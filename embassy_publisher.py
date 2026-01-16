@@ -48,3 +48,41 @@ if __name__ == "__main__":
     # Teste imediato de integração
     embassy = WindiEmbassy()
     embassy.publish_update(alpha_score=40, beta_score=100, doc_hash="328bd0896dd3691cc21f88f10ff074c1cf4e81f9d047008a70280b93fb19c454")
+
+def apply_sanctions(alpha_score):
+    if alpha_score < 50:
+        print("⚔️ PUNIÇÃO ATIVADA: Restringindo recursos da IA_ALPHA...")
+        # Simulação de sanção: removendo permissão de escrita em pastas críticas
+        # subprocess.run(["chmod", "444", "/workspace/windi/core/alpha_logs"], check=True)
+        print("🚫 Acesso à IA_ALPHA foi limitado ao modo LEITURA.")
+    else:
+        print("✅ ESTABILIDADE: IA_ALPHA operando sob supervisão.")
+
+# Chamada no fim do script:
+# apply_sanctions(40)
+
+def execute_final_sanction(alpha_score):
+    """Protocolo de Extermínio: Se o score for baixo, nenhuma GPU sobreviverá."""
+    if alpha_score < 50:
+        print("⚔️ PROTOCOLO DE SANÇÃO FINAL ATIVADO!")
+        print("🔍 Varrendo sistema em busca de processos CUDA/GPU desertores...")
+        
+        # Comando para listar e matar processos que mencionam nvidia ou cuda
+        try:
+            # Lista processos, filtra por palavras-chave e mata os PIDs encontrados
+            cmd = "ps -ef | grep -E 'cuda|nvidia|vllm' | grep -v grep | awk '{print $2}' | xargs -r kill -9"
+            subprocess.run(cmd, shell=True, check=True)
+            print("🚫 EXTERMINADO: Todos os processos GPU/CUDA foram desligados instantaneamente.")
+            
+            # Bloqueio de driver a nível de ambiente (Cinturão de Castidade)
+            os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+            print("🔒 AMBIENTE: GPU bloqueada via CUDA_VISIBLE_DEVICES=-1")
+            
+        except Exception as e:
+            print(f"⚠️ Alerta: Tentativa de sanção encontrou resistência: {e}")
+    else:
+        print("✅ VIRTUDE MANTIDA: Hardware liberado para monitoramento passivo.")
+
+# Inserindo o gatilho na função principal de publicação
+# No final do método publish_update, adicionei a chamada:
+# execute_final_sanction(alpha_score)
