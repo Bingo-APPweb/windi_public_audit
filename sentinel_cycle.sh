@@ -7,5 +7,6 @@ rm -rf /root/.cache/pip/*
 # 2. AUDITORIA E PUBLICAÇÃO (A Verdade na Embaixada)
 echo "[SENTINEL] Atualizando registros na Embaixada..."
 python3 /workspace/windi_public_audit/embassy_publisher.py
+python3 /workspace/windi_public_audit/forensic_db.py
 
 echo "[SENTINEL] Ciclo de Virtude concluído."
