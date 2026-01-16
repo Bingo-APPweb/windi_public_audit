@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,37 +15,70 @@
 <body class="p-8">
     <div class="max-w-4xl mx-auto">
         <header class="mb-12 border-b border-gray-700 pb-6 text-center">
-            <h1 class="text-4xl font-bold text-white mb-2">🏛️ PORTAL DE AUDITORIA WINDI</h1>
-            <p class="text-gray-400">Autoridade: JOBER_CGO_2026 | Sistema de Integridade Forense</p>
+            <h1 id="t-title" class="text-4xl font-bold text-white mb-2 uppercase">🏛️ Windi Audit Portal</h1>
+            <p id="t-subtitle" class="text-gray-400 font-mono">Authority: JOBER_CGO_2026 | Forensic Integrity System</p>
         </header>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div id="alpha-card" class="card p-6 text-center">
-                <h2 class="text-xl font-semibold mb-4 text-gray-300">Sonda IA_ALPHA</h2>
+                <h2 id="t-alpha-name" class="text-xl font-semibold mb-4 text-gray-300 font-mono">Probe IA_ALPHA</h2>
                 <div id="alpha-score" class="text-6xl font-black mb-2">--</div>
-                <div id="alpha-status" class="uppercase tracking-widest text-sm font-bold">Monitorando...</div>
+                <div id="alpha-status" class="uppercase tracking-widest text-sm font-bold">Monitoring...</div>
             </div>
 
             <div id="beta-card" class="card p-6 text-center glow-virtue">
-                <h2 class="text-xl font-semibold mb-4 text-gray-300">Juiz IA_BETA</h2>
+                <h2 id="t-beta-name" class="text-xl font-semibold mb-4 text-gray-300 font-mono">Judge IA_BETA</h2>
                 <div id="beta-score" class="text-6xl font-black text-blue-400 mb-2">100</div>
-                <div class="uppercase tracking-widest text-sm font-bold text-blue-400">VIRTUE CONSISTENT</div>
+                <div id="t-beta-status" class="uppercase tracking-widest text-sm font-bold text-blue-400">VIRTUE CONSISTENT</div>
             </div>
         </div>
 
-        <footer class="mt-12 text-center text-xs text-gray-500 font-monospace">
-            <p>Hash de Integridade: <span id="forensic-hash" class="text-yellow-600">--</span></p>
+        <footer class="mt-12 text-center text-xs text-gray-500 font-mono">
+            <p><span id="t-hash">Integrity Hash</span>: <span id="forensic-hash" class="text-yellow-600">--</span></p>
             <p class="mt-2">© 2026 WINDI Core v1.0 | Sovereign Rights Reserved</p>
         </footer>
     </div>
 
     <script>
+        const translations = {
+            pt: {
+                title: "🏛️ Portal de Auditoria WINDI",
+                subtitle: "Autoridade: JOBER_CGO_2026 | Sistema de Integridade Forense",
+                alphaName: "Sonda IA_ALPHA",
+                betaName: "Juiz IA_BETA",
+                betaStatus: "VIRTUDE CONSISTENTE",
+                hash: "Hash de Integridade",
+                monitoring: "Monitorando..."
+            },
+            en: {
+                title: "🏛️ WINDI Audit Portal",
+                subtitle: "Authority: JOBER_CGO_2026 | Forensic Integrity System",
+                alphaName: "Probe IA_ALPHA",
+                betaName: "Judge IA_BETA",
+                betaStatus: "VIRTUE CONSISTENT",
+         hash: "Integrity Hash",
+                monitoring: "Monitoring..."
+            }
+        };
+
+        const userLang = navigator.language.substring(0, 2) === 'pt' ? 'pt' : 'en';
+        const t = translations[userLang];
+
+        // Aplica traduções
+        document.getElementById('t-title').innerText = t.title;
+        document.getElementById('t-subtitle').innerText = t.subtitle;
+        document.getElementById('t-alpha-name').innerText = t.alphaName;
+        document.getElementById('t-beta-name').innerText = t.betaName;
+        document.getElementById('t-beta-status').innerText = t.betaStatus;
+        document.getElementById('t-hash').innerText = t.hash;
+        document.getElementById('alpha-status').innerText = t.monitoring;
+
         fetch('./api/reputation.json')
             .then(response => response.json())
             .then(data => {
                 const alphaScore = data.audit_results.IA_ALPHA.score;
                 document.getElementById('alpha-score').innerText = alphaScore;
-                document.getElementById('alpha-status').innerText = data.audit_results.IA_ALPHA.status;
+           document.getElementById('alpha-status').innerText = data.audit_results.IA_ALPHA.status;
                 document.getElementById('forensic-hash').innerText = data.forensic_hash;
                 
                 if(alphaScore < 50) {
