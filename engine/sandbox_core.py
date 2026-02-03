@@ -19,6 +19,7 @@ import asyncio
 from datetime import datetime
 from typing import Dict, List, Optional, Any
 from dataclasses import dataclass, asdict
+from pathlib import Path  # PATCH 2A
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # DATA STRUCTURES
@@ -58,7 +59,13 @@ class DeliberationFrame:
     
     # Auditoria
     receipt: str
-    
+
+    # PATCH 2B: Domain Routing fields (2026-02-03)
+    domain: str = "operational"
+    isp: Optional[str] = None
+    sge_ruleset: str = "minimal"
+    domain_confidence: float = 0.0
+
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # SANDBOX CORE - FACTORY FLOOR ORCHESTRATOR
@@ -87,7 +94,76 @@ class SandboxCore:
         """Inicializa com componentes existentes."""
         self._init_dragons()
         self.session_log = []
+        # PATCH 2C: Domain Routing initialization (2026-02-03)
+        self.domain_mapping = self._load_domain_mapping()
+        self.identity_detector = self._init_identity_detector()
+
         
+
+    def _load_domain_mapping(self) -> dict:
+        """PATCH 2D: Load domain mapping for routing."""
+        domain_file = Path("/opt/windi/domains/domain_mapping.json")
+        try:
+            if domain_file.exists():
+                with open(domain_file, 'r', encoding='utf-8') as f:
+                    mapping = json.load(f)
+                    print(f"[SandboxCore] Domain mapping loaded: {len(mapping.get('domains', {}))} domains")
+                    return mapping
+        except Exception as e:
+            print(f"[SandboxCore] Warning: Could not load domain mapping: {e}")
+        return {"domains": {}, "isp_mapping": {}, "routing_rules": {"default_domain": "operational"}}
+
+    def _init_identity_detector(self):
+        """PATCH 2D: Initialize identity detector for domain detection."""
+        try:
+            from identity_detector import IdentityDetector
+            detector = IdentityDetector()
+            print("[SandboxCore] IdentityDetector initialized for domain routing")
+            return detector
+        except Exception as e:
+            print(f"[SandboxCore] Warning: Could not init IdentityDetector: {e}")
+            return None
+
+    def detect_request_domain(self, request: str) -> dict:
+        """
+        PATCH 2D: Detect domain for incoming request.
+        Returns: {domain, isp, sge_ruleset, confidence}
+        Principle: Each domain is a separate juridical universe.
+        """
+        # Try identity detector first
+        if self.identity_detector:
+            try:
+                result = self.identity_detector.detect_domain(request)
+                if result.get('detected'):
+                    return {
+                        'domain': result['domain'],
+                        'isp': result['isp'],
+                        'sge_ruleset': result['sge_ruleset'],
+                        'confidence': result['confidence'],
+                        'source': 'identity_detector'
+                    }
+            except Exception as e:
+                print(f"[SandboxCore] Identity detector error: {e}")
+
+        # Fallback to routing rules
+        default_domain = self.domain_mapping.get('routing_rules', {}).get('default_domain', 'operational')
+        return {
+            'domain': default_domain,
+            'isp': None,
+            'sge_ruleset': 'minimal',
+            'confidence': 0.0,
+            'source': 'fallback'
+        }
+
+    def get_domain_config(self, domain: str) -> dict:
+        """PATCH 2D: Get configuration for a specific domain."""
+        domains = self.domain_mapping.get('domains', {})
+        return domains.get(domain, {
+            'database': 'babel_documents.db',
+            'sge_default': 'minimal',
+            'isolation_level': 'MEDIUM'
+        })
+
     def _init_dragons(self):
         """Carrega APIs dos Dragões."""
         try:
@@ -118,6 +194,11 @@ class SandboxCore:
         timestamp = datetime.utcnow().isoformat()
         
         self._log(session_id, "SESSION_START", {"request": request[:200]})
+
+        # PATCH 2E: Domain Detection (2026-02-03)
+        domain_info = self.detect_request_domain(request)
+
+
         
         # ─────────────────────────────────────────────────────────────────────
         # FASE 1: ARCHITECT (GPT) - Estrutura opções
@@ -187,7 +268,12 @@ class SandboxCore:
             consistency=divergence["consistency"],
             human_action="DECIDE" if not divergence["detected"] else "REVIEW",
             options=["APPROVE", "REJECT", "REQUEST_CLARIFICATION", "ESCALATE"],
-            receipt=receipt
+            receipt=receipt,
+            # PATCH 2F: Domain info
+            domain=domain_info['domain'],
+            isp=domain_info.get('isp'),
+            sge_ruleset=domain_info['sge_ruleset'],
+            domain_confidence=domain_info['confidence']
         )
         
         self._log(session_id, "FRAME_READY", {
