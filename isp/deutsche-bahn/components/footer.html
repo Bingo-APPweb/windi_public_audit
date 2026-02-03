@@ -1,14 +1,20 @@
 <!--
   Deutsche Bahn ISP - Footer Component
-  WINDI Publishing House | Version 1.0
+  WINDI Publishing House | Version 2.0 (ISP Phase 2)
+  Template Engine: Jinja2
 
   Variables:
-    {{doc_number}}       - Document reference number
-    {{classification}}   - Security classification (optional)
-    {{show_windi}}       - Boolean to show WINDI governance block
-    {{windi_receipt}}    - WINDI receipt hash
-    {{windi_level}}      - Governance level (LOW/MEDIUM/HIGH)
-    {{page_numbers}}     - Boolean to show page numbers
+    {{ doc_number }}       - Document reference number
+    {{ classification }}   - Security classification (optional)
+    {{ show_windi }}       - Boolean to show WINDI governance block
+    {{ windi_receipt }}    - WINDI receipt hash
+    {{ windi_level }}      - Governance level (LOW/MEDIUM/HIGH)
+    {{ windi_hash }}       - Content hash (short)
+    {{ windi_timestamp }}  - ISO timestamp
+    {{ qr_base64 }}        - QR code as base64 PNG (ISP Phase 2)
+    {{ structural_hash }}  - DeepDOCFakes structural hash
+    {{ resilience_score }} - Document resilience score
+    {{ page_numbers }}     - Boolean to show page numbers
 -->
 
 <footer class="isp-footer">
@@ -28,38 +34,38 @@
         <span class="separator">|</span>
         <span>Deutschland</span>
       </div>
-      {{#classification}}
+      {% if classification %}
       <div class="isp-footer-classification">
         <span class="classification-label">Klassifizierung:</span>
-        <span class="classification-value">{{classification}}</span>
+        <span class="classification-value">{{ classification }}</span>
       </div>
-      {{/classification}}
+      {% endif %}
     </div>
 
     <!-- Center Column: Document Reference -->
     <div class="isp-footer-center">
-      {{#doc_number}}
-      <div class="isp-footer-ref">Ref: {{doc_number}}</div>
-      {{/doc_number}}
+      {% if doc_number %}
+      <div class="isp-footer-ref">Ref: {{ doc_number }}</div>
+      {% endif %}
     </div>
 
     <!-- Right Column: WINDI Block or Page Numbers -->
     <div class="isp-footer-right">
-      {{#show_windi}}
+      {% if show_windi %}
       <div class="windi-mini-receipt">
         <div class="windi-label">WINDI Gov.</div>
-        <div class="windi-level windi-level-{{windi_level}}">{{windi_level}}</div>
-        {{#windi_receipt}}
-        <div class="windi-hash">{{windi_receipt}}</div>
-        {{/windi_receipt}}
+        <div class="windi-level windi-level-{{ windi_level }}">{{ windi_level }}</div>
+        {% if windi_receipt %}
+        <div class="windi-hash">{{ windi_receipt }}</div>
+        {% endif %}
       </div>
-      {{/show_windi}}
+      {% endif %}
 
-      {{#page_numbers}}
+      {% if page_numbers %}
       <div class="isp-footer-pages">
         Seite <span class="page-current"></span> von <span class="page-total"></span>
       </div>
-      {{/page_numbers}}
+      {% endif %}
     </div>
 
   </div>
@@ -67,35 +73,61 @@
 </footer>
 
 <!-- Full WINDI Governance Block (for last page) -->
-{{#show_windi_full}}
+{% if show_windi_full %}
 <div class="windi-governance-block">
   <div class="windi-block-header">
     <span class="windi-icon">&#9670;</span>
     <span class="windi-title">WINDI Governance Receipt</span>
   </div>
-  <div class="windi-block-content">
-    <div class="windi-row">
-      <span class="windi-key">Level:</span>
-      <span class="windi-value windi-level-{{windi_level}}">{{windi_level}}</span>
+  <div class="windi-block-body">
+    <div class="windi-block-content">
+      <div class="windi-row">
+        <span class="windi-key">Level:</span>
+        <span class="windi-value windi-level-{{ windi_level }}">{{ windi_level }}</span>
+      </div>
+      <div class="windi-row">
+        <span class="windi-key">Receipt:</span>
+        <span class="windi-value mono">{{ windi_receipt }}</span>
+      </div>
+      <div class="windi-row">
+        <span class="windi-key">Hash:</span>
+        <span class="windi-value mono">{{ windi_hash }}</span>
+      </div>
+      <div class="windi-row">
+        <span class="windi-key">Timestamp:</span>
+        <span class="windi-value">{{ windi_timestamp }}</span>
+      </div>
+      <div class="windi-row">
+        <span class="windi-key">ISP:</span>
+        <span class="windi-value">WINDI-ISP-DB-001</span>
+      </div>
+      {% if structural_hash %}
+      <div class="windi-row">
+        <span class="windi-key">Struct Hash:</span>
+        <span class="windi-value mono">{{ structural_hash }}</span>
+      </div>
+      {% endif %}
+      {% if resilience_score %}
+      <div class="windi-row">
+        <span class="windi-key">Resilience:</span>
+        <span class="windi-value">{{ resilience_score }}/100 {{ resilience_rating }}</span>
+      </div>
+      {% endif %}
     </div>
-    <div class="windi-row">
-      <span class="windi-key">Receipt:</span>
-      <span class="windi-value mono">{{windi_receipt}}</span>
+    {% if qr_base64 %}
+    <div class="windi-qr-container">
+      <img src="data:image/png;base64,{{ qr_base64 }}" class="windi-qr" alt="WINDI QR Code"/>
+      <div class="windi-qr-label">Scan to verify</div>
     </div>
-    <div class="windi-row">
-      <span class="windi-key">Timestamp:</span>
-      <span class="windi-value">{{windi_timestamp}}</span>
-    </div>
-    <div class="windi-row">
-      <span class="windi-key">ISP:</span>
-      <span class="windi-value">WINDI-ISP-DB-001</span>
-    </div>
+    {% endif %}
   </div>
   <div class="windi-block-footer">
-    AI processes. Human decides. WINDI guarantees.
+    <span class="windi-sof-badge">SOF v1.0</span>
+    <span class="windi-eu-badge">EU AI Act</span>
+    <span class="windi-principle">AI processes. Human decides. WINDI guarantees.</span>
   </div>
 </div>
-{{/show_windi_full}}
+{% endif %}
 
 <style>
 .isp-footer {
@@ -277,14 +309,66 @@
   font-size: 7pt;
 }
 
+.windi-block-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 4mm;
+}
+
 .windi-block-footer {
   margin-top: 3mm;
   padding-top: 2mm;
   border-top: 0.5pt solid #CCCCCC;
   font-size: 7pt;
-  font-style: italic;
   color: #878787;
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3mm;
+  flex-wrap: wrap;
+}
+
+.windi-sof-badge {
+  background: #0d9488;
+  color: #fff;
+  padding: 0.5mm 2mm;
+  border-radius: 2px;
+  font-weight: bold;
+  font-style: normal;
+}
+
+.windi-eu-badge {
+  background: #1a365d;
+  color: #fff;
+  padding: 0.5mm 2mm;
+  border-radius: 2px;
+  font-weight: bold;
+  font-style: normal;
+}
+
+.windi-principle {
+  font-style: italic;
+}
+
+/* QR Code Container */
+.windi-qr-container {
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.windi-qr {
+  width: 18mm;
+  height: 18mm;
+  border: 0.5pt solid #CCCCCC;
+  border-radius: 2px;
+}
+
+.windi-qr-label {
+  font-size: 5pt;
+  color: #878787;
+  margin-top: 1mm;
 }
 
 /* Print optimization */

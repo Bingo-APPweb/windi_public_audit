@@ -89,3 +89,69 @@ class SubmissionRegistry:
         total = len(entries)
         sealed = sum(1 for e in entries if e.get("integrity_hash"))
         return sealed == total, {"total": total, "sealed": sealed, "complete": sealed == total}
+
+    def register_isp_submission(self, receipt):
+        """
+        Register ISP document submission with enhanced metadata.
+
+        Args:
+            receipt: dict with keys:
+                - receipt_id: WINDI receipt identifier
+                - document_id: Document ID
+                - timestamp: ISO timestamp
+                - governance_level: LOW/MEDIUM/HIGH
+                - isp_id: Institutional Style Profile ID
+                - isp_form: Form ID within the ISP
+                - content_hash: Hash of document content
+                - structural_hash: DeepDOCFakes structural hash
+                - author: Author information dict
+                - witness: Witness information dict
+
+        Returns:
+            Registered entry dict
+        """
+        data = self._load()
+        entry = {
+            "submission_id": receipt.get("receipt_id", ""),
+            "document_id": receipt.get("document_id", ""),
+            "registered_at": receipt.get("timestamp") or datetime.now(timezone.utc).isoformat(),
+            "governance_level": receipt.get("governance_level", "LOW"),
+            "isp_profile": receipt.get("isp_id", ""),
+            "form_id": receipt.get("isp_form", ""),
+            "content_hash": receipt.get("content_hash", ""),
+            "structural_hash": receipt.get("structural_hash", ""),
+            "sof_protocol": receipt.get("sof_protocol", "WINDI-SOF-v1"),
+            "author_name": receipt.get("author", {}).get("name", ""),
+            "author_id": receipt.get("author", {}).get("employee_id", ""),
+            "witness_name": receipt.get("witness", {}).get("name", ""),
+            "witness_id": receipt.get("witness", {}).get("id", ""),
+            "policy_version": "2.2.0",
+            "validation_status": "registered",
+        }
+        data["entries"].append(entry)
+
+        # Update stats
+        data["stats"]["total"] = len(data["entries"])
+        lv = entry["governance_level"]
+        data["stats"]["by_level"][lv] = data["stats"]["by_level"].get(lv, 0) + 1
+
+        # Track ISP profiles
+        if "by_isp" not in data["stats"]:
+            data["stats"]["by_isp"] = {}
+        isp = entry["isp_profile"] or "unknown"
+        data["stats"]["by_isp"][isp] = data["stats"]["by_isp"].get(isp, 0) + 1
+
+        self._save(data)
+        return entry
+
+    def query_by_isp(self, isp_id, limit=50):
+        """Query submissions by ISP profile."""
+        results = self._load()["entries"]
+        results = [e for e in results if e.get("isp_profile") == isp_id]
+        results.sort(key=lambda e: e.get("registered_at", ""), reverse=True)
+        return results[:limit]
+
+    def get_isp_stats(self):
+        """Get statistics grouped by ISP profile."""
+        data = self._load()
+        return data.get("stats", {}).get("by_isp", {})

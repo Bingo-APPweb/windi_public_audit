@@ -908,7 +908,7 @@
   </div>
 
   <!-- ═══════════════════════════════════════════════════════════════ -->
-  <!-- FOOTER -->
+  <!-- FOOTER (Static form reference) -->
   <!-- ═══════════════════════════════════════════════════════════════ -->
   <div class="footer">
     <div class="footer-left">
@@ -919,12 +919,16 @@
     <div class="footer-right">
       <div class="windi-block">
         <span class="windi-label">WINDI Gov:</span>
-        <span class="windi-level LOW">LOW</span>
-        <span class="windi-hash">ISP:DB-001</span>
-        <span class="windi-motto">Human decides.</span>
+        <span class="windi-level {{ windi_level }}">{{ windi_level }}</span>
+        <span class="windi-hash">{{ windi_receipt }}</span>
       </div>
     </div>
   </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- ISP FOOTER WITH WINDI GOVERNANCE BLOCK & QR CODE -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  {{ isp_footer | safe }}
 
 </body>
 </html>
