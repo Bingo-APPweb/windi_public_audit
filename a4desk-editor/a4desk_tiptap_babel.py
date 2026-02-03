@@ -744,12 +744,15 @@ def verify_receipt(receipt_id):
         accept_header = request.headers.get('Accept', '')
         wants_html = 'text/html' in accept_header and 'application/json' not in accept_header
         if wants_html:
+            from datetime import datetime
             template_context = {
                 "receipt_id": receipt_id,
                 "status": "NOT_FOUND",
                 "status_class": "invalid",
                 "status_icon": "✗",
-                "status_text": "NOT FOUND"
+                "status_text": "NOT FOUND",
+                "status_subtitle": "Receipt not in database",
+                "verification_time": datetime.now().strftime("%Y-%m-%d %H:%M:%S UTC")
             }
             return render_template_string(VERIFY_HTML_TEMPLATE, **template_context), 404
         return jsonify({"status": "NOT_FOUND", "error": "Receipt not found", "receipt_id": receipt_id}), 404
@@ -799,13 +802,29 @@ def verify_receipt(receipt_id):
 
     if wants_html:
         # Render HTML verification page
+        from datetime import datetime
         level_colors = {"LOW": "green", "MEDIUM": "blue", "HIGH": "purple"}
+
+        # Calculate resilience class for CSS styling
+        if resilience_score >= 90:
+            resilience_class = "maximum"
+        elif resilience_score >= 70:
+            resilience_class = "high"
+        elif resilience_score >= 40:
+            resilience_class = "medium"
+        else:
+            resilience_class = "low"
+
+        sof_protocol = receipt_data.get("sof_protocol", "v1.0")
+        verification_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S UTC")
+
         template_context = {
             "receipt_id": receipt_data.get("receipt_id", receipt_id),
             "status": "VALID",
             "status_class": "valid",
             "status_icon": "✓",
             "status_text": "VERIFIED",
+            "status_subtitle": "Document authenticity confirmed",
             "title": title,
             "isp_profile": isp_profile,
             "form_id": form_id,
@@ -816,8 +835,11 @@ def verify_receipt(receipt_id):
             "structural_hash": structural_hash_display,
             "resilience_score": resilience_score,
             "resilience_rating": resilience_rating,
+            "resilience_class": resilience_class,
             "author": author_name,
-            "witness": witness_name
+            "witness": witness_name,
+            "sof_protocol": sof_protocol,
+            "verification_time": verification_time
         }
         return render_template_string(VERIFY_HTML_TEMPLATE, **template_context)
 
@@ -1493,8 +1515,10 @@ def api_get_isp_template_html(profile_id, template_name):
 # ═══════════════════════════════════════════════════════════════════════════════
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# WINDI VERIFICATION PAGE TEMPLATE
+# PHASE 3A: HTML VERIFICATION PAGE TEMPLATE
+# "AI processes. Human decides. WINDI guarantees."
 # ═══════════════════════════════════════════════════════════════════════════════
+
 VERIFY_HTML_TEMPLATE = '''
 <!DOCTYPE html>
 <html lang="de">
@@ -1502,6 +1526,7 @@ VERIFY_HTML_TEMPLATE = '''
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WINDI Verification - {{ receipt_id }}</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐉</text></svg>">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -1511,58 +1536,93 @@ VERIFY_HTML_TEMPLATE = '''
             color: #fff;
         }
         .container { max-width: 500px; margin: 0 auto; }
-        .card { background: rgba(255,255,255,0.1); border-radius: 16px; padding: 24px; margin-bottom: 16px; backdrop-filter: blur(10px); }
-        .status-valid { background: linear-gradient(135deg, #10b981 0%, #059669 100%); text-align: center; }
-        .status-invalid { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); text-align: center; }
-        .status-partial { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); text-align: center; }
-        .status-icon { font-size: 48px; margin-bottom: 8px; }
-        .status-text { font-size: 24px; font-weight: bold; }
-        .receipt-id { font-family: monospace; font-size: 12px; opacity: 0.8; margin-top: 8px; word-break: break-all; }
-        .section-title { font-size: 14px; font-weight: 600; color: #94a3b8; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-        .detail-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .header { text-align: center; margin-bottom: 20px; }
+        .header-logo { font-size: 48px; margin-bottom: 8px; }
+        .header-title { font-size: 14px; letter-spacing: 2px; color: #94a3b8; text-transform: uppercase; }
+        .card { background: rgba(255,255,255,0.1); border-radius: 16px; padding: 24px; margin-bottom: 16px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .status-valid { background: linear-gradient(135deg, #10b981 0%, #059669 100%); text-align: center; border: none; }
+        .status-invalid { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); text-align: center; border: none; }
+        .status-partial { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); text-align: center; border: none; }
+        .status-icon { font-size: 64px; margin-bottom: 12px; }
+        .status-text { font-size: 28px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; }
+        .status-subtitle { font-size: 14px; opacity: 0.9; margin-top: 8px; }
+        .receipt-id { font-family: 'Courier New', monospace; font-size: 11px; opacity: 0.8; margin-top: 12px; word-break: break-all; background: rgba(0,0,0,0.2); padding: 8px 12px; border-radius: 8px; }
+        .section-title { font-size: 13px; font-weight: 600; color: #94a3b8; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 1px; }
+        .detail-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
         .detail-row:last-child { border-bottom: none; }
-        .detail-label { color: #94a3b8; }
-        .detail-value { font-weight: 500; text-align: right; font-family: monospace; }
-        .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
-        .badge-green { background: #10b981; }
-        .badge-blue { background: #3b82f6; }
-        .badge-purple { background: #8b5cf6; }
-        .resilience-bar { height: 8px; background: rgba(255,255,255,0.2); border-radius: 4px; overflow: hidden; margin-top: 8px; }
-        .resilience-fill { height: 100%; background: linear-gradient(90deg, #10b981, #3b82f6); border-radius: 4px; }
-        .footer { text-align: center; padding: 20px; color: #64748b; font-size: 12px; }
-        .footer-motto { font-style: italic; margin-bottom: 8px; }
-        .windi-logo { font-size: 24px; margin-bottom: 8px; }
+        .detail-label { color: #94a3b8; font-size: 13px; }
+        .detail-value { font-weight: 500; text-align: right; font-family: 'Courier New', monospace; font-size: 13px; max-width: 60%; word-break: break-all; }
+        .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+        .badge-green { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid #10b981; }
+        .badge-blue { background: rgba(59, 130, 246, 0.2); color: #3b82f6; border: 1px solid #3b82f6; }
+        .badge-purple { background: rgba(139, 92, 246, 0.2); color: #a78bfa; border: 1px solid #8b5cf6; }
+        .badge-yellow { background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid #f59e0b; }
+        .badge-red { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; }
+        .resilience-container { margin-top: 8px; }
+        .resilience-bar { height: 8px; background: rgba(255,255,255,0.2); border-radius: 4px; overflow: hidden; }
+        .resilience-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; }
+        .resilience-fill.maximum { background: linear-gradient(90deg, #10b981, #3b82f6); }
+        .resilience-fill.high { background: linear-gradient(90deg, #3b82f6, #8b5cf6); }
+        .resilience-fill.medium { background: linear-gradient(90deg, #f59e0b, #ef4444); }
+        .resilience-fill.low { background: #ef4444; }
+        .footer { text-align: center; padding: 24px 20px; color: #64748b; font-size: 12px; }
+        .footer-motto { font-style: italic; margin-bottom: 12px; color: #94a3b8; }
+        .footer-org { margin-bottom: 4px; }
+        .footer-link { color: #3b82f6; text-decoration: none; }
+        .timestamp { font-size: 11px; color: #64748b; text-align: center; margin-top: 8px; }
+        .isp-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.1); padding: 6px 12px; border-radius: 8px; margin-top: 8px; }
+        .isp-badge img { height: 16px; }
+        .error-details { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); border-radius: 8px; padding: 16px; margin-top: 16px; }
+        .error-details code { font-family: monospace; font-size: 12px; color: #f87171; }
+        @media (max-width: 380px) {
+            .detail-row { flex-direction: column; align-items: flex-start; gap: 4px; }
+            .detail-value { text-align: left; max-width: 100%; }
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <div class="header">
+            <div class="header-logo">🐉</div>
+            <div class="header-title">WINDI Verification</div>
+        </div>
+
         <div class="card status-{{ status_class }}">
             <div class="status-icon">{{ status_icon }}</div>
             <div class="status-text">{{ status_text }}</div>
+            <div class="status-subtitle">{{ status_subtitle }}</div>
             <div class="receipt-id">{{ receipt_id }}</div>
         </div>
 
-        {% if status == 'VALID' %}
+        {% if status == 'VALID' or status == 'PARTIAL' %}
         <div class="card">
-            <div class="section-title">📄 Document Details</div>
+            <div class="section-title">📄 Document</div>
+            {% if title %}
             <div class="detail-row">
                 <span class="detail-label">Title</span>
-                <span class="detail-value">{{ title or 'N/A' }}</span>
+                <span class="detail-value">{{ title }}</span>
             </div>
+            {% endif %}
+            {% if isp_profile %}
             <div class="detail-row">
-                <span class="detail-label">ISP Profile</span>
-                <span class="detail-value">{{ isp_profile or 'N/A' }}</span>
+                <span class="detail-label">Institution</span>
+                <span class="detail-value">{{ isp_profile }}</span>
             </div>
+            {% endif %}
+            {% if form_id %}
             <div class="detail-row">
-                <span class="detail-label">Form ID</span>
-                <span class="detail-value">{{ form_id or 'N/A' }}</span>
+                <span class="detail-label">Form</span>
+                <span class="detail-value">{{ form_id }}</span>
             </div>
+            {% endif %}
+            {% if created_at %}
             <div class="detail-row">
                 <span class="detail-label">Created</span>
-                <span class="detail-value">{{ created_at or 'N/A' }}</span>
+                <span class="detail-value">{{ created_at }}</span>
             </div>
+            {% endif %}
             <div class="detail-row">
-                <span class="detail-label">Level</span>
+                <span class="detail-label">Governance</span>
                 <span class="badge badge-{{ level_color }}">{{ governance_level }}</span>
             </div>
         </div>
@@ -1571,19 +1631,26 @@ VERIFY_HTML_TEMPLATE = '''
             <div class="section-title">🔐 Integrity</div>
             <div class="detail-row">
                 <span class="detail-label">Content Hash</span>
-                <span class="detail-value">{{ content_hash }}</span>
+                <span class="detail-value">{{ content_hash or 'N/A' }}</span>
             </div>
             <div class="detail-row">
                 <span class="detail-label">Structural Hash</span>
-                <span class="detail-value">{{ structural_hash }}</span>
+                <span class="detail-value">{{ structural_hash or 'N/A' }}</span>
             </div>
+            {% if resilience_score %}
             <div class="detail-row">
                 <span class="detail-label">Resilience</span>
-                <span class="detail-value">{{ resilience_score }}/100 {{ resilience_rating }}</span>
+                <span class="detail-value">{{ resilience_score }}/100</span>
             </div>
-            <div class="resilience-bar">
-                <div class="resilience-fill" style="width: {{ resilience_score }}%"></div>
+            <div class="resilience-container">
+                <div class="resilience-bar">
+                    <div class="resilience-fill {{ resilience_class }}" style="width: {{ resilience_score }}%"></div>
+                </div>
             </div>
+            {% if resilience_rating %}
+            <div class="timestamp">{{ resilience_rating }}</div>
+            {% endif %}
+            {% endif %}
         </div>
 
         {% if author or witness %}
@@ -1601,6 +1668,10 @@ VERIFY_HTML_TEMPLATE = '''
                 <span class="detail-value">{{ witness }}</span>
             </div>
             {% endif %}
+            <div class="detail-row">
+                <span class="detail-label">Four-Eyes</span>
+                <span class="badge badge-{{ 'green' if witness else 'yellow' }}">{{ 'Active' if witness else 'Single' }}</span>
+            </div>
         </div>
         {% endif %}
 
@@ -1612,19 +1683,48 @@ VERIFY_HTML_TEMPLATE = '''
             </div>
             <div class="detail-row">
                 <span class="detail-label">SOF Protocol</span>
-                <span class="badge badge-blue">v1.0</span>
+                <span class="badge badge-blue">{{ sof_protocol or 'v1.0' }}</span>
             </div>
             <div class="detail-row">
-                <span class="detail-label">Four-Eyes</span>
-                <span class="badge badge-purple">{{ 'Active' if witness else 'N/A' }}</span>
+                <span class="detail-label">Human Decision</span>
+                <span class="badge badge-purple">✓ Guaranteed</span>
             </div>
         </div>
         {% endif %}
 
+        {% if status == 'NOT_FOUND' %}
+        <div class="card">
+            <div class="section-title">ℹ️ Information</div>
+            <p style="color: #94a3b8; line-height: 1.6;">
+                This receipt ID was not found in our verification database.
+                This could mean:
+            </p>
+            <ul style="color: #94a3b8; margin: 16px 0; padding-left: 20px; line-height: 1.8;">
+                <li>The document hasn't been finalized yet</li>
+                <li>The receipt ID was entered incorrectly</li>
+                <li>The document was created in a different system</li>
+            </ul>
+            <p style="color: #64748b; font-size: 12px;">
+                If you believe this is an error, please contact WINDI support.
+            </p>
+        </div>
+        {% endif %}
+
+        {% if error_message %}
+        <div class="error-details">
+            <div class="section-title" style="color: #f87171;">⚠️ Error Details</div>
+            <code>{{ error_message }}</code>
+        </div>
+        {% endif %}
+
         <div class="footer">
-            <div class="windi-logo">🐉</div>
             <div class="footer-motto">"AI processes. Human decides. WINDI guarantees."</div>
-            <div>WINDI Publishing House · Kempten, Bavaria</div>
+            <div class="footer-org">WINDI Publishing House · Kempten, Bavaria</div>
+            <a href="https://windia4desk.tech" class="footer-link">windia4desk.tech</a>
+        </div>
+
+        <div class="timestamp">
+            Verified at {{ verification_time }}
         </div>
     </div>
 </body>
