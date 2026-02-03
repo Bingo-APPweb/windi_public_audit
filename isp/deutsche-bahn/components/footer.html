@@ -1,0 +1,304 @@
+<!--
+  Deutsche Bahn ISP - Footer Component
+  WINDI Publishing House | Version 1.0
+
+  Variables:
+    {{doc_number}}       - Document reference number
+    {{classification}}   - Security classification (optional)
+    {{show_windi}}       - Boolean to show WINDI governance block
+    {{windi_receipt}}    - WINDI receipt hash
+    {{windi_level}}      - Governance level (LOW/MEDIUM/HIGH)
+    {{page_numbers}}     - Boolean to show page numbers
+-->
+
+<footer class="isp-footer">
+
+  <!-- Red accent line -->
+  <div class="isp-footer-accent"></div>
+
+  <div class="isp-footer-grid">
+
+    <!-- Left Column: Organization Info -->
+    <div class="isp-footer-left">
+      <div class="isp-footer-brand">Deutsche Bahn AG</div>
+      <div class="isp-footer-legal">
+        <span>Potsdamer Platz 2</span>
+        <span class="separator">|</span>
+        <span>10785 Berlin</span>
+        <span class="separator">|</span>
+        <span>Deutschland</span>
+      </div>
+      {{#classification}}
+      <div class="isp-footer-classification">
+        <span class="classification-label">Klassifizierung:</span>
+        <span class="classification-value">{{classification}}</span>
+      </div>
+      {{/classification}}
+    </div>
+
+    <!-- Center Column: Document Reference -->
+    <div class="isp-footer-center">
+      {{#doc_number}}
+      <div class="isp-footer-ref">Ref: {{doc_number}}</div>
+      {{/doc_number}}
+    </div>
+
+    <!-- Right Column: WINDI Block or Page Numbers -->
+    <div class="isp-footer-right">
+      {{#show_windi}}
+      <div class="windi-mini-receipt">
+        <div class="windi-label">WINDI Gov.</div>
+        <div class="windi-level windi-level-{{windi_level}}">{{windi_level}}</div>
+        {{#windi_receipt}}
+        <div class="windi-hash">{{windi_receipt}}</div>
+        {{/windi_receipt}}
+      </div>
+      {{/show_windi}}
+
+      {{#page_numbers}}
+      <div class="isp-footer-pages">
+        Seite <span class="page-current"></span> von <span class="page-total"></span>
+      </div>
+      {{/page_numbers}}
+    </div>
+
+  </div>
+
+</footer>
+
+<!-- Full WINDI Governance Block (for last page) -->
+{{#show_windi_full}}
+<div class="windi-governance-block">
+  <div class="windi-block-header">
+    <span class="windi-icon">&#9670;</span>
+    <span class="windi-title">WINDI Governance Receipt</span>
+  </div>
+  <div class="windi-block-content">
+    <div class="windi-row">
+      <span class="windi-key">Level:</span>
+      <span class="windi-value windi-level-{{windi_level}}">{{windi_level}}</span>
+    </div>
+    <div class="windi-row">
+      <span class="windi-key">Receipt:</span>
+      <span class="windi-value mono">{{windi_receipt}}</span>
+    </div>
+    <div class="windi-row">
+      <span class="windi-key">Timestamp:</span>
+      <span class="windi-value">{{windi_timestamp}}</span>
+    </div>
+    <div class="windi-row">
+      <span class="windi-key">ISP:</span>
+      <span class="windi-value">WINDI-ISP-DB-001</span>
+    </div>
+  </div>
+  <div class="windi-block-footer">
+    AI processes. Human decides. WINDI guarantees.
+  </div>
+</div>
+{{/show_windi_full}}
+
+<style>
+.isp-footer {
+  width: 100%;
+  margin-top: auto;
+  padding-top: 4mm;
+}
+
+.isp-footer-accent {
+  height: 2pt;
+  background: #EC0016;
+  margin-bottom: 3mm;
+}
+
+.isp-footer-grid {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  font-size: 8pt;
+  color: #878787;
+}
+
+.isp-footer-left {
+  flex: 2;
+}
+
+.isp-footer-brand {
+  font-size: 9pt;
+  font-weight: bold;
+  color: #EC0016;
+  margin-bottom: 1mm;
+}
+
+.isp-footer-legal {
+  line-height: 1.4;
+}
+
+.isp-footer-legal .separator {
+  margin: 0 1.5mm;
+  color: #CCCCCC;
+}
+
+.isp-footer-classification {
+  margin-top: 2mm;
+  padding: 1mm 2mm;
+  background: #FEF0F1;
+  border-left: 2pt solid #EC0016;
+  display: inline-block;
+}
+
+.classification-label {
+  color: #646464;
+}
+
+.classification-value {
+  font-weight: bold;
+  color: #EC0016;
+}
+
+.isp-footer-center {
+  flex: 1;
+  text-align: center;
+}
+
+.isp-footer-ref {
+  font-family: Consolas, Monaco, monospace;
+  font-size: 7pt;
+}
+
+.isp-footer-right {
+  flex: 1;
+  text-align: right;
+}
+
+.isp-footer-pages {
+  font-size: 8pt;
+  color: #878787;
+}
+
+/* Mini WINDI Receipt */
+.windi-mini-receipt {
+  display: inline-block;
+  padding: 1.5mm 3mm;
+  background: #F0F0F0;
+  border: 0.5pt solid #CCCCCC;
+  border-radius: 2px;
+  font-size: 7pt;
+  text-align: left;
+}
+
+.windi-label {
+  font-weight: bold;
+  color: #646464;
+  margin-bottom: 0.5mm;
+}
+
+.windi-level {
+  font-weight: bold;
+  padding: 0.5mm 1.5mm;
+  border-radius: 2px;
+  display: inline-block;
+  margin-bottom: 0.5mm;
+}
+
+.windi-level-LOW {
+  background: #E5F5E9;
+  color: #008A29;
+}
+
+.windi-level-MEDIUM {
+  background: #FFF3E0;
+  color: #F39200;
+}
+
+.windi-level-HIGH {
+  background: #FEF0F1;
+  color: #EC0016;
+}
+
+.windi-hash {
+  font-family: Consolas, Monaco, monospace;
+  font-size: 6pt;
+  color: #878787;
+  word-break: break-all;
+  max-width: 25mm;
+}
+
+/* Full WINDI Governance Block */
+.windi-governance-block {
+  margin-top: 6mm;
+  padding: 4mm;
+  background: #F0F0F0;
+  border: 1pt solid #CCCCCC;
+  border-radius: 4px;
+  page-break-inside: avoid;
+}
+
+.windi-block-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 3mm;
+  padding-bottom: 2mm;
+  border-bottom: 0.5pt solid #CCCCCC;
+}
+
+.windi-icon {
+  color: #EC0016;
+  font-size: 10pt;
+  margin-right: 2mm;
+}
+
+.windi-title {
+  font-size: 9pt;
+  font-weight: bold;
+  color: #1E1E1E;
+}
+
+.windi-block-content {
+  font-size: 8pt;
+}
+
+.windi-row {
+  display: flex;
+  margin-bottom: 1mm;
+}
+
+.windi-key {
+  width: 20mm;
+  color: #646464;
+}
+
+.windi-value {
+  flex: 1;
+  color: #1E1E1E;
+}
+
+.windi-value.mono {
+  font-family: Consolas, Monaco, monospace;
+  font-size: 7pt;
+}
+
+.windi-block-footer {
+  margin-top: 3mm;
+  padding-top: 2mm;
+  border-top: 0.5pt solid #CCCCCC;
+  font-size: 7pt;
+  font-style: italic;
+  color: #878787;
+  text-align: center;
+}
+
+/* Print optimization */
+@media print {
+  .isp-footer {
+    position: running(footer);
+  }
+
+  .page-current::after {
+    content: counter(page);
+  }
+
+  .page-total::after {
+    content: counter(pages);
+  }
+}
+</style>

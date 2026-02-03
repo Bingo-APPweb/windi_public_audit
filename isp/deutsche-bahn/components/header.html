@@ -1,0 +1,157 @@
+<!--
+  Deutsche Bahn ISP - Header Component
+  WINDI Publishing House | Version 1.0
+
+  Variables:
+    {{doc_type}}     - Document type (e.g., "Transportauftrag", "Memo")
+    {{doc_number}}   - Document reference number
+    {{doc_date}}     - Document date (DD.MM.YYYY)
+    {{department}}   - Department name (optional)
+    {{show_logo}}    - Boolean to show/hide logo placeholder
+-->
+
+<header class="isp-header">
+  <div class="isp-header-grid">
+
+    <!-- Left Column: Document Info -->
+    <div class="isp-header-left">
+      <div class="isp-header-org">Deutsche Bahn AG</div>
+      {{#department}}
+      <div class="isp-header-dept">{{department}}</div>
+      {{/department}}
+      <div class="isp-header-meta">
+        <span class="doc-type">{{doc_type}}</span>
+        {{#doc_number}}
+        <span class="doc-number">Nr. {{doc_number}}</span>
+        {{/doc_number}}
+      </div>
+    </div>
+
+    <!-- Center Column: Title (optional) -->
+    <div class="isp-header-center">
+      {{#title}}
+      <h1 class="isp-header-title">{{title}}</h1>
+      {{/title}}
+    </div>
+
+    <!-- Right Column: Logo & Date -->
+    <div class="isp-header-right">
+      {{#show_logo}}
+      <div class="isp-logo-container">
+        <!-- Logo placeholder - requires identity_license -->
+        <div class="isp-logo-placeholder" aria-label="Deutsche Bahn Logo">
+          <span class="logo-text">DB</span>
+        </div>
+      </div>
+      {{/show_logo}}
+      <div class="isp-header-date">{{doc_date}}</div>
+    </div>
+
+  </div>
+
+  <!-- Red accent line -->
+  <div class="isp-header-accent"></div>
+</header>
+
+<style>
+.isp-header {
+  width: 100%;
+  margin-bottom: 6mm;
+}
+
+.isp-header-grid {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 3mm;
+}
+
+.isp-header-left {
+  flex: 1;
+}
+
+.isp-header-org {
+  font-size: 11pt;
+  font-weight: bold;
+  color: #1E1E1E;
+  margin-bottom: 1mm;
+}
+
+.isp-header-dept {
+  font-size: 9pt;
+  color: #646464;
+  margin-bottom: 2mm;
+}
+
+.isp-header-meta {
+  font-size: 8pt;
+  color: #878787;
+}
+
+.isp-header-meta .doc-type {
+  font-weight: bold;
+  color: #EC0016;
+  margin-right: 3mm;
+}
+
+.isp-header-meta .doc-number {
+  font-family: Consolas, Monaco, monospace;
+}
+
+.isp-header-center {
+  flex: 2;
+  text-align: center;
+}
+
+.isp-header-title {
+  font-size: 14pt;
+  font-weight: bold;
+  color: #EC0016;
+  margin: 0;
+  padding: 0;
+}
+
+.isp-header-right {
+  flex: 1;
+  text-align: right;
+}
+
+.isp-logo-container {
+  margin-bottom: 2mm;
+}
+
+.isp-logo-placeholder {
+  display: inline-block;
+  width: 40mm;
+  height: 10mm;
+  background: linear-gradient(135deg, #EC0016 0%, #C50014 100%);
+  border-radius: 2px;
+  text-align: center;
+  line-height: 10mm;
+}
+
+.isp-logo-placeholder .logo-text {
+  font-size: 16pt;
+  font-weight: bold;
+  color: #FFFFFF;
+  letter-spacing: 2pt;
+}
+
+.isp-header-date {
+  font-size: 9pt;
+  color: #646464;
+}
+
+.isp-header-accent {
+  height: 3pt;
+  background: linear-gradient(90deg, #EC0016 0%, #EC0016 70%, transparent 100%);
+  margin-top: 2mm;
+}
+
+/* Print optimization */
+@media print {
+  .isp-header {
+    position: running(header);
+  }
+}
+</style>

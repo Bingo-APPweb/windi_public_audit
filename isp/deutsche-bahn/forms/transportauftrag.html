@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<!--
+  Deutsche Bahn ISP - Transportauftrag (Transport Order Form)
+  WINDI Publishing House | Version 1.0
+
+  Form ID: DB-TRA-INT-003
+  Purpose: Internal transport order for goods and materials
+  Governance Level: LOW (operational) | MEDIUM (if safety-relevant)
+
+  Based on standard DB internal logistics documentation
+-->
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="generator" content="WINDI Publishing House">
+  <meta name="isp-id" content="WINDI-ISP-DB-001">
+  <meta name="form-id" content="DB-TRA-INT-003">
+  <meta name="governance-level" content="LOW">
+  <title>Transportauftrag - Deutsche Bahn AG</title>
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    @page {
+      size: A4;
+      margin: 15mm 12mm 12mm 15mm;
+    }
+
+    @page :first {
+      margin-top: 12mm;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 8pt;
+      line-height: 1.35;
+      color: #1E1E1E;
+    }
+
+    /* === HEADER === */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding-bottom: 3mm;
+      border-bottom: 3pt solid #EC0016;
+      margin-bottom: 4mm;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 4mm;
+    }
+
+    .logo-box {
+      width: 28mm;
+      height: 8mm;
+      background: linear-gradient(135deg, #EC0016, #C50014);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 1px;
+    }
+
+    .logo-text {
+      color: #FFFFFF;
+      font-size: 12pt;
+      font-weight: bold;
+      letter-spacing: 1pt;
+    }
+
+    .org-info {
+      font-size: 7pt;
+      color: #646464;
+    }
+
+    .org-name {
+      font-size: 9pt;
+      font-weight: bold;
+      color: #1E1E1E;
+    }
+
+    .header-right {
+      text-align: right;
+    }
+
+    .form-id-box {
+      background: #F0F0F0;
+      border: 0.5pt solid #CCCCCC;
+      padding: 2mm 3mm;
+      margin-bottom: 2mm;
+    }
+
+    .form-id-label {
+      font-size: 6pt;
+      color: #878787;
+    }
+
+    .form-id-value {
+      font-family: Consolas, Monaco, monospace;
+      font-size: 9pt;
+      font-weight: bold;
+      color: #EC0016;
+    }
+
+    .form-meta {
+      font-size: 6pt;
+      color: #AFAFAF;
+    }
+
+    /* === TITLE === */
+    .title-bar {
+      background: #EC0016;
+      color: #FFFFFF;
+      text-align: center;
+      padding: 2.5mm 0;
+      margin-bottom: 4mm;
+    }
+
+    .title-main {
+      font-size: 13pt;
+      font-weight: bold;
+      letter-spacing: 0.5pt;
+    }
+
+    .title-sub {
+      font-size: 8pt;
+      opacity: 0.9;
+    }
+
+    /* === SECTIONS === */
+    .section {
+      margin-bottom: 4mm;
+      page-break-inside: avoid;
+    }
+
+    .section-header {
+      background: #282828;
+      color: #FFFFFF;
+      font-size: 8pt;
+      font-weight: bold;
+      padding: 1.5mm 3mm;
+      display: flex;
+      align-items: center;
+      gap: 2mm;
+    }
+
+    .section-num {
+      background: #EC0016;
+      color: #FFFFFF;
+      width: 5mm;
+      height: 5mm;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 7pt;
+    }
+
+    .section-body {
+      border: 0.5pt solid #CCCCCC;
+      border-top: none;
+      padding: 3mm;
+    }
+
+    /* === FORM ROWS === */
+    .row {
+      display: flex;
+      gap: 3mm;
+      margin-bottom: 2.5mm;
+    }
+
+    .row:last-child {
+      margin-bottom: 0;
+    }
+
+    .col {
+      flex: 1;
+    }
+
+    .col-2 { flex: 2; }
+    .col-3 { flex: 3; }
+    .col-auto { flex: none; }
+
+    /* === FIELD === */
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5mm;
+    }
+
+    .field-inline {
+      flex-direction: row;
+      align-items: center;
+      gap: 2mm;
+    }
+
+    .field-label {
+      font-size: 7pt;
+      color: #646464;
+    }
+
+    .field-label.required::after {
+      content: " *";
+      color: #EC0016;
+    }
+
+    .field-input {
+      border: 0.5pt solid #CCCCCC;
+      min-height: 6mm;
+      padding: 1mm 2mm;
+      background: #FFFFFF;
+      font-size: 8pt;
+    }
+
+    .field-input.h-large {
+      min-height: 12mm;
+    }
+
+    .field-input.h-xl {
+      min-height: 18mm;
+    }
+
+    .field-input.w-sm {
+      width: 20mm;
+    }
+
+    .field-input.w-md {
+      width: 35mm;
+    }
+
+    .field-input.w-date {
+      width: 25mm;
+    }
+
+    .field-input.w-time {
+      width: 18mm;
+    }
+
+    /* === CHECKBOXES === */
+    .checkbox-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2mm 6mm;
+    }
+
+    .checkbox {
+      display: flex;
+      align-items: center;
+      gap: 1.5mm;
+    }
+
+    .checkbox-box {
+      width: 3.5mm;
+      height: 3.5mm;
+      border: 0.5pt solid #646464;
+      background: #FFFFFF;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .checkbox-box.checked {
+      background: #EC0016;
+      border-color: #EC0016;
+    }
+
+    .checkbox-box.checked::after {
+      content: "✓";
+      color: #FFFFFF;
+      font-size: 7pt;
+      font-weight: bold;
+    }
+
+    .checkbox-text {
+      font-size: 7pt;
+      color: #1E1E1E;
+    }
+
+    /* === TABLES === */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 7pt;
+    }
+
+    .data-table th {
+      background: #EC0016;
+      color: #FFFFFF;
+      font-weight: bold;
+      padding: 1.5mm 2mm;
+      text-align: left;
+      border: 0.5pt solid #C50014;
+    }
+
+    .data-table th.center {
+      text-align: center;
+    }
+
+    .data-table td {
+      padding: 1.5mm 2mm;
+      border: 0.5pt solid #CCCCCC;
+      vertical-align: middle;
+    }
+
+    .data-table tr:nth-child(even) td {
+      background: #F8F8F8;
+    }
+
+    .data-table .row-num {
+      width: 6mm;
+      text-align: center;
+      color: #878787;
+      font-weight: bold;
+    }
+
+    .data-table .input-cell {
+      background: #FFFFFF !important;
+      min-height: 5mm;
+    }
+
+    .data-table .sum-row td {
+      background: #F0F0F0 !important;
+      font-weight: bold;
+    }
+
+    /* === PRIORITY INDICATOR === */
+    .priority-box {
+      display: flex;
+      gap: 3mm;
+      padding: 2mm;
+      background: #FEF0F1;
+      border: 0.5pt solid #EC0016;
+      border-radius: 2px;
+    }
+
+    .priority-option {
+      display: flex;
+      align-items: center;
+      gap: 1.5mm;
+    }
+
+    .priority-circle {
+      width: 4mm;
+      height: 4mm;
+      border-radius: 50%;
+      border: 0.5pt solid #646464;
+    }
+
+    .priority-circle.selected {
+      background: #EC0016;
+      border-color: #EC0016;
+    }
+
+    .priority-text {
+      font-size: 7pt;
+      font-weight: bold;
+    }
+
+    .priority-text.urgent {
+      color: #EC0016;
+    }
+
+    /* === SIGNATURES === */
+    .signatures {
+      display: flex;
+      gap: 8mm;
+      margin-top: 4mm;
+    }
+
+    .sig-box {
+      flex: 1;
+      text-align: center;
+    }
+
+    .sig-line {
+      border-bottom: 0.5pt solid #1E1E1E;
+      height: 10mm;
+      margin-bottom: 1mm;
+    }
+
+    .sig-caption {
+      font-size: 6pt;
+      color: #878787;
+    }
+
+    /* === FOOTER === */
+    .footer {
+      margin-top: 4mm;
+      padding-top: 3mm;
+      border-top: 2pt solid #EC0016;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .footer-left {
+      font-size: 6pt;
+      color: #878787;
+    }
+
+    .footer-brand {
+      font-size: 7pt;
+      font-weight: bold;
+      color: #EC0016;
+    }
+
+    .footer-right {
+      text-align: right;
+    }
+
+    /* === WINDI GOVERNANCE === */
+    .windi-block {
+      background: #F0F0F0;
+      border: 0.5pt solid #CCCCCC;
+      border-radius: 2px;
+      padding: 2mm;
+      font-size: 6pt;
+      display: flex;
+      align-items: center;
+      gap: 3mm;
+    }
+
+    .windi-label {
+      color: #646464;
+    }
+
+    .windi-level {
+      font-weight: bold;
+      padding: 0.5mm 2mm;
+      border-radius: 2px;
+    }
+
+    .windi-level.LOW {
+      background: #E5F5E9;
+      color: #008A29;
+    }
+
+    .windi-level.MEDIUM {
+      background: #FFF3E0;
+      color: #F39200;
+    }
+
+    .windi-hash {
+      font-family: Consolas, Monaco, monospace;
+      color: #878787;
+      font-size: 5pt;
+    }
+
+    .windi-motto {
+      font-style: italic;
+      color: #AFAFAF;
+    }
+
+    /* === OFFICE USE ONLY === */
+    .office-use {
+      background: repeating-linear-gradient(
+        45deg,
+        #F8F8F8,
+        #F8F8F8 2mm,
+        #FFFFFF 2mm,
+        #FFFFFF 4mm
+      );
+      border: 0.5pt dashed #878787;
+      padding: 2mm;
+    }
+
+    .office-use-title {
+      font-size: 7pt;
+      font-weight: bold;
+      color: #878787;
+      text-transform: uppercase;
+      margin-bottom: 2mm;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- HEADER -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div class="header">
+    <div class="header-left">
+      <div class="logo-box">
+        <span class="logo-text">DB</span>
+      </div>
+      <div class="org-info">
+        <div class="org-name">Deutsche Bahn AG</div>
+        <div>Logistik & Materialwirtschaft</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="form-id-box">
+        <div class="form-id-label">Formular-Nr.</div>
+        <div class="form-id-value">DB-TRA-INT-003</div>
+      </div>
+      <div class="form-meta">Version 2.1 | Stand: 01.02.2026</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- TITLE -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div class="title-bar">
+    <div class="title-main">TRANSPORTAUFTRAG</div>
+    <div class="title-sub">Interner Warentransport | Internal Transport Order</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 1: AUFTRAGSDATEN -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">1</span>
+      AUFTRAGSDATEN
+    </div>
+    <div class="section-body">
+      <div class="row">
+        <div class="col">
+          <div class="field">
+            <span class="field-label required">Auftragsnummer</span>
+            <div class="field-input w-md"></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="field">
+            <span class="field-label required">Auftragsdatum</span>
+            <div class="field-input w-date"></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="field">
+            <span class="field-label">Kostenstelle</span>
+            <div class="field-input w-md"></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="field">
+            <span class="field-label">PSP-Element</span>
+            <div class="field-input w-md"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-auto">
+          <div class="field">
+            <span class="field-label required">Priorität</span>
+            <div class="priority-box">
+              <div class="priority-option">
+                <div class="priority-circle"></div>
+                <span class="priority-text">Normal</span>
+              </div>
+              <div class="priority-option">
+                <div class="priority-circle"></div>
+                <span class="priority-text">Eilig</span>
+              </div>
+              <div class="priority-option">
+                <div class="priority-circle"></div>
+                <span class="priority-text urgent">DRINGEND</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="field">
+            <span class="field-label">Referenz / Bezug</span>
+            <div class="field-input"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 2: ABSENDER -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">2</span>
+      ABSENDER (Versandstelle)
+    </div>
+    <div class="section-body">
+      <div class="row">
+        <div class="col-2">
+          <div class="field">
+            <span class="field-label required">Abteilung / Bereich</span>
+            <div class="field-input"></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="field">
+            <span class="field-label required">Standort</span>
+            <div class="field-input"></div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-2">
+          <div class="field">
+            <span class="field-label required">Ansprechpartner</span>
+            <div class="field-input"></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="field">
+            <span class="field-label required">Telefon / Durchwahl</span>
+            <div class="field-input"></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="field">
+            <span class="field-label">E-Mail</span>
+            <div class="field-input"></div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <div class="field">
+            <span class="field-label">Gebäude / Raum</span>
+            <div class="field-input"></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="field">
+            <span class="field-label">Abholbereit ab</span>
+            <div class="row" style="margin-bottom: 0;">
+              <div class="field-input w-date"></div>
+              <div class="field-input w-time"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 3: EMPFÄNGER -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">3</span>
+      EMPFÄNGER (Zielstelle)
+    </div>
+    <div class="section-body">
+      <div class="row">
+        <div class="col-2">
+          <div class="field">
+            <span class="field-label required">Abteilung / Bereich</span>
+            <div class="field-input"></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="field">
+            <span class="field-label required">Standort</span>
+            <div class="field-input"></div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-2">
+          <div class="field">
+            <span class="field-label required">Ansprechpartner</span>
+            <div class="field-input"></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="field">
+            <span class="field-label required">Telefon / Durchwahl</span>
+            <div class="field-input"></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="field">
+            <span class="field-label">E-Mail</span>
+            <div class="field-input"></div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <div class="field">
+            <span class="field-label">Gebäude / Raum / Etage</span>
+            <div class="field-input"></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="field">
+            <span class="field-label required">Gewünschter Liefertermin</span>
+            <div class="row" style="margin-bottom: 0;">
+              <div class="field-input w-date"></div>
+              <div class="field-input w-time"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 4: TRANSPORTGUT -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">4</span>
+      TRANSPORTGUT
+    </div>
+    <div class="section-body">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="center" style="width: 6mm;">Pos.</th>
+            <th>Bezeichnung / Beschreibung</th>
+            <th class="center" style="width: 15mm;">Menge</th>
+            <th class="center" style="width: 15mm;">Einheit</th>
+            <th class="center" style="width: 20mm;">Gewicht (kg)</th>
+            <th class="center" style="width: 25mm;">Maße (LxBxH cm)</th>
+            <th style="width: 20mm;">Inventar-Nr.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="row-num">1</td>
+            <td class="input-cell"></td>
+            <td class="input-cell"></td>
+            <td class="input-cell"></td>
+            <td class="input-cell"></td>
+            <td class="input-cell"></td>
+            <td class="input-cell"></td>
+          </tr>
+          <tr>
+            <td class="row-num">2</td>
+            <td class="input-cell"></td>
+            <td class="input-cell"></td>
+            <td class="input-cell"></td>
+            <td class="input-cell"></td>
+            <td class="input-cell"></td>
+            <td class="input-cell"></td>
+          </tr>
+          <tr>
+            <td class="row-num">3</td>
+            <td class="input-cell"></td>
+            <td class="input-cell"></td>
+            <td class="input-cell"></td>
+            <td class="input-cell"></td>
+            <td class="input-cell"></td>
+            <td class="input-cell"></td>
+          </tr>
+          <tr>
+            <td class="row-num">4</td>
+            <td class="input-cell"></td>
+            <td class="input-cell"></td>
+            <td class="input-cell"></td>
+            <td class="input-cell"></td>
+            <td class="input-cell"></td>
+            <td class="input-cell"></td>
+          </tr>
+          <tr>
+            <td class="row-num">5</td>
+            <td class="input-cell"></td>
+            <td class="input-cell"></td>
+            <td class="input-cell"></td>
+            <td class="input-cell"></td>
+            <td class="input-cell"></td>
+            <td class="input-cell"></td>
+          </tr>
+          <tr class="sum-row">
+            <td colspan="4" style="text-align: right;">Gesamtgewicht:</td>
+            <td class="input-cell"></td>
+            <td colspan="2"></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Special Handling -->
+      <div style="margin-top: 3mm;">
+        <span class="field-label">Besondere Transportanforderungen:</span>
+        <div class="checkbox-row" style="margin-top: 1.5mm;">
+          <div class="checkbox">
+            <div class="checkbox-box"></div>
+            <span class="checkbox-text">Zerbrechlich</span>
+          </div>
+          <div class="checkbox">
+            <div class="checkbox-box"></div>
+            <span class="checkbox-text">Schwergut (&gt;50kg)</span>
+          </div>
+          <div class="checkbox">
+            <div class="checkbox-box"></div>
+            <span class="checkbox-text">Sperrgut</span>
+          </div>
+          <div class="checkbox">
+            <div class="checkbox-box"></div>
+            <span class="checkbox-text">Gefahrgut (ADR)</span>
+          </div>
+          <div class="checkbox">
+            <div class="checkbox-box"></div>
+            <span class="checkbox-text">Temperaturempfindlich</span>
+          </div>
+          <div class="checkbox">
+            <div class="checkbox-box"></div>
+            <span class="checkbox-text">Vertraulich</span>
+          </div>
+          <div class="checkbox">
+            <div class="checkbox-box"></div>
+            <span class="checkbox-text">IT-Hardware</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 5: HINWEISE -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">5</span>
+      BESONDERE HINWEISE / ANWEISUNGEN
+    </div>
+    <div class="section-body">
+      <div class="field-input h-large"></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- SECTION 6: UNTERSCHRIFTEN -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">6</span>
+      FREIGABE & BESTÄTIGUNG
+    </div>
+    <div class="section-body">
+      <div class="signatures">
+        <div class="sig-box">
+          <div class="sig-line"></div>
+          <div class="sig-caption">Auftraggeber (Name, Datum)</div>
+        </div>
+        <div class="sig-box">
+          <div class="sig-line"></div>
+          <div class="sig-caption">Kostenstellen-Verantwortlicher</div>
+        </div>
+        <div class="sig-box">
+          <div class="sig-line"></div>
+          <div class="sig-caption">Logistik (Annahme)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- OFFICE USE ONLY -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="office-use">
+      <div class="office-use-title">Nur für Logistik / Office Use Only</div>
+      <div class="row">
+        <div class="col">
+          <div class="field field-inline">
+            <span class="field-label">Transport-ID:</span>
+            <div class="field-input w-md"></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="field field-inline">
+            <span class="field-label">Fahrer:</span>
+            <div class="field-input"></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="field field-inline">
+            <span class="field-label">Fahrzeug:</span>
+            <div class="field-input w-md"></div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <div class="field field-inline">
+            <span class="field-label">Abholung:</span>
+            <div class="field-input w-date"></div>
+            <div class="field-input w-time"></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="field field-inline">
+            <span class="field-label">Zustellung:</span>
+            <div class="field-input w-date"></div>
+            <div class="field-input w-time"></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="field field-inline">
+            <span class="field-label">Empfangsbestätigung:</span>
+            <div class="field-input"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <!-- FOOTER -->
+  <!-- ═══════════════════════════════════════════════════════════════ -->
+  <div class="footer">
+    <div class="footer-left">
+      <div class="footer-brand">Deutsche Bahn AG</div>
+      <div>Logistik & Materialwirtschaft | Potsdamer Platz 2, 10785 Berlin</div>
+      <div>Formular DB-TRA-INT-003 | Aufbewahrungsfrist: 3 Jahre</div>
+    </div>
+    <div class="footer-right">
+      <div class="windi-block">
+        <span class="windi-label">WINDI Gov:</span>
+        <span class="windi-level LOW">LOW</span>
+        <span class="windi-hash">ISP:DB-001</span>
+        <span class="windi-motto">Human decides.</span>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

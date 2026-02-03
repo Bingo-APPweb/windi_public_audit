@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<!--
+  Deutsche Bahn ISP - Generic Form Template
+  WINDI Publishing House | Version 1.0
+  Template ID: DB-FRM-001
+
+  Purpose: Base template for institutional forms
+  Governance: Inherits from form type definition
+-->
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="generator" content="WINDI Publishing House">
+  <meta name="isp-id" content="WINDI-ISP-DB-001">
+  <meta name="template-id" content="DB-FRM-001">
+  <title>{{form_title}} - Deutsche Bahn</title>
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    @page {
+      size: A4;
+      margin: 20mm 15mm 15mm 20mm;
+
+      @bottom-center {
+        content: "Seite " counter(page) " von " counter(pages);
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 7pt;
+        color: #878787;
+      }
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 9pt;
+      line-height: 1.4;
+      color: #1E1E1E;
+    }
+
+    /* Form Header */
+    .form-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding-bottom: 4mm;
+      border-bottom: 3pt solid #EC0016;
+      margin-bottom: 5mm;
+    }
+
+    .form-header-left {
+      flex: 1;
+    }
+
+    .form-org {
+      font-size: 10pt;
+      font-weight: bold;
+      color: #1E1E1E;
+    }
+
+    .form-dept {
+      font-size: 8pt;
+      color: #646464;
+    }
+
+    .form-header-right {
+      text-align: right;
+    }
+
+    .form-id {
+      font-family: Consolas, Monaco, monospace;
+      font-size: 8pt;
+      color: #878787;
+      background: #F0F0F0;
+      padding: 1mm 2mm;
+      border-radius: 2px;
+    }
+
+    .form-version {
+      font-size: 7pt;
+      color: #AFAFAF;
+      margin-top: 1mm;
+    }
+
+    /* Form Title */
+    .form-title-block {
+      text-align: center;
+      margin: 5mm 0;
+      padding: 3mm;
+      background: #FEF0F1;
+      border-left: 4pt solid #EC0016;
+    }
+
+    .form-title {
+      font-size: 14pt;
+      font-weight: bold;
+      color: #EC0016;
+      margin: 0;
+    }
+
+    .form-subtitle {
+      font-size: 9pt;
+      color: #646464;
+      margin-top: 1mm;
+    }
+
+    /* Form Sections */
+    .form-section {
+      margin-bottom: 5mm;
+      page-break-inside: avoid;
+    }
+
+    .section-header {
+      background: #EC0016;
+      color: #FFFFFF;
+      font-size: 9pt;
+      font-weight: bold;
+      padding: 2mm 3mm;
+      margin-bottom: 3mm;
+    }
+
+    .section-number {
+      display: inline-block;
+      width: 6mm;
+      height: 6mm;
+      background: #FFFFFF;
+      color: #EC0016;
+      text-align: center;
+      line-height: 6mm;
+      border-radius: 50%;
+      margin-right: 2mm;
+      font-size: 8pt;
+    }
+
+    .section-content {
+      padding: 2mm;
+      border: 0.5pt solid #E5E5E5;
+      border-top: none;
+    }
+
+    /* Form Fields */
+    .field-row {
+      display: flex;
+      margin-bottom: 3mm;
+      align-items: flex-start;
+    }
+
+    .field-row.compact {
+      margin-bottom: 2mm;
+    }
+
+    .field-label {
+      width: 45mm;
+      font-size: 8pt;
+      color: #646464;
+      padding-top: 1.5mm;
+      flex-shrink: 0;
+    }
+
+    .field-label.required::after {
+      content: " *";
+      color: #EC0016;
+    }
+
+    .field-input {
+      flex: 1;
+      min-height: 7mm;
+      border: 0.5pt solid #CCCCCC;
+      padding: 1.5mm 2mm;
+      font-size: 9pt;
+      background: #FFFFFF;
+    }
+
+    .field-input:focus {
+      border-color: #EC0016;
+      outline: none;
+    }
+
+    .field-input.small {
+      width: 25mm;
+      flex: none;
+    }
+
+    .field-input.medium {
+      width: 40mm;
+      flex: none;
+    }
+
+    .field-input.large {
+      min-height: 20mm;
+    }
+
+    .field-hint {
+      font-size: 7pt;
+      color: #AFAFAF;
+      margin-top: 0.5mm;
+    }
+
+    /* Inline Fields */
+    .fields-inline {
+      display: flex;
+      gap: 5mm;
+    }
+
+    .fields-inline .field-group {
+      display: flex;
+      align-items: center;
+      gap: 2mm;
+    }
+
+    .fields-inline .field-label {
+      width: auto;
+      padding-top: 0;
+    }
+
+    /* Checkboxes */
+    .checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3mm 8mm;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 2mm;
+    }
+
+    .checkbox-box {
+      width: 4mm;
+      height: 4mm;
+      border: 0.5pt solid #646464;
+      flex-shrink: 0;
+    }
+
+    .checkbox-box.checked {
+      background: #EC0016;
+      position: relative;
+    }
+
+    .checkbox-box.checked::after {
+      content: "✓";
+      color: #FFFFFF;
+      font-size: 8pt;
+      position: absolute;
+      top: -1mm;
+      left: 0.5mm;
+    }
+
+    .checkbox-label {
+      font-size: 8pt;
+      color: #1E1E1E;
+    }
+
+    /* Radio Buttons */
+    .radio-group {
+      display: flex;
+      gap: 5mm;
+    }
+
+    .radio-item {
+      display: flex;
+      align-items: center;
+      gap: 2mm;
+    }
+
+    .radio-circle {
+      width: 4mm;
+      height: 4mm;
+      border: 0.5pt solid #646464;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .radio-circle.selected {
+      border-color: #EC0016;
+      background: radial-gradient(circle, #EC0016 40%, transparent 45%);
+    }
+
+    /* Tables */
+    .form-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 3mm 0;
+      font-size: 8pt;
+    }
+
+    .form-table th {
+      background: #EC0016;
+      color: #FFFFFF;
+      font-weight: bold;
+      padding: 2mm 3mm;
+      text-align: left;
+      border: 0.5pt solid #C50014;
+    }
+
+    .form-table td {
+      padding: 2mm 3mm;
+      border: 0.5pt solid #CCCCCC;
+      vertical-align: top;
+    }
+
+    .form-table tr:nth-child(even) td {
+      background: #F8F8F8;
+    }
+
+    .form-table .row-number {
+      width: 8mm;
+      text-align: center;
+      color: #878787;
+    }
+
+    .form-table .input-cell {
+      background: #FFFFFF;
+      min-height: 6mm;
+    }
+
+    /* Signature Section */
+    .signature-section {
+      margin-top: 8mm;
+      display: flex;
+      gap: 15mm;
+    }
+
+    .signature-box {
+      flex: 1;
+    }
+
+    .signature-line {
+      border-bottom: 0.5pt solid #1E1E1E;
+      height: 12mm;
+      margin-bottom: 1mm;
+    }
+
+    .signature-caption {
+      font-size: 7pt;
+      color: #878787;
+      text-align: center;
+    }
+
+    /* Notes/Instructions */
+    .form-notes {
+      margin-top: 5mm;
+      padding: 3mm;
+      background: #F8F8F8;
+      border-left: 2pt solid #878787;
+      font-size: 8pt;
+      color: #646464;
+    }
+
+    .form-notes strong {
+      color: #1E1E1E;
+    }
+
+    /* WINDI Footer */
+    .windi-form-footer {
+      margin-top: 5mm;
+      padding: 3mm;
+      background: #F0F0F0;
+      border: 0.5pt solid #CCCCCC;
+      border-radius: 3px;
+      font-size: 7pt;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .windi-badge {
+      display: flex;
+      align-items: center;
+      gap: 2mm;
+    }
+
+    .windi-level-badge {
+      padding: 1mm 2mm;
+      border-radius: 2px;
+      font-weight: bold;
+    }
+
+    .windi-level-LOW { background: #E5F5E9; color: #008A29; }
+    .windi-level-MEDIUM { background: #FFF3E0; color: #F39200; }
+    .windi-level-HIGH { background: #FEF0F1; color: #EC0016; }
+  </style>
+</head>
+<body>
+
+  <!-- Form Header -->
+  <div class="form-header">
+    <div class="form-header-left">
+      <div class="form-org">Deutsche Bahn AG</div>
+      <div class="form-dept">{{department}}</div>
+    </div>
+    <div class="form-header-right">
+      <div class="form-id">{{form_id}}</div>
+      <div class="form-version">Version {{form_version}} | {{form_date}}</div>
+    </div>
+  </div>
+
+  <!-- Form Title -->
+  <div class="form-title-block">
+    <h1 class="form-title">{{form_title}}</h1>
+    {{#form_subtitle}}
+    <div class="form-subtitle">{{form_subtitle}}</div>
+    {{/form_subtitle}}
+  </div>
+
+  <!-- Dynamic Form Sections -->
+  {{#sections}}
+  <div class="form-section">
+    <div class="section-header">
+      <span class="section-number">{{number}}</span>
+      {{title}}
+    </div>
+    <div class="section-content">
+      {{{content}}}
+    </div>
+  </div>
+  {{/sections}}
+
+  <!-- Signature Section -->
+  {{#show_signatures}}
+  <div class="signature-section">
+    {{#signatures}}
+    <div class="signature-box">
+      <div class="signature-line"></div>
+      <div class="signature-caption">{{caption}}</div>
+    </div>
+    {{/signatures}}
+  </div>
+  {{/show_signatures}}
+
+  <!-- Notes -->
+  {{#notes}}
+  <div class="form-notes">
+    <strong>Hinweis:</strong> {{{notes}}}
+  </div>
+  {{/notes}}
+
+  <!-- WINDI Footer -->
+  <div class="windi-form-footer">
+    <div class="windi-badge">
+      <span>WINDI Governance:</span>
+      <span class="windi-level-badge windi-level-{{windi_level}}">{{windi_level}}</span>
+    </div>
+    <div class="windi-receipt">
+      {{windi_receipt}}
+    </div>
+    <div class="windi-motto">
+      AI processes. Human decides. WINDI guarantees.
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<!--
+  Deutsche Bahn ISP - Letter Template
+  WINDI Publishing House | Version 1.0
+  Template ID: DB-LTR-001
+
+  Purpose: Official correspondence template
+  Governance: LOW (default) | MEDIUM (with institutional metadata)
+-->
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="generator" content="WINDI Publishing House">
+  <meta name="isp-id" content="WINDI-ISP-DB-001">
+  <meta name="template-id" content="DB-LTR-001">
+  <title>{{subject}} - Deutsche Bahn</title>
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    @page {
+      size: A4;
+      margin: 25mm 20mm 20mm 25mm;
+
+      @top-right {
+        content: none;
+      }
+
+      @bottom-center {
+        content: "Seite " counter(page) " von " counter(pages);
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 8pt;
+        color: #878787;
+      }
+    }
+
+    @page :first {
+      @bottom-center {
+        content: none;
+      }
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 10pt;
+      line-height: 1.5;
+      color: #1E1E1E;
+    }
+
+    /* Letter-specific styles */
+    .letter-container {
+      min-height: 247mm; /* A4 minus margins */
+      display: flex;
+      flex-direction: column;
+    }
+
+    .letter-header {
+      margin-bottom: 15mm;
+    }
+
+    .sender-block {
+      font-size: 8pt;
+      color: #878787;
+      border-bottom: 0.5pt solid #CCCCCC;
+      padding-bottom: 2mm;
+      margin-bottom: 8mm;
+    }
+
+    .recipient-block {
+      min-height: 40mm;
+      margin-bottom: 10mm;
+    }
+
+    .recipient-name {
+      font-weight: bold;
+    }
+
+    .recipient-address {
+      line-height: 1.6;
+    }
+
+    .date-block {
+      text-align: right;
+      margin-bottom: 10mm;
+      color: #646464;
+    }
+
+    .reference-block {
+      display: flex;
+      gap: 15mm;
+      font-size: 9pt;
+      margin-bottom: 8mm;
+      color: #646464;
+    }
+
+    .reference-item label {
+      display: block;
+      font-size: 8pt;
+      color: #878787;
+    }
+
+    .subject-line {
+      font-size: 11pt;
+      font-weight: bold;
+      color: #1E1E1E;
+      margin-bottom: 8mm;
+      padding-bottom: 3mm;
+      border-bottom: 2pt solid #EC0016;
+    }
+
+    .letter-body {
+      flex: 1;
+    }
+
+    .salutation {
+      margin-bottom: 5mm;
+    }
+
+    .letter-content {
+      margin-bottom: 8mm;
+    }
+
+    .letter-content p {
+      margin-bottom: 4mm;
+      text-align: justify;
+    }
+
+    .closing {
+      margin-top: 8mm;
+      margin-bottom: 15mm;
+    }
+
+    .signature-block {
+      margin-top: 12mm;
+    }
+
+    .signature-line {
+      width: 60mm;
+      border-bottom: 0.5pt solid #1E1E1E;
+      margin-bottom: 2mm;
+    }
+
+    .signature-name {
+      font-weight: bold;
+    }
+
+    .signature-title {
+      font-size: 9pt;
+      color: #646464;
+    }
+
+    .attachments-block {
+      margin-top: 10mm;
+      padding-top: 5mm;
+      border-top: 0.5pt solid #CCCCCC;
+      font-size: 9pt;
+    }
+
+    .attachments-label {
+      font-weight: bold;
+      color: #646464;
+      margin-bottom: 2mm;
+    }
+
+    .attachments-list {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+    }
+
+    .attachments-list li::before {
+      content: "— ";
+      color: #EC0016;
+    }
+
+    .letter-footer {
+      margin-top: auto;
+      padding-top: 5mm;
+    }
+  </style>
+</head>
+<body>
+  <div class="letter-container">
+
+    <!-- Header with Sender Info -->
+    <div class="letter-header">
+      <div class="sender-block">
+        Deutsche Bahn AG · {{sender_department}} · {{sender_address}}
+      </div>
+
+      <!-- Recipient -->
+      <div class="recipient-block">
+        <div class="recipient-name">{{recipient_name}}</div>
+        <div class="recipient-address">
+          {{recipient_company}}<br>
+          {{recipient_street}}<br>
+          {{recipient_city}}
+        </div>
+      </div>
+
+      <!-- Date -->
+      <div class="date-block">
+        {{city}}, {{date}}
+      </div>
+
+      <!-- References -->
+      {{#show_references}}
+      <div class="reference-block">
+        <div class="reference-item">
+          <label>Ihr Zeichen:</label>
+          <span>{{their_reference}}</span>
+        </div>
+        <div class="reference-item">
+          <label>Unser Zeichen:</label>
+          <span>{{our_reference}}</span>
+        </div>
+        <div class="reference-item">
+          <label>Sachbearbeiter:</label>
+          <span>{{contact_person}}</span>
+        </div>
+        <div class="reference-item">
+          <label>Telefon:</label>
+          <span>{{contact_phone}}</span>
+        </div>
+      </div>
+      {{/show_references}}
+
+      <!-- Subject -->
+      <div class="subject-line">{{subject}}</div>
+    </div>
+
+    <!-- Letter Body -->
+    <div class="letter-body">
+      <div class="salutation">{{salutation}}</div>
+
+      <div class="letter-content">
+        {{{content}}}
+      </div>
+
+      <div class="closing">{{closing}}</div>
+
+      <div class="signature-block">
+        <div class="signature-line"></div>
+        <div class="signature-name">{{signer_name}}</div>
+        <div class="signature-title">{{signer_title}}</div>
+      </div>
+
+      <!-- Attachments -->
+      {{#attachments}}
+      <div class="attachments-block">
+        <div class="attachments-label">Anlagen:</div>
+        <ul class="attachments-list">
+          {{#items}}
+          <li>{{.}}</li>
+          {{/items}}
+        </ul>
+      </div>
+      {{/attachments}}
+    </div>
+
+    <!-- Footer -->
+    <div class="letter-footer">
+      {{> components/footer.html}}
+    </div>
+
+  </div>
+</body>
+</html>
