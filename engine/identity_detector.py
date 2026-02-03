@@ -33,6 +33,93 @@ class IdentityDetector:
         self.config = {}
         self._keyword_index = {}
         self._load_directory()
+        # PATCH 1B: Domain Mapping Integration (2026-02-03)
+        self.domain_mapping = self._load_domain_mapping()
+
+
+
+    def _load_domain_mapping(self) -> dict:
+        """
+        PATCH 1C: Load domain mapping for routing decisions.
+        Principle: Each domain is a separate juridical universe.
+        """
+        domain_file = "/opt/windi/domains/domain_mapping.json"
+        try:
+            with open(domain_file, 'r', encoding='utf-8') as f:
+                mapping = json.load(f)
+                print(f"[IdentityDetector] Domain mapping loaded: {len(mapping.get('isp_mapping', {}))} ISPs")
+                return mapping
+        except FileNotFoundError:
+            print(f"[IdentityDetector] Warning: {domain_file} not found, using defaults")
+            return {"isp_mapping": {}, "domains": {}}
+        except Exception as e:
+            print(f"[IdentityDetector] Error loading domain mapping: {e}")
+            return {"isp_mapping": {}, "domains": {}}
+
+    def detect_domain(self, text: str) -> dict:
+        """
+        PATCH 1C: Detect domain based on keywords and patterns.
+        Returns: {domain, isp, sge_ruleset, confidence, matches}
+        """
+        text_lower = text.lower()
+        results = []
+
+        for isp_id, isp_config in self.domain_mapping.get('isp_mapping', {}).items():
+            matches = []
+            score = 0.0
+
+            # Check keywords
+            for keyword in isp_config.get('keywords', []):
+                if keyword.lower() in text_lower:
+                    matches.append(('keyword', keyword))
+                    score += 0.15
+
+            # Check patterns (regex)
+            for pattern in isp_config.get('patterns', []):
+                try:
+                    if re.search(pattern, text, re.IGNORECASE):
+                        matches.append(('pattern', pattern))
+                        score += 0.25  # Patterns são mais específicos
+                except re.error:
+                    pass
+
+            if matches:
+                results.append({
+                    'isp': isp_id,
+                    'domain': isp_config.get('domain', 'operational'),
+                    'sge_ruleset': isp_config.get('sge_ruleset', 'minimal'),
+                    'governance_default': isp_config.get('governance_default', 'MEDIUM'),
+                    'confidence': min(score, 1.0),
+                    'matches': matches
+                })
+
+        # Ordenar por confiança
+        results.sort(key=lambda x: x['confidence'], reverse=True)
+
+        if results:
+            best = results[0]
+            return {
+                'detected': True,
+                'domain': best['domain'],
+                'isp': best['isp'],
+                'sge_ruleset': best['sge_ruleset'],
+                'governance_default': best['governance_default'],
+                'confidence': best['confidence'],
+                'matches': best['matches'],
+                'alternatives': results[1:3] if len(results) > 1 else []
+            }
+
+        # Default: operational domain
+        return {
+            'detected': False,
+            'domain': 'operational',
+            'isp': None,
+            'sge_ruleset': 'minimal',
+            'governance_default': 'MEDIUM',
+            'confidence': 0.0,
+            'matches': [],
+            'alternatives': []
+        }
 
     def _load_directory(self):
         """Load the identity directory and build keyword index."""
@@ -273,6 +360,9 @@ class IdentityDetector:
                 primary_detection, current_level, highest_level
             )
 
+        # PATCH 1D: Add domain detection to result
+        domain_info = self.detect_domain(text)
+
         return {
             "action": "upgrade" if needs_upgrade else "confirm",
             "current_level": current_level,
@@ -284,7 +374,8 @@ class IdentityDetector:
                 "disclaimer_required": any(d["disclaimer_required"] for d in detections),
                 "logo_allowed": all(d["logo_allowed"] for d in detections),
                 "license_statuses": list(set(d["identity_license_status"] for d in detections))
-            }
+            },
+            "domain_detection": domain_info
         }
 
     def _build_advisor_message(

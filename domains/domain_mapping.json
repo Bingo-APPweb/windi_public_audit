@@ -1,0 +1,152 @@
+{
+  "_metadata": {
+    "version": "1.0.0",
+    "created": "2026-02-03",
+    "author": "Dragon Council",
+    "principle": "Domain Sovereignty - Isolamento de Realidades Regulatórias",
+    "description": "Maps ISPs to Domains to SGE rulesets. Each domain is a separate juridical universe."
+  },
+
+  "domains": {
+    "institutional": {
+      "description": "Government, public administration, official communications",
+      "database": "institutional.db",
+      "sge_default": "standard",
+      "isolation_level": "HIGH",
+      "audit_retention_days": 3650,
+      "isps": ["bundesregierung", "bis-style", "public-admin"]
+    },
+    "operational": {
+      "description": "Corporate operations, transport, logistics",
+      "database": "babel_documents.db",
+      "sge_default": "minimal",
+      "isolation_level": "MEDIUM",
+      "audit_retention_days": 1825,
+      "isps": ["deutsche-bahn", "corporate", "logistics"]
+    },
+    "industrial": {
+      "description": "Food safety, packaging compliance, manufacturing",
+      "database": "industrial.db",
+      "sge_default": "verpackg-lucid-v1",
+      "isolation_level": "HIGH",
+      "audit_retention_days": 2555,
+      "isps": ["food-industry", "packaging", "manufacturing"]
+    },
+    "forensic": {
+      "description": "Financial regulation, central banking, audit-critical",
+      "database": "forensic.db",
+      "sge_default": "regulatory-full",
+      "isolation_level": "MAXIMUM",
+      "audit_retention_days": 7300,
+      "isps": ["bis-style", "bafin", "central-bank"]
+    }
+  },
+
+  "isp_mapping": {
+    "bundesregierung": {
+      "domain": "institutional",
+      "sge_ruleset": "standard",
+      "governance_default": "HIGH",
+      "keywords": ["Bundesregierung", "Ministerium", "Behörde", "Amt", "Bescheid"],
+      "patterns": []
+    },
+    "deutsche-bahn": {
+      "domain": "operational",
+      "sge_ruleset": "minimal",
+      "governance_default": "MEDIUM",
+      "keywords": ["Deutsche Bahn", "DB", "Transport", "Bahnhof", "Fahrplan"],
+      "patterns": ["DB-[A-Z]{3}-[A-Z]{3}-[0-9]{3}"]
+    },
+    "food-industry": {
+      "domain": "industrial",
+      "sge_ruleset": "verpackg-lucid-v1",
+      "governance_default": "HIGH",
+      "keywords": [
+        "LUCID", "Verpackungsgesetz", "VerpackG", "ZSVR",
+        "Grüner Punkt", "Dual System", "Interseroh", "Landbell",
+        "HACCP", "ISO 22000", "BRC", "IFS", "SQF",
+        "Lebensmittelsicherheit", "Food Safety",
+        "Verpackungslizenz", "Packaging License"
+      ],
+      "patterns": [
+        "DE[0-9]{9}",
+        "LUCID-[A-Z0-9]+",
+        "ISO 22000:[0-9]{4}"
+      ]
+    },
+    "bis-style": {
+      "domain": "forensic",
+      "sge_ruleset": "regulatory-full",
+      "governance_default": "HIGH",
+      "keywords": ["BIS", "Central Bank", "Regulatory", "Basel", "Financial Stability"],
+      "patterns": []
+    }
+  },
+
+  "sge_rulesets": {
+    "standard": {
+      "description": "Default institutional governance rules",
+      "rules_file": "sge_rules/standard.json",
+      "validation_depth": "MEDIUM"
+    },
+    "minimal": {
+      "description": "Light operational validation",
+      "rules_file": "sge_rules/minimal.json",
+      "validation_depth": "LOW"
+    },
+    "verpackg-lucid-v1": {
+      "description": "German packaging law compliance (VerpackG/LUCID)",
+      "rules_file": "sge_rules/verpackg-lucid-rules.json",
+      "validation_depth": "HIGH",
+      "regulatory_references": [
+        "Verpackungsgesetz (VerpackG) 2019",
+        "LUCID Registration System",
+        "Dual System Participation Requirements"
+      ]
+    },
+    "regulatory-full": {
+      "description": "Full regulatory compliance for financial institutions",
+      "rules_file": "sge_rules/regulatory-full.json",
+      "validation_depth": "MAXIMUM"
+    }
+  },
+
+  "access_control": {
+    "profiles": {
+      "institutional_analyst": {
+        "can_view": ["institutional", "operational"],
+        "can_edit": ["institutional"],
+        "can_audit": ["institutional"]
+      },
+      "industrial_analyst": {
+        "can_view": ["industrial"],
+        "can_edit": ["industrial"],
+        "can_audit": ["industrial"]
+      },
+      "operational_user": {
+        "can_view": ["operational"],
+        "can_edit": ["operational"],
+        "can_audit": []
+      },
+      "constitutional_admin": {
+        "can_view": ["institutional", "operational", "industrial", "forensic"],
+        "can_edit": [],
+        "can_audit": ["institutional", "operational", "industrial", "forensic"],
+        "note": "Can view metadata globally, not cross-domain content"
+      }
+    }
+  },
+
+  "routing_rules": {
+    "default_domain": "operational",
+    "fallback_sge": "minimal",
+    "unknown_isp_action": "FLAG_FOR_HUMAN_REVIEW",
+    "cross_domain_request_action": "REJECT_WITH_EXPLANATION"
+  },
+
+  "_windi_signature": {
+    "principle": "AI processes. Human decides. WINDI guarantees.",
+    "sovereignty": "Each domain is a separate juridical universe",
+    "non_contamination": "SGE loads only domain-specific rules, then unloads"
+  }
+}
