@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verification Layer — WINDI Masterarbeit</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐉</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-cream: #fdfbf7;
+            --text-dark: #1a1a1a;
+            --text-muted: #555;
+            --accent-burgundy: #8b0000;
+            --accent-gold: #b8860b;
+            --border-light: #e5e0d5;
+            --code-bg: #f5f2eb;
+            --nav-bg: #2c2c2c;
+            --success-green: #10b981;
+            --warning-yellow: #f59e0b;
+            --error-red: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Crimson Text', Georgia, serif;
+            background: var(--bg-cream);
+            color: var(--text-dark);
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+
+        /* Navigation */
+        .thesis-nav {
+            background: var(--nav-bg);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .thesis-nav a {
+            color: #fff;
+            text-decoration: none;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .thesis-nav a:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .nav-brand {
+            font-weight: 700;
+            font-size: 1.1rem !important;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Main Content */
+        .content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        /* Header */
+        .chapter-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid var(--border-light);
+        }
+
+        .chapter-number {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.9rem;
+            color: var(--accent-burgundy);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 0.5rem;
+        }
+
+        .chapter-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+        }
+
+        .chapter-subtitle {
+            font-size: 1.3rem;
+            font-style: italic;
+            color: var(--text-muted);
+        }
+
+        /* Sections */
+        h2 {
+            font-size: 1.6rem;
+            color: var(--accent-burgundy);
+            margin: 2.5rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            color: var(--text-dark);
+            margin: 2rem 0 1rem;
+        }
+
+        h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin: 1.5rem 0 0.75rem;
+        }
+
+        p {
+            margin-bottom: 1.2rem;
+            text-align: justify;
+        }
+
+        /* Code blocks */
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        code {
+            font-family: 'Fira Code', 'Consolas', monospace;
+            background: var(--code-bg);
+            padding: 0.15rem 0.4rem;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.95rem;
+        }
+
+        th, td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border: 1px solid var(--border-light);
+        }
+
+        th {
+            background: var(--code-bg);
+            font-family: 'Source Sans Pro', sans-serif;
+            font-weight: 600;
+            color: var(--accent-burgundy);
+        }
+
+        /* Diagrams */
+        .diagram-container {
+            background: #fff;
+            border: 2px solid var(--border-light);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .diagram-title {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1.5rem;
+        }
+
+        .pipeline-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .pipeline-step {
+            background: linear-gradient(135deg, var(--accent-burgundy), #a52a2a);
+            color: #fff;
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .pipeline-arrow {
+            color: var(--accent-gold);
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        /* Info boxes */
+        .info-box {
+            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+            border-left: 4px solid #0ea5e9;
+            padding: 1.25rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .info-box.success {
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+            border-left-color: var(--success-green);
+        }
+
+        .info-box.warning {
+            background: linear-gradient(135deg, #fffbeb, #fef3c7);
+            border-left-color: var(--warning-yellow);
+        }
+
+        .info-box-title {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Lists */
+        ul, ol {
+            margin: 1rem 0 1.5rem 2rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Verification Status Cards */
+        .status-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .status-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 2px solid var(--border-light);
+        }
+
+        .status-card.valid {
+            border-color: var(--success-green);
+            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+        }
+
+        .status-card.partial {
+            border-color: var(--warning-yellow);
+            background: linear-gradient(135deg, #fffbeb, #fef3c7);
+        }
+
+        .status-card.invalid {
+            border-color: var(--error-red);
+            background: linear-gradient(135deg, #fef2f2, #fee2e2);
+        }
+
+        .status-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .status-label {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+
+        /* Screenshot placeholder */
+        .screenshot-container {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+            color: #fff;
+            text-align: center;
+        }
+
+        .screenshot-mockup {
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            max-width: 350px;
+            margin: 0 auto;
+        }
+
+        .mockup-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .mockup-status {
+            background: var(--success-green);
+            color: #fff;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+
+        .mockup-status-icon {
+            font-size: 2rem;
+        }
+
+        .mockup-status-text {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-weight: 700;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .mockup-receipt {
+            font-family: monospace;
+            font-size: 0.7rem;
+            background: rgba(0,0,0,0.3);
+            padding: 0.5rem;
+            border-radius: 6px;
+            word-break: break-all;
+        }
+
+        .mockup-details {
+            text-align: left;
+            font-size: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .mockup-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.4rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .mockup-label {
+            color: rgba(255,255,255,0.6);
+        }
+
+        .mockup-value {
+            font-family: monospace;
+        }
+
+        /* Footer */
+        .windi-footer {
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 2px solid var(--border-light);
+            text-align: center;
+        }
+
+        .windi-receipt-block {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: #fff;
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+            display: inline-block;
+        }
+
+        .receipt-title {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 0.5rem;
+        }
+
+        .receipt-id {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: var(--accent-gold);
+        }
+
+        .receipt-motto {
+            font-style: italic;
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.8);
+            margin-top: 0.75rem;
+        }
+
+        .ledger-info {
+            font-family: 'Source Sans Pro', sans-serif;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 1rem;
+        }
+
+        .footer-meta {
+            margin-top: 2rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .content {
+                padding: 2rem 1.25rem;
+            }
+
+            .chapter-title {
+                font-size: 1.8rem;
+            }
+
+            .pipeline-diagram {
+                flex-direction: column;
+            }
+
+            .pipeline-arrow {
+                transform: rotate(90deg);
+            }
+
+            .status-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-links {
+                display: none;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            .thesis-nav {
+                display: none;
+            }
+
+            .content {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="thesis-nav">
+        <a href="index.html" class="nav-brand">🐉 WINDI Masterarbeit</a>
+        <div class="nav-links">
+            <a href="index.html">Übersicht</a>
+            <a href="tr-007.html">TR-007 SOF</a>
+            <a href="identity-governance-layer.html">Identity Layer</a>
+            <a href="idpf-abstract.html">IDPF Abstract</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="content">
+
+        <!-- Chapter Header -->
+        <header class="chapter-header">
+            <div class="chapter-number">Kapitel 11 · Phase 3A</div>
+            <h1 class="chapter-title">Public Verification Layer</h1>
+            <p class="chapter-subtitle">Von der Dokumentenerstellung zur öffentlichen Integritätsprüfung</p>
+        </header>
+
+        <!-- Abstract -->
+        <section>
+            <h2>11.1 Einführung</h2>
+            <p>
+                Das WINDI Verification Layer bildet den Abschluss der dokumentären Governance-Pipeline. 
+                Es transformiert abstrakte kryptographische Hashes und interne Registrierungsdaten in eine 
+                <strong>öffentlich zugängliche, visuell verständliche Validierungsschnittstelle</strong>. 
+                Diese Schicht ermöglicht es jedem Stakeholder — vom Auditor bis zum Endnutzer — die 
+                Authentizität und Integrität eines WINDI-governierten Dokuments zu verifizieren.
+            </p>
+
+            <div class="info-box success">
+                <div class="info-box-title">✅ Kernprinzip</div>
+                <p style="margin:0">
+                    <em>"AI processes. Human decides. WINDI guarantees."</em> — Der Verification Layer 
+                    macht diese Garantie durch externe Prüfbarkeit nachweisbar.
+                </p>
+            </div>
+        </section>
+
+        <!-- Pipeline Diagram -->
+        <section>
+            <h2>11.2 End-to-End Pipeline</h2>
+            
+            <div class="diagram-container">
+                <div class="diagram-title">Abbildung 11.1: Vollständige WINDI Governance Pipeline</div>
+                <div class="pipeline-diagram">
+                    <div class="pipeline-step">📄 Dokument</div>
+                    <span class="pipeline-arrow">→</span>
+                    <div class="pipeline-step">🤖 AI-Assistenz</div>
+                    <span class="pipeline-arrow">→</span>
+                    <div class="pipeline-step">🔐 Hash-Generierung</div>
+                    <span class="pipeline-arrow">→</span>
+                    <div class="pipeline-step">📝 WINDI Receipt</div>
+                    <span class="pipeline-arrow">→</span>
+                    <div class="pipeline-step">📱 QR-Code</div>
+                    <span class="pipeline-arrow">→</span>
+                    <div class="pipeline-step">🌐 /verify</div>
+                </div>
+            </div>
+
+            <p>
+                Die Pipeline beginnt mit der Dokumentenerstellung im BABEL Editor und endet mit einer 
+                öffentlich zugänglichen Verifizierungsseite. Jeder Schritt generiert kryptographisch 
+                verifizierbare Beweise, die in der Submission Registry persistent gespeichert werden.
+            </p>
+
+            <h3>11.2.1 Komponenten der Pipeline</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Komponente</th>
+                        <th>Funktion</th>
+                        <th>Output</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>BABEL Editor</strong></td>
+                        <td>Dokumentenerstellung mit ISP-Templates</td>
+                        <td>HTML-Inhalt + Metadaten</td>
+                    </tr>
+                    <tr>
+                        <td><strong>AI Form Filling</strong></td>
+                        <td>KI-gestützte Feldpopulation</td>
+                        <td>WINDI-FILL Receipt</td>
+                    </tr>
+                    <tr>
+                        <td><strong>DeepDOCFakes</strong></td>
+                        <td>Strukturelle Hash-Berechnung</td>
+                        <td>Structural Hash (16 Zeichen)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Submission Registry</strong></td>
+                        <td>Persistente Registrierung</td>
+                        <td>Index Entry + ISP Metadata</td>
+                    </tr>
+                    <tr>
+                        <td><strong>PDF Export</strong></td>
+                        <td>Governierte Dokumentausgabe</td>
+                        <td>PDF mit QR-Code + Footer</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Verification API</strong></td>
+                        <td>Öffentliche Validierung</td>
+                        <td>HTML/JSON Response</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Hash Architecture -->
+        <section>
+            <h2>11.3 Duale Hash-Architektur</h2>
+            
+            <p>
+                WINDI verwendet ein duales Hash-System, das sowohl Inhalts- als auch Strukturintegrität 
+                unabhängig verifizierbar macht. Diese Trennung ermöglicht differenzierte Integritätsprüfungen 
+                und erhöht die forensische Aussagekraft.
+            </p>
+
+            <h3>11.3.1 Content Hash</h3>
+            <p>
+                Der <strong>Content Hash</strong> ist ein SHA-256-Digest des vollständigen Dokumentinhalts. 
+                Er ändert sich bei jeder Modifikation des Textes und dient als primärer Integritätsindikator.
+            </p>
+            <pre><code>content_hash = hashlib.sha256(content.encode()).hexdigest()[:12]
+# Beispiel: "772fc9dec169"</code></pre>
+
+            <h3>11.3.2 Structural Hash</h3>
+            <p>
+                Der <strong>Structural Hash</strong> wird durch das DeepDOCFakes-Modul generiert und 
+                kodiert die semantische Struktur des Dokuments — Feldtypen, Governance-Level, ISP-Profil 
+                und Policy-Version. Dieser Hash bleibt stabil, auch wenn der Inhalt variiert, solange 
+                die Dokumentstruktur identisch bleibt.
+            </p>
+            <pre><code>decision_payload = {
+    "submission_id": f"WINDI-{doc_id}",
+    "governance_level": "MEDIUM",
+    "policy_version": "2.2.0",
+    "isp_profile": "deutsche-bahn",
+    "metadata": {
+        "document_id": doc_id,
+        "form_id": "transportauftrag",
+        "template_type": "form"
+    }
+}
+structural_hash = compute_structural_hash(decision_payload)
+# Beispiel: "08759d5047b101af"</code></pre>
+
+            <div class="info-box">
+                <div class="info-box-title">💡 Warum zwei Hashes?</div>
+                <p style="margin:0">
+                    Der duale Ansatz erlaubt es, zwischen <em>inhaltlichen</em> und <em>strukturellen</em> 
+                    Manipulationen zu unterscheiden. Ein Dokument mit korrektem Structural Hash aber 
+                    falschem Content Hash wurde nachträglich bearbeitet. Ein Dokument mit beiden 
+                    inkorrekten Hashes wurde möglicherweise vollständig gefälscht.
+                </p>
+            </div>
+        </section>
+
+        <!-- Verification States -->
+        <section>
+            <h2>11.4 Verifikationszustände</h2>
+            
+            <p>
+                Das Verification Layer unterscheidet drei semantisch distinkte Zustände, die dem Nutzer 
+                visuell kommuniziert werden:
+            </p>
+
+            <div class="status-cards">
+                <div class="status-card valid">
+                    <div class="status-icon">✅</div>
+                    <div class="status-label">VALID</div>
+                    <div class="status-desc">Dokument vollständig verifiziert. Alle Hashes korrekt.</div>
+                </div>
+                <div class="status-card partial">
+                    <div class="status-icon">⚠️</div>
+                    <div class="status-label">PARTIAL</div>
+                    <div class="status-desc">Registrierung vorhanden, aber unvollständige Metadaten.</div>
+                </div>
+                <div class="status-card invalid">
+                    <div class="status-icon">❌</div>
+                    <div class="status-label">NOT FOUND</div>
+                    <div class="status-desc">Receipt nicht in der Datenbank gefunden.</div>
+                </div>
+            </div>
+
+            <p>
+                Der <strong>PARTIAL</strong>-Zustand ist bewusst nicht als Fehler konzipiert. Er ermöglicht 
+                die Verifikation von Dokumenten, die sich noch im Bearbeitungsprozess befinden oder deren 
+                Metadaten aus Legacy-Gründen unvollständig sind. Dies vermeidet falsch-negative Ergebnisse 
+                und erhöht die Systemakzeptanz in realen Arbeitskontexten.
+            </p>
+        </section>
+
+        <!-- Mobile Verification -->
+        <section>
+            <h2>11.5 Mobile Verification Interface</h2>
+
+            <p>
+                Die Verifikationsseite ist <strong>mobile-first</strong> konzipiert, da der primäre 
+                Anwendungsfall das Scannen eines QR-Codes auf einem gedruckten Dokument mit einem 
+                Smartphone ist. Die Designentscheidungen reflektieren dies:
+            </p>
+
+            <ul>
+                <li><strong>Kein Login erforderlich</strong> — Öffentliche Zugänglichkeit</li>
+                <li><strong>Kein App-Download</strong> — Native Browser-Unterstützung</li>
+                <li><strong>Touch-optimiert</strong> — Große Tap-Targets, scrollbare Karten</li>
+                <li><strong>Offline-tolerant</strong> — Minimale Assets, schnelle Ladezeit</li>
+            </ul>
+
+            <div class="screenshot-container">
+                <div class="diagram-title" style="color: rgba(255,255,255,0.6);">
+                    Abbildung 11.2: Mobile Verification Page (Mockup)
+                </div>
+                <div class="screenshot-mockup">
+                    <div class="mockup-header">
+                        <span style="font-size: 1.5rem;">🐉</span>
+                        <span style="font-family: 'Source Sans Pro', sans-serif; font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;">WINDI Verification</span>
+                    </div>
+                    <div class="mockup-status">
+                        <div class="mockup-status-icon">✅</div>
+                        <div class="mockup-status-text">Verified</div>
+                    </div>
+                    <div class="mockup-receipt">WINDI-BABEL-03FEB26-772FC9DEC169</div>
+                    <div class="mockup-details">
+                        <div class="mockup-row">
+                            <span class="mockup-label">ISP</span>
+                            <span class="mockup-value">deutsche-bahn</span>
+                        </div>
+                        <div class="mockup-row">
+                            <span class="mockup-label">Level</span>
+                            <span class="mockup-value">MEDIUM</span>
+                        </div>
+                        <div class="mockup-row">
+                            <span class="mockup-label">Hash</span>
+                            <span class="mockup-value">772fc9dec169...</span>
+                        </div>
+                        <div class="mockup-row">
+                            <span class="mockup-label">Resilience</span>
+                            <span class="mockup-value">100/100</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Four-Eyes Principle -->
+        <section>
+            <h2>11.6 Four-Eyes-Prinzip in der Verifikation</h2>
+
+            <p>
+                Das Verification Layer visualisiert den <strong>Four-Eyes-Principle</strong> — das 
+                Erfordernis, dass kritische Dokumente von mindestens zwei Personen (Author + Witness) 
+                bestätigt werden müssen. Diese Information wird prominent auf der Verifikationsseite 
+                angezeigt:
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rolle</th>
+                        <th>Verantwortung</th>
+                        <th>Anzeige</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Author</strong></td>
+                        <td>Dokumenterstellung und inhaltliche Verantwortung</td>
+                        <td>Name + Employee ID</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Witness</strong></td>
+                        <td>Unabhängige Prüfung und Bestätigung</td>
+                        <td>Name + Relation</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p>
+                Wenn ein Witness vorhanden ist, zeigt die Verifikationsseite einen grünen 
+                <code>Four-Eyes: Active</code>-Badge an. Ohne Witness erscheint ein gelber 
+                <code>Four-Eyes: Single</code>-Badge, der auf die fehlende unabhängige Prüfung hinweist.
+            </p>
+
+            <div class="info-box warning">
+                <div class="info-box-title">⚠️ EU AI Act Compliance</div>
+                <p style="margin:0">
+                    Die explizite Dokumentation menschlicher Rollen ist eine Kernforderung des EU AI Act 
+                    (Art. 14 — Human Oversight). Das Verification Layer macht diese Compliance für 
+                    externe Auditoren sofort sichtbar und nachprüfbar.
+                </p>
+            </div>
+        </section>
+
+        <!-- API Specification -->
+        <section>
+            <h2>11.7 API-Spezifikation</h2>
+
+            <p>
+                Das Verification Layer bietet einen dualen Zugang — HTML für Browser-Clients und 
+                JSON für programmatische Integration. Die Formatauswahl erfolgt automatisch basierend 
+                auf dem <code>Accept</code>-Header oder kann explizit per Query-Parameter gesteuert werden.
+            </p>
+
+            <h3>11.7.1 Endpoints</h3>
+            <pre><code>GET /verify/{receipt_id}
+GET /verify/{receipt_id}?format=html   → HTML-Seite
+GET /verify/{receipt_id}?format=json   → JSON-Response
+GET /api/verify/{receipt_id}           → JSON (API-Pfad)</code></pre>
+
+            <h3>11.7.2 JSON Response Schema</h3>
+            <pre><code>{
+  "status": "VALID",
+  "receipt_id": "WINDI-BABEL-03FEB26-772FC9DEC169",
+  "document": {
+    "title": "Transportauftrag",
+    "governance_level": "MEDIUM",
+    "isp_profile": "deutsche-bahn",
+    "form_id": "transportauftrag",
+    "created_at": "2026-02-03T16:45:00Z"
+  },
+  "integrity": {
+    "content_hash": "772fc9dec169...",
+    "structural_hash": "08759d5047b1...",
+    "resilience_score": 100,
+    "resilience_rating": "MAXIMUM"
+  },
+  "compliance": {
+    "eu_ai_act": true,
+    "sof_protocol": "v1.0",
+    "human_decision": true,
+    "four_eyes": true
+  },
+  "human_roles": {
+    "author": "Max Mustermann",
+    "witness": "Erika Musterfrau"
+  },
+  "issuer": {
+    "organization": "WINDI Publishing House",
+    "jurisdiction": "DE",
+    "principle": "AI processes. Human decides. WINDI guarantees."
+  },
+  "verified_at": "2026-02-03T17:30:00 UTC"
+}</code></pre>
+        </section>
+
+        <!-- Conclusion -->
+        <section>
+            <h2>11.8 Fazit</h2>
+
+            <p>
+                Das Public Verification Layer transformiert das WINDI-System von einer internen 
+                Governance-Plattform zu einer <strong>öffentlichen Autorität für Dokumentenintegrität</strong>. 
+                Die Kombination aus kryptographischer Verifizierung, visueller Zugänglichkeit und 
+                EU AI Act Compliance positioniert WINDI als Referenzimplementierung für 
+                KI-governierte institutionelle Dokumentation.
+            </p>
+
+            <p>
+                Die Entscheidung für ein browser-basiertes, app-freies Verifikationsmodell folgt dem 
+                WINDI-Prinzip der <strong>Soberania Semântica</strong> — der Nutzer behält die Kontrolle 
+                über den Validierungsprozess, ohne von proprietären Plattformen abhängig zu sein.
+            </p>
+
+            <div class="info-box success">
+                <div class="info-box-title">🎯 Implementierungsstatus</div>
+                <p style="margin:0">
+                    Phase 3A ist vollständig implementiert und in Produktion auf 
+                    <code>babel.windia4desk.tech:8085/verify/</code>. Der Pipeline-Kreislauf ist geschlossen: 
+                    Dokumente können erstellt, governiert, exportiert und öffentlich verifiziert werden.
+                </p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="windi-footer">
+            <div class="windi-receipt-block">
+                <div class="receipt-title">WINDI Governance Receipt</div>
+                <div class="receipt-id">WINDI-MASTER-03FEB26-VERIFICATION</div>
+                <div class="receipt-motto">"AI processes. Human decides. WINDI guarantees."</div>
+            </div>
+
+            <div class="ledger-info">
+                WINDI Governance Ledger | Human-authored: 100% | Template: Academic Chapter v1.0 | Structure: VALID
+            </div>
+
+            <div class="footer-meta">
+                <p>WINDI Publishing House — Kempten, Bavaria, Germany</p>
+                <p>Masterarbeit Documentation · Version 1.0 · Februar 2026</p>
+            </div>
+        </footer>
+
+    </main>
+
+</body>
+</html>
