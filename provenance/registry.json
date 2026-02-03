@@ -1,0 +1,49 @@
+{
+  "entries": [
+    {
+      "submission_id": "WINDI-BABEL-03FEB26-772FC9DEC169",
+      "document_id": "BABEL-20260203161913",
+      "registered_at": "2026-02-03T15:19:22.183201+00:00",
+      "governance_level": "MEDIUM",
+      "isp_profile": "deutsche-bahn",
+      "form_id": "transportauftrag",
+      "content_hash": "c00c05100254",
+      "structural_hash": "08759d5047b101af",
+      "sof_protocol": "WINDI-SOF-v1",
+      "author_name": "",
+      "author_id": "",
+      "witness_name": "Dr. Klaus Schmidt",
+      "witness_id": "EMP-2024-0001",
+      "policy_version": "2.2.0",
+      "validation_status": "registered"
+    },
+    {
+      "submission_id": "WINDI-BABEL-03FEB26-772FC9DEC169",
+      "document_id": "BABEL-20260203161913",
+      "registered_at": "2026-02-03T15:19:31.660243+00:00",
+      "governance_level": "MEDIUM",
+      "isp_profile": "deutsche-bahn",
+      "form_id": "transportauftrag",
+      "content_hash": "c00c05100254",
+      "structural_hash": "08759d5047b101af",
+      "sof_protocol": "WINDI-SOF-v1",
+      "author_name": "",
+      "author_id": "",
+      "witness_name": "Dr. Klaus Schmidt",
+      "witness_id": "EMP-2024-0001",
+      "policy_version": "2.2.0",
+      "validation_status": "registered"
+    }
+  ],
+  "stats": {
+    "total": 2,
+    "by_level": {
+      "MEDIUM": 2
+    },
+    "by_entity": {},
+    "by_isp": {
+      "deutsche-bahn": 2
+    }
+  },
+  "last_updated": "2026-02-03T15:19:31.667470+00:00"
+}

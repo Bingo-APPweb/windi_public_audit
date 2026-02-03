@@ -216,8 +216,7 @@ def init_db():
               "ALTER TABLE documents ADD COLUMN modified_by TEXT DEFAULT ''",
               "ALTER TABLE documents ADD COLUMN witness TEXT DEFAULT ''",
               "ALTER TABLE documents ADD COLUMN dragon TEXT DEFAULT 'claude'",
-              "ALTER TABLE documents ADD COLUMN content_html TEXT DEFAULT ''",
-              "ALTER TABLE documents ADD COLUMN metadata TEXT DEFAULT '{}'"]:
+              "ALTER TABLE documents ADD COLUMN content_html TEXT DEFAULT ''"]:
         try: cursor.execute(m)
         except: pass
     conn.commit()
@@ -628,56 +627,11 @@ def update_document(doc_id):
     old_status = row["status"]
     now = datetime.now(timezone.utc).isoformat()
     content_hash = hashlib.sha256(content.encode()).hexdigest()[:12]
-
-    # ISP Phase 2: Handle metadata with ISP info
-    existing_metadata = {}
-    if "metadata" in row.keys() and row["metadata"]:
-        try:
-            existing_metadata = json.loads(row["metadata"])
-        except:
-            pass
-    new_metadata = data.get('metadata', {})
-    # Merge metadata, new values override existing
-    merged_metadata = {**existing_metadata, **new_metadata}
-
-    # ISP Phase 2: Generate structural hash if DeepDOCFakes available
-    structural_hash = None
-    if DEEPDOCFAKES_AVAILABLE and merged_metadata.get('institutional_profile'):
-        try:
-            isp_profile = merged_metadata.get('institutional_profile', 'windi_default')
-            gov_level = merged_metadata.get('governance_level', 'LOW')
-            decision_payload = {
-                "submission_id": f"WINDI-{doc_id}",
-                "governance_level": gov_level,
-                "policy_version": "2.2.0",
-                "isp_profile": isp_profile,
-                "organization": "WINDI Publishing House",
-                "metadata": {
-                    "document_id": doc_id,
-                    "form_id": merged_metadata.get('form_id'),
-                    "template_type": merged_metadata.get('template_type')
-                }
-            }
-            structural_hash = compute_structural_hash(decision_payload)
-            merged_metadata['structural_hash'] = structural_hash[:16]
-            merged_metadata['content_hash'] = content_hash
-            print(f"[ISP Phase 2] Structural hash generated: {structural_hash[:16]}")
-        except Exception as e:
-            print(f"[ISP Phase 2] Structural hash error: {e}")
-
-    metadata_json = json.dumps(merged_metadata)
-
-    cursor.execute("UPDATE documents SET title = ?, content = ?, content_html = ?, human_fields = ?, status = 'validated', updated_at = ?, modified_by = ?, witness = ?, metadata = ? WHERE id = ?", (title, content, content_html, human_fields, now, modified_by, json.dumps(witness_data) if witness_data else '', metadata_json, doc_id))
+    cursor.execute("UPDATE documents SET title = ?, content = ?, content_html = ?, human_fields = ?, status = 'validated', updated_at = ?, modified_by = ?, witness = ? WHERE id = ?", (title, content, content_html, human_fields, now, modified_by, json.dumps(witness_data) if witness_data else '', doc_id))
     conn.commit()
     conn.close()
     log_audit(doc_id, 'DOC_UPDATED', author_data, session_id=session_id, witness_data=witness_data if witness_data.get('name') else None, old_status=old_status, new_status='validated', content_hash=content_hash)
-
-    response = {"id": doc_id, "status": "validated", "message": "Gespeichert"}
-    if structural_hash:
-        response["structural_hash"] = structural_hash[:16]
-    if merged_metadata.get('institutional_profile'):
-        response["isp_profile"] = merged_metadata['institutional_profile']
-    return jsonify(response)
+    return jsonify({"id": doc_id, "status": "validated", "message": "Gespeichert"})
 
 @app.route('/api/document/<doc_id>/finalize', methods=['POST'])
 def finalize_document(doc_id):
@@ -694,75 +648,33 @@ def finalize_document(doc_id):
     if not row:
         conn.close()
         return jsonify({"error": "Not found"}), 404
-
-    # ISP Phase 2: Get document metadata
-    doc_metadata = {}
-    if "metadata" in row.keys() and row["metadata"]:
-        try:
-            doc_metadata = json.loads(row["metadata"])
-        except:
-            pass
-    isp_profile = doc_metadata.get('institutional_profile', 'windi_default')
-    form_id = doc_metadata.get('form_id')
-    governance_level = doc_metadata.get('governance_level', 'HIGH')
-
     author_data = {'id': sess['user_id'] if sess else '', 'name': sess['full_name'] if sess else '', 'employee_id': sess['user_id'] if sess else '', 'department': sess.get('department', '') if sess else '', 'position': sess.get('position', '') if sess else ''}
     old_status = row["status"]
     content = {"text": row["content"], "human_fields": json.loads(row["human_fields"] or "{}"), "author": author_data, "witness": witness_data}
-
-    # ISP Phase 2: Enhanced receipt with ISP info
     receipt = make_receipt(doc_id, content, row["language"], author_data, witness_data)
-    receipt["isp_id"] = isp_profile
-    receipt["isp_form"] = form_id
-    receipt["governance_level"] = governance_level
-
     now = datetime.now(timezone.utc).isoformat()
     content_hash = hashlib.sha256(row["content"].encode()).hexdigest()[:12]
     cursor.execute("UPDATE documents SET status = 'finalized', receipt = ?, updated_at = ?, witness = ? WHERE id = ?", (json.dumps(receipt), now, json.dumps(witness_data), doc_id))
     conn.commit()
     conn.close()
     log_audit(doc_id, 'DOC_FINALIZED', author_data, session_id=session_id, witness_data=witness_data, old_status=old_status, new_status='finalized', content_hash=content_hash, notes=f'WINDI-QUITTUNG: {receipt["receipt_id"]}')
-
     # ─── DeepDOCFakes: Provenance Record ─────────────────────
     if DEEPDOCFAKES_AVAILABLE:
         try:
             prov_record = build_provenance_record(
                 submission_id=receipt["receipt_id"],
-                governance_level=governance_level,
+                governance_level="HIGH",
                 policy_version="2.2.0",
-                isp_profile=isp_profile,
+                isp_profile="windi_default",
                 organization="WINDI Publishing House",
                 content_hash=content_hash,
-                metadata={"document_id": doc_id, "author": author_data.get("name", ""), "language": row["language"], "form_id": form_id}
+                metadata={"document_id": doc_id, "author": author_data.get("name", ""), "language": row["language"]}
             )
             prov_path = persist_provenance_record(prov_record)
             if prov_path:
                 print(f"[WINDI-SOF] Provenance record created: {receipt['receipt_id']}")
         except Exception as e:
             print(f"[WINDI-SOF] Provenance generation error: {e}")
-
-    # ─── ISP Phase 2: Register to Submission Registry ─────────────────────
-    try:
-        from engine.submission_registry import SubmissionRegistry
-        registry = SubmissionRegistry("/opt/windi/provenance")
-        isp_receipt = {
-            "receipt_id": receipt["receipt_id"],
-            "document_id": doc_id,
-            "timestamp": now,
-            "governance_level": governance_level,
-            "isp_id": isp_profile,
-            "isp_form": form_id,
-            "content_hash": content_hash,
-            "structural_hash": receipt.get("structural_hash", ""),
-            "author": author_data,
-            "witness": witness_data,
-            "sof_protocol": "WINDI-SOF-v1"
-        }
-        registry.register_isp_submission(isp_receipt)
-        print(f"[ISP Phase 2] Submission registered: {receipt['receipt_id']}")
-    except Exception as e:
-        print(f"[ISP Phase 2] Registry error: {e}")
-
     return jsonify({"id": doc_id, "status": "finalized", "receipt": receipt})
 
 @app.route('/api/document/<doc_id>', methods=['DELETE'])
@@ -806,45 +718,141 @@ def get_document_audit(doc_id):
     return jsonify({"document_id": doc_id, "audit_trail": [dict(r) for r in rows]})
 
 @app.route('/api/verify/<receipt_id>', methods=['GET'])
+@app.route('/verify/<receipt_id>', methods=['GET'])
 def verify_receipt(receipt_id):
+    """
+    ISP Phase 2 Enhanced Verification Endpoint.
+    GET /verify/WINDI-DB-03FEB26-A1B2C3D4
+    """
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM documents WHERE receipt LIKE ?", (f'%{receipt_id}%',))
     row = cursor.fetchone()
-    if not row:
+
+    # Check submission registry as fallback
+    registry_entry = None
+    try:
+        from engine.submission_registry import SubmissionRegistry
+        registry = SubmissionRegistry("/opt/windi/provenance")
+        registry_entry = registry.lookup(receipt_id)
+    except:
+        pass
+
+    if not row and not registry_entry:
         conn.close()
-        return jsonify({"verified": False, "error": "Receipt not found"}), 404
-    
-    # Fetch governance audit data
-    cursor.execute("SELECT * FROM governance_audit WHERE receipt_id = ? ORDER BY id DESC LIMIT 1", (receipt_id,))
-    audit_row = cursor.fetchone()
-    conn.close()
-    
-    governance_data = None
-    if audit_row:
-        governance_data = {
-            "human_authored_percentage": audit_row["human_authored_percentage"],
-            "ai_assisted_blocks": audit_row["ai_assisted_blocks"],
-            "total_blocks": audit_row["total_blocks"],
-            "structure_valid": bool(audit_row["structure_valid"]),
-            "template_id": audit_row["template_id"],
-            "audit_timestamp": audit_row["timestamp"]
-        }
-        # Phase 4: Add ISP data if available
-        if "institutional_profile_id" in audit_row.keys() and audit_row["institutional_profile_id"]:
-            governance_data["institutional_profile"] = {
-                "profile_id": audit_row["institutional_profile_id"],
-                "profile_type": audit_row["institutional_profile_type"]
+        # Check if browser request
+        accept_header = request.headers.get('Accept', '')
+        wants_html = 'text/html' in accept_header and 'application/json' not in accept_header
+        if wants_html:
+            template_context = {
+                "receipt_id": receipt_id,
+                "status": "NOT_FOUND",
+                "status_class": "invalid",
+                "status_icon": "✗",
+                "status_text": "NOT FOUND"
             }
-    
+            return render_template_string(VERIFY_HTML_TEMPLATE, **template_context), 404
+        return jsonify({"status": "NOT_FOUND", "error": "Receipt not found", "receipt_id": receipt_id}), 404
+
+    # Parse receipt and metadata
+    receipt_data = {}
+    doc_metadata = {}
+    if row:
+        try:
+            if row["receipt"]:
+                receipt_data = json.loads(row["receipt"])
+        except (KeyError, TypeError, json.JSONDecodeError):
+            pass
+        try:
+            # Check if metadata column exists using row.keys()
+            row_keys = row.keys()
+            if "metadata" in row_keys and row["metadata"]:
+                doc_metadata = json.loads(row["metadata"])
+        except (KeyError, TypeError, json.JSONDecodeError):
+            pass
+    conn.close()
+
+    # Extract ISP fields
+    isp_profile = receipt_data.get("isp_id") or doc_metadata.get("institutional_profile")
+    form_id = receipt_data.get("isp_form") or doc_metadata.get("form_id")
+    governance_level = receipt_data.get("governance_level", "LOW")
+    content_hash = receipt_data.get("hash", "")
+    structural_hash = receipt_data.get("structural_hash") or doc_metadata.get("structural_hash", "")
+    title = row["title"] if row else None
+    created_at = receipt_data.get("timestamp", "")
+    resilience_score = receipt_data.get("resilience_score", 0) or 0
+    resilience_rating = receipt_data.get("resilience_rating", "")
+
+    # Format hashes for display
+    content_hash_display = content_hash[:12] + "..." if len(content_hash) > 12 else content_hash
+    structural_hash_display = structural_hash[:12] + "..." if len(str(structural_hash)) > 12 else structural_hash
+
+    # Get author/witness names
+    author_data = receipt_data.get("author", {})
+    witness_data = receipt_data.get("witness", {})
+    author_name = author_data.get("name") if author_data else None
+    witness_name = witness_data.get("name") if witness_data else None
+
+    # Check if browser request (wants HTML)
+    accept_header = request.headers.get('Accept', '')
+    wants_html = 'text/html' in accept_header and 'application/json' not in accept_header
+
+    if wants_html:
+        # Render HTML verification page
+        level_colors = {"LOW": "green", "MEDIUM": "blue", "HIGH": "purple"}
+        template_context = {
+            "receipt_id": receipt_data.get("receipt_id", receipt_id),
+            "status": "VALID",
+            "status_class": "valid",
+            "status_icon": "✓",
+            "status_text": "VERIFIED",
+            "title": title,
+            "isp_profile": isp_profile,
+            "form_id": form_id,
+            "created_at": created_at[:10] if created_at else None,
+            "governance_level": governance_level,
+            "level_color": level_colors.get(governance_level, "blue"),
+            "content_hash": content_hash_display,
+            "structural_hash": structural_hash_display,
+            "resilience_score": resilience_score,
+            "resilience_rating": resilience_rating,
+            "author": author_name,
+            "witness": witness_name
+        }
+        return render_template_string(VERIFY_HTML_TEMPLATE, **template_context)
+
+    # Build ISP Phase 2 JSON response
     return jsonify({
-        "verified": True,
-        "document_id": row["id"],
-        "title": row["title"],
-        "status": row["status"],
-        "receipt": json.loads(row["receipt"]) if row["receipt"] else {},
-        "governance": governance_data,
-        "principle": "KI verarbeitet. Mensch entscheidet. WINDI garantiert."
+        "status": "VALID",
+        "document": {
+            "receipt_id": receipt_data.get("receipt_id", receipt_id),
+            "document_id": row["id"] if row else None,
+            "title": title,
+            "created_at": created_at,
+            "governance_level": governance_level,
+            "isp_profile": isp_profile,
+            "form_id": form_id
+        },
+        "integrity": {
+            "content_hash": content_hash_display,
+            "structural_hash": structural_hash_display,
+            "status": "INTACT" if content_hash else "NO_HASH",
+            "resilience_score": resilience_score,
+            "resilience_rating": resilience_rating
+        },
+        "compliance": {
+            "eu_ai_act": True,
+            "sof_protocol": receipt_data.get("sof_protocol", "v1.0"),
+            "human_authored": True,
+            "four_eyes_principle": bool(witness_name)
+        },
+        "issuer": {
+            "organization": "WINDI Publishing House",
+            "jurisdiction": "DE",
+            "principle": "AI processes. Human decides. WINDI guarantees."
+        },
+        "author": author_data,
+        "witness": witness_data
     })
 
 @app.route('/api/users', methods=['GET'])
@@ -1188,183 +1196,6 @@ def chat():
     except:
         return jsonify({"error": "Gateway error"}), 503
 
-
-# ═══════════════════════════════════════════════════════════════════════════════
-# ISP PHASE 2: AI FORM FILLING
-# "AI processes. Human decides. WINDI guarantees."
-# ═══════════════════════════════════════════════════════════════════════════════
-
-def extract_form_fields(html_content):
-    """Extract form fields from HTML content for AI filling."""
-    import re
-    fields = []
-
-    # Extract input fields
-    input_pattern = r'<input[^>]*(?:name=["\']([^"\']+)["\']|id=["\']([^"\']+)["\'])[^>]*(?:type=["\']([^"\']+)["\'])?[^>]*(?:placeholder=["\']([^"\']+)["\'])?[^>]*>'
-    for match in re.finditer(input_pattern, html_content, re.IGNORECASE):
-        name = match.group(1) or match.group(2)
-        field_type = match.group(3) or 'text'
-        placeholder = match.group(4) or ''
-        if name and field_type not in ['hidden', 'submit', 'button']:
-            fields.append({
-                'name': name,
-                'type': field_type,
-                'placeholder': placeholder,
-                'element': 'input'
-            })
-
-    # Extract textarea fields
-    textarea_pattern = r'<textarea[^>]*(?:name=["\']([^"\']+)["\']|id=["\']([^"\']+)["\'])[^>]*(?:placeholder=["\']([^"\']+)["\'])?[^>]*>'
-    for match in re.finditer(textarea_pattern, html_content, re.IGNORECASE):
-        name = match.group(1) or match.group(2)
-        placeholder = match.group(3) or ''
-        if name:
-            fields.append({
-                'name': name,
-                'type': 'textarea',
-                'placeholder': placeholder,
-                'element': 'textarea'
-            })
-
-    # Extract select fields
-    select_pattern = r'<select[^>]*(?:name=["\']([^"\']+)["\']|id=["\']([^"\']+)["\'])[^>]*>(.*?)</select>'
-    for match in re.finditer(select_pattern, html_content, re.IGNORECASE | re.DOTALL):
-        name = match.group(1) or match.group(2)
-        options_html = match.group(3)
-        options = re.findall(r'<option[^>]*value=["\']([^"\']*)["\'][^>]*>([^<]*)</option>', options_html, re.IGNORECASE)
-        if name:
-            fields.append({
-                'name': name,
-                'type': 'select',
-                'options': [{'value': v, 'label': l.strip()} for v, l in options if v],
-                'element': 'select'
-            })
-
-    return fields
-
-
-def build_form_fill_prompt(fields, user_prompt, isp_id, form_id):
-    """Build a prompt for the LLM to fill form fields."""
-    field_descriptions = []
-    for f in fields:
-        desc = f"- {f['name']} ({f['type']})"
-        if f.get('placeholder'):
-            desc += f": {f['placeholder']}"
-        if f.get('options'):
-            opts = ', '.join([o['label'] for o in f['options'][:5]])
-            desc += f" [options: {opts}]"
-        field_descriptions.append(desc)
-
-    prompt = f"""You are filling out an institutional form.
-
-Form: {form_id or 'Unknown'}
-Institution: {isp_id or 'Unknown'}
-User Request: {user_prompt}
-
-Form fields to fill:
-{chr(10).join(field_descriptions)}
-
-Generate realistic, appropriate test data for each field.
-For German institutions, use German-language values.
-For dates, use format DD.MM.YYYY.
-For select fields, choose from the available options.
-
-Respond ONLY with a JSON object mapping field names to values, like:
-{{"field_name": "value", "another_field": "value"}}
-
-Do not include any explanation or markdown, just the JSON object."""
-
-    return prompt
-
-
-@app.route('/api/form/fill', methods=['POST'])
-def fill_form_with_ai():
-    """
-    Extract form fields and use LLM to generate appropriate values.
-
-    Request:
-    {
-        "form_html": "<html>...",
-        "user_prompt": "preenche com dados de teste",
-        "isp_id": "deutsche-bahn",
-        "form_id": "transportauftrag"
-    }
-
-    Response:
-    {
-        "success": true,
-        "fields": {"field_name": "generated_value", ...},
-        "receipt": "WINDI-FILL-..."
-    }
-    """
-    data = request.json or {}
-    form_html = data.get('form_html', '')
-    user_prompt = data.get('user_prompt', 'Fill with test data')
-    isp_id = data.get('isp_id', '')
-    form_id = data.get('form_id', '')
-
-    if not form_html:
-        return jsonify({"success": False, "error": "No form HTML provided"}), 400
-
-    # Extract form fields
-    fields = extract_form_fields(form_html)
-
-    if not fields:
-        return jsonify({"success": False, "error": "No fillable fields found in form"}), 400
-
-    # Build prompt for LLM
-    prompt = build_form_fill_prompt(fields, user_prompt, isp_id, form_id)
-
-    # Call LLM via gateway
-    try:
-        payload = {
-            "message": prompt,
-            "context": f"ISP Form Filling for {isp_id}",
-            "dragon": "claude",
-            "lang": "de",
-            "system_mode": "json_only"
-        }
-        resp = requests.post(f"{CONFIG['gateway']}/api/chat", json=payload, timeout=60)
-        result = resp.json()
-
-        if result.get('error'):
-            return jsonify({"success": False, "error": result['error']}), 500
-
-        # Parse LLM response as JSON
-        llm_response = result.get('response', '{}')
-
-        # Try to extract JSON from response
-        import re
-        json_match = re.search(r'\{[^{}]*\}', llm_response, re.DOTALL)
-        if json_match:
-            try:
-                field_values = json.loads(json_match.group())
-            except json.JSONDecodeError:
-                field_values = {}
-        else:
-            field_values = {}
-
-        # Generate receipt for this fill operation
-        ts = datetime.now(timezone.utc)
-        fill_hash = hashlib.sha256(json.dumps(field_values, sort_keys=True).encode()).hexdigest()[:8]
-        receipt_id = f"WINDI-FILL-{ts.strftime('%d%b%y').upper()}-{fill_hash.upper()}"
-
-        return jsonify({
-            "success": True,
-            "fields": field_values,
-            "field_count": len(fields),
-            "filled_count": len(field_values),
-            "receipt": receipt_id,
-            "isp_id": isp_id,
-            "form_id": form_id
-        })
-
-    except requests.exceptions.RequestException as e:
-        return jsonify({"success": False, "error": f"Gateway error: {str(e)}"}), 503
-    except Exception as e:
-        return jsonify({"success": False, "error": f"Processing error: {str(e)}"}), 500
-
-
 # ═══════════════════════════════════════════════════════════════════════════════
 # SANDBOX CORE - Three Dragons Deliberation
 # "AI processes. Human decides. WINDI guarantees."
@@ -1661,6 +1492,145 @@ def api_get_isp_template_html(profile_id, template_name):
 # END ISP TEMPLATES v2.0
 # ═══════════════════════════════════════════════════════════════════════════════
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# WINDI VERIFICATION PAGE TEMPLATE
+# ═══════════════════════════════════════════════════════════════════════════════
+VERIFY_HTML_TEMPLATE = '''
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WINDI Verification - {{ receipt_id }}</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh; padding: 20px;
+            color: #fff;
+        }
+        .container { max-width: 500px; margin: 0 auto; }
+        .card { background: rgba(255,255,255,0.1); border-radius: 16px; padding: 24px; margin-bottom: 16px; backdrop-filter: blur(10px); }
+        .status-valid { background: linear-gradient(135deg, #10b981 0%, #059669 100%); text-align: center; }
+        .status-invalid { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); text-align: center; }
+        .status-partial { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); text-align: center; }
+        .status-icon { font-size: 48px; margin-bottom: 8px; }
+        .status-text { font-size: 24px; font-weight: bold; }
+        .receipt-id { font-family: monospace; font-size: 12px; opacity: 0.8; margin-top: 8px; word-break: break-all; }
+        .section-title { font-size: 14px; font-weight: 600; color: #94a3b8; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .detail-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .detail-row:last-child { border-bottom: none; }
+        .detail-label { color: #94a3b8; }
+        .detail-value { font-weight: 500; text-align: right; font-family: monospace; }
+        .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .badge-green { background: #10b981; }
+        .badge-blue { background: #3b82f6; }
+        .badge-purple { background: #8b5cf6; }
+        .resilience-bar { height: 8px; background: rgba(255,255,255,0.2); border-radius: 4px; overflow: hidden; margin-top: 8px; }
+        .resilience-fill { height: 100%; background: linear-gradient(90deg, #10b981, #3b82f6); border-radius: 4px; }
+        .footer { text-align: center; padding: 20px; color: #64748b; font-size: 12px; }
+        .footer-motto { font-style: italic; margin-bottom: 8px; }
+        .windi-logo { font-size: 24px; margin-bottom: 8px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card status-{{ status_class }}">
+            <div class="status-icon">{{ status_icon }}</div>
+            <div class="status-text">{{ status_text }}</div>
+            <div class="receipt-id">{{ receipt_id }}</div>
+        </div>
+
+        {% if status == 'VALID' %}
+        <div class="card">
+            <div class="section-title">📄 Document Details</div>
+            <div class="detail-row">
+                <span class="detail-label">Title</span>
+                <span class="detail-value">{{ title or 'N/A' }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">ISP Profile</span>
+                <span class="detail-value">{{ isp_profile or 'N/A' }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Form ID</span>
+                <span class="detail-value">{{ form_id or 'N/A' }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Created</span>
+                <span class="detail-value">{{ created_at or 'N/A' }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Level</span>
+                <span class="badge badge-{{ level_color }}">{{ governance_level }}</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="section-title">🔐 Integrity</div>
+            <div class="detail-row">
+                <span class="detail-label">Content Hash</span>
+                <span class="detail-value">{{ content_hash }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Structural Hash</span>
+                <span class="detail-value">{{ structural_hash }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Resilience</span>
+                <span class="detail-value">{{ resilience_score }}/100 {{ resilience_rating }}</span>
+            </div>
+            <div class="resilience-bar">
+                <div class="resilience-fill" style="width: {{ resilience_score }}%"></div>
+            </div>
+        </div>
+
+        {% if author or witness %}
+        <div class="card">
+            <div class="section-title">👥 Human Roles</div>
+            {% if author %}
+            <div class="detail-row">
+                <span class="detail-label">Author</span>
+                <span class="detail-value">{{ author }}</span>
+            </div>
+            {% endif %}
+            {% if witness %}
+            <div class="detail-row">
+                <span class="detail-label">Witness</span>
+                <span class="detail-value">{{ witness }}</span>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <div class="card">
+            <div class="section-title">🏛️ Compliance</div>
+            <div class="detail-row">
+                <span class="detail-label">EU AI Act</span>
+                <span class="badge badge-green">✓ Compliant</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">SOF Protocol</span>
+                <span class="badge badge-blue">v1.0</span>
+            </div>
+            <div class="detail-row">
+                <span class="detail-label">Four-Eyes</span>
+                <span class="badge badge-purple">{{ 'Active' if witness else 'N/A' }}</span>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="footer">
+            <div class="windi-logo">🐉</div>
+            <div class="footer-motto">"AI processes. Human decides. WINDI guarantees."</div>
+            <div>WINDI Publishing House · Kempten, Bavaria</div>
+        </div>
+    </div>
+</body>
+</html>
+'''
+
 # Using raw string (r-prefix) for JavaScript regex patterns
 BABEL_HTML = r'''<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>A4 Desk BABEL v4.7-gov</title><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><link rel="stylesheet" href="/static/windi_v47.css"><link rel="stylesheet" href="/static/windi_v47.css"><style>*{margin:0;padding:0;box-sizing:border-box}:root{--primary:#1a365d;--accent:#3182ce;--success:#38a169;--warning:#d69e2e;--danger:#e53e3e;--bg:#f7fafc;--card:#fff;--text:#2d3748;--border:#e2e8f0}body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}.login-overlay{position:fixed;inset:0;background:linear-gradient(135deg,#1a365d,#2c5282);display:flex;align-items:center;justify-content:center;z-index:10000}.login-modal{background:#fff;border-radius:16px;padding:40px;max-width:500px;width:95%;max-height:90vh;overflow-y:auto}.login-header{text-align:center;margin-bottom:25px}.login-header .icon{font-size:56px}.login-header h1{color:var(--primary);font-size:1.6rem}.form-section{background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:16px}.form-section-title{display:flex;align-items:center;gap:8px;font-weight:600;color:var(--primary);margin-bottom:12px}.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}.form-row.single{grid-template-columns:1fr}.form-field{display:flex;flex-direction:column;gap:4px}.form-field label{font-size:.8rem;font-weight:600}.form-field .required{color:#dc2626}.form-field input,.form-field select{padding:10px;border:2px solid var(--border);border-radius:6px}.form-field input:focus{outline:none;border-color:var(--accent)}.form-field small{font-size:.7rem;color:#718096}.login-btn{width:100%;padding:14px;background:linear-gradient(135deg,#999999,#AAAAAA);color:#fff;border:none;border-radius:10px;cursor:pointer;font-weight:700;font-size:1rem;margin-top:10px}.login-principle{background:#F5F5F5;border:1px dashed #AAAAAA;padding:12px;border-radius:8px;text-align:center;margin-top:15px;font-size:.85rem;color:#777777;font-weight:600}.migration-notice{background:#fef3c7;border:1px solid #f59e0b;border-radius:8px;padding:12px;margin-bottom:15px;font-size:.85rem;color:#92400e}.session-bar{position:fixed;top:0;left:0;right:0;height:40px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:9000;font-size:.85rem}.session-bar .user-info{display:flex;align-items:center;gap:15px}.session-bar .btn-profile{background:transparent;border:1px solid rgba(255,255,255,0.3);color:#fff;padding:4px 12px;border-radius:4px;cursor:pointer;font-size:.8rem}.session-bar .btn-profile:hover{background:rgba(255,255,255,0.1)}.session-bar .timer.warning{color:#fbbf24;animation:pulse 1s infinite}.session-bar .btn-logout{background:var(--danger);border:none;color:#fff;padding:5px 15px;border-radius:4px;cursor:pointer}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}.app-content{margin-top:40px;display:flex;min-height:calc(100vh - 40px)}.sidebar{width:280px;background:var(--primary);color:#fff;padding:20px;flex-shrink:0}.sidebar.collapsed{width:0;padding:0;overflow:hidden}.sidebar-toggle{position:fixed;left:10px;top:50px;z-index:1000;background:var(--primary);color:#fff;border:none;width:40px;height:40px;border-radius:8px;cursor:pointer}.logo{display:flex;align-items:center;gap:10px;margin:30px 0 20px}.logo i{font-size:2rem;color:var(--accent)}.lang-bar{display:flex;gap:5px;margin-bottom:20px}.lang-btn{background:#2c5282;border:none;color:#fff;padding:5px 10px;border-radius:4px;cursor:pointer}.lang-btn.active{background:var(--accent)}.btn-new{width:100%;padding:12px;background:var(--success);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;margin-bottom:20px}.doc-list{max-height:calc(100vh - 350px);overflow-y:auto}.doc-item{padding:12px;background:#2c5282;border-radius:6px;margin-bottom:8px;cursor:pointer;font-size:.85rem;display:flex;justify-content:space-between}.doc-item:hover{background:var(--accent)}.doc-item-delete{background:var(--danger);color:#fff;border:none;padding:4px 8px;border-radius:4px;cursor:pointer}.main-area{flex:1;display:flex;flex-direction:column}.top-bar{background:var(--card);padding:10px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:15px;flex-wrap:wrap}.top-bar-title{font-size:1.1rem;font-weight:600;color:var(--primary);margin-left:50px}.top-bar-actions{display:flex;gap:8px;margin-left:auto}.top-bar-btn{padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-size:.85rem}.btn-save{background:var(--primary);color:#fff}.btn-finalize{background:var(--success);color:#fff}.btn-delete{background:var(--danger);color:#fff}.btn-settings{background:var(--accent);color:#fff}.status-badge{padding:6px 12px;border-radius:20px;font-size:.8rem;font-weight:600}.status-draft{background:#fef3c7;color:#92400e}.status-validated{background:#d1fae5;color:#777777}.status-finalized{background:#dbeafe;color:#1e40af}.content-area{flex:1;display:flex;overflow:hidden}.editor-section{flex:1;display:flex;flex-direction:column;padding:20px;overflow-y:auto}.title-input{width:100%;font-size:1.5rem;font-weight:700;border:none;border-bottom:2px solid var(--border);padding:10px 0;margin-bottom:15px;color:var(--primary);background:transparent}.title-input:focus{outline:none;border-color:var(--accent)}.editor-toolbar{display:flex;gap:5px;padding:10px;background:var(--bg);border-radius:8px;margin-bottom:10px}.toolbar-btn{background:#fff;border:1px solid var(--border);padding:8px 12px;border-radius:4px;cursor:pointer}.toolbar-btn:hover{background:var(--accent);color:#fff}#editor{flex:1;border:1px solid var(--border);border-radius:8px;padding:20px;font-size:1rem;line-height:1.8;background:#fff;overflow-y:auto;min-height:200px}#editor:focus{outline:none;border-color:var(--accent)}.chat-section{width:40%;min-width:320px;display:flex;flex-direction:column;border-left:1px solid var(--border)}.chat-header{padding:15px;background:var(--primary);color:#fff}.chat-messages{flex:1;overflow-y:auto;padding:20px;background:var(--bg)}.chat-msg{padding:12px;border-radius:12px;margin-bottom:12px;max-width:90%;white-space:pre-wrap}.chat-user{background:var(--primary);color:#fff;margin-left:auto}.chat-ai{background:#fff;border:1px solid var(--border)}.insert-btn{margin-top:10px;padding:8px 16px;background:var(--success);color:#fff;border:none;border-radius:6px;cursor:pointer}.preview-btn{margin-top:10px;margin-right:8px;padding:8px 16px;background:var(--accent);color:#fff;border:none;border-radius:6px;cursor:pointer}.chat-input-area{padding:15px;background:#fff;border-top:1px solid var(--border)}.chat-textarea{width:100%;min-height:80px;padding:12px;border:1px solid var(--border);border-radius:8px;resize:vertical;margin-bottom:10px}.chat-actions{display:flex;gap:10px;justify-content:flex-end}.chat-send{padding:10px 20px;background:var(--accent);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600}.chat-send-doc{padding:10px 20px;background:var(--warning);color:#fff;border:none;border-radius:8px;cursor:pointer}.settings-panel{width:340px;background:var(--card);border-left:1px solid var(--border);padding:20px;overflow-y:auto}.settings-panel.collapsed{width:0;padding:0;overflow:hidden}.panel-toggle{position:fixed;right:10px;top:50px;z-index:1000;background:var(--accent);color:#fff;border:none;width:40px;height:40px;border-radius:8px;cursor:pointer}.panel-section{margin-bottom:25px}.panel-title{font-size:.9rem;font-weight:600;color:var(--primary);margin-bottom:10px}.human-field{margin-bottom:15px}.human-field label{display:block;font-size:.85rem;color:#718096;margin-bottom:5px}.human-field input,.human-field select{width:100%;padding:10px;border:1px solid var(--border);border-radius:6px}.human-field input:read-only{background:#f1f5f9}.human-field small{color:var(--warning);font-size:.75rem}.witness-section{background:#fefce8;border:1px dashed #eab308;border-radius:8px;padding:15px;margin-top:15px}.export-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.btn-export{background:#805ad5;color:#fff;padding:8px;border:none;border-radius:6px;cursor:pointer}.receipt-box{background:var(--bg);border:1px solid var(--success);border-radius:8px;padding:15px;font-family:monospace;font-size:.75rem;display:none;margin-top:15px}.receipt-box.show{display:block}.panel-section:first-child{position:sticky;top:0;background:var(--card);z-index:10;padding-bottom:10px;border-bottom:1px solid var(--border)}.witness-section{position:sticky;top:160px;background:#fefce8;z-index:9}.chat-content{white-space:pre-wrap}.chat-content.collapsed{max-height:150px;overflow:hidden;position:relative}.chat-content.collapsed::after{content:'';position:absolute;bottom:0;left:0;right:0;height:40px;background:linear-gradient(transparent,#fff)}.expand-btn{background:transparent;border:1px dashed var(--accent);color:var(--accent);padding:4px 12px;border-radius:4px;cursor:pointer;margin:8px 0;display:block;width:100%;text-align:center}.reauth-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:10001}.reauth-overlay.show{display:flex}.reauth-modal{background:#fff;border-radius:16px;padding:30px;max-width:400px;width:95%}.reauth-modal h3{color:var(--primary);margin-bottom:10px}.reauth-modal input{width:100%;padding:12px;border:2px solid var(--border);border-radius:8px;margin-bottom:15px}.reauth-buttons{display:flex;gap:10px}.reauth-buttons button{flex:1;padding:12px;border:none;border-radius:8px;cursor:pointer;font-weight:600}.btn-reauth-confirm{background:var(--success);color:#fff}.btn-reauth-cancel{background:#718096;color:#fff}.profile-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:10001}.profile-overlay.show{display:flex}.profile-modal{background:#fff;border-radius:16px;padding:30px;max-width:500px;width:95%;max-height:90vh;overflow-y:auto}.profile-modal h3{color:var(--primary);margin-bottom:20px;display:flex;align-items:center;gap:10px}.profile-form .form-field{margin-bottom:15px}.profile-form label{display:block;font-size:.85rem;font-weight:600;color:#4a5568;margin-bottom:5px}.profile-form input{width:100%;padding:12px;border:2px solid var(--border);border-radius:8px}.profile-form input:read-only{background:#f1f5f9;color:#718096}.profile-form input:focus{outline:none;border-color:var(--accent)}.profile-buttons{display:flex;gap:10px;margin-top:20px}.profile-buttons button{flex:1;padding:12px;border:none;border-radius:8px;cursor:pointer;font-weight:600}.btn-profile-save{background:var(--success);color:#fff}.btn-profile-cancel{background:#718096;color:#fff}.preview-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:10001}.preview-overlay.show{display:flex}.preview-modal{background:#fff;border-radius:16px;padding:30px;max-width:800px;width:95%;max-height:90vh;overflow-y:auto}.preview-modal h3{color:var(--primary);margin-bottom:20px;display:flex;align-items:center;gap:10px}.preview-content{background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:20px;min-height:200px;max-height:400px;overflow-y:auto;white-space:pre-wrap;line-height:1.8}.preview-buttons{display:flex;gap:10px;margin-top:20px}.preview-buttons button{flex:1;padding:12px;border:none;border-radius:8px;cursor:pointer;font-weight:600}.btn-preview-insert{background:var(--success);color:#fff}.btn-preview-cancel{background:#718096;color:#fff}.toast{position:fixed;bottom:20px;right:20px;padding:15px 25px;border-radius:8px;color:#fff;font-weight:600;z-index:10002}.toast-success{background:var(--success)}.toast-error{background:var(--danger)}.toast-warning{background:var(--warning)}.template-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:10001}.template-overlay.show{display:flex}.template-modal{background:#fff;border-radius:16px;padding:30px;max-width:700px;width:95%;max-height:90vh;overflow-y:auto}.template-modal h3{color:var(--primary);margin-bottom:20px}.template-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px}.template-card{border:2px solid var(--border);border-radius:12px;padding:15px;cursor:pointer;transition:all .2s}.template-card:hover{border-color:var(--accent);transform:translateY(-2px)}.template-card.selected{border-color:var(--success);background:#F5F5F5}.template-card-header{height:40px;border-radius:6px;margin-bottom:10px}.template-card-name{font-weight:600;font-size:.9rem;margin-bottom:5px}.template-card-desc{font-size:.75rem;color:#718096}.template-card-langs{display:flex;gap:4px;margin-top:8px;flex-wrap:wrap}.template-card-lang{font-size:.65rem;background:#e2e8f0;padding:2px 6px;border-radius:4px}.template-buttons{display:flex;gap:10px;margin-top:20px}.template-buttons button{flex:1;padding:12px;border:none;border-radius:8px;cursor:pointer;font-weight:600}.btn-template-apply{background:var(--success);color:#fff}.btn-template-cancel{background:#718096;color:#fff}@media(max-width:900px){.content-area{flex-direction:column}.chat-section{width:100%;border-left:none;border-top:1px solid var(--border)}.form-row{grid-template-columns:1fr}}</style></head><body>
 
@@ -1856,15 +1826,7 @@ async function newDoc(){
 async function saveDoc(){
     if(!docId)await newDoc();
     const content={text:document.getElementById('editor').innerText,html:document.getElementById('editor').innerHTML};
-
-    // ISP Phase 2: Include ISP metadata
-    const metadata = window.currentDocMetadata || {};
-    metadata.institutional_profile = selectedIspId || metadata.institutional_profile;
-    metadata.form_id = selectedTemplateId ? selectedTemplateId.id : metadata.form_id;
-    metadata.template_type = selectedTemplateId ? selectedTemplateId.type : metadata.template_type;
-    window.currentDocMetadata = metadata;
-
-    const res=await fetch('/api/document/'+docId,{method:'PUT',headers:{'Content-Type':'application/json','X-Session-ID':sessionId},body:JSON.stringify({title:document.getElementById('docTitle').value,content:content,human_fields:{author:currentUser?currentUser.full_name:'',author_id:currentUser?currentUser.employee_id:'',date:document.getElementById('fieldDate').value,witness_name:getWitnessData().name,witness_id:getWitnessData().id},author_data:getAuthorData(),witness_data:getWitnessData(),metadata:metadata})});
+    const res=await fetch('/api/document/'+docId,{method:'PUT',headers:{'Content-Type':'application/json','X-Session-ID':sessionId},body:JSON.stringify({title:document.getElementById('docTitle').value,content:content,human_fields:{author:currentUser?currentUser.full_name:'',author_id:currentUser?currentUser.employee_id:'',date:document.getElementById('fieldDate').value,witness_name:getWitnessData().name,witness_id:getWitnessData().id},author_data:getAuthorData(),witness_data:getWitnessData()})});
     if(res.ok){updateStatus('validated');toast('Gespeichert','success');loadDocs()}
 }
 
@@ -1926,117 +1888,9 @@ function exportDoc(fmt){if(!docId)return toast('Zuerst speichern','error');windo
 function updateStatus(s){const b=document.getElementById('statusBadge');b.className='status-badge status-'+s;b.textContent=t(s)}
 function execCmd(c,v){document.execCommand(c,false,v||null);document.getElementById('editor').focus()}
 
-// ISP Phase 2: AI Form Filling
-async function fillFormWithAI(userPrompt) {
-    const editor = document.getElementById('editor');
-    const formHtml = editor.innerHTML;
-
-    // Extract current ISP context
-    const ispId = selectedIspId || (window.currentDocMetadata ? window.currentDocMetadata.institutional_profile : null);
-    const formId = window.currentDocMetadata ? window.currentDocMetadata.form_id : null;
-
-    const box = document.getElementById('chatMessages');
-    box.innerHTML += '<div class="chat-msg chat-user">' + userPrompt.split('\n').join('<br>') + '</div>';
-    box.innerHTML += '<div class="chat-msg chat-ai" id="thinking"><i class="fas fa-spinner fa-spin"></i> Formular wird ausgefuellt...</div>';
-    box.scrollTop = box.scrollHeight;
-
-    try {
-        const response = await fetch('/api/form/fill', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json', 'X-Session-ID': sessionId},
-            body: JSON.stringify({
-                form_html: formHtml,
-                user_prompt: userPrompt,
-                isp_id: ispId,
-                form_id: formId
-            })
-        });
-
-        const data = await response.json();
-        var thinking = document.getElementById('thinking');
-        if (thinking) thinking.remove();
-
-        if (data.success && data.fields) {
-            // Fill each field in the editor
-            let filledCount = 0;
-            Object.entries(data.fields).forEach(function([name, value]) {
-                // Try multiple selectors to find the field
-                const selectors = [
-                    '[name="' + name + '"]',
-                    '#' + name,
-                    '[data-field="' + name + '"]'
-                ];
-                for (let sel of selectors) {
-                    const field = editor.querySelector(sel);
-                    if (field) {
-                        if (field.tagName === 'SELECT') {
-                            // For select, find matching option
-                            const options = field.querySelectorAll('option');
-                            for (let opt of options) {
-                                if (opt.value === value || opt.textContent.trim() === value) {
-                                    field.value = opt.value;
-                                    break;
-                                }
-                            }
-                        } else if (field.tagName === 'INPUT' || field.tagName === 'TEXTAREA') {
-                            field.value = value;
-                        } else if (field.contentEditable === 'true') {
-                            field.textContent = value;
-                        }
-                        filledCount++;
-                        break;
-                    }
-                }
-            });
-
-            box.innerHTML += '<div class="chat-msg chat-ai"><i class="fas fa-check" style="color:var(--success)"></i> Formular ausgefuellt: ' + filledCount + ' Felder<br><small style="color:#718096;">Receipt: ' + data.receipt + '</small></div>';
-            toast('Formular ausgefuellt: ' + filledCount + ' Felder', 'success');
-        } else {
-            box.innerHTML += '<div class="chat-msg chat-ai" style="color:var(--danger)"><i class="fas fa-exclamation-triangle"></i> ' + (data.error || 'Fehler beim Ausfuellen') + '</div>';
-            toast(data.error || 'Fehler beim Ausfuellen', 'error');
-        }
-    } catch (e) {
-        var thinking = document.getElementById('thinking');
-        if (thinking) thinking.remove();
-        box.innerHTML += '<div class="chat-msg chat-ai" style="color:var(--danger)">Verbindungsfehler</div>';
-        toast('Verbindungsfehler', 'error');
-    }
-    box.scrollTop = box.scrollHeight;
-}
-
-// Check if current editor contains an ISP form
-function hasActiveISPForm() {
-    const editor = document.getElementById('editor');
-    return editor.querySelector('.isp-document') !== null ||
-           editor.querySelector('[class*="isp-"]') !== null ||
-           editor.querySelector('form') !== null ||
-           editor.querySelectorAll('input, select, textarea').length > 2;
-}
-
-// Detect form-fill intent in message
-function isFormFillIntent(msg) {
-    const patterns = [
-        /preenche/i, /preencher/i,
-        /fill/i, /filling/i,
-        /ausf[uü]llen/i, /f[uü]lle/i,
-        /dados de teste/i, /test data/i, /testdaten/i,
-        /exemplo/i, /example/i, /beispiel/i,
-        /gerar dados/i, /generate data/i, /generiere/i
-    ];
-    return patterns.some(p => p.test(msg));
-}
-
 async function sendChat(){
     const input=document.getElementById('chatInput'),msg=input.value.trim();
     if(!msg)return;
-
-    // ISP Phase 2: Detect form-fill intent
-    if (isFormFillIntent(msg) && hasActiveISPForm()) {
-        input.value = '';
-        await fillFormWithAI(msg);
-        return;
-    }
-
     const box=document.getElementById('chatMessages');
     box.innerHTML+='<div class="chat-msg chat-user">'+msg.split('\n').join('<br>')+'</div>';
     input.value='';

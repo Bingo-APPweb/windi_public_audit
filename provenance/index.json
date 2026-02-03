@@ -14,5 +14,21 @@
     "resilience_score": 90,
     "updated_at": "2026-02-02T16:20:20.340211+00:00",
     "prov_version": "1.0.0"
+  },
+  "WINDI-BABEL-03FEB26-772FC9DEC169": {
+    "record_path": "/opt/windi/provenance/records/WINDI-BABEL-03FEB26-772FC9DEC169.json",
+    "structural_hash": "58f7e5aaa41c5cb9396e53f28a5ddda79449c4fbf6d5fb7f9d49534ea27de07d",
+    "governance_level": "MEDIUM",
+    "resilience_score": 50,
+    "updated_at": "2026-02-03T15:19:31.667137+00:00",
+    "prov_version": "1.0.0"
+  },
+  "WINDI-BABEL-03FEB26-7634C30AFF59": {
+    "record_path": "/opt/windi/provenance/records/WINDI-BABEL-03FEB26-7634C30AFF59.json",
+    "structural_hash": "29045f1d2faf5d4c10a73fd74707e32e4bac53ff47bc86d79930eac5f2cd145f",
+    "governance_level": "HIGH",
+    "resilience_score": 90,
+    "updated_at": "2026-02-03T15:42:47.902797+00:00",
+    "prov_version": "1.0.0"
   }
 }
