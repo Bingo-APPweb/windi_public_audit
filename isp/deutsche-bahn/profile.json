@@ -3,6 +3,11 @@
   "isp_id": "WINDI-ISP-DB-001",
   "created": "2026-01-31T00:00:00Z",
   "created_by": "WINDI Dragon Council",
+  "logo": {
+    "file": "assets/logo_db.svg",
+    "width": "100px",
+    "format": "svg"
+  },
   "organization": {
     "organization_name": "Deutsche Bahn AG",
     "organization_type": "public_enterprise",
@@ -52,7 +57,7 @@
     "valid_from": null,
     "valid_until": null,
     "scope": {
-      "logo": false,
+      "logo": true,
       "letterhead": false,
       "institutional_tone": true,
       "values_reference": false,
