@@ -851,24 +851,97 @@ def export_document(doc_id, fmt):
     # Phase 4: Get ISP from document metadata if available
     institutional_profile = doc_metadata.get("institutional_profile")
     
-    # === ISP Integration ===
+    # === ISP Integration v2.0 ===
+    # Supports: templates, forms, components, tokens
     isp_css = ""
     isp_header = ""
+    isp_footer = ""
+    isp_full_html = None  # If set, use this instead of building HTML manually
+
     if institutional_profile:
-        print(f"[ISP DEBUG] Loading profile: {institutional_profile}")
+        print(f"[ISP v2.0] Loading profile: {institutional_profile}")
         try:
+            from isp_loader import (
+                load_profile, load_tokens, load_css, load_template,
+                load_component, load_form, get_logo_base64,
+                render_isp_template, build_full_document
+            )
+
             isp_data = load_profile(institutional_profile)
+            tokens = load_tokens(institutional_profile)
+
             if isp_data:
                 isp_css = load_css(institutional_profile)
-                logo_path = get_logo_path(institutional_profile)
-                if logo_path and logo_path.exists():
-                    import base64 as b64
-                    with open(logo_path, 'rb') as lf:
-                        logo_b64 = b64.b64encode(lf.read()).decode()
-                    primary_color = isp_data.get("colors", {}).get("primary", "#000")
-                    isp_header = f'''<div style="text-align:right;padding-bottom:10px;border-bottom:2px solid {primary_color};margin-bottom:15px;"><img src="data:image/svg+xml;base64,{logo_b64}" style="width:60px;"/></div>'''
+
+                # Get template type and form ID from document metadata
+                template_type = doc_metadata.get("template_type", "letter")
+                form_id = doc_metadata.get("form_id")  # e.g., "transportauftrag"
+
+                # Build context for template rendering
+                template_context = {
+                    "title": title,
+                    "content": content_html,
+                    "doc_id": doc_id,
+                    "doc_date": datetime.now(timezone.utc).strftime("%d.%m.%Y"),
+                    "doc_number": doc_metadata.get("doc_number", doc_id[:8]),
+
+                    # WINDI Governance
+                    "windi_receipt": receipt_id,
+                    "windi_hash": receipt_hash[:16] + "..." if len(receipt_hash) > 16 else receipt_hash,
+                    "windi_level": receipt_data.get("governance_level", "LOW"),
+                    "windi_timestamp": datetime.now(timezone.utc).isoformat(),
+                    "show_windi": True,
+                    "show_windi_full": True,
+
+                    # Author & Witness
+                    "author_name": author_info.get("name", ""),
+                    "author_id": author_info.get("employee_id", ""),
+                    "witness_name": witness_info.get("name", ""),
+
+                    # Resilience score
+                    "resilience_score": receipt_data.get("resilience_score", "--"),
+                    "resilience_rating": receipt_data.get("resilience_rating", ""),
+                    "structural_hash": receipt_data.get("structural_hash", "n/a"),
+
+                    # QR Code
+                    "qr_base64": qr_base64,
+                }
+
+                # Try to build full document using ISP template system
+                if form_id or template_type:
+                    isp_full_html = build_full_document(
+                        institutional_profile,
+                        content_html,
+                        template_type=template_type,
+                        form_id=form_id,
+                        context=template_context
+                    )
+                    if isp_full_html:
+                        print(f"[ISP v2.0] Using ISP template: {form_id or template_type}")
+
+                # Fallback: Load header/footer components separately
+                if not isp_full_html:
+                    header_component = load_component(institutional_profile, "header")
+                    footer_component = load_component(institutional_profile, "footer")
+
+                    if header_component:
+                        isp_header = render_isp_template(institutional_profile, header_component, template_context)
+                    else:
+                        # Legacy fallback: simple logo header
+                        logo_b64 = get_logo_base64(institutional_profile)
+                        if logo_b64:
+                            primary_color = tokens.get("colors", {}).get("primary", {}).get("red", "#000")
+                            if not primary_color:
+                                primary_color = isp_data.get("colors", {}).get("primary", "#000")
+                            isp_header = f'''<div style="text-align:right;padding-bottom:10px;border-bottom:2px solid {primary_color};margin-bottom:15px;"><img src="data:image/svg+xml;base64,{logo_b64}" style="width:60px;"/></div>'''
+
+                    if footer_component:
+                        isp_footer = render_isp_template(institutional_profile, footer_component, template_context)
+
         except Exception as e:
-            print(f"[WINDI] ISP load error: {e}")
+            import traceback
+            print(f"[ISP v2.0] Load error: {e}")
+            traceback.print_exc()
     save_governance_audit(get_db, doc_id, governance_stats, structure_check, receipt_id, institutional_profile)
     # ========== END PHASE 3 ==========
     # v4.7-gov: Human Authorship Notice
@@ -878,9 +951,79 @@ def export_document(doc_id, fmt):
         Document governed by WINDI • Human authored • AI-assisted under supervision
     </div>
     """
-    
-    html_content = f'''<!DOCTYPE html><html><head><meta charset="UTF-8"><title>{title}</title><style>body{{font-family:Helvetica,Arial,sans-serif;font-size:10pt;line-height:1.3;margin:15mm 15mm}}table{{page-break-inside:avoid;width:100%}}tr{{page-break-inside:avoid}}h1{{font-size:14pt;color:#1a365d;border-bottom:2px solid #3182ce;padding-bottom:6pt;margin-bottom:10pt}}.footer{{margin-top:20pt;border-top:2pt solid #999999;padding-top:10pt}}{isp_css}</style></head><body>{isp_header}{('<h1>' + title + '</h1>') if title not in ['Neues Dokument', 'New Document', 'Novo Documento'] else ''}<div>{content_html}</div>{human_authorship_notice if "HUMAN AUTHORSHIP" not in content_html and "menschlichen Autoren" not in content_html else ""}{governance_ledger_html}<div class="footer" style="margin-top:15pt;padding-top:8pt;border-top:0.5pt solid #ccc;"><table style="width:100%;font-size:6pt;color:#888;border:none;"><tr style="background:none;"><td style="border:none;padding:2pt;vertical-align:top;width:70%;"><div>WINDI-RECEIPT: {receipt_id} | Hash: {receipt_hash}</div><div style="margin-top:2pt;">Author: {author_info.get("name","-")} ({author_info.get("employee_id","-")}) | Witness: {witness_info.get("name","-")}</div><div style="margin-top:2pt;color:#aaa;">A4 Desk BABEL v4.8 | EU AI Act Compliant | windi.publishing.de</div><div style="margin-top:3pt;"><span style="background:#0d9488;color:#fff;padding:1pt 4pt;border-radius:2pt;font-size:5pt;font-weight:bold;">🛡 SOF v1.0</span> <span style="background:#1a365d;color:#fff;padding:1pt 4pt;border-radius:2pt;font-size:5pt;">Resilience: {receipt_data.get("resilience_score","--")}/100 {receipt_data.get("resilience_rating","")}</span> <span style="font-size:5pt;color:#aaa;">Hash: {receipt_data.get("structural_hash","n/a")}</span></div></td><td style="border:none;padding:2pt;text-align:right;vertical-align:top;width:30%;"><img src="data:image/png;base64,{qr_base64}" style="width:35px;opacity:0.7;"/></td></tr></table></div>
-</body></html>'''
+
+    # === ISP v2.0: Use full template if available ===
+    if isp_full_html:
+        # Use the fully rendered ISP template
+        html_content = isp_full_html
+        print(f"[ISP v2.0] Using ISP full template for {doc_id}")
+    else:
+        # Fallback: Build HTML with components (legacy compatible)
+        # Build footer: use ISP footer component if available, otherwise default
+        footer_html = isp_footer if isp_footer else f'''<div class="footer" style="margin-top:15pt;padding-top:8pt;border-top:0.5pt solid #ccc;">
+            <table style="width:100%;font-size:6pt;color:#888;border:none;">
+                <tr style="background:none;">
+                    <td style="border:none;padding:2pt;vertical-align:top;width:70%;">
+                        <div>WINDI-RECEIPT: {receipt_id} | Hash: {receipt_hash}</div>
+                        <div style="margin-top:2pt;">Author: {author_info.get("name","-")} ({author_info.get("employee_id","-")}) | Witness: {witness_info.get("name","-")}</div>
+                        <div style="margin-top:2pt;color:#aaa;">A4 Desk BABEL v4.8 | EU AI Act Compliant | windi.publishing.de</div>
+                        <div style="margin-top:3pt;">
+                            <span style="background:#0d9488;color:#fff;padding:1pt 4pt;border-radius:2pt;font-size:5pt;font-weight:bold;">SOF v1.0</span>
+                            <span style="background:#1a365d;color:#fff;padding:1pt 4pt;border-radius:2pt;font-size:5pt;">Resilience: {receipt_data.get("resilience_score","--")}/100 {receipt_data.get("resilience_rating","")}</span>
+                            <span style="font-size:5pt;color:#aaa;">Hash: {receipt_data.get("structural_hash","n/a")}</span>
+                        </div>
+                    </td>
+                    <td style="border:none;padding:2pt;text-align:right;vertical-align:top;width:30%;">
+                        <img src="data:image/png;base64,{qr_base64}" style="width:35px;opacity:0.7;"/>
+                    </td>
+                </tr>
+            </table>
+        </div>'''
+
+        # Build title (skip generic titles)
+        title_html = f'<h1>{title}</h1>' if title not in ['Neues Dokument', 'New Document', 'Novo Documento'] else ''
+
+        # Build authorship notice (skip if already present)
+        authorship_html = human_authorship_notice if "HUMAN AUTHORSHIP" not in content_html and "menschlichen Autoren" not in content_html else ""
+
+        html_content = f'''<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{title}</title>
+    <style>
+        body {{
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 10pt;
+            line-height: 1.3;
+            margin: 15mm 15mm;
+        }}
+        table {{ page-break-inside: avoid; width: 100%; }}
+        tr {{ page-break-inside: avoid; }}
+        h1 {{
+            font-size: 14pt;
+            color: #1a365d;
+            border-bottom: 2px solid #3182ce;
+            padding-bottom: 6pt;
+            margin-bottom: 10pt;
+        }}
+        .footer {{
+            margin-top: 20pt;
+            border-top: 2pt solid #999999;
+            padding-top: 10pt;
+        }}
+        {isp_css}
+    </style>
+</head>
+<body>
+    {isp_header}
+    {title_html}
+    <div class="document-content">{content_html}</div>
+    {authorship_html}
+    {governance_ledger_html}
+    {footer_html}
+</body>
+</html>'''
     with tempfile.NamedTemporaryFile(mode='w', suffix='.html', delete=False, encoding='utf-8') as f:
         f.write(html_content)
         html_path = f.name

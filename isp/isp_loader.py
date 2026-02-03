@@ -1,10 +1,33 @@
 """
-WINDI ISP Loader v1.0
-Institutional Style Profile System
+WINDI ISP Loader v2.0
+Institutional Style Profile System with Templates Support
+
+Version: 2.0.0
+Date: 03-Feb-2026
+Author: WINDI Publishing House
+
+New in v2.0:
+- load_tokens() - Design system tokens
+- load_template() - HTML templates
+- load_component() - Reusable components
+- load_form() - Institutional forms
+- list_templates() - Available templates
+- list_forms() - Available forms
+- render_isp_template() - Jinja2 rendering
 """
 import os
 import json
+import base64
 from pathlib import Path
+from datetime import datetime
+
+# Jinja2 for template rendering
+try:
+    from jinja2 import Template, Environment, FileSystemLoader
+    JINJA2_AVAILABLE = True
+except ImportError:
+    JINJA2_AVAILABLE = False
+    print("⚠ Jinja2 not available - template rendering disabled")
 
 ISP_BASE_PATH = Path("/opt/windi/isp")
 
@@ -92,6 +115,313 @@ def generate_styled_html(profile_id, title, content, date_str=""):
     <div>{contact.get("company", "")} | {contact.get("website", "")}</div>
 </div>
 </body></html>'''
+
+# ============================================================
+# ISP TEMPLATES v2.0 - New Template System
+# ============================================================
+
+def load_tokens(profile_id):
+    """
+    Carrega design tokens de um ISP.
+
+    Args:
+        profile_id: ID do perfil institucional (ex: 'deutsche-bahn')
+
+    Returns:
+        dict: Design tokens (colors, typography, spacing, etc.)
+    """
+    tokens_path = ISP_BASE_PATH / profile_id / "tokens.json"
+    if not tokens_path.exists():
+        return {}
+    try:
+        with open(tokens_path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except Exception as e:
+        print(f"[ISP] Error loading tokens for {profile_id}: {e}")
+        return {}
+
+
+def load_template(profile_id, template_name):
+    """
+    Carrega um template HTML de um ISP.
+
+    Args:
+        profile_id: ID do perfil institucional
+        template_name: Nome do template (sem extensão, ex: 'letter', 'form')
+
+    Returns:
+        str: Conteúdo HTML do template ou None se não existir
+    """
+    template_path = ISP_BASE_PATH / profile_id / "templates" / f"{template_name}.html"
+    if not template_path.exists():
+        return None
+    try:
+        with open(template_path, 'r', encoding='utf-8') as f:
+            return f.read()
+    except Exception as e:
+        print(f"[ISP] Error loading template {template_name} for {profile_id}: {e}")
+        return None
+
+
+def load_component(profile_id, component_name):
+    """
+    Carrega um componente HTML reutilizável de um ISP.
+
+    Args:
+        profile_id: ID do perfil institucional
+        component_name: Nome do componente (sem extensão, ex: 'header', 'footer')
+
+    Returns:
+        str: Conteúdo HTML do componente ou string vazia
+    """
+    comp_path = ISP_BASE_PATH / profile_id / "components" / f"{component_name}.html"
+    if not comp_path.exists():
+        return ""
+    try:
+        with open(comp_path, 'r', encoding='utf-8') as f:
+            return f.read()
+    except Exception as e:
+        print(f"[ISP] Error loading component {component_name} for {profile_id}: {e}")
+        return ""
+
+
+def load_form(profile_id, form_name):
+    """
+    Carrega um formulário institucional específico.
+
+    Args:
+        profile_id: ID do perfil institucional
+        form_name: Nome do formulário (sem extensão, ex: 'transportauftrag')
+
+    Returns:
+        str: Conteúdo HTML do formulário ou None se não existir
+    """
+    form_path = ISP_BASE_PATH / profile_id / "forms" / f"{form_name}.html"
+    if not form_path.exists():
+        return None
+    try:
+        with open(form_path, 'r', encoding='utf-8') as f:
+            return f.read()
+    except Exception as e:
+        print(f"[ISP] Error loading form {form_name} for {profile_id}: {e}")
+        return None
+
+
+def list_templates(profile_id):
+    """
+    Lista todos os templates disponíveis para um ISP.
+
+    Args:
+        profile_id: ID do perfil institucional
+
+    Returns:
+        list: Lista de nomes de templates disponíveis
+    """
+    templates_dir = ISP_BASE_PATH / profile_id / "templates"
+    if not templates_dir.exists():
+        return []
+    return [f.stem for f in templates_dir.glob("*.html")]
+
+
+def list_forms(profile_id):
+    """
+    Lista todos os formulários disponíveis para um ISP.
+
+    Args:
+        profile_id: ID do perfil institucional
+
+    Returns:
+        list: Lista de nomes de formulários disponíveis
+    """
+    forms_dir = ISP_BASE_PATH / profile_id / "forms"
+    if not forms_dir.exists():
+        return []
+    return [f.stem for f in forms_dir.glob("*.html")]
+
+
+def list_components(profile_id):
+    """
+    Lista todos os componentes disponíveis para um ISP.
+
+    Args:
+        profile_id: ID do perfil institucional
+
+    Returns:
+        list: Lista de nomes de componentes disponíveis
+    """
+    components_dir = ISP_BASE_PATH / profile_id / "components"
+    if not components_dir.exists():
+        return []
+    return [f.stem for f in components_dir.glob("*.html")]
+
+
+def get_logo_base64(profile_id):
+    """
+    Retorna o logo em base64 para embedding em HTML.
+
+    Args:
+        profile_id: ID do perfil institucional
+
+    Returns:
+        str: Logo em base64 ou string vazia
+    """
+    logo_path = get_logo_path(profile_id)
+    if logo_path and logo_path.exists():
+        try:
+            with open(logo_path, 'rb') as f:
+                return base64.b64encode(f.read()).decode()
+        except Exception as e:
+            print(f"[ISP] Error loading logo for {profile_id}: {e}")
+    return ""
+
+
+def render_isp_template(profile_id, template_html, context=None):
+    """
+    Renderiza um template ISP com Jinja2.
+
+    Args:
+        profile_id: ID do perfil institucional
+        template_html: Conteúdo HTML do template
+        context: Dicionário com variáveis para o template
+
+    Returns:
+        str: HTML renderizado ou template original se Jinja2 não disponível
+    """
+    if not JINJA2_AVAILABLE:
+        print("[ISP] Jinja2 not available, returning raw template")
+        return template_html
+
+    if context is None:
+        context = {}
+
+    # Load tokens and profile for default context
+    tokens = load_tokens(profile_id)
+    profile = load_profile(profile_id)
+
+    # Build default context
+    default_context = {
+        # Metadata
+        "profile_id": profile_id,
+        "doc_date": datetime.now().strftime("%d.%m.%Y"),
+        "doc_datetime": datetime.now().isoformat(),
+        "year": datetime.now().year,
+
+        # Organization from profile
+        "org_name": profile.get("organization", {}).get("organization_name", "") if profile else "",
+        "org_type": profile.get("organization", {}).get("organization_type", "") if profile else "",
+        "jurisdiction": profile.get("organization", {}).get("jurisdiction", "") if profile else "",
+
+        # Logo
+        "logo_base64": get_logo_base64(profile_id),
+
+        # Colors from tokens
+        "color_primary": tokens.get("colors", {}).get("primary", {}).get("red", "#000000"),
+        "color_secondary": tokens.get("colors", {}).get("neutral", {}).get("gray_500", "#666666"),
+        "color_text": tokens.get("colors", {}).get("neutral", {}).get("black", "#1E1E1E"),
+        "color_background": tokens.get("colors", {}).get("background", {}).get("page", "#FFFFFF"),
+
+        # Typography from tokens
+        "font_family": tokens.get("typography", {}).get("font_family", {}).get("primary", "Arial, sans-serif"),
+        "font_size_base": tokens.get("typography", {}).get("font_size", {}).get("base", "9pt"),
+
+        # WINDI defaults
+        "windi_level": "LOW",
+        "windi_receipt": "",
+        "windi_timestamp": datetime.now().isoformat(),
+        "show_windi": True,
+    }
+
+    # Merge with provided context (provided context takes precedence)
+    final_context = {**default_context, **context}
+
+    try:
+        # Create Jinja2 template
+        template = Template(template_html)
+        return template.render(**final_context)
+    except Exception as e:
+        print(f"[ISP] Template render error: {e}")
+        return template_html
+
+
+def build_full_document(profile_id, content_html, template_type="letter", form_id=None, context=None):
+    """
+    Constrói documento completo usando template ISP.
+
+    Args:
+        profile_id: ID do perfil institucional
+        content_html: Conteúdo HTML do documento
+        template_type: Tipo de template ('letter', 'form', 'memo', 'report')
+        form_id: ID do formulário específico (se aplicável)
+        context: Variáveis adicionais para o template
+
+    Returns:
+        str: HTML completo renderizado ou None se template não existir
+    """
+    if context is None:
+        context = {}
+
+    # Add content to context
+    context["content"] = content_html
+
+    # Try to load form first, then template
+    template_html = None
+
+    if form_id:
+        template_html = load_form(profile_id, form_id)
+        if template_html:
+            print(f"[ISP] Using form: {form_id}")
+
+    if not template_html:
+        template_html = load_template(profile_id, template_type)
+        if template_html:
+            print(f"[ISP] Using template: {template_type}")
+
+    if not template_html:
+        print(f"[ISP] No template found, using fallback")
+        return None
+
+    # Load and inject components
+    header_html = load_component(profile_id, "header")
+    footer_html = load_component(profile_id, "footer")
+
+    if header_html:
+        context["isp_header"] = render_isp_template(profile_id, header_html, context)
+    if footer_html:
+        context["isp_footer"] = render_isp_template(profile_id, footer_html, context)
+
+    # Render final template
+    return render_isp_template(profile_id, template_html, context)
+
+
+def get_isp_summary(profile_id):
+    """
+    Retorna resumo completo de um ISP para API/debug.
+
+    Args:
+        profile_id: ID do perfil institucional
+
+    Returns:
+        dict: Resumo com profile, templates, forms, components disponíveis
+    """
+    profile = load_profile(profile_id)
+    tokens = load_tokens(profile_id)
+
+    return {
+        "profile_id": profile_id,
+        "exists": profile is not None,
+        "organization": profile.get("organization", {}) if profile else {},
+        "governance": profile.get("governance", {}) if profile else {},
+        "has_tokens": bool(tokens),
+        "templates": list_templates(profile_id),
+        "forms": list_forms(profile_id),
+        "components": list_components(profile_id),
+        "has_logo": bool(get_logo_base64(profile_id)),
+        "css_available": bool(load_css(profile_id)),
+    }
+
+
+print("✓ ISP Templates v2.0 loaded")
+
 # ============================================================
 # GOVERNANCE LEVELS - v1.1.0
 # Document Security Classification System
