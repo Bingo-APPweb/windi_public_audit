@@ -1254,11 +1254,7 @@ def deliberate():
             "divergence_pattern": frame.divergence_pattern,
             "consistency": frame.consistency,
             "human_action": frame.human_action,
-            "options": frame.options,
-            "domain": getattr(frame, 'domain', 'operational'),
-            "isp": getattr(frame, 'isp', None),
-            "sge_ruleset": getattr(frame, 'sge_ruleset', 'minimal'),
-            "domain_confidence": getattr(frame, 'domain_confidence', 0.0)
+            "options": frame.options
         })
     except Exception as e:
         return jsonify({
