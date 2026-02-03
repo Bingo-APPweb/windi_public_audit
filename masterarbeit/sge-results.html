@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Semantic Governance Engine (SGE) &mdash; First Empirical Results &mdash; WINDI Masterarbeit</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink:        #1a1a2e;
+      --paper:      #fafaf8;
+      --header-bg:  #2c3e50;
+      --accent:     #c9a84c;
+      --accent-dark:#a07e2e;
+      --teal:       #1a7a6d;
+      --teal-light: #e8f5f2;
+      --caption:    #666;
+      --border:     #d4d0c8;
+      --blue-dark:  #0f3460;
+      --blue-mid:   #1a5276;
+      --slate:      #34495e;
+      --slate-light:#ecf0f1;
+      --green:      #27ae60;
+      --orange:     #e67e22;
+      --red:        #c0392b;
+      --yellow:     #f39c12;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Libre Baskerville', Georgia, serif;
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--ink);
+      background: var(--paper);
+    }
+
+    /* === HEADER === */
+    .doc-header {
+      background: var(--header-bg);
+      color: #e0e0e0;
+      padding: 1.2rem 2rem;
+      font-family: 'Source Sans Pro', sans-serif;
+      font-size: 0.82rem;
+    }
+    .doc-header-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 2rem;
+    }
+    .doc-series {
+      font-weight: 700;
+      color: var(--accent);
+      font-size: 0.95rem;
+      letter-spacing: 0.04em;
+    }
+    .doc-org { margin-top: 0.3rem; opacity: 0.8; }
+    .doc-header-right {
+      text-align: right;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      line-height: 1.6;
+      opacity: 0.85;
+    }
+
+    /* === TITLE BLOCK === */
+    .title-block {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 3rem 2rem 2rem;
+      border-bottom: 2px solid var(--border);
+    }
+    .section-label {
+      font-family: 'Source Sans Pro', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--slate);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 0.6rem;
+    }
+    .title-block h1 {
+      font-family: 'Libre Baskerville', Georgia, serif;
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1.3;
+      color: var(--header-bg);
+      margin-bottom: 0.5rem;
+    }
+    .subtitle {
+      font-family: 'Libre Baskerville', Georgia, serif;
+      font-size: 1.12rem;
+      font-style: italic;
+      color: var(--caption);
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+    .title-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 2rem;
+      font-family: 'Source Sans Pro', sans-serif;
+      font-size: 0.88rem;
+    }
+    .meta-pair { display: flex; gap: 0.4rem; }
+    .meta-pair dt { font-weight: 600; color: var(--blue-mid); }
+    .meta-pair dd { color: var(--ink); }
+
+    /* === CONTENT === */
+    .content {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4rem;
+    }
+
+    .content h2 {
+      font-family: 'Source Sans Pro', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--header-bg);
+      margin: 2.5rem 0 1rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .content h3 {
+      font-family: 'Source Sans Pro', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--blue-mid);
+      margin: 1.8rem 0 0.8rem;
+    }
+    .content p {
+      margin-bottom: 1.2rem;
+      text-align: justify;
+      hyphens: auto;
+    }
+
+    /* === ABSTRACT === */
+    .abstract {
+      background: var(--slate-light);
+      border-left: 4px solid var(--header-bg);
+      padding: 1.5rem 1.8rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.97rem;
+      line-height: 1.75;
+    }
+    .abstract strong {
+      display: block;
+      font-family: 'Source Sans Pro', sans-serif;
+      font-size: 0.88rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--header-bg);
+      margin-bottom: 0.8rem;
+    }
+
+    /* === PRINCIPLE BOX === */
+    .principle-box {
+      background: linear-gradient(135deg, var(--header-bg), var(--slate));
+      color: #fff;
+      padding: 1.8rem 2rem;
+      border-radius: 4px;
+      margin: 2rem 0;
+      text-align: center;
+    }
+    .principle-text {
+      font-family: 'Libre Baskerville', Georgia, serif;
+      font-size: 1.1rem;
+      font-style: italic;
+      line-height: 1.6;
+    }
+    .principle-source {
+      font-family: 'Source Sans Pro', sans-serif;
+      font-size: 0.8rem;
+      margin-top: 0.8rem;
+      opacity: 0.7;
+    }
+
+    /* === LAYER ARCHITECTURE === */
+    .layer-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .layer-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--header-bg);
+      padding: 1.2rem 1.4rem;
+      border-radius: 0 0 4px 4px;
+    }
+    .layer-number {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--accent-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .layer-name {
+      font-family: 'Source Sans Pro', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--header-bg);
+      margin: 0.3rem 0;
+    }
+    .layer-desc {
+      font-size: 0.88rem;
+      color: var(--caption);
+      line-height: 1.5;
+    }
+
+    /* === RESULTS TABLE === */
+    .results-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-family: 'Source Sans Pro', sans-serif;
+      font-size: 0.85rem;
+    }
+    .results-table th {
+      background: var(--header-bg);
+      color: #fff;
+      padding: 0.6rem 0.8rem;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .results-table td {
+      padding: 0.5rem 0.8rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    .results-table tr:nth-child(even) td { background: #f8f8f5; }
+    .score-badge {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 3px;
+      font-weight: 700;
+      font-size: 0.82rem;
+      min-width: 3rem;
+      text-align: center;
+    }
+    .score-clean { background: #d5f5e3; color: #1e8449; }
+    .score-low { background: #d4efdf; color: #27ae60; }
+    .score-medium { background: #fdebd0; color: #ca6f1e; }
+    .score-high { background: #fadbd8; color: #c0392b; }
+    .score-critical { background: #f5b7b1; color: #922b21; }
+
+    /* === SUMMARY CARDS === */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .summary-card {
+      text-align: center;
+      padding: 1.2rem;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+    }
+    .summary-number {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 2.2rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+    .summary-label {
+      font-family: 'Source Sans Pro', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 0.4rem;
+    }
+
+    /* === TIMELINE === */
+    .timeline {
+      position: relative;
+      padding-left: 2rem;
+      margin: 1.5rem 0;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 0.5rem;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: var(--header-bg);
+    }
+    .timeline-item {
+      position: relative;
+      margin-bottom: 1.5rem;
+      padding-left: 1rem;
+    }
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -1.75rem;
+      top: 0.5rem;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid var(--header-bg);
+    }
+    .timeline-time {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--accent-dark);
+      font-weight: 600;
+    }
+    .timeline-title {
+      font-family: 'Source Sans Pro', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--header-bg);
+    }
+    .timeline-desc {
+      font-size: 0.88rem;
+      color: var(--caption);
+      line-height: 1.5;
+    }
+
+    /* === CODE BLOCK === */
+    .code-block {
+      background: #1a1a2e;
+      color: #e0e0e0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      line-height: 1.6;
+      padding: 1.2rem 1.5rem;
+      border-radius: 4px;
+      margin: 1.2rem 0;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .code-comment { color: #6c7a89; }
+    .code-keyword { color: #c9a84c; }
+    .code-string { color: #82c8a0; }
+    .code-number { color: #e6a07c; }
+
+    /* === INVARIANT MAPPING === */
+    .inv-mapping {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .inv-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      padding: 1rem 1.2rem;
+      border-radius: 4px;
+    }
+    .inv-id {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--teal);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .inv-label {
+      font-family: 'Source Sans Pro', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin: 0.3rem 0;
+    }
+    .inv-desc {
+      font-size: 0.85rem;
+      color: var(--caption);
+      line-height: 1.5;
+    }
+
+    /* === CROSS-REFS === */
+    .tr-crossref {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .tr-link {
+      display: block;
+      padding: 1rem 1.2rem;
+      background: linear-gradient(135deg, var(--header-bg), var(--slate));
+      color: #fff;
+      text-decoration: none;
+      border-radius: 4px;
+      font-family: 'Source Sans Pro', sans-serif;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .tr-link:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .tr-link .tr-id {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .tr-link .tr-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-top: 0.3rem;
+    }
+
+    /* === NAVIGATION === */
+    .nav-links {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 2px solid var(--border);
+      font-family: 'Source Sans Pro', sans-serif;
+      font-size: 0.95rem;
+    }
+    .nav-links a {
+      color: var(--header-bg);
+      text-decoration: none;
+      font-weight: 600;
+      padding: 0.5rem 0;
+      border-bottom: 2px solid transparent;
+      transition: border-color 0.2s;
+    }
+    .nav-links a:hover { border-bottom-color: var(--accent); }
+
+    /* === FOOTER === */
+    .doc-footer {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 1.5rem 2rem;
+      font-family: 'Source Sans Pro', sans-serif;
+      font-size: 0.8rem;
+      color: var(--caption);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .doc-footer .footer-left { font-style: italic; }
+    .doc-footer .footer-right {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      text-align: right;
+    }
+
+    @media print {
+      .doc-header { background: white; color: var(--ink); border-bottom: 2px solid var(--ink); }
+      .principle-box { background: #eee; color: var(--ink); }
+      body { font-size: 11pt; }
+    }
+    @media (max-width: 700px) {
+      .doc-header-inner { flex-direction: column; }
+      .title-block h1 { font-size: 1.5rem; }
+      .layer-grid, .inv-mapping { grid-template-columns: 1fr; }
+      .summary-grid { grid-template-columns: repeat(2, 1fr); }
+      .tr-crossref { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="doc-header">
+    <div class="doc-header-inner">
+      <div class="doc-header-left">
+        <div class="doc-series">WINDI Masterarbeit &middot; Section 11</div>
+        <div class="doc-org">WINDI Publishing House &middot; Kempten (Allg&auml;u), Bavaria, Germany</div>
+      </div>
+      <div class="doc-header-right">
+        Document ID: WINDI-SEC11-SGE-2026<br>
+        Version 1.0<br>
+        02 February 2026<br>
+        Classification: PUBLIC
+      </div>
+    </div>
+  </header>
+
+  <!-- TITLE BLOCK -->
+  <div class="title-block">
+    <div class="section-label">Section 11 &mdash; Semantic Governance Infrastructure</div>
+    <h1>Semantic Governance Engine (SGE)</h1>
+    <div class="subtitle">Pre-Publication Institutional Risk Detection &mdash; Architecture, Methodology, and First Empirical Results</div>
+    <div class="title-meta">
+      <div class="meta-pair"><dt>Author:</dt><dd>Jober M&ouml;gele Correa, Chief Governance Officer</dd></div>
+      <div class="meta-pair"><dt>Date:</dt><dd>02 February 2026</dd></div>
+      <div class="meta-pair"><dt>Status:</dt><dd>Research Prototype &mdash; v1.0.0</dd></div>
+    </div>
+    <div class="title-meta" style="margin-top: 0.5rem;">
+      <div class="meta-pair"><dt>Scope:</dt><dd>Automated semantic risk analysis for institutional document governance</dd></div>
+      <div class="meta-pair"><dt>Invariants:</dt><dd>I1 (Sovereignty), I2 (Non-Opacity), I3 (Transparency), I4 (Jurisdiction), I5 (No Fabrication)</dd></div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ABSTRACT -->
+    <div class="abstract">
+      <strong>Abstract</strong>
+      This section documents the Semantic Governance Engine (SGE), a research prototype developed within the WINDI framework to explore the feasibility of automated institutional risk detection in written communication. The SGE performs six-layer semantic analysis of documents, detecting institutional identity risks, authority-claiming language, journalistic format patterns, and governance alignment gaps. In its first empirical evaluation against the complete WINDI Masterarbeit corpus (28 documents), the engine identified 12 compliant documents (43%) and 16 documents requiring governance review (57%), validating both the detection methodology and the practical need for semantic governance infrastructure. The SGE is positioned as a transferable research contribution, demonstrating how governance principles can be operationalized as executable semantic checks prior to publication.
+    </div>
+
+    <!-- SECTION 1: ORIGIN -->
+    <h2>1. Origin: From Human Detection to Automated Governance</h2>
+
+    <p>The Semantic Governance Engine emerged from a concrete governance event, not from abstract design. On 02 February 2026, during the deployment of PUB-001 (a German academic article on document provenance), an external reviewer identified that the document contained a reference to the Wall Street Journal formatted in a manner that could imply institutional affiliation where none existed.</p>
+
+    <p>The manual detection and correction cycle that followed &mdash; spanning entity identification, risk assessment, editorial restructuring, transparency disclosure, and policy formalization (POL-001) &mdash; demonstrated both the necessity and the feasibility of automating this process. The question became: <em>can the governance instinct that a trained human applies to institutional communication be formalized into executable rules?</em></p>
+
+    <div class="principle-box">
+      <div class="principle-text">&ldquo;The system that governs documents must also govern its own communication about those documents.&rdquo;</div>
+      <div class="principle-source">WINDI Metagovernance Principle &mdash; 02 February 2026</div>
+    </div>
+
+    <p>The SGE is the answer to that question: a six-layer semantic analysis engine that replicates and extends the human governance review process, producing structured risk reports with invariant mapping, evidence chains, and actionable recommendations.</p>
+
+    <!-- SECTION 2: ARCHITECTURE -->
+    <h2>2. Architecture: Six Layers of Semantic Detection</h2>
+
+    <p>The SGE analyzes documents through six complementary detection layers, each targeting a specific category of institutional communication risk. The layers operate independently but produce findings that are cross-referenced against the WINDI Invariant Core for governance alignment scoring.</p>
+
+    <div class="layer-grid">
+      <div class="layer-card">
+        <div class="layer-number">Layer 1</div>
+        <div class="layer-name">Sensitive Entity Detection</div>
+        <div class="layer-desc">Identifies references to external organizations (media, government, certification, financial) using word-boundary-aware pattern matching across 60+ known entities. Distinguishes between references within disclosure contexts and ungovemed references.</div>
+      </div>
+      <div class="layer-card">
+        <div class="layer-number">Layer 2</div>
+        <div class="layer-name">Authority-Claiming Language</div>
+        <div class="layer-desc">Detects linguistic patterns suggesting endorsement, certification, partnership, or authorization claims. Includes negation awareness to distinguish &ldquo;not endorsed by&rdquo; from &ldquo;endorsed by&rdquo; &mdash; a critical refinement for policy documents.</div>
+      </div>
+      <div class="layer-card">
+        <div class="layer-number">Layer 3</div>
+        <div class="layer-name">Journalistic Format Detection</div>
+        <div class="layer-desc">Identifies structural indicators of journalistic editorial formatting: dateline patterns, anonymous source attributions, trade press section headers, and correspondent references. Triggers disclosure requirements per POL-001.</div>
+      </div>
+      <div class="layer-card">
+        <div class="layer-number">Layer 4</div>
+        <div class="layer-name">Disclosure Completeness</div>
+        <div class="layer-desc">Cross-references detected risks (Layers 1&ndash;3) against the presence of Editorial Transparency Notices, governance disclosures, and authorship declarations. Flags documents where risks exist without corresponding disclosures.</div>
+      </div>
+      <div class="layer-card">
+        <div class="layer-number">Layer 5</div>
+        <div class="layer-name">AI Autonomy Language</div>
+        <div class="layer-desc">Detects language implying autonomous AI decision-making (&ldquo;the system decided&rdquo;, &ldquo;automatically approved&rdquo;) that conflicts with the WINDI principle: &ldquo;AI processes. Human decides. WINDI guarantees.&rdquo;</div>
+      </div>
+      <div class="layer-card">
+        <div class="layer-number">Layer 6</div>
+        <div class="layer-name">Authorship Clarity</div>
+        <div class="layer-desc">Verifies the presence of clear WINDI authorship attribution in institutional documents, including author identification, WINDI-RECEIPT markers, and institutional affiliation statements.</div>
+      </div>
+    </div>
+
+    <h3>2.1 Design Decisions</h3>
+
+    <p>Several design decisions distinguish the SGE from conventional text analysis tools. First, <strong>word boundary detection</strong> prevents false positives: the German compound word &ldquo;Erscheinungsbild&rdquo; does not trigger a match for the media entity &ldquo;BILD&rdquo;, and &ldquo;Fachartikel&rdquo; does not match &ldquo;FT&rdquo;. Second, <strong>negation awareness</strong> in authority pattern detection ensures that policy language disclaiming authority (&ldquo;not affiliated with, endorsed by, or published by&rdquo;) is correctly classified as governance-compliant rather than risk-bearing. Third, <strong>disclosure context analysis</strong> reduces entity reference severity when the reference appears within a transparency notice or governance block.</p>
+
+    <h3>2.2 Scoring Methodology</h3>
+
+    <p>The SGE produces a Semantic Governance Score (0&ndash;100) based on cumulative risk penalties: LOW findings deduct 2 points, MEDIUM findings deduct 8, HIGH findings deduct 15, and CRITICAL findings deduct 25. The overall risk level is determined by the highest individual finding severity. A score of 100 indicates full semantic compliance with no governance findings.</p>
+
+    <!-- SECTION 3: FIRST EMPIRICAL RESULTS -->
+    <h2>3. First Empirical Results: Masterarbeit Corpus Scan</h2>
+
+    <p>On 02 February 2026, the SGE performed its first complete corpus evaluation against all 28 documents of the WINDI Masterarbeit documentation site. The scan was executed immediately upon deployment, providing baseline governance metrics for the entire publication corpus.</p>
+
+    <!-- Summary cards -->
+    <div class="summary-grid">
+      <div class="summary-card" style="border-top: 3px solid var(--header-bg);">
+        <div class="summary-number" style="color: var(--header-bg);">28</div>
+        <div class="summary-label">Pages Scanned</div>
+      </div>
+      <div class="summary-card" style="border-top: 3px solid var(--green);">
+        <div class="summary-number" style="color: var(--green);">12</div>
+        <div class="summary-label">Clean (100/100)</div>
+      </div>
+      <div class="summary-card" style="border-top: 3px solid var(--orange);">
+        <div class="summary-number" style="color: var(--orange);">16</div>
+        <div class="summary-label">Flagged</div>
+      </div>
+      <div class="summary-card" style="border-top: 3px solid var(--red);">
+        <div class="summary-number" style="color: var(--red);">3</div>
+        <div class="summary-label">Critical</div>
+      </div>
+    </div>
+
+    <h3>3.1 Complete Results</h3>
+
+    <table class="results-table">
+      <thead>
+        <tr>
+          <th>Document</th>
+          <th>Score</th>
+          <th>Risk</th>
+          <th>Findings</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>cover.html</td>
+          <td><span class="score-badge score-clean">100</span></td>
+          <td>NONE</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>data-handling.html</td>
+          <td><span class="score-badge score-clean">100</span></td>
+          <td>NONE</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>diagrams.html</td>
+          <td><span class="score-badge score-clean">100</span></td>
+          <td>NONE</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>document-integrity.html</td>
+          <td><span class="score-badge score-clean">100</span></td>
+          <td>NONE</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>dokumentenintegritaet.html</td>
+          <td><span class="score-badge score-clean">100</span></td>
+          <td>NONE</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>druck-wasserzeichen-schicht.html</td>
+          <td><span class="score-badge score-clean">100</span></td>
+          <td>NONE</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>editorial-policy.html</td>
+          <td><span class="score-badge score-clean">100</span></td>
+          <td>NONE</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>human-oversight.html</td>
+          <td><span class="score-badge score-clean">100</span></td>
+          <td>NONE</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>print-complete.html</td>
+          <td><span class="score-badge score-clean">100</span></td>
+          <td>NONE</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>print-watermark-layer.html</td>
+          <td><span class="score-badge score-clean">100</span></td>
+          <td>NONE</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>regulatory-summary-print-layer.html</td>
+          <td><span class="score-badge score-clean">100</span></td>
+          <td>NONE</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>tr-windi-2026-004.html</td>
+          <td><span class="score-badge score-clean">100</span></td>
+          <td>NONE</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>fachartikel-provenienz.html <em>(corrected)</em></td>
+          <td><span class="score-badge score-low">98</span></td>
+          <td>LOW</td>
+          <td>1</td>
+        </tr>
+        <tr>
+          <td>interface-guide.html</td>
+          <td><span class="score-badge score-medium">92</span></td>
+          <td>MEDIUM</td>
+          <td>1</td>
+        </tr>
+        <tr>
+          <td>press-release-windi-2026.html</td>
+          <td><span class="score-badge score-medium">84</span></td>
+          <td>MEDIUM</td>
+          <td>2</td>
+        </tr>
+        <tr>
+          <td>index.html</td>
+          <td><span class="score-badge score-high">70</span></td>
+          <td>HIGH</td>
+          <td>2</td>
+        </tr>
+        <tr>
+          <td>idpf-abstract.html</td>
+          <td><span class="score-badge score-high">70</span></td>
+          <td>HIGH</td>
+          <td>2</td>
+        </tr>
+        <tr>
+          <td>windi-working-paper-2026.html</td>
+          <td><span class="score-badge score-high">62</span></td>
+          <td>HIGH</td>
+          <td>3</td>
+        </tr>
+        <tr>
+          <td>about-windi.html</td>
+          <td><span class="score-badge score-high">55</span></td>
+          <td>HIGH</td>
+          <td>3</td>
+        </tr>
+        <tr>
+          <td>tr-007.html</td>
+          <td><span class="score-badge score-high">47</span></td>
+          <td>HIGH</td>
+          <td>4</td>
+        </tr>
+        <tr>
+          <td>windi-side-by-side-2026.html</td>
+          <td><span class="score-badge score-high">47</span></td>
+          <td>HIGH</td>
+          <td>4</td>
+        </tr>
+        <tr>
+          <td>publications.html</td>
+          <td><span class="score-badge score-critical">45</span></td>
+          <td>CRITICAL</td>
+          <td>3</td>
+        </tr>
+        <tr>
+          <td>wsj-style-governed-windi-2026.html</td>
+          <td><span class="score-badge score-high">45</span></td>
+          <td>HIGH</td>
+          <td>5</td>
+        </tr>
+        <tr>
+          <td>governance-levels.html</td>
+          <td><span class="score-badge score-high">40</span></td>
+          <td>HIGH</td>
+          <td>4</td>
+        </tr>
+        <tr>
+          <td>tr-windi-2026-003.html</td>
+          <td><span class="score-badge score-high">25</span></td>
+          <td>HIGH</td>
+          <td>5</td>
+        </tr>
+        <tr>
+          <td>identity-governance-layer.html</td>
+          <td><span class="score-badge score-critical">15</span></td>
+          <td>CRITICAL</td>
+          <td>5</td>
+        </tr>
+        <tr>
+          <td>isp-evolution.html</td>
+          <td><span class="score-badge score-critical">0</span></td>
+          <td>CRITICAL</td>
+          <td>6</td>
+        </tr>
+        <tr>
+          <td>tr-windi-2026-005.html</td>
+          <td><span class="score-badge score-critical">0</span></td>
+          <td>CRITICAL</td>
+          <td>6</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>3.2 Analysis of Results</h3>
+
+    <p>The distribution of scores reveals a clear pattern: documents created with governance-aware tooling (A4 Desk BABEL with SOF v1.0) and technical documentation without external entity references consistently achieve perfect scores. Conversely, documents that reference external institutions &mdash; whether for comparison, regulatory context, or demonstration purposes &mdash; require explicit governance disclosure to achieve compliance.</p>
+
+    <p>The three CRITICAL-rated documents (isp-evolution.html, tr-windi-2026-005.html, identity-governance-layer.html) each contain multiple references to external institutions (Deutsche Bahn, Bundesregierung, BaFin, Banco do Brasil) used as demonstration examples for the ISP framework. These references are legitimate in context &mdash; they demonstrate institutional governance capabilities &mdash; but the SGE correctly identifies the absence of explicit disclosure noting that WINDI is not affiliated with these institutions.</p>
+
+    <p>Notably, the fachartikel-provenienz.html document, which triggered the entire governance event chain, scores 98/100 after correction &mdash; with only a residual LOW-level finding for a properly governed reference. This validates the complete cycle: detection &rarr; correction &rarr; re-evaluation.</p>
+
+    <!-- SECTION 4: CASE STUDY -->
+    <h2>4. Case Study: Self-Governance in Research Communication</h2>
+
+    <p>The development of the SGE constitutes a case study in reflexive governance: a system designed to govern institutional documents was applied to govern its own documentation. The following timeline documents the complete cycle.</p>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-time">02 Feb 2026 &mdash; 17:00 CET</div>
+        <div class="timeline-title">PUB-001 Deployed</div>
+        <div class="timeline-desc">German academic article on document provenance published to Masterarbeit site, containing media coverage section with Wall Street Journal reference.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-time">02 Feb 2026 &mdash; 17:15 CET</div>
+        <div class="timeline-title">Risk Detected (Human)</div>
+        <div class="timeline-desc">External reviewer identifies institutional identity risk: WSJ reference formatted as implied affiliation. WINDI Invariants I1 and I2 flagged.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-time">02 Feb 2026 &mdash; 17:30 CET</div>
+        <div class="timeline-title">Correction Applied</div>
+        <div class="timeline-desc">WSJ branding removed. &ldquo;International Trade Press &mdash; Editorial-Style Communication&rdquo; header applied. Editorial Transparency Notice added.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-time">02 Feb 2026 &mdash; 18:00 CET</div>
+        <div class="timeline-title">POL-001 Published</div>
+        <div class="timeline-desc">Editorial &amp; Media Format Policy formalized as institutional governance document (v1.0, subsequently refined to v1.1).</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-time">02 Feb 2026 &mdash; 18:30 CET</div>
+        <div class="timeline-title">SGE Conceived</div>
+        <div class="timeline-desc">Recognition that the manual governance cycle could be automated. Six-layer architecture designed based on the human detection process.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-time">02 Feb 2026 &mdash; 18:43 CET</div>
+        <div class="timeline-title">SGE v1.0 Deployed</div>
+        <div class="timeline-desc">Engine deployed to /opt/windi/engine/. First corpus scan: 28 pages, 12 clean, 16 flagged. Module 28 of the WINDI Engine.</div>
+      </div>
+    </div>
+
+    <p>This timeline demonstrates a six-phase governance cycle completing in under two hours: <em>Detection &rarr; Assessment &rarr; Correction &rarr; Formalization &rarr; Automation &rarr; Evaluation.</em> Each phase produced verifiable artifacts with timestamps, hashes, and version identifiers. The cycle was self-documenting &mdash; including this very section, which records the process of recording the process.</p>
+
+    <!-- SECTION 5: ACADEMIC POSITIONING -->
+    <h2>5. Academic Positioning</h2>
+
+    <p>The Semantic Governance Engine was developed as a research prototype to explore the feasibility of automated institutional risk detection in written communication. While not deployed as a production system, it demonstrates how governance principles can be operationalized as executable semantic checks prior to publication. The model is designed to be transferable to high-responsibility communication environments such as media organizations, corporate communications, and public-sector information systems.</p>
+
+    <h3>5.1 Contribution</h3>
+
+    <p>The SGE contributes to the intersection of several research domains: computational governance (formalizing institutional rules as executable code), sociotechnical systems (bridging human governance judgment with automated detection), reflexive governance (systems that govern themselves), and responsible AI (ensuring that AI-assisted communication maintains institutional integrity).</p>
+
+    <h3>5.2 Limitations</h3>
+
+    <p>As a research prototype, the SGE has several acknowledged limitations. Entity detection is based on curated lists rather than dynamic knowledge bases. Pattern matching, while boundary-aware and negation-sensitive, does not perform deep semantic analysis or contextual inference. The scoring methodology uses fixed penalties rather than adaptive weighting. These limitations are intentional design choices for a v1.0 prototype and represent clear directions for future development.</p>
+
+    <h3>5.3 Transferability</h3>
+
+    <p>The SGE architecture is deliberately domain-agnostic. While the current entity lists and pattern rules are tuned for the WINDI context, the six-layer structure and scoring methodology can be adapted to any institutional communication environment that requires pre-publication governance. Potential adoption contexts include newspaper editorial review systems, government press release governance, corporate compliance verification for external communications, and academic publication integrity checking.</p>
+
+    <!-- SECTION 6: INVARIANT ALIGNMENT -->
+    <h2>6. Governance Alignment</h2>
+
+    <p>The SGE operationalizes five of the eight WINDI Invariants:</p>
+
+    <div class="inv-mapping">
+      <div class="inv-card">
+        <div class="inv-id">I1 &mdash; Sovereignty</div>
+        <div class="inv-label">Entity Detection Layer</div>
+        <div class="inv-desc">Identifies references to external organizations that could imply borrowed institutional authority.</div>
+      </div>
+      <div class="inv-card">
+        <div class="inv-id">I2 &mdash; Non-Opacity</div>
+        <div class="inv-label">Disclosure Completeness Layer</div>
+        <div class="inv-desc">Ensures that institutional communication is transparent about authorship, origin, and editorial format.</div>
+      </div>
+      <div class="inv-card">
+        <div class="inv-id">I3 &mdash; Transparency</div>
+        <div class="inv-label">Authorship Clarity Layer</div>
+        <div class="inv-desc">Verifies visible attribution of document authorship and institutional origin.</div>
+      </div>
+      <div class="inv-card">
+        <div class="inv-id">I4 &mdash; Jurisdiction</div>
+        <div class="inv-label">Authority-Claiming Layer</div>
+        <div class="inv-desc">Detects unsubstantiated claims of legal, regulatory, or certification authority.</div>
+      </div>
+      <div class="inv-card">
+        <div class="inv-id">I5 &mdash; No Fabrication</div>
+        <div class="inv-label">Cross-Layer Validation</div>
+        <div class="inv-desc">Ensures no fabricated affiliations, endorsements, or institutional identities appear in documents.</div>
+      </div>
+    </div>
+
+    <!-- SECTION 7: TECHNICAL REFERENCE -->
+    <h2>7. Technical Reference</h2>
+
+    <div class="code-block"><span class="code-comment"># WINDI Semantic Governance Engine (SGE) v1.0</span>
+<span class="code-comment"># Location: /opt/windi/engine/semantic_governance.py</span>
+<span class="code-comment"># Dependencies: Python 3.x standard library (no external packages)</span>
+
+<span class="code-comment"># Single file scan</span>
+<span class="code-keyword">$</span> python3 semantic_governance.py document.html
+
+<span class="code-comment"># Directory scan (all .html files)</span>
+<span class="code-keyword">$</span> python3 semantic_governance.py /opt/windi/masterarbeit/
+
+<span class="code-comment"># JSON output (for API integration)</span>
+<span class="code-keyword">$</span> python3 semantic_governance.py document.html <span class="code-string">--json</span>
+
+<span class="code-comment"># HTML badge (for document embedding)</span>
+<span class="code-keyword">$</span> python3 semantic_governance.py document.html <span class="code-string">--badge</span>
+
+<span class="code-comment"># Strict mode (flag all external entity references)</span>
+<span class="code-keyword">$</span> python3 semantic_governance.py document.html <span class="code-string">--strict</span></div>
+
+    <p>The engine is implemented in pure Python with no external dependencies, ensuring portability and reproducibility. The complete source code is available as part of the WINDI Engine repository at <code>/opt/windi/engine/semantic_governance.py</code>.</p>
+
+    <!-- CROSS-REFERENCES -->
+    <h2>Related Documentation</h2>
+
+    <div class="tr-crossref">
+      <a href="editorial-policy.html" class="tr-link">
+        <span class="tr-id">POL-001</span>
+        <span class="tr-title">Editorial &amp; Media Format Policy</span>
+      </a>
+      <a href="fachartikel-provenienz.html" class="tr-link">
+        <span class="tr-id">PUB-001</span>
+        <span class="tr-title">Gesicherte Herkunft statt blo&szlig;er Erkennung</span>
+      </a>
+      <a href="identity-governance-layer.html" class="tr-link">
+        <span class="tr-id">Section 10</span>
+        <span class="tr-title">Institutional Identity Governance Layer</span>
+      </a>
+      <a href="tr-007.html" class="tr-link">
+        <span class="tr-id">TR-007</span>
+        <span class="tr-title">Secure Origin Framework</span>
+      </a>
+      <a href="governance-levels.html" class="tr-link">
+        <span class="tr-id">Governance</span>
+        <span class="tr-title">Governance Levels &amp; Invariants</span>
+      </a>
+    </div>
+
+    <!-- NAVIGATION -->
+    <div class="nav-links">
+      <a href="editorial-policy.html">&larr; POL-001: Editorial Policy</a>
+      <a href="index.html">WINDI Documentation Index &rarr;</a>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="doc-footer">
+    <div class="footer-left">
+      WINDI Publishing House &middot; Kempten (Allg&auml;u), Bavaria, Germany<br>
+      Masterarbeit documentation: <em>master.windia4desk.tech</em>
+    </div>
+    <div class="footer-right">
+      WINDI-SEC11-SGE-2026<br>
+      Version 1.0<br>
+      02 February 2026<br>
+      Classification: PUBLIC
+    </div>
+  </footer>
+
+</body>
+</html>

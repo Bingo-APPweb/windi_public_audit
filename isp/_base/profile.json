@@ -1,0 +1,49 @@
+{
+  "id": "INSTITUICAO-ID",
+  "name": "Nome Completo da Instituição",
+  "short_name": "SIGLA",
+  "version": "1.0.0",
+  "created": "2026-02-01",
+  "colors": {
+    "primary": "#000000",
+    "secondary": "#333333",
+    "accent": "#666666",
+    "background": "#FFFFFF",
+    "header_bg": "#F0F0F0",
+    "border": "#CCCCCC"
+  },
+  "fonts": {
+    "heading": "Arial, Helvetica, sans-serif",
+    "body": "Arial, Helvetica, sans-serif",
+    "size_h1": "16pt",
+    "size_h2": "12pt",
+    "size_body": "10pt",
+    "size_footer": "8pt"
+  },
+  "logo": {
+    "file": "assets/logo.svg",
+    "width": "60px",
+    "position": "top-right"
+  },
+  "header": {
+    "show": true,
+    "border_bottom": true
+  },
+  "footer": {
+    "show": true,
+    "border_top": true,
+    "format_de": "Seite {page} von {total}",
+    "format_en": "Page {page} of {total}"
+  },
+  "document": {
+    "margin_top": "30mm",
+    "margin_bottom": "25mm",
+    "margin_left": "20mm",
+    "margin_right": "20mm"
+  },
+  "contact": {
+    "company": "Nome da Instituição",
+    "address": "Endereço completo",
+    "website": "www.exemplo.de"
+  }
+}

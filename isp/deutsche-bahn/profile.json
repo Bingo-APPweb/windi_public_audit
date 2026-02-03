@@ -1,0 +1,65 @@
+{
+  "isp_schema_version": "2.0.0",
+  "isp_id": "WINDI-ISP-DB-001",
+  "created": "2026-01-31T00:00:00Z",
+  "created_by": "WINDI Dragon Council",
+  "organization": {
+    "organization_name": "Deutsche Bahn AG",
+    "organization_type": "public_enterprise",
+    "jurisdiction": "DE",
+    "sector": "transport_infrastructure",
+    "description": "Operational document governance for Deutsche Bahn internal communications and procedures"
+  },
+  "governance": {
+    "default_level": "LOW",
+    "description": "Operational standard for day-to-day transport documentation",
+    "allowed_levels": [
+      "LOW",
+      "MEDIUM"
+    ],
+    "escalation_policy": "manual_upgrade",
+    "notes": "Standard operational documents default to LOW. Compliance and safety documents may be escalated to MEDIUM."
+  },
+  "compliance_requirements": {
+    "eu_ai_act": true,
+    "gdpr": true
+  },
+  "document_types": [
+    {
+      "type": "operational_procedure",
+      "governance_level": "LOW",
+      "metadata_block": "none",
+      "retention_period": "3_years"
+    },
+    {
+      "type": "internal_communication",
+      "governance_level": "LOW",
+      "metadata_block": "none",
+      "retention_period": "1_year"
+    },
+    {
+      "type": "safety_compliance",
+      "governance_level": "MEDIUM",
+      "metadata_block": "institutional",
+      "retention_period": "7_years"
+    }
+  ],
+  "identity_license": {
+    "status": "model_only",
+    "authorized_by": null,
+    "authorization_ref": null,
+    "authorization_hash": null,
+    "valid_from": null,
+    "valid_until": null,
+    "scope": {
+      "logo": false,
+      "letterhead": false,
+      "institutional_tone": true,
+      "values_reference": false,
+      "official_address": false
+    },
+    "restrictions": [
+      "Model/simulation use only"
+    ]
+  }
+}

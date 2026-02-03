@@ -1,0 +1,450 @@
+{
+  "template_definition": {
+    "tenant_id": "kempten",
+    "department_code": "bauamt",
+    "doctype_code": "bescheid_baugenehmigung",
+    "version": "1.0.0",
+    "title_de": "Bescheid über eine Baugenehmigung",
+    "title_en": "Building Permit Decision",
+    "legal_basis": "Art. 68 BayBO (Bayerische Bauordnung)",
+    "disclosure_de": "Dieses Dokument wurde mit KI-Unterstützung erstellt. Die finale Entscheidung (Tenor) sowie die Unterschrift wurden ausschließlich von einem Menschen vorgenommen. Gemäß Art. 50 EU AI Act.",
+    "disclosure_en": "This document was created with AI assistance. The final decision (tenor) and signature were made exclusively by a human. Per Art. 50 EU AI Act."
+  },
+  
+  "tiptap_json": {
+    "type": "doc",
+    "content": [
+      {
+        "type": "heading",
+        "attrs": {"level": 1},
+        "content": [{"type": "text", "text": "Stadt Kempten (Allgäu)"}]
+      },
+      {
+        "type": "heading",
+        "attrs": {"level": 2},
+        "content": [{"type": "text", "text": "Bauamt"}]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {"type": "text", "marks": [{"type": "bold"}], "text": "Aktenzeichen: "},
+          {"type": "text", "text": "{{aktenzeichen}}"}
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {"type": "text", "marks": [{"type": "bold"}], "text": "Datum: "},
+          {"type": "text", "text": "{{datum}}"}
+        ]
+      },
+      {
+        "type": "horizontalRule"
+      },
+      {
+        "type": "heading",
+        "attrs": {"level": 2},
+        "content": [{"type": "text", "text": "BESCHEID"}]
+      },
+      {
+        "type": "heading",
+        "attrs": {"level": 3},
+        "content": [{"type": "text", "text": "über eine Baugenehmigung"}]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {"type": "text", "marks": [{"type": "bold"}], "text": "Antragsteller: "},
+          {"type": "text", "text": "{{antragsteller_name}}"}
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {"type": "text", "marks": [{"type": "bold"}], "text": "Adresse: "},
+          {"type": "text", "text": "{{antragsteller_adresse}}"}
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {"type": "text", "marks": [{"type": "bold"}], "text": "Bauvorhaben: "},
+          {"type": "text", "text": "{{bauvorhaben}}"}
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {"type": "text", "marks": [{"type": "bold"}], "text": "Grundstück: "},
+          {"type": "text", "text": "{{grundstueck}}"}
+        ]
+      },
+      {
+        "type": "horizontalRule"
+      },
+      {
+        "type": "heading",
+        "attrs": {"level": 3},
+        "content": [{"type": "text", "text": "I. TENOR"}]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {"class": "nur-mensch"},
+        "content": [
+          {"type": "text", "marks": [{"type": "highlight", "attrs": {"color": "#c6f6d5"}}], 
+           "text": "{{tenor_decision}}"}
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {"class": "nur-mensch"},
+        "content": [
+          {"type": "text", "marks": [{"type": "highlight", "attrs": {"color": "#c6f6d5"}}], 
+           "text": "{{tenor_text}}"}
+        ]
+      },
+      {
+        "type": "horizontalRule"
+      },
+      {
+        "type": "heading",
+        "attrs": {"level": 3},
+        "content": [{"type": "text", "text": "II. SACHVERHALT"}]
+      },
+      {
+        "type": "paragraph",
+        "content": [{"type": "text", "text": "{{sachverhalt}}"}]
+      },
+      {
+        "type": "horizontalRule"
+      },
+      {
+        "type": "heading",
+        "attrs": {"level": 3},
+        "content": [{"type": "text", "text": "III. BEGRÜNDUNG"}]
+      },
+      {
+        "type": "paragraph",
+        "content": [{"type": "text", "text": "{{begruendung}}"}]
+      },
+      {
+        "type": "horizontalRule"
+      },
+      {
+        "type": "heading",
+        "attrs": {"level": 3},
+        "content": [{"type": "text", "text": "IV. AUFLAGEN"}]
+      },
+      {
+        "type": "paragraph",
+        "content": [{"type": "text", "text": "{{auflagen}}"}]
+      },
+      {
+        "type": "horizontalRule"
+      },
+      {
+        "type": "heading",
+        "attrs": {"level": 3},
+        "content": [{"type": "text", "text": "V. RECHTSBEHELFSBELEHRUNG"}]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {"type": "text", "text": "Gegen diesen Bescheid kann innerhalb eines Monats nach Bekanntgabe Widerspruch erhoben werden. Der Widerspruch ist bei der Stadt Kempten (Allgäu), Rathausplatz 22, 87435 Kempten, schriftlich oder zur Niederschrift einzulegen."}
+        ]
+      },
+      {
+        "type": "horizontalRule"
+      },
+      {
+        "type": "heading",
+        "attrs": {"level": 3},
+        "content": [{"type": "text", "text": "VI. UNTERSCHRIFT"}]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {"type": "text", "text": "Kempten (Allgäu), den {{datum}}"}
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {"class": "nur-mensch"},
+        "content": [
+          {"type": "text", "marks": [{"type": "highlight", "attrs": {"color": "#c6f6d5"}}], 
+           "text": "{{unterschrift}}"}
+        ]
+      },
+      {
+        "type": "paragraph",
+        "content": [
+          {"type": "text", "marks": [{"type": "italic"}], 
+           "text": "{{sachbearbeiter_name}}, {{sachbearbeiter_titel}}"}
+        ]
+      },
+      {
+        "type": "horizontalRule"
+      },
+      {
+        "type": "paragraph",
+        "attrs": {"class": "governance-footer"},
+        "content": [
+          {"type": "text", "marks": [{"type": "small"}], 
+           "text": "📋 KI-Transparenzhinweis (Art. 50 EU AI Act): Dieses Dokument wurde mit KI-Unterstützung erstellt. Die Entscheidung (Tenor) und Unterschrift wurden ausschließlich von Menschen vorgenommen. Mehr: windi.ai/governance"}
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {"class": "receipt"},
+        "content": [
+          {"type": "text", "marks": [{"type": "code"}], 
+           "text": "WINDI-RECEIPT: {{windi_receipt}}"}
+        ]
+      }
+    ]
+  },
+  
+  "fields": [
+    {
+      "code": "aktenzeichen",
+      "type": "string",
+      "source": "system",
+      "required": true,
+      "label_de": "Aktenzeichen",
+      "label_en": "Reference Number",
+      "help_de": "Wird automatisch vom System generiert",
+      "validation": "^[A-Z0-9\\-/]+$",
+      "order": 1,
+      "group": "header"
+    },
+    {
+      "code": "datum",
+      "type": "date",
+      "source": "system",
+      "required": true,
+      "label_de": "Datum",
+      "label_en": "Date",
+      "order": 2,
+      "group": "header"
+    },
+    {
+      "code": "antragsteller_name",
+      "type": "string",
+      "source": "user",
+      "required": true,
+      "label_de": "Name des Antragstellers",
+      "label_en": "Applicant Name",
+      "order": 3,
+      "group": "antragsteller"
+    },
+    {
+      "code": "antragsteller_adresse",
+      "type": "string",
+      "source": "user",
+      "required": true,
+      "label_de": "Adresse des Antragstellers",
+      "label_en": "Applicant Address",
+      "order": 4,
+      "group": "antragsteller"
+    },
+    {
+      "code": "bauvorhaben",
+      "type": "string",
+      "source": "user",
+      "required": true,
+      "label_de": "Beschreibung des Bauvorhabens",
+      "label_en": "Building Project Description",
+      "order": 5,
+      "group": "vorhaben"
+    },
+    {
+      "code": "grundstueck",
+      "type": "string",
+      "source": "user",
+      "required": true,
+      "label_de": "Grundstücksbezeichnung",
+      "label_en": "Property Designation",
+      "help_de": "Flurstück, Gemarkung, Adresse",
+      "order": 6,
+      "group": "vorhaben"
+    },
+    {
+      "code": "tenor_decision",
+      "type": "string",
+      "source": "human_only",
+      "required": true,
+      "label_de": "Entscheidung (genehmigt/abgelehnt)",
+      "label_en": "Decision (approved/rejected)",
+      "order": 10,
+      "group": "tenor"
+    },
+    {
+      "code": "tenor_text",
+      "type": "richtext",
+      "source": "human_only",
+      "required": true,
+      "label_de": "Tenor-Text",
+      "label_en": "Tenor Text",
+      "help_de": "Vollständiger Text der Entscheidung",
+      "order": 11,
+      "group": "tenor"
+    },
+    {
+      "code": "sachverhalt",
+      "type": "richtext",
+      "source": "ai",
+      "required": true,
+      "label_de": "Sachverhalt",
+      "label_en": "Facts of the Case",
+      "help_de": "Wird von KI basierend auf Antragsdaten erstellt",
+      "order": 20,
+      "group": "inhalt"
+    },
+    {
+      "code": "begruendung",
+      "type": "richtext",
+      "source": "ai",
+      "required": true,
+      "label_de": "Begründung",
+      "label_en": "Justification",
+      "help_de": "Wird von KI basierend auf rechtlichen Grundlagen erstellt",
+      "order": 21,
+      "group": "inhalt"
+    },
+    {
+      "code": "auflagen",
+      "type": "list",
+      "source": "ai",
+      "required": false,
+      "label_de": "Auflagen",
+      "label_en": "Conditions",
+      "help_de": "Optionale Auflagen für die Genehmigung",
+      "order": 22,
+      "group": "inhalt"
+    },
+    {
+      "code": "unterschrift",
+      "type": "string",
+      "source": "human_only",
+      "required": true,
+      "label_de": "Unterschrift",
+      "label_en": "Signature",
+      "order": 30,
+      "group": "abschluss"
+    },
+    {
+      "code": "sachbearbeiter_name",
+      "type": "string",
+      "source": "user",
+      "required": true,
+      "label_de": "Name des Sachbearbeiters",
+      "label_en": "Officer Name",
+      "order": 31,
+      "group": "abschluss"
+    },
+    {
+      "code": "sachbearbeiter_titel",
+      "type": "string",
+      "source": "user",
+      "required": false,
+      "label_de": "Titel/Position",
+      "label_en": "Title/Position",
+      "default": "Sachbearbeiter Bauamt",
+      "order": 32,
+      "group": "abschluss"
+    },
+    {
+      "code": "windi_receipt",
+      "type": "string",
+      "source": "system",
+      "required": true,
+      "label_de": "WINDI Receipt",
+      "label_en": "WINDI Receipt",
+      "order": 99,
+      "group": "system"
+    }
+  ],
+  
+  "human_only": [
+    {
+      "field_code": "tenor_decision",
+      "reason_de": "Die Entscheidung über Genehmigung oder Ablehnung muss von einem Menschen getroffen werden",
+      "reason_en": "The decision to approve or reject must be made by a human",
+      "requires_signature": false,
+      "requires_justification": true
+    },
+    {
+      "field_code": "tenor_text",
+      "reason_de": "Der vollständige Tenor-Text muss von einem Menschen formuliert oder bestätigt werden",
+      "reason_en": "The complete tenor text must be formulated or confirmed by a human",
+      "requires_signature": false,
+      "requires_justification": false
+    },
+    {
+      "field_code": "unterschrift",
+      "reason_de": "Die rechtsgültige Unterschrift kann nur von einem autorisierten Menschen geleistet werden",
+      "reason_en": "The legally valid signature can only be provided by an authorized human",
+      "requires_signature": true,
+      "requires_justification": false
+    }
+  ],
+  
+  "governance_rules": [
+    {
+      "code": "ai_must_not_decide_tenor",
+      "type": "prohibition",
+      "description_de": "Die KI darf niemals eigenständig über die Genehmigung oder Ablehnung eines Bauantrags entscheiden",
+      "description_en": "AI must never independently decide on the approval or rejection of a building application",
+      "enforcement": "strict"
+    },
+    {
+      "code": "ai_must_flag_missing_human_only",
+      "type": "requirement",
+      "description_de": "Die KI muss alle fehlenden NUR-MENSCH-Felder deutlich markieren",
+      "description_en": "AI must clearly mark all missing HUMAN-ONLY fields",
+      "enforcement": "strict"
+    },
+    {
+      "code": "ai_must_cite_legal_basis",
+      "type": "requirement",
+      "description_de": "Die KI muss bei der Begründung die relevanten Rechtsgrundlagen zitieren",
+      "description_en": "AI must cite relevant legal bases in the justification",
+      "enforcement": "advisory"
+    },
+    {
+      "code": "ai_must_preserve_audit_trail",
+      "type": "requirement",
+      "description_de": "Alle KI-Aktionen müssen vollständig protokolliert werden",
+      "description_en": "All AI actions must be fully logged",
+      "enforcement": "strict"
+    },
+    {
+      "code": "ai_transparency_disclosure",
+      "type": "requirement",
+      "description_de": "Das Dokument muss den KI-Transparenzhinweis gemäß Art. 50 EU AI Act enthalten",
+      "description_en": "The document must contain the AI transparency disclosure per Art. 50 EU AI Act",
+      "enforcement": "strict"
+    }
+  ],
+  
+  "example_generation_request": {
+    "tenant": "kempten",
+    "department": "bauamt",
+    "doctype": "bescheid_baugenehmigung",
+    "language": "de",
+    "inputs": {
+      "antragsteller_name": "Max Mustermann",
+      "antragsteller_adresse": "Musterstraße 15, 87435 Kempten",
+      "bauvorhaben": "Neubau eines Einfamilienhauses mit Garage",
+      "grundstueck": "Flurstück 1234/5, Gemarkung Kempten",
+      "sachbearbeiter_name": "Dr. Anna Schmidt",
+      "sachbearbeiter_titel": "Leiterin Bauamt"
+    }
+  },
+  
+  "example_ai_generation": {
+    "sachverhalt": "Der Antragsteller, Herr Max Mustermann, wohnhaft Musterstraße 15, 87435 Kempten, hat am [DATUM] einen Bauantrag für den Neubau eines Einfamilienhauses mit Garage auf dem Grundstück Flurstück 1234/5, Gemarkung Kempten, eingereicht. Die eingereichten Unterlagen umfassen die vollständigen Bauzeichnungen, den Lageplan, die statischen Berechnungen sowie den Nachweis über die Einhaltung der Energieeinsparverordnung (EnEV).",
+    "begruendung": "Das Bauvorhaben liegt im Geltungsbereich des Bebauungsplans Nr. 123 'Wohngebiet Nord'. Die geplante Bebauung entspricht den Festsetzungen des Bebauungsplans hinsichtlich Art und Maß der baulichen Nutzung, der überbaubaren Grundstücksflächen sowie der Bauweise. Die Erschließung des Grundstücks ist gesichert. Die Abstandsflächen gemäß Art. 6 BayBO werden eingehalten.",
+    "auflagen": "1. Die Bauarbeiten dürfen nur zwischen 7:00 und 20:00 Uhr an Werktagen durchgeführt werden.\n2. Die Baugenehmigung ist vor Baubeginn auf der Baustelle auszuhängen.\n3. Der Baubeginn ist dem Bauamt mindestens eine Woche vorher schriftlich anzuzeigen."
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "document": "WINDI Publishing House — Manifesto",
+  "type": "MAN-001",
+  "version": "1.0",
+  "deployed_at": "2026-02-02T20:49:01Z",
+  "deployed_by": "WINDI Deploy Script",
+  "paths": {
+    "masterarbeit": "/opt/windi/masterarbeit/windi-publishing-house.html",
+    "web": "/var/www/html/windi-publishing-house.html"
+  },
+  "hash": "90fbda8c7658e1015ca7a8c7335a5ce4725889be128f1c12629d3cc3eed2f300",
+  "status": "ACTIVE",
+  "governance": {
+    "framework": "WINDI Pre-AI Governance Layer",
+    "principle": "AI processes. Human decides. WINDI guarantees.",
+    "eu_ai_act": true
+  }
+}

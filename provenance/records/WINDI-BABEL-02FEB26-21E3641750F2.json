@@ -1,0 +1,58 @@
+{
+  "_provenance_version": "1.0.0",
+  "_protocol": "WINDI-SOF-v1",
+  "provenance_id": "WINDI-PROV-2F9D8E0A5A69",
+  "created_at": "2026-02-02T16:13:48.263901+00:00",
+  "submission_id": "WINDI-BABEL-02FEB26-21E3641750F2",
+  "document_id": "WINDI-BABEL-02FEB26-21E3641750F2",
+  "governance_context": {
+    "level": "HIGH",
+    "isp_profile": "windi_default",
+    "policy_version": "2.2.0",
+    "config_hash": "",
+    "organization": "WINDI Publishing House"
+  },
+  "identity_governance": {},
+  "system_identity": {
+    "system": "WINDI Publishing House",
+    "engine": "WINDI Governance Engine",
+    "division": "Document Security Division",
+    "version": "1.0.0",
+    "jurisdiction": "DE — Federal Republic of Germany",
+    "infrastructure": "Strato DE (German jurisdiction)",
+    "server_id": "strato-kempten-01",
+    "protocol": "WINDI-SOF-v1"
+  },
+  "cryptographic_proof": {
+    "structural_hash": "11613a20547cd52424839ce547fe06dc5a6e1fb22af8692c38df1699441cad69",
+    "provenance_hash": "8eb74128f8a96ef739601d40ddbd61499a0a9fb3adfecda72fe93ab93e051d8b",
+    "content_structural_hash": null,
+    "content_hash": "d9c70017f926",
+    "algorithm": "SHA-256",
+    "hash_chain": "11613a20547cd524→8eb74128f8a96ef7"
+  },
+  "deepfake_resilience": {
+    "score": 90,
+    "rating": "MAXIMUM — Forensic-grade provenance",
+    "max_score": 100
+  },
+  "verification": {
+    "verify_url": "/api/verify/WINDI-BABEL-02FEB26-21E3641750F2",
+    "verify_hash": "8eb74128f8a96ef739601d40ddbd6149",
+    "protocol": "WINDI-SOF-v1"
+  },
+  "decision_payload": {
+    "submission_id": "WINDI-BABEL-02FEB26-21E3641750F2",
+    "governance_level": "HIGH",
+    "policy_version": "2.2.0",
+    "config_hash": "",
+    "isp_profile": "windi_default",
+    "organization": "WINDI Publishing House",
+    "metadata": {
+      "document_id": "BABEL-20260201005342",
+      "author": "Jober Mögele Correa",
+      "language": "de"
+    },
+    "identity_governance": {}
+  }
+}

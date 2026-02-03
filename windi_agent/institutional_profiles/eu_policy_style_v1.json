@@ -1,0 +1,64 @@
+{
+  "profile_id": "eu_policy_style_v1",
+  "profile_type": "official",
+  "institutional_domain": "governmental",
+  "source": {
+    "derived_from": null,
+    "confidence": "high"
+  },
+  "language_mode": {
+    "primary": "en",
+    "secondary": ["de", "fr"],
+    "bilingual_balance": "primary_dominant"
+  },
+  "tone_and_register": {
+    "formality_level": "very_high",
+    "voice": "policy",
+    "directness": "balanced"
+  },
+  "structural_bias": {
+    "document_archetype": "policy_brief",
+    "sectioning_style": "numbered",
+    "preferred_sections": [
+      "executive_summary",
+      "context",
+      "policy_analysis",
+      "options",
+      "recommendations",
+      "implementation"
+    ]
+  },
+  "terminology_preferences": {
+    "role_terms": {
+      "author": ["Policy Officer", "Referent"],
+      "department": ["Directorate-General", "Generaldirektion"]
+    },
+    "institution_terms": {
+      "organization": ["European Commission", "Europäische Kommission"],
+      "body": ["Council", "Parliament", "Rat", "Parlament"]
+    }
+  },
+  "formatting_guidance": {
+    "paragraph_style": "formal_block",
+    "list_style": "numbered",
+    "emphasis_usage": "minimal",
+    "citation_expectation": "footnotes"
+  },
+  "interaction_rules": {
+    "ask_clarification_before_structuring": true,
+    "avoid_informal_language": true,
+    "avoid_marketing_tone": true,
+    "use_neutral_policy_language": true
+  },
+  "governance_constraints": {
+    "cannot_override_human_authorship_notice": true,
+    "cannot_modify_governance_ledger": true,
+    "cannot_claim_authority": true
+  },
+  "metadata": {
+    "version": "1.0",
+    "created": "2026-01-30",
+    "author": "WINDI Publishing House",
+    "description": "EU Commission policy document style"
+  }
+}

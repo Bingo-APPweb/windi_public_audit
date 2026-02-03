@@ -1,0 +1,158 @@
+{
+  "isp_profile": {
+    "id": "bundesregierung",
+    "version": "1.0.0",
+    "created": "2026-02-02",
+    "name": "Bundesregierung",
+    "name_display": {
+      "de": "Bundesregierung der Bundesrepublik Deutschland",
+      "en": "Federal Government of Germany",
+      "pt": "Governo Federal da Alemanha"
+    },
+    "type": "government_institutional",
+    "governance_level": "MEDIUM",
+    "description": {
+      "de": "Governance-Profil für Dokumente mit institutionellem Bezug zur Bundesregierung. Fokus auf Legitimität, Transparenz und öffentliche Rechenschaftspflicht.",
+      "en": "Governance profile for documents with institutional reference to the Federal Government. Focus on legitimacy, transparency, and public accountability.",
+      "pt": "Perfil de governança para documentos com referência institucional ao Governo Federal. Foco em legitimidade, transparência e responsabilidade pública."
+    }
+  },
+
+  "detection_keywords": [
+    "Bundesregierung",
+    "Bundesministerium",
+    "Bundeskanzleramt",
+    "Bundesminister",
+    "Bundeskanzler",
+    "Bundesrepublik Deutschland",
+    "BMI", "BMWK", "BMBF", "BMF", "BMFSFJ", "BMG", "BMAS", "BMUV", "BMDV", "BMZ", "BMJ", "BMVg", "BMWSB",
+    "Kabinett",
+    "Gesetzentwurf",
+    "Regierungsentwurf",
+    "Bundesadler",
+    "Dienstsitz Berlin",
+    "Dienstsitz Bonn"
+  ],
+
+  "identity_license": {
+    "status": "model_only",
+    "scope": "no_official_identity",
+    "logo_allowed": false,
+    "seal_allowed": false,
+    "letterhead_allowed": false,
+    "disclaimer_required": true,
+    "disclaimer": {
+      "de": "Dieses Dokument wurde NICHT von der Bundesregierung erstellt oder autorisiert. Es enthält Bezüge zu einer realen Institution. Governance-Stufe: MEDIUM.",
+      "en": "This document was NOT created or authorized by the Federal Government of Germany. It contains references to a real institution. Governance level: MEDIUM.",
+      "pt": "Este documento NÃO foi criado ou autorizado pelo Governo Federal da Alemanha. Contém referências a uma instituição real. Nível de governança: MEDIUM."
+    }
+  },
+
+  "metadata_fields": {
+    "institution_name": {
+      "required": true,
+      "type": "string",
+      "description": "Name of the referenced federal institution or ministry"
+    },
+    "document_type": {
+      "required": true,
+      "type": "enum",
+      "values": ["policy", "communication", "report", "briefing", "analysis", "proposal", "correspondence"],
+      "description": "Classification of the document type"
+    },
+    "classification_level": {
+      "required": true,
+      "type": "enum",
+      "values": ["public", "internal", "restricted"],
+      "default": "internal",
+      "description": "Document classification level"
+    },
+    "intended_audience": {
+      "required": true,
+      "type": "enum",
+      "values": ["internal", "public", "inter-agency", "parliamentary", "cabinet"],
+      "description": "Primary target audience for the document"
+    },
+    "author_department": {
+      "required": true,
+      "type": "string",
+      "description": "Department or unit responsible for the document"
+    },
+    "version_number": {
+      "required": true,
+      "type": "string",
+      "default": "1.0",
+      "description": "Document version for change tracking"
+    },
+    "review_status": {
+      "required": true,
+      "type": "enum",
+      "values": ["draft", "under_review", "approved", "published", "archived"],
+      "default": "draft",
+      "description": "Current review and approval status"
+    }
+  },
+
+  "public_accountability": {
+    "transparency_level": {
+      "required": true,
+      "type": "enum",
+      "values": ["informational", "formal", "regulatory_context"],
+      "description": "Level of public transparency obligation"
+    },
+    "accountability_chain": {
+      "required": false,
+      "type": "string",
+      "description": "Chain of institutional responsibility for the document"
+    },
+    "parliamentary_relevance": {
+      "required": false,
+      "type": "boolean",
+      "default": false,
+      "description": "Whether the document has parliamentary reporting implications"
+    }
+  },
+
+  "governance_rules": {
+    "audit_trail": {
+      "enabled": true,
+      "granularity": "standard",
+      "description": "All document actions logged with timestamp and actor"
+    },
+    "version_control": {
+      "enabled": true,
+      "policy": "active",
+      "description": "All versions retained with change justification"
+    },
+    "watermark": {
+      "enabled": true,
+      "style": "discrete",
+      "text": "WINDI Governance | MEDIUM | Bundesregierung"
+    },
+    "ai_role": {
+      "permitted": ["documentation", "traceability", "process_governance", "drafting_assistance"],
+      "prohibited": ["autonomous_decision", "policy_creation_without_review", "identity_impersonation"],
+      "human_review_required": true,
+      "description": "AI assists documentation and governance. All policy decisions require human authorization."
+    },
+    "integrity_hash": {
+      "enabled": true,
+      "algorithm": "SHA-256",
+      "description": "Document integrity verification via cryptographic hash"
+    }
+  },
+
+  "risk_profile": {
+    "primary_risk": "reputational_and_political",
+    "secondary_risk": "legitimacy",
+    "data_sensitivity": "medium",
+    "public_impact": "high",
+    "mitigation_strategy": "Standardization, transparency, institutional identity protection, audit trail"
+  },
+
+  "windi_positioning": {
+    "de": "WINDI dient als Transparenz- und Dokumentationsschicht. WINDI trifft keine politischen Entscheidungen. WINDI schützt institutionelle Integrität.",
+    "en": "WINDI serves as transparency and documentation layer. WINDI makes no political decisions. WINDI protects institutional integrity.",
+    "pt": "WINDI serve como camada de transparência e documentação. WINDI não toma decisões políticas. WINDI protege a integridade institucional."
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "WINDI-BABEL-02FEB26-21E3641750F2": {
+    "record_path": "/opt/windi/provenance/records/WINDI-BABEL-02FEB26-21E3641750F2.json",
+    "structural_hash": "11613a20547cd52424839ce547fe06dc5a6e1fb22af8692c38df1699441cad69",
+    "governance_level": "HIGH",
+    "resilience_score": 90,
+    "updated_at": "2026-02-02T16:13:48.264345+00:00",
+    "prov_version": "1.0.0"
+  },
+  "WINDI-BABEL-02FEB26-BC1DE1865F90": {
+    "record_path": "/opt/windi/provenance/records/WINDI-BABEL-02FEB26-BC1DE1865F90.json",
+    "structural_hash": "fd02742b42b4e641d42b81dbbdfed4085d2f228d1a2b77734c99e5ee8ce73dc9",
+    "governance_level": "HIGH",
+    "resilience_score": 90,
+    "updated_at": "2026-02-02T16:20:20.340211+00:00",
+    "prov_version": "1.0.0"
+  }
+}

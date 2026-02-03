@@ -1,0 +1,14 @@
+[Unit]
+Description=WINDI Master Arbeit Documentation Server
+After=network.target
+
+[Service]
+Type=simple
+User=windi
+WorkingDirectory=/opt/windi/masterarbeit
+ExecStart=/usr/bin/python3 /opt/windi/masterarbeit/server.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

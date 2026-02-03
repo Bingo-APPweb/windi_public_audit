@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TR-WINDI-2026-003 — Service Layer Bootstrap</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --windi-dark: #1a2332;
+            --windi-blue: #2c5f8a;
+            --windi-accent: #3a7ca5;
+            --windi-light: #edf2f7;
+            --windi-green: #2d6a4f;
+            --windi-gold: #b8860b;
+            --windi-border: #d1d9e0;
+            --windi-text: #2d3748;
+            --windi-muted: #718096;
+            --serif: 'Source Serif 4', 'Georgia', serif;
+            --sans: 'Source Sans 3', 'Helvetica Neue', sans-serif;
+            --mono: 'JetBrains Mono', 'Consolas', monospace;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: var(--serif);
+            color: var(--windi-text);
+            background: #f7f9fb;
+            line-height: 1.7;
+            font-size: 17px;
+        }
+
+        /* ── Navigation bar ── */
+        .nav-bar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--windi-dark);
+            padding: 12px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+        }
+        .nav-bar a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            font-family: var(--sans);
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.03em;
+            transition: color 0.2s;
+        }
+        .nav-bar a:hover { color: #90caf9; }
+        .nav-brand {
+            font-weight: 700;
+            color: #90caf9 !important;
+            font-size: 15px;
+            letter-spacing: 0.08em;
+        }
+        .nav-links { display: flex; gap: 24px; }
+
+        /* ── Article container ── */
+        .article {
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ── Cover header ── */
+        .cover {
+            background: linear-gradient(135deg, var(--windi-dark) 0%, #243447 50%, var(--windi-blue) 100%);
+            padding: 80px 40px 60px;
+            margin-bottom: 48px;
+            position: relative;
+            overflow: hidden;
+        }
+        .cover::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(58,124,165,0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        .cover-inner {
+            max-width: 820px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        .tr-badge {
+            display: inline-block;
+            background: rgba(144,202,249,0.15);
+            border: 1px solid rgba(144,202,249,0.3);
+            color: #90caf9;
+            font-family: var(--mono);
+            font-size: 13px;
+            font-weight: 500;
+            padding: 6px 16px;
+            border-radius: 4px;
+            letter-spacing: 0.08em;
+            margin-bottom: 24px;
+        }
+        .cover h1 {
+            font-family: var(--serif);
+            font-size: 2.6em;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.2;
+            margin-bottom: 12px;
+        }
+        .cover .subtitle {
+            font-family: var(--sans);
+            font-size: 1.2em;
+            color: rgba(255,255,255,0.7);
+            font-weight: 300;
+            margin-bottom: 8px;
+        }
+        .cover .section-ref {
+            font-family: var(--sans);
+            font-size: 0.95em;
+            color: rgba(255,255,255,0.5);
+            font-style: italic;
+        }
+
+        /* ── Metadata strip ── */
+        .meta-strip {
+            max-width: 820px;
+            margin: -24px auto 48px;
+            padding: 24px 32px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+            position: relative;
+            z-index: 2;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px 32px;
+        }
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+        }
+        .meta-label {
+            font-family: var(--sans);
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--windi-muted);
+            margin-bottom: 4px;
+        }
+        .meta-value {
+            font-family: var(--sans);
+            font-size: 15px;
+            color: var(--windi-text);
+            font-weight: 500;
+        }
+        .meta-value.status {
+            color: var(--windi-green);
+            font-weight: 700;
+        }
+
+        /* ── Section headings ── */
+        h2 {
+            font-family: var(--serif);
+            font-size: 1.7em;
+            font-weight: 700;
+            color: var(--windi-dark);
+            margin: 56px 0 20px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--windi-light);
+        }
+        h2 .num {
+            color: var(--windi-blue);
+            font-weight: 600;
+        }
+        h3 {
+            font-family: var(--sans);
+            font-size: 1.15em;
+            font-weight: 600;
+            color: var(--windi-blue);
+            margin: 36px 0 12px;
+        }
+
+        /* ── Body text ── */
+        p {
+            margin-bottom: 16px;
+            text-align: justify;
+            hyphens: auto;
+        }
+
+        /* ── Tables ── */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0 28px;
+            font-size: 15px;
+        }
+        thead th {
+            background: var(--windi-dark);
+            color: #ffffff;
+            font-family: var(--sans);
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 10px 14px;
+            text-align: left;
+        }
+        tbody td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--windi-border);
+            font-family: var(--sans);
+            font-size: 14px;
+            vertical-align: top;
+        }
+        tbody tr:nth-child(even) {
+            background: rgba(237,242,247,0.4);
+        }
+        tbody tr.highlight {
+            background: rgba(45,106,79,0.08);
+        }
+        tbody tr.highlight td {
+            font-weight: 600;
+            color: var(--windi-green);
+        }
+        td code, th code {
+            font-family: var(--mono);
+            font-size: 13px;
+            background: rgba(0,0,0,0.04);
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+
+        /* ── Code blocks ── */
+        .code-block {
+            background: #1e2a3a;
+            color: #e2e8f0;
+            font-family: var(--mono);
+            font-size: 13px;
+            line-height: 1.6;
+            padding: 20px 24px;
+            border-radius: 6px;
+            margin: 16px 0 24px;
+            overflow-x: auto;
+            border-left: 3px solid var(--windi-accent);
+        }
+        .code-block .prompt { color: #90caf9; }
+        .code-block .comment { color: #718096; font-style: italic; }
+        .code-block .success { color: #68d391; }
+        .code-block .key { color: #fbd38d; }
+        .code-block .value { color: #9ae6b4; }
+        .code-block .arrow { color: #fc8181; }
+
+        /* ── Callout boxes ── */
+        .principle-box {
+            background: linear-gradient(135deg, rgba(44,95,138,0.06) 0%, rgba(58,124,165,0.04) 100%);
+            border-left: 4px solid var(--windi-blue);
+            padding: 20px 24px;
+            margin: 20px 0 28px;
+            border-radius: 0 6px 6px 0;
+        }
+        .principle-box .principle-title {
+            font-family: var(--sans);
+            font-weight: 700;
+            color: var(--windi-blue);
+            font-size: 15px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .principle-box p {
+            margin-bottom: 8px;
+            font-size: 16px;
+            text-align: left;
+        }
+        .principle-box p:last-child { margin-bottom: 0; }
+        .principle-box em {
+            font-style: italic;
+            color: var(--windi-dark);
+        }
+
+        /* ── Results badge ── */
+        .result-pass {
+            display: inline-block;
+            background: rgba(45,106,79,0.1);
+            color: var(--windi-green);
+            font-family: var(--mono);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 2px 10px;
+            border-radius: 3px;
+        }
+
+        /* ── Footer / Receipt ── */
+        .receipt-footer {
+            margin: 64px 0 0;
+            padding: 32px;
+            background: var(--windi-light);
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid var(--windi-border);
+        }
+        .receipt-footer .receipt-title {
+            font-family: var(--sans);
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--windi-dark);
+            margin-bottom: 12px;
+        }
+        .receipt-footer .receipt-hash {
+            font-family: var(--mono);
+            font-size: 12px;
+            color: var(--windi-blue);
+            background: #fff;
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 4px;
+            border: 1px solid var(--windi-border);
+            margin-bottom: 12px;
+            letter-spacing: 0.02em;
+        }
+        .receipt-footer .receipt-meta {
+            font-family: var(--sans);
+            font-size: 13px;
+            color: var(--windi-muted);
+            line-height: 1.8;
+        }
+        .receipt-footer .motto {
+            font-family: var(--serif);
+            font-style: italic;
+            font-size: 15px;
+            color: var(--windi-blue);
+            margin-top: 16px;
+        }
+
+        .authorship-notice {
+            margin-top: 24px;
+            padding: 16px 24px;
+            background: #fff;
+            border: 1px solid var(--windi-border);
+            border-radius: 6px;
+            text-align: center;
+        }
+        .authorship-notice h4 {
+            font-family: var(--sans);
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            color: var(--windi-dark);
+            margin-bottom: 8px;
+        }
+        .authorship-notice p {
+            font-family: var(--sans);
+            font-size: 13px;
+            color: var(--windi-muted);
+            text-align: center;
+            margin-bottom: 4px;
+        }
+
+        .page-footer {
+            max-width: 820px;
+            margin: 40px auto;
+            padding: 24px;
+            text-align: center;
+            font-family: var(--sans);
+            font-size: 13px;
+            color: var(--windi-muted);
+            border-top: 1px solid var(--windi-border);
+        }
+        .page-footer a { color: var(--windi-blue); text-decoration: none; }
+        .page-footer a:hover { text-decoration: underline; }
+
+        /* ── Print styles ── */
+        @media print {
+            .nav-bar { display: none; }
+            .cover { break-after: page; }
+            body { font-size: 11pt; background: white; }
+            .article { max-width: 100%; }
+            .meta-strip { box-shadow: none; border: 1px solid #ccc; }
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 768px) {
+            .cover { padding: 48px 24px 40px; }
+            .cover h1 { font-size: 1.8em; }
+            .meta-strip { grid-template-columns: 1fr; margin: -16px 16px 32px; }
+            .nav-links { gap: 12px; }
+            .nav-bar { padding: 12px 16px; }
+            .code-block { font-size: 12px; padding: 14px 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="nav-bar">
+    <a href="/" class="nav-brand">WINDI SYSTEM</a>
+    <div class="nav-links">
+        <a href="/">Masterarbeit</a>
+        <a href="governance-levels.html">Governance</a>
+        <a href="document-integrity.html">Integrity</a>
+    </div>
+</nav>
+
+<!-- Cover -->
+<header class="cover">
+    <div class="cover-inner">
+        <div class="tr-badge">TECHNICAL REPORT SERIES &middot; TR-WINDI-2026-003</div>
+        <h1>Service Layer Bootstrap</h1>
+        <div class="subtitle">From Offline Engine to Network-Observable Governance</div>
+        <div class="section-ref">Section 11 &mdash; Evolution Infrastructure Series</div>
+    </div>
+</header>
+
+<!-- Metadata -->
+<div class="meta-strip">
+    <div class="meta-item">
+        <span class="meta-label">Author</span>
+        <span class="meta-value">Jober M&ouml;gele Correa &mdash; Chief Governance Officer</span>
+    </div>
+    <div class="meta-item">
+        <span class="meta-label">AI Collaborators</span>
+        <span class="meta-value">Claude (Guardian) &middot; GPT (Architect)</span>
+    </div>
+    <div class="meta-item">
+        <span class="meta-label">Date</span>
+        <span class="meta-value">01 February 2026</span>
+    </div>
+    <div class="meta-item">
+        <span class="meta-label">Status</span>
+        <span class="meta-value status">&#10003; REGISTERED</span>
+    </div>
+    <div class="meta-item">
+        <span class="meta-label">Classification</span>
+        <span class="meta-value">Methodological + Architectural</span>
+    </div>
+    <div class="meta-item">
+        <span class="meta-label">Follows</span>
+        <span class="meta-value">TR-WINDI-2026-002 &middot; Section 10</span>
+    </div>
+</div>
+
+<!-- Content -->
+<article class="article">
+
+    <!-- 1. Abstract -->
+    <h2><span class="num">1.</span> Abstract</h2>
+
+    <p>This Technical Report documents the methodology employed to introduce the first HTTP service endpoint into the WINDI governance infrastructure on 01 February 2026. The operation was executed on a production Strato server hosting eight pre-existing services across seven active network ports, requiring precise coordination to avoid disruption.</p>
+
+    <p>Three engineering principles emerged from this work and are formally proposed as operational standards for WINDI infrastructure evolution: <strong>Infrastructure Discovery as Governance Practice</strong>, <strong>Layered Verification Methodology</strong>, and <strong>Zero-Violence Operational Deployment</strong>. These principles demonstrate that WINDI governance philosophy extends beyond document processing into the operational practices that sustain the system itself.</p>
+
+    <p>Key results include: complete port topology mapping of the production environment (8 services, ports 8080&ndash;8889), successful deployment of the Evolution API heartbeat on port 8083, independent verification of the HTTP transport layer prior to governance logic integration, and preservation of all pre-existing services with zero interruption.</p>
+
+    <!-- 2. Context -->
+    <h2><span class="num">2.</span> Context &mdash; System State Before the API</h2>
+
+    <p>Prior to this operation, the WINDI governance engine existed as a collection of offline Python modules deployed to <code>/opt/windi/engine/</code> on a Debian-based Strato virtual server (87.106.29.233). The Evolution v1.0 deployment had been completed earlier on the same day, comprising the following validated components:</p>
+
+    <table>
+        <thead>
+            <tr><th>Module</th><th>Function</th></tr>
+        </thead>
+        <tbody>
+            <tr><td><code>identity_detector.py</code></td><td>Detects real institutional names in document text</td></tr>
+            <tr><td><code>governance_levels.json</code></td><td>Policy rules for LOW / MEDIUM / HIGH classification</td></tr>
+            <tr><td><code>governance_event_log.py</code></td><td>Chained event log with hash-based integrity</td></tr>
+            <tr><td><code>medium_registry.py</code></td><td>Registry for MEDIUM-level institutional content</td></tr>
+            <tr><td><code>governance_health.py</code></td><td>Comprehensive health check (GovernanceHealthCheck class)</td></tr>
+            <tr><td><code>identity_directory.json</code></td><td>Directory of 6 known institutions with license metadata</td></tr>
+        </tbody>
+    </table>
+
+    <p>All modules had passed their respective test suites: the Identity Detector correctly classified Deutsche Bahn AG (MEDIUM), European Central Bank (HIGH), Banco do Brasil S.A. (MEDIUM), Bundesregierung (MEDIUM), and BaFin (HIGH). The Event Log demonstrated chain integrity. The Medium Registry produced valid governance statements with trilingual disclaimers. A frozen backup was created at <code>/opt/windi/backups/evolution_v1.0_20260201/</code>.</p>
+
+    <p>However, all of these capabilities were invocable only through direct Python execution. The engine had no network presence. It could not be queried, monitored, or integrated by other services. This represented the fundamental limitation that the Evolution API was designed to address.</p>
+
+    <!-- 3. Problem Statement -->
+    <h2><span class="num">3.</span> Problem Statement</h2>
+
+    <p>The objective was to introduce a minimal HTTP service that would allow the governance engine to be queried over the network, establishing the foundation for subsequent integration with the BABEL editor interface and external monitoring systems.</p>
+
+    <p>The challenge was operational, not algorithmic. The production server was already running multiple services that had been accumulating organically over several days. No centralized port registry existed. No service manifest documented which processes occupied which ports. Deploying a new listener without first understanding the existing topology risked port conflicts, service disruption, or silent failures.</p>
+
+    <p>This situation mirrors a pattern common in institutional technology environments: systems that work individually but whose interactions are undocumented, creating fragility that only becomes visible when change is attempted. The WINDI governance philosophy &mdash; which emphasizes transparency, observability, and non-opacity &mdash; demanded that the deployment process itself embody these principles.</p>
+
+    <!-- 4. Methodology -->
+    <h2><span class="num">4.</span> Methodology</h2>
+
+    <h3>4.1 Port Discovery and Topology Mapping</h3>
+
+    <p>Rather than selecting a port from the roadmap (which had designated 8081) and attempting deployment, the team adopted a discovery-first approach. Initial deployment attempts on ports 8081 and 8082 failed with <code>OSError [Errno 98]: Address already in use</code>, triggering systematic investigation.</p>
+
+    <p>The discovery process used standard Linux networking tools to enumerate all listening TCP sockets:</p>
+
+    <div class="code-block"><span class="prompt">$</span> ss -tulnp | grep python
+<span class="prompt">$</span> ss -tulnp | grep -E "LISTEN" | sort -t: -k2 -n
+<span class="prompt">$</span> ps aux | grep -E "(windi|uvicorn|governance)" | grep -v grep</div>
+
+    <p>This revealed the complete service topology for the first time:</p>
+
+    <table>
+        <thead>
+            <tr><th>Port</th><th>Service</th><th>PID</th><th>Running Since</th></tr>
+        </thead>
+        <tbody>
+            <tr><td><code>8080</code></td><td><code>windi_governance_api.py</code></td><td><code>194102</code></td><td>01 Feb (15:13)</td></tr>
+            <tr><td><code>8081</code></td><td><code>brain.trust_bus</code> (uvicorn)</td><td><code>111947</code></td><td>29 Jan</td></tr>
+            <tr><td><code>8082</code></td><td><code>windi_gateway.py</code></td><td><code>130784</code></td><td>30 Jan</td></tr>
+            <tr class="highlight"><td><code>8083</code></td><td><strong>FREE &rarr; Evolution API Minimal</strong></td><td>&mdash;</td><td>&mdash;</td></tr>
+            <tr><td><code>8084</code></td><td><code>masterarbeit/server.py</code></td><td><code>132023</code></td><td>30 Jan</td></tr>
+            <tr><td><code>8085</code></td><td><code>a4desk_tiptap_babel.py</code> (BABEL)</td><td><code>193826</code></td><td>01 Feb (15:03)</td></tr>
+            <tr><td><code>8086</code></td><td><code>app.py</code> (2 workers)</td><td><code>142790/92</code></td><td>31 Jan</td></tr>
+            <tr><td><code>8889</code></td><td><code>windi_cortex.py</code></td><td><code>111953</code></td><td>29 Jan</td></tr>
+        </tbody>
+    </table>
+
+    <p>The discovery revealed that port 8083 was the only available port in the WINDI service block (8080&ndash;8089). This port was selected for the Evolution API minimal heartbeat.</p>
+
+    <h3>4.2 Layer Isolation &mdash; Transport Before Logic</h3>
+
+    <p>A critical design decision was to verify the HTTP transport layer independently of any governance logic. The existing <code>governance_health.py</code> module contained a comprehensive <code>GovernanceHealthCheck</code> class that touches the filesystem, reads JSON configurations, and initializes multiple subsystem connections. Coupling this to the initial HTTP test would have made failure diagnosis ambiguous: a failure could indicate either a networking problem or a governance module error.</p>
+
+    <p>The team therefore created <code>governance_api_minimal.py</code> with zero imports from the governance engine. The file uses only Python standard library modules (<code>http.server</code>, <code>json</code>, <code>datetime</code>) and serves a single endpoint:</p>
+
+    <div class="code-block"><span class="prompt">GET</span> /api/governance/status
+
+<span class="comment">Response:</span>
+{
+    <span class="key">"status"</span>: <span class="value">"UP"</span>,
+    <span class="key">"service"</span>: <span class="value">"WINDI Governance API"</span>,
+    <span class="key">"version"</span>: <span class="value">"1.1-minimal"</span>,
+    <span class="key">"checked_at"</span>: <span class="value">"2026-02-01T19:49:16.921090+00:00"</span>
+}</div>
+
+    <p>This creates a diagnostic separation that persists into future phases:</p>
+
+    <table>
+        <thead>
+            <tr><th>Phase</th><th>Endpoint</th><th>What It Validates</th></tr>
+        </thead>
+        <tbody>
+            <tr><td><strong>1.0 (current)</strong></td><td><code>/api/governance/status</code></td><td>HTTP server, port binding, JSON serialization</td></tr>
+            <tr><td>1.1 (next)</td><td><code>/api/governance/health</code></td><td>Engine integrity, policy config, module presence</td></tr>
+            <tr><td>1.2 (future)</td><td><code>/api/governance/detect</code></td><td>Identity detection via API</td></tr>
+            <tr><td>1.3 (future)</td><td>BABEL proxy integration</td><td>End-to-end UI connectivity</td></tr>
+        </tbody>
+    </table>
+
+    <p>If <code>/status</code> returns UP but <code>/health</code> fails, the problem is definitively in the governance engine, not in the network layer. This principle of layered verification enables precise diagnosis at every stage of system evolution.</p>
+
+    <h3>4.3 Zero-Violence Deployment</h3>
+
+    <p>Throughout the operation, no existing process was terminated, paused, or modified. When port conflicts were discovered, the response was investigation followed by relocation, never forced termination:</p>
+
+    <div class="code-block"><span class="comment">Attempt 1:</span> Port 8081 <span class="arrow">&rarr;</span> OCCUPIED (trust_bus, since 29 Jan)
+  Action: Investigate process identity, document, move on
+
+<span class="comment">Attempt 2:</span> Port 8082 <span class="arrow">&rarr;</span> OCCUPIED (gateway, since 30 Jan)
+  Action: Full port scan, complete topology mapping
+
+<span class="comment">Attempt 3:</span> Port 8083 <span class="arrow">&rarr;</span> <span class="success">FREE &rarr; SUCCESS</span>
+  Action: Deploy, verify, document</div>
+
+    <p>The operational principle applied was: <em>never destroy what you do not fully understand</em>. Each failed attempt generated knowledge that improved the subsequent attempt and contributed to the permanent documentation of the system topology.</p>
+
+    <!-- 5. Implementation Evidence -->
+    <h2><span class="num">5.</span> Implementation Evidence</h2>
+
+    <p>The following terminal output constitutes the primary evidence of successful deployment. All timestamps are UTC.</p>
+
+    <h3>5.1 Process Verification</h3>
+    <div class="code-block"><span class="prompt">$</span> ps aux | grep governance_api_minimal.py | grep -v grep
+windi  200916  2.0  0.4  27844 18816 pts/0  S  20:49  0:00  python3 governance_api_minimal.py</div>
+
+    <h3>5.2 Port Binding Verification</h3>
+    <div class="code-block"><span class="prompt">$</span> ss -tulnp | grep 8083
+tcp  LISTEN  0  5  <span class="success">0.0.0.0:8083</span>  0.0.0.0:*  users:(("python3",pid=200916,fd=3))</div>
+
+    <h3>5.3 Heartbeat Response</h3>
+    <div class="code-block"><span class="prompt">$</span> curl -s http://localhost:8083/api/governance/status | python3 -m json.tool
+{
+    <span class="key">"status"</span>: <span class="value">"UP"</span>,
+    <span class="key">"service"</span>: <span class="value">"WINDI Governance API"</span>,
+    <span class="key">"version"</span>: <span class="value">"1.1-minimal"</span>,
+    <span class="key">"checked_at"</span>: <span class="value">"2026-02-01T19:49:16.921090+00:00"</span>
+}</div>
+
+    <h3>5.4 Error Handling Verification (404)</h3>
+    <div class="code-block"><span class="prompt">$</span> curl -s http://localhost:8083/qualquer-coisa | python3 -m json.tool
+{
+    <span class="key">"error"</span>: <span class="value">"Not found"</span>,
+    <span class="key">"available"</span>: [<span class="value">"/api/governance/status"</span>]
+}</div>
+
+    <h3>5.5 Service Coexistence Verification</h3>
+    <p>After deployment, all eight pre-existing services remained operational:</p>
+    <div class="code-block"><span class="prompt">$</span> ss -tulnp | grep -E "(8080|8081|8082|8083|8084|8085|8086|8889)"
+tcp  LISTEN  0.0.0.0:<span class="value">8080</span>  windi_governance_api.py
+tcp  LISTEN  127.0.0.1:<span class="value">8081</span>  brain.trust_bus (uvicorn)
+tcp  LISTEN  127.0.0.1:<span class="value">8082</span>  windi_gateway.py
+tcp  LISTEN  0.0.0.0:<span class="success">8083</span>  governance_api_minimal.py  <span class="success">[NEW]</span>
+tcp  LISTEN  0.0.0.0:<span class="value">8084</span>  masterarbeit/server.py
+tcp  LISTEN  0.0.0.0:<span class="value">8085</span>  a4desk_tiptap_babel.py
+tcp  LISTEN  0.0.0.0:<span class="value">8086</span>  app.py
+tcp  LISTEN  127.0.0.1:<span class="value">8889</span>  windi_cortex.py</div>
+
+    <!-- 6. Results -->
+    <h2><span class="num">6.</span> Results</h2>
+
+    <table>
+        <thead>
+            <tr><th>Metric</th><th>Status</th><th>Detail</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>HTTP heartbeat endpoint</td><td><span class="result-pass">&#10003; PASS</span></td><td>Port 8083, 0.0.0.0 binding</td></tr>
+            <tr><td>JSON serialization</td><td><span class="result-pass">&#10003; PASS</span></td><td>UTF-8, indent formatting</td></tr>
+            <tr><td>Error handling (404)</td><td><span class="result-pass">&#10003; PASS</span></td><td>Controlled JSON error response</td></tr>
+            <tr><td>Engine isolation</td><td><span class="result-pass">&#10003; PASS</span></td><td>Zero imports from governance modules</td></tr>
+            <tr><td>Pre-existing services preserved</td><td><span class="result-pass">&#10003; PASS</span></td><td>8/8 services intact</td></tr>
+            <tr><td>Port topology documented</td><td><span class="result-pass">&#10003; PASS</span></td><td>Complete map: 8080&ndash;8889</td></tr>
+            <tr><td>Safety backup created</td><td><span class="result-pass">&#10003; PASS</span></td><td><code>/opt/windi/backups/pre_minimal_api_20260201/</code></td></tr>
+        </tbody>
+    </table>
+
+    <p>The WINDI governance engine has transitioned from an offline library invocable only through direct Python execution to a network-observable service that can be queried, monitored, and integrated by other system components. This transition was achieved without any disruption to the existing service ecosystem.</p>
+
+    <!-- 7. Derived Principles -->
+    <h2><span class="num">7.</span> Derived Principles</h2>
+
+    <p>Three operational principles emerged from this work. Each is proposed as a formal standard for future WINDI infrastructure operations.</p>
+
+    <h3>7.1 Infrastructure Discovery as Governance Practice</h3>
+
+    <p>The act of deploying a new service forced the discovery and documentation of the complete production topology. Before this operation, no unified record existed of which services occupied which ports. The failed deployment attempts on ports 8081 and 8082 were not errors &mdash; they were the mechanism through which the system became self-aware of its own topology.</p>
+
+    <div class="principle-box">
+        <div class="principle-title">Principle I</div>
+        <p><em>Any modification to infrastructure that does not first map the existing state is ungoverned. Discovery is not a prerequisite to deployment; discovery IS governance.</em></p>
+    </div>
+
+    <h3>7.2 Layered Verification Methodology</h3>
+
+    <p>The separation of transport verification (<code>/status</code>) from logic verification (<code>/health</code>) creates a diagnostic chain where each layer can be validated independently. When a problem occurs, the first question is always: which layer failed? This eliminates the ambiguity that arises when multiple concerns are tested simultaneously.</p>
+
+    <div class="principle-box">
+        <div class="principle-title">Principle II</div>
+        <p><em>Every new system capability must be verifiable at the layer where it operates, independent of layers above or below it.</em></p>
+    </div>
+
+    <h3>7.3 Zero-Violence Operational Deployment</h3>
+
+    <p>No existing process was terminated during this operation. When conflicts arose, the response was always to understand and relocate, never to force. This approach preserved system stability and generated knowledge that improved subsequent decisions.</p>
+
+    <div class="principle-box">
+        <div class="principle-title">Principle III</div>
+        <p><em>In a production environment, the correct response to conflict is investigation, not termination. What you cannot explain, you must not destroy.</em></p>
+    </div>
+
+    <!-- 8. Implications -->
+    <h2><span class="num">8.</span> Implications for Governance Systems</h2>
+
+    <p>This work demonstrates that WINDI governance philosophy is not limited to document classification and institutional identity management. The same principles that govern how WINDI processes documents &mdash; transparency, non-opacity, sovereignty, and structured conflict resolution &mdash; can be applied to how the system itself evolves.</p>
+
+    <p>The coherence between declared governance principles and operational practice is significant. A governance system that does not govern its own infrastructure undermines its credibility. By applying WINDI Invariants I2 (Non-Opacity) and I3 (Transpar&ecirc;ncia) to the deployment process itself, this work establishes a precedent for self-consistent system evolution.</p>
+
+    <p>The port topology mapping (Section 4.1) constitutes the first infrastructure audit of the WINDI production environment. This artifact has immediate practical value for capacity planning, dependency analysis, and incident response. It also serves as baseline documentation against which future changes can be measured &mdash; a direct application of governance principle I6 (Conflict Structuring).</p>
+
+    <p>For future integrations (Event Log API, Medium Registry API, BABEL proxy), the methodology established here provides a reproducible protocol: discover, isolate, verify layer by layer, document, and preserve existing services. This protocol can be formalized as a WINDI Operational Procedure (WOP) for infrastructure changes.</p>
+
+    <!-- 9. Next Steps -->
+    <h2><span class="num">9.</span> Next Steps</h2>
+
+    <table>
+        <thead>
+            <tr><th>Phase</th><th>Action</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+            <tr><td><strong>1.1</strong></td><td>Connect <code>/api/governance/health</code></td><td>First integration with <code>GovernanceHealthCheck.quick_status()</code></td></tr>
+            <tr><td>1.2</td><td>Add <code>/api/governance/detect</code></td><td>POST endpoint for identity detection via HTTP</td></tr>
+            <tr><td>1.3</td><td>BABEL proxy integration</td><td>Route <code>/api/evolution/*</code> from :8085 to :8083</td></tr>
+            <tr><td>2.0</td><td>Full Evolution API</td><td>Events, Registry, and Identity Directory endpoints</td></tr>
+        </tbody>
+    </table>
+
+    <!-- 10. Invariant Alignment -->
+    <h2><span class="num">10.</span> Alignment with WINDI Invariants</h2>
+
+    <table>
+        <thead>
+            <tr><th>ID</th><th>Invariant</th><th>Application in This Report</th></tr>
+        </thead>
+        <tbody>
+            <tr><td><strong>I1</strong></td><td>Soberania</td><td>Human decided port allocation, process preservation, deployment timing</td></tr>
+            <tr><td><strong>I2</strong></td><td>Non-Opacity</td><td>Full port topology revealed; no hidden dependencies remain</td></tr>
+            <tr><td><strong>I3</strong></td><td>Transpar&ecirc;ncia</td><td>All commands, outputs, and decisions documented with evidence</td></tr>
+            <tr><td><strong>I5</strong></td><td>No Fabrication</td><td>Only verified ports and processes reported; no assumptions</td></tr>
+            <tr><td><strong>I6</strong></td><td>Conflict Structuring</td><td>Port conflicts resolved through structured investigation, not force</td></tr>
+            <tr><td><strong>I7</strong></td><td>Institutional</td><td>Infrastructure now documented as institutional asset</td></tr>
+        </tbody>
+    </table>
+
+    <!-- Receipt Footer -->
+    <div class="receipt-footer">
+        <div class="receipt-title">End of Technical Report TR-WINDI-2026-003</div>
+        <div class="receipt-hash">WINDI-TR-01FEB26-SLB-SEC11-003</div>
+        <div class="receipt-meta">
+            Registered: 01 February 2026<br>
+            WINDI Publishing House &middot; Kempten, Bavaria, Germany<br>
+            Author: Jober M&ouml;gele Correa (WINDI-CEO-001)<br>
+            AI Collaborators: Claude (Guardian) &middot; GPT (Architect)<br>
+            Series: TR-WINDI &middot; Section 11 &middot; Evolution Infrastructure
+        </div>
+        <div class="motto">&ldquo;AI processes. Human decides. WINDI guarantees.&rdquo;</div>
+    </div>
+
+    <div class="authorship-notice">
+        <h4>&#9997; HUMAN AUTHORSHIP NOTICE</h4>
+        <p>This document was created and reviewed by human authors.</p>
+        <p>AI assistance was used under human supervision and control.</p>
+        <p>Final decisions and content approval: Human responsibility.</p>
+        <p><strong>KI verarbeitet. Mensch entscheidet. WINDI garantiert.</strong></p>
+    </div>
+
+</article>
+
+<footer class="page-footer">
+    <a href="/">WINDI System &mdash; Institutional Documentation</a><br>
+    WINDI Publishing House &mdash; Kempten, Bavaria, Germany<br>
+    Version 1.0 &mdash; Institutional Beta
+</footer>
+
+</body>
+</html>

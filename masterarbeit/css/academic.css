@@ -1,0 +1,96 @@
+:root{--primary-blue:#003366;--secondary-blue:#0055a4;--accent-gold:#c9a227;--text-dark:#1a1a1a;--bg-cream:#faf8f5;--bg-white:#fff;--border-light:#e0e0e0}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Crimson Text',Georgia,serif;line-height:1.7;color:var(--text-dark);background:var(--bg-cream)}
+.thesis-header{background:linear-gradient(135deg,var(--primary-blue),var(--secondary-blue));color:#fff;padding:4rem 2rem;text-align:center;border-bottom:4px solid var(--accent-gold)}
+.thesis-header h1{font-size:2.5rem;margin-bottom:1rem}
+.thesis-header .subtitle{font-size:1.3rem;opacity:.9;margin-bottom:2rem}
+.thesis-header .version-badge{display:inline-block;background:var(--accent-gold);color:var(--primary-blue);padding:.3rem 1rem;font-size:.85rem;font-weight:600;margin-top:1.5rem}
+.thesis-nav{background:#fff;border-bottom:1px solid var(--border-light);padding:1rem 2rem;position:sticky;top:0;z-index:100}
+.thesis-nav ul{list-style:none;display:flex;flex-wrap:wrap;gap:.5rem 2rem;max-width:1000px;margin:0 auto;justify-content:center}
+.thesis-nav a{color:#444;text-decoration:none;font-size:.9rem;padding:.3rem 0;border-bottom:2px solid transparent}
+.thesis-nav a:hover{color:var(--primary-blue);border-bottom-color:var(--accent-gold)}
+.thesis-content{max-width:800px;margin:0 auto;padding:3rem 2rem;background:#fff;min-height:100vh}
+.chapter{margin-bottom:4rem}
+.chapter-number{font-size:.9rem;color:var(--secondary-blue);text-transform:uppercase;letter-spacing:.15em;margin-bottom:.5rem}
+.chapter h2{font-size:1.8rem;color:var(--primary-blue);margin-bottom:1.5rem;padding-bottom:.5rem;border-bottom:1px solid var(--border-light)}
+.chapter h3{font-size:1.2rem;font-weight:600;margin:2rem 0 1rem}
+.chapter p{margin-bottom:1.2rem;text-align:justify}
+.section-num{font-weight:600;color:var(--secondary-blue);margin-right:.5rem}
+.bilingual{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin:1.5rem 0;padding:1.5rem;background:var(--bg-cream);border-left:3px solid var(--secondary-blue)}
+.lang-label{font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;color:#666;margin-bottom:.5rem}
+.highlight-box{margin:2rem 0;padding:1.5rem;border-radius:4px}
+.highlight-box.principle{background:#f0f7ff;border-left:4px solid var(--secondary-blue)}
+.highlight-box.governance{background:#fff9e6;border-left:4px solid var(--accent-gold)}
+.highlight-box.technical{background:#f5f5f5;border-left:4px solid #666}
+.highlight-box .box-title{font-weight:600;font-size:.9rem;text-transform:uppercase;margin-bottom:.75rem}
+.principle-quote{font-size:1.3rem;font-style:italic;color:var(--primary-blue);text-align:center;padding:2rem;margin:2rem 0;border-top:1px solid var(--border-light);border-bottom:1px solid var(--border-light)}
+.principle-quote .attribution{font-size:.9rem;font-style:normal;color:#666;margin-top:1rem}
+.spec-table{width:100%;border-collapse:collapse;margin:1.5rem 0}
+.spec-table th{background:var(--primary-blue);color:#fff;padding:.75rem 1rem;text-align:left}
+.spec-table td{padding:.75rem 1rem;border-bottom:1px solid var(--border-light)}
+.spec-table tr:nth-child(even){background:var(--bg-cream)}
+.thesis-footer{background:var(--primary-blue);color:#fff;padding:2rem;text-align:center;font-size:.85rem}
+.print-controls{position:fixed;top:1rem;right:1rem;z-index:1000}
+.print-btn{padding:.6rem 1.2rem;background:#003366;color:#fff;border:none;border-radius:4px;cursor:pointer}
+.print-btn:hover{background:#0055a4}
+@media print{.thesis-nav,.print-controls{display:none!important}body{background:#fff!important}.thesis-header{background:none!important;color:#003366!important;border-bottom:2px solid #003366}}
+@media(max-width:768px){.bilingual{grid-template-columns:1fr}}
+
+/* WINDI Official Footer */
+.windi-receipt-footer {
+    background: #fff;
+    border-top: 3px solid #00a89d;
+    padding: 2rem;
+    margin-top: 3rem;
+    font-family: 'Source Sans Pro', Arial, sans-serif;
+}
+.windi-receipt-footer .windi-brand {
+    color: #00a89d;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+.windi-receipt-footer .receipt-line {
+    font-size: 0.85rem;
+    color: #333;
+    margin-bottom: 0.3rem;
+}
+.windi-receipt-footer .qr-section {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.5rem;
+    margin: 1rem 0;
+}
+.windi-receipt-footer .qr-code {
+    width: 80px;
+    height: 80px;
+    border: 1px solid #ddd;
+}
+.windi-receipt-footer .compliance-badge {
+    color: #00a89d;
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+}
+.windi-receipt-footer .authorship-notice {
+    background: #f9f9f9;
+    border-left: 3px solid #c9a227;
+    padding: 1rem;
+    margin-top: 1.5rem;
+    font-size: 0.85rem;
+}
+.windi-receipt-footer .authorship-notice h4 {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+.windi-receipt-footer .principle {
+    font-style: italic;
+    color: #003366;
+    margin: 0.5rem 0;
+}
+.windi-receipt-footer .ledger-info {
+    font-size: 0.75rem;
+    color: #666;
+    margin-top: 1rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid #ddd;
+}

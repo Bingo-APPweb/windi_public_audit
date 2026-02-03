@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="../styles/base.css">
+</head>
+<body>
+
+<header class="doc-header">
+  <h1>Beschaffungsantrag</h1>
+  <p class="org">Deutsche Bahn AG</p>
+</header>
+
+<section class="meta">
+  <p><strong>Antragsteller:</strong> {{ requester_name }}</p>
+  <p><strong>Abteilung:</strong> {{ department }}</p>
+  <p><strong>Kostenstelle:</strong> {{ cost_center }}</p>
+</section>
+
+<section class="items">
+  <table>
+    <thead>
+      <tr><th>Beschreibung</th><th>Menge</th><th>Preis (€)</th></tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+      <tr>
+        <td>{{ item.desc }}</td>
+        <td>{{ item.qty }}</td>
+        <td>{{ item.price }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+
+<footer class="doc-footer">
+  <p>Dieses Dokument wurde über A4Desk generiert.</p>
+</footer>
+
+</body>
+</html>

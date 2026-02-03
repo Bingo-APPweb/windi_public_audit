@@ -1,0 +1,100 @@
+{
+  "isp_schema_version": "2.0.0",
+  "isp_id": "WINDI-ISP-BIS-STYLE-001",
+  "created": "2026-02-01T09:00:00Z",
+  "created_by": "WINDI Dragon Council",
+  "organization": {
+    "organization_name": "Regulatory Statistical Authority (Model)",
+    "organization_type": "regulatory_authority",
+    "jurisdiction": "international",
+    "sector": "financial_regulation",
+    "description": "Model ISP profile inspired by BIS ecosystem standards for regulatory statistical reporting"
+  },
+  "governance": {
+    "default_level": "HIGH",
+    "description": "Regulatory and systemic statistical reporting profile",
+    "allowed_levels": [
+      "HIGH"
+    ],
+    "escalation_policy": "no_downgrade",
+    "notes": "All documents under this ISP must be generated at HIGH level. Downgrade is prohibited."
+  },
+  "regulatory_metadata_template": {
+    "reporting_entity": "",
+    "reporting_entity_identifier": "",
+    "reporting_scope": "",
+    "reference_period": "",
+    "data_frequency": "",
+    "consolidation_level": "",
+    "statistical_framework": "",
+    "confidentiality_level": "restricted",
+    "data_owner": "",
+    "validation_status": "provisional"
+  },
+  "compliance_requirements": {
+    "eu_ai_act": true,
+    "gdpr": true,
+    "bis_statistical_standards": true,
+    "sdmx_alignment": true,
+    "ecb_reporting_framework": true
+  },
+  "document_types": [
+    {
+      "type": "statistical_report",
+      "governance_level": "HIGH",
+      "metadata_block": "regulatory",
+      "retention_period": "10_years"
+    },
+    {
+      "type": "risk_assessment",
+      "governance_level": "HIGH",
+      "metadata_block": "regulatory",
+      "retention_period": "10_years"
+    },
+    {
+      "type": "supervisory_disclosure",
+      "governance_level": "HIGH",
+      "metadata_block": "regulatory",
+      "retention_period": "permanent"
+    },
+    {
+      "type": "policy_framework",
+      "governance_level": "HIGH",
+      "metadata_block": "regulatory",
+      "retention_period": "permanent"
+    }
+  ],
+  "audit_requirements": {
+    "comprehensive_trail": true,
+    "tamper_evidence": true,
+    "submission_package_id": true,
+    "configuration_hash_required": true,
+    "forensic_ledger_entry": true,
+    "reproduction_guarantee": "Any document must be reproducible from its submission package ID and configuration hash"
+  },
+  "watermark_policy": {
+    "visible": true,
+    "text": "WINDI Governed Document | Forensic Regulatory Level",
+    "position": "header_footer",
+    "density": "controlled"
+  },
+  "identity_license": {
+    "status": "model_only",
+    "authorized_by": null,
+    "authorization_ref": null,
+    "authorization_hash": null,
+    "valid_from": null,
+    "valid_until": null,
+    "scope": {
+      "logo": false,
+      "letterhead": false,
+      "institutional_tone": true,
+      "values_reference": true,
+      "official_address": false
+    },
+    "restrictions": [
+      "Model/simulation use only",
+      "BIS regulatory framework reference only"
+    ]
+  }
+}

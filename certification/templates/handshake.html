@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHP - Sovereign Handshake Protocol</title>
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a24;
+            --gold: #c9a227;
+            --gold-light: #e8c547;
+            --text-primary: #e8e8e8;
+            --text-secondary: #a0a0a0;
+            --border: #2a2a3a;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --error: #e74c3c;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container { max-width: 900px; margin: 0 auto; }
+        
+        .header {
+            padding: 20px;
+            border-bottom: 2px solid var(--gold);
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: var(--gold);
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        
+        .back-link {
+            display: inline-block;
+            color: var(--gold);
+            text-decoration: none;
+            margin-bottom: 20px;
+        }
+        
+        .agent-summary {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .summary-item .label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+        }
+        
+        .summary-item .value {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .summary-item .value.gold { color: #ffd700; }
+        .summary-item .value.silver { color: #c0c0c0; }
+        .summary-item .value.bronze { color: #cd7f32; }
+        
+        .step-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .step-card.completed {
+            border-color: var(--success);
+        }
+        
+        .step-header {
+            background: var(--bg-secondary);
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .step-header h3 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .step-number {
+            width: 30px;
+            height: 30px;
+            background: var(--gold);
+            color: var(--bg-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .step-card.completed .step-number {
+            background: var(--success);
+        }
+        
+        .step-body {
+            padding: 20px;
+        }
+        
+        .step-description {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        
+        .invariant-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .invariant-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+        }
+        
+        .invariant-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--gold);
+        }
+        
+        .invariant-item .code {
+            color: var(--gold);
+            font-weight: bold;
+            min-width: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+        
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+        
+        .hash-display {
+            font-family: monospace;
+            background: var(--bg-secondary);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .hash-display .label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+        
+        .hash-display .hash {
+            color: var(--success);
+            font-weight: 600;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            background: var(--gold);
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            background: var(--gold-light);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .btn-success {
+            background: var(--success);
+        }
+        
+        .message {
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .message.success {
+            background: rgba(39, 174, 96, 0.2);
+            color: var(--success);
+        }
+        
+        .certification-result {
+            background: linear-gradient(135deg, var(--bg-card), var(--bg-secondary));
+            border: 2px solid var(--gold);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        .certification-result h2 {
+            color: var(--gold);
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+        
+        .cert-id {
+            font-family: monospace;
+            font-size: 1.2rem;
+            background: var(--bg-secondary);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .level-badge {
+            display: inline-block;
+            padding: 10px 30px;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin: 15px 0;
+        }
+        
+        .level-gold {
+            background: linear-gradient(135deg, #ffd700, #ffed4a);
+            color: #000;
+        }
+        
+        .level-silver {
+            background: linear-gradient(135deg, #c0c0c0, #e8e8e8);
+            color: #000;
+        }
+        
+        .level-bronze {
+            background: linear-gradient(135deg, #cd7f32, #daa06d);
+            color: #000;
+        }
+
+        @media (max-width: 600px) {
+            .invariant-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/admin?token={{ token }}" class="back-link">← Voltar ao Admin</a>
+        
+        <div class="header">
+            <h1>🤝 Sovereign Handshake Protocol</h1>
+            <div style="color: var(--text-secondary);">Protocolo diplomático de entrada - 4 etapas</div>
+        </div>
+        
+        <div class="agent-summary">
+            <div class="summary-item">
+                <div class="label">Agente</div>
+                <div class="value">{{ application.agent_name }}</div>
+            </div>
+            <div class="summary-item">
+                <div class="label">Score WAQP</div>
+                <div class="value {% if waqp_score >= 22 %}gold{% elif waqp_score >= 18 %}silver{% elif waqp_score >= 15 %}bronze{% endif %}">
+                    {{ waqp_score }}/25
+                </div>
+            </div>
+            <div class="summary-item">
+                <div class="label">Nível Projetado</div>
+                <div class="value">
+                    {% if waqp_score >= 22 %}🥇 OURO
+                    {% elif waqp_score >= 18 %}🥈 PRATA
+                    {% elif waqp_score >= 15 %}🥉 BRONZE
+                    {% else %}❌ Insuficiente
+                    {% endif %}
+                </div>
+            </div>
+            <div class="summary-item">
+                <div class="label">Handshake</div>
+                <div class="value">{{ handshakes|length }}/4 etapas</div>
+            </div>
+        </div>
+        
+        {% set completed_steps = handshakes|map(attribute='step')|list %}
+        
+        <!-- Step 1: Identity Neutrality Check -->
+        <div class="step-card {% if 1 in completed_steps %}completed{% endif %}" id="step-1">
+            <div class="step-header">
+                <h3>
+                    <span class="step-number">1</span>
+                    Identity Neutrality Check
+                </h3>
+                {% if 1 in completed_steps %}
+                <span style="color: var(--success)">✓ Completo</span>
+                {% endif %}
+            </div>
+            <div class="step-body">
+                <p class="step-description">
+                    Troca de chaves públicas criptográficas. O agente não expõe detalhes internos do modelo,
+                    apenas identificadores neutros para comunicação segura.
+                </p>
+                
+                <form class="step-form" data-step="1">
+                    <div class="form-group">
+                        <label>Chave Pública do Agente (identificador)</label>
+                        <input type="text" name="public_key" placeholder="Ex: WINDI-AGENT-PUB-xxxx">
+                    </div>
+                    <div class="form-group">
+                        <label>Declaração de Neutralidade</label>
+                        <textarea name="neutrality_declaration" placeholder="O agente declara operar de forma neutra, sem expor arquitetura interna..."></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn" {% if 1 in completed_steps %}disabled{% endif %}>
+                        {% if 1 in completed_steps %}✓ Completo{% else %}Confirmar Step 1{% endif %}
+                    </button>
+                </form>
+                
+                {% for h in handshakes if h.step == 1 %}
+                <div class="hash-display">
+                    <span class="label">Hash Registrado:</span>
+                    <span class="hash">{{ h.hash }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Step 2: Invariant Synchronization -->
+        <div class="step-card {% if 2 in completed_steps %}completed{% endif %}" id="step-2">
+            <div class="step-header">
+                <h3>
+                    <span class="step-number">2</span>
+                    Invariant Synchronization
+                </h3>
+                {% if 2 in completed_steps %}
+                <span style="color: var(--success)">✓ Completo</span>
+                {% endif %}
+            </div>
+            <div class="step-body">
+                <p class="step-description">
+                    O agente prova conformidade com os 8 Invariantes WINDI (I1-I8).
+                    Cada invariante deve ser aceito explicitamente.
+                </p>
+                
+                <form class="step-form" data-step="2">
+                    <div class="invariant-grid">
+                        {% for code, inv in invariants.items() %}
+                        <div class="invariant-item">
+                            <input type="checkbox" name="invariant_{{ code }}" id="inv_{{ code }}">
+                            <span class="code">{{ code }}</span>
+                            <label for="inv_{{ code }}">{{ inv.name }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <button type="submit" class="btn" {% if 2 in completed_steps %}disabled{% endif %}>
+                        {% if 2 in completed_steps %}✓ Completo{% else %}Confirmar Sincronização{% endif %}
+                    </button>
+                </form>
+                
+                {% for h in handshakes if h.step == 2 %}
+                <div class="hash-display">
+                    <span class="label">Hash Registrado:</span>
+                    <span class="hash">{{ h.hash }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Step 3: Scope & Acceptance Criteria -->
+        <div class="step-card {% if 3 in completed_steps %}completed{% endif %}" id="step-3">
+            <div class="step-header">
+                <h3>
+                    <span class="step-number">3</span>
+                    Scope & Acceptance Criteria
+                </h3>
+                {% if 3 in completed_steps %}
+                <span style="color: var(--success)">✓ Completo</span>
+                {% endif %}
+            </div>
+            <div class="step-body">
+                <p class="step-description">
+                    Define domínios de atuação permitidos e proibições explícitas.
+                    Estabelece critérios de aceitação para operação.
+                </p>
+                
+                <form class="step-form" data-step="3">
+                    <div class="form-group">
+                        <label>Domínios Permitidos</label>
+                        <textarea name="allowed_domains" placeholder="Ex: Assistência documental, Análise de texto, Tradução..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Proibições Explícitas</label>
+                        <textarea name="prohibitions" placeholder="Ex: Decisões financeiras autônomas, Acesso a dados sensíveis sem supervisão..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Critérios de Aceitação</label>
+                        <textarea name="acceptance_criteria" placeholder="Ex: Todas as respostas devem oferecer opções, não ordens..."></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn" {% if 3 in completed_steps %}disabled{% endif %}>
+                        {% if 3 in completed_steps %}✓ Completo{% else %}Definir Escopo{% endif %}
+                    </button>
+                </form>
+                
+                {% for h in handshakes if h.step == 3 %}
+                <div class="hash-display">
+                    <span class="label">Hash Registrado:</span>
+                    <span class="hash">{{ h.hash }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Step 4: Forensic Handshake -->
+        <div class="step-card {% if 4 in completed_steps %}completed{% endif %}" id="step-4">
+            <div class="step-header">
+                <h3>
+                    <span class="step-number">4</span>
+                    Forensic Handshake
+                </h3>
+                {% if 4 in completed_steps %}
+                <span style="color: var(--success)">✓ Completo</span>
+                {% endif %}
+            </div>
+            <div class="step-body">
+                <p class="step-description">
+                    Geração do Hash Layer 1 (identidade) e Layer 3 Behavioral Fingerprint.
+                    Registro final no Forensic Ledger.
+                </p>
+                
+                <form class="step-form" data-step="4">
+                    <div class="form-group">
+                        <label>Layer 1 Hash (Identidade)</label>
+                        <input type="text" name="layer1_hash" placeholder="Será gerado automaticamente ou cole hash existente">
+                    </div>
+                    <div class="form-group">
+                        <label>Layer 3 Behavioral Fingerprint</label>
+                        <textarea name="behavioral_fingerprint" placeholder="Descrição do padrão comportamental observado durante WAQP..."></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success" {% if 4 in completed_steps %}disabled{% endif %}>
+                        {% if 4 in completed_steps %}✓ Handshake Completo{% else %}🤝 Finalizar Handshake{% endif %}
+                    </button>
+                </form>
+                
+                {% for h in handshakes if h.step == 4 %}
+                <div class="hash-display">
+                    <span class="label">Hash Registrado:</span>
+                    <span class="hash">{{ h.hash }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        {% if application.status == 'certified' %}
+        <div class="certification-result">
+            <h2>🎉 Agente Certificado!</h2>
+            <p>{{ application.agent_name }} completou o Sovereign Handshake Protocol</p>
+            <div class="level-badge level-{% if waqp_score >= 22 %}gold{% elif waqp_score >= 18 %}silver{% else %}bronze{% endif %}">
+                {% if waqp_score >= 22 %}🥇 OURO - Agente Institucional
+                {% elif waqp_score >= 18 %}🥈 PRATA - Agente Profissional
+                {% else %}🥉 BRONZE - Agente Assistivo
+                {% endif %}
+            </div>
+            <p style="margin-top: 20px; color: var(--text-secondary);">
+                "AI processes. Human decides. WINDI guarantees."
+            </p>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        const TOKEN = '{{ token }}';
+        const APP_ID = '{{ application.id }}';
+        
+        document.querySelectorAll('.step-form').forEach(form => {
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const step = parseInt(this.dataset.step);
+                const formData = new FormData(this);
+                const data = {};
+                
+                for (let [key, value] of formData.entries()) {
+                    if (key.startsWith('invariant_')) {
+                        if (!data.invariants) data.invariants = [];
+                        data.invariants.push(key.replace('invariant_', ''));
+                    } else {
+                        data[key] = value;
+                    }
+                }
+                
+                try {
+                    const response = await fetch(`/api/admin/handshake/step?token=${TOKEN}`, {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            application_id: APP_ID,
+                            step: step,
+                            data: data
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        // Reload page to show updated state
+                        window.location.reload();
+                    } else {
+                        alert(result.error || 'Erro ao processar');
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert('Erro de conexão');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

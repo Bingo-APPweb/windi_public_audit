@@ -1,0 +1,37 @@
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11pt;
+  margin: 25mm;
+  color: #000;
+}
+
+.doc-header {
+  border-bottom: 2px solid #000;
+  margin-bottom: 10mm;
+}
+
+.doc-header h1 {
+  font-size: 18pt;
+  margin: 0;
+}
+
+.meta p {
+  margin: 2mm 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10mm;
+}
+
+th, td {
+  border: 1px solid #000;
+  padding: 3mm;
+}
+
+.doc-footer {
+  position: fixed;
+  bottom: 10mm;
+  font-size: 9pt;
+}

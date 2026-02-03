@@ -1,0 +1,9 @@
+plate("procurement_form.html")
+    html_content = template.render(data)
+
+    HTML(
+        string=html_content,
+        base_url=BASE_DIR
+    ).write_pdf(output_path)
+
+    print(f"PDF gerado em {output_path}")

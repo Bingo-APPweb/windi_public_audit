@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Interface Guide — WINDI A4 Desk</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital@0;1&family=Libre+Baskerville:wght@400;700&family=Source+Sans+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/academic.css">
+    <style>
+        .screenshot-container{position:relative;margin:2rem 0;border:2px solid #003366;border-radius:8px;overflow:hidden}
+        .screenshot-container img{width:100%;display:block}
+        .annotation{position:absolute;background:#c9a227;color:#003366;padding:0.3rem 0.8rem;border-radius:4px;font-family:'Source Sans Pro',sans-serif;font-size:0.85rem;font-weight:600;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,0.3)}
+        .annotation::after{content:'';position:absolute;width:0;height:0}
+        .annotation.left::after{right:-10px;top:50%;transform:translateY(-50%);border-top:8px solid transparent;border-bottom:8px solid transparent;border-left:10px solid #c9a227}
+        .annotation.right::after{left:-10px;top:50%;transform:translateY(-50%);border-top:8px solid transparent;border-bottom:8px solid transparent;border-right:10px solid #c9a227}
+        .annotation.bottom::after{top:-10px;left:50%;transform:translateX(-50%);border-left:8px solid transparent;border-right:8px solid transparent;border-bottom:10px solid #c9a227}
+        .annotation.top::after{bottom:-10px;left:50%;transform:translateX(-50%);border-left:8px solid transparent;border-right:8px solid transparent;border-top:10px solid #c9a227}
+        .callout-number{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;background:#003366;color:#fff;border-radius:50%;margin-right:0.5rem;font-size:0.8rem}
+        .legend{background:#f9f9f9;padding:1.5rem;border-radius:8px;margin:2rem 0}
+        .legend-item{display:flex;align-items:flex-start;margin:1rem 0;padding:0.75rem;background:#fff;border-left:4px solid #c9a227;border-radius:0 4px 4px 0}
+        .legend-item .num{flex-shrink:0;width:28px;height:28px;background:#003366;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-right:1rem;font-weight:600}
+        .legend-item .text h4{margin:0 0 0.3rem 0;color:#003366;font-size:1rem}
+        .legend-item .text p{margin:0;color:#555;font-size:0.9rem}
+        .screen-section{margin:3rem 0;padding:2rem;background:#fff;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+        .screen-section h3{color:#003366;border-bottom:2px solid #c9a227;padding-bottom:0.5rem;margin-bottom:1.5rem}
+    </style>
+</head>
+<body>
+    <header class="thesis-header">
+        <h1>INTERFACE GUIDE</h1>
+        <p class="subtitle">A4 Desk BABEL — Visual Reference</p>
+        <span class="version-badge">USER GUIDE v1.0</span>
+    </header>
+    <nav class="thesis-nav">
+        <ul>
+            <li><a href="index.html">← System Overview</a></li>
+            <li><a href="#login">Login Screen</a></li>
+            <li><a href="#main">Main Interface</a></li>
+            <li><a href="#legend">Component Legend</a></li>
+            <li><a href="diagrams.html">Diagrams ↗</a></li>
+        </ul>
+    </nav>
+    <div class="print-controls"><button class="print-btn" onclick="window.print()">🖨️ Print</button></div>
+    
+    <main class="thesis-content">
+        <div class="principle-quote">"Every interface element reinforces human authority."<div class="attribution">— WINDI Design Principle</div></div>
+
+        <!-- LOGIN SCREEN -->
+        <section class="screen-section" id="login">
+            <h3>🔐 Login Screen — Authentication Portal</h3>
+            <p>The secure entry point to the WINDI System. All users must authenticate with institutional credentials.</p>
+            
+            <div class="screenshot-container">
+                <img src="images/login-screen.png" alt="A4 Desk Login Screen">
+                <span class="annotation left" style="top:15%;left:2%">① Personal Data</span>
+                <span class="annotation left" style="top:35%;left:2%">② Department & Role</span>
+                <span class="annotation left" style="top:50%;left:2%">③ Secure Password</span>
+                <span class="annotation left" style="top:68%;left:2%">④ Hierarchy (Optional)</span>
+                <span class="annotation top" style="bottom:18%;left:50%;transform:translateX(-50%)">⑤ Login Button</span>
+                <span class="annotation top" style="bottom:5%;left:50%;transform:translateX(-50%)">⑥ WINDI Principle</span>
+            </div>
+            
+            <div class="legend">
+                <h4>Login Screen Components:</h4>
+                <div class="legend-item"><span class="num">1</span><div class="text"><h4>Persönliche Daten (Personal Data)</h4><p>Name and Mitarbeiter-ID (Employee ID) for institutional identification.</p></div></div>
+                <div class="legend-item"><span class="num">2</span><div class="text"><h4>Abteilung & Position</h4><p>Department and role assignment for access control and document attribution.</p></div></div>
+                <div class="legend-item"><span class="num">3</span><div class="text"><h4>Secure Password</h4><p>Authentication credential. Stored securely on first login.</p></div></div>
+                <div class="legend-item"><span class="num">4</span><div class="text"><h4>Hierarchie (Optional)</h4><p>Supervisor reference for approval workflows and escalation paths.</p></div></div>
+                <div class="legend-item"><span class="num">5</span><div class="text"><h4>Anmelden (Login)</h4><p>Submit credentials to access the system.</p></div></div>
+                <div class="legend-item"><span class="num">6</span><div class="text"><h4>WINDI Principle</h4><p>"KI verarbeitet. Mensch entscheidet. WINDI garantiert." — Always visible reminder.</p></div></div>
+            </div>
+        </section>
+
+        <!-- MAIN INTERFACE -->
+        <section class="screen-section" id="main">
+            <h3>🖥️ Main Interface — Document Workspace</h3>
+            <p>The primary workspace combining document editing, AI assistance, and governance controls.</p>
+            
+            <div class="screenshot-container">
+                <img src="images/main-interface.png" alt="A4 Desk Main Interface">
+                <span class="annotation bottom" style="top:2%;left:15%">① User & Session</span>
+                <span class="annotation bottom" style="top:2%;right:25%">② Action Buttons</span>
+                <span class="annotation right" style="top:25%;left:2%">③ Sidebar Navigation</span>
+                <span class="annotation right" style="top:50%;left:2%">④ Document List</span>
+                <span class="annotation top" style="top:12%;left:35%">⑤ Editor Toolbar</span>
+                <span class="annotation left" style="top:40%;right:35%">⑥ Document Editor</span>
+                <span class="annotation left" style="top:15%;right:2%">⑦ AI Chat Panel</span>
+                <span class="annotation left" style="top:45%;right:2%">⑧ Author Metadata</span>
+                <span class="annotation left" style="top:65%;right:2%">⑨ Reviewer Assignment</span>
+                <span class="annotation left" style="top:85%;right:2%">⑩ Export Options</span>
+            </div>
+            
+            <div class="legend">
+                <h4>Main Interface Components:</h4>
+                <div class="legend-item"><span class="num">1</span><div class="text"><h4>User & Session Info</h4><p>Logged-in user identity, profile access, and session timestamp.</p></div></div>
+                <div class="legend-item"><span class="num">2</span><div class="text"><h4>Action Buttons</h4><p>Speichern (Save), Abschließen (Finalize), and system controls.</p></div></div>
+                <div class="legend-item"><span class="num">3</span><div class="text"><h4>Sidebar — A4 Desk BABEL</h4><p>System branding, version info, and language selection (DE/EN/PT).</p></div></div>
+                <div class="legend-item"><span class="num">4</span><div class="text"><h4>Document List</h4><p>All documents with status indicators. Create new or select existing.</p></div></div>
+                <div class="legend-item"><span class="num">5</span><div class="text"><h4>Editor Toolbar</h4><p>Formatting controls: Bold, Italic, Underline, Block types, Lists.</p></div></div>
+                <div class="legend-item"><span class="num">6</span><div class="text"><h4>Document Editor</h4><p>Rich text editing area. All content created and approved by humans.</p></div></div>
+                <div class="legend-item"><span class="num">7</span><div class="text"><h4>WINDI LLM Chat</h4><p>AI assistant panel. Suggestions require human review and approval.</p></div></div>
+                <div class="legend-item"><span class="num">8</span><div class="text"><h4>Author Metadata</h4><p>Document author information, date, and human authorship indicator.</p></div></div>
+                <div class="legend-item"><span class="num">9</span><div class="text"><h4>Prüfer (Reviewer)</h4><p>Assign reviewer for approval workflow. Four-eyes principle enforcement.</p></div></div>
+                <div class="legend-item"><span class="num">10</span><div class="text"><h4>Export Options</h4><p>Multiple formats: ODT, DOCX, PDF, HTML, RTF, MD. PDF includes QR verification.</p></div></div>
+            </div>
+        </section>
+
+        <!-- WORKFLOW -->
+        <section class="chapter" id="workflow">
+            <div class="chapter-number">Quick Reference</div>
+            <h2>Typical Workflow</h2>
+            <div class="highlight-box principle">
+                <div class="box-title">Step-by-Step</div>
+                <p><strong>1.</strong> Login with institutional credentials</p>
+                <p><strong>2.</strong> Click "+ Neues Dokument" to create document</p>
+                <p><strong>3.</strong> Use toolbar to format content</p>
+                <p><strong>4.</strong> Ask WINDI Chat for assistance (optional)</p>
+                <p><strong>5.</strong> Review and edit AI suggestions</p>
+                <p><strong>6.</strong> Assign Prüfer (Reviewer) if required</p>
+                <p><strong>7.</strong> Click "Speichern" to save draft</p>
+                <p><strong>8.</strong> Click "Abschließen" to finalize</p>
+                <p><strong>9.</strong> Export as PDF with WINDI-RECEIPT</p>
+            </div>
+        </section>
+
+        <section class="windi-receipt-footer">
+            <div class="windi-brand">WINDI Publishing House</div>
+            <div class="receipt-line">WINDI-QUITTUNG: WINDI-GUIDE-30JAN26-GU1D3ABC | Hash: gu1d3abc</div>
+            <div class="receipt-line">Autor: Jober Mögele Correa (WINDI-CEO-001) | Status: INSTITUTIONAL BETA</div>
+            <div class="qr-section">
+                <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=https://master.windia4desk.tech/interface-guide.html" alt="QR Code">
+                <div>
+                    <div class="receipt-line">A4 Desk BABEL v4.7-gov | EU AI Act Compliant</div>
+                    <div class="compliance-badge">✓ Verified Institutional Documentation</div>
+                </div>
+            </div>
+            <div class="authorship-notice">
+                <h4>✍ HUMAN AUTHORSHIP NOTICE</h4>
+                <p>This document was created and reviewed by human authors.</p>
+                <p class="principle">KI verarbeitet. Mensch entscheidet. WINDI garantiert.</p>
+            </div>
+            <div class="ledger-info">WINDI Governance Ledger | Human-authored: 100.0% | Template: Interface Guide v1.0 | Structure: VALID</div>
+        </section>
+    </main>
+    <footer class="thesis-footer"><p>WINDI System — Interface Guide · Version 1.0</p></footer>
+</body>
+</html>

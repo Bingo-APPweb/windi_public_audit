@@ -1,0 +1,22 @@
+import sqlite3
+from datetime import datetime
+
+DB_PATH = "/opt/windi/data/virtue_history.db"
+
+def write_event(event):
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.cursor()
+
+    cur.execute("""
+        INSERT INTO ledger (event_id, timestamp, actor, action, payload)
+        VALUES (?, ?, ?, ?, ?)
+    """, (
+        event.event_id,
+        datetime.utcnow().isoformat(),
+        event.actor,
+        event.action,
+        event.payload
+    ))
+
+    conn.commit()
+    conn.close()

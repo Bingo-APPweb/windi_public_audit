@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WINDI Physical Security Layer — Regulatory Summary | Regulatorische Zusammenfassung</title>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Source Sans Pro', sans-serif;
+            background: #fff;
+            color: #1a1a1a;
+            line-height: 1.6;
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .bilingual {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        @media (max-width: 768px) {
+            .bilingual { grid-template-columns: 1fr; }
+        }
+        .lang-col { padding: 1rem; }
+        .lang-col.en { border-right: 1px solid #ddd; }
+        .lang-col h3 { 
+            color: #003366; 
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+        header {
+            text-align: center;
+            border-bottom: 3px solid #003366;
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        header h1 {
+            font-size: 1.8rem;
+            color: #003366;
+            margin-bottom: 0.5rem;
+        }
+        header .subtitle {
+            color: #666;
+            font-size: 1rem;
+        }
+        .badge {
+            display: inline-block;
+            background: #0d9488;
+            color: #fff;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+        h2 {
+            color: #003366;
+            border-bottom: 2px solid #0d9488;
+            padding-bottom: 0.5rem;
+            margin: 2rem 0 1rem 0;
+            font-size: 1.3rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background: #f5f5f5;
+            color: #003366;
+            font-weight: 600;
+        }
+        .spec-table td:first-child {
+            font-weight: 600;
+            width: 40%;
+        }
+        .check { color: #10b981; }
+        .cross { color: #ef4444; }
+        .warning-box {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        .compliance-box {
+            background: #ecfdf5;
+            border-left: 4px solid #10b981;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        code {
+            background: #f5f5f5;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+        .signature-block {
+            margin-top: 3rem;
+            padding-top: 1rem;
+            border-top: 1px solid #ddd;
+        }
+        .signature-block p {
+            margin: 0.25rem 0;
+        }
+        footer {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 2px solid #003366;
+            text-align: center;
+            color: #666;
+            font-size: 0.85rem;
+        }
+        .qr-placeholder {
+            width: 80px;
+            height: 80px;
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>WINDI Physical Security Layer</h1>
+        <p class="subtitle">Regulatory Technical Summary | Regulatorische Technische Zusammenfassung</p>
+        <span class="badge">v0.1 — January 2026</span>
+    </header>
+
+    <h2>1. System Identification | Systemidentifikation</h2>
+    <div class="bilingual">
+        <div class="lang-col en">
+            <table class="spec-table">
+                <tr><td>System Name</td><td>WINDI Print Watermark Layer</td></tr>
+                <tr><td>Version</td><td>0.1</td></tr>
+                <tr><td>Operator</td><td>WINDI Publishing House</td></tr>
+                <tr><td>Location</td><td>Kempten, Bavaria, Germany</td></tr>
+                <tr><td>Contact</td><td>Chief Governance Officer</td></tr>
+            </table>
+        </div>
+        <div class="lang-col de">
+            <table class="spec-table">
+                <tr><td>Systemname</td><td>WINDI Druck-Wasserzeichen-Schicht</td></tr>
+                <tr><td>Version</td><td>0.1</td></tr>
+                <tr><td>Betreiber</td><td>WINDI Publishing House</td></tr>
+                <tr><td>Standort</td><td>Kempten, Bayern, Deutschland</td></tr>
+                <tr><td>Kontakt</td><td>Chief Governance Officer</td></tr>
+            </table>
+        </div>
+    </div>
+
+    <h2>2. Purpose | Zweck</h2>
+    <div class="bilingual">
+        <div class="lang-col en">
+            <p>Extension of the WINDI digital governance envelope to physical documents through forensic micro-patterns embedded in PDFs before printing.</p>
+            <p><strong>Goal:</strong> Enable traceability between printed documents and their digitally governed originals.</p>
+        </div>
+        <div class="lang-col de">
+            <p>Erweiterung des digitalen WINDI-Governance-Umschlags auf physische Dokumente durch forensische Mikro-Muster, die vor dem Drucken in PDFs eingebettet werden.</p>
+            <p><strong>Ziel:</strong> Ermöglichung der Rückverfolgbarkeit zwischen gedruckten Dokumenten und ihren digital gesteuerten Originalen.</p>
+        </div>
+    </div>
+
+    <h2>3. Technical Specifications | Technische Spezifikationen</h2>
+    <table>
+        <tr>
+            <th>Parameter</th>
+            <th>Value | Wert</th>
+            <th>Description | Beschreibung</th>
+        </tr>
+        <tr>
+            <td>Pattern Seed</td>
+            <td><code>SHA256(doc_hash)</code></td>
+            <td>Deterministic derivation | Deterministische Ableitung</td>
+        </tr>
+        <tr>
+            <td>Micro-Lines</td>
+            <td>50 per page | pro Seite</td>
+            <td>Width 0.1-0.2pt, 3% opacity | Breite 0,1-0,2pt, 3% Opazität</td>
+        </tr>
+        <tr>
+            <td>Micro-Dots</td>
+            <td>25 per page | pro Seite</td>
+            <td>Radius 0.2-0.5pt | Radius 0,2-0,5pt</td>
+        </tr>
+        <tr>
+            <td>Micro-Text</td>
+            <td>4 positions | Positionen</td>
+            <td>0.4pt, document corners | Dokumentecken</td>
+        </tr>
+        <tr>
+            <td>Detection</td>
+            <td>≥1200 DPI scan</td>
+            <td>Full pattern recovery | Vollständige Musterwiederherstellung</td>
+        </tr>
+    </table>
+
+    <h2>4. Capabilities and Limitations | Fähigkeiten und Einschränkungen</h2>
+    <div class="bilingual">
+        <div class="lang-col en">
+            <h3><span class="check">✓</span> This system DOES:</h3>
+            <ul>
+                <li>Provide forensic traceability</li>
+                <li>Deter casual forgery</li>
+                <li>Enable post-hoc verification</li>
+                <li>Link physical to digital governance</li>
+            </ul>
+        </div>
+        <div class="lang-col de">
+            <h3><span class="check">✓</span> Dieses System BIETET:</h3>
+            <ul>
+                <li>Forensische Rückverfolgbarkeit</li>
+                <li>Abschreckung gegen gelegentliche Fälschung</li>
+                <li>Nachträgliche Verifizierungsmöglichkeit</li>
+                <li>Verbindung physisch zu digital</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="warning-box">
+        <div class="bilingual" style="margin:0;gap:1rem">
+            <div class="lang-col en" style="padding:0;border:none">
+                <h3><span class="cross">✗</span> This system does NOT:</h3>
+                <ul>
+                    <li>Provide absolute protection against forgery</li>
+                    <li>Replace cryptographic verification</li>
+                    <li>Function as DRM or copy protection</li>
+                    <li>Guarantee tamper-proof documents</li>
+                </ul>
+            </div>
+            <div class="lang-col de" style="padding:0">
+                <h3><span class="cross">✗</span> Dieses System bietet NICHT:</h3>
+                <ul>
+                    <li>Absoluten Schutz gegen Fälschung</li>
+                    <li>Ersatz für kryptographische Verifizierung</li>
+                    <li>DRM oder Kopierschutz</li>
+                    <li>Manipulationssichere Dokumente</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <h2>5. EU AI Act Compliance | EU AI Act Konformität</h2>
+    <div class="compliance-box">
+        <div class="bilingual" style="margin:0;gap:1rem">
+            <div class="lang-col en" style="padding:0;border:none">
+                <p><strong>Article 52 Transparency:</strong> Full documentation of AI involvement in document creation and governance.</p>
+                <p><strong>Human Oversight:</strong> All documents require human authorization before export.</p>
+                <p><strong>Traceability:</strong> Complete audit trail from creation to physical artifact.</p>
+            </div>
+            <div class="lang-col de" style="padding:0">
+                <p><strong>Artikel 52 Transparenz:</strong> Vollständige Dokumentation der KI-Beteiligung an Dokumentenerstellung und Governance.</p>
+                <p><strong>Menschliche Aufsicht:</strong> Alle Dokumente erfordern menschliche Autorisierung vor Export.</p>
+                <p><strong>Rückverfolgbarkeit:</strong> Vollständiger Prüfpfad von Erstellung bis physischem Artefakt.</p>
+            </div>
+        </div>
+    </div>
+
+    <h2>6. Verification Endpoints | Verifizierungs-Endpunkte</h2>
+    <table>
+        <tr>
+            <th>Endpoint</th>
+            <th>Method</th>
+            <th>Purpose | Zweck</th>
+        </tr>
+        <tr>
+            <td><code>/api/windi/status</code></td>
+            <td>GET</td>
+            <td>System status | Systemstatus</td>
+        </tr>
+        <tr>
+            <td><code>/api/windi/envelope/{doc_id}</code></td>
+            <td>GET</td>
+            <td>Retrieve envelope | Umschlag abrufen</td>
+        </tr>
+        <tr>
+            <td><code>/api/windi/verify/{doc_id}</code></td>
+            <td>GET/POST</td>
+            <td>Verify integrity | Integrität verifizieren</td>
+        </tr>
+    </table>
+
+    <h2>7. Integrity Chain | Integritätskette</h2>
+    <table>
+        <tr>
+            <th>Layer | Schicht</th>
+            <th>Domain | Domäne</th>
+            <th>Verification | Verifizierung</th>
+        </tr>
+        <tr>
+            <td>WINDI Envelope | Umschlag</td>
+            <td>Digital | Digital</td>
+            <td>Cryptographic | Kryptographisch</td>
+        </tr>
+        <tr>
+            <td>Registry</td>
+            <td>Institutional | Institutionell</td>
+            <td>Certificate Lookup | Zertifikatsabfrage</td>
+        </tr>
+        <tr>
+            <td>Print Watermark | Druck-Wasserzeichen</td>
+            <td>Physical | Physisch</td>
+            <td>Forensic Analysis | Forensische Analyse</td>
+        </tr>
+    </table>
+
+    <div class="signature-block">
+        <div class="bilingual">
+            <div class="lang-col en">
+                <p><strong>Document Classification:</strong> Technical — Regulatory</p>
+                <p><strong>Prepared by:</strong> WINDI Publishing House</p>
+                <p><strong>Date:</strong> January 31, 2026</p>
+                <p><strong>Review Status:</strong> Production v0.1</p>
+            </div>
+            <div class="lang-col de">
+                <p><strong>Dokumentklassifikation:</strong> Technisch — Regulatorisch</p>
+                <p><strong>Erstellt von:</strong> WINDI Publishing House</p>
+                <p><strong>Datum:</strong> 31. Januar 2026</p>
+                <p><strong>Prüfstatus:</strong> Produktion v0.1</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- WINDI Governance Receipt -->
+    <div style="margin:2rem 0;padding:1.5rem;background:#f8f9fa;border:2px solid #0d9488;border-radius:8px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;">
+            <div style="flex:1;min-width:300px;">
+                <div style="font-size:0.9rem;color:#0d9488;font-weight:bold;margin-bottom:0.5rem;">WINDI Publishing House — Governance Receipt</div>
+                <div style="font-size:0.8rem;color:#333;">
+                    WINDI-QUITTUNG: WINDI-MASTER-31JAN26-B32149A5 | Hash: b32149a5a532<br>
+                    Author | Autor: Chief Governance Officer<br>
+                    Witness | Prüfer: WINDI System<br>
+                    Document ID | Dokument-ID: WINDI-MASTER-PRINT-REG
+                </div>
+                <div style="font-size:0.75rem;color:#0d9488;margin-top:0.75rem;font-style:italic;">
+                    "AI processes. Human decides. WINDI guarantees."<br>
+                    „KI verarbeitet. Mensch entscheidet. WINDI garantiert."
+                </div>
+            </div>
+            <div style="text-align:center;">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=https://master.windia4desk.tech/regulatory-summary-print-layer.html" alt="WINDI QR" style="width:80px;height:80px;border-radius:4px;border:1px solid #ddd;"/>
+                <div style="font-size:0.65rem;color:#666;margin-top:0.25rem;">Scan to verify | Scannen zur Verifizierung</div>
+            </div>
+        </div>
+        <div style="margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid #ddd;font-size:0.65rem;color:#666;text-align:center;">
+            A4 Desk BABEL v4.7-gov | EU AI Act Compliant | Regulatory Summary v0.1 | January 2026
+        </div>
+    </div>
+
+    <footer>
+        <p><strong>WINDI Publishing House</strong> — Kempten, Bavaria, Germany</p>
+        <p style="margin-top:0.5rem;font-style:italic">"AI processes. Human decides. WINDI guarantees."</p>
+        <p style="margin-top:0.25rem;font-style:italic">„KI verarbeitet. Mensch entscheidet. WINDI garantiert."</p>
+    </footer>
+</body>
+</html>

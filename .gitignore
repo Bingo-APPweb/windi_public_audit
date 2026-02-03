@@ -1,0 +1,17 @@
+# Ambiente e secrets
+.env
+venv/
+__pycache__/
+*.pyc
+
+# Dados locais
+*.db
+*.sqlite
+backups/
+outputs/
+data/
+
+# Temporários
+*.tar.gz
+test.pdf
+test_template.html

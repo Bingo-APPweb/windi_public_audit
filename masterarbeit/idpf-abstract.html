@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IDPF — Institutional Document Provenance Framework | WINDI Masterarbeit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Source+Sans+Pro:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/academic.css">
+    <style>
+        /* ═══════════════════════════════════════════════════════
+           IDPF ABSTRACT — Page-Specific Styles
+           Extends academic.css without overriding
+           ═══════════════════════════════════════════════════════ */
+
+        .idpf-hero {
+            text-align: center;
+            padding: 2.5rem 2rem 1.5rem;
+            border-bottom: 2px solid var(--accent-gold, #c9a227);
+            margin-bottom: 2rem;
+        }
+
+        .idpf-label {
+            display: inline-block;
+            font-family: 'Source Sans Pro', Arial, sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--accent-gold, #c9a227);
+            background: rgba(201, 162, 39, 0.08);
+            padding: 0.35rem 1.2rem;
+            border-radius: 2px;
+            border: 1px solid rgba(201, 162, 39, 0.2);
+            margin-bottom: 1.2rem;
+        }
+
+        .idpf-title {
+            font-family: 'Crimson Text', Georgia, serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-blue, #003366);
+            line-height: 1.25;
+            margin: 0.8rem 0 0.3rem;
+        }
+
+        .idpf-acronym {
+            font-family: 'Source Sans Pro', Arial, sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--secondary-blue, #0055a4);
+            letter-spacing: 0.05em;
+            margin-bottom: 0.8rem;
+        }
+
+        .idpf-subtitle {
+            font-family: 'Crimson Text', Georgia, serif;
+            font-size: 1.1rem;
+            font-style: italic;
+            color: #555;
+            line-height: 1.5;
+            max-width: 600px;
+            margin: 0 auto 1.2rem;
+        }
+
+        .idpf-meta {
+            font-family: 'Source Sans Pro', Arial, sans-serif;
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .idpf-meta strong {
+            color: var(--text-dark, #1a1a1a);
+            font-weight: 600;
+        }
+
+        /* Abstract Sections */
+        .abstract-body {
+            padding: 0 1rem;
+            max-width: 720px;
+            margin: 0 auto;
+        }
+
+        .section-label {
+            font-family: 'Source Sans Pro', Arial, sans-serif;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--primary-blue, #003366);
+            margin: 1.8rem 0 0.6rem;
+            padding-bottom: 0.3rem;
+            border-bottom: 1px solid var(--border-light, #e0e0e0);
+        }
+
+        .abstract-body p {
+            font-family: 'Crimson Text', Georgia, serif;
+            font-size: 1.05rem;
+            line-height: 1.75;
+            color: var(--text-dark, #1a1a1a);
+            text-align: justify;
+            margin-bottom: 0.8rem;
+            hyphens: auto;
+        }
+
+        .abstract-body p .label-inline {
+            font-family: 'Source Sans Pro', Arial, sans-serif;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--primary-blue, #003366);
+        }
+
+        .abstract-body em.key-concept {
+            font-weight: 600;
+            color: var(--primary-blue, #003366);
+        }
+
+        /* Architecture Table */
+        .arch-table-wrapper {
+            margin: 1.5rem 0;
+            overflow-x: auto;
+        }
+
+        .arch-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'Source Sans Pro', Arial, sans-serif;
+            font-size: 0.88rem;
+        }
+
+        .arch-table thead th {
+            background: var(--primary-blue, #003366);
+            color: #fff;
+            font-weight: 600;
+            padding: 0.65rem 0.8rem;
+            text-align: left;
+            font-size: 0.82rem;
+            letter-spacing: 0.03em;
+        }
+
+        .arch-table tbody td {
+            padding: 0.6rem 0.8rem;
+            border-bottom: 1px solid var(--border-light, #e0e0e0);
+            color: var(--text-dark, #1a1a1a);
+            vertical-align: top;
+        }
+
+        .arch-table tbody tr:nth-child(even) {
+            background: rgba(0, 51, 102, 0.03);
+        }
+
+        .arch-table tbody td:first-child {
+            font-weight: 600;
+            color: var(--primary-blue, #003366);
+            white-space: nowrap;
+        }
+
+        .arch-table tbody td:last-child {
+            font-size: 0.84rem;
+            color: #555;
+        }
+
+        /* Paradigm Shift Box */
+        .paradigm-box {
+            margin: 2rem 0;
+            border: 2px solid var(--accent-gold, #c9a227);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .paradigm-old {
+            padding: 1rem 1.5rem;
+            background: #f9f7f2;
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+        }
+
+        .paradigm-new {
+            padding: 1rem 1.5rem;
+            background: linear-gradient(135deg, rgba(0, 51, 102, 0.06), rgba(0, 85, 164, 0.04));
+            border-top: 1px solid rgba(201, 162, 39, 0.3);
+            display: flex;
+            align-items: baseline;
+            gap: 0.5rem;
+        }
+
+        .paradigm-label {
+            font-family: 'Source Sans Pro', Arial, sans-serif;
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #888;
+            white-space: nowrap;
+        }
+
+        .paradigm-new .paradigm-label {
+            color: var(--primary-blue, #003366);
+        }
+
+        .paradigm-text {
+            font-family: 'Crimson Text', Georgia, serif;
+            font-size: 1.05rem;
+            font-style: italic;
+            color: #555;
+        }
+
+        .paradigm-new .paradigm-text {
+            color: var(--primary-blue, #003366);
+            font-weight: 600;
+        }
+
+        .paradigm-arrow {
+            text-align: center;
+            padding: 0.2rem 0;
+            background: rgba(201, 162, 39, 0.08);
+            font-size: 0.75rem;
+            color: var(--accent-gold, #c9a227);
+            letter-spacing: 0.3em;
+        }
+
+        /* Keywords */
+        .keywords-section {
+            margin: 2rem 0 1rem;
+            padding-top: 1.2rem;
+            border-top: 1px solid var(--border-light, #e0e0e0);
+        }
+
+        .keywords-label {
+            font-family: 'Source Sans Pro', Arial, sans-serif;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--primary-blue, #003366);
+            margin-bottom: 0.4rem;
+        }
+
+        .keywords-list {
+            font-family: 'Source Sans Pro', Arial, sans-serif;
+            font-size: 0.85rem;
+            color: #555;
+            font-style: italic;
+            line-height: 1.6;
+        }
+
+        .classification-label {
+            font-family: 'Source Sans Pro', Arial, sans-serif;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--primary-blue, #003366);
+            margin-top: 0.8rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .classification-list {
+            font-family: 'Source Sans Pro', Arial, sans-serif;
+            font-size: 0.85rem;
+            color: #555;
+            font-style: italic;
+        }
+
+        /* Navigation link */
+        .back-link {
+            display: inline-block;
+            font-family: 'Source Sans Pro', Arial, sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--secondary-blue, #0055a4);
+            text-decoration: none;
+            padding: 0.5rem 0;
+            margin-bottom: 0.5rem;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--primary-blue, #003366);
+        }
+
+        /* SOF Protocol Badge */
+        .protocol-badge {
+            display: inline-block;
+            font-family: 'Source Sans Pro', Arial, sans-serif;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            color: #fff;
+            background: var(--secondary-blue, #0055a4);
+            padding: 0.2rem 0.6rem;
+            border-radius: 2px;
+            margin-top: 0.3rem;
+        }
+
+        /* Print Optimization */
+        @media print {
+            .back-link, .print-controls, .thesis-nav { display: none !important; }
+            body { background: #fff !important; }
+            .idpf-hero { border-bottom-color: #003366; }
+            .paradigm-box { break-inside: avoid; }
+        }
+
+        @media (max-width: 768px) {
+            .idpf-title { font-size: 1.5rem; }
+            .idpf-acronym { font-size: 1.15rem; }
+            .abstract-body { padding: 0 0.5rem; }
+            .paradigm-old, .paradigm-new { flex-direction: column; gap: 0.3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Back Navigation -->
+    <div style="max-width: 800px; margin: 0 auto; padding: 1rem 2rem 0;">
+        <a href="index.html" class="back-link">← WINDI System Documentation</a>
+    </div>
+
+    <!-- Main Content -->
+    <article style="max-width: 800px; margin: 0 auto; padding: 0 2rem 2rem;">
+
+        <!-- Hero Section -->
+        <header class="idpf-hero">
+            <div class="idpf-label">Forschungsabstract</div>
+
+            <h1 class="idpf-title">Institutional Document<br>Provenance Framework</h1>
+            <div class="idpf-acronym">(IDPF)</div>
+
+            <p class="idpf-subtitle">
+                Ein governance-basiertes Referenzmodell zur Sicherung der Herkunft
+                KI-generierter institutioneller Dokumente
+            </p>
+
+            <div class="idpf-meta">
+                <strong>Jober Mögele Correa</strong><br>
+                Chief Governance Officer, WINDI Publishing House<br>
+                Masterarbeit — Hochschule Kempten<br>
+                Februar 2026
+            </div>
+
+            <div class="protocol-badge">Protokoll: WINDI-SOF-v1 · Secure Origin Framework</div>
+        </header>
+
+        <!-- Abstract Body -->
+        <div class="abstract-body">
+
+            <div class="section-label">Problemstellung</div>
+            <p>
+                Die rasante Entwicklung generativer KI-Systeme ermöglicht die Erzeugung institutioneller Dokumente, die in Sprache, Layout und Formatierung kaum von authentischen Originalen zu unterscheiden sind. Dieses Phänomen — hier als <em class="key-concept">Document Deepfakes</em> bezeichnet — stellt eine neuartige Bedrohungskategorie dar: institutionelle Identitätsfälschung ohne technischen Einbruch. Klassische Ansätze der Deepfake-Erkennung fokussieren auf die nachträgliche Identifikation gefälschter Inhalte und stoßen bei strukturell perfekten Dokumenten an ihre Grenzen.
+            </p>
+
+            <div class="section-label">Forschungslücke</div>
+            <p>
+                Während für audiovisuelle Medien bereits umfangreiche Provenienzstandards existieren (z.&thinsp;B. C2PA, Content Credentials), fehlt ein vergleichbares Modell für den Bereich institutioneller Dokumente im öffentlichen und regulierten Sektor. Insbesondere adressiert keine bestehende Lösung die Verbindung von institutioneller Identitätskontrolle, kryptographischer Strukturverankerung und governance-gestufter Verifikation.
+            </p>
+
+            <div class="section-label">Beitrag und Paradigmenwechsel</div>
+            <p>
+                Das vorliegende Referenzmodell — das <em class="key-concept">Institutional Document Provenance Framework (IDPF)</em> — schlägt einen grundlegend anderen Ansatz vor: <strong><em>Nicht die Erkennung des Falschen steht im Mittelpunkt, sondern die gesicherte Herkunft des Echten.</em></strong> Anstatt Fälschungen nachträglich zu identifizieren, wird jedes institutionelle Dokument bei seiner Erzeugung mit einer kryptographisch verankerten Herkunftsidentität ausgestattet — einer digitalen Geburtsurkunde, die Struktur, Kontext und Governance-Ebene untrennbar mit dem Dokument verbindet.
+            </p>
+
+            <!-- Paradigm Shift Box -->
+            <div class="paradigm-box">
+                <div class="paradigm-old">
+                    <span class="paradigm-label">Bisherige Logik:</span>
+                    <span class="paradigm-text">„Wie erkennen wir Fälschungen?"</span>
+                </div>
+                <div class="paradigm-arrow">▼ ▼ ▼ &ensp; P A R A D I G M E N W E C H S E L &ensp; ▼ ▼ ▼</div>
+                <div class="paradigm-new">
+                    <span class="paradigm-label">IDPF-Ansatz:</span>
+                    <span class="paradigm-text">„Wie schaffen wir überprüfbare Herkunft für echte Dokumente?"</span>
+                </div>
+            </div>
+
+            <div class="section-label">Architektur</div>
+            <p>
+                Das IDPF basiert auf vier konzeptionellen Schichten:
+            </p>
+
+            <div class="arch-table-wrapper">
+                <table class="arch-table">
+                    <thead>
+                        <tr>
+                            <th>Schicht</th>
+                            <th>Funktion</th>
+                            <th>Mechanismus</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Identitätskontrolle</td>
+                            <td>Institutionelle Authentifizierung</td>
+                            <td>Identity Governance Layer mit Lizenzmodell</td>
+                        </tr>
+                        <tr>
+                            <td>Strukturelle Provenienz</td>
+                            <td>Kryptographischer Herkunftsnachweis</td>
+                            <td>Kanonische Hashes, Provenance Records</td>
+                        </tr>
+                        <tr>
+                            <td>Verifikation</td>
+                            <td>Echtheitsbestätigung</td>
+                            <td>Dreistufig: VALID | UNKNOWN | TAMPERED</td>
+                        </tr>
+                        <tr>
+                            <td>Resilienz-Bewertung</td>
+                            <td>Quantifizierte Fälschungsresistenz</td>
+                            <td>Deepfake Resilience Score (0–100)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p>
+                Das Modell definiert drei Governance-Stufen (HIGH, MEDIUM, LOW) mit abgestuften Sicherheitsanforderungen und führt den neuartigen <em class="key-concept">Deepfake Resilience Score</em> ein — eine quantifizierte Metrik (0–100) zur Bewertung der Fälschungsresistenz institutioneller Dokumente.
+            </p>
+
+            <div class="section-label">Regulatorische Relevanz</div>
+            <p>
+                Das Modell adressiert direkt zentrale Anforderungen des EU AI Act: Aufzeichnungspflichten (Art.&thinsp;12), menschliche Aufsicht (Art.&thinsp;14) und Transparenzpflichten bei KI-generierten Inhalten (Art.&thinsp;50). Es bietet damit einen konzeptionellen Rahmen für Organisationen in der digitalen Verwaltung, im Finanzsektor (BaFin-Konformität), im Bildungswesen und in der öffentlichen Kommunikation.
+            </p>
+
+            <div class="section-label">Validierung</div>
+            <p>
+                Eine prototypische Referenzimplementierung auf deutscher Serverinfrastruktur (Secure Origin Framework, SOF&nbsp;v1.0) demonstriert die praktische Umsetzbarkeit des Modells mit vollständiger Provenienz-Kette, deterministischer Hash-Verifikation und stufenbasierter Governance — validiert durch 15 automatisierte Testfälle über alle Governance-Ebenen.
+            </p>
+
+            <!-- Keywords & Classification -->
+            <div class="keywords-section">
+                <div class="keywords-label">Schlüsselwörter</div>
+                <div class="keywords-list">
+                    Dokumenten-Provenienz · Document Deepfakes · Institutional Identity Governance · EU AI Act Compliance · Deepfake Resilience Score · Kryptographische Herkunftssicherung · Pre-AI Governance Layer
+                </div>
+
+                <div class="classification-label">Einordnung</div>
+                <div class="classification-list">
+                    AI Governance · Information Security · Digital Trust Infrastructure · Regulatory Technology
+                </div>
+            </div>
+
+        </div><!-- .abstract-body -->
+
+    </article>
+
+    <!-- WINDI Receipt Footer -->
+    <footer class="windi-receipt-footer" style="max-width: 800px; margin: 2rem auto 0; padding: 2rem;">
+        <div class="windi-brand" style="color: #00a89d; font-family: 'Source Sans Pro', Arial, sans-serif; font-weight: 700; font-size: 1.1rem; margin-bottom: 0.5rem;">WINDI Publishing House</div>
+        <div class="qr-section" style="display: flex; align-items: flex-start; gap: 1.5rem; margin: 1rem 0;">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=https://master.windia4desk.tech/idpf-abstract.html" alt="QR Code" class="qr-code" style="width: 80px; height: 80px; border: 1px solid #ddd;">
+            <div>
+                <div class="receipt-line" style="font-family: 'Source Sans Pro', Arial, sans-serif; font-size: 0.85rem; color: #333; margin-bottom: 0.3rem;">WINDI-QUITTUNG: WINDI-IDPF-02FEB26-ABSTRACT | Hash: idpf-02feb26-a1b2c3d4</div>
+                <div class="receipt-line" style="font-family: 'Source Sans Pro', Arial, sans-serif; font-size: 0.85rem; color: #333; margin-bottom: 0.3rem;">Autor: Jober Mögele Correa (WINDI-CEO-001) | Status: FORSCHUNGSABSTRACT</div>
+                <div class="compliance-badge" style="font-family: 'Source Sans Pro', Arial, sans-serif; color: #00a89d; font-size: 0.8rem; margin-top: 0.5rem;">A4 Desk BABEL v4.7-gov | EU AI Act Compliant</div>
+                <div style="font-family: 'Source Sans Pro', Arial, sans-serif; color: #00a89d; font-size: 0.8rem;">✓ Verified Institutional Documentation</div>
+            </div>
+        </div>
+
+        <div class="authorship-notice" style="background: #f9f9f9; border-left: 3px solid #c9a227; padding: 1rem; margin-top: 1.5rem; font-family: 'Source Sans Pro', Arial, sans-serif; font-size: 0.85rem;">
+            <h4 style="font-size: 0.9rem; margin-bottom: 0.5rem;">✍ HUMAN AUTHORSHIP NOTICE</h4>
+            <p style="margin-bottom: 0.3rem; text-align: left;">This document was created and reviewed by human authors.</p>
+            <p style="margin-bottom: 0.3rem; text-align: left;">AI assistance was used under human supervision and control.</p>
+            <p style="margin-bottom: 0.3rem; text-align: left;">Final decisions and content approval: Human responsibility.</p>
+            <p class="principle" style="font-style: italic; color: #003366; margin: 0.5rem 0; text-align: left;"><strong>KI verarbeitet. Mensch entscheidet. WINDI garantiert.</strong></p>
+        </div>
+
+        <div class="ledger-info" style="font-family: 'Source Sans Pro', Arial, sans-serif; font-size: 0.75rem; color: #666; margin-top: 1rem; padding-top: 0.5rem; border-top: 1px solid #ddd;">
+            WINDI Governance Ledger | Human-authored: 100.0% | Template: IDPF Abstract v1.0 | Structure: VALID
+        </div>
+    </footer>
+
+    <div style="text-align: center; padding: 1.5rem; font-family: 'Source Sans Pro', Arial, sans-serif; font-size: 0.8rem; color: #999;">
+        WINDI System — Institutional Documentation<br>
+        WINDI Publishing House — Kempten, Bavaria, Germany<br>
+        Version 1.0 — Februar 2026
+    </div>
+
+</body>
+</html>

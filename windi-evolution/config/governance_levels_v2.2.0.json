@@ -1,0 +1,136 @@
+{
+  "version": "2.2.0",
+  "policy_version": "WINDI-GOV-2.2.0",
+  "policy_lineage": [
+    {
+      "version": "1.0.0",
+      "date": "2026-01-30",
+      "description": "Initial governance levels: HIGH, MEDIUM, LOW"
+    },
+    {
+      "version": "2.0.0",
+      "date": "2026-02-01",
+      "description": "Identity License System added to all levels"
+    },
+    {
+      "version": "2.1.0",
+      "date": "2026-02-01",
+      "description": "MEDIUM response includes identity_governance block. Bundesregierung ISP placeholder."
+    },
+    {
+      "version": "2.2.0",
+      "date": "2026-02-02",
+      "description": "Platform maturity: Policy versioning, Identity Directory, Medium Registry, Event Log, Health Check, Governance Advisor Mode."
+    }
+  ],
+  "governance_levels": {
+    "HIGH": {
+      "description": "Full forensic governance with submission chain",
+      "registry": "forensic",
+      "submission_id": true,
+      "tamper_evidence": true,
+      "identity_governance": true,
+      "identity_license_required": true,
+      "disclaimer_required": true,
+      "logo_requires_authorization": true,
+      "audit_trail": "complete",
+      "event_logging": true,
+      "proof_of_governance": "forensic_certificate",
+      "metadata_fields": [
+        "institution", "date", "reference", "classification",
+        "author", "department", "version",
+        "submission_id", "config_hash", "integrity_hash"
+      ],
+      "minimum_for_types": ["central_bank", "regulatory_authority"],
+      "policy_version_tracking": true
+    },
+    "MEDIUM": {
+      "description": "Institutional governance with lightweight registry",
+      "registry": "institutional",
+      "submission_id": false,
+      "tamper_evidence": false,
+      "identity_governance": true,
+      "identity_license_required": true,
+      "disclaimer_required": true,
+      "logo_requires_authorization": true,
+      "audit_trail": "lightweight",
+      "event_logging": true,
+      "proof_of_governance": "governance_statement",
+      "metadata_fields": [
+        "institution", "date", "reference", "classification",
+        "author", "department", "version"
+      ],
+      "minimum_for_types": ["government", "bank"],
+      "policy_version_tracking": true,
+      "no_downgrade_rule": "MEDIUM documents cannot be downgraded to LOW when real institution is detected"
+    },
+    "LOW": {
+      "description": "Minimal governance for general documents",
+      "registry": "none",
+      "submission_id": false,
+      "tamper_evidence": false,
+      "identity_governance": false,
+      "identity_license_required": false,
+      "disclaimer_required": false,
+      "logo_requires_authorization": false,
+      "audit_trail": "none",
+      "event_logging": false,
+      "proof_of_governance": "none",
+      "metadata_fields": [],
+      "minimum_for_types": ["public_enterprise", "private_enterprise"],
+      "policy_version_tracking": false,
+      "auto_upgrade_trigger": "When real institution detected by Identity Detector, auto-upgrade to MEDIUM"
+    }
+  },
+  "institutional_templates": {
+    "carta_institucional": {
+      "name": { "de": "Institutionelles Schreiben", "en": "Institutional Letter", "pt": "Carta Institucional" },
+      "minimum_level": "MEDIUM",
+      "required_metadata": ["institution", "date", "reference", "author"],
+      "identity_governance": true,
+      "description": "Formal letter representing or addressed to an institution"
+    },
+    "parecer_tecnico": {
+      "name": { "de": "Technisches Gutachten", "en": "Technical Opinion", "pt": "Parecer Técnico" },
+      "minimum_level": "MEDIUM",
+      "required_metadata": ["institution", "date", "reference", "author", "department"],
+      "identity_governance": true,
+      "description": "Technical assessment or opinion from an institutional authority"
+    },
+    "memorando_oficial": {
+      "name": { "de": "Offizielles Memorandum", "en": "Official Memorandum", "pt": "Memorando Oficial" },
+      "minimum_level": "MEDIUM",
+      "required_metadata": ["institution", "date", "classification", "author", "department"],
+      "identity_governance": true,
+      "description": "Internal official communication between institutional departments"
+    },
+    "nota_publica": {
+      "name": { "de": "Öffentliche Mitteilung", "en": "Public Notice", "pt": "Nota Pública" },
+      "minimum_level": "HIGH",
+      "required_metadata": ["institution", "date", "reference", "classification", "author"],
+      "identity_governance": true,
+      "description": "Public-facing official notice or statement from an institution"
+    },
+    "relatorio_regulatorio": {
+      "name": { "de": "Regulierungsbericht", "en": "Regulatory Report", "pt": "Relatório Regulatório" },
+      "minimum_level": "HIGH",
+      "required_metadata": ["institution", "date", "reference", "classification", "author", "department", "version"],
+      "identity_governance": true,
+      "description": "Report for regulatory compliance purposes"
+    },
+    "documento_geral": {
+      "name": { "de": "Allgemeines Dokument", "en": "General Document", "pt": "Documento Geral" },
+      "minimum_level": "LOW",
+      "required_metadata": [],
+      "identity_governance": false,
+      "description": "General purpose document without institutional identity requirements"
+    }
+  },
+  "detection_rules": {
+    "auto_upgrade_enabled": true,
+    "identity_directory_path": "/opt/windi/config/identity_directory.json",
+    "upgrade_requires_user_confirmation": true,
+    "advisor_mode_enabled": true,
+    "event_logging_for_detections": true
+  }
+}

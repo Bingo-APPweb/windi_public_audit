@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>System Diagrams — WINDI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital@0;1&family=Libre+Baskerville:wght@400;700&family=Source+Sans+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <link rel="stylesheet" href="css/academic.css">
+    <style>.diagram-box{background:#fff;border:1px solid #e0e0e0;border-radius:8px;padding:2rem;margin:2rem 0;text-align:center}.diagram-box h3{color:#003366;margin-bottom:1rem;font-family:'Source Sans Pro',sans-serif}</style>
+</head>
+<body>
+    <header class="thesis-header">
+        <h1>SYSTEM DIAGRAMS</h1>
+        <p class="subtitle">Visual Documentation of WINDI Architecture</p>
+        <span class="version-badge">REFERENCE COLLECTION</span>
+    </header>
+    <nav class="thesis-nav">
+        <ul>
+            <li><a href="index.html">← System Overview</a></li>
+            <li><a href="#dragons">Three Dragons</a></li>
+            <li><a href="#hitl">Human-in-the-Loop</a></li>
+            <li><a href="#architecture">Architecture</a></li>
+            <li><a href="#invariantes">Invariantes</a></li>
+            <li><a href="#escalation">Escalation</a></li>
+        </ul>
+    </nav>
+    <div class="print-controls"><button class="print-btn" onclick="window.print()">🖨️ Print</button></div>
+    <main class="thesis-content">
+        <div class="principle-quote">"Visual clarity enables governance transparency."<div class="attribution">— WINDI Documentation Principle</div></div>
+
+        <section class="chapter" id="dragons">
+            <div class="chapter-number">Diagram 1</div>
+            <h2>Three Dragons Protocol</h2>
+            <p>The coordination model for AI-assisted governance with distinct roles and responsibilities.</p>
+            <div class="diagram-box">
+                <div class="mermaid">
+flowchart TB
+    subgraph HUMAN["Human Authority"]
+        HV["Human Volante<br/>(Decision Maker)"]
+    end
+    subgraph DRAGONS["Three Dragons"]
+        G["🐉 Guardian<br/>Governance & Priority"]
+        A["🐉 Architect<br/>Structure & Design"]
+        W["🐉 Witness<br/>Validation & Audit"]
+    end
+    HV -->|"Commands"| DRAGONS
+    G -->|"Advises"| HV
+    A -->|"Proposes"| HV
+    W -->|"Validates"| HV
+    G <-->|"Coordinates"| A
+    A <-->|"Reviews"| W
+    W <-->|"Confirms"| G
+                </div>
+            </div>
+        </section>
+
+        <section class="chapter" id="hitl">
+            <div class="chapter-number">Diagram 2</div>
+            <h2>Human-in-the-Loop Workflow</h2>
+            <p>Every system operation requires human initiation, review, and approval.</p>
+            <div class="diagram-box">
+                <div class="mermaid">
+sequenceDiagram
+    participant H as Human Operator
+    participant S as WINDI System
+    participant V as Validation Gate
+    participant O as Output
+    H->>S: 1. Initiate Task
+    S->>S: 2. Process Request
+    S->>H: 3. Present Draft
+    H->>H: 4. Review & Evaluate
+    alt Approved
+        H->>V: 5a. Approve
+        V->>O: 6. Release
+    else Revision Needed
+        H->>S: 5b. Request Changes
+        S->>H: Return to Step 3
+    else Rejected
+        H->>H: 5c. Discard
+    end
+    Note over H,O: Human approval required at every step
+                </div>
+            </div>
+        </section>
+
+        <section class="chapter" id="architecture">
+            <div class="chapter-number">Diagram 3</div>
+            <h2>System Architecture</h2>
+            <p>Three-layer separation ensuring governance, processing, and infrastructure integrity.</p>
+            <div class="diagram-box">
+                <div class="mermaid">
+flowchart TB
+    subgraph INTERACTION["Interaction Layer"]
+        UI["A4 Desk BABEL"]
+        CHAT["Chat Interface"]
+        EDITOR["Document Editor"]
+    end
+    subgraph PROCESSING["Processing Layer"]
+        CORE["WINDI Core"]
+        VALID["Constitutional Validator"]
+        AGENT["WINDI Agent"]
+    end
+    subgraph INFRA["Infrastructure Layer"]
+        DB["Database"]
+        LEDGER["Governance Ledger"]
+        BACKUP["Backup System"]
+    end
+    INTERACTION --> PROCESSING
+    PROCESSING --> INFRA
+    VALID -->|"Compliance Check"| CORE
+    LEDGER -->|"Audit Trail"| VALID
+                </div>
+            </div>
+        </section>
+
+        <section class="chapter" id="invariantes">
+            <div class="chapter-number">Diagram 4</div>
+            <h2>The Eight Invariantes</h2>
+            <p>Constitutional principles that cannot be violated under any circumstances.</p>
+            <div class="diagram-box">
+                <div class="mermaid">
+mindmap
+    root((INVARIANTES))
+        Soberania
+            Human authority
+            AI serves only
+        Non-Opacity
+            Visible processes
+            No hidden operations
+        Transparência
+            Audit trails
+            Documented reasoning
+        Jurisdição
+            Defined scope
+            Clear boundaries
+        No Fabrication
+            Verified facts only
+            No invention
+        Conflict Structuring
+            Explicit handling
+            Documented resolution
+        Institutional
+            Formal standards
+            Professional conduct
+        No Depth Punishment
+            Consistent behavior
+            Fair treatment
+                </div>
+            </div>
+        </section>
+
+        <section class="chapter" id="escalation">
+            <div class="chapter-number">Diagram 5</div>
+            <h2>Escalation Model</h2>
+            <p>When uncertainty arises, institutional caution takes precedence over speed.</p>
+            <div class="diagram-box">
+                <div class="mermaid">
+flowchart TD
+    ISSUE["⚠️ Issue Detected"]
+    ISSUE --> PAUSE["Operator: PAUSE"]
+    PAUSE --> ESCALATE["Escalate to Guardian"]
+    ESCALATE --> ASSESS{"Assessment"}
+    ASSESS -->|"Technical"| ARCHITECT["Architect Review"]
+    ASSESS -->|"Governance"| GUARDIAN["Guardian Decision"]
+    ASSESS -->|"Operational"| OPERATOR["Operator Adjustment"]
+    ARCHITECT --> RESOLVE["✓ Resolution"]
+    GUARDIAN --> RESOLVE
+    OPERATOR --> RESOLVE
+    RESOLVE --> RESUME["Resume Operations"]
+                </div>
+            </div>
+        </section>
+
+        <section class="chapter" id="dataflow">
+            <div class="chapter-number">Diagram 6</div>
+            <h2>Document Lifecycle</h2>
+            <p>From creation to verified institutional output.</p>
+            <div class="diagram-box">
+                <div class="mermaid">
+flowchart LR
+    CREATE["Create"] --> EDIT["Edit"]
+    EDIT --> REVIEW["Human Review"]
+    REVIEW --> APPROVE{"Approved?"}
+    APPROVE -->|"Yes"| SIGN["Generate Receipt"]
+    APPROVE -->|"No"| EDIT
+    SIGN --> EXPORT["Export PDF"]
+    EXPORT --> VERIFY["QR Verification"]
+    VERIFY --> ARCHIVE["Governance Ledger"]
+                </div>
+            </div>
+        </section>
+
+        <section class="windi-receipt-footer">
+            <div class="windi-brand">WINDI Publishing House</div>
+            <div class="receipt-line">WINDI-QUITTUNG: WINDI-DIAG-30JAN26-D1AGR4M5 | Hash: d1agr4m5</div>
+            <div class="receipt-line">Autor: Jober Mögele Correa (WINDI-CEO-001) | Status: INSTITUTIONAL BETA</div>
+            <div class="qr-section">
+                <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=https://master.windia4desk.tech/diagrams.html" alt="QR Code">
+                <div>
+                    <div class="receipt-line">A4 Desk BABEL v4.7-gov | EU AI Act Compliant</div>
+                    <div class="compliance-badge">✓ Verified Institutional Documentation</div>
+                </div>
+            </div>
+            <div class="authorship-notice">
+                <h4>✍ HUMAN AUTHORSHIP NOTICE</h4>
+                <p>This document was created and reviewed by human authors.</p>
+                <p>AI assistance was used under human supervision and control.</p>
+                <p class="principle">KI verarbeitet. Mensch entscheidet. WINDI garantiert.</p>
+            </div>
+            <div class="ledger-info">WINDI Governance Ledger | Human-authored: 100.0% | Template: Diagrams v1.0 | Structure: VALID</div>
+        </section>
+    </main>
+    <footer class="thesis-footer"><p>WINDI System — Diagram Collection · Version 1.0</p></footer>
+    <script>mermaid.initialize({startOnLoad:true,theme:'base',themeVariables:{primaryColor:'#e8f4ff',primaryTextColor:'#003366',primaryBorderColor:'#0055a4',lineColor:'#0055a4'}});</script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+{
+  "meta": {
+    "schema_version": "1.0.0",
+    "policy_version": "WINDI-GOV-2.1.0",
+    "created": "2026-02-01T23:00:00Z",
+    "updated": "2026-02-01T23:00:00Z",
+    "description": "WINDI Identity Directory - Institutional catalog for automatic governance detection"
+  },
+  "institutions": [
+    {
+      "id": "INST-DE-DB-001",
+      "name_official": "Deutsche Bahn AG",
+      "aliases": ["Deutsche Bahn", "DB", "DB AG", "DB Fernverkehr", "DB Regio", "DB Cargo", "DB Schenker"],
+      "country": "DE",
+      "type": "public_enterprise",
+      "sector": "transport",
+      "isp_exists": true,
+      "isp_file": "isp_deutsche_bahn.json",
+      "default_governance_level": "LOW",
+      "identity_license": {
+        "status": "model_only",
+        "scope": "document_simulation",
+        "issued": "2026-02-01",
+        "expires": null,
+        "disclaimer_required": true,
+        "logo_allowed": false
+      },
+      "detection_keywords": ["Deutsche Bahn", "DB AG", "Fernverkehr", "ICE", "DB Regio"],
+      "auto_upgrade_to": "MEDIUM",
+      "notes": "First ISP client. LOW for general docs, auto-upgrade to MEDIUM when identity is simulated."
+    },
+    {
+      "id": "INST-DE-BRG-001",
+      "name_official": "Bundesregierung der Bundesrepublik Deutschland",
+      "aliases": ["Bundesregierung", "Bundesrepublik Deutschland", "German Federal Government", "Governo Federal Alemão"],
+      "country": "DE",
+      "type": "government",
+      "sector": "federal_government",
+      "isp_exists": false,
+      "isp_file": null,
+      "default_governance_level": "MEDIUM",
+      "identity_license": {
+        "status": "pending",
+        "scope": null,
+        "issued": null,
+        "expires": null,
+        "disclaimer_required": true,
+        "logo_allowed": false
+      },
+      "detection_keywords": ["Bundesregierung", "Bundeskanzler", "Bundeskanzleramt", "Bundesminister", "Bundesministerium"],
+      "auto_upgrade_to": "MEDIUM",
+      "notes": "Next planned ISP profile. Government context always requires MEDIUM minimum."
+    },
+    {
+      "id": "INST-EU-ECB-001",
+      "name_official": "European Central Bank",
+      "aliases": ["ECB", "Europäische Zentralbank", "EZB", "Banco Central Europeu", "BCE"],
+      "country": "EU",
+      "type": "central_bank",
+      "sector": "banking",
+      "isp_exists": false,
+      "isp_file": null,
+      "default_governance_level": "HIGH",
+      "identity_license": {
+        "status": "pending",
+        "scope": null,
+        "issued": null,
+        "expires": null,
+        "disclaimer_required": true,
+        "logo_allowed": false
+      },
+      "detection_keywords": ["ECB", "EZB", "European Central Bank", "Europäische Zentralbank", "Banco Central Europeu"],
+      "auto_upgrade_to": "HIGH",
+      "notes": "First HIGH submission REG-20260201-0001. Central bank context mandates HIGH governance."
+    },
+    {
+      "id": "INST-BR-BB-001",
+      "name_official": "Banco do Brasil S.A.",
+      "aliases": ["Banco do Brasil", "BB", "BdB"],
+      "country": "BR",
+      "type": "bank",
+      "sector": "banking",
+      "isp_exists": false,
+      "isp_file": null,
+      "default_governance_level": "MEDIUM",
+      "identity_license": {
+        "status": "pending",
+        "scope": null,
+        "issued": null,
+        "expires": null,
+        "disclaimer_required": true,
+        "logo_allowed": false
+      },
+      "detection_keywords": ["Banco do Brasil", "BB S.A."],
+      "auto_upgrade_to": "MEDIUM",
+      "notes": "Key discovery origin: 'Simular identidade institucional real ativa governança institucional.' Carta BB triggered Identity License requirement."
+    },
+    {
+      "id": "INST-DE-BAFIN-001",
+      "name_official": "Bundesanstalt für Finanzdienstleistungsaufsicht",
+      "aliases": ["BaFin", "Finanzaufsicht"],
+      "country": "DE",
+      "type": "regulatory_authority",
+      "sector": "financial_regulation",
+      "isp_exists": false,
+      "isp_file": null,
+      "default_governance_level": "HIGH",
+      "identity_license": {
+        "status": "pending",
+        "scope": null,
+        "issued": null,
+        "expires": null,
+        "disclaimer_required": true,
+        "logo_allowed": false
+      },
+      "detection_keywords": ["BaFin", "Bundesanstalt für Finanzdienstleistungsaufsicht", "Finanzaufsicht"],
+      "auto_upgrade_to": "HIGH",
+      "notes": "Financial regulator. Any document mentioning BaFin in institutional context requires HIGH."
+    },
+    {
+      "id": "INST-EU-EC-001",
+      "name_official": "European Commission",
+      "aliases": ["Europäische Kommission", "Comissão Europeia", "EU Commission", "EU-Kommission"],
+      "country": "EU",
+      "type": "government",
+      "sector": "supranational_government",
+      "isp_exists": false,
+      "isp_file": null,
+      "default_governance_level": "HIGH",
+      "identity_license": {
+        "status": "pending",
+        "scope": null,
+        "issued": null,
+        "expires": null,
+        "disclaimer_required": true,
+        "logo_allowed": false
+      },
+      "detection_keywords": ["European Commission", "Europäische Kommission", "Comissão Europeia", "EU-Kommission", "EU AI Act"],
+      "auto_upgrade_to": "HIGH",
+      "notes": "EU AI Act origin authority. Institutional simulation requires HIGH governance."
+    }
+  ],
+  "type_rules": {
+    "central_bank": { "minimum_level": "HIGH", "disclaimer_always": true, "logo_never": true },
+    "regulatory_authority": { "minimum_level": "HIGH", "disclaimer_always": true, "logo_never": true },
+    "government": { "minimum_level": "MEDIUM", "disclaimer_always": true, "logo_never": true },
+    "bank": { "minimum_level": "MEDIUM", "disclaimer_always": true, "logo_default_no": true },
+    "public_enterprise": { "minimum_level": "LOW", "disclaimer_when_simulated": true, "logo_default_no": true },
+    "private_enterprise": { "minimum_level": "LOW", "disclaimer_when_simulated": true, "logo_default_no": true }
+  },
+  "detection_config": {
+    "case_sensitive_aliases": false,
+    "min_confidence": 0.7,
+    "scan_fields": ["content", "title", "metadata.institution"],
+    "auto_upgrade_enabled": true,
+    "notify_user_on_detection": true
+  }
+}

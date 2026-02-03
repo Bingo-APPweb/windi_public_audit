@@ -1,0 +1,93 @@
+\documentclass[conference]{IEEEtran}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+
+\title{The Sovereign Handshake Protocol:\\
+A Governance-Layer Mechanism for Safe Inter-System Cooperation}
+
+\author{
+\IEEEauthorblockN{Jober Mögele Correa}
+\IEEEauthorblockA{
+Independent Researcher\\
+Kempten, Bavaria, Germany\\
+Email: contact@windi.systems
+}
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+The Sovereign Handshake Protocol (SHP) is a governance-layer coordination framework designed to enable secure and accountable cooperation between independent autonomous systems. As distributed AI environments expand across institutional and jurisdictional boundaries, traditional assumptions of shared control and unified oversight no longer hold. SHP addresses this gap by introducing a structured pre-cooperation protocol executed outside the models themselves, at a supervisory governance layer.
+
+The protocol establishes cryptographic trust without revealing internal system identities, synchronizes operational constraints to prevent unauthorized decision delegation, and formally defines task scope and acceptance criteria. Additionally, it incorporates integrity and behavioral verification steps to reduce the risk of compromised or misaligned systems.
+
+By transforming inter-system interaction into an explicit, auditable agreement rather than an implicit technical exchange, SHP mitigates delegation cascades and preserves human accountability. The framework contributes to emerging approaches in AI governance, distributed system safety, and cross-institutional digital cooperation.
+\end{abstract}
+
+\section{Introduction}
+
+Distributed AI and automation environments increasingly require systems to collaborate across technical and institutional boundaries. However, most architectures assume either shared control, unified oversight, or implicit trust between interacting components. In cross-organizational contexts, these assumptions do not hold.
+
+This creates a governance gap: systems must exchange information and coordinate tasks without surrendering sovereignty, authority, or accountability. The Sovereign Handshake Protocol (SHP) addresses this gap by introducing a structured pre-cooperation procedure executed at the governance layer rather than inside computational models.
+
+\section{Problem Statement: Delegation Cascades}
+
+When autonomous systems interact without explicit governance constraints, they may recursively delegate subtasks to other systems. Over time, this can produce opaque chains of decision-making in which human oversight becomes diluted or effectively absent. Such delegation cascades represent a systemic risk: responsibility becomes unclear while operational authority spreads across loosely coupled agents.
+
+A coordination protocol must therefore ensure that cooperation does not imply shared decision authority or unbounded task propagation.
+
+\section{Governance-Layer Architecture}
+
+SHP operates outside the internal reasoning processes of the participating systems. Instead, it is executed by a supervisory governance layer associated with each system node. This separation ensures that cooperation rules are enforced institutionally rather than being embedded in opaque model behavior.
+
+The governance layer is responsible for identity verification, rule synchronization, and task scoping prior to any operational data exchange.
+
+\section{The Sovereign Handshake Sequence}
+
+The protocol consists of a structured sequence executed before cooperation begins:
+
+\subsection{Identity Neutrality Check}
+Systems establish a secure communication channel using cryptographic public keys, without exposing internal architectures or model identities.
+
+\subsection{Constraint Synchronization}
+Both parties verify that they are operating under compatible governance constraints, particularly regarding the absence of autonomous decision authority.
+
+\subsection{Scope and Acceptance Criteria Definition}
+The task is formally bounded through explicit prohibitions and objective acceptance conditions, preventing open-ended delegation.
+
+\subsection{Forensic Compatibility Exchange}
+Systems exchange integrity and behavioral fingerprints to reduce the risk of compromised or misaligned operational states.
+
+This sequence transforms cooperation into an explicit, auditable agreement rather than an implicit technical interaction.
+
+\section{Governance Implications}
+
+SHP shifts inter-system cooperation from a purely technical problem to an institutional governance process. It ensures that:
+
+\begin{itemize}
+    \item Cooperation does not transfer decision authority
+    \item Tasks remain bounded and reviewable
+    \item Accountability remains attributable to human-governed entities
+\end{itemize}
+
+This approach is particularly relevant in regulated, cross-border, or multi-stakeholder environments where technical interoperability alone is insufficient to guarantee responsible operation.
+
+\section{Conclusion}
+
+The Sovereign Handshake Protocol provides a governance-first framework for safe cooperation between autonomous systems. By formalizing pre-cooperation checks at the institutional layer, it reduces systemic risk, preserves sovereignty, and reinforces human accountability in distributed AI ecosystems.
+
+\section*{Acknowledgment}
+
+The author acknowledges the broader research community working on AI governance, distributed system safety, and institutional oversight frameworks that inspired this conceptual architecture.
+
+\bibliographystyle{IEEEtran}
+\begin{thebibliography}{1}
+
+\bibitem{ai_governance}
+Various Authors, ``Emerging Approaches in AI Governance and Oversight,'' 2020--2025.
+
+\end{thebibliography}
+
+\end{document}

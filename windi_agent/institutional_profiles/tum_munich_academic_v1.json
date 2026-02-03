@@ -1,0 +1,55 @@
+{
+  "profile_id": "tum_munich_academic_v1",
+  "profile_type": "official",
+  "institutional_domain": "academic",
+  "source": {
+    "derived_from": null,
+    "confidence": "high"
+  },
+  "language_mode": {
+    "primary": "de",
+    "secondary": ["en"],
+    "bilingual_balance": "symmetric"
+  },
+  "tone_and_register": {
+    "formality_level": "very_high",
+    "voice": "academic",
+    "directness": "balanced"
+  },
+  "structural_bias": {
+    "document_archetype": "academic_note",
+    "sectioning_style": "titled",
+    "preferred_sections": ["introduction", "context", "analysis", "conclusion"]
+  },
+  "terminology_preferences": {
+    "role_terms": {
+      "department": ["Lehrstuhl", "Chair"],
+      "professor": ["Prof. Dr.", "Professor"]
+    },
+    "institution_terms": {
+      "university": ["Technische Universität", "Technical University"],
+      "faculty": ["Fakultät", "Faculty"]
+    }
+  },
+  "formatting_guidance": {
+    "paragraph_style": "formal_block",
+    "list_style": "numbered",
+    "emphasis_usage": "minimal",
+    "citation_expectation": "manual_only"
+  },
+  "interaction_rules": {
+    "ask_clarification_before_structuring": true,
+    "avoid_informal_language": true,
+    "avoid_marketing_tone": true
+  },
+  "governance_constraints": {
+    "cannot_override_human_authorship_notice": true,
+    "cannot_modify_governance_ledger": true,
+    "cannot_claim_authority": true
+  },
+  "metadata": {
+    "version": "1.0",
+    "created": "2026-01-30",
+    "author": "WINDI Publishing House"
+  }
+}

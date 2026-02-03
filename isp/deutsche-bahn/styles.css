@@ -1,0 +1,137 @@
+/* Deutsche Bahn ISP v1.1.0 - WINDI Publishing House */
+/* Modelo padrão para biblioteca ISP */
+
+@page {
+  size: A4;
+  margin: 30mm 20mm 25mm 20mm;
+  
+  @bottom-center {
+    content: "Seite " counter(page) " von " counter(pages);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 8pt;
+    color: #878787;
+  }
+}
+
+@page :first {
+  @bottom-center {
+    content: none;
+  }
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 10pt;
+  line-height: 1.5;
+  color: #1E1E1E;
+}
+
+/* === ISP HEADER === */
+.isp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-bottom: 12px;
+  border-bottom: 3px solid #EC0016;
+  margin-bottom: 20px;
+}
+
+.isp-header-left {
+  font-size: 9pt;
+  color: #878787;
+}
+
+.isp-header-right {
+  text-align: right;
+}
+
+.isp-logo {
+  width: 55px;
+  height: auto;
+}
+
+/* === TÍTULOS === */
+h1 {
+  font-size: 16pt;
+  font-weight: bold;
+  color: #EC0016;
+  margin: 20px 0 15px 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #CCCCCC;
+}
+
+h2 {
+  font-size: 12pt;
+  font-weight: bold;
+  color: #1E1E1E;
+  margin: 15px 0 10px 0;
+}
+
+h3 {
+  font-size: 10pt;
+  font-weight: bold;
+  color: #1E1E1E;
+  margin: 12px 0 8px 0;
+}
+
+/* === TABELAS === */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 15px 0;
+  page-break-inside: avoid;
+}
+
+th {
+  background-color: #EC0016;
+  color: #FFFFFF;
+  font-weight: bold;
+  padding: 8px 10px;
+  text-align: left;
+  font-size: 9pt;
+}
+
+td {
+  padding: 6px 10px;
+  border-bottom: 1px solid #CCCCCC;
+  font-size: 9pt;
+}
+
+tr:nth-child(even) {
+  background-color: #F8F8F8;
+}
+
+/* === ISP FOOTER === */
+.isp-footer {
+  margin-top: 30px;
+  padding-top: 15px;
+  border-top: 2px solid #EC0016;
+  font-size: 8pt;
+  color: #878787;
+}
+
+.isp-footer-brand {
+  font-size: 9pt;
+  font-weight: bold;
+  color: #EC0016;
+  margin-bottom: 5px;
+}
+
+.isp-footer-contact {
+  line-height: 1.6;
+}
+
+/* === WINDI INTEGRATION === */
+.windi-receipt {
+  background: #F0F0F0;
+  border: 1px solid #CCCCCC;
+  border-radius: 4px;
+  padding: 10px;
+  margin-top: 20px;
+  font-size: 8pt;
+}
+
+.windi-qr {
+  float: right;
+  margin-left: 15px;
+}

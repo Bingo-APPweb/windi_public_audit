@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fachartikel: Gesicherte Herkunft statt bloßer Erkennung — WINDI Masterarbeit</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink:        #1a1a2e;
+      --paper:      #fafaf8;
+      --header-bg:  #0d2137;
+      --accent:     #c9a84c;
+      --accent-dark:#a07e2e;
+      --teal:       #1a7a6d;
+      --teal-light: #e8f5f2;
+      --caption:    #666;
+      --border:     #d4d0c8;
+      --blue-dark:  #0f3460;
+      --blue-mid:   #1a5276;
+      --purple:     #4a1942;
+      --purple-light:#f3edf5;
+      --green-sof:  #27ae60;
+      --orange-res: #e67e22;
+      --red-deep:   #c0392b;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Libre Baskerville', Georgia, serif;
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--ink);
+      background: var(--paper);
+    }
+
+    /* === HEADER === */
+    .doc-header {
+      background: var(--header-bg);
+      color: #e0e0e0;
+      padding: 1.2rem 2rem;
+      font-family: 'Source Sans Pro', sans-serif;
+      font-size: 0.82rem;
+    }
+    .doc-header-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 2rem;
+    }
+    .doc-series {
+      font-weight: 700;
+      color: var(--accent);
+      font-size: 0.95rem;
+      letter-spacing: 0.04em;
+    }
+    .doc-org { margin-top: 0.3rem; opacity: 0.8; }
+    .doc-header-right {
+      text-align: right;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      line-height: 1.6;
+      opacity: 0.85;
+    }
+
+    /* === TITLE BLOCK === */
+    .title-block {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 3rem 2rem 2rem;
+      border-bottom: 2px solid var(--border);
+    }
+    .section-label {
+      font-family: 'Source Sans Pro', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--teal);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 0.6rem;
+    }
+    .title-block h1 {
+      font-family: 'Libre Baskerville', Georgia, serif;
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1.3;
+      color: var(--blue-dark);
+      margin-bottom: 0.5rem;
+    }
+    .subtitle {
+      font-family: 'Libre Baskerville', Georgia, serif;
+      font-size: 1.15rem;
+      font-style: italic;
+      color: var(--caption);
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+    .title-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 2rem;
+      font-family: 'Source Sans Pro', sans-serif;
+      font-size: 0.88rem;
+    }
+    .meta-pair { display: flex; gap: 0.4rem; }
+    .meta-pair dt { font-weight: 600; color: var(--blue-mid); }
+    .meta-pair dd { color: var(--ink); }
+
+    /* === CONTENT === */
+    .content {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 4rem;
+    }
+
+    /* Abstract */
+    .abstract {
+      background: var(--teal-light);
+      border-left: 4px solid var(--teal);
+      padding: 1.5rem 1.8rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.97rem;
+      line-height: 1.75;
+    }
+    .abstract strong {
+      display: block;
+      font-family: 'Source Sans Pro', sans-serif;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--teal);
+      margin-bottom: 0.8rem;
+    }
+
+    /* Section headings */
+    .content h2 {
+      font-family: 'Source Sans Pro', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--blue-dark);
+      margin: 2.5rem 0 1rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .content h3 {
+      font-family: 'Source Sans Pro', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--blue-mid);
+      margin: 1.8rem 0 0.8rem;
+    }
+
+    /* Paragraphs */
+    .content p {
+      margin-bottom: 1.2rem;
+      text-align: justify;
+      hyphens: auto;
+    }
+
+    /* Lists within content */
+    .content ul {
+      margin: 0.8rem 0 1.2rem 1.5rem;
+      list-style: none;
+    }
+    .content ul li {
+      position: relative;
+      padding-left: 1.2rem;
+      margin-bottom: 0.4rem;
+    }
+    .content ul li::before {
+      content: '▸';
+      position: absolute;
+      left: 0;
+      color: var(--teal);
+      font-weight: 700;
+    }
+
+    /* Comparison table */
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-family: 'Source Sans Pro', sans-serif;
+      font-size: 0.92rem;
+    }
+    .comparison-table th {
+      background: var(--header-bg);
+      color: #fff;
+      padding: 0.7rem 1rem;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .comparison-table td {
+      padding: 0.7rem 1rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    .comparison-table tr:nth-child(even) td {
+      background: #f5f5f0;
+    }
+    .comparison-table .old-approach {
+      color: var(--caption);
+      font-style: italic;
+    }
+    .comparison-table .new-approach {
+      color: var(--teal);
+      font-weight: 600;
+    }
+
+    /* Highlight box */
+    .paradigm-box {
+      background: linear-gradient(135deg, var(--blue-dark), var(--purple));
+      color: #fff;
+      padding: 1.8rem 2rem;
+      border-radius: 4px;
+      margin: 2rem 0;
+      text-align: center;
+      font-family: 'Libre Baskerville', Georgia, serif;
+      font-size: 1.1rem;
+      font-style: italic;
+      line-height: 1.6;
+    }
+
+    /* Architecture layers */
+    .layer-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--teal);
+      padding: 1.2rem 1.5rem;
+      margin: 1rem 0;
+      border-radius: 0 4px 4px 0;
+    }
+    .layer-card h4 {
+      font-family: 'Source Sans Pro', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--blue-dark);
+      margin-bottom: 0.5rem;
+    }
+    .layer-card p {
+      font-size: 0.95rem;
+      margin-bottom: 0.5rem;
+    }
+    .layer-card ul {
+      margin: 0.5rem 0 0 1.2rem;
+      font-size: 0.92rem;
+    }
+
+    /* Relevance grid */
+    .relevance-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 0.8rem;
+      margin: 1rem 0 1.5rem;
+    }
+    .relevance-item {
+      background: var(--teal-light);
+      padding: 0.8rem 1rem;
+      border-radius: 4px;
+      font-family: 'Source Sans Pro', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--teal);
+      text-align: center;
+      border: 1px solid rgba(26,122,109,0.15);
+    }
+
+    /* Conclusion box */
+    .conclusion-box {
+      background: var(--purple-light);
+      border-left: 4px solid var(--purple);
+      padding: 1.5rem 1.8rem;
+      margin: 2rem 0;
+    }
+    .conclusion-box .central-question {
+      display: block;
+      font-family: 'Libre Baskerville', Georgia, serif;
+      font-size: 1.05rem;
+      font-style: italic;
+      color: var(--purple);
+      margin: 1rem 0;
+      padding-left: 1rem;
+      border-left: 2px solid var(--purple);
+    }
+
+    /* === WINDI GOVERNANCE REFERENCE === */
+    .governance-reference {
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 2px solid var(--border);
+    }
+    .governance-reference h2 {
+      border-bottom: none;
+      margin-bottom: 1rem;
+    }
+
+    .babel-receipt {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.5rem;
+      margin: 1.2rem 0;
+      font-family: 'Source Sans Pro', sans-serif;
+    }
+    .babel-receipt-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .babel-receipt-logo {
+      font-family: 'Source Sans Pro', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--blue-dark);
+    }
+    .babel-receipt-logo small {
+      display: block;
+      font-weight: 400;
+      font-size: 0.75rem;
+      color: var(--caption);
+    }
+
+    .receipt-line {
+      display: flex;
+      gap: 0.5rem;
+      padding: 0.3rem 0;
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+    .receipt-label {
+      font-weight: 600;
+      color: var(--blue-mid);
+      min-width: 130px;
+      flex-shrink: 0;
+    }
+    .receipt-value {
+      color: var(--ink);
+    }
+    .receipt-value.mono {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+    }
+
+    .governance-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 1rem;
+      padding-top: 0.8rem;
+      border-top: 1px solid var(--border);
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.8rem;
+      border-radius: 4px;
+      font-family: 'Source Sans Pro', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    .badge-sof {
+      background: var(--green-sof);
+      color: #fff;
+    }
+    .badge-resilience {
+      background: linear-gradient(135deg, var(--orange-res), var(--red-deep));
+      color: #fff;
+    }
+    .badge-structure {
+      background: var(--teal-light);
+      color: var(--teal);
+      border: 1px solid rgba(26,122,109,0.2);
+    }
+    .badge-human {
+      background: #eef2f7;
+      color: var(--blue-dark);
+      border: 1px solid rgba(15,52,96,0.15);
+    }
+
+    .governance-statement {
+      text-align: center;
+      padding: 1rem;
+      margin: 1.2rem 0;
+      font-family: 'Source Sans Pro', sans-serif;
+      font-size: 0.85rem;
+      color: var(--caption);
+      background: #f8f8f5;
+      border-radius: 4px;
+      line-height: 1.8;
+    }
+    .governance-statement .line-main {
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    /* === MEDIA REFERENCE === */
+    .media-reference {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      padding: 1.2rem 1.5rem;
+      margin: 1.5rem 0;
+      border-radius: 0 4px 4px 0;
+    }
+    .media-reference h4 {
+      font-family: 'Source Sans Pro', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--accent-dark);
+      margin-bottom: 0.5rem;
+    }
+    .media-reference p {
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+    .media-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--caption);
+      margin-top: 0.6rem;
+    }
+
+    /* === TR CROSS-REFERENCE === */
+    .tr-crossref {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .tr-link {
+      display: block;
+      padding: 1rem 1.2rem;
+      background: linear-gradient(135deg, var(--header-bg), var(--blue-mid));
+      color: #fff;
+      text-decoration: none;
+      border-radius: 4px;
+      font-family: 'Source Sans Pro', sans-serif;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .tr-link:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .tr-link .tr-id {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .tr-link .tr-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-top: 0.3rem;
+    }
+
+    /* === NAVIGATION === */
+    .nav-links {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 2px solid var(--border);
+      font-family: 'Source Sans Pro', sans-serif;
+      font-size: 0.95rem;
+    }
+    .nav-links a {
+      color: var(--blue-dark);
+      text-decoration: none;
+      font-weight: 600;
+      padding: 0.5rem 0;
+      border-bottom: 2px solid transparent;
+      transition: border-color 0.2s;
+    }
+    .nav-links a:hover { border-bottom-color: var(--accent); }
+
+    /* === FOOTER === */
+    .doc-footer {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 1.5rem 2rem;
+      font-family: 'Source Sans Pro', sans-serif;
+      font-size: 0.8rem;
+      color: var(--caption);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .doc-footer .footer-left { font-style: italic; }
+    .doc-footer .footer-right {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      text-align: right;
+    }
+
+    /* === PRINT === */
+    @media print {
+      .doc-header { background: white; color: var(--ink); border-bottom: 2px solid var(--ink); }
+      .doc-series { color: var(--ink); }
+      .paradigm-box { background: #eee; color: var(--ink); }
+      .tr-link { background: #eee; color: var(--ink); }
+      body { font-size: 11pt; }
+    }
+
+    /* === RESPONSIVE === */
+    @media (max-width: 700px) {
+      .doc-header-inner { flex-direction: column; gap: 0.8rem; }
+      .doc-header-right { text-align: left; }
+      .title-block h1 { font-size: 1.5rem; }
+      .comparison-table { font-size: 0.82rem; }
+      .comparison-table th, .comparison-table td { padding: 0.5rem 0.6rem; }
+      .tr-crossref { grid-template-columns: 1fr; }
+      .relevance-grid { grid-template-columns: 1fr 1fr; }
+      .babel-receipt-header { flex-direction: column; gap: 0.5rem; }
+      .receipt-line { flex-direction: column; gap: 0.1rem; }
+      .receipt-label { min-width: auto; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="doc-header">
+    <div class="doc-header-inner">
+      <div class="doc-header-left">
+        <div class="doc-series">WINDI Fachartikel &middot; PUB-001</div>
+        <div class="doc-org">WINDI Publishing House &middot; Kempten (Allg&auml;u), Bavaria, Germany</div>
+      </div>
+      <div class="doc-header-right">
+        Dokument-ID: PUB-WINDI-2026-001<br>
+        IDPF Modell v1.0<br>
+        02. Februar 2026<br>
+        Klassifikation: &Ouml;FFENTLICH
+      </div>
+    </div>
+  </header>
+
+  <!-- TITLE BLOCK -->
+  <div class="title-block">
+    <div class="section-label">PUB-001 &mdash; Fachartikel &middot; Akademische Ver&ouml;ffentlichung</div>
+    <h1>Gesicherte Herkunft statt blo&szlig;er Erkennung</h1>
+    <div class="subtitle">Ein institutionelles Provenienzmodell f&uuml;r KI-gest&uuml;tzte Dokumente</div>
+    <div class="title-meta">
+      <div class="meta-pair"><dt>Autor:</dt><dd>Jober M&ouml;gele Correa, Chief Governance Officer</dd></div>
+      <div class="meta-pair"><dt>Datum:</dt><dd>02. Februar 2026</dd></div>
+      <div class="meta-pair"><dt>Status:</dt><dd>Registriert &amp; Verifiziert</dd></div>
+    </div>
+    <div class="title-meta" style="margin-top: 0.5rem;">
+      <div class="meta-pair"><dt>Bezug:</dt><dd>TR-007 (Secure Origin Framework), Section 10 (Identity Governance Layer)</dd></div>
+      <div class="meta-pair"><dt>Sprache:</dt><dd>Deutsch (Originalfassung)</dd></div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ABSTRACT -->
+    <div class="abstract">
+      <strong>Abstract</strong>
+      Die rasante Entwicklung generativer KI-Systeme erm&ouml;glicht heute die Erstellung visuell und sprachlich &uuml;berzeugender Dokumente, die institutionelle Identit&auml;t simulieren k&ouml;nnen. Diese Entwicklung f&uuml;hrt zu einem neuen Risikofeld: <em>institutionelle Deepfakes</em> &ndash; Dokumente, die wie offizielle Schreiben von Beh&ouml;rden, Unternehmen oder Organisationen wirken, ohne authentisch zu sein.
+
+      <br><br>W&auml;hrend aktuelle Sicherheitsans&auml;tze prim&auml;r auf die Erkennung manipulierter Inhalte abzielen, wird in dieser Arbeit ein alternativer Paradigmenwechsel vorgeschlagen: <strong>Vertrauen entsteht nicht durch das Aufdecken des Falschen, sondern durch die gesicherte Herkunft des Echten.</strong>
+
+      <br><br>Dazu wird ein <em>Institutionelles Dokument-Provenienz-Framework (IDPF)</em> vorgestellt, das Dokumente bereits bei ihrer Erstellung mit strukturellen, kryptographischen und governance-basierten Herkunftsmerkmalen versieht. Das Modell kombiniert Identit&auml;ts-Governance, strukturelle Integrit&auml;tsnachweise und eine forensisch nachvollziehbare Herkunftskette. Ziel ist die Schaffung einer &uuml;berpr&uuml;fbaren, maschinenlesbaren und regulatorisch anschlussf&auml;higen Vertrauensinfrastruktur f&uuml;r KI-unterst&uuml;tzte institutionelle Dokumente.
+    </div>
+
+    <!-- SECTION 1 -->
+    <h2>1. Problemstellung: Institutionelle Deepfakes</h2>
+
+    <p>Mit generativer KI ist es m&ouml;glich, innerhalb von Sekunden Dokumente zu erzeugen, die:</p>
+    <ul>
+      <li>offizielle Layouts imitieren</li>
+      <li>institutionelle Sprache reproduzieren</li>
+      <li>organisatorische Rollen vort&auml;uschen</li>
+      <li>regulatorische Kontexte simulieren</li>
+    </ul>
+
+    <p>Diese Dokumente sind nicht nur stilistisch &uuml;berzeugend, sondern k&ouml;nnen auch in Verwaltungs-, Finanz- oder Rechtskontexten <em>reale Handlungen ausl&ouml;sen</em>. Die klassische Unterscheidung zwischen &bdquo;echt&ldquo; und &bdquo;gef&auml;lscht&ldquo; wird dadurch technisch und organisatorisch zunehmend unscharf.</p>
+
+    <p>Bisherige Schutzma&szlig;nahmen konzentrieren sich &uuml;berwiegend auf visuelle Manipulationserkennung, Textanalyse auf KI-Spuren sowie forensische Nachuntersuchungen. Diese Verfahren sind jedoch <em>reaktiv, teuer, nicht skalierbar</em> und liefern keine belastbare Aussage zur positiven Authentizit&auml;t eines Dokuments.</p>
+
+    <!-- SECTION 2 -->
+    <h2>2. Paradigmenwechsel: Herkunft statt Erscheinung</h2>
+
+    <div class="paradigm-box">
+      Dokumentvertrauen darf nicht mehr prim&auml;r aus Erscheinungsmerkmalen abgeleitet werden, sondern muss aus <em>gesicherter Herkunft</em> entstehen.
+    </div>
+
+    <p>Dies bedeutet eine fundamentale Verschiebung in der Bewertungslogik dokumentarer Integrit&auml;t:</p>
+
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>Bisheriger Ansatz</th>
+          <th>Neuer Ansatz (IDPF)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="old-approach">&bdquo;Ist das Dokument manipuliert?&ldquo;</td>
+          <td class="new-approach">&bdquo;Woher stammt dieses Dokument nachweislich?&ldquo;</td>
+        </tr>
+        <tr>
+          <td class="old-approach">Visuelle Pr&uuml;fung</td>
+          <td class="new-approach">Strukturelle Herkunftspr&uuml;fung</td>
+        </tr>
+        <tr>
+          <td class="old-approach">Forensik nach dem Vorfall</td>
+          <td class="new-approach">Herkunftssicherung beim Entstehen</td>
+        </tr>
+        <tr>
+          <td class="old-approach">Detektion des Falschen</td>
+          <td class="new-approach">Verifikation des Echten</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>Dieses Prinzip wird im vorgeschlagenen <em>Institutionellen Dokument-Provenienz-Framework (IDPF)</em> formalisiert.</p>
+
+    <!-- SECTION 3 -->
+    <h2>3. Das Institutionelle Dokument-Provenienz-Framework (IDPF)</h2>
+
+    <p>Das IDPF beschreibt eine mehrschichtige Architektur zur Sicherung der dokumentaren Herkunft in KI-unterst&uuml;tzten institutionellen Kontexten.</p>
+
+    <h3>3.1 Identit&auml;ts-Governance-Schicht</h3>
+    <div class="layer-card">
+      <h4>&#x1F6E1; Identity Governance Layer</h4>
+      <p>Dokumente, die institutionelle Identit&auml;t referenzieren oder simulieren, werden einer Governance-Logik unterworfen. Diese Schicht regelt:</p>
+      <ul>
+        <li>ob institutionelle Bezeichnungen verwendet werden d&uuml;rfen</li>
+        <li>ob visuelle Identit&auml;t (z.&thinsp;B. Logos) zul&auml;ssig ist</li>
+        <li>ob ein Modell-Disclaimer erforderlich ist</li>
+        <li>ob eine formale Autorisierung vorliegt</li>
+      </ul>
+      <p>Damit wird verhindert, dass KI-Systeme unbeabsichtigt offizielle Autorit&auml;t vort&auml;uschen.</p>
+    </div>
+
+    <h3>3.2 Strukturelle Integrit&auml;tsschicht</h3>
+    <div class="layer-card">
+      <h4>&#x1F50D; Structural Integrity Layer</h4>
+      <p>Anstelle rein visueller Merkmale wird die interne Struktur des Dokuments als Integrit&auml;tsanker genutzt:</p>
+      <ul>
+        <li>Strukturhash des Dokumentlayouts</li>
+        <li>Metadatenbindung</li>
+        <li>Versions- und Policy-Referenzen</li>
+      </ul>
+      <p>Diese Elemente machen das Dokument als strukturelle Einheit &uuml;berpr&uuml;fbar, unabh&auml;ngig vom sichtbaren Erscheinungsbild.</p>
+    </div>
+
+    <h3>3.3 Provenienz-Schicht</h3>
+    <div class="layer-card">
+      <h4>&#x1F4DC; Provenance Layer</h4>
+      <p>Die Provenienzschicht erzeugt eine digitale Herkunftsbescheinigung zum Zeitpunkt der Dokumenterstellung. Sie enth&auml;lt unter anderem:</p>
+      <ul>
+        <li>Systemkennung</li>
+        <li>Erstellungszeitpunkt</li>
+        <li>Governance-Level</li>
+        <li>Policy-Version</li>
+        <li>Kryptographische Referenzen</li>
+      </ul>
+      <p>Diese Daten bilden eine maschinenlesbare <em>&bdquo;Geburtsurkunde&ldquo;</em> des Dokuments.</p>
+    </div>
+
+    <h3>3.4 Forensische Verkettung</h3>
+    <div class="layer-card">
+      <h4>&#x1F517; Forensic Chain</h4>
+      <p>Alle Provenienzdatens&auml;tze werden in einer verketteten Struktur gespeichert. Dadurch entsteht eine nachvollziehbare Historie, die Manipulationen erkennbar macht und eine nachtr&auml;gliche Integrit&auml;tspr&uuml;fung erm&ouml;glicht.</p>
+    </div>
+
+    <!-- SECTION 4 -->
+    <h2>4. Deepfake-Resilienz als Bewertungsmodell</h2>
+
+    <p>Ein weiterer Beitrag dieser Arbeit ist die Einf&uuml;hrung eines <em>Deepfake-Resilienz-Scores</em>. Dieser bewertet, wie widerstandsf&auml;hig ein Dokument gegen glaubw&uuml;rdige F&auml;lschung ist. Kriterien sind unter anderem:</p>
+    <ul>
+      <li>Governance-Level</li>
+      <li>Strukturelle Integrit&auml;t</li>
+      <li>Provenienzbindung</li>
+      <li>Identit&auml;ts-Governance</li>
+      <li>Forensische Nachvollziehbarkeit</li>
+    </ul>
+
+    <p>Der Score beschreibt nicht die Qualit&auml;t des Inhalts, sondern die <strong>Sicherheit der Herkunft</strong>. In der operativen Implementierung (TR-007 / SOF v1.0) wird dieser Score auf einer Skala von 0&ndash;100 berechnet und als maschinenlesbares Badge in das Dokument eingebettet.</p>
+
+    <!-- SECTION 5 -->
+    <h2>5. Relevanz f&uuml;r Regulierung und Organisationen</h2>
+
+    <p>Das vorgestellte Modell ist besonders relevant f&uuml;r:</p>
+
+    <div class="relevance-grid">
+      <div class="relevance-item">&Ouml;ffentliche Verwaltungen</div>
+      <div class="relevance-item">Finanzaufsicht &amp; Banken</div>
+      <div class="relevance-item">Zertifizierungsstellen</div>
+      <div class="relevance-item">Sozial- &amp; Gesundheitsinstitutionen</div>
+    </div>
+
+    <p>Dort, wo Dokumente rechtliche oder wirtschaftliche Folgen ausl&ouml;sen, ist Herkunftssicherheit zentraler Bestandteil institutioneller Vertrauensw&uuml;rdigkeit. Im Kontext des EU AI Act stellt das IDPF einen konkreten Beitrag zur Einhaltung der Transparenz- und Nachweisanforderungen dar.</p>
+
+    <!-- SECTION 6 -->
+    <h2>6. Diskussion</h2>
+
+    <p>Das IDPF ersetzt keine klassische Dokumentenpr&uuml;fung, sondern erweitert sie um eine neue Dimension: <em>pr&auml;ventive Herkunftssicherung</em>. W&auml;hrend Deepfake-Erkennung immer ein Katz-und-Maus-Spiel bleibt, schafft Herkunftsverankerung eine stabile Vertrauensgrundlage.</p>
+
+    <p>Das Modell kann als infrastruktureller Baustein f&uuml;r eine zuk&uuml;nftige dokumentare Vertrauensarchitektur verstanden werden &ndash; insbesondere in Verbindung mit bestehenden Governance-Infrastrukturen wie dem WINDI-System.</p>
+
+    <!-- SECTION 7 -->
+    <h2>7. Schlussfolgerung</h2>
+
+    <div class="conclusion-box">
+      <p>Diese Arbeit zeigt, dass in der &Auml;ra generativer KI eine neue Form der Dokumentensicherheit erforderlich ist.</p>
+
+      <p>Nicht mehr die Frage</p>
+      <span class="central-question">&bdquo;Ist dieses Dokument gef&auml;lscht?&ldquo;</span>
+
+      <p>steht im Zentrum, sondern:</p>
+      <span class="central-question">&bdquo;Ist die Herkunft dieses Dokuments gesichert und &uuml;berpr&uuml;fbar?&ldquo;</span>
+
+      <p>Das Institutionelle Dokument-Provenienz-Framework liefert daf&uuml;r einen konzeptionellen und technischen Ansatz und legt die Grundlage f&uuml;r eine neue Klasse vertrauensw&uuml;rdiger, KI-unterst&uuml;tzt erzeugter Dokumente.</p>
+    </div>
+
+    <!-- WINDI GOVERNANCE REFERENCE SECTION -->
+    <div class="governance-reference">
+      <h2>&#x1F4CB; WINDI Governance-Referenz (A4 Desk BABEL)</h2>
+
+      <p>Dieser Fachartikel wurde unter WINDI-Governance erstellt und tr&auml;gt die folgenden registrierten Herkunftsmerkmale aus dem A4 Desk BABEL-System:</p>
+
+      <div class="governance-statement">
+        <div class="line-main">Document governed by WINDI &bull; Human authored &bull; AI-assisted under supervision</div>
+        Governed via WINDI &bull; Human: 100.0% &bull; Template: unknown &bull; Structure: VALID
+      </div>
+
+      <div class="babel-receipt">
+        <div class="babel-receipt-header">
+          <div class="babel-receipt-logo">
+            &#x1F3DB; A4 Desk BABEL v4.8
+            <small>WINDI Publishing House &bull; EU AI Act Compliant</small>
+          </div>
+          <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--caption);">
+            windi.publishing.de
+          </div>
+        </div>
+
+        <div class="receipt-line">
+          <span class="receipt-label">WINDI-Receipt:</span>
+          <span class="receipt-value mono">WINDI-BABEL-02FEB26-BC1DE1865F90</span>
+        </div>
+        <div class="receipt-line">
+          <span class="receipt-label">Hash:</span>
+          <span class="receipt-value mono">bc1de1865f90</span>
+        </div>
+        <div class="receipt-line">
+          <span class="receipt-label">Autor:</span>
+          <span class="receipt-value">Jober M&ouml;gele Correa (WINDI-CEO-001)</span>
+        </div>
+        <div class="receipt-line">
+          <span class="receipt-label">Witness:</span>
+          <span class="receipt-value">Dr. Schmidt Bauer</span>
+        </div>
+        <div class="receipt-line">
+          <span class="receipt-label">Provenance Hash:</span>
+          <span class="receipt-value mono">f6f732282d85bc40</span>
+        </div>
+
+        <div class="governance-badges">
+          <span class="badge badge-sof">&#x1F6E1; SOF v1.0</span>
+          <span class="badge badge-resilience">Resilience: 100/100 MAXIMUM &mdash; Forensic-grade provenance</span>
+          <span class="badge badge-structure">Structure: VALID</span>
+          <span class="badge badge-human">Human: 100.0%</span>
+        </div>
+      </div>
+
+      <!-- MEDIA COVERAGE REFERENCE -->
+      <h3 style="margin-top: 2rem;">Medienspiegel: Internationale Berichterstattung</h3>
+
+      <div class="media-reference">
+        <h4>&#x1F4F0; Internationale Fachpresse &mdash; Journalistisches Format (Editorial Style)#x1F4F0; Internationale Fachpresse &#x1F4F0; Internationale Fachpresse &mdash; Journalistisches Format (Editorial Style)mdash; Journalistisches Format (Editorial Style)</h4>
+        <p><em>Titel: <p><em>&ldquo;European Research Project Introduces First Operationalldquo;European Research Project Introduces First Operational &lsquo;Responsibility Infrastructure&rsquo; for AI Systems&rdquo;</em></p>
+        <p class="media-meta" style="color:#c0392b; font-family: Source Sans Pro, sans-serif; font-size: 0.85rem; margin-top: 0.5rem;"><strong>&#x26A0; Hinweis:</strong> Dieser Text wurde von WINDI im journalistischen Stil (Editorial Format) verfasst. Er ist <em>keine</em> Ver&ouml;ffentlichung des Wall Street Journal oder einer verbundenen Institution.</p>
+        <p>WINDI embeds governance directly into AI-assisted writing, shifting responsibility from model outputs to real-time human decision contexts.</p>
+        <p class="media-meta">
+          Berlin / Brussels &mdash; February 2026<br>
+          WINDI-RECEIPT: WINDI-BABEL-02FEB26-BC1DE1865F90 | SOF v1.0 | Resilience: 100/100
+        </p>
+      </div>
+    </div>
+
+    <!-- CROSS-REFERENCES -->
+    <h2>Verwandte Dokumentation</h2>
+
+    <div class="tr-crossref">
+      <a href="isp-evolution.html" class="tr-link">
+        <span class="tr-id">TR-006</span>
+        <span class="tr-title">ISP Registry &amp; Evolution Framework</span>
+      </a>
+      <a href="identity-governance-layer.html" class="tr-link">
+        <span class="tr-id">Section 10</span>
+        <span class="tr-title">Institutional Identity Governance Layer</span>
+      </a>
+      <a href="tr-007.html" class="tr-link">
+        <span class="tr-id">TR-007</span>
+        <span class="tr-title">Document Provenance &amp; Anti-Deepfake Framework</span>
+      </a>
+    </div>
+
+    <p style="text-align: center; font-family: 'Source Sans Pro', sans-serif; font-size: 0.88rem; color: var(--caption); margin-top: 1rem;">
+      <strong>Provenienz-Kette:</strong> TR-006 (ISP-Profile) &rarr; Section 10 (Identit&auml;ts-Governance) &rarr; TR-007 (SOF-Implementierung) &rarr; <strong>PUB-001</strong> (Akademische Grundlage)
+    </p>
+
+    <!-- NAVIGATION -->
+    <div class="nav-links">
+      <a href="tr-007.html">&larr; TR-007: Secure Origin Framework</a>
+      <a href="index.html">WINDI Documentation Index &rarr;</a>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="doc-footer">
+    <div class="footer-left">
+      WINDI Publishing House &middot; Kempten (Allg&auml;u), Bavaria, Germany<br>
+      Masterarbeit-Dokumentation: <em>master.windia4desk.tech</em>
+    </div>
+    <div class="footer-right">
+      PUB-WINDI-2026-001<br>
+      IDPF v1.0 &middot; SOF v1.0<br>
+      02. Februar 2026<br>
+      Klassifikation: &Ouml;FFENTLICH
+    </div>
+  </footer>
+
+</body>
+</html>

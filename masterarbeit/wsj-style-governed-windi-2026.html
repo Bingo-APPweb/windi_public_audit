@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>TR / Press Feature — Responsibility Infrastructure for AI Systems (WSJ-style)</title>
+  <style>
+    :root{
+      --bg:#0b0e14; --panel:#0f1420; --text:#e7eaf0; --muted:#aab3c5;
+      --line:#20283a; --accent:#60a5fa; --good:#34d399; --warn:#fbbf24;
+      --serif: ui-serif, Georgia, "Times New Roman", Times, serif;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    body{margin:0;background:radial-gradient(1200px 600px at 20% 0%, #18223a 0%, var(--bg) 55%);color:var(--text);font-family:var(--sans);}
+    a{color:var(--accent);text-decoration:none}
+    a:hover{text-decoration:underline}
+    .wrap{max-width:980px;margin:0 auto;padding:28px 18px 80px;}
+    .topnav{display:flex;gap:14px;flex-wrap:wrap;align-items:center;font-size:14px;color:var(--muted);margin-bottom:18px}
+    .topnav a{color:var(--muted)}
+    .hero{background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));border:1px solid var(--line);border-radius:18px;padding:22px 22px 18px;box-shadow:0 12px 30px rgba(0,0,0,.35)}
+    .kicker{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+    .badge{font-size:12px;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--line);padding:6px 10px;border-radius:999px;background:rgba(0,0,0,.25)}
+    .badge.wsj{font-weight:700}
+    .badge.tech{color:#e5e7eb}
+    .badge.registered{border-color:rgba(52,211,153,.45);color:var(--good);background:rgba(52,211,153,.08)}
+    h1{font-family:var(--serif);font-size:40px;line-height:1.08;margin:8px 0 10px}
+    .sub{font-size:18px;color:var(--muted);max-width:74ch;line-height:1.5;margin-bottom:12px}
+    .meta{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:14px;border-top:1px solid var(--line);padding-top:12px;margin-top:14px}
+    .meta b{color:var(--text)}
+    .grid{display:grid;grid-template-columns: 1fr;gap:18px;margin-top:18px}
+    @media(min-width: 980px){.grid{grid-template-columns: 1.6fr .9fr}}
+    .card{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:16px;padding:18px}
+    .card h2{font-family:var(--serif);margin:0 0 8px;font-size:22px}
+    .p{color:var(--text);line-height:1.65;font-size:16px}
+    .p em{color:#fff}
+    .quote{border-left:3px solid rgba(96,165,250,.6);padding-left:14px;color:#dbe7ff;font-style:italic;margin:12px 0}
+    .sidebar h3{margin:0 0 10px;font-size:14px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+    .kv{display:grid;grid-template-columns: 140px 1fr;gap:8px 10px;font-size:14px;color:var(--muted)}
+    .kv b{color:var(--text);font-weight:600}
+    .rule{height:1px;background:var(--line);margin:14px 0}
+    .receipt{font-family:var(--mono);font-size:12.5px;line-height:1.5;color:#cbd5e1;background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:14px;padding:14px;overflow:auto}
+    footer{margin-top:22px;color:var(--muted);font-size:13px}
+    .sig{margin-top:10px;font-family:var(--serif);font-size:18px;color:#e8f5ff}
+  </style>
+</head>
+<body>
+<div style="background:#fff3cd;border:2px solid #ffc107;padding:1rem 1.5rem;margin:1rem auto;max-width:900px;font-family:sans-serif;font-size:0.9rem;text-align:center;border-radius:6px;">
+<strong>⚠️ GOVERNANCE DISCLOSURE (WINDI I1/I2):</strong> This article was authored by WINDI Publishing House using a journalistic editorial format. It is <strong>not</strong> a publication of the Wall Street Journal or any affiliated entity. The editorial style is used for illustrative purposes only.
+</div>
+  <div class="wrap">
+    <div class="topnav">
+      <a href="./index.html">&larr; Masterarbeit Index</a>
+      <span>&bull;</span>
+      <a href="./press-release-windi-2026.html">Press Release</a>
+      <span>&bull;</span>
+      <a href="./tr-windi-2026-004.html">TR-004</a>
+      <span>&bull;</span>
+      <a href="./tr-windi-2026-005.html">TR-005</a>
+    </div>
+
+    <section class="hero">
+      <div class="kicker">
+        <span class="badge wsj">Wall Street Journal &bull; Technology</span>
+        <span class="badge tech">WSJ-style feature (governed)</span>
+        <span class="badge registered">&check; Governed via WINDI</span>
+      </div>
+      <h1>European Research Project Introduces First Operational &ldquo;Responsibility Infrastructure&rdquo; for AI Systems</h1>
+      <div class="sub">WINDI embeds governance directly into AI-assisted writing, shifting responsibility from model outputs to real-time human decision contexts.</div>
+      <div class="meta">
+        <div><b>Dateline:</b> Berlin / Brussels &mdash; February 2026</div>
+        <div><b>Format:</b> Diplomatic English, journalistic</div>
+      </div>
+    </section>
+
+    <div class="grid">
+      <main class="card">
+        <p class="p">
+          A European research initiative has introduced what it describes as the first operational system designed to embed governance directly into the process of AI-assisted document creation.
+        </p>
+
+        <p class="p">
+          The system, known as <em>WINDI</em>, operates in real time as a human drafts a document. It detects references to real institutions, interprets their governance implications, applies policy rules, explains its reasoning in natural language, and visually signals the appropriate governance level within the editor interface.
+        </p>
+
+        <p class="p">
+          This approach differs markedly from most existing AI governance efforts, which focus either on regulatory frameworks, ethical guidelines, or post-hoc audits. WINDI instead positions governance as a continuous operational layer surrounding human decisions.
+        </p>
+
+        <div class="quote">&ldquo;AI processes information. Humans remain the decision-makers. WINDI guarantees that the process is governed,&rdquo; said a project contributor.</div>
+
+        <h2>Operational Architecture</h2>
+        <p class="p">
+          The system functions through what researchers term &ldquo;context-aware governance adaptation.&rdquo; When a user references the German Federal Ministry of Finance, for example, WINDI automatically adjusts its communication protocols to match institutional formality standards while maintaining transparency about its decision-making process.
+        </p>
+
+        <p class="p">
+          Unlike conventional AI safety measures that operate at the model level, WINDI&rsquo;s governance infrastructure activates at the point of human-AI interaction. The system maintains what it calls an &ldquo;invariable core&rdquo; of ethical principles while adapting its expression to match institutional contexts.
+        </p>
+
+        <h2>Real-Time Implementation</h2>
+        <p class="p">
+          The project has documented its architecture across multiple technical reports, combining academic modeling with a working network-based system. This convergence of theoretical framework and production deployment represents an uncommon approach in AI governance research.
+        </p>
+
+        <p class="p">
+          Early testing has involved document creation for various European institutions, including Deutsche Bahn logistics forms and Banco do Brasil recommendation letters. Each interaction demonstrates the system&rsquo;s ability to maintain governance standards while adapting to specific institutional requirements.
+        </p>
+
+        <h2>Regulatory Implications</h2>
+        <p class="p">
+          As the European Union&rsquo;s AI Act enters full implementation, WINDI&rsquo;s approach may signal a shift in how organizations manage AI compliance. Rather than retrofitting governance onto existing AI systems, the project suggests embedding responsibility directly into the interaction architecture.
+        </p>
+
+        <div class="quote">&ldquo;This represents a fundamental rethinking of where responsibility resides in AI systems,&rdquo; noted a regulatory observer familiar with the project. &ldquo;Instead of trying to make AI models responsible, we&rsquo;re making the interaction infrastructure responsible.&rdquo;</div>
+
+        <h2>Industry Response</h2>
+        <p class="p">
+          The financial services sector, facing increasing AI governance requirements, has shown particular interest in WINDI&rsquo;s document creation capabilities. The system&rsquo;s ability to maintain institutional tone while ensuring transparency could address growing concerns about AI-generated content in regulated communications.
+        </p>
+
+        <p class="p">
+          Technology firms have begun examining whether similar responsibility infrastructures could be integrated into existing AI products, potentially offering a new approach to compliance with emerging AI regulations.
+        </p>
+
+        <h2>Market Implications</h2>
+        <p class="p">
+          The project&rsquo;s emphasis on human decision sovereignty while leveraging AI capabilities aligns with growing enterprise demand for governed AI solutions. Early assessments suggest this approach could influence how organizations structure AI deployment strategies, particularly in regulated industries.
+        </p>
+
+        <p class="p">
+          As regulatory attention intensifies across Europe, the concept of a responsibility infrastructure may offer a new paradigm: governance not as an external constraint, but as a visible, continuous layer that supports human accountability.
+        </p>
+
+        <p class="p">
+          The research project continues to operate as a live system, with technical documentation available through European academic networks.
+        </p>
+
+        <footer>
+          <div><em>*This article was reported by [Name], technology correspondent, from Berlin and Brussels.*</em></div>
+          <div class="sig">&ldquo;KI verarbeitet. Der Mensch entscheidet. WINDI garantiert.&rdquo;</div>
+        </footer>
+      </main>
+
+      <aside class="card sidebar">
+        <h3>Governance Footer (as in PDF)</h3>
+        <div class="receipt">
+Document governed by WINDI &bull; Human authored &bull; AI-assisted under supervision
+Governed via WINDI &bull; Human: 100.0% &bull; Template: unknown &bull; Structure: VALID
+WINDI-RECEIPT: WINDI-BABEL-01FEB26-BC1DE1865F90 | Hash: bc1de1865f90
+Author: Jober M&ouml;gele Correa (WINDI-CEO-001) | Witness: Dr. Schmidt Bauer
+A4 Desk BABEL v4.8 | EU AI Act Compliant | windi.publishing.de
+        </div>
+
+        <div class="rule"></div>
+
+        <h3>Document Registry</h3>
+        <div class="kv">
+          <span>Page</span><b>WSJ-style article (governed)</b>
+          <span>Pairs with</span><b>press-release-windi-2026.html</b>
+          <span>Evidence</span><b>WINDI-RECEIPT + hash</b>
+          <span>Value</span><b>Self-governed narrative</b>
+        </div>
+
+        <div class="rule"></div>
+
+        <h3>Related Documents</h3>
+        <div class="kv">
+          <span>TR-004</span><b>From Library to Cognitive Service</b>
+          <span>TR-005</span><b>Six-Phase Cognitive Governance Cycle</b>
+          <span>PR-001</span><b>Press Release: Responsibility Infrastructure</b>
+          <span>Source PDF</span><b>Governed via A4 Desk BABEL v4.8</b>
+        </div>
+
+        <div class="rule"></div>
+
+        <h3>Self-Referential Proof</h3>
+        <p class="p" style="font-size:14px;color:var(--muted)">
+          This article about WINDI&rsquo;s governance infrastructure was itself written in the A4&nbsp;Desk BABEL editor, governed by the WINDI engine, and exported with a cryptographic receipt. The document that describes the system is evidence of the system in operation.
+        </p>
+
+        <div class="rule"></div>
+
+        <h3>Human Authorship</h3>
+        <p class="p" style="font-size:13px;color:var(--muted)">
+          Created and reviewed by human authors. AI editorial assistance (Three Dragons Protocol) under human supervision. Final decisions and content approval: human responsibility.
+        </p>
+      </aside>
+    </div>
+  </div>
+</body>
+</html>

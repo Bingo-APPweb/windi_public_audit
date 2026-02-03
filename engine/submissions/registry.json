@@ -1,0 +1,26 @@
+{
+  "entries": [
+    {
+      "submission_id": "REG-20260201-0001",
+      "document_id": null,
+      "registered_at": "2026-02-01T08:58:11.341414+00:00",
+      "governance_level": "HIGH",
+      "policy_version": "2.0.0",
+      "config_hash": "0eaa119c63bc1c59f372aa048df1e7566f4d57c08bd77ac55777a124dcfe0d84",
+      "integrity_hash": "dd68612cf5dc60fdbe9c26586ccb784d1e6cdae9766ec76e2bf96038faa600e4",
+      "reporting_entity": "European Central Bank (Model)",
+      "reference_period": "2026-Q1",
+      "validation_status": "provisional"
+    }
+  ],
+  "stats": {
+    "total": 1,
+    "by_level": {
+      "HIGH": 1
+    },
+    "by_entity": {
+      "European Central Bank (Model)": 1
+    }
+  },
+  "last_updated": "2026-02-01T08:58:11.341421+00:00"
+}

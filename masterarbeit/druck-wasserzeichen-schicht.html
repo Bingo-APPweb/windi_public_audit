@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WINDI Druck-Wasserzeichen-Schicht — Technische Notiz v0.1</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital@0;1&family=Libre+Baskerville:wght@400;700&family=Source+Sans+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/academic.css">
+    <style>
+        .tech-box {
+            background: #1a1a2e;
+            border: 1px solid #4a4a6a;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .tech-box h4 {
+            color: #6366f1;
+            margin-bottom: 0.75rem;
+            font-size: 1rem;
+        }
+        .tech-box code {
+            background: #0d0d1a;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'Consolas', monospace;
+            font-size: 0.9rem;
+        }
+        .tech-box pre {
+            background: #0d0d1a;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 0.75rem 0;
+        }
+        .is-box {
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 3px solid #10b981;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        .is-not-box {
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 3px solid #ef4444;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        .pipeline-diagram {
+            background: #1e1e2e;
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            font-family: monospace;
+            line-height: 2;
+            margin: 1.5rem 0;
+        }
+        .pipeline-diagram .arrow {
+            color: #6366f1;
+        }
+        .visibility-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        .visibility-table th,
+        .visibility-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #333;
+        }
+        .visibility-table th {
+            color: #6366f1;
+        }
+        .chain-diagram {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        .chain-item {
+            background: #1a1a2e;
+            border: 1px solid #4a4a6a;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            flex: 1;
+            min-width: 200px;
+        }
+        .chain-item h5 {
+            color: #6366f1;
+            margin-bottom: 0.5rem;
+        }
+        .chain-item .domain {
+            font-size: 0.85rem;
+            color: #888;
+        }
+        .chain-item .method {
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            color: #10b981;
+        }
+        .lang-switch {
+            text-align: right;
+            margin-bottom: 1rem;
+        }
+        .lang-switch a {
+            padding: 0.5rem 1rem;
+            background: #1a1a2e;
+            color: #6366f1;
+            text-decoration: none;
+            border-radius: 4px;
+            margin-left: 0.5rem;
+        }
+        .lang-switch a:hover {
+            background: #2a2a3e;
+        }
+        .regulatory-box {
+            background: rgba(99, 102, 241, 0.1);
+            border: 2px solid #6366f1;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+        }
+        .regulatory-box h4 {
+            color: #6366f1;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="thesis-header">
+        <h1>WINDI Druck-Wasserzeichen-Schicht</h1>
+        <p class="subtitle">Technische Notiz v0.1 — Physische Forensische Erweiterung</p>
+        <div class="meta">
+            <p>WINDI Publishing House — Januar 2026</p>
+        </div>
+        <span class="version-badge">TECHNISCHE NOTIZ</span>
+    </header>
+
+    <div class="lang-switch">
+        <a href="print-watermark-layer.html">🇬🇧 English</a>
+        <a href="druck-wasserzeichen-schicht.html" style="background:#6366f1;color:#fff">🇩🇪 Deutsch</a>
+    </div>
+
+    <nav class="thesis-nav">
+        <ul>
+            <li><a href="index.html">Startseite</a></li>
+            <li><a href="dokumentenintegritaet.html">Dokumentenintegrität</a></li>
+            <li><a href="#problem">Problem</a></li>
+            <li><a href="#architektur">Architektur</a></li>
+            <li><a href="#integration">Integration</a></li>
+            <li><a href="#einschraenkungen">Einschränkungen</a></li>
+        </ul>
+    </nav>
+
+    <main class="thesis-content">
+        <div class="principle-quote">
+            „KI verarbeitet. Mensch entscheidet. WINDI garantiert."
+            <div class="attribution">— WINDI Betriebsprinzip</div>
+        </div>
+
+        <div class="regulatory-box">
+            <h4>🏛️ Hinweis für Aufsichtsbehörden</h4>
+            <p>Diese technische Dokumentation beschreibt eine optionale Erweiterung des WINDI-Governance-Systems zur forensischen Rückverfolgbarkeit gedruckter Dokumente. Die Implementierung entspricht den Transparenzanforderungen gemäß EU AI Act Artikel 52.</p>
+            <p><strong>Zuständige Stelle:</strong> WINDI Publishing House, Kempten, Bavaria, Germany</p>
+            <p><strong>Kontakt:</strong> Chief Governance Officer</p>
+        </div>
+
+        <section class="chapter" id="zusammenfassung">
+            <div class="chapter-number">Zusammenfassung</div>
+            <h2>Physische Forensische Erweiterung</h2>
+            <p>Diese technische Notiz beschreibt die WINDI Druck-Wasserzeichen-Schicht, eine optionale Erweiterung, die die Lücke zwischen digitaler und physischer Integrität in der Dokumentengovernance überbrückt. Das Modul bettet deterministische Mikro-Vektor-Muster, die aus dem Dokument-Hash abgeleitet werden, vor dem Drucken in PDF-Dateien ein und ermöglicht so die forensische Rückverfolgbarkeit zwischen gedruckten Artefakten und ihren digital gesteuerten Originalen.</p>
+        </section>
+
+        <section class="chapter" id="problem">
+            <div class="chapter-number">Abschnitt 1</div>
+            <h2>Problemstellung</h2>
+            <p>Der WINDI-Governance-Umschlag bietet kryptographische Integrität für digitale Dokumente durch den <code>doc_hash</code>, <code>governance_digest</code> und strukturelle Signaturen. Wenn Dokumente jedoch gedruckt werden, wird diese digitale Beweiskette unterbrochen.</p>
+            <p>Gedruckte Dokumente existieren außerhalb der kryptographischen Domäne. Ein gedrucktes Zertifikat, ein Vertrag oder ein offizielles Dokument kann nicht direkt gegen seinen digitalen Governance-Umschlag verifiziert werden.</p>
+            <p>Die Druck-Wasserzeichen-Schicht adressiert diese Lücke, indem sie physische forensische Marker einbettet, die den Druckprozess überleben und mathematisch mit dem ursprünglichen <code>doc_hash</code> verbunden bleiben.</p>
+        </section>
+
+        <section class="chapter" id="designprinzipien">
+            <div class="chapter-number">Abschnitt 2</div>
+            <h2>Designprinzipien</h2>
+            
+            <div class="is-box">
+                <h4>✓ Was diese Schicht IST</h4>
+                <ul>
+                    <li>Ein forensischer Rückverfolgbarkeitsmechanismus für gedruckte Dokumente</li>
+                    <li>Ein deterministisches Muster, das aus kryptographischen Hashes abgeleitet wird</li>
+                    <li>Ein Abschreckungsmittel gegen unbefugte Reproduktion</li>
+                    <li>Eine Brücke zwischen digitaler Governance und physischen Artefakten</li>
+                    <li>Ähnlich den Techniken, die in offiziellen Zertifikaten und sicheren Dokumenten verwendet werden</li>
+                </ul>
+            </div>
+
+            <div class="is-not-box">
+                <h4>✗ Was diese Schicht NICHT IST</h4>
+                <ul>
+                    <li>Eine magische unsichtbare Markierung</li>
+                    <li>Absoluter Schutz gegen Fälschung</li>
+                    <li>Ein Ersatz für digitale Verifizierung</li>
+                    <li>DRM oder Kopierschutz</li>
+                </ul>
+            </div>
+
+            <p>Diese Unterscheidung ist kritisch. Die Schicht liefert forensische Beweise, keinen kryptographischen Beweis. Ein entschlossener Gegner mit ausreichenden Ressourcen könnte die Muster möglicherweise reproduzieren. Der Wert liegt darin, die Hürde für gelegentliche Fälschungen zu erhöhen und nachträgliche forensische Analysen zu ermöglichen.</p>
+        </section>
+
+        <section class="chapter" id="architektur">
+            <div class="chapter-number">Abschnitt 3</div>
+            <h2>Technische Architektur</h2>
+
+            <h3>3.1 Mustergenerierung</h3>
+            <p>Die Wasserzeichenmuster werden deterministisch aus dem <code>doc_hash</code> generiert:</p>
+            
+            <div class="tech-box">
+                <pre>pattern_seed = SHA256(doc_hash)</pre>
+                <p>Dieser Seed initialisiert einen deterministischen Pseudo-Zufallszahlengenerator, der identische Muster für identische <code>doc_hash</code>-Werte erzeugt. Das gleiche Dokument generiert immer das gleiche Wasserzeichenmuster, was eine Verifizierung ermöglicht.</p>
+            </div>
+
+            <h3>3.2 Mustertypen</h3>
+            
+            <div class="tech-box">
+                <h4>Mikro-Linien (Vektoriell)</h4>
+                <p>Breite: 0,1–0,2 Punkte | Opazität: 3% | Menge: 50 pro Seite</p>
+                <p>Erstellt einen einzigartigen geometrischen Fingerabdruck, der aus dem Seed abgeleitet wird.</p>
+            </div>
+
+            <div class="tech-box">
+                <h4>Mikro-Punkte</h4>
+                <p>Radius: 0,2–0,5 Punkte | Verteilung: Pseudo-zufällig</p>
+                <p>Ergänzende Musterdichte für forensische Erkennung.</p>
+            </div>
+
+            <div class="tech-box">
+                <h4>Mikro-Text</h4>
+                <p>Größe: 0,3–0,5 Punkte | Inhalt: <code>WINDI:{doc_hash_fragment}:{issuer_id}</code></p>
+                <p>Menschlich lesbare Identifikation unter Vergrößerung.</p>
+            </div>
+
+            <h3>3.3 Sichtbarkeitsmerkmale</h3>
+            <table class="visibility-table">
+                <tr>
+                    <th>Bedingung</th>
+                    <th>Sichtbarkeit</th>
+                </tr>
+                <tr>
+                    <td>Normale Betrachtung</td>
+                    <td>Unsichtbar</td>
+                </tr>
+                <tr>
+                    <td>10-fache Vergrößerung</td>
+                    <td>Kaum wahrnehmbar</td>
+                </tr>
+                <tr>
+                    <td>50-fache Vergrößerung</td>
+                    <td>Deutlich sichtbar</td>
+                </tr>
+                <tr>
+                    <td>1200+ DPI Scan</td>
+                    <td>Vollständig wiederherstellbar</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="chapter" id="integration">
+            <div class="chapter-number">Abschnitt 4</div>
+            <h2>Integration mit A4Desk-Pipeline</h2>
+
+            <div class="pipeline-diagram">
+                Benutzer initiiert PDF-Export<br>
+                <span class="arrow">↓</span><br>
+                A4Desk generiert Dokumentinhalt<br>
+                <span class="arrow">↓</span><br>
+                WINDI-Umschlag erstellt (doc_hash generiert)<br>
+                <span class="arrow">↓</span><br>
+                <strong style="color:#6366f1">Druck-Wasserzeichen-Schicht bettet Muster ein</strong><br>
+                <span class="arrow">↓</span><br>
+                Finales PDF an Benutzer geliefert
+            </div>
+
+            <div class="tech-box">
+                <h4>Modulstandort</h4>
+                <pre>/opt/windi/engine/windi_print_layer.py</pre>
+            </div>
+
+            <div class="tech-box">
+                <h4>Primäre Funktion</h4>
+                <pre>def embed_print_watermark(pdf_bytes: bytes, 
+                          doc_hash: str,
+                          issuer_id: str = "WINDI") -> bytes:
+    """
+    Bettet deterministisches Mikro-Vektor-Wasserzeichen in PDF ein.
+    Gibt modifizierte PDF-Bytes mit forensischer Schicht zurück.
+    """</pre>
+            </div>
+        </section>
+
+        <section class="chapter" id="integritaetskette">
+            <div class="chapter-number">Abschnitt 5</div>
+            <h2>Integritätskette</h2>
+
+            <div class="principle-quote">
+                „KI verarbeitet. Mensch entscheidet. WINDI garantiert."
+                <div class="attribution">— Erweitert auf die physische Domäne</div>
+            </div>
+
+            <div class="chain-diagram">
+                <div class="chain-item">
+                    <h5>WINDI-Umschlag</h5>
+                    <div class="domain">Digitale Domäne</div>
+                    <div class="method">Kryptographische Verifizierung</div>
+                </div>
+                <div class="chain-item">
+                    <h5>Registry</h5>
+                    <div class="domain">Institutionelle Domäne</div>
+                    <div class="method">Zertifikatsabfrage</div>
+                </div>
+                <div class="chain-item">
+                    <h5>Druck-Wasserzeichen</h5>
+                    <div class="domain">Physische Domäne</div>
+                    <div class="method">Forensische Analyse</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="chapter" id="einschraenkungen">
+            <div class="chapter-number">Abschnitt 6</div>
+            <h2>Einschränkungen und Ehrliche Bewertung</h2>
+
+            <h3>Technische Einschränkungen</h3>
+            <ul>
+                <li>Muster können bei Druck minderer Qualität degradieren</li>
+                <li>Fotokopien zeigen Musterdegradation</li>
+                <li>Extremer Dokumentenverschleiß kann Muster zerstören</li>
+                <li>Verifizierung erfordert spezialisierte Scan-Ausrüstung</li>
+            </ul>
+
+            <h3>Sicherheitseinschränkungen</h3>
+            <ul>
+                <li>Ein entschlossener Gegner mit Zugang zum <code>doc_hash</code> könnte Muster regenerieren</li>
+                <li>Die Schicht liefert forensische Beweise, keinen kryptographischen Beweis</li>
+                <li>Physische Sicherheit ist von Natur aus schwächer als digitale Sicherheit</li>
+            </ul>
+        </section>
+
+        <section class="chapter" id="compliance">
+            <div class="chapter-number">Abschnitt 7</div>
+            <h2>Regulatorische Compliance</h2>
+
+            <div class="regulatory-box">
+                <h4>EU AI Act Konformität</h4>
+                <p>Diese Implementierung unterstützt die folgenden regulatorischen Anforderungen:</p>
+                <ul>
+                    <li><strong>Artikel 52 (Transparenz):</strong> Klare Dokumentation der KI-Beteiligung an der Dokumentenerstellung</li>
+                    <li><strong>Rückverfolgbarkeit:</strong> Mathematische Verbindung zwischen digitalen und physischen Dokumenten</li>
+                    <li><strong>Auditierbarkeit:</strong> Forensische Beweise für Authentizitätsprüfungen</li>
+                    <li><strong>Menschliche Aufsicht:</strong> Alle Dokumente erfordern menschliche Autorisierung vor Export</li>
+                </ul>
+            </div>
+
+            <div class="tech-box">
+                <h4>Audit-Endpunkte</h4>
+                <pre>GET /api/windi/status          — Systemstatus
+GET /api/windi/envelope/{id}   — Umschlag abrufen
+GET /api/windi/verify/{id}     — Integrität verifizieren</pre>
+            </div>
+        </section>
+
+        <section class="chapter">
+            <div class="chapter-number">Fazit</div>
+            <h2>Zusammenfassung</h2>
+            <p>Die WINDI Druck-Wasserzeichen-Schicht stellt einen pragmatischen Ansatz zur Überbrückung der digitalen und physischen Dokumentenintegrität dar. Sie beansprucht nicht, absolute Sicherheit zu bieten — solche Behauptungen wären unehrlich. Stattdessen bietet sie einen forensischen Rückverfolgbarkeitsmechanismus, der die Hürde für Dokumentenfälschung erhöht und nachträgliche Verifizierung bei Streitigkeiten ermöglicht.</p>
+            <p>Die Schicht ist optional, modular und mathematisch mit der bestehenden WINDI-Governance-Infrastruktur verbunden. Sie demonstriert, dass Dokumentensouveränität über den digitalen Bereich hinaus erweitert werden kann, ohne die Prinzipien von Ehrlichkeit und Transparenz aufzugeben, die den WINDI-Ansatz definieren.</p>
+        </section>
+
+        <section class="windi-receipt-footer" style="margin-top:2rem;padding:1.5rem;background:linear-gradient(135deg,#0a0a0a 0%,#1a1a2e 100%);border-radius:8px;border:1px solid #0d9488;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;">
+                <div style="flex:1;min-width:280px;">
+                    <div style="font-size:0.8rem;color:#0d9488;font-weight:bold;margin-bottom:0.5rem;">WINDI Publishing House</div>
+                    <div style="font-size:0.75rem;color:#ccc;">
+                        WINDI-QUITTUNG: WINDI-MASTER-31JAN26-3C9013C9 | Hash: 3c9013c944d1<br>
+                        Autor: Chief Governance Officer | Prüfer: WINDI System<br>
+                        Dokument-ID: WINDI-MASTER-PRINT-DE
+                    </div>
+                    <div style="font-size:0.7rem;color:#0d9488;margin-top:0.5rem;font-style:italic;">
+                        KI verarbeitet. Mensch entscheidet. WINDI garantiert.
+                    </div>
+                    <div style="margin-top:1rem;">
+                        <a href="dokumentenintegritaet.html" style="display:inline-block;padding:0.4rem 0.8rem;background:#0d9488;color:#fff;text-decoration:none;border-radius:4px;font-size:0.75rem;margin-right:0.5rem;">← Dokumentenintegrität</a>
+                        <a href="index.html" style="display:inline-block;padding:0.4rem 0.8rem;background:#003366;color:#fff;text-decoration:none;border-radius:4px;font-size:0.75rem;">Startseite</a>
+                    </div>
+                </div>
+                <div style="text-align:center;">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=70x70&data=https://master.windia4desk.tech/druck-wasserzeichen-schicht.html" alt="WINDI QR" style="width:70px;height:70px;border-radius:4px;"/>
+                    <div style="font-size:0.6rem;color:#666;margin-top:0.25rem;">Scannen zur Verifizierung</div>
+                </div>
+            </div>
+            <div style="margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid #333;font-size:0.6rem;color:#666;text-align:center;">
+                A4 Desk BABEL v4.7-gov | EU AI Act Konform | Technische Notiz v0.1 | Januar 2026
+            </div>
+        </section>
+    </main>
+
+    <footer style="text-align:center;padding:1.5rem;color:#666;font-size:0.8rem;border-top:1px solid #333;margin-top:2rem;">
+        <p>WINDI System Dokumentation — Masterarbeit Projekt</p>
+        <p style="margin-top:0.5rem;font-style:italic;color:#0d9488;">„KI verarbeitet. Mensch entscheidet. WINDI garantiert."</p>
+    </footer>
+</body>
+</html>

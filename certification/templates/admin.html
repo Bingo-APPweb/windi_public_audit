@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WINDI Certification Admin</title>
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a24;
+            --gold: #c9a227;
+            --gold-light: #e8c547;
+            --text-primary: #e8e8e8;
+            --text-secondary: #a0a0a0;
+            --border: #2a2a3a;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --error: #e74c3c;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container { max-width: 1000px; margin: 0 auto; }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 2px solid var(--gold);
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: var(--gold);
+            font-size: 1.5rem;
+        }
+        
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .lang-switcher {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .lang-btn {
+            padding: 5px 10px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.8rem;
+        }
+        
+        .lang-btn.active {
+            background: var(--gold);
+            color: var(--bg-primary);
+            border-color: var(--gold);
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--gold);
+        }
+        
+        .stat-card .label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+        
+        .applications-table {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .table-header {
+            background: var(--bg-secondary);
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .table-header h2 {
+            color: var(--gold);
+            font-size: 1.1rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        th {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+        
+        tr:hover {
+            background: var(--bg-secondary);
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .status-pending {
+            background: rgba(243, 156, 18, 0.2);
+            color: var(--warning);
+        }
+        
+        .status-evaluating {
+            background: rgba(52, 152, 219, 0.2);
+            color: #3498db;
+        }
+        
+        .status-certified {
+            background: rgba(39, 174, 96, 0.2);
+            color: var(--success);
+        }
+        
+        .status-rejected {
+            background: rgba(231, 76, 60, 0.2);
+            color: var(--error);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 8px 15px;
+            background: var(--gold);
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            margin-right: 5px;
+        }
+        
+        .btn:hover {
+            background: var(--gold-light);
+        }
+        
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+        
+        .agent-id {
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 50px;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+            
+            thead tr {
+                display: none;
+            }
+            
+            tr {
+                margin-bottom: 15px;
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                padding: 10px;
+            }
+            
+            td {
+                border: none;
+                padding: 8px 10px;
+                text-align: right;
+            }
+            
+            td:before {
+                content: attr(data-label);
+                float: left;
+                font-weight: 600;
+                color: var(--text-secondary);
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .header-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    {% set lang = request.args.get('lang', 'en') %}
+    
+    {% set t = {
+        'en': {
+            'title': 'WINDI Certification Admin',
+            'register': '← Register',
+            'total': 'Total Applications',
+            'pending': 'Pending',
+            'certified': 'Certified',
+            'rejected': 'Rejected',
+            'agent_apps': 'Agent Applications',
+            'agent': 'Agent',
+            'operator': 'Operator',
+            'status': 'Status',
+            'date': 'Date',
+            'actions': 'Actions',
+            'no_apps': 'No applications registered yet.'
+        },
+        'de': {
+            'title': 'WINDI Zertifizierung Admin',
+            'register': '← Registrierung',
+            'total': 'Gesamtanträge',
+            'pending': 'Ausstehend',
+            'certified': 'Zertifiziert',
+            'rejected': 'Abgelehnt',
+            'agent_apps': 'Agenten-Anträge',
+            'agent': 'Agent',
+            'operator': 'Betreiber',
+            'status': 'Status',
+            'date': 'Datum',
+            'actions': 'Aktionen',
+            'no_apps': 'Noch keine Anträge registriert.'
+        },
+        'pt': {
+            'title': 'WINDI Certificação Admin',
+            'register': '← Registro',
+            'total': 'Total Aplicações',
+            'pending': 'Pendentes',
+            'certified': 'Certificados',
+            'rejected': 'Rejeitados',
+            'agent_apps': 'Aplicações de Agentes',
+            'agent': 'Agente',
+            'operator': 'Operador',
+            'status': 'Status',
+            'date': 'Data',
+            'actions': 'Ações',
+            'no_apps': 'Nenhuma aplicação registrada ainda.'
+        }
+    } %}
+    
+    {% set i18n = t.get(lang, t['en']) %}
+    
+    <div class="container">
+        <div class="header">
+            <h1>🏛️ {{ i18n['title'] }}</h1>
+            <div class="header-actions">
+                <div class="lang-switcher">
+                    <a href="?token={{ token }}&lang=en" class="lang-btn {{ 'active' if lang == 'en' else '' }}">EN</a>
+                    <a href="?token={{ token }}&lang=de" class="lang-btn {{ 'active' if lang == 'de' else '' }}">DE</a>
+                    <a href="?token={{ token }}&lang=pt" class="lang-btn {{ 'active' if lang == 'pt' else '' }}">PT</a>
+                </div>
+                <a href="/?lang={{ lang }}" class="btn btn-secondary">{{ i18n['register'] }}</a>
+            </div>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <div class="number">{{ applications|length }}</div>
+                <div class="label">{{ i18n['total'] }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">{{ applications|selectattr('status', 'equalto', 'pending')|list|length }}</div>
+                <div class="label">{{ i18n['pending'] }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">{{ applications|selectattr('status', 'equalto', 'certified')|list|length }}</div>
+                <div class="label">{{ i18n['certified'] }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">{{ applications|selectattr('status', 'equalto', 'rejected')|list|length }}</div>
+                <div class="label">{{ i18n['rejected'] }}</div>
+            </div>
+        </div>
+        
+        <div class="applications-table">
+            <div class="table-header">
+                <h2>{{ i18n['agent_apps'] }}</h2>
+            </div>
+            
+            {% if applications %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>{{ i18n['agent'] }}</th>
+                        <th>{{ i18n['operator'] }}</th>
+                        <th>{{ i18n['status'] }}</th>
+                        <th>{{ i18n['date'] }}</th>
+                        <th>{{ i18n['actions'] }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for app in applications %}
+                    <tr>
+                        <td data-label="{{ i18n['agent'] }}">
+                            <strong>{{ app.agent_name }}</strong>
+                            <div class="agent-id">{{ app.id }}</div>
+                        </td>
+                        <td data-label="{{ i18n['operator'] }}">
+                            {{ app.operator_name }}<br>
+                            <small style="color: var(--text-secondary);">{{ app.operator_email }}</small>
+                        </td>
+                        <td data-label="{{ i18n['status'] }}">
+                            <span class="status-badge status-{{ app.status }}">{{ app.status|upper }}</span>
+                        </td>
+                        <td data-label="{{ i18n['date'] }}">{{ app.created_at[:10] }}</td>
+                        <td data-label="{{ i18n['actions'] }}">
+                            <a href="/admin/evaluate/{{ app.id }}?token={{ token }}&lang={{ lang }}" class="btn">WAQP</a>
+                            <a href="/admin/handshake/{{ app.id }}?token={{ token }}&lang={{ lang }}" class="btn btn-secondary">SHP</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <p>{{ i18n['no_apps'] }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

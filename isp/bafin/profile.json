@@ -1,0 +1,484 @@
+{
+  "isp_schema_version": "2.0.0",
+  "isp_id": "WINDI-ISP-BAFIN-001",
+  "created": "2026-02-02T12:30:00Z",
+  "created_by": "WINDI Dragon Council",
+  "last_updated": "2026-02-02T12:30:00Z",
+
+  "organization": {
+    "organization_name": "Bundesanstalt für Finanzdienstleistungsaufsicht (BaFin)",
+    "organization_name_en": "Federal Financial Supervisory Authority",
+    "organization_name_pt": "Autoridade Federal de Supervisão Financeira",
+    "organization_type": "federal_regulatory_authority",
+    "legal_form": "Rechtsfähige Anstalt des öffentlichen Rechts",
+    "legal_basis": "Finanzdienstleistungsaufsichtsgesetz (FinDAG) vom 22.04.2002",
+    "jurisdiction": "DE",
+    "sector": "financial_regulation_supervision",
+    "parent_authority": "Bundesministerium der Finanzen (BMF)",
+    "supervision_type": "Rechts- und Fachaufsicht durch BMF",
+    "founding_date": "2002-05-01",
+    "predecessor_authorities": [
+      "Bundesaufsichtsamt für das Kreditwesen (BAKred)",
+      "Bundesaufsichtsamt für den Wertpapierhandel (BAWe)",
+      "Bundesaufsichtsamt für das Versicherungswesen (BAV)"
+    ],
+    "locations": {
+      "bonn": "Graurheindorfer Str. 108, 53117 Bonn",
+      "frankfurt": "Marie-Curie-Straße 24-28, 60439 Frankfurt am Main"
+    },
+    "description": "Die BaFin ist die zentrale Aufsichtsbehörde über den gesamten Finanzsektor in Deutschland. Sie vereinigt die Aufsicht über Banken, Finanzdienstleister, Versicherer und den Wertpapierhandel unter einem Dach. Ihr Hauptziel ist die Gewährleistung eines funktionsfähigen, stabilen und integren deutschen Finanzsystems sowie der Schutz von Verbrauchern, Anlegern und Versicherten.",
+    "description_en": "BaFin is the central supervisory authority for the entire financial sector in Germany. It combines supervision of banks, financial service providers, insurers and securities trading under one roof. Its main objective is to ensure a functioning, stable and sound German financial system and to protect consumers, investors and policyholders.",
+    "description_pt": "A BaFin é a autoridade central de supervisão para todo o setor financeiro na Alemanha. Reúne a supervisão de bancos, prestadores de serviços financeiros, seguradoras e comércio de valores mobiliários sob um mesmo teto. Seu objetivo principal é garantir um sistema financeiro alemão funcional, estável e íntegro, além de proteger consumidores, investidores e segurados.",
+    "statistics": {
+      "supervised_entities_approx": 6700,
+      "employees_approx": 2700,
+      "funding_model": "Gebühren und Umlagen der beaufsichtigten Unternehmen",
+      "annual_budget_approx_eur": "400000000"
+    },
+    "organizational_structure": {
+      "organs": ["Direktorium", "Präsident/in", "Verwaltungsrat", "Fachbeirat"],
+      "direktorium_composition": [
+        "Präsident/in",
+        "Exekutivdirektor/in Bankenaufsicht",
+        "Exekutivdirektor/in Versicherungs- und Pensionsfondsaufsicht",
+        "Exekutivdirektor/in Wertpapieraufsicht",
+        "Exekutivdirektor/in Querschnittsaufgaben/Innere Verwaltung"
+      ],
+      "verwaltungsrat_size": 21,
+      "fachbeirat_size": 24
+    },
+    "european_integration": {
+      "ssm": "Single Supervisory Mechanism (einheitlicher Aufsichtsmechanismus) — BaFin wirkt in gemeinsamen Aufsichtsteams mit EZB",
+      "srm": "Single Resolution Mechanism — BaFin als Nationale Abwicklungsbehörde",
+      "eba": "European Banking Authority — BaFin als nationale Aufsichtsbehörde",
+      "eiopa": "European Insurance and Occupational Pensions Authority",
+      "esma": "European Securities and Markets Authority",
+      "afs": "Ausschuss für Finanzstabilität (BMF, Bundesbank, BaFin)"
+    }
+  },
+
+  "governance": {
+    "governance_level": "HIGH",
+    "classification": "regulatory_financial_authority",
+    "risk_profile": {
+      "primary_risk": "financial_system_stability",
+      "secondary_risks": [
+        "market_integrity",
+        "consumer_protection",
+        "data_confidentiality",
+        "regulatory_compliance",
+        "systemic_risk",
+        "anti_money_laundering",
+        "terrorism_financing_prevention"
+      ],
+      "data_sensitivity": "critical",
+      "public_impact": "systemic",
+      "notes": "BaFin-Dokumente betreffen die Stabilität des gesamten deutschen Finanzsystems. Fehlkommunikation oder Datenlecks können Marktbewegungen, Bankruns oder systemische Krisen auslösen. Höchste Vertraulichkeits- und Integritätsanforderungen."
+    },
+    "allowed_levels": ["HIGH"],
+    "escalation_policy": "no_downgrade",
+    "escalation_notes": "Alle Dokumente im BaFin-Kontext müssen auf HIGH-Level verbleiben. Ein Downgrade ist ausgeschlossen, da selbst operative Dokumente regulatorische Implikationen haben können."
+  },
+
+  "institutional_context": {
+    "supervision_areas": [
+      {
+        "area": "Bankenaufsicht",
+        "description": "Aufsicht über Kreditinstitute, Finanzdienstleistungsinstitute, Zahlungs- und E-Geld-Institute",
+        "legal_basis": ["KWG (Kreditwesengesetz)", "CRR (Capital Requirements Regulation)", "CRD (Capital Requirements Directive)"],
+        "cooperation": "Deutsche Bundesbank (laufende Analysen/Prüfungen), EZB/SSM (bedeutende Institute)"
+      },
+      {
+        "area": "Versicherungsaufsicht",
+        "description": "Aufsicht über Versicherungsunternehmen, Pensionsfonds und Versorgungseinrichtungen",
+        "legal_basis": ["VAG (Versicherungsaufsichtsgesetz)", "Solvency II"],
+        "cooperation": "EIOPA"
+      },
+      {
+        "area": "Wertpapieraufsicht",
+        "description": "Marktaufsicht, Insiderhandel-Bekämpfung, Prospektprüfung, Ad-hoc-Publizität",
+        "legal_basis": ["WpHG (Wertpapierhandelsgesetz)", "MAR (Market Abuse Regulation)", "MiFID II/MiFIR"],
+        "cooperation": "ESMA, Börsenaufsichtsbehörden"
+      },
+      {
+        "area": "Geldwäscheprävention",
+        "description": "Prävention von Geldwäsche und Terrorismusfinanzierung im Finanzsektor",
+        "legal_basis": ["GwG (Geldwäschegesetz)", "AMLD (Anti-Money Laundering Directive)"],
+        "cooperation": "FIU (Financial Intelligence Unit), Europol"
+      },
+      {
+        "area": "Verbraucherschutz",
+        "description": "Kollektiver Verbraucherschutz, Beschwerdemanagement, Warnung vor unseriösen Anbietern",
+        "legal_basis": ["FinDAG § 4 Abs. 1a"],
+        "cooperation": "Verbraucherzentralen"
+      },
+      {
+        "area": "Abwicklung",
+        "description": "Nationale Abwicklungsbehörde für Kreditinstitute und bestimmte Wertpapierfirmen",
+        "legal_basis": ["SAG (Sanierungs- und Abwicklungsgesetz)", "SRM-Verordnung"],
+        "cooperation": "SRB (Single Resolution Board)"
+      },
+      {
+        "area": "FinTech / Innovation",
+        "description": "FinTech Innovation Hub, Krypto-Aufsicht (MiCAR), Digital Finance",
+        "legal_basis": ["MiCAR", "DORA", "EU AI Act"],
+        "cooperation": "EU AI Office, nationale Marktüberwachungsbehörden"
+      }
+    ],
+    "key_regulatory_frameworks": {
+      "national": [
+        {"name": "KWG", "full_name": "Kreditwesengesetz", "scope": "Banken und Finanzdienstleister"},
+        {"name": "VAG", "full_name": "Versicherungsaufsichtsgesetz", "scope": "Versicherer und Pensionsfonds"},
+        {"name": "WpHG", "full_name": "Wertpapierhandelsgesetz", "scope": "Wertpapierhandel und Marktintegrität"},
+        {"name": "GwG", "full_name": "Geldwäschegesetz", "scope": "Geldwäscheprävention"},
+        {"name": "SAG", "full_name": "Sanierungs- und Abwicklungsgesetz", "scope": "Bankenabwicklung"},
+        {"name": "FinDAG", "full_name": "Finanzdienstleistungsaufsichtsgesetz", "scope": "BaFin-Organisation"},
+        {"name": "ZAG", "full_name": "Zahlungsdiensteaufsichtsgesetz", "scope": "Zahlungsdienstleister"}
+      ],
+      "european": [
+        {"name": "CRR/CRD", "scope": "Eigenkapitalanforderungen Banken"},
+        {"name": "Solvency II", "scope": "Eigenkapitalanforderungen Versicherer"},
+        {"name": "MiFID II/MiFIR", "scope": "Finanzmarktrichtlinie"},
+        {"name": "MAR", "scope": "Marktmissbrauchsverordnung"},
+        {"name": "DORA", "full_name": "Digital Operational Resilience Act", "scope": "Digitale operationelle Resilienz im Finanzsektor", "effective": "2025-01-17"},
+        {"name": "MiCAR", "full_name": "Markets in Crypto-Assets Regulation", "scope": "Krypto-Assets"},
+        {"name": "EU AI Act", "full_name": "Verordnung (EU) 2024/1689", "scope": "KI-Regulierung", "full_application": "2026-08-02"}
+      ]
+    }
+  },
+
+  "ai_governance_context": {
+    "description": "BaFin ist der zentrale Akteur für KI-Governance im deutschen Finanzsektor. Die Dezember 2025 veröffentlichte Orientierungshilfe zu IKT-Risiken beim KI-Einsatz definiert den regulatorischen Rahmen.",
+    "bafin_ki_orientierungshilfe": {
+      "published": "2025-12-18",
+      "title": "Orientierungshilfe zu IKT-Risiken beim Einsatz von Künstlicher Intelligenz in Finanzunternehmen",
+      "key_principles": [
+        "KI-Systeme sind vollständig in das IKT-Risikomanagement nach DORA zu integrieren",
+        "KI darf nicht isoliert betrachtet werden — Einbettung in bestehendes Risikomanagement",
+        "Lebenszyklusorientierte Perspektive: Datenbeschaffung → Modellentwicklung → Bereitstellung → Betrieb → Stilllegung",
+        "KI-Systeme sind Kombination aus IKT-Assets und IKT-Infrastruktur",
+        "Exit-Strategien und Deinstallation sind Teil der Governance",
+        "Besondere Aufmerksamkeit für IKT-Drittparteienrisiken beim KI-Einsatz"
+      ],
+      "target_audience": ["Institute unter CRR", "Versicherer unter Solvency II"],
+      "binding_character": "Unverbindliche Orientierungshilfe (aufsichtliche Erwartungshaltung)"
+    },
+    "dora_ai_intersection": {
+      "description": "DORA behandelt KI technologieneutral als IKT-System. DORA adressiert operative Resilienz, EU AI Act adressiert Nachvollziehbarkeit und menschliche Kontrolle.",
+      "key_requirements": [
+        "KI-Systeme wie andere IKT-Assets in IKT-Risikomanagement integrieren",
+        "Identifikation, Schutz, Erkennung, Reaktion und Wiederherstellung (DORA-Zyklus)",
+        "Drittparteienrisikomanagement für Cloud-basierte KI-Dienste",
+        "Subcontracting-Anforderungen für KI-Dienste kritischer Funktionen"
+      ]
+    },
+    "eu_ai_act_financial_sector": {
+      "high_risk_applications": [
+        "Automatisiertes Kreditscoring",
+        "KI-gestützte Risikobewertung",
+        "Algorithmic Trading Überwachung",
+        "Automatisierte Geldwäscheerkennung",
+        "KI-basierte Versicherungsprämienberechnung"
+      ],
+      "timeline": {
+        "prohibited_practices": "2025-02-02 (in Kraft)",
+        "ai_literacy_obligations": "2025-02-02 (in Kraft)",
+        "gpai_obligations": "2025-08-02 (in Kraft)",
+        "high_risk_full_application": "2026-08-02",
+        "regulated_products_extended": "2027-08-02"
+      },
+      "windi_relevance": "WINDI als Pre-AI Governance Layer positioniert sich exakt in der Lücke zwischen EU AI Act Anforderungen und praktischer Umsetzung in Finanzunternehmen — die BaFin-Orientierungshilfe bestätigt den Bedarf an strukturierter KI-Governance."
+    }
+  },
+
+  "operational_templates": {
+    "description": "Dokumenttypen im BaFin-Kontext, die WINDI-Governance-Unterstützung nutzen können. ALLE Dokumente auf HIGH-Level.",
+    "templates": [
+      {
+        "template_id": "aufsichtliche_mitteilung",
+        "name": "Aufsichtliche Mitteilung / Rundschreiben",
+        "description": "Offizielle Mitteilungen und Rundschreiben der BaFin an beaufsichtigte Unternehmen",
+        "category": "aufsicht",
+        "governance_level": "HIGH",
+        "confidentiality": "restricted_to_public",
+        "retention_period": "permanent"
+      },
+      {
+        "template_id": "pruefungsbericht",
+        "name": "Prüfungsbericht",
+        "description": "Berichte aus aufsichtlichen Prüfungen von Finanzinstituten",
+        "category": "aufsicht",
+        "governance_level": "HIGH",
+        "confidentiality": "strictly_confidential",
+        "retention_period": "permanent"
+      },
+      {
+        "template_id": "risikobewertung",
+        "name": "Risikobewertung (SREP / ORSA)",
+        "description": "Supervisory Review and Evaluation Process / Own Risk and Solvency Assessment",
+        "category": "risikomanagement",
+        "governance_level": "HIGH",
+        "confidentiality": "strictly_confidential",
+        "retention_period": "10_years"
+      },
+      {
+        "template_id": "erlaubnisverfahren",
+        "name": "Erlaubnisverfahren / Zulassungsbescheid",
+        "description": "Erteilung oder Versagung von Erlaubnissen für Bank-, Versicherungs- oder Finanzdienstleistungsgeschäfte",
+        "category": "zulassung",
+        "governance_level": "HIGH",
+        "confidentiality": "confidential",
+        "retention_period": "permanent",
+        "legal_effect": true
+      },
+      {
+        "template_id": "sanktionsbescheid",
+        "name": "Sanktionsbescheid / Bußgeldbescheid",
+        "description": "Verwaltungsrechtliche Sanktionen und Bußgelder gegen Institute oder Personen",
+        "category": "enforcement",
+        "governance_level": "HIGH",
+        "confidentiality": "confidential_to_public",
+        "retention_period": "permanent",
+        "legal_effect": true
+      },
+      {
+        "template_id": "verbraucherwarnung",
+        "name": "Verbraucherwarnung",
+        "description": "Öffentliche Warnungen vor unerlaubten Geschäften oder unseriösen Finanzanbietern",
+        "category": "verbraucherschutz",
+        "governance_level": "HIGH",
+        "confidentiality": "public",
+        "retention_period": "permanent"
+      },
+      {
+        "template_id": "abwicklungsplan",
+        "name": "Abwicklungsplan",
+        "description": "Abwicklungspläne für systemrelevante Institute (Recovery & Resolution Plans)",
+        "category": "abwicklung",
+        "governance_level": "HIGH",
+        "confidentiality": "strictly_confidential",
+        "retention_period": "permanent"
+      },
+      {
+        "template_id": "geldwaesche_verdachtsmeldung",
+        "name": "Geldwäscheverdachtsmeldung",
+        "description": "Verdachtsmeldungen nach GwG an die FIU / Dokumentation der Meldepflichten",
+        "category": "geldwaeschepraevention",
+        "governance_level": "HIGH",
+        "confidentiality": "strictly_confidential",
+        "retention_period": "10_years"
+      },
+      {
+        "template_id": "ki_risikobewertung",
+        "name": "KI-Risikobewertung nach DORA/EU AI Act",
+        "description": "Bewertung von IKT-Risiken beim Einsatz von KI-Systemen gemäß BaFin-Orientierungshilfe",
+        "category": "ki_governance",
+        "governance_level": "HIGH",
+        "confidentiality": "confidential",
+        "retention_period": "10_years",
+        "notes": "Basiert auf BaFin-Orientierungshilfe vom 18.12.2025"
+      },
+      {
+        "template_id": "dora_ikt_bericht",
+        "name": "DORA IKT-Risikomanagementbericht",
+        "description": "Bericht zum IKT-Risikomanagement nach DORA inkl. KI-spezifischer Risikodimensionen",
+        "category": "ki_governance",
+        "governance_level": "HIGH",
+        "confidentiality": "confidential",
+        "retention_period": "10_years"
+      },
+      {
+        "template_id": "prospektpruefung",
+        "name": "Prospektprüfung / Prospektbilligung",
+        "description": "Prüfung und Billigung von Wertpapierprospekten",
+        "category": "wertpapieraufsicht",
+        "governance_level": "HIGH",
+        "confidentiality": "confidential_to_public",
+        "retention_period": "permanent",
+        "legal_effect": true
+      },
+      {
+        "template_id": "marktmissbrauch_untersuchung",
+        "name": "Marktmissbrauchsuntersuchung",
+        "description": "Untersuchungen zu Insiderhandel, Marktmanipulation und Ad-hoc-Publizitätsverstößen",
+        "category": "enforcement",
+        "governance_level": "HIGH",
+        "confidentiality": "strictly_confidential",
+        "retention_period": "permanent"
+      }
+    ]
+  },
+
+  "document_categories": [
+    "aufsicht",
+    "risikomanagement",
+    "zulassung",
+    "enforcement",
+    "verbraucherschutz",
+    "abwicklung",
+    "geldwaeschepraevention",
+    "ki_governance",
+    "wertpapieraufsicht",
+    "meldewesen",
+    "sustainable_finance",
+    "fintech_innovation"
+  ],
+
+  "ai_role": {
+    "description": "WINDI unterstützt im BaFin-Kontext ausschließlich bei Dokumentation, Strukturierung und Governance-Prozessen. WINDI trifft keine aufsichtlichen Entscheidungen, erteilt keine Erlaubnisse, verhängt keine Sanktionen und bewertet keine Finanzinstitute.",
+    "permitted_actions": [
+      "document_structuring",
+      "regulatory_reference_lookup",
+      "compliance_checklist_generation",
+      "template_generation_governance",
+      "translation_regulatory_documents",
+      "process_documentation",
+      "risk_taxonomy_drafting",
+      "audit_trail_documentation",
+      "timeline_tracking_regulatory",
+      "cross_reference_eu_national_law"
+    ],
+    "prohibited_actions": [
+      "supervisory_decisions",
+      "licensing_decisions",
+      "sanction_recommendations",
+      "risk_scoring_of_institutions",
+      "market_analysis_for_trading",
+      "insider_information_processing",
+      "aml_suspicious_activity_determination",
+      "solvency_assessment",
+      "identity_impersonation",
+      "autonomous_regulatory_interpretation"
+    ],
+    "human_review": {
+      "required": true,
+      "mandatory": true,
+      "four_eyes_principle": true,
+      "notes": "Jedes WINDI-generierte Dokument im BaFin-Kontext MUSS von mindestens zwei qualifizierten Personen geprüft werden (Vier-Augen-Prinzip). Kein Dokument darf ohne menschliche Freigabe den BaFin-Kontext verlassen."
+    }
+  },
+
+  "data_protection": {
+    "gdpr_dsgvo": {
+      "relevant": true,
+      "data_categories": [
+        "regulatory_supervision_data",
+        "financial_institution_data",
+        "market_surveillance_data",
+        "consumer_complaint_data",
+        "suspicious_transaction_data",
+        "insider_trading_investigation_data"
+      ],
+      "sensitivity_level": "critical",
+      "data_minimization": true,
+      "purpose_limitation": true,
+      "notes": "BaFin verarbeitet hochsensible Aufsichtsdaten. Jede unautorisierte Offenlegung kann Marktbewegungen auslösen oder laufende Ermittlungen gefährden."
+    },
+    "professional_secrecy": {
+      "applicable": true,
+      "legal_basis": "FinDAG, KWG § 9 (Verschwiegenheitspflicht)",
+      "scope": "Alle bei der BaFin Beschäftigten und von ihr beauftragten Personen unterliegen der Verschwiegenheitspflicht",
+      "penalty": "Strafrechtliche Sanktionen bei Verletzung"
+    }
+  },
+
+  "compliance_requirements": {
+    "eu_ai_act": {
+      "applicable": true,
+      "bafin_role": "BaFin als sektorale Aufsichtsbehörde für KI im Finanzsektor",
+      "high_risk_systems": ["Kreditscoring", "Risikobewertung", "AML-Screening"],
+      "orientierungshilfe": "BaFin-Orientierungshilfe IKT-Risiken KI (18.12.2025)"
+    },
+    "dora": {
+      "applicable": true,
+      "effective_date": "2025-01-17",
+      "scope": "Alle beaufsichtigten Finanzunternehmen",
+      "key_requirements": ["IKT-Risikomanagement", "Incident Reporting", "Resilience Testing", "Third-Party Risk Management"]
+    },
+    "gdpr_dsgvo": true,
+    "kwg": true,
+    "vag": true,
+    "wphg": true,
+    "gwg": true,
+    "findag": true,
+    "mar": true,
+    "micar": true
+  },
+
+  "watermark_policy": {
+    "visible": true,
+    "text": "WINDI Governance | HIGH | BaFin Regulatory Context",
+    "position": "header_footer",
+    "density": "controlled",
+    "classification_marking": true,
+    "confidentiality_label": "required"
+  },
+
+  "audit_trail": {
+    "enabled": true,
+    "granularity": "comprehensive",
+    "tamper_evidence": true,
+    "submission_package_id": true,
+    "configuration_hash_required": true,
+    "forensic_ledger_entry": true,
+    "retention_period": "10_years_minimum",
+    "chain_of_custody": true,
+    "reproduction_guarantee": "Jedes Dokument muss aus seiner Submission-Package-ID und dem Konfigurationshash reproduzierbar sein",
+    "notes": "Vollständige forensische Dokumentation aller Dokumenten-Lebenszyklen. Manipulationssichere Audit-Trails mit kryptographischen Nachweisen."
+  },
+
+  "identity_license": {
+    "status": "model_only",
+    "authorized_by": null,
+    "authorization_ref": null,
+    "authorization_hash": null,
+    "valid_from": null,
+    "valid_until": null,
+    "scope": {
+      "logo": false,
+      "letterhead": false,
+      "bundesadler": false,
+      "official_seal": false,
+      "institutional_tone": true,
+      "regulatory_language": true,
+      "values_reference": true,
+      "official_address": false
+    },
+    "restrictions": [
+      "Model/simulation use only until Identity License is granted",
+      "No official BaFin seals, Bundesadler or official formatting",
+      "No implication of official BaFin endorsement or authorization",
+      "Regulatory language for demonstration purposes only",
+      "No document may appear to originate from or be endorsed by BaFin"
+    ]
+  },
+
+  "keywords": [
+    "bafin", "bundesanstalt", "finanzdienstleistungsaufsicht",
+    "bankenaufsicht", "versicherungsaufsicht", "wertpapieraufsicht",
+    "finanzaufsicht", "finanzregulierung", "aufsichtsbehörde",
+    "kreditwesengesetz", "kwg", "vag", "wphg", "findag",
+    "dora", "digital operational resilience", "eu ai act", "ki-verordnung",
+    "micar", "krypto", "mifid", "mar", "solvency",
+    "geldwäsche", "gwg", "aml", "terrorismusfinanzierung",
+    "srep", "orsa", "abwicklung", "resolution",
+    "prospekt", "insiderhandel", "marktmissbrauch",
+    "verbraucherschutz", "erlaubnis", "sanktion",
+    "bundesbank", "ezb", "ssm", "eba", "esma", "eiopa",
+    "risikomanagement", "ikt", "compliance", "financial_regulation"
+  ],
+
+  "positioning_statement": {
+    "de": "WINDI dient im BaFin-Kontext als dokumentarische Governance-Schicht für Regulierungsprozesse. WINDI trifft keine aufsichtlichen Entscheidungen. WINDI erteilt keine Erlaubnisse. WINDI bewertet keine Institute. WINDI verhängt keine Sanktionen. Jedes WINDI-Dokument unterliegt dem Vier-Augen-Prinzip.",
+    "en": "WINDI serves in the BaFin context as a documentary governance layer for regulatory processes. WINDI does not make supervisory decisions. WINDI does not grant licenses. WINDI does not assess institutions. WINDI does not impose sanctions. Every WINDI document is subject to the four-eyes principle.",
+    "pt": "WINDI serve no contexto BaFin como camada de governança documental para processos regulatórios. WINDI não toma decisões de supervisão. WINDI não concede licenças. WINDI não avalia instituições. WINDI não impõe sanções. Todo documento WINDI está sujeito ao princípio dos quatro olhos."
+  },
+
+  "strategic_notes": {
+    "windi_bafin_alignment": "A BaFin-Orientierungshilfe de 18.12.2025 confirma exatamente a necessidade que WINDI resolve: KI precisa de governance estruturada, integração no risk management existente, e documentação ao longo de todo o ciclo de vida. WINDI é a implementação prática desta exigência.",
+    "dora_eu_ai_act_bridge": "DORA (resiliência operacional) + EU AI Act (transparência/direitos) = dois frameworks complementares. WINDI integra ambos numa camada de governança unificada, exatamente como a BaFin recomenda.",
+    "bis_bafin_complementarity": "BIS-Style (HIGH): padrões internacionais de reportagem regulatória. BaFin (HIGH): supervisão nacional do setor financeiro alemão. Juntos cobrem o eixo internacional↔nacional da regulação financeira.",
+    "market_positioning": "Qualquer banco ou seguradora na Alemanha que use IA precisa demonstrar compliance com DORA + EU AI Act à BaFin. WINDI oferece a camada de governança que documenta essa compliance — produto direto para ~6.700 entidades supervisionadas.",
+    "wirecard_lesson": "O escândalo Wirecard demonstrou as consequências de falhas na supervisão financeira. WINDI reforça a cultura de documentação, rastreabilidade e transparência que a BaFin reformada exige desde 2021."
+  }
+}

@@ -1,0 +1,234 @@
+WINDI EVOLUTION PACKAGE v1.0
+Deployment Guide - Platform Maturity Phase
+02 February 2026
+Policy Version: WINDI-GOV-2.2.0
+
+================================================================
+WHAT THIS PACKAGE CONTAINS
+================================================================
+
+4 strategic fronts implemented:
+
+1. GOVERNANCE MATURITY
+   - Policy versioning (governance_levels_v2.2.0.json)
+   - Policy lineage tracking
+   - Institutional templates with governance minimums
+
+2. INSTITUTIONAL MATURITY
+   - Identity Directory (identity_directory.json)
+   - Identity Detector with auto-detection
+   - German declension-tolerant matching
+   - Governance Advisor Mode (trilingual)
+
+3. SYSTEM MATURITY
+   - Governance Event Log with hash chain integrity
+   - Medium Registry (lightweight institutional traceability)
+   - Governance Health Check (observable infrastructure)
+   - Proof of Governance statements
+
+4. PRODUCT MATURITY
+   - Governance Advisor messages (DE/EN/PT)
+   - Governance Statement generation
+   - 13 new API endpoints
+
+================================================================
+FILES TO DEPLOY
+================================================================
+
+CONFIG FILES (new directory):
+  /opt/windi/config/identity_directory.json
+  /opt/windi/engine/governance_levels.json  (replace with v2.2.0)
+
+ENGINE MODULES (4 new):
+  /opt/windi/engine/identity_detector.py
+  /opt/windi/engine/governance_event_log.py
+  /opt/windi/engine/medium_registry.py
+  /opt/windi/engine/governance_health.py
+
+API (optional standalone or integrate):
+  /opt/windi/engine/governance_api_evolution.py
+
+DATABASES (auto-created):
+  /opt/windi/forensic/governance_events.db
+  /opt/windi/forensic/medium_registry.db
+
+================================================================
+DEPLOYMENT STEPS
+================================================================
+
+Step 1: Create config directory
+  mkdir -p /opt/windi/config
+
+Step 2: Upload config files
+  scp config/identity_directory.json windi@87.106.29.233:/opt/windi/config/
+  scp config/governance_levels_v2.2.0.json windi@87.106.29.233:/opt/windi/engine/governance_levels.json
+
+Step 3: Upload engine modules
+  scp engine/identity_detector.py windi@87.106.29.233:/opt/windi/engine/
+  scp engine/governance_event_log.py windi@87.106.29.233:/opt/windi/engine/
+  scp engine/medium_registry.py windi@87.106.29.233:/opt/windi/engine/
+  scp engine/governance_health.py windi@87.106.29.233:/opt/windi/engine/
+  scp engine/governance_api_evolution.py windi@87.106.29.233:/opt/windi/engine/
+
+Step 4: Test on server
+  cd /opt/windi/engine
+  python3 identity_detector.py
+  python3 governance_event_log.py
+  python3 medium_registry.py
+
+Step 5: Start Evolution API (optional, port 8081)
+  nohup python3 governance_api_evolution.py --port 8081 > /tmp/windi-evo.log 2>&1 &
+
+Step 6: Integrate into BABEL (recommended)
+  Add proxy routes in a4desk_tiptap_babel.py:
+    /api/gov/detect      -> localhost:8081/api/governance/detect
+    /api/gov/recommend   -> localhost:8081/api/governance/recommend
+    /api/gov/health      -> localhost:8081/api/governance/health
+    /api/gov/status      -> localhost:8081/api/governance/status
+    /api/gov/medium/*    -> localhost:8081/api/governance/medium/*
+    /api/gov/events/*    -> localhost:8081/api/governance/events/*
+    /api/gov/identity/*  -> localhost:8081/api/governance/identity/*
+
+================================================================
+NEW API ENDPOINTS
+================================================================
+
+HEALTH & STATUS:
+  GET  /api/governance/status    Quick health status
+  GET  /api/governance/health    Full health check (all components)
+
+IDENTITY DETECTION (Governance Advisor):
+  POST /api/governance/detect
+    Body: {"text": "document content..."}
+    Returns: detected institutions with confidence scores
+
+  POST /api/governance/recommend
+    Body: {"text": "...", "current_level": "LOW"}
+    Returns: governance recommendation with trilingual advisor message
+
+MEDIUM REGISTRY:
+  POST /api/governance/medium/register
+    Body: {"content": "...", "isp_name": "...", "institution_name": "...", ...}
+    Returns: entry_id, content_hash_short
+
+  GET  /api/governance/medium/list?isp=...&limit=50
+  POST /api/governance/medium/verify  {"entry_id": "...", "content": "..."}
+  POST /api/governance/medium/proof   {"entry_id": "..."}
+    Returns: WINDI Governance Statement (trilingual)
+
+EVENT LOG:
+  GET  /api/governance/events?type=...&level=...&since=...
+  GET  /api/governance/events/stats
+
+IDENTITY DIRECTORY:
+  GET  /api/governance/identity/list?country=DE&type=bank
+  GET  /api/governance/identity/lookup?id=INST-DE-DB-001
+  POST /api/governance/identity/add   (new institution)
+
+================================================================
+IDENTITY DETECTOR - TEST RESULTS
+================================================================
+
+Test 1: "Deutschen Bahn" (German declension)
+  -> Deutsche Bahn AG detected (75%) -> AUTO-UPGRADE to MEDIUM
+
+Test 2: "European Central Bank"
+  -> ECB detected (90%) -> AUTO-UPGRADE to HIGH
+
+Test 3: "Banco do Brasil" (Portuguese)
+  -> BB detected (85%) -> AUTO-UPGRADE to MEDIUM
+
+Test 4: Generic document
+  -> No detection -> NO CHANGE (correct)
+
+Test 5: "Bundesregierung" (single word)
+  -> German Government detected (70%) -> AUTO-UPGRADE to MEDIUM
+
+Test 6: "BaFin" (abbreviation)
+  -> BaFin detected (70%) -> AUTO-UPGRADE to HIGH
+
+All 6/6 tests PASS.
+
+================================================================
+GOVERNANCE LEVELS v2.2.0 - WHAT CHANGED
+================================================================
+
+From v2.1.0:
+  + Policy version ID in all governance configs
+  + Policy lineage (full version history)
+  + Institutional templates with governance minimums
+    - carta_institucional (MEDIUM)
+    - parecer_tecnico (MEDIUM)
+    - memorando_oficial (MEDIUM)
+    - nota_publica (HIGH)
+    - relatorio_regulatorio (HIGH)
+    - documento_geral (LOW)
+  + Detection rules configuration
+  + Medium registry ("institutional" audit trail)
+  + Event logging flags per level
+  + Proof of governance type per level
+
+================================================================
+ARCHITECTURE AFTER EVOLUTION
+================================================================
+
+Engine Modules (11 total):
+  Core (7):    governance_validator, submission_id, tamper_evidence,
+               submission_registry, audit_dashboard, isp_loader,
+               windi_governance_api
+  Evolution (4): identity_detector, governance_event_log,
+                 medium_registry, governance_health
+
+Registry Layers:
+  LOW    -> No registry
+  MEDIUM -> Medium Registry (institutional, lightweight)
+  HIGH   -> Forensic Registry (submission chain, REG- IDs)
+
+Event Flow:
+  Text Input
+    -> Identity Detector scans for institutions
+    -> Governance Advisor recommends level
+    -> User confirms or overrides
+    -> Event Log records decision
+    -> MEDIUM: Medium Registry entry created
+    -> HIGH: Forensic submission chain
+    -> Proof of Governance generated
+
+================================================================
+NEXT STEPS (SUGGESTED)
+================================================================
+
+Phase 2A: Dashboard Integration
+  - Add Identity Directory browser to /governance page
+  - Show detection results in real-time as user types
+  - Event Log viewer with filters
+
+Phase 2B: Expand Identity Directory
+  - Add more German institutions (Bundesbank, KfW, etc.)
+  - Add EU institutions (EBA, ESMA, EIOPA)
+  - Add Brazilian institutions (BACEN, CVM, BNDES)
+
+Phase 2C: Governance Advisor in Editor
+  - Real-time scanning as document is edited
+  - Non-intrusive notification bar
+  - One-click level upgrade
+
+Phase 2D: Masterarbeit Registration
+  - Register this evolution as TR-WINDI-2026-003
+  - Section: "Platform Maturity Architecture"
+
+================================================================
+WINDI INVARIANTS COMPLIANCE
+================================================================
+
+I1 Soberania:    User always confirms governance decisions
+I2 Non-Opacity:  Event Log makes all decisions visible
+I3 Transparencia: Health Check exposes full system state
+I4 Jurisdicao:   Identity Directory respects institutional jurisdiction
+I5 No Fabrication: Detection uses curated, verified keywords
+I6 Conflict Structuring: Advisor presents recommendation, user decides
+I7 Institutional: Medium Registry creates institutional traceability
+I8 No Depth Punishment: LOW documents still free, no registration burden
+
+All 8 Invariants preserved.
+================================================================

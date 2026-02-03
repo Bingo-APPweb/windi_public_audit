@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WINDI ISP Registry v2.5.0 — Institutional Governance Profiles</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #1a1a2e;
+      --paper: #fafaf8;
+      --paper-warm: #f5f4f0;
+      --accent-blue: #2c3e6b;
+      --accent-gold: #b8860b;
+      --high-color: #8b1a1a;
+      --high-bg: #fdf2f2;
+      --high-border: #d4a0a0;
+      --medium-color: #7a5c00;
+      --medium-bg: #fdf8ed;
+      --medium-border: #d4c490;
+      --low-color: #1a5c3a;
+      --low-bg: #f0f7f3;
+      --low-border: #a0c4ad;
+      --rule: #d0cec8;
+      --caption: #6b6860;
+      --code-bg: #f0efe8;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Source Sans 3', 'Segoe UI', sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      line-height: 1.7;
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* === HEADER === */
+    .doc-header {
+      background: var(--ink);
+      color: var(--paper);
+      padding: 2rem 0;
+      border-bottom: 3px solid var(--accent-gold);
+    }
+
+    .doc-header-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .doc-header-left {
+      flex: 1;
+    }
+
+    .doc-series {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent-gold);
+      margin-bottom: 0.25rem;
+    }
+
+    .doc-org {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 1.15rem;
+      font-weight: 300;
+      letter-spacing: 0.02em;
+      opacity: 0.85;
+    }
+
+    .doc-header-right {
+      text-align: right;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      line-height: 1.8;
+      opacity: 0.7;
+      padding-top: 0.25rem;
+    }
+
+    /* === TITLE BLOCK === */
+    .title-block {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 3rem 2rem 2rem;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .title-block h1 {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 2.2rem;
+      font-weight: 700;
+      line-height: 1.25;
+      color: var(--accent-blue);
+      margin-bottom: 0.5rem;
+    }
+
+    .title-block .subtitle {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 1.25rem;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--caption);
+      margin-bottom: 1.5rem;
+    }
+
+    .title-meta {
+      display: flex;
+      gap: 2.5rem;
+      flex-wrap: wrap;
+      font-size: 0.88rem;
+      color: var(--caption);
+    }
+
+    .title-meta dt {
+      font-weight: 600;
+      color: var(--ink);
+      display: inline;
+    }
+
+    .title-meta dd {
+      display: inline;
+      margin-left: 0.25rem;
+    }
+
+    .title-meta .meta-pair {
+      display: flex;
+      gap: 0.25rem;
+    }
+
+    /* === MAIN CONTENT === */
+    .content {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .section {
+      margin-bottom: 2.5rem;
+    }
+
+    .section-number {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent-gold);
+      margin-bottom: 0.25rem;
+    }
+
+    h2 {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 1.45rem;
+      font-weight: 600;
+      color: var(--accent-blue);
+      margin-bottom: 1rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    h3 {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+      margin-top: 1.5rem;
+    }
+
+    p {
+      margin-bottom: 1rem;
+      text-align: justify;
+      hyphens: auto;
+    }
+
+    /* === ABSTRACT === */
+    .abstract {
+      background: var(--paper-warm);
+      border-left: 3px solid var(--accent-blue);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.95rem;
+    }
+
+    .abstract strong {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent-blue);
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    /* === GOVERNANCE PYRAMID === */
+    .pyramid-container {
+      display: flex;
+      justify-content: center;
+      margin: 2rem 0;
+    }
+
+    .pyramid {
+      width: 100%;
+      max-width: 680px;
+    }
+
+    .pyramid-level {
+      border-radius: 4px;
+      padding: 1rem 1.5rem;
+      margin-bottom: 0.5rem;
+      position: relative;
+    }
+
+    .pyramid-level.high {
+      background: var(--high-bg);
+      border: 1px solid var(--high-border);
+      margin-left: 15%;
+      margin-right: 15%;
+    }
+
+    .pyramid-level.medium {
+      background: var(--medium-bg);
+      border: 1px solid var(--medium-border);
+      margin-left: 7.5%;
+      margin-right: 7.5%;
+    }
+
+    .pyramid-level.low {
+      background: var(--low-bg);
+      border: 1px solid var(--low-border);
+    }
+
+    .pyramid-level-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.15rem 0.5rem;
+      border-radius: 2px;
+      display: inline-block;
+      margin-bottom: 0.4rem;
+    }
+
+    .pyramid-level.high .pyramid-level-tag {
+      background: var(--high-color);
+      color: white;
+    }
+
+    .pyramid-level.medium .pyramid-level-tag {
+      background: var(--medium-color);
+      color: white;
+    }
+
+    .pyramid-level.low .pyramid-level-tag {
+      background: var(--low-color);
+      color: white;
+    }
+
+    .pyramid-level-desc {
+      font-size: 0.82rem;
+      color: var(--caption);
+      font-style: italic;
+      margin-top: 0.15rem;
+    }
+
+    .pyramid-orgs {
+      font-size: 0.92rem;
+      line-height: 1.6;
+    }
+
+    .pyramid-orgs .org-name {
+      font-weight: 600;
+    }
+
+    .pyramid-orgs .org-type {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--caption);
+      margin-left: 0.25rem;
+    }
+
+    /* === CATALOG TABLE === */
+    .catalog-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+      margin: 1.5rem 0;
+    }
+
+    .catalog-table thead {
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    .catalog-table th {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.6rem 0.8rem;
+      text-align: left;
+      font-weight: 500;
+    }
+
+    .catalog-table td {
+      padding: 0.6rem 0.8rem;
+      border-bottom: 1px solid var(--rule);
+      vertical-align: top;
+    }
+
+    .catalog-table tbody tr:hover {
+      background: var(--paper-warm);
+    }
+
+    .level-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      padding: 0.15rem 0.45rem;
+      border-radius: 2px;
+      display: inline-block;
+    }
+
+    .level-badge.high {
+      background: var(--high-color);
+      color: white;
+    }
+
+    .level-badge.medium {
+      background: var(--medium-color);
+      color: white;
+    }
+
+    .level-badge.low {
+      background: var(--low-color);
+      color: white;
+    }
+
+    .template-count {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--accent-blue);
+    }
+
+    /* === PROFILE CARDS === */
+    .profile-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    @media (max-width: 700px) {
+      .profile-grid { grid-template-columns: 1fr; }
+    }
+
+    .profile-card {
+      border: 1px solid var(--rule);
+      border-radius: 4px;
+      padding: 1.1rem 1.2rem;
+      background: white;
+      transition: box-shadow 0.2s;
+    }
+
+    .profile-card:hover {
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+
+    .profile-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.5rem;
+    }
+
+    .profile-card h4 {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.3;
+    }
+
+    .profile-card .card-type {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--caption);
+      margin-top: 0.15rem;
+    }
+
+    .profile-card .card-detail {
+      font-size: 0.82rem;
+      color: var(--caption);
+      line-height: 1.5;
+    }
+
+    .profile-card .card-templates {
+      margin-top: 0.6rem;
+      font-size: 0.78rem;
+      color: var(--caption);
+    }
+
+    .profile-card .card-templates span {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 500;
+      color: var(--accent-blue);
+    }
+
+    /* === TIMELINE === */
+    .timeline {
+      position: relative;
+      margin: 1.5rem 0 1.5rem 1.5rem;
+      padding-left: 1.5rem;
+      border-left: 2px solid var(--rule);
+    }
+
+    .timeline-entry {
+      position: relative;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+    }
+
+    .timeline-entry::before {
+      content: '';
+      position: absolute;
+      left: -1.85rem;
+      top: 0.35rem;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent-blue);
+      border: 2px solid var(--paper);
+      box-shadow: 0 0 0 2px var(--accent-blue);
+    }
+
+    .timeline-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--accent-gold);
+      letter-spacing: 0.05em;
+      margin-bottom: 0.15rem;
+    }
+
+    .timeline-title {
+      font-weight: 600;
+      font-size: 0.92rem;
+      margin-bottom: 0.1rem;
+    }
+
+    .timeline-desc {
+      font-size: 0.82rem;
+      color: var(--caption);
+    }
+
+    /* === KEY METRICS === */
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    @media (max-width: 600px) {
+      .metrics-row { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .metric-box {
+      text-align: center;
+      padding: 1.2rem 0.8rem;
+      background: white;
+      border: 1px solid var(--rule);
+      border-radius: 4px;
+    }
+
+    .metric-value {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--accent-blue);
+      line-height: 1;
+    }
+
+    .metric-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--caption);
+      margin-top: 0.3rem;
+    }
+
+    /* === CODE / TECHNICAL === */
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85em;
+      background: var(--code-bg);
+      padding: 0.1rem 0.35rem;
+      border-radius: 2px;
+    }
+
+    .code-block {
+      background: var(--ink);
+      color: #e0ddd5;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      line-height: 1.65;
+      padding: 1rem 1.25rem;
+      border-radius: 4px;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+
+    .code-block .comment { color: #6a9955; }
+    .code-block .key { color: #9cdcfe; }
+    .code-block .string { color: #ce9178; }
+    .code-block .bracket { color: #ffd700; }
+
+    /* === GOVERNANCE MODEL DIAGRAM === */
+    .governance-model {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 0;
+      margin: 1.5rem 0;
+      border: 1px solid var(--rule);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .gov-model-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 500;
+    }
+
+    .gov-model-content {
+      padding: 0.8rem 1rem;
+      font-size: 0.88rem;
+      border-left: 1px solid var(--rule);
+    }
+
+    .gov-row-high .gov-model-label { background: var(--high-color); color: white; }
+    .gov-row-high .gov-model-content { background: var(--high-bg); }
+    .gov-row-medium .gov-model-label { background: var(--medium-color); color: white; }
+    .gov-row-medium .gov-model-content { background: var(--medium-bg); }
+    .gov-row-low .gov-model-label { background: var(--low-color); color: white; }
+    .gov-row-low .gov-model-content { background: var(--low-bg); }
+
+    .gov-feature {
+      font-size: 0.82rem;
+      color: var(--caption);
+      margin-top: 0.2rem;
+    }
+
+    /* === FIGURE CAPTION === */
+    .figure {
+      margin: 2rem 0;
+    }
+
+    .figure-caption {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 0.8rem;
+      color: var(--caption);
+      text-align: center;
+      margin-top: 0.5rem;
+      font-style: italic;
+    }
+
+    .figure-caption strong {
+      font-style: normal;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.05em;
+    }
+
+    /* === FOOTNOTES / FOOTER === */
+    .doc-footer {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 1.5rem 2rem 3rem;
+      border-top: 1px solid var(--rule);
+      font-size: 0.8rem;
+      color: var(--caption);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .doc-footer .footer-left {
+      font-style: italic;
+    }
+
+    .doc-footer .footer-right {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      text-align: right;
+    }
+
+    /* === PRINCIPLE BOX === */
+    .principle-box {
+      background: var(--ink);
+      color: var(--paper);
+      text-align: center;
+      padding: 1.5rem 2rem;
+      border-radius: 4px;
+      margin: 2rem 0;
+    }
+
+    .principle-box .principle-text {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 1.2rem;
+      font-weight: 300;
+      font-style: italic;
+      line-height: 1.5;
+    }
+
+    .principle-box .principle-source {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent-gold);
+      margin-top: 0.6rem;
+    }
+
+    /* === EU CONNECTION === */
+    .eu-ref {
+      background: white;
+      border: 1px solid var(--rule);
+      border-left: 3px solid var(--accent-blue);
+      padding: 1rem 1.25rem;
+      margin: 1rem 0;
+      font-size: 0.88rem;
+    }
+
+    .eu-ref-title {
+      font-weight: 600;
+      font-size: 0.82rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .eu-ref-body {
+      color: var(--caption);
+      font-size: 0.84rem;
+    }
+
+    /* === PRINT STYLES === */
+    @media print {
+      .doc-header { background: white; color: var(--ink); border-bottom: 2px solid var(--ink); }
+      .doc-series, .doc-header-right { color: var(--ink); }
+      body { font-size: 11pt; }
+      .profile-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* === SEPARATOR === */
+    .sep {
+      text-align: center;
+      margin: 2.5rem 0;
+      color: var(--rule);
+      font-size: 1.2rem;
+      letter-spacing: 1em;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="doc-header">
+    <div class="doc-header-inner">
+      <div class="doc-header-left">
+        <div class="doc-series">WINDI Technical Report — TR-WINDI-2026-006</div>
+        <div class="doc-org">WINDI Publishing House · Kempten (Allgäu), Bavaria, Germany</div>
+      </div>
+      <div class="doc-header-right">
+        Registry v2.5.0<br>
+        02 February 2026<br>
+        Classification: PUBLIC
+      </div>
+    </div>
+  </header>
+
+  <!-- TITLE -->
+  <div class="title-block">
+    <h1>Institutional Style Profiles:<br>A Tiered Governance Model for AI&#8209;Assisted Document Generation</h1>
+    <div class="subtitle">Entwicklung eines gestuften Dokumenten-Governance-Modells für KI-unterstützte institutionelle Veröffentlichung</div>
+    <div class="title-meta">
+      <div class="meta-pair"><dt>Author:</dt><dd>Jober Mögele Correa, Chief Governance Officer</dd></div>
+      <div class="meta-pair"><dt>System:</dt><dd>WINDI — We Invite New Decision Intelligence</dd></div>
+      <div class="meta-pair"><dt>Status:</dt><dd>Production (Strato DE Infrastructure)</dd></div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ABSTRACT -->
+    <div class="abstract">
+      <strong>Abstract / Zusammenfassung</strong>
+      This report documents the design, implementation and deployment of the WINDI Institutional Style Profile (ISP) Registry — a governance framework that classifies institutional document requirements into three tiers (HIGH, MEDIUM, LOW) based on regulatory risk, identity sensitivity, and forensic audit requirements. The registry currently comprises eight institutional profiles spanning financial regulation, federal government, social services, public enterprise, professional chambers, and technical inspection — representing a cross-section of the German institutional landscape. Each profile encodes organisation-specific templates, governance constraints, and compliance metadata, enabling AI-assisted document generation that respects institutional identity without substituting human decision-making. The system is deployed on German-jurisdiction infrastructure and aligned with EU AI Act requirements for human oversight in AI-assisted processes.
+    </div>
+
+    <!-- KEY METRICS -->
+    <div class="metrics-row">
+      <div class="metric-box">
+        <div class="metric-value">8</div>
+        <div class="metric-label">ISP Profiles</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-value">3</div>
+        <div class="metric-label">Governance Tiers</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-value">76</div>
+        <div class="metric-label">Document Templates</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-value">v2.5.0</div>
+        <div class="metric-label">Registry Version</div>
+      </div>
+    </div>
+
+    <!-- SECTION 1: GOVERNANCE MODEL -->
+    <div class="section">
+      <div class="section-number">Section I</div>
+      <h2>Das Governance-Stufenmodell</h2>
+
+      <p>The WINDI Governance Level Model addresses a fundamental challenge in AI-assisted document generation: different institutional contexts require different levels of oversight, identity protection, and auditability. A logistics notification from Deutsche Bahn requires different governance than a supervisory assessment from BaFin. The model operationalises this insight through three tiers, each with distinct technical enforcement mechanisms.</p>
+
+      <div class="figure">
+        <div class="governance-model">
+          <div class="gov-row-high" style="display: contents;">
+            <div class="gov-model-label">HIGH</div>
+            <div class="gov-model-content">
+              <strong>Regulatorisch / Forensisch</strong> — Höchste Anforderungen an Nachvollziehbarkeit und Dokumentenintegrität.
+              <div class="gov-feature">Forensic ledger · Tamper evidence · Chain of custody · Four-eyes principle · No downgrade policy · SHA-256 hash chain</div>
+            </div>
+          </div>
+          <div class="gov-row-medium" style="display: contents;">
+            <div class="gov-model-label">MEDIUM</div>
+            <div class="gov-model-content">
+              <strong>Institutionell / Identitätssensibel</strong> — Schutz der institutionellen Identität gegen Missbrauch und Fälschung.
+              <div class="gov-feature">Identity License System · Automatic disclaimers · Logo usage controls · Institutional reference audit · Trilingual support</div>
+            </div>
+          </div>
+          <div class="gov-row-low" style="display: contents;">
+            <div class="gov-model-label">LOW</div>
+            <div class="gov-model-content">
+              <strong>Operativ / Sektoral</strong> — Standardisierte Vorlagen mit grundlegender Governance für den täglichen Betrieb.
+              <div class="gov-feature">Template validation · Metadata enforcement · Style consistency · Basic audit trail · Governance receipt</div>
+            </div>
+          </div>
+        </div>
+        <div class="figure-caption"><strong>Fig. 1</strong> — WINDI Governance Level Model with enforcement mechanisms per tier</div>
+      </div>
+
+      <p>The core architectural principle is strict separation of concerns: <em>the template never decides the governance level — the API decides; the template merely manifests.</em> This ensures that governance enforcement cannot be bypassed through template manipulation, a design pattern aligned with the EU AI Act's requirement for meaningful human oversight (Article 14).</p>
+    </div>
+
+    <div class="principle-box">
+      <div class="principle-text">„KI verarbeitet. Der Mensch entscheidet. WINDI garantiert."</div>
+      <div class="principle-source">WINDI Governance Principle — Invariant I1: Sovereignty</div>
+    </div>
+
+    <!-- SECTION 2: INSTITUTIONAL PYRAMID -->
+    <div class="section">
+      <div class="section-number">Section II</div>
+      <h2>Die institutionelle Pyramide</h2>
+
+      <p>The ISP Registry models a representative cross-section of the German institutional landscape. The selection follows deliberate strategic logic: regulatory authorities at the apex, government and social institutions at the middle tier, and operational/sectoral organisations at the base. Together, these profiles demonstrate that the governance model scales across institutional contexts with materially different risk profiles.</p>
+
+      <div class="figure">
+        <div class="pyramid-container">
+          <div class="pyramid">
+            <div class="pyramid-level high">
+              <div class="pyramid-level-tag">HIGH — Regulatorisch</div>
+              <div class="pyramid-orgs">
+                <span class="org-name">BIS Regulatory Authority</span> <span class="org-type">regulatory_authority</span><br>
+                <span class="org-name">BaFin</span> <span class="org-type">federal_regulatory_authority</span>
+              </div>
+              <div class="pyramid-level-desc">International and national financial supervision · Forensic audit mandatory</div>
+            </div>
+            <div class="pyramid-level medium">
+              <div class="pyramid-level-tag">MEDIUM — Institutionell</div>
+              <div class="pyramid-orgs">
+                <span class="org-name">Bundesregierung</span> <span class="org-type">government_institutional</span><br>
+                <span class="org-name">Bundesagentur für Arbeit</span> <span class="org-type">social_sensitive_institutional</span>
+              </div>
+              <div class="pyramid-level-desc">Federal government and social services · Identity License required</div>
+            </div>
+            <div class="pyramid-level low">
+              <div class="pyramid-level-tag">LOW — Operativ</div>
+              <div class="pyramid-orgs">
+                <span class="org-name">Deutsche Bahn AG</span> <span class="org-type">public_enterprise</span><br>
+                <span class="org-name">Industrie- und Handelskammer</span> <span class="org-type">public_law_chamber</span><br>
+                <span class="org-name">Handwerkskammer</span> <span class="org-type">public_law_chamber</span><br>
+                <span class="org-name">Technischer Überwachungsverein (TÜV)</span> <span class="org-type">technical_inspection_org</span>
+              </div>
+              <div class="pyramid-level-desc">Transport, commerce, crafts, and technical inspection · Standard governance</div>
+            </div>
+          </div>
+        </div>
+        <div class="figure-caption"><strong>Fig. 2</strong> — WINDI ISP Registry v2.5.0: Institutional governance pyramid (8 profiles, 3 tiers)</div>
+      </div>
+
+      <p>The selection covers institutions that collectively interact with virtually every enterprise and citizen in Germany: IHK and HWK together span the entire <em>gewerbliche</em> economy, BaFin supervises approximately 6,700 financial entities, TÜV certifications are recognised in over 160 countries, and the Bundesagentur für Arbeit serves as the primary interface between citizens and the labour market.</p>
+    </div>
+
+    <!-- SECTION 3: PROFILE CATALOG -->
+    <div class="section">
+      <div class="section-number">Section III</div>
+      <h2>Profilkatalog — ISP Registry v2.5.0</h2>
+
+      <table class="catalog-table">
+        <thead>
+          <tr>
+            <th>Institution</th>
+            <th>Level</th>
+            <th>Type</th>
+            <th>Templates</th>
+            <th>Sector</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>BIS Regulatory Authority</strong></td>
+            <td><span class="level-badge high">HIGH</span></td>
+            <td>regulatory_authority</td>
+            <td class="template-count">8</td>
+            <td>International Finance</td>
+          </tr>
+          <tr>
+            <td><strong>BaFin</strong><br><span style="font-size:0.8rem;color:var(--caption);">Bundesanstalt für Finanzdienstleistungsaufsicht</span></td>
+            <td><span class="level-badge high">HIGH</span></td>
+            <td>federal_regulatory_authority</td>
+            <td class="template-count">12</td>
+            <td>Financial Supervision</td>
+          </tr>
+          <tr>
+            <td><strong>Bundesregierung</strong><br><span style="font-size:0.8rem;color:var(--caption);">Bundesrepublik Deutschland</span></td>
+            <td><span class="level-badge medium">MEDIUM</span></td>
+            <td>government_institutional</td>
+            <td class="template-count">10</td>
+            <td>Federal Government</td>
+          </tr>
+          <tr>
+            <td><strong>Bundesagentur für Arbeit</strong></td>
+            <td><span class="level-badge medium">MEDIUM</span></td>
+            <td>social_sensitive_institutional</td>
+            <td class="template-count">12</td>
+            <td>Social Services</td>
+          </tr>
+          <tr>
+            <td><strong>Deutsche Bahn AG</strong></td>
+            <td><span class="level-badge low">LOW</span></td>
+            <td>public_enterprise</td>
+            <td class="template-count">6</td>
+            <td>Transport Infrastructure</td>
+          </tr>
+          <tr>
+            <td><strong>Industrie- und Handelskammer</strong></td>
+            <td><span class="level-badge low">LOW</span></td>
+            <td>public_law_chamber</td>
+            <td class="template-count">8</td>
+            <td>Commerce &amp; Industry</td>
+          </tr>
+          <tr>
+            <td><strong>Handwerkskammer</strong></td>
+            <td><span class="level-badge low">LOW</span></td>
+            <td>public_law_chamber</td>
+            <td class="template-count">10</td>
+            <td>Crafts &amp; Trades</td>
+          </tr>
+          <tr>
+            <td><strong>TÜV</strong><br><span style="font-size:0.8rem;color:var(--caption);">Technischer Überwachungsverein</span></td>
+            <td><span class="level-badge low">LOW</span></td>
+            <td>technical_inspection_org</td>
+            <td class="template-count">12</td>
+            <td>Technical Certification</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="figure-caption"><strong>Table 1</strong> — Complete ISP Registry with governance classification and template counts</div>
+    </div>
+
+    <!-- SECTION 4: PROFILE DETAILS -->
+    <div class="section">
+      <div class="section-number">Section IV</div>
+      <h2>Profilübersicht — Institutionelle Kontexte</h2>
+
+      <h3>HIGH-Level Profiles — Regulatorische Aufsicht</h3>
+      <div class="profile-grid">
+        <div class="profile-card">
+          <div class="profile-card-header">
+            <div>
+              <h4>BIS Regulatory Authority</h4>
+              <div class="card-type">regulatory_authority · international</div>
+            </div>
+            <span class="level-badge high">HIGH</span>
+          </div>
+          <div class="card-detail">International regulatory reporting model for statistical and supervisory publications. Establishes the baseline for highest-level governance enforcement with mandatory forensic audit trail.</div>
+          <div class="card-templates"><span>8</span> templates — Statistical reports, supervisory publications, regulatory analyses</div>
+        </div>
+        <div class="profile-card">
+          <div class="profile-card-header">
+            <div>
+              <h4>BaFin</h4>
+              <div class="card-type">federal_regulatory_authority · national</div>
+            </div>
+            <span class="level-badge high">HIGH</span>
+          </div>
+          <div class="card-detail">Germany's financial supervisory authority covering banking, insurance, securities, and payment services. Supervises ~6,700 entities. Profile includes KI-Risikobewertung templates aligned with DORA and EU AI Act requirements. Published KI-Orientierungshilfe on 18.12.2025.</div>
+          <div class="card-templates"><span>12</span> templates — SREP/ORSA, Sanktionsbescheid, KI-Risikobewertung, Geldwäsche-Meldung, DORA IKT-Bericht</div>
+        </div>
+      </div>
+
+      <h3>MEDIUM-Level Profiles — Institutionelle Identität</h3>
+      <div class="profile-grid">
+        <div class="profile-card">
+          <div class="profile-card-header">
+            <div>
+              <h4>Bundesregierung</h4>
+              <div class="card-type">government_institutional · federal</div>
+            </div>
+            <span class="level-badge medium">MEDIUM</span>
+          </div>
+          <div class="card-detail">Federal government of Germany. Documents require identity protection through WINDI's Identity License System — ensuring institutional references include appropriate disclaimers and preventing unauthorized logo usage in AI-generated content.</div>
+          <div class="card-templates"><span>10</span> templates — Regierungserklärung, Gesetzentwurf, Kabinettsbeschluss, Pressemitteilung</div>
+        </div>
+        <div class="profile-card">
+          <div class="profile-card-header">
+            <div>
+              <h4>Bundesagentur für Arbeit</h4>
+              <div class="card-type">social_sensitive_institutional · federal</div>
+            </div>
+            <span class="level-badge medium">MEDIUM</span>
+          </div>
+          <div class="card-detail">Germany's federal employment agency. Handles socially sensitive data requiring enhanced identity governance. Documents interface with citizens in vulnerable situations, demanding particular care in AI-assisted generation.</div>
+          <div class="card-templates"><span>12</span> templates — Bewilligungsbescheid, Eingliederungsvereinbarung, Arbeitsmarktbericht, Gründungszuschuss</div>
+        </div>
+      </div>
+
+      <h3>LOW-Level Profiles — Operative Sektoren</h3>
+      <div class="profile-grid">
+        <div class="profile-card">
+          <div class="profile-card-header">
+            <div>
+              <h4>Deutsche Bahn AG</h4>
+              <div class="card-type">public_enterprise · transport</div>
+            </div>
+            <span class="level-badge low">LOW</span>
+          </div>
+          <div class="card-detail">Germany's national railway and first ISP profile developed. Operational logistics documentation with standard governance. Established the baseline template architecture for the entire ISP system.</div>
+          <div class="card-templates"><span>6</span> templates — Fahrplanauskunft, Verspätungsmeldung, Baustelleninfo, Servicemitteilung</div>
+        </div>
+        <div class="profile-card">
+          <div class="profile-card-header">
+            <div>
+              <h4>IHK</h4>
+              <div class="card-type">public_law_chamber · commerce</div>
+            </div>
+            <span class="level-badge low">LOW</span>
+          </div>
+          <div class="card-detail">Industrie- und Handelskammer — the chamber of commerce and industry. Public-law body covering all non-craft commercial enterprises. Together with HWK, spans the entire German <em>gewerbliche</em> economy.</div>
+          <div class="card-templates"><span>8</span> templates — Ursprungszeugnis, Handelsregisterauszug, Ausbildungsvertrag, Sachverständigen-Bestellung</div>
+        </div>
+        <div class="profile-card">
+          <div class="profile-card-header">
+            <div>
+              <h4>HWK</h4>
+              <div class="card-type">public_law_chamber · crafts</div>
+            </div>
+            <span class="level-badge low">LOW</span>
+          </div>
+          <div class="card-detail">Handwerkskammer — the chamber of crafts and trades. Governs the Handwerksordnung with Meisterpflicht in 53 trades. HWK Schwaben operates a Bildungs- und Technologiezentrum (BTZ) in Kempten.</div>
+          <div class="card-templates"><span>10</span> templates — Handwerksrolle, Meisterprüfung, Gesellenprüfung, Existenzgründungsberatung, ÜLU-Bescheinigung</div>
+        </div>
+        <div class="profile-card">
+          <div class="profile-card-header">
+            <div>
+              <h4>TÜV</h4>
+              <div class="card-type">technical_inspection_org · certification</div>
+            </div>
+            <span class="level-badge low">LOW</span>
+          </div>
+          <div class="card-detail">Technischer Überwachungsverein — Germany's most iconic quality brand. Combined ecosystem: ~74,000 employees, ~€7.8B revenue. Operates TÜV AI.Lab (est. 2021) and is preparing Notified Body status for EU AI Act conformity assessment.</div>
+          <div class="card-templates"><span>12</span> templates — HU/AU, Managementsystem-Zertifizierung, GS-Zeichen, KI-Konformitätsbewertung, Cybersecurity-Prüfung</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sep">· · ·</div>
+
+    <!-- SECTION 5: INNOVATION — IDENTITY LICENSE -->
+    <div class="section">
+      <div class="section-number">Section V</div>
+      <h2>Innovation: Das Identity License System</h2>
+
+      <p>A key methodological contribution of the ISP framework is the Identity License System, developed for MEDIUM-level governance. The system addresses a novel challenge in AI-assisted document generation: <em>how to permit institutional language patterns without enabling identity falsification.</em></p>
+
+      <p>The discovery emerged from empirical testing — a Banco do Brasil letter generated through the WINDI system demonstrated that simulating institutional identity in AI-generated text activates governance requirements that do not arise with generic documents. This insight, documented as WINDI Key Discovery, led to a formal identity governance layer with five license states:</p>
+
+      <div class="code-block">
+<span class="bracket">{</span>
+  <span class="key">"identity_license"</span>: <span class="bracket">{</span>
+    <span class="key">"states"</span>: [<span class="string">"authorized"</span>, <span class="string">"model_only"</span>, <span class="string">"pending"</span>, <span class="string">"expired"</span>, <span class="string">"revoked"</span>],
+    <span class="key">"enforcement"</span>: <span class="bracket">{</span>
+      <span class="key">"logo_usage"</span>: <span class="string">"blocked unless authorized"</span>,
+      <span class="key">"disclaimer"</span>: <span class="string">"automatic insertion for model_only"</span>,
+      <span class="key">"audit_trail"</span>: <span class="string">"all institutional references logged"</span>
+    <span class="bracket">}</span>
+  <span class="bracket">}</span>
+<span class="bracket">}</span>
+      </div>
+
+      <p>This mechanism ensures that AI-generated documents can adopt institutional communication styles for legitimate purposes (training, simulation, drafting assistance) while maintaining clear provenance and preventing misrepresentation — a requirement particularly relevant under the EU AI Act's transparency obligations (Article 50).</p>
+    </div>
+
+    <!-- SECTION 6: EU AI ACT ALIGNMENT -->
+    <div class="section">
+      <div class="section-number">Section VI</div>
+      <h2>Regulatorische Einordnung — EU AI Act</h2>
+
+      <p>The ISP governance tiers map directly to the risk-based approach established by the European AI Act (Regulation (EU) 2024/1689). The system provides documented governance processes that organisations can reference when demonstrating compliance with human oversight requirements.</p>
+
+      <div class="eu-ref">
+        <div class="eu-ref-title">Art. 14 — Menschliche Aufsicht / Human Oversight</div>
+        <div class="eu-ref-body">WINDI's architectural principle „the API decides, the template manifests" ensures that governance level enforcement is not delegable to the AI system. Every document generation passes through a decision layer where human-set governance policies determine the applicable constraints.</div>
+      </div>
+
+      <div class="eu-ref">
+        <div class="eu-ref-title">Art. 50 — Transparenzpflichten / Transparency Obligations</div>
+        <div class="eu-ref-body">The Identity License System ensures that AI-generated documents referencing institutional identities carry appropriate disclaimers and provenance metadata. The forensic ledger at HIGH level provides tamper-evident documentation of the complete generation process.</div>
+      </div>
+
+      <div class="eu-ref">
+        <div class="eu-ref-title">DORA (Regulation (EU) 2022/2554) — IKT-Risikomanagement</div>
+        <div class="eu-ref-body">The BaFin ISP profile includes dedicated templates for DORA IKT reporting and KI-Risikobewertung, providing governance-controlled document generation for financial entities' ICT risk management obligations.</div>
+      </div>
+    </div>
+
+    <!-- SECTION 7: DEPLOYMENT TIMELINE -->
+    <div class="section">
+      <div class="section-number">Section VII</div>
+      <h2>Deployment-Chronologie</h2>
+
+      <p>The ISP Registry was developed and deployed iteratively on production infrastructure (Strato DE, German jurisdiction) between 31 January and 2 February 2026. Each deployment followed a zero-violence protocol: backup → create → deploy → validate → verify.</p>
+
+      <div class="timeline">
+        <div class="timeline-entry">
+          <div class="timeline-date">31 Jan 2026</div>
+          <div class="timeline-title">Deutsche Bahn AG — ISP v1.0.0</div>
+          <div class="timeline-desc">First institutional profile. Established base architecture for ISP system including template schema, governance metadata, and style configuration.</div>
+        </div>
+        <div class="timeline-entry">
+          <div class="timeline-date">01 Feb 2026</div>
+          <div class="timeline-title">BIS-Style Regulatory — ISP v2.0.0</div>
+          <div class="timeline-desc">First HIGH-level profile. Introduced forensic ledger requirements and regulatory metadata constraints.</div>
+        </div>
+        <div class="timeline-entry">
+          <div class="timeline-date">02 Feb 2026 · 10:51</div>
+          <div class="timeline-title">Bundesregierung + Agentur für Arbeit — ISP v2.2.0</div>
+          <div class="timeline-desc">First MEDIUM-level profiles. Activated Identity License System with disclaimer enforcement and institutional reference auditing.</div>
+        </div>
+        <div class="timeline-entry">
+          <div class="timeline-date">02 Feb 2026 · 11:05</div>
+          <div class="timeline-title">IHK — ISP v2.2.0</div>
+          <div class="timeline-desc">Commerce and industry chamber. Established public_law_chamber type classification.</div>
+        </div>
+        <div class="timeline-entry">
+          <div class="timeline-date">02 Feb 2026 · 11:22</div>
+          <div class="timeline-title">HWK — ISP v2.3.0</div>
+          <div class="timeline-desc">Crafts chamber. Complementary to IHK — together covering the entire gewerbliche economy. Documented HWK Schwaben BTZ Kempten connection.</div>
+        </div>
+        <div class="timeline-entry">
+          <div class="timeline-date">02 Feb 2026 · 11:31</div>
+          <div class="timeline-title">BaFin — ISP v2.4.0</div>
+          <div class="timeline-desc">National financial supervisor. Most dense profile: 12 templates, 7 supervision areas, KI-Risikobewertung aligned with DORA + EU AI Act. Four-eyes principle enforced.</div>
+        </div>
+        <div class="timeline-entry">
+          <div class="timeline-date">02 Feb 2026 · 11:42</div>
+          <div class="timeline-title">TÜV — ISP v2.5.0</div>
+          <div class="timeline-desc">Technical inspection ecosystem. Largest profile (23KB). Includes unique ai_governance_context section documenting TÜV AI.Lab and EU AI Act Notified Body preparation.</div>
+        </div>
+      </div>
+
+      <div class="figure-caption"><strong>Fig. 3</strong> — Deployment timeline: 7 profiles in 36 hours, from v1.0.0 to v2.5.0</div>
+    </div>
+
+    <!-- SECTION 8: TECHNICAL ARCHITECTURE -->
+    <div class="section">
+      <div class="section-number">Section VIII</div>
+      <h2>Technische Architektur</h2>
+
+      <p>Each ISP profile is stored as a self-contained JSON document in the server's ISP directory. The registry maintains a central <code>governance_levels.json</code> manifest that maps institutions to governance tiers and document type classifications. Profile loading, validation, and governance enforcement are handled by the WINDI engine at runtime.</p>
+
+      <div class="code-block">
+<span class="comment"># Server directory structure (Strato DE)</span>
+/opt/windi/isp/
+├── governance_levels.json    <span class="comment"># Central registry (v2.5.0)</span>
+├── ARCHITECTURE.md
+├── README.md
+├── isp_loader.py             <span class="comment"># Profile loader module</span>
+├── _base/profile.json        <span class="comment"># Base template schema</span>
+├── deutsche-bahn/profile.json
+├── bundesregierung/profile.json
+├── agentur-fuer-arbeit/profile.json
+├── ihk/profile.json
+├── hwk/profile.json
+├── bafin/profile.json        <span class="comment"># HIGH: 24KB, 12 templates</span>
+├── bis-style/profile.json
+└── tuev/profile.json         <span class="comment"># LOW: 23KB, 12 templates</span>
+      </div>
+
+      <p>Each profile encodes four governance dimensions: organisational metadata (legal name, type, sector), template definitions (document types with field schemas and validation rules), governance constraints (level-specific enforcement policies), and detection keywords (for the Identity Detector module to recognise institutional references in free text).</p>
+    </div>
+
+    <!-- SECTION 9: OUTLOOK -->
+    <div class="section">
+      <div class="section-number">Section IX</div>
+      <h2>Ausblick — Nächste Schritte</h2>
+
+      <p>The current registry demonstrates proof of concept across three governance tiers and eight institutional contexts. Planned development includes catalog consolidation (schema validation tooling and standardised field requirements), expansion into health sector profiles (Bundesärztekammer, GKV/Krankenkassen) and additional technical inspection bodies (DEKRA), as well as an academic/university profile type relevant to the Hochschule environment where this research is conducted.</p>
+
+      <p>The strategic objective is not exhaustive institutional coverage, but rather a sufficiently diverse catalog that validates the governance model's applicability across materially different risk contexts — from financial regulation to public transport, from federal government to craft trades.</p>
+    </div>
+
+    <div class="principle-box">
+      <div class="principle-text">„AI processes. Human decides. WINDI guarantees."</div>
+      <div class="principle-source">WINDI Handshake Protocol v1.1 · Marco Zero: 19 January 2026</div>
+    </div>
+
+  </div>
+
+  <!-- NAV LINKS -->
+    <div style="max-width:900px;margin:0 auto;padding:1rem 2rem 0;display:flex;justify-content:space-between;font-size:.88rem;border-top:1px solid #d0cec8">
+      <a href="index.html" style="color:#2c3e6b;text-decoration:none">&larr; WINDI Documentation Index</a>
+      <a href="identity-governance-layer.html" style="color:#2c3e6b;text-decoration:none">Section 10: Identity Governance &rarr;</a>
+    </div>
+
+  <!-- FOOTER -->
+  <footer class="doc-footer">
+    <div class="footer-left">
+      WINDI Publishing House · Kempten (Allgäu), Bavaria, Germany<br>
+      Masterarbeit documentation: <em>master.windia4desk.tech</em>
+    </div>
+    <div class="footer-right">
+      TR-WINDI-2026-006<br>
+      ISP Registry v2.5.0<br>
+      02 February 2026<br>
+      Classification: PUBLIC
+    </div>
+  </footer>
+
+</body>
+</html>

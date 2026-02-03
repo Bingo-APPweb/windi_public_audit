@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TR-007 — Document Provenance & Anti-Deepfake Framework | WINDI System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #1a1a2e;
+      --paper: #fafaf8;
+      --paper-warm: #f5f4f0;
+      --accent-blue: #2c3e6b;
+      --accent-gold: #b8860b;
+      --high-color: #8b1a1a;
+      --high-bg: #fdf2f2;
+      --medium-color: #7a5c00;
+      --medium-bg: #fdf8ed;
+      --medium-border: #d4c490;
+      --low-color: #1a5c3a;
+      --low-bg: #f0f7f3;
+      --rule: #d0cec8;
+      --caption: #6b6860;
+      --code-bg: #f0efe8;
+      --discovery-bg: #faf6ee;
+      --discovery-border: #c9a227;
+      --shield-color: #4a1942;
+      --shield-bg: #f8f0f7;
+      --shield-border: #7b2d8e;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Source Sans 3', 'Segoe UI', sans-serif;
+      background: var(--paper);
+      color: var(--ink);
+      line-height: 1.75;
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* === HEADER === */
+    .doc-header {
+      background: var(--ink);
+      color: var(--paper);
+      padding: 2rem 0;
+      border-bottom: 3px solid var(--accent-gold);
+    }
+
+    .doc-header-inner {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .doc-header-left { flex: 1; }
+
+    .doc-series {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent-gold);
+      margin-bottom: 0.25rem;
+    }
+
+    .doc-org {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 1.1rem;
+      font-weight: 300;
+      letter-spacing: 0.02em;
+      opacity: 0.85;
+    }
+
+    .doc-header-right {
+      text-align: right;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      line-height: 1.8;
+      opacity: 0.7;
+      padding-top: 0.25rem;
+    }
+
+    /* === TITLE === */
+    .title-block {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 3rem 2rem 2rem;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .title-block .section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent-gold);
+      margin-bottom: 0.35rem;
+    }
+
+    .title-block h1 {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 2.1rem;
+      font-weight: 700;
+      line-height: 1.25;
+      color: var(--accent-blue);
+      margin-bottom: 0.5rem;
+    }
+
+    .title-block .subtitle {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 1.15rem;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--caption);
+      margin-bottom: 1.5rem;
+    }
+
+    .title-meta {
+      display: flex;
+      gap: 2.5rem;
+      flex-wrap: wrap;
+      font-size: 0.86rem;
+      color: var(--caption);
+    }
+
+    .title-meta dt { font-weight: 600; color: var(--ink); display: inline; }
+    .title-meta dd { display: inline; margin-left: 0.25rem; }
+    .title-meta .meta-pair { display: flex; gap: 0.25rem; }
+
+    /* === CONTENT === */
+    .content {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .section { margin-bottom: 2.5rem; }
+
+    .section-number {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent-gold);
+      margin-bottom: 0.25rem;
+    }
+
+    h2 {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--accent-blue);
+      margin-bottom: 1rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    h3 {
+      font-family: 'Source Sans 3', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+      margin-top: 1.8rem;
+    }
+
+    p {
+      margin-bottom: 1rem;
+      text-align: justify;
+      hyphens: auto;
+    }
+
+    /* === ABSTRACT === */
+    .abstract {
+      background: var(--paper-warm);
+      border-left: 3px solid var(--accent-blue);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2.5rem;
+      font-size: 0.95rem;
+    }
+
+    .abstract strong {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent-blue);
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    /* === THREAT BOX === */
+    .threat-box {
+      background: var(--high-bg);
+      border: 1px solid var(--high-color);
+      border-left: 4px solid var(--high-color);
+      border-radius: 4px;
+      padding: 1.5rem 1.75rem;
+      margin: 2rem 0;
+    }
+
+    .threat-box .threat-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--high-color);
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    .threat-box .threat-text {
+      font-size: 0.92rem;
+      line-height: 1.6;
+    }
+
+    /* === DISCOVERY BOX === */
+    .discovery-box {
+      background: var(--discovery-bg);
+      border: 1px solid var(--discovery-border);
+      border-left: 4px solid var(--discovery-border);
+      border-radius: 4px;
+      padding: 1.5rem 1.75rem;
+      margin: 2rem 0;
+    }
+
+    .discovery-box .discovery-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--discovery-border);
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    .discovery-box .discovery-quote {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 1.15rem;
+      font-style: italic;
+      color: var(--ink);
+      line-height: 1.5;
+      margin-bottom: 0.5rem;
+    }
+
+    .discovery-box .discovery-source {
+      font-size: 0.82rem;
+      color: var(--caption);
+    }
+
+    /* === CODE BLOCKS === */
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85em;
+      background: var(--code-bg);
+      padding: 0.1rem 0.35rem;
+      border-radius: 2px;
+    }
+
+    .code-block {
+      background: var(--ink);
+      color: #e0ddd5;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.76rem;
+      line-height: 1.65;
+      padding: 1.25rem 1.5rem;
+      border-radius: 4px;
+      overflow-x: auto;
+      margin: 1.25rem 0;
+    }
+
+    .code-block .comment { color: #6a9955; }
+    .code-block .key { color: #9cdcfe; }
+    .code-block .string { color: #ce9178; }
+    .code-block .bracket { color: #ffd700; }
+    .code-block .bool { color: #569cd6; }
+    .code-block .num { color: #b5cea8; }
+
+    /* === TABLES === */
+    .matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.86rem;
+      margin: 1.5rem 0;
+    }
+
+    .matrix-table thead {
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    .matrix-table th {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.6rem 0.7rem;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    .matrix-table th:first-child { text-align: left; }
+
+    .matrix-table td {
+      padding: 0.55rem 0.7rem;
+      border-bottom: 1px solid var(--rule);
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    .matrix-table td:first-child {
+      text-align: left;
+      font-weight: 500;
+    }
+
+    .matrix-table tbody tr:hover { background: var(--paper-warm); }
+
+    .cell-yes { color: var(--low-color); font-weight: 600; }
+    .cell-no { color: var(--high-color); font-weight: 600; }
+    .cell-opt { color: var(--medium-color); font-weight: 600; }
+
+    .status-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      padding: 0.15rem 0.45rem;
+      border-radius: 2px;
+      display: inline-block;
+      font-weight: 500;
+    }
+
+    .badge-high { background: var(--high-bg); color: var(--high-color); }
+    .badge-medium { background: var(--medium-bg); color: var(--medium-color); }
+    .badge-low { background: var(--low-bg); color: var(--low-color); }
+    .badge-max { background: #1a1a2e; color: #ffd700; }
+
+    /* === ARCHITECTURE DIAGRAM === */
+    .arch-diagram {
+      background: var(--ink);
+      color: #e0ddd5;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      line-height: 1.6;
+      padding: 1.5rem 2rem;
+      border-radius: 4px;
+      margin: 1.5rem 0;
+      white-space: pre;
+      overflow-x: auto;
+    }
+
+    .arch-diagram .highlight { color: #ffd700; }
+    .arch-diagram .dim { color: #666; }
+
+    /* === COMPARISON PANEL === */
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    @media (max-width: 640px) {
+      .comparison { grid-template-columns: 1fr; }
+    }
+
+    .comparison-panel {
+      border: 1px solid var(--rule);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .comparison-panel-header {
+      padding: 0.6rem 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+
+    .comparison-panel.before .comparison-panel-header {
+      background: var(--high-bg);
+      color: var(--high-color);
+      border-bottom: 1px solid var(--high-color);
+    }
+
+    .comparison-panel.after .comparison-panel-header {
+      background: var(--low-bg);
+      color: var(--low-color);
+      border-bottom: 1px solid var(--low-color);
+    }
+
+    .comparison-panel-body {
+      padding: 1rem;
+      font-size: 0.86rem;
+      line-height: 1.6;
+    }
+
+    .comparison-panel-body li {
+      margin-bottom: 0.3rem;
+      margin-left: 1rem;
+    }
+
+    /* === EU REFERENCE === */
+    .eu-ref {
+      background: white;
+      border: 1px solid var(--rule);
+      border-left: 3px solid var(--accent-blue);
+      padding: 1rem 1.25rem;
+      margin: 1rem 0;
+      font-size: 0.88rem;
+    }
+
+    .eu-ref-title {
+      font-weight: 600;
+      font-size: 0.84rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .eu-ref-body {
+      color: var(--caption);
+      font-size: 0.84rem;
+    }
+
+    /* === PRINCIPLE BOX === */
+    .principle-box {
+      background: var(--ink);
+      color: var(--paper);
+      text-align: center;
+      padding: 1.5rem 2rem;
+      border-radius: 4px;
+      margin: 2rem 0;
+    }
+
+    .principle-box .principle-text {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 1.15rem;
+      font-weight: 300;
+      font-style: italic;
+      line-height: 1.5;
+    }
+
+    .principle-box .principle-source {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent-gold);
+      margin-top: 0.6rem;
+    }
+
+    /* === FIGURE CAPTION === */
+    .figure-caption {
+      font-size: 0.8rem;
+      color: var(--caption);
+      text-align: center;
+      margin-top: 0.5rem;
+      font-style: italic;
+    }
+
+    .figure-caption strong {
+      font-style: normal;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.05em;
+    }
+
+    /* === SCORE VISUAL === */
+    .score-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 0.5rem 0;
+    }
+
+    .score-label {
+      min-width: 100px;
+      font-size: 0.84rem;
+      font-weight: 500;
+    }
+
+    .score-bar-bg {
+      flex: 1;
+      height: 24px;
+      background: var(--code-bg);
+      border-radius: 3px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .score-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 0.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: white;
+    }
+
+    .score-fill-max { background: linear-gradient(90deg, #1a5c3a, #2e8b57); }
+    .score-fill-high { background: linear-gradient(90deg, #2c3e6b, #4a6fa5); }
+    .score-fill-low { background: linear-gradient(90deg, #7a5c00, #b8860b); }
+
+    /* === SEPARATOR === */
+    .sep {
+      text-align: center;
+      margin: 2.5rem 0;
+      color: var(--rule);
+      font-size: 1.2rem;
+      letter-spacing: 1em;
+    }
+
+    /* === NAV LINKS === */
+    .nav-links {
+      display: flex;
+      justify-content: space-between;
+      margin: 2rem 0;
+      padding-top: 1rem;
+      border-top: 1px solid var(--rule);
+      font-size: 0.88rem;
+    }
+
+    .nav-links a {
+      color: var(--accent-blue);
+      text-decoration: none;
+    }
+
+    .nav-links a:hover { text-decoration: underline; }
+
+    /* === FOOTER === */
+    .doc-footer {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 1.5rem 2rem 3rem;
+      border-top: 1px solid var(--rule);
+      font-size: 0.8rem;
+      color: var(--caption);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .doc-footer .footer-left { font-style: italic; }
+    .doc-footer .footer-right {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      text-align: right;
+    }
+
+    /* === PRINT === */
+    @media print {
+      .doc-header { background: white; color: var(--ink); border-bottom: 2px solid var(--ink); }
+      .doc-series { color: var(--ink); }
+      body { font-size: 11pt; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="doc-header">
+    <div class="doc-header-inner">
+      <div class="doc-header-left">
+        <div class="doc-series">WINDI Technical Report &middot; TR-007</div>
+        <div class="doc-org">WINDI Publishing House &middot; Kempten (Allg&auml;u), Bavaria, Germany</div>
+      </div>
+      <div class="doc-header-right">
+        Document ID: TR-WINDI-2026-007<br>
+        SOF Protocol v1.0<br>
+        02 February 2026<br>
+        Classification: PUBLIC
+      </div>
+    </div>
+  </header>
+
+  <!-- TITLE -->
+  <div class="title-block">
+    <div class="section-label">TR-007 &mdash; Document Security Division</div>
+    <h1>Document Provenance &amp; Anti&#8209;Deepfake Framework</h1>
+    <div class="subtitle">A Secure Origin Approach to AI&#8209;Generated Institutional Content</div>
+    <div class="title-meta">
+      <div class="meta-pair"><dt>Author:</dt><dd>Jober M&ouml;gele Correa, Chief Governance Officer</dd></div>
+      <div class="meta-pair"><dt>Date:</dt><dd>02 February 2026</dd></div>
+      <div class="meta-pair"><dt>Status:</dt><dd>Deployed in Production (15/15 tests passed)</dd></div>
+    </div>
+    <div class="title-meta" style="margin-top: 0.5rem;">
+      <div class="meta-pair"><dt>Related:</dt><dd>TR-006 (ISP Registry), Section 10 (Identity Governance Layer)</dd></div>
+      <div class="meta-pair"><dt>Division:</dt><dd>WINDI Document Security Division (DeepDOCFakes)</dd></div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ABSTRACT -->
+    <div class="abstract">
+      <strong>Abstract</strong>
+      AI systems can generate institutionally styled documents that closely mimic official communications. This capability introduces a new class of fraud risk: <em>document deepfakes</em>, where authenticity is inferred from appearance rather than verifiable origin. This report introduces a Secure Origin Framework (SOF) for AI-assisted institutional documents, implemented as the WINDI DeepDOCFakes division. The framework anchors each governed document to a reproducible provenance record, a canonical structural fingerprint, and a verification protocol returning VALID / UNKNOWN / TAMPERED. A quantitative Deepfake Resilience Score (0&ndash;100) provides an audit-friendly language for comparing governance strength across institutional risk tiers. The result is a paradigm shift from &ldquo;document looks authentic&rdquo; to &ldquo;document origin is verifiable.&rdquo;
+    </div>
+
+
+    <!-- 1. PROBLEM STATEMENT -->
+    <div class="section">
+      <div class="section-number">Section 1</div>
+      <h2>Problem Statement</h2>
+
+      <h3>1.1 &ensp;Document Deepfakes as an Emerging Threat</h3>
+
+      <p>Document deepfakes differ fundamentally from video or audio deepfakes: they exploit trust in institutional tone, layout, symbols, and formatting. A forged PDF can be convincing even if it never existed within the issuing institution&rsquo;s systems. This threat grows with three converging capabilities: high-fidelity text generation in institutional style, easy replication of visual identity, and weak provenance mechanisms in common PDF workflows.</p>
+
+      <div class="threat-box">
+        <div class="threat-label">Threat Vector &mdash; Document Deepfake</div>
+        <div class="threat-text">
+          An adversary uses an AI system to generate a PDF that perfectly replicates the tone, structure, legal references, and formatting of a BaFin regulatory communication. The document is indistinguishable from an authentic aufsichtliche Mitteilung by visual inspection alone. Without a provenance infrastructure, the recipient has no mechanism to verify institutional origin beyond subjective judgment of &ldquo;whether it looks right.&rdquo;
+        </div>
+      </div>
+
+      <h3>1.2 &ensp;Why Traditional Controls Are Insufficient</h3>
+
+      <p>Watermarks, letterheads, and &ldquo;professional formatting&rdquo; are copyable. Even signatures can be simulated. Without a cryptographic and registry-anchored provenance layer, document authenticity remains a matter of subjective interpretation. The key insight is deceptively simple: <strong>visual similarity is not authenticity</strong>.</p>
+    </div>
+
+
+    <!-- 2. RESEARCH CONTRIBUTION -->
+    <div class="section">
+      <div class="section-number">Section 2</div>
+      <h2>Research Contribution</h2>
+
+      <p>This report contributes an operational framework for institutional document authenticity in AI-assisted generation contexts. The contribution is not a visual anti-fraud technique; it is a <strong>systems-level provenance infrastructure</strong> for institutional documentation.</p>
+
+      <table class="matrix-table">
+        <thead>
+          <tr>
+            <th>Contribution</th>
+            <th>Mechanism</th>
+            <th>Purpose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Structural Fingerprinting</td>
+            <td>Canonical SHA-256 hash over governance payloads</td>
+            <td>Anti-deepfake identity that visual copying cannot replicate</td>
+          </tr>
+          <tr>
+            <td>Provenance Record</td>
+            <td>Digital birth certificate with governance lineage</td>
+            <td>Binds document to policy, ISP context, and identity state</td>
+          </tr>
+          <tr>
+            <td>Verification Protocol</td>
+            <td>Deterministic check returning VALID / UNKNOWN / TAMPERED</td>
+            <td>Replaces subjective &ldquo;looks real&rdquo; with verifiable outcome</td>
+          </tr>
+          <tr>
+            <td>Resilience Score</td>
+            <td>Quantitative metric (0&ndash;100) from security features</td>
+            <td>Audit-friendly language for governance strength comparison</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="figure-caption"><strong>Table 1</strong> &mdash; Four core contributions of the Secure Origin Framework</div>
+    </div>
+
+
+    <!-- 3. THREAT MODEL -->
+    <div class="section">
+      <div class="section-number">Section 3</div>
+      <h2>Threat Model</h2>
+
+      <h3>3.1 &ensp;Attacker Capabilities</h3>
+
+      <p>A document deepfake attacker can generate institutionally styled text with tone mimicry, replicate layouts and templates, insert plausible institutional attributes (addresses, departments, slogans), and produce convincing PDFs with copied logos when identity is uncontrolled.</p>
+
+      <h3>3.2 &ensp;Attacker Limitations (in Secure Origin Systems)</h3>
+
+      <p>Within a WINDI-governed system, the attacker <em>cannot</em>: reproduce internal provenance records in the authoritative registry, reconstruct canonical structural fingerprints consistent with recorded provenance, or fake verified registry linkage without access to the issuance infrastructure. The structural hash includes governance context, server identity, and timestamps that are invisible in the document itself.</p>
+
+      <div class="comparison">
+        <div class="comparison-panel before">
+          <div class="comparison-panel-header">Attacker Can Copy</div>
+          <div class="comparison-panel-body">
+            <ul>
+              <li>Text content and institutional tone</li>
+              <li>Visual layout and formatting</li>
+              <li>Institutional logos (if uncontrolled)</li>
+              <li>Letterhead structure and addresses</li>
+              <li>Legal reference patterns</li>
+            </ul>
+          </div>
+        </div>
+        <div class="comparison-panel after">
+          <div class="comparison-panel-header">Attacker Cannot Copy</div>
+          <div class="comparison-panel-body">
+            <ul>
+              <li>Internal canonical field order</li>
+              <li>Structural hash over governance context</li>
+              <li>Provenance ID generated at creation time</li>
+              <li>Registry entry on authoritative server</li>
+              <li>Hash chain including server identity</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="figure-caption"><strong>Fig. 1</strong> &mdash; Attacker capability boundary: what deepfakes can and cannot replicate</div>
+
+      <h3>3.3 &ensp;Security Goal</h3>
+
+      <p>Ensure authenticity claims are supported by <strong>verifiable origin</strong>, not appearance. Any tampering or off-system generation should be detectable as UNKNOWN or TAMPERED through deterministic verification.</p>
+    </div>
+
+
+    <div class="sep">&middot; &middot; &middot;</div>
+
+
+    <!-- 4. SECURE ORIGIN FRAMEWORK -->
+    <div class="section">
+      <div class="section-number">Section 4</div>
+      <h2>Secure Origin Framework (SOF)</h2>
+
+      <h3>4.1 &ensp;Architecture</h3>
+
+      <div class="arch-diagram"><span class="dim">/opt/windi/engine/</span>
+<span class="highlight">deepdocfakes/</span>                    <span class="dim">&larr; Document Security Division</span>
+├── structural_hash.py         <span class="dim">canonical fingerprinting</span>
+├── provenance_engine.py       <span class="dim">digital birth certificates</span>
+├── verify_engine.py           <span class="dim">VALID / UNKNOWN / TAMPERED</span>
+├── deepfake_risk.py           <span class="dim">resilience scoring (0&ndash;100)</span>
+├── pdf_metadata_embed.py      <span class="dim">XMP metadata embedding</span>
+└── registry_provenance.py     <span class="dim">registry &amp; audit</span>
+
+<span class="dim">/opt/windi/</span><span class="highlight">provenance/</span>               <span class="dim">&larr; Secure Origin Storage</span>
+├── records/                   <span class="dim">provenance record JSON files</span>
+└── index.json                 <span class="dim">fast lookup index</span></div>
+
+      <div class="figure-caption"><strong>Fig. 2</strong> &mdash; DeepDOCFakes module architecture on Strato DE infrastructure</div>
+
+      <h3>4.2 &ensp;Structural Hash</h3>
+
+      <p>A canonical structural hash is computed over the governance decision payload: governance level, policy version, configuration hash, ISP profile, organisation, regulatory metadata, and identity governance status. The hash uses a versioned canonicalisation wrapper (<code>_canon_version: 1.0</code>) with deterministic JSON serialisation (sorted keys, no whitespace variation). If any governance parameter changes, the fingerprint changes &mdash; creating a structural identity that deepfakes cannot replicate because it depends on system-internal state.</p>
+
+      <h3>4.3 &ensp;Provenance Record</h3>
+
+      <p>Each governed document receives a provenance record &mdash; a &ldquo;digital birth certificate&rdquo; &mdash; that links the document to the governance policy lineage in effect, identity governance constraints (licensed vs. model_only), metadata completeness, timestamps, sealing state, and the cryptographic proof chain. The record includes system identity (WINDI, version, jurisdiction: DE, Strato infrastructure), ensuring that provenance is bound to a specific installation and jurisdiction.</p>
+
+      <div class="code-block">
+<span class="comment">// Provenance record structure (production output)</span>
+<span class="bracket">{</span>
+  <span class="key">"provenance_id"</span>: <span class="string">"WINDI-PROV-DC4EAF4763E1"</span>,
+  <span class="key">"submission_id"</span>: <span class="string">"REG-20260202-0007"</span>,
+  <span class="key">"governance_context"</span>: <span class="bracket">{</span>
+    <span class="key">"level"</span>: <span class="string">"HIGH"</span>,
+    <span class="key">"isp_profile"</span>: <span class="string">"bafin"</span>,
+    <span class="key">"policy_version"</span>: <span class="string">"2.2.0"</span>
+  <span class="bracket">}</span>,
+  <span class="key">"cryptographic_proof"</span>: <span class="bracket">{</span>
+    <span class="key">"structural_hash"</span>: <span class="string">"dc4eaf4763e130b6..."</span>,
+    <span class="key">"provenance_hash"</span>: <span class="string">"a7f2c8d1e9b34..."</span>,
+    <span class="key">"hash_chain"</span>: <span class="string">"dc4eaf4763e130b6&rarr;a7f2c8d1e9b34..."</span>
+  <span class="bracket">}</span>,
+  <span class="key">"deepfake_resilience"</span>: <span class="bracket">{</span>
+    <span class="key">"score"</span>: <span class="num">100</span>,
+    <span class="key">"rating"</span>: <span class="string">"MAXIMUM &mdash; Forensic-grade provenance"</span>
+  <span class="bracket">}</span>
+<span class="bracket">}</span>
+      </div>
+
+      <div class="figure-caption"><strong>Fig. 3</strong> &mdash; Provenance record structure for HIGH-governance BaFin document (production output, 02 February 2026)</div>
+
+      <h3>4.4 &ensp;Verification Protocol</h3>
+
+      <p>Verification returns one of three deterministic outcomes:</p>
+
+      <table class="matrix-table">
+        <thead>
+          <tr>
+            <th>Status</th>
+            <th>Meaning</th>
+            <th>Trigger Condition</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="status-badge badge-low">VALID</span></td>
+            <td>Record exists and structural fingerprint matches</td>
+            <td>Structural hash recomputation equals stored hash</td>
+          </tr>
+          <tr>
+            <td><span class="status-badge badge-medium">UNKNOWN</span></td>
+            <td>No authoritative record exists</td>
+            <td>Submission ID not found in provenance registry</td>
+          </tr>
+          <tr>
+            <td><span class="status-badge badge-high">TAMPERED</span></td>
+            <td>Record exists but fingerprint mismatch detected</td>
+            <td>Recomputed hash differs from stored hash</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="figure-caption"><strong>Table 2</strong> &mdash; Verification protocol outcomes: the document equivalent of HTTPS certificate validation</div>
+
+      <p>This is the equivalent of an authenticity handshake: not &ldquo;looks right,&rdquo; but &ldquo;provably issued.&rdquo;</p>
+    </div>
+
+
+    <!-- 5. DEEPFAKE RESILIENCE SCORE -->
+    <div class="section">
+      <div class="section-number">Section 5</div>
+      <h2>Deepfake Resilience Score</h2>
+
+      <p>A score between 0 and 100 communicates governance strength in audit language. The score is computed from active security features including provenance requirements, registry anchoring, structural hashing mode, embedded metadata, tamper evidence, identity governance status, and jurisdiction binding.</p>
+
+      <h3>5.1 &ensp;Empirical Results</h3>
+
+      <div style="margin: 1.5rem 0;">
+        <div class="score-row">
+          <div class="score-label"><span class="status-badge badge-high">HIGH</span> BaFin</div>
+          <div class="score-bar-bg"><div class="score-bar-fill score-fill-max" style="width: 100%;">100/100 MAXIMUM</div></div>
+        </div>
+        <div class="score-row">
+          <div class="score-label"><span class="status-badge badge-medium">MED</span> Bundesreg.</div>
+          <div class="score-bar-bg"><div class="score-bar-fill score-fill-high" style="width: 60%;">60/100 HIGH</div></div>
+        </div>
+        <div class="score-row">
+          <div class="score-label"><span class="status-badge badge-low">LOW</span> T&Uuml;V</div>
+          <div class="score-bar-bg"><div class="score-bar-fill score-fill-low" style="width: 30%;">30/100 LOW</div></div>
+        </div>
+      </div>
+
+      <div class="figure-caption"><strong>Fig. 4</strong> &mdash; Deepfake Resilience Scores from production self-test (02 February 2026, 15:13 CET)</div>
+
+      <h3>5.2 &ensp;Score Interpretation</h3>
+
+      <table class="matrix-table">
+        <thead>
+          <tr>
+            <th>Score Range</th>
+            <th>Rating</th>
+            <th>Typical Configuration</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>85&ndash;100</td>
+            <td><span class="status-badge badge-max">MAXIMUM</span></td>
+            <td>HIGH + forensic ledger + four-eyes + full provenance</td>
+          </tr>
+          <tr>
+            <td>60&ndash;84</td>
+            <td><span class="status-badge badge-high">HIGH</span></td>
+            <td>HIGH standard or MEDIUM + identity governance</td>
+          </tr>
+          <tr>
+            <td>40&ndash;59</td>
+            <td><span class="status-badge badge-medium">MEDIUM</span></td>
+            <td>MEDIUM with structural hash and provenance</td>
+          </tr>
+          <tr>
+            <td>20&ndash;39</td>
+            <td><span class="status-badge badge-low">LOW</span></td>
+            <td>LOW with basic provenance markers</td>
+          </tr>
+          <tr>
+            <td>0&ndash;19</td>
+            <td><span class="status-badge" style="background: #f0f0f0; color: #666;">MINIMAL</span></td>
+            <td>LOW without provenance infrastructure</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="figure-caption"><strong>Table 3</strong> &mdash; Deepfake Resilience Score interpretation: a new language for document security audits</div>
+    </div>
+
+
+    <!-- 6. INTEGRATION -->
+    <div class="section">
+      <div class="section-number">Section 6</div>
+      <h2>Integration with Governance Levels and ISP</h2>
+
+      <p>DeepDOCFakes is designed to integrate with WINDI&rsquo;s three governance tiers, aligning security cost with institutional risk while enabling consistent verification semantics across all levels.</p>
+
+      <table class="matrix-table">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>HIGH</th>
+            <th>MEDIUM</th>
+            <th>LOW</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Provenance record</td>
+            <td class="cell-yes">Required</td>
+            <td class="cell-opt">Optional</td>
+            <td class="cell-no">&mdash;</td>
+          </tr>
+          <tr>
+            <td>Registry entry</td>
+            <td class="cell-yes">Required</td>
+            <td class="cell-opt">Optional</td>
+            <td class="cell-no">&mdash;</td>
+          </tr>
+          <tr>
+            <td>Structural hash</td>
+            <td class="cell-yes">Strict</td>
+            <td class="cell-yes">Strict</td>
+            <td class="cell-opt">Basic</td>
+          </tr>
+          <tr>
+            <td>PDF metadata embed</td>
+            <td class="cell-yes">Yes</td>
+            <td class="cell-yes">Yes</td>
+            <td class="cell-no">No</td>
+          </tr>
+          <tr>
+            <td>Verify endpoint</td>
+            <td class="cell-yes">Yes</td>
+            <td class="cell-yes">Yes</td>
+            <td class="cell-no">No</td>
+          </tr>
+          <tr>
+            <td>Forensic ledger</td>
+            <td class="cell-yes">Yes</td>
+            <td class="cell-no">&mdash;</td>
+            <td class="cell-no">&mdash;</td>
+          </tr>
+          <tr>
+            <td>Four-eyes principle</td>
+            <td class="cell-yes">Yes</td>
+            <td class="cell-no">&mdash;</td>
+            <td class="cell-no">&mdash;</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="figure-caption"><strong>Table 4</strong> &mdash; Security feature matrix by governance level: risk-proportional provenance</div>
+    </div>
+
+
+    <!-- 7. EVALUATION -->
+    <div class="section">
+      <div class="section-number">Section 7</div>
+      <h2>Evaluation</h2>
+
+      <h3>7.1 &ensp;Empirical Validation</h3>
+
+      <p>The framework was validated through 15 automated tests executed in production on 02 February 2026, covering reproducibility (same payload produces same structural hash), tamper detection (payload modification triggers TAMPERED), absence detection (unknown submission IDs return UNKNOWN), governance tier ordering (HIGH &gt; MEDIUM &gt; LOW resilience scores), PDF metadata generation, and registry integrity verification.</p>
+
+      <div class="discovery-box">
+        <div class="discovery-label">Production Test Results &mdash; 02 February 2026, 15:13 CET</div>
+        <div class="discovery-quote">15/15 tests passed. DeepDOCFakes module ready for production.</div>
+        <div class="discovery-source">Self-test output from deploy_deepdocfakes.sh on Strato DE server (87.106.29.233). Tests executed against all three governance levels with HIGH (BaFin, 100/100), MEDIUM (Bundesregierung, 60/100), and LOW (T&Uuml;V, 30/100) configurations. Registry integrity check: HEALTHY.</div>
+      </div>
+
+      <h3>7.2 &ensp;Practical Criteria</h3>
+
+      <p>The framework satisfies four practical requirements: <strong>verifiability</strong> (independent check returns deterministic results), <strong>traceability</strong> (record links to governance state at issuance), <strong>tamper evidence</strong> (modifications are detectable through hash mismatch), and <strong>auditability</strong> (scores and verification outcomes are explainable to non-technical auditors and regulators).</p>
+    </div>
+
+
+    <!-- 8. REGULATORY ALIGNMENT -->
+    <div class="section">
+      <div class="section-number">Section 8</div>
+      <h2>Regulatory Alignment</h2>
+
+      <div class="eu-ref">
+        <div class="eu-ref-title">EU AI Act &mdash; Article 12: Record-Keeping</div>
+        <div class="eu-ref-body">Provenance records provide a complete audit trail of document generation decisions, including governance level, policy version, identity governance status, and cryptographic proof. Each record is persisted with atomic writes and indexed for efficient retrieval.</div>
+      </div>
+
+      <div class="eu-ref">
+        <div class="eu-ref-title">EU AI Act &mdash; Article 14: Human Oversight</div>
+        <div class="eu-ref-body">The four-eyes principle in HIGH governance requires dual-control verification before document sealing. The framework enforces this as a prerequisite for forensic-grade provenance, ensuring human oversight is structurally embedded rather than procedurally optional.</div>
+      </div>
+
+      <div class="eu-ref">
+        <div class="eu-ref-title">EU AI Act &mdash; Article 50: Transparency Obligations</div>
+        <div class="eu-ref-body">The verification protocol extends transparency from &ldquo;is this AI-generated?&rdquo; to &ldquo;is this institutionally authorised?&rdquo; The identity governance integration (Section 10) ensures that institutional identity usage is explicitly controlled, disclosed, and verifiable through the provenance chain.</div>
+      </div>
+
+      <p>The framework also aligns with BaFin&rsquo;s KI-Orientierungshilfe (18 December 2025) requirements for lifecycle governance and risk documentation in AI-assisted financial services.</p>
+    </div>
+
+
+    <!-- 9. LIMITATIONS -->
+    <div class="section">
+      <div class="section-number">Section 9</div>
+      <h2>Limitations and Open Questions</h2>
+
+      <p>Provenance frameworks require an authoritative source of truth, meaning registry governance becomes a critical dependency. Interoperable verification across organisations needs standardisation beyond the WINDI-SOF protocol. Visual identity controls (addressed in Section 10) remain necessary but are insufficient alone. Offline verification and long-term archival formats require careful design for document lifecycles extending beyond the issuing system&rsquo;s operational period.</p>
+    </div>
+
+
+    <!-- 10. FUTURE WORK -->
+    <div class="section">
+      <div class="section-number">Section 10</div>
+      <h2>Future Work</h2>
+
+      <p>Four directions are planned for the Secure Origin Framework: an external-facing verification endpoint (&ldquo;WINDI Verify&rdquo;) for auditors and regulators, cross-validation attestations through the Witness Dragon (Gemini) mechanism, SDMX-aligned provenance export for regulatory reporting contexts, and a standardised provenance schema for institutional document ecosystems that could enable cross-organisational verification.</p>
+    </div>
+
+
+    <!-- CONCLUSION -->
+    <div class="section">
+      <div class="section-number">Conclusion</div>
+      <h2>Conclusion</h2>
+
+      <p>Document deepfakes shift institutional trust from evidence to aesthetics. The Secure Origin Framework responds by re-grounding authenticity in verifiable provenance: canonical structural hashing, registry-anchored provenance records, and deterministic verification outcomes. DeepDOCFakes provides a scalable and audit-friendly architecture for AI-assisted institutional content in regulated environments.</p>
+
+      <p>This framework connects the WINDI governance architecture from end to end: the ISP Registry (TR-006) defines institutional profiles, the Identity Governance Layer (Section 10) controls institutional identity usage, and the Secure Origin Framework (TR-007) guarantees that governed documents carry verifiable proof of their institutional origin. Together, they establish a complete provenance chain from institutional identity to document verification.</p>
+    </div>
+
+    <div class="principle-box">
+      <div class="principle-text">&ldquo;We don&rsquo;t protect the appearance of the document.<br>We protect the institutional existence of it.&rdquo;</div>
+      <div class="principle-source">WINDI Document Security Division &mdash; Secure Origin Framework v1.0, 02 February 2026</div>
+    </div>
+
+    <!-- NAVIGATION -->
+    <div class="nav-links">
+      <a href="identity-governance-layer.html">&larr; Section 10: Identity Governance Layer</a>
+      <a href="fachartikel-provenienz.html">PUB-001: Fachartikel Provenienzmodell <a href="index.html">WINDI Documentation Index &rarr;</a>rarr;</a>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="doc-footer">
+    <div class="footer-left">
+      WINDI Publishing House &middot; Kempten (Allg&auml;u), Bavaria, Germany<br>
+      Masterarbeit documentation: <em>master.windia4desk.tech</em>
+    </div>
+    <div class="footer-right">
+      TR-WINDI-2026-007<br>
+      SOF v1.0 &middot; DeepDOCFakes v1.0.0<br>
+      02 February 2026<br>
+      Classification: PUBLIC
+    </div>
+  </footer>
+
+</body>
+</html>

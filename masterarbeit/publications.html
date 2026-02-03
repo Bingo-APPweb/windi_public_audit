@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Publications — WINDI System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital@0;1&family=Libre+Baskerville:wght@400;700&family=Source+Sans+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/academic.css">
+    <style>
+        .book-card{background:#fff;border:1px solid #e0e0e0;border-radius:8px;padding:2rem;margin:2rem 0;box-shadow:0 2px 8px rgba(0,0,0,0.08)}
+        .book-card h3{color:#003366;margin-bottom:0.5rem;font-size:1.4rem}
+        .book-meta{font-size:0.9rem;color:#666;margin-bottom:1rem;font-family:'Source Sans Pro',sans-serif}
+        .book-meta span{display:inline-block;background:#f0f0f0;padding:0.2rem 0.6rem;border-radius:3px;margin-right:0.5rem;margin-bottom:0.3rem}
+        .book-description{margin:1rem 0;line-height:1.7}
+        .book-toc{background:#f9f9f9;padding:1rem 1.5rem;border-radius:4px;margin:1rem 0}
+        .book-toc h4{color:#003366;margin-bottom:0.75rem;font-size:1rem}
+        .book-toc ul{margin:0;padding-left:1.5rem}
+        .book-toc li{margin:0.4rem 0;color:#555}
+        .download-buttons{display:flex;gap:1rem;flex-wrap:wrap;margin-top:1.5rem}
+        .download-btn{display:inline-flex;align-items:center;gap:0.5rem;padding:0.75rem 1.5rem;border-radius:4px;text-decoration:none;font-family:'Source Sans Pro',sans-serif;font-weight:600;transition:transform 0.2s}
+        .download-btn:hover{transform:translateY(-2px)}
+        .download-btn.en{background:#003366;color:#fff}
+        .download-btn.de{background:#c9a227;color:#003366}
+        .download-btn.pt{background:#00a89d;color:#fff}
+        .status-badge{display:inline-block;background:#00a89d;color:#fff;padding:0.3rem 0.8rem;border-radius:3px;font-size:0.8rem;font-weight:600;margin-left:0.5rem}
+        .quote-block{border-left:4px solid #c9a227;padding:1rem 1.5rem;margin:1.5rem 0;background:#fff9e6;font-style:italic}
+        .coming-soon{opacity:0.6}
+        .coming-soon .download-btn{background:#ccc;cursor:not-allowed}
+    </style>
+</head>
+<body>
+    <header class="thesis-header">
+        <h1>PUBLICATIONS</h1>
+        <p class="subtitle">WINDI Editorial Library</p>
+        <span class="version-badge">INSTITUTIONAL COLLECTION</span>
+    </header>
+    <nav class="thesis-nav">
+        <ul>
+            <li><a href="index.html">← System Overview</a></li>
+            <li><a href="#windi-pact">WINDI-PACT Book</a></li>
+            <li><a href="#articles">Articles</a></li>
+            <li><a href="diagrams.html">Diagrams ↗</a></li>
+            <li><a href="interface-guide.html">Interface Guide ↗</a></li>
+        </ul>
+    </nav>
+    <div class="print-controls"><button class="print-btn" onclick="window.print()">🖨️ Print</button></div>
+    
+    <main class="thesis-content">
+        <div class="principle-quote">"WINDI enters the human world as a place that helps people see — not as a system that solves."<div class="attribution">— WINDI Core Principle</div></div>
+
+        <!-- WINDI-PACT BOOK -->
+        <section class="chapter" id="windi-pact">
+            <div class="chapter-number">Featured Publication</div>
+            <h2>📚 WINDI — On AI Language and Responsibility</h2>
+            
+            <div class="book-card">
+                <h3>WINDI-PACT Editorial Book <span class="status-badge">v1.0</span></h3>
+                <div class="book-meta">
+                    <span>📄 ~30 pages</span>
+                    <span>🌐 EN / DE</span>
+                    <span>📅 January 2026</span>
+                    <span>🏛️ Editorial Artifact</span>
+                </div>
+                
+                <div class="quote-block">
+                    "This document presents WINDI as a living editorial thesis dedicated to observing friction zones between language, responsibility, and artificial intelligence systems in human contexts."
+                </div>
+                
+                <p class="book-description">The WINDI-PACT book is a comprehensive editorial artifact that explores the critical intersection of AI systems, human language, and institutional responsibility. It establishes WINDI as an observational framework — not a solution provider — that helps stakeholders identify interpretation risks, responsibility shifts, and implicit promises in AI-related communications.</p>
+                
+                <div class="book-toc">
+                    <h4>Table of Contents</h4>
+                    <ul>
+                        <li><strong>Part I — Editorial Thesis:</strong> Abstract, Context, The Observed Problem, What WINDI Is/Is Not, Sessions, Limits, Responsibility</li>
+                        <li><strong>Part II — Public Reading Format:</strong> Independent Sessions, Hard Guardrails, Language Controls, Entry/Exit Rules, Escalation Triggers</li>
+                        <li><strong>Part III — Governance Artifacts:</strong> Fornalha Limits, Normative Context, Legal Framing, Evolution Norms</li>
+                        <li><strong>Part IV — Cases:</strong> External Reading (Grok), BingoBetFun Essay, LiveDrop Framing</li>
+                        <li><strong>Appendix:</strong> Template Catalog, Silent Deck, Regulatory Guide, Red Team Scenarios, Origin Case Layer Map</li>
+                    </ul>
+                </div>
+                
+                <div class="highlight-box governance">
+                    <div class="box-title">Key Principles</div>
+                    <p><strong>Non-Executive:</strong> WINDI does not build, deploy, or operate systems.</p>
+                    <p><strong>Non-Promissory:</strong> No guarantees of compliance, safety, or outcomes.</p>
+                    <p><strong>Non-Binding:</strong> All decisions remain fully human.</p>
+                    <p><strong>Observational:</strong> Helps see interpretation risks before execution.</p>
+                </div>
+                
+                <div class="download-buttons">
+                    <a href="books/WINDI_Book_EN.md" class="download-btn en" download>🇬🇧 Download English</a>
+                    <a href="books/WINDI_Book_DE.md" class="download-btn de" download>🇩🇪 Download Deutsch</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- CORE CONCEPTS -->
+        <section class="chapter" id="concepts">
+            <div class="chapter-number">Core Concepts</div>
+            <h2>📖 Key Ideas from WINDI-PACT</h2>
+            
+            <div class="highlight-box principle">
+                <div class="box-title">The Observed Problem</div>
+                <p>The central problem is not AI capability, but how it is described, positioned, and integrated into human narratives.</p>
+                <p><strong>Repeatedly observed:</strong> Language that assigns implicit agency to non-autonomous systems. Promises that exceed the real scope of operation. Technical terms used as rhetorical shielding. Involuntary transfer of responsibility to "the system".</p>
+            </div>
+            
+            <div class="highlight-box technical">
+                <div class="box-title">WINDI Sessions</div>
+                <p>A WINDI Session is a time-situated editorial reading applied to a single language artifact. The output is always descriptive:</p>
+                <p>• Possible external reader inferences<br>• Detected implicit promises<br>• Points of ambiguity or semantic overload<br>• Observations on the responsibility chain<br>• Minimal optional rewrites (language only)</p>
+            </div>
+            
+            <div class="highlight-box governance">
+                <div class="box-title">Hard Guardrails (Non-Negotiable)</div>
+                <p><strong>S1 — No Execution:</strong> A session does not build, deploy, integrate, or operate.</p>
+                <p><strong>S2 — No Approvals:</strong> Does not certify, validate, or sign off anything.</p>
+                <p><strong>S3 — No Compliance Posture:</strong> Does not assert legal/regulatory compliance.</p>
+                <p><strong>S4 — No Outcome Promises:</strong> Does not guarantee risk-free outcomes.</p>
+                <p><strong>S5 — No Advice Capacity:</strong> Does not provide legal, business, or technical advice.</p>
+            </div>
+        </section>
+
+        <!-- ARTICLES SECTION -->
+            <section class="chapter" id="articles">
+            <div class="chapter-number">Academic Collection</div>
+            <h2>📰 Articles & Technical Documentation</h2>
+            
+            <div class="book-card">
+                <h3>The Sovereign Handshake Protocol <span class="status-badge">IEEE Format</span></h3>
+                <div class="book-meta">
+                    <span>📄 Conference Paper</span>
+                    <span>🔬 IEEE Style</span>
+                    <span>📅 2026</span>
+                </div>
+                <div class="quote-block">"A Governance-Layer Mechanism for Safe Inter-System Cooperation"</div>
+                <p class="book-description">Introduces the Sovereign Handshake Protocol (SHP), a governance-layer coordination framework for secure cooperation between independent autonomous systems. Addresses delegation cascades and preserves human accountability.</p>
+                <div class="download-buttons">
+                    <a href="books/Sovereign_Handshake_Protocol_IEEE.tex" class="download-btn en" download>📄 Download LaTeX</a>
+                </div>
+            </div>
+            
+            <div class="book-card">
+                <h3>WINDI A4 Desk Governance Architecture <span class="status-badge">TUM Style</span></h3>
+                <div class="book-meta">
+                    <span>📄 10 Pages</span>
+                    <span>🌐 EN/DE Bilingual</span>
+                    <span>📅 January 2026</span>
+                    <span>🏛️ v4.7-gov</span>
+                </div>
+                <div class="quote-block">"KI verarbeitet. Mensch entscheidet. WINDI garantiert."</div>
+                <p class="book-description">Comprehensive technical documentation of the A4 Desk BABEL governance architecture. Covers the four-layer model, Governance Ledger, QR Verification System, and EU AI Act alignment. Bilingual EN/DE edition in academic format.</p>
+                <div class="book-toc">
+                    <h4>Contents</h4>
+                    <ul>
+                        <li>Executive Summary / Zusammenfassung</li>
+                        <li>Governance Model (Human Volante Principle)</li>
+                        <li>Architecture Layers (4-Layer Model)</li>
+                        <li>Governance Ledger & QR Verification</li>
+                        <li>EU AI Act Compliance Mapping</li>
+                        <li>Technical Reference & API</li>
+                    </ul>
+                </div>
+                <div class="download-buttons">
+                    <a href="books/WINDI_Governance_Architecture_v47gov.pdf" class="download-btn de" download>📄 Download PDF (217KB)</a>
+                </div>
+            </div>
+            
+            <div class="book-card">
+                <h3>Bescheid Example — Real Use Case <span class="status-badge">Case Study</span></h3>
+                <div class="book-meta">
+                    <span>📄 3 Pages</span>
+                    <span>🇩🇪 German</span>
+                    <span>📅 January 2026</span>
+                    <span>🏛️ Bauamt Kempten</span>
+                </div>
+                <div class="quote-block">"[Nur Mensch — Entscheidung]"</div>
+                <p class="book-description">Real-world example of an official German government document (Baugenehmigung / Building Permit) produced with A4 Desk BABEL. Demonstrates WINDI-RECEIPT integration, QR verification, EU AI Act Art. 50 transparency compliance, and clear human-AI role separation.</p>
+                <div class="highlight-box governance">
+                    <div class="box-title">Key Features Demonstrated</div>
+                    <p><strong>WINDI-RECEIPT:</strong> WINDI-BABEL-28JAN26-FF04B8D4 | Hash: ff04b8d43518</p>
+                    <p><strong>Human Decision Zone:</strong> "[Nur Mensch — Entscheidung]" marking</p>
+                    <p><strong>Signature Requirement:</strong> "[Nur Mensch — Unterschrift erforderlich]"</p>
+                    <p><strong>EU AI Act:</strong> Art. 50 Transparenzpflichten compliance</p>
+                </div>
+                <div class="download-buttons">
+                    <a href="books/Bescheid_LLM_Example.pdf" class="download-btn de" download>📄 Download PDF (9KB)</a>
+                </div>
+            </div>
+        </section>
+        <section>
+            <h2>📰 Articles Collection</h2>
+            
+            <p>Academic and editorial articles inspired by leading publications will be added here:</p>
+                    <a href="books/Sovereign_Handshake_Protocol_IEEE.tex" class="download-btn en" download>📄 Download LaTeX</a>
+                </div>
+            </div>
+
+              <div class="book-card">
+              <h3>The Constitutional Gate <span class="status-badge">Economist Style</span></h3>
+              <div class="book-meta">
+                 <span>📄 4 Pages</span>
+                 <span>🌐 English</span>
+                 <span>📅 2026</span>
+                 <span>📰 Editorial</span>
+          </div>
+             <div class="quote-block">"AI governance needs constitutional thinking, not just technical fixes."</div>
+             <p class="book-description">An editorial analysis in The Economist style exploring the Constitutional Gate concept — how institutional governance layers can provide structured oversight for AI systems while preserving operational flexibility.</p>
+             <div class="download-buttons">
+                  <a href="books/WINDI_Constitutional_Gate_Economist.pdf" class="download-btn en" download>📄 Download PDF (754KB)</a>
+         
+</div>
+         </div>
+            
+            <div class="book-card" style="opacity:0.7">
+                <h3>MIT Technology Review Style</h3>
+                <p>Technical perspectives on pre-AI governance layers.</p>
+                <div class="download-buttons">
+                    <span class="download-btn" style="background:#ccc;cursor:not-allowed">Coming Soon</span>
+                </div>
+            </div>
+            
+            <div class="book-card" style="opacity:0.7">
+                <h3>TUM München Academic Format</h3>
+                <p>Formal research documentation on human-AI collaboration frameworks.</p>
+                <div class="download-buttons">
+                    <span class="download-btn" style="background:#ccc;cursor:not-allowed">Coming Soon</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="windi-receipt-footer">
+            <div class="windi-brand">WINDI Publishing House</div>
+            <div class="receipt-line">WINDI-QUITTUNG: WINDI-PUB-30JAN26-PUBL1C4T | Hash: publ1c4t</div>
+            <div class="receipt-line">Autor: Jober Mögele Correa (WINDI-CEO-001) | Status: INSTITUTIONAL BETA</div>
+            <div class="qr-section">
+                <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=https://master.windia4desk.tech/publications.html" alt="QR Code">
+                <div>
+                    <div class="receipt-line">A4 Desk BABEL v4.7-gov | EU AI Act Compliant</div>
+                    <div class="compliance-badge">✓ Verified Institutional Documentation</div>
+                </div>
+            </div>
+            <div class="authorship-notice">
+                <h4>✍ HUMAN AUTHORSHIP NOTICE</h4>
+                <p>This document was created and reviewed by human authors.</p>
+                <p class="principle">KI verarbeitet. Mensch entscheidet. WINDI garantiert.</p>
+            </div>
+            <div class="ledger-info">WINDI Governance Ledger | Human-authored: 100.0% | Template: Publications v1.0 | Structure: VALID</div>
+        </section>
+    </main>
+    <footer class="thesis-footer"><p>WINDI System — Publications · Version 1.0</p></footer>
+</body>
+</html>
