@@ -5,27 +5,27 @@ It combines human oversight, cryptographic integrity, and public verification.
 
 AI processes. Human decides. WINDI guarantees.
 
-🔍 What This Repo Contains
+🔍 What This Repository Contains
 
 Technical components of the WINDI Verification & Governance Layer, including:
 
-📄 PDF receipt + QR embedding
+📄 PDF receipt generation with embedded QR codes
 
-🔐 Cryptographic hash integration
+🔐 Cryptographic hash and structural integrity integration
 
-🌐 Public verification endpoint
+🌐 Public verification endpoints (HTML & JSON)
 
-🧭 Governance & integrity tools
+🧭 Governance and integrity validation tools
 
 🌐 Public Verification
 
 Documents processed with WINDI can be verified by anyone:
 
-Human-readable:
+Human-readable verification page
 https://windia4desk.tech/verify/
 <receipt_id>
 
-Machine-readable API:
+Machine-readable API
 https://windia4desk.tech/api/verify/
 <receipt_id>
 
@@ -42,7 +42,7 @@ https://master.windia4desk.tech
 
 WINDI enforces:
 
-✔ Four-Eyes Principle (AI + Human)
+✔ Four-Eyes Principle (AI + Human oversight)
 ✔ Structural integrity validation
 ✔ Cryptographic provenance
 ✔ Public auditability
@@ -50,7 +50,8 @@ WINDI enforces:
 📌 Purpose of This Repository
 
 This repository provides the technical implementation of the verification and governance mechanisms described in the WINDI research.
-It serves as supplementary technical evidence for academic and regulatory review.
+
+It serves as supplementary technical evidence for academic and regulatory review and demonstrates a fully operational reference implementation.
 
 🐉 WINDI — Governance & Verifikation für KI-Dokumente
 
@@ -61,25 +62,25 @@ AI processes. Human decides. WINDI guarantees.
 
 🔍 Inhalt dieses Repositories
 
-Technische Komponenten der WINDI Verifikations- und Governance-Schicht, u. a.:
+Technische Komponenten der WINDI Verifikations- und Governance-Schicht, unter anderem:
 
-📄 Einbettung von Receipts und QR-Codes in PDFs
+📄 Erstellung von PDF-Receipts mit eingebettetem QR-Code
 
-🔐 Integration kryptographischer Hashes
+🔐 Integration kryptographischer Hashes und Strukturvalidierung
 
-🌐 Öffentlicher Verifikationsendpunkt
+🌐 Öffentliche Verifikationsendpunkte (HTML & JSON)
 
-🧭 Werkzeuge zur Integritäts- und Governance-Kontrolle
+🧭 Werkzeuge zur Integritäts- und Governance-Prüfung
 
 🌐 Öffentliche Verifikation
 
 Mit WINDI erzeugte Dokumente können von jeder Person überprüft werden:
 
-Menschenlesbar:
+Menschenlesbare Verifikationsseite
 https://windia4desk.tech/verify/
 <receipt_id>
 
-Maschinenlesbare API:
+Maschinenlesbare API
 https://windia4desk.tech/api/verify/
 <receipt_id>
 
@@ -96,11 +97,16 @@ https://master.windia4desk.tech
 
 WINDI stellt sicher:
 
-✔ Vier-Augen-Prinzip (KI + Mensch)
+✔ Vier-Augen-Prinzip (KI + menschliche Aufsicht)
 ✔ Strukturelle Integritätsprüfung
 ✔ Kryptographische Provenienz
 ✔ Öffentliche Nachprüfbarkeit
 
+📌 Zweck dieses Repositories
+
+Dieses Repository enthält die technische Umsetzung der in der WINDI-Forschung beschriebenen Verifikations- und Governance-Mechanismen.
+
+Es dient als ergänzender technischer Nachweis für akademische und regulatorische Prüfungen und stellt eine funktionsfähige Referenzimplementierung bereit.
 📌 Zweck dieses Repositories
 
 Dieses Repository enthält die technische Umsetzung der in der WINDI-Forschung beschriebenen Verifikations- und Governance-Mechanismen.
