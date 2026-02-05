@@ -1,0 +1,310 @@
+{
+  "isp_profile": {
+    "metadata": {
+      "profile_id": "dhl-group",
+      "version": "1.0.0",
+      "created": "2026-02-05T19:53:25Z",
+      "governance_level": "LOW",
+      "profile_type": "global_logistics_enterprise",
+      "windi_registry_version": "2.11.0",
+      "generator": "windi-isp-factory/v1.0",
+      "audit_hash": "19ee4555dcfce19d4b520551afec460f6d35eed56108b7215dd54c071f126e77"
+    },
+    "organization": {
+      "name_full": "Deutsche Post DHL Group",
+      "name_short": "DHL",
+      "legal_form": "AG (Aktiengesellschaft)",
+      "sector": "Logistik / Post- und Paketdienste",
+      "employees": 583000,
+      "revenue_eur": "~€81 Mrd. (2024)",
+      "headquarters": "Bonn",
+      "description": "Deutsche Post DHL Group ist der weltweit größte Logistikkonzern und Betreiber des deutschen Post- und Paketdienstes. Das Unternehmen operiert in über 220 Ländern mit Divisionen für Express, Global Forwarding & Freight, eCommerce, Supply Chain und Post & Paket Deutschland.",
+      "relevance": "Als größter Logistikkonzern der Welt generiert DHL massive Dokumentenströme: Frachtbriefe, Zollerklärungen, Lieferscheine, Versicherungsdokumente und Compliance-Berichte. WINDI-Governance kann die Dokumentenintegrität in der gesamten Lieferkette sichern — besonders relevant angesichts der US-Handelspolitik und neuen Zollregeln.",
+      "regional_presence": [
+        "Bonn (Zentrale)",
+        "Leipzig (European Hub / DHL Express)",
+        "Frankfurt (Global Forwarding)",
+        "Hamburg (Freight)",
+        "Augsburg (Supply Chain DACH)"
+      ]
+    },
+    "governance": {
+      "level": "LOW",
+      "identity_license_required": false,
+      "retention_years": 5,
+      "risk_domains": [
+        "supply_chain_integrity",
+        "customs_compliance",
+        "data_privacy_logistics",
+        "cross_border_trade",
+        "environmental_sustainability",
+        "labor_compliance"
+      ],
+      "compliance_frameworks": [
+        "DSGVO",
+        "EU AI Act",
+        "EU Customs Code (UCC)",
+        "Postgesetz (PostG)",
+        "Lieferkettensorgfaltspflichtengesetz (LkSG)",
+        "Corporate Sustainability Reporting Directive (CSRD)",
+        "ISO 27001",
+        "AEO (Authorised Economic Operator)"
+      ],
+      "sge_thresholds": {
+        "warn": 55,
+        "alert": 70,
+        "block": 60
+      }
+    },
+    "templates": [
+      {
+        "id": "TPL-DHL-001",
+        "name_de": "Frachtbrief / Konnossement",
+        "name_en": "Bill of Lading / Waybill",
+        "category": "logistics_operations",
+        "risk_level": "R2",
+        "description": "Standardisierter Frachtbrief für nationale und internationale Sendungen mit Governance-Validierung",
+        "required_fields": [
+          "sender",
+          "receiver",
+          "goods_description",
+          "weight",
+          "route",
+          "date"
+        ],
+        "governance_notes": "Cross-border shipments require customs compliance validation"
+      },
+      {
+        "id": "TPL-DHL-002",
+        "name_de": "Zollerklärung",
+        "name_en": "Customs Declaration",
+        "category": "customs_trade",
+        "risk_level": "R3",
+        "description": "Zollerklärung für Import/Export mit automatischer Tarifklassifizierung und Compliance-Prüfung",
+        "required_fields": [
+          "declarant",
+          "goods_classification",
+          "origin_country",
+          "destination_country",
+          "customs_value",
+          "tariff_code"
+        ],
+        "governance_notes": "High risk due to US trade policy changes. SGE monitors tariff classification accuracy."
+      },
+      {
+        "id": "TPL-DHL-003",
+        "name_de": "Lieferschein",
+        "name_en": "Delivery Note",
+        "category": "logistics_operations",
+        "risk_level": "R1",
+        "description": "Lieferschein mit Sendungsverfolgung und Empfangsbestätigung",
+        "required_fields": [
+          "order_number",
+          "sender",
+          "receiver",
+          "items",
+          "delivery_date"
+        ],
+        "governance_notes": "Standard operational document, low governance risk"
+      },
+      {
+        "id": "TPL-DHL-004",
+        "name_de": "Transportversicherung",
+        "name_en": "Transport Insurance Certificate",
+        "category": "insurance_risk",
+        "risk_level": "R3",
+        "description": "Versicherungszertifikat für Frachttransport mit Wertdeklaration und Risikobewertung",
+        "required_fields": [
+          "insured_party",
+          "goods_value",
+          "route",
+          "insurance_type",
+          "coverage_period"
+        ],
+        "governance_notes": "Value declarations require SGE verification for R3+ risk levels"
+      },
+      {
+        "id": "TPL-DHL-005",
+        "name_de": "Nachhaltigkeitsbericht Lieferkette",
+        "name_en": "Supply Chain Sustainability Report",
+        "category": "sustainability_compliance",
+        "risk_level": "R2",
+        "description": "CSRD-konformer Nachhaltigkeitsbericht für Lieferketten-Emissionen und ESG-Kennzahlen",
+        "required_fields": [
+          "reporting_period",
+          "scope_emissions",
+          "sustainability_targets",
+          "supply_chain_metrics"
+        ],
+        "governance_notes": "CSRD mandatory reporting. LkSG supply chain due diligence documentation."
+      },
+      {
+        "id": "TPL-DHL-006",
+        "name_de": "Gefahrgutbegleitschein",
+        "name_en": "Dangerous Goods Declaration",
+        "category": "safety_compliance",
+        "risk_level": "R4",
+        "description": "Begleitdokument für Gefahrguttransport nach ADR/IATA-DGR Vorschriften",
+        "required_fields": [
+          "un_number",
+          "proper_shipping_name",
+          "hazard_class",
+          "packing_group",
+          "emergency_contact"
+        ],
+        "governance_notes": "Critical safety document. R4 risk — SGE alert threshold. Requires certified signatory."
+      },
+      {
+        "id": "TPL-DHL-007",
+        "name_de": "Dienstleistungsvertrag Logistik",
+        "name_en": "Logistics Service Agreement",
+        "category": "contracts",
+        "risk_level": "R2",
+        "description": "Rahmenvertrag für Logistikdienstleistungen mit SLA-Definitionen und Haftungsregelungen",
+        "required_fields": [
+          "contracting_parties",
+          "service_scope",
+          "sla_metrics",
+          "liability_terms",
+          "duration"
+        ],
+        "governance_notes": "Contract templates require legal review indicator in governance flow"
+      },
+      {
+        "id": "TPL-DHL-008",
+        "name_de": "Datenschutz-Folgenabschätzung Logistik",
+        "name_en": "Logistics Data Protection Impact Assessment",
+        "category": "data_privacy",
+        "risk_level": "R3",
+        "description": "DSGVO-konforme DSFA für Sendungsverfolgung, Kundendaten und IoT-Sensordaten in der Logistikkette",
+        "required_fields": [
+          "processing_activity",
+          "data_categories",
+          "risk_assessment",
+          "mitigation_measures"
+        ],
+        "governance_notes": "Mandatory for new tracking systems and AI-based route optimization"
+      }
+    ],
+    "document_categories": [
+      {
+        "id": "logistics_operations",
+        "name_de": "Logistik & Betrieb",
+        "name_en": "Logistics & Operations",
+        "description": "Operational documents for freight, delivery, and supply chain management",
+        "typical_risk_level": "R1-R2"
+      },
+      {
+        "id": "customs_trade",
+        "name_de": "Zoll & Handel",
+        "name_en": "Customs & Trade",
+        "description": "Cross-border trade documentation, customs declarations, tariff classifications",
+        "typical_risk_level": "R2-R3"
+      },
+      {
+        "id": "insurance_risk",
+        "name_de": "Versicherung & Risiko",
+        "name_en": "Insurance & Risk",
+        "description": "Transport insurance, risk assessments, claims documentation",
+        "typical_risk_level": "R2-R3"
+      },
+      {
+        "id": "sustainability_compliance",
+        "name_de": "Nachhaltigkeit & Compliance",
+        "name_en": "Sustainability & Compliance",
+        "description": "CSRD reports, ESG metrics, supply chain due diligence under LkSG",
+        "typical_risk_level": "R2"
+      },
+      {
+        "id": "safety_compliance",
+        "name_de": "Sicherheit & Gefahrgut",
+        "name_en": "Safety & Dangerous Goods",
+        "description": "Dangerous goods handling, safety certifications, ADR/IATA compliance",
+        "typical_risk_level": "R3-R4"
+      },
+      {
+        "id": "contracts",
+        "name_de": "Verträge & Vereinbarungen",
+        "name_en": "Contracts & Agreements",
+        "description": "Service agreements, SLAs, partnership contracts",
+        "typical_risk_level": "R2"
+      },
+      {
+        "id": "data_privacy",
+        "name_de": "Datenschutz",
+        "name_en": "Data Privacy",
+        "description": "DSGVO compliance, data protection impact assessments, privacy documentation",
+        "typical_risk_level": "R3"
+      }
+    ],
+    "sge_keywords": {
+      "domain_terms": [
+        "Frachtbrief",
+        "Konnossement",
+        "Sendungsverfolgung",
+        "Tracking",
+        "Paketdienst",
+        "Express-Zustellung",
+        "Luftfracht",
+        "Seefracht",
+        "Supply Chain",
+        "Lieferkette",
+        "Logistikzentrum",
+        "Hub",
+        "Last Mile",
+        "Zustellung",
+        "Retoure",
+        "Wareneingang"
+      ],
+      "risk_indicators": [
+        "Gefahrgut",
+        "Zollbetrug",
+        "Sanktionsliste",
+        "Embargo",
+        "Sendungsverlust",
+        "Transportschaden",
+        "Lieferverzug",
+        "Dual-Use-Güter",
+        "Tarifumgehung",
+        "De-minimis"
+      ],
+      "compliance_terms": [
+        "UCC",
+        "Zollkodex",
+        "AEO",
+        "IATA-DGR",
+        "ADR",
+        "LkSG",
+        "CSRD",
+        "PostG",
+        "Postgesetz",
+        "Lieferkettensorgfalt",
+        "CO2-Emissionen",
+        "Scope-3"
+      ],
+      "organizational_terms": [
+        "Deutsche Post",
+        "DHL Express",
+        "DHL Global Forwarding",
+        "DHL Freight",
+        "DHL eCommerce",
+        "DHL Supply Chain",
+        "Post & Paket Deutschland",
+        "Gelbe Engel",
+        "Tobias Meyer",
+        "Bonn",
+        "Leipzig Hub"
+      ]
+    },
+    "cross_references": {
+      "complementary": [
+        "deutsche-bahn",
+        "ihk"
+      ],
+      "hierarchical": [
+        "bundesregierung"
+      ],
+      "notes": "DHL als größter Logistikkonzern interagiert mit DB (Schienenlogistik), IHK (Außenhandelsdokumente) und unterliegt Bundesregierung-Regulierung (PostG). Zollrelevanz verbindet zu potenziellen EU-Institutionsprofilen."
+    }
+  }
+}

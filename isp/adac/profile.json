@@ -1,0 +1,300 @@
+{
+  "isp_profile": {
+    "metadata": {
+      "profile_id": "adac",
+      "version": "1.0.0",
+      "created": "2026-02-05T19:53:25Z",
+      "governance_level": "LOW",
+      "profile_type": "membership_association",
+      "windi_registry_version": "2.11.0",
+      "generator": "windi-isp-factory/v1.0",
+      "audit_hash": "fffa19371f50efa3bb1fdf5a7d2e12768ebbc968f05503f6384a24cef825c190"
+    },
+    "organization": {
+      "name_full": "Allgemeiner Deutscher Automobil-Club e.V.",
+      "name_short": "ADAC",
+      "legal_form": "eingetragener Verein (e.V.)",
+      "sector": "Automobil / Mobilität / Verbraucherschutz",
+      "employees": 9000,
+      "revenue_eur": "~€1,03 Mrd. e.V. + ~€1,27 Mrd. ADAC SE (2024/2023)",
+      "headquarters": "München",
+      "description": "Der ADAC ist Europas größter Automobilclub und Deutschlands größter Verein mit über 22,2 Millionen Mitgliedern. Er bietet Pannenhilfe ('Gelbe Engel'), Versicherungen, Reiseservices, Fahrzeugtests, Luftrettung und Verbraucherschutz. Die kommerziellen Aktivitäten sind seit 2017 in der ADAC SE organisiert, die gemeinnützigen in der ADAC Stiftung.",
+      "relevance": "Der ADAC verwaltet als größter deutscher Verein massive Mitgliederdatenbanken (22,2 Mio. Personen), Versicherungspolicen und Pannenhilfe-Einsatzprotokolle. WINDI-Governance sichert Datenschutz bei Mitgliederkommunikation, Versicherungsdokumenten und der zunehmend digitalisierten Pannenhilfe mit IoT- und KI-Einsatz. Besonders relevant für Allgäu: ADAC Regionalclub Südbayern und Technikzentrum Landsberg.",
+      "regional_presence": [
+        "München (Zentrale, Hansastraße 19)",
+        "Landsberg am Lech (Technikzentrum)",
+        "18 Regionalclubs bundesweit",
+        "168 Geschäftsstellen",
+        "37 Luftrettungszentren"
+      ]
+    },
+    "governance": {
+      "level": "LOW",
+      "identity_license_required": false,
+      "retention_years": 5,
+      "risk_domains": [
+        "member_data_privacy",
+        "insurance_operations",
+        "consumer_protection",
+        "vehicle_safety_testing",
+        "emergency_rescue_operations",
+        "financial_governance_association"
+      ],
+      "compliance_frameworks": [
+        "DSGVO",
+        "EU AI Act",
+        "Vereinsrecht (BGB §§21-79)",
+        "Versicherungsaufsichtsgesetz (VAG)",
+        "Verbraucherinformationspflichten",
+        "Luftrettung-Betriebsgenehmigung",
+        "ISO 27001"
+      ],
+      "sge_thresholds": {
+        "warn": 55,
+        "alert": 70,
+        "block": 60
+      }
+    },
+    "templates": [
+      {
+        "id": "TPL-ADAC-001",
+        "name_de": "Mitgliedschaftsvertrag",
+        "name_en": "Membership Agreement",
+        "category": "membership_management",
+        "risk_level": "R1",
+        "description": "Standardvertrag für ADAC-Mitgliedschaft (Basis, Plus, Premium) mit Leistungsübersicht und Datenschutzhinweisen",
+        "required_fields": [
+          "member_name",
+          "membership_type",
+          "start_date",
+          "payment_method"
+        ],
+        "governance_notes": "22.2M member base — DSGVO consent management critical"
+      },
+      {
+        "id": "TPL-ADAC-002",
+        "name_de": "Pannenhilfe-Einsatzprotokoll",
+        "name_en": "Roadside Assistance Report",
+        "category": "emergency_operations",
+        "risk_level": "R2",
+        "description": "Einsatzprotokoll der Straßenwacht mit Fahrzeugdiagnose, durchgeführten Maßnahmen und Abschleppdokumentation",
+        "required_fields": [
+          "case_number",
+          "member_id",
+          "vehicle_data",
+          "location",
+          "diagnosis",
+          "measures_taken",
+          "technician_id"
+        ],
+        "governance_notes": "3.6M annual deployments. Location data and vehicle diagnostics require privacy governance."
+      },
+      {
+        "id": "TPL-ADAC-003",
+        "name_de": "Fahrzeugtest-Bericht",
+        "name_en": "Vehicle Test Report",
+        "category": "consumer_protection",
+        "risk_level": "R2",
+        "description": "ADAC Autotest-Bericht mit Sicherheitsbewertung, Umweltwerten (EcoTest) und Verbraucherbewertung",
+        "required_fields": [
+          "vehicle_model",
+          "test_date",
+          "safety_score",
+          "eco_score",
+          "overall_rating",
+          "test_center"
+        ],
+        "governance_notes": "High public impact — test results influence consumer decisions and manufacturer reputation"
+      },
+      {
+        "id": "TPL-ADAC-004",
+        "name_de": "Versicherungspolice",
+        "name_en": "Insurance Policy Document",
+        "category": "insurance_services",
+        "risk_level": "R3",
+        "description": "ADAC Versicherungsdokument (Kfz, Reise, Auslandsschutzbrief) mit Deckungsumfang und Schadensregulierung",
+        "required_fields": [
+          "policyholder",
+          "insurance_type",
+          "coverage_scope",
+          "premium",
+          "validity_period"
+        ],
+        "governance_notes": "VAG-regulated. Financial document with binding legal obligations."
+      },
+      {
+        "id": "TPL-ADAC-005",
+        "name_de": "Luftrettung-Einsatzbericht",
+        "name_en": "Air Rescue Mission Report",
+        "category": "emergency_operations",
+        "risk_level": "R4",
+        "description": "Einsatzbericht der ADAC Luftrettung mit medizinischen Daten, Flugroute und Patienteninformationen",
+        "required_fields": [
+          "mission_id",
+          "helicopter_id",
+          "pilot",
+          "medic",
+          "patient_data",
+          "flight_route",
+          "hospital_destination"
+        ],
+        "governance_notes": "Critical medical + aviation data. R4 risk — highest privacy and safety requirements. Health data under Art. 9 DSGVO."
+      },
+      {
+        "id": "TPL-ADAC-006",
+        "name_de": "Reiserücktritt-Schadenmeldung",
+        "name_en": "Travel Cancellation Claim",
+        "category": "insurance_services",
+        "risk_level": "R2",
+        "description": "Schadensmeldung für Reiserücktritt/-abbruch mit Reisedokumentation und medizinischen Nachweisen",
+        "required_fields": [
+          "claim_number",
+          "policyholder",
+          "travel_dates",
+          "cancellation_reason",
+          "documentation"
+        ],
+        "governance_notes": "May contain medical certificates — special category data handling required"
+      },
+      {
+        "id": "TPL-ADAC-007",
+        "name_de": "Verbraucherschutz-Stellungnahme",
+        "name_en": "Consumer Protection Advisory",
+        "category": "consumer_protection",
+        "risk_level": "R2",
+        "description": "Offizielle ADAC-Stellungnahme zu Verbraucherthemen (Kraftstoffpreise, Verkehrsrecht, Fahrzeugrückrufe)",
+        "required_fields": [
+          "topic",
+          "legal_basis",
+          "consumer_impact",
+          "adac_recommendation",
+          "publication_date"
+        ],
+        "governance_notes": "Public-facing document with high media impact. Accuracy and neutrality critical after 2014 scandal reforms."
+      },
+      {
+        "id": "TPL-ADAC-008",
+        "name_de": "Vereins-Geschäftsbericht",
+        "name_en": "Association Annual Report",
+        "category": "association_governance",
+        "risk_level": "R2",
+        "description": "Jahresgeschäftsbericht des ADAC e.V. mit Finanzkennzahlen, Mitgliederentwicklung und Vereinsaktivitäten",
+        "required_fields": [
+          "fiscal_year",
+          "revenue",
+          "expenditure",
+          "member_count",
+          "key_activities",
+          "board_report"
+        ],
+        "governance_notes": "Vereinsrecht compliance. Transparency requirements post-2014 governance reform."
+      }
+    ],
+    "document_categories": [
+      {
+        "id": "membership_management",
+        "name_de": "Mitgliederverwaltung",
+        "name_en": "Membership Management",
+        "description": "Member registration, contracts, communication, data management for 22.2M members",
+        "typical_risk_level": "R1-R2"
+      },
+      {
+        "id": "emergency_operations",
+        "name_de": "Pannenhilfe & Rettung",
+        "name_en": "Roadside Assistance & Rescue",
+        "description": "Roadside assistance reports, air rescue missions, emergency response documentation",
+        "typical_risk_level": "R2-R4"
+      },
+      {
+        "id": "consumer_protection",
+        "name_de": "Verbraucherschutz & Tests",
+        "name_en": "Consumer Protection & Testing",
+        "description": "Vehicle tests, EcoTest, product reviews, consumer advisories",
+        "typical_risk_level": "R2"
+      },
+      {
+        "id": "insurance_services",
+        "name_de": "Versicherungen",
+        "name_en": "Insurance Services",
+        "description": "Insurance policies, claims processing, travel protection documents",
+        "typical_risk_level": "R2-R3"
+      },
+      {
+        "id": "association_governance",
+        "name_de": "Vereinsführung",
+        "name_en": "Association Governance",
+        "description": "Annual reports, board decisions, member assembly protocols, financial statements",
+        "typical_risk_level": "R2"
+      }
+    ],
+    "sge_keywords": {
+      "domain_terms": [
+        "Pannenhilfe",
+        "Straßenwacht",
+        "Gelbe Engel",
+        "Abschleppdienst",
+        "Luftrettung",
+        "Rettungshubschrauber",
+        "Christoph",
+        "Mitgliedschaft",
+        "Autotest",
+        "EcoTest",
+        "Crashtest",
+        "Verkehrssicherheit",
+        "Führerschein",
+        "Fahrsicherheitstraining",
+        "Staumelder",
+        "Routenplaner",
+        "Reiseplanung"
+      ],
+      "risk_indicators": [
+        "Mitgliederdaten-Missbrauch",
+        "Versicherungsbetrug",
+        "Datenleck",
+        "Fehldiagnose",
+        "Rückrufaktion",
+        "Testmanipulation",
+        "Beitragserschleichung",
+        "Identitätsdiebstahl",
+        "Notfallprotokoll-Fehler",
+        "Rettungsverzögerung"
+      ],
+      "compliance_terms": [
+        "Vereinsrecht",
+        "VAG",
+        "Versicherungsaufsicht",
+        "Mitgliederversammlung",
+        "Satzung",
+        "Beitragsordnung",
+        "Betriebsgenehmigung Luftrettung",
+        "EASA",
+        "Verbraucherschutzgesetz",
+        "Musterfeststellungsklage"
+      ],
+      "organizational_terms": [
+        "ADAC e.V.",
+        "ADAC SE",
+        "ADAC Stiftung",
+        "ADAC Luftrettung",
+        "ADAC Versicherung AG",
+        "ADAC Motorwelt",
+        "Regionalclub",
+        "Südbayern",
+        "München Hansastraße",
+        "Landsberg Technikzentrum",
+        "Nordbayern",
+        "Nordrhein"
+      ]
+    },
+    "cross_references": {
+      "complementary": [
+        "tuev",
+        "deutsche-bahn"
+      ],
+      "hierarchical": [
+        "bundesregierung"
+      ],
+      "notes": "ADAC kooperiert eng mit TÜV (Fahrzeugsicherheit, gemeinsame Testreihen), DB (Mobilitätskette) und unterliegt Bundesregierung-Regulierung (Vereinsrecht, VAG via ADAC Versicherung). Als Verbraucherorganisation ergänzt ADAC die IHK im B2C-Bereich."
+    }
+  }
+}
