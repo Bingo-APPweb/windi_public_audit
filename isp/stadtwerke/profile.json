@@ -1,0 +1,371 @@
+{
+  "isp_profile": {
+    "metadata": {
+      "profile_id": "stadtwerke",
+      "version": "1.0.0",
+      "created": "2026-02-05T17:31:11Z",
+      "governance_level": "LOW",
+      "profile_type": "municipal_utility_enterprise",
+      "windi_registry_version": "2.7.0",
+      "generator": "windi-isp-factory/v1.0",
+      "audit_hash": "8d4b7d3adb6d2ccea593af0783d261b93f62e151231afe7e0506efc077827149"
+    },
+    "organization": {
+      "name_full": "Stadtwerke (Kommunale Versorgungsunternehmen)",
+      "name_short": "Stadtwerke",
+      "legal_form": "GmbH (kommunale Beteiligung)",
+      "sector": "Energie, Wasser, Nahverkehr, Daseinsvorsorge",
+      "employees": 250000,
+      "revenue_eur": "110 Mrd. EUR (kumuliert, ~900 Stadtwerke)",
+      "headquarters": "Bundesweit (dezentral, kommunale Trägerschaft)",
+      "description": "Stadtwerke sind kommunale Versorgungsunternehmen, die Strom, Gas, Fernwärme, Wasser, Telekommunikation und öffentlichen Nahverkehr bereitstellen. Rund 900 Stadtwerke versorgen über die Hälfte der deutschen Haushalte mit Energie. Sie bilden das Rückgrat der kommunalen Daseinsvorsorge und sind zentrale Akteure der Energiewende.",
+      "relevance": "Stadtwerke repräsentieren die größte Gruppe kommunaler Unternehmen in Deutschland. Als KRITIS-Betreiber im Energiesektor unterliegen sie EnWG, NIS2 und dem KRITIS-Dachgesetz. Ihre dezentrale Struktur macht dokumentengestützte Governance besonders relevant — jede Kommune entscheidet autonom, braucht aber standardisierte Compliance. Direkte Allgäu-Relevanz: Stadtwerke Kempten, Stadtwerke Memmingen, Allgäuer Überlandwerk.",
+      "regional_presence": [
+        "Stadtwerke Kempten (Allgäu)",
+        "Stadtwerke München (größtes Stadtwerk Europas)",
+        "Stadtwerke Köln (Holdingstruktur)",
+        "Stadtwerke Augsburg",
+        "Stadtwerke Memmingen",
+        "Allgäuer Überlandwerk (AÜW)"
+      ]
+    },
+    "governance": {
+      "level": "LOW",
+      "identity_license_required": false,
+      "retention_years": 5,
+      "risk_domains": [
+        "Versorgungssicherheit (Strom, Gas, Wasser)",
+        "KRITIS-Compliance (Energiesektor)",
+        "Cybersicherheit (IT/OT-Konvergenz)",
+        "Kommunale Vergabe und Konzessionen",
+        "Energiewende-Transformation",
+        "Verbraucherdatenschutz",
+        "Netzregulierung und Entgelte"
+      ],
+      "compliance_frameworks": [
+        "DSGVO",
+        "EnWG",
+        "KRITIS-Verordnung",
+        "KRITIS-Dachgesetz",
+        "NIS2",
+        "IT-Sicherheitskatalog BNetzA",
+        "ISO 27001",
+        "ISO 27019",
+        "BSI IT-Grundschutz",
+        "EU AI Act",
+        "AVBWasserV",
+        "Kommunalrecht"
+      ],
+      "sge_thresholds": {
+        "warn": 55,
+        "alert": 70,
+        "block": 60
+      }
+    },
+    "templates": [
+      {
+        "id": "TPL-STW-001",
+        "name_de": "Versorgungsbericht (Strom/Gas/Wasser)",
+        "name_en": "Utility Supply Report",
+        "category": "operations",
+        "risk_level": "R2",
+        "description": "Periodischer Bericht über Versorgungskennzahlen, Netzauslastung und Störungsstatistik",
+        "required_fields": [
+          "berichtszeitraum",
+          "versorgungsgebiet",
+          "kennzahlen",
+          "stoerungen"
+        ],
+        "governance_notes": "Enthält Netzdaten — EnWG §11 und BNetzA-Berichtspflichten beachten"
+      },
+      {
+        "id": "TPL-STW-002",
+        "name_de": "KRITIS-Meldung an BSI",
+        "name_en": "KRITIS Incident Report to BSI",
+        "category": "compliance",
+        "risk_level": "R4",
+        "description": "Pflichtmeldung bei Sicherheitsvorfällen an kritischer Infrastruktur gemäß §8b BSIG",
+        "required_fields": [
+          "vorfallbeschreibung",
+          "betroffene_anlage",
+          "auswirkung",
+          "sofortmassnahmen",
+          "kontaktstelle"
+        ],
+        "governance_notes": "KRITIS-Meldepflicht — unverzügliche Meldung an BSI. Höchste Priorität bei Versorgungsausfall"
+      },
+      {
+        "id": "TPL-STW-003",
+        "name_de": "Konzessionsvertrag (Energieversorgung)",
+        "name_en": "Energy Concession Agreement",
+        "category": "legal",
+        "risk_level": "R3",
+        "description": "Vertrag zwischen Kommune und Stadtwerk über Strom-/Gaskonzession mit Laufzeit und Entgelten",
+        "required_fields": [
+          "kommune",
+          "versorgungsart",
+          "laufzeit",
+          "konzessionsabgabe",
+          "netzbetreiber"
+        ],
+        "governance_notes": "Konzessionsvergabe nach §46 EnWG — transparentes Verfahren erforderlich"
+      },
+      {
+        "id": "TPL-STW-004",
+        "name_de": "Netzentgelt-Kalkulation",
+        "name_en": "Grid Fee Calculation",
+        "category": "finance",
+        "risk_level": "R3",
+        "description": "Kalkulation der Netzentgelte für die Bundesnetzagentur gemäß Anreizregulierungsverordnung",
+        "required_fields": [
+          "regulierungsperiode",
+          "kostenbestandteile",
+          "erloesobergrenze",
+          "kalkulationsgrundlage"
+        ],
+        "governance_notes": "BNetzA-reguliert — Anreizregulierung (ARegV). Strenge Dokumentationsanforderungen"
+      },
+      {
+        "id": "TPL-STW-005",
+        "name_de": "IT-Sicherheitskonzept (ISMS)",
+        "name_en": "IT Security Concept (ISMS)",
+        "category": "security",
+        "risk_level": "R4",
+        "description": "Informationssicherheitsmanagement nach ISO 27001/27019 und IT-Sicherheitskatalog BNetzA",
+        "required_fields": [
+          "geltungsbereich",
+          "risikoanalyse",
+          "massnahmen",
+          "verantwortlichkeiten",
+          "auditplan"
+        ],
+        "governance_notes": "Pflicht für Netzbetreiber nach §11(1a) EnWG. Zertifizierung durch akkreditierte Stelle"
+      },
+      {
+        "id": "TPL-STW-006",
+        "name_de": "Energiewende-Strategiepapier",
+        "name_en": "Energy Transition Strategy Paper",
+        "category": "strategy",
+        "risk_level": "R2",
+        "description": "Strategische Planung für Ausbau Erneuerbarer Energien, Dekarbonisierung und Sektorkopplung",
+        "required_fields": [
+          "zeithorizont",
+          "ausbauziele",
+          "investitionsplan",
+          "co2_reduktion",
+          "buergerbeteiligung"
+        ],
+        "governance_notes": "Kommunale Wärmplanung nach WPG beachten. Bürgerbeteiligung dokumentieren"
+      },
+      {
+        "id": "TPL-STW-007",
+        "name_de": "Störungsmeldung Versorgungsnetz",
+        "name_en": "Grid Disruption Report",
+        "category": "operations",
+        "risk_level": "R3",
+        "description": "Dokumentation von Netzstörungen inkl. Ursachenanalyse, SAIDI/SAIFI-Kennzahlen und Wiederherstellung",
+        "required_fields": [
+          "stoerungszeitpunkt",
+          "betroffenes_netz",
+          "ursache",
+          "dauer",
+          "betroffene_kunden",
+          "massnahmen"
+        ],
+        "governance_notes": "BNetzA-Berichtspflicht nach §52 EnWG. SAIDI-Statistik für Qualitätselement"
+      },
+      {
+        "id": "TPL-STW-008",
+        "name_de": "Beteiligungsbericht (Kommune)",
+        "name_en": "Municipal Participation Report",
+        "category": "governance",
+        "risk_level": "R2",
+        "description": "Jährlicher Bericht an den Gemeinderat über Geschäftsentwicklung, Ausschüttungen und Quersubventionierung",
+        "required_fields": [
+          "geschaeftsjahr",
+          "ergebnis",
+          "ausschuettung",
+          "quersubventionierung",
+          "investitionen",
+          "personal"
+        ],
+        "governance_notes": "Kommunalrechtliche Berichtspflicht. Transparenz gegenüber Gemeinderat und Öffentlichkeit"
+      },
+      {
+        "id": "TPL-STW-009",
+        "name_de": "Datenschutz-Folgenabschätzung (Smart Meter)",
+        "name_en": "Data Protection Impact Assessment (Smart Meter)",
+        "category": "compliance",
+        "risk_level": "R4",
+        "description": "DSFA für den Rollout intelligenter Messsysteme nach MsbG und DSGVO Art. 35",
+        "required_fields": [
+          "verarbeitungszweck",
+          "datenkategorien",
+          "risikobewertung",
+          "schutzmassnahmen",
+          "betroffenenrechte"
+        ],
+        "governance_notes": "Smart-Meter-Rollout nach MsbG — BSI-Zertifizierung der Gateway-Infrastruktur erforderlich"
+      },
+      {
+        "id": "TPL-STW-010",
+        "name_de": "Wasserqualitätsbericht",
+        "name_en": "Water Quality Report",
+        "category": "operations",
+        "risk_level": "R3",
+        "description": "Dokumentation der Trinkwasserqualität nach TrinkwV mit Analyseergebnissen und Grenzwertüberwachung",
+        "required_fields": [
+          "versorgungsgebiet",
+          "probenahme",
+          "analyseergebnisse",
+          "grenzwerte",
+          "massnahmen"
+        ],
+        "governance_notes": "Trinkwasserverordnung — Meldepflicht bei Grenzwertüberschreitung an Gesundheitsamt"
+      }
+    ],
+    "document_categories": [
+      {
+        "id": "operations",
+        "name_de": "Betrieb & Versorgung",
+        "name_en": "Operations & Supply",
+        "description": "Versorgungsberichte, Störungsdokumentation, Netzmanagement",
+        "typical_risk_level": "R2"
+      },
+      {
+        "id": "compliance",
+        "name_de": "Regulierung & Compliance",
+        "name_en": "Regulation & Compliance",
+        "description": "KRITIS-Meldungen, DSFA, Auditberichte, Zertifizierungen",
+        "typical_risk_level": "R4"
+      },
+      {
+        "id": "legal",
+        "name_de": "Verträge & Konzessionen",
+        "name_en": "Contracts & Concessions",
+        "description": "Konzessionsverträge, Lieferantenverträge, Kooperationsvereinbarungen",
+        "typical_risk_level": "R3"
+      },
+      {
+        "id": "finance",
+        "name_de": "Finanzen & Entgelte",
+        "name_en": "Finance & Tariffs",
+        "description": "Netzentgelte, Tarifkalkulationen, Beteiligungsberichte",
+        "typical_risk_level": "R3"
+      },
+      {
+        "id": "security",
+        "name_de": "IT-Sicherheit & KRITIS",
+        "name_en": "IT Security & Critical Infrastructure",
+        "description": "ISMS, Penetrationsberichte, Notfallpläne, BSI-Audits",
+        "typical_risk_level": "R4"
+      },
+      {
+        "id": "strategy",
+        "name_de": "Strategie & Transformation",
+        "name_en": "Strategy & Transformation",
+        "description": "Energiewende-Pläne, Digitalisierungsstrategie, Bürgerbeteiligung",
+        "typical_risk_level": "R2"
+      },
+      {
+        "id": "governance",
+        "name_de": "Kommunale Governance",
+        "name_en": "Municipal Governance",
+        "description": "Beteiligungsberichte, Gremienbeschlüsse, Aufsichtsratsprotokolle",
+        "typical_risk_level": "R2"
+      }
+    ],
+    "sge_keywords": {
+      "domain_terms": [
+        "Versorgungssicherheit",
+        "Netzauslastung",
+        "Grundversorgung",
+        "Konzessionsabgabe",
+        "Netzentgelt",
+        "Einspeisevergütung",
+        "Lastmanagement",
+        "Spitzenlast",
+        "Blindleistung",
+        "Fernwärmenetz",
+        "Trinkwasseraufbereitung",
+        "Abwasserentsorgung",
+        "Smart Grid",
+        "intelligentes Messsystem",
+        "Gateway-Administrator",
+        "Sektorkopplung",
+        "Power-to-Heat",
+        "Elektromobilität",
+        "Bürgerenergie",
+        "Quartiersversorgung",
+        "Nahwärmenetz"
+      ],
+      "risk_indicators": [
+        "Versorgungsunterbrechung",
+        "Netzstörung",
+        "Blackout",
+        "SAIDI",
+        "SAIFI",
+        "Grenzwertüberschreitung",
+        "Cyberangriff",
+        "IT-Sicherheitsvorfall",
+        "Datenpanne",
+        "Konzessionsverlust",
+        "Regulierungsrisiko",
+        "Netzentgeltkürzung",
+        "Sabotage",
+        "physischer Zugriff",
+        "OT-Kompromittierung"
+      ],
+      "compliance_terms": [
+        "EnWG",
+        "KRITIS",
+        "KRITIS-Dachgesetz",
+        "NIS2",
+        "IT-Sicherheitskatalog",
+        "BNetzA",
+        "BSI",
+        "ARegV",
+        "MsbG",
+        "TrinkwV",
+        "AVBWasserV",
+        "ISO 27001",
+        "ISO 27019",
+        "IT-Grundschutz",
+        "DSGVO",
+        "WPG",
+        "Kommunalrecht",
+        "EU AI Act",
+        "BSIG",
+        "Meldepflicht"
+      ],
+      "organizational_terms": [
+        "Stadtwerk",
+        "Netzbetreiber",
+        "Messstellenbetreiber",
+        "Gemeinderat",
+        "Aufsichtsrat",
+        "Geschäftsführung",
+        "VKU",
+        "Kommunalunternehmen",
+        "Daseinsvorsorge",
+        "Quersubventionierung",
+        "Eigenbetrieb",
+        "Anstalt des öffentlichen Rechts",
+        "Konzessionsverfahren",
+        "Unbundling",
+        "Entflechtung"
+      ]
+    },
+    "cross_references": {
+      "complementary": [
+        "deutsche-bahn",
+        "tuev",
+        "siemens"
+      ],
+      "hierarchical": [
+        "bundesregierung"
+      ],
+      "notes": "Deutsche Bahn: Gemeinsame KRITIS-Infrastruktur und Energieeinspeiseverträge. TÜV: Technische Prüfungen von Energieanlagen und Netzen. Siemens: Lieferant von Netzleittechnik, Smart-Grid-Technologie und Automatisierung. Bundesregierung: Übergeordnete Regulierung durch EnWG, KRITIS-DG und Energiewende-Gesetzgebung."
+    }
+  }
+}

@@ -1,0 +1,144 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "windi:rfc-002:telemetry-packet:1.0",
+  "title": "WINDI Telemetry Packet",
+  "type": "object",
+  "required": [
+    "header",
+    "payload",
+    "auth"
+  ],
+  "properties": {
+    "header": {
+      "type": "object",
+      "required": [
+        "v",
+        "alg",
+        "cid",
+        "kid",
+        "ts",
+        "nonce",
+        "seq"
+      ],
+      "properties": {
+        "v": {
+          "type": "string",
+          "const": "1.0"
+        },
+        "alg": {
+          "type": "string",
+          "enum": [
+            "HMAC-SHA256",
+            "ED25519"
+          ]
+        },
+        "cid": {
+          "type": "string"
+        },
+        "kid": {
+          "type": "string"
+        },
+        "ts": {
+          "type": "integer"
+        },
+        "nonce": {
+          "type": "string"
+        },
+        "seq": {
+          "type": "integer"
+        }
+      },
+      "additionalProperties": false
+    },
+    "payload": {
+      "type": "object",
+      "required": [
+        "shelf",
+        "code",
+        "weight",
+        "domain_hash",
+        "doc_fingerprint",
+        "event"
+      ],
+      "properties": {
+        "shelf": {
+          "type": "string",
+          "enum": [
+            "S1",
+            "S2",
+            "S3",
+            "S4",
+            "S5",
+            "S6",
+            "S7"
+          ]
+        },
+        "code": {
+          "type": "string"
+        },
+        "weight": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "domain_hash": {
+          "type": "string"
+        },
+        "doc_fingerprint": {
+          "type": "string"
+        },
+        "event": {
+          "type": "string",
+          "enum": [
+            "DOC_CREATED",
+            "APPROVAL_REQUESTED",
+            "APPROVED",
+            "REJECTED",
+            "APPROVAL_OVERRIDDEN",
+            "DEADLINE_EXCEEDED",
+            "DEPENDENCY_LINKED",
+            "DEPENDENCY_BLOCKING",
+            "STATE_TRANSITION"
+          ]
+        },
+        "ctx": {
+          "type": "object",
+          "properties": {
+            "window": {
+              "type": "string",
+              "enum": [
+                "1m",
+                "5m",
+                "15m",
+                "1h",
+                "24h",
+                "7d",
+                "30d"
+              ]
+            },
+            "flags": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4294967295
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "auth": {
+      "type": "object",
+      "required": [
+        "sig"
+      ],
+      "properties": {
+        "sig": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

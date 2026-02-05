@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>WINDI War Room</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0f172a;color:#e2e8f0;font-family:'JetBrains Mono','Fira Code',monospace}
+@keyframes pulse-ring{0%{transform:scale(1);opacity:.8}100%{transform:scale(2.5);opacity:0}}
+@keyframes alert-flash{0%,100%{border-color:#f97316;box-shadow:0 0 20px #f9731640}50%{border-color:#ef4444;box-shadow:0 0 40px #ef444460}}
+@keyframes gravity-pulse{0%,100%{opacity:1}50%{opacity:.6}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script>
+const e=React.createElement,{useState,useEffect}=React;
+const RISK_COLORS={R0:"#22c55e",R1:"#84cc16",R2:"#eab308",R3:"#f97316",R4:"#ef4444",R5:"#dc2626"};
+const ML={docsProcessed:{l:"Docs Processed",i:"\ud83d\udcc4"},sgeAvg:{l:"SGE Score",i:"\ud83e\udde0"},complianceRate:{l:"Compliance",i:"\u2705"},avgResponse:{l:"Avg Response",i:"\u23f1"},overrides:{l:"Overrides",i:"\ud83d\udd04"},flagged:{l:"Flagged",i:"\u26a0\ufe0f"}};
+const CL={euAiAct:"EU AI Act",bsiC5:"BSI C5",iso27001:"ISO 27001",gdpr:"GDPR"};
+const PI={"deutsche-bahn":"\ud83d\ude84",bundesregierung:"\ud83c\udfdb","bis-style":"\ud83c\udfe6",_base:"\u2699\ufe0f",ihk:"\ud83c\udfe2",hwk:"\ud83d\udd27",tuev:"\ud83d\udee1",bafin:"\ud83d\udcb6","agentur-fuer-arbeit":"\ud83d\udc65"};
+
+function App(){
+const[data,setData]=useState(null);
+const[clock,setClock]=useState(new Date());
+const[lang,setLang]=useState("en");
+const[err,setErr]=useState(null);
+
+useEffect(()=>{const t=setInterval(()=>setClock(new Date()),1000);return()=>clearInterval(t)},[]);
+useEffect(()=>{
+function load(){fetch("https://admin.windia4desk.tech/api/briefing").then(r=>r.json()).then(r=>{if(r.success){setData(r.data);setErr(null)}else setErr("API error")}).catch(x=>setErr(x.message))}
+load();const t=setInterval(load,30000);return()=>clearInterval(t)},[]);
+
+if(err)return e("div",{style:{padding:60,textAlign:"center"}},e("div",{style:{fontSize:24,color:"#f87171"}},"\u26a0 Connection Error"),e("div",{style:{fontSize:13,color:"#64748b",marginTop:12}},err));
+if(!data)return e("div",{style:{padding:60,textAlign:"center",color:"#c9a84c",fontSize:16}},"\ud83d\udc09 Loading WINDI systems...");
+
+const hasAlert=data.decisions?.some(d=>d.urgency==="high"&&d.status==="pending");
+const prL=data._meta?.engine?.profiles_loaded||[];
+const prA=data._meta?.engine?.profiles_available||[];
+const src=data._meta?.sources||{};
+const s=k=>({display:"flex",alignItems:"center",gap:6,fontSize:11,color:src[k]==="connected"?"#4ade80":"#f87171"});
+
+return e("div",null,
+// TOP BAR
+e("div",{style:{background:"#0a0f1a",borderBottom:"1px solid #1e293b",padding:"12px 24px",display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:8}},
+e("div",{style:{display:"flex",alignItems:"center",gap:16,flexWrap:"wrap"}},
+e("div",null,e("span",{style:{fontSize:20,fontWeight:700,color:"#c9a84c",letterSpacing:4}},"WINDI"),e("span",{style:{fontSize:12,color:"#64748b",marginLeft:12,letterSpacing:2}},"WAR ROOM")),
+e("div",{style:{width:1,height:24,background:"#1e293b"}}),
+...Object.keys(src).map(k=>e("div",{key:k,style:s(k)},e("span",{style:{width:6,height:6,borderRadius:"50%",background:src[k]==="connected"?"#4ade80":"#f87171",display:"inline-block"}}),e("span",{style:{color:"#94a3b8"}},k.replace("_"," "))))),
+e("div",{style:{display:"flex",alignItems:"center",gap:16}},
+e("button",{onClick:()=>setLang(l=>l==="en"?"de":"en"),style:{background:"#1e293b",border:"1px solid #334155",color:"#94a3b8",padding:"4px 10px",borderRadius:4,cursor:"pointer",fontSize:11,fontFamily:"inherit"}},lang.toUpperCase()),
+e("div",{style:{fontSize:13,color:"#c9a84c",fontVariantNumeric:"tabular-nums"}},clock.toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit",second:"2-digit"})+" CET"))
+),
+// MAIN
+e("div",{style:{padding:"20px 24px",maxWidth:1400,margin:"0 auto"}},
+// STATUS ROW
+e("div",{style:{display:"flex",gap:16,marginBottom:20,flexWrap:"wrap"}},
+e("div",{style:{flex:1,minWidth:260,background:"#1e293b",borderRadius:8,padding:20,border:"1px solid #334155"}},e("div",{style:{fontSize:11,color:"#64748b",letterSpacing:2,marginBottom:8}},"GOVERNANCE BRIEFING"),e("div",{style:{fontSize:28,fontWeight:700}},data.briefingDate),e("div",{style:{fontSize:12,color:"#94a3b8",marginTop:4}},"Report "+data.reportId+" \xb7 "+data.genTime+" \xb7 Day "+data.contDays)),
+e("div",{style:{flex:1,minWidth:260,background:"#1e293b",borderRadius:8,padding:20,border:"1px solid #334155"}},e("div",{style:{fontSize:11,color:"#64748b",letterSpacing:2,marginBottom:8}},"ENGINE STATUS"),e("div",{style:{display:"flex",alignItems:"center",gap:10}},e("span",{style:{width:12,height:12,borderRadius:"50%",background:"#4ade80",display:"inline-block",animation:"pulse-ring 1.5s ease-out infinite"}}),e("span",{style:{fontSize:22,fontWeight:700,color:"#4ade80"}},(data.systemStatus||"").toUpperCase())),e("div",{style:{fontSize:11,color:"#64748b",marginTop:8}},"Core v"+(data._meta?.engine?.version||"?")+" \xb7 SGE v"+(data._meta?.sge?.version||"?"))),
+e("div",{style:{flex:1,minWidth:260,background:"#1e293b",borderRadius:8,padding:20,border:"1px solid #334155"}},e("div",{style:{fontSize:11,color:"#64748b",letterSpacing:2,marginBottom:8}},"AUDIT CHAIN"),e("div",{style:{fontSize:14,fontWeight:500,color:"#c9a84c",fontFamily:"monospace"}},data.hash),e("div",{style:{fontSize:12,color:"#94a3b8",marginTop:8}},"Ledger: "+data.ledgerRef+" \xb7 ",e("span",{style:{color:"#4ade80"}},"Sealed \u2713")))
+),
+// GRID
+e("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}},
+// DECISIONS
+e("div",{style:{background:"#1e293b",borderRadius:8,padding:20,border:hasAlert?"2px solid #f97316":"1px solid #334155",animation:hasAlert?"alert-flash 2s ease-in-out infinite":"none"}},
+e("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}},e("div",{style:{fontSize:11,color:"#64748b",letterSpacing:2}},"PENDING DECISIONS"),e("span",{style:{fontSize:11,color:hasAlert?"#f97316":"#4ade80",fontWeight:700}},(data.decisions?.length||0)+" "+(hasAlert?"ACTION REQUIRED":"CLEAR"))),
+...(data.decisions||[]).map((d,i)=>{const rc=RISK_COLORS[d.sge]||"#6b7280";const pct=Math.min(((parseInt(d.sge?.replace("R","")||"0")+1)/6)*100,100);return e("div",{key:i,style:{background:"#0f172a",borderRadius:6,padding:16,marginBottom:8,borderLeft:"4px solid "+rc}},
+e("div",{style:{display:"flex",justifyContent:"space-between",marginBottom:10}},e("div",{style:{fontSize:15,fontWeight:600,flex:1,lineHeight:1.4}},d.topic?.[lang]||d.topic?.en),e("div",{style:{display:"flex",gap:6,marginLeft:12}},e("span",{style:{background:rc+"20",color:rc,padding:"2px 8px",borderRadius:3,fontSize:11,fontWeight:700}},d.sge),e("span",{style:{background:d.urgency==="high"?"#7f1d1d":"#1e3a5f",color:d.urgency==="high"?"#fca5a5":"#93c5fd",padding:"2px 8px",borderRadius:3,fontSize:11,fontWeight:700,textTransform:"uppercase"}},d.urgency))),
+e("div",{style:{width:"100%",height:6,background:"#1e293b",borderRadius:3,overflow:"hidden"}},e("div",{style:{width:pct+"%",height:"100%",background:"linear-gradient(90deg,"+rc+"88,"+rc+")",borderRadius:3,animation:d.urgency==="high"?"gravity-pulse 2s ease-in-out infinite":"none"}})),
+e("div",{style:{fontSize:11,color:"#64748b",marginTop:8}},"ID: "+d.id+" \xb7 Status: ",e("span",{style:{color:"#fbbf24"}},d.status?.toUpperCase()))
+)}),
+e("div",{style:{display:"flex",gap:20,marginTop:16,paddingTop:12,borderTop:"1px solid #334155"}},
+...[["ACTIVE",data.risks?.active||0,"#fbbf24"],["RESOLVED",data.risks?.resolved||0,"#4ade80"],["NEW",data.risks?.new||0,"#60a5fa"]].map(([l,v,c])=>e("div",{key:l,style:{textAlign:"center"}},e("div",{style:{fontSize:24,fontWeight:700,color:c}},v),e("div",{style:{fontSize:10,color:"#64748b",letterSpacing:1}},l))))
+),
+// RIGHT COL
+e("div",{style:{display:"flex",flexDirection:"column",gap:16}},
+// METRICS
+e("div",{style:{background:"#1e293b",borderRadius:8,padding:20,border:"1px solid #334155"}},
+e("div",{style:{fontSize:11,color:"#64748b",letterSpacing:2,marginBottom:16}},"KEY METRICS"),
+e("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:12}},...(data.metrics||[]).map((m,i)=>{const info=ML[m.k]||{l:m.k,i:"\ud83d\udcca"};const ok=m.inv?m.v===0:m.v>=(m.p||0);return e("div",{key:i,style:{background:"#0f172a",borderRadius:6,padding:12,textAlign:"center"}},e("div",{style:{fontSize:16,marginBottom:4}},info.i),e("div",{style:{fontSize:22,fontWeight:700,color:ok?"#4ade80":"#fbbf24",fontVariantNumeric:"tabular-nums"}},m.v+(m.u||"")),e("div",{style:{fontSize:9,color:"#64748b",letterSpacing:1,marginTop:4,textTransform:"uppercase"}},info.l),m.p>0?e("div",{style:{fontSize:9,color:"#475569",marginTop:2}},"target: "+m.p+(m.u||"")):null)}))),
+// COMPLIANCE
+e("div",{style:{background:"#1e293b",borderRadius:8,padding:20,border:"1px solid #334155"}},
+e("div",{style:{fontSize:11,color:"#64748b",letterSpacing:2,marginBottom:12}},"COMPLIANCE STATUS"),
+e("div",{style:{display:"flex",gap:12,flexWrap:"wrap"}},...(data.compliance||[]).map((c,i)=>{const ok=c.s==="compliant",pt=c.s==="partial";return e("div",{key:i,style:{background:"#0f172a",borderRadius:6,padding:"10px 14px",display:"flex",alignItems:"center",gap:10,flex:"1 1 45%",minWidth:140}},e("span",{style:{fontSize:13,fontWeight:600}},CL[c.k]||c.k),e("span",{style:{marginLeft:"auto",padding:"2px 8px",borderRadius:3,fontSize:10,fontWeight:700,letterSpacing:1,background:ok?"#064e3b":pt?"#713f12":"#7f1d1d",color:ok?"#34d399":pt?"#fbbf24":"#f87171"}},ok?"COMPLIANT":pt?"PARTIAL":"FAIL"))})))
+)
+),
+// ISP PROFILES
+e("div",{style:{marginTop:16,background:"#1e293b",borderRadius:8,padding:20,border:"1px solid #334155"}},
+e("div",{style:{fontSize:11,color:"#64748b",letterSpacing:2,marginBottom:16}},"ISP PROFILES"),
+e("div",{style:{display:"flex",gap:10,flexWrap:"wrap"}},...prA.map(p=>{const ld=prL.includes(p);return e("div",{key:p,style:{background:ld?"#0f172a":"#0f172a80",border:ld?"1px solid #c9a84c":"1px solid #1e293b",borderRadius:6,padding:"10px 16px",display:"flex",alignItems:"center",gap:8,opacity:ld?1:.4}},e("span",{style:{fontSize:18}},PI[p]||"\ud83d\udccb"),e("div",null,e("div",{style:{fontSize:12,fontWeight:ld?600:400,color:ld?"#c9a84c":"#64748b"}},p.replace(/_/g," ").replace(/-/g," ").toUpperCase()),e("div",{style:{fontSize:9,color:ld?"#4ade80":"#475569"}},ld?"LOADED":"AVAILABLE")))}))
+),
+// SUMMARY
+e("div",{style:{marginTop:16,background:"#1e293b",borderRadius:8,padding:20,border:"1px solid #334155",borderLeft:"4px solid #c9a84c"}},
+e("div",{style:{fontSize:11,color:"#64748b",letterSpacing:2,marginBottom:10}},"EXECUTIVE SUMMARY"),
+e("div",{style:{fontSize:13,lineHeight:1.8,color:"#cbd5e1"}},data.summary?.[lang]||data.summary?.en)),
+// PDF DOWNLOAD
+e("div",{style:{marginTop:16,textAlign:"center"}},
+e("a",{href:"/api/report/pdf/download?lang="+lang,style:{display:"inline-block",background:"#c9a84c",color:"#0f172a",padding:"12px 28px",borderRadius:4,textDecoration:"none",fontWeight:700,fontSize:13,letterSpacing:1}},"\ud83d\udcdc DOWNLOAD VIRTUE RECEIPT (PDF)")),
+// FOOTER
+e("div",{style:{marginTop:20,textAlign:"center",padding:"16px 0",borderTop:"1px solid #1e293b"}},
+e("div",{style:{fontSize:10,color:"#475569",letterSpacing:2}},"AI PROCESSES \xb7 HUMAN DECIDES \xb7 WINDI GUARANTEES"),
+e("div",{style:{fontSize:9,color:"#334155",marginTop:6}},"Three Dragons Protocol \u2014 Guardian \xb7 Architect \xb7 Witness"))
+))
+}
+ReactDOM.createRoot(document.getElementById("app")).render(e(App))
+</script>
+</body>
+</html>

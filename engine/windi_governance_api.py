@@ -28,7 +28,7 @@ ENGINE_DIR = "/opt/windi/engine"
 ISP_DIR = "/opt/windi/isp"
 sys.path.insert(0, ENGINE_DIR)
 
-from isp_loader import ISPLoader
+from isp_governance_loader import ISPLoader
 from submission_registry import SubmissionRegistry
 from audit_dashboard import AuditDashboard
 from governance_validator import GovernanceValidator

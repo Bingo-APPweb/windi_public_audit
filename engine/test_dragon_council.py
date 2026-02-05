@@ -18,7 +18,7 @@ from governance_validator import GovernanceValidator
 from submission_id import generate_submission_id
 from tamper_evidence import seal_record, verify_record
 from submission_registry import SubmissionRegistry
-from isp_loader import ISPLoader
+from isp_governance_loader import ISPLoader
 from audit_dashboard import AuditDashboard
 
 BIS_META = {

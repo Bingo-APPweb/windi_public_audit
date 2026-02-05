@@ -16,10 +16,16 @@ New in v2.0:
 - render_isp_template() - Jinja2 rendering
 """
 import os
+import sys
 import json
 import base64
 from pathlib import Path
 from datetime import datetime
+
+# Ensure ISP directory is in sys.path for module imports
+ISP_PATH = "/opt/windi/isp"
+if ISP_PATH not in sys.path:
+    sys.path.insert(0, ISP_PATH)
 
 # Jinja2 for template rendering
 try:
@@ -335,8 +341,9 @@ def render_isp_template(profile_id, template_html, context=None):
     final_context = {**default_context, **context}
 
     try:
-        # Create Jinja2 template
-        template = Template(template_html)
+        # Custom env: prevent {# in CSS from being parsed as Jinja2 comment
+        env = Environment(comment_start_string='{##', comment_end_string='##}')
+        template = env.from_string(template_html)
         return template.render(**final_context)
     except Exception as e:
         print(f"[ISP] Template render error: {e}")

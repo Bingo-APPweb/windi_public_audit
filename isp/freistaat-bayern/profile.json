@@ -1,0 +1,387 @@
+{
+  "isp_profile": {
+    "metadata": {
+      "profile_id": "freistaat-bayern",
+      "version": "1.0.0",
+      "created": "2026-02-05T19:38:59Z",
+      "governance_level": "MEDIUM",
+      "profile_type": "state_government_institutional",
+      "windi_registry_version": "2.9.0",
+      "generator": "windi-isp-factory/v1.0",
+      "audit_hash": "5599c74e6020d3f66fb14fbb374110e0209c0e5126d2025a4f74eb3ae25a42cb"
+    },
+    "organization": {
+      "name_full": "Freistaat Bayern (Bayerische Staatsregierung)",
+      "name_short": "Bayern",
+      "legal_form": "Gliedstaat der Bundesrepublik Deutschland",
+      "sector": "Landesverwaltung, Exekutive, Gesetzgebung",
+      "employees": 350000,
+      "revenue_eur": "75 Mrd. EUR (Landeshaushalt 2024)",
+      "headquarters": "München (Bayerische Staatskanzlei)",
+      "description": "Der Freistaat Bayern ist das flächenmäßig größte und bevölkerungsreichste Bundesland nach NRW mit rund 13 Millionen Einwohnern. Die Bayerische Staatsregierung besteht aus dem Ministerpräsidenten und bis zu 17 Staatsministern und Staatssekretären. Bayern hat eine eigene Verfassung (seit 1946) und ist in 7 Regierungsbezirke gegliedert. Die CSU stellt seit 1957 ununterbrochen den Ministerpräsidenten.",
+      "relevance": "Bayern ist das Land, in dem WINDI physisch operiert (Kempten liegt im Regierungsbezirk Schwaben). Die Bayerische Staatsregierung gibt Rahmenbedingungen für kommunale Governance vor. Direkte Relevanz: BayDSG (Bayerisches Datenschutzgesetz), BayEGovG, Bayerische Gemeindeordnung. Landesbehörden wie LfD Bayern, LKA Bayern, Regierung von Schwaben sind wichtige Stakeholder.",
+      "regional_presence": [
+        "Regierungsbezirk Schwaben (Sitz: Augsburg) — inkl. Allgäu",
+        "Regierungsbezirk Oberbayern (Sitz: München)",
+        "Regierungsbezirk Niederbayern (Sitz: Landshut)",
+        "Regierungsbezirk Oberpfalz (Sitz: Regensburg)",
+        "Regierungsbezirk Oberfranken (Sitz: Bayreuth)",
+        "Regierungsbezirk Mittelfranken (Sitz: Ansbach)",
+        "Regierungsbezirk Unterfranken (Sitz: Würzburg)"
+      ]
+    },
+    "governance": {
+      "level": "MEDIUM",
+      "identity_license_required": true,
+      "retention_years": 7,
+      "risk_domains": [
+        "Verwaltungsdigitalisierung und E-Government",
+        "Datenschutz öffentlicher Sektor (BayDSG)",
+        "IT-Sicherheit Landesverwaltung",
+        "Haushalts- und Finanzgovernance",
+        "Föderale Abstimmung Bund-Land",
+        "Kommunalaufsicht",
+        "Polizei- und Sicherheitsbehörden"
+      ],
+      "compliance_frameworks": [
+        "Bayerische Verfassung",
+        "BayDSG (Bayerisches Datenschutzgesetz)",
+        "BayEGovG (E-Government-Gesetz)",
+        "BayHO (Haushaltsordnung)",
+        "Bayerische Gemeindeordnung (GO)",
+        "DSGVO",
+        "BSI IT-Grundschutz",
+        "ISO 27001",
+        "EU AI Act",
+        "NIS2",
+        "OZG (Onlinezugangsgesetz)"
+      ],
+      "sge_thresholds": {
+        "warn": 50,
+        "alert": 65,
+        "block": 75
+      }
+    },
+    "templates": [
+      {
+        "id": "TPL-BAY-001",
+        "name_de": "Kabinettsbeschluss",
+        "name_en": "Cabinet Resolution",
+        "category": "governance",
+        "risk_level": "R3",
+        "description": "Beschlussvorlage für den Ministerrat mit Sachverhalt, Beschlussvorschlag und Ressortabstimmung",
+        "required_fields": [
+          "tagesordnung",
+          "federführendes_ministerium",
+          "sachverhalt",
+          "beschlussvorschlag",
+          "ressortabstimmung",
+          "anlagen"
+        ],
+        "governance_notes": "Kabinettsvorlagen unterliegen der Geheimhaltung bis zur Veröffentlichung"
+      },
+      {
+        "id": "TPL-BAY-002",
+        "name_de": "Gesetzentwurf (Landtag)",
+        "name_en": "Draft Bill (State Parliament)",
+        "category": "legislation",
+        "risk_level": "R3",
+        "description": "Gesetzentwurf der Staatsregierung für den Bayerischen Landtag nach Art. 71 BV",
+        "required_fields": [
+          "gesetzestitel",
+          "begruendung",
+          "normtext",
+          "folgenabschaetzung",
+          "finanzielle_auswirkungen"
+        ],
+        "governance_notes": "Verkündung im Bayerischen Gesetz- und Verordnungsblatt"
+      },
+      {
+        "id": "TPL-BAY-003",
+        "name_de": "Haushaltsplan (Einzelplan)",
+        "name_en": "Budget Plan (Single Plan)",
+        "category": "finance",
+        "risk_level": "R3",
+        "description": "Einzelplan eines Staatsministeriums mit Titeln, Ansätzen und Erläuterungen nach BayHO",
+        "required_fields": [
+          "ministerium",
+          "haushaltsjahr",
+          "titel",
+          "einnahmen",
+          "ausgaben",
+          "verpflichtungsermaechtigung",
+          "erlaeuterungen"
+        ],
+        "governance_notes": "Bayerischer Oberster Rechnungshof prüft Haushaltsführung"
+      },
+      {
+        "id": "TPL-BAY-004",
+        "name_de": "Verwaltungsvorschrift",
+        "name_en": "Administrative Regulation",
+        "category": "administration",
+        "risk_level": "R2",
+        "description": "Interne Verwaltungsvorschrift zur einheitlichen Rechtsanwendung in der Landesverwaltung",
+        "required_fields": [
+          "regelungsgegenstand",
+          "geltungsbereich",
+          "inhalt",
+          "inkrafttreten",
+          "ausserkrafttreten"
+        ],
+        "governance_notes": "Veröffentlichung im Bayerischen Ministerialblatt (BayMBl)"
+      },
+      {
+        "id": "TPL-BAY-005",
+        "name_de": "Datenschutz-Folgenabschätzung (BayDSG)",
+        "name_en": "Data Protection Impact Assessment (BayDSG)",
+        "category": "data_protection",
+        "risk_level": "R4",
+        "description": "DSFA nach Art. 35 DSGVO i.V.m. BayDSG für Verarbeitungen der Landesverwaltung",
+        "required_fields": [
+          "verarbeitungszweck",
+          "datenkategorien",
+          "risikobewertung",
+          "schutzmassnahmen",
+          "stellungnahme_lfd"
+        ],
+        "governance_notes": "LfD Bayern (Landesbeauftragter für Datenschutz) ist zuständige Aufsichtsbehörde"
+      },
+      {
+        "id": "TPL-BAY-006",
+        "name_de": "Kommunalaufsichtliche Verfügung",
+        "name_en": "Municipal Supervisory Order",
+        "category": "municipal_oversight",
+        "risk_level": "R3",
+        "description": "Aufsichtsverfügung der Regierung gegenüber Kommunen nach BayGO Art. 108ff",
+        "required_fields": [
+          "kommune",
+          "aufsichtsmassnahme",
+          "rechtsgrundlage",
+          "begruendung",
+          "frist",
+          "rechtsmittelbelehrung"
+        ],
+        "governance_notes": "Regierungen der Bezirke sind Rechtsaufsichtsbehörden für kreisfreie Städte"
+      },
+      {
+        "id": "TPL-BAY-007",
+        "name_de": "IT-Sicherheitskonzept (Landesverwaltung)",
+        "name_en": "IT Security Concept (State Administration)",
+        "category": "it_security",
+        "risk_level": "R4",
+        "description": "IT-Sicherheitskonzept nach BSI IT-Grundschutz für Landesbehörden",
+        "required_fields": [
+          "geltungsbereich",
+          "schutzbedarfsfeststellung",
+          "massnahmen",
+          "verantwortlichkeiten",
+          "notfallplan"
+        ],
+        "governance_notes": "Bayern.de und BayernID erfordern höchste IT-Sicherheitsstandards"
+      },
+      {
+        "id": "TPL-BAY-008",
+        "name_de": "Staatsvertrag (Land)",
+        "name_en": "Interstate Treaty",
+        "category": "legal",
+        "risk_level": "R3",
+        "description": "Staatsvertrag zwischen Bayern und anderen Bundesländern oder dem Bund",
+        "required_fields": [
+          "vertragspartner",
+          "regelungsgegenstand",
+          "inhalt",
+          "ratifikation",
+          "inkrafttreten"
+        ],
+        "governance_notes": "Ratifikation durch Bayerischen Landtag erforderlich"
+      },
+      {
+        "id": "TPL-BAY-009",
+        "name_de": "Förderbescheid",
+        "name_en": "Grant Decision",
+        "category": "grants",
+        "risk_level": "R2",
+        "description": "Zuwendungsbescheid nach BayHO Art. 44 mit Nebenbestimmungen und Verwendungsnachweis",
+        "required_fields": [
+          "empfaenger",
+          "foerderprogramm",
+          "betrag",
+          "verwendungszweck",
+          "nebenbestimmungen",
+          "abruf",
+          "verwendungsnachweis"
+        ],
+        "governance_notes": "Bayerischer Oberster Rechnungshof kann Fördermittelverwendung prüfen"
+      },
+      {
+        "id": "TPL-BAY-010",
+        "name_de": "Bundesratsinitiative",
+        "name_en": "Bundesrat Initiative",
+        "category": "federal_affairs",
+        "risk_level": "R3",
+        "description": "Gesetzesinitiative Bayerns im Bundesrat nach Art. 76 GG",
+        "required_fields": [
+          "gesetzesvorhaben",
+          "begruendung",
+          "bayerische_interessen",
+          "abstimmungsverhalten",
+          "koalitionspartner"
+        ],
+        "governance_notes": "Staatskanzlei koordiniert Bundesratsangelegenheiten. Bayern hat 6 Stimmen"
+      }
+    ],
+    "document_categories": [
+      {
+        "id": "governance",
+        "name_de": "Staatsregierung & Kabinett",
+        "name_en": "State Government & Cabinet",
+        "description": "Kabinettsbeschlüsse, Ministerratsprotokolle, Regierungserklärungen",
+        "typical_risk_level": "R3"
+      },
+      {
+        "id": "legislation",
+        "name_de": "Gesetzgebung",
+        "name_en": "Legislation",
+        "description": "Gesetzentwürfe, Verordnungen, Parlamentsdrucksachen",
+        "typical_risk_level": "R3"
+      },
+      {
+        "id": "finance",
+        "name_de": "Haushalt & Finanzen",
+        "name_en": "Budget & Finance",
+        "description": "Haushaltspläne, Finanzberichte, Rechnungshofberichte",
+        "typical_risk_level": "R3"
+      },
+      {
+        "id": "administration",
+        "name_de": "Verwaltung",
+        "name_en": "Administration",
+        "description": "Verwaltungsvorschriften, Organisationserlasse, Dienstanweisungen",
+        "typical_risk_level": "R2"
+      },
+      {
+        "id": "data_protection",
+        "name_de": "Datenschutz",
+        "name_en": "Data Protection",
+        "description": "DSFAs, Verarbeitungsverzeichnisse, LfD-Abstimmungen",
+        "typical_risk_level": "R4"
+      },
+      {
+        "id": "municipal_oversight",
+        "name_de": "Kommunalaufsicht",
+        "name_en": "Municipal Oversight",
+        "description": "Aufsichtsverfügungen, Genehmigungen, Beanstandungen",
+        "typical_risk_level": "R3"
+      },
+      {
+        "id": "it_security",
+        "name_de": "IT-Sicherheit",
+        "name_en": "IT Security",
+        "description": "Sicherheitskonzepte, Penetrationsberichte, Notfallpläne",
+        "typical_risk_level": "R4"
+      },
+      {
+        "id": "legal",
+        "name_de": "Staatsverträge & Abkommen",
+        "name_en": "Treaties & Agreements",
+        "description": "Staatsverträge, Verwaltungsabkommen, Länderkooperationen",
+        "typical_risk_level": "R3"
+      },
+      {
+        "id": "grants",
+        "name_de": "Förderung",
+        "name_en": "Grants",
+        "description": "Förderbescheide, Verwendungsnachweise, Prüfberichte",
+        "typical_risk_level": "R2"
+      },
+      {
+        "id": "federal_affairs",
+        "name_de": "Bundesangelegenheiten",
+        "name_en": "Federal Affairs",
+        "description": "Bundesratsinitiativen, Bund-Länder-Abstimmungen",
+        "typical_risk_level": "R3"
+      }
+    ],
+    "sge_keywords": {
+      "domain_terms": [
+        "Staatsregierung",
+        "Ministerpräsident",
+        "Staatsminister",
+        "Staatskanzlei",
+        "Staatsministerium",
+        "Kabinett",
+        "Bayerischer Landtag",
+        "Verfassungsgerichtshof",
+        "Rechnungshof",
+        "Regierungsbezirk",
+        "Bezirksregierung",
+        "Landratsamt",
+        "Landesbehörde",
+        "Mittelbehörde",
+        "Unterbehörde",
+        "Freistaat",
+        "Landesverfassung",
+        "Landesrecht",
+        "BayernID",
+        "BayernPortal",
+        "ELSTER"
+      ],
+      "risk_indicators": [
+        "Verfassungsverstoß",
+        "Haushaltsüberschreitung",
+        "Rechtswidrigkeit",
+        "Kommunalaufsicht",
+        "Beanstandung",
+        "Gesetzesverletzung",
+        "Datenschutzverstoß",
+        "IT-Sicherheitsvorfall",
+        "Cyberangriff",
+        "Fördermittelmissbrauch",
+        "Rechnungshoffeststellung",
+        "Prüfungsbemerkung"
+      ],
+      "compliance_terms": [
+        "Bayerische Verfassung",
+        "BayDSG",
+        "BayEGovG",
+        "BayHO",
+        "BayVwVfG",
+        "BayGO",
+        "LfD Bayern",
+        "DSGVO",
+        "BSI IT-Grundschutz",
+        "OZG",
+        "EU AI Act",
+        "NIS2",
+        "Art. 71 BV",
+        "Art. 52 BV",
+        "Art. 108 GO"
+      ],
+      "organizational_terms": [
+        "Bayerische Staatskanzlei",
+        "Leiter der Staatskanzlei",
+        "Staatsministerium des Innern",
+        "Finanzministerium",
+        "Justizministerium",
+        "Regierung von Schwaben",
+        "Regierung von Oberbayern",
+        "CSU",
+        "Freie Wähler",
+        "Landtagsfraktion",
+        "Oberster Rechnungshof",
+        "LfD Bayern",
+        "LKA Bayern"
+      ]
+    },
+    "cross_references": {
+      "complementary": [
+        "bundesregierung",
+        "stadt-kempten"
+      ],
+      "hierarchical": [
+        "bundesregierung"
+      ],
+      "notes": "Bundesregierung: Übergeordnete Bundesgesetzgebung, Grundgesetz-Rahmen. Stadt Kempten: Kommune im Regierungsbezirk Schwaben, unterliegt bayerischer Kommunalaufsicht. Bayern ist Bindeglied zwischen Bund und Kommunen im föderalen System."
+    }
+  }
+}

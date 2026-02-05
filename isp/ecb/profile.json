@@ -1,0 +1,501 @@
+{
+  "isp_profile": {
+    "metadata": {
+      "profile_id": "ecb",
+      "version": "1.0.0",
+      "created": "2026-02-05T19:20:47Z",
+      "governance_level": "HIGH",
+      "profile_type": "supranational_central_bank",
+      "windi_registry_version": "2.6.0",
+      "generator": "windi-isp-factory/v1.0",
+      "audit_hash": "a23b19496f3438ad4bc7a97e34c18efe123893e7990fba7e1c6357af4340ad9b"
+    },
+    "organization": {
+      "name_full": "Europäische Zentralbank / European Central Bank",
+      "name_short": "ECB",
+      "legal_form": "Organ der EU (Art. 13 EUV), sui generis nach AEUV Protokoll Nr. 4",
+      "sector": "Zentralbankwesen, Geldpolitik und Bankenaufsicht",
+      "employees": 5200,
+      "revenue_eur": "Nicht anwendbar (Zentralbank — Seigniorage und Zinseinnahmen)",
+      "headquarters": "Frankfurt am Main, Deutschland",
+      "description": "Die Europäische Zentralbank (EZB) ist die Zentralbank der 20 Eurozone-Länder. Gegründet 1998, verantwortet sie Geldpolitik, Preisstabilität und — seit 2014 über den Single Supervisory Mechanism (SSM) — die direkte Aufsicht über die größten Banken der Eurozone. Mit über 5.200 Mitarbeitern ist sie die mächtigste geldpolitische Institution Europas.",
+      "relevance": "ECB-Dokumente haben unmittelbare Markt- und Regulierungswirkung auf die gesamte Eurozone. Zinsentscheidungen, SSM-Beschlüsse, SREP-Ergebnisse und geldpolitische Stellungnahmen bewegen Billionen. WINDI-Governance muss bei ECB-referenzierten Dokumenten höchste Integrität, Terminologietreue und Zeitstempel-Genauigkeit gewährleisten. Jeder Fehler in einem ECB-Dokument kann systemische Folgen haben.",
+      "regional_presence": [
+        "Frankfurt am Main (Hauptsitz — Sonnemannstraße 20)",
+        "Frankfurt am Main (Gallileo Building — Bankenaufsicht SSM)",
+        "Eurosystem: 20 nationale Zentralbanken der Eurozone",
+        "SSM: 21 teilnehmende Länder inkl. Close Cooperation",
+        "ECB Representative Office Brüssel"
+      ]
+    },
+    "governance": {
+      "level": "HIGH",
+      "identity_license_required": true,
+      "retention_years": 10,
+      "risk_domains": [
+        "Geldpolitik und Preisstabilität",
+        "Bankenaufsicht (SSM/SREP)",
+        "Systemisches Finanzrisiko (Makroprudenzielle Aufsicht)",
+        "Zahlungsverkehr und Marktinfrastruktur (TARGET2/T2S/TIPS)",
+        "Cybersicherheit Finanzsektor (TIBER-EU)",
+        "Digitaler Euro (CBDC)",
+        "Klimabezogene Finanzrisiken",
+        "Anti-Geldwäsche (AML) im SSM-Kontext"
+      ],
+      "compliance_frameworks": [
+        "AEUV Protokoll Nr. 4 (EZB-Satzung)",
+        "SSM-Verordnung (EU) Nr. 1024/2013",
+        "Basel III / Basel IV (BCBS via CRR/CRD)",
+        "DORA (EU) 2022/2554",
+        "MiCA (EU) 2023/1114",
+        "EU AI Act",
+        "DSGVO",
+        "ISO 27001",
+        "TIBER-EU Framework"
+      ],
+      "sge_thresholds": {
+        "warn": 40,
+        "alert": 60,
+        "block": 80
+      }
+    },
+    "templates": [
+      {
+        "id": "TPL-ECB-001",
+        "name_de": "Geldpolitischer Beschluss",
+        "name_en": "Monetary Policy Decision",
+        "category": "monetary_policy",
+        "risk_level": "R5",
+        "description": "Offizielle Zinsentscheidungen und geldpolitische Beschlüsse des EZB-Rats nach der geldpolitischen Sitzung",
+        "required_fields": [
+          "meeting_date",
+          "decision_type",
+          "key_rates",
+          "forward_guidance",
+          "press_conference_ref"
+        ],
+        "governance_notes": "HÖCHSTES RISIKO. Zinsentscheidungen bewegen globale Märkte. Millisekunden-genaue Veröffentlichung. Jede Abweichung vom Originalwortlaut kann Marktmanipulation darstellen."
+      },
+      {
+        "id": "TPL-ECB-002",
+        "name_de": "Pressekonferenz-Statement",
+        "name_en": "Press Conference Statement",
+        "category": "monetary_policy",
+        "risk_level": "R5",
+        "description": "Einleitende Erklärung der EZB-Präsidentin bei der geldpolitischen Pressekonferenz",
+        "required_fields": [
+          "president",
+          "date",
+          "introductory_statement",
+          "qa_summary"
+        ],
+        "governance_notes": "Marktbewegendes Dokument. Formulierungen wie 'whatever it takes' werden historisch. Exakte Wiedergabe ist kritisch."
+      },
+      {
+        "id": "TPL-ECB-003",
+        "name_de": "SSM Aufsichtsbeschluss (SREP)",
+        "name_en": "SSM Supervisory Decision (SREP)",
+        "category": "banking_supervision",
+        "risk_level": "R5",
+        "description": "Individuelle Aufsichtsbeschlüsse im Rahmen des Supervisory Review and Evaluation Process für signifikante Institute",
+        "required_fields": [
+          "institution",
+          "srep_score",
+          "p2r_requirement",
+          "p2g_guidance",
+          "qualitative_measures"
+        ],
+        "governance_notes": "Vertrauliche Aufsichtsinformation. Betrifft Kapitalanforderungen einzelner Banken. Höchste Vertraulichkeit und Genauigkeit. Identity License REQUIRED."
+      },
+      {
+        "id": "TPL-ECB-004",
+        "name_de": "EZB-Wirtschaftsbericht",
+        "name_en": "ECB Economic Bulletin",
+        "category": "economic_analysis",
+        "risk_level": "R4",
+        "description": "Regelmäßiger Wirtschaftsbericht mit makroökonomischer Analyse der Eurozone, Inflationsprognosen und geldpolitischer Einordnung",
+        "required_fields": [
+          "bulletin_number",
+          "year",
+          "economic_outlook",
+          "inflation_projections",
+          "risk_assessment"
+        ],
+        "governance_notes": "Enthält offizielle Projektionen. Abweichungen von veröffentlichten Zahlen sind kritisch."
+      },
+      {
+        "id": "TPL-ECB-005",
+        "name_de": "Finanzstabilitätsbericht",
+        "name_en": "Financial Stability Review",
+        "category": "macroprudential",
+        "risk_level": "R4",
+        "description": "Halbjährliche Analyse der Stabilität des Finanzsystems in der Eurozone mit Risikoidentifikation und Stresstestszenarien",
+        "required_fields": [
+          "period",
+          "systemic_risks",
+          "vulnerability_assessment",
+          "macroprudential_measures"
+        ],
+        "governance_notes": "Systemische Risikoeinschätzung mit potenziell marktbewegender Wirkung."
+      },
+      {
+        "id": "TPL-ECB-006",
+        "name_de": "EZB-Leitlinie (Guideline)",
+        "name_en": "ECB Guideline",
+        "category": "legal_instrument",
+        "risk_level": "R5",
+        "description": "Rechtsverbindliche Leitlinien der EZB an nationale Zentralbanken des Eurosystems zur Umsetzung geldpolitischer Operationen",
+        "required_fields": [
+          "guideline_number",
+          "legal_basis",
+          "addressees",
+          "effective_date",
+          "amends"
+        ],
+        "governance_notes": "Rechtsverbindlich für NZBen. Fehlerhafte Wiedergabe kann zu Rechtsstreitigkeiten führen."
+      },
+      {
+        "id": "TPL-ECB-007",
+        "name_de": "EZB-Verordnung (Regulation)",
+        "name_en": "ECB Regulation",
+        "category": "legal_instrument",
+        "risk_level": "R5",
+        "description": "Verordnungen der EZB mit direkter Rechtswirkung, insbesondere im Bereich Statistik, Mindestreserven und Aufsicht",
+        "required_fields": [
+          "regulation_number",
+          "legal_basis",
+          "scope",
+          "effective_date",
+          "official_journal_ref"
+        ],
+        "governance_notes": "Unmittelbar geltendes EU-Recht. Höchste juristische Genauigkeit und korrekte Amtsblatt-Referenz erforderlich."
+      },
+      {
+        "id": "TPL-ECB-008",
+        "name_de": "SSM-Aufsichtsprioritäten",
+        "name_en": "SSM Supervisory Priorities",
+        "category": "banking_supervision",
+        "risk_level": "R4",
+        "description": "Jährliche strategische Aufsichtsprioritäten des SSM mit Schwerpunktbereichen und geplanten Aufsichtsmaßnahmen (aktuell 2026-2028)",
+        "required_fields": [
+          "priority_cycle",
+          "strategic_objectives",
+          "key_vulnerabilities",
+          "planned_activities"
+        ],
+        "governance_notes": "Öffentliches Dokument mit Signalwirkung für beaufsichtigte Institute. Korrekte Wiedergabe der Prioritäten ist essentiell."
+      },
+      {
+        "id": "TPL-ECB-009",
+        "name_de": "EZB Working Paper",
+        "name_en": "ECB Working Paper",
+        "category": "research",
+        "risk_level": "R3",
+        "description": "Forschungspapiere der EZB-Mitarbeiter zu Geldpolitik, Makroökonomie, Finanzstabilität und Bankenaufsicht",
+        "required_fields": [
+          "authors",
+          "working_paper_number",
+          "abstract",
+          "jel_codes",
+          "disclaimer"
+        ],
+        "governance_notes": "Forschungsmeinungen der Autoren, NICHT offizielle EZB-Position. Disclaimer ist obligatorisch."
+      },
+      {
+        "id": "TPL-ECB-010",
+        "name_de": "Rede (Executive Board)",
+        "name_en": "Executive Board Speech",
+        "category": "public_communication",
+        "risk_level": "R4",
+        "description": "Offizielle Reden der Mitglieder des EZB-Direktoriums bei Konferenzen, Parlamentsanhörungen und öffentlichen Veranstaltungen",
+        "required_fields": [
+          "speaker",
+          "title",
+          "event",
+          "date",
+          "key_messages"
+        ],
+        "governance_notes": "Direktoriumsreden werden als geldpolitische Signale interpretiert. Formulierungen haben Marktrelevanz."
+      },
+      {
+        "id": "TPL-ECB-011",
+        "name_de": "Digitaler Euro Fortschrittsbericht",
+        "name_en": "Digital Euro Progress Report",
+        "category": "digital_euro",
+        "risk_level": "R4",
+        "description": "Fortschrittsberichte zum Digitalen Euro-Projekt — Design, Datenschutz, Infrastruktur und Gesetzgebungsprozess",
+        "required_fields": [
+          "project_phase",
+          "design_decisions",
+          "privacy_framework",
+          "legislative_status",
+          "timeline"
+        ],
+        "governance_notes": "Geopolitisch sensibel. Digitaler Euro betrifft Souveränität, Datenschutz und Finanzinfrastruktur. Höchste Sorgfalt bei technischen und politischen Aussagen."
+      },
+      {
+        "id": "TPL-ECB-012",
+        "name_de": "TARGET2/T2S Systeminformation",
+        "name_en": "TARGET2/T2S System Information",
+        "category": "market_infrastructure",
+        "risk_level": "R4",
+        "description": "Technische und betriebliche Informationen zu TARGET2 (Zahlungsverkehr), T2S (Wertpapierabwicklung) und TIPS (Echtzeitzahlungen)",
+        "required_fields": [
+          "system",
+          "change_type",
+          "effective_date",
+          "technical_specs",
+          "participant_impact"
+        ],
+        "governance_notes": "Kritische Zahlungsinfrastruktur der Eurozone. Technische Fehler können Zahlungsausfälle verursachen."
+      },
+      {
+        "id": "TPL-ECB-013",
+        "name_de": "Stellungnahme (Opinion)",
+        "name_en": "ECB Opinion",
+        "category": "legal_instrument",
+        "risk_level": "R4",
+        "description": "Formelle Stellungnahmen der EZB zu EU-Gesetzgebungsvorschlägen und nationalen Gesetzentwürfen im Zuständigkeitsbereich",
+        "required_fields": [
+          "opinion_number",
+          "legislative_proposal",
+          "requesting_authority",
+          "key_observations",
+          "legal_basis"
+        ],
+        "governance_notes": "Rechtsrelevante Stellungnahmen mit Einfluss auf EU-Gesetzgebung. Korrekte rechtliche Bezüge sind essentiell."
+      },
+      {
+        "id": "TPL-ECB-014",
+        "name_de": "Klimarisiko-Stresstest",
+        "name_en": "Climate Risk Stress Test",
+        "category": "macroprudential",
+        "risk_level": "R4",
+        "description": "Klimabezogene Stresstests der EZB-Bankenaufsicht mit Szenarien, Methodik und Ergebnissen für beaufsichtigte Institute",
+        "required_fields": [
+          "year",
+          "scenarios",
+          "methodology",
+          "participating_banks",
+          "aggregate_results"
+        ],
+        "governance_notes": "Stresstest-Ergebnisse beeinflussen Bankbewertungen und Kapitalmärkte. Aggregate ok, Einzelergebnisse vertraulich."
+      },
+      {
+        "id": "TPL-ECB-015",
+        "name_de": "EZB-Jahresbericht",
+        "name_en": "ECB Annual Report",
+        "category": "institutional_report",
+        "risk_level": "R4",
+        "description": "Offizieller Jahresbericht der EZB an das Europäische Parlament mit Rechenschaftsbericht über Geldpolitik und institutionelle Aktivitäten",
+        "required_fields": [
+          "fiscal_year",
+          "president_letter",
+          "monetary_policy_review",
+          "institutional_activities",
+          "financial_statements"
+        ],
+        "governance_notes": "Rechenschaftspflicht gegenüber EU-Parlament. Institutionelles Schlüsseldokument."
+      }
+    ],
+    "document_categories": [
+      {
+        "id": "monetary_policy",
+        "name_de": "Geldpolitik",
+        "name_en": "Monetary Policy",
+        "description": "Zinsentscheidungen, Pressekonferenzen und geldpolitische Erklärungen des EZB-Rats",
+        "typical_risk_level": "R5"
+      },
+      {
+        "id": "banking_supervision",
+        "name_de": "Bankenaufsicht",
+        "name_en": "Banking Supervision",
+        "description": "SSM-Beschlüsse, SREP, Aufsichtsprioritäten und aufsichtliche Leitlinien",
+        "typical_risk_level": "R5"
+      },
+      {
+        "id": "legal_instrument",
+        "name_de": "Rechtsinstrument",
+        "name_en": "Legal Instrument",
+        "description": "Verordnungen, Leitlinien, Beschlüsse und Stellungnahmen der EZB",
+        "typical_risk_level": "R5"
+      },
+      {
+        "id": "economic_analysis",
+        "name_de": "Wirtschaftliche Analyse",
+        "name_en": "Economic Analysis",
+        "description": "Wirtschaftsberichte, Projektionen und makroökonomische Analysen",
+        "typical_risk_level": "R4"
+      },
+      {
+        "id": "macroprudential",
+        "name_de": "Makroprudenzielle Aufsicht",
+        "name_en": "Macroprudential Supervision",
+        "description": "Finanzstabilitätsberichte, Stresstests und systemische Risikoanalysen",
+        "typical_risk_level": "R4"
+      },
+      {
+        "id": "research",
+        "name_de": "Forschung",
+        "name_en": "Research",
+        "description": "Working Papers und Forschungspublikationen der EZB-Mitarbeiter",
+        "typical_risk_level": "R3"
+      },
+      {
+        "id": "digital_euro",
+        "name_de": "Digitaler Euro",
+        "name_en": "Digital Euro",
+        "description": "CBDC-Projektberichte, Design-Entscheidungen und Gesetzgebungsprozess",
+        "typical_risk_level": "R4"
+      },
+      {
+        "id": "market_infrastructure",
+        "name_de": "Marktinfrastruktur",
+        "name_en": "Market Infrastructure",
+        "description": "TARGET2, T2S, TIPS und europäische Zahlungsverkehrsinfrastruktur",
+        "typical_risk_level": "R4"
+      },
+      {
+        "id": "public_communication",
+        "name_de": "Öffentliche Kommunikation",
+        "name_en": "Public Communication",
+        "description": "Reden, Interviews und öffentliche Stellungnahmen des Direktoriums",
+        "typical_risk_level": "R4"
+      },
+      {
+        "id": "institutional_report",
+        "name_de": "Institutioneller Bericht",
+        "name_en": "Institutional Report",
+        "description": "Jahresberichte und Rechenschaftsdokumente",
+        "typical_risk_level": "R4"
+      }
+    ],
+    "sge_keywords": {
+      "domain_terms": [
+        "EZB",
+        "ECB",
+        "Europäische Zentralbank",
+        "European Central Bank",
+        "Eurosystem",
+        "Eurozone",
+        "Euro-Währungsgebiet",
+        "Geldpolitik",
+        "Monetary Policy",
+        "Leitzins",
+        "Key Rate",
+        "Hauptrefinanzierungssatz",
+        "Main Refinancing Rate",
+        "Einlagefazilität",
+        "Deposit Facility",
+        "Spitzenrefinanzierung",
+        "SSM",
+        "Single Supervisory Mechanism",
+        "Bankenaufsicht",
+        "SREP",
+        "Pillar 2 Requirement",
+        "P2R",
+        "P2G",
+        "TARGET2",
+        "T2S",
+        "TIPS",
+        "SEPA",
+        "Digitaler Euro",
+        "Digital Euro",
+        "CBDC",
+        "Finanzstabilität",
+        "Financial Stability",
+        "Governing Council",
+        "EZB-Rat",
+        "Executive Board",
+        "Direktorium"
+      ],
+      "risk_indicators": [
+        "Inflationsrisiko",
+        "Inflation Risk",
+        "Deflationsrisiko",
+        "Systemisches Risiko",
+        "Systemic Risk",
+        "Kreditrisiko",
+        "Credit Risk",
+        "NPL",
+        "Zinsänderungsrisiko",
+        "Interest Rate Risk",
+        "Liquiditätsrisiko",
+        "Liquidity Risk",
+        "Cyberrisiko",
+        "Cyber Risk",
+        "TIBER-EU",
+        "Klimarisiko",
+        "Climate Risk",
+        "Transition Risk",
+        "Geopolitisches Risiko",
+        "Geopolitical Risk",
+        "Konzentrationsrisiko",
+        "Concentration Risk",
+        "Operationelles Risiko",
+        "Operational Risk"
+      ],
+      "compliance_terms": [
+        "AEUV",
+        "TFEU",
+        "EZB-Satzung",
+        "Statute of the ESCB",
+        "SSM-Verordnung",
+        "SSM Regulation",
+        "CRR",
+        "CRD",
+        "DORA",
+        "MiCA",
+        "EU AI Act",
+        "DSGVO",
+        "GDPR",
+        "BRRD",
+        "SRM",
+        "EDIS",
+        "Bankenunion",
+        "Banking Union",
+        "Basel III",
+        "Basel IV",
+        "LCR",
+        "NSFR",
+        "ICAAP",
+        "ILAAP",
+        "Stress Testing",
+        "AML",
+        "CFT",
+        "AMLA"
+      ],
+      "organizational_terms": [
+        "Präsidentin",
+        "President",
+        "Christine Lagarde",
+        "Vizepräsident",
+        "Vice-President",
+        "Luis de Guindos",
+        "Supervisory Board",
+        "Claudia Buch",
+        "Governing Council",
+        "General Council",
+        "DG Economics",
+        "DG Market Operations",
+        "DG Microprudential Supervision",
+        "DG Macroprudential Policy",
+        "DG Market Infrastructure",
+        "Joint Supervisory Team",
+        "JST",
+        "Significant Institution",
+        "SI",
+        "Less Significant Institution",
+        "LSI"
+      ]
+    },
+    "cross_references": {
+      "complementary": [
+        "bafin",
+        "bis-regulatory"
+      ],
+      "hierarchical": [],
+      "notes": "ECB setzt EU-Geldpolitik und implementiert BIS/BCBS-Standards über CRR/CRD. BaFin ist als nationale Aufsichtsbehörde Teil des SSM und führt EZB-Beschlüsse auf deutscher Ebene aus. BIS→ECB→BaFin bildet die vollständige regulatorische Kaskade: BIS setzt globale Standards, ECB implementiert für Eurozone, BaFin setzt national um. Die drei HIGH-Profile bilden zusammen die vollständige Governance-Pyramide der Finanzregulierung."
+    }
+  }
+}
