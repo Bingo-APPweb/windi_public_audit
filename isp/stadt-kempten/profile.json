@@ -1,0 +1,376 @@
+{
+  "isp_profile": {
+    "metadata": {
+      "profile_id": "stadt-kempten",
+      "version": "1.0.0",
+      "created": "2026-02-05T19:39:03Z",
+      "governance_level": "LOW",
+      "profile_type": "municipal_administration",
+      "windi_registry_version": "2.9.0",
+      "generator": "windi-isp-factory/v1.0",
+      "audit_hash": "747cefcc332e5fe3131613d21ee25cfecf1ac568005b4fefbfa90763554a8b5a"
+    },
+    "organization": {
+      "name_full": "Stadt Kempten (Allgäu) — Kreisfreie Stadt",
+      "name_short": "Kempten",
+      "legal_form": "Kreisfreie Stadt (Gebietskörperschaft)",
+      "sector": "Kommunalverwaltung, Daseinsvorsorge",
+      "employees": 1500,
+      "revenue_eur": "350 Mio. EUR (Haushaltsvolumen geschätzt)",
+      "headquarters": "Rathaus, Rathausplatz 22, 87435 Kempten (Allgäu)",
+      "description": "Kempten (Allgäu) ist eine kreisfreie Stadt mit rund 72.000 Einwohnern im bayerischen Regierungsbezirk Schwaben. Sie ist das Ober-, Schul- und Verwaltungszentrum der Planungsregion Allgäu mit 480.000 Einwohnern. Kempten gilt als eine der ältesten Städte Deutschlands und ist die südlichste kreisfreie Stadt der Bundesrepublik.",
+      "relevance": "Kempten ist die Heimatstadt des WINDI Publishing House — das erste kommunale Profil mit direktem WINDI-Bezug. Als kreisfreie Stadt unterliegt Kempten direkt der Aufsicht der Regierung von Schwaben. Die Stadtverwaltung ist ein typischer WINDI-Kunde für kommunale Dokumenten-Governance. Kempten ist Testfall für alle kommunalen ISP-Anwendungen.",
+      "regional_presence": [
+        "Rathaus Kempten (Hauptverwaltung)",
+        "Stadtwerke Kempten (kommunaler Versorger)",
+        "Klinikverbund Kempten-Oberallgäu",
+        "Allgäu-Gymnasium Kempten",
+        "Hochschule Kempten"
+      ]
+    },
+    "governance": {
+      "level": "LOW",
+      "identity_license_required": false,
+      "retention_years": 5,
+      "risk_domains": [
+        "Kommunale Selbstverwaltung",
+        "Bürgerdatenverarbeitung (Meldewesen, Standesamt)",
+        "E-Government und Digitalisierung",
+        "Haushalts- und Finanzwirtschaft",
+        "Kommunale Auftragsvergabe",
+        "Baugenehmigungen und Stadtplanung",
+        "Sozialleistungen und Jugendamt"
+      ],
+      "compliance_frameworks": [
+        "Bayerische Gemeindeordnung (GO)",
+        "BayDSG (Bayerisches Datenschutzgesetz)",
+        "DSGVO",
+        "KommHV-Kameralistik / KommHV-Doppik",
+        "VOB/VOL/VgV (Vergaberecht)",
+        "OZG (Onlinezugangsgesetz)",
+        "BayEGovG",
+        "BSI IT-Grundschutz",
+        "EU AI Act"
+      ],
+      "sge_thresholds": {
+        "warn": 55,
+        "alert": 70,
+        "block": 60
+      }
+    },
+    "templates": [
+      {
+        "id": "TPL-KE-001",
+        "name_de": "Stadtratsbeschluss",
+        "name_en": "City Council Resolution",
+        "category": "governance",
+        "risk_level": "R2",
+        "description": "Beschlussvorlage für den Stadtrat mit Sachverhalt, Beschlussvorschlag und Finanzierung",
+        "required_fields": [
+          "tagesordnungspunkt",
+          "federführendes_referat",
+          "sachverhalt",
+          "beschlussvorschlag",
+          "finanzielle_auswirkungen",
+          "anlagen"
+        ],
+        "governance_notes": "Stadtratssitzungen sind öffentlich nach Art. 52 GO. Nichtöffentliche Beratung nur bei berechtigtem Interesse"
+      },
+      {
+        "id": "TPL-KE-002",
+        "name_de": "Baugenehmigung",
+        "name_en": "Building Permit",
+        "category": "building",
+        "risk_level": "R2",
+        "description": "Genehmigungsbescheid nach BayBO mit Auflagen und Nebenbestimmungen",
+        "required_fields": [
+          "bauherr",
+          "bauvorhaben",
+          "grundstueck",
+          "genehmigung",
+          "auflagen",
+          "rechtsgrundlage",
+          "rechtsmittelbelehrung"
+        ],
+        "governance_notes": "Bauaufsichtsbehörde der kreisfreien Stadt. Einvernehmen nach §36 BauGB"
+      },
+      {
+        "id": "TPL-KE-003",
+        "name_de": "Vergabevermerk",
+        "name_en": "Procurement Documentation",
+        "category": "procurement",
+        "risk_level": "R3",
+        "description": "Dokumentation des Vergabeverfahrens nach VOB/VOL/VgV mit Wertung und Zuschlagsentscheidung",
+        "required_fields": [
+          "vergabegegenstand",
+          "verfahrensart",
+          "bieter",
+          "wertung",
+          "zuschlag",
+          "begruendung"
+        ],
+        "governance_notes": "Vergabekammer Südbayern bei Nachprüfungsverfahren. Dokumentationspflicht nach §8 VgV"
+      },
+      {
+        "id": "TPL-KE-004",
+        "name_de": "Haushaltssatzung",
+        "name_en": "Municipal Budget Statute",
+        "category": "finance",
+        "risk_level": "R3",
+        "description": "Haushaltssatzung der Stadt mit Haushaltsplan, Stellenplan und Anlagen nach KommHV",
+        "required_fields": [
+          "haushaltsjahr",
+          "einnahmen",
+          "ausgaben",
+          "hebesaetze",
+          "kreditaufnahme",
+          "stellenplan"
+        ],
+        "governance_notes": "Genehmigungspflicht durch Regierung von Schwaben bei Kreditaufnahme"
+      },
+      {
+        "id": "TPL-KE-005",
+        "name_de": "Datenschutz-Folgenabschätzung (Kommune)",
+        "name_en": "Data Protection Impact Assessment (Municipal)",
+        "category": "data_protection",
+        "risk_level": "R3",
+        "description": "DSFA nach DSGVO Art. 35 für kommunale Verarbeitungen (Meldewesen, Soziales, etc.)",
+        "required_fields": [
+          "verarbeitungszweck",
+          "datenkategorien",
+          "betroffene",
+          "risikobewertung",
+          "schutzmassnahmen"
+        ],
+        "governance_notes": "LfD Bayern ist Aufsichtsbehörde. Besondere Sensibilität bei Sozialdaten nach SGB"
+      },
+      {
+        "id": "TPL-KE-006",
+        "name_de": "Satzung (Kommunal)",
+        "name_en": "Municipal Statute",
+        "category": "legislation",
+        "risk_level": "R2",
+        "description": "Kommunale Satzung nach Art. 23 GO (Gebühren, Beiträge, Benutzungsordnung)",
+        "required_fields": [
+          "satzungsgegenstand",
+          "rechtsgrundlage",
+          "inhalt",
+          "inkrafttreten",
+          "bekanntmachung"
+        ],
+        "governance_notes": "Veröffentlichung im Amtsblatt der Stadt Kempten. Rechtsaufsicht durch Regierung von Schwaben"
+      },
+      {
+        "id": "TPL-KE-007",
+        "name_de": "Bürgerbescheid",
+        "name_en": "Citizen Decision (Administrative Act)",
+        "category": "citizen_services",
+        "risk_level": "R2",
+        "description": "Verwaltungsakt gegenüber Bürgern mit Tenor, Begründung und Rechtsbehelfsbelehrung",
+        "required_fields": [
+          "empfaenger",
+          "betreff",
+          "tenor",
+          "begruendung",
+          "rechtsbehelfsbelehrung"
+        ],
+        "governance_notes": "Widerspruchsverfahren nach VwGO. Verwaltungsgericht Augsburg zuständig"
+      },
+      {
+        "id": "TPL-KE-008",
+        "name_de": "Jahresrechnung (Kommune)",
+        "name_en": "Annual Accounts (Municipal)",
+        "category": "finance",
+        "risk_level": "R2",
+        "description": "Jahresrechnung mit Rechenschaftsbericht nach KommHV zur Entlastung durch Stadtrat",
+        "required_fields": [
+          "haushaltsjahr",
+          "ist_ergebnis",
+          "soll_ist_vergleich",
+          "ruecklagen",
+          "schulden",
+          "rechenschaftsbericht"
+        ],
+        "governance_notes": "Kommunaler Prüfungsverband Bayern (BKPV) prüft überörtlich"
+      },
+      {
+        "id": "TPL-KE-009",
+        "name_de": "Förderantrag (Kommune)",
+        "name_en": "Grant Application (Municipal)",
+        "category": "grants",
+        "risk_level": "R2",
+        "description": "Antrag auf Zuwendung bei Land oder Bund mit Projektbeschreibung und Finanzierungsplan",
+        "required_fields": [
+          "foerderprogramm",
+          "projektbeschreibung",
+          "gesamtkosten",
+          "eigenanteil",
+          "zeitplan"
+        ],
+        "governance_notes": "Bayerische Förderrichtlinien beachten. Verwendungsnachweis nach ANBest-K"
+      },
+      {
+        "id": "TPL-KE-010",
+        "name_de": "IT-Sicherheitsrichtlinie (Kommune)",
+        "name_en": "IT Security Policy (Municipal)",
+        "category": "it_security",
+        "risk_level": "R3",
+        "description": "IT-Sicherheitskonzept für die Stadtverwaltung nach BSI IT-Grundschutz",
+        "required_fields": [
+          "geltungsbereich",
+          "verantwortlichkeiten",
+          "schutzmassnahmen",
+          "notfallplan",
+          "schulung"
+        ],
+        "governance_notes": "OZG-Dienste erfordern IT-Sicherheitsniveau. BayernID-Anbindung"
+      }
+    ],
+    "document_categories": [
+      {
+        "id": "governance",
+        "name_de": "Stadtrat & Verwaltung",
+        "name_en": "City Council & Administration",
+        "description": "Stadtratsbeschlüsse, Referatsvorlagen, Geschäftsordnung",
+        "typical_risk_level": "R2"
+      },
+      {
+        "id": "building",
+        "name_de": "Bauwesen",
+        "name_en": "Building Affairs",
+        "description": "Baugenehmigungen, Bebauungspläne, Bauordnungsrecht",
+        "typical_risk_level": "R2"
+      },
+      {
+        "id": "procurement",
+        "name_de": "Vergabe",
+        "name_en": "Procurement",
+        "description": "Vergabevermerke, Ausschreibungen, Verträge",
+        "typical_risk_level": "R3"
+      },
+      {
+        "id": "finance",
+        "name_de": "Finanzen & Haushalt",
+        "name_en": "Finance & Budget",
+        "description": "Haushaltssatzung, Jahresrechnung, Prüfberichte",
+        "typical_risk_level": "R3"
+      },
+      {
+        "id": "data_protection",
+        "name_de": "Datenschutz",
+        "name_en": "Data Protection",
+        "description": "DSFAs, Verarbeitungsverzeichnis, Datenschutzberichte",
+        "typical_risk_level": "R3"
+      },
+      {
+        "id": "legislation",
+        "name_de": "Satzungen & Verordnungen",
+        "name_en": "Statutes & Ordinances",
+        "description": "Kommunale Satzungen, Verordnungen, Amtsblatt",
+        "typical_risk_level": "R2"
+      },
+      {
+        "id": "citizen_services",
+        "name_de": "Bürgerservice",
+        "name_en": "Citizen Services",
+        "description": "Bescheide, Genehmigungen, Anträge",
+        "typical_risk_level": "R2"
+      },
+      {
+        "id": "grants",
+        "name_de": "Förderung",
+        "name_en": "Grants",
+        "description": "Förderanträge, Verwendungsnachweise, Zuwendungsbescheide",
+        "typical_risk_level": "R2"
+      },
+      {
+        "id": "it_security",
+        "name_de": "IT-Sicherheit",
+        "name_en": "IT Security",
+        "description": "IT-Konzepte, Notfallpläne, Sicherheitsberichte",
+        "typical_risk_level": "R3"
+      }
+    ],
+    "sge_keywords": {
+      "domain_terms": [
+        "Stadtverwaltung",
+        "Oberbürgermeister",
+        "Stadtrat",
+        "Referat",
+        "Amt",
+        "Sachgebiet",
+        "kreisfreie Stadt",
+        "kommunale Selbstverwaltung",
+        "Gemeindeordnung",
+        "Bürgerservice",
+        "Einwohnermeldeamt",
+        "Standesamt",
+        "Bauamt",
+        "Ordnungsamt",
+        "Jugendamt",
+        "Kämmerei",
+        "Haushalt",
+        "Hebesatz",
+        "Bebauungsplan",
+        "Flächennutzungsplan",
+        "Bauleitplanung"
+      ],
+      "risk_indicators": [
+        "Haushaltsüberschreitung",
+        "Genehmigungspflicht",
+        "Beanstandung",
+        "Rechtsaufsicht",
+        "Nachprüfungsverfahren",
+        "Vergabefehler",
+        "Datenschutzbeschwerde",
+        "Widerspruch",
+        "Klage",
+        "Fördermittelrückforderung",
+        "Prüfungsbemerkung",
+        "Rechtswidrigkeit"
+      ],
+      "compliance_terms": [
+        "Bayerische Gemeindeordnung",
+        "BayDSG",
+        "DSGVO",
+        "KommHV",
+        "VOB",
+        "VOL",
+        "VgV",
+        "OZG",
+        "BayEGovG",
+        "BayBO",
+        "Art. 52 GO",
+        "Art. 23 GO",
+        "Art. 108 GO",
+        "LfD Bayern",
+        "Regierung von Schwaben",
+        "BKPV"
+      ],
+      "organizational_terms": [
+        "Stadt Kempten",
+        "Rathaus",
+        "Stadtrat",
+        "Oberbürgermeister",
+        "Referent",
+        "Amtsleiter",
+        "Referat Recht, Finanzen und Sicherheit",
+        "Referat Planen, Bauen und Umwelt",
+        "Amt für BürgerService",
+        "Amt für Finanzen",
+        "Stadtwerke Kempten",
+        "Allgäu Tower"
+      ]
+    },
+    "cross_references": {
+      "complementary": [
+        "freistaat-bayern",
+        "stadtwerke"
+      ],
+      "hierarchical": [
+        "freistaat-bayern"
+      ],
+      "notes": "Freistaat Bayern: Rechtsaufsicht durch Regierung von Schwaben, Landesgesetzgebung (GO, BayDSG). Stadtwerke: Kommunaler Energieversorger als Tochtergesellschaft. Kempten ist die 'Allgäu-Metropole' und Verwaltungszentrum der Region."
+    }
+  }
+}

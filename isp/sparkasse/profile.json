@@ -1,0 +1,469 @@
+{
+  "isp_profile": {
+    "metadata": {
+      "profile_id": "sparkasse",
+      "version": "1.0.0",
+      "created": "2026-02-05T18:26:12Z",
+      "governance_level": "MEDIUM",
+      "profile_type": "public_financial_institution",
+      "windi_registry_version": "2.8.0",
+      "generator": "windi-isp-factory/v1.0",
+      "audit_hash": "e059b77503ca3010249ca5a81ed88bb202e6c5a08317313c419a503fab739a77"
+    },
+    "organization": {
+      "name_full": "Sparkassen-Finanzgruppe (German Savings Banks)",
+      "name_short": "Sparkasse",
+      "legal_form": "Anstalt des öffentlichen Rechts (AöR) / kommunale Trägerschaft",
+      "sector": "Finanzdienstleistungen, Bankwesen, öffentlicher Sektor",
+      "employees": 290000,
+      "revenue_eur": "2.5 Billionen EUR Assets (Sparkassen-Finanzgruppe gesamt)",
+      "headquarters": "Berlin (DSGV), dezentral ~352 Sparkassen bundesweit",
+      "description": "Die Sparkassen-Finanzgruppe ist die größte Finanzgruppe in Deutschland und zweitgrößte in Europa nach Bilanzsumme. Mit rund 352 rechtlich selbstständigen Sparkassen, Landesbanken und DekaBank bildet sie das Rückgrat der kommunalen Finanzierung und KMU-Kreditversorgung. Sparkassen operieren nach dem Regionalprinzip: lokal gesammelte Einlagen werden lokal reinvestiert.",
+      "relevance": "Sparkassen sind BaFin-regulierte Kreditinstitute mit umfangreichen Compliance-Anforderungen (MaRisk, BAIT, KWG §25a). Die dezentrale Struktur mit kommunaler Trägerschaft macht standardisierte Dokumenten-Governance essenziell — jede Sparkasse muss eigenständig Compliance nachweisen. 50 Millionen Kunden bedeuten massive DSGVO-Verantwortung. Direkte Allgäu-Relevanz: Sparkasse Allgäu, Kreissparkasse Lindau-Bodensee.",
+      "regional_presence": [
+        "Sparkasse Allgäu (Kempten/Oberallgäu)",
+        "Kreissparkasse Lindau-Bodensee",
+        "Sparkasse Schwaben-Bodensee",
+        "Hamburger Sparkasse (größte Sparkasse Deutschlands)",
+        "Kreissparkasse Köln",
+        "Stadtsparkasse München"
+      ]
+    },
+    "governance": {
+      "level": "MEDIUM",
+      "identity_license_required": true,
+      "retention_years": 7,
+      "risk_domains": [
+        "Finanzielle Integrität und Geldwäscheprävention",
+        "Kreditrisiko und Kreditausfälle",
+        "Operationelle Risiken (MaRisk)",
+        "IT-Sicherheit und Cyberrisiken (BAIT)",
+        "Datenschutz und Bankgeheimnis",
+        "Reputationsrisiko",
+        "ESG-Risiken (Klima, Nachhaltigkeit)",
+        "Auslagerungsrisiken (Cloud, IT-Dienstleister)"
+      ],
+      "compliance_frameworks": [
+        "KWG (Kreditwesengesetz)",
+        "MaRisk (Mindestanforderungen an das Risikomanagement)",
+        "BAIT (Bankaufsichtliche Anforderungen an die IT)",
+        "DSGVO",
+        "GwG (Geldwäschegesetz)",
+        "WpHG (Wertpapierhandelsgesetz)",
+        "BaFin-Aufsicht",
+        "EBA Guidelines",
+        "Basel III/IV",
+        "ISO 27001",
+        "BSI IT-Grundschutz",
+        "NIS2",
+        "DORA (Digital Operational Resilience Act)",
+        "EU AI Act"
+      ],
+      "sge_thresholds": {
+        "warn": 50,
+        "alert": 65,
+        "block": 75
+      }
+    },
+    "templates": [
+      {
+        "id": "TPL-SPK-001",
+        "name_de": "MaRisk-Risikobericht",
+        "name_en": "MaRisk Risk Report",
+        "category": "risk_management",
+        "risk_level": "R4",
+        "description": "Quartalsweiser Gesamtrisikobericht nach MaRisk BT 3.1 für Vorstand und Aufsichtsrat",
+        "required_fields": [
+          "berichtszeitraum",
+          "risikoarten",
+          "risikotragfaehigkeit",
+          "limitsystem",
+          "stresstests",
+          "essentielle_risiken"
+        ],
+        "governance_notes": "BaFin-prüfungsrelevant. Muss Kreditrisiko, Marktrisiko, operationelle Risiken und ESG-Risiken umfassen"
+      },
+      {
+        "id": "TPL-SPK-002",
+        "name_de": "BAIT-Sicherheitskonzept",
+        "name_en": "BAIT IT Security Concept",
+        "category": "it_security",
+        "risk_level": "R4",
+        "description": "IT-Sicherheitskonzept nach BAIT mit Informationsrisikomanagement und Notfallplanung",
+        "required_fields": [
+          "it_strategie",
+          "informationsrisiken",
+          "schutzmassnahmen",
+          "notfallplan",
+          "outsourcing_risiken"
+        ],
+        "governance_notes": "BAIT §25a KWG. Muss BSI IT-Grundschutz oder ISO 27001 referenzieren"
+      },
+      {
+        "id": "TPL-SPK-003",
+        "name_de": "Geldwäsche-Verdachtsmeldung",
+        "name_en": "Money Laundering Suspicious Activity Report",
+        "category": "compliance",
+        "risk_level": "R5",
+        "description": "Verdachtsmeldung an die Financial Intelligence Unit (FIU) nach §43 GwG",
+        "required_fields": [
+          "verdachtsgrund",
+          "beteiligte_personen",
+          "transaktionsdetails",
+          "risikobewertung",
+          "dokumentation"
+        ],
+        "governance_notes": "Höchste Vertraulichkeit. Tipping-off-Verbot nach §47 GwG. Unverzügliche Meldepflicht"
+      },
+      {
+        "id": "TPL-SPK-004",
+        "name_de": "Kreditvorlage Firmenkunde",
+        "name_en": "Corporate Credit Proposal",
+        "category": "credit",
+        "risk_level": "R3",
+        "description": "Kreditentscheidungsvorlage für Firmenkunden nach MaRisk BTO 1.2 mit Risikoanalyse",
+        "required_fields": [
+          "kreditnehmer",
+          "kreditbetrag",
+          "verwendungszweck",
+          "sicherheiten",
+          "rating",
+          "kapitaldienstfaehigkeit",
+          "votum"
+        ],
+        "governance_notes": "Marktfolge-Votum erforderlich bei Überschreitung von Kompetenzen. ESG-Bewertung nach MaRisk 7"
+      },
+      {
+        "id": "TPL-SPK-005",
+        "name_de": "Aufsichtsratsvorlage",
+        "name_en": "Supervisory Board Proposal",
+        "category": "governance",
+        "risk_level": "R3",
+        "description": "Beschlussvorlage für Aufsichtsrat/Verwaltungsrat mit Empfehlung und Begründung",
+        "required_fields": [
+          "tagesordnungspunkt",
+          "sachverhalt",
+          "beschlussvorschlag",
+          "begruendung",
+          "auswirkungen",
+          "anlagen"
+        ],
+        "governance_notes": "Kommunale Aufsichtsgremien mit politischen Vertretern — besondere Transparenzanforderungen"
+      },
+      {
+        "id": "TPL-SPK-006",
+        "name_de": "Auslagerungsvertrag (Cloud/IT)",
+        "name_en": "Outsourcing Agreement (Cloud/IT)",
+        "category": "outsourcing",
+        "risk_level": "R4",
+        "description": "Auslagerungsvereinbarung nach MaRisk AT 9 und BAIT für IT-Dienstleister",
+        "required_fields": [
+          "dienstleister",
+          "leistungsumfang",
+          "datenschutz",
+          "auditrechte",
+          "kuendigungsrecht",
+          "notfallplanung",
+          "subunternehmer"
+        ],
+        "governance_notes": "BaFin-Anzeigepflicht bei wesentlicher Auslagerung. Cloud-Spezifika nach EBA Guidelines"
+      },
+      {
+        "id": "TPL-SPK-007",
+        "name_de": "Datenschutz-Folgenabschätzung (Banking)",
+        "name_en": "Data Protection Impact Assessment (Banking)",
+        "category": "data_protection",
+        "risk_level": "R4",
+        "description": "DSFA nach DSGVO Art. 35 für Bankprodukte mit umfangreicher Datenverarbeitung",
+        "required_fields": [
+          "verarbeitungszweck",
+          "datenkategorien",
+          "rechtsgrundlage",
+          "risikobewertung",
+          "schutzmassnahmen",
+          "betroffenenrechte"
+        ],
+        "governance_notes": "Bankgeheimnis §383 HGB beachten. Besondere Kategorien nach Art. 9 DSGVO bei Scoring"
+      },
+      {
+        "id": "TPL-SPK-008",
+        "name_de": "Interne Revision — Prüfbericht",
+        "name_en": "Internal Audit Report",
+        "category": "audit",
+        "risk_level": "R3",
+        "description": "Prüfbericht der Internen Revision nach MaRisk BT 2 mit Feststellungen und Maßnahmen",
+        "required_fields": [
+          "pruefungsgegenstand",
+          "pruefungszeitraum",
+          "feststellungen",
+          "risikobewertung",
+          "massnahmen",
+          "frist"
+        ],
+        "governance_notes": "Revisionsfunktion muss unabhängig nach MaRisk AT 4.4 sein. Vorstandsvorlage bei wesentlichen Feststellungen"
+      },
+      {
+        "id": "TPL-SPK-009",
+        "name_de": "KYC-Dokumentation Neukunde",
+        "name_en": "KYC Documentation New Customer",
+        "category": "compliance",
+        "risk_level": "R4",
+        "description": "Know-Your-Customer-Dokumentation nach GwG §§10-17 für Kundenidentifizierung",
+        "required_fields": [
+          "identifizierung",
+          "wirtschaftlich_berechtigte",
+          "geschaeftszweck",
+          "risikoklassifizierung",
+          "pep_pruefung",
+          "sanktionspruefung"
+        ],
+        "governance_notes": "Aufbewahrung 5 Jahre nach Geschäftsbeziehungsende. Verstärkte Sorgfaltspflichten bei Hochrisiko"
+      },
+      {
+        "id": "TPL-SPK-010",
+        "name_de": "Geschäftsbericht (Sparkasse)",
+        "name_en": "Annual Report (Sparkasse)",
+        "category": "reporting",
+        "risk_level": "R2",
+        "description": "Jahresgeschäftsbericht mit Lagebericht, Bilanz und GuV für kommunalen Träger",
+        "required_fields": [
+          "geschaeftsjahr",
+          "lagebericht",
+          "bilanz",
+          "guv",
+          "anhang",
+          "pruefungsvermerk"
+        ],
+        "governance_notes": "Veröffentlichungspflicht nach §340a HGB. Kommunale Transparenz gegenüber Träger und Öffentlichkeit"
+      },
+      {
+        "id": "TPL-SPK-011",
+        "name_de": "DORA-Vorfallmeldung",
+        "name_en": "DORA Incident Report",
+        "category": "incident",
+        "risk_level": "R5",
+        "description": "Meldung schwerwiegender IKT-Vorfälle nach DORA Art. 19 an BaFin/EBA",
+        "required_fields": [
+          "vorfallbeschreibung",
+          "auswirkung",
+          "betroffene_dienste",
+          "ursachenanalyse",
+          "eindaemmung",
+          "kommunikation"
+        ],
+        "governance_notes": "DORA ab 17.01.2025 voll wirksam. Meldefristen: Initial 4h, Zwischenbericht 72h, Abschluss 1 Monat"
+      },
+      {
+        "id": "TPL-SPK-012",
+        "name_de": "ESG-Risikobewertung Kreditportfolio",
+        "name_en": "ESG Risk Assessment Credit Portfolio",
+        "category": "risk_management",
+        "risk_level": "R3",
+        "description": "Bewertung von Klima- und Nachhaltigkeitsrisiken im Kreditportfolio nach MaRisk 7",
+        "required_fields": [
+          "portfoliosegmente",
+          "klimarisiken",
+          "transitionsrisiken",
+          "physische_risiken",
+          "stresstests",
+          "massnahmen"
+        ],
+        "governance_notes": "BaFin-Merkblatt zu Nachhaltigkeitsrisiken. EBA-Leitlinien zu ESG-Risiken in Kreditvergabe"
+      }
+    ],
+    "document_categories": [
+      {
+        "id": "risk_management",
+        "name_de": "Risikomanagement",
+        "name_en": "Risk Management",
+        "description": "MaRisk-Berichte, Risikoanalysen, Stresstests, Limitsysteme",
+        "typical_risk_level": "R4"
+      },
+      {
+        "id": "it_security",
+        "name_de": "IT-Sicherheit (BAIT)",
+        "name_en": "IT Security (BAIT)",
+        "description": "BAIT-Dokumentation, Informationsrisikomanagement, Notfallpläne",
+        "typical_risk_level": "R4"
+      },
+      {
+        "id": "compliance",
+        "name_de": "Compliance & AML",
+        "name_en": "Compliance & AML",
+        "description": "Geldwäsche-Dokumentation, KYC, Sanktionsprüfung, Verdachtsmeldungen",
+        "typical_risk_level": "R5"
+      },
+      {
+        "id": "credit",
+        "name_de": "Kreditgeschäft",
+        "name_en": "Credit Business",
+        "description": "Kreditvorlagen, Sicherheitenbewertungen, Ratings, Engagementberichte",
+        "typical_risk_level": "R3"
+      },
+      {
+        "id": "governance",
+        "name_de": "Corporate Governance",
+        "name_en": "Corporate Governance",
+        "description": "Aufsichtsratsvorlagen, Vorstandsbeschlüsse, Gremiendokumentation",
+        "typical_risk_level": "R3"
+      },
+      {
+        "id": "outsourcing",
+        "name_de": "Auslagerung & Cloud",
+        "name_en": "Outsourcing & Cloud",
+        "description": "Auslagerungsverträge, Dienstleistersteuerung, Cloud-Compliance",
+        "typical_risk_level": "R4"
+      },
+      {
+        "id": "data_protection",
+        "name_de": "Datenschutz",
+        "name_en": "Data Protection",
+        "description": "DSFAs, Verarbeitungsverzeichnisse, Bankgeheimnis-Dokumentation",
+        "typical_risk_level": "R4"
+      },
+      {
+        "id": "audit",
+        "name_de": "Revision & Prüfung",
+        "name_en": "Audit & Examination",
+        "description": "Revisionsprüfungen, BaFin-Prüfungen, Jahresabschlussprüfung",
+        "typical_risk_level": "R3"
+      },
+      {
+        "id": "incident",
+        "name_de": "Vorfallmanagement",
+        "name_en": "Incident Management",
+        "description": "DORA-Meldungen, IT-Sicherheitsvorfälle, Notfallberichte",
+        "typical_risk_level": "R5"
+      },
+      {
+        "id": "reporting",
+        "name_de": "Berichtswesen",
+        "name_en": "Reporting",
+        "description": "Geschäftsberichte, Meldewesen, aufsichtsrechtliche Reports",
+        "typical_risk_level": "R2"
+      }
+    ],
+    "sge_keywords": {
+      "domain_terms": [
+        "Kreditinstitut",
+        "Einlagengeschäft",
+        "Kreditgeschäft",
+        "Regionalprinzip",
+        "kommunale Trägerschaft",
+        "Gewährträgerhaftung",
+        "Risikotragfähigkeit",
+        "Risikoappetit",
+        "Limitüberschreitung",
+        "Kreditengagement",
+        "Großkredit",
+        "Millionenkredit",
+        "Rating",
+        "Bonitätsprüfung",
+        "Kapitaldienstfähigkeit",
+        "Eigenkapitalquote",
+        "CET1",
+        "Leverage Ratio",
+        "Liquiditätsreserve",
+        "LCR",
+        "NSFR",
+        "Marktfolge",
+        "Votum",
+        "Kompetenzregelung",
+        "Verbriefung",
+        "Derivat",
+        "Depot",
+        "Zahlungsverkehr",
+        "SEPA",
+        "TARGET2"
+      ],
+      "risk_indicators": [
+        "Kreditausfall",
+        "NPL",
+        "Wertberichtigung",
+        "Geldwäscheverdacht",
+        "Terrorismusfinanzierung",
+        "Sanktionsverstoß",
+        "Betrugsfall",
+        "Identitätsdiebstahl",
+        "Cyberangriff",
+        "Datenpanne",
+        "Bankgeheimnisverletzung",
+        "Insiderhandel",
+        "Limitüberschreitung",
+        "Klumpenrisiko",
+        "Konzentrationsrisiko",
+        "operationelles Versagen",
+        "Systemausfall",
+        "Prozessfehler",
+        "Reputationsschaden",
+        "Compliance-Verstoß",
+        "BaFin-Feststellung"
+      ],
+      "compliance_terms": [
+        "KWG",
+        "MaRisk",
+        "BAIT",
+        "GwG",
+        "WpHG",
+        "BaFin",
+        "Bundesbank",
+        "EBA",
+        "EZB",
+        "Basel III",
+        "CRR",
+        "CRD",
+        "DORA",
+        "§25a KWG",
+        "§10 GwG",
+        "§43 GwG",
+        "Drei-Linien-Modell",
+        "Funktionstrennung",
+        "Marktfolge",
+        "Interne Revision",
+        "Compliance-Funktion",
+        "Geldwäschebeauftragter",
+        "Auslagerung",
+        "Anzeigepflicht",
+        "Prüfungsbericht",
+        "DSGVO",
+        "Bankgeheimnis",
+        "EU AI Act",
+        "NIS2"
+      ],
+      "organizational_terms": [
+        "Sparkasse",
+        "Landesbank",
+        "DekaBank",
+        "DSGV",
+        "Sparkassenverband",
+        "Regionalprinzip",
+        "Verwaltungsrat",
+        "Träger",
+        "Kommune",
+        "Vorstand",
+        "Marktbereich",
+        "Marktfolge",
+        "Filialnetz",
+        "Geschäftsstelle",
+        "SB-Zone",
+        "Sparkassen-Finanzgruppe",
+        "Sicherungseinrichtung",
+        "Institutssicherung",
+        "Girozentrale",
+        "S-Finanzgruppe",
+        "OSPlus"
+      ]
+    },
+    "cross_references": {
+      "complementary": [
+        "bafin",
+        "bundesregierung",
+        "stadtwerke"
+      ],
+      "hierarchical": [
+        "bafin"
+      ],
+      "notes": "BaFin: Direkte Aufsichtsbehörde, MaRisk/BAIT-Vorgaben, Prüfungen. Bundesregierung: KWG-Gesetzgebung, EU-Bankenregulierung. Stadtwerke: Häufige Kunden (Kommunalkredit), ähnliche kommunale Trägerschaft. Sparkassen sind als DSGV-Mitglieder Teil des zweitgrößten Finanzdienstleisters Europas."
+    }
+  }
+}

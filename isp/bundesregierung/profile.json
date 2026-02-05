@@ -1,158 +1,508 @@
 {
   "isp_profile": {
-    "id": "bundesregierung",
-    "version": "1.0.0",
-    "created": "2026-02-02",
-    "name": "Bundesregierung",
-    "name_display": {
-      "de": "Bundesregierung der Bundesrepublik Deutschland",
-      "en": "Federal Government of Germany",
-      "pt": "Governo Federal da Alemanha"
+    "metadata": {
+      "profile_id": "bundesregierung",
+      "version": "1.0.0",
+      "created": "2026-02-05T19:26:58Z",
+      "governance_level": "MEDIUM",
+      "profile_type": "federal_government",
+      "windi_registry_version": "2.6.0",
+      "generator": "windi-isp-factory/v1.0",
+      "audit_hash": "dbc2b157d8aadd9d45a8a29802579111239a82568412f4b034852ec6af11b258"
     },
-    "type": "government_institutional",
-    "governance_level": "MEDIUM",
-    "description": {
-      "de": "Governance-Profil für Dokumente mit institutionellem Bezug zur Bundesregierung. Fokus auf Legitimität, Transparenz und öffentliche Rechenschaftspflicht.",
-      "en": "Governance profile for documents with institutional reference to the Federal Government. Focus on legitimacy, transparency, and public accountability.",
-      "pt": "Perfil de governança para documentos com referência institucional ao Governo Federal. Foco em legitimidade, transparência e responsabilidade pública."
+    "organization": {
+      "name_full": "Bundesregierung der Bundesrepublik Deutschland",
+      "name_short": "Bundesregierung",
+      "legal_form": "Verfassungsorgan (Art. 62-69 GG)",
+      "sector": "Regierung und öffentliche Verwaltung",
+      "employees": 25000,
+      "revenue_eur": "Nicht anwendbar (Bundeshaushalt ~480 Mrd. EUR, 2025)",
+      "headquarters": "Berlin (Bundeskanzleramt, Willy-Brandt-Straße 1)",
+      "description": "Die Bundesregierung der Bundesrepublik Deutschland (Kabinett Merz, seit Mai 2025) besteht aus dem Bundeskanzler Friedrich Merz (CDU) und den Bundesministerinnen und Bundesministern. Die Regierungskoalition CDU/CSU und SPD führt 15 Bundesministerien plus Bundeskanzleramt. Als oberste Exekutive ist die Bundesregierung verantwortlich für Gesetzentwürfe, Verordnungen, völkerrechtliche Verträge und die politische Steuerung Deutschlands.",
+      "relevance": "Bundesregierung-Dokumente (Kabinettsbeschlüsse, Gesetzentwürfe, Verordnungen, Regierungserklärungen) haben unmittelbare Rechtswirkung auf 84 Millionen Einwohner und prägen die EU-Politik. WINDI-Governance muss bei Bundesregierung-referenzierten Dokumenten höchste Terminologietreue (Amtssprache), korrekte Rechtsverweise (GG, BGBl.) und institutionelle Genauigkeit gewährleisten. Fehler können Rechtsstreitigkeiten oder Fehlinformationen verursachen.",
+      "regional_presence": [
+        "Berlin (Bundeskanzleramt, alle Bundesministerien — Hauptsitz)",
+        "Bonn (Zweitsitze: BMVg, BMBF, BMZ, BMEL, BMU, BMWSB u.a.)",
+        "Ständige Vertretung bei der EU, Brüssel",
+        "Deutsche Botschaften weltweit (Auswärtiges Amt)"
+      ]
+    },
+    "governance": {
+      "level": "MEDIUM",
+      "identity_license_required": true,
+      "retention_years": 7,
+      "risk_domains": [
+        "Gesetzgebung und Verordnungen",
+        "Haushalts- und Finanzpolitik",
+        "Innere Sicherheit und Verfassungsschutz",
+        "Außen- und Sicherheitspolitik",
+        "Datenschutz und digitale Verwaltung (OZG)",
+        "Klimapolitik und Energiewende",
+        "Europapolitik und EU-Ratspräsidentschaft"
+      ],
+      "compliance_frameworks": [
+        "Grundgesetz (GG)",
+        "Geschäftsordnung der Bundesregierung (GOBReg)",
+        "Gemeinsame Geschäftsordnung der Bundesministerien (GGO)",
+        "Bundesbeamtengesetz (BBG)",
+        "DSGVO / BDSG",
+        "EU AI Act",
+        "Onlinezugangsgesetz (OZG 2.0)",
+        "Informationsfreiheitsgesetz (IFG)",
+        "Registermodernisierungsgesetz (RegMoG)"
+      ],
+      "sge_thresholds": {
+        "warn": 50,
+        "alert": 65,
+        "block": 75
+      }
+    },
+    "templates": [
+      {
+        "id": "TPL-BREG-001",
+        "name_de": "Kabinettsbeschluss",
+        "name_en": "Cabinet Decision",
+        "category": "government_decision",
+        "risk_level": "R5",
+        "description": "Offizielle Beschlüsse des Bundeskabinetts zu Gesetzentwürfen, Verordnungen, Berichten und politischen Grundsatzentscheidungen",
+        "required_fields": [
+          "date",
+          "agenda_item",
+          "decision_text",
+          "responsible_ministry",
+          "legal_basis"
+        ],
+        "governance_notes": "Höchste Ebene exekutiver Entscheidung. Kabinettsbeschlüsse lösen Gesetzgebungsverfahren aus. Exakte Wiedergabe ist verfassungsrechtlich kritisch."
+      },
+      {
+        "id": "TPL-BREG-002",
+        "name_de": "Gesetzentwurf der Bundesregierung",
+        "name_en": "Government Draft Legislation",
+        "category": "legislation",
+        "risk_level": "R5",
+        "description": "Regierungsentwürfe für Bundesgesetze mit Begründung, Gesetzesfolgenabschätzung und Stellungnahme des Bundesrates",
+        "required_fields": [
+          "law_title",
+          "drucksache_number",
+          "leading_ministry",
+          "article_text",
+          "justification",
+          "bundesrat_opinion"
+        ],
+        "governance_notes": "R5-Maximum. Gesetzestexte müssen zeichengenau sein. Jede Abweichung vom Bundesdrucksache-Original kann Rechtsfolgen haben."
+      },
+      {
+        "id": "TPL-BREG-003",
+        "name_de": "Rechtsverordnung",
+        "name_en": "Statutory Instrument / Regulation",
+        "category": "legislation",
+        "risk_level": "R5",
+        "description": "Rechtsverordnungen der Bundesregierung oder einzelner Ministerien auf Grundlage gesetzlicher Ermächtigung",
+        "required_fields": [
+          "title",
+          "legal_basis",
+          "issuing_authority",
+          "bgbl_reference",
+          "effective_date"
+        ],
+        "governance_notes": "Unmittelbar geltendes Recht. BGBl.-Referenz und Ermächtigungsgrundlage müssen exakt stimmen."
+      },
+      {
+        "id": "TPL-BREG-004",
+        "name_de": "Regierungserklärung",
+        "name_en": "Government Policy Statement",
+        "category": "political_communication",
+        "risk_level": "R4",
+        "description": "Offizielle Erklärungen des Bundeskanzlers vor dem Bundestag zu grundlegenden politischen Fragen und Regierungsprogramm",
+        "required_fields": [
+          "chancellor",
+          "date",
+          "occasion",
+          "key_policy_areas",
+          "bundestag_session"
+        ],
+        "governance_notes": "Politisch höchst bedeutsam. Regierungserklärungen definieren die politische Richtung. Formulierungen werden historisch archiviert."
+      },
+      {
+        "id": "TPL-BREG-005",
+        "name_de": "Koalitionsvertrag",
+        "name_en": "Coalition Agreement",
+        "category": "political_framework",
+        "risk_level": "R4",
+        "description": "Koalitionsvereinbarung zwischen den Regierungsparteien als politische Grundlage der Legislaturperiode (aktuell CDU/CSU-SPD 2025)",
+        "required_fields": [
+          "parties",
+          "legislative_period",
+          "policy_chapters",
+          "date_signed"
+        ],
+        "governance_notes": "Politischer Referenzrahmen für alle Regierungsvorhaben. Keine Rechtsbindung, aber höchste politische Bindungswirkung."
+      },
+      {
+        "id": "TPL-BREG-006",
+        "name_de": "Bundeshaushaltsentwurf",
+        "name_en": "Federal Budget Draft",
+        "category": "fiscal_policy",
+        "risk_level": "R5",
+        "description": "Entwurf des Bundeshaushaltsgesetzes und Einzelpläne der Ministerien mit Einnahmen, Ausgaben und Schuldenbremse-Berechnung",
+        "required_fields": [
+          "fiscal_year",
+          "total_volume",
+          "einzelplaene",
+          "debt_brake_calculation",
+          "bmf_explanation"
+        ],
+        "governance_notes": "Haushaltsrecht ist Königsrecht des Parlaments. Zahlen müssen exakt sein — jede Abweichung ist haushaltspolitisch kritisch."
+      },
+      {
+        "id": "TPL-BREG-007",
+        "name_de": "Kabinettsbericht / Lagebericht",
+        "name_en": "Cabinet Report / Situation Report",
+        "category": "government_report",
+        "risk_level": "R3",
+        "description": "Periodische Berichte der Bundesregierung an den Bundestag zu spezifischen Themen (Jahreswirtschaftsbericht, Migrationsbericht, Rüstungsexportbericht etc.)",
+        "required_fields": [
+          "report_type",
+          "reporting_period",
+          "responsible_ministry",
+          "key_findings",
+          "drucksache_ref"
+        ],
+        "governance_notes": "Rechenschaftspflicht gegenüber Parlament. Daten und Statistiken müssen nachprüfbar sein."
+      },
+      {
+        "id": "TPL-BREG-008",
+        "name_de": "Antwort auf Große/Kleine Anfrage",
+        "name_en": "Response to Parliamentary Question",
+        "category": "parliamentary_accountability",
+        "risk_level": "R3",
+        "description": "Offizielle Antworten der Bundesregierung auf Große und Kleine Anfragen des Bundestages",
+        "required_fields": [
+          "anfrage_type",
+          "fragesteller",
+          "drucksache_ref",
+          "responsible_ministry",
+          "answer_text"
+        ],
+        "governance_notes": "Parlamentarische Kontrolle. Antworten werden öffentlich und können politisch zitiert werden."
+      },
+      {
+        "id": "TPL-BREG-009",
+        "name_de": "Pressemitteilung der Bundesregierung",
+        "name_en": "Federal Government Press Release",
+        "category": "public_communication",
+        "risk_level": "R3",
+        "description": "Offizielle Mitteilungen des Bundespresseamts (BPA) zu Kabinettsentscheidungen, politischen Positionen und Terminen",
+        "required_fields": [
+          "date",
+          "title",
+          "ministry_or_bpa",
+          "content",
+          "spokesperson"
+        ],
+        "governance_notes": "Öffentliche Kommunikation der Regierung. Muss mit tatsächlichen Kabinettsbeschlüssen übereinstimmen."
+      },
+      {
+        "id": "TPL-BREG-010",
+        "name_de": "Völkerrechtlicher Vertrag",
+        "name_en": "International Treaty",
+        "category": "foreign_affairs",
+        "risk_level": "R5",
+        "description": "Völkerrechtliche Verträge und Abkommen, die der Zustimmung der Bundesregierung und ggf. des Bundestages bedürfen",
+        "required_fields": [
+          "treaty_title",
+          "parties",
+          "subject",
+          "date_signed",
+          "ratification_status",
+          "bgbl_ii_ref"
+        ],
+        "governance_notes": "Völkerrechtlich bindend. Vertragstext und Ratifikationsstatus müssen exakt sein. BGBl. II-Referenz obligatorisch."
+      },
+      {
+        "id": "TPL-BREG-011",
+        "name_de": "Verwaltungsvorschrift",
+        "name_en": "Administrative Regulation",
+        "category": "administrative",
+        "risk_level": "R3",
+        "description": "Allgemeine Verwaltungsvorschriften der Bundesregierung zur Steuerung der nachgeordneten Bundesverwaltung",
+        "required_fields": [
+          "title",
+          "issuing_authority",
+          "legal_basis",
+          "addressees",
+          "effective_date"
+        ],
+        "governance_notes": "Interne Steuerung der Verwaltung. Keine unmittelbare Außenwirkung, aber bindend für Behörden."
+      },
+      {
+        "id": "TPL-BREG-012",
+        "name_de": "Digitalstrategie / OZG-Bericht",
+        "name_en": "Digital Strategy / OZG Report",
+        "category": "digital_governance",
+        "risk_level": "R3",
+        "description": "Strategiedokumente und Fortschrittsberichte zur Digitalisierung der Verwaltung (OZG 2.0, Registermodernisierung, KI-Strategie)",
+        "required_fields": [
+          "strategy_area",
+          "reporting_period",
+          "milestones",
+          "responsible_ministry",
+          "kpis"
+        ],
+        "governance_notes": "Wachsende Relevanz durch EU AI Act und OZG 2.0. KI-bezogene Inhalte erfordern besondere Sorgfalt."
+      },
+      {
+        "id": "TPL-BREG-013",
+        "name_de": "Nationale Sicherheitsstrategie",
+        "name_en": "National Security Strategy",
+        "category": "security_policy",
+        "risk_level": "R4",
+        "description": "Strategische Grundlagendokumente der Bundesregierung zu Sicherheits-, Verteidigungs- und Außenpolitik",
+        "required_fields": [
+          "document_title",
+          "date_approved",
+          "strategic_pillars",
+          "threat_assessment",
+          "capability_goals"
+        ],
+        "governance_notes": "Sicherheitspolitisch sensibel. Abstimmung mit NATO- und EU-Partnern erforderlich. Geheimhaltungsstufen beachten."
+      },
+      {
+        "id": "TPL-BREG-014",
+        "name_de": "EU-Ratsposition",
+        "name_en": "EU Council Position",
+        "category": "european_affairs",
+        "risk_level": "R4",
+        "description": "Positionspapiere und Weisungen der Bundesregierung für Verhandlungen im Rat der EU (Ministerrat)",
+        "required_fields": [
+          "dossier",
+          "council_formation",
+          "german_position",
+          "negotiation_mandate",
+          "leading_ministry"
+        ],
+        "governance_notes": "Verhandlungspositionen können vertraulich sein. Vorzeitige Veröffentlichung kann diplomatische Folgen haben."
+      },
+      {
+        "id": "TPL-BREG-015",
+        "name_de": "Kabinettausschuss-Protokoll",
+        "name_en": "Cabinet Committee Minutes",
+        "category": "government_decision",
+        "risk_level": "R4",
+        "description": "Ergebnisprotokolle der Kabinettsausschüsse (z.B. Ausschuss für Europafragen, Sicherheitskabinett, Digitalausschuss)",
+        "required_fields": [
+          "committee",
+          "date",
+          "agenda",
+          "decisions",
+          "action_items",
+          "classification"
+        ],
+        "governance_notes": "Interne Regierungskoordination. Vertraulichkeitsstufe beachten. Nur autorisierte Zusammenfassungen nach außen."
+      }
+    ],
+    "document_categories": [
+      {
+        "id": "government_decision",
+        "name_de": "Regierungsentscheidung",
+        "name_en": "Government Decision",
+        "description": "Kabinettsbeschlüsse und Entscheidungen der Kabinettsausschüsse",
+        "typical_risk_level": "R5"
+      },
+      {
+        "id": "legislation",
+        "name_de": "Gesetzgebung",
+        "name_en": "Legislation",
+        "description": "Gesetzentwürfe, Rechtsverordnungen und normative Rechtsakte",
+        "typical_risk_level": "R5"
+      },
+      {
+        "id": "fiscal_policy",
+        "name_de": "Haushaltspolitik",
+        "name_en": "Fiscal Policy",
+        "description": "Bundeshaushalt, Finanzplanung und Schuldenbremse",
+        "typical_risk_level": "R5"
+      },
+      {
+        "id": "political_communication",
+        "name_de": "Politische Kommunikation",
+        "name_en": "Political Communication",
+        "description": "Regierungserklärungen und politische Grundsatzreden",
+        "typical_risk_level": "R4"
+      },
+      {
+        "id": "political_framework",
+        "name_de": "Politischer Rahmen",
+        "name_en": "Political Framework",
+        "description": "Koalitionsvertrag und strategische Rahmendokumente",
+        "typical_risk_level": "R4"
+      },
+      {
+        "id": "government_report",
+        "name_de": "Regierungsbericht",
+        "name_en": "Government Report",
+        "description": "Periodische Berichte an Bundestag und Öffentlichkeit",
+        "typical_risk_level": "R3"
+      },
+      {
+        "id": "parliamentary_accountability",
+        "name_de": "Parlamentarische Rechenschaft",
+        "name_en": "Parliamentary Accountability",
+        "description": "Antworten auf Anfragen und parlamentarische Kontrolle",
+        "typical_risk_level": "R3"
+      },
+      {
+        "id": "public_communication",
+        "name_de": "Öffentlichkeitsarbeit",
+        "name_en": "Public Communication",
+        "description": "Pressemitteilungen und offizielle Kommunikation des BPA",
+        "typical_risk_level": "R3"
+      },
+      {
+        "id": "foreign_affairs",
+        "name_de": "Auswärtige Angelegenheiten",
+        "name_en": "Foreign Affairs",
+        "description": "Völkerrechtliche Verträge und internationale Abkommen",
+        "typical_risk_level": "R5"
+      },
+      {
+        "id": "administrative",
+        "name_de": "Verwaltung",
+        "name_en": "Administration",
+        "description": "Verwaltungsvorschriften und interne Steuerungsinstrumente",
+        "typical_risk_level": "R3"
+      },
+      {
+        "id": "digital_governance",
+        "name_de": "Digitale Verwaltung",
+        "name_en": "Digital Governance",
+        "description": "OZG, Digitalstrategie und KI-Governance der Bundesverwaltung",
+        "typical_risk_level": "R3"
+      },
+      {
+        "id": "security_policy",
+        "name_de": "Sicherheitspolitik",
+        "name_en": "Security Policy",
+        "description": "Nationale Sicherheitsstrategie und Verteidigungspolitik",
+        "typical_risk_level": "R4"
+      },
+      {
+        "id": "european_affairs",
+        "name_de": "Europapolitik",
+        "name_en": "European Affairs",
+        "description": "EU-Ratspositionen und europapolitische Koordinierung",
+        "typical_risk_level": "R4"
+      }
+    ],
+    "sge_keywords": {
+      "domain_terms": [
+        "Bundesregierung",
+        "Bundeskanzler",
+        "Friedrich Merz",
+        "Bundeskabinett",
+        "Bundesministerium",
+        "Kabinettsbeschluss",
+        "Gesetzentwurf",
+        "Rechtsverordnung",
+        "Verwaltungsvorschrift",
+        "Grundgesetz",
+        "Bundesgesetzblatt",
+        "BGBl",
+        "Bundestag",
+        "Bundesrat",
+        "Vermittlungsausschuss",
+        "Geschäftsordnung",
+        "GOBReg",
+        "GGO",
+        "Regierungserklärung",
+        "Koalitionsvertrag",
+        "Bundeskanzleramt",
+        "BPA",
+        "Regierungssprecher",
+        "Föderalismus",
+        "Bund-Länder",
+        "Ministerkonferenz"
+      ],
+      "risk_indicators": [
+        "Verfassungswidrigkeit",
+        "Grundrechtsverletzung",
+        "Haushaltsvorbehalt",
+        "Schuldenbremse",
+        "Geheimhaltungsstufe",
+        "VS-Vertraulich",
+        "VS-Geheim",
+        "Sicherheitsrisiko",
+        "Terrorismusgefahr",
+        "Datenschutzverletzung",
+        "DSGVO-Verstoß",
+        "Diplomatische Krise",
+        "Souveränitätsverletzung",
+        "Wirtschaftskrise",
+        "Energieversorgungssicherheit",
+        "Desinformation",
+        "Fake News",
+        "Verfassungsschutz",
+        "Nachrichtendienste"
+      ],
+      "compliance_terms": [
+        "Grundgesetz",
+        "Art. 62-69 GG",
+        "Art. 20 GG",
+        "DSGVO",
+        "BDSG",
+        "IFG",
+        "UIG",
+        "EU AI Act",
+        "OZG 2.0",
+        "RegMoG",
+        "BBG",
+        "BeamtStG",
+        "Disziplinarrecht",
+        "Vergaberecht",
+        "Haushaltsrecht",
+        "BHO",
+        "Korruptionsprävention",
+        "Lobbyregister",
+        "Stabilitätspakt",
+        "Schuldenbremse Art. 109 GG",
+        "NATO-Vertrag",
+        "EU-Verträge",
+        "AEUV"
+      ],
+      "organizational_terms": [
+        "Bundeskanzler",
+        "Vizekanzler",
+        "Lars Klingbeil",
+        "Bundeskanzleramt",
+        "Chef BKAmt",
+        "Thorsten Frei",
+        "BMF",
+        "BMI",
+        "AA",
+        "BMVg",
+        "BMWK",
+        "BMBF",
+        "BMAS",
+        "BMG",
+        "BMEL",
+        "BMUV",
+        "BMWSB",
+        "BMJ",
+        "BPA",
+        "Regierungssprecher",
+        "Staatssekretär",
+        "Parlamentarischer Staatssekretär",
+        "Abteilungsleiter",
+        "Referatsleiter"
+      ]
+    },
+    "cross_references": {
+      "complementary": [
+        "bafin",
+        "bundesagentur-fuer-arbeit"
+      ],
+      "hierarchical": [],
+      "notes": "Die Bundesregierung ist die oberste Exekutive und setzt den politischen und rechtlichen Rahmen, in dem alle nachgeordneten Behörden (BaFin, BA, etc.) operieren. BaFin untersteht dem BMF, die Bundesagentur für Arbeit dem BMAS. Bundesregierung-ISP validiert Regierungsdokumente, die als Rechtsgrundlage für nachgeordnete ISP-Profile dienen. Die regulatorische Kaskade: Bundesregierung → Bundesbehörden → Landesbehörden."
     }
-  },
-
-  "detection_keywords": [
-    "Bundesregierung",
-    "Bundesministerium",
-    "Bundeskanzleramt",
-    "Bundesminister",
-    "Bundeskanzler",
-    "Bundesrepublik Deutschland",
-    "BMI", "BMWK", "BMBF", "BMF", "BMFSFJ", "BMG", "BMAS", "BMUV", "BMDV", "BMZ", "BMJ", "BMVg", "BMWSB",
-    "Kabinett",
-    "Gesetzentwurf",
-    "Regierungsentwurf",
-    "Bundesadler",
-    "Dienstsitz Berlin",
-    "Dienstsitz Bonn"
-  ],
-
-  "identity_license": {
-    "status": "model_only",
-    "scope": "no_official_identity",
-    "logo_allowed": false,
-    "seal_allowed": false,
-    "letterhead_allowed": false,
-    "disclaimer_required": true,
-    "disclaimer": {
-      "de": "Dieses Dokument wurde NICHT von der Bundesregierung erstellt oder autorisiert. Es enthält Bezüge zu einer realen Institution. Governance-Stufe: MEDIUM.",
-      "en": "This document was NOT created or authorized by the Federal Government of Germany. It contains references to a real institution. Governance level: MEDIUM.",
-      "pt": "Este documento NÃO foi criado ou autorizado pelo Governo Federal da Alemanha. Contém referências a uma instituição real. Nível de governança: MEDIUM."
-    }
-  },
-
-  "metadata_fields": {
-    "institution_name": {
-      "required": true,
-      "type": "string",
-      "description": "Name of the referenced federal institution or ministry"
-    },
-    "document_type": {
-      "required": true,
-      "type": "enum",
-      "values": ["policy", "communication", "report", "briefing", "analysis", "proposal", "correspondence"],
-      "description": "Classification of the document type"
-    },
-    "classification_level": {
-      "required": true,
-      "type": "enum",
-      "values": ["public", "internal", "restricted"],
-      "default": "internal",
-      "description": "Document classification level"
-    },
-    "intended_audience": {
-      "required": true,
-      "type": "enum",
-      "values": ["internal", "public", "inter-agency", "parliamentary", "cabinet"],
-      "description": "Primary target audience for the document"
-    },
-    "author_department": {
-      "required": true,
-      "type": "string",
-      "description": "Department or unit responsible for the document"
-    },
-    "version_number": {
-      "required": true,
-      "type": "string",
-      "default": "1.0",
-      "description": "Document version for change tracking"
-    },
-    "review_status": {
-      "required": true,
-      "type": "enum",
-      "values": ["draft", "under_review", "approved", "published", "archived"],
-      "default": "draft",
-      "description": "Current review and approval status"
-    }
-  },
-
-  "public_accountability": {
-    "transparency_level": {
-      "required": true,
-      "type": "enum",
-      "values": ["informational", "formal", "regulatory_context"],
-      "description": "Level of public transparency obligation"
-    },
-    "accountability_chain": {
-      "required": false,
-      "type": "string",
-      "description": "Chain of institutional responsibility for the document"
-    },
-    "parliamentary_relevance": {
-      "required": false,
-      "type": "boolean",
-      "default": false,
-      "description": "Whether the document has parliamentary reporting implications"
-    }
-  },
-
-  "governance_rules": {
-    "audit_trail": {
-      "enabled": true,
-      "granularity": "standard",
-      "description": "All document actions logged with timestamp and actor"
-    },
-    "version_control": {
-      "enabled": true,
-      "policy": "active",
-      "description": "All versions retained with change justification"
-    },
-    "watermark": {
-      "enabled": true,
-      "style": "discrete",
-      "text": "WINDI Governance | MEDIUM | Bundesregierung"
-    },
-    "ai_role": {
-      "permitted": ["documentation", "traceability", "process_governance", "drafting_assistance"],
-      "prohibited": ["autonomous_decision", "policy_creation_without_review", "identity_impersonation"],
-      "human_review_required": true,
-      "description": "AI assists documentation and governance. All policy decisions require human authorization."
-    },
-    "integrity_hash": {
-      "enabled": true,
-      "algorithm": "SHA-256",
-      "description": "Document integrity verification via cryptographic hash"
-    }
-  },
-
-  "risk_profile": {
-    "primary_risk": "reputational_and_political",
-    "secondary_risk": "legitimacy",
-    "data_sensitivity": "medium",
-    "public_impact": "high",
-    "mitigation_strategy": "Standardization, transparency, institutional identity protection, audit trail"
-  },
-
-  "windi_positioning": {
-    "de": "WINDI dient als Transparenz- und Dokumentationsschicht. WINDI trifft keine politischen Entscheidungen. WINDI schützt institutionelle Integrität.",
-    "en": "WINDI serves as transparency and documentation layer. WINDI makes no political decisions. WINDI protects institutional integrity.",
-    "pt": "WINDI serve como camada de transparência e documentação. WINDI não toma decisões políticas. WINDI protege a integridade institucional."
   }
 }

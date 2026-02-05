@@ -1,5 +1,5 @@
 {
-  "version": "2.2.0",
+  "version": "2.6.0",
   "policy_version": "WINDI-GOV-2.2.0",
   "policy_lineage": [
     {
@@ -37,11 +37,21 @@
       "event_logging": true,
       "proof_of_governance": "forensic_certificate",
       "metadata_fields": [
-        "institution", "date", "reference", "classification",
-        "author", "department", "version",
-        "submission_id", "config_hash", "integrity_hash"
+        "institution",
+        "date",
+        "reference",
+        "classification",
+        "author",
+        "department",
+        "version",
+        "submission_id",
+        "config_hash",
+        "integrity_hash"
       ],
-      "minimum_for_types": ["central_bank", "regulatory_authority"],
+      "minimum_for_types": [
+        "central_bank",
+        "regulatory_authority"
+      ],
       "policy_version_tracking": true
     },
     "MEDIUM": {
@@ -57,10 +67,18 @@
       "event_logging": true,
       "proof_of_governance": "governance_statement",
       "metadata_fields": [
-        "institution", "date", "reference", "classification",
-        "author", "department", "version"
+        "institution",
+        "date",
+        "reference",
+        "classification",
+        "author",
+        "department",
+        "version"
       ],
-      "minimum_for_types": ["government", "bank"],
+      "minimum_for_types": [
+        "government",
+        "bank"
+      ],
       "policy_version_tracking": true,
       "no_downgrade_rule": "MEDIUM documents cannot be downgraded to LOW when real institution is detected"
     },
@@ -77,49 +95,107 @@
       "event_logging": false,
       "proof_of_governance": "none",
       "metadata_fields": [],
-      "minimum_for_types": ["public_enterprise", "private_enterprise"],
+      "minimum_for_types": [
+        "public_enterprise",
+        "private_enterprise"
+      ],
       "policy_version_tracking": false,
       "auto_upgrade_trigger": "When real institution detected by Identity Detector, auto-upgrade to MEDIUM"
     }
   },
   "institutional_templates": {
     "carta_institucional": {
-      "name": { "de": "Institutionelles Schreiben", "en": "Institutional Letter", "pt": "Carta Institucional" },
+      "name": {
+        "de": "Institutionelles Schreiben",
+        "en": "Institutional Letter",
+        "pt": "Carta Institucional"
+      },
       "minimum_level": "MEDIUM",
-      "required_metadata": ["institution", "date", "reference", "author"],
+      "required_metadata": [
+        "institution",
+        "date",
+        "reference",
+        "author"
+      ],
       "identity_governance": true,
       "description": "Formal letter representing or addressed to an institution"
     },
     "parecer_tecnico": {
-      "name": { "de": "Technisches Gutachten", "en": "Technical Opinion", "pt": "Parecer Técnico" },
+      "name": {
+        "de": "Technisches Gutachten",
+        "en": "Technical Opinion",
+        "pt": "Parecer Técnico"
+      },
       "minimum_level": "MEDIUM",
-      "required_metadata": ["institution", "date", "reference", "author", "department"],
+      "required_metadata": [
+        "institution",
+        "date",
+        "reference",
+        "author",
+        "department"
+      ],
       "identity_governance": true,
       "description": "Technical assessment or opinion from an institutional authority"
     },
     "memorando_oficial": {
-      "name": { "de": "Offizielles Memorandum", "en": "Official Memorandum", "pt": "Memorando Oficial" },
+      "name": {
+        "de": "Offizielles Memorandum",
+        "en": "Official Memorandum",
+        "pt": "Memorando Oficial"
+      },
       "minimum_level": "MEDIUM",
-      "required_metadata": ["institution", "date", "classification", "author", "department"],
+      "required_metadata": [
+        "institution",
+        "date",
+        "classification",
+        "author",
+        "department"
+      ],
       "identity_governance": true,
       "description": "Internal official communication between institutional departments"
     },
     "nota_publica": {
-      "name": { "de": "Öffentliche Mitteilung", "en": "Public Notice", "pt": "Nota Pública" },
+      "name": {
+        "de": "Öffentliche Mitteilung",
+        "en": "Public Notice",
+        "pt": "Nota Pública"
+      },
       "minimum_level": "HIGH",
-      "required_metadata": ["institution", "date", "reference", "classification", "author"],
+      "required_metadata": [
+        "institution",
+        "date",
+        "reference",
+        "classification",
+        "author"
+      ],
       "identity_governance": true,
       "description": "Public-facing official notice or statement from an institution"
     },
     "relatorio_regulatorio": {
-      "name": { "de": "Regulierungsbericht", "en": "Regulatory Report", "pt": "Relatório Regulatório" },
+      "name": {
+        "de": "Regulierungsbericht",
+        "en": "Regulatory Report",
+        "pt": "Relatório Regulatório"
+      },
       "minimum_level": "HIGH",
-      "required_metadata": ["institution", "date", "reference", "classification", "author", "department", "version"],
+      "required_metadata": [
+        "institution",
+        "date",
+        "reference",
+        "classification",
+        "author",
+        "department",
+        "version"
+      ],
       "identity_governance": true,
       "description": "Report for regulatory compliance purposes"
     },
     "documento_geral": {
-      "name": { "de": "Allgemeines Dokument", "en": "General Document", "pt": "Documento Geral" },
+      "name": {
+        "de": "Allgemeines Dokument",
+        "en": "General Document",
+        "pt": "Documento Geral"
+      },
       "minimum_level": "LOW",
       "required_metadata": [],
       "identity_governance": false,

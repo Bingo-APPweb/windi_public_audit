@@ -1,0 +1,100 @@
+{
+  "version": "1.1",
+  "timestamp": "20260205_173342",
+  "scan_date": "2026-02-05T17:33:42.267302",
+  "target_dir": "/opt/windi/isp",
+  "two_stage_aware": true,
+  "scores": {
+    "phases": {
+      "1_Smart_Syntax": {
+        "status": "PASS",
+        "critical": 0,
+        "high": 0,
+        "warn": 0
+      },
+      "2_Jinja2_Parse": {
+        "status": "PASS",
+        "critical": 0,
+        "high": 0,
+        "warn": 0
+      },
+      "3_Module_Health": {
+        "status": "WARN",
+        "critical": 0,
+        "high": 1,
+        "warn": 1
+      },
+      "4_Render_Chain": {
+        "status": "PASS",
+        "critical": 0,
+        "high": 0,
+        "warn": 0
+      }
+    },
+    "overall_score": 87,
+    "total_critical": 0,
+    "total_high": 1,
+    "total_warn": 1,
+    "grade": "B"
+  },
+  "phases": {
+    "1_Smart_Syntax": [
+      {
+        "file": "/opt/windi/isp/deutsche-bahn/templates/form.html",
+        "line": 0,
+        "severity": "OK",
+        "pattern": "raw_blocks_present",
+        "desc": "Has 4 raw block(s) \u2014 two-stage pipeline \u2713",
+        "fix_hint": "Good: Mustache content is protected"
+      },
+      {
+        "file": "/opt/windi/isp/deutsche-bahn/templates/letter.html",
+        "line": 0,
+        "severity": "OK",
+        "pattern": "raw_blocks_present",
+        "desc": "Has 4 raw block(s) \u2014 two-stage pipeline \u2713",
+        "fix_hint": "Good: Mustache content is protected"
+      }
+    ],
+    "2_Jinja2_Parse": [
+      {
+        "file": "/opt/windi/isp/deutsche-bahn/components/footer.html",
+        "severity": "OK",
+        "desc": "Jinja2 parse successful"
+      },
+      {
+        "file": "/opt/windi/isp/deutsche-bahn/components/header.html",
+        "severity": "OK",
+        "desc": "Jinja2 parse successful"
+      },
+      {
+        "file": "/opt/windi/isp/deutsche-bahn/forms/transportauftrag.html",
+        "severity": "OK",
+        "desc": "Jinja2 parse successful"
+      },
+      {
+        "file": "/opt/windi/isp/deutsche-bahn/templates/form.html",
+        "severity": "OK",
+        "desc": "Jinja2 parse successful"
+      },
+      {
+        "file": "/opt/windi/isp/deutsche-bahn/templates/letter.html",
+        "severity": "OK",
+        "desc": "Jinja2 parse successful"
+      }
+    ],
+    "3_Module_Health": [
+      {
+        "severity": "HIGH",
+        "desc": "/opt/windi/isp not in sys.path",
+        "fix": "Add sys.path.insert(0, '/opt/windi/isp') to loader"
+      },
+      {
+        "severity": "LOW",
+        "desc": "Loader in two locations \u2014 verify active one"
+      }
+    ],
+    "4_Render_Chain": []
+  },
+  "integrity_hash": "b86e086eb22ff7ec"
+}

@@ -1,0 +1,512 @@
+{
+  "isp_profile": {
+    "metadata": {
+      "profile_id": "bundesagentur-fuer-arbeit",
+      "version": "1.0.0",
+      "created": "2026-02-05T18:48:01Z",
+      "governance_level": "MEDIUM",
+      "profile_type": "social_sensitive_institutional",
+      "windi_registry_version": "2.6.0",
+      "generator": "windi-isp-factory/v1.0",
+      "audit_hash": "173e45fc3e4fb26b07dff531bd3cb11957f295dc922818d7a6780ff91600b653"
+    },
+    "organization": {
+      "name_full": "Bundesagentur für Arbeit",
+      "name_short": "BA",
+      "legal_form": "Körperschaft des öffentlichen Rechts mit Selbstverwaltung",
+      "sector": "Arbeitsmarkt / Sozialversicherung / Öffentliche Verwaltung",
+      "employees": 110000,
+      "revenue_eur": "€47.8 Mrd. Haushalt (2025)",
+      "headquarters": "Nürnberg",
+      "description": "Die Bundesagentur für Arbeit (BA) ist die größte Bundesbehörde Deutschlands und Trägerin der gesetzlichen Arbeitslosenversicherung. Mit 150 Agenturen, 600 Niederlassungen, 300 Jobcentern und 100 Familienkassen verwaltet sie Arbeitslosengeld, Bürgergeld, Kindergeld, berufliche Weiterbildung und Arbeitsvermittlung für Millionen von Bürgerinnen und Bürgern.",
+      "relevance": "Als größte Bundesbehörde mit hochsensiblen Sozialdaten (SGB II/III/X) und direktem Einfluss auf das Leben von Millionen Leistungsbeziehenden ist die BA ein Schlüsselprofil für WINDI. Die Governance-Anforderungen sind besonders hoch wegen Sozialdatenschutz (§ 35 SGB I, §§ 67-85a SGB X), Bescheide mit unmittelbarer Rechtswirkung (Verwaltungsakte) und der massiven Digitalisierungsoffensive der BA.",
+      "regional_presence": [
+        "10 Regionaldirektionen: Berlin, Chemnitz, Düsseldorf, Frankfurt, Halle, Hannover, Kiel, Nürnberg, Saarbrücken, Stuttgart",
+        "150 Agenturen für Arbeit mit ca. 600 Niederlassungen bundesweit",
+        "300 Jobcenter (gemeinsame Einrichtungen mit Kommunen)",
+        "100 Familienkassen-Standorte",
+        "Hochschule der BA in Mannheim und Schwerin",
+        "IT-Systemhaus Nürnberg",
+        "BA-Service-Haus",
+        "Regionaldirektion Bayern (für Allgäu/Schwaben zuständig)"
+      ]
+    },
+    "governance": {
+      "level": "MEDIUM",
+      "identity_license_required": true,
+      "retention_years": 7,
+      "risk_domains": [
+        "Sozialdaten nach § 35 SGB I",
+        "Gesundheitsdaten (Reha, Schwerbehinderte, AU-Bescheinigungen)",
+        "Einkommensdaten und Vermögensverhältnisse",
+        "Familiendaten (Bedarfsgemeinschaft, Kindergeld)",
+        "Beschäftigungsdaten und Arbeitgeberdaten",
+        "Sanktionsdaten und Leistungsminderungen",
+        "Integrations- und Migrationsdaten (ZAV, Erwerbsmigration)",
+        "Minderjährigendaten (Kinderzuschlag, Berufsberatung)"
+      ],
+      "compliance_frameworks": [
+        "DSGVO",
+        "BDSG",
+        "SGB I §35 (Sozialdatenschutz)",
+        "SGB II (Bürgergeld/Grundsicherung)",
+        "SGB III (Arbeitsförderung)",
+        "SGB X (Verwaltungsverfahren, §§67-85a Sozialdatenschutz)",
+        "EU AI Act",
+        "NIS2 (IT-Infrastruktur kritisch)",
+        "BHO (Bundeshaushaltsordnung)",
+        "BFSG (Barrierefreiheitsstärkungsgesetz)",
+        "VwVfG (Verwaltungsverfahrensgesetz)",
+        "AGG (Allgemeines Gleichbehandlungsgesetz)"
+      ],
+      "sge_thresholds": {
+        "warn": 50,
+        "alert": 65,
+        "block": 75
+      }
+    },
+    "templates": [
+      {
+        "id": "TPL-BA-001",
+        "name_de": "Bewilligungsbescheid Arbeitslosengeld I",
+        "name_en": "Unemployment Benefit I Approval Notice",
+        "category": "leistungsbescheide",
+        "risk_level": "R3",
+        "description": "Verwaltungsakt zur Bewilligung von Arbeitslosengeld nach SGB III mit Berechnung, Anspruchsdauer und Zahlungsmodalitäten",
+        "required_fields": [
+          "leistungsempfaenger",
+          "versicherungsnummer",
+          "bemessungsentgelt",
+          "leistungssatz",
+          "anspruchsdauer",
+          "bewilligungszeitraum",
+          "zahlungsweg"
+        ],
+        "governance_notes": "Verwaltungsakt mit Rechtsmittelbelehrung. Sozialdaten nach §35 SGB I. Widerspruchsfrist 1 Monat."
+      },
+      {
+        "id": "TPL-BA-002",
+        "name_de": "Bewilligungsbescheid Bürgergeld (SGB II)",
+        "name_en": "Citizen's Benefit Approval Notice",
+        "category": "leistungsbescheide",
+        "risk_level": "R4",
+        "description": "Verwaltungsakt zur Bewilligung von Bürgergeld mit Regelbedarfen, KdU, Mehrbedarfen und Berechnungsbögen für die gesamte Bedarfsgemeinschaft",
+        "required_fields": [
+          "bedarfsgemeinschaft",
+          "regelbedarf",
+          "kosten_unterkunft_heizung",
+          "einkommen_anrechnung",
+          "bewilligungszeitraum",
+          "zahlbetrag"
+        ],
+        "governance_notes": "Höchste Sensibilität: Bedarfsgemeinschaftsdaten, Einkommensverhältnisse, Wohnsituation. Karenzzeit 12 Monate bei Erstantrag für KdU. DSGVO Art.9 relevant."
+      },
+      {
+        "id": "TPL-BA-003",
+        "name_de": "Kooperationsplan (ehem. Eingliederungsvereinbarung)",
+        "name_en": "Cooperation Plan (formerly Integration Agreement)",
+        "category": "eingliederung",
+        "risk_level": "R3",
+        "description": "Seit Juli 2023 ersetzt der Kooperationsplan die Eingliederungsvereinbarung. Dokumentiert Potenzialanalyse, Eingliederungsziele, Eigenbemühungen und Fördermaßnahmen",
+        "required_fields": [
+          "potenzialanalyse",
+          "eingliederungsziel",
+          "eigenbemuehungen",
+          "foerdermassnahmen",
+          "zwischenziele",
+          "prueftermin"
+        ],
+        "governance_notes": "Kein öffentlich-rechtlicher Vertrag mehr (anders als EinV). Schlichtungsverfahren bei Meinungsverschiedenheiten. Keine direkten Sanktionen aus Kooperationsplan."
+      },
+      {
+        "id": "TPL-BA-004",
+        "name_de": "Ablehnungsbescheid",
+        "name_en": "Rejection Notice",
+        "category": "leistungsbescheide",
+        "risk_level": "R3",
+        "description": "Verwaltungsakt zur Ablehnung eines Leistungsantrags nach SGB II oder SGB III mit Begründung und Rechtsmittelbelehrung",
+        "required_fields": [
+          "antragsteller",
+          "antragsdatum",
+          "ablehnungsgrund",
+          "rechtsgrundlage",
+          "rechtsbehelfsbelehrung"
+        ],
+        "governance_notes": "Muss bestimmt und begründet sein (§§33, 35 SGB X). Widerspruchsfrist 1 Monat. Hohe Fehlerquote bei Bescheiden dokumentiert."
+      },
+      {
+        "id": "TPL-BA-005",
+        "name_de": "Sanktions-/Leistungsminderungsbescheid",
+        "name_en": "Sanction/Benefit Reduction Notice",
+        "category": "leistungsbescheide",
+        "risk_level": "R5",
+        "description": "Verwaltungsakt zur Minderung von Bürgergeld bei Pflichtverletzungen nach §§31-32 SGB II mit Anhörung und Begründung",
+        "required_fields": [
+          "pflichtverletzung",
+          "anhoerung_datum",
+          "minderungsbetrag",
+          "minderungszeitraum",
+          "rechtsgrundlage",
+          "rechtsbehelfsbelehrung"
+        ],
+        "governance_notes": "Höchstes Risiko R5: Existenzsichernde Leistungen betroffen. BVerfG-Urteil 2019 begrenzt Sanktionen. Vorherige Anhörung zwingend (§24 SGB X). Kosten der Unterkunft nicht minderbar."
+      },
+      {
+        "id": "TPL-BA-006",
+        "name_de": "Bildungsgutschein",
+        "name_en": "Education Voucher",
+        "category": "foerderung",
+        "risk_level": "R2",
+        "description": "Förderzusage für berufliche Weiterbildung nach §81 SGB III. Berechtigt zur Teilnahme an zertifizierten Maßnahmen bei zugelassenen Trägern",
+        "required_fields": [
+          "bildungsziel",
+          "maßnahme_art",
+          "maßnahme_dauer",
+          "traeger",
+          "gueltigkeitszeitraum",
+          "kostenuebernahme"
+        ],
+        "governance_notes": "Budget €3.4 Mrd. (2025) für Weiterbildung. Bildungsgutschein 3 Monate gültig. Nur AZAV-zertifizierte Träger."
+      },
+      {
+        "id": "TPL-BA-007",
+        "name_de": "Aktivierungs- und Vermittlungsgutschein (AVGS)",
+        "name_en": "Activation and Placement Voucher",
+        "category": "foerderung",
+        "risk_level": "R2",
+        "description": "Gutschein für Maßnahmen bei einem privaten Arbeitsvermittler oder für Coaching/Aktivierungsmaßnahmen",
+        "required_fields": [
+          "massnahme_art",
+          "massnahme_ziel",
+          "gueltigkeitszeitraum",
+          "traeger_anforderungen"
+        ],
+        "governance_notes": "Verschiedene Varianten (MAT, MAG, MPAV). Nachweispflicht der Maßnahmedurchführung."
+      },
+      {
+        "id": "TPL-BA-008",
+        "name_de": "Aufhebungs- und Erstattungsbescheid",
+        "name_en": "Revocation and Reimbursement Notice",
+        "category": "leistungsbescheide",
+        "risk_level": "R4",
+        "description": "Verwaltungsakt zur Aufhebung eines Bewilligungsbescheids und Rückforderung überzahlter Leistungen nach §§45-50 SGB X",
+        "required_fields": [
+          "ursprungsbescheid",
+          "aufhebungsgrund",
+          "erstattungsbetrag",
+          "erstattungszeitraum",
+          "rechtsgrundlage",
+          "vertrauensschutz"
+        ],
+        "governance_notes": "Vertrauensschutzprüfung erforderlich (§45 SGB X). Rückforderung kann Existenz gefährden. Ratenzahlung möglich. Verjährung beachten."
+      },
+      {
+        "id": "TPL-BA-009",
+        "name_de": "Kindergeldbescheid (Familienkasse)",
+        "name_en": "Child Benefit Notice",
+        "category": "familienkasse",
+        "risk_level": "R3",
+        "description": "Bewilligung oder Ablehnung von Kindergeld und Kinderzuschlag durch die Familienkasse der BA",
+        "required_fields": [
+          "kindergeldberechtigter",
+          "kinder_daten",
+          "anspruchszeitraum",
+          "kindergeld_hoehe",
+          "kinderzuschlag"
+        ],
+        "governance_notes": "Minderjährigendaten besonders geschützt. DSGVO Art.8 beachten. Familienkasse als besondere Dienststelle der BA."
+      },
+      {
+        "id": "TPL-BA-010",
+        "name_de": "Widerspruchsbescheid",
+        "name_en": "Objection Decision Notice",
+        "category": "rechtsbehelfe",
+        "risk_level": "R3",
+        "description": "Entscheidung über einen eingelegten Widerspruch gegen einen Verwaltungsakt. Kann den Ausgangsbescheid bestätigen, ändern oder aufheben",
+        "required_fields": [
+          "ausgangsbescheid",
+          "widerspruchsbegruendung",
+          "pruefungsergebnis",
+          "entscheidung",
+          "rechtsbehelfsbelehrung_klage"
+        ],
+        "governance_notes": "Widerspruchsquote bei Jobcentern ca. 1.8%. Klagefrist nach Widerspruchsbescheid 1 Monat. Sozialgericht zuständig."
+      },
+      {
+        "id": "TPL-BA-011",
+        "name_de": "Arbeitsmarktbericht / Statistikbericht",
+        "name_en": "Labor Market Report / Statistical Report",
+        "category": "berichte",
+        "risk_level": "R1",
+        "description": "Periodischer Bericht zur Arbeitsmarktlage mit Arbeitslosenquote, Beschäftigungsentwicklung, offene Stellen und Branchenanalysen",
+        "required_fields": [
+          "berichtszeitraum",
+          "arbeitslosenquote",
+          "beschaeftigtenzahl",
+          "offene_stellen",
+          "regionalvergleich"
+        ],
+        "governance_notes": "Öffentlich zugänglich. Statistikpflicht nach §281 SGB III. Keine personenbezogenen Daten. IAB als wissenschaftliche Grundlage."
+      },
+      {
+        "id": "TPL-BA-012",
+        "name_de": "Fachliche Weisung / Geschäftsanweisung",
+        "name_en": "Technical Directive / Operational Instruction",
+        "category": "intern",
+        "risk_level": "R2",
+        "description": "Interne Verwaltungsvorschrift zur einheitlichen Rechtsauslegung und Verfahrenssteuerung in Agenturen und Jobcentern",
+        "required_fields": [
+          "rechtsgrundlage",
+          "geltungsbereich",
+          "inkrafttreten",
+          "weisungsinhalt",
+          "zustaendigkeit"
+        ],
+        "governance_notes": "Bindend für alle nachgeordneten Dienststellen. Regelmäßige Aktualisierung bei Gesetzesänderungen. Öffentlich einsehbar auf arbeitsagentur.de."
+      },
+      {
+        "id": "TPL-BA-013",
+        "name_de": "Arbeitsbescheinigung nach §312 SGB III",
+        "name_en": "Employment Certificate",
+        "category": "bescheinigungen",
+        "risk_level": "R2",
+        "description": "Vom Arbeitgeber auszustellende Bescheinigung über das Beschäftigungsverhältnis zur Berechnung des Arbeitslosengeldes",
+        "required_fields": [
+          "arbeitnehmer",
+          "arbeitgeber",
+          "beschaeftigungszeitraum",
+          "arbeitsentgelt",
+          "kuendigungsgrund",
+          "arbeitszeit"
+        ],
+        "governance_notes": "Arbeitgeber gesetzlich verpflichtet (§312 SGB III). Grundlage für ALG-Berechnung. Einkommensdaten besonders schützenswert."
+      },
+      {
+        "id": "TPL-BA-014",
+        "name_de": "Maßnahmebeschreibung Weiterbildung",
+        "name_en": "Training Measure Description",
+        "category": "foerderung",
+        "risk_level": "R1",
+        "description": "Beschreibung einer beruflichen Weiterbildungsmaßnahme mit Inhalten, Dauer, Zertifizierung und AZAV-Zulassung",
+        "required_fields": [
+          "massnahme_titel",
+          "bildungsziel",
+          "inhalte",
+          "dauer",
+          "azav_zulassung",
+          "traeger",
+          "abschluss"
+        ],
+        "governance_notes": "Muss AZAV-zertifiziert sein. Budget 2025: €3.4 Mrd. Ab 2025 auch FbW für SGB-II-Leistungsberechtigte durch BA finanziert."
+      },
+      {
+        "id": "TPL-BA-015",
+        "name_de": "Veränderungsmitteilung (VÄM)",
+        "name_en": "Change Notification Form",
+        "category": "formulare",
+        "risk_level": "R2",
+        "description": "Formular zur Mitteilung von Änderungen der persönlichen oder wirtschaftlichen Verhältnisse während des Leistungsbezugs",
+        "required_fields": [
+          "leistungsempfaenger",
+          "bg_nummer",
+          "aenderungsart",
+          "aenderungsdatum",
+          "nachweise"
+        ],
+        "governance_notes": "Mitwirkungspflicht nach §60 SGB I. Nichtmeldung kann zu Rückforderungen führen. Online via jobcenter.digital möglich."
+      }
+    ],
+    "document_categories": [
+      {
+        "id": "leistungsbescheide",
+        "name_de": "Leistungsbescheide",
+        "name_en": "Benefit Notices",
+        "description": "Verwaltungsakte über Bewilligung, Ablehnung, Änderung oder Aufhebung von Sozialleistungen",
+        "typical_risk_level": "R3-R5"
+      },
+      {
+        "id": "eingliederung",
+        "name_de": "Eingliederungsdokumente",
+        "name_en": "Integration Documents",
+        "description": "Dokumente zur Arbeitsmarktintegration: Kooperationspläne, Potenzialanalysen, Vermittlungsvorschläge",
+        "typical_risk_level": "R2-R3"
+      },
+      {
+        "id": "foerderung",
+        "name_de": "Förderdokumente",
+        "name_en": "Funding Documents",
+        "description": "Bildungsgutscheine, AVGS, Maßnahmebeschreibungen und Weiterbildungsdokumente",
+        "typical_risk_level": "R1-R2"
+      },
+      {
+        "id": "familienkasse",
+        "name_de": "Familienkasse-Dokumente",
+        "name_en": "Family Benefits Office Documents",
+        "description": "Kindergeld- und Kinderzuschlagbescheide, Anträge und Nachweise",
+        "typical_risk_level": "R3"
+      },
+      {
+        "id": "rechtsbehelfe",
+        "name_de": "Rechtsbehelfe und Widersprüche",
+        "name_en": "Legal Remedies and Objections",
+        "description": "Widerspruchsbescheide, Anhörungsschreiben, Klageverfahren",
+        "typical_risk_level": "R3-R4"
+      },
+      {
+        "id": "berichte",
+        "name_de": "Berichte und Statistiken",
+        "name_en": "Reports and Statistics",
+        "description": "Arbeitsmarktberichte, Haushaltspläne, IAB-Forschungsberichte",
+        "typical_risk_level": "R0-R1"
+      },
+      {
+        "id": "intern",
+        "name_de": "Interne Weisungen",
+        "name_en": "Internal Directives",
+        "description": "Fachliche Weisungen, Geschäftsanweisungen, Handlungsempfehlungen für Agenturen und Jobcenter",
+        "typical_risk_level": "R1-R2"
+      },
+      {
+        "id": "bescheinigungen",
+        "name_de": "Bescheinigungen",
+        "name_en": "Certificates",
+        "description": "Arbeitsbescheinigungen, Verdienstbescheinigungen, Leistungsnachweise",
+        "typical_risk_level": "R2"
+      },
+      {
+        "id": "formulare",
+        "name_de": "Formulare und Anträge",
+        "name_en": "Forms and Applications",
+        "description": "Antragsformulare (HA, WBA, VÄM), Anlagen (EK, EKS, VM, KI, KDU) und Ausfüllhinweise",
+        "typical_risk_level": "R2"
+      }
+    ],
+    "sge_keywords": {
+      "domain_terms": [
+        "Arbeitslosengeld",
+        "Bürgergeld",
+        "Arbeitsförderung",
+        "Arbeitsvermittlung",
+        "Berufsberatung",
+        "Weiterbildung",
+        "Bildungsgutschein",
+        "Aktivierungs- und Vermittlungsgutschein",
+        "AVGS",
+        "Kurzarbeitergeld",
+        "Insolvenzgeld",
+        "Kindergeld",
+        "Kinderzuschlag",
+        "Bedarfsgemeinschaft",
+        "Regelbedarf",
+        "Kosten der Unterkunft",
+        "Mehrbedarf",
+        "Eingliederungsleistung",
+        "Kooperationsplan",
+        "Potenzialanalyse",
+        "Fachkräftesicherung",
+        "Qualifizierung",
+        "Berufsinformationszentrum",
+        "Erwerbsmigration",
+        "Rehabilitation",
+        "Schwerbehinderte",
+        "Teilhabe",
+        "Jobcenter",
+        "Agentur für Arbeit",
+        "Regionaldirektion",
+        "Familienkasse"
+      ],
+      "risk_indicators": [
+        "Leistungsminderung",
+        "Sanktion",
+        "Pflichtverletzung",
+        "Meldeversäumnis",
+        "Sperrzeiten",
+        "Überzahlung",
+        "Rückforderung",
+        "Aufhebung",
+        "Erstattungspflicht",
+        "Hilfebedürftigkeit",
+        "Existenzsicherung",
+        "Vertrauensschutz",
+        "Mitwirkungspflicht",
+        "Eingliederungspflicht",
+        "Zumutbarkeit",
+        "Rechtswidrigkeit",
+        "vorläufige Bewilligung",
+        "Anrechnung",
+        "Vermögensanrechnung",
+        "Einkommensanrechnung",
+        "Untätigkeitsklage",
+        "Datenmissbrauch",
+        "unbefugter Zugriff",
+        "Identitätsbetrug"
+      ],
+      "compliance_terms": [
+        "SGB II",
+        "SGB III",
+        "SGB X",
+        "SGB I §35",
+        "DSGVO",
+        "BDSG",
+        "Sozialdatenschutz",
+        "Sozialgeheimnis",
+        "Verwaltungsakt",
+        "Rechtsmittelbelehrung",
+        "Widerspruchsverfahren",
+        "Anhörung §24 SGB X",
+        "Bestandskraft",
+        "Rücknahme §44 SGB X",
+        "Aufhebung §45 SGB X",
+        "Erstattung §50 SGB X",
+        "VwVfG",
+        "AGG",
+        "AZAV",
+        "BHO",
+        "EU AI Act",
+        "NIS2",
+        "BFSG",
+        "Barrierefreiheit",
+        "Amtsermittlungsgrundsatz",
+        "Verhältnismäßigkeit",
+        "BVerfG-Sanktionsurteil"
+      ],
+      "organizational_terms": [
+        "Bundesagentur für Arbeit",
+        "BA",
+        "Vorstand",
+        "Verwaltungsrat",
+        "Andrea Nahles",
+        "Regionaldirektion",
+        "Agentur für Arbeit",
+        "Jobcenter",
+        "gemeinsame Einrichtung",
+        "zugelassener kommunaler Träger",
+        "Optionskommune",
+        "Familienkasse",
+        "IT-Systemhaus",
+        "IAB",
+        "ZAV",
+        "BA-Service-Haus",
+        "Hochschule der BA",
+        "Arbeitgeber-Service",
+        "Eingangszone",
+        "Service Center",
+        "Operativer Service",
+        "Technischer Beratungsdienst",
+        "EURES",
+        "Euroguidance",
+        "BMAS",
+        "HFA Alliance"
+      ]
+    },
+    "cross_references": {
+      "complementary": [
+        "bundesregierung"
+      ],
+      "hierarchical": [
+        "bundesregierung"
+      ],
+      "notes": "BA unterliegt Rechtsaufsicht des BMAS (Bundesministerium für Arbeit und Soziales). Komplementär zur Bundesregierung als nachgeordnete Körperschaft. BA-Haushalt ist eigenständig (Beitragsfinanzierung), aber Jobcenter werden teils aus Bundeshaushalt finanziert (Eingliederungstitel Kap. 1101)."
+    }
+  }
+}

@@ -1,0 +1,477 @@
+{
+  "isp_profile": {
+    "metadata": {
+      "profile_id": "bis-regulatory",
+      "version": "1.0.0",
+      "created": "2026-02-05T19:07:28Z",
+      "governance_level": "HIGH",
+      "profile_type": "international_regulatory_authority",
+      "windi_registry_version": "2.6.0",
+      "generator": "windi-isp-factory/v1.0",
+      "audit_hash": "39320de88f9600670f0f356537dd6aac1393a75b3cc5eecec8eef646540acac9"
+    },
+    "organization": {
+      "name_full": "Bank for International Settlements",
+      "name_short": "BIS",
+      "legal_form": "Internationale Organisation (sui generis, Völkerrecht)",
+      "sector": "Internationale Finanzregulierung und Zentralbankwesen",
+      "employees": 1000,
+      "revenue_eur": "~€700M (Bilanzgewinn variabel)",
+      "headquarters": "Basel, Schweiz",
+      "description": "Die Bank für Internationalen Zahlungsausgleich (BIZ) ist die älteste internationale Finanzorganisation (gegründet 1930). Sie dient als Hub für 63 Zentralbanken und fördert internationale Währungs- und Finanzstabilität durch den Basler Prozess, Forschung und Bankdienstleistungen für Zentralbanken.",
+      "relevance": "BIS setzt globale Bankenstandards (Basel III/IV), beherbergt das CPMI und den Basler Ausschuss. Jedes Dokument mit BIS-Referenz hat systemisches Gewicht für die gesamte Finanzindustrie. WINDI-Governance muss höchste Integrität bei BIS-referenzierten Dokumenten gewährleisten.",
+      "regional_presence": [
+        "Basel (Hauptsitz)",
+        "Hongkong SAR (Repräsentanz)",
+        "Mexiko-Stadt (Repräsentanz)",
+        "BIS Innovation Hub: Basel, Hongkong, Singapur, London, Stockholm, Toronto, Frankfurt"
+      ]
+    },
+    "governance": {
+      "level": "HIGH",
+      "identity_license_required": true,
+      "retention_years": 10,
+      "risk_domains": [
+        "Systemisches Finanzrisiko",
+        "Geldpolitische Stabilität",
+        "Zahlungsverkehr und Marktinfrastruktur",
+        "Bankenaufsicht und Regulierung",
+        "Cybersicherheit Finanzsektor",
+        "Digitale Vermögenswerte und CBDC",
+        "Klimabezogene Finanzrisiken"
+      ],
+      "compliance_frameworks": [
+        "Basel III / Basel IV",
+        "CPMI-IOSCO Principles for FMIs",
+        "FSB Key Attributes",
+        "DORA (EU) 2022/2554",
+        "EU AI Act",
+        "DSGVO",
+        "ISO 27001",
+        "BIS Governance Framework"
+      ],
+      "sge_thresholds": {
+        "warn": 40,
+        "alert": 60,
+        "block": 80
+      }
+    },
+    "templates": [
+      {
+        "id": "TPL-BIS-001",
+        "name_de": "Basler Konsultativpapier",
+        "name_en": "Basel Consultative Document",
+        "category": "regulatory_standard",
+        "risk_level": "R5",
+        "description": "Offizielle Konsultationsdokumente des Basler Ausschusses für Bankenaufsicht mit regulatorischen Vorschlägen",
+        "required_fields": [
+          "title",
+          "committee",
+          "consultation_period",
+          "bcbs_reference"
+        ],
+        "governance_notes": "Höchste SGE-Prüfung. Jede Terminologie muss exakt BCBS-Standards entsprechen. Falsche Begriffe können regulatorische Fehlinterpretationen verursachen."
+      },
+      {
+        "id": "TPL-BIS-002",
+        "name_de": "Regulatorischer Standard (Endgültig)",
+        "name_en": "Final Regulatory Standard",
+        "category": "regulatory_standard",
+        "risk_level": "R5",
+        "description": "Endgültige regulatorische Standards und Rahmenwerke des BCBS mit bindender Wirkung für Mitgliedsjurisdiktionen",
+        "required_fields": [
+          "title",
+          "framework_reference",
+          "implementation_date",
+          "jurisdictions"
+        ],
+        "governance_notes": "R5-Maximum. Verbindliche Standards — jede Abweichung vom Original muss als solche gekennzeichnet werden. Identity License REQUIRED."
+      },
+      {
+        "id": "TPL-BIS-003",
+        "name_de": "BIS-Quartalsbericht",
+        "name_en": "BIS Quarterly Review",
+        "category": "research_publication",
+        "risk_level": "R4",
+        "description": "Vierteljährliche Analyse internationaler Banken- und Finanzmärkte mit statistischen Daten und Sonderbeiträgen",
+        "required_fields": [
+          "quarter",
+          "year",
+          "statistical_annex",
+          "special_features"
+        ],
+        "governance_notes": "Statistische Daten müssen verifiziert werden. Zitate aus dem BIS Quarterly Review haben hohes Gewicht in der Finanzbranche."
+      },
+      {
+        "id": "TPL-BIS-004",
+        "name_de": "BIS-Jahresbericht",
+        "name_en": "BIS Annual Report",
+        "category": "institutional_report",
+        "risk_level": "R4",
+        "description": "Offizieller Jahresbericht der BIZ mit wirtschaftlicher Analyse, Aktivitätenbericht und Finanzergebnis",
+        "required_fields": [
+          "fiscal_year",
+          "gm_statement",
+          "economic_chapters",
+          "financial_statements"
+        ],
+        "governance_notes": "Institutionelles Schlüsseldokument. GM-Statement und Finanzdaten erfordern höchste Genauigkeit."
+      },
+      {
+        "id": "TPL-BIS-005",
+        "name_de": "Arbeitspapier (BIS Working Paper)",
+        "name_en": "BIS Working Paper",
+        "category": "research_publication",
+        "risk_level": "R3",
+        "description": "Forschungspapiere der BIZ-Mitarbeiter zu Geldpolitik, Finanzstabilität und Regulierungsthemen",
+        "required_fields": [
+          "authors",
+          "abstract",
+          "jel_codes",
+          "working_paper_number"
+        ],
+        "governance_notes": "Forschungsmeinungen der Autoren, nicht offizielle BIS-Position — Disclaimer obligatorisch."
+      },
+      {
+        "id": "TPL-BIS-006",
+        "name_de": "CPMI-Bericht",
+        "name_en": "CPMI Report",
+        "category": "committee_publication",
+        "risk_level": "R5",
+        "description": "Berichte und Standards des Committee on Payments and Market Infrastructures zu Zahlungssystemen und Marktinfrastrukturen",
+        "required_fields": [
+          "committee",
+          "report_type",
+          "pfmi_reference",
+          "member_jurisdictions"
+        ],
+        "governance_notes": "CPMI-IOSCO Standards haben quasi-regulatorische Bindungswirkung. Höchste Sorgfalt bei Terminologie."
+      },
+      {
+        "id": "TPL-BIS-007",
+        "name_de": "FSI-Publikation",
+        "name_en": "FSI Publication",
+        "category": "education_publication",
+        "risk_level": "R3",
+        "description": "Financial Stability Institute Insights, Occasional Papers und Ausbildungsmaterialien für Aufsichtsbehörden",
+        "required_fields": [
+          "fsi_type",
+          "topic",
+          "target_audience",
+          "policy_relevance"
+        ],
+        "governance_notes": "Bildungsmaterial für Aufseher — muss fachlich korrekt, aber verständlich sein."
+      },
+      {
+        "id": "TPL-BIS-008",
+        "name_de": "Innovation Hub Bericht",
+        "name_en": "Innovation Hub Report",
+        "category": "innovation_publication",
+        "risk_level": "R3",
+        "description": "Berichte des BIS Innovation Hub zu CBDC, DeFi, SupTech, RegTech und anderen Fintech-Innovationen",
+        "required_fields": [
+          "hub_centre",
+          "project_name",
+          "technology_area",
+          "findings"
+        ],
+        "governance_notes": "Innovationsberichte mit experimentellem Charakter — klare Abgrenzung von regulatorischen Standards."
+      },
+      {
+        "id": "TPL-BIS-009",
+        "name_de": "Statistische Veröffentlichung",
+        "name_en": "Statistical Publication",
+        "category": "statistics",
+        "risk_level": "R4",
+        "description": "Internationale Banken-, Derivate- und Zahlungsstatistiken der BIZ (IBS, OTC-Derivate, CPMI-Red Book)",
+        "required_fields": [
+          "dataset",
+          "reporting_period",
+          "methodology_reference",
+          "coverage"
+        ],
+        "governance_notes": "Statistische Integrität ist essentiell. Daten werden global von Zentralbanken und Regulierern referenziert."
+      },
+      {
+        "id": "TPL-BIS-010",
+        "name_de": "Basler Ausschuss Leitlinien",
+        "name_en": "Basel Committee Guidelines",
+        "category": "regulatory_guidance",
+        "risk_level": "R4",
+        "description": "Nicht-bindende Leitlinien und Best Practices des BCBS zur Ergänzung regulatorischer Standards",
+        "required_fields": [
+          "guideline_number",
+          "supersedes",
+          "related_standards",
+          "effective_date"
+        ],
+        "governance_notes": "Leitlinien sind nicht bindend, haben aber starke Signalwirkung. Unterschied zu Standards muss klar kommuniziert werden."
+      },
+      {
+        "id": "TPL-BIS-011",
+        "name_de": "GHOS-Kommuniqué",
+        "name_en": "GHOS Communiqué",
+        "category": "governance_communication",
+        "risk_level": "R5",
+        "description": "Offizielle Kommuniqués der Group of Central Bank Governors and Heads of Supervision nach Sitzungen",
+        "required_fields": [
+          "meeting_date",
+          "key_decisions",
+          "endorsed_standards",
+          "participants"
+        ],
+        "governance_notes": "Höchste Governance-Ebene der BIZ. GHOS-Entscheidungen setzen regulatorische Richtung. Absolute Genauigkeit erforderlich."
+      },
+      {
+        "id": "TPL-BIS-012",
+        "name_de": "Green Bond Framework",
+        "name_en": "BIS Green Bond Framework",
+        "category": "sustainable_finance",
+        "risk_level": "R3",
+        "description": "BIZ-Rahmenwerk für grüne Anleihen und nachhaltige Finanzierungsinstrumente der Zentralbanken",
+        "required_fields": [
+          "framework_version",
+          "eligible_assets",
+          "reporting_criteria",
+          "verification"
+        ],
+        "governance_notes": "Nachhaltigkeitsrahmen mit wachsender regulatorischer Bedeutung. Taxonomie-Konformität prüfen."
+      },
+      {
+        "id": "TPL-BIS-013",
+        "name_de": "Rundschreiben an Zentralbanken",
+        "name_en": "Circular to Central Banks",
+        "category": "institutional_communication",
+        "risk_level": "R4",
+        "description": "Offizielle Rundschreiben und Mitteilungen der BIZ an ihre Mitglieds-Zentralbanken",
+        "required_fields": [
+          "circular_number",
+          "addressees",
+          "subject",
+          "action_required"
+        ],
+        "governance_notes": "Interne institutionelle Kommunikation mit potenziell marktbewegender Wirkung."
+      },
+      {
+        "id": "TPL-BIS-014",
+        "name_de": "Rede des Generaldirektors",
+        "name_en": "General Manager Speech",
+        "category": "public_communication",
+        "risk_level": "R4",
+        "description": "Offizielle Reden des BIZ-Generaldirektors bei internationalen Foren und Konferenzen",
+        "required_fields": [
+          "speaker",
+          "event",
+          "date",
+          "key_messages"
+        ],
+        "governance_notes": "GM-Reden setzen Ton der internationalen Geldpolitik-Debatte. Jedes Wort wird von Märkten analysiert."
+      },
+      {
+        "id": "TPL-BIS-015",
+        "name_de": "CBDC-Forschungsbericht",
+        "name_en": "CBDC Research Report",
+        "category": "innovation_publication",
+        "risk_level": "R4",
+        "description": "Forschungsberichte zu Central Bank Digital Currencies — Architektur, Design und Pilotprojekte (Project Helvetia, mBridge etc.)",
+        "required_fields": [
+          "project_name",
+          "participating_central_banks",
+          "technology_stack",
+          "findings",
+          "policy_implications"
+        ],
+        "governance_notes": "CBDC-Forschung hat geopolitische Dimension. Technische Genauigkeit und politische Neutralität sind essentiell."
+      }
+    ],
+    "document_categories": [
+      {
+        "id": "regulatory_standard",
+        "name_de": "Regulatorischer Standard",
+        "name_en": "Regulatory Standard",
+        "description": "Bindende und quasi-bindende Standards des BCBS",
+        "typical_risk_level": "R5"
+      },
+      {
+        "id": "research_publication",
+        "name_de": "Forschungspublikation",
+        "name_en": "Research Publication",
+        "description": "Working Papers, Quartalsberichte und analytische Publikationen",
+        "typical_risk_level": "R3"
+      },
+      {
+        "id": "committee_publication",
+        "name_de": "Ausschuss-Publikation",
+        "name_en": "Committee Publication",
+        "description": "Berichte und Standards der BIS-gehosteten Ausschüsse (CPMI, FSB, BCBS)",
+        "typical_risk_level": "R5"
+      },
+      {
+        "id": "institutional_report",
+        "name_de": "Institutioneller Bericht",
+        "name_en": "Institutional Report",
+        "description": "Jahresberichte und institutionelle Dokumente der BIZ",
+        "typical_risk_level": "R4"
+      },
+      {
+        "id": "education_publication",
+        "name_de": "Bildungspublikation",
+        "name_en": "Education Publication",
+        "description": "FSI-Materialien und Ausbildungsdokumente für Aufsichtsbehörden",
+        "typical_risk_level": "R3"
+      },
+      {
+        "id": "innovation_publication",
+        "name_de": "Innovationspublikation",
+        "name_en": "Innovation Publication",
+        "description": "BIS Innovation Hub Berichte zu CBDC, FinTech, SupTech",
+        "typical_risk_level": "R3"
+      },
+      {
+        "id": "statistics",
+        "name_de": "Statistik",
+        "name_en": "Statistics",
+        "description": "Internationale Banken- und Finanzstatistiken",
+        "typical_risk_level": "R4"
+      },
+      {
+        "id": "regulatory_guidance",
+        "name_de": "Regulatorische Leitlinien",
+        "name_en": "Regulatory Guidance",
+        "description": "Nicht-bindende Leitlinien und Best Practices",
+        "typical_risk_level": "R4"
+      },
+      {
+        "id": "governance_communication",
+        "name_de": "Governance-Kommunikation",
+        "name_en": "Governance Communication",
+        "description": "GHOS-Kommuniqués und Governance-Entscheidungen",
+        "typical_risk_level": "R5"
+      },
+      {
+        "id": "sustainable_finance",
+        "name_de": "Nachhaltige Finanzen",
+        "name_en": "Sustainable Finance",
+        "description": "Green Bond Frameworks und ESG-bezogene Publikationen",
+        "typical_risk_level": "R3"
+      },
+      {
+        "id": "institutional_communication",
+        "name_de": "Institutionelle Kommunikation",
+        "name_en": "Institutional Communication",
+        "description": "Rundschreiben und offizielle Mitteilungen",
+        "typical_risk_level": "R4"
+      },
+      {
+        "id": "public_communication",
+        "name_de": "Öffentliche Kommunikation",
+        "name_en": "Public Communication",
+        "description": "Reden, Pressemitteilungen und öffentliche Stellungnahmen",
+        "typical_risk_level": "R4"
+      }
+    ],
+    "sge_keywords": {
+      "domain_terms": [
+        "Basel III",
+        "Basel IV",
+        "BCBS",
+        "Basler Ausschuss",
+        "Zentralbank",
+        "Central Bank",
+        "Geldpolitik",
+        "Monetary Policy",
+        "Finanzstabilität",
+        "Financial Stability",
+        "Zahlungsverkehr",
+        "CPMI",
+        "PFMI",
+        "Systemrelevanz",
+        "SIFI",
+        "G-SIB",
+        "Eigenkapitalanforderungen",
+        "Capital Requirements",
+        "Liquiditätskennzahlen",
+        "LCR",
+        "NSFR",
+        "Leverage Ratio",
+        "CBDC",
+        "Digital Currency",
+        "Marktinfrastruktur",
+        "FMI",
+        "Settlement",
+        "BIS Innovation Hub",
+        "SupTech",
+        "RegTech"
+      ],
+      "risk_indicators": [
+        "Systemisches Risiko",
+        "Systemic Risk",
+        "Konzentrationsrisiko",
+        "Concentration Risk",
+        "Operationelles Risiko",
+        "Operational Risk",
+        "Kreditrisiko",
+        "Credit Risk",
+        "Marktrisiko",
+        "Cyberrisiko",
+        "Klimarisiko",
+        "Climate Risk",
+        "Pro-Zyklizität",
+        "Procyclicality",
+        "Too Big to Fail",
+        "Moral Hazard",
+        "Ansteckungsrisiko",
+        "Contagion Risk",
+        "Gegenparteirisiko",
+        "Counterparty Risk"
+      ],
+      "compliance_terms": [
+        "Basel Framework",
+        "Pillar 1",
+        "Pillar 2",
+        "Pillar 3",
+        "DORA",
+        "EU AI Act",
+        "DSGVO",
+        "GDPR",
+        "Proportionalitätsprinzip",
+        "Proportionality",
+        "Minimum Capital",
+        "Risk-Weighted Assets",
+        "RWA",
+        "Stress Testing",
+        "ICAAP",
+        "ILAAP",
+        "Recovery and Resolution",
+        "BRRD",
+        "TLAC",
+        "AML/CFT",
+        "FATF Standards"
+      ],
+      "organizational_terms": [
+        "Generaldirektor",
+        "General Manager",
+        "GHOS",
+        "Board of Directors",
+        "Verwaltungsrat",
+        "FSI",
+        "Financial Stability Institute",
+        "BIS Innovation Hub",
+        "Representative Office",
+        "Basel Process",
+        "Global Financial System",
+        "Committee on the Global Financial System",
+        "Irving Fisher Committee",
+        "Markets Committee",
+        "Central Bank Governance Group"
+      ]
+    },
+    "cross_references": {
+      "complementary": [
+        "bafin"
+      ],
+      "hierarchical": [],
+      "notes": "BIS setzt die internationalen Standards, die BaFin auf nationaler Ebene in Deutschland umsetzt. Basel III/IV-Standards des BCBS werden durch BaFin-Rundschreiben und MaRisk in deutsches Recht transformiert. BIS-ISP validiert die Quelle, BaFin-ISP validiert die nationale Umsetzung."
+    }
+  }
+}

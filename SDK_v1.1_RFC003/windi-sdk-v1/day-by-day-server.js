@@ -9,6 +9,14 @@ const app = express();
 // Mount the Day-by-Day API aggregator
 const dayByDayApi = require('./day-by-day-api');
 app.use('/api', dayByDayApi);
+app.use('/war-room', express.static('warroom'));
+
+// ── WINDI Dispatcher & PDF Virtue Receipt Engine ──
+app.use(express.json());
+const pdfRoute = require('./windi-dispatcher/pdf-virtue-receipt');
+const dispatchRoute = require('./windi-dispatcher/dispatch-route');
+app.use('/api', pdfRoute);
+app.use('/api', dispatchRoute);
 
 // ============================================================
 // AVAILABLE ENDPOINTS:

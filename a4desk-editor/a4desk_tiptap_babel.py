@@ -91,6 +91,7 @@ from flask_cors import CORS
 import requests
 from weasyprint import HTML as WeasyHTML
 
+sys.path.insert(0, '/opt/windi/isp')
 sys.path.insert(0, '/opt/windi/templates')
 try:
     from bescheid_generator import generate_bescheid_pdf, BEISPIEL_BAUGENEHMIGUNG
@@ -881,6 +882,28 @@ def finalize_document(doc_id):
                 print(f"[WINDI-SOF] Provenance record created: {receipt['receipt_id']}")
         except Exception as e:
             print(f"[WINDI-SOF] Provenance generation error: {e}")
+
+    # ─── GOVERNANCE BRIDGE: Submit to War Room (v1.1) ──────────
+    try:
+        from governance_bridge import submit_to_governance
+        bridge_result = submit_to_governance(
+            doc_id=doc_id,
+            content_text=row["content"],
+            language=row["language"],
+            author_data=author_data,
+            witness_data=witness_data,
+            receipt=receipt,
+            domain_tag=domain_tag,
+        )
+        if bridge_result:
+            _corr = bridge_result.get('bridge_correlation_id', '?')
+            _sub = bridge_result.get('submission_id', bridge_result.get('id', '?'))
+            print(f"[BRIDGE] Doc {doc_id} → War Room: submission={_sub} corr={_corr}")
+        else:
+            print(f"[BRIDGE] Doc {doc_id} → War Room: API offline (graceful skip)")
+    except Exception as bridge_err:
+        print(f"[BRIDGE] Non-critical error for {doc_id}: {bridge_err}")
+    # ─── END GOVERNANCE BRIDGE ─────────────────────────────────
     return jsonify({"id": doc_id, "status": "finalized", "receipt": receipt})
 
 @app.route('/api/document/<doc_id>', methods=['DELETE'])

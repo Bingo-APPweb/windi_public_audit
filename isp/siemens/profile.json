@@ -1,0 +1,404 @@
+{
+  "isp_profile": {
+    "metadata": {
+      "profile_id": "siemens",
+      "version": "1.0.0",
+      "created": "2026-02-05T17:12:22Z",
+      "governance_level": "LOW",
+      "profile_type": "industrial_technology_conglomerate",
+      "windi_registry_version": "2.6.0",
+      "generator": "windi-isp-factory/v1.0",
+      "audit_hash": "c6b69f880f05763308debb0b9506ae16b433e3bb4bbdf265a0ebb539b71feec1"
+    },
+    "organization": {
+      "name_full": "Siemens Aktiengesellschaft",
+      "name_short": "Siemens",
+      "legal_form": "Aktiengesellschaft (AG)",
+      "sector": "Industrial Technology / Digital Industries / Smart Infrastructure / Mobility",
+      "employees": 318000,
+      "revenue_eur": "€78.9B (FY2025, record year — net income €10.4B, FCF €10.8B)",
+      "headquarters": "München (Werner-von-Siemens-Straße 1, 80333)",
+      "description": "Siemens AG ist Europas größtes Industrieunternehmen und globaler Technologiekonzern mit Schwerpunkt auf Automatisierung, Digitalisierung, Elektrifizierung und Mobilität. Gegründet 1847 von Werner von Siemens. CEO Roland Busch treibt seit 2021 die ONE Tech Company Strategie voran. FY2025 war ein Rekordjahr mit €10.4B Nettogewinn und €10.8B Free Cash Flow.",
+      "relevance": "Siemens hat eine Geschäftsstelle direkt in Kempten (An der Stadtmauer 4, 87435) und die Niederlassung Augsburg deckt ganz Schwaben ab — von Augsburg über Ostallgäu/Kaufbeuren, Oberallgäu/Kempten bis Lindau am Bodensee. Major Bayern-Standorte: München (HQ), Erlangen (Technik-HQ), Nürnberg. Siemens-Ausbildungsverträge laufen über IHK Schwaben. TÜV zertifiziert Siemens-Produkte (GS-Zeichen, ISO-Managementsysteme).",
+      "regional_presence": [
+        "München (Konzernzentrale, Werner-von-Siemens-Str. 1)",
+        "Erlangen (Technik-Hauptsitz, Digital Industries HQ)",
+        "Nürnberg (Smart Infrastructure)",
+        "Augsburg (Niederlassung Schwaben — Vertrieb & Service)",
+        "Kempten (Geschäftsstelle, An der Stadtmauer 4, 87435)",
+        "Berlin (Regierungsbeziehungen, Siemensstadt Square)",
+        "Braunschweig (Mobility / Schienenfahrzeuge)",
+        "Mülheim an der Ruhr (Historischer Standort)"
+      ]
+    },
+    "governance": {
+      "level": "LOW",
+      "identity_license_required": false,
+      "retention_years": 5,
+      "risk_domains": [
+        "Industrial Safety (Maschinensicherheit, Anlagensicherheit)",
+        "Cybersecurity (OT/IT-Sicherheit, IEC 62443, NIS2)",
+        "Supply Chain (Lieferketten, Zulieferer-Management)",
+        "IP Protection (Patente — 43.400 Patente, R&D €4.9B/Jahr)",
+        "Critical Infrastructure (KRITIS — Energie, Transport, Gesundheit)",
+        "AI Governance (EU AI Act, Siemens Industrial Copilot)",
+        "Data Privacy (DSGVO, Kundendaten, Mitarbeiterdaten)"
+      ],
+      "compliance_frameworks": [
+        "DSGVO / GDPR",
+        "EU AI Act (Siemens als Anbieter von KI-Systemen)",
+        "ISO 27001 (Informationssicherheit)",
+        "IEC 62443 (Industrial Cybersecurity)",
+        "EU Machinery Regulation 2023/1230",
+        "NIS2 Directive (KRITIS-Betreiber)",
+        "BSI-Grundschutz (C5)",
+        "ISO 9001 (Qualitätsmanagement)",
+        "ISO 14001 (Umweltmanagement)",
+        "SOX (Sarbanes-Oxley, US-Listing)",
+        "EU Corporate Sustainability Reporting Directive (CSRD)"
+      ],
+      "sge_thresholds": {
+        "warn": 55,
+        "alert": 70,
+        "block": 60
+      }
+    },
+    "templates": [
+      {
+        "id": "TPL-SIE-001",
+        "name_de": "Technische Produktdokumentation",
+        "name_en": "Technical Product Documentation",
+        "category": "engineering",
+        "risk_level": "R2",
+        "description": "Product technical documentation for SIMATIC, Xcelerator, Digital Twin platforms",
+        "required_fields": [
+          "product_id",
+          "version",
+          "division",
+          "classification"
+        ],
+        "governance_notes": "IP-sensitive — check patent status before external distribution"
+      },
+      {
+        "id": "TPL-SIE-002",
+        "name_de": "Sicherheitszertifikat (CE/GS)",
+        "name_en": "Safety Certificate (CE/GS)",
+        "category": "compliance",
+        "risk_level": "R3",
+        "description": "Industrial safety certification per EU Machinery Regulation and product safety law",
+        "required_fields": [
+          "cert_id",
+          "standard",
+          "product_line",
+          "notified_body"
+        ],
+        "governance_notes": "Regulatory compliance — coordinate with TÜV for external certification"
+      },
+      {
+        "id": "TPL-SIE-003",
+        "name_de": "Lieferantenbewertung / Supplier Scorecard",
+        "name_en": "Supplier Evaluation / Scorecard",
+        "category": "procurement",
+        "risk_level": "R2",
+        "description": "Supply chain supplier assessment covering quality, delivery, sustainability",
+        "required_fields": [
+          "supplier_id",
+          "evaluation_date",
+          "category",
+          "score"
+        ],
+        "governance_notes": "Confidential — restricted distribution, supply chain risk assessment"
+      },
+      {
+        "id": "TPL-SIE-004",
+        "name_de": "Projektstatusbericht",
+        "name_en": "Project Status Report",
+        "category": "management",
+        "risk_level": "R1",
+        "description": "Internal project status reporting across Digital Industries, Smart Infrastructure, Mobility",
+        "required_fields": [
+          "project_id",
+          "period",
+          "division",
+          "pm_name"
+        ],
+        "governance_notes": "Internal use — standard distribution"
+      },
+      {
+        "id": "TPL-SIE-005",
+        "name_de": "Cybersecurity-Auditbericht (OT/IT)",
+        "name_en": "Cybersecurity Audit Report (OT/IT)",
+        "category": "security",
+        "risk_level": "R4",
+        "description": "OT/IT security audit per IEC 62443 and BSI-Grundschutz for industrial automation systems",
+        "required_fields": [
+          "audit_id",
+          "scope",
+          "standard",
+          "auditor",
+          "classification"
+        ],
+        "governance_notes": "Critical infrastructure — KRITIS-relevant, restricted access, NIS2 compliance"
+      },
+      {
+        "id": "TPL-SIE-006",
+        "name_de": "Patentanmeldung / Erfindungsmeldung",
+        "name_en": "Patent Application / Invention Disclosure",
+        "category": "ip",
+        "risk_level": "R4",
+        "description": "Patent filing and invention disclosure — Siemens files ~4,000 patents/year",
+        "required_fields": [
+          "invention_id",
+          "inventors",
+          "division",
+          "technology_field",
+          "priority_date"
+        ],
+        "governance_notes": "Highest confidentiality — Siemens top-3 patent filer globally"
+      },
+      {
+        "id": "TPL-SIE-007",
+        "name_de": "Wartungsprotokoll / Instandhaltungsbericht",
+        "name_en": "Maintenance Protocol / Service Report",
+        "category": "operations",
+        "risk_level": "R1",
+        "description": "Equipment maintenance and service documentation for field operations",
+        "required_fields": [
+          "equipment_id",
+          "date",
+          "technician",
+          "location"
+        ],
+        "governance_notes": "Operational — standard distribution to service teams"
+      },
+      {
+        "id": "TPL-SIE-008",
+        "name_de": "KI-Folgenabschätzung (EU AI Act)",
+        "name_en": "AI Impact Assessment (EU AI Act)",
+        "category": "compliance",
+        "risk_level": "R3",
+        "description": "AI system risk and impact assessment per EU AI Act Art. 9 — covers Siemens Industrial Copilot and embedded AI systems",
+        "required_fields": [
+          "system_id",
+          "risk_class",
+          "intended_purpose",
+          "division"
+        ],
+        "governance_notes": "EU AI Act compliance — mandatory for high-risk AI systems"
+      },
+      {
+        "id": "TPL-SIE-009",
+        "name_de": "Ausschreibungsunterlagen / Angebotsdokumentation",
+        "name_en": "Tender Documentation / Proposal",
+        "category": "sales",
+        "risk_level": "R2",
+        "description": "Bid and tender documentation for large infrastructure and mobility projects",
+        "required_fields": [
+          "tender_id",
+          "customer",
+          "division",
+          "volume_eur"
+        ],
+        "governance_notes": "Commercially sensitive — anti-corruption compliance (Siemens post-2008 reforms)"
+      },
+      {
+        "id": "TPL-SIE-010",
+        "name_de": "Nachhaltigkeitsbericht (CSRD)",
+        "name_en": "Sustainability Report (CSRD)",
+        "category": "compliance",
+        "risk_level": "R2",
+        "description": "Corporate sustainability reporting per EU CSRD — DEGREE framework metrics",
+        "required_fields": [
+          "reporting_period",
+          "scope",
+          "kpi_category"
+        ],
+        "governance_notes": "Public reporting — coordinate with ESG team, DEGREE framework"
+      },
+      {
+        "id": "TPL-SIE-011",
+        "name_de": "Konformitätserklärung (Digital Twin)",
+        "name_en": "Conformity Declaration (Digital Twin)",
+        "category": "engineering",
+        "risk_level": "R2",
+        "description": "Conformity documentation for Xcelerator Digital Twin deployments and MindSphere integrations",
+        "required_fields": [
+          "deployment_id",
+          "platform",
+          "customer",
+          "data_classification"
+        ],
+        "governance_notes": "Technical compliance — data sovereignty considerations"
+      },
+      {
+        "id": "TPL-SIE-012",
+        "name_de": "Ausbildungsvertrag / Praktikumsvereinbarung",
+        "name_en": "Training Contract / Internship Agreement",
+        "category": "hr",
+        "risk_level": "R1",
+        "description": "Apprenticeship and internship contracts — Siemens trains ~4,000 Azubis in Germany",
+        "required_fields": [
+          "trainee_name",
+          "beruf",
+          "start_date",
+          "ausbildungsort"
+        ],
+        "governance_notes": "IHK-registered — coordinate with local IHK Schwaben for Kempten/Augsburg region"
+      }
+    ],
+    "document_categories": [
+      {
+        "id": "engineering",
+        "name_de": "Technik & Produktentwicklung",
+        "name_en": "Engineering & Product Development",
+        "description": "Technical documentation, product specs, Digital Twin, Xcelerator platform docs",
+        "typical_risk_level": "R2"
+      },
+      {
+        "id": "compliance",
+        "name_de": "Compliance & Regulatorik",
+        "name_en": "Compliance & Regulatory",
+        "description": "Certifications, EU AI Act, CSRD, CE/GS declarations",
+        "typical_risk_level": "R3"
+      },
+      {
+        "id": "procurement",
+        "name_de": "Beschaffung & Lieferkette",
+        "name_en": "Procurement & Supply Chain",
+        "description": "Supplier evaluations, procurement documentation, supply chain risk",
+        "typical_risk_level": "R2"
+      },
+      {
+        "id": "management",
+        "name_de": "Management & Berichtswesen",
+        "name_en": "Management & Reporting",
+        "description": "Internal reports, board communications, strategy documents",
+        "typical_risk_level": "R1"
+      },
+      {
+        "id": "security",
+        "name_de": "Cybersecurity & Informationssicherheit",
+        "name_en": "Cybersecurity & Information Security",
+        "description": "OT/IT security audits, IEC 62443, BSI-Grundschutz, NIS2",
+        "typical_risk_level": "R4"
+      },
+      {
+        "id": "ip",
+        "name_de": "Geistiges Eigentum & Patente",
+        "name_en": "Intellectual Property & Patents",
+        "description": "Patent filings, invention disclosures, trade secrets, licensing",
+        "typical_risk_level": "R4"
+      },
+      {
+        "id": "operations",
+        "name_de": "Betrieb & Instandhaltung",
+        "name_en": "Operations & Maintenance",
+        "description": "Field service protocols, maintenance logs, equipment records",
+        "typical_risk_level": "R1"
+      },
+      {
+        "id": "sales",
+        "name_de": "Vertrieb & Ausschreibungen",
+        "name_en": "Sales & Tenders",
+        "description": "Bid documentation, proposals, customer contracts",
+        "typical_risk_level": "R2"
+      },
+      {
+        "id": "hr",
+        "name_de": "Personal & Ausbildung",
+        "name_en": "HR & Training",
+        "description": "Ausbildungsverträge, Praktika, Mitarbeiterdokumentation",
+        "typical_risk_level": "R1"
+      }
+    ],
+    "sge_keywords": {
+      "domain_terms": [
+        "Automatisierung",
+        "Digitalisierung",
+        "SPS",
+        "SIMATIC",
+        "MindSphere",
+        "Xcelerator",
+        "Digital Twin",
+        "Industrial IoT",
+        "Antriebstechnik",
+        "Energieverteilung",
+        "Schienenfahrzeug",
+        "Signaltechnik",
+        "ETCS",
+        "Gebäudeautomation",
+        "Smart Grid",
+        "Ladeinfrastruktur",
+        "Industrial Copilot",
+        "SINUMERIK",
+        "TIA Portal",
+        "WinCC",
+        "PLC",
+        "SCADA"
+      ],
+      "risk_indicators": [
+        "Sicherheitslücke",
+        "Rückruf",
+        "Betriebsunterbrechung",
+        "Datenverlust",
+        "Patentverletzung",
+        "Compliance-Verstoß",
+        "Cyberangriff",
+        "Lieferkettenrisiko",
+        "Produkthaftung",
+        "Exportkontrolle",
+        "Sanktionsverstoß",
+        "Korruptionsrisiko",
+        "KRITIS-Ausfall",
+        "Datenabfluss",
+        "Werksspionage"
+      ],
+      "compliance_terms": [
+        "CE-Kennzeichnung",
+        "ISO 27001",
+        "IEC 62443",
+        "EU AI Act",
+        "Maschinenverordnung",
+        "DSGVO",
+        "NIS2",
+        "KRITIS",
+        "BSI-Grundschutz",
+        "SOX",
+        "CSRD",
+        "GS-Zeichen",
+        "Konformitätserklärung",
+        "Exportkontrollrecht",
+        "Anti-Korruption",
+        "Kartellrecht"
+      ],
+      "organizational_terms": [
+        "Siemens AG",
+        "Digital Industries",
+        "Smart Infrastructure",
+        "Siemens Mobility",
+        "Siemens Healthineers",
+        "Siemens Energy",
+        "Siemens Financial Services",
+        "Roland Busch",
+        "Vorstand",
+        "Compliance Officer",
+        "Werkleiter",
+        "Niederlassung Augsburg",
+        "Geschäftsstelle Kempten",
+        "ONE Tech Company",
+        "Xcelerator Marketplace",
+        "Altair Engineering",
+        "Siemensstadt Square"
+      ]
+    },
+    "cross_references": {
+      "complementary": [
+        "tuev",
+        "ihk",
+        "hwk"
+      ],
+      "hierarchical": [],
+      "notes": "TÜV certifies Siemens products (GS-Zeichen, Managementsysteme, KI-Konformitätsbewertung). IHK Schwaben handles Siemens Ausbildungsverträge in Kempten/Augsburg region. HWK relevant for Handwerk-subcontractors in Siemens supply chain. Deutsche Bahn is major Siemens Mobility customer (ICE, Signaltechnik)."
+    }
+  }
+}
