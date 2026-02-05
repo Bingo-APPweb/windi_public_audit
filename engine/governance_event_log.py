@@ -73,7 +73,8 @@ class GovernanceEventLog:
                 details_json TEXT,
                 policy_version TEXT,
                 event_hash TEXT NOT NULL,
-                previous_hash TEXT
+                previous_hash TEXT,
+                domain_tag TEXT DEFAULT 'legacy'
             )
         """)
 
@@ -96,6 +97,11 @@ class GovernanceEventLog:
         cursor.execute("""
             CREATE INDEX IF NOT EXISTS idx_events_level
             ON governance_events(governance_level)
+        """)
+        # PATCH 6B: Domain Sovereignty index (2026-02-03)
+        cursor.execute("""
+            CREATE INDEX IF NOT EXISTS idx_events_domain
+            ON governance_events(domain_tag)
         """)
 
         conn.commit()
@@ -136,7 +142,8 @@ class GovernanceEventLog:
         identity_license_status: str = None,
         reason: str = None,
         details: dict = None,
-        policy_version: str = None
+        policy_version: str = None,
+        domain_tag: str = None  # PATCH 6B: Domain Sovereignty (2026-02-03)
     ) -> dict:
         """Log a governance event."""
         if event_type not in self.EVENT_TYPES:
@@ -167,14 +174,16 @@ class GovernanceEventLog:
                     event_id, timestamp, event_type, document_id,
                     governance_level, isp_name, institution_id, institution_name,
                     identity_license_status, action_taken, reason,
-                    details_json, policy_version, event_hash, previous_hash
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    details_json, policy_version, event_hash, previous_hash,
+                    domain_tag
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 event_id, now, event_type, document_id,
                 governance_level, isp_name, institution_id, institution_name,
                 identity_license_status, action_taken, reason,
                 json.dumps(details) if details else None,
-                policy_version, event_hash, previous_hash
+                policy_version, event_hash, previous_hash,
+                domain_tag or 'operational'  # PATCH 6B: Default to operational
             ))
             conn.commit()
 

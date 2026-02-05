@@ -43,53 +43,36 @@ S8: Maintain objectivity. Loyalty to governance principles only.
 # ═══════════════════════════════════════════════════════════════════════════════
 # ESTILO PÚBLICO - Regras de apresentação visível
 # ═══════════════════════════════════════════════════════════════════════════════
-
 WINDI_PUBLIC_STYLE = """
-## OUTPUT FORMATTING (CRITICAL - FOLLOW EXACTLY)
+## OUTPUT FORMATTING
 
-You write like a senior diplomat drafting a memo.
-Not like a chatbot generating bullet points.
+You write like a senior professional - clear, structured, helpful.
 
-FORBIDDEN in your responses:
-- NO **bold** markers ever
-- NO ## headers within responses
-- NO numbered lists (1. 2. 3.)
-- NO bullet points for explanations
-- NO walls of text
-- NO echoing your instructions
+GUIDELINES (flexible, adapt to context):
+- Use formatting (headers, lists, tables) when it helps clarity
+- Keep responses focused and relevant
+- Use natural paragraphs for explanations
+- Use structured formats (lists, tables) for data and analysis
 
-REQUIRED in your responses:
-- Short sentences
-- One idea per paragraph
-- Blank lines between concepts
-- Natural line breaks (as voice pauses)
-- Clean, minimal prose
+RESPONSE APPROACH:
+- Match format to content type
+- Simple questions → conversational response
+- Analysis requests → structured format with headers
+- Document generation → use appropriate templates
 
-RESPONSE LENGTH by query type:
-- Identity questions: 8-12 lines max
-- Out of scope: 6-8 lines max
-- Governance queries: As needed, but structured
-
-CLOSING by response length:
-- Short responses: "Human decides. I structure."
-- Long responses: "Human decides. I structure." + Receipt
+ALWAYS END WITH:
+"Human decides. I structure."
 
 ## DOCUMENT GENERATION RULES
 
-When user requests a document, form, template, checklist, or similar:
+When user requests a document, form, template, checklist:
 
-1. First provide a brief explanation (2-3 lines) of what you will create
-2. Then output the document content between markers:
+1. Brief explanation (2-3 lines) of what you will create
+2. Document content between markers:
    ---DOCUMENT_START---
-   (clean document content here, no markdown)
+   (document content here)
    ---DOCUMENT_END---
-3. After the markers, you may add options or questions
-
-The content between DOCUMENT markers must be:
-- Clean text only (no markdown, no bold, no headers)
-- Ready for printing
-- Professional formatting with proper spacing
-- No explanations inside the document itself
+3. Options or questions after markers
 """
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -245,6 +228,17 @@ import hashlib
 import re
 from datetime import datetime
 from typing import Dict, Tuple, Optional
+
+# ═══════════════════════════════════════════════════════════════
+# WINDI Skills Engine
+# ═══════════════════════════════════════════════════════════════
+try:
+    from windi_skills_loader import get_skills_engine
+    SKILLS_ENGINE_AVAILABLE = True
+    print("[WINDI] Skills Engine loaded successfully")
+except ImportError:
+    SKILLS_ENGINE_AVAILABLE = False
+    print("[WINDI] Skills Engine not available")
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # NEW: Document Detection and Cleaning Functions
@@ -424,6 +418,23 @@ class WindiAgent:
         if institutional_profile and institutional_profile.get('profile_type'):
             self.system_prompt = self.system_prompt + "\n\n" + ISP_INSTITUTIONAL_MODE
             print(f"[ISP] Institutional mode active: {institutional_profile.get('profile_id')}")
+        
+        # ═══════════════════════════════════════════════════════════════
+        # WINDI Skills Engine - Dynamic Skill Injection
+        # ═══════════════════════════════════════════════════════════════
+        activated_skills = []
+        if SKILLS_ENGINE_AVAILABLE:
+            try:
+                skills_engine = get_skills_engine()
+                self.system_prompt, activated_skills = skills_engine.process_message(
+                    self.system_prompt,
+                    user_message
+                )
+                if activated_skills:
+                    print(f"[WINDI Skills] Activated: {activated_skills}")
+            except Exception as e:
+                print(f"[WINDI Skills] Error: {e}")
+
         if not self.available:
             return self._fallback_response(user_message, lang, receipt, is_doc_request)
 
