@@ -119,6 +119,10 @@ app.secret_key = os.getenv('WINDI_SECRET_KEY', secrets.token_hex(32))
 def serve_static(filename):
     return send_from_directory('/opt/windi/a4desk-editor/static', filename)
 
+@app.route('/favicon.svg')
+def serve_favicon():
+    return send_from_directory('/opt/windi/a4desk', 'favicon.svg', mimetype='image/svg+xml')
+
 if REGISTRY_AVAILABLE:
     register_registry_endpoints(app)
     app.register_blueprint(isp_bp)
@@ -238,20 +242,28 @@ def get_last_audit_hash():
     conn.close()
     return row["current_hash"] if row else "GENESIS"
 
-def log_audit(doc_id, action, actor_data, session_id=None, witness_data=None, old_status=None, new_status=None, content_hash=None, notes=None):
+def log_audit(doc_id, action, actor_data, session_id=None, witness_data=None, old_status=None, new_status=None, content_hash=None, notes=None, domain_tag=None):
+    """
+    PATCH 6C: Added domain_tag parameter for Domain Sovereignty (2026-02-03)
+    """
     conn = get_db()
     cursor = conn.cursor()
     previous_hash = get_last_audit_hash()
     timestamp = datetime.now(timezone.utc).isoformat()
     hash_input = f"{doc_id}{action}{actor_data.get('id','')}{timestamp}{previous_hash}"
     current_hash = hashlib.sha256(hash_input.encode()).hexdigest()[:16]
+
+    # PATCH 6C: Resolve domain_tag if not provided
+    if domain_tag is None:
+        domain_tag = 'operational'  # Default domain
+
     cursor.execute("""
         INSERT INTO document_audit (document_id, session_id, action, actor_id, actor_name, actor_employee_id, actor_position,
-         witness_id, witness_name, witness_position, old_status, new_status, content_hash, timestamp, ip_address, user_agent, notes, previous_hash, current_hash)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+         witness_id, witness_name, witness_position, old_status, new_status, content_hash, timestamp, ip_address, user_agent, notes, previous_hash, current_hash, domain_tag)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, (doc_id, session_id, action, actor_data.get('id', 'unknown'), actor_data.get('name', 'Anonymous'), actor_data.get('employee_id', ''), actor_data.get('position', ''),
           witness_data.get('id', '') if witness_data else '', witness_data.get('name', '') if witness_data else '', witness_data.get('position', '') if witness_data else '',
-          old_status, new_status, content_hash, timestamp, request.remote_addr if request else '', request.headers.get('User-Agent', '') if request else '', notes, previous_hash, current_hash))
+          old_status, new_status, content_hash, timestamp, request.remote_addr if request else '', request.headers.get('User-Agent', '') if request else '', notes, previous_hash, current_hash, domain_tag))
     conn.commit()
     conn.close()
     return current_hash
@@ -396,6 +408,176 @@ def generate_qr_base64(data):
 @app.route('/api/health')
 def health():
     return jsonify({"status": "healthy", "service": "A4 Desk BABEL v4.7-gov", "version": "4.6", "compliance": ["EU AI Act", "BSI", "DSGVO"]})
+
+# ═══════════════════════════════════════════════════════════════
+# WSG - WINDI Surface Guard v0.1.1
+# Frontend Constitutional Security Layer
+# ═══════════════════════════════════════════════════════════════
+
+WSG_DIR = "/opt/windi/a4desk/wsg"
+WSG_BUILD_ID_FILE = "/opt/windi/data/.wsg-build-id"
+WSG_VIOLATION_LOG = "/opt/windi/data/wsg_violations.jsonl"
+
+# Carregar chave privada Ed25519
+WSG_PRIVATE_KEY = None
+try:
+    with open('/etc/windi/wsg-keys.json', 'r') as f:
+        _wsg_keys = json.load(f)
+        WSG_PRIVATE_KEY = _wsg_keys.get('privateKey')
+    print("✓ WSG Ed25519 keys loaded")
+except Exception as e:
+    print(f"⚠ WSG keys not available: {e}")
+
+def wsg_get_build_id():
+    """Retorna build ID monotônico."""
+    try:
+        if os.path.exists(WSG_BUILD_ID_FILE):
+            with open(WSG_BUILD_ID_FILE, 'r') as f:
+                return int(f.read().strip())
+    except:
+        pass
+    return 1
+
+def wsg_increment_build_id():
+    """Incrementa build ID."""
+    build_id = wsg_get_build_id() + 1
+    os.makedirs(os.path.dirname(WSG_BUILD_ID_FILE), exist_ok=True)
+    with open(WSG_BUILD_ID_FILE, 'w') as f:
+        f.write(str(build_id))
+    return build_id
+
+def wsg_sign_manifest(manifest_data, private_key_b64):
+    """Assina manifesto com Ed25519."""
+    if not private_key_b64:
+        return None
+    try:
+        from cryptography.hazmat.primitives import serialization
+        from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+
+        # Decodificar chave privada DER
+        private_key_der = base64.b64decode(private_key_b64)
+        private_key = serialization.load_der_private_key(private_key_der, password=None)
+
+        # Assinar payload
+        payload = json.dumps(manifest_data, sort_keys=True).encode('utf-8')
+        signature = private_key.sign(payload)
+        return base64.b64encode(signature).decode('utf-8')
+    except Exception as e:
+        print(f"[WSG] Sign error: {e}")
+        return None
+
+def wsg_calculate_hash(file_path):
+    """Calcula SHA-256 de um arquivo."""
+    h = hashlib.sha256()
+    with open(file_path, 'rb') as f:
+        for chunk in iter(lambda: f.read(8192), b''):
+            h.update(chunk)
+    return f"sha256-{h.hexdigest()}"
+
+def wsg_determine_integrity_level(filename):
+    """Determina nível de integridade baseado no nome do arquivo."""
+    name = filename.lower()
+    if any(k in name for k in ['decisao', 'governance', 'approval', 'reject', 'sge', 'risk']):
+        return 'CRITICAL'
+    if any(k in name for k in ['auth', 'login', 'session', 'main', 'app', 'index']):
+        return 'HIGH'
+    return 'STANDARD'
+
+@app.route('/wsg/<path:filename>')
+def serve_wsg(filename):
+    """Serve arquivos WSG (Service Worker, DOM Sentinel, Init)."""
+    return send_from_directory(WSG_DIR, filename)
+
+@app.route('/api/wsg/virtue-manifest.json')
+def wsg_virtue_manifest():
+    """Gera Virtue Manifest assinado com anti-replay."""
+    now = datetime.now(timezone.utc)
+    build_id = wsg_increment_build_id()
+    expires_at = now + timedelta(hours=1)
+
+    # Escanear assets do diretório static
+    assets = {}
+    static_dirs = ['/', '/js', '/css', '/components', '/modules', '/extensions', '/toolbar']
+    cert_extensions = ['.js', '.css', '.html', '.mjs']
+
+    for asset_dir in static_dirs:
+        full_path = os.path.join(STATIC_DIR, asset_dir.lstrip('/'))
+        if os.path.exists(full_path):
+            for root, dirs, files in os.walk(full_path):
+                for file in files:
+                    ext = os.path.splitext(file)[1]
+                    if ext in cert_extensions:
+                        file_path = os.path.join(root, file)
+                        rel_path = '/' + os.path.relpath(file_path, STATIC_DIR)
+                        try:
+                            stat = os.stat(file_path)
+                            assets[rel_path] = {
+                                'hash': wsg_calculate_hash(file_path),
+                                'size': stat.st_size,
+                                'integrity': wsg_determine_integrity_level(file),
+                                'domain': 'operational',
+                                'scope': 'general'
+                            }
+                        except Exception as e:
+                            print(f"[WSG] Hash error {file_path}: {e}")
+
+    # Construir manifesto
+    manifest = {
+        'version': '1.1.0',
+        'generated': now.isoformat(),
+        'signer': 'WINDI-BABEL-API',
+        'build_id': build_id,
+        'not_before': now.isoformat(),
+        'expires_at': expires_at.isoformat(),
+        'previous_manifest_hash': None,
+        'assets': assets
+    }
+
+    # Calcular hash do manifesto
+    manifest_string = json.dumps(manifest, sort_keys=True)
+    manifest_hash = hashlib.sha256(manifest_string.encode()).hexdigest()
+    manifest['manifest_hash'] = f"sha256-{manifest_hash}"
+
+    # Assinar com Ed25519
+    if WSG_PRIVATE_KEY:
+        signature = wsg_sign_manifest(manifest, WSG_PRIVATE_KEY)
+        manifest['signature'] = signature
+        manifest['signature_algorithm'] = 'Ed25519'
+    else:
+        manifest['signature'] = f"DEV-SIG-{manifest_hash[:32]}"
+        manifest['signature_algorithm'] = 'none'
+
+    response = jsonify(manifest)
+    response.headers['Cache-Control'] = 'no-store, must-revalidate'
+    response.headers['X-WINDI-Build-ID'] = str(build_id)
+    return response
+
+@app.route('/api/wsg/violation', methods=['POST'])
+def wsg_violation_report():
+    """Recebe e registra violações de integridade."""
+    violation = request.json or {}
+
+    if not violation.get('receipt_type'):
+        return jsonify({'error': 'Invalid violation report'}), 400
+
+    # Calcular hash do receipt
+    receipt_string = json.dumps(violation, sort_keys=True)
+    receipt_hash = hashlib.sha256(receipt_string.encode()).hexdigest()
+    violation['receipt_hash'] = f"sha256-{receipt_hash}"
+    violation['server_timestamp'] = datetime.now(timezone.utc).isoformat()
+
+    # Persistir no log
+    os.makedirs(os.path.dirname(WSG_VIOLATION_LOG), exist_ok=True)
+    with open(WSG_VIOLATION_LOG, 'a') as f:
+        f.write(json.dumps(violation) + '\n')
+
+    print(f"[WSG] 🚨 VIOLATION: {violation.get('violation', {}).get('type', 'UNKNOWN')}")
+
+    return jsonify({
+        'received': True,
+        'receipt_hash': violation['receipt_hash'],
+        'timestamp': violation['server_timestamp']
+    })
 
 def generate_windi_envelope(doc_id, content_bytes, content_type, author_data, intent_code="publish.document"):
     """Generate a WINDI v0.1 envelope for document integrity."""
@@ -630,7 +812,19 @@ def update_document(doc_id):
     cursor.execute("UPDATE documents SET title = ?, content = ?, content_html = ?, human_fields = ?, status = 'validated', updated_at = ?, modified_by = ?, witness = ? WHERE id = ?", (title, content, content_html, human_fields, now, modified_by, json.dumps(witness_data) if witness_data else '', doc_id))
     conn.commit()
     conn.close()
-    log_audit(doc_id, 'DOC_UPDATED', author_data, session_id=session_id, witness_data=witness_data if witness_data.get('name') else None, old_status=old_status, new_status='validated', content_hash=content_hash)
+
+    # PATCH 6C: Detect domain for audit trail
+    domain_tag = 'operational'
+    try:
+        from engine.identity_detector import IdentityDetector
+        detector = IdentityDetector()
+        domain_info = detector.detect_domain(content)
+        if domain_info.get('detected'):
+            domain_tag = domain_info.get('domain', 'operational')
+    except Exception:
+        pass
+
+    log_audit(doc_id, 'DOC_UPDATED', author_data, session_id=session_id, witness_data=witness_data if witness_data.get('name') else None, old_status=old_status, new_status='validated', content_hash=content_hash, domain_tag=domain_tag)
     return jsonify({"id": doc_id, "status": "validated", "message": "Gespeichert"})
 
 @app.route('/api/document/<doc_id>/finalize', methods=['POST'])
@@ -657,7 +851,19 @@ def finalize_document(doc_id):
     cursor.execute("UPDATE documents SET status = 'finalized', receipt = ?, updated_at = ?, witness = ? WHERE id = ?", (json.dumps(receipt), now, json.dumps(witness_data), doc_id))
     conn.commit()
     conn.close()
-    log_audit(doc_id, 'DOC_FINALIZED', author_data, session_id=session_id, witness_data=witness_data, old_status=old_status, new_status='finalized', content_hash=content_hash, notes=f'WINDI-QUITTUNG: {receipt["receipt_id"]}')
+
+    # PATCH 6C: Detect domain for audit trail
+    domain_tag = 'operational'  # Default
+    try:
+        from engine.identity_detector import IdentityDetector
+        detector = IdentityDetector()
+        domain_info = detector.detect_domain(row["content"])
+        if domain_info.get('detected'):
+            domain_tag = domain_info.get('domain', 'operational')
+    except Exception:
+        pass
+
+    log_audit(doc_id, 'DOC_FINALIZED', author_data, session_id=session_id, witness_data=witness_data, old_status=old_status, new_status='finalized', content_hash=content_hash, notes=f'WINDI-QUITTUNG: {receipt["receipt_id"]}', domain_tag=domain_tag)
     # ─── DeepDOCFakes: Provenance Record ─────────────────────
     if DEEPDOCFAKES_AVAILABLE:
         try:
@@ -1736,7 +1942,7 @@ VERIFY_HTML_TEMPLATE = '''
 '''
 
 # Using raw string (r-prefix) for JavaScript regex patterns
-BABEL_HTML = r'''<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>A4 Desk BABEL v4.7-gov</title><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><link rel="stylesheet" href="/static/windi_v47.css"><link rel="stylesheet" href="/static/windi_v47.css"><style>*{margin:0;padding:0;box-sizing:border-box}:root{--primary:#1a365d;--accent:#3182ce;--success:#38a169;--warning:#d69e2e;--danger:#e53e3e;--bg:#f7fafc;--card:#fff;--text:#2d3748;--border:#e2e8f0}body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}.login-overlay{position:fixed;inset:0;background:linear-gradient(135deg,#1a365d,#2c5282);display:flex;align-items:center;justify-content:center;z-index:10000}.login-modal{background:#fff;border-radius:16px;padding:40px;max-width:500px;width:95%;max-height:90vh;overflow-y:auto}.login-header{text-align:center;margin-bottom:25px}.login-header .icon{font-size:56px}.login-header h1{color:var(--primary);font-size:1.6rem}.form-section{background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:16px}.form-section-title{display:flex;align-items:center;gap:8px;font-weight:600;color:var(--primary);margin-bottom:12px}.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}.form-row.single{grid-template-columns:1fr}.form-field{display:flex;flex-direction:column;gap:4px}.form-field label{font-size:.8rem;font-weight:600}.form-field .required{color:#dc2626}.form-field input,.form-field select{padding:10px;border:2px solid var(--border);border-radius:6px}.form-field input:focus{outline:none;border-color:var(--accent)}.form-field small{font-size:.7rem;color:#718096}.login-btn{width:100%;padding:14px;background:linear-gradient(135deg,#999999,#AAAAAA);color:#fff;border:none;border-radius:10px;cursor:pointer;font-weight:700;font-size:1rem;margin-top:10px}.login-principle{background:#F5F5F5;border:1px dashed #AAAAAA;padding:12px;border-radius:8px;text-align:center;margin-top:15px;font-size:.85rem;color:#777777;font-weight:600}.migration-notice{background:#fef3c7;border:1px solid #f59e0b;border-radius:8px;padding:12px;margin-bottom:15px;font-size:.85rem;color:#92400e}.session-bar{position:fixed;top:0;left:0;right:0;height:40px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:9000;font-size:.85rem}.session-bar .user-info{display:flex;align-items:center;gap:15px}.session-bar .btn-profile{background:transparent;border:1px solid rgba(255,255,255,0.3);color:#fff;padding:4px 12px;border-radius:4px;cursor:pointer;font-size:.8rem}.session-bar .btn-profile:hover{background:rgba(255,255,255,0.1)}.session-bar .timer.warning{color:#fbbf24;animation:pulse 1s infinite}.session-bar .btn-logout{background:var(--danger);border:none;color:#fff;padding:5px 15px;border-radius:4px;cursor:pointer}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}.app-content{margin-top:40px;display:flex;min-height:calc(100vh - 40px)}.sidebar{width:280px;background:var(--primary);color:#fff;padding:20px;flex-shrink:0}.sidebar.collapsed{width:0;padding:0;overflow:hidden}.sidebar-toggle{position:fixed;left:10px;top:50px;z-index:1000;background:var(--primary);color:#fff;border:none;width:40px;height:40px;border-radius:8px;cursor:pointer}.logo{display:flex;align-items:center;gap:10px;margin:30px 0 20px}.logo i{font-size:2rem;color:var(--accent)}.lang-bar{display:flex;gap:5px;margin-bottom:20px}.lang-btn{background:#2c5282;border:none;color:#fff;padding:5px 10px;border-radius:4px;cursor:pointer}.lang-btn.active{background:var(--accent)}.btn-new{width:100%;padding:12px;background:var(--success);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;margin-bottom:20px}.doc-list{max-height:calc(100vh - 350px);overflow-y:auto}.doc-item{padding:12px;background:#2c5282;border-radius:6px;margin-bottom:8px;cursor:pointer;font-size:.85rem;display:flex;justify-content:space-between}.doc-item:hover{background:var(--accent)}.doc-item-delete{background:var(--danger);color:#fff;border:none;padding:4px 8px;border-radius:4px;cursor:pointer}.main-area{flex:1;display:flex;flex-direction:column}.top-bar{background:var(--card);padding:10px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:15px;flex-wrap:wrap}.top-bar-title{font-size:1.1rem;font-weight:600;color:var(--primary);margin-left:50px}.top-bar-actions{display:flex;gap:8px;margin-left:auto}.top-bar-btn{padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-size:.85rem}.btn-save{background:var(--primary);color:#fff}.btn-finalize{background:var(--success);color:#fff}.btn-delete{background:var(--danger);color:#fff}.btn-settings{background:var(--accent);color:#fff}.status-badge{padding:6px 12px;border-radius:20px;font-size:.8rem;font-weight:600}.status-draft{background:#fef3c7;color:#92400e}.status-validated{background:#d1fae5;color:#777777}.status-finalized{background:#dbeafe;color:#1e40af}.content-area{flex:1;display:flex;overflow:hidden}.editor-section{flex:1;display:flex;flex-direction:column;padding:20px;overflow-y:auto}.title-input{width:100%;font-size:1.5rem;font-weight:700;border:none;border-bottom:2px solid var(--border);padding:10px 0;margin-bottom:15px;color:var(--primary);background:transparent}.title-input:focus{outline:none;border-color:var(--accent)}.editor-toolbar{display:flex;gap:5px;padding:10px;background:var(--bg);border-radius:8px;margin-bottom:10px}.toolbar-btn{background:#fff;border:1px solid var(--border);padding:8px 12px;border-radius:4px;cursor:pointer}.toolbar-btn:hover{background:var(--accent);color:#fff}#editor{flex:1;border:1px solid var(--border);border-radius:8px;padding:20px;font-size:1rem;line-height:1.8;background:#fff;overflow-y:auto;min-height:200px}#editor:focus{outline:none;border-color:var(--accent)}.chat-section{width:40%;min-width:320px;display:flex;flex-direction:column;border-left:1px solid var(--border)}.chat-header{padding:15px;background:var(--primary);color:#fff}.chat-messages{flex:1;overflow-y:auto;padding:20px;background:var(--bg)}.chat-msg{padding:12px;border-radius:12px;margin-bottom:12px;max-width:90%;white-space:pre-wrap}.chat-user{background:var(--primary);color:#fff;margin-left:auto}.chat-ai{background:#fff;border:1px solid var(--border)}.insert-btn{margin-top:10px;padding:8px 16px;background:var(--success);color:#fff;border:none;border-radius:6px;cursor:pointer}.preview-btn{margin-top:10px;margin-right:8px;padding:8px 16px;background:var(--accent);color:#fff;border:none;border-radius:6px;cursor:pointer}.chat-input-area{padding:15px;background:#fff;border-top:1px solid var(--border)}.chat-textarea{width:100%;min-height:80px;padding:12px;border:1px solid var(--border);border-radius:8px;resize:vertical;margin-bottom:10px}.chat-actions{display:flex;gap:10px;justify-content:flex-end}.chat-send{padding:10px 20px;background:var(--accent);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600}.chat-send-doc{padding:10px 20px;background:var(--warning);color:#fff;border:none;border-radius:8px;cursor:pointer}.settings-panel{width:340px;background:var(--card);border-left:1px solid var(--border);padding:20px;overflow-y:auto}.settings-panel.collapsed{width:0;padding:0;overflow:hidden}.panel-toggle{position:fixed;right:10px;top:50px;z-index:1000;background:var(--accent);color:#fff;border:none;width:40px;height:40px;border-radius:8px;cursor:pointer}.panel-section{margin-bottom:25px}.panel-title{font-size:.9rem;font-weight:600;color:var(--primary);margin-bottom:10px}.human-field{margin-bottom:15px}.human-field label{display:block;font-size:.85rem;color:#718096;margin-bottom:5px}.human-field input,.human-field select{width:100%;padding:10px;border:1px solid var(--border);border-radius:6px}.human-field input:read-only{background:#f1f5f9}.human-field small{color:var(--warning);font-size:.75rem}.witness-section{background:#fefce8;border:1px dashed #eab308;border-radius:8px;padding:15px;margin-top:15px}.export-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.btn-export{background:#805ad5;color:#fff;padding:8px;border:none;border-radius:6px;cursor:pointer}.receipt-box{background:var(--bg);border:1px solid var(--success);border-radius:8px;padding:15px;font-family:monospace;font-size:.75rem;display:none;margin-top:15px}.receipt-box.show{display:block}.panel-section:first-child{position:sticky;top:0;background:var(--card);z-index:10;padding-bottom:10px;border-bottom:1px solid var(--border)}.witness-section{position:sticky;top:160px;background:#fefce8;z-index:9}.chat-content{white-space:pre-wrap}.chat-content.collapsed{max-height:150px;overflow:hidden;position:relative}.chat-content.collapsed::after{content:'';position:absolute;bottom:0;left:0;right:0;height:40px;background:linear-gradient(transparent,#fff)}.expand-btn{background:transparent;border:1px dashed var(--accent);color:var(--accent);padding:4px 12px;border-radius:4px;cursor:pointer;margin:8px 0;display:block;width:100%;text-align:center}.reauth-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:10001}.reauth-overlay.show{display:flex}.reauth-modal{background:#fff;border-radius:16px;padding:30px;max-width:400px;width:95%}.reauth-modal h3{color:var(--primary);margin-bottom:10px}.reauth-modal input{width:100%;padding:12px;border:2px solid var(--border);border-radius:8px;margin-bottom:15px}.reauth-buttons{display:flex;gap:10px}.reauth-buttons button{flex:1;padding:12px;border:none;border-radius:8px;cursor:pointer;font-weight:600}.btn-reauth-confirm{background:var(--success);color:#fff}.btn-reauth-cancel{background:#718096;color:#fff}.profile-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:10001}.profile-overlay.show{display:flex}.profile-modal{background:#fff;border-radius:16px;padding:30px;max-width:500px;width:95%;max-height:90vh;overflow-y:auto}.profile-modal h3{color:var(--primary);margin-bottom:20px;display:flex;align-items:center;gap:10px}.profile-form .form-field{margin-bottom:15px}.profile-form label{display:block;font-size:.85rem;font-weight:600;color:#4a5568;margin-bottom:5px}.profile-form input{width:100%;padding:12px;border:2px solid var(--border);border-radius:8px}.profile-form input:read-only{background:#f1f5f9;color:#718096}.profile-form input:focus{outline:none;border-color:var(--accent)}.profile-buttons{display:flex;gap:10px;margin-top:20px}.profile-buttons button{flex:1;padding:12px;border:none;border-radius:8px;cursor:pointer;font-weight:600}.btn-profile-save{background:var(--success);color:#fff}.btn-profile-cancel{background:#718096;color:#fff}.preview-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:10001}.preview-overlay.show{display:flex}.preview-modal{background:#fff;border-radius:16px;padding:30px;max-width:800px;width:95%;max-height:90vh;overflow-y:auto}.preview-modal h3{color:var(--primary);margin-bottom:20px;display:flex;align-items:center;gap:10px}.preview-content{background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:20px;min-height:200px;max-height:400px;overflow-y:auto;white-space:pre-wrap;line-height:1.8}.preview-buttons{display:flex;gap:10px;margin-top:20px}.preview-buttons button{flex:1;padding:12px;border:none;border-radius:8px;cursor:pointer;font-weight:600}.btn-preview-insert{background:var(--success);color:#fff}.btn-preview-cancel{background:#718096;color:#fff}.toast{position:fixed;bottom:20px;right:20px;padding:15px 25px;border-radius:8px;color:#fff;font-weight:600;z-index:10002}.toast-success{background:var(--success)}.toast-error{background:var(--danger)}.toast-warning{background:var(--warning)}.template-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:10001}.template-overlay.show{display:flex}.template-modal{background:#fff;border-radius:16px;padding:30px;max-width:700px;width:95%;max-height:90vh;overflow-y:auto}.template-modal h3{color:var(--primary);margin-bottom:20px}.template-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px}.template-card{border:2px solid var(--border);border-radius:12px;padding:15px;cursor:pointer;transition:all .2s}.template-card:hover{border-color:var(--accent);transform:translateY(-2px)}.template-card.selected{border-color:var(--success);background:#F5F5F5}.template-card-header{height:40px;border-radius:6px;margin-bottom:10px}.template-card-name{font-weight:600;font-size:.9rem;margin-bottom:5px}.template-card-desc{font-size:.75rem;color:#718096}.template-card-langs{display:flex;gap:4px;margin-top:8px;flex-wrap:wrap}.template-card-lang{font-size:.65rem;background:#e2e8f0;padding:2px 6px;border-radius:4px}.template-buttons{display:flex;gap:10px;margin-top:20px}.template-buttons button{flex:1;padding:12px;border:none;border-radius:8px;cursor:pointer;font-weight:600}.btn-template-apply{background:var(--success);color:#fff}.btn-template-cancel{background:#718096;color:#fff}@media(max-width:900px){.content-area{flex-direction:column}.chat-section{width:100%;border-left:none;border-top:1px solid var(--border)}.form-row{grid-template-columns:1fr}}</style></head><body>
+BABEL_HTML = r'''<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>A4 Desk BABEL v4.7-gov</title><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><link rel="stylesheet" href="/static/windi_v47.css"><link rel="stylesheet" href="/static/windi_v47.css"><style>*{margin:0;padding:0;box-sizing:border-box}:root{--primary:#1a365d;--accent:#3182ce;--success:#38a169;--warning:#d69e2e;--danger:#e53e3e;--bg:#f7fafc;--card:#fff;--text:#2d3748;--border:#e2e8f0}body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}.login-overlay{position:fixed;inset:0;background:linear-gradient(135deg,#1a365d,#2c5282);display:flex;align-items:center;justify-content:center;z-index:10000}.login-modal{background:#fff;border-radius:16px;padding:40px;max-width:500px;width:95%;max-height:90vh;overflow-y:auto}.login-header{text-align:center;margin-bottom:25px}.login-header .icon{font-size:56px}.login-header h1{color:var(--primary);font-size:1.6rem}.form-section{background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:16px}.form-section-title{display:flex;align-items:center;gap:8px;font-weight:600;color:var(--primary);margin-bottom:12px}.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}.form-row.single{grid-template-columns:1fr}.form-field{display:flex;flex-direction:column;gap:4px}.form-field label{font-size:.8rem;font-weight:600}.form-field .required{color:#dc2626}.form-field input,.form-field select{padding:10px;border:2px solid var(--border);border-radius:6px}.form-field input:focus{outline:none;border-color:var(--accent)}.form-field small{font-size:.7rem;color:#718096}.login-btn{width:100%;padding:14px;background:linear-gradient(135deg,#999999,#AAAAAA);color:#fff;border:none;border-radius:10px;cursor:pointer;font-weight:700;font-size:1rem;margin-top:10px}.login-principle{background:#F5F5F5;border:1px dashed #AAAAAA;padding:12px;border-radius:8px;text-align:center;margin-top:15px;font-size:.85rem;color:#777777;font-weight:600}.migration-notice{background:#fef3c7;border:1px solid #f59e0b;border-radius:8px;padding:12px;margin-bottom:15px;font-size:.85rem;color:#92400e}.session-bar{position:fixed;top:0;left:0;right:0;height:40px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:9000;font-size:.85rem}.session-bar .user-info{display:flex;align-items:center;gap:15px}.session-bar .btn-profile{background:transparent;border:1px solid rgba(255,255,255,0.3);color:#fff;padding:4px 12px;border-radius:4px;cursor:pointer;font-size:.8rem}.session-bar .btn-profile:hover{background:rgba(255,255,255,0.1)}.session-bar .timer.warning{color:#fbbf24;animation:pulse 1s infinite}.session-bar .btn-logout{background:var(--danger);border:none;color:#fff;padding:5px 15px;border-radius:4px;cursor:pointer}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}.app-content{margin-top:40px;display:flex;min-height:calc(100vh - 40px)}.sidebar{width:280px;background:var(--primary);color:#fff;padding:20px;flex-shrink:0}.sidebar.collapsed{width:0;padding:0;overflow:hidden}.sidebar-toggle{position:fixed;left:10px;top:50px;z-index:1000;background:var(--primary);color:#fff;border:none;width:40px;height:40px;border-radius:8px;cursor:pointer}.logo{display:flex;align-items:center;gap:10px;margin:30px 0 20px}.logo i{font-size:2rem;color:var(--accent)}.lang-bar{display:flex;gap:5px;margin-bottom:20px}.lang-btn{background:#2c5282;border:none;color:#fff;padding:5px 10px;border-radius:4px;cursor:pointer}.lang-btn.active{background:var(--accent)}.btn-new{width:100%;padding:12px;background:var(--success);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600;margin-bottom:20px}.doc-list{max-height:calc(100vh - 350px);overflow-y:auto}.doc-item{padding:12px;background:#2c5282;border-radius:6px;margin-bottom:8px;cursor:pointer;font-size:.85rem;display:flex;justify-content:space-between}.doc-item:hover{background:var(--accent)}.doc-item-delete{background:var(--danger);color:#fff;border:none;padding:4px 8px;border-radius:4px;cursor:pointer}.main-area{flex:1;display:flex;flex-direction:column}.top-bar{background:var(--card);padding:10px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:15px;flex-wrap:wrap}.top-bar-title{font-size:1.1rem;font-weight:600;color:var(--primary);margin-left:50px}.top-bar-actions{display:flex;gap:8px;margin-left:auto}.top-bar-btn{padding:8px 16px;border:none;border-radius:6px;cursor:pointer;font-size:.85rem}.btn-save{background:var(--primary);color:#fff}.btn-finalize{background:var(--success);color:#fff}.btn-delete{background:var(--danger);color:#fff}.btn-settings{background:var(--accent);color:#fff}.status-badge{padding:6px 12px;border-radius:20px;font-size:.8rem;font-weight:600}.status-draft{background:#fef3c7;color:#92400e}.status-validated{background:#d1fae5;color:#777777}.status-finalized{background:#dbeafe;color:#1e40af}.content-area{flex:1;display:flex;overflow:hidden}.editor-section{flex:1;display:flex;flex-direction:column;padding:20px;overflow-y:auto}.title-input{width:100%;font-size:1.5rem;font-weight:700;border:none;border-bottom:2px solid var(--border);padding:10px 0;margin-bottom:15px;color:var(--primary);background:transparent}.title-input:focus{outline:none;border-color:var(--accent)}.editor-toolbar{display:flex;gap:5px;padding:10px;background:var(--bg);border-radius:8px;margin-bottom:10px}.toolbar-btn{background:#fff;border:1px solid var(--border);padding:8px 12px;border-radius:4px;cursor:pointer}.toolbar-btn:hover{background:var(--accent);color:#fff}#editor{flex:1;border:1px solid var(--border);border-radius:8px;padding:20px;font-size:1rem;line-height:1.8;background:#fff;overflow-y:auto;min-height:200px}#editor:focus{outline:none;border-color:var(--accent)}.chat-section{width:40%;min-width:320px;display:flex;flex-direction:column;border-left:1px solid var(--border)}.chat-header{padding:15px;background:var(--primary);color:#fff}.chat-messages{flex:1;overflow-y:auto;padding:20px;background:var(--bg)}.chat-msg{padding:12px;border-radius:12px;margin-bottom:12px;max-width:90%;white-space:pre-wrap}.chat-user{background:var(--primary);color:#fff;margin-left:auto}.chat-ai{background:#fff;border:1px solid var(--border)}.insert-btn{margin-top:10px;padding:8px 16px;background:var(--success);color:#fff;border:none;border-radius:6px;cursor:pointer}.preview-btn{margin-top:10px;margin-right:8px;padding:8px 16px;background:var(--accent);color:#fff;border:none;border-radius:6px;cursor:pointer}.chat-input-area{padding:15px;background:#fff;border-top:1px solid var(--border)}.chat-textarea{width:100%;min-height:80px;padding:12px;border:1px solid var(--border);border-radius:8px;resize:vertical;margin-bottom:10px}.chat-actions{display:flex;gap:10px;justify-content:flex-end}.chat-send{padding:10px 20px;background:var(--accent);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600}.chat-send-doc{padding:10px 20px;background:var(--warning);color:#fff;border:none;border-radius:8px;cursor:pointer}.settings-panel{width:340px;background:var(--card);border-left:1px solid var(--border);padding:20px;overflow-y:auto}.settings-panel.collapsed{width:0;padding:0;overflow:hidden}.panel-toggle{position:fixed;right:10px;top:50px;z-index:1000;background:var(--accent);color:#fff;border:none;width:40px;height:40px;border-radius:8px;cursor:pointer}.panel-section{margin-bottom:25px}.panel-title{font-size:.9rem;font-weight:600;color:var(--primary);margin-bottom:10px}.human-field{margin-bottom:15px}.human-field label{display:block;font-size:.85rem;color:#718096;margin-bottom:5px}.human-field input,.human-field select{width:100%;padding:10px;border:1px solid var(--border);border-radius:6px}.human-field input:read-only{background:#f1f5f9}.human-field small{color:var(--warning);font-size:.75rem}.witness-section{background:#fefce8;border:1px dashed #eab308;border-radius:8px;padding:15px;margin-top:15px}.export-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.btn-export{background:#805ad5;color:#fff;padding:8px;border:none;border-radius:6px;cursor:pointer}.receipt-box{background:var(--bg);border:1px solid var(--success);border-radius:8px;padding:15px;font-family:monospace;font-size:.75rem;display:none;margin-top:15px}.receipt-box.show{display:block}.panel-section:first-child{position:sticky;top:0;background:var(--card);z-index:10;padding-bottom:10px;border-bottom:1px solid var(--border)}.witness-section{position:sticky;top:160px;background:#fefce8;z-index:9}.chat-content{white-space:pre-wrap}.chat-content.collapsed{max-height:150px;overflow:hidden;position:relative}.chat-content.collapsed::after{content:'';position:absolute;bottom:0;left:0;right:0;height:40px;background:linear-gradient(transparent,#fff)}.expand-btn{background:transparent;border:1px dashed var(--accent);color:var(--accent);padding:4px 12px;border-radius:4px;cursor:pointer;margin:8px 0;display:block;width:100%;text-align:center}.reauth-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:10001}.reauth-overlay.show{display:flex}.reauth-modal{background:#fff;border-radius:16px;padding:30px;max-width:400px;width:95%}.reauth-modal h3{color:var(--primary);margin-bottom:10px}.reauth-modal input{width:100%;padding:12px;border:2px solid var(--border);border-radius:8px;margin-bottom:15px}.reauth-buttons{display:flex;gap:10px}.reauth-buttons button{flex:1;padding:12px;border:none;border-radius:8px;cursor:pointer;font-weight:600}.btn-reauth-confirm{background:var(--success);color:#fff}.btn-reauth-cancel{background:#718096;color:#fff}.profile-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:10001}.profile-overlay.show{display:flex}.profile-modal{background:#fff;border-radius:16px;padding:30px;max-width:500px;width:95%;max-height:90vh;overflow-y:auto}.profile-modal h3{color:var(--primary);margin-bottom:20px;display:flex;align-items:center;gap:10px}.profile-form .form-field{margin-bottom:15px}.profile-form label{display:block;font-size:.85rem;font-weight:600;color:#4a5568;margin-bottom:5px}.profile-form input{width:100%;padding:12px;border:2px solid var(--border);border-radius:8px}.profile-form input:read-only{background:#f1f5f9;color:#718096}.profile-form input:focus{outline:none;border-color:var(--accent)}.profile-buttons{display:flex;gap:10px;margin-top:20px}.profile-buttons button{flex:1;padding:12px;border:none;border-radius:8px;cursor:pointer;font-weight:600}.btn-profile-save{background:var(--success);color:#fff}.btn-profile-cancel{background:#718096;color:#fff}.preview-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:10001}.preview-overlay.show{display:flex}.preview-modal{background:#fff;border-radius:16px;padding:30px;max-width:800px;width:95%;max-height:90vh;overflow-y:auto}.preview-modal h3{color:var(--primary);margin-bottom:20px;display:flex;align-items:center;gap:10px}.preview-content{background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:20px;min-height:200px;max-height:400px;overflow-y:auto;white-space:pre-wrap;line-height:1.8}.preview-buttons{display:flex;gap:10px;margin-top:20px}.preview-buttons button{flex:1;padding:12px;border:none;border-radius:8px;cursor:pointer;font-weight:600}.btn-preview-insert{background:var(--success);color:#fff}.btn-preview-cancel{background:#718096;color:#fff}.toast{position:fixed;bottom:20px;right:20px;padding:15px 25px;border-radius:8px;color:#fff;font-weight:600;z-index:10002}.toast-success{background:var(--success)}.toast-error{background:var(--danger)}.toast-warning{background:var(--warning)}.template-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:10001}.template-overlay.show{display:flex}.template-modal{background:#fff;border-radius:16px;padding:30px;max-width:700px;width:95%;max-height:90vh;overflow-y:auto}.template-modal h3{color:var(--primary);margin-bottom:20px}.template-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px}.template-card{border:2px solid var(--border);border-radius:12px;padding:15px;cursor:pointer;transition:all .2s}.template-card:hover{border-color:var(--accent);transform:translateY(-2px)}.template-card.selected{border-color:var(--success);background:#F5F5F5}.template-card-header{height:40px;border-radius:6px;margin-bottom:10px}.template-card-name{font-weight:600;font-size:.9rem;margin-bottom:5px}.template-card-desc{font-size:.75rem;color:#718096}.template-card-langs{display:flex;gap:4px;margin-top:8px;flex-wrap:wrap}.template-card-lang{font-size:.65rem;background:#e2e8f0;padding:2px 6px;border-radius:4px}.template-buttons{display:flex;gap:10px;margin-top:20px}.template-buttons button{flex:1;padding:12px;border:none;border-radius:8px;cursor:pointer;font-weight:600}.btn-template-apply{background:var(--success);color:#fff}.btn-template-cancel{background:#718096;color:#fff}@media(max-width:900px){.content-area{flex-direction:column}.chat-section{width:100%;border-left:none;border-top:1px solid var(--border)}.form-row{grid-template-columns:1fr}}</style><script src="/wsg/wsg-init.js"></script></head><body>
 
 <div class="login-overlay" id="loginOverlay"><div class="login-modal"><div class="login-header"><div class="icon">🏛️</div><h1>WINDI Publishing House</h1><p>Human Identity Card</p></div><div class="migration-notice" id="migrationNotice" style="display:none"><strong>ℹ️ System aktualisiert.</strong> Zur Nutzung ergänzen Sie Ihre Mitarbeiter-ID und Passwort.</div><form onsubmit="handleLogin(event)"><div class="form-section"><div class="form-section-title"><i class="fas fa-user"></i> Persönliche Daten</div><div class="form-row"><div class="form-field"><label>Name <span class="required">*</span></label><input type="text" id="loginFullName" required placeholder="Max Mustermann"></div><div class="form-field"><label>Mitarbeiter-ID <span class="required">*</span></label><input type="text" id="loginEmployeeId" required placeholder="EMP-2024-0042"></div></div><div class="form-row"><div class="form-field"><label>Abteilung</label><input type="text" id="loginDepartment" placeholder="Bauamt"></div><div class="form-field"><label>Position</label><input type="text" id="loginPosition" placeholder="Sachbearbeiter"></div></div><div class="form-row single"><div class="form-field"><label>E-Mail</label><input type="email" id="loginEmail" placeholder="max@behoerde.de"></div></div><div class="form-row single"><div class="form-field"><label>Passwort <span class="required">*</span></label><input type="password" id="loginPassword" required placeholder="Ihr Passwort"><small>Bei Erstanmeldung wird dieses Passwort gespeichert.</small></div></div></div><div class="form-section"><div class="form-section-title"><i class="fas fa-sitemap"></i> Hierarchie (optional)</div><div class="form-row"><div class="form-field"><label>Vorgesetzter-ID</label><input type="text" id="loginSupervisorId" placeholder="EMP-2024-0001"></div><div class="form-field"><label>Vorgesetzter Name</label><input type="text" id="loginSupervisorName" placeholder="Dr. Schmidt"></div></div></div><button type="submit" class="login-btn"><i class="fas fa-sign-in-alt"></i> Anmelden</button><div class="login-principle">🔒 KI verarbeitet. Mensch entscheidet. WINDI garantiert.</div></form></div></div>
 
@@ -2163,6 +2369,15 @@ function toast(m,t){var el=document.createElement('div');el.className='toast toa
 document.addEventListener('DOMContentLoaded',function(){
     document.getElementById('chatInput').addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat()}});
     document.getElementById('reauthPassword').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();confirmReauth()}});
+    // WSG - WINDI Surface Guard v0.1.1
+    if(window.WSG){
+        window.WSG.init({
+            debug:true,
+            showBadge:true,
+            onReady:function(r){console.log('[BABEL] WSG initialized',r)},
+            onViolation:function(v){console.warn('[BABEL] WSG violation',v);toast('Integridade comprometida!','error')}
+        });
+    }
 });
 
 function cleanLLMResponse(text){
