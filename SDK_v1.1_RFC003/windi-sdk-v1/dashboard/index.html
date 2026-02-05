@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI Governance Monitor</title>
+<style>
+  :root {
+    --bg: #0a0e17;
+    --surface: #111827;
+    --border: #1e293b;
+    --text: #e2e8f0;
+    --text-dim: #64748b;
+    --accent: #3b82f6;
+    --green: #10b981;
+    --yellow: #f59e0b;
+    --orange: #f97316;
+    --red: #ef4444;
+    --purple: #8b5cf6;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'SF Mono', 'Fira Code', monospace; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  .header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 24px; border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, #111827 0%, #0a0e17 100%);
+  }
+  .header h1 { font-size: 16px; font-weight: 600; letter-spacing: 1px; }
+  .header h1 span { color: var(--accent); }
+  .header .motto { font-size: 11px; color: var(--text-dim); }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 8px; animation: pulse 2s infinite; }
+  .status-dot.live { background: var(--green); }
+  .status-dot.offline { background: var(--red); }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  .grid { display: grid; grid-template-columns: 280px 1fr 320px; gap: 1px; background: var(--border); min-height: calc(100vh - 57px); }
+  .panel { background: var(--surface); padding: 16px; overflow-y: auto; }
+
+  .panel-title { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: var(--text-dim); margin-bottom: 12px; }
+
+  /* Shelf Health Cards */
+  .shelf-card {
+    background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
+    padding: 12px; margin-bottom: 8px; cursor: pointer; transition: border-color 0.2s;
+  }
+  .shelf-card:hover { border-color: var(--accent); }
+  .shelf-card.active { border-color: var(--accent); box-shadow: 0 0 12px rgba(59,130,246,0.15); }
+  .shelf-label { font-size: 12px; font-weight: 600; display: flex; justify-content: space-between; }
+  .shelf-name { font-size: 10px; color: var(--text-dim); margin-top: 2px; }
+  .shelf-bar { height: 4px; border-radius: 2px; background: var(--border); margin-top: 8px; overflow: hidden; }
+  .shelf-bar-fill { height: 100%; border-radius: 2px; transition: width 0.6s ease; }
+  .shelf-stats { display: flex; justify-content: space-between; margin-top: 6px; font-size: 10px; color: var(--text-dim); }
+
+  .status-badge {
+    font-size: 9px; padding: 2px 6px; border-radius: 3px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .status-healthy { background: rgba(16,185,129,0.15); color: var(--green); }
+  .status-warning { background: rgba(245,158,11,0.15); color: var(--yellow); }
+  .status-critical { background: rgba(239,68,68,0.15); color: var(--red); }
+  .status-no_data { background: rgba(100,116,139,0.15); color: var(--text-dim); }
+
+  /* Center Panel - ECG */
+  .ecg-container { height: 200px; position: relative; background: var(--bg); border-radius: 8px; border: 1px solid var(--border); overflow: hidden; margin-bottom: 16px; }
+  .ecg-canvas { width: 100%; height: 100%; }
+  .ecg-label { position: absolute; top: 8px; left: 12px; font-size: 10px; color: var(--text-dim); }
+  .ecg-bpm { position: absolute; top: 8px; right: 12px; font-size: 24px; font-weight: 700; color: var(--green); }
+  .ecg-bpm span { font-size: 10px; color: var(--text-dim); }
+
+  /* Stats Grid */
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 16px; }
+  .stat-card { background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 12px; text-align: center; }
+  .stat-value { font-size: 24px; font-weight: 700; }
+  .stat-label { font-size: 10px; color: var(--text-dim); margin-top: 4px; }
+
+  /* Severity Distribution */
+  .severity-bar { display: flex; height: 24px; border-radius: 4px; overflow: hidden; margin-bottom: 16px; }
+  .severity-bar div { transition: width 0.6s ease; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; }
+
+  /* Shelf Detail Table */
+  .detail-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  .detail-table th { text-align: left; padding: 8px; border-bottom: 1px solid var(--border); color: var(--text-dim); font-size: 10px; text-transform: uppercase; }
+  .detail-table td { padding: 6px 8px; border-bottom: 1px solid rgba(30,41,59,0.5); }
+  .detail-table tr:hover { background: rgba(59,130,246,0.05); }
+
+  /* Live Feed */
+  .feed-item {
+    padding: 8px 10px; margin-bottom: 4px; border-radius: 4px;
+    border-left: 3px solid var(--border); background: var(--bg);
+    font-size: 11px; animation: fadeIn 0.3s ease;
+  }
+  .feed-item.high { border-left-color: var(--red); }
+  .feed-item.medium { border-left-color: var(--yellow); }
+  .feed-item.low { border-left-color: var(--green); }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+  .feed-code { font-weight: 600; color: var(--accent); }
+  .feed-event { color: var(--text-dim); font-size: 10px; }
+  .feed-weight { float: right; font-weight: 700; }
+
+  /* Hotspot */
+  .hotspot { padding: 10px; margin-bottom: 6px; border-radius: 6px; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); }
+  .hotspot-code { font-weight: 700; color: var(--red); }
+  .hotspot-name { font-size: 10px; color: var(--text-dim); }
+
+  /* Event Distribution */
+  .event-row { display: flex; align-items: center; margin-bottom: 4px; font-size: 11px; }
+  .event-label { width: 140px; color: var(--text-dim); font-size: 10px; }
+  .event-bar-bg { flex: 1; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .event-bar-fill { height: 100%; border-radius: 3px; background: var(--accent); transition: width 0.6s; }
+  .event-count { width: 40px; text-align: right; font-size: 10px; color: var(--text-dim); }
+
+  .offline-msg { text-align: center; padding: 40px; color: var(--text-dim); }
+  .offline-msg h2 { color: var(--yellow); margin-bottom: 12px; }
+
+  @media (max-width: 1024px) { .grid { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1><span>WINDI</span> GOVERNANCE MONITOR</h1>
+    <div class="motto">Flow is Truth. Content is Sovereign.</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:16px;">
+    <div style="font-size:11px;color:var(--text-dim);" id="lastUpdate">—</div>
+    <div><span class="status-dot" id="statusDot"></span><span id="statusText" style="font-size:11px;">Connecting...</span></div>
+  </div>
+</div>
+
+<div class="grid">
+  <!-- LEFT: Shelf Health -->
+  <div class="panel" id="shelfPanel">
+    <div class="panel-title">Shelf Health (S1–S7)</div>
+    <div id="shelfCards"></div>
+  </div>
+
+  <!-- CENTER: ECG + Stats + Detail -->
+  <div class="panel">
+    <div class="panel-title">Governance Pulse</div>
+    <div class="ecg-container">
+      <div class="ecg-label">SIGNAL WEIGHT / TIME</div>
+      <div class="ecg-bpm" id="bpm">0 <span>avg weight</span></div>
+      <canvas class="ecg-canvas" id="ecgCanvas"></canvas>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value" id="totalReceived" style="color:var(--accent)">0</div>
+        <div class="stat-label">SIGNALS RECEIVED</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="totalRejected" style="color:var(--red)">0</div>
+        <div class="stat-label">REJECTED</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="avgWeight" style="color:var(--yellow)">0</div>
+        <div class="stat-label">AVG WEIGHT</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="hotCount" style="color:var(--red)">0</div>
+        <div class="stat-label">HIGH SEVERITY</div>
+      </div>
+    </div>
+
+    <div class="panel-title">Severity Distribution</div>
+    <div class="severity-bar" id="severityBar"></div>
+
+    <div class="panel-title">Event Distribution</div>
+    <div id="eventDist"></div>
+
+    <div class="panel-title" style="margin-top:16px;">Shelf Detail</div>
+    <table class="detail-table" id="detailTable">
+      <thead><tr><th>Time</th><th>Code</th><th>Signal</th><th>Weight</th><th>Event</th><th>Severity</th></tr></thead>
+      <tbody id="detailBody"></tbody>
+    </table>
+  </div>
+
+  <!-- RIGHT: Live Feed + Hotspots -->
+  <div class="panel">
+    <div class="panel-title">🔥 Hotspots</div>
+    <div id="hotspots"></div>
+
+    <div class="panel-title" style="margin-top:16px;">Live Signal Feed</div>
+    <div id="liveFeed"></div>
+  </div>
+</div>
+
+<script>
+const BRIDGE_URL = location.origin;
+const SHELF_NAMES = {
+  S1: "Identity", S2: "Impact", S3: "Domain",
+  S4: "Governance", S5: "Decision", S6: "Temporal", S7: "Relations"
+};
+const REFRESH_MS = 2000;
+
+let ecgData = [];
+let selectedShelf = null;
+let isOnline = false;
+
+// ─── ECG Drawing ────────────────────────────────────────────────
+const canvas = document.getElementById('ecgCanvas');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas() {
+  canvas.width = canvas.parentElement.clientWidth;
+  canvas.height = canvas.parentElement.clientHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+function drawECG() {
+  const w = canvas.width, h = canvas.height;
+  ctx.fillStyle = '#0a0e17';
+  ctx.fillRect(0, 0, w, h);
+
+  // Grid
+  ctx.strokeStyle = 'rgba(30,41,59,0.5)';
+  ctx.lineWidth = 0.5;
+  for (let x = 0; x < w; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+  for (let y = 0; y < h; y += 30) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+
+  if (ecgData.length < 2) return;
+
+  // Baseline
+  const baseline = h * 0.7;
+  ctx.strokeStyle = 'rgba(16,185,129,0.3)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 4]);
+  ctx.beginPath(); ctx.moveTo(0, baseline); ctx.lineTo(w, baseline); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Signal trace
+  const maxPoints = Math.min(ecgData.length, 200);
+  const points = ecgData.slice(-maxPoints);
+  const step = w / maxPoints;
+
+  ctx.beginPath();
+  ctx.strokeStyle = '#10b981';
+  ctx.lineWidth = 2;
+  ctx.shadowColor = '#10b981';
+  ctx.shadowBlur = 6;
+
+  points.forEach((p, i) => {
+    const x = i * step;
+    const spike = (p.weight / 100) * (h * 0.65);
+    const y = baseline - spike;
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // Severity color overlay for high-weight points
+  points.forEach((p, i) => {
+    if (p.weight > 75) {
+      const x = i * step;
+      const spike = (p.weight / 100) * (h * 0.65);
+      const y = baseline - spike;
+      ctx.fillStyle = p.weight > 90 ? 'rgba(239,68,68,0.8)' : 'rgba(245,158,11,0.6)';
+      ctx.beginPath();
+      ctx.arc(x, y, 3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  });
+}
+
+// ─── Rendering ──────────────────────────────────────────────────
+
+function renderShelfCards(data) {
+  const container = document.getElementById('shelfCards');
+  container.innerHTML = '';
+  const health = data.shelf_health || {};
+  const counts = data.by_shelf || {};
+
+  Object.entries(SHELF_NAMES).forEach(([id, name]) => {
+    const sh = health[id] || { count: 0, avg_weight: 0, status: 'no_data' };
+    const card = document.createElement('div');
+    card.className = `shelf-card ${selectedShelf === id ? 'active' : ''}`;
+    card.onclick = () => { selectedShelf = id; fetchDashboard(); };
+
+    const statusClass = `status-${sh.status}`;
+    const barColor = sh.status === 'critical' ? 'var(--red)' : sh.status === 'warning' ? 'var(--yellow)' : 'var(--green)';
+
+    card.innerHTML = `
+      <div class="shelf-label">${id} <span class="status-badge ${statusClass}">${sh.status}</span></div>
+      <div class="shelf-name">${name}</div>
+      <div class="shelf-bar"><div class="shelf-bar-fill" style="width:${sh.avg_weight}%;background:${barColor}"></div></div>
+      <div class="shelf-stats"><span>${sh.count} signals</span><span>avg ${sh.avg_weight}</span></div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function renderStats(data) {
+  document.getElementById('totalReceived').textContent = (data.totals?.received || 0).toLocaleString();
+  document.getElementById('totalRejected').textContent = (data.totals?.rejected || 0).toLocaleString();
+  document.getElementById('avgWeight').textContent = data.totals?.avg_weight || 0;
+  document.getElementById('hotCount').textContent = data.by_severity?.high || 0;
+  document.getElementById('bpm').innerHTML = `${data.totals?.avg_weight || 0} <span>avg weight</span>`;
+}
+
+function renderSeverityBar(data) {
+  const sev = data.by_severity || {};
+  const total = (sev.low || 0) + (sev.medium || 0) + (sev.high || 0);
+  if (total === 0) return;
+
+  const bar = document.getElementById('severityBar');
+  bar.innerHTML = `
+    <div style="width:${(sev.low/total)*100}%;background:var(--green)">low ${sev.low}</div>
+    <div style="width:${(sev.medium/total)*100}%;background:var(--yellow);color:#000">med ${sev.medium}</div>
+    <div style="width:${(sev.high/total)*100}%;background:var(--red)">high ${sev.high}</div>
+  `;
+}
+
+function renderEventDist(data) {
+  const events = data.by_event || {};
+  const maxVal = Math.max(...Object.values(events), 1);
+  const container = document.getElementById('eventDist');
+  container.innerHTML = '';
+
+  Object.entries(events).sort((a, b) => b[1] - a[1]).forEach(([ev, count]) => {
+    if (count === 0) return;
+    const row = document.createElement('div');
+    row.className = 'event-row';
+    row.innerHTML = `
+      <div class="event-label">${ev}</div>
+      <div class="event-bar-bg"><div class="event-bar-fill" style="width:${(count/maxVal)*100}%"></div></div>
+      <div class="event-count">${count}</div>
+    `;
+    container.appendChild(row);
+  });
+}
+
+function renderHotspots(data) {
+  const container = document.getElementById('hotspots');
+  container.innerHTML = '';
+  (data.hotspots || []).forEach(h => {
+    const div = document.createElement('div');
+    div.className = 'hotspot';
+    div.innerHTML = `
+      <div class="hotspot-code">🔥 ${h.code} <span style="float:right;font-size:18px;">${h.weight}</span></div>
+      <div class="hotspot-name">${h.signal_name} — ${h.event}</div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function renderLiveFeed(data) {
+  const container = document.getElementById('liveFeed');
+  container.innerHTML = '';
+  const feed = (data.live_feed || []).reverse();
+  feed.forEach(s => {
+    const div = document.createElement('div');
+    div.className = `feed-item ${s.severity}`;
+    const time = new Date(s.ts).toLocaleTimeString();
+    div.innerHTML = `
+      <span class="feed-weight" style="color:${s.weight > 75 ? 'var(--red)' : s.weight > 50 ? 'var(--yellow)' : 'var(--green)'}">${s.weight}</span>
+      <span class="feed-code">${s.code}</span> ${s.signal_name}<br>
+      <span class="feed-event">${time} · ${s.event}</span>
+    `;
+    container.appendChild(div);
+  });
+
+  // Feed ECG data
+  feed.reverse().forEach(s => ecgData.push(s));
+  if (ecgData.length > 500) ecgData = ecgData.slice(-500);
+  drawECG();
+}
+
+function renderDetail(signals) {
+  const body = document.getElementById('detailBody');
+  body.innerHTML = '';
+  signals.forEach(s => {
+    const tr = document.createElement('tr');
+    const time = new Date(s.ts).toLocaleTimeString();
+    const sevColor = s.severity === 'high' ? 'var(--red)' : s.severity === 'medium' ? 'var(--yellow)' : 'var(--green)';
+    tr.innerHTML = `
+      <td style="color:var(--text-dim)">${time}</td>
+      <td style="color:var(--accent);font-weight:600">${s.code}</td>
+      <td>${s.signal_name}</td>
+      <td style="font-weight:700;color:${s.weight > 75 ? 'var(--red)' : s.weight > 50 ? 'var(--yellow)' : 'var(--green)'}">${s.weight}</td>
+      <td style="font-size:10px">${s.event}</td>
+      <td><span style="color:${sevColor}">${s.severity}</span></td>
+    `;
+    body.appendChild(tr);
+  });
+}
+
+// ─── Data Fetching ──────────────────────────────────────────────
+
+let dashboardData = null;
+
+async function fetchDashboard() {
+  try {
+    const res = await fetch(`${BRIDGE_URL}/api/v1/dashboard`);
+    if (!res.ok) throw new Error(res.status);
+    dashboardData = await res.json();
+    isOnline = true;
+
+    document.getElementById('statusDot').className = 'status-dot live';
+    document.getElementById('statusText').textContent = 'LIVE';
+    document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
+
+    renderShelfCards(dashboardData);
+    renderStats(dashboardData);
+    renderSeverityBar(dashboardData);
+    renderEventDist(dashboardData);
+    renderHotspots(dashboardData);
+    renderLiveFeed(dashboardData);
+
+    // Fetch shelf detail if selected
+    if (selectedShelf) {
+      const detRes = await fetch(`${BRIDGE_URL}/api/v1/shelf/${selectedShelf.toLowerCase()}`);
+      if (detRes.ok) renderDetail(await detRes.json());
+    }
+  } catch (e) {
+    isOnline = false;
+    document.getElementById('statusDot').className = 'status-dot offline';
+    document.getElementById('statusText').textContent = 'OFFLINE';
+  }
+}
+
+// ─── Demo Mode (offline with sample data) ───────────────────────
+
+function loadDemoData() {
+  const shelves = ['S1','S2','S3','S4','S5','S6','S7'];
+  const codes = ['ID-CONC','IMP-GRAV','DOM-FRIC','GOV-DENS','DEC-OVR','TMP-SPIKE','REL-NODE'];
+  const names = ['Decisional Concentration','Energy Gravity','Interdepartmental Friction','Bureaucratic Density','Override Frequency','Quarter-End Pulse','Critical Node'];
+  const events = ['APPROVED','APPROVAL_OVERRIDDEN','DEADLINE_EXCEEDED','DOC_CREATED','DEPENDENCY_BLOCKING'];
+
+  const feed = [];
+  for (let i = 0; i < 20; i++) {
+    const idx = Math.floor(Math.random() * 7);
+    feed.push({
+      ts: Date.now() - (i * 60000),
+      shelf: shelves[idx],
+      code: codes[idx],
+      signal_name: names[idx],
+      severity: Math.random() > 0.5 ? 'high' : Math.random() > 0.3 ? 'medium' : 'low',
+      weight: Math.floor(40 + Math.random() * 60),
+      event: events[Math.floor(Math.random() * events.length)],
+    });
+  }
+
+  dashboardData = {
+    totals: { received: 1000, rejected: 3, avg_weight: 71.4 },
+    by_shelf: { S1: 180, S2: 210, S3: 165, S4: 130, S5: 145, S6: 90, S7: 80 },
+    by_severity: { low: 180, medium: 420, high: 400 },
+    by_event: {
+      APPROVED: 280, APPROVAL_OVERRIDDEN: 150, DEADLINE_EXCEEDED: 120,
+      DOC_CREATED: 160, DEPENDENCY_BLOCKING: 90, STATE_TRANSITION: 110,
+      APPROVAL_REQUESTED: 60, REJECTED: 20, DEPENDENCY_LINKED: 10,
+    },
+    shelf_health: {
+      S1: { count: 180, avg_weight: 78.3, status: 'critical' },
+      S2: { count: 210, avg_weight: 68.5, status: 'warning' },
+      S3: { count: 165, avg_weight: 74.1, status: 'warning' },
+      S4: { count: 130, avg_weight: 72.8, status: 'warning' },
+      S5: { count: 145, avg_weight: 81.2, status: 'critical' },
+      S6: { count: 90, avg_weight: 83.7, status: 'critical' },
+      S7: { count: 80, avg_weight: 76.4, status: 'critical' },
+    },
+    hotspots: [
+      { code: 'TMP-SPIKE', signal_name: 'Quarter-End Pulse', weight: 98, event: 'APPROVAL_OVERRIDDEN' },
+      { code: 'DEC-OVR', signal_name: 'Override Frequency', weight: 95, event: 'APPROVAL_OVERRIDDEN' },
+      { code: 'ID-CONC', signal_name: 'Decisional Concentration', weight: 93, event: 'APPROVED' },
+      { code: 'REL-NODE', signal_name: 'Critical Node', weight: 91, event: 'DEPENDENCY_BLOCKING' },
+      { code: 'DOM-FRIC', signal_name: 'Interdepartmental Friction', weight: 89, event: 'DEADLINE_EXCEEDED' },
+    ],
+    live_feed: feed,
+  };
+
+  renderShelfCards(dashboardData);
+  renderStats(dashboardData);
+  renderSeverityBar(dashboardData);
+  renderEventDist(dashboardData);
+  renderHotspots(dashboardData);
+  renderLiveFeed(dashboardData);
+  document.getElementById('statusDot').className = 'status-dot live';
+  document.getElementById('statusText').textContent = 'DEMO';
+  document.getElementById('lastUpdate').textContent = 'Deutsche Bahn Simulation';
+}
+
+// ─── Init ───────────────────────────────────────────────────────
+
+async function init() {
+  try {
+    const res = await fetch(`${BRIDGE_URL}/api/v1/health`);
+    if (res.ok) {
+      fetchDashboard();
+      setInterval(fetchDashboard, REFRESH_MS);
+    } else {
+      loadDemoData();
+    }
+  } catch {
+    loadDemoData();
+  }
+}
+
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "version": "1.0",
+  "registry": {
+    "ID-CONC": 257,
+    "ID-CENT": 258,
+    "IMP-GRAV": 513,
+    "IMP-SKEW": 514,
+    "DOM-FRIC": 769,
+    "DOM-LOOP": 770,
+    "GOV-DENS": 1025,
+    "GOV-STACK": 1026,
+    "DEC-OVR": 1281,
+    "DEC-INTU": 1282,
+    "TMP-SPIKE": 1537,
+    "TMP-STALL": 1538,
+    "REL-DEPTH": 1793,
+    "REL-NODE": 1794
+  }
+}
