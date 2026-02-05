@@ -1,0 +1,30 @@
+{
+  "packets": [
+    {
+      "header": {
+        "v": "1.0",
+        "alg": "HMAC-SHA256",
+        "cid": "b64(sha256(client_id))",
+        "kid": "key-01",
+        "ts": 1738706400000,
+        "nonce": "b64(12bytes)",
+        "seq": 1
+      },
+      "payload": {
+        "shelf": "S5",
+        "code": "DEC-OVR",
+        "weight": 85,
+        "domain_hash": "b64(sha256(...))",
+        "doc_fingerprint": "b64(sha256(...))",
+        "event": "APPROVAL_OVERRIDDEN",
+        "ctx": {
+          "window": "5m",
+          "flags": 7
+        }
+      },
+      "auth": {
+        "sig": "b64(hmac)"
+      }
+    }
+  ]
+}

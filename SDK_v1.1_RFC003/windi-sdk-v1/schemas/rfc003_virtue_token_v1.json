@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "windi:rfc-003:virtue-token:1.0",
+  "title": "WINDI Virtue Token (JWT Payload)",
+  "description": "RFC-003 Governance Access & Authority Model — JWT authorization token defining sovereignty level, domain scope, and signal visibility for dashboard access.",
+  "type": "object",
+  "required": ["sub", "iss", "iat", "exp", "s_level", "domains", "clearance"],
+  "properties": {
+    "sub": {
+      "type": "string",
+      "description": "Subject identifier (user hash or ID)"
+    },
+    "iss": {
+      "type": "string",
+      "const": "windi-core",
+      "description": "Issuer — always windi-core"
+    },
+    "iat": {
+      "type": "integer",
+      "description": "Issued at (epoch seconds)"
+    },
+    "exp": {
+      "type": "integer",
+      "description": "Expiration (epoch seconds)"
+    },
+    "s_level": {
+      "type": "integer",
+      "enum": [1, 2, 3],
+      "description": "Sovereignty Level: 1=Tactical, 2=Strategic, 3=Sovereign"
+    },
+    "domains": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Organizational domains the actor has visibility into"
+    },
+    "clearance": {
+      "type": "string",
+      "enum": ["TACTICAL", "STRATEGIC", "SOVEREIGN"],
+      "description": "Human-readable clearance level"
+    },
+    "kill_switch_authority": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether actor can activate Governance Hold Protocol"
+    },
+    "shelves": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["S1", "S2", "S3", "S4", "S5", "S6", "S7"]
+      },
+      "description": "Visible shelves (filtered by s_level)"
+    },
+    "signals": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Visible signal codes (filtered by s_level + domain)"
+    },
+    "temporal_scope": {
+      "type": "string",
+      "enum": ["realtime", "7d", "30d", "90d", "365d", "unlimited"],
+      "description": "Temporal window of signal visibility"
+    },
+    "audit_trail": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether actor actions are logged in Forensic Ledger"
+    },
+    "nonce": {
+      "type": "string",
+      "description": "Anti-replay nonce"
+    }
+  },
+  "additionalProperties": false
+}
