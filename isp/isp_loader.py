@@ -38,19 +38,40 @@ except ImportError:
 ISP_BASE_PATH = Path("/opt/windi/isp")
 
 def list_profiles():
-    """Lista todos os ISPs disponíveis"""
+    """Lista todos os ISPs disponíveis (supports both legacy and canonical schema)"""
     profiles = []
-    for folder in ISP_BASE_PATH.iterdir():
-        if folder.is_dir() and not folder.name.startswith("_"):
+    for folder in sorted(ISP_BASE_PATH.iterdir()):
+        if folder.is_dir() and not folder.name.startswith("_") and folder.name != "__pycache__":
             profile_file = folder / "profile.json"
             if profile_file.exists():
-                with open(profile_file, 'r') as f:
-                    data = json.load(f)
-                    profiles.append({
-                        "id": data.get("id"),
-                        "name": data.get("name"),
-                        "short_name": data.get("short_name")
-                    })
+                try:
+                    with open(profile_file, 'r', encoding='utf-8') as f:
+                        data = json.load(f)
+                    # Canonical schema: isp_profile wrapper
+                    if "isp_profile" in data:
+                        isp = data["isp_profile"]
+                        meta = isp.get("metadata", {})
+                        org = isp.get("organization", {})
+                        profiles.append({
+                            "id": meta.get("profile_id", folder.name),
+                            "name": org.get("name_full", org.get("name", folder.name)),
+                            "short_name": org.get("name_short", folder.name),
+                            "governance_level": meta.get("governance_level", "LOW"),
+                            "templates_count": len(isp.get("templates", [])),
+                            "profile_type": meta.get("profile_type", "unknown")
+                        })
+                    # Legacy schema: flat root
+                    else:
+                        profiles.append({
+                            "id": data.get("id", folder.name),
+                            "name": data.get("name", data.get("name_display", folder.name)),
+                            "short_name": data.get("short_name", folder.name),
+                            "governance_level": data.get("governance_level", "LOW"),
+                            "templates_count": 0,
+                            "profile_type": data.get("type", "unknown")
+                        })
+                except Exception as e:
+                    print(f"[ISP] Error loading {folder.name}: {e}")
     return profiles
 
 def load_profile(profile_id):
@@ -216,33 +237,99 @@ def load_form(profile_id, form_name):
 def list_templates(profile_id):
     """
     Lista todos os templates disponíveis para um ISP.
+    Checks both HTML files in templates/ dir AND JSON templates in profile.json.
 
     Args:
         profile_id: ID do perfil institucional
 
     Returns:
-        list: Lista de nomes de templates disponíveis
+        list: Lista de dicts com template info
     """
+    results = []
+    
+    # Source 1: HTML files in templates/ directory
     templates_dir = ISP_BASE_PATH / profile_id / "templates"
-    if not templates_dir.exists():
-        return []
-    return [f.stem for f in templates_dir.glob("*.html")]
+    if templates_dir.exists():
+        for f in sorted(templates_dir.glob("*.html")):
+            results.append({
+                "id": f.stem,
+                "name": f.stem.replace("_", " ").replace("-", " ").title(),
+                "type": "html_file",
+                "source": "file"
+            })
+    
+    # Source 2: JSON templates in profile.json (canonical schema)
+    profile_path = ISP_BASE_PATH / profile_id / "profile.json"
+    if profile_path.exists():
+        try:
+            with open(profile_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            isp = data.get("isp_profile", data)
+            json_templates = isp.get("templates", [])
+            for t in json_templates:
+                tid = t.get("id", "")
+                results.append({
+                    "id": tid,
+                    "name": t.get("name_de", t.get("name", tid)),
+                    "name_en": t.get("name_en", ""),
+                    "category": t.get("category", ""),
+                    "risk_level": t.get("risk_level", "R1"),
+                    "description": t.get("description", ""),
+                    "type": "json_definition",
+                    "source": "profile"
+                })
+        except Exception as e:
+            print(f"[ISP] Error reading templates from profile.json: {e}")
+    
+    return results
 
 
 def list_forms(profile_id):
     """
     Lista todos os formulários disponíveis para um ISP.
+    Checks both HTML files in forms/ dir AND document_categories in profile.json.
 
     Args:
         profile_id: ID do perfil institucional
 
     Returns:
-        list: Lista de nomes de formulários disponíveis
+        list: Lista de dicts com form info
     """
+    results = []
+    
+    # Source 1: HTML files in forms/ directory
     forms_dir = ISP_BASE_PATH / profile_id / "forms"
-    if not forms_dir.exists():
-        return []
-    return [f.stem for f in forms_dir.glob("*.html")]
+    if forms_dir.exists():
+        for f in sorted(forms_dir.glob("*.html")):
+            results.append({
+                "id": f.stem,
+                "name": f.stem.replace("_", " ").replace("-", " ").title(),
+                "type": "html_file",
+                "source": "file"
+            })
+    
+    # Source 2: document_categories from profile.json (canonical schema)
+    profile_path = ISP_BASE_PATH / profile_id / "profile.json"
+    if profile_path.exists():
+        try:
+            with open(profile_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            isp = data.get("isp_profile", data)
+            categories = isp.get("document_categories", [])
+            for c in categories:
+                results.append({
+                    "id": c.get("id", ""),
+                    "name": c.get("name_de", c.get("name", "")),
+                    "name_en": c.get("name_en", ""),
+                    "description": c.get("description", ""),
+                    "risk_level": c.get("typical_risk_level", "R1"),
+                    "type": "category",
+                    "source": "profile"
+                })
+        except Exception as e:
+            print(f"[ISP] Error reading categories from profile.json: {e}")
+    
+    return results
 
 
 def list_components(profile_id):
@@ -455,6 +542,9 @@ def get_governance_config(profile_id, doc_type=None):
         if doc_type in mapping:
             level = mapping[doc_type]
     
+    # Support canonical schema (isp_profile wrapper)
+    if org_profile and "isp_profile" in org_profile:
+        org_profile = org_profile["isp_profile"]
     if org_profile and "governance" in org_profile:
         org_gov = org_profile["governance"]
         if org_gov.get("default_level"):

@@ -1639,13 +1639,18 @@ def api_templates_available():
                     elif profile and "colors" in profile:
                         primary_color = profile.get("colors", {}).get("primary", primary_color)
 
+                    # Support both canonical (isp_profile wrapper) and legacy schema
+                    isp = profile.get("isp_profile", profile) if profile else {}
+                    org = isp.get("organization", {})
+                    gov = isp.get("governance", {})
+                    meta = isp.get("metadata", {})
                     result.append({
                         "id": folder.name,
-                        "name": profile.get("organization", {}).get("organization_name", folder.name),
-                        "short_name": folder.name.replace("-", " ").title(),
-                        "jurisdiction": profile.get("organization", {}).get("jurisdiction", ""),
-                        "sector": profile.get("organization", {}).get("sector", ""),
-                        "governance_level": profile.get("governance", {}).get("default_level", "LOW"),
+                        "name": org.get("name_full", org.get("organization_name", folder.name)),
+                        "short_name": org.get("name_short", folder.name.replace("-", " ").title()),
+                        "jurisdiction": org.get("jurisdiction", meta.get("governance_level", "")),
+                        "sector": org.get("sector", ""),
+                        "governance_level": meta.get("governance_level", gov.get("default_level", gov.get("level", "LOW"))),
                         "primary_color": primary_color,
                         "templates": templates,
                         "forms": forms,
@@ -2469,8 +2474,9 @@ function onIspSelect(ispId){
         html+='<div style="margin-bottom:15px;"><label style="font-weight:600;color:#1a365d;display:block;margin-bottom:10px;"><i class="fas fa-file-alt"></i> Formulare:</label>';
         html+='<div class="template-grid">';
         profile.forms.forEach(f=>{
-            const formTitle=f.replace(/-/g,' ').replace(/\b\w/g,l=>l.toUpperCase());
-            html+='<div class="template-card" data-type="form" data-id="'+f+'" onclick="selectISPTemplate(this,\'form\',\''+f+'\')">';
+            const fId=(typeof f==='string')?f:(f.id||'');
+            const formTitle=(typeof f==='string')?f.replace(/-/g,' ').replace(/\b\w/g,l=>l.toUpperCase()):(f.name||f.id||'');
+            html+='<div class="template-card" data-type="form" data-id="'+fId+'" onclick="selectISPTemplate(this,\'form\',\''+fId+'\')">';
             html+='<div class="template-card-header" style="background:linear-gradient(135deg,'+profile.primary_color+',#2c5282)"></div>';
             html+='<div class="template-card-name">'+formTitle+'</div>';
             html+='<div class="template-card-desc">'+profile.short_name+' Formular</div>';
@@ -2485,8 +2491,9 @@ function onIspSelect(ispId){
         html+='<div><label style="font-weight:600;color:#1a365d;display:block;margin-bottom:10px;"><i class="fas fa-file-invoice"></i> Templates:</label>';
         html+='<div class="template-grid">';
         profile.templates.forEach(t=>{
-            const tplTitle=t.replace(/-/g,' ').replace(/\b\w/g,l=>l.toUpperCase());
-            html+='<div class="template-card" data-type="template" data-id="'+t+'" onclick="selectISPTemplate(this,\'template\',\''+t+'\')">';
+            const tId=(typeof t==='string')?t:(t.id||'');
+            const tplTitle=(typeof t==='string')?t.replace(/-/g,' ').replace(/\b\w/g,l=>l.toUpperCase()):(t.name||t.id||'');
+            html+='<div class="template-card" data-type="template" data-id="'+tId+'" onclick="selectISPTemplate(this,\'template\',\''+tId+'\')">';
             html+='<div class="template-card-header" style="background:linear-gradient(135deg,'+profile.primary_color+',#4a5568)"></div>';
             html+='<div class="template-card-name">'+tplTitle+'</div>';
             html+='<div class="template-card-desc">'+profile.short_name+' Template</div>';
