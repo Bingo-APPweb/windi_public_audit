@@ -1,488 +1,405 @@
 {
   "isp_profile": {
-    "id": "tuev",
-    "version": "1.0.0",
-    "schema_version": "2.0.0",
-    "created": "2026-02-02",
-    "created_by": "WINDI Dragon Council",
-    "name": "Technischer Überwachungsverein (TÜV)",
-    "name_display": {
-      "de": "Technischer Überwachungsverein (TÜV)",
-      "en": "Technical Inspection Association (TÜV)",
-      "pt": "Associação de Inspeção Técnica (TÜV)"
+    "metadata": {
+      "profile_id": "tuev",
+      "version": "2.0.0",
+      "created": "2026-02-02",
+      "updated": "2026-02-06T14:10:01.807073",
+      "governance_level": "LOW",
+      "profile_type": "technical_inspection_organization",
+      "windi_registry_version": "3.0.0",
+      "audit_hash": "5253ac1be2d64ed6"
     },
-    "type": "technical_inspection_organization",
-    "governance_level": "LOW",
-    "description": {
-      "de": "Governance-Profil für Dokumente mit Bezug zu den Technischen Überwachungsvereinen. Prüfberichte, Zertifizierungen, Sachverständigengutachten, Schulungsnachweise und Konformitätsbewertungen. 5 TÜV-Organisationen in Deutschland als eingetragene Vereine mit hoheitlichen Prüfaufgaben.",
-      "en": "Governance profile for documents referencing Technical Inspection Associations. Inspection reports, certifications, expert assessments, training certificates and conformity assessments. 5 TÜV organizations in Germany as registered associations with sovereign inspection duties.",
-      "pt": "Perfil de governança para documentos referentes às Associações de Inspeção Técnica. Relatórios de inspeção, certificações, pareceres técnicos, certificados de formação e avaliações de conformidade. 5 organizações TÜV na Alemanha como associações registradas com funções de inspeção soberanas."
-    },
-    "institutional_context": {
-      "legal_form": "Eingetragene Vereine (e.V.) mit technischen Dienstleistungskonzernen als Tochtergesellschaften",
-      "legal_basis": [
-        "Produktsicherheitsgesetz (ProdSG)",
-        "Betriebssicherheitsverordnung (BetrSichV)",
-        "Straßenverkehrszulassungsordnung (StVZO) § 29 — Hauptuntersuchung",
-        "Akkreditierungsstellengesetz (AkkStelleG)",
-        "EU-Verordnung 765/2008 — Akkreditierung und Marktüberwachung",
-        "EU AI Act (Verordnung 2024/1689) — Konformitätsbewertung Art. 29-43",
-        "Gewerbeordnung (GewO) — historische Grundlage seit 1866"
-      ],
-      "historical_origin": {
-        "founding_event": "Explosion des Dampfkessels der Mannheimer Aktienbrauerei, Januar 1865",
-        "first_association": "Dampfkessel-Überwachungs- und Revisions-Verein, gegründet 1866",
-        "first_vehicle_inspection": "Baden, 1906",
-        "inspection_sticker_introduced": 1961,
-        "liberalization": "1990er Jahre — Aufhebung der TÜV-Prüfmonopole"
-      },
-      "brand_significance": {
-        "de": "\"TÜV\" ist ein Deonym — umgangssprachlich synonym mit der Hauptuntersuchung. \"TÜV-geprüft\" ist das bekannteste deutsche Qualitätssiegel weltweit.",
-        "en": "\"TÜV\" is a genericized trademark — colloquially synonymous with vehicle inspection. \"TÜV-tested\" is Germany's most recognized quality mark worldwide.",
-        "pt": "\"TÜV\" é uma marca genérica — coloquialmente sinônimo de inspeção veicular. \"Testado pelo TÜV\" é o selo de qualidade alemão mais reconhecido mundialmente."
-      },
-      "organizations": {
-        "description": "5 TÜV-Organisationen in Deutschland, 3 große Holdings + 2 unabhängige",
-        "major_holdings": [
-          {
-            "name": "TÜV Süd",
-            "headquarters": "München",
-            "employees_2024": 30000,
-            "revenue_2024_mio_eur": 3429,
-            "ebit_2024_mio_eur": 216.6,
-            "segments": ["Industry", "Mobility", "Certification"],
-            "ceo": "Dr. Johannes Bussmann",
-            "global_presence": "50+ Länder",
-            "note": "Nummer 1 der TÜV-Firmen in Deutschland"
-          },
-          {
-            "name": "TÜV Rheinland",
-            "headquarters": "Köln",
-            "employees_2024": 25900,
-            "revenue_2024_mio_eur": 2714,
-            "ebit_2024_mio_eur": 214.8,
-            "segments": ["Industrial Services", "Mobility", "Products", "People & Business Assurance", "Digital & Cyber"],
-            "ceo": "Dr.-Ing. Michael Fübi",
-            "global_presence": "Standorte in über 60 Ländern",
-            "owner": "TÜV Rheinland Berlin Brandenburg Pfalz e.V.",
-            "note": "Stärkste internationale Ausrichtung, 52,4% Auslandsumsatz"
-          },
-          {
-            "name": "TÜV Nord",
-            "headquarters": "Hannover",
-            "employees_2024": 15000,
-            "revenue_2024_mio_eur": 1690,
-            "ebit_2024_mio_eur": 89.8,
-            "segments": ["Industrial Services", "Mobility", "Training"],
-            "global_presence": "70+ Länder",
-            "strategy": "Horizon2030 — Digitalisierung, Cybersecurity, internationale Expansion",
-            "note": "Starkes Engagement in Energiewende und USA-Geschäft"
-          }
-        ],
-        "independent": [
-          {
-            "name": "TÜV Thüringen",
-            "headquarters": "Erfurt",
-            "employees": 1000,
-            "note": "Einziger eigenständiger TÜV in den neuen Bundesländern, Tochter TÜVLITA in Litauen"
-          },
-          {
-            "name": "TÜV Saarland",
-            "headquarters": "Sulzbach/Saar",
-            "employees": 640,
-            "note": "Kleinste TÜV-Organisation, 2005 Kfz-Geschäft teilweise an TÜV Rheinland abgegeben"
-          }
-        ],
-        "associated": {
-          "name": "TÜV Hessen",
-          "headquarters": "Darmstadt",
-          "employees": 1300,
-          "note": "Seit 1999 zu 55% im Besitz von TÜV Süd"
-        },
-        "combined_ecosystem_2024": {
-          "total_employees_approx": 74000,
-          "total_revenue_approx_mio_eur": 7833,
-          "note": "Zahlen umfassen die 3 großen Holdings + Schätzungen für kleinere Gesellschaften"
-        }
-      },
-      "umbrella_organization": {
-        "name": "TÜV-Verband e.V.",
-        "seat": "Berlin",
-        "role": "Politische Interessenvertretung der TÜV-Unternehmen in Berlin und Brüssel",
-        "ceo": "Dr. Joachim Bühler",
-        "key_bodies": [
-          "Präsidium",
-          "Arbeitskreise und Kommissionen",
-          "Geschäftsstelle"
-        ]
-      },
-      "accreditation": {
-        "national_body": "Deutsche Akkreditierungsstelle GmbH (DAkkS)",
-        "legal_basis": "Akkreditierungsstellengesetz, EU-Verordnung 765/2008",
-        "scope": "Akkreditierung als Voraussetzung für Notifizierung als Benannte Stelle (Notified Body)",
-        "eu_framework": "European co-operation for Accreditation (EA)",
-        "international": "IAF (Zertifizierungsstellen), ILAC (Prüflabore)"
-      },
-      "competitors": {
-        "fahrzeugueberwachung": ["DEKRA", "GTÜ", "KÜS", "FSP"],
-        "international_tic": ["SGS (Schweiz)", "Bureau Veritas (Frankreich)", "Intertek (UK)", "DNV (Norwegen)"],
-        "note": "TÜV-Prüfmonopol seit Liberalisierung in den 1990ern aufgehoben"
-      },
-      "core_functions": [
-        "Fahrzeugprüfung — Hauptuntersuchung (HU) und Abgasuntersuchung (AU)",
-        "Anlagenprüfung — überwachungsbedürftige Anlagen nach BetrSichV",
-        "Produktzertifizierung — GS-Zeichen, CE-Konformität",
-        "Managementsystem-Zertifizierung — ISO 9001, 14001, 45001, 27001",
-        "Personenzertifizierung — Schweißer, Sachverständige, Fachkräfte",
-        "Konformitätsbewertung — als Benannte Stelle (Notified Body)",
-        "Sachverständigengutachten — Unfälle, Schäden, Bewertungen",
-        "Weiterbildung und Akademie — Schulungen, Seminare, Zertifikatslehrgänge",
-        "Cybersecurity und IT-Prüfungen — TÜVIT, ISO 27001",
-        "KI-Prüfung und -Zertifizierung — TÜV AI.Lab, EU AI Act Konformität"
+    "organization": {
+      "name_full": "Technischer Überwachungsverein (TÜV)",
+      "name_short": "TÜV",
+      "legal_form": "e.V. / AG (varies by regional entity)",
+      "sector": "Technische Prüfung / Zertifizierung / Sicherheit",
+      "employees": 74000,
+      "revenue_eur": "~7.8 Mrd. EUR",
+      "headquarters": "München/Hannover/Köln",
+      "description": "Deutschlands führende technische Prüf- und Zertifizierungsinstitute. Prüfen Fahrzeuge (HU/AU), Anlagen, Produkte und Managementsysteme. TÜV-geprüft ist eines der bekanntesten Qualitätssiegel weltweit.",
+      "relevance": "TÜV-Dokumente sind rechtserheblich. Fehlerhaftes Prüfgutachten kann zu Betriebsuntersagungen und Rückrufen führen. Schlüsselrolle bei KI-Konformitätsbewertung unter EU AI Act.",
+      "regional_presence": [
+        "TÜV SÜD: München",
+        "TÜV NORD: Hannover",
+        "TÜV Rheinland: Köln",
+        "International: 60+ Länder"
       ]
     },
-
-    "ai_governance_context": {
-      "description": "TÜV als Schlüsselakteur der KI-Regulierung in der EU",
-      "tuev_ai_lab": {
-        "name": "TÜV AI.Lab",
-        "founded": 2021,
-        "managing_director": "Franziska Weindauer",
-        "mission": "Regulatorische Anforderungen an KI in Prüfkriterien und Prüfprozesse übersetzen",
-        "key_outputs": [
-          "AI Act Risk Navigator — kostenloses Klassifizierungstool für Risikoklassen",
-          "KI-System-Taxonomie (Whitepaper)",
-          "Prüfkriterien für sicherheitskritische KI-Anwendungen",
-          "ISO 14971 ↔ EU AI Act Mapping (Medizinprodukte)",
-          "ISO 13485 ↔ EU AI Act Mapping (QMS)",
-          "Bias-in-AI-Recruitment Studie (mit StepStone)"
-        ],
-        "quote": "Das TÜV AI.Lab hat zum Ziel, die regulatorischen Anforderungen an KI in die Praxis zu übersetzen und Europa zum Hotspot für sichere und vertrauenswürdige KI zu machen."
-      },
-      "tuev_sued_ai_services": {
-        "launch_date": "2025-11-25",
-        "service": "Freiwillige Konformitätszertifikate für KI-Systeme/Produkte",
-        "scope": "Technische Dokumentation und Produktkonformität nach EU AI Act (Verordnung 2024/1689)",
-        "article_reference": "Art. 11 EU AI Act — technische Dokumentation",
-        "additional_services": ["KI-Schulungen", "Gap-Assessments", "Readiness Checks"],
-        "contact": "ai@tuvsud.com"
-      },
-      "tuevit": {
-        "name": "TÜVIT (TÜV Nord Tochter)",
-        "focus": "Robustheit, Erklärbarkeit, Sicherheit von KI-Systemen",
-        "service": "Trusted Product Scheme für KI",
-        "capabilities": ["Gap-Analysen", "Modelldesign-Analysen", "Sicherheitschecks mit Testsoftware"]
-      },
-      "notified_body_status": {
-        "current": "Verfahren zur Benennung von Notified Bodies für EU AI Act laufen noch",
-        "position": "TÜV-Organisationen bereiten sich auf Notifizierung nach Art. 29-38 EU AI Act vor",
-        "advantage": "Bestehende Notifizierungen unter anderen EU-Harmonisierungsvorschriften (MDR, Maschinenrichtlinie) erleichtern Erweiterung auf AI Act",
-        "eu_ai_act_art_43": "High-risk AI in Annex I Produkten: Konformitätsbewertung durch Notified Body, TÜV als natürlicher Kandidat"
-      },
-      "eu_ai_act_timeline": {
-        "2025-02-02": "Verbotene Praktiken + KI-Kompetenzpflicht (Art. 4) — in Kraft",
-        "2025-08-02": "GPAI-Pflichten — in Kraft",
-        "2026-08-02": "High-risk Systeme — volle Anwendung",
-        "2027-08-02": "Regulierte Produkte (Annex I) — erweiterte Übergangsfrist"
-      },
-      "windi_strategic_alignment": {
-        "de": "TÜV entwickelt die Prüfstandards für KI. WINDI liefert die Governance-Schicht, die dokumentiert, dass KI-Systeme diese Standards einhalten. TÜV prüft — WINDI dokumentiert den Prozess. Komplementär, nicht konkurrierend.",
-        "en": "TÜV develops the testing standards for AI. WINDI provides the governance layer that documents compliance with these standards. TÜV tests — WINDI documents the process. Complementary, not competing.",
-        "pt": "TÜV desenvolve os padrões de teste para IA. WINDI fornece a camada de governança que documenta a conformidade com esses padrões. TÜV testa — WINDI documenta o processo. Complementar, não concorrente."
+    "governance": {
+      "level": "LOW",
+      "identity_license_required": false,
+      "retention_years": 5,
+      "risk_domains": [
+        "Technische Sicherheit",
+        "Produkthaftung",
+        "Umweltschutz",
+        "Arbeitssicherheit",
+        "KI-Konformität"
+      ],
+      "compliance_frameworks": [
+        "EU AI Act",
+        "DSGVO",
+        "Maschinenrichtlinie 2006/42/EG",
+        "BetrSichV",
+        "ProdSG",
+        "ISO 17025",
+        "ISO 17020",
+        "ISO 17065",
+        "CE-Richtlinien",
+        "EnEfG"
+      ],
+      "sge_thresholds": {
+        "warn": 40,
+        "alert": 60,
+        "block": 80
       }
-    }
-  },
-
-  "detection_keywords": [
-    "TÜV",
-    "Technischer Überwachungsverein",
-    "TÜV Süd",
-    "TÜV SÜD",
-    "TÜV Rheinland",
-    "TÜV Nord",
-    "TÜV Thüringen",
-    "TÜV Saarland",
-    "TÜV Hessen",
-    "TÜV-Verband",
-    "TÜV AI.Lab",
-    "TÜVIT",
-    "TÜV-geprüft",
-    "TÜV-Siegel",
-    "TÜV-Zertifikat",
-    "TÜV Akademie",
-    "Hauptuntersuchung",
-    "HU/AU",
-    "Abgasuntersuchung",
-    "GS-Zeichen",
-    "Geprüfte Sicherheit",
-    "Prüfplakette",
-    "Anlagenprüfung",
-    "Konformitätsbewertung",
-    "Notified Body",
-    "Benannte Stelle",
-    "DAkkS",
-    "Akkreditierung",
-    "BetrSichV",
-    "ProdSG",
-    "Produktsicherheit",
-    "Sachverständigengutachten",
-    "ISO 9001",
-    "ISO 14001",
-    "ISO 27001",
-    "CE-Kennzeichnung",
-    "Managementsystem-Zertifizierung",
-    "Prüfbericht",
-    "Prüfingenieur",
-    "Zugelassene Überwachungsstelle",
-    "ZÜS",
-    "KI-Zertifizierung",
-    "KI-Konformität",
-    "AI Act Risk Navigator",
-    "KI-Beauftragter TÜV"
-  ],
-
-  "identity_license": {
-    "status": "model_only",
-    "scope": "no_official_identity",
-    "logo_allowed": false,
-    "seal_allowed": false,
-    "tuev_siegel_allowed": false,
-    "gs_zeichen_allowed": false,
-    "letterhead_allowed": false,
-    "disclaimer_required": true,
-    "disclaimer": {
-      "de": "Dieses Dokument wurde NICHT von einer TÜV-Organisation erstellt, geprüft oder autorisiert. Es enthält Bezüge zu realen Institutionen. Kein TÜV-Siegel oder GS-Zeichen darf reproduziert werden. Governance-Stufe: LOW.",
-      "en": "This document was NOT created, inspected or authorized by any TÜV organization. It contains references to real institutions. No TÜV mark or GS mark may be reproduced. Governance level: LOW.",
-      "pt": "Este documento NÃO foi criado, inspecionado ou autorizado por nenhuma organização TÜV. Contém referências a instituições reais. Nenhum selo TÜV ou marca GS pode ser reproduzido. Nível de governança: LOW."
     },
-    "trademark_notice": "\"TÜV\" ist eine geschützte Marke. Die Bezeichnung \"TÜV-geprüft\" darf nur von einem Technischen Überwachungsverein oder einer Tochtergesellschaft verwendet werden."
-  },
-
-  "metadata_fields": {
-    "institution_name": {
-      "required": true,
-      "type": "string",
-      "description": "Name of the specific TÜV organization (e.g. TÜV Süd, TÜV Rheinland, TÜV Nord)"
-    },
-    "document_type": {
-      "required": true,
-      "type": "enum",
-      "values": [
-        "inspection_report",
-        "certification_document",
-        "expert_assessment",
-        "training_certificate",
-        "conformity_assessment",
-        "audit_report",
-        "product_test_report",
-        "management_system_certificate",
-        "personnel_certificate",
-        "ai_assessment",
-        "cybersecurity_report",
-        "energy_audit"
-      ],
-      "description": "Type of TÜV document"
-    },
-    "document_category": {
-      "required": true,
-      "type": "enum",
-      "values": [
-        "fahrzeugueberwachung",
-        "anlagensicherheit",
-        "produktzertifizierung",
-        "managementsysteme",
-        "personenzertifizierung",
-        "weiterbildung",
-        "sachverstaendige",
-        "cybersecurity",
-        "ki_und_digitalisierung",
-        "energieeffizienz",
-        "umwelt_und_nachhaltigkeit",
-        "medizinprodukte"
-      ],
-      "description": "TÜV business area the document belongs to"
-    },
-    "pruefnorm": {
-      "required": false,
-      "type": "string",
-      "description": "Applicable standard or regulation (e.g. ISO 9001:2015, BetrSichV Anh.2 Abschn.4, EU AI Act Art. 43)"
-    },
-    "tuev_organization": {
-      "required": false,
-      "type": "string",
-      "description": "Specific TÜV entity (TÜV Süd, TÜV Rheinland, TÜV Nord, etc.)"
-    },
-    "pruefzeichen": {
-      "required": false,
-      "type": "enum",
-      "values": ["gs_zeichen", "tuev_mark", "ce_marking", "none"],
-      "description": "Applicable test mark (reference only, never reproduced)"
-    },
-    "akkreditierung_ref": {
-      "required": false,
-      "type": "string",
-      "description": "DAkkS accreditation reference number if applicable"
-    }
-  },
-
-  "governance_rules": {
-    "audit_trail": {
-      "enabled": true,
-      "granularity": "basic",
-      "description": "Document creation and modification logged"
-    },
-    "version_control": {
-      "enabled": false,
-      "policy": "optional",
-      "description": "Version tracking optional for operational documents"
-    },
-    "watermark": {
-      "enabled": false,
-      "style": "metadata_only",
-      "text": "WINDI Governance | LOW | TÜV"
-    },
-    "ai_role": {
-      "permitted": [
-        "form_assistance",
-        "template_generation",
-        "document_drafting",
-        "translation_support",
-        "checklist_creation",
-        "process_documentation",
-        "compliance_mapping",
-        "risk_classification_guidance"
-      ],
-      "prohibited": [
-        "certificate_issuance",
-        "test_mark_reproduction",
-        "inspection_decisions",
-        "conformity_declarations",
-        "identity_impersonation",
-        "akkreditierung_claims"
-      ],
-      "human_review_required": false,
-      "human_review_recommended": true,
-      "description": "AI assists with operational documents, compliance mapping and risk classification guidance. Official certificates, test marks, inspection decisions and conformity declarations require human authority and valid accreditation."
-    },
-    "integrity_hash": {
-      "enabled": true,
-      "algorithm": "SHA-256",
-      "display": "footer_only",
-      "description": "Hash in footer for traceability"
-    }
-  },
-
-  "operational_templates": {
-    "description": "Common TÜV document templates that WINDI can assist with",
     "templates": [
       {
-        "id": "hu_au_pruefbericht",
-        "name": "Hauptuntersuchung/Abgasuntersuchung Prüfbericht",
-        "category": "fahrzeugueberwachung",
-        "legal_basis": "StVZO § 29, Anlage VIII",
-        "description": "Vehicle inspection report template (HU/AU)",
-        "note": "Prüfplakette wird nur von amtlich anerkannten aaSoP oder PI vergeben"
+        "id": "TPL-TUV-001",
+        "name_de": "HU/AU-Prüfbericht",
+        "name_en": "Vehicle Inspection Report",
+        "category": "fahrzeugpruefung",
+        "risk_level": "R2",
+        "description": "Hauptuntersuchung und Abgasuntersuchung für Kraftfahrzeuge nach §29 StVZO",
+        "required_fields": [
+          "institution",
+          "date",
+          "reference",
+          "fahrzeug",
+          "pruefer"
+        ],
+        "governance_notes": "Rechtsverbindlich. Ohne bestandene HU keine Zulassung."
       },
       {
-        "id": "managementsystem_zertifikat",
-        "name": "Managementsystem-Zertifizierung",
-        "category": "managementsysteme",
-        "legal_basis": "ISO 9001, ISO 14001, ISO 45001, ISO 27001",
-        "description": "Management system certification document template"
+        "id": "TPL-TUV-002",
+        "name_de": "Managementsystem-Zertifikat",
+        "name_en": "Management System Certificate",
+        "category": "zertifizierung",
+        "risk_level": "R2",
+        "description": "Zertifizierung nach ISO 9001, ISO 14001, ISO 45001 etc.",
+        "required_fields": [
+          "institution",
+          "date",
+          "reference",
+          "norm",
+          "geltungsbereich",
+          "gueltigkeitsdauer"
+        ],
+        "governance_notes": "3-Jahres-Zyklus mit jährlichen Überwachungsaudits."
       },
       {
-        "id": "produktzertifizierung_gs",
-        "name": "Produktzertifizierung / GS-Zeichen",
-        "category": "produktzertifizierung",
-        "legal_basis": "ProdSG § 20-23",
-        "description": "Product certification with GS mark (Geprüfte Sicherheit)",
-        "note": "GS-Zeichen ist gesetzlich geregelt, nicht reproduzierbar"
+        "id": "TPL-TUV-003",
+        "name_de": "Produktzertifizierung GS-Zeichen",
+        "name_en": "Product Certification GS Mark",
+        "category": "produktpruefung",
+        "risk_level": "R2",
+        "description": "Geprüfte Sicherheit nach ProdSG für Verbraucherprodukte",
+        "required_fields": [
+          "institution",
+          "date",
+          "reference",
+          "produkt",
+          "hersteller",
+          "pruefgrundlage"
+        ],
+        "governance_notes": "GS-Zeichen: einziges gesetzlich geregeltes Prüfzeichen in DE."
       },
       {
-        "id": "anlagenpruefung_betrsichv",
-        "name": "Prüfbericht überwachungsbedürftige Anlage",
-        "category": "anlagensicherheit",
-        "legal_basis": "BetrSichV §§ 14-16, ProdSG § 2 Nr. 30",
-        "description": "Inspection report for monitored installations (elevators, pressure vessels, etc.)"
+        "id": "TPL-TUV-004",
+        "name_de": "Anlagenprüfung nach BetrSichV",
+        "name_en": "Equipment Inspection BetrSichV",
+        "category": "anlagenpruefung",
+        "risk_level": "R3",
+        "description": "Prüfung überwachungsbedürftiger Anlagen (Aufzüge, Druckgeräte, Ex-Anlagen)",
+        "required_fields": [
+          "institution",
+          "date",
+          "reference",
+          "anlage",
+          "betreiber",
+          "rechtsgrundlage",
+          "ergebnis"
+        ],
+        "governance_notes": "R3: Betriebsuntersagung bei negativem Ergebnis möglich."
       },
       {
-        "id": "sachverstaendigen_gutachten",
-        "name": "Sachverständigengutachten",
-        "category": "sachverstaendige",
-        "description": "Expert assessment/appraisal template"
+        "id": "TPL-TUV-005",
+        "name_de": "Sachverständigengutachten",
+        "name_en": "Expert Opinion",
+        "category": "gutachten",
+        "risk_level": "R3",
+        "description": "Technisches Gutachten als Beweismittel für Gerichte und Versicherungen",
+        "required_fields": [
+          "institution",
+          "date",
+          "reference",
+          "auftraggeber",
+          "gegenstand",
+          "sachverstaendiger"
+        ],
+        "governance_notes": "R3: Gerichtsverwertbar. Sachverständige öffentlich bestellt und vereidigt."
       },
       {
-        "id": "weiterbildung_zertifikat",
-        "name": "Weiterbildungszertifikat TÜV Akademie",
-        "category": "weiterbildung",
-        "description": "Continuing education certificate from TÜV Academy"
+        "id": "TPL-TUV-006",
+        "name_de": "Weiterbildungszertifikat",
+        "name_en": "Training Certificate",
+        "category": "akademie",
+        "risk_level": "R1",
+        "description": "Zertifikate der TÜV Akademie für Fach- und Führungskräfte",
+        "required_fields": [
+          "institution",
+          "date",
+          "reference",
+          "teilnehmer",
+          "lehrgang"
+        ],
+        "governance_notes": "TÜV Akademie: einer der größten Weiterbildungsanbieter in DE."
       },
       {
-        "id": "personenzertifizierung",
-        "name": "Personenzertifizierung",
+        "id": "TPL-TUV-007",
+        "name_de": "Personenzertifizierung",
+        "name_en": "Personnel Certification",
         "category": "personenzertifizierung",
-        "description": "Personnel certification (welders, specialists, auditors)"
+        "risk_level": "R2",
+        "description": "Personenzertifizierung nach ISO 17024 (z.B. Schweißer, Datenschutzbeauftragter)",
+        "required_fields": [
+          "institution",
+          "date",
+          "reference",
+          "person",
+          "kompetenzbereich",
+          "gueltigkeitsdauer"
+        ],
+        "governance_notes": "ISO 17024 akkreditiert durch DAkkS."
       },
       {
-        "id": "ki_konformitaetsbewertung",
-        "name": "KI-Konformitätsbewertung nach EU AI Act",
-        "category": "ki_und_digitalisierung",
-        "legal_basis": "EU AI Act (Verordnung 2024/1689) Art. 43, Anhang VI/VII",
-        "description": "AI conformity assessment document — risk classification, technical documentation review, gap analysis",
-        "note": "Verfahren für Notified Bodies noch im Aufbau (Stand Feb 2026)"
+        "id": "TPL-TUV-008",
+        "name_de": "KI-Konformitätsbewertung",
+        "name_en": "AI Conformity Assessment",
+        "category": "ki_bewertung",
+        "risk_level": "R3",
+        "description": "Konformitätsbewertung von KI-Systemen nach EU AI Act Art. 43",
+        "required_fields": [
+          "institution",
+          "date",
+          "reference",
+          "ki_system",
+          "risikoklasse",
+          "hersteller",
+          "bewertungsergebnis"
+        ],
+        "governance_notes": "R3: TÜV AI.Lab (gegründet 2021). Hochrisiko-KI benötigt Drittprüfung."
       },
       {
-        "id": "cybersecurity_pruefbericht",
-        "name": "Cybersecurity-Prüfbericht",
-        "category": "cybersecurity",
-        "legal_basis": "ISO 27001, IEC 62443, TÜVIT Trusted Product Scheme",
-        "description": "Cybersecurity assessment report"
+        "id": "TPL-TUV-009",
+        "name_de": "Cybersecurity-Prüfbericht",
+        "name_en": "Cybersecurity Audit Report",
+        "category": "it_sicherheit",
+        "risk_level": "R3",
+        "description": "Prüfung der IT-Sicherheit nach ISO 27001, IEC 62443 oder ETSI EN 303 645",
+        "required_fields": [
+          "institution",
+          "date",
+          "reference",
+          "system",
+          "pruefstandard",
+          "ergebnis"
+        ],
+        "governance_notes": "Zunehmend relevant durch NIS2 und Cyber Resilience Act."
       },
       {
-        "id": "energieaudit_bericht",
-        "name": "Energieaudit-Bericht",
-        "category": "energieeffizienz",
-        "legal_basis": "EDL-G, DIN EN 16247, ISO 50001",
-        "description": "Energy audit report template"
+        "id": "TPL-TUV-010",
+        "name_de": "Energieaudit-Bericht",
+        "name_en": "Energy Audit Report",
+        "category": "energie",
+        "risk_level": "R2",
+        "description": "Energieaudit nach DIN EN 16247 bzw. ISO 50001 Zertifizierung",
+        "required_fields": [
+          "institution",
+          "date",
+          "reference",
+          "unternehmen",
+          "energieverbrauch",
+          "einsparpotenziale"
+        ],
+        "governance_notes": "Pflicht für Nicht-KMU alle 4 Jahre nach EnEfG."
       },
       {
-        "id": "ce_konformitaetserklaerung",
-        "name": "CE-Konformitätserklärung (Unterstützung)",
-        "category": "produktzertifizierung",
-        "legal_basis": "EU-Verordnung 765/2008, applicable EU directives",
-        "description": "Support template for CE declaration of conformity",
-        "note": "CE-Erklärung wird vom Hersteller ausgestellt, TÜV als Notified Body prüft"
+        "id": "TPL-TUV-011",
+        "name_de": "CE-Konformitätserklärung",
+        "name_en": "CE Declaration of Conformity",
+        "category": "konformitaet",
+        "risk_level": "R3",
+        "description": "EU-Konformitätserklärung und CE-Kennzeichnung für Maschinen und Produkte",
+        "required_fields": [
+          "institution",
+          "date",
+          "reference",
+          "produkt",
+          "richtlinien",
+          "normen",
+          "hersteller"
+        ],
+        "governance_notes": "R3: Ohne CE kein EU-Marktzugang. Maschinenrichtlinie 2006/42/EG."
       },
       {
-        "id": "ki_risiko_klassifizierung",
-        "name": "KI-Risiko-Klassifizierung (AI Act Risk Navigator)",
-        "category": "ki_und_digitalisierung",
-        "legal_basis": "EU AI Act Art. 6, Anhang III",
-        "description": "AI system risk classification worksheet following TÜV AI.Lab Risk Navigator methodology"
+        "id": "TPL-TUV-012",
+        "name_de": "KI-Risikoklassifizierung",
+        "name_en": "AI Risk Classification",
+        "category": "ki_bewertung",
+        "risk_level": "R3",
+        "description": "Risikoklassifizierung von KI-Systemen nach EU AI Act Anhang III",
+        "required_fields": [
+          "institution",
+          "date",
+          "reference",
+          "ki_system",
+          "anwendungsbereich",
+          "risikoklasse",
+          "begruendung"
+        ],
+        "governance_notes": "R3: Bestimmt ob Hochrisiko-KI vorliegt und welche Pflichten gelten."
       }
-    ]
-  },
-
-  "risk_profile": {
-    "primary_risk": "operational_accuracy",
-    "secondary_risk": "trademark_and_certification_integrity",
-    "data_sensitivity": "low_to_medium",
-    "public_impact": "medium",
-    "regulatory_sensitivity": "high_for_ai_context",
-    "mitigation_strategy": "Template standardization, strict trademark protection, clear separation of WINDI assistance from official TÜV certification, basic audit trail. AI governance documents flagged for enhanced review."
-  },
-
-  "windi_positioning": {
-    "de": "WINDI unterstützt bei der Erstellung und Verwaltung operationeller TÜV-Dokumente wie Prüfberichte, Checklisten und Schulungsunterlagen. WINDI erstellt keine amtlichen Zertifikate, Prüfzeichen oder Konformitätserklärungen. WINDI kann insbesondere bei der Vorbereitung von KI-Konformitätsbewertungen und der Dokumentation von EU AI Act-Anforderungen assistieren — als Governance-Ergänzung zum TÜV-Prüfprozess.",
-    "en": "WINDI assists with creation and management of operational TÜV documents such as inspection reports, checklists and training materials. WINDI does not issue official certificates, test marks or declarations of conformity. WINDI can particularly assist in preparing AI conformity assessments and documenting EU AI Act requirements — as a governance complement to TÜV inspection processes.",
-    "pt": "WINDI auxilia na criação e gestão de documentos operacionais TÜV como relatórios de inspeção, checklists e materiais de formação. WINDI não emite certificados oficiais, marcas de teste ou declarações de conformidade. WINDI pode particularmente auxiliar na preparação de avaliações de conformidade de IA e documentação de requisitos do EU AI Act — como complemento de governança ao processo de inspeção TÜV."
-  },
-
-  "strategic_notes": {
-    "buzz_factor": "MAXIMUM — TÜV is Germany's most iconic quality brand, recognized in 160+ countries. 'TÜV-geprüft' is a household term for every German citizen.",
-    "ai_governance_nexus": "TÜV is positioning itself as THE conformity assessment body for EU AI Act. TÜV AI.Lab + voluntary AI certificates + future Notified Body status = direct strategic relevance for WINDI.",
-    "complementarity": "TÜV prüft KI-Systeme. WINDI dokumentiert den Governance-Prozess. Perfekte Komplementarität — WINDI wird zum 'Governance-TÜV' für KI.",
-    "market_reach": "Combined TÜV ecosystem: ~74,000 employees, ~€7.8B revenue. Every company in Germany interacts with TÜV. Every car owner knows TÜV.",
-    "presentation_value": "When Prof. Niedermeier or any stakeholder sees 'TÜV' in the WINDI ISP catalog, immediate credibility and recognition."
+    ],
+    "document_categories": [
+      {
+        "id": "fahrzeugpruefung",
+        "name_de": "Fahrzeugprüfung",
+        "name_en": "Vehicle Inspection",
+        "description": "HU/AU und Fahrzeuggutachten",
+        "typical_risk_level": "R2"
+      },
+      {
+        "id": "zertifizierung",
+        "name_de": "Systemzertifizierung",
+        "name_en": "System Certification",
+        "description": "ISO-Managementsysteme",
+        "typical_risk_level": "R2"
+      },
+      {
+        "id": "produktpruefung",
+        "name_de": "Produktprüfung",
+        "name_en": "Product Testing",
+        "description": "GS-Zeichen, Baumuster",
+        "typical_risk_level": "R2"
+      },
+      {
+        "id": "anlagenpruefung",
+        "name_de": "Anlagenprüfung",
+        "name_en": "Plant Inspection",
+        "description": "Überwachungsbedürftige Anlagen",
+        "typical_risk_level": "R3"
+      },
+      {
+        "id": "gutachten",
+        "name_de": "Gutachten",
+        "name_en": "Expert Opinions",
+        "description": "Gerichtsgutachten, Schadensgutachten",
+        "typical_risk_level": "R3"
+      },
+      {
+        "id": "ki_bewertung",
+        "name_de": "KI-Bewertung",
+        "name_en": "AI Assessment",
+        "description": "EU AI Act Konformität",
+        "typical_risk_level": "R3"
+      },
+      {
+        "id": "akademie",
+        "name_de": "Akademie & Weiterbildung",
+        "name_en": "Academy & Training",
+        "description": "Schulungen und Zertifikate",
+        "typical_risk_level": "R1"
+      }
+    ],
+    "sge_keywords": {
+      "domain_terms": [
+        "TÜV",
+        "TÜV SÜD",
+        "TÜV NORD",
+        "TÜV Rheinland",
+        "Hauptuntersuchung",
+        "HU",
+        "AU",
+        "Abgasuntersuchung",
+        "Prüfbericht",
+        "Zertifikat",
+        "Gutachten",
+        "Sachverständiger",
+        "Prüfingenieur",
+        "Baumusterprüfung",
+        "GS-Zeichen",
+        "Geprüfte Sicherheit",
+        "Überwachungsaudit",
+        "Rezertifizierung",
+        "Akkreditierung",
+        "DAkkS",
+        "TÜV AI.Lab",
+        "Prüfplakette",
+        "Mängelklasse",
+        "Typgenehmigung"
+      ],
+      "risk_indicators": [
+        "Mängelkategorie",
+        "erheblicher Mangel",
+        "gefährlicher Mangel",
+        "Betriebsuntersagung",
+        "Rückruf",
+        "Produktwarnung",
+        "Konformitätsabweichung",
+        "Zertifikatsentzug",
+        "Audit-Nichtkonformität",
+        "Sicherheitsdefizit",
+        "Unfallgefahr",
+        "Haftungsrisiko"
+      ],
+      "compliance_terms": [
+        "BetrSichV",
+        "ProdSG",
+        "Maschinenrichtlinie",
+        "StVZO",
+        "ISO 9001",
+        "ISO 14001",
+        "ISO 45001",
+        "ISO 27001",
+        "ISO 17025",
+        "ISO 17020",
+        "ISO 17065",
+        "ISO 17024",
+        "IEC 62443",
+        "EU AI Act",
+        "CE-Richtlinie",
+        "ATEX",
+        "Druckgeräterichtlinie",
+        "Aufzugsrichtlinie",
+        "EnEfG",
+        "NIS2",
+        "Cyber Resilience Act"
+      ],
+      "organizational_terms": [
+        "Benannte Stelle",
+        "Notified Body",
+        "Konformitätsbewertungsstelle",
+        "Zugelassene Überwachungsstelle",
+        "ZÜS",
+        "Prüfstelle",
+        "Zertifizierungsstelle",
+        "Inspektionsstelle",
+        "TÜV Akademie",
+        "Sachverständigenorganisation"
+      ]
+    },
+    "cross_references": {
+      "complementary": [
+        "ihk",
+        "hwk",
+        "siemens"
+      ],
+      "hierarchical": [],
+      "notes": "TÜV prüft Produkte und Anlagen von IHK/HWK-Mitgliedsunternehmen. Siemens als Großkunde für Industrieanlagenprüfung."
+    }
   }
 }

@@ -1,393 +1,309 @@
 {
-  "isp_schema_version": "2.0.0",
-  "isp_id": "WINDI-ISP-HWK-001",
-  "created": "2026-02-02T12:00:00Z",
-  "created_by": "WINDI Dragon Council",
-  "last_updated": "2026-02-02T12:00:00Z",
-
-  "organization": {
-    "organization_name": "Handwerkskammer (HWK)",
-    "organization_name_en": "Chamber of Crafts and Skilled Trades",
-    "organization_name_pt": "Câmara de Artesanato e Ofícios Qualificados",
-    "organization_type": "public_law_chamber",
-    "legal_form": "Körperschaft des öffentlichen Rechts",
-    "legal_basis": "Handwerksordnung (HwO) §§ 90-91",
-    "legal_basis_date": "1953-09-17",
-    "jurisdiction": "DE",
-    "sector": "skilled_trades_crafts",
-    "parent_organization": "Zentralverband des Deutschen Handwerks (ZDH)",
-    "description": "Die Handwerkskammern sind die gesetzlichen Interessenvertretungen des Handwerks und Körperschaften des öffentlichen Rechts. Sie führen die Handwerksrolle, regeln die Berufsausbildung und das Prüfungswesen, und vertreten das Gesamthandwerk gegenüber Politik und Verwaltung.",
-    "description_en": "The Chambers of Crafts are the statutory representatives of the skilled trades sector and public law corporations. They maintain the crafts register, regulate vocational training and examination systems, and represent the entire craft sector vis-à-vis politics and administration.",
-    "description_pt": "As Câmaras de Artesanato são as representantes legais do setor de ofícios qualificados e corporações de direito público. Mantêm o registro de artesanato, regulam a formação profissional e o sistema de exames, e representam todo o setor artesanal perante a política e a administração.",
-    "statistics": {
-      "total_chambers": 53,
-      "total_member_businesses": 1000000,
-      "total_employees_in_sector": 5600000,
-      "total_apprentices": 360000,
-      "annual_revenue_sector_eur": "700000000000",
-      "share_of_gdp_percent": 8.9,
-      "founding_year": 1900,
-      "legal_basis_year": 1953,
-      "craft_professions_total": 130,
-      "craft_professions_licensed": 53,
-      "craft_professions_license_free": 41,
-      "craft_like_trades": 57
+  "isp_profile": {
+    "metadata": {
+      "profile_id": "hwk",
+      "version": "2.0.0",
+      "created": "2026-02-02",
+      "updated": "2026-02-06T14:05:51.203871",
+      "governance_level": "LOW",
+      "profile_type": "public_law_chamber",
+      "windi_registry_version": "3.0.0",
+      "conversion_note": "Converted from alt-schema to canonical on 06 Feb 2026",
+      "audit_hash": "472fce908400fd14"
     },
-    "organizational_structure": {
-      "organs": ["Vollversammlung", "Vorstand", "Präsident", "Hauptgeschäftsführer"],
-      "sub_organizations": ["Kreishandwerkerschaften", "Innungen", "Fachverbände"],
-      "national_level": "Zentralverband des Deutschen Handwerks (ZDH)",
-      "regional_level": "Regionale Handwerkskammertage / Landeshandwerksvertretungen",
-      "membership_type": "mandatory",
-      "membership_composition": "Betriebsinhaber (2/3) und Arbeitnehmervertreter (1/3)"
-    }
-  },
-
-  "regional_example": {
-    "name": "Handwerkskammer für Schwaben",
-    "abbreviation": "HWK Schwaben",
-    "seat": "Augsburg",
-    "address": "Siebentischstraße 52-58, 86161 Augsburg",
-    "phone": "+49 821 3259-0",
-    "email": "info@hwk-schwaben.de",
-    "website": "https://www.hwk-schwaben.de",
-    "member_businesses": 30000,
-    "employees_in_district": 136500,
-    "apprentices": 9427,
-    "annual_revenue_eur": "21000000000",
-    "staff": 200,
-    "president": "Hans-Peter Rauch",
-    "founding_year": 1900,
-    "bildungszentren": [
-      {
-        "name": "BTZ Augsburg",
-        "location": "Siebentischstraße 52-58, 86161 Augsburg",
-        "phone": "+49 821 3259-0"
-      },
-      {
-        "name": "BTZ Kempten",
-        "location": "Kotterner Straße 39, 87435 Kempten",
-        "phone": "+49 831 52318-0",
-        "email": "btz.kempten@hwk-schwaben.de"
-      },
-      {
-        "name": "BTZ Memmingen",
-        "location": "Claußweg 4-8, 87700 Memmingen",
-        "phone": "+49 8331 9534-0"
-      },
-      {
-        "name": "Bildungszentrum Weißenhorn",
-        "location": "Weißenhorn"
-      }
-    ],
-    "beratungszentren": [
-      "Augsburg", "Kempten", "Memmingen", "Dillingen", "Kaufbeuren"
-    ],
-    "motto": "Wir vertreten. Wir bilden. Wir beraten."
-  },
-
-  "governance": {
-    "governance_level": "LOW",
-    "classification": "operational_institutional",
-    "risk_profile": {
-      "primary_risk": "operational_accuracy",
-      "secondary_risks": ["form_compliance", "qualification_integrity", "craft_register_accuracy"],
-      "data_sensitivity": "low_to_moderate",
-      "public_impact": "moderate",
-      "notes": "Handwerkskammern verwalten die Handwerksrolle und das Prüfungswesen. Dokumente betreffen hauptsächlich Betriebsregistrierung, Ausbildung und Beratung. Die Meisterprüfung hat berufsrechtliche Bedeutung (Zulassungspflicht in 53 Gewerken)."
+    "organization": {
+      "name_full": "Handwerkskammer (HWK)",
+      "name_short": "HWK",
+      "legal_form": "Körperschaft des öffentlichen Rechts",
+      "sector": "skilled_trades_crafts",
+      "employees": 15000,
+      "revenue_eur": "Beitragsfinanziert",
+      "headquarters": "53 Handwerkskammern bundesweit",
+      "description": "Die Handwerkskammern sind die gesetzlichen Interessenvertretungen des Handwerks und Körperschaften des öffentlichen Rechts. Sie führen die Handwerksrolle, regeln die Berufsausbildung und das Prüfungswesen, und vertreten das Gesamthandwerk gegenüber Politik und Verwaltung.",
+      "relevance": "Als Körperschaften des öffentlichen Rechts erstellen HWKs rechtsverbindliche Dokumente: Meisterbriefe, Handwerksrolleneintragungen, Ausbildungsverträge und Sachverständigengutachten. Diese Dokumente haben direkte rechtliche und wirtschaftliche Auswirkungen auf Handwerksbetriebe und Gesellen.",
+      "regional_presence": [
+        "HWK Schwaben: Augsburg (zuständig für Allgäu/Kempten)",
+        "HWK Oberbayern: München",
+        "HWK Mittelfranken: Nürnberg",
+        "53 Kammern bundesweit"
+      ]
     },
-    "allowed_levels": ["LOW"],
-    "escalation_policy": "upgrade_on_legal_relevance",
-    "escalation_triggers": [
-      "Dokumente mit berufsrechtlicher Wirkung (Meisterbrief, Handwerkskarte)",
-      "Sachverständigengutachten für Gerichtsverfahren",
-      "Ordnungswidrigkeitsverfahren bei Schwarzarbeit"
-    ]
-  },
-
-  "institutional_context": {
-    "core_functions": [
-      {
-        "function": "Handwerksrolle",
-        "description": "Führung des gesetzlichen Verzeichnisses aller zulassungspflichtigen Handwerksbetriebe",
-        "legal_basis": "HwO § 6",
-        "governance_relevance": "Hoheitliche Aufgabe — Eintragung ist Voraussetzung für Gewerbeausübung"
-      },
-      {
-        "function": "Berufsausbildung",
-        "description": "Regelung, Überwachung und Förderung der beruflichen Ausbildung im Handwerk",
-        "legal_basis": "HwO §§ 21-44, BBiG",
-        "governance_relevance": "Ausbildungsverträge, Lehrlingsrolle, Überbetriebliche Lehrlingsunterweisung (ÜLU)"
-      },
-      {
-        "function": "Prüfungswesen",
-        "description": "Durchführung von Gesellen- und Meisterprüfungen sowie Fortbildungsprüfungen",
-        "legal_basis": "HwO §§ 31-42, 45-51b",
-        "governance_relevance": "Gesellen- und Meisterbriefe sind berufsqualifizierende Urkunden"
-      },
-      {
-        "function": "Sachverständigenwesen",
-        "description": "Bestellung und Vereidigung von Sachverständigen des Handwerks",
-        "legal_basis": "HwO § 91 Abs. 1 Nr. 8",
-        "governance_relevance": "Öffentlich bestellte Sachverständige erstellen Gutachten für Gerichte und Behörden"
-      },
-      {
-        "function": "Betriebsberatung",
-        "description": "Betriebswirtschaftliche, technische, rechtliche und Umweltberatung",
-        "legal_basis": "HwO § 91 Abs. 1 Nr. 1-3",
-        "governance_relevance": "Beratungsberichte und Empfehlungen für Mitgliedsbetriebe"
-      },
-      {
-        "function": "Rechtsaufsicht",
-        "description": "Rechtsaufsicht über Innungen und Kreishandwerkerschaften",
-        "legal_basis": "HwO § 91 Abs. 2",
-        "governance_relevance": "Aufsichtsfunktion über Sub-Organisationen"
-      },
-      {
-        "function": "Interessenvertretung",
-        "description": "Vertretung des Gesamthandwerks gegenüber Politik, Verwaltung und Öffentlichkeit",
-        "legal_basis": "HwO § 91 Abs. 1",
-        "governance_relevance": "Stellungnahmen, Gutachten, politische Positionspapiere"
-      }
-    ],
-    "craft_categories": {
-      "anlage_a": {
-        "description": "Zulassungspflichtige Handwerke (Meisterpflicht)",
-        "count": 53,
-        "examples": ["Maurer", "Zimmerer", "Dachdecker", "Elektrotechniker", "Installateur/Heizungsbauer", "Kfz-Techniker", "Tischler", "Maler/Lackierer", "Friseur", "Bäcker", "Fleischer", "Augenoptiker", "Zahntechniker"]
-      },
-      "anlage_b1": {
-        "description": "Zulassungsfreie Handwerke",
-        "count": 41,
-        "examples": ["Fliesen-/Platten-/Mosaikleger", "Uhrmacher", "Graveur", "Fotografen", "Textilreiniger", "Gebäudereiniger"]
-      },
-      "anlage_b2": {
-        "description": "Handwerksähnliche Gewerbe",
-        "count": 57,
-        "examples": ["Eisenflechter", "Holz-/Bautenschutzgewerbe", "Bodenleger", "Rohr-/Kanalreiniger"]
+    "governance": {
+      "level": "LOW",
+      "identity_license_required": false,
+      "retention_years": 5,
+      "risk_domains": [
+        "Berufsrecht",
+        "Ausbildungsrecht",
+        "Meisterprüfungsrecht",
+        "Betriebshaftung",
+        "Handwerksordnung"
+      ],
+      "compliance_frameworks": [
+        "DSGVO",
+        "HwO (Handwerksordnung)",
+        "BBiG (Berufsbildungsgesetz)",
+        "EU AI Act",
+        "Vergaberecht",
+        "GewO"
+      ],
+      "sge_thresholds": {
+        "warn": 40,
+        "alert": 60,
+        "block": 80
       }
     },
-    "differentiator_from_ihk": "Die HWK vertritt speziell das Handwerk (handwerkliche Gewerbe mit Meisterpflicht oder handwerksähnliche Tätigkeiten), während die IHK Handel und Industrie vertritt. Bei Mischbetrieben erfolgt eine anteilige Zuordnung. Die HWK hat hoheitliche Aufgaben im Prüfungswesen (Gesellen-/Meisterprüfung), die die IHK für den industriellen Bereich separat wahrnimmt."
-  },
-
-  "operational_templates": {
-    "description": "Standarddokumenttypen der Handwerkskammer, die WINDI-Governance-Unterstützung nutzen können",
     "templates": [
       {
-        "template_id": "handwerksrolle_eintragung",
-        "name": "Eintragung in die Handwerksrolle",
-        "description": "Antrag und Bescheid zur Eintragung eines Handwerksbetriebs in die Handwerksrolle",
+        "id": "TPL-HWK-001",
+        "name_de": "Eintragung in die Handwerksrolle",
+        "name_en": "",
         "category": "betriebsregistrierung",
-        "governance_level": "LOW",
-        "required_fields": ["betriebsname", "betriebsinhaber", "handwerk_bezeichnung", "anlage_kategorie", "qualifikationsnachweis", "betriebssitz"],
-        "legal_effect": true,
-        "notes": "Eintragung ist Voraussetzung für zulassungspflichtige Handwerksausübung"
+        "risk_level": "R1",
+        "description": "Antrag und Bescheid zur Eintragung eines Handwerksbetriebs in die Handwerksrolle",
+        "required_fields": [
+          "betriebsname",
+          "betriebsinhaber",
+          "handwerk_bezeichnung",
+          "anlage_kategorie",
+          "qualifikationsnachweis",
+          "betriebssitz"
+        ],
+        "governance_notes": "True Eintragung ist Voraussetzung für zulassungspflichtige Handwerksausübung"
       },
       {
-        "template_id": "ausbildungsvertrag",
-        "name": "Berufsausbildungsvertrag",
+        "id": "TPL-HWK-002",
+        "name_de": "Berufsausbildungsvertrag",
+        "name_en": "",
+        "category": "berufsbildung",
+        "risk_level": "R1",
         "description": "Lehrvertrag zwischen Ausbildungsbetrieb und Lehrling, eingetragen in die Lehrlingsrolle",
-        "category": "berufsbildung",
-        "governance_level": "LOW",
-        "required_fields": ["ausbildungsbetrieb", "lehrling", "ausbildungsberuf", "ausbildungsdauer", "verguetung", "ausbilder"],
-        "legal_effect": true,
-        "notes": "Muss bei der HWK zur Eintragung in die Lehrlingsrolle eingereicht werden"
+        "required_fields": [
+          "ausbildungsbetrieb",
+          "lehrling",
+          "ausbildungsberuf",
+          "ausbildungsdauer",
+          "verguetung",
+          "ausbilder"
+        ],
+        "governance_notes": "True Muss bei der HWK zur Eintragung in die Lehrlingsrolle eingereicht werden"
       },
       {
-        "template_id": "gesellenpruefung_anmeldung",
-        "name": "Anmeldung zur Gesellenprüfung",
+        "id": "TPL-HWK-003",
+        "name_de": "Anmeldung zur Gesellenprüfung",
+        "name_en": "",
+        "category": "pruefungswesen",
+        "risk_level": "R1",
         "description": "Prüfungsanmeldung für die Gesellenprüfung (Teil 1 und/oder Teil 2)",
-        "category": "pruefungswesen",
-        "governance_level": "LOW",
-        "required_fields": ["pruefling", "ausbildungsberuf", "pruefungsteil", "ausbildungsbetrieb", "pruefungstermin"],
-        "legal_effect": false
+        "required_fields": [
+          "pruefling",
+          "ausbildungsberuf",
+          "pruefungsteil",
+          "ausbildungsbetrieb",
+          "pruefungstermin"
+        ],
+        "governance_notes": "False"
       },
       {
-        "template_id": "meisterpruefung_anmeldung",
-        "name": "Anmeldung zur Meisterprüfung",
+        "id": "TPL-HWK-004",
+        "name_de": "Anmeldung zur Meisterprüfung",
+        "name_en": "",
+        "category": "pruefungswesen",
+        "risk_level": "R1",
         "description": "Prüfungsanmeldung für die Meisterprüfung (Teile I-IV)",
-        "category": "pruefungswesen",
-        "governance_level": "LOW",
-        "required_fields": ["pruefling", "handwerk", "pruefungsteile", "vorqualifikation", "berufspraxis_nachweis"],
-        "legal_effect": false,
-        "notes": "Meisterprüfung besteht aus 4 Teilen: I (Praxis), II (Theorie), III (BWL), IV (Pädagogik)"
+        "required_fields": [
+          "pruefling",
+          "handwerk",
+          "pruefungsteile",
+          "vorqualifikation",
+          "berufspraxis_nachweis"
+        ],
+        "governance_notes": "False Meisterprüfung besteht aus 4 Teilen: I (Praxis), II (Theorie), III (BWL), IV (Pädagogik)"
       },
       {
-        "template_id": "sachverstaendigen_bestellung",
-        "name": "Antrag auf Sachverständigenbestellung",
-        "description": "Antrag auf öffentliche Bestellung und Vereidigung als Sachverständiger des Handwerks",
+        "id": "TPL-HWK-005",
+        "name_de": "Antrag auf Sachverständigenbestellung",
+        "name_en": "",
         "category": "sachverstaendigenwesen",
-        "governance_level": "LOW",
-        "required_fields": ["antragsteller", "sachgebiet", "qualifikationsnachweise", "berufserfahrung", "referenzen"],
-        "legal_effect": true,
-        "notes": "Öffentlich bestellte und vereidigte Sachverständige gem. HwO § 91"
+        "risk_level": "R1",
+        "description": "Antrag auf öffentliche Bestellung und Vereidigung als Sachverständiger des Handwerks",
+        "required_fields": [
+          "antragsteller",
+          "sachgebiet",
+          "qualifikationsnachweise",
+          "berufserfahrung",
+          "referenzen"
+        ],
+        "governance_notes": "True Öffentlich bestellte und vereidigte Sachverständige gem. HwO § 91"
       },
       {
-        "template_id": "betriebsberatung_bericht",
-        "name": "Betriebsberatungsbericht",
+        "id": "TPL-HWK-006",
+        "name_de": "Betriebsberatungsbericht",
+        "name_en": "",
+        "category": "beratung",
+        "risk_level": "R1",
         "description": "Dokumentation einer betriebswirtschaftlichen, technischen oder rechtlichen Beratung",
-        "category": "beratung",
-        "governance_level": "LOW",
-        "required_fields": ["betrieb", "beratungsthema", "berater", "beratungsdatum", "empfehlungen"],
-        "legal_effect": false
+        "required_fields": [
+          "betrieb",
+          "beratungsthema",
+          "berater",
+          "beratungsdatum",
+          "empfehlungen"
+        ],
+        "governance_notes": "False"
       },
       {
-        "template_id": "uelu_bescheinigung",
-        "name": "ÜLU-Teilnahmebescheinigung",
-        "description": "Bescheinigung über die Teilnahme an Überbetrieblicher Lehrlingsunterweisung",
+        "id": "TPL-HWK-007",
+        "name_de": "ÜLU-Teilnahmebescheinigung",
+        "name_en": "",
         "category": "berufsbildung",
-        "governance_level": "LOW",
-        "required_fields": ["lehrling", "ausbildungsberuf", "lehrgang_bezeichnung", "lehrgang_dauer", "btz_standort"],
-        "legal_effect": false,
-        "notes": "ÜLU ergänzt die betriebliche Ausbildung in den Berufsbildungszentren (BTZ)"
+        "risk_level": "R1",
+        "description": "Bescheinigung über die Teilnahme an Überbetrieblicher Lehrlingsunterweisung",
+        "required_fields": [
+          "lehrling",
+          "ausbildungsberuf",
+          "lehrgang_bezeichnung",
+          "lehrgang_dauer",
+          "btz_standort"
+        ],
+        "governance_notes": "False ÜLU ergänzt die betriebliche Ausbildung in den Berufsbildungszentren (BTZ)"
       },
       {
-        "template_id": "weiterbildung_zertifikat",
-        "name": "Weiterbildungszertifikat",
-        "description": "Zertifikat über abgeschlossene Fort- oder Weiterbildung an der HWK-Akademie",
+        "id": "TPL-HWK-008",
+        "name_de": "Weiterbildungszertifikat",
+        "name_en": "",
         "category": "weiterbildung",
-        "governance_level": "LOW",
-        "required_fields": ["teilnehmer", "kursbezeichnung", "kursdauer", "abschlussdatum", "standort"],
-        "legal_effect": false
+        "risk_level": "R1",
+        "description": "Zertifikat über abgeschlossene Fort- oder Weiterbildung an der HWK-Akademie",
+        "required_fields": [
+          "teilnehmer",
+          "kursbezeichnung",
+          "kursdauer",
+          "abschlussdatum",
+          "standort"
+        ],
+        "governance_notes": "False"
       },
       {
-        "template_id": "existenzgruendung_beratung",
-        "name": "Existenzgründungsberatung",
-        "description": "Beratungsprotokoll und Businessplan-Unterstützung für Handwerks-Existenzgründer",
+        "id": "TPL-HWK-009",
+        "name_de": "Existenzgründungsberatung",
+        "name_en": "",
         "category": "beratung",
-        "governance_level": "LOW",
-        "required_fields": ["gruender", "geplantes_handwerk", "standort", "finanzierungsplan", "beratungsergebnis"],
-        "legal_effect": false,
-        "notes": "Häufig Voraussetzung für Gründungszuschuss der Agentur für Arbeit"
+        "risk_level": "R1",
+        "description": "Beratungsprotokoll und Businessplan-Unterstützung für Handwerks-Existenzgründer",
+        "required_fields": [
+          "gruender",
+          "geplantes_handwerk",
+          "standort",
+          "finanzierungsplan",
+          "beratungsergebnis"
+        ],
+        "governance_notes": "False Häufig Voraussetzung für Gründungszuschuss der Agentur für Arbeit"
       },
       {
-        "template_id": "schwarzarbeit_meldung",
-        "name": "Meldung Verdacht auf Schwarzarbeit",
-        "description": "Formular zur Meldung von Verdachtsfällen unerlaubter Handwerksausübung",
+        "id": "TPL-HWK-010",
+        "name_de": "Meldung Verdacht auf Schwarzarbeit",
+        "name_en": "",
         "category": "ordnungswidrigkeiten",
-        "governance_level": "LOW",
-        "required_fields": ["melder", "verdaechtiger_betrieb", "tatbestand", "beweismittel"],
-        "legal_effect": true,
-        "notes": "Unerlaubte Handwerksausübung ist Ordnungswidrigkeit gem. HwO § 117"
+        "risk_level": "R1",
+        "description": "Formular zur Meldung von Verdachtsfällen unerlaubter Handwerksausübung",
+        "required_fields": [
+          "melder",
+          "verdaechtiger_betrieb",
+          "tatbestand",
+          "beweismittel"
+        ],
+        "governance_notes": "True Unerlaubte Handwerksausübung ist Ordnungswidrigkeit gem. HwO § 117"
       }
-    ]
-  },
-
-  "document_categories": [
-    "betriebsregistrierung",
-    "berufsbildung",
-    "pruefungswesen",
-    "sachverstaendigenwesen",
-    "beratung",
-    "weiterbildung",
-    "existenzgruendung",
-    "ordnungswidrigkeiten",
-    "interessenvertretung",
-    "rechtsaufsicht",
-    "innovation_und_technik",
-    "umwelt_und_energie"
-  ],
-
-  "ai_role": {
-    "description": "WINDI unterstützt die Handwerkskammer bei der Dokumentenerstellung, Formularhilfe und Prozessdokumentation. WINDI erstellt keine Prüfungsergebnisse, stellt keine Handwerkskarten aus und bewertet keine Qualifikationen.",
-    "permitted_actions": [
-      "form_assistance",
-      "template_generation",
-      "document_drafting",
-      "translation_support",
-      "checklist_creation",
-      "process_documentation",
-      "beratungsbericht_drafting",
-      "correspondence_drafting",
-      "statistical_reporting"
     ],
-    "prohibited_actions": [
-      "handwerkskarte_issuance",
-      "meisterbrief_issuance",
-      "gesellenbrief_issuance",
-      "pruefungsergebnis_feststellung",
-      "qualification_assessment",
-      "sachverstaendigen_bestellung",
-      "identity_impersonation",
-      "rechtsaufsicht_entscheidungen"
+    "document_categories": [
+      {
+        "id": "meister",
+        "name_de": "Meisterprüfung",
+        "name_en": "Master Examination",
+        "description": "Meisterprüfung, Meisterbrief, Zulassungen",
+        "typical_risk_level": "R2"
+      },
+      {
+        "id": "ausbildung",
+        "name_de": "Berufsausbildung",
+        "name_en": "Vocational Training",
+        "description": "Ausbildungsverträge, Gesellenprüfungen",
+        "typical_risk_level": "R2"
+      },
+      {
+        "id": "handwerksrolle",
+        "name_de": "Handwerksrolle",
+        "name_en": "Crafts Register",
+        "description": "Ein- und Austragungen, Betriebsbescheinigungen",
+        "typical_risk_level": "R2"
+      },
+      {
+        "id": "sachverstaendige",
+        "name_de": "Sachverständigenwesen",
+        "name_en": "Expert Services",
+        "description": "Gutachten und Sachverständigenbestellungen",
+        "typical_risk_level": "R3"
+      },
+      {
+        "id": "beratung",
+        "name_de": "Betriebsberatung",
+        "name_en": "Business Consulting",
+        "description": "Betriebswirtschaftliche Beratung und Förderung",
+        "typical_risk_level": "R1"
+      }
     ],
-    "human_review": {
-      "required": false,
-      "recommended": true,
-      "notes": "Empfohlen bei Dokumenten mit Rechtswirkung (Eintragungen, Prüfungsanmeldungen, Sachverständigenanträge)"
-    }
-  },
-
-  "compliance_requirements": {
-    "eu_ai_act": true,
-    "gdpr_dsgvo": true,
-    "handwerksordnung": true,
-    "berufsbildungsgesetz": true,
-    "gewerbeordnung": true,
-    "verwaltungsverfahrensgesetz": true
-  },
-
-  "watermark_policy": {
-    "visible": true,
-    "text": "WINDI Governance | LOW | Handwerkskammer",
-    "position": "footer",
-    "density": "minimal"
-  },
-
-  "audit_trail": {
-    "enabled": true,
-    "granularity": "basic",
-    "retention_period": "3_years",
-    "forensic_ledger": false,
-    "notes": "Basis-Audit für operationelle Dokumente. Erhöhte Dokumentation bei Dokumenten mit Rechtswirkung."
-  },
-
-  "identity_license": {
-    "status": "model_only",
-    "authorized_by": null,
-    "authorization_ref": null,
-    "authorization_hash": null,
-    "valid_from": null,
-    "valid_until": null,
-    "scope": {
-      "logo": false,
-      "letterhead": false,
-      "institutional_tone": true,
-      "values_reference": true,
-      "official_address": false,
-      "meisterbrief_format": false,
-      "hwk_siegel": false
+    "sge_keywords": {
+      "domain_terms": [
+        "handwerkskammer",
+        "hwk",
+        "handwerk",
+        "meister",
+        "meisterbrief",
+        "gesellenbrief",
+        "handwerksrolle",
+        "lehrlingsrolle",
+        "handwerksordnung",
+        "gesellenprüfung",
+        "meisterprüfung",
+        "ausbildungsvertrag",
+        "lehrvertrag",
+        "berufsausbildung",
+        "überbetriebliche lehrlingsunterweisung",
+        "ülu",
+        "btz",
+        "sachverständiger",
+        "innungen",
+        "meisterpflicht",
+        "zulassungspflichtig",
+        "betriebsberatung",
+        "existenzgründung",
+        "weiterbildung",
+        "schwaben",
+        "augsburg",
+        "kempten",
+        "zdh",
+        "handwerkskarte",
+        "gewerbekarte",
+        "craft",
+        "skilled_trades"
+      ],
+      "risk_indicators": [],
+      "compliance_terms": [
+        "handwerksordnung",
+        "hwo"
+      ],
+      "organizational_terms": [
+        "kreishandwerkerschaft"
+      ]
     },
-    "restrictions": [
-      "Model/simulation use only until Identity License is granted",
-      "No official HWK seals or Meisterbrief formatting",
-      "No implication of official HWK endorsement",
-      "Institutional tone for demonstration purposes only"
-    ]
-  },
-
-  "keywords": [
-    "handwerkskammer", "hwk", "handwerk", "meister", "meisterbrief",
-    "gesellenbrief", "gesellenprüfung", "meisterprüfung", "handwerksrolle",
-    "lehrlingsrolle", "ausbildungsvertrag", "lehrvertrag", "berufsausbildung",
-    "überbetriebliche lehrlingsunterweisung", "ülu", "btz",
-    "sachverständiger", "innungen", "kreishandwerkerschaft",
-    "handwerksordnung", "hwo", "meisterpflicht", "zulassungspflichtig",
-    "betriebsberatung", "existenzgründung", "weiterbildung",
-    "schwaben", "augsburg", "kempten", "zdh",
-    "handwerkskarte", "gewerbekarte", "craft", "skilled_trades"
-  ],
-
-  "positioning_statement": {
-    "de": "WINDI unterstützt die Handwerkskammer als digitale Governance-Schicht für Dokumentenprozesse. WINDI stellt keine Urkunden aus. WINDI bewertet keine Qualifikationen. WINDI ersetzt keinen Meisterprüfungsausschuss.",
-    "en": "WINDI supports the Chamber of Crafts as a digital governance layer for document processes. WINDI does not issue certificates. WINDI does not assess qualifications. WINDI does not replace any examination committee.",
-    "pt": "WINDI apoia a Câmara de Artesanato como camada de governança digital para processos documentais. WINDI não emite certificados. WINDI não avalia qualificações. WINDI não substitui nenhuma comissão de exame."
-  },
-
-  "strategic_notes": {
-    "ihk_hwk_complementarity": "IHK und HWK sind komplementäre Kammerstrukturen: IHK für Handel/Industrie, HWK für Handwerk. Zusammen decken sie nahezu die gesamte gewerbliche Wirtschaft Deutschlands ab. WINDI-ISP-Profile für beide Kammern ermöglichen vollständige Abdeckung des Kammersystems.",
-    "meisterpflicht_relevance": "Die Meisterpflicht in 53 zulassungspflichtigen Handwerken macht die HWK zu einem einzigartigen Governance-Kontext: Berufsausübung ist an Qualifikationsnachweise gebunden, die von der HWK verwaltet werden.",
-    "kempten_connection": "HWK Schwaben betreibt ein BTZ in Kempten (Kotterner Str. 39) — direkter lokaler Anknüpfungspunkt für WINDI Publishing House.",
-    "agentur_fuer_arbeit_link": "Existenzgründungsberatung der HWK ist häufig Voraussetzung für den Gründungszuschuss der Agentur für Arbeit — natürliche Verknüpfung zwischen den ISP-Profilen."
+    "cross_references": {
+      "complementary": [
+        "ihk",
+        "tuev"
+      ],
+      "hierarchical": [],
+      "notes": "HWK und IHK sind die beiden Kammern der gewerblichen Wirtschaft. HWK für Handwerk, IHK für Industrie/Handel. TÜV prüft Produkte der Handwerksbetriebe."
+    }
   }
 }

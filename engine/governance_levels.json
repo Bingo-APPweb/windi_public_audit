@@ -1,5 +1,5 @@
 {
-  "version": "2.6.0",
+  "version": "3.0.0",
   "policy_version": "WINDI-GOV-2.2.0",
   "policy_lineage": [
     {
@@ -21,6 +21,16 @@
       "version": "2.2.0",
       "date": "2026-02-02",
       "description": "Platform maturity: Policy versioning, Identity Directory, Medium Registry, Event Log, Health Check, Governance Advisor Mode."
+    },
+    {
+      "version": "3.0.0",
+      "date": "2026-02-06",
+      "description": "ISP Registry: 17 profiles (3H 5M 9L)"
+    },
+    {
+      "version": "3.0.0",
+      "date": "2026-02-06",
+      "description": "ISP Registry: 17 profiles (3H 5M 9L)"
     }
   ],
   "governance_levels": {
@@ -208,5 +218,222 @@
     "upgrade_requires_user_confirmation": true,
     "advisor_mode_enabled": true,
     "event_logging_for_detections": true
+  },
+  "isp_registry": {
+    "registry_version": "1.0.0",
+    "last_scan": "2026-02-06T14:13:17.830625",
+    "total": 17,
+    "stats": {
+      "HIGH": 3,
+      "MEDIUM": 5,
+      "LOW": 9
+    },
+    "path": "/opt/windi/isp",
+    "profiles": {
+      "adac": {
+        "name_full": "Allgemeiner Deutscher Automobil-Club e.V.",
+        "name_short": "ADAC",
+        "governance_level": "LOW",
+        "profile_type": "membership_association",
+        "profile_version": "1.0.0",
+        "path": "/opt/windi/isp/adac",
+        "templates": 8,
+        "keywords": 49,
+        "size": 11080,
+        "status": "complete"
+      },
+      "aok": {
+        "name_full": "Allgemeine Ortskrankenkassen (AOK-Bundesverband)",
+        "name_short": "AOK",
+        "governance_level": "MEDIUM",
+        "profile_type": "statutory_health_insurance",
+        "profile_version": "1.0.0",
+        "path": "/opt/windi/isp/aok",
+        "templates": 12,
+        "keywords": 96,
+        "size": 16710,
+        "status": "complete"
+      },
+      "bafin": {
+        "name_full": "Bundesanstalt für Finanzdienstleistungsaufsicht",
+        "name_short": "BaFin",
+        "governance_level": "HIGH",
+        "profile_type": "federal_regulatory_authority",
+        "profile_version": "1.0.0",
+        "path": "/opt/windi/isp/bafin",
+        "templates": 15,
+        "keywords": 123,
+        "size": 23951,
+        "status": "complete"
+      },
+      "bis-regulatory": {
+        "name_full": "Bank for International Settlements",
+        "name_short": "BIS",
+        "governance_level": "HIGH",
+        "profile_type": "international_regulatory_authority",
+        "profile_version": "1.0.0",
+        "path": "/opt/windi/isp/bis-regulatory",
+        "templates": 15,
+        "keywords": 86,
+        "size": 17743,
+        "status": "complete"
+      },
+      "bundesagentur-fuer-arbeit": {
+        "name_full": "Bundesagentur für Arbeit",
+        "name_short": "BA",
+        "governance_level": "MEDIUM",
+        "profile_type": "social_sensitive_institutional",
+        "profile_version": "1.0.0",
+        "path": "/opt/windi/isp/bundesagentur-fuer-arbeit",
+        "templates": 15,
+        "keywords": 108,
+        "size": 20480,
+        "status": "complete"
+      },
+      "bundesregierung": {
+        "name_full": "Bundesregierung der Bundesrepublik Deutschland",
+        "name_short": "Bundesregierung",
+        "governance_level": "MEDIUM",
+        "profile_type": "federal_government",
+        "profile_version": "1.0.0",
+        "path": "/opt/windi/isp/bundesregierung",
+        "templates": 15,
+        "keywords": 92,
+        "size": 19486,
+        "status": "complete"
+      },
+      "deutsche-bahn": {
+        "name_full": "Deutsche Bahn Aktiengesellschaft",
+        "name_short": "DB",
+        "governance_level": "LOW",
+        "profile_type": "public_enterprise",
+        "profile_version": "2.0.0",
+        "path": "/opt/windi/isp/deutsche-bahn",
+        "templates": 12,
+        "keywords": 94,
+        "size": 15310,
+        "status": "complete"
+      },
+      "dhl-group": {
+        "name_full": "Deutsche Post DHL Group",
+        "name_short": "DHL",
+        "governance_level": "LOW",
+        "profile_type": "global_logistics_enterprise",
+        "profile_version": "1.0.0",
+        "path": "/opt/windi/isp/dhl-group",
+        "templates": 8,
+        "keywords": 49,
+        "size": 10756,
+        "status": "complete"
+      },
+      "ecb": {
+        "name_full": "Europäische Zentralbank / European Central Bank",
+        "name_short": "ECB",
+        "governance_level": "HIGH",
+        "profile_type": "supranational_central_bank",
+        "profile_version": "1.0.0",
+        "path": "/opt/windi/isp/ecb",
+        "templates": 15,
+        "keywords": 109,
+        "size": 19023,
+        "status": "complete"
+      },
+      "freistaat-bayern": {
+        "name_full": "Freistaat Bayern (Bayerische Staatsregierung)",
+        "name_short": "Bayern",
+        "governance_level": "MEDIUM",
+        "profile_type": "state_government_institutional",
+        "profile_version": "1.0.0",
+        "path": "/opt/windi/isp/freistaat-bayern",
+        "templates": 10,
+        "keywords": 61,
+        "size": 13780,
+        "status": "complete"
+      },
+      "hwk": {
+        "name_full": "Handwerkskammer (HWK)",
+        "name_short": "HWK",
+        "governance_level": "LOW",
+        "profile_type": "public_law_chamber",
+        "profile_version": "2.0.0",
+        "path": "/opt/windi/isp/hwk",
+        "templates": 10,
+        "keywords": 35,
+        "size": 10271,
+        "status": "complete"
+      },
+      "ihk": {
+        "name_full": "Industrie- und Handelskammer (IHK)",
+        "name_short": "IHK",
+        "governance_level": "LOW",
+        "profile_type": "public_law_chamber",
+        "profile_version": "2.0.0",
+        "path": "/opt/windi/isp/ihk",
+        "templates": 8,
+        "keywords": 23,
+        "size": 8075,
+        "status": "complete"
+      },
+      "siemens": {
+        "name_full": "Siemens Aktiengesellschaft",
+        "name_short": "Siemens",
+        "governance_level": "LOW",
+        "profile_type": "industrial_technology_conglomerate",
+        "profile_version": "1.0.0",
+        "path": "/opt/windi/isp/siemens",
+        "templates": 12,
+        "keywords": 70,
+        "size": 15050,
+        "status": "complete"
+      },
+      "sparkasse": {
+        "name_full": "Sparkassen-Finanzgruppe (German Savings Banks)",
+        "name_short": "Sparkasse",
+        "governance_level": "MEDIUM",
+        "profile_type": "public_financial_institution",
+        "profile_version": "1.0.0",
+        "path": "/opt/windi/isp/sparkasse",
+        "templates": 12,
+        "keywords": 101,
+        "size": 16580,
+        "status": "complete"
+      },
+      "stadt-kempten": {
+        "name_full": "Stadt Kempten (Allgäu) — Kreisfreie Stadt",
+        "name_short": "Kempten",
+        "governance_level": "LOW",
+        "profile_type": "municipal_administration",
+        "profile_version": "1.0.0",
+        "path": "/opt/windi/isp/stadt-kempten",
+        "templates": 10,
+        "keywords": 61,
+        "size": 13039,
+        "status": "complete"
+      },
+      "stadtwerke": {
+        "name_full": "Stadtwerke (Kommunale Versorgungsunternehmen)",
+        "name_short": "Stadtwerke",
+        "governance_level": "LOW",
+        "profile_type": "municipal_utility_enterprise",
+        "profile_version": "1.0.0",
+        "path": "/opt/windi/isp/stadtwerke",
+        "templates": 10,
+        "keywords": 71,
+        "size": 13365,
+        "status": "complete"
+      },
+      "tuev": {
+        "name_full": "Technischer Überwachungsverein (TÜV)",
+        "name_short": "TÜV",
+        "governance_level": "LOW",
+        "profile_type": "technical_inspection_organization",
+        "profile_version": "2.0.0",
+        "path": "/opt/windi/isp/tuev",
+        "templates": 12,
+        "keywords": 67,
+        "size": 12564,
+        "status": "complete"
+      }
+    }
   }
 }

@@ -1,70 +1,446 @@
 {
-  "isp_schema_version": "2.0.0",
-  "isp_id": "WINDI-ISP-DB-001",
-  "created": "2026-01-31T00:00:00Z",
-  "created_by": "WINDI Dragon Council",
-  "logo": {
-    "file": "assets/logo_db.svg",
-    "width": "100px",
-    "format": "svg"
-  },
-  "organization": {
-    "organization_name": "Deutsche Bahn AG",
-    "organization_type": "public_enterprise",
-    "jurisdiction": "DE",
-    "sector": "transport_infrastructure",
-    "description": "Operational document governance for Deutsche Bahn internal communications and procedures"
-  },
-  "governance": {
-    "default_level": "LOW",
-    "description": "Operational standard for day-to-day transport documentation",
-    "allowed_levels": [
-      "LOW",
-      "MEDIUM"
+  "isp_profile": {
+    "metadata": {
+      "profile_id": "deutsche-bahn",
+      "version": "2.0.0",
+      "created": "2026-01-31",
+      "updated": "2026-02-06T14:05:51.203871",
+      "governance_level": "LOW",
+      "profile_type": "public_enterprise",
+      "windi_registry_version": "3.0.0",
+      "audit_hash": "405e93214c653da2"
+    },
+    "organization": {
+      "name_full": "Deutsche Bahn Aktiengesellschaft",
+      "name_short": "DB",
+      "legal_form": "Aktiengesellschaft (100% Bundeseigentum)",
+      "sector": "Schienenverkehr / Infrastruktur / Logistik",
+      "employees": 230000,
+      "revenue_eur": "26,2 Mrd. EUR (2024), Prognose >27 Mrd. EUR (2025)",
+      "headquarters": "Berlin (Bahntower, Potsdamer Platz)",
+      "description": "Die Deutsche Bahn AG ist das nationale Eisenbahnunternehmen Deutschlands und nach der Deutschen Post/DHL das zweitgrößte Transportunternehmen des Landes. Der Konzern befördert jährlich rund 132 Mio. Fernverkehrsreisende und 1,6 Mrd. Nahverkehrsreisende. Nach dem Verkauf von DB Schenker (2024) und DB Arriva konzentriert sich der Konzern auf das Kerngeschäft Schiene mit dem Sanierungsprogramm S3.",
+      "relevance": "Als zu 100% im Bundeseigentum stehendes Unternehmen mit €26B Netto-Finanzschulden und 148 verbundenen Unternehmen ist DB ein Paradebeispiel für WINDI-Dokumentengovernance. Das Sanierungsprogramm S3 (bis 2027) erfordert massive interne Dokumentation: Beschaffung, Vergabe, Bauplanung, Personalabbau (~10.000 Stellen), Infrastruktursanierung. Fehlerhaft governance-te Dokumente können zu Millionenschäden führen — wie der Bundesrechnungshof regelmäßig feststellt.",
+      "regional_presence": [
+        "Zentrale: Berlin (Bahntower)",
+        "DB Fernverkehr: Frankfurt am Main",
+        "DB Regio: Frankfurt am Main (+ regionale Gesellschaften)",
+        "DB Cargo: Mainz",
+        "DB InfraGO: Frankfurt am Main",
+        "DB Engineering & Consulting: Berlin",
+        "Regionalverkehr Allgäu GmbH (RVA): Oberstdorf",
+        "148 verbundene Unternehmen im In- und Ausland"
+      ]
+    },
+    "governance": {
+      "level": "LOW",
+      "identity_license_required": false,
+      "retention_years": 5,
+      "risk_domains": [
+        "Vergaberecht",
+        "Eisenbahnrecht",
+        "Arbeitssicherheit",
+        "Infrastrukturplanung",
+        "Finanzcontrolling",
+        "Beihilferecht",
+        "Umweltschutz",
+        "Datenschutz"
+      ],
+      "compliance_frameworks": [
+        "EU AI Act",
+        "DSGVO",
+        "AEG (Allg. Eisenbahngesetz)",
+        "EBO",
+        "Vergaberecht (GWB/VgV)",
+        "BHO (Bundeshaushaltsordnung)",
+        "SEEG",
+        "CSR-Richtlinie",
+        "EU-Beihilferecht",
+        "Lärmschutz-RL"
+      ],
+      "sge_thresholds": {
+        "warn": 40,
+        "alert": 60,
+        "block": 80
+      }
+    },
+    "templates": [
+      {
+        "id": "TPL-DB-001",
+        "name_de": "Vergabevermerk",
+        "name_en": "Procurement Memorandum",
+        "category": "beschaffung",
+        "risk_level": "R3",
+        "description": "Dokumentation von Vergabeentscheidungen nach GWB/VgV für Infrastrukturprojekte",
+        "required_fields": [
+          "institution",
+          "date",
+          "reference",
+          "vergabestelle",
+          "auftragsvolumen",
+          "vergabeart"
+        ],
+        "governance_notes": "Vergaberechtlich relevant, Nachprüfungsverfahren möglich. Aufbewahrung mind. 10 Jahre."
+      },
+      {
+        "id": "TPL-DB-002",
+        "name_de": "Bauplanungsunterlage",
+        "name_en": "Construction Planning Document",
+        "category": "infrastruktur",
+        "risk_level": "R3",
+        "description": "Planfeststellungs- und Genehmigungsunterlagen für Schienenwege und Stationen",
+        "required_fields": [
+          "institution",
+          "date",
+          "reference",
+          "projekt",
+          "planfeststellungsbeschluss"
+        ],
+        "governance_notes": "Planfeststellungsverfahren nach AEG §18. Öffentlichkeitsbeteiligung erforderlich."
+      },
+      {
+        "id": "TPL-DB-003",
+        "name_de": "Betriebliche Anweisung",
+        "name_en": "Operational Directive",
+        "category": "betrieb",
+        "risk_level": "R2",
+        "description": "Interne Betriebsanweisungen für Zugbetrieb, Stellwerke und Fahrdienstleitung",
+        "required_fields": [
+          "institution",
+          "date",
+          "reference",
+          "geltungsbereich",
+          "verantwortlicher"
+        ],
+        "governance_notes": "Sicherheitsrelevant nach EBO. Müssen allen betroffenen Mitarbeitern nachweislich bekannt gemacht werden."
+      },
+      {
+        "id": "TPL-DB-004",
+        "name_de": "Sicherheitsbericht",
+        "name_en": "Safety Report",
+        "category": "sicherheit",
+        "risk_level": "R4",
+        "description": "Sicherheitsbericht nach EU-Richtlinie 2016/798 über die Eisenbahnsicherheit",
+        "required_fields": [
+          "institution",
+          "date",
+          "reference",
+          "berichtszeitraum",
+          "sicherheitskennzahlen",
+          "vorfaelle"
+        ],
+        "governance_notes": "R4: Meldepflicht an Eisenbahn-Bundesamt (EBA). Europäische Agentur für Eisenbahnsicherheit (ERA) aggregiert."
+      },
+      {
+        "id": "TPL-DB-005",
+        "name_de": "Instandhaltungsplan",
+        "name_en": "Maintenance Plan",
+        "category": "infrastruktur",
+        "risk_level": "R3",
+        "description": "Langfristiger Instandhaltungsplan für Schienennetz und Stationen (LuFV-konform)",
+        "required_fields": [
+          "institution",
+          "date",
+          "reference",
+          "streckenabschnitt",
+          "massnahmen",
+          "budget"
+        ],
+        "governance_notes": "Leistungs- und Finanzierungsvereinbarung (LuFV III) zwischen Bund und DB InfraGO. Bundesrechnungshof-Prüfung."
+      },
+      {
+        "id": "TPL-DB-006",
+        "name_de": "Konzerninterner Vertrag",
+        "name_en": "Intra-Group Agreement",
+        "category": "recht",
+        "risk_level": "R3",
+        "description": "Verträge zwischen DB AG und Tochtergesellschaften (148 verbundene Unternehmen)",
+        "required_fields": [
+          "institution",
+          "date",
+          "reference",
+          "vertragsparteien",
+          "gegenstand",
+          "laufzeit"
+        ],
+        "governance_notes": "Beihilferechtlich sensibel — EU-Kommission prüft konzerninterne Quersubventionierung (siehe DB Cargo Beihilfeverfahren 2024)."
+      },
+      {
+        "id": "TPL-DB-007",
+        "name_de": "Personalrestrukturierungsdokument",
+        "name_en": "Workforce Restructuring Document",
+        "category": "personal",
+        "risk_level": "R3",
+        "description": "Dokumentation des Personalabbaus im Rahmen des Sanierungsprogramms S3 (~10.000 Stellen bis 2027)",
+        "required_fields": [
+          "institution",
+          "date",
+          "reference",
+          "bereich",
+          "massnahmenpaket",
+          "betriebsratsabstimmung"
+        ],
+        "governance_notes": "Betriebsverfassungsrecht, Sozialplanpflicht. Hohe Sensibilität wegen öffentlicher Wahrnehmung."
+      },
+      {
+        "id": "TPL-DB-008",
+        "name_de": "Fahrgastrechte-Bescheid",
+        "name_en": "Passenger Rights Decision",
+        "category": "kundenservice",
+        "risk_level": "R2",
+        "description": "Entschädigungsentscheidungen nach EU-Fahrgastrechteverordnung 2021/782",
+        "required_fields": [
+          "institution",
+          "date",
+          "reference",
+          "fahrgast",
+          "zugverbindung",
+          "verspaetung",
+          "entschaedigungsbetrag"
+        ],
+        "governance_notes": "132 Mio. EUR Entschädigungen in 2024. Schlichtungsstelle für den öffentlichen Personenverkehr (SÖP) als Eskalationsinstanz."
+      },
+      {
+        "id": "TPL-DB-009",
+        "name_de": "Infrastruktur-Zustandsbericht",
+        "name_en": "Infrastructure Condition Report",
+        "category": "infrastruktur",
+        "risk_level": "R3",
+        "description": "Zustandsbericht für Generalsanierungskorridore und Hochleistungskorridore",
+        "required_fields": [
+          "institution",
+          "date",
+          "reference",
+          "korridor",
+          "zustandskategorie",
+          "handlungsbedarf"
+        ],
+        "governance_notes": "Generalsanierung Riedbahn (Frankfurt-Mannheim) als Pilotprojekt. Bundesrechnungshof-Transparenzanforderungen."
+      },
+      {
+        "id": "TPL-DB-010",
+        "name_de": "Energiebericht",
+        "name_en": "Energy Report",
+        "category": "nachhaltigkeit",
+        "risk_level": "R2",
+        "description": "Bericht zum Bahnstrommix und Klimaschutzzielen (SBTi-zertifiziert seit März 2025)",
+        "required_fields": [
+          "institution",
+          "date",
+          "reference",
+          "berichtszeitraum",
+          "anteil_erneuerbare",
+          "co2_emissionen"
+        ],
+        "governance_notes": "69,8% Erneuerbare 2024. Ziel: Klimaneutralität. SBTi-Zertifizierung verpflichtet zu regelmäßiger Berichterstattung."
+      },
+      {
+        "id": "TPL-DB-011",
+        "name_de": "Ausschreibungsunterlage",
+        "name_en": "Tender Documentation",
+        "category": "beschaffung",
+        "risk_level": "R3",
+        "description": "Ausschreibungsunterlagen für Großprojekte (Fahrzeugbeschaffung, Bauvorhaben)",
+        "required_fields": [
+          "institution",
+          "date",
+          "reference",
+          "vergabeart",
+          "auftragsgegenstand",
+          "schätzwert",
+          "frist"
+        ],
+        "governance_notes": "EU-weite Ausschreibungspflicht ab Schwellenwert. Nachprüfungsverfahren vor Vergabekammern möglich."
+      },
+      {
+        "id": "TPL-DB-012",
+        "name_de": "Vorstandsvorlage",
+        "name_en": "Board Submission",
+        "category": "management",
+        "risk_level": "R4",
+        "description": "Entscheidungsvorlage für den Vorstand der DB AG zu strategischen Themen",
+        "required_fields": [
+          "institution",
+          "date",
+          "reference",
+          "thema",
+          "empfehlung",
+          "finanzielle_auswirkung",
+          "vorstandsmitglied"
+        ],
+        "governance_notes": "R4: Höchste Vertraulichkeitsstufe. Aufsichtsrat-Informationspflicht bei wesentlichen Entscheidungen. Bundesbeteiligungsbericht."
+      }
     ],
-    "escalation_policy": "manual_upgrade",
-    "notes": "Standard operational documents default to LOW. Compliance and safety documents may be escalated to MEDIUM."
-  },
-  "compliance_requirements": {
-    "eu_ai_act": true,
-    "gdpr": true
-  },
-  "document_types": [
-    {
-      "type": "operational_procedure",
-      "governance_level": "LOW",
-      "metadata_block": "none",
-      "retention_period": "3_years"
+    "document_categories": [
+      {
+        "id": "beschaffung",
+        "name_de": "Beschaffung & Vergabe",
+        "name_en": "Procurement",
+        "description": "Vergabevermerke, Ausschreibungen, Rahmenverträge",
+        "typical_risk_level": "R3"
+      },
+      {
+        "id": "infrastruktur",
+        "name_de": "Infrastruktur & Planung",
+        "name_en": "Infrastructure & Planning",
+        "description": "Bauplanung, Instandhaltung, Zustandsberichte",
+        "typical_risk_level": "R3"
+      },
+      {
+        "id": "betrieb",
+        "name_de": "Betrieb & Sicherheit",
+        "name_en": "Operations & Safety",
+        "description": "Betriebsanweisungen, Sicherheitsberichte",
+        "typical_risk_level": "R3"
+      },
+      {
+        "id": "recht",
+        "name_de": "Recht & Verträge",
+        "name_en": "Legal & Contracts",
+        "description": "Konzerninterne Verträge, Beihilferecht",
+        "typical_risk_level": "R3"
+      },
+      {
+        "id": "personal",
+        "name_de": "Personal & Restrukturierung",
+        "name_en": "HR & Restructuring",
+        "description": "Personalabbau, Sozialplan, S3-Programm",
+        "typical_risk_level": "R3"
+      },
+      {
+        "id": "kundenservice",
+        "name_de": "Kundenservice & Fahrgastrechte",
+        "name_en": "Customer Service & Rights",
+        "description": "Fahrgastentschädigung, Beschwerden",
+        "typical_risk_level": "R2"
+      },
+      {
+        "id": "nachhaltigkeit",
+        "name_de": "Nachhaltigkeit & Energie",
+        "name_en": "Sustainability & Energy",
+        "description": "Klimaberichte, Energiewende, SBTi",
+        "typical_risk_level": "R2"
+      },
+      {
+        "id": "management",
+        "name_de": "Management & Strategie",
+        "name_en": "Management & Strategy",
+        "description": "Vorstandsvorlagen, Strategiedokumente",
+        "typical_risk_level": "R4"
+      }
+    ],
+    "sge_keywords": {
+      "domain_terms": [
+        "Deutsche Bahn",
+        "DB AG",
+        "DB InfraGO",
+        "DB Fernverkehr",
+        "DB Regio",
+        "DB Cargo",
+        "Schienenverkehr",
+        "Eisenbahn",
+        "Zugverkehr",
+        "Fahrplan",
+        "Trassenvergabe",
+        "ICE",
+        "Intercity",
+        "S-Bahn",
+        "Regionalbahn",
+        "Güterverkehr",
+        "Schienennetz",
+        "Stellwerk",
+        "Weiche",
+        "Oberleitung",
+        "Bahnhof",
+        "Generalsanierung",
+        "Riedbahn",
+        "Hochleistungskorridor",
+        "Sanierungsprogramm S3",
+        "Bahntower",
+        "Potsdamer Platz",
+        "Regionalverkehr Allgäu",
+        "RVA",
+        "Oberstdorf"
+      ],
+      "risk_indicators": [
+        "Verspätung",
+        "Zugausfall",
+        "Störung",
+        "Entgleisung",
+        "Unfall",
+        "Pünktlichkeit",
+        "Infrastrukturmangel",
+        "Instandhaltungsrückstau",
+        "Personalabbau",
+        "Betriebsstörung",
+        "Signalstörung",
+        "Weichenstörung",
+        "Oberleitungsschaden",
+        "Schienenbruch",
+        "Böschungsrutschung",
+        "Netto-Finanzschulden",
+        "EBIT-Verlust",
+        "Beihilfeverfahren"
+      ],
+      "compliance_terms": [
+        "AEG",
+        "EBO",
+        "Eisenbahn-Bundesamt",
+        "EBA",
+        "Bundesnetzagentur",
+        "Trassenpreissystem",
+        "GWB",
+        "VgV",
+        "Vergabekammer",
+        "Nachprüfungsverfahren",
+        "BHO",
+        "Bundesrechnungshof",
+        "Bundesbeteiligungsbericht",
+        "LuFV",
+        "Leistungs- und Finanzierungsvereinbarung",
+        "EU-Beihilferecht",
+        "EU-Fahrgastrechteverordnung",
+        "SBTi",
+        "CSR-Richtlinie",
+        "SEEG",
+        "ERA",
+        "TSI",
+        "Interoperabilitätsrichtlinie",
+        "Planfeststellung",
+        "DSGVO",
+        "EU AI Act"
+      ],
+      "organizational_terms": [
+        "Vorstand",
+        "Aufsichtsrat",
+        "Bundesverkehrsministerium",
+        "BMDV",
+        "Eisenbahninfrastrukturunternehmen",
+        "Eisenbahnverkehrsunternehmen",
+        "Konzernabschluss",
+        "Integrierter Bericht",
+        "Fahrdienstleiter",
+        "Triebfahrzeugführer",
+        "Zugbegleiter",
+        "Betriebsrat",
+        "EVG",
+        "GDL",
+        "Tarifvertrag",
+        "Bundeskanzleramt",
+        "Eigentümerinteresse",
+        "S&P AA+",
+        "Kapitalerhöhung",
+        "Gemeinwohlverpflichtung"
+      ]
     },
-    {
-      "type": "internal_communication",
-      "governance_level": "LOW",
-      "metadata_block": "none",
-      "retention_period": "1_year"
-    },
-    {
-      "type": "safety_compliance",
-      "governance_level": "MEDIUM",
-      "metadata_block": "institutional",
-      "retention_period": "7_years"
+    "cross_references": {
+      "complementary": [
+        "stadtwerke",
+        "stadt-kempten"
+      ],
+      "hierarchical": [
+        "bundesregierung"
+      ],
+      "notes": "DB AG ist 100% Bundeseigentum — hierarchische Verbindung zur Bundesregierung. Stadtwerke und kommunale Verkehrsunternehmen als Kooperationspartner im ÖPNV. RVA (Regionalverkehr Allgäu) als Tochtergesellschaft mit Bezug zum Kempten-Raum."
     }
-  ],
-  "identity_license": {
-    "status": "model_only",
-    "authorized_by": null,
-    "authorization_ref": null,
-    "authorization_hash": null,
-    "valid_from": null,
-    "valid_until": null,
-    "scope": {
-      "logo": true,
-      "letterhead": false,
-      "institutional_tone": true,
-      "values_reference": false,
-      "official_address": false
-    },
-    "restrictions": [
-      "Model/simulation use only"
-    ]
   }
 }

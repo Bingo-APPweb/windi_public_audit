@@ -1,240 +1,258 @@
 {
   "isp_profile": {
-    "id": "ihk",
-    "version": "1.0.0",
-    "created": "2026-02-02",
-    "name": "Industrie- und Handelskammer",
-    "name_display": {
-      "de": "Industrie- und Handelskammer (IHK)",
-      "en": "Chamber of Commerce and Industry (CCI)",
-      "pt": "Câmara de Comércio e Indústria (IHK)"
+    "metadata": {
+      "profile_id": "ihk",
+      "version": "2.0.0",
+      "created": "2026-02-02",
+      "updated": "2026-02-06T14:05:51.203871",
+      "governance_level": "LOW",
+      "profile_type": "public_law_chamber",
+      "windi_registry_version": "3.0.0",
+      "conversion_note": "Converted from alt-schema to canonical on 06 Feb 2026",
+      "audit_hash": "a3678ac8d8cc6e2a"
     },
-    "type": "public_law_chamber",
-    "governance_level": "LOW",
-    "description": {
-      "de": "Governance-Profil für Dokumente mit Bezug zur Industrie- und Handelskammer. Operationelle Formulare, Bescheinigungen, Ausbildungsdokumente und Handelspapiere. 79 regionale IHKs als Körperschaften des öffentlichen Rechts.",
-      "en": "Governance profile for documents referencing Chambers of Commerce and Industry. Operational forms, certifications, training documents and trade papers. 79 regional IHKs as public-law bodies.",
-      "pt": "Perfil de governança para documentos referentes às Câmaras de Comércio e Indústria. Formulários operacionais, certificados, documentos de formação e papéis comerciais. 79 IHKs regionais como órgãos de direito público."
-    },
-    "institutional_context": {
+    "organization": {
+      "name_full": "Industrie- und Handelskammer (IHK)",
+      "name_short": "IHK",
       "legal_form": "Körperschaft des öffentlichen Rechts",
-      "legal_basis": "IHKG (Gesetz zur vorläufigen Regelung des Rechts der Industrie- und Handelskammern)",
-      "umbrella_organization": "DIHK (Deutscher Industrie- und Handelskammertag)",
-      "total_chambers": 79,
-      "total_member_companies": "3.6 Millionen",
-      "membership": "Pflichtmitgliedschaft für gewerbliche Unternehmen",
-      "core_functions": [
-        "Interessenvertretung der gewerblichen Wirtschaft",
-        "Berufsausbildung und Prüfungswesen",
-        "Außenhandelsdokumente und Ursprungszeugnisse",
-        "Existenzgründungsberatung",
-        "Sachverständigenbestellung",
-        "Weiterbildung und Zertifizierung"
+      "sector": "Wirtschaftsorganisation / Berufsbildung / Außenwirtschaft",
+      "employees": 22000,
+      "revenue_eur": "Beitrags- und gebührenfinanziert (~4 Mrd. EUR gesamt)",
+      "headquarters": "79 IHKs bundesweit, DIHK Berlin (Dachverband)",
+      "description": "Die Industrie- und Handelskammern (IHK) sind die Selbstverwaltungsorgane der gewerblichen Wirtschaft in Deutschland. Alle Gewerbetreibenden (außer Handwerker, Freiberufler und Landwirte) sind Pflichtmitglieder. Die 79 IHKs betreuen rund 3,6 Millionen Mitgliedsunternehmen. Kernaufgaben: Berufsausbildung, Außenwirtschaft (Ursprungszeugnisse), Existenzgründungsberatung, Sachverständigenwesen.",
+      "relevance": "IHK-Dokumente haben hohe rechtliche Relevanz: Ursprungszeugnisse sind international anerkannte Handelsdokumente, Ausbildungsverträge sind rechtsverbindlich, Sachverständigengutachten dienen als Beweismittel vor Gericht. Die IHK Schwaben (Augsburg) ist die zuständige Kammer für den Raum Kempten/Allgäu.",
+      "regional_presence": [
+        "IHK Schwaben: Augsburg (zuständig für Kempten/Allgäu)",
+        "IHK München und Oberbayern: München",
+        "IHK Nürnberg für Mittelfranken: Nürnberg",
+        "DIHK (Dachverband): Berlin",
+        "79 IHKs bundesweit"
+      ]
+    },
+    "governance": {
+      "level": "LOW",
+      "identity_license_required": false,
+      "retention_years": 5,
+      "risk_domains": [
+        "Außenwirtschaftsrecht",
+        "Berufsbildungsrecht",
+        "Gewerberecht",
+        "Sachverständigenwesen",
+        "Handelsrecht"
       ],
-      "regional_example": {
-        "name": "IHK Schwaben",
-        "seat": "Augsburg",
-        "members": "140.000+",
-        "regional_offices": ["Donauwörth", "Günzburg", "Kaufbeuren", "Kempten", "Dillingen", "Lindau", "Memmingen", "Neu-Ulm"],
-        "motto": "Bilden. Bündeln. Beraten."
+      "compliance_frameworks": [
+        "DSGVO",
+        "IHKG",
+        "BBiG",
+        "AWG/AWV",
+        "GewO",
+        "EU AI Act",
+        "UCC (Unionszollkodex)"
+      ],
+      "sge_thresholds": {
+        "warn": 40,
+        "alert": 60,
+        "block": 80
       }
-    }
-  },
-
-  "detection_keywords": [
-    "IHK",
-    "Industrie- und Handelskammer",
-    "Handelskammer",
-    "DIHK",
-    "IHK Schwaben",
-    "IHK München",
-    "IHK Berlin",
-    "Ursprungszeugnis",
-    "Carnet ATA",
-    "IHK-Prüfung",
-    "IHK-Zeugnis",
-    "IHK-Bescheinigung",
-    "Ausbildungsvertrag",
-    "Ausbildungsrahmenplan",
-    "Gewerbeanmeldung",
-    "Sachverständige",
-    "Weiterbildungszertifikat",
-    "IHK-Abschluss",
-    "Handelsfachwirt",
-    "Industriemeister",
-    "Firmennamen-Check",
-    "Vollversammlung",
-    "Wirtschaftssatzung"
-  ],
-
-  "identity_license": {
-    "status": "model_only",
-    "scope": "no_official_identity",
-    "logo_allowed": false,
-    "seal_allowed": false,
-    "letterhead_allowed": false,
-    "disclaimer_required": true,
-    "disclaimer": {
-      "de": "Dieses Dokument wurde NICHT von einer Industrie- und Handelskammer erstellt oder autorisiert. Es enthält Bezüge zu einer realen Institution. Governance-Stufe: LOW.",
-      "en": "This document was NOT created or authorized by a Chamber of Commerce and Industry. It contains references to a real institution. Governance level: LOW.",
-      "pt": "Este documento NÃO foi criado ou autorizado por uma Câmara de Comércio e Indústria. Contém referências a uma instituição real. Nível de governança: LOW."
-    }
-  },
-
-  "metadata_fields": {
-    "institution_name": {
-      "required": true,
-      "type": "string",
-      "description": "Name of the specific IHK (e.g. IHK Schwaben, IHK München)"
     },
-    "document_type": {
-      "required": true,
-      "type": "enum",
-      "values": [
-        "certificate_of_origin",
-        "trade_document",
-        "training_contract",
-        "exam_document",
-        "business_registration",
-        "expert_appointment",
-        "continuing_education_cert",
-        "member_correspondence",
-        "internal_form",
-        "checklist",
-        "advisory_document"
-      ],
-      "description": "Type of IHK document"
-    },
-    "document_category": {
-      "required": true,
-      "type": "enum",
-      "values": [
-        "aussenhandel",
-        "berufsbildung",
-        "existenzgruendung",
-        "recht_und_steuern",
-        "innovation_und_umwelt",
-        "standortpolitik",
-        "unternehmenservice",
-        "sachverstaendige"
-      ],
-      "description": "IHK business area the document belongs to"
-    },
-    "regional_chamber": {
-      "required": false,
-      "type": "string",
-      "description": "Specific regional IHK if applicable"
-    },
-    "member_facing": {
-      "required": true,
-      "type": "boolean",
-      "default": false,
-      "description": "Whether the document is intended for member companies"
-    }
-  },
-
-  "governance_rules": {
-    "audit_trail": {
-      "enabled": true,
-      "granularity": "basic",
-      "description": "Document creation and modification logged"
-    },
-    "version_control": {
-      "enabled": false,
-      "policy": "optional",
-      "description": "Version tracking optional for operational documents"
-    },
-    "watermark": {
-      "enabled": false,
-      "style": "metadata_only",
-      "text": "WINDI Governance | LOW | IHK"
-    },
-    "ai_role": {
-      "permitted": [
-        "form_assistance",
-        "template_generation",
-        "document_drafting",
-        "translation_support",
-        "checklist_creation",
-        "process_documentation"
-      ],
-      "prohibited": [
-        "official_certificate_issuance",
-        "exam_grading",
-        "legal_decisions",
-        "identity_impersonation"
-      ],
-      "human_review_required": false,
-      "human_review_recommended": true,
-      "description": "AI assists with operational documents. Official certificates and exams require human authority."
-    },
-    "integrity_hash": {
-      "enabled": true,
-      "algorithm": "SHA-256",
-      "display": "footer_only",
-      "description": "Hash in footer for traceability"
-    }
-  },
-
-  "operational_templates": {
-    "description": "Common IHK document templates that WINDI can assist with",
     "templates": [
       {
-        "id": "ursprungszeugnis_antrag",
-        "name": "Ursprungszeugnis-Antrag",
+        "id": "TPL-IHK-001",
+        "name_de": "Ursprungszeugnis-Antrag",
+        "name_en": "",
         "category": "aussenhandel",
-        "description": "Application form for certificate of origin"
+        "risk_level": "R2",
+        "description": "Application form for certificate of origin",
+        "required_fields": [
+          "institution",
+          "date",
+          "reference",
+          "antragsteller"
+        ],
+        "governance_notes": ""
       },
       {
-        "id": "ausbildungsvertrag",
-        "name": "Berufsausbildungsvertrag",
+        "id": "TPL-IHK-002",
+        "name_de": "Berufsausbildungsvertrag",
+        "name_en": "",
         "category": "berufsbildung",
-        "description": "Vocational training contract template"
+        "risk_level": "R2",
+        "description": "Vocational training contract template",
+        "required_fields": [
+          "institution",
+          "date",
+          "reference",
+          "antragsteller"
+        ],
+        "governance_notes": ""
       },
       {
-        "id": "pruefungsanmeldung",
-        "name": "Prüfungsanmeldung",
+        "id": "TPL-IHK-003",
+        "name_de": "Prüfungsanmeldung",
+        "name_en": "",
         "category": "berufsbildung",
-        "description": "Exam registration form"
+        "risk_level": "R2",
+        "description": "Exam registration form",
+        "required_fields": [
+          "institution",
+          "date",
+          "reference",
+          "antragsteller"
+        ],
+        "governance_notes": ""
       },
       {
-        "id": "gewerbeanzeige",
-        "name": "Gewerbeanzeige",
+        "id": "TPL-IHK-004",
+        "name_de": "Gewerbeanzeige",
+        "name_en": "",
         "category": "existenzgruendung",
-        "description": "Business registration notification"
+        "risk_level": "R2",
+        "description": "Business registration notification",
+        "required_fields": [
+          "institution",
+          "date",
+          "reference",
+          "antragsteller"
+        ],
+        "governance_notes": ""
       },
       {
-        "id": "sachverstaendige_antrag",
-        "name": "Sachverständigenbestellung",
+        "id": "TPL-IHK-005",
+        "name_de": "Sachverständigenbestellung",
+        "name_en": "",
         "category": "sachverstaendige",
-        "description": "Expert witness appointment application"
+        "risk_level": "R2",
+        "description": "Expert witness appointment application",
+        "required_fields": [
+          "institution",
+          "date",
+          "reference",
+          "antragsteller"
+        ],
+        "governance_notes": ""
       },
       {
-        "id": "weiterbildung_zertifikat",
-        "name": "Weiterbildungszertifikat",
+        "id": "TPL-IHK-006",
+        "name_de": "Weiterbildungszertifikat",
+        "name_en": "",
         "category": "berufsbildung",
-        "description": "Continuing education certificate template"
+        "risk_level": "R2",
+        "description": "Continuing education certificate template",
+        "required_fields": [
+          "institution",
+          "date",
+          "reference",
+          "antragsteller"
+        ],
+        "governance_notes": ""
       },
       {
-        "id": "firmencheck",
-        "name": "Firmennamen-Check",
+        "id": "TPL-IHK-007",
+        "name_de": "Firmennamen-Check",
+        "name_en": "",
         "category": "recht_und_steuern",
-        "description": "Company name verification request"
+        "risk_level": "R2",
+        "description": "Company name verification request",
+        "required_fields": [
+          "institution",
+          "date",
+          "reference",
+          "antragsteller"
+        ],
+        "governance_notes": ""
+      },
+      {
+        "id": "TPL-IHK-008",
+        "name_de": "Handelsregisterauszug-Beglaubigung",
+        "name_en": "Commercial Register Certification",
+        "category": "handelsrecht",
+        "risk_level": "R2",
+        "description": "Beglaubigung und Bestätigung von Handelsregisterdaten durch die IHK",
+        "required_fields": [
+          "institution",
+          "date",
+          "reference",
+          "firma"
+        ],
+        "governance_notes": "HGB-relevant"
       }
-    ]
-  },
-
-  "risk_profile": {
-    "primary_risk": "operational_accuracy",
-    "secondary_risk": "form_compliance",
-    "data_sensitivity": "low",
-    "public_impact": "low",
-    "mitigation_strategy": "Template standardization, basic audit trail, form validation"
-  },
-
-  "windi_positioning": {
-    "de": "WINDI unterstützt bei der Erstellung und Verwaltung operationeller IHK-Dokumente. WINDI erstellt keine amtlichen Bescheinigungen. WINDI standardisiert Formularprozesse und gewährleistet Nachvollziehbarkeit.",
-    "en": "WINDI assists with creation and management of operational IHK documents. WINDI does not issue official certificates. WINDI standardizes form processes and ensures traceability.",
-    "pt": "WINDI auxilia na criação e gestão de documentos operacionais da IHK. WINDI não emite certificados oficiais. WINDI padroniza processos de formulários e garante rastreabilidade."
+    ],
+    "document_categories": [
+      {
+        "id": "aussenwirtschaft",
+        "name_de": "Außenwirtschaft",
+        "name_en": "Foreign Trade",
+        "description": "Ursprungszeugnisse, Carnets, Handelsdokumente",
+        "typical_risk_level": "R2"
+      },
+      {
+        "id": "ausbildung",
+        "name_de": "Berufsausbildung",
+        "name_en": "Vocational Training",
+        "description": "Ausbildungsverträge, Prüfungen, Zeugnisse",
+        "typical_risk_level": "R2"
+      },
+      {
+        "id": "gewerbe",
+        "name_de": "Gewerbeanzeigen",
+        "name_en": "Business Registration",
+        "description": "Gewerbeanmeldungen und -abmeldungen",
+        "typical_risk_level": "R1"
+      },
+      {
+        "id": "sachverstaendige",
+        "name_de": "Sachverständige",
+        "name_en": "Expert Witnesses",
+        "description": "Sachverständigenbestellungen und Gutachten",
+        "typical_risk_level": "R3"
+      },
+      {
+        "id": "weiterbildung",
+        "name_de": "Weiterbildung",
+        "name_en": "Further Education",
+        "description": "Weiterbildungszertifikate und Prüfungsnachweise",
+        "typical_risk_level": "R1"
+      }
+    ],
+    "sge_keywords": {
+      "domain_terms": [
+        "IHK",
+        "Industrie- und Handelskammer",
+        "Handelskammer",
+        "DIHK",
+        "IHK Schwaben",
+        "IHK München",
+        "IHK Berlin",
+        "IHK-Prüfung",
+        "IHK-Zeugnis",
+        "IHK-Bescheinigung",
+        "Ausbildungsvertrag",
+        "Ausbildungsrahmenplan",
+        "Gewerbeanmeldung",
+        "Sachverständige",
+        "IHK-Abschluss",
+        "Handelsfachwirt",
+        "Industriemeister",
+        "Firmennamen-Check",
+        "Wirtschaftssatzung",
+        "Ursprungszeugnis",
+        "Carnet ATA",
+        "Weiterbildungszertifikat"
+      ],
+      "risk_indicators": [],
+      "compliance_terms": [],
+      "organizational_terms": [
+        "Vollversammlung"
+      ]
+    },
+    "cross_references": {
+      "complementary": [
+        "hwk",
+        "tuev",
+        "stadt-kempten"
+      ],
+      "hierarchical": [],
+      "notes": "IHK und HWK sind die beiden Kammern der gewerblichen Wirtschaft. IHK für Industrie/Handel, HWK für Handwerk. Stadt Kempten als lokale Verbindung im Allgäu."
+    }
   }
 }
