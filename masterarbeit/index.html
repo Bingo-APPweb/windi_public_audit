@@ -171,16 +171,23 @@ nav {
 }
 
 /* ══ PROBLEM SECTION ══ */
-.problem-block {
+.problem-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  margin-top: 40px;
+  align-items: center;
+}
+
+.problem-text {
   background: var(--noir-surface);
   border: 1px solid var(--noir-border);
   border-radius: 6px;
   padding: 48px;
-  margin-top: 40px;
   position: relative;
   overflow: hidden;
 }
-.problem-block::before {
+.problem-text::before {
   content: '⚠';
   position: absolute;
   top: 20px;
@@ -188,13 +195,28 @@ nav {
   font-size: 64px;
   opacity: 0.05;
 }
-.problem-block p {
+.problem-text p {
   color: var(--silver);
   font-size: 17px;
   line-height: 1.9;
-  max-width: 700px;
 }
-.problem-block p strong { color: var(--white); font-weight: 600; }
+.problem-text p strong { color: var(--white); font-weight: 600; }
+
+.problem-image {
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--noir-border);
+}
+.problem-image img {
+  width: 100%;
+  display: block;
+}
+
+@media (max-width: 900px) {
+  .problem-split {
+    grid-template-columns: 1fr;
+  }
+}
 
 /* ══ GLOSSARY ══ */
 .glossary-grid {
@@ -240,17 +262,12 @@ nav {
 .hero::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(to bottom, rgba(10,10,15,0.85) 0%, rgba(10,10,15,0.7) 50%, rgba(10,10,15,0.9) 100%);
-  z-index: 1;
-}
-
-.hero > * {
-  position: relative;
-  z-index: 2;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(ellipse at 50% 50%, rgba(201,168,76,0.06) 0%, transparent 60%);
+  animation: heroGlow 8s ease-in-out infinite alternate;
 }
 
 @keyframes heroGlow {
@@ -859,7 +876,7 @@ footer .footer-copy {
 </nav>
 
 <!-- ══ HERO ══ -->
-<div class="hero" style="background-image: url('windi-hero-banner.jpg'); background-size: cover; background-position: center;">
+<div class="hero">
   <div class="hero-badge">Pre-AI Governance Layer</div>
   <h1>
     <span class="gold">WINDI</span><br>
@@ -874,8 +891,13 @@ footer .footer-copy {
   <div class="section-label" data-de="Das Problem" data-en="The Problem" data-pt="O Problema">The Problem</div>
   <div class="section-title" data-de="Warum WINDI existiert" data-en="Why WINDI Exists" data-pt="Por que WINDI Existe">Why WINDI Exists</div>
 
-  <div class="problem-block">
-    <p data-de="Heute werden wichtige Entscheidungen in Systemen getroffen, die verandert, geloscht oder manipuliert werden konnen. Berichte werden umgeschrieben. Versionen gehen verloren. Verantwortlichkeiten verschwinden.<br><br><strong>WINDI wurde geschaffen, um sicherzustellen, dass wichtige menschliche Entscheidungen fur immer registriert, geschutzt und prufbar bleiben.</strong><br><br>In WINDI ist eine 'Entscheidung' jede formale Aussage mit rechtlichen, betrieblichen, finanziellen oder historischen Konsequenzen — Vertrage, Genehmigungen, Compliance-Berichte, behordliche Bescheide oder Prufungsergebnisse." data-en="Today, important decisions are made in systems that can be altered, deleted, or manipulated. Reports get rewritten. Versions are lost. Responsibilities dissolve.<br><br><strong>WINDI was created to ensure that important human decisions are registered, protected, and auditable forever.</strong><br><br>In WINDI, a 'decision' is any formal statement with legal, operational, financial, or historical consequences — contracts, approvals, compliance reports, government notices, or audit findings." data-pt="Hoje, decisoes importantes sao feitas em sistemas que podem ser alterados, apagados ou manipulados. Relatorios sao reescritos. Versoes se perdem. Responsabilidades se diluem.<br><br><strong>WINDI foi criado para garantir que decisoes humanas importantes sejam registradas, protegidas e auditaveis para sempre.</strong><br><br>No WINDI, uma 'decisao' e qualquer declaracao formal com consequencias juridicas, operacionais, financeiras ou historicas — contratos, aprovacoes, relatorios de compliance, atos governamentais ou resultados de auditoria.">Today, important decisions are made in systems that can be altered, deleted, or manipulated. Reports get rewritten. Versions are lost. Responsibilities dissolve.<br><br><strong>WINDI was created to ensure that important human decisions are registered, protected, and auditable forever.</strong><br><br>In WINDI, a "decision" is any formal statement with legal, operational, financial, or historical consequences — contracts, approvals, compliance reports, government notices, or audit findings.</p>
+  <div class="problem-split">
+    <div class="problem-text">
+      <p data-de="Heute werden wichtige Entscheidungen in Systemen getroffen, die verandert, geloscht oder manipuliert werden konnen. Berichte werden umgeschrieben. Versionen gehen verloren. Verantwortlichkeiten verschwinden.<br><br><strong>WINDI wurde geschaffen, um sicherzustellen, dass wichtige menschliche Entscheidungen fur immer registriert, geschutzt und prufbar bleiben.</strong><br><br>In WINDI ist eine 'Entscheidung' jede formale Aussage mit rechtlichen, betrieblichen, finanziellen oder historischen Konsequenzen — Vertrage, Genehmigungen, Compliance-Berichte, behordliche Bescheide oder Prufungsergebnisse." data-en="Today, important decisions are made in systems that can be altered, deleted, or manipulated. Reports get rewritten. Versions are lost. Responsibilities dissolve.<br><br><strong>WINDI was created to ensure that important human decisions are registered, protected, and auditable forever.</strong><br><br>In WINDI, a 'decision' is any formal statement with legal, operational, financial, or historical consequences — contracts, approvals, compliance reports, government notices, or audit findings." data-pt="Hoje, decisoes importantes sao feitas em sistemas que podem ser alterados, apagados ou manipulados. Relatorios sao reescritos. Versoes se perdem. Responsabilidades se diluem.<br><br><strong>WINDI foi criado para garantir que decisoes humanas importantes sejam registradas, protegidas e auditaveis para sempre.</strong><br><br>No WINDI, uma 'decisao' e qualquer declaracao formal com consequencias juridicas, operacionais, financeiras ou historicas — contratos, aprovacoes, relatorios de compliance, atos governamentais ou resultados de auditoria.">Today, important decisions are made in systems that can be altered, deleted, or manipulated. Reports get rewritten. Versions are lost. Responsibilities dissolve.<br><br><strong>WINDI was created to ensure that important human decisions are registered, protected, and auditable forever.</strong><br><br>In WINDI, a "decision" is any formal statement with legal, operational, financial, or historical consequences — contracts, approvals, compliance reports, government notices, or audit findings.</p>
+    </div>
+    <div class="problem-image">
+      <img src="windi-hero-banner.jpg" alt="WINDI Governance Vision">
+    </div>
   </div>
 </section>
 
