@@ -1,192 +1,639 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="de">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>TR / Press Feature — Responsibility Infrastructure for AI Systems (WSJ-style)</title>
-  <style>
-    :root{
-      --bg:#0b0e14; --panel:#0f1420; --text:#e7eaf0; --muted:#aab3c5;
-      --line:#20283a; --accent:#60a5fa; --good:#34d399; --warn:#fbbf24;
-      --serif: ui-serif, Georgia, "Times New Roman", Times, serif;
-      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    }
-    body{margin:0;background:radial-gradient(1200px 600px at 20% 0%, #18223a 0%, var(--bg) 55%);color:var(--text);font-family:var(--sans);}
-    a{color:var(--accent);text-decoration:none}
-    a:hover{text-decoration:underline}
-    .wrap{max-width:980px;margin:0 auto;padding:28px 18px 80px;}
-    .topnav{display:flex;gap:14px;flex-wrap:wrap;align-items:center;font-size:14px;color:var(--muted);margin-bottom:18px}
-    .topnav a{color:var(--muted)}
-    .hero{background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));border:1px solid var(--line);border-radius:18px;padding:22px 22px 18px;box-shadow:0 12px 30px rgba(0,0,0,.35)}
-    .kicker{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
-    .badge{font-size:12px;letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--line);padding:6px 10px;border-radius:999px;background:rgba(0,0,0,.25)}
-    .badge.wsj{font-weight:700}
-    .badge.tech{color:#e5e7eb}
-    .badge.registered{border-color:rgba(52,211,153,.45);color:var(--good);background:rgba(52,211,153,.08)}
-    h1{font-family:var(--serif);font-size:40px;line-height:1.08;margin:8px 0 10px}
-    .sub{font-size:18px;color:var(--muted);max-width:74ch;line-height:1.5;margin-bottom:12px}
-    .meta{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:14px;border-top:1px solid var(--line);padding-top:12px;margin-top:14px}
-    .meta b{color:var(--text)}
-    .grid{display:grid;grid-template-columns: 1fr;gap:18px;margin-top:18px}
-    @media(min-width: 980px){.grid{grid-template-columns: 1.6fr .9fr}}
-    .card{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:16px;padding:18px}
-    .card h2{font-family:var(--serif);margin:0 0 8px;font-size:22px}
-    .p{color:var(--text);line-height:1.65;font-size:16px}
-    .p em{color:#fff}
-    .quote{border-left:3px solid rgba(96,165,250,.6);padding-left:14px;color:#dbe7ff;font-style:italic;margin:12px 0}
-    .sidebar h3{margin:0 0 10px;font-size:14px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
-    .kv{display:grid;grid-template-columns: 140px 1fr;gap:8px 10px;font-size:14px;color:var(--muted)}
-    .kv b{color:var(--text);font-weight:600}
-    .rule{height:1px;background:var(--line);margin:14px 0}
-    .receipt{font-family:var(--mono);font-size:12.5px;line-height:1.5;color:#cbd5e1;background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:14px;padding:14px;overflow:auto}
-    footer{margin-top:22px;color:var(--muted);font-size:13px}
-    .sig{margin-top:10px;font-family:var(--serif);font-size:18px;color:#e8f5ff}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TR / Press Feature - Responsibility Infrastructure for AI Systems (WSJ-style) - WINDI</title>
+<meta name="description" content="European Research Project Introduces First Operational Responsibility Infrastructure for AI Systems - WSJ-style governed feature article">
+<link rel="stylesheet" href="windi-internal.css">
+<style>
+  /* Article-specific styles */
+  .article-hero {
+    background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.01));
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    margin-bottom: 32px;
+    box-shadow: 0 12px 30px rgba(0,0,0,.25);
+  }
+  .kicker {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .badge {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    border: 1px solid var(--border-subtle);
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(0,0,0,.25);
+    color: var(--text-secondary);
+  }
+  .badge.wsj {
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .badge.registered {
+    border-color: var(--signal-safe);
+    color: var(--signal-safe);
+    background: var(--signal-safe-dim);
+  }
+  .article-hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 4vw, 38px);
+    line-height: 1.12;
+    margin-bottom: 16px;
+  }
+  .article-sub {
+    font-size: 17px;
+    color: var(--text-secondary);
+    max-width: 74ch;
+    line-height: 1.55;
+    margin-bottom: 16px;
+  }
+  .article-meta {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    color: var(--text-tertiary);
+    font-size: 13px;
+    border-top: 1px solid var(--border-subtle);
+    padding-top: 16px;
+    margin-top: 16px;
+  }
+  .article-meta b {
+    color: var(--text-secondary);
+  }
+  .article-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  @media(min-width: 1100px) {
+    .article-grid { grid-template-columns: 1.6fr .9fr; }
+  }
+  .article-main {
+    background: var(--surface-1);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 32px;
+  }
+  .article-main p {
+    font-size: 15px;
+    line-height: 1.7;
+    margin-bottom: 18px;
+  }
+  .article-main h2 {
+    font-family: var(--font-display);
+    font-size: 20px;
+    margin-top: 32px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .article-quote {
+    border-left: 3px solid var(--gold);
+    padding: 16px 20px;
+    margin: 20px 0;
+    background: var(--gold-glow);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    font-style: italic;
+    color: var(--text-secondary);
+  }
+  .article-quote p { margin-bottom: 0; }
+  .article-sidebar {
+    background: var(--surface-1);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 24px;
+  }
+  .sidebar-title {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+  }
+  .sidebar-receipt {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    background: var(--surface-0);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    overflow: auto;
+    margin-bottom: 20px;
+  }
+  .sidebar-divider {
+    height: 1px;
+    background: var(--border-subtle);
+    margin: 20px 0;
+  }
+  .sidebar-kv {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 8px 12px;
+    font-size: 13px;
+    color: var(--text-tertiary);
+  }
+  .sidebar-kv b {
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+  .sidebar-note {
+    font-size: 13px;
+    color: var(--text-tertiary);
+    line-height: 1.6;
+    margin-top: 8px;
+  }
+  .article-sig {
+    margin-top: 24px;
+    font-family: var(--font-display);
+    font-size: 16px;
+    color: var(--gold);
+    font-style: italic;
+  }
+  .governance-disclosure {
+    background: var(--signal-flow-dim);
+    border: 1px solid var(--signal-flow);
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    font-size: 13px;
+    text-align: center;
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+  }
+  .governance-disclosure strong {
+    color: var(--signal-flow);
+  }
+  .authorship-notice {
+    background: var(--surface-1);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    margin-top: 24px;
+    font-size: 13px;
+    color: var(--text-tertiary);
+  }
+  .authorship-notice strong {
+    color: var(--text-secondary);
+  }
+</style>
 </head>
-<body>
-<div style="background:#fff3cd;border:2px solid #ffc107;padding:1rem 1.5rem;margin:1rem auto;max-width:900px;font-family:sans-serif;font-size:0.9rem;text-align:center;border-radius:6px;">
-<strong>⚠️ GOVERNANCE DISCLOSURE (WINDI I1/I2):</strong> This article was authored by WINDI Publishing House using a journalistic editorial format. It is <strong>not</strong> a publication of the Wall Street Journal or any affiliated entity. The editorial style is used for illustrative purposes only.
-</div>
-  <div class="wrap">
-    <div class="topnav">
-      <a href="./index.html">&larr; Masterarbeit Index</a>
-      <span>&bull;</span>
-      <a href="./press-release-windi-2026.html">Press Release</a>
-      <span>&bull;</span>
-      <a href="./tr-windi-2026-004.html">TR-004</a>
-      <span>&bull;</span>
-      <a href="./tr-windi-2026-005.html">TR-005</a>
+<body data-theme="dark" data-lang="de">
+
+<!-- Header -->
+<header class="site-header">
+  <a href="index.html" class="header-brand">
+    <div class="header-logo">W</div>
+    <div class="header-title-group">
+      <span class="header-title">WINDI</span>
+      <span class="header-subtitle">Governance Intelligence</span>
+    </div>
+  </a>
+  <div class="header-center">
+    <div class="header-status">
+      <span class="status-dot"></span>
+      <span>Operational</span>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('de')">DE</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('pt')">PT</button>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+      <div class="theme-toggle-track"></div>
+      <div class="theme-toggle-thumb" id="themeThumb"></div>
+    </button>
+    <button class="mobile-toggle" onclick="toggleSidebar()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- Sidebar Navigation -->
+<nav class="sidebar sidebar-left" id="sidebarLeft">
+  <div class="sidebar-section">
+    <div class="sidebar-label">Masterarbeit</div>
+    <a href="index.html" class="sidebar-link">Main Document</a>
+    <a href="cover.html" class="sidebar-link">Cover</a>
+    <a href="about-windi.html" class="sidebar-link">About WINDI</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Governance</div>
+    <a href="governance-levels.html" class="sidebar-link">Governance Levels</a>
+    <a href="human-oversight.html" class="sidebar-link">Human Oversight</a>
+    <a href="data-handling.html" class="sidebar-link">Data Handling</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Architecture</div>
+    <a href="diagrams.html" class="sidebar-link">Diagrams</a>
+    <a href="interface-guide.html" class="sidebar-link">Interface Guide</a>
+    <a href="verification-layer.html" class="sidebar-link">Verification Layer</a>
+    <a href="kapitel12_domain_sovereignty.html" class="sidebar-link">Domain Sovereignty</a>
+    <a href="identity-governance-layer.html" class="sidebar-link">Identity Governance</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Technical Reports</div>
+    <a href="tr-windi-2026-003.html" class="sidebar-link">TR-003: Service Layer</a>
+    <a href="tr-windi-2026-004.html" class="sidebar-link">TR-004: Cognitive Service</a>
+    <a href="tr-windi-2026-005.html" class="sidebar-link">TR-005: Cognitive Cycle</a>
+    <a href="isp-evolution.html" class="sidebar-link">TR-006: ISP Registry</a>
+    <a href="tr-007.html" class="sidebar-link">TR-007: Provenance</a>
+    <a href="sge-results.html" class="sidebar-link">SGE Results</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Publications</div>
+    <a href="publications.html" class="sidebar-link">Publications</a>
+    <a href="fachartikel-provenienz.html" class="sidebar-link">Fachartikel</a>
+    <a href="windi-publishing-house.html" class="sidebar-link">Manifesto</a>
+    <a href="editorial-policy.html" class="sidebar-link">Editorial Policy</a>
+    <a href="idpf-abstract.html" class="sidebar-link">IDPF Abstract</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Media</div>
+    <a href="windi-working-paper-2026.html" class="sidebar-link">Working Paper</a>
+    <a href="press-release-windi-2026.html" class="sidebar-link">Press Release</a>
+    <a href="windi-side-by-side-2026.html" class="sidebar-link">Side-by-Side</a>
+    <a href="wsj-style-governed-windi-2026.html" class="sidebar-link sidebar-link-active">WSJ Feature</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Compliance</div>
+    <a href="document-integrity.html" class="sidebar-link">Doc Integrity</a>
+    <a href="print-watermark-layer.html" class="sidebar-link">Print Layer</a>
+    <a href="regulatory-summary-print-layer.html" class="sidebar-link">Regulatory</a>
+    <a href="availability-implementation.html" class="sidebar-link">Appendix A</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<main class="main-content">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-breadcrumb">
+      <a href="index.html">WINDI</a>
+      <span class="breadcrumb-sep">/</span>
+      <span class="breadcrumb-current">
+        <span class="l-de">WSJ Feature</span>
+        <span class="l-en">WSJ Feature</span>
+        <span class="l-pt">WSJ Feature</span>
+      </span>
+    </div>
+    <div class="page-meta-bar">
+      <span class="page-tag page-tag-gov">Media</span>
+      <span class="page-date">2026-02-07</span>
+    </div>
+    <h1 class="page-title">
+      <span class="l-de">WSJ-Style Feature Article</span>
+      <span class="l-en">WSJ-Style Feature Article</span>
+      <span class="l-pt">Artigo de Reportagem Estilo WSJ</span>
+    </h1>
+    <p class="page-subtitle">
+      <span class="l-de">Verantwortungsinfrastruktur für KI-Systeme - Governed Feature</span>
+      <span class="l-en">Responsibility Infrastructure for AI Systems - Governed Feature</span>
+      <span class="l-pt">Infraestrutura de Responsabilidade para Sistemas de IA - Feature Governado</span>
+    </p>
+    <div class="page-divider"></div>
+  </div>
+
+  <!-- Content -->
+  <div class="content-prose">
+
+    <!-- Governance Disclosure -->
+    <div class="governance-disclosure">
+      <strong class="l-de">GOVERNANCE-OFFENLEGUNG (WINDI I1/I2):</strong>
+      <strong class="l-en">GOVERNANCE DISCLOSURE (WINDI I1/I2):</strong>
+      <strong class="l-pt">DIVULGACAO DE GOVERNANCA (WINDI I1/I2):</strong>
+      <span class="l-de">Dieser Artikel wurde von WINDI Publishing House im journalistischen Redaktionsformat verfasst. Es handelt sich <strong>nicht</strong> um eine Publikation des Wall Street Journal oder einer verbundenen Einrichtung. Der redaktionelle Stil wird nur zu Illustrationszwecken verwendet.</span>
+      <span class="l-en">This article was authored by WINDI Publishing House using a journalistic editorial format. It is <strong>not</strong> a publication of the Wall Street Journal or any affiliated entity. The editorial style is used for illustrative purposes only.</span>
+      <span class="l-pt">Este artigo foi escrito pela WINDI Publishing House usando um formato editorial jornalistico. <strong>Nao</strong> e uma publicacao do Wall Street Journal ou de qualquer entidade afiliada. O estilo editorial e usado apenas para fins ilustrativos.</span>
     </div>
 
-    <section class="hero">
+    <!-- Page Hero -->
+    <section class="article-hero">
       <div class="kicker">
         <span class="badge wsj">Wall Street Journal &bull; Technology</span>
-        <span class="badge tech">WSJ-style feature (governed)</span>
+        <span class="badge">WSJ-style feature (governed)</span>
         <span class="badge registered">&check; Governed via WINDI</span>
       </div>
-      <h1>European Research Project Introduces First Operational &ldquo;Responsibility Infrastructure&rdquo; for AI Systems</h1>
-      <div class="sub">WINDI embeds governance directly into AI-assisted writing, shifting responsibility from model outputs to real-time human decision contexts.</div>
-      <div class="meta">
-        <div><b>Dateline:</b> Berlin / Brussels &mdash; February 2026</div>
-        <div><b>Format:</b> Diplomatic English, journalistic</div>
+      <h1>
+        <span class="l-de">Europaisches Forschungsprojekt stellt erste operative &bdquo;Verantwortungsinfrastruktur&ldquo; fur KI-Systeme vor</span>
+        <span class="l-en">European Research Project Introduces First Operational &ldquo;Responsibility Infrastructure&rdquo; for AI Systems</span>
+        <span class="l-pt">Projeto de Pesquisa Europeu Apresenta Primeira &ldquo;Infraestrutura de Responsabilidade&rdquo; Operacional para Sistemas de IA</span>
+      </h1>
+      <div class="article-sub">
+        <span class="l-de">WINDI bettet Governance direkt in KI-gestutztes Schreiben ein und verlagert die Verantwortung von Modellausgaben auf Echtzeit-Entscheidungskontexte des Menschen.</span>
+        <span class="l-en">WINDI embeds governance directly into AI-assisted writing, shifting responsibility from model outputs to real-time human decision contexts.</span>
+        <span class="l-pt">O WINDI incorpora governanca diretamente na escrita assistida por IA, transferindo a responsabilidade das saidas do modelo para contextos de decisao humana em tempo real.</span>
+      </div>
+      <div class="article-meta">
+        <div><b class="l-de">Datum:</b><b class="l-en">Dateline:</b><b class="l-pt">Data:</b> Berlin / Brussels &mdash; February 2026</div>
+        <div><b class="l-de">Format:</b><b class="l-en">Format:</b><b class="l-pt">Formato:</b> Diplomatic English, journalistic</div>
       </div>
     </section>
 
-    <div class="grid">
-      <main class="card">
-        <p class="p">
-          A European research initiative has introduced what it describes as the first operational system designed to embed governance directly into the process of AI-assisted document creation.
+    <div class="article-grid">
+      <!-- Main Article Content -->
+      <article class="article-main">
+        <p>
+          <span class="lb-de">Eine europaische Forschungsinitiative hat das erste operative System vorgestellt, das Governance direkt in den Prozess der KI-gestutzten Dokumentenerstellung einbettet.</span>
+          <span class="lb-en">A European research initiative has introduced what it describes as the first operational system designed to embed governance directly into the process of AI-assisted document creation.</span>
+          <span class="lb-pt">Uma iniciativa de pesquisa europeia introduziu o que descreve como o primeiro sistema operacional projetado para incorporar governanca diretamente no processo de criacao de documentos assistida por IA.</span>
         </p>
 
-        <p class="p">
-          The system, known as <em>WINDI</em>, operates in real time as a human drafts a document. It detects references to real institutions, interprets their governance implications, applies policy rules, explains its reasoning in natural language, and visually signals the appropriate governance level within the editor interface.
+        <p>
+          <span class="lb-de">Das System mit dem Namen <em>WINDI</em> arbeitet in Echtzeit, wahrend ein Mensch ein Dokument verfasst. Es erkennt Verweise auf reale Institutionen, interpretiert deren Governance-Implikationen, wendet Richtlinienregeln an, erklart seine Argumentation in naturlicher Sprache und signalisiert visuell das angemessene Governance-Level in der Editor-Oberflache.</span>
+          <span class="lb-en">The system, known as <em>WINDI</em>, operates in real time as a human drafts a document. It detects references to real institutions, interprets their governance implications, applies policy rules, explains its reasoning in natural language, and visually signals the appropriate governance level within the editor interface.</span>
+          <span class="lb-pt">O sistema, conhecido como <em>WINDI</em>, opera em tempo real enquanto um humano elabora um documento. Ele detecta referencias a instituicoes reais, interpreta suas implicacoes de governanca, aplica regras de politica, explica seu raciocinio em linguagem natural e sinaliza visualmente o nivel de governanca apropriado na interface do editor.</span>
         </p>
 
-        <p class="p">
-          This approach differs markedly from most existing AI governance efforts, which focus either on regulatory frameworks, ethical guidelines, or post-hoc audits. WINDI instead positions governance as a continuous operational layer surrounding human decisions.
+        <p>
+          <span class="lb-de">Dieser Ansatz unterscheidet sich deutlich von den meisten bestehenden KI-Governance-Bemuhungen, die sich entweder auf regulatorische Rahmenwerke, ethische Richtlinien oder nachtragliche Audits konzentrieren. WINDI positioniert Governance stattdessen als kontinuierliche operative Schicht, die menschliche Entscheidungen umgibt.</span>
+          <span class="lb-en">This approach differs markedly from most existing AI governance efforts, which focus either on regulatory frameworks, ethical guidelines, or post-hoc audits. WINDI instead positions governance as a continuous operational layer surrounding human decisions.</span>
+          <span class="lb-pt">Esta abordagem difere marcadamente da maioria dos esforcos de governanca de IA existentes, que se concentram em estruturas regulatorias, diretrizes eticas ou auditorias pos-fato. O WINDI posiciona a governanca como uma camada operacional continua que envolve as decisoes humanas.</span>
         </p>
 
-        <div class="quote">&ldquo;AI processes information. Humans remain the decision-makers. WINDI guarantees that the process is governed,&rdquo; said a project contributor.</div>
+        <div class="article-quote">
+          <p>
+            <span class="l-de">&bdquo;KI verarbeitet Informationen. Menschen bleiben die Entscheidungstrager. WINDI garantiert, dass der Prozess gesteuert wird,&ldquo; sagte ein Projektmitarbeiter.</span>
+            <span class="l-en">&ldquo;AI processes information. Humans remain the decision-makers. WINDI guarantees that the process is governed,&rdquo; said a project contributor.</span>
+            <span class="l-pt">&ldquo;A IA processa informacoes. Os humanos permanecem como tomadores de decisao. O WINDI garante que o processo seja governado,&rdquo; disse um colaborador do projeto.</span>
+          </p>
+        </div>
 
-        <h2>Operational Architecture</h2>
-        <p class="p">
-          The system functions through what researchers term &ldquo;context-aware governance adaptation.&rdquo; When a user references the German Federal Ministry of Finance, for example, WINDI automatically adjusts its communication protocols to match institutional formality standards while maintaining transparency about its decision-making process.
+        <h2>
+          <span class="l-de">Operative Architektur</span>
+          <span class="l-en">Operational Architecture</span>
+          <span class="l-pt">Arquitetura Operacional</span>
+        </h2>
+
+        <p>
+          <span class="lb-de">Das System funktioniert durch das, was Forscher als &bdquo;kontextbewusste Governance-Anpassung&ldquo; bezeichnen. Wenn ein Benutzer beispielsweise auf das Bundesfinanzministerium verweist, passt WINDI automatisch seine Kommunikationsprotokolle an die institutionellen Formalitatsnormen an und wahrt gleichzeitig Transparenz uber seinen Entscheidungsprozess.</span>
+          <span class="lb-en">The system functions through what researchers term &ldquo;context-aware governance adaptation.&rdquo; When a user references the German Federal Ministry of Finance, for example, WINDI automatically adjusts its communication protocols to match institutional formality standards while maintaining transparency about its decision-making process.</span>
+          <span class="lb-pt">O sistema funciona atraves do que os pesquisadores chamam de &ldquo;adaptacao de governanca sensivel ao contexto.&rdquo; Quando um usuario faz referencia ao Ministerio Federal das Financas da Alemanha, por exemplo, o WINDI ajusta automaticamente seus protocolos de comunicacao para corresponder aos padroes de formalidade institucional, mantendo transparencia sobre seu processo de tomada de decisao.</span>
         </p>
 
-        <p class="p">
-          Unlike conventional AI safety measures that operate at the model level, WINDI&rsquo;s governance infrastructure activates at the point of human-AI interaction. The system maintains what it calls an &ldquo;invariable core&rdquo; of ethical principles while adapting its expression to match institutional contexts.
+        <p>
+          <span class="lb-de">Im Gegensatz zu herkommlichen KI-Sicherheitsmassnahmen, die auf Modellebene arbeiten, aktiviert sich die Governance-Infrastruktur von WINDI am Punkt der Mensch-KI-Interaktion. Das System halt einen &bdquo;unveranderlichen Kern&ldquo; ethischer Prinzipien aufrecht und passt gleichzeitig seinen Ausdruck an institutionelle Kontexte an.</span>
+          <span class="lb-en">Unlike conventional AI safety measures that operate at the model level, WINDI&rsquo;s governance infrastructure activates at the point of human-AI interaction. The system maintains what it calls an &ldquo;invariable core&rdquo; of ethical principles while adapting its expression to match institutional contexts.</span>
+          <span class="lb-pt">Diferentemente das medidas convencionais de seguranca de IA que operam no nivel do modelo, a infraestrutura de governanca do WINDI e ativada no ponto de interacao humano-IA. O sistema mantem o que chama de &ldquo;nucleo invariavel&rdquo; de principios eticos, enquanto adapta sua expressao para corresponder aos contextos institucionais.</span>
         </p>
 
-        <h2>Real-Time Implementation</h2>
-        <p class="p">
-          The project has documented its architecture across multiple technical reports, combining academic modeling with a working network-based system. This convergence of theoretical framework and production deployment represents an uncommon approach in AI governance research.
+        <h2>
+          <span class="l-de">Echtzeit-Implementierung</span>
+          <span class="l-en">Real-Time Implementation</span>
+          <span class="l-pt">Implementacao em Tempo Real</span>
+        </h2>
+
+        <p>
+          <span class="lb-de">Das Projekt hat seine Architektur in mehreren technischen Berichten dokumentiert und kombiniert akademische Modellierung mit einem funktionierenden netzwerkbasierten System. Diese Konvergenz von theoretischem Rahmenwerk und Produktionseinsatz stellt einen ungewohnlichen Ansatz in der KI-Governance-Forschung dar.</span>
+          <span class="lb-en">The project has documented its architecture across multiple technical reports, combining academic modeling with a working network-based system. This convergence of theoretical framework and production deployment represents an uncommon approach in AI governance research.</span>
+          <span class="lb-pt">O projeto documentou sua arquitetura em varios relatorios tecnicos, combinando modelagem academica com um sistema baseado em rede funcional. Essa convergencia de estrutura teorica e implantacao em producao representa uma abordagem incomum na pesquisa de governanca de IA.</span>
         </p>
 
-        <p class="p">
-          Early testing has involved document creation for various European institutions, including Deutsche Bahn logistics forms and Banco do Brasil recommendation letters. Each interaction demonstrates the system&rsquo;s ability to maintain governance standards while adapting to specific institutional requirements.
+        <p>
+          <span class="lb-de">Fruhe Tests umfassten die Dokumentenerstellung fur verschiedene europaische Institutionen, darunter Deutsche Bahn Logistikformulare und Empfehlungsschreiben der Banco do Brasil. Jede Interaktion demonstriert die Fahigkeit des Systems, Governance-Standards aufrechtzuerhalten und sich gleichzeitig an spezifische institutionelle Anforderungen anzupassen.</span>
+          <span class="lb-en">Early testing has involved document creation for various European institutions, including Deutsche Bahn logistics forms and Banco do Brasil recommendation letters. Each interaction demonstrates the system&rsquo;s ability to maintain governance standards while adapting to specific institutional requirements.</span>
+          <span class="lb-pt">Os testes iniciais envolveram a criacao de documentos para varias instituicoes europeias, incluindo formularios de logistica da Deutsche Bahn e cartas de recomendacao do Banco do Brasil. Cada interacao demonstra a capacidade do sistema de manter padroes de governanca enquanto se adapta a requisitos institucionais especificos.</span>
         </p>
 
-        <h2>Regulatory Implications</h2>
-        <p class="p">
-          As the European Union&rsquo;s AI Act enters full implementation, WINDI&rsquo;s approach may signal a shift in how organizations manage AI compliance. Rather than retrofitting governance onto existing AI systems, the project suggests embedding responsibility directly into the interaction architecture.
+        <h2>
+          <span class="l-de">Regulatorische Implikationen</span>
+          <span class="l-en">Regulatory Implications</span>
+          <span class="l-pt">Implicacoes Regulatorias</span>
+        </h2>
+
+        <p>
+          <span class="lb-de">Mit dem Inkrafttreten des EU AI Act konnte der Ansatz von WINDI einen Wandel signalisieren, wie Organisationen KI-Compliance handhaben. Anstatt Governance nachtraglich auf bestehende KI-Systeme anzuwenden, schlagt das Projekt vor, Verantwortung direkt in die Interaktionsarchitektur einzubetten.</span>
+          <span class="lb-en">As the European Union&rsquo;s AI Act enters full implementation, WINDI&rsquo;s approach may signal a shift in how organizations manage AI compliance. Rather than retrofitting governance onto existing AI systems, the project suggests embedding responsibility directly into the interaction architecture.</span>
+          <span class="lb-pt">Com a entrada em vigor do EU AI Act, a abordagem do WINDI pode sinalizar uma mudanca na forma como as organizacoes gerenciam a conformidade com IA. Em vez de adaptar a governanca a sistemas de IA existentes, o projeto sugere incorporar a responsabilidade diretamente na arquitetura de interacao.</span>
         </p>
 
-        <div class="quote">&ldquo;This represents a fundamental rethinking of where responsibility resides in AI systems,&rdquo; noted a regulatory observer familiar with the project. &ldquo;Instead of trying to make AI models responsible, we&rsquo;re making the interaction infrastructure responsible.&rdquo;</div>
+        <div class="article-quote">
+          <p>
+            <span class="l-de">&bdquo;Dies stellt ein fundamentales Umdenken dar, wo Verantwortung in KI-Systemen liegt,&ldquo; bemerkte ein mit dem Projekt vertrauter Regulierungsbeobachter. &bdquo;Anstatt zu versuchen, KI-Modelle verantwortlich zu machen, machen wir die Interaktionsinfrastruktur verantwortlich.&ldquo;</span>
+            <span class="l-en">&ldquo;This represents a fundamental rethinking of where responsibility resides in AI systems,&rdquo; noted a regulatory observer familiar with the project. &ldquo;Instead of trying to make AI models responsible, we&rsquo;re making the interaction infrastructure responsible.&rdquo;</span>
+            <span class="l-pt">&ldquo;Isso representa uma reformulacao fundamental de onde reside a responsabilidade nos sistemas de IA,&rdquo; observou um observador regulatorio familiarizado com o projeto. &ldquo;Em vez de tentar tornar os modelos de IA responsaveis, estamos tornando a infraestrutura de interacao responsavel.&rdquo;</span>
+          </p>
+        </div>
 
-        <h2>Industry Response</h2>
-        <p class="p">
-          The financial services sector, facing increasing AI governance requirements, has shown particular interest in WINDI&rsquo;s document creation capabilities. The system&rsquo;s ability to maintain institutional tone while ensuring transparency could address growing concerns about AI-generated content in regulated communications.
+        <h2>
+          <span class="l-de">Branchenreaktion</span>
+          <span class="l-en">Industry Response</span>
+          <span class="l-pt">Resposta da Industria</span>
+        </h2>
+
+        <p>
+          <span class="lb-de">Der Finanzdienstleistungssektor, der mit zunehmenden KI-Governance-Anforderungen konfrontiert ist, hat besonderes Interesse an den Dokumentenerstellungsfahigkeiten von WINDI gezeigt. Die Fahigkeit des Systems, den institutionellen Ton beizubehalten und gleichzeitig Transparenz zu gewahrleisten, konnte wachsende Bedenken hinsichtlich KI-generierter Inhalte in regulierter Kommunikation adressieren.</span>
+          <span class="lb-en">The financial services sector, facing increasing AI governance requirements, has shown particular interest in WINDI&rsquo;s document creation capabilities. The system&rsquo;s ability to maintain institutional tone while ensuring transparency could address growing concerns about AI-generated content in regulated communications.</span>
+          <span class="lb-pt">O setor de servicos financeiros, enfrentando requisitos crescentes de governanca de IA, demonstrou interesse particular nas capacidades de criacao de documentos do WINDI. A capacidade do sistema de manter o tom institucional enquanto garante transparencia pode abordar preocupacoes crescentes sobre conteudo gerado por IA em comunicacoes reguladas.</span>
         </p>
 
-        <p class="p">
-          Technology firms have begun examining whether similar responsibility infrastructures could be integrated into existing AI products, potentially offering a new approach to compliance with emerging AI regulations.
+        <p>
+          <span class="lb-de">Technologieunternehmen haben begonnen zu prufen, ob ahnliche Verantwortungsinfrastrukturen in bestehende KI-Produkte integriert werden konnten, was potenziell einen neuen Ansatz zur Einhaltung neuer KI-Vorschriften bieten konnte.</span>
+          <span class="lb-en">Technology firms have begun examining whether similar responsibility infrastructures could be integrated into existing AI products, potentially offering a new approach to compliance with emerging AI regulations.</span>
+          <span class="lb-pt">Empresas de tecnologia comecaram a examinar se infraestruturas de responsabilidade semelhantes poderiam ser integradas a produtos de IA existentes, potencialmente oferecendo uma nova abordagem para conformidade com regulamentacoes emergentes de IA.</span>
         </p>
 
-        <h2>Market Implications</h2>
-        <p class="p">
-          The project&rsquo;s emphasis on human decision sovereignty while leveraging AI capabilities aligns with growing enterprise demand for governed AI solutions. Early assessments suggest this approach could influence how organizations structure AI deployment strategies, particularly in regulated industries.
+        <h2>
+          <span class="l-de">Marktimplikationen</span>
+          <span class="l-en">Market Implications</span>
+          <span class="l-pt">Implicacoes de Mercado</span>
+        </h2>
+
+        <p>
+          <span class="lb-de">Die Betonung des Projekts auf menschliche Entscheidungssouveranitat bei gleichzeitiger Nutzung von KI-Fahigkeiten entspricht der wachsenden Unternehmensnachfrage nach gesteuerten KI-Losungen. Erste Bewertungen deuten darauf hin, dass dieser Ansatz beeinflussen konnte, wie Organisationen KI-Einsatzstrategien strukturieren, insbesondere in regulierten Branchen.</span>
+          <span class="lb-en">The project&rsquo;s emphasis on human decision sovereignty while leveraging AI capabilities aligns with growing enterprise demand for governed AI solutions. Early assessments suggest this approach could influence how organizations structure AI deployment strategies, particularly in regulated industries.</span>
+          <span class="lb-pt">A enfase do projeto na soberania de decisao humana enquanto aproveita as capacidades de IA alinha-se com a crescente demanda empresarial por solucoes de IA governadas. Avaliacoes iniciais sugerem que essa abordagem pode influenciar como as organizacoes estruturam estrategias de implantacao de IA, particularmente em industrias reguladas.</span>
         </p>
 
-        <p class="p">
-          As regulatory attention intensifies across Europe, the concept of a responsibility infrastructure may offer a new paradigm: governance not as an external constraint, but as a visible, continuous layer that supports human accountability.
+        <p>
+          <span class="lb-de">Wahrend die regulatorische Aufmerksamkeit in ganz Europa zunimmt, konnte das Konzept einer Verantwortungsinfrastruktur ein neues Paradigma bieten: Governance nicht als externe Einschrankung, sondern als sichtbare, kontinuierliche Schicht, die menschliche Verantwortlichkeit unterstutzt.</span>
+          <span class="lb-en">As regulatory attention intensifies across Europe, the concept of a responsibility infrastructure may offer a new paradigm: governance not as an external constraint, but as a visible, continuous layer that supports human accountability.</span>
+          <span class="lb-pt">A medida que a atencao regulatoria se intensifica em toda a Europa, o conceito de uma infraestrutura de responsabilidade pode oferecer um novo paradigma: governanca nao como uma restricao externa, mas como uma camada visivel e continua que apoia a responsabilidade humana.</span>
         </p>
 
-        <p class="p">
-          The research project continues to operate as a live system, with technical documentation available through European academic networks.
+        <p>
+          <span class="lb-de">Das Forschungsprojekt arbeitet weiterhin als Live-System, wobei die technische Dokumentation uber europaische akademische Netzwerke verfugbar ist.</span>
+          <span class="lb-en">The research project continues to operate as a live system, with technical documentation available through European academic networks.</span>
+          <span class="lb-pt">O projeto de pesquisa continua a operar como um sistema ativo, com documentacao tecnica disponivel atraves de redes academicas europeias.</span>
         </p>
 
-        <footer>
-          <div><em>*This article was reported by [Name], technology correspondent, from Berlin and Brussels.*</em></div>
-          <div class="sig">&ldquo;KI verarbeitet. Der Mensch entscheidet. WINDI garantiert.&rdquo;</div>
-        </footer>
-      </main>
+        <div class="authorship-notice">
+          <p>
+            <span class="l-de"><strong>Urheberschaftshinweis:</strong> Dieser Artikel wurde aus Berlin und Brussel berichtet. Erstellt und gepruft von menschlichen Autoren. KI-redaktionelle Unterstutzung (Three Dragons Protocol) unter menschlicher Aufsicht. Endgultige Entscheidungen und Inhaltsgenehmigung: menschliche Verantwortung.</span>
+            <span class="l-en"><strong>Authorship Notice:</strong> This article was reported from Berlin and Brussels. Created and reviewed by human authors. AI editorial assistance (Three Dragons Protocol) under human supervision. Final decisions and content approval: human responsibility.</span>
+            <span class="l-pt"><strong>Aviso de Autoria:</strong> Este artigo foi reportado de Berlim e Bruxelas. Criado e revisado por autores humanos. Assistencia editorial de IA (Three Dragons Protocol) sob supervisao humana. Decisoes finais e aprovacao de conteudo: responsabilidade humana.</span>
+          </p>
+        </div>
 
-      <aside class="card sidebar">
-        <h3>Governance Footer (as in PDF)</h3>
-        <div class="receipt">
+        <div class="article-sig">
+          <span class="l-de">&bdquo;KI verarbeitet. Der Mensch entscheidet. WINDI garantiert.&ldquo;</span>
+          <span class="l-en">&ldquo;AI processes. Human decides. WINDI guarantees.&rdquo;</span>
+          <span class="l-pt">&ldquo;A IA processa. O humano decide. O WINDI garante.&rdquo;</span>
+        </div>
+      </article>
+
+      <!-- Sidebar -->
+      <aside class="article-sidebar">
+        <div class="sidebar-title">
+          <span class="l-de">Governance-Fusszeile (wie im PDF)</span>
+          <span class="l-en">Governance Footer (as in PDF)</span>
+          <span class="l-pt">Rodape de Governanca (como no PDF)</span>
+        </div>
+        <div class="sidebar-receipt">
 Document governed by WINDI &bull; Human authored &bull; AI-assisted under supervision
 Governed via WINDI &bull; Human: 100.0% &bull; Template: unknown &bull; Structure: VALID
 WINDI-RECEIPT: WINDI-BABEL-01FEB26-BC1DE1865F90 | Hash: bc1de1865f90
-Author: Jober M&ouml;gele Correa (WINDI-CEO-001) | Witness: Dr. Schmidt Bauer
+Author: Jober Mogele Correa (WINDI-CEO-001) | Witness: Dr. Schmidt Bauer
 A4 Desk BABEL v4.8 | EU AI Act Compliant | windi.publishing.de
         </div>
 
-        <div class="rule"></div>
+        <div class="sidebar-divider"></div>
 
-        <h3>Document Registry</h3>
-        <div class="kv">
-          <span>Page</span><b>WSJ-style article (governed)</b>
-          <span>Pairs with</span><b>press-release-windi-2026.html</b>
-          <span>Evidence</span><b>WINDI-RECEIPT + hash</b>
-          <span>Value</span><b>Self-governed narrative</b>
+        <div class="sidebar-title">
+          <span class="l-de">Dokumentenregister</span>
+          <span class="l-en">Document Registry</span>
+          <span class="l-pt">Registro de Documento</span>
+        </div>
+        <div class="sidebar-kv">
+          <span class="l-de">Seite</span>
+          <span class="l-en">Page</span>
+          <span class="l-pt">Pagina</span>
+          <b>WSJ-style article (governed)</b>
+          <span class="l-de">Verknupft mit</span>
+          <span class="l-en">Pairs with</span>
+          <span class="l-pt">Emparelhado com</span>
+          <b>press-release-windi-2026.html</b>
+          <span class="l-de">Nachweis</span>
+          <span class="l-en">Evidence</span>
+          <span class="l-pt">Evidencia</span>
+          <b>WINDI-RECEIPT + hash</b>
+          <span class="l-de">Wert</span>
+          <span class="l-en">Value</span>
+          <span class="l-pt">Valor</span>
+          <b>Self-governed narrative</b>
         </div>
 
-        <div class="rule"></div>
+        <div class="sidebar-divider"></div>
 
-        <h3>Related Documents</h3>
-        <div class="kv">
+        <div class="sidebar-title">
+          <span class="l-de">Verwandte Dokumente</span>
+          <span class="l-en">Related Documents</span>
+          <span class="l-pt">Documentos Relacionados</span>
+        </div>
+        <div class="sidebar-kv">
           <span>TR-004</span><b>From Library to Cognitive Service</b>
           <span>TR-005</span><b>Six-Phase Cognitive Governance Cycle</b>
           <span>PR-001</span><b>Press Release: Responsibility Infrastructure</b>
-          <span>Source PDF</span><b>Governed via A4 Desk BABEL v4.8</b>
+          <span class="l-de">Quell-PDF</span>
+          <span class="l-en">Source PDF</span>
+          <span class="l-pt">PDF Fonte</span>
+          <b>Governed via A4 Desk BABEL v4.8</b>
         </div>
 
-        <div class="rule"></div>
+        <div class="sidebar-divider"></div>
 
-        <h3>Self-Referential Proof</h3>
-        <p class="p" style="font-size:14px;color:var(--muted)">
-          This article about WINDI&rsquo;s governance infrastructure was itself written in the A4&nbsp;Desk BABEL editor, governed by the WINDI engine, and exported with a cryptographic receipt. The document that describes the system is evidence of the system in operation.
+        <div class="sidebar-title">
+          <span class="l-de">Selbstreferenzieller Beweis</span>
+          <span class="l-en">Self-Referential Proof</span>
+          <span class="l-pt">Prova Autorreferencial</span>
+        </div>
+        <p class="sidebar-note">
+          <span class="l-de">Dieser Artikel uber die Governance-Infrastruktur von WINDI wurde selbst im A4&nbsp;Desk BABEL-Editor verfasst, vom WINDI-Engine gesteuert und mit einem kryptografischen Beleg exportiert. Das Dokument, das das System beschreibt, ist ein Beweis fur das System im Betrieb.</span>
+          <span class="l-en">This article about WINDI&rsquo;s governance infrastructure was itself written in the A4&nbsp;Desk BABEL editor, governed by the WINDI engine, and exported with a cryptographic receipt. The document that describes the system is evidence of the system in operation.</span>
+          <span class="l-pt">Este artigo sobre a infraestrutura de governanca do WINDI foi escrito no editor A4&nbsp;Desk BABEL, governado pelo motor WINDI e exportado com um recibo criptografico. O documento que descreve o sistema e evidencia do sistema em operacao.</span>
         </p>
 
-        <div class="rule"></div>
+        <div class="sidebar-divider"></div>
 
-        <h3>Human Authorship</h3>
-        <p class="p" style="font-size:13px;color:var(--muted)">
-          Created and reviewed by human authors. AI editorial assistance (Three Dragons Protocol) under human supervision. Final decisions and content approval: human responsibility.
+        <div class="sidebar-title">
+          <span class="l-de">Menschliche Urheberschaft</span>
+          <span class="l-en">Human Authorship</span>
+          <span class="l-pt">Autoria Humana</span>
+        </div>
+        <p class="sidebar-note">
+          <span class="l-de">Erstellt und gepruft von menschlichen Autoren. KI-redaktionelle Unterstutzung (Three Dragons Protocol) unter menschlicher Aufsicht. Endgultige Entscheidungen und Inhaltsgenehmigung: menschliche Verantwortung.</span>
+          <span class="l-en">Created and reviewed by human authors. AI editorial assistance (Three Dragons Protocol) under human supervision. Final decisions and content approval: human responsibility.</span>
+          <span class="l-pt">Criado e revisado por autores humanos. Assistencia editorial de IA (Three Dragons Protocol) sob supervisao humana. Decisoes finais e aprovacao de conteudo: responsabilidade humana.</span>
         </p>
       </aside>
     </div>
+
   </div>
+
+  <!-- Page Footer -->
+  <footer class="page-footer">
+    <div class="page-footer-meta">
+      <span>WINDI-WSJ-07FEB26-NOIR</span>
+      <span>Media Document</span>
+    </div>
+    <p class="page-footer-quittung">Author: Jober Mogele Correa (WINDI-CEO-001) | Hash: bc1de1865f90</p>
+    <p class="page-footer-principle">
+      <span class="l-de">"KI verarbeitet. Mensch entscheidet. WINDI garantiert."</span>
+      <span class="l-en">"AI processes. Human decides. WINDI guarantees."</span>
+      <span class="l-pt">"IA processa. Humano decide. WINDI garante."</span>
+    </p>
+  </footer>
+
+</main>
+
+<!-- JavaScript -->
+<script>
+// Theme Toggle
+function toggleTheme() {
+  const body = document.body;
+  const isLight = body.getAttribute('data-theme') === 'light';
+  body.setAttribute('data-theme', isLight ? 'dark' : 'light');
+  try { localStorage.setItem('windi-theme', isLight ? 'dark' : 'light'); } catch(e) {}
+}
+
+// Language Switcher
+function setLang(lang) {
+  document.body.setAttribute('data-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+  try { localStorage.setItem('windi-lang', lang); } catch(e) {}
+}
+
+// Sidebar Toggle (mobile)
+let sidebarOpen = false;
+function toggleSidebar() {
+  sidebarOpen = !sidebarOpen;
+  document.getElementById('sidebarLeft').classList.toggle('open', sidebarOpen);
+}
+
+// Close sidebar on link click (mobile)
+document.querySelectorAll('.sidebar-link').forEach(link => {
+  link.addEventListener('click', () => {
+    if (window.innerWidth <= 960) {
+      sidebarOpen = false;
+      document.getElementById('sidebarLeft').classList.remove('open');
+    }
+  });
+});
+
+// Init saved preferences
+(function init() {
+  try {
+    const theme = localStorage.getItem('windi-theme');
+    const lang = localStorage.getItem('windi-lang');
+    if (theme) document.body.setAttribute('data-theme', theme);
+    if (lang) setLang(lang);
+  } catch(e) {}
+})();
+</script>
+
 </body>
 </html>

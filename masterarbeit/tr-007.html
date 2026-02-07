@@ -1,643 +1,229 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TR-007 — Document Provenance & Anti-Deepfake Framework | WINDI System</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --ink: #1a1a2e;
-      --paper: #fafaf8;
-      --paper-warm: #f5f4f0;
-      --accent-blue: #2c3e6b;
-      --accent-gold: #b8860b;
-      --high-color: #8b1a1a;
-      --high-bg: #fdf2f2;
-      --medium-color: #7a5c00;
-      --medium-bg: #fdf8ed;
-      --medium-border: #d4c490;
-      --low-color: #1a5c3a;
-      --low-bg: #f0f7f3;
-      --rule: #d0cec8;
-      --caption: #6b6860;
-      --code-bg: #f0efe8;
-      --discovery-bg: #faf6ee;
-      --discovery-border: #c9a227;
-      --shield-color: #4a1942;
-      --shield-bg: #f8f0f7;
-      --shield-border: #7b2d8e;
-    }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      font-family: 'Source Sans 3', 'Segoe UI', sans-serif;
-      background: var(--paper);
-      color: var(--ink);
-      line-height: 1.75;
-      font-size: 16px;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    /* === HEADER === */
-    .doc-header {
-      background: var(--ink);
-      color: var(--paper);
-      padding: 2rem 0;
-      border-bottom: 3px solid var(--accent-gold);
-    }
-
-    .doc-header-inner {
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 0 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-    }
-
-    .doc-header-left { flex: 1; }
-
-    .doc-series {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--accent-gold);
-      margin-bottom: 0.25rem;
-    }
-
-    .doc-org {
-      font-family: 'Crimson Pro', Georgia, serif;
-      font-size: 1.1rem;
-      font-weight: 300;
-      letter-spacing: 0.02em;
-      opacity: 0.85;
-    }
-
-    .doc-header-right {
-      text-align: right;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
-      line-height: 1.8;
-      opacity: 0.7;
-      padding-top: 0.25rem;
-    }
-
-    /* === TITLE === */
-    .title-block {
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 3rem 2rem 2rem;
-      border-bottom: 1px solid var(--rule);
-    }
-
-    .title-block .section-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--accent-gold);
-      margin-bottom: 0.35rem;
-    }
-
-    .title-block h1 {
-      font-family: 'Crimson Pro', Georgia, serif;
-      font-size: 2.1rem;
-      font-weight: 700;
-      line-height: 1.25;
-      color: var(--accent-blue);
-      margin-bottom: 0.5rem;
-    }
-
-    .title-block .subtitle {
-      font-family: 'Crimson Pro', Georgia, serif;
-      font-size: 1.15rem;
-      font-weight: 300;
-      font-style: italic;
-      color: var(--caption);
-      margin-bottom: 1.5rem;
-    }
-
-    .title-meta {
-      display: flex;
-      gap: 2.5rem;
-      flex-wrap: wrap;
-      font-size: 0.86rem;
-      color: var(--caption);
-    }
-
-    .title-meta dt { font-weight: 600; color: var(--ink); display: inline; }
-    .title-meta dd { display: inline; margin-left: 0.25rem; }
-    .title-meta .meta-pair { display: flex; gap: 0.25rem; }
-
-    /* === CONTENT === */
-    .content {
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 2rem;
-    }
-
-    .section { margin-bottom: 2.5rem; }
-
-    .section-number {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--accent-gold);
-      margin-bottom: 0.25rem;
-    }
-
-    h2 {
-      font-family: 'Crimson Pro', Georgia, serif;
-      font-size: 1.4rem;
-      font-weight: 600;
-      color: var(--accent-blue);
-      margin-bottom: 1rem;
-      padding-bottom: 0.4rem;
-      border-bottom: 1px solid var(--rule);
-    }
-
-    h3 {
-      font-family: 'Source Sans 3', sans-serif;
-      font-size: 1.05rem;
-      font-weight: 600;
-      color: var(--ink);
-      margin-bottom: 0.5rem;
-      margin-top: 1.8rem;
-    }
-
-    p {
-      margin-bottom: 1rem;
-      text-align: justify;
-      hyphens: auto;
-    }
-
-    /* === ABSTRACT === */
-    .abstract {
-      background: var(--paper-warm);
-      border-left: 3px solid var(--accent-blue);
-      padding: 1.25rem 1.5rem;
-      margin-bottom: 2.5rem;
-      font-size: 0.95rem;
-    }
-
-    .abstract strong {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--accent-blue);
-      display: block;
-      margin-bottom: 0.5rem;
-    }
-
-    /* === THREAT BOX === */
-    .threat-box {
-      background: var(--high-bg);
-      border: 1px solid var(--high-color);
-      border-left: 4px solid var(--high-color);
-      border-radius: 4px;
-      padding: 1.5rem 1.75rem;
-      margin: 2rem 0;
-    }
-
-    .threat-box .threat-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--high-color);
-      margin-bottom: 0.5rem;
-      font-weight: 500;
-    }
-
-    .threat-box .threat-text {
-      font-size: 0.92rem;
-      line-height: 1.6;
-    }
-
-    /* === DISCOVERY BOX === */
-    .discovery-box {
-      background: var(--discovery-bg);
-      border: 1px solid var(--discovery-border);
-      border-left: 4px solid var(--discovery-border);
-      border-radius: 4px;
-      padding: 1.5rem 1.75rem;
-      margin: 2rem 0;
-    }
-
-    .discovery-box .discovery-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--discovery-border);
-      margin-bottom: 0.5rem;
-      font-weight: 500;
-    }
-
-    .discovery-box .discovery-quote {
-      font-family: 'Crimson Pro', Georgia, serif;
-      font-size: 1.15rem;
-      font-style: italic;
-      color: var(--ink);
-      line-height: 1.5;
-      margin-bottom: 0.5rem;
-    }
-
-    .discovery-box .discovery-source {
-      font-size: 0.82rem;
-      color: var(--caption);
-    }
-
-    /* === CODE BLOCKS === */
-    code {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.85em;
-      background: var(--code-bg);
-      padding: 0.1rem 0.35rem;
-      border-radius: 2px;
-    }
-
-    .code-block {
-      background: var(--ink);
-      color: #e0ddd5;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.76rem;
-      line-height: 1.65;
-      padding: 1.25rem 1.5rem;
-      border-radius: 4px;
-      overflow-x: auto;
-      margin: 1.25rem 0;
-    }
-
-    .code-block .comment { color: #6a9955; }
-    .code-block .key { color: #9cdcfe; }
-    .code-block .string { color: #ce9178; }
-    .code-block .bracket { color: #ffd700; }
-    .code-block .bool { color: #569cd6; }
-    .code-block .num { color: #b5cea8; }
-
-    /* === TABLES === */
-    .matrix-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.86rem;
-      margin: 1.5rem 0;
-    }
-
-    .matrix-table thead {
-      background: var(--ink);
-      color: var(--paper);
-    }
-
-    .matrix-table th {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.68rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 0.6rem 0.7rem;
-      text-align: center;
-      font-weight: 500;
-    }
-
-    .matrix-table th:first-child { text-align: left; }
-
-    .matrix-table td {
-      padding: 0.55rem 0.7rem;
-      border-bottom: 1px solid var(--rule);
-      text-align: center;
-      vertical-align: middle;
-    }
-
-    .matrix-table td:first-child {
-      text-align: left;
-      font-weight: 500;
-    }
-
-    .matrix-table tbody tr:hover { background: var(--paper-warm); }
-
-    .cell-yes { color: var(--low-color); font-weight: 600; }
-    .cell-no { color: var(--high-color); font-weight: 600; }
-    .cell-opt { color: var(--medium-color); font-weight: 600; }
-
-    .status-badge {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.68rem;
-      padding: 0.15rem 0.45rem;
-      border-radius: 2px;
-      display: inline-block;
-      font-weight: 500;
-    }
-
-    .badge-high { background: var(--high-bg); color: var(--high-color); }
-    .badge-medium { background: var(--medium-bg); color: var(--medium-color); }
-    .badge-low { background: var(--low-bg); color: var(--low-color); }
-    .badge-max { background: #1a1a2e; color: #ffd700; }
-
-    /* === ARCHITECTURE DIAGRAM === */
-    .arch-diagram {
-      background: var(--ink);
-      color: #e0ddd5;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.78rem;
-      line-height: 1.6;
-      padding: 1.5rem 2rem;
-      border-radius: 4px;
-      margin: 1.5rem 0;
-      white-space: pre;
-      overflow-x: auto;
-    }
-
-    .arch-diagram .highlight { color: #ffd700; }
-    .arch-diagram .dim { color: #666; }
-
-    /* === COMPARISON PANEL === */
-    .comparison {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      margin: 1.5rem 0;
-    }
-
-    @media (max-width: 640px) {
-      .comparison { grid-template-columns: 1fr; }
-    }
-
-    .comparison-panel {
-      border: 1px solid var(--rule);
-      border-radius: 4px;
-      overflow: hidden;
-    }
-
-    .comparison-panel-header {
-      padding: 0.6rem 1rem;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      font-weight: 500;
-    }
-
-    .comparison-panel.before .comparison-panel-header {
-      background: var(--high-bg);
-      color: var(--high-color);
-      border-bottom: 1px solid var(--high-color);
-    }
-
-    .comparison-panel.after .comparison-panel-header {
-      background: var(--low-bg);
-      color: var(--low-color);
-      border-bottom: 1px solid var(--low-color);
-    }
-
-    .comparison-panel-body {
-      padding: 1rem;
-      font-size: 0.86rem;
-      line-height: 1.6;
-    }
-
-    .comparison-panel-body li {
-      margin-bottom: 0.3rem;
-      margin-left: 1rem;
-    }
-
-    /* === EU REFERENCE === */
-    .eu-ref {
-      background: white;
-      border: 1px solid var(--rule);
-      border-left: 3px solid var(--accent-blue);
-      padding: 1rem 1.25rem;
-      margin: 1rem 0;
-      font-size: 0.88rem;
-    }
-
-    .eu-ref-title {
-      font-weight: 600;
-      font-size: 0.84rem;
-      margin-bottom: 0.3rem;
-    }
-
-    .eu-ref-body {
-      color: var(--caption);
-      font-size: 0.84rem;
-    }
-
-    /* === PRINCIPLE BOX === */
-    .principle-box {
-      background: var(--ink);
-      color: var(--paper);
-      text-align: center;
-      padding: 1.5rem 2rem;
-      border-radius: 4px;
-      margin: 2rem 0;
-    }
-
-    .principle-box .principle-text {
-      font-family: 'Crimson Pro', Georgia, serif;
-      font-size: 1.15rem;
-      font-weight: 300;
-      font-style: italic;
-      line-height: 1.5;
-    }
-
-    .principle-box .principle-source {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.68rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--accent-gold);
-      margin-top: 0.6rem;
-    }
-
-    /* === FIGURE CAPTION === */
-    .figure-caption {
-      font-size: 0.8rem;
-      color: var(--caption);
-      text-align: center;
-      margin-top: 0.5rem;
-      font-style: italic;
-    }
-
-    .figure-caption strong {
-      font-style: normal;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
-      letter-spacing: 0.05em;
-    }
-
-    /* === SCORE VISUAL === */
-    .score-row {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      margin: 0.5rem 0;
-    }
-
-    .score-label {
-      min-width: 100px;
-      font-size: 0.84rem;
-      font-weight: 500;
-    }
-
-    .score-bar-bg {
-      flex: 1;
-      height: 24px;
-      background: var(--code-bg);
-      border-radius: 3px;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .score-bar-fill {
-      height: 100%;
-      border-radius: 3px;
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      padding-right: 0.5rem;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      font-weight: 500;
-      color: white;
-    }
-
-    .score-fill-max { background: linear-gradient(90deg, #1a5c3a, #2e8b57); }
-    .score-fill-high { background: linear-gradient(90deg, #2c3e6b, #4a6fa5); }
-    .score-fill-low { background: linear-gradient(90deg, #7a5c00, #b8860b); }
-
-    /* === SEPARATOR === */
-    .sep {
-      text-align: center;
-      margin: 2.5rem 0;
-      color: var(--rule);
-      font-size: 1.2rem;
-      letter-spacing: 1em;
-    }
-
-    /* === NAV LINKS === */
-    .nav-links {
-      display: flex;
-      justify-content: space-between;
-      margin: 2rem 0;
-      padding-top: 1rem;
-      border-top: 1px solid var(--rule);
-      font-size: 0.88rem;
-    }
-
-    .nav-links a {
-      color: var(--accent-blue);
-      text-decoration: none;
-    }
-
-    .nav-links a:hover { text-decoration: underline; }
-
-    /* === FOOTER === */
-    .doc-footer {
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 1.5rem 2rem 3rem;
-      border-top: 1px solid var(--rule);
-      font-size: 0.8rem;
-      color: var(--caption);
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-
-    .doc-footer .footer-left { font-style: italic; }
-    .doc-footer .footer-right {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      text-align: right;
-    }
-
-    /* === PRINT === */
-    @media print {
-      .doc-header { background: white; color: var(--ink); border-bottom: 2px solid var(--ink); }
-      .doc-series { color: var(--ink); }
-      body { font-size: 11pt; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TR-007 — Document Provenance & Anti-Deepfake Framework | WINDI System</title>
+<meta name="description" content="TR-007: Secure Origin Framework for AI-Generated Institutional Content">
+<link rel="stylesheet" href="windi-internal.css">
 </head>
-<body>
+<body data-theme="dark" data-lang="de">
 
-  <!-- HEADER -->
-  <header class="doc-header">
-    <div class="doc-header-inner">
-      <div class="doc-header-left">
-        <div class="doc-series">WINDI Technical Report &middot; TR-007</div>
-        <div class="doc-org">WINDI Publishing House &middot; Kempten (Allg&auml;u), Bavaria, Germany</div>
-      </div>
-      <div class="doc-header-right">
-        Document ID: TR-WINDI-2026-007<br>
-        SOF Protocol v1.0<br>
-        02 February 2026<br>
-        Classification: PUBLIC
-      </div>
+<!-- Header -->
+<header class="site-header">
+  <a href="index.html" class="header-brand">
+    <div class="header-logo">W</div>
+    <div class="header-title-group">
+      <span class="header-title">WINDI</span>
+      <span class="header-subtitle">Document Security Division</span>
     </div>
-  </header>
-
-  <!-- TITLE -->
-  <div class="title-block">
-    <div class="section-label">TR-007 &mdash; Document Security Division</div>
-    <h1>Document Provenance &amp; Anti&#8209;Deepfake Framework</h1>
-    <div class="subtitle">A Secure Origin Approach to AI&#8209;Generated Institutional Content</div>
-    <div class="title-meta">
-      <div class="meta-pair"><dt>Author:</dt><dd>Jober M&ouml;gele Correa, Chief Governance Officer</dd></div>
-      <div class="meta-pair"><dt>Date:</dt><dd>02 February 2026</dd></div>
-      <div class="meta-pair"><dt>Status:</dt><dd>Deployed in Production (15/15 tests passed)</dd></div>
-    </div>
-    <div class="title-meta" style="margin-top: 0.5rem;">
-      <div class="meta-pair"><dt>Related:</dt><dd>TR-006 (ISP Registry), Section 10 (Identity Governance Layer)</dd></div>
-      <div class="meta-pair"><dt>Division:</dt><dd>WINDI Document Security Division (DeepDOCFakes)</dd></div>
+  </a>
+  <div class="header-center">
+    <div class="header-status">
+      <span class="status-dot"></span>
+      <span>Operational</span>
     </div>
   </div>
-
-  <div class="content">
-
-    <!-- ABSTRACT -->
-    <div class="abstract">
-      <strong>Abstract</strong>
-      AI systems can generate institutionally styled documents that closely mimic official communications. This capability introduces a new class of fraud risk: <em>document deepfakes</em>, where authenticity is inferred from appearance rather than verifiable origin. This report introduces a Secure Origin Framework (SOF) for AI-assisted institutional documents, implemented as the WINDI DeepDOCFakes division. The framework anchors each governed document to a reproducible provenance record, a canonical structural fingerprint, and a verification protocol returning VALID / UNKNOWN / TAMPERED. A quantitative Deepfake Resilience Score (0&ndash;100) provides an audit-friendly language for comparing governance strength across institutional risk tiers. The result is a paradigm shift from &ldquo;document looks authentic&rdquo; to &ldquo;document origin is verifiable.&rdquo;
+  <div class="header-right">
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('de')">DE</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('pt')">PT</button>
     </div>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+      <div class="theme-toggle-track"></div>
+      <div class="theme-toggle-thumb" id="themeThumb"></div>
+    </button>
+    <button class="mobile-toggle" onclick="toggleSidebar()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
 
+<!-- Sidebar Navigation -->
+<nav class="sidebar sidebar-left" id="sidebarLeft">
+  <div class="sidebar-section">
+    <div class="sidebar-label">Masterarbeit</div>
+    <a href="index.html" class="sidebar-link">Main Document</a>
+    <a href="cover.html" class="sidebar-link">Cover</a>
+    <a href="about-windi.html" class="sidebar-link">About WINDI</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Governance</div>
+    <a href="governance-levels.html" class="sidebar-link">Governance Levels</a>
+    <a href="human-oversight.html" class="sidebar-link">Human Oversight</a>
+    <a href="data-handling.html" class="sidebar-link">Data Handling</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Architecture</div>
+    <a href="diagrams.html" class="sidebar-link">Diagrams</a>
+    <a href="interface-guide.html" class="sidebar-link">Interface Guide</a>
+    <a href="verification-layer.html" class="sidebar-link">Verification Layer</a>
+    <a href="kapitel12_domain_sovereignty.html" class="sidebar-link">Domain Sovereignty</a>
+    <a href="identity-governance-layer.html" class="sidebar-link">Identity Governance</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Technical Reports</div>
+    <a href="tr-windi-2026-003.html" class="sidebar-link">TR-003: Service Layer</a>
+    <a href="tr-windi-2026-004.html" class="sidebar-link">TR-004: Cognitive Service</a>
+    <a href="tr-windi-2026-005.html" class="sidebar-link">TR-005: Cognitive Cycle</a>
+    <a href="isp-evolution.html" class="sidebar-link">TR-006: ISP Registry</a>
+    <a href="tr-007.html" class="sidebar-link sidebar-link-active">TR-007: Provenance</a>
+    <a href="sge-results.html" class="sidebar-link">SGE Results</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Publications</div>
+    <a href="publications.html" class="sidebar-link">Publications</a>
+    <a href="fachartikel-provenienz.html" class="sidebar-link">Fachartikel</a>
+    <a href="windi-publishing-house.html" class="sidebar-link">Manifesto</a>
+    <a href="editorial-policy.html" class="sidebar-link">Editorial Policy</a>
+    <a href="idpf-abstract.html" class="sidebar-link">IDPF Abstract</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Media</div>
+    <a href="windi-working-paper-2026.html" class="sidebar-link">Working Paper</a>
+    <a href="press-release-windi-2026.html" class="sidebar-link">Press Release</a>
+    <a href="windi-side-by-side-2026.html" class="sidebar-link">Side-by-Side</a>
+    <a href="wsj-style-governed-windi-2026.html" class="sidebar-link">WSJ Feature</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Compliance</div>
+    <a href="document-integrity.html" class="sidebar-link">Doc Integrity</a>
+    <a href="print-watermark-layer.html" class="sidebar-link">Print Layer</a>
+    <a href="regulatory-summary-print-layer.html" class="sidebar-link">Regulatory</a>
+    <a href="availability-implementation.html" class="sidebar-link">Appendix A</a>
+  </div>
+</nav>
 
-    <!-- 1. PROBLEM STATEMENT -->
-    <div class="section">
-      <div class="section-number">Section 1</div>
-      <h2>Problem Statement</h2>
+<!-- Main Content -->
+<main class="main-content">
 
-      <h3>1.1 &ensp;Document Deepfakes as an Emerging Threat</h3>
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-breadcrumb">
+      <a href="index.html">WINDI</a>
+      <span class="breadcrumb-sep">/</span>
+      <span class="breadcrumb-current">TR-007</span>
+    </div>
+    <div class="page-meta-bar">
+      <span class="page-tag page-tag-gov">Technical Report</span>
+      <span class="page-date">2026-02-02</span>
+    </div>
+    <h1 class="page-title">
+      <span class="l-de">Dokumentenprovenienz & Anti-Deepfake-Framework</span>
+      <span class="l-en">Document Provenance & Anti-Deepfake Framework</span>
+      <span class="l-pt">Proveniencia de Documentos & Framework Anti-Deepfake</span>
+    </h1>
+    <p class="page-subtitle">
+      <span class="l-de">Ein Secure-Origin-Ansatz fur KI-generierte institutionelle Inhalte</span>
+      <span class="l-en">A Secure Origin Approach to AI-Generated Institutional Content</span>
+      <span class="l-pt">Uma Abordagem de Origem Segura para Conteudo Institucional Gerado por IA</span>
+    </p>
+    <div class="page-divider"></div>
+  </div>
 
-      <p>Document deepfakes differ fundamentally from video or audio deepfakes: they exploit trust in institutional tone, layout, symbols, and formatting. A forged PDF can be convincing even if it never existed within the issuing institution&rsquo;s systems. This threat grows with three converging capabilities: high-fidelity text generation in institutional style, easy replication of visual identity, and weak provenance mechanisms in common PDF workflows.</p>
+  <!-- Content -->
+  <div class="content-prose">
 
-      <div class="threat-box">
-        <div class="threat-label">Threat Vector &mdash; Document Deepfake</div>
-        <div class="threat-text">
-          An adversary uses an AI system to generate a PDF that perfectly replicates the tone, structure, legal references, and formatting of a BaFin regulatory communication. The document is indistinguishable from an authentic aufsichtliche Mitteilung by visual inspection alone. Without a provenance infrastructure, the recipient has no mechanism to verify institutional origin beyond subjective judgment of &ldquo;whether it looks right.&rdquo;
+    <!-- Document Metadata -->
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>Document Metadata</h3>
+        <div class="spec-table-wrapper">
+          <table class="spec-table">
+            <tbody>
+              <tr><td><strong>Document ID:</strong></td><td>TR-WINDI-2026-007</td></tr>
+              <tr><td><strong>Protocol:</strong></td><td>SOF v1.0</td></tr>
+              <tr><td><strong>Date:</strong></td><td>02 February 2026</td></tr>
+              <tr><td><strong>Classification:</strong></td><td>PUBLIC</td></tr>
+              <tr><td><strong>Author:</strong></td><td>Jober Mogele Correa, Chief Governance Officer</td></tr>
+              <tr><td><strong>Status:</strong></td><td>Deployed in Production (15/15 tests passed)</td></tr>
+              <tr><td><strong>Related:</strong></td><td>TR-006 (ISP Registry), Section 10 (Identity Governance Layer)</td></tr>
+              <tr><td><strong>Division:</strong></td><td>WINDI Document Security Division (DeepDOCFakes)</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
+    </div>
 
-      <h3>1.2 &ensp;Why Traditional Controls Are Insufficient</h3>
+    <!-- Abstract -->
+    <h2>
+      <span class="l-de">Zusammenfassung</span>
+      <span class="l-en">Abstract</span>
+      <span class="l-pt">Resumo</span>
+    </h2>
 
-      <p>Watermarks, letterheads, and &ldquo;professional formatting&rdquo; are copyable. Even signatures can be simulated. Without a cryptographic and registry-anchored provenance layer, document authenticity remains a matter of subjective interpretation. The key insight is deceptively simple: <strong>visual similarity is not authenticity</strong>.</p>
+    <div class="doc-quote">
+      <p>
+        <span class="lb-de">KI-Systeme konnen institutionell gestaltete Dokumente erzeugen, die offizielle Mitteilungen nahezu perfekt imitieren. Diese Fahigkeit fuhrt zu einer neuen Klasse von Betrugsrisiken: <em>Dokumenten-Deepfakes</em>, bei denen Authentizitat aus dem Erscheinungsbild statt aus uberprufbarer Herkunft abgeleitet wird. Dieser Bericht stellt ein Secure Origin Framework (SOF) fur KI-gestutzte institutionelle Dokumente vor, implementiert als WINDI DeepDOCFakes-Abteilung. Das Framework verankert jedes governierte Dokument an einem reproduzierbaren Provenienz-Record, einem kanonischen strukturellen Fingerabdruck und einem Verifizierungsprotokoll, das VALID / UNKNOWN / TAMPERED zuruckgibt.</span>
+        <span class="lb-en">AI systems can generate institutionally styled documents that closely mimic official communications. This capability introduces a new class of fraud risk: <em>document deepfakes</em>, where authenticity is inferred from appearance rather than verifiable origin. This report introduces a Secure Origin Framework (SOF) for AI-assisted institutional documents, implemented as the WINDI DeepDOCFakes division. The framework anchors each governed document to a reproducible provenance record, a canonical structural fingerprint, and a verification protocol returning VALID / UNKNOWN / TAMPERED. A quantitative Deepfake Resilience Score (0&ndash;100) provides an audit-friendly language for comparing governance strength across institutional risk tiers. The result is a paradigm shift from "document looks authentic" to "document origin is verifiable."</span>
+        <span class="lb-pt">Sistemas de IA podem gerar documentos com estilo institucional que imitam de perto comunicacoes oficiais. Essa capacidade introduz uma nova classe de risco de fraude: <em>deepfakes de documentos</em>, onde a autenticidade e inferida da aparencia em vez da origem verificavel. Este relatorio introduz um Framework de Origem Segura (SOF) para documentos institucionais assistidos por IA, implementado como a divisao WINDI DeepDOCFakes.</span>
+      </p>
     </div>
 
 
-    <!-- 2. RESEARCH CONTRIBUTION -->
-    <div class="section">
-      <div class="section-number">Section 2</div>
-      <h2>Research Contribution</h2>
+    <!-- Section 1: Problem Statement -->
+    <h2>
+      <span class="l-de">1. Problemstellung</span>
+      <span class="l-en">1. Problem Statement</span>
+      <span class="l-pt">1. Declaracao do Problema</span>
+    </h2>
 
-      <p>This report contributes an operational framework for institutional document authenticity in AI-assisted generation contexts. The contribution is not a visual anti-fraud technique; it is a <strong>systems-level provenance infrastructure</strong> for institutional documentation.</p>
+    <h3>
+      <span class="l-de">1.1 Dokumenten-Deepfakes als aufkommende Bedrohung</span>
+      <span class="l-en">1.1 Document Deepfakes as an Emerging Threat</span>
+      <span class="l-pt">1.1 Deepfakes de Documentos como Ameaca Emergente</span>
+    </h3>
 
-      <table class="matrix-table">
+    <p>
+      <span class="lb-de">Dokumenten-Deepfakes unterscheiden sich grundlegend von Video- oder Audio-Deepfakes: Sie nutzen das Vertrauen in institutionellen Ton, Layout, Symbole und Formatierung aus. Ein gefalschtes PDF kann uberzeugend sein, selbst wenn es nie in den Systemen der ausstellenden Institution existierte.</span>
+      <span class="lb-en">Document deepfakes differ fundamentally from video or audio deepfakes: they exploit trust in institutional tone, layout, symbols, and formatting. A forged PDF can be convincing even if it never existed within the issuing institution's systems. This threat grows with three converging capabilities: high-fidelity text generation in institutional style, easy replication of visual identity, and weak provenance mechanisms in common PDF workflows.</span>
+      <span class="lb-pt">Deepfakes de documentos diferem fundamentalmente de deepfakes de video ou audio: eles exploram a confianca no tom institucional, layout, simbolos e formatacao. Um PDF falsificado pode ser convincente mesmo que nunca tenha existido nos sistemas da instituicao emissora.</span>
+    </p>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>
+          <span class="l-de">Bedrohungsvektor &mdash; Dokumenten-Deepfake</span>
+          <span class="l-en">Threat Vector &mdash; Document Deepfake</span>
+          <span class="l-pt">Vetor de Ameaca &mdash; Deepfake de Documento</span>
+        </h3>
+        <p>
+          <span class="l-de">Ein Angreifer verwendet ein KI-System, um ein PDF zu generieren, das den Ton, die Struktur, rechtliche Referenzen und Formatierung einer BaFin-Regulierungsmitteilung perfekt repliziert. Das Dokument ist durch visuelle Inspektion allein nicht von einer authentischen aufsichtlichen Mitteilung zu unterscheiden. Ohne eine Provenienz-Infrastruktur hat der Empfanger keinen Mechanismus, um die institutionelle Herkunft uber subjektive Beurteilung hinaus zu verifizieren.</span>
+          <span class="l-en">An adversary uses an AI system to generate a PDF that perfectly replicates the tone, structure, legal references, and formatting of a BaFin regulatory communication. The document is indistinguishable from an authentic aufsichtliche Mitteilung by visual inspection alone. Without a provenance infrastructure, the recipient has no mechanism to verify institutional origin beyond subjective judgment of "whether it looks right."</span>
+          <span class="l-pt">Um adversario usa um sistema de IA para gerar um PDF que replica perfeitamente o tom, estrutura, referencias legais e formatacao de uma comunicacao regulatoria da BaFin. O documento e indistinguivel de uma aufsichtliche Mitteilung autentica apenas por inspecao visual. Sem uma infraestrutura de proveniencia, o destinatario nao tem mecanismo para verificar a origem institucional alem do julgamento subjetivo.</span>
+        </p>
+      </div>
+    </div>
+
+    <h3>
+      <span class="l-de">1.2 Warum traditionelle Kontrollen unzureichend sind</span>
+      <span class="l-en">1.2 Why Traditional Controls Are Insufficient</span>
+      <span class="l-pt">1.2 Por que Controles Tradicionais Sao Insuficientes</span>
+    </h3>
+
+    <p>
+      <span class="lb-de">Wasserzeichen, Briefkopfe und "professionelle Formatierung" sind kopierbar. Selbst Unterschriften konnen simuliert werden. Ohne eine kryptografisch und registrierungsverankerte Provenienzschicht bleibt die Dokumentenauthentizitat eine Frage der subjektiven Interpretation. Die Schlusselerkenntnis ist tauschend einfach: <strong>Visuelle Ahnlichkeit ist keine Authentizitat</strong>.</span>
+      <span class="lb-en">Watermarks, letterheads, and "professional formatting" are copyable. Even signatures can be simulated. Without a cryptographic and registry-anchored provenance layer, document authenticity remains a matter of subjective interpretation. The key insight is deceptively simple: <strong>visual similarity is not authenticity</strong>.</span>
+      <span class="lb-pt">Marcas d'agua, cabecalhos e "formatacao profissional" sao copiaveis. Ate assinaturas podem ser simuladas. Sem uma camada de proveniencia criptografica e ancorada em registro, a autenticidade do documento permanece uma questao de interpretacao subjetiva. <strong>Similaridade visual nao e autenticidade</strong>.</span>
+    </p>
+
+
+    <!-- Section 2: Research Contribution -->
+    <h2>
+      <span class="l-de">2. Forschungsbeitrag</span>
+      <span class="l-en">2. Research Contribution</span>
+      <span class="l-pt">2. Contribuicao da Pesquisa</span>
+    </h2>
+
+    <p>
+      <span class="lb-de">Dieser Bericht tragt ein operatives Framework fur die Authentizitat institutioneller Dokumente in KI-gestutzten Generierungskontexten bei. Der Beitrag ist keine visuelle Anti-Betrugs-Technik; es ist eine <strong>systemweite Provenienz-Infrastruktur</strong> fur institutionelle Dokumentation.</span>
+      <span class="lb-en">This report contributes an operational framework for institutional document authenticity in AI-assisted generation contexts. The contribution is not a visual anti-fraud technique; it is a <strong>systems-level provenance infrastructure</strong> for institutional documentation.</span>
+      <span class="lb-pt">Este relatorio contribui com um framework operacional para autenticidade de documentos institucionais em contextos de geracao assistida por IA. A contribuicao nao e uma tecnica visual anti-fraude; e uma <strong>infraestrutura de proveniencia em nivel de sistema</strong> para documentacao institucional.</span>
+    </p>
+
+    <div class="spec-table-wrapper">
+      <table class="spec-table">
         <thead>
           <tr>
             <th>Contribution</th>
@@ -659,7 +245,7 @@
           <tr>
             <td>Verification Protocol</td>
             <td>Deterministic check returning VALID / UNKNOWN / TAMPERED</td>
-            <td>Replaces subjective &ldquo;looks real&rdquo; with verifiable outcome</td>
+            <td>Replaces subjective "looks real" with verifiable outcome</td>
           </tr>
           <tr>
             <td>Resilience Score</td>
@@ -668,121 +254,177 @@
           </tr>
         </tbody>
       </table>
-
-      <div class="figure-caption"><strong>Table 1</strong> &mdash; Four core contributions of the Secure Origin Framework</div>
     </div>
+    <p style="font-size: 12px; color: var(--text-tertiary); text-align: center;"><strong>Table 1</strong> &mdash; Four core contributions of the Secure Origin Framework</p>
 
 
-    <!-- 3. THREAT MODEL -->
-    <div class="section">
-      <div class="section-number">Section 3</div>
-      <h2>Threat Model</h2>
+    <!-- Section 3: Threat Model -->
+    <h2>
+      <span class="l-de">3. Bedrohungsmodell</span>
+      <span class="l-en">3. Threat Model</span>
+      <span class="l-pt">3. Modelo de Ameaca</span>
+    </h2>
 
-      <h3>3.1 &ensp;Attacker Capabilities</h3>
+    <h3>
+      <span class="l-de">3.1 Angreiferfahigkeiten</span>
+      <span class="l-en">3.1 Attacker Capabilities</span>
+      <span class="l-pt">3.1 Capacidades do Atacante</span>
+    </h3>
 
-      <p>A document deepfake attacker can generate institutionally styled text with tone mimicry, replicate layouts and templates, insert plausible institutional attributes (addresses, departments, slogans), and produce convincing PDFs with copied logos when identity is uncontrolled.</p>
+    <p>
+      <span class="lb-de">Ein Dokumenten-Deepfake-Angreifer kann institutionell gestalteten Text mit Tonimitation generieren, Layouts und Vorlagen replizieren, plausible institutionelle Attribute einfugen (Adressen, Abteilungen, Slogans) und uberzeugende PDFs mit kopierten Logos erstellen, wenn die Identitat unkontrolliert ist.</span>
+      <span class="lb-en">A document deepfake attacker can generate institutionally styled text with tone mimicry, replicate layouts and templates, insert plausible institutional attributes (addresses, departments, slogans), and produce convincing PDFs with copied logos when identity is uncontrolled.</span>
+      <span class="lb-pt">Um atacante de deepfake de documentos pode gerar texto com estilo institucional com imitacao de tom, replicar layouts e modelos, inserir atributos institucionais plausiveis (enderecos, departamentos, slogans) e produzir PDFs convincentes com logos copiados quando a identidade nao e controlada.</span>
+    </p>
 
-      <h3>3.2 &ensp;Attacker Limitations (in Secure Origin Systems)</h3>
+    <h3>
+      <span class="l-de">3.2 Angreiferbeschrankungen (in Secure Origin Systemen)</span>
+      <span class="l-en">3.2 Attacker Limitations (in Secure Origin Systems)</span>
+      <span class="l-pt">3.2 Limitacoes do Atacante (em Sistemas de Origem Segura)</span>
+    </h3>
 
-      <p>Within a WINDI-governed system, the attacker <em>cannot</em>: reproduce internal provenance records in the authoritative registry, reconstruct canonical structural fingerprints consistent with recorded provenance, or fake verified registry linkage without access to the issuance infrastructure. The structural hash includes governance context, server identity, and timestamps that are invisible in the document itself.</p>
+    <p>
+      <span class="lb-de">Innerhalb eines WINDI-governierten Systems kann der Angreifer <em>nicht</em>: interne Provenienz-Records im autoritativen Register reproduzieren, kanonische strukturelle Fingerabdrucke rekonstruieren, die mit der aufgezeichneten Provenienz ubereinstimmen, oder verifizierte Registrierungsverknupfungen falschen ohne Zugang zur Ausstellungsinfrastruktur.</span>
+      <span class="lb-en">Within a WINDI-governed system, the attacker <em>cannot</em>: reproduce internal provenance records in the authoritative registry, reconstruct canonical structural fingerprints consistent with recorded provenance, or fake verified registry linkage without access to the issuance infrastructure. The structural hash includes governance context, server identity, and timestamps that are invisible in the document itself.</span>
+      <span class="lb-pt">Dentro de um sistema governado pelo WINDI, o atacante <em>nao pode</em>: reproduzir registros de proveniencia internos no registro autoritativo, reconstruir impressoes digitais estruturais canonicas consistentes com a proveniencia registrada, ou falsificar vinculacao de registro verificada sem acesso a infraestrutura de emissao.</span>
+    </p>
 
-      <div class="comparison">
-        <div class="comparison-panel before">
-          <div class="comparison-panel-header">Attacker Can Copy</div>
-          <div class="comparison-panel-body">
-            <ul>
-              <li>Text content and institutional tone</li>
-              <li>Visual layout and formatting</li>
-              <li>Institutional logos (if uncontrolled)</li>
-              <li>Letterhead structure and addresses</li>
-              <li>Legal reference patterns</li>
-            </ul>
-          </div>
-        </div>
-        <div class="comparison-panel after">
-          <div class="comparison-panel-header">Attacker Cannot Copy</div>
-          <div class="comparison-panel-body">
-            <ul>
-              <li>Internal canonical field order</li>
-              <li>Structural hash over governance context</li>
-              <li>Provenance ID generated at creation time</li>
-              <li>Registry entry on authoritative server</li>
-              <li>Hash chain including server identity</li>
-            </ul>
-          </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0;">
+      <div class="cta-box" style="border-left: 3px solid var(--signal-core);">
+        <div class="cta-content">
+          <h3 style="color: var(--signal-core);">
+            <span class="l-de">Angreifer kann kopieren</span>
+            <span class="l-en">Attacker Can Copy</span>
+            <span class="l-pt">Atacante Pode Copiar</span>
+          </h3>
+          <ul>
+            <li><span class="l-de">Textinhalt und institutioneller Ton</span><span class="l-en">Text content and institutional tone</span><span class="l-pt">Conteudo de texto e tom institucional</span></li>
+            <li><span class="l-de">Visuelles Layout und Formatierung</span><span class="l-en">Visual layout and formatting</span><span class="l-pt">Layout visual e formatacao</span></li>
+            <li><span class="l-de">Institutionelle Logos (wenn unkontrolliert)</span><span class="l-en">Institutional logos (if uncontrolled)</span><span class="l-pt">Logos institucionais (se nao controlados)</span></li>
+            <li><span class="l-de">Briefkopfstruktur und Adressen</span><span class="l-en">Letterhead structure and addresses</span><span class="l-pt">Estrutura de cabecalho e enderecos</span></li>
+            <li><span class="l-de">Rechtliche Referenzmuster</span><span class="l-en">Legal reference patterns</span><span class="l-pt">Padroes de referencia legal</span></li>
+          </ul>
         </div>
       </div>
-
-      <div class="figure-caption"><strong>Fig. 1</strong> &mdash; Attacker capability boundary: what deepfakes can and cannot replicate</div>
-
-      <h3>3.3 &ensp;Security Goal</h3>
-
-      <p>Ensure authenticity claims are supported by <strong>verifiable origin</strong>, not appearance. Any tampering or off-system generation should be detectable as UNKNOWN or TAMPERED through deterministic verification.</p>
-    </div>
-
-
-    <div class="sep">&middot; &middot; &middot;</div>
-
-
-    <!-- 4. SECURE ORIGIN FRAMEWORK -->
-    <div class="section">
-      <div class="section-number">Section 4</div>
-      <h2>Secure Origin Framework (SOF)</h2>
-
-      <h3>4.1 &ensp;Architecture</h3>
-
-      <div class="arch-diagram"><span class="dim">/opt/windi/engine/</span>
-<span class="highlight">deepdocfakes/</span>                    <span class="dim">&larr; Document Security Division</span>
-├── structural_hash.py         <span class="dim">canonical fingerprinting</span>
-├── provenance_engine.py       <span class="dim">digital birth certificates</span>
-├── verify_engine.py           <span class="dim">VALID / UNKNOWN / TAMPERED</span>
-├── deepfake_risk.py           <span class="dim">resilience scoring (0&ndash;100)</span>
-├── pdf_metadata_embed.py      <span class="dim">XMP metadata embedding</span>
-└── registry_provenance.py     <span class="dim">registry &amp; audit</span>
-
-<span class="dim">/opt/windi/</span><span class="highlight">provenance/</span>               <span class="dim">&larr; Secure Origin Storage</span>
-├── records/                   <span class="dim">provenance record JSON files</span>
-└── index.json                 <span class="dim">fast lookup index</span></div>
-
-      <div class="figure-caption"><strong>Fig. 2</strong> &mdash; DeepDOCFakes module architecture on Strato DE infrastructure</div>
-
-      <h3>4.2 &ensp;Structural Hash</h3>
-
-      <p>A canonical structural hash is computed over the governance decision payload: governance level, policy version, configuration hash, ISP profile, organisation, regulatory metadata, and identity governance status. The hash uses a versioned canonicalisation wrapper (<code>_canon_version: 1.0</code>) with deterministic JSON serialisation (sorted keys, no whitespace variation). If any governance parameter changes, the fingerprint changes &mdash; creating a structural identity that deepfakes cannot replicate because it depends on system-internal state.</p>
-
-      <h3>4.3 &ensp;Provenance Record</h3>
-
-      <p>Each governed document receives a provenance record &mdash; a &ldquo;digital birth certificate&rdquo; &mdash; that links the document to the governance policy lineage in effect, identity governance constraints (licensed vs. model_only), metadata completeness, timestamps, sealing state, and the cryptographic proof chain. The record includes system identity (WINDI, version, jurisdiction: DE, Strato infrastructure), ensuring that provenance is bound to a specific installation and jurisdiction.</p>
-
-      <div class="code-block">
-<span class="comment">// Provenance record structure (production output)</span>
-<span class="bracket">{</span>
-  <span class="key">"provenance_id"</span>: <span class="string">"WINDI-PROV-DC4EAF4763E1"</span>,
-  <span class="key">"submission_id"</span>: <span class="string">"REG-20260202-0007"</span>,
-  <span class="key">"governance_context"</span>: <span class="bracket">{</span>
-    <span class="key">"level"</span>: <span class="string">"HIGH"</span>,
-    <span class="key">"isp_profile"</span>: <span class="string">"bafin"</span>,
-    <span class="key">"policy_version"</span>: <span class="string">"2.2.0"</span>
-  <span class="bracket">}</span>,
-  <span class="key">"cryptographic_proof"</span>: <span class="bracket">{</span>
-    <span class="key">"structural_hash"</span>: <span class="string">"dc4eaf4763e130b6..."</span>,
-    <span class="key">"provenance_hash"</span>: <span class="string">"a7f2c8d1e9b34..."</span>,
-    <span class="key">"hash_chain"</span>: <span class="string">"dc4eaf4763e130b6&rarr;a7f2c8d1e9b34..."</span>
-  <span class="bracket">}</span>,
-  <span class="key">"deepfake_resilience"</span>: <span class="bracket">{</span>
-    <span class="key">"score"</span>: <span class="num">100</span>,
-    <span class="key">"rating"</span>: <span class="string">"MAXIMUM &mdash; Forensic-grade provenance"</span>
-  <span class="bracket">}</span>
-<span class="bracket">}</span>
+      <div class="cta-box" style="border-left: 3px solid var(--signal-safe);">
+        <div class="cta-content">
+          <h3 style="color: var(--signal-safe);">
+            <span class="l-de">Angreifer kann nicht kopieren</span>
+            <span class="l-en">Attacker Cannot Copy</span>
+            <span class="l-pt">Atacante Nao Pode Copiar</span>
+          </h3>
+          <ul>
+            <li><span class="l-de">Interne kanonische Feldreihenfolge</span><span class="l-en">Internal canonical field order</span><span class="l-pt">Ordem canonica de campos internos</span></li>
+            <li><span class="l-de">Struktureller Hash uber Governance-Kontext</span><span class="l-en">Structural hash over governance context</span><span class="l-pt">Hash estrutural sobre contexto de governanca</span></li>
+            <li><span class="l-de">Provenienz-ID bei Erstellung generiert</span><span class="l-en">Provenance ID generated at creation time</span><span class="l-pt">ID de proveniencia gerado no momento da criacao</span></li>
+            <li><span class="l-de">Registereintrag auf autoritativem Server</span><span class="l-en">Registry entry on authoritative server</span><span class="l-pt">Entrada de registro no servidor autoritativo</span></li>
+            <li><span class="l-de">Hash-Kette mit Server-Identitat</span><span class="l-en">Hash chain including server identity</span><span class="l-pt">Cadeia de hash incluindo identidade do servidor</span></li>
+          </ul>
+        </div>
       </div>
+    </div>
+    <p style="font-size: 12px; color: var(--text-tertiary); text-align: center;"><strong>Fig. 1</strong> &mdash; Attacker capability boundary: what deepfakes can and cannot replicate</p>
 
-      <div class="figure-caption"><strong>Fig. 3</strong> &mdash; Provenance record structure for HIGH-governance BaFin document (production output, 02 February 2026)</div>
+    <h3>
+      <span class="l-de">3.3 Sicherheitsziel</span>
+      <span class="l-en">3.3 Security Goal</span>
+      <span class="l-pt">3.3 Objetivo de Seguranca</span>
+    </h3>
 
-      <h3>4.4 &ensp;Verification Protocol</h3>
+    <p>
+      <span class="lb-de">Sicherstellen, dass Authentizitatsanspruche durch <strong>uberprufbare Herkunft</strong> gestutzt werden, nicht durch Erscheinungsbild. Jede Manipulation oder systemexterne Generierung sollte als UNKNOWN oder TAMPERED durch deterministische Verifizierung erkennbar sein.</span>
+      <span class="lb-en">Ensure authenticity claims are supported by <strong>verifiable origin</strong>, not appearance. Any tampering or off-system generation should be detectable as UNKNOWN or TAMPERED through deterministic verification.</span>
+      <span class="lb-pt">Garantir que reivindicacoes de autenticidade sejam apoiadas por <strong>origem verificavel</strong>, nao por aparencia. Qualquer adulteracao ou geracao fora do sistema deve ser detectavel como UNKNOWN ou TAMPERED atraves de verificacao deterministica.</span>
+    </p>
 
-      <p>Verification returns one of three deterministic outcomes:</p>
+    <hr>
 
-      <table class="matrix-table">
+    <!-- Section 4: Secure Origin Framework -->
+    <h2>
+      <span class="l-de">4. Secure Origin Framework (SOF)</span>
+      <span class="l-en">4. Secure Origin Framework (SOF)</span>
+      <span class="l-pt">4. Framework de Origem Segura (SOF)</span>
+    </h2>
+
+    <h3>
+      <span class="l-de">4.1 Architektur</span>
+      <span class="l-en">4.1 Architecture</span>
+      <span class="l-pt">4.1 Arquitetura</span>
+    </h3>
+
+    <pre><code>/opt/windi/engine/
+deepdocfakes/                    <span style="color: var(--text-tertiary);">&larr; Document Security Division</span>
+├── structural_hash.py         <span style="color: var(--text-tertiary);">canonical fingerprinting</span>
+├── provenance_engine.py       <span style="color: var(--text-tertiary);">digital birth certificates</span>
+├── verify_engine.py           <span style="color: var(--text-tertiary);">VALID / UNKNOWN / TAMPERED</span>
+├── deepfake_risk.py           <span style="color: var(--text-tertiary);">resilience scoring (0&ndash;100)</span>
+├── pdf_metadata_embed.py      <span style="color: var(--text-tertiary);">XMP metadata embedding</span>
+└── registry_provenance.py     <span style="color: var(--text-tertiary);">registry &amp; audit</span>
+
+/opt/windi/provenance/               <span style="color: var(--text-tertiary);">&larr; Secure Origin Storage</span>
+├── records/                   <span style="color: var(--text-tertiary);">provenance record JSON files</span>
+└── index.json                 <span style="color: var(--text-tertiary);">fast lookup index</span></code></pre>
+    <p style="font-size: 12px; color: var(--text-tertiary); text-align: center;"><strong>Fig. 2</strong> &mdash; DeepDOCFakes module architecture on Strato DE infrastructure</p>
+
+    <h3>
+      <span class="l-de">4.2 Struktureller Hash</span>
+      <span class="l-en">4.2 Structural Hash</span>
+      <span class="l-pt">4.2 Hash Estrutural</span>
+    </h3>
+
+    <p>
+      <span class="lb-de">Ein kanonischer struktureller Hash wird uber die Governance-Entscheidungspayload berechnet: Governance-Level, Policy-Version, Konfigurations-Hash, ISP-Profil, Organisation, regulatorische Metadaten und Identitats-Governance-Status. Der Hash verwendet einen versionierten Kanonisierungswrapper (<code>_canon_version: 1.0</code>) mit deterministischer JSON-Serialisierung.</span>
+      <span class="lb-en">A canonical structural hash is computed over the governance decision payload: governance level, policy version, configuration hash, ISP profile, organisation, regulatory metadata, and identity governance status. The hash uses a versioned canonicalisation wrapper (<code>_canon_version: 1.0</code>) with deterministic JSON serialisation (sorted keys, no whitespace variation). If any governance parameter changes, the fingerprint changes &mdash; creating a structural identity that deepfakes cannot replicate because it depends on system-internal state.</span>
+      <span class="lb-pt">Um hash estrutural canonico e calculado sobre a carga de decisao de governanca: nivel de governanca, versao da politica, hash de configuracao, perfil ISP, organizacao, metadados regulatorios e status de governanca de identidade.</span>
+    </p>
+
+    <h3>
+      <span class="l-de">4.3 Provenienz-Record</span>
+      <span class="l-en">4.3 Provenance Record</span>
+      <span class="l-pt">4.3 Registro de Proveniencia</span>
+    </h3>
+
+    <p>
+      <span class="lb-de">Jedes governierte Dokument erhalt einen Provenienz-Record &mdash; eine "digitale Geburtsurkunde" &mdash; der das Dokument mit der geltenden Governance-Policy-Linie, Identitats-Governance-Beschrankungen (lizenziert vs. model_only), Metadaten-Vollstandigkeit, Zeitstempeln, Versiegelungszustand und der kryptografischen Beweiskette verknupft.</span>
+      <span class="lb-en">Each governed document receives a provenance record &mdash; a "digital birth certificate" &mdash; that links the document to the governance policy lineage in effect, identity governance constraints (licensed vs. model_only), metadata completeness, timestamps, sealing state, and the cryptographic proof chain. The record includes system identity (WINDI, version, jurisdiction: DE, Strato infrastructure), ensuring that provenance is bound to a specific installation and jurisdiction.</span>
+      <span class="lb-pt">Cada documento governado recebe um registro de proveniencia &mdash; uma "certidao de nascimento digital" &mdash; que vincula o documento a linhagem da politica de governanca em vigor, restricoes de governanca de identidade (licenciado vs. model_only), completude de metadados, carimbos de data/hora, estado de selagem e cadeia de prova criptografica.</span>
+    </p>
+
+    <pre><code><span style="color: var(--text-tertiary);">// Provenance record structure (production output)</span>
+{
+  <span style="color: var(--gold);">"provenance_id"</span>: <span style="color: var(--signal-flow);">"WINDI-PROV-DC4EAF4763E1"</span>,
+  <span style="color: var(--gold);">"submission_id"</span>: <span style="color: var(--signal-flow);">"REG-20260202-0007"</span>,
+  <span style="color: var(--gold);">"governance_context"</span>: {
+    <span style="color: var(--gold);">"level"</span>: <span style="color: var(--signal-flow);">"HIGH"</span>,
+    <span style="color: var(--gold);">"isp_profile"</span>: <span style="color: var(--signal-flow);">"bafin"</span>,
+    <span style="color: var(--gold);">"policy_version"</span>: <span style="color: var(--signal-flow);">"2.2.0"</span>
+  },
+  <span style="color: var(--gold);">"cryptographic_proof"</span>: {
+    <span style="color: var(--gold);">"structural_hash"</span>: <span style="color: var(--signal-flow);">"dc4eaf4763e130b6..."</span>,
+    <span style="color: var(--gold);">"provenance_hash"</span>: <span style="color: var(--signal-flow);">"a7f2c8d1e9b34..."</span>,
+    <span style="color: var(--gold);">"hash_chain"</span>: <span style="color: var(--signal-flow);">"dc4eaf4763e130b6&rarr;a7f2c8d1e9b34..."</span>
+  },
+  <span style="color: var(--gold);">"deepfake_resilience"</span>: {
+    <span style="color: var(--gold);">"score"</span>: <span style="color: var(--signal-safe);">100</span>,
+    <span style="color: var(--gold);">"rating"</span>: <span style="color: var(--signal-flow);">"MAXIMUM &mdash; Forensic-grade provenance"</span>
+  }
+}</code></pre>
+    <p style="font-size: 12px; color: var(--text-tertiary); text-align: center;"><strong>Fig. 3</strong> &mdash; Provenance record structure for HIGH-governance BaFin document (production output, 02 February 2026)</p>
+
+    <h3>
+      <span class="l-de">4.4 Verifizierungsprotokoll</span>
+      <span class="l-en">4.4 Verification Protocol</span>
+      <span class="l-pt">4.4 Protocolo de Verificacao</span>
+    </h3>
+
+    <p>
+      <span class="lb-de">Die Verifizierung gibt eines von drei deterministischen Ergebnissen zuruck:</span>
+      <span class="lb-en">Verification returns one of three deterministic outcomes:</span>
+      <span class="lb-pt">A verificacao retorna um de tres resultados deterministicos:</span>
+    </p>
+
+    <div class="spec-table-wrapper">
+      <table class="spec-table">
         <thead>
           <tr>
             <th>Status</th>
@@ -792,58 +434,86 @@
         </thead>
         <tbody>
           <tr>
-            <td><span class="status-badge badge-low">VALID</span></td>
+            <td><code style="background: var(--signal-safe-dim); color: var(--signal-safe);">VALID</code></td>
             <td>Record exists and structural fingerprint matches</td>
             <td>Structural hash recomputation equals stored hash</td>
           </tr>
           <tr>
-            <td><span class="status-badge badge-medium">UNKNOWN</span></td>
+            <td><code style="background: var(--signal-flow-dim); color: var(--signal-flow);">UNKNOWN</code></td>
             <td>No authoritative record exists</td>
             <td>Submission ID not found in provenance registry</td>
           </tr>
           <tr>
-            <td><span class="status-badge badge-high">TAMPERED</span></td>
+            <td><code style="background: var(--signal-core-dim); color: var(--signal-core);">TAMPERED</code></td>
             <td>Record exists but fingerprint mismatch detected</td>
             <td>Recomputed hash differs from stored hash</td>
           </tr>
         </tbody>
       </table>
-
-      <div class="figure-caption"><strong>Table 2</strong> &mdash; Verification protocol outcomes: the document equivalent of HTTPS certificate validation</div>
-
-      <p>This is the equivalent of an authenticity handshake: not &ldquo;looks right,&rdquo; but &ldquo;provably issued.&rdquo;</p>
     </div>
+    <p style="font-size: 12px; color: var(--text-tertiary); text-align: center;"><strong>Table 2</strong> &mdash; Verification protocol outcomes: the document equivalent of HTTPS certificate validation</p>
+
+    <p>
+      <span class="lb-de">Dies ist das Aquivalent eines Authentizitats-Handshakes: nicht "sieht richtig aus", sondern "nachweislich ausgestellt".</span>
+      <span class="lb-en">This is the equivalent of an authenticity handshake: not "looks right," but "provably issued."</span>
+      <span class="lb-pt">Este e o equivalente de um handshake de autenticidade: nao "parece certo", mas "comprovadamente emitido".</span>
+    </p>
 
 
-    <!-- 5. DEEPFAKE RESILIENCE SCORE -->
-    <div class="section">
-      <div class="section-number">Section 5</div>
-      <h2>Deepfake Resilience Score</h2>
+    <!-- Section 5: Deepfake Resilience Score -->
+    <h2>
+      <span class="l-de">5. Deepfake-Resilienz-Score</span>
+      <span class="l-en">5. Deepfake Resilience Score</span>
+      <span class="l-pt">5. Pontuacao de Resiliencia a Deepfake</span>
+    </h2>
 
-      <p>A score between 0 and 100 communicates governance strength in audit language. The score is computed from active security features including provenance requirements, registry anchoring, structural hashing mode, embedded metadata, tamper evidence, identity governance status, and jurisdiction binding.</p>
+    <p>
+      <span class="lb-de">Ein Score zwischen 0 und 100 kommuniziert die Governance-Starke in Audit-Sprache. Der Score wird aus aktiven Sicherheitsfunktionen berechnet, einschliesslich Provenienzanforderungen, Registrierungsverankerung, strukturellem Hashing-Modus, eingebetteten Metadaten, Manipulationsnachweis, Identitats-Governance-Status und Jurisdiktionsbindung.</span>
+      <span class="lb-en">A score between 0 and 100 communicates governance strength in audit language. The score is computed from active security features including provenance requirements, registry anchoring, structural hashing mode, embedded metadata, tamper evidence, identity governance status, and jurisdiction binding.</span>
+      <span class="lb-pt">Uma pontuacao entre 0 e 100 comunica a forca da governanca em linguagem de auditoria. A pontuacao e calculada a partir de recursos de seguranca ativos, incluindo requisitos de proveniencia, ancoragem de registro, modo de hash estrutural, metadados incorporados, evidencia de adulteracao, status de governanca de identidade e vinculacao de jurisdicao.</span>
+    </p>
 
-      <h3>5.1 &ensp;Empirical Results</h3>
+    <h3>
+      <span class="l-de">5.1 Empirische Ergebnisse</span>
+      <span class="l-en">5.1 Empirical Results</span>
+      <span class="l-pt">5.1 Resultados Empiricos</span>
+    </h3>
 
-      <div style="margin: 1.5rem 0;">
-        <div class="score-row">
-          <div class="score-label"><span class="status-badge badge-high">HIGH</span> BaFin</div>
-          <div class="score-bar-bg"><div class="score-bar-fill score-fill-max" style="width: 100%;">100/100 MAXIMUM</div></div>
-        </div>
-        <div class="score-row">
-          <div class="score-label"><span class="status-badge badge-medium">MED</span> Bundesreg.</div>
-          <div class="score-bar-bg"><div class="score-bar-fill score-fill-high" style="width: 60%;">60/100 HIGH</div></div>
-        </div>
-        <div class="score-row">
-          <div class="score-label"><span class="status-badge badge-low">LOW</span> T&Uuml;V</div>
-          <div class="score-bar-bg"><div class="score-bar-fill score-fill-low" style="width: 30%;">30/100 LOW</div></div>
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>Deepfake Resilience Scores (02 February 2026, 15:13 CET)</h3>
+        <div style="margin: 16px 0;">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+            <span style="min-width: 120px;"><code style="background: var(--signal-core-dim); color: var(--signal-core);">HIGH</code> BaFin</span>
+            <div style="flex: 1; height: 24px; background: var(--surface-2); border-radius: 4px; overflow: hidden;">
+              <div style="width: 100%; height: 100%; background: linear-gradient(90deg, var(--signal-safe), #2e8b57); display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; font-family: var(--font-mono); font-size: 11px; color: white;">100/100 MAXIMUM</div>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+            <span style="min-width: 120px;"><code style="background: var(--signal-flow-dim); color: var(--signal-flow);">MED</code> Bundesreg.</span>
+            <div style="flex: 1; height: 24px; background: var(--surface-2); border-radius: 4px; overflow: hidden;">
+              <div style="width: 60%; height: 100%; background: linear-gradient(90deg, var(--signal-gov), #4a6fa5); display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; font-family: var(--font-mono); font-size: 11px; color: white;">60/100 HIGH</div>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="min-width: 120px;"><code style="background: var(--signal-safe-dim); color: var(--signal-safe);">LOW</code> TUV</span>
+            <div style="flex: 1; height: 24px; background: var(--surface-2); border-radius: 4px; overflow: hidden;">
+              <div style="width: 30%; height: 100%; background: linear-gradient(90deg, var(--signal-flow), #b8860b); display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; font-family: var(--font-mono); font-size: 11px; color: white;">30/100 LOW</div>
+            </div>
+          </div>
         </div>
       </div>
+    </div>
+    <p style="font-size: 12px; color: var(--text-tertiary); text-align: center;"><strong>Fig. 4</strong> &mdash; Deepfake Resilience Scores from production self-test (02 February 2026, 15:13 CET)</p>
 
-      <div class="figure-caption"><strong>Fig. 4</strong> &mdash; Deepfake Resilience Scores from production self-test (02 February 2026, 15:13 CET)</div>
+    <h3>
+      <span class="l-de">5.2 Score-Interpretation</span>
+      <span class="l-en">5.2 Score Interpretation</span>
+      <span class="l-pt">5.2 Interpretacao da Pontuacao</span>
+    </h3>
 
-      <h3>5.2 &ensp;Score Interpretation</h3>
-
-      <table class="matrix-table">
+    <div class="spec-table-wrapper">
+      <table class="spec-table">
         <thead>
           <tr>
             <th>Score Range</th>
@@ -854,44 +524,50 @@
         <tbody>
           <tr>
             <td>85&ndash;100</td>
-            <td><span class="status-badge badge-max">MAXIMUM</span></td>
+            <td><code style="background: #1a1a2e; color: #ffd700;">MAXIMUM</code></td>
             <td>HIGH + forensic ledger + four-eyes + full provenance</td>
           </tr>
           <tr>
             <td>60&ndash;84</td>
-            <td><span class="status-badge badge-high">HIGH</span></td>
+            <td><code style="background: var(--signal-core-dim); color: var(--signal-core);">HIGH</code></td>
             <td>HIGH standard or MEDIUM + identity governance</td>
           </tr>
           <tr>
             <td>40&ndash;59</td>
-            <td><span class="status-badge badge-medium">MEDIUM</span></td>
+            <td><code style="background: var(--signal-flow-dim); color: var(--signal-flow);">MEDIUM</code></td>
             <td>MEDIUM with structural hash and provenance</td>
           </tr>
           <tr>
             <td>20&ndash;39</td>
-            <td><span class="status-badge badge-low">LOW</span></td>
+            <td><code style="background: var(--signal-safe-dim); color: var(--signal-safe);">LOW</code></td>
             <td>LOW with basic provenance markers</td>
           </tr>
           <tr>
             <td>0&ndash;19</td>
-            <td><span class="status-badge" style="background: #f0f0f0; color: #666;">MINIMAL</span></td>
+            <td><code style="background: var(--surface-2); color: var(--text-tertiary);">MINIMAL</code></td>
             <td>LOW without provenance infrastructure</td>
           </tr>
         </tbody>
       </table>
-
-      <div class="figure-caption"><strong>Table 3</strong> &mdash; Deepfake Resilience Score interpretation: a new language for document security audits</div>
     </div>
+    <p style="font-size: 12px; color: var(--text-tertiary); text-align: center;"><strong>Table 3</strong> &mdash; Deepfake Resilience Score interpretation: a new language for document security audits</p>
 
 
-    <!-- 6. INTEGRATION -->
-    <div class="section">
-      <div class="section-number">Section 6</div>
-      <h2>Integration with Governance Levels and ISP</h2>
+    <!-- Section 6: Integration -->
+    <h2>
+      <span class="l-de">6. Integration mit Governance-Ebenen und ISP</span>
+      <span class="l-en">6. Integration with Governance Levels and ISP</span>
+      <span class="l-pt">6. Integracao com Niveis de Governanca e ISP</span>
+    </h2>
 
-      <p>DeepDOCFakes is designed to integrate with WINDI&rsquo;s three governance tiers, aligning security cost with institutional risk while enabling consistent verification semantics across all levels.</p>
+    <p>
+      <span class="lb-de">DeepDOCFakes ist so konzipiert, dass es sich in WINDIs drei Governance-Stufen integriert und die Sicherheitskosten mit dem institutionellen Risiko abstimmt, wahrend es konsistente Verifizierungssemantik auf allen Ebenen ermoglicht.</span>
+      <span class="lb-en">DeepDOCFakes is designed to integrate with WINDI's three governance tiers, aligning security cost with institutional risk while enabling consistent verification semantics across all levels.</span>
+      <span class="lb-pt">O DeepDOCFakes e projetado para integrar-se aos tres niveis de governanca do WINDI, alinhando o custo de seguranca com o risco institucional, enquanto permite semantica de verificacao consistente em todos os niveis.</span>
+    </p>
 
-      <table class="matrix-table">
+    <div class="spec-table-wrapper">
+      <table class="spec-table">
         <thead>
           <tr>
             <th>Feature</th>
@@ -903,152 +579,268 @@
         <tbody>
           <tr>
             <td>Provenance record</td>
-            <td class="cell-yes">Required</td>
-            <td class="cell-opt">Optional</td>
-            <td class="cell-no">&mdash;</td>
+            <td style="color: var(--signal-safe);">Required</td>
+            <td style="color: var(--signal-flow);">Optional</td>
+            <td style="color: var(--text-tertiary);">&mdash;</td>
           </tr>
           <tr>
             <td>Registry entry</td>
-            <td class="cell-yes">Required</td>
-            <td class="cell-opt">Optional</td>
-            <td class="cell-no">&mdash;</td>
+            <td style="color: var(--signal-safe);">Required</td>
+            <td style="color: var(--signal-flow);">Optional</td>
+            <td style="color: var(--text-tertiary);">&mdash;</td>
           </tr>
           <tr>
             <td>Structural hash</td>
-            <td class="cell-yes">Strict</td>
-            <td class="cell-yes">Strict</td>
-            <td class="cell-opt">Basic</td>
+            <td style="color: var(--signal-safe);">Strict</td>
+            <td style="color: var(--signal-safe);">Strict</td>
+            <td style="color: var(--signal-flow);">Basic</td>
           </tr>
           <tr>
             <td>PDF metadata embed</td>
-            <td class="cell-yes">Yes</td>
-            <td class="cell-yes">Yes</td>
-            <td class="cell-no">No</td>
+            <td style="color: var(--signal-safe);">Yes</td>
+            <td style="color: var(--signal-safe);">Yes</td>
+            <td style="color: var(--signal-core);">No</td>
           </tr>
           <tr>
             <td>Verify endpoint</td>
-            <td class="cell-yes">Yes</td>
-            <td class="cell-yes">Yes</td>
-            <td class="cell-no">No</td>
+            <td style="color: var(--signal-safe);">Yes</td>
+            <td style="color: var(--signal-safe);">Yes</td>
+            <td style="color: var(--signal-core);">No</td>
           </tr>
           <tr>
             <td>Forensic ledger</td>
-            <td class="cell-yes">Yes</td>
-            <td class="cell-no">&mdash;</td>
-            <td class="cell-no">&mdash;</td>
+            <td style="color: var(--signal-safe);">Yes</td>
+            <td style="color: var(--text-tertiary);">&mdash;</td>
+            <td style="color: var(--text-tertiary);">&mdash;</td>
           </tr>
           <tr>
             <td>Four-eyes principle</td>
-            <td class="cell-yes">Yes</td>
-            <td class="cell-no">&mdash;</td>
-            <td class="cell-no">&mdash;</td>
+            <td style="color: var(--signal-safe);">Yes</td>
+            <td style="color: var(--text-tertiary);">&mdash;</td>
+            <td style="color: var(--text-tertiary);">&mdash;</td>
           </tr>
         </tbody>
       </table>
+    </div>
+    <p style="font-size: 12px; color: var(--text-tertiary); text-align: center;"><strong>Table 4</strong> &mdash; Security feature matrix by governance level: risk-proportional provenance</p>
 
-      <div class="figure-caption"><strong>Table 4</strong> &mdash; Security feature matrix by governance level: risk-proportional provenance</div>
+
+    <!-- Section 7: Evaluation -->
+    <h2>
+      <span class="l-de">7. Bewertung</span>
+      <span class="l-en">7. Evaluation</span>
+      <span class="l-pt">7. Avaliacao</span>
+    </h2>
+
+    <h3>
+      <span class="l-de">7.1 Empirische Validierung</span>
+      <span class="l-en">7.1 Empirical Validation</span>
+      <span class="l-pt">7.1 Validacao Empirica</span>
+    </h3>
+
+    <p>
+      <span class="lb-de">Das Framework wurde durch 15 automatisierte Tests validiert, die am 02. Februar 2026 in der Produktion ausgefuhrt wurden. Diese deckten Reproduzierbarkeit (gleiche Payload erzeugt gleichen strukturellen Hash), Manipulationserkennung (Payload-Modifikation lost TAMPERED aus), Abwesenheitserkennung (unbekannte Submission-IDs geben UNKNOWN zuruck), Governance-Tier-Ordnung (HIGH > MEDIUM > LOW Resilienz-Scores), PDF-Metadaten-Generierung und Registry-Integritatsuberprufung ab.</span>
+      <span class="lb-en">The framework was validated through 15 automated tests executed in production on 02 February 2026, covering reproducibility (same payload produces same structural hash), tamper detection (payload modification triggers TAMPERED), absence detection (unknown submission IDs return UNKNOWN), governance tier ordering (HIGH > MEDIUM > LOW resilience scores), PDF metadata generation, and registry integrity verification.</span>
+      <span class="lb-pt">O framework foi validado atraves de 15 testes automatizados executados em producao em 02 de fevereiro de 2026, cobrindo reprodutibilidade (mesma carga produz mesmo hash estrutural), deteccao de adulteracao (modificacao de carga aciona TAMPERED), deteccao de ausencia (IDs de submissao desconhecidos retornam UNKNOWN), ordenacao de niveis de governanca (pontuacoes de resiliencia HIGH > MEDIUM > LOW), geracao de metadados PDF e verificacao de integridade do registro.</span>
+    </p>
+
+    <div class="doc-quote" style="border-left-color: var(--gold);">
+      <p style="color: var(--gold); font-size: 18px; font-weight: 600; margin-bottom: 8px;">15/15 tests passed. DeepDOCFakes module ready for production.</p>
+      <p style="font-size: 13px; color: var(--text-tertiary);">Self-test output from deploy_deepdocfakes.sh on Strato DE server (87.106.29.233). Tests executed against all three governance levels with HIGH (BaFin, 100/100), MEDIUM (Bundesregierung, 60/100), and LOW (TUV, 30/100) configurations. Registry integrity check: HEALTHY.</p>
     </div>
 
+    <h3>
+      <span class="l-de">7.2 Praktische Kriterien</span>
+      <span class="l-en">7.2 Practical Criteria</span>
+      <span class="l-pt">7.2 Criterios Praticos</span>
+    </h3>
 
-    <!-- 7. EVALUATION -->
-    <div class="section">
-      <div class="section-number">Section 7</div>
-      <h2>Evaluation</h2>
+    <p>
+      <span class="lb-de">Das Framework erfullt vier praktische Anforderungen: <strong>Verifizierbarkeit</strong> (unabhangige Prufung liefert deterministische Ergebnisse), <strong>Ruckverfolgbarkeit</strong> (Record verknupft mit Governance-Zustand bei Ausstellung), <strong>Manipulationsnachweis</strong> (Modifikationen sind durch Hash-Abweichung erkennbar) und <strong>Pruffahigkeit</strong> (Scores und Verifizierungsergebnisse sind fur nicht-technische Prufer und Regulatoren erklarbar).</span>
+      <span class="lb-en">The framework satisfies four practical requirements: <strong>verifiability</strong> (independent check returns deterministic results), <strong>traceability</strong> (record links to governance state at issuance), <strong>tamper evidence</strong> (modifications are detectable through hash mismatch), and <strong>auditability</strong> (scores and verification outcomes are explainable to non-technical auditors and regulators).</span>
+      <span class="lb-pt">O framework satisfaz quatro requisitos praticos: <strong>verificabilidade</strong> (verificacao independente retorna resultados deterministicos), <strong>rastreabilidade</strong> (registro vinculado ao estado de governanca na emissao), <strong>evidencia de adulteracao</strong> (modificacoes sao detectaveis atraves de incompatibilidade de hash) e <strong>auditabilidade</strong> (pontuacoes e resultados de verificacao sao explicaveis para auditores e reguladores nao-tecnicos).</span>
+    </p>
 
-      <h3>7.1 &ensp;Empirical Validation</h3>
 
-      <p>The framework was validated through 15 automated tests executed in production on 02 February 2026, covering reproducibility (same payload produces same structural hash), tamper detection (payload modification triggers TAMPERED), absence detection (unknown submission IDs return UNKNOWN), governance tier ordering (HIGH &gt; MEDIUM &gt; LOW resilience scores), PDF metadata generation, and registry integrity verification.</p>
+    <!-- Section 8: Regulatory Alignment -->
+    <h2>
+      <span class="l-de">8. Regulatorische Ausrichtung</span>
+      <span class="l-en">8. Regulatory Alignment</span>
+      <span class="l-pt">8. Alinhamento Regulatorio</span>
+    </h2>
 
-      <div class="discovery-box">
-        <div class="discovery-label">Production Test Results &mdash; 02 February 2026, 15:13 CET</div>
-        <div class="discovery-quote">15/15 tests passed. DeepDOCFakes module ready for production.</div>
-        <div class="discovery-source">Self-test output from deploy_deepdocfakes.sh on Strato DE server (87.106.29.233). Tests executed against all three governance levels with HIGH (BaFin, 100/100), MEDIUM (Bundesregierung, 60/100), and LOW (T&Uuml;V, 30/100) configurations. Registry integrity check: HEALTHY.</div>
+    <div class="cta-box" style="border-left: 3px solid var(--signal-gov);">
+      <div class="cta-content">
+        <h3 style="color: var(--signal-gov);">EU AI Act &mdash; Article 12: Record-Keeping</h3>
+        <p>
+          <span class="l-de">Provenienz-Records bieten eine vollstandige Audit-Trail von Dokumentengenerierungsentscheidungen, einschliesslich Governance-Level, Policy-Version, Identitats-Governance-Status und kryptografischem Nachweis. Jeder Record wird mit atomaren Schreibvorgangen persistiert und fur effizienten Abruf indexiert.</span>
+          <span class="l-en">Provenance records provide a complete audit trail of document generation decisions, including governance level, policy version, identity governance status, and cryptographic proof. Each record is persisted with atomic writes and indexed for efficient retrieval.</span>
+          <span class="l-pt">Registros de proveniencia fornecem uma trilha de auditoria completa das decisoes de geracao de documentos, incluindo nivel de governanca, versao da politica, status de governanca de identidade e prova criptografica.</span>
+        </p>
       </div>
-
-      <h3>7.2 &ensp;Practical Criteria</h3>
-
-      <p>The framework satisfies four practical requirements: <strong>verifiability</strong> (independent check returns deterministic results), <strong>traceability</strong> (record links to governance state at issuance), <strong>tamper evidence</strong> (modifications are detectable through hash mismatch), and <strong>auditability</strong> (scores and verification outcomes are explainable to non-technical auditors and regulators).</p>
     </div>
 
-
-    <!-- 8. REGULATORY ALIGNMENT -->
-    <div class="section">
-      <div class="section-number">Section 8</div>
-      <h2>Regulatory Alignment</h2>
-
-      <div class="eu-ref">
-        <div class="eu-ref-title">EU AI Act &mdash; Article 12: Record-Keeping</div>
-        <div class="eu-ref-body">Provenance records provide a complete audit trail of document generation decisions, including governance level, policy version, identity governance status, and cryptographic proof. Each record is persisted with atomic writes and indexed for efficient retrieval.</div>
+    <div class="cta-box" style="border-left: 3px solid var(--signal-gov);">
+      <div class="cta-content">
+        <h3 style="color: var(--signal-gov);">EU AI Act &mdash; Article 14: Human Oversight</h3>
+        <p>
+          <span class="l-de">Das Vier-Augen-Prinzip in HIGH-Governance erfordert Dual-Control-Verifizierung vor der Dokumentenversiegelung. Das Framework erzwingt dies als Voraussetzung fur forensische Provenienz und stellt sicher, dass menschliche Aufsicht strukturell eingebettet ist, anstatt prozedural optional zu sein.</span>
+          <span class="l-en">The four-eyes principle in HIGH governance requires dual-control verification before document sealing. The framework enforces this as a prerequisite for forensic-grade provenance, ensuring human oversight is structurally embedded rather than procedurally optional.</span>
+          <span class="l-pt">O principio de quatro olhos na governanca HIGH requer verificacao de controle duplo antes da selagem do documento. O framework impoe isso como pre-requisito para proveniencia de grau forense.</span>
+        </p>
       </div>
+    </div>
 
-      <div class="eu-ref">
-        <div class="eu-ref-title">EU AI Act &mdash; Article 14: Human Oversight</div>
-        <div class="eu-ref-body">The four-eyes principle in HIGH governance requires dual-control verification before document sealing. The framework enforces this as a prerequisite for forensic-grade provenance, ensuring human oversight is structurally embedded rather than procedurally optional.</div>
+    <div class="cta-box" style="border-left: 3px solid var(--signal-gov);">
+      <div class="cta-content">
+        <h3 style="color: var(--signal-gov);">EU AI Act &mdash; Article 50: Transparency Obligations</h3>
+        <p>
+          <span class="l-de">Das Verifizierungsprotokoll erweitert die Transparenz von "Ist dies KI-generiert?" zu "Ist dies institutionell autorisiert?" Die Identitats-Governance-Integration (Abschnitt 10) stellt sicher, dass die Nutzung institutioneller Identitat explizit kontrolliert, offengelegt und durch die Provenienzkette verifizierbar ist.</span>
+          <span class="l-en">The verification protocol extends transparency from "is this AI-generated?" to "is this institutionally authorised?" The identity governance integration (Section 10) ensures that institutional identity usage is explicitly controlled, disclosed, and verifiable through the provenance chain.</span>
+          <span class="l-pt">O protocolo de verificacao estende a transparencia de "isso e gerado por IA?" para "isso e institucionalmente autorizado?" A integracao de governanca de identidade (Secao 10) garante que o uso de identidade institucional seja explicitamente controlado, divulgado e verificavel atraves da cadeia de proveniencia.</span>
+        </p>
       </div>
+    </div>
 
-      <div class="eu-ref">
-        <div class="eu-ref-title">EU AI Act &mdash; Article 50: Transparency Obligations</div>
-        <div class="eu-ref-body">The verification protocol extends transparency from &ldquo;is this AI-generated?&rdquo; to &ldquo;is this institutionally authorised?&rdquo; The identity governance integration (Section 10) ensures that institutional identity usage is explicitly controlled, disclosed, and verifiable through the provenance chain.</div>
-      </div>
+    <p>
+      <span class="lb-de">Das Framework ist auch auf die Anforderungen der BaFin KI-Orientierungshilfe (18. Dezember 2025) fur Lifecycle-Governance und Risikodokumentation bei KI-gestutzten Finanzdienstleistungen ausgerichtet.</span>
+      <span class="lb-en">The framework also aligns with BaFin's KI-Orientierungshilfe (18 December 2025) requirements for lifecycle governance and risk documentation in AI-assisted financial services.</span>
+      <span class="lb-pt">O framework tambem se alinha com os requisitos do KI-Orientierungshilfe da BaFin (18 de dezembro de 2025) para governanca de ciclo de vida e documentacao de risco em servicos financeiros assistidos por IA.</span>
+    </p>
 
-      <p>The framework also aligns with BaFin&rsquo;s KI-Orientierungshilfe (18 December 2025) requirements for lifecycle governance and risk documentation in AI-assisted financial services.</p>
+
+    <!-- Section 9: Limitations -->
+    <h2>
+      <span class="l-de">9. Einschrankungen und offene Fragen</span>
+      <span class="l-en">9. Limitations and Open Questions</span>
+      <span class="l-pt">9. Limitacoes e Questoes Abertas</span>
+    </h2>
+
+    <p>
+      <span class="lb-de">Provenienz-Frameworks erfordern eine autoritative Wahrheitsquelle, was bedeutet, dass die Registrierungs-Governance zu einer kritischen Abhangigkeit wird. Interoperable Verifizierung uber Organisationen hinweg benotigt Standardisierung uber das WINDI-SOF-Protokoll hinaus. Visuelle Identitatskontrollen (behandelt in Abschnitt 10) bleiben notwendig, sind aber allein unzureichend. Offline-Verifizierung und langfristige Archivierungsformate erfordern sorgfaltiges Design fur Dokumentenlebenszyklen, die uber die Betriebszeit des ausstellenden Systems hinausgehen.</span>
+      <span class="lb-en">Provenance frameworks require an authoritative source of truth, meaning registry governance becomes a critical dependency. Interoperable verification across organisations needs standardisation beyond the WINDI-SOF protocol. Visual identity controls (addressed in Section 10) remain necessary but are insufficient alone. Offline verification and long-term archival formats require careful design for document lifecycles extending beyond the issuing system's operational period.</span>
+      <span class="lb-pt">Frameworks de proveniencia requerem uma fonte autoritativa de verdade, significando que a governanca do registro se torna uma dependencia critica. A verificacao interoperavel entre organizacoes precisa de padronizacao alem do protocolo WINDI-SOF. Controles de identidade visual (abordados na Secao 10) permanecem necessarios, mas sao insuficientes sozinhos. Verificacao offline e formatos de arquivamento de longo prazo requerem design cuidadoso para ciclos de vida de documentos que se estendem alem do periodo operacional do sistema emissor.</span>
+    </p>
+
+
+    <!-- Section 10: Future Work -->
+    <h2>
+      <span class="l-de">10. Zukunftige Arbeit</span>
+      <span class="l-en">10. Future Work</span>
+      <span class="l-pt">10. Trabalho Futuro</span>
+    </h2>
+
+    <p>
+      <span class="lb-de">Vier Richtungen sind fur das Secure Origin Framework geplant: ein externes Verifizierungs-Endpoint ("WINDI Verify") fur Prufer und Regulatoren, Cross-Validierungs-Attestierungen durch den Witness Dragon (Gemini) Mechanismus, SDMX-ausgerichteter Provenienz-Export fur regulatorische Berichtskontexte und ein standardisiertes Provenienz-Schema fur institutionelle Dokumentenokosysteme, das organisationsubergreifende Verifizierung ermoglichen konnte.</span>
+      <span class="lb-en">Four directions are planned for the Secure Origin Framework: an external-facing verification endpoint ("WINDI Verify") for auditors and regulators, cross-validation attestations through the Witness Dragon (Gemini) mechanism, SDMX-aligned provenance export for regulatory reporting contexts, and a standardised provenance schema for institutional document ecosystems that could enable cross-organisational verification.</span>
+      <span class="lb-pt">Quatro direcoes estao planejadas para o Framework de Origem Segura: um endpoint de verificacao voltado para o exterior ("WINDI Verify") para auditores e reguladores, atestacoes de validacao cruzada atraves do mecanismo Witness Dragon (Gemini), exportacao de proveniencia alinhada ao SDMX para contextos de relatorios regulatorios, e um esquema de proveniencia padronizado para ecossistemas de documentos institucionais que poderia permitir verificacao entre organizacoes.</span>
+    </p>
+
+
+    <!-- Conclusion -->
+    <h2>
+      <span class="l-de">Fazit</span>
+      <span class="l-en">Conclusion</span>
+      <span class="l-pt">Conclusao</span>
+    </h2>
+
+    <p>
+      <span class="lb-de">Dokumenten-Deepfakes verschieben das institutionelle Vertrauen von Evidenz zu Asthetik. Das Secure Origin Framework antwortet, indem es Authentizitat in verifizierbarer Provenienz neu verankert: kanonisches strukturelles Hashing, registrierungsverankerte Provenienz-Records und deterministische Verifizierungsergebnisse. DeepDOCFakes bietet eine skalierbare und prufungsfreundliche Architektur fur KI-gestutzte institutionelle Inhalte in regulierten Umgebungen.</span>
+      <span class="lb-en">Document deepfakes shift institutional trust from evidence to aesthetics. The Secure Origin Framework responds by re-grounding authenticity in verifiable provenance: canonical structural hashing, registry-anchored provenance records, and deterministic verification outcomes. DeepDOCFakes provides a scalable and audit-friendly architecture for AI-assisted institutional content in regulated environments.</span>
+      <span class="lb-pt">Deepfakes de documentos deslocam a confianca institucional da evidencia para a estetica. O Framework de Origem Segura responde re-ancorando a autenticidade em proveniencia verificavel: hash estrutural canonico, registros de proveniencia ancorados em registro e resultados de verificacao deterministicos. O DeepDOCFakes fornece uma arquitetura escalavel e amigavel para auditoria para conteudo institucional assistido por IA em ambientes regulados.</span>
+    </p>
+
+    <p>
+      <span class="lb-de">Dieses Framework verbindet die WINDI-Governance-Architektur von Ende zu Ende: Das ISP-Register (TR-006) definiert institutionelle Profile, die Identity Governance Layer (Abschnitt 10) kontrolliert die institutionelle Identitatsnutzung, und das Secure Origin Framework (TR-007) garantiert, dass governierte Dokumente uberprufbaren Nachweis ihrer institutionellen Herkunft tragen. Zusammen etablieren sie eine vollstandige Provenienzkette von der institutionellen Identitat bis zur Dokumentenverifizierung.</span>
+      <span class="lb-en">This framework connects the WINDI governance architecture from end to end: the ISP Registry (TR-006) defines institutional profiles, the Identity Governance Layer (Section 10) controls institutional identity usage, and the Secure Origin Framework (TR-007) guarantees that governed documents carry verifiable proof of their institutional origin. Together, they establish a complete provenance chain from institutional identity to document verification.</span>
+      <span class="lb-pt">Este framework conecta a arquitetura de governanca do WINDI de ponta a ponta: o Registro ISP (TR-006) define perfis institucionais, a Camada de Governanca de Identidade (Secao 10) controla o uso de identidade institucional, e o Framework de Origem Segura (TR-007) garante que documentos governados carreguem prova verificavel de sua origem institucional. Juntos, estabelecem uma cadeia de proveniencia completa da identidade institucional ate a verificacao de documentos.</span>
+    </p>
+
+    <div class="doc-quote" style="text-align: center; border-left: none; background: var(--surface-1); border: 1px solid var(--border-gold);">
+      <p style="font-size: 18px; font-style: italic; color: var(--text-primary); margin-bottom: 8px;">
+        <span class="l-de">"Wir schutzen nicht das Erscheinungsbild des Dokuments.<br>Wir schutzen die institutionelle Existenz davon."</span>
+        <span class="l-en">"We don't protect the appearance of the document.<br>We protect the institutional existence of it."</span>
+        <span class="l-pt">"Nao protegemos a aparencia do documento.<br>Protegemos a existencia institucional dele."</span>
+      </p>
+      <p style="font-family: var(--font-mono); font-size: 10px; color: var(--gold); letter-spacing: 2px; text-transform: uppercase;">WINDI Document Security Division &mdash; Secure Origin Framework v1.0, 02 February 2026</p>
     </div>
 
 
-    <!-- 9. LIMITATIONS -->
-    <div class="section">
-      <div class="section-number">Section 9</div>
-      <h2>Limitations and Open Questions</h2>
-
-      <p>Provenance frameworks require an authoritative source of truth, meaning registry governance becomes a critical dependency. Interoperable verification across organisations needs standardisation beyond the WINDI-SOF protocol. Visual identity controls (addressed in Section 10) remain necessary but are insufficient alone. Offline verification and long-term archival formats require careful design for document lifecycles extending beyond the issuing system&rsquo;s operational period.</p>
-    </div>
-
-
-    <!-- 10. FUTURE WORK -->
-    <div class="section">
-      <div class="section-number">Section 10</div>
-      <h2>Future Work</h2>
-
-      <p>Four directions are planned for the Secure Origin Framework: an external-facing verification endpoint (&ldquo;WINDI Verify&rdquo;) for auditors and regulators, cross-validation attestations through the Witness Dragon (Gemini) mechanism, SDMX-aligned provenance export for regulatory reporting contexts, and a standardised provenance schema for institutional document ecosystems that could enable cross-organisational verification.</p>
-    </div>
-
-
-    <!-- CONCLUSION -->
-    <div class="section">
-      <div class="section-number">Conclusion</div>
-      <h2>Conclusion</h2>
-
-      <p>Document deepfakes shift institutional trust from evidence to aesthetics. The Secure Origin Framework responds by re-grounding authenticity in verifiable provenance: canonical structural hashing, registry-anchored provenance records, and deterministic verification outcomes. DeepDOCFakes provides a scalable and audit-friendly architecture for AI-assisted institutional content in regulated environments.</p>
-
-      <p>This framework connects the WINDI governance architecture from end to end: the ISP Registry (TR-006) defines institutional profiles, the Identity Governance Layer (Section 10) controls institutional identity usage, and the Secure Origin Framework (TR-007) guarantees that governed documents carry verifiable proof of their institutional origin. Together, they establish a complete provenance chain from institutional identity to document verification.</p>
-    </div>
-
-    <div class="principle-box">
-      <div class="principle-text">&ldquo;We don&rsquo;t protect the appearance of the document.<br>We protect the institutional existence of it.&rdquo;</div>
-      <div class="principle-source">WINDI Document Security Division &mdash; Secure Origin Framework v1.0, 02 February 2026</div>
-    </div>
-
-    <!-- NAVIGATION -->
-    <div class="nav-links">
-      <a href="identity-governance-layer.html">&larr; Section 10: Identity Governance Layer</a>
-      <a href="fachartikel-provenienz.html">PUB-001: Fachartikel Provenienzmodell <a href="index.html">WINDI Documentation Index &rarr;</a>rarr;</a>
-    </div>
+    <!-- Navigation -->
+    <h3>
+      <span class="l-de">Navigation</span>
+      <span class="l-en">Navigation</span>
+      <span class="l-pt">Navegacao</span>
+    </h3>
+    <ul>
+      <li><a href="identity-governance-layer.html">&larr; Section 10: Identity Governance Layer</a></li>
+      <li><a href="fachartikel-provenienz.html">PUB-001: Fachartikel Provenienzmodell &rarr;</a></li>
+      <li><a href="index.html">WINDI Documentation Index</a></li>
+    </ul>
 
   </div>
 
-  <!-- FOOTER -->
-  <footer class="doc-footer">
-    <div class="footer-left">
-      WINDI Publishing House &middot; Kempten (Allg&auml;u), Bavaria, Germany<br>
-      Masterarbeit documentation: <em>master.windia4desk.tech</em>
+  <!-- Page Footer -->
+  <footer class="page-footer">
+    <div class="page-footer-meta">
+      <span>WINDI-RECEIPT: TR-007-PROV-06FEB26-SOF-V1</span>
+      <span>Technical Report</span>
     </div>
-    <div class="footer-right">
-      TR-WINDI-2026-007<br>
-      SOF v1.0 &middot; DeepDOCFakes v1.0.0<br>
-      02 February 2026<br>
-      Classification: PUBLIC
-    </div>
+    <p class="page-footer-quittung">Author: Jober Mogele Correa, Chief Governance Officer | Status: DEPLOYED (15/15 tests passed)</p>
+    <p class="page-footer-principle">
+      <span class="l-de">"KI verarbeitet. Mensch entscheidet. WINDI garantiert."</span>
+      <span class="l-en">"AI processes. Human decides. WINDI guarantees."</span>
+      <span class="l-pt">"IA processa. Humano decide. WINDI garante."</span>
+    </p>
   </footer>
+
+</main>
+
+<!-- JavaScript -->
+<script>
+// Theme Toggle
+function toggleTheme() {
+  const body = document.body;
+  const isLight = body.getAttribute('data-theme') === 'light';
+  body.setAttribute('data-theme', isLight ? 'dark' : 'light');
+  try { localStorage.setItem('windi-theme', isLight ? 'dark' : 'light'); } catch(e) {}
+}
+
+// Language Switcher
+function setLang(lang) {
+  document.body.setAttribute('data-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+  try { localStorage.setItem('windi-lang', lang); } catch(e) {}
+}
+
+// Sidebar Toggle (mobile)
+let sidebarOpen = false;
+function toggleSidebar() {
+  sidebarOpen = !sidebarOpen;
+  document.getElementById('sidebarLeft').classList.toggle('open', sidebarOpen);
+}
+
+// Close sidebar on link click (mobile)
+document.querySelectorAll('.sidebar-link').forEach(link => {
+  link.addEventListener('click', () => {
+    if (window.innerWidth <= 960) {
+      sidebarOpen = false;
+      document.getElementById('sidebarLeft').classList.remove('open');
+    }
+  });
+});
+
+// Init saved preferences
+(function init() {
+  try {
+    const theme = localStorage.getItem('windi-theme');
+    const lang = localStorage.getItem('windi-lang');
+    if (theme) document.body.setAttribute('data-theme', theme);
+    if (lang) setLang(lang);
+  } catch(e) {}
+})();
+</script>
 
 </body>
 </html>

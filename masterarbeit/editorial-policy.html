@@ -1,585 +1,838 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Editorial &amp; Media Format Policy &mdash; WINDI Publishing House</title>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --ink:        #1a1a2e;
-      --paper:      #fafaf8;
-      --header-bg:  #2c3e50;
-      --accent:     #c9a84c;
-      --accent-dark:#a07e2e;
-      --teal:       #1a7a6d;
-      --teal-light: #e8f5f2;
-      --caption:    #666;
-      --border:     #d4d0c8;
-      --blue-dark:  #0f3460;
-      --blue-mid:   #1a5276;
-      --slate:      #34495e;
-      --slate-light:#ecf0f1;
-    }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: 'Libre Baskerville', Georgia, serif;
-      font-size: 1.05rem;
-      line-height: 1.8;
-      color: var(--ink);
-      background: var(--paper);
-    }
-
-    /* === HEADER === */
-    .doc-header {
-      background: var(--header-bg);
-      color: #e0e0e0;
-      padding: 1.2rem 2rem;
-      font-family: 'Source Sans Pro', sans-serif;
-      font-size: 0.82rem;
-    }
-    .doc-header-inner {
-      max-width: 900px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 2rem;
-    }
-    .doc-series {
-      font-weight: 700;
-      color: var(--accent);
-      font-size: 0.95rem;
-      letter-spacing: 0.04em;
-    }
-    .doc-org { margin-top: 0.3rem; opacity: 0.8; }
-    .doc-header-right {
-      text-align: right;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
-      line-height: 1.6;
-      opacity: 0.85;
-    }
-
-    /* === TITLE BLOCK === */
-    .title-block {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 3rem 2rem 2rem;
-      border-bottom: 2px solid var(--border);
-    }
-    .section-label {
-      font-family: 'Source Sans Pro', sans-serif;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--slate);
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      margin-bottom: 0.6rem;
-    }
-    .title-block h1 {
-      font-family: 'Libre Baskerville', Georgia, serif;
-      font-size: 2rem;
-      font-weight: 700;
-      line-height: 1.3;
-      color: var(--header-bg);
-      margin-bottom: 0.5rem;
-    }
-    .subtitle {
-      font-family: 'Libre Baskerville', Georgia, serif;
-      font-size: 1.12rem;
-      font-style: italic;
-      color: var(--caption);
-      margin-bottom: 1.5rem;
-      line-height: 1.5;
-    }
-    .title-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem 2rem;
-      font-family: 'Source Sans Pro', sans-serif;
-      font-size: 0.88rem;
-    }
-    .meta-pair { display: flex; gap: 0.4rem; }
-    .meta-pair dt { font-weight: 600; color: var(--blue-mid); }
-    .meta-pair dd { color: var(--ink); }
-
-    /* === CONTENT === */
-    .content {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 2.5rem 2rem 4rem;
-    }
-
-    .content h2 {
-      font-family: 'Source Sans Pro', sans-serif;
-      font-size: 1.3rem;
-      font-weight: 700;
-      color: var(--header-bg);
-      margin: 2.5rem 0 1rem;
-      padding-bottom: 0.4rem;
-      border-bottom: 1px solid var(--border);
-    }
-    .content h3 {
-      font-family: 'Source Sans Pro', sans-serif;
-      font-size: 1.05rem;
-      font-weight: 600;
-      color: var(--blue-mid);
-      margin: 1.8rem 0 0.8rem;
-    }
-    .content p {
-      margin-bottom: 1.2rem;
-      text-align: justify;
-      hyphens: auto;
-    }
-
-    /* Preamble */
-    .preamble {
-      background: var(--slate-light);
-      border-left: 4px solid var(--header-bg);
-      padding: 1.5rem 1.8rem;
-      margin-bottom: 2.5rem;
-      font-size: 0.97rem;
-      line-height: 1.75;
-    }
-    .preamble strong {
-      display: block;
-      font-family: 'Source Sans Pro', sans-serif;
-      font-size: 0.88rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--header-bg);
-      margin-bottom: 0.8rem;
-    }
-
-    /* Policy articles */
-    .article-block {
-      background: #fff;
-      border: 1px solid var(--border);
-      border-left: 4px solid var(--header-bg);
-      padding: 1.4rem 1.6rem;
-      margin: 1.2rem 0;
-      border-radius: 0 4px 4px 0;
-    }
-    .article-block h4 {
-      font-family: 'Source Sans Pro', sans-serif;
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--header-bg);
-      margin-bottom: 0.6rem;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-    .article-block p {
-      font-size: 0.95rem;
-      margin-bottom: 0.6rem;
-      text-align: left;
-    }
-
-    /* Principle box */
-    .principle-box {
-      background: linear-gradient(135deg, var(--header-bg), var(--slate));
-      color: #fff;
-      padding: 1.8rem 2rem;
-      border-radius: 4px;
-      margin: 2rem 0;
-      text-align: center;
-    }
-    .principle-text {
-      font-family: 'Libre Baskerville', Georgia, serif;
-      font-size: 1.1rem;
-      font-style: italic;
-      line-height: 1.6;
-    }
-    .principle-source {
-      font-family: 'Source Sans Pro', sans-serif;
-      font-size: 0.8rem;
-      margin-top: 0.8rem;
-      opacity: 0.7;
-    }
-
-    /* Format table */
-    .format-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1.5rem 0;
-      font-family: 'Source Sans Pro', sans-serif;
-      font-size: 0.9rem;
-    }
-    .format-table th {
-      background: var(--header-bg);
-      color: #fff;
-      padding: 0.7rem 1rem;
-      text-align: left;
-      font-weight: 600;
-      font-size: 0.82rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-    .format-table td {
-      padding: 0.7rem 1rem;
-      border-bottom: 1px solid var(--border);
-      vertical-align: top;
-    }
-    .format-table tr:nth-child(even) td { background: #f5f5f0; }
-
-    /* Governance mapping */
-    .gov-mapping {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      margin: 1.5rem 0;
-    }
-    .gov-card {
-      background: #fff;
-      border: 1px solid var(--border);
-      padding: 1rem 1.2rem;
-      border-radius: 4px;
-    }
-    .gov-card .gov-invariant {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: var(--teal);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-    .gov-card .gov-label {
-      font-family: 'Source Sans Pro', sans-serif;
-      font-size: 0.92rem;
-      font-weight: 600;
-      color: var(--ink);
-      margin: 0.3rem 0;
-    }
-    .gov-card .gov-desc {
-      font-size: 0.85rem;
-      color: var(--caption);
-      line-height: 1.5;
-    }
-
-    /* Cross-refs */
-    .tr-crossref {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 1rem;
-      margin: 1.5rem 0;
-    }
-    .tr-link {
-      display: block;
-      padding: 1rem 1.2rem;
-      background: linear-gradient(135deg, var(--header-bg), var(--slate));
-      color: #fff;
-      text-decoration: none;
-      border-radius: 4px;
-      font-family: 'Source Sans Pro', sans-serif;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .tr-link:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-    .tr-link .tr-id {
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: var(--accent);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-    }
-    .tr-link .tr-title {
-      font-size: 0.95rem;
-      font-weight: 600;
-      margin-top: 0.3rem;
-    }
-
-    /* Navigation */
-    .nav-links {
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 1rem;
-      margin-top: 3rem;
-      padding-top: 1.5rem;
-      border-top: 2px solid var(--border);
-      font-family: 'Source Sans Pro', sans-serif;
-      font-size: 0.95rem;
-    }
-    .nav-links a {
-      color: var(--header-bg);
-      text-decoration: none;
-      font-weight: 600;
-      padding: 0.5rem 0;
-      border-bottom: 2px solid transparent;
-      transition: border-color 0.2s;
-    }
-    .nav-links a:hover { border-bottom-color: var(--accent); }
-
-    /* Footer */
-    .doc-footer {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 1.5rem 2rem;
-      font-family: 'Source Sans Pro', sans-serif;
-      font-size: 0.8rem;
-      color: var(--caption);
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-    .doc-footer .footer-left { font-style: italic; }
-    .doc-footer .footer-right {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      text-align: right;
-    }
-
-    @media print {
-      .doc-header { background: white; color: var(--ink); border-bottom: 2px solid var(--ink); }
-      .principle-box { background: #eee; color: var(--ink); }
-      body { font-size: 11pt; }
-    }
-    @media (max-width: 700px) {
-      .doc-header-inner { flex-direction: column; }
-      .title-block h1 { font-size: 1.5rem; }
-      .gov-mapping { grid-template-columns: 1fr; }
-      .tr-crossref { grid-template-columns: 1fr; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Editorial & Media Format Policy — WINDI Publishing House</title>
+<meta name="description" content="Governing the use of journalistic and editorial formats in WINDI research communications">
+<link rel="stylesheet" href="windi-internal.css">
+<style>
+  /* Policy-specific styles */
+  .preamble-box {
+    background: var(--gold-glow);
+    border-left: 3px solid var(--gold);
+    padding: 24px;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    margin: 24px 0;
+  }
+  .preamble-box strong {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+  .preamble-box p {
+    color: var(--text-primary);
+    font-size: 15px;
+    margin-bottom: 0;
+    line-height: 1.7;
+  }
+  .principle-box {
+    background: linear-gradient(135deg, var(--surface-2), var(--surface-3));
+    border: 1px solid var(--border-gold);
+    padding: 32px;
+    border-radius: var(--radius-md);
+    margin: 32px 0;
+    text-align: center;
+  }
+  .principle-text {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 600;
+    font-style: italic;
+    line-height: 1.6;
+    color: var(--text-primary);
+  }
+  .principle-source {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    margin-top: 16px;
+    color: var(--text-tertiary);
+    letter-spacing: 1px;
+  }
+  .article-block {
+    background: var(--surface-1);
+    border: 1px solid var(--border-subtle);
+    border-left: 3px solid var(--gold);
+    padding: 20px 24px;
+    margin: 16px 0;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  }
+  .article-block h4 {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gold);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .article-block p {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+  .article-block p:last-child {
+    margin-bottom: 0;
+  }
+  .article-block.prohibited {
+    border-left-color: var(--signal-core);
+  }
+  .article-block.prohibited h4 {
+    color: var(--signal-core);
+  }
+  .format-table {
+    width: 100%;
+    margin: 24px 0;
+    font-size: 14px;
+  }
+  .format-table th {
+    text-align: left;
+  }
+  .format-table .status-permitted {
+    color: var(--signal-safe);
+    font-weight: 600;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .format-table .status-prohibited {
+    color: var(--signal-core);
+    font-weight: 600;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .gov-mapping {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin: 24px 0;
+  }
+  .gov-card {
+    background: var(--surface-1);
+    border: 1px solid var(--border-subtle);
+    padding: 20px;
+    border-radius: var(--radius-sm);
+  }
+  .gov-card .gov-invariant {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--signal-gov);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .gov-card .gov-invariant a {
+    color: inherit;
+  }
+  .gov-card .gov-label {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 8px 0;
+  }
+  .gov-card .gov-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 0;
+  }
+  .notice-box {
+    background: var(--signal-gov-dim);
+    border-left: 3px solid var(--signal-gov);
+    padding: 20px 24px;
+    margin: 24px 0;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  }
+  .notice-box .notice-header {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--signal-gov);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .notice-box p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 0;
+    line-height: 1.6;
+  }
+  .tr-crossref {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 16px;
+    margin: 24px 0;
+  }
+  .tr-link {
+    display: block;
+    padding: 16px 20px;
+    background: var(--surface-2);
+    border: 1px solid var(--border-subtle);
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+    transition: all 0.2s;
+  }
+  .tr-link:hover {
+    border-color: var(--gold-line);
+    background: var(--gold-glow);
+    transform: translateY(-2px);
+  }
+  .tr-link .tr-id {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .tr-link .tr-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-top: 4px;
+  }
+  .meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px 24px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    margin: 16px 0;
+  }
+  .meta-item {
+    display: flex;
+    gap: 8px;
+  }
+  .meta-item dt {
+    color: var(--text-tertiary);
+  }
+  .meta-item dd {
+    color: var(--text-secondary);
+  }
+  .meta-item dd a {
+    color: var(--gold);
+  }
+</style>
 </head>
-<body>
+<body data-theme="dark" data-lang="de">
 
-  <!-- HEADER -->
-  <header class="doc-header">
-    <div class="doc-header-inner">
-      <div class="doc-header-left">
-        <div class="doc-series">WINDI Policy Document &middot; POL-001</div>
-        <div class="doc-org">WINDI Publishing House &middot; Kempten (Allg&auml;u), Bavaria, Germany</div>
-      </div>
-      <div class="doc-header-right">
-        Document ID: POL-WINDI-2026-001<br>
-        Version 1.1<br>
-        02 February 2026<br>
-        Classification: PUBLIC
-      </div>
+<!-- Header -->
+<header class="site-header">
+  <a href="index.html" class="header-brand">
+    <div class="header-logo">W</div>
+    <div class="header-title-group">
+      <span class="header-title">WINDI</span>
+      <span class="header-subtitle">Governance Intelligence</span>
     </div>
-  </header>
-
-  <!-- TITLE BLOCK -->
-  <div class="title-block">
-    <div class="section-label">POL-001 &mdash; Institutional Communication Governance</div>
-    <h1>Editorial &amp; Media Format Policy</h1>
-    <div class="subtitle">Governing the use of journalistic and editorial formats in WINDI research communications</div>
-    <div class="title-meta">
-      <div class="meta-pair"><dt>Author:</dt><dd>Jober M&ouml;gele Correa, Chief Governance Officer</dd></div>
-      <div class="meta-pair"><dt>Date:</dt><dd>02 February 2026</dd></div>
-      <div class="meta-pair"><dt>Status:</dt><dd>Active &mdash; Effective Immediately</dd></div>
-    </div>
-    <div class="title-meta" style="margin-top: 0.5rem;">
-      <div class="meta-pair"><dt>Scope:</dt><dd>All WINDI publications, research communications, and demonstration documents</dd></div>
-      <div class="meta-pair"><dt>Governance:</dt><dd><a href="governance-levels.html" style="color: inherit; text-decoration: underline dotted;">WINDI Invariants</a> I1 (Sovereignty), I2 (Non-Opacity), I4 (Jurisdiction)</dd></div>
+  </a>
+  <div class="header-center">
+    <div class="header-status">
+      <span class="status-dot"></span>
+      <span>Operational</span>
     </div>
   </div>
+  <div class="header-right">
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('de')">DE</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('pt')">PT</button>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+      <div class="theme-toggle-track"></div>
+      <div class="theme-toggle-thumb" id="themeThumb"></div>
+    </button>
+    <button class="mobile-toggle" onclick="toggleSidebar()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
 
-  <div class="content">
+<!-- Sidebar Navigation -->
+<nav class="sidebar sidebar-left" id="sidebarLeft">
+  <div class="sidebar-section">
+    <div class="sidebar-label">Masterarbeit</div>
+    <a href="index.html" class="sidebar-link">Main Document</a>
+    <a href="cover.html" class="sidebar-link">Cover</a>
+    <a href="about-windi.html" class="sidebar-link">About WINDI</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Governance</div>
+    <a href="governance-levels.html" class="sidebar-link">Governance Levels</a>
+    <a href="human-oversight.html" class="sidebar-link">Human Oversight</a>
+    <a href="data-handling.html" class="sidebar-link">Data Handling</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Architecture</div>
+    <a href="diagrams.html" class="sidebar-link">Diagrams</a>
+    <a href="interface-guide.html" class="sidebar-link">Interface Guide</a>
+    <a href="verification-layer.html" class="sidebar-link">Verification Layer</a>
+    <a href="kapitel12_domain_sovereignty.html" class="sidebar-link">Domain Sovereignty</a>
+    <a href="identity-governance-layer.html" class="sidebar-link">Identity Governance</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Technical Reports</div>
+    <a href="tr-windi-2026-003.html" class="sidebar-link">TR-003: Service Layer</a>
+    <a href="tr-windi-2026-004.html" class="sidebar-link">TR-004: Cognitive Service</a>
+    <a href="tr-windi-2026-005.html" class="sidebar-link">TR-005: Cognitive Cycle</a>
+    <a href="isp-evolution.html" class="sidebar-link">TR-006: ISP Registry</a>
+    <a href="tr-007.html" class="sidebar-link">TR-007: Provenance</a>
+    <a href="sge-results.html" class="sidebar-link">SGE Results</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Publications</div>
+    <a href="publications.html" class="sidebar-link">Publications</a>
+    <a href="fachartikel-provenienz.html" class="sidebar-link">Fachartikel</a>
+    <a href="windi-publishing-house.html" class="sidebar-link">Manifesto</a>
+    <a href="editorial-policy.html" class="sidebar-link sidebar-link-active">Editorial Policy</a>
+    <a href="idpf-abstract.html" class="sidebar-link">IDPF Abstract</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Media</div>
+    <a href="windi-working-paper-2026.html" class="sidebar-link">Working Paper</a>
+    <a href="press-release-windi-2026.html" class="sidebar-link">Press Release</a>
+    <a href="windi-side-by-side-2026.html" class="sidebar-link">Side-by-Side</a>
+    <a href="wsj-style-governed-windi-2026.html" class="sidebar-link">WSJ Feature</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Compliance</div>
+    <a href="document-integrity.html" class="sidebar-link">Doc Integrity</a>
+    <a href="print-watermark-layer.html" class="sidebar-link">Print Layer</a>
+    <a href="regulatory-summary-print-layer.html" class="sidebar-link">Regulatory</a>
+    <a href="availability-implementation.html" class="sidebar-link">Appendix A</a>
+  </div>
+</nav>
 
-    <!-- PREAMBLE -->
-    <div class="preamble">
-      <strong>Policy Statement</strong>
-      The WINDI project occasionally employs journalistic and editorial communication formats to present research findings, system capabilities, and governance concepts in accessible, professionally structured language. This policy governs the conditions under which such formats are used, ensuring that institutional independence, authorship transparency, and editorial integrity are maintained at all times.
+<!-- Right Sidebar TOC -->
+<aside class="sidebar sidebar-right" id="sidebarRight">
+  <div class="sidebar-label">
+    <span class="l-de">Auf dieser Seite</span>
+    <span class="l-en">On this page</span>
+    <span class="l-pt">Nesta pagina</span>
+  </div>
+  <a href="#purpose" class="toc-link">
+    <span class="l-de">Zweck und Begrundung</span>
+    <span class="l-en">Purpose and Rationale</span>
+    <span class="l-pt">Proposito e Justificativa</span>
+  </a>
+  <a href="#principles" class="toc-link">
+    <span class="l-de">Grundprinzipien</span>
+    <span class="l-en">Core Principles</span>
+    <span class="l-pt">Principios Fundamentais</span>
+  </a>
+  <a href="#permitted" class="toc-link">
+    <span class="l-de">Erlaubte Verwendungen</span>
+    <span class="l-en">Permitted Uses</span>
+    <span class="l-pt">Usos Permitidos</span>
+  </a>
+  <a href="#transparency" class="toc-link">
+    <span class="l-de">Transparenzhinweis</span>
+    <span class="l-en">Transparency Notice</span>
+    <span class="l-pt">Aviso de Transparencia</span>
+  </a>
+  <a href="#governance" class="toc-link">
+    <span class="l-de">Governance-Ausrichtung</span>
+    <span class="l-en">Governance Alignment</span>
+    <span class="l-pt">Alinhamento de Governanca</span>
+  </a>
+  <a href="#history" class="toc-link">
+    <span class="l-de">Implementierungsgeschichte</span>
+    <span class="l-en">Implementation History</span>
+    <span class="l-pt">Historico de Implementacao</span>
+  </a>
+  <a href="#applicability" class="toc-link">
+    <span class="l-de">Anwendbarkeit</span>
+    <span class="l-en">Applicability</span>
+    <span class="l-pt">Aplicabilidade</span>
+  </a>
+</aside>
+
+<!-- Main Content -->
+<main class="main-content">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-breadcrumb">
+      <a href="index.html">WINDI</a>
+      <span class="breadcrumb-sep">/</span>
+      <span class="breadcrumb-current">
+        <span class="l-de">Redaktionsrichtlinie</span>
+        <span class="l-en">Editorial Policy</span>
+        <span class="l-pt">Politica Editorial</span>
+      </span>
+    </div>
+    <div class="page-meta-bar">
+      <span class="page-tag page-tag-gov">POL-001</span>
+      <span class="page-date">2026-02-02</span>
+    </div>
+    <h1 class="page-title">
+      <span class="l-de">Redaktions- und Medienformat-Richtlinie</span>
+      <span class="l-en">Editorial & Media Format Policy</span>
+      <span class="l-pt">Politica Editorial e de Formato de Midia</span>
+    </h1>
+    <p class="page-subtitle">
+      <span class="l-de">Regelung der Verwendung von journalistischen und redaktionellen Formaten in der WINDI-Forschungskommunikation</span>
+      <span class="l-en">Governing the use of journalistic and editorial formats in WINDI research communications</span>
+      <span class="l-pt">Regendo o uso de formatos jornalisticos e editoriais nas comunicacoes de pesquisa do WINDI</span>
+    </p>
+    <div class="page-divider"></div>
+  </div>
+
+  <!-- Content -->
+  <div class="content-prose">
+
+    <!-- Metadata -->
+    <div class="meta-grid">
+      <div class="meta-item"><dt>Author:</dt><dd>Jober Mogele Correa, Chief Governance Officer</dd></div>
+      <div class="meta-item"><dt>Date:</dt><dd>02 February 2026</dd></div>
+      <div class="meta-item"><dt>Version:</dt><dd>1.1</dd></div>
+      <div class="meta-item"><dt>Status:</dt><dd>Active — Effective Immediately</dd></div>
+      <div class="meta-item"><dt>Scope:</dt><dd>All WINDI publications</dd></div>
+      <div class="meta-item"><dt>Governance:</dt><dd><a href="governance-levels.html">I1, I2, I4</a></dd></div>
+      <div class="meta-item"><dt>Document ID:</dt><dd>POL-WINDI-2026-001</dd></div>
+      <div class="meta-item"><dt>Classification:</dt><dd>PUBLIC</dd></div>
     </div>
 
-    <!-- SECTION 1 -->
-    <h2>1. Purpose and Rationale</h2>
+    <!-- Preamble -->
+    <div class="preamble-box">
+      <strong>
+        <span class="l-de">Grundsatzerklarung</span>
+        <span class="l-en">Policy Statement</span>
+        <span class="l-pt">Declaracao de Politica</span>
+      </strong>
+      <p>
+        <span class="lb-de">Das WINDI-Projekt verwendet gelegentlich journalistische und redaktionelle Kommunikationsformate, um Forschungsergebnisse, Systemfahigkeiten und Governance-Konzepte in zuganglicher, professionell strukturierter Sprache zu prasentieren. Diese Richtlinie regelt die Bedingungen, unter denen solche Formate verwendet werden, und stellt sicher, dass institutionelle Unabhangigkeit, Transparenz der Urheberschaft und redaktionelle Integritat jederzeit gewahrt bleiben.</span>
+        <span class="lb-en">The WINDI project occasionally employs journalistic and editorial communication formats to present research findings, system capabilities, and governance concepts in accessible, professionally structured language. This policy governs the conditions under which such formats are used, ensuring that institutional independence, authorship transparency, and editorial integrity are maintained at all times.</span>
+        <span class="lb-pt">O projeto WINDI ocasionalmente emprega formatos de comunicacao jornalistica e editorial para apresentar descobertas de pesquisa, capacidades do sistema e conceitos de governanca em linguagem acessivel e profissionalmente estruturada. Esta politica rege as condicoes sob as quais tais formatos sao usados, garantindo que a independencia institucional, transparencia de autoria e integridade editorial sejam mantidas em todos os momentos.</span>
+      </p>
+    </div>
 
-    <p>Research communication often benefits from established narrative structures. Journalistic editorial formats &mdash; with their clear headline hierarchies, contextual framing, and structured argumentation &mdash; provide an effective vehicle for conveying complex governance concepts to diverse audiences: regulators, academic reviewers, institutional partners, and the informed public.</p>
+    <!-- Section 1: Purpose and Rationale -->
+    <h2 id="purpose">
+      <span class="l-de">1. Zweck und Begrundung</span>
+      <span class="l-en">1. Purpose and Rationale</span>
+      <span class="l-pt">1. Proposito e Justificativa</span>
+    </h2>
 
-    <p>However, the use of such formats carries an inherent risk: <em>the appearance of institutional affiliation where none exists.</em> A document formatted in the style of a major publication may inadvertently suggest endorsement, authorship, or partnership with that publication.</p>
+    <p>
+      <span class="lb-de">Forschungskommunikation profitiert oft von etablierten Erzahlstrukturen. Journalistische Redaktionsformate — mit ihren klaren Uberschriftenhierarchien, kontextuellen Rahmungen und strukturierter Argumentation — bieten ein effektives Mittel zur Vermittlung komplexer Governance-Konzepte an unterschiedliche Zielgruppen: Regulierungsbehorden, akademische Gutachter, institutionelle Partner und die informierte Offentlichkeit.</span>
+      <span class="lb-en">Research communication often benefits from established narrative structures. Journalistic editorial formats — with their clear headline hierarchies, contextual framing, and structured argumentation — provide an effective vehicle for conveying complex governance concepts to diverse audiences: regulators, academic reviewers, institutional partners, and the informed public.</span>
+      <span class="lb-pt">A comunicacao de pesquisa frequentemente se beneficia de estruturas narrativas estabelecidas. Formatos editoriais jornalisticos — com suas hierarquias de titulos claras, enquadramento contextual e argumentacao estruturada — fornecem um veiculo eficaz para transmitir conceitos complexos de governanca a diversos publicos: reguladores, revisores academicos, parceiros institucionais e o publico informado.</span>
+    </p>
 
-    <p>This policy addresses that risk directly, transforming it from a potential vulnerability into a demonstrable strength: governed communication as an extension of the WINDI governance architecture.</p>
+    <p>
+      <span class="lb-de">Die Verwendung solcher Formate birgt jedoch ein inharentes Risiko: <em>den Anschein einer institutionellen Zugehorigkeit, wo keine besteht.</em> Ein Dokument, das im Stil einer grossen Publikation formatiert ist, kann unbeabsichtigt eine Bestatigung, Urheberschaft oder Partnerschaft mit dieser Publikation suggerieren.</span>
+      <span class="lb-en">However, the use of such formats carries an inherent risk: <em>the appearance of institutional affiliation where none exists.</em> A document formatted in the style of a major publication may inadvertently suggest endorsement, authorship, or partnership with that publication.</span>
+      <span class="lb-pt">No entanto, o uso de tais formatos carrega um risco inerente: <em>a aparencia de afiliacao institucional onde nao existe nenhuma.</em> Um documento formatado no estilo de uma publicacao importante pode inadvertidamente sugerir endosso, autoria ou parceria com essa publicacao.</span>
+    </p>
 
-    <!-- SECTION 2 -->
-    <h2>2. Core Principles</h2>
+    <p>
+      <span class="lb-de">Diese Richtlinie adressiert dieses Risiko direkt und verwandelt es von einer potenziellen Schwachstelle in eine nachweisbare Starke: gesteuerte Kommunikation als Erweiterung der WINDI-Governance-Architektur.</span>
+      <span class="lb-en">This policy addresses that risk directly, transforming it from a potential vulnerability into a demonstrable strength: governed communication as an extension of the WINDI governance architecture.</span>
+      <span class="lb-pt">Esta politica aborda esse risco diretamente, transformando-o de uma vulnerabilidade potencial em uma forca demonstravel: comunicacao governada como uma extensao da arquitetura de governanca do WINDI.</span>
+    </p>
+
+    <!-- Section 2: Core Principles -->
+    <h2 id="principles">
+      <span class="l-de">2. Grundprinzipien</span>
+      <span class="l-en">2. Core Principles</span>
+      <span class="l-pt">2. Principios Fundamentais</span>
+    </h2>
 
     <div class="principle-box">
-      <div class="principle-text">WINDI does not borrow institutional authority.<br>WINDI creates its own authority through transparency, governance, and provenance.</div>
-      <div class="principle-source">WINDI Editorial Policy &mdash; Foundational Principle</div>
+      <div class="principle-text">
+        <span class="l-de">WINDI leiht sich keine institutionelle Autoritat.<br>WINDI schafft seine eigene Autoritat durch Transparenz, Governance und Provenienz.</span>
+        <span class="l-en">WINDI does not borrow institutional authority.<br>WINDI creates its own authority through transparency, governance, and provenance.</span>
+        <span class="l-pt">WINDI nao empresta autoridade institucional.<br>WINDI cria sua propria autoridade atraves de transparencia, governanca e proveniencia.</span>
+      </div>
+      <div class="principle-source">WINDI Editorial Policy — Foundational Principle</div>
     </div>
 
     <div class="article-block">
-      <h4>Principle 1: Format Independence</h4>
-      <p>The use of a journalistic or editorial format does not imply affiliation with any media organization. Format is a communication tool; it is not a claim of origin.</p>
+      <h4>
+        <span class="l-de">Prinzip 1: Formatunabhangigkeit</span>
+        <span class="l-en">Principle 1: Format Independence</span>
+        <span class="l-pt">Principio 1: Independencia de Formato</span>
+      </h4>
+      <p>
+        <span class="lb-de">Die Verwendung eines journalistischen oder redaktionellen Formats impliziert keine Zugehorigkeit zu einer Medienorganisation. Format ist ein Kommunikationswerkzeug; es ist kein Herkunftsanspruch.</span>
+        <span class="lb-en">The use of a journalistic or editorial format does not imply affiliation with any media organization. Format is a communication tool; it is not a claim of origin.</span>
+        <span class="lb-pt">O uso de um formato jornalistico ou editorial nao implica afiliacao com qualquer organizacao de midia. Formato e uma ferramenta de comunicacao; nao e uma reivindicacao de origem.</span>
+      </p>
     </div>
 
     <div class="article-block">
-      <h4>Principle 2: Mandatory Transparency</h4>
-      <p>Every WINDI document that employs a media-style format must include an <em>Editorial Transparency Notice</em> that explicitly identifies WINDI as the independent author and disclaims any affiliation with external media organizations.</p>
+      <h4>
+        <span class="l-de">Prinzip 2: Verpflichtende Transparenz</span>
+        <span class="l-en">Principle 2: Mandatory Transparency</span>
+        <span class="l-pt">Principio 2: Transparencia Obrigatoria</span>
+      </h4>
+      <p>
+        <span class="lb-de">Jedes WINDI-Dokument, das ein Medienformat verwendet, muss einen <em>Redaktionellen Transparenzhinweis</em> enthalten, der WINDI ausdrucklich als unabhangigen Autor identifiziert und jede Zugehorigkeit zu externen Medienorganisationen ausschliesst.</span>
+        <span class="lb-en">Every WINDI document that employs a media-style format must include an <em>Editorial Transparency Notice</em> that explicitly identifies WINDI as the independent author and disclaims any affiliation with external media organizations.</span>
+        <span class="lb-pt">Todo documento WINDI que emprega um formato de estilo de midia deve incluir um <em>Aviso de Transparencia Editorial</em> que identifica explicitamente o WINDI como o autor independente e nega qualquer afiliacao com organizacoes de midia externas.</span>
+      </p>
     </div>
 
     <div class="article-block">
-      <h4>Principle 3: Provenance over Appearance</h4>
-      <p>Consistent with the WINDI Institutional Document Provenance Framework (IDPF), the credibility of a document derives from its verifiable origin, not from its visual or stylistic resemblance to established publications.</p>
+      <h4>
+        <span class="l-de">Prinzip 3: Provenienz vor Erscheinungsbild</span>
+        <span class="l-en">Principle 3: Provenance over Appearance</span>
+        <span class="l-pt">Principio 3: Proveniencia sobre Aparencia</span>
+      </h4>
+      <p>
+        <span class="lb-de">Im Einklang mit dem WINDI Institutional Document Provenance Framework (IDPF) leitet sich die Glaubwurdigkeit eines Dokuments von seinem verifizierbaren Ursprung ab, nicht von seiner visuellen oder stilistischen Ahnlichkeit mit etablierten Publikationen.</span>
+        <span class="lb-en">Consistent with the WINDI Institutional Document Provenance Framework (IDPF), the credibility of a document derives from its verifiable origin, not from its visual or stylistic resemblance to established publications.</span>
+        <span class="lb-pt">Consistente com o WINDI Institutional Document Provenance Framework (IDPF), a credibilidade de um documento deriva de sua origem verificavel, nao de sua semelhanca visual ou estilistica com publicacoes estabelecidas.</span>
+      </p>
     </div>
 
     <div class="article-block">
-      <h4>Principle 4: No Institutional Identity Simulation</h4>
-      <p>WINDI documents must not use the names, logos, mastheads, or distinctive typographic identities of external media organizations in a manner that could reasonably be interpreted as claiming authorship or endorsement by those organizations.</p>
+      <h4>
+        <span class="l-de">Prinzip 4: Keine Simulation institutioneller Identitat</span>
+        <span class="l-en">Principle 4: No Institutional Identity Simulation</span>
+        <span class="l-pt">Principio 4: Sem Simulacao de Identidade Institucional</span>
+      </h4>
+      <p>
+        <span class="lb-de">WINDI-Dokumente durfen nicht die Namen, Logos, Kopfleisten oder charakteristischen typografischen Identitaten externer Medienorganisationen in einer Weise verwenden, die vernunftigerweise als Anspruch auf Urheberschaft oder Bestatigung durch diese Organisationen interpretiert werden konnte.</span>
+        <span class="lb-en">WINDI documents must not use the names, logos, mastheads, or distinctive typographic identities of external media organizations in a manner that could reasonably be interpreted as claiming authorship or endorsement by those organizations.</span>
+        <span class="lb-pt">Documentos WINDI nao devem usar os nomes, logotipos, cabecalhos ou identidades tipograficas distintivas de organizacoes de midia externas de uma maneira que possa razoavelmente ser interpretada como reivindicando autoria ou endosso por essas organizacoes.</span>
+      </p>
     </div>
 
-    <!-- SECTION 3 -->
-    <h2>3. Permitted and Prohibited Uses</h2>
+    <!-- Section 3: Permitted and Prohibited Uses -->
+    <h2 id="permitted">
+      <span class="l-de">3. Erlaubte und verbotene Verwendungen</span>
+      <span class="l-en">3. Permitted and Prohibited Uses</span>
+      <span class="l-pt">3. Usos Permitidos e Proibidos</span>
+    </h2>
 
-    <table class="format-table">
-      <thead>
-        <tr>
-          <th>Use</th>
-          <th>Status</th>
-          <th>Conditions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Journalistic editorial structure (headline, lead, body, quotes)</td>
-          <td style="color: var(--teal); font-weight: 600;">Permitted</td>
-          <td>Must include Editorial Transparency Notice</td>
-        </tr>
-        <tr>
-          <td>Trade press format for research communication</td>
-          <td style="color: var(--teal); font-weight: 600;">Permitted</td>
-          <td>Labeled as &ldquo;Editorial-Style Communication&rdquo;</td>
-        </tr>
-        <tr>
-          <td>Academic press release format</td>
-          <td style="color: var(--teal); font-weight: 600;">Permitted</td>
-          <td>Source clearly identified as WINDI Publishing House</td>
-        </tr>
-        <tr>
-          <td>Use of real media organization names in headers</td>
-          <td style="color: #c0392b; font-weight: 600;">Prohibited</td>
-          <td>Creates misleading impression of affiliation</td>
-        </tr>
-        <tr>
-          <td>Reproduction of external mastheads or logos</td>
-          <td style="color: #c0392b; font-weight: 600;">Prohibited</td>
-          <td>Violates WINDI Invariant I1 (Sovereignty)</td>
-        </tr>
-        <tr>
-          <td>Implicit suggestion of external endorsement</td>
-          <td style="color: #c0392b; font-weight: 600;">Prohibited</td>
-          <td>Violates WINDI Invariant I2 (Non-Opacity)</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <div class="article-block" style="border-left-color: #c0392b; margin-top: 1.5rem;">
-      <h4 style="color: #c0392b;">Absolute Prohibition: No Impersonation</h4>
-      <p>Under no circumstances may WINDI publications imply affiliation with, endorsement by, or authorship from existing media organizations, government agencies, financial institutions, or any other external entity. This prohibition applies regardless of format, context, or stated purpose.</p>
-      <p style="font-size: 0.9rem; color: #666;">This clause is non-negotiable and derives directly from WINDI Invariants I1 (Sovereignty) and I5 (No Fabrication). Violation constitutes a governance breach subject to immediate correction and documentation.</p>
+    <div class="spec-table-wrapper">
+      <table class="spec-table format-table">
+        <thead>
+          <tr>
+            <th>Use</th>
+            <th>Status</th>
+            <th>Conditions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Journalistic editorial structure (headline, lead, body, quotes)</td>
+            <td class="status-permitted">Permitted</td>
+            <td>Must include Editorial Transparency Notice</td>
+          </tr>
+          <tr>
+            <td>Trade press format for research communication</td>
+            <td class="status-permitted">Permitted</td>
+            <td>Labeled as "Editorial-Style Communication"</td>
+          </tr>
+          <tr>
+            <td>Academic press release format</td>
+            <td class="status-permitted">Permitted</td>
+            <td>Source clearly identified as WINDI Publishing House</td>
+          </tr>
+          <tr>
+            <td>Use of real media organization names in headers</td>
+            <td class="status-prohibited">Prohibited</td>
+            <td>Creates misleading impression of affiliation</td>
+          </tr>
+          <tr>
+            <td>Reproduction of external mastheads or logos</td>
+            <td class="status-prohibited">Prohibited</td>
+            <td>Violates WINDI Invariant I1 (Sovereignty)</td>
+          </tr>
+          <tr>
+            <td>Implicit suggestion of external endorsement</td>
+            <td class="status-prohibited">Prohibited</td>
+            <td>Violates WINDI Invariant I2 (Non-Opacity)</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
-    <!-- SECTION 4 -->
-    <h2>4. Editorial Transparency Notice Requirements</h2>
-
-    <p>All WINDI documents that use journalistic or editorial formats must include the following notice, positioned within the document body near the editorial content:</p>
-
-    <div style="background: #f0f4f8; border-left: 3px solid var(--blue-mid); padding: 1rem 1.4rem; margin: 1.5rem 0; border-radius: 0 4px 4px 0;">
-      <p style="font-size: 0.92rem; font-weight: 600; color: var(--blue-mid); margin-bottom: 0.4rem;">&#x2696; Editorial Transparency Notice</p>
-      <p style="font-size: 0.88rem; color: #444; line-height: 1.6; margin: 0;">This article was independently produced by the WINDI project using a journalistic editorial format for research communication purposes. It is not affiliated with, endorsed by, or published by <em>[name of referenced publication]</em> or any related media organization.</p>
+    <div class="article-block prohibited">
+      <h4>
+        <span class="l-de">Absolutes Verbot: Keine Nachahmung</span>
+        <span class="l-en">Absolute Prohibition: No Impersonation</span>
+        <span class="l-pt">Proibicao Absoluta: Sem Personificacao</span>
+      </h4>
+      <p>
+        <span class="lb-de">Unter keinen Umstanden durfen WINDI-Publikationen eine Zugehorigkeit zu, Bestatigung durch oder Urheberschaft von bestehenden Medienorganisationen, Regierungsbehorden, Finanzinstituten oder anderen externen Einrichtungen implizieren. Dieses Verbot gilt unabhangig von Format, Kontext oder erklartem Zweck.</span>
+        <span class="lb-en">Under no circumstances may WINDI publications imply affiliation with, endorsement by, or authorship from existing media organizations, government agencies, financial institutions, or any other external entity. This prohibition applies regardless of format, context, or stated purpose.</span>
+        <span class="lb-pt">Sob nenhuma circunstancia as publicacoes WINDI podem implicar afiliacao com, endosso por ou autoria de organizacoes de midia existentes, agencias governamentais, instituicoes financeiras ou qualquer outra entidade externa. Esta proibicao se aplica independentemente do formato, contexto ou proposito declarado.</span>
+      </p>
+      <p style="font-size: 12px; color: var(--text-tertiary);">
+        <span class="lb-de">Diese Klausel ist nicht verhandelbar und leitet sich direkt von den WINDI-Invarianten I1 (Souveranitat) und I5 (Kein Fabulieren) ab. Ein Verstoss stellt einen Governance-Bruch dar, der einer sofortigen Korrektur und Dokumentation unterliegt.</span>
+        <span class="lb-en">This clause is non-negotiable and derives directly from WINDI Invariants I1 (Sovereignty) and I5 (No Fabrication). Violation constitutes a governance breach subject to immediate correction and documentation.</span>
+        <span class="lb-pt">Esta clausula e inegociavel e deriva diretamente das Invariantes WINDI I1 (Soberania) e I5 (Sem Fabricacao). A violacao constitui uma violacao de governanca sujeita a correcao e documentacao imediatas.</span>
+      </p>
     </div>
 
-    <h3>4.1 Notice Specifications</h3>
+    <!-- Section 4: Editorial Transparency Notice Requirements -->
+    <h2 id="transparency">
+      <span class="l-de">4. Anforderungen an den Redaktionellen Transparenzhinweis</span>
+      <span class="l-en">4. Editorial Transparency Notice Requirements</span>
+      <span class="l-pt">4. Requisitos do Aviso de Transparencia Editorial</span>
+    </h2>
 
-    <p>The notice must be visually distinct from body text, rendered with a lateral border and contrasting background. It must identify WINDI as the sole author, name the editorial format being used, and explicitly disclaim affiliation with any external organization referenced in or implied by the format.</p>
+    <p>
+      <span class="lb-de">Alle WINDI-Dokumente, die journalistische oder redaktionelle Formate verwenden, mussen den folgenden Hinweis enthalten, der innerhalb des Dokumentenkorpers in der Nahe des redaktionellen Inhalts positioniert ist:</span>
+      <span class="lb-en">All WINDI documents that use journalistic or editorial formats must include the following notice, positioned within the document body near the editorial content:</span>
+      <span class="lb-pt">Todos os documentos WINDI que usam formatos jornalisticos ou editoriais devem incluir o seguinte aviso, posicionado dentro do corpo do documento proximo ao conteudo editorial:</span>
+    </p>
 
-    <h3>4.2 Placement</h3>
+    <div class="notice-box">
+      <div class="notice-header">Editorial Transparency Notice</div>
+      <p>This article was independently produced by the WINDI project using a journalistic editorial format for research communication purposes. It is not affiliated with, endorsed by, or published by <em>[name of referenced publication]</em> or any related media organization.</p>
+    </div>
 
-    <p>The notice must appear immediately following the editorial content header or within the first visible section of the document. It must not be relegated to a footnote, appendix, or metadata-only field.</p>
+    <h3>
+      <span class="l-de">4.1 Hinweisspezifikationen</span>
+      <span class="l-en">4.1 Notice Specifications</span>
+      <span class="l-pt">4.1 Especificacoes do Aviso</span>
+    </h3>
 
-    <!-- SECTION 5 -->
-    <h2>5. Governance Alignment</h2>
+    <p>
+      <span class="lb-de">Der Hinweis muss sich optisch vom Fliesstext abheben, mit einem seitlichen Rand und kontrastierendem Hintergrund dargestellt werden. Er muss WINDI als alleinigen Autor identifizieren, das verwendete redaktionelle Format benennen und ausdrucklich jede Zugehorigkeit zu einer externen Organisation, die im Format referenziert oder angedeutet wird, ausschliessen.</span>
+      <span class="lb-en">The notice must be visually distinct from body text, rendered with a lateral border and contrasting background. It must identify WINDI as the sole author, name the editorial format being used, and explicitly disclaim affiliation with any external organization referenced in or implied by the format.</span>
+      <span class="lb-pt">O aviso deve ser visualmente distinto do texto do corpo, renderizado com uma borda lateral e fundo contrastante. Deve identificar o WINDI como o unico autor, nomear o formato editorial sendo usado e explicitamente negar afiliacao com qualquer organizacao externa referenciada ou implicada pelo formato.</span>
+    </p>
 
-    <p>This policy is a direct application of the WINDI Invariant Core to the domain of research communication:</p>
+    <h3>
+      <span class="l-de">4.2 Platzierung</span>
+      <span class="l-en">4.2 Placement</span>
+      <span class="l-pt">4.2 Posicionamento</span>
+    </h3>
+
+    <p>
+      <span class="lb-de">Der Hinweis muss unmittelbar nach der Kopfzeile des redaktionellen Inhalts oder innerhalb des ersten sichtbaren Abschnitts des Dokuments erscheinen. Er darf nicht in eine Fussnote, einen Anhang oder ein reines Metadatenfeld verbannt werden.</span>
+      <span class="lb-en">The notice must appear immediately following the editorial content header or within the first visible section of the document. It must not be relegated to a footnote, appendix, or metadata-only field.</span>
+      <span class="lb-pt">O aviso deve aparecer imediatamente apos o cabecalho do conteudo editorial ou dentro da primeira secao visivel do documento. Nao deve ser relegado a uma nota de rodape, apendice ou campo apenas de metadados.</span>
+    </p>
+
+    <!-- Section 5: Governance Alignment -->
+    <h2 id="governance">
+      <span class="l-de">5. Governance-Ausrichtung</span>
+      <span class="l-en">5. Governance Alignment</span>
+      <span class="l-pt">5. Alinhamento de Governanca</span>
+    </h2>
+
+    <p>
+      <span class="lb-de">Diese Richtlinie ist eine direkte Anwendung des WINDI Invariant Core auf den Bereich der Forschungskommunikation:</span>
+      <span class="lb-en">This policy is a direct application of the WINDI Invariant Core to the domain of research communication:</span>
+      <span class="lb-pt">Esta politica e uma aplicacao direta do WINDI Invariant Core ao dominio da comunicacao de pesquisa:</span>
+    </p>
 
     <div class="gov-mapping">
       <div class="gov-card">
-        <div class="gov-invariant">I1 &mdash; <a href="governance-levels.html" style="color: inherit;">Sovereignty</a></div>
-        <div class="gov-label">Institutional Independence</div>
-        <div class="gov-desc">WINDI does not derive authority from external brands. Communication formats serve clarity, not borrowed prestige.</div>
+        <div class="gov-invariant">I1 — <a href="governance-levels.html">Sovereignty</a></div>
+        <div class="gov-label">
+          <span class="l-de">Institutionelle Unabhangigkeit</span>
+          <span class="l-en">Institutional Independence</span>
+          <span class="l-pt">Independencia Institucional</span>
+        </div>
+        <p class="gov-desc">
+          <span class="l-de">WINDI leitet keine Autoritat von externen Marken ab. Kommunikationsformate dienen der Klarheit, nicht geliehenem Prestige.</span>
+          <span class="l-en">WINDI does not derive authority from external brands. Communication formats serve clarity, not borrowed prestige.</span>
+          <span class="l-pt">WINDI nao deriva autoridade de marcas externas. Formatos de comunicacao servem a clareza, nao a prestigio emprestado.</span>
+        </p>
       </div>
       <div class="gov-card">
-        <div class="gov-invariant">I2 &mdash; <a href="governance-levels.html" style="color: inherit;">Non-Opacity</a></div>
-        <div class="gov-label">Full Transparency</div>
-        <div class="gov-desc">Every editorial format choice is disclosed. No reader should be uncertain about the authorship or origin of any WINDI document.</div>
+        <div class="gov-invariant">I2 — <a href="governance-levels.html">Non-Opacity</a></div>
+        <div class="gov-label">
+          <span class="l-de">Volle Transparenz</span>
+          <span class="l-en">Full Transparency</span>
+          <span class="l-pt">Transparencia Total</span>
+        </div>
+        <p class="gov-desc">
+          <span class="l-de">Jede redaktionelle Formatwahl wird offengelegt. Kein Leser sollte uber die Urheberschaft oder Herkunft eines WINDI-Dokuments im Unklaren sein.</span>
+          <span class="l-en">Every editorial format choice is disclosed. No reader should be uncertain about the authorship or origin of any WINDI document.</span>
+          <span class="l-pt">Cada escolha de formato editorial e divulgada. Nenhum leitor deve ter incerteza sobre a autoria ou origem de qualquer documento WINDI.</span>
+        </p>
       </div>
       <div class="gov-card">
-        <div class="gov-invariant">I3 &mdash; <a href="governance-levels.html" style="color: inherit;">Transparency</a></div>
-        <div class="gov-label">Visible Reasoning</div>
-        <div class="gov-desc">The rationale for using editorial formats is documented in this policy and available to any stakeholder.</div>
+        <div class="gov-invariant">I3 — <a href="governance-levels.html">Transparency</a></div>
+        <div class="gov-label">
+          <span class="l-de">Sichtbare Begrundung</span>
+          <span class="l-en">Visible Reasoning</span>
+          <span class="l-pt">Raciocinio Visivel</span>
+        </div>
+        <p class="gov-desc">
+          <span class="l-de">Die Begrundung fur die Verwendung redaktioneller Formate ist in dieser Richtlinie dokumentiert und fur alle Stakeholder verfugbar.</span>
+          <span class="l-en">The rationale for using editorial formats is documented in this policy and available to any stakeholder.</span>
+          <span class="l-pt">A justificativa para usar formatos editoriais esta documentada nesta politica e disponivel para qualquer parte interessada.</span>
+        </p>
       </div>
       <div class="gov-card">
-        <div class="gov-invariant">I5 &mdash; <a href="governance-levels.html" style="color: inherit;">No Fabrication</a></div>
-        <div class="gov-label">No False Attribution</div>
-        <div class="gov-desc">WINDI never fabricates quotes, endorsements, or affiliations. All editorial content is original or properly attributed.</div>
+        <div class="gov-invariant">I5 — <a href="governance-levels.html">No Fabrication</a></div>
+        <div class="gov-label">
+          <span class="l-de">Keine falsche Zuschreibung</span>
+          <span class="l-en">No False Attribution</span>
+          <span class="l-pt">Sem Atribuicao Falsa</span>
+        </div>
+        <p class="gov-desc">
+          <span class="l-de">WINDI erfindet niemals Zitate, Bestatigungen oder Zugehorigkeiten. Alle redaktionellen Inhalte sind original oder ordnungsgemaess zugeordnet.</span>
+          <span class="l-en">WINDI never fabricates quotes, endorsements, or affiliations. All editorial content is original or properly attributed.</span>
+          <span class="l-pt">WINDI nunca fabrica citacoes, endossos ou afiliacoes. Todo o conteudo editorial e original ou devidamente atribuido.</span>
+        </p>
       </div>
     </div>
 
-    <!-- SECTION 6 -->
-    <h2>6. Implementation History</h2>
+    <!-- Section 6: Implementation History -->
+    <h2 id="history">
+      <span class="l-de">6. Implementierungsgeschichte</span>
+      <span class="l-en">6. Implementation History</span>
+      <span class="l-pt">6. Historico de Implementacao</span>
+    </h2>
 
-    <p>This policy was formalized following a governance review on 02 February 2026, during which the WINDI team identified that a research communication document using a journalistic editorial format contained references that could be interpreted as implying affiliation with an external media organization.</p>
+    <p>
+      <span class="lb-de">Diese Richtlinie wurde nach einer Governance-Uberprufung am 02. Februar 2026 formalisiert, bei der das WINDI-Team feststellte, dass ein Forschungskommunikationsdokument, das ein journalistisches Redaktionsformat verwendete, Verweise enthielt, die als Andeutung einer Zugehorigkeit zu einer externen Medienorganisation interpretiert werden konnten.</span>
+      <span class="lb-en">This policy was formalized following a governance review on 02 February 2026, during which the WINDI team identified that a research communication document using a journalistic editorial format contained references that could be interpreted as implying affiliation with an external media organization.</span>
+      <span class="lb-pt">Esta politica foi formalizada apos uma revisao de governanca em 02 de fevereiro de 2026, durante a qual a equipe WINDI identificou que um documento de comunicacao de pesquisa usando um formato editorial jornalistico continha referencias que poderiam ser interpretadas como implicando afiliacao com uma organizacao de midia externa.</span>
+    </p>
 
-    <p>The review process itself demonstrated the WINDI governance model in action: the system&rsquo;s Identity Governance Layer detected the institutional identity concern, the team applied the appropriate corrective measures, and this policy was created to prevent recurrence and establish a permanent governance framework for editorial communication.</p>
+    <p>
+      <span class="lb-de">Der Uberprufungsprozess selbst demonstrierte das WINDI-Governance-Modell in Aktion: Die Identity Governance Layer des Systems erkannte das institutionelle Identitatsproblem, das Team wendete die entsprechenden Korrekturmassnahmen an, und diese Richtlinie wurde erstellt, um Wiederholungen zu verhindern und einen dauerhaften Governance-Rahmen fur die redaktionelle Kommunikation zu etablieren.</span>
+      <span class="lb-en">The review process itself demonstrated the WINDI governance model in action: the system's Identity Governance Layer detected the institutional identity concern, the team applied the appropriate corrective measures, and this policy was created to prevent recurrence and establish a permanent governance framework for editorial communication.</span>
+      <span class="lb-pt">O processo de revisao em si demonstrou o modelo de governanca WINDI em acao: a Camada de Governanca de Identidade do sistema detectou a preocupacao com a identidade institucional, a equipe aplicou as medidas corretivas apropriadas, e esta politica foi criada para prevenir recorrencia e estabelecer uma estrutura de governanca permanente para comunicacao editorial.</span>
+    </p>
 
-    <p>This self-correcting process &mdash; from detection through remediation to policy formalization &mdash; exemplifies the WINDI principle that governance is not a constraint imposed from outside, but a continuous operational layer that supports human accountability.</p>
+    <p>
+      <span class="lb-de">Dieser selbstkorrigierende Prozess — von der Erkennung uber die Behebung bis zur Richtlinienformalisierung — veranschaulicht das WINDI-Prinzip, dass Governance keine von aussen auferlegte Beschrankung ist, sondern eine kontinuierliche operative Schicht, die menschliche Verantwortlichkeit unterstutzt.</span>
+      <span class="lb-en">This self-correcting process — from detection through remediation to policy formalization — exemplifies the WINDI principle that governance is not a constraint imposed from outside, but a continuous operational layer that supports human accountability.</span>
+      <span class="lb-pt">Este processo autocorretivo — da deteccao atraves da remediacao ate a formalizacao da politica — exemplifica o principio WINDI de que governanca nao e uma restricao imposta de fora, mas uma camada operacional continua que apoia a responsabilidade humana.</span>
+    </p>
 
-    <!-- SECTION 7 -->
-    <h2>7. Applicability</h2>
+    <!-- Section 7: Applicability -->
+    <h2 id="applicability">
+      <span class="l-de">7. Anwendbarkeit</span>
+      <span class="l-en">7. Applicability</span>
+      <span class="l-pt">7. Aplicabilidade</span>
+    </h2>
 
-    <p>This policy applies to all documents produced under the WINDI governance framework, including but not limited to: research papers, technical reports, press-style communications, demonstration documents, presentation materials, and any content published through the A4 Desk BABEL editor or the WINDI Masterarbeit documentation site.</p>
+    <p>
+      <span class="lb-de">Diese Richtlinie gilt fur alle unter dem WINDI-Governance-Rahmen erstellten Dokumente, einschliesslich, aber nicht beschrankt auf: Forschungsarbeiten, technische Berichte, pressemassige Kommunikation, Demonstrationsdokumente, Prasentationsmaterialien und alle uber den A4 Desk BABEL-Editor oder die WINDI Masterarbeit-Dokumentationsseite veroffentlichten Inhalte.</span>
+      <span class="lb-en">This policy applies to all documents produced under the WINDI governance framework, including but not limited to: research papers, technical reports, press-style communications, demonstration documents, presentation materials, and any content published through the A4 Desk BABEL editor or the WINDI Masterarbeit documentation site.</span>
+      <span class="lb-pt">Esta politica se aplica a todos os documentos produzidos sob a estrutura de governanca WINDI, incluindo, mas nao se limitando a: artigos de pesquisa, relatorios tecnicos, comunicacoes em estilo de imprensa, documentos de demonstracao, materiais de apresentacao e qualquer conteudo publicado atraves do editor A4 Desk BABEL ou do site de documentacao WINDI Masterarbeit.</span>
+    </p>
 
-    <p>Third parties using WINDI governance tools are encouraged to adopt equivalent editorial transparency standards.</p>
+    <p>
+      <span class="lb-de">Dritte, die WINDI-Governance-Tools verwenden, werden ermutigt, aquivalente redaktionelle Transparenzstandards zu ubernehmen.</span>
+      <span class="lb-en">Third parties using WINDI governance tools are encouraged to adopt equivalent editorial transparency standards.</span>
+      <span class="lb-pt">Terceiros que usam ferramentas de governanca WINDI sao encorajados a adotar padroes equivalentes de transparencia editorial.</span>
+    </p>
 
-    <!-- CROSS-REFERENCES -->
-    <h2>Related Documentation</h2>
+    <!-- Related Documentation -->
+    <h2>
+      <span class="l-de">Verwandte Dokumentation</span>
+      <span class="l-en">Related Documentation</span>
+      <span class="l-pt">Documentacao Relacionada</span>
+    </h2>
 
     <div class="tr-crossref">
       <a href="fachartikel-provenienz.html" class="tr-link">
         <span class="tr-id">PUB-001</span>
-        <span class="tr-title">Gesicherte Herkunft statt blo&szlig;er Erkennung</span>
+        <span class="tr-title">Gesicherte Herkunft statt blosser Erkennung</span>
       </a>
       <a href="tr-007.html" class="tr-link">
         <span class="tr-id">TR-007</span>
-        <span class="tr-title">Document Provenance &amp; Anti-Deepfake Framework</span>
+        <span class="tr-title">Document Provenance & Anti-Deepfake Framework</span>
       </a>
       <a href="identity-governance-layer.html" class="tr-link">
         <span class="tr-id">Section 10</span>
         <span class="tr-title">Institutional Identity Governance Layer</span>
       </a>
+      <a href="sge-results.html" class="tr-link">
+        <span class="tr-id">Section 11</span>
+        <span class="tr-title">Semantic Governance Engine — First Results</span>
+      </a>
     </div>
 
-    <!-- NAVIGATION -->
-    <div class="tr-crossref" style="margin-bottom: 1rem;"><a href="sge-results.html" class="tr-link"><span class="tr-id">Section 11</span><span class="tr-title">Semantic Governance Engine &mdash; First Results</span></a></div>
-    <div class="nav-links">
-      <a href="fachartikel-provenienz.html">&larr; PUB-001: Fachartikel Provenienzmodell</a>
-      <a href="index.html">WINDI Documentation Index &rarr;</a>
+    <!-- Navigation -->
+    <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border-subtle);">
+      <a href="fachartikel-provenienz.html" style="font-size: 14px;">
+        <span class="l-de">← PUB-001: Fachartikel Provenienzmodell</span>
+        <span class="l-en">← PUB-001: Provenance Model Article</span>
+        <span class="l-pt">← PUB-001: Artigo Modelo de Proveniencia</span>
+      </a>
+      <a href="index.html" style="font-size: 14px;">
+        <span class="l-de">WINDI Dokumentationsindex →</span>
+        <span class="l-en">WINDI Documentation Index →</span>
+        <span class="l-pt">Indice de Documentacao WINDI →</span>
+      </a>
     </div>
 
   </div>
 
-  <!-- FOOTER -->
-  <footer class="doc-footer">
-    <div class="footer-left">
-      WINDI Publishing House &middot; Kempten (Allg&auml;u), Bavaria, Germany<br>
-      Masterarbeit documentation: <em>master.windia4desk.tech</em>
+  <!-- Page Footer -->
+  <footer class="page-footer">
+    <div class="page-footer-meta">
+      <span>WINDI-RECEIPT: POL-WINDI-2026-001-NOIR</span>
+      <span>Governance Document</span>
     </div>
-    <div class="footer-right">
-      POL-WINDI-2026-001<br>
-      Version 1.0<br>
-      02 February 2026<br>
-      Classification: PUBLIC
-    </div>
+    <p class="page-footer-quittung">Author: Jober Mogele Correa (WINDI-CGO-001) | Status: Active</p>
+    <p class="page-footer-principle">
+      <span class="l-de">"KI verarbeitet. Mensch entscheidet. WINDI garantiert."</span>
+      <span class="l-en">"AI processes. Human decides. WINDI guarantees."</span>
+      <span class="l-pt">"IA processa. Humano decide. WINDI garante."</span>
+    </p>
   </footer>
+
+</main>
+
+<!-- JavaScript -->
+<script>
+// Theme Toggle
+function toggleTheme() {
+  const body = document.body;
+  const isLight = body.getAttribute('data-theme') === 'light';
+  body.setAttribute('data-theme', isLight ? 'dark' : 'light');
+  try { localStorage.setItem('windi-theme', isLight ? 'dark' : 'light'); } catch(e) {}
+}
+
+// Language Switcher
+function setLang(lang) {
+  document.body.setAttribute('data-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+  try { localStorage.setItem('windi-lang', lang); } catch(e) {}
+}
+
+// Sidebar Toggle (mobile)
+let sidebarOpen = false;
+function toggleSidebar() {
+  sidebarOpen = !sidebarOpen;
+  document.getElementById('sidebarLeft').classList.toggle('open', sidebarOpen);
+}
+
+// Close sidebar on link click (mobile)
+document.querySelectorAll('.sidebar-link').forEach(link => {
+  link.addEventListener('click', () => {
+    if (window.innerWidth <= 960) {
+      sidebarOpen = false;
+      document.getElementById('sidebarLeft').classList.remove('open');
+    }
+  });
+});
+
+// Init saved preferences
+(function init() {
+  try {
+    const theme = localStorage.getItem('windi-theme');
+    const lang = localStorage.getItem('windi-lang');
+    if (theme) document.body.setAttribute('data-theme', theme);
+    if (lang) setLang(lang);
+  } catch(e) {}
+})();
+</script>
 
 </body>
 </html>

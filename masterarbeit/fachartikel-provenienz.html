@@ -1,844 +1,781 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fachartikel: Gesicherte Herkunft statt bloßer Erkennung — WINDI Masterarbeit</title>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --ink:        #1a1a2e;
-      --paper:      #fafaf8;
-      --header-bg:  #0d2137;
-      --accent:     #c9a84c;
-      --accent-dark:#a07e2e;
-      --teal:       #1a7a6d;
-      --teal-light: #e8f5f2;
-      --caption:    #666;
-      --border:     #d4d0c8;
-      --blue-dark:  #0f3460;
-      --blue-mid:   #1a5276;
-      --purple:     #4a1942;
-      --purple-light:#f3edf5;
-      --green-sof:  #27ae60;
-      --orange-res: #e67e22;
-      --red-deep:   #c0392b;
-    }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: 'Libre Baskerville', Georgia, serif;
-      font-size: 1.05rem;
-      line-height: 1.8;
-      color: var(--ink);
-      background: var(--paper);
-    }
-
-    /* === HEADER === */
-    .doc-header {
-      background: var(--header-bg);
-      color: #e0e0e0;
-      padding: 1.2rem 2rem;
-      font-family: 'Source Sans Pro', sans-serif;
-      font-size: 0.82rem;
-    }
-    .doc-header-inner {
-      max-width: 900px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 2rem;
-    }
-    .doc-series {
-      font-weight: 700;
-      color: var(--accent);
-      font-size: 0.95rem;
-      letter-spacing: 0.04em;
-    }
-    .doc-org { margin-top: 0.3rem; opacity: 0.8; }
-    .doc-header-right {
-      text-align: right;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
-      line-height: 1.6;
-      opacity: 0.85;
-    }
-
-    /* === TITLE BLOCK === */
-    .title-block {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 3rem 2rem 2rem;
-      border-bottom: 2px solid var(--border);
-    }
-    .section-label {
-      font-family: 'Source Sans Pro', sans-serif;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: var(--teal);
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      margin-bottom: 0.6rem;
-    }
-    .title-block h1 {
-      font-family: 'Libre Baskerville', Georgia, serif;
-      font-size: 2rem;
-      font-weight: 700;
-      line-height: 1.3;
-      color: var(--blue-dark);
-      margin-bottom: 0.5rem;
-    }
-    .subtitle {
-      font-family: 'Libre Baskerville', Georgia, serif;
-      font-size: 1.15rem;
-      font-style: italic;
-      color: var(--caption);
-      margin-bottom: 1.5rem;
-      line-height: 1.5;
-    }
-    .title-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem 2rem;
-      font-family: 'Source Sans Pro', sans-serif;
-      font-size: 0.88rem;
-    }
-    .meta-pair { display: flex; gap: 0.4rem; }
-    .meta-pair dt { font-weight: 600; color: var(--blue-mid); }
-    .meta-pair dd { color: var(--ink); }
-
-    /* === CONTENT === */
-    .content {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 2.5rem 2rem 4rem;
-    }
-
-    /* Abstract */
-    .abstract {
-      background: var(--teal-light);
-      border-left: 4px solid var(--teal);
-      padding: 1.5rem 1.8rem;
-      margin-bottom: 2.5rem;
-      font-size: 0.97rem;
-      line-height: 1.75;
-    }
-    .abstract strong {
-      display: block;
-      font-family: 'Source Sans Pro', sans-serif;
-      font-size: 0.9rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--teal);
-      margin-bottom: 0.8rem;
-    }
-
-    /* Section headings */
-    .content h2 {
-      font-family: 'Source Sans Pro', sans-serif;
-      font-size: 1.35rem;
-      font-weight: 700;
-      color: var(--blue-dark);
-      margin: 2.5rem 0 1rem;
-      padding-bottom: 0.4rem;
-      border-bottom: 1px solid var(--border);
-    }
-    .content h3 {
-      font-family: 'Source Sans Pro', sans-serif;
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: var(--blue-mid);
-      margin: 1.8rem 0 0.8rem;
-    }
-
-    /* Paragraphs */
-    .content p {
-      margin-bottom: 1.2rem;
-      text-align: justify;
-      hyphens: auto;
-    }
-
-    /* Lists within content */
-    .content ul {
-      margin: 0.8rem 0 1.2rem 1.5rem;
-      list-style: none;
-    }
-    .content ul li {
-      position: relative;
-      padding-left: 1.2rem;
-      margin-bottom: 0.4rem;
-    }
-    .content ul li::before {
-      content: '▸';
-      position: absolute;
-      left: 0;
-      color: var(--teal);
-      font-weight: 700;
-    }
-
-    /* Comparison table */
-    .comparison-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1.5rem 0;
-      font-family: 'Source Sans Pro', sans-serif;
-      font-size: 0.92rem;
-    }
-    .comparison-table th {
-      background: var(--header-bg);
-      color: #fff;
-      padding: 0.7rem 1rem;
-      text-align: left;
-      font-weight: 600;
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-    .comparison-table td {
-      padding: 0.7rem 1rem;
-      border-bottom: 1px solid var(--border);
-      vertical-align: top;
-    }
-    .comparison-table tr:nth-child(even) td {
-      background: #f5f5f0;
-    }
-    .comparison-table .old-approach {
-      color: var(--caption);
-      font-style: italic;
-    }
-    .comparison-table .new-approach {
-      color: var(--teal);
-      font-weight: 600;
-    }
-
-    /* Highlight box */
-    .paradigm-box {
-      background: linear-gradient(135deg, var(--blue-dark), var(--purple));
-      color: #fff;
-      padding: 1.8rem 2rem;
-      border-radius: 4px;
-      margin: 2rem 0;
-      text-align: center;
-      font-family: 'Libre Baskerville', Georgia, serif;
-      font-size: 1.1rem;
-      font-style: italic;
-      line-height: 1.6;
-    }
-
-    /* Architecture layers */
-    .layer-card {
-      background: #fff;
-      border: 1px solid var(--border);
-      border-left: 4px solid var(--teal);
-      padding: 1.2rem 1.5rem;
-      margin: 1rem 0;
-      border-radius: 0 4px 4px 0;
-    }
-    .layer-card h4 {
-      font-family: 'Source Sans Pro', sans-serif;
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--blue-dark);
-      margin-bottom: 0.5rem;
-    }
-    .layer-card p {
-      font-size: 0.95rem;
-      margin-bottom: 0.5rem;
-    }
-    .layer-card ul {
-      margin: 0.5rem 0 0 1.2rem;
-      font-size: 0.92rem;
-    }
-
-    /* Relevance grid */
-    .relevance-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 0.8rem;
-      margin: 1rem 0 1.5rem;
-    }
-    .relevance-item {
-      background: var(--teal-light);
-      padding: 0.8rem 1rem;
-      border-radius: 4px;
-      font-family: 'Source Sans Pro', sans-serif;
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--teal);
-      text-align: center;
-      border: 1px solid rgba(26,122,109,0.15);
-    }
-
-    /* Conclusion box */
-    .conclusion-box {
-      background: var(--purple-light);
-      border-left: 4px solid var(--purple);
-      padding: 1.5rem 1.8rem;
-      margin: 2rem 0;
-    }
-    .conclusion-box .central-question {
-      display: block;
-      font-family: 'Libre Baskerville', Georgia, serif;
-      font-size: 1.05rem;
-      font-style: italic;
-      color: var(--purple);
-      margin: 1rem 0;
-      padding-left: 1rem;
-      border-left: 2px solid var(--purple);
-    }
-
-    /* === WINDI GOVERNANCE REFERENCE === */
-    .governance-reference {
-      margin-top: 3rem;
-      padding-top: 2rem;
-      border-top: 2px solid var(--border);
-    }
-    .governance-reference h2 {
-      border-bottom: none;
-      margin-bottom: 1rem;
-    }
-
-    .babel-receipt {
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 1.5rem;
-      margin: 1.2rem 0;
-      font-family: 'Source Sans Pro', sans-serif;
-    }
-    .babel-receipt-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1rem;
-      padding-bottom: 0.8rem;
-      border-bottom: 1px solid var(--border);
-    }
-    .babel-receipt-logo {
-      font-family: 'Source Sans Pro', sans-serif;
-      font-weight: 700;
-      font-size: 1rem;
-      color: var(--blue-dark);
-    }
-    .babel-receipt-logo small {
-      display: block;
-      font-weight: 400;
-      font-size: 0.75rem;
-      color: var(--caption);
-    }
-
-    .receipt-line {
-      display: flex;
-      gap: 0.5rem;
-      padding: 0.3rem 0;
-      font-size: 0.88rem;
-      line-height: 1.5;
-    }
-    .receipt-label {
-      font-weight: 600;
-      color: var(--blue-mid);
-      min-width: 130px;
-      flex-shrink: 0;
-    }
-    .receipt-value {
-      color: var(--ink);
-    }
-    .receipt-value.mono {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.82rem;
-    }
-
-    .governance-badges {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.6rem;
-      margin-top: 1rem;
-      padding-top: 0.8rem;
-      border-top: 1px solid var(--border);
-    }
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      padding: 0.35rem 0.8rem;
-      border-radius: 4px;
-      font-family: 'Source Sans Pro', sans-serif;
-      font-size: 0.78rem;
-      font-weight: 600;
-      letter-spacing: 0.02em;
-    }
-    .badge-sof {
-      background: var(--green-sof);
-      color: #fff;
-    }
-    .badge-resilience {
-      background: linear-gradient(135deg, var(--orange-res), var(--red-deep));
-      color: #fff;
-    }
-    .badge-structure {
-      background: var(--teal-light);
-      color: var(--teal);
-      border: 1px solid rgba(26,122,109,0.2);
-    }
-    .badge-human {
-      background: #eef2f7;
-      color: var(--blue-dark);
-      border: 1px solid rgba(15,52,96,0.15);
-    }
-
-    .governance-statement {
-      text-align: center;
-      padding: 1rem;
-      margin: 1.2rem 0;
-      font-family: 'Source Sans Pro', sans-serif;
-      font-size: 0.85rem;
-      color: var(--caption);
-      background: #f8f8f5;
-      border-radius: 4px;
-      line-height: 1.8;
-    }
-    .governance-statement .line-main {
-      font-weight: 600;
-      color: var(--ink);
-    }
-
-    /* === MEDIA REFERENCE === */
-    .media-reference {
-      background: #fff;
-      border: 1px solid var(--border);
-      border-left: 4px solid var(--accent);
-      padding: 1.2rem 1.5rem;
-      margin: 1.5rem 0;
-      border-radius: 0 4px 4px 0;
-    }
-    .media-reference h4 {
-      font-family: 'Source Sans Pro', sans-serif;
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--accent-dark);
-      margin-bottom: 0.5rem;
-    }
-    .media-reference p {
-      font-size: 0.9rem;
-      line-height: 1.6;
-    }
-    .media-meta {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
-      color: var(--caption);
-      margin-top: 0.6rem;
-    }
-
-    /* === TR CROSS-REFERENCE === */
-    .tr-crossref {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 1rem;
-      margin: 1.5rem 0;
-    }
-    .tr-link {
-      display: block;
-      padding: 1rem 1.2rem;
-      background: linear-gradient(135deg, var(--header-bg), var(--blue-mid));
-      color: #fff;
-      text-decoration: none;
-      border-radius: 4px;
-      font-family: 'Source Sans Pro', sans-serif;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .tr-link:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-    .tr-link .tr-id {
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: var(--accent);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-    }
-    .tr-link .tr-title {
-      font-size: 0.95rem;
-      font-weight: 600;
-      margin-top: 0.3rem;
-    }
-
-    /* === NAVIGATION === */
-    .nav-links {
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 1rem;
-      margin-top: 3rem;
-      padding-top: 1.5rem;
-      border-top: 2px solid var(--border);
-      font-family: 'Source Sans Pro', sans-serif;
-      font-size: 0.95rem;
-    }
-    .nav-links a {
-      color: var(--blue-dark);
-      text-decoration: none;
-      font-weight: 600;
-      padding: 0.5rem 0;
-      border-bottom: 2px solid transparent;
-      transition: border-color 0.2s;
-    }
-    .nav-links a:hover { border-bottom-color: var(--accent); }
-
-    /* === FOOTER === */
-    .doc-footer {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 1.5rem 2rem;
-      font-family: 'Source Sans Pro', sans-serif;
-      font-size: 0.8rem;
-      color: var(--caption);
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-    .doc-footer .footer-left { font-style: italic; }
-    .doc-footer .footer-right {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      text-align: right;
-    }
-
-    /* === PRINT === */
-    @media print {
-      .doc-header { background: white; color: var(--ink); border-bottom: 2px solid var(--ink); }
-      .doc-series { color: var(--ink); }
-      .paradigm-box { background: #eee; color: var(--ink); }
-      .tr-link { background: #eee; color: var(--ink); }
-      body { font-size: 11pt; }
-    }
-
-    /* === RESPONSIVE === */
-    @media (max-width: 700px) {
-      .doc-header-inner { flex-direction: column; gap: 0.8rem; }
-      .doc-header-right { text-align: left; }
-      .title-block h1 { font-size: 1.5rem; }
-      .comparison-table { font-size: 0.82rem; }
-      .comparison-table th, .comparison-table td { padding: 0.5rem 0.6rem; }
-      .tr-crossref { grid-template-columns: 1fr; }
-      .relevance-grid { grid-template-columns: 1fr 1fr; }
-      .babel-receipt-header { flex-direction: column; gap: 0.5rem; }
-      .receipt-line { flex-direction: column; gap: 0.1rem; }
-      .receipt-label { min-width: auto; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fachartikel: Gesicherte Herkunft statt bloßer Erkennung — WINDI Masterarbeit</title>
+<meta name="description" content="Ein institutionelles Provenienzmodell für KI-gestützte Dokumente — IDPF Framework">
+<link rel="stylesheet" href="windi-internal.css">
 </head>
-<body>
+<body data-theme="dark" data-lang="de">
 
-  <!-- HEADER -->
-  <header class="doc-header">
-    <div class="doc-header-inner">
-      <div class="doc-header-left">
-        <div class="doc-series">WINDI Fachartikel &middot; PUB-001</div>
-        <div class="doc-org">WINDI Publishing House &middot; Kempten (Allg&auml;u), Bavaria, Germany</div>
-      </div>
-      <div class="doc-header-right">
-        Dokument-ID: PUB-WINDI-2026-001<br>
-        IDPF Modell v1.0<br>
-        02. Februar 2026<br>
-        Klassifikation: &Ouml;FFENTLICH
-      </div>
+<!-- Header -->
+<header class="site-header">
+  <a href="index.html" class="header-brand">
+    <div class="header-logo">W</div>
+    <div class="header-title-group">
+      <span class="header-title">WINDI</span>
+      <span class="header-subtitle">Governance Intelligence</span>
     </div>
-  </header>
-
-  <!-- TITLE BLOCK -->
-  <div class="title-block">
-    <div class="section-label">PUB-001 &mdash; Fachartikel &middot; Akademische Ver&ouml;ffentlichung</div>
-    <h1>Gesicherte Herkunft statt blo&szlig;er Erkennung</h1>
-    <div class="subtitle">Ein institutionelles Provenienzmodell f&uuml;r KI-gest&uuml;tzte Dokumente</div>
-    <div class="title-meta">
-      <div class="meta-pair"><dt>Autor:</dt><dd>Jober M&ouml;gele Correa, Chief Governance Officer</dd></div>
-      <div class="meta-pair"><dt>Datum:</dt><dd>02. Februar 2026</dd></div>
-      <div class="meta-pair"><dt>Status:</dt><dd>Registriert &amp; Verifiziert</dd></div>
-    </div>
-    <div class="title-meta" style="margin-top: 0.5rem;">
-      <div class="meta-pair"><dt>Bezug:</dt><dd>TR-007 (Secure Origin Framework), Section 10 (Identity Governance Layer)</dd></div>
-      <div class="meta-pair"><dt>Sprache:</dt><dd>Deutsch (Originalfassung)</dd></div>
+  </a>
+  <div class="header-center">
+    <div class="header-status">
+      <span class="status-dot"></span>
+      <span>Operational</span>
     </div>
   </div>
+  <div class="header-right">
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('de')">DE</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('pt')">PT</button>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+      <div class="theme-toggle-track"></div>
+      <div class="theme-toggle-thumb" id="themeThumb"></div>
+    </button>
+    <button class="mobile-toggle" onclick="toggleSidebar()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
 
-  <div class="content">
+<!-- Sidebar Navigation -->
+<nav class="sidebar sidebar-left" id="sidebarLeft">
+  <div class="sidebar-section">
+    <div class="sidebar-label">Masterarbeit</div>
+    <a href="index.html" class="sidebar-link">Main Document</a>
+    <a href="cover.html" class="sidebar-link">Cover</a>
+    <a href="about-windi.html" class="sidebar-link">About WINDI</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Governance</div>
+    <a href="governance-levels.html" class="sidebar-link">Governance Levels</a>
+    <a href="human-oversight.html" class="sidebar-link">Human Oversight</a>
+    <a href="data-handling.html" class="sidebar-link">Data Handling</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Architecture</div>
+    <a href="diagrams.html" class="sidebar-link">Diagrams</a>
+    <a href="interface-guide.html" class="sidebar-link">Interface Guide</a>
+    <a href="verification-layer.html" class="sidebar-link">Verification Layer</a>
+    <a href="kapitel12_domain_sovereignty.html" class="sidebar-link">Domain Sovereignty</a>
+    <a href="identity-governance-layer.html" class="sidebar-link">Identity Governance</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Technical Reports</div>
+    <a href="tr-windi-2026-003.html" class="sidebar-link">TR-003: Service Layer</a>
+    <a href="tr-windi-2026-004.html" class="sidebar-link">TR-004: Cognitive Service</a>
+    <a href="tr-windi-2026-005.html" class="sidebar-link">TR-005: Cognitive Cycle</a>
+    <a href="isp-evolution.html" class="sidebar-link">TR-006: ISP Registry</a>
+    <a href="tr-007.html" class="sidebar-link">TR-007: Provenance</a>
+    <a href="sge-results.html" class="sidebar-link">SGE Results</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Publications</div>
+    <a href="publications.html" class="sidebar-link">Publications</a>
+    <a href="fachartikel-provenienz.html" class="sidebar-link sidebar-link-active">Fachartikel</a>
+    <a href="windi-publishing-house.html" class="sidebar-link">Manifesto</a>
+    <a href="editorial-policy.html" class="sidebar-link">Editorial Policy</a>
+    <a href="idpf-abstract.html" class="sidebar-link">IDPF Abstract</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Media</div>
+    <a href="windi-working-paper-2026.html" class="sidebar-link">Working Paper</a>
+    <a href="press-release-windi-2026.html" class="sidebar-link">Press Release</a>
+    <a href="windi-side-by-side-2026.html" class="sidebar-link">Side-by-Side</a>
+    <a href="wsj-style-governed-windi-2026.html" class="sidebar-link">WSJ Feature</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Compliance</div>
+    <a href="document-integrity.html" class="sidebar-link">Doc Integrity</a>
+    <a href="print-watermark-layer.html" class="sidebar-link">Print Layer</a>
+    <a href="regulatory-summary-print-layer.html" class="sidebar-link">Regulatory</a>
+    <a href="availability-implementation.html" class="sidebar-link">Appendix A</a>
+  </div>
+</nav>
+
+<!-- Right Sidebar TOC -->
+<aside class="sidebar sidebar-right" id="sidebarRight">
+  <div class="sidebar-label">
+    <span class="l-de">Auf dieser Seite</span>
+    <span class="l-en">On this page</span>
+    <span class="l-pt">Nesta pagina</span>
+  </div>
+  <a href="#abstract" class="toc-link">
+    <span class="l-de">Abstract</span>
+    <span class="l-en">Abstract</span>
+    <span class="l-pt">Resumo</span>
+  </a>
+  <a href="#problem" class="toc-link">
+    <span class="l-de">1. Problemstellung</span>
+    <span class="l-en">1. Problem Statement</span>
+    <span class="l-pt">1. Problema</span>
+  </a>
+  <a href="#paradigm" class="toc-link">
+    <span class="l-de">2. Paradigmenwechsel</span>
+    <span class="l-en">2. Paradigm Shift</span>
+    <span class="l-pt">2. Mudanca de Paradigma</span>
+  </a>
+  <a href="#idpf" class="toc-link">
+    <span class="l-de">3. IDPF Framework</span>
+    <span class="l-en">3. IDPF Framework</span>
+    <span class="l-pt">3. Framework IDPF</span>
+  </a>
+  <a href="#resilience" class="toc-link">
+    <span class="l-de">4. Deepfake-Resilienz</span>
+    <span class="l-en">4. Deepfake Resilience</span>
+    <span class="l-pt">4. Resiliencia a Deepfakes</span>
+  </a>
+  <a href="#relevance" class="toc-link">
+    <span class="l-de">5. Regulatorische Relevanz</span>
+    <span class="l-en">5. Regulatory Relevance</span>
+    <span class="l-pt">5. Relevancia Regulatoria</span>
+  </a>
+  <a href="#discussion" class="toc-link">
+    <span class="l-de">6. Diskussion</span>
+    <span class="l-en">6. Discussion</span>
+    <span class="l-pt">6. Discussao</span>
+  </a>
+  <a href="#conclusion" class="toc-link">
+    <span class="l-de">7. Schlussfolgerung</span>
+    <span class="l-en">7. Conclusion</span>
+    <span class="l-pt">7. Conclusao</span>
+  </a>
+  <a href="#governance-ref" class="toc-link">
+    <span class="l-de">WINDI Referenz</span>
+    <span class="l-en">WINDI Reference</span>
+    <span class="l-pt">Referencia WINDI</span>
+  </a>
+</aside>
+
+<!-- Main Content -->
+<main class="main-content">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-breadcrumb">
+      <a href="index.html">WINDI</a>
+      <span class="breadcrumb-sep">/</span>
+      <a href="publications.html">Publications</a>
+      <span class="breadcrumb-sep">/</span>
+      <span class="breadcrumb-current">
+        <span class="l-de">Fachartikel</span>
+        <span class="l-en">Academic Article</span>
+        <span class="l-pt">Artigo Academico</span>
+      </span>
+    </div>
+    <div class="page-meta-bar">
+      <span class="page-tag page-tag-gov">PUB-001</span>
+      <span class="page-tag">Fachartikel</span>
+      <span class="page-date">2026-02-02</span>
+    </div>
+    <h1 class="page-title">
+      <span class="l-de">Gesicherte Herkunft statt bloßer Erkennung</span>
+      <span class="l-en">Secured Provenance Instead of Mere Detection</span>
+      <span class="l-pt">Proveniencia Segura em Vez de Mera Deteccao</span>
+    </h1>
+    <p class="page-subtitle">
+      <span class="l-de">Ein institutionelles Provenienzmodell fur KI-gestutzte Dokumente</span>
+      <span class="l-en">An Institutional Provenance Model for AI-Assisted Documents</span>
+      <span class="l-pt">Um Modelo Institucional de Proveniencia para Documentos Assistidos por IA</span>
+    </p>
+    <div class="page-divider"></div>
+  </div>
+
+  <!-- Content -->
+  <div class="content-prose">
+
+    <!-- Document Meta Box -->
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>
+          <span class="l-de">Dokumentinformation</span>
+          <span class="l-en">Document Information</span>
+          <span class="l-pt">Informacao do Documento</span>
+        </h3>
+        <p><strong>Autor:</strong> Jober Mogele Correa, Chief Governance Officer</p>
+        <p><strong>Datum:</strong> 02. Februar 2026</p>
+        <p><strong>Status:</strong> Registriert &amp; Verifiziert</p>
+        <p><strong>Bezug:</strong> TR-007 (Secure Origin Framework), Section 10 (Identity Governance Layer)</p>
+        <p><strong>Dokument-ID:</strong> PUB-WINDI-2026-001 | IDPF Modell v1.0</p>
+      </div>
+    </div>
 
     <!-- ABSTRACT -->
-    <div class="abstract">
-      <strong>Abstract</strong>
-      Die rasante Entwicklung generativer KI-Systeme erm&ouml;glicht heute die Erstellung visuell und sprachlich &uuml;berzeugender Dokumente, die institutionelle Identit&auml;t simulieren k&ouml;nnen. Diese Entwicklung f&uuml;hrt zu einem neuen Risikofeld: <em>institutionelle Deepfakes</em> &ndash; Dokumente, die wie offizielle Schreiben von Beh&ouml;rden, Unternehmen oder Organisationen wirken, ohne authentisch zu sein.
+    <h2 id="abstract">
+      <span class="l-de">Abstract</span>
+      <span class="l-en">Abstract</span>
+      <span class="l-pt">Resumo</span>
+    </h2>
 
-      <br><br>W&auml;hrend aktuelle Sicherheitsans&auml;tze prim&auml;r auf die Erkennung manipulierter Inhalte abzielen, wird in dieser Arbeit ein alternativer Paradigmenwechsel vorgeschlagen: <strong>Vertrauen entsteht nicht durch das Aufdecken des Falschen, sondern durch die gesicherte Herkunft des Echten.</strong>
-
-      <br><br>Dazu wird ein <em>Institutionelles Dokument-Provenienz-Framework (IDPF)</em> vorgestellt, das Dokumente bereits bei ihrer Erstellung mit strukturellen, kryptographischen und governance-basierten Herkunftsmerkmalen versieht. Das Modell kombiniert Identit&auml;ts-Governance, strukturelle Integrit&auml;tsnachweise und eine forensisch nachvollziehbare Herkunftskette. Ziel ist die Schaffung einer &uuml;berpr&uuml;fbaren, maschinenlesbaren und regulatorisch anschlussf&auml;higen Vertrauensinfrastruktur f&uuml;r KI-unterst&uuml;tzte institutionelle Dokumente.
+    <div class="doc-quote">
+      <p>
+        <span class="l-de">Die rasante Entwicklung generativer KI-Systeme ermoglicht heute die Erstellung visuell und sprachlich uberzeugender Dokumente, die institutionelle Identitat simulieren konnen. Diese Entwicklung fuhrt zu einem neuen Risikofeld: <em>institutionelle Deepfakes</em> – Dokumente, die wie offizielle Schreiben von Behorden, Unternehmen oder Organisationen wirken, ohne authentisch zu sein.</span>
+        <span class="l-en">The rapid development of generative AI systems now enables the creation of visually and linguistically convincing documents that can simulate institutional identity. This development leads to a new risk field: <em>institutional deepfakes</em> – documents that appear to be official correspondence from authorities, companies, or organizations without being authentic.</span>
+        <span class="l-pt">O rapido desenvolvimento de sistemas de IA generativa agora permite a criacao de documentos visualmente e linguisticamente convincentes que podem simular identidade institucional. Este desenvolvimento leva a um novo campo de risco: <em>deepfakes institucionais</em> – documentos que parecem ser correspondencia oficial de autoridades, empresas ou organizacoes sem serem autenticos.</span>
+      </p>
     </div>
+
+    <p>
+      <span class="lb-de">Wahrend aktuelle Sicherheitsansatze primar auf die Erkennung manipulierter Inhalte abzielen, wird in dieser Arbeit ein alternativer Paradigmenwechsel vorgeschlagen: <strong>Vertrauen entsteht nicht durch das Aufdecken des Falschen, sondern durch die gesicherte Herkunft des Echten.</strong></span>
+      <span class="lb-en">While current security approaches primarily aim at detecting manipulated content, this work proposes an alternative paradigm shift: <strong>Trust is not created by uncovering what is false, but through the secured provenance of what is genuine.</strong></span>
+      <span class="lb-pt">Enquanto as abordagens de seguranca atuais visam principalmente detectar conteudo manipulado, este trabalho propoe uma mudanca de paradigma alternativa: <strong>A confianca nao e criada descobrindo o que e falso, mas atraves da proveniencia segura do que e genuino.</strong></span>
+    </p>
+
+    <p>
+      <span class="lb-de">Dazu wird ein <em>Institutionelles Dokument-Provenienz-Framework (IDPF)</em> vorgestellt, das Dokumente bereits bei ihrer Erstellung mit strukturellen, kryptographischen und governance-basierten Herkunftsmerkmalen versieht. Das Modell kombiniert Identitats-Governance, strukturelle Integritatsnachweise und eine forensisch nachvollziehbare Herkunftskette. Ziel ist die Schaffung einer uberprufbaren, maschinenlesbaren und regulatorisch anschlussfahigen Vertrauensinfrastruktur fur KI-unterstutzte institutionelle Dokumente.</span>
+      <span class="lb-en">To this end, an <em>Institutional Document Provenance Framework (IDPF)</em> is presented, which equips documents with structural, cryptographic, and governance-based provenance features at the time of their creation. The model combines identity governance, structural integrity proofs, and a forensically traceable chain of origin. The goal is to create a verifiable, machine-readable, and regulatory-compatible trust infrastructure for AI-assisted institutional documents.</span>
+      <span class="lb-pt">Para esse fim, apresenta-se um <em>Framework Institucional de Proveniencia de Documentos (IDPF)</em>, que equipa documentos com caracteristicas de proveniencia estruturais, criptograficas e baseadas em governanca no momento de sua criacao. O modelo combina governanca de identidade, provas de integridade estrutural e uma cadeia de origem forense rastreavel. O objetivo e criar uma infraestrutura de confianca verificavel, legivel por maquina e compativel com regulamentacoes para documentos institucionais assistidos por IA.</span>
+    </p>
 
     <!-- SECTION 1 -->
-    <h2>1. Problemstellung: Institutionelle Deepfakes</h2>
+    <h2 id="problem">
+      <span class="l-de">1. Problemstellung: Institutionelle Deepfakes</span>
+      <span class="l-en">1. Problem Statement: Institutional Deepfakes</span>
+      <span class="l-pt">1. Problema: Deepfakes Institucionais</span>
+    </h2>
 
-    <p>Mit generativer KI ist es m&ouml;glich, innerhalb von Sekunden Dokumente zu erzeugen, die:</p>
+    <p>
+      <span class="lb-de">Mit generativer KI ist es moglich, innerhalb von Sekunden Dokumente zu erzeugen, die:</span>
+      <span class="lb-en">With generative AI, it is possible to create documents within seconds that:</span>
+      <span class="lb-pt">Com IA generativa, e possivel criar documentos em segundos que:</span>
+    </p>
+
     <ul>
-      <li>offizielle Layouts imitieren</li>
-      <li>institutionelle Sprache reproduzieren</li>
-      <li>organisatorische Rollen vort&auml;uschen</li>
-      <li>regulatorische Kontexte simulieren</li>
+      <li>
+        <span class="l-de">offizielle Layouts imitieren</span>
+        <span class="l-en">imitate official layouts</span>
+        <span class="l-pt">imitam layouts oficiais</span>
+      </li>
+      <li>
+        <span class="l-de">institutionelle Sprache reproduzieren</span>
+        <span class="l-en">reproduce institutional language</span>
+        <span class="l-pt">reproduzem linguagem institucional</span>
+      </li>
+      <li>
+        <span class="l-de">organisatorische Rollen vortauschen</span>
+        <span class="l-en">simulate organizational roles</span>
+        <span class="l-pt">simulam funcoes organizacionais</span>
+      </li>
+      <li>
+        <span class="l-de">regulatorische Kontexte simulieren</span>
+        <span class="l-en">simulate regulatory contexts</span>
+        <span class="l-pt">simulam contextos regulatorios</span>
+      </li>
     </ul>
 
-    <p>Diese Dokumente sind nicht nur stilistisch &uuml;berzeugend, sondern k&ouml;nnen auch in Verwaltungs-, Finanz- oder Rechtskontexten <em>reale Handlungen ausl&ouml;sen</em>. Die klassische Unterscheidung zwischen &bdquo;echt&ldquo; und &bdquo;gef&auml;lscht&ldquo; wird dadurch technisch und organisatorisch zunehmend unscharf.</p>
+    <p>
+      <span class="lb-de">Diese Dokumente sind nicht nur stilistisch uberzeugend, sondern konnen auch in Verwaltungs-, Finanz- oder Rechtskontexten <em>reale Handlungen auslosen</em>. Die klassische Unterscheidung zwischen "echt" und "gefalscht" wird dadurch technisch und organisatorisch zunehmend unscharf.</span>
+      <span class="lb-en">These documents are not only stylistically convincing but can also trigger <em>real actions</em> in administrative, financial, or legal contexts. The classic distinction between "genuine" and "forged" is thus becoming increasingly blurred technically and organizationally.</span>
+      <span class="lb-pt">Esses documentos nao sao apenas estilisticamente convincentes, mas tambem podem desencadear <em>acoes reais</em> em contextos administrativos, financeiros ou legais. A distincao classica entre "genuino" e "falsificado" esta assim se tornando cada vez mais turva tecnica e organizacionalmente.</span>
+    </p>
 
-    <p>Bisherige Schutzma&szlig;nahmen konzentrieren sich &uuml;berwiegend auf visuelle Manipulationserkennung, Textanalyse auf KI-Spuren sowie forensische Nachuntersuchungen. Diese Verfahren sind jedoch <em>reaktiv, teuer, nicht skalierbar</em> und liefern keine belastbare Aussage zur positiven Authentizit&auml;t eines Dokuments.</p>
+    <p>
+      <span class="lb-de">Bisherige Schutzmassnahmen konzentrieren sich uberwiegend auf visuelle Manipulationserkennung, Textanalyse auf KI-Spuren sowie forensische Nachuntersuchungen. Diese Verfahren sind jedoch <em>reaktiv, teuer, nicht skalierbar</em> und liefern keine belastbare Aussage zur positiven Authentizitat eines Dokuments.</span>
+      <span class="lb-en">Previous protective measures focus predominantly on visual manipulation detection, text analysis for AI traces, and forensic post-investigations. However, these procedures are <em>reactive, expensive, not scalable</em>, and do not provide a reliable statement about the positive authenticity of a document.</span>
+      <span class="lb-pt">Medidas de protecao anteriores concentram-se predominantemente na deteccao de manipulacao visual, analise de texto para tracos de IA e investigacoes forenses posteriores. No entanto, esses procedimentos sao <em>reativos, caros, nao escalaveis</em> e nao fornecem uma declaracao confiavel sobre a autenticidade positiva de um documento.</span>
+    </p>
 
     <!-- SECTION 2 -->
-    <h2>2. Paradigmenwechsel: Herkunft statt Erscheinung</h2>
+    <h2 id="paradigm">
+      <span class="l-de">2. Paradigmenwechsel: Herkunft statt Erscheinung</span>
+      <span class="l-en">2. Paradigm Shift: Provenance Instead of Appearance</span>
+      <span class="l-pt">2. Mudanca de Paradigma: Proveniencia em Vez de Aparencia</span>
+    </h2>
 
-    <div class="paradigm-box">
-      Dokumentvertrauen darf nicht mehr prim&auml;r aus Erscheinungsmerkmalen abgeleitet werden, sondern muss aus <em>gesicherter Herkunft</em> entstehen.
+    <div class="doc-quote">
+      <p>
+        <span class="l-de">Dokumentvertrauen darf nicht mehr primar aus Erscheinungsmerkmalen abgeleitet werden, sondern muss aus <em>gesicherter Herkunft</em> entstehen.</span>
+        <span class="l-en">Document trust must no longer be primarily derived from appearance characteristics, but must arise from <em>secured provenance</em>.</span>
+        <span class="l-pt">A confianca em documentos nao deve mais ser derivada primariamente de caracteristicas de aparencia, mas deve surgir de <em>proveniencia segura</em>.</span>
+      </p>
     </div>
 
-    <p>Dies bedeutet eine fundamentale Verschiebung in der Bewertungslogik dokumentarer Integrit&auml;t:</p>
+    <p>
+      <span class="lb-de">Dies bedeutet eine fundamentale Verschiebung in der Bewertungslogik dokumentarer Integritat:</span>
+      <span class="lb-en">This means a fundamental shift in the evaluation logic of document integrity:</span>
+      <span class="lb-pt">Isso significa uma mudanca fundamental na logica de avaliacao da integridade documental:</span>
+    </p>
 
-    <table class="comparison-table">
-      <thead>
-        <tr>
-          <th>Bisheriger Ansatz</th>
-          <th>Neuer Ansatz (IDPF)</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="old-approach">&bdquo;Ist das Dokument manipuliert?&ldquo;</td>
-          <td class="new-approach">&bdquo;Woher stammt dieses Dokument nachweislich?&ldquo;</td>
-        </tr>
-        <tr>
-          <td class="old-approach">Visuelle Pr&uuml;fung</td>
-          <td class="new-approach">Strukturelle Herkunftspr&uuml;fung</td>
-        </tr>
-        <tr>
-          <td class="old-approach">Forensik nach dem Vorfall</td>
-          <td class="new-approach">Herkunftssicherung beim Entstehen</td>
-        </tr>
-        <tr>
-          <td class="old-approach">Detektion des Falschen</td>
-          <td class="new-approach">Verifikation des Echten</td>
-        </tr>
-      </tbody>
-    </table>
+    <div class="spec-table-wrapper">
+      <table class="spec-table">
+        <thead>
+          <tr>
+            <th>Previous Approach</th>
+            <th>New Approach (IDPF)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>"Is this document manipulated?"</td>
+            <td>"Where does this document demonstrably come from?"</td>
+          </tr>
+          <tr>
+            <td>Visual inspection</td>
+            <td>Structural provenance verification</td>
+          </tr>
+          <tr>
+            <td>Forensics after the incident</td>
+            <td>Provenance securing at creation</td>
+          </tr>
+          <tr>
+            <td>Detection of the false</td>
+            <td>Verification of the genuine</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-    <p>Dieses Prinzip wird im vorgeschlagenen <em>Institutionellen Dokument-Provenienz-Framework (IDPF)</em> formalisiert.</p>
+    <p>
+      <span class="lb-de">Dieses Prinzip wird im vorgeschlagenen <em>Institutionellen Dokument-Provenienz-Framework (IDPF)</em> formalisiert.</span>
+      <span class="lb-en">This principle is formalized in the proposed <em>Institutional Document Provenance Framework (IDPF)</em>.</span>
+      <span class="lb-pt">Este principio e formalizado no proposto <em>Framework Institucional de Proveniencia de Documentos (IDPF)</em>.</span>
+    </p>
 
     <!-- SECTION 3 -->
-    <h2>3. Das Institutionelle Dokument-Provenienz-Framework (IDPF)</h2>
+    <h2 id="idpf">
+      <span class="l-de">3. Das Institutionelle Dokument-Provenienz-Framework (IDPF)</span>
+      <span class="l-en">3. The Institutional Document Provenance Framework (IDPF)</span>
+      <span class="l-pt">3. O Framework Institucional de Proveniencia de Documentos (IDPF)</span>
+    </h2>
 
-    <p>Das IDPF beschreibt eine mehrschichtige Architektur zur Sicherung der dokumentaren Herkunft in KI-unterst&uuml;tzten institutionellen Kontexten.</p>
+    <p>
+      <span class="lb-de">Das IDPF beschreibt eine mehrschichtige Architektur zur Sicherung der dokumentaren Herkunft in KI-unterstutzten institutionellen Kontexten.</span>
+      <span class="lb-en">The IDPF describes a multi-layered architecture for securing document provenance in AI-assisted institutional contexts.</span>
+      <span class="lb-pt">O IDPF descreve uma arquitetura multicamadas para garantir a proveniencia de documentos em contextos institucionais assistidos por IA.</span>
+    </p>
 
-    <h3>3.1 Identit&auml;ts-Governance-Schicht</h3>
-    <div class="layer-card">
-      <h4>&#x1F6E1; Identity Governance Layer</h4>
-      <p>Dokumente, die institutionelle Identit&auml;t referenzieren oder simulieren, werden einer Governance-Logik unterworfen. Diese Schicht regelt:</p>
-      <ul>
-        <li>ob institutionelle Bezeichnungen verwendet werden d&uuml;rfen</li>
-        <li>ob visuelle Identit&auml;t (z.&thinsp;B. Logos) zul&auml;ssig ist</li>
-        <li>ob ein Modell-Disclaimer erforderlich ist</li>
-        <li>ob eine formale Autorisierung vorliegt</li>
-      </ul>
-      <p>Damit wird verhindert, dass KI-Systeme unbeabsichtigt offizielle Autorit&auml;t vort&auml;uschen.</p>
+    <h3>3.1 Identity Governance Layer</h3>
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>Identity Governance Layer</h3>
+        <p>
+          <span class="lb-de">Dokumente, die institutionelle Identitat referenzieren oder simulieren, werden einer Governance-Logik unterworfen. Diese Schicht regelt:</span>
+          <span class="lb-en">Documents that reference or simulate institutional identity are subjected to governance logic. This layer regulates:</span>
+          <span class="lb-pt">Documentos que referenciam ou simulam identidade institucional estao sujeitos a logica de governanca. Esta camada regula:</span>
+        </p>
+        <ul>
+          <li>
+            <span class="l-de">ob institutionelle Bezeichnungen verwendet werden durfen</span>
+            <span class="l-en">whether institutional designations may be used</span>
+            <span class="l-pt">se designacoes institucionais podem ser usadas</span>
+          </li>
+          <li>
+            <span class="l-de">ob visuelle Identitat (z.B. Logos) zulassig ist</span>
+            <span class="l-en">whether visual identity (e.g., logos) is permissible</span>
+            <span class="l-pt">se identidade visual (por exemplo, logos) e permitida</span>
+          </li>
+          <li>
+            <span class="l-de">ob ein Modell-Disclaimer erforderlich ist</span>
+            <span class="l-en">whether a model disclaimer is required</span>
+            <span class="l-pt">se um aviso de modelo e necessario</span>
+          </li>
+          <li>
+            <span class="l-de">ob eine formale Autorisierung vorliegt</span>
+            <span class="l-en">whether formal authorization exists</span>
+            <span class="l-pt">se existe autorizacao formal</span>
+          </li>
+        </ul>
+        <p>
+          <span class="lb-de">Damit wird verhindert, dass KI-Systeme unbeabsichtigt offizielle Autoritat vortauschen.</span>
+          <span class="lb-en">This prevents AI systems from unintentionally simulating official authority.</span>
+          <span class="lb-pt">Isso impede que sistemas de IA simulem involuntariamente autoridade oficial.</span>
+        </p>
+      </div>
     </div>
 
-    <h3>3.2 Strukturelle Integrit&auml;tsschicht</h3>
-    <div class="layer-card">
-      <h4>&#x1F50D; Structural Integrity Layer</h4>
-      <p>Anstelle rein visueller Merkmale wird die interne Struktur des Dokuments als Integrit&auml;tsanker genutzt:</p>
-      <ul>
-        <li>Strukturhash des Dokumentlayouts</li>
-        <li>Metadatenbindung</li>
-        <li>Versions- und Policy-Referenzen</li>
-      </ul>
-      <p>Diese Elemente machen das Dokument als strukturelle Einheit &uuml;berpr&uuml;fbar, unabh&auml;ngig vom sichtbaren Erscheinungsbild.</p>
+    <h3>3.2 Structural Integrity Layer</h3>
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>Structural Integrity Layer</h3>
+        <p>
+          <span class="lb-de">Anstelle rein visueller Merkmale wird die interne Struktur des Dokuments als Integritatsanker genutzt:</span>
+          <span class="lb-en">Instead of purely visual features, the internal structure of the document is used as an integrity anchor:</span>
+          <span class="lb-pt">Em vez de caracteristicas puramente visuais, a estrutura interna do documento e usada como ancora de integridade:</span>
+        </p>
+        <ul>
+          <li>
+            <span class="l-de">Strukturhash des Dokumentlayouts</span>
+            <span class="l-en">Structure hash of the document layout</span>
+            <span class="l-pt">Hash de estrutura do layout do documento</span>
+          </li>
+          <li>
+            <span class="l-de">Metadatenbindung</span>
+            <span class="l-en">Metadata binding</span>
+            <span class="l-pt">Vinculacao de metadados</span>
+          </li>
+          <li>
+            <span class="l-de">Versions- und Policy-Referenzen</span>
+            <span class="l-en">Version and policy references</span>
+            <span class="l-pt">Referencias de versao e politica</span>
+          </li>
+        </ul>
+        <p>
+          <span class="lb-de">Diese Elemente machen das Dokument als strukturelle Einheit uberprufbar, unabhangig vom sichtbaren Erscheinungsbild.</span>
+          <span class="lb-en">These elements make the document verifiable as a structural unit, independent of visible appearance.</span>
+          <span class="lb-pt">Esses elementos tornam o documento verificavel como uma unidade estrutural, independente da aparencia visivel.</span>
+        </p>
+      </div>
     </div>
 
-    <h3>3.3 Provenienz-Schicht</h3>
-    <div class="layer-card">
-      <h4>&#x1F4DC; Provenance Layer</h4>
-      <p>Die Provenienzschicht erzeugt eine digitale Herkunftsbescheinigung zum Zeitpunkt der Dokumenterstellung. Sie enth&auml;lt unter anderem:</p>
-      <ul>
-        <li>Systemkennung</li>
-        <li>Erstellungszeitpunkt</li>
-        <li>Governance-Level</li>
-        <li>Policy-Version</li>
-        <li>Kryptographische Referenzen</li>
-      </ul>
-      <p>Diese Daten bilden eine maschinenlesbare <em>&bdquo;Geburtsurkunde&ldquo;</em> des Dokuments.</p>
+    <h3>3.3 Provenance Layer</h3>
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>Provenance Layer</h3>
+        <p>
+          <span class="lb-de">Die Provenienzschicht erzeugt eine digitale Herkunftsbescheinigung zum Zeitpunkt der Dokumenterstellung. Sie enthalt unter anderem:</span>
+          <span class="lb-en">The provenance layer creates a digital certificate of origin at the time of document creation. It includes, among others:</span>
+          <span class="lb-pt">A camada de proveniencia cria um certificado digital de origem no momento da criacao do documento. Ela inclui, entre outros:</span>
+        </p>
+        <ul>
+          <li>
+            <span class="l-de">Systemkennung</span>
+            <span class="l-en">System identifier</span>
+            <span class="l-pt">Identificador do sistema</span>
+          </li>
+          <li>
+            <span class="l-de">Erstellungszeitpunkt</span>
+            <span class="l-en">Creation timestamp</span>
+            <span class="l-pt">Carimbo de data/hora de criacao</span>
+          </li>
+          <li>
+            <span class="l-de">Governance-Level</span>
+            <span class="l-en">Governance level</span>
+            <span class="l-pt">Nivel de governanca</span>
+          </li>
+          <li>
+            <span class="l-de">Policy-Version</span>
+            <span class="l-en">Policy version</span>
+            <span class="l-pt">Versao da politica</span>
+          </li>
+          <li>
+            <span class="l-de">Kryptographische Referenzen</span>
+            <span class="l-en">Cryptographic references</span>
+            <span class="l-pt">Referencias criptograficas</span>
+          </li>
+        </ul>
+        <p>
+          <span class="lb-de">Diese Daten bilden eine maschinenlesbare "Geburtsurkunde" des Dokuments.</span>
+          <span class="lb-en">This data forms a machine-readable "birth certificate" of the document.</span>
+          <span class="lb-pt">Esses dados formam uma "certidao de nascimento" do documento legivel por maquina.</span>
+        </p>
+      </div>
     </div>
 
-    <h3>3.4 Forensische Verkettung</h3>
-    <div class="layer-card">
-      <h4>&#x1F517; Forensic Chain</h4>
-      <p>Alle Provenienzdatens&auml;tze werden in einer verketteten Struktur gespeichert. Dadurch entsteht eine nachvollziehbare Historie, die Manipulationen erkennbar macht und eine nachtr&auml;gliche Integrit&auml;tspr&uuml;fung erm&ouml;glicht.</p>
+    <h3>3.4 Forensic Chain</h3>
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>Forensic Chain</h3>
+        <p>
+          <span class="lb-de">Alle Provenienzdatensatze werden in einer verketteten Struktur gespeichert. Dadurch entsteht eine nachvollziehbare Historie, die Manipulationen erkennbar macht und eine nachtragliche Integritatsprufung ermoglicht.</span>
+          <span class="lb-en">All provenance records are stored in a chained structure. This creates a traceable history that makes manipulations detectable and enables subsequent integrity verification.</span>
+          <span class="lb-pt">Todos os registros de proveniencia sao armazenados em uma estrutura encadeada. Isso cria um historico rastreavel que torna as manipulacoes detectaveis e permite a verificacao de integridade subsequente.</span>
+        </p>
+      </div>
     </div>
 
     <!-- SECTION 4 -->
-    <h2>4. Deepfake-Resilienz als Bewertungsmodell</h2>
+    <h2 id="resilience">
+      <span class="l-de">4. Deepfake-Resilienz als Bewertungsmodell</span>
+      <span class="l-en">4. Deepfake Resilience as an Evaluation Model</span>
+      <span class="l-pt">4. Resiliencia a Deepfakes como Modelo de Avaliacao</span>
+    </h2>
 
-    <p>Ein weiterer Beitrag dieser Arbeit ist die Einf&uuml;hrung eines <em>Deepfake-Resilienz-Scores</em>. Dieser bewertet, wie widerstandsf&auml;hig ein Dokument gegen glaubw&uuml;rdige F&auml;lschung ist. Kriterien sind unter anderem:</p>
+    <p>
+      <span class="lb-de">Ein weiterer Beitrag dieser Arbeit ist die Einfuhrung eines <em>Deepfake-Resilienz-Scores</em>. Dieser bewertet, wie widerstandsfahig ein Dokument gegen glaubwurdige Falschung ist. Kriterien sind unter anderem:</span>
+      <span class="lb-en">Another contribution of this work is the introduction of a <em>Deepfake Resilience Score</em>. This evaluates how resistant a document is to credible forgery. Criteria include:</span>
+      <span class="lb-pt">Outra contribuicao deste trabalho e a introducao de um <em>Score de Resiliencia a Deepfakes</em>. Este avalia o quao resistente um documento e a falsificacao credivel. Os criterios incluem:</span>
+    </p>
+
     <ul>
-      <li>Governance-Level</li>
-      <li>Strukturelle Integrit&auml;t</li>
-      <li>Provenienzbindung</li>
-      <li>Identit&auml;ts-Governance</li>
-      <li>Forensische Nachvollziehbarkeit</li>
+      <li>
+        <span class="l-de">Governance-Level</span>
+        <span class="l-en">Governance level</span>
+        <span class="l-pt">Nivel de governanca</span>
+      </li>
+      <li>
+        <span class="l-de">Strukturelle Integritat</span>
+        <span class="l-en">Structural integrity</span>
+        <span class="l-pt">Integridade estrutural</span>
+      </li>
+      <li>
+        <span class="l-de">Provenienzbindung</span>
+        <span class="l-en">Provenance binding</span>
+        <span class="l-pt">Vinculacao de proveniencia</span>
+      </li>
+      <li>
+        <span class="l-de">Identitats-Governance</span>
+        <span class="l-en">Identity governance</span>
+        <span class="l-pt">Governanca de identidade</span>
+      </li>
+      <li>
+        <span class="l-de">Forensische Nachvollziehbarkeit</span>
+        <span class="l-en">Forensic traceability</span>
+        <span class="l-pt">Rastreabilidade forense</span>
+      </li>
     </ul>
 
-    <p>Der Score beschreibt nicht die Qualit&auml;t des Inhalts, sondern die <strong>Sicherheit der Herkunft</strong>. In der operativen Implementierung (TR-007 / SOF v1.0) wird dieser Score auf einer Skala von 0&ndash;100 berechnet und als maschinenlesbares Badge in das Dokument eingebettet.</p>
+    <p>
+      <span class="lb-de">Der Score beschreibt nicht die Qualitat des Inhalts, sondern die <strong>Sicherheit der Herkunft</strong>. In der operativen Implementierung (TR-007 / SOF v1.0) wird dieser Score auf einer Skala von 0–100 berechnet und als maschinenlesbares Badge in das Dokument eingebettet.</span>
+      <span class="lb-en">The score does not describe the quality of content but the <strong>security of provenance</strong>. In the operational implementation (TR-007 / SOF v1.0), this score is calculated on a scale of 0–100 and embedded as a machine-readable badge in the document.</span>
+      <span class="lb-pt">O score nao descreve a qualidade do conteudo, mas a <strong>seguranca da proveniencia</strong>. Na implementacao operacional (TR-007 / SOF v1.0), este score e calculado em uma escala de 0–100 e incorporado como um selo legivel por maquina no documento.</span>
+    </p>
 
     <!-- SECTION 5 -->
-    <h2>5. Relevanz f&uuml;r Regulierung und Organisationen</h2>
+    <h2 id="relevance">
+      <span class="l-de">5. Relevanz fur Regulierung und Organisationen</span>
+      <span class="l-en">5. Relevance for Regulation and Organizations</span>
+      <span class="l-pt">5. Relevancia para Regulacao e Organizacoes</span>
+    </h2>
 
-    <p>Das vorgestellte Modell ist besonders relevant f&uuml;r:</p>
+    <p>
+      <span class="lb-de">Das vorgestellte Modell ist besonders relevant fur:</span>
+      <span class="lb-en">The presented model is particularly relevant for:</span>
+      <span class="lb-pt">O modelo apresentado e particularmente relevante para:</span>
+    </p>
 
-    <div class="relevance-grid">
-      <div class="relevance-item">&Ouml;ffentliche Verwaltungen</div>
-      <div class="relevance-item">Finanzaufsicht &amp; Banken</div>
-      <div class="relevance-item">Zertifizierungsstellen</div>
-      <div class="relevance-item">Sozial- &amp; Gesundheitsinstitutionen</div>
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>
+          <span class="l-de">Zielgruppen</span>
+          <span class="l-en">Target Sectors</span>
+          <span class="l-pt">Setores-Alvo</span>
+        </h3>
+        <ul>
+          <li>
+            <span class="l-de">Offentliche Verwaltungen</span>
+            <span class="l-en">Public Administrations</span>
+            <span class="l-pt">Administracoes Publicas</span>
+          </li>
+          <li>
+            <span class="l-de">Finanzaufsicht &amp; Banken</span>
+            <span class="l-en">Financial Supervision &amp; Banks</span>
+            <span class="l-pt">Supervisao Financeira &amp; Bancos</span>
+          </li>
+          <li>
+            <span class="l-de">Zertifizierungsstellen</span>
+            <span class="l-en">Certification Bodies</span>
+            <span class="l-pt">Orgaos de Certificacao</span>
+          </li>
+          <li>
+            <span class="l-de">Sozial- &amp; Gesundheitsinstitutionen</span>
+            <span class="l-en">Social &amp; Health Institutions</span>
+            <span class="l-pt">Instituicoes Sociais e de Saude</span>
+          </li>
+        </ul>
+      </div>
     </div>
 
-    <p>Dort, wo Dokumente rechtliche oder wirtschaftliche Folgen ausl&ouml;sen, ist Herkunftssicherheit zentraler Bestandteil institutioneller Vertrauensw&uuml;rdigkeit. Im Kontext des EU AI Act stellt das IDPF einen konkreten Beitrag zur Einhaltung der Transparenz- und Nachweisanforderungen dar.</p>
+    <p>
+      <span class="lb-de">Dort, wo Dokumente rechtliche oder wirtschaftliche Folgen auslosen, ist Herkunftssicherheit zentraler Bestandteil institutioneller Vertrauenswurdigkeit. Im Kontext des EU AI Act stellt das IDPF einen konkreten Beitrag zur Einhaltung der Transparenz- und Nachweisanforderungen dar.</span>
+      <span class="lb-en">Where documents trigger legal or economic consequences, provenance security is a central component of institutional trustworthiness. In the context of the EU AI Act, the IDPF represents a concrete contribution to compliance with transparency and evidence requirements.</span>
+      <span class="lb-pt">Onde documentos desencadeiam consequencias legais ou economicas, a seguranca de proveniencia e um componente central da confiabilidade institucional. No contexto do EU AI Act, o IDPF representa uma contribuicao concreta para o cumprimento dos requisitos de transparencia e evidencia.</span>
+    </p>
 
     <!-- SECTION 6 -->
-    <h2>6. Diskussion</h2>
+    <h2 id="discussion">
+      <span class="l-de">6. Diskussion</span>
+      <span class="l-en">6. Discussion</span>
+      <span class="l-pt">6. Discussao</span>
+    </h2>
 
-    <p>Das IDPF ersetzt keine klassische Dokumentenpr&uuml;fung, sondern erweitert sie um eine neue Dimension: <em>pr&auml;ventive Herkunftssicherung</em>. W&auml;hrend Deepfake-Erkennung immer ein Katz-und-Maus-Spiel bleibt, schafft Herkunftsverankerung eine stabile Vertrauensgrundlage.</p>
+    <p>
+      <span class="lb-de">Das IDPF ersetzt keine klassische Dokumentenprufung, sondern erweitert sie um eine neue Dimension: <em>praventive Herkunftssicherung</em>. Wahrend Deepfake-Erkennung immer ein Katz-und-Maus-Spiel bleibt, schafft Herkunftsverankerung eine stabile Vertrauensgrundlage.</span>
+      <span class="lb-en">The IDPF does not replace classic document verification but extends it with a new dimension: <em>preventive provenance securing</em>. While deepfake detection always remains a cat-and-mouse game, provenance anchoring creates a stable foundation of trust.</span>
+      <span class="lb-pt">O IDPF nao substitui a verificacao classica de documentos, mas a estende com uma nova dimensao: <em>seguranca preventiva de proveniencia</em>. Enquanto a deteccao de deepfakes sempre permanece um jogo de gato e rato, a ancoragem de proveniencia cria uma base estavel de confianca.</span>
+    </p>
 
-    <p>Das Modell kann als infrastruktureller Baustein f&uuml;r eine zuk&uuml;nftige dokumentare Vertrauensarchitektur verstanden werden &ndash; insbesondere in Verbindung mit bestehenden Governance-Infrastrukturen wie dem WINDI-System.</p>
+    <p>
+      <span class="lb-de">Das Modell kann als infrastruktureller Baustein fur eine zukunftige dokumentare Vertrauensarchitektur verstanden werden – insbesondere in Verbindung mit bestehenden Governance-Infrastrukturen wie dem WINDI-System.</span>
+      <span class="lb-en">The model can be understood as an infrastructural building block for a future documentary trust architecture – especially in connection with existing governance infrastructures such as the WINDI system.</span>
+      <span class="lb-pt">O modelo pode ser entendido como um bloco de construcao infraestrutural para uma futura arquitetura de confianca documental – especialmente em conexao com infraestruturas de governanca existentes, como o sistema WINDI.</span>
+    </p>
 
     <!-- SECTION 7 -->
-    <h2>7. Schlussfolgerung</h2>
+    <h2 id="conclusion">
+      <span class="l-de">7. Schlussfolgerung</span>
+      <span class="l-en">7. Conclusion</span>
+      <span class="l-pt">7. Conclusao</span>
+    </h2>
 
-    <div class="conclusion-box">
-      <p>Diese Arbeit zeigt, dass in der &Auml;ra generativer KI eine neue Form der Dokumentensicherheit erforderlich ist.</p>
-
-      <p>Nicht mehr die Frage</p>
-      <span class="central-question">&bdquo;Ist dieses Dokument gef&auml;lscht?&ldquo;</span>
-
-      <p>steht im Zentrum, sondern:</p>
-      <span class="central-question">&bdquo;Ist die Herkunft dieses Dokuments gesichert und &uuml;berpr&uuml;fbar?&ldquo;</span>
-
-      <p>Das Institutionelle Dokument-Provenienz-Framework liefert daf&uuml;r einen konzeptionellen und technischen Ansatz und legt die Grundlage f&uuml;r eine neue Klasse vertrauensw&uuml;rdiger, KI-unterst&uuml;tzt erzeugter Dokumente.</p>
+    <div class="doc-quote">
+      <p>
+        <span class="l-de">Diese Arbeit zeigt, dass in der Ara generativer KI eine neue Form der Dokumentensicherheit erforderlich ist.</span>
+        <span class="l-en">This work demonstrates that in the era of generative AI, a new form of document security is required.</span>
+        <span class="l-pt">Este trabalho demonstra que na era da IA generativa, uma nova forma de seguranca de documentos e necessaria.</span>
+      </p>
     </div>
 
+    <p>
+      <span class="lb-de">Nicht mehr die Frage "Ist dieses Dokument gefalscht?" steht im Zentrum, sondern: "Ist die Herkunft dieses Dokuments gesichert und uberprufbar?"</span>
+      <span class="lb-en">The central question is no longer "Is this document forged?" but rather: "Is the provenance of this document secured and verifiable?"</span>
+      <span class="lb-pt">A questao central nao e mais "Este documento e falsificado?" mas sim: "A proveniencia deste documento e segura e verificavel?"</span>
+    </p>
+
+    <p>
+      <span class="lb-de">Das Institutionelle Dokument-Provenienz-Framework liefert dafur einen konzeptionellen und technischen Ansatz und legt die Grundlage fur eine neue Klasse vertrauenswurdiger, KI-unterstutzt erzeugter Dokumente.</span>
+      <span class="lb-en">The Institutional Document Provenance Framework provides a conceptual and technical approach and lays the foundation for a new class of trustworthy, AI-assisted documents.</span>
+      <span class="lb-pt">O Framework Institucional de Proveniencia de Documentos fornece uma abordagem conceitual e tecnica e estabelece a base para uma nova classe de documentos confiaveis assistidos por IA.</span>
+    </p>
+
     <!-- WINDI GOVERNANCE REFERENCE SECTION -->
-    <div class="governance-reference">
-      <h2>&#x1F4CB; WINDI Governance-Referenz (A4 Desk BABEL)</h2>
+    <h2 id="governance-ref">
+      <span class="l-de">WINDI Governance-Referenz</span>
+      <span class="l-en">WINDI Governance Reference</span>
+      <span class="l-pt">Referencia de Governanca WINDI</span>
+    </h2>
 
-      <p>Dieser Fachartikel wurde unter WINDI-Governance erstellt und tr&auml;gt die folgenden registrierten Herkunftsmerkmale aus dem A4 Desk BABEL-System:</p>
+    <p>
+      <span class="lb-de">Dieser Fachartikel wurde unter WINDI-Governance erstellt und tragt die folgenden registrierten Herkunftsmerkmale aus dem A4 Desk BABEL-System:</span>
+      <span class="lb-en">This article was created under WINDI governance and carries the following registered provenance markers from the A4 Desk BABEL system:</span>
+      <span class="lb-pt">Este artigo foi criado sob governanca WINDI e possui os seguintes marcadores de proveniencia registrados do sistema A4 Desk BABEL:</span>
+    </p>
 
-      <div class="governance-statement">
-        <div class="line-main">Document governed by WINDI &bull; Human authored &bull; AI-assisted under supervision</div>
-        Governed via WINDI &bull; Human: 100.0% &bull; Template: unknown &bull; Structure: VALID
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>A4 Desk BABEL v4.8</h3>
+        <p style="text-align: center; color: var(--text-secondary); font-size: 13px;">
+          Document governed by WINDI &bull; Human authored &bull; AI-assisted under supervision<br>
+          Governed via WINDI &bull; Human: 100.0% &bull; Template: unknown &bull; Structure: VALID
+        </p>
+        <hr style="border-color: var(--border-subtle); margin: 16px 0;">
+        <p><strong>WINDI-Receipt:</strong> <code>WINDI-BABEL-02FEB26-BC1DE1865F90</code></p>
+        <p><strong>Hash:</strong> <code>bc1de1865f90</code></p>
+        <p><strong>Autor:</strong> Jober Mogele Correa (WINDI-CEO-001)</p>
+        <p><strong>Witness:</strong> Dr. Schmidt Bauer</p>
+        <p><strong>Provenance Hash:</strong> <code>f6f732282d85bc40</code></p>
+        <hr style="border-color: var(--border-subtle); margin: 16px 0;">
+        <p>
+          <span class="status-badge status-active">SOF v1.0</span>
+          <span class="status-badge status-active">Resilience: 100/100</span>
+          <span class="status-badge status-active">Structure: VALID</span>
+          <span class="status-badge status-active">Human: 100.0%</span>
+        </p>
       </div>
+    </div>
 
-      <div class="babel-receipt">
-        <div class="babel-receipt-header">
-          <div class="babel-receipt-logo">
-            &#x1F3DB; A4 Desk BABEL v4.8
-            <small>WINDI Publishing House &bull; EU AI Act Compliant</small>
-          </div>
-          <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--caption);">
-            windi.publishing.de
-          </div>
-        </div>
+    <!-- MEDIA COVERAGE REFERENCE -->
+    <h3>
+      <span class="l-de">Medienspiegel: Internationale Berichterstattung</span>
+      <span class="l-en">Media Mirror: International Coverage</span>
+      <span class="l-pt">Espelho de Midia: Cobertura Internacional</span>
+    </h3>
 
-        <div class="receipt-line">
-          <span class="receipt-label">WINDI-Receipt:</span>
-          <span class="receipt-value mono">WINDI-BABEL-02FEB26-BC1DE1865F90</span>
-        </div>
-        <div class="receipt-line">
-          <span class="receipt-label">Hash:</span>
-          <span class="receipt-value mono">bc1de1865f90</span>
-        </div>
-        <div class="receipt-line">
-          <span class="receipt-label">Autor:</span>
-          <span class="receipt-value">Jober M&ouml;gele Correa (WINDI-CEO-001)</span>
-        </div>
-        <div class="receipt-line">
-          <span class="receipt-label">Witness:</span>
-          <span class="receipt-value">Dr. Schmidt Bauer</span>
-        </div>
-        <div class="receipt-line">
-          <span class="receipt-label">Provenance Hash:</span>
-          <span class="receipt-value mono">f6f732282d85bc40</span>
-        </div>
-
-        <div class="governance-badges">
-          <span class="badge badge-sof">&#x1F6E1; SOF v1.0</span>
-          <span class="badge badge-resilience">Resilience: 100/100 MAXIMUM &mdash; Forensic-grade provenance</span>
-          <span class="badge badge-structure">Structure: VALID</span>
-          <span class="badge badge-human">Human: 100.0%</span>
-        </div>
-      </div>
-
-      <!-- MEDIA COVERAGE REFERENCE -->
-      <h3 style="margin-top: 2rem;">Medienspiegel: Internationale Berichterstattung</h3>
-
-      <div class="media-reference">
-        <h4>&#x1F4F0; Internationale Fachpresse &mdash; Journalistisches Format (Editorial Style)#x1F4F0; Internationale Fachpresse &#x1F4F0; Internationale Fachpresse &mdash; Journalistisches Format (Editorial Style)mdash; Journalistisches Format (Editorial Style)</h4>
-        <p><em>Titel: <p><em>&ldquo;European Research Project Introduces First Operationalldquo;European Research Project Introduces First Operational &lsquo;Responsibility Infrastructure&rsquo; for AI Systems&rdquo;</em></p>
-        <p class="media-meta" style="color:#c0392b; font-family: Source Sans Pro, sans-serif; font-size: 0.85rem; margin-top: 0.5rem;"><strong>&#x26A0; Hinweis:</strong> Dieser Text wurde von WINDI im journalistischen Stil (Editorial Format) verfasst. Er ist <em>keine</em> Ver&ouml;ffentlichung des Wall Street Journal oder einer verbundenen Institution.</p>
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>Editorial Format Publication</h3>
+        <p><em>Title: "European Research Project Introduces First Operational 'Responsibility Infrastructure' for AI Systems"</em></p>
+        <p style="color: var(--signal-warn); font-size: 13px;">
+          <span class="l-de"><strong>Hinweis:</strong> Dieser Text wurde von WINDI im journalistischen Stil (Editorial Format) verfasst. Er ist <em>keine</em> Veroffentlichung des Wall Street Journal oder einer verbundenen Institution.</span>
+          <span class="l-en"><strong>Note:</strong> This text was written by WINDI in journalistic style (Editorial Format). It is <em>not</em> a publication of the Wall Street Journal or any affiliated institution.</span>
+          <span class="l-pt"><strong>Nota:</strong> Este texto foi escrito pela WINDI em estilo jornalistico (Formato Editorial). <em>Nao</em> e uma publicacao do Wall Street Journal ou qualquer instituicao afiliada.</span>
+        </p>
         <p>WINDI embeds governance directly into AI-assisted writing, shifting responsibility from model outputs to real-time human decision contexts.</p>
-        <p class="media-meta">
-          Berlin / Brussels &mdash; February 2026<br>
+        <p style="font-family: var(--font-mono); font-size: 11px; color: var(--text-tertiary);">
+          Berlin / Brussels — February 2026<br>
           WINDI-RECEIPT: WINDI-BABEL-02FEB26-BC1DE1865F90 | SOF v1.0 | Resilience: 100/100
         </p>
       </div>
     </div>
 
     <!-- CROSS-REFERENCES -->
-    <h2>Verwandte Dokumentation</h2>
+    <h2>
+      <span class="l-de">Verwandte Dokumentation</span>
+      <span class="l-en">Related Documentation</span>
+      <span class="l-pt">Documentacao Relacionada</span>
+    </h2>
 
-    <div class="tr-crossref">
-      <a href="isp-evolution.html" class="tr-link">
-        <span class="tr-id">TR-006</span>
-        <span class="tr-title">ISP Registry &amp; Evolution Framework</span>
-      </a>
-      <a href="identity-governance-layer.html" class="tr-link">
-        <span class="tr-id">Section 10</span>
-        <span class="tr-title">Institutional Identity Governance Layer</span>
-      </a>
-      <a href="tr-007.html" class="tr-link">
-        <span class="tr-id">TR-007</span>
-        <span class="tr-title">Document Provenance &amp; Anti-Deepfake Framework</span>
-      </a>
-    </div>
+    <ul>
+      <li><a href="isp-evolution.html"><strong>TR-006:</strong> ISP Registry &amp; Evolution Framework</a></li>
+      <li><a href="identity-governance-layer.html"><strong>Section 10:</strong> Institutional Identity Governance Layer</a></li>
+      <li><a href="tr-007.html"><strong>TR-007:</strong> Document Provenance &amp; Anti-Deepfake Framework</a></li>
+    </ul>
 
-    <p style="text-align: center; font-family: 'Source Sans Pro', sans-serif; font-size: 0.88rem; color: var(--caption); margin-top: 1rem;">
-      <strong>Provenienz-Kette:</strong> TR-006 (ISP-Profile) &rarr; Section 10 (Identit&auml;ts-Governance) &rarr; TR-007 (SOF-Implementierung) &rarr; <strong>PUB-001</strong> (Akademische Grundlage)
+    <p style="text-align: center; font-size: 13px; color: var(--text-tertiary); margin-top: 24px;">
+      <strong>
+        <span class="l-de">Provenienz-Kette:</span>
+        <span class="l-en">Provenance Chain:</span>
+        <span class="l-pt">Cadeia de Proveniencia:</span>
+      </strong>
+      TR-006 (ISP-Profile) &rarr; Section 10 (Identity Governance) &rarr; TR-007 (SOF Implementation) &rarr; <strong>PUB-001</strong> (Academic Foundation)
     </p>
 
-    <!-- NAVIGATION -->
-    <div class="nav-links">
+    <!-- Navigation Links -->
+    <hr style="border-color: var(--border-subtle); margin: 32px 0;">
+    <p style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
       <a href="tr-007.html">&larr; TR-007: Secure Origin Framework</a>
       <a href="index.html">WINDI Documentation Index &rarr;</a>
-    </div>
+    </p>
 
   </div>
 
-  <!-- FOOTER -->
-  <footer class="doc-footer">
-    <div class="footer-left">
-      WINDI Publishing House &middot; Kempten (Allg&auml;u), Bavaria, Germany<br>
-      Masterarbeit-Dokumentation: <em>master.windia4desk.tech</em>
+  <!-- Page Footer -->
+  <footer class="page-footer">
+    <div class="page-footer-meta">
+      <span>WINDI-BABEL-02FEB26-BC1DE1865F90</span>
+      <span>PUB-WINDI-2026-001</span>
     </div>
-    <div class="footer-right">
-      PUB-WINDI-2026-001<br>
-      IDPF v1.0 &middot; SOF v1.0<br>
-      02. Februar 2026<br>
-      Klassifikation: &Ouml;FFENTLICH
+    <p class="page-footer-quittung">Author: Jober Mogele Correa (WINDI-CEO-001) | Status: Registered &amp; Verified</p>
+    <p class="page-footer-principle">
+      <span class="l-de">"KI verarbeitet. Mensch entscheidet. WINDI garantiert."</span>
+      <span class="l-en">"AI processes. Human decides. WINDI guarantees."</span>
+      <span class="l-pt">"IA processa. Humano decide. WINDI garante."</span>
+    </p>
+    <div style="margin-top: 16px; font-size: 11px; color: var(--text-tertiary);">
+      <strong>Authorship Notice:</strong> This document was authored by Jober Mogele Correa, Chief Governance Officer, WINDI Publishing House.<br>
+      Human-authored content under WINDI governance supervision. AI-assisted formatting only.<br>
+      Kempten (Allgau), Bavaria, Germany &bull; IDPF v1.0 &bull; SOF v1.0 &bull; 02. Februar 2026 &bull; Classification: PUBLIC
     </div>
   </footer>
+
+</main>
+
+<!-- JavaScript -->
+<script>
+// Theme Toggle
+function toggleTheme() {
+  const body = document.body;
+  const isLight = body.getAttribute('data-theme') === 'light';
+  body.setAttribute('data-theme', isLight ? 'dark' : 'light');
+  try { localStorage.setItem('windi-theme', isLight ? 'dark' : 'light'); } catch(e) {}
+}
+
+// Language Switcher
+function setLang(lang) {
+  document.body.setAttribute('data-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+  try { localStorage.setItem('windi-lang', lang); } catch(e) {}
+}
+
+// Sidebar Toggle (mobile)
+let sidebarOpen = false;
+function toggleSidebar() {
+  sidebarOpen = !sidebarOpen;
+  document.getElementById('sidebarLeft').classList.toggle('open', sidebarOpen);
+}
+
+// Close sidebar on link click (mobile)
+document.querySelectorAll('.sidebar-link').forEach(link => {
+  link.addEventListener('click', () => {
+    if (window.innerWidth <= 960) {
+      sidebarOpen = false;
+      document.getElementById('sidebarLeft').classList.remove('open');
+    }
+  });
+});
+
+// Init saved preferences
+(function init() {
+  try {
+    const theme = localStorage.getItem('windi-theme');
+    const lang = localStorage.getItem('windi-lang');
+    if (theme) document.body.setAttribute('data-theme', theme);
+    if (lang) setLang(lang);
+  } catch(e) {}
+})();
+</script>
 
 </body>
 </html>

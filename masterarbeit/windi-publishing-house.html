@@ -1,210 +1,372 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Manifesto of the WINDI Publishing House — Human Narrative Sovereignty in the Age of Artificial Intelligence" />
-  <meta name="author" content="WINDI Publishing House — Jober Mögele Correa" />
-  <meta name="keywords" content="WINDI, Publishing House, AI Governance, Human Authorship, EU AI Act, Manifesto" />
-  <title>Manifesto — WINDI Publishing House</title>
-  <style>
-    :root {
-      --windi-dark: #1a1a1a;
-      --windi-accent: #c49b2a;
-      --windi-bg: #f9f9f6;
-      --windi-white: #ffffff;
-      --windi-text: #222222;
-      --windi-muted: #666666;
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      font-family: Georgia, "Times New Roman", serif;
-      margin: 0;
-      padding: 0;
-      background: var(--windi-bg);
-      color: var(--windi-text);
-      line-height: 1.75;
-    }
-
-    header {
-      background: var(--windi-dark);
-      color: var(--windi-white);
-      padding: 2.5rem 1.5rem;
-      text-align: center;
-      border-bottom: 4px solid var(--windi-accent);
-    }
-
-    header h1 {
-      margin: 0 0 0.5rem 0;
-      font-size: 1.8rem;
-      letter-spacing: 1px;
-    }
-
-    header p {
-      margin: 0;
-      font-size: 1.05rem;
-      opacity: 0.85;
-      font-style: italic;
-    }
-
-    main {
-      max-width: 900px;
-      margin: 2.5rem auto;
-      padding: 2rem 2.5rem 3rem 2.5rem;
-      background: var(--windi-white);
-      box-shadow: 0 1px 8px rgba(0,0,0,0.06);
-    }
-
-    h2 {
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      margin-top: 2.5rem;
-      border-bottom: 2px solid var(--windi-accent);
-      padding-bottom: 0.4rem;
-      color: var(--windi-dark);
-    }
-
-    p { margin: 1.2rem 0; }
-
-    ul {
-      margin: 1rem 0 1.5rem 2rem;
-      list-style-type: "▸ ";
-    }
-
-    ul li {
-      margin-bottom: 0.5rem;
-      padding-left: 0.3rem;
-    }
-
-    .quote {
-      font-style: italic;
-      background: #f5f3eb;
-      padding: 1.2rem 1.8rem;
-      border-left: 4px solid var(--windi-accent);
-      margin: 2rem 0;
-      color: #333;
-    }
-
-    .principle {
-      background: #fafaf5;
-      border: 1px solid #e8e4d8;
-      padding: 1.5rem 2rem;
-      margin: 2rem 0;
-      border-radius: 3px;
-    }
-
-    .principle strong {
-      color: var(--windi-dark);
-    }
-
-    .separator {
-      text-align: center;
-      margin: 2.5rem 0;
-      color: var(--windi-accent);
-      font-size: 1.2rem;
-      letter-spacing: 6px;
-    }
-
-    footer {
-      text-align: center;
-      font-size: 0.85rem;
-      color: var(--windi-muted);
-      padding: 2rem 1rem 3rem 1rem;
-      border-top: 1px solid #ddd;
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    footer .signature {
-      font-style: italic;
-      margin-top: 0.5rem;
-    }
-
-    nav.back-link {
-      max-width: 900px;
-      margin: 1.5rem auto 0 auto;
-      padding: 0 1.5rem;
-    }
-
-    nav.back-link a {
-      color: var(--windi-muted);
-      text-decoration: none;
-      font-size: 0.9rem;
-    }
-
-    nav.back-link a:hover {
-      color: var(--windi-accent);
-    }
-
-    @media (max-width: 640px) {
-      main { padding: 1.5rem 1.2rem 2rem 1.2rem; }
-      header h1 { font-size: 1.4rem; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manifesto — WINDI Publishing House</title>
+<meta name="description" content="Manifesto of the WINDI Publishing House — Human Narrative Sovereignty in the Age of Artificial Intelligence">
+<meta name="author" content="WINDI Publishing House — Jober Mögele Correa">
+<meta name="keywords" content="WINDI, Publishing House, AI Governance, Human Authorship, EU AI Act, Manifesto">
+<link rel="stylesheet" href="windi-internal.css">
 </head>
-<body>
+<body data-theme="dark" data-lang="de">
 
-<nav class="back-link">
-  <a href="index.html">← Back to Masterarbeit Index</a>
-</nav>
-
-<header>
-  <h1>Manifesto of the WINDI Publishing House</h1>
-  <p>Human Authorship in the Age of Artificial Intelligence</p>
+<!-- Header -->
+<header class="site-header">
+  <a href="index.html" class="header-brand">
+    <div class="header-logo">W</div>
+    <div class="header-title-group">
+      <span class="header-title">WINDI</span>
+      <span class="header-subtitle">Governance Intelligence</span>
+    </div>
+  </a>
+  <div class="header-center">
+    <div class="header-status">
+      <span class="status-dot"></span>
+      <span>Operational</span>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('de')">DE</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('pt')">PT</button>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+      <div class="theme-toggle-track"></div>
+      <div class="theme-toggle-thumb" id="themeThumb"></div>
+    </button>
+    <button class="mobile-toggle" onclick="toggleSidebar()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
 </header>
 
-<main>
+<!-- Sidebar Navigation -->
+<nav class="sidebar sidebar-left" id="sidebarLeft">
+  <div class="sidebar-section">
+    <div class="sidebar-label">Masterarbeit</div>
+    <a href="index.html" class="sidebar-link">Main Document</a>
+    <a href="cover.html" class="sidebar-link">Cover</a>
+    <a href="about-windi.html" class="sidebar-link">About WINDI</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Governance</div>
+    <a href="governance-levels.html" class="sidebar-link">Governance Levels</a>
+    <a href="human-oversight.html" class="sidebar-link">Human Oversight</a>
+    <a href="data-handling.html" class="sidebar-link">Data Handling</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Architecture</div>
+    <a href="diagrams.html" class="sidebar-link">Diagrams</a>
+    <a href="interface-guide.html" class="sidebar-link">Interface Guide</a>
+    <a href="verification-layer.html" class="sidebar-link">Verification Layer</a>
+    <a href="kapitel12_domain_sovereignty.html" class="sidebar-link">Domain Sovereignty</a>
+    <a href="identity-governance-layer.html" class="sidebar-link">Identity Governance</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Technical Reports</div>
+    <a href="tr-windi-2026-003.html" class="sidebar-link">TR-003: Service Layer</a>
+    <a href="tr-windi-2026-004.html" class="sidebar-link">TR-004: Cognitive Service</a>
+    <a href="tr-windi-2026-005.html" class="sidebar-link">TR-005: Cognitive Cycle</a>
+    <a href="isp-evolution.html" class="sidebar-link">TR-006: ISP Registry</a>
+    <a href="tr-007.html" class="sidebar-link">TR-007: Provenance</a>
+    <a href="sge-results.html" class="sidebar-link">SGE Results</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Publications</div>
+    <a href="publications.html" class="sidebar-link">Publications</a>
+    <a href="fachartikel-provenienz.html" class="sidebar-link">Fachartikel</a>
+    <a href="windi-publishing-house.html" class="sidebar-link sidebar-link-active">Manifesto</a>
+    <a href="editorial-policy.html" class="sidebar-link">Editorial Policy</a>
+    <a href="idpf-abstract.html" class="sidebar-link">IDPF Abstract</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Media</div>
+    <a href="windi-working-paper-2026.html" class="sidebar-link">Working Paper</a>
+    <a href="press-release-windi-2026.html" class="sidebar-link">Press Release</a>
+    <a href="windi-side-by-side-2026.html" class="sidebar-link">Side-by-Side</a>
+    <a href="wsj-style-governed-windi-2026.html" class="sidebar-link">WSJ Feature</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Compliance</div>
+    <a href="document-integrity.html" class="sidebar-link">Doc Integrity</a>
+    <a href="print-watermark-layer.html" class="sidebar-link">Print Layer</a>
+    <a href="regulatory-summary-print-layer.html" class="sidebar-link">Regulatory</a>
+    <a href="availability-implementation.html" class="sidebar-link">Appendix A</a>
+  </div>
+</nav>
 
-<p>In an age where artificial intelligence can generate language at scale, the role of the human author stands at a turning point. Writing is no longer only a technical act of producing text — it is a declaration of presence, memory, and meaning. The WINDI Publishing House exists to protect that human space.</p>
+<!-- Right Sidebar TOC -->
+<aside class="sidebar sidebar-right" id="sidebarRight">
+  <div class="sidebar-label">
+    <span class="l-de">Auf dieser Seite</span>
+    <span class="l-en">On this page</span>
+    <span class="l-pt">Nesta pagina</span>
+  </div>
+  <a href="#opening" class="toc-link">
+    <span class="l-de">Einleitung</span>
+    <span class="l-en">Opening Statement</span>
+    <span class="l-pt">Declaracao Inicial</span>
+  </a>
+  <a href="#foundation" class="toc-link">
+    <span class="l-de">Redaktionelle Grundlage</span>
+    <span class="l-en">Editorial Foundation</span>
+    <span class="l-pt">Fundacao Editorial</span>
+  </a>
+  <a href="#principle" class="toc-link">
+    <span class="l-de">Das WINDI-Prinzip</span>
+    <span class="l-en">The WINDI Principle</span>
+    <span class="l-pt">O Principio WINDI</span>
+  </a>
+  <a href="#why" class="toc-link">
+    <span class="l-de">Warum dies wichtig ist</span>
+    <span class="l-en">Why This Matters</span>
+    <span class="l-pt">Por que isso importa</span>
+  </a>
+  <a href="#declaration" class="toc-link">
+    <span class="l-de">Erklaerung</span>
+    <span class="l-en">Declaration</span>
+    <span class="l-pt">Declaracao</span>
+  </a>
+</aside>
 
-<div class="quote">
-  AI may assist expression, but authorship belongs to the human.
-</div>
+<!-- Main Content -->
+<main class="main-content">
 
-<p>Language is not merely output. It is how individuals construct identity, process experience, and give form to their inner world. When machines enter this space, they must do so with boundaries. Technology must support clarity, structure, and continuity — never replace lived experience, personal memory, or human interpretation.</p>
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-breadcrumb">
+      <a href="index.html">WINDI</a>
+      <span class="breadcrumb-sep">/</span>
+      <span class="breadcrumb-current">
+        <span class="l-de">Manifest</span>
+        <span class="l-en">Manifesto</span>
+        <span class="l-pt">Manifesto</span>
+      </span>
+    </div>
+    <div class="page-meta-bar">
+      <span class="page-tag page-tag-gov">Publishing House</span>
+      <span class="page-date">2026-02-06</span>
+    </div>
+    <h1 class="page-title">
+      <span class="l-de">Manifest des WINDI Verlagshauses</span>
+      <span class="l-en">Manifesto of the WINDI Publishing House</span>
+      <span class="l-pt">Manifesto da WINDI Publishing House</span>
+    </h1>
+    <p class="page-subtitle">
+      <span class="l-de">Menschliche Autorschaft im Zeitalter der Kuenstlichen Intelligenz</span>
+      <span class="l-en">Human Authorship in the Age of Artificial Intelligence</span>
+      <span class="l-pt">Autoria Humana na Era da Inteligencia Artificial</span>
+    </p>
+    <div class="page-divider"></div>
+  </div>
 
-<h2>Our Editorial Foundation</h2>
+  <!-- Content -->
+  <div class="content-prose">
 
-<ul>
-  <li>The human remains the sole author of meaning and narrative identity</li>
-  <li>AI functions exclusively as a structural and semantic facilitator</li>
-  <li>No system generates autobiographical content or personal interpretation</li>
-  <li>Editorial processes are transparent, documented, and ethically bounded</li>
-</ul>
+    <!-- Opening Quote -->
+    <div class="doc-quote">
+      <p>
+        <span class="l-de">"KI kann den Ausdruck unterstuetzen, aber die Autorschaft gehoert dem Menschen."</span>
+        <span class="l-en">"AI may assist expression, but authorship belongs to the human."</span>
+        <span class="l-pt">"A IA pode auxiliar a expressao, mas a autoria pertence ao humano."</span>
+      </p>
+      <cite>— WINDI Publishing House Principle</cite>
+    </div>
 
-<h2>The WINDI Principle</h2>
+    <!-- Section: Opening Statement -->
+    <h2 id="opening">
+      <span class="l-de">Einleitung</span>
+      <span class="l-en">Opening Statement</span>
+      <span class="l-pt">Declaracao Inicial</span>
+    </h2>
+    <p>
+      <span class="lb-de">In einer Zeit, in der kuenstliche Intelligenz Sprache in grossem Massstab erzeugen kann, steht die Rolle des menschlichen Autors an einem Wendepunkt. Schreiben ist nicht mehr nur ein technischer Akt der Texterstellung — es ist eine Erklaerung von Praesenz, Erinnerung und Bedeutung. Das WINDI Verlagshaus existiert, um diesen menschlichen Raum zu schuetzen.</span>
+      <span class="lb-en">In an age where artificial intelligence can generate language at scale, the role of the human author stands at a turning point. Writing is no longer only a technical act of producing text — it is a declaration of presence, memory, and meaning. The WINDI Publishing House exists to protect that human space.</span>
+      <span class="lb-pt">Em uma era onde a inteligencia artificial pode gerar linguagem em escala, o papel do autor humano encontra-se em um ponto de virada. Escrever nao e mais apenas um ato tecnico de produzir texto — e uma declaracao de presenca, memoria e significado. A WINDI Publishing House existe para proteger esse espaco humano.</span>
+    </p>
 
-<div class="principle">
-  <strong>AI processes. Human decides. WINDI guarantees.</strong><br/><br/>
-  Every document published under WINDI governance carries the assurance that human sovereignty was preserved at every stage — from intention to final word. Our systems do not author; they serve. They do not interpret; they structure. They do not replace the writer; they illuminate the path.
-</div>
+    <p>
+      <span class="lb-de">Sprache ist nicht nur Output. Sie ist die Art, wie Individuen Identitaet konstruieren, Erfahrungen verarbeiten und ihrer inneren Welt Form geben. Wenn Maschinen diesen Raum betreten, muessen sie dies mit Grenzen tun. Technologie muss Klarheit, Struktur und Kontinuitaet unterstuetzen — niemals gelebte Erfahrung, persoenliche Erinnerung oder menschliche Interpretation ersetzen.</span>
+      <span class="lb-en">Language is not merely output. It is how individuals construct identity, process experience, and give form to their inner world. When machines enter this space, they must do so with boundaries. Technology must support clarity, structure, and continuity — never replace lived experience, personal memory, or human interpretation.</span>
+      <span class="lb-pt">A linguagem nao e meramente output. E como os individuos constroem identidade, processam experiencias e dao forma ao seu mundo interior. Quando as maquinas entram neste espaco, devem faze-lo com limites. A tecnologia deve apoiar clareza, estrutura e continuidade — nunca substituir a experiencia vivida, a memoria pessoal ou a interpretacao humana.</span>
+    </p>
 
-<h2>Why This Matters</h2>
+    <!-- Section: Editorial Foundation -->
+    <h2 id="foundation">
+      <span class="l-de">Unsere Redaktionelle Grundlage</span>
+      <span class="l-en">Our Editorial Foundation</span>
+      <span class="l-pt">Nossa Fundacao Editorial</span>
+    </h2>
 
-<p>The rise of generative AI presents a fundamental challenge: when machines can produce text indistinguishable from human writing, what protects the authenticity of human voice? The answer is governance — transparent, auditable, and principled.</p>
+    <ul>
+      <li>
+        <span class="l-de">Der Mensch bleibt der einzige Autor von Bedeutung und narrativer Identitaet</span>
+        <span class="l-en">The human remains the sole author of meaning and narrative identity</span>
+        <span class="l-pt">O humano permanece como unico autor de significado e identidade narrativa</span>
+      </li>
+      <li>
+        <span class="l-de">KI fungiert ausschliesslich als struktureller und semantischer Vermittler</span>
+        <span class="l-en">AI functions exclusively as a structural and semantic facilitator</span>
+        <span class="l-pt">A IA funciona exclusivamente como facilitador estrutural e semantico</span>
+      </li>
+      <li>
+        <span class="l-de">Kein System erzeugt autobiografische Inhalte oder persoenliche Interpretation</span>
+        <span class="l-en">No system generates autobiographical content or personal interpretation</span>
+        <span class="l-pt">Nenhum sistema gera conteudo autobiografico ou interpretacao pessoal</span>
+      </li>
+      <li>
+        <span class="l-de">Redaktionelle Prozesse sind transparent, dokumentiert und ethisch begrenzt</span>
+        <span class="l-en">Editorial processes are transparent, documented, and ethically bounded</span>
+        <span class="l-pt">Os processos editoriais sao transparentes, documentados e eticamente delimitados</span>
+      </li>
+    </ul>
 
-<p>WINDI Publishing House implements the Pre-AI Governance Layer developed under the WINDI framework, ensuring every editorial process operates under the eight invariants that protect human narrative sovereignty, institutional transparency, and jurisdictional compliance under the EU AI Act.</p>
+    <!-- Section: The WINDI Principle -->
+    <h2 id="principle">
+      <span class="l-de">Das WINDI-Prinzip</span>
+      <span class="l-en">The WINDI Principle</span>
+      <span class="l-pt">O Principio WINDI</span>
+    </h2>
 
-<div class="separator">◆ ◆ ◆</div>
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>Core Governance Statement</h3>
+        <p>
+          <span class="l-de"><strong>KI verarbeitet. Mensch entscheidet. WINDI garantiert.</strong></span>
+          <span class="l-en"><strong>AI processes. Human decides. WINDI guarantees.</strong></span>
+          <span class="l-pt"><strong>IA processa. Humano decide. WINDI garante.</strong></span>
+        </p>
+      </div>
+    </div>
 
-<div class="quote">
-  In a world of synthetic text, we choose <strong>authentic authorship</strong>.<br/>
-  In a world of generative automation, we choose <strong>governed collaboration</strong>.<br/>
-  In a world where identity can be simulated, we stand for <strong>lived human voice</strong>.
-</div>
+    <p>
+      <span class="lb-de">Jedes unter WINDI-Governance veroeffentlichte Dokument traegt die Zusicherung, dass die menschliche Souveraenitaet in jeder Phase bewahrt wurde — von der Absicht bis zum letzten Wort. Unsere Systeme verfassen nicht; sie dienen. Sie interpretieren nicht; sie strukturieren. Sie ersetzen den Schreiber nicht; sie erhellen den Weg.</span>
+      <span class="lb-en">Every document published under WINDI governance carries the assurance that human sovereignty was preserved at every stage — from intention to final word. Our systems do not author; they serve. They do not interpret; they structure. They do not replace the writer; they illuminate the path.</span>
+      <span class="lb-pt">Todo documento publicado sob a governanca WINDI carrega a garantia de que a soberania humana foi preservada em cada etapa — da intencao a palavra final. Nossos sistemas nao sao autores; eles servem. Eles nao interpretam; eles estruturam. Eles nao substituem o escritor; eles iluminam o caminho.</span>
+    </p>
 
-<p>This is not a rejection of technology. It is a commitment to its responsible integration — where the machine amplifies without appropriating, assists without assuming, and serves without silencing.</p>
+    <!-- Section: Why This Matters -->
+    <h2 id="why">
+      <span class="l-de">Warum dies wichtig ist</span>
+      <span class="l-en">Why This Matters</span>
+      <span class="l-pt">Por que isso importa</span>
+    </h2>
 
-<p>The WINDI Publishing House stands at the intersection of innovation and integrity. We invite authors, institutions, and readers to join us in building a future where human narrative remains sovereign.</p>
+    <p>
+      <span class="lb-de">Der Aufstieg der generativen KI stellt eine fundamentale Herausforderung dar: Wenn Maschinen Text produzieren koennen, der nicht von menschlichem Schreiben zu unterscheiden ist, was schuetzt dann die Authentizitaet der menschlichen Stimme? Die Antwort ist Governance — transparent, ueberpruefbar und prinzipienbasiert.</span>
+      <span class="lb-en">The rise of generative AI presents a fundamental challenge: when machines can produce text indistinguishable from human writing, what protects the authenticity of human voice? The answer is governance — transparent, auditable, and principled.</span>
+      <span class="lb-pt">A ascensao da IA generativa apresenta um desafio fundamental: quando maquinas podem produzir texto indistinguivel da escrita humana, o que protege a autenticidade da voz humana? A resposta e governanca — transparente, auditavel e baseada em principios.</span>
+    </p>
+
+    <p>
+      <span class="lb-de">Das WINDI Verlagshaus implementiert die Pre-AI Governance Layer, die im Rahmen des WINDI-Frameworks entwickelt wurde, und stellt sicher, dass jeder redaktionelle Prozess unter den acht Invarianten operiert, die die menschliche narrative Souveraenitaet, institutionelle Transparenz und jurisdiktionelle Compliance gemaess dem EU AI Act schuetzen.</span>
+      <span class="lb-en">WINDI Publishing House implements the Pre-AI Governance Layer developed under the WINDI framework, ensuring every editorial process operates under the eight invariants that protect human narrative sovereignty, institutional transparency, and jurisdictional compliance under the EU AI Act.</span>
+      <span class="lb-pt">A WINDI Publishing House implementa a Camada de Governanca Pre-IA desenvolvida sob o framework WINDI, garantindo que cada processo editorial opere sob as oito invariantes que protegem a soberania narrativa humana, transparencia institucional e conformidade jurisdicional sob o EU AI Act.</span>
+    </p>
+
+    <!-- Section: Declaration -->
+    <h2 id="declaration">
+      <span class="l-de">Erklaerung</span>
+      <span class="l-en">Declaration</span>
+      <span class="l-pt">Declaracao</span>
+    </h2>
+
+    <div class="doc-quote">
+      <p>
+        <span class="l-de">In einer Welt synthetischer Texte waehlen wir <strong>authentische Autorschaft</strong>.<br/>
+        In einer Welt generativer Automatisierung waehlen wir <strong>geregelte Zusammenarbeit</strong>.<br/>
+        In einer Welt, in der Identitaet simuliert werden kann, stehen wir fuer <strong>gelebte menschliche Stimme</strong>.</span>
+        <span class="l-en">In a world of synthetic text, we choose <strong>authentic authorship</strong>.<br/>
+        In a world of generative automation, we choose <strong>governed collaboration</strong>.<br/>
+        In a world where identity can be simulated, we stand for <strong>lived human voice</strong>.</span>
+        <span class="l-pt">Em um mundo de texto sintetico, escolhemos <strong>autoria autentica</strong>.<br/>
+        Em um mundo de automacao generativa, escolhemos <strong>colaboracao governada</strong>.<br/>
+        Em um mundo onde a identidade pode ser simulada, defendemos a <strong>voz humana vivida</strong>.</span>
+      </p>
+    </div>
+
+    <p>
+      <span class="lb-de">Dies ist keine Ablehnung der Technologie. Es ist ein Bekenntnis zu ihrer verantwortungsvollen Integration — wo die Maschine verstaerkt ohne anzueignen, unterstuetzt ohne anzunehmen und dient ohne zum Schweigen zu bringen.</span>
+      <span class="lb-en">This is not a rejection of technology. It is a commitment to its responsible integration — where the machine amplifies without appropriating, assists without assuming, and serves without silencing.</span>
+      <span class="lb-pt">Isto nao e uma rejeicao da tecnologia. E um compromisso com sua integracao responsavel — onde a maquina amplifica sem apropriar, auxilia sem assumir e serve sem silenciar.</span>
+    </p>
+
+    <p>
+      <span class="lb-de">Das WINDI Verlagshaus steht an der Schnittstelle von Innovation und Integritaet. Wir laden Autoren, Institutionen und Leser ein, sich uns anzuschliessen, um eine Zukunft zu gestalten, in der die menschliche Erzaehlung souveraen bleibt.</span>
+      <span class="lb-en">The WINDI Publishing House stands at the intersection of innovation and integrity. We invite authors, institutions, and readers to join us in building a future where human narrative remains sovereign.</span>
+      <span class="lb-pt">A WINDI Publishing House esta na intersecao entre inovacao e integridade. Convidamos autores, instituicoes e leitores a se juntarem a nos na construcao de um futuro onde a narrativa humana permanece soberana.</span>
+    </p>
+
+  </div>
+
+  <!-- Page Footer -->
+  <footer class="page-footer">
+    <div class="page-footer-meta">
+      <span>WINDI-MANIFESTO-06FEB26-NOIR</span>
+      <span>Publishing House Document</span>
+    </div>
+    <p class="page-footer-quittung">Author: Jober Mögele Correa (WINDI-CGO-001) | Status: INSTITUTIONAL</p>
+    <p class="page-footer-principle">
+      <span class="l-de">"KI verarbeitet. Mensch entscheidet. WINDI garantiert."</span>
+      <span class="l-en">"AI processes. Human decides. WINDI guarantees."</span>
+      <span class="l-pt">"IA processa. Humano decide. WINDI garante."</span>
+    </p>
+    <p class="page-footer-location">
+      <span class="l-de">Kempten (Allgaeu), Bayern, Deutschland</span>
+      <span class="l-en">Kempten (Allgaeu), Bavaria, Germany</span>
+      <span class="l-pt">Kempten (Allgaeu), Baviera, Alemanha</span>
+    </p>
+  </footer>
 
 </main>
 
-<footer>
-  © 2026 WINDI Publishing House — Human Narrative Agency Framework<br/>
-  <span class="signature">Kempten (Allgäu), Bavaria, Germany</span>
-</footer>
+<!-- JavaScript -->
+<script>
+// Theme Toggle
+function toggleTheme() {
+  const body = document.body;
+  const isLight = body.getAttribute('data-theme') === 'light';
+  body.setAttribute('data-theme', isLight ? 'dark' : 'light');
+  try { localStorage.setItem('windi-theme', isLight ? 'dark' : 'light'); } catch(e) {}
+}
+
+// Language Switcher
+function setLang(lang) {
+  document.body.setAttribute('data-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+  try { localStorage.setItem('windi-lang', lang); } catch(e) {}
+}
+
+// Sidebar Toggle (mobile)
+let sidebarOpen = false;
+function toggleSidebar() {
+  sidebarOpen = !sidebarOpen;
+  document.getElementById('sidebarLeft').classList.toggle('open', sidebarOpen);
+}
+
+// Close sidebar on link click (mobile)
+document.querySelectorAll('.sidebar-link').forEach(link => {
+  link.addEventListener('click', () => {
+    if (window.innerWidth <= 960) {
+      sidebarOpen = false;
+      document.getElementById('sidebarLeft').classList.remove('open');
+    }
+  });
+});
+
+// Init saved preferences
+(function init() {
+  try {
+    const theme = localStorage.getItem('windi-theme');
+    const lang = localStorage.getItem('windi-lang');
+    if (theme) document.body.setAttribute('data-theme', theme);
+    if (lang) setLang(lang);
+  } catch(e) {}
+})();
+</script>
 
 </body>
 </html>

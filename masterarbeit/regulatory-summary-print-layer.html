@@ -1,365 +1,766 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WINDI Physical Security Layer — Regulatory Summary | Regulatorische Zusammenfassung</title>
-    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600&display=swap" rel="stylesheet">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Source Sans Pro', sans-serif;
-            background: #fff;
-            color: #1a1a1a;
-            line-height: 1.6;
-            padding: 2rem;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-        .bilingual {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-        @media (max-width: 768px) {
-            .bilingual { grid-template-columns: 1fr; }
-        }
-        .lang-col { padding: 1rem; }
-        .lang-col.en { border-right: 1px solid #ddd; }
-        .lang-col h3 { 
-            color: #003366; 
-            margin-bottom: 0.5rem;
-            font-size: 1.1rem;
-        }
-        header {
-            text-align: center;
-            border-bottom: 3px solid #003366;
-            padding-bottom: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        header h1 {
-            font-size: 1.8rem;
-            color: #003366;
-            margin-bottom: 0.5rem;
-        }
-        header .subtitle {
-            color: #666;
-            font-size: 1rem;
-        }
-        .badge {
-            display: inline-block;
-            background: #0d9488;
-            color: #fff;
-            padding: 0.25rem 0.75rem;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            margin-top: 0.5rem;
-        }
-        h2 {
-            color: #003366;
-            border-bottom: 2px solid #0d9488;
-            padding-bottom: 0.5rem;
-            margin: 2rem 0 1rem 0;
-            font-size: 1.3rem;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1rem 0;
-        }
-        th, td {
-            padding: 0.75rem;
-            text-align: left;
-            border: 1px solid #ddd;
-        }
-        th {
-            background: #f5f5f5;
-            color: #003366;
-            font-weight: 600;
-        }
-        .spec-table td:first-child {
-            font-weight: 600;
-            width: 40%;
-        }
-        .check { color: #10b981; }
-        .cross { color: #ef4444; }
-        .warning-box {
-            background: #fef3c7;
-            border-left: 4px solid #f59e0b;
-            padding: 1rem;
-            margin: 1rem 0;
-        }
-        .compliance-box {
-            background: #ecfdf5;
-            border-left: 4px solid #10b981;
-            padding: 1rem;
-            margin: 1rem 0;
-        }
-        code {
-            background: #f5f5f5;
-            padding: 0.2rem 0.4rem;
-            border-radius: 3px;
-            font-family: monospace;
-            font-size: 0.9rem;
-        }
-        .signature-block {
-            margin-top: 3rem;
-            padding-top: 1rem;
-            border-top: 1px solid #ddd;
-        }
-        .signature-block p {
-            margin: 0.25rem 0;
-        }
-        footer {
-            margin-top: 2rem;
-            padding-top: 1rem;
-            border-top: 2px solid #003366;
-            text-align: center;
-            color: #666;
-            font-size: 0.85rem;
-        }
-        .qr-placeholder {
-            width: 80px;
-            height: 80px;
-            background: #f5f5f5;
-            border: 1px solid #ddd;
-            display: inline-block;
-            margin-top: 0.5rem;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI Physical Security Layer — Regulatory Summary</title>
+<meta name="description" content="Regulatory Technical Summary for WINDI Print Watermark Layer">
+<link rel="stylesheet" href="windi-internal.css">
 </head>
-<body>
-    <header>
-        <h1>WINDI Physical Security Layer</h1>
-        <p class="subtitle">Regulatory Technical Summary | Regulatorische Technische Zusammenfassung</p>
-        <span class="badge">v0.1 — January 2026</span>
-    </header>
+<body data-theme="dark" data-lang="de">
 
-    <h2>1. System Identification | Systemidentifikation</h2>
-    <div class="bilingual">
-        <div class="lang-col en">
-            <table class="spec-table">
-                <tr><td>System Name</td><td>WINDI Print Watermark Layer</td></tr>
-                <tr><td>Version</td><td>0.1</td></tr>
-                <tr><td>Operator</td><td>WINDI Publishing House</td></tr>
-                <tr><td>Location</td><td>Kempten, Bavaria, Germany</td></tr>
-                <tr><td>Contact</td><td>Chief Governance Officer</td></tr>
-            </table>
-        </div>
-        <div class="lang-col de">
-            <table class="spec-table">
-                <tr><td>Systemname</td><td>WINDI Druck-Wasserzeichen-Schicht</td></tr>
-                <tr><td>Version</td><td>0.1</td></tr>
-                <tr><td>Betreiber</td><td>WINDI Publishing House</td></tr>
-                <tr><td>Standort</td><td>Kempten, Bayern, Deutschland</td></tr>
-                <tr><td>Kontakt</td><td>Chief Governance Officer</td></tr>
-            </table>
-        </div>
+<!-- Header -->
+<header class="site-header">
+  <a href="index.html" class="header-brand">
+    <div class="header-logo">W</div>
+    <div class="header-title-group">
+      <span class="header-title">WINDI</span>
+      <span class="header-subtitle">Governance Intelligence</span>
+    </div>
+  </a>
+  <div class="header-center">
+    <div class="header-status">
+      <span class="status-dot"></span>
+      <span>Operational</span>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('de')">DE</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('pt')">PT</button>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+      <div class="theme-toggle-track"></div>
+      <div class="theme-toggle-thumb" id="themeThumb"></div>
+    </button>
+    <button class="mobile-toggle" onclick="toggleSidebar()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- Sidebar Navigation -->
+<nav class="sidebar sidebar-left" id="sidebarLeft">
+  <div class="sidebar-section">
+    <div class="sidebar-label">Masterarbeit</div>
+    <a href="index.html" class="sidebar-link">Main Document</a>
+    <a href="cover.html" class="sidebar-link">Cover</a>
+    <a href="about-windi.html" class="sidebar-link">About WINDI</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Governance</div>
+    <a href="governance-levels.html" class="sidebar-link">Governance Levels</a>
+    <a href="human-oversight.html" class="sidebar-link">Human Oversight</a>
+    <a href="data-handling.html" class="sidebar-link">Data Handling</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Architecture</div>
+    <a href="diagrams.html" class="sidebar-link">Diagrams</a>
+    <a href="interface-guide.html" class="sidebar-link">Interface Guide</a>
+    <a href="verification-layer.html" class="sidebar-link">Verification Layer</a>
+    <a href="kapitel12_domain_sovereignty.html" class="sidebar-link">Domain Sovereignty</a>
+    <a href="identity-governance-layer.html" class="sidebar-link">Identity Governance</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Technical Reports</div>
+    <a href="tr-windi-2026-003.html" class="sidebar-link">TR-003: Service Layer</a>
+    <a href="tr-windi-2026-004.html" class="sidebar-link">TR-004: Cognitive Service</a>
+    <a href="tr-windi-2026-005.html" class="sidebar-link">TR-005: Cognitive Cycle</a>
+    <a href="isp-evolution.html" class="sidebar-link">TR-006: ISP Registry</a>
+    <a href="tr-007.html" class="sidebar-link">TR-007: Provenance</a>
+    <a href="sge-results.html" class="sidebar-link">SGE Results</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Publications</div>
+    <a href="publications.html" class="sidebar-link">Publications</a>
+    <a href="fachartikel-provenienz.html" class="sidebar-link">Fachartikel</a>
+    <a href="windi-publishing-house.html" class="sidebar-link">Manifesto</a>
+    <a href="editorial-policy.html" class="sidebar-link">Editorial Policy</a>
+    <a href="idpf-abstract.html" class="sidebar-link">IDPF Abstract</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Media</div>
+    <a href="windi-working-paper-2026.html" class="sidebar-link">Working Paper</a>
+    <a href="press-release-windi-2026.html" class="sidebar-link">Press Release</a>
+    <a href="windi-side-by-side-2026.html" class="sidebar-link">Side-by-Side</a>
+    <a href="wsj-style-governed-windi-2026.html" class="sidebar-link">WSJ Feature</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Compliance</div>
+    <a href="document-integrity.html" class="sidebar-link">Doc Integrity</a>
+    <a href="print-watermark-layer.html" class="sidebar-link">Print Layer</a>
+    <a href="regulatory-summary-print-layer.html" class="sidebar-link sidebar-link-active">Regulatory</a>
+    <a href="availability-implementation.html" class="sidebar-link">Appendix A</a>
+  </div>
+</nav>
+
+<!-- Right Sidebar TOC -->
+<aside class="sidebar sidebar-right" id="sidebarRight">
+  <div class="sidebar-label">
+    <span class="l-de">Auf dieser Seite</span>
+    <span class="l-en">On this page</span>
+    <span class="l-pt">Nesta página</span>
+  </div>
+  <a href="#system-id" class="toc-link">
+    <span class="l-de">Systemidentifikation</span>
+    <span class="l-en">System Identification</span>
+    <span class="l-pt">Identificação do Sistema</span>
+  </a>
+  <a href="#purpose" class="toc-link">
+    <span class="l-de">Zweck</span>
+    <span class="l-en">Purpose</span>
+    <span class="l-pt">Propósito</span>
+  </a>
+  <a href="#technical" class="toc-link">
+    <span class="l-de">Technische Spezifikationen</span>
+    <span class="l-en">Technical Specifications</span>
+    <span class="l-pt">Especificações Técnicas</span>
+  </a>
+  <a href="#capabilities" class="toc-link">
+    <span class="l-de">Fähigkeiten</span>
+    <span class="l-en">Capabilities</span>
+    <span class="l-pt">Capacidades</span>
+  </a>
+  <a href="#compliance" class="toc-link">
+    <span class="l-de">EU AI Act</span>
+    <span class="l-en">EU AI Act</span>
+    <span class="l-pt">EU AI Act</span>
+  </a>
+  <a href="#endpoints" class="toc-link">
+    <span class="l-de">Endpunkte</span>
+    <span class="l-en">Endpoints</span>
+    <span class="l-pt">Endpoints</span>
+  </a>
+  <a href="#integrity" class="toc-link">
+    <span class="l-de">Integritätskette</span>
+    <span class="l-en">Integrity Chain</span>
+    <span class="l-pt">Cadeia de Integridade</span>
+  </a>
+</aside>
+
+<!-- Main Content -->
+<main class="main-content">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-breadcrumb">
+      <a href="index.html">WINDI</a>
+      <span class="breadcrumb-sep">/</span>
+      <span class="breadcrumb-current">
+        <span class="l-de">Physische Sicherheitsschicht</span>
+        <span class="l-en">Physical Security Layer</span>
+        <span class="l-pt">Camada de Segurança Física</span>
+      </span>
+    </div>
+    <div class="page-meta-bar">
+      <span class="page-tag page-tag-gov">Regulatory Compliance</span>
+      <span class="page-date">v0.1 — January 2026</span>
+    </div>
+    <h1 class="page-title">
+      <span class="l-de">Physische Sicherheitsschicht</span>
+      <span class="l-en">Physical Security Layer</span>
+      <span class="l-pt">Camada de Segurança Física</span>
+    </h1>
+    <p class="page-subtitle">
+      <span class="l-de">Regulatorische Technische Zusammenfassung | v0.1 — Januar 2026</span>
+      <span class="l-en">Regulatory Technical Summary | v0.1 — January 2026</span>
+      <span class="l-pt">Resumo Técnico Regulatório | v0.1 — Janeiro 2026</span>
+    </p>
+    <div class="page-divider"></div>
+  </div>
+
+  <!-- Content -->
+  <div class="content-prose">
+
+    <!-- Section 1: System Identification -->
+    <h2 id="system-id">
+      <span class="l-de">1. Systemidentifikation</span>
+      <span class="l-en">1. System Identification</span>
+      <span class="l-pt">1. Identificação do Sistema</span>
+    </h2>
+
+    <div class="spec-table-wrapper">
+      <table class="spec-table">
+        <thead>
+          <tr>
+            <th>
+              <span class="l-de">Parameter</span>
+              <span class="l-en">Parameter</span>
+              <span class="l-pt">Parâmetro</span>
+            </th>
+            <th>
+              <span class="l-de">Wert</span>
+              <span class="l-en">Value</span>
+              <span class="l-pt">Valor</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <span class="l-de">Systemname</span>
+              <span class="l-en">System Name</span>
+              <span class="l-pt">Nome do Sistema</span>
+            </td>
+            <td>
+              <span class="l-de">WINDI Druck-Wasserzeichen-Schicht</span>
+              <span class="l-en">WINDI Print Watermark Layer</span>
+              <span class="l-pt">Camada de Marca d'Água WINDI</span>
+            </td>
+          </tr>
+          <tr>
+            <td>Version</td>
+            <td>0.1</td>
+          </tr>
+          <tr>
+            <td>
+              <span class="l-de">Betreiber</span>
+              <span class="l-en">Operator</span>
+              <span class="l-pt">Operador</span>
+            </td>
+            <td>WINDI Publishing House</td>
+          </tr>
+          <tr>
+            <td>
+              <span class="l-de">Standort</span>
+              <span class="l-en">Location</span>
+              <span class="l-pt">Localização</span>
+            </td>
+            <td>
+              <span class="l-de">Kempten, Bayern, Deutschland</span>
+              <span class="l-en">Kempten, Bavaria, Germany</span>
+              <span class="l-pt">Kempten, Baviera, Alemanha</span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span class="l-de">Kontakt</span>
+              <span class="l-en">Contact</span>
+              <span class="l-pt">Contato</span>
+            </td>
+            <td>Chief Governance Officer</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
-    <h2>2. Purpose | Zweck</h2>
-    <div class="bilingual">
-        <div class="lang-col en">
-            <p>Extension of the WINDI digital governance envelope to physical documents through forensic micro-patterns embedded in PDFs before printing.</p>
-            <p><strong>Goal:</strong> Enable traceability between printed documents and their digitally governed originals.</p>
-        </div>
-        <div class="lang-col de">
-            <p>Erweiterung des digitalen WINDI-Governance-Umschlags auf physische Dokumente durch forensische Mikro-Muster, die vor dem Drucken in PDFs eingebettet werden.</p>
-            <p><strong>Ziel:</strong> Ermöglichung der Rückverfolgbarkeit zwischen gedruckten Dokumenten und ihren digital gesteuerten Originalen.</p>
-        </div>
+    <!-- Section 2: Purpose -->
+    <h2 id="purpose">
+      <span class="l-de">2. Zweck</span>
+      <span class="l-en">2. Purpose</span>
+      <span class="l-pt">2. Propósito</span>
+    </h2>
+
+    <p>
+      <span class="lb-de">Erweiterung des digitalen WINDI-Governance-Umschlags auf physische Dokumente durch forensische Mikro-Muster, die vor dem Drucken in PDFs eingebettet werden.</span>
+      <span class="lb-en">Extension of the WINDI digital governance envelope to physical documents through forensic micro-patterns embedded in PDFs before printing.</span>
+      <span class="lb-pt">Extensão do envelope de governança digital WINDI para documentos físicos através de micro-padrões forenses incorporados em PDFs antes da impressão.</span>
+    </p>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>
+          <span class="l-de">Ziel</span>
+          <span class="l-en">Goal</span>
+          <span class="l-pt">Objetivo</span>
+        </h3>
+        <p>
+          <span class="l-de">Ermöglichung der Rückverfolgbarkeit zwischen gedruckten Dokumenten und ihren digital gesteuerten Originalen.</span>
+          <span class="l-en">Enable traceability between printed documents and their digitally governed originals.</span>
+          <span class="l-pt">Permitir rastreabilidade entre documentos impressos e seus originais governados digitalmente.</span>
+        </p>
+      </div>
     </div>
 
-    <h2>3. Technical Specifications | Technische Spezifikationen</h2>
-    <table>
-        <tr>
+    <!-- Section 3: Technical Specifications -->
+    <h2 id="technical">
+      <span class="l-de">3. Technische Spezifikationen</span>
+      <span class="l-en">3. Technical Specifications</span>
+      <span class="l-pt">3. Especificações Técnicas</span>
+    </h2>
+
+    <div class="spec-table-wrapper">
+      <table class="spec-table">
+        <thead>
+          <tr>
             <th>Parameter</th>
-            <th>Value | Wert</th>
-            <th>Description | Beschreibung</th>
-        </tr>
-        <tr>
+            <th>
+              <span class="l-de">Wert</span>
+              <span class="l-en">Value</span>
+              <span class="l-pt">Valor</span>
+            </th>
+            <th>
+              <span class="l-de">Beschreibung</span>
+              <span class="l-en">Description</span>
+              <span class="l-pt">Descrição</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
             <td>Pattern Seed</td>
             <td><code>SHA256(doc_hash)</code></td>
-            <td>Deterministic derivation | Deterministische Ableitung</td>
-        </tr>
-        <tr>
+            <td>
+              <span class="l-de">Deterministische Ableitung</span>
+              <span class="l-en">Deterministic derivation</span>
+              <span class="l-pt">Derivação determinística</span>
+            </td>
+          </tr>
+          <tr>
             <td>Micro-Lines</td>
-            <td>50 per page | pro Seite</td>
-            <td>Width 0.1-0.2pt, 3% opacity | Breite 0,1-0,2pt, 3% Opazität</td>
-        </tr>
-        <tr>
+            <td>
+              <span class="l-de">50 pro Seite</span>
+              <span class="l-en">50 per page</span>
+              <span class="l-pt">50 por página</span>
+            </td>
+            <td>
+              <span class="l-de">Breite 0,1-0,2pt, 3% Opazität</span>
+              <span class="l-en">Width 0.1-0.2pt, 3% opacity</span>
+              <span class="l-pt">Largura 0.1-0.2pt, 3% opacidade</span>
+            </td>
+          </tr>
+          <tr>
             <td>Micro-Dots</td>
-            <td>25 per page | pro Seite</td>
-            <td>Radius 0.2-0.5pt | Radius 0,2-0,5pt</td>
-        </tr>
-        <tr>
+            <td>
+              <span class="l-de">25 pro Seite</span>
+              <span class="l-en">25 per page</span>
+              <span class="l-pt">25 por página</span>
+            </td>
+            <td>Radius 0.2-0.5pt</td>
+          </tr>
+          <tr>
             <td>Micro-Text</td>
-            <td>4 positions | Positionen</td>
-            <td>0.4pt, document corners | Dokumentecken</td>
-        </tr>
-        <tr>
+            <td>
+              <span class="l-de">4 Positionen</span>
+              <span class="l-en">4 positions</span>
+              <span class="l-pt">4 posições</span>
+            </td>
+            <td>
+              <span class="l-de">0,4pt, Dokumentecken</span>
+              <span class="l-en">0.4pt, document corners</span>
+              <span class="l-pt">0.4pt, cantos do documento</span>
+            </td>
+          </tr>
+          <tr>
             <td>Detection</td>
-            <td>≥1200 DPI scan</td>
-            <td>Full pattern recovery | Vollständige Musterwiederherstellung</td>
-        </tr>
-    </table>
-
-    <h2>4. Capabilities and Limitations | Fähigkeiten und Einschränkungen</h2>
-    <div class="bilingual">
-        <div class="lang-col en">
-            <h3><span class="check">✓</span> This system DOES:</h3>
-            <ul>
-                <li>Provide forensic traceability</li>
-                <li>Deter casual forgery</li>
-                <li>Enable post-hoc verification</li>
-                <li>Link physical to digital governance</li>
-            </ul>
-        </div>
-        <div class="lang-col de">
-            <h3><span class="check">✓</span> Dieses System BIETET:</h3>
-            <ul>
-                <li>Forensische Rückverfolgbarkeit</li>
-                <li>Abschreckung gegen gelegentliche Fälschung</li>
-                <li>Nachträgliche Verifizierungsmöglichkeit</li>
-                <li>Verbindung physisch zu digital</li>
-            </ul>
-        </div>
+            <td>&ge;1200 DPI scan</td>
+            <td>
+              <span class="l-de">Vollständige Musterwiederherstellung</span>
+              <span class="l-en">Full pattern recovery</span>
+              <span class="l-pt">Recuperação completa do padrão</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
-    <div class="warning-box">
-        <div class="bilingual" style="margin:0;gap:1rem">
-            <div class="lang-col en" style="padding:0;border:none">
-                <h3><span class="cross">✗</span> This system does NOT:</h3>
-                <ul>
-                    <li>Provide absolute protection against forgery</li>
-                    <li>Replace cryptographic verification</li>
-                    <li>Function as DRM or copy protection</li>
-                    <li>Guarantee tamper-proof documents</li>
-                </ul>
-            </div>
-            <div class="lang-col de" style="padding:0">
-                <h3><span class="cross">✗</span> Dieses System bietet NICHT:</h3>
-                <ul>
-                    <li>Absoluten Schutz gegen Fälschung</li>
-                    <li>Ersatz für kryptographische Verifizierung</li>
-                    <li>DRM oder Kopierschutz</li>
-                    <li>Manipulationssichere Dokumente</li>
-                </ul>
-            </div>
-        </div>
+    <!-- Section 4: Capabilities and Limitations -->
+    <h2 id="capabilities">
+      <span class="l-de">4. Fähigkeiten und Einschränkungen</span>
+      <span class="l-en">4. Capabilities and Limitations</span>
+      <span class="l-pt">4. Capacidades e Limitações</span>
+    </h2>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>
+          <span class="l-de">Dieses System BIETET:</span>
+          <span class="l-en">This system DOES:</span>
+          <span class="l-pt">Este sistema OFERECE:</span>
+        </h3>
+        <ul>
+          <li>
+            <span class="l-de">Forensische Rückverfolgbarkeit</span>
+            <span class="l-en">Provide forensic traceability</span>
+            <span class="l-pt">Rastreabilidade forense</span>
+          </li>
+          <li>
+            <span class="l-de">Abschreckung gegen gelegentliche Fälschung</span>
+            <span class="l-en">Deter casual forgery</span>
+            <span class="l-pt">Desencorajar falsificação casual</span>
+          </li>
+          <li>
+            <span class="l-de">Nachträgliche Verifizierungsmöglichkeit</span>
+            <span class="l-en">Enable post-hoc verification</span>
+            <span class="l-pt">Permitir verificação posterior</span>
+          </li>
+          <li>
+            <span class="l-de">Verbindung physisch zu digital</span>
+            <span class="l-en">Link physical to digital governance</span>
+            <span class="l-pt">Conectar governança física a digital</span>
+          </li>
+        </ul>
+      </div>
     </div>
 
-    <h2>5. EU AI Act Compliance | EU AI Act Konformität</h2>
-    <div class="compliance-box">
-        <div class="bilingual" style="margin:0;gap:1rem">
-            <div class="lang-col en" style="padding:0;border:none">
-                <p><strong>Article 52 Transparency:</strong> Full documentation of AI involvement in document creation and governance.</p>
-                <p><strong>Human Oversight:</strong> All documents require human authorization before export.</p>
-                <p><strong>Traceability:</strong> Complete audit trail from creation to physical artifact.</p>
-            </div>
-            <div class="lang-col de" style="padding:0">
-                <p><strong>Artikel 52 Transparenz:</strong> Vollständige Dokumentation der KI-Beteiligung an Dokumentenerstellung und Governance.</p>
-                <p><strong>Menschliche Aufsicht:</strong> Alle Dokumente erfordern menschliche Autorisierung vor Export.</p>
-                <p><strong>Rückverfolgbarkeit:</strong> Vollständiger Prüfpfad von Erstellung bis physischem Artefakt.</p>
-            </div>
-        </div>
+    <blockquote>
+      <p>
+        <strong>
+          <span class="l-de">Dieses System bietet NICHT:</span>
+          <span class="l-en">This system does NOT:</span>
+          <span class="l-pt">Este sistema NÃO oferece:</span>
+        </strong>
+      </p>
+      <ul>
+        <li>
+          <span class="l-de">Absoluten Schutz gegen Fälschung</span>
+          <span class="l-en">Provide absolute protection against forgery</span>
+          <span class="l-pt">Proteção absoluta contra falsificação</span>
+        </li>
+        <li>
+          <span class="l-de">Ersatz für kryptographische Verifizierung</span>
+          <span class="l-en">Replace cryptographic verification</span>
+          <span class="l-pt">Substituir verificação criptográfica</span>
+        </li>
+        <li>
+          <span class="l-de">DRM oder Kopierschutz</span>
+          <span class="l-en">Function as DRM or copy protection</span>
+          <span class="l-pt">Funcionar como DRM ou proteção contra cópia</span>
+        </li>
+        <li>
+          <span class="l-de">Manipulationssichere Dokumente</span>
+          <span class="l-en">Guarantee tamper-proof documents</span>
+          <span class="l-pt">Garantir documentos à prova de adulteração</span>
+        </li>
+      </ul>
+    </blockquote>
+
+    <!-- Section 5: EU AI Act Compliance -->
+    <h2 id="compliance">
+      <span class="l-de">5. EU AI Act Konformität</span>
+      <span class="l-en">5. EU AI Act Compliance</span>
+      <span class="l-pt">5. Conformidade com o EU AI Act</span>
+    </h2>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>
+          <span class="l-de">Konformitätsstatus</span>
+          <span class="l-en">Compliance Status</span>
+          <span class="l-pt">Status de Conformidade</span>
+        </h3>
+
+        <h4>
+          <span class="l-de">Artikel 52 Transparenz</span>
+          <span class="l-en">Article 52 Transparency</span>
+          <span class="l-pt">Artigo 52 Transparência</span>
+        </h4>
+        <p>
+          <span class="l-de">Vollständige Dokumentation der KI-Beteiligung an Dokumentenerstellung und Governance.</span>
+          <span class="l-en">Full documentation of AI involvement in document creation and governance.</span>
+          <span class="l-pt">Documentação completa do envolvimento de IA na criação e governança de documentos.</span>
+        </p>
+
+        <h4>
+          <span class="l-de">Menschliche Aufsicht</span>
+          <span class="l-en">Human Oversight</span>
+          <span class="l-pt">Supervisão Humana</span>
+        </h4>
+        <p>
+          <span class="l-de">Alle Dokumente erfordern menschliche Autorisierung vor Export.</span>
+          <span class="l-en">All documents require human authorization before export.</span>
+          <span class="l-pt">Todos os documentos requerem autorização humana antes da exportação.</span>
+        </p>
+
+        <h4>
+          <span class="l-de">Rückverfolgbarkeit</span>
+          <span class="l-en">Traceability</span>
+          <span class="l-pt">Rastreabilidade</span>
+        </h4>
+        <p>
+          <span class="l-de">Vollständiger Prüfpfad von Erstellung bis physischem Artefakt.</span>
+          <span class="l-en">Complete audit trail from creation to physical artifact.</span>
+          <span class="l-pt">Trilha de auditoria completa desde a criação até o artefato físico.</span>
+        </p>
+      </div>
     </div>
 
-    <h2>6. Verification Endpoints | Verifizierungs-Endpunkte</h2>
-    <table>
-        <tr>
+    <!-- Section 6: Verification Endpoints -->
+    <h2 id="endpoints">
+      <span class="l-de">6. Verifizierungs-Endpunkte</span>
+      <span class="l-en">6. Verification Endpoints</span>
+      <span class="l-pt">6. Endpoints de Verificação</span>
+    </h2>
+
+    <div class="spec-table-wrapper">
+      <table class="spec-table">
+        <thead>
+          <tr>
             <th>Endpoint</th>
             <th>Method</th>
-            <th>Purpose | Zweck</th>
-        </tr>
-        <tr>
+            <th>
+              <span class="l-de">Zweck</span>
+              <span class="l-en">Purpose</span>
+              <span class="l-pt">Propósito</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
             <td><code>/api/windi/status</code></td>
             <td>GET</td>
-            <td>System status | Systemstatus</td>
-        </tr>
-        <tr>
+            <td>
+              <span class="l-de">Systemstatus</span>
+              <span class="l-en">System status</span>
+              <span class="l-pt">Status do sistema</span>
+            </td>
+          </tr>
+          <tr>
             <td><code>/api/windi/envelope/{doc_id}</code></td>
             <td>GET</td>
-            <td>Retrieve envelope | Umschlag abrufen</td>
-        </tr>
-        <tr>
+            <td>
+              <span class="l-de">Umschlag abrufen</span>
+              <span class="l-en">Retrieve envelope</span>
+              <span class="l-pt">Recuperar envelope</span>
+            </td>
+          </tr>
+          <tr>
             <td><code>/api/windi/verify/{doc_id}</code></td>
             <td>GET/POST</td>
-            <td>Verify integrity | Integrität verifizieren</td>
-        </tr>
-    </table>
+            <td>
+              <span class="l-de">Integrität verifizieren</span>
+              <span class="l-en">Verify integrity</span>
+              <span class="l-pt">Verificar integridade</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-    <h2>7. Integrity Chain | Integritätskette</h2>
-    <table>
-        <tr>
-            <th>Layer | Schicht</th>
-            <th>Domain | Domäne</th>
-            <th>Verification | Verifizierung</th>
-        </tr>
-        <tr>
-            <td>WINDI Envelope | Umschlag</td>
-            <td>Digital | Digital</td>
-            <td>Cryptographic | Kryptographisch</td>
-        </tr>
-        <tr>
+    <!-- Section 7: Integrity Chain -->
+    <h2 id="integrity">
+      <span class="l-de">7. Integritätskette</span>
+      <span class="l-en">7. Integrity Chain</span>
+      <span class="l-pt">7. Cadeia de Integridade</span>
+    </h2>
+
+    <div class="spec-table-wrapper">
+      <table class="spec-table">
+        <thead>
+          <tr>
+            <th>
+              <span class="l-de">Schicht</span>
+              <span class="l-en">Layer</span>
+              <span class="l-pt">Camada</span>
+            </th>
+            <th>
+              <span class="l-de">Domäne</span>
+              <span class="l-en">Domain</span>
+              <span class="l-pt">Domínio</span>
+            </th>
+            <th>
+              <span class="l-de">Verifizierung</span>
+              <span class="l-en">Verification</span>
+              <span class="l-pt">Verificação</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <span class="l-de">WINDI Umschlag</span>
+              <span class="l-en">WINDI Envelope</span>
+              <span class="l-pt">Envelope WINDI</span>
+            </td>
+            <td>Digital</td>
+            <td>
+              <span class="l-de">Kryptographisch</span>
+              <span class="l-en">Cryptographic</span>
+              <span class="l-pt">Criptográfico</span>
+            </td>
+          </tr>
+          <tr>
             <td>Registry</td>
-            <td>Institutional | Institutionell</td>
-            <td>Certificate Lookup | Zertifikatsabfrage</td>
-        </tr>
-        <tr>
-            <td>Print Watermark | Druck-Wasserzeichen</td>
-            <td>Physical | Physisch</td>
-            <td>Forensic Analysis | Forensische Analyse</td>
-        </tr>
-    </table>
+            <td>
+              <span class="l-de">Institutionell</span>
+              <span class="l-en">Institutional</span>
+              <span class="l-pt">Institucional</span>
+            </td>
+            <td>
+              <span class="l-de">Zertifikatsabfrage</span>
+              <span class="l-en">Certificate Lookup</span>
+              <span class="l-pt">Consulta de Certificado</span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span class="l-de">Druck-Wasserzeichen</span>
+              <span class="l-en">Print Watermark</span>
+              <span class="l-pt">Marca d'Água de Impressão</span>
+            </td>
+            <td>
+              <span class="l-de">Physisch</span>
+              <span class="l-en">Physical</span>
+              <span class="l-pt">Físico</span>
+            </td>
+            <td>
+              <span class="l-de">Forensische Analyse</span>
+              <span class="l-en">Forensic Analysis</span>
+              <span class="l-pt">Análise Forense</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-    <div class="signature-block">
-        <div class="bilingual">
-            <div class="lang-col en">
-                <p><strong>Document Classification:</strong> Technical — Regulatory</p>
-                <p><strong>Prepared by:</strong> WINDI Publishing House</p>
-                <p><strong>Date:</strong> January 31, 2026</p>
-                <p><strong>Review Status:</strong> Production v0.1</p>
-            </div>
-            <div class="lang-col de">
-                <p><strong>Dokumentklassifikation:</strong> Technisch — Regulatorisch</p>
-                <p><strong>Erstellt von:</strong> WINDI Publishing House</p>
-                <p><strong>Datum:</strong> 31. Januar 2026</p>
-                <p><strong>Prüfstatus:</strong> Produktion v0.1</p>
-            </div>
-        </div>
+    <!-- Signature Block -->
+    <hr>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>
+          <span class="l-de">Dokumentklassifikation</span>
+          <span class="l-en">Document Classification</span>
+          <span class="l-pt">Classificação do Documento</span>
+        </h3>
+
+        <p>
+          <strong>
+            <span class="l-de">Klassifikation:</span>
+            <span class="l-en">Classification:</span>
+            <span class="l-pt">Classificação:</span>
+          </strong>
+          <span class="l-de">Technisch — Regulatorisch</span>
+          <span class="l-en">Technical — Regulatory</span>
+          <span class="l-pt">Técnico — Regulatório</span>
+        </p>
+
+        <p>
+          <strong>
+            <span class="l-de">Erstellt von:</span>
+            <span class="l-en">Prepared by:</span>
+            <span class="l-pt">Preparado por:</span>
+          </strong>
+          WINDI Publishing House
+        </p>
+
+        <p>
+          <strong>
+            <span class="l-de">Datum:</span>
+            <span class="l-en">Date:</span>
+            <span class="l-pt">Data:</span>
+          </strong>
+          <span class="l-de">31. Januar 2026</span>
+          <span class="l-en">January 31, 2026</span>
+          <span class="l-pt">31 de Janeiro de 2026</span>
+        </p>
+
+        <p>
+          <strong>
+            <span class="l-de">Prüfstatus:</span>
+            <span class="l-en">Review Status:</span>
+            <span class="l-pt">Status de Revisão:</span>
+          </strong>
+          <span class="l-de">Produktion v0.1</span>
+          <span class="l-en">Production v0.1</span>
+          <span class="l-pt">Produção v0.1</span>
+        </p>
+      </div>
     </div>
 
     <!-- WINDI Governance Receipt -->
-    <div style="margin:2rem 0;padding:1.5rem;background:#f8f9fa;border:2px solid #0d9488;border-radius:8px;">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;">
-            <div style="flex:1;min-width:300px;">
-                <div style="font-size:0.9rem;color:#0d9488;font-weight:bold;margin-bottom:0.5rem;">WINDI Publishing House — Governance Receipt</div>
-                <div style="font-size:0.8rem;color:#333;">
-                    WINDI-QUITTUNG: WINDI-MASTER-31JAN26-B32149A5 | Hash: b32149a5a532<br>
-                    Author | Autor: Chief Governance Officer<br>
-                    Witness | Prüfer: WINDI System<br>
-                    Document ID | Dokument-ID: WINDI-MASTER-PRINT-REG
-                </div>
-                <div style="font-size:0.75rem;color:#0d9488;margin-top:0.75rem;font-style:italic;">
-                    "AI processes. Human decides. WINDI guarantees."<br>
-                    „KI verarbeitet. Mensch entscheidet. WINDI garantiert."
-                </div>
-            </div>
-            <div style="text-align:center;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=https://master.windia4desk.tech/regulatory-summary-print-layer.html" alt="WINDI QR" style="width:80px;height:80px;border-radius:4px;border:1px solid #ddd;"/>
-                <div style="font-size:0.65rem;color:#666;margin-top:0.25rem;">Scan to verify | Scannen zur Verifizierung</div>
-            </div>
-        </div>
-        <div style="margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid #ddd;font-size:0.65rem;color:#666;text-align:center;">
-            A4 Desk BABEL v4.7-gov | EU AI Act Compliant | Regulatory Summary v0.1 | January 2026
-        </div>
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>WINDI Governance Receipt</h3>
+        <p><strong>WINDI-QUITTUNG:</strong> WINDI-MASTER-31JAN26-B32149A5</p>
+        <p><strong>Hash:</strong> <code>b32149a5a532</code></p>
+        <p>
+          <strong>
+            <span class="l-de">Autor:</span>
+            <span class="l-en">Author:</span>
+            <span class="l-pt">Autor:</span>
+          </strong>
+          Chief Governance Officer
+        </p>
+        <p>
+          <strong>
+            <span class="l-de">Prüfer:</span>
+            <span class="l-en">Witness:</span>
+            <span class="l-pt">Testemunha:</span>
+          </strong>
+          WINDI System
+        </p>
+        <p><strong>Document ID:</strong> WINDI-MASTER-PRINT-REG</p>
+        <blockquote>
+          <p>
+            <span class="l-de">"KI verarbeitet. Mensch entscheidet. WINDI garantiert."</span>
+            <span class="l-en">"AI processes. Human decides. WINDI guarantees."</span>
+            <span class="l-pt">"IA processa. Humano decide. WINDI garante."</span>
+          </p>
+        </blockquote>
+        <p style="font-size: 11px; color: var(--text-tertiary);">A4 Desk BABEL v4.7-gov | EU AI Act Compliant | Regulatory Summary v0.1 | January 2026</p>
+      </div>
     </div>
 
-    <footer>
-        <p><strong>WINDI Publishing House</strong> — Kempten, Bavaria, Germany</p>
-        <p style="margin-top:0.5rem;font-style:italic">"AI processes. Human decides. WINDI guarantees."</p>
-        <p style="margin-top:0.25rem;font-style:italic">„KI verarbeitet. Mensch entscheidet. WINDI garantiert."</p>
-    </footer>
+  </div>
+
+  <!-- Page Footer -->
+  <footer class="page-footer">
+    <div class="page-footer-meta">
+      <span>WINDI-RECEIPT: WINDI-MASTER-PRINT-REG-06FEB26-NOIR</span>
+      <span>Governance Document</span>
+    </div>
+    <p class="page-footer-quittung">Author: Jober Mögele Correa (WINDI-CEO-001) | Status: INSTITUTIONAL BETA</p>
+    <p class="page-footer-principle">
+      <span class="l-de">"KI verarbeitet. Mensch entscheidet. WINDI garantiert."</span>
+      <span class="l-en">"AI processes. Human decides. WINDI guarantees."</span>
+      <span class="l-pt">"IA processa. Humano decide. WINDI garante."</span>
+    </p>
+    <div style="margin-top: 16px; font-size: 11px; color: var(--text-tertiary);">
+      <span class="l-de">Kempten, Bayern, Deutschland | Chief Governance Officer: Jober Mögele Correa</span>
+      <span class="l-en">Kempten, Bavaria, Germany | Chief Governance Officer: Jober Mögele Correa</span>
+      <span class="l-pt">Kempten, Baviera, Alemanha | Chief Governance Officer: Jober Mögele Correa</span>
+    </div>
+  </footer>
+
+</main>
+
+<!-- JavaScript -->
+<script>
+// Theme Toggle
+function toggleTheme() {
+  const body = document.body;
+  const isLight = body.getAttribute('data-theme') === 'light';
+  body.setAttribute('data-theme', isLight ? 'dark' : 'light');
+  try { localStorage.setItem('windi-theme', isLight ? 'dark' : 'light'); } catch(e) {}
+}
+
+// Language Switcher
+function setLang(lang) {
+  document.body.setAttribute('data-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+  try { localStorage.setItem('windi-lang', lang); } catch(e) {}
+}
+
+// Sidebar Toggle (mobile)
+let sidebarOpen = false;
+function toggleSidebar() {
+  sidebarOpen = !sidebarOpen;
+  document.getElementById('sidebarLeft').classList.toggle('open', sidebarOpen);
+}
+
+// Close sidebar on link click (mobile)
+document.querySelectorAll('.sidebar-link').forEach(link => {
+  link.addEventListener('click', () => {
+    if (window.innerWidth <= 960) {
+      sidebarOpen = false;
+      document.getElementById('sidebarLeft').classList.remove('open');
+    }
+  });
+});
+
+// Init saved preferences
+(function init() {
+  try {
+    const theme = localStorage.getItem('windi-theme');
+    const lang = localStorage.getItem('windi-lang');
+    if (theme) document.body.setAttribute('data-theme', theme);
+    if (lang) setLang(lang);
+  } catch(e) {}
+})();
+</script>
+
 </body>
 </html>

@@ -1,354 +1,635 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WINDI Print Watermark Layer — Technical Note v0.1</title>
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital@0;1&family=Libre+Baskerville:wght@400;700&family=Source+Sans+Pro:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/academic.css">
-    <style>
-        .tech-box {
-            background: #1a1a2e;
-            border: 1px solid #4a4a6a;
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin: 1.5rem 0;
-        }
-        .tech-box h4 {
-            color: #6366f1;
-            margin-bottom: 0.75rem;
-            font-size: 1rem;
-        }
-        .tech-box code {
-            background: #0d0d1a;
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
-            font-family: 'Consolas', monospace;
-            font-size: 0.9rem;
-        }
-        .tech-box pre {
-            background: #0d0d1a;
-            padding: 1rem;
-            border-radius: 4px;
-            overflow-x: auto;
-            margin: 0.75rem 0;
-        }
-        .is-box {
-            background: rgba(16, 185, 129, 0.1);
-            border-left: 3px solid #10b981;
-            padding: 1rem;
-            margin: 1rem 0;
-        }
-        .is-not-box {
-            background: rgba(239, 68, 68, 0.1);
-            border-left: 3px solid #ef4444;
-            padding: 1rem;
-            margin: 1rem 0;
-        }
-        .pipeline-diagram {
-            background: #1e1e2e;
-            border-radius: 8px;
-            padding: 1.5rem;
-            text-align: center;
-            font-family: monospace;
-            line-height: 2;
-            margin: 1.5rem 0;
-        }
-        .pipeline-diagram .arrow {
-            color: #6366f1;
-        }
-        .visibility-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1rem 0;
-        }
-        .visibility-table th,
-        .visibility-table td {
-            padding: 0.75rem;
-            text-align: left;
-            border-bottom: 1px solid #333;
-        }
-        .visibility-table th {
-            color: #6366f1;
-        }
-        .chain-diagram {
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin: 1.5rem 0;
-        }
-        .chain-item {
-            background: #1a1a2e;
-            border: 1px solid #4a4a6a;
-            border-radius: 8px;
-            padding: 1rem;
-            text-align: center;
-            flex: 1;
-            min-width: 200px;
-        }
-        .chain-item h5 {
-            color: #6366f1;
-            margin-bottom: 0.5rem;
-        }
-        .chain-item .domain {
-            font-size: 0.85rem;
-            color: #888;
-        }
-        .chain-item .method {
-            font-size: 0.9rem;
-            margin-top: 0.5rem;
-            color: #10b981;
-        }
-        .lang-switch {
-            text-align: right;
-            margin-bottom: 1rem;
-        }
-        .lang-switch a {
-            padding: 0.5rem 1rem;
-            background: #1a1a2e;
-            color: #6366f1;
-            text-decoration: none;
-            border-radius: 4px;
-            margin-left: 0.5rem;
-        }
-        .lang-switch a:hover {
-            background: #2a2a3e;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI Print Watermark Layer — Technical Note v0.1</title>
+<meta name="description" content="WINDI Print Watermark Layer - Physical Forensic Extension for Document Governance">
+<link rel="stylesheet" href="windi-internal.css">
 </head>
-<body>
-    <header class="thesis-header">
-        <h1>WINDI Print Watermark Layer</h1>
-        <p class="subtitle">Technical Note v0.1 — Physical Forensic Extension</p>
-        <div class="meta">
-            <p>WINDI Publishing House — January 2026</p>
-        </div>
-        <span class="version-badge">TECHNICAL NOTE</span>
-    </header>
+<body data-theme="dark" data-lang="de">
 
-    <nav class="thesis-nav">
+<!-- Header -->
+<header class="site-header">
+  <a href="index.html" class="header-brand">
+    <div class="header-logo">W</div>
+    <div class="header-title-group">
+      <span class="header-title">WINDI</span>
+      <span class="header-subtitle">Governance Intelligence</span>
+    </div>
+  </a>
+  <div class="header-center">
+    <div class="header-status">
+      <span class="status-dot"></span>
+      <span>Operational</span>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('de')">DE</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('pt')">PT</button>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+      <div class="theme-toggle-track"></div>
+      <div class="theme-toggle-thumb" id="themeThumb"></div>
+    </button>
+    <button class="mobile-toggle" onclick="toggleSidebar()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- Sidebar Navigation -->
+<nav class="sidebar sidebar-left" id="sidebarLeft">
+  <div class="sidebar-section">
+    <div class="sidebar-label">Masterarbeit</div>
+    <a href="index.html" class="sidebar-link">Main Document</a>
+    <a href="cover.html" class="sidebar-link">Cover</a>
+    <a href="about-windi.html" class="sidebar-link">About WINDI</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Governance</div>
+    <a href="governance-levels.html" class="sidebar-link">Governance Levels</a>
+    <a href="human-oversight.html" class="sidebar-link">Human Oversight</a>
+    <a href="data-handling.html" class="sidebar-link">Data Handling</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Architecture</div>
+    <a href="diagrams.html" class="sidebar-link">Diagrams</a>
+    <a href="interface-guide.html" class="sidebar-link">Interface Guide</a>
+    <a href="verification-layer.html" class="sidebar-link">Verification Layer</a>
+    <a href="kapitel12_domain_sovereignty.html" class="sidebar-link">Domain Sovereignty</a>
+    <a href="identity-governance-layer.html" class="sidebar-link">Identity Governance</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Technical Reports</div>
+    <a href="tr-windi-2026-003.html" class="sidebar-link">TR-003: Service Layer</a>
+    <a href="tr-windi-2026-004.html" class="sidebar-link">TR-004: Cognitive Service</a>
+    <a href="tr-windi-2026-005.html" class="sidebar-link">TR-005: Cognitive Cycle</a>
+    <a href="isp-evolution.html" class="sidebar-link">TR-006: ISP Registry</a>
+    <a href="tr-007.html" class="sidebar-link">TR-007: Provenance</a>
+    <a href="sge-results.html" class="sidebar-link">SGE Results</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Publications</div>
+    <a href="publications.html" class="sidebar-link">Publications</a>
+    <a href="fachartikel-provenienz.html" class="sidebar-link">Fachartikel</a>
+    <a href="windi-publishing-house.html" class="sidebar-link">Manifesto</a>
+    <a href="editorial-policy.html" class="sidebar-link">Editorial Policy</a>
+    <a href="idpf-abstract.html" class="sidebar-link">IDPF Abstract</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Media</div>
+    <a href="windi-working-paper-2026.html" class="sidebar-link">Working Paper</a>
+    <a href="press-release-windi-2026.html" class="sidebar-link">Press Release</a>
+    <a href="windi-side-by-side-2026.html" class="sidebar-link">Side-by-Side</a>
+    <a href="wsj-style-governed-windi-2026.html" class="sidebar-link">WSJ Feature</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Compliance</div>
+    <a href="document-integrity.html" class="sidebar-link">Doc Integrity</a>
+    <a href="print-watermark-layer.html" class="sidebar-link sidebar-link-active">Print Layer</a>
+    <a href="regulatory-summary-print-layer.html" class="sidebar-link">Regulatory</a>
+    <a href="availability-implementation.html" class="sidebar-link">Appendix A</a>
+  </div>
+</nav>
+
+<!-- Right Sidebar TOC -->
+<aside class="sidebar sidebar-right" id="sidebarRight">
+  <div class="sidebar-label">
+    <span class="l-de">Auf dieser Seite</span>
+    <span class="l-en">On this page</span>
+    <span class="l-pt">Nesta página</span>
+  </div>
+  <a href="#abstract" class="toc-link">
+    <span class="l-de">Zusammenfassung</span>
+    <span class="l-en">Abstract</span>
+    <span class="l-pt">Resumo</span>
+  </a>
+  <a href="#problem" class="toc-link">
+    <span class="l-de">Problemstellung</span>
+    <span class="l-en">Problem Statement</span>
+    <span class="l-pt">Declaração do Problema</span>
+  </a>
+  <a href="#design" class="toc-link">
+    <span class="l-de">Designprinzipien</span>
+    <span class="l-en">Design Principles</span>
+    <span class="l-pt">Princípios de Design</span>
+  </a>
+  <a href="#architecture" class="toc-link">
+    <span class="l-de">Technische Architektur</span>
+    <span class="l-en">Technical Architecture</span>
+    <span class="l-pt">Arquitetura Técnica</span>
+  </a>
+  <a href="#integration" class="toc-link">
+    <span class="l-de">Integration</span>
+    <span class="l-en">Integration</span>
+    <span class="l-pt">Integração</span>
+  </a>
+  <a href="#chain" class="toc-link">
+    <span class="l-de">Integritätskette</span>
+    <span class="l-en">Integrity Chain</span>
+    <span class="l-pt">Cadeia de Integridade</span>
+  </a>
+  <a href="#limitations" class="toc-link">
+    <span class="l-de">Einschränkungen</span>
+    <span class="l-en">Limitations</span>
+    <span class="l-pt">Limitações</span>
+  </a>
+  <a href="#conclusion" class="toc-link">
+    <span class="l-de">Schlussfolgerung</span>
+    <span class="l-en">Conclusion</span>
+    <span class="l-pt">Conclusão</span>
+  </a>
+</aside>
+
+<!-- Main Content -->
+<main class="main-content">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-breadcrumb">
+      <a href="index.html">WINDI</a>
+      <span class="breadcrumb-sep">/</span>
+      <span class="breadcrumb-current">
+        <span class="l-de">Druck-Wasserzeichen-Schicht</span>
+        <span class="l-en">Print Watermark Layer</span>
+        <span class="l-pt">Camada de Marca d'Água</span>
+      </span>
+    </div>
+    <div class="page-meta-bar">
+      <span class="page-tag page-tag-gov">Technical Note v0.1</span>
+      <span class="page-date">2026-02-07</span>
+    </div>
+    <h1 class="page-title">
+      <span class="l-de">WINDI Druck-Wasserzeichen-Schicht</span>
+      <span class="l-en">WINDI Print Watermark Layer</span>
+      <span class="l-pt">Camada de Marca d'Água de Impressão WINDI</span>
+    </h1>
+    <p class="page-subtitle">
+      <span class="l-de">Physische forensische Erweiterung für die Dokumentengovernance</span>
+      <span class="l-en">Physical Forensic Extension for Document Governance</span>
+      <span class="l-pt">Extensão Forense Física para Governança de Documentos</span>
+    </p>
+    <div class="page-divider"></div>
+  </div>
+
+  <!-- Content -->
+  <div class="content-prose">
+
+    <!-- Opening Quote -->
+    <div class="doc-quote">
+      <p>
+        <span class="l-de">"Die Garantie erstreckt sich vom Digitalen zum Physischen."</span>
+        <span class="l-en">"The guarantee extends from digital to physical."</span>
+        <span class="l-pt">"A garantia se estende do digital ao físico."</span>
+      </p>
+      <cite>— WINDI Print Layer Principle</cite>
+    </div>
+
+    <!-- Section: Abstract -->
+    <h2 id="abstract">
+      <span class="l-de">Zusammenfassung: Physische forensische Erweiterung</span>
+      <span class="l-en">Abstract: Physical Forensic Extension</span>
+      <span class="l-pt">Resumo: Extensão Forense Física</span>
+    </h2>
+    <p>
+      <span class="lb-de">Diese technische Note beschreibt die WINDI Druck-Wasserzeichen-Schicht, eine optionale Erweiterung, die die digital-physische Integritätslücke in der Dokumentengovernance überbrückt. Das Modul bettet deterministische Mikro-Vektor-Muster, die aus dem Dokument-Hash abgeleitet werden, in PDF-Dateien vor dem Drucken ein und ermöglicht so die forensische Rückverfolgbarkeit zwischen gedruckten Artefakten und ihren digital verwalteten Originalen.</span>
+      <span class="lb-en">This technical note describes the WINDI Print Watermark Layer, an optional extension that bridges the digital-physical integrity gap in document governance. The module embeds deterministic micro-vector patterns derived from the document hash into PDF files prior to printing, enabling forensic traceability between printed artifacts and their digitally governed originals.</span>
+      <span class="lb-pt">Esta nota técnica descreve a Camada de Marca d'Água de Impressão WINDI, uma extensão opcional que preenche a lacuna de integridade digital-física na governança de documentos. O módulo incorpora padrões de micro-vetores determinísticos derivados do hash do documento em arquivos PDF antes da impressão, permitindo a rastreabilidade forense entre artefatos impressos e seus originais governados digitalmente.</span>
+    </p>
+
+    <!-- Section: Problem Statement -->
+    <h2 id="problem">
+      <span class="l-de">Abschnitt 1: Problemstellung</span>
+      <span class="l-en">Section 1: Problem Statement</span>
+      <span class="l-pt">Seção 1: Declaração do Problema</span>
+    </h2>
+    <p>
+      <span class="lb-de">Der WINDI-Governance-Umschlag bietet kryptografische Integrität für digitale Dokumente durch den <code>doc_hash</code>, <code>governance_digest</code> und strukturelle Signaturen. Wenn Dokumente jedoch gedruckt werden, wird diese digitale Verwaltungskette unterbrochen.</span>
+      <span class="lb-en">The WINDI governance envelope provides cryptographic integrity for digital documents through the <code>doc_hash</code>, <code>governance_digest</code>, and structural signatures. However, when documents are printed, this digital chain of custody is broken.</span>
+      <span class="lb-pt">O envelope de governança WINDI fornece integridade criptográfica para documentos digitais através do <code>doc_hash</code>, <code>governance_digest</code> e assinaturas estruturais. No entanto, quando os documentos são impressos, esta cadeia de custódia digital é quebrada.</span>
+    </p>
+    <p>
+      <span class="lb-de">Gedruckte Dokumente existieren außerhalb der kryptografischen Domäne. Ein gedrucktes Zertifikat, Vertrag oder offizielles Dokument kann nicht direkt gegen seinen digitalen Governance-Umschlag verifiziert werden.</span>
+      <span class="lb-en">Printed documents exist outside the cryptographic domain. A printed certificate, contract, or official document cannot be directly verified against its digital governance envelope.</span>
+      <span class="lb-pt">Documentos impressos existem fora do domínio criptográfico. Um certificado impresso, contrato ou documento oficial não pode ser verificado diretamente contra seu envelope de governança digital.</span>
+    </p>
+    <p>
+      <span class="lb-de">Die Druck-Wasserzeichen-Schicht adressiert diese Lücke, indem sie physische forensische Marker einbettet, die den Druckprozess überleben und mathematisch mit dem ursprünglichen <code>doc_hash</code> verbunden bleiben.</span>
+      <span class="lb-en">The Print Watermark Layer addresses this gap by embedding physical forensic markers that survive the printing process and remain mathematically linked to the original <code>doc_hash</code>.</span>
+      <span class="lb-pt">A Camada de Marca d'Água de Impressão aborda essa lacuna incorporando marcadores forenses físicos que sobrevivem ao processo de impressão e permanecem matematicamente vinculados ao <code>doc_hash</code> original.</span>
+    </p>
+
+    <!-- Section: Design Principles -->
+    <h2 id="design">
+      <span class="l-de">Abschnitt 2: Designprinzipien</span>
+      <span class="l-en">Section 2: Design Principles</span>
+      <span class="l-pt">Seção 2: Princípios de Design</span>
+    </h2>
+
+    <div class="cta-box" style="border-left-color: #10b981;">
+      <div class="cta-content">
+        <h3>
+          <span class="l-de">Was diese Schicht IST</span>
+          <span class="l-en">What This Layer IS</span>
+          <span class="l-pt">O que esta Camada É</span>
+        </h3>
         <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="document-integrity.html">Document Integrity</a></li>
-            <li><a href="#problem">Problem</a></li>
-            <li><a href="#architecture">Architecture</a></li>
-            <li><a href="#integration">Integration</a></li>
-            <li><a href="#limitations">Limitations</a></li>
+          <li>
+            <span class="l-de">Ein forensischer Rückverfolgbarkeitsmechanismus für gedruckte Dokumente</span>
+            <span class="l-en">A forensic traceability mechanism for printed documents</span>
+            <span class="l-pt">Um mecanismo de rastreabilidade forense para documentos impressos</span>
+          </li>
+          <li>
+            <span class="l-de">Ein deterministisches Muster, abgeleitet aus kryptografischen Hashes</span>
+            <span class="l-en">A deterministic pattern derived from cryptographic hashes</span>
+            <span class="l-pt">Um padrão determinístico derivado de hashes criptográficos</span>
+          </li>
+          <li>
+            <span class="l-de">Ein Abschreckungsmittel gegen unbefugte Reproduktion</span>
+            <span class="l-en">A disincentive against unauthorized reproduction</span>
+            <span class="l-pt">Um desincentivo contra reprodução não autorizada</span>
+          </li>
+          <li>
+            <span class="l-de">Eine Brücke zwischen digitaler Governance und physischen Artefakten</span>
+            <span class="l-en">A bridge between digital governance and physical artifacts</span>
+            <span class="l-pt">Uma ponte entre governança digital e artefatos físicos</span>
+          </li>
+          <li>
+            <span class="l-de">Ähnlich wie Techniken in offiziellen Zertifikaten und sicheren Dokumenten</span>
+            <span class="l-en">Similar to techniques used in official certificates and secure documents</span>
+            <span class="l-pt">Similar às técnicas usadas em certificados oficiais e documentos seguros</span>
+          </li>
         </ul>
-    </nav>
+      </div>
+    </div>
 
-    <main class="thesis-content">
-        <div class="principle-quote">
-            "The guarantee extends from digital to physical."
-            <div class="attribution">— WINDI Print Layer Principle</div>
-        </div>
+    <div class="cta-box" style="border-left-color: #ef4444;">
+      <div class="cta-content">
+        <h3>
+          <span class="l-de">Was diese Schicht NICHT IST</span>
+          <span class="l-en">What This Layer IS NOT</span>
+          <span class="l-pt">O que esta Camada NÃO É</span>
+        </h3>
+        <ul>
+          <li>
+            <span class="l-de">Ein magisches unsichtbares Zeichen</span>
+            <span class="l-en">A magical invisible mark</span>
+            <span class="l-pt">Uma marca mágica invisível</span>
+          </li>
+          <li>
+            <span class="l-de">Absoluter Schutz gegen Fälschung</span>
+            <span class="l-en">Absolute protection against falsification</span>
+            <span class="l-pt">Proteção absoluta contra falsificação</span>
+          </li>
+          <li>
+            <span class="l-de">Ein Ersatz für digitale Verifizierung</span>
+            <span class="l-en">A replacement for digital verification</span>
+            <span class="l-pt">Um substituto para verificação digital</span>
+          </li>
+          <li>
+            <span class="l-de">DRM oder Kopierschutz</span>
+            <span class="l-en">DRM or copy protection</span>
+            <span class="l-pt">DRM ou proteção contra cópia</span>
+          </li>
+        </ul>
+      </div>
+    </div>
 
-        <section class="chapter" id="abstract">
-            <div class="chapter-number">Abstract</div>
-            <h2>Physical Forensic Extension</h2>
-            <p>This technical note describes the WINDI Print Watermark Layer, an optional extension that bridges the digital-physical integrity gap in document governance. The module embeds deterministic micro-vector patterns derived from the document hash into PDF files prior to printing, enabling forensic traceability between printed artifacts and their digitally governed originals.</p>
-        </section>
+    <p>
+      <span class="lb-de">Diese Unterscheidung ist entscheidend. Die Schicht liefert forensische Beweise, keinen kryptografischen Nachweis. Ein erfahrener Gegner mit ausreichenden Ressourcen könnte die Muster potenziell reproduzieren. Der Wert liegt darin, die Hürde für gelegentliche Fälschungen zu erhöhen und eine nachträgliche forensische Analyse zu ermöglichen.</span>
+      <span class="lb-en">This distinction is critical. The layer provides forensic evidence, not cryptographic proof. A skilled adversary with sufficient resources could potentially reproduce the patterns. The value lies in raising the bar for casual forgery and enabling post-hoc forensic analysis.</span>
+      <span class="lb-pt">Esta distinção é crítica. A camada fornece evidências forenses, não prova criptográfica. Um adversário habilidoso com recursos suficientes poderia potencialmente reproduzir os padrões. O valor está em elevar o nível para falsificações casuais e permitir análise forense pós-hoc.</span>
+    </p>
 
-        <section class="chapter" id="problem">
-            <div class="chapter-number">Section 1</div>
-            <h2>Problem Statement</h2>
-            <p>The WINDI governance envelope provides cryptographic integrity for digital documents through the <code>doc_hash</code>, <code>governance_digest</code>, and structural signatures. However, when documents are printed, this digital chain of custody is broken.</p>
-            <p>Printed documents exist outside the cryptographic domain. A printed certificate, contract, or official document cannot be directly verified against its digital governance envelope.</p>
-            <p>The Print Watermark Layer addresses this gap by embedding physical forensic markers that survive the printing process and remain mathematically linked to the original <code>doc_hash</code>.</p>
-        </section>
+    <!-- Section: Technical Architecture -->
+    <h2 id="architecture">
+      <span class="l-de">Abschnitt 3: Technische Architektur</span>
+      <span class="l-en">Section 3: Technical Architecture</span>
+      <span class="l-pt">Seção 3: Arquitetura Técnica</span>
+    </h2>
 
-        <section class="chapter" id="design">
-            <div class="chapter-number">Section 2</div>
-            <h2>Design Principles</h2>
-            
-            <div class="is-box">
-                <h4>✓ What This Layer IS</h4>
-                <ul>
-                    <li>A forensic traceability mechanism for printed documents</li>
-                    <li>A deterministic pattern derived from cryptographic hashes</li>
-                    <li>A disincentive against unauthorized reproduction</li>
-                    <li>A bridge between digital governance and physical artifacts</li>
-                    <li>Similar to techniques used in official certificates and secure documents</li>
-                </ul>
-            </div>
+    <h3>3.1 Pattern Generation</h3>
+    <p>
+      <span class="lb-de">Die Wasserzeichenmuster werden deterministisch aus dem <code>doc_hash</code> generiert:</span>
+      <span class="lb-en">The watermark patterns are generated deterministically from the <code>doc_hash</code>:</span>
+      <span class="lb-pt">Os padrões de marca d'água são gerados deterministicamente a partir do <code>doc_hash</code>:</span>
+    </p>
 
-            <div class="is-not-box">
-                <h4>✗ What This Layer IS NOT</h4>
-                <ul>
-                    <li>A magical invisible mark</li>
-                    <li>Absolute protection against falsification</li>
-                    <li>A replacement for digital verification</li>
-                    <li>DRM or copy protection</li>
-                </ul>
-            </div>
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>Pattern Seed Generation</h3>
+        <pre><code>pattern_seed = SHA256(doc_hash)</code></pre>
+        <p>
+          <span class="lb-de">Dieser Seed initialisiert einen deterministischen Pseudo-Zufallszahlengenerator, der identische Muster für identische <code>doc_hash</code>-Werte erzeugt. Das gleiche Dokument wird immer das gleiche Wasserzeichenmuster generieren, was die Verifizierung ermöglicht.</span>
+          <span class="lb-en">This seed initializes a deterministic pseudo-random number generator that produces identical patterns for identical <code>doc_hash</code> values. The same document will always generate the same watermark pattern, enabling verification.</span>
+          <span class="lb-pt">Esta semente inicializa um gerador de números pseudo-aleatórios determinístico que produz padrões idênticos para valores <code>doc_hash</code> idênticos. O mesmo documento sempre gerará o mesmo padrão de marca d'água, permitindo verificação.</span>
+        </p>
+      </div>
+    </div>
 
-            <p>This distinction is critical. The layer provides forensic evidence, not cryptographic proof. A skilled adversary with sufficient resources could potentially reproduce the patterns. The value lies in raising the bar for casual forgery and enabling post-hoc forensic analysis.</p>
-        </section>
+    <h3>3.2 Pattern Types</h3>
 
-        <section class="chapter" id="architecture">
-            <div class="chapter-number">Section 3</div>
-            <h2>Technical Architecture</h2>
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>Micro-Lines (Vectorial)</h3>
+        <p><strong>Width:</strong> 0.1-0.2 points | <strong>Opacity:</strong> 3% | <strong>Quantity:</strong> 50 per page</p>
+        <p>
+          <span class="l-de">Erzeugt einzigartigen geometrischen Fingerabdruck aus dem Seed.</span>
+          <span class="l-en">Creates unique geometric fingerprint derived from seed.</span>
+          <span class="l-pt">Cria impressão digital geométrica única derivada da semente.</span>
+        </p>
+      </div>
+    </div>
 
-            <h3>3.1 Pattern Generation</h3>
-            <p>The watermark patterns are generated deterministically from the <code>doc_hash</code>:</p>
-            
-            <div class="tech-box">
-                <pre>pattern_seed = SHA256(doc_hash)</pre>
-                <p>This seed initializes a deterministic pseudo-random number generator that produces identical patterns for identical <code>doc_hash</code> values. The same document will always generate the same watermark pattern, enabling verification.</p>
-            </div>
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>Micro-Dots</h3>
+        <p><strong>Radius:</strong> 0.2-0.5 points | <strong>Distribution:</strong> Pseudo-random</p>
+        <p>
+          <span class="l-de">Ergänzende Musterdichte für forensische Erkennung.</span>
+          <span class="l-en">Supplementary pattern density for forensic detection.</span>
+          <span class="l-pt">Densidade de padrão suplementar para detecção forense.</span>
+        </p>
+      </div>
+    </div>
 
-            <h3>3.2 Pattern Types</h3>
-            
-            <div class="tech-box">
-                <h4>Micro-Lines (Vectorial)</h4>
-                <p>Width: 0.1–0.2 points | Opacity: 3% | Quantity: 50 per page</p>
-                <p>Creates unique geometric fingerprint derived from seed.</p>
-            </div>
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>Micro-Text</h3>
+        <p><strong>Size:</strong> 0.3-0.5 points | <strong>Content:</strong> <code>WINDI:{doc_hash_fragment}:{issuer_id}</code></p>
+        <p>
+          <span class="l-de">Menschenlesbare Identifikation unter Vergrößerung.</span>
+          <span class="l-en">Human-readable identification under magnification.</span>
+          <span class="l-pt">Identificação legível por humanos sob ampliação.</span>
+        </p>
+      </div>
+    </div>
 
-            <div class="tech-box">
-                <h4>Micro-Dots</h4>
-                <p>Radius: 0.2–0.5 points | Distribution: Pseudo-random</p>
-                <p>Supplementary pattern density for forensic detection.</p>
-            </div>
+    <h3>3.3 Visibility Characteristics</h3>
 
-            <div class="tech-box">
-                <h4>Micro-Text</h4>
-                <p>Size: 0.3–0.5 points | Content: <code>WINDI:{doc_hash_fragment}:{issuer_id}</code></p>
-                <p>Human-readable identification under magnification.</p>
-            </div>
+    <div class="spec-table-wrapper">
+      <table class="spec-table">
+        <thead>
+          <tr>
+            <th>Condition</th>
+            <th>Visibility</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Normal viewing</td>
+            <td>Invisible</td>
+          </tr>
+          <tr>
+            <td>10x magnification</td>
+            <td>Barely perceptible</td>
+          </tr>
+          <tr>
+            <td>50x magnification</td>
+            <td>Clearly visible</td>
+          </tr>
+          <tr>
+            <td>1200+ DPI scan</td>
+            <td>Fully recoverable</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-            <h3>3.3 Visibility Characteristics</h3>
-            <table class="visibility-table">
-                <tr>
-                    <th>Condition</th>
-                    <th>Visibility</th>
-                </tr>
-                <tr>
-                    <td>Normal viewing</td>
-                    <td>Invisible</td>
-                </tr>
-                <tr>
-                    <td>10x magnification</td>
-                    <td>Barely perceptible</td>
-                </tr>
-                <tr>
-                    <td>50x magnification</td>
-                    <td>Clearly visible</td>
-                </tr>
-                <tr>
-                    <td>1200+ DPI scan</td>
-                    <td>Fully recoverable</td>
-                </tr>
-            </table>
-        </section>
+    <!-- Section: Integration with A4Desk Pipeline -->
+    <h2 id="integration">
+      <span class="l-de">Abschnitt 4: Integration mit der A4Desk-Pipeline</span>
+      <span class="l-en">Section 4: Integration with A4Desk Pipeline</span>
+      <span class="l-pt">Seção 4: Integração com o Pipeline A4Desk</span>
+    </h2>
 
-        <section class="chapter" id="integration">
-            <div class="chapter-number">Section 4</div>
-            <h2>Integration with A4Desk Pipeline</h2>
+    <div class="cta-box" style="text-align: center; font-family: monospace; line-height: 2;">
+      <div class="cta-content">
+        User initiates PDF export<br>
+        <span style="color: var(--accent);">&#8595;</span><br>
+        A4Desk generates document content<br>
+        <span style="color: var(--accent);">&#8595;</span><br>
+        WINDI Envelope created (doc_hash generated)<br>
+        <span style="color: var(--accent);">&#8595;</span><br>
+        <strong style="color: var(--accent);">Print Watermark Layer embeds patterns using doc_hash</strong><br>
+        <span style="color: var(--accent);">&#8595;</span><br>
+        Final PDF delivered to user
+      </div>
+    </div>
 
-            <div class="pipeline-diagram">
-                User initiates PDF export<br>
-                <span class="arrow">↓</span><br>
-                A4Desk generates document content<br>
-                <span class="arrow">↓</span><br>
-                WINDI Envelope created (doc_hash generated)<br>
-                <span class="arrow">↓</span><br>
-                <strong style="color:#6366f1">Print Watermark Layer embeds patterns using doc_hash</strong><br>
-                <span class="arrow">↓</span><br>
-                Final PDF delivered to user
-            </div>
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>Module Location</h3>
+        <pre><code>/opt/windi/engine/windi_print_layer.py</code></pre>
+      </div>
+    </div>
 
-            <div class="tech-box">
-                <h4>Module Location</h4>
-                <pre>/opt/windi/engine/windi_print_layer.py</pre>
-            </div>
-
-            <div class="tech-box">
-                <h4>Primary Function</h4>
-                <pre>def embed_print_watermark(pdf_bytes: bytes, 
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>Primary Function</h3>
+        <pre><code>def embed_print_watermark(pdf_bytes: bytes,
                           doc_hash: str,
                           issuer_id: str = "WINDI") -> bytes:
     """
     Embed deterministic micro-vector watermark into PDF.
     Returns modified PDF bytes with forensic layer.
-    """</pre>
-            </div>
-        </section>
+    """</code></pre>
+      </div>
+    </div>
 
-        <section class="chapter" id="chain">
-            <div class="chapter-number">Section 5</div>
-            <h2>Integrity Chain</h2>
+    <!-- Section: Integrity Chain -->
+    <h2 id="chain">
+      <span class="l-de">Abschnitt 5: Integritätskette</span>
+      <span class="l-en">Section 5: Integrity Chain</span>
+      <span class="l-pt">Seção 5: Cadeia de Integridade</span>
+    </h2>
 
-            <div class="principle-quote">
-                "AI processes. Human decides. WINDI guarantees."
-                <div class="attribution">— Extended to physical domain</div>
-            </div>
+    <div class="doc-quote">
+      <p>
+        <span class="l-de">"KI verarbeitet. Mensch entscheidet. WINDI garantiert."</span>
+        <span class="l-en">"AI processes. Human decides. WINDI guarantees."</span>
+        <span class="l-pt">"IA processa. Humano decide. WINDI garante."</span>
+      </p>
+      <cite>— Extended to physical domain</cite>
+    </div>
 
-            <div class="chain-diagram">
-                <div class="chain-item">
-                    <h5>WINDI Envelope</h5>
-                    <div class="domain">Digital Domain</div>
-                    <div class="method">Cryptographic Verification</div>
-                </div>
-                <div class="chain-item">
-                    <h5>Registry</h5>
-                    <div class="domain">Institutional Domain</div>
-                    <div class="method">Certificate Lookup</div>
-                </div>
-                <div class="chain-item">
-                    <h5>Print Watermark</h5>
-                    <div class="domain">Physical Domain</div>
-                    <div class="method">Forensic Analysis</div>
-                </div>
-            </div>
-        </section>
+    <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 1rem; margin: 1.5rem 0;">
+      <div class="cta-box" style="flex: 1; min-width: 200px; text-align: center;">
+        <div class="cta-content">
+          <h3>WINDI Envelope</h3>
+          <p style="font-size: 0.85rem; opacity: 0.7;">Digital Domain</p>
+          <p style="color: #10b981;">Cryptographic Verification</p>
+        </div>
+      </div>
+      <div class="cta-box" style="flex: 1; min-width: 200px; text-align: center;">
+        <div class="cta-content">
+          <h3>Registry</h3>
+          <p style="font-size: 0.85rem; opacity: 0.7;">Institutional Domain</p>
+          <p style="color: #10b981;">Certificate Lookup</p>
+        </div>
+      </div>
+      <div class="cta-box" style="flex: 1; min-width: 200px; text-align: center;">
+        <div class="cta-content">
+          <h3>Print Watermark</h3>
+          <p style="font-size: 0.85rem; opacity: 0.7;">Physical Domain</p>
+          <p style="color: #10b981;">Forensic Analysis</p>
+        </div>
+      </div>
+    </div>
 
-        <section class="chapter" id="limitations">
-            <div class="chapter-number">Section 6</div>
-            <h2>Limitations and Honest Assessment</h2>
+    <!-- Section: Limitations -->
+    <h2 id="limitations">
+      <span class="l-de">Abschnitt 6: Einschränkungen und ehrliche Bewertung</span>
+      <span class="l-en">Section 6: Limitations and Honest Assessment</span>
+      <span class="l-pt">Seção 6: Limitações e Avaliação Honesta</span>
+    </h2>
 
-            <h3>Technical Limitations</h3>
-            <ul>
-                <li>Patterns may degrade with low-quality printing</li>
-                <li>Photocopies will show pattern degradation</li>
-                <li>Extreme document wear may destroy patterns</li>
-                <li>Verification requires specialized scanning equipment</li>
-            </ul>
+    <h3>
+      <span class="l-de">Technische Einschränkungen</span>
+      <span class="l-en">Technical Limitations</span>
+      <span class="l-pt">Limitações Técnicas</span>
+    </h3>
+    <ul>
+      <li>
+        <span class="l-de">Muster können bei niedrigerer Druckqualität degradieren</span>
+        <span class="l-en">Patterns may degrade with low-quality printing</span>
+        <span class="l-pt">Padrões podem degradar com impressão de baixa qualidade</span>
+      </li>
+      <li>
+        <span class="l-de">Fotokopien zeigen Musterdegradierung</span>
+        <span class="l-en">Photocopies will show pattern degradation</span>
+        <span class="l-pt">Fotocópias mostrarão degradação de padrão</span>
+      </li>
+      <li>
+        <span class="l-de">Extremer Dokumentenverschleiß kann Muster zerstören</span>
+        <span class="l-en">Extreme document wear may destroy patterns</span>
+        <span class="l-pt">Desgaste extremo de documentos pode destruir padrões</span>
+      </li>
+      <li>
+        <span class="l-de">Verifizierung erfordert spezialisierte Scan-Ausrüstung</span>
+        <span class="l-en">Verification requires specialized scanning equipment</span>
+        <span class="l-pt">Verificação requer equipamento de digitalização especializado</span>
+      </li>
+    </ul>
 
-            <h3>Security Limitations</h3>
-            <ul>
-                <li>A determined adversary with access to the <code>doc_hash</code> could regenerate patterns</li>
-                <li>The layer provides forensic evidence, not cryptographic proof</li>
-                <li>Physical security is inherently weaker than digital security</li>
-            </ul>
-        </section>
+    <h3>
+      <span class="l-de">Sicherheitseinschränkungen</span>
+      <span class="l-en">Security Limitations</span>
+      <span class="l-pt">Limitações de Segurança</span>
+    </h3>
+    <ul>
+      <li>
+        <span class="l-de">Ein entschlossener Gegner mit Zugang zum <code>doc_hash</code> könnte Muster regenerieren</span>
+        <span class="l-en">A determined adversary with access to the <code>doc_hash</code> could regenerate patterns</span>
+        <span class="l-pt">Um adversário determinado com acesso ao <code>doc_hash</code> poderia regenerar padrões</span>
+      </li>
+      <li>
+        <span class="l-de">Die Schicht liefert forensische Beweise, keinen kryptografischen Nachweis</span>
+        <span class="l-en">The layer provides forensic evidence, not cryptographic proof</span>
+        <span class="l-pt">A camada fornece evidências forenses, não prova criptográfica</span>
+      </li>
+      <li>
+        <span class="l-de">Physische Sicherheit ist von Natur aus schwächer als digitale Sicherheit</span>
+        <span class="l-en">Physical security is inherently weaker than digital security</span>
+        <span class="l-pt">Segurança física é inerentemente mais fraca que segurança digital</span>
+      </li>
+    </ul>
 
-        <section class="chapter">
-            <div class="chapter-number">Conclusion</div>
-            <h2>Summary</h2>
-            <p>The WINDI Print Watermark Layer represents a pragmatic approach to bridging digital and physical document integrity. It does not claim to provide absolute security—such claims would be dishonest. Instead, it provides a forensic traceability mechanism that raises the bar for document forgery and enables post-hoc verification when disputes arise.</p>
-            <p>The layer is optional, modular, and mathematically linked to the existing WINDI governance infrastructure. It demonstrates that document sovereignty can extend beyond the digital realm without abandoning the principles of honesty and transparency that define the WINDI approach.</p>
-        </section>
+    <!-- Section: Conclusion -->
+    <h2 id="conclusion">
+      <span class="l-de">Schlussfolgerung: Zusammenfassung</span>
+      <span class="l-en">Conclusion: Summary</span>
+      <span class="l-pt">Conclusão: Resumo</span>
+    </h2>
+    <p>
+      <span class="lb-de">Die WINDI Druck-Wasserzeichen-Schicht stellt einen pragmatischen Ansatz dar, um die digitale und physische Dokumentenintegrität zu verbinden. Sie erhebt nicht den Anspruch, absolute Sicherheit zu bieten--solche Behauptungen wären unehrlich. Stattdessen bietet sie einen forensischen Rückverfolgbarkeitsmechanismus, der die Hürde für Dokumentenfälschung erhöht und eine nachträgliche Überprüfung bei Streitigkeiten ermöglicht.</span>
+      <span class="lb-en">The WINDI Print Watermark Layer represents a pragmatic approach to bridging digital and physical document integrity. It does not claim to provide absolute security--such claims would be dishonest. Instead, it provides a forensic traceability mechanism that raises the bar for document forgery and enables post-hoc verification when disputes arise.</span>
+      <span class="lb-pt">A Camada de Marca d'Água de Impressão WINDI representa uma abordagem pragmática para conectar a integridade de documentos digitais e físicos. Ela não afirma fornecer segurança absoluta--tais afirmações seriam desonestas. Em vez disso, fornece um mecanismo de rastreabilidade forense que eleva o nível para falsificação de documentos e permite verificação pós-hoc quando surgem disputas.</span>
+    </p>
+    <p>
+      <span class="lb-de">Die Schicht ist optional, modular und mathematisch mit der bestehenden WINDI-Governance-Infrastruktur verbunden. Sie demonstriert, dass Dokumentensouveränität über das digitale Reich hinaus erweitert werden kann, ohne die Prinzipien der Ehrlichkeit und Transparenz aufzugeben, die den WINDI-Ansatz definieren.</span>
+      <span class="lb-en">The layer is optional, modular, and mathematically linked to the existing WINDI governance infrastructure. It demonstrates that document sovereignty can extend beyond the digital realm without abandoning the principles of honesty and transparency that define the WINDI approach.</span>
+      <span class="lb-pt">A camada é opcional, modular e matematicamente vinculada à infraestrutura de governança WINDI existente. Ela demonstra que a soberania de documentos pode se estender além do reino digital sem abandonar os princípios de honestidade e transparência que definem a abordagem WINDI.</span>
+    </p>
 
-        <section class="windi-receipt-footer">
-            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap">
-                <div>
-                    <strong style="color:#6366f1">WINDI Publishing House</strong><br>
-                    <span style="font-size:0.85rem">Technical Note: Print Watermark Layer v0.1</span><br>
-                    <span style="font-size:0.8rem;color:#888">January 2026 | Kempten, Bavaria, Germany</span>
-                </div>
-                <div style="text-align:right">
-                    <a href="document-integrity.html" style="display:inline-block;padding:0.5rem 1rem;background:#0d9488;color:#fff;text-decoration:none;border-radius:4px;margin:0.25rem">← Document Integrity</a>
-                    <a href="index.html" style="display:inline-block;padding:0.5rem 1rem;background:#003366;color:#fff;text-decoration:none;border-radius:4px;margin:0.25rem">Home</a>
-                </div>
-            </div>
-        </section>
-    </main>
+    <!-- Related Documents -->
+    <h3>
+      <span class="l-de">Verwandte Dokumente</span>
+      <span class="l-en">Related Documents</span>
+      <span class="l-pt">Documentos Relacionados</span>
+    </h3>
+    <ul>
+      <li><a href="document-integrity.html">Document Integrity (WINDI v0.1)</a></li>
+      <li><a href="druck-wasserzeichen-schicht.html">Druck-Wasserzeichen-Schicht (DE)</a></li>
+      <li><a href="regulatory-summary-print-layer.html">Regulatory Summary</a></li>
+    </ul>
 
-    <footer style="text-align:center;padding:2rem;color:#666;font-size:0.85rem">
-        <p>WINDI System Documentation — Masterarbeit Project</p>
-        <p style="margin-top:0.5rem;font-style:italic">"AI processes. Human decides. WINDI guarantees."</p>
-    </footer>
+  </div>
+
+  <!-- Page Footer -->
+  <footer class="page-footer">
+    <div class="page-footer-meta">
+      <span>WINDI-PRINT-LAYER-07FEB26-NOIR</span>
+      <span>Technical Note v0.1</span>
+    </div>
+    <p class="page-footer-quittung">Author: WINDI Publishing House | Status: INSTITUTIONAL BETA</p>
+    <p class="page-footer-principle">
+      <span class="l-de">"KI verarbeitet. Mensch entscheidet. WINDI garantiert."</span>
+      <span class="l-en">"AI processes. Human decides. WINDI guarantees."</span>
+      <span class="l-pt">"IA processa. Humano decide. WINDI garante."</span>
+    </p>
+  </footer>
+
+</main>
+
+<!-- JavaScript -->
+<script>
+// Theme Toggle
+function toggleTheme() {
+  const body = document.body;
+  const isLight = body.getAttribute('data-theme') === 'light';
+  body.setAttribute('data-theme', isLight ? 'dark' : 'light');
+  try { localStorage.setItem('windi-theme', isLight ? 'dark' : 'light'); } catch(e) {}
+}
+
+// Language Switcher
+function setLang(lang) {
+  document.body.setAttribute('data-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+  try { localStorage.setItem('windi-lang', lang); } catch(e) {}
+}
+
+// Sidebar Toggle (mobile)
+let sidebarOpen = false;
+function toggleSidebar() {
+  sidebarOpen = !sidebarOpen;
+  document.getElementById('sidebarLeft').classList.toggle('open', sidebarOpen);
+}
+
+// Close sidebar on link click (mobile)
+document.querySelectorAll('.sidebar-link').forEach(link => {
+  link.addEventListener('click', () => {
+    if (window.innerWidth <= 960) {
+      sidebarOpen = false;
+      document.getElementById('sidebarLeft').classList.remove('open');
+    }
+  });
+});
+
+// Init saved preferences
+(function init() {
+  try {
+    const theme = localStorage.getItem('windi-theme');
+    const lang = localStorage.getItem('windi-lang');
+    if (theme) document.body.setAttribute('data-theme', theme);
+    if (lang) setLang(lang);
+  } catch(e) {}
+})();
+</script>
+
 </body>
 </html>
