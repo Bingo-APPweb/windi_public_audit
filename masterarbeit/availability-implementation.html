@@ -1,707 +1,340 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Availability of Implementation — WINDI Masterarbeit</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐉</text></svg>">
-    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-cream: #fdfbf7;
-            --text-dark: #1a1a1a;
-            --text-muted: #555;
-            --accent-burgundy: #8b0000;
-            --accent-gold: #b8860b;
-            --border-light: #e5e0d5;
-            --code-bg: #f5f2eb;
-            --nav-bg: #2c2c2c;
-            --success-green: #10b981;
-            --info-blue: #0ea5e9;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: 'Crimson Text', Georgia, serif;
-            background: var(--bg-cream);
-            color: var(--text-dark);
-            line-height: 1.8;
-            font-size: 1.1rem;
-        }
-
-        /* Navigation */
-        .thesis-nav {
-            background: var(--nav-bg);
-            padding: 1rem 2rem;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .thesis-nav a {
-            color: #fff;
-            text-decoration: none;
-            font-family: 'Source Sans Pro', sans-serif;
-            font-size: 0.9rem;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            transition: background 0.2s;
-        }
-
-        .thesis-nav a:hover {
-            background: rgba(255,255,255,0.1);
-        }
-
-        .nav-brand {
-            font-weight: 700;
-            font-size: 1.1rem !important;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        /* Main Content */
-        .content {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 3rem 2rem;
-        }
-
-        /* Header */
-        .chapter-header {
-            text-align: center;
-            margin-bottom: 3rem;
-            padding-bottom: 2rem;
-            border-bottom: 2px solid var(--border-light);
-        }
-
-        .chapter-number {
-            font-family: 'Source Sans Pro', sans-serif;
-            font-size: 0.9rem;
-            color: var(--accent-burgundy);
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            margin-bottom: 0.5rem;
-        }
-
-        .chapter-title {
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 0.5rem;
-            line-height: 1.2;
-        }
-
-        .chapter-subtitle {
-            font-size: 1.2rem;
-            font-style: italic;
-            color: var(--text-muted);
-        }
-
-        /* Language Toggle */
-        .language-toggle {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin: 2rem 0;
-        }
-
-        .lang-btn {
-            font-family: 'Source Sans Pro', sans-serif;
-            padding: 0.75rem 1.5rem;
-            border: 2px solid var(--border-light);
-            background: #fff;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-
-        .lang-btn:hover {
-            border-color: var(--accent-burgundy);
-        }
-
-        .lang-btn.active {
-            background: var(--accent-burgundy);
-            color: #fff;
-            border-color: var(--accent-burgundy);
-        }
-
-        /* Language Sections */
-        .lang-section {
-            display: none;
-        }
-
-        .lang-section.active {
-            display: block;
-        }
-
-        /* Sections */
-        h2 {
-            font-size: 1.5rem;
-            color: var(--accent-burgundy);
-            margin: 2.5rem 0 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--border-light);
-        }
-
-        h3 {
-            font-size: 1.25rem;
-            color: var(--text-dark);
-            margin: 2rem 0 1rem;
-            font-weight: 600;
-        }
-
-        p {
-            margin-bottom: 1.2rem;
-            text-align: justify;
-        }
-
-        /* Info boxes */
-        .info-box {
-            background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
-            border-left: 4px solid var(--info-blue);
-            padding: 1.25rem 1.5rem;
-            margin: 1.5rem 0;
-            border-radius: 0 8px 8px 0;
-        }
-
-        .info-box.success {
-            background: linear-gradient(135deg, #f0fdf4, #dcfce7);
-            border-left-color: var(--success-green);
-        }
-
-        .info-box.gold {
-            background: linear-gradient(135deg, #fffbeb, #fef3c7);
-            border-left-color: var(--accent-gold);
-        }
-
-        .info-box-title {
-            font-family: 'Source Sans Pro', sans-serif;
-            font-weight: 700;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        /* Code blocks */
-        pre {
-            background: var(--code-bg);
-            border: 1px solid var(--border-light);
-            border-radius: 8px;
-            padding: 1.5rem;
-            overflow-x: auto;
-            margin: 1.5rem 0;
-            font-family: 'Fira Code', 'Consolas', monospace;
-            font-size: 0.85rem;
-            line-height: 1.6;
-        }
-
-        code {
-            font-family: 'Fira Code', 'Consolas', monospace;
-            background: var(--code-bg);
-            padding: 0.15rem 0.4rem;
-            border-radius: 3px;
-            font-size: 0.9em;
-        }
-
-        /* Phase boxes */
-        .phase-box {
-            background: #fff;
-            border: 2px solid var(--border-light);
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin: 1.5rem 0;
-        }
-
-        .phase-header {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 1rem;
-        }
-
-        .phase-badge {
-            background: var(--accent-burgundy);
-            color: #fff;
-            font-family: 'Source Sans Pro', sans-serif;
-            font-size: 0.75rem;
-            font-weight: 700;
-            padding: 0.35rem 0.75rem;
-            border-radius: 4px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .phase-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--text-dark);
-        }
-
-        .phase-content {
-            color: var(--text-muted);
-            font-size: 1rem;
-        }
-
-        /* Links table */
-        .links-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1.5rem 0;
-            font-size: 0.95rem;
-        }
-
-        .links-table th,
-        .links-table td {
-            padding: 0.75rem 1rem;
-            text-align: left;
-            border: 1px solid var(--border-light);
-        }
-
-        .links-table th {
-            background: var(--code-bg);
-            font-family: 'Source Sans Pro', sans-serif;
-            font-weight: 600;
-            color: var(--accent-burgundy);
-        }
-
-        .links-table a {
-            color: var(--info-blue);
-            text-decoration: none;
-        }
-
-        .links-table a:hover {
-            text-decoration: underline;
-        }
-
-        /* Conclusion box */
-        .conclusion-box {
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            color: #fff;
-            padding: 2rem;
-            border-radius: 12px;
-            margin: 2rem 0;
-            text-align: center;
-        }
-
-        .conclusion-text {
-            font-size: 1.1rem;
-            line-height: 1.8;
-            font-style: italic;
-        }
-
-        .conclusion-motto {
-            margin-top: 1.5rem;
-            font-family: 'Source Sans Pro', sans-serif;
-            font-size: 0.9rem;
-            color: var(--accent-gold);
-            letter-spacing: 1px;
-        }
-
-        /* Footer */
-        .windi-footer {
-            margin-top: 4rem;
-            padding-top: 2rem;
-            border-top: 2px solid var(--border-light);
-            text-align: center;
-        }
-
-        .windi-receipt-block {
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            color: #fff;
-            padding: 1.5rem 2rem;
-            border-radius: 12px;
-            margin: 1.5rem 0;
-            display: inline-block;
-        }
-
-        .receipt-title {
-            font-family: 'Source Sans Pro', sans-serif;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: rgba(255,255,255,0.6);
-            margin-bottom: 0.5rem;
-        }
-
-        .receipt-id {
-            font-family: 'Fira Code', monospace;
-            font-size: 0.9rem;
-            color: var(--accent-gold);
-        }
-
-        .receipt-motto {
-            font-style: italic;
-            font-size: 0.9rem;
-            color: rgba(255,255,255,0.8);
-            margin-top: 0.75rem;
-        }
-
-        .ledger-info {
-            font-family: 'Source Sans Pro', sans-serif;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-top: 1rem;
-        }
-
-        .footer-meta {
-            margin-top: 2rem;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .content {
-                padding: 2rem 1.25rem;
-            }
-
-            .chapter-title {
-                font-size: 1.7rem;
-            }
-
-            .nav-links {
-                display: none;
-            }
-
-            .language-toggle {
-                flex-direction: column;
-                align-items: center;
-            }
-        }
-
-        /* Print styles */
-        @media print {
-            .thesis-nav, .language-toggle {
-                display: none;
-            }
-
-            .lang-section {
-                display: block !important;
-                page-break-before: always;
-            }
-
-            .lang-section:first-of-type {
-                page-break-before: auto;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Availability of Implementation — WINDI Masterarbeit</title>
+<meta name="description" content="Technical Evidence: Availability of Implementation and Verification Infrastructure">
+<link rel="stylesheet" href="windi-internal.css">
 </head>
-<body>
+<body data-theme="dark" data-lang="de">
 
-    <!-- Navigation -->
-    <nav class="thesis-nav">
-        <a href="index.html" class="nav-brand">🐉 WINDI Masterarbeit</a>
-        <div class="nav-links">
-            <a href="index.html">Übersicht</a>
-            <a href="verification-layer.html">Kapitel 11</a>
-            <a href="tr-007.html">TR-007 SOF</a>
-            <a href="idpf-abstract.html">IDPF Abstract</a>
-        </div>
-    </nav>
+<!-- Header -->
+<header class="site-header">
+  <a href="index.html" class="header-brand">
+    <div class="header-logo">W</div>
+    <div class="header-title-group">
+      <span class="header-title">WINDI</span>
+      <span class="header-subtitle">Governance Intelligence</span>
+    </div>
+  </a>
+  <div class="header-center">
+    <div class="header-status">
+      <span class="status-dot"></span>
+      <span>Operational</span>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('de')">DE</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('pt')">PT</button>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+      <div class="theme-toggle-track"></div>
+      <div class="theme-toggle-thumb" id="themeThumb"></div>
+    </button>
+    <button class="mobile-toggle" onclick="toggleSidebar()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
 
-    <!-- Main Content -->
-    <main class="content">
+<!-- Sidebar Navigation -->
+<nav class="sidebar sidebar-left" id="sidebarLeft">
+  <div class="sidebar-section">
+    <div class="sidebar-label">Masterarbeit</div>
+    <a href="index.html" class="sidebar-link">Main Document</a>
+    <a href="cover.html" class="sidebar-link">Cover</a>
+    <a href="about-windi.html" class="sidebar-link">About WINDI</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Governance</div>
+    <a href="governance-levels.html" class="sidebar-link">Governance Levels</a>
+    <a href="human-oversight.html" class="sidebar-link">Human Oversight</a>
+    <a href="data-handling.html" class="sidebar-link">Data Handling</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Architecture</div>
+    <a href="diagrams.html" class="sidebar-link">Diagrams</a>
+    <a href="interface-guide.html" class="sidebar-link">Interface Guide</a>
+    <a href="verification-layer.html" class="sidebar-link">Verification Layer</a>
+    <a href="kapitel12_domain_sovereignty.html" class="sidebar-link">Domain Sovereignty</a>
+    <a href="identity-governance-layer.html" class="sidebar-link">Identity Governance</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Technical Reports</div>
+    <a href="tr-windi-2026-003.html" class="sidebar-link">TR-003: Service Layer</a>
+    <a href="tr-windi-2026-004.html" class="sidebar-link">TR-004: Cognitive Service</a>
+    <a href="tr-windi-2026-005.html" class="sidebar-link">TR-005: Cognitive Cycle</a>
+    <a href="isp-evolution.html" class="sidebar-link">TR-006: ISP Registry</a>
+    <a href="tr-007.html" class="sidebar-link">TR-007: Provenance</a>
+    <a href="sge-results.html" class="sidebar-link">SGE Results</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Publications</div>
+    <a href="publications.html" class="sidebar-link">Publications</a>
+    <a href="fachartikel-provenienz.html" class="sidebar-link">Fachartikel</a>
+    <a href="windi-publishing-house.html" class="sidebar-link">Manifesto</a>
+    <a href="editorial-policy.html" class="sidebar-link">Editorial Policy</a>
+    <a href="idpf-abstract.html" class="sidebar-link">IDPF Abstract</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Media</div>
+    <a href="windi-working-paper-2026.html" class="sidebar-link">Working Paper</a>
+    <a href="press-release-windi-2026.html" class="sidebar-link">Press Release</a>
+    <a href="windi-side-by-side-2026.html" class="sidebar-link">Side-by-Side</a>
+    <a href="wsj-style-governed-windi-2026.html" class="sidebar-link">WSJ Feature</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Compliance</div>
+    <a href="document-integrity.html" class="sidebar-link">Doc Integrity</a>
+    <a href="print-watermark-layer.html" class="sidebar-link">Print Layer</a>
+    <a href="regulatory-summary-print-layer.html" class="sidebar-link">Regulatory</a>
+    <a href="availability-implementation.html" class="sidebar-link sidebar-link-active">Appendix A</a>
+  </div>
+</nav>
 
-        <!-- Chapter Header -->
-        <header class="chapter-header">
-            <div class="chapter-number">Appendix A · Technical Evidence</div>
-            <h1 class="chapter-title">Availability of Implementation and Verification Infrastructure</h1>
-            <p class="chapter-subtitle">Verfügbarkeit der Implementierung und Verifikationsinfrastruktur</p>
-        </header>
+<!-- Right Sidebar TOC -->
+<aside class="sidebar sidebar-right" id="sidebarRight">
+  <div class="sidebar-label">
+    <span class="l-de">Auf dieser Seite</span>
+    <span class="l-en">On this page</span>
+    <span class="l-pt">Nesta pagina</span>
+  </div>
+  <a href="#phase2" class="toc-link">Phase 2: Governance</a>
+  <a href="#phase3a" class="toc-link">Phase 3A: Verification</a>
+  <a href="#infrastructure" class="toc-link">Verification Infrastructure</a>
+  <a href="#code" class="toc-link">Code Availability</a>
+  <a href="#conclusion" class="toc-link">Conclusion</a>
+</aside>
 
-        <!-- Language Toggle -->
-        <div class="language-toggle">
-            <button class="lang-btn active" onclick="showLang('en')">🇬🇧 English</button>
-            <button class="lang-btn" onclick="showLang('de')">🇩🇪 Deutsch</button>
-        </div>
+<!-- Main Content -->
+<main class="main-content">
 
-        <!-- ═══════════════════════════════════════════════════════════════ -->
-        <!-- ENGLISH VERSION -->
-        <!-- ═══════════════════════════════════════════════════════════════ -->
-        <section id="lang-en" class="lang-section active">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-breadcrumb">
+      <a href="index.html">WINDI</a>
+      <span class="breadcrumb-sep">/</span>
+      <span class="breadcrumb-current">Appendix A</span>
+    </div>
+    <div class="page-meta-bar">
+      <span class="page-tag page-tag-tr">Technical Evidence</span>
+      <span class="page-date">2026-02-07</span>
+    </div>
+    <h1 class="page-title">
+      <span class="l-de">Verfugbarkeit der Implementierung und Verifikationsinfrastruktur</span>
+      <span class="l-en">Availability of Implementation and Verification Infrastructure</span>
+      <span class="l-pt">Disponibilidade da Implementacao e Infraestrutura de Verificacao</span>
+    </h1>
+    <p class="page-subtitle">
+      <span class="l-de">Offentliche Dokumentation der operativen Governance-Infrastruktur von WINDI</span>
+      <span class="l-en">Public documentation of WINDI's operational governance infrastructure</span>
+      <span class="l-pt">Documentacao publica da infraestrutura de governanca operacional do WINDI</span>
+    </p>
+    <div class="page-divider"></div>
+  </div>
 
-            <p>
-                To ensure transparency, reproducibility, and technical verifiability of the concepts 
-                presented in this thesis, the WINDI system has been implemented as a fully operational 
-                governance infrastructure. The implementation is publicly documented and technically 
-                traceable through a version-controlled software repository and a live verification interface.
-            </p>
+  <!-- Content -->
+  <div class="content-prose">
 
-            <p>
-                The practical realization of the proposed model is structured in three major implementation phases:
-            </p>
+    <!-- Introduction -->
+    <p>
+      <span class="lb-de">Zur Sicherstellung von Transparenz, Reproduzierbarkeit und technischer Uberprufbarkeit der in dieser Arbeit vorgestellten Konzepte wurde das WINDI-System als vollstandig funktionsfahige Governance-Infrastruktur implementiert. Die Umsetzung ist offentlich dokumentiert und uber ein versionskontrolliertes Software-Repository sowie eine live zugangliche Verifikationsschnittstelle technisch nachvollziehbar.</span>
+      <span class="lb-en">To ensure transparency, reproducibility, and technical verifiability of the concepts presented in this thesis, the WINDI system has been implemented as a fully operational governance infrastructure. The implementation is publicly documented and technically traceable through a version-controlled software repository and a live verification interface.</span>
+      <span class="lb-pt">Para garantir transparencia, reprodutibilidade e verificabilidade tecnica dos conceitos apresentados nesta tese, o sistema WINDI foi implementado como uma infraestrutura de governanca totalmente operacional. A implementacao esta publicamente documentada e tecnicamente rastreavel atraves de um repositorio de software com controle de versao e uma interface de verificacao ao vivo.</span>
+    </p>
 
-            <!-- Phase 2 -->
-            <div class="phase-box">
-                <div class="phase-header">
-                    <span class="phase-badge">Phase 2</span>
-                    <span class="phase-title">Institutional Governance Integration</span>
-                </div>
-                <div class="phase-content">
-                    <p>
-                        This phase established the operational backbone of the system. It introduced 
-                        <strong>Institutional Style Profiles (ISP)</strong> as structured identity layers for documents, 
-                        integrated AI-assisted form processing under human oversight, and implemented 
-                        cryptographic provenance mechanisms. Documents generated in this phase include 
-                        content hashes, structural hashes, governance receipts, and submission registry 
-                        entries, enabling auditable traceability of document origin and integrity.
-                    </p>
-                </div>
-            </div>
+    <p>
+      <span class="lb-de">Die praktische Realisierung des vorgeschlagenen Modells gliedert sich in drei zentrale Implementierungsphasen:</span>
+      <span class="lb-en">The practical realization of the proposed model is structured in three major implementation phases:</span>
+      <span class="lb-pt">A realizacao pratica do modelo proposto esta estruturada em tres grandes fases de implementacao:</span>
+    </p>
 
-            <!-- Phase 3A -->
-            <div class="phase-box">
-                <div class="phase-header">
-                    <span class="phase-badge">Phase 3A</span>
-                    <span class="phase-title">Public Verification Layer</span>
-                </div>
-                <div class="phase-content">
-                    <p>
-                        Phase 3A extended the governance pipeline into the public domain. A web-based 
-                        verification interface allows any stakeholder to validate the authenticity and 
-                        integrity of a WINDI-governed document using its receipt identifier. This layer 
-                        transforms internal cryptographic evidence into a publicly accessible, human-readable 
-                        validation interface, thereby operationalizing the principle:
-                    </p>
-                    <div class="info-box gold">
-                        <p style="margin:0; text-align:center; font-style:italic; font-size:1.1rem;">
-                            "AI processes. Human decides. WINDI guarantees."
-                        </p>
-                    </div>
-                </div>
-            </div>
+    <!-- Phase 2 -->
+    <h2 id="phase2">
+      <span class="l-de">Phase 2: Integration institutioneller Governance</span>
+      <span class="l-en">Phase 2: Institutional Governance Integration</span>
+      <span class="l-pt">Fase 2: Integracao de Governanca Institucional</span>
+    </h2>
 
-            <h2>Verification Infrastructure</h2>
-            <p>
-                The system includes a public verification endpoint that returns both machine-readable (JSON) 
-                and human-readable (HTML) validation results. This ensures accessibility for both automated 
-                auditing systems and non-technical end users. The verification layer bridges the gap between 
-                technical provenance mechanisms and societal trust requirements.
-            </p>
+    <div class="cta-box">
+      <div class="cta-content">
+        <p>
+          <span class="lb-de">Diese Phase etablierte das operative Fundament des Systems. Sie fuhrte <strong>Institutional Style Profiles (ISP)</strong> als strukturierte Identitatsschicht fur Dokumente ein, integrierte KI-gestutzte Formularverarbeitung unter menschlicher Aufsicht und implementierte kryptographische Provenienzmechanismen.</span>
+          <span class="lb-en">This phase established the operational backbone of the system. It introduced <strong>Institutional Style Profiles (ISP)</strong> as structured identity layers for documents, integrated AI-assisted form processing under human oversight, and implemented cryptographic provenance mechanisms.</span>
+          <span class="lb-pt">Esta fase estabeleceu a espinha dorsal operacional do sistema. Introduziu os <strong>Perfis de Estilo Institucional (ISP)</strong> como camadas de identidade estruturadas para documentos, integrou processamento de formularios assistido por IA sob supervisao humana e implementou mecanismos criptograficos de proveniencia.</span>
+        </p>
+      </div>
+    </div>
 
-            <table class="links-table">
-                <thead>
-                    <tr>
-                        <th>Resource</th>
-                        <th>URL</th>
-                        <th>Purpose</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>HTML Verification</td>
-                        <td><a href="https://windia4desk.tech/verify/" target="_blank">windia4desk.tech/verify/&lt;receipt&gt;</a></td>
-                        <td>Human-readable validation page</td>
-                    </tr>
-                    <tr>
-                        <td>JSON API</td>
-                        <td><a href="https://windia4desk.tech/api/verify/" target="_blank">windia4desk.tech/api/verify/&lt;receipt&gt;</a></td>
-                        <td>Machine-readable validation</td>
-                    </tr>
-                    <tr>
-                        <td>Academic Documentation</td>
-                        <td><a href="https://master.windia4desk.tech" target="_blank">master.windia4desk.tech</a></td>
-                        <td>Thesis documentation site</td>
-                    </tr>
-                    <tr>
-                        <td>Source Repository</td>
-                        <td><a href="https://github.com/Bingo-APPweb/windi_public_audit" target="_blank">github.com/Bingo-APPweb/windi_public_audit</a></td>
-                        <td>Version-controlled codebase</td>
-                    </tr>
-                </tbody>
-            </table>
+    <!-- Phase 3A -->
+    <h2 id="phase3a">
+      <span class="l-de">Phase 3A: Offentliche Verifikationsschicht</span>
+      <span class="l-en">Phase 3A: Public Verification Layer</span>
+      <span class="l-pt">Fase 3A: Camada de Verificacao Publica</span>
+    </h2>
 
-            <h2>Code and System Availability</h2>
-            <p>
-                The complete implementation, including the governance engine, document generation workflows, 
-                and verification services, is maintained in a version-controlled repository. This repository 
-                serves as supplementary technical evidence for the thesis and enables independent review of 
-                the system architecture, governance logic, and verification mechanisms.
-            </p>
+    <div class="cta-box">
+      <div class="cta-content">
+        <p>
+          <span class="lb-de">Phase 3A erweiterte die Governance-Pipeline in den offentlichen Raum. Eine webbasierte Verifikationsoberflache ermoglicht es jedem Stakeholder, die Authentizitat und Integritat eines WINDI-governierten Dokuments anhand seiner Receipt-ID zu uberprufen.</span>
+          <span class="lb-en">Phase 3A extended the governance pipeline into the public domain. A web-based verification interface allows any stakeholder to validate the authenticity and integrity of a WINDI-governed document using its receipt identifier.</span>
+          <span class="lb-pt">A Fase 3A estendeu o pipeline de governanca para o dominio publico. Uma interface de verificacao baseada na web permite que qualquer stakeholder valide a autenticidade e integridade de um documento governado pelo WINDI usando seu identificador de recibo.</span>
+        </p>
+      </div>
+    </div>
 
-            <div class="conclusion-box">
-                <p class="conclusion-text">
-                    Together, the written thesis, the operational system, and the publicly accessible 
-                    verification layer form an integrated research contribution combining theoretical 
-                    governance design with practical, verifiable implementation.
-                </p>
-                <p class="conclusion-motto">"AI processes. Human decides. WINDI guarantees."</p>
-            </div>
+    <div class="doc-quote">
+      <p>
+        <span class="l-de">"KI verarbeitet. Mensch entscheidet. WINDI garantiert."</span>
+        <span class="l-en">"AI processes. Human decides. WINDI guarantees."</span>
+        <span class="l-pt">"IA processa. Humano decide. WINDI garante."</span>
+      </p>
+      <cite>— WINDI Core Principle</cite>
+    </div>
 
-        </section>
+    <!-- Verification Infrastructure -->
+    <h2 id="infrastructure">
+      <span class="l-de">Verifikationsinfrastruktur</span>
+      <span class="l-en">Verification Infrastructure</span>
+      <span class="l-pt">Infraestrutura de Verificacao</span>
+    </h2>
 
-        <!-- ═══════════════════════════════════════════════════════════════ -->
-        <!-- GERMAN VERSION -->
-        <!-- ═══════════════════════════════════════════════════════════════ -->
-        <section id="lang-de" class="lang-section">
+    <p>
+      <span class="lb-de">Das System stellt einen offentlichen Verifikationsendpunkt bereit, der sowohl maschinenlesbare (JSON) als auch menschenlesbare (HTML) Validierungsergebnisse liefert. Dadurch wird sowohl die Integration in automatisierte Prufprozesse als auch die Zuganglichkeit fur nicht-technische Endnutzer gewahrleistet.</span>
+      <span class="lb-en">The system includes a public verification endpoint that returns both machine-readable (JSON) and human-readable (HTML) validation results. This ensures accessibility for both automated auditing systems and non-technical end users.</span>
+      <span class="lb-pt">O sistema inclui um endpoint de verificacao publico que retorna resultados de validacao tanto em formato legivel por maquina (JSON) quanto legivel por humanos (HTML). Isso garante acessibilidade tanto para sistemas de auditoria automatizados quanto para usuarios finais nao tecnicos.</span>
+    </p>
 
-            <p>
-                Zur Sicherstellung von Transparenz, Reproduzierbarkeit und technischer Überprüfbarkeit 
-                der in dieser Arbeit vorgestellten Konzepte wurde das WINDI-System als vollständig 
-                funktionsfähige Governance-Infrastruktur implementiert. Die Umsetzung ist öffentlich 
-                dokumentiert und über ein versionskontrolliertes Software-Repository sowie eine live 
-                zugängliche Verifikationsschnittstelle technisch nachvollziehbar.
-            </p>
+    <div class="spec-table-wrapper">
+      <table class="spec-table">
+        <thead>
+          <tr>
+            <th>Resource</th>
+            <th>URL</th>
+            <th>Purpose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>HTML Verification</td>
+            <td><code>windia4desk.tech/verify/&lt;receipt&gt;</code></td>
+            <td>Human-readable validation page</td>
+          </tr>
+          <tr>
+            <td>JSON API</td>
+            <td><code>windia4desk.tech/api/verify/&lt;receipt&gt;</code></td>
+            <td>Machine-readable validation</td>
+          </tr>
+          <tr>
+            <td>Academic Documentation</td>
+            <td><code>master.windia4desk.tech</code></td>
+            <td>Thesis documentation site</td>
+          </tr>
+          <tr>
+            <td>Source Repository</td>
+            <td><code>github.com/Bingo-APPweb/windi_public_audit</code></td>
+            <td>Version-controlled codebase</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-            <p>
-                Die praktische Realisierung des vorgeschlagenen Modells gliedert sich in drei zentrale 
-                Implementierungsphasen:
-            </p>
+    <!-- Code and System Availability -->
+    <h2 id="code">
+      <span class="l-de">Verfugbarkeit von Code und System</span>
+      <span class="l-en">Code and System Availability</span>
+      <span class="l-pt">Disponibilidade de Codigo e Sistema</span>
+    </h2>
 
-            <!-- Phase 2 -->
-            <div class="phase-box">
-                <div class="phase-header">
-                    <span class="phase-badge">Phase 2</span>
-                    <span class="phase-title">Integration institutioneller Governance</span>
-                </div>
-                <div class="phase-content">
-                    <p>
-                        Diese Phase etablierte das operative Fundament des Systems. Sie führte 
-                        <strong>Institutional Style Profiles (ISP)</strong> als strukturierte Identitätsschicht 
-                        für Dokumente ein, integrierte KI-gestützte Formularverarbeitung unter menschlicher 
-                        Aufsicht und implementierte kryptographische Provenienzmechanismen. In dieser Phase 
-                        erzeugte Dokumente enthalten Content-Hashes, strukturelle Hashes, Governance-Quittungen 
-                        sowie Registry-Einträge, wodurch eine auditierbare Nachvollziehbarkeit von Ursprung 
-                        und Integrität ermöglicht wird.
-                    </p>
-                </div>
-            </div>
+    <p>
+      <span class="lb-de">Die vollstandige Implementierung, einschliesslich Governance-Engine, Dokumentenerzeugung und Verifikationsdiensten, wird in einem versionskontrollierten Repository gepflegt. Dieses Repository dient als erganzender technischer Nachweis zur vorliegenden Arbeit und ermoglicht eine unabhangige Prufung der Systemarchitektur, Governance-Logik und Verifikationsmechanismen.</span>
+      <span class="lb-en">The complete implementation, including the governance engine, document generation workflows, and verification services, is maintained in a version-controlled repository. This repository serves as supplementary technical evidence for the thesis and enables independent review of the system architecture, governance logic, and verification mechanisms.</span>
+      <span class="lb-pt">A implementacao completa, incluindo o motor de governanca, fluxos de trabalho de geracao de documentos e servicos de verificacao, e mantida em um repositorio com controle de versao. Este repositorio serve como evidencia tecnica suplementar para a tese e permite revisao independente da arquitetura do sistema, logica de governanca e mecanismos de verificacao.</span>
+    </p>
 
-            <!-- Phase 3A -->
-            <div class="phase-box">
-                <div class="phase-header">
-                    <span class="phase-badge">Phase 3A</span>
-                    <span class="phase-title">Öffentliche Verifikationsschicht</span>
-                </div>
-                <div class="phase-content">
-                    <p>
-                        Phase 3A erweiterte die Governance-Pipeline in den öffentlichen Raum. Eine webbasierte 
-                        Verifikationsoberfläche ermöglicht es jedem Stakeholder, die Authentizität und 
-                        Integrität eines WINDI-governierten Dokuments anhand seiner Receipt-ID zu überprüfen. 
-                        Diese Schicht transformiert interne kryptographische Nachweise in eine öffentlich 
-                        zugängliche, visuell verständliche Validierungsschnittstelle und operationalisiert 
-                        damit das Prinzip:
-                    </p>
-                    <div class="info-box gold">
-                        <p style="margin:0; text-align:center; font-style:italic; font-size:1.1rem;">
-                            „AI processes. Human decides. WINDI guarantees."
-                        </p>
-                    </div>
-                </div>
-            </div>
+    <!-- Conclusion -->
+    <h2 id="conclusion">
+      <span class="l-de">Fazit</span>
+      <span class="l-en">Conclusion</span>
+      <span class="l-pt">Conclusao</span>
+    </h2>
 
-            <h2>Verifikationsinfrastruktur</h2>
-            <p>
-                Das System stellt einen öffentlichen Verifikationsendpunkt bereit, der sowohl 
-                maschinenlesbare (JSON) als auch menschenlesbare (HTML) Validierungsergebnisse liefert. 
-                Dadurch wird sowohl die Integration in automatisierte Prüfprozesse als auch die 
-                Zugänglichkeit für nicht-technische Endnutzer gewährleistet. Die Verifikationsschicht 
-                bildet die Brücke zwischen technischer Provenienz und gesellschaftlichen Vertrauensanforderungen.
-            </p>
+    <div class="cta-box">
+      <div class="cta-content">
+        <p>
+          <span class="lb-de">Gemeinsam bilden die schriftliche Arbeit, das operative System und die offentlich zugangliche Verifikationsschicht einen integrierten Forschungsbeitrag, der theoretisches Governance-Design mit praktischer, uberprufbarer Implementierung verbindet.</span>
+          <span class="lb-en">Together, the written thesis, the operational system, and the publicly accessible verification layer form an integrated research contribution combining theoretical governance design with practical, verifiable implementation.</span>
+          <span class="lb-pt">Juntos, a tese escrita, o sistema operacional e a camada de verificacao publicamente acessivel formam uma contribuicao de pesquisa integrada que combina design teorico de governanca com implementacao pratica e verificavel.</span>
+        </p>
+      </div>
+    </div>
 
-            <table class="links-table">
-                <thead>
-                    <tr>
-                        <th>Ressource</th>
-                        <th>URL</th>
-                        <th>Zweck</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>HTML-Verifikation</td>
-                        <td><a href="https://windia4desk.tech/verify/" target="_blank">windia4desk.tech/verify/&lt;receipt&gt;</a></td>
-                        <td>Menschenlesbare Validierungsseite</td>
-                    </tr>
-                    <tr>
-                        <td>JSON-API</td>
-                        <td><a href="https://windia4desk.tech/api/verify/" target="_blank">windia4desk.tech/api/verify/&lt;receipt&gt;</a></td>
-                        <td>Maschinenlesbare Validierung</td>
-                    </tr>
-                    <tr>
-                        <td>Akademische Dokumentation</td>
-                        <td><a href="https://master.windia4desk.tech" target="_blank">master.windia4desk.tech</a></td>
-                        <td>Dokumentationsseite der Arbeit</td>
-                    </tr>
-                    <tr>
-                        <td>Quellcode-Repository</td>
-                        <td><a href="https://github.com/Bingo-APPweb/windi_public_audit" target="_blank">github.com/Bingo-APPweb/windi_public_audit</a></td>
-                        <td>Versionskontrollierte Codebasis</td>
-                    </tr>
-                </tbody>
-            </table>
+  </div>
 
-            <h2>Verfügbarkeit von Code und System</h2>
-            <p>
-                Die vollständige Implementierung, einschließlich Governance-Engine, Dokumentenerzeugung 
-                und Verifikationsdiensten, wird in einem versionskontrollierten Repository gepflegt. 
-                Dieses Repository dient als ergänzender technischer Nachweis zur vorliegenden Arbeit 
-                und ermöglicht eine unabhängige Prüfung der Systemarchitektur, Governance-Logik und 
-                Verifikationsmechanismen.
-            </p>
+  <!-- Page Footer -->
+  <footer class="page-footer">
+    <div class="page-footer-meta">
+      <span>WINDI-MASTER-07FEB26-AVAILABILITY</span>
+      <span>Appendix A — Technical Evidence</span>
+    </div>
+    <p class="page-footer-quittung">Author: Jober Mogele Correa (WINDI-CEO-001) | Status: INSTITUTIONAL BETA</p>
+    <p class="page-footer-principle">
+      <span class="l-de">"KI verarbeitet. Mensch entscheidet. WINDI garantiert."</span>
+      <span class="l-en">"AI processes. Human decides. WINDI guarantees."</span>
+      <span class="l-pt">"IA processa. Humano decide. WINDI garante."</span>
+    </p>
+  </footer>
 
-            <div class="conclusion-box">
-                <p class="conclusion-text">
-                    Gemeinsam bilden die schriftliche Arbeit, das operative System und die öffentlich 
-                    zugängliche Verifikationsschicht einen integrierten Forschungsbeitrag, der theoretisches 
-                    Governance-Design mit praktischer, überprüfbarer Implementierung verbindet.
-                </p>
-                <p class="conclusion-motto">„AI processes. Human decides. WINDI guarantees."</p>
-            </div>
+</main>
 
-        </section>
+<!-- JavaScript -->
+<script>
+// Theme Toggle
+function toggleTheme() {
+  const body = document.body;
+  const isLight = body.getAttribute('data-theme') === 'light';
+  body.setAttribute('data-theme', isLight ? 'dark' : 'light');
+  try { localStorage.setItem('windi-theme', isLight ? 'dark' : 'light'); } catch(e) {}
+}
 
-        <!-- Footer -->
-        <footer class="windi-footer">
-            <div class="windi-receipt-block">
-                <div class="receipt-title">WINDI Governance Receipt</div>
-                <div class="receipt-id">WINDI-MASTER-03FEB26-AVAILABILITY</div>
-                <div class="receipt-motto">"AI processes. Human decides. WINDI guarantees."</div>
-            </div>
+// Language Switcher
+function setLang(lang) {
+  document.body.setAttribute('data-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+  try { localStorage.setItem('windi-lang', lang); } catch(e) {}
+}
 
-            <div class="ledger-info">
-                WINDI Governance Ledger | Human-authored: 100% | Template: Academic Appendix v1.0 | Structure: VALID
-            </div>
+// Sidebar Toggle (mobile)
+let sidebarOpen = false;
+function toggleSidebar() {
+  sidebarOpen = !sidebarOpen;
+  document.getElementById('sidebarLeft').classList.toggle('open', sidebarOpen);
+}
 
-            <div class="footer-meta">
-                <p>WINDI Publishing House — Kempten, Bavaria, Germany</p>
-                <p>Masterarbeit Documentation · Version 1.0 · Februar 2026</p>
-            </div>
-        </footer>
+// Close sidebar on link click (mobile)
+document.querySelectorAll('.sidebar-link').forEach(link => {
+  link.addEventListener('click', () => {
+    if (window.innerWidth <= 960) {
+      sidebarOpen = false;
+      document.getElementById('sidebarLeft').classList.remove('open');
+    }
+  });
+});
 
-    </main>
-
-    <!-- Language Toggle Script -->
-    <script>
-        function showLang(lang) {
-            // Hide all sections
-            document.querySelectorAll('.lang-section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-            
-            // Show selected
-            document.getElementById('lang-' + lang).classList.add('active');
-            event.target.classList.add('active');
-        }
-    </script>
+// Init saved preferences
+(function init() {
+  try {
+    const theme = localStorage.getItem('windi-theme');
+    const lang = localStorage.getItem('windi-lang');
+    if (theme) document.body.setAttribute('data-theme', theme);
+    if (lang) setLang(lang);
+  } catch(e) {}
+})();
+</script>
 
 </body>
 </html>

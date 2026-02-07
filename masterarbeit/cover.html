@@ -1,11 +1,319 @@
-<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>WINDI System — Titelblatt</title><link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital@0;1&family=Libre+Baskerville:wght@400;700&family=Source+Sans+Pro:wght@300;400;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="css/academic.css"><style>.title-page{min-height:100vh;display:flex;flex-direction:column;justify-content:space-between;padding:3rem;background:#fff;max-width:210mm;margin:0 auto}.title-page-header{text-align:center;padding-top:2rem}.institution-name{font-family:'Source Sans Pro',sans-serif;font-size:1.1rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:#444}.institution-location{font-family:'Crimson Text',serif;color:#666;font-style:italic}.document-type{font-family:'Source Sans Pro',sans-serif;font-size:.9rem;letter-spacing:.2em;text-transform:uppercase;color:#0055a4;border:1px solid #0055a4;padding:.5rem 2rem;display:inline-block;margin-top:2rem}.title-page-main{text-align:center;flex-grow:1;display:flex;flex-direction:column;justify-content:center}.main-title{font-family:'Libre Baskerville',serif;font-size:2.8rem;font-weight:700;color:#003366;margin-bottom:1.5rem}.main-subtitle{font-family:'Crimson Text',serif;font-size:1.5rem;color:#333;margin-bottom:2rem}.system-name{font-family:'Source Sans Pro',sans-serif;color:#666;letter-spacing:.1em}.principle-stmt{font-family:'Crimson Text',serif;font-size:1.2rem;font-style:italic;color:#0055a4;padding:1.5rem;border-top:1px solid #ddd;border-bottom:1px solid #ddd;max-width:500px;margin:2rem auto}.version-badge-lg{display:inline-block;background:linear-gradient(135deg,#003366,#0055a4);color:#fff;padding:.6rem 2rem;font-family:'Source Sans Pro',sans-serif;font-size:.9rem;font-weight:600;letter-spacing:.15em}.title-page-footer{text-align:center;padding-bottom:2rem}.author-label{font-family:'Source Sans Pro',sans-serif;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:#888}.author-name{font-family:'Crimson Text',serif;font-size:1.2rem;color:#333}.date-block{font-family:'Crimson Text',serif;color:#666;margin-top:2rem}.deco-line{width:60px;height:3px;background:#c9a227;margin:2rem auto}.screen-nav{position:fixed;bottom:2rem;right:2rem;display:flex;gap:1rem}.screen-nav a,.screen-nav button{padding:.75rem 1.5rem;background:#003366;color:#fff;text-decoration:none;border:none;border-radius:4px;cursor:pointer}@media print{.screen-nav{display:none}}</style></head><body><div class="title-page"><header class="title-page-header"><div class="institution-name">WINDI Publishing House</div><div class="institution-location">Kempten (Allgäu), Bavaria, Germany</div><div class="document-type">Institutional Documentation</div></header><main class="title-page-main"><h1 class="main-title">WINDI SYSTEM</h1><p class="main-subtitle">Pre-AI Governance Layer<br>for Institutional Workflow Orchestration</p><div class="system-name">A4 Desk BABEL Interface</div><div class="deco-line"></div><div class="principle-stmt">„AI processes. Human decides. WINDI guarantees."</div><span class="version-badge-lg">INSTITUTIONAL BETA · VERSION 1.0</span></main><footer class="title-page-footer"><div class="author-label">Conceived & Developed by</div><div class="author-name">Jober Mögele Correa</div><div class="deco-line"></div><div class="date-block">Marco Zero: 19. Januar 2026<br>Kempten (Allgäu), Bavaria</div></footer></div><section class="windi-receipt-footer" style="position:absolute;bottom:0;left:0;right:0;padding:1rem 2rem;">
-    <div class="windi-brand">WINDI Publishing House</div>
-    <div class="receipt-line">WINDI-QUITTUNG: WINDI-COVER-30JAN26-C0V3R123 | Hash: c0v3r123</div>
-    <div class="qr-section">
-        <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=https://master.windia4desk.tech" alt="QR Code">
-        <div>
-            <div class="receipt-line">A4 Desk BABEL v4.7-gov | EU AI Act Compliant</div>
-            <div class="compliance-badge">✓ Verified Institutional Documentation</div>
-        </div>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cover — WINDI System</title>
+<meta name="description" content="WINDI Pre-AI Governance Layer — Cover Page">
+<link rel="stylesheet" href="windi-internal.css">
+<style>
+  .cover-page {
+    min-height: calc(100vh - 200px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 60px 20px;
+  }
+  .cover-institution {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+  .cover-location {
+    font-size: 14px;
+    color: var(--text-tertiary);
+    font-style: italic;
+    margin-bottom: 40px;
+  }
+  .cover-badge {
+    display: inline-block;
+    padding: 8px 20px;
+    border: 1px solid var(--border-gold);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--gold);
+    margin-bottom: 60px;
+  }
+  .cover-main-title {
+    font-family: var(--font-display);
+    font-size: clamp(36px, 6vw, 56px);
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+    letter-spacing: 4px;
+  }
+  .cover-subtitle {
+    font-size: 20px;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+    max-width: 500px;
+  }
+  .cover-system {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-tertiary);
+    letter-spacing: 1px;
+    margin-bottom: 40px;
+  }
+  .cover-deco-line {
+    width: 60px;
+    height: 3px;
+    background: var(--gold);
+    margin: 32px auto;
+  }
+  .cover-principle {
+    font-size: 18px;
+    font-style: italic;
+    color: var(--gold);
+    padding: 24px;
+    border-top: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-subtle);
+    max-width: 450px;
+    margin: 32px auto;
+  }
+  .cover-version {
+    display: inline-block;
+    padding: 12px 32px;
+    background: linear-gradient(135deg, var(--surface-2), var(--surface-3));
+    border: 1px solid var(--border-gold);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 2px;
+    color: var(--gold);
+    margin: 40px 0;
+  }
+  .cover-author-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    margin-top: 60px;
+    margin-bottom: 8px;
+  }
+  .cover-author-name {
+    font-size: 18px;
+    color: var(--text-secondary);
+    margin-bottom: 32px;
+  }
+  .cover-date {
+    font-size: 14px;
+    color: var(--text-tertiary);
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body data-theme="dark" data-lang="de">
+
+<!-- Header -->
+<header class="site-header">
+  <a href="index.html" class="header-brand">
+    <div class="header-logo">W</div>
+    <div class="header-title-group">
+      <span class="header-title">WINDI</span>
+      <span class="header-subtitle">Governance Intelligence</span>
     </div>
-</section><nav class="screen-nav"><a href="index.html">Enter Documentation →</a><button onclick="window.print()">🖨️ Print</button></nav></body></html>
+  </a>
+  <div class="header-center">
+    <div class="header-status">
+      <span class="status-dot"></span>
+      <span>Operational</span>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('de')">DE</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('pt')">PT</button>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+      <div class="theme-toggle-track"></div>
+      <div class="theme-toggle-thumb" id="themeThumb"></div>
+    </button>
+    <button class="mobile-toggle" onclick="toggleSidebar()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- Sidebar Navigation -->
+<nav class="sidebar sidebar-left" id="sidebarLeft">
+  <div class="sidebar-section">
+    <div class="sidebar-label">Masterarbeit</div>
+    <a href="index.html" class="sidebar-link">Main Document</a>
+    <a href="cover.html" class="sidebar-link sidebar-link-active">Cover</a>
+    <a href="about-windi.html" class="sidebar-link">About WINDI</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Governance</div>
+    <a href="governance-levels.html" class="sidebar-link">Governance Levels</a>
+    <a href="human-oversight.html" class="sidebar-link">Human Oversight</a>
+    <a href="data-handling.html" class="sidebar-link">Data Handling</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Architecture</div>
+    <a href="diagrams.html" class="sidebar-link">Diagrams</a>
+    <a href="interface-guide.html" class="sidebar-link">Interface Guide</a>
+    <a href="verification-layer.html" class="sidebar-link">Verification Layer</a>
+    <a href="kapitel12_domain_sovereignty.html" class="sidebar-link">Domain Sovereignty</a>
+    <a href="identity-governance-layer.html" class="sidebar-link">Identity Governance</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Technical Reports</div>
+    <a href="tr-windi-2026-003.html" class="sidebar-link">TR-003: Service Layer</a>
+    <a href="tr-windi-2026-004.html" class="sidebar-link">TR-004: Cognitive Service</a>
+    <a href="tr-windi-2026-005.html" class="sidebar-link">TR-005: Cognitive Cycle</a>
+    <a href="isp-evolution.html" class="sidebar-link">TR-006: ISP Registry</a>
+    <a href="tr-007.html" class="sidebar-link">TR-007: Provenance</a>
+    <a href="sge-results.html" class="sidebar-link">SGE Results</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Publications</div>
+    <a href="publications.html" class="sidebar-link">Publications</a>
+    <a href="fachartikel-provenienz.html" class="sidebar-link">Fachartikel</a>
+    <a href="windi-publishing-house.html" class="sidebar-link">Manifesto</a>
+    <a href="editorial-policy.html" class="sidebar-link">Editorial Policy</a>
+    <a href="idpf-abstract.html" class="sidebar-link">IDPF Abstract</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Media</div>
+    <a href="windi-working-paper-2026.html" class="sidebar-link">Working Paper</a>
+    <a href="press-release-windi-2026.html" class="sidebar-link">Press Release</a>
+    <a href="windi-side-by-side-2026.html" class="sidebar-link">Side-by-Side</a>
+    <a href="wsj-style-governed-windi-2026.html" class="sidebar-link">WSJ Feature</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Compliance</div>
+    <a href="document-integrity.html" class="sidebar-link">Doc Integrity</a>
+    <a href="print-watermark-layer.html" class="sidebar-link">Print Layer</a>
+    <a href="regulatory-summary-print-layer.html" class="sidebar-link">Regulatory</a>
+    <a href="availability-implementation.html" class="sidebar-link">Appendix A</a>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<main class="main-content">
+
+  <div class="cover-page">
+    <div class="cover-institution">WINDI Publishing House</div>
+    <div class="cover-location">
+      <span class="l-de">Kempten (Allgäu), Bayern, Deutschland</span>
+      <span class="l-en">Kempten (Allgäu), Bavaria, Germany</span>
+      <span class="l-pt">Kempten (Allgäu), Baviera, Alemanha</span>
+    </div>
+
+    <div class="cover-badge">
+      <span class="l-de">Institutionelle Dokumentation</span>
+      <span class="l-en">Institutional Documentation</span>
+      <span class="l-pt">Documentação Institucional</span>
+    </div>
+
+    <h1 class="cover-main-title">WINDI SYSTEM</h1>
+
+    <p class="cover-subtitle">
+      <span class="lb-de">Pre-AI Governance Layer<br>für institutionelle Workflow-Orchestrierung</span>
+      <span class="lb-en">Pre-AI Governance Layer<br>for Institutional Workflow Orchestration</span>
+      <span class="lb-pt">Camada de Governança Pré-IA<br>para Orquestração de Fluxos de Trabalho Institucionais</span>
+    </p>
+
+    <div class="cover-system">A4 Desk BABEL Interface</div>
+
+    <div class="cover-deco-line"></div>
+
+    <div class="cover-principle">
+      <span class="l-de">"KI verarbeitet. Mensch entscheidet. WINDI garantiert."</span>
+      <span class="l-en">"AI processes. Human decides. WINDI guarantees."</span>
+      <span class="l-pt">"IA processa. Humano decide. WINDI garante."</span>
+    </div>
+
+    <div class="cover-version">INSTITUTIONAL BETA · VERSION 1.0</div>
+
+    <div class="cover-author-label">
+      <span class="l-de">Konzipiert & Entwickelt von</span>
+      <span class="l-en">Conceived & Developed by</span>
+      <span class="l-pt">Concebido & Desenvolvido por</span>
+    </div>
+
+    <div class="cover-author-name">Jober Mögele Correa</div>
+
+    <div class="cover-deco-line"></div>
+
+    <div class="cover-date">
+      <span class="lb-de">Marco Zero: 19. Januar 2026<br>Kempten (Allgäu), Bayern</span>
+      <span class="lb-en">Marco Zero: January 19, 2026<br>Kempten (Allgäu), Bavaria</span>
+      <span class="lb-pt">Marco Zero: 19 de Janeiro de 2026<br>Kempten (Allgäu), Baviera</span>
+    </div>
+  </div>
+
+  <!-- Page Footer -->
+  <footer class="page-footer">
+    <div class="page-footer-meta">
+      <span>WINDI-COVER-07FEB26-NOIR</span>
+      <span>Cover Page</span>
+    </div>
+    <p class="page-footer-quittung">Author: Jober Mögele Correa (WINDI-CEO-001) | Status: INSTITUTIONAL BETA</p>
+    <p class="page-footer-principle">
+      <span class="l-de">"KI verarbeitet. Mensch entscheidet. WINDI garantiert."</span>
+      <span class="l-en">"AI processes. Human decides. WINDI guarantees."</span>
+      <span class="l-pt">"IA processa. Humano decide. WINDI garante."</span>
+    </p>
+  </footer>
+
+</main>
+
+<!-- JavaScript -->
+<script>
+// Theme Toggle
+function toggleTheme() {
+  const body = document.body;
+  const isLight = body.getAttribute('data-theme') === 'light';
+  body.setAttribute('data-theme', isLight ? 'dark' : 'light');
+  try { localStorage.setItem('windi-theme', isLight ? 'dark' : 'light'); } catch(e) {}
+}
+
+// Language Switcher
+function setLang(lang) {
+  document.body.setAttribute('data-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+  try { localStorage.setItem('windi-lang', lang); } catch(e) {}
+}
+
+// Sidebar Toggle (mobile)
+let sidebarOpen = false;
+function toggleSidebar() {
+  sidebarOpen = !sidebarOpen;
+  document.getElementById('sidebarLeft').classList.toggle('open', sidebarOpen);
+}
+
+// Close sidebar on link click (mobile)
+document.querySelectorAll('.sidebar-link').forEach(link => {
+  link.addEventListener('click', () => {
+    if (window.innerWidth <= 960) {
+      sidebarOpen = false;
+      document.getElementById('sidebarLeft').classList.remove('open');
+    }
+  });
+});
+
+// Init saved preferences
+(function init() {
+  try {
+    const theme = localStorage.getItem('windi-theme');
+    const lang = localStorage.getItem('windi-lang');
+    if (theme) document.body.setAttribute('data-theme', theme);
+    if (lang) setLang(lang);
+  } catch(e) {}
+})();
+</script>
+
+</body>
+</html>

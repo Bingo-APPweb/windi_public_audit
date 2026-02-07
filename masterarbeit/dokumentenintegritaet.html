@@ -1,249 +1,590 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dokumentenintegrität — WINDI v0.1</title>
-    <style>
-        :root {
-            --windi-primary: #0d9488;
-            --windi-dark: #0f766e;
-            --windi-light: #f0fdfa;
-            --text-primary: #1e293b;
-            --text-secondary: #64748b;
-            --border-color: #e2e8f0;
-            --code-bg: #1e293b;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            line-height: 1.7;
-            color: var(--text-primary);
-            background: linear-gradient(135deg, #f8fafc 0%, #f0fdfa 100%);
-        }
-        .container { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
-        header { text-align: center; margin-bottom: 48px; padding-bottom: 32px; border-bottom: 3px solid var(--windi-primary); }
-        .badge { display: inline-block; background: var(--windi-primary); color: white; padding: 4px 12px; border-radius: 16px; font-size: 12px; font-weight: 600; margin-bottom: 16px; }
-        h1 { font-size: 2.5rem; color: var(--windi-dark); margin-bottom: 8px; }
-        .subtitle { font-size: 1.25rem; color: var(--text-secondary); }
-        .principle { background: var(--windi-light); border-left: 4px solid var(--windi-primary); padding: 16px 24px; margin: 32px 0; font-style: italic; color: var(--windi-dark); }
-        h2 { font-size: 1.75rem; color: var(--windi-dark); margin: 48px 0 24px; padding-bottom: 8px; border-bottom: 2px solid var(--border-color); }
-        h3 { font-size: 1.25rem; color: var(--text-primary); margin: 32px 0 16px; }
-        p { margin-bottom: 16px; }
-        .box { background: white; border: 2px solid var(--border-color); border-radius: 12px; padding: 24px; margin: 24px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        .box h4 { color: var(--windi-primary); margin-bottom: 16px; }
-        pre { background: var(--code-bg); color: #e2e8f0; padding: 20px; border-radius: 8px; overflow-x: auto; font-family: monospace; font-size: 14px; margin: 16px 0; }
-        code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 0.9em; color: var(--windi-dark); }
-        pre code { background: none; padding: 0; color: inherit; }
-        table { width: 100%; border-collapse: collapse; margin: 24px 0; background: white; border-radius: 8px; overflow: hidden; }
-        th { background: var(--windi-primary); color: white; padding: 12px 16px; text-align: left; }
-        td { padding: 12px 16px; border-bottom: 1px solid var(--border-color); }
-        .chain { background: linear-gradient(135deg, #1e293b 0%, #334155 100%); color: white; padding: 32px; border-radius: 12px; margin: 24px 0; font-family: monospace; text-align: center; }
-        .step { display: inline-block; background: var(--windi-primary); padding: 12px 20px; border-radius: 8px; margin: 8px; }
-        .arrow { color: #14b8a6; font-size: 24px; margin: 0 8px; }
-        .eu { background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); color: white; padding: 24px; border-radius: 12px; margin: 24px 0; }
-        .eu h4 { margin-bottom: 16px; }
-        .eu ul { list-style: none; padding: 0; }
-        .eu li { padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.2); }
-        .human-notice { background: #f0fdf4; border: 2px solid #059669; border-radius: 8px; padding: 16px; margin: 32px 0; text-align: center; }
-        .human-notice h5 { color: #065f46; margin-bottom: 8px; }
-        .human-notice p { color: #047857; font-size: 0.9rem; margin: 0; }
-        footer { margin-top: 64px; padding-top: 32px; border-top: 2px solid var(--windi-primary); text-align: center; }
-        .footer-brand { font-size: 1.1rem; font-weight: 600; color: var(--windi-primary); }
-        .footer-meta { color: var(--text-secondary); font-size: 0.9rem; margin-top: 8px; }
-        .nav { display: flex; justify-content: space-between; margin: 32px 0; padding: 16px 0; border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); }
-        .nav a { color: var(--windi-primary); text-decoration: none; font-weight: 500; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dokumentenintegritaet — WINDI v0.1</title>
+<meta name="description" content="WINDI Envelope v0.1 Spezifikation fuer kryptografische Dokumentenintegritaet und EU AI Act Konformitaet">
+<link rel="stylesheet" href="windi-internal.css">
 </head>
-<body>
-    <div class="container">
-        <header>
-            <span class="badge">KAPITEL 6 — NEU</span>
-            <h1>Dokumentenintegrität-Framework</h1>
-            <p class="subtitle">WINDI v0.1 Spezifikation & Implementierung</p>
-        </header>
-        
-        <div class="principle">
-            „KI verarbeitet. Mensch entscheidet. WINDI garantiert."<br>
-            — WINDI Betriebsprinzip
-        </div>
-        
-        <nav class="nav">
-            <a href="index.html">← Zurück zum Index</a>
-            <a href="document-integrity.html">English Version →</a>
-        </nav>
+<body data-theme="dark" data-lang="de">
 
-        <h2>6.1 Problemstellung</h2>
-        
-        <p>Traditionelle Dokumentenmanagementsysteme behandeln Inhalt und Metadaten als getrennte Einheiten. Ein PDF kann modifiziert, Metadaten gefälscht werden — es existiert kein mathematischer Beweis, der das Dokument an seinen Governance-Kontext bindet.</p>
-        
-        <p>Dies schafft ein grundlegendes Vertrauensproblem in institutionellen Workflows, besonders kritisch unter den <strong>EU AI Act</strong> Anforderungen für KI-unterstützte Dokumentenerstellung.</p>
-
-        <div class="box">
-            <h4>Forschungsfrage</h4>
-            <p><em>Wie können kryptografische Integritätsmechanismen direkt in Dokumenten-Workflows eingebettet werden, um eine verifizierbare Governance-Inhalt-Bindung zu schaffen, die eine Offline-Regulatorenverifizierung ermöglicht?</em></p>
-        </div>
-
-        <h2>6.2 WINDI Envelope v0.1</h2>
-        
-        <h3>Drei-Komponenten-Architektur</h3>
-        
-        <table>
-            <tr>
-                <th>Komponente</th>
-                <th>Inhalt</th>
-                <th>Funktion</th>
-            </tr>
-            <tr>
-                <td>📄 DOCUMENT</td>
-                <td>ID, Version, Content Hash</td>
-                <td>Dokumentenidentifikation</td>
-            </tr>
-            <tr>
-                <td>🏛️ GOVERNANCE</td>
-                <td>Issuer, Actor, Policy, Jurisdiction</td>
-                <td>Institutioneller Kontext</td>
-            </tr>
-            <tr>
-                <td>🔐 INTEGRITY</td>
-                <td>Digests, Hash Chain, Signature</td>
-                <td>Kryptografische Bindung</td>
-            </tr>
-        </table>
-
-        <h3>Kryptografische Kette</h3>
-        
-        <div class="chain">
-            <span class="step">body_sha256</span>
-            <span class="arrow">+</span>
-            <span class="step">governance_digest</span>
-            <span class="arrow">→</span>
-            <span class="step">doc_hash</span>
-            <span class="arrow">→</span>
-            <span class="step">struct_sig</span>
-        </div>
-
-        <table>
-            <tr>
-                <th>Schritt</th>
-                <th>Operation</th>
-                <th>Ausgabe</th>
-            </tr>
-            <tr>
-                <td>1</td>
-                <td>SHA-256(Dokumentbytes)</td>
-                <td><code>body_sha256</code></td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>SHA-256(C14N(Governance))</td>
-                <td><code>governance_digest</code></td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>SHA-256(gov_digest + body_sha)</td>
-                <td><code>doc_hash</code></td>
-            </tr>
-            <tr>
-                <td>4</td>
-                <td>HMAC-SHA256(Secret, doc_hash)</td>
-                <td><code>struct_sig</code></td>
-            </tr>
-        </table>
-
-        <h2>6.3 EU AI Act Konformität</h2>
-        
-        <div class="eu">
-            <h4>🇪🇺 Artikel-Zuordnung</h4>
-            <ul>
-                <li><strong>Artikel 52 (Transparenz):</strong> governance.intent_code, governance.policy_reference</li>
-                <li><strong>Artikel 17 (Qualitätsmanagement):</strong> governance.responsible_actor_id, unveränderliche Bindung</li>
-                <li><strong>Artikel 61 (Marktüberwachung):</strong> governance.timestamp_issued, Audit-Trail</li>
-                <li><strong>Artikel 13 (Nutzertransparenz):</strong> Human Authorship Notice im Dokument</li>
-            </ul>
-        </div>
-
-        <h2>6.4 Implementierungsergebnisse</h2>
-        
-        <table>
-            <tr>
-                <th>Komponente</th>
-                <th>Status</th>
-            </tr>
-            <tr>
-                <td>Kanonisierungsmodul (C14N)</td>
-                <td>✅ Betriebsbereit</td>
-            </tr>
-            <tr>
-                <td>Envelope-Generierung</td>
-                <td>✅ Automatisch beim Export</td>
-            </tr>
-            <tr>
-                <td>Governance-Bindung</td>
-                <td>✅ SHA-256 + HMAC</td>
-            </tr>
-            <tr>
-                <td>API-Verifizierungsendpunkt</td>
-                <td>✅ /api/windi/verify/{id}</td>
-            </tr>
-            <tr>
-                <td>Offline-Verifizierung</td>
-                <td>✅ Möglich</td>
-            </tr>
-            <tr>
-                <td>EU AI Act Mapping</td>
-                <td>✅ Artikel 13, 17, 52, 61</td>
-            </tr>
-        </table>
-
-        <h2>6.5 Live-Endpunkte</h2>
-        
-        <div class="box">
-            <h4>Produktions-API</h4>
-            <table>
-                <tr>
-                    <td><code>GET /api/windi/status</code></td>
-                    <td>Integrationsstatus</td>
-                </tr>
-                <tr>
-                    <td><code>GET /api/windi/envelope/{id}</code></td>
-                    <td>Envelope abrufen</td>
-                </tr>
-                <tr>
-                    <td><code>GET /api/windi/verify/{id}</code></td>
-                    <td>Integrität verifizieren</td>
-                </tr>
-            </table>
-            <p style="margin-top: 16px; text-align: center;">
-                <a href="https://windi-domain.com/api/windi/status" target="_blank" style="color: var(--windi-primary);">
-                    🚀 Live-API testen
-                </a>
-            </p>
-        </div>
-
-        <div class="human-notice">
-            <h5>✍️ MENSCHLICHE URHEBERSCHAFT</h5>
-            <p>Dieses Dokument wurde von menschlichen Autoren erstellt und überprüft.<br>
-            KI-Unterstützung wurde unter menschlicher Aufsicht und Kontrolle eingesetzt.<br>
-            Endgültige Entscheidungen und Inhaltsfreigabe: Menschliche Verantwortung.</p>
-            <p style="margin-top: 12px; font-style: italic;">KI verarbeitet. Mensch entscheidet. WINDI garantiert.</p>
-        </div>
-
-        <footer>
-            <div class="footer-brand">WINDI Publishing House</div>
-            <div class="footer-meta">
-                WINDI-QUITTUNG: WINDI-MASTER-31JAN26-ADAEA831 | Hash: adaea831<br>
-                Autor: Jober Mögele Correa (WINDI-CEO-001) | Technisch: Claude (Guardian Dragon)<br>
-                Implementierungsdatum: 31. Januar 2026
-            </div>
-            <div style="margin-top: 16px;">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=https://windi-domain.com/api/windi/verify/WINDI-MASTER-INTEGRITY-DE" alt="QR Code">
-            </div>
-            <div class="footer-meta" style="margin-top: 12px;">
-                A4 Desk BABEL v4.7-gov | EU AI Act Konform<br>
-                ✓ Verifizierte Institutionelle Dokumentation
-            </div>
-        </footer>
+<!-- Header -->
+<header class="site-header">
+  <a href="index.html" class="header-brand">
+    <div class="header-logo">W</div>
+    <div class="header-title-group">
+      <span class="header-title">WINDI</span>
+      <span class="header-subtitle">Governance Intelligence</span>
     </div>
+  </a>
+  <div class="header-center">
+    <div class="header-status">
+      <span class="status-dot"></span>
+      <span>Operational</span>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('de')">DE</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('pt')">PT</button>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+      <div class="theme-toggle-track"></div>
+      <div class="theme-toggle-thumb" id="themeThumb"></div>
+    </button>
+    <button class="mobile-toggle" onclick="toggleSidebar()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- Sidebar Navigation -->
+<nav class="sidebar sidebar-left" id="sidebarLeft">
+  <div class="sidebar-section">
+    <div class="sidebar-label">Masterarbeit</div>
+    <a href="index.html" class="sidebar-link">Main Document</a>
+    <a href="cover.html" class="sidebar-link">Cover</a>
+    <a href="about-windi.html" class="sidebar-link">About WINDI</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Governance</div>
+    <a href="governance-levels.html" class="sidebar-link">Governance Levels</a>
+    <a href="human-oversight.html" class="sidebar-link">Human Oversight</a>
+    <a href="data-handling.html" class="sidebar-link">Data Handling</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Architecture</div>
+    <a href="diagrams.html" class="sidebar-link">Diagrams</a>
+    <a href="interface-guide.html" class="sidebar-link">Interface Guide</a>
+    <a href="verification-layer.html" class="sidebar-link">Verification Layer</a>
+    <a href="kapitel12_domain_sovereignty.html" class="sidebar-link">Domain Sovereignty</a>
+    <a href="identity-governance-layer.html" class="sidebar-link">Identity Governance</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Technical Reports</div>
+    <a href="tr-windi-2026-003.html" class="sidebar-link">TR-003: Service Layer</a>
+    <a href="tr-windi-2026-004.html" class="sidebar-link">TR-004: Cognitive Service</a>
+    <a href="tr-windi-2026-005.html" class="sidebar-link">TR-005: Cognitive Cycle</a>
+    <a href="isp-evolution.html" class="sidebar-link">TR-006: ISP Registry</a>
+    <a href="tr-007.html" class="sidebar-link">TR-007: Provenance</a>
+    <a href="sge-results.html" class="sidebar-link">SGE Results</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Publications</div>
+    <a href="publications.html" class="sidebar-link">Publications</a>
+    <a href="fachartikel-provenienz.html" class="sidebar-link">Fachartikel</a>
+    <a href="windi-publishing-house.html" class="sidebar-link">Manifesto</a>
+    <a href="editorial-policy.html" class="sidebar-link">Editorial Policy</a>
+    <a href="idpf-abstract.html" class="sidebar-link">IDPF Abstract</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Media</div>
+    <a href="windi-working-paper-2026.html" class="sidebar-link">Working Paper</a>
+    <a href="press-release-windi-2026.html" class="sidebar-link">Press Release</a>
+    <a href="windi-side-by-side-2026.html" class="sidebar-link">Side-by-Side</a>
+    <a href="wsj-style-governed-windi-2026.html" class="sidebar-link">WSJ Feature</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Compliance</div>
+    <a href="dokumentenintegritaet.html" class="sidebar-link sidebar-link-active">Doc Integrity</a>
+    <a href="print-watermark-layer.html" class="sidebar-link">Print Layer</a>
+    <a href="regulatory-summary-print-layer.html" class="sidebar-link">Regulatory</a>
+    <a href="availability-implementation.html" class="sidebar-link">Appendix A</a>
+  </div>
+</nav>
+
+<!-- Right Sidebar TOC -->
+<aside class="sidebar sidebar-right" id="sidebarRight">
+  <div class="sidebar-label">
+    <span class="l-de">Auf dieser Seite</span>
+    <span class="l-en">On this page</span>
+    <span class="l-pt">Nesta pagina</span>
+  </div>
+  <a href="#problem" class="toc-link">
+    <span class="l-de">Problemstellung</span>
+    <span class="l-en">Problem Statement</span>
+    <span class="l-pt">Declaracao do Problema</span>
+  </a>
+  <a href="#envelope" class="toc-link">
+    <span class="l-de">WINDI Envelope</span>
+    <span class="l-en">WINDI Envelope</span>
+    <span class="l-pt">WINDI Envelope</span>
+  </a>
+  <a href="#euaiact" class="toc-link">
+    <span class="l-de">EU AI Act</span>
+    <span class="l-en">EU AI Act</span>
+    <span class="l-pt">EU AI Act</span>
+  </a>
+  <a href="#implementation" class="toc-link">
+    <span class="l-de">Implementierung</span>
+    <span class="l-en">Implementation</span>
+    <span class="l-pt">Implementacao</span>
+  </a>
+  <a href="#endpoints" class="toc-link">
+    <span class="l-de">Live-Endpunkte</span>
+    <span class="l-en">Live Endpoints</span>
+    <span class="l-pt">Endpoints Ativos</span>
+  </a>
+</aside>
+
+<!-- Main Content -->
+<main class="main-content">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-breadcrumb">
+      <a href="index.html">WINDI</a>
+      <span class="breadcrumb-sep">/</span>
+      <span class="breadcrumb-current">
+        <span class="l-de">Dokumentenintegritaet</span>
+        <span class="l-en">Document Integrity</span>
+        <span class="l-pt">Integridade Documental</span>
+      </span>
+    </div>
+    <div class="page-meta-bar">
+      <span class="page-tag page-tag-gov">Kapitel 6 — Compliance</span>
+      <span class="page-date">2026-01-31</span>
+    </div>
+    <h1 class="page-title">
+      <span class="l-de">Dokumentenintegritaet-Framework</span>
+      <span class="l-en">Document Integrity Framework</span>
+      <span class="l-pt">Framework de Integridade Documental</span>
+    </h1>
+    <p class="page-subtitle">
+      <span class="l-de">WINDI v0.1 Spezifikation &amp; Implementierung</span>
+      <span class="l-en">WINDI v0.1 Specification &amp; Implementation</span>
+      <span class="l-pt">Especificacao e Implementacao WINDI v0.1</span>
+    </p>
+    <div class="page-divider"></div>
+  </div>
+
+  <!-- Content -->
+  <div class="content-prose">
+
+    <!-- Opening Quote -->
+    <div class="doc-quote">
+      <p>
+        <span class="l-de">"KI verarbeitet. Mensch entscheidet. WINDI garantiert."</span>
+        <span class="l-en">"AI processes. Human decides. WINDI guarantees."</span>
+        <span class="l-pt">"IA processa. Humano decide. WINDI garante."</span>
+      </p>
+      <cite>— WINDI Betriebsprinzip</cite>
+    </div>
+
+    <!-- Navigation Links -->
+    <p>
+      <span class="lb-de"><a href="index.html">&larr; Zurueck zum Index</a> | <a href="document-integrity.html">English Version &rarr;</a></span>
+      <span class="lb-en"><a href="index.html">&larr; Back to Index</a> | <a href="document-integrity.html">English Version &rarr;</a></span>
+      <span class="lb-pt"><a href="index.html">&larr; Voltar ao Indice</a> | <a href="document-integrity.html">Versao em Ingles &rarr;</a></span>
+    </p>
+
+    <!-- Section 6.1 -->
+    <h2 id="problem">
+      <span class="l-de">6.1 Problemstellung</span>
+      <span class="l-en">6.1 Problem Statement</span>
+      <span class="l-pt">6.1 Declaracao do Problema</span>
+    </h2>
+
+    <p>
+      <span class="lb-de">Traditionelle Dokumentenmanagementsysteme behandeln Inhalt und Metadaten als getrennte Einheiten. Ein PDF kann modifiziert, Metadaten gefaelscht werden — es existiert kein mathematischer Beweis, der das Dokument an seinen Governance-Kontext bindet.</span>
+      <span class="lb-en">Traditional document management systems treat content and metadata as separate entities. A PDF can be modified, metadata falsified — there exists no mathematical proof binding the document to its governance context.</span>
+      <span class="lb-pt">Sistemas tradicionais de gestao documental tratam conteudo e metadados como entidades separadas. Um PDF pode ser modificado, metadados falsificados — nao existe prova matematica vinculando o documento ao seu contexto de governanca.</span>
+    </p>
+
+    <p>
+      <span class="lb-de">Dies schafft ein grundlegendes Vertrauensproblem in institutionellen Workflows, besonders kritisch unter den <strong>EU AI Act</strong> Anforderungen fuer KI-unterstuetzte Dokumentenerstellung.</span>
+      <span class="lb-en">This creates a fundamental trust problem in institutional workflows, particularly critical under <strong>EU AI Act</strong> requirements for AI-assisted document generation.</span>
+      <span class="lb-pt">Isso cria um problema fundamental de confianca em fluxos de trabalho institucionais, particularmente critico sob os requisitos do <strong>EU AI Act</strong> para geracao de documentos assistida por IA.</span>
+    </p>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>
+          <span class="l-de">Forschungsfrage</span>
+          <span class="l-en">Research Question</span>
+          <span class="l-pt">Questao de Pesquisa</span>
+        </h3>
+        <p>
+          <span class="l-de"><em>Wie koennen kryptografische Integritaetsmechanismen direkt in Dokumenten-Workflows eingebettet werden, um eine verifizierbare Governance-Inhalt-Bindung zu schaffen, die eine Offline-Regulatorenverifizierung ermoeglicht?</em></span>
+          <span class="l-en"><em>How can cryptographic integrity mechanisms be embedded directly into document workflows to create verifiable governance-content binding that enables offline regulatory verification?</em></span>
+          <span class="l-pt"><em>Como mecanismos de integridade criptografica podem ser incorporados diretamente em fluxos de trabalho de documentos para criar vinculacao verificavel de governanca-conteudo que permita verificacao regulatoria offline?</em></span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Section 6.2 -->
+    <h2 id="envelope">
+      <span class="l-de">6.2 WINDI Envelope v0.1</span>
+      <span class="l-en">6.2 WINDI Envelope v0.1</span>
+      <span class="l-pt">6.2 WINDI Envelope v0.1</span>
+    </h2>
+
+    <h3>
+      <span class="l-de">Drei-Komponenten-Architektur</span>
+      <span class="l-en">Three-Component Architecture</span>
+      <span class="l-pt">Arquitetura de Tres Componentes</span>
+    </h3>
+
+    <div class="spec-table-wrapper">
+      <table class="spec-table">
+        <thead>
+          <tr>
+            <th>
+              <span class="l-de">Komponente</span>
+              <span class="l-en">Component</span>
+              <span class="l-pt">Componente</span>
+            </th>
+            <th>
+              <span class="l-de">Inhalt</span>
+              <span class="l-en">Content</span>
+              <span class="l-pt">Conteudo</span>
+            </th>
+            <th>
+              <span class="l-de">Funktion</span>
+              <span class="l-en">Function</span>
+              <span class="l-pt">Funcao</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>DOCUMENT</strong></td>
+            <td>ID, Version, Content Hash</td>
+            <td>
+              <span class="l-de">Dokumentenidentifikation</span>
+              <span class="l-en">Document Identification</span>
+              <span class="l-pt">Identificacao do Documento</span>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>GOVERNANCE</strong></td>
+            <td>Issuer, Actor, Policy, Jurisdiction</td>
+            <td>
+              <span class="l-de">Institutioneller Kontext</span>
+              <span class="l-en">Institutional Context</span>
+              <span class="l-pt">Contexto Institucional</span>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>INTEGRITY</strong></td>
+            <td>Digests, Hash Chain, Signature</td>
+            <td>
+              <span class="l-de">Kryptografische Bindung</span>
+              <span class="l-en">Cryptographic Binding</span>
+              <span class="l-pt">Vinculacao Criptografica</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>
+      <span class="l-de">Kryptografische Kette</span>
+      <span class="l-en">Cryptographic Chain</span>
+      <span class="l-pt">Cadeia Criptografica</span>
+    </h3>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <p style="text-align: center; font-family: var(--font-mono); font-size: 14px;">
+          <code>body_sha256</code> + <code>governance_digest</code> &rarr; <code>doc_hash</code> &rarr; <code>struct_sig</code>
+        </p>
+      </div>
+    </div>
+
+    <div class="spec-table-wrapper">
+      <table class="spec-table">
+        <thead>
+          <tr>
+            <th>
+              <span class="l-de">Schritt</span>
+              <span class="l-en">Step</span>
+              <span class="l-pt">Passo</span>
+            </th>
+            <th>Operation</th>
+            <th>
+              <span class="l-de">Ausgabe</span>
+              <span class="l-en">Output</span>
+              <span class="l-pt">Saida</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>SHA-256(Dokumentbytes)</td>
+            <td><code>body_sha256</code></td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>SHA-256(C14N(Governance))</td>
+            <td><code>governance_digest</code></td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>SHA-256(gov_digest + body_sha)</td>
+            <td><code>doc_hash</code></td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>HMAC-SHA256(Secret, doc_hash)</td>
+            <td><code>struct_sig</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Section 6.3 -->
+    <h2 id="euaiact">
+      <span class="l-de">6.3 EU AI Act Konformitaet</span>
+      <span class="l-en">6.3 EU AI Act Compliance</span>
+      <span class="l-pt">6.3 Conformidade com o EU AI Act</span>
+    </h2>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>
+          <span class="l-de">Artikel-Zuordnung</span>
+          <span class="l-en">Article Alignment</span>
+          <span class="l-pt">Alinhamento de Artigos</span>
+        </h3>
+        <ul>
+          <li><strong>Artikel 52 (Transparenz):</strong> governance.intent_code, governance.policy_reference</li>
+          <li><strong>Artikel 17 (Qualitaetsmanagement):</strong> governance.responsible_actor_id, unveraenderliche Bindung</li>
+          <li><strong>Artikel 61 (Marktueberwachung):</strong> governance.timestamp_issued, Audit-Trail</li>
+          <li><strong>Artikel 13 (Nutzertransparenz):</strong> Human Authorship Notice im Dokument</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Section 6.4 -->
+    <h2 id="implementation">
+      <span class="l-de">6.4 Implementierungsergebnisse</span>
+      <span class="l-en">6.4 Implementation Results</span>
+      <span class="l-pt">6.4 Resultados da Implementacao</span>
+    </h2>
+
+    <div class="spec-table-wrapper">
+      <table class="spec-table">
+        <thead>
+          <tr>
+            <th>
+              <span class="l-de">Komponente</span>
+              <span class="l-en">Component</span>
+              <span class="l-pt">Componente</span>
+            </th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <span class="l-de">Kanonisierungsmodul (C14N)</span>
+              <span class="l-en">Canonicalization Module (C14N)</span>
+              <span class="l-pt">Modulo de Canonicalizacao (C14N)</span>
+            </td>
+            <td>
+              <span class="status-badge status-active">
+                <span class="l-de">Betriebsbereit</span>
+                <span class="l-en">Operational</span>
+                <span class="l-pt">Operacional</span>
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span class="l-de">Envelope-Generierung</span>
+              <span class="l-en">Envelope Generation</span>
+              <span class="l-pt">Geracao de Envelope</span>
+            </td>
+            <td>
+              <span class="l-de">Automatisch beim Export</span>
+              <span class="l-en">Automatic on Export</span>
+              <span class="l-pt">Automatico na Exportacao</span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span class="l-de">Governance-Bindung</span>
+              <span class="l-en">Governance Binding</span>
+              <span class="l-pt">Vinculacao de Governanca</span>
+            </td>
+            <td>SHA-256 + HMAC</td>
+          </tr>
+          <tr>
+            <td>
+              <span class="l-de">API-Verifizierungsendpunkt</span>
+              <span class="l-en">API Verification Endpoint</span>
+              <span class="l-pt">Endpoint de Verificacao API</span>
+            </td>
+            <td>/api/windi/verify/{id}</td>
+          </tr>
+          <tr>
+            <td>
+              <span class="l-de">Offline-Verifizierung</span>
+              <span class="l-en">Offline Verification</span>
+              <span class="l-pt">Verificacao Offline</span>
+            </td>
+            <td>
+              <span class="l-de">Moeglich</span>
+              <span class="l-en">Possible</span>
+              <span class="l-pt">Possivel</span>
+            </td>
+          </tr>
+          <tr>
+            <td>EU AI Act Mapping</td>
+            <td>Artikel 13, 17, 52, 61</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Section 6.5 -->
+    <h2 id="endpoints">
+      <span class="l-de">6.5 Live-Endpunkte</span>
+      <span class="l-en">6.5 Live Endpoints</span>
+      <span class="l-pt">6.5 Endpoints Ativos</span>
+    </h2>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>Produktions-API</h3>
+        <div class="spec-table-wrapper">
+          <table class="spec-table">
+            <tbody>
+              <tr>
+                <td><code>GET /api/windi/status</code></td>
+                <td>
+                  <span class="l-de">Integrationsstatus</span>
+                  <span class="l-en">Integration status</span>
+                  <span class="l-pt">Status de integracao</span>
+                </td>
+              </tr>
+              <tr>
+                <td><code>GET /api/windi/envelope/{id}</code></td>
+                <td>
+                  <span class="l-de">Envelope abrufen</span>
+                  <span class="l-en">Retrieve envelope</span>
+                  <span class="l-pt">Recuperar envelope</span>
+                </td>
+              </tr>
+              <tr>
+                <td><code>GET /api/windi/verify/{id}</code></td>
+                <td>
+                  <span class="l-de">Integritaet verifizieren</span>
+                  <span class="l-en">Verify integrity</span>
+                  <span class="l-pt">Verificar integridade</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="margin-top: 16px; text-align: center;">
+          <a href="https://windi-domain.com/api/windi/status" target="_blank">
+            <span class="l-de">Live-API testen</span>
+            <span class="l-en">Test Live API</span>
+            <span class="l-pt">Testar API Ativa</span>
+          </a>
+        </p>
+      </div>
+    </div>
+
+    <!-- Human Authorship Notice -->
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>
+          <span class="l-de">Menschliche Urheberschaft</span>
+          <span class="l-en">Human Authorship Notice</span>
+          <span class="l-pt">Aviso de Autoria Humana</span>
+        </h3>
+        <p>
+          <span class="lb-de">Dieses Dokument wurde von menschlichen Autoren erstellt und ueberprueft. KI-Unterstuetzung wurde unter menschlicher Aufsicht und Kontrolle eingesetzt. Endgueltige Entscheidungen und Inhaltsfreigabe: Menschliche Verantwortung.</span>
+          <span class="lb-en">This document was created and reviewed by human authors. AI assistance was used under human supervision and control. Final decisions and content approval: Human responsibility.</span>
+          <span class="lb-pt">Este documento foi criado e revisado por autores humanos. Assistencia de IA foi usada sob supervisao e controle humano. Decisoes finais e aprovacao de conteudo: Responsabilidade humana.</span>
+        </p>
+        <p style="font-style: italic; margin-top: 12px;">
+          <span class="l-de">KI verarbeitet. Mensch entscheidet. WINDI garantiert.</span>
+          <span class="l-en">AI processes. Human decides. WINDI guarantees.</span>
+          <span class="l-pt">IA processa. Humano decide. WINDI garante.</span>
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Page Footer -->
+  <footer class="page-footer">
+    <div class="page-footer-meta">
+      <span>WINDI-QUITTUNG: WINDI-MASTER-31JAN26-ADAEA831</span>
+      <span>Hash: adaea831</span>
+    </div>
+    <p class="page-footer-quittung">WINDI PUBLISHING HOUSE</p>
+    <p class="page-footer-quittung">Autor: Jober Moegele Correa (WINDI-CEO-001) | Technical: Claude (Guardian Dragon)</p>
+    <p class="page-footer-quittung">
+      <span class="l-de">Implementierungsdatum: 31. Januar 2026</span>
+      <span class="l-en">Implementation Date: 31 January 2026</span>
+      <span class="l-pt">Data de Implementacao: 31 de Janeiro de 2026</span>
+    </p>
+    <p class="page-footer-quittung">A4 Desk BABEL v4.7-gov | EU AI Act Konform | Verified Institutional Documentation</p>
+    <div style="margin-top: 16px; text-align: center;">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&amp;data=https://windi-domain.com/api/windi/verify/WINDI-MASTER-INTEGRITY-DE" alt="QR Code">
+    </div>
+    <p class="page-footer-principle">
+      <span class="l-de">"KI verarbeitet. Mensch entscheidet. WINDI garantiert."</span>
+      <span class="l-en">"AI processes. Human decides. WINDI guarantees."</span>
+      <span class="l-pt">"IA processa. Humano decide. WINDI garante."</span>
+    </p>
+  </footer>
+
+</main>
+
+<!-- JavaScript -->
+<script>
+// Theme Toggle
+function toggleTheme() {
+  const body = document.body;
+  const isLight = body.getAttribute('data-theme') === 'light';
+  body.setAttribute('data-theme', isLight ? 'dark' : 'light');
+  try { localStorage.setItem('windi-theme', isLight ? 'dark' : 'light'); } catch(e) {}
+}
+
+// Language Switcher
+function setLang(lang) {
+  document.body.setAttribute('data-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+  try { localStorage.setItem('windi-lang', lang); } catch(e) {}
+}
+
+// Sidebar Toggle (mobile)
+let sidebarOpen = false;
+function toggleSidebar() {
+  sidebarOpen = !sidebarOpen;
+  document.getElementById('sidebarLeft').classList.toggle('open', sidebarOpen);
+}
+
+// Close sidebar on link click (mobile)
+document.querySelectorAll('.sidebar-link').forEach(link => {
+  link.addEventListener('click', () => {
+    if (window.innerWidth <= 960) {
+      sidebarOpen = false;
+      document.getElementById('sidebarLeft').classList.remove('open');
+    }
+  });
+});
+
+// Init saved preferences
+(function init() {
+  try {
+    const theme = localStorage.getItem('windi-theme');
+    const lang = localStorage.getItem('windi-lang');
+    if (theme) document.body.setAttribute('data-theme', theme);
+    if (lang) setLang(lang);
+  } catch(e) {}
+})();
+</script>
+
 </body>
 </html>

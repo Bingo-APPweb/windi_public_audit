@@ -1,22 +1,358 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Data Handling Policy — WINDI</title><link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital@0;1&family=Libre+Baskerville:wght@400;700&family=Source+Sans+Pro:wght@300;400;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="css/academic.css"></head><body><header class="thesis-header"><h1>DATA HANDLING & USAGE POLICY</h1><p class="subtitle">Governance Document for the WINDI System</p><span class="version-badge">VERSION 1.0</span></header><nav class="thesis-nav"><ul><li><a href="index.html">← System Overview</a></li><li><a href="human-oversight.html">← Human Oversight</a></li><li><a href="#scope">Data Scope</a></li><li><a href="#minimization">Minimization</a></li><li><a href="#storage">Storage</a></li></ul></nav><div class="print-controls"><button class="print-btn" onclick="window.print()">🖨️ Print</button></div><main class="thesis-content"><div class="principle-quote">"Only data necessary for operational workflows should be entered into the system."<div class="attribution">— Data Minimization Principle</div></div><section class="chapter" id="scope"><div class="chapter-number">Section 2</div><h2>Scope of Data</h2><p>The WINDI System may process: text-based workflow inputs, system-generated structured outputs, operational metadata such as timestamps and process logs.</p><div class="highlight-box governance"><div class="box-title">Important Limitation</div><p>The system is <strong>not intended</strong> for storage of highly sensitive personal, medical, or financial data unless governed by additional safeguards.</p></div></section><section class="chapter" id="minimization"><div class="chapter-number">Section 3</div><h2>Data Minimization Principle</h2><p>Only data necessary for operational workflows should be entered. Users are responsible for avoiding unnecessary personal or sensitive information.</p></section><section class="chapter" id="storage"><div class="chapter-number">Section 6</div><h2>Data Storage & Logging</h2><table class="spec-table"><thead><tr><th>Data Type</th><th>Location</th><th>Retention</th></tr></thead><tbody><tr><td>Document content</td><td>SQLite database</td><td>Until deletion</td></tr><tr><td>Audit trail</td><td>Forensic ledger</td><td>Permanent</td></tr><tr><td>Session state</td><td>Memory</td><td>Session duration</td></tr><tr><td>Backups</td><td>Backup directory</td><td>Rolling</td></tr></tbody></table></section><section class="chapter"><div class="chapter-number">Section 7</div><h2>Access Control</h2><p>Access is restricted to authorized users within defined institutional roles. Anonymous or public access to internal functions is not permitted.</p></section><section class="windi-receipt-footer">
-    <div class="windi-brand">WINDI Publishing House</div>
-    <div class="receipt-line">WINDI-QUITTUNG: WINDI-DHP-30JAN26-E5F6G7H8 | Hash: e5f6g7h8</div>
-    <div class="receipt-line">Autor: Jober Mögele Correa (WINDI-CEO-001) | Status: INSTITUTIONAL BETA</div>
-    <div class="qr-section">
-        <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=https://master.windia4desk.tech/data-handling.html" alt="QR Code">
-        <div>
-            <div class="receipt-line">A4 Desk BABEL v4.7-gov | EU AI Act Compliant</div>
-            <div class="compliance-badge">✓ Verified Institutional Documentation</div>
-        </div>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data Handling Policy — WINDI System</title>
+<meta name="description" content="WINDI Data Handling & Usage Policy — Governance Document">
+<link rel="stylesheet" href="windi-internal.css">
+</head>
+<body data-theme="dark" data-lang="de">
+
+<!-- Header -->
+<header class="site-header">
+  <a href="index.html" class="header-brand">
+    <div class="header-logo">W</div>
+    <div class="header-title-group">
+      <span class="header-title">WINDI</span>
+      <span class="header-subtitle">Governance Intelligence</span>
     </div>
-    <div class="authorship-notice">
-        <h4>✍ HUMAN AUTHORSHIP NOTICE</h4>
-        <p>This document was created and reviewed by human authors.</p>
-        <p>AI assistance was used under human supervision and control.</p>
-        <p>Final decisions and content approval: Human responsibility.</p>
-        <p class="principle">KI verarbeitet. Mensch entscheidet. WINDI garantiert.</p>
+  </a>
+  <div class="header-center">
+    <div class="header-status">
+      <span class="status-dot"></span>
+      <span>Operational</span>
     </div>
-    <div class="ledger-info">
-        WINDI Governance Ledger | Human-authored: 100.0% | Template: Data Handling v1.0 | Structure: VALID
+  </div>
+  <div class="header-right">
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('de')">DE</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('pt')">PT</button>
     </div>
-</section></main><footer class="thesis-footer"><p>WINDI System — Data Handling Policy · Version 1.0</p></footer></body></html>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+      <div class="theme-toggle-track"></div>
+      <div class="theme-toggle-thumb" id="themeThumb"></div>
+    </button>
+    <button class="mobile-toggle" onclick="toggleSidebar()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- Sidebar Navigation -->
+<nav class="sidebar sidebar-left" id="sidebarLeft">
+  <div class="sidebar-section">
+    <div class="sidebar-label">Masterarbeit</div>
+    <a href="index.html" class="sidebar-link">Main Document</a>
+    <a href="cover.html" class="sidebar-link">Cover</a>
+    <a href="about-windi.html" class="sidebar-link">About WINDI</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Governance</div>
+    <a href="governance-levels.html" class="sidebar-link">Governance Levels</a>
+    <a href="human-oversight.html" class="sidebar-link">Human Oversight</a>
+    <a href="data-handling.html" class="sidebar-link sidebar-link-active">Data Handling</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Architecture</div>
+    <a href="diagrams.html" class="sidebar-link">Diagrams</a>
+    <a href="interface-guide.html" class="sidebar-link">Interface Guide</a>
+    <a href="verification-layer.html" class="sidebar-link">Verification Layer</a>
+    <a href="kapitel12_domain_sovereignty.html" class="sidebar-link">Domain Sovereignty</a>
+    <a href="identity-governance-layer.html" class="sidebar-link">Identity Governance</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Technical Reports</div>
+    <a href="tr-windi-2026-003.html" class="sidebar-link">TR-003: Service Layer</a>
+    <a href="tr-windi-2026-004.html" class="sidebar-link">TR-004: Cognitive Service</a>
+    <a href="tr-windi-2026-005.html" class="sidebar-link">TR-005: Cognitive Cycle</a>
+    <a href="isp-evolution.html" class="sidebar-link">TR-006: ISP Registry</a>
+    <a href="tr-007.html" class="sidebar-link">TR-007: Provenance</a>
+    <a href="sge-results.html" class="sidebar-link">SGE Results</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Publications</div>
+    <a href="publications.html" class="sidebar-link">Publications</a>
+    <a href="fachartikel-provenienz.html" class="sidebar-link">Fachartikel</a>
+    <a href="windi-publishing-house.html" class="sidebar-link">Manifesto</a>
+    <a href="editorial-policy.html" class="sidebar-link">Editorial Policy</a>
+    <a href="idpf-abstract.html" class="sidebar-link">IDPF Abstract</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Media</div>
+    <a href="windi-working-paper-2026.html" class="sidebar-link">Working Paper</a>
+    <a href="press-release-windi-2026.html" class="sidebar-link">Press Release</a>
+    <a href="windi-side-by-side-2026.html" class="sidebar-link">Side-by-Side</a>
+    <a href="wsj-style-governed-windi-2026.html" class="sidebar-link">WSJ Feature</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Compliance</div>
+    <a href="document-integrity.html" class="sidebar-link">Doc Integrity</a>
+    <a href="print-watermark-layer.html" class="sidebar-link">Print Layer</a>
+    <a href="regulatory-summary-print-layer.html" class="sidebar-link">Regulatory</a>
+    <a href="availability-implementation.html" class="sidebar-link">Appendix A</a>
+  </div>
+</nav>
+
+<!-- Right Sidebar TOC -->
+<aside class="sidebar sidebar-right" id="sidebarRight">
+  <div class="sidebar-label">
+    <span class="l-de">Auf dieser Seite</span>
+    <span class="l-en">On this page</span>
+    <span class="l-pt">Nesta página</span>
+  </div>
+  <a href="#scope" class="toc-link">
+    <span class="l-de">Datenumfang</span>
+    <span class="l-en">Scope of Data</span>
+    <span class="l-pt">Escopo dos Dados</span>
+  </a>
+  <a href="#minimization" class="toc-link">
+    <span class="l-de">Datenminimierung</span>
+    <span class="l-en">Data Minimization</span>
+    <span class="l-pt">Minimização de Dados</span>
+  </a>
+  <a href="#storage" class="toc-link">
+    <span class="l-de">Speicherung</span>
+    <span class="l-en">Storage & Logging</span>
+    <span class="l-pt">Armazenamento</span>
+  </a>
+  <a href="#access" class="toc-link">
+    <span class="l-de">Zugriffskontrolle</span>
+    <span class="l-en">Access Control</span>
+    <span class="l-pt">Controle de Acesso</span>
+  </a>
+</aside>
+
+<!-- Main Content -->
+<main class="main-content">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-breadcrumb">
+      <a href="index.html">WINDI</a>
+      <span class="breadcrumb-sep">/</span>
+      <span class="breadcrumb-current">
+        <span class="l-de">Datenverarbeitung</span>
+        <span class="l-en">Data Handling</span>
+        <span class="l-pt">Tratamento de Dados</span>
+      </span>
+    </div>
+    <div class="page-meta-bar">
+      <span class="page-tag page-tag-gov">Governance</span>
+      <span class="page-date">2026-02-07</span>
+    </div>
+    <h1 class="page-title">
+      <span class="l-de">Datenverarbeitung & Nutzungsrichtlinie</span>
+      <span class="l-en">Data Handling & Usage Policy</span>
+      <span class="l-pt">Política de Tratamento e Uso de Dados</span>
+    </h1>
+    <p class="page-subtitle">
+      <span class="l-de">Governance-Dokument für das WINDI System Datenmanagement</span>
+      <span class="l-en">Governance document for the WINDI System data management</span>
+      <span class="l-pt">Documento de governança para gestão de dados do Sistema WINDI</span>
+    </p>
+    <div class="page-divider"></div>
+  </div>
+
+  <!-- Content -->
+  <div class="content-prose">
+
+    <!-- Opening Quote -->
+    <div class="doc-quote">
+      <p>
+        <span class="l-de">"Nur für operative Workflows notwendige Daten sollten in das System eingegeben werden."</span>
+        <span class="l-en">"Only data necessary for operational workflows should be entered into the system."</span>
+        <span class="l-pt">"Apenas dados necessários para fluxos de trabalho operacionais devem ser inseridos no sistema."</span>
+      </p>
+      <cite>— WINDI Data Minimization Principle</cite>
+    </div>
+
+    <!-- Section: Scope of Data -->
+    <h2 id="scope">
+      <span class="l-de">Datenumfang</span>
+      <span class="l-en">Scope of Data</span>
+      <span class="l-pt">Escopo dos Dados</span>
+    </h2>
+    <p>
+      <span class="lb-de">Das WINDI System kann verarbeiten: textbasierte Workflow-Eingaben, systemgenerierte strukturierte Ausgaben, operative Metadaten wie Zeitstempel und Prozessprotokolle.</span>
+      <span class="lb-en">The WINDI System may process: text-based workflow inputs, system-generated structured outputs, operational metadata such as timestamps and process logs.</span>
+      <span class="lb-pt">O Sistema WINDI pode processar: entradas de fluxo de trabalho baseadas em texto, saídas estruturadas geradas pelo sistema, metadados operacionais como timestamps e logs de processo.</span>
+    </p>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>
+          <span class="l-de">Wichtige Einschränkung</span>
+          <span class="l-en">Important Limitation</span>
+          <span class="l-pt">Limitação Importante</span>
+        </h3>
+        <p>
+          <span class="l-de">Das System ist <strong>nicht vorgesehen</strong> für die Speicherung hochsensibler persönlicher, medizinischer oder finanzieller Daten, es sei denn, diese werden durch zusätzliche Schutzmaßnahmen abgesichert.</span>
+          <span class="l-en">The system is <strong>not intended</strong> for storage of highly sensitive personal, medical, or financial data unless governed by additional safeguards.</span>
+          <span class="l-pt">O sistema <strong>não se destina</strong> ao armazenamento de dados pessoais, médicos ou financeiros altamente sensíveis, a menos que regidos por salvaguardas adicionais.</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Section: Data Minimization -->
+    <h2 id="minimization">
+      <span class="l-de">Datenminimierungsprinzip</span>
+      <span class="l-en">Data Minimization Principle</span>
+      <span class="l-pt">Princípio de Minimização de Dados</span>
+    </h2>
+    <p>
+      <span class="lb-de">Nur für operative Workflows notwendige Daten sollten eingegeben werden. Benutzer sind dafür verantwortlich, unnötige persönliche oder sensible Informationen zu vermeiden.</span>
+      <span class="lb-en">Only data necessary for operational workflows should be entered. Users are responsible for avoiding unnecessary personal or sensitive information.</span>
+      <span class="lb-pt">Apenas dados necessários para fluxos de trabalho operacionais devem ser inseridos. Os usuários são responsáveis por evitar informações pessoais ou sensíveis desnecessárias.</span>
+    </p>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>
+          <span class="l-de">Kernprinzip</span>
+          <span class="l-en">Core Principle</span>
+          <span class="l-pt">Princípio Central</span>
+        </h3>
+        <p>
+          <span class="l-de"><strong>Datenminimierung ist eine grundlegende Governance-Anforderung.</strong></span>
+          <span class="l-en"><strong>Data minimization is a foundational governance requirement.</strong></span>
+          <span class="l-pt"><strong>A minimização de dados é um requisito fundamental de governança.</strong></span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Section: Storage & Logging -->
+    <h2 id="storage">
+      <span class="l-de">Datenspeicherung & Protokollierung</span>
+      <span class="l-en">Data Storage & Logging</span>
+      <span class="l-pt">Armazenamento de Dados & Registro</span>
+    </h2>
+
+    <div class="spec-table-wrapper">
+      <table class="spec-table">
+        <thead>
+          <tr>
+            <th>Data Type</th>
+            <th>Location</th>
+            <th>Retention</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Document content</td>
+            <td>SQLite database</td>
+            <td>Until deletion</td>
+          </tr>
+          <tr>
+            <td>Audit trail</td>
+            <td>Forensic ledger</td>
+            <td><span class="status-badge status-active">Permanent</span></td>
+          </tr>
+          <tr>
+            <td>Session state</td>
+            <td>Memory</td>
+            <td>Session duration</td>
+          </tr>
+          <tr>
+            <td>Backups</td>
+            <td>Backup directory</td>
+            <td>Rolling</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Section: Access Control -->
+    <h2 id="access">
+      <span class="l-de">Zugriffskontrolle</span>
+      <span class="l-en">Access Control</span>
+      <span class="l-pt">Controle de Acesso</span>
+    </h2>
+    <p>
+      <span class="lb-de">Der Zugriff ist auf autorisierte Benutzer innerhalb definierter institutioneller Rollen beschränkt. Anonymer oder öffentlicher Zugriff auf interne Funktionen ist nicht gestattet.</span>
+      <span class="lb-en">Access is restricted to authorized users within defined institutional roles. Anonymous or public access to internal functions is not permitted.</span>
+      <span class="lb-pt">O acesso é restrito a usuários autorizados dentro de funções institucionais definidas. Acesso anônimo ou público a funções internas não é permitido.</span>
+    </p>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>
+          <span class="l-de">Zugriffsrichtlinie</span>
+          <span class="l-en">Access Policy</span>
+          <span class="l-pt">Política de Acesso</span>
+        </h3>
+        <p>
+          <span class="l-de"><strong>Jeder Systemzugriff erfordert institutionelle Autorisierung und Rollenzuweisung.</strong></span>
+          <span class="l-en"><strong>All system access requires institutional authorization and role assignment.</strong></span>
+          <span class="l-pt"><strong>Todo acesso ao sistema requer autorização institucional e atribuição de função.</strong></span>
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Page Footer -->
+  <footer class="page-footer">
+    <div class="page-footer-meta">
+      <span>WINDI-DHP-07FEB26-NOIR</span>
+      <span>Governance Document</span>
+    </div>
+    <p class="page-footer-quittung">Author: Jober Mögele Correa (WINDI-CEO-001) | Status: INSTITUTIONAL BETA</p>
+    <p class="page-footer-principle">
+      <span class="l-de">"KI verarbeitet. Mensch entscheidet. WINDI garantiert."</span>
+      <span class="l-en">"AI processes. Human decides. WINDI guarantees."</span>
+      <span class="l-pt">"IA processa. Humano decide. WINDI garante."</span>
+    </p>
+  </footer>
+
+</main>
+
+<!-- JavaScript -->
+<script>
+// Theme Toggle
+function toggleTheme() {
+  const body = document.body;
+  const isLight = body.getAttribute('data-theme') === 'light';
+  body.setAttribute('data-theme', isLight ? 'dark' : 'light');
+  try { localStorage.setItem('windi-theme', isLight ? 'dark' : 'light'); } catch(e) {}
+}
+
+// Language Switcher
+function setLang(lang) {
+  document.body.setAttribute('data-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+  try { localStorage.setItem('windi-lang', lang); } catch(e) {}
+}
+
+// Sidebar Toggle (mobile)
+let sidebarOpen = false;
+function toggleSidebar() {
+  sidebarOpen = !sidebarOpen;
+  document.getElementById('sidebarLeft').classList.toggle('open', sidebarOpen);
+}
+
+// Close sidebar on link click (mobile)
+document.querySelectorAll('.sidebar-link').forEach(link => {
+  link.addEventListener('click', () => {
+    if (window.innerWidth <= 960) {
+      sidebarOpen = false;
+      document.getElementById('sidebarLeft').classList.remove('open');
+    }
+  });
+});
+
+// Init saved preferences
+(function init() {
+  try {
+    const theme = localStorage.getItem('windi-theme');
+    const lang = localStorage.getItem('windi-lang');
+    if (theme) document.body.setAttribute('data-theme', theme);
+    if (lang) setLang(lang);
+  } catch(e) {}
+})();
+</script>
+
+</body>
+</html>

@@ -3,1129 +3,440 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WINDI Technical Report — Proportional Document Governance Through Risk-Based Classification</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=JetBrains+Mono:wght@400;500;600&family=Source+Sans+3:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
-
-  :root {
-    --paper-bg: #fafaf8;
-    --text-primary: #1a1a1a;
-    --text-secondary: #4a4a4a;
-    --text-muted: #7a7a7a;
-    --accent-blue: #1a3a5c;
-    --accent-blue-light: #2a5a8c;
-    --border-light: #d8d4cc;
-    --border-medium: #b8b4ac;
-    --low-green: #2d8a4e;
-    --low-green-bg: #eef7f1;
-    --low-green-border: #a8d5b8;
-    --medium-amber: #c47f17;
-    --medium-amber-bg: #fef8ec;
-    --medium-amber-border: #e8c87a;
-    --high-red: #b83232;
-    --high-red-bg: #fdf0f0;
-    --high-red-border: #e0a0a0;
-    --code-bg: #f0efe8;
-    --figure-bg: #f4f3ee;
-    --header-gradient: linear-gradient(135deg, #0d1b2a 0%, #1b3a5c 40%, #2a5a8c 100%);
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: 'Crimson Pro', 'Georgia', serif;
-    background: #e8e6e0;
-    color: var(--text-primary);
-    line-height: 1.72;
-    font-size: 17.5px;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  /* === PAPER CONTAINER === */
-  .paper-wrapper {
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 24px 16px 60px;
-  }
-
-  .paper {
-    background: var(--paper-bg);
-    box-shadow:
-      0 1px 3px rgba(0,0,0,0.08),
-      0 8px 30px rgba(0,0,0,0.06),
-      0 25px 60px rgba(0,0,0,0.04);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-
-  /* === TU HEADER BAND === */
-  .tu-header {
-    background: var(--header-gradient);
-    padding: 28px 48px 24px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .tu-header::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background:
-      repeating-linear-gradient(
-        90deg,
-        transparent,
-        transparent 119px,
-        rgba(255,255,255,0.03) 119px,
-        rgba(255,255,255,0.03) 120px
-      );
-    pointer-events: none;
-  }
-
-  .tu-header::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--low-green), var(--medium-amber), var(--high-red));
-  }
-
-  .tu-institution {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 16px;
-  }
-
-  .tu-shield {
-    width: 52px;
-    height: 52px;
-    border: 2px solid rgba(255,255,255,0.5);
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    background: rgba(255,255,255,0.08);
-    backdrop-filter: blur(4px);
-  }
-
-  .tu-shield svg {
-    width: 32px;
-    height: 32px;
-  }
-
-  .tu-inst-text {
-    color: rgba(255,255,255,0.92);
-    font-family: 'Source Sans 3', sans-serif;
-    font-size: 12.5px;
-    font-weight: 500;
-    letter-spacing: 0.8px;
-    text-transform: uppercase;
-    line-height: 1.5;
-  }
-
-  .tu-inst-text span {
-    display: block;
-    color: rgba(255,255,255,0.55);
-    font-size: 11px;
-    font-weight: 400;
-    letter-spacing: 1.2px;
-    margin-top: 1px;
-  }
-
-  .tu-report-badge {
-    display: inline-block;
-    background: rgba(255,255,255,0.1);
-    border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 3px;
-    padding: 3px 10px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10.5px;
-    color: rgba(255,255,255,0.7);
-    letter-spacing: 0.5px;
-    margin-bottom: 14px;
-  }
-
-  .tu-title {
-    color: #fff;
-    font-family: 'Crimson Pro', serif;
-    font-size: 26px;
-    font-weight: 600;
-    line-height: 1.3;
-    margin-bottom: 8px;
-    letter-spacing: -0.2px;
-  }
-
-  .tu-subtitle {
-    color: rgba(255,255,255,0.7);
-    font-family: 'Crimson Pro', serif;
-    font-size: 16px;
-    font-weight: 400;
-    font-style: italic;
-    line-height: 1.5;
-  }
-
-  /* === METADATA BAR === */
-  .meta-bar {
-    padding: 20px 48px;
-    background: #f0efe8;
-    border-bottom: 1px solid var(--border-light);
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px 28px;
-  }
-
-  .meta-item {
-    font-family: 'Source Sans 3', sans-serif;
-    font-size: 13px;
-    color: var(--text-secondary);
-  }
-
-  .meta-item strong {
-    color: var(--text-primary);
-    font-weight: 600;
-  }
-
-  /* === CONTENT AREA === */
-  .content {
-    padding: 40px 48px 48px;
-  }
-
-  /* === ABSTRACT === */
-  .abstract-block {
-    border: 1px solid var(--border-light);
-    border-left: 3px solid var(--accent-blue);
-    background: #fdfcfa;
-    padding: 24px 28px;
-    margin-bottom: 36px;
-    border-radius: 0 3px 3px 0;
-  }
-
-  .abstract-label {
-    font-family: 'Source Sans 3', sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
-    color: var(--accent-blue);
-    margin-bottom: 10px;
-  }
-
-  .abstract-block p {
-    font-size: 15.5px;
-    line-height: 1.7;
-    color: var(--text-secondary);
-    margin-bottom: 10px;
-  }
-
-  .abstract-block p:last-child { margin-bottom: 0; }
-
-  .keywords {
-    margin-top: 14px;
-    padding-top: 12px;
-    border-top: 1px solid var(--border-light);
-    font-family: 'Source Sans 3', sans-serif;
-    font-size: 12.5px;
-    color: var(--text-muted);
-  }
-
-  .keywords strong {
-    color: var(--text-secondary);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-size: 11px;
-  }
-
-  /* === SECTION HEADINGS === */
-  .section-number {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--accent-blue-light);
-    display: block;
-    margin-bottom: 4px;
-    letter-spacing: 0.5px;
-  }
-
-  h2 {
-    font-family: 'Crimson Pro', serif;
-    font-size: 22px;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 16px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid var(--border-light);
-    letter-spacing: -0.2px;
-  }
-
-  h3 {
-    font-family: 'Crimson Pro', serif;
-    font-size: 18.5px;
-    font-weight: 600;
-    color: var(--accent-blue);
-    margin: 28px 0 12px;
-  }
-
-  .section { margin-bottom: 36px; }
-
-  .content p {
-    margin-bottom: 14px;
-    text-align: justify;
-    hyphens: auto;
-  }
-
-  /* === GOVERNANCE LEVEL CARDS === */
-  .level-card {
-    border-radius: 4px;
-    padding: 24px 26px;
-    margin: 20px 0 24px;
-    position: relative;
-  }
-
-  .level-card::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 4px;
-    border-radius: 4px 0 0 4px;
-  }
-
-  .level-low {
-    background: var(--low-green-bg);
-    border: 1px solid var(--low-green-border);
-  }
-  .level-low::before { background: var(--low-green); }
-
-  .level-medium {
-    background: var(--medium-amber-bg);
-    border: 1px solid var(--medium-amber-border);
-  }
-  .level-medium::before { background: var(--medium-amber); }
-
-  .level-high {
-    background: var(--high-red-bg);
-    border: 1px solid var(--high-red-border);
-  }
-  .level-high::before { background: var(--high-red); }
-
-  .level-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    font-family: 'Source Sans 3', sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1.2px;
-    margin-bottom: 6px;
-  }
-
-  .level-low .level-badge { color: var(--low-green); }
-  .level-medium .level-badge { color: var(--medium-amber); }
-  .level-high .level-badge { color: var(--high-red); }
-
-  .level-badge .dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    display: inline-block;
-  }
-
-  .level-low .dot { background: var(--low-green); }
-  .level-medium .dot { background: var(--medium-amber); }
-  .level-high .dot { background: var(--high-red); }
-
-  .level-name {
-    font-family: 'Crimson Pro', serif;
-    font-size: 19px;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 10px;
-  }
-
-  .level-card p {
-    font-size: 15.5px;
-    line-height: 1.65;
-    color: var(--text-secondary);
-    margin-bottom: 8px;
-    text-align: left;
-  }
-
-  .level-card p:last-child { margin-bottom: 0; }
-
-  .level-principle {
-    margin-top: 14px;
-    padding: 10px 14px;
-    background: rgba(255,255,255,0.7);
-    border-radius: 3px;
-    font-style: italic;
-    font-size: 15px;
-    color: var(--text-secondary);
-    border-left: 2px solid var(--border-medium);
-  }
-
-  /* === REQUIREMENTS LIST === */
-  .req-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px 20px;
-    margin-top: 12px;
-    font-family: 'Source Sans 3', sans-serif;
-    font-size: 14px;
-  }
-
-  .req-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 3px 0;
-    color: var(--text-secondary);
-  }
-
-  .req-yes {
-    color: var(--low-green);
-    font-weight: 600;
-    font-size: 13px;
-  }
-
-  .req-no {
-    color: var(--text-muted);
-    font-size: 13px;
-  }
-
-  /* === COMPARISON TABLE === */
-  .comparison-table-wrap {
-    margin: 24px 0;
-    overflow-x: auto;
-  }
-
-  .comparison-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-family: 'Source Sans 3', sans-serif;
-    font-size: 14px;
-  }
-
-  .comparison-table thead th {
-    background: var(--accent-blue);
-    color: #fff;
-    padding: 10px 14px;
-    text-align: left;
-    font-weight: 600;
-    font-size: 12.5px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    white-space: nowrap;
-  }
-
-  .comparison-table thead th:first-child {
-    border-radius: 3px 0 0 0;
-  }
-
-  .comparison-table thead th:last-child {
-    border-radius: 0 3px 0 0;
-  }
-
-  .comparison-table thead th.col-low { background: var(--low-green); }
-  .comparison-table thead th.col-medium { background: var(--medium-amber); }
-  .comparison-table thead th.col-high { background: var(--high-red); }
-
-  .comparison-table tbody td {
-    padding: 9px 14px;
-    border-bottom: 1px solid var(--border-light);
-    vertical-align: middle;
-  }
-
-  .comparison-table tbody tr:last-child td {
-    border-bottom: none;
-  }
-
-  .comparison-table tbody tr:nth-child(even) td {
-    background: #fafaf6;
-  }
-
-  .comparison-table .feat-name {
-    font-weight: 600;
-    color: var(--text-primary);
-    white-space: nowrap;
-  }
-
-  .check { color: var(--low-green); font-weight: 700; }
-  .cross { color: var(--text-muted); }
-  .partial { color: var(--medium-amber); font-weight: 600; }
-
-  /* === FIGURE === */
-  .figure-block {
-    margin: 28px 0;
-    border: 1px solid var(--border-light);
-    border-radius: 4px;
-    overflow: hidden;
-    background: var(--figure-bg);
-  }
-
-  .figure-image-area {
-    padding: 20px;
-    min-height: 320px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-  }
-
-  .figure-image-area img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 3px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
-  }
-
-  .figure-placeholder {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    color: var(--text-muted);
-    font-family: 'Source Sans 3', sans-serif;
-    font-size: 14px;
-    padding: 40px;
-    border: 2px dashed var(--border-light);
-    border-radius: 4px;
-    background: rgba(255,255,255,0.5);
-    width: 100%;
-    min-height: 280px;
-  }
-
-  .figure-placeholder svg {
-    opacity: 0.4;
-  }
-
-  .figure-caption {
-    padding: 12px 20px;
-    background: #fff;
-    border-top: 1px solid var(--border-light);
-    font-family: 'Source Sans 3', sans-serif;
-    font-size: 13px;
-    color: var(--text-secondary);
-    line-height: 1.55;
-  }
-
-  .figure-caption strong {
-    color: var(--accent-blue);
-    font-weight: 700;
-  }
-
-  /* === CODE BLOCKS === */
-  .code-block {
-    background: #1e2430;
-    border-radius: 4px;
-    margin: 16px 0;
-    overflow: hidden;
-  }
-
-  .code-header {
-    background: #161b24;
-    padding: 8px 16px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    color: rgba(255,255,255,0.45);
-    letter-spacing: 0.5px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .code-header .dot-r { width: 8px; height: 8px; border-radius: 50%; background: #ff5f57; }
-  .code-header .dot-y { width: 8px; height: 8px; border-radius: 50%; background: #ffbd2e; }
-  .code-header .dot-g { width: 8px; height: 8px; border-radius: 50%; background: #28c840; }
-
-  .code-block pre {
-    padding: 16px 20px;
-    overflow-x: auto;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    line-height: 1.6;
-    color: #c8d3e0;
-  }
-
-  .code-block .key { color: #7ec8e3; }
-  .code-block .str { color: #a8d8a8; }
-  .code-block .bool { color: #f0a8a8; }
-  .code-block .comment { color: #6a7a8a; font-style: italic; }
-  .code-block .num { color: #e8c87a; }
-
-  /* === DEFINITION BLOCK === */
-  .def-block {
-    background: #fff;
-    border: 1px solid var(--border-light);
-    border-radius: 4px;
-    padding: 18px 22px;
-    margin: 16px 0;
-  }
-
-  .def-block dt {
-    font-family: 'Source Sans 3', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    color: var(--accent-blue);
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    margin-bottom: 4px;
-  }
-
-  .def-block dd {
-    font-size: 15px;
-    color: var(--text-secondary);
-    margin-bottom: 12px;
-    padding-left: 12px;
-    border-left: 2px solid var(--border-light);
-  }
-
-  .def-block dd:last-child { margin-bottom: 0; }
-
-  /* === ARCHITECTURE DIAGRAM (ASCII) === */
-  .arch-diagram {
-    background: #fff;
-    border: 1px solid var(--border-light);
-    border-radius: 4px;
-    padding: 24px;
-    margin: 20px 0;
-    text-align: center;
-    overflow-x: auto;
-  }
-
-  .arch-diagram pre {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12.5px;
-    line-height: 1.5;
-    color: var(--text-secondary);
-    display: inline-block;
-    text-align: left;
-  }
-
-  /* === GOVERNANCE FLOW VISUAL === */
-  .flow-visual {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0;
-    margin: 28px 0;
-    padding: 20px 0;
-  }
-
-  .flow-node {
-    text-align: center;
-    padding: 16px 20px;
-    border-radius: 6px;
-    min-width: 160px;
-    position: relative;
-  }
-
-  .flow-node-low {
-    background: var(--low-green-bg);
-    border: 2px solid var(--low-green);
-  }
-
-  .flow-node-medium {
-    background: var(--medium-amber-bg);
-    border: 2px solid var(--medium-amber);
-  }
-
-  .flow-node-high {
-    background: var(--high-red-bg);
-    border: 2px solid var(--high-red);
-  }
-
-  .flow-node-label {
-    font-family: 'Source Sans 3', sans-serif;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 4px;
-  }
-
-  .flow-node-low .flow-node-label { color: var(--low-green); }
-  .flow-node-medium .flow-node-label { color: var(--medium-amber); }
-  .flow-node-high .flow-node-label { color: var(--high-red); }
-
-  .flow-node-name {
-    font-family: 'Crimson Pro', serif;
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--text-primary);
-  }
-
-  .flow-arrow {
-    font-size: 22px;
-    color: var(--border-medium);
-    padding: 0 8px;
-    font-family: 'Source Sans 3', sans-serif;
-    font-weight: 300;
-  }
-
-  /* === FOOTER === */
-  .paper-footer {
-    background: #f0efe8;
-    border-top: 1px solid var(--border-light);
-    padding: 24px 48px;
-  }
-
-  .footer-windi {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
-
-  .footer-left {
-    font-family: 'Source Sans 3', sans-serif;
-    font-size: 12px;
-    color: var(--text-muted);
-    line-height: 1.6;
-  }
-
-  .footer-left .windi-name {
-    font-weight: 700;
-    color: var(--text-secondary);
-    font-size: 13px;
-  }
-
-  .footer-principle {
-    font-style: italic;
-    font-family: 'Crimson Pro', serif;
-    font-size: 13.5px;
-    color: var(--text-secondary);
-    margin-top: 6px;
-  }
-
-  .footer-right {
-    text-align: right;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10.5px;
-    color: var(--text-muted);
-    line-height: 1.7;
-  }
-
-  .footer-hash {
-    padding: 4px 8px;
-    background: rgba(0,0,0,0.04);
-    border-radius: 2px;
-    display: inline-block;
-    margin-top: 4px;
-  }
-
-  .footer-qr {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-top: 14px;
-    padding-top: 14px;
-    border-top: 1px solid var(--border-light);
-    justify-content: center;
-  }
-
-  .footer-qr img {
-    border: 1px solid var(--border-light);
-    border-radius: 2px;
-  }
-
-  .footer-qr-text {
-    font-family: 'Source Sans 3', sans-serif;
-    font-size: 11.5px;
-    color: var(--text-muted);
-    line-height: 1.5;
-  }
-
-  .footer-qr-text a {
-    color: var(--accent-blue-light);
-    text-decoration: none;
-  }
-
-  .footer-qr-text a:hover { text-decoration: underline; }
-
-  /* === HUMAN AUTHORSHIP NOTICE === */
-  .human-notice {
-    margin-top: 14px;
-    padding-top: 14px;
-    border-top: 1px solid var(--border-light);
-    text-align: center;
-    font-family: 'Source Sans 3', sans-serif;
-    font-size: 11px;
-    color: var(--text-muted);
-    letter-spacing: 0.3px;
-  }
-
-  .human-notice strong {
-    color: var(--text-secondary);
-    font-size: 10.5px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-
-  /* === BACK LINK === */
-  .back-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    font-family: 'Source Sans 3', sans-serif;
-    font-size: 13px;
-    color: var(--accent-blue-light);
-    text-decoration: none;
-    margin-bottom: 16px;
-    padding: 6px 12px;
-    background: rgba(255,255,255,0.6);
-    border-radius: 3px;
-    border: 1px solid var(--border-light);
-    transition: all 0.2s;
-  }
-
-  .back-link:hover {
-    background: #fff;
-    border-color: var(--accent-blue-light);
-  }
-
-  /* === RESPONSIVE === */
-  @media (max-width: 680px) {
-    .paper-wrapper { padding: 12px 8px 40px; }
-    .tu-header { padding: 20px 24px; }
-    .meta-bar { padding: 16px 24px; }
-    .content { padding: 28px 24px 36px; }
-    .paper-footer { padding: 20px 24px; }
-    .tu-title { font-size: 21px; }
-    h2 { font-size: 19px; }
-    .flow-visual { flex-direction: column; gap: 4px; }
-    .flow-arrow { transform: rotate(90deg); }
-    .flow-node { min-width: 200px; }
-    .req-grid { grid-template-columns: 1fr; }
-    .footer-windi { flex-direction: column; text-align: center; }
-    .footer-right { text-align: center; }
-  }
-
-  /* === PRINT === */
-  @media print {
-    body { background: #fff; font-size: 11pt; }
-    .paper-wrapper { padding: 0; max-width: 100%; }
-    .paper { box-shadow: none; }
-    .back-link { display: none; }
-    .tu-header { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-    .level-card { break-inside: avoid; }
-    .figure-block { break-inside: avoid; }
-  }
-</style>
+<title>Governance Levels — WINDI Technical Report TR-002</title>
+<meta name="description" content="WINDI Proportional Document Governance Through Risk-Based Classification">
+<meta name="author" content="Jober Mogele Correa">
+<meta name="generator" content="WINDI NOIR Template v2.0">
+<link rel="stylesheet" href="windi-internal.css">
 </head>
-<body>
+<body data-theme="dark" data-lang="de">
 
-<div class="paper-wrapper">
+<!-- Scroll Progress -->
+<div class="scroll-progress"><div class="scroll-progress-bar" id="scrollBar"></div></div>
 
-  <a href="index.html" class="back-link">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-    WINDI Documentation
+<!-- Header -->
+<header class="site-header">
+  <a href="index.html" class="header-brand">
+    <span class="header-logo">WINDI</span>
+    <span class="header-divider"></span>
+    <span class="header-subtitle">Governance Intelligence</span>
   </a>
+  <div class="header-controls">
+    <div class="header-status">
+      <span class="status-dot"></span>
+      <span>Operational</span>
+    </div>
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('de')">DE</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('pt')">PT</button>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+      <div class="theme-toggle-track"></div>
+      <div class="theme-toggle-thumb" id="themeThumb"></div>
+    </button>
+    <button class="mobile-toggle" onclick="toggleSidebar()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
 
-  <article class="paper">
+<!-- Sidebar Navigation -->
+<nav class="sidebar-left" id="sidebarLeft">
+  <div class="sidebar-section">
+    <div class="sidebar-label">Masterarbeit</div>
+    <a href="index.html" class="sidebar-link"><span class="sidebar-icon">M</span> Main Document</a>
+    <a href="cover.html" class="sidebar-link"><span class="sidebar-icon">C</span> Cover</a>
+    <a href="about-windi.html" class="sidebar-link"><span class="sidebar-icon">i</span> About WINDI</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Governance</div>
+    <a href="governance-levels.html" class="sidebar-link sidebar-link-active"><span class="sidebar-icon">G</span> Governance Levels</a>
+    <a href="human-oversight.html" class="sidebar-link"><span class="sidebar-icon">H</span> Human Oversight</a>
+    <a href="data-handling.html" class="sidebar-link"><span class="sidebar-icon">D</span> Data Handling</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Architecture</div>
+    <a href="diagrams.html" class="sidebar-link"><span class="sidebar-icon">A</span> Diagrams</a>
+    <a href="interface-guide.html" class="sidebar-link"><span class="sidebar-icon">I</span> Interface Guide</a>
+    <a href="verification-layer.html" class="sidebar-link"><span class="sidebar-icon">V</span> Verification Layer</a>
+    <a href="kapitel12_domain_sovereignty.html" class="sidebar-link"><span class="sidebar-icon">S</span> Domain Sovereignty</a>
+    <a href="identity-governance-layer.html" class="sidebar-link"><span class="sidebar-icon">L</span> Identity Governance</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Technical Reports</div>
+    <a href="tr-windi-2026-003.html" class="sidebar-link"><span class="sidebar-icon">3</span> TR-003: Service Layer</a>
+    <a href="tr-windi-2026-004.html" class="sidebar-link"><span class="sidebar-icon">4</span> TR-004: Cognitive Service</a>
+    <a href="tr-windi-2026-005.html" class="sidebar-link"><span class="sidebar-icon">5</span> TR-005: Cognitive Cycle</a>
+    <a href="isp-evolution.html" class="sidebar-link"><span class="sidebar-icon">6</span> TR-006: ISP Registry</a>
+    <a href="tr-007.html" class="sidebar-link"><span class="sidebar-icon">7</span> TR-007: Provenance</a>
+    <a href="sge-results.html" class="sidebar-link"><span class="sidebar-icon">R</span> SGE Results</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Publications</div>
+    <a href="publications.html" class="sidebar-link"><span class="sidebar-icon">P</span> Publications</a>
+    <a href="fachartikel-provenienz.html" class="sidebar-link"><span class="sidebar-icon">F</span> Fachartikel</a>
+    <a href="windi-publishing-house.html" class="sidebar-link"><span class="sidebar-icon">W</span> Manifesto</a>
+    <a href="editorial-policy.html" class="sidebar-link"><span class="sidebar-icon">E</span> Editorial Policy</a>
+    <a href="idpf-abstract.html" class="sidebar-link"><span class="sidebar-icon">I</span> IDPF Abstract</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Media</div>
+    <a href="windi-working-paper-2026.html" class="sidebar-link"><span class="sidebar-icon">W</span> Working Paper</a>
+    <a href="press-release-windi-2026.html" class="sidebar-link"><span class="sidebar-icon">P</span> Press Release</a>
+    <a href="windi-side-by-side-2026.html" class="sidebar-link"><span class="sidebar-icon">S</span> Side-by-Side</a>
+    <a href="wsj-style-governed-windi-2026.html" class="sidebar-link"><span class="sidebar-icon">J</span> WSJ Feature</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Compliance</div>
+    <a href="document-integrity.html" class="sidebar-link"><span class="sidebar-icon">D</span> Doc Integrity</a>
+    <a href="print-watermark-layer.html" class="sidebar-link"><span class="sidebar-icon">P</span> Print Layer</a>
+    <a href="regulatory-summary-print-layer.html" class="sidebar-link"><span class="sidebar-icon">R</span> Regulatory</a>
+    <a href="availability-implementation.html" class="sidebar-link"><span class="sidebar-icon">A</span> Appendix A</a>
+  </div>
+</nav>
 
-    <!-- TU HEADER -->
-    <header class="tu-header">
-      <div class="tu-institution">
-        <div class="tu-shield">
-          <svg viewBox="0 0 32 32" fill="none">
-            <path d="M16 2L4 8v6c0 9 5.5 16 12 18 6.5-2 12-9 12-18V8L16 2z" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" fill="none"/>
-            <path d="M12 16l3 3 5-6" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <div class="tu-inst-text">
-          WINDI Publishing House &middot; Kempten, Bavaria
-          <span>Pre-AI Governance Layer &middot; Technical Report Series</span>
-        </div>
-      </div>
+<!-- Main Content -->
+<div class="page-wrapper">
+  <main class="page-content">
 
-      <div class="tu-report-badge">TR-WINDI-2026-002 &middot; Governance Architecture</div>
-
-      <h1 class="tu-title">Proportional Document Governance Through Risk-Based Classification</h1>
-      <div class="tu-subtitle">The Three-Level Model: Operational, Institutional, and Forensic Regulatory Standards in the WINDI System</div>
-    </header>
-
-    <!-- METADATA BAR -->
-    <div class="meta-bar">
-      <div class="meta-item"><strong>Author:</strong> Jober M&ouml;gele Correa</div>
-      <div class="meta-item"><strong>Date:</strong> 01 February 2026</div>
-      <div class="meta-item"><strong>Version:</strong> 2.0.0</div>
-      <div class="meta-item"><strong>Status:</strong> Published</div>
-      <div class="meta-item"><strong>Classification:</strong> Public</div>
+    <!-- Page Hero -->
+    <div class="page-hero">
+      <div class="page-hero-label">TR-WINDI-2026-002 | Governance Architecture</div>
+      <h1 class="l-en">Proportional Document Governance Through Risk-Based Classification</h1>
+      <h1 class="l-de">Proportionale Dokumenten-Governance durch risikobasierte Klassifizierung</h1>
+      <h1 class="l-pt">Governanca Proporcional de Documentos atraves de Classificacao Baseada em Risco</h1>
+      <p class="page-hero-desc lb-en">The Three-Level Model: Operational, Institutional, and Forensic Regulatory Standards in the WINDI System</p>
+      <p class="page-hero-desc lb-de">Das Drei-Stufen-Modell: Operationelle, Institutionelle und Forensisch-Regulatorische Standards im WINDI System</p>
+      <p class="page-hero-desc lb-pt">O Modelo de Tres Niveis: Padroes Operacionais, Institucionais e Forenses Regulatorios no Sistema WINDI</p>
     </div>
 
-    <div class="content">
+    <!-- Metadata Bar -->
+    <div class="meta-bar">
+      <div><strong class="l-en">Author:</strong><strong class="l-de">Autor:</strong><strong class="l-pt">Autor:</strong> Jober Mogele Correa</div>
+      <div><strong class="l-en">Date:</strong><strong class="l-de">Datum:</strong><strong class="l-pt">Data:</strong> 01 February 2026</div>
+      <div><strong class="l-en">Version:</strong><strong class="l-de">Version:</strong><strong class="l-pt">Versao:</strong> 2.0.0</div>
+      <div><strong class="l-en">Status:</strong><strong class="l-de">Status:</strong><strong class="l-pt">Status:</strong> Published</div>
+      <div><strong class="l-en">Classification:</strong><strong class="l-de">Klassifizierung:</strong><strong class="l-pt">Classificacao:</strong> Public</div>
+    </div>
 
-      <!-- ABSTRACT -->
-      <div class="abstract-block">
-        <div class="abstract-label">Abstract</div>
-        <p>
-          This technical report presents the WINDI Governance Engine's three-level document classification model, a risk-proportional approach to institutional document governance. Rather than applying uniform security measures to all documents, the system implements graduated governance layers&thinsp;&mdash;&thinsp;Operational (LOW), Institutional (MEDIUM), and Forensic Regulatory (HIGH)&thinsp;&mdash;&thinsp;where each level enforces requirements proportional to the document's institutional impact and regulatory significance.
-        </p>
-        <p>
-          The architecture is validated through a production deployment on German infrastructure (Strato), with the first regulatory-grade submission (REG-20260201-0001) demonstrating complete chain integrity, tamper evidence, and metadata enforcement. The system's Institutional Security Profiles (ISP) enable per-organisation governance configuration, supporting environments from operational daily workflows (Deutsche Bahn) to central banking supervision (BIS-Style).
-        </p>
-        <p>
-          Diese Arbeit beschreibt das WINDI-Dreistufenmodell f&uuml;r risikobasierte Dokumenten-Governance: eine proportionale Architektur, die institutionelle Anforderungen mit operativer Effizienz verbindet.
-        </p>
-        <div class="keywords">
-          <strong>Keywords:</strong> Document Governance, EU AI Act, Risk-Based Classification, Institutional Security Profiles, Proportional Compliance, Forensic Traceability, Pre-AI Governance Layer
+    <!-- Abstract -->
+    <div class="abstract-block">
+      <div class="abstract-label l-en">Abstract</div>
+      <div class="abstract-label l-de">Zusammenfassung</div>
+      <div class="abstract-label l-pt">Resumo</div>
+      <p class="lb-en">This technical report presents the WINDI Governance Engine's three-level document classification model, a risk-proportional approach to institutional document governance. Rather than applying uniform security measures to all documents, the system implements graduated governance layers—Operational (LOW), Institutional (MEDIUM), and Forensic Regulatory (HIGH)—where each level enforces requirements proportional to the document's institutional impact and regulatory significance.</p>
+      <p class="lb-de">Dieser technische Bericht prasentiert das Drei-Stufen-Dokumentenklassifizierungsmodell der WINDI Governance Engine, einen risikoproportionalen Ansatz zur institutionellen Dokumenten-Governance. Anstatt einheitliche Sicherheitsmassnahmen auf alle Dokumente anzuwenden, implementiert das System abgestufte Governance-Ebenen—Operationell (LOW), Institutionell (MEDIUM) und Forensisch-Regulatorisch (HIGH)—wobei jede Ebene Anforderungen proportional zur institutionellen Auswirkung und regulatorischen Bedeutung des Dokuments durchsetzt.</p>
+      <p class="lb-pt">Este relatorio tecnico apresenta o modelo de classificacao de documentos de tres niveis do Motor de Governanca WINDI, uma abordagem proporcional ao risco para governanca de documentos institucionais. Em vez de aplicar medidas de seguranca uniformes a todos os documentos, o sistema implementa camadas de governanca graduadas—Operacional (LOW), Institucional (MEDIUM) e Forense Regulatorio (HIGH)—onde cada nivel aplica requisitos proporcionais ao impacto institucional e significancia regulatoria do documento.</p>
+
+      <p class="lb-en">The architecture is validated through a production deployment on German infrastructure (Strato), with the first regulatory-grade submission (REG-20260201-0001) demonstrating complete chain integrity, tamper evidence, and metadata enforcement. The system's Institutional Security Profiles (ISP) enable per-organisation governance configuration, supporting environments from operational daily workflows (Deutsche Bahn) to central banking supervision (BIS-Style).</p>
+      <p class="lb-de">Die Architektur wird durch eine Produktionsbereitstellung auf deutscher Infrastruktur (Strato) validiert, wobei die erste regulatorische Einreichung (REG-20260201-0001) vollstandige Kettenintegritat, Manipulationsnachweis und Metadatendurchsetzung demonstriert. Die institutionellen Sicherheitsprofile (ISP) des Systems ermoglichen eine organisationsspezifische Governance-Konfiguration.</p>
+      <p class="lb-pt">A arquitetura e validada atraves de implantacao em producao na infraestrutura alema (Strato), com a primeira submissao de grau regulatorio (REG-20260201-0001) demonstrando integridade completa da cadeia, evidencia de adulteracao e aplicacao de metadados. Os Perfis de Seguranca Institucional (ISP) do sistema permitem configuracao de governanca por organizacao.</p>
+
+      <div class="keywords">
+        <strong>Keywords:</strong> Document Governance, EU AI Act, Risk-Based Classification, Institutional Security Profiles, Proportional Compliance, Forensic Traceability, Pre-AI Governance Layer
+      </div>
+    </div>
+
+    <!-- Section 1: Introduction -->
+    <section>
+      <h2 class="l-en">Section 1: Introduction — The Problem of Uniform Governance</h2>
+      <h2 class="l-de">Abschnitt 1: Einfuhrung — Das Problem einheitlicher Governance</h2>
+      <h2 class="l-pt">Secao 1: Introducao — O Problema da Governanca Uniforme</h2>
+
+      <p class="lb-en">Institutional environments produce documents with vastly different risk profiles. An internal operational memo at a transport company carries fundamentally different governance requirements than a regulatory submission to a central banking authority. Yet traditional document management systems typically apply either no governance controls or enforce uniform, heavy-weight compliance mechanisms across all document types.</p>
+      <p class="lb-de">Institutionelle Umgebungen produzieren Dokumente mit sehr unterschiedlichen Risikoprofilen. Ein internes operatives Memo bei einem Transportunternehmen hat grundlegend andere Governance-Anforderungen als eine regulatorische Einreichung bei einer Zentralbank-Behorde. Traditionelle Dokumentenmanagementsysteme wenden jedoch typischerweise entweder keine Governance-Kontrollen an oder erzwingen einheitliche, schwergewichtige Compliance-Mechanismen uber alle Dokumenttypen hinweg.</p>
+      <p class="lb-pt">Ambientes institucionais produzem documentos com perfis de risco vastamente diferentes. Um memorando operacional interno em uma empresa de transporte carrega requisitos de governanca fundamentalmente diferentes de uma submissao regulatoria a uma autoridade bancaria central. No entanto, sistemas tradicionais de gerenciamento de documentos tipicamente aplicam ou nenhum controle de governanca ou impoe mecanismos de conformidade uniformes e pesados em todos os tipos de documento.</p>
+
+      <p class="lb-en">This binary approach creates two failure modes. Under-governance exposes institutions to compliance risks and lacks traceability when it matters most. Over-governance burdens daily operations with unnecessary overhead, creating friction that leads to workarounds and shadow processes that ultimately undermine governance altogether.</p>
+      <p class="lb-de">Dieser binare Ansatz schafft zwei Fehlermodi. Unter-Governance setzt Institutionen Compliance-Risiken aus und fehlt Ruckverfolgbarkeit, wenn es am wichtigsten ist. Uber-Governance belastet den taglichen Betrieb mit unnotigem Overhead und schafft Reibung, die zu Workarounds und Schattenprozessen fuhrt, die letztendlich die Governance insgesamt untergraben.</p>
+      <p class="lb-pt">Esta abordagem binaria cria dois modos de falha. Sub-governanca expoe instituicoes a riscos de conformidade e carece de rastreabilidade quando mais importa. Sobre-governanca sobrecarrega operacoes diarias com overhead desnecessario, criando atrito que leva a solucoes alternativas e processos sombra que finalmente minam a governanca por completo.</p>
+
+      <p class="lb-en">The WINDI system resolves this tension through <em>proportional governance</em>—a risk-based classification model where the depth of metadata requirements, audit trails, and integrity mechanisms scales with the document's institutional impact.</p>
+      <p class="lb-de">Das WINDI System lost diese Spannung durch <em>proportionale Governance</em>—ein risikobasiertes Klassifizierungsmodell, bei dem die Tiefe der Metadatenanforderungen, Audit-Trails und Integritatsmechanismen mit der institutionellen Auswirkung des Dokuments skaliert.</p>
+      <p class="lb-pt">O sistema WINDI resolve esta tensao atraves de <em>governanca proporcional</em>—um modelo de classificacao baseado em risco onde a profundidade dos requisitos de metadados, trilhas de auditoria e mecanismos de integridade escala com o impacto institucional do documento.</p>
+
+      <div class="gov-box">
+        <div class="gov-box-header l-en">Design Principle</div>
+        <div class="gov-box-header l-de">Designprinzip</div>
+        <div class="gov-box-header l-pt">Principio de Design</div>
+        <p class="lb-en"><strong>The greater the institutional impact, the greater the requirement for metadata completeness and traceability.</strong></p>
+        <p class="lb-de"><strong>Je grosser die institutionelle Auswirkung, desto grosser die Anforderung an Metadatenvollstandigkeit und Nachvollziehbarkeit.</strong></p>
+        <p class="lb-pt"><strong>Quanto maior o impacto institucional, maior o requisito de completude de metadados e rastreabilidade.</strong></p>
+      </div>
+    </section>
+
+    <!-- Section 2: Three-Level Model -->
+    <section>
+      <h2 class="l-en">Section 2: The Three-Level Governance Model</h2>
+      <h2 class="l-de">Abschnitt 2: Das Drei-Stufen-Governance-Modell</h2>
+      <h2 class="l-pt">Secao 2: O Modelo de Governanca de Tres Niveis</h2>
+
+      <p class="lb-en">The WINDI Governance Engine implements three distinct governance levels, each designed for a specific class of institutional document. The levels are not arbitrary tiers but represent fundamentally different governance philosophies, from invisible facilitation to forensic enforcement.</p>
+      <p class="lb-de">Die WINDI Governance Engine implementiert drei verschiedene Governance-Ebenen, jede fur eine spezifische Klasse institutioneller Dokumente konzipiert. Die Ebenen sind keine willkurlichen Stufen, sondern reprasentieren fundamental unterschiedliche Governance-Philosophien, von unsichtbarer Erleichterung bis zur forensischen Durchsetzung.</p>
+      <p class="lb-pt">O Motor de Governanca WINDI implementa tres niveis distintos de governanca, cada um projetado para uma classe especifica de documento institucional. Os niveis nao sao camadas arbitrarias, mas representam filosofias de governanca fundamentalmente diferentes, desde facilitacao invisivel ate aplicacao forense.</p>
+
+      <!-- Flow Visual -->
+      <div class="flow-visual">
+        <div class="flow-node flow-node-low">
+          <div class="flow-node-label">LOW</div>
+          <div class="flow-node-name">Operational</div>
+        </div>
+        <div class="flow-arrow">-></div>
+        <div class="flow-node flow-node-medium">
+          <div class="flow-node-label">MEDIUM</div>
+          <div class="flow-node-name">Institutional</div>
+        </div>
+        <div class="flow-arrow">-></div>
+        <div class="flow-node flow-node-high">
+          <div class="flow-node-label">HIGH</div>
+          <div class="flow-node-name">Forensic Regulatory</div>
         </div>
       </div>
 
-      <!-- SECTION 1: INTRODUCTION -->
-      <div class="section">
-        <span class="section-number">Section 1</span>
-        <h2>Introduction: The Problem of Uniform Governance</h2>
+      <!-- Level LOW -->
+      <h3 class="l-en">2.1 LOW — Operational Standard</h3>
+      <h3 class="l-de">2.1 LOW — Operativer Standard</h3>
+      <h3 class="l-pt">2.1 LOW — Padrao Operacional</h3>
 
-        <p>
-          Institutional environments produce documents with vastly different risk profiles. An internal operational memo at a transport company carries fundamentally different governance requirements than a regulatory submission to a central banking authority. Yet traditional document management systems typically apply either no governance controls or enforce uniform, heavy-weight compliance mechanisms across all document types.
-        </p>
-        <p>
-          This binary approach creates two failure modes. Under-governance exposes institutions to compliance risks and lacks traceability when it matters most. Over-governance burdens daily operations with unnecessary overhead, creating friction that leads to workarounds and shadow processes that ultimately undermine governance altogether.
-        </p>
-        <p>
-          The WINDI system resolves this tension through <em>proportional governance</em>&thinsp;&mdash;&thinsp;a risk-based classification model where the depth of metadata requirements, audit trails, and integrity mechanisms scales with the document's institutional impact. The core principle:
-        </p>
+      <div class="level-card level-low">
+        <div class="level-badge"><span class="dot"></span> LOW — OPERATIONAL</div>
+        <div class="level-name l-en">Governance Without Friction</div>
+        <div class="level-name l-de">Governance ohne Reibung</div>
+        <div class="level-name l-pt">Governanca sem Atrito</div>
 
-        <div class="level-principle" style="margin: 16px 0 10px; padding: 12px 18px; background: #f8f7f2; border-left: 3px solid var(--accent-blue); border-radius: 0 3px 3px 0;">
-          <strong style="font-style: normal; color: var(--accent-blue); font-family: 'Source Sans 3', sans-serif; font-size: 12px; text-transform: uppercase; letter-spacing: 1px;">Design Principle</strong><br>
-          The greater the institutional impact, the greater the requirement for metadata completeness and traceability.
+        <p class="lb-en">The Operational Standard is designed for daily institutional workflows where governance should be invisible. Internal memos, routine communications, and operational documents pass through the system without metadata requirements, submission identifiers, or forensic sealing. The governance layer exists but does not impose.</p>
+        <p class="lb-de">Der operative Standard ist fur tagliche institutionelle Workflows konzipiert, bei denen Governance unsichtbar sein sollte. Interne Memos, Routinekommunikation und operative Dokumente passieren das System ohne Metadatenanforderungen, Einreichungs-IDs oder forensische Versiegelung. Die Governance-Schicht existiert, aber sie zwingt nicht auf.</p>
+        <p class="lb-pt">O Padrao Operacional e projetado para fluxos de trabalho institucionais diarios onde a governanca deve ser invisivel. Memorandos internos, comunicacoes de rotina e documentos operacionais passam pelo sistema sem requisitos de metadados, identificadores de submissao ou selagem forense. A camada de governanca existe mas nao impoe.</p>
+
+        <p class="lb-en">This level acknowledges a critical insight: not every document requires traceability. Applying regulatory overhead to routine operations creates institutional fatigue and diminishes the perceived value of governance when it truly matters.</p>
+        <p class="lb-de">Diese Ebene erkennt eine kritische Erkenntnis an: Nicht jedes Dokument erfordert Nachvollziehbarkeit. Die Anwendung regulatorischen Overheads auf Routineoperationen schafft institutionelle Ermudung und vermindert den wahrgenommenen Wert von Governance, wenn sie wirklich wichtig ist.</p>
+        <p class="lb-pt">Este nivel reconhece um insight critico: nem todo documento requer rastreabilidade. Aplicar overhead regulatorio a operacoes de rotina cria fadiga institucional e diminui o valor percebido da governanca quando ela realmente importa.</p>
+
+        <div class="level-principle">
+          <span class="l-en">Governance must be invisible where it is unnecessary, so it can be trusted where it is essential.</span>
+          <span class="l-de">Governance muss unsichtbar sein, wo sie unnotig ist, damit sie vertraut werden kann, wo sie wesentlich ist.</span>
+          <span class="l-pt">Governanca deve ser invisivel onde desnecessaria, para que possa ser confiavel onde e essencial.</span>
+        </div>
+
+        <div class="req-grid">
+          <div class="req-item"><span class="req-no">x</span> Mandatory metadata</div>
+          <div class="req-item"><span class="req-no">x</span> Policy version tracking</div>
+          <div class="req-item"><span class="req-no">x</span> Submission ID</div>
+          <div class="req-item"><span class="req-no">x</span> Integrity hash</div>
+          <div class="req-item"><span class="req-no">x</span> Forensic registry</div>
+          <div class="req-item"><span class="req-no">x</span> Watermark</div>
         </div>
       </div>
 
-      <!-- SECTION 2: THE THREE-LEVEL MODEL -->
-      <div class="section">
-        <span class="section-number">Section 2</span>
-        <h2>The Three-Level Governance Model</h2>
+      <!-- Level MEDIUM -->
+      <h3 class="l-en">2.2 MEDIUM — Institutional Standard</h3>
+      <h3 class="l-de">2.2 MEDIUM — Institutioneller Standard</h3>
+      <h3 class="l-pt">2.2 MEDIUM — Padrao Institucional</h3>
 
-        <p>
-          The WINDI Governance Engine implements three distinct governance levels, each designed for a specific class of institutional document. The levels are not arbitrary tiers but represent fundamentally different governance philosophies, from invisible facilitation to forensic enforcement.
-        </p>
+      <div class="level-card level-medium">
+        <div class="level-badge"><span class="dot"></span> MEDIUM — INSTITUTIONAL</div>
+        <div class="level-name l-en">Organisational Accountability</div>
+        <div class="level-name l-de">Organisatorische Verantwortlichkeit</div>
+        <div class="level-name l-pt">Responsabilidade Organizacional</div>
 
-        <!-- VISUAL FLOW -->
-        <div class="flow-visual">
-          <div class="flow-node flow-node-low">
-            <div class="flow-node-label">LOW</div>
-            <div class="flow-node-name">Operational</div>
-          </div>
-          <div class="flow-arrow">&rarr;</div>
-          <div class="flow-node flow-node-medium">
-            <div class="flow-node-label">MEDIUM</div>
-            <div class="flow-node-name">Institutional</div>
-          </div>
-          <div class="flow-arrow">&rarr;</div>
-          <div class="flow-node flow-node-high">
-            <div class="flow-node-label">HIGH</div>
-            <div class="flow-node-name">Forensic Regulatory</div>
-          </div>
+        <p class="lb-en">The Institutional Standard occupies the critical middle ground between operational fluidity and regulatory rigour. Documents at this level carry institutional weight—policy notes, compliance reports, formal inter-departmental communications—and require structured metadata that establishes organisational accountability without imposing forensic-grade controls.</p>
+        <p class="lb-de">Der institutionelle Standard besetzt das kritische Mittelfeld zwischen operativer Fluiditat und regulatorischer Strenge. Dokumente auf dieser Ebene tragen institutionelles Gewicht—Richtliniennotizen, Compliance-Berichte, formelle inter-departementale Kommunikation—und erfordern strukturierte Metadaten, die organisatorische Verantwortlichkeit etablieren, ohne forensische Kontrollen aufzuerlegen.</p>
+        <p class="lb-pt">O Padrao Institucional ocupa o terreno critico entre fluidez operacional e rigor regulatorio. Documentos neste nivel carregam peso institucional—notas de politica, relatorios de conformidade, comunicacoes inter-departamentais formais—e requerem metadados estruturados que estabelecem responsabilidade organizacional sem impor controles de grau forense.</p>
+
+        <p class="lb-en">MEDIUM-level governance enforces institutional metadata (issuing authority, document purpose, confidentiality classification, validation status) and maintains standard audit trails. It does not, however, generate submission identifiers, compute integrity hashes, or create forensic registry entries. The distinction is deliberate: institutional accountability is not the same as regulatory traceability.</p>
+        <p class="lb-de">MEDIUM-Level Governance erzwingt institutionelle Metadaten (ausstellende Behorde, Dokumentzweck, Vertraulichkeitsklassifizierung, Validierungsstatus) und pflegt Standard-Audit-Trails. Sie generiert jedoch keine Einreichungs-IDs, berechnet keine Integritäts-Hashes oder erstellt keine forensischen Registry-Eintrage. Die Unterscheidung ist beabsichtigt: institutionelle Verantwortlichkeit ist nicht dasselbe wie regulatorische Ruckverfolgbarkeit.</p>
+        <p class="lb-pt">Governanca nivel MEDIUM aplica metadados institucionais (autoridade emissora, proposito do documento, classificacao de confidencialidade, status de validacao) e mantem trilhas de auditoria padrao. No entanto, nao gera identificadores de submissao, calcula hashes de integridade ou cria entradas de registro forense. A distincao e deliberada: responsabilidade institucional nao e o mesmo que rastreabilidade regulatoria.</p>
+
+        <div class="level-principle">
+          <span class="l-en">Institutional responsibility requires documented ownership, not forensic sealing.</span>
+          <span class="l-de">Institutionelle Verantwortung erfordert dokumentierte Eigentumerschaft, nicht forensische Versiegelung.</span>
+          <span class="l-pt">Responsabilidade institucional requer propriedade documentada, nao selagem forense.</span>
         </div>
 
-        <!-- LOW -->
-        <h3>2.1 &ensp;LOW &mdash; Operational Standard</h3>
-
-        <div class="level-card level-low">
-          <div class="level-badge"><span class="dot"></span> LOW &mdash; OPERATIONAL</div>
-          <div class="level-name">Governance Without Friction</div>
-          <p>
-            The Operational Standard is designed for daily institutional workflows where governance should be invisible. Internal memos, routine communications, and operational documents pass through the system without metadata requirements, submission identifiers, or forensic sealing. The governance layer exists but does not impose.
-          </p>
-          <p>
-            This level acknowledges a critical insight: not every document requires traceability. Applying regulatory overhead to routine operations creates institutional fatigue and diminishes the perceived value of governance when it truly matters.
-          </p>
-          <div class="level-principle">
-            Governance must be invisible where it is unnecessary, so it can be trusted where it is essential.
-          </div>
-          <div class="req-grid">
-            <div class="req-item"><span class="req-no">&times;</span> Mandatory metadata</div>
-            <div class="req-item"><span class="req-no">&times;</span> Policy version tracking</div>
-            <div class="req-item"><span class="req-no">&times;</span> Submission ID</div>
-            <div class="req-item"><span class="req-no">&times;</span> Integrity hash</div>
-            <div class="req-item"><span class="req-no">&times;</span> Forensic registry</div>
-            <div class="req-item"><span class="req-no">&times;</span> Watermark</div>
-          </div>
-        </div>
-
-        <!-- MEDIUM -->
-        <h3>2.2 &ensp;MEDIUM &mdash; Institutional Standard</h3>
-
-        <div class="level-card level-medium">
-          <div class="level-badge"><span class="dot"></span> MEDIUM &mdash; INSTITUTIONAL</div>
-          <div class="level-name">Organisational Accountability</div>
-          <p>
-            The Institutional Standard occupies the critical middle ground between operational fluidity and regulatory rigour. Documents at this level carry institutional weight&thinsp;&mdash;&thinsp;policy notes, compliance reports, formal inter-departmental communications&thinsp;&mdash;&thinsp;and require structured metadata that establishes organisational accountability without imposing forensic-grade controls.
-          </p>
-          <p>
-            MEDIUM-level governance enforces institutional metadata (issuing authority, document purpose, confidentiality classification, validation status) and maintains standard audit trails. It does not, however, generate submission identifiers, compute integrity hashes, or create forensic registry entries. The distinction is deliberate: institutional accountability is not the same as regulatory traceability.
-          </p>
-          <div class="level-principle">
-            Institutional responsibility requires documented ownership, not forensic sealing.
-          </div>
-          <div class="req-grid">
-            <div class="req-item"><span class="req-yes">&check;</span> Institutional metadata (7 fields)</div>
-            <div class="req-item"><span class="req-yes">&check;</span> Policy version tracking</div>
-            <div class="req-item"><span class="req-yes">&check;</span> Standard audit trail</div>
-            <div class="req-item"><span class="req-yes">&check;</span> Discreet watermark</div>
-            <div class="req-item"><span class="req-no">&times;</span> Submission ID</div>
-            <div class="req-item"><span class="req-no">&times;</span> Integrity hash</div>
-            <div class="req-item"><span class="req-no">&times;</span> Forensic registry</div>
-            <div class="req-item"><span class="req-no">&times;</span> Configuration hash seal</div>
-          </div>
-        </div>
-
-        <!-- HIGH -->
-        <h3>2.3 &ensp;HIGH &mdash; Forensic Regulatory</h3>
-
-        <div class="level-card level-high">
-          <div class="level-badge"><span class="dot"></span> HIGH &mdash; FORENSIC REGULATORY</div>
-          <div class="level-name">Complete Regulatory Traceability</div>
-          <p>
-            The Forensic Regulatory level implements the full governance apparatus. Designed for environments where regulatory compliance demands complete traceability&thinsp;&mdash;&thinsp;central banking supervision, statistical reporting frameworks (SDMX), EU AI Act compliance submissions&thinsp;&mdash;&thinsp;this level enforces a strict invariant: a document cannot be generated unless all required regulatory metadata is present and validated.
-          </p>
-          <p>
-            Each HIGH-level generation produces a sealed submission package containing a unique Submission ID, a configuration hash binding the document to the exact governance policy version, an integrity hash for tamper evidence, and a forensic registry entry enabling retrospective audit. The chain of integrity is preserved from generation through archival.
-          </p>
-          <div class="level-principle">
-            Without complete metadata, the document must not exist.
-          </div>
-          <div class="req-grid">
-            <div class="req-item"><span class="req-yes">&check;</span> Regulatory metadata (10 fields, SDMX)</div>
-            <div class="req-item"><span class="req-yes">&check;</span> Policy version tracking</div>
-            <div class="req-item"><span class="req-yes">&check;</span> Submission ID (REG-*)</div>
-            <div class="req-item"><span class="req-yes">&check;</span> Configuration hash seal</div>
-            <div class="req-item"><span class="req-yes">&check;</span> Integrity hash (SHA-256)</div>
-            <div class="req-item"><span class="req-yes">&check;</span> Forensic registry</div>
-            <div class="req-item"><span class="req-yes">&check;</span> Full audit trail</div>
-            <div class="req-item"><span class="req-yes">&check;</span> Header + footer watermark</div>
-          </div>
+        <div class="req-grid">
+          <div class="req-item"><span class="req-yes">Y</span> Institutional metadata (7 fields)</div>
+          <div class="req-item"><span class="req-yes">Y</span> Policy version tracking</div>
+          <div class="req-item"><span class="req-yes">Y</span> Standard audit trail</div>
+          <div class="req-item"><span class="req-yes">Y</span> Discreet watermark</div>
+          <div class="req-item"><span class="req-no">x</span> Submission ID</div>
+          <div class="req-item"><span class="req-no">x</span> Integrity hash</div>
+          <div class="req-item"><span class="req-no">x</span> Forensic registry</div>
+          <div class="req-item"><span class="req-no">x</span> Configuration hash seal</div>
         </div>
       </div>
 
-      <!-- SECTION 3: COMPARISON -->
-      <div class="section">
-        <span class="section-number">Section 3</span>
-        <h2>Comparative Analysis of Governance Levels</h2>
+      <!-- Level HIGH -->
+      <h3 class="l-en">2.3 HIGH — Forensic Regulatory</h3>
+      <h3 class="l-de">2.3 HIGH — Forensisch-Regulatorisch</h3>
+      <h3 class="l-pt">2.3 HIGH — Forense Regulatorio</h3>
 
-        <p>
-          The following matrix presents a comprehensive comparison of governance features across the three levels, demonstrating the proportional escalation of requirements as institutional impact increases.
-        </p>
+      <div class="level-card level-high">
+        <div class="level-badge"><span class="dot"></span> HIGH — FORENSIC REGULATORY</div>
+        <div class="level-name l-en">Complete Regulatory Traceability</div>
+        <div class="level-name l-de">Vollstandige regulatorische Nachvollziehbarkeit</div>
+        <div class="level-name l-pt">Rastreabilidade Regulatoria Completa</div>
 
-        <div class="comparison-table-wrap">
-          <table class="comparison-table">
-            <thead>
-              <tr>
-                <th>Governance Feature</th>
-                <th class="col-low">LOW</th>
-                <th class="col-medium">MEDIUM</th>
-                <th class="col-high">HIGH</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td class="feat-name">Mandatory Metadata</td>
-                <td><span class="cross">&mdash;</span></td>
-                <td><span class="check">&check;</span> Institutional (7)</td>
-                <td><span class="check">&check;</span> Regulatory (10)</td>
-              </tr>
-              <tr>
-                <td class="feat-name">Metadata Block Schema</td>
-                <td><span class="cross">&mdash;</span></td>
-                <td><span class="partial">Institutional</span></td>
-                <td><span class="check">SDMX-aligned</span></td>
-              </tr>
-              <tr>
-                <td class="feat-name">Policy Version</td>
-                <td><span class="cross">&mdash;</span></td>
-                <td><span class="check">&check;</span></td>
-                <td><span class="check">&check;</span></td>
-              </tr>
-              <tr>
-                <td class="feat-name">Configuration Hash</td>
-                <td><span class="cross">&mdash;</span></td>
-                <td><span class="cross">&mdash;</span></td>
-                <td><span class="check">&check;</span> SHA-256</td>
-              </tr>
-              <tr>
-                <td class="feat-name">Submission ID</td>
-                <td><span class="cross">&mdash;</span></td>
-                <td><span class="cross">&mdash;</span></td>
-                <td><span class="check">&check;</span> REG-*</td>
-              </tr>
-              <tr>
-                <td class="feat-name">Integrity Hash</td>
-                <td><span class="cross">&mdash;</span></td>
-                <td><span class="cross">&mdash;</span></td>
-                <td><span class="check">&check;</span> SHA-256</td>
-              </tr>
-              <tr>
-                <td class="feat-name">Forensic Registry</td>
-                <td><span class="cross">&mdash;</span></td>
-                <td><span class="cross">&mdash;</span></td>
-                <td><span class="check">&check;</span> Full chain</td>
-              </tr>
-              <tr>
-                <td class="feat-name">Audit Trail</td>
-                <td><span class="cross">&mdash;</span></td>
-                <td><span class="partial">Standard</span></td>
-                <td><span class="check">Full forensic</span></td>
-              </tr>
-              <tr>
-                <td class="feat-name">Watermark</td>
-                <td><span class="cross">&mdash;</span></td>
-                <td><span class="partial">Discreet footer</span></td>
-                <td><span class="check">Header + footer</span></td>
-              </tr>
-              <tr>
-                <td class="feat-name">Generation Blocking</td>
-                <td><span class="cross">&mdash;</span></td>
-                <td><span class="check">&check;</span> Missing metadata</td>
-                <td><span class="check">&check;</span> Missing metadata</td>
-              </tr>
-              <tr>
-                <td class="feat-name">Tamper Evidence</td>
-                <td><span class="cross">&mdash;</span></td>
-                <td><span class="cross">&mdash;</span></td>
-                <td><span class="check">&check;</span> Seal + verify</td>
-              </tr>
-            </tbody>
-          </table>
+        <p class="lb-en">The Forensic Regulatory level implements the full governance apparatus. Designed for environments where regulatory compliance demands complete traceability—central banking supervision, statistical reporting frameworks (SDMX), EU AI Act compliance submissions—this level enforces a strict invariant: a document cannot be generated unless all required regulatory metadata is present and validated.</p>
+        <p class="lb-de">Die forensisch-regulatorische Ebene implementiert den vollstandigen Governance-Apparat. Konzipiert fur Umgebungen, in denen regulatorische Compliance vollstandige Ruckverfolgbarkeit erfordert—Zentralbank-Aufsicht, statistische Berichtsrahmen (SDMX), EU AI Act Compliance-Einreichungen—erzwingt diese Ebene eine strikte Invariante: Ein Dokument kann nicht generiert werden, es sei denn, alle erforderlichen regulatorischen Metadaten sind vorhanden und validiert.</p>
+        <p class="lb-pt">O nivel Forense Regulatorio implementa o aparato completo de governanca. Projetado para ambientes onde conformidade regulatoria exige rastreabilidade completa—supervisao de bancos centrais, frameworks de relatorios estatisticos (SDMX), submissoes de conformidade EU AI Act—este nivel aplica uma invariante estrita: um documento nao pode ser gerado a menos que todos os metadados regulatorios requeridos estejam presentes e validados.</p>
+
+        <p class="lb-en">Each HIGH-level generation produces a sealed submission package containing a unique Submission ID, a configuration hash binding the document to the exact governance policy version, an integrity hash for tamper evidence, and a forensic registry entry enabling retrospective audit. The chain of integrity is preserved from generation through archival.</p>
+        <p class="lb-de">Jede HIGH-Level Generierung produziert ein versiegeltes Einreichungspaket mit einer eindeutigen Submission-ID, einem Konfigurations-Hash, der das Dokument an die exakte Governance-Richtlinienversion bindet, einem Integritäts-Hash fur Manipulationsnachweis und einem forensischen Registry-Eintrag, der retrospektive Audits ermoglicht. Die Integritatskette wird von der Generierung bis zur Archivierung bewahrt.</p>
+        <p class="lb-pt">Cada geracao HIGH-level produz um pacote de submissao selado contendo um ID de Submissao unico, um hash de configuracao vinculando o documento a versao exata da politica de governanca, um hash de integridade para evidencia de adulteracao e uma entrada de registro forense permitindo auditoria retrospectiva. A cadeia de integridade e preservada desde a geracao ate o arquivamento.</p>
+
+        <div class="level-principle">
+          <span class="l-en">Without complete metadata, the document must not exist.</span>
+          <span class="l-de">Ohne vollstandige Metadaten darf das Dokument nicht existieren.</span>
+          <span class="l-pt">Sem metadados completos, o documento nao deve existir.</span>
+        </div>
+
+        <div class="req-grid">
+          <div class="req-item"><span class="req-yes">Y</span> Regulatory metadata (10 fields, SDMX)</div>
+          <div class="req-item"><span class="req-yes">Y</span> Policy version tracking</div>
+          <div class="req-item"><span class="req-yes">Y</span> Submission ID (REG-*)</div>
+          <div class="req-item"><span class="req-yes">Y</span> Configuration hash seal</div>
+          <div class="req-item"><span class="req-yes">Y</span> Integrity hash (SHA-256)</div>
+          <div class="req-item"><span class="req-yes">Y</span> Forensic registry</div>
+          <div class="req-item"><span class="req-yes">Y</span> Full audit trail</div>
+          <div class="req-item"><span class="req-yes">Y</span> Header + footer watermark</div>
         </div>
       </div>
+    </section>
 
-      <!-- SECTION 4: ISP PROFILES -->
-      <div class="section">
-        <span class="section-number">Section 4</span>
-        <h2>Institutional Security Profiles (ISP)</h2>
+    <!-- Section 3: Comparative Analysis -->
+    <section>
+      <h2 class="l-en">Section 3: Comparative Analysis of Governance Levels</h2>
+      <h2 class="l-de">Abschnitt 3: Vergleichende Analyse der Governance-Ebenen</h2>
+      <h2 class="l-pt">Secao 3: Analise Comparativa dos Niveis de Governanca</h2>
 
-        <p>
-          Each organisation deploying the WINDI system operates under a configurable Institutional Security Profile that determines its default governance level, permitted upgrades, minimum enforcement thresholds, and document-type overrides. The ISP transforms WINDI from a static governance engine into configurable institutional infrastructure.
-        </p>
+      <p class="lb-en">The following matrix presents a comprehensive comparison of governance features across the three levels, demonstrating the proportional escalation of requirements as institutional impact increases.</p>
+      <p class="lb-de">Die folgende Matrix prasentiert einen umfassenden Vergleich der Governance-Funktionen uber die drei Ebenen hinweg und demonstriert die proportionale Eskalation der Anforderungen bei steigender institutioneller Auswirkung.</p>
+      <p class="lb-pt">A matriz a seguir apresenta uma comparacao abrangente das funcionalidades de governanca atraves dos tres niveis, demonstrando a escalacao proporcional de requisitos conforme o impacto institucional aumenta.</p>
 
-        <h3>4.1 &ensp;Active Profiles in Production</h3>
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>Governance Feature</th>
+            <th class="col-low">LOW</th>
+            <th class="col-medium">MEDIUM</th>
+            <th class="col-high">HIGH</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="feat-name">Mandatory Metadata</td>
+            <td><span class="cross">—</span></td>
+            <td><span class="check">Y</span> Institutional (7)</td>
+            <td><span class="check">Y</span> Regulatory (10)</td>
+          </tr>
+          <tr>
+            <td class="feat-name">Metadata Block Schema</td>
+            <td><span class="cross">—</span></td>
+            <td><span class="partial">Institutional</span></td>
+            <td><span class="check">SDMX-aligned</span></td>
+          </tr>
+          <tr>
+            <td class="feat-name">Policy Version</td>
+            <td><span class="cross">—</span></td>
+            <td><span class="check">Y</span></td>
+            <td><span class="check">Y</span></td>
+          </tr>
+          <tr>
+            <td class="feat-name">Configuration Hash</td>
+            <td><span class="cross">—</span></td>
+            <td><span class="cross">—</span></td>
+            <td><span class="check">Y</span> SHA-256</td>
+          </tr>
+          <tr>
+            <td class="feat-name">Submission ID</td>
+            <td><span class="cross">—</span></td>
+            <td><span class="cross">—</span></td>
+            <td><span class="check">Y</span> REG-*</td>
+          </tr>
+          <tr>
+            <td class="feat-name">Integrity Hash</td>
+            <td><span class="cross">—</span></td>
+            <td><span class="cross">—</span></td>
+            <td><span class="check">Y</span> SHA-256</td>
+          </tr>
+          <tr>
+            <td class="feat-name">Forensic Registry</td>
+            <td><span class="cross">—</span></td>
+            <td><span class="cross">—</span></td>
+            <td><span class="check">Y</span> Full chain</td>
+          </tr>
+          <tr>
+            <td class="feat-name">Audit Trail</td>
+            <td><span class="cross">—</span></td>
+            <td><span class="partial">Standard</span></td>
+            <td><span class="check">Full forensic</span></td>
+          </tr>
+          <tr>
+            <td class="feat-name">Watermark</td>
+            <td><span class="cross">—</span></td>
+            <td><span class="partial">Discreet footer</span></td>
+            <td><span class="check">Header + footer</span></td>
+          </tr>
+          <tr>
+            <td class="feat-name">Generation Blocking</td>
+            <td><span class="cross">—</span></td>
+            <td><span class="check">Y</span> Missing metadata</td>
+            <td><span class="check">Y</span> Missing metadata</td>
+          </tr>
+          <tr>
+            <td class="feat-name">Tamper Evidence</td>
+            <td><span class="cross">—</span></td>
+            <td><span class="cross">—</span></td>
+            <td><span class="check">Y</span> Seal + verify</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
 
-        <div class="def-block">
-          <dl>
-            <dt>Deutsche Bahn AG &mdash; Operational (LOW)</dt>
-            <dd>Transport operator. Default governance: LOW. Operational documents flow without metadata constraints. Manual upgrade to HIGH permitted for regulatory submissions.</dd>
+    <!-- Section 4: ISP Profiles -->
+    <section>
+      <h2 class="l-en">Section 4: Institutional Security Profiles (ISP)</h2>
+      <h2 class="l-de">Abschnitt 4: Institutionelle Sicherheitsprofile (ISP)</h2>
+      <h2 class="l-pt">Secao 4: Perfis de Seguranca Institucional (ISP)</h2>
 
-            <dt>BIS-Style Regulatory Authority &mdash; Forensic (HIGH)</dt>
-            <dd>Central banking supervision model. Default governance: HIGH. All documents require complete SDMX-aligned regulatory metadata. No downgrade permitted below HIGH.</dd>
+      <p class="lb-en">Each organisation deploying the WINDI system operates under a configurable Institutional Security Profile that determines its default governance level, permitted upgrades, minimum enforcement thresholds, and document-type overrides. The ISP transforms WINDI from a static governance engine into configurable institutional infrastructure.</p>
+      <p class="lb-de">Jede Organisation, die das WINDI System einsetzt, operiert unter einem konfigurierbaren institutionellen Sicherheitsprofil, das ihre Standard-Governance-Ebene, erlaubte Upgrades, minimale Durchsetzungsschwellen und Dokumenttyp-Uberschreibungen bestimmt. Das ISP transformiert WINDI von einer statischen Governance-Engine in konfigurierbare institutionelle Infrastruktur.</p>
+      <p class="lb-pt">Cada organizacao que implanta o sistema WINDI opera sob um Perfil de Seguranca Institucional configuravel que determina seu nivel de governanca padrao, upgrades permitidos, limites minimos de aplicacao e substituicoes de tipo de documento. O ISP transforma o WINDI de um motor de governanca estatico em infraestrutura institucional configuravel.</p>
 
-            <dt>Bundesregierung &mdash; Institutional (MEDIUM) <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; background: var(--medium-amber-bg); color: var(--medium-amber); padding: 2px 6px; border-radius: 2px; margin-left: 4px;">NEXT</span></dt>
-            <dd>Federal government institutional profile. Default governance: MEDIUM. Policy notes and formal communications require institutional metadata. Regulatory submissions escalate to HIGH. No downgrade below MEDIUM.</dd>
-          </dl>
+      <h3 class="l-en">4.1 Active Profiles in Production</h3>
+      <h3 class="l-de">4.1 Aktive Profile in Produktion</h3>
+      <h3 class="l-pt">4.1 Perfis Ativos em Producao</h3>
+
+      <div class="def-block">
+        <dl>
+          <dt>Deutsche Bahn AG — Operational (LOW)</dt>
+          <dd class="lb-en">Transport operator. Default governance: LOW. Operational documents flow without metadata constraints. Manual upgrade to HIGH permitted for regulatory submissions.</dd>
+          <dd class="lb-de">Transportbetreiber. Standard-Governance: LOW. Operative Dokumente fliessen ohne Metadatenbeschrankungen. Manuelles Upgrade auf HIGH fur regulatorische Einreichungen erlaubt.</dd>
+          <dd class="lb-pt">Operadora de transporte. Governanca padrao: LOW. Documentos operacionais fluem sem restricoes de metadados. Upgrade manual para HIGH permitido para submissoes regulatorias.</dd>
+
+          <dt>BIS-Style Regulatory Authority — Forensic (HIGH)</dt>
+          <dd class="lb-en">Central banking supervision model. Default governance: HIGH. All documents require complete SDMX-aligned regulatory metadata. No downgrade permitted below HIGH.</dd>
+          <dd class="lb-de">Zentralbank-Aufsichtsmodell. Standard-Governance: HIGH. Alle Dokumente erfordern vollstandige SDMX-ausgerichtete regulatorische Metadaten. Kein Downgrade unter HIGH erlaubt.</dd>
+          <dd class="lb-pt">Modelo de supervisao de banco central. Governanca padrao: HIGH. Todos os documentos requerem metadados regulatorios completos alinhados ao SDMX. Nenhum downgrade permitido abaixo de HIGH.</dd>
+
+          <dt>Bundesregierung — Institutional (MEDIUM)</dt>
+          <dd class="lb-en">Federal government institutional profile. Default governance: MEDIUM. Policy notes and formal communications require institutional metadata. Regulatory submissions escalate to HIGH. No downgrade below MEDIUM.</dd>
+          <dd class="lb-de">Bundesregierung institutionelles Profil. Standard-Governance: MEDIUM. Richtliniennotizen und formelle Kommunikation erfordern institutionelle Metadaten. Regulatorische Einreichungen eskalieren auf HIGH. Kein Downgrade unter MEDIUM.</dd>
+          <dd class="lb-pt">Perfil institucional do governo federal. Governanca padrao: MEDIUM. Notas de politica e comunicacoes formais requerem metadados institucionais. Submissoes regulatorias escalam para HIGH. Nenhum downgrade abaixo de MEDIUM.</dd>
+        </dl>
+      </div>
+
+      <h3 class="l-en">4.2 ISP Governance Configuration</h3>
+      <h3 class="l-de">4.2 ISP Governance-Konfiguration</h3>
+      <h3 class="l-pt">4.2 Configuracao de Governanca ISP</h3>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span>
+          bundesregierung/profile.json
         </div>
-
-        <h3>4.2 &ensp;ISP Governance Configuration</h3>
-
-        <div class="code-block">
-          <div class="code-header">
-            <span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span>
-            &ensp;bundesregierung/profile.json
-          </div>
-          <pre>{
+        <pre>{
   <span class="key">"organization_name"</span>: <span class="str">"Bundesregierung (Model)"</span>,
   <span class="key">"isp_profile"</span>: <span class="str">"bundesregierung"</span>,
   <span class="key">"governance"</span>: {
@@ -1141,47 +452,51 @@
     <span class="key">"regulatory_submission"</span>: <span class="str">"HIGH"</span>
   }
 }</pre>
-        </div>
-
-        <p>
-          The no-downgrade enforcement mechanism ensures that organisations operating at MEDIUM cannot accidentally generate LOW-governance documents, preserving institutional accountability as a floor rather than an option.
-        </p>
       </div>
 
-      <!-- SECTION 5: FIGURE (DASHBOARD) -->
-      <div class="section">
-        <span class="section-number">Section 5</span>
-        <h2>System Dashboard &mdash; Production Environment</h2>
+      <p class="lb-en">The no-downgrade enforcement mechanism ensures that organisations operating at MEDIUM cannot accidentally generate LOW-governance documents, preserving institutional accountability as a floor rather than an option.</p>
+      <p class="lb-de">Der No-Downgrade-Durchsetzungsmechanismus stellt sicher, dass Organisationen, die auf MEDIUM operieren, nicht versehentlich LOW-Governance-Dokumente generieren konnen, wodurch institutionelle Verantwortlichkeit als Mindeststandard und nicht als Option erhalten bleibt.</p>
+      <p class="lb-pt">O mecanismo de aplicacao no-downgrade garante que organizacoes operando em MEDIUM nao possam acidentalmente gerar documentos LOW-governance, preservando responsabilidade institucional como piso em vez de opcao.</p>
+    </section>
 
-        <p>
-          The WINDI Governance Dashboard provides real-time visibility into the governance engine's operational state. The interface exposes document generation controls with level selection, the audit registry with submission chain integrity, and compliance monitoring with invariant validation status.
-        </p>
+    <!-- Section 5: Dashboard -->
+    <section>
+      <h2 class="l-en">Section 5: System Dashboard — Production Environment</h2>
+      <h2 class="l-de">Abschnitt 5: System-Dashboard — Produktionsumgebung</h2>
+      <h2 class="l-pt">Secao 5: Dashboard do Sistema — Ambiente de Producao</h2>
 
-        <div class="figure-block">
-          <div class="figure-image-area" style="background: #0d1117; padding: 16px; border-radius: 4px;">
-            <img src="dashboard-screenshot.png" alt="WINDI Governance Dashboard — Document Generation interface showing the three governance levels (LOW, MEDIUM, HIGH) with level selector, connected to Governance API on Strato DE infrastructure" style="width: 100%; border-radius: 6px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
-          </div>
-          <div class="figure-caption">
-            <strong>Figure 1.</strong> WINDI Governance Dashboard in production (Strato server, 87.106.29.233:8080). The interface displays the three governance levels, active ISP profiles, submission registry with chain integrity verification, and real-time compliance status. Dashboard connected to the live Governance API.
-          </div>
+      <p class="lb-en">The WINDI Governance Dashboard provides real-time visibility into the governance engine's operational state. The interface exposes document generation controls with level selection, the audit registry with submission chain integrity, and compliance monitoring with invariant validation status.</p>
+      <p class="lb-de">Das WINDI Governance Dashboard bietet Echtzeit-Einblick in den Betriebszustand der Governance Engine. Die Schnittstelle zeigt Dokumentengenerierungskontrollen mit Ebenenauswahl, das Audit-Register mit Einreichungsketten-Integritat und Compliance-Uberwachung mit Invariantenvalidierungsstatus.</p>
+      <p class="lb-pt">O Dashboard de Governanca WINDI fornece visibilidade em tempo real do estado operacional do motor de governanca. A interface expoe controles de geracao de documentos com selecao de nivel, o registro de auditoria com integridade da cadeia de submissao e monitoramento de conformidade com status de validacao de invariantes.</p>
+
+      <div class="figure-block">
+        <div class="figure-image-area">
+          <img src="dashboard-screenshot.png" alt="WINDI Governance Dashboard — Document Generation interface showing the three governance levels (LOW, MEDIUM, HIGH) with level selector, connected to Governance API on Strato DE infrastructure">
+        </div>
+        <div class="figure-caption">
+          <strong>Figure 1.</strong> <span class="l-en">WINDI Governance Dashboard in production (Strato server, 87.106.29.233:8080). The interface displays the three governance levels, active ISP profiles, submission registry with chain integrity verification, and real-time compliance status.</span>
+          <span class="l-de">WINDI Governance Dashboard in Produktion (Strato Server, 87.106.29.233:8080). Die Schnittstelle zeigt die drei Governance-Ebenen, aktive ISP-Profile, Einreichungsregister mit Kettenintegritatsverifizierung und Echtzeit-Compliance-Status.</span>
+          <span class="l-pt">Dashboard de Governanca WINDI em producao (servidor Strato, 87.106.29.233:8080). A interface exibe os tres niveis de governanca, perfis ISP ativos, registro de submissao com verificacao de integridade da cadeia e status de conformidade em tempo real.</span>
         </div>
       </div>
+    </section>
 
-      <!-- SECTION 6: FIRST SUBMISSION -->
-      <div class="section">
-        <span class="section-number">Section 6</span>
-        <h2>Validation: First Regulatory Submission</h2>
+    <!-- Section 6: First Submission -->
+    <section>
+      <h2 class="l-en">Section 6: Validation — First Regulatory Submission</h2>
+      <h2 class="l-de">Abschnitt 6: Validierung — Erste Regulatorische Einreichung</h2>
+      <h2 class="l-pt">Secao 6: Validacao — Primeira Submissao Regulatoria</h2>
 
-        <p>
-          On 01 February 2026, the WINDI Governance Engine produced its first sealed regulatory submission, validating the complete HIGH-level governance chain in a production environment. The submission demonstrates end-to-end functionality: metadata validation, submission identifier generation, configuration binding, integrity hashing, tamper evidence sealing, and forensic registry entry.
-        </p>
+      <p class="lb-en">On 01 February 2026, the WINDI Governance Engine produced its first sealed regulatory submission, validating the complete HIGH-level governance chain in a production environment. The submission demonstrates end-to-end functionality: metadata validation, submission identifier generation, configuration binding, integrity hashing, tamper evidence sealing, and forensic registry entry.</p>
+      <p class="lb-de">Am 01. Februar 2026 produzierte die WINDI Governance Engine ihre erste versiegelte regulatorische Einreichung und validierte die vollstandige HIGH-Level Governance-Kette in einer Produktionsumgebung. Die Einreichung demonstriert End-to-End-Funktionalitat: Metadatenvalidierung, Einreichungs-ID-Generierung, Konfigurationsbindung, Integritäts-Hashing, Manipulationsnachweisversiegelung und forensischer Registry-Eintrag.</p>
+      <p class="lb-pt">Em 01 de fevereiro de 2026, o Motor de Governanca WINDI produziu sua primeira submissao regulatoria selada, validando a cadeia completa de governanca HIGH-level em ambiente de producao. A submissao demonstra funcionalidade de ponta a ponta: validacao de metadados, geracao de identificador de submissao, vinculacao de configuracao, hashing de integridade, selagem de evidencia de adulteracao e entrada de registro forense.</p>
 
-        <div class="code-block">
-          <div class="code-header">
-            <span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span>
-            &ensp;First Submission &mdash; REG-20260201-0001
-          </div>
-          <pre><span class="comment">// Submission Package</span>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span>
+          First Submission — REG-20260201-0001
+        </div>
+        <pre><span class="comment">// Submission Package</span>
 <span class="key">submission_id</span>:   <span class="str">REG-20260201-0001</span>
 <span class="key">level</span>:           <span class="str">HIGH (Forensic Regulatory)</span>
 <span class="key">profile</span>:         <span class="str">BIS-Style (Model)</span>
@@ -1192,100 +507,129 @@
 <span class="key">sealed_at</span>:       <span class="str">2026-02-01T08:58:11Z</span>
 <span class="key">entity</span>:          <span class="str">European Central Bank (Model)</span>
 <span class="key">infrastructure</span>:  <span class="str">German (Strato), GDPR-compliant</span></pre>
-        </div>
-
-        <p>
-          This submission represents the proof that the WINDI governance model operates beyond theoretical architecture. The system enforces metadata completeness, generates cryptographic integrity evidence, and maintains a forensic registry&thinsp;&mdash;&thinsp;all on production infrastructure subject to European data protection regulations.
-        </p>
       </div>
 
-      <!-- SECTION 7: ACADEMIC SIGNIFICANCE -->
-      <div class="section">
-        <span class="section-number">Section 7</span>
-        <h2>Academic Significance and Contribution</h2>
+      <p class="lb-en">This submission represents the proof that the WINDI governance model operates beyond theoretical architecture. The system enforces metadata completeness, generates cryptographic integrity evidence, and maintains a forensic registry—all on production infrastructure subject to European data protection regulations.</p>
+      <p class="lb-de">Diese Einreichung reprasentiert den Beweis, dass das WINDI Governance-Modell uber theoretische Architektur hinaus operiert. Das System erzwingt Metadatenvollstandigkeit, generiert kryptografische Integritatsnachweise und pflegt ein forensisches Register—alles auf Produktionsinfrastruktur, die europaischen Datenschutzvorschriften unterliegt.</p>
+      <p class="lb-pt">Esta submissao representa a prova de que o modelo de governanca WINDI opera alem da arquitetura teorica. O sistema aplica completude de metadados, gera evidencia de integridade criptografica e mantem um registro forense—tudo em infraestrutura de producao sujeita a regulamentacoes europeias de protecao de dados.</p>
+    </section>
 
-        <p>
-          The three-level governance model presented in this report addresses a gap in the current literature on AI-assisted document generation. While existing frameworks focus on either full compliance enforcement or no governance at all, the WINDI approach demonstrates that proportional governance is both technically feasible and architecturally sound.
-        </p>
-        <p>
-          The model's core contributions are threefold. First, it establishes that document governance can be graduated rather than binary, with enforcement depth scaling to institutional risk. Second, it proves that regulatory-grade traceability&thinsp;&mdash;&thinsp;including cryptographic integrity chains and forensic registries&thinsp;&mdash;&thinsp;can be implemented as a system layer rather than an afterthought. Third, the ISP mechanism demonstrates that per-organisation governance configuration is viable in production, enabling a single platform to serve operational, institutional, and regulatory environments simultaneously.
-        </p>
-        <p>
-          These contributions align with the EU AI Act's emphasis on risk-based regulation and support the broader thesis of the WINDI project: that a pre-AI governance layer can guarantee proportional institutional compliance while preserving human decision-making authority.
-        </p>
+    <!-- Section 7: Academic Significance -->
+    <section>
+      <h2 class="l-en">Section 7: Academic Significance and Contribution</h2>
+      <h2 class="l-de">Abschnitt 7: Akademische Bedeutung und Beitrag</h2>
+      <h2 class="l-pt">Secao 7: Significancia Academica e Contribuicao</h2>
 
-        <div class="level-principle" style="margin-top: 20px; padding: 14px 18px; background: #f8f7f2; border-left: 3px solid var(--accent-blue); border-radius: 0 3px 3px 0; font-size: 16px;">
-          AI processes. Human decides. WINDI guarantees proportionally.
-        </div>
+      <p class="lb-en">The three-level governance model presented in this report addresses a gap in the current literature on AI-assisted document generation. While existing frameworks focus on either full compliance enforcement or no governance at all, the WINDI approach demonstrates that proportional governance is both technically feasible and architecturally sound.</p>
+      <p class="lb-de">Das in diesem Bericht prasentierte Drei-Stufen-Governance-Modell adressiert eine Lucke in der aktuellen Literatur zur KI-unterstutzten Dokumentengenerierung. Wahrend bestehende Frameworks sich entweder auf vollstandige Compliance-Durchsetzung oder gar keine Governance konzentrieren, demonstriert der WINDI-Ansatz, dass proportionale Governance sowohl technisch machbar als auch architektonisch solide ist.</p>
+      <p class="lb-pt">O modelo de governanca de tres niveis apresentado neste relatorio aborda uma lacuna na literatura atual sobre geracao de documentos assistida por IA. Enquanto frameworks existentes focam em aplicacao de conformidade completa ou nenhuma governanca, a abordagem WINDI demonstra que governanca proporcional e tanto tecnicamente viavel quanto arquitetonicamente solida.</p>
+
+      <p class="lb-en">The model's core contributions are threefold:</p>
+      <p class="lb-de">Die Kernbeitrage des Modells sind dreifach:</p>
+      <p class="lb-pt">As contribuicoes centrais do modelo sao tres:</p>
+
+      <ol>
+        <li>
+          <span class="l-en"><strong>Graduated governance:</strong> It establishes that document governance can be graduated rather than binary, with enforcement depth scaling to institutional risk.</span>
+          <span class="l-de"><strong>Abgestufte Governance:</strong> Es etabliert, dass Dokumenten-Governance abgestuft statt binar sein kann, wobei die Durchsetzungstiefe mit dem institutionellen Risiko skaliert.</span>
+          <span class="l-pt"><strong>Governanca graduada:</strong> Estabelece que governanca de documentos pode ser graduada em vez de binaria, com profundidade de aplicacao escalando com o risco institucional.</span>
+        </li>
+
+        <li>
+          <span class="l-en"><strong>Regulatory-grade traceability:</strong> It proves that regulatory-grade traceability—including cryptographic integrity chains and forensic registries—can be implemented as a system layer rather than an afterthought.</span>
+          <span class="l-de"><strong>Regulatorische Ruckverfolgbarkeit:</strong> Es beweist, dass regulatorische Ruckverfolgbarkeit—einschliesslich kryptografischer Integritatsketten und forensischer Register—als Systemschicht implementiert werden kann, statt als nachtraglicher Gedanke.</span>
+          <span class="l-pt"><strong>Rastreabilidade de grau regulatorio:</strong> Prova que rastreabilidade de grau regulatorio—incluindo cadeias de integridade criptografica e registros forenses—pode ser implementada como camada de sistema em vez de pensamento posterior.</span>
+        </li>
+
+        <li>
+          <span class="l-en"><strong>Per-organisation configuration:</strong> The ISP mechanism demonstrates that per-organisation governance configuration is viable in production, enabling a single platform to serve operational, institutional, and regulatory environments simultaneously.</span>
+          <span class="l-de"><strong>Organisations-spezifische Konfiguration:</strong> Der ISP-Mechanismus demonstriert, dass organisations-spezifische Governance-Konfiguration in Produktion praktikabel ist und einer einzelnen Plattform ermoglicht, operative, institutionelle und regulatorische Umgebungen gleichzeitig zu bedienen.</span>
+          <span class="l-pt"><strong>Configuracao por organizacao:</strong> O mecanismo ISP demonstra que configuracao de governanca por organizacao e viavel em producao, permitindo que uma unica plataforma sirva ambientes operacionais, institucionais e regulatorios simultaneamente.</span>
+        </li>
+      </ol>
+
+      <p class="lb-en">These contributions align with the EU AI Act's emphasis on risk-based regulation and support the broader thesis of the WINDI project: that a pre-AI governance layer can guarantee proportional institutional compliance while preserving human decision-making authority.</p>
+      <p class="lb-de">Diese Beitrage entsprechen dem Schwerpunkt des EU AI Act auf risikobasierter Regulierung und unterstutzen die breitere These des WINDI-Projekts: dass eine Pre-AI-Governance-Schicht proportionale institutionelle Compliance garantieren kann, wahrend die menschliche Entscheidungsbefugnis erhalten bleibt.</p>
+      <p class="lb-pt">Estas contribuicoes alinham-se com a enfase do EU AI Act em regulacao baseada em risco e apoiam a tese mais ampla do projeto WINDI: que uma camada de governanca pre-IA pode garantir conformidade institucional proporcional enquanto preserva a autoridade de decisao humana.</p>
+
+      <blockquote>
+        <p class="lb-en">AI processes. Human decides. WINDI guarantees proportionally.</p>
+        <p class="lb-de">KI verarbeitet. Mensch entscheidet. WINDI garantiert proportional.</p>
+        <p class="lb-pt">IA processa. Humano decide. WINDI garante proporcionalmente.</p>
+      </blockquote>
+    </section>
+
+    <!-- Section 8: Architecture -->
+    <section>
+      <h2 class="l-en">Section 8: System Architecture Overview</h2>
+      <h2 class="l-de">Abschnitt 8: Systemarchitektur-Uberblick</h2>
+      <h2 class="l-pt">Secao 8: Visao Geral da Arquitetura do Sistema</h2>
+
+      <div class="arch-diagram">
+        <pre>
+ +-----------------------------------------------------+
+ |                  A4 DESK BABEL UI                    |
+ |               (Port 8085 | TipTap)                   |
+ |   +----------+  +----------+  +------------------+  |
+ |   |  Editor   |  |  Chat    |  |  Level Selector  |  |
+ |   |  DE/EN/PT |  |  Triling |  |  LOW MED HIGH    |  |
+ |   +----------+  +----------+  +------------------+  |
+ +----------------------+------------------------------+
+                        |
+                        v
+ +-----------------------------------------------------+
+ |              WINDI GOVERNANCE API                    |
+ |                 (Port 8080)                          |
+ |                                                      |
+ |  +------------+ +-----------+ +------------------+  |
+ |  | ISP Loader | | Validator | |  Submission ID    |  |
+ |  |            | |           | |  Generator        |  |
+ |  +-----+------+ +-----+-----+ +--------+---------+  |
+ |        |              |                 |            |
+ |  +-----v--------------v-----------------v---------+  |
+ |  |            Governance Engine Core               |  |
+ |  |  +---------+  +----------+  +--------------+   |  |
+ |  |  | Tamper   |  | Registry |  |  Dashboard   |   |  |
+ |  |  | Evidence |  |          |  |  + Audit     |   |  |
+ |  |  +---------+  +----------+  +--------------+   |  |
+ |  +------------------------------------------------+  |
+ +----------------------+------------------------------+
+                        |
+                        v
+ +-----------------------------------------------------+
+ |                ISP PROFILES                          |
+ |  +--------------+ +------------+ +--------------+   |
+ |  | Deutsche Bahn| | BIS-Style  | |Bundesregierung|  |
+ |  |   [G] LOW    | |  [R] HIGH  | |  [Y] MEDIUM  |  |
+ |  +--------------+ +------------+ +--------------+   |
+ +-----------------------------------------------------+</pre>
       </div>
 
-      <!-- SECTION 8: ARCHITECTURE -->
-      <div class="section">
-        <span class="section-number">Section 8</span>
-        <h2>System Architecture Overview</h2>
-
-        <div class="arch-diagram">
-          <pre>
- ┌─────────────────────────────────────────────────────┐
- │                  A4 DESK BABEL UI                    │
- │               (Port 8085 · TipTap)                   │
- │   ┌──────────┐  ┌──────────┐  ┌──────────────────┐  │
- │   │  Editor   │  │  Chat    │  │  Level Selector  │  │
- │   │  DE/EN/PT │  │  Trilíng │  │  LOW MED HIGH    │  │
- │   └──────────┘  └──────────┘  └──────────────────┘  │
- └──────────────────────┬──────────────────────────────┘
-                        │
-                        ▼
- ┌─────────────────────────────────────────────────────┐
- │              WINDI GOVERNANCE API                    │
- │                 (Port 8080)                           │
- │                                                      │
- │  ┌────────────┐ ┌───────────┐ ┌──────────────────┐  │
- │  │ ISP Loader │ │ Validator │ │  Submission ID    │  │
- │  │            │ │           │ │  Generator        │  │
- │  └─────┬──────┘ └─────┬─────┘ └────────┬─────────┘  │
- │        │              │                 │            │
- │  ┌─────▼──────────────▼─────────────────▼─────────┐  │
- │  │            Governance Engine Core               │  │
- │  │  ┌─────────┐  ┌──────────┐  ┌──────────────┐   │  │
- │  │  │ Tamper   │  │ Registry │  │  Dashboard   │   │  │
- │  │  │ Evidence │  │          │  │  + Audit     │   │  │
- │  │  └─────────┘  └──────────┘  └──────────────┘   │  │
- │  └─────────────────────────────────────────────────┘  │
- └──────────────────────┬──────────────────────────────┘
-                        │
-                        ▼
- ┌─────────────────────────────────────────────────────┐
- │                ISP PROFILES                          │
- │  ┌──────────────┐ ┌────────────┐ ┌──────────────┐   │
- │  │ Deutsche Bahn│ │ BIS-Style  │ │Bundesregierung│  │
- │  │   🟢 LOW     │ │  🔴 HIGH   │ │  🟠 MEDIUM   │  │
- │  └──────────────┘ └────────────┘ └──────────────┘   │
- └─────────────────────────────────────────────────────┘</pre>
-        </div>
-
-        <div class="figure-caption" style="border: 1px solid var(--border-light); border-top: 1px solid var(--border-light); border-radius: 0 0 4px 4px; margin-top: -1px;">
-          <strong>Figure 2.</strong> WINDI System Architecture showing the three-layer model: User Interface (A4 Desk BABEL), Governance API with engine modules, and configurable ISP Profiles per organisation. The governance decision flow passes through ISP loading, metadata validation, and conditional forensic sealing based on the effective governance level.
-        </div>
+      <div class="figure-caption">
+        <strong>Figure 2.</strong> <span class="l-en">WINDI System Architecture showing the three-layer model: User Interface (A4 Desk BABEL), Governance API with engine modules, and configurable ISP Profiles per organisation. The governance decision flow passes through ISP loading, metadata validation, and conditional forensic sealing based on the effective governance level.</span>
+        <span class="l-de">WINDI Systemarchitektur zeigt das Drei-Schichten-Modell: Benutzeroberflache (A4 Desk BABEL), Governance API mit Engine-Modulen und konfigurierbare ISP-Profile pro Organisation. Der Governance-Entscheidungsfluss durchlauft ISP-Laden, Metadatenvalidierung und bedingte forensische Versiegelung basierend auf der effektiven Governance-Ebene.</span>
+        <span class="l-pt">Arquitetura do Sistema WINDI mostrando o modelo de tres camadas: Interface de Usuario (A4 Desk BABEL), API de Governanca com modulos de motor e Perfis ISP configuraveis por organizacao. O fluxo de decisao de governanca passa por carregamento ISP, validacao de metadados e selagem forense condicional baseada no nivel de governanca efetivo.</span>
       </div>
+    </section>
 
-      <!-- SECTION 9: TESTS -->
-      <div class="section">
-        <span class="section-number">Section 9</span>
-        <h2>Integration Testing &mdash; Dragon Council Validation</h2>
+    <!-- Section 9: Integration Testing -->
+    <section>
+      <h2 class="l-en">Section 9: Integration Testing — Dragon Council Validation</h2>
+      <h2 class="l-de">Abschnitt 9: Integrationstests — Dragon Council Validierung</h2>
+      <h2 class="l-pt">Secao 9: Testes de Integracao — Validacao Dragon Council</h2>
 
-        <p>
-          The governance engine was validated through the Dragon Council integration test suite, which exercises all critical governance paths. All eight tests pass in the production environment, confirming operational readiness across all governance levels.
-        </p>
+      <p class="lb-en">The governance engine was validated through the Dragon Council integration test suite, which exercises all critical governance paths. All eight tests pass in the production environment, confirming operational readiness across all governance levels.</p>
+      <p class="lb-de">Die Governance Engine wurde durch die Dragon Council Integrationstestsuite validiert, die alle kritischen Governance-Pfade durchlauft. Alle acht Tests bestehen in der Produktionsumgebung und bestatigen die Betriebsbereitschaft uber alle Governance-Ebenen hinweg.</p>
+      <p class="lb-pt">O motor de governanca foi validado atraves da suite de testes de integracao Dragon Council, que exercita todos os caminhos criticos de governanca. Todos os oito testes passam no ambiente de producao, confirmando prontidao operacional em todos os niveis de governanca.</p>
 
-        <div class="code-block">
-          <div class="code-header">
-            <span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span>
-            &ensp;test_dragon_council.py &mdash; Results
-          </div>
-          <pre><span class="comment">══════════════════════════════════════════════════</span>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span>
+          test_dragon_council.py — Results
+        </div>
+        <pre><span class="comment">==================================================</span>
 <span class="comment">WINDI Dragon Council Integration Test</span>
-<span class="comment">══════════════════════════════════════════════════</span>
+<span class="comment">==================================================</span>
   <span class="str">PASS</span>  1. Deutsche Bahn LOW passes without metadata
   <span class="str">PASS</span>  2. BIS-Style HIGH blocked without metadata
   <span class="str">PASS</span>  3. BIS-Style HIGH approved with full metadata
@@ -1294,150 +638,149 @@
   <span class="str">PASS</span>  6. Registry: register + query + stats
   <span class="str">PASS</span>  7. Audit dashboard: overview + integrity + entity
   <span class="str">PASS</span>  8. Rejects invalid allowed values
-<span class="comment">══════════════════════════════════════════════════</span>
+<span class="comment">==================================================</span>
 Results: <span class="num">8</span>/<span class="num">8</span> passed, <span class="num">0</span> failed
 
 <span class="str">Dragon Council merge: VALIDATED</span>
 <span class="key">AI processes. Human decides. WINDI guarantees.</span></pre>
-        </div>
       </div>
+    </section>
 
-    </div>
+    <!-- Section 10: Identity Governance Layer -->
+    <section>
+      <h2 class="l-en">Section 10: Institutional Identity Governance Layer</h2>
+      <h2 class="l-de">Abschnitt 10: Institutionelle Identitats-Governance-Schicht</h2>
+      <h2 class="l-pt">Secao 10: Camada de Governanca de Identidade Institucional</h2>
 
-      <!-- SECTION 10: IDENTITY GOVERNANCE LAYER — 01 FEB 2026 -->
-      <div class="section">
-        <span class="section-number">Section 10</span>
-        <h2>Institutional Identity Governance Layer</h2>
+      <p class="lb-en"><em>Milestone: 01 February 2026 — Dragon Council Decision (Guardian + Architect)</em></p>
+      <p class="lb-de"><em>Meilenstein: 01. Februar 2026 — Dragon Council Entscheidung (Guardian + Architect)</em></p>
+      <p class="lb-pt"><em>Marco: 01 de Fevereiro de 2026 — Decisao Dragon Council (Guardian + Architect)</em></p>
 
-        <p>
-          <em>Milestone: 01 February 2026 &mdash; Dragon Council Decision (Guardian + Architect)</em>
-        </p>
+      <p class="lb-en">During the deployment of the MEDIUM governance level, a critical architectural discovery emerged from a real-world test case: the generation of a formal letter styled after Banco do Brasil S.A. The system correctly produced institutional language, formal structure, and even referenced the institution's values (Integridade, Sustentabilidade, Performance) — but this raised a fundamental governance question: <strong>when does institutional language simulation require governance controls?</strong></p>
+      <p class="lb-de">Wahrend der Bereitstellung der MEDIUM-Governance-Ebene entstand eine kritische architektonische Entdeckung aus einem realen Testfall: die Generierung eines formellen Briefes im Stil der Banco do Brasil S.A. Das System produzierte korrekt institutionelle Sprache, formelle Struktur und verwies sogar auf die Werte der Institution — aber dies warf eine fundamentale Governance-Frage auf: <strong>Wann erfordert die Simulation institutioneller Sprache Governance-Kontrollen?</strong></p>
+      <p class="lb-pt">Durante a implantacao do nivel de governanca MEDIUM, uma descoberta arquitetonica critica emergiu de um caso de teste real: a geracao de uma carta formal estilizada apos o Banco do Brasil S.A. O sistema produziu corretamente linguagem institucional, estrutura formal e ate referenciou os valores da instituicao (Integridade, Sustentabilidade, Performance) — mas isso levantou uma questao fundamental de governanca: <strong>quando a simulacao de linguagem institucional requer controles de governanca?</strong></p>
 
-        <p>
-          During the deployment of the MEDIUM governance level, a critical architectural discovery emerged from a real-world test case: the generation of a formal letter styled after Banco do Brasil S.A. The system correctly produced institutional language, formal structure, and even referenced the institution&rsquo;s values (Integridade, Sustentabilidade, Performance) &mdash; but this raised a fundamental governance question: <strong>when does institutional language simulation require governance controls?</strong>
-        </p>
+      <p class="lb-en">The answer became the Identity Governance Layer — a licensing mechanism integrated directly into ISP Profiles that controls whether an institution's identity (logo, letterhead, tone, values, official address) may be used in generated documents. This transforms MEDIUM from a simple metadata layer into an <strong>institutional identity governance platform</strong>.</p>
+      <p class="lb-de">Die Antwort wurde die Identity Governance Layer — ein Lizenzierungsmechanismus, der direkt in ISP-Profile integriert ist und kontrolliert, ob die Identitat einer Institution (Logo, Briefkopf, Ton, Werte, offizielle Adresse) in generierten Dokumenten verwendet werden darf. Dies transformiert MEDIUM von einer einfachen Metadatenschicht in eine <strong>institutionelle Identitats-Governance-Plattform</strong>.</p>
+      <p class="lb-pt">A resposta se tornou a Camada de Governanca de Identidade — um mecanismo de licenciamento integrado diretamente nos Perfis ISP que controla se a identidade de uma instituicao (logo, papel timbrado, tom, valores, endereco oficial) pode ser usada em documentos gerados. Isso transforma MEDIUM de uma simples camada de metadados em uma <strong>plataforma de governanca de identidade institucional</strong>.</p>
 
-        <p>
-          The answer became the Identity Governance Layer &mdash; a licensing mechanism integrated directly into ISP Profiles that controls whether an institution&rsquo;s identity (logo, letterhead, tone, values, official address) may be used in generated documents. This transforms MEDIUM from a simple metadata layer into an <strong>institutional identity governance platform</strong>.
-        </p>
+      <h3 class="l-en">10.1 The Identity License Schema</h3>
+      <h3 class="l-de">10.1 Das Identity-License-Schema</h3>
+      <h3 class="l-pt">10.1 O Schema de Licenca de Identidade</h3>
 
-        <h3>10.1 &ensp;The Identity License Schema</h3>
+      <p class="lb-en">Each ISP Profile now contains an <code>identity_license</code> block that declares the authorisation status for institutional identity usage. The system recognises five statuses, each triggering different governance behaviours automatically:</p>
+      <p class="lb-de">Jedes ISP-Profil enthalt nun einen <code>identity_license</code>-Block, der den Autorisierungsstatus fur die Nutzung der institutionellen Identitat deklariert. Das System erkennt funf Status, die jeweils unterschiedliche Governance-Verhaltensweisen automatisch auslosen:</p>
+      <p class="lb-pt">Cada Perfil ISP agora contem um bloco <code>identity_license</code> que declara o status de autorizacao para uso de identidade institucional. O sistema reconhece cinco status, cada um acionando diferentes comportamentos de governanca automaticamente:</p>
 
-        <p>
-          Each ISP Profile now contains an <code>identity_license</code> block that declares the authorisation status for institutional identity usage. The system recognises five statuses, each triggering different governance behaviours automatically:
-        </p>
-
-        <div class="code-block">
-          <div class="code-header">
-            <span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span>
-            &ensp;ISP Profile &mdash; identity_license schema
-          </div>
-          <pre><span class="key">"identity_license"</span>: {
+      <div class="code-block">
+        <div class="code-header">
+          <span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span>
+          ISP Profile — identity_license schema
+        </div>
+        <pre><span class="key">"identity_license"</span>: {
   <span class="key">"status"</span>: <span class="str">"model_only"</span> | <span class="str">"authorized"</span> | <span class="str">"pending"</span> | <span class="str">"expired"</span> | <span class="str">"revoked"</span>,
-  <span class="key">"authorized_by"</span>: <span class="str">"Diretoria de Comunica&ccedil;&atilde;o Corporativa"</span>,
+  <span class="key">"authorized_by"</span>: <span class="str">"Diretoria de Comunicacao Corporativa"</span>,
   <span class="key">"authorization_ref"</span>: <span class="str">"CONTRATO-BB-WINDI-2026-001"</span>,
   <span class="key">"authorization_hash"</span>: <span class="str">"sha256 of authorization document"</span>,
   <span class="key">"valid_from"</span>: <span class="str">"2026-03-01"</span>,
   <span class="key">"valid_until"</span>: <span class="str">"2027-02-28"</span>,
   <span class="key">"scope"</span>: {
-    <span class="key">"logo"</span>: <span class="num">true</span> | <span class="num">false</span>,
-    <span class="key">"letterhead"</span>: <span class="num">true</span> | <span class="num">false</span>,
-    <span class="key">"institutional_tone"</span>: <span class="num">true</span>,
-    <span class="key">"values_reference"</span>: <span class="num">true</span>,
-    <span class="key">"official_address"</span>: <span class="num">true</span> | <span class="num">false</span>
+    <span class="key">"logo"</span>: true | false,
+    <span class="key">"letterhead"</span>: true | false,
+    <span class="key">"institutional_tone"</span>: true,
+    <span class="key">"values_reference"</span>: true,
+    <span class="key">"official_address"</span>: true | false
   },
   <span class="key">"restrictions"</span>: [<span class="str">"Model/simulation use only"</span>]
 }</pre>
+      </div>
+
+      <h3 class="l-en">10.2 Behaviour Matrix</h3>
+      <h3 class="l-de">10.2 Verhaltensmatrix</h3>
+      <h3 class="l-pt">10.2 Matriz de Comportamento</h3>
+
+      <p class="lb-en">The governance engine evaluates the identity license at generation time, including automatic expiration checking for authorized licenses. The following matrix defines system behaviour for each license status:</p>
+      <p class="lb-de">Die Governance-Engine bewertet die Identitatslizenz zum Generierungszeitpunkt, einschliesslich automatischer Ablaufprufung fur autorisierte Lizenzen. Die folgende Matrix definiert das Systemverhalten fur jeden Lizenzstatus:</p>
+      <p class="lb-pt">O motor de governanca avalia a licenca de identidade no momento da geracao, incluindo verificacao automatica de expiracao para licencas autorizadas. A matriz a seguir define o comportamento do sistema para cada status de licenca:</p>
+
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>License Status</th>
+            <th>Logo</th>
+            <th>Institutional Tone</th>
+            <th>Disclaimer</th>
+            <th>Audit Category</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="feat-name">model_only</td>
+            <td><span class="cross">x</span></td>
+            <td><span class="check">Y</span></td>
+            <td><span class="check">Y</span> Required</td>
+            <td><code>model_simulation</code></td>
+          </tr>
+          <tr>
+            <td class="feat-name">pending</td>
+            <td><span class="cross">x</span></td>
+            <td><span class="check">Y</span></td>
+            <td><span class="check">Y</span> Required</td>
+            <td><code>pending_license</code></td>
+          </tr>
+          <tr>
+            <td class="feat-name">authorized</td>
+            <td><span class="check">Y</span> per scope</td>
+            <td><span class="check">Y</span></td>
+            <td><span class="cross">—</span> Optional</td>
+            <td><code>licensed_usage</code></td>
+          </tr>
+          <tr>
+            <td class="feat-name">expired</td>
+            <td><span class="cross">x</span></td>
+            <td><span class="check">Y</span></td>
+            <td><span class="check">Y</span> Required</td>
+            <td><code>license_expired</code></td>
+          </tr>
+          <tr>
+            <td class="feat-name">revoked</td>
+            <td><span class="cross">x</span></td>
+            <td><span class="cross">x</span> Restricted</td>
+            <td><span class="check">Y</span> Required</td>
+            <td><code>license_revoked</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3 class="l-en">10.3 Automatic Disclaimer (Trilingual)</h3>
+      <h3 class="l-de">10.3 Automatischer Disclaimer (Trilingual)</h3>
+      <h3 class="l-pt">10.3 Disclaimer Automatico (Trilingue)</h3>
+
+      <p class="lb-en">When a document is generated under <code>model_only</code>, <code>pending</code>, <code>expired</code>, or <code>revoked</code> status, the system automatically includes a disclaimer in the governance response:</p>
+      <p class="lb-de">Wenn ein Dokument unter <code>model_only</code>, <code>pending</code>, <code>expired</code> oder <code>revoked</code> Status generiert wird, fugt das System automatisch einen Disclaimer in die Governance-Antwort ein:</p>
+      <p class="lb-pt">Quando um documento e gerado sob status <code>model_only</code>, <code>pending</code>, <code>expired</code> ou <code>revoked</code>, o sistema automaticamente inclui um disclaimer na resposta de governanca:</p>
+
+      <div class="level-card level-medium">
+        <div class="level-badge"><span class="dot"></span> DISCLAIMER — INSTITUTIONAL IDENTITY</div>
+        <p><strong>DE:</strong> Dieses Dokument verwendet institutionelle Sprache zu Modell- oder Simulationszwecken. Es handelt sich nicht um ein offizielles Dokument der genannten Institution.</p>
+        <p><strong>EN:</strong> This document uses institutional language for model or simulation purposes. It is not an official document issued by the mentioned institution.</p>
+        <p><strong>PT:</strong> Este documento utiliza linguagem institucional para fins de modelo ou simulacao. Nao se trata de documento oficial emitido pela instituicao mencionada.</p>
+      </div>
+
+      <h3 class="l-en">10.4 Live Production Response</h3>
+      <h3 class="l-de">10.4 Live-Produktionsantwort</h3>
+      <h3 class="l-pt">10.4 Resposta de Producao Ao Vivo</h3>
+
+      <p class="lb-en">The following is the actual API response from the production Governance Engine on 01 February 2026, showing the <code>identity_governance</code> block integrated into a MEDIUM-level generation for the Bundesregierung ISP profile:</p>
+      <p class="lb-de">Das Folgende ist die tatsachliche API-Antwort der Produktions-Governance-Engine vom 01. Februar 2026, die den <code>identity_governance</code>-Block zeigt, der in eine MEDIUM-Level-Generierung fur das Bundesregierung ISP-Profil integriert ist:</p>
+      <p class="lb-pt">O seguinte e a resposta real da API do Motor de Governanca de producao em 01 de Fevereiro de 2026, mostrando o bloco <code>identity_governance</code> integrado em uma geracao nivel MEDIUM para o perfil ISP Bundesregierung:</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span>
+          POST /api/generate — MEDIUM + Identity Governance
         </div>
-
-        <h3>10.2 &ensp;Behaviour Matrix</h3>
-
-        <p>
-          The governance engine evaluates the identity license at generation time, including automatic expiration checking for authorized licenses. The following matrix defines system behaviour for each license status:
-        </p>
-
-        <div class="comparison-table-wrap">
-          <table class="comparison-table">
-            <thead>
-              <tr>
-                <th>License Status</th>
-                <th>Logo</th>
-                <th>Institutional Tone</th>
-                <th>Disclaimer</th>
-                <th>Audit Category</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>model_only</strong></td>
-                <td style="color:#c0392b">&times;</td>
-                <td style="color:#27ae60">&check;</td>
-                <td style="color:#27ae60">&check; Required</td>
-                <td><code>model_simulation</code></td>
-              </tr>
-              <tr>
-                <td><strong>pending</strong></td>
-                <td style="color:#c0392b">&times;</td>
-                <td style="color:#27ae60">&check;</td>
-                <td style="color:#27ae60">&check; Required</td>
-                <td><code>pending_license</code></td>
-              </tr>
-              <tr>
-                <td><strong>authorized</strong></td>
-                <td style="color:#27ae60">&check; per scope</td>
-                <td style="color:#27ae60">&check;</td>
-                <td style="color:#718096">&mdash; Optional</td>
-                <td><code>licensed_usage</code></td>
-              </tr>
-              <tr>
-                <td><strong>expired</strong></td>
-                <td style="color:#c0392b">&times;</td>
-                <td style="color:#27ae60">&check;</td>
-                <td style="color:#27ae60">&check; Required</td>
-                <td><code>license_expired</code></td>
-              </tr>
-              <tr>
-                <td><strong>revoked</strong></td>
-                <td style="color:#c0392b">&times;</td>
-                <td style="color:#c0392b">&times; Restricted</td>
-                <td style="color:#27ae60">&check; Required</td>
-                <td><code>license_revoked</code></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <h3>10.3 &ensp;Automatic Disclaimer (Trilingual)</h3>
-
-        <p>
-          When a document is generated under <code>model_only</code>, <code>pending</code>, <code>expired</code>, or <code>revoked</code> status, the system automatically includes a disclaimer in the governance response:
-        </p>
-
-        <div class="level-card level-medium">
-          <div class="level-badge"><span class="dot"></span> DISCLAIMER &mdash; INSTITUTIONAL IDENTITY</div>
-          <p>
-            <strong>DE:</strong> Dieses Dokument verwendet institutionelle Sprache zu Modell- oder Simulationszwecken. Es handelt sich nicht um ein offizielles Dokument der genannten Institution.
-          </p>
-          <p>
-            <strong>EN:</strong> This document uses institutional language for model or simulation purposes. It is not an official document issued by the mentioned institution.
-          </p>
-          <p>
-            <strong>PT:</strong> Este documento utiliza linguagem institucional para fins de modelo ou simula&ccedil;&atilde;o. N&atilde;o se trata de documento oficial emitido pela institui&ccedil;&atilde;o mencionada.
-          </p>
-        </div>
-
-        <h3>10.4 &ensp;Live Production Response</h3>
-
-        <p>
-          The following is the actual API response from the production Governance Engine on 01 February 2026, showing the <code>identity_governance</code> block integrated into a MEDIUM-level generation for the Bundesregierung ISP profile:
-        </p>
-
-        <div class="code-block">
-          <div class="code-header">
-            <span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span>
-            &ensp;POST /api/generate &mdash; MEDIUM + Identity Governance
-          </div>
-          <pre>{
+        <pre>{
   <span class="key">"status"</span>: <span class="str">"APPROVED"</span>,
   <span class="key">"governance_level"</span>: <span class="str">"MEDIUM"</span>,
   <span class="key">"governance_name"</span>: <span class="str">"Institutional Standard"</span>,
@@ -1446,8 +789,8 @@ Results: <span class="num">8</span>/<span class="num">8</span> passed, <span cla
   <span class="key">"identity_governance"</span>: {
     <span class="key">"institution"</span>: <span class="str">"Bundesregierung (Model)"</span>,
     <span class="key">"license_status"</span>: <span class="str">"model_only"</span>,
-    <span class="key">"logo_allowed"</span>: <span class="num">false</span>,
-    <span class="key">"disclaimer_required"</span>: <span class="num">true</span>,
+    <span class="key">"logo_allowed"</span>: false,
+    <span class="key">"disclaimer_required"</span>: true,
     <span class="key">"disclaimer_text"</span>: <span class="str">"This document uses institutional language
       for model or simulation purposes..."</span>,
     <span class="key">"audit_category"</span>: <span class="str">"model_simulation"</span>,
@@ -1458,254 +801,169 @@ Results: <span class="num">8</span>/<span class="num">8</span> passed, <span cla
     ]
   }
 }</pre>
-        </div>
-
-        <h3>10.5 &ensp;Architectural Significance</h3>
-
-        <p>
-          The Identity Governance Layer establishes WINDI as the first document generation platform to integrate <strong>institutional identity licensing</strong> directly into its governance engine. This enables three capabilities not found in existing enterprise document management systems:
-        </p>
-
-        <p>
-          <strong>1. Contractual identity control:</strong> Institutions can formally authorise the use of their brand, letterhead, and visual identity within WINDI-governed documents, with automatic expiration and revocation handling.
-        </p>
-        <p>
-          <strong>2. Proportional brand protection:</strong> Documents that reference real institutions are automatically classified and governed &mdash; the system knows the difference between using an institution&rsquo;s language as a model and acting on its behalf.
-        </p>
-        <p>
-          <strong>3. Audit trail for identity usage:</strong> Every document generation that involves institutional identity is recorded with its license status, scope, and restrictions, creating an institutional accountability chain.
-        </p>
-
-        <div class="level-principle">
-          Simulating institutional identity activates institutional governance. The system decides automatically.
-        </div>
-
-        <p>
-          <em>Core rule discovered 01 February 2026:</em> Whenever a document mentions or simulates a real institution, governance level must be MEDIUM or higher. This is enforced by the Identity Governance Layer, not by user choice.
-        </p>
-
       </div>
 
+      <h3 class="l-en">10.5 Architectural Significance</h3>
+      <h3 class="l-de">10.5 Architektonische Bedeutung</h3>
+      <h3 class="l-pt">10.5 Significancia Arquitetonica</h3>
 
+      <p class="lb-en">The Identity Governance Layer establishes WINDI as the first document generation platform to integrate <strong>institutional identity licensing</strong> directly into its governance engine. This enables three capabilities not found in existing enterprise document management systems:</p>
+      <p class="lb-de">Die Identity Governance Layer etabliert WINDI als die erste Dokumentengenerierungsplattform, die <strong>institutionelle Identitatslizenzierung</strong> direkt in ihre Governance-Engine integriert. Dies ermoglicht drei Fahigkeiten, die in bestehenden Enterprise-Dokumentenmanagementsystemen nicht zu finden sind:</p>
+      <p class="lb-pt">A Camada de Governanca de Identidade estabelece o WINDI como a primeira plataforma de geracao de documentos a integrar <strong>licenciamento de identidade institucional</strong> diretamente em seu motor de governanca. Isso habilita tres capacidades nao encontradas em sistemas de gerenciamento de documentos empresariais existentes:</p>
 
-      <!-- SECTION 10: IDENTITY GOVERNANCE LAYER — 01 FEB 2026 -->
-      <div class="section">
-        <span class="section-number">Section 10</span>
-        <h2>Institutional Identity Governance Layer</h2>
+      <ol>
+        <li>
+          <span class="l-en"><strong>Contractual identity control:</strong> Institutions can formally authorise the use of their brand, letterhead, and visual identity within WINDI-governed documents, with automatic expiration and revocation handling.</span>
+          <span class="l-de"><strong>Vertragliche Identitatskontrolle:</strong> Institutionen konnen formell die Nutzung ihrer Marke, ihres Briefkopfs und ihrer visuellen Identitat innerhalb von WINDI-gesteuerten Dokumenten autorisieren, mit automatischer Ablauf- und Widerrufsbehandlung.</span>
+          <span class="l-pt"><strong>Controle de identidade contratual:</strong> Instituicoes podem autorizar formalmente o uso de sua marca, papel timbrado e identidade visual dentro de documentos governados pelo WINDI, com tratamento automatico de expiracao e revogacao.</span>
+        </li>
 
-        <p>
-          <em>Milestone: 01 February 2026 &mdash; Dragon Council Decision (Guardian + Architect)</em>
-        </p>
+        <li>
+          <span class="l-en"><strong>Proportional brand protection:</strong> Documents that reference real institutions are automatically classified and governed — the system knows the difference between using an institution's language as a model and acting on its behalf.</span>
+          <span class="l-de"><strong>Proportionaler Markenschutz:</strong> Dokumente, die auf reale Institutionen verweisen, werden automatisch klassifiziert und gesteuert — das System kennt den Unterschied zwischen der Verwendung der Sprache einer Institution als Modell und dem Handeln in ihrem Namen.</span>
+          <span class="l-pt"><strong>Protecao proporcional de marca:</strong> Documentos que referenciam instituicoes reais sao automaticamente classificados e governados — o sistema conhece a diferenca entre usar a linguagem de uma instituicao como modelo e agir em seu nome.</span>
+        </li>
 
-        <p>
-          During the deployment of the MEDIUM governance level, a critical architectural discovery emerged from a real-world test case: the generation of a formal letter styled after Banco do Brasil S.A. The system correctly produced institutional language, formal structure, and even referenced the institution&rsquo;s values (Integridade, Sustentabilidade, Performance) &mdash; but this raised a fundamental governance question: <strong>when does institutional language simulation require governance controls?</strong>
-        </p>
+        <li>
+          <span class="l-en"><strong>Audit trail for identity usage:</strong> Every document generation that involves institutional identity is recorded with its license status, scope, and restrictions, creating an institutional accountability chain.</span>
+          <span class="l-de"><strong>Audit-Trail fur Identitatsnutzung:</strong> Jede Dokumentengenerierung, die institutionelle Identitat beinhaltet, wird mit ihrem Lizenzstatus, Umfang und Einschrankungen aufgezeichnet und schafft eine institutionelle Verantwortlichkeitskette.</span>
+          <span class="l-pt"><strong>Trilha de auditoria para uso de identidade:</strong> Cada geracao de documento que envolve identidade institucional e registrada com seu status de licenca, escopo e restricoes, criando uma cadeia de responsabilidade institucional.</span>
+        </li>
+      </ol>
 
-        <p>
-          The answer became the Identity Governance Layer &mdash; a licensing mechanism integrated directly into ISP Profiles that controls whether an institution&rsquo;s identity (logo, letterhead, tone, values, official address) may be used in generated documents. This transforms MEDIUM from a simple metadata layer into an <strong>institutional identity governance platform</strong>.
-        </p>
-
-        <h3>10.1 &ensp;The Identity License Schema</h3>
-
-        <p>
-          Each ISP Profile now contains an <code>identity_license</code> block that declares the authorisation status for institutional identity usage. The system recognises five statuses, each triggering different governance behaviours automatically:
-        </p>
-
-        <div class="code-block">
-          <div class="code-header">
-            <span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span>
-            &ensp;ISP Profile &mdash; identity_license schema
-          </div>
-          <pre><span class="key">"identity_license"</span>: {
-  <span class="key">"status"</span>: <span class="str">"model_only"</span> | <span class="str">"authorized"</span> | <span class="str">"pending"</span> | <span class="str">"expired"</span> | <span class="str">"revoked"</span>,
-  <span class="key">"authorized_by"</span>: <span class="str">"Diretoria de Comunica&ccedil;&atilde;o Corporativa"</span>,
-  <span class="key">"authorization_ref"</span>: <span class="str">"CONTRATO-BB-WINDI-2026-001"</span>,
-  <span class="key">"authorization_hash"</span>: <span class="str">"sha256 of authorization document"</span>,
-  <span class="key">"valid_from"</span>: <span class="str">"2026-03-01"</span>,
-  <span class="key">"valid_until"</span>: <span class="str">"2027-02-28"</span>,
-  <span class="key">"scope"</span>: {
-    <span class="key">"logo"</span>: <span class="num">true</span> | <span class="num">false</span>,
-    <span class="key">"letterhead"</span>: <span class="num">true</span> | <span class="num">false</span>,
-    <span class="key">"institutional_tone"</span>: <span class="num">true</span>,
-    <span class="key">"values_reference"</span>: <span class="num">true</span>,
-    <span class="key">"official_address"</span>: <span class="num">true</span> | <span class="num">false</span>
-  },
-  <span class="key">"restrictions"</span>: [<span class="str">"Model/simulation use only"</span>]
-}</pre>
-        </div>
-
-        <h3>10.2 &ensp;Behaviour Matrix</h3>
-
-        <p>
-          The governance engine evaluates the identity license at generation time, including automatic expiration checking for authorized licenses. The following matrix defines system behaviour for each license status:
-        </p>
-
-        <div class="comparison-table-wrap">
-          <table class="comparison-table">
-            <thead>
-              <tr>
-                <th>License Status</th>
-                <th>Logo</th>
-                <th>Institutional Tone</th>
-                <th>Disclaimer</th>
-                <th>Audit Category</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>model_only</strong></td>
-                <td style="color:#c0392b">&times;</td>
-                <td style="color:#27ae60">&check;</td>
-                <td style="color:#27ae60">&check; Required</td>
-                <td><code>model_simulation</code></td>
-              </tr>
-              <tr>
-                <td><strong>pending</strong></td>
-                <td style="color:#c0392b">&times;</td>
-                <td style="color:#27ae60">&check;</td>
-                <td style="color:#27ae60">&check; Required</td>
-                <td><code>pending_license</code></td>
-              </tr>
-              <tr>
-                <td><strong>authorized</strong></td>
-                <td style="color:#27ae60">&check; per scope</td>
-                <td style="color:#27ae60">&check;</td>
-                <td style="color:#718096">&mdash; Optional</td>
-                <td><code>licensed_usage</code></td>
-              </tr>
-              <tr>
-                <td><strong>expired</strong></td>
-                <td style="color:#c0392b">&times;</td>
-                <td style="color:#27ae60">&check;</td>
-                <td style="color:#27ae60">&check; Required</td>
-                <td><code>license_expired</code></td>
-              </tr>
-              <tr>
-                <td><strong>revoked</strong></td>
-                <td style="color:#c0392b">&times;</td>
-                <td style="color:#c0392b">&times; Restricted</td>
-                <td style="color:#27ae60">&check; Required</td>
-                <td><code>license_revoked</code></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <h3>10.3 &ensp;Automatic Disclaimer (Trilingual)</h3>
-
-        <p>
-          When a document is generated under <code>model_only</code>, <code>pending</code>, <code>expired</code>, or <code>revoked</code> status, the system automatically includes a disclaimer in the governance response:
-        </p>
-
-        <div class="level-card level-medium">
-          <div class="level-badge"><span class="dot"></span> DISCLAIMER &mdash; INSTITUTIONAL IDENTITY</div>
-          <p>
-            <strong>DE:</strong> Dieses Dokument verwendet institutionelle Sprache zu Modell- oder Simulationszwecken. Es handelt sich nicht um ein offizielles Dokument der genannten Institution.
-          </p>
-          <p>
-            <strong>EN:</strong> This document uses institutional language for model or simulation purposes. It is not an official document issued by the mentioned institution.
-          </p>
-          <p>
-            <strong>PT:</strong> Este documento utiliza linguagem institucional para fins de modelo ou simula&ccedil;&atilde;o. N&atilde;o se trata de documento oficial emitido pela institui&ccedil;&atilde;o mencionada.
-          </p>
-        </div>
-
-        <h3>10.4 &ensp;Live Production Response</h3>
-
-        <p>
-          The following is the actual API response from the production Governance Engine on 01 February 2026, showing the <code>identity_governance</code> block integrated into a MEDIUM-level generation for the Bundesregierung ISP profile:
-        </p>
-
-        <div class="code-block">
-          <div class="code-header">
-            <span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span>
-            &ensp;POST /api/generate &mdash; MEDIUM + Identity Governance
-          </div>
-          <pre>{
-  <span class="key">"status"</span>: <span class="str">"APPROVED"</span>,
-  <span class="key">"governance_level"</span>: <span class="str">"MEDIUM"</span>,
-  <span class="key">"governance_name"</span>: <span class="str">"Institutional Standard"</span>,
-  <span class="key">"isp_profile"</span>: <span class="str">"bundesregierung"</span>,
-  <span class="key">"metadata"</span>: { <span class="comment">/* 7 institutional fields */</span> },
-  <span class="key">"identity_governance"</span>: {
-    <span class="key">"institution"</span>: <span class="str">"Bundesregierung (Model)"</span>,
-    <span class="key">"license_status"</span>: <span class="str">"model_only"</span>,
-    <span class="key">"logo_allowed"</span>: <span class="num">false</span>,
-    <span class="key">"disclaimer_required"</span>: <span class="num">true</span>,
-    <span class="key">"disclaimer_text"</span>: <span class="str">"This document uses institutional language
-      for model or simulation purposes..."</span>,
-    <span class="key">"audit_category"</span>: <span class="str">"model_simulation"</span>,
-    <span class="key">"restrictions"</span>: [
-      <span class="str">"Model/simulation use only"</span>,
-      <span class="str">"No official government identity permitted"</span>,
-      <span class="str">"Disclaimer required on all documents"</span>
-    ]
-  }
-}</pre>
-        </div>
-
-        <h3>10.5 &ensp;Architectural Significance</h3>
-
-        <p>
-          The Identity Governance Layer establishes WINDI as the first document generation platform to integrate <strong>institutional identity licensing</strong> directly into its governance engine. This enables three capabilities not found in existing enterprise document management systems:
-        </p>
-
-        <p>
-          <strong>1. Contractual identity control:</strong> Institutions can formally authorise the use of their brand, letterhead, and visual identity within WINDI-governed documents, with automatic expiration and revocation handling.
-        </p>
-        <p>
-          <strong>2. Proportional brand protection:</strong> Documents that reference real institutions are automatically classified and governed &mdash; the system knows the difference between using an institution&rsquo;s language as a model and acting on its behalf.
-        </p>
-        <p>
-          <strong>3. Audit trail for identity usage:</strong> Every document generation that involves institutional identity is recorded with its license status, scope, and restrictions, creating an institutional accountability chain.
-        </p>
-
-        <div class="level-principle">
-          Simulating institutional identity activates institutional governance. The system decides automatically.
-        </div>
-
-        <p>
-          <em>Core rule discovered 01 February 2026:</em> Whenever a document mentions or simulates a real institution, governance level must be MEDIUM or higher. This is enforced by the Identity Governance Layer, not by user choice.
-        </p>
-
+      <div class="gov-box">
+        <div class="gov-box-header l-en">Core Rule</div>
+        <div class="gov-box-header l-de">Kernregel</div>
+        <div class="gov-box-header l-pt">Regra Central</div>
+        <p class="lb-en"><strong>Simulating institutional identity activates institutional governance. The system decides automatically.</strong></p>
+        <p class="lb-de"><strong>Die Simulation institutioneller Identitat aktiviert institutionelle Governance. Das System entscheidet automatisch.</strong></p>
+        <p class="lb-pt"><strong>Simular identidade institucional ativa governanca institucional. O sistema decide automaticamente.</strong></p>
       </div>
 
+      <p class="lb-en"><em>Core rule discovered 01 February 2026:</em> Whenever a document mentions or simulates a real institution, governance level must be MEDIUM or higher. This is enforced by the Identity Governance Layer, not by user choice.</p>
+      <p class="lb-de"><em>Kernregel entdeckt 01. Februar 2026:</em> Wann immer ein Dokument eine reale Institution erwahnt oder simuliert, muss das Governance-Level MEDIUM oder hoher sein. Dies wird von der Identity Governance Layer durchgesetzt, nicht durch Benutzerwahl.</p>
+      <p class="lb-pt"><em>Regra central descoberta 01 de Fevereiro de 2026:</em> Sempre que um documento menciona ou simula uma instituicao real, o nivel de governanca deve ser MEDIUM ou superior. Isso e aplicado pela Camada de Governanca de Identidade, nao por escolha do usuario.</p>
+    </section>
 
-    <!-- END CONTENT -->
+    <!-- Authorship Notice -->
+    <section class="authorship-notice">
+      <h2 class="l-en">Authorship and Acknowledgements</h2>
+      <h2 class="l-de">Urheberschaft und Danksagungen</h2>
+      <h2 class="l-pt">Autoria e Agradecimentos</h2>
 
-    <!-- FOOTER -->
-    <footer class="paper-footer">
-      <div class="footer-windi">
-        <div class="footer-left">
-          <div class="windi-name">WINDI Publishing House</div>
-          Kempten, Bavaria, Germany<br>
-          Technical Report TR-WINDI-2026-002
-          <div class="footer-principle">&ldquo;AI processes. Human decides. WINDI guarantees.&rdquo;</div>
-        </div>
-        <div class="footer-right">
-          Status: PUBLISHED<br>
-          Classification: PUBLIC<br>
-          Engine: v2.0.0<br>
-          <div class="footer-hash">WINDI-TR-01FEB26-GOV4-IDENTITY</div>
-        </div>
+      <p class="lb-en">This technical report was authored by <strong>Jober Mogele Correa</strong>, Chief Governance Officer (CGO) of WINDI Publishing House, Kempten, Bavaria. The document represents original research conducted as part of the WINDI Pre-AI Governance Layer project and the accompanying Masterarbeit at Hochschule Kempten, Fakultat Informatik.</p>
+      <p class="lb-de">Dieser technische Bericht wurde von <strong>Jober Mogele Correa</strong>, Chief Governance Officer (CGO) des WINDI Publishing House, Kempten, Bayern, verfasst. Das Dokument stellt Originalforschung dar, die im Rahmen des WINDI Pre-AI Governance Layer Projekts und der begleitenden Masterarbeit an der Hochschule Kempten, Fakultat Informatik, durchgefuhrt wurde.</p>
+      <p class="lb-pt">Este relatorio tecnico foi escrito por <strong>Jober Mogele Correa</strong>, Chief Governance Officer (CGO) da WINDI Publishing House, Kempten, Baviera. O documento representa pesquisa original conduzida como parte do projeto WINDI Pre-AI Governance Layer e da Masterarbeit acompanhante na Hochschule Kempten, Fakultat Informatik.</p>
+
+      <div class="def-block">
+        <dl>
+          <dt class="l-en">Three Dragons Architecture</dt>
+          <dt class="l-de">Three Dragons Architektur</dt>
+          <dt class="l-pt">Arquitetura Three Dragons</dt>
+          <dd class="lb-en">Claude (Guardian): Validation and governance | GPT (Architect): Structuring | Gemini (Witness): Observation and audit</dd>
+          <dd class="lb-de">Claude (Guardian): Validierung und Governance | GPT (Architect): Strukturierung | Gemini (Witness): Beobachtung und Audit</dd>
+          <dd class="lb-pt">Claude (Guardian): Validacao e governanca | GPT (Architect): Estruturacao | Gemini (Witness): Observacao e auditoria</dd>
+
+          <dt class="l-en">Core Principle</dt>
+          <dt class="l-de">Kernprinzip</dt>
+          <dt class="l-pt">Principio Central</dt>
+          <dd>"AI processes. Human decides. WINDI guarantees."</dd>
+
+          <dt class="l-en">8 Invariants (I1-I8)</dt>
+          <dt class="l-de">8 Invarianten (I1-I8)</dt>
+          <dt class="l-pt">8 Invariantes (I1-I8)</dt>
+          <dd>I1: Sovereignty | I2: Non-Opacity | I3: Transparency | I4: EU Jurisdiction | I5: No Fabrication | I6: Conflict Structuring | I7: Institutional | I8: No Depth Punishment</dd>
+        </dl>
       </div>
-      <div class="footer-qr">
-        <img src="https://api.qrserver.com/v1/create-qr-code/?size=64x64&data=https://master.windia4desk.tech/governance-levels.html" alt="QR Code" width="64" height="64">
-        <div class="footer-qr-text">
-          <a href="https://master.windia4desk.tech">master.windia4desk.tech</a><br>
-          WINDI Governance Engine &mdash; Document Governance Architecture<br>
-          EU AI Act Compliant &middot; A4 Desk BABEL v4.7-gov
-        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="page-footer">
+      <div class="footer-receipt">WINDI-RECEIPT: WINDI-TR002-06FEB26-NOIR</div>
+      <div class="footer-brand">WINDI PUBLISHING HOUSE</div>
+      <div class="footer-tagline">Kempten, Bavaria | Est. 2026</div>
+      <div class="footer-legal">
+        <span class="l-en">AI processes. Human decides. WINDI guarantees.</span>
+        <span class="l-de">KI verarbeitet. Mensch entscheidet. WINDI garantiert.</span>
+        <span class="l-pt">IA processa. Humano decide. WINDI garante.</span>
       </div>
-      <div class="human-notice">
-        <strong>&check; Human Authorship Notice</strong><br>
-        This document was created and reviewed by human authors. AI assistance was used under human supervision and control.<br>
-        Final decisions and content approval: Human responsibility. &mdash; KI verarbeitet. Mensch entscheidet. WINDI garantiert.
+      <div class="footer-version">
+        <span class="l-en">Document Version: 2.0.0 | WINDI NOIR Template v2.0 | Generated: 06 February 2026</span>
+        <span class="l-de">Dokumentversion: 2.0.0 | WINDI NOIR Template v2.0 | Erstellt: 06. Februar 2026</span>
+        <span class="l-pt">Versao do Documento: 2.0.0 | WINDI NOIR Template v2.0 | Gerado: 06 de Fevereiro de 2026</span>
       </div>
     </footer>
 
-  </article>
+  </main>
 </div>
+
+<!-- WINDI NOIR JavaScript -->
+<script>
+// ============================================
+// WINDI NOIR v2.0 — Theme and Language Control
+// ============================================
+
+// Theme Toggle
+function toggleTheme() {
+  const body = document.body;
+  const thumb = document.getElementById('themeThumb');
+  const isLight = body.getAttribute('data-theme') === 'light';
+  body.setAttribute('data-theme', isLight ? 'dark' : 'light');
+  if (thumb) thumb.textContent = isLight ? '' : '';
+  try { localStorage.setItem('windi-theme', isLight ? 'dark' : 'light'); } catch(e) {}
+}
+
+// Language Switcher
+function setLang(lang) {
+  document.body.setAttribute('data-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  const activeBtn = document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`);
+  if (activeBtn) activeBtn.classList.add('active');
+  try { localStorage.setItem('windi-lang', lang); } catch(e) {}
+}
+
+// Sidebar Toggle (mobile)
+let sidebarOpen = false;
+function toggleSidebar() {
+  sidebarOpen = !sidebarOpen;
+  const sidebar = document.getElementById('sidebarLeft');
+  if (sidebar) sidebar.classList.toggle('open', sidebarOpen);
+}
+
+// Scroll Progress
+window.addEventListener('scroll', () => {
+  const bar = document.getElementById('scrollBar');
+  if (bar) {
+    const pct = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+    bar.style.width = Math.min(pct, 100) + '%';
+  }
+});
+
+// Close sidebar on link click (mobile)
+document.querySelectorAll('.sidebar-link').forEach(link => {
+  link.addEventListener('click', () => {
+    if (window.innerWidth <= 960) {
+      sidebarOpen = false;
+      const sidebar = document.getElementById('sidebarLeft');
+      if (sidebar) sidebar.classList.remove('open');
+    }
+  });
+});
+
+// Init saved preferences
+(function init() {
+  try {
+    const theme = localStorage.getItem('windi-theme');
+    const lang = localStorage.getItem('windi-lang');
+    if (theme === 'light') {
+      document.body.setAttribute('data-theme', 'light');
+      const t = document.getElementById('themeThumb');
+      if (t) t.textContent = '';
+    }
+    if (lang) setLang(lang);
+  } catch(e) {}
+})();
+</script>
 
 </body>
 </html>

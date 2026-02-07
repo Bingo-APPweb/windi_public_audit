@@ -1,22 +1,403 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Human Oversight Model — WINDI</title><link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital@0;1&family=Libre+Baskerville:wght@400;700&family=Source+Sans+Pro:wght@300;400;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="css/academic.css"></head><body><header class="thesis-header"><h1>HUMAN OVERSIGHT MODEL</h1><p class="subtitle">Governance Document for the WINDI System</p><span class="version-badge">VERSION 1.0</span></header><nav class="thesis-nav"><ul><li><a href="index.html">← System Overview</a></li><li><a href="#principle">Principle</a></li><li><a href="#hitl">Human-in-the-Loop</a></li><li><a href="#roles">Roles</a></li><li><a href="data-handling.html">Data Handling →</a></li></ul></nav><div class="print-controls"><button class="print-btn" onclick="window.print()">🖨️ Print</button></div><main class="thesis-content"><div class="principle-quote">"The WINDI System does not possess decision-making authority.<br>All institutional responsibility remains with human operators."<div class="attribution">— Foundational Principle</div></div><section class="chapter" id="principle"><div class="chapter-number">Section 2</div><h2>Foundational Principle</h2><div class="highlight-box principle"><div class="box-title">Core Governance Principle</div><p><strong>The WINDI System does not possess decision-making authority.</strong></p><p>All institutional responsibility remains with human operators and governing roles.</p><p>System outputs are advisory and assistive, never autonomous or self-authorizing.</p></div></section><section class="chapter" id="hitl"><div class="chapter-number">Section 3</div><h2>Human-in-the-Loop Requirement</h2><p>Every operational cycle must include direct human involvement:</p><p>1. A human initiates a task</p><p>2. The system generates a response</p><p>3. A human reviews the output</p><p>4. A human explicitly approves, edits, or rejects</p><div class="highlight-box governance"><div class="box-title">Critical Rule</div><p><strong>No system output may be used in an institutional context without human validation.</strong></p></div></section><section class="chapter" id="roles"><div class="chapter-number">Section 4</div><h2>Oversight Roles</h2><h3><span class="section-num">4.1</span> Operators</h3><p>Responsible for submitting tasks, reviewing outputs, ensuring appropriateness. First level of oversight.</p><h3><span class="section-num">4.2</span> Guardian</h3><p>Provides institutional oversight. Defines acceptable use boundaries, prioritizes safeguards, intervenes when needed. Governance authority over system behavior.</p><h3><span class="section-num">4.3</span> Architect</h3><p>Responsible for system design and structural integrity. Ensures technical capabilities never bypass human authority.</p></section><section class="chapter"><div class="chapter-number">Section 6</div><h2>Intervention Rights</h2><p>Human oversight roles have the authority to: halt system use at any time, override system outputs, restrict or suspend specific use cases.</p><p><strong>System operation is conditional upon continued human approval.</strong></p></section><section class="windi-receipt-footer">
-    <div class="windi-brand">WINDI Publishing House</div>
-    <div class="receipt-line">WINDI-QUITTUNG: WINDI-HOM-30JAN26-A1B2C3D4 | Hash: a1b2c3d4</div>
-    <div class="receipt-line">Autor: Jober Mögele Correa (WINDI-CEO-001) | Status: INSTITUTIONAL BETA</div>
-    <div class="qr-section">
-        <img class="qr-code" src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=https://master.windia4desk.tech/human-oversight.html" alt="QR Code">
-        <div>
-            <div class="receipt-line">A4 Desk BABEL v4.7-gov | EU AI Act Compliant</div>
-            <div class="compliance-badge">✓ Verified Institutional Documentation</div>
-        </div>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Human Oversight Model — WINDI System</title>
+<meta name="description" content="WINDI Human Oversight Model — Governance Document">
+<link rel="stylesheet" href="windi-internal.css">
+</head>
+<body data-theme="dark" data-lang="de">
+
+<!-- Header -->
+<header class="site-header">
+  <a href="index.html" class="header-brand">
+    <div class="header-logo">W</div>
+    <div class="header-title-group">
+      <span class="header-title">WINDI</span>
+      <span class="header-subtitle">Governance Intelligence</span>
     </div>
-    <div class="authorship-notice">
-        <h4>✍ HUMAN AUTHORSHIP NOTICE</h4>
-        <p>This document was created and reviewed by human authors.</p>
-        <p>AI assistance was used under human supervision and control.</p>
-        <p>Final decisions and content approval: Human responsibility.</p>
-        <p class="principle">KI verarbeitet. Mensch entscheidet. WINDI garantiert.</p>
+  </a>
+  <div class="header-center">
+    <div class="header-status">
+      <span class="status-dot"></span>
+      <span>Operational</span>
     </div>
-    <div class="ledger-info">
-        WINDI Governance Ledger | Human-authored: 100.0% | Template: Human Oversight v1.0 | Structure: VALID
+  </div>
+  <div class="header-right">
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('de')">DE</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('pt')">PT</button>
     </div>
-</section></main><footer class="thesis-footer"><p>WINDI System — Human Oversight Model · Version 1.0</p></footer></body></html>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+      <div class="theme-toggle-track"></div>
+      <div class="theme-toggle-thumb" id="themeThumb"></div>
+    </button>
+    <button class="mobile-toggle" onclick="toggleSidebar()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- Sidebar Navigation -->
+<nav class="sidebar sidebar-left" id="sidebarLeft">
+  <div class="sidebar-section">
+    <div class="sidebar-label">Masterarbeit</div>
+    <a href="index.html" class="sidebar-link">Main Document</a>
+    <a href="cover.html" class="sidebar-link">Cover</a>
+    <a href="about-windi.html" class="sidebar-link">About WINDI</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Governance</div>
+    <a href="governance-levels.html" class="sidebar-link">Governance Levels</a>
+    <a href="human-oversight.html" class="sidebar-link sidebar-link-active">Human Oversight</a>
+    <a href="data-handling.html" class="sidebar-link">Data Handling</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Architecture</div>
+    <a href="diagrams.html" class="sidebar-link">Diagrams</a>
+    <a href="interface-guide.html" class="sidebar-link">Interface Guide</a>
+    <a href="verification-layer.html" class="sidebar-link">Verification Layer</a>
+    <a href="kapitel12_domain_sovereignty.html" class="sidebar-link">Domain Sovereignty</a>
+    <a href="identity-governance-layer.html" class="sidebar-link">Identity Governance</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Technical Reports</div>
+    <a href="tr-windi-2026-003.html" class="sidebar-link">TR-003: Service Layer</a>
+    <a href="tr-windi-2026-004.html" class="sidebar-link">TR-004: Cognitive Service</a>
+    <a href="tr-windi-2026-005.html" class="sidebar-link">TR-005: Cognitive Cycle</a>
+    <a href="isp-evolution.html" class="sidebar-link">TR-006: ISP Registry</a>
+    <a href="tr-007.html" class="sidebar-link">TR-007: Provenance</a>
+    <a href="sge-results.html" class="sidebar-link">SGE Results</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Publications</div>
+    <a href="publications.html" class="sidebar-link">Publications</a>
+    <a href="fachartikel-provenienz.html" class="sidebar-link">Fachartikel</a>
+    <a href="windi-publishing-house.html" class="sidebar-link">Manifesto</a>
+    <a href="editorial-policy.html" class="sidebar-link">Editorial Policy</a>
+    <a href="idpf-abstract.html" class="sidebar-link">IDPF Abstract</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Media</div>
+    <a href="windi-working-paper-2026.html" class="sidebar-link">Working Paper</a>
+    <a href="press-release-windi-2026.html" class="sidebar-link">Press Release</a>
+    <a href="windi-side-by-side-2026.html" class="sidebar-link">Side-by-Side</a>
+    <a href="wsj-style-governed-windi-2026.html" class="sidebar-link">WSJ Feature</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Compliance</div>
+    <a href="document-integrity.html" class="sidebar-link">Doc Integrity</a>
+    <a href="print-watermark-layer.html" class="sidebar-link">Print Layer</a>
+    <a href="regulatory-summary-print-layer.html" class="sidebar-link">Regulatory</a>
+    <a href="availability-implementation.html" class="sidebar-link">Appendix A</a>
+  </div>
+</nav>
+
+<!-- Right Sidebar TOC -->
+<aside class="sidebar sidebar-right" id="sidebarRight">
+  <div class="sidebar-label">
+    <span class="l-de">Auf dieser Seite</span>
+    <span class="l-en">On this page</span>
+    <span class="l-pt">Nesta página</span>
+  </div>
+  <a href="#principle" class="toc-link">
+    <span class="l-de">Grundlegendes Prinzip</span>
+    <span class="l-en">Foundational Principle</span>
+    <span class="l-pt">Princípio Fundamental</span>
+  </a>
+  <a href="#human-loop" class="toc-link">
+    <span class="l-de">Human-in-the-Loop</span>
+    <span class="l-en">Human-in-the-Loop</span>
+    <span class="l-pt">Human-in-the-Loop</span>
+  </a>
+  <a href="#roles" class="toc-link">
+    <span class="l-de">Aufsichtsrollen</span>
+    <span class="l-en">Oversight Roles</span>
+    <span class="l-pt">Funções de Supervisão</span>
+  </a>
+  <a href="#intervention" class="toc-link">
+    <span class="l-de">Interventionsrechte</span>
+    <span class="l-en">Intervention Rights</span>
+    <span class="l-pt">Direitos de Intervenção</span>
+  </a>
+</aside>
+
+<!-- Main Content -->
+<main class="main-content">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-breadcrumb">
+      <a href="index.html">WINDI</a>
+      <span class="breadcrumb-sep">/</span>
+      <span class="breadcrumb-current">
+        <span class="l-de">Menschliche Aufsicht</span>
+        <span class="l-en">Human Oversight</span>
+        <span class="l-pt">Supervisão Humana</span>
+      </span>
+    </div>
+    <div class="page-meta-bar">
+      <span class="page-tag page-tag-gov">Governance</span>
+      <span class="page-date">2026-02-07</span>
+    </div>
+    <h1 class="page-title">
+      <span class="l-de">Menschliches Aufsichtsmodell</span>
+      <span class="l-en">Human Oversight Model</span>
+      <span class="l-pt">Modelo de Supervisão Humana</span>
+    </h1>
+    <p class="page-subtitle">
+      <span class="l-de">Governance-Framework zur Sicherstellung menschlicher Autorität über KI-gestützte Prozesse</span>
+      <span class="l-en">Governance framework ensuring human authority over AI-assisted processes</span>
+      <span class="l-pt">Framework de governança garantindo autoridade humana sobre processos assistidos por IA</span>
+    </p>
+    <div class="page-divider"></div>
+  </div>
+
+  <!-- Content -->
+  <div class="content-prose">
+
+    <!-- Opening Quote -->
+    <div class="doc-quote">
+      <p>
+        <span class="l-de">"Das WINDI System besitzt keine Entscheidungsbefugnis. Alle institutionelle Verantwortung verbleibt bei menschlichen Operatoren."</span>
+        <span class="l-en">"The WINDI System does not possess decision-making authority. All institutional responsibility remains with human operators."</span>
+        <span class="l-pt">"O Sistema WINDI não possui autoridade de tomada de decisão. Toda responsabilidade institucional permanece com operadores humanos."</span>
+      </p>
+      <cite>— WINDI Foundational Governance Principle</cite>
+    </div>
+
+    <!-- Section: Foundational Principle -->
+    <h2 id="principle">
+      <span class="l-de">Grundlegendes Prinzip</span>
+      <span class="l-en">Foundational Principle</span>
+      <span class="l-pt">Princípio Fundamental</span>
+    </h2>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>
+          <span class="l-de">Kern-Governance-Prinzip</span>
+          <span class="l-en">Core Governance Principle</span>
+          <span class="l-pt">Princípio Central de Governança</span>
+        </h3>
+        <p>
+          <span class="l-de"><strong>Das WINDI System besitzt keine Entscheidungsbefugnis.</strong></span>
+          <span class="l-en"><strong>The WINDI System does not possess decision-making authority.</strong></span>
+          <span class="l-pt"><strong>O Sistema WINDI não possui autoridade de tomada de decisão.</strong></span>
+        </p>
+        <p>
+          <span class="l-de">Alle institutionelle Verantwortung verbleibt bei menschlichen Operatoren und Governance-Rollen.</span>
+          <span class="l-en">All institutional responsibility remains with human operators and governing roles.</span>
+          <span class="l-pt">Toda responsabilidade institucional permanece com operadores humanos e funções de governança.</span>
+        </p>
+        <p>
+          <span class="l-de">Systemausgaben sind beratend und unterstützend, niemals autonom oder selbstautorisierend.</span>
+          <span class="l-en">System outputs are advisory and assistive, never autonomous or self-authorizing.</span>
+          <span class="l-pt">Saídas do sistema são consultivas e assistivas, nunca autônomas ou autoautorizadas.</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Section: Human-in-the-Loop -->
+    <h2 id="human-loop">
+      <span class="l-de">Human-in-the-Loop Anforderung</span>
+      <span class="l-en">Human-in-the-Loop Requirement</span>
+      <span class="l-pt">Requisito Human-in-the-Loop</span>
+    </h2>
+    <p>
+      <span class="lb-de">Jeder operative Zyklus muss direkte menschliche Beteiligung beinhalten:</span>
+      <span class="lb-en">Every operational cycle must include direct human involvement:</span>
+      <span class="lb-pt">Cada ciclo operacional deve incluir envolvimento humano direto:</span>
+    </p>
+
+    <ol>
+      <li>
+        <span class="l-de">Ein Mensch initiiert eine Aufgabe</span>
+        <span class="l-en">A human initiates a task</span>
+        <span class="l-pt">Um humano inicia uma tarefa</span>
+      </li>
+      <li>
+        <span class="l-de">Das System generiert eine Antwort</span>
+        <span class="l-en">The system generates a response</span>
+        <span class="l-pt">O sistema gera uma resposta</span>
+      </li>
+      <li>
+        <span class="l-de">Ein Mensch überprüft die Ausgabe</span>
+        <span class="l-en">A human reviews the output</span>
+        <span class="l-pt">Um humano revisa a saída</span>
+      </li>
+      <li>
+        <span class="l-de">Ein Mensch genehmigt, bearbeitet oder lehnt explizit ab</span>
+        <span class="l-en">A human explicitly approves, edits, or rejects</span>
+        <span class="l-pt">Um humano aprova, edita ou rejeita explicitamente</span>
+      </li>
+    </ol>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>
+          <span class="l-de">Kritische Regel</span>
+          <span class="l-en">Critical Rule</span>
+          <span class="l-pt">Regra Crítica</span>
+        </h3>
+        <p>
+          <span class="l-de"><strong>Keine Systemausgabe darf in einem institutionellen Kontext ohne menschliche Validierung verwendet werden.</strong></span>
+          <span class="l-en"><strong>No system output may be used in an institutional context without human validation.</strong></span>
+          <span class="l-pt"><strong>Nenhuma saída do sistema pode ser usada em contexto institucional sem validação humana.</strong></span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Section: Oversight Roles -->
+    <h2 id="roles">
+      <span class="l-de">Aufsichtsrollen</span>
+      <span class="l-en">Oversight Roles</span>
+      <span class="l-pt">Funções de Supervisão</span>
+    </h2>
+
+    <h3>
+      <span class="l-de">Operatoren</span>
+      <span class="l-en">Operators</span>
+      <span class="l-pt">Operadores</span>
+    </h3>
+    <p>
+      <span class="lb-de">Verantwortlich für das Einreichen von Aufgaben, die Überprüfung von Ausgaben und die Sicherstellung der Angemessenheit. Erste Ebene der Aufsicht.</span>
+      <span class="lb-en">Responsible for submitting tasks, reviewing outputs, ensuring appropriateness. First level of oversight.</span>
+      <span class="lb-pt">Responsáveis por submeter tarefas, revisar saídas, garantir adequação. Primeiro nível de supervisão.</span>
+    </p>
+
+    <h3>
+      <span class="l-de">Guardian</span>
+      <span class="l-en">Guardian</span>
+      <span class="l-pt">Guardian</span>
+    </h3>
+    <p>
+      <span class="lb-de">Bietet institutionelle Aufsicht. Definiert akzeptable Nutzungsgrenzen, priorisiert Schutzmaßnahmen, interveniert bei Bedarf. Governance-Autorität über Systemverhalten.</span>
+      <span class="lb-en">Provides institutional oversight. Defines acceptable use boundaries, prioritizes safeguards, intervenes when needed. Governance authority over system behavior.</span>
+      <span class="lb-pt">Fornece supervisão institucional. Define limites de uso aceitável, prioriza salvaguardas, intervém quando necessário. Autoridade de governança sobre comportamento do sistema.</span>
+    </p>
+
+    <h3>
+      <span class="l-de">Architect</span>
+      <span class="l-en">Architect</span>
+      <span class="l-pt">Architect</span>
+    </h3>
+    <p>
+      <span class="lb-de">Verantwortlich für Systemdesign und strukturelle Integrität. Stellt sicher, dass technische Fähigkeiten niemals menschliche Autorität umgehen.</span>
+      <span class="lb-en">Responsible for system design and structural integrity. Ensures technical capabilities never bypass human authority.</span>
+      <span class="lb-pt">Responsável pelo design do sistema e integridade estrutural. Garante que capacidades técnicas nunca contornem autoridade humana.</span>
+    </p>
+
+    <!-- Section: Intervention Rights -->
+    <h2 id="intervention">
+      <span class="l-de">Interventionsrechte</span>
+      <span class="l-en">Intervention Rights</span>
+      <span class="l-pt">Direitos de Intervenção</span>
+    </h2>
+    <p>
+      <span class="lb-de">Menschliche Aufsichtsrollen haben die Befugnis zu:</span>
+      <span class="lb-en">Human oversight roles have the authority to:</span>
+      <span class="lb-pt">Funções de supervisão humana têm autoridade para:</span>
+    </p>
+
+    <ul>
+      <li>
+        <span class="l-de">Die Systemnutzung jederzeit stoppen</span>
+        <span class="l-en">Halt system use at any time</span>
+        <span class="l-pt">Interromper uso do sistema a qualquer momento</span>
+      </li>
+      <li>
+        <span class="l-de">Systemausgaben überschreiben</span>
+        <span class="l-en">Override system outputs</span>
+        <span class="l-pt">Sobrescrever saídas do sistema</span>
+      </li>
+      <li>
+        <span class="l-de">Spezifische Anwendungsfälle einschränken oder aussetzen</span>
+        <span class="l-en">Restrict or suspend specific use cases</span>
+        <span class="l-pt">Restringir ou suspender casos de uso específicos</span>
+      </li>
+    </ul>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>
+          <span class="l-de">Grundlegende Regel</span>
+          <span class="l-en">Fundamental Rule</span>
+          <span class="l-pt">Regra Fundamental</span>
+        </h3>
+        <p>
+          <span class="l-de"><strong>Der Systembetrieb ist von fortgesetzter menschlicher Genehmigung abhängig.</strong></span>
+          <span class="l-en"><strong>System operation is conditional upon continued human approval.</strong></span>
+          <span class="l-pt"><strong>A operação do sistema é condicional à aprovação humana contínua.</strong></span>
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Page Footer -->
+  <footer class="page-footer">
+    <div class="page-footer-meta">
+      <span>WINDI-HOM-07FEB26-NOIR</span>
+      <span>Governance Document</span>
+    </div>
+    <p class="page-footer-quittung">Author: Jober Mögele Correa (WINDI-CEO-001) | Status: INSTITUTIONAL BETA</p>
+    <p class="page-footer-principle">
+      <span class="l-de">"KI verarbeitet. Mensch entscheidet. WINDI garantiert."</span>
+      <span class="l-en">"AI processes. Human decides. WINDI guarantees."</span>
+      <span class="l-pt">"IA processa. Humano decide. WINDI garante."</span>
+    </p>
+  </footer>
+
+</main>
+
+<!-- JavaScript -->
+<script>
+// Theme Toggle
+function toggleTheme() {
+  const body = document.body;
+  const isLight = body.getAttribute('data-theme') === 'light';
+  body.setAttribute('data-theme', isLight ? 'dark' : 'light');
+  try { localStorage.setItem('windi-theme', isLight ? 'dark' : 'light'); } catch(e) {}
+}
+
+// Language Switcher
+function setLang(lang) {
+  document.body.setAttribute('data-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+  try { localStorage.setItem('windi-lang', lang); } catch(e) {}
+}
+
+// Sidebar Toggle (mobile)
+let sidebarOpen = false;
+function toggleSidebar() {
+  sidebarOpen = !sidebarOpen;
+  document.getElementById('sidebarLeft').classList.toggle('open', sidebarOpen);
+}
+
+// Close sidebar on link click (mobile)
+document.querySelectorAll('.sidebar-link').forEach(link => {
+  link.addEventListener('click', () => {
+    if (window.innerWidth <= 960) {
+      sidebarOpen = false;
+      document.getElementById('sidebarLeft').classList.remove('open');
+    }
+  });
+});
+
+// Init saved preferences
+(function init() {
+  try {
+    const theme = localStorage.getItem('windi-theme');
+    const lang = localStorage.getItem('windi-lang');
+    if (theme) document.body.setAttribute('data-theme', theme);
+    if (lang) setLang(lang);
+  } catch(e) {}
+})();
+</script>
+
+</body>
+</html>

@@ -1,669 +1,304 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Section 10 — Institutional Identity Governance Layer | WINDI System</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --ink: #1a1a2e;
-      --paper: #fafaf8;
-      --paper-warm: #f5f4f0;
-      --accent-blue: #2c3e6b;
-      --accent-gold: #b8860b;
-      --high-color: #8b1a1a;
-      --high-bg: #fdf2f2;
-      --medium-color: #7a5c00;
-      --medium-bg: #fdf8ed;
-      --medium-border: #d4c490;
-      --low-color: #1a5c3a;
-      --low-bg: #f0f7f3;
-      --rule: #d0cec8;
-      --caption: #6b6860;
-      --code-bg: #f0efe8;
-      --discovery-bg: #faf6ee;
-      --discovery-border: #c9a227;
-    }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      font-family: 'Source Sans 3', 'Segoe UI', sans-serif;
-      background: var(--paper);
-      color: var(--ink);
-      line-height: 1.75;
-      font-size: 16px;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    /* === HEADER === */
-    .doc-header {
-      background: var(--ink);
-      color: var(--paper);
-      padding: 2rem 0;
-      border-bottom: 3px solid var(--accent-gold);
-    }
-
-    .doc-header-inner {
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 0 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-    }
-
-    .doc-header-left { flex: 1; }
-
-    .doc-series {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--accent-gold);
-      margin-bottom: 0.25rem;
-    }
-
-    .doc-org {
-      font-family: 'Crimson Pro', Georgia, serif;
-      font-size: 1.1rem;
-      font-weight: 300;
-      letter-spacing: 0.02em;
-      opacity: 0.85;
-    }
-
-    .doc-header-right {
-      text-align: right;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
-      line-height: 1.8;
-      opacity: 0.7;
-      padding-top: 0.25rem;
-    }
-
-    /* === TITLE === */
-    .title-block {
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 3rem 2rem 2rem;
-      border-bottom: 1px solid var(--rule);
-    }
-
-    .title-block .section-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: var(--accent-gold);
-      margin-bottom: 0.35rem;
-    }
-
-    .title-block h1 {
-      font-family: 'Crimson Pro', Georgia, serif;
-      font-size: 2.1rem;
-      font-weight: 700;
-      line-height: 1.25;
-      color: var(--accent-blue);
-      margin-bottom: 0.5rem;
-    }
-
-    .title-block .subtitle {
-      font-family: 'Crimson Pro', Georgia, serif;
-      font-size: 1.15rem;
-      font-weight: 300;
-      font-style: italic;
-      color: var(--caption);
-      margin-bottom: 1.5rem;
-    }
-
-    .title-meta {
-      display: flex;
-      gap: 2.5rem;
-      flex-wrap: wrap;
-      font-size: 0.86rem;
-      color: var(--caption);
-    }
-
-    .title-meta dt { font-weight: 600; color: var(--ink); display: inline; }
-    .title-meta dd { display: inline; margin-left: 0.25rem; }
-    .title-meta .meta-pair { display: flex; gap: 0.25rem; }
-
-    /* === CONTENT === */
-    .content {
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 2rem;
-    }
-
-    .section { margin-bottom: 2.5rem; }
-
-    .section-number {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--accent-gold);
-      margin-bottom: 0.25rem;
-    }
-
-    h2 {
-      font-family: 'Crimson Pro', Georgia, serif;
-      font-size: 1.4rem;
-      font-weight: 600;
-      color: var(--accent-blue);
-      margin-bottom: 1rem;
-      padding-bottom: 0.4rem;
-      border-bottom: 1px solid var(--rule);
-    }
-
-    h3 {
-      font-family: 'Source Sans 3', sans-serif;
-      font-size: 1.05rem;
-      font-weight: 600;
-      color: var(--ink);
-      margin-bottom: 0.5rem;
-      margin-top: 1.8rem;
-    }
-
-    p {
-      margin-bottom: 1rem;
-      text-align: justify;
-      hyphens: auto;
-    }
-
-    /* === ABSTRACT === */
-    .abstract {
-      background: var(--paper-warm);
-      border-left: 3px solid var(--accent-blue);
-      padding: 1.25rem 1.5rem;
-      margin-bottom: 2.5rem;
-      font-size: 0.95rem;
-    }
-
-    .abstract strong {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--accent-blue);
-      display: block;
-      margin-bottom: 0.5rem;
-    }
-
-    /* === DISCOVERY BOX === */
-    .discovery-box {
-      background: var(--discovery-bg);
-      border: 1px solid var(--discovery-border);
-      border-left: 4px solid var(--discovery-border);
-      border-radius: 4px;
-      padding: 1.5rem 1.75rem;
-      margin: 2rem 0;
-    }
-
-    .discovery-box .discovery-label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--discovery-border);
-      margin-bottom: 0.5rem;
-      font-weight: 500;
-    }
-
-    .discovery-box .discovery-quote {
-      font-family: 'Crimson Pro', Georgia, serif;
-      font-size: 1.15rem;
-      font-style: italic;
-      color: var(--ink);
-      line-height: 1.5;
-      margin-bottom: 0.5rem;
-    }
-
-    .discovery-box .discovery-source {
-      font-size: 0.82rem;
-      color: var(--caption);
-    }
-
-    /* === CODE BLOCKS === */
-    code {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.85em;
-      background: var(--code-bg);
-      padding: 0.1rem 0.35rem;
-      border-radius: 2px;
-    }
-
-    .code-block {
-      background: var(--ink);
-      color: #e0ddd5;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.76rem;
-      line-height: 1.65;
-      padding: 1.25rem 1.5rem;
-      border-radius: 4px;
-      overflow-x: auto;
-      margin: 1.25rem 0;
-    }
-
-    .code-block .comment { color: #6a9955; }
-    .code-block .key { color: #9cdcfe; }
-    .code-block .string { color: #ce9178; }
-    .code-block .bracket { color: #ffd700; }
-    .code-block .bool { color: #569cd6; }
-
-    /* === BEHAVIOR MATRIX TABLE === */
-    .matrix-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.86rem;
-      margin: 1.5rem 0;
-    }
-
-    .matrix-table thead {
-      background: var(--ink);
-      color: var(--paper);
-    }
-
-    .matrix-table th {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.68rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 0.6rem 0.7rem;
-      text-align: center;
-      font-weight: 500;
-    }
-
-    .matrix-table th:first-child { text-align: left; }
-
-    .matrix-table td {
-      padding: 0.55rem 0.7rem;
-      border-bottom: 1px solid var(--rule);
-      text-align: center;
-      vertical-align: middle;
-    }
-
-    .matrix-table td:first-child {
-      text-align: left;
-      font-weight: 500;
-    }
-
-    .matrix-table tbody tr:hover { background: var(--paper-warm); }
-
-    .status-badge {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.68rem;
-      padding: 0.15rem 0.45rem;
-      border-radius: 2px;
-      display: inline-block;
-      font-weight: 500;
-    }
-
-    .status-authorized { background: #dcfce7; color: #166534; }
-    .status-model { background: var(--medium-bg); color: var(--medium-color); }
-    .status-pending { background: #f0f0f0; color: #666; }
-    .status-revoked { background: var(--high-bg); color: var(--high-color); }
-
-    .cell-yes { color: var(--low-color); font-weight: 600; }
-    .cell-no { color: var(--high-color); font-weight: 600; }
-    .cell-warn { color: var(--medium-color); font-weight: 600; }
-    .cell-block { color: var(--high-color); font-weight: 700; }
-
-    /* === FLOW DIAGRAM === */
-    .flow-container {
-      margin: 2rem 0;
-    }
-
-    .flow-diagram {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    .flow-step {
-      display: flex;
-      align-items: stretch;
-      min-height: 60px;
-    }
-
-    .flow-step-num {
-      width: 48px;
-      min-width: 48px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
-      font-weight: 500;
-      color: white;
-      background: var(--accent-blue);
-      border-radius: 4px 0 0 4px;
-    }
-
-    .flow-step-content {
-      flex: 1;
-      padding: 0.65rem 1rem;
-      border: 1px solid var(--rule);
-      border-left: none;
-      border-radius: 0 4px 4px 0;
-      background: white;
-    }
-
-    .flow-step-title {
-      font-weight: 600;
-      font-size: 0.9rem;
-      margin-bottom: 0.1rem;
-    }
-
-    .flow-step-desc {
-      font-size: 0.8rem;
-      color: var(--caption);
-    }
-
-    .flow-arrow {
-      display: flex;
-      justify-content: center;
-      padding: 0.15rem 0;
-      color: var(--rule);
-      font-size: 1.2rem;
-    }
-
-    /* === EU REFERENCE === */
-    .eu-ref {
-      background: white;
-      border: 1px solid var(--rule);
-      border-left: 3px solid var(--accent-blue);
-      padding: 1rem 1.25rem;
-      margin: 1rem 0;
-      font-size: 0.88rem;
-    }
-
-    .eu-ref-title {
-      font-weight: 600;
-      font-size: 0.84rem;
-      margin-bottom: 0.3rem;
-    }
-
-    .eu-ref-body {
-      color: var(--caption);
-      font-size: 0.84rem;
-    }
-
-    /* === PRINCIPLE BOX === */
-    .principle-box {
-      background: var(--ink);
-      color: var(--paper);
-      text-align: center;
-      padding: 1.5rem 2rem;
-      border-radius: 4px;
-      margin: 2rem 0;
-    }
-
-    .principle-box .principle-text {
-      font-family: 'Crimson Pro', Georgia, serif;
-      font-size: 1.15rem;
-      font-weight: 300;
-      font-style: italic;
-      line-height: 1.5;
-    }
-
-    .principle-box .principle-source {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.68rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--accent-gold);
-      margin-top: 0.6rem;
-    }
-
-    /* === FIGURE CAPTION === */
-    .figure-caption {
-      font-size: 0.8rem;
-      color: var(--caption);
-      text-align: center;
-      margin-top: 0.5rem;
-      font-style: italic;
-    }
-
-    .figure-caption strong {
-      font-style: normal;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
-      letter-spacing: 0.05em;
-    }
-
-    /* === COMPARISON PANEL === */
-    .comparison {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      margin: 1.5rem 0;
-    }
-
-    @media (max-width: 640px) {
-      .comparison { grid-template-columns: 1fr; }
-    }
-
-    .comparison-panel {
-      border: 1px solid var(--rule);
-      border-radius: 4px;
-      overflow: hidden;
-    }
-
-    .comparison-panel-header {
-      padding: 0.6rem 1rem;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      font-weight: 500;
-    }
-
-    .comparison-panel.before .comparison-panel-header {
-      background: var(--high-bg);
-      color: var(--high-color);
-      border-bottom: 1px solid var(--high-color);
-    }
-
-    .comparison-panel.after .comparison-panel-header {
-      background: var(--low-bg);
-      color: var(--low-color);
-      border-bottom: 1px solid var(--low-color);
-    }
-
-    .comparison-panel-body {
-      padding: 1rem;
-      font-size: 0.86rem;
-      line-height: 1.6;
-    }
-
-    .comparison-panel-body li {
-      margin-bottom: 0.3rem;
-      margin-left: 1rem;
-    }
-
-    /* === SEPARATOR === */
-    .sep {
-      text-align: center;
-      margin: 2.5rem 0;
-      color: var(--rule);
-      font-size: 1.2rem;
-      letter-spacing: 1em;
-    }
-
-    /* === NAV LINKS === */
-    .nav-links {
-      display: flex;
-      justify-content: space-between;
-      margin: 2rem 0;
-      padding-top: 1rem;
-      border-top: 1px solid var(--rule);
-      font-size: 0.88rem;
-    }
-
-    .nav-links a {
-      color: var(--accent-blue);
-      text-decoration: none;
-    }
-
-    .nav-links a:hover { text-decoration: underline; }
-
-    /* === FOOTER === */
-    .doc-footer {
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 1.5rem 2rem 3rem;
-      border-top: 1px solid var(--rule);
-      font-size: 0.8rem;
-      color: var(--caption);
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-
-    .doc-footer .footer-left { font-style: italic; }
-    .doc-footer .footer-right {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      text-align: right;
-    }
-
-    /* === PRINT === */
-    @media print {
-      .doc-header { background: white; color: var(--ink); border-bottom: 2px solid var(--ink); }
-      .doc-series { color: var(--ink); }
-      body { font-size: 11pt; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Section 10 — Institutional Identity Governance Layer | WINDI System</title>
+<meta name="description" content="A Licensing Framework for Institutional Identity in AI-Assisted Document Generation">
+<link rel="stylesheet" href="windi-internal.css">
 </head>
-<body>
+<body data-theme="dark" data-lang="de">
 
-  <!-- HEADER -->
-  <header class="doc-header">
-    <div class="doc-header-inner">
-      <div class="doc-header-left">
-        <div class="doc-series">WINDI Masterarbeit · Section 10</div>
-        <div class="doc-org">WINDI Publishing House · Kempten (Allgäu), Bavaria, Germany</div>
-      </div>
-      <div class="doc-header-right">
-        Governance v2.2.0<br>
-        02 February 2026<br>
-        Classification: PUBLIC
-      </div>
+<!-- Header -->
+<header class="site-header">
+  <a href="index.html" class="header-brand">
+    <div class="header-logo">W</div>
+    <div class="header-title-group">
+      <span class="header-title">WINDI</span>
+      <span class="header-subtitle">Governance Intelligence</span>
     </div>
-  </header>
-
-  <!-- TITLE -->
-  <div class="title-block">
-    <div class="section-label">Section 10 — Conceptual Contribution</div>
-    <h1>Institutional Identity Governance Layer</h1>
-    <div class="subtitle">A Licensing Framework for Institutional Identity in AI&#8209;Assisted Document Generation</div>
-    <div class="title-meta">
-      <div class="meta-pair"><dt>Author:</dt><dd>Jober Mögele Correa, Chief Governance Officer</dd></div>
-      <div class="meta-pair"><dt>Discovery Date:</dt><dd>01 February 2026</dd></div>
-      <div class="meta-pair"><dt>Status:</dt><dd>Deployed in Production</dd></div>
+  </a>
+  <div class="header-center">
+    <div class="header-status">
+      <span class="status-dot"></span>
+      <span>Operational</span>
     </div>
   </div>
+  <div class="header-right">
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('de')">DE</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('pt')">PT</button>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+      <div class="theme-toggle-track"></div>
+      <div class="theme-toggle-thumb" id="themeThumb"></div>
+    </button>
+    <button class="mobile-toggle" onclick="toggleSidebar()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
 
-  <div class="content">
+<!-- Sidebar Navigation -->
+<nav class="sidebar sidebar-left" id="sidebarLeft">
+  <div class="sidebar-section">
+    <div class="sidebar-label">Masterarbeit</div>
+    <a href="index.html" class="sidebar-link">Main Document</a>
+    <a href="cover.html" class="sidebar-link">Cover</a>
+    <a href="about-windi.html" class="sidebar-link">About WINDI</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Governance</div>
+    <a href="governance-levels.html" class="sidebar-link">Governance Levels</a>
+    <a href="human-oversight.html" class="sidebar-link">Human Oversight</a>
+    <a href="data-handling.html" class="sidebar-link">Data Handling</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Architecture</div>
+    <a href="diagrams.html" class="sidebar-link">Diagrams</a>
+    <a href="interface-guide.html" class="sidebar-link">Interface Guide</a>
+    <a href="verification-layer.html" class="sidebar-link">Verification Layer</a>
+    <a href="kapitel12_domain_sovereignty.html" class="sidebar-link">Domain Sovereignty</a>
+    <a href="identity-governance-layer.html" class="sidebar-link sidebar-link-active">Identity Governance</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Technical Reports</div>
+    <a href="tr-windi-2026-003.html" class="sidebar-link">TR-003: Service Layer</a>
+    <a href="tr-windi-2026-004.html" class="sidebar-link">TR-004: Cognitive Service</a>
+    <a href="tr-windi-2026-005.html" class="sidebar-link">TR-005: Cognitive Cycle</a>
+    <a href="isp-evolution.html" class="sidebar-link">TR-006: ISP Registry</a>
+    <a href="tr-007.html" class="sidebar-link">TR-007: Provenance</a>
+    <a href="sge-results.html" class="sidebar-link">SGE Results</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Publications</div>
+    <a href="publications.html" class="sidebar-link">Publications</a>
+    <a href="fachartikel-provenienz.html" class="sidebar-link">Fachartikel</a>
+    <a href="windi-publishing-house.html" class="sidebar-link">Manifesto</a>
+    <a href="editorial-policy.html" class="sidebar-link">Editorial Policy</a>
+    <a href="idpf-abstract.html" class="sidebar-link">IDPF Abstract</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Media</div>
+    <a href="windi-working-paper-2026.html" class="sidebar-link">Working Paper</a>
+    <a href="press-release-windi-2026.html" class="sidebar-link">Press Release</a>
+    <a href="windi-side-by-side-2026.html" class="sidebar-link">Side-by-Side</a>
+    <a href="wsj-style-governed-windi-2026.html" class="sidebar-link">WSJ Feature</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-label">Compliance</div>
+    <a href="document-integrity.html" class="sidebar-link">Doc Integrity</a>
+    <a href="print-watermark-layer.html" class="sidebar-link">Print Layer</a>
+    <a href="regulatory-summary-print-layer.html" class="sidebar-link">Regulatory</a>
+    <a href="availability-implementation.html" class="sidebar-link">Appendix A</a>
+  </div>
+</nav>
 
-    <!-- ABSTRACT -->
-    <div class="abstract">
-      <strong>Abstract</strong>
-      When AI systems generate documents that adopt institutional language, formatting, and communication patterns, a governance gap emerges: the document may be indistinguishable from official institutional communication while carrying no institutional authority. This section presents the Institutional Identity Governance Layer — a licensing framework developed for the WINDI system that controls how institutional identities (logos, letterheads, tone, values, official addresses) may be referenced in AI-assisted document generation. The framework introduces five license states (authorized, model_only, pending, expired, revoked) with graduated enforcement, automatic disclaimer insertion, and forensic audit capabilities. The discovery originated from an empirical test case involving a Banco do Brasil formal letter, where the system's ability to accurately simulate institutional identity revealed the need for a dedicated governance mechanism. This represents a contribution to the emerging field of institutional identity governance in human-AI co-decision systems.
+<!-- Main Content -->
+<main class="main-content">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-breadcrumb">
+      <a href="index.html">WINDI</a>
+      <span class="breadcrumb-sep">/</span>
+      <span class="breadcrumb-current">
+        <span class="l-de">Identitaets-Governance</span>
+        <span class="l-en">Identity Governance</span>
+        <span class="l-pt">Governanca de Identidade</span>
+      </span>
+    </div>
+    <div class="page-meta-bar">
+      <span class="page-tag page-tag-gov">Section 10</span>
+      <span class="page-date">2026-02-02</span>
+    </div>
+    <h1 class="page-title">
+      <span class="l-de">Institutionelle Identitaets-Governance-Schicht</span>
+      <span class="l-en">Institutional Identity Governance Layer</span>
+      <span class="l-pt">Camada de Governanca de Identidade Institucional</span>
+    </h1>
+    <p class="page-subtitle">
+      <span class="l-de">Ein Lizenzierungsrahmen fuer institutionelle Identitaet in KI-gestuetzter Dokumentenerstellung</span>
+      <span class="l-en">A Licensing Framework for Institutional Identity in AI-Assisted Document Generation</span>
+      <span class="l-pt">Um Framework de Licenciamento para Identidade Institucional em Geracao de Documentos Assistida por IA</span>
+    </p>
+    <p style="font-size: 13px; color: var(--text-tertiary); margin-top: 16px;">
+      <strong>Author:</strong> Jober Moegele Correa, Chief Governance Officer |
+      <strong>Discovery Date:</strong> 01 February 2026 |
+      <strong>Status:</strong> Deployed in Production
+    </p>
+    <div class="page-divider"></div>
+  </div>
+
+  <!-- Content -->
+  <div class="content-prose">
+
+    <!-- Abstract -->
+    <h2>
+      <span class="l-de">Zusammenfassung</span>
+      <span class="l-en">Abstract</span>
+      <span class="l-pt">Resumo</span>
+    </h2>
+
+    <div class="doc-quote">
+      <p>
+        <span class="lb-de">Wenn KI-Systeme Dokumente generieren, die institutionelle Sprache, Formatierung und Kommunikationsmuster uebernehmen, entsteht eine Governance-Luecke: Das Dokument kann von offizieller institutioneller Kommunikation nicht unterschieden werden, traegt aber keine institutionelle Autoritaet. Dieser Abschnitt praesentiert die Institutionelle Identitaets-Governance-Schicht — ein Lizenzierungsrahmen, der fuer das WINDI-System entwickelt wurde und kontrolliert, wie institutionelle Identitaeten (Logos, Briefkoepfe, Tonfall, Werte, offizielle Adressen) in der KI-gestuetzten Dokumentenerstellung referenziert werden duerfen.</span>
+        <span class="lb-en">When AI systems generate documents that adopt institutional language, formatting, and communication patterns, a governance gap emerges: the document may be indistinguishable from official institutional communication while carrying no institutional authority. This section presents the Institutional Identity Governance Layer — a licensing framework developed for the WINDI system that controls how institutional identities (logos, letterheads, tone, values, official addresses) may be referenced in AI-assisted document generation. The framework introduces five license states (authorized, model_only, pending, expired, revoked) with graduated enforcement, automatic disclaimer insertion, and forensic audit capabilities. The discovery originated from an empirical test case involving a Banco do Brasil formal letter, where the system's ability to accurately simulate institutional identity revealed the need for a dedicated governance mechanism. This represents a contribution to the emerging field of institutional identity governance in human-AI co-decision systems.</span>
+        <span class="lb-pt">Quando sistemas de IA geram documentos que adotam linguagem institucional, formatacao e padroes de comunicacao, surge uma lacuna de governanca: o documento pode ser indistinguivel da comunicacao institucional oficial, mas sem carregar autoridade institucional. Esta secao apresenta a Camada de Governanca de Identidade Institucional — um framework de licenciamento desenvolvido para o sistema WINDI que controla como identidades institucionais (logos, papeis timbrados, tom, valores, enderecos oficiais) podem ser referenciadas na geracao de documentos assistida por IA.</span>
+      </p>
     </div>
 
-    <!-- RESEARCH CONTRIBUTION -->
-    <div style="background:#f0f7f3;border:1px solid #a0c4ad;border-left:4px solid #1a5c3a;border-radius:4px;padding:1.25rem 1.5rem;margin-bottom:2.5rem">
-      <div style="font-family:JetBrains Mono,monospace;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:#1a5c3a;margin-bottom:.5rem;font-weight:500">Research Contribution</div>
-      <p style="margin:0;font-size:.95rem;line-height:1.7;text-align:justify">This work contributes to the emerging field of AI governance by introducing a structured framework for managing institutional identity in AI-assisted document generation. The Identity Governance Layer addresses a gap not yet formalised in existing regulatory frameworks: the risk that AI systems can convincingly simulate institutional communication styles, creating potential for misrepresentation without malicious intent. The proposed five-state licensing model balances institutional autonomy, branding integrity, and public trust through graduated enforcement rather than binary prohibition — enabling legitimate use cases (training, simulation, drafting assistance) while maintaining auditable governance controls. The framework was developed through deployment-driven discovery and validated against eight institutional profiles representing the German regulatory, governmental, and economic landscape.</p>
+    <!-- Research Contribution -->
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>
+          <span class="l-de">Forschungsbeitrag</span>
+          <span class="l-en">Research Contribution</span>
+          <span class="l-pt">Contribuicao de Pesquisa</span>
+        </h3>
+        <p>
+          <span class="lb-de">Diese Arbeit leistet einen Beitrag zum aufkommenden Feld der KI-Governance, indem sie ein strukturiertes Framework fuer die Verwaltung institutioneller Identitaet in der KI-gestuetzten Dokumentenerstellung einfuehrt. Die Identitaets-Governance-Schicht adressiert eine Luecke, die in bestehenden regulatorischen Rahmenwerken noch nicht formalisiert wurde: das Risiko, dass KI-Systeme institutionelle Kommunikationsstile ueberzeugend simulieren koennen.</span>
+          <span class="lb-en">This work contributes to the emerging field of AI governance by introducing a structured framework for managing institutional identity in AI-assisted document generation. The Identity Governance Layer addresses a gap not yet formalised in existing regulatory frameworks: the risk that AI systems can convincingly simulate institutional communication styles, creating potential for misrepresentation without malicious intent. The proposed five-state licensing model balances institutional autonomy, branding integrity, and public trust through graduated enforcement rather than binary prohibition — enabling legitimate use cases (training, simulation, drafting assistance) while maintaining auditable governance controls. The framework was developed through deployment-driven discovery and validated against eight institutional profiles representing the German regulatory, governmental, and economic landscape.</span>
+          <span class="lb-pt">Este trabalho contribui para o campo emergente de governanca de IA ao introduzir um framework estruturado para gerenciar identidade institucional na geracao de documentos assistida por IA. A Camada de Governanca de Identidade aborda uma lacuna ainda nao formalizada em frameworks regulatorios existentes: o risco de que sistemas de IA possam simular convincentemente estilos de comunicacao institucional.</span>
+        </p>
+      </div>
     </div>
 
-    <!-- SECTION 10.1: THE PROBLEM -->
-    <div class="section">
-      <div class="section-number">10.1</div>
-      <h2>The Problem: Institutional Identity Simulation</h2>
+    <!-- Section 10.1: The Problem -->
+    <h2>
+      <span class="l-de">10.1 — Das Problem: Institutionelle Identitaetssimulation</span>
+      <span class="l-en">10.1 — The Problem: Institutional Identity Simulation</span>
+      <span class="l-pt">10.1 — O Problema: Simulacao de Identidade Institucional</span>
+    </h2>
 
-      <p>Modern large language models can produce text that convincingly adopts the communication style, terminology, and structural patterns of specific institutions. When asked to draft a letter in the style of a government ministry, a financial regulator, or a public enterprise, the output may include correct formatting conventions, appropriate legal references, characteristic phrasing, and even institutional values — all without any formal relationship between the AI system operator and the referenced institution.</p>
+    <p>
+      <span class="lb-de">Moderne grosse Sprachmodelle koennen Text produzieren, der ueberzeugend den Kommunikationsstil, die Terminologie und die strukturellen Muster spezifischer Institutionen annimmt. Wenn sie gebeten werden, einen Brief im Stil eines Regierungsministeriums, einer Finanzaufsicht oder eines oeffentlichen Unternehmens zu verfassen, kann die Ausgabe korrekte Formatierungskonventionen, angemessene rechtliche Verweise, charakteristische Formulierungen und sogar institutionelle Werte enthalten.</span>
+      <span class="lb-en">Modern large language models can produce text that convincingly adopts the communication style, terminology, and structural patterns of specific institutions. When asked to draft a letter in the style of a government ministry, a financial regulator, or a public enterprise, the output may include correct formatting conventions, appropriate legal references, characteristic phrasing, and even institutional values — all without any formal relationship between the AI system operator and the referenced institution.</span>
+      <span class="lb-pt">Modelos de linguagem modernos podem produzir texto que adota convincentemente o estilo de comunicacao, terminologia e padroes estruturais de instituicoes especificas. Quando solicitados a redigir uma carta no estilo de um ministerio governamental, um regulador financeiro ou uma empresa publica, a saida pode incluir convencoes de formatacao corretas, referencias legais apropriadas, frases caracteristicas e ate valores institucionais.</span>
+    </p>
 
-      <p>This capability introduces a category of risk that existing AI governance frameworks do not adequately address. The EU AI Act establishes transparency requirements for AI-generated content (Article 50) and prohibits certain manipulative practices (Article 5), but does not specifically govern the simulation of institutional identity in document generation. Yet the practical consequences are significant: a convincingly formatted letter bearing institutional language patterns could be mistaken for official communication, undermining both institutional trust and document integrity.</p>
+    <p>
+      <span class="lb-de">Diese Faehigkeit fuehrt eine Risikokategorie ein, die bestehende KI-Governance-Frameworks nicht angemessen adressieren. Die EU-KI-Verordnung legt Transparenzanforderungen fuer KI-generierte Inhalte fest (Artikel 50) und verbietet bestimmte manipulative Praktiken (Artikel 5), regelt aber nicht spezifisch die Simulation institutioneller Identitaet bei der Dokumentenerstellung.</span>
+      <span class="lb-en">This capability introduces a category of risk that existing AI governance frameworks do not adequately address. The EU AI Act establishes transparency requirements for AI-generated content (Article 50) and prohibits certain manipulative practices (Article 5), but does not specifically govern the simulation of institutional identity in document generation. Yet the practical consequences are significant: a convincingly formatted letter bearing institutional language patterns could be mistaken for official communication, undermining both institutional trust and document integrity.</span>
+      <span class="lb-pt">Essa capacidade introduz uma categoria de risco que os frameworks de governanca de IA existentes nao abordam adequadamente. O EU AI Act estabelece requisitos de transparencia para conteudo gerado por IA (Artigo 50) e proibe certas praticas manipulativas (Artigo 5), mas nao governa especificamente a simulacao de identidade institucional na geracao de documentos.</span>
+    </p>
 
-      <p>The challenge is not to prevent all institutional language in AI-assisted documents — there are legitimate use cases including training, simulation, drafting assistance, and style modelling. The challenge is to establish a governance mechanism that distinguishes between authorised and unauthorised usage, enforces appropriate transparency, and maintains an auditable record of institutional identity references.</p>
+    <p>
+      <span class="lb-de">Die Herausforderung besteht nicht darin, jegliche institutionelle Sprache in KI-gestuetzten Dokumenten zu verhindern — es gibt legitime Anwendungsfaelle wie Training, Simulation, Entwurfshilfe und Stilmodellierung. Die Herausforderung besteht darin, einen Governance-Mechanismus zu etablieren, der zwischen autorisierter und nicht autorisierter Nutzung unterscheidet.</span>
+      <span class="lb-en">The challenge is not to prevent all institutional language in AI-assisted documents — there are legitimate use cases including training, simulation, drafting assistance, and style modelling. The challenge is to establish a governance mechanism that distinguishes between authorised and unauthorised usage, enforces appropriate transparency, and maintains an auditable record of institutional identity references.</span>
+      <span class="lb-pt">O desafio nao e prevenir toda linguagem institucional em documentos assistidos por IA — existem casos de uso legitimos incluindo treinamento, simulacao, assistencia na redacao e modelagem de estilo. O desafio e estabelecer um mecanismo de governanca que distinga entre uso autorizado e nao autorizado.</span>
+    </p>
+
+    <!-- Key Discovery -->
+    <div class="cta-box" style="border-left: 3px solid var(--gold);">
+      <div class="cta-content">
+        <h3 style="color: var(--gold);">Key Discovery — 01 February 2026</h3>
+        <blockquote style="border-left: none; background: none; padding: 0; margin: 0;">
+          <p style="font-size: 18px; font-style: italic; color: var(--gold);">"Simular identidade institucional real ativa governanca institucional."</p>
+          <p style="font-size: 15px; font-style: italic; color: var(--text-secondary);">Simulating real institutional identity activates institutional governance.</p>
+        </blockquote>
+        <p style="margin-top: 16px; font-size: 13px; color: var(--text-tertiary);">Discovered during Banco do Brasil letter test case. The system correctly generated institutional tone, values (Integridade, Sustentabilidade, Performance), formal structure, and department references — revealing that institutional identity simulation is not a formatting concern but a governance concern that requires dedicated architectural response.</p>
+      </div>
     </div>
 
-    <!-- DISCOVERY -->
-    <div class="discovery-box">
-      <div class="discovery-label">Key Discovery — 01 February 2026</div>
-      <div class="discovery-quote">„Simular identidade institucional real ativa governança institucional."</div>
-      <div class="discovery-quote" style="font-size: 0.95rem;">Simulating real institutional identity activates institutional governance.</div>
-      <div class="discovery-source">Discovered during Banco do Brasil letter test case. The system correctly generated institutional tone, values (Integridade, Sustentabilidade, Performance), formal structure, and department references — revealing that institutional identity simulation is not a formatting concern but a governance concern that requires dedicated architectural response.</div>
-    </div>
+    <!-- Section 10.2: The Framework -->
+    <h2>
+      <span class="l-de">10.2 — Das Identitaetslizenz-Framework</span>
+      <span class="l-en">10.2 — The Identity License Framework</span>
+      <span class="l-pt">10.2 — O Framework de Licenca de Identidade</span>
+    </h2>
 
-    <!-- SECTION 10.2: THE FRAMEWORK -->
-    <div class="section">
-      <div class="section-number">10.2</div>
-      <h2>The Identity License Framework</h2>
+    <p>
+      <span class="lb-de">Die Institutionelle Identitaets-Governance-Schicht ist als integraler Bestandteil des WINDI ISP (Institutional Style Profile) Systems implementiert. Jedes institutionelle Profil enthaelt einen <code>identity_license</code>-Block, der den Autorisierungsstatus fuer die Nutzung institutioneller Identitaet deklariert und den Durchsetzungsbereich definiert.</span>
+      <span class="lb-en">The Institutional Identity Governance Layer is implemented as an integral component of the WINDI ISP (Institutional Style Profile) system. Each institutional profile contains an <code>identity_license</code> block that declares the authorisation status for institutional identity usage and defines the enforcement scope.</span>
+      <span class="lb-pt">A Camada de Governanca de Identidade Institucional e implementada como um componente integral do sistema WINDI ISP (Institutional Style Profile). Cada perfil institucional contem um bloco <code>identity_license</code> que declara o status de autorizacao para uso de identidade institucional e define o escopo de aplicacao.</span>
+    </p>
 
-      <p>The Institutional Identity Governance Layer is implemented as an integral component of the WINDI ISP (Institutional Style Profile) system. Each institutional profile contains an <code>identity_license</code> block that declares the authorisation status for institutional identity usage and defines the enforcement scope.</p>
+    <h3>
+      <span class="l-de">10.2.0 — Design-Prinzipien</span>
+      <span class="l-en">10.2.0 — Design Principles</span>
+      <span class="l-pt">10.2.0 — Principios de Design</span>
+    </h3>
 
-      <h3>10.2.0 &ensp;Design Principles</h3>
+    <p>
+      <span class="lb-de">Die Identitaets-Governance-Schicht basiert auf vier Design-Prinzipien, die aus dem empirischen Entdeckungsprozess abgeleitet wurden:</span>
+      <span class="lb-en">The Identity Governance Layer is built on four design principles derived from the empirical discovery process:</span>
+      <span class="lb-pt">A Camada de Governanca de Identidade e construida sobre quatro principios de design derivados do processo de descoberta empirica:</span>
+    </p>
 
-      <p>The Identity Governance Layer is built on four design principles derived from the empirical discovery process:</p>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin:1rem 0">
-        <div style="background:white;border:1px solid #d0cec8;border-radius:4px;padding:.9rem 1rem">
-          <div style="font-family:JetBrains Mono,monospace;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:#b8860b;margin-bottom:.25rem">P1 — Graduated Enforcement</div>
-          <div style="font-size:.86rem;color:#6b6860">Govern, do not prohibit. Five license states enable legitimate use while maintaining controls. Binary allow/deny would eliminate valid use cases.</div>
-        </div>
-        <div style="background:white;border:1px solid #d0cec8;border-radius:4px;padding:.9rem 1rem">
-          <div style="font-family:JetBrains Mono,monospace;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:#b8860b;margin-bottom:.25rem">P2 — Scope-Based Permission</div>
-          <div style="font-size:.86rem;color:#6b6860">Identity is not monolithic. Logo, letterhead, tone, values, and address are independently controllable elements, each with its own governance scope.</div>
-        </div>
-        <div style="background:white;border:1px solid #d0cec8;border-radius:4px;padding:.9rem 1rem">
-          <div style="font-family:JetBrains Mono,monospace;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:#b8860b;margin-bottom:.25rem">P3 — Forensic Transparency</div>
-          <div style="font-size:.86rem;color:#6b6860">Every identity decision is recorded. The audit block captures what was used, what was blocked, and why — enabling post-hoc verification and regulatory compliance.</div>
-        </div>
-        <div style="background:white;border:1px solid #d0cec8;border-radius:4px;padding:.9rem 1rem">
-          <div style="font-family:JetBrains Mono,monospace;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:#b8860b;margin-bottom:.25rem">P4 — Institutional Sovereignty</div>
-          <div style="font-size:.86rem;color:#6b6860">The institution controls its own identity. Authorization comes from the institution, not the system operator. WINDI enforces; the institution decides.</div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0;">
+      <div class="cta-box" style="margin: 0;">
+        <div class="cta-content">
+          <h4 style="font-size: 11px; letter-spacing: 1px;">P1 — GRADUATED ENFORCEMENT</h4>
+          <p style="margin: 0;">Govern, do not prohibit. Five license states enable legitimate use while maintaining controls. Binary allow/deny would eliminate valid use cases.</p>
         </div>
       </div>
-
-      <h3>10.2.1 &ensp;License States</h3>
-
-      <p>The framework defines five license states, each triggering distinct governance behaviour:</p>
-
-      <div class="code-block">
-<span class="bracket">{</span>
-  <span class="key">"identity_license"</span>: <span class="bracket">{</span>
-    <span class="key">"status"</span>: <span class="string">"model_only"</span>,        <span class="comment">// authorized | model_only | pending | expired | revoked</span>
-    <span class="key">"authorized_by"</span>: <span class="string">null</span>,
-    <span class="key">"authorization_ref"</span>: <span class="string">null</span>,
-    <span class="key">"valid_from"</span>: <span class="string">null</span>,
-    <span class="key">"valid_until"</span>: <span class="string">null</span>,
-    <span class="key">"scope"</span>: <span class="bracket">{</span>
-      <span class="key">"logo"</span>: <span class="bool">false</span>,
-      <span class="key">"letterhead"</span>: <span class="bool">false</span>,
-      <span class="key">"institutional_tone"</span>: <span class="bool">true</span>,
-      <span class="key">"values_reference"</span>: <span class="bool">true</span>,
-      <span class="key">"official_address"</span>: <span class="bool">false</span>
-    <span class="bracket">}</span>,
-    <span class="key">"disclaimer_required"</span>: <span class="bool">true</span>,
-    <span class="key">"logo_allowed"</span>: <span class="bool">false</span>
-  <span class="bracket">}</span>
-<span class="bracket">}</span>
+      <div class="cta-box" style="margin: 0;">
+        <div class="cta-content">
+          <h4 style="font-size: 11px; letter-spacing: 1px;">P2 — SCOPE-BASED PERMISSION</h4>
+          <p style="margin: 0;">Identity is not monolithic. Logo, letterhead, tone, values, and address are independently controllable elements, each with its own governance scope.</p>
+        </div>
       </div>
+      <div class="cta-box" style="margin: 0;">
+        <div class="cta-content">
+          <h4 style="font-size: 11px; letter-spacing: 1px;">P3 — FORENSIC TRANSPARENCY</h4>
+          <p style="margin: 0;">Every identity decision is recorded. The audit block captures what was used, what was blocked, and why — enabling post-hoc verification and regulatory compliance.</p>
+        </div>
+      </div>
+      <div class="cta-box" style="margin: 0;">
+        <div class="cta-content">
+          <h4 style="font-size: 11px; letter-spacing: 1px;">P4 — INSTITUTIONAL SOVEREIGNTY</h4>
+          <p style="margin: 0;">The institution controls its own identity. Authorization comes from the institution, not the system operator. WINDI enforces; the institution decides.</p>
+        </div>
+      </div>
+    </div>
 
-      <h3>10.2.2 &ensp;Behaviour Matrix</h3>
+    <h3>
+      <span class="l-de">10.2.1 — Lizenzstatus</span>
+      <span class="l-en">10.2.1 — License States</span>
+      <span class="l-pt">10.2.1 — Estados de Licenca</span>
+    </h3>
 
-      <p>The governance engine enforces different constraints based on the license state. The following matrix defines the system's behaviour for each combination of license status and identity element:</p>
+    <p>
+      <span class="lb-de">Das Framework definiert fuenf Lizenzstatus, von denen jeder unterschiedliches Governance-Verhalten ausloest:</span>
+      <span class="lb-en">The framework defines five license states, each triggering distinct governance behaviour:</span>
+      <span class="lb-pt">O framework define cinco estados de licenca, cada um acionando comportamento de governanca distinto:</span>
+    </p>
 
-      <table class="matrix-table">
+    <pre><code>{
+  "identity_license": {
+    "status": "model_only",        // authorized | model_only | pending | expired | revoked
+    "authorized_by": null,
+    "authorization_ref": null,
+    "valid_from": null,
+    "valid_until": null,
+    "scope": {
+      "logo": false,
+      "letterhead": false,
+      "institutional_tone": true,
+      "values_reference": true,
+      "official_address": false
+    },
+    "disclaimer_required": true,
+    "logo_allowed": false
+  }
+}</code></pre>
+
+    <h3>
+      <span class="l-de">10.2.2 — Verhaltensmatrix</span>
+      <span class="l-en">10.2.2 — Behaviour Matrix</span>
+      <span class="l-pt">10.2.2 — Matriz de Comportamento</span>
+    </h3>
+
+    <p>
+      <span class="lb-de">Die Governance-Engine erzwingt unterschiedliche Einschraenkungen basierend auf dem Lizenzstatus. Die folgende Matrix definiert das Systemverhalten fuer jede Kombination von Lizenzstatus und Identitaetselement:</span>
+      <span class="lb-en">The governance engine enforces different constraints based on the license state. The following matrix defines the system's behaviour for each combination of license status and identity element:</span>
+      <span class="lb-pt">O motor de governanca aplica diferentes restricoes com base no estado da licenca. A matriz a seguir define o comportamento do sistema para cada combinacao de status de licenca e elemento de identidade:</span>
+    </p>
+
+    <div class="spec-table-wrapper">
+      <table class="spec-table">
         <thead>
           <tr>
             <th>License Status</th>
@@ -675,305 +310,415 @@
         </thead>
         <tbody>
           <tr>
-            <td><span class="status-badge status-authorized">authorized</span></td>
-            <td class="cell-yes">✓ per scope</td>
-            <td class="cell-yes">✓ full</td>
+            <td><code style="background: var(--signal-safe-dim); color: var(--signal-safe);">authorized</code></td>
+            <td style="color: var(--signal-safe);">&#10003; per scope</td>
+            <td style="color: var(--signal-safe);">&#10003; full</td>
             <td>Optional</td>
             <td><code>licensed_usage</code></td>
           </tr>
           <tr>
-            <td><span class="status-badge status-model">model_only</span></td>
-            <td class="cell-no">✗ blocked</td>
-            <td class="cell-yes">✓ permitted</td>
-            <td class="cell-warn">Required</td>
+            <td><code style="background: var(--signal-flow-dim); color: var(--signal-flow);">model_only</code></td>
+            <td style="color: var(--signal-core);">&#10007; blocked</td>
+            <td style="color: var(--signal-safe);">&#10003; permitted</td>
+            <td style="color: var(--signal-flow);">Required</td>
             <td><code>model_simulation</code></td>
           </tr>
           <tr>
-            <td><span class="status-badge status-pending">pending</span></td>
-            <td class="cell-no">✗ blocked</td>
-            <td class="cell-yes">✓ permitted</td>
-            <td class="cell-warn">Required</td>
+            <td><code style="background: var(--surface-2); color: var(--text-tertiary);">pending</code></td>
+            <td style="color: var(--signal-core);">&#10007; blocked</td>
+            <td style="color: var(--signal-safe);">&#10003; permitted</td>
+            <td style="color: var(--signal-flow);">Required</td>
             <td><code>model_simulation</code></td>
           </tr>
           <tr>
-            <td><span class="status-badge status-revoked">expired</span></td>
-            <td class="cell-block">✗ blocked</td>
-            <td class="cell-warn">⚠ with notice</td>
-            <td class="cell-warn">Required</td>
+            <td><code style="background: var(--signal-core-dim); color: var(--signal-core);">expired</code></td>
+            <td style="color: var(--signal-core);">&#10007; blocked</td>
+            <td style="color: var(--signal-flow);">&#9888; with notice</td>
+            <td style="color: var(--signal-flow);">Required</td>
             <td><code>license_expired</code></td>
           </tr>
           <tr>
-            <td><span class="status-badge status-revoked">revoked</span></td>
-            <td class="cell-block">✗ blocked</td>
-            <td class="cell-block">✗ blocked</td>
+            <td><code style="background: var(--signal-core-dim); color: var(--signal-core);">revoked</code></td>
+            <td style="color: var(--signal-core);">&#10007; blocked</td>
+            <td style="color: var(--signal-core);">&#10007; blocked</td>
             <td>N/A</td>
             <td><code>license_revoked</code></td>
           </tr>
         </tbody>
       </table>
-
-      <div class="figure-caption"><strong>Table 1</strong> — Identity License Behaviour Matrix: governance enforcement per license state</div>
-
-      <h3>10.2.3 &ensp;Graduated Enforcement</h3>
-
-      <p>A key design principle is graduated enforcement rather than binary allow/deny. The <code>model_only</code> state — the most common in practice — permits institutional language patterns for legitimate use cases (training documents, style simulation, drafting assistance) while enforcing automatic disclaimer insertion and logo blocking. This approach recognises that institutional language simulation has valid applications and should be governed, not prohibited.</p>
-
-      <p>The <code>authorized</code> state, by contrast, represents a formal relationship between the system operator and the referenced institution, documented through a verifiable authorization reference. This state unlocks identity elements (logo, letterhead, official address) according to a defined scope, enabling fully branded document generation under governance control.</p>
     </div>
+    <p style="font-size: 12px; color: var(--text-tertiary); text-align: center; margin-top: 8px;"><strong>Table 1</strong> — Identity License Behaviour Matrix: governance enforcement per license state</p>
 
-    <div class="sep">· · ·</div>
+    <h3>
+      <span class="l-de">10.2.3 — Abgestufte Durchsetzung</span>
+      <span class="l-en">10.2.3 — Graduated Enforcement</span>
+      <span class="l-pt">10.2.3 — Aplicacao Graduada</span>
+    </h3>
 
-    <!-- SECTION 10.3: ENFORCEMENT FLOW -->
-    <div class="section">
-      <div class="section-number">10.3</div>
-      <h2>Enforcement Architecture</h2>
+    <p>
+      <span class="lb-de">Ein wichtiges Design-Prinzip ist die abgestufte Durchsetzung anstelle von binaerer Erlaubnis/Verweigerung. Der <code>model_only</code>-Status — der in der Praxis am haeufigsten vorkommt — erlaubt institutionelle Sprachmuster fuer legitime Anwendungsfaelle (Schulungsdokumente, Stilsimulation, Entwurfshilfe) bei gleichzeitiger Durchsetzung automatischer Haftungsausschluesse und Logo-Sperrung.</span>
+      <span class="lb-en">A key design principle is graduated enforcement rather than binary allow/deny. The <code>model_only</code> state — the most common in practice — permits institutional language patterns for legitimate use cases (training documents, style simulation, drafting assistance) while enforcing automatic disclaimer insertion and logo blocking. This approach recognises that institutional language simulation has valid applications and should be governed, not prohibited.</span>
+      <span class="lb-pt">Um principio de design chave e a aplicacao graduada em vez de permissao/negacao binaria. O estado <code>model_only</code> — o mais comum na pratica — permite padroes de linguagem institucional para casos de uso legitimos (documentos de treinamento, simulacao de estilo, assistencia na redacao) enquanto aplica insercao automatica de avisos e bloqueio de logotipos.</span>
+    </p>
 
-      <p>The Identity Governance Layer operates within the WINDI governance engine as a validation step during document generation. When the engine detects institutional references — either through explicit ISP profile selection or through the Identity Detector's automated keyword recognition — it triggers the identity license validation flow.</p>
+    <p>
+      <span class="lb-de">Der <code>authorized</code>-Status hingegen repraesentiert eine formelle Beziehung zwischen dem Systembetreiber und der referenzierten Institution, dokumentiert durch eine verifizierbare Autorisierungsreferenz. Dieser Status entsperrt Identitaetselemente (Logo, Briefkopf, offizielle Adresse) gemaess einem definierten Umfang.</span>
+      <span class="lb-en">The <code>authorized</code> state, by contrast, represents a formal relationship between the system operator and the referenced institution, documented through a verifiable authorization reference. This state unlocks identity elements (logo, letterhead, official address) according to a defined scope, enabling fully branded document generation under governance control.</span>
+      <span class="lb-pt">O estado <code>authorized</code>, em contraste, representa uma relacao formal entre o operador do sistema e a instituicao referenciada, documentada atraves de uma referencia de autorizacao verificavel. Este estado desbloqueia elementos de identidade (logo, papel timbrado, endereco oficial) de acordo com um escopo definido.</span>
+    </p>
 
-      <div class="flow-container">
-        <div class="flow-diagram">
-          <div class="flow-step">
-            <div class="flow-step-num">1</div>
-            <div class="flow-step-content">
-              <div class="flow-step-title">Institutional Reference Detection</div>
-              <div class="flow-step-desc">Identity Detector scans text for institutional keywords, names, and patterns. Supports multilingual detection with German declension tolerance.</div>
+    <hr>
+
+    <!-- Section 10.3: Enforcement Architecture -->
+    <h2>
+      <span class="l-de">10.3 — Durchsetzungsarchitektur</span>
+      <span class="l-en">10.3 — Enforcement Architecture</span>
+      <span class="l-pt">10.3 — Arquitetura de Aplicacao</span>
+    </h2>
+
+    <p>
+      <span class="lb-de">Die Identitaets-Governance-Schicht arbeitet innerhalb der WINDI-Governance-Engine als Validierungsschritt waehrend der Dokumentenerstellung. Wenn die Engine institutionelle Referenzen erkennt — entweder durch explizite ISP-Profilauswahl oder durch automatische Schluesselworterkennung des Identity Detectors — loest sie den Identitaetslizenz-Validierungsablauf aus.</span>
+      <span class="lb-en">The Identity Governance Layer operates within the WINDI governance engine as a validation step during document generation. When the engine detects institutional references — either through explicit ISP profile selection or through the Identity Detector's automated keyword recognition — it triggers the identity license validation flow.</span>
+      <span class="lb-pt">A Camada de Governanca de Identidade opera dentro do motor de governanca WINDI como uma etapa de validacao durante a geracao de documentos. Quando o motor detecta referencias institucionais — seja atraves de selecao explicita de perfil ISP ou atraves de reconhecimento automatico de palavras-chave do Identity Detector — ele aciona o fluxo de validacao de licenca de identidade.</span>
+    </p>
+
+    <div class="cta-box">
+      <div class="cta-content">
+        <h3>Identity Governance Enforcement Flow</h3>
+        <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 16px;">
+          <div style="display: flex; align-items: stretch;">
+            <div style="background: var(--gold); color: var(--void); padding: 12px 16px; border-radius: 6px 0 0 6px; font-family: var(--font-mono); font-size: 12px; font-weight: 600; display: flex; align-items: center; min-width: 48px; justify-content: center;">1</div>
+            <div style="flex: 1; padding: 12px 16px; border: 1px solid var(--border-subtle); border-left: none; border-radius: 0 6px 6px 0; background: var(--surface-1);">
+              <strong>Institutional Reference Detection</strong><br>
+              <span style="color: var(--text-tertiary); font-size: 13px;">Identity Detector scans text for institutional keywords, names, and patterns. Supports multilingual detection with German declension tolerance.</span>
             </div>
           </div>
-          <div class="flow-arrow">↓</div>
-          <div class="flow-step">
-            <div class="flow-step-num">2</div>
-            <div class="flow-step-content">
-              <div class="flow-step-title">ISP Profile Lookup</div>
-              <div class="flow-step-desc">If a matching institutional profile exists, retrieve its <code>identity_license</code> configuration and governance level.</div>
+          <div style="text-align: center; color: var(--gold); font-size: 18px;">&#8595;</div>
+          <div style="display: flex; align-items: stretch;">
+            <div style="background: var(--gold); color: var(--void); padding: 12px 16px; border-radius: 6px 0 0 6px; font-family: var(--font-mono); font-size: 12px; font-weight: 600; display: flex; align-items: center; min-width: 48px; justify-content: center;">2</div>
+            <div style="flex: 1; padding: 12px 16px; border: 1px solid var(--border-subtle); border-left: none; border-radius: 0 6px 6px 0; background: var(--surface-1);">
+              <strong>ISP Profile Lookup</strong><br>
+              <span style="color: var(--text-tertiary); font-size: 13px;">If a matching institutional profile exists, retrieve its <code>identity_license</code> configuration and governance level.</span>
             </div>
           </div>
-          <div class="flow-arrow">↓</div>
-          <div class="flow-step">
-            <div class="flow-step-num">3</div>
-            <div class="flow-step-content">
-              <div class="flow-step-title">License Status Evaluation</div>
-              <div class="flow-step-desc">Validate license state against behaviour matrix. Determine which identity elements are permitted, restricted, or blocked.</div>
+          <div style="text-align: center; color: var(--gold); font-size: 18px;">&#8595;</div>
+          <div style="display: flex; align-items: stretch;">
+            <div style="background: var(--gold); color: var(--void); padding: 12px 16px; border-radius: 6px 0 0 6px; font-family: var(--font-mono); font-size: 12px; font-weight: 600; display: flex; align-items: center; min-width: 48px; justify-content: center;">3</div>
+            <div style="flex: 1; padding: 12px 16px; border: 1px solid var(--border-subtle); border-left: none; border-radius: 0 6px 6px 0; background: var(--surface-1);">
+              <strong>License Status Evaluation</strong><br>
+              <span style="color: var(--text-tertiary); font-size: 13px;">Validate license state against behaviour matrix. Determine which identity elements are permitted, restricted, or blocked.</span>
             </div>
           </div>
-          <div class="flow-arrow">↓</div>
-          <div class="flow-step">
-            <div class="flow-step-num">4</div>
-            <div class="flow-step-content">
-              <div class="flow-step-title">Governance Enforcement</div>
-              <div class="flow-step-desc">Apply constraints: insert disclaimers, block logos, restrict identity elements. Generate trilingual disclaimer text (DE/EN/PT).</div>
+          <div style="text-align: center; color: var(--gold); font-size: 18px;">&#8595;</div>
+          <div style="display: flex; align-items: stretch;">
+            <div style="background: var(--gold); color: var(--void); padding: 12px 16px; border-radius: 6px 0 0 6px; font-family: var(--font-mono); font-size: 12px; font-weight: 600; display: flex; align-items: center; min-width: 48px; justify-content: center;">4</div>
+            <div style="flex: 1; padding: 12px 16px; border: 1px solid var(--border-subtle); border-left: none; border-radius: 0 6px 6px 0; background: var(--surface-1);">
+              <strong>Governance Enforcement</strong><br>
+              <span style="color: var(--text-tertiary); font-size: 13px;">Apply constraints: insert disclaimers, block logos, restrict identity elements. Generate trilingual disclaimer text (DE/EN/PT).</span>
             </div>
           </div>
-          <div class="flow-arrow">↓</div>
-          <div class="flow-step">
-            <div class="flow-step-num">5</div>
-            <div class="flow-step-content">
-              <div class="flow-step-title">Audit Trail Generation</div>
-              <div class="flow-step-desc">Record <code>identity_governance</code> block in document metadata: license status, logo usage, disclaimer insertion, audit category, and authorization reference.</div>
+          <div style="text-align: center; color: var(--gold); font-size: 18px;">&#8595;</div>
+          <div style="display: flex; align-items: stretch;">
+            <div style="background: var(--gold); color: var(--void); padding: 12px 16px; border-radius: 6px 0 0 6px; font-family: var(--font-mono); font-size: 12px; font-weight: 600; display: flex; align-items: center; min-width: 48px; justify-content: center;">5</div>
+            <div style="flex: 1; padding: 12px 16px; border: 1px solid var(--border-subtle); border-left: none; border-radius: 0 6px 6px 0; background: var(--surface-1);">
+              <strong>Audit Trail Generation</strong><br>
+              <span style="color: var(--text-tertiary); font-size: 13px;">Record <code>identity_governance</code> block in document metadata: license status, logo usage, disclaimer insertion, audit category, and authorization reference.</span>
             </div>
           </div>
         </div>
-        <div class="figure-caption"><strong>Fig. 1</strong> — Identity Governance enforcement flow: from detection to audit trail</div>
+        <p style="font-size: 12px; color: var(--text-tertiary); text-align: center; margin-top: 16px;"><strong>Fig. 1</strong> — Identity Governance enforcement flow: from detection to audit trail</p>
       </div>
     </div>
 
-    <!-- SECTION 10.4: THE AUDIT BLOCK -->
-    <div class="section">
-      <div class="section-number">10.4</div>
-      <h2>The Identity Governance Audit Block</h2>
+    <!-- Section 10.4: The Audit Block -->
+    <h2>
+      <span class="l-de">10.4 — Der Identitaets-Governance-Auditblock</span>
+      <span class="l-en">10.4 — The Identity Governance Audit Block</span>
+      <span class="l-pt">10.4 — O Bloco de Auditoria de Governanca de Identidade</span>
+    </h2>
 
-      <p>Every document generated through WINDI's MEDIUM or HIGH governance tiers that references an institutional identity produces a structured <code>identity_governance</code> block in its metadata. This block serves as a forensic record of identity usage decisions, enabling post-hoc verification and compliance auditing.</p>
+    <p>
+      <span class="lb-de">Jedes Dokument, das ueber WINDIs MEDIUM- oder HIGH-Governance-Stufen generiert wird und eine institutionelle Identitaet referenziert, erzeugt einen strukturierten <code>identity_governance</code>-Block in seinen Metadaten. Dieser Block dient als forensische Aufzeichnung von Identitaetsnutzungsentscheidungen und ermoeglicht nachtraegliche Verifizierung und Compliance-Audits.</span>
+      <span class="lb-en">Every document generated through WINDI's MEDIUM or HIGH governance tiers that references an institutional identity produces a structured <code>identity_governance</code> block in its metadata. This block serves as a forensic record of identity usage decisions, enabling post-hoc verification and compliance auditing.</span>
+      <span class="lb-pt">Todo documento gerado atraves dos niveis de governanca MEDIUM ou HIGH do WINDI que referencia uma identidade institucional produz um bloco <code>identity_governance</code> estruturado em seus metadados. Este bloco serve como registro forense de decisoes de uso de identidade, permitindo verificacao posterior e auditoria de conformidade.</span>
+    </p>
 
-      <div class="code-block">
-<span class="comment">// Actual system output — Bundesregierung MEDIUM document</span>
-<span class="bracket">{</span>
-  <span class="key">"identity_governance"</span>: <span class="bracket">{</span>
-    <span class="key">"institution"</span>: <span class="string">"Bundesregierung (Model)"</span>,
-    <span class="key">"license_status"</span>: <span class="string">"model_only"</span>,
-    <span class="key">"logo_allowed"</span>: <span class="bool">false</span>,
-    <span class="key">"disclaimer_required"</span>: <span class="bool">true</span>,
-    <span class="key">"disclaimer_text"</span>: <span class="string">"This document uses institutional language for model or simulation purposes. It is not an official document issued by the mentioned institution."</span>,
-    <span class="key">"audit_category"</span>: <span class="string">"model_simulation"</span>,
-    <span class="key">"authorization_ref"</span>: <span class="bool">null</span>,
-    <span class="key">"restrictions"</span>: [
-      <span class="string">"Model/simulation use only"</span>,
-      <span class="string">"No official government identity permitted"</span>,
-      <span class="string">"Disclaimer required on all documents"</span>
+    <pre><code>// Actual system output — Bundesregierung MEDIUM document
+{
+  "identity_governance": {
+    "institution": "Bundesregierung (Model)",
+    "license_status": "model_only",
+    "logo_allowed": false,
+    "disclaimer_required": true,
+    "disclaimer_text": "This document uses institutional language for model or simulation purposes. It is not an official document issued by the mentioned institution.",
+    "audit_category": "model_simulation",
+    "authorization_ref": null,
+    "restrictions": [
+      "Model/simulation use only",
+      "No official government identity permitted",
+      "Disclaimer required on all documents"
     ]
-  <span class="bracket">}</span>
-<span class="bracket">}</span>
-      </div>
+  }
+}</code></pre>
+    <p style="font-size: 12px; color: var(--text-tertiary); text-align: center; margin-top: 8px;"><strong>Fig. 2</strong> — Identity governance audit block from production system (Bundesregierung MEDIUM profile, 01 February 2026)</p>
 
-      <div class="figure-caption"><strong>Fig. 2</strong> — Identity governance audit block from production system (Bundesregierung MEDIUM profile, 01 February 2026)</div>
+    <p>
+      <span class="lb-de">Dieser Auditblock wird nicht rekonstruiert — er wird zum Zeitpunkt der Generierung erfasst und in den Governance-Beleg des Dokuments aufgenommen. Fuer HIGH-Level-Dokumente werden die Identitaets-Governance-Daten zusaetzlich im forensischen Ledger mit manipulationssicherem Hashing aufgezeichnet.</span>
+      <span class="lb-en">This audit block is not reconstructed — it is captured at generation time and included in the document's governance receipt. For HIGH-level documents, the identity governance data is additionally recorded in the forensic ledger with tamper-evident hashing, ensuring that identity usage decisions cannot be retroactively altered.</span>
+      <span class="lb-pt">Este bloco de auditoria nao e reconstruido — ele e capturado no momento da geracao e incluido no recibo de governanca do documento. Para documentos de nivel HIGH, os dados de governanca de identidade sao adicionalmente registrados no ledger forense com hashing a prova de adulteracao.</span>
+    </p>
 
-      <p>This audit block is not reconstructed — it is captured at generation time and included in the document's governance receipt. For HIGH-level documents, the identity governance data is additionally recorded in the forensic ledger with tamper-evident hashing, ensuring that identity usage decisions cannot be retroactively altered.</p>
-    </div>
+    <!-- Section 10.5: Impact Before and After -->
+    <h2>
+      <span class="l-de">10.5 — Auswirkung: Vor und Nach Identitaets-Governance</span>
+      <span class="l-en">10.5 — Impact: Before and After Identity Governance</span>
+      <span class="l-pt">10.5 — Impacto: Antes e Depois da Governanca de Identidade</span>
+    </h2>
 
-    <!-- SECTION 10.5: BEFORE AND AFTER -->
-    <div class="section">
-      <div class="section-number">10.5</div>
-      <h2>Impact: Before and After Identity Governance</h2>
-
-      <div class="comparison">
-        <div class="comparison-panel before">
-          <div class="comparison-panel-header">Without Identity Governance</div>
-          <div class="comparison-panel-body">
-            <ul>
-              <li>AI generates institutional-style documents without controls</li>
-              <li>No distinction between authorised and simulated identity</li>
-              <li>Logos and letterheads used without permission verification</li>
-              <li>No audit trail of institutional identity references</li>
-              <li>No automatic disclaimers for simulation use cases</li>
-              <li>Institutional trust erosion through uncontrolled mimicry</li>
-            </ul>
-          </div>
-        </div>
-        <div class="comparison-panel after">
-          <div class="comparison-panel-header">With Identity Governance (WINDI)</div>
-          <div class="comparison-panel-body">
-            <ul>
-              <li>Every institutional reference passes through license validation</li>
-              <li>Five graduated states from authorised to revoked</li>
-              <li>Logo and letterhead usage controlled by scope definition</li>
-              <li>Complete forensic audit trail of all identity decisions</li>
-              <li>Trilingual automatic disclaimers (DE/EN/PT)</li>
-              <li>Institutional trust preserved through transparent governance</li>
-            </ul>
-          </div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0;">
+      <div class="cta-box" style="margin: 0; border-left: 3px solid var(--signal-core);">
+        <div class="cta-content">
+          <h4 style="color: var(--signal-core); font-size: 11px; letter-spacing: 1px;">WITHOUT IDENTITY GOVERNANCE</h4>
+          <ul style="margin-top: 12px;">
+            <li>AI generates institutional-style documents without controls</li>
+            <li>No distinction between authorised and simulated identity</li>
+            <li>Logos and letterheads used without permission verification</li>
+            <li>No audit trail of institutional identity references</li>
+            <li>No automatic disclaimers for simulation use cases</li>
+            <li>Institutional trust erosion through uncontrolled mimicry</li>
+          </ul>
         </div>
       </div>
-
-      <div class="figure-caption"><strong>Fig. 3</strong> — Comparative impact analysis of the Identity Governance Layer</div>
+      <div class="cta-box" style="margin: 0; border-left: 3px solid var(--signal-safe);">
+        <div class="cta-content">
+          <h4 style="color: var(--signal-safe); font-size: 11px; letter-spacing: 1px;">WITH IDENTITY GOVERNANCE (WINDI)</h4>
+          <ul style="margin-top: 12px;">
+            <li>Every institutional reference passes through license validation</li>
+            <li>Five graduated states from authorised to revoked</li>
+            <li>Logo and letterhead usage controlled by scope definition</li>
+            <li>Complete forensic audit trail of all identity decisions</li>
+            <li>Trilingual automatic disclaimers (DE/EN/PT)</li>
+            <li>Institutional trust preserved through transparent governance</li>
+          </ul>
+        </div>
+      </div>
     </div>
+    <p style="font-size: 12px; color: var(--text-tertiary); text-align: center;"><strong>Fig. 3</strong> — Comparative impact analysis of the Identity Governance Layer</p>
 
-    <!-- SECTION 10.5b: PRACTICAL SCENARIOS -->
-    <div class="section">
-      <div class="section-number">10.5.1</div>
-      <h3>Applied Scenarios</h3>
-      <p>The following table illustrates how the Identity Governance Layer operates across different institutional contexts currently modelled in the ISP Registry. Each scenario demonstrates the practical effect of the license status on document governance behaviour.</p>
-      <table class="matrix-table">
+    <h3>
+      <span class="l-de">10.5.1 — Angewandte Szenarien</span>
+      <span class="l-en">10.5.1 — Applied Scenarios</span>
+      <span class="l-pt">10.5.1 — Cenarios Aplicados</span>
+    </h3>
+
+    <p>
+      <span class="lb-de">Die folgende Tabelle veranschaulicht, wie die Identitaets-Governance-Schicht in verschiedenen institutionellen Kontexten funktioniert, die derzeit im ISP-Register modelliert sind. Jedes Szenario demonstriert die praktische Auswirkung des Lizenzstatus auf das Dokument-Governance-Verhalten.</span>
+      <span class="lb-en">The following table illustrates how the Identity Governance Layer operates across different institutional contexts currently modelled in the ISP Registry. Each scenario demonstrates the practical effect of the license status on document governance behaviour.</span>
+      <span class="lb-pt">A tabela a seguir ilustra como a Camada de Governanca de Identidade opera em diferentes contextos institucionais atualmente modelados no Registro ISP. Cada cenario demonstra o efeito pratico do status da licenca no comportamento de governanca de documentos.</span>
+    </p>
+
+    <div class="spec-table-wrapper">
+      <table class="spec-table">
         <thead>
           <tr>
-            <th style="text-align:left">Scenario</th>
-            <th style="text-align:left">Institution</th>
+            <th>Scenario</th>
+            <th>Institution</th>
             <th>Level</th>
             <th>License</th>
-            <th style="text-align:left">Governance Result</th>
+            <th>Governance Result</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td style="text-align:left">Academic letter draft</td>
-            <td style="text-align:left"><strong>Banco do Brasil</strong></td>
-            <td><span class="status-badge status-model">MEDIUM</span></td>
-            <td><span class="status-badge status-model">model_only</span></td>
-            <td style="text-align:left">Disclaimer inserted · Logo blocked · Tone permitted · Audit: <code>model_simulation</code></td>
+            <td>Academic letter draft</td>
+            <td><strong>Banco do Brasil</strong></td>
+            <td><code style="background: var(--signal-flow-dim); color: var(--signal-flow);">MEDIUM</code></td>
+            <td><code style="background: var(--signal-flow-dim); color: var(--signal-flow);">model_only</code></td>
+            <td>Disclaimer inserted / Logo blocked / Tone permitted / Audit: <code>model_simulation</code></td>
           </tr>
           <tr>
-            <td style="text-align:left">Policy memo simulation</td>
-            <td style="text-align:left"><strong>Bundesregierung</strong></td>
-            <td><span class="status-badge status-model">MEDIUM</span></td>
-            <td><span class="status-badge status-model">model_only</span></td>
-            <td style="text-align:left">Disclaimer inserted · No official identity · Institutional tone for training use</td>
+            <td>Policy memo simulation</td>
+            <td><strong>Bundesregierung</strong></td>
+            <td><code style="background: var(--signal-flow-dim); color: var(--signal-flow);">MEDIUM</code></td>
+            <td><code style="background: var(--signal-flow-dim); color: var(--signal-flow);">model_only</code></td>
+            <td>Disclaimer inserted / No official identity / Institutional tone for training use</td>
           </tr>
           <tr>
-            <td style="text-align:left">Supervisory assessment</td>
-            <td style="text-align:left"><strong>BaFin</strong></td>
-            <td><span class="status-badge status-revoked">HIGH</span></td>
-            <td><span class="status-badge status-pending">pending</span></td>
-            <td style="text-align:left">Forensic ledger · Four-eyes principle · Disclaimer · No downgrade permitted</td>
+            <td>Supervisory assessment</td>
+            <td><strong>BaFin</strong></td>
+            <td><code style="background: var(--signal-core-dim); color: var(--signal-core);">HIGH</code></td>
+            <td><code style="background: var(--surface-2); color: var(--text-tertiary);">pending</code></td>
+            <td>Forensic ledger / Four-eyes principle / Disclaimer / No downgrade permitted</td>
           </tr>
           <tr>
-            <td style="text-align:left">Certification report</td>
-            <td style="text-align:left"><strong>TÜV</strong></td>
-            <td><span class="status-badge status-authorized">LOW</span></td>
-            <td><span class="status-badge status-authorized">authorized</span></td>
-            <td style="text-align:left">Full identity per scope · Logo permitted · Audit: <code>licensed_usage</code></td>
+            <td>Certification report</td>
+            <td><strong>TUeV</strong></td>
+            <td><code style="background: var(--signal-safe-dim); color: var(--signal-safe);">LOW</code></td>
+            <td><code style="background: var(--signal-safe-dim); color: var(--signal-safe);">authorized</code></td>
+            <td>Full identity per scope / Logo permitted / Audit: <code>licensed_usage</code></td>
           </tr>
           <tr>
-            <td style="text-align:left">Benefits notification</td>
-            <td style="text-align:left"><strong>Agentur für Arbeit</strong></td>
-            <td><span class="status-badge status-model">MEDIUM</span></td>
-            <td><span class="status-badge status-model">model_only</span></td>
-            <td style="text-align:left">Socially sensitive context · Forced disclaimer · Identity elements restricted</td>
+            <td>Benefits notification</td>
+            <td><strong>Agentur fuer Arbeit</strong></td>
+            <td><code style="background: var(--signal-flow-dim); color: var(--signal-flow);">MEDIUM</code></td>
+            <td><code style="background: var(--signal-flow-dim); color: var(--signal-flow);">model_only</code></td>
+            <td>Socially sensitive context / Forced disclaimer / Identity elements restricted</td>
           </tr>
           <tr>
-            <td style="text-align:left">Trade certificate</td>
-            <td style="text-align:left"><strong>HWK</strong></td>
-            <td><span class="status-badge status-authorized">LOW</span></td>
-            <td><span class="status-badge status-authorized">authorized</span></td>
-            <td style="text-align:left">Full operational identity · Standard governance receipt · Craft sector compliance</td>
+            <td>Trade certificate</td>
+            <td><strong>HWK</strong></td>
+            <td><code style="background: var(--signal-safe-dim); color: var(--signal-safe);">LOW</code></td>
+            <td><code style="background: var(--signal-safe-dim); color: var(--signal-safe);">authorized</code></td>
+            <td>Full operational identity / Standard governance receipt / Craft sector compliance</td>
           </tr>
         </tbody>
       </table>
-      <div class="figure-caption"><strong>Table 2</strong> — Applied governance scenarios across six institutional profiles from the ISP Registry v2.5.0</div>
     </div>
+    <p style="font-size: 12px; color: var(--text-tertiary); text-align: center; margin-top: 8px;"><strong>Table 2</strong> — Applied governance scenarios across six institutional profiles from the ISP Registry v2.5.0</p>
 
-    <!-- SECTION 10.6: REGULATORY ALIGNMENT -->
-    <div class="section">
-      <div class="section-number">10.6</div>
-      <h2>Regulatory Alignment</h2>
+    <!-- Section 10.6: Regulatory Alignment -->
+    <h2>
+      <span class="l-de">10.6 — Regulatorische Ausrichtung</span>
+      <span class="l-en">10.6 — Regulatory Alignment</span>
+      <span class="l-pt">10.6 — Alinhamento Regulatorio</span>
+    </h2>
 
-      <p>The Identity Governance Layer addresses requirements that span multiple regulatory frameworks, none of which specifically anticipate the problem of institutional identity simulation in AI-assisted document generation.</p>
+    <p>
+      <span class="lb-de">Die Identitaets-Governance-Schicht adressiert Anforderungen, die mehrere regulatorische Rahmenwerke umspannen, von denen keines speziell das Problem der institutionellen Identitaetssimulation in der KI-gestuetzten Dokumentenerstellung antizipiert.</span>
+      <span class="lb-en">The Identity Governance Layer addresses requirements that span multiple regulatory frameworks, none of which specifically anticipate the problem of institutional identity simulation in AI-assisted document generation.</span>
+      <span class="lb-pt">A Camada de Governanca de Identidade aborda requisitos que abrangem multiplos frameworks regulatorios, nenhum dos quais antecipa especificamente o problema da simulacao de identidade institucional na geracao de documentos assistida por IA.</span>
+    </p>
 
-      <div class="eu-ref">
-        <div class="eu-ref-title">EU AI Act — Article 50: Transparency Obligations</div>
-        <div class="eu-ref-body">AI-generated content must be identifiable as such. The Identity Governance Layer extends this principle to institutional identity: not only must AI-generated documents be marked, but their use of institutional identity must be explicitly governed, disclosed, and auditable. The automatic disclaimer mechanism directly operationalises this requirement.</div>
-      </div>
-
-      <div class="eu-ref">
-        <div class="eu-ref-title">EU AI Act — Article 5: Prohibited Practices (Manipulation)</div>
-        <div class="eu-ref-body">While the prohibition targets manipulative AI practices, the boundary between legitimate institutional language simulation (e.g., for training) and deceptive institutional mimicry requires a governance mechanism to enforce. The five-state license model provides this enforcement, ensuring that institutional identity usage is always traceable to an explicit governance decision.</div>
-      </div>
-
-      <div class="eu-ref">
-        <div class="eu-ref-title">GDPR — Principle of Accountability (Article 5(2))</div>
-        <div class="eu-ref-body">The <code>identity_governance</code> audit block in every governed document provides verifiable evidence of identity usage decisions, supporting the controller's obligation to demonstrate compliance with data protection and institutional integrity requirements.</div>
-      </div>
-
-      <div class="eu-ref">
-        <div class="eu-ref-title">BaFin KI-Orientierungshilfe (18 December 2025)</div>
-        <div class="eu-ref-body">BaFin's guidance on AI in financial services emphasises lifecycle governance and risk documentation. For regulated entities using AI-assisted document generation, the Identity Governance Layer provides auditable proof that institutional identity was used under controlled conditions — a requirement that financial supervisors are likely to examine as AI adoption expands.</div>
+    <div class="cta-box" style="border-left: 3px solid var(--signal-gov);">
+      <div class="cta-content">
+        <h3 style="color: var(--signal-gov);">EU AI Act — Article 50: Transparency Obligations</h3>
+        <p>AI-generated content must be identifiable as such. The Identity Governance Layer extends this principle to institutional identity: not only must AI-generated documents be marked, but their use of institutional identity must be explicitly governed, disclosed, and auditable. The automatic disclaimer mechanism directly operationalises this requirement.</p>
       </div>
     </div>
 
-    <!-- SECTION 10.7: METHODOLOGY -->
-    <div class="section">
-      <div class="section-number">10.7</div>
-      <h2>Methodological Note</h2>
-
-      <p>The Identity Governance Layer was not designed from theoretical requirements. It emerged from deployment-driven discovery — a methodology where architectural decisions are derived from real-world test cases executed in production-like environments. The Banco do Brasil letter case study demonstrated that institutional identity simulation is a governance concern <em>before</em> this concern was formally specified in the system's requirements.</p>
-
-      <p>This approach — building governance mechanisms in response to empirically observed risks rather than anticipated risks — aligns with the iterative development methodology that characterises the WINDI system. The ISP Registry evolved from a single profile (Deutsche Bahn, 31 January 2026) to eight profiles across three governance tiers (02 February 2026), with each deployment revealing new governance requirements that were then integrated into the framework.</p>
-
-      <p>The academic significance of this methodology is that it demonstrates a <strong>feedback loop between deployment and design</strong>: the act of deploying institutional profiles in a production system generates insights that are immediately incorporated into the governance architecture, producing a system that is both empirically grounded and theoretically coherent.</p>
+    <div class="cta-box" style="border-left: 3px solid var(--signal-gov);">
+      <div class="cta-content">
+        <h3 style="color: var(--signal-gov);">EU AI Act — Article 5: Prohibited Practices (Manipulation)</h3>
+        <p>While the prohibition targets manipulative AI practices, the boundary between legitimate institutional language simulation (e.g., for training) and deceptive institutional mimicry requires a governance mechanism to enforce. The five-state license model provides this enforcement, ensuring that institutional identity usage is always traceable to an explicit governance decision.</p>
+      </div>
     </div>
 
-    <div class="principle-box">
-      <div class="principle-text">„When institutional identity can be simulated, institutional identity must be governed."</div>
-      <div class="principle-source">WINDI Key Discovery — derived from Banco do Brasil test case, 01 February 2026</div>
+    <div class="cta-box" style="border-left: 3px solid var(--signal-gov);">
+      <div class="cta-content">
+        <h3 style="color: var(--signal-gov);">GDPR — Principle of Accountability (Article 5(2))</h3>
+        <p>The <code>identity_governance</code> audit block in every governed document provides verifiable evidence of identity usage decisions, supporting the controller's obligation to demonstrate compliance with data protection and institutional integrity requirements.</p>
+      </div>
     </div>
 
-    <!-- NAVIGATION -->
-    <div class="nav-links">
-      <a href="isp-evolution.html">← TR-006: ISP Registry v2.5.0</a>
-      <a href="tr-007.html">TR-007: Secure Origin Framework →</a>
+    <div class="cta-box" style="border-left: 3px solid var(--signal-gov);">
+      <div class="cta-content">
+        <h3 style="color: var(--signal-gov);">BaFin KI-Orientierungshilfe (18 December 2025)</h3>
+        <p>BaFin's guidance on AI in financial services emphasises lifecycle governance and risk documentation. For regulated entities using AI-assisted document generation, the Identity Governance Layer provides auditable proof that institutional identity was used under controlled conditions — a requirement that financial supervisors are likely to examine as AI adoption expands.</p>
+      </div>
     </div>
+
+    <!-- Section 10.7: Methodological Note -->
+    <h2>
+      <span class="l-de">10.7 — Methodologische Anmerkung</span>
+      <span class="l-en">10.7 — Methodological Note</span>
+      <span class="l-pt">10.7 — Nota Metodologica</span>
+    </h2>
+
+    <p>
+      <span class="lb-de">Die Identitaets-Governance-Schicht wurde nicht aus theoretischen Anforderungen entworfen. Sie entstand aus bereitstellungsgetriebener Entdeckung — einer Methodik, bei der architektonische Entscheidungen aus realen Testfaellen abgeleitet werden, die in produktionsaehnlichen Umgebungen ausgefuehrt werden.</span>
+      <span class="lb-en">The Identity Governance Layer was not designed from theoretical requirements. It emerged from deployment-driven discovery — a methodology where architectural decisions are derived from real-world test cases executed in production-like environments. The Banco do Brasil letter case study demonstrated that institutional identity simulation is a governance concern <em>before</em> this concern was formally specified in the system's requirements.</span>
+      <span class="lb-pt">A Camada de Governanca de Identidade nao foi projetada a partir de requisitos teoricos. Ela emergiu da descoberta orientada por implantacao — uma metodologia onde decisoes arquitetonicas sao derivadas de casos de teste do mundo real executados em ambientes similares a producao.</span>
+    </p>
+
+    <p>
+      <span class="lb-de">Dieser Ansatz — Governance-Mechanismen als Reaktion auf empirisch beobachtete Risiken statt auf antizipierte Risiken zu entwickeln — stimmt mit der iterativen Entwicklungsmethodik ueberein, die das WINDI-System charakterisiert.</span>
+      <span class="lb-en">This approach — building governance mechanisms in response to empirically observed risks rather than anticipated risks — aligns with the iterative development methodology that characterises the WINDI system. The ISP Registry evolved from a single profile (Deutsche Bahn, 31 January 2026) to eight profiles across three governance tiers (02 February 2026), with each deployment revealing new governance requirements that were then integrated into the framework.</span>
+      <span class="lb-pt">Esta abordagem — construir mecanismos de governanca em resposta a riscos empiricamente observados em vez de riscos antecipados — alinha-se com a metodologia de desenvolvimento iterativo que caracteriza o sistema WINDI.</span>
+    </p>
+
+    <p>
+      <span class="lb-de">Die akademische Bedeutung dieser Methodik besteht darin, dass sie eine <strong>Rueckkopplungsschleife zwischen Bereitstellung und Design</strong> demonstriert: Der Akt der Bereitstellung institutioneller Profile in einem Produktionssystem generiert Erkenntnisse, die sofort in die Governance-Architektur integriert werden.</span>
+      <span class="lb-en">The academic significance of this methodology is that it demonstrates a <strong>feedback loop between deployment and design</strong>: the act of deploying institutional profiles in a production system generates insights that are immediately incorporated into the governance architecture, producing a system that is both empirically grounded and theoretically coherent.</span>
+      <span class="lb-pt">O significado academico desta metodologia e que ela demonstra um <strong>ciclo de feedback entre implantacao e design</strong>: o ato de implantar perfis institucionais em um sistema de producao gera insights que sao imediatamente incorporados na arquitetura de governanca.</span>
+    </p>
+
+    <!-- Closing Principle -->
+    <div class="cta-box" style="background: var(--surface-0); text-align: center; padding: 32px;">
+      <div class="cta-content">
+        <p style="font-size: 20px; font-style: italic; color: var(--text-primary); margin-bottom: 12px;">"When institutional identity can be simulated, institutional identity must be governed."</p>
+        <p style="font-family: var(--font-mono); font-size: 10px; color: var(--gold); letter-spacing: 2px; text-transform: uppercase; margin: 0;">WINDI Key Discovery — derived from Banco do Brasil test case, 01 February 2026</p>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <section style="display: flex; justify-content: space-between; margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border-subtle);">
+      <a href="isp-evolution.html" style="font-size: 14px;">&#8592; TR-006: ISP Registry v2.5.0</a>
+      <a href="tr-007.html" style="font-size: 14px;">TR-007: Secure Origin Framework &#8594;</a>
+    </section>
 
   </div>
 
-  <!-- FOOTER -->
-  <footer class="doc-footer">
-    <div class="footer-left">
-      WINDI Publishing House · Kempten (Allgäu), Bavaria, Germany<br>
-      Masterarbeit documentation: <em>master.windia4desk.tech</em>
+  <!-- Page Footer -->
+  <footer class="page-footer">
+    <div class="page-footer-meta">
+      <span>WINDI-IDGOV-06FEB26-NOIR</span>
+      <span>Section 10</span>
     </div>
-    <div class="footer-right">
-      Section 10<br>
-      Identity Governance v2.2.0<br>
-      02 February 2026<br>
-      Classification: PUBLIC
-    </div>
+    <p class="page-footer-quittung">Author: Jober Moegele Correa (WINDI-CEO-001) | Status: Deployed in Production</p>
+    <p class="page-footer-principle">
+      <span class="l-de">"KI verarbeitet. Mensch entscheidet. WINDI garantiert."</span>
+      <span class="l-en">"AI processes. Human decides. WINDI guarantees."</span>
+      <span class="l-pt">"IA processa. Humano decide. WINDI garante."</span>
+    </p>
   </footer>
+
+</main>
+
+<!-- JavaScript -->
+<script>
+// Theme Toggle
+function toggleTheme() {
+  const body = document.body;
+  const isLight = body.getAttribute('data-theme') === 'light';
+  body.setAttribute('data-theme', isLight ? 'dark' : 'light');
+  try { localStorage.setItem('windi-theme', isLight ? 'dark' : 'light'); } catch(e) {}
+}
+
+// Language Switcher
+function setLang(lang) {
+  document.body.setAttribute('data-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+  try { localStorage.setItem('windi-lang', lang); } catch(e) {}
+}
+
+// Sidebar Toggle (mobile)
+let sidebarOpen = false;
+function toggleSidebar() {
+  sidebarOpen = !sidebarOpen;
+  document.getElementById('sidebarLeft').classList.toggle('open', sidebarOpen);
+}
+
+// Close sidebar on link click (mobile)
+document.querySelectorAll('.sidebar-link').forEach(link => {
+  link.addEventListener('click', () => {
+    if (window.innerWidth <= 960) {
+      sidebarOpen = false;
+      document.getElementById('sidebarLeft').classList.remove('open');
+    }
+  });
+});
+
+// Init saved preferences
+(function init() {
+  try {
+    const theme = localStorage.getItem('windi-theme');
+    const lang = localStorage.getItem('windi-lang');
+    if (theme) document.body.setAttribute('data-theme', theme);
+    if (lang) setLang(lang);
+  } catch(e) {}
+})();
+</script>
 
 </body>
 </html>
