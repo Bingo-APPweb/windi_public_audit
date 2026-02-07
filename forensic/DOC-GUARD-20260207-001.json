@@ -1,0 +1,14 @@
+{
+  "doc_id": "DOC-GUARD-20260207-001",
+  "type": "INSTITUTIONAL_DEPOSITION",
+  "classification": "CANONICAL_RECORD",
+  "generated_at": "2026-02-07T21:57:05+01:00",
+  "sha256": "726d23531cb46514d2f42f5f1847995f5b43d3e4f3b60413920a3a127d794639",
+  "server": "87.106.29.233",
+  "guard_version": "v1.4",
+  "human_decision": "Option 2 — Exclude legacy pre-chain records",
+  "windi_verified": true,
+  "chain_records": 158,
+  "legacy_excluded": 8,
+  "isp_profiles_valid": 17
+}

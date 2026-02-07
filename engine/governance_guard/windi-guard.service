@@ -1,0 +1,32 @@
+[Unit]
+Description=WINDI Governance Guard Agent v1.0
+Documentation=https://windi-domain.com/governance
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=windi
+Group=windi
+WorkingDirectory=/opt/windi/engine/governance_guard
+ExecStart=/usr/bin/python3 /opt/windi/engine/governance_guard/governance_guard.py daemon --api
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=windi-guard
+
+# Environment
+Environment="WINDI_BASE=/opt/windi"
+Environment="GUARD_DATA=/opt/windi/data/guard"
+Environment="GUARD_LOG=/var/log/windi/governance_guard.log"
+Environment="PYTHONUNBUFFERED=1"
+
+# Security hardening
+NoNewPrivileges=yes
+ProtectSystem=strict
+ReadWritePaths=/opt/windi/data /var/log/windi /tmp
+
+[Install]
+WantedBy=multi-user.target

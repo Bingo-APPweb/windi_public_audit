@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>WINDI Governance Command Center</title>
-<meta name="description" content="WINDI Governance Intelligence — Unified Command Center for Document Governance Operations">
+<title>WINDI Governance Dashboard</title>
+<meta name="description" content="WINDI Governance Intelligence — Unified Governance Dashboard for Document Governance Operations">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%2306060c'/%3E%3Ctext x='50' y='70' font-size='50' text-anchor='middle' fill='%23c9a227'%3E⚖%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200;12..96,400;12..96,600;12..96,800&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
@@ -263,6 +263,100 @@ body { font-family: var(--font-body); background: var(--void); color: var(--text
   font-size: 0.72rem;
   color: var(--text-secondary);
   margin-top: 4px;
+}
+
+/* WINDI VERIFIED Card */
+.gc-verified-card {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  background: linear-gradient(135deg, var(--surface-1), var(--surface-2));
+  border: 2px solid var(--signal-safe);
+  border-radius: var(--radius-lg);
+  padding: 20px 28px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 24px rgba(58, 184, 122, 0.15), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+.gc-verified-badge {
+  flex-shrink: 0;
+}
+
+.gc-verified-svg {
+  width: 100px;
+  height: 100px;
+  transition: transform 0.3s var(--ease-spring);
+  filter: drop-shadow(0 4px 12px rgba(58, 184, 122, 0.3));
+}
+
+.gc-verified-svg:hover {
+  transform: scale(1.08);
+}
+
+.gc-verified-info {
+  flex: 1;
+}
+
+.gc-verified-title {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--signal-safe);
+  margin-bottom: 4px;
+}
+
+.gc-verified-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+.gc-verified-links {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.gc-verified-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: var(--surface-0);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.gc-verified-link:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+  box-shadow: 0 2px 8px var(--gold-glow);
+}
+
+.gc-verified-link i {
+  color: var(--gold);
+}
+
+.gc-verified-meta {
+  display: flex;
+  gap: 20px;
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+}
+
+.gc-verified-meta span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.gc-verified-meta i {
+  color: var(--text-secondary);
 }
 
 /* Service Grid */
@@ -872,9 +966,87 @@ body { font-family: var(--font-body); background: var(--void); color: var(--text
   .gc-main { padding: 12px; }
   .gc-stats { grid-template-columns: 1fr 1fr; }
 }
+/* ====== KLAR THEME (Light Mode) ====== */
+[data-theme="klar"] {
+  --void: #f5f5f0;
+  --surface-0: #ffffff;
+  --surface-1: #f0ede6;
+  --surface-2: #e8e4db;
+  --gold: #8b6914;
+  --gold-bright: #a07d1a;
+  --gold-dim: #c9a227;
+  --text-primary: #1a1a1a;
+  --text-secondary: #4a4a4a;
+  --text-muted: #6a6a6a;
+  --border-subtle: #d4d0c8;
+  --border-default: #b8b4ac;
+  --status-success: #2d6a30;
+  --status-warning: #8b6914;
+  --status-danger: #a82020;
+  --status-info: #1a5276;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+}
+[data-theme="klar"] .gc-header {
+  background: linear-gradient(135deg, #ffffff 0%, #f0ede6 100%);
+  border-bottom: 1px solid #d4d0c8;
+}
+[data-theme="klar"] .gc-card {
+  background: #ffffff;
+  border: 1px solid #d4d0c8;
+}
+[data-theme="klar"] .gc-tab.active {
+  background: #8b6914;
+  color: #ffffff;
+}
+[data-theme="klar"] .gc-tab:not(.active) {
+  background: #f0ede6;
+  color: #4a4a4a;
+  border: 1px solid #d4d0c8;
+}
+[data-theme="klar"] .gc-tab:not(.active):hover {
+  background: #e8e4db;
+}
+[data-theme="klar"] .gc-kpi-value {
+  color: #1a1a1a;
+}
+[data-theme="klar"] .gc-table th {
+  background: #f0ede6;
+  color: #1a1a1a;
+}
+[data-theme="klar"] .gc-table td {
+  border-color: #d4d0c8;
+  color: #1a1a1a;
+}
+[data-theme="klar"] input,
+[data-theme="klar"] select,
+[data-theme="klar"] textarea {
+  background: #ffffff;
+  color: #1a1a1a;
+  border-color: #d4d0c8;
+}
+/* Theme toggle button */
+.theme-toggle-gov {
+  position: fixed;
+  top: 12px;
+  right: 16px;
+  z-index: 1000;
+  background: var(--surface-1);
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  padding: 6px 14px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+.theme-toggle-gov:hover {
+  border-color: var(--gold);
+  box-shadow: 0 0 8px rgba(201,162,39,0.3);
+}
 </style>
 </head>
 <body>
+<button class="theme-toggle-gov" onclick="toggleTheme()" title="Toggle Noir/Klar">🌙</button>
 
 <!-- ═══════════ HEADER ═══════════ -->
 <header class="gc-header">
@@ -882,7 +1054,7 @@ body { font-family: var(--font-body); background: var(--void); color: var(--text
     <div class="gc-logo-icon">⚖</div>
     <div>
       <div class="gc-logo-text">WINDI Governance</div>
-      <div class="gc-logo-sub">Command Center</div>
+      <div class="gc-logo-sub">Governance Dashboard</div>
     </div>
   </a>
 
@@ -939,6 +1111,32 @@ body { font-family: var(--font-body); background: var(--void); color: var(--text
         <div class="gc-stat-label">SGE Version</div>
         <div class="gc-stat-value" id="statSGE">—</div>
         <div class="gc-stat-sub">Semantic Governance</div>
+      </div>
+    </div>
+
+    <!-- WINDI VERIFIED Card -->
+    <div class="gc-verified-card">
+      <div class="gc-verified-badge">
+        <a href="/records/DOC-GUARD-20260207-001.html" target="_blank" title="View Institutional Deposition">
+          <img src="/records/WINDI_VERIFIED_BADGE.svg" alt="WINDI VERIFIED" class="gc-verified-svg">
+        </a>
+      </div>
+      <div class="gc-verified-info">
+        <div class="gc-verified-title">✅ WINDI VERIFIED</div>
+        <div class="gc-verified-subtitle">Governance Intact · Guard v1.4</div>
+        <div class="gc-verified-links">
+          <a href="/records/DOC-GUARD-20260207-001.html" target="_blank" class="gc-verified-link">
+            <i class="fas fa-file-contract"></i> Institutional Deposition
+          </a>
+          <a href="/records/WINDI_VERIFIED_BADGE.svg" target="_blank" class="gc-verified-link">
+            <i class="fas fa-certificate"></i> Badge SVG
+          </a>
+        </div>
+        <div class="gc-verified-meta">
+          <span><i class="fas fa-link"></i> 158 records</span>
+          <span><i class="fas fa-shield-alt"></i> 17 ISP profiles</span>
+          <span><i class="fas fa-clock"></i> 2026-02-07</span>
+        </div>
       </div>
     </div>
 
@@ -1382,8 +1580,8 @@ async function loadBriefing() {
 async function loadWarRoom() {
   // Load submissions as events
   const subs = await apiFetch(API.gov + '/submissions');
-  if (subs && Array.isArray(subs.submissions || subs)) {
-    const entries = subs.submissions || subs;
+  if (subs && Array.isArray(subs.results || subs)) {
+    const entries = subs.results || subs;
     if (entries.length === 0) {
       document.getElementById('eventLog').innerHTML = '<div class="gc-empty"><i class="fas fa-inbox"></i><p>No events yet.</p></div>';
     } else {
@@ -1391,8 +1589,8 @@ async function loadWarRoom() {
         <div class="gc-event">
           <div class="gc-event-dot ${e.governance_level === 'HIGH' ? 'crit' : e.governance_level === 'MEDIUM' ? 'warn' : 'safe'}"></div>
           <div>
-            <div class="gc-event-text">${e.governance_level || '—'} · ${e.doc_type || e.document_type || 'Document'} · ${e.status || 'submitted'}</div>
-            <div class="gc-event-time">${e.reg_id || e.id || '—'} · ${e.timestamp || e.created_at || '—'}</div>
+            <div class="gc-event-text">${e.governance_level || '—'} · ${e.governance_level || e.governance_level || 'Document'} · ${e.validation_status || 'submitted'}</div>
+            <div class="gc-event-time">${e.submission_id || e.id || '—'} · ${e.registered_at || e.registered_at || '—'}</div>
           </div>
         </div>
       `).join('');
@@ -1401,7 +1599,7 @@ async function loadWarRoom() {
 
   // Load ISP profiles
   const integrity = await apiFetch(API.gov + '/integrity');
-  if (integrity && integrity.profiles) {
+  if (integrity && typeof integrity.profiles === "object") {
     document.getElementById('ispMonitor').innerHTML = Object.entries(integrity.profiles).map(([name, data]) => `
       <div class="gc-isp-item">
         <span class="gc-isp-name">${name}</span>
@@ -1425,15 +1623,15 @@ async function loadWarRoom() {
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;">
         <div>
           <div class="gc-stat-label">Total Entries</div>
-          <div style="font-size:1.2rem;font-weight:700;color:var(--text-primary);">${integrity.total_entries || integrity.total || '—'}</div>
+          <div style="font-size:1.2rem;font-weight:700;color:var(--text-primary);">${integrity.report?.total || integrity.report?.total || '—'}</div>
         </div>
         <div>
           <div class="gc-stat-label">Sealed</div>
-          <div style="font-size:1.2rem;font-weight:700;color:var(--signal-safe);">${integrity.sealed_count || integrity.sealed || '—'}</div>
+          <div style="font-size:1.2rem;font-weight:700;color:var(--signal-safe);">${integrity.report?.sealed || integrity.report?.sealed || '—'}</div>
         </div>
         <div>
           <div class="gc-stat-label">Integrity</div>
-          <div style="font-size:1.2rem;font-weight:700;color:${integrity.valid ? 'var(--signal-safe)' : 'var(--signal-core)'};">${integrity.valid ? '✓ Verified' : '✗ Broken'}</div>
+          <div style="font-size:1.2rem;font-weight:700;color:${integrity.status === 'INTACT' ? 'var(--signal-safe)' : 'var(--signal-core)'};">${integrity.status === 'INTACT' ? '✓ INTACT' : '✗ Broken'}</div>
         </div>
       </div>
     `;
@@ -1515,19 +1713,19 @@ async function loadAudit() {
   const subs = await apiFetch(API.gov + '/submissions');
   const tbody = document.getElementById('auditTableBody');
 
-  if (subs && (subs.submissions || Array.isArray(subs))) {
-    const entries = subs.submissions || subs;
+  if (subs && (subs.results || Array.isArray(subs))) {
+    const entries = subs.results || subs;
     if (entries.length === 0) {
       tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-tertiary);padding:32px;">No submissions yet.</td></tr>';
     } else {
       tbody.innerHTML = entries.map(e => `
         <tr>
-          <td><span style="font-family:var(--font-mono);font-size:0.78rem;">${e.reg_id || e.id || '—'}</span></td>
-          <td>${e.timestamp || e.created_at || '—'}</td>
+          <td><span style="font-family:var(--font-mono);font-size:0.78rem;">${e.submission_id || e.id || '—'}</span></td>
+          <td>${e.registered_at || e.registered_at || '—'}</td>
           <td><span class="gc-isp-level ${(e.governance_level || 'low').toLowerCase()}">${e.governance_level || '—'}</span></td>
-          <td>${e.doc_type || e.document_type || '—'}</td>
-          <td>${e.status || '—'}</td>
-          <td class="gc-hash-cell">${(e.hash || e.envelope_hash || '—').substring(0, 16)}…</td>
+          <td>${e.governance_level || e.governance_level || '—'}</td>
+          <td>${e.validation_status || '—'}</td>
+          <td class="gc-hash-cell">${(e.integrity_hash || e.integrity_hash || '—').substring(0, 16)}…</td>
         </tr>
       `).join('');
     }
@@ -1549,7 +1747,39 @@ updateClock();
 // ═══════════ INIT ═══════════
 loadOverview();
 loadFromHash();
+
+// === THEME TOGGLE (Noir/Klar) ===
+function toggleTheme() {
+  const html = document.documentElement;
+  const btn = document.querySelector(".theme-toggle-gov");
+  const current = html.getAttribute("data-theme");
+  if (current === "dark") {
+    html.setAttribute("data-theme", "klar");
+    btn.textContent = "☀️";
+    localStorage.setItem("windi-gov-theme", "klar");
+  } else {
+    html.setAttribute("data-theme", "dark");
+    btn.textContent = "🌙";
+    localStorage.setItem("windi-gov-theme", "dark");
+  }
+}
+// Restore saved theme
+(function() {
+  var saved = localStorage.getItem("windi-gov-theme");
+  if (saved === "klar") {
+    document.documentElement.setAttribute("data-theme", "klar");
+    var btn = document.querySelector(".theme-toggle-gov");
+    if (btn) btn.textContent = "☀️";
+  }
+})();
 </script>
+
+<!-- WINDI VERIFIED Fixed Badge -->
+<div style="position:fixed; bottom:16px; right:16px; z-index:9999;">
+  <a href="/records/DOC-GUARD-20260207-001.html" target="_blank" title="View Governance Deposition">
+    <img src="/records/WINDI_VERIFIED_BADGE.svg" alt="WINDI VERIFIED" width="80" style="opacity:0.85; transition:opacity 0.3s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.85'">
+  </a>
+</div>
 
 </body>
 </html>
