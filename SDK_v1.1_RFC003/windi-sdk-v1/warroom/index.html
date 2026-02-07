@@ -27,7 +27,7 @@ const PI={"deutsche-bahn":"\ud83d\ude84",bundesregierung:"\ud83c\udfdb","bis-sty
 function App(){
 const[data,setData]=useState(null);
 const[clock,setClock]=useState(new Date());
-const[lang,setLang]=useState("en");
+const[lang,setLang]=useState("de");
 const[err,setErr]=useState(null);
 
 useEffect(()=>{const t=setInterval(()=>setClock(new Date()),1000);return()=>clearInterval(t)},[]);

@@ -127,39 +127,37 @@
 
     const badge = document.createElement('div');
     badge.id = 'wsg-status-badge';
-    
+
     const icon = status.active ? '🛡️' : '⚠️';
     const text = status.active ? 'WSG Active' : 'WSG Inactive';
     const bg = status.active ? 'rgba(34, 197, 94, 0.95)' : 'rgba(239, 68, 68, 0.95)';
 
-    badge.innerHTML = `<span style="margin-right:6px">${icon}</span>${text}`;
+    badge.innerHTML = `<span style="margin-right:4px">${icon}</span>${text}`;
     badge.style.cssText = `
-      position: fixed;
-      bottom: 12px;
-      right: 12px;
       background: ${bg};
       color: white;
-      padding: 8px 14px;
-      border-radius: 24px;
-      font-size: 13px;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 11px;
       font-family: system-ui, -apple-system, sans-serif;
       font-weight: 500;
-      z-index: 2147483646;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       cursor: pointer;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.2);
       transition: transform 0.15s, box-shadow 0.15s;
+      white-space: nowrap;
+      margin-left: auto;
     `;
 
     badge.addEventListener('mouseenter', () => {
-      badge.style.transform = 'scale(1.03)';
-      badge.style.boxShadow = '0 6px 16px rgba(0,0,0,0.3)';
+      badge.style.transform = 'scale(1.05)';
+      badge.style.boxShadow = '0 2px 8px rgba(0,0,0,0.3)';
     });
 
     badge.addEventListener('mouseleave', () => {
       badge.style.transform = 'scale(1)';
-      badge.style.boxShadow = '0 4px 12px rgba(0,0,0,0.25)';
+      badge.style.boxShadow = '0 1px 4px rgba(0,0,0,0.2)';
     });
 
     badge.addEventListener('click', async () => {
@@ -178,11 +176,36 @@
         `────────────────────────`,
         `Frontend Constitutional Security Layer`
       ].join('\n');
-      
+
       alert(msg);
     });
 
-    document.body.appendChild(badge);
+    // ═══ Insert into chat header instead of body (fixes mobile overlap) ═══
+    const chatHeader = document.querySelector('.chat-header');
+    if (chatHeader) {
+      chatHeader.style.display = 'flex';
+      chatHeader.style.alignItems = 'center';
+      chatHeader.style.justifyContent = 'space-between';
+      chatHeader.appendChild(badge);
+    } else {
+      // Fallback: try other header selectors
+      const altHeader = document.querySelector('.chat-panel .panel-title')
+                     || document.querySelector('[class*="chat"] [class*="header"]')
+                     || document.querySelector('.llm-title');
+      if (altHeader) {
+        altHeader.style.display = 'flex';
+        altHeader.style.alignItems = 'center';
+        altHeader.style.justifyContent = 'space-between';
+        altHeader.appendChild(badge);
+      } else {
+        // Last resort: fixed position at TOP right (not bottom)
+        badge.style.position = 'fixed';
+        badge.style.top = '60px';
+        badge.style.right = '12px';
+        badge.style.zIndex = '2147483646';
+        document.body.appendChild(badge);
+      }
+    }
     return badge;
   }
 
