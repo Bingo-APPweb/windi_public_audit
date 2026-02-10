@@ -54,6 +54,19 @@
         "warn": 40,
         "alert": 60,
         "block": 80
+      },
+      "identity_license": {
+        "status": "authorized",
+        "type": "international_regulatory",
+        "jurisdiction": "INT",
+        "issuing_body": "Bank for International Settlements",
+        "valid_from": "2026-02-08",
+        "review_cycle": "annual",
+        "disclaimer": {
+          "de": "Dieses Profil dient ausschließlich der Dokumentengovernance. Es stellt keine Autorisierung durch die BIS dar.",
+          "en": "This profile serves document governance only. It does not represent authorization by BIS.",
+          "pt": "Este perfil serve apenas para governança de documentos. Não representa autorização pelo BIS."
+        }
       }
     },
     "templates": [
@@ -473,5 +486,8 @@
       "hierarchical": [],
       "notes": "BIS setzt die internationalen Standards, die BaFin auf nationaler Ebene in Deutschland umsetzt. Basel III/IV-Standards des BCBS werden durch BaFin-Rundschreiben und MaRisk in deutsches Recht transformiert. BIS-ISP validiert die Quelle, BaFin-ISP validiert die nationale Umsetzung."
     }
+  },
+  "governance": {
+    "level": "HIGH"
   }
 }

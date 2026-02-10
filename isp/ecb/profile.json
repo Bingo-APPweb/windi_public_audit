@@ -57,6 +57,19 @@
         "warn": 40,
         "alert": 60,
         "block": 80
+      },
+      "identity_license": {
+        "status": "authorized",
+        "type": "central_bank",
+        "jurisdiction": "EU",
+        "issuing_body": "European Central Bank",
+        "valid_from": "2026-02-08",
+        "review_cycle": "annual",
+        "disclaimer": {
+          "de": "Dieses Profil dient ausschließlich der Dokumentengovernance. Es stellt keine Autorisierung durch die EZB dar.",
+          "en": "This profile serves document governance only. It does not represent authorization by ECB.",
+          "pt": "Este perfil serve apenas para governança de documentos. Não representa autorização pelo BCE."
+        }
       }
     },
     "templates": [
@@ -497,5 +510,8 @@
       "hierarchical": [],
       "notes": "ECB setzt EU-Geldpolitik und implementiert BIS/BCBS-Standards über CRR/CRD. BaFin ist als nationale Aufsichtsbehörde Teil des SSM und führt EZB-Beschlüsse auf deutscher Ebene aus. BIS→ECB→BaFin bildet die vollständige regulatorische Kaskade: BIS setzt globale Standards, ECB implementiert für Eurozone, BaFin setzt national um. Die drei HIGH-Profile bilden zusammen die vollständige Governance-Pyramide der Finanzregulierung."
     }
+  },
+  "governance": {
+    "level": "HIGH"
   }
 }

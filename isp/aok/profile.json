@@ -63,6 +63,19 @@
         "warn": 50,
         "alert": 65,
         "block": 75
+      },
+      "identity_license": {
+        "status": "model_only",
+        "type": "public_health_insurance",
+        "jurisdiction": "DE",
+        "issuing_body": "AOK Bundesverband",
+        "valid_from": "2026-02-08",
+        "review_cycle": "annual",
+        "disclaimer": {
+          "de": "Dieses Profil dient ausschließlich der Dokumentengovernance. Modellprofil ohne institutionelle Autorisierung.",
+          "en": "This profile serves document governance only. Model profile without institutional authorization.",
+          "pt": "Este perfil serve apenas para governança de documentos. Perfil modelo sem autorização institucional."
+        }
       }
     },
     "templates": [
@@ -453,5 +466,8 @@
       ],
       "notes": "Bundesregierung: SGB V-Gesetzgebung, Gesundheitspolitik, GDNG. Sparkasse: Ähnliche kommunale Trägerschaft und Selbstverwaltungsstruktur, häufig Geschäftskonten für AOK-Regionaldirektionen. BaFin: Keine direkte Aufsicht (BfDI zuständig), aber Schnittstellen bei Kapitalanlagen der Kassen. AOK als Teil des GKV-Systems unterliegt BfDI-Bundesaufsicht bei bundesunmittelbaren Trägern."
     }
+  },
+  "governance": {
+    "level": "MEDIUM"
   }
 }

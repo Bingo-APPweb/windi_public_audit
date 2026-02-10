@@ -400,5 +400,8 @@
       "hierarchical": [],
       "notes": "TÜV certifies Siemens products (GS-Zeichen, Managementsysteme, KI-Konformitätsbewertung). IHK Schwaben handles Siemens Ausbildungsverträge in Kempten/Augsburg region. HWK relevant for Handwerk-subcontractors in Siemens supply chain. Deutsche Bahn is major Siemens Mobility customer (ICE, Signaltechnik)."
     }
+  },
+  "governance": {
+    "level": "LOW"
   }
 }

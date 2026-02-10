@@ -55,6 +55,19 @@
         "warn": 50,
         "alert": 65,
         "block": 75
+      },
+      "identity_license": {
+        "status": "model_only",
+        "type": "federal_government",
+        "jurisdiction": "DE",
+        "issuing_body": "Bundesregierung der Bundesrepublik Deutschland",
+        "valid_from": "2026-02-08",
+        "review_cycle": "annual",
+        "disclaimer": {
+          "de": "Dieses Profil dient ausschließlich der Dokumentengovernance. Modellprofil ohne institutionelle Autorisierung.",
+          "en": "This profile serves document governance only. Model profile without institutional authorization.",
+          "pt": "Este perfil serve apenas para governança de documentos. Perfil modelo sem autorização institucional."
+        }
       }
     },
     "templates": [
@@ -504,5 +517,8 @@
       "hierarchical": [],
       "notes": "Die Bundesregierung ist die oberste Exekutive und setzt den politischen und rechtlichen Rahmen, in dem alle nachgeordneten Behörden (BaFin, BA, etc.) operieren. BaFin untersteht dem BMF, die Bundesagentur für Arbeit dem BMAS. Bundesregierung-ISP validiert Regierungsdokumente, die als Rechtsgrundlage für nachgeordnete ISP-Profile dienen. Die regulatorische Kaskade: Bundesregierung → Bundesbehörden → Landesbehörden."
     }
+  },
+  "governance": {
+    "level": "MEDIUM"
   }
 }

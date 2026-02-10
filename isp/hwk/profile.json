@@ -305,5 +305,8 @@
       "hierarchical": [],
       "notes": "HWK und IHK sind die beiden Kammern der gewerblichen Wirtschaft. HWK für Handwerk, IHK für Industrie/Handel. TÜV prüft Produkte der Handwerksbetriebe."
     }
+  },
+  "governance": {
+    "level": "LOW"
   }
 }

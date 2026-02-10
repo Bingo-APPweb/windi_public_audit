@@ -442,5 +442,8 @@
       ],
       "notes": "DB AG ist 100% Bundeseigentum — hierarchische Verbindung zur Bundesregierung. Stadtwerke und kommunale Verkehrsunternehmen als Kooperationspartner im ÖPNV. RVA (Regionalverkehr Allgäu) als Tochtergesellschaft mit Bezug zum Kempten-Raum."
     }
+  },
+  "governance": {
+    "level": "LOW"
   }
 }

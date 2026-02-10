@@ -372,5 +372,8 @@
       ],
       "notes": "Freistaat Bayern: Rechtsaufsicht durch Regierung von Schwaben, Landesgesetzgebung (GO, BayDSG). Stadtwerke: Kommunaler Energieversorger als Tochtergesellschaft. Kempten ist die 'Allgäu-Metropole' und Verwaltungszentrum der Region."
     }
+  },
+  "governance": {
+    "level": "MEDIUM"
   }
 }

@@ -296,5 +296,8 @@
       ],
       "notes": "ADAC kooperiert eng mit TÜV (Fahrzeugsicherheit, gemeinsame Testreihen), DB (Mobilitätskette) und unterliegt Bundesregierung-Regulierung (Vereinsrecht, VAG via ADAC Versicherung). Als Verbraucherorganisation ergänzt ADAC die IHK im B2C-Bereich."
     }
+  },
+  "governance": {
+    "level": "LOW"
   }
 }

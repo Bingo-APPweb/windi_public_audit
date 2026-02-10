@@ -10,6 +10,14 @@ Endpoints:
   GET  /api/integrity        — Chain integrity check
   GET  /api/status           — System status
   GET  /api/compliance       — Compliance matrix data
+  GET  /api/agents/health    — Agent health check
+  GET  /api/agents/registry  — Agent registry
+  GET  /api/agents/isp-manager/status  — ISP Manager status
+  POST /api/agents/isp-manager/audit   — Run ISP audit
+  GET  /api/agents/isp-manager/alerts  — ISP alerts
+  GET  /api/agents/isp-manager/report  — ISP health report
+  POST /api/agents/isp-manager/validate — Validate specific ISP
+  GET  /api/agents/isp-manager/receipts — Forensic receipts
 
 Runs on port 8080 alongside A4 Desk BABEL on 8085.
 AI processes. Human decides. WINDI guarantees.
@@ -19,6 +27,8 @@ import json
 import os
 import sys
 import traceback
+import subprocess
+import glob as glob_module
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
 from datetime import datetime, timezone
@@ -68,6 +78,73 @@ def detect_profile(level, profile_name=None):
         except Exception:
             pass
     return LEVEL_TO_PROFILE.get(level, "deutsche-bahn")
+
+
+# ─── Agent API Bridge Configuration ─────────────────────────────
+AGENT_PATH = "/opt/windi/agents/isp-manager"
+AGENT_SCRIPT = os.path.join(AGENT_PATH, "isp_manager_agent.py")
+AGENT_RECEIPTS_DIR = os.path.join(AGENT_PATH, "receipts")
+AGENT_ALERTS_DIR = os.path.join(AGENT_PATH, "alerts")
+AGENT_REPORTS_DIR = os.path.join(AGENT_PATH, "reports")
+AGENT_MANIFEST_PATH = os.path.join(AGENT_PATH, "manifest.json")
+AGENT_CAPSULE_PATH = os.path.join(AGENT_PATH, "capsule.json")
+AGENT_REGISTRY_PATH = "/opt/windi/agents/registry.json"
+
+
+def _run_agent(action, extra_args=None, timeout=60):
+    """Execute agent command and capture output."""
+    cmd = ["python3", AGENT_SCRIPT, action]
+    if extra_args:
+        cmd.extend(extra_args)
+    try:
+        result = subprocess.run(
+            cmd, capture_output=True, text=True, timeout=timeout, cwd=AGENT_PATH
+        )
+        return {
+            "success": result.returncode == 0,
+            "stdout": result.stdout,
+            "stderr": result.stderr,
+            "return_code": result.returncode
+        }
+    except subprocess.TimeoutExpired:
+        return {"success": False, "stdout": "", "stderr": f"Agent timed out after {timeout}s", "return_code": -1}
+    except Exception as e:
+        return {"success": False, "stdout": "", "stderr": str(e), "return_code": -1}
+
+
+def _load_json_file(path):
+    """Safely load a JSON file."""
+    try:
+        with open(path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError) as e:
+        return {"error": str(e)}
+
+
+def _list_json_files(directory, limit=20):
+    """List JSON files in a directory, newest first."""
+    if not os.path.isdir(directory):
+        return []
+    files = glob_module.glob(os.path.join(directory, "*.json"))
+    files.sort(key=os.path.getmtime, reverse=True)
+    results = []
+    for f in files[:limit]:
+        try:
+            stat = os.stat(f)
+            data = _load_json_file(f)
+            results.append({
+                "filename": os.path.basename(f),
+                "path": f,
+                "size_bytes": stat.st_size,
+                "modified": datetime.fromtimestamp(stat.st_mtime).isoformat(),
+                "data": data
+            })
+        except Exception:
+            results.append({"filename": os.path.basename(f), "error": "Could not read file"})
+    return results
+
+
+print("[WINDI-API] Agent API Bridge configured")
 
 
 class GovernanceAPIHandler(BaseHTTPRequestHandler):
@@ -131,6 +208,28 @@ class GovernanceAPIHandler(BaseHTTPRequestHandler):
             elif path == "/api/health":
                 self._json(200, {"status": "ok", "timestamp": datetime.now(timezone.utc).isoformat()})
 
+            # ─── Agent API Endpoints ─────────────────────────────────
+            elif path == "/api/agents/health":
+                self._json(200, self._agents_health())
+
+            elif path == "/api/agents/registry":
+                self._json(200, self._agents_registry())
+
+            elif path == "/api/agents/isp-manager/status":
+                self._json(200, self._agent_isp_status())
+
+            elif path == "/api/agents/isp-manager/alerts":
+                limit = int(params.get("limit", [20])[0])
+                severity = params.get("severity", [None])[0]
+                self._json(200, self._agent_isp_alerts(limit, severity))
+
+            elif path == "/api/agents/isp-manager/report":
+                self._json(200, self._agent_isp_report())
+
+            elif path == "/api/agents/isp-manager/receipts":
+                limit = int(params.get("limit", [20])[0])
+                self._json(200, self._agent_isp_receipts(limit))
+
             else:
                 self._error(404, f"Unknown endpoint: {path}")
 
@@ -151,6 +250,14 @@ class GovernanceAPIHandler(BaseHTTPRequestHandler):
                 export_path = os.path.join(SUBMISSIONS_DIR, f"export-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')}.json")
                 data = dashboard.export(export_path)
                 self._json(200, {"exported_to": export_path, "total": data.get("total", 0)})
+
+            # ─── Agent API POST Endpoints ────────────────────────────
+            elif path == "/api/agents/isp-manager/audit":
+                self._json(200, self._agent_isp_audit())
+
+            elif path == "/api/agents/isp-manager/validate":
+                body = self._read_body()
+                self._json(200, self._agent_isp_validate(body))
 
             else:
                 self._error(404, f"Unknown endpoint: {path}")
@@ -277,6 +384,129 @@ class GovernanceAPIHandler(BaseHTTPRequestHandler):
             "metadata_schemas": config.get("metadata_schemas", {}),
             "invariants_enforced": 8,
             "invariants_total": 8,
+        }
+
+    # ─── Agent API Implementation ────────────────────────────────
+    def _agents_health(self):
+        """GET /api/agents/health — Quick health check for all agents."""
+        agents = []
+        manifest = _load_json_file(AGENT_MANIFEST_PATH)
+        status = _run_agent("status", timeout=10)
+        agents.append({
+            "agent_id": "isp-manager",
+            "version": manifest.get("version", "unknown"),
+            "operational": status["success"],
+            "invariante_i9": True,
+            "auto_apply": False
+        })
+        return {
+            "total_agents": len(agents),
+            "agents": agents,
+            "timestamp": datetime.now(timezone.utc).isoformat() + "Z"
+        }
+
+    def _agents_registry(self):
+        """GET /api/agents/registry — Master agent registry."""
+        registry = _load_json_file(AGENT_REGISTRY_PATH)
+        return {"registry": registry, "timestamp": datetime.now(timezone.utc).isoformat() + "Z"}
+
+    def _agent_isp_status(self):
+        """GET /api/agents/isp-manager/status — Agent identity and status."""
+        manifest = _load_json_file(AGENT_MANIFEST_PATH)
+        capsule = _load_json_file(AGENT_CAPSULE_PATH)
+        receipt_count = len(glob_module.glob(os.path.join(AGENT_RECEIPTS_DIR, "*.json"))) if os.path.isdir(AGENT_RECEIPTS_DIR) else 0
+        alert_count = len(glob_module.glob(os.path.join(AGENT_ALERTS_DIR, "*.json"))) if os.path.isdir(AGENT_ALERTS_DIR) else 0
+        report_count = len(glob_module.glob(os.path.join(AGENT_REPORTS_DIR, "*.json"))) if os.path.isdir(AGENT_REPORTS_DIR) else 0
+        live_status = _run_agent("status", timeout=15)
+        return {
+            "agent_id": "isp-manager",
+            "version": manifest.get("version", "unknown"),
+            "status": "operational" if live_status["success"] else "error",
+            "manifest": manifest,
+            "capsule_summary": {"can_do": capsule.get("can_do", []), "cannot_do": capsule.get("cannot_do", [])},
+            "artifact_counts": {"receipts": receipt_count, "alerts": alert_count, "reports": report_count},
+            "invariante_i9": True,
+            "auto_apply": False,
+            "timestamp": datetime.now(timezone.utc).isoformat() + "Z"
+        }
+
+    def _agent_isp_alerts(self, limit=20, severity=None):
+        """GET /api/agents/isp-manager/alerts — Latest structured alerts."""
+        alerts = _list_json_files(AGENT_ALERTS_DIR, limit=limit)
+        if severity:
+            severity = severity.upper()
+            filtered = []
+            for a in alerts:
+                data = a.get("data", {})
+                if isinstance(data, dict):
+                    if data.get("severity", "").upper() == severity:
+                        filtered.append(a)
+                    elif any(al.get("severity", "").upper() == severity for al in data.get("alerts", []) if isinstance(al, dict)):
+                        filtered.append(a)
+                else:
+                    filtered.append(a)
+            alerts = filtered
+        return {"agent_id": "isp-manager", "total": len(alerts), "filter_severity": severity, "alerts": alerts, "timestamp": datetime.now(timezone.utc).isoformat() + "Z"}
+
+    def _agent_isp_report(self):
+        """GET /api/agents/isp-manager/report — Latest health report."""
+        reports = _list_json_files(AGENT_REPORTS_DIR, limit=1)
+        if not reports:
+            result = _run_agent("health_report", timeout=60)
+            if result["success"]:
+                reports = _list_json_files(AGENT_REPORTS_DIR, limit=1)
+        return {
+            "agent_id": "isp-manager",
+            "report": reports[0] if reports else None,
+            "available_reports": len(glob_module.glob(os.path.join(AGENT_REPORTS_DIR, "*.json"))) if os.path.isdir(AGENT_REPORTS_DIR) else 0,
+            "timestamp": datetime.now(timezone.utc).isoformat() + "Z"
+        }
+
+    def _agent_isp_receipts(self, limit=20):
+        """GET /api/agents/isp-manager/receipts — Forensic receipts list."""
+        receipts = _list_json_files(AGENT_RECEIPTS_DIR, limit=limit)
+        return {"agent_id": "isp-manager", "total": len(receipts), "receipts": receipts, "timestamp": datetime.now(timezone.utc).isoformat() + "Z"}
+
+    def _agent_isp_audit(self):
+        """POST /api/agents/isp-manager/audit — Run full ISP audit (READ-ONLY)."""
+        result = _run_agent("audit", timeout=120)
+        if not result["success"]:
+            return {
+                "success": False,
+                "error": result["stderr"],
+                "invariante_i9": "Audit is read-only — no modifications made",
+                "timestamp": datetime.now(timezone.utc).isoformat() + "Z"
+            }
+        latest_receipt = None
+        if os.path.isdir(AGENT_RECEIPTS_DIR):
+            receipts = sorted(glob_module.glob(os.path.join(AGENT_RECEIPTS_DIR, "*.json")), key=os.path.getmtime, reverse=True)
+            if receipts:
+                latest_receipt = _load_json_file(receipts[0])
+        return {
+            "success": True,
+            "raw_output": result["stdout"],
+            "receipt": latest_receipt,
+            "invariante_i9": "Audit is read-only — no modifications made",
+            "auto_apply": False,
+            "timestamp": datetime.now(timezone.utc).isoformat() + "Z"
+        }
+
+    def _agent_isp_validate(self, body):
+        """POST /api/agents/isp-manager/validate — Validate specific ISP profile."""
+        isp_id = body.get("isp_id", "").strip()
+        if not isp_id:
+            return {"success": False, "error": "Missing required field: isp_id", "example": {"isp_id": "bafin"}}
+        if not all(c.isalnum() or c in "-_" for c in isp_id):
+            return {"success": False, "error": "Invalid isp_id format. Use alphanumeric, hyphens, or underscores."}
+        result = _run_agent("validate", extra_args=["--isp-id", isp_id], timeout=30)
+        return {
+            "success": result["success"],
+            "isp_id": isp_id,
+            "output": result["stdout"],
+            "errors": result["stderr"] if result["stderr"] else None,
+            "invariante_i9": "Validation is read-only — no modifications made",
+            "auto_apply": False,
+            "timestamp": datetime.now(timezone.utc).isoformat() + "Z"
         }
 
     def log_message(self, format, *args):
