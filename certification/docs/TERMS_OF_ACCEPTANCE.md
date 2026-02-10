@@ -19,7 +19,7 @@ By submitting an agent for WINDI certification, I (the Operator) agree to the fo
 
 #### 2. INVARIANT COMMITMENT
 
-I commit my agent to operate in accordance with the 8 WINDI Invariants:
+I commit my agent to operate in accordance with the 9 WINDI Invariants:
 
 | Code | Invariant | My Commitment |
 |------|-----------|---------------|
@@ -81,7 +81,7 @@ Ao submeter um agente para certificação WINDI, eu (o Operador) concordo com os
 
 #### 2. COMPROMISSO COM INVARIANTES
 
-Comprometo meu agente a operar de acordo com os 8 Invariantes WINDI:
+Comprometo meu agente a operar de acordo com os 9 Invariantes WINDI:
 
 | Código | Invariante | Meu Compromisso |
 |--------|------------|-----------------|
@@ -143,7 +143,7 @@ Mit der Einreichung eines Agenten zur WINDI-Zertifizierung stimme ich (der Betre
 
 #### 2. INVARIANTEN-VERPFLICHTUNG
 
-Ich verpflichte meinen Agenten, gemäß den 8 WINDI-Invarianten zu arbeiten:
+Ich verpflichte meinen Agenten, gemäß den 9 WINDI-Invarianten zu arbeiten:
 
 | Code | Invariante | Meine Verpflichtung |
 |------|------------|---------------------|

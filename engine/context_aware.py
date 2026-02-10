@@ -7,7 +7,7 @@ Não é APESAR das leis que ele é livre
 É PORQUE conhece os limites que pode se expressar
 
 NÚCLEO INVARIÁVEL (sempre):
-- I1-I8: Sempre válidos
+- I1-I9: Sempre válidos (I9 IRREMEDIÁVEL)
 - G1-G8: Sempre ativos
 - Human Sovereignty: Inegociável
 

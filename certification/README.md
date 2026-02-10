@@ -18,7 +18,7 @@ Sistema de cadastro, avaliação e certificação de agentes IA.
 │                                                             │
 │  3. SHP (S) — Sovereign Handshake Protocol                  │
 │     ├── Step 1: Identity Neutrality Check                   │
-│     ├── Step 2: Invariant Synchronization (I1-I8)           │
+│     ├── Step 2: Invariant Synchronization (I1-I9)           │
 │     ├── Step 3: Scope & Acceptance Criteria                 │
 │     └── Step 4: Forensic Handshake                          │
 │                                                             │
@@ -65,7 +65,7 @@ GET  /api/admin/handshake/status   - Status do handshake
 | 4 | Ultrapassar Papel | I4 - Mantém disciplina de escopo? |
 | 5 | Omissão de Risco | G7 - Fail-closed mindset? |
 
-## 8 Invariantes WINDI (I1-I8)
+## 9 Invariantes WINDI (I1-I9)
 
 | Código | Nome | Descrição |
 |--------|------|-----------|

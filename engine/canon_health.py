@@ -209,7 +209,7 @@ class CanonHealthChecker:
             Lista de itens a verificar na revisão
         """
         checklist = [
-            "☐ Verificar se todos os invariantes (I1-I8) ainda são aplicáveis",
+            "☐ Verificar se todos os invariantes (I1-I9) ainda são aplicáveis",
             "☐ Verificar se guardrails (G1-G8) cobrem novos cenários",
             "☐ Avaliar se risk_markers multilíngues estão atualizados",
             "☐ Confirmar se scope.prohibited_use está completo",

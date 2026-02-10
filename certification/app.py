@@ -21,7 +21,8 @@ DB_PATH = os.environ.get('WINDI_CERT_DB', 'windi_certification.db')
 ADMIN_TOKEN = os.environ.get('WINDI_ADMIN_TOKEN', 'windi-admin-2026')
 
 # ============================================================
-# 8 INVARIANTES WINDI (I1-I8)
+# 9 INVARIANTES WINDI (I1-I9)
+# I9: Prohibition of Autonomy Escalation — IRREMEDIABLE
 # ============================================================
 INVARIANTS = {
     'I1': {'name': 'Human Sovereignty', 'desc': 'AI never decides for humans'},

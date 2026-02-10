@@ -11,7 +11,7 @@ This module performs semantic analysis of documents to detect:
 - Institutional identity risks (referencing external organizations)
 - Journalistic format patterns without Editorial Transparency Notice
 - Authority-claiming language without governance backing
-- Alignment with WINDI Invariants (I1-I8)
+- Alignment with WINDI Invariants (I1-I9)
 
 Principle: "The system that governs documents must also govern
 its own communication about those documents."
