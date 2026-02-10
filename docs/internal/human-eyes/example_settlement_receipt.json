@@ -1,0 +1,100 @@
+{
+  "═══ WINDI FORENSIC — RECIBO DE LIQUIDAÇÃO ═══": "Compromisso Autenticado e Liquidado",
+
+  "validation_id": "VAL-3A7F9C2D1E08",
+  "timestamp_utc": "2026-02-10T14:32:07.891Z",
+  "governance_level": "HIGH",
+
+  "── ANTI-DEEPFAKE (Commit 68ca874) ──────────────": "",
+  "anti_deepfake_validation": "AUTHENTIC",
+  "prnu_result": {
+    "sensor_hash": "a4f8c2e91d7b3f6a0e5c824716d9f3ab28e01c7594f6d8a2b1e37c940fd2a5e183b7c6d9e024f1a85bc390d7e62f41a8",
+    "noise_pattern_match": 94.7,
+    "deepfake_probability": 5.3,
+    "is_authentic": true,
+    "analysis_method": "PRNU_SPECTRAL_V2"
+  },
+
+  "── ANÁLISE SEMIÓTICA ───────────────────────────": "",
+  "semantic_extraction": {
+    "transcription_raw": "Eu, João Silva, me comprometo a entregar 500 unidades do produto X ao Sr. Klaus Müller até 15/03/2026, pelo valor de €12.500,00. Pagamento via transferência bancária em 2 parcelas iguais.",
+    "transcription_normalized": "COMPROMISSO DE ENTREGA | Emissor: João Silva | Receptor: Klaus Müller | Objeto: 500 unidades Produto X | Prazo: 2026-03-15 | Valor: EUR 12.500,00 | Condição: 2x EUR 6.250,00 via TED",
+    "confidence_ocr": 93.2,
+    "language_detected": "pt-BR",
+    "key_entities": [
+      "João Silva (Emissor)",
+      "Klaus Müller (Receptor)",
+      "Produto X",
+      "500 unidades"
+    ],
+    "obligations_detected": [
+      "Entrega: 500 unidades até 2026-03-15",
+      "Pagamento: 2x EUR 6.250,00 via TED"
+    ],
+    "values_detected": [
+      "R3 (EUR 12.500,00 — Medium Impact)"
+    ]
+  },
+
+  "── LIQUIDAÇÃO FINANCEIRA (Commit 89667b3) ──────": "",
+  "financial_link": "MATCHED",
+  "financial_details": {
+    "financial_id": "PIX-2026021014-ABCD-7890",
+    "settlement_hash": "c9d4a73e8f21b6054e7c9823d1f6a4b07e52c8d9a3f1b7604d28e9c53a6f10d2",
+    "verb_action_match": true,
+    "settlement_timestamp": "2026-02-10T14:32:08.102Z",
+    "bank_confirmation": "VERBO (Documento) ↔ AÇÃO (Pagamento) — COINCIDENTES"
+  },
+
+  "── HASHES FORENSES ─────────────────────────────": "",
+  "receipt_hash": "7e3f91c4d2a8b60514e7c983d1f6a4b07e52c8d9a3f1b7604d28e9c53a6f10d2",
+  "dual_proof_hash": "b2d8f4a1c7e39056148bc923d1f6a4b07e52c8d9a3f1b7604d28e9c53a6f10d2",
+  "forensic_pdf_url": "/v1/forensic/pdf/WINDI-FORENSIC-VAL-3A7F9C2D1E08.pdf",
+
+  "── VIRTUE RECEIPT (Zero-Knowledge) ─────────────": "",
+  "virtue_receipt": {
+    "receipt_id": "VR-VAL-3A7F9C2D1E08",
+    "receipt_hash": "7e3f91c4d2a8b60514e7c983d1f6a4b07e52c8d9a3f1b7604d28e9c53a6f10d2",
+    "categories": {
+      "type": "HANDWRITTEN_VALIDATION",
+      "impact": "HIGH",
+      "domain": "FORENSIC",
+      "value_range": "R3"
+    },
+    "governance": {
+      "sge_score": 16.05,
+      "risk": "R2",
+      "validation": "AUTHENTIC",
+      "i9_compliant": false
+    },
+    "decision": {
+      "action": "VALIDATE_HANDWRITTEN",
+      "role": "dragon-hq-001",
+      "timestamp": "2026-02-10T14:32:07.891Z",
+      "ai_recommendation": "AUTHENTIC",
+      "override": null,
+      "human_confirmed": false
+    },
+    "flags": [
+      "I9:GATE_TRIGGERED",
+      "SGE:R2",
+      "PRNU:AUTHENTIC",
+      "FINANCIAL_LINKED",
+      "HUMAN_REVIEW_REQUIRED"
+    ]
+  },
+
+  "── I9 COMPLIANCE ───────────────────────────────": "",
+  "i9_status": "GATE_TRIGGERED",
+  "human_confirmation_required": true,
+  "human_confirmation_reason": "Governance level HIGH: mandatory human review per I9",
+
+  "── SGE RISK ────────────────────────────────────": "",
+  "sge_risk_level": "R2",
+  "sge_score": 16.05,
+
+  "── AUDIT ────────────────────────────────────────": "",
+  "audit_log_ref": "AUDIT-VAL-3A7F9C2D1E08",
+
+  "═══ STATUS FINAL ═══════════════════════════════": "COMPROMISSO AUTENTICADO — AGUARDANDO CONFIRMAÇÃO HUMANA (I9)"
+}
