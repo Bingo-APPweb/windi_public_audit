@@ -254,5 +254,8 @@
       "hierarchical": [],
       "notes": "IHK und HWK sind die beiden Kammern der gewerblichen Wirtschaft. IHK für Industrie/Handel, HWK für Handwerk. Stadt Kempten als lokale Verbindung im Allgäu."
     }
+  },
+  "governance": {
+    "level": "LOW"
   }
 }

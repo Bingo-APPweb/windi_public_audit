@@ -63,6 +63,19 @@
         "warn": 50,
         "alert": 65,
         "block": 75
+      },
+      "identity_license": {
+        "status": "model_only",
+        "type": "federal_agency",
+        "jurisdiction": "DE",
+        "issuing_body": "Bundesagentur für Arbeit",
+        "valid_from": "2026-02-08",
+        "review_cycle": "annual",
+        "disclaimer": {
+          "de": "Dieses Profil dient ausschließlich der Dokumentengovernance. Modellprofil ohne institutionelle Autorisierung.",
+          "en": "This profile serves document governance only. Model profile without institutional authorization.",
+          "pt": "Este perfil serve apenas para governança de documentos. Perfil modelo sem autorização institucional."
+        }
       }
     },
     "templates": [
@@ -508,5 +521,8 @@
       ],
       "notes": "BA unterliegt Rechtsaufsicht des BMAS (Bundesministerium für Arbeit und Soziales). Komplementär zur Bundesregierung als nachgeordnete Körperschaft. BA-Haushalt ist eigenständig (Beitragsfinanzierung), aber Jobcenter werden teils aus Bundeshaushalt finanziert (Eingliederungstitel Kap. 1101)."
     }
+  },
+  "governance": {
+    "level": "MEDIUM"
   }
 }

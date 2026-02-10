@@ -367,5 +367,8 @@
       ],
       "notes": "Deutsche Bahn: Gemeinsame KRITIS-Infrastruktur und Energieeinspeiseverträge. TÜV: Technische Prüfungen von Energieanlagen und Netzen. Siemens: Lieferant von Netzleittechnik, Smart-Grid-Technologie und Automatisierung. Bundesregierung: Übergeordnete Regulierung durch EnWG, KRITIS-DG und Energiewende-Gesetzgebung."
     }
+  },
+  "governance": {
+    "level": "LOW"
   }
 }

@@ -63,6 +63,19 @@
         "warn": 50,
         "alert": 65,
         "block": 75
+      },
+      "identity_license": {
+        "status": "model_only",
+        "type": "financial_institution",
+        "jurisdiction": "DE",
+        "issuing_body": "Deutscher Sparkassen- und Giroverband",
+        "valid_from": "2026-02-08",
+        "review_cycle": "annual",
+        "disclaimer": {
+          "de": "Dieses Profil dient ausschließlich der Dokumentengovernance. Modellprofil ohne institutionelle Autorisierung.",
+          "en": "This profile serves document governance only. Model profile without institutional authorization.",
+          "pt": "Este perfil serve apenas para governança de documentos. Perfil modelo sem autorização institucional."
+        }
       }
     },
     "templates": [
@@ -465,5 +478,8 @@
       ],
       "notes": "BaFin: Direkte Aufsichtsbehörde, MaRisk/BAIT-Vorgaben, Prüfungen. Bundesregierung: KWG-Gesetzgebung, EU-Bankenregulierung. Stadtwerke: Häufige Kunden (Kommunalkredit), ähnliche kommunale Trägerschaft. Sparkassen sind als DSGV-Mitglieder Teil des zweitgrößten Finanzdienstleisters Europas."
     }
+  },
+  "governance": {
+    "level": "MEDIUM"
   }
 }

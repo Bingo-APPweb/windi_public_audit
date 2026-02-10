@@ -60,6 +60,19 @@
         "warn": 50,
         "alert": 65,
         "block": 75
+      },
+      "identity_license": {
+        "status": "model_only",
+        "type": "state_government",
+        "jurisdiction": "DE-BY",
+        "issuing_body": "Freistaat Bayern",
+        "valid_from": "2026-02-08",
+        "review_cycle": "annual",
+        "disclaimer": {
+          "de": "Dieses Profil dient ausschließlich der Dokumentengovernance. Modellprofil ohne institutionelle Autorisierung.",
+          "en": "This profile serves document governance only. Model profile without institutional authorization.",
+          "pt": "Este perfil serve apenas para governança de documentos. Perfil modelo sem autorização institucional."
+        }
       }
     },
     "templates": [
@@ -383,5 +396,8 @@
       ],
       "notes": "Bundesregierung: Übergeordnete Bundesgesetzgebung, Grundgesetz-Rahmen. Stadt Kempten: Kommune im Regierungsbezirk Schwaben, unterliegt bayerischer Kommunalaufsicht. Bayern ist Bindeglied zwischen Bund und Kommunen im föderalen System."
     }
+  },
+  "governance": {
+    "level": "MEDIUM"
   }
 }

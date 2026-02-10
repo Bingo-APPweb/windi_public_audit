@@ -45,5 +45,8 @@
     "company": "Nome da Instituição",
     "address": "Endereço completo",
     "website": "www.exemplo.de"
+  },
+  "governance": {
+    "level": "LOW"
   }
 }

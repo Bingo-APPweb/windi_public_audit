@@ -73,6 +73,19 @@
         "warn": 40,
         "alert": 60,
         "block": 80
+      },
+      "identity_license": {
+        "status": "authorized",
+        "type": "regulatory_authority",
+        "jurisdiction": "DE",
+        "issuing_body": "Bundesanstalt für Finanzdienstleistungsaufsicht",
+        "valid_from": "2026-02-08",
+        "review_cycle": "annual",
+        "disclaimer": {
+          "de": "Dieses Profil dient ausschließlich der Dokumentengovernance. Es stellt keine Autorisierung durch die BaFin dar.",
+          "en": "This profile serves document governance only. It does not represent authorization by BaFin.",
+          "pt": "Este perfil serve apenas para governança de documentos. Não representa autorização pela BaFin."
+        }
       }
     },
     "templates": [
@@ -559,5 +572,8 @@
       ],
       "notes": "BaFin unterliegt Rechts- und Fachaufsicht des BMF. Enge Zusammenarbeit mit Deutscher Bundesbank bei Bankenaufsicht. Im SSM: EZB beaufsichtigt direkt ~20 bedeutende deutsche Bankengruppen, BaFin ~1.630 weniger bedeutende Institute. BaFin-Rundschreiben (MaRisk, BAIT) definieren Governance-Standards für gesamten Finanzsektor inkl. Sparkassen. BIS als internationaler Standard-Setzer komplementär."
     }
+  },
+  "governance": {
+    "level": "HIGH"
   }
 }

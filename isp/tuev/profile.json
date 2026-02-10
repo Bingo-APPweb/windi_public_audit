@@ -401,5 +401,8 @@
       "hierarchical": [],
       "notes": "TÜV prüft Produkte und Anlagen von IHK/HWK-Mitgliedsunternehmen. Siemens als Großkunde für Industrieanlagenprüfung."
     }
+  },
+  "governance": {
+    "level": "LOW"
   }
 }

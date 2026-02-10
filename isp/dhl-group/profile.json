@@ -306,5 +306,8 @@
       ],
       "notes": "DHL als größter Logistikkonzern interagiert mit DB (Schienenlogistik), IHK (Außenhandelsdokumente) und unterliegt Bundesregierung-Regulierung (PostG). Zollrelevanz verbindet zu potenziellen EU-Institutionsprofilen."
     }
+  },
+  "governance": {
+    "level": "LOW"
   }
 }

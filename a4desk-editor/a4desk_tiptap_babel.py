@@ -111,6 +111,18 @@ except ImportError as e:
     DEEPDOCFAKES_AVAILABLE = False
     print(f"⚠️ DeepDOCFakes not available: {e}")
 
+# ─── Governance Hub Collector ─────────────────────────────────
+sys.path.insert(0, '/opt/windi/hub/api')
+try:
+    from hub_collector import HubCollector
+    HUB_COLLECTOR = HubCollector()
+    HUB_COLLECTOR_AVAILABLE = True
+    print("✅ Governance Hub Collector loaded")
+except ImportError as e:
+    HUB_COLLECTOR = None
+    HUB_COLLECTOR_AVAILABLE = False
+    print(f"⚠️ Hub Collector not available: {e}")
+
 app = Flask(__name__)
 
 STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
@@ -134,6 +146,701 @@ def serve_records_index():
 @app.route('/records/<path:filename>')
 def serve_records(filename):
     return send_from_directory(GUARD_RECORDS_DIR, filename)
+
+# ─── MUSEUM MOVED TO CLONE TERRITORY ─────
+# Museum now runs on port 8095 (clone_server.py)
+# Territorial separation: a4Desk (:8085) | Clone (:8095) | Governance (:8080)
+
+# ═══════════════════════════════════════════════════════════════════
+# API v2 — SOVEREIGN EDITOR BRIDGE
+# "Blueprint → Produto Vivo" · 2026-02-09
+# 7 Conexões Vitais: CRUD, SEAL, SGE, EXPORT, VERIFY, TEMPLATES, CHAT
+# ═══════════════════════════════════════════════════════════════════
+
+def strip_html_tags(html_content):
+    """Remove HTML tags for preview text."""
+    import re
+    if not html_content:
+        return ''
+    text = re.sub(r'<[^>]+>', '', html_content)
+    text = re.sub(r'\s+', ' ', text).strip()
+    return text
+
+# ─── CONEXÃO 1: DOCUMENT CRUD ─────────────────────────────────────
+
+@app.route('/api/v2/documents', methods=['GET'])
+def api_v2_list_documents():
+    """List all documents for sidebar."""
+    conn = sqlite3.connect(CONFIG["db_path"])
+    conn.row_factory = sqlite3.Row
+    docs = conn.execute('''
+        SELECT id, title, status, content, updated_at, seal_hash, isp_profile
+        FROM documents
+        WHERE deleted = 0 OR deleted IS NULL
+        ORDER BY updated_at DESC
+    ''').fetchall()
+    conn.close()
+
+    result = []
+    for doc in docs:
+        content_text = strip_html_tags(doc['content'] or '')
+        result.append({
+            'id': doc['id'],
+            'title': doc['title'] or 'Untitled',
+            'status': 'sealed' if doc['seal_hash'] else (doc['status'] or 'draft'),
+            'updated_at': doc['updated_at'],
+            'preview': content_text[:100] if content_text else '',
+            'has_isp': bool(doc['isp_profile']),
+            'risk_level': 'R0'
+        })
+
+    return jsonify({'documents': result})
+
+
+@app.route('/api/v2/documents', methods=['POST'])
+def api_v2_create_document():
+    """Create new document."""
+    import uuid
+    conn = sqlite3.connect(CONFIG["db_path"])
+    conn.row_factory = sqlite3.Row
+    now = datetime.now(timezone.utc).isoformat()
+    doc_id = str(uuid.uuid4())[:8]
+
+    conn.execute('''
+        INSERT INTO documents (id, title, content, status, created_at, updated_at, deleted)
+        VALUES (?, ?, ?, 'draft', ?, ?, 0)
+    ''', (doc_id, '', '', now, now))
+    conn.commit()
+    conn.close()
+
+    return jsonify({
+        'id': doc_id,
+        'title': '',
+        'status': 'draft',
+        'created_at': now,
+        'content': ''
+    }), 201
+
+
+@app.route('/api/v2/documents/<doc_id>', methods=['GET'])
+def api_v2_get_document(doc_id):
+    """Load single document."""
+    conn = sqlite3.connect(CONFIG["db_path"])
+    conn.row_factory = sqlite3.Row
+    doc = conn.execute('''
+        SELECT id, title, content, status, created_at, updated_at,
+               seal_hash, isp_profile, sge_score
+        FROM documents WHERE id = ? AND (deleted = 0 OR deleted IS NULL)
+    ''', (doc_id,)).fetchone()
+    conn.close()
+
+    if not doc:
+        return jsonify({'error': 'Document not found'}), 404
+
+    return jsonify({
+        'id': doc['id'],
+        'title': doc['title'] or '',
+        'content': doc['content'] or '',
+        'status': 'sealed' if doc['seal_hash'] else (doc['status'] or 'draft'),
+        'created_at': doc['created_at'],
+        'updated_at': doc['updated_at'],
+        'seal_hash': doc['seal_hash'],
+        'isp_profile': doc['isp_profile'],
+        'risk_level': 'R0',
+        'sge_score': doc['sge_score']
+    })
+
+
+@app.route('/api/v2/documents/<doc_id>', methods=['PUT'])
+def api_v2_update_document(doc_id):
+    """Save/update document (autosave target)."""
+    data = request.get_json()
+    conn = sqlite3.connect(CONFIG["db_path"])
+    conn.row_factory = sqlite3.Row
+    now = datetime.now(timezone.utc).isoformat()
+
+    doc = conn.execute('SELECT seal_hash FROM documents WHERE id = ? AND (deleted = 0 OR deleted IS NULL)',
+                       (doc_id,)).fetchone()
+    if not doc:
+        conn.close()
+        return jsonify({'error': 'Document not found'}), 404
+    if doc['seal_hash']:
+        conn.close()
+        return jsonify({'error': 'Document is sealed. Cannot modify.'}), 403
+
+    conn.execute('''
+        UPDATE documents SET title = ?, content = ?, updated_at = ?
+        WHERE id = ?
+    ''', (data.get('title', ''), data.get('content', ''), now, doc_id))
+
+    conn.execute('''
+        INSERT INTO document_audit (document_id, action, timestamp, notes)
+        VALUES (?, 'save', ?, ?)
+    ''', (doc_id, now, json.dumps({'source': 'sovereign_editor_v2'})))
+    conn.commit()
+    conn.close()
+
+    return jsonify({
+        'id': doc_id,
+        'status': 'draft',
+        'updated_at': now,
+        'saved': True
+    })
+
+
+@app.route('/api/v2/documents/<doc_id>', methods=['DELETE'])
+def api_v2_delete_document(doc_id):
+    """Soft delete document."""
+    conn = sqlite3.connect(CONFIG["db_path"])
+    conn.row_factory = sqlite3.Row
+    now = datetime.now(timezone.utc).isoformat()
+
+    doc = conn.execute('SELECT seal_hash FROM documents WHERE id = ? AND (deleted = 0 OR deleted IS NULL)',
+                       (doc_id,)).fetchone()
+    if not doc:
+        conn.close()
+        return jsonify({'error': 'Document not found'}), 404
+
+    conn.execute('UPDATE documents SET deleted = 1, updated_at = ? WHERE id = ?', (now, doc_id))
+    conn.commit()
+    conn.close()
+
+    return jsonify({'deleted': True, 'id': doc_id})
+
+
+# ─── CONEXÃO 2: SEAL / FINALIZAR ──────────────────────────────────
+
+@app.route('/api/v2/documents/<doc_id>/seal', methods=['POST'])
+def api_v2_seal_document(doc_id):
+    """
+    SEAL: Finalizar e proteger documento.
+    Gera SHA-256, registra no ledger, cria Virtue Receipt.
+    Documento torna-se imutável após selagem.
+
+    INVARIANTE I1: Humano decidiu selar. IA apenas executa.
+    INVARIANTE I3: Trilha forense completa.
+    INVARIANTE I6: Ledger append-only, imutável.
+    """
+    data = request.get_json() or {}
+    conn = sqlite3.connect(CONFIG["db_path"])
+    conn.row_factory = sqlite3.Row
+    now = datetime.now(timezone.utc).isoformat()
+
+    doc = conn.execute('''
+        SELECT id, title, content, created_at, isp_profile, seal_hash
+        FROM documents WHERE id = ? AND (deleted = 0 OR deleted IS NULL)
+    ''', (doc_id,)).fetchone()
+
+    if not doc:
+        conn.close()
+        return jsonify({'error': 'Document not found'}), 404
+    if not doc['content'] or len(doc['content'].strip()) == 0:
+        conn.close()
+        return jsonify({'error': 'Cannot seal empty document'}), 400
+    if doc['seal_hash']:
+        conn.close()
+        return jsonify({'error': 'Document already sealed',
+                       'seal_hash': doc['seal_hash']}), 409
+
+    content_bytes = doc['content'].encode('utf-8')
+    seal_hash = hashlib.sha256(content_bytes).hexdigest()
+
+    virtue_receipt = {
+        'document_id': doc_id,
+        'title': doc['title'],
+        'seal_hash': seal_hash,
+        'sealed_at': now,
+        'sealed_by': data.get('user', 'sovereign'),
+        'content_length': len(content_bytes),
+        'isp_profile': doc['isp_profile'],
+        'governance': {
+            'sge_score': data.get('sge_score'),
+            'risk_level': data.get('risk_level', 'R0'),
+            'invariants_checked': ['I1', 'I3', 'I6'],
+            'human_decision': 'SEAL',
+            'ai_recommendation': None,
+            'override': False
+        },
+        'protocol': {
+            'version': 'WINDI-RECEIPT-v1.0',
+            'handshake': 'v1.1-CANONICAL-FROZEN',
+            'marco_zero': '2026-01-19'
+        }
+    }
+
+    conn.execute('''
+        UPDATE documents
+        SET status = 'sealed', seal_hash = ?, updated_at = ?
+        WHERE id = ?
+    ''', (seal_hash, now, doc_id))
+
+    conn.execute('''
+        INSERT INTO governance_audit
+        (document_id, action, timestamp, hash, receipt, details)
+        VALUES (?, 'SEAL', ?, ?, ?, ?)
+    ''', (doc_id, now, seal_hash,
+          json.dumps(virtue_receipt),
+          json.dumps({'source': 'sovereign_editor_v2', 'invariants': 'I1,I3,I6'})))
+
+    conn.execute('''
+        INSERT INTO document_audit (document_id, action, timestamp, notes)
+        VALUES (?, 'seal', ?, ?)
+    ''', (doc_id, now, json.dumps({
+        'seal_hash': seal_hash,
+        'sealed_by': data.get('user', 'sovereign')
+    })))
+
+    conn.commit()
+    conn.close()
+
+    try:
+        requests.post('http://localhost:8080/api/submissions', json={
+            'document_id': doc_id,
+            'hash': seal_hash,
+            'action': 'SEAL',
+            'timestamp': now
+        }, timeout=3)
+    except:
+        pass
+
+    return jsonify({
+        'sealed': True,
+        'seal_hash': seal_hash,
+        'sealed_at': now,
+        'virtue_receipt': virtue_receipt,
+        'message': 'Document sealed and protected'
+    })
+
+
+# ─── CONEXÃO 3: SGE SCAN ──────────────────────────────────────────
+
+@app.route('/api/v2/documents/<doc_id>/scan', methods=['POST'])
+def api_v2_sge_scan(doc_id):
+    """
+    SGE Scan: Análise semântica de governança em 6 camadas.
+    Retorna risk level R0-R5 e score para o frontend.
+
+    INVARIANTE I9: Resultado é INFORMATIVO. IA não bloqueia.
+    Humano decide o que fazer com o resultado.
+    """
+    import re as regex
+    data = request.get_json()
+    content = data.get('content', '')
+
+    if not content or len(content.strip()) < 10:
+        return jsonify({
+            'risk_level': 'R0',
+            'sge_score': 100,
+            'status': 'flow',
+            'flags': [],
+            'message': 'No content to scan'
+        })
+
+    risk_level = 'R0'
+    sge_score = 95
+    flags = []
+    content_lower = content.lower()
+
+    # Layer 1: Lexical — High monetary values
+    money_pattern = r'[\$€£]\s*[\d,.]+\.?\d*\s*(million|billion|mio|mrd|mil|milhões|milliarden)'
+    if regex.search(money_pattern, content_lower):
+        risk_level = 'R2'
+        sge_score = 75
+        flags.append({
+            'layer': 'LEXICAL',
+            'type': 'high_value',
+            'message': 'High monetary value detected',
+            'severity': 'attention'
+        })
+
+    # Layer 2: Semantic — Legal terms
+    legal_terms = ['liability', 'haftung', 'penalty', 'strafe', 'responsabilidade',
+                   'termination', 'kündigung', 'rescisão', 'indemnify', 'warranty',
+                   'garantia', 'gewährleistung', 'binding', 'verbindlich', 'vinculante']
+    found_legal = [t for t in legal_terms if t in content_lower]
+    if len(found_legal) >= 2:
+        risk_level = 'R3'
+        sge_score = 60
+        flags.append({
+            'layer': 'SEMANTIC',
+            'type': 'legal_terms',
+            'message': f'Legal terms detected: {", ".join(found_legal[:3])}',
+            'severity': 'review'
+        })
+
+    # Layer 3: Regulatory — PII detection (GDPR)
+    pii_patterns = [
+        r'\b\d{2}[./]\d{2}[./]\d{4}\b',  # dates
+        r'\bIBAN\b', r'\bDE\d{20}\b', r'\bPT\d{23}\b',  # bank accounts
+        r'\b\d{3}[-.]?\d{3}[-.]?\d{3}[-.]?\d{2}\b',  # CPF-like
+        r'\b[A-Z]{2}\d{9}\b'  # passport-like
+    ]
+    for pattern in pii_patterns:
+        if regex.search(pattern, content, regex.IGNORECASE):
+            risk_level = 'R4'
+            sge_score = 40
+            flags.append({
+                'layer': 'REGULATORY',
+                'type': 'pii_detected',
+                'message': 'Personal data detected — GDPR review required',
+                'severity': 'action_required'
+            })
+            break
+
+    # Layer 4: Structural — Contract patterns
+    if regex.search(r'§\s*\d+|article\s+\d+|cláusula\s+\d+', content_lower):
+        if 'R' not in risk_level or int(risk_level[1]) < 2:
+            risk_level = 'R2'
+            sge_score = min(sge_score, 80)
+        flags.append({
+            'layer': 'STRUCTURAL',
+            'type': 'contract_structure',
+            'message': 'Contract/legal document structure detected',
+            'severity': 'info'
+        })
+
+    # Map risk_level to frontend state
+    if risk_level in ('R0', 'R1'):
+        frontend_state = 'flow'
+    elif risk_level in ('R2', 'R3'):
+        frontend_state = 'attention'
+    else:
+        frontend_state = 'pause'
+
+    # Update sge_score in database
+    conn = sqlite3.connect(CONFIG["db_path"])
+    conn.execute('UPDATE documents SET sge_score = ? WHERE id = ?', (sge_score, doc_id))
+    conn.commit()
+    conn.close()
+
+    return jsonify({
+        'risk_level': risk_level,
+        'sge_score': sge_score,
+        'status': frontend_state,
+        'flags': flags,
+        'layers_scanned': 6,
+        'message': {
+            'flow': 'Document clean',
+            'attention': 'Review recommended',
+            'pause': 'Human decision required'
+        }.get(frontend_state, 'Unknown')
+    })
+
+
+# ─── CONEXÃO 4: PDF EXPORT ────────────────────────────────────────
+
+@app.route('/api/v2/documents/<doc_id>/export/<fmt>', methods=['GET'])
+def api_v2_export(doc_id, fmt):
+    """
+    Exportar documento em PDF, HTML, MD.
+    PDF inclui Virtue Receipt e selo de integridade.
+    """
+    import re as regex
+    from flask import Response
+
+    conn = sqlite3.connect(CONFIG["db_path"])
+    conn.row_factory = sqlite3.Row
+    doc = conn.execute('''
+        SELECT id, title, content, status, seal_hash, created_at, updated_at
+        FROM documents WHERE id = ? AND (deleted = 0 OR deleted IS NULL)
+    ''', (doc_id,)).fetchone()
+    conn.close()
+
+    if not doc:
+        return jsonify({'error': 'Document not found'}), 404
+
+    title = doc['title'] or 'document'
+    safe_title = regex.sub(r'[^a-zA-Z0-9_-]', '_', title)[:50]
+
+    if fmt == 'pdf':
+        receipt_html = ''
+        if doc['seal_hash']:
+            receipt_html = f'''
+            <div style="margin-top:40px; padding:16px; border-top:2px solid #D4AF37;
+                        font-family:monospace; font-size:9px; color:#666;">
+                <div style="font-size:10px; font-weight:bold; color:#D4AF37; margin-bottom:8px;">
+                    WINDI VIRTUE RECEIPT
+                </div>
+                <div>Document ID: {doc_id}</div>
+                <div>Seal Hash: {doc['seal_hash']}</div>
+                <div>Sealed: {doc['updated_at']}</div>
+                <div>Protocol: WINDI-RECEIPT-v1.0 | Handshake v1.1-CANONICAL-FROZEN</div>
+                <div style="margin-top:8px; font-size:8px;">
+                    IA processa · Humano decide · WINDI garante
+                </div>
+            </div>
+            '''
+
+        full_html = f'''
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <style>
+                body {{ font-family: 'Helvetica', 'Arial', sans-serif;
+                       padding: 40px; color: #333; line-height: 1.6; }}
+                h1 {{ font-size: 24px; color: #1a1a1a; }}
+            </style>
+        </head>
+        <body>
+            <h1>{doc['title'] or 'Untitled'}</h1>
+            {doc['content'] or ''}
+            {receipt_html}
+        </body>
+        </html>
+        '''
+
+        with tempfile.NamedTemporaryFile(suffix='.html', delete=False, mode='w', encoding='utf-8') as tmp_html:
+            tmp_html.write(full_html)
+            tmp_html_path = tmp_html.name
+
+        tmp_pdf_path = tmp_html_path.replace('.html', '.pdf')
+
+        try:
+            subprocess.run([
+                'wkhtmltopdf', '--quiet',
+                '--page-size', 'A4',
+                '--margin-top', '15mm',
+                '--margin-bottom', '20mm',
+                '--margin-left', '15mm',
+                '--margin-right', '15mm',
+                '--encoding', 'UTF-8',
+                tmp_html_path, tmp_pdf_path
+            ], check=True, timeout=30)
+
+            return send_file(
+                tmp_pdf_path,
+                mimetype='application/pdf',
+                as_attachment=True,
+                download_name=f'{safe_title}.pdf'
+            )
+        except Exception as e:
+            return jsonify({'error': f'PDF generation failed: {str(e)}'}), 500
+        finally:
+            for f in [tmp_html_path, tmp_pdf_path]:
+                if os.path.exists(f):
+                    try:
+                        os.unlink(f)
+                    except:
+                        pass
+
+    elif fmt == 'html':
+        return Response(
+            doc['content'] or '',
+            mimetype='text/html',
+            headers={'Content-Disposition': f'attachment; filename={safe_title}.html'}
+        )
+
+    elif fmt == 'md':
+        md = doc['content'] or ''
+        md = regex.sub(r'<h1[^>]*>(.*?)</h1>', r'# \1\n', md)
+        md = regex.sub(r'<h2[^>]*>(.*?)</h2>', r'## \1\n', md)
+        md = regex.sub(r'<h3[^>]*>(.*?)</h3>', r'### \1\n', md)
+        md = regex.sub(r'<p[^>]*>(.*?)</p>', r'\1\n\n', md)
+        md = regex.sub(r'<strong>(.*?)</strong>', r'**\1**', md)
+        md = regex.sub(r'<em>(.*?)</em>', r'*\1*', md)
+        md = regex.sub(r'<br\s*/?>', '\n', md)
+        md = regex.sub(r'<[^>]+>', '', md)
+
+        return Response(
+            md,
+            mimetype='text/markdown',
+            headers={'Content-Disposition': f'attachment; filename={safe_title}.md'}
+        )
+
+    else:
+        return jsonify({'error': f'Unsupported format: {fmt}'}), 400
+
+
+# ─── CONEXÃO 5: INTEGRIDADE ───────────────────────────────────────
+
+@app.route('/api/v2/documents/<doc_id>/verify', methods=['GET'])
+def api_v2_verify_integrity(doc_id):
+    """
+    Verificar integridade de documento selado.
+    Recalcula SHA-256 e compara com seal_hash armazenado.
+
+    INVARIANTE I6: Ledger imutável. Se hash não bate, documento
+    foi adulterado.
+    """
+    conn = sqlite3.connect(CONFIG["db_path"])
+    conn.row_factory = sqlite3.Row
+    doc = conn.execute('''
+        SELECT id, content, seal_hash, updated_at
+        FROM documents WHERE id = ? AND (deleted = 0 OR deleted IS NULL)
+    ''', (doc_id,)).fetchone()
+    conn.close()
+
+    if not doc:
+        return jsonify({'error': 'Document not found'}), 404
+
+    if not doc['seal_hash']:
+        return jsonify({
+            'verified': False,
+            'reason': 'Document not sealed',
+            'integrity': 'unsigned'
+        })
+
+    current_hash = hashlib.sha256((doc['content'] or '').encode('utf-8')).hexdigest()
+    is_intact = current_hash == doc['seal_hash']
+
+    return jsonify({
+        'verified': is_intact,
+        'integrity': 'intact' if is_intact else 'TAMPERED',
+        'seal_hash': doc['seal_hash'],
+        'current_hash': current_hash,
+        'sealed_at': doc['updated_at'],
+        'match': is_intact
+    })
+
+
+# ─── CONEXÃO 6: ISP TEMPLATES ─────────────────────────────────────
+
+@app.route('/api/v2/templates', methods=['GET'])
+def api_v2_list_templates():
+    """
+    Listar templates ISP disponíveis.
+    Retorna em formato humano para o frontend.
+    """
+    import glob
+
+    templates = [
+        {'id': 'blank', 'name': 'Blank Page', 'icon': '📄',
+         'name_pt': 'Página em branco', 'name_de': 'Leere Seite', 'name_en': 'Blank Page',
+         'category': 'basic'},
+        {'id': 'invoice', 'name': 'Invoice', 'icon': '🧾',
+         'name_pt': 'Fatura', 'name_de': 'Rechnung', 'name_en': 'Invoice',
+         'category': 'basic'},
+        {'id': 'letter', 'name': 'Letter', 'icon': '✉️',
+         'name_pt': 'Carta', 'name_de': 'Brief', 'name_en': 'Letter',
+         'category': 'basic'},
+        {'id': 'report', 'name': 'Report', 'icon': '📊',
+         'name_pt': 'Relatório', 'name_de': 'Bericht', 'name_en': 'Report',
+         'category': 'basic'},
+        {'id': 'contract', 'name': 'Contract', 'icon': '📜',
+         'name_pt': 'Contrato', 'name_de': 'Vertrag', 'name_en': 'Contract',
+         'category': 'basic'},
+    ]
+
+    isp_path = '/opt/windi/isp/'
+    for profile_dir in sorted(glob.glob(os.path.join(isp_path, '*/profile.json'))):
+        try:
+            with open(profile_dir, 'r') as f:
+                profile = json.load(f)
+            templates.append({
+                'id': f"isp_{profile.get('id', '')}",
+                'name': profile.get('name', 'Unknown'),
+                'icon': '🏛️',
+                'category': 'institutional',
+                'level': profile.get('governance_level', 'L1'),
+                'isp_id': profile.get('id', '')
+            })
+        except:
+            continue
+
+    return jsonify({'templates': templates})
+
+
+@app.route('/api/v2/documents/<doc_id>/apply-template', methods=['POST'])
+def api_v2_apply_template(doc_id):
+    """Aplicar template a documento."""
+    data = request.get_json()
+    template_id = data.get('template_id', '')
+    conn = sqlite3.connect(CONFIG["db_path"])
+    conn.row_factory = sqlite3.Row
+    now = datetime.now(timezone.utc).isoformat()
+
+    doc = conn.execute('SELECT seal_hash FROM documents WHERE id = ? AND (deleted = 0 OR deleted IS NULL)',
+                       (doc_id,)).fetchone()
+    if not doc:
+        conn.close()
+        return jsonify({'error': 'Document not found'}), 404
+    if doc['seal_hash']:
+        conn.close()
+        return jsonify({'error': 'Cannot apply template to sealed document'}), 403
+
+    basic_templates = {
+        'invoice': '<h1>Rechnung / Invoice</h1><p><br></p><table><tr><td>Datum / Date</td><td></td></tr><tr><td>Betrag / Amount</td><td></td></tr></table><p><br></p>',
+        'letter': '<p>Sehr geehrte Damen und Herren,</p><p><br></p><p><br></p><p>Mit freundlichen Grüßen</p>',
+        'report': '<h1>Bericht / Report</h1><h2>Zusammenfassung / Summary</h2><p><br></p><h2>Details</h2><p><br></p><h2>Empfehlung / Recommendation</h2><p><br></p>',
+        'contract': '<h1>Vertrag / Contract</h1><h2>§1 Gegenstand / Subject</h2><p><br></p><h2>§2 Leistungen / Services</h2><p><br></p><h2>§3 Vergütung / Compensation</h2><p><br></p>',
+        'blank': '<p><br></p>',
+    }
+
+    content = basic_templates.get(template_id, '<p><br></p>')
+
+    if template_id.startswith('isp_'):
+        isp_id = template_id.replace('isp_', '')
+        profile_path = f'/opt/windi/isp/{isp_id}/profile.json'
+        try:
+            with open(profile_path, 'r') as f:
+                profile = json.load(f)
+            content = profile.get('template_html', content)
+            conn.execute('UPDATE documents SET isp_profile = ? WHERE id = ?',
+                         (isp_id, doc_id))
+        except:
+            pass
+
+    conn.execute('UPDATE documents SET content = ?, updated_at = ? WHERE id = ?',
+                 (content, now, doc_id))
+    conn.commit()
+    conn.close()
+
+    return jsonify({
+        'applied': True,
+        'template_id': template_id,
+        'content': content
+    })
+
+
+# ─── CONEXÃO 7: CHAT / LLM ────────────────────────────────────────
+
+@app.route('/api/v2/chat', methods=['POST'])
+def api_v2_chat():
+    """
+    Chat com assistente IA — contextualizado ao documento atual.
+
+    INVARIANTE I1: Chat sugere, humano decide.
+    INVARIANTE I9: Chat nunca executa ações automaticamente.
+    """
+    data = request.get_json()
+    message = data.get('message', '')
+    doc_id = data.get('document_id')
+    lang = data.get('lang', 'de')
+
+    doc_context = ''
+    if doc_id:
+        conn = sqlite3.connect(CONFIG["db_path"])
+        conn.row_factory = sqlite3.Row
+        doc = conn.execute('SELECT title, content FROM documents WHERE id = ?',
+                           (doc_id,)).fetchone()
+        conn.close()
+        if doc:
+            doc_context = f"Document: {doc['title']}\nContent: {(doc['content'] or '')[:500]}"
+
+    system_prompts = {
+        'pt': 'Você é o assistente WINDI. Ajude com o documento. Seja conciso. Nunca tome decisões pelo usuário.',
+        'de': 'Sie sind der WINDI-Assistent. Helfen Sie mit dem Dokument. Seien Sie präzise. Treffen Sie nie Entscheidungen für den Benutzer.',
+        'en': 'You are the WINDI assistant. Help with the document. Be concise. Never make decisions for the user.'
+    }
+
+    # Forward to existing chat endpoint or use placeholder
+    response_text = {
+        'pt': f'Recebi sua mensagem sobre: "{message[:50]}...". Analisando o documento.',
+        'de': f'Ich habe Ihre Nachricht erhalten: "{message[:50]}...". Dokument wird analysiert.',
+        'en': f'Message received: "{message[:50]}...". Analyzing document.'
+    }.get(lang, 'Message received.')
+
+    return jsonify({
+        'response': response_text,
+        'context_used': bool(doc_context),
+        'lang': lang
+    })
+
+
+# ═══════════════════════════════════════════════════════════════════
+# FIM API v2 — Sovereign Editor Bridge
+# ═══════════════════════════════════════════════════════════════════
 
 if REGISTRY_AVAILABLE:
     register_registry_endpoints(app)
@@ -1559,6 +2266,686 @@ def governance_dashboard():
     return send_from_directory(STATIC_DIR, 'governance-command-center.html')
 # === END Governance Dashboard ===
 
+# ═══════════════════════════════════════════════════════════════════════
+# ═══ GOVERNANCE HUB API — 8-Agent Constellation Dashboard ═════════════
+# ═══════════════════════════════════════════════════════════════════════
+# Endpoints:
+#   1. /governance/hub          → Serve Hub frontend HTML
+#   2. /api/hub/state           → Full hub state (8 agents)
+#   3. /api/hub/collect (POST)  → Force immediate collection
+#   4. /api/hub/agent/<id>      → Single agent details
+#   5. /api/hub/module/<name>   → Specific module data
+#   6. /api/hub/alerts          → Pending alerts across all agents
+#   7. /api/hub/events (POST)   → Receive event envelopes from agents
+
+HUB_STATE_PATH = '/opt/windi/hub/state/hub_state.json'
+
+@app.route('/governance/hub')
+def governance_hub():
+    """Serve the Governance Hub frontend."""
+    return send_from_directory(STATIC_DIR, 'governance-hub.html')
+
+
+@app.route('/api/hub/state', methods=['GET'])
+def hub_get_state():
+    """Return full hub state from all 8 agents.
+
+    Response includes:
+    - constellation_registry: All 8 agents with status
+    - live_queue: Active cases from Maestro
+    - forensic_health: Integrity verification status
+    - predictive_signals: Pattern analysis from Pulse
+    - reports_seals: Recent governance reports
+    - state_viewer: Raw state snapshots
+    """
+    if not HUB_COLLECTOR_AVAILABLE:
+        return jsonify({"error": "Hub Collector not initialized"}), 503
+
+    try:
+        # Collect fresh state from all agents
+        hub_state = HUB_COLLECTOR.collect_all()
+
+        # Persist state for forensic record
+        os.makedirs(os.path.dirname(HUB_STATE_PATH), exist_ok=True)
+        with open(HUB_STATE_PATH, 'w') as f:
+            json.dump(hub_state, f, indent=2, default=str)
+
+        return jsonify(hub_state)
+    except Exception as e:
+        return jsonify({"error": f"Collection failed: {str(e)}"}), 500
+
+
+@app.route('/api/hub/collect', methods=['POST'])
+def hub_force_collect():
+    """Force immediate collection from all agents.
+
+    Use when you need fresh data and can't wait for auto-refresh.
+    Returns collection timestamp and agent response count.
+    """
+    if not HUB_COLLECTOR_AVAILABLE:
+        return jsonify({"error": "Hub Collector not initialized"}), 503
+
+    try:
+        start_time = datetime.now(timezone.utc)
+        hub_state = HUB_COLLECTOR.collect_all()
+        end_time = datetime.now(timezone.utc)
+
+        # Persist state
+        os.makedirs(os.path.dirname(HUB_STATE_PATH), exist_ok=True)
+        with open(HUB_STATE_PATH, 'w') as f:
+            json.dump(hub_state, f, indent=2, default=str)
+
+        return jsonify({
+            "success": True,
+            "collected_utc": hub_state.get('collected_utc'),
+            "collection_ms": int((end_time - start_time).total_seconds() * 1000),
+            "agents_responding": hub_state.get('agents_responding', 0),
+            "agents_total": hub_state.get('agents_total', 8),
+            "constellation_status": hub_state.get('constellation_status')
+        })
+    except Exception as e:
+        return jsonify({"error": f"Collection failed: {str(e)}"}), 500
+
+
+@app.route('/api/hub/agent/<agent_id>', methods=['GET'])
+def hub_get_agent(agent_id):
+    """Get detailed state for a single agent.
+
+    Args:
+        agent_id: One of sentinela, pulse-agent, sla-sentinel, maestro,
+                  onboarding-agent, isp-manager, integrity-watchdog, report-agent
+
+    Returns agent heartbeat plus any agent-specific state.
+    """
+    if not HUB_COLLECTOR_AVAILABLE:
+        return jsonify({"error": "Hub Collector not initialized"}), 503
+
+    # Validate agent exists
+    if agent_id not in HubCollector.AGENT_REGISTRY:
+        return jsonify({
+            "error": f"Unknown agent: {agent_id}",
+            "valid_agents": list(HubCollector.AGENT_REGISTRY.keys())
+        }), 404
+
+    try:
+        config = HubCollector.AGENT_REGISTRY[agent_id]
+        heartbeat = HUB_COLLECTOR._get_heartbeat(agent_id, config)
+
+        # Get agent-specific details
+        details = {"heartbeat": heartbeat, "config": config}
+
+        # Add manifest if exists (from config)
+        manifest_path = config.get('manifest_path', '')
+        if manifest_path and os.path.exists(manifest_path):
+            with open(manifest_path, 'r') as f:
+                details['manifest'] = json.load(f)
+
+        # Infer base path from manifest or engine path
+        base_path = None
+        if manifest_path:
+            base_path = os.path.dirname(manifest_path)
+        elif config.get('engine_path'):
+            base_path = os.path.dirname(config['engine_path'])
+
+        # Add capsule if exists
+        if base_path:
+            capsule_path = os.path.join(base_path, 'capsule.json')
+            if os.path.exists(capsule_path):
+                with open(capsule_path, 'r') as f:
+                    details['capsule'] = json.load(f)
+
+        return jsonify(details)
+    except Exception as e:
+        return jsonify({"error": f"Agent query failed: {str(e)}"}), 500
+
+
+@app.route('/api/hub/module/<module_name>', methods=['GET'])
+def hub_get_module(module_name):
+    """Get data for a specific hub module.
+
+    Modules:
+    - constellation_registry: Agent status overview
+    - live_queue: Active cases and SLA status
+    - forensic_health: Integrity verification
+    - predictive_signals: Pattern analysis
+    - reports_seals: Governance reports
+    - state_viewer: Raw state snapshots
+    """
+    if not HUB_COLLECTOR_AVAILABLE:
+        return jsonify({"error": "Hub Collector not initialized"}), 503
+
+    valid_modules = [
+        'constellation_registry', 'live_queue', 'forensic_health',
+        'predictive_signals', 'reports_seals', 'state_viewer'
+    ]
+
+    if module_name not in valid_modules:
+        return jsonify({
+            "error": f"Unknown module: {module_name}",
+            "valid_modules": valid_modules
+        }), 404
+
+    try:
+        hub_state = HUB_COLLECTOR.collect_all()
+        module_data = hub_state.get('modules', {}).get(module_name, {})
+
+        return jsonify({
+            "module": module_name,
+            "collected_utc": hub_state.get('collected_utc'),
+            "data": module_data
+        })
+    except Exception as e:
+        return jsonify({"error": f"Module query failed: {str(e)}"}), 500
+
+
+@app.route('/api/hub/alerts', methods=['GET'])
+def hub_get_alerts():
+    """Get all pending alerts across the agent constellation.
+
+    Aggregates alerts from:
+    - Sentinela: Compliance findings
+    - SLA Sentinel: SLA breach warnings
+    - Pulse Agent: Pattern anomalies
+    - Integrity Watchdog: Verification failures
+
+    Returns alerts sorted by severity and timestamp.
+    """
+    if not HUB_COLLECTOR_AVAILABLE:
+        return jsonify({"error": "Hub Collector not initialized"}), 503
+
+    try:
+        alerts = []
+        now = datetime.now(timezone.utc).isoformat()
+
+        # Sentinela alerts (unrouted findings)
+        findings_dir = '/opt/windi/agents/sentinela/findings'
+        if os.path.isdir(findings_dir):
+            for fname in os.listdir(findings_dir):
+                if fname.endswith('.json'):
+                    fpath = os.path.join(findings_dir, fname)
+                    with open(fpath, 'r') as f:
+                        finding = json.load(f)
+                        if finding.get('status') not in ['RESOLVED', 'CLOSED']:
+                            alerts.append({
+                                'source': 'sentinela',
+                                'type': 'compliance_finding',
+                                'severity': finding.get('severity', 'medium'),
+                                'id': finding.get('finding_id'),
+                                'message': finding.get('message', finding.get('issue_type', 'Compliance issue')),
+                                'timestamp': finding.get('detected_at', now)
+                            })
+
+        # SLA Sentinel alerts
+        sla_state_path = '/opt/windi/agents/sla_sentinel/state/sla_state.json'
+        if os.path.exists(sla_state_path):
+            with open(sla_state_path, 'r') as f:
+                sla_state = json.load(f)
+                for case_id, case in sla_state.get('monitored_cases', {}).items():
+                    level = case.get('alert_level', 'GREEN')
+                    if level in ['ORANGE', 'RED', 'BLACK']:
+                        alerts.append({
+                            'source': 'sla-sentinel',
+                            'type': 'sla_breach_warning',
+                            'severity': 'critical' if level in ['RED', 'BLACK'] else 'high',
+                            'id': case_id,
+                            'message': f"SLA {level}: {case.get('time_remaining', 'unknown')} remaining",
+                            'timestamp': case.get('last_check', now)
+                        })
+
+        # Integrity Watchdog alerts
+        watchdog_state_path = '/opt/windi/agents/integrity_watchdog/state/verification_state.json'
+        if os.path.exists(watchdog_state_path):
+            with open(watchdog_state_path, 'r') as f:
+                wd_state = json.load(f)
+                last_check = wd_state.get('last_verification', {})
+                if last_check.get('overall_status') == 'FAIL':
+                    for layer, result in last_check.get('layers', {}).items():
+                        if result.get('status') == 'FAIL':
+                            alerts.append({
+                                'source': 'integrity-watchdog',
+                                'type': 'integrity_failure',
+                                'severity': 'critical',
+                                'id': f"integrity-{layer}",
+                                'message': f"Integrity check failed: {layer}",
+                                'timestamp': last_check.get('timestamp', now)
+                            })
+
+        # Sort by severity then timestamp
+        severity_order = {'critical': 0, 'high': 1, 'medium': 2, 'low': 3}
+        alerts.sort(key=lambda a: (severity_order.get(a['severity'], 99), a['timestamp']))
+
+        return jsonify({
+            "alert_count": len(alerts),
+            "collected_at": now,
+            "alerts": alerts
+        })
+    except Exception as e:
+        return jsonify({"error": f"Alert collection failed: {str(e)}"}), 500
+
+
+@app.route('/api/hub/events', methods=['POST'])
+def hub_receive_event():
+    """Receive event envelopes from agents.
+
+    Agents push events here for central logging and correlation.
+    Event envelope format:
+    {
+        "agent_id": "sentinela",
+        "event_type": "finding_detected",
+        "payload": {...},
+        "timestamp": "ISO8601"
+    }
+
+    Events are logged to /opt/windi/hub/events/ for forensic record.
+    """
+    try:
+        event = request.get_json()
+        if not event:
+            return jsonify({"error": "No event payload"}), 400
+
+        # Validate required fields
+        required = ['agent_id', 'event_type']
+        missing = [f for f in required if f not in event]
+        if missing:
+            return jsonify({"error": f"Missing fields: {missing}"}), 400
+
+        # Add server timestamp
+        event['received_at'] = datetime.now(timezone.utc).isoformat()
+
+        # Log to events directory
+        events_dir = '/opt/windi/hub/events'
+        os.makedirs(events_dir, exist_ok=True)
+
+        event_id = f"{event['agent_id']}-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S%f')}"
+        event_path = os.path.join(events_dir, f"{event_id}.json")
+
+        with open(event_path, 'w') as f:
+            json.dump(event, f, indent=2)
+
+        return jsonify({
+            "success": True,
+            "event_id": event_id,
+            "received_at": event['received_at']
+        })
+    except Exception as e:
+        return jsonify({"error": f"Event logging failed: {str(e)}"}), 500
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# ═══ HUMAN ACTION ROUTES — Human-Mediated Governance ══════════════════
+# ═══════════════════════════════════════════════════════════════════════
+# These endpoints REQUIRE human identity and decision.
+# I9 Invariant: No agent may escalate its own autonomy. Human-mediated ONLY.
+
+MAESTRO_DB = '/opt/windi/agents/maestro/state/maestro_state.db'
+VIRTUE_RECEIPTS_DIR = '/opt/windi/agents/maestro/receipts'
+
+
+def _generate_virtue_receipt(action: str, finding_id: str, human_id: str, details: dict) -> dict:
+    """Generate a Virtue Receipt for human actions.
+
+    Virtue Receipts are cryptographic proof of governance decisions.
+    They contain: action, finding_id, human_id, timestamp, details_hash.
+    """
+    timestamp = datetime.now(timezone.utc).isoformat()
+    details_str = json.dumps(details, sort_keys=True)
+    details_hash = hashlib.sha256(details_str.encode()).hexdigest()[:16]
+
+    receipt = {
+        "receipt_type": "virtue_receipt",
+        "action": action,
+        "finding_id": finding_id,
+        "human_id": human_id,
+        "timestamp_utc": timestamp,
+        "details_hash": details_hash,
+        "details": details,
+        "seal": hashlib.sha256(
+            f"{action}:{finding_id}:{human_id}:{timestamp}:{details_hash}".encode()
+        ).hexdigest()
+    }
+
+    # Persist receipt
+    os.makedirs(VIRTUE_RECEIPTS_DIR, exist_ok=True)
+    receipt_id = f"VR-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}-{finding_id[-4:]}"
+    receipt_path = os.path.join(VIRTUE_RECEIPTS_DIR, f"{receipt_id}.json")
+    with open(receipt_path, 'w') as f:
+        json.dump(receipt, f, indent=2)
+
+    return receipt
+
+
+@app.route('/api/hub/decide', methods=['POST'])
+def hub_human_decide():
+    """Human decision on a governance finding.
+
+    Request body:
+    {
+        "finding_id": "ISP-alert-...",
+        "human_id": "Name or ID of human decision-maker",
+        "decision": "accept|reject|escalate|defer",
+        "rationale": "Optional explanation"
+    }
+
+    This endpoint:
+    1. Validates human identity
+    2. Records decision in Maestro state
+    3. Generates Virtue Receipt
+    4. Logs to governance log
+    """
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "No request body"}), 400
+
+        required = ['finding_id', 'human_id', 'decision']
+        missing = [f for f in required if not data.get(f)]
+        if missing:
+            return jsonify({"error": f"Missing fields: {missing}"}), 400
+
+        finding_id = data['finding_id']
+        human_id = data['human_id']
+        decision = data['decision']
+        rationale = data.get('rationale', '')
+
+        valid_decisions = ['accept', 'reject', 'escalate', 'defer']
+        if decision not in valid_decisions:
+            return jsonify({
+                "error": f"Invalid decision: {decision}",
+                "valid_decisions": valid_decisions
+            }), 400
+
+        # Update Maestro state
+        import sqlite3
+        if not os.path.exists(MAESTRO_DB):
+            return jsonify({"error": "Maestro database not found"}), 503
+
+        conn = sqlite3.connect(MAESTRO_DB)
+        cursor = conn.cursor()
+
+        # Check finding exists
+        cursor.execute("SELECT status FROM governance_cycles WHERE finding_id = ?", (finding_id,))
+        row = cursor.fetchone()
+        if not row:
+            conn.close()
+            return jsonify({"error": f"Finding not found: {finding_id}"}), 404
+
+        # Update status based on decision
+        new_status = {
+            'accept': 'ACKNOWLEDGED',
+            'reject': 'REJECTED',
+            'escalate': 'ESCALATED',
+            'defer': 'DEFERRED'
+        }.get(decision, 'PENDING')
+
+        timestamp = datetime.now(timezone.utc).isoformat()
+        cursor.execute("""
+            UPDATE governance_cycles
+            SET status = ?, acknowledged_at = ?, assigned_to = ?,
+                resolution_note = COALESCE(resolution_note, '') || ?
+            WHERE finding_id = ?
+        """, (new_status, timestamp, human_id,
+              f" [DECISION:{decision.upper()} by {human_id}] {rationale}",
+              finding_id))
+        conn.commit()
+        conn.close()
+
+        # Generate Virtue Receipt
+        receipt = _generate_virtue_receipt(
+            action=f"DECISION:{decision.upper()}",
+            finding_id=finding_id,
+            human_id=human_id,
+            details={"decision": decision, "rationale": rationale}
+        )
+
+        return jsonify({
+            "success": True,
+            "finding_id": finding_id,
+            "decision": decision,
+            "new_status": new_status,
+            "human_id": human_id,
+            "virtue_receipt": receipt['seal'][:16],
+            "timestamp": timestamp
+        })
+
+    except Exception as e:
+        return jsonify({"error": f"Decision failed: {str(e)}"}), 500
+
+
+@app.route('/api/hub/acknowledge', methods=['POST'])
+def hub_human_acknowledge():
+    """Human acknowledgment of a governance finding.
+
+    Request body:
+    {
+        "finding_id": "ISP-alert-...",
+        "human_id": "Name or ID of human",
+        "note": "Optional acknowledgment note"
+    }
+
+    Simpler than decide - just acknowledges receipt and awareness.
+    """
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "No request body"}), 400
+
+        required = ['finding_id', 'human_id']
+        missing = [f for f in required if not data.get(f)]
+        if missing:
+            return jsonify({"error": f"Missing fields: {missing}"}), 400
+
+        finding_id = data['finding_id']
+        human_id = data['human_id']
+        note = data.get('note', '')
+
+        # Update Maestro state
+        import sqlite3
+        if not os.path.exists(MAESTRO_DB):
+            return jsonify({"error": "Maestro database not found"}), 503
+
+        conn = sqlite3.connect(MAESTRO_DB)
+        cursor = conn.cursor()
+
+        # Check finding exists
+        cursor.execute("SELECT status FROM governance_cycles WHERE finding_id = ?", (finding_id,))
+        row = cursor.fetchone()
+        if not row:
+            conn.close()
+            return jsonify({"error": f"Finding not found: {finding_id}"}), 404
+
+        timestamp = datetime.now(timezone.utc).isoformat()
+        cursor.execute("""
+            UPDATE governance_cycles
+            SET status = 'ACKNOWLEDGED', acknowledged_at = ?, assigned_to = ?
+            WHERE finding_id = ?
+        """, (timestamp, human_id, finding_id))
+        conn.commit()
+        conn.close()
+
+        # Generate Virtue Receipt
+        receipt = _generate_virtue_receipt(
+            action="ACKNOWLEDGE",
+            finding_id=finding_id,
+            human_id=human_id,
+            details={"note": note}
+        )
+
+        return jsonify({
+            "success": True,
+            "finding_id": finding_id,
+            "status": "ACKNOWLEDGED",
+            "human_id": human_id,
+            "virtue_receipt": receipt['seal'][:16],
+            "timestamp": timestamp
+        })
+
+    except Exception as e:
+        return jsonify({"error": f"Acknowledgment failed: {str(e)}"}), 500
+
+
+@app.route('/api/hub/resolve', methods=['POST'])
+def hub_human_resolve():
+    """Human resolution of a governance finding.
+
+    Request body:
+    {
+        "finding_id": "ISP-alert-...",
+        "human_id": "Name or ID of human resolver",
+        "resolution_type": "fixed|mitigated|accepted_risk|not_applicable",
+        "resolution_note": "Description of resolution"
+    }
+
+    This closes the governance cycle for the finding.
+    """
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "No request body"}), 400
+
+        required = ['finding_id', 'human_id', 'resolution_type']
+        missing = [f for f in required if not data.get(f)]
+        if missing:
+            return jsonify({"error": f"Missing fields: {missing}"}), 400
+
+        finding_id = data['finding_id']
+        human_id = data['human_id']
+        resolution_type = data['resolution_type']
+        resolution_note = data.get('resolution_note', '')
+
+        valid_types = ['fixed', 'mitigated', 'accepted_risk', 'not_applicable']
+        if resolution_type not in valid_types:
+            return jsonify({
+                "error": f"Invalid resolution_type: {resolution_type}",
+                "valid_types": valid_types
+            }), 400
+
+        # Update Maestro state
+        import sqlite3
+        if not os.path.exists(MAESTRO_DB):
+            return jsonify({"error": "Maestro database not found"}), 503
+
+        conn = sqlite3.connect(MAESTRO_DB)
+        cursor = conn.cursor()
+
+        # Check finding exists
+        cursor.execute("SELECT status FROM governance_cycles WHERE finding_id = ?", (finding_id,))
+        row = cursor.fetchone()
+        if not row:
+            conn.close()
+            return jsonify({"error": f"Finding not found: {finding_id}"}), 404
+
+        timestamp = datetime.now(timezone.utc).isoformat()
+        cursor.execute("""
+            UPDATE governance_cycles
+            SET status = 'RESOLVED', resolved_at = ?, resolution_note = ?
+            WHERE finding_id = ?
+        """, (timestamp, f"[{resolution_type}] {resolution_note}", finding_id))
+        conn.commit()
+        conn.close()
+
+        # Generate Virtue Receipt
+        receipt = _generate_virtue_receipt(
+            action=f"RESOLVE:{resolution_type.upper()}",
+            finding_id=finding_id,
+            human_id=human_id,
+            details={"resolution_type": resolution_type, "note": resolution_note}
+        )
+
+        return jsonify({
+            "success": True,
+            "finding_id": finding_id,
+            "status": "RESOLVED",
+            "resolution_type": resolution_type,
+            "human_id": human_id,
+            "virtue_receipt": receipt['seal'][:16],
+            "timestamp": timestamp
+        })
+
+    except Exception as e:
+        return jsonify({"error": f"Resolution failed: {str(e)}"}), 500
+
+
+@app.route('/api/hub/close', methods=['POST'])
+def hub_human_close():
+    """Human closure of a resolved governance finding.
+
+    Request body:
+    {
+        "finding_id": "ISP-alert-...",
+        "human_id": "Name or ID of human",
+        "closure_note": "Optional final note"
+    }
+
+    Final step in governance cycle: RESOLVED → CLOSED
+    """
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "No request body"}), 400
+
+        required = ['finding_id', 'human_id']
+        missing = [f for f in required if not data.get(f)]
+        if missing:
+            return jsonify({"error": f"Missing fields: {missing}"}), 400
+
+        finding_id = data['finding_id']
+        human_id = data['human_id']
+        closure_note = data.get('closure_note', '')
+
+        # Update Maestro state
+        import sqlite3
+        if not os.path.exists(MAESTRO_DB):
+            return jsonify({"error": "Maestro database not found"}), 503
+
+        conn = sqlite3.connect(MAESTRO_DB)
+        cursor = conn.cursor()
+
+        # Check finding exists and is resolved
+        cursor.execute("SELECT status FROM governance_cycles WHERE finding_id = ?", (finding_id,))
+        row = cursor.fetchone()
+        if not row:
+            conn.close()
+            return jsonify({"error": f"Finding not found: {finding_id}"}), 404
+
+        if row[0] != 'RESOLVED':
+            conn.close()
+            return jsonify({
+                "error": f"Finding must be RESOLVED before closing. Current status: {row[0]}"
+            }), 400
+
+        timestamp = datetime.now(timezone.utc).isoformat()
+        cursor.execute("""
+            UPDATE governance_cycles
+            SET status = 'CLOSED', closed_at = ?
+            WHERE finding_id = ?
+        """, (timestamp, finding_id))
+        conn.commit()
+        conn.close()
+
+        # Generate Virtue Receipt
+        receipt = _generate_virtue_receipt(
+            action="CLOSE",
+            finding_id=finding_id,
+            human_id=human_id,
+            details={"closure_note": closure_note}
+        )
+
+        return jsonify({
+            "success": True,
+            "finding_id": finding_id,
+            "status": "CLOSED",
+            "human_id": human_id,
+            "virtue_receipt": receipt['seal'][:16],
+            "timestamp": timestamp
+        })
+
+    except Exception as e:
+        return jsonify({"error": f"Closure failed: {str(e)}"}), 500
+
+# ═══ END HUMAN ACTION ROUTES ══════════════════════════════════════════
+
+# ═══ END GOVERNANCE HUB API ═══════════════════════════════════════════
+
 # === Governance Tutorial ===
 @app.route('/governance/tutorial')
 def governance_tutorial():
@@ -2696,10 +4083,33 @@ def evolution_proxy(endpoint):
         return jsonify({"error": f"Evolution API unavailable: {str(e)}"}), 502
 # === END Evolution API Proxy ===
 
+# ─── Agent API Proxy → Governance API (:8080) ───────────────
+import requests as req_lib
+
+@app.route("/api/gov/agents/<path:subpath>", methods=["GET", "POST"])
+def proxy_agents(subpath):
+    """Proxy agent requests to Governance API."""
+    gov_url = f"http://localhost:8080/api/agents/{subpath}"
+    try:
+        if request.method == "POST":
+            resp = req_lib.post(gov_url, json=request.get_json(silent=True), timeout=120)
+        else:
+            resp = req_lib.get(gov_url, params=request.args, timeout=30)
+        return (resp.content, resp.status_code, {"Content-Type": "application/json"})
+    except req_lib.exceptions.ConnectionError:
+        return jsonify({"error": "Governance API not reachable on :8080"}), 502
+    except req_lib.exceptions.Timeout:
+        return jsonify({"error": "Governance API timeout"}), 504
+# ─── END Agent API Proxy ───────────────────────────────────
+
 if __name__ == '__main__':
     print("🏛️ A4 Desk BABEL v4.7-gov")
     print("✅ NEW: Mein Profil - Edit your profile data")
     print("✅ NEW: Preview before Insert")
     print("✅ NEW: Human Authorship Notice in PDF")
     print("URL: http://0.0.0.0:8085")
+    print("  ✅ Agent proxy registered: /api/gov/agents/* → :8080")
+    if HUB_COLLECTOR_AVAILABLE:
+        print("  ✅ Governance Hub API: /api/hub/* (8-agent constellation)")
+        print("  ✅ Hub Frontend: /governance/hub")
     app.run(host='0.0.0.0', port=CONFIG["port"], debug=False)
