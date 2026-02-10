@@ -1,0 +1,473 @@
+{
+  "$schema": "https://windi.tech/schemas/marketplace-catalog-v1.json",
+  "version": "1.0.0",
+  "generated": "2026-02-10T18:30:00Z",
+  "catalog_id": "WINDI-MARKETPLACE-CATALOG-2026",
+
+  "tiers": {
+    "FREE": {
+      "name": { "de": "ONBOARD", "en": "ONBOARD", "pt": "ONBOARD" },
+      "tagline": { "de": "Flying Low", "en": "Flying Low", "pt": "Voando Baixo" },
+      "price_eur": 0,
+      "max_users": 3,
+      "color": "#4ade80",
+      "icon": "✈️"
+    },
+    "PROFESSIONAL": {
+      "name": { "de": "SALA VIP", "en": "VIP LOUNGE", "pt": "SALA VIP" },
+      "tagline": { "de": "Flying Medium", "en": "Flying Medium", "pt": "Voando Médio" },
+      "price_eur": "25-40",
+      "max_users": 25,
+      "color": "#facc15",
+      "icon": "🏰"
+    },
+    "ENTERPRISE": {
+      "name": { "de": "COCKPIT", "en": "COCKPIT", "pt": "COCKPIT" },
+      "tagline": { "de": "Flying High", "en": "Flying High", "pt": "Voando Alto" },
+      "price_eur": "80-120",
+      "max_users": "unlimited",
+      "color": "#f87171",
+      "icon": "🎯"
+    }
+  },
+
+  "modules": [
+    {
+      "id": "babel-editor",
+      "name": "W-a4Desk BABEL Editor",
+      "description": {
+        "de": "Tiptap-basierter Governance-Editor mit SGE 6-Layer Analyse",
+        "en": "Tiptap-based Governance Editor with SGE 6-Layer Analysis",
+        "pt": "Editor de Governança baseado em Tiptap com Análise SGE 6-Layer"
+      },
+      "status": "LIVE",
+      "tier": "FREE",
+      "governance_level": ["LOW", "MEDIUM", "HIGH"],
+      "port": 8085,
+      "path": "/opt/windi/a4desk-editor/a4desk_tiptap_babel.py",
+      "lines": 1410,
+      "dependencies": ["semantic_governance", "isp_governance_loader"],
+      "features": [
+        "PDF/DOCX/Image upload",
+        "SGE 6-Layer Analysis",
+        "Risk Classification R0-R5",
+        "Trilingual DE/EN/PT",
+        "Governance Receipt"
+      ],
+      "commit": "77a153a"
+    },
+    {
+      "id": "sge-engine",
+      "name": "SGE — Semantic Governance Engine",
+      "description": {
+        "de": "6-Schichten semantische Analyse: Lexical → Institutional",
+        "en": "6-Layer semantic analysis: Lexical → Institutional",
+        "pt": "Análise semântica de 6 camadas: Lexical → Institutional"
+      },
+      "status": "LIVE",
+      "tier": "FREE",
+      "governance_level": ["LOW", "MEDIUM", "HIGH"],
+      "port": null,
+      "path": "/opt/windi/engine/semantic_governance.py",
+      "lines": 890,
+      "dependencies": [],
+      "features": [
+        "Lexical Layer",
+        "Syntactic Layer",
+        "Semantic Layer",
+        "Pragmatic Layer",
+        "Regulatory Layer",
+        "Institutional Layer"
+      ],
+      "commit": "base"
+    },
+    {
+      "id": "governance-api",
+      "name": "WINDI Governance API",
+      "description": {
+        "de": "REST API für Governance-Validierung und ISP-Management",
+        "en": "REST API for Governance validation and ISP Management",
+        "pt": "API REST para validação de Governança e gerenciamento ISP"
+      },
+      "status": "LIVE",
+      "tier": "FREE",
+      "governance_level": ["LOW", "MEDIUM", "HIGH"],
+      "port": 8080,
+      "path": "/opt/windi/engine/windi_governance_api.py",
+      "lines": 230,
+      "dependencies": ["sge-engine", "isp-hub"],
+      "features": [
+        "Document validation",
+        "ISP profile loading",
+        "Governance Receipt generation",
+        "9 Invariants enforcement"
+      ],
+      "commit": "77a153a"
+    },
+    {
+      "id": "isp-hub",
+      "name": "ISP Hub — Institutional Style Profiles",
+      "description": {
+        "de": "17 vorgefertigte institutionelle Profile + Custom",
+        "en": "17 pre-built institutional profiles + Custom",
+        "pt": "17 perfis institucionais pré-construídos + Custom"
+      },
+      "status": "LIVE",
+      "tier": "PROFESSIONAL",
+      "governance_level": ["LOW", "MEDIUM", "HIGH"],
+      "port": null,
+      "path": "/opt/windi/isp/",
+      "lines": null,
+      "dependencies": [],
+      "profiles": [
+        "deutsche-bahn", "bundesregierung", "ecb", "bafin", "siemens",
+        "sparkasse", "tuev", "ihk", "hwk", "dhl-group", "adac", "aok",
+        "freistaat-bayern", "stadt-kempten", "stadtwerke",
+        "bundesagentur-fuer-arbeit", "bis-regulatory"
+      ],
+      "features": [
+        "3 Governance Levels per ISP",
+        "Identity License Management",
+        "Branding & Templates",
+        "Custom ISP creation (ENTERPRISE)"
+      ],
+      "commit": "77a153a"
+    },
+    {
+      "id": "pixwindi",
+      "name": "PixWindi — Anti-Deep Fake Engine",
+      "description": {
+        "de": "Forensische Bildanalyse mit PRNU Sensor-DNA Extraktion",
+        "en": "Forensic image analysis with PRNU Sensor-DNA extraction",
+        "pt": "Análise forense de imagem com extração de Sensor-DNA PRNU"
+      },
+      "status": "LIVE",
+      "tier": "PROFESSIONAL",
+      "governance_level": ["MEDIUM", "HIGH"],
+      "port": null,
+      "path": "/opt/windi/engine/pixwindi/",
+      "lines": 3430,
+      "dependencies": ["numpy", "PIL"],
+      "submodules": [
+        {"name": "prnu_extractor.py", "lines": 717, "function": "PRNU SensorDNA analysis"},
+        {"name": "image_processor.py", "lines": 625, "function": "Perspective correction, de-skew"},
+        {"name": "semiotic_analyzer.py", "lines": 737, "function": "Calligraphy vector extraction"},
+        {"name": "forensic_pdf.py", "lines": 786, "function": "Dual-panel a4Desk PDF with QR"},
+        {"name": "pixwindi_engine.py", "lines": 530, "function": "5-stage pipeline orchestrator"}
+      ],
+      "features": [
+        "PRNU Sensor-DNA extraction",
+        "Deep Fake detection",
+        "Semiotic Signature generation",
+        "Ink coherence analysis",
+        "Forensic PDF generation"
+      ],
+      "commit": "68ca874"
+    },
+    {
+      "id": "commitguard",
+      "name": "CommitGuard — Settlement Engine",
+      "description": {
+        "de": "Handschriftliche Zusagen → Finanzielle Liquidation",
+        "en": "Handwritten commitments → Financial liquidation",
+        "pt": "Compromissos manuscritos → Liquidação financeira"
+      },
+      "status": "LIVE",
+      "tier": "PROFESSIONAL",
+      "governance_level": ["MEDIUM", "HIGH"],
+      "port": null,
+      "path": "/opt/windi/engine/settlement/",
+      "lines": 2017,
+      "dependencies": ["pixwindi"],
+      "submodules": [
+        {"name": "commitment_parser.py", "lines": 634, "function": "DE/EN/PT/ES extraction"},
+        {"name": "transaction_bridge.py", "lines": 602, "function": "BankAdapter, Webhooks"},
+        {"name": "settlement_engine.py", "lines": 720, "function": "CREATE→LINK→SETTLE→VERIFY"}
+      ],
+      "features": [
+        "Multilingual commitment parsing",
+        "Document (Verbo) + Payment (Ação) linking",
+        "Dual-Proof Hash generation",
+        "Bank adapter interface",
+        "Settlement webhooks"
+      ],
+      "commit": "89667b3"
+    },
+    {
+      "id": "forensic-api",
+      "name": "Forensic API v1",
+      "description": {
+        "de": "REST Endpoint für forensische Dokumentenvalidierung",
+        "en": "REST endpoint for forensic document validation",
+        "pt": "Endpoint REST para validação forense de documentos"
+      },
+      "status": "LIVE",
+      "tier": "PROFESSIONAL",
+      "governance_level": ["MEDIUM", "HIGH"],
+      "port": 8093,
+      "path": "/opt/windi/engine/forensic_api.py",
+      "lines": 806,
+      "dependencies": ["pixwindi", "commitguard"],
+      "features": [
+        "POST /v1/forensic/validate",
+        "Handwritten document analysis",
+        "Governance Receipt generation"
+      ],
+      "commit": "c1d71b7"
+    },
+    {
+      "id": "tabeliao-digital",
+      "name": "Tabelião Digital v2",
+      "description": {
+        "de": "Digitaler Notar mit VirtueReceipt und SGE Risk Classification",
+        "en": "Digital Notary with VirtueReceipt and SGE Risk Classification",
+        "pt": "Tabelião Digital com VirtueReceipt e Classificação de Risco SGE"
+      },
+      "status": "LIVE",
+      "tier": "ENTERPRISE",
+      "governance_level": ["HIGH"],
+      "port": 8091,
+      "path": "/opt/windi/engine/forensic_validate_handwritten.py",
+      "lines": 818,
+      "dependencies": ["pixwindi", "commitguard", "forensic-api"],
+      "features": [
+        "POST /v1/forensic/validate-handwritten",
+        "VirtueReceipt (Zero-Knowledge proof)",
+        "SGE Risk Classification R0-R5",
+        "I9GovernanceGate (confidence < 85% → human)",
+        "Forensic PDF with Chain Hash"
+      ],
+      "commit": "e19131a"
+    },
+    {
+      "id": "wsg-hub",
+      "name": "WSG — WINDI Surface Guard",
+      "description": {
+        "de": "Infrastructure Healer: Observar. Registrar. Curar. Dissuadir.",
+        "en": "Infrastructure Healer: Observe. Record. Heal. Deter.",
+        "pt": "Infrastructure Healer: Observar. Registrar. Curar. Dissuadir."
+      },
+      "status": "LIVE",
+      "tier": "ENTERPRISE",
+      "governance_level": ["HIGH"],
+      "port": 8094,
+      "path": "/opt/windi/guard/",
+      "lines": 2895,
+      "dependencies": [],
+      "submodules": [
+        {"name": "wsg_health_monitor.py", "lines": 572, "function": "Auto-restart services"},
+        {"name": "wsg_link_checker.py", "lines": 582, "function": "Dead link scanner"},
+        {"name": "wsg_css_guard.py", "lines": 576, "function": "CSS drift detection"},
+        {"name": "wsg_i18n_guard.py", "lines": 569, "function": "i18n consistency"},
+        {"name": "wsg_hub.py", "lines": 557, "function": "Daemon orchestrator"}
+      ],
+      "features": [
+        "Service auto-restart (watchdog)",
+        "Link integrity scanning",
+        "CSS drift enforcement",
+        "i18n consistency checking",
+        "WSG-HEAL Receipts"
+      ],
+      "commit": "a157dac"
+    },
+
+    {
+      "id": "pulsewatch",
+      "name": "PulseWatch — Realtime Monitoring",
+      "description": {
+        "de": "Dokumenten-Arrhythmie-Erkennung in Echtzeit",
+        "en": "Document arrhythmia detection in realtime",
+        "pt": "Detecção de arritmia documental em tempo real"
+      },
+      "status": "COMING_SOON",
+      "tier": "ENTERPRISE",
+      "governance_level": ["HIGH"],
+      "port": 8095,
+      "path": "/opt/windi/engine/pulsewatch/",
+      "lines": null,
+      "dependencies": ["sge-engine", "wsg-hub"],
+      "features": [
+        "Governance flow anomaly detection",
+        "System pulse rate metrics",
+        "R4/R5 alerting & escalation",
+        "Historical trend analysis"
+      ],
+      "eta": "Q2 2026"
+    },
+    {
+      "id": "compliance-agent",
+      "name": "Compliance Agent",
+      "description": {
+        "de": "Automatische EU AI Act, DSGVO, BSI C5 Prüfung",
+        "en": "Automatic EU AI Act, GDPR, BSI C5 compliance check",
+        "pt": "Verificação automática EU AI Act, LGPD, BSI C5"
+      },
+      "status": "COMING_SOON",
+      "tier": "ENTERPRISE",
+      "governance_level": ["HIGH"],
+      "port": null,
+      "path": "/opt/windi/agents/compliance/",
+      "lines": null,
+      "dependencies": ["sge-engine", "isp-hub"],
+      "features": [
+        "EU AI Act article mapping",
+        "GDPR/DSGVO compliance check",
+        "BSI C5 + ISO 27001 validation",
+        "Audit-ready reports"
+      ],
+      "eta": "Q2 2026"
+    },
+    {
+      "id": "forensic-ledger",
+      "name": "Forensic Ledger — Merkle Tree",
+      "description": {
+        "de": "Kryptographische Beweiskette für jede Entscheidung",
+        "en": "Cryptographic proof chain for every decision",
+        "pt": "Cadeia criptográfica de provas para cada decisão"
+      },
+      "status": "COMING_SOON",
+      "tier": "ENTERPRISE",
+      "governance_level": ["HIGH"],
+      "port": null,
+      "path": "/opt/windi/engine/forensic_ledger/",
+      "lines": null,
+      "dependencies": ["tabeliao-digital", "pixwindi"],
+      "features": [
+        "Full Merkle Tree",
+        "Forensic Virtue Receipts",
+        "Git integration",
+        "Proof-of-Decision"
+      ],
+      "eta": "Q3 2026"
+    },
+    {
+      "id": "twin-digital",
+      "name": "Twin Digital — Simulation Engine",
+      "description": {
+        "de": "\"Was wäre wenn?\" — Szenario-Simulation vor Entscheidungen",
+        "en": "\"What if?\" — Scenario simulation before decisions",
+        "pt": "\"E se?\" — Simulação de cenários antes de decisões"
+      },
+      "status": "COMING_SOON",
+      "tier": "PROFESSIONAL",
+      "governance_level": ["MEDIUM", "HIGH"],
+      "port": null,
+      "path": "/opt/windi/engine/twin_digital/",
+      "lines": null,
+      "dependencies": ["sge-engine", "isp-hub"],
+      "features": [
+        "Scenario simulation",
+        "Risk prognosis on changes",
+        "Ist vs. Soll comparison",
+        "SGE score preview"
+      ],
+      "eta": "Q2 2026"
+    },
+    {
+      "id": "controller-dashboard",
+      "name": "Controller Dashboard",
+      "description": {
+        "de": "Risiko-Übersicht und Governance Flow-Baum",
+        "en": "Risk overview and Governance flow tree",
+        "pt": "Visão geral de riscos e árvore de fluxo de Governança"
+      },
+      "status": "READY",
+      "tier": "PROFESSIONAL",
+      "governance_level": ["MEDIUM", "HIGH"],
+      "port": null,
+      "path": "/opt/windi/a4desk-editor/static/audit_dashboard.html",
+      "lines": null,
+      "dependencies": ["sge-engine", "governance-api"],
+      "features": [
+        "Risk overview by impact (R1-R5)",
+        "SGE-Score monitoring",
+        "Governance flow tree",
+        "Export CSV/JSON/PDF"
+      ],
+      "commit": null
+    }
+  ],
+
+  "agents": [
+    {
+      "id": "maestro-agent",
+      "name": "Maestro Agent",
+      "description": "Multi-agent orchestration coordinator",
+      "status": "LIVE",
+      "path": "/opt/windi/agents/maestro/",
+      "tier": "ENTERPRISE"
+    },
+    {
+      "id": "constitutional-agent",
+      "name": "Constitutional Agent",
+      "description": "I1-I9 invariant enforcement and constitutional gate",
+      "status": "LIVE",
+      "path": "/opt/windi/agents/constitutional-agent/",
+      "tier": "FREE"
+    },
+    {
+      "id": "isp-manager-agent",
+      "name": "ISP Manager Agent",
+      "description": "Institutional Style Profile lifecycle management",
+      "status": "LIVE",
+      "path": "/opt/windi/agents/isp-manager/",
+      "tier": "PROFESSIONAL"
+    },
+    {
+      "id": "sentinela-agent",
+      "name": "Sentinela Agent",
+      "description": "Security monitoring and threat detection",
+      "status": "LIVE",
+      "path": "/opt/windi/agents/sentinela/",
+      "tier": "ENTERPRISE"
+    },
+    {
+      "id": "pulse-agent",
+      "name": "Pulse Agent",
+      "description": "Health monitoring and heartbeat",
+      "status": "LIVE",
+      "path": "/opt/windi/agents/pulse_agent/",
+      "tier": "PROFESSIONAL"
+    },
+    {
+      "id": "onboarding-agent",
+      "name": "Onboarding Agent",
+      "description": "New user and organization onboarding",
+      "status": "LIVE",
+      "path": "/opt/windi/agents/onboarding_agent/",
+      "tier": "FREE"
+    }
+  ],
+
+  "port_registry": {
+    "8080": {"module": "governance-api", "name": "WINDI Governance API"},
+    "8083": {"module": "governance-minimal", "name": "Governance API Minimal"},
+    "8085": {"module": "babel-editor", "name": "W-a4Desk BABEL Editor"},
+    "8091": {"module": "tabeliao-digital", "name": "Tabelião Digital v2"},
+    "8093": {"module": "forensic-api", "name": "Forensic API v1"},
+    "8094": {"module": "wsg-hub", "name": "WSG Hub Controller"},
+    "8095": {"module": "pulsewatch", "name": "PulseWatch (COMING SOON)"}
+  },
+
+  "invariants": [
+    {"id": "I1", "name": "Soberania", "description": "Human sovereignty over AI"},
+    {"id": "I2", "name": "Non-Opacity", "description": "Transparent AI reasoning"},
+    {"id": "I3", "name": "Transparência", "description": "Audit trail for all decisions"},
+    {"id": "I4", "name": "Jurisdição EU", "description": "EU legal jurisdiction compliance"},
+    {"id": "I5", "name": "No Fabrication", "description": "No AI-generated false content"},
+    {"id": "I6", "name": "Conflict Structuring", "description": "Structured conflict resolution"},
+    {"id": "I7", "name": "Institutional", "description": "Institutional accountability"},
+    {"id": "I8", "name": "No Depth Punishment", "description": "No penalization for thorough analysis"},
+    {"id": "I9", "name": "Prohibition of Autonomy Escalation", "description": "IRREMEDIABLE — No autonomous decision escalation"}
+  ],
+
+  "statistics": {
+    "total_modules": 14,
+    "live_modules": 9,
+    "coming_soon_modules": 4,
+    "ready_modules": 1,
+    "total_agents": 6,
+    "total_lines_of_code": 12504,
+    "total_isp_profiles": 17
+  }
+}
