@@ -461,6 +461,65 @@
     {"id": "I9", "name": "Prohibition of Autonomy Escalation", "description": "IRREMEDIABLE — No autonomous decision escalation"}
   ],
 
+  "communication_layers": [
+    {
+      "id": "agent-academy",
+      "name": "Agent Academy (Matrix P0-P7)",
+      "tagline": {
+        "de": "AI processes. Human decides. WINDI guarantees.",
+        "en": "AI processes. Human decides. WINDI guarantees.",
+        "pt": "IA processa. Humano decide. WINDI garante."
+      },
+      "audience": "Dragons, developers, Three Dragons Protocol",
+      "path": "/opt/windi/clone/matrix/",
+      "pages": ["P0-invariants", "P1-guardrails", "P2-observation", "P3-cognitive", "P4-governance", "P5-architecture", "P6-evolution", "P7-templates"],
+      "status": "LIVE",
+      "purpose": "Constitutional governance and audit trail"
+    },
+    {
+      "id": "human-eyes",
+      "name": "Human Eyes",
+      "tagline": {
+        "de": "Unterschreiben Sie nie wieder blind.",
+        "en": "Never sign blind again.",
+        "pt": "Nunca mais assine às cegas."
+      },
+      "audience": "Real humans, clients, investors",
+      "path": "/opt/windi/docs/internal/human-eyes/",
+      "pages": ["windi-human-eyes.html", "windi-clone-modules.html"],
+      "status": "LIVE",
+      "purpose": "Emotional safety messaging — \"É seguro?\""
+    },
+    {
+      "id": "flying-tiers",
+      "name": "Inside the Envelopes / Flying Tiers",
+      "tagline": {
+        "de": "Flying High — Zero Turbulenz.",
+        "en": "Flying High — Zero Turbulence.",
+        "pt": "Voando Alto — Zero Turbulência."
+      },
+      "audience": "Tech-savvy decision makers, controllers",
+      "path": "/opt/windi/a4desk-editor/static/",
+      "pages": ["inside-the-envelopes.html", "marketplace.html"],
+      "status": "LIVE",
+      "purpose": "Commercial-technical pricing tiers"
+    },
+    {
+      "id": "wsg-guard",
+      "name": "WSG Infrastructure Guard",
+      "tagline": {
+        "de": "Observar. Registrar. Curar. Dissuadir.",
+        "en": "Observe. Record. Heal. Deter.",
+        "pt": "Observar. Registrar. Curar. Dissuadir."
+      },
+      "audience": "DevOps, infrastructure teams",
+      "path": "/opt/windi/guard/",
+      "pages": ["wsg_hub.py", "wsg_health_monitor.py"],
+      "status": "LIVE",
+      "purpose": "Infrastructure auto-heal monitoring"
+    }
+  ],
+
   "statistics": {
     "total_modules": 14,
     "live_modules": 9,
@@ -468,6 +527,7 @@
     "ready_modules": 1,
     "total_agents": 6,
     "total_lines_of_code": 12504,
-    "total_isp_profiles": 17
+    "total_isp_profiles": 17,
+    "communication_layers": 4
   }
 }
