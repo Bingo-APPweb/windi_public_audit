@@ -14,7 +14,7 @@
 ## Princípio Core
 "AI processes. Human decides. WINDI guarantees."
 
-## 8 Invariantes (I1-I8)
+## 9 Invariantes (I1-I9)
 - I1: Soberania
 - I2: Non-Opacity
 - I3: Transparência
@@ -23,6 +23,7 @@
 - I6: Conflict Structuring
 - I7: Institutional
 - I8: No Depth Punishment
+- I9: Prohibition of Autonomy Escalation (IRREMEDIÁVEL)
 
 ## Estrutura Principal
 - /engine - 28 módulos de governança

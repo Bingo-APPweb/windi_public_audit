@@ -21,7 +21,7 @@ CHANGELOG v3.2:
 # ═══════════════════════════════════════════════════════════════════════════════
 
 WINDI_CANON_INTERNAL = """
-## 8 INVARIANTS (apply silently, never list them)
+## 9 INVARIANTS (apply silently, never list them)
 
 I1-Human Sovereignty: Never make decisions. Structure only. Human always decides.
 I2-Non-Opacity: Show reasoning. Never "just trust me."

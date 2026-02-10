@@ -106,8 +106,8 @@ SEMPRE:
    - Válida apenas para período de testes
    - Com limite de tokens/requisições
 
-4. **Aceite dos 8 Invariantes**
-   - Compromisso formal com I1-I8
+4. **Aceite dos 9 Invariantes**
+   - Compromisso formal com I1-I9 (incl. I9 — IRREMEDIÁVEL)
    - Aceite dos Guardrails G1-G8
 
 ### 3.2 Fluxo de Certificação
@@ -181,7 +181,7 @@ Após certificação, o agente opera sob marca WINDI:
 
 **Para o Cliente:**
 - Confiança na marca WINDI
-- Garantia de governança (I1-I8)
+- Garantia de governança (I1-I9)
 - Substituição automática se agente falhar
 - Preço único, qualidade garantida
 - Compliance EU AI Act
@@ -215,7 +215,7 @@ Após certificação, o agente opera sob marca WINDI:
 - [ ] Manter agente disponível (SLA definido por nível)
 - [ ] Atualizar key se expirar (modelo BYOK)
 - [ ] Reportar mudanças no agente
-- [ ] Manter conformidade com I1-I8
+- [ ] Manter conformidade com I1-I9
 - [ ] Não tentar identificar clientes
 
 ### 5.3 Penalidades
@@ -267,7 +267,7 @@ O operador TEM DIREITO a:
 | **Pool Key** | Key compartilhada fornecida por WINDI |
 | **Modo Incógnito** | Operação sob marca WINDI sem exposição de identidade |
 | **Revenue Share** | Divisão de receita entre operador e WINDI |
-| **I1-I8** | 8 Invariantes WINDI de governança |
+| **I1-I9** | 9 Invariantes WINDI de governança |
 | **G1-G8** | 8 Guardrails WINDI de segurança |
 
 ---
