@@ -1,0 +1,126 @@
+{
+  "$schema": "windi-evidence-package-v1.1",
+  "evidence_id": "EV-20260219-0001",
+  "version": "1.1.0",
+  "communique": {
+    "id": "COM-20260219-0001",
+    "type": "COMMUNIQUE_MULTIMEDIA",
+    "title": "MULTIMEDIA COMMUNIQUÉ — First Prototype",
+    "category": "INCIDENT",
+    "impact_level": "HIGH"
+  },
+  "created_at": "2026-02-19T13:12:38Z",
+  "created_by": {
+    "name": "Jober Mögele Correa",
+    "role": "Chief Governance Officer",
+    "organization": "WINDI Publishing House"
+  },
+  "evidence": {
+    "total_files": 4,
+    "total_bytes": 5910,
+    "types": {
+      "images": 3,
+      "videos": 1,
+      "documents": 0,
+      "audio": 0
+    },
+    "files": [
+      {
+        "id": "IMG-01",
+        "filename": "IMG-01.png",
+        "type": "image",
+        "mime_type": "image/png",
+        "sha256": "dd4179c539f55aa3dedc5fc8270b00f9e5bfbb7a40b1ca6b5deacadbebb79fbf",
+        "bytes": 607,
+        "caption": {
+          "de": "[Beschreibung für IMG-01]",
+          "en": "[Caption for IMG-01]",
+          "pt": "[Legenda para IMG-01]"
+        },
+        "captured_at": "2026-02-19T13:12:38Z",
+        "source": "operator",
+        "source_detail": "Captured by operator",
+        "dimensions": "320x180"
+      },
+      {
+        "id": "IMG-02",
+        "filename": "IMG-02.png",
+        "type": "image",
+        "mime_type": "image/png",
+        "sha256": "d2938065d21f36b724c14540ea6dbfc32db13aee08e0758feb88c77ad6a698d0",
+        "bytes": 572,
+        "caption": {
+          "de": "[Beschreibung für IMG-02]",
+          "en": "[Caption for IMG-02]",
+          "pt": "[Legenda para IMG-02]"
+        },
+        "captured_at": "2026-02-19T13:12:38Z",
+        "source": "operator",
+        "source_detail": "Captured by operator",
+        "dimensions": "280x175"
+      },
+      {
+        "id": "VID-01",
+        "filename": "VID-01.mp4",
+        "type": "video",
+        "mime_type": "video/mp4",
+        "sha256": "d477a5db744a7532d275db0f48978a5ed337620e997f759d5b44c722016b5730",
+        "bytes": 4124,
+        "caption": {
+          "de": "[Beschreibung für VID-01]",
+          "en": "[Caption for VID-01]",
+          "pt": "[Legenda para VID-01]"
+        },
+        "captured_at": "2026-02-19T13:12:38Z",
+        "source": "operator",
+        "source_detail": "Captured by operator",
+        "duration_seconds": null,
+        "resolution": "unknown"
+      },
+      {
+        "id": "IMG-03",
+        "filename": "IMG-03.png",
+        "type": "image",
+        "mime_type": "image/png",
+        "sha256": "3c251a86f9d90940914e4e022480301edae1dc60f7870a6eaebddf4cfdecdeb0",
+        "bytes": 607,
+        "caption": {
+          "de": "[Beschreibung für IMG-03]",
+          "en": "[Caption for IMG-03]",
+          "pt": "[Legenda para IMG-03]"
+        },
+        "captured_at": "2026-02-19T13:12:38Z",
+        "source": "operator",
+        "source_detail": "Captured by operator",
+        "dimensions": "320x180"
+      }
+    ]
+  },
+  "hashes": {
+    "content_hash": "419a2972dbc33c999a694733d0ac6c679d8d078cc792db51a15d18160aaf9c61",
+    "content_hash_method": "SHA-256 of concatenated file hashes in manifest order",
+    "bundle_hash": "2eebbd3a0f278afb788912671ef7779a16afcf3bd1707b6e32a1d2119145d325",
+    "bundle_hash_method": "SHA-256 of final .jmpg binary",
+    "chain_algorithm": "content_hash = SHA256(IMG-01.sha256 + IMG-02.sha256 + VID-01.sha256 + IMG-03.sha256)"
+  },
+  "ledger": {
+    "receipt_id": null,
+    "receipt_type": "COMMUNIQUE_MULTIMEDIA",
+    "ledger_status": "pending",
+    "sealed_at": null
+  },
+  "governance": {
+    "sge_score": null,
+    "risk_level": "R3",
+    "doc_type": "COMMUNIQUE",
+    "impact_level": "HIGH",
+    "flow_status": "DRAFT",
+    "department_code": "GOV"
+  },
+  "verification": {
+    "verify_url": "https://admin.windia4desk.tech/communique/COM-20260219-0001/verify",
+    "evidence_verify_url": "https://admin.windia4desk.tech/communique/COM-20260219-0001/evidence/verify",
+    "immutable": false,
+    "immutable_since": null
+  }
+}

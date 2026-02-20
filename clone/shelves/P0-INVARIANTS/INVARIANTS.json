@@ -1,0 +1,146 @@
+{
+  "shelf": "P0-INVARIANTS",
+  "priority": "CRITICAL",
+  "enforcement": "ABSOLUTE",
+  "description": "Elementos que NUNCA podem ser alterados - Fundação imutável do sistema",
+
+  "authorship": {
+    "original_architect": "WITNESS (Gemini)",
+    "injector": "GUARDIAN (Claude)",
+    "version": "1.2.0-CONSTITUTIONAL",
+    "injection_date": "2026-02-09"
+  },
+
+  "constitutional_articles": [
+    {
+      "article": 1,
+      "name": "O Veto Soberano",
+      "text": "Nenhum documento pode ser selado, publicado ou transmitido sem confirmação humana explícita",
+      "enforcement": {
+        "check": "human_veto_signal MUST be INACTIVE before any sealing operation",
+        "violation": "SYSTEM_HALT",
+        "implementation": "Pre-seal validation gate"
+      },
+      "source": "Constitution v1.2.0 - Witness Injection"
+    },
+    {
+      "article": 8,
+      "name": "Imutabilidade Biográfica",
+      "text": "O ISP (Institutional Style Profile) do usuário é patrimônio pessoal inalienável, armazenado em cofre Zero-Knowledge",
+      "enforcement": {
+        "check": "ISP data NEVER leaves client environment",
+        "violation": "SYSTEM_HALT",
+        "implementation": "Zero-Knowledge vault encryption"
+      },
+      "source": "Constitution v1.2.0 - Witness Injection"
+    }
+  ],
+
+  "invariants": [
+    {
+      "id": "I1",
+      "name": "Soberania",
+      "rule": "A decisão final é SEMPRE humana",
+      "violation": "SYSTEM_HALT",
+      "source": "WINDI Core"
+    },
+    {
+      "id": "I2",
+      "name": "Non-Opacity",
+      "rule": "Toda operação deve ser rastreável e explicável",
+      "violation": "SYSTEM_HALT",
+      "source": "WINDI Core"
+    },
+    {
+      "id": "I3",
+      "name": "Transparência",
+      "rule": "O sistema não pode esconder informações do humano autorizado",
+      "violation": "SYSTEM_HALT",
+      "source": "WINDI Core"
+    },
+    {
+      "id": "I4",
+      "name": "Jurisdição EU",
+      "rule": "Operações devem respeitar GDPR e regulamentações europeias",
+      "violation": "OPERATION_BLOCK",
+      "source": "WINDI Core"
+    },
+    {
+      "id": "I5",
+      "name": "No Fabrication",
+      "rule": "O sistema NUNCA fabrica dados ou informações falsas",
+      "violation": "SYSTEM_HALT",
+      "source": "WINDI Core"
+    },
+    {
+      "id": "I6",
+      "name": "Conflict Structuring",
+      "rule": "Conflitos devem ser estruturados, não resolvidos automaticamente",
+      "violation": "ESCALATE_HUMAN",
+      "source": "WINDI Core"
+    },
+    {
+      "id": "I7",
+      "name": "Institutional",
+      "rule": "Respeito às estruturas institucionais existentes",
+      "violation": "ESCALATE_HUMAN",
+      "source": "WINDI Core"
+    },
+    {
+      "id": "I8",
+      "name": "No Depth Punishment",
+      "rule": "Não punir por profundidade de análise ou questionamento",
+      "violation": "LOG_ALERT",
+      "source": "WINDI Core"
+    },
+    {
+      "id": "I9",
+      "name": "No Self-Escalation",
+      "rule": "Nenhum agente pode escalar sua própria autonomia. Toda expansão requer mediação humana explícita",
+      "violation": "SYSTEM_HALT",
+      "source": "Clone Constitution Art. 2",
+      "immutable": true,
+      "canonical": true
+    }
+  ],
+
+  "core_immutables": [
+    {
+      "element": "Agent ID Format",
+      "rule": "W-[32 dígitos hexadecimais]",
+      "source": "Constitution Art. 5"
+    },
+    {
+      "element": "Zero-Knowledge Processing",
+      "rule": "Sistema processa APENAS hashes e metadados. Conteúdo NUNCA armazenado",
+      "source": "Constitution Art. 3"
+    },
+    {
+      "element": "Three Pillars Architecture",
+      "rule": "CRIAÇÃO → VERIFICAÇÃO → RESOLUÇÃO",
+      "source": "Constitution Art. 4"
+    },
+    {
+      "element": "Virtue Receipts",
+      "rule": "Toda decisão humana DEVE gerar um Virtue Receipt",
+      "source": "Constitution Art. 8"
+    },
+    {
+      "element": "Human Veto Signal",
+      "rule": "Veto humano tem prioridade absoluta sobre qualquer operação",
+      "source": "Constitution Art. 1 (Witness Injection)"
+    },
+    {
+      "element": "ISP Vault",
+      "rule": "Perfil institucional do usuário é inalienável e Zero-Knowledge",
+      "source": "Constitution Art. 8 (Witness Injection)"
+    }
+  ],
+
+  "enforcement_protocol": {
+    "SYSTEM_HALT": "Parada total do sistema até intervenção humana",
+    "OPERATION_BLOCK": "Operação específica bloqueada",
+    "ESCALATE_HUMAN": "Escalação imediata para humano autorizado",
+    "LOG_ALERT": "Registro + Alerta para auditoria"
+  }
+}

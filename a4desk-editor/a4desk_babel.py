@@ -107,6 +107,13 @@ def make_receipt(doc_id, content, guardrails, lang):
         "bridge_status": "connected" if BRIDGE_AVAILABLE else "local"
     }
 
+# ── /health alias (Guardian Protocol 2026-02-16) ──
+@app.route('/health')
+def health_root():
+    """Root health endpoint for Sentinel/Desktop monitoring."""
+    from flask import jsonify as _j
+    return _j({"status": "ok", "service": "windi-babel", "version": "4.7.1-gov", "protocol": "three-dragons", "i9": "active"})
+
 @app.route('/api/health')
 def health():
     return jsonify({"status": "healthy", "service": "A4 Desk BABEL", "languages": list(get_langs().keys())})

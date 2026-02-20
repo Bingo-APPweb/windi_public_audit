@@ -1,0 +1,48 @@
+{
+  "org_id": "bundesregierung",
+  "org_name": "Bundesregierung",
+  "theme_name": "Federal Government",
+  "colors": {
+    "primary": "003366",
+    "secondary": "000000",
+    "background": "FFFFFF",
+    "background_alt": "E8EDF2",
+    "text": "1A1A1A",
+    "text_muted": "5A6A7A",
+    "accent": "FFCC00",
+    "success": "2D8A4E",
+    "warning": "E6A800",
+    "danger": "CC0000"
+  },
+  "fonts": {
+    "title": "Georgia",
+    "body": "Calibri",
+    "mono": "Consolas"
+  },
+  "logo": {
+    "path": "assets/bund_logo.png",
+    "width": 1.5,
+    "height": 0.8
+  },
+  "footer": {
+    "left_text": "Bundesregierung",
+    "right_text": "VS-NUR FÜR DEN DIENSTGEBRAUCH",
+    "classification": "RESTRICTED",
+    "show_page_number": true,
+    "show_windi_seal": true,
+    "show_timestamp": true
+  },
+  "governance": {
+    "level": "MAXIMUM",
+    "forensic_receipt": true,
+    "zk_declaration": true,
+    "sentinel_status": true,
+    "compliance_frameworks": ["EU AI Act", "BSI C5", "ISO 27001", "GDPR", "IT-Grundschutz"]
+  },
+  "watermark": {
+    "enabled": true,
+    "text": "VERTRAULICH",
+    "opacity": 8
+  },
+  "identity_license": "model_only"
+}

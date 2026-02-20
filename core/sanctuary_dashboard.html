@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🏛️ WINDI Skill-Sanctuary — Controller Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --noir-bg: #0a0a0c;
+  --noir-surface: #141418;
+  --noir-card: #1a1a20;
+  --noir-border: #2a2a32;
+  --noir-hover: #222228;
+  --gold: #d4af37;
+  --gold-light: #f0d060;
+  --gold-dim: #8b7320;
+  --gold-glow: rgba(212,175,55,0.15);
+  --text: #e8e6e0;
+  --text-dim: #8a8880;
+  --text-muted: #5a5850;
+  --risk-r0: #22c55e;
+  --risk-r1: #22c55e;
+  --risk-r2: #eab308;
+  --risk-r3: #f97316;
+  --risk-r4: #ef4444;
+  --risk-r5: #1a1a20;
+  --guardian: #60a5fa;
+  --architect: #a78bfa;
+  --witness: #34d399;
+  --font-display: 'Bricolage Grotesque', sans-serif;
+  --font-body: 'Outfit', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--noir-bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ═══ HEADER ═══ */
+.header {
+  background: linear-gradient(135deg, var(--noir-surface) 0%, #0f0f14 100%);
+  border-bottom: 1px solid var(--noir-border);
+  padding: 20px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(12px);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-icon {
+  font-size: 28px;
+  filter: drop-shadow(0 0 8px var(--gold-glow));
+}
+
+.header h1 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 22px;
+  color: var(--gold);
+  letter-spacing: -0.5px;
+}
+
+.header h1 span {
+  color: var(--text-dim);
+  font-weight: 400;
+  font-size: 14px;
+  margin-left: 8px;
+}
+
+.header-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.status-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-badge.online {
+  background: rgba(34,197,94,0.12);
+  color: #22c55e;
+  border: 1px solid rgba(34,197,94,0.25);
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* ═══ MAIN LAYOUT ═══ */
+.main {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 28px 32px;
+  display: grid;
+  gap: 24px;
+}
+
+/* ═══ STATS ROW ═══ */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.stat-card {
+  background: var(--noir-card);
+  border: 1px solid var(--noir-border);
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.2s;
+}
+
+.stat-card:hover {
+  border-color: var(--gold-dim);
+  box-shadow: 0 0 20px var(--gold-glow);
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: var(--font-mono);
+  margin-bottom: 8px;
+}
+
+.stat-value {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--gold);
+}
+
+.stat-value.guardian { color: var(--guardian); }
+.stat-value.architect { color: var(--architect); }
+.stat-value.witness { color: var(--witness); }
+
+.stat-sub {
+  font-size: 13px;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+
+/* ═══ SECTION ═══ */
+.section {
+  background: var(--noir-card);
+  border: 1px solid var(--noir-border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.section-header {
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--noir-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-body {
+  padding: 24px;
+}
+
+/* ═══ SCANNER PANEL ═══ */
+.scanner-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 900px) {
+  .scanner-grid { grid-template-columns: 1fr; }
+}
+
+.scan-input textarea {
+  width: 100%;
+  height: 220px;
+  background: var(--noir-bg);
+  border: 1px solid var(--noir-border);
+  border-radius: 10px;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  padding: 16px;
+  resize: vertical;
+  transition: border-color 0.2s;
+}
+
+.scan-input textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px var(--gold-glow);
+}
+
+.scan-input textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.scan-controls {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+select {
+  background: var(--noir-bg);
+  border: 1px solid var(--noir-border);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 13px;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+select:focus { outline: none; border-color: var(--gold); }
+
+.btn {
+  padding: 10px 22px;
+  border-radius: 8px;
+  border: none;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary {
+  background: var(--gold);
+  color: var(--noir-bg);
+}
+
+.btn-primary:hover {
+  background: var(--gold-light);
+  box-shadow: 0 0 24px var(--gold-glow);
+}
+
+.btn-secondary {
+  background: var(--noir-surface);
+  color: var(--text);
+  border: 1px solid var(--noir-border);
+}
+
+.btn-secondary:hover {
+  border-color: var(--gold-dim);
+  color: var(--gold);
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: wait;
+}
+
+/* ═══ RISK RESULT ═══ */
+.risk-result {
+  display: none;
+}
+
+.risk-result.visible {
+  display: block;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.risk-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 24px;
+  border-radius: 12px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 28px;
+  margin-bottom: 18px;
+}
+
+.risk-badge.r0, .risk-badge.r1 { background: rgba(34,197,94,0.12); color: var(--risk-r0); border: 1px solid rgba(34,197,94,0.3); }
+.risk-badge.r2 { background: rgba(234,179,8,0.12); color: var(--risk-r2); border: 1px solid rgba(234,179,8,0.3); }
+.risk-badge.r3 { background: rgba(249,115,22,0.12); color: var(--risk-r3); border: 1px solid rgba(249,115,22,0.3); }
+.risk-badge.r4 { background: rgba(239,68,68,0.12); color: var(--risk-r4); border: 1px solid rgba(239,68,68,0.3); }
+.risk-badge.r5 { background: rgba(255,255,255,0.06); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
+
+.risk-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.risk-meta-item {
+  background: var(--noir-bg);
+  border-radius: 8px;
+  padding: 12px 16px;
+}
+
+.risk-meta-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-family: var(--font-mono);
+}
+
+.risk-meta-value {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  margin-top: 4px;
+}
+
+/* ═══ LAYER BARS ═══ */
+.layer-bars {
+  margin-top: 18px;
+}
+
+.layer-bar {
+  display: grid;
+  grid-template-columns: 120px 1fr 50px;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.layer-bar-name {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+.layer-bar-track {
+  height: 8px;
+  background: var(--noir-bg);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.layer-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.6s ease;
+}
+
+.layer-bar-pct {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-dim);
+  text-align: right;
+}
+
+/* ═══ SKILLS TABLE ═══ */
+.skills-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.skill-row {
+  display: grid;
+  grid-template-columns: 40px 1fr 120px 100px 80px;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--noir-bg);
+  border-radius: 10px;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+}
+
+.skill-row:hover {
+  border-color: var(--noir-border);
+  background: var(--noir-hover);
+}
+
+.skill-icon { font-size: 22px; text-align: center; }
+
+.skill-name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.skill-desc {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+
+.skill-domain {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  text-align: center;
+}
+
+.skill-domain.guardian { background: rgba(96,165,250,0.12); color: var(--guardian); }
+.skill-domain.architect { background: rgba(167,139,250,0.12); color: var(--architect); }
+.skill-domain.witness { background: rgba(52,211,153,0.12); color: var(--witness); }
+
+.skill-version {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-dim);
+  text-align: center;
+}
+
+.skill-i9 {
+  font-size: 12px;
+  text-align: center;
+  font-family: var(--font-mono);
+}
+
+/* ═══ RECEIPTS TABLE ═══ */
+.receipts-grid {
+  display: grid;
+  gap: 8px;
+}
+
+.receipt-row {
+  display: grid;
+  grid-template-columns: 200px 1fr 100px 80px 80px;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--noir-bg);
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.receipt-id {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--gold);
+}
+
+.receipt-time {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ═══ RED FLAGS ═══ */
+.red-flags {
+  margin-top: 16px;
+}
+
+.red-flag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: rgba(239,68,68,0.08);
+  border: 1px solid rgba(239,68,68,0.2);
+  border-radius: 8px;
+  margin-bottom: 6px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--risk-r4);
+}
+
+/* ═══ EMPTY STATE ═══ */
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+/* ═══ LOADING SPINNER ═══ */
+.spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--noir-bg);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ═══ PRINCIPLE BANNER ═══ */
+.principle {
+  text-align: center;
+  padding: 16px;
+  font-family: var(--font-display);
+  font-size: 13px;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  border-top: 1px solid var(--noir-border);
+  margin-top: 20px;
+}
+
+.principle em {
+  color: var(--gold-dim);
+  font-style: normal;
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-left">
+    <span class="header-icon">🏛️</span>
+    <h1>WINDI Skill-Sanctuary <span>Controller Dashboard</span></h1>
+  </div>
+  <div class="header-status">
+    <div class="status-badge online" id="statusBadge">
+      <span class="status-dot"></span>
+      <span id="statusText">Connecting...</span>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- STATS ROW -->
+  <div class="stats-row" id="statsRow">
+    <div class="stat-card">
+      <div class="stat-label">Total Skills</div>
+      <div class="stat-value" id="statTotal">—</div>
+      <div class="stat-sub">Baptized & sealed</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">🛡️ Guardian</div>
+      <div class="stat-value guardian" id="statGuardian">—</div>
+      <div class="stat-sub">Defense & Immunity</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">🏗️ Architect</div>
+      <div class="stat-value architect" id="statArchitect">—</div>
+      <div class="stat-sub">Structure & Expansion</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">👁️ Witness</div>
+      <div class="stat-value witness" id="statWitness">—</div>
+      <div class="stat-sub">Record & Proof</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Gate Decisions</div>
+      <div class="stat-value" id="statGate">—</div>
+      <div class="stat-sub">Constitutional Gate</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Receipts</div>
+      <div class="stat-value" id="statReceipts">—</div>
+      <div class="stat-sub">Virtue Receipts</div>
+    </div>
+  </div>
+
+  <!-- SGE SCANNER -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">🔬 SGE Document Scanner</div>
+    </div>
+    <div class="section-body">
+      <div class="scanner-grid">
+        <div class="scan-input">
+          <textarea id="scanContent" placeholder="Paste document content here for governance analysis...&#10;&#10;Example: Auftragsverarbeitungsvertrag gemäß Art. 28 DSGVO..."></textarea>
+          <div class="scan-controls">
+            <select id="scanType">
+              <option value="contract">Contract</option>
+              <option value="dpa">DPA / AVV</option>
+              <option value="policy">Policy</option>
+              <option value="config">Config</option>
+              <option value="report">Report</option>
+            </select>
+            <select id="scanMode">
+              <option value="full">Full Scan (6 layers)</option>
+              <option value="quick">Quick Triage (2 layers)</option>
+            </select>
+            <button class="btn btn-primary" id="btnScan" onclick="runScan()">
+              🔬 Scan Document
+            </button>
+            <button class="btn btn-secondary" onclick="runAudit()">
+              🛡️ I1-I9 Audit
+            </button>
+          </div>
+        </div>
+        <div class="risk-result" id="riskResult">
+          <!-- Results rendered here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SKILLS LIST -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">📦 Baptized Gnosis Capsules</div>
+    </div>
+    <div class="section-body">
+      <div class="skills-grid" id="skillsGrid">
+        <div class="empty-state">Loading skills...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECEIPTS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">📜 Consumption Receipts</div>
+      <button class="btn btn-secondary" onclick="loadReceipts()" style="padding:6px 14px;font-size:12px">↻ Refresh</button>
+    </div>
+    <div class="section-body">
+      <div class="receipts-grid" id="receiptsGrid">
+        <div class="empty-state">Loading receipts...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRINCIPLE -->
+  <div class="principle">
+    <em>AI processes.</em> Human decides. <em>WINDI guarantees.</em>
+    — Three Dragons Protocol
+  </div>
+</main>
+
+<script>
+const API = window.location.origin + '/api/sanctuary';
+
+// ═══ LOAD STATUS ═══
+async function loadStatus() {
+  try {
+    const res = await fetch(`${API}/status`);
+    const data = await res.json();
+
+    document.getElementById('statusText').textContent = data.status === 'operational' ? 'Operational' : data.status;
+    document.getElementById('statTotal').textContent = data.total_skills || 0;
+    document.getElementById('statGuardian').textContent = data.domains?.guardian?.count || 0;
+    document.getElementById('statArchitect').textContent = data.domains?.architect?.count || 0;
+    document.getElementById('statWitness').textContent = data.domains?.witness?.count || 0;
+    document.getElementById('statGate').textContent = data.gate_decisions || 0;
+    document.getElementById('statReceipts').textContent = data.receipts_generated || 0;
+  } catch (e) {
+    document.getElementById('statusText').textContent = 'Offline';
+    document.getElementById('statusBadge').className = 'status-badge';
+  }
+}
+
+// ═══ LOAD SKILLS ═══
+async function loadSkills() {
+  try {
+    const res = await fetch(`${API}/skills`);
+    const data = await res.json();
+    const grid = document.getElementById('skillsGrid');
+
+    if (!data.skills || data.skills.length === 0) {
+      grid.innerHTML = '<div class="empty-state">No baptized skills found</div>';
+      return;
+    }
+
+    grid.innerHTML = data.skills.map(s => `
+      <div class="skill-row">
+        <div class="skill-icon">${s.icon || '📦'}</div>
+        <div>
+          <div class="skill-name">${s.name}</div>
+          <div class="skill-desc">${s.description || ''}</div>
+        </div>
+        <div class="skill-domain ${s.domain}">${s.domain}</div>
+        <div class="skill-version">v${s.version}</div>
+        <div class="skill-i9">${s.i9_certified ? '✅ I9' : '❌ I9'}</div>
+      </div>
+    `).join('');
+  } catch (e) {
+    document.getElementById('skillsGrid').innerHTML = '<div class="empty-state">Failed to load skills</div>';
+  }
+}
+
+// ═══ LOAD RECEIPTS ═══
+async function loadReceipts() {
+  try {
+    const res = await fetch(`${API}/receipts`);
+    const data = await res.json();
+    const grid = document.getElementById('receiptsGrid');
+
+    if (!data.receipts || data.receipts.length === 0) {
+      grid.innerHTML = '<div class="empty-state">No receipts yet — scan a document to generate the first one</div>';
+      return;
+    }
+
+    grid.innerHTML = data.receipts.map(r => `
+      <div class="receipt-row">
+        <div>
+          <div class="receipt-id">${r.receipt_id}</div>
+          <div class="receipt-time">${new Date(r.consumed_at).toLocaleString('de-DE')}</div>
+        </div>
+        <div>${r.skill_name || '—'}</div>
+        <div class="skill-domain ${r.domain || ''}">${r.domain || '—'}</div>
+        <div style="font-family:var(--font-mono);font-size:12px">${r.execution_ms || 0}ms</div>
+        <div>${r.i9_status === 'CLEAN' ? '✅' : '⚠️'} ${r.i9_status || '—'}</div>
+      </div>
+    `).join('');
+  } catch (e) {
+    document.getElementById('receiptsGrid').innerHTML = '<div class="empty-state">Failed to load receipts</div>';
+  }
+}
+
+// ═══ RUN SCAN ═══
+async function runScan() {
+  const content = document.getElementById('scanContent').value.trim();
+  if (!content) { alert('Please paste document content to scan.'); return; }
+
+  const btn = document.getElementById('btnScan');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Scanning...';
+
+  const mode = document.getElementById('scanMode').value;
+  const endpoint = mode === 'quick' ? '/quick-scan' : '/scan';
+
+  try {
+    const res = await fetch(`${API}${endpoint}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        content: content,
+        document_type: document.getElementById('scanType').value,
+        scan_mode: mode
+      })
+    });
+    const data = await res.json();
+    renderScanResult(data);
+    loadStatus();
+    loadReceipts();
+  } catch (e) {
+    alert('Scan failed: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '🔬 Scan Document';
+  }
+}
+
+// ═══ RUN AUDIT ═══
+async function runAudit() {
+  const content = document.getElementById('scanContent').value.trim();
+  if (!content) { alert('Please paste document content to audit.'); return; }
+
+  try {
+    const res = await fetch(`${API}/audit`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        content: content,
+        document_type: document.getElementById('scanType').value
+      })
+    });
+    const data = await res.json();
+    renderAuditResult(data);
+    loadStatus();
+    loadReceipts();
+  } catch (e) {
+    alert('Audit failed: ' + e.message);
+  }
+}
+
+// ═══ RENDER SCAN RESULT ═══
+function renderScanResult(data) {
+  const panel = document.getElementById('riskResult');
+  panel.classList.add('visible');
+
+  if (!data.success) {
+    panel.innerHTML = `<div class="red-flag">❌ Scan failed: ${data.error || data.result || 'Unknown error'}</div>`;
+    return;
+  }
+
+  const report = data.result;
+  const risk = report.risk;
+  const gov = report.governance;
+  const rl = risk.risk_level.toLowerCase();
+
+  // Layer bar colors
+  function barColor(score) {
+    if (score >= 0.75) return 'var(--risk-r0)';
+    if (score >= 0.5) return 'var(--risk-r2)';
+    if (score >= 0.25) return 'var(--risk-r3)';
+    return 'var(--risk-r4)';
+  }
+
+  // Layer bars HTML
+  const layerBars = Object.entries(risk.layer_scores || {}).map(([name, score]) => `
+    <div class="layer-bar">
+      <div class="layer-bar-name">${name}</div>
+      <div class="layer-bar-track">
+        <div class="layer-bar-fill" style="width:${Math.round(score*100)}%;background:${barColor(score)}"></div>
+      </div>
+      <div class="layer-bar-pct">${Math.round(score*100)}%</div>
+    </div>
+  `).join('');
+
+  // Red flags
+  const lexical = report.layers?.lexical || {};
+  const redFlags = lexical.red_flags || {};
+  const flagsHtml = Object.keys(redFlags).length > 0 ? `
+    <div class="red-flags">
+      <div style="font-family:var(--font-mono);font-size:12px;color:var(--risk-r4);margin-bottom:8px">🚨 RED FLAGS</div>
+      ${Object.entries(redFlags).map(([name, patterns]) => `
+        <div class="red-flag">❌ ${name.replace(/_/g, ' ')} (${patterns.length} patterns)</div>
+      `).join('')}
+    </div>
+  ` : '';
+
+  panel.innerHTML = `
+    <div class="risk-badge ${rl}">
+      ${risk.color} ${risk.risk_level} — ${risk.label}
+    </div>
+    <div style="font-size:14px;color:var(--text-dim);margin-bottom:4px">
+      ${risk.action} ${gov.human_decision_required ? '⚠️ Human Decision Required' : ''}
+    </div>
+
+    <div class="risk-meta">
+      <div class="risk-meta-item">
+        <div class="risk-meta-label">SGE Score</div>
+        <div class="risk-meta-value">${risk.composite_score?.toFixed(4) || '—'}</div>
+      </div>
+      <div class="risk-meta-item">
+        <div class="risk-meta-label">Red Flag Penalty</div>
+        <div class="risk-meta-value">${risk.red_flag_penalty?.toFixed(4) || '—'}</div>
+      </div>
+      <div class="risk-meta-item">
+        <div class="risk-meta-label">Receipt</div>
+        <div class="risk-meta-value" style="color:var(--gold);font-size:12px">${data.receipt?.receipt_id || '—'}</div>
+      </div>
+      <div class="risk-meta-item">
+        <div class="risk-meta-label">Execution</div>
+        <div class="risk-meta-value">${data.execution_ms || 0}ms</div>
+      </div>
+    </div>
+
+    <div class="layer-bars">
+      <div style="font-family:var(--font-mono);font-size:12px;color:var(--text-muted);margin-bottom:10px;text-transform:uppercase">Layer Analysis</div>
+      ${layerBars}
+    </div>
+
+    ${flagsHtml}
+  `;
+}
+
+// ═══ RENDER AUDIT RESULT ═══
+function renderAuditResult(data) {
+  const panel = document.getElementById('riskResult');
+  panel.classList.add('visible');
+
+  if (!data.success) {
+    panel.innerHTML = `<div class="red-flag">❌ Audit failed: ${data.error || data.result || 'Unknown'}</div>`;
+    return;
+  }
+
+  const audit = data.result;
+  const rl = audit.audit_result === 'PASS' ? 'r0' : audit.audit_result === 'WARNING' ? 'r2' : 'r4';
+  const icon = audit.audit_result === 'PASS' ? '✅' : audit.audit_result === 'WARNING' ? '⚠️' : '❌';
+
+  const invariantRows = Object.entries(audit.results || {}).map(([id, inv]) => `
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--noir-bg);border-radius:8px;margin-bottom:6px">
+      <span style="font-size:14px">${inv.status === 'PASS' ? '✅' : '❌'}</span>
+      <span style="font-family:var(--font-mono);font-size:12px;color:var(--gold);width:30px">${id}</span>
+      <span style="font-size:13px;flex:1">${inv.name}</span>
+      <span style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted)">${inv.status}</span>
+    </div>
+  `).join('');
+
+  panel.innerHTML = `
+    <div class="risk-badge ${rl}">${icon} I1-I9 Audit: ${audit.audit_result}</div>
+    <div class="risk-meta" style="margin-bottom:18px">
+      <div class="risk-meta-item">
+        <div class="risk-meta-label">Checked</div>
+        <div class="risk-meta-value">${audit.invariants_checked} invariants</div>
+      </div>
+      <div class="risk-meta-item">
+        <div class="risk-meta-label">Violations</div>
+        <div class="risk-meta-value" style="color:${audit.violations > 0 ? 'var(--risk-r4)' : 'var(--risk-r0)'}">${audit.violations}</div>
+      </div>
+      <div class="risk-meta-item">
+        <div class="risk-meta-label">Receipt</div>
+        <div class="risk-meta-value" style="color:var(--gold);font-size:12px">${data.receipt?.receipt_id || '—'}</div>
+      </div>
+    </div>
+    ${invariantRows}
+  `;
+}
+
+// ═══ INIT ═══
+document.addEventListener('DOMContentLoaded', () => {
+  loadStatus();
+  loadSkills();
+  loadReceipts();
+  // Auto-refresh status every 30s
+  setInterval(loadStatus, 30000);
+});
+</script>
+</body>
+</html>

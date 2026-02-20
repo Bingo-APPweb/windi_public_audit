@@ -1,0 +1,21 @@
+{
+  "version": "1.0.0",
+  "profiles": [
+    {
+      "id": "isp-communique",
+      "name": "WINDI Communiqu\u00e9 ISP",
+      "level": "HIGH",
+      "templates": 6,
+      "type": "governance_infrastructure",
+      "version": "1.0.0",
+      "path": "/opt/windi/isp/communique/",
+      "created": "2026-02-19T22:00:00Z",
+      "trilingual": true,
+      "languages": [
+        "de",
+        "en",
+        "pt"
+      ]
+    }
+  ]
+}

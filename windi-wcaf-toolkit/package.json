@@ -1,0 +1,15 @@
+{
+  "name": "windi-wcaf-toolkit",
+  "version": "0.1.0",
+  "description": "WINDI Chain Audit Format CLI toolkit",
+  "bin": {
+    "wcaf": "bin/wcaf.js"
+  },
+  "type": "commonjs",
+  "scripts": {
+    "test": "node --test"
+  },
+  "dependencies": {
+    "windi-forensics-engine": "file:../windi-forensics-engine"
+  }
+}

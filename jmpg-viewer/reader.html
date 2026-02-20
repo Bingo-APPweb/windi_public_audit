@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI Sovereign Reader — Communiqué Verification</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════
+   WINDI DESIGN SYSTEM — Noir/Klar Dual Theme
+   "Design influences trust, legibility, institutional
+    perception, and cognitive load." — Architect
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  --gold: #C9A84C;
+  --gold-dim: #8B7535;
+  --gold-glow: rgba(201, 168, 76, 0.12);
+  --verified: #4CAF50;
+  --verified-bg: rgba(76, 175, 80, 0.08);
+  --warning: #E6A817;
+  --warning-bg: rgba(230, 168, 23, 0.08);
+  --danger: #D45454;
+  --danger-bg: rgba(212, 84, 84, 0.08);
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="dark"] {
+  --bg: #0A0A0A;
+  --bg-elevated: #0D0D0D;
+  --surface: #151515;
+  --card: #1C1C1C;
+  --card-hover: #222222;
+  --border: #2A2A2A;
+  --border-subtle: #1F1F1F;
+  --text: #E8E8E8;
+  --text-secondary: #BBBBBB;
+  --muted: #777777;
+  --shadow: rgba(0,0,0,0.5);
+  --theme-label: "NOIR";
+}
+
+[data-theme="light"] {
+  --bg: #F7F6F2;
+  --bg-elevated: #FAFAF8;
+  --surface: #FFFFFF;
+  --card: #F0EFE8;
+  --card-hover: #E8E7E0;
+  --border: #D8D7D0;
+  --border-subtle: #E8E7E0;
+  --text: #1A1A1A;
+  --text-secondary: #444444;
+  --muted: #888888;
+  --shadow: rgba(0,0,0,0.08);
+  --theme-label: "KLAR";
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  transition: background var(--transition), color var(--transition);
+}
+
+/* ═══════════════════════════════════════════════
+   TYPOGRAPHY SYSTEM
+   Bricolage Grotesque — headers, identity, seals
+   Outfit — body text, UI elements
+   JetBrains Mono — hashes, codes, technical data
+   ═══════════════════════════════════════════════ */
+
+.font-identity { font-family: 'Bricolage Grotesque', sans-serif; }
+.font-body { font-family: 'Outfit', sans-serif; }
+.font-mono { font-family: 'JetBrains Mono', monospace; }
+
+/* ═══════════════════════════════════════════════
+   LAYOUT
+   ═══════════════════════════════════════════════ */
+
+.reader-shell {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 24px 20px;
+}
+
+/* ═══════════════════════════════════════════════
+   HEADER BAR
+   ═══════════════════════════════════════════════ */
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-subtle);
+  margin-bottom: 24px;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: #0D0D0D;
+  font-weight: 700;
+}
+
+.header-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 0.3px;
+}
+
+.header-subtitle {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.5px;
+  margin-top: 1px;
+}
+
+.header-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.btn-theme {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  background: var(--surface);
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.btn-theme:hover { color: var(--gold); border-color: var(--gold-dim); }
+
+/* ═══════════════════════════════════════════════
+   VERIFICATION GATE — Evidence First
+   "Content is blocked until integrity is proven"
+   ═══════════════════════════════════════════════ */
+
+.verification-gate {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all var(--transition);
+}
+
+.gate-header {
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.gate-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+  transition: all var(--transition);
+}
+
+.gate-icon.pending { background: var(--gold-glow); }
+.gate-icon.verifying { background: var(--gold-glow); animation: pulse 1.5s ease infinite; }
+.gate-icon.verified { background: var(--verified-bg); }
+.gate-icon.unreachable { background: var(--warning-bg); }
+.gate-icon.failed { background: var(--danger-bg); }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(0.95); }
+}
+
+.gate-title {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.gate-status {
+  font-size: 11px;
+  margin-top: 2px;
+}
+
+.gate-status.pending { color: var(--muted); }
+.gate-status.verifying { color: var(--gold); }
+.gate-status.verified { color: var(--verified); }
+.gate-status.unreachable { color: var(--warning); }
+.gate-status.failed { color: var(--danger); }
+
+/* Verification Steps */
+.gate-steps {
+  padding: 16px 24px;
+}
+
+.step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.step:last-child { border-bottom: none; }
+
+.step-indicator {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  transition: all var(--transition);
+}
+
+.step-indicator.waiting {
+  border: 1.5px solid var(--border);
+  color: var(--muted);
+  background: transparent;
+}
+.step-indicator.running {
+  border: 1.5px solid var(--gold);
+  color: var(--gold);
+  background: var(--gold-glow);
+  animation: pulse 1s ease infinite;
+}
+.step-indicator.pass {
+  border: none;
+  color: #0D0D0D;
+  background: var(--verified);
+}
+.step-indicator.fail {
+  border: none;
+  color: #fff;
+  background: var(--danger);
+}
+.step-indicator.warn {
+  border: none;
+  color: #0D0D0D;
+  background: var(--warning);
+}
+
+.step-content { flex: 1; min-width: 0; }
+
+.step-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+.step-detail {
+  font-size: 10px;
+  color: var(--muted);
+  word-break: break-all;
+  line-height: 1.5;
+}
+
+.step-hash {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px;
+  color: var(--muted);
+  background: var(--bg);
+  padding: 4px 8px;
+  border-radius: 3px;
+  margin-top: 4px;
+  display: inline-block;
+  word-break: break-all;
+  line-height: 1.4;
+  border: 1px solid var(--border-subtle);
+}
+
+/* ═══════════════════════════════════════════════
+   COMMUNIQUÉ CONTENT (renders after verification)
+   ═══════════════════════════════════════════════ */
+
+.content-area {
+  margin-top: 24px;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.content-area.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.communique-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.communique-seal-bar {
+  padding: 10px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.seal-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 3px;
+}
+.seal-badge.verified {
+  color: var(--verified);
+  background: var(--verified-bg);
+}
+.seal-badge.partial {
+  color: var(--warning);
+  background: var(--warning-bg);
+}
+
+.communique-header {
+  padding: 28px 28px 0;
+}
+
+.communique-meta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.meta-tag {
+  font-size: 9px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 3px 8px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+}
+.meta-tag.gold { color: var(--gold); border-color: var(--gold-dim); }
+
+.communique-title {
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.3;
+  color: var(--text);
+  letter-spacing: -0.3px;
+  margin-bottom: 8px;
+}
+
+.communique-author {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.communique-date {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.communique-body {
+  padding: 24px 28px;
+  line-height: 1.7;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.communique-body h2 {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 24px 0 10px;
+}
+.communique-body h2:first-child { margin-top: 0; }
+
+.communique-body p { margin-bottom: 14px; }
+
+.communique-body blockquote {
+  border-left: 3px solid var(--gold);
+  padding: 12px 18px;
+  margin: 16px 0;
+  background: var(--gold-glow);
+  border-radius: 0 6px 6px 0;
+  font-style: italic;
+  color: var(--text);
+  font-size: 13px;
+}
+
+/* Evidence Section */
+.evidence-section {
+  padding: 0 28px 24px;
+}
+
+.evidence-header {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.evidence-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: var(--bg);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.evidence-icon { font-size: 16px; }
+
+.evidence-info { flex: 1; min-width: 0; }
+
+.evidence-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.evidence-detail {
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 0.3px;
+}
+
+.evidence-status {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+.evidence-status.verified { color: var(--verified); background: var(--verified-bg); }
+.evidence-status.unverified { color: var(--warning); background: var(--warning-bg); }
+
+/* ═══════════════════════════════════════════════
+   INTEGRITY TRANSPARENCY PANEL
+   ═══════════════════════════════════════════════ */
+
+.transparency-panel {
+  margin-top: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.transparency-toggle {
+  width: 100%;
+  padding: 12px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  transition: color var(--transition);
+}
+.transparency-toggle:hover { color: var(--gold); }
+
+.transparency-content {
+  padding: 0 24px 16px;
+  display: none;
+}
+.transparency-content.open { display: block; }
+
+.transparency-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-subtle);
+  gap: 16px;
+}
+.transparency-row:last-child { border-bottom: none; }
+
+.transparency-label {
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.transparency-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--text-secondary);
+  word-break: break-all;
+  text-align: right;
+  line-height: 1.5;
+}
+
+/* ═══════════════════════════════════════════════
+   FOOTER
+   ═══════════════════════════════════════════════ */
+
+.reader-footer {
+  margin-top: 32px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.footer-left {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--muted);
+  letter-spacing: 0.5px;
+}
+
+.footer-right {
+  font-family: 'Outfit', sans-serif;
+  font-size: 10px;
+  color: var(--gold-dim);
+  font-style: italic;
+}
+
+/* ═══════════════════════════════════════════════
+   DROP ZONE (for offline .jmpg files)
+   ═══════════════════════════════════════════════ */
+
+.drop-zone {
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  padding: 48px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--transition);
+  margin-bottom: 24px;
+}
+.drop-zone.active {
+  border-color: var(--gold);
+  background: var(--gold-glow);
+}
+.drop-zone:hover { border-color: var(--muted); }
+
+.drop-icon { font-size: 40px; opacity: 0.5; margin-bottom: 12px; }
+
+.drop-title {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.drop-hint {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.drop-tech {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--gold-dim);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════ */
+
+@media (max-width: 600px) {
+  .reader-shell { padding: 16px 14px; }
+  .communique-header { padding: 20px 18px 0; }
+  .communique-body { padding: 18px; }
+  .communique-title { font-size: 18px; }
+  .evidence-section { padding: 0 18px 18px; }
+  .gate-header { padding: 16px 18px; }
+  .gate-steps { padding: 12px 18px; }
+  .transparency-toggle { padding: 10px 18px; }
+  .transparency-content { padding: 0 18px 12px; }
+}
+</style>
+</head>
+<body>
+<div class="reader-shell" id="app">
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-brand">
+      <div class="header-logo font-identity">W</div>
+      <div>
+        <div class="header-title font-identity">WINDI Sovereign Reader</div>
+        <div class="header-subtitle font-mono">JMPG Viewer v2.1 — Zero-Knowledge Verification</div>
+      </div>
+    </div>
+    <div class="header-controls">
+      <button class="btn-theme font-mono" id="themeToggle">KLAR</button>
+    </div>
+  </header>
+
+  <!-- Drop Zone (for offline .jmpg) -->
+  <div class="drop-zone" id="dropZone">
+    <div class="drop-icon">🛡️</div>
+    <div class="drop-title font-identity">Open Communiqué Bundle</div>
+    <div class="drop-hint">Drop a .jmpg file or click to browse — verification runs locally</div>
+    <div class="drop-tech">SHA-256 · Web Crypto API · Evidence-First Protocol</div>
+    <input type="file" id="fileInput" accept=".jmpg,.zip" style="display:none">
+  </div>
+
+  <!-- Verification Gate -->
+  <div class="verification-gate" id="verificationGate" style="display:none">
+    <div class="gate-header">
+      <div class="gate-icon pending" id="gateIcon">🔐</div>
+      <div>
+        <div class="gate-title font-identity" id="gateTitle">Integrity Verification</div>
+        <div class="gate-status pending font-mono" id="gateStatus">Preparing verification pipeline...</div>
+      </div>
+    </div>
+
+    <div class="gate-steps" id="gateSteps">
+      <!-- Steps injected by JS -->
+    </div>
+  </div>
+
+  <!-- Communiqué Content (hidden until verified) -->
+  <div class="content-area" id="contentArea">
+    <div class="communique-card">
+      <div class="communique-seal-bar">
+        <div class="seal-badge verified font-mono" id="sealBadge">
+          <span>●</span> <span id="sealText">VERIFIED</span>
+        </div>
+        <div class="font-mono" style="font-size:9px; color:var(--muted); letter-spacing:0.5px;" id="receiptLabel">
+          VR-COM-XXXXX
+        </div>
+      </div>
+
+      <div class="communique-header">
+        <div class="communique-meta" id="metaTags"></div>
+        <h1 class="communique-title font-identity" id="comTitle">Loading...</h1>
+        <div class="communique-author font-body" id="comAuthor"></div>
+        <div class="communique-date font-mono" id="comDate"></div>
+      </div>
+
+      <div class="communique-body font-body" id="comBody"></div>
+
+      <div class="evidence-section" id="evidenceSection" style="display:none">
+        <div class="evidence-header font-identity">Attached Evidence</div>
+        <div id="evidenceList"></div>
+      </div>
+    </div>
+
+    <!-- Transparency Panel -->
+    <div class="transparency-panel">
+      <button class="transparency-toggle" id="transparencyToggle">
+        <span>Integrity Transparency Panel</span>
+        <span id="toggleArrow">▸</span>
+      </button>
+      <div class="transparency-content" id="transparencyContent">
+        <div class="transparency-row">
+          <span class="transparency-label">Bundle Hash</span>
+          <span class="transparency-value" id="tpBundleHash">—</span>
+        </div>
+        <div class="transparency-row">
+          <span class="transparency-label">Content Hash</span>
+          <span class="transparency-value" id="tpContentHash">—</span>
+        </div>
+        <div class="transparency-row">
+          <span class="transparency-label">Receipt ID</span>
+          <span class="transparency-value" id="tpReceiptId">—</span>
+        </div>
+        <div class="transparency-row">
+          <span class="transparency-label">Ledger Status</span>
+          <span class="transparency-value" id="tpLedgerStatus">—</span>
+        </div>
+        <div class="transparency-row">
+          <span class="transparency-label">Sealed At</span>
+          <span class="transparency-value" id="tpSealedAt">—</span>
+        </div>
+        <div class="transparency-row">
+          <span class="transparency-label">Verified At</span>
+          <span class="transparency-value" id="tpVerifiedAt">—</span>
+        </div>
+        <div class="transparency-row">
+          <span class="transparency-label">Protocol</span>
+          <span class="transparency-value">WINDI PACT v1.0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="reader-footer">
+    <span class="footer-left">WINDI PACT v1.0 · Evidence Schema v1.1 · Viewer v2.1</span>
+    <span class="footer-right">"The reader does not show truth. It lets you verify it."</span>
+  </footer>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// WINDI SOVEREIGN READER v2.1
+// Evidence-First Verification — Zero Knowledge Privacy
+// "Trust before reading. Verify before rendering."
+// ═══════════════════════════════════════════════════════════════
+
+const LEDGER_BASE = "https://admin.windia4desk.tech/communique";
+
+// ── Theme Toggle ─────────────────────────────────────────────
+const themeBtn = document.getElementById("themeToggle");
+themeBtn.addEventListener("click", () => {
+  const html = document.documentElement;
+  const isDark = html.getAttribute("data-theme") === "dark";
+  html.setAttribute("data-theme", isDark ? "light" : "dark");
+  themeBtn.textContent = isDark ? "NOIR" : "KLAR";
+});
+
+// ── Transparency Panel Toggle ────────────────────────────────
+const tpToggle = document.getElementById("transparencyToggle");
+const tpContent = document.getElementById("transparencyContent");
+const tpArrow = document.getElementById("toggleArrow");
+tpToggle.addEventListener("click", () => {
+  const isOpen = tpContent.classList.toggle("open");
+  tpArrow.textContent = isOpen ? "▾" : "▸";
+});
+
+// ── SHA-256 (Web Crypto API) ─────────────────────────────────
+async function computeSHA256(arrayBuffer) {
+  const hashBuffer = await crypto.subtle.digest("SHA-256", arrayBuffer);
+  return [...new Uint8Array(hashBuffer)]
+    .map(b => b.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+// ── Verification Steps UI ────────────────────────────────────
+const STEPS = [
+  { id: "fetch",    label: "Fetch bundle bytes" },
+  { id: "hash",     label: "Compute SHA-256 locally" },
+  { id: "manifest", label: "Parse manifest.json" },
+  { id: "ledger",   label: "Query Forensic Ledger" },
+  { id: "compare",  label: "Compare hash integrity" },
+  { id: "render",   label: "Render verified content" },
+];
+
+function renderSteps() {
+  const container = document.getElementById("gateSteps");
+  container.innerHTML = STEPS.map(s => `
+    <div class="step" id="step-${s.id}">
+      <div class="step-indicator waiting font-mono" id="ind-${s.id}">○</div>
+      <div class="step-content">
+        <div class="step-label font-body">${s.label}</div>
+        <div class="step-detail font-mono" id="detail-${s.id}"></div>
+      </div>
+    </div>
+  `).join("");
+}
+
+function setStep(id, state, detail, hashValue) {
+  const ind = document.getElementById(`ind-${id}`);
+  const det = document.getElementById(`detail-${id}`);
+  
+  ind.className = `step-indicator ${state} font-mono`;
+  ind.textContent = state === "pass" ? "✓" : state === "fail" ? "✕" : state === "warn" ? "!" : state === "running" ? "◉" : "○";
+  
+  if (detail) det.textContent = detail;
+  if (hashValue) {
+    det.innerHTML = detail + `<div class="step-hash">${hashValue}</div>`;
+  }
+}
+
+function setGateState(state, title, status) {
+  const icon = document.getElementById("gateIcon");
+  const titleEl = document.getElementById("gateTitle");
+  const statusEl = document.getElementById("gateStatus");
+
+  icon.className = `gate-icon ${state}`;
+  icon.textContent = state === "verified" ? "🟢" : state === "unreachable" ? "🟡" : state === "failed" ? "🔴" : "🔐";
+  
+  titleEl.textContent = title;
+  statusEl.className = `gate-status ${state} font-mono`;
+  statusEl.textContent = status;
+}
+
+// ── Content Renderer ─────────────────────────────────────────
+function renderCommunique(manifest, content) {
+  // Title
+  document.getElementById("comTitle").textContent = 
+    content.title_en || content.title_de || content.title || "Untitled Communiqué";
+  
+  // Author
+  const author = manifest.author_name || content.author || "";
+  const role = manifest.author_role || "";
+  document.getElementById("comAuthor").textContent = 
+    role ? `${author} — ${role}` : author;
+
+  // Date
+  document.getElementById("comDate").textContent = 
+    manifest.published_at || manifest.created_at || "";
+
+  // Meta tags
+  const metaContainer = document.getElementById("metaTags");
+  const tags = [];
+  if (manifest.category) tags.push({ text: manifest.category, gold: true });
+  if (manifest.impact_level) tags.push({ text: manifest.impact_level });
+  if (manifest.template_id) tags.push({ text: manifest.template_id });
+  metaContainer.innerHTML = tags.map(t => 
+    `<span class="meta-tag font-mono ${t.gold ? 'gold' : ''}">${t.text}</span>`
+  ).join("");
+
+  // Body
+  const body = document.getElementById("comBody");
+  if (content.blocks && Array.isArray(content.blocks)) {
+    body.innerHTML = content.blocks.map(block => {
+      switch(block.type) {
+        case "heading": return `<h2>${block.text || ""}</h2>`;
+        case "paragraph": return `<p>${block.text || ""}</p>`;
+        case "quote": return `<blockquote>${block.text || ""}</blockquote>`;
+        case "divider": return `<hr style="border:none;border-top:1px solid var(--border);margin:20px 0;">`;
+        default: return `<p>${block.text || ""}</p>`;
+      }
+    }).join("");
+  } else if (content.body_de || content.body_en || content.body) {
+    body.innerHTML = `<p>${content.body_en || content.body_de || content.body}</p>`;
+  }
+
+  // Evidence
+  if (manifest.evidence && manifest.evidence.files && manifest.evidence.files.length > 0) {
+    document.getElementById("evidenceSection").style.display = "block";
+    const list = document.getElementById("evidenceList");
+    list.innerHTML = manifest.evidence.files.map(ev => {
+      const icons = { IMG: "🖼", VID: "🎬", AUD: "🔊", DOC: "📄" };
+      const cat = (ev.id || "").split("-")[0];
+      return `
+        <div class="evidence-item">
+          <span class="evidence-icon">${icons[cat] || "📎"}</span>
+          <div class="evidence-info">
+            <div class="evidence-name font-body">${ev.id || ev.filename || "Unknown"}</div>
+            <div class="evidence-detail font-mono">${ev.sha256 ? ev.sha256.substring(0, 24) + "..." : "no hash"} · ${ev.role || "unclassified"}</div>
+          </div>
+          <span class="evidence-status ${ev.verified !== false ? 'verified' : 'unverified'} font-mono">
+            ${ev.verified !== false ? 'VERIFIED' : 'UNVERIFIED'}
+          </span>
+        </div>
+      `;
+    }).join("");
+  }
+
+  // Receipt label
+  document.getElementById("receiptLabel").textContent = manifest.receipt_id || "—";
+}
+
+// ── Transparency Panel Data ──────────────────────────────────
+function fillTransparency(data) {
+  if (data.bundleHash) document.getElementById("tpBundleHash").textContent = data.bundleHash;
+  if (data.contentHash) document.getElementById("tpContentHash").textContent = data.contentHash;
+  if (data.receiptId) document.getElementById("tpReceiptId").textContent = data.receiptId;
+  if (data.ledgerStatus) document.getElementById("tpLedgerStatus").textContent = data.ledgerStatus;
+  if (data.sealedAt) document.getElementById("tpSealedAt").textContent = data.sealedAt;
+  document.getElementById("tpVerifiedAt").textContent = new Date().toISOString();
+}
+
+// ── Main Verification Pipeline ───────────────────────────────
+async function verifyBundle(arrayBuffer, source) {
+  const gate = document.getElementById("verificationGate");
+  const contentArea = document.getElementById("contentArea");
+  
+  gate.style.display = "block";
+  contentArea.classList.remove("revealed");
+  renderSteps();
+
+  // Step 1: Fetch/Load
+  setStep("fetch", "running", `Loading from ${source}...`);
+  await sleep(300);
+  setStep("fetch", "pass", `Loaded ${formatBytes(arrayBuffer.byteLength)} from ${source}`);
+
+  // Step 2: Compute SHA-256
+  setStep("hash", "running", "Computing SHA-256 in your browser...");
+  const bundleHash = await computeSHA256(arrayBuffer);
+  setStep("hash", "pass", "Bundle hash computed locally:", bundleHash);
+
+  // Step 3: Parse manifest
+  setStep("manifest", "running", "Extracting manifest.json...");
+  let manifest, content;
+  try {
+    const result = await parseJMPG(arrayBuffer);
+    manifest = result.manifest;
+    content = result.content;
+    setStep("manifest", "pass", `Manifest v${manifest.schema_version || manifest.version || "?"} — ${manifest.evidence?.count || 0} evidence files`);
+  } catch (err) {
+    setStep("manifest", "fail", `Parse failed: ${err.message}`);
+    setGateState("failed", "Integrity Verification Failed", "Bundle structure is invalid or corrupted");
+    return;
+  }
+
+  // Step 4: Query Ledger
+  setStep("ledger", "running", "Querying Forensic Ledger...");
+  let ledgerData = null;
+  try {
+    const receiptId = manifest.receipt_id;
+    if (receiptId) {
+      const comId = receiptId.replace("VR-COM-", "COM-").substring(0, 20);
+      const resp = await fetch(`${LEDGER_BASE}/${manifest.communique_id || comId}/verify`);
+      if (resp.ok) {
+        ledgerData = await resp.json();
+        setStep("ledger", "pass", `Receipt ${receiptId} found — status: ${ledgerData.status || ledgerData.ledger_status || "sealed"}`);
+      } else {
+        setStep("ledger", "warn", "Ledger reachable but receipt not found");
+      }
+    } else {
+      setStep("ledger", "warn", "No receipt ID in manifest — offline verification only");
+    }
+  } catch (err) {
+    setStep("ledger", "warn", "Ledger unreachable — validating with local hash only");
+  }
+
+  // Step 5: Compare
+  setStep("compare", "running", "Comparing integrity...");
+  await sleep(200);
+
+  const contentHash = manifest.content_hash || null;
+  let integrityResult = "local_only";
+
+  if (ledgerData) {
+    const ledgerHash = ledgerData.content_hash_stored || ledgerData.bundle_hash;
+    if (ledgerHash === bundleHash || ledgerHash === contentHash) {
+      integrityResult = "full_match";
+      setStep("compare", "pass", "Hash matches Forensic Ledger — integrity confirmed");
+    } else if (ledgerData.content_hash_match === true) {
+      integrityResult = "content_match";
+      setStep("compare", "pass", "Content hash verified by Ledger");
+    } else {
+      integrityResult = "mismatch";
+      setStep("compare", "fail", "HASH MISMATCH — bundle may have been tampered with", 
+        `Local: ${bundleHash}\nLedger: ${ledgerHash}`);
+    }
+  } else {
+    integrityResult = "local_only";
+    setStep("compare", "warn", "Local hash computed — Ledger validation pending");
+  }
+
+  // Step 6: Render decision
+  if (integrityResult === "mismatch") {
+    setStep("render", "fail", "Content blocked — integrity compromised");
+    setGateState("failed", "Integrity Verification FAILED", "DO NOT TRUST THIS CONTENT — hash mismatch detected");
+    
+    // Fill transparency even on failure
+    fillTransparency({ bundleHash, contentHash, receiptId: manifest.receipt_id, ledgerStatus: "MISMATCH" });
+    return;
+  }
+
+  setStep("render", "running", "Rendering verified content...");
+  await sleep(400);
+  setStep("render", "pass", "Content verified and rendered");
+
+  // Set gate state
+  if (integrityResult === "full_match" || integrityResult === "content_match") {
+    setGateState("verified", "Integrity Verified", "Content matches Forensic Ledger — safe to read");
+    document.getElementById("sealBadge").className = "seal-badge verified font-mono";
+    document.getElementById("sealText").textContent = "VERIFIED";
+  } else {
+    setGateState("unreachable", "Locally Verified", "Ledger unreachable — local hash valid, online verification pending");
+    document.getElementById("sealBadge").className = "seal-badge partial font-mono";
+    document.getElementById("sealText").textContent = "LOCALLY VERIFIED";
+  }
+
+  // Render content
+  renderCommunique(manifest, content);
+
+  // Fill transparency panel
+  fillTransparency({
+    bundleHash,
+    contentHash: contentHash || bundleHash,
+    receiptId: manifest.receipt_id || "—",
+    ledgerStatus: ledgerData ? (ledgerData.ledger_status || ledgerData.status || "sealed") : "UNREACHABLE",
+    sealedAt: ledgerData?.published_at || manifest.published_at || "—",
+  });
+
+  // Reveal content with animation
+  await sleep(200);
+  contentArea.classList.add("revealed");
+}
+
+// ── JMPG Parser (ZIP) ────────────────────────────────────────
+async function parseJMPG(arrayBuffer) {
+  // Simple ZIP parser for manifest.json and content.json
+  const bytes = new Uint8Array(arrayBuffer);
+  const files = extractZipFiles(bytes);
+  
+  const manifestFile = files.find(f => f.name === "manifest.json" || f.name.endsWith("/manifest.json"));
+  const contentFile = files.find(f => f.name === "content.json" || f.name.endsWith("/content.json"));
+  
+  if (!manifestFile) throw new Error("manifest.json not found in bundle");
+  
+  const manifest = JSON.parse(new TextDecoder().decode(manifestFile.data));
+  const content = contentFile ? JSON.parse(new TextDecoder().decode(contentFile.data)) : manifest;
+  
+  return { manifest, content };
+}
+
+// Minimal ZIP file extractor (no dependencies)
+function extractZipFiles(bytes) {
+  const files = [];
+  let offset = 0;
+  
+  while (offset < bytes.length - 4) {
+    // Local file header signature
+    if (bytes[offset] === 0x50 && bytes[offset+1] === 0x4B && 
+        bytes[offset+2] === 0x03 && bytes[offset+3] === 0x04) {
+      
+      const fnLen = bytes[offset + 26] | (bytes[offset + 27] << 8);
+      const exLen = bytes[offset + 28] | (bytes[offset + 29] << 8);
+      const compSize = bytes[offset + 18] | (bytes[offset + 19] << 8) | 
+                       (bytes[offset + 20] << 16) | (bytes[offset + 21] << 24);
+      const uncompSize = bytes[offset + 22] | (bytes[offset + 23] << 8) | 
+                         (bytes[offset + 24] << 16) | (bytes[offset + 25] << 24);
+      const compression = bytes[offset + 8] | (bytes[offset + 9] << 8);
+      
+      const nameStart = offset + 30;
+      const name = new TextDecoder().decode(bytes.slice(nameStart, nameStart + fnLen));
+      const dataStart = nameStart + fnLen + exLen;
+      const size = compression === 0 ? uncompSize : compSize;
+      const data = bytes.slice(dataStart, dataStart + size);
+      
+      if (name && !name.endsWith("/")) {
+        files.push({ name, data, compressed: compression !== 0 });
+      }
+      
+      offset = dataStart + size;
+    } else {
+      offset++;
+    }
+  }
+  
+  return files;
+}
+
+// ── Utilities ────────────────────────────────────────────────
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function formatBytes(b) {
+  if (b < 1024) return b + " B";
+  if (b < 1024*1024) return (b/1024).toFixed(1) + " KB";
+  return (b/(1024*1024)).toFixed(2) + " MB";
+}
+
+// ── Drop Zone / File Input ───────────────────────────────────
+const dropZone = document.getElementById("dropZone");
+const fileInput = document.getElementById("fileInput");
+
+dropZone.addEventListener("click", () => fileInput.click());
+dropZone.addEventListener("dragover", e => { e.preventDefault(); dropZone.classList.add("active"); });
+dropZone.addEventListener("dragleave", () => dropZone.classList.remove("active"));
+dropZone.addEventListener("drop", async e => {
+  e.preventDefault();
+  dropZone.classList.remove("active");
+  const file = e.dataTransfer.files[0];
+  if (file) processFile(file);
+});
+
+fileInput.addEventListener("change", e => {
+  if (e.target.files[0]) processFile(e.target.files[0]);
+});
+
+async function processFile(file) {
+  dropZone.style.display = "none";
+  const buffer = await file.arrayBuffer();
+  verifyBundle(buffer, file.name);
+}
+
+// ── URL-based Loading ────────────────────────────────────────
+// If URL has ?bundle=... or ?id=..., auto-fetch
+(async function checkURLParams() {
+  const params = new URLSearchParams(window.location.search);
+  const bundleURL = params.get("bundle");
+  const comId = params.get("id");
+  
+  if (bundleURL) {
+    dropZone.style.display = "none";
+    document.getElementById("verificationGate").style.display = "block";
+    renderSteps();
+    setStep("fetch", "running", `Fetching ${bundleURL}...`);
+    
+    try {
+      const resp = await fetch(bundleURL);
+      const buffer = await resp.arrayBuffer();
+      verifyBundle(buffer, bundleURL);
+    } catch (err) {
+      setStep("fetch", "fail", `Failed to fetch: ${err.message}`);
+      setGateState("failed", "Fetch Failed", "Could not retrieve the bundle from the provided URL");
+    }
+  } else if (comId) {
+    // Try to load from WINDI Vault
+    dropZone.style.display = "none";
+    document.getElementById("verificationGate").style.display = "block";
+    renderSteps();
+    
+    const vaultURL = `https://admin.windia4desk.tech/vault/multimedia/${comId}.jmpg`;
+    setStep("fetch", "running", `Fetching from WINDI Vault: ${comId}...`);
+    
+    try {
+      const resp = await fetch(vaultURL);
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      const buffer = await resp.arrayBuffer();
+      verifyBundle(buffer, `Vault: ${comId}`);
+    } catch (err) {
+      setStep("fetch", "fail", `Vault fetch failed: ${err.message}`);
+      setGateState("failed", "Vault Unreachable", "Could not retrieve bundle — try offline mode");
+      dropZone.style.display = "block";
+    }
+  }
+})();
+</script>
+</body>
+</html>

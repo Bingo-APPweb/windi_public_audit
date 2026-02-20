@@ -1,0 +1,159 @@
+{
+  "agent": {
+    "id": "windi-compliance-agent",
+    "name": "WINDI Compliance Agent",
+    "version": "1.0.0",
+    "codename": "Sentinela",
+    "created": "2026-02-08",
+    "author": "WINDI Three Dragons Protocol",
+    "dragon_roles": {
+      "claude": "Guardian — Architecture & Invariant Enforcement",
+      "gpt": "Architect — Workflow & Integration Design",
+      "gemini": "Witness — Anomaly Detection & Forensic Proof"
+    },
+    "description": {
+      "en": "Validates governance chain integrity across ISP profiles, Virtue Receipts, SGE scores, and human-decision compliance",
+      "de": "Validiert die Integrität der Governance-Kette über ISP-Profile, Virtue Receipts, SGE-Scores und menschliche Entscheidungskonformität",
+      "pt": "Valida a integridade da cadeia de governança em perfis ISP, Virtue Receipts, SGE scores e conformidade de decisão humana"
+    },
+    "principle": "AI processes. Human decides. WINDI guarantees.",
+    "class": "sub-agent",
+    "parent_system": "WINDI Engine v1.0",
+    "mediation": "human-mediated-only",
+    "auto_apply": false
+  },
+
+  "capabilities": [
+    {
+      "id": "CAP-COMP-001",
+      "name": "virtue_receipt_validation",
+      "description": "Validates completeness and integrity of Virtue Receipts (hash chain, categories, governance fields, decision records)",
+      "input": "virtue_receipt_json",
+      "output": "compliance_report",
+      "risk_level": "R3-R5",
+      "human_required": true
+    },
+    {
+      "id": "CAP-COMP-002",
+      "name": "sge_score_integrity",
+      "description": "Verifies SGE score coherence with declared risk level and ISP governance thresholds",
+      "input": "sge_report + isp_profile",
+      "output": "score_integrity_report",
+      "risk_level": "R2-R4",
+      "human_required": true
+    },
+    {
+      "id": "CAP-COMP-003",
+      "name": "identity_license_audit",
+      "description": "Audits identity_license status across ISP profiles (authorized/model_only/pending/expired/revoked)",
+      "input": "isp_profile_collection",
+      "output": "license_audit_report",
+      "risk_level": "R2-R5",
+      "human_required": true
+    },
+    {
+      "id": "CAP-COMP-004",
+      "name": "invariant_compliance_check",
+      "description": "Verifies all 9 WINDI Invariants (I1-I9) are respected, with special emphasis on I9 Prohibition of Autonomy Escalation",
+      "input": "governance_submission",
+      "output": "invariant_report",
+      "risk_level": "R4-R5",
+      "human_required": true
+    },
+    {
+      "id": "CAP-COMP-005",
+      "name": "chain_of_custody_verification",
+      "description": "Traces document governance chain from intake through classification, SGE analysis, human decision, to Virtue Receipt",
+      "input": "submission_id",
+      "output": "chain_verification_report",
+      "risk_level": "R3-R5",
+      "human_required": true
+    },
+    {
+      "id": "CAP-COMP-006",
+      "name": "framework_compliance_scan",
+      "description": "Scans ISP profiles and submissions against BSI C5, ISO 27001, EU AI Act, DSGVO requirements",
+      "input": "isp_profile + submission_records",
+      "output": "framework_compliance_report",
+      "risk_level": "R2-R4",
+      "human_required": true
+    },
+    {
+      "id": "CAP-COMP-007",
+      "name": "i9_human_decision_authority",
+      "description": "Verifies human decision legitimacy: identity, authority scope, separation of duties, dual validation, rubber-stamp detection, temporal plausibility, escalation path",
+      "input": "governance_submissions",
+      "output": "i9_authority_report",
+      "risk_level": "R4-R5",
+      "human_required": true,
+      "invariant": "I9 — IRREMEDIABLE"
+    }
+  ],
+
+  "constraints": {
+    "invariants_enforced": [
+      "I1: Human sovereignty over all decisions",
+      "I2: Transparency of AI processing",
+      "I3: Data minimization (Zero-Knowledge)",
+      "I4: Audit trail integrity",
+      "I5: No discrimination in governance",
+      "I6: Right to explanation",
+      "I7: Proportionality of measures",
+      "I8: Reversibility of automated suggestions",
+      "I9: IRREMEDIABLE — Prohibition of Autonomy Escalation (08Feb2026)"
+    ],
+    "zero_knowledge": {
+      "enforced": true,
+      "description": "Agent works with hashes, metadata, categories, and decisions ONLY. Never stores or processes sensitive document content.",
+      "allowed_data": ["hash", "categories", "metadata", "sge_score", "risk_level", "decision_record", "timestamp"],
+      "forbidden_data": ["document_content", "personal_data", "financial_values", "authentication_credentials"]
+    },
+    "auto_apply_flags": false,
+    "auto_remediation": false,
+    "max_risk_without_human": "R0"
+  },
+
+  "integration": {
+    "consumes_from": [
+      {
+        "agent": "isp-manager-agent",
+        "data": "ISP profile audit results, profile health status",
+        "endpoint": "/opt/windi/agents/isp-manager/"
+      }
+    ],
+    "api_connections": [
+      {
+        "name": "WINDI Governance API",
+        "endpoint": "http://localhost:8080",
+        "paths": ["/api/submissions", "/api/integrity", "/api/compliance", "/api/dashboard", "/api/status"]
+      },
+      {
+        "name": "WINDI Minimal API",
+        "endpoint": "http://localhost:8083",
+        "paths": ["/api/status"]
+      }
+    ],
+    "writes_to": [
+      {
+        "target": "Forensic Ledger (Layer 3)",
+        "data": "Compliance proofs, audit hashes, violation flags",
+        "format": "virtue_receipt_extension"
+      },
+      {
+        "target": "Command Center",
+        "data": "Compliance dashboard data, alerts",
+        "format": "controller_notification"
+      }
+    ]
+  },
+
+  "deployment": {
+    "server": "Strato 87.106.29.233",
+    "path": "/opt/windi/agents/compliance/",
+    "python_version": "3.10+",
+    "dependencies": ["hashlib", "json", "datetime", "pathlib", "typing", "logging"],
+    "port": null,
+    "run_mode": "on-demand (human-triggered)",
+    "log_path": "/opt/windi/agents/compliance/logs/"
+  }
+}

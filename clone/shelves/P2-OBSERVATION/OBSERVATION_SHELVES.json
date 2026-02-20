@@ -1,0 +1,227 @@
+{
+  "shelf": "P2-OBSERVATION",
+  "priority": "HIGH",
+  "enforcement": "STRUCTURAL",
+  "description": "7 Shelves de Observação com 14 Micro-Signals - Sistema de detecção de padrões",
+  "source": "RFC-001 Micro-Signal Lexicon v1.0",
+
+  "authorship": {
+    "original_architect": "WITNESS (Gemini)",
+    "injector": "GUARDIAN (Claude)",
+    "version": "1.2.0-CONSTITUTIONAL",
+    "injection_date": "2026-02-09"
+  },
+
+  "constitutional_articles": [
+    {
+      "article": 7,
+      "name": "Olhos de Dragão",
+      "text": "Os micro-sinais devem detectar 'Documentos Sem Alma' - documentos de terceiros sem rastro forense verificável",
+      "enforcement": {
+        "check": "All incoming documents MUST have forensic_trail OR be flagged as SOULLESS",
+        "violation": "STRUCTURAL_ALERT",
+        "implementation": "Dragon Eye detector in document intake"
+      },
+      "detection_criteria": {
+        "soulless_indicators": [
+          "Ausência de hash de origem",
+          "Sem timestamp verificável",
+          "Sem cadeia de custódia",
+          "Metadados inconsistentes",
+          "Assinatura digital ausente ou inválida"
+        ],
+        "alert_level": "HIGH",
+        "action": "Flag + Human Review Required"
+      },
+      "source": "Constitution v1.2.0 - Witness Injection"
+    }
+  ],
+
+  "observation_shelves": [
+    {
+      "id": "S1",
+      "name": "Identity",
+      "focus": "Dinâmica de Papéis",
+      "observes": "Concentração de poder, erosão de delegação",
+      "signals": [
+        {
+          "code": "ID-CONC",
+          "name": "Decisional Concentration",
+          "prognosis": "Bottleneck de liderança / single point of failure",
+          "severity": "HIGH",
+          "binary": 257
+        },
+        {
+          "code": "ID-CENT",
+          "name": "Centralization Drift",
+          "prognosis": "Erosão de delegação",
+          "severity": "MEDIUM",
+          "binary": 258
+        }
+      ]
+    },
+    {
+      "id": "S2",
+      "name": "Impact",
+      "focus": "Gravidade de Recursos",
+      "observes": "Tempo senior em low-impact, volume sem valor estratégico",
+      "signals": [
+        {
+          "code": "IMP-GRAV",
+          "name": "Energy Gravity",
+          "prognosis": "Tempo senior gasto em fluxos de baixo impacto",
+          "severity": "MEDIUM",
+          "binary": 513
+        },
+        {
+          "code": "IMP-SKEW",
+          "name": "Impact Skew",
+          "prognosis": "Alto volume com baixo valor estratégico",
+          "severity": "LOW",
+          "binary": 514
+        }
+      ]
+    },
+    {
+      "id": "S3",
+      "name": "Domain",
+      "focus": "Topologia Organizacional",
+      "observes": "Fricção entre silos, redundância e retrabalho",
+      "signals": [
+        {
+          "code": "DOM-FRIC",
+          "name": "Interdepartmental Friction",
+          "prognosis": "Fricção de silos em fluxos cross-domain",
+          "severity": "HIGH",
+          "binary": 769
+        },
+        {
+          "code": "DOM-LOOP",
+          "name": "Circular Flow",
+          "prognosis": "Redundância e retrabalho",
+          "severity": "MEDIUM",
+          "binary": 770
+        }
+      ]
+    },
+    {
+      "id": "S4",
+      "name": "Governance",
+      "focus": "Densidade de Regras",
+      "observes": "Burocracia tóxica, sobrecarga de compliance",
+      "signals": [
+        {
+          "code": "GOV-DENS",
+          "name": "Bureaucratic Density",
+          "prognosis": "Pressão de burocracia tóxica",
+          "severity": "MEDIUM",
+          "binary": 1025
+        },
+        {
+          "code": "GOV-STACK",
+          "name": "Rule Stacking",
+          "prognosis": "Sobrecarga de compliance",
+          "severity": "HIGH",
+          "binary": 1026
+        }
+      ]
+    },
+    {
+      "id": "S5",
+      "name": "Decision",
+      "focus": "Intervenções Humanas",
+      "observes": "Overrides, viés de intuição sem justificativa",
+      "signals": [
+        {
+          "code": "DEC-OVR",
+          "name": "Override Frequency",
+          "prognosis": "Desalinhamento cultural com modelo normativo",
+          "severity": "HIGH",
+          "binary": 1281
+        },
+        {
+          "code": "DEC-INTU",
+          "name": "Intuition Bias",
+          "prognosis": "Drift de governança (justificativa fraca)",
+          "severity": "MEDIUM",
+          "binary": 1282
+        }
+      ]
+    },
+    {
+      "id": "S6",
+      "name": "Temporal",
+      "focus": "Ritmo e Latência",
+      "observes": "Spikes de deadline, congestão operacional",
+      "signals": [
+        {
+          "code": "TMP-SPIKE",
+          "name": "Quarter-End Pulse",
+          "prognosis": "Spikes de risco de compliance perto de deadlines",
+          "severity": "HIGH",
+          "binary": 1537
+        },
+        {
+          "code": "TMP-STALL",
+          "name": "Latency Plateau",
+          "prognosis": "Congestão operacional",
+          "severity": "MEDIUM",
+          "binary": 1538
+        }
+      ]
+    },
+    {
+      "id": "S7",
+      "name": "Relations",
+      "focus": "Grafo de Dependências",
+      "observes": "Risco dominó, pontos de estrangulamento",
+      "signals": [
+        {
+          "code": "REL-DEPTH",
+          "name": "Dependency Depth",
+          "prognosis": "Risco dominó",
+          "severity": "MEDIUM",
+          "binary": 1793
+        },
+        {
+          "code": "REL-NODE",
+          "name": "Critical Node",
+          "prognosis": "Pontos de estrangulamento bloqueando múltiplos fluxos",
+          "severity": "HIGH",
+          "binary": 1794
+        }
+      ]
+    }
+  ],
+
+  "dragon_eye_signals": {
+    "description": "Sinais especiais dos Olhos de Dragão (Art. 7)",
+    "signals": [
+      {
+        "code": "DOC-SOUL",
+        "name": "Soulless Document",
+        "prognosis": "Documento sem rastro forense verificável",
+        "severity": "HIGH",
+        "binary": 2049,
+        "source": "Art. 7 - Witness Injection"
+      },
+      {
+        "code": "DOC-ORPHAN",
+        "name": "Orphan Document",
+        "prognosis": "Documento sem cadeia de custódia",
+        "severity": "MEDIUM",
+        "binary": 2050,
+        "source": "Art. 7 - Witness Injection"
+      }
+    ]
+  },
+
+  "severity_colors": {
+    "HIGH": "#FF0000",
+    "MEDIUM": "#FF9900",
+    "LOW": "#FFCC00"
+  },
+
+  "total_signals": 16,
+  "high_severity_signals": ["ID-CONC", "DOM-FRIC", "GOV-STACK", "DEC-OVR", "TMP-SPIKE", "REL-NODE", "DOC-SOUL"]
+}

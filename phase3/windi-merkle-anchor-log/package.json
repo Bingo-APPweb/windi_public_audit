@@ -1,0 +1,27 @@
+{
+  "name": "windi-merkle-anchor-log",
+  "version": "0.1.0",
+  "description": "CT-style Merkle Transparency Log for WINDI document anchors",
+  "main": "src/server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node test/test-merkle.js"
+  },
+  "keywords": [
+    "merkle",
+    "transparency-log",
+    "certificate-transparency",
+    "windi",
+    "audit"
+  ],
+  "author": "WINDI Project",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.19.2",
+    "pg": "^8.11.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

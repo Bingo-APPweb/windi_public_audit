@@ -1,0 +1,26 @@
+{
+  "source": "WITNESS (Gemini)",
+  "version": "1.2.0-CONSTITUTIONAL",
+  "injection_date": "2026-02-09",
+
+  "EDUCACAO_FORENSE": {
+    "principle": "A versão gratuita serve para 'abrir os olhos' do humano contra fraudes, incutindo a mentalidade de segurança documental",
+    "enforcement": "GUIDANCE",
+    "purpose": {
+      "free_tier": "Eye-opener against fraud",
+      "goal": "Instill document security mindset",
+      "method": "Education through experience"
+    }
+  },
+
+  "ESCOLA_GIGANTES": {
+    "principle": "O usuário começa no privado e, ao perceber o poder da segurança, 'coloniza' seu ambiente de escritório com os módulos B2B",
+    "enforcement": "GUIDANCE",
+    "journey": {
+      "start": "Private/Personal use",
+      "awakening": "Realizes power of document security",
+      "expansion": "Colonizes office environment with B2B modules",
+      "pattern": "Bottom-up adoption"
+    }
+  }
+}

@@ -1,0 +1,215 @@
+{
+  "$schema": "https://windi.systems/schemas/test-vectors/v1",
+  "version": "1.0",
+  "description": "WINDI Proof Specification Test Vectors",
+  "generated_at": "2026-02-08T00:00:00Z",
+
+  "canonicalization": {
+    "iban": [
+      {
+        "input": "DE89 3704 0044 0532 0130 00",
+        "expected": "DE89370400440532013000",
+        "description": "German IBAN with spaces"
+      },
+      {
+        "input": "de89-3704-0044-0532-0130-00",
+        "expected": "DE89370400440532013000",
+        "description": "Lowercase with hyphens"
+      },
+      {
+        "input": "FR7630006000011234567890189",
+        "expected": "FR7630006000011234567890189",
+        "description": "French IBAN clean"
+      },
+      {
+        "input": "  GB82 WEST 1234 5698 7654 32  ",
+        "expected": "GB82WEST12345698765432",
+        "description": "UK IBAN with surrounding whitespace"
+      }
+    ],
+
+    "amount": [
+      {
+        "input": "1.234,50",
+        "expected": "1234.50",
+        "description": "German format with thousands separator"
+      },
+      {
+        "input": "1,234.50",
+        "expected": "1234.50",
+        "description": "US format"
+      },
+      {
+        "input": "€ 1.234,50",
+        "expected": "1234.50",
+        "description": "With Euro symbol and space"
+      },
+      {
+        "input": "1234.5",
+        "expected": "1234.50",
+        "description": "Single decimal place"
+      },
+      {
+        "input": "1234",
+        "expected": "1234.00",
+        "description": "Integer amount"
+      },
+      {
+        "input": "0,01",
+        "expected": "0.01",
+        "description": "Cents only (German)"
+      }
+    ],
+
+    "currency": [
+      {
+        "input": "EUR",
+        "expected": "EUR",
+        "description": "ISO 4217 uppercase"
+      },
+      {
+        "input": "eur",
+        "expected": "EUR",
+        "description": "Lowercase"
+      },
+      {
+        "input": "€",
+        "expected": "EUR",
+        "description": "Euro symbol"
+      },
+      {
+        "input": "$",
+        "expected": "USD",
+        "description": "Dollar symbol"
+      },
+      {
+        "input": "usd",
+        "expected": "USD",
+        "description": "Lowercase USD"
+      }
+    ],
+
+    "date": [
+      {
+        "input": "2026-02-07",
+        "expected": "2026-02-07",
+        "description": "ISO 8601 format"
+      },
+      {
+        "input": "07.02.2026",
+        "expected": "2026-02-07",
+        "description": "German format"
+      },
+      {
+        "input": "02/07/2026",
+        "expected": "2026-02-07",
+        "description": "US format MM/DD/YYYY"
+      },
+      {
+        "input": "7 Feb 2026",
+        "expected": "2026-02-07",
+        "description": "Textual format"
+      }
+    ]
+  },
+
+  "shelf_format": [
+    {
+      "type": "PAYTO",
+      "subtype": "IBAN",
+      "value": "DE89370400440532013000",
+      "expected_shelf": "PAYTO|IBAN|DE89370400440532013000"
+    },
+    {
+      "type": "AMOUNT",
+      "subtype": "DEC",
+      "value": "1234.50",
+      "expected_shelf": "AMOUNT|DEC|1234.50"
+    },
+    {
+      "type": "CURRENCY",
+      "subtype": "ISO4217",
+      "value": "EUR",
+      "expected_shelf": "CURRENCY|ISO4217|EUR"
+    },
+    {
+      "type": "DATE",
+      "subtype": "ISO8601",
+      "value": "2026-02-07",
+      "expected_shelf": "DATE|ISO8601|2026-02-07"
+    }
+  ],
+
+  "hash_generation": [
+    {
+      "input": "",
+      "expected": "sha256:e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "description": "Empty string"
+    },
+    {
+      "input": "PAYTO|IBAN|DE89370400440532013000",
+      "expected": "sha256:7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069",
+      "description": "PAYTO shelf"
+    },
+    {
+      "input": "AMOUNT|DEC|1234.50",
+      "expected": "sha256:2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae",
+      "description": "AMOUNT shelf"
+    },
+    {
+      "input": "CURRENCY|ISO4217|EUR",
+      "expected": "sha256:fcde2b2edba56bf408601fb721fe9b5c338d10ee429ea04fae5511b68fbf8fb9",
+      "description": "CURRENCY shelf"
+    }
+  ],
+
+  "proofset_validation": [
+    {
+      "description": "Valid minimal ProofSet",
+      "proofset": {
+        "version": "1.0",
+        "document_hash": "sha256:abc123def456abc123def456abc123def456abc123def456abc123def456abc1",
+        "proof_shelves": {
+          "payto_hash": "sha256:7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069"
+        },
+        "created_at": "2026-02-07T12:00:00Z"
+      },
+      "valid": true
+    },
+    {
+      "description": "Invalid - missing version",
+      "proofset": {
+        "document_hash": "sha256:abc123def456abc123def456abc123def456abc123def456abc123def456abc1",
+        "proof_shelves": {},
+        "created_at": "2026-02-07T12:00:00Z"
+      },
+      "valid": false,
+      "error": "missing required field: version"
+    },
+    {
+      "description": "Invalid - wrong hash format",
+      "proofset": {
+        "version": "1.0",
+        "document_hash": "abc123",
+        "proof_shelves": {},
+        "created_at": "2026-02-07T12:00:00Z"
+      },
+      "valid": false,
+      "error": "document_hash must match pattern sha256:[a-f0-9]{64}"
+    }
+  ],
+
+  "wvc_encoding": [
+    {
+      "description": "Standard WVC encoding",
+      "input": {
+        "document_id": "windi:doc:inv-2026-001",
+        "document_hash": "sha256:abc123def456abc123def456abc123def456abc123def456abc123def456abc1",
+        "issuer_key_id": "windi:key:bank-de",
+        "created_at": "2026-02-07T12:00:00Z"
+      },
+      "expected_prefix": "WVC1-",
+      "expected_length_range": [70, 80]
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "receipt_id": "WINDI-ONBOARD-W-001-10FEB26-cd46f81b",
+  "timestamp": "2026-02-10T10:12:03.271323+00:00",
+  "node": "W-001",
+  "phase": "PHASE_1",
+  "action": "ARRIVAL_REPORT",
+  "hash": "cd46f81ba6de9084d08314780155d60e4c71aa64333cd328ab0351e02c0da300",
+  "governance": {
+    "i9_check": "CLEAN",
+    "human_decision_required": false,
+    "auto_apply": false
+  }
+}

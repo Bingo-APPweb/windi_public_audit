@@ -1,0 +1,87 @@
+{
+  "mirror_version": "1.0.0",
+  "created_utc": "2026-02-08T23:19:16Z",
+  "parent_system": "WINDI Platform",
+  "clone_system": "WINDI-CLONE",
+
+  "mirrored_modules": [
+    {
+      "parent_module": "WINDI-HUB",
+      "clone_module": "CLONE-HUB",
+      "parent_path": "/opt/windi/hub",
+      "clone_path": "/opt/windi/clone/hub",
+      "sync_status": "TEMPLATE_READY",
+      "components": [
+        "hub_collector.py",
+        "HUB_MANIFEST.json",
+        "api/endpoints",
+        "static/governance-hub.html"
+      ]
+    },
+    {
+      "parent_module": "a4Desk-Editor",
+      "clone_module": "Clone-Editor",
+      "parent_path": "/opt/windi/a4desk-editor",
+      "clone_path": "/opt/windi/clone/editor",
+      "sync_status": "TEMPLATE_READY",
+      "components": [
+        "a4desk_tiptap_babel.py",
+        "static/",
+        "templates/",
+        "governance/"
+      ]
+    },
+    {
+      "parent_module": "Agent Constellation",
+      "clone_module": "Clone Constellation",
+      "parent_path": "/opt/windi/agents",
+      "clone_path": "/opt/windi/clone/agents",
+      "sync_status": "TEMPLATE_READY",
+      "agents_count": 8,
+      "shelves": {
+        "detection": ["SGE", "NOC"],
+        "orchestration": ["Maestro", "ISP-Manager"],
+        "verification": ["Sentinela", "Compliance"],
+        "meta_governance": ["Integrity-Watchdog", "Pulse"]
+      }
+    },
+    {
+      "parent_module": "Three Pillars",
+      "clone_module": "Clone Pillars",
+      "architecture": {
+        "pillar_1": {
+          "name": "CREATION",
+          "agent": "ISP-Manager",
+          "function": "Document Generation"
+        },
+        "pillar_2": {
+          "name": "VERIFICATION",
+          "agent": "Sentinela",
+          "function": "Integrity Validation"
+        },
+        "pillar_3": {
+          "name": "RESOLUTION",
+          "agent": "Maestro",
+          "function": "Workflow Orchestration"
+        }
+      }
+    }
+  ],
+
+  "immutable_core": [
+    "Invariant I9 (No self-escalation)",
+    "Zero-Knowledge Processing",
+    "Agent ID Format (W-[32 hex])",
+    "Virtue Receipts",
+    "Three Pillars Architecture"
+  ],
+
+  "customizable_layer": [
+    "Visual Branding",
+    "Module Names",
+    "Workflow Configurations",
+    "External Integrations",
+    "Interface Language",
+    "Customer-specific Agents (W-...20000+)"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "receipt_id": "MAESTRO-20260208-185324-616a47b0",
+  "agent_id": "windi://agent/core/maestro",
+  "version": "1.2.0",
+  "action": "SLA_CHECK",
+  "finding_id": null,
+  "details": {
+    "total_open": 6,
+    "breached": 0,
+    "warnings": 0,
+    "healthy": 6
+  },
+  "timestamp": "2026-02-08T18:53:24.973070+00:00",
+  "integrity_hash": "616a47b02f432b74b082a240bbb378cf195731bb763551cea7dd4a7b3271f8ad",
+  "invariante_i9": true,
+  "auto_apply": false
+}

@@ -1,0 +1,16 @@
+{
+  "receipt_id": "MAESTRO-20260208-185204-4f605138",
+  "agent_id": "windi://agent/core/maestro",
+  "version": "1.2.0",
+  "action": "ASSEMBLE_PACKAGE",
+  "finding_id": "ISP-alerts_20260208_085840",
+  "details": {
+    "finding_id": "ISP-alerts_20260208_085840",
+    "package_file": "/opt/windi/agents/maestro/resolutions/PKG-ISP-alerts_20260208_085840-20260208185204.json",
+    "integrity_hash": "3379c0b85c4eed79f520959f99efb412b71af5b80ddb5b4beb0caf5ab00c479e"
+  },
+  "timestamp": "2026-02-08T18:52:04.486959+00:00",
+  "integrity_hash": "4f6051380a1bfff5e8607e4ddac13fe10e1c1f3fdb3ec92cd2c99d53122fde35",
+  "invariante_i9": true,
+  "auto_apply": false
+}

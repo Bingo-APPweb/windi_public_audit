@@ -1,0 +1,106 @@
+# WINDI Maestro — Escalation Rules
+# Automatic escalation on SLA breach or explicit request
+# "AI processes. Human decides. WINDI guarantees."
+
+version: "1.0.0"
+updated: "2026-02-08"
+
+escalation:
+  # First response breach for critical/high severity
+  - when:
+      breach: "first_response"
+      severity_min: R4
+    then:
+      escalate_to: "Compliance Lead"
+      channel: "priority"
+      notify: ["original_assignee", "escalation_target"]
+      record_reason: "First response SLA breach"
+
+  # Decision breach for critical severity
+  - when:
+      breach: "decision"
+      severity_min: R5
+    then:
+      escalate_to: "Institutional Owner"
+      channel: "halt"
+      notify: ["original_assignee", "escalation_target", "Human Dragon"]
+      record_reason: "Critical decision SLA breach"
+
+  # Any breach involving I9 (IRREMEDIABLE)
+  - when:
+      breach: "first_response"
+      invariants_any: ["I9"]
+    then:
+      escalate_to: "Human Dragon"
+      channel: "halt"
+      notify: ["all_governance_officers"]
+      record_reason: "I9 IRREMEDIABLE — response timeout"
+      actions:
+        - "suspend_related_operations"
+        - "create_incident_record"
+
+  - when:
+      breach: "decision"
+      invariants_any: ["I9"]
+    then:
+      escalate_to: "Human Dragon"
+      channel: "halt"
+      notify: ["all_governance_officers", "Institutional Owner"]
+      record_reason: "I9 IRREMEDIABLE — decision timeout"
+      actions:
+        - "suspend_all_governance_operations"
+        - "create_critical_incident_record"
+        - "notify_external_auditor"
+
+  # I3 Zero-Knowledge breach (data protection)
+  - when:
+      breach: "first_response"
+      invariants_any: ["I3"]
+    then:
+      escalate_to: "Data Protection Officer"
+      channel: "priority"
+      record_reason: "Data protection issue unacknowledged"
+
+  # I4 Audit Trail breach (integrity)
+  - when:
+      breach: "decision"
+      invariants_any: ["I4"]
+    then:
+      escalate_to: "Institutional Owner"
+      channel: "priority"
+      record_reason: "Audit trail integrity issue unresolved"
+      actions:
+        - "freeze_related_ledger_writes"
+
+  # General escalation for stale cases
+  - when:
+      stale_hours: 48
+      status: "routed"
+    then:
+      escalate_to: "next_in_hierarchy"
+      channel: "standard"
+      record_reason: "Case stale for 48h without acknowledgment"
+
+  - when:
+      stale_hours: 72
+      status: "acknowledged"
+    then:
+      escalate_to: "next_in_hierarchy"
+      channel: "priority"
+      record_reason: "Case acknowledged but no decision for 72h"
+
+# Escalation path override by ISP tier
+tier_overrides:
+  tier1_government:
+    skip_levels: 1  # Escalate directly to next+1 level
+    notify_external: true
+  tier2_regulated:
+    skip_levels: 0
+    notify_external: false
+  tier3_standard:
+    skip_levels: 0
+    notify_external: false
+
+# Maximum escalation depth
+max_escalation_depth: 5
+final_escalation_target: "Human Dragon"

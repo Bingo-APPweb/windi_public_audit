@@ -1,0 +1,70 @@
+{
+  "alerts": [
+    {
+      "alert_type": "WARNING",
+      "severity": "MEDIUM",
+      "code": "ISP-W003",
+      "message": "Missing identity_license in governance section for MEDIUM profile",
+      "source": "aok",
+      "timestamp": "2026-02-08T10:35:05.333809+00:00"
+    },
+    {
+      "alert_type": "WARNING",
+      "severity": "MEDIUM",
+      "code": "ISP-W003",
+      "message": "Missing identity_license in governance section for HIGH profile",
+      "source": "bafin",
+      "timestamp": "2026-02-08T10:35:05.333819+00:00"
+    },
+    {
+      "alert_type": "WARNING",
+      "severity": "MEDIUM",
+      "code": "ISP-W003",
+      "message": "Missing identity_license in governance section for HIGH profile",
+      "source": "bis-regulatory",
+      "timestamp": "2026-02-08T10:35:05.333822+00:00"
+    },
+    {
+      "alert_type": "WARNING",
+      "severity": "MEDIUM",
+      "code": "ISP-W003",
+      "message": "Missing identity_license in governance section for MEDIUM profile",
+      "source": "bundesagentur-fuer-arbeit",
+      "timestamp": "2026-02-08T10:35:05.333827+00:00"
+    },
+    {
+      "alert_type": "WARNING",
+      "severity": "MEDIUM",
+      "code": "ISP-W003",
+      "message": "Missing identity_license in governance section for MEDIUM profile",
+      "source": "bundesregierung",
+      "timestamp": "2026-02-08T10:35:05.333829+00:00"
+    },
+    {
+      "alert_type": "WARNING",
+      "severity": "MEDIUM",
+      "code": "ISP-W003",
+      "message": "Missing identity_license in governance section for HIGH profile",
+      "source": "ecb",
+      "timestamp": "2026-02-08T10:35:05.333832+00:00"
+    },
+    {
+      "alert_type": "WARNING",
+      "severity": "MEDIUM",
+      "code": "ISP-W003",
+      "message": "Missing identity_license in governance section for MEDIUM profile",
+      "source": "freistaat-bayern",
+      "timestamp": "2026-02-08T10:35:05.333834+00:00"
+    },
+    {
+      "alert_type": "WARNING",
+      "severity": "MEDIUM",
+      "code": "ISP-W003",
+      "message": "Missing identity_license in governance section for MEDIUM profile",
+      "source": "sparkasse",
+      "timestamp": "2026-02-08T10:35:05.333837+00:00"
+    }
+  ],
+  "count": 8,
+  "timestamp": "2026-02-08T10:35:05.333893+00:00"
+}

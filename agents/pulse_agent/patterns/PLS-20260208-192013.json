@@ -1,0 +1,28 @@
+{
+  "analysis_id": "PLS-20260208-192013",
+  "timestamp_utc": "2026-02-08T19:20:13.331623+00:00",
+  "window_days": 30,
+  "data_points_analyzed": 6,
+  "patterns_detected": [],
+  "rhythm_status": "NORMAL",
+  "alerts": [],
+  "confidence": "LOW",
+  "recommendations": [],
+  "analysis_hash": "46edf5f879e8657da757533eca1532f40d79d064a13d2d51c3d60877deb4be5e",
+  "rhythm_metrics": {
+    "R2": {
+      "avg_minutes": 3.51,
+      "count": 6,
+      "min": 3.51,
+      "max": 3.51
+    }
+  },
+  "frequency_metrics": {
+    "avg_daily": 6.0,
+    "max_daily": 6,
+    "total_days": 1,
+    "by_agent": {
+      "isp-manager": 6
+    }
+  }
+}

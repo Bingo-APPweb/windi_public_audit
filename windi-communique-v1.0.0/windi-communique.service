@@ -1,0 +1,34 @@
+[Unit]
+Description=WINDI Communiqué Engine - Verified Institutional Communications
+Documentation=https://master.windia4desk.tech/docs/
+After=network.target windi-suite-docs.service windi-export.service
+Wants=windi-suite-docs.service windi-export.service
+
+[Service]
+Type=simple
+User=windi
+Group=windi
+WorkingDirectory=/opt/windi/communique
+ExecStart=/usr/bin/python3 /opt/windi/communique/communique_engine.py
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=windi-communique
+
+# Environment
+Environment=WINDI_ENV=production
+Environment=COMMUNIQUE_PORT=8105
+Environment=LEDGER_URL=http://127.0.0.1:8101
+Environment=EXPORT_URL=http://127.0.0.1:8103
+Environment=COMMUNIQUE_DOMAIN=admin.windia4desk.tech
+
+# Security hardening
+NoNewPrivileges=yes
+ProtectSystem=strict
+ReadWritePaths=/opt/windi/communique/data /opt/windi/communique/published /opt/windi/communique/backups
+ProtectHome=yes
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target

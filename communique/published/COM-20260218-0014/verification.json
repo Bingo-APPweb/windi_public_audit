@@ -1,0 +1,13 @@
+{
+  "communique_id": "COM-20260218-0014",
+  "content_hash": "2362a689b66fc0794d6e6c4619253624b2f4560f9107747f50e0de86631bd037",
+  "bundle_hash": "df0d5162a93a6555e4c59d60b1f8674ef5ca1dd935a01ae925b466c397fcf210",
+  "receipt_id": "VR-COM-593c5acf9dfe",
+  "ledger_id": "VR-COM-593c5acf9dfe",
+  "category": "UPDATE",
+  "impact_level": "HIGH",
+  "author": "Dragon",
+  "published_at": "2026-02-18T17:24:55Z",
+  "verify_url": "https://admin.windia4desk.tech/communique/COM-20260218-0014/verify",
+  "generated_at": "2026-02-18T17:24:55Z"
+}

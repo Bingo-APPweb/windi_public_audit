@@ -1,0 +1,133 @@
+{
+  "report_type": "GOVERNANCE_CYCLE_REPORT",
+  "agent_id": "windi://agent/core/maestro",
+  "dashboard": {
+    "agent_id": "windi://agent/core/maestro",
+    "pillar": "RESOLUTION",
+    "status_distribution": {
+      "CLOSED": 6
+    },
+    "open_by_severity": {},
+    "total_closed_cycles": 6,
+    "avg_resolution_hours": 0.06,
+    "recent_events": [
+      {
+        "finding_id": "ISP-alerts_20260208_103650",
+        "event": "CLOSED",
+        "timestamp": "2026-02-08T18:54:15.920120+00:00"
+      },
+      {
+        "finding_id": "ISP-alerts_20260208_103505",
+        "event": "CLOSED",
+        "timestamp": "2026-02-08T18:54:15.873620+00:00"
+      },
+      {
+        "finding_id": "ISP-alerts_20260208_094654",
+        "event": "CLOSED",
+        "timestamp": "2026-02-08T18:54:15.824294+00:00"
+      },
+      {
+        "finding_id": "ISP-alerts_20260208_090650",
+        "event": "CLOSED",
+        "timestamp": "2026-02-08T18:54:15.779770+00:00"
+      },
+      {
+        "finding_id": "ISP-alerts_20260208_090401",
+        "event": "CLOSED",
+        "timestamp": "2026-02-08T18:54:15.729831+00:00"
+      },
+      {
+        "finding_id": "ISP-alerts_20260208_085840",
+        "event": "CLOSED",
+        "timestamp": "2026-02-08T18:54:15.682285+00:00"
+      },
+      {
+        "finding_id": "ISP-alerts_20260208_103650",
+        "event": "RESOLVED",
+        "timestamp": "2026-02-08T18:54:11.815797+00:00"
+      },
+      {
+        "finding_id": "ISP-alerts_20260208_103505",
+        "event": "RESOLVED",
+        "timestamp": "2026-02-08T18:54:11.769658+00:00"
+      },
+      {
+        "finding_id": "ISP-alerts_20260208_094654",
+        "event": "RESOLVED",
+        "timestamp": "2026-02-08T18:54:11.723713+00:00"
+      },
+      {
+        "finding_id": "ISP-alerts_20260208_090650",
+        "event": "RESOLVED",
+        "timestamp": "2026-02-08T18:54:11.678277+00:00"
+      },
+      {
+        "finding_id": "ISP-alerts_20260208_090401",
+        "event": "RESOLVED",
+        "timestamp": "2026-02-08T18:54:11.631103+00:00"
+      },
+      {
+        "finding_id": "ISP-alerts_20260208_085840",
+        "event": "RESOLVED",
+        "timestamp": "2026-02-08T18:54:11.584849+00:00"
+      },
+      {
+        "finding_id": "ISP-alerts_20260208_103650",
+        "event": "ACKNOWLEDGED",
+        "timestamp": "2026-02-08T18:53:22.066641+00:00"
+      },
+      {
+        "finding_id": "ISP-alerts_20260208_103505",
+        "event": "ACKNOWLEDGED",
+        "timestamp": "2026-02-08T18:53:21.991018+00:00"
+      },
+      {
+        "finding_id": "ISP-alerts_20260208_094654",
+        "event": "ACKNOWLEDGED",
+        "timestamp": "2026-02-08T18:53:21.914140+00:00"
+      },
+      {
+        "finding_id": "ISP-alerts_20260208_090650",
+        "event": "ACKNOWLEDGED",
+        "timestamp": "2026-02-08T18:53:21.828959+00:00"
+      },
+      {
+        "finding_id": "ISP-alerts_20260208_090401",
+        "event": "ACKNOWLEDGED",
+        "timestamp": "2026-02-08T18:53:21.756455+00:00"
+      },
+      {
+        "finding_id": "ISP-alerts_20260208_085840",
+        "event": "ACKNOWLEDGED",
+        "timestamp": "2026-02-08T18:53:21.683939+00:00"
+      },
+      {
+        "finding_id": "ISP-alerts_20260208_103650",
+        "event": "REGISTERED",
+        "timestamp": "2026-02-08T18:50:45.154356+00:00"
+      },
+      {
+        "finding_id": "ISP-alerts_20260208_103505",
+        "event": "REGISTERED",
+        "timestamp": "2026-02-08T18:50:45.150825+00:00"
+      }
+    ],
+    "generated_at": "2026-02-08T18:54:19.385425+00:00",
+    "auto_apply": false
+  },
+  "sla_status": {
+    "total_open_cycles": 0,
+    "sla_breaches": 0,
+    "sla_warnings": 0,
+    "healthy_cycles": 0,
+    "checked_at": "2026-02-08T18:54:19.385451+00:00",
+    "auto_apply": false
+  },
+  "sla_breaches": {
+    "acknowledge": [],
+    "resolve": []
+  },
+  "sla_warnings": [],
+  "generated_at": "2026-02-08T18:54:19.385972+00:00",
+  "auto_apply": false
+}

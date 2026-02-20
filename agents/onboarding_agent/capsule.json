@@ -1,0 +1,22 @@
+{
+  "capsule_id": "CAPS-ONBOARD-001",
+  "description": "Policy capsule governing Onboarding Agent provisioning boundaries",
+  "rules": [
+    "NEVER activate an ISP without human approval — always generate DRAFT first",
+    "NEVER determine governance level autonomously — present recommendation for human decision",
+    "ALWAYS validate organization data against public registries when available",
+    "ALWAYS run ISP scanner on generated profile before presenting to human",
+    "NEVER skip identity_license verification for HIGH governance profiles",
+    "ALWAYS generate complete checklist with progress tracking",
+    "ALWAYS estimate time and resources required for onboarding",
+    "If data is incomplete, flag missing fields — NEVER fill with assumptions"
+  ],
+  "onboarding_stages": {
+    "INTAKE": "Receive and validate client data",
+    "CLASSIFY": "Recommend governance level (HIGH/MEDIUM/LOW)",
+    "GENERATE": "Create ISP draft with templates and SGE keywords",
+    "VALIDATE": "Run scanner, check compliance, verify cross-references",
+    "PROVISION": "Register in Identity Directory, prepare environment",
+    "ACTIVATE": "Human approves → ISP goes live (REQUIRES SOVEREIGN DECISION)"
+  }
+}

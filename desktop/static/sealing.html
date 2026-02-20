@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI Sealing — Dokument versiegelt</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Outfit', sans-serif; }
+  #root { min-height: 100vh; }
+</style>
+<script>
+  // Polyfill for window.storage (used in artifacts with persistent storage)
+  if (!window.storage) {
+    const _store = {};
+    window.storage = {
+      get: async (k) => { if (_store[k]) return { key: k, value: _store[k] }; throw new Error('not found'); },
+      set: async (k, v) => { _store[k] = v; return { key: k, value: v }; },
+      delete: async (k) => { delete _store[k]; return { key: k, deleted: true }; },
+      list: async (prefix) => { const keys = Object.keys(_store).filter(k => !prefix || k.startsWith(prefix)); return { keys }; },
+    };
+  }
+</script>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback, useMemo } = React;
+
+
+const FONTS_CSS = `@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');`;
+
+// Simulated cryptographic values
+const CRYPTO = {
+  ed25519: "b7f2a91c4d8e3f6071a2b5c8d9e0f1234567890abcdef",
+  integrityHash: "dd68612c...0eaa119c",
+  receiptId: "VR-20260216-00847",
+  ispContext: "Deutsche Bahn AG · ISP v2.2.0",
+  sgeScore: 0.87,
+  governanceLevel: "HIGH",
+  merkleRoot: "a4c8e2f1...7b3d9e05",
+  timestamp: null,
+};
+
+// === SEAL SVG COMPONENT ===
+const SealStamp = ({ progress, size = 160 }) => {
+  const opacity = Math.min(1, progress * 2);
+  const scale = 0.6 + Math.min(0.4, progress * 0.5);
+  const rotation = (1 - progress) * -15;
+  const glowIntensity = progress > 0.8 ? (progress - 0.8) * 5 : 0;
+
+  return (
+    <svg width={size} height={size} viewBox="0 0 200 200" style={{
+      transform: `scale(${scale}) rotate(${rotation}deg)`,
+      opacity, transition: "none",
+      filter: `drop-shadow(0 0 ${glowIntensity * 20}px rgba(201,168,76,${glowIntensity * 0.6}))`,
+    }}>
+      {/* Outer ring with notches */}
+      {Array.from({ length: 36 }).map((_, i) => {
+        const angle = (i * 10) * Math.PI / 180;
+        const r1 = 92, r2 = 98;
+        return (
+          <line key={i}
+            x1={100 + Math.cos(angle) * r1} y1={100 + Math.sin(angle) * r1}
+            x2={100 + Math.cos(angle) * r2} y2={100 + Math.sin(angle) * r2}
+            stroke="#C9A84C" strokeWidth="2" opacity={0.5 + (progress * 0.5)}
+          />
+        );
+      })}
+      {/* Outer circle */}
+      <circle cx="100" cy="100" r="90" fill="none" stroke="#C9A84C" strokeWidth="2.5" opacity={opacity}/>
+      <circle cx="100" cy="100" r="82" fill="none" stroke="#C9A84C" strokeWidth="1" opacity={opacity * 0.6}/>
+      {/* Inner circle */}
+      <circle cx="100" cy="100" r="70" fill="rgba(201,168,76,0.06)" stroke="#C9A84C" strokeWidth="1.5" opacity={opacity}/>
+      {/* Shield icon */}
+      <path d="M100 55 L75 68 L75 90 C75 108 86 124 100 130 C114 124 125 108 125 90 L125 68 Z"
+        fill="none" stroke="#C9A84C" strokeWidth="2" opacity={opacity}/>
+      <path d="M100 62 L80 73 L80 90 C80 105 89 118 100 123 C111 118 120 105 120 90 L120 73 Z"
+        fill="rgba(201,168,76,0.1)" stroke="none" opacity={opacity}/>
+      {/* W inside shield */}
+      <text x="100" y="98" textAnchor="middle" fill="#C9A84C" fontSize="28" fontWeight="800"
+        fontFamily="Bricolage Grotesque" opacity={opacity}>W</text>
+      {/* Circular text */}
+      <defs>
+        <path id="topArc" d="M 30,100 a 70,70 0 0,1 140,0"/>
+        <path id="bottomArc" d="M 170,100 a 70,70 0 0,1 -140,0"/>
+      </defs>
+      <text fontSize="9" fill="#C9A84C" fontFamily="JetBrains Mono" fontWeight="500" letterSpacing="3" opacity={opacity}>
+        <textPath href="#topArc" startOffset="50%" textAnchor="middle">VERSIEGELT · SEALED</textPath>
+      </text>
+      <text fontSize="8" fill="#C9A84C" fontFamily="JetBrains Mono" fontWeight="400" letterSpacing="2" opacity={opacity * 0.8}>
+        <textPath href="#bottomArc" startOffset="50%" textAnchor="middle">WINDI GOVERNANCE</textPath>
+      </text>
+    </svg>
+  );
+};
+
+// === SIGNATURE PAD ===
+const SignaturePad = ({ onSign, signed, isDark }) => {
+  const canvasRef = useRef(null);
+  const [drawing, setDrawing] = useState(false);
+  const [hasContent, setHasContent] = useState(false);
+  const [points, setPoints] = useState([]);
+  const lastPoint = useRef(null);
+
+  const getPos = (e) => {
+    const rect = canvasRef.current.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    return { x: clientX - rect.left, y: clientY - rect.top };
+  };
+
+  const startDraw = (e) => {
+    if (signed) return;
+    e.preventDefault();
+    setDrawing(true);
+    const pos = getPos(e);
+    lastPoint.current = pos;
+    setHasContent(true);
+  };
+
+  const draw = (e) => {
+    if (!drawing || signed) return;
+    e.preventDefault();
+    const ctx = canvasRef.current.getContext("2d");
+    const pos = getPos(e);
+    ctx.beginPath();
+    ctx.moveTo(lastPoint.current.x, lastPoint.current.y);
+    ctx.lineTo(pos.x, pos.y);
+    ctx.strokeStyle = isDark ? "#E8DCC8" : "#1A1A2E";
+    ctx.lineWidth = 2;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.stroke();
+    lastPoint.current = pos;
+    setPoints(prev => [...prev, pos]);
+  };
+
+  const endDraw = () => { setDrawing(false); lastPoint.current = null; };
+
+  const clear = () => {
+    if (signed) return;
+    const ctx = canvasRef.current.getContext("2d");
+    ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    setHasContent(false);
+    setPoints([]);
+  };
+
+  const border = isDark ? "#2A2D3A" : "#D0D0D0";
+  const bg = isDark ? "#12141C" : "#FEFEFE";
+  const text2 = isDark ? "#6B7080" : "#9CA3AF";
+
+  return (
+    <div style={{ position: "relative" }}>
+      <div style={{
+        fontSize: 11, fontWeight: 600, color: isDark ? "#A0A4B8" : "#6B7280",
+        marginBottom: 6, fontFamily: "'Outfit'", letterSpacing: 0.5,
+        display: "flex", alignItems: "center", gap: 6,
+      }}>
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" opacity="0.6">
+          <path d="M13.5 3.5l-1-1-9 9v1h1l9-9zm1.4-1.4l-1-1a.5.5 0 00-.7 0l-.7.7 1.7 1.7.7-.7a.5.5 0 000-.7zM2 12.5V14h1.5l.3-.3-1.5-1.5-.3.3z"/>
+        </svg>
+        Paperless Signature
+        {signed && (
+          <span style={{ color: "#C9A84C", fontSize: 10, fontFamily: "'JetBrains Mono'" }}>
+            CAPTURED
+          </span>
+        )}
+      </div>
+      <div style={{
+        border: `1.5px ${signed ? "solid #C9A84C" : `dashed ${border}`}`,
+        borderRadius: 10, overflow: "hidden", position: "relative",
+        backgroundColor: bg,
+        boxShadow: signed ? "0 0 20px rgba(201,168,76,0.1)" : "none",
+        transition: "all 0.3s ease",
+      }}>
+        <canvas ref={canvasRef} width={340} height={100}
+          onMouseDown={startDraw} onMouseMove={draw} onMouseUp={endDraw} onMouseLeave={endDraw}
+          onTouchStart={startDraw} onTouchMove={draw} onTouchEnd={endDraw}
+          style={{ cursor: signed ? "default" : "crosshair", display: "block", width: "100%", height: 100 }}
+        />
+        {!hasContent && !signed && (
+          <div style={{
+            position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)",
+            color: text2, fontSize: 12, fontFamily: "'Outfit'", pointerEvents: "none",
+            display: "flex", alignItems: "center", gap: 6, opacity: 0.6,
+          }}>
+            <span>Hier unterschreiben</span>
+          </div>
+        )}
+        {/* Signature line */}
+        <div style={{
+          position: "absolute", bottom: 20, left: 20, right: 20,
+          borderBottom: `1px solid ${isDark ? "#2A2D3A" : "#E0E0E0"}`,
+          opacity: 0.5,
+        }}/>
+        {signed && (
+          <div style={{
+            position: "absolute", bottom: 4, right: 8,
+            fontSize: 8, color: "#C9A84C", fontFamily: "'JetBrains Mono'",
+            opacity: 0.7,
+          }}>Ed25519 BOUND</div>
+        )}
+      </div>
+      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6 }}>
+        {!signed && (
+          <button onClick={clear} style={{
+            fontSize: 10, color: text2, background: "none", border: "none",
+            cursor: "pointer", fontFamily: "'Outfit'",
+          }}>Löschen</button>
+        )}
+        {hasContent && !signed && (
+          <button onClick={() => onSign()} style={{
+            fontSize: 11, color: "#C9A84C", background: "none", border: `1px solid #C9A84C`,
+            borderRadius: 6, padding: "3px 12px", cursor: "pointer",
+            fontFamily: "'Outfit'", fontWeight: 600,
+          }}>Unterschrift bestätigen</button>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// === SCANNING LINE ===
+const ScanLine = ({ active, progress }) => {
+  if (!active) return null;
+  const y = progress * 100;
+  return (
+    <div style={{
+      position: "absolute", left: 0, right: 0, top: `${y}%`,
+      height: 2, background: "linear-gradient(90deg, transparent, #C9A84C, transparent)",
+      boxShadow: "0 0 15px rgba(201,168,76,0.5)", transition: "top 0.05s linear",
+      zIndex: 10,
+    }}/>
+  );
+};
+
+// === MAIN COMPONENT ===
+function WINDISealingRitual() {
+  const [theme, setTheme] = useState("klar");
+  const [phase, setPhase] = useState("document"); // document | signing | sealing | sealed
+  const [sealProgress, setSealProgress] = useState(0);
+  const [scanProgress, setScanProgress] = useState(0);
+  const [signatureDone, setSignatureDone] = useState(false);
+  const [showReceipt, setShowReceipt] = useState(false);
+  const [sealingStep, setSealingStep] = useState(0);
+  const [dimLevel, setDimLevel] = useState(0);
+  const animRef = useRef(null);
+
+  const isDark = theme === "noir";
+  const bg = isDark ? "#0F1117" : "#FAFBFC";
+  const surface = isDark ? "#1A1D27" : "#FFFFFF";
+  const text1 = isDark ? "#F0F0F0" : "#1A1A2E";
+  const text2 = isDark ? "#A0A4B8" : "#6B7280";
+  const text3 = isDark ? "#6B7080" : "#9CA3AF";
+  const border = isDark ? "#2A2D3A" : "#E5E7EB";
+  const gold = "#C9A84C";
+
+  const SEALING_STEPS = [
+    { label: "Signatur wird verifiziert…", icon: "✍", tech: "Paperless Signature → Ed25519 binding" },
+    { label: "Governance wird angewendet…", icon: "🛡", tech: `Level: ${CRYPTO.governanceLevel} · SGE: ${CRYPTO.sgeScore}` },
+    { label: "Dokument wird gescannt…", icon: "◎", tech: "SGE Semantic Analysis · 6 Layers" },
+    { label: "Integrität wird berechnet…", icon: "⧫", tech: `Hash: ${CRYPTO.integrityHash}` },
+    { label: "Virtue Receipt wird erstellt…", icon: "📜", tech: `Receipt: ${CRYPTO.receiptId}` },
+    { label: "Merkle Tree wird aktualisiert…", icon: "⬡", tech: `Root: ${CRYPTO.merkleRoot}` },
+    { label: "Dokument wird versiegelt…", icon: "◆", tech: "Immutable · Auditable · Sovereign" },
+  ];
+
+  const now = new Date();
+  CRYPTO.timestamp = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}-${String(now.getDate()).padStart(2,"0")}T${String(now.getHours()).padStart(2,"0")}:${String(now.getMinutes()).padStart(2,"0")}:${String(now.getSeconds()).padStart(2,"0")}Z`;
+
+  const startSigning = () => setPhase("signing");
+
+  const confirmSignature = () => {
+    setSignatureDone(true);
+    setTimeout(() => startSealing(), 600);
+  };
+
+  const startSealing = () => {
+    setPhase("sealing");
+    setSealProgress(0);
+    setSealingStep(0);
+    setDimLevel(0.06);
+
+    let step = 0;
+    const totalSteps = SEALING_STEPS.length;
+    const stepDuration = 500;
+
+    const advanceStep = () => {
+      if (step < totalSteps) {
+        setSealingStep(step);
+        setSealProgress(step / totalSteps);
+
+        if (step === 2) {
+          let scan = 0;
+          const scanInterval = setInterval(() => {
+            scan += 0.03;
+            setScanProgress(scan);
+            if (scan >= 1) clearInterval(scanInterval);
+          }, 20);
+        }
+
+        step++;
+        setTimeout(advanceStep, stepDuration);
+      } else {
+        setSealProgress(1);
+        setDimLevel(0);
+        setTimeout(() => {
+          setPhase("sealed");
+          setTimeout(() => setShowReceipt(true), 800);
+        }, 400);
+      }
+    };
+
+    setTimeout(advanceStep, 300);
+  };
+
+  const resetDemo = () => {
+    setPhase("document");
+    setSealProgress(0);
+    setScanProgress(0);
+    setSignatureDone(false);
+    setShowReceipt(false);
+    setSealingStep(0);
+    setDimLevel(0);
+  };
+
+  return (
+    <div style={{
+      fontFamily: "'Outfit', sans-serif", backgroundColor: bg, color: text1,
+      minHeight: "100vh", display: "flex", flexDirection: "column",
+      position: "relative", overflow: "hidden",
+    }}>
+      <style>{FONTS_CSS}</style>
+      <style>{`
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes pulseGold { 0%, 100% { box-shadow: 0 0 0 0 rgba(201,168,76,0.3); } 50% { box-shadow: 0 0 20px 4px rgba(201,168,76,0.15); } }
+        @keyframes sealDrop { 0% { transform: scale(1.3) rotate(-10deg); opacity: 0; } 60% { transform: scale(0.95) rotate(2deg); opacity: 1; } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        @keyframes checkmark { 0% { stroke-dashoffset: 24; } 100% { stroke-dashoffset: 0; } }
+        .step-item { animation: fadeUp 0.3s ease both; }
+      `}</style>
+
+      {/* DIM OVERLAY during sealing */}
+      {dimLevel > 0 && (
+        <div style={{
+          position: "fixed", inset: 0, backgroundColor: `rgba(0,0,0,${dimLevel})`,
+          zIndex: 5, transition: "background-color 0.5s ease", pointerEvents: "none",
+        }}/>
+      )}
+
+      {/* === TOP BAR === */}
+      <div style={{
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        padding: "0 24px", height: 48, borderBottom: `1px solid ${border}`,
+        backgroundColor: isDark ? "#12141C" : "#FFFFFF", zIndex: 20,
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <svg width="22" height="22" viewBox="0 0 32 32">
+            <rect width="32" height="32" rx="6" fill={gold}/>
+            <text x="16" y="22" textAnchor="middle" fill="#0F1117" fontSize="16" fontWeight="800" fontFamily="Bricolage Grotesque">W</text>
+          </svg>
+          <span style={{ fontFamily: "'Bricolage Grotesque'", fontWeight: 700, fontSize: 16, color: text1 }}>WINDI</span>
+          <span style={{ fontSize: 10, color: text3, fontFamily: "'JetBrains Mono'", padding: "1px 6px", borderRadius: 4, backgroundColor: isDark ? "#1E2030" : "#F0F1F4" }}>Dokumente</span>
+          <span style={{ color: text3, fontSize: 13, margin: "0 4px" }}>›</span>
+          <span style={{ fontSize: 13, color: text2, fontWeight: 500 }}>ECB Model Risk Assessment</span>
+          {phase === "sealed" && (
+            <span style={{
+              fontSize: 10, color: gold, fontFamily: "'JetBrains Mono'", fontWeight: 500,
+              padding: "2px 8px", borderRadius: 4, backgroundColor: isDark ? "#2A2520" : "#FFF9E8",
+              marginLeft: 8, display: "flex", alignItems: "center", gap: 4,
+              animation: "fadeIn 0.5s ease",
+            }}>
+              <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M8 0l2.2 5.5L16 6.1l-4 3.7 1 5.7L8 12.8l-5 2.7 1-5.7-4-3.7 5.8-.6z"/>
+              </svg>
+              VERSIEGELT
+            </span>
+          )}
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <button onClick={() => setTheme(isDark ? "klar" : "noir")} style={{
+            width: 30, height: 30, borderRadius: 6, border: `1px solid ${border}`,
+            backgroundColor: "transparent", cursor: "pointer", color: text2, fontSize: 14,
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}>{isDark ? "☀" : "●"}</button>
+          {phase === "sealed" && (
+            <button onClick={resetDemo} style={{
+              fontSize: 11, color: text3, background: "none", border: `1px solid ${border}`,
+              borderRadius: 6, padding: "4px 10px", cursor: "pointer", fontFamily: "'Outfit'",
+            }}>Demo Reset</button>
+          )}
+        </div>
+      </div>
+
+      {/* === DOCUMENT AREA === */}
+      <div style={{
+        flex: 1, display: "flex", justifyContent: "center", padding: "32px 24px",
+        position: "relative", zIndex: 10,
+      }}>
+        <div style={{
+          width: "100%", maxWidth: 700, position: "relative",
+        }}>
+          {/* Document paper */}
+          <div style={{
+            backgroundColor: surface, borderRadius: 12, padding: "40px 48px",
+            border: `1px solid ${phase === "sealed" ? gold : border}`,
+            boxShadow: phase === "sealed"
+              ? `0 0 40px rgba(201,168,76,0.08), 0 4px 20px rgba(0,0,0,0.06)`
+              : `0 2px 12px rgba(0,0,0,0.04)`,
+            transition: "border-color 0.5s ease, box-shadow 0.5s ease",
+            position: "relative", overflow: "hidden",
+            minHeight: 520,
+          }}>
+            {/* Scan line during sealing */}
+            <ScanLine active={phase === "sealing" && sealingStep === 2} progress={scanProgress}/>
+
+            {/* Document header */}
+            <div style={{
+              display: "flex", justifyContent: "space-between", alignItems: "flex-start",
+              marginBottom: 28, paddingBottom: 20, borderBottom: `1px solid ${border}`,
+            }}>
+              <div>
+                <div style={{ fontSize: 10, color: gold, fontFamily: "'JetBrains Mono'", fontWeight: 500, marginBottom: 4, letterSpacing: 1 }}>
+                  REG-20260216-00847
+                </div>
+                <h2 style={{ fontFamily: "'Bricolage Grotesque'", fontSize: 22, fontWeight: 700, color: text1, marginBottom: 4 }}>
+                  ECB Model Risk Assessment
+                </h2>
+                <div style={{ fontSize: 12, color: text3 }}>European Central Bank · Regulatory Submission</div>
+              </div>
+              <div style={{
+                display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4,
+              }}>
+                <div style={{
+                  display: "flex", alignItems: "center", gap: 5,
+                  padding: "3px 10px", borderRadius: 6,
+                  backgroundColor: phase === "sealed" ? (isDark ? "#2A2520" : "#FFF9E8") : (isDark ? "#1E2030" : "#F0F1F4"),
+                  transition: "all 0.4s ease",
+                }}>
+                  <span style={{
+                    width: 7, height: 7, borderRadius: "50%",
+                    backgroundColor: phase === "sealed" ? gold : (phase === "sealing" ? "#F59E0B" : "#22C55E"),
+                    transition: "all 0.3s ease",
+                  }}/>
+                  <span style={{
+                    fontSize: 10, fontFamily: "'JetBrains Mono'", fontWeight: 500,
+                    color: phase === "sealed" ? gold : text2,
+                  }}>
+                    {phase === "sealed" ? "VERSIEGELT" : phase === "sealing" ? "VERSIEGELUNG…" : "ENTWURF"}
+                  </span>
+                </div>
+                <span style={{ fontSize: 10, color: text3, fontFamily: "'JetBrains Mono'" }}>
+                  {CRYPTO.ispContext}
+                </span>
+              </div>
+            </div>
+
+            {/* Simulated document content */}
+            <div style={{ opacity: phase === "sealing" ? 0.5 : 1, transition: "opacity 0.4s ease" }}>
+              {[
+                { w: "100%", h: 10 }, { w: "95%", h: 10 }, { w: "88%", h: 10 },
+                { w: "100%", h: 10 }, { w: "72%", h: 10 },
+                { w: "0", h: 16 },
+                { w: "45%", h: 12, bold: true },
+                { w: "100%", h: 10 }, { w: "100%", h: 10 }, { w: "94%", h: 10 },
+                { w: "100%", h: 10 }, { w: "67%", h: 10 },
+                { w: "0", h: 16 },
+                { w: "38%", h: 12, bold: true },
+                { w: "100%", h: 10 }, { w: "91%", h: 10 }, { w: "100%", h: 10 },
+                { w: "85%", h: 10 },
+              ].map((line, i) => (
+                <div key={i} style={{
+                  width: line.w, height: line.h, marginBottom: 6,
+                  backgroundColor: line.w === "0" ? "transparent" : (isDark ? "#1E2030" : "#F0F1F4"),
+                  borderRadius: 3, opacity: line.bold ? 0.8 : 0.4,
+                }}/>
+              ))}
+            </div>
+
+            {/* SIGNATURE SECTION */}
+            {(phase === "signing" || phase === "sealing" || phase === "sealed") && (
+              <div style={{
+                marginTop: 32, paddingTop: 24, borderTop: `1px solid ${border}`,
+                animation: "fadeUp 0.4s ease",
+              }}>
+                <SignaturePad onSign={confirmSignature} signed={signatureDone} isDark={isDark}/>
+              </div>
+            )}
+
+            {/* SEAL OVERLAY when sealed */}
+            {phase === "sealed" && (
+              <div style={{
+                position: "absolute", top: "50%", left: "50%",
+                transform: "translate(-50%, -50%)",
+                animation: "sealDrop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both",
+                zIndex: 15, pointerEvents: "none",
+              }}>
+                <SealStamp progress={1} size={180}/>
+              </div>
+            )}
+
+            {/* VERSIEGELT confirmation text */}
+            {phase === "sealed" && !showReceipt && (
+              <div style={{
+                position: "absolute", bottom: 40, left: 0, right: 0,
+                textAlign: "center", animation: "fadeIn 0.8s ease 0.4s both",
+                zIndex: 15,
+              }}>
+                <div style={{
+                  fontSize: 18, fontFamily: "'Bricolage Grotesque'", fontWeight: 700,
+                  color: gold, letterSpacing: 1,
+                }}>Dokument versiegelt.</div>
+                <div style={{ fontSize: 11, color: text3, marginTop: 4, fontFamily: "'JetBrains Mono'" }}>
+                  {CRYPTO.timestamp}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* === ACTION BUTTON === */}
+          {phase === "document" && (
+            <div style={{
+              display: "flex", justifyContent: "flex-end", marginTop: 16,
+              animation: "fadeUp 0.4s ease",
+            }}>
+              <button onClick={startSigning} style={{
+                padding: "10px 28px", borderRadius: 10, border: "none",
+                backgroundColor: gold, color: "#0F1117", fontSize: 14,
+                fontFamily: "'Outfit'", fontWeight: 600, cursor: "pointer",
+                display: "flex", alignItems: "center", gap: 8,
+                boxShadow: "0 4px 15px rgba(201,168,76,0.3)",
+                transition: "transform 0.2s ease",
+              }}>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="#0F1117">
+                  <path d="M8 1L2 4v4.5c0 3.5 2.6 6.8 6 7.5 3.4-.7 6-4 6-7.5V4L8 1z"/>
+                </svg>
+                Versiegeln
+              </button>
+            </div>
+          )}
+
+          {/* === SEALING PROGRESS PANEL === */}
+          {phase === "sealing" && (
+            <div style={{
+              marginTop: 16, padding: "20px 24px", borderRadius: 12,
+              backgroundColor: isDark ? "#14161E" : "#FAFBFC",
+              border: `1px solid ${isDark ? "#2A2520" : "#F0EBD8"}`,
+              animation: "fadeUp 0.4s ease",
+            }}>
+              <div style={{
+                display: "flex", alignItems: "center", gap: 8, marginBottom: 16,
+              }}>
+                <div style={{
+                  width: 8, height: 8, borderRadius: "50%", backgroundColor: gold,
+                  animation: "pulseGold 1.5s ease infinite",
+                }}/>
+                <span style={{
+                  fontSize: 12, fontFamily: "'Outfit'", fontWeight: 600, color: gold,
+                }}>Versiegelung wird durchgeführt…</span>
+              </div>
+
+              {/* Progress bar */}
+              <div style={{
+                width: "100%", height: 3, backgroundColor: isDark ? "#1E2030" : "#E8E8E8",
+                borderRadius: 2, marginBottom: 16, overflow: "hidden",
+              }}>
+                <div style={{
+                  width: `${sealProgress * 100}%`, height: "100%",
+                  background: `linear-gradient(90deg, ${gold}, #E8D48C)`,
+                  borderRadius: 2, transition: "width 0.3s ease",
+                  backgroundSize: "200% 100%",
+                  animation: "shimmer 1.5s linear infinite",
+                }}/>
+              </div>
+
+              {/* Steps */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                {SEALING_STEPS.map((step, i) => {
+                  const isActive = i === sealingStep;
+                  const isDone = i < sealingStep;
+                  const isFuture = i > sealingStep;
+                  return (
+                    <div key={i} className="step-item" style={{
+                      display: "flex", alignItems: "center", gap: 10,
+                      opacity: isFuture ? 0.25 : 1,
+                      animation: isActive ? "fadeUp 0.3s ease" : "none",
+                      transition: "opacity 0.3s ease",
+                    }}>
+                      <div style={{
+                        width: 20, height: 20, borderRadius: 6,
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        fontSize: 11,
+                        backgroundColor: isDone ? (isDark ? "#2A2520" : "#FFF9E8") : isActive ? (isDark ? "#1E2030" : "#F5F5F5") : "transparent",
+                        color: isDone ? gold : text3,
+                        border: isActive ? `1px solid ${gold}` : "1px solid transparent",
+                      }}>
+                        {isDone ? (
+                          <svg width="12" height="12" viewBox="0 0 16 16" fill={gold}>
+                            <path d="M6.5 12L2 7.5l1.4-1.4L6.5 9.2l6.1-6.1L14 4.5z"/>
+                          </svg>
+                        ) : step.icon}
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <div style={{
+                          fontSize: 12, fontWeight: isActive ? 600 : 400,
+                          color: isActive ? text1 : text2,
+                          fontFamily: "'Outfit'",
+                        }}>{step.label}</div>
+                        {(isActive || isDone) && (
+                          <div style={{
+                            fontSize: 9, color: text3, fontFamily: "'JetBrains Mono'",
+                            marginTop: 1, letterSpacing: 0.3,
+                          }}>{step.tech}</div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* === VIRTUE RECEIPT === */}
+          {showReceipt && (
+            <div style={{
+              marginTop: 16, borderRadius: 12, overflow: "hidden",
+              border: `1px solid ${isDark ? "#2A2520" : "#E8DCC8"}`,
+              animation: "fadeUp 0.5s ease",
+            }}>
+              {/* Receipt header */}
+              <div style={{
+                padding: "14px 24px",
+                background: isDark
+                  ? "linear-gradient(135deg, #1A1810, #1E1C14)"
+                  : "linear-gradient(135deg, #FBF7ED, #F5EDD8)",
+                display: "flex", alignItems: "center", justifyContent: "space-between",
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <svg width="18" height="18" viewBox="0 0 32 32">
+                    <rect width="32" height="32" rx="6" fill={gold}/>
+                    <text x="16" y="22" textAnchor="middle" fill="#0F1117" fontSize="14" fontWeight="800" fontFamily="Bricolage Grotesque">W</text>
+                  </svg>
+                  <span style={{
+                    fontFamily: "'Bricolage Grotesque'", fontWeight: 700, fontSize: 14, color: gold,
+                  }}>WINDI-RECEIPT</span>
+                </div>
+                <span style={{
+                  fontSize: 10, fontFamily: "'JetBrains Mono'", color: text3,
+                }}>{CRYPTO.receiptId}</span>
+              </div>
+
+              {/* Receipt body */}
+              <div style={{
+                padding: "20px 24px",
+                backgroundColor: isDark ? "#14161E" : "#FEFDFB",
+                display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px 32px",
+              }}>
+                {[
+                  { label: "Governance Level", value: CRYPTO.governanceLevel, color: "#EF4444" },
+                  { label: "SGE Score", value: CRYPTO.sgeScore.toFixed(2), color: "#F59E0B" },
+                  { label: "Ed25519 Signature", value: CRYPTO.ed25519.slice(0, 24) + "…" },
+                  { label: "Integrity Hash", value: CRYPTO.integrityHash },
+                  { label: "Merkle Root", value: CRYPTO.merkleRoot },
+                  { label: "ISP Context", value: CRYPTO.ispContext },
+                  { label: "Timestamp", value: CRYPTO.timestamp },
+                  { label: "Paperless Signature", value: "BOUND · VERIFIED", color: "#22C55E" },
+                ].map((item, i) => (
+                  <div key={i} style={{ animation: `fadeUp 0.3s ease ${i * 0.05}s both` }}>
+                    <div style={{
+                      fontSize: 9, color: text3, fontFamily: "'JetBrains Mono'",
+                      letterSpacing: 0.5, marginBottom: 3, fontWeight: 500,
+                      textTransform: "uppercase",
+                    }}>{item.label}</div>
+                    <div style={{
+                      fontSize: 12, color: item.color || text1,
+                      fontFamily: "'JetBrains Mono'", fontWeight: 500,
+                      wordBreak: "break-all",
+                    }}>{item.value}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Receipt footer */}
+              <div style={{
+                padding: "10px 24px",
+                backgroundColor: isDark ? "#12141C" : "#FAF8F2",
+                borderTop: `1px solid ${isDark ? "#2A2520" : "#E8DCC8"}`,
+                display: "flex", alignItems: "center", justifyContent: "space-between",
+              }}>
+                <span style={{
+                  fontSize: 9, color: text3, fontFamily: "'JetBrains Mono'", letterSpacing: 0.3,
+                }}>AI processes. Human decides. WINDI guarantees.</span>
+                <span style={{
+                  fontSize: 9, color: gold, fontFamily: "'JetBrains Mono'", fontWeight: 500,
+                }}>IMMUTABLE · AUDITABLE · SOVEREIGN</span>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* === BOTTOM BAR === */}
+      <div style={{
+        padding: "10px 24px", borderTop: `1px solid ${border}`,
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        backgroundColor: isDark ? "#12141C" : "#FAFBFC", zIndex: 20,
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <svg width="12" height="12" viewBox="0 0 16 16" fill={gold} opacity="0.5">
+            <path d="M8 1L2 4v4.5c0 3.5 2.6 6.8 6 7.5 3.4-.7 6-4 6-7.5V4L8 1z"/>
+          </svg>
+          <span style={{ fontSize: 10, color: text3, fontFamily: "'JetBrains Mono'" }}>
+            Geschützt durch WINDI Governance Layer · Ed25519 · SGE v1.0
+          </span>
+        </div>
+        <span style={{ fontSize: 10, color: text3, fontFamily: "'JetBrains Mono'" }}>
+          {CRYPTO.ispContext}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(React.createElement(WINDISealingRitual));
+</script>
+</body>
+</html>

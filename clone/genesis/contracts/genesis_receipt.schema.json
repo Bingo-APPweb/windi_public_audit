@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://windi.systems/schemas/genesis_receipt.v1.json",
+  "title": "WINDI Genesis Receipt",
+  "description": "Proof of system birth - generated on first a4Desk boot",
+  "type": "object",
+
+  "required": [
+    "event",
+    "timestamp_utc",
+    "clone_id",
+    "build",
+    "isp_dna",
+    "zk_boundary",
+    "i9",
+    "seal"
+  ],
+
+  "properties": {
+    "event": {
+      "type": "string",
+      "const": "A4DESK_GENESIS",
+      "description": "Event type identifier"
+    },
+
+    "timestamp_utc": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO8601 timestamp of genesis"
+    },
+
+    "clone_id": {
+      "type": "string",
+      "pattern": "^W-[0-9A-F]{32}$",
+      "description": "Unique clone identifier"
+    },
+
+    "build": {
+      "type": "object",
+      "required": ["app_version", "core_hash", "constitution_hash"],
+      "properties": {
+        "app_version": {
+          "type": "string",
+          "description": "Application version (semver)"
+        },
+        "core_hash": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$",
+          "description": "Hash of core bundle"
+        },
+        "constitution_hash": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$",
+          "description": "Hash of shelves P0-P7"
+        }
+      }
+    },
+
+    "isp_dna": {
+      "type": "object",
+      "required": ["active_profiles", "note"],
+      "properties": {
+        "active_profiles": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["profile_id", "jurisdiction", "level"],
+            "properties": {
+              "profile_id": {
+                "type": "string",
+                "description": "ISP profile identifier"
+              },
+              "jurisdiction": {
+                "type": "string",
+                "description": "Geographic jurisdiction (DE, EU, etc.)"
+              },
+              "level": {
+                "type": "string",
+                "enum": ["L1-STANDARD", "L2-ENTERPRISE", "L3-SOVEREIGN"],
+                "description": "Profile authority level"
+              },
+              "profile_hash": {
+                "type": "string",
+                "description": "Optional hash of profile data"
+              }
+            }
+          },
+          "description": "List of active ISP DNA profiles (metadata only)"
+        },
+        "profile_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of active profiles"
+        },
+        "note": {
+          "type": "string",
+          "const": "metadata-only; no document content",
+          "description": "ZK compliance note"
+        }
+      }
+    },
+
+    "zk_boundary": {
+      "type": "object",
+      "required": ["content_exfiltration", "allowed_outbound"],
+      "properties": {
+        "content_exfiltration": {
+          "type": "string",
+          "const": "FORBIDDEN",
+          "description": "Content never leaves the system"
+        },
+        "allowed_outbound": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["hashes", "ranges", "counts_buckets", "receipt_refs"]
+          },
+          "description": "What can be synced to Hub"
+        }
+      }
+    },
+
+    "i9": {
+      "type": "object",
+      "required": ["auto_apply", "decision_authority"],
+      "properties": {
+        "auto_apply": {
+          "type": "boolean",
+          "const": false,
+          "description": "System never auto-applies decisions"
+        },
+        "decision_authority": {
+          "type": "string",
+          "const": "human_only",
+          "description": "Only humans make decisions"
+        }
+      }
+    },
+
+    "three_dragons": {
+      "type": "object",
+      "properties": {
+        "witness": { "type": "string" },
+        "architect": { "type": "string" },
+        "guardian": { "type": "string" }
+      },
+      "description": "Three Dragons attestation"
+    },
+
+    "seal": {
+      "type": "object",
+      "required": ["genesis_seal", "ledger_ref"],
+      "properties": {
+        "genesis_seal": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "SHA-256 hash of receipt body"
+        },
+        "ledger_ref": {
+          "type": "string",
+          "pattern": "^LEDGER-GENESIS-[a-f0-9]{12}$",
+          "description": "Reference to ledger entry"
+        }
+      }
+    }
+  }
+}

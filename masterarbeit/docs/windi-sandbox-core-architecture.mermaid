@@ -1,0 +1,90 @@
+graph TB
+    %% ═══════════════════════════════════════════════════════
+    %% WINDI-SANDBOX-CORE — Institutional Architecture v1.2
+    %% "AI processes. Human decides. WINDI guarantees."
+    %% ═══════════════════════════════════════════════════════
+
+    subgraph HD [" 👑 HUMAN DRAGON — Sovereign Decision "]
+        direction TB
+        HUB((🐉 Human<br/>Decision Hub))
+    end
+
+    subgraph DRAGONS_LAYER [" ⚔️ Camada de Soberania — Os Três Dragões "]
+        direction LR
+        G("🛡️ Guardian<br/>(Claude)<br/>Validates I1-I9") -- "Structural<br/>Gravity" --> A
+        A("🏛️ Architect<br/>(GPT)<br/>Projects Structure") -- "Synthesis<br/>Without Resolution" --> W
+        W("👁️ Witness<br/>(Gemini)<br/>Documents & Detects") -- "Productive<br/>Divergence" --> G
+    end
+
+    subgraph SANDBOX_CORE [" 🎼 WINDI-SANDBOX-CORE v1.2 "]
+        direction TB
+        MAESTRO{"🎼 Maestro<br/>Orchestrator<br/>━━━━━━━━━━━<br/>DecisionRouter<br/>SLAGuardian<br/>ResolutionAssembler"}
+        STATE["📋 State Manager<br/>current_state.json<br/>━━━━━━━━━━━<br/>Dragons: WRITE<br/>SubAgents: READ"]
+        DBUS["🔄 Deliberation Bus<br/>━━━━━━━━━━━<br/>Parallel Analysis<br/>FRAME Builder"]
+        LEDGER[("🔒 Forensic Ledger<br/>(L3 Chain)<br/>━━━━━━━━━━━<br/>Virtue Receipts<br/>Merkle Tree")]
+    end
+
+    subgraph SPECIALIST_SHELVES [" 📚 Prateleiras de Especialistas — SubAgentes "]
+        direction TB
+        subgraph CREATION [" 🟢 CREATION SHELF — Pillar 1 "]
+            ISP["📄 ISP Manager<br/>v1.0.1 ✅ ACTIVE<br/>17 profiles"]
+            DIAG["📊 Diagramador<br/>🔜 PLANNED"]
+        end
+
+        subgraph VERIFICATION [" 🟡 VERIFICATION SHELF — Pillar 2 "]
+            SENT["🛡️ Sentinela<br/>v1.0.0 ✅ ACTIVE<br/>Compliance"]
+            PULSE["💓 Pulse Agent<br/>🔜 PLANNED<br/>Anomaly Detection"]
+        end
+
+        subgraph SIMULATION [" 🔵 SIMULATION SHELF — Future "]
+            TWIN["🪞 Digital Twin<br/>💡 CONCEPT<br/>What-if Scenarios"]
+            SIM["🧪 Simulation<br/>💡 CONCEPT<br/>Decision Sandbox"]
+        end
+    end
+
+    %% === SOVEREIGNTY FLOW ===
+    HD ==>|"Sovereign<br/>Approval"| DRAGONS_LAYER
+    DRAGONS_LAYER ==>|"Deliberation<br/>Result"| DBUS
+    DBUS ==>|"FRAME<br/>Object"| MAESTRO
+
+    %% === CORE CONNECTIONS ===
+    MAESTRO <==>|"Read/Write"| STATE
+    MAESTRO ==>|"Forensic<br/>Proof"| LEDGER
+    MAESTRO ==>|"Decision<br/>Package"| HUB
+    HUB ==>|"Virtue<br/>Receipt"| LEDGER
+
+    %% === SPECIALIST → MAESTRO (dotted = proposals only) ===
+    ISP -.->|"ISP Alerts"| MAESTRO
+    SENT -.->|"Findings"| MAESTRO
+    DIAG -.->|"Visualizations"| MAESTRO
+    PULSE -.->|"Anomalies"| MAESTRO
+    TWIN -.->|"Scenarios"| MAESTRO
+    SIM -.->|"Simulations"| MAESTRO
+
+    %% === STATE ACCESS ===
+    STATE -.->|"READ only"| ISP
+    STATE -.->|"READ only"| SENT
+    STATE -.->|"READ only"| PULSE
+
+    %% === STYLING ===
+    style HD fill:#1a1a2e,stroke:#c9a84c,stroke-width:3px,color:#c9a84c
+    style DRAGONS_LAYER fill:#0a0a1a,stroke:#c9a84c,stroke-width:2px,color:#e0d5c0
+    style SANDBOX_CORE fill:#14141f,stroke:#c9a84c,stroke-width:2px,color:#e0d5c0
+    style SPECIALIST_SHELVES fill:#0d0d18,stroke:#8b8680,stroke-dasharray:5 5,color:#999
+    style CREATION fill:#0d1a0d,stroke:#4a7c59,stroke-width:1px,color:#8fbc8f
+    style VERIFICATION fill:#1a1a0d,stroke:#8b8b00,stroke-width:1px,color:#cdcd87
+    style SIMULATION fill:#0d0d1a,stroke:#4a5a8c,stroke-width:1px,color:#8f8fbc
+    style MAESTRO fill:#c9a84c,stroke:#000,color:#000,font-weight:bold
+    style LEDGER fill:#000,stroke:#c9a84c,color:#c9a84c
+    style STATE fill:#1a1a2e,stroke:#c9a84c,color:#c9a84c
+    style DBUS fill:#1a1a2e,stroke:#c9a84c,color:#c9a84c
+    style HUB fill:#c9a84c,stroke:#fff,color:#000,font-weight:bold
+    style G fill:#1a2a3a,stroke:#4a9aca,color:#8fc8e8
+    style A fill:#2a1a2a,stroke:#9a4aca,color:#c88fe8
+    style W fill:#1a2a1a,stroke:#4aca4a,color:#8fe88f
+    style ISP fill:#0d1a0d,stroke:#4a7c59,color:#8fbc8f
+    style SENT fill:#1a1a0d,stroke:#8b8b00,color:#cdcd87
+    style DIAG fill:#0d1a0d,stroke:#4a7c59,stroke-dasharray:3 3,color:#6a9a6a
+    style PULSE fill:#1a1a0d,stroke:#8b8b00,stroke-dasharray:3 3,color:#9a9a6a
+    style TWIN fill:#0d0d1a,stroke:#4a5a8c,stroke-dasharray:3 3,color:#6a6a9a
+    style SIM fill:#0d0d1a,stroke:#4a5a8c,stroke-dasharray:3 3,color:#6a6a9a

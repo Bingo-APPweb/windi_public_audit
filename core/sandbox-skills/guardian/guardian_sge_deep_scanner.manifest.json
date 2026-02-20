@@ -1,0 +1,15 @@
+{
+  "skill_id": "sge_deep_scanner",
+  "name": "SGE Deep Scanner",
+  "version": "1.0.0",
+  "domain": "guardian",
+  "capability": "sge_scan",
+  "description": "6-layer SGE scanner for DSGVO/GDPR",
+  "author_dragon": "Guardian (Claude)",
+  "integrity_hash": "869cf265d53c64040a26af316c8df9f5ca458871486503dacdc21b819eb930f5",
+  "baptism_date": "2026-02-10T11:01:47.964959+00:00",
+  "i9_certified": true,
+  "constitutional_gate": true,
+  "dependencies": [],
+  "metadata": {}
+}

@@ -1,0 +1,37 @@
+{
+  "registry_version": "1.0.0",
+  "created": "2026-02-07",
+  "updated": "2026-02-08",
+  "principle": "AI processes. Human decides. WINDI guarantees.",
+  "protocol": "Three Dragons — Claude=Guardian, GPT=Architect, Gemini=Witness",
+  "invariants_enforced": ["I1", "I2", "I3", "I4", "I5", "I6", "I7", "I8", "I9"],
+  "agents": [
+    {
+      "agent_id": "windi://agent/core/isp-manager",
+      "name": "ISP Manager Agent",
+      "version": "1.0.0",
+      "status": "active",
+      "layer_priority": 2,
+      "path": "agents/isp-manager/",
+      "port": null,
+      "description": "Manages ISP lifecycle: scan, validate, drift-check, draft patches",
+      "execution_mode": "human-mediated"
+    }
+  ],
+  "reserved_slots": [
+    {
+      "agent_id": "windi://agent/core/compliance-checker",
+      "name": "Compliance Checker Agent",
+      "status": "planned",
+      "layer_priority": 3,
+      "description": "Validates documents against SGE rulesets per ISP"
+    },
+    {
+      "agent_id": "windi://agent/core/diagramador-isp",
+      "name": "Diagramador ISP",
+      "status": "planned",
+      "layer_priority": 2,
+      "description": "Visual layout agent for institutional document form"
+    }
+  ]
+}

@@ -1,0 +1,168 @@
+# ═══════════════════════════════════════════════════════════════════
+# WINDI Phase 3: Federation Core — Docker Compose
+# ═══════════════════════════════════════════════════════════════════
+# Services:
+#   - hub-node-registry    :8070  Node identity & attestation
+#   - hub-issuer-sync      :8071  Issuer registry sync
+#   - hub-anchor-receiver  :8072  Anchor federation
+#   - transparency-log     :8073  Hash-chain log (legacy)
+#   - merkle-anchor-log    :8074  CT-style Merkle Transparency Log
+#   - postgres             :5432  Database
+# ═══════════════════════════════════════════════════════════════════
+
+version: '3.8'
+
+services:
+  # ─── Hub Node Registry ─────────────────────────────────────────────
+  hub-node-registry:
+    build:
+      context: ./hub-node-registry
+      dockerfile: Dockerfile
+    container_name: windi-hub-node-registry
+    ports:
+      - "8070:8070"
+    environment:
+      - PORT=8070
+      - DATABASE_URL=postgresql://windi:windi@postgres:5432/windi_hub
+      - HUB_SIGNING_KEY=${HUB_SIGNING_KEY:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - windi-federation
+    restart: unless-stopped
+
+  # ─── Hub Issuer Sync ───────────────────────────────────────────────
+  hub-issuer-sync:
+    build:
+      context: ./issuer-registry-sync
+      dockerfile: Dockerfile
+    container_name: windi-hub-issuer-sync
+    ports:
+      - "8071:8071"
+    environment:
+      - SYNC_PORT=8071
+      - DATABASE_URL=postgresql://windi:windi@postgres:5432/windi_hub
+      - REQUIRE_NODE_AUTH=true
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - windi-federation
+    restart: unless-stopped
+
+  # ─── Hub Anchor Receiver ───────────────────────────────────────────
+  hub-anchor-receiver:
+    build:
+      context: ./anchor-federation
+      dockerfile: Dockerfile
+    container_name: windi-hub-anchor-receiver
+    ports:
+      - "8072:8072"
+    environment:
+      - ANCHOR_PORT=8072
+      - DATABASE_URL=postgresql://windi:windi@postgres:5432/windi_hub
+      - HUB_SIGNING_KEY=${HUB_SIGNING_KEY:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - windi-federation
+    restart: unless-stopped
+
+  # ─── Merkle Transparency Log (Legacy Hash-Chain) ──────────────────
+  transparency-log:
+    build:
+      context: ./merkle-transparency-log
+      dockerfile: Dockerfile
+    container_name: windi-transparency-log
+    ports:
+      - "8073:8073"
+    environment:
+      - LOG_PORT=8073
+      - DATABASE_URL=postgresql://windi:windi@postgres:5432/windi_hub
+      - LOG_SIGNING_KEY=${LOG_SIGNING_KEY:-}
+      - LOG_ID=windi-transparency-log-01
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - windi-federation
+    restart: unless-stopped
+
+  # ─── CT-Style Merkle Anchor Log (Phase 3B) ───────────────────────
+  merkle-anchor-log:
+    build:
+      context: ./windi-merkle-anchor-log
+      dockerfile: Dockerfile
+    container_name: windi-merkle-anchor-log
+    ports:
+      - "4051:4051"
+    environment:
+      - PORT=4051
+      - DATABASE_URL=postgresql://windi:windi@postgres:5432/windi_hub
+      - LOG_SIGNING_KEY_PATH=/run/secrets/log_signing_key.pem
+      - LOG_KEY_ID=hub-log-2026
+    volumes:
+      - ./mtls/certs/log_signing_key.pem:/run/secrets/log_signing_key.pem:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - windi-federation
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:4051/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # ─── PostgreSQL ────────────────────────────────────────────────────
+  postgres:
+    image: postgres:15-alpine
+    container_name: windi-postgres
+    environment:
+      - POSTGRES_USER=windi
+      - POSTGRES_PASSWORD=windi
+      - POSTGRES_DB=windi_hub
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./hub-node-registry/sql/001_schema.sql:/docker-entrypoint-initdb.d/001_nodes.sql:ro
+      - ./issuer-registry-sync/sql/001_sync_schema.sql:/docker-entrypoint-initdb.d/002_issuers.sql:ro
+      - ./windi-merkle-anchor-log/sql/001_schema.sql:/docker-entrypoint-initdb.d/003_merkle.sql:ro
+    ports:
+      - "5432:5432"
+    networks:
+      - windi-federation
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U windi -d windi_hub"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ─── Nginx Reverse Proxy (mTLS ready) ──────────────────────────────
+  nginx:
+    image: nginx:alpine
+    container_name: windi-nginx
+    ports:
+      - "443:443"
+      - "80:80"
+    volumes:
+      - ./mtls/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./mtls/certs:/etc/nginx/certs:ro
+    depends_on:
+      - hub-node-registry
+      - hub-issuer-sync
+      - hub-anchor-receiver
+      - merkle-anchor-log
+    networks:
+      - windi-federation
+    restart: unless-stopped
+
+networks:
+  windi-federation:
+    driver: bridge
+
+volumes:
+  postgres-data:

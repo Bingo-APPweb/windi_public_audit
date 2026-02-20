@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI Suite — Guten Tag</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Outfit', sans-serif; }
+  #root { min-height: 100vh; }
+</style>
+<script>
+  // Polyfill for window.storage (used in artifacts with persistent storage)
+  if (!window.storage) {
+    const _store = {};
+    window.storage = {
+      get: async (k) => { if (_store[k]) return { key: k, value: _store[k] }; throw new Error('not found'); },
+      set: async (k, v) => { _store[k] = v; return { key: k, value: v }; },
+      delete: async (k) => { delete _store[k]; return { key: k, deleted: true }; },
+      list: async (prefix) => { const keys = Object.keys(_store).filter(k => !prefix || k.startsWith(prefix)); return { keys }; },
+    };
+  }
+</script>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback, useMemo } = React;
+
+
+const FONTS_CSS = `
+  @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+`;
+
+// === WINDI SUITE DATA ===
+const SUITE_APPS = [
+  { id: "dokumente", label: "Dokumente", icon: "doc", color: "#2B5797" },
+  { id: "tabellen", label: "Tabellen", icon: "sheet", color: "#217346" },
+  { id: "prasentationen", label: "Präsentationen", icon: "slides", color: "#B7472A" },
+];
+
+const TEMPLATES = {
+  dokumente: [
+    { id: "blank", name: "Leeres Dokument", desc: "Beginnen Sie von Grund auf", icon: "blank", governance: "LOW" },
+    { id: "bescheid", name: "Bescheid", desc: "Amtliche Mitteilung", icon: "official", governance: "HIGH" },
+    { id: "vertrag", name: "Vertrag", desc: "Vertragsvorlage", icon: "contract", governance: "HIGH" },
+    { id: "bericht", name: "Bericht", desc: "Geschäftsbericht", icon: "report", governance: "MEDIUM" },
+    { id: "brief", name: "Geschäftsbrief", desc: "Formeller Brief", icon: "letter", governance: "LOW" },
+    { id: "protokoll", name: "Protokoll", desc: "Sitzungsprotokoll", icon: "minutes", governance: "MEDIUM" },
+  ],
+  tabellen: [
+    { id: "blank-t", name: "Leere Tabelle", desc: "Neue Arbeitsmappe", icon: "blank", governance: "LOW" },
+    { id: "budget", name: "Budget", desc: "Finanzplanung", icon: "finance", governance: "HIGH" },
+    { id: "inventar", name: "Inventar", desc: "Bestandsverwaltung", icon: "inventory", governance: "MEDIUM" },
+    { id: "zeitplan", name: "Zeitplan", desc: "Projektplanung", icon: "schedule", governance: "LOW" },
+  ],
+  prasentationen: [
+    { id: "blank-p", name: "Leere Präsentation", desc: "Neue Folien", icon: "blank", governance: "LOW" },
+    { id: "pitch", name: "Pitch Deck", desc: "Geschäftspräsentation", icon: "pitch", governance: "MEDIUM" },
+    { id: "quartals", name: "Quartalsbericht", desc: "Q-Reporting", icon: "quarterly", governance: "HIGH" },
+    { id: "schulung", name: "Schulung", desc: "Trainingsmaterial", icon: "training", governance: "LOW" },
+  ],
+};
+
+const RECENT_DOCS = {
+  dokumente: [
+    { name: "ECB Model Risk Assessment", date: "15. Feb 2026", governance: "HIGH", sge: 0.94, status: "sealed" },
+    { name: "Deutsche Bahn Compliance Report", date: "14. Feb 2026", governance: "HIGH", sge: 0.87, status: "sealed" },
+    { name: "Internes Memorandum Q1", date: "12. Feb 2026", governance: "MEDIUM", sge: 0.72, status: "sealed" },
+    { name: "Projektplan WINDI Phase 3", date: "10. Feb 2026", governance: "LOW", sge: 0.45, status: "draft" },
+    { name: "Bescheid BaFin Anfrage", date: "08. Feb 2026", governance: "HIGH", sge: 0.91, status: "sealed" },
+  ],
+  tabellen: [
+    { name: "Budget Forecast 2026", date: "13. Feb 2026", governance: "HIGH", sge: 0.88, status: "sealed" },
+    { name: "Inventarliste Büro Kempten", date: "09. Feb 2026", governance: "LOW", sge: 0.31, status: "draft" },
+    { name: "Personalplanung Q2", date: "05. Feb 2026", governance: "MEDIUM", sge: 0.65, status: "sealed" },
+  ],
+  prasentationen: [
+    { name: "Investor Pitch v3", date: "11. Feb 2026", governance: "HIGH", sge: 0.92, status: "sealed" },
+    { name: "Team Onboarding Slides", date: "07. Feb 2026", governance: "LOW", sge: 0.28, status: "draft" },
+  ],
+};
+
+// === ICON COMPONENTS ===
+const DocIcon = ({ type, color, size = 64 }) => {
+  const icons = {
+    blank: (
+      <svg width={size} height={size} viewBox="0 0 64 64" fill="none">
+        <rect x="12" y="4" width="40" height="56" rx="3" fill="white" stroke="#D0D0D0" strokeWidth="1.5"/>
+        <line x1="20" y1="18" x2="44" y2="18" stroke="#E8E8E8" strokeWidth="2" strokeLinecap="round"/>
+        <line x1="20" y1="26" x2="44" y2="26" stroke="#E8E8E8" strokeWidth="2" strokeLinecap="round"/>
+        <line x1="20" y1="34" x2="36" y2="34" stroke="#E8E8E8" strokeWidth="2" strokeLinecap="round"/>
+        <rect x="37" y="39" width="20" height="20" rx="10" fill={color} opacity="0.12"/>
+        <text x="47" y="53" textAnchor="middle" fill={color} fontSize="13" fontWeight="700" fontFamily="Outfit">+</text>
+      </svg>
+    ),
+    official: (
+      <svg width={size} height={size} viewBox="0 0 64 64" fill="none">
+        <rect x="12" y="4" width="40" height="56" rx="3" fill="white" stroke="#D0D0D0" strokeWidth="1.5"/>
+        <rect x="12" y="4" width="40" height="14" rx="3" fill={color}/>
+        <circle cx="32" cy="11" r="4" fill="white" opacity="0.9"/>
+        <line x1="20" y1="26" x2="44" y2="26" stroke="#E0E0E0" strokeWidth="2" strokeLinecap="round"/>
+        <line x1="20" y1="33" x2="44" y2="33" stroke="#E0E0E0" strokeWidth="2" strokeLinecap="round"/>
+        <line x1="20" y1="40" x2="38" y2="40" stroke="#E0E0E0" strokeWidth="2" strokeLinecap="round"/>
+        <rect x="20" y="47" width="24" height="6" rx="1" fill={color} opacity="0.15"/>
+      </svg>
+    ),
+    contract: (
+      <svg width={size} height={size} viewBox="0 0 64 64" fill="none">
+        <rect x="12" y="4" width="40" height="56" rx="3" fill="white" stroke="#D0D0D0" strokeWidth="1.5"/>
+        <line x1="20" y1="15" x2="44" y2="15" stroke="#E0E0E0" strokeWidth="2" strokeLinecap="round"/>
+        <line x1="20" y1="22" x2="44" y2="22" stroke="#E0E0E0" strokeWidth="2" strokeLinecap="round"/>
+        <line x1="20" y1="29" x2="44" y2="29" stroke="#E0E0E0" strokeWidth="2" strokeLinecap="round"/>
+        <line x1="20" y1="36" x2="36" y2="36" stroke="#E0E0E0" strokeWidth="2" strokeLinecap="round"/>
+        <path d="M22 48 Q28 42 34 48 Q40 54 46 48" stroke={color} strokeWidth="2" fill="none" strokeLinecap="round"/>
+        <circle cx="46" cy="48" r="2" fill={color}/>
+      </svg>
+    ),
+    report: (
+      <svg width={size} height={size} viewBox="0 0 64 64" fill="none">
+        <rect x="12" y="4" width="40" height="56" rx="3" fill="white" stroke="#D0D0D0" strokeWidth="1.5"/>
+        <rect x="20" y="12" width="6" height="20" rx="1" fill={color} opacity="0.3"/>
+        <rect x="29" y="18" width="6" height="14" rx="1" fill={color} opacity="0.5"/>
+        <rect x="38" y="8" width="6" height="24" rx="1" fill={color} opacity="0.7"/>
+        <line x1="20" y1="40" x2="44" y2="40" stroke="#E0E0E0" strokeWidth="2" strokeLinecap="round"/>
+        <line x1="20" y1="47" x2="38" y2="47" stroke="#E0E0E0" strokeWidth="2" strokeLinecap="round"/>
+      </svg>
+    ),
+    letter: (
+      <svg width={size} height={size} viewBox="0 0 64 64" fill="none">
+        <rect x="12" y="4" width="40" height="56" rx="3" fill="white" stroke="#D0D0D0" strokeWidth="1.5"/>
+        <rect x="20" y="10" width="12" height="3" rx="1" fill={color} opacity="0.6"/>
+        <line x1="20" y1="22" x2="44" y2="22" stroke="#E0E0E0" strokeWidth="2" strokeLinecap="round"/>
+        <line x1="20" y1="29" x2="44" y2="29" stroke="#E0E0E0" strokeWidth="2" strokeLinecap="round"/>
+        <line x1="20" y1="36" x2="44" y2="36" stroke="#E0E0E0" strokeWidth="2" strokeLinecap="round"/>
+        <line x1="20" y1="43" x2="30" y2="43" stroke="#E0E0E0" strokeWidth="2" strokeLinecap="round"/>
+      </svg>
+    ),
+    minutes: (
+      <svg width={size} height={size} viewBox="0 0 64 64" fill="none">
+        <rect x="12" y="4" width="40" height="56" rx="3" fill="white" stroke="#D0D0D0" strokeWidth="1.5"/>
+        <circle cx="24" cy="16" r="3" stroke={color} strokeWidth="1.5" fill="none"/>
+        <line x1="30" y1="16" x2="44" y2="16" stroke="#E0E0E0" strokeWidth="2" strokeLinecap="round"/>
+        <circle cx="24" cy="28" r="3" stroke={color} strokeWidth="1.5" fill={color} opacity="0.3"/>
+        <line x1="30" y1="28" x2="44" y2="28" stroke="#E0E0E0" strokeWidth="2" strokeLinecap="round"/>
+        <circle cx="24" cy="40" r="3" stroke={color} strokeWidth="1.5" fill="none"/>
+        <line x1="30" y1="40" x2="40" y2="40" stroke="#E0E0E0" strokeWidth="2" strokeLinecap="round"/>
+      </svg>
+    ),
+    finance: (
+      <svg width={size} height={size} viewBox="0 0 64 64" fill="none">
+        <rect x="12" y="4" width="40" height="56" rx="3" fill="white" stroke="#D0D0D0" strokeWidth="1.5"/>
+        <text x="32" y="35" textAnchor="middle" fill={color} fontSize="22" fontWeight="700" fontFamily="Outfit">€</text>
+        <rect x="18" y="44" width="28" height="1.5" rx="0.5" fill="#E0E0E0"/>
+        <rect x="18" y="49" width="20" height="1.5" rx="0.5" fill="#E0E0E0"/>
+      </svg>
+    ),
+    inventory: (
+      <svg width={size} height={size} viewBox="0 0 64 64" fill="none">
+        <rect x="12" y="4" width="40" height="56" rx="3" fill="white" stroke="#D0D0D0" strokeWidth="1.5"/>
+        <rect x="18" y="12" width="28" height="8" rx="1" stroke={color} strokeWidth="1.2" fill={color} opacity="0.08"/>
+        <rect x="18" y="24" width="28" height="8" rx="1" stroke={color} strokeWidth="1.2" fill={color} opacity="0.08"/>
+        <rect x="18" y="36" width="28" height="8" rx="1" stroke={color} strokeWidth="1.2" fill={color} opacity="0.08"/>
+      </svg>
+    ),
+    schedule: (
+      <svg width={size} height={size} viewBox="0 0 64 64" fill="none">
+        <rect x="12" y="4" width="40" height="56" rx="3" fill="white" stroke="#D0D0D0" strokeWidth="1.5"/>
+        <rect x="18" y="10" width="28" height="6" rx="1" fill={color} opacity="0.7"/>
+        <line x1="26" y1="22" x2="26" y2="50" stroke="#E8E8E8" strokeWidth="1"/>
+        <line x1="38" y1="22" x2="38" y2="50" stroke="#E8E8E8" strokeWidth="1"/>
+        <line x1="18" y1="30" x2="46" y2="30" stroke="#E8E8E8" strokeWidth="1"/>
+        <line x1="18" y1="38" x2="46" y2="38" stroke="#E8E8E8" strokeWidth="1"/>
+        <rect x="28" y="24" width="8" height="4" rx="1" fill={color} opacity="0.25"/>
+      </svg>
+    ),
+    pitch: (
+      <svg width={size} height={size} viewBox="0 0 64 64" fill="none">
+        <rect x="8" y="10" width="48" height="36" rx="3" fill="white" stroke="#D0D0D0" strokeWidth="1.5"/>
+        <rect x="8" y="10" width="48" height="10" rx="3" fill={color}/>
+        <text x="32" y="18" textAnchor="middle" fill="white" fontSize="7" fontWeight="600" fontFamily="Outfit">PITCH</text>
+        <rect x="14" y="28" width="18" height="3" rx="1" fill="#E0E0E0"/>
+        <rect x="14" y="34" width="14" height="3" rx="1" fill="#E0E0E0"/>
+        <circle cx="46" cy="34" r="6" fill={color} opacity="0.15"/>
+        <rect x="24" y="50" width="16" height="3" rx="1.5" fill="#D0D0D0"/>
+      </svg>
+    ),
+    quarterly: (
+      <svg width={size} height={size} viewBox="0 0 64 64" fill="none">
+        <rect x="8" y="10" width="48" height="36" rx="3" fill="white" stroke="#D0D0D0" strokeWidth="1.5"/>
+        <rect x="14" y="18" width="5" height="16" rx="1" fill={color} opacity="0.3"/>
+        <rect x="22" y="22" width="5" height="12" rx="1" fill={color} opacity="0.5"/>
+        <rect x="30" y="16" width="5" height="18" rx="1" fill={color} opacity="0.7"/>
+        <rect x="38" y="14" width="5" height="20" rx="1" fill={color} opacity="0.9"/>
+        <line x1="14" y1="38" x2="46" y2="38" stroke="#E0E0E0" strokeWidth="1"/>
+        <rect x="24" y="50" width="16" height="3" rx="1.5" fill="#D0D0D0"/>
+      </svg>
+    ),
+    training: (
+      <svg width={size} height={size} viewBox="0 0 64 64" fill="none">
+        <rect x="8" y="10" width="48" height="36" rx="3" fill="white" stroke="#D0D0D0" strokeWidth="1.5"/>
+        <circle cx="32" cy="26" r="8" stroke={color} strokeWidth="1.5" fill={color} opacity="0.1"/>
+        <polygon points="30,22 30,30 37,26" fill={color}/>
+        <rect x="20" y="38" width="24" height="2" rx="1" fill="#E0E0E0"/>
+        <rect x="24" y="50" width="16" height="3" rx="1.5" fill="#D0D0D0"/>
+      </svg>
+    ),
+  };
+  return icons[type] || icons.blank;
+};
+
+// === STATUS INDICATORS ===
+const GovernanceDot = ({ level }) => {
+  const colors = { LOW: "#22C55E", MEDIUM: "#F59E0B", HIGH: "#EF4444" };
+  return (
+    <span style={{
+      display: "inline-block", width: 8, height: 8, borderRadius: "50%",
+      backgroundColor: colors[level] || "#999", marginRight: 6, flexShrink: 0,
+    }}/>
+  );
+};
+
+const SealBadge = ({ status }) => {
+  if (status !== "sealed") return null;
+  return (
+    <span style={{
+      display: "inline-flex", alignItems: "center", gap: 3,
+      fontSize: 10, color: "#C9A84C", fontFamily: "JetBrains Mono",
+      letterSpacing: 0.5, fontWeight: 500, opacity: 0.8,
+    }}>
+      <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M8 0l2.2 5.5L16 6.1l-4 3.7 1 5.7L8 12.8l-5 2.7 1-5.7-4-3.7 5.8-.6z"/>
+      </svg>
+      SEALED
+    </span>
+  );
+};
+
+// === MAIN COMPONENT ===
+function WINDISuite() {
+  const [theme, setTheme] = useState("klar");
+  const [activeApp, setActiveApp] = useState("dokumente");
+  const [hoveredTemplate, setHoveredTemplate] = useState(null);
+  const [selectedDoc, setSelectedDoc] = useState(null);
+  const [showGovernance, setShowGovernance] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  const [time, setTime] = useState(new Date());
+
+  useEffect(() => { setLoaded(true); }, []);
+  useEffect(() => {
+    const t = setInterval(() => setTime(new Date()), 60000);
+    return () => clearInterval(t);
+  }, []);
+
+  const isDark = theme === "noir";
+  const appColor = SUITE_APPS.find(a => a.id === activeApp)?.color || "#2B5797";
+  const templates = TEMPLATES[activeApp] || [];
+  const recentDocs = RECENT_DOCS[activeApp] || [];
+
+  const greeting = () => {
+    const h = time.getHours();
+    if (h < 12) return "Guten Morgen";
+    if (h < 17) return "Guten Tag";
+    return "Guten Abend";
+  };
+
+  const bg = isDark ? "#0F1117" : "#FAFBFC";
+  const surface = isDark ? "#1A1D27" : "#FFFFFF";
+  const surfaceHover = isDark ? "#22263A" : "#F5F6F8";
+  const text1 = isDark ? "#F0F0F0" : "#1A1A2E";
+  const text2 = isDark ? "#A0A4B8" : "#6B7280";
+  const text3 = isDark ? "#6B7080" : "#9CA3AF";
+  const border = isDark ? "#2A2D3A" : "#E5E7EB";
+  const gold = "#C9A84C";
+  const sidebarBg = isDark ? "#14161E" : "#F0F1F4";
+
+  return (
+    <div style={{
+      fontFamily: "'Outfit', sans-serif", backgroundColor: bg, color: text1,
+      minHeight: "100vh", display: "flex", flexDirection: "column",
+      opacity: loaded ? 1 : 0, transition: "opacity 0.6s ease",
+    }}>
+      <style>{FONTS_CSS}</style>
+      <style>{`
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: ${border}; border-radius: 3px; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulseGold { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+        .tmpl-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+        .doc-row:hover { background: ${surfaceHover} !important; }
+      `}</style>
+
+      {/* === TOP BAR === */}
+      <div style={{
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        padding: "0 24px", height: 48, borderBottom: `1px solid ${border}`,
+        backgroundColor: isDark ? "#12141C" : "#FFFFFF",
+      }}>
+        {/* Left: WINDI wordmark */}
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <div style={{
+            display: "flex", alignItems: "center", gap: 8,
+          }}>
+            <svg width="22" height="22" viewBox="0 0 32 32" fill="none">
+              <rect width="32" height="32" rx="6" fill={gold}/>
+              <text x="16" y="22" textAnchor="middle" fill="#0F1117" fontSize="16" fontWeight="800" fontFamily="Bricolage Grotesque">W</text>
+            </svg>
+            <span style={{
+              fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 700,
+              fontSize: 16, color: text1, letterSpacing: -0.5,
+            }}>WINDI</span>
+            <span style={{
+              fontSize: 10, color: text3, fontFamily: "'JetBrains Mono'",
+              padding: "1px 6px", borderRadius: 4,
+              backgroundColor: isDark ? "#1E2030" : "#F0F1F4",
+            }}>Suite</span>
+          </div>
+
+          {/* App tabs */}
+          <div style={{ display: "flex", gap: 2, marginLeft: 20 }}>
+            {SUITE_APPS.map(app => (
+              <button key={app.id} onClick={() => setActiveApp(app.id)} style={{
+                padding: "6px 16px", borderRadius: 6, border: "none", cursor: "pointer",
+                fontSize: 13, fontWeight: activeApp === app.id ? 600 : 400,
+                fontFamily: "'Outfit'",
+                backgroundColor: activeApp === app.id ? (isDark ? "#1E2030" : "#F0F1F4") : "transparent",
+                color: activeApp === app.id ? app.color : text2,
+                borderBottom: activeApp === app.id ? `2px solid ${app.color}` : "2px solid transparent",
+                transition: "all 0.2s ease",
+              }}>
+                {app.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Right: controls */}
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          {/* Governance toggle */}
+          <button onClick={() => setShowGovernance(!showGovernance)} style={{
+            display: "flex", alignItems: "center", gap: 5,
+            padding: "4px 10px", borderRadius: 6, border: `1px solid ${border}`,
+            backgroundColor: showGovernance ? (isDark ? "#2A2520" : "#FFF9E8") : "transparent",
+            color: showGovernance ? gold : text3, fontSize: 11, cursor: "pointer",
+            fontFamily: "'JetBrains Mono'", fontWeight: 500,
+          }}>
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor" opacity={showGovernance ? 1 : 0.5}>
+              <path d="M8 1L2 4v4.5c0 3.5 2.6 6.8 6 7.5 3.4-.7 6-4 6-7.5V4L8 1zm0 2.2l4 2v3.3c0 2.7-1.9 5.2-4 5.9-2.1-.7-4-3.2-4-5.9V5.2l4-2z"/>
+            </svg>
+            {showGovernance ? "GOV ON" : "GOV"}
+          </button>
+
+          {/* Theme toggle */}
+          <button onClick={() => setTheme(isDark ? "klar" : "noir")} style={{
+            width: 32, height: 32, borderRadius: 8, border: `1px solid ${border}`,
+            backgroundColor: "transparent", cursor: "pointer", display: "flex",
+            alignItems: "center", justifyContent: "center", color: text2,
+          }}>
+            {isDark ? "☀" : "●"}
+          </button>
+
+          {/* User avatar */}
+          <div style={{
+            width: 32, height: 32, borderRadius: 8, backgroundColor: gold,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            color: "#0F1117", fontWeight: 700, fontSize: 13,
+            fontFamily: "'Bricolage Grotesque'",
+          }}>JM</div>
+        </div>
+      </div>
+
+      {/* === MAIN CONTENT === */}
+      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+        {/* Greeting + New section */}
+        <div style={{
+          padding: "40px 48px 20px",
+          animation: "fadeUp 0.5s ease",
+        }}>
+          <h1 style={{
+            fontFamily: "'Bricolage Grotesque', sans-serif",
+            fontSize: 32, fontWeight: 300, color: text1, marginBottom: 4,
+            letterSpacing: -1,
+          }}>
+            {greeting()}, <span style={{ fontWeight: 700 }}>Jober</span>
+          </h1>
+          <p style={{ color: text3, fontSize: 14, marginBottom: 32 }}>
+            Was möchten Sie heute erstellen?
+          </p>
+
+          {/* Templates */}
+          <div style={{
+            display: "flex", alignItems: "center", gap: 6, marginBottom: 16,
+          }}>
+            <span style={{ fontSize: 13, fontWeight: 600, color: text2, letterSpacing: 0.5 }}>
+              Neu
+            </span>
+            <span style={{
+              fontSize: 10, color: text3, fontFamily: "'JetBrains Mono'",
+              padding: "1px 5px", borderRadius: 3,
+              backgroundColor: isDark ? "#1E2030" : "#F0F1F4",
+            }}>
+              {templates.length} Vorlagen
+            </span>
+          </div>
+
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: `repeat(${Math.min(templates.length, 6)}, minmax(120px, 150px))`,
+            gap: 16, marginBottom: 8,
+          }}>
+            {templates.map((t, i) => (
+              <div key={t.id} className="tmpl-card"
+                onMouseEnter={() => setHoveredTemplate(t.id)}
+                onMouseLeave={() => setHoveredTemplate(null)}
+                style={{
+                  cursor: "pointer", borderRadius: 10,
+                  border: `1px solid ${hoveredTemplate === t.id ? appColor : border}`,
+                  backgroundColor: surface, padding: "16px 12px 12px",
+                  display: "flex", flexDirection: "column", alignItems: "center",
+                  transition: "all 0.25s ease",
+                  animation: `fadeUp 0.4s ease ${i * 0.06}s both`,
+                  position: "relative", overflow: "hidden",
+                }}>
+                {/* Governance indicator - only visible in GOV mode */}
+                {showGovernance && (
+                  <div style={{
+                    position: "absolute", top: 6, right: 6,
+                    display: "flex", alignItems: "center", gap: 3,
+                  }}>
+                    <GovernanceDot level={t.governance}/>
+                    <span style={{
+                      fontSize: 8, fontFamily: "'JetBrains Mono'", color: text3,
+                      fontWeight: 500, letterSpacing: 0.3,
+                    }}>{t.governance}</span>
+                  </div>
+                )}
+                <DocIcon type={t.icon} color={appColor} size={56}/>
+                <span style={{
+                  fontSize: 12, fontWeight: 500, color: text1,
+                  marginTop: 8, textAlign: "center", lineHeight: 1.3,
+                }}>{t.name}</span>
+                <span style={{
+                  fontSize: 10, color: text3, marginTop: 2, textAlign: "center",
+                }}>{t.desc}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Recent documents */}
+        <div style={{
+          flex: 1, padding: "0 48px 40px",
+          animation: "fadeUp 0.5s ease 0.2s both",
+        }}>
+          <div style={{
+            display: "flex", alignItems: "center", justifyContent: "space-between",
+            marginBottom: 12,
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+              <span style={{
+                fontSize: 13, fontWeight: 600, color: appColor,
+                padding: "4px 12px", borderRadius: 20,
+                backgroundColor: isDark ? "#1E2030" : "#F0F1F4",
+              }}>Zuletzt verwendet</span>
+              <span style={{
+                fontSize: 13, color: text3, cursor: "pointer",
+                padding: "4px 12px", borderRadius: 20,
+              }}>Favoriten</span>
+              <span style={{
+                fontSize: 13, color: text3, cursor: "pointer",
+                padding: "4px 12px", borderRadius: 20,
+              }}>Mit mir geteilt</span>
+            </div>
+            {showGovernance && (
+              <span style={{
+                fontSize: 10, color: gold, fontFamily: "'JetBrains Mono'",
+                display: "flex", alignItems: "center", gap: 4,
+                animation: "pulseGold 2s ease infinite",
+              }}>
+                <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M8 1L2 4v4.5c0 3.5 2.6 6.8 6 7.5 3.4-.7 6-4 6-7.5V4L8 1z"/>
+                </svg>
+                GOVERNANCE ACTIVE
+              </span>
+            )}
+          </div>
+
+          {/* Table header */}
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: showGovernance ? "1fr 120px 80px 80px 80px" : "1fr 120px 80px",
+            padding: "8px 16px", fontSize: 11, color: text3, fontWeight: 500,
+            borderBottom: `1px solid ${border}`, letterSpacing: 0.3,
+          }}>
+            <span>Name</span>
+            <span>Änderungsdatum</span>
+            {showGovernance && <span>Governance</span>}
+            {showGovernance && <span>SGE Score</span>}
+            <span>Status</span>
+          </div>
+
+          {/* Document rows */}
+          {recentDocs.map((doc, i) => (
+            <div key={i} className="doc-row"
+              onClick={() => setSelectedDoc(doc)}
+              style={{
+                display: "grid",
+                gridTemplateColumns: showGovernance ? "1fr 120px 80px 80px 80px" : "1fr 120px 80px",
+                padding: "12px 16px", cursor: "pointer",
+                borderBottom: `1px solid ${isDark ? "#1A1D27" : "#F5F5F5"}`,
+                borderRadius: 6, transition: "background 0.15s ease",
+                animation: `fadeUp 0.3s ease ${0.3 + i * 0.05}s both`,
+                alignItems: "center",
+              }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                  <rect x="3" y="1" width="12" height="16" rx="2" fill={appColor} opacity="0.12"/>
+                  <rect x="3" y="1" width="12" height="16" rx="2" stroke={appColor} strokeWidth="1" opacity="0.3"/>
+                  <line x1="6" y1="6" x2="12" y2="6" stroke={appColor} strokeWidth="1" opacity="0.4" strokeLinecap="round"/>
+                  <line x1="6" y1="9" x2="12" y2="9" stroke={appColor} strokeWidth="1" opacity="0.4" strokeLinecap="round"/>
+                  <line x1="6" y1="12" x2="10" y2="12" stroke={appColor} strokeWidth="1" opacity="0.4" strokeLinecap="round"/>
+                </svg>
+                <span style={{ fontSize: 13, fontWeight: 500, color: text1 }}>
+                  {doc.name}
+                </span>
+              </div>
+              <span style={{ fontSize: 12, color: text3 }}>{doc.date}</span>
+              {showGovernance && (
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <GovernanceDot level={doc.governance}/>
+                  <span style={{ fontSize: 11, color: text2, fontFamily: "'JetBrains Mono'" }}>
+                    {doc.governance}
+                  </span>
+                </div>
+              )}
+              {showGovernance && (
+                <span style={{
+                  fontSize: 11, fontFamily: "'JetBrains Mono'", fontWeight: 500,
+                  color: doc.sge > 0.8 ? "#EF4444" : doc.sge > 0.6 ? "#F59E0B" : "#22C55E",
+                }}>{doc.sge.toFixed(2)}</span>
+              )}
+              <SealBadge status={doc.status}/>
+            </div>
+          ))}
+        </div>
+
+        {/* Bottom bar - Governance whisper */}
+        <div style={{
+          padding: "12px 48px", borderTop: `1px solid ${border}`,
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          backgroundColor: isDark ? "#12141C" : "#FAFBFC",
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <svg width="14" height="14" viewBox="0 0 16 16" fill={gold} opacity="0.5">
+              <path d="M8 1L2 4v4.5c0 3.5 2.6 6.8 6 7.5 3.4-.7 6-4 6-7.5V4L8 1z"/>
+            </svg>
+            <span style={{
+              fontSize: 10, color: text3, fontFamily: "'JetBrains Mono'",
+              letterSpacing: 0.3,
+            }}>
+              Geschützt durch WINDI Governance Layer
+            </span>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            <span style={{ fontSize: 10, color: text3, fontFamily: "'JetBrains Mono'" }}>
+              ISP: Deutsche Bahn · BaFin · Bundesregierung
+            </span>
+            <span style={{ fontSize: 10, color: text3, fontFamily: "'JetBrains Mono'" }}>
+              Ed25519 · SGE v1.0
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(React.createElement(WINDISuite));
+</script>
+</body>
+</html>

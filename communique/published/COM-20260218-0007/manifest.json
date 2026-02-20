@@ -1,0 +1,11 @@
+{
+  "communique_id": "COM-20260218-0007",
+  "files": [
+    "communique.pdf",
+    "verification.json"
+  ],
+  "content_hash": "0e96ef1d61aae78d6eecadb6cbbb81762150507610b13a6c2ff0b10e42299107",
+  "bundle_hash": "72de5d4c95638f4daf73ec32deb75bf88bcd9aeeb44e32406121bd017173a47b",
+  "bundle_size": 8023,
+  "generated_at": "2026-02-18T16:52:12Z"
+}

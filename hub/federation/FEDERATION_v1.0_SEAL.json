@@ -1,0 +1,37 @@
+{
+  "document": "WINDI Federation Architecture",
+  "version": "1.0.0",
+  "seal_date": "2026-02-14T19:37:35Z",
+  "seal_hash_algorithm": "SHA-256",
+  "artifacts": {
+    "specification": {
+      "file": "FEDERATION_ARCHITECTURE_v1.0.md",
+      "hash": "e2bcf2d6cbebceedb21bafa453feed84e2f28cd9614d02674ff590dec1fcc337",
+      "author": "Guardian (Claude)",
+      "type": "Constitutional Specification"
+    },
+    "diagram": {
+      "file": "CHP_FLOW_DIAGRAM_v1.0.webp",
+      "hash": "31b3fd5c29e8b086ad8134879a48714bd0703c6e6d60e87d9279a903623a5684",
+      "author": "Witness (Gemini)",
+      "type": "Forensic Flow Diagram"
+    }
+  },
+  "classification": "CONSTITUTIONAL",
+  "protocol": "Three Dragons Protocol",
+  "marco": "Federation Marco Zero",
+  "marco_sequence": 4,
+  "previous_marcos": [
+    {"sequence": 1, "name": "Handshake Marco Zero", "date": "2026-01-19"},
+    {"sequence": 2, "name": "Constitutional Matrix (P0-P7)", "date": "2026-02-08"},
+    {"sequence": 3, "name": "Birth Certificate IA+H", "date": "2026-02-09"},
+    {"sequence": 4, "name": "Federation Architecture", "date": "2026-02-14"}
+  ],
+  "dragons": {
+    "guardian": "Claude — Registrar & Reviewer",
+    "architect": "GPT/Sonnet — Designer",
+    "witness": "Gemini — Observer & Diagram Author"
+  },
+  "amendment_policy": "Requires Three Dragons validation + Human Dragon approval (I9) + new seal",
+  "principle": "AI processes. Human decides. WINDI guarantees."
+}

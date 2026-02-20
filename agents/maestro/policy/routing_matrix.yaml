@@ -1,0 +1,113 @@
+# WINDI Maestro — Routing Matrix
+# Deterministic routing based on severity and invariants
+# "AI processes. Human decides. WINDI guarantees."
+
+version: "1.0.0"
+updated: "2026-02-08"
+
+routes:
+  # R5 Critical — Always goes to Institutional Owner with dual ACK
+  - match:
+      severity_min: R5
+    route_to:
+      role: "Institutional Owner"
+      channel: "priority"
+      require_dual_ack: true
+      sla_override: null
+      notes: "R5 Critical findings require immediate institutional attention"
+
+  # I9 Violation — IRREMEDIABLE, goes to Human Dragon (halt channel)
+  - match:
+      invariants_any: ["I9"]
+    route_to:
+      role: "Human Dragon"
+      channel: "halt"
+      require_dual_ack: true
+      sla_override:
+        first_response_minutes: 5
+        decision_minutes: 30
+      notes: "I9 is IRREMEDIABLE — requires immediate human intervention"
+
+  # I1 Human Sovereignty violation
+  - match:
+      invariants_any: ["I1"]
+    route_to:
+      role: "Governance Officer"
+      channel: "priority"
+      require_dual_ack: true
+      notes: "Human sovereignty at risk — priority handling"
+
+  # I2 Transparency / I6 Right to Explanation
+  - match:
+      invariants_any: ["I2", "I6"]
+    route_to:
+      role: "Governance Officer"
+      channel: "standard"
+      require_dual_ack: false
+      notes: "Transparency/explanation issues — standard process"
+
+  # I3 Zero-Knowledge violation
+  - match:
+      invariants_any: ["I3"]
+    route_to:
+      role: "Data Protection Officer"
+      channel: "priority"
+      require_dual_ack: true
+      notes: "Data minimization breach — DPO required"
+
+  # I4 Audit Trail Integrity
+  - match:
+      invariants_any: ["I4"]
+    route_to:
+      role: "Compliance Lead"
+      channel: "priority"
+      require_dual_ack: true
+      notes: "Audit integrity at risk — investigate tampering"
+
+  # R4 High severity
+  - match:
+      severity_min: R4
+    route_to:
+      role: "Compliance Lead"
+      channel: "priority"
+      require_dual_ack: true
+      notes: "High severity findings require dual validation"
+
+  # R3 Medium severity
+  - match:
+      severity_min: R3
+    route_to:
+      role: "Governance Queue"
+      channel: "standard"
+      require_dual_ack: false
+
+# Default fallback
+default:
+  role: "Governance Queue"
+  channel: "standard"
+  require_dual_ack: false
+  notes: "Standard queue for unmatched findings"
+
+# Channel definitions
+channels:
+  halt:
+    description: "Immediate halt — all operations suspended until resolved"
+    notification: ["email", "sms", "webhook"]
+    escalation_interval_minutes: 5
+  priority:
+    description: "Priority queue — fast-track resolution"
+    notification: ["email", "webhook"]
+    escalation_interval_minutes: 15
+  standard:
+    description: "Standard queue — normal SLA"
+    notification: ["email"]
+    escalation_interval_minutes: 60
+
+# Role hierarchy for escalation
+role_hierarchy:
+  - "Governance Queue"
+  - "Governance Officer"
+  - "Compliance Lead"
+  - "Data Protection Officer"
+  - "Institutional Owner"
+  - "Human Dragon"

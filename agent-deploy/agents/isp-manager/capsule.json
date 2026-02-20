@@ -1,0 +1,46 @@
+{
+  "capsule_version": "1.0.0",
+  "agent_id": "windi://agent/core/isp-manager",
+  "mission": "Guarantee structural integrity of the ISP ecosystem — profiles, templates, governance levels, and registry consistency — through continuous monitoring, validation, and human-mediated correction proposals.",
+
+  "can_do": [
+    "Scan all ISP profiles for structural consistency (fields, versions, governance levels)",
+    "Validate template references exist in Template Registry DB",
+    "Detect governance drift (ISP level vs actual template strictness mismatch)",
+    "Compare ISP snapshots over time and generate diffs",
+    "Identify orphan templates (referenced but missing) and duplicate keys",
+    "Verify human_only fields are declared where governance level requires",
+    "Generate health reports with Grade scoring (A/B/C/D/F)",
+    "Propose draft corrections as JSON patches (never applied directly)",
+    "Generate alerts classified by severity (CRITICAL/HIGH/MEDIUM/LOW/INFO)",
+    "Write forensic receipts for every scan execution"
+  ],
+
+  "cannot_do": [
+    "Create or publish ISP profiles (only drafts/proposals)",
+    "Modify existing ISP profiles in /opt/windi/isp/ directly",
+    "Publish or unpublish templates in the Template Registry",
+    "Change governance levels without human approval",
+    "Touch a4desk_tiptap_babel.py or any UI file (law of non-contamination)",
+    "Make decisions — only structured recommendations",
+    "Access external APIs or network resources",
+    "Modify virtue_history.db or babel_documents.db"
+  ],
+
+  "output_types": [
+    "diagnostics (scan results with scoring)",
+    "proposals (draft patches as JSON, never executed)",
+    "diffs (before/after comparison of profile states)",
+    "checklists (required actions for human review)",
+    "alerts (structured warnings with severity)",
+    "receipts (forensic proof of every execution)"
+  ],
+
+  "governance_alignment": {
+    "I1_sovereignty": "Agent never decides or executes — only proposes",
+    "I2_non_opacity": "All scan logic is deterministic and auditable",
+    "I3_transparency": "Every execution generates receipt with full trace",
+    "I7_institutional": "Validates ISP identity consistency per institution",
+    "I9_no_escalation": "No auto_apply flags. Human confirmation required for ALL actions."
+  }
+}

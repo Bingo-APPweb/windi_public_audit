@@ -1,0 +1,24 @@
+[Unit]
+Description=WINDI Sentinel LAW v1.0.0 — Permanent Governance Invariants
+Documentation=https://admin.windia4desk.tech/sentinel-law/health
+After=network.target windi-desktop.service windi-bridge.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=windi
+Group=windi
+WorkingDirectory=/opt/windi/sentinel-law
+ExecStart=/usr/bin/python3 /opt/windi/sentinel-law/sentinel_law.py
+Restart=always
+RestartSec=5
+StandardOutput=append:/opt/windi/logs/sentinel_law.log
+StandardError=append:/opt/windi/logs/sentinel_law.log
+
+# Security hardening
+NoNewPrivileges=yes
+ProtectSystem=strict
+ReadWritePaths=/opt/windi/data /opt/windi/logs /opt/windi/sentinel-law
+
+[Install]
+WantedBy=multi-user.target

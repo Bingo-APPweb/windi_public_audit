@@ -1,0 +1,66 @@
+{
+  "policy_version": "1.0.0",
+  "agent_id": "windi://agent/core/maestro",
+
+  "permissions": {
+    "read": [
+      "/opt/windi/agents/registry.json",
+      "/opt/windi/agents/sentinela/findings/*.json",
+      "/opt/windi/agents/sentinela/receipts/*.json",
+      "/opt/windi/agents/isp-manager/alerts/*.json",
+      "/opt/windi/agents/isp-manager/reports/*.json",
+      "/opt/windi/isp/**/*.json",
+      "/opt/windi/engine/governance_levels.json",
+      "/opt/windi/data/virtue_history.db"
+    ],
+    "write": [
+      "/opt/windi/agents/maestro/resolutions/",
+      "/opt/windi/agents/maestro/escalations/",
+      "/opt/windi/agents/maestro/receipts/",
+      "/opt/windi/agents/maestro/reports/",
+      "/opt/windi/agents/maestro/state/"
+    ],
+    "execute": [],
+    "forbidden": [
+      "/opt/windi/a4desk-editor/*",
+      "/opt/windi/data/babel_documents.db",
+      "/opt/windi/isp/**/profile.json:write",
+      "/opt/windi/agents/sentinela/**:write",
+      "/opt/windi/agents/isp-manager/**:write",
+      "/opt/windi/engine/*.py"
+    ]
+  },
+
+  "api_access": {
+    "governance_api": {
+      "base_url": "http://localhost:8080",
+      "allowed_endpoints": [
+        "GET /api/submissions",
+        "GET /api/dashboard",
+        "GET /api/compliance",
+        "GET /api/status",
+        "GET /api/agents/health"
+      ],
+      "forbidden_endpoints": [
+        "POST /api/generate",
+        "DELETE *"
+      ]
+    }
+  },
+
+  "rate_limits": {
+    "max_routings_per_hour": 50,
+    "max_escalations_per_hour": 10,
+    "max_sla_checks_per_hour": 100,
+    "max_report_size_kb": 1024
+  },
+
+  "sandbox_integration": {
+    "entry_point": "maestro_agent.py",
+    "routing_rules": [
+      {"condition": "task_type starts_with 'maestro.'", "route_to": "maestro"},
+      {"condition": "source == 'sentinela' and type == 'finding'", "route_to": "maestro"},
+      {"condition": "source == 'command_center' and type == 'resolution'", "route_to": "maestro"}
+    ]
+  }
+}

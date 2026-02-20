@@ -1,0 +1,197 @@
+{
+  "shelf": "P5-ARCHITECTURE",
+  "priority": "MEDIUM",
+  "enforcement": "STRUCTURAL",
+  "description": "Three Pillars + Sistema de Identidade + Espelhamento - Estrutura fundamental",
+
+  "authorship": {
+    "original_architect": "WITNESS (Gemini)",
+    "injector": "GUARDIAN (Claude)",
+    "version": "1.2.0-CONSTITUTIONAL",
+    "injection_date": "2026-02-09"
+  },
+
+  "constitutional_articles": [
+    {
+      "article": 4,
+      "name": "Identidade Soberana",
+      "text": "O sistema de espelhamento (Mirror System) deve garantir que notas pessoais permaneçam invisíveis ao Ledger público, a menos que marcadas explicitamente para selagem",
+      "enforcement": {
+        "check": "personal_notes MUST be INVISIBLE to public ledger unless seal_flag is TRUE",
+        "violation": "PRIVACY_BREACH",
+        "implementation": "Privacy filter in mirror sync"
+      },
+      "visibility_levels": {
+        "PRIVATE": {
+          "description": "Notas pessoais - visíveis apenas para o autor",
+          "sync_to_ledger": false,
+          "encryption": "user_key_only"
+        },
+        "INTERNAL": {
+          "description": "Visível para organização do autor",
+          "sync_to_ledger": false,
+          "encryption": "org_key"
+        },
+        "SEALABLE": {
+          "description": "Marcado para possível selagem futura",
+          "sync_to_ledger": false,
+          "encryption": "org_key",
+          "requires_explicit_seal": true
+        },
+        "SEALED": {
+          "description": "Selado no Ledger público",
+          "sync_to_ledger": true,
+          "encryption": "public_verifiable"
+        }
+      },
+      "default_state": "PRIVATE",
+      "source": "Constitution v1.2.0 - Witness Injection"
+    }
+  ],
+
+  "three_pillars": {
+    "description": "Arquitetura obrigatória de três pilares",
+    "source": "Constitution Art. 4",
+
+    "pillars": [
+      {
+        "id": "PILLAR_1",
+        "name": "CRIAÇÃO",
+        "agent": "ISP-Manager (Clone-ISP-Manager)",
+        "function": "Geração de documentos",
+        "capabilities": ["document_creation", "template_management", "pdf_generation"]
+      },
+      {
+        "id": "PILLAR_2",
+        "name": "VERIFICAÇÃO",
+        "agent": "Sentinela (Clone-Sentinela)",
+        "function": "Validação de integridade",
+        "capabilities": ["integrity_verification", "seal_validation", "compliance_check"]
+      },
+      {
+        "id": "PILLAR_3",
+        "name": "RESOLUÇÃO",
+        "agent": "Maestro (Clone-Maestro)",
+        "function": "Orquestração de fluxos",
+        "capabilities": ["task_orchestration", "workflow_management", "queue_processing"]
+      }
+    ]
+  },
+
+  "identity_system": {
+    "description": "Sistema de identificação de agentes",
+    "format": "W-[32 dígitos hexadecimais]",
+    "example": "W-00000000000000000000000000000001",
+
+    "reserved_ranges": {
+      "W-00000000000000000000000000000001": "Genesis Clone",
+      "W-...0002 até ...0009": "Core System Agents",
+      "W-...10000 até ...19999": "Clone Instance Agents",
+      "W-...20000 até ...29999": "Customer Deployments",
+      "W-...90000 até ...99999": "Meta-Governance"
+    },
+
+    "rule": "Nenhum agente pode operar sem registro no Agent Registry"
+  },
+
+  "mirror_system": {
+    "description": "Sistema de espelhamento do WINDI pai com proteção de privacidade (Art. 4)",
+
+    "privacy_filter": {
+      "description": "Filtro de privacidade conforme Art. 4 - Identidade Soberana",
+      "rules": [
+        "Notas PRIVATE nunca sincronizam",
+        "Notas INTERNAL sincronizam apenas dentro da org",
+        "Notas SEALABLE requerem confirmação explícita",
+        "Apenas SEALED vai para Ledger público"
+      ]
+    },
+
+    "mirrored_modules": [
+      {
+        "parent": "WINDI-HUB",
+        "clone": "CLONE-HUB",
+        "components": ["hub_collector.py", "HUB_MANIFEST.json", "api/endpoints", "static/governance-hub.html"]
+      },
+      {
+        "parent": "a4Desk-Editor",
+        "clone": "Clone-Editor",
+        "components": ["a4desk_tiptap_babel.py", "static/", "templates/", "governance/"]
+      },
+      {
+        "parent": "Agent Constellation",
+        "clone": "Clone Constellation",
+        "agents_count": 8,
+        "shelves": {
+          "detection": ["SGE", "NOC"],
+          "orchestration": ["Maestro", "ISP-Manager"],
+          "verification": ["Sentinela", "Compliance"],
+          "meta_governance": ["Integrity-Watchdog", "Pulse"]
+        }
+      }
+    ],
+
+    "sync_protocol": {
+      "rule": "Alterações no sistema pai podem ser propagadas para clones mediante aprovação humana",
+      "independence": "Cada clone opera de forma autônoma após deployment",
+      "privacy_enforcement": "Art. 4 - Notas pessoais NUNCA sincronizam sem seal_flag"
+    }
+  },
+
+  "layer_system": {
+    "immutable_core": {
+      "description": "Elementos IMUTÁVEIS (referência P0-INVARIANTS)",
+      "elements": [
+        "Invariante I9",
+        "Formato de Agent ID",
+        "Princípio Zero-Knowledge",
+        "Arquitetura Três Pilares",
+        "Virtue Receipts",
+        "Veto Soberano (Art. 1)",
+        "Imutabilidade Biográfica (Art. 8)"
+      ]
+    },
+    "customizable_layer": {
+      "description": "Elementos que podem ser adaptados",
+      "elements": [
+        "Branding visual",
+        "Nomes de módulos",
+        "Configurações de workflow",
+        "Integrações externas",
+        "Idioma da interface",
+        "Customer-specific Agents (W-...20000+)"
+      ]
+    },
+    "privacy_layer": {
+      "description": "Camada de privacidade (Art. 4)",
+      "elements": [
+        "Notas pessoais (PRIVATE)",
+        "Documentos internos (INTERNAL)",
+        "Rascunhos para selagem (SEALABLE)"
+      ]
+    }
+  },
+
+  "tech_stack": {
+    "three_layer_architecture": {
+      "L1_Edge": {
+        "name": "a4Desk (Ponta)",
+        "description": "SGE roda LOCAL no cliente",
+        "data_flow": "Emite apenas: hash + categorias + metadados + decisão",
+        "privacy": "ZERO dados sensíveis saem do cliente",
+        "privacy_enforcement": "Art. 4 - Notas pessoais permanecem locais"
+      },
+      "L2_Mesh": {
+        "name": "WINDI Mesh (Dashboard Controllers)",
+        "description": "Recebe sinais via Bridge API",
+        "security": "Valida HMAC + anti-replay"
+      },
+      "L3_Ledger": {
+        "name": "Forensic Ledger",
+        "description": "Hashes imutáveis",
+        "features": ["Merkle Tree verification", "Virtue Receipts"],
+        "privacy_enforcement": "Apenas documentos SEALED aparecem aqui"
+      }
+    }
+  }
+}

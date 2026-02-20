@@ -1,0 +1,10 @@
+{
+  "HUMAN_BEHAVIORAL_SIGNALS": [
+    "decision_hesitation_time",
+    "rushed_high_risk_decisions",
+    "sudden_writing_pattern_shift",
+    "emotional_language_under_financial_decision",
+    "override_frequency_pattern",
+    "deferral_behavior_pattern"
+  ]
+}

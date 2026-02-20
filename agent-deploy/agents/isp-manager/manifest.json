@@ -1,0 +1,33 @@
+{
+  "agent_id": "windi://agent/core/isp-manager",
+  "agent_name": "WINDI ISP Manager Agent",
+  "version": "1.0.0",
+  "created": "2026-02-07",
+  "authors": ["Three Dragons Council"],
+  "agent_specialty": "isp-lifecycle-management",
+  "compatible_hosts": [
+    "windi://host/a4desk/babel",
+    "windi://host/sandbox/core"
+  ],
+  "execution_mode": "human-mediated",
+  "layer_priority": 2,
+  "description": "Manages the complete lifecycle of ISP Profiles and Template Registry. Scans, validates, detects drift, generates alerts, and prepares draft corrections. Never applies changes directly — all outputs are proposals for human review.",
+  "invariants_enforced": ["I1", "I2", "I3", "I4", "I5", "I6", "I7", "I8", "I9"],
+  "guardrails_enforced": ["G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8"],
+  "dependencies": {
+    "isp_library": "/opt/windi/isp/",
+    "template_registry_db": "/opt/windi/data/template_registry.db",
+    "governance_levels": "/opt/windi/engine/governance_levels.json",
+    "isp_scanner": "/opt/windi/isp_scanner_v1.1.py",
+    "virtue_history_db": "/opt/windi/data/virtue_history.db"
+  },
+  "sandbox_routing": {
+    "task_types": [
+      "isp.audit",
+      "isp.validate",
+      "isp.drift_check",
+      "isp.draft_patch",
+      "isp.health_report"
+    ]
+  }
+}

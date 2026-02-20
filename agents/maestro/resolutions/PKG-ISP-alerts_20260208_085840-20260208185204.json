@@ -1,0 +1,1656 @@
+{
+  "package_type": "DECISION_PACKAGE",
+  "package_version": "1.0.0",
+  "finding_id": "ISP-alerts_20260208_085840",
+  "assembled_at": "2026-02-08T18:52:04.482971+00:00",
+  "finding_context": {
+    "severity": "R2",
+    "category": "",
+    "summary": "",
+    "source_agent": "isp-manager",
+    "current_status": "OPEN",
+    "created_at": "2026-02-08T18:50:45.119431+00:00"
+  },
+  "isp_context": {
+    "isp_id": null,
+    "note": "No ISP context available"
+  },
+  "governance_context": {
+    "risk_level": "R2",
+    "risk_label": "Low",
+    "risk_color": "🟡",
+    "recommended_action": "Attention recommended",
+    "governance_config_available": true
+  },
+  "sla_status": {
+    "current_status": "OPEN",
+    "acknowledge_deadline": "2026-02-09T18:50:45.119431+00:00",
+    "resolve_deadline": "2026-02-22T18:50:45.119431+00:00",
+    "acknowledged_at": null,
+    "resolved_at": null,
+    "acknowledge_status": "PENDING",
+    "acknowledge_remaining_hours": 23.98
+  },
+  "proof_chain": {
+    "total_receipts": 1,
+    "verified_receipts": 1,
+    "chain_intact": true,
+    "receipts": [
+      {
+        "receipt_id": "MAESTRO-20260208-185045-a50fb659",
+        "action": "ROUTE_FINDING",
+        "timestamp": "2026-02-08T18:50:45.122072+00:00",
+        "integrity_hash": "a50fb659cc761318daf2ba5b3e7f83d7cf4b32a5369765598446314991302fbb",
+        "verified": true
+      }
+    ],
+    "chain_hash": "8e94eb0458d5dd5d"
+  },
+  "related_findings": {
+    "related": [
+      {
+        "finding_id": "ISP-alerts_20260208_103650",
+        "relation": "SAME_CATEGORY",
+        "severity": "R2",
+        "status": "OPEN"
+      },
+      {
+        "finding_id": "ISP-alerts_20260208_103505",
+        "relation": "SAME_CATEGORY",
+        "severity": "R2",
+        "status": "OPEN"
+      },
+      {
+        "finding_id": "ISP-alerts_20260208_094654",
+        "relation": "SAME_CATEGORY",
+        "severity": "R2",
+        "status": "OPEN"
+      },
+      {
+        "finding_id": "ISP-alerts_20260208_090650",
+        "relation": "SAME_CATEGORY",
+        "severity": "R2",
+        "status": "OPEN"
+      },
+      {
+        "finding_id": "ISP-alerts_20260208_090401",
+        "relation": "SAME_CATEGORY",
+        "severity": "R2",
+        "status": "OPEN"
+      }
+    ],
+    "patterns": [
+      {
+        "type": "RECURRING_CATEGORY",
+        "category": "",
+        "occurrences": 6,
+        "insight": "Category '' has 6 total findings — potential systemic issue"
+      },
+      {
+        "type": "SEVERITY_CLUSTER",
+        "severity": "R2",
+        "open_count": 6,
+        "insight": "6 open R2 findings — workload concentration risk"
+      }
+    ],
+    "total_related": 5
+  },
+  "timeline": [
+    {
+      "event": "REGISTERED",
+      "data": {
+        "alerts": [
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: profile_id",
+            "source": "adac",
+            "timestamp": "2026-02-08T08:58:40.620839+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: profile_name",
+            "source": "adac",
+            "timestamp": "2026-02-08T08:58:40.620849+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: version",
+            "source": "adac",
+            "timestamp": "2026-02-08T08:58:40.620852+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: governance_level",
+            "source": "adac",
+            "timestamp": "2026-02-08T08:58:40.620854+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: institution",
+            "source": "adac",
+            "timestamp": "2026-02-08T08:58:40.620856+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: templates",
+            "source": "adac",
+            "timestamp": "2026-02-08T08:58:40.620858+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: sge_keywords",
+            "source": "adac",
+            "timestamp": "2026-02-08T08:58:40.620860+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: cross_references",
+            "source": "adac",
+            "timestamp": "2026-02-08T08:58:40.620864+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: identity_license",
+            "source": "adac",
+            "timestamp": "2026-02-08T08:58:40.620867+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: compliance_frameworks",
+            "source": "adac",
+            "timestamp": "2026-02-08T08:58:40.620869+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "LOW",
+            "code": "ISP-W002",
+            "message": "Below minimum templates: 0/8 for UNKNOWN",
+            "source": "adac",
+            "timestamp": "2026-02-08T08:58:40.620871+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: profile_id",
+            "source": "aok",
+            "timestamp": "2026-02-08T08:58:40.620873+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: profile_name",
+            "source": "aok",
+            "timestamp": "2026-02-08T08:58:40.620875+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: version",
+            "source": "aok",
+            "timestamp": "2026-02-08T08:58:40.620877+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: governance_level",
+            "source": "aok",
+            "timestamp": "2026-02-08T08:58:40.620878+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: institution",
+            "source": "aok",
+            "timestamp": "2026-02-08T08:58:40.620880+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: templates",
+            "source": "aok",
+            "timestamp": "2026-02-08T08:58:40.620882+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: sge_keywords",
+            "source": "aok",
+            "timestamp": "2026-02-08T08:58:40.620883+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: cross_references",
+            "source": "aok",
+            "timestamp": "2026-02-08T08:58:40.620885+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: identity_license",
+            "source": "aok",
+            "timestamp": "2026-02-08T08:58:40.620887+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: compliance_frameworks",
+            "source": "aok",
+            "timestamp": "2026-02-08T08:58:40.620889+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "LOW",
+            "code": "ISP-W002",
+            "message": "Below minimum templates: 0/8 for UNKNOWN",
+            "source": "aok",
+            "timestamp": "2026-02-08T08:58:40.620890+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: profile_id",
+            "source": "bafin",
+            "timestamp": "2026-02-08T08:58:40.620895+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: profile_name",
+            "source": "bafin",
+            "timestamp": "2026-02-08T08:58:40.620897+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: version",
+            "source": "bafin",
+            "timestamp": "2026-02-08T08:58:40.620899+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: governance_level",
+            "source": "bafin",
+            "timestamp": "2026-02-08T08:58:40.620901+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: institution",
+            "source": "bafin",
+            "timestamp": "2026-02-08T08:58:40.620902+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: templates",
+            "source": "bafin",
+            "timestamp": "2026-02-08T08:58:40.620904+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: sge_keywords",
+            "source": "bafin",
+            "timestamp": "2026-02-08T08:58:40.620906+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: cross_references",
+            "source": "bafin",
+            "timestamp": "2026-02-08T08:58:40.620908+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: identity_license",
+            "source": "bafin",
+            "timestamp": "2026-02-08T08:58:40.620909+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: compliance_frameworks",
+            "source": "bafin",
+            "timestamp": "2026-02-08T08:58:40.620911+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "LOW",
+            "code": "ISP-W002",
+            "message": "Below minimum templates: 0/8 for UNKNOWN",
+            "source": "bafin",
+            "timestamp": "2026-02-08T08:58:40.620913+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: profile_id",
+            "source": "bis-regulatory",
+            "timestamp": "2026-02-08T08:58:40.620915+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: profile_name",
+            "source": "bis-regulatory",
+            "timestamp": "2026-02-08T08:58:40.620917+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: version",
+            "source": "bis-regulatory",
+            "timestamp": "2026-02-08T08:58:40.620918+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: governance_level",
+            "source": "bis-regulatory",
+            "timestamp": "2026-02-08T08:58:40.620920+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: institution",
+            "source": "bis-regulatory",
+            "timestamp": "2026-02-08T08:58:40.620922+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: templates",
+            "source": "bis-regulatory",
+            "timestamp": "2026-02-08T08:58:40.620923+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: sge_keywords",
+            "source": "bis-regulatory",
+            "timestamp": "2026-02-08T08:58:40.620925+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: cross_references",
+            "source": "bis-regulatory",
+            "timestamp": "2026-02-08T08:58:40.620927+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: identity_license",
+            "source": "bis-regulatory",
+            "timestamp": "2026-02-08T08:58:40.620929+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: compliance_frameworks",
+            "source": "bis-regulatory",
+            "timestamp": "2026-02-08T08:58:40.620931+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "LOW",
+            "code": "ISP-W002",
+            "message": "Below minimum templates: 0/8 for UNKNOWN",
+            "source": "bis-regulatory",
+            "timestamp": "2026-02-08T08:58:40.620932+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: profile_id",
+            "source": "bundesagentur-fuer-arbeit",
+            "timestamp": "2026-02-08T08:58:40.620934+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: profile_name",
+            "source": "bundesagentur-fuer-arbeit",
+            "timestamp": "2026-02-08T08:58:40.620936+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: version",
+            "source": "bundesagentur-fuer-arbeit",
+            "timestamp": "2026-02-08T08:58:40.620937+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: governance_level",
+            "source": "bundesagentur-fuer-arbeit",
+            "timestamp": "2026-02-08T08:58:40.620939+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: institution",
+            "source": "bundesagentur-fuer-arbeit",
+            "timestamp": "2026-02-08T08:58:40.620941+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: templates",
+            "source": "bundesagentur-fuer-arbeit",
+            "timestamp": "2026-02-08T08:58:40.620943+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: sge_keywords",
+            "source": "bundesagentur-fuer-arbeit",
+            "timestamp": "2026-02-08T08:58:40.620944+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: cross_references",
+            "source": "bundesagentur-fuer-arbeit",
+            "timestamp": "2026-02-08T08:58:40.620947+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: identity_license",
+            "source": "bundesagentur-fuer-arbeit",
+            "timestamp": "2026-02-08T08:58:40.620949+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: compliance_frameworks",
+            "source": "bundesagentur-fuer-arbeit",
+            "timestamp": "2026-02-08T08:58:40.620950+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "LOW",
+            "code": "ISP-W002",
+            "message": "Below minimum templates: 0/8 for UNKNOWN",
+            "source": "bundesagentur-fuer-arbeit",
+            "timestamp": "2026-02-08T08:58:40.620952+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: profile_id",
+            "source": "bundesregierung",
+            "timestamp": "2026-02-08T08:58:40.620954+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: profile_name",
+            "source": "bundesregierung",
+            "timestamp": "2026-02-08T08:58:40.620956+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: version",
+            "source": "bundesregierung",
+            "timestamp": "2026-02-08T08:58:40.620957+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: governance_level",
+            "source": "bundesregierung",
+            "timestamp": "2026-02-08T08:58:40.620959+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: institution",
+            "source": "bundesregierung",
+            "timestamp": "2026-02-08T08:58:40.620961+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: templates",
+            "source": "bundesregierung",
+            "timestamp": "2026-02-08T08:58:40.620962+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: sge_keywords",
+            "source": "bundesregierung",
+            "timestamp": "2026-02-08T08:58:40.620964+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: cross_references",
+            "source": "bundesregierung",
+            "timestamp": "2026-02-08T08:58:40.620966+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: identity_license",
+            "source": "bundesregierung",
+            "timestamp": "2026-02-08T08:58:40.620968+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: compliance_frameworks",
+            "source": "bundesregierung",
+            "timestamp": "2026-02-08T08:58:40.620969+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "LOW",
+            "code": "ISP-W002",
+            "message": "Below minimum templates: 0/8 for UNKNOWN",
+            "source": "bundesregierung",
+            "timestamp": "2026-02-08T08:58:40.620971+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: profile_id",
+            "source": "deutsche-bahn",
+            "timestamp": "2026-02-08T08:58:40.620973+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: profile_name",
+            "source": "deutsche-bahn",
+            "timestamp": "2026-02-08T08:58:40.620975+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: version",
+            "source": "deutsche-bahn",
+            "timestamp": "2026-02-08T08:58:40.620976+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: governance_level",
+            "source": "deutsche-bahn",
+            "timestamp": "2026-02-08T08:58:40.620978+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: institution",
+            "source": "deutsche-bahn",
+            "timestamp": "2026-02-08T08:58:40.620980+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: templates",
+            "source": "deutsche-bahn",
+            "timestamp": "2026-02-08T08:58:40.620981+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: sge_keywords",
+            "source": "deutsche-bahn",
+            "timestamp": "2026-02-08T08:58:40.620983+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: cross_references",
+            "source": "deutsche-bahn",
+            "timestamp": "2026-02-08T08:58:40.620985+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: identity_license",
+            "source": "deutsche-bahn",
+            "timestamp": "2026-02-08T08:58:40.620986+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: compliance_frameworks",
+            "source": "deutsche-bahn",
+            "timestamp": "2026-02-08T08:58:40.620988+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "LOW",
+            "code": "ISP-W002",
+            "message": "Below minimum templates: 0/8 for UNKNOWN",
+            "source": "deutsche-bahn",
+            "timestamp": "2026-02-08T08:58:40.620990+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: profile_id",
+            "source": "dhl-group",
+            "timestamp": "2026-02-08T08:58:40.620992+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: profile_name",
+            "source": "dhl-group",
+            "timestamp": "2026-02-08T08:58:40.620994+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: version",
+            "source": "dhl-group",
+            "timestamp": "2026-02-08T08:58:40.620996+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: governance_level",
+            "source": "dhl-group",
+            "timestamp": "2026-02-08T08:58:40.620997+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: institution",
+            "source": "dhl-group",
+            "timestamp": "2026-02-08T08:58:40.620999+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: templates",
+            "source": "dhl-group",
+            "timestamp": "2026-02-08T08:58:40.621000+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: sge_keywords",
+            "source": "dhl-group",
+            "timestamp": "2026-02-08T08:58:40.621002+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: cross_references",
+            "source": "dhl-group",
+            "timestamp": "2026-02-08T08:58:40.621004+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: identity_license",
+            "source": "dhl-group",
+            "timestamp": "2026-02-08T08:58:40.621006+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: compliance_frameworks",
+            "source": "dhl-group",
+            "timestamp": "2026-02-08T08:58:40.621008+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "LOW",
+            "code": "ISP-W002",
+            "message": "Below minimum templates: 0/8 for UNKNOWN",
+            "source": "dhl-group",
+            "timestamp": "2026-02-08T08:58:40.621009+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: profile_id",
+            "source": "ecb",
+            "timestamp": "2026-02-08T08:58:40.621011+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: profile_name",
+            "source": "ecb",
+            "timestamp": "2026-02-08T08:58:40.621013+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: version",
+            "source": "ecb",
+            "timestamp": "2026-02-08T08:58:40.621017+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: governance_level",
+            "source": "ecb",
+            "timestamp": "2026-02-08T08:58:40.621019+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: institution",
+            "source": "ecb",
+            "timestamp": "2026-02-08T08:58:40.621020+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: templates",
+            "source": "ecb",
+            "timestamp": "2026-02-08T08:58:40.621022+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: sge_keywords",
+            "source": "ecb",
+            "timestamp": "2026-02-08T08:58:40.621024+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: cross_references",
+            "source": "ecb",
+            "timestamp": "2026-02-08T08:58:40.621026+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: identity_license",
+            "source": "ecb",
+            "timestamp": "2026-02-08T08:58:40.621028+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: compliance_frameworks",
+            "source": "ecb",
+            "timestamp": "2026-02-08T08:58:40.621029+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "LOW",
+            "code": "ISP-W002",
+            "message": "Below minimum templates: 0/8 for UNKNOWN",
+            "source": "ecb",
+            "timestamp": "2026-02-08T08:58:40.621031+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: profile_id",
+            "source": "freistaat-bayern",
+            "timestamp": "2026-02-08T08:58:40.621033+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: profile_name",
+            "source": "freistaat-bayern",
+            "timestamp": "2026-02-08T08:58:40.621035+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: version",
+            "source": "freistaat-bayern",
+            "timestamp": "2026-02-08T08:58:40.621036+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: governance_level",
+            "source": "freistaat-bayern",
+            "timestamp": "2026-02-08T08:58:40.621038+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: institution",
+            "source": "freistaat-bayern",
+            "timestamp": "2026-02-08T08:58:40.621040+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: templates",
+            "source": "freistaat-bayern",
+            "timestamp": "2026-02-08T08:58:40.621041+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: sge_keywords",
+            "source": "freistaat-bayern",
+            "timestamp": "2026-02-08T08:58:40.621043+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: cross_references",
+            "source": "freistaat-bayern",
+            "timestamp": "2026-02-08T08:58:40.621045+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: identity_license",
+            "source": "freistaat-bayern",
+            "timestamp": "2026-02-08T08:58:40.621046+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: compliance_frameworks",
+            "source": "freistaat-bayern",
+            "timestamp": "2026-02-08T08:58:40.621048+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "LOW",
+            "code": "ISP-W002",
+            "message": "Below minimum templates: 0/8 for UNKNOWN",
+            "source": "freistaat-bayern",
+            "timestamp": "2026-02-08T08:58:40.621050+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: profile_id",
+            "source": "hwk",
+            "timestamp": "2026-02-08T08:58:40.621052+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: profile_name",
+            "source": "hwk",
+            "timestamp": "2026-02-08T08:58:40.621054+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: version",
+            "source": "hwk",
+            "timestamp": "2026-02-08T08:58:40.621055+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: governance_level",
+            "source": "hwk",
+            "timestamp": "2026-02-08T08:58:40.621057+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: institution",
+            "source": "hwk",
+            "timestamp": "2026-02-08T08:58:40.621059+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: templates",
+            "source": "hwk",
+            "timestamp": "2026-02-08T08:58:40.621060+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: sge_keywords",
+            "source": "hwk",
+            "timestamp": "2026-02-08T08:58:40.621062+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: cross_references",
+            "source": "hwk",
+            "timestamp": "2026-02-08T08:58:40.621064+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: identity_license",
+            "source": "hwk",
+            "timestamp": "2026-02-08T08:58:40.621066+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: compliance_frameworks",
+            "source": "hwk",
+            "timestamp": "2026-02-08T08:58:40.621067+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "LOW",
+            "code": "ISP-W002",
+            "message": "Below minimum templates: 0/8 for UNKNOWN",
+            "source": "hwk",
+            "timestamp": "2026-02-08T08:58:40.621069+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: profile_id",
+            "source": "ihk",
+            "timestamp": "2026-02-08T08:58:40.621071+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: profile_name",
+            "source": "ihk",
+            "timestamp": "2026-02-08T08:58:40.621073+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: version",
+            "source": "ihk",
+            "timestamp": "2026-02-08T08:58:40.621075+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: governance_level",
+            "source": "ihk",
+            "timestamp": "2026-02-08T08:58:40.621077+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: institution",
+            "source": "ihk",
+            "timestamp": "2026-02-08T08:58:40.621078+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: templates",
+            "source": "ihk",
+            "timestamp": "2026-02-08T08:58:40.621080+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: sge_keywords",
+            "source": "ihk",
+            "timestamp": "2026-02-08T08:58:40.621082+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: cross_references",
+            "source": "ihk",
+            "timestamp": "2026-02-08T08:58:40.621084+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: identity_license",
+            "source": "ihk",
+            "timestamp": "2026-02-08T08:58:40.621086+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: compliance_frameworks",
+            "source": "ihk",
+            "timestamp": "2026-02-08T08:58:40.621088+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "LOW",
+            "code": "ISP-W002",
+            "message": "Below minimum templates: 0/8 for UNKNOWN",
+            "source": "ihk",
+            "timestamp": "2026-02-08T08:58:40.621089+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: profile_id",
+            "source": "siemens",
+            "timestamp": "2026-02-08T08:58:40.621091+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: profile_name",
+            "source": "siemens",
+            "timestamp": "2026-02-08T08:58:40.621093+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: version",
+            "source": "siemens",
+            "timestamp": "2026-02-08T08:58:40.621095+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: governance_level",
+            "source": "siemens",
+            "timestamp": "2026-02-08T08:58:40.621096+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: institution",
+            "source": "siemens",
+            "timestamp": "2026-02-08T08:58:40.621098+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: templates",
+            "source": "siemens",
+            "timestamp": "2026-02-08T08:58:40.621100+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: sge_keywords",
+            "source": "siemens",
+            "timestamp": "2026-02-08T08:58:40.621101+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: cross_references",
+            "source": "siemens",
+            "timestamp": "2026-02-08T08:58:40.621103+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: identity_license",
+            "source": "siemens",
+            "timestamp": "2026-02-08T08:58:40.621105+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: compliance_frameworks",
+            "source": "siemens",
+            "timestamp": "2026-02-08T08:58:40.621107+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "LOW",
+            "code": "ISP-W002",
+            "message": "Below minimum templates: 0/8 for UNKNOWN",
+            "source": "siemens",
+            "timestamp": "2026-02-08T08:58:40.621108+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: profile_id",
+            "source": "sparkasse",
+            "timestamp": "2026-02-08T08:58:40.621110+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: profile_name",
+            "source": "sparkasse",
+            "timestamp": "2026-02-08T08:58:40.621112+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: version",
+            "source": "sparkasse",
+            "timestamp": "2026-02-08T08:58:40.621114+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: governance_level",
+            "source": "sparkasse",
+            "timestamp": "2026-02-08T08:58:40.621115+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: institution",
+            "source": "sparkasse",
+            "timestamp": "2026-02-08T08:58:40.621117+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: templates",
+            "source": "sparkasse",
+            "timestamp": "2026-02-08T08:58:40.621119+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: sge_keywords",
+            "source": "sparkasse",
+            "timestamp": "2026-02-08T08:58:40.621121+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: cross_references",
+            "source": "sparkasse",
+            "timestamp": "2026-02-08T08:58:40.621123+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: identity_license",
+            "source": "sparkasse",
+            "timestamp": "2026-02-08T08:58:40.621124+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: compliance_frameworks",
+            "source": "sparkasse",
+            "timestamp": "2026-02-08T08:58:40.621126+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "LOW",
+            "code": "ISP-W002",
+            "message": "Below minimum templates: 0/8 for UNKNOWN",
+            "source": "sparkasse",
+            "timestamp": "2026-02-08T08:58:40.621128+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: profile_id",
+            "source": "stadt-kempten",
+            "timestamp": "2026-02-08T08:58:40.621129+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: profile_name",
+            "source": "stadt-kempten",
+            "timestamp": "2026-02-08T08:58:40.621131+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: version",
+            "source": "stadt-kempten",
+            "timestamp": "2026-02-08T08:58:40.621133+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: governance_level",
+            "source": "stadt-kempten",
+            "timestamp": "2026-02-08T08:58:40.621134+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: institution",
+            "source": "stadt-kempten",
+            "timestamp": "2026-02-08T08:58:40.621136+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: templates",
+            "source": "stadt-kempten",
+            "timestamp": "2026-02-08T08:58:40.621138+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: sge_keywords",
+            "source": "stadt-kempten",
+            "timestamp": "2026-02-08T08:58:40.621140+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: cross_references",
+            "source": "stadt-kempten",
+            "timestamp": "2026-02-08T08:58:40.621141+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: identity_license",
+            "source": "stadt-kempten",
+            "timestamp": "2026-02-08T08:58:40.621143+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: compliance_frameworks",
+            "source": "stadt-kempten",
+            "timestamp": "2026-02-08T08:58:40.621145+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "LOW",
+            "code": "ISP-W002",
+            "message": "Below minimum templates: 0/8 for UNKNOWN",
+            "source": "stadt-kempten",
+            "timestamp": "2026-02-08T08:58:40.621147+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: profile_id",
+            "source": "stadtwerke",
+            "timestamp": "2026-02-08T08:58:40.621148+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: profile_name",
+            "source": "stadtwerke",
+            "timestamp": "2026-02-08T08:58:40.621150+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: version",
+            "source": "stadtwerke",
+            "timestamp": "2026-02-08T08:58:40.621152+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: governance_level",
+            "source": "stadtwerke",
+            "timestamp": "2026-02-08T08:58:40.621154+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: institution",
+            "source": "stadtwerke",
+            "timestamp": "2026-02-08T08:58:40.621156+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: templates",
+            "source": "stadtwerke",
+            "timestamp": "2026-02-08T08:58:40.621160+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: sge_keywords",
+            "source": "stadtwerke",
+            "timestamp": "2026-02-08T08:58:40.621162+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: cross_references",
+            "source": "stadtwerke",
+            "timestamp": "2026-02-08T08:58:40.621164+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: identity_license",
+            "source": "stadtwerke",
+            "timestamp": "2026-02-08T08:58:40.621165+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: compliance_frameworks",
+            "source": "stadtwerke",
+            "timestamp": "2026-02-08T08:58:40.621167+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "LOW",
+            "code": "ISP-W002",
+            "message": "Below minimum templates: 0/8 for UNKNOWN",
+            "source": "stadtwerke",
+            "timestamp": "2026-02-08T08:58:40.621169+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: profile_id",
+            "source": "tuev",
+            "timestamp": "2026-02-08T08:58:40.621171+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: profile_name",
+            "source": "tuev",
+            "timestamp": "2026-02-08T08:58:40.621172+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: version",
+            "source": "tuev",
+            "timestamp": "2026-02-08T08:58:40.621174+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: governance_level",
+            "source": "tuev",
+            "timestamp": "2026-02-08T08:58:40.621176+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: institution",
+            "source": "tuev",
+            "timestamp": "2026-02-08T08:58:40.621178+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: templates",
+            "source": "tuev",
+            "timestamp": "2026-02-08T08:58:40.621179+00:00"
+          },
+          {
+            "alert_type": "VIOLATION",
+            "severity": "HIGH",
+            "code": "ISP-V003",
+            "message": "Missing required field: sge_keywords",
+            "source": "tuev",
+            "timestamp": "2026-02-08T08:58:40.621181+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: cross_references",
+            "source": "tuev",
+            "timestamp": "2026-02-08T08:58:40.621183+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: identity_license",
+            "source": "tuev",
+            "timestamp": "2026-02-08T08:58:40.621185+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "MEDIUM",
+            "code": "ISP-W001",
+            "message": "Missing recommended field: compliance_frameworks",
+            "source": "tuev",
+            "timestamp": "2026-02-08T08:58:40.621186+00:00"
+          },
+          {
+            "alert_type": "WARNING",
+            "severity": "LOW",
+            "code": "ISP-W002",
+            "message": "Below minimum templates: 0/8 for UNKNOWN",
+            "source": "tuev",
+            "timestamp": "2026-02-08T08:58:40.621188+00:00"
+          }
+        ],
+        "count": 187,
+        "timestamp": "2026-02-08T08:58:40.621240+00:00",
+        "source_agent": "isp-manager",
+        "finding_id": "ISP-alerts_20260208_085840"
+      },
+      "timestamp": "2026-02-08T18:50:45.119431+00:00",
+      "receipt_id": null
+    }
+  ],
+  "routing": {
+    "finding_id": "ISP-alerts_20260208_085840",
+    "channel": {
+      "type": "INSTITUTIONAL_CHANNEL",
+      "mode": "STANDARD",
+      "notification": "QUEUED",
+      "dashboard_highlight": false,
+      "reason": "Standard governance flow for R2"
+    },
+    "stakeholder": {
+      "primary": "Governance Controller",
+      "escalation": "Chief Governance Officer",
+      "notify": [
+        "Department Head"
+      ]
+    },
+    "priority": {
+      "score": 36,
+      "level": "LOW",
+      "breakdown": {
+        "severity_contribution": 12.0,
+        "governance_contribution": 15.0,
+        "category_contribution": 9.0
+      }
+    },
+    "domain": {
+      "domain_id": "general",
+      "name": "General Governance",
+      "description": "Uncategorized governance findings",
+      "typical_actions": [
+        "Manual classification",
+        "Human assessment"
+      ]
+    },
+    "governance_level": "MEDIUM",
+    "rationale": "Finding classified as R2 severity in MEDIUM governance context. Category '' maps to general domain. Routed via INSTITUTIONAL_CHANNEL (STANDARD mode) to Governance Controller as primary decision-maker. Priority score: 36/100 (LOW).",
+    "routing_timestamp": "2026-02-08T18:52:04.482946+00:00",
+    "auto_apply": false
+  },
+  "constitutional": {
+    "I1_sovereignty": "This package is for HUMAN DECISION only",
+    "I2_non_opacity": "All data sources and reasoning are fully visible",
+    "I3_transparency": "Integrity hash ensures no tampering",
+    "I9_no_autonomy": "auto_apply is always false"
+  },
+  "auto_apply": false,
+  "integrity_hash": "3379c0b85c4eed79f520959f99efb412b71af5b80ddb5b4beb0caf5ab00c479e"
+}

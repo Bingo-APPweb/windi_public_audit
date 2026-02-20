@@ -1,0 +1,27 @@
+{
+  "source": "WITNESS (Gemini)",
+  "version": "1.2.0-CONSTITUTIONAL",
+  "injection_date": "2026-02-09",
+
+  "CARTAS_FE_PUBLICA": {
+    "principle": "Modelos prontos para Bancos e Órgãos Governamentais",
+    "enforcement": "LOG_ONLY",
+    "templates": {
+      "category": "Official Correspondence",
+      "targets": ["Banks", "Government Agencies"],
+      "tier": "FREE",
+      "purpose": "Immediate use for formal communications"
+    }
+  },
+
+  "INICIACAO_ISP": {
+    "principle": "Guia para o humano criar sua primeira Identidade Original WINDI",
+    "enforcement": "LOG_ONLY",
+    "guide": {
+      "purpose": "First Identity creation",
+      "result": "Individual Signature Profile (ISP)",
+      "tier": "FREE",
+      "onboarding": "First step into WINDI ecosystem"
+    }
+  }
+}

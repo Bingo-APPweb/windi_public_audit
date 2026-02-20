@@ -1,0 +1,68 @@
+{
+  "specification": "DESKTOP_HYBRID_RUNTIME",
+  "version": "0.1.0",
+  "principle": "O sistema não é um app. É uma película de vidro forense sobre o OS.",
+
+  "runtime_planes": {
+    "PLANE_1_WORKSPACE": {
+      "codename": "FLOW",
+      "description": "Editor + templates + autosave local. Zero atrito.",
+      "path": "runtime/workspace/",
+      "components": {
+        "editor": "Editor de documentos",
+        "templates": "Biblioteca de modelos",
+        "autosave": "Salvamento automático local"
+      },
+      "agent_mode": "FLOW",
+      "friction": "ZERO"
+    },
+
+    "PLANE_2_GOVERNANCE": {
+      "codename": "SILENT",
+      "description": "Scan + flags + decisão humana apenas no momento de transição",
+      "path": "runtime/governance/",
+      "components": {
+        "scanner": "Análise de conformidade",
+        "flags": "Sistema de alertas R0-R5",
+        "decision_modal": "Interface de decisão humana"
+      },
+      "trigger": "Transição: exportar/enviar/selar",
+      "agent_mode": "ATTENTION | PAUSE",
+      "friction": "MINIMAL_NECESSARY"
+    },
+
+    "PLANE_3_FORENSIC": {
+      "codename": "INVISIBLE",
+      "description": "Outbox offline + receipts + ledger local + sync com Hub",
+      "path": "runtime/forensic/",
+      "components": {
+        "outbox": "Fila offline de provas",
+        "receipts": "Gerador de recibos",
+        "ledger_local": "Ledger append-only local",
+        "hub_sync": "Sincronização com Hub (só provas)"
+      },
+      "agent_mode": "FLOW",
+      "friction": "ZERO",
+      "visibility": "INVISIBLE_TO_USER"
+    }
+  },
+
+  "document_states": {
+    "machine": [
+      {"state": "DRAFT", "plane": "WORKSPACE", "agent": "FLOW"},
+      {"state": "CHECKING", "plane": "GOVERNANCE", "agent": "FLOW"},
+      {"state": "PENDING", "plane": "GOVERNANCE", "agent": "ATTENTION/PAUSE"},
+      {"state": "DEFERRED", "plane": "GOVERNANCE", "agent": "ATTENTION"},
+      {"state": "SEALED", "plane": "FORENSIC", "agent": "FLOW"}
+    ],
+    "principle": "Fricção só no momento de decisão. Resto é silêncio."
+  },
+
+  "platforms": {
+    "supported": ["Linux", "Windows", "MacOS"],
+    "priority": "Linux first (MVP)",
+    "architecture": "Desktop-first, não web"
+  },
+
+  "golden_rule": "Tríade Workspace-Governance-Forensic = Arquitetura do app"
+}

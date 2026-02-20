@@ -1,0 +1,12 @@
+{
+  "name": "windi-evidence-bundle",
+  "version": "1.0.0",
+  "description": "WINDI Evidence Bundle Generator - Court-ready packages",
+  "main": "src/bundle-generator.js",
+  "dependencies": {
+    "archiver": "^6.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

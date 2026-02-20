@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="noir">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>WINDI • JMPG Viewer</title>
+  <meta name="description" content="Joint Media Protocol for Governance — Verified Communication"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <!-- JSZip for .jmpg extraction -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <!-- QR Code generator -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    /* ═══════════════════════════════════════════════════════════════
+       WINDI DESIGN SYSTEM v2.1 — Noir + Klar
+       Fonts: Bricolage Grotesque + Outfit + JetBrains Mono
+       ═══════════════════════════════════════════════════════════════ */
+    :root {
+      --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
+      --font-body: 'Outfit', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --gold: #d4af37;
+      --gold-dim: rgba(212,175,55,0.3);
+      --gold-glow: rgba(212,175,55,0.12);
+      --green-ok: #22c55e;
+      --red-fail: #ef4444;
+      --orange-warn: #f59e0b;
+      --blue-info: #3b82f6;
+      --radius: 14px;
+      --radius-sm: 8px;
+      --transition: 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+    [data-theme="noir"] {
+      --bg-deep: #08080e; --bg-surface: #0f0f18; --bg-card: #16162a; --bg-paper: #1c1c35;
+      --text-primary: #f0ece4; --text-secondary: rgba(240,236,228,0.6); --text-muted: rgba(240,236,228,0.35);
+      --border: rgba(212,175,55,0.12); --border-strong: rgba(212,175,55,0.25);
+      --paper-bg: #ffffff; --paper-text: #111118; --paper-muted: #6b7280; --paper-border: rgba(0,0,0,0.06);
+      --trust-bg: rgba(212,175,55,0.04); --drop-bg: rgba(212,175,55,0.03);
+      --seal-verified-bg: rgba(34,197,94,0.08); --seal-fail-bg: rgba(239,68,68,0.08);
+    }
+    [data-theme="klar"] {
+      --bg-deep: #f4f2ee; --bg-surface: #eae7e0; --bg-card: #ddd9d0; --bg-paper: #ffffff;
+      --text-primary: #111118; --text-secondary: rgba(17,17,24,0.6); --text-muted: rgba(17,17,24,0.35);
+      --border: rgba(0,0,0,0.08); --border-strong: rgba(0,0,0,0.15);
+      --paper-bg: #ffffff; --paper-text: #111118; --paper-muted: #6b7280; --paper-border: rgba(0,0,0,0.08);
+      --trust-bg: rgba(212,175,55,0.06); --drop-bg: rgba(0,0,0,0.02);
+      --seal-verified-bg: rgba(34,197,94,0.06); --seal-fail-bg: rgba(239,68,68,0.06);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg-deep); color: var(--text-primary); min-height: 100vh; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+
+    /* ── Header ── */
+    .header { display: flex; align-items: center; justify-content: space-between; padding: 12px 24px; background: var(--bg-surface); border-bottom: 1px solid var(--border); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 100; }
+    .logo { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-weight: 800; font-size: 1.1rem; color: var(--gold); }
+    .logo-dot { width: 18px; height: 18px; border-radius: 50%; background: var(--gold); box-shadow: 0 0 12px var(--gold-dim); }
+    .version { font-family: var(--font-mono); font-size: 0.7rem; padding: 3px 8px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; color: var(--text-secondary); }
+    .header-actions { display: flex; align-items: center; gap: 12px; }
+    .theme-toggle { width: 36px; height: 20px; border-radius: 10px; border: 1px solid var(--border-strong); background: var(--bg-card); cursor: pointer; position: relative; transition: var(--transition); }
+    .theme-toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: var(--gold); transition: var(--transition); }
+    [data-theme="klar"] .theme-toggle::after { left: 18px; }
+    .btn-open { font-family: var(--font-body); font-weight: 500; font-size: 0.85rem; padding: 6px 16px; border-radius: var(--radius-sm); border: 1px solid var(--gold-dim); background: var(--trust-bg); color: var(--gold); cursor: pointer; transition: var(--transition); }
+    .btn-open:hover { background: var(--gold); color: var(--bg-deep); }
+
+    /* ── Drop Zone ── */
+    .drop-zone { max-width: 700px; margin: 80px auto; padding: 64px 40px; border: 2px dashed var(--gold-dim); border-radius: var(--radius); background: var(--bg-card); text-align: center; cursor: pointer; transition: var(--transition); }
+    .drop-zone.dragover { border-color: var(--gold); background: var(--trust-bg); transform: scale(1.01); }
+    .drop-icon { font-size: 3rem; margin-bottom: 16px; opacity: 0.5; }
+    .drop-title { font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; margin-bottom: 8px; }
+    .drop-sub { font-size: 0.9rem; color: var(--text-secondary); }
+    .drop-sub code { font-family: var(--font-mono); padding: 2px 6px; background: var(--bg-surface); border-radius: 4px; font-size: 0.8rem; }
+
+    /* ── Loading ── */
+    .loading { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 80px 20px; }
+    .spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Communiqué ── */
+    .communique { max-width: 780px; margin: 32px auto; padding: 0 20px; animation: fadeIn 0.4s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ── Verification Seal ── */
+    .seal { display: flex; align-items: center; gap: 14px; padding: 16px 20px; border-radius: var(--radius); margin-bottom: 20px; border: 1px solid; transition: var(--transition); }
+    .seal.verified { background: var(--seal-verified-bg); border-color: rgba(34,197,94,0.2); }
+    .seal.failed { background: var(--seal-fail-bg); border-color: rgba(239,68,68,0.2); }
+    .seal.pending { background: var(--trust-bg); border-color: var(--border); }
+    .seal-icon { font-size: 2rem; flex-shrink: 0; }
+    .seal-info { flex: 1; }
+    .seal-title { font-family: var(--font-display); font-weight: 700; font-size: 1rem; }
+    .seal.verified .seal-title { color: var(--green-ok); }
+    .seal.failed .seal-title { color: var(--red-fail); }
+    .seal.pending .seal-title { color: var(--orange-warn); }
+    .seal-detail { font-size: 0.8rem; color: var(--text-secondary); font-family: var(--font-mono); margin-top: 2px; }
+    .seal-qr { flex-shrink: 0; }
+
+    /* ── Meta Bar ── */
+    .meta-bar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .meta-tag { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; font-size: 0.75rem; font-family: var(--font-mono); border-radius: 20px; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-secondary); }
+    .meta-tag.kind { background: var(--gold); color: var(--bg-deep); font-weight: 600; border-color: var(--gold); }
+    .meta-tag.ledger { background: rgba(34,197,94,0.1); color: var(--green-ok); border-color: rgba(34,197,94,0.2); }
+
+    /* ── Paper ── */
+    .paper { background: var(--paper-bg); color: var(--paper-text); border-radius: var(--radius); padding: 48px 40px; box-shadow: 0 4px 24px rgba(0,0,0,0.15); border: 1px solid var(--paper-border); }
+    .paper h1 { font-family: var(--font-display); font-weight: 800; font-size: 1.8rem; line-height: 1.2; margin-bottom: 20px; color: var(--paper-text); }
+    .paper h2 { font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; margin-top: 28px; margin-bottom: 12px; color: var(--paper-text); }
+    .paper h3 { font-family: var(--font-display); font-weight: 600; font-size: 1.1rem; margin-top: 24px; margin-bottom: 10px; }
+    .paper p { font-family: var(--font-body); font-size: 1rem; line-height: 1.7; margin-bottom: 14px; color: var(--paper-text); }
+    .paper blockquote { border-left: 3px solid var(--gold); padding: 12px 20px; margin: 20px 0; background: rgba(212,175,55,0.04); border-radius: 0 var(--radius-sm) var(--radius-sm) 0; font-style: italic; color: var(--paper-muted); }
+    .paper ul, .paper ol { padding-left: 24px; margin-bottom: 14px; }
+    .paper li { margin-bottom: 6px; line-height: 1.6; }
+    .paper hr { border: none; height: 1px; background: var(--paper-border); margin: 28px 0; }
+    .paper pre { font-family: var(--font-mono); font-size: 0.85rem; background: #f3f4f6; padding: 16px; border-radius: var(--radius-sm); overflow-x: auto; margin: 16px 0; }
+    .paper figure { margin: 20px 0; text-align: center; }
+    .paper figure img { max-width: 100%; border-radius: var(--radius-sm); }
+    .paper figcaption { font-size: 0.85rem; color: var(--paper-muted); margin-top: 8px; }
+    .paper table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.9rem; }
+    .paper th, .paper td { padding: 8px 12px; border: 1px solid #e5e7eb; text-align: left; }
+    .paper th { background: #f9fafb; font-weight: 600; }
+
+    /* ── Receipt Panel ── */
+    .receipt-panel { margin-top: 20px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .receipt-toggle { width: 100%; padding: 14px 20px; background: none; border: none; color: var(--text-primary); font-family: var(--font-display); font-weight: 600; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; justify-content: space-between; }
+    .receipt-toggle:hover { background: var(--trust-bg); }
+    .receipt-body { display: none; padding: 0 20px 20px; }
+    .receipt-body.open { display: block; }
+    .receipt-row { display: flex; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+    .receipt-row:last-child { border-bottom: none; }
+    .receipt-label { min-width: 140px; color: var(--text-muted); font-family: var(--font-mono); font-size: 0.75rem; text-transform: uppercase; }
+    .receipt-value { color: var(--text-primary); font-family: var(--font-mono); font-size: 0.8rem; word-break: break-all; }
+    .receipt-value.ok { color: var(--green-ok); }
+    .receipt-value.fail { color: var(--red-fail); }
+    .receipt-value.warn { color: var(--orange-warn); }
+
+    /* ── QR Section ── */
+    .qr-section { display: flex; align-items: center; gap: 16px; margin-top: 20px; padding: 16px 20px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); }
+    .qr-section canvas { border-radius: 4px; }
+    .qr-info { font-size: 0.8rem; color: var(--text-secondary); }
+    .qr-info strong { color: var(--text-primary); display: block; margin-bottom: 4px; font-family: var(--font-display); }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .paper { padding: 28px 20px; }
+      .paper h1 { font-size: 1.4rem; }
+      .seal { flex-direction: column; text-align: center; }
+      .meta-bar { justify-content: center; }
+      .qr-section { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <input type="file" id="fileInput" accept=".jmpg" hidden/>
+  <header class="header">
+    <div class="logo">
+      <div class="logo-dot"></div>
+      WINDI
+      <span class="version">JMPG-2.1</span>
+    </div>
+    <div class="header-actions">
+      <div class="theme-toggle" id="themeToggle" title="Noir / Klar"></div>
+      <button class="btn-open" onclick="document.getElementById('fileInput').click()">Öffnen / Open</button>
+    </div>
+  </header>
+
+  <main id="main">
+    <div class="drop-zone" id="dropZone">
+      <div class="drop-icon">📄</div>
+      <div class="drop-title">JMPG öffnen</div>
+      <div class="drop-sub">
+        Datei hier ablegen oder klicken • Drop file here or click<br/>
+        <code>.jmpg</code> — Joint Media Protocol for Governance
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // ── Utilities ──
+    const $ = id => document.getElementById(id);
+    function el(tag, cls, text) {
+      const e = document.createElement(tag);
+      if (cls) e.className = cls;
+      if (text) e.textContent = text;
+      return e;
+    }
+
+    // ── Theme Toggle ──
+    $('themeToggle').onclick = () => {
+      const html = document.documentElement;
+      html.dataset.theme = html.dataset.theme === 'noir' ? 'klar' : 'noir';
+    };
+
+    // ── File Input ──
+    $('fileInput').onchange = e => { if (e.target.files[0]) loadJmpg(e.target.files[0]); };
+
+    // ── Drop Zone ──
+    const dz = $('dropZone');
+    dz.addEventListener('click', () => $('fileInput').click());
+    dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
+    dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+    dz.addEventListener('drop', e => {
+      e.preventDefault();
+      dz.classList.remove('dragover');
+      const f = e.dataTransfer.files?.[0];
+      if (f) loadJmpg(f);
+    });
+
+    // ── SHA-256 ──
+    async function sha256hex(data) {
+      const buf = await crypto.subtle.digest('SHA-256', data);
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    function jsonCanonical(obj) {
+      if (obj === null || typeof obj !== 'object') return JSON.stringify(obj);
+      if (Array.isArray(obj)) return '[' + obj.map(jsonCanonical).join(',') + ']';
+      const keys = Object.keys(obj).sort();
+      return '{' + keys.map(k => JSON.stringify(k) + ':' + jsonCanonical(obj[k])).join(',') + '}';
+    }
+
+    // ── Ledger Verification ──
+    async function verifyWithLedger(receiptId, contentHash) {
+      const result = { status: 'pending', message: 'Prüfung läuft…', receipt: null };
+      if (!receiptId) {
+        result.status = 'no-receipt';
+        result.message = 'Kein Ledger-Receipt vorhanden / No Ledger receipt';
+        return result;
+      }
+      try {
+        const resp = await fetch(`/suite-docs/api/receipts/${encodeURIComponent(receiptId)}`);
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const data = await resp.json();
+        if (!data.ok || !data.receipt) {
+          result.status = 'not-found';
+          result.message = `Receipt ${receiptId} nicht gefunden / not found`;
+          return result;
+        }
+        const r = data.receipt;
+        result.receipt = r;
+        // Compare content_hash
+        if (r.content_hash && contentHash) {
+          if (r.content_hash === contentHash) {
+            result.status = 'verified';
+            result.message = 'Integrität verifiziert / Integrity verified';
+          } else {
+            result.status = 'hash-mismatch';
+            result.message = 'Hash stimmt nicht überein / Hash mismatch — WARNUNG';
+          }
+        } else {
+          result.status = 'partial';
+          result.message = 'Receipt gefunden, Hash nicht vergleichbar / Receipt found, hash not comparable';
+        }
+      } catch (err) {
+        result.status = 'error';
+        result.message = `Ledger nicht erreichbar / Ledger unavailable: ${err.message}`;
+      }
+      return result;
+    }
+
+    // ── Content Hash Verification (local) ──
+    async function verifyContentHash(blocks, expectedHash) {
+      const canonical = jsonCanonical(blocks);
+      const hash = await sha256hex(new TextEncoder().encode(canonical));
+      return { match: hash === expectedHash, computed: hash, expected: expectedHash };
+    }
+
+    // ── Load & Render JMPG ──
+    async function loadJmpg(file) {
+      const main = $('main');
+      main.innerHTML = '<div class="loading"><div class="spinner"></div><div>Paket wird geprüft… / Verifying package…</div></div>';
+
+      try {
+        const buf = await file.arrayBuffer();
+        const zip = await JSZip.loadAsync(buf);
+
+        // Parse manifest
+        const manifestFile = zip.file('manifest.json');
+        if (!manifestFile) throw new Error('manifest.json not found — not a valid .jmpg');
+        const manifest = JSON.parse(await manifestFile.async('string'));
+
+        // Parse content
+        const contentPath = manifest.entrypoints?.content || 'content.json';
+        const contentFile = zip.file(contentPath);
+        if (!contentFile) throw new Error(`${contentPath} not found`);
+        const content = JSON.parse(await contentFile.async('string'));
+
+        // Parse receipt
+        let receipt = null;
+        const receiptFile = zip.file('receipt.json');
+        if (receiptFile) receipt = JSON.parse(await receiptFile.async('string'));
+
+        // Parse hash.txt (if present)
+        let hashTxt = null;
+        const hashFile = zip.file('hash.txt');
+        if (hashFile) hashTxt = await hashFile.async('string');
+
+        // Load media assets
+        const assets = {};
+        const mediaFolder = zip.folder('media');
+        if (mediaFolder) {
+          const mediaFiles = [];
+          zip.forEach((path, entry) => {
+            if (path.startsWith('media/') && !entry.dir) mediaFiles.push(entry);
+          });
+          for (const f of mediaFiles) {
+            assets[f.name] = await f.async('uint8array');
+          }
+        }
+        // Also load old-format assets
+        if (manifest.assets) {
+          for (const a of manifest.assets) {
+            const f = zip.file(a.path);
+            if (f) assets[a.path] = await f.async('uint8array');
+          }
+        }
+
+        // Determine content hash (support both formats)
+        const expectedHash = manifest.content_hash
+          || manifest.governance?.content_hash_sha256?.replace('sha256:', '')
+          || receipt?.content_hash
+          || null;
+
+        // Determine receipt ID (support both formats)
+        const receiptId = manifest.governance?.receipt_id
+          || manifest.package_id
+          || receipt?.receipt_id
+          || null;
+
+        // Determine content blocks (support both formats)
+        const blocks = content.blocks || content.content || [];
+
+        // 1. Local hash verification
+        let hashResult = { match: false, computed: '—', expected: expectedHash || '—' };
+        if (expectedHash && blocks.length > 0) {
+          hashResult = await verifyContentHash(blocks, expectedHash);
+        }
+
+        // 2. Ledger verification (async)
+        const ledgerResult = await verifyWithLedger(receiptId, expectedHash);
+
+        // Render
+        main.innerHTML = '';
+        main.appendChild(renderCommunique(manifest, content, blocks, assets, receipt, hashResult, ledgerResult, hashTxt));
+
+      } catch (err) {
+        console.error(err);
+        main.innerHTML = '';
+        const errDiv = el('div', 'drop-zone');
+        errDiv.style.borderColor = 'var(--red-fail)';
+        errDiv.innerHTML = `<div class="drop-icon">⚠️</div><div class="drop-title">Fehler / Error</div><div class="drop-sub">${err.message}</div>`;
+        main.appendChild(errDiv);
+      }
+    }
+
+    // ── Render Communiqué ──
+    function renderCommunique(manifest, content, blocks, assets, receipt, hashResult, ledgerResult, hashTxt) {
+      const wrap = el('div', 'communique');
+
+      // ── Verification Seal ──
+      const sealClass = ledgerResult.status === 'verified' && hashResult.match ? 'verified'
+        : (ledgerResult.status === 'hash-mismatch' || ledgerResult.status === 'error') ? 'failed'
+        : 'pending';
+
+      const seal = el('div', `seal ${sealClass}`);
+
+      const sealIcon = el('div', 'seal-icon');
+      sealIcon.textContent = sealClass === 'verified' ? '🛡️' : sealClass === 'failed' ? '⚠️' : '🔍';
+      seal.appendChild(sealIcon);
+
+      const sealInfo = el('div', 'seal-info');
+      const sealTitle = el('div', 'seal-title');
+      if (sealClass === 'verified') {
+        sealTitle.textContent = '✓ Integrität geschützt / Integrity Protected';
+      } else if (sealClass === 'failed') {
+        sealTitle.textContent = '✗ Integritätsprüfung fehlgeschlagen / Integrity Check Failed';
+      } else {
+        sealTitle.textContent = '◌ ' + ledgerResult.message;
+      }
+      sealInfo.appendChild(sealTitle);
+
+      if (manifest.governance?.receipt_id || manifest.package_id) {
+        const sealDetail = el('div', 'seal-detail', `Receipt: ${manifest.governance?.receipt_id || manifest.package_id}`);
+        sealInfo.appendChild(sealDetail);
+      }
+      if (hashResult.match) {
+        const hashDetail = el('div', 'seal-detail', `SHA-256: ${hashResult.computed.substring(0, 24)}…`);
+        sealInfo.appendChild(hashDetail);
+      }
+      if (ledgerResult.receipt) {
+        const tsDetail = el('div', 'seal-detail');
+        const ts = new Date(ledgerResult.receipt.created_at * 1000);
+        tsDetail.textContent = `Ledger: ${ts.toISOString().replace('T', ' ').substring(0, 19)} UTC`;
+        sealInfo.appendChild(tsDetail);
+      }
+      seal.appendChild(sealInfo);
+
+      // QR Code in seal
+      if (manifest.governance?.receipt_id || manifest.package_id) {
+        const qrDiv = el('div', 'seal-qr');
+        qrDiv.id = 'sealQR';
+        seal.appendChild(qrDiv);
+      }
+      wrap.appendChild(seal);
+
+      // ── Meta Bar ──
+      const meta = el('div', 'meta-bar');
+      const template = manifest.template || manifest.kind || 'COMMUNIQUÉ';
+      meta.appendChild(el('span', 'meta-tag kind', template.toUpperCase()));
+      if (manifest.metadata?.language || manifest.language) {
+        meta.appendChild(el('span', 'meta-tag', (manifest.metadata?.language || manifest.language).toUpperCase()));
+      }
+      if (manifest.package_id) meta.appendChild(el('span', 'meta-tag', manifest.package_id));
+      if (manifest.author?.display_name || manifest.author) {
+        const authorName = typeof manifest.author === 'string' ? manifest.author : manifest.author?.display_name;
+        if (authorName) meta.appendChild(el('span', 'meta-tag', '👤 ' + authorName));
+      }
+      if (ledgerResult.status === 'verified') {
+        meta.appendChild(el('span', 'meta-tag ledger', '🛡 LEDGER VERIFIED'));
+      }
+      wrap.appendChild(meta);
+
+      // ── Paper ──
+      const paper = el('div', 'paper');
+
+      for (const b of blocks) {
+        const type = b.type || '';
+        switch (type) {
+          // ── New Export Engine format ──
+          case 'heading': {
+            const level = b.level || 1;
+            const h = document.createElement(`h${Math.min(level, 3)}`);
+            h.textContent = b.text || '';
+            paper.appendChild(h);
+            break;
+          }
+          case 'paragraph': {
+            paper.appendChild(el('p', '', b.text || ''));
+            break;
+          }
+          case 'quote': {
+            const bq = document.createElement('blockquote');
+            bq.textContent = b.text || '';
+            paper.appendChild(bq);
+            break;
+          }
+          case 'list': {
+            const listEl = document.createElement(b.ordered ? 'ol' : 'ul');
+            for (const item of (b.items || [])) {
+              listEl.appendChild(el('li', '', item));
+            }
+            paper.appendChild(listEl);
+            break;
+          }
+          case 'image': {
+            const fig = document.createElement('figure');
+            const img = document.createElement('img');
+            // Check if image is in assets
+            const src = b.src || b.filename || '';
+            const assetKey = Object.keys(assets).find(k => k.includes(src) || src.includes(k));
+            if (assetKey && assets[assetKey]) {
+              const mimeGuess = src.endsWith('.png') ? 'image/png' : 'image/jpeg';
+              const blob = new Blob([assets[assetKey]], { type: mimeGuess });
+              img.src = URL.createObjectURL(blob);
+            } else if (src.startsWith('data:') || src.startsWith('http')) {
+              img.src = src;
+            }
+            img.alt = b.alt || b.caption || '';
+            fig.appendChild(img);
+            if (b.alt || b.caption) fig.appendChild(el('figcaption', '', b.alt || b.caption));
+            paper.appendChild(fig);
+            break;
+          }
+          case 'table': {
+            const table = document.createElement('table');
+            for (let i = 0; i < (b.rows || []).length; i++) {
+              const tr = document.createElement('tr');
+              for (const cell of b.rows[i]) {
+                const td = document.createElement(i === 0 ? 'th' : 'td');
+                td.textContent = cell;
+                tr.appendChild(td);
+              }
+              table.appendChild(tr);
+            }
+            paper.appendChild(table);
+            break;
+          }
+          case 'code': {
+            const pre = document.createElement('pre');
+            pre.textContent = b.text || b.code || '';
+            paper.appendChild(pre);
+            break;
+          }
+          case 'divider': {
+            paper.appendChild(document.createElement('hr'));
+            break;
+          }
+          // ── Old format (v1 viewer) ──
+          case 'TitleBlock': {
+            paper.appendChild(el('h1', 'doc-title', b.text || manifest.title || ''));
+            break;
+          }
+          case 'TextBlock': {
+            paper.appendChild(el('p', '', b.text || ''));
+            break;
+          }
+          case 'ImageBlock': {
+            const data = assets[b.src];
+            if (data) {
+              const mimeGuess = b.src.endsWith('.png') ? 'image/png' : 'image/jpeg';
+              const blob = new Blob([data], { type: mimeGuess });
+              const fig2 = document.createElement('figure');
+              const img2 = document.createElement('img');
+              img2.src = URL.createObjectURL(blob);
+              img2.alt = b.caption || '';
+              fig2.appendChild(img2);
+              if (b.caption) fig2.appendChild(el('figcaption', '', b.caption));
+              paper.appendChild(fig2);
+            }
+            break;
+          }
+          case 'ActionBlock': {
+            const act = b.action || {};
+            if (act.type === 'link' && act.url) {
+              const a = document.createElement('a');
+              a.className = 'btn-open';
+              a.href = act.url;
+              a.target = '_blank';
+              a.rel = 'noopener noreferrer';
+              a.textContent = b.label || 'Öffnen';
+              a.style.display = 'inline-block';
+              a.style.marginTop = '12px';
+              paper.appendChild(a);
+            }
+            break;
+          }
+          default: {
+            // Unknown block — render as paragraph
+            if (b.text) paper.appendChild(el('p', '', b.text));
+          }
+        }
+      }
+      wrap.appendChild(paper);
+
+      // ── Receipt Panel (collapsible) ──
+      const receiptPanel = el('div', 'receipt-panel');
+      const toggle = el('button', 'receipt-toggle');
+      toggle.innerHTML = '🔐 Forensic Receipt <span>▼</span>';
+      const body = el('div', 'receipt-body');
+
+      // Build receipt rows
+      const rows = [];
+      rows.push(['Package ID', manifest.package_id || '—']);
+      rows.push(['Content Hash', hashResult.expected || '—']);
+      rows.push(['Hash Valid', hashResult.match ? '✓ MATCH' : '✗ MISMATCH', hashResult.match ? 'ok' : 'fail']);
+      rows.push(['Ledger Status', ledgerResult.status === 'verified' ? '✓ REGISTERED' : ledgerResult.message, ledgerResult.status === 'verified' ? 'ok' : ledgerResult.status === 'error' ? 'fail' : 'warn']);
+      if (manifest.integrity?.manifest_hash) rows.push(['Manifest Hash', manifest.integrity.manifest_hash]);
+      rows.push(['Template', manifest.template || '—']);
+      rows.push(['Author', typeof manifest.author === 'string' ? manifest.author : manifest.author?.display_name || '—']);
+      rows.push(['Created', manifest.created_at || '—']);
+      if (manifest.metadata?.doc_type) rows.push(['Doc Type', manifest.metadata.doc_type]);
+      if (manifest.metadata?.impact_level) rows.push(['Impact', manifest.metadata.impact_level]);
+      if (manifest.governance?.sge_score != null) rows.push(['SGE Score', String(manifest.governance.sge_score)]);
+      if (manifest.governance?.risk_level) rows.push(['Risk Level', manifest.governance.risk_level]);
+      if (manifest.metadata?.tags?.length) rows.push(['Tags', manifest.metadata.tags.join(', ')]);
+      rows.push(['Engine', manifest.engine_version || '—']);
+      rows.push(['Spec', manifest.jmpg_version || '—']);
+
+      for (const [label, value, cls] of rows) {
+        const row = el('div', 'receipt-row');
+        row.appendChild(el('div', 'receipt-label', label));
+        row.appendChild(el('div', `receipt-value${cls ? ' ' + cls : ''}`, value));
+        body.appendChild(row);
+      }
+
+      toggle.onclick = () => body.classList.toggle('open');
+      receiptPanel.appendChild(toggle);
+      receiptPanel.appendChild(body);
+      wrap.appendChild(receiptPanel);
+
+      // ── QR Code Section ──
+      const receiptIdForQR = manifest.governance?.receipt_id || manifest.package_id;
+      if (receiptIdForQR) {
+        const qrSection = el('div', 'qr-section');
+        const qrTarget = el('div', '');
+        qrTarget.id = 'mainQR';
+        qrSection.appendChild(qrTarget);
+        const qrInfo = el('div', 'qr-info');
+        qrInfo.innerHTML = `<strong>QR Verification Code</strong>Scan to verify this Communiqué against the WINDI Forensic Ledger.<br/><span style="font-family:var(--font-mono);font-size:0.75rem;opacity:0.6">${receiptIdForQR}</span>`;
+        qrSection.appendChild(qrInfo);
+        wrap.appendChild(qrSection);
+
+        // Generate QR after render
+        setTimeout(() => {
+          const verifyUrl = `https://admin.windia4desk.tech/suite-docs/api/receipts/${encodeURIComponent(receiptIdForQR)}`;
+          try {
+            new QRCode(document.getElementById('mainQR'), {
+              text: verifyUrl,
+              width: 80,
+              height: 80,
+              colorDark: document.documentElement.dataset.theme === 'noir' ? '#d4af37' : '#111118',
+              colorLight: document.documentElement.dataset.theme === 'noir' ? '#16162a' : '#ffffff',
+              correctLevel: QRCode.CorrectLevel.M
+            });
+            // Also small QR in seal
+            const sealQREl = document.getElementById('sealQR');
+            if (sealQREl) {
+              new QRCode(sealQREl, {
+                text: verifyUrl,
+                width: 48,
+                height: 48,
+                colorDark: document.documentElement.dataset.theme === 'noir' ? '#d4af37' : '#111118',
+                colorLight: 'transparent',
+                correctLevel: QRCode.CorrectLevel.L
+              });
+            }
+          } catch (e) { console.warn('QR generation failed:', e); }
+        }, 100);
+      }
+
+      return wrap;
+    }
+  </script>
+</body>
+</html>

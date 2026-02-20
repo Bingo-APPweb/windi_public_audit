@@ -1,0 +1,13 @@
+{
+  "communique_id": "COM-20260219-0001",
+  "content_hash": "2bfc3f471973bac6f6d96121dac32a696664db182a5b8d3ad96b9c167a2e5683",
+  "bundle_hash": "b819a9dbadd29bd2c57b2ea5d6ad59ca6029dbb1d284748a99b05fa7e8344cf7",
+  "receipt_id": "VR-COM-ef5ef676e196",
+  "ledger_id": "VR-COM-ef5ef676e196",
+  "category": "LAUNCH",
+  "impact_level": "HIGH",
+  "author": "Jober Mögele Correa",
+  "published_at": "2026-02-19T17:41:27Z",
+  "verify_url": "https://admin.windia4desk.tech/communique/COM-20260219-0001/verify",
+  "generated_at": "2026-02-19T17:41:27Z"
+}

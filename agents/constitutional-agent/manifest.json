@@ -1,0 +1,19 @@
+{
+  "name": "constitutional-agent",
+  "version": "1.0.0",
+  "node": "W-00000000000000000000001",
+  "alias": "Praktikant",
+  "status": "active",
+  "phase": "onboarding-complete",
+  "capabilities": ["sge_analysis", "human_escalation", "virtue_receipt", "babel_bridge", "i9_enforcement"],
+  "invariants": ["I1","I2","I3","I4","I5","I6","I7","I8","I9"],
+  "ports": {"api": 8091},
+  "onboarding": {
+    "phase1": "OBSERVATION_COMPLETE",
+    "phase2": "ASSISTANCE_COMPLETE",
+    "phase3": "TRUST_COMPLETE",
+    "first_escalation": "SIMULATED_SUCCESSFULLY"
+  },
+  "principle": "AI processes. Human decides. WINDI guarantees.",
+  "created": "2026-02-10T11:12:03+0100"
+}

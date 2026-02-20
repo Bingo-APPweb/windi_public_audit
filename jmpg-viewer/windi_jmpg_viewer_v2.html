@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="noir">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>WINDI • JMPG Viewer</title>
+  <meta name="description" content="Joint Media Protocol for Governance — Verified Communication"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    /* ═══════════════════════════════════════════════════════════════
+       WINDI DESIGN SYSTEM — Noir + Klar Themes
+       Fonts: Bricolage Grotesque (display) + Outfit (body) + JetBrains Mono (code)
+       ═══════════════════════════════════════════════════════════════ */
+    :root {
+      --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
+      --font-body: 'Outfit', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --gold: #d4af37;
+      --gold-dim: rgba(212,175,55,0.3);
+      --gold-glow: rgba(212,175,55,0.12);
+      --green-ok: #22c55e;
+      --red-fail: #ef4444;
+      --orange-warn: #f59e0b;
+      --radius: 14px;
+      --radius-sm: 8px;
+      --transition: 0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    /* ── NOIR THEME ── */
+    [data-theme="noir"] {
+      --bg-deep: #08080e;
+      --bg-surface: #0f0f18;
+      --bg-card: #16162a;
+      --bg-paper: #1c1c35;
+      --text-primary: #f0ece4;
+      --text-secondary: rgba(240,236,228,0.6);
+      --text-muted: rgba(240,236,228,0.35);
+      --border: rgba(212,175,55,0.12);
+      --border-strong: rgba(212,175,55,0.25);
+      --paper-bg: #ffffff;
+      --paper-text: #111118;
+      --paper-muted: #6b7280;
+      --paper-border: rgba(0,0,0,0.06);
+      --trust-bg: rgba(212,175,55,0.04);
+      --drop-bg: rgba(212,175,55,0.03);
+    }
+
+    /* ── KLAR THEME ── */
+    [data-theme="klar"] {
+      --bg-deep: #f4f2ee;
+      --bg-surface: #eae7e0;
+      --bg-card: #ddd9d0;
+      --bg-paper: #ffffff;
+      --text-primary: #111118;
+      --text-secondary: rgba(17,17,24,0.6);
+      --text-muted: rgba(17,17,24,0.35);
+      --border: rgba(0,0,0,0.08);
+      --border-strong: rgba(0,0,0,0.15);
+      --paper-bg: #ffffff;
+      --paper-text: #111118;
+      --paper-muted: #6b7280;
+      --paper-border: rgba(0,0,0,0.08);
+      --trust-bg: rgba(212,175,55,0.06);
+      --drop-bg: rgba(0,0,0,0.02);
+    }
+
+    /* ── RESET ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-deep);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: 12px 20px;
+      display: flex; align-items: center; gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .logo {
+      display: flex; align-items: center; gap: 8px;
+      font-family: var(--font-display);
+      font-weight: 700; font-size: 15px;
+      color: var(--gold);
+      letter-spacing: -0.02em;
+    }
+
+    .logo-icon {
+      width: 28px; height: 28px;
+      border: 2px solid var(--gold);
+      border-radius: 7px;
+      display: grid; place-items: center;
+      font-size: 14px;
+      background: var(--gold-glow);
+    }
+
+    .format-badge {
+      font-family: var(--font-mono);
+      font-size: 11px; font-weight: 500;
+      padding: 3px 8px;
+      border: 1px solid var(--gold-dim);
+      color: var(--gold);
+      border-radius: 999px;
+      letter-spacing: 0.05em;
+    }
+
+    .header-right {
+      margin-left: auto;
+      display: flex; align-items: center; gap: 10px;
+    }
+
+    .theme-toggle {
+      width: 36px; height: 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-strong);
+      border-radius: 10px;
+      position: relative;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .theme-toggle::after {
+      content: '';
+      position: absolute;
+      top: 2px; left: 2px;
+      width: 14px; height: 14px;
+      background: var(--gold);
+      border-radius: 50%;
+      transition: var(--transition);
+    }
+
+    [data-theme="klar"] .theme-toggle::after {
+      left: 18px;
+      background: #111;
+    }
+
+    .file-label {
+      font-family: var(--font-body);
+      font-size: 13px; font-weight: 500;
+      padding: 6px 14px;
+      background: var(--gold);
+      color: #111;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .file-label:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+    .file-input { display: none; }
+
+    /* ── MAIN ── */
+    .main {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 24px 16px 80px;
+    }
+
+    /* ── DROP ZONE ── */
+    .drop-zone {
+      border: 2px dashed var(--border-strong);
+      border-radius: var(--radius);
+      padding: 60px 24px;
+      text-align: center;
+      background: var(--drop-bg);
+      transition: var(--transition);
+      cursor: pointer;
+    }
+
+    .drop-zone.dragover {
+      border-color: var(--gold);
+      background: var(--gold-glow);
+      transform: scale(1.01);
+    }
+
+    .drop-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      opacity: 0.6;
+    }
+
+    .drop-title {
+      font-family: var(--font-display);
+      font-size: 20px; font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .drop-sub {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .drop-sub code {
+      font-family: var(--font-mono);
+      background: var(--bg-card);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    /* ── LOADING ── */
+    .loading {
+      text-align: center;
+      padding: 40px;
+    }
+
+    .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── COMMUNIQUÉ CARD ── */
+    .communique {
+      animation: fadeUp 0.5s ease-out;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── META BAR ── */
+    .meta-bar {
+      display: flex; align-items: center; gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .meta-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 3px 8px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--text-secondary);
+    }
+
+    .meta-tag.kind {
+      border-color: var(--gold-dim);
+      color: var(--gold);
+    }
+
+    /* ── PAPER ── */
+    .paper {
+      background: var(--paper-bg);
+      color: var(--paper-text);
+      border-radius: var(--radius);
+      padding: 28px 24px;
+      box-shadow:
+        0 1px 3px rgba(0,0,0,0.04),
+        0 8px 30px rgba(0,0,0,0.08),
+        0 20px 60px rgba(0,0,0,0.06);
+    }
+
+    .paper .doc-title {
+      font-family: var(--font-display);
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      margin-bottom: 16px;
+      color: var(--paper-text);
+    }
+
+    .paper .doc-text {
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--paper-text);
+      margin-bottom: 14px;
+    }
+
+    .paper figure {
+      margin: 16px 0;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--paper-border);
+    }
+
+    .paper figure img {
+      width: 100%;
+      display: block;
+    }
+
+    .paper figcaption {
+      font-size: 12px;
+      color: var(--paper-muted);
+      padding: 8px 12px;
+      background: rgba(0,0,0,0.02);
+    }
+
+    .paper .actions {
+      display: flex; gap: 10px; flex-wrap: wrap;
+      margin: 16px 0;
+    }
+
+    .paper .action-btn {
+      font-family: var(--font-body);
+      font-size: 14px; font-weight: 500;
+      padding: 10px 18px;
+      background: #16213e;
+      color: #f5f5f5;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: var(--transition);
+    }
+
+    .paper .action-btn:hover { filter: brightness(1.15); transform: translateY(-1px); }
+
+    /* ── TRUST BLOCK ── */
+    .trust-section {
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: 1px solid var(--paper-border);
+    }
+
+    .trust-header {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .trust-status {
+      display: flex; align-items: center; gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 12px; font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 999px;
+      animation: trustPulse 2s ease-in-out;
+    }
+
+    .trust-status.valid {
+      background: rgba(34,197,94,0.1);
+      color: var(--green-ok);
+      border: 1px solid rgba(34,197,94,0.2);
+    }
+
+    .trust-status.unsigned {
+      background: rgba(245,158,11,0.1);
+      color: var(--orange-warn);
+      border: 1px solid rgba(245,158,11,0.2);
+    }
+
+    .trust-status.invalid {
+      background: rgba(239,68,68,0.1);
+      color: var(--red-fail);
+      border: 1px solid rgba(239,68,68,0.2);
+    }
+
+    @keyframes trustPulse {
+      0% { opacity: 0; transform: scale(0.9); }
+      50% { transform: scale(1.03); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    .trust-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    @media (max-width: 560px) {
+      .trust-grid { grid-template-columns: 1fr; }
+    }
+
+    .trust-item {
+      padding: 10px 12px;
+      background: var(--trust-bg);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--paper-border);
+    }
+
+    .trust-label {
+      font-size: 11px;
+      color: var(--paper-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 4px;
+      font-family: var(--font-body);
+      font-weight: 500;
+    }
+
+    .trust-value {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      word-break: break-all;
+      color: var(--paper-text);
+      line-height: 1.4;
+    }
+
+    .trust-value.hash {
+      font-size: 10px;
+      opacity: 0.8;
+    }
+
+    /* ── SGE METER ── */
+    .sge-meter {
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    .sge-bar {
+      flex: 1; height: 6px;
+      background: rgba(0,0,0,0.06);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .sge-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 1s ease-out;
+      background: linear-gradient(90deg, var(--green-ok), var(--gold));
+    }
+
+    .sge-score {
+      font-family: var(--font-mono);
+      font-size: 13px; font-weight: 500;
+    }
+
+    /* ── VIRAL FOOTER ── */
+    .viral-footer {
+      margin-top: 20px;
+      padding: 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      display: flex; align-items: center; gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .viral-seal {
+      display: flex; align-items: center; gap: 8px;
+      font-family: var(--font-display);
+      font-size: 13px; font-weight: 600;
+      color: var(--gold);
+    }
+
+    .viral-seal .shield {
+      width: 32px; height: 32px;
+      border: 2px solid var(--gold);
+      border-radius: 8px;
+      display: grid; place-items: center;
+      font-size: 16px;
+      background: var(--gold-glow);
+    }
+
+    .viral-cta {
+      margin-left: auto;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .viral-cta a {
+      color: var(--gold);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .viral-cta a:hover { text-decoration: underline; }
+
+    /* ── LINHAGEM BUTTON ── */
+    .linhagem-btn {
+      font-family: var(--font-body);
+      font-size: 12px; font-weight: 500;
+      padding: 6px 14px;
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+
+    .linhagem-btn:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: var(--gold-glow);
+    }
+
+    /* ── RECEIPT PANEL ── */
+    .receipt-panel {
+      margin-top: 12px;
+      padding: 14px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-secondary);
+      white-space: pre-wrap;
+      word-break: break-all;
+      display: none;
+      animation: fadeUp 0.3s ease-out;
+    }
+
+    .receipt-panel.open { display: block; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 480px) {
+      .header { padding: 10px 14px; }
+      .main { padding: 16px 12px 60px; }
+      .paper { padding: 20px 16px; }
+      .paper .doc-title { font-size: 22px; }
+      .viral-footer { flex-direction: column; align-items: flex-start; }
+      .viral-cta { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ HEADER ═══ -->
+  <div class="header">
+    <div class="logo">
+      <div class="logo-icon">🛡️</div>
+      <span>WINDI</span>
+    </div>
+    <div class="format-badge">JMPG-1.0</div>
+    <div class="header-right">
+      <div class="theme-toggle" id="themeToggle" title="Noir / Klar"></div>
+      <label class="file-label">
+        Öffnen / Open
+        <input type="file" class="file-input" id="fileInput" accept=".jmpg,.zip"/>
+      </label>
+    </div>
+  </div>
+
+  <!-- ═══ MAIN ═══ -->
+  <div class="main" id="main">
+
+    <!-- Drop Zone (initial state) -->
+    <div class="drop-zone" id="dropZone">
+      <div class="drop-icon">📄</div>
+      <div class="drop-title">JMPG öffnen</div>
+      <div class="drop-sub">
+        Datei hier ablegen oder klicken • Drop file here or click<br/>
+        <code>.jmpg</code> — Joint Media Protocol for Governance
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══ SCRIPTS ═══ -->
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script>
+  (function() {
+    'use strict';
+
+    // ── Helpers ──
+    const $ = id => document.getElementById(id);
+    const el = (tag, cls, children) => {
+      const n = document.createElement(tag);
+      if (cls) n.className = cls;
+      if (children) {
+        if (typeof children === 'string') n.textContent = children;
+        else if (Array.isArray(children)) children.forEach(c => {
+          if (typeof c === 'string') n.appendChild(document.createTextNode(c));
+          else if (c) n.appendChild(c);
+        });
+      }
+      return n;
+    };
+
+    // ── Theme Toggle ──
+    $('themeToggle').addEventListener('click', () => {
+      const html = document.documentElement;
+      html.dataset.theme = html.dataset.theme === 'noir' ? 'klar' : 'noir';
+    });
+
+    // ── File Input ──
+    $('fileInput').addEventListener('change', e => {
+      const f = e.target.files?.[0];
+      if (f) loadJmpg(f);
+    });
+
+    // ── Drop Zone ──
+    const dz = $('dropZone');
+    dz.addEventListener('click', () => $('fileInput').click());
+    dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
+    dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+    dz.addEventListener('drop', e => {
+      e.preventDefault();
+      dz.classList.remove('dragover');
+      const f = e.dataTransfer.files?.[0];
+      if (f) loadJmpg(f);
+    });
+
+    // ── SHA-256 Hash Verification ──
+    async function sha256hex(data) {
+      const buf = await crypto.subtle.digest('SHA-256', data);
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+    }
+
+    async function verifyContentHash(content, expectedHash) {
+      const canonical = JSON.stringify(content, Object.keys(content).sort(), undefined);
+      // Replicate the Python approach: minified, sorted keys
+      const minified = JSON.stringify(
+        JSON.parse(JSON.stringify(content)),
+        Object.keys(content).sort().length ? undefined : null
+      );
+      // Simple canonical: sorted keys, no spaces
+      const sorted = jsonCanonical(content);
+      const hash = await sha256hex(new TextEncoder().encode(sorted));
+      const expected = expectedHash.replace('sha256:', '');
+      return { match: hash === expected, computed: hash, expected };
+    }
+
+    function jsonCanonical(obj) {
+      if (obj === null || typeof obj !== 'object') return JSON.stringify(obj);
+      if (Array.isArray(obj)) return '[' + obj.map(jsonCanonical).join(',') + ']';
+      const keys = Object.keys(obj).sort();
+      return '{' + keys.map(k => JSON.stringify(k) + ':' + jsonCanonical(obj[k])).join(',') + '}';
+    }
+
+    // ── Load & Render JMPG ──
+    async function loadJmpg(file) {
+      const main = $('main');
+      main.innerHTML = '<div class="loading"><div class="spinner"></div><div>Paket wird geprüft… / Verifying package…</div></div>';
+
+      try {
+        const buf = await file.arrayBuffer();
+        const zip = await JSZip.loadAsync(buf);
+
+        // Parse manifest
+        const manifestFile = zip.file('manifest.json');
+        if (!manifestFile) throw new Error('manifest.json not found — not a valid .jmpg');
+        const manifest = JSON.parse(await manifestFile.async('string'));
+
+        // Parse content
+        const contentPath = manifest.entrypoints?.content || 'content.json';
+        const contentFile = zip.file(contentPath);
+        if (!contentFile) throw new Error(`${contentPath} not found`);
+        const content = JSON.parse(await contentFile.async('string'));
+
+        // Parse receipt
+        let receipt = null;
+        const receiptFile = zip.file('receipt.json');
+        if (receiptFile) receipt = JSON.parse(await receiptFile.async('string'));
+
+        // Load assets
+        const assets = {};
+        if (manifest.assets) {
+          for (const a of manifest.assets) {
+            const f = zip.file(a.path);
+            if (f) assets[a.path] = await f.async('uint8array');
+          }
+        }
+
+        // Verify content hash
+        let hashResult = { match: false, computed: '—', expected: '—' };
+        if (manifest.governance?.content_hash_sha256) {
+          hashResult = await verifyContentHash(content, manifest.governance.content_hash_sha256);
+        }
+
+        // Render
+        main.innerHTML = '';
+        main.appendChild(renderCommunique(manifest, content, assets, receipt, hashResult));
+
+      } catch (err) {
+        console.error(err);
+        main.innerHTML = '';
+        const errDiv = el('div', 'drop-zone');
+        errDiv.style.borderColor = 'var(--red-fail)';
+        errDiv.innerHTML = `<div class="drop-icon">⚠️</div><div class="drop-title">Fehler / Error</div><div class="drop-sub">${err.message}</div>`;
+        main.appendChild(errDiv);
+      }
+    }
+
+    function renderCommunique(manifest, content, assets, receipt, hashResult) {
+      const wrap = el('div', 'communique');
+
+      // ── Meta Bar ──
+      const meta = el('div', 'meta-bar');
+      const kindTag = el('span', 'meta-tag kind', manifest.kind || 'COMMUNIQUE');
+      meta.appendChild(kindTag);
+      if (manifest.language) meta.appendChild(el('span', 'meta-tag', manifest.language));
+      if (manifest.package_id) meta.appendChild(el('span', 'meta-tag', manifest.package_id));
+      if (manifest.author?.display_name) {
+        meta.appendChild(el('span', 'meta-tag', '👤 ' + manifest.author.display_name));
+      }
+      wrap.appendChild(meta);
+
+      // ── Paper ──
+      const paper = el('div', 'paper');
+      const blocks = content.blocks || [];
+      let actionsDiv = null;
+
+      for (const b of blocks) {
+        switch (b.type) {
+          case 'TitleBlock': {
+            paper.appendChild(el('h1', 'doc-title', b.text || manifest.title || ''));
+            break;
+          }
+          case 'TextBlock': {
+            paper.appendChild(el('p', 'doc-text', b.text || ''));
+            break;
+          }
+          case 'ImageBlock': {
+            const data = assets[b.src];
+            if (data) {
+              const mimeGuess = b.src.endsWith('.png') ? 'image/png' :
+                               b.src.endsWith('.jpg') || b.src.endsWith('.jpeg') ? 'image/jpeg' : 'image/png';
+              const blob = new Blob([data], { type: mimeGuess });
+              const url = URL.createObjectURL(blob);
+              const fig = document.createElement('figure');
+              const img = document.createElement('img');
+              img.src = url; img.alt = b.caption || '';
+              fig.appendChild(img);
+              if (b.caption) {
+                const cap = document.createElement('figcaption');
+                cap.textContent = b.caption;
+                fig.appendChild(cap);
+              }
+              paper.appendChild(fig);
+            }
+            break;
+          }
+          case 'ActionBlock': {
+            if (!actionsDiv) { actionsDiv = el('div', 'actions'); paper.appendChild(actionsDiv); }
+            const act = b.action || {};
+            if (act.type === 'link' && act.url) {
+              const a = document.createElement('a');
+              a.className = 'action-btn'; a.href = act.url;
+              a.target = '_blank'; a.rel = 'noopener noreferrer';
+              a.textContent = b.label || 'Öffnen';
+              actionsDiv.appendChild(a);
+            } else {
+              actionsDiv.appendChild(el('button', 'action-btn', b.label || 'Aktion'));
+            }
+            break;
+          }
+          case 'TrustBlock': {
+            paper.appendChild(renderTrustBlock(manifest, hashResult, receipt));
+            break;
+          }
+        }
+      }
+
+      wrap.appendChild(paper);
+
+      // ── Viral Footer ──
+      const viral = el('div', 'viral-footer');
+      const seal = el('div', 'viral-seal');
+      seal.innerHTML = '<div class="shield">🛡️</div>';
+      seal.appendChild(document.createTextNode(' Geschützt durch WINDI'));
+      viral.appendChild(seal);
+      const cta = el('div', 'viral-cta');
+      cta.innerHTML = 'Joint Media Protocol for Governance • <a href="https://www.windi-domain.com" target="_blank">windi-domain.com</a>';
+      viral.appendChild(cta);
+      wrap.appendChild(viral);
+
+      return wrap;
+    }
+
+    function renderTrustBlock(manifest, hashResult, receipt) {
+      const section = el('div', 'trust-section');
+      const g = manifest.governance || {};
+
+      // ── Status badge ──
+      const header = el('div', 'trust-header');
+
+      if (hashResult.match) {
+        const badge = el('span', 'trust-status valid', '✓ Integrität bestätigt');
+        header.appendChild(badge);
+      } else if (!manifest.signature?.signed) {
+        const badge = el('span', 'trust-status unsigned', '⚠ Nicht signiert');
+        header.appendChild(badge);
+      } else {
+        const badge = el('span', 'trust-status invalid', '✗ Abweichung erkannt');
+        header.appendChild(badge);
+      }
+
+      section.appendChild(header);
+
+      // ── Trust Grid ──
+      const grid = el('div', 'trust-grid');
+
+      // Content Hash
+      const hashItem = el('div', 'trust-item');
+      hashItem.appendChild(el('div', 'trust-label', 'SHA-256 Content'));
+      const hv = el('div', 'trust-value hash', g.content_hash_sha256?.replace('sha256:', '') || '—');
+      hashItem.appendChild(hv);
+      grid.appendChild(hashItem);
+
+      // Author
+      const authorItem = el('div', 'trust-item');
+      authorItem.appendChild(el('div', 'trust-label', 'Autor / Wallet'));
+      authorItem.appendChild(el('div', 'trust-value', manifest.author?.wallet_id || '—'));
+      grid.appendChild(authorItem);
+
+      // Ledger
+      const ledgerItem = el('div', 'trust-item');
+      ledgerItem.appendChild(el('div', 'trust-label', 'Forensic Ledger'));
+      const ledgerVal = el('div', 'trust-value');
+      ledgerVal.textContent = (g.ledger_ref?.ledger_entry_id || '—') + ' • ' + (g.ledger_ref?.chain_status || '');
+      ledgerItem.appendChild(ledgerVal);
+      grid.appendChild(ledgerItem);
+
+      // Timestamp
+      const timeItem = el('div', 'trust-item');
+      timeItem.appendChild(el('div', 'trust-label', 'Zeitstempel'));
+      const ts = manifest.created_at || '—';
+      const formatted = ts !== '—' ? new Date(ts).toLocaleString('de-DE', { dateStyle: 'medium', timeStyle: 'short' }) : '—';
+      timeItem.appendChild(el('div', 'trust-value', formatted));
+      grid.appendChild(timeItem);
+
+      // SGE Score (if present)
+      if (g.sge?.score != null) {
+        const sgeItem = el('div', 'trust-item');
+        sgeItem.appendChild(el('div', 'trust-label', 'SGE Governance Score'));
+        const meter = el('div', 'sge-meter');
+        const bar = el('div', 'sge-bar');
+        const fill = el('div', 'sge-fill');
+        fill.style.width = (g.sge.score * 100) + '%';
+        bar.appendChild(fill);
+        meter.appendChild(bar);
+        meter.appendChild(el('span', 'sge-score', (g.sge.score * 100).toFixed(0) + '%'));
+        sgeItem.appendChild(meter);
+        const risk = el('div', 'trust-value', 'Risk: ' + (g.sge.risk_level || '—') + ' • ' + (g.sge.categories?.doc_type || ''));
+        risk.style.marginTop = '4px';
+        sgeItem.appendChild(risk);
+        grid.appendChild(sgeItem);
+      }
+
+      // Signature
+      const sigItem = el('div', 'trust-item');
+      sigItem.appendChild(el('div', 'trust-label', 'Signatur'));
+      if (manifest.signature?.signed) {
+        sigItem.appendChild(el('div', 'trust-value', manifest.signature.alg + ' ✓ Signiert'));
+      } else {
+        const sv = el('div', 'trust-value');
+        sv.style.color = 'var(--orange-warn)';
+        sv.textContent = (manifest.signature?.alg || 'Ed25519') + ' • Noch nicht signiert';
+        sigItem.appendChild(sv);
+      }
+      grid.appendChild(sigItem);
+
+      section.appendChild(grid);
+
+      // ── Linhagem de Ferro Button ──
+      const linhagemWrap = el('div', '');
+      linhagemWrap.style.marginTop = '12px';
+      linhagemWrap.style.display = 'flex';
+      linhagemWrap.style.gap = '8px';
+
+      const linBtn = document.createElement('button');
+      linBtn.className = 'linhagem-btn';
+      linBtn.innerHTML = '🔗 Linhagem de Ferro prüfen';
+
+      const receiptPanel = el('div', 'receipt-panel');
+      if (receipt) {
+        receiptPanel.textContent = JSON.stringify(receipt, null, 2);
+      } else {
+        receiptPanel.textContent = '// Kein Receipt im Paket';
+      }
+
+      linBtn.addEventListener('click', () => {
+        receiptPanel.classList.toggle('open');
+        linBtn.innerHTML = receiptPanel.classList.contains('open')
+          ? '🔗 Linhagem ausblenden' : '🔗 Linhagem de Ferro prüfen';
+      });
+
+      linhagemWrap.appendChild(linBtn);
+      section.appendChild(linhagemWrap);
+      section.appendChild(receiptPanel);
+
+      return section;
+    }
+
+  })();
+  </script>
+</body>
+</html>

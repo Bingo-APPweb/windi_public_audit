@@ -1,0 +1,17 @@
+{
+  "baseline_id": "BASELINE-20260208",
+  "created_utc": "2026-02-08T19:20:13.273888+00:00",
+  "window_days": 30,
+  "data_points": 6,
+  "rhythm": {
+    "R2": {
+      "avg_minutes": 3.51,
+      "count": 6
+    }
+  },
+  "frequency": {
+    "by_agent": {
+      "isp-manager": 6
+    }
+  }
+}

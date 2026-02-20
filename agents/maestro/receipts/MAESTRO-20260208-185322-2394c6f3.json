@@ -1,0 +1,18 @@
+{
+  "receipt_id": "MAESTRO-20260208-185322-2394c6f3",
+  "agent_id": "windi://agent/core/maestro",
+  "version": "1.2.0",
+  "action": "ACKNOWLEDGE",
+  "finding_id": "ISP-alerts_20260208_103650",
+  "details": {
+    "finding_id": "ISP-alerts_20260208_103650",
+    "status": "ACKNOWLEDGED",
+    "acknowledged_by": "Human Dragon",
+    "timestamp": "2026-02-08T18:53:22.066641+00:00",
+    "auto_apply": false
+  },
+  "timestamp": "2026-02-08T18:53:22.073793+00:00",
+  "integrity_hash": "2394c6f3d631be6a783484ee26e6ab41d5eac53e8e6e650d54251b15ab8ba1f5",
+  "invariante_i9": true,
+  "auto_apply": false
+}

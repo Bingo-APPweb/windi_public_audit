@@ -1,0 +1,390 @@
+/**
+ * WINDI D1 — M3.2 Paper Refinements
+ * ═══════════════════════════════════
+ * Fixes:
+ *   1. Toolbar inside paper → soft/light (Klar)
+ *   2. Status bar → bottom of viewport, not inside paper
+ *   3. Soften all dark elements on white paper
+ *   4. Export button styling
+ *
+ * Import AFTER a4-page.css:
+ *   import './m3-refinements.css';
+ */
+
+/* ═══════════════════════════════════════════
+   TOOLBAR ON PAPER — Klar (Light) Mode
+   Soft, minimal, like LibreOffice toolbar
+   ═══════════════════════════════════════════ */
+
+.a4-page-wrapper .d1-toolbar,
+.a4-page-wrapper .editor-toolbar,
+.a4-page-wrapper [class*="toolbar"],
+.a4-content > div:first-child:has(button) {
+  background: #f8f6f0 !important;
+  border-bottom: 1px solid #e0dcd0 !important;
+  padding: 6px 12px !important;
+  border-radius: 0 !important;
+}
+
+/* Toolbar buttons on paper — subtle */
+.a4-page-wrapper .d1-toolbar button,
+.a4-page-wrapper .editor-toolbar button,
+.a4-page-wrapper [class*="toolbar"] button {
+  background: transparent !important;
+  color: #555 !important;
+  border: none !important;
+  border-radius: 3px !important;
+  padding: 4px 6px !important;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-size: 13px;
+}
+
+.a4-page-wrapper .d1-toolbar button:hover,
+.a4-page-wrapper .editor-toolbar button:hover,
+.a4-page-wrapper [class*="toolbar"] button:hover {
+  background: #e8e4d8 !important;
+  color: #222 !important;
+}
+
+.a4-page-wrapper .d1-toolbar button.is-active,
+.a4-page-wrapper .editor-toolbar button.is-active,
+.a4-page-wrapper [class*="toolbar"] button.is-active {
+  background: #c8a00022 !important;
+  color: #8a6d00 !important;
+  font-weight: 600;
+}
+
+/* Toolbar separator/divider on paper */
+.a4-page-wrapper .d1-toolbar .toolbar-sep,
+.a4-page-wrapper .d1-toolbar .separator,
+.a4-page-wrapper [class*="toolbar"] [class*="sep"],
+.a4-page-wrapper [class*="toolbar"] [class*="divider"] {
+  background: #ddd !important;
+  width: 1px;
+  height: 18px;
+  margin: 0 6px;
+}
+
+/* ═══════════════════════════════════════════
+   STATUS BAR — Move to viewport bottom
+   NOT inside the paper
+   ═══════════════════════════════════════════ */
+
+.d1-status-bar,
+[class*="status-bar"],
+.status-bar {
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 100 !important;
+  background: #111 !important;
+  border-top: 1px solid #2a2a2a !important;
+  padding: 3px 16px !important;
+  font-size: 11px !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  height: 24px !important;
+  color: #888 !important;
+  font-family: 'JetBrains Mono', monospace !important;
+}
+
+/* Status bar Saved indicator */
+.d1-status-bar .status-saved,
+.d1-status-bar [class*="saved"] {
+  color: #22c55e;
+}
+
+/* Ensure main content doesn't hide behind fixed status bar */
+.d1-app {
+  padding-bottom: 28px !important;
+}
+
+/* ═══════════════════════════════════════════
+   SEAL ON PAPER — Refined Klar Version
+   Warmer, softer, like parchment header
+   ═══════════════════════════════════════════ */
+
+.a4-page-wrapper .seal-bar,
+.seal-on-paper .seal-bar {
+  background: #f5f0e0 !important;
+  border-bottom: 1px solid #e0dcd0 !important;
+  padding: 8px 20px !important;
+}
+
+.a4-page-wrapper .seal-bar:hover,
+.seal-on-paper .seal-bar:hover {
+  background: #efe8d4 !important;
+}
+
+/* WINDI badge on paper — dark badge on light bg */
+.a4-page-wrapper .seal-bar > span:first-child,
+.seal-on-paper [style*="background: rgb(200, 160, 0)"],
+.seal-on-paper [style*="#c8a000"] {
+  background: #1a1a1a !important;
+  color: #c8a000 !important;
+}
+
+/* All text in seal on paper — dark */
+.a4-page-wrapper .seal-bar span,
+.seal-on-paper .seal-bar span {
+  color: #555 !important;
+}
+
+/* Receipt ID — darker */
+.a4-page-wrapper .seal-bar span[style*="font-weight: 500"],
+.a4-page-wrapper .seal-bar span[style*="font-weight:500"] {
+  color: #1a1a1a !important;
+  font-weight: 600 !important;
+}
+
+/* Status pill on paper */
+.a4-page-wrapper .seal-bar span[style*="border-radius: 10px"],
+.a4-page-wrapper .seal-bar span[style*="border-radius:10px"] {
+  background: rgba(34, 197, 94, 0.1) !important;
+}
+
+/* Expanded panel on paper */
+.a4-page-wrapper div[style*="background: rgb(17, 17, 17)"],
+.a4-page-wrapper div[style*="background:#111"] {
+  background: #f8f6f0 !important;
+  border-bottom: 1px solid #e0dcd0 !important;
+}
+
+/* ═══════════════════════════════════════════
+   RULER — Softer on paper
+   ═══════════════════════════════════════════ */
+
+.a4-ruler {
+  background: #f5f2e8 !important;
+  border-bottom: 1px solid #e0dcd0 !important;
+  height: 22px !important;
+}
+
+.a4-ruler .ruler-mark.major {
+  background: #aaa !important;
+}
+
+.a4-ruler .ruler-mark.minor {
+  background: #ccc !important;
+}
+
+.a4-ruler .ruler-number {
+  color: #999 !important;
+}
+
+/* ═══════════════════════════════════════════
+   PAGE FOOTER ON PAPER — Softer
+   ═══════════════════════════════════════════ */
+
+.a4-page-footer {
+  background: #fafafa !important;
+  border-top: 1px solid #eee !important;
+  padding: 6px 25mm !important;
+  font-size: 8px !important;
+  color: #bbb !important;
+}
+
+.a4-page-footer .footer-windi {
+  color: #c8a000 !important;
+  font-weight: 500 !important;
+  font-size: 8px !important;
+}
+
+/* ═══════════════════════════════════════════
+   EXPORT DROPDOWN BUTTON
+   ═══════════════════════════════════════════ */
+
+.btn-export {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  padding: 4px 12px !important;
+  background: transparent !important;
+  color: #ccc !important;
+  border: 1px solid #444 !important;
+  border-radius: 4px !important;
+  font-size: 12px !important;
+  font-family: 'Outfit', sans-serif !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  pointer-events: auto !important;
+  opacity: 1 !important;
+}
+
+.btn-export:hover {
+  background: #333 !important;
+  color: #e5e5e5 !important;
+  border-color: #c8a000 !important;
+}
+
+.btn-export:disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+}
+
+/* Export dropdown menu */
+.export-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 4px 0;
+  min-width: 180px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  z-index: 200;
+  margin-top: 4px;
+}
+
+.export-dropdown button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 16px;
+  background: transparent;
+  color: #ccc;
+  border: none;
+  font-size: 13px;
+  font-family: 'Outfit', sans-serif;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+}
+
+.export-dropdown button:hover {
+  background: #c8a00015;
+  color: #e5e5e5;
+}
+
+.export-dropdown button .export-icon {
+  font-size: 16px;
+  width: 22px;
+  text-align: center;
+}
+
+.export-dropdown button .export-label {
+  flex: 1;
+}
+
+.export-dropdown button .export-ext {
+  color: #666;
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.export-dropdown .export-sep {
+  height: 1px;
+  background: #333;
+  margin: 4px 12px;
+}
+
+/* ═══════════════════════════════════════════
+   LANGUAGE SELECTOR (Trilingual)
+   ═══════════════════════════════════════════ */
+
+.lang-selector {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  border: 1px solid #444;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-left: 8px;
+}
+
+.lang-selector button {
+  padding: 3px 8px;
+  background: transparent;
+  color: #888;
+  border: none;
+  border-right: 1px solid #333;
+  font-size: 10px;
+  font-weight: 600;
+  font-family: 'JetBrains Mono', monospace;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.15s ease;
+}
+
+.lang-selector button:last-child {
+  border-right: none;
+}
+
+.lang-selector button:hover {
+  background: #333;
+  color: #ccc;
+}
+
+.lang-selector button.active {
+  background: #c8a00022;
+  color: #c8a000;
+}
+
+/* ═══════════════════════════════════════════
+   PRINT — Hide everything except paper
+   ═══════════════════════════════════════════ */
+
+@media print {
+  .d1-header,
+  .doc-sidebar,
+  .governance-panel,
+  .d1-status-bar,
+  .status-bar,
+  .a4-ruler,
+  .export-dropdown,
+  .lang-selector {
+    display: none !important;
+  }
+
+  .d1-editor-area {
+    background: white !important;
+    padding: 0 !important;
+    background-image: none !important;
+  }
+
+  .a4-page-wrapper {
+    box-shadow: none !important;
+    margin: 0 !important;
+    width: 100% !important;
+  }
+
+  .a4-page-wrapper .a4-content {
+    padding: 20mm !important;
+  }
+
+  /* Seal prints subtle */
+  .seal-on-paper .seal-bar {
+    background: #f5f0e0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    padding: 4px 20mm !important;
+    font-size: 9px !important;
+  }
+}
+
+/* ═══ M3 Export Engine Badge ═══ */
+.export-m3-item {
+  position: relative;
+}
+.export-m3-badge {
+  display: inline-block;
+  background: var(--windi-gold, #C5A55A);
+  color: #0A0A0A;
+  font-size: 8px;
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: 3px;
+  margin-left: 6px;
+  letter-spacing: 0.5px;
+  vertical-align: middle;
+  line-height: 1.2;
+}
+.export-m3-item:hover .export-m3-badge {
+  background: #D4B96E;
+}

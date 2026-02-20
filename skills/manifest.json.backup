@@ -1,0 +1,27 @@
+{
+    "version": "1.0.0",
+    "created": "2026-02-11",
+    "skills": {
+      "core/api-gateway-deployment": {
+        "shelf_link": "P5-operational",
+        "governance_level": "HIGH",
+        "version": "1.0.0",
+        "description": "Deploy APIs with nginx, SSL, zero-downtime"
+      },
+      "core/sovereign-handshake": {
+        "shelf_link": "P0-invariants",
+        "governance_level": "MAXIMUM",
+        "version": "1.0.0"
+      },
+      "core/casual-chat": {
+        "shelf_link": "P1-guardrails",
+        "governance_level": "LOW",
+        "version": "1.0.0"
+      },
+      "core/product-identity": {
+        "shelf_link": "P2-identity",
+        "governance_level": "MEDIUM",
+        "version": "1.0.0"
+      }
+    }
+  }

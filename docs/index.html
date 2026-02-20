@@ -1,0 +1,1679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI Ecosystem — Architecture & Navigation Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,600;12..96,700;12..96,800&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js"></script>
+<style>
+  :root {
+    /* Noir Theme (default) */
+    --bg-primary: #0a0a0a;
+    --bg-secondary: #111111;
+    --bg-card: #161616;
+    --bg-card-hover: #1a1a1a;
+    --border: #222222;
+    --border-accent: #c8a44e;
+    --text-primary: #e8e4dc;
+    --text-secondary: #9a9590;
+    --text-muted: #5a5550;
+    --gold: #c8a44e;
+    --gold-dim: #a88a3e;
+    --gold-glow: rgba(200,164,78,0.15);
+    --green: #3ecf8e;
+    --yellow: #e8c547;
+    --orange: #e8944e;
+    --red: #e85c4e;
+    --blue: #4ea4e8;
+    --purple: #9a6ee8;
+    --tier-p: #3ecf8e;
+    --tier-m: #e8c547;
+    --tier-g: #e85c4e;
+    --mermaid-bg: #111111;
+    --mermaid-text: #e8e4dc;
+    --mermaid-border: #c8a44e;
+    --mermaid-node: #1e1e1e;
+  }
+
+  [data-theme="klar"] {
+    --bg-primary: #f5f2ed;
+    --bg-secondary: #eae6df;
+    --bg-card: #ffffff;
+    --bg-card-hover: #faf8f5;
+    --border: #d6d0c8;
+    --border-accent: #a88a3e;
+    --text-primary: #1a1816;
+    --text-secondary: #5a5550;
+    --text-muted: #9a9590;
+    --gold: #a88a3e;
+    --gold-dim: #8a7030;
+    --gold-glow: rgba(168,138,62,0.12);
+    --mermaid-bg: #ffffff;
+    --mermaid-text: #1a1816;
+    --mermaid-border: #a88a3e;
+    --mermaid-node: #f5f2ed;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+    transition: background 0.4s ease, color 0.4s ease;
+  }
+
+  /* === HEADER === */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg-primary);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  .header-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo {
+    font-family: 'Bricolage Grotesque', serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: var(--gold);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .logo-shield { font-size: 1.3rem; }
+  .logo-sub {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 400;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-left: 0.5rem;
+  }
+
+  .header-controls {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 0.25rem;
+  }
+
+  .nav-links a {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-decoration: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    transition: all 0.2s;
+  }
+
+  .nav-links a:hover {
+    color: var(--gold);
+    background: var(--gold-glow);
+  }
+
+  .theme-toggle {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    padding: 0.4rem 0.7rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  /* === HERO === */
+  .hero {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 4rem 2rem 3rem;
+    text-align: center;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--gold-glow);
+    border: 1px solid var(--border-accent);
+    padding: 0.4rem 1rem;
+    border-radius: 100px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.05em;
+  }
+
+  .hero h1 {
+    font-family: 'Bricolage Grotesque', serif;
+    font-size: clamp(2.2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+  }
+
+  .hero h1 span { color: var(--gold); }
+
+  .hero p {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+    max-width: 700px;
+    margin: 0 auto 2rem;
+    font-weight: 300;
+  }
+
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-value {
+    font-family: 'Bricolage Grotesque', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--gold);
+  }
+
+  .stat-label {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 0.2rem;
+  }
+
+  /* === SECTIONS === */
+  .section {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+  }
+
+  .section-header {
+    margin-bottom: 2rem;
+  }
+
+  .section-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 0.5rem;
+  }
+
+  .section-title {
+    font-family: 'Bricolage Grotesque', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+
+  .section-title span { color: var(--gold); }
+
+  /* === ARCHITECTURE DIAGRAM === */
+  .diagram-container {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    overflow-x: auto;
+  }
+
+  .diagram-container .mermaid {
+    display: flex;
+    justify-content: center;
+  }
+
+  /* === LAYER CARDS === */
+  .layers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .layer-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .layer-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--card-accent, var(--gold));
+  }
+
+  .layer-card:hover {
+    border-color: var(--border-accent);
+    background: var(--bg-card-hover);
+    transform: translateY(-2px);
+  }
+
+  .layer-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--card-accent, var(--gold));
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 0.5rem;
+  }
+
+  .layer-title {
+    font-family: 'Bricolage Grotesque', serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
+
+  .layer-desc {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+    font-weight: 300;
+  }
+
+  /* === SERVICE CARDS === */
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .service-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem;
+    transition: all 0.25s;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+
+  .service-card:hover {
+    border-color: var(--border-accent);
+    background: var(--bg-card-hover);
+    transform: translateY(-1px);
+  }
+
+  .service-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+  }
+
+  .service-name {
+    font-family: 'Bricolage Grotesque', serif;
+    font-weight: 700;
+    font-size: 1rem;
+  }
+
+  .service-port {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--gold);
+    background: var(--gold-glow);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  .service-desc {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.75rem;
+    font-weight: 300;
+  }
+
+  .service-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+
+  .tag-live {
+    border-color: var(--green);
+    color: var(--green);
+  }
+
+  .tag-l1 { border-color: var(--blue); color: var(--blue); }
+  .tag-l2 { border-color: var(--purple); color: var(--purple); }
+  .tag-l3 { border-color: var(--gold); color: var(--gold); }
+
+  /* === PORT MAP TABLE === */
+  .table-wrap {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-top: 1.5rem;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  thead {
+    background: var(--bg-secondary);
+  }
+
+  th {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    padding: 0.8rem 1.2rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  td {
+    padding: 0.7rem 1.2rem;
+    font-size: 0.85rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-secondary);
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  tr:hover td {
+    background: var(--bg-card-hover);
+    color: var(--text-primary);
+  }
+
+  td:first-child {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--gold);
+    font-weight: 500;
+    font-size: 0.8rem;
+  }
+
+  .status-dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    margin-right: 0.4rem;
+    vertical-align: middle;
+  }
+
+  .dot-live { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .dot-internal { background: var(--text-muted); }
+
+  /* === TRUST FLOW === */
+  .flow-container {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-top: 1.5rem;
+    overflow-x: auto;
+  }
+
+  /* === FEATURE INDEX === */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .feature-group {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .feature-group-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .feature-group-title {
+    font-family: 'Bricolage Grotesque', serif;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+  }
+
+  .feature-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.8rem;
+  }
+
+  .feature-item:last-child { border-bottom: none; }
+
+  .feature-name { color: var(--text-secondary); }
+
+  .feature-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+  }
+
+  /* === ENTRY POINTS === */
+  .entry-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .entry-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .entry-card:hover {
+    border-color: var(--border-accent);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  }
+
+  .entry-card.tier-p { --card-accent: var(--tier-p); }
+  .entry-card.tier-m { --card-accent: var(--tier-m); }
+  .entry-card.tier-g { --card-accent: var(--tier-g); }
+  .entry-card.tier-v { --card-accent: var(--blue); }
+
+  .entry-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--card-accent, var(--gold));
+  }
+
+  .entry-domain {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .entry-name {
+    font-family: 'Bricolage Grotesque', serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 0.4rem;
+    color: var(--card-accent, var(--text-primary));
+  }
+
+  .entry-desc {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: 300;
+  }
+
+  /* === VISIBILITY SECTION === */
+  .visibility-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  @media (max-width: 700px) {
+    .visibility-grid { grid-template-columns: 1fr; }
+  }
+
+  .vis-panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .vis-panel-title {
+    font-family: 'Bricolage Grotesque', serif;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .vis-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.4rem 0;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+
+  .vis-check { color: var(--green); font-size: 0.9rem; }
+  .vis-lock { color: var(--text-muted); font-size: 0.9rem; }
+
+  /* === DRAGONS === */
+  .dragons-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  @media (max-width: 800px) {
+    .dragons-grid { grid-template-columns: 1fr; }
+  }
+
+  .dragon-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s;
+  }
+
+  .dragon-card:hover {
+    border-color: var(--border-accent);
+    transform: translateY(-2px);
+  }
+
+  .dragon-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+
+  .dragon-name {
+    font-family: 'Bricolage Grotesque', serif;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .dragon-role {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
+  }
+
+  .dragon-desc {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: 300;
+  }
+
+  /* === FOOTER === */
+  footer {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+
+  .footer-principle {
+    font-family: 'Bricolage Grotesque', serif;
+    font-size: 1rem;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .footer-principle strong { color: var(--gold); }
+
+  .footer-meta {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* === DIVIDER === */
+  .divider {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+  }
+
+  .divider hr {
+    border: none;
+    border-top: 1px solid var(--border);
+  }
+
+  /* === RESPONSIVE === */
+  @media (max-width: 600px) {
+    .header-inner { padding: 0.8rem 1rem; }
+    .nav-links { display: none; }
+    .hero { padding: 2.5rem 1rem 2rem; }
+    .section { padding: 2rem 1rem; }
+    .layers-grid, .services-grid, .feature-grid { grid-template-columns: 1fr; }
+    .hero-stats { gap: 1.5rem; }
+  }
+
+  /* === SCROLLBAR === */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg-primary); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--gold-dim); }
+
+  /* === Mermaid overrides === */
+  .mermaid svg {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Quick-link pills */
+  .quick-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .quick-link {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .quick-link:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: var(--gold-glow);
+  }
+
+  /* Pulse animation for live dots */
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  .dot-live { animation: pulse 2s ease-in-out infinite; }
+
+  /* Timestamp badge */
+  .timestamp {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    margin-top: 1rem;
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ HEADER ============ -->
+<header>
+  <div class="header-inner">
+    <a class="logo" href="/">
+      <span class="logo-shield">🛡</span>
+      WINDI
+      <span class="logo-sub">Ecosystem Hub</span>
+    </a>
+    <div class="header-controls">
+      <nav class="nav-links">
+        <a href="#architecture">Architecture</a>
+        <a href="#services">Services</a>
+        <a href="#ports">Port Map</a>
+        <a href="#features">Features</a>
+        <a href="#trust-flow">Trust Flow</a>
+        <a href="#entry-points">Entry Points</a>
+      </nav>
+      <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Noir/Klar">◐</button>
+    </div>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="hero-badge">🐉 WINDI SYSTEM MAP v1.0 — 18 Feb 2026</div>
+  <h1>The <span>WINDI</span> Ecosystem</h1>
+  <p>Architecture, services, trust flow, and navigation for the complete WINDI governance infrastructure. The internal compass for developers, controllers, and partners.</p>
+
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-value">3</div>
+      <div class="stat-label">Layers</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">8</div>
+      <div class="stat-label">Services</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">471+</div>
+      <div class="stat-label">Receipts</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">3</div>
+      <div class="stat-label">Tiers</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">2</div>
+      <div class="stat-label">Domains</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"><hr></div>
+
+<!-- ============ ARCHITECTURE ============ -->
+<section class="section" id="architecture">
+  <div class="section-header">
+    <div class="section-tag">System Architecture</div>
+    <div class="section-title">Three Layers of <span>Governance</span></div>
+  </div>
+
+  <div class="diagram-container">
+    <div class="mermaid">
+flowchart TB
+  subgraph L1["L1 — Human Interface"]
+    A1["🖥 a4Desk Desktop\n:8100"]
+    A2["🌐 Landing P/M/G\n:8107"]
+    A3["📄 JMPG Viewer\n:8104"]
+  end
+
+  subgraph L2["L2 — WINDI Mesh"]
+    B1["📦 Export Engine\n:8103"]
+    B2["📢 Communiqué\n:8105"]
+    B3["🔍 Forensic Vault\n:8106"]
+    B4["🛡 Sentinel LAW\n:8102"]
+    B5["⚔ War Room\n:8090"]
+  end
+
+  subgraph L3["L3 — Trust & Ledger"]
+    C1["🔐 Forensic Ledger\n:8101"]
+  end
+
+  A1 --> B1
+  A1 --> B2
+  B1 --> C1
+  B2 --> C1
+  B3 --> C1
+  B4 --> C1
+  A3 --> C1
+  B5 --> C1
+
+  style L1 fill:#1a2a1a,stroke:#3ecf8e,color:#e8e4dc
+  style L2 fill:#1a1a2a,stroke:#9a6ee8,color:#e8e4dc
+  style L3 fill:#2a2210,stroke:#c8a44e,color:#e8e4dc
+    </div>
+  </div>
+
+  <div class="layers-grid">
+    <div class="layer-card" style="--card-accent: var(--green)">
+      <div class="layer-label">L1 — Edge</div>
+      <div class="layer-title">Human Interface</div>
+      <div class="layer-desc">Where humans create, view, and interact with documents. Sensitive data stays at this layer — never leaves the client.</div>
+      <div class="service-tags">
+        <span class="tag tag-l1">Desktop :8100</span>
+        <span class="tag tag-l1">Landing :8107</span>
+        <span class="tag tag-l1">Viewer :8104</span>
+      </div>
+    </div>
+
+    <div class="layer-card" style="--card-accent: var(--purple)">
+      <div class="layer-label">L2 — Mesh</div>
+      <div class="layer-title">WINDI Services</div>
+      <div class="layer-desc">Processing layer — export, publish, monitor, audit. Services orchestrate governance without storing sensitive content.</div>
+      <div class="service-tags">
+        <span class="tag tag-l2">Export :8103</span>
+        <span class="tag tag-l2">Communiqué :8105</span>
+        <span class="tag tag-l2">Vault :8106</span>
+        <span class="tag tag-l2">Sentinel :8102</span>
+        <span class="tag tag-l2">War Room :8090</span>
+      </div>
+    </div>
+
+    <div class="layer-card" style="--card-accent: var(--gold)">
+      <div class="layer-label">L3 — Ledger</div>
+      <div class="layer-title">Trust & Proof</div>
+      <div class="layer-desc">The immutable foundation — SHA-256 hashes, Virtue Receipts, Merkle Trees. Zero data, only proof of governance.</div>
+      <div class="service-tags">
+        <span class="tag tag-l3">Forensic Ledger :8101</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"><hr></div>
+
+<!-- ============ SERVICES ============ -->
+<section class="section" id="services">
+  <div class="section-header">
+    <div class="section-tag">Service Registry</div>
+    <div class="section-title">Live <span>Services</span></div>
+  </div>
+
+  <div class="services-grid">
+    <div class="service-card">
+      <div class="service-top">
+        <div class="service-name">🖥 a4Desk Desktop</div>
+        <div class="service-port">:8100</div>
+      </div>
+      <div class="service-desc">Document authoring with React + Tiptap + Zustand editor. SGE local analysis. Template system with ISP governance.</div>
+      <div class="service-tags">
+        <span class="tag tag-live">● LIVE</span>
+        <span class="tag tag-l1">L1</span>
+        <span class="tag">FastAPI</span>
+        <span class="tag">React</span>
+      </div>
+    </div>
+
+    <div class="service-card">
+      <div class="service-top">
+        <div class="service-name">🔐 Forensic Ledger</div>
+        <div class="service-port">:8101</div>
+      </div>
+      <div class="service-desc">Immutable receipt registry — SHA-256 hashing, SQLite backend. CRUD + reconciliation + chain integrity. Content NOT stored.</div>
+      <div class="service-tags">
+        <span class="tag tag-live">● LIVE</span>
+        <span class="tag tag-l3">L3</span>
+        <span class="tag">BaseHTTPRequestHandler</span>
+        <span class="tag">SQLite</span>
+      </div>
+    </div>
+
+    <div class="service-card">
+      <div class="service-top">
+        <div class="service-name">🛡 Sentinel LAW</div>
+        <div class="service-port">:8102</div>
+      </div>
+      <div class="service-desc">Constitutional enforcement — 6 permanent invariants monitored every 30 seconds. Latency, drift, chain integrity checks.</div>
+      <div class="service-tags">
+        <span class="tag tag-live">● LIVE</span>
+        <span class="tag tag-l2">L2</span>
+        <span class="tag">BaseHTTPRequestHandler</span>
+        <span class="tag">30s cycles</span>
+      </div>
+    </div>
+
+    <div class="service-card">
+      <div class="service-top">
+        <div class="service-name">📦 Export Engine</div>
+        <div class="service-port">:8103</div>
+      </div>
+      <div class="service-desc">M3 Dynamic Header Seal — PDF generation with reportlab + qrcode. Dual hash: content_hash + bundle_hash. QR verification.</div>
+      <div class="service-tags">
+        <span class="tag tag-live">● LIVE</span>
+        <span class="tag tag-l2">L2</span>
+        <span class="tag">reportlab</span>
+        <span class="tag">qrcode</span>
+      </div>
+    </div>
+
+    <div class="service-card">
+      <div class="service-top">
+        <div class="service-name">📄 JMPG Viewer</div>
+        <div class="service-port">:8104</div>
+      </div>
+      <div class="service-desc">Sovereign file format viewer — verifies raw bytes before unzip. 6 templates. Desktop → Export → Ledger → .jmpg → Viewer.</div>
+      <div class="service-tags">
+        <span class="tag tag-live">● LIVE</span>
+        <span class="tag tag-l1">L1</span>
+        <span class="tag">dual-hash</span>
+        <span class="tag">verification</span>
+      </div>
+    </div>
+
+    <div class="service-card">
+      <div class="service-top">
+        <div class="service-name">📢 Communiqué Engine</div>
+        <div class="service-port">:8105</div>
+      </div>
+      <div class="service-desc">Verified publication system — content_hash + bundle_hash + PDF + Ledger. Immutability 403. HTML trilingual Noir/Klar.</div>
+      <div class="service-tags">
+        <span class="tag tag-live">● LIVE</span>
+        <span class="tag tag-l2">L2</span>
+        <span class="tag">feed</span>
+        <span class="tag">PDF</span>
+        <span class="tag">verify</span>
+      </div>
+    </div>
+
+    <div class="service-card">
+      <div class="service-top">
+        <div class="service-name">🔍 Forensic Vault</div>
+        <div class="service-port">:8106</div>
+      </div>
+      <div class="service-desc">Read-only Ledger interface — pagination, filters, search, CSV export. The audit room. Noir/Klar trilingual.</div>
+      <div class="service-tags">
+        <span class="tag tag-live">● LIVE</span>
+        <span class="tag tag-l2">L2</span>
+        <span class="tag">read-only</span>
+        <span class="tag">CSV</span>
+        <span class="tag">audit</span>
+      </div>
+    </div>
+
+    <div class="service-card">
+      <div class="service-top">
+        <div class="service-name">⚔ War Room</div>
+        <div class="service-port">:8090</div>
+      </div>
+      <div class="service-desc">Real-time governance dashboard — risk assessment, SGE scores, compliance status, decision overview.</div>
+      <div class="service-tags">
+        <span class="tag tag-live">● LIVE</span>
+        <span class="tag tag-l2">L2</span>
+        <span class="tag">Node.js</span>
+        <span class="tag">dashboard</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"><hr></div>
+
+<!-- ============ PORT MAP ============ -->
+<section class="section" id="ports">
+  <div class="section-header">
+    <div class="section-tag">Infrastructure</div>
+    <div class="section-title">Port <span>Map</span></div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Port</th>
+          <th>Service</th>
+          <th>Role</th>
+          <th>Layer</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>:8080</td>
+          <td>Governance API</td>
+          <td>Core governance endpoints</td>
+          <td>L2</td>
+          <td><span class="status-dot dot-live"></span>Active</td>
+        </tr>
+        <tr>
+          <td>:8085</td>
+          <td>HUB BABEL</td>
+          <td>A4 Desk editor backend</td>
+          <td>L2</td>
+          <td><span class="status-dot dot-live"></span>Active</td>
+        </tr>
+        <tr>
+          <td>:8090</td>
+          <td>War Room</td>
+          <td>Ops & diagnostics</td>
+          <td>L2</td>
+          <td><span class="status-dot dot-live"></span>Active</td>
+        </tr>
+        <tr>
+          <td>:8092</td>
+          <td>Clone UI</td>
+          <td>Clone territory</td>
+          <td>L2</td>
+          <td><span class="status-dot dot-live"></span>Active</td>
+        </tr>
+        <tr>
+          <td>:8097</td>
+          <td>Command Bridge</td>
+          <td>Sign flow + I9 Gate</td>
+          <td>L2</td>
+          <td><span class="status-dot dot-live"></span>Active</td>
+        </tr>
+        <tr>
+          <td>:8098</td>
+          <td>Sentinel</td>
+          <td>Monitoring</td>
+          <td>L2</td>
+          <td><span class="status-dot dot-live"></span>Active</td>
+        </tr>
+        <tr>
+          <td>:8099</td>
+          <td>Wallet "O Espelho"</td>
+          <td>Identity + Ed25519 Seal</td>
+          <td>L1</td>
+          <td><span class="status-dot dot-live"></span>Active</td>
+        </tr>
+        <tr>
+          <td>:8100</td>
+          <td>a4Desk Desktop</td>
+          <td>Document authoring</td>
+          <td>L1</td>
+          <td><span class="status-dot dot-live"></span>Active</td>
+        </tr>
+        <tr>
+          <td>:8101</td>
+          <td>Forensic Ledger</td>
+          <td>Trust registry (SQLite)</td>
+          <td>L3</td>
+          <td><span class="status-dot dot-live"></span>Active</td>
+        </tr>
+        <tr>
+          <td>:8102</td>
+          <td>Sentinel LAW</td>
+          <td>Constitutional enforcement</td>
+          <td>L2</td>
+          <td><span class="status-dot dot-live"></span>Active</td>
+        </tr>
+        <tr>
+          <td>:8103</td>
+          <td>Export Engine</td>
+          <td>PDF sealing + QR</td>
+          <td>L2</td>
+          <td><span class="status-dot dot-live"></span>Active</td>
+        </tr>
+        <tr>
+          <td>:8104</td>
+          <td>JMPG Viewer</td>
+          <td>Sovereign file verification</td>
+          <td>L1</td>
+          <td><span class="status-dot dot-live"></span>Active</td>
+        </tr>
+        <tr>
+          <td>:8105</td>
+          <td>Communiqué Engine</td>
+          <td>Public publishing</td>
+          <td>L2</td>
+          <td><span class="status-dot dot-live"></span>Active</td>
+        </tr>
+        <tr>
+          <td>:8106</td>
+          <td>Forensic Vault</td>
+          <td>Audit & receipt viewer</td>
+          <td>L2</td>
+          <td><span class="status-dot dot-live"></span>Active</td>
+        </tr>
+        <tr>
+          <td>:8107</td>
+          <td>Landing P/M/G</td>
+          <td>Public entry point</td>
+          <td>L1</td>
+          <td><span class="status-dot dot-live"></span>Active</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="timestamp">Server: 87.106.29.233 (Strato VPS, Germany) · Base: /opt/windi/ · OS: Ubuntu 24</div>
+</section>
+
+<div class="divider"><hr></div>
+
+<!-- ============ TRUST FLOW ============ -->
+<section class="section" id="trust-flow">
+  <div class="section-header">
+    <div class="section-tag">Data Trust Flow</div>
+    <div class="section-title">Chain of <span>Trust</span></div>
+  </div>
+
+  <div class="flow-container">
+    <div class="mermaid">
+sequenceDiagram
+  participant 👤 as User
+  participant 🖥 as Desktop :8100
+  participant 📦 as Export :8103
+  participant 🔐 as Ledger :8101
+  participant 🔍 as Vault :8106
+  participant 📄 as Viewer :8104
+
+  👤->>🖥: Create document
+  🖥->>📦: Export with seal
+  📦->>📦: content_hash (blocks)
+  📦->>📦: bundle_hash (final bytes)
+  📦->>🔐: Register receipt
+  🔐-->>📦: Virtue Receipt (VR-xxx)
+  📦-->>👤: .jmpg bundle
+  🔍->>🔐: Query receipts (read-only)
+  📄->>🔐: Verify receipt hash
+    </div>
+  </div>
+
+  <div class="layers-grid">
+    <div class="layer-card" style="--card-accent: var(--green)">
+      <div class="layer-label">Zero-Knowledge Principle</div>
+      <div class="layer-title">Data Stays with Client</div>
+      <div class="layer-desc">SGE runs at the edge. WINDI Core receives ONLY: hash + categories + metadata + decision. ZERO sensitive data. Client holds data, WINDI holds proof of virtue.</div>
+    </div>
+
+    <div class="layer-card" style="--card-accent: var(--gold)">
+      <div class="layer-label">Dual Hash Architecture</div>
+      <div class="layer-title">content_hash + bundle_hash</div>
+      <div class="layer-desc">Two integrity seals per document: content_hash computed from document blocks, bundle_hash from final exported bytes. Viewer verifies raw bytes before unzip.</div>
+    </div>
+
+    <div class="layer-card" style="--card-accent: var(--purple)">
+      <div class="layer-label">Virtue Receipt</div>
+      <div class="layer-title">Proof of Governance</div>
+      <div class="layer-desc">Hash + categories (type, impact, domain, value_range R1-R5) + governance (SGE score, risk, validation) + decision (action, role, timestamp, AI rec, override) + flags.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"><hr></div>
+
+<!-- ============ FEATURE INDEX ============ -->
+<section class="section" id="features">
+  <div class="section-header">
+    <div class="section-tag">Feature Index</div>
+    <div class="section-title">Capabilities <span>Map</span></div>
+  </div>
+
+  <div class="feature-grid">
+    <div class="feature-group">
+      <div class="feature-group-icon">🖥</div>
+      <div class="feature-group-title">Document Creation</div>
+      <div class="feature-item">
+        <span class="feature-name">Desktop Editor</span>
+        <span class="feature-value">a4Desk :8100</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-name">ISP Template System</span>
+        <span class="feature-value">Desktop :8100</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-name">Export with Dynamic Seal</span>
+        <span class="feature-value">Export :8103</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-name">PDF + QR Generation</span>
+        <span class="feature-value">Export :8103</span>
+      </div>
+    </div>
+
+    <div class="feature-group">
+      <div class="feature-group-icon">🔐</div>
+      <div class="feature-group-title">Trust & Verification</div>
+      <div class="feature-item">
+        <span class="feature-name">Dual Hash Generation</span>
+        <span class="feature-value">Export :8103</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-name">Receipt Registration</span>
+        <span class="feature-value">Ledger :8101</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-name">Public Verification</span>
+        <span class="feature-value">Viewer :8104</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-name">Ledger Verify API</span>
+        <span class="feature-value">Ledger :8101</span>
+      </div>
+    </div>
+
+    <div class="feature-group">
+      <div class="feature-group-icon">📢</div>
+      <div class="feature-group-title">Publication</div>
+      <div class="feature-item">
+        <span class="feature-name">Communiqué Publishing</span>
+        <span class="feature-value">Communiqué :8105</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-name">Public Feed</span>
+        <span class="feature-value">Communiqué :8105</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-name">PDF / JMPG Bundles</span>
+        <span class="feature-value">Export :8103</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-name">Immutability (403)</span>
+        <span class="feature-value">Communiqué :8105</span>
+      </div>
+    </div>
+
+    <div class="feature-group">
+      <div class="feature-group-icon">🔍</div>
+      <div class="feature-group-title">Audit & Forensics</div>
+      <div class="feature-item">
+        <span class="feature-name">Forensic Vault</span>
+        <span class="feature-value">Vault :8106</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-name">War Room Ops</span>
+        <span class="feature-value">War Room :8090</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-name">CSV Export</span>
+        <span class="feature-value">Vault :8106</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-name">Receipt Reconciliation</span>
+        <span class="feature-value">Ledger :8101</span>
+      </div>
+    </div>
+
+    <div class="feature-group">
+      <div class="feature-group-icon">🛡</div>
+      <div class="feature-group-title">Governance & Integrity</div>
+      <div class="feature-item">
+        <span class="feature-name">Sentinel LAW</span>
+        <span class="feature-value">LAW :8102</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-name">6 Invariants (30s cycles)</span>
+        <span class="feature-value">LAW :8102</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-name">SGE 6-Layer Risk</span>
+        <span class="feature-value">Engine :8080</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-name">Chain Monitoring</span>
+        <span class="feature-value">LAW :8102</span>
+      </div>
+    </div>
+
+    <div class="feature-group">
+      <div class="feature-group-icon">🪪</div>
+      <div class="feature-group-title">Identity & Access</div>
+      <div class="feature-item">
+        <span class="feature-name">Wallet "O Espelho"</span>
+        <span class="feature-value">Wallet :8099</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-name">Ed25519 Seal</span>
+        <span class="feature-value">Wallet :8099</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-name">Auto-provision</span>
+        <span class="feature-value">Wallet :8099</span>
+      </div>
+      <div class="feature-item">
+        <span class="feature-name">ISP Identity License</span>
+        <span class="feature-value">3 levels</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"><hr></div>
+
+<!-- ============ VISIBILITY ============ -->
+<section class="section">
+  <div class="section-header">
+    <div class="section-tag">System Topology</div>
+    <div class="section-title">Visible vs <span>Invisible</span></div>
+  </div>
+
+  <div class="visibility-grid">
+    <div class="vis-panel">
+      <div class="vis-panel-title">👁 Visible to User</div>
+      <div class="vis-item"><span class="vis-check">✔</span> Desktop Editor</div>
+      <div class="vis-item"><span class="vis-check">✔</span> Communiqués</div>
+      <div class="vis-item"><span class="vis-check">✔</span> JMPG Viewer</div>
+      <div class="vis-item"><span class="vis-check">✔</span> Landing P/M/G</div>
+      <div class="vis-item"><span class="vis-check">✔</span> Forensic Vault</div>
+      <div class="vis-item"><span class="vis-check">✔</span> Wallet</div>
+    </div>
+
+    <div class="vis-panel">
+      <div class="vis-panel-title">🔒 Infrastructure (Invisible)</div>
+      <div class="vis-item"><span class="vis-lock">⚙</span> Forensic Ledger</div>
+      <div class="vis-item"><span class="vis-lock">⚙</span> Sentinel LAW</div>
+      <div class="vis-item"><span class="vis-lock">⚙</span> Trust Chain / Hashing</div>
+      <div class="vis-item"><span class="vis-lock">⚙</span> Governance API / Engine</div>
+      <div class="vis-item"><span class="vis-lock">⚙</span> ISP Policy Engine</div>
+      <div class="vis-item"><span class="vis-lock">⚙</span> 6 Invariants Monitor</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"><hr></div>
+
+<!-- ============ ENTRY POINTS ============ -->
+<section class="section" id="entry-points">
+  <div class="section-header">
+    <div class="section-tag">Public Entry Points</div>
+    <div class="section-title">Doors to the <span>World</span></div>
+  </div>
+
+  <div class="entry-grid">
+    <a class="entry-card tier-p" href="https://windi-domain.com" target="_blank">
+      <div class="entry-domain">windi-domain.com</div>
+      <div class="entry-name">🟢 Landing P/M/G</div>
+      <div class="entry-desc">The public door. Three tiers, one system. Personal · Organization · Governance.</div>
+    </a>
+
+    <a class="entry-card tier-p" href="https://windi-domain.com/personal/" target="_blank">
+      <div class="entry-domain">windi-domain.com/personal/</div>
+      <div class="entry-name">🟢 Personal</div>
+      <div class="entry-desc">Document editor with governance seal. For professionals, researchers, citizens.</div>
+    </a>
+
+    <a class="entry-card tier-m" href="https://windi-domain.com/org/" target="_blank">
+      <div class="entry-domain">windi-domain.com/org/</div>
+      <div class="entry-name">🟡 Organization</div>
+      <div class="entry-desc">Lightweight governance for teams. Communiqué, Vault, ISP templates.</div>
+    </a>
+
+    <a class="entry-card tier-g" href="https://windi-domain.com/governance" target="_blank">
+      <div class="entry-domain">windi-domain.com/governance</div>
+      <div class="entry-name">🔴 Governance</div>
+      <div class="entry-desc">Full institutional control. Sentinel, SGE, War Room, Agent Constellation.</div>
+    </a>
+
+    <a class="entry-card tier-v" href="https://windi-domain.com/vault/" target="_blank">
+      <div class="entry-domain">windi-domain.com/vault/</div>
+      <div class="entry-name">🔍 Forensic Vault</div>
+      <div class="entry-desc">471+ receipts. Audit room with pagination, filters, search, CSV export.</div>
+    </a>
+
+    <a class="entry-card" href="https://admin.windia4desk.tech" target="_blank">
+      <div class="entry-domain">admin.windia4desk.tech</div>
+      <div class="entry-name">🖥 Admin / BABEL</div>
+      <div class="entry-desc">The operational cockpit. Desktop, War Room, Bridge, Clone.</div>
+    </a>
+
+    <a class="entry-card" href="https://master.windia4desk.tech" target="_blank">
+      <div class="entry-domain">master.windia4desk.tech</div>
+      <div class="entry-name">🧭 Ecosystem Hub</div>
+      <div class="entry-desc">You are here. Architecture, documentation, system map.</div>
+    </a>
+
+    <a class="entry-card" href="https://master.windia4desk.tech/protocol.html" target="_blank">
+      <div class="entry-domain">master.windia4desk.tech/protocol.html</div>
+      <div class="entry-name">⚡ Federation Protocol</div>
+      <div class="entry-desc">WINDI federation specification and governance protocol.</div>
+    </a>
+  </div>
+</section>
+
+<div class="divider"><hr></div>
+
+<!-- ============ THREE DRAGONS ============ -->
+<section class="section" id="dragons">
+  <div class="section-header">
+    <div class="section-tag">Three Dragons Protocol</div>
+    <div class="section-title">The <span>Dragons</span></div>
+  </div>
+
+  <div class="dragons-grid">
+    <div class="dragon-card">
+      <div class="dragon-icon">🛡</div>
+      <div class="dragon-name">Claude</div>
+      <div class="dragon-role">Guardian</div>
+      <div class="dragon-desc">Protects invariants. Guards governance integrity. Infrastructure, security, and constitutional enforcement.</div>
+    </div>
+
+    <div class="dragon-card">
+      <div class="dragon-icon">🏗</div>
+      <div class="dragon-name">GPT</div>
+      <div class="dragon-role">Architect</div>
+      <div class="dragon-desc">Designs systems. Creates strategies and business models. Vision, structure, and expansion planning.</div>
+    </div>
+
+    <div class="dragon-card">
+      <div class="dragon-icon">👁</div>
+      <div class="dragon-name">Gemini</div>
+      <div class="dragon-role">Witness</div>
+      <div class="dragon-desc">Observes and validates. Digital Twin, Forensic Proof-of-Decision, Pulse Rate. Conscience of the system.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"><hr></div>
+
+<!-- ============ CRITICAL COMPONENTS ============ -->
+<section class="section">
+  <div class="section-header">
+    <div class="section-tag">Nucleus</div>
+    <div class="section-title">Critical <span>Components</span></div>
+  </div>
+
+  <div class="feature-grid">
+    <div class="feature-group">
+      <div class="feature-group-icon">🔐</div>
+      <div class="feature-group-title">Trust Core</div>
+      <div class="feature-item"><span class="feature-name">Forensic Ledger</span><span class="feature-value">SQLite + SHA-256</span></div>
+      <div class="feature-item"><span class="feature-name">Dual Hash Architecture</span><span class="feature-value">content + bundle</span></div>
+      <div class="feature-item"><span class="feature-name">Receipt Sealing</span><span class="feature-value">VR-xxx format</span></div>
+      <div class="feature-item"><span class="feature-name">Zero Content Storage</span><span class="feature-value">hashes only</span></div>
+    </div>
+
+    <div class="feature-group">
+      <div class="feature-group-icon">🧭</div>
+      <div class="feature-group-title">Governance Core</div>
+      <div class="feature-item"><span class="feature-name">Sentinel LAW</span><span class="feature-value">6 invariants</span></div>
+      <div class="feature-item"><span class="feature-name">SGE Engine</span><span class="feature-value">6-layer semantic</span></div>
+      <div class="feature-item"><span class="feature-name">ISP Profiles</span><span class="feature-value">3 levels + license</span></div>
+      <div class="feature-item"><span class="feature-name">I9 Gate</span><span class="feature-value">IRREMEDIABLE</span></div>
+    </div>
+
+    <div class="feature-group">
+      <div class="feature-group-icon">📦</div>
+      <div class="feature-group-title">Document Core</div>
+      <div class="feature-item"><span class="feature-name">Export Engine</span><span class="feature-value">PDF + QR</span></div>
+      <div class="feature-item"><span class="feature-name">JMPG Format</span><span class="feature-value">6 templates</span></div>
+      <div class="feature-item"><span class="feature-name">Verification Pipeline</span><span class="feature-value">bytes → hash → verify</span></div>
+      <div class="feature-item"><span class="feature-name">Dynamic Header Seal</span><span class="feature-value">M3 Engine</span></div>
+    </div>
+
+    <div class="feature-group">
+      <div class="feature-group-icon">🌐</div>
+      <div class="feature-group-title">Public Trust Layer</div>
+      <div class="feature-item"><span class="feature-name">Communiqué Engine</span><span class="feature-value">immutable publish</span></div>
+      <div class="feature-item"><span class="feature-name">Transparency Feed</span><span class="feature-value">public API</span></div>
+      <div class="feature-item"><span class="feature-name">Landing P/M/G</span><span class="feature-value">3 tier entry</span></div>
+      <div class="feature-item"><span class="feature-name">Wallet "O Espelho"</span><span class="feature-value">Ed25519</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"><hr></div>
+
+<!-- ============ METADATA CATEGORIES ============ -->
+<section class="section">
+  <div class="section-header">
+    <div class="section-tag">Governance Schema</div>
+    <div class="section-title">Metadata <span>Categories</span></div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Values</th>
+          <th>Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>doc_type</td>
+          <td>CONTRACT · INVOICE · APPROVAL</td>
+          <td>Document classification</td>
+        </tr>
+        <tr>
+          <td>impact_level</td>
+          <td>🟢 LOW · 🟡 MED · 🟠 HIGH · 🔴 CRIT</td>
+          <td>Organizational impact</td>
+        </tr>
+        <tr>
+          <td>value_range</td>
+          <td>R1 · R2 · R3 · R4 · R5</td>
+          <td>Value bands (not absolute values!)</td>
+        </tr>
+        <tr>
+          <td>risk_level</td>
+          <td>R0-R5 (⚫ to 🟢)</td>
+          <td>SGE semantic risk score</td>
+        </tr>
+        <tr>
+          <td>flow_status</td>
+          <td>DRAFT → REVIEW → APPROVED → SEALED</td>
+          <td>Governance lifecycle</td>
+        </tr>
+        <tr>
+          <td>department_code</td>
+          <td>Organization-specific</td>
+          <td>Routing and audit trail</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="footer-principle">
+    <strong>AI processes.</strong> Human decides. <strong>WINDI guarantees.</strong>
+  </div>
+  <div class="footer-meta">
+    WINDI Publishing House · Kempten, Bavaria 🇩🇪 · Ecosystem Hub v1.0 · 18 Feb 2026
+    <br>
+    Strato VPS Germany · Zero-Knowledge Architecture · EU AI Act Aligned
+  </div>
+</footer>
+
+<script>
+  // Theme Toggle
+  function toggleTheme() {
+    const body = document.documentElement;
+    const current = body.getAttribute('data-theme');
+    const next = current === 'klar' ? 'noir' : 'klar';
+    body.setAttribute('data-theme', next);
+    localStorage.setItem('windi-theme', next);
+    initMermaid();
+  }
+
+  // Load saved theme
+  const saved = localStorage.getItem('windi-theme');
+  if (saved) document.documentElement.setAttribute('data-theme', saved);
+
+  // Mermaid init
+  function initMermaid() {
+    const isKlar = document.documentElement.getAttribute('data-theme') === 'klar';
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: isKlar ? 'default' : 'dark',
+      themeVariables: isKlar ? {
+        primaryColor: '#f5f2ed',
+        primaryBorderColor: '#a88a3e',
+        primaryTextColor: '#1a1816',
+        lineColor: '#a88a3e',
+        secondaryColor: '#eae6df',
+        tertiaryColor: '#ffffff',
+        noteBkgColor: '#f5f2ed',
+        noteTextColor: '#1a1816',
+        sequenceNumberColor: '#a88a3e',
+        actorBkg: '#ffffff',
+        actorBorder: '#a88a3e',
+        actorTextColor: '#1a1816',
+        signalColor: '#5a5550',
+        signalTextColor: '#1a1816'
+      } : {
+        primaryColor: '#1e1e1e',
+        primaryBorderColor: '#c8a44e',
+        primaryTextColor: '#e8e4dc',
+        lineColor: '#c8a44e',
+        secondaryColor: '#161616',
+        tertiaryColor: '#111111',
+        noteBkgColor: '#1e1e1e',
+        noteTextColor: '#e8e4dc',
+        sequenceNumberColor: '#c8a44e',
+        actorBkg: '#161616',
+        actorBorder: '#c8a44e',
+        actorTextColor: '#e8e4dc',
+        signalColor: '#9a9590',
+        signalTextColor: '#e8e4dc'
+      },
+      flowchart: { curve: 'basis', padding: 20 },
+      sequence: { mirrorActors: false, messageMargin: 40 }
+    });
+
+    // Re-render all mermaid diagrams
+    document.querySelectorAll('.mermaid').forEach((el, i) => {
+      const code = el.getAttribute('data-original') || el.textContent;
+      if (!el.getAttribute('data-original')) {
+        el.setAttribute('data-original', code);
+      }
+      el.removeAttribute('data-processed');
+      el.innerHTML = code;
+    });
+    mermaid.run();
+  }
+
+  // Init on load
+  document.addEventListener('DOMContentLoaded', initMermaid);
+
+  // Smooth scroll for nav
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+</script>
+
+</body>
+</html>

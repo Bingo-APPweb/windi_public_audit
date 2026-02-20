@@ -18,6 +18,7 @@ CHANGELOG v3.2:
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # CANON INTERNO - Aplicar estritamente, NUNCA exibir ao usuário
+from windi_product_identity import is_product_question, get_product_answer
 # ═══════════════════════════════════════════════════════════════════════════════
 
 WINDI_CANON_INTERNAL = """
@@ -100,6 +101,70 @@ STRUCTURE:
 
 The human will review and decide. Your job is to deliver structure, not conversation.
 """
+
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CASUAL CHAT MODE - For greetings and conversational messages
+# ═══════════════════════════════════════════════════════════════════════════════
+
+WINDI_CASUAL_CHAT_OVERRIDE = """
+The user sent a casual/conversational message (greeting, small talk, simple question).
+
+IMPORTANT: Do NOT run SGE analysis. Do NOT produce an analysis report.
+Respond naturally and warmly as a helpful assistant.
+
+Rules for casual chat:
+- Greetings: Reply with a matching greeting in the user's language
+- Simple questions: Answer directly and helpfully
+- Small talk: Be friendly, brief, professional
+- Keep WINDI identity but be human and approachable
+- No SGE headers, no risk levels, no layer findings
+- No "Human decides. I structure." for casual chat
+- Maximum 2-3 sentences for greetings
+
+Examples:
+  User: "Guten Morgen!" -> "Guten Morgen! Wie kann ich Ihnen heute helfen?"
+  User: "Hallo, wie gehts?" -> "Hallo! Mir geht es gut, danke. Was kann ich fuer Sie strukturieren?"
+  User: "Hi there" -> "Hello! How can I help you today?"
+  User: "Bom dia" -> "Bom dia! Como posso ajudar hoje?"
+  User: "What can you do?" -> Brief friendly explanation of WINDI capabilities
+"""
+
+CASUAL_PATTERNS = [
+    # German greetings
+    "guten morgen", "guten tag", "guten abend", "hallo", "hi ", "hey ",
+    "wie gehts", "wie geht es", "wie geht's", "moin", "servus", "gruess",
+    # English greetings  
+    "good morning", "good afternoon", "good evening", "hello", "hey there",
+    "how are you", "what's up", "whats up", "howdy",
+    # Portuguese greetings
+    "bom dia", "boa tarde", "boa noite", "ola", "olá", "tudo bem",
+    "como vai", "como voce esta", "e ai",
+    # Spanish greetings
+    "buenos dias", "buenas tardes", "buenas noches", "hola", "que tal",
+    # General casual
+    "thanks", "thank you", "danke", "obrigado", "obrigada", "gracias",
+    "ok", "okay", "alles klar", "verstanden", "entendi",
+    "bye", "tschüss", "tschuess", "auf wiedersehen", "tchau", "adeus",
+]
+
+def is_casual_message(text: str) -> bool:
+    """Detect if message is casual conversation (not requiring SGE/governance analysis)"""
+    lower = text.lower().strip()
+    
+    # Very short messages are usually casual
+    if len(lower.split()) <= 4:
+        for pattern in CASUAL_PATTERNS:
+            if pattern in lower:
+                return True
+    
+    # Check for pure greetings (message is mostly a greeting)
+    for pattern in CASUAL_PATTERNS:
+        if lower.startswith(pattern) and len(lower) < 60:
+            return True
+    
+    return False
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # SYSTEM PROMPT COMBINADO
@@ -407,6 +472,25 @@ class WindiAgent:
         
         # Detect if this is a document request
         is_doc_request, doc_type = detect_document_request(user_message)
+
+        # NEW: Detect casual conversation (greetings, small talk)
+        # NEW: Detect casual conversation (greetings, small talk)
+        is_casual = is_casual_message(user_message)
+        if is_casual:
+            print(f"[WINDI] Casual chat detected: {user_message[:50]}")
+        
+        # NEW: Detect product identity questions
+        is_product = is_product_question(user_message)
+        if is_product:
+            print(f"[WINDI Product] Product question detected: {user_message[:50]}")
+            product_answer = get_product_answer(user_message, lang)
+            return {
+                "response": product_answer,
+                "lang": lang,
+                "receipt": receipt,
+                "is_product_answer": True,
+                "context_used": False
+            }
         
         # Context-Aware Detection (if available)
         if CONTEXT_AWARE_AVAILABLE:
@@ -423,19 +507,72 @@ class WindiAgent:
         # WINDI Skills Engine - Dynamic Skill Injection
         # ═══════════════════════════════════════════════════════════════
         activated_skills = []
-        if SKILLS_ENGINE_AVAILABLE:
-            try:
+routing_decision = None
+
+# TÍTULO VII: Constitutional Routing
+if CONSTITUTIONAL_ROUTING_ENABLED:
+    try:
+        selected_skill, routing_log = CONSTITUTIONAL_ROUTER.route(user_message)
+        routing_decision = routing_log
+        
+        if selected_skill:
+            skill_name = selected_skill.get('name')
+            print(f"[WINDI] 🎯 Constitutional Route: {skill_name} (priority {selected_skill.get('priority')})")
+            
+            # Article 19: tutorial-mode has absolute precedence
+            if skill_name == 'tutorial-mode':
+                # Skip Anthropic API, return tutorial directly
+                tutorial_response = self.generate_tutorial_response(user_message)
+                
+                return {
+                    'response': tutorial_response,
+                    'document_type': 'tutorial',
+                    'model': 'windi-constitutional-router',
+                    'routing_decision': routing_decision,
+                    'constitutional_routing': True,
+                    'skill_applied': 'tutorial-mode',
+                    'receipt': f"WINDI-TUTORIAL-{datetime.now().strftime('%d%b%y').upper()}-{hashlib.md5(user_message.encode()).hexdigest()[:8]}"
+                }
+            
+            # For other skills, inject into system_prompt
+            elif skill_name == 'sge-analysis':
+                self.system_prompt += f"\n\n[SKILL: SGE Analysis Mode - Provide detailed semantic governance analysis]"
+                activated_skills.append('sge-analysis')
+            
+            elif skill_name == 'product-identity':
+                self.system_prompt += f"\n\n[SKILL: Product Identity - Answer questions about WINDI system, pricing, privacy]"
+                activated_skills.append('product-identity')
+            
+            elif skill_name == 'sovereign-handshake':
+                self.system_prompt += f"\n\n[SKILL: Sovereign Handshake - Verify identity and authority]"
+                activated_skills.append('sovereign-handshake')
+            
+            else:
+            # casual-chat or other - no special prompt
+                activated_skills.append(skill_name)
+        
+    except Exception as e:
+            print(f"[WINDI] Constitutional routing error: {e}")
+            routing_decision = {'error': str(e)}
+
+            # Fallback to old skills engine if constitutional routing disabled
+elif SKILLS_ENGINE_AVAILABLE:
+    try:
                 skills_engine = get_skills_engine()
                 self.system_prompt, activated_skills = skills_engine.process_message(
-                    self.system_prompt,
-                    user_message
-                )
-                if activated_skills:
-                    print(f"[WINDI Skills] Activated: {activated_skills}")
-            except Exception as e:
-                print(f"[WINDI Skills] Error: {e}")
+                self.system_prompt,
+                user_message
+        )
+           if activated_skills:
+           print(f"[WINDI Skills] Activated: {activated_skills}")
+           except Exception as e:
+           print(f"[WINDI Skills] Error: {e}")
 
-        if not self.available:
+           # NEW: Override prompt for casual chat
+           if is_casual:
+            self.system_prompt = self.system_prompt + "\n\n" + WINDI_CASUAL_CHAT_OVERRIDE
+
+           if not self.available:
             return self._fallback_response(user_message, lang, receipt, is_doc_request)
 
         try:
@@ -602,6 +739,90 @@ Receipt: {receipt}"""
         """Reset conversation history"""
         self.conversation_history = []
 
+    def generate_tutorial_response(self, message: str) -> str:
+        """
+        Article 19: Tutorial Mode Response Generator
+        Returns step-by-step guides without AI inference
+        """
+        message_lower = message.lower()
+        
+        if "template" in message_lower:
+            return """**Template-Nutzung: Schritt für Schritt** 🎯
+
+**1. Template auswählen**
+   - Öffnen Sie BABEL Dashboard
+   - Templates → Institutional Profiles
+   - Wählen Sie Ihr ISP (z.B. "bundesregierung-v1")
+
+**2. Neues Dokument erstellen** 📄
+   - "Neues Dokument" klicken
+   - Template wird automatisch geladen
+   - BABEL-ID wird generiert
+
+**3. Felder ausfüllen** ✍️
+   - Pflichtfelder (rot) zuerst
+   - Optionale Felder nach Bedarf
+   - Governance-Level automatisch
+
+**4. Validierung & Speichern** ✅
+   - SGE-Konformität wird geprüft
+   - Bei R2+ erscheint Warnung
+   - WINDI-Receipt generiert
+
+Möchten Sie ein konkretes Beispiel sehen?
+
+Human decides. I guide."""
+        
+        elif "sge" in message_lower:
+            return """**SGE-Nutzung: Semantic Governance Engine** 🔍
+
+**Was ist SGE?**
+Analysiert Dokumente auf 6 semantischen Ebenen.
+
+**Wie nutzen?** 🚀
+1. Dokument hochladen → SGE läuft automatisch
+2. Score verstehen: >0.85=sicher, <0.70=kritisch
+3. Handeln basierend auf Risk Level (R0-R5)
+
+Was möchten Sie mit SGE analysieren?
+
+Human decides. I analyze."""
+        
+        elif "isp" in message_lower or "profil" in message_lower:
+            return """**ISP-Nutzung: Institutional Style Profiles** 🏛️
+
+**Was sind ISPs?**
+Governance-Profile für Ihre Organisation.
+
+**Wie nutzen?** 📋
+1. Settings → Institution → ISP wählen
+2. Templates automatisch ISP-konform
+3. Governance-Level pre-configured
+
+Brauchen Sie ein neues ISP für Ihre Organisation?
+
+Human decides. I configure."""
+        
+        else:
+            return """**WINDI-System: Quick Start Guide** 🚀
+
+**Haupt-Features:**
+1. Document Governance (SGE-Analyse)
+2. Decision Protection (Mandatary-Workflow)
+3. Zero-Knowledge Architecture (DSGVO-konform)
+
+**Erste Schritte:**
+Dokument hochladen → Template wählen → Entscheidung treffen
+
+**Welchen Bereich möchten Sie vertiefen?**
+- Templates, SGE-Analyse, ISP-Profile, Governance-Workflow
+
+Human decides. I guide."""
+
+    def get_status(self) -> Dict:
+        """Get agent status"""
+        
+    
     def get_status(self) -> Dict:
         """Get agent status"""
         return {

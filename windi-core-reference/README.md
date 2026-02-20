@@ -1,20 +1,18 @@
 # WINDI Core Reference
 
+**The Single Source of Truth** for the WINDI ecosystem.
+
 Part of the **WINDI** (Worldwide Infrastructure for Non-repudiable Document Integrity) ecosystem.
 
-This repository provides the **Architecture and Implementation Reference** — the central documentation hub for the WINDI trust and verification architecture.
+## Documentation
 
-## Purpose
-
-This module enables secure, verifiable, and privacy-preserving document integrity workflows for institutional and financial environments.
-
-The Core Reference provides:
-- Complete architecture documentation
-- Component interaction diagrams
-- Implementation guidelines
-- API specifications
-- Security model documentation
-- Deployment patterns
+| Document | Description |
+|----------|-------------|
+| [ARCHITECTURE.md](ARCHITECTURE.md) | System architecture and data flow |
+| [TRUST_MODEL.md](TRUST_MODEL.md) | Trust levels and verification tiers |
+| [WCAF_FORMAT.md](WCAF_FORMAT.md) | WINDI Chain Audit Format specification |
+| [I18N_MODEL.md](I18N_MODEL.md) | Internationalization strategy |
+| [ROADMAP.md](ROADMAP.md) | Development milestones |
 
 ## WINDI Ecosystem
 
@@ -22,13 +20,13 @@ The Core Reference provides:
 ┌─────────────────────────────────────────────────────────┐
 │                    WINDI Ecosystem                       │
 ├─────────────────────────────────────────────────────────┤
-│  windi-reader-sdk        — Document governance reader    │
-│  windi-policy-engine     — ISP and policy management     │
-│  windi-proof-spec        — Virtue Receipt specifications │
-│  windi-verification-api  — Verification endpoints        │
-│  windi-forensics-engine  — Chain integrity & audit       │
-│  windi-wcaf-toolkit      — Compliance assessment tools   │
-│  windi-core-reference    — Architecture reference ◄──    │
+│  windi-reader-sdk        — Client SDK for verification   │
+│  windi-policy-engine     — Risk decision engine          │
+│  windi-proof-spec        — Cryptographic proof schema    │
+│  windi-verification-api  — Backend verification API      │
+│  windi-forensics-engine  — Audit trail and replay        │
+│  windi-wcaf-toolkit      — Auditor CLI tools             │
+│  windi-core-reference ◄── YOU ARE HERE                  │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -36,21 +34,46 @@ The Core Reference provides:
 
 > **"AI processes. Human decides. WINDI guarantees."**
 
-1. **Human Sovereignty** — AI advises, humans decide
-2. **Cryptographic Integrity** — Every document verifiable
-3. **Privacy by Design** — No sensitive data exposure
+1. **Human Sovereignty** — AI advises, humans make final decisions
+2. **Cryptographic Integrity** — Every document verifiable by hash
+3. **Privacy by Design** — Only hashes transmitted, never content
 4. **Institutional Trust** — Governance for regulated environments
+5. **Non-Repudiation** — Complete audit trail with institutional signatures
 
-## Security Principles
+## Quick Reference
 
-- No sensitive data processing
-- Cryptographic integrity by design
-- Deterministic verification
-- Auditability and compliance readiness
+### Verification Flow
 
-## Status
+```
+Document → SDK (hash) → /verify API → Policy Engine → Decision
+                              ↓
+                        Forensics Log
+```
 
-Early public technical release — interfaces may evolve.
+### Trust Levels
+
+| Level | Meaning |
+|-------|---------|
+| `LOW` | Integrity or signature problem, or unknown issuer |
+| `MEDIUM` | Signature valid, issuer REGISTERED |
+| `HIGH` | Signature valid, issuer TRUSTED |
+
+### Decision Outcomes
+
+| Decision | Action |
+|----------|--------|
+| `ALLOW` | Payment proceeds |
+| `HOLD` | Manual review required |
+| `BLOCK` | Payment rejected |
+
+## Related Repositories
+
+- [windi-reader-sdk](https://github.com/Bingo-APPweb/windi-reader-sdk)
+- [windi-verification-api](https://github.com/Bingo-APPweb/windi-verification-api)
+- [windi-policy-engine](https://github.com/Bingo-APPweb/windi-policy-engine)
+- [windi-forensics-engine](https://github.com/Bingo-APPweb/windi-forensics-engine)
+- [windi-proof-spec](https://github.com/Bingo-APPweb/windi-proof-spec)
+- [windi-wcaf-toolkit](https://github.com/Bingo-APPweb/windi-wcaf-toolkit)
 
 ## License
 

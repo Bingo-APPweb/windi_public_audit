@@ -29,7 +29,7 @@ const INSTITUTIONAL_BLOCKS = {
   },
   windi_formal_v1: {
     templateName: "WINDI Formal Document",
-    standard: "WINDI Publishing House",
+    standard: "WINDI SYSTEM",
     blocks: [
       { id: "memo_header", label: "Memo Header", labelDE: "Memo-Kopf", required: true, maxInstances: 1, placeholder: "", template: "<strong>MEMORANDUM</strong><br><br>To: <br>From: <br>Date: <br>Re: " },
       { id: "memo_body", label: "Body", labelDE: "Inhalt", required: true, maxInstances: null, placeholder: "Content...", template: "" },

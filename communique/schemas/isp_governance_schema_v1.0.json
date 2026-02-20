@@ -1,0 +1,347 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "WINDI ISP Governance Block v1.0",
+  "description": "Institutional Protocol layer for Communiqué.jmpg — transforms documents into verifiable institutional instruments",
+  "version": "1.0.0",
+  "created": "2026-02-18",
+  "author": "WINDI Governance Core — Three Dragons Protocol",
+  "type": "object",
+  "required": ["template_id", "version", "authority", "impact_level"],
+  "properties": {
+    "template_id": {
+      "type": "string",
+      "enum": ["ISP-COM-01", "ISP-COM-02", "ISP-COM-03", "ISP-COM-04", "ISP-COM-05"],
+      "description": "Institutional template classification"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$",
+      "default": "1.0",
+      "description": "Schema version for forward compatibility"
+    },
+    "authority": {
+      "type": "string",
+      "description": "Issuing authority (person or institutional body)",
+      "examples": ["WINDI Governance Core", "Jober Moegele Correa — CGO"]
+    },
+    "authority_level": {
+      "type": "string",
+      "enum": ["SYSTEM", "EXECUTIVE", "OPERATIONAL", "INFORMATIONAL"],
+      "default": "OPERATIONAL",
+      "description": "Decision authority tier"
+    },
+    "impact_level": {
+      "type": "string",
+      "enum": ["LOW", "MED", "HIGH", "CRIT"],
+      "description": "Institutional impact classification"
+    },
+    "jurisdiction": {
+      "type": "string",
+      "default": "EU",
+      "description": "Regulatory jurisdiction scope",
+      "examples": ["EU", "DE", "BR", "GLOBAL", "INTERNAL"]
+    },
+    "validity": {
+      "type": "string",
+      "enum": ["immediate", "scheduled", "provisional", "retroactive"],
+      "default": "immediate",
+      "description": "When this instrument takes effect"
+    },
+    "validity_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Specific effective date (required if validity=scheduled)"
+    },
+    "expiry_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Optional expiration date for time-bounded instruments"
+    },
+    "decision_type": {
+      "type": "string",
+      "enum": [
+        "institutional_announcement",
+        "operational_update",
+        "security_advisory",
+        "governance_decision",
+        "status_report",
+        "protocol_change",
+        "policy_update",
+        "system_milestone",
+        "compliance_notice",
+        "revocation"
+      ],
+      "description": "Nature of the institutional decision"
+    },
+    "compliance_reference": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": [],
+      "description": "Regulatory frameworks this document is structured in REFERENCE to (not claiming compliance)",
+      "examples": [["EU AI Act", "ISO 42001", "BSI C5", "ISO 27001"]]
+    },
+    "department_code": {
+      "type": "string",
+      "description": "Issuing department or division",
+      "examples": ["TITAN", "GOVERNANCE", "SECURITY", "OPERATIONS"]
+    },
+    "supersedes": {
+      "type": "string",
+      "description": "Receipt ID of the document this instrument replaces (if any)"
+    },
+    "audit_flag": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this document requires audit trail"
+    },
+    "classification": {
+      "type": "string",
+      "enum": ["PUBLIC", "INTERNAL", "RESTRICTED", "CONFIDENTIAL"],
+      "default": "PUBLIC",
+      "description": "Document access classification"
+    },
+    "rendering_rules": {
+      "type": "object",
+      "description": "Visual integrity constraints for ISP Builder",
+      "properties": {
+        "theme": {
+          "type": "string",
+          "enum": ["noir", "klar"],
+          "default": "noir"
+        },
+        "preserve_whitespace": {
+          "type": "boolean",
+          "default": true
+        },
+        "enforce_signature_display": {
+          "type": "boolean",
+          "default": true
+        },
+        "enforce_seal_position": {
+          "type": "string",
+          "enum": ["header", "footer", "both"],
+          "default": "both"
+        }
+      }
+    }
+  },
+
+  "_templates": {
+    "ISP-COM-01": {
+      "name": "Institutional Announcement",
+      "name_de": "Institutionelle Bekanntmachung",
+      "name_pt": "Comunicado Institucional",
+      "visual_code": "WINDI-OFFICIAL",
+      "color": "#22c55e",
+      "icon": "🟢",
+      "impact_default": "HIGH",
+      "authority_level_default": "EXECUTIVE",
+      "classification_default": "PUBLIC",
+      "structure": [
+        "context",
+        "decision_or_milestone",
+        "impact",
+        "public_verification",
+        "next_steps"
+      ],
+      "structure_de": [
+        "Kontext",
+        "Entscheidung/Meilenstein",
+        "Auswirkung",
+        "Öffentliche Verifizierung",
+        "Nächste Schritte"
+      ],
+      "rendering": {
+        "theme": "noir",
+        "fonts": ["Bricolage Grotesque", "Outfit"],
+        "accent_color": "#D4AF37",
+        "seal_position": "both",
+        "description": "Noir absolute background, gold fonts, centered virtue seal"
+      },
+      "use_cases": [
+        "System milestones",
+        "Product launches",
+        "ISP level activations",
+        "Iron Lineage declarations"
+      ]
+    },
+    "ISP-COM-02": {
+      "name": "Operational Update",
+      "name_de": "Operatives Update",
+      "name_pt": "Atualização Operacional",
+      "visual_code": "JORNALINE-MODERN",
+      "color": "#eab308",
+      "icon": "🟡",
+      "impact_default": "MED",
+      "authority_level_default": "OPERATIONAL",
+      "classification_default": "PUBLIC",
+      "structure": [
+        "what_changed",
+        "why_changed",
+        "technical_impact",
+        "operational_impact"
+      ],
+      "structure_de": [
+        "Was hat sich geändert",
+        "Warum die Änderung",
+        "Technische Auswirkung",
+        "Operativer Einfluss"
+      ],
+      "rendering": {
+        "theme": "klar",
+        "fonts": ["Bricolage Grotesque", "JetBrains Mono"],
+        "accent_color": "#1a1a2e",
+        "seal_position": "footer",
+        "description": "Dual-column layout, Bricolage typography, future NYT aesthetic"
+      },
+      "use_cases": [
+        "Dual-hash deployments",
+        "Engine optimizations",
+        "Viewer patches",
+        "Infrastructure upgrades"
+      ]
+    },
+    "ISP-COM-03": {
+      "name": "Security / Trust Advisory",
+      "name_de": "Sicherheits- / Vertrauenshinweis",
+      "name_pt": "Aviso de Segurança / Confiança",
+      "visual_code": "SECURITY-ALERT",
+      "color": "#ef4444",
+      "icon": "🔴",
+      "impact_default": "CRIT",
+      "authority_level_default": "SYSTEM",
+      "classification_default": "PUBLIC",
+      "structure": [
+        "risk_identified",
+        "systems_affected",
+        "mitigation",
+        "action_required"
+      ],
+      "structure_de": [
+        "Erkanntes Risiko",
+        "Betroffene Systeme",
+        "Gegenmaßnahmen",
+        "Erforderliche Maßnahmen"
+      ],
+      "rendering": {
+        "theme": "noir",
+        "fonts": ["JetBrains Mono", "Outfit"],
+        "accent_color": "#ef4444",
+        "seal_position": "header",
+        "description": "High-contrast alert styling, red accent, prominent seal"
+      },
+      "use_cases": [
+        "Vulnerability disclosures",
+        "Protocol changes",
+        "Certificate revocations",
+        "Integrity breaches"
+      ]
+    },
+    "ISP-COM-04": {
+      "name": "Governance Decision",
+      "name_de": "Governance-Entscheidung",
+      "name_pt": "Decisão de Governança",
+      "visual_code": "GOVERNANCE-DECREE",
+      "color": "#f97316",
+      "icon": "🟠",
+      "impact_default": "HIGH",
+      "authority_level_default": "EXECUTIVE",
+      "classification_default": "INTERNAL",
+      "structure": [
+        "foundation",
+        "decision",
+        "justification",
+        "effective_date"
+      ],
+      "structure_de": [
+        "Grundlage",
+        "Entscheidung",
+        "Begründung",
+        "Gültigkeitsdatum"
+      ],
+      "rendering": {
+        "theme": "noir",
+        "fonts": ["Bricolage Grotesque", "Outfit"],
+        "accent_color": "#f97316",
+        "seal_position": "both",
+        "description": "Authoritative decree styling, orange accent, formal layout"
+      },
+      "use_cases": [
+        "Policy changes",
+        "New ISP levels",
+        "Audit rule modifications",
+        "Constitutional amendments"
+      ]
+    },
+    "ISP-COM-05": {
+      "name": "Status Report",
+      "name_de": "Statusbericht",
+      "name_pt": "Relatório de Status",
+      "visual_code": "STATUS-DASHBOARD",
+      "color": "#3b82f6",
+      "icon": "🔵",
+      "impact_default": "LOW",
+      "authority_level_default": "INFORMATIONAL",
+      "classification_default": "PUBLIC",
+      "structure": [
+        "overview",
+        "metrics",
+        "relevant_events",
+        "outlook"
+      ],
+      "structure_de": [
+        "Überblick",
+        "Kennzahlen",
+        "Relevante Ereignisse",
+        "Ausblick"
+      ],
+      "rendering": {
+        "theme": "klar",
+        "fonts": ["Outfit", "JetBrains Mono"],
+        "accent_color": "#3b82f6",
+        "seal_position": "footer",
+        "description": "Dashboard aesthetic, metrics-friendly, clean layout"
+      },
+      "use_cases": [
+        "Monthly reports",
+        "System health",
+        "Operational metrics",
+        "Transparency reports"
+      ]
+    }
+  },
+
+  "_authority_levels": {
+    "SYSTEM": {
+      "description": "Automated system-level decisions (Sentinel, LAW)",
+      "requires_human_override": false,
+      "audit_mandatory": true
+    },
+    "EXECUTIVE": {
+      "description": "Strategic decisions by CGO or governance board",
+      "requires_human_override": true,
+      "audit_mandatory": true
+    },
+    "OPERATIONAL": {
+      "description": "Day-to-day operational decisions",
+      "requires_human_override": false,
+      "audit_mandatory": true
+    },
+    "INFORMATIONAL": {
+      "description": "Transparency and reporting — no decision authority",
+      "requires_human_override": false,
+      "audit_mandatory": false
+    }
+  },
+
+  "_validation_rules": {
+    "ISP-COM-03_requires_CRIT_or_HIGH": "Security advisories must have impact_level CRIT or HIGH",
+    "ISP-COM-04_requires_EXECUTIVE": "Governance decisions must have authority_level EXECUTIVE or SYSTEM",
+    "scheduled_requires_date": "If validity=scheduled, validity_date is required",
+    "supersedes_must_exist": "If supersedes is set, the referenced receipt_id must exist in Ledger",
+    "compliance_reference_not_scope": "Field is 'reference' not 'scope' — WINDI references frameworks, does not claim compliance"
+  },
+
+  "_principle": "AI processes. Human decides. WINDI guarantees.",
+  "_guardian_note": "compliance_reference (not compliance_scope) — protects WINDI legally until formal certification"
+}

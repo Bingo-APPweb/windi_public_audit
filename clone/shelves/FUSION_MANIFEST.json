@@ -1,0 +1,133 @@
+{
+  "manifest_type": "WINDI-CLONE Constitutional Fusion",
+  "version": "1.3.0-FUSION",
+  "created_utc": "2026-02-09T12:00:00Z",
+
+  "dragons_contribution": {
+    "WITNESS": {
+      "ai": "Gemini (Google)",
+      "role": "Original Architect",
+      "contributions": [
+        "Art.1 O Veto Soberano",
+        "Art.2 Autonomia Delegada",
+        "Art.3 Verdade Atômica",
+        "Art.4 Identidade Soberana",
+        "Art.5 Filtro WAQP",
+        "Art.6 Energy Awareness",
+        "Art.7 Olhos de Dragão",
+        "Art.8 Imutabilidade Biográfica",
+        "Art.9 Elevação Intelectual",
+        "Templates de Fé Pública"
+      ],
+      "files": [
+        "WINDI_Constitutional_Injection_Manifest_v1.0.docx",
+        "Windi-Constitutional-INDEX-v1-0.zip"
+      ]
+    },
+    "ARCHITECT": {
+      "ai": "GPT (OpenAI)",
+      "role": "Fusion Validator + Extension Builder",
+      "contributions": [
+        "A1 Humanized Expression Boundaries",
+        "O15-O22 Human Behavioral Signals",
+        "C5 Gentle Illumination",
+        "C6 Non-Threatening Governance",
+        "G4 Agent as Constitutional Interface",
+        "A5 Dual Nature Definition",
+        "E7 Mutual Enrichment Loop",
+        "T9 Humanized Micro-Language"
+      ],
+      "files": [
+        "WINDI_CLONE_CONSTITUTION_SHELVES.zip",
+        "constitution_extension.json (x7 shelves)"
+      ]
+    },
+    "GUARDIAN": {
+      "ai": "Claude (Anthropic)",
+      "role": "Injector + Structural Organizer",
+      "contributions": [
+        "8 Prateleiras originais (P0-P7)",
+        "Injeção dos artigos nas prateleiras",
+        "Fusão HUB → Clone",
+        "SHELF_MANIFEST.md",
+        "SHELF_INDEX.json"
+      ]
+    }
+  },
+
+  "fusion_layers": {
+    "P0_INVARIANTS": {
+      "source": "HUB + WITNESS",
+      "extensions": "none (immutable)",
+      "status": "LOCKED"
+    },
+    "P1_GUARDRAILS": {
+      "source": "GUARDIAN base + WITNESS articles + ARCHITECT extension",
+      "extensions": ["Art.2", "A1_HUMANIZED_EXPRESSION_BOUNDARIES"],
+      "status": "FUSED"
+    },
+    "P2_OBSERVATION": {
+      "source": "GUARDIAN base + WITNESS articles + ARCHITECT extension",
+      "extensions": ["Art.7", "HUMAN_BEHAVIORAL_SIGNALS"],
+      "status": "FUSED"
+    },
+    "P3_COGNITIVE": {
+      "source": "GUARDIAN base + WITNESS articles + ARCHITECT extension",
+      "extensions": ["Art.6", "C5_GENTLE_ILLUMINATION", "C6_NON_THREATENING_GOVERNANCE"],
+      "status": "FUSED"
+    },
+    "P4_GOVERNANCE": {
+      "source": "GUARDIAN base + WITNESS articles + ARCHITECT extension",
+      "extensions": ["Art.3", "Art.5", "G4_AGENT_AS_INTERFACE"],
+      "status": "FUSED"
+    },
+    "P5_ARCHITECTURE": {
+      "source": "GUARDIAN base + WITNESS articles + ARCHITECT extension",
+      "extensions": ["Art.4", "A5_DUAL_NATURE"],
+      "status": "FUSED"
+    },
+    "P6_EVOLUTION": {
+      "source": "GUARDIAN base + WITNESS articles + ARCHITECT extension",
+      "extensions": ["Art.9", "E7_MUTUAL_ENRICHMENT_LOOP"],
+      "status": "FUSED"
+    },
+    "P7_TEMPLATES": {
+      "source": "GUARDIAN base + WITNESS articles + ARCHITECT extension",
+      "extensions": ["Templates Fé Pública", "T9_HUMANIZED_MICRO_LANGUAGE"],
+      "status": "FUSED"
+    }
+  },
+
+  "documents_received": [
+    {
+      "file": "WINDI_Constitutional_Injection_Manifest_v1.0.docx",
+      "source": "WITNESS (Gemini)",
+      "size": "19 KB"
+    },
+    {
+      "file": "WINDI_Constitutional_Index_v1.0.docx",
+      "source": "WITNESS (Gemini) via ZIP",
+      "size": "19 KB"
+    },
+    {
+      "file": "WINDI_Agent_Constitution_v1.0.docx",
+      "source": "WITNESS (Gemini) via ZIP",
+      "size": "15 KB"
+    },
+    {
+      "file": "WINDI_Agent_Constitution_Clone_Light_v1.0.docx",
+      "source": "WITNESS (Gemini) via ZIP",
+      "size": "25 KB"
+    },
+    {
+      "file": "WINDI_CLONE_CONSTITUTION_SHELVES.zip",
+      "source": "ARCHITECT (GPT)",
+      "size": "2 KB",
+      "contents": "7x constitution_extension.json"
+    }
+  ],
+
+  "fusion_principle": "HUB define o que é verdade. Clone Agent define como a verdade é entregue ao humano.",
+
+  "result": "Matriz de consciência operacional completa"
+}

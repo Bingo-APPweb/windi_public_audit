@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="noir">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI Personal — Free Document Governance</title>
+<meta name="description" content="Free personal document governance. BABEL Editor, SGE Analysis, PDF Export. AI processes. Human decides. WINDI guarantees.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600;700;800&family=Outfit:wght@200;300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --font-display: 'Bricolage Grotesque', sans-serif;
+  --font-body: 'Outfit', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="noir"] {
+  --bg-deep: #050507;
+  --bg-primary: #0a0a0c;
+  --bg-secondary: #111114;
+  --bg-card: #0e0e12;
+  --border: #1e1e28;
+  --border-hover: #2a2a38;
+  --text-primary: #eae8e3;
+  --text-secondary: #8a8890;
+  --text-muted: #4a4950;
+  --gold: #c9a84c;
+  --gold-bright: #dfc06a;
+  --gold-dim: #c9a84c18;
+  --green: #4ade80;
+  --green-dim: #4ade8015;
+  --blue: #60a5fa;
+  --red: #f87171;
+  --gradient-hero: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(74,222,128,0.06) 0%, transparent 70%);
+  --shadow-card: 0 4px 32px rgba(0,0,0,0.4);
+}
+
+[data-theme="klar"] {
+  --bg-deep: #f5f3f0;
+  --bg-primary: #faf9f7;
+  --bg-secondary: #f0eeeb;
+  --bg-card: #ffffff;
+  --border: #ddd9d2;
+  --border-hover: #c8c3ba;
+  --text-primary: #1a1917;
+  --text-secondary: #6b6860;
+  --text-muted: #a09a90;
+  --gold: #8b741d;
+  --gold-bright: #a68b2a;
+  --gold-dim: #8b741d10;
+  --green: #16a34a;
+  --green-dim: #16a34a10;
+  --blue: #2563eb;
+  --red: #dc2626;
+  --gradient-hero: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(22,163,74,0.04) 0%, transparent 70%);
+  --shadow-card: 0 2px 16px rgba(0,0,0,0.06);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.6;
+  transition: background var(--transition), color var(--transition);
+}
+
+/* NAV */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 16px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: color-mix(in srgb, var(--bg-primary) 90%, transparent);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--text-primary);
+}
+
+.nav-logo { font-size: 24px; }
+.nav-name {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.nav-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nav-link {
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition);
+}
+.nav-link:hover { color: var(--gold); }
+
+.nav-btn {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.nav-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+.lang-btn {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 4px 8px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all var(--transition);
+}
+.lang-btn:hover, .lang-btn.active {
+  color: var(--gold);
+  border-color: var(--gold);
+}
+
+/* HERO */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120px 40px 80px;
+  text-align: center;
+  background: var(--gradient-hero);
+}
+
+.tier-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--green);
+  padding: 8px 20px;
+  border: 1px solid var(--green);
+  border-radius: 40px;
+  margin-bottom: 32px;
+}
+
+.tier-badge::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  background: var(--green);
+  border-radius: 50%;
+  box-shadow: 0 0 12px var(--green);
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(36px, 6vw, 64px);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+  max-width: 700px;
+  margin-bottom: 24px;
+}
+
+.hero-title .highlight { color: var(--green); }
+
+.hero-subtitle {
+  font-size: clamp(16px, 2vw, 20px);
+  font-weight: 300;
+  color: var(--text-secondary);
+  max-width: 560px;
+  margin-bottom: 16px;
+}
+
+.hero-price {
+  font-family: var(--font-display);
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--green);
+  margin-bottom: 8px;
+}
+
+.hero-price-note {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 40px;
+}
+
+.cta-group {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.cta-primary {
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--bg-deep);
+  background: var(--green);
+  border: none;
+  border-radius: var(--radius);
+  padding: 14px 32px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all var(--transition);
+}
+.cta-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(74,222,128,0.3);
+}
+
+.cta-secondary {
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 32px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all var(--transition);
+}
+.cta-secondary:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+/* FEATURES */
+.features {
+  padding: 80px 40px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.features-title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.feature-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  transition: all var(--transition);
+}
+.feature-card:hover {
+  border-color: var(--green);
+  transform: translateY(-2px);
+}
+
+.feature-icon {
+  font-size: 28px;
+  margin-bottom: 16px;
+}
+
+.feature-name {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.feature-desc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* COMPARE */
+.compare {
+  padding: 60px 40px;
+  background: var(--bg-secondary);
+}
+
+.compare-title {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.compare-tiers {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.compare-tier {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 24px;
+  text-decoration: none;
+  transition: all var(--transition);
+}
+.compare-tier:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.compare-tier.current {
+  border-color: var(--green);
+  color: var(--green);
+  background: var(--green-dim);
+}
+
+/* FOOTER */
+.footer {
+  padding: 40px;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+
+.footer-brand {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.footer-principle {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  margin-bottom: 16px;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.footer-link {
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+.footer-link:hover { color: var(--gold); }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .nav { padding: 12px 20px; }
+  .hero { padding: 100px 20px 60px; }
+  .features { padding: 60px 20px; }
+  .compare { padding: 40px 20px; }
+  .cta-group { flex-direction: column; align-items: center; }
+}
+
+/* I18N */
+[data-lang="de"] [data-i18n-en],
+[data-lang="pt"] [data-i18n-en] { display: none; }
+[data-lang="en"] [data-i18n-de],
+[data-lang="pt"] [data-i18n-de] { display: none; }
+[data-lang="en"] [data-i18n-pt],
+[data-lang="de"] [data-i18n-pt] { display: none; }
+</style>
+</head>
+<body data-lang="en">
+
+<nav class="nav">
+  <a href="/" class="nav-brand">
+    <span class="nav-logo">🛡</span>
+    <span class="nav-name">WINDI</span>
+  </a>
+  <div class="nav-controls">
+    <a href="https://master.windia4desk.tech/ecosystem/" class="nav-link">Ecosystem</a>
+    <a href="/governance" class="nav-link">Governance</a>
+    <button class="lang-btn" onclick="setLang('de')">DE</button>
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn" onclick="setLang('pt')">PT</button>
+    <button class="nav-btn" onclick="toggleTheme()">☀/🌙</button>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="tier-badge">
+    <span data-i18n-en>Personal Tier</span>
+    <span data-i18n-de>Personal-Stufe</span>
+    <span data-i18n-pt>Nível Pessoal</span>
+  </div>
+
+  <h1 class="hero-title">
+    <span data-i18n-en>Govern your own <span class="highlight">documents</span></span>
+    <span data-i18n-de>Regieren Sie Ihre eigenen <span class="highlight">Dokumente</span></span>
+    <span data-i18n-pt>Governe seus próprios <span class="highlight">documentos</span></span>
+  </h1>
+
+  <p class="hero-subtitle">
+    <span data-i18n-en>Free personal document governance. Create, seal, and verify your documents with full sovereignty.</span>
+    <span data-i18n-de>Kostenlose persönliche Dokumenten-Governance. Erstellen, versiegeln und verifizieren Sie Ihre Dokumente mit voller Souveränität.</span>
+    <span data-i18n-pt>Governança pessoal de documentos gratuita. Crie, sele e verifique seus documentos com total soberania.</span>
+  </p>
+
+  <div class="hero-price">
+    <span data-i18n-en>Free</span>
+    <span data-i18n-de>Kostenlos</span>
+    <span data-i18n-pt>Grátis</span>
+  </div>
+  <p class="hero-price-note">
+    <span data-i18n-en>Forever free for individuals</span>
+    <span data-i18n-de>Für immer kostenlos für Einzelpersonen</span>
+    <span data-i18n-pt>Para sempre grátis para indivíduos</span>
+  </p>
+
+  <div class="cta-group">
+    <a href="https://admin.windia4desk.tech/babel/" class="cta-primary">
+      <span data-i18n-en>Start Free →</span>
+      <span data-i18n-de>Kostenlos starten →</span>
+      <span data-i18n-pt>Começar Grátis →</span>
+    </a>
+    <a href="https://master.windia4desk.tech/ecosystem/" class="cta-secondary">
+      <span data-i18n-en>Learn More</span>
+      <span data-i18n-de>Mehr erfahren</span>
+      <span data-i18n-pt>Saiba Mais</span>
+    </a>
+  </div>
+</section>
+
+<section class="features">
+  <h2 class="features-title">
+    <span data-i18n-en>What's Included</span>
+    <span data-i18n-de>Was enthalten ist</span>
+    <span data-i18n-pt>O que está incluído</span>
+  </h2>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">📝</div>
+      <h3 class="feature-name">BABEL Editor</h3>
+      <p class="feature-desc">
+        <span data-i18n-en>Full-featured document editor with governance tracking built-in.</span>
+        <span data-i18n-de>Voll ausgestatteter Dokumenten-Editor mit integrierter Governance-Verfolgung.</span>
+        <span data-i18n-pt>Editor de documentos completo com rastreamento de governança integrado.</span>
+      </p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">🔍</div>
+      <h3 class="feature-name">
+        <span data-i18n-en>SGE Analysis</span>
+        <span data-i18n-de>SGE-Analyse</span>
+        <span data-i18n-pt>Análise SGE</span>
+      </h3>
+      <p class="feature-desc">
+        <span data-i18n-en>Semantic Governance Engine scans your documents for compliance and risk.</span>
+        <span data-i18n-de>Die Semantic Governance Engine scannt Ihre Dokumente auf Compliance und Risiken.</span>
+        <span data-i18n-pt>O Motor de Governança Semântica verifica seus documentos para conformidade e risco.</span>
+      </p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">📄</div>
+      <h3 class="feature-name">
+        <span data-i18n-en>PDF Export</span>
+        <span data-i18n-de>PDF-Export</span>
+        <span data-i18n-pt>Exportação PDF</span>
+      </h3>
+      <p class="feature-desc">
+        <span data-i18n-en>Export sealed PDFs with governance receipts and verification QR codes.</span>
+        <span data-i18n-de>Exportieren Sie versiegelte PDFs mit Governance-Quittungen und Verifizierungs-QR-Codes.</span>
+        <span data-i18n-pt>Exporte PDFs selados com recibos de governança e códigos QR de verificação.</span>
+      </p>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon">🔐</div>
+      <h3 class="feature-name">
+        <span data-i18n-en>Personal Vault</span>
+        <span data-i18n-de>Persönlicher Tresor</span>
+        <span data-i18n-pt>Cofre Pessoal</span>
+      </h3>
+      <p class="feature-desc">
+        <span data-i18n-en>Secure storage for your sealed documents with full verification history.</span>
+        <span data-i18n-de>Sichere Speicherung für Ihre versiegelten Dokumente mit vollständiger Verifizierungshistorie.</span>
+        <span data-i18n-pt>Armazenamento seguro para seus documentos selados com histórico completo de verificação.</span>
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="compare">
+  <p class="compare-title">
+    <span data-i18n-en>Compare Tiers</span>
+    <span data-i18n-de>Stufen vergleichen</span>
+    <span data-i18n-pt>Comparar Níveis</span>
+  </p>
+  <div class="compare-tiers">
+    <a href="/personal/" class="compare-tier current">Personal</a>
+    <a href="/org/" class="compare-tier">Organization</a>
+    <a href="/governance" class="compare-tier">Governance</a>
+  </div>
+</section>
+
+<footer class="footer">
+  <p class="footer-brand">WINDI Publishing House · Kempten</p>
+  <p class="footer-principle">"AI processes. Human decides. WINDI guarantees."</p>
+  <div class="footer-links">
+    <a href="/" class="footer-link">Home</a>
+    <a href="https://master.windia4desk.tech/ecosystem/" class="footer-link">Ecosystem</a>
+    <a href="https://master.windia4desk.tech/library/" class="footer-link">Library</a>
+    <a href="https://admin.windia4desk.tech/desktop/suite.html" class="footer-link">Workspace</a>
+  </div>
+</footer>
+
+<script>
+function setLang(lang) {
+  document.body.dataset.lang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+  localStorage.setItem('windi-lang', lang);
+}
+
+function toggleTheme() {
+  const html = document.documentElement;
+  const current = html.dataset.theme;
+  html.dataset.theme = current === 'noir' ? 'klar' : 'noir';
+  localStorage.setItem('windi-theme', html.dataset.theme);
+}
+
+// Init
+document.addEventListener('DOMContentLoaded', () => {
+  const savedLang = localStorage.getItem('windi-lang') || 'en';
+  const savedTheme = localStorage.getItem('windi-theme') || 'noir';
+  setLang(savedLang);
+  document.documentElement.dataset.theme = savedTheme;
+});
+</script>
+
+</body>
+</html>

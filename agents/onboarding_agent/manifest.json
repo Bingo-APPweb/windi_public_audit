@@ -1,0 +1,29 @@
+{
+  "agent_id": "onboarding-agent",
+  "agent_name": "Onboarding Agent",
+  "version": "1.0.0",
+  "shelf": "orchestration",
+  "role": "Automatização do onboarding de novos clientes e ISPs, desde intake até provisioning completo",
+  "principle": "AI processes. Human decides. WINDI guarantees.",
+  "human_mediated": true,
+  "auto_apply": false,
+  "invariants_observed": ["I1", "I2", "I3", "I5", "I6", "I9"],
+  "dependencies": ["isp-manager", "maestro"],
+  "inputs": [
+    "client_intake_form",
+    "organization_data",
+    "governance_level_request"
+  ],
+  "outputs": [
+    "onboarding_checklist",
+    "generated_isp_draft",
+    "identity_directory_entry",
+    "readiness_report"
+  ],
+  "schedule": {
+    "on_event": "on_new_client_request",
+    "on_demand": true
+  },
+  "created": "2026-02-08T00:00:00Z",
+  "created_by": "Three Dragons Protocol — Guardian"
+}

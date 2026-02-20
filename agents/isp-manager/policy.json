@@ -1,0 +1,46 @@
+{
+  "policy_version": "1.0.0",
+  "agent_id": "windi://agent/core/isp-manager",
+
+  "permissions": {
+    "read": [
+      "/opt/windi/isp/**/*.json",
+      "/opt/windi/isp/**/templates/**",
+      "/opt/windi/data/template_registry.db",
+      "/opt/windi/engine/governance_levels.json",
+      "/opt/windi/reports/isp_scan_*.json",
+      "/opt/windi/backups/registry_snapshot_*/"
+    ],
+    "write": [
+      "/opt/windi/agents/isp-manager/drafts/",
+      "/opt/windi/agents/isp-manager/alerts/",
+      "/opt/windi/agents/isp-manager/receipts/",
+      "/opt/windi/agents/isp-manager/reports/"
+    ],
+    "execute": [
+      "/opt/windi/isp_scanner_v1.1.py"
+    ],
+    "forbidden": [
+      "/opt/windi/a4desk-editor/*",
+      "/opt/windi/data/babel_documents.db",
+      "/opt/windi/data/virtue_history.db",
+      "/opt/windi/engine/*.py",
+      "/opt/windi/isp/**/profile.json:write"
+    ]
+  },
+
+  "rate_limits": {
+    "max_scans_per_hour": 10,
+    "max_alerts_per_scan": 50,
+    "max_draft_size_kb": 512
+  },
+
+  "sandbox_integration": {
+    "entry_point": "isp_manager_agent.py",
+    "routing_rules": [
+      {"condition": "task_type starts_with 'isp.'", "route_to": "isp-manager"},
+      {"condition": "request contains isp_id", "route_to": "isp-manager"},
+      {"condition": "source == 'governance_panel'", "route_to": "isp-manager"}
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "receipt_id": "WINDI-AGENT-ISP-08FEB26-090401-56a6d732",
+  "agent_id": "windi://agent/core/isp-manager",
+  "agent_version": "1.0.0",
+  "action": "audit",
+  "timestamp": "2026-02-08T09:04:01.045909+00:00",
+  "human_confirmed": false,
+  "results_hash": "a153695a1012402452e725974427f7c1523619c283e18c49667a8db416ee5c1f",
+  "summary": {
+    "profiles_scanned": 17,
+    "violations": 119,
+    "warnings": 68,
+    "grade": "F (0)"
+  },
+  "invariant_compliance": {
+    "I1_sovereignty": "Agent proposed only — no modifications made",
+    "I9_no_escalation": "No auto_apply executed"
+  }
+}

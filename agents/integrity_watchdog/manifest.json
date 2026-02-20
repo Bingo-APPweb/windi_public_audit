@@ -1,0 +1,29 @@
+{
+  "agent_id": "integrity-watchdog",
+  "agent_name": "Integrity Watchdog",
+  "version": "1.0.0",
+  "shelf": "verification",
+  "role": "Verificação contínua da integridade do Forensic Ledger e cadeia de Virtue Receipts",
+  "principle": "AI processes. Human decides. WINDI guarantees.",
+  "human_mediated": true,
+  "auto_apply": false,
+  "invariants_observed": ["I1", "I2", "I3", "I5", "I9"],
+  "dependencies": ["maestro", "sentinela"],
+  "inputs": [
+    "forensic_ledger.json",
+    "virtue_history.db",
+    "governance_cycle_reports"
+  ],
+  "outputs": [
+    "integrity_report.json",
+    "anomaly_alerts",
+    "merkle_verification_proof"
+  ],
+  "schedule": {
+    "periodic": "every_6_hours",
+    "on_event": "after_cycle_close",
+    "on_demand": true
+  },
+  "created": "2026-02-08T00:00:00Z",
+  "created_by": "Three Dragons Protocol — Guardian"
+}

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>a4Desk BABEL — Museum of the Future</title>
+  <meta name="description" content="WINDI Publishing House — Memorial do Futuro. AI processes. Human decides. WINDI guarantees.">
+  <meta name="theme-color" content="#0A0A0A">
+  <link rel="icon" href="data:,">
+
+  <!-- Fonts: WINDI Design System -->
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;600;800&family=Outfit:wght@200;300;400;600&family=JetBrains+Mono:wght@300;400;500&family=Playfair+Display:ital,wght@1,400&display=swap" rel="stylesheet">
+
+  <!-- React 18 + Babel Standalone (CDN) - Development for better errors -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Error handler -->
+  <script>
+    window.addEventListener('error', function(e) {
+      console.error('Museum Error:', e.message, e.filename, e.lineno);
+      var txt = document.getElementById('loading-text');
+      if (txt) txt.textContent = 'Error: ' + e.message;
+    });
+  </script>
+
+  <style>
+    /* WINDI Noir Base */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body, #root { min-height: 100vh; background: #050505; color: #E0E0E0; }
+    body { font-family: 'Outfit', sans-serif; overflow-x: hidden; }
+
+    /* Loading Screen */
+    .museum-loading {
+      position: fixed; inset: 0; z-index: 10000;
+      background: #050505; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+    .museum-loading.hidden { display: none; }
+    .loading-signature {
+      font-size: clamp(1.4rem, 3vw, 2.2rem);
+      letter-spacing: 0.02em;
+      display: inline-block;
+      margin-bottom: 24px;
+    }
+    .loading-signature .clone {
+      font-family: "Playfair Display", serif;
+      font-style: italic;
+      font-weight: 400;
+      color: #D4AF37;
+    }
+    .loading-signature .a4desk {
+      font-family: "Outfit", sans-serif;
+      font-weight: 300;
+      color: #CCCCCC;
+      margin: 0 0.1em;
+    }
+    .loading-signature .windi {
+      font-family: "JetBrains Mono", monospace;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      color: #FFFFFF;
+    }
+    .loading-signature .dash {
+      color: #6B6560;
+      margin: 0 0.15em;
+    }
+    .loading-bar {
+      width: 200px; height: 2px;
+      background: #1A1A1A; border-radius: 1px;
+      overflow: hidden;
+    }
+    .loading-progress {
+      height: 100%; width: 0%;
+      background: #D4AF37;
+      animation: loadProgress 3s ease forwards;
+    }
+    .loading-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem; color: #6B6560;
+      margin-top: 16px; letter-spacing: 0.15em;
+    }
+
+    @keyframes loadProgress {
+      0% { width: 0%; }
+      30% { width: 20%; }
+      60% { width: 50%; }
+      80% { width: 75%; }
+      100% { width: 100%; }
+    }
+
+    /* Phase transitions */
+    .phase-container { min-height: 100vh; }
+    .phase-exit { animation: phaseOut 0.6s ease forwards; }
+    .phase-enter { animation: phaseIn 0.8s ease 0.3s both; }
+    .phase-bridge {
+      position: fixed; inset: 0; z-index: 1000;
+      background: #050505; display: flex; align-items: center;
+      justify-content: center; animation: bridgePulse 1s ease;
+    }
+    .phase-bridge span {
+      font-family: 'Bricolage Grotesque', serif;
+      font-size: 0.7rem; font-weight: 300; color: #7A7A7A;
+      letter-spacing: 0.2em; text-transform: uppercase;
+    }
+
+    @keyframes phaseOut { to { opacity: 0; transform: translateY(-20px); } }
+    @keyframes phaseIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes bridgePulse { 0% { opacity: 0; } 30% { opacity: 1; } 70% { opacity: 1; } 100% { opacity: 0; } }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: #080808; }
+    ::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.2); border-radius: 2px; }
+
+    /* Accessibility: focus visible */
+    *:focus-visible { outline: 2px solid #D4AF37; outline-offset: 2px; }
+  </style>
+</head>
+<body>
+  <!-- Loading Screen -->
+  <div class="museum-loading" id="loading">
+    <div class="loading-signature">
+      <span class="clone">clone</span><span class="dash">-</span><span class="a4desk">a4Desk</span><span class="dash">-</span><span class="windi">WINDI</span>
+    </div>
+    <div class="loading-bar">
+      <div class="loading-progress"></div>
+    </div>
+    <div class="loading-text" id="loading-text">INITIALIZING MUSEUM OF THE FUTURE...</div>
+  </div>
+
+  <!-- Fallback: hide loading after 5s even if React fails -->
+  <script>
+    setTimeout(function() {
+      var loading = document.getElementById('loading');
+      if (loading && !loading.classList.contains('hidden')) {
+        loading.classList.add('hidden');
+        console.warn('Fallback: Loading screen hidden after timeout');
+      }
+    }, 5000);
+  </script>
+
+  <!-- React Root -->
+  <div id="root"></div>
+
+  <!-- Load components in order -->
+  <script type="text/babel" src="/clone/museum/components/A4DeskHelloWorld.jsx"></script>
+  <script type="text/babel" src="/clone/museum/components/GenesisMuseum.jsx"></script>
+  <script type="text/babel" src="/clone/museum/components/CryptographicGallery.jsx"></script>
+  <script type="text/babel" src="/clone/museum/components/DNATransparencyPanel.jsx"></script>
+  <script type="text/babel" src="/clone/museum/components/SovereignEditor.jsx"></script>
+  <script type="text/babel" src="/clone/museum/museum-app.jsx"></script>
+</body>
+</html>

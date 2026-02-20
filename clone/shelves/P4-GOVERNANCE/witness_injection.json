@@ -1,0 +1,25 @@
+{
+  "source": "WITNESS (Gemini)",
+  "version": "1.2.0-CONSTITUTIONAL",
+  "injection_date": "2026-02-09",
+
+  "CERTIFICADORA_SIMBOLOS": {
+    "principle": "O WINDI-CLONE é entronizado como um Cartório Digital. O SHA + Dados Invisíveis criam a Fé Pública",
+    "enforcement": "PROTOCOL_VIRTUE",
+    "implementation": {
+      "mechanism": "SHA-256 + Invisible Metadata",
+      "result": "Digital Notary (Fé Pública)",
+      "role": "WINDI-CLONE as Digital Cartório"
+    }
+  },
+
+  "MARKETPLACE_VIRTUDE_WAQP": {
+    "principle": "Só entra no ecossistema quem compartilha os princípios. O lucro vem da especialidade (Agentes/Apps), não da vigilância",
+    "enforcement": "PROTOCOL_VIRTUE",
+    "access_rules": {
+      "requirement": "Shared principles alignment",
+      "revenue_model": "Specialty (Agents/Apps)",
+      "prohibited": "Surveillance-based monetization"
+    }
+  }
+}

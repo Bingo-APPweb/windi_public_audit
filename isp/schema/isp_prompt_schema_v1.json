@@ -1,0 +1,323 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://admin.windia4desk.tech/isp/schema/v1.0",
+  "title": "WINDI ISP Prompt Schema v1.0",
+  "description": "Institutional Style Profile resolution schema. Governs how AI agents resolve institutional tone, structure, and compliance requirements from user prompts. The template NEVER decides the level. The API decides. The template only manifests.",
+  "version": "1.0.0",
+  "type": "object",
+  "required": ["profile_id", "profile_type", "institutional_domain", "governance"],
+  "properties": {
+    "profile_id": {
+      "type": "string",
+      "pattern": "^ISP-[A-Z0-9]+-[a-z0-9_]+-(v[0-9]+\\.[0-9]+)$",
+      "description": "Unique profile identifier. Format: ISP-{ORG}-{variant}-{version}",
+      "examples": [
+        "ISP-TUM-academic-v1.0",
+        "ISP-BSI-compliance-v1.0",
+        "ISP-WINDI-communique-v1.0",
+        "ISP-GENERIC-business-v1.0"
+      ]
+    },
+    "profile_type": {
+      "type": "string",
+      "enum": ["official", "inferred", "custom"],
+      "description": "official = known ISP from library, inferred = AI-resolved from prompt context, custom = user-defined"
+    },
+    "institutional_domain": {
+      "type": "object",
+      "required": ["sector", "formality_level"],
+      "properties": {
+        "sector": {
+          "type": "string",
+          "enum": [
+            "academic",
+            "government",
+            "corporate",
+            "legal",
+            "medical",
+            "financial",
+            "journalistic",
+            "technical",
+            "ngo",
+            "internal",
+            "general"
+          ],
+          "description": "Primary institutional sector"
+        },
+        "sub_sector": {
+          "type": "string",
+          "description": "Optional sub-sector refinement",
+          "examples": ["university_research", "municipal_admin", "press_release", "audit_report"]
+        },
+        "formality_level": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5,
+          "description": "1=casual internal, 2=standard business, 3=formal institutional, 4=official/legal, 5=ceremonial/diplomatic"
+        },
+        "jurisdiction": {
+          "type": "string",
+          "description": "Legal/regulatory jurisdiction if applicable",
+          "examples": ["DE", "EU", "US", "CH", "INTERNATIONAL"]
+        }
+      }
+    },
+    "language_mode": {
+      "type": "object",
+      "required": ["primary"],
+      "properties": {
+        "primary": {
+          "type": "string",
+          "pattern": "^[a-z]{2}(-[A-Z]{2})?$",
+          "description": "Primary language (ISO 639-1, optional region)",
+          "examples": ["de", "en", "pt-BR", "de-DE"]
+        },
+        "secondary": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Additional languages for trilingual support",
+          "examples": [["en", "pt"]]
+        },
+        "terminology_set": {
+          "type": "string",
+          "description": "Domain-specific terminology reference",
+          "examples": ["bsi_c5", "iso27001", "academic_de", "legal_de"]
+        }
+      }
+    },
+    "tone_and_register": {
+      "type": "object",
+      "required": ["voice"],
+      "properties": {
+        "voice": {
+          "type": "string",
+          "enum": [
+            "institutional_passive",
+            "institutional_active",
+            "academic_neutral",
+            "corporate_direct",
+            "legal_precise",
+            "journalistic_narrative",
+            "diplomatic_measured",
+            "technical_concise"
+          ],
+          "description": "Primary authorial voice"
+        },
+        "person": {
+          "type": "string",
+          "enum": ["first_singular", "first_plural", "third_person", "impersonal"],
+          "description": "Grammatical person preference"
+        },
+        "hedging_level": {
+          "type": "string",
+          "enum": ["none", "minimal", "moderate", "strong"],
+          "description": "Degree of epistemic hedging (should, could, may, might...)"
+        },
+        "prohibited_patterns": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Phrases or patterns forbidden in this profile",
+          "examples": [["I think", "obviously", "basically", "game-changer"]]
+        },
+        "required_patterns": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Phrases or structures that MUST appear",
+          "examples": [["Respectfully submitted", "In accordance with §"]]
+        }
+      }
+    },
+    "structural_bias": {
+      "type": "object",
+      "description": "Document structure preferences for this profile",
+      "properties": {
+        "heading_style": {
+          "type": "string",
+          "enum": ["numbered", "named", "hybrid", "none"],
+          "description": "How section headings are formatted"
+        },
+        "paragraph_length": {
+          "type": "string",
+          "enum": ["short", "medium", "long", "academic"],
+          "description": "Preferred paragraph density"
+        },
+        "citation_style": {
+          "type": "string",
+          "enum": ["none", "footnote", "inline", "apa", "chicago", "din_iso_690"],
+          "description": "Citation format if applicable"
+        },
+        "required_sections": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Sections that MUST appear in documents of this profile",
+          "examples": [["Abstract", "Methodology", "References"]]
+        },
+        "forbidden_sections": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Sections that must NOT appear",
+          "examples": [["Disclaimer", "Opinion"]]
+        },
+        "max_page_count": {
+          "type": "integer",
+          "description": "Maximum pages for this document type"
+        }
+      }
+    },
+    "governance": {
+      "type": "object",
+      "required": ["sge_level", "human_authority"],
+      "description": "WINDI governance constraints — the invariant layer",
+      "properties": {
+        "sge_level": {
+          "type": "string",
+          "enum": ["R0", "R1", "R2", "R3", "R4", "R5"],
+          "description": "SGE (Semantic Governance Engine) risk classification. R0=minimal, R5=critical"
+        },
+        "human_authority": {
+          "type": "string",
+          "enum": ["required", "recommended", "optional"],
+          "description": "Human review requirement. ALWAYS 'required' for R3+ documents"
+        },
+        "ledger_registration": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether this document type gets registered in the Forensic Ledger"
+        },
+        "vault_broadcast": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether exported binaries get broadcasted to Forensic Vault"
+        },
+        "evidence_package": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether this profile generates an Evidence Package (bundle_hash)"
+        },
+        "immutability_after_publish": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether published documents become immutable (HTTP 403 on edit)"
+        },
+        "audit_trail": {
+          "type": "string",
+          "enum": ["none", "basic", "full", "forensic"],
+          "description": "Level of audit trail generation"
+        },
+        "compliance_tags": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Applicable compliance frameworks",
+          "examples": [["BSI-C5", "ISO-27001", "DSGVO", "GDPR"]]
+        }
+      }
+    },
+    "template_binding": {
+      "type": "object",
+      "description": "How this ISP maps to concrete Jinja2/HTML templates",
+      "properties": {
+        "base_template": {
+          "type": "string",
+          "description": "Primary template filename in /opt/windi/isp/templates/",
+          "examples": ["communique_noir.html", "academic_tum.html", "compliance_bsi.html"]
+        },
+        "css_override": {
+          "type": "string",
+          "description": "Optional CSS file for institutional branding"
+        },
+        "logo_path": {
+          "type": "string",
+          "description": "Path to institutional logo (relative to /opt/windi/isp/assets/)"
+        },
+        "color_palette": {
+          "type": "object",
+          "properties": {
+            "primary": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+            "secondary": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+            "accent": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" }
+          }
+        },
+        "fonts": {
+          "type": "object",
+          "properties": {
+            "heading": { "type": "string" },
+            "body": { "type": "string" },
+            "mono": { "type": "string" }
+          }
+        }
+      }
+    },
+    "prompt_resolution": {
+      "type": "object",
+      "description": "Rules for how resolve_institutional_style() infers this profile from user prompts",
+      "properties": {
+        "trigger_keywords": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Keywords that trigger this profile (case-insensitive)",
+          "examples": [["TUM", "München", "Masterarbeit", "Doktorarbeit"]]
+        },
+        "trigger_patterns": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Regex patterns that trigger this profile",
+          "examples": [["(?i)technische.*universit", "(?i)master.*thesis.*munich"]]
+        },
+        "confidence_threshold": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "default": 0.7,
+          "description": "Minimum confidence to auto-apply this profile (below = ask human)"
+        },
+        "fallback_profile": {
+          "type": "string",
+          "description": "Profile to use if confidence is below threshold",
+          "examples": ["ISP-GENERIC-business-v1.0"]
+        },
+        "exclusion_keywords": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Keywords that explicitly disqualify this profile",
+          "examples": [["informal", "blog", "social media"]]
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "created_by": {
+          "type": "string",
+          "description": "Creator (human or dragon protocol)"
+        },
+        "last_modified": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["draft", "active", "deprecated", "archived"]
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of this profile"
+        },
+        "changelog": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "date": { "type": "string", "format": "date" },
+              "change": { "type": "string" },
+              "author": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

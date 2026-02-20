@@ -1,0 +1,25 @@
+{
+  "manifest_type": "WINDI-CLONE Genesis",
+  "version": "1.0.0",
+  "genesis_utc": "2026-02-08T23:19:16Z",
+  "seal": "44b666868d344928",
+  
+  "documents_created": [
+    "IDENTITY.json",
+    "constitution/CONSTITUTION.md",
+    "registry/AGENT_REGISTRY.json",
+    "mirror/MIRROR_CONFIG.json"
+  ],
+  
+  "agent_id": "W-00000000000000000000000000000001",
+  "status": "INITIALIZED",
+  
+  "next_steps": [
+    "Ratify Constitution (Three Dragons signatures)",
+    "Deploy Clone Agents (8 pending)",
+    "Configure Customer Branding",
+    "Establish Sync Protocol with Parent"
+  ],
+  
+  "guardian_signature": "Claude Code (Anthropic) - 2026-02-08T23:20:31Z"
+}

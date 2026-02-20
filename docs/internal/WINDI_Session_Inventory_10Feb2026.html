@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI Session Inventory — 10 Feb 2026</title>
+<style>
+:root{--bg:#0a0a0f;--bg2:#12121a;--card:#1a1a24;--gold:#c9a227;--gold-l:#e8c547;--txt:#e8e8e8;--txt2:#a0a0a0;--brd:#2a2a3a;--green:#27ae60;--blue:#3498db;--orange:#f39c12;--red:#e74c3c}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);padding:20px;line-height:1.6}
+.container{max-width:1100px;margin:0 auto}
+h1{color:var(--gold);font-size:1.8rem;text-align:center;padding:20px 0;border-bottom:2px solid var(--gold)}
+h2{color:var(--gold);font-size:1.3rem;margin:30px 0 15px;padding:10px 15px;background:var(--bg2);border-left:4px solid var(--gold);border-radius:0 8px 8px 0}
+h3{color:var(--gold-l);font-size:1.05rem;margin:20px 0 10px}
+.subtitle{text-align:center;color:var(--txt2);margin:10px 0 30px;font-size:.9rem}
+.card{background:var(--card);border:1px solid var(--brd);border-radius:10px;padding:20px;margin:15px 0}
+.card.conf{border-color:var(--red);border-width:2px}
+.card.pub{border-color:var(--green);border-width:2px}
+table{width:100%;border-collapse:collapse;margin:10px 0}
+th{background:var(--bg2);color:var(--txt2);padding:10px;text-align:left;font-size:.8rem;text-transform:uppercase;letter-spacing:.5px}
+td{padding:10px;border-bottom:1px solid var(--brd);font-size:.9rem}
+tr:hover{background:rgba(201,162,39,.03)}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:.75rem;font-weight:600}
+.badge.low{background:rgba(39,174,96,.2);color:var(--green)}
+.badge.med{background:rgba(243,156,18,.2);color:var(--orange)}
+.badge.high{background:rgba(231,76,60,.2);color:var(--red)}
+.badge.conf{background:rgba(231,76,60,.15);color:var(--red)}
+.badge.pub{background:rgba(39,174,96,.15);color:var(--green)}
+.badge.code{background:rgba(52,152,219,.15);color:var(--blue)}
+.badge.doc{background:rgba(201,162,39,.15);color:var(--gold)}
+.mono{font-family:'Courier New',monospace;font-size:.85rem;color:var(--gold);word-break:break-all}
+.path{background:var(--bg2);padding:4px 10px;border-radius:4px;font-family:'Courier New',monospace;font-size:.82rem;display:inline-block;margin:2px 0}
+.arrow{color:var(--gold);font-weight:bold;margin:0 8px}
+.section-map{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+@media(max-width:768px){.section-map{grid-template-columns:1fr}}
+.map-card{background:var(--bg2);border:1px solid var(--brd);border-radius:8px;padding:15px}
+.map-card h4{color:var(--gold-l);margin-bottom:8px;font-size:.9rem}
+.map-card ul{list-style:none;padding:0}
+.map-card li{padding:4px 0;font-size:.85rem;color:var(--txt2)}
+.map-card li::before{content:"→ ";color:var(--gold)}
+.warn{background:rgba(243,156,18,.1);border:1px solid var(--orange);border-radius:8px;padding:15px;margin:15px 0;font-size:.9rem}
+.warn::before{content:"⚠️ ";font-size:1.1rem}
+.ok{background:rgba(39,174,96,.1);border:1px solid var(--green);border-radius:8px;padding:15px;margin:15px 0;font-size:.9rem}
+.ok::before{content:"✅ "}
+.cmd{background:var(--bg);border:1px solid var(--brd);border-radius:6px;padding:12px;margin:8px 0;font-family:'Courier New',monospace;font-size:.82rem;color:var(--green);overflow-x:auto;white-space:pre}
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>🐉 WINDI Session Inventory — 10 Feb 2026</h1>
+<p class="subtitle">Complete transfer guide: Documents, Code, and Deployment Map</p>
+
+<!-- ============================================================ -->
+<!-- SECTION 1: DOCUMENTS -->
+<!-- ============================================================ -->
+
+<h2>📄 AREA 1 — Documents (DOCX → master.windia4desk.tech)</h2>
+
+<div class="card conf">
+<h3>🔴 CONFIDENTIAL Document</h3>
+<table>
+<tr>
+  <th>File</th>
+  <th>Classification</th>
+  <th>Contains</th>
+  <th>Transfer</th>
+</tr>
+<tr>
+  <td><strong>WINDI_Marketplace_Architecture_CONFIDENTIAL_v1.0.docx</strong><br><span class="mono">DOC-MKT-2026-001</span></td>
+  <td><span class="badge conf">VERTRAULICH</span></td>
+  <td>Financial projections, pricing strategy, TAM, unit economics, competitive moat, revenue models</td>
+  <td><span class="badge high">DO NOT PUBLISH</span></td>
+</tr>
+</table>
+<div class="warn">This document must NOT go to master.windia4desk.tech. It contains the full financial portfolio. Store in private archive only:
+<div class="cmd"># Strato — private archive
+scp WINDI_Marketplace_Architecture_CONFIDENTIAL_v1.0.docx windi@87.106.29.233:/opt/windi/docs/internal/
+# Or Google Drive → WINDI Internal / Strategy / 2026</div>
+</div>
+</div>
+
+<div class="card pub">
+<h3>🟢 PUBLIC Document</h3>
+<table>
+<tr>
+  <th>File</th>
+  <th>Classification</th>
+  <th>Contains</th>
+  <th>Transfer</th>
+</tr>
+<tr>
+  <td><strong>WINDI_Agent_Certification_Protocol_v1.0.docx</strong><br><span class="mono">PROT-CERT-2026-001</span></td>
+  <td><span class="badge pub">PUBLIC</span></td>
+  <td>Certification flow, 9 Invariants, WAQP scenarios, SHP steps, certification levels, infrastructure reference</td>
+  <td><span class="badge pub">→ master.windia4desk.tech</span></td>
+</tr>
+</table>
+</div>
+
+<h3>📍 Where on master.windia4desk.tech?</h3>
+
+<p>The docs site has a sidebar with 7 sections. The Certification Protocol fits into <strong>two existing sections</strong> and could create a <strong>new section</strong>:</p>
+
+<div class="section-map">
+<div class="map-card">
+  <h4>Option A — Add to "Federation & Tools" (existing)</h4>
+  <ul>
+    <li>Dokumentenschutz — Für Entscheider</li>
+    <li>Merkle Transparency Log</li>
+    <li>wcaf verify-evidence</li>
+    <li><strong style="color:var(--gold)">Agent Certification Protocol ← NEW</strong></li>
+  </ul>
+  <div class="cmd"># File goes to:
+/opt/windi/masterarbeit/docs/agent-certification-protocol.html
+
+# Sidebar link:
+&lt;a href="agent-certification-protocol.html"&gt;Agent Certification Protocol&lt;/a&gt;</div>
+</div>
+
+<div class="map-card">
+  <h4>Option B — New "Marketplace" section (recommended)</h4>
+  <ul>
+    <li><strong style="color:var(--gold)">Agent Certification Protocol ← NEW</strong></li>
+    <li><em style="color:var(--txt2)">Marketplace Overview (future)</em></li>
+    <li><em style="color:var(--txt2)">ISP Store Guide (future)</em></li>
+    <li><em style="color:var(--txt2)">Developer SDK Docs (future)</em></li>
+  </ul>
+  <div class="cmd"># New sidebar section in docs/index.html:
+&lt;div class="sidebar-section"&gt;
+  &lt;div class="sidebar-label"&gt;Marketplace&lt;/div&gt;
+  &lt;a href="agent-certification-protocol.html" class="sidebar-link"&gt;
+    Agent Certification Protocol
+  &lt;/a&gt;
+&lt;/div&gt;</div>
+</div>
+</div>
+
+<div class="warn">The DOCX needs conversion to HTML matching the master.windia4desk.tech Noir theme (uses windi-internal.css). Two approaches:
+<br><br>
+<strong>Quick:</strong> Convert DOCX → HTML via pandoc, wrap in site template<br>
+<strong>Proper:</strong> Build dedicated HTML page with sidebar integration (matches TR-003 through TR-007 format)
+</div>
+
+<h3>📋 Transfer Commands</h3>
+<div class="cmd"># 1. Create directories on Strato
+ssh windi@87.106.29.233 "mkdir -p /opt/windi/docs/internal /opt/windi/docs/public"
+
+# 2. Transfer CONFIDENTIAL doc (internal only)
+scp WINDI_Marketplace_Architecture_CONFIDENTIAL_v1.0.docx \
+    windi@87.106.29.233:/opt/windi/docs/internal/
+
+# 3. Transfer PUBLIC protocol (for web publication)
+scp WINDI_Agent_Certification_Protocol_v1.0.docx \
+    windi@87.106.29.233:/opt/windi/docs/public/
+
+# 4. Convert to HTML for master.windia4desk.tech (requires pandoc)
+ssh windi@87.106.29.233 "cd /opt/windi/docs/public && \
+  pandoc WINDI_Agent_Certification_Protocol_v1.0.docx \
+  -o /opt/windi/masterarbeit/docs/agent-certification-protocol-raw.html"
+
+# 5. Then wrap in site template (manual or scripted)</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 2: CODE INVENTORY -->
+<!-- ============================================================ -->
+
+<h2>💻 AREA 2 — Code Inventory by Deployment Difficulty</h2>
+
+<!-- LOW -->
+<div class="card">
+<h3>🟢 LOW Difficulty — Copy & Replace (No coding needed)</h3>
+<p style="color:var(--txt2);margin-bottom:15px">These files are drop-in replacements. Just copy to the right location and restart if needed.</p>
+
+<table>
+<tr><th>File</th><th>What It Does</th><th>Where It Goes</th><th>Command</th></tr>
+<tr>
+  <td><strong>admin_windia4desk_index_UPDATED.html</strong><br><span class="badge code">HTML</span></td>
+  <td>Updated portal with:<br>• I9 in oath (trilingual)<br>• 9 Invariants (not 8)<br>• Bronze/Silver/Gold ↔ Self-Certified/Verified/Endorsed</td>
+  <td><span class="path">Replaces current index.html on admin.windia4desk.tech</span></td>
+  <td>
+<div class="cmd"># Find current file location on Strato:
+ssh windi@87.106.29.233 "find /opt/windi -name '*.html' | xargs grep -l 'Agent Certification' 2>/dev/null"
+
+# Then replace:
+scp admin_windia4desk_index_UPDATED.html windi@87.106.29.233:/path/to/index.html
+
+# No restart needed — it's static HTML</div>
+  </td>
+</tr>
+</table>
+
+<div class="ok">Zero risk. The file is the same portal with 9 surgical text changes. If anything goes wrong, restore the original HTML. No backend changes.</div>
+</div>
+
+<!-- MEDIUM -->
+<div class="card">
+<h3>🟡 MEDIUM Difficulty — Integration Required (Some Flask knowledge)</h3>
+<p style="color:var(--txt2);margin-bottom:15px">These files need to be integrated into the existing Flask app. Requires editing the main Python file and restarting the service.</p>
+
+<table>
+<tr><th>File</th><th>What It Does</th><th>Where It Goes</th><th>Steps</th></tr>
+<tr>
+  <td><strong>backoffice.py</strong><br><span class="badge code">Python/Flask Blueprint</span></td>
+  <td>Certification Backoffice backend:<br>• SQLite database for applications<br>• 8 API endpoints<br>• Forensic Ledger (JSONL)<br>• Email notifications<br>• Integrity hashing</td>
+  <td><span class="path">/opt/windi/agents/certification/backoffice.py</span></td>
+  <td>See integration steps below</td>
+</tr>
+<tr>
+  <td><strong>admin_dashboard.html</strong><br><span class="badge code">HTML/JS Dashboard</span></td>
+  <td>Admin UI for reviewing certification applications:<br>• Stats grid<br>• Filterable application table<br>• Review actions (WAQP→SHP→Certify)<br>• Detail modal with event timeline<br>• Auto-refresh 30s</td>
+  <td><span class="path">/opt/windi/agents/certification/admin_dashboard.html</span></td>
+  <td>Served by backoffice.py /admin route</td>
+</tr>
+</table>
+
+<h3>Integration Steps (5 steps)</h3>
+<div class="cmd"># STEP 1: Backup
+BK="/opt/windi/backups/pre_backoffice_$(date +%Y%m%d_%H%M%S)"
+mkdir -p $BK
+# Copy whatever Flask app currently serves admin.windia4desk.tech
+cp /opt/windi/agents/certification/*.py $BK/ 2>/dev/null
+cp /opt/windi/agents/certification/*.html $BK/ 2>/dev/null
+
+# STEP 2: Upload files
+scp backoffice.py windi@87.106.29.233:/opt/windi/agents/certification/
+scp admin_dashboard.html windi@87.106.29.233:/opt/windi/agents/certification/
+
+# STEP 3: Generate secure admin token
+python3 -c "import secrets; print(secrets.token_urlsafe(32))"
+# Save this token! You need it to access /admin
+
+# STEP 4: Edit main Flask app (the one serving admin.windia4desk.tech)
+# Find it:
+ssh windi@87.106.29.233 "ps aux | grep -E 'flask|python.*admin' | grep -v grep"
+# Add these lines to it:
+
+# --- ADD TO TOP OF FILE ---
+# import os, sys
+# os.environ['WINDI_ADMIN_TOKEN'] = 'YOUR_TOKEN_HERE'
+# sys.path.insert(0, '/opt/windi/agents/certification')
+# from backoffice import backoffice_bp, init_backoffice
+# --- AFTER app = Flask(__name__) ---
+# init_backoffice(app)
+# app.register_blueprint(backoffice_bp)
+
+# STEP 5: Restart
+# pkill -f the_flask_app.py
+# cd /opt/windi/agents/certification
+# nohup python3 the_flask_app.py > /tmp/admin_cert.log 2>&1 &</div>
+
+<div class="warn">Requires knowing which Flask file currently serves admin.windia4desk.tech. The backoffice.py REPLACES the /api/apply endpoint — it's backwards-compatible but now saves to SQLite instead of whatever the current storage is. Test after deploy:
+<div class="cmd"># Test public endpoint (should still work)
+curl -s -X POST https://admin.windia4desk.tech/api/apply \
+  -H "Content-Type: application/json" \
+  -d '{"agent_name":"Test","operator_name":"Test","operator_email":"t@t.com","accepted_terms":true}'
+
+# Test admin endpoint (should return applications list)
+curl -s https://admin.windia4desk.tech/api/applications \
+  -H "Authorization: Bearer YOUR_TOKEN"
+
+# Test dashboard
+# Open: https://admin.windia4desk.tech/admin?token=YOUR_TOKEN</div>
+</div>
+</div>
+
+<!-- HIGH -->
+<div class="card">
+<h3>🔴 HIGH Difficulty — Architectural Decisions (Strategy + Technical)</h3>
+<p style="color:var(--txt2);margin-bottom:15px">These require human decisions about business strategy, site architecture, and long-term structure. Not just copy/paste.</p>
+
+<table>
+<tr><th>Item</th><th>What It Requires</th><th>Decision Needed</th><th>Dependencies</th></tr>
+<tr>
+  <td><strong>Marketplace Architecture</strong><br><span class="badge doc">DOCX Strategy</span></td>
+  <td>Internal document archival system. Where do CONFIDENTIAL docs live? Google Drive? Strato private folder? Encrypted?</td>
+  <td>Choose document management strategy for sensitive business docs</td>
+  <td>None — but sets precedent for all future confidential docs</td>
+</tr>
+<tr>
+  <td><strong>Protocol → HTML on master site</strong><br><span class="badge code">HTML Conversion</span></td>
+  <td>Convert DOCX to themed HTML matching windi-internal.css, add to sidebar navigation, decide if "Marketplace" becomes a new sidebar section</td>
+  <td>Site architecture: new section vs. existing section?</td>
+  <td>Access to /opt/windi/masterarbeit/ file structure</td>
+</tr>
+<tr>
+  <td><strong>Email notifications</strong><br><span class="badge code">SMTP Config</span></td>
+  <td>Configure SMTP on Strato for real email alerts. Requires: SMTP host, port, user, password, recipient email</td>
+  <td>Which email service? Strato built-in SMTP? External?</td>
+  <td>backoffice.py deployed first, then env vars set</td>
+</tr>
+<tr>
+  <td><strong>Existing data migration</strong><br><span class="badge code">Data Migration</span></td>
+  <td>Find where /api/apply currently stores data on Strato, migrate to new SQLite DB</td>
+  <td>Need to SSH and inspect current storage format</td>
+  <td>backoffice.py deployed first, then POST /api/migrate-existing</td>
+</tr>
+</table>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 3: COMPLETE FILE MAP -->
+<!-- ============================================================ -->
+
+<h2>🗺️ AREA 3 — Complete File Map (What Goes Where)</h2>
+
+<table>
+<tr>
+  <th>File</th>
+  <th>Type</th>
+  <th>Class</th>
+  <th>Difficulty</th>
+  <th>Destination on Strato</th>
+</tr>
+<tr>
+  <td class="mono">admin_windia4desk_index_UPDATED.html</td>
+  <td><span class="badge code">Portal HTML</span></td>
+  <td><span class="badge pub">PUBLIC</span></td>
+  <td><span class="badge low">LOW</span></td>
+  <td>Replace current index.html for admin.windia4desk.tech</td>
+</tr>
+<tr>
+  <td class="mono">portal_update_diff.patch</td>
+  <td><span class="badge code">Diff/Patch</span></td>
+  <td><span class="badge pub">PUBLIC</span></td>
+  <td><span class="badge low">LOW</span></td>
+  <td>Reference only — shows exact 9 changes made</td>
+</tr>
+<tr>
+  <td class="mono">backoffice.py</td>
+  <td><span class="badge code">Flask Backend</span></td>
+  <td><span class="badge pub">INTERNAL</span></td>
+  <td><span class="badge med">MEDIUM</span></td>
+  <td>/opt/windi/agents/certification/backoffice.py</td>
+</tr>
+<tr>
+  <td class="mono">admin_dashboard.html</td>
+  <td><span class="badge code">Admin UI</span></td>
+  <td><span class="badge pub">INTERNAL</span></td>
+  <td><span class="badge med">MEDIUM</span></td>
+  <td>/opt/windi/agents/certification/admin_dashboard.html</td>
+</tr>
+<tr>
+  <td class="mono">deploy_backoffice.sh</td>
+  <td><span class="badge code">Deploy Script</span></td>
+  <td><span class="badge pub">INTERNAL</span></td>
+  <td><span class="badge med">MEDIUM</span></td>
+  <td>Run from local machine (guides deployment)</td>
+</tr>
+<tr>
+  <td class="mono">certification_backoffice.tar.gz</td>
+  <td><span class="badge code">Archive</span></td>
+  <td><span class="badge pub">INTERNAL</span></td>
+  <td><span class="badge med">MEDIUM</span></td>
+  <td>Contains all 3 above in one package</td>
+</tr>
+<tr style="border-top:2px solid var(--gold)">
+  <td class="mono">WINDI_Marketplace_Architecture<br>_CONFIDENTIAL_v1.0.docx</td>
+  <td><span class="badge doc">Strategy Doc</span></td>
+  <td><span class="badge conf">CONFIDENTIAL</span></td>
+  <td><span class="badge high">HIGH</span></td>
+  <td>/opt/windi/docs/internal/ or Google Drive (private)</td>
+</tr>
+<tr>
+  <td class="mono">WINDI_Agent_Certification<br>_Protocol_v1.0.docx</td>
+  <td><span class="badge doc">Protocol Doc</span></td>
+  <td><span class="badge pub">PUBLIC</span></td>
+  <td><span class="badge high">HIGH</span></td>
+  <td>/opt/windi/docs/public/ → convert to HTML for master site</td>
+</tr>
+</table>
+
+<!-- ============================================================ -->
+<!-- SECTION 4: RECOMMENDED DEPLOY ORDER -->
+<!-- ============================================================ -->
+
+<h2>📋 Recommended Deployment Order</h2>
+
+<table>
+<tr><th>Order</th><th>Action</th><th>Difficulty</th><th>Time</th><th>Impact</th></tr>
+<tr>
+  <td style="color:var(--gold);font-weight:bold;font-size:1.2rem">1</td>
+  <td><strong>Update portal HTML</strong> (I9 + 9 Invariants + unified levels)</td>
+  <td><span class="badge low">LOW</span></td>
+  <td>2 min</td>
+  <td>Constitutional correctness. Portal stops saying "8 Invariants"</td>
+</tr>
+<tr>
+  <td style="color:var(--gold);font-weight:bold;font-size:1.2rem">2</td>
+  <td><strong>Store CONFIDENTIAL doc</strong> in private archive</td>
+  <td><span class="badge low">LOW</span></td>
+  <td>1 min</td>
+  <td>Financial strategy secured</td>
+</tr>
+<tr>
+  <td style="color:var(--gold);font-weight:bold;font-size:1.2rem">3</td>
+  <td><strong>Deploy Certification Backoffice</strong> (backoffice.py + dashboard)</td>
+  <td><span class="badge med">MEDIUM</span></td>
+  <td>15-30 min</td>
+  <td>Applications become visible. Admin can review.</td>
+</tr>
+<tr>
+  <td style="color:var(--gold);font-weight:bold;font-size:1.2rem">4</td>
+  <td><strong>Migrate existing applications</strong> from current storage</td>
+  <td><span class="badge med">MEDIUM</span></td>
+  <td>5-10 min</td>
+  <td>No data lost from previous submissions</td>
+</tr>
+<tr>
+  <td style="color:var(--gold);font-weight:bold;font-size:1.2rem">5</td>
+  <td><strong>Configure email notifications</strong> (SMTP)</td>
+  <td><span class="badge high">HIGH</span></td>
+  <td>15-30 min</td>
+  <td>Real-time alerts for new applications</td>
+</tr>
+<tr>
+  <td style="color:var(--gold);font-weight:bold;font-size:1.2rem">6</td>
+  <td><strong>Publish Protocol on master site</strong> (DOCX → HTML)</td>
+  <td><span class="badge high">HIGH</span></td>
+  <td>30-60 min</td>
+  <td>Public standard for marketplace. Third parties can read it.</td>
+</tr>
+</table>
+
+<div class="ok" style="margin-top:20px">
+<strong>After steps 1-3:</strong> The Certification Portal is constitutionally correct, applications are persistent, and you can see who applied. The marketplace has its first operational backoffice.
+</div>
+
+<p style="text-align:center;margin-top:40px;color:var(--gold);font-style:italic">"AI processes. Human decides. WINDI guarantees." 🐉🛡️</p>
+<p style="text-align:center;color:var(--txt2);font-size:.8rem;margin-top:10px">WINDI Publishing House | Kempten (Allgäu) | 10 February 2026</p>
+
+</div>
+</body>
+</html>

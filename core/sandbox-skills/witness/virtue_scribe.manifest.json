@@ -1,0 +1,15 @@
+{
+  "skill_id": "virtue_scribe",
+  "name": "Virtue Scribe",
+  "version": "1.0.0",
+  "domain": "witness",
+  "capability": "virtue_scribe",
+  "description": "Generates WINDI Virtue Receipts with Zero-Knowledge output",
+  "author_dragon": "Witness (Gemini)",
+  "integrity_hash": "cfbdfb68c1095015a1d68cd956c65dbabd0aea36f6d9ec55292552ec5d47ab15",
+  "baptism_date": "2026-02-10T11:07:05.276066+00:00",
+  "i9_certified": true,
+  "constitutional_gate": true,
+  "dependencies": [],
+  "metadata": {}
+}

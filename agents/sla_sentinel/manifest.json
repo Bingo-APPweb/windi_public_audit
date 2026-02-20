@@ -1,0 +1,29 @@
+{
+  "agent_id": "sla-sentinel",
+  "agent_name": "SLA Sentinel",
+  "version": "1.0.0",
+  "shelf": "detection",
+  "role": "Monitoramento em tempo real de SLAs de governança, com alertas preventivos antes de breaches",
+  "principle": "AI processes. Human decides. WINDI guarantees.",
+  "human_mediated": true,
+  "auto_apply": false,
+  "invariants_observed": ["I1", "I2", "I3", "I9"],
+  "dependencies": ["maestro"],
+  "inputs": [
+    "active_findings_queue",
+    "sla_definitions",
+    "governance_cycle_status"
+  ],
+  "outputs": [
+    "sla_status_report",
+    "preemptive_alerts",
+    "escalation_notifications"
+  ],
+  "schedule": {
+    "periodic": "every_60_seconds_when_active",
+    "on_event": "on_new_finding",
+    "on_demand": true
+  },
+  "created": "2026-02-08T00:00:00Z",
+  "created_by": "Three Dragons Protocol — Guardian"
+}

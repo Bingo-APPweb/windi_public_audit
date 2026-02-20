@@ -1,0 +1,1 @@
+/opt/windi/clone/PURPOSE_MANIFESTO.md

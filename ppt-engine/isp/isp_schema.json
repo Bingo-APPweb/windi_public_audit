@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "WINDI ISP PPT Configuration",
+  "description": "Institutional Style Profile for WINDI PPT Engine. Defines visual identity, governance rules, and compliance metadata for automated presentation generation.",
+  "version": "1.0.0",
+  "type": "object",
+  "required": ["org_id", "org_name", "theme", "colors", "fonts", "footer", "governance"],
+  "properties": {
+    "org_id": {
+      "type": "string",
+      "description": "Unique institutional identifier (slug format)",
+      "pattern": "^[a-z0-9-]+$"
+    },
+    "org_name": {
+      "type": "string",
+      "description": "Full legal or display name of the institution"
+    },
+    "theme_name": {
+      "type": "string",
+      "description": "Human-readable theme name"
+    },
+    "colors": {
+      "type": "object",
+      "required": ["primary", "secondary", "background", "background_alt", "text", "text_muted", "accent"],
+      "properties": {
+        "primary": { "type": "string", "pattern": "^[0-9A-Fa-f]{6}$" },
+        "secondary": { "type": "string", "pattern": "^[0-9A-Fa-f]{6}$" },
+        "background": { "type": "string", "pattern": "^[0-9A-Fa-f]{6}$" },
+        "background_alt": { "type": "string", "pattern": "^[0-9A-Fa-f]{6}$" },
+        "text": { "type": "string", "pattern": "^[0-9A-Fa-f]{6}$" },
+        "text_muted": { "type": "string", "pattern": "^[0-9A-Fa-f]{6}$" },
+        "accent": { "type": "string", "pattern": "^[0-9A-Fa-f]{6}$" },
+        "success": { "type": "string", "pattern": "^[0-9A-Fa-f]{6}$" },
+        "warning": { "type": "string", "pattern": "^[0-9A-Fa-f]{6}$" },
+        "danger": { "type": "string", "pattern": "^[0-9A-Fa-f]{6}$" }
+      }
+    },
+    "fonts": {
+      "type": "object",
+      "required": ["title", "body", "mono"],
+      "properties": {
+        "title": { "type": "string" },
+        "body": { "type": "string" },
+        "mono": { "type": "string" }
+      }
+    },
+    "logo": {
+      "type": "object",
+      "properties": {
+        "path": { "type": "string" },
+        "width": { "type": "number" },
+        "height": { "type": "number" }
+      }
+    },
+    "footer": {
+      "type": "object",
+      "required": ["left_text", "show_page_number"],
+      "properties": {
+        "left_text": { "type": "string" },
+        "right_text": { "type": "string" },
+        "classification": {
+          "type": "string",
+          "enum": ["PUBLIC", "INTERNAL", "CONFIDENTIAL", "RESTRICTED", "SECRET"]
+        },
+        "show_page_number": { "type": "boolean" },
+        "show_windi_seal": { "type": "boolean" },
+        "show_timestamp": { "type": "boolean" }
+      }
+    },
+    "governance": {
+      "type": "object",
+      "required": ["level", "forensic_receipt"],
+      "properties": {
+        "level": {
+          "type": "string",
+          "enum": ["STANDARD", "ENHANCED", "MAXIMUM"],
+          "description": "L1=STANDARD (hash only), L2=ENHANCED (hash+metadata), L3=MAXIMUM (full forensic receipt slide)"
+        },
+        "forensic_receipt": { "type": "boolean" },
+        "zk_declaration": { "type": "boolean" },
+        "sentinel_status": { "type": "boolean" },
+        "compliance_frameworks": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "watermark": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "text": { "type": "string" },
+        "opacity": { "type": "number", "minimum": 0, "maximum": 100 }
+      }
+    },
+    "identity_license": {
+      "type": "string",
+      "enum": ["authorized", "model_only", "pending", "expired", "revoked"]
+    }
+  }
+}

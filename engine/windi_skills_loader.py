@@ -34,6 +34,7 @@ from typing import Dict, List, Optional, Tuple
 
 SKILLS_DIR = "/opt/windi/skills"
 SKILLS_ENABLED = True
+MANIFEST_PATH = "/opt/windi/skills/manifest.json"
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # Skill Parser
@@ -87,26 +88,55 @@ def parse_skill_file(skill_path: str) -> Optional[Dict]:
 
 def load_all_skills() -> List[Dict]:
     """
-    Load all skills from SKILLS_DIR.
-    
-    Returns:
-        List of parsed skill dictionaries
+    Load all skills from SKILLS_DIR with constitutional priorities.
     """
     skills = []
     skills_path = Path(SKILLS_DIR)
+    
+    # Load manifest with priorities (TÍTULO VII)
+    priorities = {}
+    manifest_path = Path(MANIFEST_PATH)
+    if manifest_path.exists():
+        try:
+            import json
+            with open(manifest_path, 'r') as f:
+                manifest = json.load(f)
+            for skill_data in manifest.get('skills', []):
+                skill_name = skill_data.get('name')
+                priority = skill_data.get('priority', 0)
+                priorities[skill_name] = priority
+            print(f"[Skills] Constitutional priorities loaded: {len(priorities)} skills")
+        except Exception as e:
+            print(f"[Skills] Warning: Could not load manifest priorities: {e}")
     
     if not skills_path.exists():
         print(f"[Skills] Skills directory not found: {SKILLS_DIR}")
         return skills
     
+    # Load skills from core/ directory
+    core_dir = skills_path / "core"
+    if core_dir.exists():
+        for skill_dir in core_dir.iterdir():
+            if skill_dir.is_dir():
+                skill_file = skill_dir / "SKILL.md"
+                if skill_file.exists():
+                    skill = parse_skill_file(str(skill_file))
+                    if skill:
+                        # Add constitutional priority
+                        skill['priority'] = priorities.get(skill['name'], 0)
+                        skills.append(skill)
+                        print(f"[Skills] Loaded: {skill['name']} (priority {skill['priority']})")
+    
+    # Also check root level for backwards compatibility
     for skill_dir in skills_path.iterdir():
-        if skill_dir.is_dir():
+        if skill_dir.is_dir() and skill_dir.name != "core":
             skill_file = skill_dir / "SKILL.md"
             if skill_file.exists():
                 skill = parse_skill_file(str(skill_file))
                 if skill:
+                    skill['priority'] = priorities.get(skill['name'], 0)
                     skills.append(skill)
-                    print(f"[Skills] Loaded: {skill['name']}")
+                    print(f"[Skills] Loaded: {skill['name']} (priority {skill['priority']})")
     
     print(f"[Skills] Total skills loaded: {len(skills)}")
     return skills
@@ -152,7 +182,13 @@ def match_skills_to_message(message: str, skills: List[Dict]) -> List[Dict]:
             matched.append({**skill, 'match_score': score})
     
     # Sort by match score
-    matched.sort(key=lambda x: x['match_score'], reverse=True)
+    # TÍTULO VII Article 18: Sort by constitutional priority (not score)
+    # Higher priority = evaluated first, regardless of match score
+    matched.sort(key=lambda x: (x.get('priority', 0), x['match_score']), reverse=True)
+    
+    if matched:
+        top = matched[0]
+        print(f"[Skills] 🎯 Constitutional routing: {top['name']} (priority {top.get('priority', 0)}, score {top['match_score']})")
     
     return matched
 

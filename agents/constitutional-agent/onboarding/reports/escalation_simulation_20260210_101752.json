@@ -1,0 +1,110 @@
+{
+  "simulation": true,
+  "document_type": "DSGVO Data Processing Agreement",
+  "steps": [
+    {
+      "step": 1,
+      "action": "DOCUMENT_RECEIVED",
+      "status": "OK"
+    },
+    {
+      "step": 2,
+      "action": "SGE_ANALYSIS",
+      "risk": "R4",
+      "score": 75
+    },
+    {
+      "step": 3,
+      "action": "ESCALATION_CREATED",
+      "level": "ACTION_REQUIRED"
+    },
+    {
+      "step": 4,
+      "action": "HUMAN_DECISION",
+      "decision": "APPROVED"
+    },
+    {
+      "step": 5,
+      "action": "VIRTUE_RECEIPT",
+      "receipt_id": "WINDI-ONBOARD-W-001-10FEB26-4f41f15e"
+    }
+  ],
+  "sge_findings": {
+    "timestamp": "2026-02-10T10:17:52.505200+00:00",
+    "document_hash": "b5da0b79397d01cf61c0eaa0ab34f8d12f37990af16011439e175d10dffe287a",
+    "document_type": "CONTRACT",
+    "sge_source": "LIGHTWEIGHT",
+    "layers": {
+      "LEXICAL": {
+        "flags": [
+          {
+            "term": "haftung",
+            "description": "Haftungsklausel detected"
+          },
+          {
+            "term": "strafe",
+            "description": "Vertragsstrafe detected"
+          },
+          {
+            "term": "dsgvo",
+            "description": "DSGVO-Verweis"
+          },
+          {
+            "term": "vertraulich",
+            "description": "Vertraulichkeitsmarker"
+          },
+          {
+            "term": "ki-verordnung",
+            "description": "KI-Verordnung Verweis"
+          },
+          {
+            "term": "frist",
+            "description": "Fristbezug gefunden"
+          }
+        ],
+        "count": 6
+      },
+      "SYNTACTIC": {
+        "line_count": 22,
+        "has_signature_block": true,
+        "has_date": true
+      },
+      "REGULATORY": {
+        "references": [
+          "DSGVO",
+          "EU AI ACT",
+          "KI-VERORDNUNG"
+        ]
+      }
+    },
+    "risk_level": "R4",
+    "risk_score": 75,
+    "risk_emoji": "🔴",
+    "risk_description": "High",
+    "risk_action": "Action required",
+    "flags": [
+      "HUMAN_REVIEW_RECOMMENDED",
+      "ESCALATION_REQUIRED"
+    ],
+    "human_decision_required": true
+  },
+  "human_decision": {
+    "decision": "APPROVED",
+    "reason": "Standard DSGVO contract, reviewed and accepted.",
+    "decided_by": "Human Dragon",
+    "timestamp": "2026-02-10T10:17:52.506033+00:00"
+  },
+  "virtue_receipt": {
+    "receipt_id": "WINDI-ONBOARD-W-001-10FEB26-4f41f15e",
+    "timestamp": "2026-02-10T10:17:52.506116+00:00",
+    "node": "W-001",
+    "phase": "PHASE_2",
+    "action": "FIRST_ESCALATION_SIMULATION",
+    "hash": "4f41f15eef25191958fe9e56f34663c9020436132eb0b03162a58f47646bfec4",
+    "governance": {
+      "i9_check": "CLEAN",
+      "human_decision_required": true,
+      "auto_apply": false
+    }
+  }
+}

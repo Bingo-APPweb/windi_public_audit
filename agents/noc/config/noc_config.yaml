@@ -1,0 +1,130 @@
+# WINDI NOC Agent Configuration
+# Version: 1.0.0
+
+agent:
+  name: "WINDI NOC Agent"
+  version: "1.0.0"
+  port: 8880
+  log_level: "INFO"
+
+# Conexoes externas
+connections:
+  prometheus:
+    url: "${PROMETHEUS_URL:-http://localhost:9090}"
+    timeout: 30
+  alertmanager:
+    url: "${ALERTMANAGER_URL:-http://localhost:9093}"
+    timeout: 10
+  loki:
+    url: "${LOKI_URL:-http://localhost:3100}"
+    timeout: 10
+  isp_agent:
+    url: "http://localhost:8800"
+    timeout: 30
+
+# Intervalos de coleta (segundos)
+collection:
+  metrics_interval: 15
+  health_check_interval: 60
+  baseline_update_interval: 3600
+  anomaly_detection_interval: 30
+
+# Thresholds de alerta
+thresholds:
+  cpu:
+    warning: 70
+    critical: 90
+  memory:
+    warning: 75
+    critical: 95
+  disk:
+    warning: 80
+    critical: 95
+  latency_ms:
+    warning: 100
+    critical: 500
+  packet_loss_percent:
+    warning: 1
+    critical: 5
+  error_rate_percent:
+    warning: 1
+    critical: 5
+
+# Configuracao de anomalias
+anomaly_detection:
+  enabled: true
+  algorithm: "isolation_forest"
+  contamination: 0.1
+  min_samples: 100
+  features:
+    - "cpu_usage"
+    - "memory_usage"
+    - "network_in"
+    - "network_out"
+    - "latency"
+    - "error_count"
+
+# Baseline da rede
+baseline:
+  window_hours: 168  # 7 dias
+  update_on_startup: true
+  percentile_normal: 95
+
+# Alertas
+alerting:
+  enabled: true
+  channels:
+    telegram:
+      enabled: false
+      bot_token: "${TELEGRAM_BOT_TOKEN:-}"
+      chat_id: "${TELEGRAM_CHAT_ID:-}"
+    webhook:
+      enabled: true
+      url: "http://localhost:8800/webhook/noc"
+    email:
+      enabled: false
+      smtp_host: "smtp.gmail.com"
+      smtp_port: 587
+      from: "noc@windi.tech"
+      to: ["admin@windi.tech"]
+
+  # Agregacao de alertas
+  aggregation:
+    window_seconds: 300
+    max_alerts_per_window: 10
+
+  # Silenciamento
+  silence:
+    maintenance_mode: false
+    silenced_hosts: []
+
+# Integracao com outros agentes
+integrations:
+  isp_agent:
+    enabled: true
+    sync_interval: 60
+  security_agent:
+    enabled: false
+    webhook: "http://localhost:8881/webhook/noc"
+  support_agent:
+    enabled: false
+    webhook: "http://localhost:8882/webhook/noc"
+
+# Retencao de dados
+retention:
+  metrics_days: 30
+  logs_days: 14
+  alerts_days: 90
+  baseline_days: 30
+
+# Auto-healing (experimental)
+auto_healing:
+  enabled: false
+  actions:
+    restart_service:
+      enabled: false
+      max_attempts: 3
+    scale_resources:
+      enabled: false
+    failover:
+      enabled: false

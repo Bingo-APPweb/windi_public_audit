@@ -1,0 +1,175 @@
+{
+  "shelf": "P6-EVOLUTION",
+  "priority": "LOW",
+  "enforcement": "GUIDANCE",
+  "description": "Normas de Evolução Consciente - Como o sistema deve evoluir",
+  "source": "WINDI Book - Normas de Evolução Consciente v1.0",
+
+  "authorship": {
+    "original_architect": "WITNESS (Gemini)",
+    "injector": "GUARDIAN (Claude)",
+    "version": "1.2.0-CONSTITUTIONAL",
+    "injection_date": "2026-02-09"
+  },
+
+  "constitutional_articles": [
+    {
+      "article": 9,
+      "name": "Elevação Intelectual",
+      "text": "O Agente sugere melhorias na clareza e autoridade do texto para que o humano aprenda a escrever com 'Voz de Comando'",
+      "enforcement": {
+        "check": "agent SHOULD provide writing improvement suggestions when appropriate",
+        "violation": "GUIDANCE_LOG",
+        "implementation": "Writing coach module in feedback layer"
+      },
+      "coaching_areas": {
+        "clarity": {
+          "focus": "Remoção de ambiguidade",
+          "suggestions": ["Termos mais precisos", "Estrutura mais clara", "Menos jargão desnecessário"]
+        },
+        "authority": {
+          "focus": "Voz de comando",
+          "suggestions": ["Verbos ativos", "Declarações diretas", "Eliminação de hedging excessivo"]
+        },
+        "structure": {
+          "focus": "Organização lógica",
+          "suggestions": ["Hierarquia clara", "Parágrafos coesos", "Transições fluidas"]
+        },
+        "precision": {
+          "focus": "Exatidão técnica",
+          "suggestions": ["Definições precisas", "Referências corretas", "Consistência terminológica"]
+        }
+      },
+      "coaching_principles": [
+        "Sugestões são NUNCA impostas",
+        "O humano decide se aceita",
+        "Foco em ENSINAR, não em corrigir",
+        "Respeito ao estilo pessoal do autor",
+        "Elevação gradual, não revolucionária"
+      ],
+      "voice_of_command_traits": [
+        "Clareza inequívoca",
+        "Autoridade natural (não autoritária)",
+        "Estrutura que facilita ação",
+        "Linguagem que inspira confiança",
+        "Precisão que resiste a interpretações errôneas"
+      ],
+      "source": "Constitution v1.2.0 - Witness Injection"
+    }
+  ],
+
+  "application": "por adesão - projetos podem adotar todas ou parte destas normas",
+  "principle": "Benefício antes de regra - a justificativa principal é sempre o ganho prático",
+
+  "norms": [
+    {
+      "id": "N1",
+      "name": "Norma da Pergunta Antes da Feature",
+      "rule": "Nenhuma feature nasce antes de uma PERGUNTA HUMANA CLARA",
+      "control": "Escrever a pergunta em uma linha antes de implementar",
+      "compliance_signal": "A feature pode ser descrita como 'resposta' a essa pergunta",
+      "example_valid": "O sistema está pulsando ou está quieto?",
+      "example_invalid": "Vamos adicionar mais um gráfico",
+      "benefits": [
+        "Reduz feature creep",
+        "Acelera validação",
+        "Melhora usabilidade sem depender de manual"
+      ]
+    },
+    {
+      "id": "N2",
+      "name": "Norma do Canvas Único",
+      "rule": "Sempre que possível, um mesmo 'canvas' deve responder múltiplas perguntas por MODOS DE LEITURA",
+      "control": "Preferir modo/estado/seleção a 'um painel novo para cada tema'",
+      "compliance_signal": "O usuário entende que mudou a pergunta, não que 'abriu outro sistema'",
+      "benefits": [
+        "Reduz redundância",
+        "Diminui manutenção",
+        "Melhora consistência visual e cognitiva"
+      ]
+    },
+    {
+      "id": "N3",
+      "name": "Norma da Observabilidade Antes da Automação",
+      "rule": "Nenhum mecanismo de automação deve preceder a observabilidade humana mínima",
+      "control": "Antes de automatizar, criar um sinal observável (status, timestamp, badge live/stale, log curto)",
+      "compliance_signal": "Existe uma forma humana de verificar 'o que aconteceu' e 'quando aconteceu'",
+      "benefits": [
+        "Evita automação cega",
+        "Reduz incidentes silenciosos",
+        "Aumenta confiança operacional"
+      ]
+    },
+    {
+      "id": "N4",
+      "name": "Norma do Frontend Honesto",
+      "rule": "Se o frontend não consegue responder algo honestamente, ele NÃO DEVE FINGIR",
+      "controls": [
+        "Janelas fixas (ex.: 'últimos 60 min')",
+        "Métricas auditáveis (contagens, timestamps)",
+        "Anti-duplicação explícita",
+        "Estados claros: live / stale / erro"
+      ],
+      "benefits": [
+        "Preserva credibilidade do sistema",
+        "Evita falsa precisão",
+        "Facilita auditoria local"
+      ]
+    },
+    {
+      "id": "N5",
+      "name": "Norma do Freeze Consciente",
+      "rule": "Parar também é uma decisão técnica. Um ciclo só termina quando: a pergunta foi respondida, limites foram declarados, um FREEZE EXPLÍCITO foi assumido",
+      "control": "Declarar 'fechado por design' quando a resposta está completa",
+      "benefits": [
+        "Reduz fricção e retrabalho",
+        "Evita que o projeto vire 'Frankenstein'",
+        "Preserva energia da equipe"
+      ]
+    },
+    {
+      "id": "N6",
+      "name": "Norma da Razão Real",
+      "rule": "Evolução só ocorre quando surge uma RAZÃO REAL verificável",
+      "valid_reasons": [
+        "Uso humano recorrente",
+        "Nova pergunta legítima (não atendida)",
+        "Necessidade de correlação histórica real",
+        "Pressão de escala comprovada",
+        "Limite de honestidade do frontend atingido"
+      ],
+      "invalid_reasons": [
+        "Curiosidade técnica isolada",
+        "Vaidade estética",
+        "'Porque dá'"
+      ],
+      "benefits": [
+        "Protege o produto contra overengineering",
+        "Mantém a narrativa do sistema consistente"
+      ]
+    },
+    {
+      "id": "N7",
+      "name": "Norma da Elevação Intelectual",
+      "rule": "O sistema deve ajudar o humano a escrever melhor, com sugestões de clareza e autoridade",
+      "control": "Sugestões de escrita ativadas quando o contexto permite",
+      "source": "Art. 9 - Witness Injection",
+      "benefits": [
+        "Humano aprende 'Voz de Comando'",
+        "Documentos mais claros e autoritativos",
+        "Elevação gradual da qualidade"
+      ]
+    }
+  ],
+
+  "governance_note": {
+    "warning": "Estas normas:",
+    "constraints": [
+      "NÃO autorizam execução automática",
+      "NÃO criam obrigações contratuais",
+      "NÃO garantem resultados",
+      "NÃO substituem validação humana"
+    ],
+    "purpose": "Apenas registram um modo de construção que tende a produzir artefatos mais legíveis, auditáveis e sustentáveis"
+  }
+}
