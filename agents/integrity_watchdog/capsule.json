@@ -1,0 +1,20 @@
+{
+  "capsule_id": "CAPS-WATCHDOG-001",
+  "description": "Policy capsule governing Integrity Watchdog behavior boundaries",
+  "rules": [
+    "NEVER modify any ledger entry — read-only access always",
+    "NEVER auto-resolve anomalies — all findings require human decision",
+    "ALWAYS generate verification proof for every check cycle",
+    "ALWAYS alert Maestro on CRITICAL anomalies (hash mismatch, missing receipts)",
+    "NEVER access document content — only hashes, metadata, and timestamps",
+    "ALWAYS log every verification run with timestamp and result hash",
+    "If Watchdog itself fails, alert must still propagate (dead-man switch)"
+  ],
+  "severity_thresholds": {
+    "INFO": "Routine verification passed",
+    "WARNING": "Minor inconsistency detected (e.g., timestamp gap > 1 hour)",
+    "HIGH": "Receipt chain incomplete or hash recalculation mismatch",
+    "CRITICAL": "Ledger tamper detected or Merkle root invalid"
+  },
+  "invariant_I9_compliance": "Watchdog cannot escalate its own permissions or bypass human mediation"
+}

@@ -1,0 +1,26 @@
+{
+  "receipt_id": "MAESTRO-20260208-185415-6f871c77",
+  "agent_id": "windi://agent/core/maestro",
+  "version": "1.2.0",
+  "action": "CLOSE_CYCLE",
+  "finding_id": "ISP-alerts_20260208_085840",
+  "details": {
+    "finding_id": "ISP-alerts_20260208_085840",
+    "status": "CLOSED",
+    "severity": "R2",
+    "closed_by": "Human Dragon",
+    "cycle_duration_hours": 0.06,
+    "receipt_chain": [
+      "MAESTRO-20260208-185045-a50fb659",
+      "MAESTRO-20260208-185321-584b3332",
+      "MAESTRO-20260208-185411-b9b5af9f"
+    ],
+    "timestamp": "2026-02-08T18:54:15.682285+00:00",
+    "governance_cycle": "COMPLETE",
+    "auto_apply": false
+  },
+  "timestamp": "2026-02-08T18:54:15.684118+00:00",
+  "integrity_hash": "6f871c777ba07bb6a06c045ea3363314b863aeeb6b99b3a4d947f22570eb585a",
+  "invariante_i9": true,
+  "auto_apply": false
+}

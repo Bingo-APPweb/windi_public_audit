@@ -1,0 +1,10 @@
+{
+  "skill": "windi-federation",
+  "version": "1.0.0",
+  "deployed_at": "2026-02-14T20:06:59Z",
+  "seal_hash": "44f9d97c2762c2943cd95ad2d0a453b632c820ff4cf81f35255a7c9e8d1df37c",
+  "location": "/opt/windi/skills/windi-federation/SKILL.md",
+  "lines": 461,
+  "marco": "Federation Marco Zero (#4)",
+  "protocol": "Three Dragons Protocol"
+}

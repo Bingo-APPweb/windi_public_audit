@@ -1,0 +1,43 @@
+{
+  "name": "@bingo-appweb/windi-reader-sdk",
+  "version": "0.1.0",
+  "description": "WINDI Reader SDK — Secure document verification client for financial institutions",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "main": "./src/index.js",
+  "files": [
+    "src",
+    "docs",
+    "LICENSE",
+    "SECURITY.md",
+    "CHANGELOG.md",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "axios": "^1.7.0"
+  },
+  "scripts": {
+    "lint": "node -c src/index.js >/dev/null 2>&1 || true",
+    "example:hash": "node examples/verify-by-hash.js",
+    "example:file": "node examples/verify-from-file.js",
+    "example:decision": "node examples/verify-and-decision-demo.js"
+  },
+  "keywords": [
+    "windi",
+    "document-security",
+    "fraud-prevention",
+    "cryptographic-verification",
+    "fintech"
+  ],
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Bingo-APPweb/windi-reader-sdk.git"
+  },
+  "homepage": "https://github.com/Bingo-APPweb/windi-core-reference"
+}

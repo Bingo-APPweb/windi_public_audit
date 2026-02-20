@@ -1,0 +1,299 @@
+{
+  "isp_profile": {
+    "id": "isp-communique",
+    "name": "WINDI Communiqué ISP",
+    "name_de": "WINDI Kommuniqué-Profil",
+    "version": "1.0.0",
+    "created": "2026-02-19T22:00:00Z",
+    "created_by": "Three Dragons Protocol — Guardian",
+    "description": "Institutional Style Profile for WINDI Communiqué publishing system. Defines 6 document templates for governance-aware digital publishing via .jmpg format.",
+    "organization": {
+      "name": "WINDI Publishing House",
+      "type": "governance_infrastructure",
+      "sector": "GRC / Document Intelligence",
+      "region": "Kempten, Bavaria, DE"
+    },
+    "governance": {
+      "level": "HIGH",
+      "identity_license": "required",
+      "retention_years": 10,
+      "sge_thresholds": { "warn": 40, "review": 60, "block": 80 },
+      "compliance_frameworks": ["EU AI Act", "DSGVO/GDPR", "BSI C5", "ISO 27001"]
+    }
+  },
+  "templates": [
+    {
+      "id": "ISP-COM-01",
+      "code": "official",
+      "name_de": "Amtliches Kommuniqué",
+      "name_en": "Official Communiqué",
+      "name_pt": "Comunicado Oficial",
+      "description_de": "Formelle institutionelle Mitteilung mit höchster Governance-Stufe. Für offizielle Erklärungen, Richtlinienänderungen und bindende Entscheidungen.",
+      "description_en": "Formal institutional communication with highest governance level. For official statements, policy changes, and binding decisions.",
+      "description_pt": "Comunicação institucional formal com nível máximo de governança. Para declarações oficiais, mudanças de política e decisões vinculantes.",
+      "governance_level": "HIGH",
+      "sge_risk_profile": "R3",
+      "requires_review": true,
+      "requires_seal": true,
+      "layout": {
+        "header": { "show_logo": true, "show_date": true, "show_reference_number": true, "show_classification": true, "classification_default": "OFFICIAL" },
+        "body": { "font_family": "Bricolage Grotesque", "font_size_pt": 11, "line_height": 1.6, "max_sections": 10, "required_sections": ["preamble", "body", "conclusion"], "optional_sections": ["annexes", "references", "distribution_list"] },
+        "footer": { "show_seal": true, "show_qr": true, "show_receipt_id": true, "show_hash_preview": true, "show_verification_url": true },
+        "typography": {
+          "title": { "font": "Bricolage Grotesque", "weight": 700, "size": "24px" },
+          "subtitle": { "font": "Outfit", "weight": 400, "size": "16px" },
+          "body": { "font": "Outfit", "weight": 400, "size": "14px" },
+          "mono": { "font": "JetBrains Mono", "weight": 400, "size": "12px" }
+        },
+        "colors": {
+          "noir": { "bg": "#0D0D0D", "text": "#E8E6E1", "accent": "#C9A227", "seal": "#C9A227" },
+          "klar": { "bg": "#FAFAF8", "text": "#1A1A1A", "accent": "#8B6914", "seal": "#8B6914" }
+        }
+      },
+      "form_fields": [
+        { "id": "title", "label_de": "Titel", "label_en": "Title", "label_pt": "Título", "type": "text", "required": true },
+        { "id": "reference_number", "label_de": "Aktenzeichen", "label_en": "Reference Number", "label_pt": "Número de Referência", "type": "text", "required": true },
+        { "id": "classification", "label_de": "Klassifikation", "label_en": "Classification", "label_pt": "Classificação", "type": "select", "options": ["OFFICIAL", "CONFIDENTIAL", "INTERNAL"], "required": true },
+        { "id": "preamble", "label_de": "Präambel", "label_en": "Preamble", "label_pt": "Preâmbulo", "type": "richtext", "required": true },
+        { "id": "body", "label_de": "Inhalt", "label_en": "Content", "label_pt": "Conteúdo", "type": "richtext", "required": true },
+        { "id": "conclusion", "label_de": "Schlussfolgerung", "label_en": "Conclusion", "label_pt": "Conclusão", "type": "richtext", "required": true },
+        { "id": "author_name", "label_de": "Verfasser", "label_en": "Author", "label_pt": "Autor", "type": "text", "required": true },
+        { "id": "author_role", "label_de": "Funktion", "label_en": "Role", "label_pt": "Função", "type": "text", "required": true },
+        { "id": "distribution", "label_de": "Verteiler", "label_en": "Distribution", "label_pt": "Distribuição", "type": "textarea", "required": false }
+      ],
+      "sge_keywords": ["Erklärung", "Beschluss", "verbindlich", "Richtlinie", "Anordnung", "statement", "binding", "policy", "directive", "declaração", "vinculante", "diretriz"]
+    },
+    {
+      "id": "ISP-COM-02",
+      "code": "jornaline",
+      "name_de": "Jornaline — Nachrichtenformat",
+      "name_en": "Jornaline — News Format",
+      "name_pt": "Jornaline — Formato Notícia",
+      "description_de": "Journalistisches Nachrichtenformat für Pressemitteilungen, Berichte und redaktionelle Inhalte.",
+      "description_en": "Journalistic news format for press releases, reports, and editorial content.",
+      "description_pt": "Formato jornalístico para comunicados de imprensa, reportagens e conteúdo editorial.",
+      "governance_level": "MEDIUM",
+      "sge_risk_profile": "R2",
+      "requires_review": true,
+      "requires_seal": true,
+      "layout": {
+        "header": { "show_logo": true, "show_date": true, "show_edition_number": true, "show_category_tag": true, "masthead_style": "newspaper" },
+        "body": { "font_family": "Outfit", "font_size_pt": 11, "line_height": 1.7, "columns": 1, "required_sections": ["headline", "lead", "body"], "optional_sections": ["sidebar", "pullquote", "image_caption", "byline"] },
+        "footer": { "show_seal": true, "show_qr": true, "show_receipt_id": true, "show_edition_info": true },
+        "typography": {
+          "headline": { "font": "Bricolage Grotesque", "weight": 800, "size": "32px" },
+          "subheadline": { "font": "Bricolage Grotesque", "weight": 600, "size": "20px" },
+          "lead": { "font": "Outfit", "weight": 500, "size": "16px", "style": "italic" },
+          "body": { "font": "Outfit", "weight": 400, "size": "14px" },
+          "byline": { "font": "JetBrains Mono", "weight": 400, "size": "11px" }
+        },
+        "colors": {
+          "noir": { "bg": "#0D0D0D", "text": "#E8E6E1", "accent": "#C9A227", "headline": "#FFFFFF", "category_tag": "#C9A227" },
+          "klar": { "bg": "#FAFAF8", "text": "#1A1A1A", "accent": "#8B6914", "headline": "#000000", "category_tag": "#8B6914" }
+        }
+      },
+      "form_fields": [
+        { "id": "headline", "label_de": "Schlagzeile", "label_en": "Headline", "label_pt": "Manchete", "type": "text", "required": true },
+        { "id": "subheadline", "label_de": "Unterzeile", "label_en": "Subheadline", "label_pt": "Subtítulo", "type": "text", "required": false },
+        { "id": "category", "label_de": "Kategorie", "label_en": "Category", "label_pt": "Categoria", "type": "select", "options": ["Governance", "Technology", "Compliance", "Operations", "Community"], "required": true },
+        { "id": "lead", "label_de": "Vorspann", "label_en": "Lead", "label_pt": "Lead", "type": "textarea", "required": true, "max_chars": 280 },
+        { "id": "body", "label_de": "Artikel", "label_en": "Article", "label_pt": "Artigo", "type": "richtext", "required": true },
+        { "id": "author_name", "label_de": "Autor", "label_en": "Author", "label_pt": "Autor", "type": "text", "required": true },
+        { "id": "author_role", "label_de": "Funktion", "label_en": "Role", "label_pt": "Função", "type": "text", "required": true },
+        { "id": "image_url", "label_de": "Bild-URL", "label_en": "Image URL", "label_pt": "URL da Imagem", "type": "text", "required": false }
+      ],
+      "sge_keywords": ["Pressemitteilung", "Bericht", "Nachricht", "Meldung", "press release", "report", "news", "article", "comunicado", "reportagem", "notícia"]
+    },
+    {
+      "id": "ISP-COM-03",
+      "code": "field_report",
+      "name_de": "Feldbericht",
+      "name_en": "Field Report",
+      "name_pt": "Relatório de Campo",
+      "description_de": "Strukturierter Bericht für operative Beobachtungen, Inspektionen und Vor-Ort-Dokumentation.",
+      "description_en": "Structured report for operational observations, inspections, and on-site documentation.",
+      "description_pt": "Relatório estruturado para observações operacionais, inspeções e documentação in loco.",
+      "governance_level": "MEDIUM",
+      "sge_risk_profile": "R2",
+      "requires_review": true,
+      "requires_seal": true,
+      "layout": {
+        "header": { "show_logo": true, "show_date": true, "show_report_number": true, "show_location": true, "show_status_badge": true },
+        "body": { "font_family": "Outfit", "font_size_pt": 11, "line_height": 1.5, "required_sections": ["summary", "observations", "findings", "recommendations"], "optional_sections": ["methodology", "evidence", "risk_assessment", "follow_up"] },
+        "footer": { "show_seal": true, "show_qr": true, "show_receipt_id": true, "show_next_review_date": true },
+        "typography": {
+          "title": { "font": "Bricolage Grotesque", "weight": 700, "size": "22px" },
+          "section_header": { "font": "Bricolage Grotesque", "weight": 600, "size": "16px" },
+          "body": { "font": "Outfit", "weight": 400, "size": "13px" },
+          "data_label": { "font": "JetBrains Mono", "weight": 500, "size": "11px" },
+          "data_value": { "font": "JetBrains Mono", "weight": 400, "size": "12px" }
+        },
+        "colors": {
+          "noir": { "bg": "#0D0D0D", "text": "#E8E6E1", "accent": "#C9A227", "status_green": "#22C55E", "status_yellow": "#EAB308", "status_red": "#EF4444" },
+          "klar": { "bg": "#FAFAF8", "text": "#1A1A1A", "accent": "#8B6914", "status_green": "#16A34A", "status_yellow": "#CA8A04", "status_red": "#DC2626" }
+        }
+      },
+      "form_fields": [
+        { "id": "title", "label_de": "Berichtstitel", "label_en": "Report Title", "label_pt": "Título do Relatório", "type": "text", "required": true },
+        { "id": "report_number", "label_de": "Berichtsnummer", "label_en": "Report Number", "label_pt": "Número do Relatório", "type": "text", "required": true },
+        { "id": "location", "label_de": "Standort", "label_en": "Location", "label_pt": "Localização", "type": "text", "required": true },
+        { "id": "status", "label_de": "Status", "label_en": "Status", "label_pt": "Status", "type": "select", "options": ["GREEN", "YELLOW", "RED"], "required": true },
+        { "id": "summary", "label_de": "Zusammenfassung", "label_en": "Summary", "label_pt": "Resumo", "type": "textarea", "required": true },
+        { "id": "observations", "label_de": "Beobachtungen", "label_en": "Observations", "label_pt": "Observações", "type": "richtext", "required": true },
+        { "id": "findings", "label_de": "Feststellungen", "label_en": "Findings", "label_pt": "Constatações", "type": "richtext", "required": true },
+        { "id": "recommendations", "label_de": "Empfehlungen", "label_en": "Recommendations", "label_pt": "Recomendações", "type": "richtext", "required": true },
+        { "id": "author_name", "label_de": "Berichterstatter", "label_en": "Reporter", "label_pt": "Relator", "type": "text", "required": true },
+        { "id": "author_role", "label_de": "Funktion", "label_en": "Role", "label_pt": "Função", "type": "text", "required": true }
+      ],
+      "sge_keywords": ["Inspektion", "Beobachtung", "Feststellung", "Empfehlung", "Standort", "inspection", "observation", "finding", "recommendation", "location", "inspeção", "observação", "constatação", "recomendação"]
+    },
+    {
+      "id": "ISP-COM-04",
+      "code": "security_advisory",
+      "name_de": "Sicherheitshinweis",
+      "name_en": "Security Advisory",
+      "name_pt": "Aviso de Segurança",
+      "description_de": "Sicherheitsrelevante Mitteilung für Schwachstellen, Vorfälle und dringende Maßnahmen.",
+      "description_en": "Security-relevant notice for vulnerabilities, incidents, and urgent measures.",
+      "description_pt": "Aviso de segurança para vulnerabilidades, incidentes e medidas urgentes.",
+      "governance_level": "HIGH",
+      "sge_risk_profile": "R4",
+      "requires_review": true,
+      "requires_seal": true,
+      "layout": {
+        "header": { "show_logo": true, "show_date": true, "show_severity_badge": true, "show_advisory_id": true, "alert_banner": true, "banner_color_critical": "#DC2626", "banner_color_high": "#EA580C", "banner_color_medium": "#CA8A04" },
+        "body": { "font_family": "Outfit", "font_size_pt": 12, "line_height": 1.6, "required_sections": ["severity", "summary", "impact", "mitigation"], "optional_sections": ["affected_systems", "timeline", "iocs", "references"] },
+        "footer": { "show_seal": true, "show_qr": true, "show_receipt_id": true, "show_response_deadline": true },
+        "typography": {
+          "title": { "font": "Bricolage Grotesque", "weight": 800, "size": "26px" },
+          "severity_badge": { "font": "JetBrains Mono", "weight": 700, "size": "14px" },
+          "body": { "font": "Outfit", "weight": 400, "size": "14px" },
+          "code": { "font": "JetBrains Mono", "weight": 400, "size": "12px" }
+        },
+        "colors": {
+          "noir": { "bg": "#0D0D0D", "text": "#E8E6E1", "accent": "#EF4444", "seal": "#C9A227", "severity_critical": "#DC2626", "severity_high": "#EA580C", "severity_medium": "#EAB308" },
+          "klar": { "bg": "#FAFAF8", "text": "#1A1A1A", "accent": "#DC2626", "seal": "#8B6914", "severity_critical": "#DC2626", "severity_high": "#EA580C", "severity_medium": "#CA8A04" }
+        }
+      },
+      "form_fields": [
+        { "id": "title", "label_de": "Titel", "label_en": "Title", "label_pt": "Título", "type": "text", "required": true },
+        { "id": "advisory_id", "label_de": "Advisory-ID", "label_en": "Advisory ID", "label_pt": "ID do Aviso", "type": "text", "required": true },
+        { "id": "severity", "label_de": "Schweregrad", "label_en": "Severity", "label_pt": "Severidade", "type": "select", "options": ["CRITICAL", "HIGH", "MEDIUM", "LOW"], "required": true },
+        { "id": "summary", "label_de": "Zusammenfassung", "label_en": "Summary", "label_pt": "Resumo", "type": "textarea", "required": true },
+        { "id": "impact", "label_de": "Auswirkung", "label_en": "Impact", "label_pt": "Impacto", "type": "richtext", "required": true },
+        { "id": "affected_systems", "label_de": "Betroffene Systeme", "label_en": "Affected Systems", "label_pt": "Sistemas Afetados", "type": "textarea", "required": true },
+        { "id": "mitigation", "label_de": "Gegenmaßnahmen", "label_en": "Mitigation", "label_pt": "Mitigação", "type": "richtext", "required": true },
+        { "id": "response_deadline", "label_de": "Reaktionsfrist", "label_en": "Response Deadline", "label_pt": "Prazo de Resposta", "type": "text", "required": true },
+        { "id": "author_name", "label_de": "Verfasser", "label_en": "Author", "label_pt": "Autor", "type": "text", "required": true },
+        { "id": "author_role", "label_de": "Funktion", "label_en": "Role", "label_pt": "Função", "type": "text", "required": true }
+      ],
+      "sge_keywords": ["Schwachstelle", "Vorfall", "Sicherheit", "dringend", "Maßnahme", "vulnerability", "incident", "security", "urgent", "mitigation", "vulnerabilidade", "incidente", "segurança", "urgente", "mitigação"]
+    },
+    {
+      "id": "ISP-COM-05",
+      "code": "governance_decision",
+      "name_de": "Governance-Entscheidung",
+      "name_en": "Governance Decision",
+      "name_pt": "Decisão de Governança",
+      "description_de": "Dokumentation einer Governance-Entscheidung mit vollständiger Entscheidungskette, Begründung und Audittrail.",
+      "description_en": "Documentation of a governance decision with complete decision chain, rationale, and audit trail.",
+      "description_pt": "Documentação de uma decisão de governança com cadeia de decisão completa, fundamentação e trilha de auditoria.",
+      "governance_level": "HIGH",
+      "sge_risk_profile": "R3",
+      "requires_review": true,
+      "requires_seal": true,
+      "layout": {
+        "header": { "show_logo": true, "show_date": true, "show_decision_number": true, "show_decision_status": true, "status_options": ["PROPOSED", "APPROVED", "REJECTED", "DEFERRED"] },
+        "body": { "font_family": "Outfit", "font_size_pt": 11, "line_height": 1.6, "required_sections": ["context", "proposal", "rationale", "decision", "implementation"], "optional_sections": ["dissenting_opinions", "impact_assessment", "review_date", "related_decisions"] },
+        "footer": { "show_seal": true, "show_qr": true, "show_receipt_id": true, "show_decision_chain": true, "show_signatories": true },
+        "typography": {
+          "title": { "font": "Bricolage Grotesque", "weight": 700, "size": "24px" },
+          "decision_badge": { "font": "JetBrains Mono", "weight": 700, "size": "16px" },
+          "body": { "font": "Outfit", "weight": 400, "size": "14px" },
+          "chain_entry": { "font": "JetBrains Mono", "weight": 400, "size": "11px" }
+        },
+        "colors": {
+          "noir": { "bg": "#0D0D0D", "text": "#E8E6E1", "accent": "#C9A227", "approved": "#22C55E", "rejected": "#EF4444", "deferred": "#EAB308" },
+          "klar": { "bg": "#FAFAF8", "text": "#1A1A1A", "accent": "#8B6914", "approved": "#16A34A", "rejected": "#DC2626", "deferred": "#CA8A04" }
+        }
+      },
+      "form_fields": [
+        { "id": "title", "label_de": "Entscheidungstitel", "label_en": "Decision Title", "label_pt": "Título da Decisão", "type": "text", "required": true },
+        { "id": "decision_number", "label_de": "Entscheidungsnummer", "label_en": "Decision Number", "label_pt": "Número da Decisão", "type": "text", "required": true },
+        { "id": "decision_status", "label_de": "Status", "label_en": "Status", "label_pt": "Status", "type": "select", "options": ["PROPOSED", "APPROVED", "REJECTED", "DEFERRED"], "required": true },
+        { "id": "context", "label_de": "Kontext", "label_en": "Context", "label_pt": "Contexto", "type": "richtext", "required": true },
+        { "id": "proposal", "label_de": "Vorschlag", "label_en": "Proposal", "label_pt": "Proposta", "type": "richtext", "required": true },
+        { "id": "rationale", "label_de": "Begründung", "label_en": "Rationale", "label_pt": "Fundamentação", "type": "richtext", "required": true },
+        { "id": "decision", "label_de": "Entscheidung", "label_en": "Decision", "label_pt": "Decisão", "type": "richtext", "required": true },
+        { "id": "implementation", "label_de": "Umsetzung", "label_en": "Implementation", "label_pt": "Implementação", "type": "richtext", "required": true },
+        { "id": "signatories", "label_de": "Unterzeichner", "label_en": "Signatories", "label_pt": "Signatários", "type": "textarea", "required": true },
+        { "id": "author_name", "label_de": "Verfasser", "label_en": "Author", "label_pt": "Autor", "type": "text", "required": true },
+        { "id": "author_role", "label_de": "Funktion", "label_en": "Role", "label_pt": "Função", "type": "text", "required": true }
+      ],
+      "sge_keywords": ["Entscheidung", "Gremium", "Beschluss", "Genehmigung", "Begründung", "decision", "board", "resolution", "approval", "rationale", "decisão", "conselho", "resolução", "aprovação", "fundamentação"]
+    },
+    {
+      "id": "ISP-COM-06",
+      "code": "system_bulletin",
+      "name_de": "System-Bulletin",
+      "name_en": "System Bulletin",
+      "name_pt": "Boletim do Sistema",
+      "description_de": "Technisches Bulletin für Systemänderungen, Wartungsfenster, Deployments und Infrastruktur-Updates.",
+      "description_en": "Technical bulletin for system changes, maintenance windows, deployments, and infrastructure updates.",
+      "description_pt": "Boletim técnico para mudanças de sistema, janelas de manutenção, deployments e atualizações de infraestrutura.",
+      "governance_level": "MEDIUM",
+      "sge_risk_profile": "R1",
+      "requires_review": false,
+      "requires_seal": true,
+      "layout": {
+        "header": { "show_logo": true, "show_date": true, "show_bulletin_number": true, "show_type_badge": true, "type_options": ["MAINTENANCE", "DEPLOYMENT", "UPDATE", "INCIDENT", "RESOLVED"] },
+        "body": { "font_family": "JetBrains Mono", "font_size_pt": 12, "line_height": 1.5, "required_sections": ["type", "summary", "details"], "optional_sections": ["affected_services", "timeline", "rollback_plan", "metrics"] },
+        "footer": { "show_seal": true, "show_qr": true, "show_receipt_id": true, "show_sentinel_status": true },
+        "typography": {
+          "title": { "font": "JetBrains Mono", "weight": 700, "size": "20px" },
+          "type_badge": { "font": "JetBrains Mono", "weight": 700, "size": "12px" },
+          "body": { "font": "JetBrains Mono", "weight": 400, "size": "13px" },
+          "service_name": { "font": "JetBrains Mono", "weight": 600, "size": "13px" }
+        },
+        "colors": {
+          "noir": { "bg": "#0D0D0D", "text": "#A3E635", "accent": "#C9A227", "seal": "#C9A227", "maintenance": "#3B82F6", "deployment": "#A855F7", "update": "#22C55E", "incident": "#EF4444", "resolved": "#22C55E" },
+          "klar": { "bg": "#FAFAF8", "text": "#1A1A1A", "accent": "#8B6914", "seal": "#8B6914", "maintenance": "#2563EB", "deployment": "#9333EA", "update": "#16A34A", "incident": "#DC2626", "resolved": "#16A34A" }
+        }
+      },
+      "form_fields": [
+        { "id": "title", "label_de": "Titel", "label_en": "Title", "label_pt": "Título", "type": "text", "required": true },
+        { "id": "bulletin_type", "label_de": "Typ", "label_en": "Type", "label_pt": "Tipo", "type": "select", "options": ["MAINTENANCE", "DEPLOYMENT", "UPDATE", "INCIDENT", "RESOLVED"], "required": true },
+        { "id": "summary", "label_de": "Zusammenfassung", "label_en": "Summary", "label_pt": "Resumo", "type": "textarea", "required": true },
+        { "id": "affected_services", "label_de": "Betroffene Dienste", "label_en": "Affected Services", "label_pt": "Serviços Afetados", "type": "textarea", "required": true },
+        { "id": "details", "label_de": "Details", "label_en": "Details", "label_pt": "Detalhes", "type": "richtext", "required": true },
+        { "id": "timeline", "label_de": "Zeitplan", "label_en": "Timeline", "label_pt": "Cronograma", "type": "textarea", "required": false },
+        { "id": "rollback_plan", "label_de": "Rollback-Plan", "label_en": "Rollback Plan", "label_pt": "Plano de Rollback", "type": "textarea", "required": false },
+        { "id": "author_name", "label_de": "Verfasser", "label_en": "Author", "label_pt": "Autor", "type": "text", "required": true },
+        { "id": "author_role", "label_de": "Funktion", "label_en": "Role", "label_pt": "Função", "type": "text", "required": true }
+      ],
+      "sge_keywords": ["Wartung", "Deployment", "Update", "Systemänderung", "Infrastruktur", "maintenance", "deployment", "update", "system change", "infrastructure", "manutenção", "implantação", "atualização", "mudança", "infraestrutura"]
+    }
+  ],
+  "resolver": {
+    "version": "1.0.0",
+    "strategy": "confidence_threshold",
+    "thresholds": { "auto_apply": 100, "human_confirms": 70, "manual_select": 0 },
+    "description": "At 100% match, template is auto-applied. At 70-99%, human confirms suggestion. Below 70%, human selects manually.",
+    "matching_fields": ["sge_keywords", "governance_level", "form_fields"]
+  },
+  "cross_references": [
+    { "profile": "isp-bafin", "relation": "compliance_target", "note": "Security Advisories may reference BaFin regulations" },
+    { "profile": "isp-bundesregierung", "relation": "reporting_target", "note": "Official Communiqués may be addressed to federal entities" },
+    { "profile": "isp-bis", "relation": "standard_source", "note": "Governance Decisions may reference BIS standards" }
+  ],
+  "audit": {
+    "created": "2026-02-19T22:00:00Z",
+    "created_by": "Three Dragons Protocol — Guardian",
+    "schema_version": "1.0.0",
+    "template_count": 6,
+    "total_form_fields": 56,
+    "total_sge_keywords": 71,
+    "trilingual": true,
+    "languages": ["de", "en", "pt"]
+  }
+}

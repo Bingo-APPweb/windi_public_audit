@@ -1,0 +1,24 @@
+[Unit]
+Description=WINDI JMPG Viewer v1.0.0 (:8104)
+Documentation=https://admin.windia4desk.tech/jmpg/health
+After=network.target windi-suite-docs.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=windi
+Group=windi
+WorkingDirectory=/opt/windi/jmpg-viewer
+ExecStart=/usr/bin/python3 /opt/windi/jmpg-viewer/jmpg_viewer_server.py
+Restart=always
+RestartSec=5
+StandardOutput=append:/opt/windi/logs/jmpg-viewer.log
+StandardError=append:/opt/windi/logs/jmpg-viewer.log
+
+# Security hardening
+NoNewPrivileges=yes
+ProtectSystem=strict
+ReadWritePaths=/opt/windi/jmpg-viewer /opt/windi/logs
+
+[Install]
+WantedBy=multi-user.target

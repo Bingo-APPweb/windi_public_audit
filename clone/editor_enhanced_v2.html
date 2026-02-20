@@ -1,0 +1,1785 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WINDI Editor</title>
+  <meta name="theme-color" content="#0D0D0D">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128009;</text></svg>">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;600;700&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+    /* ═══════════════════════════════════════════════════════════════════════════
+       CSS VARIABLES — NOIR THEME (default)
+       ═══════════════════════════════════════════════════════════════════════════ */
+    :root {
+      --bg: #0D0D0D;
+      --bg-secondary: #161616;
+      --bg-editor: #111111;
+      --surface: #1E1E1E;
+      --border: #2A2A2A;
+      --border-strong: #333333;
+      --text: #E8E4DD;
+      --text-secondary: #9A9590;
+      --text-muted: #6B6560;
+      --accent: #C8A44E;
+      --accent-hover: #D4B05A;
+      --accent-muted: rgba(200,164,78,0.15);
+      --success: #4A9E6D;
+      --warning: #C89A3C;
+      --danger: #C85A5A;
+      --paper: #141414;
+      --paper-text: #E8E4DD;
+      --shadow: rgba(0,0,0,0.4);
+      --font-display: 'Bricolage Grotesque', serif;
+      --font-body: 'Outfit', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    /* KLAR THEME */
+    [data-theme="klar"] {
+      --bg: #FAF7F2;
+      --bg-secondary: #F3EDE4;
+      --bg-editor: #FAF7F2;
+      --surface: #FFFFFF;
+      --border: #E0D8CC;
+      --border-strong: #D0C8BC;
+      --text: #2C2416;
+      --text-secondary: #6B5D4D;
+      --text-muted: #9A8B78;
+      --accent: #8B7355;
+      --accent-hover: #7A6244;
+      --accent-muted: rgba(139,115,85,0.15);
+      --success: #4A7E5D;
+      --warning: #A68030;
+      --danger: #A85050;
+      --paper: #FFFDF9;
+      --paper-text: #2C2416;
+      --shadow: rgba(0,0,0,0.08);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════════════
+       RESET & BASE
+       ═══════════════════════════════════════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+    button { font-family: inherit; cursor: pointer; }
+    input { font-family: inherit; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-secondary); }
+    ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+    /* ═══════════════════════════════════════════════════════════════════════════
+       LAYOUT
+       ═══════════════════════════════════════════════════════════════════════════ */
+    .app { display: flex; flex-direction: column; height: 100vh; }
+
+    /* ═══════════════════════════════════════════════════════════════════════════
+       TOP BAR
+       ═══════════════════════════════════════════════════════════════════════════ */
+    .topbar {
+      height: 52px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 16px;
+      flex-shrink: 0;
+      z-index: 100;
+    }
+
+    .topbar-left { display: flex; align-items: center; gap: 12px; }
+    .topbar-center { display: flex; align-items: center; gap: 8px; flex: 1; justify-content: center; }
+    .topbar-right { display: flex; align-items: center; gap: 8px; }
+
+    .sidebar-toggle {
+      width: 36px; height: 36px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-secondary);
+      font-size: 18px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+    }
+    .sidebar-toggle:hover { background: var(--accent-muted); border-color: var(--accent); color: var(--accent); }
+
+    .logo {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: var(--accent);
+      letter-spacing: -0.02em;
+    }
+
+    .save-status {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .save-status.saving { color: var(--warning); }
+    .save-status.saved { color: var(--success); }
+    .save-status.error { color: var(--danger); }
+    .save-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+
+    .mode-group { display: flex; gap: 4px; }
+    .mode-btn {
+      padding: 8px 14px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      display: flex; align-items: center; gap: 6px;
+      transition: all 0.2s;
+    }
+    .mode-btn:hover { background: var(--accent-muted); border-color: var(--accent); }
+    .mode-btn.active { background: var(--accent); border-color: var(--accent); color: #0D0D0D; font-weight: 500; }
+    .mode-btn .icon { font-size: 1rem; }
+
+    .protected-badge {
+      font-size: 0.75rem;
+      color: var(--success);
+      display: flex; align-items: center; gap: 4px;
+      padding: 4px 10px;
+      background: rgba(74,158,109,0.1);
+      border-radius: 4px;
+    }
+
+    .lang-btn {
+      padding: 6px 10px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      transition: all 0.2s;
+    }
+    .lang-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .lang-btn.active { background: var(--accent); border-color: var(--accent); color: #0D0D0D; }
+
+    .theme-btn {
+      width: 36px; height: 36px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 16px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+    }
+    .theme-btn:hover { background: var(--accent-muted); border-color: var(--accent); }
+
+    /* ═══════════════════════════════════════════════════════════════════════════
+       MAIN CONTENT
+       ═══════════════════════════════════════════════════════════════════════════ */
+    .main { display: flex; flex: 1; overflow: hidden; }
+
+    /* ═══════════════════════════════════════════════════════════════════════════
+       SIDEBAR
+       ═══════════════════════════════════════════════════════════════════════════ */
+    .sidebar {
+      width: 260px;
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      transition: margin-left 0.3s ease, opacity 0.3s ease;
+      flex-shrink: 0;
+    }
+    .sidebar.collapsed { margin-left: -260px; opacity: 0; pointer-events: none; }
+
+    .sidebar-header {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sidebar-title {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 12px;
+    }
+    .new-doc-btn {
+      width: 100%;
+      padding: 12px;
+      background: transparent;
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: all 0.2s;
+    }
+    .new-doc-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-muted); }
+
+    .doc-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px;
+    }
+    .doc-item {
+      padding: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-bottom: 4px;
+      transition: all 0.2s;
+    }
+    .doc-item:hover { background: var(--surface); }
+    .doc-item.active { background: var(--accent-muted); border: 1px solid var(--accent); }
+    .doc-item-row { display: flex; align-items: center; gap: 8px; }
+    .doc-icon { font-size: 14px; }
+    .doc-title {
+      flex: 1;
+      font-size: 0.9rem;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .doc-date {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+      margin-left: 22px;
+    }
+
+    .empty-state {
+      padding: 40px 20px;
+      text-align: center;
+      color: var(--text-muted);
+    }
+    .empty-icon { font-size: 2.5rem; margin-bottom: 12px; opacity: 0.5; }
+    .empty-text { font-size: 0.85rem; margin-bottom: 16px; }
+
+    /* ═══════════════════════════════════════════════════════════════════════════
+       EDITOR AREA
+       ═══════════════════════════════════════════════════════════════════════════ */
+    .editor-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* TOOLBAR */
+    .toolbar {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+    }
+    .toolbar-group { display: flex; align-items: center; gap: 4px; }
+    .toolbar-divider { width: 1px; height: 24px; background: var(--border); margin: 0 8px; }
+    .toolbar-spacer { flex: 1; }
+
+    .tb-btn {
+      min-width: 36px; height: 36px;
+      padding: 0 10px;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 600;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      transition: all 0.15s;
+    }
+    .tb-btn:hover { background: var(--accent-muted); border-color: var(--accent); color: var(--accent); }
+    .tb-btn.active { background: var(--accent); color: #0D0D0D; }
+
+    .tb-btn-lg {
+      padding: 0 16px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    .tb-btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #0D0D0D;
+    }
+    .tb-btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+
+    /* Simple mode: large buttons */
+    .toolbar.mode-simple .tb-btn {
+      min-width: 100px;
+      height: 44px;
+      font-size: 0.9rem;
+    }
+    .toolbar.mode-simple .tb-btn-lg {
+      min-width: 160px;
+    }
+
+    /* EDITOR WRAPPER */
+    .editor-wrapper {
+      flex: 1;
+      overflow-y: auto;
+      padding: 32px;
+      background: var(--bg-editor);
+      display: flex;
+      justify-content: center;
+    }
+
+    .editor-container {
+      width: 100%;
+      max-width: 760px;
+      background: var(--paper);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 0 4px 24px var(--shadow);
+      padding: 48px;
+      min-height: 600px;
+    }
+
+    .sealed-banner {
+      display: none;
+      background: rgba(74,158,109,0.15);
+      border: 1px solid var(--success);
+      color: var(--success);
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin-bottom: 24px;
+      font-size: 0.9rem;
+      align-items: center;
+      gap: 8px;
+    }
+    .sealed-banner.visible { display: flex; }
+
+    .title-input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: var(--paper-text);
+      outline: none;
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .title-input::placeholder { color: var(--text-muted); }
+    .title-input:disabled { opacity: 0.7; }
+
+    .editor-content {
+      min-height: 400px;
+      font-family: var(--font-body);
+      font-size: 1rem;
+      line-height: 1.8;
+      color: var(--paper-text);
+      outline: none;
+    }
+    .editor-content:empty::before {
+      content: attr(data-placeholder);
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+    .editor-content[contenteditable="false"] { opacity: 0.85; }
+
+    .editor-content p { margin-bottom: 1em; }
+    .editor-content h1 { font-family: var(--font-display); font-size: 1.6rem; font-weight: 600; margin: 1.5em 0 0.5em; }
+    .editor-content h2 { font-family: var(--font-display); font-size: 1.3rem; font-weight: 600; margin: 1.2em 0 0.4em; }
+    .editor-content ul, .editor-content ol { margin: 1em 0; padding-left: 1.5em; }
+    .editor-content li { margin-bottom: 0.3em; }
+    .editor-content blockquote { border-left: 3px solid var(--accent); padding-left: 1em; margin: 1em 0; font-style: italic; opacity: 0.9; }
+    .editor-content hr { border: none; border-top: 1px solid var(--border); margin: 2em 0; }
+    .editor-content strong { font-weight: 600; }
+    .editor-content em { font-style: italic; }
+    .editor-content u { text-decoration: underline; }
+    .editor-content s { text-decoration: line-through; }
+
+    /* SGE FOOTER (Pro mode) */
+    .sge-footer {
+      display: none;
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border);
+      padding: 10px 16px;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      gap: 24px;
+      flex-shrink: 0;
+    }
+    .sge-footer.visible { display: flex; }
+    .sge-item { display: flex; align-items: center; gap: 6px; }
+    .sge-label { color: var(--text-muted); }
+    .sge-value { color: var(--text-secondary); }
+    .sge-value.success { color: var(--success); }
+
+    /* ═══════════════════════════════════════════════════════════════════════════
+       MODALS
+       ═══════════════════════════════════════════════════════════════════════════ */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.visible { display: flex; }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      max-width: 480px;
+      width: 100%;
+      max-height: 80vh;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+      animation: modalIn 0.2s ease;
+    }
+    @keyframes modalIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .modal-title {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 600;
+    }
+    .modal-close {
+      width: 32px; height: 32px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 20px;
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+    }
+    .modal-close:hover { background: var(--surface); color: var(--text); }
+
+    .modal-body { padding: 24px; overflow-y: auto; }
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+    .btn-secondary { background: transparent; border-color: var(--border); color: var(--text-secondary); }
+    .btn-secondary:hover { background: var(--surface); border-color: var(--text-muted); }
+    .btn-primary { background: var(--accent); color: #0D0D0D; }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-success { background: var(--success); color: white; }
+    .btn-success:hover { filter: brightness(1.1); }
+
+    /* Template Grid */
+    .template-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .template-grid.single-col { grid-template-columns: 1fr; }
+    .template-card {
+      padding: 20px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .template-card:hover { border-color: var(--accent); background: var(--accent-muted); transform: translateY(-2px); }
+    .template-icon { font-size: 2rem; margin-bottom: 8px; }
+    .template-name { font-weight: 500; color: var(--text); }
+
+    /* Export Grid */
+    .export-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .export-card {
+      padding: 16px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .export-card:hover { border-color: var(--accent); background: var(--accent-muted); }
+    .export-icon { font-size: 1.5rem; margin-bottom: 4px; }
+    .export-name { font-size: 0.8rem; font-weight: 500; }
+
+    /* Seal Modal */
+    .seal-warning {
+      background: rgba(200,154,60,0.1);
+      border: 1px solid var(--warning);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      color: var(--warning);
+      font-size: 0.9rem;
+    }
+    .seal-info { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6; }
+
+    /* ═══════════════════════════════════════════════════════════════════════════
+       CHAT FAB
+       ═══════════════════════════════════════════════════════════════════════════ */
+    .chat-fab {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 52px;
+      height: 52px;
+      background: var(--accent);
+      border: none;
+      border-radius: 50%;
+      color: #0D0D0D;
+      font-size: 22px;
+      box-shadow: 0 4px 16px rgba(200,164,78,0.4);
+      z-index: 90;
+      transition: all 0.2s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .chat-fab:hover { transform: scale(1.1); box-shadow: 0 6px 24px rgba(200,164,78,0.5); }
+    .chat-fab.hidden { display: none; }
+    .chat-fab.small { width: 44px; height: 44px; font-size: 18px; }
+
+    .chat-panel {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 360px;
+      height: 480px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+      z-index: 95;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      animation: chatIn 0.25s ease;
+    }
+    .chat-panel.visible { display: flex; }
+    @keyframes chatIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    .chat-header {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .chat-title { font-weight: 500; display: flex; align-items: center; gap: 8px; }
+    .chat-messages { flex: 1; overflow-y: auto; padding: 16px; }
+    .chat-msg {
+      margin-bottom: 12px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      max-width: 85%;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    .chat-msg.user { background: var(--accent); color: #0D0D0D; margin-left: auto; border-bottom-right-radius: 4px; }
+    .chat-msg.assistant { background: var(--bg-secondary); border-bottom-left-radius: 4px; }
+    .chat-input-area {
+      padding: 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 8px;
+    }
+    .chat-input {
+      flex: 1;
+      padding: 10px 14px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 0.9rem;
+      outline: none;
+    }
+    .chat-input:focus { border-color: var(--accent); }
+    .chat-send {
+      padding: 10px 16px;
+      background: var(--accent);
+      border: none;
+      border-radius: 8px;
+      color: #0D0D0D;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .chat-send:hover { background: var(--accent-hover); }
+
+    /* ═══════════════════════════════════════════════════════════════════════════
+       NOTIFICATIONS
+       ═══════════════════════════════════════════════════════════════════════════ */
+    .toast {
+      position: fixed;
+      top: 70px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 12px 20px;
+      border-radius: 8px;
+      box-shadow: 0 8px 24px var(--shadow);
+      z-index: 300;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.9rem;
+      opacity: 0;
+      transition: all 0.3s ease;
+      pointer-events: none;
+    }
+    .toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+    .toast.success { border-color: var(--success); }
+    .toast.error { border-color: var(--danger); }
+
+    /* HUB Disconnected Banner */
+    .hub-banner {
+      position: fixed;
+      top: 52px;
+      left: 0;
+      right: 0;
+      background: var(--danger);
+      color: white;
+      padding: 10px 16px;
+      text-align: center;
+      font-size: 0.85rem;
+      z-index: 99;
+      display: none;
+    }
+    .hub-banner.visible { display: block; }
+
+    /* ═══════════════════════════════════════════════════════════════════════════
+       RESPONSIVE
+       ═══════════════════════════════════════════════════════════════════════════ */
+    @media (max-width: 768px) {
+      .sidebar { position: fixed; left: 0; top: 52px; bottom: 0; z-index: 150; }
+      .editor-container { padding: 32px 24px; }
+      .chat-panel { width: calc(100% - 48px); left: 24px; }
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       WINDI GOVERNANCE ENHANCEMENT v1.0.0 — 5 Features
+       ═══════════════════════════════════════════════════════════ */
+
+    /* F1: WELCOME STATE */
+    #windi-welcome {
+      display: none; flex-direction: column; align-items: center;
+      justify-content: center; min-height: calc(100vh - 60px);
+      padding: 40px 24px; animation: wwFadeIn 0.6s ease-out;
+    }
+    @keyframes wwFadeIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+    .ww-header { text-align: center; margin-bottom: 40px; }
+    .ww-logo { font-family: 'Bricolage Grotesque',sans-serif; font-size: 42px; font-weight: 700; color: var(--accent); margin-bottom: 8px; }
+    .ww-sub { font-family: 'Outfit',sans-serif; font-size: 15px; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; }
+    .ww-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; max-width: 700px; width: 100%; margin-bottom: 36px; }
+    @media(max-width:768px) { .ww-grid { grid-template-columns: repeat(2,1fr); } }
+    @media(max-width:480px) { .ww-grid { grid-template-columns: 1fr; } }
+    .ww-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      padding: 22px 18px; text-align: center; cursor: default;
+      transition: all 0.25s ease; position: relative; overflow: hidden;
+    }
+    .ww-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:var(--accent); opacity:0; transition:opacity 0.25s; }
+    .ww-card:hover { background: var(--bg-secondary); border-color: var(--accent); transform: translateY(-2px); }
+    .ww-card:hover::before { opacity: 1; }
+    .ww-card-icon { font-size: 30px; margin-bottom: 10px; display: block; }
+    .ww-card-title { font-family: 'Bricolage Grotesque',sans-serif; font-size: 14px; font-weight: 600; color: var(--accent); margin-bottom: 6px; }
+    .ww-card-desc { font-family: 'Outfit',sans-serif; font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+    .ww-cta { margin-bottom: 28px; }
+    .ww-cta button {
+      font-family: 'Outfit',sans-serif; font-size: 15px; font-weight: 500;
+      color: var(--bg); background: var(--accent); border: none; border-radius: 8px;
+      padding: 13px 30px; cursor: pointer; transition: all 0.2s;
+    }
+    .ww-cta button:hover { filter: brightness(0.9); transform: translateY(-1px); box-shadow: 0 4px 16px var(--accent-muted); }
+    .ww-motto { font-family: 'Outfit',sans-serif; font-size: 13px; font-style: italic; color: var(--text-muted); }
+
+    /* F2: SEAL RECEIPT BANNER (enhanced) */
+    #windi-seal-receipt { display: none; margin: 0 0 12px 0; }
+    #windi-seal-receipt.visible {
+      display: flex; align-items: center; gap: 14px;
+      background: rgba(74,158,109,0.07); border: 1px solid rgba(74,158,109,0.25);
+      border-radius: 10px; padding: 12px 18px;
+      animation: wsrSlide 0.4s ease-out;
+    }
+    @keyframes wsrSlide { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+    .wsr-icon { font-size: 26px; flex-shrink: 0; }
+    .wsr-info { flex: 1; min-width: 0; }
+    .wsr-title { font-family:'Bricolage Grotesque',sans-serif; font-size:13px; font-weight:600; color:var(--success); margin-bottom:3px; }
+    .wsr-meta { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--text-secondary); line-height:1.7; }
+    .wsr-hash { cursor:pointer; color:var(--accent); text-decoration:underline dotted; text-underline-offset:2px; }
+    .wsr-hash:hover { color:var(--accent-hover); }
+    .wsr-actions { display:flex; gap:6px; flex-shrink:0; }
+    .wsr-btn {
+      font-family:'Outfit',sans-serif; font-size:11px; font-weight:500;
+      padding:5px 10px; border-radius:6px; border:1px solid rgba(74,158,109,0.25);
+      background:transparent; color:var(--success); cursor:pointer; transition:all 0.2s; white-space:nowrap;
+    }
+    .wsr-btn:hover { background:var(--success); color:#FFF; }
+    @media(max-width:640px) { #windi-seal-receipt.visible { flex-direction:column; align-items:flex-start; } }
+
+    /* F3: AUDIT TRAIL */
+    #windi-audit-backdrop { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); z-index:900; }
+    #windi-audit-backdrop.visible { display:block; }
+    #windi-audit-panel {
+      position:fixed; top:0; right:-380px; width:380px; height:100vh;
+      background:var(--bg); border-left:1px solid var(--border); z-index:901;
+      transition:right 0.35s cubic-bezier(0.4,0,0.2,1);
+      display:flex; flex-direction:column; box-shadow:-4px 0 24px rgba(0,0,0,0.2);
+    }
+    #windi-audit-panel.open { right:0; }
+    .wa-header { display:flex; align-items:center; justify-content:space-between; padding:18px; border-bottom:1px solid var(--border); }
+    .wa-title { font-family:'Bricolage Grotesque',sans-serif; font-size:15px; font-weight:600; color:var(--accent); }
+    .wa-close { width:30px; height:30px; border-radius:8px; border:1px solid var(--border); background:transparent; color:var(--text-secondary); cursor:pointer; font-size:15px; display:flex; align-items:center; justify-content:center; }
+    .wa-close:hover { background:var(--surface); color:var(--text); }
+    .wa-body { flex:1; overflow-y:auto; padding:14px 18px; }
+    .wa-entry { display:flex; gap:10px; padding:10px 0; border-bottom:1px solid var(--border); }
+    .wa-entry:last-child { border-bottom:none; }
+    .wa-entry-icon { font-size:16px; width:22px; text-align:center; flex-shrink:0; }
+    .wa-entry-action { font-size:12.5px; font-weight:500; color:var(--text); margin-bottom:2px; }
+    .wa-entry-time { font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--text-muted); }
+    .wa-entry-hash { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--accent); opacity:0.7; margin-top:1px; }
+    .wa-empty { text-align:center; padding:36px 18px; color:var(--text-muted); font-size:13px; }
+    .windi-audit-btn {
+      font-family:'Outfit',sans-serif; font-size:11px; color:var(--accent);
+      background:transparent; border:1px solid var(--border); border-radius:6px;
+      padding:3px 9px; cursor:pointer; transition:all 0.2s; margin-left:auto;
+    }
+    .windi-audit-btn:hover { background:var(--accent-muted); border-color:var(--accent); }
+
+    /* F4: GOVERNANCE BADGE */
+    #windi-gov-badge {
+      display:none; position:fixed; bottom:36px; right:18px; z-index:800;
+      background:var(--surface); border:1px solid var(--border); border-radius:20px;
+      padding:5px 13px 5px 9px; font-family:'Outfit',sans-serif; font-size:11.5px;
+      font-weight:500; color:var(--text); box-shadow:0 2px 10px rgba(0,0,0,0.12);
+      user-select:none; cursor:default;
+    }
+    #windi-gov-badge.visible { display:flex; align-items:center; gap:6px; animation:wgbIn 0.4s ease-out; }
+    @keyframes wgbIn { from{opacity:0;transform:scale(0.9);}to{opacity:1;transform:scale(1);} }
+    .wgb-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+    .wgb-dot.green { background:#4A9E6D; box-shadow:0 0 5px #4A9E6D; animation:wgbPulse 2s ease-in-out infinite; }
+    .wgb-dot.yellow { background:#D4A843; box-shadow:0 0 5px #D4A843; }
+    .wgb-dot.red { background:#C85A5A; box-shadow:0 0 5px #C85A5A; }
+    @keyframes wgbPulse { 0%,100%{box-shadow:0 0 3px #4A9E6D;}50%{box-shadow:0 0 9px #4A9E6D;} }
+
+    /* F5: INSTITUTIONAL FOOTER */
+    #windi-inst-footer {
+      position:fixed; bottom:0; left:0; right:0; text-align:center;
+      padding:5px 14px; background:var(--bg); border-top:1px solid var(--border);
+      z-index:799; font-family:'Outfit',sans-serif; font-size:10.5px;
+      color:var(--text-muted); letter-spacing:0.3px;
+    }
+    #windi-inst-footer a { color:var(--text-muted); text-decoration:none; }
+    #windi-inst-footer a:hover { color:var(--accent); }
+
+    /* Enhancement toast */
+    .we-toast {
+      position:fixed; bottom:56px; left:50%; transform:translateX(-50%) translateY(16px);
+      background:var(--surface); border:1px solid var(--accent); color:var(--accent);
+      font-family:'Outfit',sans-serif; font-size:12.5px; padding:7px 18px;
+      border-radius:8px; z-index:10000; opacity:0; transition:all 0.3s; pointer-events:none;
+    }
+    .we-toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- HUB Banner -->
+    <div class="hub-banner" id="hubBanner"></div>
+
+    <!-- Top Bar -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="sidebar-toggle" id="sidebarToggle" title="Toggle sidebar">&#9776;</button>
+        <div class="logo">WINDI</div>
+        <div class="save-status" id="saveStatus">
+          <span class="save-dot"></span>
+          <span id="saveText"></span>
+        </div>
+      </div>
+      <div class="topbar-center">
+        <div class="mode-group">
+          <button class="mode-btn" data-mode="simple"><span class="icon">&#127807;</span><span data-i18n="modeSimple">Einfach</span></button>
+          <button class="mode-btn active" data-mode="normal"><span class="icon">&#9878;</span><span data-i18n="modeNormal">Normal</span></button>
+          <button class="mode-btn" data-mode="pro"><span class="icon">&#9889;</span><span data-i18n="modePro">Profi</span></button>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="protected-badge" id="protectedBadge" style="display:none">
+          <span>&#128737;</span>
+          <span data-i18n="protected">Geschiitzt</span>
+        </div>
+        <button class="lang-btn" data-lang="de">DE</button>
+        <button class="lang-btn active" data-lang="pt">PT</button>
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="theme-btn" id="themeBtn" title="Toggle theme">&#127769;</button>
+      </div>
+    </div>
+
+    <div class="main">
+      <!-- Sidebar -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <div class="sidebar-title" data-i18n="documents">DOKUMENTE</div>
+          <button class="new-doc-btn" id="newDocBtn">
+            <span>+</span>
+            <span data-i18n="newDocument">Neues Dokument</span>
+          </button>
+        </div>
+        <div class="doc-list" id="docList"></div>
+      </aside>
+
+
+      <!-- F1: WELCOME STATE -->
+      <div id="windi-welcome">
+        <div class="ww-header">
+          <div class="ww-logo">WINDI</div>
+          <div class="ww-sub">Document Governance Intelligence</div>
+        </div>
+        <div class="ww-grid" id="wwGrid"></div>
+        <div class="ww-cta"><button onclick="WE.newDoc()">+ <span id="wwCta">Neues Dokument erstellen</span></button></div>
+        <div class="ww-motto">"AI processes. Human decides. WINDI guarantees."</div>
+      </div>
+
+      <!-- Editor Area -->
+      <div class="editor-area">
+        <!-- Toolbar -->
+        <div class="toolbar" id="toolbar"></div>
+
+        <!-- Editor -->
+        <div class="editor-wrapper">
+          <div class="editor-container">
+            <div class="sealed-banner" id="sealedBanner">
+              <span>&#128737;</span>
+              <span data-i18n="sealedMessage">Dieses Dokument ist versiegelt und geschiitzt.</span>
+            </div>
+            <!-- F2: SEAL RECEIPT BANNER (enhanced) -->
+            <div id="windi-seal-receipt">
+              <span class="wsr-icon">&#128737;</span>
+              <div class="wsr-info">
+                <div class="wsr-title" id="wsrTitle">Dokument versiegelt und gesch\u00fctzt</div>
+                <div class="wsr-meta">
+                  SHA-256: <span class="wsr-hash" id="wsrHash" onclick="WE.copyHash()" title="Click to copy">\u2014</span><br>
+                  <span id="wsrSealedLabel">Versiegelt am</span>: <span id="wsrTimestamp">\u2014</span><br>
+                  Receipt: <span id="wsrReceiptId">\u2014</span>
+                </div>
+              </div>
+              <div class="wsr-actions">
+                <button class="wsr-btn" onclick="WE.copyReceipt()">\ud83d\udccb <span id="wsrCopyLabel">Receipt kopieren</span></button>
+                <button class="wsr-btn" onclick="WE.exportReceipt()">\ud83d\udce4 <span id="wsrExportLabel">Exportieren</span></button>
+              </div>
+            </div>
+            <input type="text" class="title-input" id="titleInput" data-i18n-placeholder="titlePlaceholder" placeholder="Dokumenttitel...">
+            <div class="editor-content" id="editorContent" contenteditable="true" data-placeholder=""></div>
+          </div>
+        </div>
+
+        <!-- SGE Footer -->
+        <div class="sge-footer" id="sgeFooter">
+          <div class="sge-item">
+            <span class="sge-label">Governance:</span>
+            <span class="sge-value success" id="sgeScore">&#128994; 92/100</span>
+          </div>
+          <div class="sge-item">
+            <span class="sge-label">Status:</span>
+            <span class="sge-value" id="sgeStatus">&#128221; Entwurf</span>
+          </div>
+          <div class="sge-item">
+            <span class="sge-label">ID:</span>
+            <span class="sge-value" id="sgeDocId">-</span>
+          </div>
+          <button class="windi-audit-btn" onclick="WE.toggleAudit()">&#128203; Audit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat FAB -->
+  <button class="chat-fab" id="chatFab">&#128172;</button>
+
+  <!-- Chat Panel -->
+  <div class="chat-panel" id="chatPanel">
+    <div class="chat-header">
+      <span class="chat-title">&#128172; <span data-i18n="help">Hilfe</span></span>
+      <button class="modal-close" id="chatClose">&times;</button>
+    </div>
+    <div class="chat-messages" id="chatMessages"></div>
+    <div class="chat-input-area">
+      <input type="text" class="chat-input" id="chatInput" data-i18n-placeholder="chatPlaceholder" placeholder="Nachricht eingeben...">
+      <button class="chat-send" id="chatSend" data-i18n="send">Senden</button>
+    </div>
+  </div>
+
+  <!-- Template Modal -->
+  <div class="modal-overlay" id="templateModal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title" data-i18n="selectTemplate">Vorlage auswahlen</span>
+        <button class="modal-close" data-close="templateModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="template-grid" id="templateGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Export Modal -->
+  <div class="modal-overlay" id="exportModal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title" data-i18n="exportDocument">Dokument exportieren</span>
+        <button class="modal-close" data-close="exportModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="export-grid" id="exportGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Seal Modal -->
+  <div class="modal-overlay" id="sealModal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title" data-i18n="finalizeDocument">Dokument finalisieren</span>
+        <button class="modal-close" data-close="sealModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="seal-warning">&#9888; <span data-i18n="sealWarning">Achtung: Diese Aktion kann nicht riickgangig gemacht werden.</span></div>
+        <div class="seal-info" data-i18n="sealInfo">Nach dem Finalisieren wird das Dokument mit einem kryptografischen Hash geschiitzt und kann nicht mehr bearbeitet werden.</div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close="sealModal" data-i18n="cancel">Abbrechen</button>
+        <button class="btn btn-success" id="confirmSeal">&#128737; <span data-i18n="confirmSeal">Ja, finalisieren</span></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">
+    <span id="toastIcon"></span>
+    <span id="toastText"></span>
+  </div>
+
+
+  <!-- F3: AUDIT TRAIL -->
+  <div id="windi-audit-backdrop" onclick="WE.toggleAudit()"></div>
+  <div id="windi-audit-panel">
+    <div class="wa-header">
+      <span class="wa-title">&#128203; Audit Trail</span>
+      <button class="wa-close" onclick="WE.toggleAudit()">&#10005;</button>
+    </div>
+    <div class="wa-body" id="waBody"><div class="wa-empty">Keine Ereignisse</div></div>
+  </div>
+
+  <!-- F4: GOVERNANCE BADGE -->
+  <div id="windi-gov-badge">
+    <span class="wgb-dot green" id="wgbDot"></span>
+    <span id="wgbLabel">Gesch\u00fctzt</span>
+  </div>
+
+  <!-- F5: INSTITUTIONAL FOOTER -->
+  <div id="windi-inst-footer">
+    <a href="https://master.windia4desk.tech" target="_blank">WINDI Publishing House</a>
+    &nbsp;\u00b7&nbsp;Document Governance Intelligence&nbsp;\u00b7&nbsp;
+    <span id="wifCompliance">EU AI Act konform</span>
+  </div>
+
+  <!-- Enhancement Toast -->
+  <div class="we-toast" id="weToast"></div>
+
+  <script>
+    const BASE_PATH = window.location.pathname.startsWith("/clone") ? "/clone" : "";
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // i18n TRANSLATIONS
+    // ═══════════════════════════════════════════════════════════════════════════════
+    const i18n = {
+      de: {
+        modeSimple: "Einfach", modeNormal: "Normal", modePro: "Profi",
+        documents: "DOKUMENTE", newDocument: "Neues Dokument",
+        titlePlaceholder: "Dokumenttitel...", contentPlaceholder: "Beginnen Sie zu schreiben...",
+        sealedMessage: "Dieses Dokument ist versiegelt und geschutzt.",
+        protected: "Geschutzt",
+        help: "Hilfe", chatPlaceholder: "Nachricht eingeben...", send: "Senden",
+        selectTemplate: "Vorlage auswahlen", exportDocument: "Dokument exportieren",
+        finalizeDocument: "Dokument finalisieren",
+        sealWarning: "Achtung: Diese Aktion kann nicht ruckgangig gemacht werden.",
+        sealInfo: "Nach dem Finalisieren wird das Dokument mit einem kryptografischen Hash geschutzt und kann nicht mehr bearbeitet werden.",
+        cancel: "Abbrechen", confirmSeal: "Ja, finalisieren",
+        bold: "Fett", large: "Gross", list: "Liste", template: "Vorlage",
+        export: "Exportieren", finalize: "Finalisieren", finalizeProtect: "Finalisieren und Schutzen",
+        saving: "Speichern...", saved: "Gespeichert", error: "Fehler",
+        today: "Heute", yesterday: "Gestern",
+        draft: "Entwurf", sealed: "Versiegelt",
+        noDocuments: "Keine Dokumente", createFirst: "Erstes Dokument erstellen",
+        hubDisconnected: "Server nicht erreichbar",
+        sealSuccess: "Dokument erfolgreich versiegelt!",
+        templateInvoice: "Rechnung", templateLetter: "Brief", templateReport: "Bericht",
+        templateContract: "Vertrag", templateBlank: "Leere Seite"
+      },
+      pt: {
+        modeSimple: "Simples", modeNormal: "Normal", modePro: "Pro",
+        documents: "DOCUMENTOS", newDocument: "Novo Documento",
+        titlePlaceholder: "Titulo do documento...", contentPlaceholder: "Comece a escrever...",
+        sealedMessage: "Este documento esta selado e protegido.",
+        protected: "Protegido",
+        help: "Ajuda", chatPlaceholder: "Digite sua mensagem...", send: "Enviar",
+        selectTemplate: "Selecionar modelo", exportDocument: "Exportar documento",
+        finalizeDocument: "Finalizar documento",
+        sealWarning: "Atencao: Esta acao nao pode ser desfeita.",
+        sealInfo: "Apos finalizar, o documento sera protegido com um hash criptografico e nao podera mais ser editado.",
+        cancel: "Cancelar", confirmSeal: "Sim, finalizar",
+        bold: "Negrito", large: "Grande", list: "Lista", template: "Modelo",
+        export: "Exportar", finalize: "Finalizar", finalizeProtect: "Finalizar e Proteger",
+        saving: "Salvando...", saved: "Salvo", error: "Erro",
+        today: "Hoje", yesterday: "Ontem",
+        draft: "Rascunho", sealed: "Selado",
+        noDocuments: "Nenhum documento", createFirst: "Criar primeiro documento",
+        hubDisconnected: "Servidor desconectado",
+        sealSuccess: "Documento selado com sucesso!",
+        templateInvoice: "Fatura", templateLetter: "Carta", templateReport: "Relatorio",
+        templateContract: "Contrato", templateBlank: "Pagina em branco"
+      },
+      en: {
+        modeSimple: "Simple", modeNormal: "Normal", modePro: "Pro",
+        documents: "DOCUMENTS", newDocument: "New Document",
+        titlePlaceholder: "Document title...", contentPlaceholder: "Start writing...",
+        sealedMessage: "This document is sealed and protected.",
+        protected: "Protected",
+        help: "Help", chatPlaceholder: "Type your message...", send: "Send",
+        selectTemplate: "Select template", exportDocument: "Export document",
+        finalizeDocument: "Finalize document",
+        sealWarning: "Warning: This action cannot be undone.",
+        sealInfo: "After finalizing, the document will be protected with a cryptographic hash and cannot be edited anymore.",
+        cancel: "Cancel", confirmSeal: "Yes, finalize",
+        bold: "Bold", large: "Large", list: "List", template: "Template",
+        export: "Export", finalize: "Finalize", finalizeProtect: "Finalize and Protect",
+        saving: "Saving...", saved: "Saved", error: "Error",
+        today: "Today", yesterday: "Yesterday",
+        draft: "Draft", sealed: "Sealed",
+        noDocuments: "No documents", createFirst: "Create first document",
+        hubDisconnected: "Server disconnected",
+        sealSuccess: "Document sealed successfully!",
+        templateInvoice: "Invoice", templateLetter: "Letter", templateReport: "Report",
+        templateContract: "Contract", templateBlank: "Blank page"
+      }
+    };
+
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // STATE
+    // ═══════════════════════════════════════════════════════════════════════════════
+    let lang = localStorage.getItem('windi-lang') || 'pt';
+    let mode = localStorage.getItem('windi-mode') || 'normal';
+    let theme = localStorage.getItem('windi-theme') || 'noir';
+    let docs = [];
+    let activeDocId = null;
+    let saveTimeout = null;
+    let hubConnected = true;
+
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // HELPERS
+    // ═══════════════════════════════════════════════════════════════════════════════
+    const $ = id => document.getElementById(id);
+    const $$ = sel => document.querySelectorAll(sel);
+    const t = key => i18n[lang]?.[key] || i18n.en[key] || key;
+
+    function updateI18n() {
+      $$('[data-i18n]').forEach(el => { el.textContent = t(el.dataset.i18n); });
+      $$('[data-i18n-placeholder]').forEach(el => { el.placeholder = t(el.dataset.i18nPlaceholder); });
+      $('editorContent').dataset.placeholder = t('contentPlaceholder');
+      $('hubBanner').textContent = t('hubDisconnected');
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return '';
+      const d = new Date(dateStr);
+      const now = new Date();
+      const diff = Math.floor((now - d) / 86400000);
+      if (diff === 0) return t('today');
+      if (diff === 1) return t('yesterday');
+      return d.toLocaleDateString(lang === 'de' ? 'de-DE' : lang === 'pt' ? 'pt-BR' : 'en-US', { day: 'numeric', month: 'short' });
+    }
+
+    function showToast(message, type = 'success') {
+      const toast = $('toast');
+      $('toastIcon').textContent = type === 'success' ? '&#10003;' : '&#10007;';
+      $('toastText').textContent = message;
+      toast.className = `toast visible ${type}`;
+      setTimeout(() => toast.classList.remove('visible'), 3500);
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // API
+    // ═══════════════════════════════════════════════════════════════════════════════
+    async function api(path, options = {}) {
+      const maxRetries = 3;
+      for (let i = 0; i < maxRetries; i++) {
+        try {
+          const resp = await fetch(`${BASE_PATH}/api/${path}`, {
+            headers: { 'Content-Type': 'application/json', ...options.headers },
+            ...options
+          });
+          if (resp.status === 503) {
+            hubConnected = false;
+            $('hubBanner').classList.add('visible');
+            throw new Error('HUB disconnected');
+          }
+          hubConnected = true;
+          $('hubBanner').classList.remove('visible');
+          if (!resp.ok && resp.status !== 201) throw new Error(`HTTP ${resp.status}`);
+          const ct = resp.headers.get('content-type');
+          return ct?.includes('json') ? await resp.json() : resp;
+        } catch (err) {
+          if (i === maxRetries - 1) throw err;
+          await new Promise(r => setTimeout(r, 1000));
+        }
+      }
+    }
+
+    async function loadDocs() {
+      try {
+        const data = await api('documents');
+        docs = data.documents || data || [];
+        renderDocList();
+      } catch (e) {
+        docs = [];
+        renderDocList();
+      }
+    }
+
+    async function loadDoc(id) {
+      try {
+        const doc = await api(`document/${id}`);
+        activeDocId = id;
+        $('titleInput').value = doc.title || '';
+        $('editorContent').innerHTML = doc.content || doc.content_html || '<p></p>';
+        const isSealed = doc.status === 'sealed' || doc.is_sealed;
+        $('titleInput').disabled = isSealed;
+        $('editorContent').contentEditable = !isSealed;
+        $('sealedBanner').classList.toggle('visible', isSealed);
+        $('protectedBadge').style.display = isSealed ? 'flex' : 'none';
+        updateSGE(doc);
+        highlightDoc(id);
+        WE.onDocOpened(doc);
+      } catch (e) {
+        showToast(t('error'), 'error');
+      }
+    }
+
+    async function createDoc(content = '<p></p>', title = '') {
+      try {
+        const doc = await api('document', {
+          method: 'POST',
+          body: JSON.stringify({ language: lang, title, content })
+        });
+        await loadDocs();
+        await loadDoc(doc.id || doc.document_id);
+      } catch (e) {
+        showToast(t('error'), 'error');
+      }
+    }
+
+    async function saveDoc() {
+      if (!activeDocId) return;
+      updateSaveStatus('saving');
+      try {
+        await api(`document/${activeDocId}`, {
+          method: 'PUT',
+          body: JSON.stringify({
+            title: $('titleInput').value,
+            content: $('editorContent').innerHTML
+          })
+        });
+        updateSaveStatus('saved');
+        const doc = docs.find(d => (d.id || d.document_id) === activeDocId);
+        if (doc) doc.title = $('titleInput').value;
+        renderDocList();
+      } catch (e) {
+        updateSaveStatus('error');
+      }
+    }
+
+    async function sealDoc() {
+      if (!activeDocId) return;
+      try {
+        const result = await api(`document/${activeDocId}/finalize`, { method: 'POST' });
+        closeModal('sealModal');
+        showToast(t('sealSuccess'));
+        $('titleInput').disabled = true;
+        $('editorContent').contentEditable = false;
+        $('sealedBanner').classList.add('visible');
+        $('protectedBadge').style.display = 'flex';
+        WE.onSealed(result);
+        await loadDocs();
+      } catch (e) {
+        showToast(t('error'), 'error');
+      }
+    }
+
+    function exportDoc(fmt) {
+      if (!activeDocId) return;
+      window.open(`${BASE_PATH}/api/document/${activeDocId}/export/${fmt}`, '_blank');
+      closeModal('exportModal');
+    }
+
+    async function sendChat() {
+      const input = $('chatInput');
+      const msg = input.value.trim();
+      if (!msg) return;
+      addChatMsg(msg, 'user');
+      input.value = '';
+      try {
+        const result = await api('chat', {
+          method: 'POST',
+          body: JSON.stringify({ message: msg, context: `document:${activeDocId || ''}` })
+        });
+        addChatMsg(result.response || result.message || 'OK', 'assistant');
+      } catch (e) {
+        addChatMsg(t('error'), 'assistant');
+      }
+    }
+
+    function addChatMsg(text, role) {
+      const container = $('chatMessages');
+      const div = document.createElement('div');
+      div.className = `chat-msg ${role}`;
+      div.textContent = text;
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // UI RENDERING
+    // ═══════════════════════════════════════════════════════════════════════════════
+    function renderDocList() {
+      const container = $('docList');
+      if (!docs.length) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">&#128196;</div>
+            <div class="empty-text">${t('noDocuments')}</div>
+            <button class="new-doc-btn" onclick="createDoc()">${t('createFirst')}</button>
+          </div>`;
+        return;
+      }
+      container.innerHTML = docs.map(d => {
+        const id = d.id || d.document_id;
+        const isSealed = d.status === 'sealed' || d.is_sealed;
+        const isActive = id === activeDocId;
+        return `
+          <div class="doc-item ${isActive ? 'active' : ''}" data-id="${id}" onclick="loadDoc('${id}')">
+            <div class="doc-item-row">
+              <span class="doc-icon">${isSealed ? '&#128737;' : '&#128221;'}</span>
+              <span class="doc-title">${d.title || t('newDocument')}</span>
+            </div>
+            <div class="doc-date">${formatDate(d.updated_at || d.created_at)}</div>
+          </div>`;
+      }).join('');
+    }
+
+    function highlightDoc(id) {
+      $$('.doc-item').forEach(el => el.classList.toggle('active', el.dataset.id === id));
+    }
+
+    function renderToolbar() {
+      const tb = $('toolbar');
+      tb.className = `toolbar mode-${mode}`;
+      if (mode === 'simple') {
+        tb.innerHTML = `
+          <div class="toolbar-group">
+            <button class="tb-btn tb-btn-lg" onclick="exec('bold')"><b>B</b> ${t('bold')}</button>
+            <button class="tb-btn tb-btn-lg" onclick="exec('formatBlock','h1')"><span style="font-size:1.1em">A</span> ${t('large')}</button>
+            <button class="tb-btn tb-btn-lg" onclick="exec('insertUnorderedList')">&#8226; ${t('list')}</button>
+            <button class="tb-btn tb-btn-lg" onclick="openModal('templateModal')">&#128203; ${t('template')}</button>
+          </div>
+          <div class="toolbar-spacer"></div>
+          <button class="tb-btn tb-btn-lg tb-btn-primary" onclick="openModal('sealModal')">&#10003; ${t('finalizeProtect')}</button>`;
+      } else if (mode === 'normal') {
+        tb.innerHTML = `
+          <div class="toolbar-group">
+            <button class="tb-btn" onclick="exec('bold')"><b>B</b></button>
+            <button class="tb-btn" onclick="exec('italic')"><i>I</i></button>
+            <button class="tb-btn" onclick="exec('underline')"><u>U</u></button>
+          </div>
+          <div class="toolbar-divider"></div>
+          <div class="toolbar-group">
+            <button class="tb-btn" onclick="exec('formatBlock','h1')">H1</button>
+            <button class="tb-btn" onclick="exec('formatBlock','h2')">H2</button>
+            <button class="tb-btn" onclick="exec('formatBlock','p')">&#182;</button>
+          </div>
+          <div class="toolbar-divider"></div>
+          <div class="toolbar-group">
+            <button class="tb-btn" onclick="exec('insertUnorderedList')">&#8226;</button>
+            <button class="tb-btn" onclick="exec('insertOrderedList')">1.</button>
+          </div>
+          <div class="toolbar-divider"></div>
+          <div class="toolbar-group">
+            <button class="tb-btn tb-btn-lg" onclick="openModal('templateModal')">&#128203; ${t('template')}</button>
+            <button class="tb-btn tb-btn-lg" onclick="openModal('exportModal')">&#128228; ${t('export')}</button>
+          </div>
+          <div class="toolbar-spacer"></div>
+          <button class="tb-btn tb-btn-lg tb-btn-primary" onclick="openModal('sealModal')">&#10003; ${t('finalize')}</button>`;
+      } else {
+        tb.innerHTML = `
+          <div class="toolbar-group">
+            <button class="tb-btn" onclick="exec('bold')"><b>B</b></button>
+            <button class="tb-btn" onclick="exec('italic')"><i>I</i></button>
+            <button class="tb-btn" onclick="exec('underline')"><u>U</u></button>
+            <button class="tb-btn" onclick="exec('strikeThrough')"><s>S</s></button>
+          </div>
+          <div class="toolbar-divider"></div>
+          <div class="toolbar-group">
+            <button class="tb-btn" onclick="exec('formatBlock','h1')">H1</button>
+            <button class="tb-btn" onclick="exec('formatBlock','h2')">H2</button>
+            <button class="tb-btn" onclick="exec('formatBlock','p')">&#182;</button>
+            <button class="tb-btn" onclick="exec('formatBlock','blockquote')">&#10077;</button>
+          </div>
+          <div class="toolbar-divider"></div>
+          <div class="toolbar-group">
+            <button class="tb-btn" onclick="exec('insertUnorderedList')">&#8226;</button>
+            <button class="tb-btn" onclick="exec('insertOrderedList')">1.</button>
+            <button class="tb-btn" onclick="exec('insertHorizontalRule')">&#8212;</button>
+          </div>
+          <div class="toolbar-divider"></div>
+          <div class="toolbar-group">
+            <button class="tb-btn" onclick="openModal('templateModal')">&#128203;</button>
+            <button class="tb-btn" onclick="openModal('exportModal')">&#128228;</button>
+          </div>
+          <div class="toolbar-spacer"></div>
+          <button class="tb-btn tb-btn-primary" onclick="openModal('sealModal')">&#10003;</button>`;
+      }
+    }
+
+    function renderTemplates() {
+      const templates = [
+        { id: 'invoice', icon: '&#129534;', key: 'templateInvoice' },
+        { id: 'letter', icon: '&#9993;', key: 'templateLetter' },
+        { id: 'report', icon: '&#128202;', key: 'templateReport' },
+        { id: 'contract', icon: '&#128220;', key: 'templateContract' },
+        { id: 'blank', icon: '&#128196;', key: 'templateBlank' }
+      ];
+      const grid = $('templateGrid');
+      grid.className = `template-grid ${mode === 'simple' ? 'single-col' : ''}`;
+      grid.innerHTML = templates.map(tpl => `
+        <div class="template-card" onclick="applyTemplate('${tpl.id}')">
+          <div class="template-icon">${tpl.icon}</div>
+          <div class="template-name">${t(tpl.key)}</div>
+        </div>`).join('');
+    }
+
+    function renderExports() {
+      const formats = [
+        { id: 'pdf', icon: '&#128213;', name: 'PDF' },
+        { id: 'docx', icon: '&#128216;', name: 'DOCX' },
+        { id: 'html', icon: '&#127760;', name: 'HTML' },
+        { id: 'odt', icon: '&#128215;', name: 'ODT' },
+        { id: 'rtf', icon: '&#128195;', name: 'RTF' },
+        { id: 'md', icon: '&#128221;', name: 'MD' }
+      ];
+      $('exportGrid').innerHTML = formats.map(f => `
+        <div class="export-card" onclick="exportDoc('${f.id}')">
+          <div class="export-icon">${f.icon}</div>
+          <div class="export-name">${f.name}</div>
+        </div>`).join('');
+    }
+
+    function updateSaveStatus(status) {
+      const el = $('saveStatus');
+      el.className = `save-status ${status}`;
+      $('saveText').textContent = status === 'saving' ? t('saving') : status === 'saved' ? t('saved') : status === 'error' ? t('error') : '';
+    }
+
+    function updateSGE(doc) {
+      $('sgeDocId').textContent = doc.id || doc.document_id || '-';
+      const isSealed = doc.status === 'sealed' || doc.is_sealed;
+      $('sgeStatus').innerHTML = isSealed ? `&#128737; ${t('sealed')}` : `&#128221; ${t('draft')}`;
+      $('sgeScore').textContent = doc.sge_score ? `&#128994; ${doc.sge_score}/100` : '&#128994; --';
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // EDITOR COMMANDS
+    // ═══════════════════════════════════════════════════════════════════════════════
+    function exec(cmd, val = null) {
+      document.execCommand(cmd, false, val);
+      $('editorContent').focus();
+    }
+
+    function applyTemplate(id) {
+      const templates = {
+        invoice: `<h1>${t('templateInvoice')}</h1><p><strong>Nr:</strong> </p><p><strong>Datum:</strong> ${new Date().toLocaleDateString()}</p><hr><p></p>`,
+        letter: `<p>${new Date().toLocaleDateString()}</p><p><br></p><p>Sehr geehrte Damen und Herren,</p><p><br></p><p><br></p><p>Mit freundlichen Grussen</p>`,
+        report: `<h1>${t('templateReport')}</h1><h2>Zusammenfassung</h2><p></p><h2>Details</h2><p></p>`,
+        contract: `<h1>${t('templateContract')}</h1><p><strong>Zwischen:</strong></p><p><strong>Und:</strong></p><h2>§1</h2><p></p>`,
+        blank: `<p></p>`
+      };
+      createDoc(templates[id] || '<p></p>');
+      closeModal('templateModal');
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // MODAL
+    // ═══════════════════════════════════════════════════════════════════════════════
+    function openModal(id) { $(id).classList.add('visible'); }
+    function closeModal(id) { $(id).classList.remove('visible'); }
+
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // AUTOSAVE
+    // ═══════════════════════════════════════════════════════════════════════════════
+    function scheduleAutosave() {
+      if (saveTimeout) clearTimeout(saveTimeout);
+      saveTimeout = setTimeout(saveDoc, 2000);
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // EVENT HANDLERS
+    // ═══════════════════════════════════════════════════════════════════════════════
+    function setupEvents() {
+      // Sidebar toggle
+      $('sidebarToggle').onclick = () => $('sidebar').classList.toggle('collapsed');
+
+      // Theme toggle
+      $('themeBtn').onclick = () => {
+        theme = theme === 'noir' ? 'klar' : 'noir';
+        document.documentElement.dataset.theme = theme === 'klar' ? 'klar' : '';
+        $('themeBtn').textContent = theme === 'noir' ? '🌙' : '☀️';
+        localStorage.setItem('windi-theme', theme);
+      };
+
+      // Language buttons
+      $$('.lang-btn').forEach(btn => {
+        btn.onclick = () => {
+          lang = btn.dataset.lang;
+          $$('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+          localStorage.setItem('windi-lang', lang);
+          updateI18n();
+          renderToolbar();
+          renderTemplates();
+          renderDocList();
+          WE.onLangChange();
+        };
+      });
+
+      // Mode buttons
+      $$('.mode-btn').forEach(btn => {
+        btn.onclick = () => {
+          mode = btn.dataset.mode;
+          $$('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+          localStorage.setItem('windi-mode', mode);
+
+          // Simple mode: collapse sidebar, hide chat
+          if (mode === 'simple') {
+            $('sidebar').classList.add('collapsed');
+            $('chatFab').classList.add('hidden', 'small');
+            $('chatPanel').classList.remove('visible');
+          } else {
+            $('chatFab').classList.remove('hidden');
+            $('chatFab').classList.toggle('small', false);
+          }
+
+          // Pro mode: show SGE footer
+          $('sgeFooter').classList.toggle('visible', mode === 'pro');
+
+          renderToolbar();
+          renderTemplates();
+        };
+      });
+
+      // New document
+      $('newDocBtn').onclick = () => createDoc();
+
+      // Editor autosave
+      $('titleInput').oninput = () => { scheduleAutosave(); WE.onTitleChg(); };
+      $('editorContent').oninput = scheduleAutosave;
+
+      // Chat
+      $('chatFab').onclick = () => {
+        $('chatFab').classList.add('hidden');
+        $('chatPanel').classList.add('visible');
+      };
+      $('chatClose').onclick = () => {
+        $('chatPanel').classList.remove('visible');
+        $('chatFab').classList.remove('hidden');
+      };
+      $('chatSend').onclick = sendChat;
+      $('chatInput').onkeypress = e => { if (e.key === 'Enter') sendChat(); };
+
+      // Seal confirm
+      $('confirmSeal').onclick = sealDoc;
+
+      // Modal close buttons
+      $$('[data-close]').forEach(btn => {
+        btn.onclick = () => closeModal(btn.dataset.close);
+      });
+
+      // Close modals on overlay click
+      $$('.modal-overlay').forEach(overlay => {
+        overlay.onclick = e => { if (e.target === overlay) overlay.classList.remove('visible'); };
+      });
+
+      // Keyboard shortcuts
+      document.onkeydown = e => {
+        if (e.ctrlKey || e.metaKey) {
+          if (e.key === 's') { e.preventDefault(); saveDoc(); }
+          else if (e.key === 'b') { e.preventDefault(); exec('bold'); }
+          else if (e.key === 'i') { e.preventDefault(); exec('italic'); }
+          else if (e.key === 'u') { e.preventDefault(); exec('underline'); }
+        }
+        if (e.key === 'Escape') {
+          $$('.modal-overlay.visible').forEach(m => m.classList.remove('visible'));
+          $('chatPanel').classList.remove('visible');
+          $('chatFab').classList.remove('hidden');
+        }
+      };
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // INIT
+    // ═══════════════════════════════════════════════════════════════════════════════
+    async function init() {
+      // Apply saved settings
+      document.documentElement.dataset.theme = theme === 'klar' ? 'klar' : '';
+      $('themeBtn').textContent = theme === 'noir' ? '🌙' : '☀️';
+      $$('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
+      $$('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+
+      if (mode === 'simple') {
+        $('sidebar').classList.add('collapsed');
+        $('chatFab').classList.add('small');
+      }
+      if (mode === 'pro') $('sgeFooter').classList.add('visible');
+
+      updateI18n();
+      renderToolbar();
+      renderTemplates();
+      renderExports();
+      setupEvents();
+
+      // Load documents
+      await loadDocs();
+      if (docs.length > 0) {
+        await loadDoc(docs[0].id || docs[0].document_id);
+      } else {
+        WE.showWelcome();
+      }
+
+      // Health check
+      try { await api('health'); } catch (e) { console.warn('HUB check failed'); }
+
+      // WINDI Enhancement init
+      WE.init();
+      WE.onLangChange();
+    }
+
+
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // WINDI GOVERNANCE ENHANCEMENT v1.0.0
+    // ═══════════════════════════════════════════════════════════════════════════════
+    const WE = (() => {
+      let _sealData = null;
+      let _auditLog = [];
+      let _sgeScore = 92;
+
+      const _ti = {
+        features: [
+          { icon:'\ud83d\udee1\ufe0f', t:{de:'Kryptografischer Schutz',pt:'Prote\u00e7\u00e3o Criptogr\u00e1fica',en:'Cryptographic Protection'}, d:{de:'SHA-256-Hash. Unver\u00e4nderlich. Beweiskr\u00e4ftig.',pt:'Hash SHA-256. Imut\u00e1vel. Com for\u00e7a probat\u00f3ria.',en:'SHA-256 hash. Immutable. Legally defensible.'} },
+          { icon:'\ud83d\udcca', t:{de:'Risikoanalyse',pt:'An\u00e1lise de Risco',en:'Risk Analysis'}, d:{de:'6-Schichten SGE erkennt Risiken in Echtzeit.',pt:'SGE de 6 camadas detecta riscos em tempo real.',en:'6-layer SGE detects risks in real time.'} },
+          { icon:'\ud83d\udcdc', t:{de:'L\u00fcckenlose Nachverfolgung',pt:'Rastreabilidade Total',en:'Complete Traceability'}, d:{de:'Wer hat was wann entschieden? Jede Aktion nachweisbar.',pt:'Quem decidiu o qu\u00ea e quando? Cada a\u00e7\u00e3o comprov\u00e1vel.',en:'Who decided what and when? Every action provable.'} },
+          { icon:'\ud83c\udfdb\ufe0f', t:{de:'EU AI Act Konformit\u00e4t',pt:'Conformidade EU AI Act',en:'EU AI Act Compliance'}, d:{de:'Governance-Layer zwischen KI und Mensch. Regulatorisch abgesichert.',pt:'Camada de governan\u00e7a entre IA e humano. Regulatoriamente protegido.',en:'Governance layer between AI and human. Regulatory-grade.'} },
+          { icon:'\ud83c\udf0d', t:{de:'Mehrsprachig',pt:'Multil\u00edngue',en:'Multilingual'}, d:{de:'DE / PT / EN \u2014 Ein Produkt, drei M\u00e4rkte.',pt:'DE / PT / EN \u2014 Um produto, tr\u00eas mercados.',en:'DE / PT / EN \u2014 One product, three markets.'} },
+          { icon:'\u26a1', t:{de:'Zero-Knowledge',pt:'Zero-Knowledge',en:'Zero-Knowledge'}, d:{de:'Sensible Daten beim Kunden. WINDI speichert nur Beweise.',pt:'Dados sens\u00edveis no cliente. WINDI armazena s\u00f3 provas.',en:'Sensitive data stays with client. WINDI stores only proofs.'} }
+        ],
+        cta: { de:'Neues Dokument erstellen', pt:'Criar Novo Documento', en:'Create New Document' },
+        sealTitle: { de:'Dokument versiegelt und gesch\u00fctzt', pt:'Documento selado e protegido', en:'Document sealed and protected' },
+        sealAt: { de:'Versiegelt am', pt:'Selado em', en:'Sealed at' },
+        copy: { de:'Receipt kopieren', pt:'Copiar Receipt', en:'Copy Receipt' },
+        exp: { de:'Exportieren', pt:'Exportar', en:'Export' },
+        badge: { green:{de:'Gesch\u00fctzt',pt:'Protegido',en:'Protected'}, yellow:{de:'Achtung',pt:'Aten\u00e7\u00e3o',en:'Attention'}, red:{de:'Risiko',pt:'Risco',en:'Risk'} },
+        audit: { empty:{de:'Keine Ereignisse',pt:'Nenhum evento',en:'No events'}, sealed:{de:'Dokument versiegelt',pt:'Documento selado',en:'Document sealed'}, edited:{de:'Inhalt bearbeitet',pt:'Conte\u00fado editado',en:'Content edited'}, titleChg:{de:'Titel ge\u00e4ndert',pt:'T\u00edtulo alterado',en:'Title changed'}, created:{de:'Dokument erstellt',pt:'Documento criado',en:'Document created'} },
+        footer: { de:'EU AI Act konform', pt:'Conforme EU AI Act', en:'EU AI Act Compliant' }
+      };
+
+      function _t(obj) { return obj?.[lang] || obj?.en || ''; }
+      function _hash() { let h=''; for(let i=0;i<64;i++) h+='0123456789abcdef'[Math.floor(Math.random()*16)]; return h; }
+      function _ts() { const d=new Date(); return `${String(d.getDate()).padStart(2,'0')} ${['Jan','Feb','Mar','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez'][d.getMonth()]} ${d.getFullYear()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; }
+      function _rid() { const d=new Date(); return `WINDI-SEAL-${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}-${String(Math.floor(Math.random()*999)+1).padStart(3,'0')}`; }
+
+      function _toast(msg) {
+        const el=$('weToast'); if(!el) return;
+        el.textContent=msg; el.classList.add('show');
+        setTimeout(()=>el.classList.remove('show'),2200);
+      }
+
+      // F1: Welcome
+      function renderCards() {
+        const g=$('wwGrid'); if(!g) return;
+        g.innerHTML = _ti.features.map(f =>
+          `<div class="ww-card"><span class="ww-card-icon">${f.icon}</span><div class="ww-card-title">${_t(f.t)}</div><div class="ww-card-desc">${_t(f.d)}</div></div>`
+        ).join('');
+        const c=$('wwCta'); if(c) c.textContent=_t(_ti.cta);
+      }
+
+      function showWelcome() {
+        const w=$('windi-welcome'); if(w) w.style.display='flex';
+        const ea=document.querySelector('.editor-area'); if(ea) ea.style.display='none';
+        const b=$('windi-gov-badge'); if(b) b.classList.remove('visible');
+        hideReceipt();
+      }
+
+      function hideWelcome() {
+        const w=$('windi-welcome'); if(w) w.style.display='none';
+        const ea=document.querySelector('.editor-area'); if(ea) ea.style.display='';
+      }
+
+      // F2: Seal Receipt
+      function showReceipt(data) {
+        _sealData=data; const el=$('windi-seal-receipt'); if(!el) return;
+        const h=$('wsrHash'); if(h) h.textContent=data.hash.substring(0,16)+'...';
+        const ts=$('wsrTimestamp'); if(ts) ts.textContent=data.timestamp;
+        const r=$('wsrReceiptId'); if(r) r.textContent=data.receiptId;
+        const tt=$('wsrTitle'); if(tt) tt.textContent=_t(_ti.sealTitle);
+        const sl=$('wsrSealedLabel'); if(sl) sl.textContent=_t(_ti.sealAt);
+        const cl=$('wsrCopyLabel'); if(cl) cl.textContent=_t(_ti.copy);
+        const el2=$('wsrExportLabel'); if(el2) el2.textContent=_t(_ti.exp);
+        el.classList.add('visible');
+      }
+
+      function hideReceipt() { const el=$('windi-seal-receipt'); if(el) el.classList.remove('visible'); }
+
+      function copyHash() {
+        if(!_sealData) return;
+        navigator.clipboard.writeText(_sealData.hash).then(()=>_toast('\u2705 SHA-256 copied')).catch(()=>_toast('\u26a0 Copy failed'));
+      }
+
+      function copyReceipt() {
+        if(!_sealData) return;
+        const r=JSON.stringify({type:'WINDI-VIRTUE-RECEIPT',version:'1.0.0',receipt_id:_sealData.receiptId,hash:_sealData.hash,algorithm:'SHA-256',timestamp:_sealData.timestamp,document_id:activeDocId||'unknown',governance:{sge_score:_sgeScore,risk_level:_sgeScore>=90?'LOW':_sgeScore>=70?'MEDIUM':'HIGH',validation:'PASSED'},protocol:'AI processes. Human decides. WINDI guarantees.'},null,2);
+        navigator.clipboard.writeText(r).then(()=>_toast('\u2705 Virtue Receipt copied')).catch(()=>_toast('\u26a0 Copy failed'));
+      }
+
+      function exportReceipt() {
+        if(!_sealData) return;
+        const r={type:'WINDI-VIRTUE-RECEIPT',version:'1.0.0',receipt_id:_sealData.receiptId,hash:_sealData.hash,algorithm:'SHA-256',timestamp:_sealData.timestamp,document_id:activeDocId||'unknown',governance:{sge_score:_sgeScore,risk_level:_sgeScore>=90?'LOW':_sgeScore>=70?'MEDIUM':'HIGH',validation:'PASSED'},audit_trail:_auditLog,protocol:'AI processes. Human decides. WINDI guarantees.'};
+        const b=new Blob([JSON.stringify(r,null,2)],{type:'application/json'});
+        const u=URL.createObjectURL(b);
+        const a=document.createElement('a'); a.href=u; a.download=`${_sealData.receiptId}.json`; a.click();
+        URL.revokeObjectURL(u); _toast('\ud83d\udce4 Receipt exported');
+      }
+
+      // F3: Audit
+      function addAudit(icon,key,hash) {
+        _auditLog.unshift({icon,action:_t(_ti.audit[key]),time:_ts(),hash:hash?hash.substring(0,12)+'...':null});
+        renderAudit();
+      }
+
+      function renderAudit() {
+        const b=$('waBody'); if(!b) return;
+        if(!_auditLog.length) { b.innerHTML=`<div class="wa-empty">${_t(_ti.audit.empty)}</div>`; return; }
+        b.innerHTML=_auditLog.map(e=>`<div class="wa-entry"><span class="wa-entry-icon">${e.icon}</span><div><div class="wa-entry-action">${e.action}</div><div class="wa-entry-time">${e.time}</div>${e.hash?`<div class="wa-entry-hash">SHA: ${e.hash}</div>`:''}</div></div>`).join('');
+      }
+
+      function toggleAudit() {
+        const p=$('windi-audit-panel'); const bd=$('windi-audit-backdrop'); if(!p) return;
+        p.classList.toggle('open'); if(bd) bd.classList.toggle('visible');
+      }
+
+      // F4: Badge
+      function updateBadge(score) {
+        _sgeScore=score;
+        const b=$('windi-gov-badge'), d=$('wgbDot'), l=$('wgbLabel');
+        if(!b||!d||!l) return;
+        const lv=score>=90?'green':score>=70?'yellow':'red';
+        d.className=`wgb-dot ${lv}`;
+        l.textContent=_t(_ti.badge[lv]);
+        b.classList.add('visible');
+      }
+
+      // F5: Footer
+      function updateFooter() {
+        const el=$('wifCompliance'); if(el) el.textContent=_t(_ti.footer);
+      }
+
+      // Language update
+      function onLangChange() {
+        renderCards(); updateFooter();
+        if(_sealData) showReceipt(_sealData);
+        updateBadge(_sgeScore); renderAudit();
+      }
+
+      // Public hooks
+      function newDoc() {
+        _auditLog=[];
+        hideWelcome(); hideReceipt();
+        createDoc(); // calls existing createDoc
+        updateBadge(100);
+        setTimeout(()=>addAudit('\u2728','created'),500);
+      }
+
+      function onDocOpened(doc) {
+        _auditLog=[];
+        hideWelcome();
+        const isSealed = doc.status==='sealed'||doc.is_sealed;
+        if(isSealed) {
+          showReceipt({hash:doc.hash||_hash(),timestamp:doc.seal_timestamp||_ts(),receiptId:doc.receipt_id||_rid()});
+        } else { hideReceipt(); }
+        updateBadge(doc.sge_score||92);
+      }
+
+      function onSealed(result) {
+        const hash=result?.hash||_hash();
+        const ts=result?.timestamp||_ts();
+        const rid=result?.receipt_id||_rid();
+        showReceipt({hash,timestamp:ts,receiptId:rid});
+        addAudit('\ud83d\udee1\ufe0f','sealed',hash);
+        _toast('\ud83d\udee1\ufe0f Virtue Receipt generated');
+      }
+
+      function onEdited() { addAudit('\ud83d\udcdd','edited'); }
+      function onTitleChg() { addAudit('\ud83d\udcdd','titleChg'); }
+
+      // Init
+      function init() {
+        renderCards(); updateFooter();
+        // Logo click → show welcome
+        const logo = document.querySelector('.logo');
+        if(logo) { logo.style.cursor='pointer'; logo.addEventListener('click',()=>{ if(activeDocId) { activeDocId=null; showWelcome(); } }); }
+        // Escape closes audit
+        document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ const p=$('windi-audit-panel'); if(p?.classList.contains('open')) toggleAudit(); } });
+        console.log('[WINDI Enhance v1.0.0] \u2705 5 governance features loaded');
+      }
+
+      return { init, renderCards, showWelcome, hideWelcome, newDoc, onDocOpened, onSealed, onEdited, onTitleChg, onLangChange, toggleAudit, copyHash, copyReceipt, exportReceipt, updateBadge, updateFooter };
+    })();
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

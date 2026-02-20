@@ -1,0 +1,74 @@
+# WINDI NOC - Alertmanager Configuration
+
+global:
+  resolve_timeout: 5m
+  # SMTP settings (uncomment to enable email)
+  # smtp_smarthost: 'smtp.gmail.com:587'
+  # smtp_from: 'noc@windi.tech'
+  # smtp_auth_username: 'noc@windi.tech'
+  # smtp_auth_password: '${SMTP_PASSWORD}'
+
+# Route tree
+route:
+  group_by: ['alertname', 'severity', 'instance']
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 4h
+  receiver: 'default-receiver'
+
+  routes:
+    # Critical alerts - immediate notification
+    - match:
+        severity: critical
+      receiver: 'critical-receiver'
+      group_wait: 10s
+      repeat_interval: 1h
+      continue: true
+
+    # Warning alerts - normal grouping
+    - match:
+        severity: warning
+      receiver: 'warning-receiver'
+      group_wait: 1m
+      repeat_interval: 4h
+
+# Inhibition rules
+inhibit_rules:
+  # Inhibit warning if critical is firing
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['alertname', 'instance']
+
+# Receivers
+receivers:
+  - name: 'default-receiver'
+    webhook_configs:
+      - url: 'http://noc-agent:8880/webhook/alert'
+        send_resolved: true
+
+  - name: 'critical-receiver'
+    webhook_configs:
+      - url: 'http://noc-agent:8880/webhook/alert'
+        send_resolved: true
+    # Telegram (uncomment to enable)
+    # telegram_configs:
+    #   - bot_token: '${TELEGRAM_BOT_TOKEN}'
+    #     chat_id: ${TELEGRAM_CHAT_ID}
+    #     parse_mode: 'HTML'
+    #     message: |
+    #       🚨 <b>CRITICAL ALERT</b>
+    #       <b>Alert:</b> {{ .GroupLabels.alertname }}
+    #       <b>Instance:</b> {{ .GroupLabels.instance }}
+    #       {{ range .Alerts }}
+    #       <b>Description:</b> {{ .Annotations.description }}
+    #       {{ end }}
+
+  - name: 'warning-receiver'
+    webhook_configs:
+      - url: 'http://noc-agent:8880/webhook/alert'
+        send_resolved: true
+
+# Templates
+templates: []

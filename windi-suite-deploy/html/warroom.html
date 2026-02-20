@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI War Room — Institutional Consciousness</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Outfit', sans-serif; }
+  #root { min-height: 100vh; }
+</style>
+<script>
+  // Polyfill for window.storage (used in artifacts with persistent storage)
+  if (!window.storage) {
+    const _store = {};
+    window.storage = {
+      get: async (k) => { if (_store[k]) return { key: k, value: _store[k] }; throw new Error('not found'); },
+      set: async (k, v) => { _store[k] = v; return { key: k, value: v }; },
+      delete: async (k) => { delete _store[k]; return { key: k, deleted: true }; },
+      list: async (prefix) => { const keys = Object.keys(_store).filter(k => !prefix || k.startsWith(prefix)); return { keys }; },
+    };
+  }
+</script>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback, useMemo } = React;
+
+
+const FONTS_CSS = `@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');`;
+
+// === ORGANIZATIONAL DATA ===
+const DEPARTMENTS = [
+  {
+    id: "finance", name: "Finanzen", head: "M. Weber",
+    docs: [
+      { name: "ECB Model Risk Assessment", sge: 0.94, level: "HIGH", type: "Bescheid", sealed: true, date: "15.02", flags: ["REGULATORY", "CROSS-BORDER"] },
+      { name: "Q4 Bilanz Konsolidierung", sge: 0.82, level: "HIGH", type: "Bericht", sealed: true, date: "14.02", flags: ["AUDIT-RELEVANT"] },
+      { name: "Budget Forecast 2026", sge: 0.71, level: "MEDIUM", type: "Tabelle", sealed: true, date: "13.02", flags: [] },
+      { name: "Reisekostenabrechnung Feb", sge: 0.12, level: "LOW", type: "Dokument", sealed: true, date: "12.02", flags: [] },
+      { name: "Investitionsstrategie Draft", sge: 0.88, level: "HIGH", type: "Vertrag", sealed: false, date: "16.02", flags: ["PENDING-REVIEW"] },
+    ],
+  },
+  {
+    id: "legal", name: "Recht & Compliance", head: "Dr. K. Fischer",
+    docs: [
+      { name: "BaFin Regulatory Response", sge: 0.96, level: "HIGH", type: "Bescheid", sealed: true, date: "14.02", flags: ["REGULATORY", "DEADLINE"] },
+      { name: "NDA Partner Agreement", sge: 0.78, level: "HIGH", type: "Vertrag", sealed: true, date: "13.02", flags: ["CONFIDENTIAL"] },
+      { name: "DSGVO Audit Report", sge: 0.85, level: "HIGH", type: "Bericht", sealed: true, date: "11.02", flags: ["AUDIT-RELEVANT", "EU-COMPLIANCE"] },
+      { name: "Compliance Training Q1", sge: 0.23, level: "LOW", type: "Präsentation", sealed: true, date: "09.02", flags: [] },
+      { name: "EU AI Act Response Draft", sge: 0.91, level: "HIGH", type: "Bescheid", sealed: false, date: "16.02", flags: ["REGULATORY", "PENDING-REVIEW"] },
+      { name: "Whistleblower Policy Update", sge: 0.67, level: "MEDIUM", type: "Dokument", sealed: true, date: "10.02", flags: [] },
+    ],
+  },
+  {
+    id: "ops", name: "Betrieb", head: "S. Müller",
+    docs: [
+      { name: "Deutsche Bahn Compliance", sge: 0.87, level: "HIGH", type: "Bericht", sealed: true, date: "14.02", flags: ["INSTITUTIONAL"] },
+      { name: "Lieferantenvertrag Siemens", sge: 0.74, level: "HIGH", type: "Vertrag", sealed: true, date: "12.02", flags: ["CROSS-BORDER"] },
+      { name: "Projektplan Phase 3", sge: 0.45, level: "LOW", type: "Dokument", sealed: false, date: "10.02", flags: [] },
+      { name: "Qualitätsbericht Jan 2026", sge: 0.58, level: "MEDIUM", type: "Bericht", sealed: true, date: "08.02", flags: [] },
+    ],
+  },
+  {
+    id: "hr", name: "Personal", head: "A. Schmidt",
+    docs: [
+      { name: "Personalplanung Q2", sge: 0.65, level: "MEDIUM", type: "Tabelle", sealed: true, date: "13.02", flags: ["CONFIDENTIAL"] },
+      { name: "Arbeitsvertrag Entwurf", sge: 0.52, level: "MEDIUM", type: "Vertrag", sealed: false, date: "15.02", flags: ["PENDING-REVIEW"] },
+      { name: "Onboarding Handbuch", sge: 0.18, level: "LOW", type: "Dokument", sealed: true, date: "07.02", flags: [] },
+    ],
+  },
+  {
+    id: "exec", name: "Vorstand", head: "J. Mögele Correa",
+    docs: [
+      { name: "Investor Pitch v3", sge: 0.92, level: "HIGH", type: "Präsentation", sealed: true, date: "11.02", flags: ["CONFIDENTIAL", "STRATEGIC"] },
+      { name: "Board Resolution Q1", sge: 0.89, level: "HIGH", type: "Bescheid", sealed: true, date: "10.02", flags: ["GOVERNANCE"] },
+      { name: "Strategiepapier 2026-2028", sge: 0.84, level: "HIGH", type: "Bericht", sealed: false, date: "16.02", flags: ["STRATEGIC", "PENDING-REVIEW"] },
+    ],
+  },
+];
+
+const FLAG_COLORS = {
+  "REGULATORY": "#EF4444",
+  "DEADLINE": "#EF4444",
+  "AUDIT-RELEVANT": "#F59E0B",
+  "CONFIDENTIAL": "#8B5CF6",
+  "CROSS-BORDER": "#3B82F6",
+  "EU-COMPLIANCE": "#3B82F6",
+  "INSTITUTIONAL": "#06B6D4",
+  "STRATEGIC": "#C9A84C",
+  "GOVERNANCE": "#C9A84C",
+  "PENDING-REVIEW": "#F97316",
+};
+
+// === HELPERS ===
+const getSGEColor = (score) => {
+  if (score >= 0.85) return "#EF4444";
+  if (score >= 0.65) return "#F59E0B";
+  if (score >= 0.40) return "#3B82F6";
+  return "#22C55E";
+};
+
+const getAvgSGE = (docs) => {
+  const sum = docs.reduce((a, d) => a + d.sge, 0);
+  return sum / docs.length;
+};
+
+const getRiskLabel = (score) => {
+  if (score >= 0.85) return "KRITISCH";
+  if (score >= 0.65) return "ERHÖHT";
+  if (score >= 0.40) return "MODERAT";
+  return "NIEDRIG";
+};
+
+// === HEATMAP CELL ===
+const HeatCell = ({ score, size = 32, isDark }) => {
+  const color = getSGEColor(score);
+  const intensity = 0.15 + score * 0.55;
+  return (
+    <div style={{
+      width: size, height: size, borderRadius: 4,
+      backgroundColor: color,
+      opacity: intensity,
+      transition: "all 0.3s ease",
+      position: "relative",
+    }}>
+      {score >= 0.85 && (
+        <div style={{
+          position: "absolute", inset: 0, borderRadius: 4,
+          boxShadow: `0 0 8px ${color}40`,
+          animation: "pulse 2s ease infinite",
+        }}/>
+      )}
+    </div>
+  );
+};
+
+// === RISK GAUGE ===
+const RiskGauge = ({ score, size = 100, isDark }) => {
+  const angle = -90 + (score * 180);
+  const color = getSGEColor(score);
+  const text1 = isDark ? "#F0F0F0" : "#1A1A2E";
+
+  return (
+    <div style={{ position: "relative", width: size, height: size * 0.6, overflow: "hidden" }}>
+      <svg width={size} height={size * 0.6} viewBox="0 0 120 72">
+        {/* Background arc */}
+        <path d="M 10 65 A 50 50 0 0 1 110 65" fill="none" stroke={isDark ? "#1E2030" : "#E8E8E8"} strokeWidth="8" strokeLinecap="round"/>
+        {/* Green zone */}
+        <path d="M 10 65 A 50 50 0 0 1 35 22" fill="none" stroke="#22C55E" strokeWidth="8" strokeLinecap="round" opacity="0.3"/>
+        {/* Yellow zone */}
+        <path d="M 35 22 A 50 50 0 0 1 60 15" fill="none" stroke="#F59E0B" strokeWidth="8" strokeLinecap="round" opacity="0.3"/>
+        {/* Red zone */}
+        <path d="M 60 15 A 50 50 0 0 1 110 65" fill="none" stroke="#EF4444" strokeWidth="8" strokeLinecap="round" opacity="0.3"/>
+        {/* Needle */}
+        <line
+          x1="60" y1="65"
+          x2={60 + Math.cos(angle * Math.PI / 180) * 40}
+          y2={65 + Math.sin(angle * Math.PI / 180) * 40}
+          stroke={color} strokeWidth="2.5" strokeLinecap="round"
+        />
+        <circle cx="60" cy="65" r="4" fill={color}/>
+        <text x="60" y="58" textAnchor="middle" fill={text1} fontSize="16" fontWeight="700" fontFamily="JetBrains Mono">
+          {score.toFixed(2)}
+        </text>
+      </svg>
+    </div>
+  );
+};
+
+// === MINI SPARKLINE ===
+const Sparkline = ({ data, width = 80, height = 24, color }) => {
+  const max = Math.max(...data);
+  const min = Math.min(...data);
+  const range = max - min || 1;
+  const points = data.map((v, i) =>
+    `${(i / (data.length - 1)) * width},${height - ((v - min) / range) * height}`
+  ).join(" ");
+
+  return (
+    <svg width={width} height={height} style={{ display: "block" }}>
+      <polyline points={points} fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      <circle cx={width} cy={height - ((data[data.length - 1] - min) / range) * height} r="2.5" fill={color}/>
+    </svg>
+  );
+};
+
+// === MAIN COMPONENT ===
+function WINDIWarRoom() {
+  const [theme, setTheme] = useState("noir");
+  const [selectedDept, setSelectedDept] = useState(null);
+  const [hoveredDoc, setHoveredDoc] = useState(null);
+  const [loaded, setLoaded] = useState(false);
+  const [now, setNow] = useState(new Date());
+  const [view, setView] = useState("heatmap"); // heatmap | timeline | details
+
+  useEffect(() => { setLoaded(true); }, []);
+  useEffect(() => {
+    const t = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(t);
+  }, []);
+
+  const isDark = theme === "noir";
+  const bg = isDark ? "#0A0C14" : "#F5F6F8";
+  const surface = isDark ? "#12151F" : "#FFFFFF";
+  const surface2 = isDark ? "#181B28" : "#FAFBFC";
+  const text1 = isDark ? "#F0F0F0" : "#1A1A2E";
+  const text2 = isDark ? "#A0A4B8" : "#6B7280";
+  const text3 = isDark ? "#555870" : "#9CA3AF";
+  const border = isDark ? "#1E2235" : "#E5E7EB";
+  const gold = "#C9A84C";
+
+  // Aggregate stats
+  const allDocs = DEPARTMENTS.flatMap(d => d.docs);
+  const totalDocs = allDocs.length;
+  const sealedDocs = allDocs.filter(d => d.sealed).length;
+  const highRisk = allDocs.filter(d => d.sge >= 0.85).length;
+  const pendingReview = allDocs.filter(d => d.flags.includes("PENDING-REVIEW")).length;
+  const orgSGE = getAvgSGE(allDocs);
+  const orgRiskLabel = getRiskLabel(orgSGE);
+
+  // Simulated trend data
+  const trendData = [0.62, 0.65, 0.71, 0.68, 0.74, 0.72, 0.69, 0.73, 0.71, 0.70];
+
+  const activeDept = selectedDept ? DEPARTMENTS.find(d => d.id === selectedDept) : null;
+
+  return (
+    <div style={{
+      fontFamily: "'Outfit', sans-serif", backgroundColor: bg, color: text1,
+      minHeight: "100vh", display: "flex", flexDirection: "column",
+      opacity: loaded ? 1 : 0, transition: "opacity 0.5s ease",
+    }}>
+      <style>{FONTS_CSS}</style>
+      <style>{`
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: ${border}; border-radius: 3px; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+        @keyframes scanline { 0% { transform: translateX(-100%); } 100% { transform: translateX(200%); } }
+        .dept-card:hover { border-color: ${gold}60 !important; transform: translateY(-1px); }
+        .doc-row:hover { background: ${isDark ? "#1A1E2E" : "#F5F6F8"} !important; }
+      `}</style>
+
+      {/* === TOP BAR === */}
+      <div style={{
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        padding: "0 20px", height: 48, borderBottom: `1px solid ${border}`,
+        backgroundColor: isDark ? "#0D0F17" : "#FFFFFF",
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <svg width="22" height="22" viewBox="0 0 32 32">
+            <rect width="32" height="32" rx="6" fill={gold}/>
+            <text x="16" y="22" textAnchor="middle" fill="#0A0C14" fontSize="16" fontWeight="800" fontFamily="Bricolage Grotesque">W</text>
+          </svg>
+          <span style={{ fontFamily: "'Bricolage Grotesque'", fontWeight: 700, fontSize: 16, color: text1 }}>WINDI</span>
+          <span style={{ fontSize: 10, color: gold, fontFamily: "'JetBrains Mono'", fontWeight: 500, padding: "2px 8px", borderRadius: 4, backgroundColor: isDark ? "#1E1C14" : "#FFF9E8", marginLeft: 4 }}>
+            CONTROLLER
+          </span>
+          <div style={{ width: 1, height: 20, backgroundColor: border, margin: "0 8px" }}/>
+          <span style={{ fontSize: 12, color: text2 }}>War Room · SGE Heatmap</span>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          {/* Live indicator */}
+          <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+            <div style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "#22C55E", animation: "pulse 1.5s ease infinite" }}/>
+            <span style={{ fontSize: 10, fontFamily: "'JetBrains Mono'", color: "#22C55E", fontWeight: 500 }}>LIVE</span>
+          </div>
+          <span style={{ fontSize: 10, fontFamily: "'JetBrains Mono'", color: text3 }}>
+            {now.toLocaleTimeString("de-DE")}
+          </span>
+          <button onClick={() => setTheme(isDark ? "klar" : "noir")} style={{
+            width: 28, height: 28, borderRadius: 6, border: `1px solid ${border}`,
+            backgroundColor: "transparent", cursor: "pointer", color: text2, fontSize: 13,
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}>{isDark ? "☀" : "●"}</button>
+        </div>
+      </div>
+
+      <div style={{ flex: 1, display: "flex", overflow: "hidden" }}>
+        {/* === LEFT PANEL: ORG OVERVIEW === */}
+        <div style={{
+          width: 300, minWidth: 300, padding: "20px 16px",
+          borderRight: `1px solid ${border}`, backgroundColor: isDark ? "#0D0F17" : "#FAFBFC",
+          overflowY: "auto", display: "flex", flexDirection: "column", gap: 16,
+        }}>
+          {/* Org Risk Gauge */}
+          <div style={{
+            backgroundColor: surface, borderRadius: 12, padding: "20px 16px",
+            border: `1px solid ${border}`, textAlign: "center",
+            animation: "fadeUp 0.4s ease",
+          }}>
+            <div style={{ fontSize: 10, color: text3, fontFamily: "'JetBrains Mono'", letterSpacing: 1, marginBottom: 8, textTransform: "uppercase" }}>
+              Organisationsrisiko
+            </div>
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <RiskGauge score={orgSGE} size={140} isDark={isDark}/>
+            </div>
+            <div style={{
+              fontSize: 13, fontWeight: 700, color: getSGEColor(orgSGE),
+              fontFamily: "'Bricolage Grotesque'", marginTop: 4, letterSpacing: 1,
+            }}>{orgRiskLabel}</div>
+            <div style={{ display: "flex", justifyContent: "center", marginTop: 8 }}>
+              <Sparkline data={trendData} width={100} height={20} color={getSGEColor(orgSGE)}/>
+            </div>
+            <div style={{ fontSize: 9, color: text3, fontFamily: "'JetBrains Mono'", marginTop: 4 }}>
+              14-Tage Trend
+            </div>
+          </div>
+
+          {/* Key metrics */}
+          <div style={{
+            display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8,
+            animation: "fadeUp 0.4s ease 0.1s both",
+          }}>
+            {[
+              { label: "Gesamt", value: totalDocs, color: text1 },
+              { label: "Versiegelt", value: sealedDocs, color: "#22C55E" },
+              { label: "Kritisch", value: highRisk, color: "#EF4444" },
+              { label: "Ausstehend", value: pendingReview, color: "#F97316" },
+            ].map((m, i) => (
+              <div key={i} style={{
+                backgroundColor: surface, borderRadius: 8, padding: "12px",
+                border: `1px solid ${border}`, textAlign: "center",
+              }}>
+                <div style={{ fontSize: 22, fontWeight: 700, color: m.color, fontFamily: "'Bricolage Grotesque'" }}>
+                  {m.value}
+                </div>
+                <div style={{ fontSize: 9, color: text3, fontFamily: "'JetBrains Mono'", letterSpacing: 0.5, marginTop: 2 }}>
+                  {m.label}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Department cards */}
+          <div style={{ animation: "fadeUp 0.4s ease 0.2s both" }}>
+            <div style={{ fontSize: 10, color: text3, fontFamily: "'JetBrains Mono'", letterSpacing: 1, marginBottom: 8, textTransform: "uppercase" }}>
+              Abteilungen
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              {DEPARTMENTS.map((dept, i) => {
+                const avgSGE = getAvgSGE(dept.docs);
+                const isSelected = selectedDept === dept.id;
+                const highCount = dept.docs.filter(d => d.sge >= 0.85).length;
+                return (
+                  <div key={dept.id} className="dept-card"
+                    onClick={() => setSelectedDept(isSelected ? null : dept.id)}
+                    style={{
+                      backgroundColor: isSelected ? (isDark ? "#181B28" : "#F5F6F8") : surface,
+                      borderRadius: 10, padding: "12px 14px", cursor: "pointer",
+                      border: `1px solid ${isSelected ? gold + "50" : border}`,
+                      transition: "all 0.2s ease",
+                      animation: `fadeUp 0.3s ease ${0.2 + i * 0.05}s both`,
+                    }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                      <span style={{ fontSize: 13, fontWeight: 600, color: text1 }}>{dept.name}</span>
+                      <span style={{
+                        fontSize: 11, fontWeight: 600, color: getSGEColor(avgSGE),
+                        fontFamily: "'JetBrains Mono'",
+                      }}>{avgSGE.toFixed(2)}</span>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                      <span style={{ fontSize: 10, color: text3 }}>{dept.head} · {dept.docs.length} Dok.</span>
+                      {highCount > 0 && (
+                        <span style={{
+                          fontSize: 9, color: "#EF4444", fontFamily: "'JetBrains Mono'",
+                          fontWeight: 500, display: "flex", alignItems: "center", gap: 3,
+                        }}>
+                          <span style={{ width: 5, height: 5, borderRadius: "50%", backgroundColor: "#EF4444", animation: "pulse 2s ease infinite" }}/>
+                          {highCount} kritisch
+                        </span>
+                      )}
+                    </div>
+                    {/* Mini heatmap row */}
+                    <div style={{ display: "flex", gap: 3, marginTop: 8 }}>
+                      {dept.docs.map((doc, j) => (
+                        <HeatCell key={j} score={doc.sge} size={20} isDark={isDark}/>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* === MAIN CONTENT === */}
+        <div style={{ flex: 1, padding: "20px 24px", overflowY: "auto" }}>
+          {!activeDept ? (
+            /* FULL ORG HEATMAP VIEW */
+            <div style={{ animation: "fadeUp 0.4s ease" }}>
+              <div style={{ marginBottom: 24 }}>
+                <h2 style={{
+                  fontFamily: "'Bricolage Grotesque'", fontSize: 24, fontWeight: 300,
+                  color: text1, marginBottom: 4,
+                }}>
+                  SGE <span style={{ fontWeight: 700 }}>Heatmap</span>
+                </h2>
+                <p style={{ fontSize: 12, color: text3 }}>
+                  Strategische Risikoübersicht aller Dokumente nach Abteilung
+                </p>
+              </div>
+
+              {/* HEATMAP GRID */}
+              <div style={{
+                backgroundColor: surface, borderRadius: 14, padding: "24px",
+                border: `1px solid ${border}`,
+              }}>
+                {DEPARTMENTS.map((dept, di) => (
+                  <div key={dept.id} style={{
+                    marginBottom: di < DEPARTMENTS.length - 1 ? 20 : 0,
+                    animation: `fadeUp 0.3s ease ${di * 0.08}s both`,
+                  }}>
+                    <div style={{
+                      display: "flex", alignItems: "center", gap: 10, marginBottom: 10,
+                      cursor: "pointer",
+                    }}
+                      onClick={() => setSelectedDept(dept.id)}
+                    >
+                      <span style={{ fontSize: 13, fontWeight: 600, color: text1, minWidth: 160 }}>{dept.name}</span>
+                      <div style={{ display: "flex", gap: 4, flex: 1 }}>
+                        {dept.docs.map((doc, j) => (
+                          <div key={j}
+                            onMouseEnter={() => setHoveredDoc(`${dept.id}-${j}`)}
+                            onMouseLeave={() => setHoveredDoc(null)}
+                            style={{ position: "relative" }}
+                          >
+                            <div style={{
+                              width: 36, height: 36, borderRadius: 6,
+                              backgroundColor: getSGEColor(doc.sge),
+                              opacity: 0.15 + doc.sge * 0.65,
+                              border: hoveredDoc === `${dept.id}-${j}` ? `2px solid ${getSGEColor(doc.sge)}` : `1px solid ${isDark ? "#1E2235" : "#E0E0E0"}`,
+                              transition: "all 0.2s ease",
+                              cursor: "pointer",
+                              display: "flex", alignItems: "center", justifyContent: "center",
+                              position: "relative",
+                            }}>
+                              {doc.sge >= 0.85 && (
+                                <div style={{
+                                  position: "absolute", inset: 0, borderRadius: 5,
+                                  boxShadow: `0 0 10px ${getSGEColor(doc.sge)}30`,
+                                  animation: "pulse 2s ease infinite",
+                                }}/>
+                              )}
+                              {!doc.sealed && (
+                                <div style={{
+                                  position: "absolute", top: -2, right: -2,
+                                  width: 8, height: 8, borderRadius: "50%",
+                                  backgroundColor: "#F97316", border: `2px solid ${surface}`,
+                                }}/>
+                              )}
+                            </div>
+                            {/* Tooltip */}
+                            {hoveredDoc === `${dept.id}-${j}` && (
+                              <div style={{
+                                position: "absolute", bottom: "calc(100% + 8px)", left: "50%",
+                                transform: "translateX(-50%)", zIndex: 100,
+                                backgroundColor: isDark ? "#1A1E2E" : "#FFFFFF",
+                                border: `1px solid ${border}`, borderRadius: 10,
+                                padding: "12px 16px", minWidth: 220,
+                                boxShadow: "0 8px 30px rgba(0,0,0,0.15)",
+                                animation: "fadeIn 0.15s ease",
+                              }}>
+                                <div style={{ fontSize: 12, fontWeight: 600, color: text1, marginBottom: 6 }}>
+                                  {doc.name}
+                                </div>
+                                <div style={{ display: "flex", gap: 12, marginBottom: 6 }}>
+                                  <div>
+                                    <div style={{ fontSize: 8, color: text3, fontFamily: "'JetBrains Mono'", letterSpacing: 0.5 }}>SGE</div>
+                                    <div style={{ fontSize: 14, fontWeight: 700, color: getSGEColor(doc.sge), fontFamily: "'JetBrains Mono'" }}>{doc.sge.toFixed(2)}</div>
+                                  </div>
+                                  <div>
+                                    <div style={{ fontSize: 8, color: text3, fontFamily: "'JetBrains Mono'", letterSpacing: 0.5 }}>LEVEL</div>
+                                    <div style={{ fontSize: 11, fontWeight: 600, color: doc.level === "HIGH" ? "#EF4444" : doc.level === "MEDIUM" ? "#F59E0B" : "#22C55E", fontFamily: "'JetBrains Mono'" }}>{doc.level}</div>
+                                  </div>
+                                  <div>
+                                    <div style={{ fontSize: 8, color: text3, fontFamily: "'JetBrains Mono'", letterSpacing: 0.5 }}>STATUS</div>
+                                    <div style={{ fontSize: 11, fontWeight: 500, color: doc.sealed ? gold : "#F97316", fontFamily: "'JetBrains Mono'" }}>{doc.sealed ? "SEALED" : "DRAFT"}</div>
+                                  </div>
+                                </div>
+                                {doc.flags.length > 0 && (
+                                  <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+                                    {doc.flags.map((f, fi) => (
+                                      <span key={fi} style={{
+                                        fontSize: 8, fontFamily: "'JetBrains Mono'", fontWeight: 500,
+                                        color: FLAG_COLORS[f] || text3, letterSpacing: 0.3,
+                                        padding: "1px 5px", borderRadius: 3,
+                                        backgroundColor: (FLAG_COLORS[f] || text3) + "15",
+                                      }}>{f}</span>
+                                    ))}
+                                  </div>
+                                )}
+                                <div style={{
+                                  position: "absolute", bottom: -5, left: "50%", transform: "translateX(-50%) rotate(45deg)",
+                                  width: 10, height: 10, backgroundColor: isDark ? "#1A1E2E" : "#FFFFFF",
+                                  borderRight: `1px solid ${border}`, borderBottom: `1px solid ${border}`,
+                                }}/>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                      <span style={{
+                        fontSize: 11, fontFamily: "'JetBrains Mono'", fontWeight: 600,
+                        color: getSGEColor(getAvgSGE(dept.docs)), minWidth: 40, textAlign: "right",
+                      }}>{getAvgSGE(dept.docs).toFixed(2)}</span>
+                    </div>
+                    {di < DEPARTMENTS.length - 1 && (
+                      <div style={{ borderBottom: `1px solid ${isDark ? "#151825" : "#F0F0F0"}` }}/>
+                    )}
+                  </div>
+                ))}
+
+                {/* Legend */}
+                <div style={{
+                  display: "flex", alignItems: "center", gap: 16, marginTop: 24,
+                  paddingTop: 16, borderTop: `1px solid ${border}`,
+                }}>
+                  <span style={{ fontSize: 9, color: text3, fontFamily: "'JetBrains Mono'" }}>RISIKO:</span>
+                  {[
+                    { label: "Niedrig", color: "#22C55E", range: "0-0.39" },
+                    { label: "Moderat", color: "#3B82F6", range: "0.40-0.64" },
+                    { label: "Erhöht", color: "#F59E0B", range: "0.65-0.84" },
+                    { label: "Kritisch", color: "#EF4444", range: "0.85-1.00" },
+                  ].map((l, i) => (
+                    <div key={i} style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                      <div style={{ width: 12, height: 12, borderRadius: 3, backgroundColor: l.color, opacity: 0.7 }}/>
+                      <span style={{ fontSize: 9, color: text2, fontFamily: "'JetBrains Mono'" }}>{l.label}</span>
+                      <span style={{ fontSize: 8, color: text3, fontFamily: "'JetBrains Mono'" }}>({l.range})</span>
+                    </div>
+                  ))}
+                  <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 5 }}>
+                    <div style={{ width: 8, height: 8, borderRadius: "50%", backgroundColor: "#F97316", border: `2px solid ${surface}` }}/>
+                    <span style={{ fontSize: 9, color: text2, fontFamily: "'JetBrains Mono'" }}>Nicht versiegelt</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* ALERTS PANEL */}
+              <div style={{
+                marginTop: 16, backgroundColor: surface, borderRadius: 14,
+                padding: "20px 24px", border: `1px solid ${border}`,
+                animation: "fadeUp 0.4s ease 0.3s both",
+              }}>
+                <div style={{
+                  fontSize: 10, color: text3, fontFamily: "'JetBrains Mono'",
+                  letterSpacing: 1, marginBottom: 14, textTransform: "uppercase",
+                  display: "flex", alignItems: "center", gap: 6,
+                }}>
+                  <span style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "#EF4444", animation: "pulse 1.5s ease infinite" }}/>
+                  Aktive Warnungen
+                </div>
+                {allDocs.filter(d => d.flags.includes("PENDING-REVIEW") || d.sge >= 0.90).map((doc, i) => (
+                  <div key={i} style={{
+                    display: "flex", alignItems: "center", gap: 12,
+                    padding: "10px 0",
+                    borderBottom: `1px solid ${isDark ? "#151825" : "#F5F5F5"}`,
+                    animation: `fadeUp 0.3s ease ${0.35 + i * 0.05}s both`,
+                  }}>
+                    <div style={{
+                      width: 32, height: 32, borderRadius: 8,
+                      backgroundColor: getSGEColor(doc.sge) + "18",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      fontSize: 14,
+                    }}>
+                      {doc.sge >= 0.90 ? "⚠" : "◎"}
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 12, fontWeight: 500, color: text1 }}>{doc.name}</div>
+                      <div style={{ fontSize: 10, color: text3, display: "flex", gap: 8, marginTop: 2 }}>
+                        <span>SGE: <span style={{ color: getSGEColor(doc.sge), fontFamily: "'JetBrains Mono'", fontWeight: 600 }}>{doc.sge.toFixed(2)}</span></span>
+                        <span>·</span>
+                        <span>{doc.sealed ? "Versiegelt" : "Entwurf"}</span>
+                      </div>
+                    </div>
+                    <div style={{ display: "flex", gap: 3 }}>
+                      {doc.flags.map((f, fi) => (
+                        <span key={fi} style={{
+                          fontSize: 8, fontFamily: "'JetBrains Mono'", fontWeight: 500,
+                          color: FLAG_COLORS[f] || text3,
+                          padding: "2px 6px", borderRadius: 4,
+                          backgroundColor: (FLAG_COLORS[f] || text3) + "12",
+                        }}>{f}</span>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            /* DEPARTMENT DETAIL VIEW */
+            <div style={{ animation: "fadeUp 0.3s ease" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 20 }}>
+                <button onClick={() => setSelectedDept(null)} style={{
+                  background: "none", border: `1px solid ${border}`, borderRadius: 6,
+                  padding: "4px 10px", cursor: "pointer", color: text2, fontSize: 12,
+                  fontFamily: "'Outfit'",
+                }}>← Zurück</button>
+                <h2 style={{
+                  fontFamily: "'Bricolage Grotesque'", fontSize: 22, fontWeight: 700, color: text1,
+                }}>
+                  {activeDept.name}
+                </h2>
+                <span style={{ fontSize: 11, color: text3 }}>· {activeDept.head}</span>
+                <span style={{
+                  fontSize: 12, fontWeight: 700, fontFamily: "'JetBrains Mono'",
+                  color: getSGEColor(getAvgSGE(activeDept.docs)),
+                  marginLeft: "auto",
+                }}>
+                  Ø SGE: {getAvgSGE(activeDept.docs).toFixed(2)}
+                </span>
+              </div>
+
+              {/* Department documents */}
+              <div style={{
+                backgroundColor: surface, borderRadius: 14, border: `1px solid ${border}`,
+                overflow: "hidden",
+              }}>
+                {/* Table header */}
+                <div style={{
+                  display: "grid", gridTemplateColumns: "1fr 80px 70px 70px 70px 1fr",
+                  padding: "10px 20px", fontSize: 9, color: text3, fontFamily: "'JetBrains Mono'",
+                  letterSpacing: 0.5, borderBottom: `1px solid ${border}`, textTransform: "uppercase",
+                  backgroundColor: isDark ? "#0E1018" : "#FAFBFC",
+                }}>
+                  <span>Dokument</span>
+                  <span>Typ</span>
+                  <span>SGE</span>
+                  <span>Level</span>
+                  <span>Status</span>
+                  <span>Flags</span>
+                </div>
+
+                {activeDept.docs.map((doc, i) => (
+                  <div key={i} className="doc-row" style={{
+                    display: "grid", gridTemplateColumns: "1fr 80px 70px 70px 70px 1fr",
+                    padding: "14px 20px", alignItems: "center",
+                    borderBottom: `1px solid ${isDark ? "#151825" : "#F5F5F5"}`,
+                    cursor: "pointer", transition: "background 0.15s ease",
+                    animation: `fadeUp 0.3s ease ${i * 0.05}s both`,
+                  }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <HeatCell score={doc.sge} size={24} isDark={isDark}/>
+                      <span style={{ fontSize: 13, fontWeight: 500, color: text1 }}>{doc.name}</span>
+                    </div>
+                    <span style={{ fontSize: 11, color: text2 }}>{doc.type}</span>
+                    <span style={{
+                      fontSize: 13, fontWeight: 700, fontFamily: "'JetBrains Mono'",
+                      color: getSGEColor(doc.sge),
+                    }}>{doc.sge.toFixed(2)}</span>
+                    <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                      <span style={{
+                        width: 7, height: 7, borderRadius: "50%",
+                        backgroundColor: doc.level === "HIGH" ? "#EF4444" : doc.level === "MEDIUM" ? "#F59E0B" : "#22C55E",
+                      }}/>
+                      <span style={{ fontSize: 10, fontFamily: "'JetBrains Mono'", color: text2 }}>{doc.level}</span>
+                    </div>
+                    <div>
+                      {doc.sealed ? (
+                        <span style={{
+                          fontSize: 9, color: gold, fontFamily: "'JetBrains Mono'",
+                          fontWeight: 500, display: "flex", alignItems: "center", gap: 3,
+                        }}>
+                          <svg width="9" height="9" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M8 0l2.2 5.5L16 6.1l-4 3.7 1 5.7L8 12.8l-5 2.7 1-5.7-4-3.7 5.8-.6z"/>
+                          </svg>
+                          SEALED
+                        </span>
+                      ) : (
+                        <span style={{ fontSize: 9, color: "#F97316", fontFamily: "'JetBrains Mono'", fontWeight: 500 }}>DRAFT</span>
+                      )}
+                    </div>
+                    <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+                      {doc.flags.map((f, fi) => (
+                        <span key={fi} style={{
+                          fontSize: 8, fontFamily: "'JetBrains Mono'", fontWeight: 500,
+                          color: FLAG_COLORS[f] || text3, letterSpacing: 0.3,
+                          padding: "1px 5px", borderRadius: 3,
+                          backgroundColor: (FLAG_COLORS[f] || text3) + "12",
+                        }}>{f}</span>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* === BOTTOM BAR === */}
+      <div style={{
+        padding: "8px 20px", borderTop: `1px solid ${border}`,
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        backgroundColor: isDark ? "#0D0F17" : "#FAFBFC",
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <svg width="12" height="12" viewBox="0 0 16 16" fill={gold} opacity="0.5">
+            <path d="M8 1L2 4v4.5c0 3.5 2.6 6.8 6 7.5 3.4-.7 6-4 6-7.5V4L8 1z"/>
+          </svg>
+          <span style={{ fontSize: 9, color: text3, fontFamily: "'JetBrains Mono'" }}>
+            WINDI Governance Layer · Controller Mode · Ed25519 · SGE v1.0
+          </span>
+        </div>
+        <span style={{ fontSize: 9, color: text3, fontFamily: "'JetBrains Mono'" }}>
+          AI processes. Human decides. WINDI guarantees.
+        </span>
+      </div>
+    </div>
+  );
+}
+
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(React.createElement(WINDIWarRoom));
+</script>
+</body>
+</html>

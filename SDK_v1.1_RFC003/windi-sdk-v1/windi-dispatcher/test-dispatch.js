@@ -74,7 +74,7 @@ const BRIEFING_URL = process.env.WINDI_BRIEFING_URL || "http://127.0.0.1:8090/ap
     })();
 
     const info = await transporter.sendMail({
-      from: '"WINDI Test" <test@windi.dev>',
+      from: '"WINDI Test" <noreply@a4desk.de>',
       to: "council@test.dev",
       subject: buildSubject(),
       text: "WINDI Dispatcher test — pipeline OK",

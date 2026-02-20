@@ -1,0 +1,48 @@
+{
+  "org_id": "windi-governance",
+  "org_name": "WINDI Publishing House",
+  "theme_name": "Noir Governance",
+  "colors": {
+    "primary": "D4AF37",
+    "secondary": "16213E",
+    "background": "1A1A2E",
+    "background_alt": "0F0F1A",
+    "text": "F5F5F5",
+    "text_muted": "8A8A8A",
+    "accent": "D4AF37",
+    "success": "2ECC71",
+    "warning": "F39C12",
+    "danger": "E74C3C"
+  },
+  "fonts": {
+    "title": "Georgia",
+    "body": "Calibri",
+    "mono": "JetBrains Mono"
+  },
+  "logo": {
+    "path": "assets/windi_logo.png",
+    "width": 1.5,
+    "height": 1.5
+  },
+  "footer": {
+    "left_text": "WINDI Publishing House",
+    "right_text": "GOVERNANCE REPORT",
+    "classification": "CONFIDENTIAL",
+    "show_page_number": true,
+    "show_windi_seal": true,
+    "show_timestamp": true
+  },
+  "governance": {
+    "level": "MAXIMUM",
+    "forensic_receipt": true,
+    "zk_declaration": true,
+    "sentinel_status": true,
+    "compliance_frameworks": ["EU AI Act", "BSI C5", "ISO 27001", "GDPR"]
+  },
+  "watermark": {
+    "enabled": false,
+    "text": "",
+    "opacity": 0
+  },
+  "identity_license": "authorized"
+}

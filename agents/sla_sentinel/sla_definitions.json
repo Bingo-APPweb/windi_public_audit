@@ -1,0 +1,48 @@
+{
+  "version": "1.0.0",
+  "sla_rules": [
+    {
+      "severity": "R5",
+      "label": "Catastrophic",
+      "max_acknowledge_minutes": 5,
+      "max_resolve_minutes": 15,
+      "max_close_minutes": 30
+    },
+    {
+      "severity": "R4",
+      "label": "Critical",
+      "max_acknowledge_minutes": 15,
+      "max_resolve_minutes": 30,
+      "max_close_minutes": 60
+    },
+    {
+      "severity": "R3",
+      "label": "High",
+      "max_acknowledge_minutes": 30,
+      "max_resolve_minutes": 120,
+      "max_close_minutes": 240
+    },
+    {
+      "severity": "R2",
+      "label": "Medium",
+      "max_acknowledge_minutes": 60,
+      "max_resolve_minutes": 480,
+      "max_close_minutes": 1440
+    },
+    {
+      "severity": "R1",
+      "label": "Low",
+      "max_acknowledge_minutes": 240,
+      "max_resolve_minutes": 1440,
+      "max_close_minutes": 4320
+    },
+    {
+      "severity": "R0",
+      "label": "Minimal",
+      "max_acknowledge_minutes": 1440,
+      "max_resolve_minutes": 4320,
+      "max_close_minutes": 10080
+    }
+  ],
+  "note": "SLA values are initial defaults — Human Dragon may adjust per institutional context"
+}

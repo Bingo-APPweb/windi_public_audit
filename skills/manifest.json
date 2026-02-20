@@ -1,0 +1,105 @@
+{
+  "version": "2.0.0",
+  "constitutional_routing": true,
+  "last_updated": "2026-02-11T22:00:00Z",
+  "skills": [
+    {
+      "name": "sovereign-handshake",
+      "path": "core/sovereign-handshake/SKILL.md",
+      "priority": 100,
+      "category": "authentication",
+      "triggers": [
+        "authenticate",
+        "authorize",
+        "permission",
+        "access",
+        "credentials",
+        "login",
+        "identity"
+      ],
+      "description": "Handshake Protocol, identity validation, mandatary verification"
+    },
+    {
+      "name": "product-identity",
+      "path": "core/product-identity/SKILL.md",
+      "priority": 90,
+      "category": "institutional",
+      "triggers": [
+        "price",
+        "pricing",
+        "cost",
+        "werbung",
+        "ads",
+        "advertisement",
+        "dados",
+        "privacy",
+        "dsgvo",
+        "gdpr",
+        "what is windi",
+        "was ist windi",
+        "o que é windi"
+      ],
+      "description": "WINDI product information, business model, privacy, pricing"
+    },
+    {
+      "name": "tutorial-mode",
+      "path": "core/tutorial-mode/SKILL.md",
+      "priority": 70,
+      "category": "education",
+      "triggers": [
+        "how to",
+        "how do i",
+        "how can i",
+        "wie kann ich",
+        "wie nutze ich",
+        "wie mache ich",
+        "wie verwende ich",
+        "como usar",
+        "como faço",
+        "como posso",
+        "como utilizar"
+      ],
+      "description": "Tutorial requests, step-by-step guides, how-to questions",
+      "skip_sge": true
+    },
+    {
+      "name": "sge-analysis",
+      "path": "core/sge-analysis/SKILL.md",
+      "priority": 60,
+      "category": "analysis",
+      "triggers": [
+        "analyze",
+        "analysiere",
+        "verificar documento",
+        "review contract",
+        "check document",
+        "validate",
+        "prüfen",
+        "analisar"
+      ],
+      "description": "Semantic Governance Engine document analysis"
+    },
+    {
+      "name": "casual-chat",
+      "path": "core/casual-chat/SKILL.md",
+      "priority": 10,
+      "category": "conversation",
+      "triggers": [],
+      "description": "General conversation, unclassified interactions"
+    },
+    {
+      "name": "api-gateway-deployment",
+      "path": "core/api-gateway-deployment/SKILL.md",
+      "priority": 50,
+      "category": "technical",
+      "triggers": [
+        "deploy",
+        "deployment",
+        "api gateway",
+        "configure",
+        "setup"
+      ],
+      "description": "API deployment and configuration guidance"
+    }
+  ]
+}

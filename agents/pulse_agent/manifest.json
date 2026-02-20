@@ -1,0 +1,31 @@
+{
+  "agent_id": "pulse-agent",
+  "agent_name": "Pulse Agent",
+  "version": "1.0.0",
+  "shelf": "detection",
+  "role": "Análise preditiva de padrões em Virtue Receipts e Governance Reports para detectar arritmias institucionais antes de se tornarem violações",
+  "principle": "AI processes. Human decides. WINDI guarantees.",
+  "human_mediated": true,
+  "auto_apply": false,
+  "invariants_observed": ["I1", "I2", "I3", "I4", "I9"],
+  "dependencies": ["maestro", "report-agent", "integrity-watchdog"],
+  "inputs": [
+    "governance_cycle_reports",
+    "virtue_receipts",
+    "integrity_check_reports",
+    "isp_audit_logs"
+  ],
+  "outputs": [
+    "pulse_analysis.json",
+    "pattern_alerts",
+    "trend_reports",
+    "rhythm_baselines"
+  ],
+  "schedule": {
+    "periodic": "daily",
+    "on_event": "after_report_generation",
+    "on_demand": true
+  },
+  "created": "2026-02-08T00:00:00Z",
+  "created_by": "Three Dragons Protocol — Witness concept, Guardian approved"
+}

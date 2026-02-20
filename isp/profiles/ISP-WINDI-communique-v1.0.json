@@ -1,0 +1,103 @@
+{
+  "profile_id": "ISP-WINDI-communique-v1.0",
+  "profile_type": "official",
+  "institutional_domain": {
+    "sector": "corporate",
+    "sub_sector": "governance_announcement",
+    "formality_level": 4,
+    "jurisdiction": "EU"
+  },
+  "language_mode": {
+    "primary": "de",
+    "secondary": ["en", "pt"],
+    "terminology_set": "windi_governance"
+  },
+  "tone_and_register": {
+    "voice": "institutional_active",
+    "person": "first_plural",
+    "hedging_level": "minimal",
+    "prohibited_patterns": [
+      "I think",
+      "maybe",
+      "kind of",
+      "basically",
+      "game-changer",
+      "disruptive",
+      "synergy"
+    ],
+    "required_patterns": [
+      "WINDI Publishing House",
+      "AI processes. Human decides. WINDI guarantees."
+    ]
+  },
+  "structural_bias": {
+    "heading_style": "numbered",
+    "paragraph_length": "medium",
+    "citation_style": "none",
+    "required_sections": [
+      "Headline",
+      "Body",
+      "Evidence Package",
+      "Verification"
+    ],
+    "forbidden_sections": [
+      "Disclaimer",
+      "Legal Notice"
+    ],
+    "max_page_count": 3
+  },
+  "governance": {
+    "sge_level": "R2",
+    "human_authority": "required",
+    "ledger_registration": true,
+    "vault_broadcast": true,
+    "evidence_package": true,
+    "immutability_after_publish": true,
+    "audit_trail": "forensic",
+    "compliance_tags": ["WINDI-GOV-v1", "DSGVO"]
+  },
+  "template_binding": {
+    "base_template": "communique_noir.html",
+    "css_override": "communique_noir_override.css",
+    "logo_path": "windi_dragon_seal.svg",
+    "color_palette": {
+      "primary": "#C9A84C",
+      "secondary": "#0D0D0D",
+      "accent": "#8B7535"
+    },
+    "fonts": {
+      "heading": "Bricolage Grotesque",
+      "body": "Outfit",
+      "mono": "JetBrains Mono"
+    }
+  },
+  "prompt_resolution": {
+    "trigger_keywords": [
+      "communiqué", "communique", "Mitteilung", "comunicado",
+      "announcement", "Ankündigung", "launch", "WINDI announcement"
+    ],
+    "trigger_patterns": [
+      "(?i)windi.*communiqu",
+      "(?i)official.*announcement",
+      "(?i)offizielle.*mitteilung",
+      "(?i)comunicado.*oficial"
+    ],
+    "confidence_threshold": 0.8,
+    "fallback_profile": "ISP-GENERIC-business-v1.0",
+    "exclusion_keywords": ["informal", "draft", "internal only", "blog"]
+  },
+  "metadata": {
+    "created_at": "2026-02-19T18:00:00Z",
+    "created_by": "Three Dragons Protocol (Guardian + Architect + Witness)",
+    "last_modified": "2026-02-19T18:00:00Z",
+    "status": "active",
+    "description": "Official WINDI Publishing House Communiqué profile. Governs institutional announcements with Evidence Package, Forensic Ledger integration, and Vault broadcast. Trilingual (DE/EN/PT) with Noir/Klar theme support.",
+    "changelog": [
+      {
+        "date": "2026-02-19",
+        "change": "Initial creation — ISP Prompt Schema v1.0",
+        "author": "Guardian Dragon"
+      }
+    ]
+  }
+}

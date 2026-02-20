@@ -1,0 +1,82 @@
+# WINDI Maestro — SLA Policies
+# Response and decision deadlines by severity
+# "AI processes. Human decides. WINDI guarantees."
+
+version: "1.0.0"
+updated: "2026-02-08"
+
+sla:
+  R5:
+    name: "Critical"
+    first_response_minutes: 15
+    decision_minutes: 60
+    escalation_on_breach: true
+    breach_notification: ["Institutional Owner", "Human Dragon"]
+    color: "red"
+
+  R4:
+    name: "High"
+    first_response_minutes: 60
+    decision_minutes: 240
+    escalation_on_breach: true
+    breach_notification: ["Compliance Lead"]
+    color: "orange"
+
+  R3:
+    name: "Medium"
+    first_response_minutes: 240
+    decision_minutes: 1440
+    escalation_on_breach: true
+    breach_notification: ["Governance Officer"]
+    color: "yellow"
+
+  R2:
+    name: "Low"
+    first_response_minutes: 480
+    decision_minutes: 4320
+    escalation_on_breach: false
+    breach_notification: []
+    color: "blue"
+
+  R1:
+    name: "Info"
+    first_response_minutes: 1440
+    decision_minutes: 10080
+    escalation_on_breach: false
+    breach_notification: []
+    color: "gray"
+
+# Tier-based SLA multipliers (ISP governance tiers)
+tier_multipliers:
+  tier1_government:
+    first_response: 0.5   # 50% of standard (faster)
+    decision: 0.5
+  tier2_regulated:
+    first_response: 0.75
+    decision: 0.75
+  tier3_standard:
+    first_response: 1.0
+    decision: 1.0
+
+# Notification thresholds (percentage of SLA consumed)
+notification_thresholds:
+  - percent: 50
+    action: "reminder"
+    message: "50% of SLA consumed"
+  - percent: 75
+    action: "warning"
+    message: "75% of SLA consumed — action required"
+  - percent: 90
+    action: "urgent"
+    message: "90% of SLA consumed — imminent breach"
+  - percent: 100
+    action: "breach"
+    message: "SLA BREACHED — escalation triggered"
+
+# Working hours (for SLA calculation)
+working_hours:
+  enabled: false  # If true, SLA only counts working hours
+  timezone: "Europe/Berlin"
+  start_hour: 8
+  end_hour: 18
+  working_days: [1, 2, 3, 4, 5]  # Monday-Friday

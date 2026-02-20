@@ -1,0 +1,21 @@
+{
+  "receipt_id": "MAESTRO-20260208-185045-2898c8d7",
+  "agent_id": "windi://agent/core/maestro",
+  "version": "1.2.0",
+  "action": "ROUTE_FINDING",
+  "finding_id": "ISP-alerts_20260208_090401",
+  "details": {
+    "finding_id": "ISP-alerts_20260208_090401",
+    "status": "OPEN",
+    "severity": "R2",
+    "routed_to": "INSTITUTIONAL_CHANNEL",
+    "sla_acknowledge": "2026-02-09T18:50:45.124077+00:00",
+    "sla_resolve": "2026-02-22T18:50:45.124077+00:00",
+    "action_required": "HUMAN_ACKNOWLEDGE",
+    "auto_apply": false
+  },
+  "timestamp": "2026-02-08T18:50:45.125949+00:00",
+  "integrity_hash": "2898c8d73a924289658e4140e553bc4db6a52959ab4d6527fb285b53a19a52df",
+  "invariante_i9": true,
+  "auto_apply": false
+}

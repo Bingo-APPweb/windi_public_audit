@@ -205,6 +205,8 @@ class GovernanceAPIHandler(BaseHTTPRequestHandler):
             elif path == "/api/entity" and "name" in params:
                 self._json(200, dashboard.entity_report(params["name"][0]))
 
+            elif path == "/health":
+                self._json(200, {"status": "ok", "service": "windi-governance", "version": "1.0.0", "protocol": "three-dragons", "i9": "active"})
             elif path == "/api/health":
                 self._json(200, {"status": "ok", "timestamp": datetime.now(timezone.utc).isoformat()})
 
@@ -545,6 +547,7 @@ def main():
     except KeyboardInterrupt:
         print("\n[WINDI-API] Shutdown.")
         server.server_close()
+
 
 
 if __name__ == "__main__":

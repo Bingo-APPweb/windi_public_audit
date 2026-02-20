@@ -1,0 +1,41 @@
+{
+  "component": "governance-hub",
+  "version": "1.0.0",
+  "deployed_utc": "2026-02-08T20:03:16.362319+00:00",
+  "endpoints": {
+    "frontend": [
+      "/governance/hub",
+      "/governance",
+      "/governance/tutorial",
+      "/static/audit_dashboard.html"
+    ],
+    "api": [
+      "/api/hub/state",
+      "/api/hub/collect",
+      "/api/hub/agent/<id>",
+      "/api/hub/module/<name>",
+      "/api/hub/alerts",
+      "/api/hub/events",
+      "/api/hub/decide",
+      "/api/hub/acknowledge",
+      "/api/hub/resolve",
+      "/api/hub/close"
+    ]
+  },
+  "modules": [
+    "constellation_registry",
+    "live_queue",
+    "forensic_health",
+    "predictive_signals",
+    "reports_seals",
+    "state_viewer"
+  ],
+  "agents_connected": 8,
+  "three_pillars": {
+    "CREATION": "isp-manager",
+    "VERIFICATION": "sentinela",
+    "RESOLUTION": "maestro"
+  },
+  "principle": "AI processes. Human decides. WINDI guarantees.",
+  "seal": "74e107e68c94defddf5bf2b25eb155acd5f91ce70e6255ded2e5310a7b6d32b7"
+}

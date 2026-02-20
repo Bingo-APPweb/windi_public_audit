@@ -1,0 +1,392 @@
+#!/usr/bin/env python3
+"""
+WINDI Communiqué Engine — Publisher Module
+============================================
+Handles the PUBLISH workflow:
+1. Canonical content normalization (NFC)
+2. SHA-256 content hash
+3. PDF generation with QR + Dynamic Header Seal
+4. Forensic Ledger registration
+5. Receipt generation
+
+Principle: "AI processes. Human decides. WINDI guarantees."
+"""
+
+import hashlib
+import json
+import os
+import unicodedata
+import urllib.request
+import urllib.error
+from datetime import datetime, timezone
+
+# Configuration
+LEDGER_URL = os.environ.get("LEDGER_URL", "http://127.0.0.1:8101")
+EXPORT_URL = os.environ.get("EXPORT_URL", "http://127.0.0.1:8103")
+BASE_DOMAIN = os.environ.get("COMMUNIQUE_DOMAIN", "admin.windia4desk.tech")
+PUBLISHED_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "published")
+
+
+def canonical_content(communique):
+    """
+    Generate canonical content string for hashing.
+    NFC-normalized, deterministic ordering, trimmed.
+    This is the 'semantic DNA' of the communiqué.
+    """
+    parts = []
+    for field in ["id", "title_de", "title_en", "title_pt",
+                  "body_de", "body_en", "body_pt",
+                  "category", "impact_level",
+                  "author_role", "author_name"]:
+        val = communique.get(field, "") or ""
+        val = unicodedata.normalize("NFC", str(val).strip())
+        parts.append(f"{field}:{val}")
+
+    canonical = "\n".join(parts)
+    return canonical
+
+
+def compute_content_hash(communique):
+    """SHA-256 of canonical content."""
+    content = canonical_content(communique)
+    return hashlib.sha256(content.encode("utf-8")).hexdigest()
+
+
+def compute_file_hash(filepath):
+    """SHA-256 of a file's bytes."""
+    h = hashlib.sha256()
+    with open(filepath, "rb") as f:
+        for chunk in iter(lambda: f.read(8192), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def register_in_ledger(communique, content_hash, bundle_hash=None, bundle_size=None):
+    """
+    Register communiqué hash in Forensic Ledger (:8101).
+    Returns receipt data or error.
+    """
+    import uuid
+    short_id = uuid.uuid4().hex[:12]
+    receipt_id = f"VR-COM-{short_id}"
+    title = communique.get("title_en") or communique.get("title_de") or "Untitled"
+    impact = communique.get("impact_level", "MED")
+    gov_map = {"LOW": "LOW", "MED": "MEDIUM", "HIGH": "HIGH", "CRIT": "CRITICAL"}
+
+    payload = {
+        "id": receipt_id,
+        "actor": communique.get("author_name", "communique-engine"),
+        "app": "communique-engine",
+        "doc_name": f"[COM] {title}",
+        "doc_type": "communique",
+        "content_hash": content_hash,
+        "governance_level": gov_map.get(impact, "MEDIUM"),
+        "sge_score": 0.95,
+        "isp_context": f"communique:{communique['id']}",
+        "bytes": bundle_size
+    }
+
+    if bundle_hash:
+        payload["bundle_hash"] = bundle_hash
+
+    try:
+        data = json.dumps(payload).encode("utf-8")
+        req = urllib.request.Request(
+            f"{LEDGER_URL}/api/receipts",
+            data=data,
+            headers={"Content-Type": "application/json"},
+            method="POST"
+        )
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            result = json.loads(resp.read().decode("utf-8"))
+            return {"success": True, "receipt": result}
+    except urllib.error.URLError as e:
+        return {"success": False, "error": f"Ledger unreachable: {e}"}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+def verify_in_ledger(receipt_id):
+    """Verify a communiqué's seal in the Forensic Ledger."""
+    try:
+        req = urllib.request.Request(
+            f"{LEDGER_URL}/api/receipts/{receipt_id}",
+            method="GET"
+        )
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            result = json.loads(resp.read().decode("utf-8"))
+            return {"success": True, "receipt": result}
+    except urllib.error.URLError as e:
+        return {"success": False, "error": f"Ledger unreachable: {e}"}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+def generate_pdf(communique, content_hash, output_path):
+    """
+    Generate PDF with Dynamic Header Seal and QR code.
+    Uses reportlab + qrcode (same as Export Engine).
+    """
+    try:
+        from reportlab.lib.pagesizes import A4
+        from reportlab.lib.units import mm
+        from reportlab.lib.colors import HexColor
+        from reportlab.pdfgen import canvas
+        import qrcode
+        from io import BytesIO
+    except ImportError:
+        return {"success": False, "error": "reportlab or qrcode not installed"}
+
+    com_id = communique["id"]
+    verify_url = f"https://{BASE_DOMAIN}/communique/{com_id}/verify"
+
+    # Generate QR code
+    qr = qrcode.QRCode(version=1, box_size=6, border=2)
+    qr.add_data(verify_url)
+    qr.make(fit=True)
+    qr_img = qr.make_image(fill_color="black", back_color="white")
+    qr_buffer = BytesIO()
+    qr_img.save(qr_buffer, format="PNG")
+    qr_buffer.seek(0)
+
+    # Save QR temporarily
+    qr_path = output_path.replace(".pdf", "_qr.png")
+    with open(qr_path, "wb") as f:
+        f.write(qr_buffer.read())
+
+    # Create PDF
+    c = canvas.Canvas(output_path, pagesize=A4)
+    width, height = A4
+
+    # === DYNAMIC HEADER SEAL ===
+    # Gold bar at top
+    c.setFillColor(HexColor("#C9A84C"))
+    c.rect(0, height - 18 * mm, width, 18 * mm, fill=1, stroke=0)
+
+    # WINDI branding
+    c.setFillColor(HexColor("#1A1A1A"))
+    c.setFont("Helvetica-Bold", 14)
+    c.drawString(15 * mm, height - 12 * mm, "WINDI COMMUNIQUÉ")
+
+    # Seal badge
+    c.setFillColor(HexColor("#1A1A1A"))
+    c.setFont("Helvetica", 8)
+    c.drawRightString(width - 15 * mm, height - 10 * mm, f"🔐 {com_id}")
+    c.drawRightString(width - 15 * mm, height - 14 * mm, f"VERIFIED · {content_hash[:16]}…")
+
+    # === CATEGORY + IMPACT BAR ===
+    cat = communique.get("category", "UPDATE")
+    impact = communique.get("impact_level", "MED")
+    impact_colors = {"LOW": "#27AE60", "MED": "#F39C12", "HIGH": "#E74C3C", "CRIT": "#8E44AD"}
+
+    y = height - 28 * mm
+    c.setFillColor(HexColor("#2C2C2C"))
+    c.rect(15 * mm, y - 2 * mm, width - 30 * mm, 8 * mm, fill=1, stroke=0)
+    c.setFillColor(HexColor("#FFFFFF"))
+    c.setFont("Helvetica-Bold", 9)
+    c.drawString(20 * mm, y, f"Kategorie: {cat}")
+
+    c.setFillColor(HexColor(impact_colors.get(impact, "#F39C12")))
+    c.drawString(80 * mm, y, f"● Auswirkung: {impact}")
+
+    pub_date = communique.get("published_at", "")
+    if pub_date:
+        c.setFillColor(HexColor("#CCCCCC"))
+        c.setFont("Helvetica", 8)
+        c.drawRightString(width - 20 * mm, y, f"Veröffentlicht: {pub_date[:10]}")
+
+    # === TITLE ===
+    y -= 18 * mm
+    c.setFillColor(HexColor("#1A1A1A"))
+    c.setFont("Helvetica-Bold", 18)
+
+    title = communique.get("title_de") or communique.get("title_en") or "Untitled"
+    # Simple word wrap for title
+    words = title.split()
+    lines = []
+    current = ""
+    for w in words:
+        test = f"{current} {w}".strip()
+        if c.stringWidth(test, "Helvetica-Bold", 18) < width - 30 * mm:
+            current = test
+        else:
+            lines.append(current)
+            current = w
+    if current:
+        lines.append(current)
+
+    for line in lines:
+        c.drawString(15 * mm, y, line)
+        y -= 8 * mm
+
+    # === BODY CONTENT ===
+    y -= 5 * mm
+    c.setFont("Helvetica", 10)
+    c.setFillColor(HexColor("#333333"))
+
+    body = communique.get("body_de") or communique.get("body_en") or ""
+    # Simple text rendering with word wrap
+    max_width = width - 30 * mm
+    for paragraph in body.split("\n"):
+        paragraph = paragraph.strip()
+        if not paragraph:
+            y -= 4 * mm
+            continue
+
+        words = paragraph.split()
+        current = ""
+        for w in words:
+            test = f"{current} {w}".strip()
+            if c.stringWidth(test, "Helvetica", 10) < max_width:
+                current = test
+            else:
+                c.drawString(15 * mm, y, current)
+                y -= 4.5 * mm
+                current = w
+                if y < 60 * mm:
+                    c.showPage()
+                    y = height - 20 * mm
+                    c.setFont("Helvetica", 10)
+                    c.setFillColor(HexColor("#333333"))
+        if current:
+            c.drawString(15 * mm, y, current)
+            y -= 4.5 * mm
+
+    # === FOOTER SEAL ===
+    footer_y = 40 * mm
+
+    # Separator line
+    c.setStrokeColor(HexColor("#C9A84C"))
+    c.setLineWidth(1)
+    c.line(15 * mm, footer_y + 15 * mm, width - 15 * mm, footer_y + 15 * mm)
+
+    # QR Code
+    try:
+        c.drawImage(qr_path, 15 * mm, footer_y - 18 * mm, 28 * mm, 28 * mm)
+    except Exception:
+        pass
+
+    # Signature block
+    sig_x = 50 * mm
+    c.setFont("Helvetica-Bold", 9)
+    c.setFillColor(HexColor("#1A1A1A"))
+    c.drawString(sig_x, footer_y + 8 * mm, communique.get("author_name", ""))
+    c.setFont("Helvetica", 8)
+    c.setFillColor(HexColor("#666666"))
+    c.drawString(sig_x, footer_y + 3 * mm, communique.get("author_role", ""))
+    c.drawString(sig_x, footer_y - 2 * mm, f"Receipt: {communique.get('receipt_id', 'pending')}")
+    c.drawString(sig_x, footer_y - 7 * mm, f"Hash: {content_hash[:32]}…")
+
+    # Verify URL
+    c.setFont("Helvetica", 7)
+    c.setFillColor(HexColor("#999999"))
+    c.drawString(sig_x, footer_y - 13 * mm, f"Prüfen: {verify_url}")
+
+    # Bottom bar
+    c.setFillColor(HexColor("#1A1A1A"))
+    c.rect(0, 0, width, 8 * mm, fill=1, stroke=0)
+    c.setFillColor(HexColor("#C9A84C"))
+    c.setFont("Helvetica", 7)
+    c.drawCentredString(width / 2, 2.5 * mm,
+                        "WINDI Publishing House · Kempten, Bavaria · \"AI processes. Human decides. WINDI guarantees.\"")
+
+    c.save()
+
+    # Cleanup temp QR
+    try:
+        os.remove(qr_path)
+    except Exception:
+        pass
+
+    return {"success": True, "path": output_path}
+
+
+def generate_verification_json(communique, content_hash, bundle_hash=None):
+    """Generate verification.json for the published directory."""
+    return {
+        "communique_id": communique["id"],
+        "content_hash": content_hash,
+        "bundle_hash": bundle_hash,
+        "receipt_id": communique.get("receipt_id"),
+        "ledger_id": communique.get("ledger_id"),
+        "category": communique.get("category"),
+        "impact_level": communique.get("impact_level"),
+        "author": communique.get("author_name"),
+        "published_at": communique.get("published_at"),
+        "verify_url": f"https://{BASE_DOMAIN}/communique/{communique['id']}/verify",
+        "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    }
+
+
+def publish_communique(communique, actor):
+    """
+    Full publish workflow:
+    1. Compute content hash (NFC canonical)
+    2. Generate PDF with QR + seal
+    3. Register in Forensic Ledger
+    4. Save verification.json
+    5. Return sealed result
+    """
+    com_id = communique["id"]
+
+    # 1. Content hash
+    content_hash = compute_content_hash(communique)
+
+    # 2. Prepare published directory
+    pub_dir = os.path.join(PUBLISHED_DIR, com_id)
+    os.makedirs(pub_dir, exist_ok=True)
+
+    # 3. Generate PDF
+    pdf_path = os.path.join(pub_dir, "communique.pdf")
+    pdf_result = generate_pdf(communique, content_hash, pdf_path)
+
+    bundle_hash = None
+    bundle_size = None
+    if pdf_result.get("success") and os.path.exists(pdf_path):
+        bundle_hash = compute_file_hash(pdf_path)
+        bundle_size = os.path.getsize(pdf_path)
+
+    # 4. Register in Ledger
+    ledger_result = register_in_ledger(communique, content_hash, bundle_hash, bundle_size)
+
+    receipt_id = None
+    ledger_id = None
+    if ledger_result.get("success"):
+        receipt = ledger_result.get("receipt", {})
+        receipt_id = receipt.get("receipt_id") or receipt.get("id")
+        ledger_id = receipt.get("ledger_id") or receipt.get("id")
+
+    # 5. Save verification.json
+    communique["receipt_id"] = receipt_id
+    communique["ledger_id"] = ledger_id
+    verification = generate_verification_json(communique, content_hash, bundle_hash)
+    verification_path = os.path.join(pub_dir, "verification.json")
+    with open(verification_path, "w", encoding="utf-8") as f:
+        json.dump(verification, f, indent=2, ensure_ascii=False)
+
+    # 6. Save manifest.json
+    manifest = {
+        "communique_id": com_id,
+        "files": ["communique.pdf", "verification.json"],
+        "content_hash": content_hash,
+        "bundle_hash": bundle_hash,
+        "bundle_size": bundle_size,
+        "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    }
+    manifest_path = os.path.join(pub_dir, "manifest.json")
+    with open(manifest_path, "w", encoding="utf-8") as f:
+        json.dump(manifest, f, indent=2, ensure_ascii=False)
+
+    return {
+        "success": True,
+        "communique_id": com_id,
+        "content_hash": content_hash,
+        "bundle_hash": bundle_hash,
+        "bundle_size": bundle_size,
+        "receipt_id": receipt_id,
+        "ledger_id": ledger_id,
+        "ledger_registered": ledger_result.get("success", False),
+        "pdf_generated": pdf_result.get("success", False),
+        "pdf_path": pdf_path if pdf_result.get("success") else None,
+        "published_dir": pub_dir
+    }

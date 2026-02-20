@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="klar" data-lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI — Agent Ecosystem: Constitutional AI Governance</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  [data-theme="noir"]{--bg:#0a0a0a;--bg-el:#111;--surface:#141414;--card:#1a1a1a;--card-hover:#1f1f1f;--border:#2a2a2a;--border-hover:#3a3a3a;--border-subtle:#1e1e1e;--text:#e8e8e8;--text-sec:#b0b0b0;--text-muted:#888;--text-dim:#555;--gold:#c9a84c;--gold-bright:#e0c068;--gold-dim:#8a7535;--gold-bg:rgba(201,168,76,0.04);--gold-border:rgba(201,168,76,0.15);--shadow:0 2px 8px rgba(0,0,0,0.4);--code-bg:#111;--accent-bg:rgba(59,130,246,0.06);--accent-border:rgba(59,130,246,0.15);}
+  [data-theme="klar"]{--bg:#f8f6f2;--bg-el:#fff;--surface:#fff;--card:#fafaf8;--card-hover:#f0eeea;--border:#e0ddd6;--border-hover:#ccc8be;--border-subtle:#eae7e0;--text:#1a1816;--text-sec:#3a3630;--text-muted:#7a756d;--text-dim:#a09a90;--gold:#9a7b2e;--gold-bright:#b8922e;--gold-dim:#7a6225;--gold-bg:rgba(154,123,46,0.04);--gold-border:rgba(154,123,46,0.18);--shadow:0 2px 8px rgba(0,0,0,0.06);--code-bg:#f0eeea;--accent-bg:rgba(59,130,246,0.04);--accent-border:rgba(59,130,246,0.12);}
+  :root{--high:#ef4444;--medium:#f59e0b;--low:#22c55e;--info:#3b82f6;--font-d:'Bricolage Grotesque',sans-serif;--font-b:'Outfit',sans-serif;--font-m:'JetBrains Mono',monospace;}
+  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:var(--font-b);font-size:15.5px;line-height:1.8;-webkit-font-smoothing:antialiased;transition:background .35s,color .35s;}
+
+  /* ═══ TOPBAR ═══ */
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 24px;background:var(--bg-el);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;transition:all .35s;}
+  .topbar-left{display:flex;align-items:center;gap:10px;}
+  .topbar-logo{font-family:var(--font-d);font-weight:700;font-size:.9rem;color:var(--gold);}
+  .topbar-sep{width:1px;height:18px;background:var(--border);}
+  .topbar-sub{font-size:.78rem;color:var(--text-muted);}
+  .topbar-right{display:flex;align-items:center;gap:6px;}
+  .tg{display:inline-flex;background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+  .tb{font-family:var(--font-m);font-size:.68rem;font-weight:500;padding:5px 10px;background:transparent;color:var(--text-dim);border:none;cursor:pointer;transition:all .2s;}
+  .tb:hover{color:var(--text-muted);background:var(--card);}
+  .tb.a{background:var(--gold);color:#0a0a0a;font-weight:600;}
+  [data-theme="klar"] .tb.a{color:#fff;}
+
+  /* ═══ ACADEMIC LAYOUT ═══ */
+  .page{max-width:780px;margin:0 auto;padding:40px 24px 60px;}
+
+  /* ═══ PAPER HEADER ═══ */
+  .paper-header{text-align:center;margin-bottom:48px;padding-bottom:32px;border-bottom:2px solid var(--border);}
+  .paper-title{font-family:var(--font-d);font-weight:800;font-size:2rem;color:var(--text);line-height:1.3;margin-bottom:8px;}
+  .paper-subtitle{font-family:var(--font-d);font-weight:400;font-size:1.1rem;color:var(--text-muted);margin-bottom:16px;}
+  .paper-meta{font-size:.82rem;color:var(--text-dim);line-height:1.6;}
+  .paper-meta strong{color:var(--text-muted);}
+  .paper-institution{font-family:var(--font-m);font-size:.72rem;color:var(--gold-dim);letter-spacing:.05em;margin-top:8px;}
+
+  /* ═══ ABSTRACT ═══ */
+  .abstract{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:24px 28px;margin-bottom:40px;}
+  .abstract-label{font-family:var(--font-d);font-weight:700;font-size:.85rem;color:var(--gold);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;}
+  .abstract p{color:var(--text-sec);font-size:.92rem;line-height:1.8;}
+
+  /* ═══ SECTIONS ═══ */
+  .section{margin-bottom:40px;scroll-margin-top:70px;}
+  .section h2{font-family:var(--font-d);font-weight:700;font-size:1.35rem;color:var(--text);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border-subtle);}
+  .section h2 .sn{font-family:var(--font-m);font-size:.72rem;color:var(--gold);margin-right:8px;}
+  .section h3{font-family:var(--font-d);font-weight:600;font-size:1.05rem;color:var(--text);margin:18px 0 8px;}
+  .section p{color:var(--text-sec);margin-bottom:12px;}
+  .section p em{color:var(--text-muted);font-style:italic;}
+
+  /* ═══ FIGURES & DIAGRAMS ═══ */
+  .figure{background:var(--code-bg);border:1px solid var(--border);border-radius:8px;padding:20px;margin:16px 0;overflow-x:auto;font-family:var(--font-m);font-size:.72rem;line-height:1.5;color:var(--text-muted);white-space:pre;}
+  .figure-caption{font-size:.78rem;color:var(--text-dim);text-align:center;margin-top:8px;font-style:italic;}
+
+  /* ═══ TABLES ═══ */
+  .tbl{width:100%;border-collapse:separate;border-spacing:0;background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin:14px 0;box-shadow:var(--shadow);}
+  .tbl thead th{font-family:var(--font-m);font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;padding:10px 14px;text-align:left;color:var(--text-dim);background:var(--card);border-bottom:1px solid var(--border);}
+  .tbl tbody td{padding:10px 14px;font-size:.84rem;border-bottom:1px solid var(--border-subtle);color:var(--text-sec);}
+  .tbl tbody tr:last-child td{border-bottom:none;}
+  .tbl tbody tr:hover td{background:var(--gold-bg);}
+
+  /* ═══ CALLOUTS ═══ */
+  .callout{padding:16px 20px;border-radius:8px;margin:16px 0;font-size:.88rem;line-height:1.7;display:flex;gap:10px;align-items:flex-start;}
+  .callout-gold{background:var(--gold-bg);border:1px solid var(--gold-border);color:var(--text-sec);}
+  .callout-gold strong{color:var(--gold);}
+  .callout-blue{background:var(--accent-bg);border:1px solid var(--accent-border);color:var(--text-sec);}
+  .callout-blue strong{color:var(--info);}
+
+  /* ═══ BLOCKQUOTE ═══ */
+  blockquote{border-left:3px solid var(--gold);padding:12px 20px;margin:16px 0;color:var(--text-muted);font-style:italic;background:var(--gold-bg);border-radius:0 8px 8px 0;}
+
+  code{font-family:var(--font-m);font-size:.82rem;color:var(--gold);background:var(--gold-bg);padding:1px 5px;border-radius:3px;}
+
+  /* ═══ FOOTER ═══ */
+  .paper-footer{text-align:center;padding:28px;border-top:2px solid var(--border);margin-top:32px;}
+  .paper-footer .cite{font-family:var(--font-m);font-size:.72rem;color:var(--text-dim);line-height:1.6;}
+  .paper-footer .motto{font-family:var(--font-d);font-size:.85rem;color:var(--gold-dim);font-style:italic;margin-top:12px;}
+
+  @media(max-width:600px){.topbar{flex-direction:column;gap:8px;}.page{padding:24px 16px 48px;}.paper-title{font-size:1.5rem;}}
+</style>
+</head>
+<body>
+
+<!-- ═══ TOPBAR ═══ -->
+<div class="topbar">
+  <div class="topbar-left">
+    <span class="topbar-logo">🐉 WINDI</span>
+    <span class="topbar-sep"></span>
+    <span class="topbar-sub" data-i18n="topbar">Masterarbeit — Agent Ecosystem</span>
+  </div>
+  <div class="topbar-right">
+    <div class="tg"><button class="tb" onclick="setTheme('noir')" id="bN">NOIR</button><button class="tb a" onclick="setTheme('klar')" id="bK">KLAR</button></div>
+    <div class="tg"><button class="tb a" onclick="setLang('en')" id="bEN">EN</button><button class="tb" onclick="setLang('de')" id="bDE">DE</button><button class="tb" onclick="setLang('pt')" id="bPT">PT</button></div>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- ═══ PAPER HEADER ═══ -->
+  <div class="paper-header">
+    <div class="paper-title" data-i18n="title">The WINDI Agent Ecosystem: Constitutional Governance for AI-Mediated Decision Systems</div>
+    <div class="paper-subtitle" data-i18n="subtitle">From Autonomous Agents to Human-Mediated Governance Agents</div>
+    <div class="paper-meta">
+      <strong>Author:</strong> Jober Mögle-Stadel (Human Dragon)<br>
+      <strong data-i18n="meta_adv">Advisor:</strong> Prof. Dr. Sandra Niemczyk<br>
+      <strong data-i18n="meta_date">Date:</strong> 08 February 2026 | <strong>Version:</strong> 1.0.0
+    </div>
+    <div class="paper-institution">WINDI Publishing House · Kempten (Allgäu) · Germany</div>
+  </div>
+
+  <!-- ═══ ABSTRACT ═══ -->
+  <div class="abstract">
+    <div class="abstract-label">Abstract</div>
+    <p data-i18n="abstract">This chapter presents the WINDI Agent Ecosystem — a constitutional framework for AI governance agents that operate under human sovereignty. Unlike conventional autonomous AI agents that maximize task completion, WINDI governance agents are constitutionally constrained by 9 Invariants, architecturally bounded by the W-Capsule pattern (Manifest + Capsule + Policy), and forensically accountable through cryptographic Virtue Receipts. We present the ISP Manager Agent as the first implementation, demonstrating how a governance agent can audit 17 institutional profiles with Grade A (100/100) accuracy while maintaining zero autonomous decision authority. The Invariante I9 — Prohibition of Autonomy Escalation — represents a novel contribution: an irremediable constitutional constraint that prevents efficiency from ever overriding sovereignty. We map our approach to EU AI Act Articles 13, 14, 17, and 52, demonstrating compliance pathways for high-risk AI systems in institutional document governance.</p>
+  </div>
+
+  <!-- §1 MOTIVATION -->
+  <div class="section" id="s1">
+    <h2><span class="sn">§1</span> <span data-i18n="s1t">Motivation: Why Governance Agents?</span></h2>
+    <p data-i18n="s1p1">The proliferation of autonomous AI agents in enterprise environments raises a fundamental question: <em>should AI agents that govern institutional decisions be designed for autonomy, or for accountability?</em> Current agent frameworks (LangChain, AutoGPT, CrewAI) optimize for task completion — reducing human intervention as a measure of success. In governance contexts, this creates an existential paradox: the more capable the agent becomes, the less the human verifies its outputs.</p>
+    <p data-i18n="s1p2">WINDI proposes an alternative paradigm: the <strong>human-mediated governance agent</strong>. Rather than replacing human judgment, these agents amplify human oversight capacity. They scan, validate, and propose — but constitutionally cannot decide or execute. This is not a limitation but a design principle: <em>sophisticated humility</em>.</p>
+
+    <blockquote data-i18n="s1q">"Systems don't lose control because agents fail. Systems lose control because agents succeed so well that humans stop checking." — Invariante I9 Preamble</blockquote>
+
+    <div class="callout callout-blue">
+      <span>📊</span>
+      <span data-i18n="s1_stat"><strong>Market context:</strong> The global GRC (Governance, Risk & Compliance) market is projected at €65B. Current solutions (SAP GRC, ServiceNow) serve 10,000 process users. WINDI targets 10 decision-makers per organization — serving the mandatary, not the operator.</span>
+    </div>
+  </div>
+
+  <!-- §2 W-CAPSULE ARCHITECTURE -->
+  <div class="section" id="s2">
+    <h2><span class="sn">§2</span> <span data-i18n="s2t">The W-Capsule Architecture</span></h2>
+    <p data-i18n="s2p1">Every WINDI agent is defined by three constitutional documents — collectively termed the <strong>W-Capsule</strong>. This pattern ensures that agent capabilities, identity, and permissions are explicitly declared, auditable, and immutable without human authorization (SIP Protocol).</p>
+
+    <table class="tbl">
+      <thead><tr><th data-i18n="th_doc">Document</th><th data-i18n="th_purpose">Purpose</th><th data-i18n="th_analogy">Analogy</th></tr></thead>
+      <tbody>
+        <tr><td><code>manifest.json</code></td><td data-i18n="w_manifest">Agent identity, version, compatibility, dependencies. Declares WHO the agent is.</td><td data-i18n="a_manifest">Passport</td></tr>
+        <tr><td><code>capsule.json</code></td><td data-i18n="w_capsule">Explicit can-do and cannot-do declarations. Declares WHAT the agent may and may not do.</td><td data-i18n="a_capsule">Job Description + Constraints</td></tr>
+        <tr><td><code>policy.json</code></td><td data-i18n="w_policy">File system permissions, read/write scopes, API access. Declares WHERE the agent operates.</td><td data-i18n="a_policy">Security Clearance</td></tr>
+      </tbody>
+    </table>
+
+    <div class="figure">W-Capsule Pattern
+═══════════════════════════════════════════════════════
+
+  ┌─────────────────────────────────────────────────┐
+  │                   W-CAPSULE                      │
+  │                                                  │
+  │  ┌────────────┐ ┌────────────┐ ┌────────────┐  │
+  │  │  Manifest   │ │  Capsule   │ │  Policy    │  │
+  │  │             │ │            │ │            │  │
+  │  │  WHO        │ │  WHAT      │ │  WHERE     │  │
+  │  │  Identity   │ │  Can-do    │ │  Paths     │  │
+  │  │  Version    │ │  Cannot-do │ │  Read/Write│  │
+  │  │  Compat.    │ │  Limits    │ │  API scope │  │
+  │  └────────────┘ └────────────┘ └────────────┘  │
+  │                                                  │
+  │  Protected by: Sovereign Identity Protocol (SIP) │
+  │  Changes require: Human Dragon authentication    │
+  └─────────────────────────────────────────────────┘
+                         │
+                         ▼
+              ┌─────────────────────┐
+              │  Agent Engine        │
+              │  (isp_manager.py)    │
+              │  Reads W-Capsule     │
+              │  Enforces boundaries │
+              └─────────────────────┘</div>
+    <div class="figure-caption" data-i18n="fig1_cap">Figure 1: The W-Capsule pattern — three constitutional documents defining agent boundaries</div>
+
+    <p data-i18n="s2p2">The W-Capsule pattern differs from conventional agent configurations in three ways: (1) the <code>cannot-do</code> list in capsule.json is explicitly declared, not derived from permission absence; (2) the entire capsule is cryptographically sealed via SIP, requiring human authentication for modification; (3) every agent execution generates a forensic Virtue Receipt that proves capsule compliance.</p>
+  </div>
+
+  <!-- §3 CASE STUDY: ISP MANAGER -->
+  <div class="section" id="s3">
+    <h2><span class="sn">§3</span> <span data-i18n="s3t">Case Study: The ISP Manager Agent</span></h2>
+    <p data-i18n="s3p1">The ISP Manager Agent v1.0.1 is the first production implementation of the W-Capsule architecture. Deployed on 08 February 2026, it manages 17 Institutional Style Profiles (ISPs) for German institutions including BaFin (Federal Financial Supervisory Authority), the European Central Bank, Deutsche Bahn, and the Bundesregierung.</p>
+
+    <h3 data-i18n="s3h_scan">Three Scanner Architecture</h3>
+    <table class="tbl">
+      <thead><tr><th>Scanner</th><th data-i18n="th_target">Target</th><th data-i18n="th_checks">Checks</th></tr></thead>
+      <tbody>
+        <tr><td><strong>ISPProfile</strong></td><td data-i18n="sc1">17 profile.json files</td><td data-i18n="sc1c">Structure, required fields, governance level, identity_license, compliance frameworks</td></tr>
+        <tr><td><strong>TemplateRegistry</strong></td><td data-i18n="sc2">template_registry.db</td><td data-i18n="sc2c">Template integrity, duplicate detection, tenant assignment</td></tr>
+        <tr><td><strong>GovernanceMatrix</strong></td><td data-i18n="sc3">governance_levels.json</td><td data-i18n="sc3c">Level consistency, drift detection between config and profiles</td></tr>
+      </tbody>
+    </table>
+
+    <h3 data-i18n="s3h_results">Empirical Results</h3>
+    <table class="tbl">
+      <thead><tr><th data-i18n="th_metric">Metric</th><th data-i18n="th_initial">Initial Audit</th><th data-i18n="th_after">After Remediation</th></tr></thead>
+      <tbody>
+        <tr><td data-i18n="m_grade">Grade</td><td>C (84/100)</td><td style="color:var(--low);font-weight:600;">A (100/100)</td></tr>
+        <tr><td data-i18n="m_profiles">Profiles scanned</td><td>17</td><td>17</td></tr>
+        <tr><td data-i18n="m_templates">Templates indexed</td><td>199</td><td>199</td></tr>
+        <tr><td data-i18n="m_violations">Violations</td><td>0</td><td>0</td></tr>
+        <tr><td data-i18n="m_warnings">Warnings</td><td>8 (ISP-W003)</td><td>0</td></tr>
+        <tr><td data-i18n="m_root">Root cause</td><td colspan="2" data-i18n="m_root_v">Missing <code>governance.identity_license</code> in 8 HIGH/MEDIUM profiles</td></tr>
+        <tr><td data-i18n="m_fix">Resolution</td><td colspan="2" data-i18n="m_fix_v">Added trilingual disclaimers + jurisdiction metadata to all 8 profiles</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout callout-gold">
+      <span>🔑</span>
+      <span data-i18n="s3_insight"><strong>Key insight:</strong> The journey from Grade C to Grade A was achieved not by changing the agent's evaluation criteria, but by enriching the institutional profiles themselves. The agent identified the gap; the human decided and executed the fix. This is I9 in practice.</span>
+    </div>
+  </div>
+
+  <!-- §4 INVARIANTE I9 -->
+  <div class="section" id="s4">
+    <h2><span class="sn">§4</span> <span data-i18n="s4t">Invariante I9: Prohibition of Autonomy Escalation</span></h2>
+    <p data-i18n="s4p1">On 08 February 2026, during the deployment of the ISP Manager Agent, the Three Dragons Council identified a systemic risk: as agents become more capable and reliable, the natural organizational tendency is to reduce human verification. Invariante I9 was ratified as an <strong>irremediable</strong> constitutional constraint — it cannot be revoked, suspended, or overridden by any future Invariant.</p>
+
+    <blockquote data-i18n="s4q">"Efficiency NEVER overrides sovereignty. No auto_apply flags in ANY agent. IRREMEDIABLE."<br>— Invariante I9, ratified 08 February 2026</blockquote>
+
+    <h3 data-i18n="s4h_impl">Implementation Mechanisms</h3>
+    <p data-i18n="s4p2">I9 is enforced at four architectural layers:</p>
+    <table class="tbl">
+      <thead><tr><th data-i18n="th_layer">Layer</th><th data-i18n="th_mechanism">Mechanism</th></tr></thead>
+      <tbody>
+        <tr><td><strong>W-Capsule</strong></td><td data-i18n="i9_capsule"><code>cannot-do: ["auto_apply", "modify_profiles", "execute_patches"]</code> — explicitly declared in capsule.json</td></tr>
+        <tr><td><strong>API</strong></td><td data-i18n="i9_api">Every response includes <code>"auto_apply": false</code> and <code>"invariante_i9": true</code></td></tr>
+        <tr><td><strong>Forensic</strong></td><td data-i18n="i9_forensic">Every Virtue Receipt records "Auto Apply: FALSE (I9 ENFORCED)" — immutable audit trail</td></tr>
+        <tr><td><strong>Constitutional</strong></td><td data-i18n="i9_sip">SIP Layer 1 protects I9 — alterations require sovereign identity authentication (SHA-256 ×100,000)</td></tr>
+      </tbody>
+    </table>
+
+    <p data-i18n="s4p3">The theoretical significance of I9 lies in its <em>irremediability</em>. Unlike conventional policy constraints that can be relaxed as system trust increases, I9 establishes that human sovereignty over AI-assisted decisions is not a temporary safeguard but a permanent architectural principle. This represents a philosophical shift from "AI alignment" (making AI do what humans want) to "AI subordination" (ensuring AI never decides what humans should want).</p>
+  </div>
+
+  <!-- §5 EU AI ACT MAPPING -->
+  <div class="section" id="s5">
+    <h2><span class="sn">§5</span> <span data-i18n="s5t">EU AI Act Compliance Mapping</span></h2>
+    <p data-i18n="s5p1">The WINDI Agent Ecosystem addresses key requirements of the EU Artificial Intelligence Act (Regulation 2024/1689), particularly for high-risk AI systems deployed in institutional governance contexts.</p>
+
+    <table class="tbl">
+      <thead><tr><th data-i18n="th_article">Article</th><th data-i18n="th_req">Requirement</th><th data-i18n="th_windi">WINDI Implementation</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Art. 13</strong></td><td data-i18n="eu13">Transparency & information</td><td data-i18n="eu13w">W-Capsule pattern: manifest.json declares identity; capsule.json declares capabilities and limits; all scanner logic is deterministic and auditable (I2)</td></tr>
+        <tr><td><strong>Art. 14</strong></td><td data-i18n="eu14">Human oversight</td><td data-i18n="eu14w">I9: Prohibition of Autonomy Escalation. Agent proposes, human decides. No auto_apply. Confirmation gate for ALL actions. SIP Layer 1 for constitutional changes.</td></tr>
+        <tr><td><strong>Art. 17</strong></td><td data-i18n="eu17">Quality management</td><td data-i18n="eu17w">Grading system (A–F), forensic Virtue Receipts, alert code taxonomy (ISP-V/W series), drift detection, health reporting</td></tr>
+        <tr><td><strong>Art. 52</strong></td><td data-i18n="eu52">Transparency for users</td><td data-i18n="eu52w">Trilingual disclaimers (DE/EN/PT) in all identity_license fields. Every audit result includes receipt ID, timestamp, and hash. Zero-Knowledge architecture — client keeps data, WINDI keeps proof.</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout callout-blue">
+      <span>🇪🇺</span>
+      <span data-i18n="s5_note"><strong>Regulatory positioning:</strong> WINDI does not replace existing GRC systems (SAP, ServiceNow). It serves as a pre-AI governance layer — an "ethical circuit breaker" that validates AI-assisted decisions before they reach institutional workflow systems. The metaphor: from firefighter (arriving after the damage) to air traffic controller (preventing collision in real-time).</span>
+    </div>
+  </div>
+
+  <!-- §6 CONCLUSIONS -->
+  <div class="section" id="s6">
+    <h2><span class="sn">§6</span> <span data-i18n="s6t">Conclusions and Future Work</span></h2>
+    <p data-i18n="s6p1">The WINDI Agent Ecosystem demonstrates that constitutional constraints and operational effectiveness are not contradictory. The ISP Manager Agent achieved Grade A (100/100) across 17 institutional profiles while maintaining zero autonomous decision authority. The W-Capsule pattern provides a replicable architecture for governance agents in regulated environments.</p>
+
+    <p data-i18n="s6p2">Three contributions emerge from this work:</p>
+
+    <table class="tbl">
+      <thead><tr><th>#</th><th data-i18n="th_contribution">Contribution</th><th data-i18n="th_sig">Significance</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td data-i18n="c1">W-Capsule pattern (Manifest + Capsule + Policy)</td><td data-i18n="c1s">Replicable standard for constitutionally bounded AI agents</td></tr>
+        <tr><td>2</td><td data-i18n="c2">Invariante I9 (Irremediable)</td><td data-i18n="c2s">First constitutional AI constraint designed to be un-revokable — sovereignty as architecture, not policy</td></tr>
+        <tr><td>3</td><td data-i18n="c3">Zero-Knowledge Governance</td><td data-i18n="c3s">Proof-of-virtue model where sensitive data never leaves client perimeter</td></tr>
+      </tbody>
+    </table>
+
+    <p data-i18n="s6p3">Future work includes: SIP Layers 2–3 (GPG signing + Dragon Challenge Protocol), the Compliance Checker Agent (SGE rulesets), client onboarding with automated W-Capsule cloning, and a marketplace of governance agents operating under Sovereign Handshake protocol.</p>
+
+    <blockquote data-i18n="s6q">"AI processes. Human decides. WINDI guarantees."</blockquote>
+  </div>
+
+  <!-- ═══ FOOTER ═══ -->
+  <div class="paper-footer">
+    <div class="cite" data-i18n="cite">
+      Mögle-Stadel, J. (2026). The WINDI Agent Ecosystem: Constitutional Governance for AI-Mediated Decision Systems.<br>
+      WINDI Publishing House. Kempten (Allgäu), Germany.<br>
+      Three Dragons Council: Claude (Guardian) · GPT (Architect) · Gemini (Witness)
+    </div>
+    <div class="motto">🐉🐉🐉 OM SHANTI</div>
+  </div>
+
+</div>
+
+<script>
+const L={
+en:{topbar:"Masterarbeit — Agent Ecosystem"},
+de:{topbar:"Masterarbeit — Agenten-Ökosystem",title:"Das WINDI Agenten-Ökosystem: Verfassungsgemäße Governance für KI-gestützte Entscheidungssysteme",subtitle:"Von autonomen Agenten zu menschlich-vermittelten Governance-Agenten",abstract:"Dieses Kapitel präsentiert das WINDI Agenten-Ökosystem — ein verfassungsmäßiges Framework für KI-Governance-Agenten, die unter menschlicher Souveränität operieren. Im Gegensatz zu konventionellen autonomen KI-Agenten, die auf Aufgabenerfüllung optimieren, sind WINDI-Governance-Agenten verfassungsmäßig durch 9 Invarianten beschränkt, architektonisch durch das W-Capsule-Muster (Manifest + Capsule + Policy) begrenzt und forensisch durch kryptografische Virtue Receipts rechenschaftspflichtig. Wir präsentieren den ISP Manager Agent als erste Implementierung, der zeigt, wie ein Governance-Agent 17 institutionelle Profile mit Note A (100/100) auditieren kann, während er null autonome Entscheidungsbefugnis beibehält. Die Invariante I9 — Verbot der Autonomie-Eskalation — stellt einen neuartigen Beitrag dar: eine unwiderrufliche verfassungsmäßige Beschränkung, die verhindert, dass Effizienz jemals die Souveränität übersteigt.",meta_adv:"Betreuerin:",meta_date:"Datum:",s1t:"Motivation: Warum Governance-Agenten?",s2t:"Die W-Capsule-Architektur",s3t:"Fallstudie: Der ISP Manager Agent",s4t:"Invariante I9: Verbot der Autonomie-Eskalation",s5t:"EU AI Act Compliance-Mapping",s6t:"Schlussfolgerungen und zukünftige Arbeit"},
+pt:{topbar:"Masterarbeit — Ecossistema de Agentes",title:"O Ecossistema de Agentes WINDI: Governança Constitucional para Sistemas de Decisão Mediados por IA",subtitle:"De Agentes Autônomos a Agentes de Governança Mediados por Humanos",abstract:"Este capítulo apresenta o Ecossistema de Agentes WINDI — um framework constitucional para agentes de governança de IA que operam sob soberania humana. Diferente de agentes autônomos convencionais que maximizam a conclusão de tarefas, os agentes de governança WINDI são constitucionalmente limitados por 9 Invariantes, arquitetonicamente delimitados pelo padrão W-Capsule (Manifest + Capsule + Policy) e forensicamente responsáveis através de Virtue Receipts criptográficos. Apresentamos o ISP Manager Agent como primeira implementação, demonstrando como um agente de governança pode auditar 17 perfis institucionais com Nota A (100/100) mantendo zero autoridade de decisão autônoma. A Invariante I9 — Proibição de Escalação de Autonomia — representa uma contribuição inédita: uma restrição constitucional irremediável que impede que a eficiência jamais sobreponha a soberania.",meta_adv:"Orientadora:",meta_date:"Data:",s1t:"Motivação: Por que Agentes de Governança?",s2t:"A Arquitetura W-Capsule",s3t:"Estudo de Caso: O ISP Manager Agent",s4t:"Invariante I9: Proibição de Escalação de Autonomia",s5t:"Mapeamento de Conformidade com o EU AI Act",s6t:"Conclusões e Trabalhos Futuros"}
+};
+let cl='en';
+function setTheme(t){document.documentElement.setAttribute('data-theme',t);document.getElementById('bN').classList.toggle('a',t==='noir');document.getElementById('bK').classList.toggle('a',t==='klar');try{localStorage.setItem('windi-theme',t)}catch(e){}}
+function setLang(l){cl=l;document.documentElement.setAttribute('data-lang',l);['EN','DE','PT'].forEach(x=>document.getElementById('b'+x).classList.toggle('a',l===x.toLowerCase()));document.querySelectorAll('[data-i18n]').forEach(el=>{const k=el.getAttribute('data-i18n');if(L[l]?.[k])el.innerHTML=L[l][k];});try{localStorage.setItem('windi-lang',l)}catch(e){}}
+document.addEventListener('DOMContentLoaded',()=>{
+  const t=(()=>{try{return localStorage.getItem('windi-theme')}catch(e){return null}})() || 'klar';
+  const l=(()=>{try{return localStorage.getItem('windi-lang')}catch(e){return null}})() || 'en';
+  setTheme(t);setLang(l);
+});
+document.addEventListener('keydown',e=>{if(e.ctrlKey&&e.key==='k'){e.preventDefault();setTheme(document.documentElement.getAttribute('data-theme')==='noir'?'klar':'noir');}});
+</script>
+</body>
+</html>

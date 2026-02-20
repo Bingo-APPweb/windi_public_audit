@@ -1,0 +1,13 @@
+{
+  "receipt_id": "SKR-20260210200805-sge_deep",
+  "skill_id": "sge_deep_scanner",
+  "skill_name": "SGE Deep Scanner",
+  "consumed_at": "2026-02-10T20:08:05.379516+00:00",
+  "consumed_by": "api-user",
+  "domain": "guardian",
+  "input_summary": "API scan request",
+  "output_hash": "3f19428a66df029d00c750325dfb2419f8898003cb1cf17b597827ca880482fc",
+  "i9_status": "CLEAN",
+  "execution_ms": 5,
+  "constitutional_gate_passed": true
+}

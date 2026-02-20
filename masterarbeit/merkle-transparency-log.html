@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Merkle Transparency Log — WINDI Documentation</title>
+  <meta name="description" content="WINDI Merkle Transparency Log — CT-style cryptographic transparency for combined_root_hash anchors">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="windi-internal.css">
+  <style>
+    /* ═══ DOC-SPECIFIC STYLES ═══ */
+    .spec-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: var(--font-mono, 'JetBrains Mono', monospace);
+      font-size: 0.6rem; letter-spacing: 1.5px; text-transform: uppercase;
+      padding: 4px 12px; border-radius: 3px;
+      background: rgba(184,134,11,0.12); color: #b8860b;
+      border: 1px solid rgba(184,134,11,0.25);
+    }
+    .spec-badge.phase { background: rgba(46,139,87,0.12); color: #2e8b57; border-color: rgba(46,139,87,0.25); }
+
+    .threat-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+    .threat-table th {
+      background: rgba(184,134,11,0.08); color: #b8860b;
+      font-family: var(--font-mono, 'JetBrains Mono', monospace);
+      font-size: 0.72rem; letter-spacing: 0.6px; text-transform: uppercase;
+      padding: 10px 16px; text-align: left;
+      border-bottom: 2px solid rgba(184,134,11,0.2);
+    }
+    .threat-table td {
+      padding: 10px 16px; font-size: 0.85rem; line-height: 1.6;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .threat-table tr:hover td { background: rgba(255,255,255,0.02); }
+    [data-theme="light"] .threat-table th { background: rgba(184,134,11,0.06); }
+    [data-theme="light"] .threat-table td { border-bottom-color: rgba(0,0,0,0.06); }
+    [data-theme="light"] .threat-table tr:hover td { background: rgba(0,0,0,0.02); }
+
+    .api-endpoint {
+      background: rgba(184,134,11,0.06); border-left: 3px solid #b8860b;
+      padding: 16px 20px; margin: 16px 0; border-radius: 0 6px 6px 0;
+    }
+    .api-method {
+      font-family: var(--font-mono, 'JetBrains Mono', monospace);
+      font-size: 0.78rem; font-weight: 600; color: #b8860b;
+      margin-bottom: 8px;
+    }
+    .api-desc { font-size: 0.85rem; color: var(--text-secondary, #999); margin-bottom: 12px; }
+
+    pre.code-block {
+      background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 6px; padding: 16px 20px; overflow-x: auto;
+      font-family: var(--font-mono, 'JetBrains Mono', monospace);
+      font-size: 0.8rem; line-height: 1.7; color: #e0e0e0;
+    }
+    [data-theme="light"] pre.code-block {
+      background: #f4f2ed; border-color: rgba(0,0,0,0.08); color: #333;
+    }
+
+    .security-card {
+      border: 1px solid rgba(184,134,11,0.2); border-radius: 8px;
+      padding: 20px 24px; margin: 16px 0;
+      background: rgba(184,134,11,0.03);
+    }
+    .security-card h4 {
+      font-family: var(--font-display, 'Bricolage Grotesque', sans-serif);
+      font-size: 0.9rem; color: #b8860b; margin-bottom: 12px;
+    }
+
+    .toc-section { margin: 24px 0; }
+    .toc-link {
+      display: block; padding: 6px 0; font-size: 0.85rem;
+      color: var(--text-secondary, #999); text-decoration: none;
+      transition: color 0.2s;
+    }
+    .toc-link:hover { color: #b8860b; }
+    .toc-link.indent { padding-left: 20px; font-size: 0.8rem; }
+  </style>
+</head>
+<body>
+
+<!-- ═══ TOP BAR ═══ -->
+<header class="top-bar" style="position:fixed;top:0;left:0;right:0;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:8px 24px;background:rgba(10,10,12,0.95);border-bottom:1px solid rgba(255,255,255,0.06);backdrop-filter:blur(12px);">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <span style="font-family:'Bricolage Grotesque',sans-serif;font-size:0.95rem;font-weight:700;color:#b8860b;">WINDI</span>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:0.55rem;letter-spacing:2px;color:#666;text-transform:uppercase;">Documentation</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:16px;">
+    <div class="lang-switcher" style="display:flex;gap:4px;">
+      <button onclick="switchLang('de')" class="lang-btn active" data-lang="de" style="padding:3px 10px;font-size:0.65rem;border-radius:3px;border:1px solid rgba(184,134,11,0.3);background:rgba(184,134,11,0.15);color:#b8860b;cursor:pointer;font-family:'JetBrains Mono',monospace;">DE</button>
+      <button onclick="switchLang('en')" class="lang-btn" data-lang="en" style="padding:3px 10px;font-size:0.65rem;border-radius:3px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:#666;cursor:pointer;font-family:'JetBrains Mono',monospace;">EN</button>
+      <button onclick="switchLang('pt')" class="lang-btn" data-lang="pt" style="padding:3px 10px;font-size:0.65rem;border-radius:3px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:#666;cursor:pointer;font-family:'JetBrains Mono',monospace;">PT</button>
+    </div>
+    <button onclick="toggleTheme()" id="themeToggle" style="padding:4px 12px;font-size:0.65rem;border-radius:3px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:#999;cursor:pointer;font-family:'JetBrains Mono',monospace;">
+      <i class="fas fa-moon"></i> Dunkel
+    </button>
+    <a href="index.html" style="font-size:0.75rem;color:#666;text-decoration:none;">← Zurück</a>
+  </div>
+</header>
+
+<!-- ═══ LEFT SIDEBAR ═══ -->
+<aside class="sidebar sidebar-left" style="position:fixed;top:46px;left:0;bottom:0;width:240px;overflow-y:auto;padding:20px 0;background:linear-gradient(180deg,rgba(18,18,22,1) 0%,rgba(10,10,12,1) 100%);border-right:1px solid rgba(255,255,255,0.06);z-index:900;">
+  <div style="padding:6px 24px;font-family:'JetBrains Mono',monospace;font-size:0.5rem;letter-spacing:2.5px;text-transform:uppercase;color:#666;border-bottom:1px solid rgba(255,255,255,0.06);margin:0 16px 12px;">
+    Federation Docs
+  </div>
+  <div class="toc-section" style="padding:0 16px;">
+    <a href="#purpose" class="toc-link">Zweck / Purpose</a>
+    <a href="#terminology" class="toc-link">Terminologie</a>
+    <a href="#threat-model" class="toc-link">Bedrohungsmodell</a>
+    <a href="#threat-inscope" class="toc-link indent">In Scope</a>
+    <a href="#threat-outofscope" class="toc-link indent">Out of Scope</a>
+    <a href="#security" class="toc-link">Sicherheitseigenschaften</a>
+    <a href="#data-model" class="toc-link">Datenmodell</a>
+    <a href="#api" class="toc-link">API Endpoints</a>
+    <a href="#api-append" class="toc-link indent">POST /anchors</a>
+    <a href="#api-sth" class="toc-link indent">GET /sth</a>
+    <a href="#api-lookup" class="toc-link indent">GET /lookup</a>
+    <a href="#api-inclusion" class="toc-link indent">GET /proof/inclusion</a>
+    <a href="#api-consistency" class="toc-link indent">GET /proof/consistency</a>
+    <a href="#api-verify" class="toc-link indent">GET /verify/:hash</a>
+    <a href="#api-pubkey" class="toc-link indent">GET /pubkey</a>
+    <a href="#verification" class="toc-link">Verifikationsalgorithmen</a>
+    <a href="#sth-lifecycle" class="toc-link">STH Lifecycle</a>
+    <a href="#operations" class="toc-link">Betriebsempfehlungen</a>
+  </div>
+
+  <div style="padding:6px 24px;font-family:'JetBrains Mono',monospace;font-size:0.5rem;letter-spacing:2.5px;text-transform:uppercase;color:#b8860b;border-bottom:1px solid rgba(255,255,255,0.06);margin:20px 16px 12px 16px;">
+    Verwandte Docs
+  </div>
+  <div style="padding:0 16px;">
+    <a href="wcaf-verify-evidence.html" class="toc-link" style="color:#b8860b;">🔗 wcaf verify-evidence</a>
+    <a href="index.html" class="toc-link">← Hauptindex</a>
+  </div>
+</aside>
+
+<!-- ═══ MAIN CONTENT ═══ -->
+<main style="margin-left:240px;margin-top:46px;padding:40px 60px 80px;max-width:900px;">
+
+  <!-- BREADCRUMB -->
+  <div style="font-size:0.75rem;color:#666;margin-bottom:24px;">
+    <a href="index.html" style="color:#666;text-decoration:none;">WINDI System</a>
+    <span style="margin:0 8px;">›</span>
+    <span style="color:#999;" data-de="Föderation" data-en="Federation" data-pt="Federação">Föderation</span>
+    <span style="margin:0 8px;">›</span>
+    <span style="color:#e0e0e0;">Merkle Transparency Log</span>
+  </div>
+
+  <!-- META BADGES -->
+  <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
+    <span class="spec-badge"><i class="fas fa-shield-alt"></i> CT-STYLE RFC 6962</span>
+    <span class="spec-badge phase"><i class="fas fa-code-branch"></i> PHASE 3B</span>
+    <span class="spec-badge"><i class="fas fa-lock"></i> APPEND-ONLY</span>
+  </div>
+
+  <!-- TITLE -->
+  <h1 style="font-family:'Bricolage Grotesque',sans-serif;font-size:2rem;font-weight:700;color:var(--text-primary,#e8e4dc);letter-spacing:-0.02em;margin-bottom:8px;">
+    WINDI Merkle Transparency Log
+  </h1>
+  <p style="font-family:'Outfit',sans-serif;font-size:1.05rem;color:var(--text-secondary,#999);line-height:1.7;margin-bottom:40px;">
+    <span data-de="Öffentliche, append-only, kryptografische Transparenz für" data-en="Public, append-only, cryptographic transparency for" data-pt="Transparência criptográfica pública, append-only para">Öffentliche, append-only, kryptografische Transparenz für</span>
+    <code style="font-family:'JetBrains Mono',monospace;font-size:0.9rem;color:#b8860b;">combined_root_hash</code>
+    <span data-de="Anker von WINDI-Knoten." data-en="anchors emitted by WINDI nodes." data-pt="âncoras emitidas por nós WINDI.">Anker von WINDI-Knoten.</span>
+  </p>
+
+  <div style="height:2px;background:linear-gradient(90deg,#b8860b,transparent);margin-bottom:40px;"></div>
+
+  <!-- ═══ PURPOSE ═══ -->
+  <section id="purpose">
+    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:1.3rem;font-weight:600;color:#b8860b;margin-bottom:16px;">
+      <span data-de="Zweck" data-en="Purpose" data-pt="Propósito">Zweck</span>
+    </h2>
+    <p style="font-family:'Outfit',sans-serif;font-size:0.9rem;line-height:1.8;color:var(--text-secondary,#bbb);margin-bottom:16px;">
+      <span data-de="Der WINDI Merkle Transparency Log bietet öffentliche, append-only, kryptografische Transparenz für combined_root_hash-Anker, die von WINDI-Knoten und/oder dem Hub emittiert werden." data-en="The WINDI Merkle Transparency Log provides public, append-only, cryptographic transparency for combined_root_hash anchors emitted by WINDI nodes and/or the Hub." data-pt="O WINDI Merkle Transparency Log fornece transparência criptográfica pública, append-only, para âncoras combined_root_hash emitidas por nós WINDI e/ou o Hub.">Der WINDI Merkle Transparency Log bietet öffentliche, append-only, kryptografische Transparenz für <code style="font-family:'JetBrains Mono',monospace;color:#b8860b;">combined_root_hash</code>-Anker, die von WINDI-Knoten und/oder dem Hub emittiert werden.</span>
+    </p>
+    <div style="background:rgba(184,134,11,0.06);border-left:3px solid #b8860b;padding:16px 20px;border-radius:0 6px 6px 0;margin:20px 0;">
+      <p style="font-size:0.85rem;line-height:1.7;color:var(--text-secondary,#bbb);margin:0;">
+        <span data-de="Ermöglicht jedem Dritten die Verifizierung, dass:" data-en="Enables any third party to verify that:" data-pt="Permite que terceiros verifiquem que:">Ermöglicht jedem Dritten die Verifizierung, dass:</span>
+      </p>
+      <ul style="margin:8px 0 0 20px;font-size:0.85rem;line-height:2;color:var(--text-secondary,#bbb);">
+        <li><span data-de="ein bestimmter combined_root_hash veröffentlicht wurde" data-en="a specific combined_root_hash was published" data-pt="um combined_root_hash específico foi publicado">ein bestimmter <code style="font-family:'JetBrains Mono',monospace;color:#b8860b;">combined_root_hash</code> veröffentlicht wurde</span></li>
+        <li><span data-de="zu oder vor einem bestimmten Zeitpunkt" data-en="at or before a specific time" data-pt="em ou antes de um momento específico">zu oder vor einem bestimmten Zeitpunkt</span></li>
+        <li><span data-de="in einem append-only Log (mit Konsistenzbeweisen)" data-en="in an append-only log (with consistency proofs)" data-pt="em um log append-only (com provas de consistência)">in einem append-only Log (mit Konsistenzbeweisen)</span></li>
+        <li><span data-de="mit kompakten Verifikationsbeweisen (Inclusion Proofs)" data-en="with compact verification proofs (inclusion proofs)" data-pt="com provas de verificação compactas (inclusion proofs)">mit kompakten Verifikationsbeweisen (Inclusion Proofs)</span></li>
+      </ul>
+    </div>
+    <p style="font-size:0.82rem;line-height:1.7;color:var(--text-tertiary,#777);margin-top:16px;">
+      <span data-de="Dieses Design folgt CT-Prinzipien (RFC 6962 Familie): Leaf-Hashing mit Präfix 0x00, Node-Hashing mit Präfix 0x01, periodische Signed Tree Heads (STH) signiert vom Log-Betreiber." data-en="This design follows CT-style principles (RFC 6962 family): leaf hashing uses prefix 0x00, node hashing uses prefix 0x01, periodic Signed Tree Heads (STH) signed by the log operator." data-pt="Este design segue princípios CT-style (família RFC 6962): hashing de folha com prefixo 0x00, hashing de nó com prefixo 0x01, Signed Tree Heads (STH) periódicos assinados pelo operador do log.">Dieses Design folgt CT-Prinzipien (RFC 6962 Familie): Leaf-Hashing mit Präfix <code>0x00</code>, Node-Hashing mit Präfix <code>0x01</code>, periodische Signed Tree Heads (STH) signiert vom Log-Betreiber.</span>
+    </p>
+  </section>
+
+  <div style="height:1px;background:rgba(255,255,255,0.06);margin:40px 0;"></div>
+
+  <!-- ═══ TERMINOLOGY ═══ -->
+  <section id="terminology">
+    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:1.3rem;font-weight:600;color:#b8860b;margin-bottom:20px;">
+      <span data-de="Terminologie" data-en="Terminology" data-pt="Terminologia">Terminologie</span>
+    </h2>
+    <table class="threat-table">
+      <thead>
+        <tr><th data-de="Begriff" data-en="Term" data-pt="Termo">Begriff</th><th data-de="Definition" data-en="Definition" data-pt="Definição">Definition</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code style="color:#b8860b;">Leaf payload</code></td><td data-de="Kanonisches JSON, das einen Ankereintrag beschreibt (z.B. combined_root_hash, node_id, ts)." data-en="Canonical JSON describing an anchor entry (e.g. combined_root_hash, node_id, ts)." data-pt="JSON canônico descrevendo uma entrada de âncora (ex. combined_root_hash, node_id, ts).">Kanonisches JSON, das einen Ankereintrag beschreibt (z.B. <code>combined_root_hash</code>, <code>node_id</code>, <code>ts</code>).</td></tr>
+        <tr><td><code style="color:#b8860b;">Leaf hash</code></td><td><code>SHA256(0x00 || canonical_json(leaf_payload))</code></td></tr>
+        <tr><td><code style="color:#b8860b;">Node hash</code></td><td><code>SHA256(0x01 || left_hash || right_hash)</code></td></tr>
+        <tr><td><code style="color:#b8860b;">Merkle root</code></td><td data-de="Root-Hash über tree_size Blätter." data-en="Root hash over tree_size leaves." data-pt="Hash raiz sobre tree_size folhas.">Root-Hash über <code>tree_size</code> Blätter.</td></tr>
+        <tr><td><code style="color:#b8860b;">STH</code></td><td data-de="Signed Tree Head — signierte Aussage über (tree_size, timestamp, root_hash) vom Log-Betreiber." data-en="Signed Tree Head — signed statement of (tree_size, timestamp, root_hash) by the log operator." data-pt="Signed Tree Head — declaração assinada de (tree_size, timestamp, root_hash) pelo operador do log.">Signed Tree Head — signierte Aussage über (<code>tree_size</code>, <code>timestamp</code>, <code>root_hash</code>) vom Log-Betreiber.</td></tr>
+        <tr><td><code style="color:#b8860b;">Inclusion proof</code></td><td data-de="Auditpfad, der beweist, dass ein Blatt in einem Baum der Größe tree_size enthalten ist." data-en="Audit path proving a leaf is included in a tree of size tree_size." data-pt="Caminho de auditoria provando que uma folha está incluída em uma árvore de tamanho tree_size.">Auditpfad, der beweist, dass ein Blatt in einem Baum der Größe <code>tree_size</code> enthalten ist.</td></tr>
+        <tr><td><code style="color:#b8860b;">Consistency proof</code></td><td data-de="Beweis, dass ein neuerer Baum eine append-only-Erweiterung eines älteren Baums ist." data-en="Proof that a newer tree is an append-only extension of an older tree." data-pt="Prova de que uma árvore mais recente é uma extensão append-only de uma árvore anterior.">Beweis, dass ein neuerer Baum eine append-only-Erweiterung eines älteren Baums ist.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div style="height:1px;background:rgba(255,255,255,0.06);margin:40px 0;"></div>
+
+  <!-- ═══ THREAT MODEL ═══ -->
+  <section id="threat-model">
+    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:1.3rem;font-weight:600;color:#b8860b;margin-bottom:20px;">
+      <span data-de="Bedrohungsmodell" data-en="Threat Model" data-pt="Modelo de Ameaças">Bedrohungsmodell</span>
+    </h2>
+
+    <div id="threat-inscope" class="security-card">
+      <h4><i class="fas fa-shield-alt" style="margin-right:8px;"></i> <span data-de="Im Geltungsbereich (wovor dieser Log schützt)" data-en="In Scope (what this log protects against)" data-pt="No escopo (contra o que este log protege)">Im Geltungsbereich</span></h4>
+      <table class="threat-table">
+        <tbody>
+          <tr><td style="width:30%;color:#b8860b;font-weight:500;" data-de="Nachträgliche Manipulation" data-en="Post-publication tampering" data-pt="Adulteração pós-publicação">Nachträgliche Manipulation</td><td data-de="Sobald ein Blatt in einem STH enthalten ist, kann ein Angreifer es nicht ändern/entfernen, ohne Beweise oder Konsistenz zu brechen." data-en="Once a leaf is included in an STH, an attacker cannot change/remove it without breaking proofs or consistency." data-pt="Uma vez que uma folha está incluída em um STH, um atacante não pode alterá-la/removê-la sem quebrar provas ou consistência.">Sobald ein Blatt in einem STH enthalten ist, kann ein Angreifer es nicht ändern/entfernen, ohne Beweise oder Konsistenz zu brechen.</td></tr>
+          <tr><td style="color:#b8860b;font-weight:500;" data-de="Rückdatierung" data-en="Backdating" data-pt="Retroatividade">Rückdatierung</td><td data-de="Der Log bietet öffentliche Ordnung und einen signierten STH-Zeitstempel; die Veröffentlichung kann extern auditiert werden." data-en="The log provides public ordering and a signed STH timestamp; publication can be audited externally." data-pt="O log fornece ordenação pública e um timestamp STH assinado; a publicação pode ser auditada externamente.">Der Log bietet öffentliche Ordnung und einen signierten STH-Zeitstempel; die Veröffentlichung kann extern auditiert werden.</td></tr>
+          <tr><td style="color:#b8860b;font-weight:500;" data-de="Stille Änderungen" data-en="Silent edits" data-pt="Edições silenciosas">Stille Änderungen</td><td data-de="Wenn ein System versucht, die Geschichte nach dem Anchoring umzuschreiben, kann der Beweis gegen den öffentlichen Log geprüft werden." data-en="If a system tries to rewrite history after anchoring, the evidence can be checked against the public log." data-pt="Se um sistema tentar reescrever o histórico após ancoragem, a evidência pode ser verificada contra o log público.">Wenn ein System versucht, die Geschichte nach dem Anchoring umzuschreiben, kann der Beweis gegen den öffentlichen Log geprüft werden.</td></tr>
+          <tr><td style="color:#b8860b;font-weight:500;" data-de="Split-View-Angriffe" data-en="Split-view attacks" data-pt="Ataques split-view">Split-View-Angriffe</td><td data-de="Mit STH-Pinning und Konsistenzverifikation können Clients Log-Rollback oder divergente Ansichten erkennen. Nur wenn Monitors/Pinning verwendet werden." data-en="With STH pinning and consistency verification, clients can detect log rollback or divergent views. Only when monitors/pinning are used." data-pt="Com STH pinning e verificação de consistência, clientes podem detectar rollback de log ou visões divergentes. Apenas quando monitors/pinning são usados.">Mit STH-Pinning und Konsistenzverifikation können Clients Log-Rollback oder divergente Ansichten erkennen. <em>Nur wenn Monitors/Pinning verwendet werden.</em></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="threat-outofscope" class="security-card" style="border-color:rgba(255,100,100,0.2);background:rgba(255,100,100,0.03);">
+      <h4 style="color:#cc6666;"><i class="fas fa-exclamation-triangle" style="margin-right:8px;"></i> <span data-de="Außerhalb des Geltungsbereichs (wovor dieser Log NICHT schützt)" data-en="Out of Scope (what this log does NOT protect against)" data-pt="Fora do escopo (contra o que este log NÃO protege)">Außerhalb des Geltungsbereichs</span></h4>
+      <table class="threat-table">
+        <tbody>
+          <tr><td style="width:30%;color:#cc6666;font-weight:500;" data-de="Unehrlicher Betreiber" data-en="Dishonest operator" data-pt="Operador desonesto">Unehrlicher Betreiber</td><td data-de="Wenn der Betreiber einen Anker nie veröffentlicht, kann der Log nicht beweisen, dass er existierte." data-en="If the operator never publishes an anchor, the log cannot prove it existed." data-pt="Se o operador nunca publicar uma âncora, o log não pode provar que ela existiu.">Wenn der Betreiber einen Anker nie veröffentlicht, kann der Log nicht beweisen, dass er existierte.</td></tr>
+          <tr><td style="color:#cc6666;font-weight:500;" data-de="Kompromittierter Signaturschlüssel" data-en="Compromised signing key" data-pt="Chave de assinatura comprometida">Kompromittierter Signaturschlüssel</td><td data-de="Ein kompromittierter Schlüssel kann betrügerische STHs signieren. Gegenmaßnahme: Schlüsselrotation, Keyset-Historie, Multi-Party-Monitoring." data-en="A compromised key can sign fraudulent STHs. Mitigation: key rotation, keyset history, multi-party monitoring." data-pt="Uma chave comprometida pode assinar STHs fraudulentos. Mitigação: rotação de chaves, histórico de keyset, monitoramento multi-party.">Ein kompromittierter Schlüssel kann betrügerische STHs signieren. Gegenmaßnahme: Schlüsselrotation, Keyset-Historie, Multi-Party-Monitoring.</td></tr>
+          <tr><td style="color:#cc6666;font-weight:500;" data-de="Falsche Hash-Generierung" data-en="Incorrect hash generation" data-pt="Geração incorreta de hash">Falsche Hash-Generierung</td><td data-de="Der Log beweist nur die Veröffentlichung des Hash; die Korrektheit wird durch WINDI Bundle-Verifikation (WCAF-Kette, Signaturen) validiert." data-en="The log only proves publication of the hash; correctness is validated by WINDI bundle verification (WCAF chain, signatures)." data-pt="O log só prova a publicação do hash; a correção é validada pela verificação do bundle WINDI (cadeia WCAF, assinaturas).">Der Log beweist nur die Veröffentlichung des Hash; die Korrektheit wird durch WINDI Bundle-Verifikation (WCAF-Kette, Signaturen) validiert.</td></tr>
+          <tr><td style="color:#cc6666;font-weight:500;" data-de="Zeitgenauigkeit" data-en="Time accuracy" data-pt="Precisão temporal">Zeitgenauigkeit</td><td data-de="Der Zeitstempel im STH wird vom Betreiber behauptet. Stärkere Garantien können durch Verankerung der STHs an einem externen Zeitstempelsystem erreicht werden." data-en="Timestamp in STH is asserted by the operator. Stronger guarantees can be achieved by anchoring STHs to an external timestamping system." data-pt="O timestamp no STH é declarado pelo operador. Garantias mais fortes podem ser alcançadas ancorando STHs a um sistema de timestamping externo.">Der Zeitstempel im STH wird vom Betreiber behauptet. Stärkere Garantien durch Verankerung an externem Zeitstempelsystem möglich.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div style="height:1px;background:rgba(255,255,255,0.06);margin:40px 0;"></div>
+
+  <!-- ═══ SECURITY PROPERTIES ═══ -->
+  <section id="security">
+    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:1.3rem;font-weight:600;color:#b8860b;margin-bottom:20px;">
+      <span data-de="Sicherheitseigenschaften" data-en="Security Properties" data-pt="Propriedades de Segurança">Sicherheitseigenschaften</span>
+    </h2>
+
+    <div class="security-card">
+      <h4><i class="fas fa-check-circle" style="margin-right:8px;"></i> <span data-de="Was bewiesen wird" data-en="What is proven" data-pt="O que é provado">Was bewiesen wird</span></h4>
+      <p style="font-size:0.85rem;line-height:1.8;color:var(--text-secondary,#bbb);margin-bottom:12px;">
+        <span data-de="Gegeben: combined_root_hash, leaf_index, STH (tree_size, root_hash, timestamp, signature), Inclusion Proof und öffentlicher Schlüssel des Log-Betreibers — kann ein Verifizierer beweisen:" data-en="Given: combined_root_hash, leaf_index, STH (tree_size, root_hash, timestamp, signature), inclusion proof and log operator public key — a verifier can prove:" data-pt="Dado: combined_root_hash, leaf_index, STH (tree_size, root_hash, timestamp, signature), inclusion proof e chave pública do operador do log — um verificador pode provar:">Gegeben: <code>combined_root_hash</code>, <code>leaf_index</code>, STH, Inclusion Proof und öffentlicher Schlüssel — kann ein Verifizierer beweisen:</span>
+      </p>
+      <ol style="margin-left:20px;font-size:0.85rem;line-height:2;color:var(--text-secondary,#bbb);">
+        <li data-de="Der combined_root_hash entspricht einem Blatt im Merkle-Baum der Größe tree_size." data-en="The combined_root_hash corresponds to a leaf committed into the Merkle tree of size tree_size." data-pt="O combined_root_hash corresponde a uma folha comprometida na árvore Merkle de tamanho tree_size.">Der <code>combined_root_hash</code> entspricht einem Blatt im Merkle-Baum der Größe <code>tree_size</code>.</li>
+        <li data-de="Der Baum-Root für tree_size stimmt mit dem signierten STH überein." data-en="The tree root for that tree_size matches the signed STH." data-pt="A raiz da árvore para esse tree_size corresponde ao STH assinado.">Der Baum-Root für <code>tree_size</code> stimmt mit dem signierten STH überein.</li>
+        <li data-de="Daher war der combined_root_hash spätestens zum Zeitpunkt STH.timestamp im Log enthalten." data-en="Therefore, the combined_root_hash was included in the log no later than STH.timestamp." data-pt="Portanto, o combined_root_hash foi incluído no log não mais tarde que STH.timestamp.">Daher war der <code>combined_root_hash</code> spätestens zum <code>STH.timestamp</code> im Log enthalten.</li>
+        <li data-de="Mit Konsistenzbeweisen: Der Log ist append-only über die Zeit (kein Rollback, kein Umschreiben)." data-en="With consistency proofs: The log is append-only over time (no rollback, no rewriting)." data-pt="Com provas de consistência: O log é append-only ao longo do tempo (sem rollback, sem reescrita).">Mit Konsistenzbeweisen: Der Log ist append-only über die Zeit (kein Rollback, kein Umschreiben).</li>
+      </ol>
+    </div>
+
+    <div class="security-card" style="border-color:rgba(255,100,100,0.2);background:rgba(255,100,100,0.03);">
+      <h4 style="color:#cc6666;"><i class="fas fa-times-circle" style="margin-right:8px;"></i> <span data-de="Was NICHT bewiesen wird" data-en="What is NOT proven" data-pt="O que NÃO é provado">Was NICHT bewiesen wird</span></h4>
+      <ul style="margin-left:20px;font-size:0.85rem;line-height:2;color:var(--text-secondary,#bbb);">
+        <li data-de="Dass das zugrunde liegende Dokument gültig ist (→ WINDI/WCAF-Kette)" data-en="That the underlying document is valid (→ WINDI/WCAF chain)" data-pt="Que o documento subjacente é válido (→ cadeia WINDI/WCAF)">Dass das zugrunde liegende Dokument gültig ist (→ WINDI/WCAF-Kette)</li>
+        <li data-de="Dass der Aussteller vertrauenswürdig ist (→ Issuer Registry + Policy)" data-en="That the issuer is trusted (→ issuer registry + policy)" data-pt="Que o emissor é confiável (→ registro de emissores + política)">Dass der Aussteller vertrauenswürdig ist (→ Issuer Registry + Policy)</li>
+        <li data-de="Dass der Zeitstempel global genau ist (nur dass der Betreiber ihn signiert hat)" data-en="That the timestamp is globally accurate (only that the operator signed it)" data-pt="Que o timestamp é globalmente preciso (apenas que o operador o assinou)">Dass der Zeitstempel global genau ist (nur dass der Betreiber ihn signiert hat)</li>
+        <li data-de="Dass der Log global konsistent ist, wenn keine Monitors/Pinning existieren" data-en="That the log is globally consistent unless monitors/pinning exist" data-pt="Que o log é globalmente consistente, a menos que monitors/pinning existam">Dass der Log global konsistent ist, wenn keine Monitors/Pinning existieren</li>
+      </ul>
+    </div>
+  </section>
+
+  <div style="height:1px;background:rgba(255,255,255,0.06);margin:40px 0;"></div>
+
+  <!-- ═══ DATA MODEL ═══ -->
+  <section id="data-model">
+    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:1.3rem;font-weight:600;color:#b8860b;margin-bottom:20px;">
+      <span data-de="Datenmodell" data-en="Data Model" data-pt="Modelo de Dados">Datenmodell</span>
+    </h2>
+
+    <h3 style="font-family:'Outfit',sans-serif;font-size:1rem;font-weight:600;color:var(--text-primary,#e8e4dc);margin-bottom:12px;">Leaf Payload (Canonical JSON)</h3>
+    <pre class="code-block">{
+  "combined_root_hash": "&lt;64 hex&gt;",
+  "node_id": "node:&lt;...&gt;",     // optional but recommended
+  "ts": "ISO-8601 timestamp"   // server time of log append
+}</pre>
+
+    <h3 style="font-family:'Outfit',sans-serif;font-size:1rem;font-weight:600;color:var(--text-primary,#e8e4dc);margin:24px 0 12px;">Leaf Hash</h3>
+    <pre class="code-block">leaf_hash = SHA256(0x00 || canonical_json(leaf_payload))</pre>
+
+    <h3 style="font-family:'Outfit',sans-serif;font-size:1rem;font-weight:600;color:var(--text-primary,#e8e4dc);margin:24px 0 12px;">Node Hash</h3>
+    <pre class="code-block">node_hash = SHA256(0x01 || left_hash || right_hash)</pre>
+  </section>
+
+  <div style="height:1px;background:rgba(255,255,255,0.06);margin:40px 0;"></div>
+
+  <!-- ═══ API ENDPOINTS ═══ -->
+  <section id="api">
+    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:1.3rem;font-weight:600;color:#b8860b;margin-bottom:24px;">
+      API Endpoints
+    </h2>
+
+    <div id="api-append" class="api-endpoint">
+      <div class="api-method">POST /anchors</div>
+      <div class="api-desc" data-de="Anker hinzufügen" data-en="Append anchor" data-pt="Adicionar âncora">Anker hinzufügen</div>
+      <p style="font-size:0.78rem;color:#999;margin-bottom:8px;">Request:</p>
+      <pre class="code-block">{
+  "combined_root_hash": "&lt;64 hex&gt;",
+  "node_id": "node:&lt;...&gt;"      // optional
+}</pre>
+      <p style="font-size:0.78rem;color:#999;margin:12px 0 8px;">Response:</p>
+      <pre class="code-block">{
+  "leaf_index": 42,
+  "leaf_hash": "&lt;hex&gt;",
+  "sth": { ... }               // optional
+}</pre>
+    </div>
+
+    <div id="api-sth" class="api-endpoint">
+      <div class="api-method">GET /sth</div>
+      <div class="api-desc" data-de="Aktueller Signed Tree Head" data-en="Current Signed Tree Head" data-pt="Signed Tree Head atual">Aktueller Signed Tree Head</div>
+      <pre class="code-block">{
+  "tree_size": 12345,
+  "timestamp": "ISO-8601",
+  "root_hash": "&lt;hex&gt;",
+  "signature_alg": "Ed25519",
+  "signature": "&lt;base64&gt;",
+  "key_id": "hub-log-2026"
+}</pre>
+    </div>
+
+    <div id="api-lookup" class="api-endpoint">
+      <div class="api-method">GET /lookup?combined_root_hash=&lt;hex&gt;</div>
+      <div class="api-desc" data-de="Suche nach combined_root_hash" data-en="Lookup by combined_root_hash" data-pt="Busca por combined_root_hash">Suche nach combined_root_hash</div>
+      <pre class="code-block">{
+  "found": true,
+  "leaf_index": 42,
+  "leaf_hash": "&lt;hex&gt;",
+  "ts": "ISO-8601",
+  "node_id": "node:..."
+}</pre>
+    </div>
+
+    <div id="api-inclusion" class="api-endpoint">
+      <div class="api-method">GET /proof/inclusion?leaf_index=&lt;n&gt;&amp;tree_size=&lt;m&gt;</div>
+      <div class="api-desc" data-de="Inklusionsbeweis" data-en="Inclusion proof" data-pt="Prova de inclusão">Inklusionsbeweis</div>
+      <pre class="code-block">{
+  "leaf_index": 42,
+  "tree_size": 12345,
+  "audit_path": ["&lt;hex&gt;", "&lt;hex&gt;", ...]
+}</pre>
+    </div>
+
+    <div id="api-consistency" class="api-endpoint">
+      <div class="api-method">GET /proof/consistency?old_size=&lt;n&gt;&amp;new_size=&lt;m&gt;</div>
+      <div class="api-desc" data-de="Konsistenzbeweis" data-en="Consistency proof" data-pt="Prova de consistência">Konsistenzbeweis</div>
+      <pre class="code-block">{
+  "old_size": 8000,
+  "new_size": 12345,
+  "consistency_path": ["&lt;hex&gt;", "..."]
+}</pre>
+    </div>
+
+    <div id="api-verify" class="api-endpoint">
+      <div class="api-method">GET /verify/:combined_root_hash</div>
+      <div class="api-desc" data-de="Komfort-Verifikationsbundle" data-en="Convenience verification bundle" data-pt="Bundle de verificação conveniente">Komfort-Verifikationsbundle</div>
+      <pre class="code-block">{
+  "lookup": { ... },
+  "sth": { ... },
+  "inclusion_proof": { ... }
+}</pre>
+    </div>
+
+    <div id="api-pubkey" class="api-endpoint">
+      <div class="api-method">GET /pubkey</div>
+      <div class="api-desc" data-de="Öffentlicher Schlüssel" data-en="Public key" data-pt="Chave pública">Öffentlicher Schlüssel</div>
+      <pre class="code-block">{
+  "key_id": "hub-log-2026",
+  "algorithm": "Ed25519",
+  "public_key_pem": "-----BEGIN PUBLIC KEY-----..."
+}</pre>
+    </div>
+  </section>
+
+  <div style="height:1px;background:rgba(255,255,255,0.06);margin:40px 0;"></div>
+
+  <!-- ═══ VERIFICATION ALGORITHMS ═══ -->
+  <section id="verification">
+    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:1.3rem;font-weight:600;color:#b8860b;margin-bottom:20px;">
+      <span data-de="Verifikationsalgorithmen (Client)" data-en="Verification Algorithms (Client)" data-pt="Algoritmos de Verificação (Cliente)">Verifikationsalgorithmen (Client)</span>
+    </h2>
+
+    <div class="security-card">
+      <h4><span data-de="STH-Signatur verifizieren" data-en="Verify STH signature" data-pt="Verificar assinatura STH">STH-Signatur verifizieren</span></h4>
+      <p style="font-size:0.85rem;line-height:1.8;color:var(--text-secondary,#bbb);">
+        Input: <code>sth</code>, <code>log_public_key</code>
+      </p>
+      <ol style="margin-left:20px;font-size:0.85rem;line-height:2;color:var(--text-secondary,#bbb);">
+        <li data-de="JSON {tree_size, timestamp, root_hash} kanonisieren" data-en="Canonicalize JSON {tree_size, timestamp, root_hash}" data-pt="Canonicalizar JSON {tree_size, timestamp, root_hash}">JSON <code>{tree_size, timestamp, root_hash}</code> kanonisieren</li>
+        <li data-de="Ed25519-Signatur über kanonische JSON-Bytes verifizieren" data-en="Verify Ed25519 signature over canonical JSON bytes" data-pt="Verificar assinatura Ed25519 sobre bytes JSON canônicos">Ed25519-Signatur über kanonische JSON-Bytes verifizieren</li>
+      </ol>
+    </div>
+
+    <div class="security-card">
+      <h4><span data-de="Inklusionsbeweis verifizieren" data-en="Verify inclusion proof" data-pt="Verificar prova de inclusão">Inklusionsbeweis verifizieren</span></h4>
+      <p style="font-size:0.85rem;line-height:1.8;color:var(--text-secondary,#bbb);">
+        Input: <code>leaf_payload</code>, <code>audit_path</code>, <code>leaf_index</code>, <code>tree_size</code>, <code>sth.root_hash</code>
+      </p>
+      <ol style="margin-left:20px;font-size:0.85rem;line-height:2;color:var(--text-secondary,#bbb);">
+        <li><code>leaf_hash = SHA256(0x00 || canonical_json(leaf_payload))</code></li>
+        <li data-de="Mit audit_path gemäß leaf_index-Position kombinieren, um Root zu rekonstruieren" data-en="Combine with audit_path according to leaf_index position to reconstruct root" data-pt="Combinar com audit_path de acordo com a posição leaf_index para reconstruir root">Mit <code>audit_path</code> gemäß <code>leaf_index</code>-Position kombinieren, um Root zu rekonstruieren</li>
+        <li data-de="Rekonstruierten Root mit sth.root_hash vergleichen" data-en="Check reconstructed root equals sth.root_hash" data-pt="Verificar se root reconstruído é igual a sth.root_hash">Rekonstruierten Root mit <code>sth.root_hash</code> vergleichen</li>
+      </ol>
+    </div>
+
+    <div class="security-card">
+      <h4><span data-de="Konsistenzbeweis verifizieren" data-en="Verify consistency proof" data-pt="Verificar prova de consistência">Konsistenzbeweis verifizieren</span></h4>
+      <p style="font-size:0.85rem;line-height:1.8;color:var(--text-secondary,#bbb);">
+        Input: <code>old_sth</code>, <code>new_sth</code>, <code>consistency_path</code>
+      </p>
+      <ol style="margin-left:20px;font-size:0.85rem;line-height:2;color:var(--text-secondary,#bbb);">
+        <li data-de="Verifizieren, dass Root von old_size als Präfix von new_size konsistent ist" data-en="Verify that root of old_size is consistent as prefix of new_size" data-pt="Verificar que root de old_size é consistente como prefixo de new_size">Verifizieren, dass Root von <code>old_size</code> als Präfix von <code>new_size</code> konsistent ist</li>
+        <li data-de="Rollback/Split-View erkennen, wenn gepinnte STHs divergieren" data-en="Detect rollback/split-view when pinned STHs diverge" data-pt="Detectar rollback/split-view quando STHs fixados divergem">Rollback/Split-View erkennen, wenn gepinnte STHs divergieren</li>
+      </ol>
+    </div>
+  </section>
+
+  <div style="height:1px;background:rgba(255,255,255,0.06);margin:40px 0;"></div>
+
+  <!-- ═══ STH LIFECYCLE ═══ -->
+  <section id="sth-lifecycle">
+    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:1.3rem;font-weight:600;color:#b8860b;margin-bottom:20px;">
+      STH Lifecycle
+    </h2>
+
+    <div class="security-card">
+      <h4><span data-de="Emissionsrichtlinien" data-en="Emission Policy" data-pt="Política de Emissão">Emissionsrichtlinien</span></h4>
+      <ul style="margin-left:20px;font-size:0.85rem;line-height:2;color:var(--text-secondary,#bbb);">
+        <li data-de="STH alle N Appends emittieren (z.B. 100)" data-en="Emit STH every N appends (e.g. 100)" data-pt="Emitir STH a cada N appends (ex. 100)">STH alle N Appends emittieren (z.B. 100)</li>
+        <li data-de="STH alle T Minuten emittieren (z.B. 1 min)" data-en="Emit STH every T minutes (e.g. 1 min)" data-pt="Emitir STH a cada T minutos (ex. 1 min)">STH alle T Minuten emittieren (z.B. 1 min)</li>
+        <li data-de="STH auf Anfrage emittieren (weniger ideal)" data-en="Emit STH on-demand when requested (less ideal)" data-pt="Emitir STH sob demanda (menos ideal)">STH auf Anfrage emittieren (weniger ideal)</li>
+      </ul>
+    </div>
+
+    <div class="security-card">
+      <h4><span data-de="Client-Pinning (empfohlen)" data-en="Client Pinning (recommended)" data-pt="Client Pinning (recomendado)">Client-Pinning (empfohlen)</span></h4>
+      <p style="font-size:0.85rem;line-height:1.8;color:var(--text-secondary,#bbb);margin-bottom:12px;" data-de="Clients sollten persistieren:" data-en="Clients should persist:" data-pt="Clientes devem persistir:">Clients sollten persistieren:</p>
+      <pre class="code-block">{
+  "tree_size": 12345,
+  "root_hash": "&lt;hex&gt;",
+  "timestamp": "ISO-8601",
+  "key_id": "hub-log-2026"
+}</pre>
+      <p style="font-size:0.85rem;line-height:1.8;color:var(--text-secondary,#bbb);margin-top:12px;" data-de="Bei nächster Verifikation: neuen STH abrufen → tree_size ≥ gepinnten → Konsistenzbeweis abrufen und verifizieren → bei Fehlschlag: Rollback/Split-View melden." data-en="On next verification: fetch new STH → require tree_size ≥ pinned → fetch consistency proof → if fails: flag rollback/split-view." data-pt="Na próxima verificação: buscar novo STH → exigir tree_size ≥ fixado → buscar prova de consistência → se falhar: sinalizar rollback/split-view.">Bei nächster Verifikation: neuen STH abrufen → <code>tree_size ≥ gepinnten</code> → Konsistenzbeweis abrufen und verifizieren → bei Fehlschlag: Rollback/Split-View melden.</p>
+    </div>
+  </section>
+
+  <div style="height:1px;background:rgba(255,255,255,0.06);margin:40px 0;"></div>
+
+  <!-- ═══ OPERATIONAL RECOMMENDATIONS ═══ -->
+  <section id="operations">
+    <h2 style="font-family:'Bricolage Grotesque',sans-serif;font-size:1.3rem;font-weight:600;color:#b8860b;margin-bottom:20px;">
+      <span data-de="Betriebsempfehlungen" data-en="Operational Recommendations" data-pt="Recomendações Operacionais">Betriebsempfehlungen</span>
+    </h2>
+    <ul style="margin-left:20px;font-size:0.85rem;line-height:2.2;color:var(--text-secondary,#bbb);">
+      <li data-de="STHs in /sth/history für Monitoring veröffentlichen." data-en="Publish STHs in /sth/history for monitoring." data-pt="Publicar STHs em /sth/history para monitoramento.">STHs in <code>/sth/history</code> für Monitoring veröffentlichen.</li>
+      <li data-de="Mehrere key_id mit Rotation und keyset.json unterstützen (Phase 3B.2+)." data-en="Support multiple key_id with rotation and keyset.json (Phase 3B.2+)." data-pt="Suportar múltiplos key_id com rotação e keyset.json (Phase 3B.2+).">Mehrere <code>key_id</code> mit Rotation und <code>keyset.json</code> unterstützen (Phase 3B.2+).</li>
+      <li data-de="Drittanbieter-Monitors ermutigen: STH periodisch abrufen, Konsistenzkette verifizieren, STHs zwischen Parteien gossipen." data-en="Encourage third-party monitors to fetch STH periodically, verify consistency chain, gossip STHs across parties." data-pt="Encorajar monitors terceiros a buscar STH periodicamente, verificar cadeia de consistência, fazer gossip de STHs entre partes.">Drittanbieter-Monitors ermutigen: STH periodisch abrufen, Konsistenzkette verifizieren, STHs zwischen Parteien gossipen.</li>
+    </ul>
+
+    <div style="background:rgba(184,134,11,0.06);border:1px solid rgba(184,134,11,0.15);border-radius:6px;padding:16px 20px;margin-top:24px;">
+      <p style="font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:#b8860b;letter-spacing:0.5px;margin-bottom:8px;">COMPATIBILITY NOTE</p>
+      <p style="font-size:0.82rem;line-height:1.7;color:var(--text-secondary,#bbb);" data-de="WINDI-Kerncodes bleiben sprachneutral. Menschenlesbarer Inhalt gehört zu i18n-Paketen; der Transparency Log speichert nur kryptografische Anker." data-en="Core WINDI codes remain language-neutral. Human-readable content belongs to i18n packs; transparency log stores only cryptographic anchors." data-pt="Códigos WINDI core permanecem neutros em idioma. Conteúdo legível pertence a pacotes i18n; o transparency log armazena apenas âncoras criptográficas.">WINDI-Kerncodes bleiben sprachneutral. Menschenlesbarer Inhalt gehört zu i18n-Paketen; der Transparency Log speichert nur kryptografische Anker.</p>
+    </div>
+  </section>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer style="margin-top:60px;padding-top:24px;border-top:1px solid rgba(255,255,255,0.06);display:flex;justify-content:space-between;align-items:center;font-size:0.7rem;color:#555;">
+    <span>© 2026 WINDI Publishing House · Kempten, Bavaria</span>
+    <span style="font-family:'JetBrains Mono',monospace;letter-spacing:1px;">
+      <span data-de="KI verarbeitet · Der Mensch entscheidet · WINDI garantiert" data-en="AI processes · Human decides · WINDI guarantees" data-pt="IA processa · Humano decide · WINDI garante">KI verarbeitet · Der Mensch entscheidet · WINDI garantiert</span>
+    </span>
+  </footer>
+
+</main>
+
+<!-- ═══ SCRIPTS ═══ -->
+<script>
+// Theme toggle
+function toggleTheme() {
+  const html = document.documentElement;
+  const btn = document.getElementById('themeToggle');
+  if (html.getAttribute('data-theme') === 'dark') {
+    html.setAttribute('data-theme', 'light');
+    btn.innerHTML = '<i class="fas fa-sun"></i> Klar';
+    document.body.style.background = '#f8f6f1';
+    document.body.style.color = '#1a1a1a';
+    document.querySelector('.top-bar').style.background = 'rgba(248,246,241,0.95)';
+    document.querySelector('.sidebar-left').style.background = 'linear-gradient(180deg,#f4f2ed,#ebe8e2)';
+  } else {
+    html.setAttribute('data-theme', 'dark');
+    btn.innerHTML = '<i class="fas fa-moon"></i> Dunkel';
+    document.body.style.background = '#0a0a0c';
+    document.body.style.color = '#e8e4dc';
+    document.querySelector('.top-bar').style.background = 'rgba(10,10,12,0.95)';
+    document.querySelector('.sidebar-left').style.background = 'linear-gradient(180deg,rgba(18,18,22,1),rgba(10,10,12,1))';
+  }
+}
+
+// Language switcher
+function switchLang(lang) {
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.style.background = 'transparent';
+    b.style.color = '#666';
+    b.style.borderColor = 'rgba(255,255,255,0.1)';
+  });
+  const active = document.querySelector(`.lang-btn[data-lang="${lang}"]`);
+  if (active) {
+    active.style.background = 'rgba(184,134,11,0.15)';
+    active.style.color = '#b8860b';
+    active.style.borderColor = 'rgba(184,134,11,0.3)';
+  }
+  document.querySelectorAll(`[data-${lang}]`).forEach(el => {
+    el.textContent = el.getAttribute(`data-${lang}`);
+  });
+}
+
+// Init
+document.addEventListener('DOMContentLoaded', () => {
+  document.body.style.margin = '0';
+  document.body.style.fontFamily = "'Outfit', sans-serif";
+  document.body.style.background = '#0a0a0c';
+  document.body.style.color = '#e8e4dc';
+});
+</script>
+</body>
+</html>

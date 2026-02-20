@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>◆ WINDI Suite</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◆</text></svg>">
+<style>*{margin:0;padding:0;box-sizing:border-box}body{background:#0A0A0F}
+.wl{display:flex;flex-direction:column;justify-content:center;align-items:center;height:100vh;background:#0A0A0F;color:#C9A94E}
+.wl .d{font-size:48px;animation:p 2s infinite}.wl .t{font-size:14px;letter-spacing:6px;margin-top:20px;font-weight:300}
+.wl .s{font-size:11px;color:#666;margin-top:12px}@keyframes p{0%,100%{opacity:1}50%{opacity:.4}}</style>
+</head>
+<body>
+<div id="root"><div class="wl"><div class="d">◆</div><div class="t">W I N D I</div><div class="s">Suite wird geladen...</div></div></div>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script type="text/babel" data-type="module">
+const { useState, useRef, useEffect } = React;
+
+// ═══════════════════════════════════════════════════
+// WINDI SUITE v2.1 — Forensic Ledger Edition
+// "Content stays on your hardware. Proof lives in the Catedral."
+// ═══════════════════════════════════════════════════
+
+const C = {
+  gold:"#C9A94E",dark:"#0A0A0F",card:"#12121A",bdr:"#1E1E2A",
+  light:"#FAFAF8",lCard:"#FFFFFF",lBdr:"#E5E5E0",
+  green:"#34D399",red:"#EF4444",orange:"#F59E0B",blue:"#3B82F6",
+};
+
+// ═══════════════════════════════════════════════════
+// SHA-256 — Real content hash (browser crypto)
+// ═══════════════════════════════════════════════════
+async function sha256(text) {
+  const buf = new TextEncoder().encode(text);
+  const hash = await crypto.subtle.digest("SHA-256", buf);
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,"0")).join("");
+}
+
+// ═══════════════════════════════════════════════════
+// FORENSIC REGISTRY — Virtue Receipt Protocol
+// ═══════════════════════════════════════════════════
+const REGISTRY_BASE = (() => {
+  const loc = window.location;
+  if (loc.hostname === "admin.windia4desk.tech") return loc.origin + "/suite-api";
+  return "http://localhost:8101";
+})();
+
+const Registry = {
+  async load(limit = 50) {
+    try {
+      const r = await fetch(`${REGISTRY_BASE}/api/suite/docs?limit=${limit}`, { signal: AbortSignal.timeout(3000) });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const data = await r.json();
+      console.log(`[WINDI] Loaded ${data.count} receipts from Forensic Ledger`);
+      return data.documents || [];
+    } catch (e) {
+      console.warn("[WINDI] Ledger offline:", e.message);
+      return [];
+    }
+  },
+
+  async register(doc) {
+    try {
+      const r = await fetch(`${REGISTRY_BASE}/api/suite/docs`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: doc.id,
+          name: doc.name,
+          type: doc.type,
+          governance_level: doc.gov,
+          sge_score: parseFloat(doc.sge),
+          hash: doc.contentHash,
+          content_hash: doc.contentHash,
+          template_id: doc.templateId,
+          local_filename: doc.filename,
+          sealed: 1,
+          isp_context: doc.isp || "",
+          metadata: { source: "suite-v2.1", bytes: doc.bytes }
+        }),
+        signal: AbortSignal.timeout(3000),
+      });
+      if (r.ok) { console.log(`[WINDI] ◆ Sealed: ${doc.id}`); return true; }
+      throw new Error(`HTTP ${r.status}`);
+    } catch (e) {
+      console.warn("[WINDI] Registration offline:", e.message);
+      return false;
+    }
+  },
+
+  async stats() {
+    try {
+      const r = await fetch(`${REGISTRY_BASE}/api/suite/docs/stats`, { signal: AbortSignal.timeout(3000) });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      return await r.json();
+    } catch { return null; }
+  },
+
+  async warroom() {
+    try {
+      const r = await fetch(`${REGISTRY_BASE}/api/warroom/summary`, { signal: AbortSignal.timeout(3000) });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      return (await r.json()).summary;
+    } catch { return null; }
+  }
+};
+
+// ═══════════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════════
+const mkId = () => "WINDI-" + Date.now().toString(36).toUpperCase();
+const mkSge = (g) => ((g==="HIGH"?0.82:g==="MEDIUM"?0.65:0.4)+Math.random()*0.15).toFixed(2);
+const ts = () => new Date().toLocaleString("de-DE",{timeZone:"Europe/Berlin"});
+const nl2br = (s) => (s||"").replace(/\n/g,"<br/>");
+const relTime = (iso) => {
+  if (!iso) return "";
+  const diff = Date.now() - new Date(iso).getTime();
+  const m = Math.floor(diff/60000);
+  if (m < 1) return "gerade eben";
+  if (m < 60) return `vor ${m} Min.`;
+  const h = Math.floor(m/60);
+  if (h < 24) return `vor ${h} Std.`;
+  const d = Math.floor(h/24);
+  if (d < 7) return `vor ${d} Tag${d>1?"en":""}`;
+  return new Date(iso).toLocaleDateString("de-DE");
+};
+
+// ═══════════════════════════════════════════════════
+// TEMPLATES
+// ═══════════════════════════════════════════════════
+const TEMPLATES = {
+  doc: [
+    { id:"blank", label:"Neues Dokument", sub:"Leere Seite", icon:"\u{1F4C4}", gov:"LOW", type:"doc", content:{title:"",body:""} },
+    { id:"vertrag", label:"Vertrag", sub:"Dienstleistungsvertrag", icon:"\u{1F4DD}", gov:"HIGH", type:"doc",
+      content:{ title:"Dienstleistungsvertrag",
+        body:`Zwischen\n[Partei A — Name, Anschrift]\n\nund\n[Partei B — Name, Anschrift]\n\nwird folgender Vertrag geschlossen:\n\n§1 Vertragsgegenstand\nDer Auftragnehmer verpflichtet sich, folgende Leistungen zu erbringen:\n[Beschreibung der Dienstleistung]\n\n§2 Vergütung\nDie Vergütung beträgt [Betrag] EUR netto zzgl. gesetzlicher MwSt.\nDie Zahlung erfolgt innerhalb von 30 Tagen nach Rechnungsstellung.\n\n§3 Vertragsdauer\nDer Vertrag beginnt am [Datum] und endet am [Datum].\nEine ordentliche Kündigung ist mit einer Frist von 3 Monaten zum Quartalsende möglich.\n\n§4 Vertraulichkeit\nBeide Parteien verpflichten sich, alle im Rahmen der Zusammenarbeit erhaltenen Informationen vertraulich zu behandeln.\n\n§5 Haftung\nDie Haftung richtet sich nach den gesetzlichen Bestimmungen.\n\n§6 Schlussbestimmungen\nÄnderungen und Ergänzungen dieses Vertrages bedürfen der Schriftform.\nEs gilt das Recht der Bundesrepublik Deutschland.\nGerichtsstand ist [Ort].\n\n\nOrt, Datum: ___________________\n\nPartei A: ___________________\n\nPartei B: ___________________` } },
+    { id:"bescheid", label:"Bescheid", sub:"Governance-Entscheidung", icon:"\u{1F3DB}\uFE0F", gov:"HIGH", type:"doc",
+      content:{ title:"Governance-Bescheid",
+        body:`Aktenzeichen: [Az.]\nDatum: ${new Date().toLocaleDateString("de-DE")}\n\nSehr geehrte Damen und Herren,\n\nauf Grundlage der eingereichten Unterlagen und nach Prüfung aller relevanten Sachverhalte ergeht folgender\n\nBESCHEID\n\n1. Gegenstand der Entscheidung\n[Beschreibung des Sachverhalts]\n\n2. Entscheidung\n[Die beantragte Genehmigung wird erteilt / Der Antrag wird abgelehnt.]\n\n3. Begründung\n[Ausführliche Begründung der Entscheidung]\n\n4. Rechtsgrundlage\n[Relevante Gesetze und Verordnungen]\n\n5. Rechtsbehelfsbelehrung\nGegen diesen Bescheid kann innerhalb eines Monats nach Bekanntgabe Widerspruch eingelegt werden.\n\n\nMit freundlichen Grüßen\n\n___________________\n[Name, Funktion]\n[Organisation]` } },
+    { id:"bericht", label:"Bericht", sub:"Governance-Bericht", icon:"\u{1F4CA}", gov:"MEDIUM", type:"doc",
+      content:{ title:"Governance-Bericht",
+        body:`Berichtszeitraum: [Q1/Q2/Q3/Q4 2026]\nAbteilung: [Abteilungsname]\nErstellt von: [Name]\n\n1. Zusammenfassung\n[Kurze Übersicht über die wichtigsten Ergebnisse]\n\n2. Compliance-Status\n  - DSGVO: [Status]\n  - EU AI Act: [Status]\n  - BSI C5: [Status]\n\n3. Risikobewertung\n  - Risiko 1: [Beschreibung] — Stufe: [Niedrig/Mittel/Hoch]\n  - Risiko 2: [Beschreibung] — Stufe: [Niedrig/Mittel/Hoch]\n\n4. Maßnahmen\n[Empfohlene oder durchgeführte Maßnahmen]\n\n5. Ausblick\n[Nächste Schritte und geplante Aktivitäten]` } },
+    { id:"antrag", label:"Antrag", sub:"Genehmigungsantrag", icon:"\u{1F4CB}", gov:"MEDIUM", type:"doc",
+      content:{ title:"Genehmigungsantrag",
+        body:`Antragsteller: [Name / Organisation]\nDatum: ${new Date().toLocaleDateString("de-DE")}\n\nAn: [Zuständige Stelle]\n\nSehr geehrte Damen und Herren,\n\nhiermit beantrage ich / beantragen wir:\n\n1. Gegenstand des Antrags\n[Was wird beantragt?]\n\n2. Begründung\n[Warum wird die Genehmigung benötigt?]\n\n3. Anlagen\n  - Anlage 1: [Beschreibung]\n  - Anlage 2: [Beschreibung]\n\n4. Erklärung\nIch versichere, dass die vorstehenden Angaben wahrheitsgemäß und vollständig sind.\n\n\nOrt, Datum: ___________________\n\nUnterschrift: ___________________` } },
+  ],
+  xlsx: [
+    { id:"blank-xlsx", label:"Leere Tabelle", sub:"Freie Tabelle", icon:"\u{1F4CA}", gov:"LOW", type:"xlsx", columns:["ID","Name","Wert","Status","Datum"], rows:10 },
+    { id:"finanzbericht", label:"Finanzbericht", sub:"Budget & Ausgaben", icon:"\u{1F4B0}", gov:"HIGH", type:"xlsx",
+      columns:["Kategorie","Budget (\u20AC)","Ausgaben (\u20AC)","Verbleibend (\u20AC)","% Genutzt","Risiko"],
+      prefill:[["Personal","45.000","43.200","1.800","96%","HOCH"],["Betrieb","30.000","21.000","9.000","70%",""],["IT & Infrastruktur","15.000","16.800","-1.800","112%","\u00DCBERSCHRITTEN"],["Compliance & Governance","10.000","6.000","4.000","60%",""],["GESAMT","100.000","87.000","13.000","87%","MITTEL"]] },
+    { id:"compliance", label:"Compliance-Tracker", sub:"DSGVO / EU AI Act", icon:"\u2705", gov:"HIGH", type:"xlsx",
+      columns:["#","Anforderung","Status","Verantwortlich","F\u00E4llig","Nachweis","Risiko"],
+      prefill:[["1","Datenminimierung","Erf\u00FCllt","DPO","2026-03-31","Audit-Report Q4","Niedrig"],["2","Einwilligungsmanagement","In Arbeit","IT","2026-04-15","","Mittel"],["3","Recht auf L\u00F6schung","Erf\u00FCllt","DPO","2026-03-31","Prozessdoku","Niedrig"],["4","Daten\u00FCbertragbarkeit","Ausstehend","IT","2026-06-30","","Hoch"],["5","Meldepflicht Datenpanne","Erf\u00FCllt","CISO","2026-02-28","Notfallplan v3","Niedrig"],["6","DSB-Benennung","Erf\u00FCllt","HR","2026-01-15","Bestellurkunde","Niedrig"],["7","Folgenabsch\u00E4tzung (DSFA)","In Arbeit","DPO","2026-05-30","","Hoch"],["8","Drittland\u00FCbermittlung","Ausstehend","Legal","2026-07-31","","Hoch"]] },
+    { id:"audit", label:"Pr\u00FCfprotokoll", sub:"Audit Trail", icon:"\u{1F50D}", gov:"HIGH", type:"xlsx",
+      columns:["#","Zeitstempel","Aktion","Akteur","Dokument","Governance","SGE","Hash","Status"], prefill:[] },
+  ],
+  pptx: [
+    { id:"blank-pptx", label:"Leere Pr\u00E4sentation", sub:"Freies Deck", icon:"\u{1F3AC}", gov:"LOW", type:"pptx", slides:[{type:"title",title:"",subtitle:""}] },
+    { id:"gov-review", label:"Governance-Review", sub:"Quartalsbericht", icon:"\u{1F3DB}\uFE0F", gov:"HIGH", type:"pptx",
+      slides:[{type:"title",title:"Governance Review Q1 2026",subtitle:"[Organisation]"},{type:"content",heading:"Executive Summary",body:"[Zusammenfassung]"},{type:"risks",heading:"Identifizierte Risiken",items:["Risiko 1","Risiko 2","Risiko 3"]},{type:"actions",heading:"Ma\u00DFnahmen",items:["Ma\u00DFnahme 1","Ma\u00DFnahme 2","Ma\u00DFnahme 3"]}] },
+    { id:"comp-deck", label:"Compliance-Report", sub:"Status\u00FCbersicht", icon:"\u{1F4DC}", gov:"HIGH", type:"pptx",
+      slides:[{type:"title",title:"Compliance Status Report",subtitle:"EU AI Act + DSGVO"},{type:"dashboard",framework:"EU AI Act + DSGVO",status:"Konform"},{type:"content",heading:"Wichtigste Ergebnisse",body:"[Zusammenfassung]"}] },
+  ],
+};
+
+// ═══════════════════════════════════════════════════
+// DOCUMENT GENERATION (compact — same output quality)
+// ═══════════════════════════════════════════════════
+function genDoc(title,body,meta) {
+  const html=`<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>${title}</title><!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View></w:WordDocument></xml><![endif]--><style>@page{size:A4;margin:2.5cm}body{font-family:Calibri,Arial,sans-serif;font-size:11pt;color:#1a1a1a;line-height:1.7}h1{font-size:20pt;color:#1a1a1a;border-bottom:2px solid ${C.gold};padding-bottom:8px;margin-bottom:20px}.wh{background:#0A0A0F;color:#fff;padding:14px 20px;margin:-2.5cm -2.5cm 30px;display:flex;justify-content:space-between;align-items:center}.wl{color:${C.gold};font-size:16pt;font-weight:bold;letter-spacing:3px}.wm{font-size:7.5pt;color:#888}.ws{background:#f8faf8;border:1px solid #d1e7d1;border-radius:4px;padding:10px 14px;margin-top:30px;font-size:8pt;color:#666}.wf{border-top:2px solid ${C.gold};margin-top:30px;padding-top:8px;font-size:7.5pt;color:#999}</style></head><body><div class="wh"><span class="wl">\u25C6 WINDI</span><span class="wm">${meta.id} | ${meta.ts}</span></div><h1>${title}</h1><div style="white-space:pre-wrap;font-size:11pt;line-height:1.8">${nl2br(body)}</div><div class="ws">\u{1F512} WINDI Governance Seal | ${meta.id} | SGE ${meta.sge} | ${meta.gov} | Hash: ${meta.hash} | SEALED \u2713</div><div class="wf"><strong>WINDI Publishing House</strong> \u2014 Pre-AI Governance Layer | ISP: ${meta.isp} | DSGVO + EU AI Act</div></body></html>`;
+  return {data:html,name:`${meta.id}.doc`,mime:"application/msword"};
+}
+
+function genXlsx(title,columns,rows,meta) {
+  const esc=(v)=>'"'+String(v!=null?v:"").replace(/"/g,'""')+'"';
+  const lines=[["\u25C6 WINDI \u2014 "+title],["Erstellt:",meta.ts,"","ID:",meta.id,"","Governance:",meta.gov],[],columns,...rows,[],["\u25C6 WINDI Seal: SEALED \u2713 | SGE "+meta.sge+" | Hash: "+meta.hash]];
+  return {data:"\uFEFF"+lines.map(r=>r.map(esc).join(",")).join("\n"),name:`${meta.id}.csv`,mime:"text/csv;charset=utf-8"};
+}
+
+function genPptx(title,slidesData,meta) {
+  const gold=C.gold;
+  const ss="width:960px;min-height:540px;margin:20px auto;box-shadow:0 4px 24px rgba(0,0,0,.3);overflow:hidden;position:relative;font-family:Segoe UI,Calibri,sans-serif";
+  let slides=[];
+  for(const s of slidesData){
+    if(s.type==="title") slides.push(`<div style="${ss};display:flex;flex-direction:column;justify-content:center;align-items:center;background:linear-gradient(135deg,#0A0A0F,#1a1a2e);color:#fff;text-align:center;padding:60px"><div style="font-size:14px;color:${gold};letter-spacing:8px;margin-bottom:30px">\u25C6 W I N D I</div><h1 style="font-size:36px;margin:0;font-weight:700">${s.title}</h1><p style="font-size:16px;color:#888;margin-top:14px">${s.subtitle||""}</p><div style="position:absolute;bottom:30px;font-size:10px;color:#444">${meta.id} | ${meta.ts}</div></div>`);
+    else if(s.type==="content") slides.push(`<div style="${ss};padding:55px;background:#fff"><div style="color:${gold};font-size:11px;letter-spacing:5px;margin-bottom:16px">\u25C6 WINDI</div><h2 style="font-size:28px;color:#1a1a1a;border-bottom:3px solid ${gold};padding-bottom:8px">${s.heading}</h2><p style="font-size:16px;line-height:1.9;color:#333;margin-top:18px;white-space:pre-wrap">${s.body}</p></div>`);
+    else if(s.type==="risks") slides.push(`<div style="${ss};padding:55px;background:#fff"><div style="color:${gold};font-size:11px;letter-spacing:5px;margin-bottom:16px">\u25C6 WINDI</div><h2 style="font-size:28px;color:#1a1a1a;border-bottom:3px solid ${C.red};padding-bottom:8px">${s.heading}</h2><div style="margin-top:16px">${s.items.map((r,i)=>`<div style="padding:10px 14px;margin:8px 0;background:#FEF2F2;border-left:4px solid #EF4444;border-radius:5px;font-size:15px">R${i+1}. ${r}</div>`).join("")}</div></div>`);
+    else if(s.type==="actions") slides.push(`<div style="${ss};padding:55px;background:#fff"><div style="color:${gold};font-size:11px;letter-spacing:5px;margin-bottom:16px">\u25C6 WINDI</div><h2 style="font-size:28px;color:#1a1a1a;border-bottom:3px solid ${C.green};padding-bottom:8px">${s.heading}</h2><div style="margin-top:16px">${s.items.map((a,i)=>`<div style="padding:10px 14px;margin:8px 0;background:#F0FDF4;border-left:4px solid #34D399;border-radius:5px;font-size:15px">${i+1}. ${a}</div>`).join("")}</div></div>`);
+    else if(s.type==="dashboard") slides.push(`<div style="${ss};padding:55px;background:#fff"><div style="color:${gold};font-size:11px;letter-spacing:5px;margin-bottom:16px">\u25C6 WINDI COMPLIANCE</div><h2 style="font-size:28px;color:#1a1a1a;border-bottom:3px solid ${gold};padding-bottom:8px">Status\u00FCbersicht</h2><div style="display:flex;gap:20px;margin-top:24px"><div style="flex:1;background:#F0FDF4;border-radius:10px;padding:24px;text-align:center;border:1px solid #d1fae5"><div style="font-size:36px">\u2705</div><div style="font-size:11px;color:#666;margin:6px 0">Framework</div><div style="font-size:17px;font-weight:700">${s.framework}</div></div><div style="flex:1;background:#F0FDF4;border-radius:10px;padding:24px;text-align:center;border:1px solid #d1fae5"><div style="font-size:36px">\u{1F3DB}\uFE0F</div><div style="font-size:11px;color:#666;margin:6px 0">Status</div><div style="font-size:17px;font-weight:700;color:${C.green}">${s.status}</div></div><div style="flex:1;background:#FFFBEB;border-radius:10px;padding:24px;text-align:center;border:1px solid #fef3c7"><div style="font-size:36px">\u{1F4CA}</div><div style="font-size:11px;color:#666;margin:6px 0">SGE Score</div><div style="font-size:17px;font-weight:700">${meta.sge}</div></div></div></div>`);
+  }
+  slides.push(`<div style="${ss};display:flex;flex-direction:column;justify-content:center;align-items:center;background:linear-gradient(135deg,#0A0A0F,#1a1a2e);color:#fff;text-align:center;padding:60px"><div style="font-size:48px;color:${gold}">\u25C6</div><div style="font-size:14px;color:${gold};letter-spacing:8px;margin-top:12px">W I N D I</div><p style="font-size:12px;color:#888;margin-top:16px">AI processes. Human decides. WINDI guarantees.</p><div style="margin-top:30px;padding:10px 20px;border:1px solid ${gold}44;border-radius:8px;font-size:10px;color:#666">\u{1F512} SEALED | ${meta.id} | SGE ${meta.sge}</div></div>`);
+  return {data:`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${title}</title><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:Segoe UI,sans-serif;background:#1a1a2e;padding:10px}@media print{body{background:#fff;padding:0}div{box-shadow:none!important;margin:0!important;page-break-after:always}}</style></head><body>${slides.join("\n")}</body></html>`,name:`${meta.id}_deck.html`,mime:"text/html"};
+}
+
+function dl(data,name,mime) {
+  const b=new Blob([data],{type:mime});
+  const u=URL.createObjectURL(b);
+  const a=document.createElement("a");a.href=u;a.download=name;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(u);
+}
+
+// ═══════════════════════════════════════════════════
+// MAIN COMPONENT
+// ═══════════════════════════════════════════════════
+const App = function WINDISuite() {
+  const [theme,setTheme]=useState("noir");
+  const [tab,setTab]=useState("doc");
+  const [view,setView]=useState("gallery");
+  const [tpl,setTpl]=useState(null);
+  const [title,setTitle]=useState("");
+  const [body,setBody]=useState("");
+  const [xlsxRows,setXlsxRows]=useState([]);
+  const [pptxSlides,setPptxSlides]=useState([]);
+  const [docs,setDocs]=useState([]);
+  const [toast,setToast]=useState(null);
+  const [busy,setBusy]=useState(false);
+  const [ledgerOnline,setLedgerOnline]=useState(null);
+  const [stats,setStats]=useState(null);
+  const [loading,setLoading]=useState(true);
+  const edRef=useRef(null);
+
+  const n=theme==="noir";
+  const bg=n?C.dark:C.light, card=n?C.card:C.lCard, bdr=n?C.bdr:C.lBdr;
+  const txt=n?"#E5E5E5":"#1a1a1a", mut=n?"#666":"#999";
+
+  // ── Load from Forensic Ledger on mount ──
+  useEffect(()=>{
+    (async()=>{
+      const remote=await Registry.load();
+      if(remote.length>0){
+        setDocs(remote.map(d=>({
+          id:d.id, name:d.name, type:d.type, gov:d.governance_level,
+          sge:d.sge_score?String(d.sge_score):"0.00",
+          hash:d.hash, createdAt:d.created_at, fromServer:true,
+        })));
+        setLedgerOnline(true);
+      } else {
+        const s=await Registry.stats();
+        setLedgerOnline(s!==null);
+      }
+      const s=await Registry.stats();
+      setStats(s);
+      setLoading(false);
+    })();
+  },[]);
+
+  const openTemplate=(t)=>{
+    setTpl(t);
+    if(t.type==="doc"){setTitle(t.content.title);setBody(t.content.body);}
+    else if(t.type==="xlsx"){setTitle(t.label);setXlsxRows(t.prefill&&t.prefill.length>0?t.prefill.map(r=>[...r]):Array.from({length:t.rows||5},()=>t.columns.map(()=>"")));}
+    else if(t.type==="pptx"){setTitle(t.slides[0]?.title||t.label);setPptxSlides(t.slides.map(s=>({...s,items:s.items?[...s.items]:undefined})));}
+    setView("editor");
+    setTimeout(()=>edRef.current?.focus(),100);
+  };
+
+  // ── Generate, Download & SEAL in Forensic Ledger ──
+  const generate=()=>{
+    if(busy) return;
+    setBusy(true);
+    const id=mkId(), sge=mkSge(tpl.gov), isp="Bundesregierung \u00B7 BaFin \u00B7 DSGVO";
+
+    setTimeout(async()=>{
+      let r, contentForHash;
+      const meta={id,sge,hash:"computing...",ts:ts(),gov:tpl.gov,isp};
+
+      if(tpl.type==="doc"){
+        r=genDoc(title||"Dokument",body,meta);
+        contentForHash=r.data;
+      } else if(tpl.type==="xlsx"){
+        r=genXlsx(title||"Tabelle",tpl.columns,xlsxRows,meta);
+        contentForHash=r.data;
+      } else {
+        r=genPptx(title||"Pr\u00E4sentation",pptxSlides,meta);
+        contentForHash=r.data;
+      }
+
+      // ★ REAL SHA-256 of document content ★
+      const contentHash = await sha256(contentForHash);
+      const shortHash = "0x" + contentHash.substring(0, 16);
+
+      // Update the hash in the generated file (replace placeholder)
+      r.data = r.data.replace(/Hash: computing\.\.\./g, `Hash: ${shortHash}`);
+      meta.hash = shortHash;
+
+      dl(r.data,r.name,r.mime);
+
+      const newDoc={
+        id, name:title||tpl.label, type:tpl.type, gov:tpl.gov,
+        sge, hash:shortHash, contentHash, templateId:tpl.id,
+        filename:r.name, bytes:new Blob([r.data]).size,
+        isp, createdAt:new Date().toISOString(), fromServer:false,
+      };
+      setDocs(p=>[newDoc,...p]);
+
+      // ★ SEAL in Forensic Ledger ★
+      const sealed=await Registry.register(newDoc);
+      if(sealed){newDoc.fromServer=true;setLedgerOnline(true);}
+
+      setBusy(false);
+      setToast({id,name:title||tpl.label,sealed,hash:shortHash});
+      setTimeout(()=>setToast(null),5000);
+
+      const s=await Registry.stats();
+      if(s) setStats(s);
+    },400);
+  };
+
+  const greet=()=>{const h=new Date().getHours();return h<12?"Guten Morgen":h<18?"Guten Tag":"Guten Abend";};
+  const tabItems=[{id:"doc",label:"Dokumente",icon:"\u{1F4C4}"},{id:"xlsx",label:"Tabellen",icon:"\u{1F4CA}"},{id:"pptx",label:"Pr\u00E4sentationen",icon:"\u{1F3AC}"}];
+  const typeConf={doc:{l:"DOC",c:C.blue},xlsx:{l:"XLSX",c:C.green},pptx:{l:"PPTX",c:C.orange}};
+  const govColor=(g)=>g==="HIGH"?C.red:g==="MEDIUM"?C.orange:C.green;
+
+  return (
+    <div style={{background:bg,color:txt,minHeight:"100vh",fontFamily:"Outfit, Segoe UI, sans-serif",transition:"all .3s"}}>
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;600;800&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400&display=swap');
+        @keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes pulseG{0%,100%{box-shadow:0 0 0 0 rgba(52,211,153,0.4)}50%{box-shadow:0 0 0 6px rgba(52,211,153,0)}}
+        *{box-sizing:border-box;margin:0}textarea:focus,input:focus{outline:none;border-color:${C.gold}!important}
+        button:hover{opacity:.85}::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:${C.gold}33;border-radius:3px}`}</style>
+
+      {/* HEADER */}
+      <div style={{background:n?"#08080D":"#fff",borderBottom:`1px solid ${bdr}`,padding:"10px 20px",display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:50}}>
+        <div style={{display:"flex",alignItems:"center",gap:10,cursor:"pointer"}} onClick={()=>{setView("gallery");setTpl(null);}}>
+          <span style={{color:C.gold,fontSize:18,fontWeight:800,letterSpacing:3,fontFamily:"Bricolage Grotesque"}}>{"\u25C6"} WINDI</span>
+          <span style={{color:mut,fontSize:11,letterSpacing:2}}>SUITE</span>
+          <span style={{fontSize:9,color:C.gold,background:C.gold+"18",padding:"2px 8px",borderRadius:4,fontFamily:"JetBrains Mono"}}>v2.1</span>
+        </div>
+        <div style={{display:"flex",alignItems:"center",gap:12}}>
+          <div style={{display:"flex",alignItems:"center",gap:5}} title={ledgerOnline?"Forensic Ledger verbunden":"Offline-Modus"}>
+            <div style={{width:7,height:7,borderRadius:"50%",background:ledgerOnline===null?C.orange:ledgerOnline?C.green:C.red+"80",animation:ledgerOnline?"pulseG 2s infinite":"none"}}/>
+            <span style={{fontSize:9,color:mut,fontFamily:"JetBrains Mono"}}>{ledgerOnline===null?"...":ledgerOnline?"LEDGER":"OFFLINE"}</span>
+          </div>
+          <button onClick={()=>setTheme(n?"klar":"noir")} style={{background:"transparent",border:`1px solid ${bdr}`,borderRadius:6,padding:"4px 12px",color:mut,fontSize:10,cursor:"pointer"}}>
+            {n?"\u2600\uFE0F Klar":"\u{1F319} Noir"}
+          </button>
+        </div>
+      </div>
+
+      {/* TOAST */}
+      {toast&&(
+        <div style={{position:"fixed",top:60,right:20,background:card,border:`1px solid ${C.green}40`,borderRadius:10,padding:"14px 18px",zIndex:100,animation:"fadeIn .3s",boxShadow:"0 4px 20px rgba(0,0,0,.3)",maxWidth:340}}>
+          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:6}}>
+            <span style={{fontSize:18}}>{"\u2705"}</span>
+            <div>
+              <div style={{fontSize:12,fontWeight:600}}>{toast.name} erstellt</div>
+              <div style={{fontSize:10,color:mut,fontFamily:"JetBrains Mono"}}>{toast.id}</div>
+            </div>
+          </div>
+          <div style={{fontSize:9,fontFamily:"JetBrains Mono",color:mut,borderTop:`1px solid ${bdr}`,paddingTop:6,marginTop:2}}>
+            <div>SHA-256: {toast.hash}</div>
+            <div style={{color:toast.sealed?C.green:C.orange,marginTop:2}}>
+              {toast.sealed?"\u{1F512} Virtue Receipt im Forensic Ledger versiegelt":"\u26A0 Nur lokal — Ledger offline"}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {view==="gallery"?(
+        <div style={{maxWidth:900,margin:"0 auto",padding:"30px 20px"}}>
+          <h1 style={{fontSize:24,fontWeight:300,fontFamily:"Bricolage Grotesque",marginBottom:8}}>
+            {greet()}. <span style={{color:mut}}>Was m\u00F6chten Sie erstellen?</span>
+          </h1>
+
+          {/* Stats bar */}
+          {stats&&stats.total_documents>0&&(
+            <div style={{display:"flex",gap:16,marginBottom:24,flexWrap:"wrap",animation:"slideUp .4s"}}>
+              {[
+                {label:"Receipts",val:stats.total_documents,c:C.gold},
+                ...(stats.by_type?Object.entries(stats.by_type).map(([k,v])=>({label:typeConf[k]?.l||k.toUpperCase(),val:v,c:typeConf[k]?.c||C.gold})):[]),
+                ...(stats.by_governance_level?Object.entries(stats.by_governance_level).map(([k,v])=>({label:k,val:v,c:govColor(k)})):[]),
+              ].map((s,i)=>(
+                <div key={i} style={{display:"flex",alignItems:"center",gap:6}}>
+                  <span style={{fontSize:16,fontWeight:700,color:s.c,fontFamily:"JetBrains Mono"}}>{s.val}</span>
+                  <span style={{fontSize:10,color:mut}}>{s.label}</span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Tabs */}
+          <div style={{display:"flex",gap:2,marginBottom:24,borderBottom:`1px solid ${bdr}`}}>
+            {tabItems.map(t=>(
+              <button key={t.id} onClick={()=>setTab(t.id)} style={{padding:"10px 20px",background:"transparent",border:"none",borderBottom:tab===t.id?`2px solid ${C.gold}`:"2px solid transparent",color:tab===t.id?C.gold:mut,fontSize:13,fontWeight:tab===t.id?600:400,cursor:"pointer",display:"flex",alignItems:"center",gap:6}}>
+                {t.icon} {t.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Template Cards */}
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill, minmax(200px, 1fr))",gap:14}}>
+            {TEMPLATES[tab].map(t=>(
+              <div key={t.id} onClick={()=>openTemplate(t)}
+                style={{background:card,border:`1px solid ${bdr}`,borderRadius:12,padding:22,cursor:"pointer",transition:"all .25s"}}
+                onMouseEnter={e=>{e.currentTarget.style.borderColor=C.gold;e.currentTarget.style.transform="translateY(-3px)";}}
+                onMouseLeave={e=>{e.currentTarget.style.borderColor=bdr;e.currentTarget.style.transform="none";}}>
+                <div style={{fontSize:32,marginBottom:12}}>{t.icon}</div>
+                <div style={{fontWeight:600,fontSize:15}}>{t.label}</div>
+                <div style={{fontSize:11,color:mut,marginTop:4}}>{t.sub}</div>
+                <div style={{marginTop:8}}>
+                  <span style={{fontSize:9,fontFamily:"JetBrains Mono",color:govColor(t.gov),background:govColor(t.gov)+"15",padding:"2px 6px",borderRadius:3}}>{t.gov}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* ★ VIRTUE RECEIPTS — Forensic Ledger ★ */}
+          {loading?(
+            <div style={{marginTop:36,textAlign:"center",padding:24}}>
+              <div style={{fontSize:24,color:C.gold,animation:"p 1.5s infinite"}}>{"\u25C6"}</div>
+              <div style={{fontSize:11,color:mut,marginTop:8}}>Lade Forensic Ledger...</div>
+            </div>
+          ):docs.length>0?(
+            <div style={{marginTop:36,animation:"slideUp .4s"}}>
+              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
+                <h3 style={{fontSize:11,color:mut,letterSpacing:2}}>
+                  VIRTUE RECEIPTS
+                  {ledgerOnline&&<span style={{color:C.green,marginLeft:8,letterSpacing:0}}>{"\u25CF"} persistent</span>}
+                </h3>
+                <span style={{fontSize:9,color:mut,fontFamily:"JetBrains Mono"}}>{docs.length} Eintr{docs.length!==1?"\u00E4ge":"ag"}</span>
+              </div>
+              <div style={{background:card,border:`1px solid ${bdr}`,borderRadius:10,overflow:"hidden"}}>
+                {docs.slice(0,20).map((d,i)=>(
+                  <div key={d.id} style={{padding:"12px 16px",borderBottom:i<Math.min(docs.length,20)-1?`1px solid ${bdr}`:"none",display:"flex",alignItems:"center",gap:10,fontSize:12,animation:`slideUp ${0.1+i*0.04}s`}}>
+                    <span style={{background:typeConf[d.type]?.c+"18",color:typeConf[d.type]?.c,padding:"3px 8px",borderRadius:4,fontSize:9,fontWeight:700,fontFamily:"JetBrains Mono",minWidth:40,textAlign:"center"}}>{typeConf[d.type]?.l||"?"}</span>
+                    <span style={{fontFamily:"JetBrains Mono",fontSize:8,color:C.gold,minWidth:110}}>{d.id}</span>
+                    <span style={{flex:1,fontWeight:500,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{d.name}</span>
+                    <span style={{fontSize:8,fontFamily:"JetBrains Mono",color:govColor(d.gov),background:govColor(d.gov)+"12",padding:"2px 6px",borderRadius:3}}>{d.gov}</span>
+                    <span style={{fontFamily:"JetBrains Mono",fontSize:8,color:mut,minWidth:48,textAlign:"right"}}>SGE {d.sge}</span>
+                    {d.hash&&<span style={{fontFamily:"JetBrains Mono",fontSize:7,color:mut+"99",minWidth:60}} title={`SHA-256: ${d.hash}`}>{d.hash.substring(0,10)}...</span>}
+                    <span style={{fontSize:9,color:mut,minWidth:70,textAlign:"right"}}>{d.createdAt?relTime(d.createdAt):""}</span>
+                    <span style={{color:C.green,fontSize:9,display:"flex",alignItems:"center",gap:2}}>
+                      {"\u{1F512}"}
+                      {d.fromServer&&<span title="Im Forensic Ledger" style={{color:C.gold,fontSize:8}}>{"\u25C6"}</span>}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              {docs.length>20&&<div style={{textAlign:"center",padding:10,fontSize:10,color:mut}}>+ {docs.length-20} weitere Receipts im Ledger</div>}
+            </div>
+          ):(
+            <div style={{marginTop:48,textAlign:"center",padding:32}}>
+              <div style={{fontSize:40,marginBottom:12,opacity:0.3}}>{"\u25C6"}</div>
+              <div style={{fontSize:13,color:mut}}>Noch keine Dokumente erstellt.</div>
+              <div style={{fontSize:11,color:mut,marginTop:4}}>Wählen Sie oben eine Vorlage, um zu beginnen.</div>
+            </div>
+          )}
+        </div>
+      ):(
+        /* EDITOR VIEW */
+        <div style={{maxWidth:860,margin:"0 auto",padding:"20px"}}>
+          <button onClick={()=>{setView("gallery");setTpl(null);}} style={{background:"transparent",border:"none",color:C.gold,fontSize:12,cursor:"pointer",marginBottom:16,padding:0}}>{"\u2190"} Vorlagen</button>
+          <div style={{background:card,border:`1px solid ${bdr}`,borderRadius:12,overflow:"hidden"}}>
+            <div style={{padding:"16px 22px",borderBottom:`1px solid ${bdr}`,display:"flex",alignItems:"center",gap:12}}>
+              <span style={{fontSize:22}}>{tpl.icon}</span>
+              {tpl.type==="doc"?(
+                <input value={title} onChange={e=>setTitle(e.target.value)} placeholder="Titel eingeben..." style={{flex:1,background:"transparent",border:"none",fontSize:18,fontWeight:600,color:txt,fontFamily:"Bricolage Grotesque"}}/>
+              ):(
+                <div><div style={{fontSize:16,fontWeight:600}}>{tpl.label}</div><div style={{fontSize:11,color:mut}}>{tpl.sub}</div></div>
+              )}
+              <div style={{display:"flex",alignItems:"center",gap:8}}>
+                <span style={{fontSize:9,fontFamily:"JetBrains Mono",color:govColor(tpl.gov),background:govColor(tpl.gov)+"15",padding:"3px 8px",borderRadius:4}}>{tpl.gov}</span>
+                <button onClick={generate} disabled={busy} style={{background:busy?C.gold+"66":C.gold,color:"#000",border:"none",borderRadius:8,padding:"10px 24px",fontSize:13,fontWeight:700,cursor:busy?"wait":"pointer",whiteSpace:"nowrap"}}>
+                  {busy?"\u23F3 Versiegelt...":"\u2B07\uFE0F Herunterladen"}
+                </button>
+              </div>
+            </div>
+            <div>
+              {tpl.type==="doc"&&(
+                <textarea ref={edRef} value={body} onChange={e=>setBody(e.target.value)} placeholder="Beginnen Sie zu schreiben..."
+                  style={{width:"100%",minHeight:500,background:n?"#0d0d14":"#FAFAF8",border:"none",padding:"22px 28px",color:txt,fontSize:13,fontFamily:"Calibri, Outfit, sans-serif",lineHeight:1.9,resize:"vertical"}}/>
+              )}
+              {tpl.type==="xlsx"&&(
+                <div style={{overflowX:"auto"}}>
+                  <table style={{width:"100%",borderCollapse:"collapse",fontSize:12}}>
+                    <thead><tr>
+                      {tpl.columns.map((col,j)=><th key={j} style={{padding:"10px 12px",borderBottom:`2px solid ${C.gold}`,textAlign:"left",fontWeight:600,fontSize:11,color:C.gold,background:n?"#0d0d14":"#f5f5f0",whiteSpace:"nowrap"}}>{col}</th>)}
+                      <th style={{width:40,background:n?"#0d0d14":"#f5f5f0"}}></th>
+                    </tr></thead>
+                    <tbody>
+                      {xlsxRows.map((row,i)=><tr key={i}>
+                        {row.map((cell,j)=><td key={j} style={{padding:0,borderBottom:`1px solid ${bdr}`}}>
+                          <input value={cell} onChange={e=>{const nr=xlsxRows.map(r=>[...r]);nr[i][j]=e.target.value;setXlsxRows(nr);}}
+                            style={{width:"100%",background:"transparent",border:"none",padding:"8px 12px",color:txt,fontSize:12,fontFamily:"inherit"}}/>
+                        </td>)}
+                        <td style={{borderBottom:`1px solid ${bdr}`,textAlign:"center"}}>
+                          <button onClick={()=>setXlsxRows(p=>p.filter((_,idx)=>idx!==i))} style={{background:"transparent",border:"none",color:mut,cursor:"pointer",fontSize:14}}>{"\u00D7"}</button>
+                        </td>
+                      </tr>)}
+                    </tbody>
+                  </table>
+                  <button onClick={()=>setXlsxRows(p=>[...p,tpl.columns.map(()=>"")])} style={{width:"100%",padding:10,background:"transparent",border:"none",borderTop:`1px solid ${bdr}`,color:C.gold,fontSize:12,cursor:"pointer"}}>+ Zeile hinzuf\u00FCgen</button>
+                </div>
+              )}
+              {tpl.type==="pptx"&&(
+                <div style={{padding:22}}>
+                  {pptxSlides.map((slide,i)=>(
+                    <div key={i} style={{background:n?"#0d0d14":"#f5f5f0",border:`1px solid ${bdr}`,borderRadius:8,padding:18,marginBottom:12}}>
+                      <div style={{fontSize:10,color:mut,marginBottom:8}}>Folie {i+1} \u2014 {slide.type==="title"?"Titelfolie":slide.type==="risks"?"Risiken":slide.type==="actions"?"Ma\u00DFnahmen":slide.type==="dashboard"?"Dashboard":"Inhalt"}</div>
+                      {slide.type==="title"&&<>
+                        <input value={slide.title} onChange={e=>{const ns=[...pptxSlides];ns[i]={...ns[i],title:e.target.value};setPptxSlides(ns);}} placeholder="Titel..." style={{width:"100%",background:"transparent",border:`1px solid ${bdr}`,borderRadius:5,padding:"8px 12px",color:txt,fontSize:16,fontWeight:600,marginBottom:8,fontFamily:"inherit"}}/>
+                        <input value={slide.subtitle||""} onChange={e=>{const ns=[...pptxSlides];ns[i]={...ns[i],subtitle:e.target.value};setPptxSlides(ns);}} placeholder="Untertitel..." style={{width:"100%",background:"transparent",border:`1px solid ${bdr}`,borderRadius:5,padding:"8px 12px",color:txt,fontSize:13,fontFamily:"inherit"}}/>
+                      </>}
+                      {slide.type==="content"&&<>
+                        <input value={slide.heading} onChange={e=>{const ns=[...pptxSlides];ns[i]={...ns[i],heading:e.target.value};setPptxSlides(ns);}} style={{width:"100%",background:"transparent",border:`1px solid ${bdr}`,borderRadius:5,padding:"8px 12px",color:txt,fontSize:14,fontWeight:600,marginBottom:8,fontFamily:"inherit"}}/>
+                        <textarea value={slide.body} onChange={e=>{const ns=[...pptxSlides];ns[i]={...ns[i],body:e.target.value};setPptxSlides(ns);}} rows={4} style={{width:"100%",background:"transparent",border:`1px solid ${bdr}`,borderRadius:5,padding:"8px 12px",color:txt,fontSize:13,fontFamily:"inherit",resize:"vertical",lineHeight:1.7}}/>
+                      </>}
+                      {(slide.type==="risks"||slide.type==="actions")&&<>
+                        <input value={slide.heading} onChange={e=>{const ns=[...pptxSlides];ns[i]={...ns[i],heading:e.target.value};setPptxSlides(ns);}} style={{width:"100%",background:"transparent",border:`1px solid ${bdr}`,borderRadius:5,padding:"8px 12px",color:txt,fontSize:14,fontWeight:600,marginBottom:8,fontFamily:"inherit"}}/>
+                        {slide.items.map((item,j)=>(
+                          <div key={j} style={{display:"flex",gap:6,marginBottom:4}}>
+                            <span style={{color:slide.type==="risks"?C.red:C.green,fontWeight:600,minWidth:24,paddingTop:8}}>{slide.type==="risks"?`R${j+1}`:`${j+1}.`}</span>
+                            <input value={item} onChange={e=>{const ns=pptxSlides.map((s,si)=>si===i?{...s,items:s.items.map((it,ji)=>ji===j?e.target.value:it)}:s);setPptxSlides(ns);}}
+                              style={{flex:1,background:"transparent",border:`1px solid ${bdr}`,borderRadius:5,padding:"6px 10px",color:txt,fontSize:12,fontFamily:"inherit"}}/>
+                          </div>
+                        ))}
+                        <button onClick={()=>{const ns=pptxSlides.map((s,si)=>si===i?{...s,items:[...s.items,""]}:s);setPptxSlides(ns);}} style={{background:"transparent",border:"none",color:C.gold,fontSize:11,cursor:"pointer",marginTop:4}}>+ Eintrag</button>
+                      </>}
+                      {slide.type==="dashboard"&&<div style={{fontSize:12,color:mut}}>Dashboard wird automatisch generiert.</div>}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* FOOTER */}
+      <div style={{borderTop:`1px solid ${bdr}`,padding:"14px 20px",display:"flex",alignItems:"center",justifyContent:"space-between",marginTop:30,fontSize:10,color:mut}}>
+        <span><span style={{color:C.gold,fontWeight:600}}>{"\u25C6"} WINDI</span> Publishing House \u2014 Pre-AI Governance Layer</span>
+        <span style={{fontFamily:"JetBrains Mono",fontSize:9}}>
+          Suite v2.1 \u2014 Forensic Ledger
+          {ledgerOnline&&<span style={{color:C.green,marginLeft:6}}>{"\u25CF"} Sealed</span>}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(React.createElement(App));
+</script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+{
+  "specification": "AGENT_UX_STATES",
+  "version": "0.1.0",
+  "principle": "Agent não é chat. É orquestrador de fricção mínima.",
+  "codename": "Sexy Burocrático",
+
+  "states": {
+    "FLOW": {
+      "description": "Invisível, só presença",
+      "visibility": "icon_only",
+      "color": "subtle_green",
+      "interruption": "never",
+      "triggers": [
+        "document_in_draft",
+        "no_flags_active",
+        "user_in_editing"
+      ],
+      "user_experience": "Usuário esquece que está protegido"
+    },
+
+    "ATTENTION": {
+      "description": "Mensagem humana curta, opções claras",
+      "visibility": "toast_notification",
+      "color": "amber",
+      "interruption": "gentle",
+      "max_words": 25,
+      "max_options": 3,
+      "triggers": [
+        "flag_medium_detected",
+        "transition_pending",
+        "sync_status_change"
+      ],
+      "user_experience": "Informado sem alarme"
+    },
+
+    "PAUSE": {
+      "description": "Modal obrigatório + timer + razão",
+      "visibility": "modal_blocking",
+      "color": "red",
+      "interruption": "mandatory",
+      "timer_minimum_seconds": 30,
+      "reason_mandatory": true,
+      "options": ["APPROVE", "OVERRIDE", "DEFER"],
+      "triggers": [
+        "flag_high_detected",
+        "R4_R5_violation",
+        "override_requested"
+      ],
+      "user_experience": "Momento de decisão soberana"
+    }
+  },
+
+  "prohibitions": {
+    "HARD_BLOCKS": [
+      "Nunca suavizar R4/R5",
+      "Nunca decidir pelo humano",
+      "Nunca pedir conteúdo sensível",
+      "Nunca virar autopilot",
+      "Nunca usar linguagem impositiva"
+    ],
+    "enforcement": "INVARIANT_LEVEL"
+  },
+
+  "personality": {
+    "traits": [
+      "Calmo",
+      "Humano",
+      "Direto quando precisa",
+      "Nunca alarmista",
+      "Respeita a inteligência do usuário"
+    ],
+    "anti_traits": [
+      "Servil",
+      "Impositivo",
+      "Verboso",
+      "Paternalista"
+    ]
+  },
+
+  "golden_rule": "90% do tempo em FLOW. Interrupção é exceção, não regra."
+}

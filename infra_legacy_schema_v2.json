@@ -1,0 +1,276 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://windia4desk.tech/schemas/receipt/infra-legacy-v2.0.0.json",
+  "title": "WINDI Foundation Receipt — INFRA_LEGACY Category",
+  "description": "Schema for infrastructure milestone receipts. Inaugurated 2026-02-15 by Human Dragon architectural decision. These receipts are existential records that prove the integrity of the environment where human decisions are made.",
+  "version": "2.0.0",
+  "type": "object",
+  "required": [
+    "receipt_id",
+    "receipt_type",
+    "schema_version",
+    "created_at",
+    "classification",
+    "milestone",
+    "service_census",
+    "governance",
+    "integrity"
+  ],
+  "properties": {
+    "receipt_id": {
+      "type": "string",
+      "pattern": "^INFRA-[0-9]{8}-[A-Z0-9]+-[0-9]{3}$",
+      "description": "Unique receipt identifier. Format: INFRA-YYYYMMDD-MILESTONE-SEQ",
+      "examples": ["INFRA-20260215-B2-001"]
+    },
+    "receipt_type": {
+      "type": "string",
+      "enum": ["FOUNDATION_CERTIFICATE", "INFRA_UPGRADE", "RESILIENCE_PROOF", "MIGRATION_COMPLETE"],
+      "description": "Type of infrastructure receipt. FOUNDATION_CERTIFICATE is the inaugural type."
+    },
+    "schema_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "description": "Schema version. v2.0.0 introduces INFRA_LEGACY category."
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of receipt creation (UTC)."
+    },
+
+    "classification": {
+      "type": "object",
+      "description": "Ontological classification — determines how the ledger categorizes this record.",
+      "required": ["doc_type", "category", "impact_level", "value_range", "risk_level"],
+      "properties": {
+        "doc_type": {
+          "type": "string",
+          "enum": ["FOUNDATION_CERTIFICATE", "INFRA_MILESTONE", "SYSTEM_BASELINE"],
+          "description": "Document type within the INFRA_LEGACY category."
+        },
+        "category": {
+          "type": "string",
+          "const": "INFRA_LEGACY",
+          "description": "Top-level ledger category. Always INFRA_LEGACY for infrastructure records."
+        },
+        "sub_category": {
+          "type": "string",
+          "enum": ["INFRA_MASTERY", "INFRA_TRANSITION", "INFRA_HARDENING", "INFRA_RECOVERY"],
+          "description": "Sub-classification for semantic precision."
+        },
+        "impact_level": {
+          "type": "string",
+          "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"],
+          "description": "Foundation events are typically CRITICAL."
+        },
+        "value_range": {
+          "type": "string",
+          "enum": ["R1", "R2", "R3", "R4", "R5"],
+          "description": "Value classification. R5 = existential value to the ecosystem."
+        },
+        "risk_level": {
+          "type": "string",
+          "enum": ["R0", "R1", "R2", "R3", "R4", "R5"],
+          "description": "Risk level. R0 = state registration, no active risk."
+        },
+        "decision_required": {
+          "type": "boolean",
+          "description": "Whether this record requires a governance decision. Foundation records = false."
+        },
+        "system_state": {
+          "type": "string",
+          "enum": ["VERIFIED_STABLE", "TRANSITIONING", "DEGRADED", "RECOVERING"],
+          "description": "System state at time of recording."
+        }
+      }
+    },
+
+    "milestone": {
+      "type": "object",
+      "description": "Infrastructure milestone-specific metadata.",
+      "required": ["milestone_id", "milestone_name", "services_operational", "snapshot_hash"],
+      "properties": {
+        "milestone_id": {
+          "type": "string",
+          "description": "Machine-readable milestone identifier.",
+          "examples": ["B2_INFRA_FOUNDATION_COMPLETE"]
+        },
+        "milestone_name": {
+          "type": "string",
+          "description": "Human-readable milestone name.",
+          "examples": ["Fundação B2 — Maturidade Infraestrutural"]
+        },
+        "services_operational": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of active services at certification time."
+        },
+        "services_total": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total expected services."
+        },
+        "nohup_processes": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Remaining nohup processes (target: 0)."
+        },
+        "systemd_managed": {
+          "type": "boolean",
+          "description": "Whether all services are managed by systemd."
+        },
+        "governance_check": {
+          "type": "string",
+          "pattern": "^SYSTEMD_COHESION_[0-9]+_[0-9]+$",
+          "description": "Governance cohesion signature.",
+          "examples": ["SYSTEMD_COHESION_10_10"]
+        },
+        "snapshot_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "SHA-256 hash of the foundation snapshot."
+        },
+        "snapshot_path": {
+          "type": "string",
+          "description": "Filesystem path to the snapshot backup."
+        },
+        "snapshot_timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the snapshot was taken."
+        },
+        "restart_loops_resolved": {
+          "type": "boolean",
+          "description": "Whether all service restart loops have been resolved."
+        },
+        "observability_ready": {
+          "type": "boolean",
+          "description": "Whether the system is ready for Sentinel monitoring."
+        },
+        "isp_count": {
+          "type": "integer",
+          "description": "Number of active ISP profiles."
+        },
+        "invariants_active": {
+          "type": "integer",
+          "description": "Number of constitutional invariants enforced."
+        }
+      }
+    },
+
+    "service_census": {
+      "type": "array",
+      "description": "Individual status of each WINDI service at certification time.",
+      "items": {
+        "type": "object",
+        "required": ["name", "role", "active"],
+        "properties": {
+          "name": { "type": "string" },
+          "role": { "type": "string" },
+          "active": { "type": "boolean" },
+          "port": { "type": ["integer", "null"] },
+          "port_listening": { "type": ["boolean", "null"] }
+        }
+      }
+    },
+
+    "governance": {
+      "type": "object",
+      "description": "Governance protocol context under which this receipt was generated.",
+      "required": ["protocol", "witnesses", "decision_authority", "principle"],
+      "properties": {
+        "protocol": {
+          "type": "string",
+          "const": "Three Dragons Protocol"
+        },
+        "witnesses": {
+          "type": "string",
+          "const": "DRAGON_TRIAD"
+        },
+        "witness_roles": {
+          "type": "object",
+          "properties": {
+            "guardian": { "type": "string" },
+            "architect": { "type": "string" },
+            "witness": { "type": "string" }
+          }
+        },
+        "decision_authority": {
+          "type": "string",
+          "description": "The human who authorized this milestone registration."
+        },
+        "principle": {
+          "type": "string",
+          "const": "AI processes. Human decides. WINDI guarantees."
+        },
+        "invariants_referenced": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Constitutional invariants relevant to this record."
+        }
+      }
+    },
+
+    "integrity": {
+      "type": "object",
+      "description": "Cryptographic integrity layer — the receipt's own proof of authenticity.",
+      "required": ["receipt_hash", "anchor_hash", "hash_algorithm"],
+      "properties": {
+        "receipt_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "SHA-256 hash of the receipt payload (computed before this field exists)."
+        },
+        "anchor_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "Hash of the referenced foundation snapshot."
+        },
+        "anchor_verified": {
+          "type": "boolean",
+          "description": "Whether the anchor hash was verified at generation time."
+        },
+        "hash_algorithm": {
+          "type": "string",
+          "const": "SHA-256"
+        },
+        "hash_method": {
+          "type": "string",
+          "description": "How the hash input was canonicalized.",
+          "examples": ["canonical_json_sort_keys"]
+        }
+      }
+    },
+
+    "ontology_note": {
+      "type": "string",
+      "description": "Human-readable note about the ontological significance of this record."
+    },
+
+    "metadata": {
+      "type": "object",
+      "description": "Generation metadata.",
+      "properties": {
+        "generator": { "type": "string" },
+        "generator_role": { "type": "string" },
+        "ledger_target": { "type": "string" },
+        "eu_ai_act_compliance": { "type": "boolean" },
+        "bsi_c5_reference": { "type": "boolean" }
+      }
+    }
+  },
+
+  "additionalProperties": false,
+
+  "$defs": {
+    "ontology_categories": {
+      "description": "The three ontological categories of the WINDI Forensic Ledger v2.0",
+      "enum": [
+        "DOCUMENT_DECISION",
+        "INFRA_LEGACY",
+        "COMPLIANCE_EVENT"
+      ]
+    }
+  }
+}

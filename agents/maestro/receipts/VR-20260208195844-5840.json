@@ -1,0 +1,13 @@
+{
+  "receipt_type": "virtue_receipt",
+  "action": "DECISION:ACCEPT",
+  "finding_id": "ISP-alerts_20260208_085840",
+  "human_id": "Human Dragon",
+  "timestamp_utc": "2026-02-08T19:58:44.679316+00:00",
+  "details_hash": "d53861dc54837b8c",
+  "details": {
+    "decision": "accept",
+    "rationale": "HUB-4 API test"
+  },
+  "seal": "3146f2fe176d0e45612a705d3ef484e9f6005c94d204a89e9907a5c300335061"
+}

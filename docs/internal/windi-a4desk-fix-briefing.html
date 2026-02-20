@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI — A4 Desk BABEL · UIX & JS Fix Briefing</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0c0c0c; --surface:#141414; --surface2:#1a1a1a;
+    --border:#222; --border2:#333;
+    --text:#f0efe8; --text-sec:#8a8a82; --text-dim:#555;
+    --gold:#c9a84c; --gold-glow:rgba(201,168,76,0.08);
+    --green:#4ade80; --green-dim:rgba(74,222,128,0.1);
+    --red:#f87171; --red-dim:rgba(248,113,113,0.08);
+    --yellow:#facc15; --yellow-dim:rgba(250,204,21,0.08);
+    --blue:#6ba3f7; --blue-dim:rgba(107,163,247,0.08);
+    --radius:12px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);padding:24px;max-width:960px;margin:0 auto;-webkit-font-smoothing:antialiased}
+
+  h1{font-family:'Bricolage Grotesque',serif;font-weight:800;font-size:28px;margin-bottom:6px}
+  h2{font-family:'Bricolage Grotesque',serif;font-weight:700;font-size:20px;margin:32px 0 16px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+  h3{font-family:'Bricolage Grotesque',serif;font-weight:600;font-size:15px;margin:20px 0 10px}
+
+  .subtitle{font-size:14px;color:var(--text-sec);margin-bottom:24px}
+  .meta{display:flex;gap:16px;margin-bottom:32px;flex-wrap:wrap}
+  .meta-tag{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 12px;border-radius:16px;letter-spacing:1px}
+  .tag-file{background:var(--blue-dim);color:var(--blue);border:1px solid rgba(107,163,247,0.15)}
+  .tag-port{background:var(--gold-glow);color:var(--gold);border:1px solid rgba(201,168,76,0.15)}
+  .tag-version{background:var(--green-dim);color:var(--green);border:1px solid rgba(74,222,128,0.15)}
+
+  /* Bug cards */
+  .bug-grid{display:flex;flex-direction:column;gap:12px}
+  .bug-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+  .bug-card:hover{border-color:var(--border2)}
+  .bug-bar{height:3px;width:100%}
+  .bar-critical{background:linear-gradient(90deg,transparent,var(--red),transparent)}
+  .bar-high{background:linear-gradient(90deg,transparent,var(--yellow),transparent)}
+  .bar-medium{background:linear-gradient(90deg,transparent,var(--blue),transparent)}
+  .bar-design{background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+
+  .bug-body{padding:16px 20px}
+  .bug-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+  .bug-id{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1px;padding:2px 8px;border-radius:8px}
+  .id-critical{background:var(--red-dim);color:var(--red)}
+  .id-high{background:var(--yellow-dim);color:var(--yellow)}
+  .id-medium{background:var(--blue-dim);color:var(--blue)}
+  .id-design{background:var(--gold-glow);color:var(--gold)}
+  .bug-status{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-dim)}
+
+  .bug-title{font-family:'Bricolage Grotesque',serif;font-weight:600;font-size:15px;margin-bottom:6px}
+  .bug-desc{font-size:13px;color:var(--text-sec);line-height:1.6;margin-bottom:10px}
+
+  .bug-detail{font-size:12px;color:var(--text-dim);line-height:1.5}
+  .bug-detail code{font-family:'JetBrains Mono',monospace;font-size:11px;background:var(--surface2);padding:1px 6px;border-radius:4px;color:var(--text-sec)}
+
+  .fix-hint{margin-top:10px;padding:10px 14px;background:var(--surface2);border-radius:8px;border-left:3px solid var(--gold);font-size:12px;color:var(--text-sec);line-height:1.5}
+  .fix-hint strong{color:var(--gold)}
+
+  /* Summary table */
+  .summary-table{width:100%;border-collapse:collapse;font-size:13px;margin:16px 0}
+  .summary-table th{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--text-sec);text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);background:var(--surface)}
+  .summary-table td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.03);vertical-align:top}
+  .summary-table tr:last-child td{border-bottom:none}
+
+  /* Phase boxes */
+  .phase{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin:12px 0}
+  .phase-tag{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--gold);margin-bottom:8px}
+  .phase h3{margin:0 0 8px}
+  .phase ul{list-style:none;display:flex;flex-direction:column;gap:6px}
+  .phase li{font-size:13px;color:var(--text-sec);padding-left:20px;position:relative;line-height:1.5}
+  .phase li::before{content:'→';position:absolute;left:0;color:var(--gold)}
+
+  .footer-note{margin-top:40px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-dim);letter-spacing:0.5px;padding-top:20px;border-top:1px solid var(--border)}
+  .footer-note .fg{color:var(--gold)}
+</style>
+</head>
+<body>
+
+<h1>🔧 A4 Desk BABEL — UIX & JS Fix Briefing</h1>
+<div class="subtitle">Todas as correções pendentes identificadas nas sessões de 26 Jan – 10 Fev 2026</div>
+
+<div class="meta">
+  <span class="meta-tag tag-file">FILE: /opt/windi/a4desk-editor/a4desk_tiptap_babel.py</span>
+  <span class="meta-tag tag-port">PORT: 8085</span>
+  <span class="meta-tag tag-version">CURRENT: v4.2</span>
+  <span class="meta-tag tag-file">WSG: /opt/windi/a4desk-editor/static/wsg/wsg-init.js</span>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2>🔴 CRITICAL — Funcionalidade Quebrada</h2>
+<!-- ═══════════════════════════════════════════ -->
+<div class="bug-grid">
+
+  <div class="bug-card">
+    <div class="bug-bar bar-critical"></div>
+    <div class="bug-body">
+      <div class="bug-header">
+        <span class="bug-id id-critical">BUG-001</span>
+        <span class="bug-status">OPEN · 29 Jan 2026</span>
+      </div>
+      <div class="bug-title">Delete funciona apenas 1x — segundo delete falha silenciosamente</div>
+      <div class="bug-desc">Após a primeira exclusão bem-sucedida, tentativas subsequentes passam pelo reauth mas o callback de delete não executa. O documento permanece na lista.</div>
+      <div class="bug-detail">
+        <strong>Root cause:</strong> <code>hideReauth()</code> limpa <code>pendingAction</code> antes de executar o callback. Fix parcial aplicado (salvar cb antes) mas delete ainda falha na 2ª execução.<br>
+        <strong>Suspeita:</strong> O <code>deleteDocById</code> usa closure sobre <code>showReauth</code> que pode ter referência stale após primeiro uso.
+      </div>
+      <div class="fix-hint">
+        <strong>Fix strategy:</strong> Refatorar <code>deleteDocById</code> para criar novo callback a cada chamada. Garantir que <code>pendingAction</code> é resetado corretamente após execução. Verificar se o <code>event listener</code> do confirmReauth está duplicado após primeira execução.
+      </div>
+    </div>
+  </div>
+
+  <div class="bug-card">
+    <div class="bug-bar bar-critical"></div>
+    <div class="bug-body">
+      <div class="bug-header">
+        <span class="bug-id id-critical">BUG-002</span>
+        <span class="bug-status">OPEN · 29 Jan 2026</span>
+      </div>
+      <div class="bug-title">Prüfer/Witness placeholder persiste — não atualiza com novo User</div>
+      <div class="bug-desc">Os campos "Dr. Schmidt" e "EMP-0001" na seção Witness aparecem como valores fixos e não mudam quando um novo User faz login. Parecem hardcoded como defaults.</div>
+      <div class="bug-detail">
+        <strong>Location:</strong> Seção <code>.witness-section</code> no settings panel.<br>
+        <strong>Root cause:</strong> Placeholders são valores estáticos no HTML, não vinculados ao user session.
+      </div>
+      <div class="fix-hint">
+        <strong>Fix strategy:</strong> Vincular campos Witness ao <code>sessionStorage</code> ou à API de user profile. Na função <code>newDoc()</code>, limpar todos os campos Witness. Adicionar <code>data-bind</code> para sincronizar com dados do usuário logado.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2>🟡 HIGH — UIX Problems</h2>
+<!-- ═══════════════════════════════════════════ -->
+<div class="bug-grid">
+
+  <div class="bug-card">
+    <div class="bug-bar bar-high"></div>
+    <div class="bug-body">
+      <div class="bug-header">
+        <span class="bug-id id-high">UIX-001</span>
+        <span class="bug-status">PARTIAL · 06 Feb 2026</span>
+      </div>
+      <div class="bug-title">WSG Badge colide com botão de prompt no mobile</div>
+      <div class="bug-desc">Badge "🛡️ WSG Active" posicionado com <code>position: fixed; bottom: 10px; right: 10px</code> sobrepõe botões do chat em telas menores.</div>
+      <div class="bug-detail">
+        <strong>File:</strong> <code>/opt/windi/a4desk-editor/static/wsg/wsg-init.js</code> → <code>createStatusBadge()</code><br>
+        <strong>Fix preparado:</strong> Mover badge para dentro do <code>.chat-header</code> com <code>margin-left: auto</code>
+      </div>
+      <div class="fix-hint">
+        <strong>Fix strategy:</strong> Remover <code>position:fixed</code>. Inserir badge como child de <code>.chat-header</code>. Fallback para <code>.llm-title</code> ou top-right fixo. Código completo já documentado em sessão 06-Feb.
+      </div>
+    </div>
+  </div>
+
+  <div class="bug-card">
+    <div class="bug-bar bar-high"></div>
+    <div class="bug-body">
+      <div class="bug-header">
+        <span class="bug-id id-high">UIX-002</span>
+        <span class="bug-status">PARTIAL · 29 Jan 2026</span>
+      </div>
+      <div class="bug-title">Chat corta respostas longas — expandir implementado mas instável</div>
+      <div class="bug-desc">O chat anteriormente cortava em 500 chars. Fix v4.2 adicionou "Mehr anzeigen/Weniger anzeigen" mas precisa validação — pode ter problemas com HTML entities na resposta LLM.</div>
+      <div class="bug-detail">
+        <strong>Implementação:</strong> <code>toggleExpand(btn)</code> toggle <code>.collapsed</code> class com <code>max-height: 150px</code>.<br>
+        <strong>Risco:</strong> Respostas com markdown/HTML podem quebrar o layout quando expandidas.
+      </div>
+      <div class="fix-hint">
+        <strong>Fix strategy:</strong> Sanitizar HTML antes de inserir. Usar <code>DOMPurify</code> ou sanitização manual. Testar com respostas longas com code blocks.
+      </div>
+    </div>
+  </div>
+
+  <div class="bug-card">
+    <div class="bug-bar bar-high"></div>
+    <div class="bug-body">
+      <div class="bug-header">
+        <span class="bug-id id-high">UIX-003</span>
+        <span class="bug-status">OPEN · 29 Jan 2026</span>
+      </div>
+      <div class="bug-title">Autor/Prüfer panels não são sticky no scroll</div>
+      <div class="bug-desc">Ao scrollar o settings panel, os cards Autor e Prüfer desaparecem. Devem ficar fixos no topo enquanto o restante do panel scrolla.</div>
+      <div class="bug-detail">
+        <strong>CSS aplicado v4.2:</strong> <code>.panel-section:first-child { position: sticky; top: 0 }</code> e <code>.witness-section { position: sticky; top: 160px }</code><br>
+        <strong>Status:</strong> Aplicado mas precisa validação visual.
+      </div>
+      <div class="fix-hint">
+        <strong>Fix strategy:</strong> Verificar se <code>overflow</code> no container pai não bloqueia sticky. O <code>overflow-y: auto</code> no parent deve ser no container correto.
+      </div>
+    </div>
+  </div>
+
+  <div class="bug-card">
+    <div class="bug-bar bar-high"></div>
+    <div class="bug-body">
+      <div class="bug-header">
+        <span class="bug-id id-high">UIX-004</span>
+        <span class="bug-status">OPEN · 29 Jan 2026</span>
+      </div>
+      <div class="bug-title">i18n — Strings PT hardcoded sobrevivem em interface EN/DE</div>
+      <div class="bug-desc">Elementos como "Digite sua mensagem...", "Enviar documento para revisão", "Enviar" aparecem em português mesmo quando idioma é DE ou EN.</div>
+      <div class="bug-detail">
+        <strong>Fix tentado:</strong> Script <code>windi_i18n_fix_v3.sh</code> em 29-Jan. Status incerto — precisa verificação.<br>
+        <strong>System:</strong> Usa <code>data-t</code> para texto e <code>data-t-placeholder</code> para placeholders.
+      </div>
+      <div class="fix-hint">
+        <strong>Fix strategy:</strong> Auditoria completa: <code>grep</code> por strings PT/DE/EN hardcoded. Substituir TODOS por <code>data-t</code> keys. Validar que objeto <code>translations</code> em JS cobre todas as keys.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2>🔵 MEDIUM — Melhorias Pendentes</h2>
+<!-- ═══════════════════════════════════════════ -->
+<div class="bug-grid">
+
+  <div class="bug-card">
+    <div class="bug-bar bar-medium"></div>
+    <div class="bug-body">
+      <div class="bug-header">
+        <span class="bug-id id-medium">ENH-001</span>
+        <span class="bug-status">PLANNED · 26 Jan 2026</span>
+      </div>
+      <div class="bug-title">Linhas (underscores) → Campos editáveis no documento</div>
+      <div class="bug-desc">Atualmente existe <code>convertUnderlinesToFields()</code> mas a conversão não é consistente. Campos gerados por LLM com "___" devem virar inputs editáveis automaticamente.</div>
+      <div class="fix-hint">
+        <strong>Fix strategy:</strong> Melhorar regex em <code>convertUnderlinesToFields</code>. Aplicar após cada inserção do LLM. Garantir que campos são salvos no <code>document content</code>.
+      </div>
+    </div>
+  </div>
+
+  <div class="bug-card">
+    <div class="bug-bar bar-medium"></div>
+    <div class="bug-body">
+      <div class="bug-header">
+        <span class="bug-id id-medium">ENH-002</span>
+        <span class="bug-status">PLANNED · 26 Jan 2026</span>
+      </div>
+      <div class="bug-title">Botão "Solicitar alteração" → Retorno ao chat com contexto</div>
+      <div class="bug-desc">Quando o usuário vê o documento, deve poder clicar em um trecho e enviar ao chat com "por favor altere este parágrafo" — atualmente não existe esse fluxo.</div>
+      <div class="fix-hint">
+        <strong>Fix strategy:</strong> Adicionar text selection handler. Ao selecionar texto + clicar botão, enviar ao chat com prefixo contextual. Preencher <code>chatInput</code> com prompt formatado.
+      </div>
+    </div>
+  </div>
+
+  <div class="bug-card">
+    <div class="bug-bar bar-medium"></div>
+    <div class="bug-body">
+      <div class="bug-header">
+        <span class="bug-id id-medium">ENH-003</span>
+        <span class="bug-status">PLANNED · 26 Jan 2026</span>
+      </div>
+      <div class="bug-title">Export Markdown — formato incorreto</div>
+      <div class="bug-desc">Export MD gera HTML em vez de Markdown puro. O Tiptap editor trabalha em HTML internamente, precisa de conversão HTML→MD no export.</div>
+      <div class="fix-hint">
+        <strong>Fix strategy:</strong> Implementar conversor HTML→MD server-side (Python <code>markdownify</code> ou <code>html2text</code>) no endpoint de export.
+      </div>
+    </div>
+  </div>
+
+  <div class="bug-card">
+    <div class="bug-bar bar-medium"></div>
+    <div class="bug-body">
+      <div class="bug-header">
+        <span class="bug-id id-medium">ENH-004</span>
+        <span class="bug-status">PLANNED · 29 Jan 2026</span>
+      </div>
+      <div class="bug-title">Preview antes de "Einfügen" — visualizar resposta LLM antes de inserir</div>
+      <div class="bug-desc">Atualmente o botão "Einfügen" insere direto no editor. Deveria abrir um preview modal com diff mostrando o que será inserido.</div>
+      <div class="fix-hint">
+        <strong>Fix strategy:</strong> Criar modal com preview do conteúdo <code>window._lastLLM</code>. Mostrar ao lado do editor. Botões "Einfügen" e "Abbrechen" no modal.
+      </div>
+    </div>
+  </div>
+
+  <div class="bug-card">
+    <div class="bug-bar bar-medium"></div>
+    <div class="bug-body">
+      <div class="bug-header">
+        <span class="bug-id id-medium">ENH-005</span>
+        <span class="bug-status">PLANNED · 29 Jan 2026</span>
+      </div>
+      <div class="bug-title">Human Authorship Notice automático no PDF export</div>
+      <div class="bug-desc">Todo PDF exportado pelo BABEL deve conter um aviso de autoria: "Dieses Dokument wurde unter menschlicher Aufsicht mit KI-Unterstützung erstellt."</div>
+      <div class="fix-hint">
+        <strong>Fix strategy:</strong> Adicionar footer automático no endpoint <code>/api/document/{id}/export/pdf</code>. Usar texto trilíngue baseado no idioma ativo.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2>🟡 DESIGN — Noir Redesign</h2>
+<!-- ═══════════════════════════════════════════ -->
+<div class="bug-grid">
+
+  <div class="bug-card">
+    <div class="bug-bar bar-design"></div>
+    <div class="bug-body">
+      <div class="bug-header">
+        <span class="bug-id id-design">DESIGN-001</span>
+        <span class="bug-status">IN PROGRESS · 06 Feb 2026</span>
+      </div>
+      <div class="bug-title">Aplicar Noir Design System ao BABEL Editor</div>
+      <div class="bug-desc">O master.windia4desk.tech já tem 32 páginas em Noir (dark+gold). O BABEL em windi-domain.com:8085 ainda usa o design antigo (light blue/white). Unificar visual.</div>
+      <div class="bug-detail">
+        <strong>CSS Noir completo:</strong> Já criado em sessão 06-Feb. Variáveis: <code>--bg: #0e0e0e</code>, <code>--gold: #c9a84c</code>, fonts Bricolage+Outfit+JetBrains Mono.<br>
+        <strong>Componentes:</strong> Toolbar, sidebar, editor area, chat panel, status bar — todos precisam de reskin.
+      </div>
+      <div class="fix-hint">
+        <strong>Fix strategy:</strong> Injetar CSS Noir como override. Manter HTML/JS intacto. Substituir todas as variáveis de cor. Adicionar Dunkel/Klar toggle como no master. File preparado: <code>windi_noir_babel.css</code>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2>📋 Tabela Resumo de Prioridades</h2>
+<!-- ═══════════════════════════════════════════ -->
+<table class="summary-table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>ISSUE</th>
+      <th>PRIORITY</th>
+      <th>EFFORT</th>
+      <th>STATUS</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td><code>BUG-001</code></td><td>Delete falha na 2ª execução</td><td style="color:var(--red)">CRITICAL</td><td>30 min</td><td>OPEN</td></tr>
+    <tr><td><code>BUG-002</code></td><td>Witness placeholder persiste</td><td style="color:var(--red)">CRITICAL</td><td>20 min</td><td>OPEN</td></tr>
+    <tr><td><code>UIX-001</code></td><td>WSG badge colide no mobile</td><td style="color:var(--yellow)">HIGH</td><td>15 min</td><td>FIX READY</td></tr>
+    <tr><td><code>UIX-002</code></td><td>Chat expandir instável</td><td style="color:var(--yellow)">HIGH</td><td>20 min</td><td>PARTIAL</td></tr>
+    <tr><td><code>UIX-003</code></td><td>Sticky panels no scroll</td><td style="color:var(--yellow)">HIGH</td><td>15 min</td><td>PARTIAL</td></tr>
+    <tr><td><code>UIX-004</code></td><td>i18n strings hardcoded</td><td style="color:var(--yellow)">HIGH</td><td>45 min</td><td>OPEN</td></tr>
+    <tr><td><code>ENH-001</code></td><td>Underscores → campos</td><td style="color:var(--blue)">MEDIUM</td><td>30 min</td><td>PLANNED</td></tr>
+    <tr><td><code>ENH-002</code></td><td>Solicitar alteração → chat</td><td style="color:var(--blue)">MEDIUM</td><td>45 min</td><td>PLANNED</td></tr>
+    <tr><td><code>ENH-003</code></td><td>Export MD incorreto</td><td style="color:var(--blue)">MEDIUM</td><td>20 min</td><td>PLANNED</td></tr>
+    <tr><td><code>ENH-004</code></td><td>Preview antes de inserir</td><td style="color:var(--blue)">MEDIUM</td><td>40 min</td><td>PLANNED</td></tr>
+    <tr><td><code>ENH-005</code></td><td>Authorship Notice no PDF</td><td style="color:var(--blue)">MEDIUM</td><td>20 min</td><td>PLANNED</td></tr>
+    <tr><td><code>DESIGN-001</code></td><td>Noir Design System</td><td style="color:var(--gold)">DESIGN</td><td>2-3h</td><td>CSS READY</td></tr>
+  </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2>🚀 Plano de Execução — 3 Fases</h2>
+<!-- ═══════════════════════════════════════════ -->
+
+<div class="phase">
+  <div class="phase-tag">PHASE 1 — HOTFIX (30 min)</div>
+  <h3>Corrigir funcionalidade quebrada</h3>
+  <ul>
+    <li><strong>BUG-001:</strong> Refatorar deleteDocById — novo callback a cada chamada</li>
+    <li><strong>BUG-002:</strong> Vincular Witness fields ao user session, limpar em newDoc()</li>
+    <li><strong>UIX-001:</strong> Aplicar WSG badge fix (código pronto)</li>
+    <li>Backup → Patch → Restart → Test → Commit</li>
+  </ul>
+</div>
+
+<div class="phase">
+  <div class="phase-tag">PHASE 2 — UIX POLISH (1-2h)</div>
+  <h3>Estabilizar experiência do usuário</h3>
+  <ul>
+    <li><strong>UIX-002:</strong> Sanitizar HTML no chat expandível</li>
+    <li><strong>UIX-003:</strong> Validar sticky panels (verificar overflow parent)</li>
+    <li><strong>UIX-004:</strong> Auditoria i18n completa — grep hardcoded → data-t</li>
+    <li><strong>ENH-005:</strong> Human Authorship Notice no PDF (rápido)</li>
+    <li>Versão → v4.3</li>
+  </ul>
+</div>
+
+<div class="phase">
+  <div class="phase-tag">PHASE 3 — REDESIGN (2-3h)</div>
+  <h3>Noir Design System + Features</h3>
+  <ul>
+    <li><strong>DESIGN-001:</strong> Aplicar CSS Noir completo ao BABEL</li>
+    <li><strong>ENH-001:</strong> Underscores → editable fields</li>
+    <li><strong>ENH-002:</strong> Solicitar alteração → chat contextual</li>
+    <li><strong>ENH-003:</strong> Fix MD export (html2text)</li>
+    <li><strong>ENH-004:</strong> Preview modal antes de inserir</li>
+    <li>Versão → v5.0 (BABEL Noir)</li>
+  </ul>
+</div>
+
+<!-- ═══════════════════════════════════════════ -->
+<h2>📁 Arquivos Chave</h2>
+<!-- ═══════════════════════════════════════════ -->
+<table class="summary-table">
+  <thead>
+    <tr><th>ARQUIVO</th><th>FUNÇÃO</th><th>LINHAS</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>/opt/windi/a4desk-editor/a4desk_tiptap_babel.py</code></td><td>Motor principal — Flask + HTML/CSS/JS inline</td><td>~3000+</td></tr>
+    <tr><td><code>/opt/windi/a4desk-editor/static/wsg/wsg-init.js</code></td><td>WSG badge + Service Worker init</td><td>~200</td></tr>
+    <tr><td><code>/opt/windi/data/babel_documents.db</code></td><td>SQLite — documentos persistidos</td><td>DB</td></tr>
+    <tr><td><code>/opt/windi/a4desk-editor/wsgi.py</code></td><td>WSGI wrapper</td><td>~20</td></tr>
+    <tr><td><code>/opt/windi/backups/</code></td><td>Backups de cada versão</td><td>—</td></tr>
+  </tbody>
+</table>
+
+<h3>⚠️ Antes de qualquer fix:</h3>
+<div class="fix-hint">
+  <strong>BACKUP OBRIGATÓRIO:</strong><br>
+  <code>cp /opt/windi/a4desk-editor/a4desk_tiptap_babel.py /opt/windi/backups/a4desk_pre_v43_$(date +%Y%m%d_%H%M).py</code><br>
+  <code>cp /opt/windi/a4desk-editor/static/wsg/wsg-init.js /opt/windi/backups/wsg-init_pre_v43.js</code>
+</div>
+
+<div class="footer-note">
+  WINDI A4 Desk BABEL · Fix Briefing · 10 Feb 2026 · <span class="fg">Three Dragons Protocol</span> — I1-I9 ACTIVE
+</div>
+
+</body>
+</html>

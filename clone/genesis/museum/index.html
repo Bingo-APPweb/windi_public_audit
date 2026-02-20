@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Museum of the Future - a4Desk BABEL Onboarding Experience">
+  <meta name="theme-color" content="#0A0A0A">
+  <title>Museum of the Future | WINDI Publishing House</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;600;800&family=Outfit:wght@200;300;400;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <!-- React -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+  <!-- Babel for JSX transpilation (development only) -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body, #root {
+      min-height: 100vh;
+      background: #050505;
+      color: #E0E0E0;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    /* Loading State */
+    .loading-screen {
+      position: fixed;
+      inset: 0;
+      background: #050505;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+    }
+
+    .loading-logo {
+      font-family: 'Bricolage Grotesque', serif;
+      font-size: 2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #D4AF37, #F5E6A3, #D4AF37);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 16px;
+    }
+
+    .loading-bar {
+      width: 200px;
+      height: 2px;
+      background: #1A1A1A;
+      border-radius: 1px;
+      overflow: hidden;
+    }
+
+    .loading-progress {
+      height: 100%;
+      background: #D4AF37;
+      animation: loadProgress 2s ease infinite;
+    }
+
+    .loading-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      color: #333;
+      margin-top: 16px;
+      letter-spacing: 0.15em;
+    }
+
+    @keyframes loadProgress {
+      0% { width: 0%; transform: translateX(0); }
+      50% { width: 60%; }
+      100% { width: 100%; transform: translateX(0); }
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: #080808; }
+    ::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.2); border-radius: 2px; }
+  </style>
+</head>
+<body>
+  <div id="root">
+    <!-- Loading Screen (shown while React loads) -->
+    <div class="loading-screen" id="loading">
+      <div class="loading-logo">a4Desk BABEL</div>
+      <div class="loading-bar">
+        <div class="loading-progress"></div>
+      </div>
+      <div class="loading-text">INITIALIZING MUSEUM...</div>
+    </div>
+  </div>
+
+  <!-- Museum App Bundle -->
+  <script type="text/babel" data-presets="react">
+    const { useState, useEffect, useRef, useCallback } = React;
+
+    // ═══════════════════════════════════════════════════════════════════
+    // MUSEUM OF THE FUTURE — INLINE BUNDLE
+    // All components compiled into single script for MVP deployment
+    // ═══════════════════════════════════════════════════════════════════
+
+    // i18n strings loaded from separate file or inline
+    const MUSEUM_LOADED = true;
+
+    // Phase Transition Component
+    function PhaseTransition({ principle, onComplete }) {
+      useEffect(() => {
+        const timer = setTimeout(onComplete, 1000);
+        return () => clearTimeout(timer);
+      }, [onComplete]);
+
+      return (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 1000,
+          background: "#050505",
+          display: "flex", alignItems: "center", justifyContent: "center",
+        }}>
+          <div style={{
+            fontFamily: "'Bricolage Grotesque', serif",
+            fontSize: "0.8rem", fontWeight: 300,
+            color: "#444", letterSpacing: "0.15em",
+            textTransform: "uppercase",
+            animation: "pulseText 1s ease infinite",
+          }}>
+            {principle}
+          </div>
+        </div>
+      );
+    }
+
+    // Progress Indicator Component
+    function ProgressIndicator({ phase, total }) {
+      return (
+        <div style={{
+          position: "fixed", top: "20px", left: "50%", transform: "translateX(-50%)",
+          zIndex: 9998, display: "flex", gap: "8px", alignItems: "center",
+          padding: "8px 16px", background: "rgba(0,0,0,0.6)",
+          borderRadius: "20px", backdropFilter: "blur(10px)",
+        }}>
+          {Array.from({ length: total }).map((_, i) => (
+            <div key={i} style={{
+              width: i + 1 === phase ? "24px" : "8px",
+              height: "8px",
+              borderRadius: "4px",
+              background: i + 1 <= phase ? "#D4AF37" : "rgba(255,255,255,0.15)",
+              transition: "all 0.4s ease",
+            }} />
+          ))}
+        </div>
+      );
+    }
+
+    // Placeholder components for each phase
+    // In production, these would be imported from separate files
+
+    function HelloWorldPlaceholder({ onComplete, lang, setLang }) {
+      const t = {
+        pt: { title: "Hello, World!", sub: "O sistema está sendo inicializado...", btn: "INICIALIZAR" },
+        de: { title: "Hello, World!", sub: "Das System wird initialisiert...", btn: "INITIALISIEREN" },
+        en: { title: "Hello, World!", sub: "The system is being initialized...", btn: "INITIALIZE" },
+      }[lang];
+
+      return (
+        <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", padding: "24px" }}>
+          <div style={{ fontFamily: "'Bricolage Grotesque', serif", fontSize: "3rem", fontWeight: 800, color: "#D4AF37", marginBottom: "16px" }}>
+            {t.title}
+          </div>
+          <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: "1rem", color: "#666", marginBottom: "48px" }}>
+            {t.sub}
+          </div>
+          <button onClick={onComplete} style={{
+            background: "rgba(212,175,55,0.06)", border: "1px solid #D4AF37", color: "#D4AF37",
+            fontFamily: "'JetBrains Mono', monospace", fontSize: "1rem", padding: "18px 64px",
+            cursor: "pointer", letterSpacing: "0.2em", borderRadius: "4px",
+          }}>
+            {t.btn}
+          </button>
+        </div>
+      );
+    }
+
+    function GenericPhasePlaceholder({ phase, onComplete, lang }) {
+      const names = {
+        2: { pt: "Museum da Origem", de: "Museum des Ursprungs", en: "Genesis Museum" },
+        3: { pt: "Galeria Criptográfica", de: "Kryptographische Galerie", en: "Cryptographic Gallery" },
+        4: { pt: "Painel de Transparência DNA", de: "DNA-Transparenz-Panel", en: "DNA Transparency Panel" },
+      };
+      const t = {
+        pt: { sub: "Carregando experiência...", btn: "CONTINUAR" },
+        de: { sub: "Erfahrung wird geladen...", btn: "WEITER" },
+        en: { sub: "Loading experience...", btn: "CONTINUE" },
+      }[lang];
+
+      return (
+        <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", padding: "24px" }}>
+          <div style={{ fontFamily: "'Bricolage Grotesque', serif", fontSize: "2rem", fontWeight: 600, color: "#CCC", marginBottom: "8px" }}>
+            {names[phase]?.[lang] || `Phase ${phase}`}
+          </div>
+          <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: "0.85rem", color: "#555", marginBottom: "48px" }}>
+            {t.sub}
+          </div>
+          <button onClick={onComplete} style={{
+            background: "rgba(212,175,55,0.06)", border: "1px solid #D4AF37", color: "#D4AF37",
+            fontFamily: "'JetBrains Mono', monospace", fontSize: "0.85rem", padding: "14px 48px",
+            cursor: "pointer", letterSpacing: "0.15em", borderRadius: "4px",
+          }}>
+            {t.btn}
+          </button>
+        </div>
+      );
+    }
+
+    function EditorPlaceholder({ lang }) {
+      const t = {
+        pt: { title: "a4Desk BABEL", sub: "Editor Soberano", status: "SOVEREIGNTY ACTIVE" },
+        de: { title: "a4Desk BABEL", sub: "Souveräner Editor", status: "SOUVERÄNITÄT AKTIV" },
+        en: { title: "a4Desk BABEL", sub: "Sovereign Editor", status: "SOVEREIGNTY ACTIVE" },
+      }[lang];
+
+      return (
+        <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", padding: "24px" }}>
+          <div style={{ fontFamily: "'Bricolage Grotesque', serif", fontSize: "2.5rem", fontWeight: 800, color: "#D4AF37", marginBottom: "8px" }}>
+            {t.title}
+          </div>
+          <div style={{ fontFamily: "'Outfit', sans-serif", fontSize: "1rem", color: "#666", marginBottom: "24px" }}>
+            {t.sub}
+          </div>
+          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.65rem", color: "#10B981", padding: "8px 16px", background: "rgba(16,185,129,0.1)", borderRadius: "4px" }}>
+            {t.status}
+          </div>
+        </div>
+      );
+    }
+
+    // Main Museum App
+    function MuseumApp() {
+      const [phase, setPhase] = useState(1);
+      const [lang, setLang] = useState("pt");
+      const [transitioning, setTransitioning] = useState(false);
+
+      const principles = {
+        pt: "IA processa · Humano decide · WINDI garante",
+        de: "KI verarbeitet · Mensch entscheidet · WINDI garantiert",
+        en: "AI processes · Human decides · WINDI guarantees",
+      };
+
+      const nextPhase = useCallback(() => {
+        if (phase < 5) {
+          setTransitioning(true);
+        }
+      }, [phase]);
+
+      const handleTransitionComplete = useCallback(() => {
+        setPhase(prev => prev + 1);
+        setTransitioning(false);
+      }, []);
+
+      return (
+        <div style={{ minHeight: "100vh", background: "#050505" }}>
+          <style>{`
+            @keyframes pulseText { 0%,100%{opacity:0.4} 50%{opacity:0.8} }
+            @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+          `}</style>
+
+          <ProgressIndicator phase={phase} total={5} />
+
+          {transitioning && (
+            <PhaseTransition
+              principle={principles[lang]}
+              onComplete={handleTransitionComplete}
+            />
+          )}
+
+          <div style={{ animation: transitioning ? "none" : "fadeIn 0.8s ease" }}>
+            {phase === 1 && <HelloWorldPlaceholder onComplete={nextPhase} lang={lang} setLang={setLang} />}
+            {phase === 2 && <GenericPhasePlaceholder phase={2} onComplete={nextPhase} lang={lang} />}
+            {phase === 3 && <GenericPhasePlaceholder phase={3} onComplete={nextPhase} lang={lang} />}
+            {phase === 4 && <GenericPhasePlaceholder phase={4} onComplete={nextPhase} lang={lang} />}
+            {phase === 5 && <EditorPlaceholder lang={lang} />}
+          </div>
+
+          {/* Language Switcher */}
+          <div style={{
+            position: "fixed", bottom: "20px", left: "20px", zIndex: 9999,
+            display: "flex", gap: "4px",
+          }}>
+            {[{ l: "pt", f: "🇧🇷" }, { l: "de", f: "🇩🇪" }, { l: "en", f: "🇬🇧" }].map(({ l, f }) => (
+              <button key={l} onClick={() => setLang(l)} style={{
+                background: lang === l ? "rgba(212,175,55,0.12)" : "rgba(255,255,255,0.02)",
+                border: lang === l ? "1px solid rgba(212,175,55,0.35)" : "1px solid rgba(255,255,255,0.06)",
+                borderRadius: "4px", padding: "6px 10px", cursor: "pointer",
+              }}>
+                <span style={{ fontSize: "0.9rem" }}>{f}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    // Hide loading and render app
+    document.getElementById('loading').style.display = 'none';
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<MuseumApp />);
+  </script>
+</body>
+</html>

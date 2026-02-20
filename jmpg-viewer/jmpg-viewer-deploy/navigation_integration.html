@@ -1,0 +1,67 @@
+<!-- ═══════════════════════════════════════════════════════════════
+     JMPG Viewer — Navigation Button for Desktop Ante-Sala
+     
+     Add this button alongside the existing Wallet, Suite, Export
+     navigation in the Desktop (:8100) interface.
+     
+     Pattern matches existing buttons (Wallet, Suite-Docs, Export)
+     ═══════════════════════════════════════════════════════════════ -->
+
+<!-- 
+  OPTION A: If your Desktop uses the standard WINDI nav-bar pattern,
+  add this button in the navigation row after Export Engine:
+-->
+<a href="/jmpg/" 
+   class="nav-btn" 
+   title="JMPG Viewer — Communiqué öffnen"
+   style="display:inline-flex; align-items:center; gap:6px; padding:8px 14px; 
+          background:rgba(212,175,55,0.08); border:1px solid rgba(212,175,55,0.25); 
+          border-radius:8px; color:#d4af37; text-decoration:none; font-size:13px; 
+          font-weight:500; transition:all 0.2s;">
+    📄 JMPG Viewer
+</a>
+
+<!--
+  OPTION B: If using the icon-grid layout (like the Desktop Trinity nav),
+  add this card:
+-->
+<a href="/jmpg/" class="tool-card" style="text-decoration:none;">
+    <div style="padding:20px; background:rgba(212,175,55,0.04); border:1px solid rgba(212,175,55,0.15);
+                border-radius:12px; text-align:center; transition:all 0.2s; cursor:pointer;">
+        <div style="font-size:32px; margin-bottom:8px;">📄</div>
+        <div style="font-family:'Bricolage Grotesque',sans-serif; font-size:15px; font-weight:700; 
+                    color:#d4af37;">JMPG Viewer</div>
+        <div style="font-size:12px; color:rgba(240,236,228,0.5); margin-top:4px;">
+            Communiqué öffnen
+        </div>
+    </div>
+</a>
+
+<!--
+  ANTE-SALA ORDER (recommended):
+  
+  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐
+  │  Wallet  │  │ Desktop  │  │   Suite  │  │  Export  │  │   JMPG   │
+  │  :8099   │  │  :8100   │  │  :8101   │  │  :8103   │  │  :8104   │
+  │ 🏦       │  │ ✏️       │  │ 📋       │  │ 📤       │  │ 📄       │
+  └──────────┘  └──────────┘  └──────────┘  └──────────┘  └──────────┘
+  
+  The JMPG Viewer completes the flow:
+  Desktop CREATES → Export SEALS → JMPG DISTRIBUTES
+-->
+
+<!-- 
+  BACK NAVIGATION: Add this to the JMPG Viewer's header (viewer.html)
+  so users can navigate back to Desktop:
+  
+  Already handled in viewer.html — the logo links to /desktop/
+  
+  If you need a dedicated back button, add inside viewer.html <header>:
+-->
+<!--
+<a href="/desktop/" 
+   style="font-size:12px; padding:4px 10px; border:1px solid rgba(255,255,255,0.12); 
+          border-radius:6px; color:rgba(240,236,228,0.6); text-decoration:none;">
+    ← Desktop
+</a>
+-->

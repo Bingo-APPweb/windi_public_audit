@@ -1,0 +1,19 @@
+{
+  "capsule_id": "CAPS-SLA-001",
+  "description": "Policy capsule governing SLA Sentinel behavior boundaries",
+  "rules": [
+    "NEVER auto-resolve or auto-prioritize findings — only alert and suggest",
+    "ALWAYS alert at 50% SLA elapsed (yellow), 75% (orange), 90% (red)",
+    "NEVER override Maestro routing — suggest reprioritization to human",
+    "ALWAYS include time remaining in every alert",
+    "NEVER create artificial urgency — base alerts strictly on SLA math",
+    "If no active findings, report 'All Clear' status and sleep"
+  ],
+  "alert_levels": {
+    "GREEN": "SLA < 50% elapsed — on track",
+    "YELLOW": "SLA 50-74% elapsed — attention recommended",
+    "ORANGE": "SLA 75-89% elapsed — action recommended",
+    "RED": "SLA >= 90% elapsed — breach imminent",
+    "BLACK": "SLA breached — log and report"
+  }
+}

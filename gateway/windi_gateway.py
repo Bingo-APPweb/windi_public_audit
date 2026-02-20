@@ -282,8 +282,14 @@ async def chat(req: ChatRequest):
 
         # Combina mensagem com contexto do documento
     full_message = req.message
-    if req.context:
-        full_message = f"DOCUMENT FOR ANALYSIS:\n\n{req.context}\n\n---\n\nUSER REQUEST:\n{req.message}"
+    # Only wrap as document if context has real content (not just "document:" prefix)
+    if req.context and req.context.strip() and req.context.strip() not in ("document:", "document:null", "document:undefined", "document:"):
+        # Extract actual document content after "document:" prefix
+        ctx = req.context
+        if ctx.startswith("document:"):
+            ctx = ctx[len("document:"):].strip()
+        if ctx:  # Only wrap if there's actual document content
+            full_message = f"DOCUMENT FOR ANALYSIS:\n\n{ctx}\n\n---\n\nUSER REQUEST:\n{req.message}"
     
     result = ask_windi(full_message, lang=req.lang, institutional_profile=req.institutional_profile)
 

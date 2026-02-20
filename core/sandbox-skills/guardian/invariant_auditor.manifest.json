@@ -1,0 +1,15 @@
+{
+  "skill_id": "invariant_auditor",
+  "name": "Invariant Auditor",
+  "version": "1.0.0",
+  "domain": "guardian",
+  "capability": "invariant_audit",
+  "description": "Audits documents against WINDI 9 Invariants I1-I9",
+  "author_dragon": "Guardian (Claude)",
+  "integrity_hash": "2478ce9f396e3539c22fe12ceb8e4d4f9f44c1431cbb2b48b4263b267432a1f5",
+  "baptism_date": "2026-02-10T11:06:55.096816+00:00",
+  "i9_certified": true,
+  "constitutional_gate": true,
+  "dependencies": [],
+  "metadata": {}
+}

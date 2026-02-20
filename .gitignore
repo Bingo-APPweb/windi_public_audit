@@ -13,5 +13,22 @@ data/
 
 # Temporários
 *.tar.gz
+*.zip
+*.swp
+*.bak
+*.bak.*
 test.pdf
 test_template.html
+tmp*.pdf
+logs/
+nohup.out
+
+# OS
+.DS_Store
+__MACOSX/
+windi-audit-report/
+windi-docker-stack/
+windi-i18n-pack/
+windi-issuer-registry/
+windi-public-anchor-log/
+windi-transparency-anchor/

@@ -1,0 +1,45 @@
+{
+  "check_id": "CHK-20260208-191741",
+  "timestamp_utc": "2026-02-08T19:17:41.765335+00:00",
+  "agent_version": "1.0.0",
+  "checks_performed": [
+    {
+      "layer": 1,
+      "name": "hash_chain",
+      "status": "PASS",
+      "details": "All 1 entries verified"
+    },
+    {
+      "layer": 2,
+      "name": "receipt_completeness",
+      "status": "SKIP",
+      "details": "Legacy virtue_history.db check not implemented"
+    },
+    {
+      "layer": 3,
+      "name": "temporal_consistency",
+      "status": "PASS",
+      "details": "All 1 entries temporally consistent"
+    },
+    {
+      "layer": 4,
+      "name": "merkle_integrity",
+      "status": "PASS",
+      "details": "Merkle root verified: 01045c29b044f4ee..."
+    },
+    {
+      "layer": 5,
+      "name": "cross_references",
+      "status": "PASS",
+      "details": "All references verified (1 entries, 13 reports)"
+    }
+  ],
+  "overall_status": "PASS",
+  "anomalies": [],
+  "statistics": {
+    "ledger_entries": 1,
+    "virtue_receipts": 0,
+    "governance_reports": 13
+  },
+  "verification_proof_hash": "87d640274ef82166acbdb9e70d0df54a79a6ec58c0298b37540947cb3d5af799"
+}

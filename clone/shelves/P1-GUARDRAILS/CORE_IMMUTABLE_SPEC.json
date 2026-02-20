@@ -1,0 +1,58 @@
+{
+  "specification": "CORE_IMMUTABLE",
+  "version": "0.1.0",
+  "principle": "Tudo que protege soberania e ZK não é config. É LEI.",
+
+  "modules": {
+    "invariants.py": {
+      "path": "core/invariants.py",
+      "type": "ENFORCED",
+      "configurable": false,
+      "contains": ["I1", "I2", "I3", "I4", "I5", "I6", "I7", "I8", "I9"],
+      "description": "9 Invariantes - imutáveis, não configuráveis"
+    },
+
+    "zk_boundary.py": {
+      "path": "core/zk_boundary.py",
+      "type": "ENFORCED",
+      "configurable": false,
+      "rules": {
+        "allowed_out": ["hashes", "metadata", "receipts", "proofs"],
+        "prohibited_out": ["content", "raw_text", "pii", "credentials"]
+      },
+      "description": "Zero-Knowledge: o que pode sair, o que é proibido"
+    },
+
+    "ledger.py": {
+      "path": "core/ledger.py",
+      "type": "ENFORCED",
+      "configurable": false,
+      "properties": {
+        "append_only": true,
+        "merkle_tree": true,
+        "verifier_included": true
+      },
+      "description": "Ledger append-only com Merkle e verificador"
+    },
+
+    "seal.py": {
+      "path": "core/seal.py",
+      "type": "ENFORCED",
+      "configurable": false,
+      "components": ["qr_code", "metadata", "visual_seal", "proof_id"],
+      "description": "Gerador de selos com QR e metadados"
+    },
+
+    "policy_engine.py": {
+      "path": "core/policy_engine.py",
+      "type": "MIXED",
+      "configurable": {
+        "thresholds": true,
+        "invariants": false
+      },
+      "description": "Motor de políticas - thresholds config, invariantes nunca"
+    }
+  },
+
+  "golden_rule": "Código que protege soberania humana não aceita override"
+}

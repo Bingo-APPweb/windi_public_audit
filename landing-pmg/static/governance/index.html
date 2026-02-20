@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="noir">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI Governance — Enterprise Document Governance</title>
+<meta name="description" content="Full institutional control. Sentinel monitoring. Multi-layer semantic risk detection. EU AI Act aligned. AI processes. Human decides. WINDI guarantees.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600;700;800&family=Outfit:wght@200;300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --font-display: 'Bricolage Grotesque', sans-serif;
+  --font-body: 'Outfit', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="noir"] {
+  --bg-deep: #050507;
+  --bg-primary: #0a0a0c;
+  --bg-secondary: #111114;
+  --bg-card: #0e0e12;
+  --border: #1e1e28;
+  --border-hover: #2a2a38;
+  --text-primary: #eae8e3;
+  --text-secondary: #8a8890;
+  --text-muted: #4a4950;
+  --gold: #c9a84c;
+  --gold-bright: #dfc06a;
+  --gold-dim: #c9a84c18;
+  --accent: #c9a84c;
+  --accent-dim: #c9a84c15;
+  --gradient-hero: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(201,168,76,0.08) 0%, transparent 70%);
+  --shadow-card: 0 4px 32px rgba(0,0,0,0.4);
+}
+
+[data-theme="klar"] {
+  --bg-deep: #f5f3f0;
+  --bg-primary: #faf9f7;
+  --bg-secondary: #f0eeeb;
+  --bg-card: #ffffff;
+  --border: #ddd9d2;
+  --border-hover: #c8c3ba;
+  --text-primary: #1a1917;
+  --text-secondary: #6b6860;
+  --text-muted: #a09a90;
+  --gold: #8b741d;
+  --gold-bright: #a68b2a;
+  --gold-dim: #8b741d10;
+  --accent: #8b741d;
+  --accent-dim: #8b741d10;
+  --gradient-hero: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(139,116,29,0.06) 0%, transparent 70%);
+  --shadow-card: 0 2px 16px rgba(0,0,0,0.06);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.6;
+  transition: background var(--transition), color var(--transition);
+}
+
+/* NAV */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 16px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: color-mix(in srgb, var(--bg-primary) 90%, transparent);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--text-primary);
+}
+.nav-logo { font-size: 24px; }
+.nav-name {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.nav-controls { display: flex; align-items: center; gap: 10px; }
+.nav-link {
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition);
+}
+.nav-link:hover { color: var(--gold); }
+.nav-btn {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.nav-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+/* HERO */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120px 40px 80px;
+  text-align: center;
+  background: var(--gradient-hero);
+}
+
+.tier-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+  padding: 8px 20px;
+  border: 1px solid var(--gold);
+  border-radius: 40px;
+  margin-bottom: 32px;
+}
+.tier-badge::before {
+  content: '';
+  width: 8px; height: 8px;
+  background: var(--gold);
+  border-radius: 50%;
+  box-shadow: 0 0 12px var(--gold);
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(36px, 6vw, 64px);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+  max-width: 700px;
+  margin-bottom: 24px;
+}
+.hero-title .highlight { color: var(--gold); }
+
+.hero-subtitle {
+  font-size: clamp(16px, 2vw, 20px);
+  font-weight: 300;
+  color: var(--text-secondary);
+  max-width: 560px;
+  margin-bottom: 16px;
+}
+
+.hero-price {
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+.hero-price-note {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 40px;
+}
+
+.cta-group { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+.cta-primary {
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--bg-deep);
+  background: var(--gold);
+  border: none;
+  border-radius: var(--radius);
+  padding: 14px 32px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all var(--transition);
+}
+.cta-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,168,76,0.3); }
+.cta-secondary {
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 32px;
+  text-decoration: none;
+  transition: all var(--transition);
+}
+.cta-secondary:hover { border-color: var(--gold); color: var(--gold); }
+
+/* FEATURES */
+.features { padding: 80px 40px; max-width: 1000px; margin: 0 auto; }
+.features-title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 48px;
+}
+.features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
+.feature-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  transition: all var(--transition);
+}
+.feature-card:hover { border-color: var(--gold); transform: translateY(-2px); }
+.feature-icon { font-size: 32px; margin-bottom: 16px; }
+.feature-title { font-family: var(--font-display); font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+.feature-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+
+/* TIERS */
+.tiers { padding: 60px 40px; text-align: center; border-top: 1px solid var(--border); }
+.tiers-title { font-family: var(--font-display); font-size: 20px; font-weight: 600; margin-bottom: 24px; }
+.tiers-grid { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+.tier-link {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  padding: 10px 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: all var(--transition);
+}
+.tier-link:hover { border-color: var(--gold); color: var(--gold); }
+.tier-link.current { border-color: var(--gold); color: var(--gold); }
+
+/* FOOTER */
+.footer {
+  padding: 40px;
+  text-align: center;
+  border-top: 1px solid var(--border);
+}
+.footer-brand { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; }
+.footer-principle {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  margin-bottom: 16px;
+}
+.footer-links { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; }
+.footer-link { font-size: 12px; color: var(--text-secondary); text-decoration: none; transition: color var(--transition); }
+.footer-link:hover { color: var(--gold); }
+
+@media (max-width: 600px) {
+  .nav { padding: 12px 20px; }
+  .hero { padding: 100px 20px 60px; }
+  .features { padding: 60px 20px; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="nav-brand">
+    <span class="nav-logo">🛡</span>
+    <span class="nav-name">WINDI</span>
+  </a>
+  <div class="nav-controls">
+    <a href="https://master.windia4desk.tech/ecosystem/" class="nav-link">Ecosystem</a>
+    <a href="/governance" class="nav-link">Dashboard</a>
+    <button class="nav-btn" onclick="toggleTheme()">◐</button>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="tier-badge">Enterprise</div>
+  <h1 class="hero-title">
+    Full <span class="highlight">Institutional</span> Control
+  </h1>
+  <p class="hero-subtitle">
+    Sentinel monitoring. Multi-layer semantic risk detection.
+    Zero-Knowledge architecture. EU AI Act aligned.
+  </p>
+  <div class="hero-price">Custom Pricing</div>
+  <p class="hero-price-note">Tailored to your institutional needs</p>
+  <div class="cta-group">
+    <a href="mailto:contact@windi-domain.com?subject=WINDI%20Governance%20Inquiry" class="cta-primary">Contact Sales</a>
+    <a href="/governance" class="cta-secondary">Open Dashboard</a>
+  </div>
+</section>
+
+<section class="features">
+  <h2 class="features-title">Enterprise Capabilities</h2>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🎯</div>
+      <h3 class="feature-title">War Room</h3>
+      <p class="feature-desc">Real-time monitoring dashboard. Full operational visibility across all document flows.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🧠</div>
+      <h3 class="feature-title">SGE 6-Layer Engine</h3>
+      <p class="feature-desc">Semantic risk detection with constitutional alignment. Multi-layer analysis before any output.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⚖️</div>
+      <h3 class="feature-title">Sentinel LAW</h3>
+      <p class="feature-desc">Constitutional enforcement layer. German law precedence with GDPR + EU AI Act compliance.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🤖</div>
+      <h3 class="feature-title">Agent Constellation</h3>
+      <p class="feature-desc">8 specialized AI agents. Each with defined scope, audit trail, and governance boundaries.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">✅</div>
+      <h3 class="feature-title">Multi-Approval Flows</h3>
+      <p class="feature-desc">Configurable approval chains. Role-based access with complete audit trail.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔐</div>
+      <h3 class="feature-title">Zero-Knowledge</h3>
+      <p class="feature-desc">Only hashes reach the Ledger. Your content stays sovereign. Always.</p>
+    </div>
+  </div>
+</section>
+
+<section class="tiers">
+  <h3 class="tiers-title">Compare Tiers</h3>
+  <div class="tiers-grid">
+    <a href="/personal/" class="tier-link">Personal</a>
+    <a href="/org/" class="tier-link">Organization</a>
+    <a href="/governance/" class="tier-link current">Governance</a>
+  </div>
+</section>
+
+<footer class="footer">
+  <p class="footer-brand">WINDI Publishing House · Kempten</p>
+  <p class="footer-principle">"AI processes. Human decides. WINDI guarantees."</p>
+  <div class="footer-links">
+    <a href="/" class="footer-link">Home</a>
+    <a href="https://master.windia4desk.tech/ecosystem/" class="footer-link">Ecosystem</a>
+    <a href="https://master.windia4desk.tech/library/" class="footer-link">Library</a>
+    <a href="https://admin.windia4desk.tech/desktop/suite.html" class="footer-link">Workspace</a>
+  </div>
+</footer>
+
+<script>
+function toggleTheme() {
+  const html = document.documentElement;
+  const current = html.getAttribute('data-theme');
+  const next = current === 'noir' ? 'klar' : 'noir';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('windi_theme', next);
+}
+(function() {
+  const saved = localStorage.getItem('windi_theme');
+  if (saved) document.documentElement.setAttribute('data-theme', saved);
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,89 @@
+{
+  "specification": "SYNC_PROTOCOL_CLONE_HUB",
+  "version": "0.1.0",
+  "principle": "Hub não vê documento. Hub vê integridade.",
+
+  "pillars": {
+    "IDENTITY": {
+      "method": "mTLS",
+      "description": "Identidade soberana do clone via certificado",
+      "components": {
+        "clone_cert": "/certs/clone.pem",
+        "clone_key": "/certs/clone.key",
+        "hub_ca": "/certs/hub_ca.pem"
+      }
+    },
+
+    "OFFLINE_FIRST": {
+      "description": "Outbox local persiste até conectividade",
+      "outbox_path": "/data/outbox/",
+      "retry_strategy": "exponential_backoff",
+      "max_retries": 10,
+      "behavior": "Trabalho nunca interrompido por rede"
+    },
+
+    "RATE_LIMITING": {
+      "description": "Proteção contra abuse",
+      "requests_per_minute": 60,
+      "burst_allowed": 10,
+      "per_tenant": true
+    },
+
+    "MULTI_TENANCY": {
+      "description": "Isolamento por organização",
+      "partition_by": "org_id",
+      "isolation": "strict",
+      "cross_tenant": "PROHIBITED"
+    },
+
+    "PROOF_ONLY": {
+      "description": "Upload apenas de Proof Envelope",
+      "allowed": [
+        "document_hash",
+        "byte_ranges",
+        "receipts",
+        "decision",
+        "health_metrics"
+      ],
+      "prohibited": [
+        "document_content",
+        "raw_text",
+        "user_pii",
+        "credentials"
+      ]
+    }
+  },
+
+  "proof_envelope": {
+    "structure": {
+      "envelope_id": "UUID",
+      "clone_id": "CLONE_IDENTITY_HASH",
+      "timestamp_utc": "ISO8601",
+      "document": {
+        "hash_sha256": "string",
+        "byte_ranges": "array",
+        "metadata_hash": "string"
+      },
+      "decision": {
+        "type": "APPROVED | OVERRIDDEN | DEFERRED",
+        "human_id": "ISP_HASH",
+        "reason": "string",
+        "timer_seconds": "number"
+      },
+      "receipts": "array",
+      "seal": {
+        "proof_id": "string",
+        "qr_data": "base64",
+        "visual_hash": "string"
+      }
+    }
+  },
+
+  "endpoints_hub": [
+    {"method": "POST", "path": "/api/v1/proof", "description": "Enviar ProofEnvelope"},
+    {"method": "GET", "path": "/api/v1/verify/{proof_id}", "description": "Verificar prova"},
+    {"method": "GET", "path": "/api/v1/clone/{clone_id}/health", "description": "Status do clone"}
+  ],
+
+  "golden_rule": "Conteúdo nunca sai. Prova sempre disponível."
+}

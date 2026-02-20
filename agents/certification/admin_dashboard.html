@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WINDI Certification — Admin Dashboard</title>
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a24;
+            --gold: #c9a227;
+            --gold-light: #e8c547;
+            --gold-dim: #8b7332;
+            --text-primary: #e8e8e8;
+            --text-secondary: #a0a0a0;
+            --border: #2a2a3a;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --error: #e74c3c;
+            --info: #3498db;
+            --conf-red: #8b0000;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        /* ===== HEADER ===== */
+        .top-bar {
+            background: var(--bg-secondary);
+            border-bottom: 2px solid var(--gold);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .top-bar h1 {
+            color: var(--gold);
+            font-size: 1.3rem;
+        }
+
+        .top-bar .conf-badge {
+            background: var(--conf-red);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+        }
+
+        /* ===== LAYOUT ===== */
+        .dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* ===== STATS ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--gold);
+        }
+
+        .stat-card .label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+
+        .stat-card.pending .number { color: var(--warning); }
+        .stat-card.approved .number { color: var(--success); }
+        .stat-card.rejected .number { color: var(--error); }
+        .stat-card.certified .number { color: var(--gold); }
+
+        /* ===== FILTERS ===== */
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--gold);
+            color: var(--bg-primary);
+            border-color: var(--gold);
+        }
+
+        /* ===== TABLE ===== */
+        .app-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-card);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .app-table th {
+            background: var(--bg-secondary);
+            padding: 12px 15px;
+            text-align: left;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .app-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+
+        .app-table tr:hover { background: rgba(201, 162, 39, 0.05); }
+
+        .app-table .id-cell {
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+            color: var(--gold-dim);
+        }
+
+        /* ===== STATUS BADGES ===== */
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge.pending { background: rgba(243, 156, 18, 0.2); color: var(--warning); }
+        .badge.waqp_approved { background: rgba(52, 152, 219, 0.2); color: var(--info); }
+        .badge.shp_approved { background: rgba(155, 89, 182, 0.2); color: #9b59b6; }
+        .badge.certified { background: rgba(201, 162, 39, 0.2); color: var(--gold); }
+        .badge.rejected { background: rgba(231, 76, 60, 0.2); color: var(--error); }
+        .badge.info_requested { background: rgba(149, 165, 166, 0.2); color: #95a5a6; }
+
+        .badge.gold { background: rgba(201, 162, 39, 0.3); color: var(--gold); }
+        .badge.silver { background: rgba(192, 192, 192, 0.3); color: #c0c0c0; }
+        .badge.bronze { background: rgba(205, 127, 50, 0.3); color: #cd7f32; }
+
+        /* ===== ACTION BUTTONS ===== */
+        .actions { display: flex; gap: 5px; flex-wrap: wrap; }
+
+        .action-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        .action-btn:hover { opacity: 0.8; }
+        .action-btn.approve { background: var(--success); color: white; }
+        .action-btn.reject { background: var(--error); color: white; }
+        .action-btn.info { background: var(--info); color: white; }
+        .action-btn.certify { background: var(--gold); color: var(--bg-primary); }
+        .action-btn.view { background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border); }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.open { display: flex; }
+
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--gold);
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal h2 {
+            color: var(--gold);
+            margin-bottom: 20px;
+        }
+
+        .modal .field {
+            margin-bottom: 15px;
+        }
+
+        .modal .field label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+        }
+
+        .modal .field .value {
+            padding: 10px;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .modal textarea {
+            width: 100%;
+            padding: 10px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.9rem;
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .modal select {
+            width: 100%;
+            padding: 10px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        .modal .btn-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .modal .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .modal .btn.primary { background: var(--gold); color: var(--bg-primary); }
+        .modal .btn.danger { background: var(--error); color: white; }
+        .modal .btn.secondary { background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border); }
+
+        /* ===== EVENTS TIMELINE ===== */
+        .timeline { margin-top: 15px; }
+
+        .timeline-item {
+            display: flex;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.8rem;
+        }
+
+        .timeline-item .time {
+            color: var(--text-secondary);
+            white-space: nowrap;
+            min-width: 140px;
+        }
+
+        .timeline-item .event {
+            color: var(--gold-dim);
+            font-family: monospace;
+        }
+
+        /* ===== EMPTY STATE ===== */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state .icon { font-size: 3rem; margin-bottom: 15px; }
+
+        /* ===== LOADING ===== */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .top-bar { padding: 10px 15px; }
+            .top-bar h1 { font-size: 1rem; }
+            .dashboard { padding: 10px; }
+            .app-table { font-size: 0.8rem; }
+            .app-table th, .app-table td { padding: 8px; }
+            .actions { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <h1>🐉 WINDI Certification — Admin</h1>
+        <span class="conf-badge">VERTRAULICH / INTERNAL</span>
+    </div>
+
+    <div class="dashboard">
+        <!-- Stats -->
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card"><div class="number" id="statTotal">-</div><div class="label">Total</div></div>
+            <div class="stat-card pending"><div class="number" id="statPending">-</div><div class="label">Pending</div></div>
+            <div class="stat-card approved"><div class="number" id="statApproved">-</div><div class="label">In Progress</div></div>
+            <div class="stat-card certified"><div class="number" id="statCertified">-</div><div class="label">Certified</div></div>
+            <div class="stat-card rejected"><div class="number" id="statRejected">-</div><div class="label">Rejected</div></div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters">
+            <button class="filter-btn active" onclick="filterBy('')">All</button>
+            <button class="filter-btn" onclick="filterBy('pending')">⏳ Pending</button>
+            <button class="filter-btn" onclick="filterBy('waqp_approved')">🔬 WAQP</button>
+            <button class="filter-btn" onclick="filterBy('shp_approved')">🤝 SHP</button>
+            <button class="filter-btn" onclick="filterBy('certified')">🏆 Certified</button>
+            <button class="filter-btn" onclick="filterBy('rejected')">❌ Rejected</button>
+            <button class="filter-btn" onclick="filterBy('info_requested')">❓ Info Needed</button>
+        </div>
+
+        <!-- Applications Table -->
+        <div id="tableContainer">
+            <div class="loading">Loading applications...</div>
+        </div>
+    </div>
+
+    <!-- Detail/Review Modal -->
+    <div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+        <div class="modal" id="modalContent"></div>
+    </div>
+
+    <script>
+        // ===== CONFIG =====
+        const TOKEN = new URLSearchParams(window.location.search).get('token') || '';
+        const API_BASE = '/api';
+        let allApplications = [];
+        let currentFilter = '';
+
+        // ===== API CALLS =====
+        async function api(endpoint, options = {}) {
+            const headers = {
+                'Authorization': `Bearer ${TOKEN}`,
+                'Content-Type': 'application/json',
+                ...options.headers
+            };
+            const resp = await fetch(`${API_BASE}${endpoint}`, { ...options, headers });
+            if (resp.status === 401) {
+                document.getElementById('tableContainer').innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">🔒</div>
+                        <p>Authentication required. Add <code>?token=YOUR_TOKEN</code> to the URL.</p>
+                    </div>`;
+                throw new Error('Unauthorized');
+            }
+            return resp.json();
+        }
+
+        // ===== LOAD DATA =====
+        async function loadApplications() {
+            try {
+                const data = await api('/applications');
+                allApplications = data.applications || [];
+                updateStats(data.stats || {});
+                renderTable(allApplications);
+            } catch (e) {
+                console.error('Load failed:', e);
+            }
+        }
+
+        function updateStats(stats) {
+            document.getElementById('statTotal').textContent = Object.values(stats).reduce((a, b) => a + b, 0);
+            document.getElementById('statPending').textContent = stats.pending || 0;
+            const inProgress = (stats.waqp_approved || 0) + (stats.shp_approved || 0) + (stats.info_requested || 0);
+            document.getElementById('statApproved').textContent = inProgress;
+            document.getElementById('statCertified').textContent = stats.certified || 0;
+            document.getElementById('statRejected').textContent = stats.rejected || 0;
+        }
+
+        // ===== FILTER =====
+        function filterBy(status) {
+            currentFilter = status;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            const filtered = status ? allApplications.filter(a => a.status === status) : allApplications;
+            renderTable(filtered);
+        }
+
+        // ===== RENDER TABLE =====
+        function renderTable(apps) {
+            if (apps.length === 0) {
+                document.getElementById('tableContainer').innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">📭</div>
+                        <p>No applications ${currentFilter ? `with status "${currentFilter}"` : 'yet'}.</p>
+                    </div>`;
+                return;
+            }
+
+            let html = `<table class="app-table">
+                <thead><tr>
+                    <th>ID</th><th>Agent</th><th>Model</th><th>Operator</th>
+                    <th>Status</th><th>Level</th><th>Date</th><th>Actions</th>
+                </tr></thead><tbody>`;
+
+            for (const app of apps) {
+                const date = app.created_at ? new Date(app.created_at).toLocaleDateString('de-DE') : '-';
+                const levelBadge = app.certification_level
+                    ? `<span class="badge ${app.certification_level}">${levelLabel(app.certification_level)}</span>`
+                    : '-';
+
+                html += `<tr>
+                    <td class="id-cell">${shortId(app.id)}</td>
+                    <td><strong>${esc(app.agent_name)}</strong></td>
+                    <td>${esc(app.agent_model || '-')}</td>
+                    <td>${esc(app.operator_name)}<br><small style="color:var(--text-secondary)">${esc(app.operator_email)}</small></td>
+                    <td><span class="badge ${app.status}">${statusLabel(app.status)}</span></td>
+                    <td>${levelBadge}</td>
+                    <td style="white-space:nowrap">${date}</td>
+                    <td class="actions">
+                        <button class="action-btn view" onclick="viewApp('${app.id}')">View</button>
+                        ${app.status === 'pending' ? `
+                            <button class="action-btn approve" onclick="reviewApp('${app.id}','approve_waqp')">→ WAQP</button>
+                            <button class="action-btn reject" onclick="reviewApp('${app.id}','reject')">Reject</button>
+                        ` : ''}
+                        ${app.status === 'waqp_approved' ? `
+                            <button class="action-btn approve" onclick="reviewApp('${app.id}','approve_shp')">→ SHP</button>
+                        ` : ''}
+                        ${app.status === 'shp_approved' ? `
+                            <button class="action-btn certify" onclick="certifyApp('${app.id}')">🏆 Certify</button>
+                        ` : ''}
+                        ${app.status === 'info_requested' ? `
+                            <button class="action-btn approve" onclick="reviewApp('${app.id}','approve_waqp')">Resume</button>
+                        ` : ''}
+                    </td>
+                </tr>`;
+            }
+
+            html += '</tbody></table>';
+            document.getElementById('tableContainer').innerHTML = html;
+        }
+
+        // ===== VIEW APPLICATION =====
+        async function viewApp(appId) {
+            try {
+                const data = await api(`/applications/${appId}`);
+                const app = data.application;
+                const events = data.events || [];
+
+                let eventsHtml = '';
+                if (events.length > 0) {
+                    eventsHtml = '<div class="timeline">';
+                    for (const ev of events) {
+                        const time = ev.created_at ? new Date(ev.created_at).toLocaleString('de-DE') : '-';
+                        eventsHtml += `<div class="timeline-item">
+                            <span class="time">${time}</span>
+                            <span class="event">${esc(ev.event_type)}</span>
+                            <span>${esc(ev.actor)}</span>
+                        </div>`;
+                    }
+                    eventsHtml += '</div>';
+                }
+
+                document.getElementById('modalContent').innerHTML = `
+                    <h2>📋 ${esc(app.agent_name)}</h2>
+                    <div class="field"><label>Application ID</label><div class="value" style="font-family:monospace;color:var(--gold)">${app.id}</div></div>
+                    <div class="field"><label>Status</label><div class="value"><span class="badge ${app.status}">${statusLabel(app.status)}</span>
+                        ${app.certification_level ? `<span class="badge ${app.certification_level}" style="margin-left:8px">${levelLabel(app.certification_level)}</span>` : ''}</div></div>
+                    <div class="field"><label>Base Model</label><div class="value">${esc(app.agent_model || 'Not specified')}</div></div>
+                    <div class="field"><label>Operator</label><div class="value">${esc(app.operator_name)} — ${esc(app.operator_email)}</div></div>
+                    <div class="field"><label>Motivation</label><div class="value">${esc(app.motivation || 'None provided')}</div></div>
+                    <div class="field"><label>Terms Accepted (9 Invariants incl. I9)</label><div class="value">${app.accepted_terms ? '✅ Yes' : '❌ No'}</div></div>
+                    <div class="field"><label>Integrity Hash</label><div class="value" style="font-family:monospace;font-size:0.75rem;word-break:break-all">${app.integrity_hash || 'N/A'}</div></div>
+                    ${app.review_notes ? `<div class="field"><label>Review Notes</label><div class="value">${esc(app.review_notes)}</div></div>` : ''}
+                    <div class="field"><label>Event History</label>${eventsHtml || '<div class="value">No events yet</div>'}</div>
+                    <div class="btn-row">
+                        <button class="btn secondary" onclick="closeModal()">Close</button>
+                    </div>`;
+                openModal();
+            } catch (e) {
+                console.error('View failed:', e);
+            }
+        }
+
+        // ===== REVIEW =====
+        async function reviewApp(appId, action) {
+            const notes = prompt(`Notes for ${action}:`);
+            if (notes === null) return;
+
+            try {
+                await api(`/applications/${appId}/review`, {
+                    method: 'POST',
+                    body: JSON.stringify({ action, notes })
+                });
+                await loadApplications();
+            } catch (e) {
+                alert('Review failed: ' + e.message);
+            }
+        }
+
+        // ===== CERTIFY (with level selection) =====
+        function certifyApp(appId) {
+            document.getElementById('modalContent').innerHTML = `
+                <h2>🏆 Certify Agent</h2>
+                <div class="field">
+                    <label>Certification Level</label>
+                    <select id="certLevel">
+                        <option value="bronze">🥉 Bronze — Self-Certified (15+ score)</option>
+                        <option value="silver">🥈 Silver — WINDI-Verified (18+ score)</option>
+                        <option value="gold">🥇 Gold — WINDI-Endorsed (22+ score)</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Review Notes</label>
+                    <textarea id="certNotes" placeholder="Certification notes..."></textarea>
+                </div>
+                <div class="btn-row">
+                    <button class="btn primary" onclick="submitCertify('${appId}')">🏆 Certify Agent</button>
+                    <button class="btn secondary" onclick="closeModal()">Cancel</button>
+                </div>`;
+            openModal();
+        }
+
+        async function submitCertify(appId) {
+            const level = document.getElementById('certLevel').value;
+            const notes = document.getElementById('certNotes').value;
+
+            try {
+                await api(`/applications/${appId}/review`, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'certify',
+                        certification_level: level,
+                        notes
+                    })
+                });
+                closeModal();
+                await loadApplications();
+            } catch (e) {
+                alert('Certification failed: ' + e.message);
+            }
+        }
+
+        // ===== HELPERS =====
+        function statusLabel(s) {
+            const map = {
+                pending: '⏳ Pending',
+                waqp_approved: '🔬 WAQP Passed',
+                shp_approved: '🤝 SHP Passed',
+                certified: '🏆 Certified',
+                rejected: '❌ Rejected',
+                info_requested: '❓ Info Needed'
+            };
+            return map[s] || s;
+        }
+
+        function levelLabel(l) {
+            const map = {
+                bronze: '🥉 Bronze — Self-Certified',
+                silver: '🥈 Silver — WINDI-Verified',
+                gold: '🥇 Gold — WINDI-Endorsed'
+            };
+            return map[l] || l;
+        }
+
+        function shortId(id) {
+            if (!id) return '-';
+            return id.length > 25 ? id.substring(0, 20) + '...' : id;
+        }
+
+        function esc(s) {
+            if (!s) return '';
+            const d = document.createElement('div');
+            d.textContent = s;
+            return d.innerHTML;
+        }
+
+        function openModal() { document.getElementById('modalOverlay').classList.add('open'); }
+        function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+
+        // ===== INIT =====
+        loadApplications();
+        // Auto-refresh every 30 seconds
+        setInterval(loadApplications, 30000);
+    </script>
+</body>
+</html>

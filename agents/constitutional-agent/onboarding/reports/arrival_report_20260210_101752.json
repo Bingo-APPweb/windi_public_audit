@@ -1,0 +1,618 @@
+{
+  "meta": {
+    "title": "WINDI Praktikant Arrival Report",
+    "subtitle": "Relatório de Chegada — O Praktikant Observa",
+    "version": "1.0.0",
+    "node": "W-001",
+    "generated": "2026-02-10T10:17:52.501040+00:00",
+    "protocol": "Praktikant Onboarding Protocol v1.0.0",
+    "principle": "AI processes. Human decides. WINDI guarantees."
+  },
+  "findings": {
+    "isp_registry": {
+      "profiles": [
+        {
+          "name": "__pycache__",
+          "path": "/opt/windi/isp/__pycache__",
+          "has_profile_json": false,
+          "valid": false,
+          "error": "Missing profile.json"
+        },
+        {
+          "name": "_base",
+          "path": "/opt/windi/isp/_base",
+          "has_profile_json": true,
+          "institution": "Unknown",
+          "governance_level": "LOW",
+          "templates_count": 0,
+          "sge_keywords": 0,
+          "valid": true
+        },
+        {
+          "name": "adac",
+          "path": "/opt/windi/isp/adac",
+          "has_profile_json": true,
+          "institution": "Unknown",
+          "governance_level": "LOW",
+          "templates_count": 0,
+          "sge_keywords": 0,
+          "valid": true
+        },
+        {
+          "name": "aok",
+          "path": "/opt/windi/isp/aok",
+          "has_profile_json": true,
+          "institution": "Unknown",
+          "governance_level": "MEDIUM",
+          "templates_count": 0,
+          "sge_keywords": 0,
+          "valid": true
+        },
+        {
+          "name": "bafin",
+          "path": "/opt/windi/isp/bafin",
+          "has_profile_json": true,
+          "institution": "Unknown",
+          "governance_level": "HIGH",
+          "templates_count": 0,
+          "sge_keywords": 0,
+          "valid": true
+        },
+        {
+          "name": "bis-regulatory",
+          "path": "/opt/windi/isp/bis-regulatory",
+          "has_profile_json": true,
+          "institution": "Unknown",
+          "governance_level": "HIGH",
+          "templates_count": 0,
+          "sge_keywords": 0,
+          "valid": true
+        },
+        {
+          "name": "bundesagentur-fuer-arbeit",
+          "path": "/opt/windi/isp/bundesagentur-fuer-arbeit",
+          "has_profile_json": true,
+          "institution": "Unknown",
+          "governance_level": "MEDIUM",
+          "templates_count": 0,
+          "sge_keywords": 0,
+          "valid": true
+        },
+        {
+          "name": "bundesregierung",
+          "path": "/opt/windi/isp/bundesregierung",
+          "has_profile_json": true,
+          "institution": "Unknown",
+          "governance_level": "MEDIUM",
+          "templates_count": 0,
+          "sge_keywords": 0,
+          "valid": true
+        },
+        {
+          "name": "deutsche-bahn",
+          "path": "/opt/windi/isp/deutsche-bahn",
+          "has_profile_json": true,
+          "institution": "Unknown",
+          "governance_level": "LOW",
+          "templates_count": 0,
+          "sge_keywords": 0,
+          "valid": true
+        },
+        {
+          "name": "dhl-group",
+          "path": "/opt/windi/isp/dhl-group",
+          "has_profile_json": true,
+          "institution": "Unknown",
+          "governance_level": "LOW",
+          "templates_count": 0,
+          "sge_keywords": 0,
+          "valid": true
+        },
+        {
+          "name": "ecb",
+          "path": "/opt/windi/isp/ecb",
+          "has_profile_json": true,
+          "institution": "Unknown",
+          "governance_level": "HIGH",
+          "templates_count": 0,
+          "sge_keywords": 0,
+          "valid": true
+        },
+        {
+          "name": "freistaat-bayern",
+          "path": "/opt/windi/isp/freistaat-bayern",
+          "has_profile_json": true,
+          "institution": "Unknown",
+          "governance_level": "MEDIUM",
+          "templates_count": 0,
+          "sge_keywords": 0,
+          "valid": true
+        },
+        {
+          "name": "hwk",
+          "path": "/opt/windi/isp/hwk",
+          "has_profile_json": true,
+          "institution": "Unknown",
+          "governance_level": "LOW",
+          "templates_count": 0,
+          "sge_keywords": 0,
+          "valid": true
+        },
+        {
+          "name": "ihk",
+          "path": "/opt/windi/isp/ihk",
+          "has_profile_json": true,
+          "institution": "Unknown",
+          "governance_level": "LOW",
+          "templates_count": 0,
+          "sge_keywords": 0,
+          "valid": true
+        },
+        {
+          "name": "siemens",
+          "path": "/opt/windi/isp/siemens",
+          "has_profile_json": true,
+          "institution": "Unknown",
+          "governance_level": "LOW",
+          "templates_count": 0,
+          "sge_keywords": 0,
+          "valid": true
+        },
+        {
+          "name": "sparkasse",
+          "path": "/opt/windi/isp/sparkasse",
+          "has_profile_json": true,
+          "institution": "Unknown",
+          "governance_level": "MEDIUM",
+          "templates_count": 0,
+          "sge_keywords": 0,
+          "valid": true
+        },
+        {
+          "name": "stadt-kempten",
+          "path": "/opt/windi/isp/stadt-kempten",
+          "has_profile_json": true,
+          "institution": "Unknown",
+          "governance_level": "MEDIUM",
+          "templates_count": 0,
+          "sge_keywords": 0,
+          "valid": true
+        },
+        {
+          "name": "stadtwerke",
+          "path": "/opt/windi/isp/stadtwerke",
+          "has_profile_json": true,
+          "institution": "Unknown",
+          "governance_level": "LOW",
+          "templates_count": 0,
+          "sge_keywords": 0,
+          "valid": true
+        },
+        {
+          "name": "tuev",
+          "path": "/opt/windi/isp/tuev",
+          "has_profile_json": true,
+          "institution": "Unknown",
+          "governance_level": "LOW",
+          "templates_count": 0,
+          "sge_keywords": 0,
+          "valid": true
+        }
+      ],
+      "total": 19,
+      "governance_levels": {
+        "LOW": 9,
+        "MEDIUM": 6,
+        "HIGH": 3
+      },
+      "health": "DEGRADED",
+      "valid_count": 18,
+      "invalid_count": 1
+    },
+    "sge_engine": {
+      "present": true,
+      "modules": [
+        "SEMANTIC",
+        "REGULATORY",
+        "INSTITUTIONAL"
+      ],
+      "layers": 3,
+      "risk_levels": [
+        "R1",
+        "R2",
+        "R3",
+        "R4",
+        "R5"
+      ],
+      "health": "DEGRADED",
+      "path": "/opt/windi/engine/semantic_governance.py",
+      "size_bytes": 34039,
+      "hash": "2a3f6615c42f02454ab0379beadc615a51a774d03ea63bb71d7ba16621bf738a",
+      "engine_modules": [
+        "agent_api_bridge.py",
+        "audit_dashboard.py",
+        "canon_health.py",
+        "context_aware.py",
+        "cycle_report_generator.py",
+        "dragon_apis.py",
+        "governance_api_evolution.py",
+        "governance_api_minimal.py",
+        "governance_cycle_report.py",
+        "governance_event_log.py",
+        "governance_health.py",
+        "governance_validator.py",
+        "identity_detector.py",
+        "isp_governance_loader.py",
+        "medium_registry.py",
+        "parallel.py",
+        "sandbox_core.py",
+        "semantic_framework_v2_1.py",
+        "semantic_governance.py",
+        "submission_id.py",
+        "submission_registry.py",
+        "tamper_evidence.py",
+        "test_deepdocfakes.py",
+        "test_dragon_council.py",
+        "tri_divergence.py",
+        "windi_agent_v3.py",
+        "windi_c14n.py",
+        "windi_constitution.py",
+        "windi_governance_api.py",
+        "windi_print_layer.py",
+        "windi_skills_loader.py",
+        "witness.py"
+      ],
+      "engine_module_count": 32
+    },
+    "constitutional_matrix": {
+      "shelves": {
+        "P0-invariants": {
+          "name": "P0-invariants",
+          "exists": true,
+          "files": [
+            "birth_certificate.json",
+            "genesis_manifest.json"
+          ],
+          "file_count": 2,
+          "layers": {
+            "guardian_base": true,
+            "architect_extension": false,
+            "witness_injection": false
+          },
+          "triple_complete": false,
+          "integrity": "INCOMPLETE"
+        },
+        "P1-guardrails": {
+          "name": "P1-guardrails",
+          "exists": true,
+          "files": [],
+          "file_count": 0,
+          "layers": {
+            "guardian_base": false,
+            "architect_extension": false,
+            "witness_injection": false
+          },
+          "triple_complete": false,
+          "integrity": "INCOMPLETE"
+        },
+        "P2-observation": {
+          "name": "P2-observation",
+          "exists": true,
+          "files": [],
+          "file_count": 0,
+          "layers": {
+            "guardian_base": false,
+            "architect_extension": false,
+            "witness_injection": false
+          },
+          "triple_complete": false,
+          "integrity": "INCOMPLETE"
+        },
+        "P3-cognitive": {
+          "name": "P3-cognitive",
+          "exists": true,
+          "files": [],
+          "file_count": 0,
+          "layers": {
+            "guardian_base": false,
+            "architect_extension": false,
+            "witness_injection": false
+          },
+          "triple_complete": false,
+          "integrity": "INCOMPLETE"
+        },
+        "P4-governance": {
+          "name": "P4-governance",
+          "exists": true,
+          "files": [
+            "identity.json"
+          ],
+          "file_count": 1,
+          "layers": {
+            "guardian_base": true,
+            "architect_extension": false,
+            "witness_injection": false
+          },
+          "triple_complete": false,
+          "integrity": "INCOMPLETE"
+        },
+        "P5-architecture": {
+          "name": "P5-architecture",
+          "exists": true,
+          "files": [
+            "agent_registry.json"
+          ],
+          "file_count": 1,
+          "layers": {
+            "guardian_base": true,
+            "architect_extension": false,
+            "witness_injection": false
+          },
+          "triple_complete": false,
+          "integrity": "INCOMPLETE"
+        },
+        "P6-evolution": {
+          "name": "P6-evolution",
+          "exists": true,
+          "files": [],
+          "file_count": 0,
+          "layers": {
+            "guardian_base": false,
+            "architect_extension": false,
+            "witness_injection": false
+          },
+          "triple_complete": false,
+          "integrity": "INCOMPLETE"
+        },
+        "P7-templates": {
+          "name": "P7-templates",
+          "exists": true,
+          "files": [],
+          "file_count": 0,
+          "layers": {
+            "guardian_base": false,
+            "architect_extension": false,
+            "witness_injection": false
+          },
+          "triple_complete": false,
+          "integrity": "INCOMPLETE"
+        }
+      },
+      "total_shelves": 8,
+      "sealed": 0,
+      "health": "EMPTY",
+      "phase1_sealed": false,
+      "i9_clean": true
+    },
+    "agent_ecosystem": {
+      "agents": [
+        {
+          "name": "compliance",
+          "path": "/opt/windi/agents/compliance",
+          "version": "unknown",
+          "capabilities": 7,
+          "status": "unknown",
+          "has_manifest": true,
+          "has_capsules": true,
+          "capsule_count": 5,
+          "has_policy": false
+        },
+        {
+          "name": "constitutional-agent",
+          "path": "/opt/windi/agents/constitutional-agent",
+          "has_manifest": false,
+          "has_capsules": false,
+          "has_policy": false
+        },
+        {
+          "name": "integrity_watchdog",
+          "path": "/opt/windi/agents/integrity_watchdog",
+          "version": "1.0.0",
+          "capabilities": 0,
+          "status": "unknown",
+          "has_manifest": true,
+          "has_capsules": false,
+          "has_policy": false
+        },
+        {
+          "name": "isp-manager",
+          "path": "/opt/windi/agents/isp-manager",
+          "version": "1.0.0",
+          "capabilities": 0,
+          "status": "unknown",
+          "has_manifest": true,
+          "has_capsules": false,
+          "has_policy": false
+        },
+        {
+          "name": "maestro",
+          "path": "/opt/windi/agents/maestro",
+          "version": "1.2.0",
+          "capabilities": 0,
+          "status": "unknown",
+          "has_manifest": true,
+          "has_capsules": true,
+          "capsule_count": 5,
+          "has_policy": false
+        },
+        {
+          "name": "noc",
+          "path": "/opt/windi/agents/noc",
+          "has_manifest": false,
+          "has_capsules": false,
+          "has_policy": false
+        },
+        {
+          "name": "onboarding_agent",
+          "path": "/opt/windi/agents/onboarding_agent",
+          "version": "1.0.0",
+          "capabilities": 0,
+          "status": "unknown",
+          "has_manifest": true,
+          "has_capsules": false,
+          "has_policy": false
+        },
+        {
+          "name": "pulse_agent",
+          "path": "/opt/windi/agents/pulse_agent",
+          "version": "1.0.0",
+          "capabilities": 0,
+          "status": "unknown",
+          "has_manifest": true,
+          "has_capsules": false,
+          "has_policy": false
+        },
+        {
+          "name": "sentinela",
+          "path": "/opt/windi/agents/sentinela",
+          "version": "unknown",
+          "capabilities": 7,
+          "status": "unknown",
+          "has_manifest": true,
+          "has_capsules": false,
+          "has_policy": false
+        },
+        {
+          "name": "sla_sentinel",
+          "path": "/opt/windi/agents/sla_sentinel",
+          "version": "1.0.0",
+          "capabilities": 0,
+          "status": "unknown",
+          "has_manifest": true,
+          "has_capsules": false,
+          "has_policy": false
+        }
+      ],
+      "total": 10,
+      "health": "HEALTHY"
+    },
+    "governance_api": {
+      "apis": [
+        {
+          "name": "Governance API",
+          "path": "/opt/windi/engine/windi_governance_api.py",
+          "expected_port": 8080,
+          "exists": true,
+          "size_bytes": 24972
+        },
+        {
+          "name": "Evolution Minimal",
+          "path": "/opt/windi/engine/governance_api_minimal.py",
+          "expected_port": 8083,
+          "exists": true,
+          "size_bytes": 6645
+        },
+        {
+          "name": "Agent API",
+          "path": "/opt/windi/agents/constitutional-agent/src/api.py",
+          "expected_port": 8091,
+          "exists": false
+        }
+      ],
+      "ports": {
+        "8080": "Governance API",
+        "8083": "Evolution Minimal",
+        "8091": "Agent API"
+      },
+      "health": "DEGRADED",
+      "port_map": {
+        "8080": "governance_api",
+        "8081": "trust_bus",
+        "8082": "gateway",
+        "8083": "evolution_minimal",
+        "8084": "masterarbeit",
+        "8085": "BABEL",
+        "8086": "app",
+        "8090": "day-by-day+warroom",
+        "8091": "agent_api",
+        "8889": "cortex"
+      }
+    },
+    "infrastructure": {
+      "directories": {
+        "engine": {
+          "exists": true,
+          "total_files": 94,
+          "total_dirs": 7,
+          "size_bytes": 1447600
+        },
+        "isp": {
+          "exists": true,
+          "total_files": 75,
+          "total_dirs": 29,
+          "size_bytes": 51936281
+        },
+        "agents": {
+          "exists": true,
+          "total_files": 196,
+          "total_dirs": 85,
+          "size_bytes": 1692795
+        },
+        "clone": {
+          "exists": true,
+          "total_files": 96,
+          "total_dirs": 40,
+          "size_bytes": 1413577
+        },
+        "backups": {
+          "exists": true,
+          "total_files": 1420,
+          "total_dirs": 422,
+          "size_bytes": 862272768
+        },
+        "data": {
+          "exists": true,
+          "total_files": 35,
+          "total_dirs": 10,
+          "size_bytes": 10982932
+        },
+        "masterarbeit": {
+          "exists": true,
+          "total_files": 73,
+          "total_dirs": 4,
+          "size_bytes": 4300580
+        },
+        "a4desk-editor": {
+          "exists": true,
+          "total_files": 92,
+          "total_dirs": 7,
+          "size_bytes": 2636357
+        }
+      },
+      "health": "HEALTHY"
+    }
+  },
+  "summary": {
+    "isp_health": "DEGRADED",
+    "sge_health": "DEGRADED",
+    "matrix_health": "EMPTY",
+    "agents_health": "HEALTHY",
+    "api_health": "DEGRADED",
+    "infra_health": "HEALTHY",
+    "i9_clean": true,
+    "overall": "OPERATIONAL_WITH_FINDINGS"
+  },
+  "receipt": {
+    "receipt_id": "WINDI-ONBOARD-W-001-10FEB26-8aa3f677",
+    "timestamp": "2026-02-10T10:17:52.501047+00:00",
+    "node": "W-001",
+    "phase": "PHASE_1",
+    "action": "ARRIVAL_REPORT",
+    "hash": "8aa3f67702edc015e300a27b8cdc33892a4ae55ac22c683e83662203ec126e03",
+    "governance": {
+      "i9_check": "CLEAN",
+      "human_decision_required": false,
+      "auto_apply": false
+    }
+  },
+  "next_phase": {
+    "name": "PHASE_2 — ASSISTANCE",
+    "description": "Connect SGE real to Agent. First Human Escalation simulation.",
+    "prerequisites": [
+      "Arrival Report reviewed by Human Dragon",
+      "SGE engine confirmed operational",
+      "I9 check CLEAN"
+    ],
+    "human_decision_required": true
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "policy_id": "default-bank-policy-v1",
+  "high_value_threshold": 10000,
+  "risk_flag_map": {
+    "DOC_NOT_FOUND": "BLOCK",
+    "ISSUER_NOT_FOUND": "HOLD",
+    "HASH_MISMATCH": "BLOCK",
+    "SIGNATURE_INVALID": "BLOCK"
+  },
+  "default_decision": "HOLD"
+}

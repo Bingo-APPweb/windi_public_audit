@@ -1,0 +1,8 @@
+{
+  "agent_id": "test-agent",
+  "event_type": "test_event",
+  "payload": {
+    "test": true
+  },
+  "received_at": "2026-02-08T19:47:40.289617+00:00"
+}

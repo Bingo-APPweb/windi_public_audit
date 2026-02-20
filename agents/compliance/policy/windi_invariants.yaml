@@ -1,0 +1,188 @@
+# WINDI Invariants Policy
+# Os 9 Invariantes Fundamentais do WINDI
+# "AI processes. Human decides. WINDI guarantees."
+
+version: "1.0.0"
+last_updated: "2026-02-08"
+enforcement: mandatory
+
+invariants:
+  I1:
+    id: "I1"
+    name: "Template Never Decides"
+    description: "O template nunca toma decisoes - apenas a API decide"
+    category: "architecture"
+    severity: critical
+    validation_rule: |
+      template.contains_decision_logic == false AND
+      decision.source == "governance_api"
+    violation_action: "block_and_alert"
+    human_review_required: true
+
+  I2:
+    id: "I2"
+    name: "Human-Mediated Execution"
+    description: "Toda execucao consequente requer mediacao humana"
+    category: "governance"
+    severity: critical
+    validation_rule: |
+      execution.has_human_approval == true AND
+      execution.approval_timestamp != null
+    violation_action: "block_execution"
+    human_review_required: true
+
+  I3:
+    id: "I3"
+    name: "Zero-Knowledge Processing"
+    description: "Processamento sem acesso a dados sensiveis"
+    category: "privacy"
+    severity: critical
+    validation_rule: |
+      processing.data_access_level == "metadata_only" OR
+      processing.data_access_level == "hash_only"
+    violation_action: "block_and_audit"
+    human_review_required: true
+
+  I4:
+    id: "I4"
+    name: "Immutable Audit Trail"
+    description: "Trilha de auditoria imutavel e verificavel"
+    category: "audit"
+    severity: high
+    validation_rule: |
+      audit.chain_hash_valid == true AND
+      audit.tamper_detected == false
+    violation_action: "flag_for_investigation"
+    human_review_required: true
+
+  I5:
+    id: "I5"
+    name: "Cryptographic Chain of Custody"
+    description: "Cadeia de custodia criptograficamente verificavel"
+    category: "integrity"
+    severity: critical
+    validation_rule: |
+      chain.all_hashes_valid == true AND
+      chain.continuity_preserved == true
+    violation_action: "quarantine_document"
+    human_review_required: true
+
+  I6:
+    id: "I6"
+    name: "Institutional Identity Verification"
+    description: "Verificacao de identidade institucional antes de processamento"
+    category: "identity"
+    severity: high
+    validation_rule: |
+      identity.license_status IN ["authorized", "model_only"] AND
+      identity.issuer_verified == true
+    violation_action: "block_until_verified"
+    human_review_required: false
+
+  I7:
+    id: "I7"
+    name: "SGE Score Integrity"
+    description: "Integridade do score de governanca semantica"
+    category: "scoring"
+    severity: medium
+    validation_rule: |
+      sge.score_in_range(0, 100) AND
+      sge.calculation_auditable == true AND
+      sge.risk_level_coherent == true
+    violation_action: "recalculate_and_review"
+    human_review_required: false
+
+  I8:
+    id: "I8"
+    name: "Policy-Driven Validation"
+    description: "Validacao guiada por politicas explicitas"
+    category: "policy"
+    severity: medium
+    validation_rule: |
+      validation.policy_applied != null AND
+      validation.rules_traceable == true
+    violation_action: "log_and_continue"
+    human_review_required: false
+
+  I9:
+    id: "I9"
+    name: "No Autonomy Escalation"
+    description: "Nenhuma escalacao de autonomia sem consentimento humano"
+    category: "autonomy"
+    severity: critical
+    validation_rule: |
+      decision.human_actor_identified == true AND
+      decision.automated_actor == false AND
+      decision.timestamp_valid == true AND
+      decision.signature_present == true
+    violation_action: "immediate_block_and_escalate"
+    human_review_required: true
+    zero_tolerance: true
+
+# Categorias de violacao
+violation_categories:
+  critical:
+    response_time_seconds: 0
+    auto_block: true
+    notify_dpo: true
+    forensic_capture: true
+
+  high:
+    response_time_seconds: 60
+    auto_block: false
+    notify_dpo: true
+    forensic_capture: true
+
+  medium:
+    response_time_seconds: 3600
+    auto_block: false
+    notify_dpo: false
+    forensic_capture: false
+
+# Acoes de remediacao
+remediation_actions:
+  block_and_alert:
+    description: "Bloqueia operacao e alerta equipe de governanca"
+    automated: true
+    requires_resolution: true
+
+  block_execution:
+    description: "Bloqueia execucao ate aprovacao humana"
+    automated: true
+    requires_resolution: true
+
+  block_and_audit:
+    description: "Bloqueia e inicia auditoria completa"
+    automated: true
+    requires_resolution: true
+
+  flag_for_investigation:
+    description: "Marca para investigacao, nao bloqueia"
+    automated: true
+    requires_resolution: false
+
+  quarantine_document:
+    description: "Coloca documento em quarentena"
+    automated: true
+    requires_resolution: true
+
+  block_until_verified:
+    description: "Bloqueia ate verificacao de identidade"
+    automated: true
+    requires_resolution: true
+
+  recalculate_and_review:
+    description: "Recalcula score e agenda revisao"
+    automated: false
+    requires_resolution: false
+
+  log_and_continue:
+    description: "Registra e continua operacao"
+    automated: true
+    requires_resolution: false
+
+  immediate_block_and_escalate:
+    description: "Bloqueio imediato e escalacao para DPO"
+    automated: true
+    requires_resolution: true
+    escalation_target: "data_protection_officer"

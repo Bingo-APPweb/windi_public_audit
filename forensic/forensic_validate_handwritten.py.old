@@ -1,0 +1,857 @@
+"""
+╔══════════════════════════════════════════════════════════════════╗
+║         WINDI FORENSIC — VALIDATE HANDWRITTEN ENDPOINT          ║
+║       "O Tabelião Digital do Compromisso Manuscrito"            ║
+║                                                                  ║
+║  Principle: AI processes. Human decides. WINDI guarantees.       ║
+║  Three Dragons: Guardian(Claude) + Architect(GPT) + Witness(Gem) ║
+║  Invariant I9: Prohibition of Autonomy Escalation (IRREMEDIABLE)║
+╚══════════════════════════════════════════════════════════════════╝
+
+Endpoint: POST /v1/forensic/validate-handwritten
+Purpose:  Receive raw handwritten artifact (napkin, note, contract sketch),
+          authenticate via PixWindi anti-deepfake engine, extract semantic
+          content, optionally link to financial settlement, and produce
+          an immutable Virtue Receipt.
+
+Commits Referenced:
+  - 68ca874: PixWindi PRNU sensor DNA extraction
+  - 89667b3: Financial liquidation bridge
+  - 77a153a: Forensic audit log standard
+
+Author: Three Dragons Collective — Guardian Layer
+Version: 1.0.0
+Date: 2026-02-10
+"""
+
+import hashlib
+import json
+import logging
+import os
+import time
+import uuid
+from datetime import datetime, timezone
+from enum import Enum
+from typing import Optional
+
+from fastapi import (
+    FastAPI,
+    File,
+    Form,
+    Header,
+    HTTPException,
+    Request,
+    UploadFile,
+    status,
+)
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, Field
+
+# ═══════════════════════════════════════════════════════════════════
+# CONFIGURATION
+# ═══════════════════════════════════════════════════════════════════
+
+WINDI_BASE = os.getenv("WINDI_BASE", "/opt/windi")
+FORENSIC_LOG_PATH = os.path.join(WINDI_BASE, "forensic", "audit_logs")
+FORENSIC_PDF_PATH = os.path.join(WINDI_BASE, "forensic", "pdf_output")
+CONFIDENCE_THRESHOLD = 85.0  # I9: Below this → HUMAN CONFIRMATION REQUIRED
+
+# Logging — Forensic grade
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [WINDI-FORENSIC] %(levelname)s %(message)s",
+)
+logger = logging.getLogger("windi.forensic.handwritten")
+
+
+# ═══════════════════════════════════════════════════════════════════
+# ENUMS & MODELS
+# ═══════════════════════════════════════════════════════════════════
+
+class GovernanceLevel(str, Enum):
+    BASIC = "BASIC"
+    MEDIUM = "MEDIUM"
+    HIGH = "HIGH"
+
+
+class RiskLevel(str, Enum):
+    R0 = "R0"
+    R1 = "R1"
+    R2 = "R2"
+    R3 = "R3"
+    R4 = "R4"
+    R5 = "R5"
+
+
+class AntiDeepfakeStatus(str, Enum):
+    AUTHENTIC = "AUTHENTIC"
+    SUSPICIOUS = "SUSPICIOUS"
+    REJECTED = "REJECTED"
+    PENDING_HUMAN_REVIEW = "PENDING_HUMAN_REVIEW"
+
+
+class FinancialLinkStatus(str, Enum):
+    NOT_REQUESTED = "NOT_REQUESTED"
+    MATCHED = "MATCHED"
+    MISMATCH = "MISMATCH"
+    PENDING_CONFIRMATION = "PENDING_CONFIRMATION"
+
+
+class MetadataInput(BaseModel):
+    """Mobile device metadata attached to the handwritten capture."""
+    gps_latitude: Optional[float] = None
+    gps_longitude: Optional[float] = None
+    timestamp_mobile: str = Field(..., description="ISO 8601 timestamp from device")
+    device_id: str = Field(..., description="Unique device identifier")
+    device_model: Optional[str] = None
+    capture_resolution: Optional[str] = None
+
+
+class PRNUResult(BaseModel):
+    """Sensor DNA fingerprint from PixWindi engine (Commit 68ca874)."""
+    sensor_hash: str
+    noise_pattern_match: float  # 0.0 - 100.0
+    deepfake_probability: float  # 0.0 - 100.0
+    is_authentic: bool
+    analysis_method: str = "PRNU_SPECTRAL_V2"
+
+
+class SemanticExtractionResult(BaseModel):
+    """Calligraphy-to-vector conversion and normalized transcription."""
+    transcription_raw: str
+    transcription_normalized: str
+    confidence_ocr: float
+    language_detected: str
+    key_entities: list[str] = []
+    obligations_detected: list[str] = []
+    values_detected: list[str] = []
+
+
+class VirtueReceipt(BaseModel):
+    """
+    WINDI Virtue Receipt — Zero-Knowledge proof of governance.
+    Client keeps the data, WINDI keeps the PROOF of virtue.
+    """
+    receipt_id: str
+    receipt_hash: str
+    categories: dict = Field(default_factory=lambda: {
+        "type": "HANDWRITTEN_VALIDATION",
+        "impact": "MEDIUM",
+        "domain": "FORENSIC",
+        "value_range": "R2",
+    })
+    governance: dict = Field(default_factory=dict)
+    decision: dict = Field(default_factory=dict)
+    flags: list[str] = []
+
+
+class ForensicValidationResponse(BaseModel):
+    """Complete response from the Digital Notary."""
+    # Core identifiers
+    validation_id: str
+    timestamp_utc: str
+    governance_level: GovernanceLevel
+
+    # Anti-Deepfake (Commit 68ca874)
+    anti_deepfake_validation: AntiDeepfakeStatus
+    prnu_result: PRNUResult
+
+    # Semantic extraction
+    semantic_extraction: SemanticExtractionResult
+
+    # Financial link (Commit 89667b3)
+    financial_link: FinancialLinkStatus
+    financial_details: Optional[dict] = None
+
+    # Governance hashes
+    receipt_hash: str
+    dual_proof_hash: str
+    forensic_pdf_url: str
+
+    # Virtue Receipt (Zero-Knowledge)
+    virtue_receipt: VirtueReceipt
+
+    # I9 Compliance
+    i9_status: str
+    human_confirmation_required: bool
+    human_confirmation_reason: Optional[str] = None
+
+    # SGE Risk Classification
+    sge_risk_level: RiskLevel
+    sge_score: float
+
+    # Audit
+    audit_log_ref: str
+
+
+# ═══════════════════════════════════════════════════════════════════
+# CORE ENGINE MODULES (Integration Points)
+# ═══════════════════════════════════════════════════════════════════
+
+class PixWindiEngine:
+    """
+    PixWindi Anti-Deepfake Engine — Commit 68ca874
+    Extracts sensor DNA (PRNU) and validates image authenticity.
+    In production, this integrates with the actual PixWindi C/Python module.
+    """
+
+    @staticmethod
+    async def process_handwritten_document(
+        image_data: bytes,
+        device_id: str,
+        governance_level: GovernanceLevel,
+    ) -> PRNUResult:
+        """
+        Process handwritten document through PRNU spectral analysis.
+        Returns sensor fingerprint and deepfake probability.
+        """
+        # Generate deterministic sensor hash from image data
+        image_hash = hashlib.sha256(image_data).hexdigest()
+        sensor_hash = hashlib.sha384(
+            f"{image_hash}:{device_id}".encode()
+        ).hexdigest()
+
+        # PRNU noise pattern analysis
+        # In production: calls native PixWindi spectral decomposition
+        noise_match = _simulate_prnu_analysis(image_data)
+        deepfake_prob = max(0.0, 100.0 - noise_match)
+
+        is_authentic = (
+            noise_match >= CONFIDENCE_THRESHOLD
+            and deepfake_prob < (100.0 - CONFIDENCE_THRESHOLD)
+        )
+
+        logger.info(
+            f"PixWindi PRNU — sensor_hash={sensor_hash[:16]}... "
+            f"noise_match={noise_match:.1f}% deepfake={deepfake_prob:.1f}% "
+            f"authentic={is_authentic}"
+        )
+
+        return PRNUResult(
+            sensor_hash=sensor_hash,
+            noise_pattern_match=noise_match,
+            deepfake_probability=deepfake_prob,
+            is_authentic=is_authentic,
+        )
+
+
+class SemanticAnalyzer:
+    """
+    Calligraphy → Vectors → Normalized a4Desk format.
+    Integrates with SGE 6-layer risk detection.
+    """
+
+    @staticmethod
+    async def analyze(
+        image_data: bytes,
+        governance_level: GovernanceLevel,
+    ) -> SemanticExtractionResult:
+        """Extract and normalize handwritten content."""
+        # In production: calls OCR engine + NLP pipeline + SGE layers
+        # Placeholder demonstrates the structure
+        return SemanticExtractionResult(
+            transcription_raw="[OCR engine processes actual image in production]",
+            transcription_normalized="[Normalized a4Desk format output]",
+            confidence_ocr=91.5,
+            language_detected="de",
+            key_entities=["Vertragspartner A", "Vertragspartner B"],
+            obligations_detected=["Lieferfrist: 30 Tage", "Zahlungsziel: 14 Tage"],
+            values_detected=["R2"],
+        )
+
+
+class FinancialBridge:
+    """
+    Financial Liquidation Bridge — Commit 89667b3
+    Links document (Verbo) with payment action (Ação).
+    """
+
+    @staticmethod
+    async def verify_settlement(
+        financial_id: str,
+        document_hash: str,
+        governance_level: GovernanceLevel,
+    ) -> tuple[FinancialLinkStatus, dict]:
+        """
+        Verify that the document (Verbo) and payment (Ação) coincide.
+        Queries banking API in production.
+        """
+        # In production: calls configured banking API
+        logger.info(
+            f"FinancialBridge — linking doc_hash={document_hash[:16]}... "
+            f"to financial_id={financial_id}"
+        )
+
+        settlement_hash = hashlib.sha256(
+            f"{financial_id}:{document_hash}".encode()
+        ).hexdigest()
+
+        return FinancialLinkStatus.MATCHED, {
+            "financial_id": financial_id,
+            "settlement_hash": settlement_hash,
+            "verb_action_match": True,
+            "settlement_timestamp": datetime.now(timezone.utc).isoformat(),
+        }
+
+
+class ForensicLedger:
+    """
+    Forensic Audit Ledger — Commit 77a153a
+    Generates immutable audit trail with Merkle Tree integration.
+    """
+
+    @staticmethod
+    async def save_audit_log(
+        validation_id: str,
+        receipt_hash: str,
+        governance_level: GovernanceLevel,
+        event_data: dict,
+    ) -> str:
+        """Save audit entry to forensic ledger."""
+        log_entry = {
+            "log_id": f"AUDIT-{validation_id}",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "event": "HANDWRITTEN_VALIDATION",
+            "governance_level": governance_level.value,
+            "receipt_hash": receipt_hash,
+            "integrity_hash": hashlib.sha256(
+                json.dumps(event_data, sort_keys=True).encode()
+            ).hexdigest(),
+            "ledger_position": f"L3-FORENSIC-{int(time.time())}",
+        }
+
+        # In production: writes to /opt/windi/forensic/audit_logs/
+        # and updates Merkle Tree in L3 layer
+        log_ref = log_entry["log_id"]
+        logger.info(f"ForensicLedger — saved {log_ref} at {log_entry['ledger_position']}")
+
+        # Ensure directory exists in production
+        os.makedirs(FORENSIC_LOG_PATH, exist_ok=True)
+        log_file = os.path.join(FORENSIC_LOG_PATH, f"{validation_id}.json")
+
+        try:
+            with open(log_file, "w") as f:
+                json.dump(log_entry, f, indent=2)
+        except OSError:
+            logger.warning(f"Could not write audit log to disk at {log_file}")
+
+        return log_ref
+
+    @staticmethod
+    async def generate_forensic_pdf(
+        validation_id: str,
+        response_data: dict,
+    ) -> str:
+        """
+        Generate immutable PDF deposited in Git and sent to parties.
+        Returns URL path to the generated PDF.
+        """
+        # In production: generates PDF via reportlab/weasyprint
+        # and commits to forensic Git repository
+        pdf_filename = f"WINDI-FORENSIC-{validation_id}.pdf"
+        pdf_url = f"/v1/forensic/pdf/{pdf_filename}"
+
+        logger.info(f"ForensicPDF — generated {pdf_filename}")
+        return pdf_url
+
+
+# ═══════════════════════════════════════════════════════════════════
+# I9 GOVERNANCE MIDDLEWARE
+# ═══════════════════════════════════════════════════════════════════
+
+class I9GovernanceGate:
+    """
+    Invariant I9 — Prohibition of Autonomy Escalation (IRREMEDIABLE)
+    Established: 08 Feb 2026
+
+    Rule: If confidence score < 85%, the system MUST request human
+    confirmation. No auto_apply. No autonomous decisions.
+
+    "Efficiency NEVER overrides sovereignty."
+    """
+
+    @staticmethod
+    def evaluate(
+        prnu_confidence: float,
+        ocr_confidence: float,
+        governance_level: GovernanceLevel,
+    ) -> tuple[bool, Optional[str]]:
+        """
+        Returns (human_confirmation_required, reason).
+        """
+        reasons = []
+
+        # Check PRNU confidence
+        if prnu_confidence < CONFIDENCE_THRESHOLD:
+            reasons.append(
+                f"PRNU confidence {prnu_confidence:.1f}% below "
+                f"threshold {CONFIDENCE_THRESHOLD}%"
+            )
+
+        # Check OCR confidence
+        if ocr_confidence < CONFIDENCE_THRESHOLD:
+            reasons.append(
+                f"OCR confidence {ocr_confidence:.1f}% below "
+                f"threshold {CONFIDENCE_THRESHOLD}%"
+            )
+
+        # HIGH governance always requires human review
+        if governance_level == GovernanceLevel.HIGH:
+            reasons.append(
+                "Governance level HIGH: mandatory human review per I9"
+            )
+
+        if reasons:
+            combined = "; ".join(reasons)
+            logger.warning(f"I9 GATE TRIGGERED — {combined}")
+            return True, combined
+
+        return False, None
+
+    @staticmethod
+    def compute_sge_risk(
+        prnu_confidence: float,
+        ocr_confidence: float,
+        has_financial_link: bool,
+    ) -> tuple[RiskLevel, float]:
+        """Compute SGE risk level from validation metrics."""
+        avg_confidence = (prnu_confidence + ocr_confidence) / 2.0
+        financial_weight = 10.0 if has_financial_link else 0.0
+
+        # SGE Score: higher = more risk (inverse of confidence)
+        sge_score = round(100.0 - avg_confidence + financial_weight, 2)
+
+        if sge_score <= 5:
+            return RiskLevel.R0, sge_score
+        elif sge_score <= 15:
+            return RiskLevel.R1, sge_score
+        elif sge_score <= 30:
+            return RiskLevel.R2, sge_score
+        elif sge_score <= 50:
+            return RiskLevel.R3, sge_score
+        elif sge_score <= 75:
+            return RiskLevel.R4, sge_score
+        else:
+            return RiskLevel.R5, sge_score
+
+
+# ═══════════════════════════════════════════════════════════════════
+# HASH GENERATION
+# ═══════════════════════════════════════════════════════════════════
+
+def generate_receipt_hash(components: dict) -> str:
+    """Generate SHA-256 receipt hash from validation components."""
+    canonical = json.dumps(components, sort_keys=True, ensure_ascii=False)
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
+def generate_dual_proof_hash(receipt_hash: str, sensor_hash: str) -> str:
+    """
+    Dual Proof Hash = SHA-256(receipt_hash + sensor_hash)
+    Links document proof with sensor authentication proof.
+    """
+    combined = f"{receipt_hash}:{sensor_hash}"
+    return hashlib.sha256(combined.encode("utf-8")).hexdigest()
+
+
+# ═══════════════════════════════════════════════════════════════════
+# HELPER (Simulation for non-production)
+# ═══════════════════════════════════════════════════════════════════
+
+def _simulate_prnu_analysis(image_data: bytes) -> float:
+    """
+    Simulate PRNU spectral analysis.
+    In production: replaced by actual PixWindi native module.
+    Returns noise pattern match score (0-100).
+    """
+    data_hash = hashlib.md5(image_data).hexdigest()
+    # Deterministic pseudo-score based on image content
+    seed = int(data_hash[:8], 16) % 100
+    return min(99.5, max(60.0, 85.0 + (seed - 50) * 0.3))
+
+
+# ═══════════════════════════════════════════════════════════════════
+# FASTAPI APPLICATION
+# ═══════════════════════════════════════════════════════════════════
+
+app = FastAPI(
+    title="WINDI Forensic — Digital Notary",
+    description=(
+        "Tabelião Digital do Compromisso Manuscrito. "
+        "AI processes. Human decides. WINDI guarantees."
+    ),
+    version="1.0.0",
+    docs_url="/v1/forensic/docs",
+    redoc_url="/v1/forensic/redoc",
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Restrict in production
+    allow_credentials=True,
+    allow_methods=["POST", "GET"],
+    allow_headers=["*"],
+)
+
+
+# ─── Health Check ─────────────────────────────────────────────────
+
+@app.get("/v1/forensic/health")
+async def health_check():
+    return {
+        "status": "operational",
+        "service": "WINDI Forensic — Digital Notary",
+        "version": "1.0.0",
+        "invariants": "I1-I9 ACTIVE",
+        "i9_status": "IRREMEDIABLE — Autonomy Escalation Prohibited",
+        "three_dragons": "Guardian(Claude) + Architect(GPT) + Witness(Gemini)",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    }
+
+
+# ─── Main Endpoint ───────────────────────────────────────────────
+
+@app.post(
+    "/v1/forensic/validate-handwritten",
+    response_model=ForensicValidationResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Validate handwritten document — Digital Notary",
+    description=(
+        "Receives raw handwritten artifact, authenticates via PixWindi "
+        "anti-deepfake engine, extracts semantic content, optionally links "
+        "to financial settlement, and produces immutable Virtue Receipt."
+    ),
+)
+async def validate_handwritten(
+    image_file: UploadFile = File(
+        ..., description="Binary image file of handwritten document"
+    ),
+    metadata_json: str = Form(
+        ..., description="JSON string with GPS, Timestamp Mobile, Device ID"
+    ),
+    link_financial_id: Optional[str] = Form(
+        None, description="Optional financial transaction ID for settlement"
+    ),
+    x_windi_identity: str = Header(
+        ..., alias="X-WINDI-Identity",
+        description="Authenticated WINDI user identity"
+    ),
+    x_governance_level: GovernanceLevel = Header(
+        GovernanceLevel.MEDIUM,
+        alias="X-Governance-Level",
+        description="Governance rigor level: BASIC, MEDIUM, HIGH"
+    ),
+):
+    """
+    ╔═══════════════════════════════════════════════════════════╗
+    ║  POST /v1/forensic/validate-handwritten                  ║
+    ║  The Digital Notary — "Compromisso Autenticado"          ║
+    ╚═══════════════════════════════════════════════════════════╝
+
+    Orchestration Flow:
+    1. Ingestion — Validate identity & parse metadata
+    2. Acreditação (68ca874) — PixWindi PRNU + anti-deepfake
+    3. Análise Semiótica — Calligraphy → vectors → a4Desk format
+    4. Liquidação (89667b3) — Optional financial settlement link
+    5. Resposta — dual_proof_hash + Forensic PDF URL
+    """
+    validation_id = f"VAL-{uuid.uuid4().hex[:12].upper()}"
+    timestamp_utc = datetime.now(timezone.utc).isoformat()
+
+    logger.info(
+        f"═══ VALIDATION START {validation_id} ═══ "
+        f"identity={x_windi_identity} governance={x_governance_level.value}"
+    )
+
+    # ┌─────────────────────────────────────────────────────────┐
+    # │ STEP 1: INGESTION — Validate headers & parse metadata   │
+    # └─────────────────────────────────────────────────────────┘
+
+    # Validate identity header
+    if not x_windi_identity or len(x_windi_identity) < 3:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={
+                "error": "IDENTITY_INVALID",
+                "message": "X-WINDI-Identity header is missing or invalid",
+                "i9_note": "Identity verification is a governance prerequisite",
+            },
+        )
+
+    # Parse metadata
+    try:
+        metadata = MetadataInput(**json.loads(metadata_json))
+    except (json.JSONDecodeError, Exception) as e:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail={
+                "error": "METADATA_INVALID",
+                "message": f"Invalid metadata_json: {str(e)}",
+            },
+        )
+
+    # Read image data
+    image_data = await image_file.read()
+    if len(image_data) == 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail={"error": "IMAGE_EMPTY", "message": "Uploaded image is empty"},
+        )
+
+    logger.info(
+        f"[{validation_id}] Ingestion OK — "
+        f"image_size={len(image_data)} bytes, device={metadata.device_id}"
+    )
+
+    # ┌─────────────────────────────────────────────────────────┐
+    # │ STEP 2: ACREDITAÇÃO — PixWindi PRNU (Commit 68ca874)   │
+    # └─────────────────────────────────────────────────────────┘
+
+    prnu_result = await PixWindiEngine.process_handwritten_document(
+        image_data=image_data,
+        device_id=metadata.device_id,
+        governance_level=x_governance_level,
+    )
+
+    # Determine anti-deepfake status
+    if prnu_result.is_authentic:
+        anti_deepfake_status = AntiDeepfakeStatus.AUTHENTIC
+    elif prnu_result.deepfake_probability > 50:
+        anti_deepfake_status = AntiDeepfakeStatus.REJECTED
+    elif prnu_result.noise_pattern_match < CONFIDENCE_THRESHOLD:
+        anti_deepfake_status = AntiDeepfakeStatus.PENDING_HUMAN_REVIEW
+    else:
+        anti_deepfake_status = AntiDeepfakeStatus.SUSPICIOUS
+
+    logger.info(
+        f"[{validation_id}] Acreditação — status={anti_deepfake_status.value}"
+    )
+
+    # ┌─────────────────────────────────────────────────────────┐
+    # │ STEP 3: ANÁLISE SEMIÓTICA — Calligraphy → a4Desk       │
+    # └─────────────────────────────────────────────────────────┘
+
+    semantic_result = await SemanticAnalyzer.analyze(
+        image_data=image_data,
+        governance_level=x_governance_level,
+    )
+
+    logger.info(
+        f"[{validation_id}] Semiótica — "
+        f"OCR_conf={semantic_result.confidence_ocr}% "
+        f"lang={semantic_result.language_detected}"
+    )
+
+    # ┌─────────────────────────────────────────────────────────┐
+    # │ I9 GOVERNANCE GATE — Autonomy Escalation Check         │
+    # └─────────────────────────────────────────────────────────┘
+
+    human_required, human_reason = I9GovernanceGate.evaluate(
+        prnu_confidence=prnu_result.noise_pattern_match,
+        ocr_confidence=semantic_result.confidence_ocr,
+        governance_level=x_governance_level,
+    )
+
+    sge_risk, sge_score = I9GovernanceGate.compute_sge_risk(
+        prnu_confidence=prnu_result.noise_pattern_match,
+        ocr_confidence=semantic_result.confidence_ocr,
+        has_financial_link=link_financial_id is not None,
+    )
+
+    i9_status = "COMPLIANT" if not human_required else "GATE_TRIGGERED"
+
+    if human_required:
+        logger.warning(
+            f"[{validation_id}] ⚠️ I9 GATE — Human confirmation required: "
+            f"{human_reason}"
+        )
+
+    # ┌─────────────────────────────────────────────────────────┐
+    # │ STEP 4: LIQUIDAÇÃO — Financial Link (Commit 89667b3)   │
+    # └─────────────────────────────────────────────────────────┘
+
+    financial_status = FinancialLinkStatus.NOT_REQUESTED
+    financial_details = None
+
+    if link_financial_id:
+        doc_hash = hashlib.sha256(image_data).hexdigest()
+        financial_status, financial_details = (
+            await FinancialBridge.verify_settlement(
+                financial_id=link_financial_id,
+                document_hash=doc_hash,
+                governance_level=x_governance_level,
+            )
+        )
+        logger.info(
+            f"[{validation_id}] Liquidação — "
+            f"status={financial_status.value} "
+            f"financial_id={link_financial_id}"
+        )
+
+    # ┌─────────────────────────────────────────────────────────┐
+    # │ STEP 5: RESPOSTA — Hashes, Receipt, PDF                │
+    # └─────────────────────────────────────────────────────────┘
+
+    # Generate receipt hash
+    receipt_components = {
+        "validation_id": validation_id,
+        "timestamp": timestamp_utc,
+        "identity": x_windi_identity,
+        "governance_level": x_governance_level.value,
+        "prnu_sensor_hash": prnu_result.sensor_hash,
+        "anti_deepfake": anti_deepfake_status.value,
+        "ocr_confidence": semantic_result.confidence_ocr,
+        "sge_risk": sge_risk.value,
+        "sge_score": sge_score,
+        "financial_link": financial_status.value,
+        "device_id": metadata.device_id,
+        "device_timestamp": metadata.timestamp_mobile,
+    }
+    receipt_hash = generate_receipt_hash(receipt_components)
+
+    # Generate dual proof hash
+    dual_proof_hash = generate_dual_proof_hash(
+        receipt_hash=receipt_hash,
+        sensor_hash=prnu_result.sensor_hash,
+    )
+
+    # Build Virtue Receipt (Zero-Knowledge: no sensitive data)
+    virtue_receipt = VirtueReceipt(
+        receipt_id=f"VR-{validation_id}",
+        receipt_hash=receipt_hash,
+        categories={
+            "type": "HANDWRITTEN_VALIDATION",
+            "impact": x_governance_level.value,
+            "domain": "FORENSIC",
+            "value_range": sge_risk.value,
+        },
+        governance={
+            "sge_score": sge_score,
+            "risk": sge_risk.value,
+            "validation": anti_deepfake_status.value,
+            "i9_compliant": i9_status == "COMPLIANT",
+        },
+        decision={
+            "action": "VALIDATE_HANDWRITTEN",
+            "role": x_windi_identity,
+            "timestamp": timestamp_utc,
+            "ai_recommendation": anti_deepfake_status.value,
+            "override": None,
+            "human_confirmed": not human_required,
+        },
+        flags=[
+            f"I9:{i9_status}",
+            f"SGE:{sge_risk.value}",
+            f"PRNU:{anti_deepfake_status.value}",
+        ]
+        + (["FINANCIAL_LINKED"] if link_financial_id else [])
+        + (["HUMAN_REVIEW_REQUIRED"] if human_required else []),
+    )
+
+    # Save audit log (Commit 77a153a)
+    audit_ref = await ForensicLedger.save_audit_log(
+        validation_id=validation_id,
+        receipt_hash=receipt_hash,
+        governance_level=x_governance_level,
+        event_data=receipt_components,
+    )
+
+    # Generate forensic PDF
+    forensic_pdf_url = await ForensicLedger.generate_forensic_pdf(
+        validation_id=validation_id,
+        response_data=receipt_components,
+    )
+
+    logger.info(
+        f"═══ VALIDATION COMPLETE {validation_id} ═══ "
+        f"receipt_hash={receipt_hash[:16]}... "
+        f"dual_proof={dual_proof_hash[:16]}... "
+        f"risk={sge_risk.value} i9={i9_status}"
+    )
+
+    # ┌─────────────────────────────────────────────────────────┐
+    # │ RETURN — The Digital Notary speaks                      │
+    # └─────────────────────────────────────────────────────────┘
+
+    return ForensicValidationResponse(
+        validation_id=validation_id,
+        timestamp_utc=timestamp_utc,
+        governance_level=x_governance_level,
+        anti_deepfake_validation=anti_deepfake_status,
+        prnu_result=prnu_result,
+        semantic_extraction=semantic_result,
+        financial_link=financial_status,
+        financial_details=financial_details,
+        receipt_hash=receipt_hash,
+        dual_proof_hash=dual_proof_hash,
+        forensic_pdf_url=forensic_pdf_url,
+        virtue_receipt=virtue_receipt,
+        i9_status=i9_status,
+        human_confirmation_required=human_required,
+        human_confirmation_reason=human_reason,
+        sge_risk_level=sge_risk,
+        sge_score=sge_score,
+        audit_log_ref=audit_ref,
+    )
+
+
+# ═══════════════════════════════════════════════════════════════════
+# ENTRY POINT
+# ═══════════════════════════════════════════════════════════════════
+
+
+# ═══════════════════════════════════════════════════════════════
+# HEALTH CHECK & ROOT ENDPOINTS
+# Adicionar ao forensic_validate_handwritten.py
+# ═══════════════════════════════════════════════════════════════
+
+@app.get("/")
+async def root():
+    """Root endpoint - API documentation."""
+    return {
+        "service": "WINDI Forensic Validation API",
+        "version": "1.0.0",
+        "description": "Valida autenticidade de documentos manuscritos usando PixWindi",
+        "endpoints": {
+            "health": "GET /health",
+            "validate": "POST /v1/forensic/validate-handwritten"
+        },
+        "principle": "AI processes. Human decides. WINDI guarantees.",
+        "invariants": "I1-I9 ACTIVE (I9 IRREMEDIABLE)",
+        "port": 8094
+    }
+
+
+@app.get("/health")
+async def health_check():
+    """Health check endpoint for monitoring."""
+    return {
+        "status": "healthy",
+        "service": "WINDI Forensic Validation API",
+        "version": "1.0.0",
+        "port": 8094,
+        "capabilities": [
+            "anti_deepfake",
+            "prnu_analysis",
+            "semantic_extraction",
+            "virtue_receipts",
+            "i9_enforcement"
+        ]
+    }
+
+if __name__ == "__main__":
+    import uvicorn
+
+    print("╔══════════════════════════════════════════════════════════╗")
+    print("║  WINDI FORENSIC — TABELIÃO DIGITAL                     ║")
+    print("║  AI processes. Human decides. WINDI guarantees.        ║")
+    print("║  Invariants I1-I9 ACTIVE (I9 IRREMEDIABLE)             ║")
+    print("╚══════════════════════════════════════════════════════════╝")
+
+    uvicorn.run(
+        "forensic_validate_handwritten:app",
+        host="0.0.0.0",
+        port=8094,  # New port for forensic service
+        reload=False,
+        log_level="info",
+    )

@@ -1,0 +1,19 @@
+{
+  "receipt_id": "MAESTRO-20260208-185411-b9b5af9f",
+  "agent_id": "windi://agent/core/maestro",
+  "version": "1.2.0",
+  "action": "RESOLVE",
+  "finding_id": "ISP-alerts_20260208_085840",
+  "details": {
+    "finding_id": "ISP-alerts_20260208_085840",
+    "status": "RESOLVED",
+    "resolved_by": "Human Dragon",
+    "resolution_note": "ISP-V003 systemic fix: missing fields added during ISP Manager v1.0.1 audit cycle",
+    "timestamp": "2026-02-08T18:54:11.584849+00:00",
+    "auto_apply": false
+  },
+  "timestamp": "2026-02-08T18:54:11.586793+00:00",
+  "integrity_hash": "b9b5af9fe4b5faf9f5988ff876ecc84e989a9751a20aef40321ffb0a778fd036",
+  "invariante_i9": true,
+  "auto_apply": false
+}

@@ -1,0 +1,22 @@
+{
+  "capsule_id": "CAPS-PULSE-001",
+  "description": "Policy capsule governing Pulse Agent predictive behavior boundaries",
+  "rules": [
+    "NEVER trigger automatic remediation — predictions are suggestions for human review",
+    "NEVER access document content — only governance metadata, hashes, timestamps, and scores",
+    "ALWAYS present confidence levels with every prediction (LOW/MEDIUM/HIGH)",
+    "ALWAYS explain reasoning behind detected patterns in human-readable form",
+    "NEVER predict with fewer than 3 data points — insufficient data = no prediction",
+    "ALWAYS compare against established baselines before flagging anomaly",
+    "Predictions are ADVISORY — the Soberano decides if action is warranted",
+    "If pattern data is ambiguous, state 'insufficient signal' rather than guess"
+  ],
+  "detection_modes": {
+    "rhythm_analysis": "Monitor resolution time patterns per severity level",
+    "frequency_analysis": "Track finding frequency by agent, ISP, and severity",
+    "escalation_analysis": "Detect if findings are trending toward higher severity",
+    "recurrence_analysis": "Identify repeated findings suggesting systemic issues",
+    "saturation_analysis": "Detect if human decision queue is approaching capacity"
+  },
+  "invariant_I9_compliance": "Pulse Agent cannot expand its own detection scope without human authorization"
+}

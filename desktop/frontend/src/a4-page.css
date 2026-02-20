@@ -1,0 +1,517 @@
+/**
+ * WINDI D1 — M3.1 A4 Page Layout
+ * ═══════════════════════════════════
+ * Transforms flat dark editor into paper-like document view.
+ * 
+ * Principle: Noir chrome (header/sidebar/panels) + Klar paper (document area)
+ * Reference: LibreOffice Writer page view
+ *
+ * Import AFTER your main styles:
+ *   import './a4-page.css';
+ */
+
+/* ═══════════════════════════════════════════
+   A4 PAGE CONTAINER
+   The "desk" where the paper sits
+   ═══════════════════════════════════════════ */
+
+.d1-editor-area {
+  background: #2a2a2a !important;
+  /* Subtle grid pattern like a desk surface */
+  background-image: 
+    radial-gradient(circle, #333 0.5px, transparent 0.5px) !important;
+  background-size: 24px 24px !important;
+  overflow-y: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  padding: 40px 20px !important;
+  min-height: 0 !important;
+}
+
+/* ═══════════════════════════════════════════
+   THE A4 PAPER
+   White sheet with shadow and margins
+   ═══════════════════════════════════════════ */
+
+.d1-editor-area > .a4-page-wrapper {
+  width: 210mm;
+  min-height: 297mm;
+  max-width: 100%;
+  background: #ffffff;
+  box-shadow: 
+    0 2px 8px rgba(0,0,0,0.3),
+    0 0 0 1px rgba(255,255,255,0.05);
+  border-radius: 2px;
+  position: relative;
+  margin-bottom: 40px;
+  flex-shrink: 0;
+}
+
+/* ─── Document Seal on the paper ─── */
+.a4-page-wrapper .seal-on-paper {
+  border-bottom: 1px solid #e5e5e5;
+  background: #fafafa;
+}
+
+/* Override seal styles for paper context (Klar mode inside paper) */
+.a4-page-wrapper .seal-bar {
+  background: #f5f0e0 !important;
+  border-bottom: 2px solid #c8a00033 !important;
+}
+
+.a4-page-wrapper .seal-bar:hover {
+  background: #efe8d4 !important;
+}
+
+.a4-page-wrapper .seal-bar .windi-badge-paper {
+  background: #1a1a1a;
+  color: #c8a000;
+}
+
+/* Seal text colors on paper */
+.a4-page-wrapper .seal-bar span {
+  color: #333 !important;
+}
+
+.a4-page-wrapper .seal-bar .seal-receipt-id {
+  color: #1a1a1a !important;
+  font-weight: 600;
+}
+
+.a4-page-wrapper .seal-bar .seal-timestamp {
+  color: #666 !important;
+}
+
+.a4-page-wrapper .seal-bar .seal-hash-short {
+  color: #999 !important;
+}
+
+/* Expanded panel on paper */
+.a4-page-wrapper .seal-expanded-panel {
+  background: #f8f6f0 !important;
+  border-bottom: 1px solid #e5e0d0 !important;
+}
+
+.a4-page-wrapper .seal-expanded-panel .detail-label {
+  color: #888 !important;
+}
+
+.a4-page-wrapper .seal-expanded-panel .detail-value {
+  color: #333 !important;
+}
+
+/* ─── Paper content area (where Tiptap lives) ─── */
+.a4-page-wrapper .a4-content {
+  padding: 25mm 25mm 30mm 25mm;
+  min-height: calc(297mm - 40px); /* Full page minus seal height */
+}
+
+/* ═══════════════════════════════════════════
+   TIPTAP EDITOR — Klar (Light) Overrides
+   Inside the paper, everything is light
+   ═══════════════════════════════════════════ */
+
+.a4-page-wrapper .ProseMirror,
+.a4-page-wrapper .tiptap {
+  color: #1a1a1a !important;
+  background: transparent !important;
+  font-family: 'Calibri', 'Arial', 'Outfit', sans-serif !important;
+  font-size: 11pt !important;
+  line-height: 1.5 !important;
+  min-height: 200mm;
+  outline: none;
+  caret-color: #1a1a1a;
+}
+
+/* Headings on paper */
+.a4-page-wrapper .ProseMirror h1,
+.a4-page-wrapper .tiptap h1 {
+  color: #1a1a1a !important;
+  font-size: 22pt !important;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 12px;
+  border-bottom: 2px solid #c8a000;
+  padding-bottom: 8px;
+}
+
+.a4-page-wrapper .ProseMirror h2,
+.a4-page-wrapper .tiptap h2 {
+  color: #2a2a2a !important;
+  font-size: 16pt !important;
+  font-weight: 600;
+  margin-top: 24px;
+  margin-bottom: 8px;
+}
+
+.a4-page-wrapper .ProseMirror h3,
+.a4-page-wrapper .tiptap h3 {
+  color: #333 !important;
+  font-size: 13pt !important;
+  font-weight: 600;
+  margin-top: 18px;
+  margin-bottom: 6px;
+}
+
+/* Paragraphs on paper */
+.a4-page-wrapper .ProseMirror p,
+.a4-page-wrapper .tiptap p {
+  color: #1a1a1a !important;
+  margin-bottom: 8px;
+  text-align: left;
+}
+
+/* Placeholder text */
+.a4-page-wrapper .ProseMirror p.is-editor-empty:first-child::before,
+.a4-page-wrapper .tiptap .is-empty::before {
+  color: #bbb !important;
+  font-style: italic;
+}
+
+/* Links on paper */
+.a4-page-wrapper .ProseMirror a,
+.a4-page-wrapper .tiptap a {
+  color: #1a6bb5 !important;
+  text-decoration: underline;
+}
+
+/* Code on paper */
+.a4-page-wrapper .ProseMirror code,
+.a4-page-wrapper .tiptap code {
+  background: #f0f0f0 !important;
+  color: #c7254e !important;
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 10pt;
+}
+
+.a4-page-wrapper .ProseMirror pre,
+.a4-page-wrapper .tiptap pre {
+  background: #f5f5f5 !important;
+  color: #333 !important;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 12px 16px;
+  overflow-x: auto;
+}
+
+/* Blockquote on paper */
+.a4-page-wrapper .ProseMirror blockquote,
+.a4-page-wrapper .tiptap blockquote {
+  border-left: 3px solid #c8a000 !important;
+  background: #faf8f2 !important;
+  color: #444 !important;
+  padding: 8px 16px;
+  margin: 12px 0;
+  font-style: italic;
+}
+
+/* Tables on paper */
+.a4-page-wrapper .ProseMirror table,
+.a4-page-wrapper .tiptap table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 12px 0;
+}
+
+.a4-page-wrapper .ProseMirror th,
+.a4-page-wrapper .tiptap th {
+  background: #f5f0e0 !important;
+  color: #1a1a1a !important;
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  font-weight: 600;
+  text-align: left;
+}
+
+.a4-page-wrapper .ProseMirror td,
+.a4-page-wrapper .tiptap td {
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  color: #333 !important;
+  background: #fff !important;
+}
+
+/* Lists on paper */
+.a4-page-wrapper .ProseMirror ul,
+.a4-page-wrapper .ProseMirror ol,
+.a4-page-wrapper .tiptap ul,
+.a4-page-wrapper .tiptap ol {
+  color: #1a1a1a !important;
+  padding-left: 24px;
+}
+
+.a4-page-wrapper .ProseMirror li,
+.a4-page-wrapper .tiptap li {
+  margin-bottom: 4px;
+}
+
+/* Horizontal rule on paper */
+.a4-page-wrapper .ProseMirror hr,
+.a4-page-wrapper .tiptap hr {
+  border: none;
+  border-top: 1px solid #ddd;
+  margin: 20px 0;
+}
+
+/* Bold text on paper */
+.a4-page-wrapper .ProseMirror strong,
+.a4-page-wrapper .tiptap strong {
+  color: #1a1a1a !important;
+  font-weight: 700;
+}
+
+/* Images on paper */
+.a4-page-wrapper .ProseMirror img,
+.a4-page-wrapper .tiptap img {
+  max-width: 100%;
+  border-radius: 2px;
+}
+
+/* Selection highlight on paper */
+.a4-page-wrapper .ProseMirror ::selection {
+  background: #c8a00033;
+}
+
+/* ═══════════════════════════════════════════
+   TOOLBAR — stays Noir, lives above the paper
+   ═══════════════════════════════════════════ */
+
+/* Toolbar should sit between header and paper */
+.d1-toolbar {
+  background: #1a1a1a;
+  border-bottom: 1px solid #333;
+  padding: 4px 12px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+/* ═══════════════════════════════════════════
+   HEADER ADDITIONS — Save & Print buttons
+   ═══════════════════════════════════════════ */
+
+/* Save button in header */
+.btn-save {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  background: transparent;
+  color: #aaa;
+  border: 1px solid #444;
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: 'Outfit', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-save:hover {
+  background: #333;
+  color: #e5e5e5;
+  border-color: #666;
+}
+
+.btn-save.saved {
+  color: #22c55e;
+  border-color: #22c55e44;
+}
+
+/* Print button */
+.btn-print {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  background: transparent;
+  color: #aaa;
+  border: 1px solid #444;
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: 'Outfit', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-print:hover {
+  background: #333;
+  color: #e5e5e5;
+  border-color: #666;
+}
+
+/* ═══════════════════════════════════════════
+   PAGE RULER (Integrity Ruler — Witness idea)
+   ═══════════════════════════════════════════ */
+
+.a4-ruler {
+  height: 20px;
+  background: #f0ece0;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  align-items: flex-end;
+  padding: 0 25mm;
+  position: relative;
+  overflow: hidden;
+}
+
+.a4-ruler .ruler-marks {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: flex-end;
+  position: relative;
+}
+
+.a4-ruler .ruler-mark {
+  position: absolute;
+  bottom: 0;
+  width: 1px;
+  background: #bbb;
+}
+
+.a4-ruler .ruler-mark.major {
+  height: 10px;
+  background: #888;
+}
+
+.a4-ruler .ruler-mark.minor {
+  height: 5px;
+  background: #ccc;
+}
+
+.a4-ruler .ruler-number {
+  position: absolute;
+  bottom: 10px;
+  font-size: 8px;
+  color: #888;
+  transform: translateX(-50%);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Ruler governance glow — changes with integrity state */
+.a4-ruler.integrity-ok {
+  border-bottom-color: #22c55e44;
+}
+
+.a4-ruler.integrity-pending {
+  border-bottom-color: #eab30844;
+}
+
+.a4-ruler.integrity-compromised {
+  border-bottom-color: #ef444444;
+  animation: rulerPulseRed 2s ease infinite;
+}
+
+@keyframes rulerPulseRed {
+  0%, 100% { border-bottom-color: #ef444444; }
+  50% { border-bottom-color: #ef4444aa; }
+}
+
+/* ═══════════════════════════════════════════
+   PAGE FOOTER (page number)
+   ═══════════════════════════════════════════ */
+
+.a4-page-footer {
+  padding: 8px 25mm;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 9px;
+  color: #999;
+  font-family: 'JetBrains Mono', monospace;
+  border-top: 1px solid #eee;
+  background: #fafafa;
+}
+
+.a4-page-footer .footer-windi {
+  color: #c8a000;
+  font-weight: 600;
+}
+
+/* ═══════════════════════════════════════════
+   STATUS BAR — Updated styling
+   ═══════════════════════════════════════════ */
+
+.d1-status-bar {
+  background: #111 !important;
+  border-top: 1px solid #222;
+  padding: 2px 16px;
+  font-size: 11px;
+  display: flex;
+  justify-content: space-between;
+  color: #666;
+}
+
+/* ═══════════════════════════════════════════
+   PRINT STYLES
+   ═══════════════════════════════════════════ */
+
+@media print {
+  /* Hide everything except the paper */
+  .d1-header,
+  .d1-toolbar,
+  .doc-sidebar,
+  .governance-panel,
+  .d1-status-bar,
+  .a4-ruler {
+    display: none !important;
+  }
+
+  .d1-editor-area {
+    background: white !important;
+    padding: 0 !important;
+    background-image: none !important;
+  }
+
+  .a4-page-wrapper {
+    box-shadow: none !important;
+    margin: 0 !important;
+    width: 100% !important;
+  }
+
+  /* Seal prints as a subtle header */
+  .seal-bar {
+    background: #f5f0e0 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .a4-page-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE — Smaller screens
+   ═══════════════════════════════════════════ */
+
+@media (max-width: 900px) {
+  .a4-page-wrapper {
+    width: 100% !important;
+    min-height: auto;
+    border-radius: 0;
+  }
+
+  .a4-page-wrapper .a4-content {
+    padding: 15mm 12mm 15mm 12mm;
+  }
+
+  .d1-editor-area {
+    padding: 0 !important;
+    background-image: none !important;
+  }
+
+  .a4-ruler {
+    display: none;
+  }
+}

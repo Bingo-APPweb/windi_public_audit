@@ -1,0 +1,1 @@
+{"timestamp": "2026-02-08T08:45:31.734957+00:00", "event_type": "IDENTITY_CREATED", "protocol": "SIP", "layer": 1, "details": {"sovereign_hash_prefix": "0cc152c7fc947b29...", "duress_configured": true, "algorithm": "SHA-256 x100000", "file": "/opt/windi/sip/sovereign_identity.json"}}

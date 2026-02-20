@@ -1,0 +1,50 @@
+{
+  "receipt_id": "MAESTRO-20260208-185205-ec9b767f",
+  "agent_id": "windi://agent/core/maestro",
+  "version": "1.2.0",
+  "action": "ROUTE_VIA_ROUTER",
+  "finding_id": "ISP-alerts_20260208_085840",
+  "details": {
+    "finding_id": "ISP-alerts_20260208_085840",
+    "channel": {
+      "type": "INSTITUTIONAL_CHANNEL",
+      "mode": "STANDARD",
+      "notification": "QUEUED",
+      "dashboard_highlight": false,
+      "reason": "Standard governance flow for R2"
+    },
+    "stakeholder": {
+      "primary": "Governance Controller",
+      "escalation": "Chief Governance Officer",
+      "notify": [
+        "Department Head"
+      ]
+    },
+    "priority": {
+      "score": 36,
+      "level": "LOW",
+      "breakdown": {
+        "severity_contribution": 12.0,
+        "governance_contribution": 15.0,
+        "category_contribution": 9.0
+      }
+    },
+    "domain": {
+      "domain_id": "general",
+      "name": "General Governance",
+      "description": "Uncategorized governance findings",
+      "typical_actions": [
+        "Manual classification",
+        "Human assessment"
+      ]
+    },
+    "governance_level": "MEDIUM",
+    "rationale": "Finding classified as R2 severity in MEDIUM governance context. Category '' maps to general domain. Routed via INSTITUTIONAL_CHANNEL (STANDARD mode) to Governance Controller as primary decision-maker. Priority score: 36/100 (LOW).",
+    "routing_timestamp": "2026-02-08T18:52:05.244931+00:00",
+    "auto_apply": false
+  },
+  "timestamp": "2026-02-08T18:52:05.244956+00:00",
+  "integrity_hash": "ec9b767ffa58f34832ad9a4ab2db9a2726323699e9ce1f1bec2521236c05f5a5",
+  "invariante_i9": true,
+  "auto_apply": false
+}

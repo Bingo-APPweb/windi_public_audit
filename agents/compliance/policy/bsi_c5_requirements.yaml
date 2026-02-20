@@ -1,0 +1,202 @@
+# BSI C5 (Cloud Computing Compliance Criteria Catalogue)
+# Requisitos relevantes para WINDI Document Governance
+# Mapeamento para validacao automatizada
+
+version: "2.0"
+standard: "BSI C5:2020"
+last_updated: "2026-02-08"
+applicable_domains:
+  - document_governance
+  - ai_processing
+  - identity_management
+
+# Controles C5 aplicaveis ao WINDI
+controls:
+  # Organisation of Information Security
+  OIS-01:
+    name: "Information Security Policy"
+    category: "OIS"
+    description: "Politica de seguranca documentada e comunicada"
+    windi_mapping:
+      invariants: ["I8"]
+      validation: "policy.documented AND policy.version_controlled"
+    automated_check: true
+
+  OIS-02:
+    name: "Roles and Responsibilities"
+    category: "OIS"
+    description: "Papeis e responsabilidades claramente definidos"
+    windi_mapping:
+      invariants: ["I2", "I9"]
+      validation: "decision.actor_role IN authorized_roles"
+    automated_check: true
+
+  # Identity and Access Management
+  IDM-01:
+    name: "User Registration"
+    category: "IDM"
+    description: "Registro formal de usuarios"
+    windi_mapping:
+      invariants: ["I6"]
+      validation: "identity.registered AND identity.verified"
+    automated_check: true
+
+  IDM-02:
+    name: "Access Rights Management"
+    category: "IDM"
+    description: "Gestao de direitos de acesso"
+    windi_mapping:
+      invariants: ["I6"]
+      validation: "identity.license_status == 'authorized' AND scope.defined"
+    automated_check: true
+
+  IDM-06:
+    name: "Privileged Access Management"
+    category: "IDM"
+    description: "Gestao de acessos privilegiados"
+    windi_mapping:
+      invariants: ["I9"]
+      validation: "privileged_action.human_approved == true"
+    automated_check: true
+
+  # Cryptography
+  CRY-01:
+    name: "Policy on Cryptography"
+    category: "CRY"
+    description: "Politica de uso de criptografia"
+    windi_mapping:
+      invariants: ["I4", "I5"]
+      validation: "hash.algorithm IN ['sha256', 'sha384', 'sha512']"
+    automated_check: true
+
+  CRY-02:
+    name: "Key Management"
+    category: "CRY"
+    description: "Gestao de chaves criptograficas"
+    windi_mapping:
+      invariants: ["I5"]
+      validation: "chain.keys_managed AND chain.rotation_policy"
+    automated_check: false
+
+  # Operations Security
+  OPS-05:
+    name: "Logging and Monitoring"
+    category: "OPS"
+    description: "Registro e monitoramento de eventos"
+    windi_mapping:
+      invariants: ["I4"]
+      validation: "audit.complete AND audit.immutable"
+    automated_check: true
+
+  OPS-06:
+    name: "Event Log Protection"
+    category: "OPS"
+    description: "Protecao de logs de eventos"
+    windi_mapping:
+      invariants: ["I4", "I5"]
+      validation: "audit.tamper_protected AND audit.hash_chain_valid"
+    automated_check: true
+
+  OPS-08:
+    name: "Technical Vulnerability Management"
+    category: "OPS"
+    description: "Gestao de vulnerabilidades tecnicas"
+    windi_mapping:
+      invariants: []
+      validation: "system.vulnerability_scan.recent"
+    automated_check: false
+
+  # Asset Management
+  AM-04:
+    name: "Information Classification"
+    category: "AM"
+    description: "Classificacao de informacoes"
+    windi_mapping:
+      invariants: ["I7"]
+      validation: "document.classified AND sge.score != null"
+    automated_check: true
+
+  AM-05:
+    name: "Handling of Assets"
+    category: "AM"
+    description: "Manuseio de ativos"
+    windi_mapping:
+      invariants: ["I3", "I5"]
+      validation: "document.handling_rules_applied"
+    automated_check: true
+
+  # Compliance
+  COM-01:
+    name: "Identification of Applicable Legislation"
+    category: "COM"
+    description: "Identificacao de legislacao aplicavel"
+    windi_mapping:
+      invariants: ["I8"]
+      validation: "isp.regulatory_framework.defined"
+    automated_check: true
+
+  COM-02:
+    name: "Compliance with Policies and Standards"
+    category: "COM"
+    description: "Conformidade com politicas"
+    windi_mapping:
+      invariants: ["I1", "I2", "I8"]
+      validation: "compliance.check_passed"
+    automated_check: true
+
+  COM-04:
+    name: "Privacy Protection"
+    category: "COM"
+    description: "Protecao de privacidade"
+    windi_mapping:
+      invariants: ["I3"]
+      validation: "processing.zero_knowledge == true"
+    automated_check: true
+
+# Niveis de maturidade C5
+maturity_levels:
+  basic:
+    minimum_score: 60
+    required_controls:
+      - OIS-01
+      - IDM-01
+      - OPS-05
+      - COM-02
+
+  standard:
+    minimum_score: 75
+    required_controls:
+      - OIS-01
+      - OIS-02
+      - IDM-01
+      - IDM-02
+      - CRY-01
+      - OPS-05
+      - OPS-06
+      - AM-04
+      - COM-01
+      - COM-02
+
+  high:
+    minimum_score: 90
+    required_controls: all
+
+# Mapeamento de evidencias
+evidence_requirements:
+  OIS-01:
+    - "policy_document_hash"
+    - "policy_version"
+    - "approval_record"
+
+  IDM-02:
+    - "license_id"
+    - "scope_definition"
+    - "issuer_verification"
+
+  OPS-05:
+    - "audit_log_hash"
+    - "chain_continuity_proof"
+
+  COM-04:
+    - "zero_knowledge_attestation"
+    - "data_access_log"

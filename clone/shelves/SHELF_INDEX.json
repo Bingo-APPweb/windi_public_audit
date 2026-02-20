@@ -1,0 +1,95 @@
+{
+  "shelf_system": "WINDI-CLONE Prateleiras de Governança",
+  "version": "1.0.0",
+  "created_utc": "2026-02-09T00:00:00Z",
+  "genesis_seal": "44b666868d344928",
+
+  "organization_principle": "Temas organizados por PRIORIDADE de enforcement",
+
+  "shelves": [
+    {
+      "id": "P0",
+      "name": "INVARIANTS",
+      "priority": "CRITICAL",
+      "description": "Elementos IMUTÁVEIS - NUNCA podem ser alterados",
+      "path": "P0-INVARIANTS/",
+      "enforcement": "ABSOLUTE",
+      "color": "#FF0000"
+    },
+    {
+      "id": "P1",
+      "name": "GUARDRAILS",
+      "priority": "HIGH",
+      "description": "Proteções de comportamento - Limites operacionais",
+      "path": "P1-GUARDRAILS/",
+      "enforcement": "MANDATORY",
+      "color": "#FF6600"
+    },
+    {
+      "id": "P2",
+      "name": "OBSERVATION",
+      "priority": "HIGH",
+      "description": "7 Shelves de Observação - Micro-Signals",
+      "path": "P2-OBSERVATION/",
+      "enforcement": "STRUCTURAL",
+      "color": "#FFCC00"
+    },
+    {
+      "id": "P3",
+      "name": "COGNITIVE",
+      "priority": "MEDIUM",
+      "description": "4 Camadas Cognitivas do Agent",
+      "path": "P3-COGNITIVE/",
+      "enforcement": "BEHAVIORAL",
+      "color": "#00CC00"
+    },
+    {
+      "id": "P4",
+      "name": "GOVERNANCE",
+      "priority": "MEDIUM",
+      "description": "Three Dragons + Virtue Receipts + Auditoria",
+      "path": "P4-GOVERNANCE/",
+      "enforcement": "PROTOCOL",
+      "color": "#0066FF"
+    },
+    {
+      "id": "P5",
+      "name": "ARCHITECTURE",
+      "priority": "MEDIUM",
+      "description": "Three Pillars + Sistema de Identidade + Espelhamento",
+      "path": "P5-ARCHITECTURE/",
+      "enforcement": "STRUCTURAL",
+      "color": "#6600FF"
+    },
+    {
+      "id": "P6",
+      "name": "EVOLUTION",
+      "priority": "LOW",
+      "description": "Normas de Evolução Consciente",
+      "path": "P6-EVOLUTION/",
+      "enforcement": "GUIDANCE",
+      "color": "#CC00CC"
+    },
+    {
+      "id": "P7",
+      "name": "TEMPLATES",
+      "priority": "LOW",
+      "description": "Fornalha Templates (T1-T8)",
+      "path": "P7-TEMPLATES/",
+      "enforcement": "OPTIONAL",
+      "color": "#666666"
+    }
+  ],
+
+  "priority_order": ["CRITICAL", "HIGH", "MEDIUM", "LOW"],
+
+  "enforcement_levels": {
+    "ABSOLUTE": "Violação = Falha catastrófica do sistema",
+    "MANDATORY": "Violação = Bloqueio de operação",
+    "STRUCTURAL": "Violação = Alerta de integridade",
+    "BEHAVIORAL": "Violação = Log + Notificação",
+    "PROTOCOL": "Violação = Requer Virtue Receipt",
+    "GUIDANCE": "Violação = Sugestão de correção",
+    "OPTIONAL": "Violação = Apenas registro"
+  }
+}

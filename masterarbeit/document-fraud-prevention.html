@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dokumentenmanipulation verhindern — WINDI Evidence Verification</title>
+  <meta name="description" content="Wie WINDI Dokumentenmanipulation verhindert: 5 automatische Prüfschritte für manipulationssichere Geschäftsdokumente. Für Gerichte, Prüfer und regulierte Branchen.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="windi-internal.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Outfit', sans-serif; background: #0a0a0c; color: #e8e4dc;
+      line-height: 1.7; overflow-x: hidden;
+    }
+    [data-theme="light"] body, [data-theme="light"] { background: #f8f6f1; color: #1a1a1a; }
+
+    /* ═══ HERO ═══ */
+    .hero {
+      max-width: 860px; margin: 0 auto; padding: 100px 40px 60px;
+      text-align: center;
+    }
+    .hero-eyebrow {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.6rem;
+      letter-spacing: 3px; text-transform: uppercase; color: #b8860b;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-family: 'Bricolage Grotesque', sans-serif; font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 800; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 24px;
+    }
+    .hero h1 .gold { color: #b8860b; }
+    .hero-sub {
+      font-size: 1.15rem; color: #999; max-width: 640px; margin: 0 auto 32px;
+      line-height: 1.8;
+    }
+    [data-theme="light"] .hero-sub { color: #555; }
+
+    .hero-stat-row {
+      display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;
+      margin-top: 40px;
+    }
+    .hero-stat {
+      text-align: center;
+    }
+    .hero-stat-number {
+      font-family: 'Bricolage Grotesque', sans-serif; font-size: 2.4rem;
+      font-weight: 800; color: #b8860b; line-height: 1;
+    }
+    .hero-stat-label {
+      font-size: 0.75rem; color: #777; margin-top: 6px;
+      font-family: 'JetBrains Mono', monospace; letter-spacing: 0.5px;
+    }
+
+    /* ═══ CONTENT WRAPPER ═══ */
+    .content { max-width: 800px; margin: 0 auto; padding: 0 40px 80px; }
+
+    /* ═══ SECTION DIVIDER ═══ */
+    .gold-line { height: 2px; background: linear-gradient(90deg, #b8860b, transparent); margin: 48px 0; }
+    .subtle-line { height: 1px; background: rgba(255,255,255,0.06); margin: 48px 0; }
+    [data-theme="light"] .subtle-line { background: rgba(0,0,0,0.06); }
+
+    /* ═══ SECTION HEADERS ═══ */
+    .section-eyebrow {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.55rem;
+      letter-spacing: 2.5px; text-transform: uppercase; color: #b8860b;
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.6rem;
+      font-weight: 700; letter-spacing: -0.02em; margin-bottom: 16px;
+    }
+    .section-intro {
+      font-size: 0.95rem; color: #999; line-height: 1.8; margin-bottom: 32px;
+    }
+    [data-theme="light"] .section-intro { color: #555; }
+
+    /* ═══ PROBLEM CARDS ═══ */
+    .problem-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px; margin: 24px 0;
+    }
+    .problem-card {
+      background: rgba(200,60,60,0.06); border: 1px solid rgba(200,60,60,0.15);
+      border-radius: 10px; padding: 24px;
+    }
+    .problem-card .icon {
+      font-size: 1.8rem; margin-bottom: 12px;
+    }
+    .problem-card h4 {
+      font-family: 'Bricolage Grotesque', sans-serif; font-size: 0.95rem;
+      font-weight: 600; color: #cc6666; margin-bottom: 8px;
+    }
+    [data-theme="light"] .problem-card h4 { color: #b33; }
+    .problem-card p {
+      font-size: 0.82rem; color: #999; line-height: 1.7;
+    }
+
+    /* ═══ STEP CARDS (5 steps) ═══ */
+    .step-flow { display: flex; flex-direction: column; gap: 0; margin: 32px 0; }
+
+    .step-item {
+      display: grid; grid-template-columns: 80px 1fr; gap: 0;
+      position: relative;
+    }
+    .step-marker {
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .step-dot {
+      width: 48px; height: 48px; border-radius: 50%;
+      background: rgba(184,134,11,0.15); border: 2px solid #b8860b;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.1rem;
+      font-weight: 700; color: #b8860b; flex-shrink: 0;
+      position: relative; z-index: 2;
+    }
+    .step-line {
+      width: 2px; flex: 1; background: rgba(184,134,11,0.2); min-height: 20px;
+    }
+    .step-item:last-child .step-line { display: none; }
+
+    .step-content {
+      padding: 8px 0 32px 20px;
+    }
+    .step-label {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.55rem;
+      letter-spacing: 2px; text-transform: uppercase; color: #b8860b;
+      margin-bottom: 4px;
+    }
+    .step-title {
+      font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.15rem;
+      font-weight: 600; margin-bottom: 8px;
+    }
+    .step-desc {
+      font-size: 0.88rem; color: #999; line-height: 1.8;
+    }
+    [data-theme="light"] .step-desc { color: #555; }
+    .step-analogy {
+      margin-top: 12px; padding: 12px 16px;
+      background: rgba(184,134,11,0.06); border-left: 3px solid rgba(184,134,11,0.3);
+      border-radius: 0 6px 6px 0; font-size: 0.82rem; color: #b8860b;
+      font-style: italic;
+    }
+    .step-catches {
+      margin-top: 10px; font-size: 0.8rem; color: #cc6666;
+    }
+    .step-catches i { margin-right: 6px; }
+
+    /* ═══ COMPARISON TABLE ═══ */
+    .compare-table {
+      width: 100%; border-collapse: collapse; margin: 24px 0;
+    }
+    .compare-table th {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.68rem;
+      letter-spacing: 1px; text-transform: uppercase; padding: 12px 16px;
+      text-align: left; border-bottom: 2px solid rgba(184,134,11,0.2);
+    }
+    .compare-table th:first-child { color: #777; }
+    .compare-table th:nth-child(2) { color: #cc6666; }
+    .compare-table th:nth-child(3) { color: #b8860b; }
+    .compare-table td {
+      padding: 12px 16px; font-size: 0.85rem; line-height: 1.6;
+      border-bottom: 1px solid rgba(255,255,255,0.06); color: #bbb;
+    }
+    [data-theme="light"] .compare-table td { border-bottom-color: rgba(0,0,0,0.06); color: #444; }
+    .compare-table tr:hover td { background: rgba(255,255,255,0.02); }
+    [data-theme="light"] .compare-table tr:hover td { background: rgba(0,0,0,0.02); }
+    .td-bad { color: #cc6666 !important; }
+    .td-good { color: #2e8b57 !important; }
+
+    /* ═══ AUDIENCE CARDS ═══ */
+    .audience-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px; margin: 24px 0;
+    }
+    .audience-card {
+      background: rgba(184,134,11,0.04); border: 1px solid rgba(184,134,11,0.12);
+      border-radius: 10px; padding: 24px; text-align: center;
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .audience-card:hover {
+      border-color: rgba(184,134,11,0.4); transform: translateY(-2px);
+    }
+    .audience-card .icon { font-size: 2rem; margin-bottom: 12px; }
+    .audience-card h4 {
+      font-family: 'Bricolage Grotesque', sans-serif; font-size: 0.9rem;
+      font-weight: 600; color: #b8860b; margin-bottom: 8px;
+    }
+    .audience-card p { font-size: 0.78rem; color: #888; line-height: 1.6; }
+
+    /* ═══ QUOTE BOX ═══ */
+    .quote-box {
+      background: linear-gradient(135deg, rgba(184,134,11,0.08), rgba(184,134,11,0.02));
+      border: 1px solid rgba(184,134,11,0.25); border-radius: 12px;
+      padding: 32px 36px; margin: 32px 0; text-align: center;
+    }
+    .quote-box p {
+      font-family: 'Outfit', sans-serif; font-size: 1.05rem; line-height: 1.8;
+      color: #ccc; font-style: italic;
+    }
+    [data-theme="light"] .quote-box p { color: #444; }
+    .quote-box .source {
+      margin-top: 16px; font-size: 0.72rem; color: #b8860b;
+      font-family: 'JetBrains Mono', monospace; letter-spacing: 1px;
+      font-style: normal;
+    }
+
+    /* ═══ CTA ═══ */
+    .cta-section { text-align: center; margin: 48px 0; }
+    .cta-btn {
+      display: inline-block; padding: 14px 36px;
+      background: #b8860b; color: #0a0a0c; border: none; border-radius: 6px;
+      font-family: 'Bricolage Grotesque', sans-serif; font-size: 0.9rem;
+      font-weight: 700; text-decoration: none; letter-spacing: 0.5px;
+      transition: background 0.3s, transform 0.2s; cursor: pointer;
+    }
+    .cta-btn:hover { background: #d4a017; transform: translateY(-1px); }
+    .cta-btn-ghost {
+      display: inline-block; padding: 14px 36px; margin-left: 16px;
+      background: transparent; color: #b8860b;
+      border: 1px solid rgba(184,134,11,0.4); border-radius: 6px;
+      font-family: 'Bricolage Grotesque', sans-serif; font-size: 0.9rem;
+      font-weight: 600; text-decoration: none; letter-spacing: 0.5px;
+      transition: all 0.3s;
+    }
+    .cta-btn-ghost:hover { background: rgba(184,134,11,0.1); border-color: #b8860b; }
+
+    /* ═══ TOP BAR ═══ */
+    .top-bar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 24px; background: rgba(10,10,12,0.95);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      backdrop-filter: blur(12px);
+    }
+    [data-theme="light"] .top-bar { background: rgba(248,246,241,0.95); border-bottom-color: rgba(0,0,0,0.06); }
+
+    .lang-btn {
+      padding: 3px 10px; font-size: 0.65rem; border-radius: 3px;
+      border: 1px solid rgba(255,255,255,0.1); background: transparent;
+      color: #666; cursor: pointer; font-family: 'JetBrains Mono', monospace;
+    }
+    .lang-btn.active {
+      background: rgba(184,134,11,0.15); color: #b8860b;
+      border-color: rgba(184,134,11,0.3);
+    }
+
+    /* ═══ FOOTER ═══ */
+    .page-footer {
+      margin-top: 60px; padding: 24px 0; border-top: 1px solid rgba(255,255,255,0.06);
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 0.7rem; color: #555;
+    }
+    [data-theme="light"] .page-footer { border-top-color: rgba(0,0,0,0.06); }
+
+    /* ═══ RESPONSIVE ═══ */
+    @media (max-width: 680px) {
+      .hero { padding: 80px 20px 40px; }
+      .content { padding: 0 20px 60px; }
+      .hero-stat-row { gap: 24px; }
+      .hero-stat-number { font-size: 1.8rem; }
+      .step-item { grid-template-columns: 60px 1fr; }
+      .cta-btn-ghost { margin-left: 0; margin-top: 12px; display: block; }
+      .problem-grid, .audience-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══ TOP BAR ═══ -->
+<header class="top-bar">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <span style="font-family:'Bricolage Grotesque',sans-serif;font-size:0.95rem;font-weight:700;color:#b8860b;">WINDI</span>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:0.55rem;letter-spacing:2px;color:#666;text-transform:uppercase;">
+      <span data-de="Für Entscheider" data-en="For Decision Makers" data-pt="Para Decisores">Für Entscheider</span>
+    </span>
+  </div>
+  <div style="display:flex;align-items:center;gap:16px;">
+    <div style="display:flex;gap:4px;">
+      <button onclick="switchLang('de')" class="lang-btn active" data-lang="de">DE</button>
+      <button onclick="switchLang('en')" class="lang-btn" data-lang="en">EN</button>
+      <button onclick="switchLang('pt')" class="lang-btn" data-lang="pt">PT</button>
+    </div>
+    <button onclick="toggleTheme()" id="themeToggle" style="padding:4px 12px;font-size:0.65rem;border-radius:3px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:#999;cursor:pointer;font-family:'JetBrains Mono',monospace;">
+      <i class="fas fa-moon"></i> Dunkel
+    </button>
+    <a href="wcaf-verify-evidence.html" style="font-size:0.72rem;color:#666;text-decoration:none;">
+      <span data-de="→ Technische Spec" data-en="→ Technical Spec" data-pt="→ Spec Técnica">→ Technische Spec</span>
+    </a>
+  </div>
+</header>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <div class="hero-eyebrow">
+    <span data-de="WINDI Evidence Verification" data-en="WINDI Evidence Verification" data-pt="WINDI Verificação de Evidências">WINDI Evidence Verification</span>
+  </div>
+  <h1>
+    <span data-de="Wie weisen Sie nach, dass ein Dokument " data-en="How do you prove a document " data-pt="Como você prova que um documento ">Wie weisen Sie nach, dass ein Dokument </span><span class="gold" data-de="nicht manipuliert" data-en="hasn't been manipulated" data-pt="não foi manipulado">nicht manipuliert</span><span data-de=" wurde?" data-en="?" data-pt="?"> wurde?</span>
+  </h1>
+  <p class="hero-sub">
+    <span data-de="Heute? In der Praxis: gar nicht. PDFs können kopiert, verändert und rückdatiert werden — und niemand merkt es. WINDI macht jedes Dokument kryptografisch überprüfbar. Automatisch. In 5 Schritten." data-en="Today? In practice: you can't. PDFs can be copied, altered, and backdated — and nobody notices. WINDI makes every document cryptographically verifiable. Automatically. In 5 steps." data-pt="Hoje? Na prática: você não consegue. PDFs podem ser copiados, alterados e retrodatados — e ninguém percebe. WINDI torna cada documento criptograficamente verificável. Automaticamente. Em 5 passos.">Heute? In der Praxis: gar nicht. PDFs können kopiert, verändert und rückdatiert werden — und niemand merkt es. WINDI macht jedes Dokument kryptografisch überprüfbar. Automatisch. In 5 Schritten.</span>
+  </p>
+  <p style="font-size:0.88rem;color:#b8860b;margin:-16px auto 32px;max-width:640px;">
+    <span data-de="Konzipiert für Gerichte, Prüfer und regulierte Branchen." data-en="Designed for courts, auditors, and regulated industries." data-pt="Projetado para tribunais, auditores e setores regulados.">Konzipiert für Gerichte, Prüfer und regulierte Branchen.</span>
+  </p>
+
+  <div class="hero-stat-row">
+    <div class="hero-stat">
+      <div class="hero-stat-number">5</div>
+      <div class="hero-stat-label" data-de="Prüfschritte" data-en="Verification Steps" data-pt="Passos de Verificação">Prüfschritte</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-number">✓</div>
+      <div class="hero-stat-label" data-de="Unabhängig überprüfbar" data-en="Independently Verifiable" data-pt="Verificável Independentemente">Unabhängig überprüfbar</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-number">∞</div>
+      <div class="hero-stat-label" data-de="Nachprüfbar durch Dritte" data-en="Third-Party Verifiable" data-pt="Verificável por Terceiros">Nachprüfbar durch Dritte</div>
+    </div>
+  </div>
+</section>
+
+<div class="content">
+
+  <div class="gold-line"></div>
+
+  <!-- ═══ THE PROBLEM ═══ -->
+  <section>
+    <div class="section-eyebrow" data-de="Das Problem" data-en="The Problem" data-pt="O Problema">Das Problem</div>
+    <h2 class="section-title">
+      <span data-de="Dokumentenbetrug kostet Milliarden — und wird selten entdeckt" data-en="Document fraud costs billions — and is rarely detected" data-pt="Fraude documental custa bilhões — e raramente é detectada">Dokumentenbetrug kostet Milliarden — und wird selten entdeckt</span>
+    </h2>
+    <p class="section-intro">
+      <span data-de="Ein manipuliertes PDF sieht genauso aus wie das Original. Ein rückdatierter Vertrag? Nicht erkennbar. Ein geänderter Prüfbericht? Kein Unterschied — oft erst, wenn der Fall vor Gericht landet." data-en="A manipulated PDF looks exactly like the original. A backdated contract? Undetectable. A modified audit report? No difference — often only noticed when the case ends up in court." data-pt="Um PDF manipulado parece exatamente igual ao original. Um contrato retrodatado? Indetectável. Um relatório de auditoria alterado? Nenhuma diferença — muitas vezes percebido apenas quando o caso chega ao tribunal.">Ein manipuliertes PDF sieht genauso aus wie das Original. Ein rückdatierter Vertrag? Nicht erkennbar. Ein geänderter Prüfbericht? Kein Unterschied — oft erst, wenn der Fall vor Gericht landet.</span>
+    </p>
+
+    <div class="problem-grid">
+      <div class="problem-card">
+        <div class="icon">📄</div>
+        <h4 data-de="Stille Änderungen" data-en="Silent Changes" data-pt="Alterações Silenciosas">Stille Änderungen</h4>
+        <p data-de="Eine Zahl im Finanzbericht geändert. Ein Absatz gelöscht. Ein Datum verschoben. Niemand sieht den Unterschied." data-en="A number changed in the financial report. A paragraph deleted. A date shifted. Nobody sees the difference." data-pt="Um número alterado no relatório financeiro. Um parágrafo deletado. Uma data deslocada. Ninguém vê a diferença.">Eine Zahl im Finanzbericht geändert. Ein Absatz gelöscht. Ein Datum verschoben. Niemand sieht den Unterschied.</p>
+      </div>
+      <div class="problem-card">
+        <div class="icon">⏪</div>
+        <h4 data-de="Rückdatierung" data-en="Backdating" data-pt="Retroatividade">Rückdatierung</h4>
+        <p data-de="Der Vertrag wurde 'schon im Januar unterschrieben'. Wirklich? Wer kann das beweisen — oder widerlegen?" data-en="The contract was 'already signed in January'. Really? Who can prove — or disprove — that?" data-pt="O contrato 'já foi assinado em janeiro'. Realmente? Quem pode provar — ou refutar — isso?">Der Vertrag wurde „schon im Januar unterschrieben". Wirklich? Wer kann das beweisen — oder widerlegen?</p>
+      </div>
+      <div class="problem-card">
+        <div class="icon">🎭</div>
+        <h4 data-de="Gefälschte Herkunft" data-en="Forged Origin" data-pt="Origem Falsificada">Gefälschte Herkunft</h4>
+        <p data-de="Wer hat dieses Dokument wirklich erstellt? War es die Compliance-Abteilung oder jemand, der ihren Briefkopf kopiert hat?" data-en="Who really created this document? Was it the compliance department or someone who copied their letterhead?" data-pt="Quem realmente criou este documento? Foi o departamento de compliance ou alguém que copiou o cabeçalho?">Wer hat dieses Dokument wirklich erstellt? War es die Compliance-Abteilung oder jemand, der ihren Briefkopf kopiert hat?</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="subtle-line"></div>
+
+  <!-- ═══ THE 5 STEPS ═══ -->
+  <section>
+    <div class="section-eyebrow" data-de="Die Lösung" data-en="The Solution" data-pt="A Solução">Die Lösung</div>
+    <h2 class="section-title">
+      <span data-de="5 automatische Prüfschritte — wie ein forensischer Notar" data-en="5 automatic verification steps — like a forensic notary" data-pt="5 passos automáticos de verificação — como um notário forense">5 automatische Prüfschritte — wie ein forensischer Notar</span>
+    </h2>
+    <p class="section-intro">
+      <span data-de="WINDI prüft jedes Dokument automatisch durch 5 unabhängige Sicherheitsschichten. Jede Schicht fängt eine andere Art von Betrug ab. Zusammen: lückenlos." data-en="WINDI automatically checks every document through 5 independent security layers. Each layer catches a different type of fraud. Together: airtight." data-pt="WINDI verifica cada documento automaticamente por 5 camadas de segurança independentes. Cada camada captura um tipo diferente de fraude. Juntas: herméticas.">WINDI prüft jedes Dokument automatisch durch 5 unabhängige Sicherheitsschichten. Jede Schicht fängt eine andere Art von Betrug ab. Zusammen: lückenlos.</span>
+    </p>
+
+    <div class="step-flow">
+
+      <!-- STEP 1 -->
+      <div class="step-item">
+        <div class="step-marker"><div class="step-dot">1</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <div class="step-label" data-de="Echtheitsprüfung" data-en="Authenticity Check" data-pt="Verificação de Autenticidade">Echtheitsprüfung</div>
+          <h3 class="step-title" data-de="Ist dieses Dokument echt?" data-en="Is this document real?" data-pt="Este documento é real?">Ist dieses Dokument echt?</h3>
+          <p class="step-desc" data-de="Jedes WINDI-Dokument wird digital signiert — wie ein Fingerabdruck. Wird auch nur ein einziges Zeichen geändert, wird die Signatur ungültig." data-en="Every WINDI document is digitally signed — like a fingerprint. If even a single character is changed, the signature becomes invalid." data-pt="Cada documento WINDI é assinado digitalmente — como uma impressão digital. Se até um único caractere for alterado, a assinatura se torna inválida.">Jedes WINDI-Dokument wird digital signiert — wie ein Fingerabdruck. Wird auch nur ein einziges Zeichen geändert, wird die Signatur ungültig.</p>
+          <div class="step-analogy">
+            <span data-de="🔍 Wie ein Siegel auf einem Brief: aufgebrochen = manipuliert." data-en="🔍 Like a seal on a letter: broken = tampered with." data-pt="🔍 Como um lacre em uma carta: rompido = adulterado.">🔍 Wie ein Siegel auf einem Brief: aufgebrochen = manipuliert.</span>
+          </div>
+          <div class="step-catches">
+            <i class="fas fa-shield-alt"></i>
+            <span data-de="Erkennt: nachträgliche Änderungen, manipulierte Berichte, gefälschte Kopien" data-en="Catches: post-publication changes, manipulated reports, forged copies" data-pt="Detecta: alterações posteriores, relatórios manipulados, cópias falsificadas">Erkennt: nachträgliche Änderungen, manipulierte Berichte, gefälschte Kopien</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="step-item">
+        <div class="step-marker"><div class="step-dot">2</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <div class="step-label" data-de="Beweiskette" data-en="Evidence Chain" data-pt="Cadeia de Evidências">Beweiskette</div>
+          <h3 class="step-title" data-de="Was ist mit diesem Dokument passiert?" data-en="What happened to this document?" data-pt="O que aconteceu com este documento?">Was ist mit diesem Dokument passiert?</h3>
+          <p class="step-desc" data-de="Jeder Schritt — Erstellung, Prüfung, Freigabe — wird in einer unlöschbaren Kette protokolliert. Fehlt ein Glied oder wurde eines geändert, fällt die Prüfung durch." data-en="Every step — creation, review, approval — is logged in an undeletable chain. If a link is missing or altered, the check fails." data-pt="Cada passo — criação, revisão, aprovação — é registrado em uma cadeia indeletável. Se um elo estiver faltando ou alterado, a verificação falha.">Jeder Schritt — Erstellung, Prüfung, Freigabe — wird in einer unlöschbaren Kette protokolliert. Fehlt ein Glied oder wurde eines geändert, fällt die Prüfung durch.</p>
+          <div class="step-analogy">
+            <span data-de="🔍 Wie eine lückenlose Grundbuch-Historie: jede Übergabe dokumentiert." data-en="🔍 Like a complete land registry history: every transfer documented." data-pt="🔍 Como um histórico completo de registro de imóveis: cada transferência documentada.">🔍 Wie eine lückenlose Grundbuch-Historie: jede Übergabe dokumentiert.</span>
+          </div>
+          <div class="step-catches">
+            <i class="fas fa-shield-alt"></i>
+            <span data-de="Erkennt: gelöschte Prüfschritte, fehlende Freigaben, manipulierte Historien" data-en="Catches: deleted review steps, missing approvals, manipulated histories" data-pt="Detecta: passos de revisão deletados, aprovações faltando, históricos manipulados">Erkennt: gelöschte Prüfschritte, fehlende Freigaben, manipulierte Historien</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="step-item">
+        <div class="step-marker"><div class="step-dot">3</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <div class="step-label" data-de="Öffentliche Verankerung" data-en="Public Anchoring" data-pt="Ancoragem Pública">Öffentliche Verankerung</div>
+          <h3 class="step-title" data-de="Existiert dieser Beweis wirklich?" data-en="Does this evidence actually exist?" data-pt="Esta evidência realmente existe?">Existiert dieser Beweis wirklich?</h3>
+          <p class="step-desc" data-de="Der kryptografische Fingerabdruck des Dokuments wird in einem öffentlichen, manipulationssicheren Register verankert, das von Dritten überprüfbar ist. Jeder kann nachprüfen: 'Ja, dieses Dokument wurde registriert.'" data-en="The cryptographic fingerprint of the document is anchored in a public, tamper-proof registry that is independently verifiable. Anyone can check: 'Yes, this document was registered.'" data-pt="A impressão digital criptográfica do documento é ancorada em um registro público, à prova de manipulação e verificável por terceiros. Qualquer pessoa pode verificar: 'Sim, este documento foi registrado.'">Der kryptografische Fingerabdruck des Dokuments wird in einem öffentlichen, manipulationssicheren Register verankert, das von Dritten überprüfbar ist. Jeder kann nachprüfen: „Ja, dieses Dokument wurde registriert."</p>
+          <div class="step-analogy">
+            <span data-de="🔍 Wie ein Notar-Stempel: öffentlich beurkundet, für jeden nachvollziehbar." data-en="🔍 Like a notary stamp: publicly certified, traceable by anyone." data-pt="🔍 Como um selo notarial: certificado publicamente, rastreável por qualquer pessoa.">🔍 Wie ein Notar-Stempel: öffentlich beurkundet, für jeden nachvollziehbar.</span>
+          </div>
+          <div class="step-catches">
+            <i class="fas fa-shield-alt"></i>
+            <span data-de="Erkennt: erfundene Dokumente, nachträglich erzeugte Beweise, 'Phantom-Berichte'" data-en="Catches: fabricated documents, retroactively created evidence, 'phantom reports'" data-pt="Detecta: documentos fabricados, evidências criadas retroativamente, 'relatórios fantasma'">Erkennt: erfundene Dokumente, nachträglich erzeugte Beweise, „Phantom-Berichte"</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 4 -->
+      <div class="step-item">
+        <div class="step-marker"><div class="step-dot">4</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <div class="step-label" data-de="Zeitbeweis" data-en="Time Proof" data-pt="Prova Temporal">Zeitbeweis</div>
+          <h3 class="step-title" data-de="Wann wurde es wirklich registriert?" data-en="When was it really registered?" data-pt="Quando foi realmente registrado?">Wann wurde es wirklich registriert?</h3>
+          <p class="step-desc" data-de="Der Zeitpunkt der Registrierung wird vom Register-Betreiber digital signiert. Eine Rückdatierung wäre sofort nachweisbar." data-en="The time of registration is digitally signed by the registry operator. Any backdating would be immediately provable." data-pt="O momento do registro é assinado digitalmente pelo operador do registro. Qualquer retroatividade seria imediatamente comprovável.">Der Zeitpunkt der Registrierung wird vom Register-Betreiber digital signiert. Eine Rückdatierung wäre sofort nachweisbar.</p>
+          <div class="step-analogy">
+            <span data-de="🔍 Wie ein Poststempel: beweist, WANN der Brief aufgegeben wurde — nicht nur, welches Datum draufsteht." data-en="🔍 Like a postal stamp: proves WHEN the letter was mailed — not just what date is written on it." data-pt="🔍 Como um carimbo postal: prova QUANDO a carta foi postada — não apenas a data escrita nela.">🔍 Wie ein Poststempel: beweist, WANN der Brief aufgegeben wurde — nicht nur, welches Datum draufsteht.</span>
+          </div>
+          <div class="step-catches">
+            <i class="fas fa-shield-alt"></i>
+            <span data-de="Erkennt: rückdatierte Verträge, nachträglich erzeugte Compliance-Nachweise" data-en="Catches: backdated contracts, retroactively created compliance evidence" data-pt="Detecta: contratos retrodatados, evidências de compliance criadas retroativamente">Erkennt: rückdatierte Verträge, nachträglich erzeugte Compliance-Nachweise</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 5 -->
+      <div class="step-item">
+        <div class="step-marker"><div class="step-dot">5</div><div class="step-line"></div></div>
+        <div class="step-content">
+          <div class="step-label" data-de="Mathematischer Beweis" data-en="Mathematical Proof" data-pt="Prova Matemática">Mathematischer Beweis</div>
+          <h3 class="step-title" data-de="Kann jemand das Register manipuliert haben?" data-en="Could someone have manipulated the registry?" data-pt="Alguém poderia ter manipulado o registro?">Kann jemand das Register manipuliert haben?</h3>
+          <p class="step-desc" data-de="Ein mathematischer Beweis (Merkle Proof) garantiert, dass Ihr Dokument tatsächlich im Register steht — und nicht nachträglich eingefügt wurde. Kein Vertrauen nötig: die Mathematik reicht." data-en="A mathematical proof (Merkle Proof) guarantees that your document is actually in the registry — and wasn't inserted afterwards. No trust needed: the math is enough." data-pt="Uma prova matemática (Merkle Proof) garante que seu documento está realmente no registro — e não foi inserido depois. Nenhuma confiança necessária: a matemática basta.">Ein mathematischer Beweis (Merkle Proof) garantiert, dass Ihr Dokument tatsächlich im Register steht — und nicht nachträglich eingefügt wurde. Kein Vertrauen nötig: die Mathematik reicht.</p>
+          <div class="step-analogy">
+            <span data-de="🔍 Wie ein DNA-Test: kein Zeuge nötig — der Beweis spricht für sich selbst." data-en="🔍 Like a DNA test: no witness needed — the evidence speaks for itself." data-pt="🔍 Como um teste de DNA: nenhuma testemunha necessária — a evidência fala por si mesma.">🔍 Wie ein DNA-Test: kein Zeuge nötig — der Beweis spricht für sich selbst.</span>
+          </div>
+          <div class="step-catches">
+            <i class="fas fa-shield-alt"></i>
+            <span data-de="Erkennt: manipulierte Register, entfernte Einträge, nachträglich eingefügte Beweise" data-en="Catches: manipulated registries, removed entries, retroactively inserted evidence" data-pt="Detecta: registros manipulados, entradas removidas, evidências inseridas retroativamente">Erkennt: manipulierte Register, entfernte Einträge, nachträglich eingefügte Beweise</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="subtle-line"></div>
+
+  <!-- ═══ COMPARISON ═══ -->
+  <section>
+    <div class="section-eyebrow" data-de="Vergleich" data-en="Comparison" data-pt="Comparação">Vergleich</div>
+    <h2 class="section-title">
+      <span data-de="Heute vs. mit WINDI" data-en="Today vs. with WINDI" data-pt="Hoje vs. com WINDI">Heute vs. mit WINDI</span>
+    </h2>
+
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th data-de="Szenario" data-en="Scenario" data-pt="Cenário">Szenario</th>
+          <th data-de="Heute" data-en="Today" data-pt="Hoje">Heute</th>
+          <th data-de="Mit WINDI" data-en="With WINDI" data-pt="Com WINDI">Mit WINDI</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td data-de="Jemand ändert eine Zahl im Prüfbericht" data-en="Someone changes a number in the audit report" data-pt="Alguém altera um número no relatório de auditoria">Jemand ändert eine Zahl im Prüfbericht</td>
+          <td class="td-bad" data-de="Nicht erkennbar" data-en="Undetectable" data-pt="Indetectável">Nicht erkennbar</td>
+          <td class="td-good" data-de="Sofort erkannt — Signatur bricht (Schritt 1)" data-en="Instantly detected — signature breaks (Step 1)" data-pt="Detectado imediatamente — assinatura quebra (Passo 1)">Sofort erkannt — Signatur bricht (Schritt 1)</td>
+        </tr>
+        <tr>
+          <td data-de="Ein Prüfschritt wird aus der Akte gelöscht" data-en="A review step is deleted from the file" data-pt="Um passo de revisão é deletado do arquivo">Ein Prüfschritt wird aus der Akte gelöscht</td>
+          <td class="td-bad" data-de="Wer merkt's?" data-en="Who would notice?" data-pt="Quem perceberia?">Wer merkt's?</td>
+          <td class="td-good" data-de="Kette reißt — fehlende Glieder sichtbar (Schritt 2)" data-en="Chain breaks — missing links visible (Step 2)" data-pt="Cadeia quebra — elos faltantes visíveis (Passo 2)">Kette reißt — fehlende Glieder sichtbar (Schritt 2)</td>
+        </tr>
+        <tr>
+          <td data-de="Ein Vertrag wird als 'schon im März signiert' behauptet" data-en="A contract is claimed as 'already signed in March'" data-pt="Um contrato é alegado como 'já assinado em março'">Ein Vertrag wird als „schon im März signiert" behauptet</td>
+          <td class="td-bad" data-de="Aussage gegen Aussage" data-en="Word against word" data-pt="Palavra contra palavra">Aussage gegen Aussage</td>
+          <td class="td-good" data-de="Zeitstempel beweist: erst im Juni registriert (Schritt 4)" data-en="Timestamp proves: registered only in June (Step 4)" data-pt="Timestamp prova: registrado apenas em junho (Passo 4)">Zeitstempel beweist: erst im Juni registriert (Schritt 4)</td>
+        </tr>
+        <tr>
+          <td data-de="Ein Compliance-Beweis wird 'nach dem Vorfall' erzeugt" data-en="Compliance evidence is created 'after the incident'" data-pt="Evidência de compliance é criada 'após o incidente'">Ein Compliance-Beweis wird „nach dem Vorfall" erzeugt</td>
+          <td class="td-bad" data-de="Schwer nachweisbar" data-en="Hard to prove" data-pt="Difícil de provar">Schwer nachweisbar</td>
+          <td class="td-good" data-de="Mathematisch beweisbar: war nicht im Register (Schritt 3+5)" data-en="Mathematically provable: wasn't in the registry (Step 3+5)" data-pt="Matematicamente comprovável: não estava no registro (Passo 3+5)">Mathematisch beweisbar: war nicht im Register (Schritt 3+5)</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="subtle-line"></div>
+
+  <!-- ═══ FOR WHOM ═══ -->
+  <section>
+    <div class="section-eyebrow" data-de="Für wen" data-en="For Whom" data-pt="Para Quem">Für wen</div>
+    <h2 class="section-title">
+      <span data-de="Wer profitiert von WINDI Evidence Verification?" data-en="Who benefits from WINDI Evidence Verification?" data-pt="Quem se beneficia da WINDI Evidence Verification?">Wer profitiert von WINDI Evidence Verification?</span>
+    </h2>
+
+    <div class="audience-grid">
+      <div class="audience-card">
+        <div class="icon">🏦</div>
+        <h4 data-de="Banken & Versicherungen" data-en="Banks & Insurers" data-pt="Bancos & Seguradoras">Banken & Versicherungen</h4>
+        <p data-de="Kreditverträge, Schadensmeldungen, Compliance-Nachweise — jedes Dokument mit forensischer Sicherheit." data-en="Loan contracts, claims reports, compliance evidence — every document with forensic security." data-pt="Contratos de crédito, relatórios de sinistros, evidências de compliance — cada documento com segurança forense.">Kreditverträge, Schadensmeldungen, Compliance-Nachweise — jedes Dokument mit forensischer Sicherheit.</p>
+      </div>
+      <div class="audience-card">
+        <div class="icon">⚖️</div>
+        <h4 data-de="Gerichte & Regulierer" data-en="Courts & Regulators" data-pt="Tribunais & Reguladores">Gerichte & Regulierer</h4>
+        <p data-de="Beweismittel, deren Authentizität mathematisch überprüfbar ist — nicht auf Zeugenaussagen angewiesen." data-en="Evidence whose authenticity is mathematically verifiable — not dependent on witness statements." data-pt="Evidências cuja autenticidade é matematicamente verificável — não dependente de depoimentos.">Beweismittel, deren Authentizität mathematisch überprüfbar ist — nicht auf Zeugenaussagen angewiesen.</p>
+      </div>
+      <div class="audience-card">
+        <div class="icon">📊</div>
+        <h4 data-de="Wirtschaftsprüfer" data-en="Auditors" data-pt="Auditores">Wirtschaftsprüfer</h4>
+        <p data-de="Prüfberichte mit nachweisbarer Integrität. Jeder Prüfschritt dokumentiert, keine Lücken möglich." data-en="Audit reports with provable integrity. Every review step documented, no gaps possible." data-pt="Relatórios de auditoria com integridade comprovável. Cada passo de revisão documentado, sem lacunas.">Prüfberichte mit nachweisbarer Integrität. Jeder Prüfschritt dokumentiert, keine Lücken möglich.</p>
+      </div>
+      <div class="audience-card">
+        <div class="icon">🏭</div>
+        <h4 data-de="Industrie & Lieferketten" data-en="Industry & Supply Chains" data-pt="Indústria & Cadeias de Suprimento">Industrie & Lieferketten</h4>
+        <p data-de="Zertifikate, Prüfprotokolle, Genehmigungen — Dokumentenbetrug in der Lieferkette beenden." data-en="Certificates, test protocols, approvals — end document fraud in the supply chain." data-pt="Certificados, protocolos de teste, aprovações — acabar com fraude documental na cadeia de suprimentos.">Zertifikate, Prüfprotokolle, Genehmigungen — Dokumentenbetrug in der Lieferkette beenden.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="subtle-line"></div>
+
+  <!-- ═══ COMPLIANCE QUOTE ═══ -->
+  <section>
+    <div class="quote-box">
+      <p>
+        <span data-de="„Der Audit-Bericht ist authentisch. Die Beweiskette ist intakt. Der Evidenzanker ist öffentlich dokumentiert und überprüfbar. Daher existierte der Dokumentenbeweis vor dem Zeitstempel und wurde seitdem nicht verändert."" data-en=""The audit report is authentic. The evidence chain is intact. The evidence anchor is publicly documented and verifiable. Therefore, the document evidence existed before the timestamp and has not been modified since."" data-pt=""O relatório de auditoria é autêntico. A cadeia de evidências está intacta. A âncora de evidência está publicamente documentada e verificável. Portanto, a evidência documental existia antes do timestamp e não foi modificada desde então."">„Der Audit-Bericht ist authentisch. Die Beweiskette ist intakt. Der Evidenzanker ist öffentlich dokumentiert und überprüfbar. Daher existierte der Dokumentenbeweis vor dem Zeitstempel und wurde seitdem nicht verändert."</span>
+      </p>
+      <div class="source" data-de="— WINDI Compliance Statement nach erfolgreicher 5-Schritt-Prüfung" data-en="— WINDI Compliance Statement after successful 5-step verification" data-pt="— WINDI Compliance Statement após verificação bem-sucedida de 5 passos">— WINDI Compliance Statement nach erfolgreicher 5-Schritt-Prüfung</div>
+    </div>
+  </section>
+
+  <div class="subtle-line"></div>
+
+  <!-- ═══ CTA ═══ -->
+  <section class="cta-section">
+    <p style="font-size:0.95rem;color:#999;margin-bottom:8px;">
+      <span data-de="WINDI schützt Ihre Dokumente. Nicht morgen. Jetzt." data-en="WINDI protects your documents. Not tomorrow. Now." data-pt="WINDI protege seus documentos. Não amanhã. Agora.">WINDI schützt Ihre Dokumente. Nicht morgen. Jetzt.</span>
+    </p>
+    <p style="font-size:0.88rem;color:#b8860b;margin-bottom:28px;font-style:italic;">
+      <span data-de="Schützen Sie Ihre Beweisdokumente, bevor ein Streitfall entsteht." data-en="Protect your evidence documents before a dispute arises." data-pt="Proteja seus documentos de evidência antes que uma disputa surja.">Schützen Sie Ihre Beweisdokumente, bevor ein Streitfall entsteht.</span>
+    </p>
+    <a href="wcaf-verify-evidence.html" class="cta-btn-ghost">
+      <span data-de="Technische Spezifikation →" data-en="Technical Specification →" data-pt="Especificação Técnica →">Technische Spezifikation →</span>
+    </a>
+    <a href="index.html" class="cta-btn-ghost">
+      <span data-de="WINDI Dokumentation →" data-en="WINDI Documentation →" data-pt="Documentação WINDI →">WINDI Dokumentation →</span>
+    </a>
+  </section>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer class="page-footer">
+    <span>© 2026 WINDI Publishing House · Kempten, Bavaria</span>
+    <span style="font-family:'JetBrains Mono',monospace;letter-spacing:1px;">
+      <span data-de="KI verarbeitet · Der Mensch entscheidet · WINDI garantiert" data-en="AI processes · Human decides · WINDI guarantees" data-pt="IA processa · Humano decide · WINDI garante">KI verarbeitet · Der Mensch entscheidet · WINDI garantiert</span>
+    </span>
+  </footer>
+
+</div>
+
+<!-- ═══ SCRIPTS ═══ -->
+<script>
+function toggleTheme() {
+  const html = document.documentElement;
+  const btn = document.getElementById('themeToggle');
+  if (html.getAttribute('data-theme') === 'dark') {
+    html.setAttribute('data-theme', 'light');
+    btn.innerHTML = '<i class="fas fa-sun"></i> Klar';
+  } else {
+    html.setAttribute('data-theme', 'dark');
+    btn.innerHTML = '<i class="fas fa-moon"></i> Dunkel';
+  }
+}
+
+function switchLang(lang) {
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  const active = document.querySelector(`.lang-btn[data-lang="${lang}"]`);
+  if (active) active.classList.add('active');
+  document.querySelectorAll(`[data-${lang}]`).forEach(el => {
+    el.textContent = el.getAttribute(`data-${lang}`);
+  });
+}
+</script>
+</body>
+</html>

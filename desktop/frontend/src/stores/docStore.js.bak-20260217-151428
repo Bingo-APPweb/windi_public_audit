@@ -1,0 +1,267 @@
+/**
+ * WINDI D1 Document Store — Zustand
+ * Manages document state, autosave, and governance bridge (B1)
+ */
+import { create } from 'zustand';
+import { get as idbGet, set as idbSet, del as idbDel, keys as idbKeys } from 'idb-keyval';
+import { hashDocument, uuidv7, createVirtueReceipt, GOV_EVENTS } from '../utils/governance';
+
+const AUTOSAVE_DEBOUNCE = 600; // ms
+const LEDGER_URL = '/desktop/api/ledger'; // proxied to backend :8100 → :8101
+
+/**
+ * Send a governance event to the Forensic Ledger via B1 bridge
+ */
+async function bridgeToLedger(receipt) {
+  try {
+      const res = await fetch(`${LEDGER_URL}/receipts`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: receipt.doc_id + '-' + Date.now(),
+        doc_id: receipt.doc_id,
+        doc_name: receipt.doc_name || 'Untitled',
+        doc_type: receipt.doc_type || 'DOCUMENT',
+        action: receipt.action,
+        integrity_hash: receipt.integrity_hash,
+        content_hash: receipt.integrity_hash,
+        actor: receipt.user_id || 'human-operator',
+        app: 'windi-d1-desktop',
+        governance_level: receipt.governance_level || 'LOW',
+        sge_score: receipt.sge_score || 0.0,
+        timestamp: receipt.timestamp,
+        metadata: receipt.metadata || {},
+      }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      return { ...receipt, ledger_entry_id: data.entry_id, reconciliation_status: 'REGISTERED' }
+
+            // M3: Update seal on successful bridge
+            const sealData = {
+              receiptId: result.ledger_entry_id || result.receipt_id,
+              hash: receipt.integrity_hash,
+              timestamp: receipt.timestamp || new Date().toISOString(),
+              status: (result.status === 'REGISTERED' || result.ledger_synced) ? 'REGISTERED' : 'PENDING',
+              sgeScore: receipt.sge_score || 0.0,
+              governanceLevel: receipt.governance_level || 'LOW',
+            };
+            get().updateSeal(sealData);
+;
+    }
+    console.warn('[B1] Ledger responded with:', res.status);
+    return { ...receipt, reconciliation_status: 'FAILED' };
+  } catch (err) {
+    console.warn('[B1] Ledger unreachable, receipt cached locally:', err.message);
+    return { ...receipt, reconciliation_status: 'OFFLINE' };
+  }
+}
+
+const useDocStore = create((set, get) => ({
+    // ─── M3: Document Seal State ───
+    sealReceiptId: null,
+    sealHash: null,
+    sealTimestamp: null,
+    sealStatus: 'DRAFT',      // DRAFT | PENDING | REGISTERED | SIGNED | COMPROMISED
+    sealSgeScore: null,
+    sealGovernanceLevel: 'LOW',
+    
+    updateSeal: (data) => set((state) => ({
+      sealReceiptId: data.receiptId || state.sealReceiptId,
+      sealHash: data.hash || state.sealHash,
+      sealTimestamp: data.timestamp || state.sealTimestamp,
+      sealStatus: data.status || state.sealStatus,
+      sealSgeScore: data.sgeScore !== undefined ? data.sgeScore : state.sealSgeScore,
+      sealGovernanceLevel: data.governanceLevel || state.sealGovernanceLevel,
+    })),
+
+  // === Document State ===
+  docId: null,
+  title: 'Untitled Document',
+  content: null, // Tiptap JSON
+  createdAt: null,
+  updatedAt: null,
+  owner: 'human-operator',
+
+  // === UI State ===
+  saveStatus: 'idle', // 'idle' | 'saving' | 'saved' | 'error'
+  integrityStatus: 'unknown', // 'unknown' | 'ok' | 'mismatch' | 'checking'
+  lastHash: null,
+  governanceLog: [], // local receipt log
+
+  // === Autosave Timer ===
+  _autosaveTimer: null,
+
+  // === Actions ===
+
+  /**
+   * Create a new document
+   */
+  createDoc: async () => {
+    const docId = `DOC-${uuidv7()}`;
+    const now = new Date().toISOString();
+    const emptyContent = { type: 'doc', content: [{ type: 'paragraph' }] };
+
+    set({
+      docId,
+      title: 'Untitled Document',
+      content: emptyContent,
+      createdAt: now,
+      updatedAt: now,
+      saveStatus: 'saved',
+      integrityStatus: 'ok',
+      lastHash: null,
+      governanceLog: [],
+    });
+
+    // Persist to IndexedDB
+    await idbSet(`doc:${docId}`, {
+      docId, title: 'Untitled Document', content: emptyContent,
+      createdAt: now, updatedAt: now, owner: 'human-operator',
+    });
+
+    // GENESIS event → Ledger
+    const receipt = await createVirtueReceipt({
+      docId, action: GOV_EVENTS.DOC_CREATED, content: emptyContent,
+    });
+    const registered = await bridgeToLedger(receipt);
+    set(s => ({ governanceLog: [...s.governanceLog, registered], lastHash: receipt.integrity_hash }));
+
+    return docId;
+  },
+
+  /**
+   * Load document from IndexedDB
+   */
+  loadDoc: async (docId) => {
+    const doc = await idbGet(`doc:${docId}`);
+    if (!doc) throw new Error(`Document ${docId} not found`);
+
+    const hash = await hashDocument(doc.content);
+    set({
+      docId: doc.docId,
+      title: doc.title || 'Untitled Document',
+      content: doc.content,
+      createdAt: doc.createdAt,
+      updatedAt: doc.updatedAt,
+      owner: doc.owner || 'human-operator',
+      saveStatus: 'saved',
+      integrityStatus: 'ok',
+      lastHash: hash,
+    });
+    return doc;
+  },
+
+  /**
+   * List all documents in IndexedDB
+   */
+  listDocs: async () => {
+    const allKeys = await idbKeys();
+    const docKeys = allKeys.filter(k => typeof k === 'string' && k.startsWith('doc:'));
+    const docs = await Promise.all(docKeys.map(async k => {
+      const doc = await idbGet(k);
+      return { docId: doc.docId, title: doc.title, updatedAt: doc.updatedAt };
+    }));
+    return docs.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+  },
+
+  /**
+   * Update content (called by Tiptap onChange) — triggers debounced autosave
+   */
+  updateContent: (newContent) => {
+    const { _autosaveTimer } = get();
+    if (_autosaveTimer) clearTimeout(_autosaveTimer);
+
+    set({ content: newContent, saveStatus: 'saving' });
+
+    const timer = setTimeout(() => {
+      get().saveDoc();
+    }, AUTOSAVE_DEBOUNCE);
+
+    set({ _autosaveTimer: timer });
+  },
+
+  /**
+   * Update document title
+   */
+  setTitle: (title) => {
+    set({ title });
+    // Trigger save after title change
+    const { _autosaveTimer } = get();
+    if (_autosaveTimer) clearTimeout(_autosaveTimer);
+    const timer = setTimeout(() => get().saveDoc(), AUTOSAVE_DEBOUNCE);
+    set({ _autosaveTimer: timer });
+  },
+
+  /**
+   * Save document — persist + governance receipt
+   */
+  saveDoc: async () => {
+    const { docId, title, content, owner, createdAt } = get();
+    if (!docId || !content) return;
+
+    const now = new Date().toISOString();
+    const hash = await hashDocument(content);
+
+    // Skip if content hasn't changed
+    if (hash === get().lastHash) {
+      set({ saveStatus: 'saved' });
+      return;
+    }
+
+    // Persist to IndexedDB
+    await idbSet(`doc:${docId}`, {
+      docId, title, content, createdAt, updatedAt: now, owner,
+    });
+
+    set({ updatedAt: now, saveStatus: 'saved', lastHash: hash });
+
+    // RECEIPT_CREATED → Ledger
+    const receipt = await createVirtueReceipt({
+      docId, action: GOV_EVENTS.DOC_SAVED, content, userId: owner,
+      metadata: { title, previous_hash: get().lastHash },
+    });
+    const registered = await bridgeToLedger(receipt);
+    set(s => ({ governanceLog: [...s.governanceLog, registered] }));
+  },
+
+  /**
+   * Delete document
+   */
+  deleteDoc: async (targetId) => {
+    const docId = targetId || get().docId;
+    if (docId) await idbDel(`doc:${docId}`);
+    if (docId === get().docId) {
+      set({ docId: null, content: null, title: 'Untitled Document', governanceLog: [] });
+    }
+  },
+
+  /**
+   * Verify document integrity against Ledger
+   */
+  verifyIntegrity: async () => {
+    const { docId, content } = get();
+    if (!docId || !content) return;
+
+    set({ integrityStatus: 'checking' });
+    const currentHash = await hashDocument(content);
+
+    try {
+      const res = await fetch(`${LEDGER_URL}/receipts?doc_id=${docId}&latest=true`);
+      if (res.ok) {
+        const data = await res.json();
+        const ledgerHash = data.integrity_hash;
+        set({
+          integrityStatus: ledgerHash === currentHash ? 'ok' : 'mismatch',
+          lastHash: currentHash,
+        });
+      } else {
+        set({ integrityStatus: 'unknown' });
+      }
+    } catch {
+      set({ integrityStatus: 'unknown' });
+    }
+  },
+}));
+
+export default useDocStore;

@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="noir">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>WINDI ISP Templates — Visual Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
+  --font-body: 'Outfit', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-body); background: #08080e; color: #f0ece4; min-height: 100vh; }
+
+.page-header {
+  text-align: center; padding: 40px 20px 20px;
+  border-bottom: 1px solid rgba(212,175,55,0.12);
+  background: #0a0a14;
+}
+.page-header h1 {
+  font-family: var(--font-display); font-weight: 800; font-size: 1.6rem;
+  color: #d4af37; margin-bottom: 6px;
+}
+.page-header p { font-size: 0.85rem; color: rgba(240,236,228,0.5); }
+.page-header .badge {
+  display: inline-block; margin-top: 10px;
+  font-family: var(--font-mono); font-size: 0.68rem;
+  padding: 3px 10px; border-radius: 4px;
+  background: rgba(212,175,55,0.08); border: 1px solid rgba(212,175,55,0.15);
+  color: #d4af37;
+}
+
+.templates-grid {
+  display: grid; grid-template-columns: 1fr;
+  gap: 40px; padding: 40px 20px; max-width: 900px; margin: 0 auto;
+}
+
+.template-section {
+  position: relative;
+}
+.template-label {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 12px; padding-left: 4px;
+}
+.template-label .tl-icon { font-size: 1.2rem; }
+.template-label .tl-id {
+  font-family: var(--font-mono); font-size: 0.72rem;
+  padding: 2px 8px; border-radius: 4px;
+  background: rgba(255,255,255,0.05); color: rgba(240,236,228,0.4);
+}
+.template-label .tl-name {
+  font-family: var(--font-display); font-weight: 700; font-size: 1rem;
+}
+.template-label .tl-codename {
+  font-size: 0.78rem; color: rgba(240,236,228,0.35); font-style: italic;
+}
+.template-label .tl-authority {
+  font-family: var(--font-mono); font-size: 0.62rem;
+  padding: 2px 8px; border-radius: 10px;
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+
+/* ═══ COM-01: The Sovereign ═══ */
+.paper-01 {
+  background: #050505; color: #f0ece4; border: 4px double #D4AF37;
+  border-radius: 12px; overflow: hidden;
+}
+.paper-01 .p-header {
+  background: #050505; text-align: center; padding: 28px 24px 20px;
+  border-bottom: 4px double #D4AF37;
+}
+.paper-01 .p-header::before {
+  content: '\269C'; display: block; font-size: 2rem; margin-bottom: 10px; opacity: 0.7;
+}
+.paper-01 .p-header h2 {
+  font-family: var(--font-display); font-weight: 800; font-size: 1.6rem;
+  color: #D4AF37; text-shadow: 0 0 30px rgba(212,175,55,0.12);
+}
+.paper-01 .p-header .p-meta {
+  font-family: var(--font-mono); font-size: 0.72rem; color: rgba(240,236,228,0.45); margin-top: 8px;
+}
+.paper-01 .p-body { padding: 24px 28px; font-size: 0.95rem; line-height: 1.65; }
+.paper-01 .p-body p { margin-bottom: 12px; }
+.paper-01 .p-footer {
+  padding: 14px 24px; border-top: 1px solid rgba(212,175,55,0.15);
+  background: rgba(212,175,55,0.04);
+  font-family: var(--font-mono); font-size: 0.68rem; color: rgba(240,236,228,0.4);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.paper-01 .p-footer .seal { color: #22c55e; }
+
+/* ═══ COM-02: The Newsroom ═══ */
+.paper-02 {
+  background: #faf8f4; color: #1A1A1A; border: 1px solid rgba(0,0,0,0.10);
+  border-radius: 12px; overflow: hidden;
+}
+.paper-02 .p-header {
+  padding: 24px 28px 14px; border-bottom: 3px solid #111118;
+}
+.paper-02 .p-header h2 {
+  font-family: var(--font-display); font-weight: 700; font-size: 1.8rem;
+  color: #111118; line-height: 1.15; margin-bottom: 10px;
+}
+.paper-02 .p-header .dateline {
+  font-family: var(--font-mono); font-size: 0.7rem;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  color: #6b7280; border-top: 1px solid rgba(0,0,0,0.08); padding-top: 8px;
+}
+.paper-02 .p-body {
+  padding: 24px 28px; columns: 2; column-gap: 28px;
+  column-rule: 1px solid rgba(0,0,0,0.06);
+  font-size: 0.92rem; line-height: 1.72;
+}
+.paper-02 .p-body p { margin-bottom: 12px; }
+.paper-02 .p-body p:first-of-type::first-letter {
+  font-family: var(--font-display); font-weight: 800; font-size: 3.2em;
+  float: left; line-height: 0.8; margin: 4px 8px 0 0; color: #111118;
+}
+.paper-02 .p-footer {
+  padding: 12px 28px; border-top: 1px solid rgba(0,0,0,0.06);
+  background: rgba(34,197,94,0.04);
+  font-family: var(--font-mono); font-size: 0.68rem; color: #6b7280;
+  display: flex; justify-content: space-between;
+}
+.paper-02 .p-footer .seal { color: #16a34a; }
+
+/* ═══ COM-03: The Guardian ═══ */
+.paper-03 {
+  background: #0a0a12; color: #f0ece4; border: 3px solid rgba(239,68,68,0.30);
+  border-radius: 12px; overflow: hidden;
+}
+.paper-03 .p-header {
+  background: #EF4444; color: #fff; padding: 18px 24px;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  position: relative; overflow: hidden;
+}
+.paper-03 .p-header::after {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: #EF4444; opacity: 0;
+  animation: pulse03 3s ease-in-out infinite;
+}
+@keyframes pulse03 { 0%,100% { opacity: 0; } 50% { opacity: 0.15; } }
+.paper-03 .p-header h2 {
+  font-family: var(--font-display); font-weight: 700; font-size: 1rem;
+  position: relative; z-index: 1;
+}
+.paper-03 .p-header .p-meta {
+  font-family: var(--font-mono); font-size: 0.68rem; opacity: 0.8;
+  margin-top: 4px; position: relative; z-index: 1;
+}
+.paper-03 .p-body {
+  padding: 20px 24px; font-family: var(--font-mono); font-size: 0.88rem; line-height: 1.6;
+}
+.paper-03 .p-body p { margin-bottom: 12px; }
+.paper-03 .p-body .hash-val {
+  color: #EF4444; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.20);
+  padding: 2px 8px; border-radius: 4px; font-size: 0.82rem;
+}
+.paper-03 .p-footer {
+  padding: 14px 24px; border-top: 1px solid rgba(239,68,68,0.15);
+  background: rgba(239,68,68,0.04);
+  font-family: var(--font-mono); font-size: 0.68rem; color: rgba(240,236,228,0.4);
+}
+
+/* ═══ COM-04: The Law ═══ */
+.paper-04 {
+  background: #0a0a12; color: #f0ece4; border: 2px solid rgba(249,115,22,0.20);
+  border-radius: 12px; overflow: hidden;
+}
+.paper-04 .p-header {
+  padding: 20px 24px; border-bottom: 2px solid #F97316;
+}
+.paper-04 .p-header h2 {
+  font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; color: #F97316;
+}
+.paper-04 .p-header h2::before { content: '\1F4DC '; }
+.paper-04 .p-header .p-meta {
+  font-family: var(--font-mono); font-size: 0.7rem; color: rgba(240,236,228,0.45); margin-top: 6px;
+}
+.paper-04 .p-body { padding: 20px 24px; }
+.paper-04 .article {
+  margin-bottom: 20px; padding: 14px 18px;
+  background: rgba(249,115,22,0.04); border-left: 3px solid #F97316;
+  border-radius: 0 8px 8px 0;
+}
+.paper-04 .article-num {
+  font-family: var(--font-display); font-weight: 700; font-size: 0.8rem;
+  text-transform: uppercase; letter-spacing: 0.08em; color: #F97316; margin-bottom: 6px;
+}
+.paper-04 .article p { font-size: 0.93rem; line-height: 1.65; margin-bottom: 8px; }
+.paper-04 .p-footer {
+  padding: 16px 24px; border-top: 1px solid rgba(249,115,22,0.12);
+  background: rgba(249,115,22,0.04); text-align: center;
+  font-family: var(--font-mono); font-size: 0.68rem; color: rgba(240,236,228,0.4);
+}
+
+/* ═══ COM-05: The Transparency ═══ */
+.paper-05 {
+  background: #ffffff; color: #1e293b; border: 1px solid rgba(59,130,246,0.15);
+  border-radius: 12px; overflow: hidden;
+}
+.paper-05 .p-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 16px 24px; border-bottom: 2px solid #3B82F6; background: #f8fafc;
+}
+.paper-05 .p-header h2 {
+  font-family: var(--font-display); font-weight: 600; font-size: 1.2rem; color: #1e293b;
+}
+.paper-05 .status-pill {
+  font-family: var(--font-mono); font-size: 0.68rem;
+  padding: 4px 12px; border-radius: 20px;
+  background: rgba(59,130,246,0.10); color: #3B82F6;
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+.paper-05 .p-body { padding: 20px 24px; font-size: 0.9rem; }
+.paper-05 .metrics {
+  display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px;
+}
+.paper-05 .m-card {
+  flex: 1; min-width: 120px; padding: 12px 16px;
+  background: rgba(59,130,246,0.03); border: 1px solid rgba(59,130,246,0.10);
+  border-radius: 10px;
+}
+.paper-05 .m-card .m-val {
+  font-family: var(--font-display); font-weight: 700; font-size: 1.5rem; color: #3B82F6;
+}
+.paper-05 .m-card .m-lbl {
+  font-size: 0.7rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 2px;
+}
+.paper-05 table {
+  width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.85rem;
+}
+.paper-05 th {
+  background: rgba(59,130,246,0.08); color: #1e293b;
+  font-family: var(--font-display); font-weight: 600; font-size: 0.72rem;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  padding: 8px 12px; text-align: left; border-bottom: 2px solid #3B82F6;
+}
+.paper-05 td { padding: 8px 12px; border-bottom: 1px solid rgba(59,130,246,0.08); }
+.paper-05 tr:nth-child(even) td { background: rgba(59,130,246,0.02); }
+.paper-05 .p-footer {
+  padding: 12px 24px; border-top: 1px solid rgba(59,130,246,0.10);
+  background: rgba(59,130,246,0.03);
+  font-family: var(--font-mono); font-size: 0.68rem; color: #64748b;
+}
+
+/* ═══ COM-06: The Confidential ═══ */
+.paper-06 {
+  background: #111827; color: #e2e8f0; border: 1px solid rgba(148,163,184,0.15);
+  border-radius: 12px; overflow: hidden; position: relative;
+}
+.paper-06::before {
+  content: 'WINDI INTERNAL'; position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%,-50%) rotate(-25deg);
+  font-family: var(--font-display); font-weight: 800; font-size: 3rem;
+  color: rgba(148,163,184,0.05); pointer-events: none; white-space: nowrap; z-index: 1;
+}
+.paper-06 .p-header {
+  padding: 14px 20px; border-bottom: 1px solid rgba(148,163,184,0.12);
+  position: relative; z-index: 2;
+}
+.paper-06 .p-header h2 {
+  font-family: var(--font-body); font-weight: 600; font-size: 1.1rem; color: #94a3b8;
+}
+.paper-06 .p-header .p-meta {
+  font-family: var(--font-mono); font-size: 0.68rem; color: rgba(226,232,240,0.4); margin-top: 4px;
+}
+.paper-06 .p-body {
+  padding: 18px 20px; font-size: 0.9rem; line-height: 1.55;
+  position: relative; z-index: 2;
+}
+.paper-06 .p-body p { margin-bottom: 10px; }
+.paper-06 .p-footer {
+  padding: 10px 20px; border-top: 1px solid rgba(148,163,184,0.10);
+  background: rgba(148,163,184,0.04);
+  font-family: var(--font-mono); font-size: 0.65rem; color: rgba(226,232,240,0.3);
+  position: relative; z-index: 2;
+}
+
+@media (max-width: 700px) {
+  .paper-02 .p-body { columns: 1; }
+  .paper-05 .metrics { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>WINDI ISP Communique Templates</h1>
+  <p>6 Instruments of Governance — Visual DNA Preview</p>
+  <span class="badge">v1.0.0 | Three Dragons Protocol</span>
+</div>
+
+<div class="templates-grid">
+
+<!-- COM-01 -->
+<div class="template-section">
+  <div class="template-label">
+    <span class="tl-icon">&#x269C;</span>
+    <span class="tl-id">ISP-COM-01</span>
+    <span class="tl-name">WINDI Official</span>
+    <span class="tl-codename">The Sovereign</span>
+    <span class="tl-authority" style="background:rgba(212,175,55,0.15);color:#D4AF37;">EXECUTIVE</span>
+  </div>
+  <div class="paper-01">
+    <div class="p-header">
+      <h2>Genesis Declaration: WINDI System v1.0</h2>
+      <div class="p-meta">Guardian &middot; 18. Februar 2026 &middot; ISP-COM-01</div>
+    </div>
+    <div class="p-body">
+      <p>The WINDI Publishing House hereby declares the operational status of the Three Dragons Protocol. All governance instruments are now sealed under the constitutional framework established by Invariants I1 through I9.</p>
+      <p>This declaration carries the highest authority level within the WINDI ecosystem. No autonomous escalation permitted. Human sovereignty preserved.</p>
+    </div>
+    <div class="p-footer">
+      <span class="seal">&#x2713; Verified &middot; VR-COM-01-a7b3c9</span>
+      <span>sha256:d4af37e8c...2b1f</span>
+    </div>
+  </div>
+</div>
+
+<!-- COM-02 -->
+<div class="template-section">
+  <div class="template-label">
+    <span class="tl-icon">&#x1F4F0;</span>
+    <span class="tl-id">ISP-COM-02</span>
+    <span class="tl-name">Jornaline Modern</span>
+    <span class="tl-codename">The Newsroom</span>
+    <span class="tl-authority" style="background:rgba(26,26,26,0.10);color:#6b7280;">STANDARD</span>
+  </div>
+  <div class="paper-02">
+    <div class="p-header">
+      <h2>The Rise of Document Governance Intelligence</h2>
+      <div class="dateline">Jober M. Correa &mdash; 18 February 2026</div>
+    </div>
+    <div class="p-body">
+      <p>In an era where artificial intelligence processes millions of documents daily, the question of who guarantees the integrity of institutional decisions has never been more critical. WINDI proposes an answer that is both simple and radical: the human decides, the system guarantees.</p>
+      <p>Unlike traditional document management, which focuses on storage and retrieval, Document Governance Intelligence operates at the level of semantic risk assessment. Every document that passes through the SGE layers is classified, scored, and sealed.</p>
+      <p>The Three Dragons Protocol establishes a constitutional framework where no single AI model holds autonomous authority. Guardian, Architect, and Witness operate in permanent tension.</p>
+      <p>This approach mirrors the separation of powers in democratic governance, applied to the digital realm where documents carry institutional weight and legal consequence.</p>
+    </div>
+    <div class="p-footer">
+      <span class="seal">&#x2713; Verified</span>
+      <span>sha256:1a1a1a2b...9e4f</span>
+    </div>
+  </div>
+</div>
+
+<!-- COM-03 -->
+<div class="template-section">
+  <div class="template-label">
+    <span class="tl-icon">&#x1F6A8;</span>
+    <span class="tl-id">ISP-COM-03</span>
+    <span class="tl-name">Security Advisory</span>
+    <span class="tl-codename">The Guardian</span>
+    <span class="tl-authority" style="background:rgba(239,68,68,0.15);color:#EF4444;">ELEVATED</span>
+  </div>
+  <div class="paper-03">
+    <div class="p-header">
+      <h2>SECURITY ADVISORY: CERTIFICATE CHAIN ANOMALY DETECTED</h2>
+      <div class="p-meta">WINDI Sentinel LAW &middot; 2026-02-18T14:32:00Z &middot; SEVERITY: CRITICAL</div>
+    </div>
+    <div class="p-body">
+      <p>Sentinel LAW monitoring has detected an anomalous hash drift in the forensic chain at block height 957.</p>
+      <p>Affected hash: <span class="hash-val">sha256:ef4444a1b2c3d4e5f6...7890</span></p>
+      <p>Expected chain integrity: VALID<br/>Observed chain integrity: DRIFT_DETECTED<br/>Reconciliation status: PENDING_REVIEW</p>
+      <p>Immediate action required. All exports from the affected block range are suspended until manual review confirms chain restoration.</p>
+    </div>
+    <div class="p-footer">
+      &#x2717; UNVERIFIED &middot; Pending manual review &middot; ISP-COM-03
+    </div>
+  </div>
+</div>
+
+<!-- COM-04 -->
+<div class="template-section">
+  <div class="template-label">
+    <span class="tl-icon">&#x1F4DC;</span>
+    <span class="tl-id">ISP-COM-04</span>
+    <span class="tl-name">Governance Decree</span>
+    <span class="tl-codename">The Law</span>
+    <span class="tl-authority" style="background:rgba(249,115,22,0.15);color:#F97316;">LEGISLATIVE</span>
+  </div>
+  <div class="paper-04">
+    <div class="p-header">
+      <h2>Decree: Sentinel LAW Enforcement Criteria v2.0</h2>
+      <div class="p-meta">WINDI Governance Council &middot; 18. Februar 2026</div>
+    </div>
+    <div class="p-body">
+      <div class="article">
+        <div class="article-num">Art. 1 &mdash; Scope of Enforcement</div>
+        <p>The Sentinel LAW system shall enforce permanent monitoring criteria across all WINDI services operating on ports 8100 through 8107.</p>
+      </div>
+      <div class="article">
+        <div class="article-num">Art. 2 &mdash; PASS Criteria</div>
+        <p>A service is considered compliant when: latency_p95 &lt; 100ms, unsynced_records = 0, hash_drift = 0, reconciliation = HEALTHY, and chain_integrity = VALID.</p>
+      </div>
+      <div class="article">
+        <div class="article-num">Art. 3 &mdash; Violation Response</div>
+        <p>Any violation triggers an immediate alert to the Governance Council. Repeated violations within 24 hours escalate to service suspension pending review.</p>
+      </div>
+    </div>
+    <div class="p-footer">
+      &#x2713; Verified &middot; VR-DEC-04-f97316 &middot; sha256:f97316ab...cd12
+    </div>
+  </div>
+</div>
+
+<!-- COM-05 -->
+<div class="template-section">
+  <div class="template-label">
+    <span class="tl-icon">&#x1F4CA;</span>
+    <span class="tl-id">ISP-COM-05</span>
+    <span class="tl-name">Status Report</span>
+    <span class="tl-codename">The Transparency</span>
+    <span class="tl-authority" style="background:rgba(59,130,246,0.10);color:#3B82F6;">STANDARD</span>
+  </div>
+  <div class="paper-05">
+    <div class="p-header">
+      <h2>System Health Report — February 2026</h2>
+      <span class="status-pill">ALL SYSTEMS OPERATIONAL</span>
+    </div>
+    <div class="p-body">
+      <div class="metrics">
+        <div class="m-card"><div class="m-val">960+</div><div class="m-lbl">Receipts</div></div>
+        <div class="m-card"><div class="m-val">6.9ms</div><div class="m-lbl">Avg Export</div></div>
+        <div class="m-card"><div class="m-val">99.7%</div><div class="m-lbl">Uptime</div></div>
+        <div class="m-card"><div class="m-val">0</div><div class="m-lbl">Hash Drift</div></div>
+      </div>
+      <table>
+        <thead><tr><th>Service</th><th>Port</th><th>Status</th><th>Latency</th></tr></thead>
+        <tbody>
+          <tr><td>Desktop D1</td><td>:8100</td><td style="color:#16a34a;">LIVE</td><td>12ms</td></tr>
+          <tr><td>Forensic Ledger</td><td>:8101</td><td style="color:#16a34a;">HEALTHY</td><td>8ms</td></tr>
+          <tr><td>Sentinel LAW</td><td>:8102</td><td style="color:#16a34a;">MONITORING</td><td>45ms</td></tr>
+          <tr><td>Export Engine</td><td>:8103</td><td style="color:#16a34a;">HEALTHY</td><td>6.9ms</td></tr>
+          <tr><td>Communique</td><td>:8105</td><td style="color:#16a34a;">OPERATIONAL</td><td>22ms</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="p-footer">
+      &#x2713; Verified &middot; VR-RPT-05-3b82f6 &middot; sha256:3b82f6cd...ef01
+    </div>
+  </div>
+</div>
+
+<!-- COM-06 -->
+<div class="template-section">
+  <div class="template-label">
+    <span class="tl-icon">&#x1F4DD;</span>
+    <span class="tl-id">ISP-COM-06</span>
+    <span class="tl-name">Internal Memo</span>
+    <span class="tl-codename">The Confidential</span>
+    <span class="tl-authority" style="background:rgba(148,163,184,0.10);color:#94a3b8;">INTERNAL</span>
+  </div>
+  <div class="paper-06">
+    <div class="p-header">
+      <h2>Re: Next Sprint Priorities</h2>
+      <div class="p-meta">Dragon &rarr; Guardian &middot; 18 Feb 2026</div>
+    </div>
+    <div class="p-body">
+      <p>Irmao, as prioridades para o proximo sprint sao claras: finalizar a integracao dos 6 templates ISP no Viewer, depois ativar o dropdown no Composer.</p>
+      <p>O layout checksum fica para a fase seguinte. Primeiro garantimos que tudo renderiza corretamente antes de adicionar verificacao forense do visual.</p>
+      <p>A regra permanece: nao gerar o que nao se pode renderizar.</p>
+    </div>
+    <div class="p-footer">
+      a7b3c9e2... &middot; INTERNAL &middot; ISP-COM-06
+    </div>
+  </div>
+</div>
+
+</div>
+
+</body>
+</html>

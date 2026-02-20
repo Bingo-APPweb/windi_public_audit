@@ -1,0 +1,48 @@
+{
+  "org_id": "deutsche-bahn",
+  "org_name": "Deutsche Bahn AG",
+  "theme_name": "DB Corporate",
+  "colors": {
+    "primary": "EC0016",
+    "secondary": "282D37",
+    "background": "FFFFFF",
+    "background_alt": "F0F3F5",
+    "text": "282D37",
+    "text_muted": "646973",
+    "accent": "EC0016",
+    "success": "408335",
+    "warning": "F39C12",
+    "danger": "EC0016"
+  },
+  "fonts": {
+    "title": "Arial Black",
+    "body": "Arial",
+    "mono": "Consolas"
+  },
+  "logo": {
+    "path": "assets/db_logo.png",
+    "width": 1.2,
+    "height": 0.6
+  },
+  "footer": {
+    "left_text": "Deutsche Bahn AG",
+    "right_text": "INTERNAL",
+    "classification": "INTERNAL",
+    "show_page_number": true,
+    "show_windi_seal": true,
+    "show_timestamp": true
+  },
+  "governance": {
+    "level": "ENHANCED",
+    "forensic_receipt": true,
+    "zk_declaration": true,
+    "sentinel_status": false,
+    "compliance_frameworks": ["ISO 27001", "GDPR", "BSI C5"]
+  },
+  "watermark": {
+    "enabled": false,
+    "text": "",
+    "opacity": 0
+  },
+  "identity_license": "model_only"
+}

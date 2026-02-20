@@ -1,0 +1,17 @@
+{
+  "receipt_id": "MAESTRO-20260208-185419-0f4f280e",
+  "agent_id": "windi://agent/core/maestro",
+  "version": "1.2.0",
+  "action": "REPORT",
+  "finding_id": null,
+  "details": {
+    "report_file": "/opt/windi/agents/maestro/reports/cycle_report_20260208_185419.json",
+    "open_cycles": {
+      "CLOSED": 6
+    }
+  },
+  "timestamp": "2026-02-08T18:54:19.386209+00:00",
+  "integrity_hash": "0f4f280e6bf3de7027abfcc95278f0976509f1cfef2ac0772c5e1bdbc26ba4e2",
+  "invariante_i9": true,
+  "auto_apply": false
+}

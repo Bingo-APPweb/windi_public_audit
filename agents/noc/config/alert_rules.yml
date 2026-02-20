@@ -1,0 +1,172 @@
+# WINDI NOC - Alert Rules
+
+groups:
+  # ============================================
+  # INFRASTRUCTURE ALERTS
+  # ============================================
+  - name: infrastructure
+    rules:
+      # High CPU Usage
+      - alert: HighCpuUsage
+        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 5m
+        labels:
+          severity: warning
+          team: noc
+        annotations:
+          summary: "High CPU usage detected"
+          description: "CPU usage is above 80% on {{ $labels.instance }} (current: {{ $value | printf \"%.1f\" }}%)"
+
+      - alert: CriticalCpuUsage
+        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 95
+        for: 2m
+        labels:
+          severity: critical
+          team: noc
+        annotations:
+          summary: "Critical CPU usage"
+          description: "CPU usage is above 95% on {{ $labels.instance }} (current: {{ $value | printf \"%.1f\" }}%)"
+
+      # Memory Usage
+      - alert: HighMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+          team: noc
+        annotations:
+          summary: "High memory usage"
+          description: "Memory usage is above 80% on {{ $labels.instance }} (current: {{ $value | printf \"%.1f\" }}%)"
+
+      - alert: CriticalMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 95
+        for: 2m
+        labels:
+          severity: critical
+          team: noc
+        annotations:
+          summary: "Critical memory usage"
+          description: "Memory usage is above 95% on {{ $labels.instance }}"
+
+      # Disk Usage
+      - alert: HighDiskUsage
+        expr: (1 - (node_filesystem_avail_bytes{fstype!~"tmpfs|overlay"} / node_filesystem_size_bytes{fstype!~"tmpfs|overlay"})) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+          team: noc
+        annotations:
+          summary: "High disk usage"
+          description: "Disk usage is above 80% on {{ $labels.instance }}:{{ $labels.mountpoint }}"
+
+      - alert: CriticalDiskUsage
+        expr: (1 - (node_filesystem_avail_bytes{fstype!~"tmpfs|overlay"} / node_filesystem_size_bytes{fstype!~"tmpfs|overlay"})) * 100 > 95
+        for: 2m
+        labels:
+          severity: critical
+          team: noc
+        annotations:
+          summary: "Critical disk usage"
+          description: "Disk usage is above 95% on {{ $labels.instance }}:{{ $labels.mountpoint }}"
+
+  # ============================================
+  # SERVICE ALERTS
+  # ============================================
+  - name: services
+    rules:
+      # Service Down
+      - alert: ServiceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+          team: noc
+        annotations:
+          summary: "Service is down"
+          description: "{{ $labels.job }} on {{ $labels.instance }} is down"
+
+      # NOC Agent Health
+      - alert: NocAgentUnhealthy
+        expr: windi_noc_health != 1
+        for: 2m
+        labels:
+          severity: warning
+          team: noc
+        annotations:
+          summary: "NOC Agent unhealthy"
+          description: "WINDI NOC Agent health check failed"
+
+      # ISP Agent Unreachable
+      - alert: IspAgentUnreachable
+        expr: up{job="isp-agent"} == 0
+        for: 2m
+        labels:
+          severity: warning
+          team: noc
+        annotations:
+          summary: "ISP Agent unreachable"
+          description: "Cannot reach ISP Agent - data collection may be affected"
+
+  # ============================================
+  # NETWORK ALERTS
+  # ============================================
+  - name: network
+    rules:
+      # High Network Traffic
+      - alert: HighNetworkTrafficIn
+        expr: rate(node_network_receive_bytes_total{device!~"lo|veth.*|docker.*|br-.*"}[5m]) * 8 / 1024 / 1024 > 800
+        for: 5m
+        labels:
+          severity: warning
+          team: noc
+        annotations:
+          summary: "High inbound network traffic"
+          description: "Network inbound traffic is above 800 Mbps on {{ $labels.instance }}:{{ $labels.device }}"
+
+      - alert: HighNetworkTrafficOut
+        expr: rate(node_network_transmit_bytes_total{device!~"lo|veth.*|docker.*|br-.*"}[5m]) * 8 / 1024 / 1024 > 800
+        for: 5m
+        labels:
+          severity: warning
+          team: noc
+        annotations:
+          summary: "High outbound network traffic"
+          description: "Network outbound traffic is above 800 Mbps on {{ $labels.instance }}:{{ $labels.device }}"
+
+      # Network Errors
+      - alert: NetworkErrors
+        expr: rate(node_network_receive_errs_total[5m]) + rate(node_network_transmit_errs_total[5m]) > 10
+        for: 5m
+        labels:
+          severity: warning
+          team: noc
+        annotations:
+          summary: "Network errors detected"
+          description: "Network errors detected on {{ $labels.instance }}:{{ $labels.device }}"
+
+  # ============================================
+  # ANOMALY ALERTS
+  # ============================================
+  - name: anomalies
+    rules:
+      # Anomaly Detected (from NOC Agent)
+      - alert: AnomalyDetected
+        expr: windi_noc_anomaly_score > 0.8
+        for: 2m
+        labels:
+          severity: warning
+          team: noc
+        annotations:
+          summary: "Anomaly detected"
+          description: "NOC Agent detected anomaly with score {{ $value | printf \"%.2f\" }}"
+
+      # Prediction: Failure Imminent
+      - alert: PredictedFailure
+        expr: windi_noc_failure_probability > 0.7
+        for: 5m
+        labels:
+          severity: warning
+          team: noc
+        annotations:
+          summary: "Failure predicted"
+          description: "NOC Agent predicts failure with {{ $value | printf \"%.0f\" }}% probability"

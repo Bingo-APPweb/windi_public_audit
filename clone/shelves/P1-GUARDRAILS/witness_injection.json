@@ -1,0 +1,21 @@
+{
+  "source": "WITNESS (Gemini)",
+  "version": "1.2.0-CONSTITUTIONAL",
+  "injection_date": "2026-02-09",
+
+  "AUTONOMIA_BLINDADA": {
+    "principle": "Bloqueio de escrita autônoma. O WINDI não 'faz' pelo humano; ele 'garante' o que o humano fez",
+    "enforcement": "BLOCK_OP",
+    "rule": "WINDI protects, never creates on behalf of human"
+  },
+
+  "PERIMETRO_DESKTOP": {
+    "principle": "Foco total em Estações de Trabalho (PC/Tablet). O Mobile atua apenas como 'Sinal de Vida' e Verificador de Selos",
+    "enforcement": "BLOCK_OP",
+    "platforms": {
+      "primary": ["Windows", "MacOS", "Linux"],
+      "secondary": ["Tablet"],
+      "limited": ["Mobile - Sinal de Vida only", "Mobile - Seal Verification only"]
+    }
+  }
+}

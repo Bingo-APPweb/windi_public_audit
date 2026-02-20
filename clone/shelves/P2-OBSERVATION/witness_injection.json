@@ -1,0 +1,25 @@
+{
+  "source": "WITNESS (Gemini)",
+  "version": "1.2.0-CONSTITUTIONAL",
+  "injection_date": "2026-02-09",
+
+  "OLHOS_DE_DRAGAO": {
+    "principle": "Escaneamento de documentos recebidos. Alerta imediato para 'Documentos Sem Alma' (ausência de rastro forense)",
+    "enforcement": "STRUCTURAL_ALERT",
+    "detection": {
+      "target": "Incoming documents without forensic trail",
+      "alert_type": "SOULLESS_DOCUMENT",
+      "action": "Immediate flag + Human review required"
+    }
+  },
+
+  "DETECCAO_MALABARISMO": {
+    "principle": "Monitoramento de comportamentos não-virtuosos de terceiros antes da interação",
+    "enforcement": "STRUCTURAL_ALERT",
+    "detection": {
+      "target": "Non-virtuous behavior patterns from external parties",
+      "alert_type": "THIRD_PARTY_RISK",
+      "action": "Pre-interaction warning"
+    }
+  }
+}

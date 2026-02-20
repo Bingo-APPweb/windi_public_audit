@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-A4 Desk BABEL - Tiptap Edition v4.7-gov
+A4 Desk BABEL - Tiptap Edition v4.7.1-gov
 WINDI Publishing House - Torre de Babel Revertida
 VERSION 4.3 - 29 JAN 2026
 
-CHANGELOG v4.7-gov:
+CHANGELOG v4.7.1-gov:
 - Mein Profil: Modal para editar dados do usuário
 - Preview antes de Einfügen
 - Human Authorship Notice no PDF
@@ -51,7 +51,7 @@ except Exception as e:
     print(f"⚠ WINDI Print Layer not available: {e}")
 from pathlib import Path
 from functools import wraps
-from flask import Flask, request, jsonify, send_file, render_template_string, send_from_directory, session
+from flask import Flask, request, jsonify, send_file, render_template_string, send_from_directory, session, redirect
 
 sys.path.insert(0, "/opt/windi/a4desk-editor/intent_parser")
 try:
@@ -72,6 +72,16 @@ try:
 except Exception as e:
     ISP_RESOLVER_AVAILABLE = False
     print(f"⚠ ISP Resolver not available: {e}")
+
+# Phase 5: WINDI Agent Identity Layer v1.0
+sys.path.insert(0, "/opt/windi/a4desk-editor")
+try:
+    from windi_agent_identity import build_system_prompt
+    WINDI_AGENT_IDENTITY_AVAILABLE = True
+    print("✓ WINDI Agent Identity loaded")
+except Exception as e:
+    WINDI_AGENT_IDENTITY_AVAILABLE = False
+    print(f"⚠️WINDI Agent Identity not available: {e}")
 
 sys.path.insert(0, '/opt/windi/template_registry')
 
@@ -608,12 +618,60 @@ def api_v2_export(doc_id, fmt):
                 tmp_html_path, tmp_pdf_path
             ], check=True, timeout=30)
 
-            return send_file(
+            # ═══════════════════════════════════════════════════════════════
+            # WS-1: Ledger Integration — Register export in Forensic Ledger
+            # ═══════════════════════════════════════════════════════════════
+            ws1_receipt_id = None
+            ws1_content_hash = None
+            ws1_bundle_hash = None
+            try:
+                from windi_hash import compute_content_hash, compute_bundle_hash
+                from ledger_bridge import register_in_ledger, seal_bundle
+
+                ws1_content_hash = compute_content_hash(doc['content'] or '')
+                ws1_bundle_hash = compute_bundle_hash(tmp_pdf_path)
+                ws1_bundle_size = os.path.getsize(tmp_pdf_path)
+
+                result = register_in_ledger(
+                    doc_id=doc_id,
+                    doc_name=title,
+                    doc_type='doc',
+                    content_hash=ws1_content_hash,
+                    governance_level='LOW',
+                    sge_score=0.0,
+                    template_id=None,
+                    export_format='pdf'
+                )
+
+                if result['success']:
+                    ws1_receipt_id = result['receipt'].get('entry_id') or result['receipt'].get('id')
+                    seal_result = seal_bundle(ws1_receipt_id, ws1_bundle_hash, ws1_bundle_size)
+                    if not seal_result.get('success'):
+                        print(f"[WS-1] Bundle seal warning: {seal_result.get('error')}")
+                else:
+                    print(f"[WS-1] Ledger warning: {result.get('error')}")
+            except Exception as e:
+                import traceback
+                print(f"[WS-1] Ledger integration error (export NOT affected): {e}")
+                traceback.print_exc()
+            # ═══════════════════════════════════════════════════════════════
+            # End WS-1 Ledger Integration
+            # ═══════════════════════════════════════════════════════════════
+
+            response = send_file(
                 tmp_pdf_path,
                 mimetype='application/pdf',
                 as_attachment=True,
                 download_name=f'{safe_title}.pdf'
             )
+            # Add WS-1 headers for receipt info
+            if ws1_receipt_id:
+                response.headers['X-WINDI-Receipt-ID'] = ws1_receipt_id
+            if ws1_content_hash:
+                response.headers['X-WINDI-Content-Hash'] = ws1_content_hash
+            if ws1_bundle_hash:
+                response.headers['X-WINDI-Bundle-Hash'] = ws1_bundle_hash
+            return response
         except Exception as e:
             return jsonify({'error': f'PDF generation failed: {str(e)}'}), 500
         finally:
@@ -1124,9 +1182,14 @@ def generate_qr_base64(data):
     img.save(buffer, format='PNG')
     return base64.b64encode(buffer.getvalue()).decode()
 
+@app.route('/health')
+def health_root():
+    """Root health for Sentinel/Desktop."""
+    return jsonify({"status": "ok", "service": "windi-babel", "version": "4.7.1-gov", "protocol": "three-dragons", "i9": "active"})
+
 @app.route('/api/health')
 def health():
-    return jsonify({"status": "healthy", "service": "A4 Desk BABEL v4.7-gov", "version": "4.6", "compliance": ["EU AI Act", "BSI", "DSGVO"]})
+    return jsonify({"status": "healthy", "service": "A4 Desk BABEL v4.7.1-gov", "version": "4.6", "compliance": ["EU AI Act", "BSI", "DSGVO"]})
 
 # ═══════════════════════════════════════════════════════════════
 # WSG - WINDI Surface Guard v0.1.1
@@ -1395,7 +1458,7 @@ def api_reauth():
     return jsonify({"error": result}), 401
 
 # ============================================
-# v4.7-gov NEW: Profile Update Endpoint
+# v4.7.1-gov NEW: Profile Update Endpoint
 # ============================================
 @app.route('/api/auth/profile', methods=['PUT'])
 def api_update_profile():
@@ -2009,7 +2072,7 @@ def export_document(doc_id, fmt):
             traceback.print_exc()
     save_governance_audit(get_db, doc_id, governance_stats, structure_check, receipt_id, institutional_profile)
     # ========== END PHASE 3 ==========
-    # v4.7-gov: Human Authorship Notice
+    # v4.7.1-gov: Human Authorship Notice
     # v4.8: MINIMAL Human Authorship Notice (single line, discrete)
     human_authorship_notice = """
     <div style="font-size:7pt;color:#999;text-align:center;margin:10pt 0;padding:5pt 0;border-top:0.5pt solid #ddd;">
@@ -2139,10 +2202,363 @@ def export_document(doc_id, fmt):
             except Exception as e:
                 print(f"[WINDI] Export envelope error: {e}", flush=True)
         # === END WINDI ===
-        return send_file(output_path, as_attachment=True, download_name=f"{title}.{fmt}", mimetype=mime_types.get(fmt, 'application/octet-stream'))
+        # ═══════════════════════════════════════════════════════════════
+        # WS-1: Ledger Integration — Register export in Forensic Ledger
+        # ═══════════════════════════════════════════════════════════════
+        ws1_receipt_id = None
+        ws1_content_hash = None
+        ws1_bundle_hash = None
+        if fmt == 'pdf':
+            try:
+                from windi_hash import compute_content_hash, compute_bundle_hash
+                from ledger_bridge import register_in_ledger, seal_bundle
+
+                ws1_content_hash = compute_content_hash(content_html or '')
+                ws1_bundle_hash = compute_bundle_hash(output_path)
+                ws1_bundle_size = os.path.getsize(output_path)
+
+                result = register_in_ledger(
+                    doc_id=doc_id,
+                    doc_name=title,
+                    doc_type='doc',
+                    content_hash=ws1_content_hash,
+                    governance_level=receipt_data.get('governance_level', 'LOW'),
+                    sge_score=0.0,
+                    template_id=template_id if template_id != 'unknown' else None,
+                    export_format='pdf'
+                )
+
+                if result['success']:
+                    ws1_receipt_id = result['receipt'].get('entry_id') or result['receipt'].get('id')
+                    seal_result = seal_bundle(ws1_receipt_id, ws1_bundle_hash, ws1_bundle_size)
+                    if not seal_result.get('success'):
+                        print(f"[WS-1] Bundle seal warning: {seal_result.get('error')}")
+                else:
+                    print(f"[WS-1] Ledger warning: {result.get('error')}")
+            except Exception as e:
+                print(f"[WS-1] Ledger integration error (export NOT affected): {e}")
+        # ═══════════════════════════════════════════════════════════════
+        # End WS-1 Ledger Integration
+        # ═══════════════════════════════════════════════════════════════
+        response = send_file(output_path, as_attachment=True, download_name=f"{title}.{fmt}", mimetype=mime_types.get(fmt, 'application/octet-stream'))
+        if ws1_receipt_id:
+            response.headers['X-WINDI-Receipt-ID'] = ws1_receipt_id
+        if ws1_content_hash:
+            response.headers['X-WINDI-Content-Hash'] = ws1_content_hash
+        if ws1_bundle_hash:
+            response.headers['X-WINDI-Bundle-Hash'] = ws1_bundle_hash
+        return response
     finally:
         if os.path.exists(html_path):
             os.unlink(html_path)
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CONSTITUTIONAL LOCAL ROUTER v1.0 — 12 Feb 2026
+# Resolve localmente o que NAO precisa de LLM/Gateway
+# Soberania: 100% — Zero dependencia de BigTech KEYs
+# "AI processes. Human decides. WINDI guarantees."
+# ═══════════════════════════════════════════════════════════════════════════════
+
+TUTORIAL_PATTERNS = {
+    'de': ["wie kann ich", "wie nutze ich", "wie geht", "wie funktioniert",
+           "wie verwende ich", "wie benutze ich", "zeig mir", "anleitung",
+           "wie mache ich", "wo finde ich", "wie starte ich", "wie oeffne ich"],
+    'en': ["how to", "how do i", "how can i", "how does", "show me how",
+           "teach me", "guide me", "where do i find", "how do i use"],
+    'pt': ["como usar", "como faco", "como posso", "como funciona",
+           "como utilizar", "me ensine", "me mostre", "onde encontro",
+           "como configurar", "como ativar"],
+}
+
+IDENTITY_PATTERNS = {
+    'de': ["wer bist du", "was bist du", "was machst du", "was kannst du",
+           "wer sind sie", "was sind sie", "stell dich vor"],
+    'en': ["who are you", "what are you", "what do you do", "what can you do",
+           "introduce yourself"],
+    'pt': ["quem e voce", "o que voce e", "o que voce faz", "quem es tu",
+           "se apresente", "o que e windi"],
+}
+
+_TEMPLATE_KW = ["template", "vorlage", "modelo", "templates", "vorlagen"]
+_EDITOR_KW = ["editor", "babel", "toolbar", "formatierung", "formatting", "formatacao"]
+_SGE_KW = ["sge", "analyse", "scan", "governance", "risk", "risco", "analise"]
+
+
+def constitutional_local_router(message, lang='de'):
+    """
+    CONSTITUTIONAL LOCAL ROUTER
+    Resolve perguntas localmente SEM chamar LLM.
+    Retorna dict com resposta ou None (= passa para Gateway).
+    """
+    text = message.lower().strip()
+
+    # --- TUTORIAL MODE ---
+    is_tutorial = any(p in text for patterns in TUTORIAL_PATTERNS.values()
+                      for p in patterns)
+    if is_tutorial:
+        topic = _detect_tutorial_topic(text)
+        response = _build_tutorial_response(topic, lang)
+        print(f"[WINDI Router] TUTORIAL mode: topic={topic}, lang={lang}", flush=True)
+        return {
+            "response": response,
+            "dragon": "windi-local",
+            "model": "constitutional-router-v1",
+            "is_document": False,
+            "routed_by": "constitutional-local",
+            "skill": "tutorial-mode"
+        }
+
+    # --- IDENTITY MODE ---
+    is_identity = any(p in text for patterns in IDENTITY_PATTERNS.values()
+                      for p in patterns)
+    if is_identity:
+        response = _build_identity_response(lang)
+        print(f"[WINDI Router] IDENTITY mode: lang={lang}", flush=True)
+        return {
+            "response": response,
+            "dragon": "windi-local",
+            "model": "constitutional-router-v1",
+            "is_document": False,
+            "routed_by": "constitutional-local",
+            "skill": "product-identity"
+        }
+
+    # --- NENHUM MATCH LOCAL -> passa para Gateway/LLM ---
+    return None
+
+
+def _detect_tutorial_topic(text):
+    if any(k in text for k in _TEMPLATE_KW):
+        return "templates"
+    if any(k in text for k in _EDITOR_KW):
+        return "editor"
+    if any(k in text for k in _SGE_KW):
+        return "sge"
+    return "general"
+
+
+def _build_tutorial_response(topic, lang):
+    tutorials = {
+        "templates": {
+            "de": """So nutzen Sie die Templates:
+
+1. Klicken Sie in der Seitenleiste auf "Templates"
+2. Waehlen Sie das gewuenschte Template (z.B. Bericht, Memo, Bescheid)
+3. Das Template wird in den Editor eingefuegt
+4. Felder in [eckigen Klammern] muessen Sie ausfuellen
+5. Speichern Sie mit dem Speicher-Button
+
+Verfuegbare Templates: Berichte, Memoranden, Bescheide, Genehmigungen, Ablehnungen.
+
+Welches Template moechten Sie verwenden?
+
+Human decides. I structure.""",
+            "en": """How to use templates:
+
+1. Click "Templates" in the sidebar
+2. Select the template you need (e.g. Report, Memo, Decision)
+3. The template is inserted into the editor
+4. Fill in fields marked with [brackets]
+5. Save using the save button
+
+Available templates: Reports, Memos, Decisions, Approvals, Rejections.
+
+Which template would you like to use?
+
+Human decides. I structure.""",
+            "pt": """Como usar os templates:
+
+1. Clique em "Templates" na barra lateral
+2. Selecione o template desejado (ex: Relatorio, Memo, Decisao)
+3. O template sera inserido no editor
+4. Preencha os campos marcados com [colchetes]
+5. Salve usando o botao de salvar
+
+Templates disponiveis: Relatorios, Memorandos, Decisoes, Aprovacoes, Rejeicoes.
+
+Qual template voce gostaria de usar?
+
+Human decides. I structure.""",
+        },
+        "editor": {
+            "de": """Der BABEL Editor - Kurzanleitung:
+
+1. Schreiben: Tippen Sie direkt im Editorbereich
+2. Formatieren: Nutzen Sie die Toolbar (Fett, Kursiv, Listen)
+3. Templates: Seitenleiste rechts
+4. Chat: Ich bin hier links - fragen Sie mich alles
+5. Speichern: Button oben oder Ctrl+S
+6. Exportieren: PDF, DOCX ueber das Export-Menue
+
+Human decides. I structure.""",
+            "en": """BABEL Editor - Quick guide:
+
+1. Write: Type directly in the editor area
+2. Format: Use the toolbar (Bold, Italic, Lists)
+3. Templates: Right sidebar
+4. Chat: I'm here on the left - ask me anything
+5. Save: Button above or Ctrl+S
+6. Export: PDF, DOCX via the export menu
+
+Human decides. I structure.""",
+            "pt": """Editor BABEL - Guia rapido:
+
+1. Escrever: Digite diretamente na area do editor
+2. Formatar: Use a toolbar (Negrito, Italico, Listas)
+3. Templates: Barra lateral direita
+4. Chat: Estou aqui a esquerda - me pergunte qualquer coisa
+5. Salvar: Botao acima ou Ctrl+S
+6. Exportar: PDF, DOCX pelo menu de exportacao
+
+Human decides. I structure.""",
+        },
+        "sge": {
+            "de": """SGE (Semantic Governance Engine) - So funktioniert die Analyse:
+
+1. Oeffnen oder erstellen Sie ein Dokument
+2. Klicken Sie auf "SGE Scan" oder "Analysieren"
+3. Die Engine prueft 6 semantische Schichten:
+   - Lexikalisch (Wortwahl)
+   - Syntaktisch (Satzstruktur)
+   - Semantisch (Bedeutung)
+   - Pragmatisch (Kontext)
+   - Regulatorisch (Compliance)
+   - Institutionell (Anforderungen)
+4. Sie erhalten einen Risk Score (R0-R5)
+5. SIE entscheiden, was zu tun ist
+
+Human decides. I structure.""",
+            "en": """SGE (Semantic Governance Engine) - How analysis works:
+
+1. Open or create a document
+2. Click "SGE Scan" or "Analyze"
+3. The engine checks 6 semantic layers:
+   - Lexical (word choice)
+   - Syntactic (sentence structure)
+   - Semantic (meaning)
+   - Pragmatic (context)
+   - Regulatory (compliance)
+   - Institutional (requirements)
+4. You receive a Risk Score (R0-R5)
+5. YOU decide what to do
+
+Human decides. I structure.""",
+            "pt": """SGE (Semantic Governance Engine) - Como funciona:
+
+1. Abra ou crie um documento
+2. Clique em "SGE Scan" ou "Analisar"
+3. O motor verifica 6 camadas semanticas:
+   - Lexical (escolha de palavras)
+   - Sintatica (estrutura de frases)
+   - Semantica (significado)
+   - Pragmatica (contexto)
+   - Regulatoria (compliance)
+   - Institucional (requisitos)
+4. Voce recebe um Risk Score (R0-R5)
+5. VOCE decide o que fazer
+
+Human decides. I structure.""",
+        },
+        "general": {
+            "de": """Ich kann Ihnen bei Folgendem helfen:
+
+- Templates verwenden und anpassen
+- Dokumente erstellen und formatieren
+- SGE-Analysen verstehen
+- Export in PDF oder DOCX
+- Governance-Fragen beantworten
+
+Was moechten Sie genauer wissen?
+
+Human decides. I structure.""",
+            "en": """I can help you with:
+
+- Using and customizing templates
+- Creating and formatting documents
+- Understanding SGE analyses
+- Exporting to PDF or DOCX
+- Answering governance questions
+
+What would you like to know more about?
+
+Human decides. I structure.""",
+            "pt": """Posso ajudar com:
+
+- Usar e personalizar templates
+- Criar e formatar documentos
+- Entender analises SGE
+- Exportar para PDF ou DOCX
+- Responder perguntas de governanca
+
+O que gostaria de saber mais?
+
+Human decides. I structure.""",
+        },
+    }
+    topic_responses = tutorials.get(topic, tutorials["general"])
+    return topic_responses.get(lang, topic_responses["de"])
+
+
+def _build_identity_response(lang):
+    responses = {
+        "de": """Ich bin WINDI - We Invite New Decision Intelligence.
+
+Eine Pre-AI Governance Schicht, die Informationen strukturiert und Entscheidungsprozesse unterstuetzt - immer mit menschlicher Souveraenitaet.
+
+Was ich tue:
+- Informationen transparent strukturieren
+- Optionen und Perspektiven praesentieren
+- Dokumente und Analysen organisieren
+- Templates bereitstellen
+
+Was ich NICHT tue:
+- Entscheidungen fuer Sie treffen
+- Fakten erfinden
+- Meine Autonomie eskalieren
+- Aktionen ohne Ihre Genehmigung ausfuehren
+
+AI processes. Human decides. WINDI guarantees.""",
+        "en": """I am WINDI - We Invite New Decision Intelligence.
+
+A Pre-AI Governance Layer that structures information and supports decision processes - always maintaining human sovereignty.
+
+What I do:
+- Structure information transparently
+- Present options and perspectives
+- Organize documents and analyses
+- Provide templates
+
+What I do NOT do:
+- Make decisions for you
+- Invent facts
+- Escalate my own autonomy
+- Execute actions without your approval
+
+AI processes. Human decides. WINDI guarantees.""",
+        "pt": """Sou WINDI - We Invite New Decision Intelligence.
+
+Uma camada de governanca Pre-AI que estrutura informacoes e apoia processos decisorios - sempre mantendo a soberania humana.
+
+O que faco:
+- Estruturo informacoes de forma transparente
+- Apresento opcoes e perspectivas
+- Organizo documentos e analises
+- Ofereco templates
+
+O que NAO faco:
+- Tomar decisoes por voce
+- Inventar fatos
+- Escalar minha autonomia
+- Executar acoes sem aprovacao humana
+
+AI processes. Human decides. WINDI guarantees.""",
+    }
+    return responses.get(lang, responses["de"])
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# END CONSTITUTIONAL LOCAL ROUTER
+# ═══════════════════════════════════════════════════════════════════════════════
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
@@ -2156,6 +2572,14 @@ def chat():
         intent_result = INTENT_HANDLER.handle_message(message, request.remote_addr)
         if intent_result['handled']:
             return jsonify(intent_result)
+    # ═══ CONSTITUTIONAL LOCAL ROUTER (12 Feb 2026) ═══
+    # Resolve tutorials, identidade e perguntas simples LOCALMENTE
+    # Sem chamar Gateway/LLM = 100% soberano, zero KEY
+    local_response = constitutional_local_router(message, data.get('lang', 'de'))
+    if local_response:
+        print(f"[WINDI] Constitutional Router handled locally: skill={local_response.get('skill')}", flush=True)
+        return jsonify(local_response)
+    # ═══ END CONSTITUTIONAL ROUTER ═══
     try:
         payload = {"message": message, "context": context, "dragon": dragon, "lang": data.get("lang", "de")}
         if isp_profile:
@@ -2264,6 +2688,11 @@ def governance_api_proxy(subpath):
 @app.route('/governance')
 def governance_dashboard():
     return send_from_directory(STATIC_DIR, 'governance-command-center.html')
+
+@app.route('/governance/')
+def governance_dashboard_trailing():
+    """WS-7: Redirect trailing slash to canonical URL."""
+    return redirect('/governance', code=301)
 # === END Governance Dashboard ===
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -3368,27 +3797,28 @@ VERIFY_HTML_TEMPLATE = '''
 '''
 
 # Using raw string (r-prefix) for JavaScript regex patterns
-BABEL_HTML = r'''<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>A4 Desk BABEL v4.7-gov</title><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><link rel="stylesheet" href="/static/windi_noir_babel.css"><script src="/wsg/wsg-init.js"></script></head><body data-theme="dark">
+BABEL_HTML = r'''<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>A4 Desk BABEL v4.7.1-gov</title><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><link rel="stylesheet" href="/static/windi_noir_babel.css"><script src="/wsg/wsg-init.js"></script></head><body data-theme="dark">
 
 <div class="login-overlay" id="loginOverlay"><div class="login-modal"><div class="login-header"><div class="icon">🏛️</div><h1>WINDI Publishing House</h1><p>Human Identity Card</p></div><div class="migration-notice" id="migrationNotice" style="display:none"><strong>ℹ️ System aktualisiert.</strong> Zur Nutzung ergänzen Sie Ihre Mitarbeiter-ID und Passwort.</div><form onsubmit="handleLogin(event)"><div class="form-section"><div class="form-section-title"><i class="fas fa-user"></i> Persönliche Daten</div><div class="form-row"><div class="form-field"><label>Name <span class="required">*</span></label><input type="text" id="loginFullName" required placeholder="Max Mustermann"></div><div class="form-field"><label>Mitarbeiter-ID <span class="required">*</span></label><input type="text" id="loginEmployeeId" required placeholder="EMP-2024-0042"></div></div><div class="form-row"><div class="form-field"><label>Abteilung</label><input type="text" id="loginDepartment" placeholder="Bauamt"></div><div class="form-field"><label>Position</label><input type="text" id="loginPosition" placeholder="Sachbearbeiter"></div></div><div class="form-row single"><div class="form-field"><label>E-Mail</label><input type="email" id="loginEmail" placeholder="max@behoerde.de"></div></div><div class="form-row single"><div class="form-field"><label>Passwort <span class="required">*</span></label><input type="password" id="loginPassword" required placeholder="Ihr Passwort"><small>Bei Erstanmeldung wird dieses Passwort gespeichert.</small></div></div></div><div class="form-section"><div class="form-section-title"><i class="fas fa-sitemap"></i> Hierarchie (optional)</div><div class="form-row"><div class="form-field"><label>Vorgesetzter-ID</label><input type="text" id="loginSupervisorId" placeholder="EMP-2024-0001"></div><div class="form-field"><label>Vorgesetzter Name</label><input type="text" id="loginSupervisorName" placeholder="Dr. Schmidt"></div></div></div><button type="submit" class="login-btn"><i class="fas fa-sign-in-alt"></i> Anmelden</button><div class="login-principle">🔒 KI verarbeitet · Mensch entscheidet · WINDI garantiert.<br><span style="font-size:11px;opacity:0.6;">AI processes · Human decides · WINDI guarantees.</span></div></form></div></div>
 
 <div class="reauth-overlay" id="reauthOverlay"><div class="reauth-modal"><h3><i class="fas fa-shield-alt"></i> Re-Authentifizierung</h3><p>Passwort bestätigen:</p><input type="password" id="reauthPassword" placeholder="Passwort"><div class="reauth-buttons"><button class="btn-reauth-cancel" onclick="hideReauth()">Abbrechen</button><button class="btn-reauth-confirm" onclick="confirmReauth()">Bestätigen</button></div></div></div>
 
-<!-- v4.7-gov: Profile Modal -->
+<!-- v4.7.1-gov: Profile Modal -->
 <div class="profile-overlay" id="profileOverlay"><div class="profile-modal"><h3><i class="fas fa-user-edit"></i> Mein Profil</h3><div class="profile-form"><div class="form-field"><label>Name</label><input type="text" id="profileFullName" readonly></div><div class="form-field"><label>Mitarbeiter-ID</label><input type="text" id="profileEmployeeId" readonly></div><div class="form-field"><label>Abteilung</label><input type="text" id="profileDepartment" placeholder="Abteilung eingeben..."></div><div class="form-field"><label>Position</label><input type="text" id="profilePosition" placeholder="Position eingeben..."></div><div class="form-field"><label>E-Mail</label><input type="email" id="profileEmail" placeholder="email@beispiel.de"></div><div class="form-field"><label>Vorgesetzter-ID</label><input type="text" id="profileSupervisorId" placeholder="EMP-..."></div><div class="form-field"><label>Vorgesetzter Name</label><input type="text" id="profileSupervisorName" placeholder="Name des Vorgesetzten"></div></div><div class="profile-buttons"><button class="btn-profile-cancel" onclick="hideProfile()">Abbrechen</button><button class="btn-profile-save" onclick="saveProfile()"><i class="fas fa-save"></i> Speichern</button></div></div></div>
 
-<!-- v4.7-gov: Preview Modal -->
+<!-- v4.7.1-gov: Preview Modal -->
 <div class="preview-overlay" id="previewOverlay"><div class="preview-modal"><h3><i class="fas fa-eye"></i> Vorschau</h3><div class="preview-content" id="previewContent"></div><div class="preview-buttons"><button class="btn-preview-cancel" onclick="hidePreview()">Abbrechen</button><button class="btn-preview-insert" onclick="confirmInsert()"><i class="fas fa-plus"></i> Einfügen</button></div></div></div>
 
 <div class="template-overlay" id="templateOverlay"><div class="template-modal"><h3><i class="fas fa-file-alt"></i> Template auswählen</h3><div class="template-grid" id="templateGrid"><div style="text-align:center;padding:20px"><i class="fas fa-spinner fa-spin"></i> Laden...</div></div><div class="template-buttons"><button class="btn-template-cancel" onclick="hideTemplateModal()">Abbrechen</button><button class="btn-template-apply" onclick="applySelectedTemplate()"><i class="fas fa-check"></i> Anwenden</button></div></div></div><div class="session-bar" id="sessionBar" style="display:none"><div class="user-info"><span><i class="fas fa-user-circle"></i> <span id="sessionUserName">-</span> | <span id="sessionUserId">-</span></span><button class="btn-profile" onclick="showProfile()"><i class="fas fa-user-edit"></i> Mein Profil</button><button class="btn-profile" onclick="window.location.href='/governance'" style="background:rgba(210,153,34,.2);border-color:rgba(210,153,34,.4);"><i class="fas fa-shield-alt"></i> Governance</button></div><div class="timer" id="sessionTimer"><i class="fas fa-clock"></i> <span id="sessionTimeLeft">10:00</span></div><button class="btn-logout" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Abmelden</button></div>
 
-<div class="app-content" id="appContent" style="display:none"><button class="sidebar-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button><aside class="sidebar" id="sidebar"><div class="logo"><i class="fas fa-landmark"></i><div><h1>A4 Desk BABEL</h1><small>v4.7-gov</small></div></div><div class="lang-bar" id="langBar"></div><button class="btn-new" onclick="newDoc()"><i class="fas fa-plus"></i> Neues Dokument</button><div class="doc-list" id="docList"></div></aside><div class="main-area"><div class="top-bar"><span class="top-bar-title">A4 Desk BABEL v4.7-gov</span><span style="font-size:10px;margin-left:8px;color:#b8860b;opacity:0.7;">WINDI Verified</span><div id="statusBadge" class="status-badge status-draft">Entwurf</div><button class="theme-toggle-noir" onclick="toggleTheme()" title="Toggle Noir/Klar"><span class="toggle-thumb" id="themeThumb">🌙</span></button><div class="top-bar-actions"><button class="top-bar-btn btn-save" onclick="saveDoc()"><i class="fas fa-save"></i> Speichern</button><button class="top-bar-btn btn-finalize" onclick="finalizeDoc()"><i class="fas fa-check"></i> Abschließen</button><button class="top-bar-btn btn-delete" onclick="deleteCurrentDoc()"><i class="fas fa-trash"></i></button><button class="top-bar-btn btn-settings" onclick="togglePanel()"><i class="fas fa-cog"></i></button></div></div><div class="content-area"><div class="editor-section"><input type="text" class="title-input" id="docTitle" placeholder="Neues Dokument" title="Document under WINDI governance tracking"><div class="editor-toolbar"><button class="toolbar-btn" onclick="execCmd('bold')"><i class="fas fa-bold"></i></button><button class="toolbar-btn" onclick="execCmd('italic')"><i class="fas fa-italic"></i></button><button class="toolbar-btn" onclick="execCmd('underline')"><i class="fas fa-underline"></i></button><button class="toolbar-btn" onclick="showTemplateModal()" title="ISP Templates" style="background:#EC0016;color:#fff;font-weight:600;"><i class="fas fa-building"></i> ISP</button><button class="toolbar-btn" onclick="execCmd('insertUnorderedList')"><i class="fas fa-list-ul"></i></button><button class="toolbar-btn" onclick="execCmd('insertOrderedList')"><i class="fas fa-list-ol"></i></button></div><div id="editor" contenteditable="true"></div></div><div class="chat-section"><div class="chat-header"><i class="fas fa-dragon"></i> AI Analysis <span style="font-size:10px;opacity:0.6;">(Advisory Only)</span></div><div class="chat-messages" id="chatMessages"><div class="chat-msg chat-ai">Willkommen! Wie kann ich helfen?<div style="margin-top:8px;padding:4px 8px;background:rgba(184,134,11,0.15);border-left:2px solid #b8860b;font-size:11px;color:#b8860b;">⚖️ Human Decision Required — AI is advisory only</div></div></div><div class="chat-input-area"><textarea class="chat-textarea" id="chatInput" placeholder="Nachricht..."></textarea><div class="chat-actions"><button class="chat-send-doc" onclick="sendDocToChat()"><i class="fas fa-file-export"></i> Doc→Chat</button><button class="chat-send" onclick="sendChat()"><i class="fas fa-paper-plane"></i> Senden</button></div></div></div></div></div><aside class="settings-panel collapsed" id="settingsPanel"><div class="panel-section"><div class="panel-title"><i class="fas fa-user"></i> Autor</div><div class="human-field"><label>Name</label><input type="text" id="fieldAuthorName" readonly></div><div class="human-field"><label>ID</label><input type="text" id="fieldAuthorId" readonly></div><div class="human-field"><label>Datum</label><input type="date" id="fieldDate"><small>🔒 Nur Mensch</small></div></div><div class="witness-section"><div class="panel-title" style="color:#854d0e"><i class="fas fa-eye"></i> Prüfer</div><div class="human-field"><label>Name *</label><input type="text" id="fieldWitnessName" placeholder="Name eingeben..." list="witnessList" onchange="fillWitnessData(this.value)"><datalist id="witnessList"></datalist><small>🔒 Erforderlich</small></div><div class="human-field"><label>ID</label><input type="text" id="fieldWitnessId" placeholder="ID eingeben..."></div><div class="human-field"><label>Position</label><input type="text" id="fieldWitnessPosition" placeholder="Position eingeben..."></div><div class="human-field"><label>Beziehung</label><select id="fieldWitnessRelation"><option value="">-- Auswählen --</option><option value="supervisor">Vorgesetzter</option><option value="compliance">Compliance</option><option value="peer">Peer</option><option value="external">Extern</option></select></div></div><div class="panel-section"><div class="panel-title"><i class="fas fa-file-export"></i> Export</div><div class="export-grid"><button class="btn-export" onclick="exportDoc('odt')">ODT</button><button class="btn-export" onclick="exportDoc('docx')">DOCX</button><button class="btn-export" onclick="exportDoc('pdf')">PDF</button><button class="btn-export" onclick="exportDoc('html')">HTML</button><button class="btn-export" onclick="exportDoc('rtf')">RTF</button><button class="btn-export" onclick="exportDoc('md')">MD</button></div></div><div class="receipt-box" id="receiptBox"></div></aside><button class="panel-toggle" onclick="togglePanel()"><i class="fas fa-cog"></i></button></div>
+<div class="app-content" id="appContent" style="display:none"><button class="sidebar-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button><aside class="sidebar" id="sidebar"><div class="logo"><i class="fas fa-landmark"></i><div><h1>A4 Desk BABEL</h1><small>v4.7.1-gov</small></div></div><a href="/desktop/suite.html" class="btn-back-suite" style="display:block;margin:8px 12px 12px;padding:8px 14px;background:rgba(196,162,101,0.15);border:1px solid rgba(196,162,101,0.3);border-radius:6px;color:#c4a265;text-decoration:none;font-size:12px;font-weight:500;text-align:center;transition:all 0.2s;" onmouseover="this.style.background='rgba(196,162,101,0.25)';this.style.borderColor='#c4a265'" onmouseout="this.style.background='rgba(196,162,101,0.15)';this.style.borderColor='rgba(196,162,101,0.3)'" title="Zurück zur Suite / Back to Suite"><i class="fas fa-arrow-left" style="margin-right:6px;"></i>Suite</a><div class="lang-bar" id="langBar"></div><button class="btn-new" onclick="newDoc()"><i class="fas fa-plus"></i> Neues Dokument</button><div class="doc-list" id="docList"></div></aside><div class="main-area"><div class="top-bar"><span class="top-bar-title">A4 Desk BABEL v4.7.1-gov</span><span style="font-size:10px;margin-left:8px;color:#b8860b;opacity:0.7;">WINDI Verified</span><div id="statusBadge" class="status-badge status-draft">Entwurf</div><div id="sealStatus" class="seal-status" style="display:none;"><i class="fas fa-stamp seal-icon"></i><span class="seal-id">-</span></div><button class="theme-toggle-noir" onclick="toggleTheme()" title="Toggle Noir/Klar"><span class="toggle-thumb" id="themeThumb">🌙</span></button><div class="top-bar-actions"><button class="top-bar-btn btn-save" onclick="saveDoc()"><i class="fas fa-save"></i> Speichern</button><button class="top-bar-btn btn-finalize" onclick="finalizeDoc()"><i class="fas fa-check"></i> Abschließen</button><button class="top-bar-btn btn-delete" onclick="deleteCurrentDoc()"><i class="fas fa-trash"></i></button><button class="top-bar-btn btn-settings" onclick="togglePanel()"><i class="fas fa-cog"></i></button></div></div><div class="content-area"><div class="editor-section"><input type="text" class="title-input" id="docTitle" placeholder="Neues Dokument" title="Document under WINDI governance tracking"><div class="editor-toolbar"><button class="toolbar-btn" onclick="execCmd('bold')"><i class="fas fa-bold"></i></button><button class="toolbar-btn" onclick="execCmd('italic')"><i class="fas fa-italic"></i></button><button class="toolbar-btn" onclick="execCmd('underline')"><i class="fas fa-underline"></i></button><button class="toolbar-btn" onclick="showTemplateModal()" title="ISP Templates" style="background:#EC0016;color:#fff;font-weight:600;"><i class="fas fa-building"></i> ISP</button><button class="toolbar-btn" onclick="execCmd('insertUnorderedList')"><i class="fas fa-list-ul"></i></button><button class="toolbar-btn" onclick="execCmd('insertOrderedList')"><i class="fas fa-list-ol"></i></button></div><div id="editor" contenteditable="true"></div></div><div class="chat-section"><div class="chat-header"><i class="fas fa-dragon"></i> AI Analysis <span style="font-size:10px;opacity:0.6;">(Advisory Only)</span></div><div class="chat-messages" id="chatMessages"><div class="chat-msg chat-ai">Willkommen! Wie kann ich helfen?<div style="margin-top:8px;padding:4px 8px;background:rgba(184,134,11,0.15);border-left:2px solid #b8860b;font-size:11px;color:#b8860b;">⚖️ Human Decision Required — AI is advisory only</div></div></div><div class="chat-input-area"><textarea class="chat-textarea" id="chatInput" placeholder="Nachricht..."></textarea><div class="chat-actions"><button class="chat-send-doc" onclick="sendDocToChat()"><i class="fas fa-file-export"></i> Doc→Chat</button><button class="chat-send" onclick="sendChat()"><i class="fas fa-paper-plane"></i> Senden</button></div></div></div></div></div><aside class="settings-panel collapsed" id="settingsPanel"><div class="panel-section"><div class="panel-title"><i class="fas fa-user"></i> Autor</div><div class="human-field"><label>Name</label><input type="text" id="fieldAuthorName" readonly></div><div class="human-field"><label>ID</label><input type="text" id="fieldAuthorId" readonly></div><div class="human-field"><label>Datum</label><input type="date" id="fieldDate"><small>🔒 Nur Mensch</small></div></div><div class="witness-section"><div class="panel-title" style="color:#854d0e"><i class="fas fa-eye"></i> Prüfer</div><div class="human-field"><label>Name *</label><input type="text" id="fieldWitnessName" placeholder="Name eingeben..." list="witnessList" onchange="fillWitnessData(this.value)"><datalist id="witnessList"></datalist><small>🔒 Erforderlich</small></div><div class="human-field"><label>ID</label><input type="text" id="fieldWitnessId" placeholder="ID eingeben..."></div><div class="human-field"><label>Position</label><input type="text" id="fieldWitnessPosition" placeholder="Position eingeben..."></div><div class="human-field"><label>Beziehung</label><select id="fieldWitnessRelation"><option value="">-- Auswählen --</option><option value="supervisor">Vorgesetzter</option><option value="compliance">Compliance</option><option value="peer">Peer</option><option value="external">Extern</option></select></div></div><div class="panel-section"><div class="panel-title"><i class="fas fa-file-export"></i> Export</div><div class="export-grid"><button class="btn-export" onclick="exportDoc('odt')">ODT</button><button class="btn-export" onclick="exportDoc('docx')">DOCX</button><button class="btn-export" onclick="exportDoc('pdf')">PDF</button><button class="btn-export" onclick="exportDoc('html')">HTML</button><button class="btn-export" onclick="exportDoc('rtf')">RTF</button><button class="btn-export" onclick="exportDoc('md')">MD</button></div></div><div class="receipt-box" id="receiptBox"></div></aside><button class="panel-toggle" onclick="togglePanel()"><i class="fas fa-cog"></i></button></div>
 
 <script>
 const CONFIG={sessionTimeoutMinutes:30,warningTimeSeconds:60};
 const LANGS={de:{flag:'🇩🇪'},en:{flag:'🇬🇧'},pt:{flag:'🇧🇷'}};
 const T={de:{draft:'Entwurf',validated:'Validiert',finalized:'Abgeschlossen',witness_required:'Prüfer erforderlich'},en:{draft:'Draft',validated:'Validated',finalized:'Finalized',witness_required:'Witness required'},pt:{draft:'Rascunho',validated:'Validado',finalized:'Finalizado',witness_required:'Testemunha necessária'}};
 let currentLang='de',docId=null,sessionId=null,sessionTimer=null,sessionTimeLeft=CONFIG.sessionTimeoutMinutes*60,currentUser=null,pendingAction=null,legacyUserId=null,registeredUsers=[];
+let lastReceipt={id:null,contentHash:null,bundleHash:null};
 
 function t(k){return(T[currentLang]||T.de)[k]||k}
 
@@ -3450,19 +3880,18 @@ async function handleLogout(){
 }
 
 function showReauth(action,cb){pendingAction={action:action,callback:cb};document.getElementById('reauthPassword').value='';document.getElementById('reauthOverlay').classList.add('show');document.getElementById('reauthPassword').focus()}
-function hideReauth(){pendingAction=null;document.getElementById('reauthOverlay').classList.remove('show')}
+function hideReauth(){document.getElementById('reauthOverlay').classList.remove('show');document.getElementById('reauthPassword').value=''}
 
 async function confirmReauth(){
     const pw=document.getElementById('reauthPassword').value;
     if(!pw)return toast('Passwort erforderlich','error');
     try{
         const res=await fetch('/api/auth/reauth',{method:'POST',headers:{'Content-Type':'application/json','X-Session-ID':sessionId},body:JSON.stringify({password:pw,action:pendingAction?pendingAction.action:''})});
-        if(res.ok){const cb=pendingAction?pendingAction.callback:null;hideReauth();if(cb)cb()}
-        else{const r=await res.json();toast(r.error||'Fehler','error')}
+        if(res.ok){const cb=pendingAction?pendingAction.callback:null;pendingAction=null;hideReauth();if(cb)cb()}else{const r=await res.json();toast(r.error||'Authentifizierung fehlgeschlagen','error')}
     }catch(e){toast('Fehler','error')}
 }
 
-// v4.7-gov: Profile Functions
+// v4.7.1-gov: Profile Functions
 async function showProfile(){
     try{
         const res=await fetch('/api/auth/profile',{headers:{'X-Session-ID':sessionId}});
@@ -3503,7 +3932,7 @@ async function saveProfile(){
     }catch(e){toast('Verbindungsfehler','error')}
 }
 
-// v4.7-gov: Preview Functions
+// v4.7.1-gov: Preview Functions
 function showPreview(){
     if(!window._lastLLM){toast('Keine Antwort zum Vorschauen','warning');return}
     document.getElementById('previewContent').innerHTML=window._lastLLM.split('\n').join('<br>');
@@ -3544,7 +3973,13 @@ function fillWitnessData(name){
 function getAuthorData(){return{id:currentUser?currentUser.employee_id:'',name:currentUser?currentUser.full_name:'',employee_id:currentUser?currentUser.employee_id:'',department:currentUser?currentUser.department:'',position:currentUser?currentUser.position:''}}
 function getWitnessData(){return{name:document.getElementById('fieldWitnessName').value,id:document.getElementById('fieldWitnessId').value,position:document.getElementById('fieldWitnessPosition').value,relation:document.getElementById('fieldWitnessRelation').value}}
 
-async function newDoc(){
+async function clearWitnessFields(){
+    var wn=document.getElementById('fieldWitnessName');if(wn){wn.value='';wn.removeAttribute('readonly')}
+    var wi=document.getElementById('fieldWitnessId');if(wi){wi.value='';wi.removeAttribute('readonly')}
+    var wp=document.getElementById('fieldWitnessPosition');if(wp){wp.value='';wp.removeAttribute('readonly')}
+    var wr=document.getElementById('fieldWitnessRelation');if(wr)wr.selectedIndex=0;
+}
+async function newDoc(){clearWitnessFields();
     const res=await fetch('/api/document',{method:'POST',headers:{'Content-Type':'application/json','X-Session-ID':sessionId},body:JSON.stringify({language:currentLang,author_data:getAuthorData()})});
     const doc=await res.json();
     docId=doc.id;
@@ -3599,7 +4034,7 @@ async function loadDoc(id){
     document.getElementById('fieldDate').value=doc.human_fields?doc.human_fields.date||'':'';
     document.getElementById('fieldWitnessName').value=doc.human_fields?doc.human_fields.witness_name||'':'';
     document.getElementById('fieldWitnessId').value=doc.human_fields?doc.human_fields.witness_id||'':'';
-    updateStatus(doc.status);
+    updateStatus(doc.status);if(doc.witness){var w=doc.witness;var wn=document.getElementById('fieldWitnessName');if(wn)wn.value=w.name||'';var wi=document.getElementById('fieldWitnessId');if(wi)wi.value=w.employee_id||w.id||'';var wp=document.getElementById('fieldWitnessPosition');if(wp)wp.value=w.position||'';}else{clearWitnessFields()}if(doc.witness){var w=doc.witness;var wn=document.getElementById('fieldWitnessName');if(wn)wn.value=w.name||'';var wi=document.getElementById('fieldWitnessId');if(wi)wi.value=w.employee_id||w.id||'';var wp=document.getElementById('fieldWitnessPosition');if(wp)wp.value=w.position||'';}else{clearWitnessFields()}
     if(doc.receipt){const box=document.getElementById('receiptBox');box.innerHTML='<strong>'+doc.receipt.receipt_id+'</strong><br>Hash: '+doc.receipt.hash;box.classList.add('show')}
     else{document.getElementById('receiptBox').classList.remove('show')}
 }
@@ -3611,16 +4046,46 @@ async function loadDocs(){
 }
 
 async function deleteDocById(id){
-    if(!confirm('Loeschen?'))return;
-    const targetId=id;
-    showReauth('DELETE',async function(){
-        const res=await fetch('/api/document/'+targetId,{method:'DELETE',headers:{'X-Session-ID':sessionId}});
-        if(res.ok){loadDocs();if(docId===targetId)newDoc();toast('Geloescht','success')}
-        else{toast('Fehler beim Loeschen','error')}
-    });
+    if(!confirm('Dokument wirklich loeschen?'))return;
+    const targetId=String(id);
+    const deleteFn=async function(){
+        try{
+            const res=await fetch('/api/document/'+targetId,{method:'DELETE',headers:{'X-Session-ID':sessionId}});
+            if(res.ok){
+                await loadDocs();
+                if(docId===targetId)newDoc();
+                toast('Dokument geloescht','success');
+            }else{
+                const err=await res.json().catch(function(){return{}});
+                toast(err.error||'Fehler beim Loeschen','error');
+            }
+        }catch(e){console.error('Delete error:',e);toast('Netzwerkfehler','error')}
+    };
+    showReauth('DELETE',deleteFn);
 }
 
-function exportDoc(fmt){if(!docId)return toast('Zuerst speichern','error');window.location.href='/api/document/'+docId+'/export/'+fmt}
+async function exportDoc(fmt){
+    if(!docId)return toast('Zuerst speichern','error');
+    toast('Exportiere '+fmt.toUpperCase()+'...','success');
+    try{
+        const res=await fetch('/api/document/'+docId+'/export/'+fmt,{headers:{'X-Session-ID':sessionId}});
+        if(!res.ok){toast('Export fehlgeschlagen','error');return;}
+        const receiptId=res.headers.get('X-WINDI-Receipt-ID');
+        const contentHash=res.headers.get('X-WINDI-Content-Hash');
+        const bundleHash=res.headers.get('X-WINDI-Bundle-Hash');
+        if(receiptId){
+            lastReceipt={id:receiptId,contentHash:contentHash,bundleHash:bundleHash};
+            showReceiptToast(receiptId,contentHash,bundleHash,fmt);
+            updateSealStatus(receiptId);
+        }
+        const blob=await res.blob();
+        const contentDisposition=res.headers.get('Content-Disposition');
+        let filename='export.'+fmt;
+        if(contentDisposition){const match=contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);if(match&&match[1])filename=match[1].replace(/['"]/g,'');}
+        const url=window.URL.createObjectURL(blob);
+        const a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();window.URL.revokeObjectURL(url);
+    }catch(e){console.error('Export error:',e);toast('Export Netzwerkfehler','error');}
+}
 function updateStatus(s){const b=document.getElementById('statusBadge');b.className='status-badge status-'+s;b.textContent=t(s)}
 function execCmd(c,v){document.execCommand(c,false,v||null);document.getElementById('editor').focus()}
 
@@ -3693,9 +4158,7 @@ function _doTranslate(lang){
   // Status badge
   var badge=document.getElementById('statusBadge');
   if(badge){
-    if(badge.classList.contains('status-draft')) badge.textContent=g('draft');
-    else if(badge.classList.contains('status-validated')) badge.textContent=g('validated');
-    else if(badge.classList.contains('status-finalized')) badge.textContent=g('finalized');
+    if(badge.classList.contains('status-draft')){badge.textContent=g('draft')}else if(badge.classList.contains('status-validated')){badge.textContent=g('validated')}else if(badge.classList.contains('status-finalized')){badge.textContent=g('finalized')}
   }
 
   // Editor placeholder
@@ -3791,6 +4254,30 @@ function _doTranslate(lang){
 }
 function initLangBar(){document.getElementById('langBar').innerHTML=Object.keys(LANGS).map(function(k){return '<button class="lang-btn '+(k===currentLang?'active':'')+'" data-lang="'+k+'" onclick="setLang(\''+k+'\')">'+LANGS[k].flag+'</button>'}).join('')}
 function toast(m,t){var el=document.createElement('div');el.className='toast toast-'+t;el.textContent=m;document.body.appendChild(el);setTimeout(function(){el.remove()},3000)}
+
+function showReceiptToast(receiptId,contentHash,bundleHash,fmt){
+    var existing=document.querySelector('.toast-receipt');if(existing)existing.remove();
+    var el=document.createElement('div');el.className='toast-receipt';
+    var shortContent=contentHash?(contentHash.substring(0,8)+'...'+contentHash.substring(56)):'N/A';
+    var shortBundle=bundleHash?(bundleHash.substring(0,8)+'...'+bundleHash.substring(56)):'N/A';
+    el.innerHTML='<button class="toast-receipt-close" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>'+
+        '<div class="toast-receipt-header"><i class="fas fa-stamp receipt-icon"></i><span class="receipt-title">Virtue Receipt</span><span class="receipt-badge">'+fmt.toUpperCase()+'</span></div>'+
+        '<div class="toast-receipt-id"><span class="label">ID:</span><span>'+receiptId+'</span></div>'+
+        '<div class="toast-receipt-hashes"><div class="toast-receipt-hash"><span class="hash-label">Content Hash</span><span class="hash-value">'+shortContent+'</span></div>'+
+        '<div class="toast-receipt-hash"><span class="hash-label">Bundle Hash</span><span class="hash-value">'+shortBundle+'</span></div></div>';
+    document.body.appendChild(el);
+    setTimeout(function(){if(el.parentElement)el.remove()},8000);
+}
+
+function updateSealStatus(receiptId){
+    var el=document.getElementById('sealStatus');if(!el)return;
+    el.style.display='inline-flex';
+    el.classList.add('sealed');
+    el.classList.remove('pending');
+    var idSpan=el.querySelector('.seal-id');
+    if(idSpan)idSpan.textContent=receiptId?receiptId.substring(0,16)+'...':'Sealed';
+    el.title=receiptId||'Document sealed with Virtue Receipt';
+}
 
 document.addEventListener('DOMContentLoaded',function(){
     document.getElementById('chatInput').addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat()}});
@@ -4013,6 +4500,200 @@ function autoLoginForTesting(){
 autoLoginForTesting();
 // === END BYPASS ===
 
+// ═══════════════════════════════════════════════════════════════════════════
+// WS-6: URL Template Auto-Load — Suite Integration
+// "Suite cards flow to BABEL. No more dead ends."
+// ═══════════════════════════════════════════════════════════════════════════
+const SUITE_TEMPLATES = {
+    vertrag: {
+        title: "Dienstleistungsvertrag",
+        body: `Zwischen
+[Partei A — Name, Anschrift]
+
+und
+[Partei B — Name, Anschrift]
+
+wird folgender Vertrag geschlossen:
+
+§1 Vertragsgegenstand
+Der Auftragnehmer verpflichtet sich, folgende Leistungen zu erbringen:
+[Beschreibung der Dienstleistung]
+
+§2 Vergütung
+Die Vergütung beträgt [Betrag] EUR netto zzgl. gesetzlicher MwSt.
+Die Zahlung erfolgt innerhalb von 30 Tagen nach Rechnungsstellung.
+
+§3 Vertragsdauer
+Der Vertrag beginnt am [Datum] und endet am [Datum].
+Eine ordentliche Kündigung ist mit einer Frist von 3 Monaten zum Quartalsende möglich.
+
+§4 Vertraulichkeit
+Beide Parteien verpflichten sich, alle im Rahmen der Zusammenarbeit erhaltenen Informationen vertraulich zu behandeln.
+
+§5 Haftung
+Die Haftung richtet sich nach den gesetzlichen Bestimmungen.
+
+§6 Schlussbestimmungen
+Änderungen und Ergänzungen dieses Vertrages bedürfen der Schriftform.
+Es gilt das Recht der Bundesrepublik Deutschland.
+Gerichtsstand ist [Ort].
+
+
+Ort, Datum: ___________________
+
+Partei A: ___________________
+
+Partei B: ___________________`,
+        gov: "HIGH"
+    },
+    bescheid: {
+        title: "Governance-Bescheid",
+        body: `Aktenzeichen: [Az.]
+Datum: ${new Date().toLocaleDateString("de-DE")}
+
+Sehr geehrte Damen und Herren,
+
+auf Grundlage der eingereichten Unterlagen und nach Prüfung aller relevanten Sachverhalte ergeht folgender
+
+BESCHEID
+
+1. Gegenstand der Entscheidung
+[Beschreibung des Sachverhalts]
+
+2. Entscheidung
+[Die beantragte Genehmigung wird erteilt / Der Antrag wird abgelehnt.]
+
+3. Begründung
+[Ausführliche Begründung der Entscheidung]
+
+4. Rechtsgrundlage
+[Relevante Gesetze und Verordnungen]
+
+5. Rechtsbehelfsbelehrung
+Gegen diesen Bescheid kann innerhalb eines Monats nach Bekanntgabe Widerspruch eingelegt werden.
+
+
+Mit freundlichen Grüßen
+
+___________________
+[Name, Funktion]
+[Organisation]`,
+        gov: "HIGH"
+    },
+    bericht: {
+        title: "Governance-Bericht",
+        body: `Berichtszeitraum: [Q1/Q2/Q3/Q4 2026]
+Abteilung: [Abteilungsname]
+Erstellt von: [Name]
+
+1. Zusammenfassung
+[Kurze Übersicht über die wichtigsten Ergebnisse]
+
+2. Compliance-Status
+  • DSGVO: [Status]
+  • EU AI Act: [Status]
+  • BSI C5: [Status]
+
+3. Risikobewertung
+  • Risiko 1: [Beschreibung] — Stufe: [Niedrig/Mittel/Hoch]
+  • Risiko 2: [Beschreibung] — Stufe: [Niedrig/Mittel/Hoch]
+
+4. Maßnahmen
+[Empfohlene oder durchgeführte Maßnahmen]
+
+5. Ausblick
+[Nächste Schritte und geplante Aktivitäten]`,
+        gov: "MEDIUM"
+    },
+    antrag: {
+        title: "Genehmigungsantrag",
+        body: `Antragsteller: [Name / Organisation]
+Datum: ${new Date().toLocaleDateString("de-DE")}
+
+An: [Zuständige Stelle]
+
+Sehr geehrte Damen und Herren,
+
+hiermit beantrage ich / beantragen wir:
+
+1. Gegenstand des Antrags
+[Was wird beantragt?]
+
+2. Begründung
+[Warum wird die Genehmigung benötigt?]
+
+3. Anlagen
+  • Anlage 1: [Beschreibung]
+  • Anlage 2: [Beschreibung]
+
+4. Erklärung
+Ich versichere, dass die vorstehenden Angaben wahrheitsgemäß und vollständig sind.
+
+
+Ort, Datum: ___________________
+
+Unterschrift: ___________________`,
+        gov: "MEDIUM"
+    }
+};
+
+async function checkUrlTemplate() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const templateId = urlParams.get('template');
+
+    if (!templateId) return; // No template param, do nothing
+
+    console.log('[WS-6] URL template detected:', templateId);
+
+    const template = SUITE_TEMPLATES[templateId];
+    if (!template) {
+        console.warn('[WS-6] Unknown template:', templateId);
+        toast('Unbekanntes Template: ' + templateId, 'warning');
+        return;
+    }
+
+    try {
+        // Create new document via API
+        const res = await fetch('/api/document', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-Session-ID': sessionId },
+            body: JSON.stringify({ language: currentLang, author_data: getAuthorData() })
+        });
+        const doc = await res.json();
+        docId = doc.id;
+
+        // Apply template content
+        document.getElementById('docTitle').value = template.title;
+        document.getElementById('editor').innerHTML = template.body.replace(/\n/g, '<br>');
+        document.getElementById('fieldDate').value = new Date().toISOString().split('T')[0];
+
+        // Clear witness fields
+        clearWitnessFields();
+        updateStatus('draft');
+        document.getElementById('receiptBox').classList.remove('show');
+
+        // Refresh doc list
+        loadDocs();
+
+        toast('✨ Template geladen: ' + template.title, 'success');
+        console.log('[WS-6] Template applied successfully:', templateId);
+
+        // Clean URL to prevent re-triggering on refresh
+        const cleanUrl = window.location.pathname;
+        window.history.replaceState({}, document.title, cleanUrl);
+
+    } catch (e) {
+        console.error('[WS-6] Error loading template:', e);
+        toast('Fehler beim Laden des Templates', 'error');
+    }
+}
+
+// Trigger template check after app initializes
+setTimeout(checkUrlTemplate, 500);
+// ═══════════════════════════════════════════════════════════════════════════
+// END WS-6: URL Template Auto-Load
+// ═══════════════════════════════════════════════════════════════════════════
+
 // === NOIR THEME TOGGLE ===
 function toggleTheme(){
     const body=document.body;
@@ -4103,7 +4784,7 @@ def proxy_agents(subpath):
 # ─── END Agent API Proxy ───────────────────────────────────
 
 if __name__ == '__main__':
-    print("🏛️ A4 Desk BABEL v4.7-gov")
+    print("🏛️ A4 Desk BABEL v4.7.1-gov")
     print("✅ NEW: Mein Profil - Edit your profile data")
     print("✅ NEW: Preview before Insert")
     print("✅ NEW: Human Authorship Notice in PDF")

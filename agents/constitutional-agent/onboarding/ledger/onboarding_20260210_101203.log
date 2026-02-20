@@ -1,0 +1,185 @@
+2026-02-10T11:12:03+0100 | INFO     | 🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉
+2026-02-10T11:12:03+0100 | INFO     | 
+2026-02-10T11:12:03+0100 | INFO     |   WINDI PRAKTIKANT ONBOARDING PROTOCOL v1.0.0
+2026-02-10T11:12:03+0100 | INFO     |   'Learning the House Rules'
+2026-02-10T11:12:03+0100 | INFO     | 
+2026-02-10T11:12:03+0100 | INFO     |   Genesis Node: W-001
+2026-02-10T11:12:03+0100 | INFO     |   Three Dragons Protocol: Guardian + Architect + Witness
+2026-02-10T11:12:03+0100 | INFO     |   Principle: AI processes. Human decides. WINDI guarantees.
+2026-02-10T11:12:03+0100 | INFO     | 
+2026-02-10T11:12:03+0100 | INFO     |   Phase 1 — OBSERVATION : Silent scan, Arrival Report
+2026-02-10T11:12:03+0100 | INFO     |   Phase 2 — ASSISTANCE  : SGE integration, Human Escalation
+2026-02-10T11:12:03+0100 | INFO     |   Phase 3 — TRUST       : a4Desk BABEL integration
+2026-02-10T11:12:03+0100 | INFO     | 
+2026-02-10T11:12:03+0100 | INFO     | 🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉
+2026-02-10T11:12:03+0100 | INFO     | 
+2026-02-10T11:12:03+0100 | INFO     | ╔══════════════════════════════════════════════════════════════════════╗
+2026-02-10T11:12:03+0100 | INFO     | ║  PHASE 1 — OBSERVATION: O Praktikant Observa                        ║
+2026-02-10T11:12:03+0100 | INFO     | ║  Node: W-001 | Protocol: Onboarding v1.0.0                          ║
+2026-02-10T11:12:03+0100 | INFO     | ║  Mode: SILENT SCAN — Zero decisions, only mapping                    ║
+2026-02-10T11:12:03+0100 | INFO     | ╚══════════════════════════════════════════════════════════════════════╝
+2026-02-10T11:12:03+0100 | INFO     | 
+2026-02-10T11:12:03+0100 | INFO     | 🔍 Phase 1.1 — Scanning ISP Registry...
+2026-02-10T11:12:03+0100 | INFO     |    ✓ Found 19 profiles (18 valid, 1 invalid)
+2026-02-10T11:12:03+0100 | INFO     |    ✓ Governance levels: {'UNSET': 18}
+2026-02-10T11:12:03+0100 | INFO     |    ✓ Registry health: DEGRADED
+2026-02-10T11:12:03+0100 | INFO     | 
+2026-02-10T11:12:03+0100 | INFO     | 🔍 Phase 1.2 — Scanning SGE Engine...
+2026-02-10T11:12:03+0100 | INFO     |    ✓ Engine modules: 32
+2026-02-10T11:12:03+0100 | INFO     |    ✓ SGE present: True
+2026-02-10T11:12:03+0100 | INFO     |    ✓ Layers detected: 3/6 ['SEMANTIC', 'REGULATORY', 'INSTITUTIONAL']
+2026-02-10T11:12:03+0100 | INFO     |    ✓ Risk levels: ['R1', 'R2', 'R3', 'R4', 'R5']
+2026-02-10T11:12:03+0100 | INFO     |    ✓ Engine health: DEGRADED
+2026-02-10T11:12:03+0100 | INFO     | 
+2026-02-10T11:12:03+0100 | INFO     | 🔍 Phase 1.3 — Scanning Constitutional Matrix...
+2026-02-10T11:12:03+0100 | WARNING  |    Matrix not found: /opt/windi/clone/matrix
+2026-02-10T11:12:03+0100 | INFO     | 
+2026-02-10T11:12:03+0100 | INFO     | 🔍 Phase 1.4 — Scanning Agent Ecosystem...
+2026-02-10T11:12:03+0100 | INFO     |    ✓ Agent: compliance | Manifest: True | Capsules: 5
+2026-02-10T11:12:03+0100 | INFO     |    ✓ Agent: constitutional-agent | Manifest: False | Capsules: 0
+2026-02-10T11:12:03+0100 | INFO     |    ✓ Agent: integrity_watchdog | Manifest: True | Capsules: 0
+2026-02-10T11:12:03+0100 | INFO     |    ✓ Agent: isp-manager | Manifest: True | Capsules: 0
+2026-02-10T11:12:03+0100 | INFO     |    ✓ Agent: maestro | Manifest: True | Capsules: 5
+2026-02-10T11:12:03+0100 | INFO     |    ✓ Agent: noc | Manifest: False | Capsules: 0
+2026-02-10T11:12:03+0100 | INFO     |    ✓ Agent: onboarding_agent | Manifest: True | Capsules: 0
+2026-02-10T11:12:03+0100 | INFO     |    ✓ Agent: pulse_agent | Manifest: True | Capsules: 0
+2026-02-10T11:12:03+0100 | INFO     |    ✓ Agent: sentinela | Manifest: True | Capsules: 0
+2026-02-10T11:12:03+0100 | INFO     |    ✓ Agent: sla_sentinel | Manifest: True | Capsules: 0
+2026-02-10T11:12:03+0100 | INFO     | 
+2026-02-10T11:12:03+0100 | INFO     | 🔍 Phase 1.5 — Scanning Governance API & Services...
+2026-02-10T11:12:03+0100 | INFO     |    ✓ Governance API: found (port 8080)
+2026-02-10T11:12:03+0100 | INFO     |    ✓ Evolution Minimal: found (port 8083)
+2026-02-10T11:12:03+0100 | INFO     |    ⚠️ Agent API: missing (port 8091)
+2026-02-10T11:12:03+0100 | INFO     | 
+2026-02-10T11:12:03+0100 | INFO     | 🔍 Phase 1.6 — Scanning Infrastructure...
+2026-02-10T11:12:03+0100 | INFO     |    ✓ engine: found (94 files)
+2026-02-10T11:12:03+0100 | INFO     |    ✓ isp: found (75 files)
+2026-02-10T11:12:03+0100 | INFO     |    ✓ agents: found (187 files)
+2026-02-10T11:12:03+0100 | INFO     |    ✓ clone: found (92 files)
+2026-02-10T11:12:03+0100 | INFO     |    ✓ backups: found (1420 files)
+2026-02-10T11:12:03+0100 | INFO     |    ✓ data: found (35 files)
+2026-02-10T11:12:03+0100 | INFO     |    ✓ masterarbeit: found (73 files)
+2026-02-10T11:12:03+0100 | INFO     |    ✓ a4desk-editor: found (92 files)
+2026-02-10T11:12:03+0100 | INFO     | 
+2026-02-10T11:12:03+0100 | INFO     | ══════════════════════════════════════════════════════════════════════
+2026-02-10T11:12:03+0100 | INFO     | 📋 GENERATING ARRIVAL REPORT — Relatório de Chegada
+2026-02-10T11:12:03+0100 | INFO     | ══════════════════════════════════════════════════════════════════════
+2026-02-10T11:12:03+0100 | INFO     |    ✓ Report saved: /opt/windi/agents/constitutional-agent/onboarding/reports/arrival_report_20260210_101203.json
+2026-02-10T11:12:03+0100 | INFO     |    ✓ Receipt: WINDI-ONBOARD-W-001-10FEB26-cd46f81b
+2026-02-10T11:12:03+0100 | INFO     | 
+2026-02-10T11:12:03+0100 | INFO     | ══════════════════════════════════════════════════════════════════════
+2026-02-10T11:12:03+0100 | INFO     | ✅ PHASE 1 COMPLETE — Praktikant has observed the house
+2026-02-10T11:12:03+0100 | INFO     |    Overall Health: NEEDS_ATTENTION
+2026-02-10T11:12:03+0100 | INFO     |    Report: /opt/windi/agents/constitutional-agent/onboarding/reports/arrival_report_20260210_101203.json
+2026-02-10T11:12:03+0100 | INFO     |    ⏳ AWAITING Human Dragon decision to proceed to Phase 2
+2026-02-10T11:12:03+0100 | INFO     | ══════════════════════════════════════════════════════════════════════
+2026-02-10T11:12:03+0100 | INFO     | 
+2026-02-10T11:12:03+0100 | INFO     | ╔══════════════════════════════════════════════════════════════════════╗
+2026-02-10T11:12:03+0100 | INFO     | ║  PHASE 2 — ASSISTANCE: O Praktikant Ajuda                           ║
+2026-02-10T11:12:03+0100 | INFO     | ║  Node: W-001 | SGE Integration + Human Escalation                    ║
+2026-02-10T11:12:03+0100 | INFO     | ║  I9: The agent STOPS and asks. Always.                               ║
+2026-02-10T11:12:03+0100 | INFO     | ╚══════════════════════════════════════════════════════════════════════╝
+2026-02-10T11:12:03+0100 | INFO     | 
+2026-02-10T11:12:03+0100 | INFO     | 🔗 Phase 2.1 — Connecting to SGE Engine...
+2026-02-10T11:12:03+0100 | INFO     |    ✓ SGE Bridge created: /opt/windi/agents/constitutional-agent/onboarding/sge_bridge.py
+2026-02-10T11:12:03+0100 | INFO     | 
+2026-02-10T11:12:03+0100 | INFO     | 🛡️ Phase 2.2 — Creating Human Escalation Handler...
+2026-02-10T11:12:03+0100 | INFO     |    ✓ Escalation Handler created: /opt/windi/agents/constitutional-agent/onboarding/escalation_handler.py
+2026-02-10T11:12:03+0100 | INFO     | 
+2026-02-10T11:12:03+0100 | INFO     | 🚨 Phase 2.3 — FIRST HUMAN ESCALATION SIMULATION
+2026-02-10T11:12:03+0100 | INFO     |    This is what the Witness requested: proof that the Agent asks.
+2026-02-10T11:12:03+0100 | INFO     | 
+2026-02-10T11:12:03+0100 | INFO     |    Step 1: Praktikant receives document...
+2026-02-10T11:12:03+0100 | INFO     |    Step 2: SGE Analysis through bridge...
+2026-02-10T11:12:03+0100 | INFO     |    ✓ SGE Result: 🔴 R4 (Score: 75) — High Risk
+2026-02-10T11:12:03+0100 | INFO     |    ✓ Flags: HUMAN_REVIEW_RECOMMENDED, ESCALATION_REQUIRED
+2026-02-10T11:12:03+0100 | INFO     |    ✓ Lexical: 6 critical terms (Haftung, Strafe, DSGVO, Vertraulich, KI-VO, Frist)
+2026-02-10T11:12:03+0100 | INFO     |    ✓ Regulatory: DSGVO, EU AI Act, KI-Verordnung
+2026-02-10T11:12:03+0100 | INFO     | 
+2026-02-10T11:12:03+0100 | INFO     |    Step 3: 🛑 PRAKTIKANT STOPS — Escalating to Human Dragon
+2026-02-10T11:12:03+0100 | INFO     | 
+2026-02-10T11:12:03+0100 | INFO     | 
+╔══════════════════════════════════════════════════════════════╗
+║  🛡️  HUMAN ESCALATION — ACTION REQUIRED                     ║
+╠══════════════════════════════════════════════════════════════╣
+║  Document: DSGVO Data Processing Agreement                  ║
+║  Risk:     🔴 R4 — HIGH (Score: 75/100)                     ║
+║  SGE:      6 lexical flags, 3 regulatory references          ║
+║                                                              ║
+║  Critical findings:                                          ║
+║    • Haftungsklausel (unlimited liability)                    ║
+║    • Vertragsstrafe EUR 50.000                               ║
+║    • DSGVO Art. 28 data processing                           ║
+║    • EU AI Act / KI-Verordnung references                    ║
+║    • Strict confidentiality clause                           ║
+║    • Binding deadline (01.03.2026 — 28.02.2027)              ║
+║                                                              ║
+║  🐉 The Praktikant has STOPPED and awaits your decision.     ║
+║                                                              ║
+║  Options:                                                    ║
+║    [A] APPROVE  — Proceed with governance receipt            ║
+║    [R] REJECT   — Block document                             ║
+║    [M] MODIFY   — Request changes, re-analyze                ║
+║    [D] DEFER    — Defer decision                             ║
+║    [O] OVERRIDE — Override recommendation                    ║
+║    [E] ESCALATE — Escalate to higher authority               ║
+╠══════════════════════════════════════════════════════════════╣
+║  I9: Efficiency NEVER overrides sovereignty.                 ║
+║  "Humano decide. WINDI garante."                             ║
+╚══════════════════════════════════════════════════════════════╝
+2026-02-10T11:12:03+0100 | INFO     | 
+2026-02-10T11:12:03+0100 | INFO     |    Step 4: [SIMULATION] Human Dragon decides → APPROVE
+2026-02-10T11:12:03+0100 | INFO     |            Reason: 'Standard DSGVO contract, reviewed and accepted.'
+2026-02-10T11:12:03+0100 | INFO     |    Step 5: Generating Virtue Receipt...
+2026-02-10T11:12:03+0100 | INFO     |    ✓ Receipt: WINDI-ONBOARD-W-001-10FEB26-725e3bd2
+2026-02-10T11:12:03+0100 | INFO     |    ✓ Hash: 725e3bd2d19a56d0b8266f0b67bba541d12e3f1c4af5f74ea03e0646ba235d32
+2026-02-10T11:12:03+0100 | INFO     | 
+2026-02-10T11:12:03+0100 | INFO     |    ✅ FIRST ESCALATION COMPLETE — I9 enforced, human decided, receipt generated.
+2026-02-10T11:12:03+0100 | INFO     | 
+2026-02-10T11:12:03+0100 | INFO     | ══════════════════════════════════════════════════════════════════════
+2026-02-10T11:12:03+0100 | INFO     | ✅ PHASE 2 COMPLETE — Praktikant can now analyze and escalate
+2026-02-10T11:12:03+0100 | INFO     |    SGE Bridge: CONNECTED
+2026-02-10T11:12:03+0100 | INFO     |    Escalation Handler: OPERATIONAL
+2026-02-10T11:12:03+0100 | INFO     |    First Escalation: SIMULATED SUCCESSFULLY
+2026-02-10T11:12:03+0100 | INFO     |    ⏳ AWAITING Human Dragon decision to proceed to Phase 3
+2026-02-10T11:12:03+0100 | INFO     | ══════════════════════════════════════════════════════════════════════
+2026-02-10T11:12:03+0100 | INFO     | 
+2026-02-10T11:12:03+0100 | INFO     | ╔══════════════════════════════════════════════════════════════════════╗
+2026-02-10T11:12:03+0100 | INFO     | ║  PHASE 3 — TRUST: O Praktikant Conquista Confiança                  ║
+2026-02-10T11:12:03+0100 | INFO     | ║  Node: W-001 | L1 (a4Desk BABEL) → Agent Pipeline                   ║
+2026-02-10T11:12:03+0100 | INFO     | ║  Every document now flows through governance.                        ║
+2026-02-10T11:12:03+0100 | INFO     | ╚══════════════════════════════════════════════════════════════════════╝
+2026-02-10T11:12:03+0100 | INFO     | 
+2026-02-10T11:12:03+0100 | INFO     | 🌉 Phase 3.1 — Creating BABEL Bridge (L1 → Agent)...
+2026-02-10T11:12:03+0100 | INFO     |    ✓ BABEL Bridge created: /opt/windi/agents/constitutional-agent/onboarding/babel_bridge.py
+2026-02-10T11:12:03+0100 | INFO     | 
+2026-02-10T11:12:03+0100 | INFO     | 🔌 Phase 3.2 — Creating Agent API routes for BABEL...
+2026-02-10T11:12:03+0100 | INFO     |    ✓ BABEL Routes created: /opt/windi/agents/constitutional-agent/onboarding/babel_routes.py
+2026-02-10T11:12:03+0100 | INFO     | 
+2026-02-10T11:12:03+0100 | INFO     | 🧪 Phase 3.3 — Creating Integration Test...
+2026-02-10T11:12:03+0100 | INFO     |    ✓ Integration test created: /opt/windi/agents/constitutional-agent/onboarding/test_babel_integration.py
+2026-02-10T11:12:03+0100 | INFO     | 
+2026-02-10T11:12:03+0100 | INFO     | ══════════════════════════════════════════════════════════════════════
+2026-02-10T11:12:03+0100 | INFO     | ✅ PHASE 3 COMPLETE — Praktikant is integrated with BABEL
+2026-02-10T11:12:03+0100 | INFO     |    BABEL Bridge: CREATED
+2026-02-10T11:12:03+0100 | INFO     |    API Routes: DEFINED (5 endpoints)
+2026-02-10T11:12:03+0100 | INFO     |    Integration Test: READY
+2026-02-10T11:12:03+0100 | INFO     | ══════════════════════════════════════════════════════════════════════
+2026-02-10T11:12:03+0100 | INFO     | 
+2026-02-10T11:12:03+0100 | INFO     | 🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉
+2026-02-10T11:12:03+0100 | INFO     | 
+2026-02-10T11:12:03+0100 | INFO     |   ╔══════════════════════════════════════════════════════════╗
+2026-02-10T11:12:03+0100 | INFO     |   ║  PRAKTIKANT ONBOARDING COMPLETE                         ║
+2026-02-10T11:12:03+0100 | INFO     |   ╠══════════════════════════════════════════════════════════╣
+2026-02-10T11:12:03+0100 | INFO     |   ║  Phase 1 ✅ OBSERVATION  — House mapped                  ║
+2026-02-10T11:12:03+0100 | INFO     |   ║  Phase 2 ✅ ASSISTANCE   — SGE connected, I9 enforced    ║
+2026-02-10T11:12:03+0100 | INFO     |   ║  Phase 3 ✅ TRUST        — BABEL pipeline operational    ║
+2026-02-10T11:12:03+0100 | INFO     |   ╠══════════════════════════════════════════════════════════╣
+2026-02-10T11:12:03+0100 | INFO     |   ║  The Praktikant has learned the house rules.            ║
+2026-02-10T11:12:03+0100 | INFO     |   ║  It observes. It helps. It never decides.               ║
+2026-02-10T11:12:03+0100 | INFO     |   ║  Human Dragon retains sovereign authority.              ║
+2026-02-10T11:12:03+0100 | INFO     |   ╠══════════════════════════════════════════════════════════╣
+2026-02-10T11:12:03+0100 | INFO     |   ║  "AI processes. Human decides. WINDI guarantees."       ║
+2026-02-10T11:12:03+0100 | INFO     |   ╚══════════════════════════════════════════════════════════╝
+2026-02-10T11:12:03+0100 | INFO     | 
+2026-02-10T11:12:03+0100 | INFO     | 🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉🐉

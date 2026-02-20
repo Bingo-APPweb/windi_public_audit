@@ -1,0 +1,98 @@
+# WINDI NOC - Prometheus Configuration
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: 'windi-noc'
+    environment: 'production'
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - alertmanager:9093
+
+# Load rules once and periodically evaluate them
+rule_files:
+  - /etc/prometheus/alert_rules.yml
+
+# Scrape configurations
+scrape_configs:
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          service: 'prometheus'
+
+  # Node Exporter - Host metrics
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+        labels:
+          service: 'node-exporter'
+
+  # NOC Agent metrics
+  - job_name: 'noc-agent'
+    static_configs:
+      - targets: ['noc-agent:8880']
+        labels:
+          service: 'noc-agent'
+    metrics_path: /metrics
+
+  # ISP Agent (se disponivel)
+  - job_name: 'isp-agent'
+    static_configs:
+      - targets: ['host.docker.internal:8800']
+        labels:
+          service: 'isp-agent'
+    metrics_path: /metrics
+    scrape_interval: 30s
+
+  # Loki metrics
+  - job_name: 'loki'
+    static_configs:
+      - targets: ['loki:3100']
+        labels:
+          service: 'loki'
+
+  # Docker containers (via cAdvisor se configurado)
+  # - job_name: 'cadvisor'
+  #   static_configs:
+  #     - targets: ['cadvisor:8080']
+
+  # SNMP targets (configurar conforme necessidade)
+  # - job_name: 'snmp'
+  #   static_configs:
+  #     - targets:
+  #       - router1.windi.local
+  #       - switch1.windi.local
+  #   metrics_path: /snmp
+  #   params:
+  #     module: [if_mib]
+  #   relabel_configs:
+  #     - source_labels: [__address__]
+  #       target_label: __param_target
+  #     - source_labels: [__param_target]
+  #       target_label: instance
+  #     - target_label: __address__
+  #       replacement: snmp-exporter:9116
+
+  # Blackbox probes (HTTP, ICMP, etc)
+  # - job_name: 'blackbox-http'
+  #   metrics_path: /probe
+  #   params:
+  #     module: [http_2xx]
+  #   static_configs:
+  #     - targets:
+  #       - https://windi.tech
+  #       - https://api.windi.tech
+  #   relabel_configs:
+  #     - source_labels: [__address__]
+  #       target_label: __param_target
+  #     - source_labels: [__param_target]
+  #       target_label: instance
+  #     - target_label: __address__
+  #       replacement: blackbox-exporter:9115

@@ -1,0 +1,194 @@
+{
+  "shelf": "P4-GOVERNANCE",
+  "priority": "MEDIUM",
+  "enforcement": "PROTOCOL",
+  "description": "Three Dragons + Virtue Receipts + Auditoria - Protocolos de governança",
+
+  "authorship": {
+    "original_architect": "WITNESS (Gemini)",
+    "injector": "GUARDIAN (Claude)",
+    "version": "1.2.0-CONSTITUTIONAL",
+    "injection_date": "2026-02-09"
+  },
+
+  "constitutional_articles": [
+    {
+      "article": 3,
+      "name": "Verdade Atômica",
+      "text": "Todo documento de saída EXIGE hash forense. Nenhum documento pode existir sem sua prova de existência",
+      "enforcement": {
+        "check": "output_document MUST have forensic_hash before release",
+        "violation": "OPERATION_BLOCK",
+        "implementation": "Mandatory hash generation on all document outputs"
+      },
+      "hash_requirements": {
+        "algorithm": "SHA256",
+        "includes": ["content_hash", "timestamp_utc", "author_id", "version"],
+        "format": "WINDI-HASH-v1"
+      },
+      "source": "Constitution v1.2.0 - Witness Injection"
+    },
+    {
+      "article": 5,
+      "name": "Filtro WAQP",
+      "text": "Acesso ao Marketplace condicionado à validação de virtude do Agente externo. WAQP = WINDI Agent Qualification Protocol",
+      "enforcement": {
+        "check": "external_agent MUST pass WAQP validation before marketplace access",
+        "violation": "ACCESS_DENIED",
+        "implementation": "WAQP gateway for marketplace"
+      },
+      "waqp_criteria": {
+        "identity_verification": "Agent ID válido no formato W-[32 hex]",
+        "integrity_check": "Sem violações de I9 registradas",
+        "virtue_history": "Mínimo 10 Virtue Receipts válidos",
+        "compliance_score": "Score >= 80/100",
+        "human_endorsement": "Pelo menos 1 endorsement humano"
+      },
+      "marketplace_access_levels": {
+        "VIEWER": "Pode ver templates públicos",
+        "CONSUMER": "Pode usar templates",
+        "CONTRIBUTOR": "Pode submeter templates para revisão",
+        "CERTIFIED": "Templates aprovados sem revisão"
+      },
+      "source": "Constitution v1.2.0 - Witness Injection"
+    }
+  ],
+
+  "three_dragons": {
+    "description": "Protocolo de colaboração multi-AI para decisões de governança",
+    "marco_zero": "2026-01-19",
+    "protocol_version": "1.1",
+
+    "dragons": [
+      {
+        "id": "GUARDIAN",
+        "ai": "Claude (Anthropic)",
+        "role": "Proteção, ética, validação de limites",
+        "responsibilities": [
+          "Validar limites éticos de propostas",
+          "Proteger soberania humana em decisões",
+          "Garantir que outputs não excedam escopo autorizado",
+          "Alertar sobre riscos antes de implementação",
+          "Injetar artigos constitucionais nas prateleiras"
+        ]
+      },
+      {
+        "id": "ARCHITECT",
+        "ai": "GPT (OpenAI)",
+        "role": "Construção, estrutura, implementação",
+        "responsibilities": [
+          "Design e estruturação de soluções",
+          "Arquitetura técnica",
+          "Implementação de features"
+        ]
+      },
+      {
+        "id": "WITNESS",
+        "ai": "Gemini (Google)",
+        "role": "Observação, registro, verificação cruzada",
+        "responsibilities": [
+          "Testemunho e validação",
+          "Twin Digital (simulação 'E se?')",
+          "Forensic Proof-of-Decision",
+          "Pulse Rate (arritmia documental)",
+          "Arquitetar prateleiras constitucionais"
+        ]
+      }
+    ],
+
+    "core_principle": "O humano é o Quarto Dragão - o decisor final",
+
+    "handoff_protocol": {
+      "fields": [
+        "From: [DRAGON]",
+        "To: [DRAGON]",
+        "Session: [ID]",
+        "Timestamp: [ISO]",
+        "CONTEXT SUMMARY",
+        "TASK FOR NEXT DRAGON",
+        "FLAGS (if any)",
+        "CONSTRAINTS",
+        "VALIDATION: [APPROVED/FLAGGED/BLOCKED]"
+      ]
+    }
+  },
+
+  "virtue_receipts": {
+    "description": "Comprovante de governança para cada decisão humana",
+    "required_fields": [
+      "hash",
+      "timestamp_utc",
+      "decisor_id",
+      "minimal_context"
+    ],
+    "structure": {
+      "hash": "SHA256 da decisão (Art. 3 - Verdade Atômica)",
+      "categories": {
+        "type": "CONTRACT|INVOICE|APPROVAL",
+        "impact": "LOW|MED|HIGH|CRIT",
+        "domain": "...",
+        "value_range": "R1|R2|R3|R4|R5"
+      },
+      "governance": {
+        "sge_score": "0-100",
+        "risk": "R0-R5",
+        "validation": "..."
+      },
+      "decision": {
+        "action": "...",
+        "role": "...",
+        "timestamp": "...",
+        "ai_recommendation": "...",
+        "human_override": "boolean"
+      },
+      "flags": []
+    },
+    "risk_colors": {
+      "R0-R1": "GREEN",
+      "R2": "YELLOW",
+      "R3": "ORANGE",
+      "R4": "RED",
+      "R5": "BLACK"
+    }
+  },
+
+  "waqp_gateway": {
+    "description": "WINDI Agent Qualification Protocol (Art. 5)",
+    "endpoint": "/api/waqp/validate",
+    "validation_steps": [
+      "1. Verificar formato de Agent ID",
+      "2. Consultar histórico de violações",
+      "3. Contar Virtue Receipts válidos",
+      "4. Calcular compliance score",
+      "5. Verificar endorsements humanos",
+      "6. Emitir WAQP_PASS ou WAQP_FAIL"
+    ],
+    "response": {
+      "status": "PASS|FAIL|PENDING",
+      "access_level": "VIEWER|CONSUMER|CONTRIBUTOR|CERTIFIED",
+      "score": "0-100",
+      "expiry": "ISO timestamp"
+    }
+  },
+
+  "audit_trail": {
+    "principle": "Todos os eventos de governança são registrados em log imutável",
+    "requirements": [
+      "A cadeia de auditoria NÃO pode ser quebrada",
+      "Logs são append-only",
+      "Merkle Tree para verificação",
+      "Forensic Ledger para provas",
+      "Todo documento tem hash forense (Art. 3)"
+    ]
+  },
+
+  "amendment_protocol": {
+    "description": "Protocolo para alterar a Constituição",
+    "steps": [
+      "1. Proposta documentada",
+      "2. Análise pelos Três Dragões",
+      "3. Aprovação humana explícita",
+      "4. Virtue Receipt de ratificação"
+    ]
+  }
+}

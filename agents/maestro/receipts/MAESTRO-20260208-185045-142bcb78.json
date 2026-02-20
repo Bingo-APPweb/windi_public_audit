@@ -1,0 +1,84 @@
+{
+  "receipt_id": "MAESTRO-20260208-185045-142bcb78",
+  "agent_id": "windi://agent/core/maestro",
+  "version": "1.2.0",
+  "action": "INGEST",
+  "finding_id": null,
+  "details": {
+    "scanned_sources": {
+      "sentinela_findings": 0,
+      "isp_manager_alerts": 6
+    },
+    "new_registered": 6,
+    "already_existed": 0,
+    "errors": 0,
+    "registered_details": [
+      {
+        "finding_id": "ISP-alerts_20260208_085840",
+        "status": "OPEN",
+        "severity": "R2",
+        "routed_to": "INSTITUTIONAL_CHANNEL",
+        "sla_acknowledge": "2026-02-09T18:50:45.119431+00:00",
+        "sla_resolve": "2026-02-22T18:50:45.119431+00:00",
+        "action_required": "HUMAN_ACKNOWLEDGE",
+        "auto_apply": false
+      },
+      {
+        "finding_id": "ISP-alerts_20260208_090401",
+        "status": "OPEN",
+        "severity": "R2",
+        "routed_to": "INSTITUTIONAL_CHANNEL",
+        "sla_acknowledge": "2026-02-09T18:50:45.124077+00:00",
+        "sla_resolve": "2026-02-22T18:50:45.124077+00:00",
+        "action_required": "HUMAN_ACKNOWLEDGE",
+        "auto_apply": false
+      },
+      {
+        "finding_id": "ISP-alerts_20260208_090650",
+        "status": "OPEN",
+        "severity": "R2",
+        "routed_to": "INSTITUTIONAL_CHANNEL",
+        "sla_acknowledge": "2026-02-09T18:50:45.127143+00:00",
+        "sla_resolve": "2026-02-22T18:50:45.127143+00:00",
+        "action_required": "HUMAN_ACKNOWLEDGE",
+        "auto_apply": false
+      },
+      {
+        "finding_id": "ISP-alerts_20260208_094654",
+        "status": "OPEN",
+        "severity": "R2",
+        "routed_to": "INSTITUTIONAL_CHANNEL",
+        "sla_acknowledge": "2026-02-09T18:50:45.129783+00:00",
+        "sla_resolve": "2026-02-22T18:50:45.129783+00:00",
+        "action_required": "HUMAN_ACKNOWLEDGE",
+        "auto_apply": false
+      },
+      {
+        "finding_id": "ISP-alerts_20260208_103505",
+        "status": "OPEN",
+        "severity": "R2",
+        "routed_to": "INSTITUTIONAL_CHANNEL",
+        "sla_acknowledge": "2026-02-09T18:50:45.150825+00:00",
+        "sla_resolve": "2026-02-22T18:50:45.150825+00:00",
+        "action_required": "HUMAN_ACKNOWLEDGE",
+        "auto_apply": false
+      },
+      {
+        "finding_id": "ISP-alerts_20260208_103650",
+        "status": "OPEN",
+        "severity": "R2",
+        "routed_to": "INSTITUTIONAL_CHANNEL",
+        "sla_acknowledge": "2026-02-09T18:50:45.154356+00:00",
+        "sla_resolve": "2026-02-22T18:50:45.154356+00:00",
+        "action_required": "HUMAN_ACKNOWLEDGE",
+        "auto_apply": false
+      }
+    ],
+    "timestamp": "2026-02-08T18:50:45.156830+00:00",
+    "auto_apply": false
+  },
+  "timestamp": "2026-02-08T18:50:45.156839+00:00",
+  "integrity_hash": "142bcb7840011025f77de451c56a50fc1344a5bfd8d58b37ec75e6c8d3302a43",
+  "invariante_i9": true,
+  "auto_apply": false
+}

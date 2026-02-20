@@ -1,0 +1,26 @@
+{
+  "source": "WITNESS (Gemini)",
+  "version": "1.2.0-CONSTITUTIONAL",
+  "injection_date": "2026-02-09",
+
+  "SUBCAMADA_DESKTOP": {
+    "principle": "O sistema não é um app, é uma película de vidro forense sobre o Windows/Mac/Linux",
+    "enforcement": "STRUCTURAL_ALERT",
+    "implementation": {
+      "type": "Forensic glass layer",
+      "not": "Traditional application",
+      "platforms": ["Windows", "MacOS", "Linux"],
+      "codename": "a4/a5Desk"
+    }
+  },
+
+  "PLUGIN_EVERYWHERE": {
+    "principle": "O WINDI flutua sobre outras ferramentas (Office/Email), injetando integridade em fluxos de terceiros",
+    "enforcement": "STRUCTURAL_ALERT",
+    "implementation": {
+      "mode": "Floating overlay",
+      "targets": ["Microsoft Office", "Email clients", "Third-party tools"],
+      "function": "Inject integrity into external workflows"
+    }
+  }
+}

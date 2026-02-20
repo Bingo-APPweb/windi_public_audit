@@ -1,0 +1,89 @@
+{
+  "manifest_version": "1.0.0",
+  "agent_id": "windi://agent/core/maestro",
+  "codename": "Maestro",
+  "pillar": "RESOLUTION",
+  "name": "WINDI Governance Orchestrator",
+  "version": "1.2.0",
+  "description": "Routes governance findings to appropriate resolution channels, tracks SLA compliance, escalates breaches, and closes governance cycles. Never decides resolution — only coordinates the path to human decision.",
+  "invariants_enforced": [
+    "I1",
+    "I2",
+    "I3",
+    "I4",
+    "I5",
+    "I6",
+    "I7",
+    "I8",
+    "I9"
+  ],
+  "guardrails_enforced": [
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5",
+    "G6",
+    "G7",
+    "G8"
+  ],
+  "execution_mode": "human-mediated",
+  "created": "2026-02-08T00:00:00Z",
+  "author": "WINDI Publishing House / Three Dragons Protocol",
+  "compatibility": {
+    "windi_engine": ">=1.0.0",
+    "python": ">=3.10",
+    "governance_api": ">=1.0.0"
+  },
+  "dependencies": {
+    "governance_api": "http://localhost:8080",
+    "agents_registry": "/opt/windi/agents/registry.json",
+    "sentinela_findings": "/opt/windi/agents/sentinela/findings/",
+    "isp_library": "/opt/windi/isp/",
+    "forensic_ledger": "/opt/windi/data/virtue_history.db",
+    "governance_levels": "/opt/windi/engine/governance_levels.json"
+  },
+  "sandbox_routing": {
+    "task_types": [
+      "maestro.route_finding",
+      "maestro.check_sla",
+      "maestro.escalate",
+      "maestro.close_cycle",
+      "maestro.status",
+      "maestro.dashboard"
+    ]
+  },
+  "ecosystem_position": {
+    "receives_from": [
+      "sentinela"
+    ],
+    "coordinates_with": [
+      "isp-manager"
+    ],
+    "outputs_to": [
+      "forensic-ledger",
+      "command-center"
+    ],
+    "escalates_to": [
+      "human-dragon"
+    ]
+  },
+  "modules": {
+    "decision_router": {
+      "version": "1.0.0",
+      "description": "Routes findings to human stakeholders"
+    },
+    "sla_guardian": {
+      "version": "1.0.0",
+      "description": "Monitors SLA compliance and triggers escalations"
+    },
+    "resolution_assembler": {
+      "version": "1.0.0",
+      "description": "Assembles DecisionPackages for human review"
+    },
+    "conflict_protocol": {
+      "version": "1.0.0",
+      "description": "Manages institutional conflict resolution"
+    }
+  }
+}

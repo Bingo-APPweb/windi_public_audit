@@ -1,0 +1,139 @@
+{
+  "registry_version": "1.2.0",
+  "created": "2026-02-07",
+  "updated": "2026-02-08",
+  "principle": "AI processes. Human decides. WINDI guarantees.",
+  "protocol": "Three Dragons — Claude=Guardian, GPT=Architect, Gemini=Witness",
+  "invariants_enforced": [
+    "I1",
+    "I2",
+    "I3",
+    "I4",
+    "I5",
+    "I6",
+    "I7",
+    "I8",
+    "I9"
+  ],
+  "institutional_pillars": {
+    "CREATION": "isp-manager",
+    "VERIFICATION": "sentinela",
+    "RESOLUTION": "maestro"
+  },
+  "agents": [
+    {
+      "agent_id": "windi://agent/core/isp-manager",
+      "name": "ISP Manager Agent",
+      "version": "1.0.1",
+      "codename": null,
+      "status": "active",
+      "layer_priority": 2,
+      "path": "agents/isp-manager/",
+      "port": 8800,
+      "description": "Manages ISP lifecycle: scan, validate, drift-check, draft patches",
+      "execution_mode": "human-mediated",
+      "pillar": "CREATION"
+    },
+    {
+      "agent_id": "windi://agent/core/compliance",
+      "name": "Compliance Agent",
+      "version": "1.0.0",
+      "codename": "Sentinela",
+      "status": "active",
+      "layer_priority": 1,
+      "path": "agents/compliance/",
+      "port": 8850,
+      "description": "Validates governance integrity, Virtue Receipts, SGE scores, Identity Licenses, and I9 human decisions",
+      "execution_mode": "advisory-only",
+      "pillar": "VERIFICATION",
+      "capabilities": [
+        "virtue_receipt_validation",
+        "sge_score_integrity_check",
+        "identity_license_compliance_audit",
+        "i9_human_decision_verification",
+        "policy_conformance_evaluation",
+        "chain_of_custody_verification",
+        "framework_compliance_scan"
+      ],
+      "non_capabilities": [
+        "execute_governance_actions",
+        "modify_scores",
+        "approve_decisions"
+      ],
+      "integrations": [
+        "isp-manager",
+        "forensic-ledger",
+        "governance-api"
+      ],
+      "policies": [
+        "windi_invariants",
+        "bsi_c5_requirements"
+      ]
+    },
+    {
+      "agent_id": "windi://agent/core/maestro",
+      "codename": "Maestro",
+      "pillar": "RESOLUTION",
+      "name": "WINDI Governance Orchestrator",
+      "version": "1.0.0",
+      "status": "ACTIVE",
+      "execution_mode": "human-mediated",
+      "path": "/opt/windi/agents/maestro",
+      "entry_point": "maestro_agent.py",
+      "registered_at": "2026-02-08T18:45:20Z"
+    }
+  ],
+  "reserved_slots": [
+    {
+      "agent_id": "windi://agent/core/diagramador",
+      "name": "Diagramador Agent",
+      "status": "planned",
+      "layer_priority": 2,
+      "description": "Visual layout agent for institutional document forms and governance flows"
+    },
+    {
+      "agent_id": "windi://agent/core/pulse",
+      "name": "Pulse Agent",
+      "status": "planned",
+      "layer_priority": 2,
+      "description": "Document rhythm anomaly detector - Gemini contribution",
+      "origin": "gemini_witness_04feb26"
+    },
+    {
+      "agent_id": "windi://agent/core/simulation",
+      "name": "Simulation Agent",
+      "status": "planned",
+      "layer_priority": 3,
+      "description": "Digital twin for 'What if?' scenario simulation before decisions",
+      "origin": "gemini_witness_04feb26"
+    }
+  ],
+  "ecosystem": {
+    "governance_cycle": "isp-manager → compliance → maestro → forensic-ledger",
+    "data_flow": {
+      "isp-manager": [
+        "compliance",
+        "maestro"
+      ],
+      "compliance": [
+        "maestro",
+        "forensic-ledger",
+        "command-center"
+      ],
+      "maestro": [
+        "forensic-ledger",
+        "command-center"
+      ],
+      "pulse": [
+        "compliance",
+        "analytics"
+      ],
+      "simulation": [
+        "compliance",
+        "growth"
+      ]
+    }
+  },
+  "version": "1.2.0",
+  "updated_at": "2026-02-08T18:45:20Z"
+}

@@ -1,0 +1,13 @@
+{
+  "receipt_type": "virtue_receipt",
+  "action": "RESOLVE:FIXED",
+  "finding_id": "ISP-alerts_20260208_090401",
+  "human_id": "Human Dragon",
+  "timestamp_utc": "2026-02-08T19:58:50.431009+00:00",
+  "details_hash": "392867c036838833",
+  "details": {
+    "resolution_type": "fixed",
+    "note": "HUB-4 API test resolution"
+  },
+  "seal": "8abbe3e1787a68527730a15e6f7d3412038ce103680214f61d589d49c6a8da6f"
+}

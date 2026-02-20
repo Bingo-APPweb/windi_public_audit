@@ -1301,3 +1301,169 @@ body {
     border-color: #ccc !important;
   }
 }
+
+/* ═══════════ WS-1: VIRTUE RECEIPT TOAST ═══════════ */
+.toast-receipt {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, var(--surface-1), var(--surface-2));
+  border: 2px solid var(--gold);
+  border-radius: 12px;
+  padding: 16px 20px;
+  min-width: 320px;
+  max-width: 420px;
+  z-index: 10003;
+  font-family: var(--font-body);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 20px var(--gold-glow);
+  animation: receiptSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes receiptSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+.toast-receipt-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--surface-3);
+}
+
+.toast-receipt-header .receipt-icon {
+  font-size: 24px;
+  color: var(--gold);
+}
+
+.toast-receipt-header .receipt-title {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--gold);
+}
+
+.toast-receipt-header .receipt-badge {
+  margin-left: auto;
+  background: var(--success);
+  color: #fff;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.toast-receipt-id {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  background: var(--surface-0);
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toast-receipt-id .label {
+  color: var(--text-tertiary);
+  font-size: 0.75rem;
+}
+
+.toast-receipt-hashes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.toast-receipt-hash {
+  background: var(--surface-0);
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+}
+
+.toast-receipt-hash .hash-label {
+  color: var(--text-tertiary);
+  font-size: 0.65rem;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.toast-receipt-hash .hash-value {
+  color: var(--text-secondary);
+  word-break: break-all;
+}
+
+.toast-receipt-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: none;
+  border: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 4px;
+  transition: color 0.2s;
+}
+
+.toast-receipt-close:hover {
+  color: var(--text-primary);
+}
+
+/* Seal Status Indicator in Top Bar */
+.seal-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  background: var(--surface-2);
+  border: 1px solid var(--surface-3);
+  color: var(--text-tertiary);
+  transition: all 0.3s ease;
+}
+
+.seal-status.sealed {
+  background: rgba(56, 161, 105, 0.15);
+  border-color: var(--success);
+  color: var(--success);
+}
+
+.seal-status.sealed .seal-icon {
+  color: var(--success);
+}
+
+.seal-status.pending {
+  background: rgba(214, 158, 46, 0.15);
+  border-color: var(--warning);
+  color: var(--warning);
+  animation: sealPulse 2s infinite;
+}
+
+@keyframes sealPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.seal-status .seal-icon {
+  font-size: 0.85rem;
+}
+
+.seal-status .seal-id {
+  font-weight: 500;
+}

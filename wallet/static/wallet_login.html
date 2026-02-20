@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>WINDI Wallet</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root{--bg-primary:#0a0a0f;--bg-secondary:#111118;--bg-card:#18181f;--bg-input:#1e1e28;--gold:#c9a227;--gold-light:#e8c547;--gold-dim:#8a7020;--gold-glow:rgba(201,162,39,0.15);--gold-glow-s:rgba(201,162,39,0.25);--text-primary:#e8e8ec;--text-secondary:#8888a0;--text-muted:#555568;--border:#2a2a38;--border-gold:rgba(201,162,39,0.3);--success:#2ecc71;--error:#e74c3c;--trust-green:#27ae60;--trust-yellow:#f1c40f;--trust-red:#e74c3c}
+        .klar{--bg-primary:#f5f3ee;--bg-secondary:#eae6dc;--bg-card:#ffffff;--bg-input:#f0ece4;--gold:#8a6914;--gold-light:#b8941d;--gold-dim:#6b510f;--gold-glow:rgba(138,105,20,0.1);--gold-glow-s:rgba(138,105,20,0.18);--text-primary:#1a1a24;--text-secondary:#5a5a6a;--text-muted:#8a8a9a;--border:#d0ccc0;--border-gold:rgba(138,105,20,0.25)}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Outfit',sans-serif;background:var(--bg-primary);color:var(--text-primary);min-height:100vh;min-height:100dvh;transition:background .4s,color .4s;overflow-x:hidden}
+        body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 15% 50%,var(--gold-glow) 0%,transparent 50%),radial-gradient(ellipse at 85% 15%,rgba(201,162,39,0.05) 0%,transparent 40%);pointer-events:none;z-index:0}
+        .app{position:relative;z-index:1;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+        .topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid var(--border);background:var(--bg-secondary);position:sticky;top:0;z-index:10}
+        .topbar-logo{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.1rem;color:var(--gold);letter-spacing:.08em;cursor:pointer}
+        .topbar-logo span{color:var(--text-muted);font-weight:400;font-size:.75rem;margin-left:6px;letter-spacing:0}
+        .topbar-controls{display:flex;align-items:center;gap:6px}
+        .lang-btn,.theme-btn{padding:4px 10px;background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--text-secondary);font-family:'Outfit',sans-serif;font-size:.72rem;cursor:pointer;transition:all .2s}
+        .lang-btn:hover,.theme-btn:hover{border-color:var(--gold);color:var(--gold)}
+        .lang-btn.active{background:var(--gold);color:var(--bg-primary);border-color:var(--gold);font-weight:600}
+        .theme-btn{font-size:.85rem;padding:4px 8px}
+        .screen{display:none;flex:1;flex-direction:column}.screen.active{display:flex}
+        @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .animate-in{animation:fadeUp .5s ease both}.delay-1{animation-delay:.1s}.delay-2{animation-delay:.2s}.delay-3{animation-delay:.3s}.delay-4{animation-delay:.4s}
+        .spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--bg-primary);border-top-color:transparent;border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:8px}
+
+        /* LANDING */
+        .landing{padding:0 20px 40px;max-width:540px;margin:0 auto;width:100%}
+        .landing-hero{text-align:center;padding:48px 0 36px}
+        .hero-shield{width:80px;height:80px;margin:0 auto 24px;border-radius:20px;background:linear-gradient(135deg,var(--gold),var(--gold-dim));display:flex;align-items:center;justify-content:center;box-shadow:0 12px 40px var(--gold-glow-s);animation:fadeUp .6s ease}
+        .hero-shield svg{width:40px;height:40px;fill:none;stroke:var(--bg-primary);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+        .hero-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:2rem;line-height:1.15;margin-bottom:12px;animation:fadeUp .6s ease .1s both}
+        .hero-title em{font-style:normal;color:var(--gold)}
+        .hero-subtitle{color:var(--text-secondary);font-size:.95rem;font-weight:300;line-height:1.5;max-width:400px;margin:0 auto;animation:fadeUp .6s ease .2s both}
+        .features{display:flex;flex-direction:column;gap:12px;margin:32px 0}
+        .feature{display:flex;align-items:flex-start;gap:14px;padding:16px;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;transition:border-color .2s}
+        .feature:hover{border-color:var(--border-gold)}
+        .feature-icon{width:40px;height:40px;border-radius:10px;background:var(--gold-glow);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.2rem}
+        .feature-text h3{font-family:'Bricolage Grotesque',sans-serif;font-size:.9rem;font-weight:600;margin-bottom:3px}
+        .feature-text p{font-size:.78rem;color:var(--text-secondary);font-weight:300;line-height:1.4}
+        .protocol-bar{text-align:center;padding:14px;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;margin-bottom:28px}
+        .protocol-bar p{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--gold-dim)}
+        .protocol-bar p:first-child{color:var(--text-secondary);font-family:'Outfit',sans-serif;font-size:.78rem;margin-bottom:4px}
+        .cta-btn{display:inline-block;width:100%;padding:16px 32px;background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--bg-primary);border:none;border-radius:12px;font-family:'Outfit',sans-serif;font-size:1.05rem;font-weight:600;cursor:pointer;transition:transform .15s,box-shadow .25s}
+        .cta-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px var(--gold-glow-s)}
+        .cta-btn:active{transform:translateY(0)}
+        .cta-login{display:block;margin-top:16px;color:var(--text-secondary);font-size:.8rem;text-decoration:none;cursor:pointer;transition:color .2s}
+        .cta-login:hover{color:var(--gold)}
+
+        /* FORM SHARED */
+        .card-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:20px}
+        .card{width:100%;max-width:440px;background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:36px 28px;animation:fadeUp .5s ease}
+        .card-back{display:inline-flex;align-items:center;gap:6px;color:var(--text-secondary);font-size:.8rem;cursor:pointer;margin-bottom:20px;background:none;border:none;font-family:'Outfit',sans-serif;transition:color .2s}
+        .card-back:hover{color:var(--gold)}
+        .card-title{font-family:'Bricolage Grotesque',sans-serif;font-size:1.4rem;font-weight:700;margin-bottom:4px}
+        .card-sub{color:var(--text-secondary);font-size:.82rem;font-weight:300;margin-bottom:28px}
+        .fg{margin-bottom:16px}
+        .fl{display:block;font-size:.72rem;color:var(--text-secondary);margin-bottom:6px;font-weight:500;text-transform:uppercase;letter-spacing:.05em}
+        .fi{width:100%;padding:12px 16px;background:var(--bg-input);border:1px solid var(--border);border-radius:10px;color:var(--text-primary);font-family:'Outfit',sans-serif;font-size:.9rem;transition:border-color .2s,box-shadow .2s;outline:none}
+        .fi.mono{font-family:'JetBrains Mono',monospace;font-size:.85rem}
+        .fi:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-glow)}
+        .fi::placeholder{color:var(--text-muted)}
+        .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+        .form-opt{font-size:.65rem;color:var(--text-muted);font-weight:300;text-transform:none;letter-spacing:0}
+        .pw-wrap{position:relative}
+        .pw-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1.1rem;padding:4px}
+        .sbtn{width:100%;padding:14px;background:linear-gradient(135deg,var(--gold),var(--gold-light));color:var(--bg-primary);border:none;border-radius:10px;font-family:'Outfit',sans-serif;font-size:1rem;font-weight:600;cursor:pointer;margin-top:8px;transition:transform .15s,box-shadow .2s}
+        .sbtn:hover{transform:translateY(-1px);box-shadow:0 6px 24px var(--gold-glow)}
+        .sbtn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+        .ferr{background:rgba(231,76,60,0.1);border:1px solid rgba(231,76,60,0.3);color:var(--error);padding:10px 14px;border-radius:8px;font-size:.82rem;margin-top:12px;display:none}
+        .form-legal{font-size:.68rem;color:var(--text-muted);text-align:center;margin-top:16px;line-height:1.5}
+        .login-link{display:block;margin-top:16px;color:var(--text-secondary);font-size:.8rem;cursor:pointer;text-decoration:none;transition:color .2s}
+        .login-link:hover{color:var(--gold)}
+
+        /* LOGIN ICON */
+        .login-icon{width:64px;height:64px;margin:0 auto 20px;border-radius:16px;background:linear-gradient(135deg,var(--gold),var(--gold-dim));display:flex;align-items:center;justify-content:center;box-shadow:0 8px 32px var(--gold-glow)}
+        .login-icon svg{width:32px;height:32px;fill:none;stroke:var(--bg-primary);stroke-width:2;stroke-linecap:round}
+        .login-title{font-family:'Bricolage Grotesque',sans-serif;font-size:1.4rem;font-weight:700;text-align:center;margin-bottom:4px}
+        .login-sub{text-align:center;color:var(--text-secondary);font-size:.82rem;font-weight:300;margin-bottom:28px}
+        .login-footer{text-align:center;margin-top:24px;padding-top:18px;border-top:1px solid var(--border)}
+        .login-footer p{color:var(--text-muted);font-size:.68rem}
+        .login-footer .proto{color:var(--gold-dim);font-family:'JetBrains Mono',monospace;font-size:.63rem;margin-top:4px}
+
+        /* DANKE */
+        .danke-check{width:72px;height:72px;margin:0 auto 20px;border-radius:50%;background:rgba(46,204,113,0.1);border:2px solid var(--success);display:flex;align-items:center;justify-content:center;font-size:2rem}
+        .danke-title{font-family:'Bricolage Grotesque',sans-serif;font-size:1.6rem;font-weight:700;margin-bottom:8px;text-align:center}
+        .danke-text{color:var(--text-secondary);font-size:.88rem;line-height:1.6;margin-bottom:24px;font-weight:300;text-align:center}
+        .wreveal{background:var(--bg-input);border:1px solid var(--border-gold);border-radius:12px;padding:20px;margin-bottom:24px}
+        .wreveal-lbl{font-size:.68rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+        .wreveal-id{font-family:'JetBrains Mono',monospace;font-size:1.1rem;font-weight:500;color:var(--gold);margin-bottom:12px}
+        .wreveal-pass{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--text-primary);background:var(--bg-card);padding:10px 14px;border-radius:8px;border:1px solid var(--border);word-break:break-all}
+        .wreveal-warn{display:flex;align-items:flex-start;gap:8px;margin-top:12px;padding:10px 12px;background:rgba(241,196,15,0.08);border:1px solid rgba(241,196,15,0.2);border-radius:8px;font-size:.75rem;color:var(--trust-yellow);text-align:left;line-height:1.4}
+
+        /* DASHBOARD */
+        .wallet-header{background:var(--bg-secondary);border-bottom:1px solid var(--border);padding:20px}
+        .wallet-identity{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+        .wallet-avatar{width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--gold),var(--gold-dim));display:flex;align-items:center;justify-content:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1.15rem;color:var(--bg-primary);flex-shrink:0}
+        .wallet-name{font-family:'Bricolage Grotesque',sans-serif;font-size:1.1rem;font-weight:700}
+        .wallet-id-d{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--gold-dim);margin-top:2px}
+        .wallet-badges{display:flex;gap:6px;flex-wrap:wrap}
+        .badge{padding:3px 10px;border-radius:6px;font-size:.67rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+        .b-role{background:rgba(201,162,39,0.15);color:var(--gold);border:1px solid var(--border-gold)}
+        .b-state{background:rgba(46,204,113,0.12);color:var(--success);border:1px solid rgba(46,204,113,0.3)}
+        .b-gov{background:rgba(136,136,160,0.1);color:var(--text-secondary);border:1px solid var(--border)}
+        .b-ctx{background:rgba(201,162,39,0.08);color:var(--gold-dim);border:1px solid var(--border)}
+        .sp{padding:20px}.spb{padding:0 20px 20px}
+        .stitle{font-family:'Bricolage Grotesque',sans-serif;font-size:.8rem;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px}
+        .trust-card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:18px}
+        .trust-meter{display:flex;align-items:center;gap:16px;margin-bottom:14px}
+        .trust-ring{width:68px;height:68px;flex-shrink:0}.trust-ring svg{width:100%;height:100%}
+        .trust-info h3{font-family:'Bricolage Grotesque',sans-serif;font-size:1.4rem;font-weight:700}
+        .trust-info p{font-size:.78rem;color:var(--text-secondary);margin-top:2px}
+        .trust-bar-w{background:var(--bg-input);border-radius:6px;height:5px;overflow:hidden}
+        .trust-bar{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--gold-dim),var(--gold),var(--gold-light));transition:width 1s ease}
+        .org-card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:14px 18px}
+        .org-name{font-family:'Bricolage Grotesque',sans-serif;font-weight:600;font-size:.9rem}
+        .org-domain{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:var(--gold-dim);margin-top:2px}
+        .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+        .info-item{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:12px}
+        .info-item .lbl{font-size:.62rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+        .info-item .val{font-family:'JetBrains Mono',monospace;font-size:.77rem;word-break:break-all}
+        .seal-card{background:var(--bg-card);border:1px solid var(--border-gold);border-radius:12px;padding:16px;text-align:center}
+        .seal-icon{font-size:1.3rem;margin-bottom:4px}
+        .seal-lbl{font-size:.67rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+        .seal-hash{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:var(--gold);word-break:break-all;line-height:1.5;opacity:.8}
+        .logout-btn{width:100%;padding:12px;background:transparent;border:1px solid var(--border);border-radius:10px;color:var(--text-secondary);font-family:'Outfit',sans-serif;font-size:.82rem;cursor:pointer;transition:all .2s;margin-bottom:32px}
+        .logout-btn:hover{border-color:var(--error);color:var(--error)}
+        .desktop-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:linear-gradient(135deg,#1a1a2e,#16213e);border:1px solid var(--border-gold,rgba(201,162,39,0.3));border-radius:12px;color:var(--gold);font-family:"Outfit",sans-serif;font-size:.9rem;font-weight:500;cursor:pointer;transition:all .3s;text-decoration:none;width:100%;justify-content:center}
+        .desktop-btn:hover{background:linear-gradient(135deg,#16213e,#0f3460);border-color:var(--gold);box-shadow:0 4px 20px rgba(201,162,39,0.15);transform:translateY(-1px)}
+        .desktop-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+        .klar .desktop-btn{background:linear-gradient(135deg,#e8e6dc,#d5d0c0);color:#8a6914;border-color:rgba(138,105,20,0.25)}
+        .klar .desktop-btn:hover{background:linear-gradient(135deg,#d5d0c0,#c5c0b0)}
+        @media(max-width:480px){.hero-title{font-size:1.6rem}.card{padding:28px 20px}.form-row{grid-template-columns:1fr}.sp,.spb{padding-left:16px;padding-right:16px}}
+    </style>
+</head>
+<body>
+<div class="app" id="app">
+    <div class="topbar">
+        <div class="topbar-logo" onclick="goHome()">WINDI <span>WALLET</span></div>
+        <div class="topbar-controls">
+            <button class="lang-btn active" onclick="setLang('de')">DE</button>
+            <button class="lang-btn" onclick="setLang('en')">EN</button>
+            <button class="lang-btn" onclick="setLang('pt')">PT</button>
+            <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">&#9788;</button>
+        </div>
+    </div>
+
+    <!-- SCREEN 1: LANDING -->
+    <div class="screen active" id="screenLanding">
+        <div class="landing">
+            <div class="landing-hero">
+                <div class="hero-shield"><svg viewBox="0 0 40 40"><path d="M20 4L6 10v10c0 9.3 6 17.2 14 20 8-2.8 14-10.7 14-20V10L20 4z"/><path d="M15 20l4 4 7-8" stroke-width="2.5"/></svg></div>
+                <h1 class="hero-title" data-t="hero_title">Ihre digitale <em>Governance-Identität</em></h1>
+                <p class="hero-subtitle" data-t="hero_subtitle">Das WINDI Wallet ist Ihre kryptographisch gesicherte Identität im Governance-Ökosystem. Kein Passwort-Chaos — eine Identität, die beweist.</p>
+            </div>
+            <div class="features">
+                <div class="feature animate-in delay-1"><div class="feature-icon">&#128274;</div><div class="feature-text"><h3 data-t="f1_title">Ed25519 Kryptographie</h3><p data-t="f1_text">Jede Identität wird mit einem einzigartigen kryptographischen Schlüsselpaar gesichert — derselbe Standard, dem auch SSH und Signal vertrauen.</p></div></div>
+                <div class="feature animate-in delay-2"><div class="feature-icon">&#128203;</div><div class="feature-text"><h3 data-t="f2_title">Governance-Receipts</h3><p data-t="f2_text">Jede Entscheidung wird forensisch dokumentiert. Ihr Wallet speichert nicht Daten, sondern Beweise — manipulationssicher und nachvollziehbar.</p></div></div>
+                <div class="feature animate-in delay-3"><div class="feature-icon">&#9878;</div><div class="feature-text"><h3 data-t="f3_title">Zero-Knowledge Architektur</h3><p data-t="f3_text">Ihre Daten bleiben bei Ihnen. WINDI speichert nur Hashes, Kategorien und Governance-Beweise — niemals Ihre sensiblen Dokumente.</p></div></div>
+            </div>
+            <div class="protocol-bar animate-in delay-4"><p data-t="protocol_text">AI processes. Human decides. WINDI guarantees.</p><p>Three Dragons Protocol v1.1 — I9 Active</p></div>
+            <div style="margin-bottom:16px"><a href="/desktop/" class="desktop-btn"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Desktop öffnen</a></div><div style="text-align:center"><button class="cta-btn" onclick="showScreen('register')" data-t="cta_register">Jetzt Wallet erstellen</button><a class="cta-login" onclick="showScreen('login')" data-t="cta_login">Bereits registriert? Anmelden</a></div>
+        </div>
+    </div>
+
+    <!-- SCREEN 2: REGISTER -->
+    <div class="screen" id="screenRegister">
+        <div class="card-wrap"><div class="card">
+            <button class="card-back" onclick="showScreen('landing')">&#8592; <span data-t="back">Zurück</span></button>
+            <h2 class="card-title" data-t="reg_title">Wallet erstellen</h2>
+            <p class="card-sub" data-t="reg_subtitle">Registrieren Sie sich für Ihre Governance-Identität</p>
+            <div class="fg"><label class="fl" data-t="label_name">Vollständiger Name</label><input class="fi" type="text" id="regName" placeholder="Max Mustermann" autocomplete="name"></div>
+            <div class="fg"><label class="fl">E-Mail</label><input class="fi" type="email" id="regEmail" placeholder="max@firma.de" autocomplete="email"></div>
+            <div class="form-row">
+                <div class="fg"><label class="fl" data-t="label_firma">Firma <span class="form-opt" data-t="optional">(optional)</span></label><input class="fi" type="text" id="regOrg" placeholder="Firma GmbH"></div>
+                <div class="fg"><label class="fl">Domain <span class="form-opt">(optional)</span></label><input class="fi mono" type="text" id="regDomain" placeholder="firma.de"></div>
+            </div>
+            <div class="fg"><label class="fl" data-t="label_pass_new">Passphrase</label><div class="pw-wrap"><input class="fi" type="password" id="regPass" placeholder="min. 8 Zeichen" autocomplete="new-password"><button class="pw-toggle" onclick="togglePw('regPass',this)">&#128065;</button></div></div>
+            <button class="sbtn" id="regBtn" onclick="doRegister()" data-t="btn_register">Wallet erstellen</button>
+            <div class="ferr" id="regErr"></div>
+            <p class="form-legal" data-t="legal">Mit der Registrierung stimmen Sie den Governance-Richtlinien des Three Dragons Protocol zu.</p>
+        </div></div>
+    </div>
+
+    <!-- SCREEN 3: VIELEN DANK -->
+    <div class="screen" id="screenDanke">
+        <div class="card-wrap"><div class="card" style="text-align:center;padding:40px 28px">
+            <div class="danke-check">&#10003;</div>
+            <h2 class="danke-title" data-t="danke_title">Vielen Dank!</h2>
+            <p class="danke-text" data-t="danke_text">Ihr WINDI Wallet wurde erfolgreich erstellt. Bitte speichern Sie Ihre Zugangsdaten sicher ab.</p>
+            <div class="wreveal">
+                <div class="wreveal-lbl">WALLET-ID</div>
+                <div class="wreveal-id" id="revealId">—</div>
+                <div class="wreveal-lbl" style="margin-top:12px">PASSPHRASE</div>
+                <div class="wreveal-pass" id="revealPass">—</div>
+                <div class="wreveal-warn"><span>&#9888;</span><span data-t="danke_warn">Bewahren Sie diese Daten sicher auf. Die Passphrase kann nicht wiederhergestellt werden.</span></div>
+            </div>
+            <button class="sbtn" onclick="prefillLogin()" data-t="btn_goto_login">Jetzt anmelden</button>
+        </div></div>
+    </div>
+
+    <!-- SCREEN 4: LOGIN -->
+    <div class="screen" id="screenLogin">
+        <div class="card-wrap"><div class="card">
+            <button class="card-back" onclick="showScreen('landing')">&#8592; <span data-t="back2">Zurück</span></button>
+            <div class="login-icon"><svg viewBox="0 0 32 32"><path d="M8 14V10a8 8 0 0 1 16 0v4"/><rect x="6" y="14" width="20" height="14" rx="3"/><circle cx="16" cy="21" r="2"/><path d="M16 23v2"/></svg></div>
+            <h2 class="login-title" data-t="login_title">Anmelden</h2>
+            <p class="login-sub" data-t="login_subtitle">Wallet-ID und Passphrase eingeben</p>
+            <div class="fg"><label class="fl">WALLET-ID</label><input class="fi mono" type="text" id="loginId" placeholder="WALLET-20260215-0001" autocomplete="username" spellcheck="false"></div>
+            <div class="fg"><label class="fl" data-t="label_passphrase">Passphrase</label><div class="pw-wrap"><input class="fi" type="password" id="loginPass" placeholder="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" autocomplete="current-password"><button class="pw-toggle" onclick="togglePw('loginPass',this)">&#128065;</button></div></div>
+            <button class="sbtn" id="loginBtn" onclick="doLogin()" data-t="btn_login">Anmelden</button>
+            <div class="ferr" id="loginErr"></div>
+            <a class="login-link" onclick="showScreen('register')" data-t="no_wallet">Noch kein Wallet? Jetzt erstellen</a>
+            <div class="login-footer"><p data-t="footer_protocol">AI processes. Human decides. WINDI guarantees.</p><p class="proto">Three Dragons Protocol v1.1 — I9 Active</p></div>
+        </div></div>
+    </div>
+
+    <!-- SCREEN 5: DASHBOARD -->
+    <div class="screen" id="screenDashboard"><div class="dashboard">
+        <div class="wallet-header">
+            <div class="wallet-identity"><div class="wallet-avatar" id="dAvatar">?</div><div><div class="wallet-name" id="dName">—</div><div class="wallet-id-d" id="dWid">—</div></div></div>
+            <div class="wallet-badges" id="dBadges"></div>
+        </div>
+        <div class="sp"><div class="stitle" data-t="section_trust">VERTRAUENSSTUFE</div>
+            <div class="trust-card"><div class="trust-meter"><div class="trust-ring" id="dRing"></div><div class="trust-info"><h3 id="dScore">—</h3><p id="dLevel">—</p></div></div><div class="trust-bar-w"><div class="trust-bar" id="dBar" style="width:0%"></div></div></div>
+        </div>
+        <div class="spb"><div class="stitle" data-t="section_org">ORGANISATION</div><div class="org-card"><div class="org-name" id="dOrg">—</div><div class="org-domain" id="dDom">—</div></div></div>
+        <div class="spb"><div class="stitle" data-t="section_identity">IDENTITÄT</div>
+            <div class="info-grid">
+                <div class="info-item"><div class="lbl">Human ID</div><div class="val" id="dHid">—</div></div>
+                <div class="info-item"><div class="lbl" data-t="label_gov">Governance</div><div class="val" id="dGov">—</div></div>
+                <div class="info-item"><div class="lbl">Context</div><div class="val" id="dCtx">—</div></div>
+                <div class="info-item"><div class="lbl">Render</div><div class="val" id="dRen">—</div></div>
+            </div>
+        </div>
+        <div class="spb"><div class="stitle" data-t="section_seal">KRYPTOGRAPHISCHES SIEGEL</div><div class="seal-card"><div class="seal-icon">&#128737;</div><div class="seal-lbl">Ed25519 Fingerprint</div><div class="seal-hash" id="dSeal">—</div></div></div>
+        <div class="spb"><a href="/desktop/suite.html" class="desktop-btn" style="margin-top:0"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>WINDI Desktop öffnen</a></div><div class="spb"><button class="logout-btn" onclick="doLogout()" data-t="btn_logout">Abmelden</button></div>
+    </div></div>
+</div>
+
+<script>
+const T={de:{hero_title_html:'Ihre digitale <em>Governance-Identität</em>',hero_subtitle:'Das WINDI Wallet ist Ihre kryptographisch gesicherte Identität im Governance-Ökosystem. Kein Passwort-Chaos — eine Identität, die beweist.',f1_title:'Ed25519 Kryptographie',f1_text:'Jede Identität wird mit einem einzigartigen kryptographischen Schlüsselpaar gesichert — derselbe Standard, dem auch SSH und Signal vertrauen.',f2_title:'Governance-Receipts',f2_text:'Jede Entscheidung wird forensisch dokumentiert. Ihr Wallet speichert nicht Daten, sondern Beweise — manipulationssicher.',f3_title:'Zero-Knowledge Architektur',f3_text:'Ihre Daten bleiben bei Ihnen. WINDI speichert nur Hashes, Kategorien und Governance-Beweise — niemals sensible Dokumente.',protocol_text:'AI processes. Human decides. WINDI guarantees.',cta_register:'Jetzt Wallet erstellen',cta_login:'Bereits registriert? Anmelden',back:'Zurück',back2:'Zurück',reg_title:'Wallet erstellen',reg_subtitle:'Registrieren Sie sich für Ihre Governance-Identität',label_name:'Vollständiger Name',label_firma:'Firma',optional:'(optional)',label_pass_new:'Passphrase',label_passphrase:'Passphrase',btn_register:'Wallet erstellen',btn_login:'Anmelden',btn_logout:'Abmelden',legal:'Mit der Registrierung stimmen Sie den Governance-Richtlinien des Three Dragons Protocol zu.',danke_title:'Vielen Dank!',danke_text:'Ihr WINDI Wallet wurde erfolgreich erstellt. Bitte speichern Sie Ihre Zugangsdaten sicher ab.',danke_warn:'Bewahren Sie diese Daten sicher auf. Die Passphrase kann nicht wiederhergestellt werden.',btn_goto_login:'Jetzt anmelden',no_wallet:'Noch kein Wallet? Jetzt erstellen',section_trust:'VERTRAUENSSTUFE',section_org:'ORGANISATION',section_identity:'IDENTITÄT',section_seal:'KRYPTOGRAPHISCHES SIEGEL',label_gov:'Governance',footer_protocol:'AI processes. Human decides. WINDI guarantees.',logging_in:'Verifiziere…',registering:'Erstelle…',err_fields:'Alle Pflichtfelder ausfüllen',err_pass_short:'Passphrase mind. 8 Zeichen',err_network:'Verbindungsfehler'},en:{hero_title_html:'Your digital <em>Governance Identity</em>',hero_subtitle:'The WINDI Wallet is your cryptographically secured identity in the governance ecosystem. No password chaos — one identity that proves.',f1_title:'Ed25519 Cryptography',f1_text:'Every identity is secured with a unique cryptographic key pair — the same standard trusted by SSH and Signal.',f2_title:'Governance Receipts',f2_text:'Every decision is forensically documented. Your Wallet stores proofs, not data — tamper-proof and traceable.',f3_title:'Zero-Knowledge Architecture',f3_text:'Your data stays with you. WINDI only stores hashes, categories and governance proofs — never sensitive documents.',protocol_text:'AI processes. Human decides. WINDI guarantees.',cta_register:'Create Wallet',cta_login:'Already registered? Sign in',back:'Back',back2:'Back',reg_title:'Create Wallet',reg_subtitle:'Register for your governance identity',label_name:'Full Name',label_firma:'Company',optional:'(optional)',label_pass_new:'Passphrase',label_passphrase:'Passphrase',btn_register:'Create Wallet',btn_login:'Sign In',btn_logout:'Sign Out',legal:'By registering you agree to the governance guidelines of the Three Dragons Protocol.',danke_title:'Thank you!',danke_text:'Your WINDI Wallet has been created successfully. Please save your credentials securely.',danke_warn:'Keep these credentials safe. The passphrase cannot be recovered.',btn_goto_login:'Sign in now',no_wallet:'No wallet yet? Create one',section_trust:'TRUST LEVEL',section_org:'ORGANISATION',section_identity:'IDENTITY',section_seal:'CRYPTOGRAPHIC SEAL',label_gov:'Governance',footer_protocol:'AI processes. Human decides. WINDI guarantees.',logging_in:'Verifying…',registering:'Creating…',err_fields:'Please fill all required fields',err_pass_short:'Passphrase min. 8 characters',err_network:'Connection error'},pt:{hero_title_html:'Sua <em>Identidade de Governança</em> digital',hero_subtitle:'O WINDI Wallet é sua identidade criptograficamente segura no ecossistema de governança. Sem caos de senhas — uma identidade que comprova.',f1_title:'Criptografia Ed25519',f1_text:'Cada identidade é protegida com um par de chaves criptográficas único — o mesmo padrão usado por SSH e Signal.',f2_title:'Recibos de Governança',f2_text:'Cada decisão é documentada forensicamente. Seu Wallet armazena provas, não dados — à prova de manipulação.',f3_title:'Arquitetura Zero-Knowledge',f3_text:'Seus dados ficam com você. O WINDI armazena apenas hashes, categorias e provas — nunca documentos sensíveis.',protocol_text:'AI processa. Humano decide. WINDI garante.',cta_register:'Criar Wallet',cta_login:'Já registrado? Entrar',back:'Voltar',back2:'Voltar',reg_title:'Criar Wallet',reg_subtitle:'Registre-se para sua identidade de governança',label_name:'Nome Completo',label_firma:'Empresa',optional:'(opcional)',label_pass_new:'Frase Secreta',label_passphrase:'Frase Secreta',btn_register:'Criar Wallet',btn_login:'Entrar',btn_logout:'Sair',legal:'Ao se registrar você concorda com as diretrizes do Three Dragons Protocol.',danke_title:'Muito obrigado!',danke_text:'Seu WINDI Wallet foi criado com sucesso. Salve suas credenciais com segurança.',danke_warn:'Guarde esses dados com segurança. A frase secreta não pode ser recuperada.',btn_goto_login:'Entrar agora',no_wallet:'Sem wallet? Crie agora',section_trust:'NÍVEL DE CONFIANÇA',section_org:'ORGANIZAÇÃO',section_identity:'IDENTIDADE',section_seal:'SELO CRIPTOGRÁFICO',label_gov:'Governança',footer_protocol:'AI processa. Humano decide. WINDI garante.',logging_in:'Verificando…',registering:'Criando…',err_fields:'Preencha todos os campos obrigatórios',err_pass_short:'Frase secreta mín. 8 caracteres',err_network:'Erro de conexão'}};
+let currentLang='de',createdWid=null,createdPw=null,authToken=null;
+
+function setLang(l){currentLang=l;document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.textContent.trim()===l.toUpperCase()));const t=T[l];document.querySelectorAll('[data-t]').forEach(el=>{const k=el.getAttribute('data-t');if(t[k])el.textContent=t[k]});const h=document.querySelector('[data-t="hero_title"]');if(h&&t.hero_title_html)h.innerHTML=t.hero_title_html;localStorage.setItem('windi_lang',l)}
+
+let isKlar=false;
+function toggleTheme(){isKlar=!isKlar;document.body.classList.toggle('klar',isKlar);document.getElementById('themeBtn').innerHTML=isKlar?'&#9790;':'&#9788;';localStorage.setItem('windi_theme',isKlar?'klar':'noir')}
+
+function showScreen(n){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));const el=document.getElementById('screen'+n.charAt(0).toUpperCase()+n.slice(1));if(el)el.classList.add('active');window.scrollTo(0,0)}
+function goHome(){showScreen(authToken?'dashboard':'landing')}
+function togglePw(id,btn){const i=document.getElementById(id);const p=i.type==='password';i.type=p?'text':'password';btn.innerHTML=p?'&#128274;':'&#128065;'}
+
+async function doRegister(){
+    const name=document.getElementById('regName').value.trim(),email=document.getElementById('regEmail').value.trim(),org=document.getElementById('regOrg').value.trim(),domain=document.getElementById('regDomain').value.trim(),pw=document.getElementById('regPass').value,err=document.getElementById('regErr'),btn=document.getElementById('regBtn'),t=T[currentLang];
+    err.style.display='none';
+    if(!name||!email){err.textContent=t.err_fields;err.style.display='block';return}
+    if(pw.length<8){err.textContent=t.err_pass_short;err.style.display='block';return}
+    btn.disabled=true;btn.innerHTML='<span class="spinner"></span>'+t.registering;
+    try{
+        const r1=await fetch('/api/wallet/provision',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({lead_id:'web-'+Date.now(),name,email,org_name:org||undefined,org_domain:domain||undefined})});
+        const d1=await r1.json();
+        if(!r1.ok||!d1.wallet_id){err.textContent=d1.error||'Provision failed';err.style.display='block';btn.disabled=false;btn.textContent=t.btn_register;return}
+        const r2=await fetch('/api/auth/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({wallet_id:d1.wallet_id,passphrase:pw,admin_key:'dragon-genesis-2026'})});
+        if(!r2.ok){const d2=await r2.json();err.textContent=d2.error||'Registration failed';err.style.display='block';btn.disabled=false;btn.textContent=t.btn_register;return}
+        createdWid=d1.wallet_id;createdPw=pw;
+        document.getElementById('revealId').textContent=d1.wallet_id;
+        document.getElementById('revealPass').textContent=pw;
+        showScreen('danke');
+    }catch(e){err.textContent=t.err_network;err.style.display='block'}
+    btn.disabled=false;btn.textContent=t.btn_register;
+}
+
+function prefillLogin(){if(createdWid)document.getElementById('loginId').value=createdWid;if(createdPw)document.getElementById('loginPass').value=createdPw;showScreen('login')}
+
+async function doLogin(){
+    const wid=document.getElementById('loginId').value.trim(),pw=document.getElementById('loginPass').value,err=document.getElementById('loginErr'),btn=document.getElementById('loginBtn'),t=T[currentLang];
+    err.style.display='none';
+    if(!wid||!pw){err.textContent=t.err_fields;err.style.display='block';return}
+    btn.disabled=true;btn.innerHTML='<span class="spinner"></span>'+t.logging_in;
+    try{
+        const r=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({wallet_id:wid,passphrase:pw})});
+        const d=await r.json();
+        if(!r.ok){err.textContent=d.error||'Login failed';err.style.display='block';btn.disabled=false;btn.textContent=t.btn_login;return}
+        authToken=d.token;localStorage.setItem('windi_token',authToken);
+        await loadDash(wid);
+    }catch(e){err.textContent=t.err_network;err.style.display='block';btn.disabled=false;btn.textContent=t.btn_login}
+}
+
+async function loadDash(wid){
+    try{
+        const r=await fetch('/api/wallet/me?wallet_id='+encodeURIComponent(wid),{headers:authToken?{'Authorization':'Bearer '+authToken}:{}});
+        const w=await r.json();if(w.error)return;
+        const ini=(w.display_name||'?').split(' ').map(n=>n[0]).join('').slice(0,2);
+        document.getElementById('dAvatar').textContent=ini;
+        document.getElementById('dName').textContent=w.display_name||'—';
+        document.getElementById('dWid').textContent=w.wallet_id||'—';
+        const b=document.getElementById('dBadges');b.innerHTML='';
+        if(w.role)b.innerHTML+='<span class="badge b-role">'+w.role+'</span>';
+        if(w.state)b.innerHTML+='<span class="badge b-state">'+w.state+'</span>';
+        if(w.governance_level)b.innerHTML+='<span class="badge b-gov">'+w.governance_level+'</span>';
+        if(w.context_type)b.innerHTML+='<span class="badge b-ctx">'+w.context_type+'</span>';
+        const sc=w.trust?.score??0;
+        document.getElementById('dScore').textContent=sc+'%';
+        document.getElementById('dLevel').textContent='Level '+(w.trust?.level||'—');
+        document.getElementById('dBar').style.width=sc+'%';
+        renderRing(sc);
+        document.getElementById('dOrg').textContent=w.org?.name||'—';
+        document.getElementById('dDom').textContent=w.org?.domain||'—';
+        document.getElementById('dHid').textContent=w.human_id?w.human_id.slice(0,18)+'…':'—';
+        document.getElementById('dGov').textContent=w.governance_level||'—';
+        document.getElementById('dCtx').textContent=w.context_type||'—';
+        document.getElementById('dRen').textContent=w.render?.path||'—';
+        document.getElementById('dSeal').textContent=w.fingerprint||'—';
+        showScreen('dashboard');
+    }catch(e){console.error(e)}
+}
+
+function renderRing(s){const r=28,c=2*Math.PI*r,o=c-(s/100)*c,cl=s>=70?'var(--trust-green)':s>=40?'var(--trust-yellow)':'var(--trust-red)';document.getElementById('dRing').innerHTML='<svg viewBox="0 0 72 72"><circle cx="36" cy="36" r="'+r+'" fill="none" stroke="var(--border)" stroke-width="4"/><circle cx="36" cy="36" r="'+r+'" fill="none" stroke="'+cl+'" stroke-width="4" stroke-dasharray="'+c+'" stroke-dashoffset="'+o+'" stroke-linecap="round" transform="rotate(-90 36 36)" style="transition:stroke-dashoffset 1.2s ease"/><text x="36" y="39" text-anchor="middle" fill="'+cl+'" font-family="Bricolage Grotesque" font-size="14" font-weight="700">'+s+'</text></svg>'}
+
+function doLogout(){authToken=null;localStorage.removeItem('windi_token');fetch('/api/auth/logout',{method:'POST'}).catch(()=>{});document.getElementById('loginPass').value='';document.getElementById('loginBtn').disabled=false;document.getElementById('loginBtn').textContent=T[currentLang].btn_login;showScreen('landing')}
+
+async function checkSession(){const s=localStorage.getItem('windi_token');if(!s)return;authToken=s;try{const r=await fetch('/api/auth/session',{headers:{'Authorization':'Bearer '+s}});if(r.ok){const d=await r.json();await loadDash(d.wallet_id)}else{localStorage.removeItem('windi_token');authToken=null}}catch(e){authToken=null}}
+
+document.addEventListener('DOMContentLoaded',()=>{if(localStorage.getItem('windi_theme')==='klar')toggleTheme();const sl=localStorage.getItem('windi_lang');if(sl&&T[sl])setLang(sl);checkSession();document.getElementById('loginPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});document.getElementById('loginId').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('loginPass').focus()});document.getElementById('regPass').addEventListener('keydown',e=>{if(e.key==='Enter')doRegister()})});
+</script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+{
+  "constellation_name": "WINDI Agent Constellation",
+  "version": "1.0.0",
+  "total_agents": 8,
+  "principle": "AI processes. Human decides. WINDI guarantees.",
+  "invariant_I9": "No agent may escalate its own autonomy. Human-mediated ONLY.",
+  "established": "2026-02-08",
+  "established_by": "Three Dragons Protocol — Human Dragon (Sovereign), Claude (Guardian), GPT (Architect), Gemini (Witness)",
+  "shelves": {
+    "detection": {
+      "description": "O que está acontecendo?",
+      "agents": [
+        {"id": "sentinela", "version": "1.0.0", "status": "OPERATIONAL"},
+        {"id": "pulse-agent", "version": "1.0.0", "status": "OPERATIONAL"},
+        {"id": "sla-sentinel", "version": "1.0.0", "status": "OPERATIONAL"}
+      ]
+    },
+    "orchestration": {
+      "description": "O que fazer?",
+      "agents": [
+        {"id": "maestro", "version": "1.2.0", "status": "OPERATIONAL"},
+        {"id": "onboarding-agent", "version": "1.0.0", "status": "OPERATIONAL"}
+      ]
+    },
+    "verification": {
+      "description": "É verdade?",
+      "agents": [
+        {"id": "isp-manager", "version": "1.0.1", "status": "OPERATIONAL"},
+        {"id": "integrity-watchdog", "version": "1.0.0", "status": "OPERATIONAL"}
+      ]
+    },
+    "meta_governance": {
+      "description": "O que aprendemos?",
+      "agents": [
+        {"id": "report-agent", "version": "1.0.0", "status": "OPERATIONAL"}
+      ]
+    }
+  },
+  "construction_order": [
+    {"priority": 1, "agent": "report-agent", "reason": "Memória institucional — documenta o que existe", "deployed": "2026-02-08"},
+    {"priority": 2, "agent": "integrity-watchdog", "reason": "Verificação forense — quem vigia os Dragões", "deployed": "2026-02-08"},
+    {"priority": 3, "agent": "pulse-agent", "reason": "Previsibilidade — de reativo a preditivo", "deployed": "2026-02-08"},
+    {"priority": 4, "agent": "sla-sentinel", "reason": "Agilidade — previne breaches temporais", "deployed": "2026-02-08"},
+    {"priority": 5, "agent": "onboarding-agent", "reason": "Escala — de artesanato a infraestrutura", "deployed": "2026-02-08"}
+  ],
+  "design_principles": [
+    "Every agent has Manifest + Capsule + Policy",
+    "Human-mediated ONLY — no auto_apply flags",
+    "Zero-knowledge compliant — no sensitive data in agent storage",
+    "Each agent answers one institutional question",
+    "8 is the limit of elegance — above this is bureaucracy"
+  ],
+  "three_pillars": {
+    "CREATION": "isp-manager",
+    "VERIFICATION": "sentinela",
+    "RESOLUTION": "maestro"
+  },
+  "seal": {
+    "statement": "AI processes. Human decides. WINDI guarantees.",
+    "sealed_utc": "2026-02-08T19:25:00Z"
+  }
+}

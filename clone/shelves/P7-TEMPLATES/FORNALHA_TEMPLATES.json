@@ -1,0 +1,275 @@
+{
+  "shelf": "P7-TEMPLATES",
+  "priority": "LOW",
+  "enforcement": "OPTIONAL",
+  "description": "Fornalha Templates (T1-T8) + Templates de Fé Pública - Formatos pré-definidos para previews",
+  "source": "WINDI Book - Appendix A Fornalha Template Catalog v1.0",
+
+  "authorship": {
+    "original_architect": "WITNESS (Gemini)",
+    "injector": "GUARDIAN (Claude)",
+    "version": "1.2.0-CONSTITUTIONAL",
+    "injection_date": "2026-02-09"
+  },
+
+  "constitutional_injection": {
+    "name": "Templates de Fé Pública",
+    "description": "Modelos de cartas para Bancos/Gov para uso imediato pelo usuário Free",
+    "enforcement": {
+      "check": "public_faith_templates MUST be available to FREE tier users",
+      "violation": "LOG_ONLY",
+      "implementation": "Template library with tier-based access"
+    },
+    "source": "Constitution v1.2.0 - Witness Injection"
+  },
+
+  "nature": "Declarative - Ex ante - Non-executable - Non-binding - Non-certifying - Decision always human",
+
+  "public_faith_templates": {
+    "description": "Templates de Fé Pública - Disponíveis para tier FREE",
+    "category": "OFFICIAL_CORRESPONDENCE",
+    "templates": [
+      {
+        "id": "PF-001",
+        "name": "Carta para Banco - Solicitação Formal",
+        "purpose": "Comunicação formal com instituição bancária",
+        "tier": "FREE",
+        "components": [
+          "Cabeçalho institucional",
+          "Identificação do solicitante",
+          "Corpo com solicitação estruturada",
+          "Fundamentação legal (quando aplicável)",
+          "Fechamento formal",
+          "Assinatura e data"
+        ],
+        "hash_required": true,
+        "seal_optional": true
+      },
+      {
+        "id": "PF-002",
+        "name": "Requerimento Administrativo - Órgão Público",
+        "purpose": "Requerimento formal para autoridade administrativa",
+        "tier": "FREE",
+        "components": [
+          "Endereçamento à autoridade",
+          "Qualificação do requerente",
+          "Exposição dos fatos",
+          "Fundamentação do pedido",
+          "Pedido específico",
+          "Requerimento de deferimento"
+        ],
+        "hash_required": true,
+        "seal_optional": true
+      },
+      {
+        "id": "PF-003",
+        "name": "Notificação Extrajudicial",
+        "purpose": "Notificação formal antes de medidas judiciais",
+        "tier": "FREE",
+        "components": [
+          "Identificação das partes",
+          "Histórico do fato",
+          "Descrição do problema",
+          "Prazo para resposta/solução",
+          "Consequências do não atendimento",
+          "Assinatura com AR"
+        ],
+        "hash_required": true,
+        "seal_recommended": true
+      },
+      {
+        "id": "PF-004",
+        "name": "Declaração de Ciência",
+        "purpose": "Registro formal de ciência de informação/evento",
+        "tier": "FREE",
+        "components": [
+          "Identificação do declarante",
+          "Objeto da ciência",
+          "Data e local",
+          "Assinatura"
+        ],
+        "hash_required": true,
+        "seal_optional": true
+      },
+      {
+        "id": "PF-005",
+        "name": "Carta de Contestação",
+        "purpose": "Contestação formal de decisão administrativa ou comercial",
+        "tier": "FREE",
+        "components": [
+          "Identificação do contestante",
+          "Referência à decisão contestada",
+          "Argumentos de contestação",
+          "Documentos de suporte",
+          "Pedido de revisão"
+        ],
+        "hash_required": true,
+        "seal_recommended": true
+      }
+    ]
+  },
+
+  "templates": [
+    {
+      "id": "T1",
+      "name": "Lab Pilot (Closed Pilot)",
+      "objective": "Estruturar um piloto de laboratório com escopo limitado e postura de evidência explícita",
+      "tier": "PRO",
+      "inputs": [
+        "Problem / hypothesis (1 paragraph)",
+        "Environment (lab / simulation / synthetic vs real data)",
+        "Data (type, sensitivity, access)",
+        "Human confirmation owner (name/role)",
+        "Validation-based closure criterion"
+      ],
+      "outputs": [
+        "Pilot scope map (in / out)",
+        "Decision & confirmation map",
+        "Validation-based closure checklist",
+        "Escalation / refusal boundaries",
+        "Evidence pack outline"
+      ],
+      "guardrails": ["Not a model benchmark", "Not a safety certification", "No guarantee of generalization"]
+    },
+    {
+      "id": "T2",
+      "name": "Research Protocol (IRB-adjacent)",
+      "objective": "Tornar pesquisa legível para revisão ética e auditabilidade",
+      "tier": "PRO",
+      "inputs": [
+        "Research question",
+        "Subjects/data (humans? personal data? minors?)",
+        "Risks (participant, reputational, institutional)",
+        "Existing mitigations",
+        "Closure criterion"
+      ],
+      "outputs": [
+        "Scope & ethics touchpoints map",
+        "Non-scope clarifications",
+        "Authority / escalation map",
+        "Documentation checklist"
+      ],
+      "guardrails": ["Does not replace IRB/ethics committee", "No compliance guarantee", "Does not authorize data collection"]
+    },
+    {
+      "id": "T3",
+      "name": "Regulatory Briefing",
+      "objective": "Preparar interação com regulador/auditor usando framing de governança",
+      "tier": "ENTERPRISE",
+      "inputs": [
+        "Institutional context",
+        "Topic (use/risk)",
+        "Ask to the regulator",
+        "Reference artifacts"
+      ],
+      "outputs": [
+        "Regulatory-grade framing",
+        "Hard questions pack",
+        "Evidence posture"
+      ],
+      "guardrails": ["No compliance claims", "No safety guarantees", "No 'WINDI certification'"]
+    },
+    {
+      "id": "T4",
+      "name": "Enterprise Scoping (Institutional Scoping)",
+      "objective": "Estruturar início de iniciativa antes de procurement e execução",
+      "tier": "ENTERPRISE",
+      "inputs": [
+        "Service / business objective",
+        "Stakeholders",
+        "Environments",
+        "Criticality",
+        "Constraints"
+      ],
+      "outputs": [
+        "Scope boundaries",
+        "Confirmation points",
+        "Closure criteria",
+        "Risk language audit"
+      ],
+      "guardrails": ["Not a technical plan", "Not a software architecture", "Does not authorize acquisition"]
+    },
+    {
+      "id": "T5",
+      "name": "IP / Authorship / Origin Case",
+      "objective": "Preparar postura de autoria e precedência interpretativa ex ante",
+      "tier": "PRO",
+      "inputs": [
+        "What the artifact is",
+        "What it is not",
+        "Publication mode (A3/A2/A1)",
+        "Language-risk terms to avoid"
+      ],
+      "outputs": [
+        "Layer plan (Layers 1-4) + limits map",
+        "Risk language matrix",
+        "Freezing metadata",
+        "Disclosure posture"
+      ],
+      "guardrails": ["No 'conclusive proof' claim", "No threat/enforcement posture", "No 'AI recognizes authorship' claim"]
+    },
+    {
+      "id": "T6",
+      "name": "Procurement / Vendor Exploration",
+      "objective": "Prevenir que procurement comece sem escopo limitado e linguagem defensável",
+      "tier": "ENTERPRISE",
+      "inputs": [
+        "Institutional need",
+        "Vendor class",
+        "Data involved",
+        "Minimum requirements",
+        "Decision criterion"
+      ],
+      "outputs": [
+        "Non-promissory requirements brief",
+        "Vendor question set",
+        "Vendor risk flags",
+        "Decision record template"
+      ],
+      "guardrails": ["Does not replace contract/DPA", "Does not validate vendor safety", "Does not remove due diligence"]
+    },
+    {
+      "id": "T7",
+      "name": "Public Communication (High-Risk)",
+      "objective": "Habilitar comunicação pública sem transformar WINDI em marketing ou certificação",
+      "tier": "ENTERPRISE",
+      "inputs": [
+        "Audience",
+        "Core message (1 sentence)",
+        "Explicit 'do not say' list",
+        "Reputation risk scenarios"
+      ],
+      "outputs": [
+        "Safe wording set",
+        "Disclosure boundary",
+        "Adversarial Q&A pack"
+      ],
+      "guardrails": ["No 'certification' framing", "No 'control' framing", "No safety/compliance guarantees"]
+    },
+    {
+      "id": "T8",
+      "name": "Multi-Agent Perspective Review",
+      "objective": "Coletar leituras divergentes estruturadas (múltiplos agentes/IAs) sob mesmo contexto normativo",
+      "tier": "ENTERPRISE",
+      "inputs": [
+        "Same intake as T1-T4",
+        "Same header/context version",
+        "Fixed questions (implicit promises? missing closure? unsafe scope?)"
+      ],
+      "outputs": [
+        "Divergence map",
+        "Risk concentration",
+        "Human decision gate (proceed/pause/escalate)"
+      ],
+      "guardrails": ["Not automated voting", "Not AI decision-making", "Not 'technical truth' - comparative reading only"]
+    }
+  ],
+
+  "tier_access": {
+    "FREE": ["PF-001", "PF-002", "PF-003", "PF-004", "PF-005"],
+    "PRO": ["T1", "T2", "T5"],
+    "ENTERPRISE": ["T3", "T4", "T6", "T7", "T8"]
+  },
+
+  "universal_disclaimer": "This output is a non-binding, ex ante preview artifact. It does not execute, approve, certify, or guarantee compliance/safety. All decisions remain human and accountable."
+}

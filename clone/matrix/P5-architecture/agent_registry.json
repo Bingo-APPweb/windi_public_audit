@@ -1,0 +1,86 @@
+{
+  "registry_version": "1.0.0",
+  "created_utc": "2026-02-08T23:19:16Z",
+  "last_updated_utc": "2026-02-08T23:19:16Z",
+
+  "agents": [
+    {
+      "agent_id": "W-00000000000000000000000000000001",
+      "name": "WINDI-CLONE Genesis",
+      "class": "CLONE_GENESIS",
+      "status": "OPERATIONAL",
+      "registered_utc": "2026-02-08T23:19:16Z",
+      "capabilities": ["clone_management", "constitution_enforcement", "agent_registration"]
+    },
+    {
+      "agent_id": "W-00000000000000000000000000000002",
+      "name": "Clone-SGE",
+      "class": "DETECTION",
+      "status": "PENDING_DEPLOYMENT",
+      "parent_mirror": "sge (Synthetic Governance Engine)",
+      "capabilities": ["document_analysis", "hash_generation", "pattern_detection"]
+    },
+    {
+      "agent_id": "W-00000000000000000000000000000003",
+      "name": "Clone-Maestro",
+      "class": "ORCHESTRATION",
+      "status": "PENDING_DEPLOYMENT",
+      "parent_mirror": "maestro",
+      "capabilities": ["task_orchestration", "workflow_management", "queue_processing"]
+    },
+    {
+      "agent_id": "W-00000000000000000000000000000004",
+      "name": "Clone-Sentinela",
+      "class": "VERIFICATION",
+      "status": "PENDING_DEPLOYMENT",
+      "parent_mirror": "sentinela",
+      "capabilities": ["integrity_verification", "seal_validation", "compliance_check"]
+    },
+    {
+      "agent_id": "W-00000000000000000000000000000005",
+      "name": "Clone-ISP-Manager",
+      "class": "ORCHESTRATION",
+      "status": "PENDING_DEPLOYMENT",
+      "parent_mirror": "isp-manager",
+      "capabilities": ["document_creation", "template_management", "pdf_generation"]
+    },
+    {
+      "agent_id": "W-00000000000000000000000000000006",
+      "name": "Clone-NOC",
+      "class": "DETECTION",
+      "status": "PENDING_DEPLOYMENT",
+      "parent_mirror": "noc (Network Operations Center)",
+      "capabilities": ["system_monitoring", "health_checks", "alert_generation"]
+    },
+    {
+      "agent_id": "W-00000000000000000000000000000007",
+      "name": "Clone-Compliance",
+      "class": "VERIFICATION",
+      "status": "PENDING_DEPLOYMENT",
+      "parent_mirror": "compliance",
+      "capabilities": ["regulation_check", "policy_enforcement", "audit_logging"]
+    },
+    {
+      "agent_id": "W-00000000000000000000000000000008",
+      "name": "Clone-Integrity-Watchdog",
+      "class": "META_GOVERNANCE",
+      "status": "PENDING_DEPLOYMENT",
+      "parent_mirror": "integrity-watchdog",
+      "capabilities": ["invariant_monitoring", "i9_enforcement", "self_audit"]
+    },
+    {
+      "agent_id": "W-00000000000000000000000000000009",
+      "name": "Clone-Pulse",
+      "class": "META_GOVERNANCE",
+      "status": "PENDING_DEPLOYMENT",
+      "parent_mirror": "pulse",
+      "capabilities": ["rhythm_analysis", "predictive_signals", "system_health"]
+    }
+  ],
+
+  "statistics": {
+    "total_registered": 9,
+    "operational": 1,
+    "pending_deployment": 8
+  }
+}

@@ -1,0 +1,120 @@
+{
+  "specification": "MVP_UMA_FATURA_UM_CARTORIO",
+  "version": "0.1.0",
+  "codename": "Etapa 0",
+  "objective": "Provar a experiência humana e o rito cartorial",
+
+  "scope": {
+    "in": [
+      "Editor de fatura B2B",
+      "Flags R3 + R4 hardcoded",
+      "Modal humano (APPROVED/OVERRIDDEN/DEFERRED)",
+      "Razão obrigatória para override",
+      "Timer de decisão",
+      "PDF com selo + QR + metadados",
+      "Ledger local append-only",
+      "Receipts: ROUTE, ACK, SEAL"
+    ],
+    "out": [
+      "Sync com Hub",
+      "Multi-tenancy",
+      "ISP completo",
+      "Agent conversacional",
+      "Múltiplos tipos de documento",
+      "Instalador multiplataforma"
+    ]
+  },
+
+  "components": {
+    "editor": {
+      "type": "Invoice B2B",
+      "fields": [
+        "issuer_info",
+        "recipient_info",
+        "line_items",
+        "totals",
+        "tax_info",
+        "dates"
+      ],
+      "templates": ["invoice_basic.yaml"]
+    },
+
+    "flags": {
+      "R3_COMPLIANCE": {
+        "severity": "MEDIUM",
+        "action": "HUMAN_REVIEW",
+        "checks": [
+          "tax_id_format_valid",
+          "amounts_consistent",
+          "dates_logical"
+        ]
+      },
+      "R4_ANOMALY": {
+        "severity": "HIGH",
+        "action": "HUMAN_MANDATORY",
+        "timer_seconds": 30,
+        "checks": [
+          "unusual_amount_pattern",
+          "recipient_first_time",
+          "round_number_alert"
+        ]
+      }
+    },
+
+    "modal": {
+      "options": ["APPROVED", "OVERRIDDEN", "DEFERRED"],
+      "reason_required": {
+        "APPROVED": false,
+        "OVERRIDDEN": true,
+        "DEFERRED": true
+      },
+      "timer": {
+        "R3": 0,
+        "R4": 30
+      }
+    },
+
+    "output": {
+      "format": "PDF",
+      "seal": {
+        "visual": true,
+        "qr_code": true,
+        "metadata_embedded": true
+      },
+      "proof_id": "WINDI-YYYY-MMDD-XXXX"
+    },
+
+    "ledger": {
+      "type": "local_append_only",
+      "path": "/data/ledger.db",
+      "merkle": true
+    },
+
+    "receipts": {
+      "types": ["ROUTE", "ACK", "SEAL"],
+      "storage": "/data/receipts/"
+    }
+  },
+
+  "api_local": {
+    "port": 4747,
+    "endpoints": [
+      {"method": "POST", "path": "/api/seal"},
+      {"method": "GET", "path": "/api/ledger"},
+      {"method": "POST", "path": "/api/verify"},
+      {"method": "GET", "path": "/api/health"}
+    ]
+  },
+
+  "success_criteria": [
+    "Usuário cria fatura em <2 minutos",
+    "Flag R4 ativa modal com timer",
+    "Override exige razão textual",
+    "PDF gerado com QR verificável",
+    "Ledger registra toda operação",
+    "Receipt SEAL confirma conclusão"
+  ],
+
+  "philosophy": "A obrigação moral se cumpre com MVP cartorial simples, não 40 features",
+  "golden_rule": "Filosofia vira máquina"
+}

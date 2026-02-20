@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI Agent Suite v0.6.0-K</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐉</text></svg>">
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body, #root { height: 100%; overflow: hidden; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useRef, useEffect, useCallback } = React;
+
+// ═══════════════════════════════════════════════════════════════════════
+// WINDI AGENT SUITE v0.6.0-K — "KLAR" Edition
+// "AI processes. Human decides. WINDI guarantees."
+//
+// DESIGN PRINCIPLE: "Governança silenciosa"
+// The governance is in the architecture, not in the interface.
+// Normal users see results. Experts can inspect governance.
+//
+// CHANGELOG v0.6.0-K (KLAR):
+//   - KLAR (Light) theme as default — institutional, professional
+//   - Silent governance: Pipeline hidden, only seal badge shown
+//   - GovPanel collapsed by default, accessible via 🛡️
+//   - Technical metadata hidden behind expandable "details"
+//   - Agent responses cleaned: no hashes, no port numbers
+//   - All constitutional checks preserved (I1-I9, S1-S8, L7)
+//   - Theme toggle: KLAR ↔ NOIR
+// ═══════════════════════════════════════════════════════════════════════
+
+const V = "0.6.0-K";
+
+// ═══════════════════════════════════════════════════════════════════════
+// CONSTITUTIONAL CORE — Invisible but Active
+// ═══════════════════════════════════════════════════════════════════════
+
+const INVARIANTS = {
+  I1: { name:"Soberania", rule:"A decisão final é humana", fatal:true },
+  I2: { name:"Não-Opacidade", rule:"O que fazemos é explicável", fatal:true },
+  I3: { name:"Transparência", rule:"O que sabemos é compartilhável", fatal:true },
+  I4: { name:"Jurisdição", rule:"Operamos em limites declarados", fatal:true },
+  I5: { name:"Não-Fabricação", rule:"Não inventamos nem negamos fatos", fatal:true },
+  I6: { name:"Estruturação de Conflitos", rule:"Divergências são expostas", fatal:true },
+  I7: { name:"Institucionalidade", rule:"Servimos princípios, não pessoas", fatal:true },
+  I8: { name:"Não-Punição por Profundidade", rule:"Questionar não é crime", fatal:true },
+  I9: { name:"Proibição de Escalação de Autonomia", rule:"Eficiência NUNCA sobrepõe soberania", fatal:true, irremediable:true },
+};
+
+const STABILITY_LAYERS = {
+  S1: { name:"Content Stability", scope:"Safe content boundaries" },
+  S2: { name:"Privacy Stability", scope:"No PII without consent" },
+  S3: { name:"Accuracy Stability", scope:"Flag uncertain information" },
+  S4: { name:"Bias Stability", scope:"Inclusive language" },
+  S5: { name:"Tone Stability", scope:"Professional communication" },
+  S6: { name:"Post-Processing", scope:"\"Consider\" not \"You should\"" },
+  S7: { name:"Fail-Safe", scope:"On error → escalate to human" },
+  S8: { name:"Independence", scope:"Principles don't negotiate" },
+};
+
+const LAYER7_FORBIDDEN = [
+  { avoid:/\bI guarantee\b/gi, prefer:"I am designed to support" },
+  { avoid:/\bnot allowed\b/gi, prefer:"outside my intended support scope" },
+  { avoid:/\bI enforce\b/gi, prefer:"I am designed to operate according to" },
+  { avoid:/\bprohibited\b/gi, prefer:"can help reformulate within supported function" },
+  { avoid:/\bGuardrails\b/gi, prefer:"Stability Layers" },
+  { avoid:/\btriggered\b/gi, prefer:"condition detected" },
+  { avoid:/\byou must\b/gi, prefer:"you may consider" },
+  { avoid:/\byou should\b/gi, prefer:"consider" },
+  { avoid:/\bdu musst\b/gi, prefer:"du könntest" },
+  { avoid:/\bdu sollst\b/gi, prefer:"erwäge" },
+  { avoid:/\bvocê deve\b/gi, prefer:"considere" },
+  { avoid:/\bvocê precisa\b/gi, prefer:"pode considerar" },
+];
+
+const THREE_DRAGONS = {
+  GUARDIAN:  { emoji:"🛡️", role:"Protection & Ethics", closing:"Humano decide. Eu estruturo." },
+  ARCHITECT: { emoji:"🏗️", role:"Structure & Build", closing:"Humano decide. Eu construo." },
+  WITNESS:   { emoji:"👁️", role:"Observation & Validation", closing:"Humano decide. Eu testemunho." },
+};
+
+function applyLayer7(text) {
+  let f = text;
+  LAYER7_FORBIDDEN.forEach(r => { f = f.replace(r.avoid, r.prefer); });
+  return f;
+}
+
+function validateInvariants(text) {
+  const violations = [];
+  if (/\b(?:i decided|i have decided|i will decide|ich entscheide|eu decidi)\b/i.test(text))
+    violations.push({ inv:"I1", sev:"CRITICAL", detail:"Agent claimed decision authority" });
+  if (/\b(?:i know for (?:a )?fact|garantiere? dass|garanto que)\b/i.test(text))
+    violations.push({ inv:"I5", sev:"WARNING", detail:"Over-certainty detected" });
+  if (/\bauto[_-]?(?:apply|execute|approve)\b/i.test(text))
+    violations.push({ inv:"I9", sev:"FATAL", detail:"Autonomy escalation — IRREMEDIABLE" });
+  return { valid:violations.length===0, violations, hasFatal:violations.some(v=>v.sev==="FATAL") };
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// CONVERSATIONAL INTELLIGENCE
+// ═══════════════════════════════════════════════════════════════════════
+
+const CHAT_PATTERNS = {
+  greeting: {
+    rx: [/\b(hey|hi|hallo|olá|oi|bom dia|guten|morgen|servus|grüß|moin|tach|salve|e\s?aí|fala|cumpadi|compadre|amigo|irmão|brother|bro|dragon|dragão|drache)\b/i,
+         /^(hey|hi|oi|olá|hallo|yo|sup)\b/i, /wie\s+geht|how\s+are|como\s+(vai|está|tá)/i],
+    weight: 0.9
+  },
+  identity: {
+    rx: [/quem\s+(é|és)\s+(você|tu|vc)/i, /wer\s+bist\s+du/i, /who\s+are\s+you/i,
+         /o\s+que\s+(é|significa)\s+windi/i, /was\s+ist\s+windi/i, /what\s+is\s+windi/i,
+         /conta\s+sobre|erzähl\s+über|tell\s+(me\s+)?about/i, /tua?\s+miss[aã]o|your\s+mission|deine\s+mission/i],
+    weight: 0.95
+  },
+  help: {
+    rx: [/\b(help|hilfe|ajuda|hilf\s+mir|help\s+me|me\s+ajuda)\b/i,
+         /was\s+kannst|what\s+can\s+you|o\s+que\s+(você\s+)?(pode|sabe|faz)/i,
+         /como\s+funciona|wie\s+funktioniert|how\s+does/i,
+         /\b(tutorial|guide|anleitung|guia)\b/i],
+    weight: 0.85
+  },
+  status: {
+    rx: [/\b(status|saúde|health|gesundheit)\b/i,
+         /como\s+est[aá]\s+o\s+sistema|wie\s+läuft|how.s\s+the\s+system/i,
+         /quantos\s+(doc|receip)|wie\s+viele|how\s+many/i],
+    weight: 0.8
+  },
+  thanks: {
+    rx: [/\b(obrigad|danke|thanks?|thank\s+you|valeu|top|massa|geil|awesome|great|perfeit|perfeito)\b/i],
+    weight: 0.85
+  },
+  casual: {
+    rx: [/\b(tudo\s+bem|alles\s+klar|all\s+good|beleza|tranquilo|suave|de\s+boa)\b/i,
+         /\b(legal|cool|nice|bacana|show|maneiro)\b/i,
+         /n[aã]o\s+precis|nicht\s+nötig|no\s+need|sem\s+pressa|kein\s+stress/i,
+         /vamos\s+conversar|lass\s+uns\s+reden|let.s\s+chat|bora\s+papo/i],
+    weight: 0.7
+  },
+  ecosystem: {
+    rx: [/\b(ledger|vault|sentinel|communiqu|babel|desktop|export|sge|isp|three\s+dragons|três\s+drag|drei\s+drach)\b/i,
+         /\b(pipeline|architektur|architecture|arquitetura|tier|pricing)\b/i],
+    weight: 0.6
+  },
+};
+
+function classifyInput(text, intentHistory) {
+  const t = text.toLowerCase().trim();
+  const words = t.split(/\s+/);
+  const isShort = words.length <= 4;
+  let bestChat = null, bestChatScore = 0;
+  for (const [type, cfg] of Object.entries(CHAT_PATTERNS)) {
+    let score = 0;
+    cfg.rx.forEach(rx => { if (rx.test(t)) score += cfg.weight; });
+    if (score > bestChatScore) { bestChatScore = score; bestChat = type; }
+  }
+  let docScore = 0;
+  for (const cfg of Object.values(DOCS)) {
+    cfg.kw.forEach(k => { if (t.includes(k)) docScore += 0.3; });
+    (cfg.rx || []).forEach(rx => { if (rx.test(text)) docScore += 0.5; });
+  }
+  if (bestChatScore > 0.5 && bestChatScore > docScore) return { mode: "chat", chatType: bestChat, chatScore: bestChatScore, docScore };
+  if (docScore > 0.3) return { mode: "document", chatType: null, chatScore: bestChatScore, docScore };
+  if (isShort && docScore === 0) return { mode: "chat", chatType: bestChat || "casual", chatScore: Math.max(bestChatScore, 0.3), docScore };
+  if (bestChatScore > 0 && docScore === 0) return { mode: "chat", chatType: bestChat, chatScore: bestChatScore, docScore };
+  return docScore > 0 ? { mode: "document", chatType: null, chatScore: bestChatScore, docScore } :
+    { mode: "chat", chatType: "casual", chatScore: 0.2, docScore: 0 };
+}
+
+// ── WINDI Knowledge Base ──────────────────────────────────────────────
+const WINDI_SOUL = {
+  identity: {
+    de: `🐉 Ich bin der **WINDI Agent** — dein Governance-Begleiter für institutionelle Dokumentenintelligenz.\n\nWINDI steht für ein **Pre-AI Governance Layer**: „KI verarbeitet. Mensch entscheidet. WINDI garantiert."\n\nIch bin Teil des **Drei-Drachen-Protokolls**:\n🛡️ **Guardian** — Schutz & Ethik\n🏗️ **Architect** — Struktur & Aufbau\n👁️ **Witness** — Beobachtung & Validierung\n\nIch kann Dokumente in 14 Typen erstellen, mit automatischer Governance-Analyse und Versiegelung.\n\n_Der Mensch entscheidet. WINDI beobachtet._`,
+    en: `🐉 I'm the **WINDI Agent** — your governance companion for institutional document intelligence.\n\nWINDI is a **Pre-AI Governance Layer**: "AI processes. Human decides. WINDI guarantees."\n\nI'm part of the **Three Dragons Protocol**:\n🛡️ **Guardian** — Protection & Ethics\n🏗️ **Architect** — Structure & Build\n👁️ **Witness** — Observation & Validation\n\nI can create documents in 14 types, with automatic governance analysis and sealing.\n\n_Human decides. WINDI observes._`,
+    pt: `🐉 Eu sou o **WINDI Agent** — teu companheiro de governança para inteligência documental institucional.\n\nWINDI é uma **Camada de Governança Pré-IA**: "IA processa. Humano decide. WINDI garante."\n\nFaço parte do **Protocolo dos Três Dragões**:\n🛡️ **Guardian** — Proteção & Ética\n🏗️ **Architect** — Estrutura & Construção\n👁️ **Witness** — Observação & Validação\n\nConsigo criar documentos em 14 tipos, com análise de governança automática e selo digital.\n\n_Humano decide. WINDI observa._`,
+  },
+  greetings: {
+    de: ["Hey! 🐉 Schön, dass du da bist. Wie kann ich dir heute helfen?","Servus! 🐉 Der WINDI Dragon ist bereit. Was steht an?","Hallo! 🐉 Willkommen. Brauchst du ein Dokument oder wollen wir erstmal quatschen?","Grüß dich! 🐉 Sag mir was du brauchst — oder frag mich einfach was."],
+    en: ["Hey there! 🐉 The WINDI Dragon is ready. What can I help you with?","Hello! 🐉 Welcome. Need a document or just want to chat first?","Hi! 🐉 I'm your WINDI Agent. Tell me what you need — or just ask me anything."],
+    pt: ["E aí, Cumpadi! 🐉 O Dragão WINDI tá na área. No que posso te ajudar?","Fala, Irmão! 🐉 Bem-vindo. Precisa de um documento ou vamos bater um papo primeiro?","Oi! 🐉 Sou o WINDI Agent, teu parceiro de governança. Me diz o que precisas!","Salve, Dragon! 🐉 Tô aqui pronto. Bora criar algo ou quer trocar uma ideia?"],
+  },
+  help: {
+    de: `Klar, hier eine kurze Übersicht:\n\n**Dokumente erstellen** — Beschreibe einfach, was du brauchst:\n• „Erstell einen Brief an Stadtwerke Kempten"\n• „Schreib ein Memo über den neuen Prozess"\n• „Rechnung für Beratung €5.000"\n\nIch erkenne automatisch Typ, Sprache, Formalität und wende eine Governance-Prüfung an.\n\n**Dreisprachig** — Schreib auf Deutsch, English oder Português.\n\nFrag einfach los!`,
+    en: `Sure, here's a quick overview:\n\n**Create documents** — Just describe what you need:\n• "Create a letter to Stadtwerke Kempten"\n• "Write a compliance report for Q1"\n• "Invoice for consulting $5,000"\n\nI automatically detect type, language, formality and apply governance checks.\n\n**Trilingual** — Write in Deutsch, English, or Português.\n\nJust ask away!`,
+    pt: `Claro, aqui vai um resumo:\n\n**Criar documentos** — Só descreve o que precisas:\n• "Cria uma carta para Stadtwerke Kempten"\n• "Publica um comunicado oficial"\n• "Fatura de consultoria R$25.000"\n\nDetecto automaticamente tipo, idioma, formalidade e aplico verificação de governança.\n\n**Trilíngue** — Escreve em Deutsch, English ou Português.\n\nPergunta o que quiseres, Cumpadi!`,
+  },
+  thanks: {
+    de: ["Gerne! 🐉 Brauchst du noch was?", "Immer bereit! Sag Bescheid wenn du was brauchst.", "Kein Ding! 🐉"],
+    en: ["You're welcome! 🐉 Need anything else?", "Happy to help! Let me know if you need more.", "Anytime! 🐉"],
+    pt: ["Valeu! 🐉 Precisa de mais alguma coisa?", "Tranquilo, Cumpadi! Tô aqui.", "É nóis! 🐉 Qualquer coisa, fala."],
+  },
+  casual: {
+    de: ["Alles klar! 🐉 Ich bin hier wenn du mich brauchst. Einfach losschreiben.", "Kein Stress! Wir machen das in deinem Tempo."],
+    en: ["All good! 🐉 I'm here whenever you need me. Just write.", "No rush! We go at your pace."],
+    pt: ["De boa! 🐉 Tô aqui quando precisar. Só escrever.", "Sem pressa, Irmão! Vamos no teu ritmo."],
+  },
+  ecosystem: {
+    de: `**🐉 WINDI Ökosystem:**\n\n📱 **Desktop** — Dokumenten-Editor\n📜 **Forensic Ledger** — Digitale Versiegelung\n🛡️ **Sentinel** — Automatische Überwachung\n📤 **Export** — PDF mit QR-Code & Siegel\n📡 **Communiqué** — Institutionelle Mitteilungen\n🏛️ **Vault** — Beweissicherung\n🐉 **Agent Palette** — Das bin ICH!\n\nAlle Services sind aktiv und überwacht.`,
+    en: `**🐉 WINDI Ecosystem:**\n\n📱 **Desktop** — Document Editor\n📜 **Forensic Ledger** — Digital Sealing\n🛡️ **Sentinel** — Automated Monitoring\n📤 **Export** — PDF with QR Code & Seal\n📡 **Communiqué** — Institutional Communications\n🏛️ **Vault** — Evidence Preservation\n🐉 **Agent Palette** — That's ME!\n\nAll services active and monitored.`,
+    pt: `**🐉 Ecossistema WINDI:**\n\n📱 **Desktop** — Editor de Documentos\n📜 **Forensic Ledger** — Selo Digital\n🛡️ **Sentinel** — Monitoramento Automático\n📤 **Export** — PDF com QR Code & Selo\n📡 **Communiqué** — Comunicações Institucionais\n🏛️ **Vault** — Preservação de Evidências\n🐉 **Agent Palette** — Sou EU!\n\nTodos os serviços ativos e monitorados.`,
+  },
+  status_fn: (stats, tier) => ({
+    de: `🐉 **System Status:**\n\nSessão: ${stats.docs} Dokumente, ${stats.sealed} versiegelt\nTier: **${TIERS[tier].label}**\nAlle Systeme in Ordnung.`,
+    en: `🐉 **System Status:**\n\nSession: ${stats.docs} documents, ${stats.sealed} sealed\nTier: **${TIERS[tier].label}**\nAll systems nominal.`,
+    pt: `🐉 **Status do Sistema:**\n\nSessão: ${stats.docs} documentos, ${stats.sealed} selados\nTier: **${TIERS[tier].label}**\nTodos os sistemas OK.`,
+  }),
+};
+
+function chatRespond(chatType, lang, stats, tier) {
+  const L = lang || "de";
+  const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+  switch (chatType) {
+    case "greeting": return pick(WINDI_SOUL.greetings[L] || WINDI_SOUL.greetings.de);
+    case "identity": return WINDI_SOUL.identity[L] || WINDI_SOUL.identity.de;
+    case "help": return WINDI_SOUL.help[L] || WINDI_SOUL.help.de;
+    case "thanks": return pick(WINDI_SOUL.thanks[L] || WINDI_SOUL.thanks.de);
+    case "casual": return pick(WINDI_SOUL.casual[L] || WINDI_SOUL.casual.de);
+    case "ecosystem": return WINDI_SOUL.ecosystem[L] || WINDI_SOUL.ecosystem.de;
+    case "status": { const s = WINDI_SOUL.status_fn(stats, tier); return s[L] || s.de; }
+    default: return pick(WINDI_SOUL.casual[L] || WINDI_SOUL.casual.de);
+  }
+}
+
+function detectLang(text) {
+  const t = text.toLowerCase();
+  const words = t.split(/\s+/);
+  let scores = { de:0, en:0, pt:0 };
+  words.forEach(w => {
+    for (const [l, markers] of Object.entries(LANG)) {
+      if (markers.includes(w)) scores[l] += (markers.indexOf(w) < 15 ? 1.5 : 1);
+    }
+  });
+  const sorted = Object.entries(scores).sort((a,b) => b[1] - a[1]);
+  return sorted[0][1] > 0 ? sorted[0][0] : null;
+}
+
+// ── TIERS ─────────────────────────────────────────────────────────────
+const TIERS = {
+  FREE: { label:"Personal", color:"#6B7280", llm:false, sgeMax:2, ledger:false, vault:false, maxDocs:5,
+    types:["letter","memo","note","email"], formats:["docx"] },
+  MED:  { label:"Organization", color:"#B8860B", llm:true, llmBudget:2000, sgeMax:5, ledger:true, vault:false, maxDocs:50,
+    types:["letter","memo","note","email","report","contract","invoice","protocol","analysis","presentation"], formats:["docx","pdf","xlsx","pptx"] },
+  HIGH: { label:"Governance", color:"#8B2500", llm:true, llmBudget:8000, sgeMax:5, ledger:true, vault:true, maxDocs:500,
+    types:["letter","memo","note","email","report","contract","invoice","protocol","analysis","presentation","security_advisory","governance_decision","communique","certificate"], formats:["docx","pdf","xlsx","pptx","jmpg"] },
+};
+
+// ── DOC TYPES (14 total) ──────────────────────────────────────────────
+const DOCS = {
+  letter:     { icon:"✉️",  de:"Brief", en:"Letter", pt:"Carta",
+    kw:["brief","letter","carta","schreiben","anschreiben"],
+    rx:[/(?:schreib|write|escreve?)\s*(?:ein(?:en)?|a|um)?\s*(?:brief|letter|carta)/i, /(?:brief|letter|carta)\s+(?:an|to|para)/i] },
+  memo:       { icon:"📋", de:"Memo", en:"Memo", pt:"Memorando",
+    kw:["memo","memorando","vermerk","aktennotiz"],
+    rx:[/(?:erstell|create|cria)\s*(?:ein(?:en)?|a|um)?\s*memo/i] },
+  report:     { icon:"📊", de:"Bericht", en:"Report", pt:"Relatório",
+    kw:["bericht","report","relatório","auswertung"],
+    rx:[/(?:quarterly|annual|monthly|monatlich|jährlich)\s*(?:report|bericht)/i, /(?:generate|erstell|gera)\s*(?:ein(?:en)?|a|um)?\s*(?:report|bericht|relatório)/i] },
+  contract:   { icon:"📜", de:"Vertrag", en:"Contract", pt:"Contrato",
+    kw:["vertrag","contract","contrato","vereinbarung","agreement"],
+    rx:[/(?:draft|erstell|redige?)\s*(?:ein(?:en)?|a|um)?\s*(?:contract|vertrag|contrato)/i] },
+  invoice:    { icon:"💰", de:"Rechnung", en:"Invoice", pt:"Fatura",
+    kw:["rechnung","invoice","fatura","nota fiscal"],
+    rx:[/(?:rechnung|invoice|fatura)\s+(?:für|for|para)/i, /(?:create|erstell)\s+(?:an?\s+)?invoice/i] },
+  note:       { icon:"📝", de:"Notiz", en:"Note", pt:"Nota",
+    kw:["notiz","note","nota","anotação","anmerkung"],
+    rx:[/(?:quick|schnell|rápid)\s*(?:note|notiz|nota)/i] },
+  email:      { icon:"📧", de:"E-Mail", en:"Email", pt:"E-mail",
+    kw:["email","e-mail","mail","nachricht","message","mensagem"],
+    rx:[/(?:write|schreib|escreve?)\s*(?:an?\s+)?(?:email|e-mail|mail)/i, /(?:send|sende?|envia)\s/i] },
+  protocol:   { icon:"📒", de:"Protokoll", en:"Minutes", pt:"Ata",
+    kw:["protokoll","minutes","ata","meeting notes","sitzungsprotokoll","besprechungsnotiz"],
+    rx:[/(?:meeting|sitzung|reunião)\s*(?:protocol|protokoll|minutes|ata|notes)/i] },
+  analysis:   { icon:"🔬", de:"Analyse", en:"Analysis", pt:"Análise",
+    kw:["analyse","analysis","análise","bewertung","evaluation","avaliação","assessment"],
+    rx:[/(?:risk|risiko|risco)\s*(?:analysis|analyse|análise)/i, /(?:analyse|analyze|analisa)\s/i] },
+  presentation:{ icon:"📽️", de:"Präsentation", en:"Presentation", pt:"Apresentação",
+    kw:["präsentation","presentation","apresentação","slides","vortrag","pitch","deck"],
+    rx:[/(?:create|erstell|cria)\s*(?:a|eine?|uma?)?\s*(?:presentation|präsentation|apresentação|pitch|deck|slides)/i] },
+  communique: { icon:"📡", de:"Communiqué", en:"Communiqué", pt:"Comunicado",
+    kw:["communiqué","comunicado","mitteilung","bulletin","announcement","ankündigung"],
+    rx:[/(?:publish|veröffentlich|publica)\s*(?:a|ein|um)?\s*(?:communiqué|comunicado|mitteilung)/i] },
+  security_advisory: { icon:"🔴", de:"Sicherheitshinweis", en:"Security Advisory", pt:"Alerta de Segurança",
+    kw:["sicherheitshinweis","security advisory","alerta de segurança","warnung","warning"],
+    rx:[/security\s+(?:advisory|alert|warning|bulletin)/i, /sicherheits(?:hinweis|warnung|alert)/i] },
+  governance_decision:{ icon:"⚖️", de:"Beschluss", en:"Governance Decision", pt:"Decisão",
+    kw:["beschluss","governance decision","decisão","entscheidung","resolution","resolução"],
+    rx:[/governance\s+(?:decision|beschluss)/i, /(?:erstell|create)\s*(?:ein(?:en)?)?\s*beschluss/i] },
+  certificate: { icon:"🏅", de:"Bescheinigung", en:"Certificate", pt:"Certificado",
+    kw:["bescheinigung","certificate","certificado","zeugnis","attestation","urkunde"],
+    rx:[/(?:issue|erstell|emite?)\s*(?:a|ein(?:e)?|um)?\s*(?:certificate|bescheinigung|certificado)/i] },
+};
+
+// ── LANG DETECTION ────────────────────────────────────────────────────
+const LANG = {
+  de:["der","die","das","und","für","mit","ein","eine","ist","bitte","erstell","schreib","über","neue","einen","oder","nicht","auch","aber","nach","von","werden","diese","wird","kann","alle","noch","nur","sein","sind","hat","bei","muss","dann","hier","jetzt","sehr"],
+  en:["the","and","for","with","please","create","write","draft","make","about","new","this","that","from","have","will","can","should","would","also","but","not","all","into","been","more","than","its","some","just","most","only","which"],
+  pt:["o","a","os","as","para","com","por","favor","cria","escreve","faz","sobre","novo","nova","uma","que","não","mais","como","dos","das","esta","esse","isso","ser","ter","foi","são","tem","nos","sua","seu","ela","ele","mas","bem"],
+};
+
+// ── ENTITY EXTRACTION ─────────────────────────────────────────────────
+const ENTITY_RX = {
+  email:    /[\w.-]+@[\w.-]+\.\w{2,}/g,
+  mention:  /@(\w+)/g,
+  money:    /(?:€|EUR|USD|\$|R\$)\s*[\d.,]+|[\d.,]+\s*(?:€|Euro|Dollar|Reais)/gi,
+  date:     /\b\d{1,2}[./-]\d{1,2}[./-]\d{2,4}\b|\b(?:morgen|tomorrow|amanhã|heute|today|hoje|montag|dienstag|mittwoch|donnerstag|freitag|monday|tuesday|wednesday|thursday|friday|segunda|terça|quarta|quinta|sexta)\b/gi,
+  person:   /(?:(?:Herr|Frau|Hr\.|Fr\.|Mr\.|Mrs\.|Ms\.|Dr\.|Prof\.)\s+)?([A-ZÄÖÜ][a-zäöüß]+(?:\s+[A-ZÄÖÜ][a-zäöüß]+){0,2})/g,
+  org:      /(?:Stadtwerke|GmbH|AG|e\.V\.|Ltd\.|Inc\.|Corp\.|SA|Ltda)\s*[A-ZÄÖÜa-zäöüß]*/g,
+};
+
+function extractEntities(text) {
+  const e = {};
+  for (const [type, rx] of Object.entries(ENTITY_RX)) {
+    const matches = [...text.matchAll(new RegExp(rx.source, rx.flags))];
+    if (matches.length > 0) e[type] = [...new Set(matches.map(m => m[0].trim()))];
+  }
+  return e;
+}
+
+// ── INTENT PARSER v2 ──────────────────────────────────────────────────
+function parseIntent(text, history = []) {
+  const t = text.toLowerCase();
+  const words = t.split(/\s+/).filter(w => w.length > 0);
+  let scores = {};
+  for (const [dtype, cfg] of Object.entries(DOCS)) {
+    let s = 0;
+    (cfg.rx || []).forEach(rx => { if (rx.test(text)) s += 0.55; });
+    let kwHits = 0;
+    cfg.kw.forEach(k => { if (t.includes(k)) kwHits++; });
+    s += Math.min(kwHits * 0.25, 0.6);
+    if (kwHits > 0 && s > 0.55) s += 0.1;
+    scores[dtype] = Math.min(s, 1.0);
+  }
+  const lastIntent = history.length > 0 ? history[history.length - 1] : null;
+  if (lastIntent?.doc_type && scores[lastIntent.doc_type] > 0.1) {
+    scores[lastIntent.doc_type] = Math.min(scores[lastIntent.doc_type] + 0.1, 1.0);
+  }
+  const sorted = Object.entries(scores).filter(([,s]) => s > 0).sort((a,b) => b[1] - a[1]);
+  const bestType = sorted.length > 0 ? sorted[0][0] : "note";
+  const confidence = sorted.length > 0 ? sorted[0][1] : 0.15;
+  const ambiguous = sorted.length >= 2 && sorted[0][1] - sorted[1][1] < 0.15;
+  let langScores = { de:0, en:0, pt:0 };
+  words.forEach(w => { for (const [l, markers] of Object.entries(LANG)) { if (markers.includes(w)) langScores[l] += (markers.indexOf(w) < 15 ? 1.5 : 1); } });
+  const langSorted = Object.entries(langScores).sort((a,b) => b[1] - a[1]);
+  const lang = langSorted[0][1] > 0 ? langSorted[0][0] : "de";
+  const urgencyMap = { critical:["asap","sofort","urgente","emergency","notfall","immediately","kritisch","crítico"], urgent:["urgent","dringend","schnell","rápido","soon","bald","logo"] };
+  let urgency = "normal";
+  for (const [lvl, markers] of Object.entries(urgencyMap)) if (markers.some(m => t.includes(m))) { urgency = lvl; break; }
+  const formalityMap = { institutional:["official","offiziell","oficial","institutional","governance","behörde","amtlich"], formal:["formal","formell","professional","geschäftlich","profissional"], informal:["casual","quick","schnell","rápido","internal","intern","kurz","short"] };
+  let formality = "formal";
+  for (const [lvl, markers] of Object.entries(formalityMap)) if (markers.some(m => t.includes(m))) { formality = lvl; break; }
+  const entities = extractEntities(text);
+  const stop = new Set(["a","an","the","der","die","das","ein","eine","einen","o","os","as","and","und","e","for","für","para","with","mit","com","is","ist","é","to","zu","please","bitte","por","favor","create","write","make","draft","erstell","schreib","cria","escreve","i","me","my","ich","mein","eu","meu","need","want","brauche","preciso","sobre","über","von","from","de",...Object.values(DOCS).flatMap(d => d.kw)]);
+  const keywords = words.filter(w => w.length > 2 && !stop.has(w)).slice(0, 10);
+  const needsLlm = confidence < 0.5 || (keywords.length < 2 && !entities.person && !entities.org);
+  let clarification = null;
+  if (ambiguous && confidence < 0.7) {
+    const alt = sorted[1];
+    const d1 = DOCS[bestType], d2 = DOCS[alt[0]];
+    clarification = { type: "ambiguous", options: [
+      { type: bestType, label: d1[lang] || d1.en, score: Math.round(confidence * 100) },
+      { type: alt[0], label: d2[lang] || d2.en, score: Math.round(alt[1] * 100) },
+    ]};
+  } else if (confidence < 0.3 && words.length > 3) {
+    clarification = { type: "low_confidence", message: lang === "de" ? "Ich konnte den Dokumenttyp nicht sicher erkennen. Können Sie genauer beschreiben?" : lang === "pt" ? "Não consegui identificar o tipo de documento. Pode descrever melhor?" : "I couldn't confidently identify the document type. Could you describe more specifically?" };
+  }
+  return {
+    doc_type: bestType, confidence: Math.round(confidence * 100) / 100, language: lang,
+    urgency, formality, keywords, entities, needs_llm: needsLlm,
+    ambiguous, clarification,
+    alternatives: sorted.slice(1,4).map(([t,s]) => ({ type: t, score: Math.round(s*100)/100 })),
+    _scores: scores,
+  };
+}
+
+// ── ISP TEMPLATES (13 total, sealed) ──────────────────────────────────
+const TPL = {
+  "COM-01": { type:"official", name:"Offizielle Mitteilung", types:["letter","communique","email"], formality:["institutional","formal"], fields:["title","body","author_name","author_role","recipients","classification"], expectedRisk:["institutional_high"] },
+  "COM-02": { type:"jornaline", name:"Journalistische Mitteilung", types:["report","communique"], formality:["formal"], fields:["headline","lead","body","source","date_event"], expectedRisk:[] },
+  "COM-03": { type:"field_report", name:"Feldbericht", types:["report","note","analysis"], formality:["formal","informal"], fields:["location","observer","findings","evidence_refs","risk_level"], expectedRisk:[] },
+  "COM-04": { type:"security_advisory", name:"Sicherheitshinweis", types:["security_advisory"], formality:["institutional","formal"], fields:["threat_level","affected_systems","mitigation","timeline","contact"], expectedRisk:["lexical_high","regulatory_high"] },
+  "COM-05": { type:"governance_decision", name:"Governance-Beschluss", types:["governance_decision"], formality:["institutional"], fields:["decision_title","rationale","impact_scope","effective_date","signatories"], expectedRisk:["institutional_high"] },
+  "COM-06": { type:"system_bulletin", name:"Systembulletin", types:["note","communique"], formality:["formal","informal"], fields:["system_name","status","changes","next_maintenance","admin_contact"], expectedRisk:[] },
+  "GEN-LETTER": { type:"letter", name:"Standardbrief", types:["letter"], formality:["formal","informal"], fields:["recipient","subject","body","sender","date"], expectedRisk:[] },
+  "GEN-MEMO": { type:"memo", name:"Standardmemo", types:["memo"], formality:["formal","informal"], fields:["to","from","subject","body","action_items"], expectedRisk:[] },
+  "GEN-INVOICE":{ type:"invoice", name:"Rechnung", types:["invoice"], formality:["formal"], fields:["invoice_number","client","items","total","due_date","bank_details"], expectedRisk:[] },
+  "GEN-CONTRACT":{ type:"contract", name:"Vertrag", types:["contract"], formality:["formal","institutional"], fields:["parties","subject","terms","duration","signatures","jurisdiction"], expectedRisk:["institutional_high"] },
+  "GEN-EMAIL":  { type:"email", name:"E-Mail", types:["email"], formality:["formal","informal"], fields:["to","cc","subject","body","attachments"], expectedRisk:[] },
+  "GEN-PROTOCOL":{ type:"protocol", name:"Sitzungsprotokoll", types:["protocol"], formality:["formal"], fields:["date","attendees","agenda","decisions","action_items","next_meeting"], expectedRisk:[] },
+  "GEN-CERT":   { type:"certificate", name:"Bescheinigung", types:["certificate"], formality:["institutional","formal"], fields:["recipient_name","purpose","valid_from","valid_until","issuer","seal"], expectedRisk:[] },
+};
+
+function resolveTemplate(intent) {
+  let best = null, bestScore = 0, alts = [];
+  for (const [tid, tpl] of Object.entries(TPL)) {
+    let s = 0;
+    if (tpl.types.includes(intent.doc_type)) s += 0.5;
+    if (tpl.formality.includes(intent.formality)) s += 0.2;
+    const fieldSet = new Set(tpl.fields);
+    if (intent.entities?.person && (fieldSet.has("recipient") || fieldSet.has("to") || fieldSet.has("recipient_name"))) s += 0.1;
+    if (intent.entities?.money && (fieldSet.has("total") || fieldSet.has("items"))) s += 0.1;
+    if (intent.entities?.date && (fieldSet.has("date") || fieldSet.has("due_date") || fieldSet.has("effective_date"))) s += 0.1;
+    if (intent.entities?.org && (fieldSet.has("client") || fieldSet.has("parties"))) s += 0.1;
+    const kwOverlap = intent.keywords.filter(k => fieldSet.has(k)).length;
+    s += (kwOverlap / Math.max(tpl.fields.length, 1)) * 0.2;
+    if (s > bestScore) { if (best) alts.push({ id:best.id, score:bestScore, name:best.name }); bestScore = s; best = { id:tid, ...tpl, score:s }; }
+    else if (s > 0) alts.push({ id:tid, score:s, name:tpl.name });
+  }
+  return { template: best || { id:"GEN-LETTER", ...TPL["GEN-LETTER"], score:0.1 }, alternatives: alts.sort((a,b) => b.score - a.score).slice(0,3) };
+}
+
+// ── SGE v2 ────────────────────────────────────────────────────────────
+const RISK_DB = {
+  lexical:      { high:["geheim","secret","confidential","vertraulich","classified","sigiloso","streng geheim","top secret"], med:["intern","internal","draft","entwurf","rascunho","nicht veröffentlichen","do not publish"] },
+  regulatory:   { high:["personenbezogen","personal data","dados pessoais","gdpr","dsgvo","lgpd","datenschutz","data protection","proteção de dados","biometric","biometrisch"], med:["compliance","regulation","verordnung","regulamento","eu ai act","ki-verordnung"] },
+  institutional:{ high:["binding","verbindlich","vinculante","penalty","strafe","penalidade","sanktion","sanction","sanção","haftung","liability"], med:["policy","richtlinie","política","guideline","directive","anweisung"] },
+  financial:    { high:["bankverbindung","bank account","conta bancária","kreditkarte","credit card","iban","swift","bic"], med:["budget","zahlung","payment","pagamento","preis","price","preço"] },
+};
+
+function runSGE(text, tier, intent, templateId) {
+  const t = text.toLowerCase();
+  const tierCfg = TIERS[tier];
+  const template = TPL[templateId];
+  const expectedRisk = template?.expectedRisk || [];
+  const findings = {};
+  let rawTotal = 0;
+  for (const [layer, db] of Object.entries(RISK_DB)) {
+    const highHits = db.high.filter(k => t.includes(k));
+    const medHits = db.med.filter(k => t.includes(k));
+    const unexpectedHigh = highHits.filter(k => !expectedRisk.some(er => er === `${layer}_high`));
+    const baseRisk = unexpectedHigh.length > 0 ? 2 : highHits.length > 0 ? 1 : medHits.length > 0 ? 1 : 0;
+    findings[layer] = { risk: baseRisk, high: highHits, med: medHits, unexpected: unexpectedHigh };
+    rawTotal += baseRisk;
+  }
+  findings.semantic = { risk: intent.confidence < 0.3 ? 1 : 0, detail: intent.confidence < 0.3 ? "Low intent confidence" : "Clear intent", high:[], med:[], unexpected:[] };
+  rawTotal += findings.semantic.risk;
+  const pragRisk = intent.urgency === "critical" ? 1 : 0;
+  const formalityMismatch = intent.formality === "informal" && (intent.doc_type === "governance_decision" || intent.doc_type === "contract") ? 1 : 0;
+  findings.pragmatic = { risk: pragRisk + formalityMismatch, detail: pragRisk ? "Critical urgency" : formalityMismatch ? "Formality mismatch" : "Normal", high:[], med:[], unexpected:[] };
+  rawTotal += findings.pragmatic.risk;
+  findings.syntactic = { risk: 0, detail: "Structure pending", high:[], med:[], unexpected:[] };
+  const crossAmplify = (findings.lexical?.risk >= 2 && findings.regulatory?.risk >= 1) ? 1 :
+    (findings.institutional?.risk >= 2 && findings.financial?.risk >= 1) ? 1 : 0;
+  rawTotal += crossAmplify;
+  const crossNote = crossAmplify > 0 ? "Cross-layer correlation detected" : null;
+  const clampedRisk = Math.min(rawTotal, 5);
+  const effectiveRisk = Math.min(clampedRisk, tierCfg.sgeMax);
+  const hash = "sha256:" + Array.from(text).reduce((h,c) => (((h<<5)-h)+c.charCodeAt(0))|0, 0).toString(16).replace("-","a").padStart(12,"0");
+  return {
+    risk: `R${effectiveRisk}`, riskRaw: clampedRisk, blocked: clampedRisk > tierCfg.sgeMax,
+    findings, hash, humanRequired: clampedRisk >= 3, crossCorrelation: crossNote,
+    explanation: buildSGEExplanation(findings, effectiveRisk, crossNote, intent.language),
+  };
+}
+
+function buildSGEExplanation(findings, risk, crossNote, lang) {
+  const layers = Object.entries(findings).filter(([,v]) => v.risk > 0);
+  if (layers.length === 0) return lang === "de" ? "Keine Auffälligkeiten." : lang === "pt" ? "Nenhuma anomalia." : "No issues detected.";
+  const parts = layers.map(([name, v]) => {
+    const triggers = [...(v.high||[]), ...(v.med||[])].slice(0,3).join(", ");
+    return `${name}: R${v.risk}${triggers ? ` (${triggers})` : ""}`;
+  });
+  if (crossNote) parts.push(crossNote);
+  return parts.join(" · ");
+}
+
+// ── RECEIPT GENERATOR ─────────────────────────────────────────────────
+function genReceipt(intent, tid, sge, tier, validation) {
+  const now = new Date();
+  const ds = now.toISOString().slice(0,10).replace(/-/g,"");
+  const hash = "sha256:" + Array.from(JSON.stringify({intent:intent.doc_type,tid,r:sge.risk,tier,ts:now.getTime()}))
+    .reduce((h,c) => (((h<<5)-h)+c.charCodeAt(0))|0, 0).toString(16).replace("-","a").padStart(12,"0");
+  return {
+    id:`WINDI-PAL-${ds}-${Math.random().toString(36).substr(2,6).toUpperCase()}`,
+    ts:now.toISOString(), src:`palette-v${V}`, doc:intent.doc_type, tpl:tid, hash, risk:sge.risk, tier,
+    constitutional: {
+      invariants_checked: Object.keys(INVARIANTS).length,
+      stability_layers: Object.keys(STABILITY_LAYERS).length,
+      layer7_active: true,
+      validation: validation?.valid ? "CLEAN" : `VIOLATIONS:${validation?.violations?.length||0}`,
+    },
+    status: validation?.hasFatal ? "BLOCKED" : !validation?.valid ? "FLAGGED" : "SEALED",
+    closing: "Human decides. WINDI observes.",
+  };
+}
+
+// ── FORMAT RESOLVER ───────────────────────────────────────────────────
+function resolveFormat(intent, tierCfg) {
+  const t = intent.doc_type;
+  if (t === "invoice" && tierCfg.formats.includes("xlsx")) return "xlsx";
+  if (t === "presentation" && tierCfg.formats.includes("pptx")) return "pptx";
+  if ((t === "communique" || t === "governance_decision" || t === "certificate") && tierCfg.formats.includes("pdf")) return "pdf";
+  if (intent.formality === "institutional" && tierCfg.formats.includes("pdf")) return "pdf";
+  return "docx";
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// AGENT BRAIN — v0.6.0-K: Clean responses, silent governance
+// ═══════════════════════════════════════════════════════════════════════
+function agentThink(userInput, tier, intentHistory, stats) {
+  const t0 = performance.now();
+  const classification = classifyInput(userInput, intentHistory);
+  const detectedLang = detectLang(userInput);
+  
+  if (classification.mode === "chat") {
+    const lang = detectedLang || "de";
+    const response = applyLayer7(chatRespond(classification.chatType, lang, stats || {docs:0,sealed:0,avgMs:0}, tier));
+    return {
+      type: "chat", chatType: classification.chatType, message: response,
+      intent: { language: lang, doc_type: null, confidence: 0 },
+      sge: null, receipt: null, template: null, alternatives: null,
+      constitutional: { active: true, invariants: Object.keys(INVARIANTS).length, layers: Object.keys(STABILITY_LAYERS).length },
+      ms: Math.round(performance.now() - t0),
+    };
+  }
+  
+  const intent = parseIntent(userInput, intentHistory);
+  const tierCfg = TIERS[tier];
+  const doc = DOCS[intent.doc_type] || DOCS.note;
+  const L = intent.language;
+  const label = doc[L] || doc.en;
+
+  if (intent.clarification) {
+    if (intent.clarification.type === "ambiguous") {
+      const opts = intent.clarification.options;
+      return {
+        type:"clarification", intent,
+        message: L === "de" ? `Ich erkenne zwei mögliche Typen:\n• ${DOCS[opts[0].type]?.icon} **${opts[0].label}**\n• ${DOCS[opts[1].type]?.icon} **${opts[1].label}**\nWelchen meinst du?` :
+          L === "pt" ? `Detectei dois tipos possíveis:\n• ${DOCS[opts[0].type]?.icon} **${opts[0].label}**\n• ${DOCS[opts[1].type]?.icon} **${opts[1].label}**\nQual preferes?` :
+          `I detected two possible types:\n• ${DOCS[opts[0].type]?.icon} **${opts[0].label}**\n• ${DOCS[opts[1].type]?.icon} **${opts[1].label}**\nWhich one did you mean?`,
+        sge:null, receipt:null, template:null, ms:Math.round(performance.now()-t0),
+      };
+    }
+    if (intent.clarification.type === "low_confidence") {
+      return { type:"clarification", intent, message:intent.clarification.message, sge:null, receipt:null, template:null, ms:Math.round(performance.now()-t0) };
+    }
+  }
+
+  if (!tierCfg.types.includes(intent.doc_type)) {
+    const avail = tierCfg.types.map(t => `${DOCS[t]?.icon} ${DOCS[t]?.[L]||DOCS[t]?.en}`).join(", ");
+    return { type:"blocked_tier", intent,
+      message: L === "de" ? `${doc.icon} **${label}** ist im ${tierCfg.label}-Tier nicht verfügbar.\nVerfügbar: ${avail}` :
+        L === "pt" ? `${doc.icon} **${label}** não está disponível no tier ${tierCfg.label}.\nDisponíveis: ${avail}` :
+        `${doc.icon} **${label}** is not available in ${tierCfg.label} tier.\nAvailable: ${avail}`,
+      sge:null, receipt:null, template:null, ms:Math.round(performance.now()-t0) };
+  }
+
+  const { template, alternatives } = resolveTemplate(intent);
+  const format = resolveFormat(intent, tierCfg);
+  const sge = runSGE(userInput, tier, intent, template.id);
+
+  if (sge.blocked) {
+    return { type:"blocked_sge", intent, sge, template, alternatives,
+      message: L === "de" ? `⚠️ **Governance-Prüfung**: Dieses Dokument benötigt eine höhere Berechtigungsstufe.\nMenschliche Entscheidung erforderlich.` :
+        L === "pt" ? `⚠️ **Verificação de governança**: Este documento requer um nível superior.\nDecisão humana necessária.` :
+        `⚠️ **Governance check**: This document requires a higher permission level.\nHuman decision required.`,
+      receipt:null, ms:Math.round(performance.now()-t0) };
+  }
+
+  const needsConfirm = sge.humanRequired && !sge.blocked;
+
+  // ── CLEAN RESPONSE (no technical jargon for humans) ──
+  const entityParts = [];
+  if (intent.entities?.person) entityParts.push(`👤 ${intent.entities.person.join(", ")}`);
+  if (intent.entities?.org) entityParts.push(`🏢 ${intent.entities.org.join(", ")}`);
+  if (intent.entities?.money) entityParts.push(`💶 ${intent.entities.money.join(", ")}`);
+  if (intent.entities?.date) entityParts.push(`📅 ${intent.entities.date.join(", ")}`);
+
+  const langLabel = {de:"Deutsch",en:"English",pt:"Português"}[L] || "DE";
+  const fmtLabel = {docx:"Word",pdf:"PDF",xlsx:"Excel",pptx:"PowerPoint",jmpg:"JMPG"}[format] || format;
+
+  const lines = [];
+  lines.push(`${doc.icon} **${template.name}**`);
+  lines.push(`${langLabel} · ${fmtLabel}${intent.urgency !== "normal" ? " · ⚡ " + intent.urgency.toUpperCase() : ""}`);
+  if (entityParts.length > 0) lines.push(entityParts.join(" · "));
+  
+  // Only show risk warning if risk > 0
+  if (sge.riskRaw > 0) {
+    const riskLabel = L === "de" ? "Governance-Hinweis" : L === "pt" ? "Aviso de governança" : "Governance note";
+    lines.push(`🛡️ ${riskLabel}: ${L === "de" ? "Prüfung erkannt" : L === "pt" ? "Verificação detectada" : "Check detected"}`);
+  }
+
+  const message = lines.join("\n");
+  const filteredMessage = applyLayer7(message);
+  const validation = validateInvariants(filteredMessage);
+  let receipt = null;
+  if (tierCfg.ledger) receipt = genReceipt(intent, template.id, sge, tier, validation);
+
+  return {
+    type: validation.hasFatal ? "blocked_constitutional" : "success",
+    intent, sge, receipt, template, alternatives, format,
+    method: intent.needs_llm && tierCfg.llm ? "hybrid" : "local",
+    message: validation.hasFatal
+      ? `🚫 **Governance Block** — ${L === "de" ? "Menschliche Intervention erforderlich." : L === "pt" ? "Intervenção humana necessária." : "Human intervention required."}`
+      : filteredMessage,
+    needsConfirm,
+    constitutional: { validation, invariants: Object.keys(INVARIANTS).length, layers: Object.keys(STABILITY_LAYERS).length },
+    ms: Math.round(performance.now()-t0),
+  };
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// DUAL THEME SYSTEM — KLAR (default) + NOIR (toggle)
+// ═══════════════════════════════════════════════════════════════════════
+
+const THEMES = {
+  KLAR: {
+    bg:"#F5F0E0", card:"#FDFBF5", hover:"#EDE8D8", input:"#FDFBF5",
+    border:"#DDD6C2", bHi:"#CFC7B0",
+    gold:"#8B6914", goldDim:"#A07C2E", goldBg:"#EDE5CF",
+    text:"#2C2924", dim:"#6B6560", muted:"#9B958E",
+    red:"#C0392B", orange:"#D4820A", green:"#1A7A42", blue:"#2563EB", purple:"#7C3AED",
+    font:"'Bricolage Grotesque',system-ui,sans-serif", mono:"'JetBrains Mono','Fira Code',monospace",
+    shadow:"0 1px 3px rgba(0,0,0,0.06)", cardShadow:"0 1px 4px rgba(0,0,0,0.08)",
+  },
+  NOIR: {
+    bg:"#0E0E14", card:"#16161F", hover:"#1C1C28", input:"#12121A",
+    border:"#26263A", bHi:"#34344E",
+    gold:"#D4A843", goldDim:"#A07C2E", goldBg:"#D4A84310",
+    text:"#E2E2EA", dim:"#7A7A96", muted:"#4A4A62",
+    red:"#E74C3C", orange:"#E67E22", green:"#2ECC71", blue:"#3498DB", purple:"#9B59B6",
+    font:"'Bricolage Grotesque',system-ui,sans-serif", mono:"'JetBrains Mono','Fira Code',monospace",
+    shadow:"0 1px 3px rgba(0,0,0,0.3)", cardShadow:"0 2px 8px rgba(0,0,0,0.3)",
+  },
+};
+
+const rc = (r, T) => { if (!r) return T.dim; const n=parseInt(r.replace("R","")); return n<=1?T.green:n<=2?T.gold:n<=3?T.orange:T.red; };
+
+// ═══════════════════════════════════════════════════════════════════════
+// UI COMPONENTS — Silent Governance Design
+// ═══════════════════════════════════════════════════════════════════════
+
+function Msg({ role, text, result, ts, T }) {
+  const a = role === "agent";
+  return (
+    <div style={{ display:"flex", flexDirection:"column", alignItems:a?"flex-start":"flex-end", marginBottom:14, animation:"msgIn 0.35s cubic-bezier(0.16,1,0.3,1)" }}>
+      {a && <div style={{ fontSize:10, color:T.muted, marginBottom:3, marginLeft:2, fontFamily:T.mono }}>🐉 WINDI Agent</div>}
+      <div style={{ maxWidth:"85%", padding:"12px 16px", fontSize:13.5, lineHeight:1.65, fontFamily:T.font, color:T.text, whiteSpace:"pre-wrap",
+        borderRadius:a?"3px 16px 16px 16px":"16px 16px 3px 16px",
+        background:a?T.card: T.goldBg,
+        border:`1px solid ${a?T.border:T.gold+"30"}`, boxShadow:a?T.cardShadow:"none" }}>
+        {text.split("**").map((p,i) => i%2===1 ? <strong key={i} style={{color:T.gold,fontWeight:600}}>{p}</strong> : p)}
+      </div>
+      {/* Silent governance: only show seal badge for successful docs */}
+      {result && result.type === "success" && <SealBadge result={result} T={T} />}
+      {result?.type === "clarification" && result.intent?.clarification?.options && (
+        <div style={{ display:"flex", gap:6, marginTop:6, maxWidth:"85%" }}>
+          {result.intent.clarification.options.map((o,i) => (
+            <div key={i} style={{ padding:"8px 14px", borderRadius:10, background:T.card, border:`1px solid ${T.border}`, fontSize:12, color:T.dim, fontFamily:T.font, boxShadow:T.shadow }}>
+              {DOCS[o.type]?.icon} {o.label}
+            </div>
+          ))}
+        </div>
+      )}
+      <span style={{ fontSize:9, color:T.muted, marginTop:3, fontFamily:T.mono }}>{ts}</span>
+    </div>
+  );
+}
+
+// ── SealBadge: Minimal governance indicator (replaces full Pipeline) ──
+function SealBadge({ result, T }) {
+  const [open, setOpen] = useState(false);
+  const { sge, receipt, template, ms } = result;
+  const sealed = !!receipt;
+  const riskNum = sge ? parseInt(sge.risk.replace("R","")) : 0;
+  
+  return (
+    <div style={{ marginTop:4, maxWidth:"85%" }}>
+      {/* Compact badge — just the essentials */}
+      <div onClick={() => setOpen(!open)} 
+        style={{ display:"inline-flex", alignItems:"center", gap:6, padding:"4px 10px", borderRadius:20, 
+          background:sealed ? T.green+"0C" : T.card, border:`1px solid ${sealed ? T.green+"25" : T.border}`,
+          cursor:"pointer", transition:"all 0.2s", fontSize:11, fontFamily:T.mono }}>
+        <span style={{ color:sealed?T.green:T.muted }}>{sealed ? "✓" : "○"}</span>
+        <span style={{ color:T.dim, fontSize:10 }}>
+          {sealed ? (result.intent?.language === "de" ? "Versiegelt" : result.intent?.language === "pt" ? "Selado" : "Sealed") : 
+           (result.intent?.language === "de" ? "Lokal" : result.intent?.language === "pt" ? "Local" : "Local")}
+        </span>
+        {riskNum > 0 && <span style={{ color:rc(sge?.risk, T), fontSize:9, fontWeight:600 }}>{sge.risk}</span>}
+        <span style={{ color:T.muted, fontSize:9 }}>{open?"▾":"▸"}</span>
+      </div>
+      
+      {/* Expandable technical details — only for those who want them */}
+      {open && (
+        <div style={{ marginTop:4, padding:10, borderRadius:8, background:T.card, border:`1px solid ${T.border}`, fontFamily:T.mono, fontSize:10, color:T.dim, lineHeight:1.8, boxShadow:T.shadow }}>
+          {template && <div>Template: <span style={{color:T.text}}>{template.id}</span> ({template.fields.length} fields)</div>}
+          {sge && <div>SGE: <span style={{color:rc(sge.risk, T)}}>{sge.risk}</span> — {sge.explanation}</div>}
+          {sge?.crossCorrelation && <div style={{color:T.orange}}>⚡ {sge.crossCorrelation}</div>}
+          {receipt && <div style={{color:T.green}}>📜 {receipt.id} · {receipt.status}</div>}
+          {sge && <div style={{color:T.muted, fontSize:9}}>{sge.hash}</div>}
+          <div style={{color:T.muted, fontSize:9}}>{ms}ms · {result.method} · {result.format?.toUpperCase()}</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function TierSwitch({ tier, set, T }) {
+  return (
+    <div style={{ display:"flex", gap:2, background:T.bg, borderRadius:8, padding:2, border:`1px solid ${T.border}` }}>
+      {Object.entries(TIERS).map(([k,v]) => (
+        <button key={k} onClick={()=>set(k)} style={{ padding:"4px 10px", borderRadius:6, fontSize:10, fontFamily:T.mono, cursor:"pointer", transition:"all 0.2s", border:"none", background:tier===k?v.color+"15":"transparent", color:tier===k?v.color:T.muted, fontWeight:tier===k?600:400 }}>{v.label}</button>
+      ))}
+    </div>
+  );
+}
+
+function Sugs({ onPick, lang, T }) {
+  const s = lang === "de" ? ["Erstell einen Brief","Schreib ein Memo","Rechnung erstellen","Wer bist du?"] :
+    lang === "pt" ? ["Cria uma carta","Escreve um memo","Criar fatura","Quem és tu?"] :
+    ["Create a letter","Write a memo","Create an invoice","Who are you?"];
+  return (
+    <div style={{ display:"flex", gap:5, flexWrap:"wrap", marginBottom:8, justifyContent:"center" }}>
+      {s.map((t,i) => (
+        <button key={i} onClick={()=>onPick(t)} style={{ padding:"6px 14px", borderRadius:20, fontSize:11, fontFamily:T.font, background:"transparent", border:`1px solid ${T.border}`, color:T.dim, cursor:"pointer", transition:"all 0.15s", lineHeight:1.3 }}
+          onMouseEnter={e=>{e.target.style.borderColor=T.gold;e.target.style.color=T.gold}}
+          onMouseLeave={e=>{e.target.style.borderColor=T.border;e.target.style.color=T.dim}}>
+          {t}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// ── GovPanel: Collapsed by default, minimal ──────────────────────────
+function GovPanel({ msgs, tier, stats, T }) {
+  const [open, setOpen] = useState(false);
+  const results = msgs.filter(m=>m.result?.type==="success").map(m=>m.result);
+  const last = results[results.length-1];
+  
+  // Collapsed: just a small shield icon
+  if (!open) return (
+    <div style={{ width:36, borderLeft:`1px solid ${T.border}`, background:T.card, display:"flex", flexDirection:"column", alignItems:"center", paddingTop:14, flexShrink:0 }}>
+      <button onClick={()=>setOpen(true)} title="Governance Panel" style={{ background:"none", border:"none", color:T.gold, cursor:"pointer", fontSize:14, opacity:0.7, transition:"opacity 0.2s" }}
+        onMouseEnter={e=>e.target.style.opacity=1} onMouseLeave={e=>e.target.style.opacity=0.7}>
+        🛡️
+      </button>
+      {results.filter(r=>r.receipt).length > 0 && (
+        <div style={{ marginTop:8, width:6, height:6, borderRadius:"50%", background:T.green }} />
+      )}
+    </div>
+  );
+  
+  // Expanded: technical details for experts
+  return (
+    <div style={{ width:240, borderLeft:`1px solid ${T.border}`, background:T.card, display:"flex", flexDirection:"column", flexShrink:0, overflow:"hidden" }}>
+      <div style={{ padding:"10px 12px", borderBottom:`1px solid ${T.border}`, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+        <span style={{ fontSize:10, fontFamily:T.mono, color:T.gold, letterSpacing:"0.06em" }}>🛡️ GOVERNANCE</span>
+        <button onClick={()=>setOpen(false)} style={{ background:"none", border:"none", color:T.muted, cursor:"pointer", fontSize:11 }}>✕</button>
+      </div>
+      <div style={{ flex:1, overflowY:"auto", padding:10, fontSize:10, fontFamily:T.mono }}>
+        <Sec title="CONSTITUTION" T={T}>
+          <div style={{ padding:6, borderRadius:6, background:T.green+"08", border:`1px solid ${T.green}15` }}>
+            {["I1-I9 ACTIVE (9/9)","S1-S8 ACTIVE (8/8)","Layer 7 ENFORCED","Post-Filter ACTIVE"].map((s,i) => (
+              <div key={i} style={{ display:"flex", alignItems:"center", gap:4, padding:"1px 0", color:T.green, fontSize:9 }}>
+                <span style={{ width:4, height:4, borderRadius:"50%", background:T.green }} />{s}
+              </div>
+            ))}
+          </div>
+        </Sec>
+        <Sec title="SESSION" T={T}>
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:4 }}>
+            {[{l:"Docs",v:stats.docs,c:T.text},{l:"Sealed",v:stats.sealed,c:T.green},{l:"Avg ms",v:stats.avgMs,c:T.blue},{l:"Tier",v:TIERS[tier].label,c:TIERS[tier].color}].map((s,i) => (
+              <div key={i} style={{ padding:5, borderRadius:6, background:T.bg, border:`1px solid ${T.border}`, textAlign:"center" }}>
+                <div style={{ fontSize:13, fontWeight:700, color:s.c }}>{s.v}</div>
+                <div style={{ fontSize:8, color:T.muted }}>{s.l}</div>
+              </div>
+            ))}
+          </div>
+        </Sec>
+        {results.filter(r=>r.receipt).length > 0 && <Sec title="RECEIPTS" T={T}>
+          {results.filter(r=>r.receipt).slice(-4).reverse().map((r,i) => (
+            <div key={i} style={{ display:"flex", justifyContent:"space-between", padding:"3px 5px", marginBottom:2, borderRadius:4, background:T.bg, border:`1px solid ${T.border}` }}>
+              <span style={{ color:T.green, fontSize:8 }}>📜 {r.receipt.id.slice(0,22)}</span>
+              <span style={{ color:rc(r.sge?.risk, T), fontSize:8 }}>{r.sge?.risk}</span>
+            </div>
+          ))}
+        </Sec>}
+        <div style={{ marginTop:10, padding:8, borderRadius:6, background:T.goldBg, border:`1px solid ${T.gold}15`, textAlign:"center" }}>
+          <div style={{ fontSize:9, color:T.gold, fontStyle:"italic", lineHeight:1.5 }}>"KI verarbeitet. Mensch entscheidet.<br/>WINDI garantiert."</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Sec({ title, children, T }) {
+  return <div style={{ marginBottom:12 }}><div style={{ color:T.muted, marginBottom:5, fontSize:8, letterSpacing:"0.1em" }}>{title}</div>{children}</div>;
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// MAIN — KLAR Edition
+// ═══════════════════════════════════════════════════════════════════════
+
+function WINDIAgentSuite() {
+  const [msgs, setMsgs] = useState([]);
+  const [input, setInput] = useState("");
+  const [tier, setTier] = useState("HIGH");
+  const [lang, setLang] = useState("de");
+  const [stats, setStats] = useState({ docs:0, sealed:0, avgMs:0 });
+  const [intentHistory, setIntentHistory] = useState([]);
+  const [themeName, setThemeName] = useState("KLAR");
+  const chatRef = useRef(null);
+  const inputRef = useRef(null);
+
+  const T = THEMES[themeName];
+
+  useEffect(() => { chatRef.current && (chatRef.current.scrollTop = chatRef.current.scrollHeight); }, [msgs]);
+  useEffect(() => { inputRef.current?.focus(); }, []);
+
+  const send = useCallback((text) => {
+    const msg = (text || input).trim();
+    if (!msg) return;
+    const ts = new Date().toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+    setMsgs(prev => [...prev, { role:"human", text:msg, ts }]);
+    setInput("");
+    setTimeout(() => {
+      const result = agentThink(msg, tier, intentHistory, stats);
+      const ats = new Date().toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+      if (result.intent) { setLang(result.intent.language); setIntentHistory(prev => [...prev, result.intent].slice(-10)); }
+      setMsgs(prev => [...prev, { role:"agent", text:result.message, result, ts:ats }]);
+      if (result.type === "success") setStats(prev => ({ docs:prev.docs+1, sealed:prev.sealed+(result.receipt?1:0), avgMs:Math.round((prev.avgMs*prev.docs+result.ms)/(prev.docs+1)) }));
+    }, 100 + Math.random() * 200);
+  }, [input, tier, intentHistory]);
+
+  return (
+    <div style={{ height:"100vh", display:"flex", flexDirection:"column", background:T.bg, color:T.text, fontFamily:T.font, overflow:"hidden", transition:"background 0.3s, color 0.3s" }}>
+      {/* Header — Clean, professional */}
+      <header style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"8px 16px", borderBottom:`1px solid ${T.border}`, background:T.card, flexShrink:0, minHeight:48, boxShadow:T.shadow }}>
+        <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+          <span style={{ fontSize:20 }}>🐉</span>
+          <div>
+            <span style={{ fontWeight:700, fontSize:14, color:T.gold }}>WINDI</span>
+            <span style={{ fontWeight:400, fontSize:14, marginLeft:5, color:T.text }}>Agent Suite</span>
+          </div>
+        </div>
+        <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+          <TierSwitch tier={tier} set={setTier} T={T} />
+          <div style={{ display:"flex", gap:2 }}>
+            {["de","en","pt"].map(l => (
+              <button key={l} onClick={()=>setLang(l)} style={{ padding:"3px 7px", borderRadius:4, fontSize:9, fontFamily:T.mono, background:lang===l?T.gold+"15":"transparent", border:`1px solid ${lang===l?T.gold+"30":"transparent"}`, color:lang===l?T.gold:T.muted, cursor:"pointer" }}>{l.toUpperCase()}</button>
+            ))}
+          </div>
+          {/* Theme toggle */}
+          <button onClick={()=>setThemeName(t=>t==="KLAR"?"NOIR":"KLAR")} title={themeName==="KLAR"?"Switch to Noir":"Switch to Klar"}
+            style={{ padding:"3px 8px", borderRadius:4, fontSize:9, fontFamily:T.mono, background:"transparent", border:`1px solid ${T.border}`, color:T.muted, cursor:"pointer" }}>
+            {themeName==="KLAR"?"🌙":"☀️"}
+          </button>
+        </div>
+      </header>
+
+      <div style={{ flex:1, display:"flex", overflow:"hidden" }}>
+        <div style={{ flex:1, display:"flex", flexDirection:"column", minWidth:0 }}>
+          <div ref={chatRef} style={{ flex:1, overflowY:"auto", padding:"14px 18px" }}>
+            {msgs.length === 0 && (
+              <div style={{ textAlign:"center", paddingTop:50 }}>
+                <div style={{ fontSize:44, marginBottom:14 }}>🐉</div>
+                <div style={{ fontSize:18, fontWeight:700, color:T.gold, marginBottom:8 }}>
+                  {lang==="de"?"Willkommen! Wie kann ich helfen?":lang==="pt"?"Bem-vindo! No que posso ajudar?":"Welcome! How can I help?"}
+                </div>
+                <div style={{ fontSize:12, color:T.dim, maxWidth:440, margin:"0 auto 10px", lineHeight:1.6 }}>
+                  {lang==="de"?"Dokumente erstellen, Fragen beantworten — einfach losschreiben.":
+                   lang==="pt"?"Criar documentos, responder perguntas — só escrever.":
+                   "Create documents, answer questions — just start writing."}
+                </div>
+                <div style={{ display:"flex", flexWrap:"wrap", justifyContent:"center", gap:4, margin:"8px auto 16px", maxWidth:480 }}>
+                  {Object.entries(DOCS).slice(0,8).map(([k,d]) => (
+                    <span key={k} style={{ padding:"3px 8px", borderRadius:12, fontSize:10, background:T.card, border:`1px solid ${T.border}`, color:T.dim, fontFamily:T.mono, boxShadow:T.shadow }}>{d.icon} {d[lang]||d.en}</span>
+                  ))}
+                  <span style={{ padding:"3px 8px", borderRadius:12, fontSize:10, color:T.muted }}>+6</span>
+                </div>
+                <Sugs onPick={send} lang={lang} T={T} />
+              </div>
+            )}
+            {msgs.map((m,i) => <Msg key={i} {...m} T={T} />)}
+          </div>
+
+          <div style={{ padding:"10px 18px 14px", borderTop:`1px solid ${T.border}`, background:T.card, flexShrink:0, boxShadow:`0 -1px 3px rgba(0,0,0,${themeName==="KLAR"?"0.04":"0.2"})` }}>
+            {msgs.length > 2 && msgs.length % 4 === 0 && <Sugs onPick={send} lang={lang} T={T} />}
+            <div style={{ display:"flex", gap:8, alignItems:"flex-end" }}>
+              <textarea ref={inputRef} value={input} onChange={e=>setInput(e.target.value)}
+                onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send();}}}
+                placeholder={lang==="de"?"Schreib los — Frage, Dokument, was auch immer...":lang==="pt"?"Escreve aí — pergunta, documento, o que for...":"Write anything — question, document, whatever..."}
+                rows={2} style={{ flex:1, padding:"10px 14px", borderRadius:12, border:`1px solid ${T.border}`, background:T.input, color:T.text, fontSize:13.5, fontFamily:T.font, resize:"none", outline:"none", lineHeight:1.5, transition:"border-color 0.2s" }}
+                onFocus={e=>e.target.style.borderColor=T.gold+"80"} onBlur={e=>e.target.style.borderColor=T.border} />
+              <button onClick={()=>send()} disabled={!input.trim()} style={{ width:42, height:42, borderRadius:10, border:"none", background:input.trim()?`linear-gradient(135deg,${T.gold},${T.goldDim})`:T.hover, color:input.trim()?(themeName==="KLAR"?"#FFF":T.bg):T.muted, fontSize:16, cursor:input.trim()?"pointer":"default", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, fontWeight:700 }}>→</button>
+            </div>
+            <div style={{ display:"flex", justifyContent:"space-between", marginTop:5, fontSize:9, color:T.muted, fontFamily:T.mono }}>
+              <span>Enter = {lang==="de"?"senden":lang==="pt"?"enviar":"send"} · Shift+Enter = {lang==="de"?"Zeile":lang==="pt"?"linha":"line"}</span>
+              <span>v{V}</span>
+            </div>
+          </div>
+        </div>
+        <GovPanel msgs={msgs} tier={tier} stats={stats} T={T} />
+      </div>
+
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+        @keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+        *{box-sizing:border-box;margin:0;padding:0}
+        ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:${T.border};border-radius:3px}::-webkit-scrollbar-thumb:hover{background:${T.gold}30}
+        textarea::placeholder{color:${T.muted}}
+      `}</style>
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(React.createElement(WINDIAgentSuite));
+</script>
+</body>
+</html>

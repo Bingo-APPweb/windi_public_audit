@@ -1,0 +1,13 @@
+{
+  "communique_id": "COM-20260218-0009",
+  "content_hash": "90c67d4baabad5e8ea49d198b991372fc0a49825115a56607f01c600c092a8ef",
+  "bundle_hash": "9c282c20cc609b7d8ed1decb8be8df462c3ebea604d7a149cf5afa05a1c9c0d2",
+  "receipt_id": "VR-COM-18e34e3edb15",
+  "ledger_id": "VR-COM-18e34e3edb15",
+  "category": "UPDATE",
+  "impact_level": "HIGH",
+  "author": "Jober Moegele Correa",
+  "published_at": "2026-02-18T16:58:43Z",
+  "verify_url": "https://admin.windia4desk.tech/communique/COM-20260218-0009/verify",
+  "generated_at": "2026-02-18T16:58:43Z"
+}

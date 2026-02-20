@@ -1,0 +1,15 @@
+{
+  "skill_id": "matrix_expander",
+  "name": "Matrix Expander",
+  "version": "1.0.0",
+  "domain": "architect",
+  "capability": "matrix_expand",
+  "description": "Generates blueprints for new Constitutional Matrix shelves",
+  "author_dragon": "Architect (GPT)",
+  "integrity_hash": "fa2171e06dc2777cc15dad95186e0193209e2415d3f50d2e71d2ceadb5eed7ce",
+  "baptism_date": "2026-02-10T11:07:00.195679+00:00",
+  "i9_certified": true,
+  "constitutional_gate": true,
+  "dependencies": [],
+  "metadata": {}
+}

@@ -1,0 +1,28 @@
+[Unit]
+Description=WINDI Forensic Vault v1.0.0
+Documentation=https://admin.windia4desk.tech/vault/health
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=windi
+Group=windi
+WorkingDirectory=/opt/windi/forensic-vault
+Environment=VAULT_PORT=8106
+Environment=LEDGER_DB=/opt/windi/data/forensic_ledger.db
+Environment=PAGE_SIZE=25
+ExecStart=/usr/bin/python3 /opt/windi/forensic-vault/forensic_vault.py
+Restart=always
+RestartSec=5
+StandardOutput=append:/opt/windi/logs/forensic_vault.log
+StandardError=append:/opt/windi/logs/forensic_vault.log
+
+# Security hardening
+NoNewPrivileges=yes
+ProtectSystem=strict
+ReadWritePaths=/opt/windi/logs /opt/windi/forensic-vault
+ReadOnlyPaths=/opt/windi/data
+
+[Install]
+WantedBy=multi-user.target

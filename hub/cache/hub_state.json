@@ -1,0 +1,271 @@
+{
+  "hub_version": "1.0.0",
+  "collected_utc": "2026-02-08T20:31:02.099198+00:00",
+  "constellation_hash": "6ee4e864",
+  "constellation_status": "OPERATIONAL",
+  "agents_total": 8,
+  "agents_responding": 8,
+  "agents_silent": 0,
+  "shelves": {
+    "detection": [
+      {
+        "agent_id": "sentinela",
+        "name": "Sentinela",
+        "icon": "🔍",
+        "shelf": "detection",
+        "version": "1.0.0",
+        "status": "OPERATIONAL",
+        "last_check_utc": "2026-02-08T20:31:02.099427+00:00",
+        "advisory_only": true,
+        "description": "Compliance verification agent",
+        "metrics": {}
+      },
+      {
+        "agent_id": "pulse-agent",
+        "name": "Pulse Agent",
+        "icon": "💓",
+        "shelf": "detection",
+        "version": "1.0.0",
+        "status": "OPERATIONAL",
+        "last_check_utc": "2026-02-08T20:31:02.099572+00:00",
+        "advisory_only": true,
+        "description": "Predictive pattern analysis",
+        "metrics": {
+          "rhythm_status": "NORMAL",
+          "patterns_count": 0,
+          "confidence": "LOW"
+        }
+      },
+      {
+        "agent_id": "sla-sentinel",
+        "name": "SLA Sentinel",
+        "icon": "⏱️",
+        "shelf": "detection",
+        "version": "1.0.0",
+        "status": "OPERATIONAL",
+        "last_check_utc": "2026-02-08T20:31:02.099746+00:00",
+        "advisory_only": true,
+        "description": "Real-time SLA monitoring",
+        "metrics": {
+          "definitions_loaded": true
+        }
+      }
+    ],
+    "orchestration": [
+      {
+        "agent_id": "maestro",
+        "name": "Maestro",
+        "icon": "🎼",
+        "shelf": "orchestration",
+        "version": "1.2.0",
+        "status": "OPERATIONAL",
+        "last_check_utc": "2026-02-08T20:31:02.099812+00:00",
+        "advisory_only": true,
+        "description": "Governance cycle orchestration",
+        "metrics": {
+          "active_cases": 2,
+          "closed_cases": 4
+        }
+      },
+      {
+        "agent_id": "onboarding-agent",
+        "name": "Onboarding Agent",
+        "icon": "🚀",
+        "shelf": "orchestration",
+        "version": "1.0.0",
+        "status": "OPERATIONAL",
+        "last_check_utc": "2026-02-08T20:31:02.100289+00:00",
+        "advisory_only": true,
+        "description": "Client/ISP provisioning pipeline",
+        "metrics": {
+          "onboardings_count": 0
+        }
+      }
+    ],
+    "verification": [
+      {
+        "agent_id": "isp-manager",
+        "name": "ISP Manager",
+        "icon": "📋",
+        "shelf": "verification",
+        "version": "1.0.0",
+        "status": "OPERATIONAL",
+        "last_check_utc": "2026-02-08T20:31:02.100377+00:00",
+        "advisory_only": true,
+        "description": "ISP profile lifecycle management",
+        "metrics": {
+          "profiles_count": 19
+        }
+      },
+      {
+        "agent_id": "integrity-watchdog",
+        "name": "Integrity Watchdog",
+        "icon": "🐕",
+        "shelf": "verification",
+        "version": "1.0.0",
+        "status": "OPERATIONAL",
+        "last_check_utc": "2026-02-08T20:31:02.103091+00:00",
+        "advisory_only": true,
+        "description": "Forensic ledger integrity verification",
+        "metrics": {
+          "overall_status": "PASS",
+          "anomalies_count": 0,
+          "last_check": "2026-02-08T19:17:41.765335+00:00"
+        }
+      }
+    ],
+    "meta_governance": [
+      {
+        "agent_id": "report-agent",
+        "name": "Report Agent",
+        "icon": "📊",
+        "shelf": "meta_governance",
+        "version": "1.0.0",
+        "status": "OPERATIONAL",
+        "last_check_utc": "2026-02-08T20:31:02.103194+00:00",
+        "advisory_only": true,
+        "description": "Governance cycle report generation",
+        "metrics": {
+          "reports_count": 13
+        }
+      }
+    ]
+  },
+  "modules": {
+    "constellation_registry": {
+      "constellation_hash": "6ee4e864",
+      "agents": [
+        {
+          "id": "sentinela",
+          "name": "Sentinela",
+          "icon": "🔍",
+          "shelf": "detection",
+          "version": "1.0.0",
+          "status": "OPERATIONAL"
+        },
+        {
+          "id": "pulse-agent",
+          "name": "Pulse Agent",
+          "icon": "💓",
+          "shelf": "detection",
+          "version": "1.0.0",
+          "status": "OPERATIONAL"
+        },
+        {
+          "id": "sla-sentinel",
+          "name": "SLA Sentinel",
+          "icon": "⏱️",
+          "shelf": "detection",
+          "version": "1.0.0",
+          "status": "OPERATIONAL"
+        },
+        {
+          "id": "maestro",
+          "name": "Maestro",
+          "icon": "🎼",
+          "shelf": "orchestration",
+          "version": "1.2.0",
+          "status": "OPERATIONAL"
+        },
+        {
+          "id": "onboarding-agent",
+          "name": "Onboarding Agent",
+          "icon": "🚀",
+          "shelf": "orchestration",
+          "version": "1.0.0",
+          "status": "OPERATIONAL"
+        },
+        {
+          "id": "isp-manager",
+          "name": "ISP Manager",
+          "icon": "📋",
+          "shelf": "verification",
+          "version": "1.0.0",
+          "status": "OPERATIONAL"
+        },
+        {
+          "id": "integrity-watchdog",
+          "name": "Integrity Watchdog",
+          "icon": "🐕",
+          "shelf": "verification",
+          "version": "1.0.0",
+          "status": "OPERATIONAL"
+        },
+        {
+          "id": "report-agent",
+          "name": "Report Agent",
+          "icon": "📊",
+          "shelf": "meta_governance",
+          "version": "1.0.0",
+          "status": "OPERATIONAL"
+        }
+      ],
+      "three_pillars": {
+        "CREATION": "isp-manager",
+        "VERIFICATION": "sentinela",
+        "RESOLUTION": "maestro"
+      }
+    },
+    "live_queue": {
+      "active_cases": [
+        {
+          "finding_id": "ISP-alerts_20260208_090401",
+          "severity": "R2",
+          "status": "RESOLVED",
+          "created_at": "2026-02-08T18:50:45.124077+00:00",
+          "acknowledged": true
+        },
+        {
+          "finding_id": "ISP-alerts_20260208_085840",
+          "severity": "R2",
+          "status": "ACKNOWLEDGED",
+          "created_at": "2026-02-08T18:50:45.119431+00:00",
+          "acknowledged": true
+        }
+      ],
+      "sla_status": "ALL_CLEAR",
+      "critical_flags": [],
+      "total_active": 2,
+      "total_pending_ack": 0
+    },
+    "forensic_health": {
+      "status": "PASS",
+      "last_check_utc": "2026-02-08T19:17:41.765335+00:00",
+      "checks": {
+        "hash_chain": true,
+        "receipt_completeness": false,
+        "temporal_consistency": true,
+        "merkle_integrity": true,
+        "cross_references": true
+      },
+      "anomalies_count": 0,
+      "merkle_root_truncated": "01045c29",
+      "dead_man_alive": true
+    },
+    "predictive_signals": {
+      "rhythm_status": "NORMAL",
+      "patterns_detected": [],
+      "confidence": "LOW",
+      "last_analysis_utc": "2026-02-08T19:20:13.331623+00:00",
+      "data_points": 6
+    },
+    "reports_seals": {
+      "sealed_reports": [],
+      "total_count": 0,
+      "latest_cycle_id": null
+    },
+    "state_viewer": {
+      "snapshot_utc": "2026-02-08T20:31:02.099198+00:00",
+      "constellation_status": "OPERATIONAL",
+      "agents_responding": 8,
+      "agents_total": 8,
+      "recent_events": []
+    }
+  },
+  "alerts_summary": {
+    "critical": 0,
+    "high": 0,
+    "warning": 0,
+    "info": 0
+  }
+}

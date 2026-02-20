@@ -1,0 +1,21 @@
+{
+  "broadcasts": [
+    {
+      "package_id": "EV-20260219-0001",
+      "receipt_id": "VR-COM-ef5ef676e196",
+      "vault_filename": "VR-COM-ef5ef676e196.jmpg",
+      "vault_path": "/opt/windi/vault/multimedia/VR-COM-ef5ef676e196.jmpg",
+      "public_url": "https://admin.windia4desk.tech/vault/multimedia/VR-COM-ef5ef676e196.jmpg",
+      "file_hash": "1d4faf93437ff2e8455e41856a85c3cf5cd2cd81127b4cb014c39a86419dcd88",
+      "file_size": 3075,
+      "file_ext": ".jmpg",
+      "ledger_status": "sealed",
+      "ledger_content_hash": "2bfc3f471973bac6f6d96121dac32a696664db182a5b8d3ad96b9c167a2e5683",
+      "broadcast_timestamp": "2026-02-19T20:25:57.201295+00:00",
+      "metadata": {}
+    }
+  ],
+  "version": "1.0.0",
+  "last_updated": "2026-02-19T20:25:57.205336+00:00",
+  "total_broadcasts": 1
+}

@@ -1,0 +1,66 @@
+{
+  "description": "Example WINDI Verification Code (WVC) payload",
+  "version": "1.0",
+
+  "source_proofset": {
+    "document_id": "windi:doc:inv-2026-001",
+    "document_hash": "sha256:a7f5f35426b927411fc9231b56382173a0b25fd4e8c9d72a4f3c8b9d74e91c23",
+    "issuer_key_id": "windi:key:bank-de",
+    "created_at": "2026-02-07T12:00:00Z"
+  },
+
+  "wvc_string": "WVC1-KRUGS4ZANFZSAYJAORSXG5BAMEQGEYLTMUZTEIDFNZRW6ZDFMEQHEZLTORUW4ZZAORUGKID",
+
+  "decoded_structure": {
+    "version": 1,
+    "flags": {
+      "has_signature": true,
+      "offline_allowed": false,
+      "high_value": false
+    },
+    "document_id_hash": "4b5255475334...",
+    "hash_prefix": "a7f5f35426b9...",
+    "timestamp": 1738929600,
+    "timestamp_iso": "2026-02-07T12:00:00Z",
+    "issuer_id_truncated": "77696e64693a...",
+    "checksum": "0x4b52"
+  },
+
+  "qr_code": {
+    "format": "QR Code",
+    "error_correction": "M",
+    "version": 5,
+    "content": "WVC1-KRUGS4ZANFZSAYJAORSXG5BAMEQGEYLTMUZTEIDFNZRW6ZDFMEQHEZLTORUW4ZZAORUGKID",
+    "placement": "Bottom-right corner, 15mm x 15mm"
+  },
+
+  "verification_url": "https://verify.windi.eu/api/verify/wvc",
+
+  "api_request": {
+    "method": "POST",
+    "url": "https://verify.windi.eu/api/verify/wvc",
+    "headers": {
+      "Content-Type": "application/json",
+      "X-WINDI-API-KEY": "your-api-key"
+    },
+    "body": {
+      "wvc": "WVC1-KRUGS4ZANFZSAYJAORSXG5BAMEQGEYLTMUZTEIDFNZRW6ZDFMEQHEZLTORUW4ZZAORUGKID",
+      "proof_level": "L2"
+    }
+  },
+
+  "expected_response": {
+    "verdict": "VALID",
+    "integrity": "INTACT",
+    "trust_level": "L2",
+    "issuer_status": "TRUSTED",
+    "checks": {
+      "hash_match": true,
+      "signature_valid": true,
+      "chain_verified": true,
+      "timestamp_valid": true
+    },
+    "risk_flags": [],
+    "request_id": "req-abc123-def456"
+  }
+}
