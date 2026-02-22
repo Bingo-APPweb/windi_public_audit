@@ -51,10 +51,15 @@ ESCALATION_THRESHOLDS = {
 SELF_PROBE_MAX_AGE_S = 120  # 2 minutes = 4 cycles
 
 # Endpoints to monitor
+# Expanded 21Feb26: +communique, +export, +vault, +palette
 ENDPOINTS = {
-    "desktop": "http://127.0.0.1:8100",
-    "ledger":  "http://127.0.0.1:8101",
-    "bridge":  "http://127.0.0.1:8097",
+    "desktop":    "http://127.0.0.1:8100",
+    "ledger":     "http://127.0.0.1:8101",
+    "bridge":     "http://127.0.0.1:8097",
+    "communique": "http://127.0.0.1:8105",
+    "export":     "http://127.0.0.1:8103",
+    "vault":      "http://127.0.0.1:8106",
+    "palette":    "http://127.0.0.1:8108",
 }
 
 DB_PATH = "/opt/windi/data/sentinel_law.db"

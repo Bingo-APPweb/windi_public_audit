@@ -1,0 +1,51 @@
+{
+  "candidate_id": "WBC-GENESIS-0000",
+  "origin_session": "three-dragons-convergence-20260221",
+  "origin_chamber": "archetype",
+  "essence": "AI processes. Human decides. WINDI guarantees. O átomo precisa estar estável antes do organismo crescer.",
+  "context_tags": [
+    "genesis",
+    "convergence",
+    "three-dragons",
+    "governance",
+    "wisdom-protocol"
+  ],
+  "source_fragments": 0,
+  "emergence_context": {
+    "situation": "milestone",
+    "actors_involved": [
+      "human_dragon",
+      "guardian",
+      "architect",
+      "witness"
+    ],
+    "intensity": 1.0
+  },
+  "weight": {
+    "base": 1.0,
+    "recurrence_count": 0,
+    "recurrence_bonus": 0.0,
+    "staleness_decay": 0.0,
+    "effective": 1.0
+  },
+  "status": "sealed",
+  "ttl_remaining": 0,
+  "created_at": "2026-02-21T11:59:16+00:00",
+  "last_evaluated": "2026-02-21T11:59:16+00:00",
+  "cycle_count": 0,
+  "i1_decision": {
+    "action": "approve",
+    "rejection_class": null,
+    "decided_at": "2026-02-21T11:59:16+00:00",
+    "decided_by": "human_dragon"
+  },
+  "sealed_as": "WB-INSP-00000000",
+  "sha256": "57c637d332c326dcf921fc43b3459324b5f1252635a60a2a0e8c6cb9f638b897",
+  "shelf": {
+    "N1": "philosophy-ethics",
+    "N2": "guiding-principles",
+    "N3": "milestone",
+    "N4": "canonical",
+    "N5": "public"
+  }
+}

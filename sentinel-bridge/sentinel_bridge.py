@@ -39,6 +39,7 @@ SENTINEL_HISTORY_FILE = "/opt/windi/data/sentinel_history.json"
 SENTINEL_INCIDENTS_FILE = "/opt/windi/data/sentinel_incidents.json"
 
 # Fallback: if Sentinel hasn't written state yet, probe services directly
+# Expanded 21Feb26: +ecosystem services 8100-8108
 SERVICE_PROBES = {
     "governance":  {"port": 8080, "path": "/health",     "critical": True},
     "babel":       {"port": 8085, "path": "/health",     "critical": True},
@@ -49,6 +50,16 @@ SERVICE_PROBES = {
     "bridge":      {"port": 8097, "path": "/health",     "critical": True},
     "brain":       {"port": None, "systemd": "windi-brain",       "critical": False},
     "sentinel":    {"port": None, "systemd": "windi-sentinel",    "critical": True},
+    # Ecosystem services (8100-8108)
+    "desktop":     {"port": 8100, "path": "/api/health", "critical": True},
+    "ledger":      {"port": 8101, "path": "/health",     "critical": True},
+    "sentinel_law":{"port": 8102, "path": "/health",     "critical": True},
+    "export":      {"port": 8103, "path": "/health",     "critical": False},
+    "viewer":      {"port": 8104, "path": "/health",     "critical": False},
+    "communique":  {"port": 8105, "path": "/health",     "critical": True},
+    "vault":       {"port": 8106, "path": "/health",     "critical": True},
+    "landing_pmg": {"port": 8107, "path": "/health",     "critical": False},
+    "palette":     {"port": 8108, "path": "/health",     "critical": False},
 }
 
 # Escalation thresholds (mirrors Sentinel daemon config)
@@ -90,6 +101,8 @@ def normalize_sentinel_state(raw_state):
     services = raw_state.get('services', {})
     
     # Known service metadata
+    # Service metadata for normalization
+    # Expanded 21Feb26: +ecosystem services 8100-8108
     svc_meta = {
         "windi-governance": {"port": 8080, "critical": True, "name": "governance"},
         "windi-babel":      {"port": 8085, "critical": True, "name": "babel"},
@@ -100,6 +113,16 @@ def normalize_sentinel_state(raw_state):
         "windi-bridge":     {"port": 8097, "critical": True, "name": "bridge"},
         "windi-brain":      {"port": None, "critical": False, "name": "brain"},
         "windi-gateway":    {"port": None, "critical": True, "name": "gateway"},
+        # Ecosystem services (8100-8108)
+        "windi-desktop":     {"port": 8100, "critical": True, "name": "desktop"},
+        "windi-ledger":      {"port": 8101, "critical": True, "name": "ledger"},
+        "windi-sentinel-law":{"port": 8102, "critical": True, "name": "sentinel_law"},
+        "windi-export":      {"port": 8103, "critical": False, "name": "export"},
+        "windi-viewer":      {"port": 8104, "critical": False, "name": "viewer"},
+        "windi-communique":  {"port": 8105, "critical": True, "name": "communique"},
+        "windi-vault":       {"port": 8106, "critical": True, "name": "vault"},
+        "windi-landing-pmg": {"port": 8107, "critical": False, "name": "landing_pmg"},
+        "windi-palette":     {"port": 8108, "critical": False, "name": "palette"},
     }
     
     normalized_services = {}

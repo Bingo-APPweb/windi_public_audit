@@ -22,6 +22,17 @@ from http.server import HTTPServer, BaseHTTPRequestHandler
 from datetime import datetime, timezone
 from pathlib import Path
 
+# WINDI Document Renderer Integration
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).parent / "renderer"))
+try:
+    from render_api import route_render_api
+    HAS_RENDERER = True
+    print("[Palette] Document Renderer: LOADED")
+except ImportError as _e:
+    HAS_RENDERER = False
+    print(f"[Palette] Document Renderer: NOT AVAILABLE ({_e})")
+
 PORT = int(os.environ.get("WINDI_PALETTE_PORT", 8108))
 VERSION = "0.3.0"
 BASE_DIR = Path(__file__).parent
@@ -83,6 +94,8 @@ class PaletteHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         path = self._normalize_path(self.path.split("?")[0])
+        if HAS_RENDERER and route_render_api(self, "GET", path):
+            return
         stats["requests"] += 1
 
         if path == "/health":
@@ -139,6 +152,8 @@ class PaletteHandler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         path = self._normalize_path(self.path.split("?")[0])
+        if HAS_RENDERER and route_render_api(self, "POST", path):
+            return
         stats["requests"] += 1
 
         if path == "/api/generate":

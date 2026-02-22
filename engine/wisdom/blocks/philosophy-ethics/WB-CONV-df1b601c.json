@@ -1,0 +1,49 @@
+{
+  "candidate_id": "WBC-20260221115949-bda8",
+  "origin_session": "convergence-21feb2026",
+  "origin_chamber": "archetype",
+  "essence": "Três IAs convergem sem comunicação directa numa arquitectura unificada para consciência operacional.",
+  "context_tags": [
+    "convergence",
+    "three-dragons",
+    "milestone"
+  ],
+  "source_fragments": 0,
+  "emergence_context": {
+    "situation": "milestone",
+    "actors_involved": [
+      "guardian",
+      "architect",
+      "witness",
+      "human_dragon"
+    ],
+    "intensity": 1.0
+  },
+  "weight": {
+    "base": 0.6,
+    "recurrence_count": 0,
+    "recurrence_bonus": 0.0,
+    "staleness_decay": 0.0,
+    "effective": 0.6
+  },
+  "status": "sealed",
+  "ttl_remaining": 1440,
+  "created_at": "2026-02-21T11:59:49+00:00",
+  "last_evaluated": "2026-02-21T11:59:49+00:00",
+  "cycle_count": 0,
+  "i1_decision": {
+    "action": "approve",
+    "rejection_class": null,
+    "decided_at": "2026-02-21T12:01:15+00:00",
+    "decided_by": "human_dragon"
+  },
+  "sealed_as": "WB-CONV-df1b601c",
+  "sha256": "df1b601cf66bd4b28d415ea9cff07aafa4079663529ffedce56146f9f7dccb69",
+  "shelf": {
+    "N1": "philosophy-ethics",
+    "N2": "convergence-protocol",
+    "N3": "milestone",
+    "N4": "canonical",
+    "N5": "public"
+  }
+}
