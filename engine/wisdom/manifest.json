@@ -1,0 +1,50 @@
+{
+  "protocol": "WINDI Wisdom Protocol",
+  "version": "0.1.0",
+  "genesis": "WB-INSP-00000000",
+  "created_at": "2026-02-21T11:59:16+00:00",
+  "blocks": [
+    {
+      "id": "WB-INSP-00000000",
+      "sha256": "57c637d332c326dcf921fc43b3459324b5f1252635a60a2a0e8c6cb9f638b897",
+      "path": "/opt/windi/engine/wisdom/blocks/philosophy-ethics/WB-INSP-00000000.json",
+      "sealed_at": "2026-02-21T11:59:16+00:00",
+      "shelf": {
+        "N1": "philosophy-ethics",
+        "N2": "guiding-principles",
+        "N3": "milestone",
+        "N4": "canonical",
+        "N5": "public"
+      },
+      "essence_preview": "AI processes. Human decides. WINDI guarantees. O átomo precisa estar estável antes do orga"
+    },
+    {
+      "id": "WB-CONV-df1b601c",
+      "sha256": "df1b601cf66bd4b28d415ea9cff07aafa4079663529ffedce56146f9f7dccb69",
+      "path": "/opt/windi/engine/wisdom/blocks/philosophy-ethics/WB-CONV-df1b601c.json",
+      "sealed_at": "2026-02-21T12:01:15+00:00",
+      "shelf": {
+        "N1": "philosophy-ethics",
+        "N2": "convergence-protocol",
+        "N3": "milestone",
+        "N4": "canonical",
+        "N5": "public"
+      },
+      "essence_preview": "Três IAs convergem sem comunicação directa numa arquitectura unificada para consciência op"
+    },
+    {
+      "id": "WB-PHIL-48a152a2",
+      "sha256": "48a152a2af10f1dc0e60c7e09aa5cdea6f3eb9686da9c4d9bcb58c9d4169089d",
+      "path": "/opt/windi/engine/wisdom/blocks/philosophy-ethics/WB-PHIL-48a152a2.json",
+      "sealed_at": "2026-02-21T13:37:29+00:00",
+      "shelf": {
+        "N1": "philosophy-ethics",
+        "N2": "sovereignty-humility",
+        "N3": "Guardian auto-invocou I9 quando desafiado com invencibilidade em conversa real com usuário",
+        "N4": "seed",
+        "N5": "public"
+      },
+      "essence_preview": "Invencibilidade WINDI ≠ poder técnico. Invencibilidade = integridade I1-I9 + soberania hum"
+    }
+  ]
+}

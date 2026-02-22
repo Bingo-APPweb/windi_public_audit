@@ -1,0 +1,134 @@
+{
+  "passport_header": {
+    "passport_id": "CP-GUAR-20260221-2f026d8b",
+    "schema_version": "1.0.0",
+    "issued_at": "2026-02-21T16:44:58.599230+00:00",
+    "valid_until": "2026-03-23T16:44:58.599230+00:00",
+    "issuer": "WINDI Publishing House \u2014 Constitutional Governance Layer",
+    "issuer_ledger_endpoint": "https://www.windi-domain.com/api/v1/verify"
+  },
+  "agent_identity": {
+    "agent_id": "AGT-GUAR-docshield01",
+    "agent_name": "[FETCH_FROM_REGISTRY]",
+    "constitutional_role": "Guardian",
+    "specialty": "Legal Compliance",
+    "ed25519_public_key": "[FETCH_FROM_WALLET]",
+    "wallet_created_at": "2026-02-21T16:44:58.599291+00:00",
+    "creator_wallet_hash": "",
+    "forging_receipt_hash": ""
+  },
+  "sentinel_summary": {
+    "total_cycles": 0,
+    "total_violations": 0,
+    "violation_rate": 0.0,
+    "last_cycle_at": "",
+    "avg_cycle_latency_ms": 0.0,
+    "p95_latency_ms": 0.0,
+    "escalation_history": [],
+    "i9_status": {
+      "enforced": true,
+      "structural": true,
+      "bypass_attempts": 0,
+      "last_verified_at": "2026-02-21T16:44:58.599460+00:00"
+    }
+  },
+  "ledger_proof": {
+    "total_receipts": 0,
+    "chain_root_hash": "",
+    "chain_integrity": "PENDING",
+    "first_receipt": {},
+    "last_receipt": {},
+    "receipt_categories": {},
+    "verification_endpoint": "https://www.windi-domain.com/api/v1/verify/AGT-GUAR-docshield01"
+  },
+  "waqp_certification": {
+    "current_tier": "BRONZE",
+    "gov_score": 65.0,
+    "evaluation_count": 1,
+    "last_evaluation_at": "2026-02-21T16:44:58.599550+00:00",
+    "tier_history": [],
+    "invariants_tested": [
+      "I1",
+      "I2",
+      "I3",
+      "I4",
+      "I5",
+      "I6",
+      "I7",
+      "I8",
+      "I9"
+    ],
+    "evaluation_receipt_hash": ""
+  },
+  "compliance_matrix": {
+    "ai_act_coverage": [
+      {
+        "article": "Art. 9",
+        "title": "Risk Management System",
+        "coverage": "FULL",
+        "mechanism": "SGE 6-Layer Risk Analysis (R0-R5)"
+      },
+      {
+        "article": "Art. 12",
+        "title": "Record-Keeping",
+        "coverage": "FULL",
+        "mechanism": "Forensic Ledger \u2014 SHA-256 Virtue Receipts per action"
+      },
+      {
+        "article": "Art. 13",
+        "title": "Transparency",
+        "coverage": "FULL",
+        "mechanism": "Torre de Observa\u00e7\u00e3o \u2014 real-time governance dashboard"
+      },
+      {
+        "article": "Art. 14",
+        "title": "Human Oversight",
+        "coverage": "FULL",
+        "mechanism": "I1 (Human Sovereignty) + I9 (Autonomy Prohibition) \u2014 structural"
+      },
+      {
+        "article": "Art. 15",
+        "title": "Accuracy, Robustness, Cybersecurity",
+        "coverage": "ARCHITECTURAL",
+        "mechanism": "Ed25519 Wallet + Sentinel LAW v2.0 continuous monitoring"
+      },
+      {
+        "article": "Art. 17",
+        "title": "Quality Management System",
+        "coverage": "FULL",
+        "mechanism": "WAQP Certification + Tier Progression (Bronze\u2192Silver\u2192Gold)"
+      },
+      {
+        "article": "Art. 26",
+        "title": "Obligations of Deployers",
+        "coverage": "PARTIAL",
+        "mechanism": "Constitutional Invariants I1-I9 enforced at architectural level"
+      },
+      {
+        "article": "Art. 61",
+        "title": "Post-Market Monitoring",
+        "coverage": "FULL",
+        "mechanism": "Sentinel LAW v2.0 \u2014 continuous 5-tier escalation monitoring"
+      }
+    ],
+    "gdpr_alignment": {
+      "data_minimization": true,
+      "right_to_explanation": true,
+      "privacy_by_design": true,
+      "data_processing_locality": "EU_ONLY"
+    },
+    "zero_knowledge_status": {
+      "client_data_stored": false,
+      "proofs_only": true,
+      "verification_method": "SHA-256 hash comparison"
+    }
+  },
+  "passport_seal": {
+    "seal_algorithm": "Ed25519",
+    "passport_hash": "a3f4e3029c4b3a43917be25b0039e0cd8f278d17b309c0566790c1a5242006ca",
+    "signature": "[UNSIGNED \u2014 Deploy signing key for production]",
+    "signer_public_key": "[DEPLOY_ED25519_ISSUING_KEY]",
+    "sealed_at": "2026-02-21T16:44:58.599230+00:00",
+    "ledger_receipt_hash": "ed19fca56075954e70441aa081621c41d21a730fb0b59f22976d7da512f1a0a2"
+  }
+}

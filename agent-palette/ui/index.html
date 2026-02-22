@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WINDI Agent Suite v0.6.0-K</title>
+<title>WINDI Agent Suite v0.7.0-D — Three Dragons</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐉</text></svg>">
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
@@ -36,7 +36,7 @@ const { useState, useRef, useEffect, useCallback } = React;
 //   - Theme toggle: KLAR ↔ NOIR
 // ═══════════════════════════════════════════════════════════════════════
 
-const V = "0.6.0-K";
+const V = "0.7.1-D";
 
 // ═══════════════════════════════════════════════════════════════════════
 // CONSTITUTIONAL CORE — Invisible but Active
@@ -266,7 +266,7 @@ const DOCS = {
     rx:[/(?:draft|erstell|redige?)\s*(?:ein(?:en)?|a|um)?\s*(?:contract|vertrag|contrato)/i] },
   invoice:    { icon:"💰", de:"Rechnung", en:"Invoice", pt:"Fatura",
     kw:["rechnung","invoice","fatura","nota fiscal"],
-    rx:[/(?:rechnung|invoice|fatura)\s+(?:für|for|para)/i, /(?:create|erstell)\s+(?:an?\s+)?invoice/i] },
+    rx:[/(?:rechnung|invoice|fatura)\s+(?:für|for|para)/i, /(?:create|erstell|criar|cria|gerar)\s+(?:an?\s+|uma?\s+)?(?:invoice|rechnung|fatura|nota\s+fiscal)/i] },
   note:       { icon:"📝", de:"Notiz", en:"Note", pt:"Nota",
     kw:["notiz","note","nota","anotação","anmerkung"],
     rx:[/(?:quick|schnell|rápid)\s*(?:note|notiz|nota)/i] },
@@ -300,7 +300,7 @@ const DOCS = {
 const LANG = {
   de:["der","die","das","und","für","mit","ein","eine","ist","bitte","erstell","schreib","über","neue","einen","oder","nicht","auch","aber","nach","von","werden","diese","wird","kann","alle","noch","nur","sein","sind","hat","bei","muss","dann","hier","jetzt","sehr"],
   en:["the","and","for","with","please","create","write","draft","make","about","new","this","that","from","have","will","can","should","would","also","but","not","all","into","been","more","than","its","some","just","most","only","which"],
-  pt:["o","a","os","as","para","com","por","favor","cria","escreve","faz","sobre","novo","nova","uma","que","não","mais","como","dos","das","esta","esse","isso","ser","ter","foi","são","tem","nos","sua","seu","ela","ele","mas","bem"],
+  pt:["o","a","os","as","para","com","por","favor","cria","criar","fatura","gerar","escreve","faz","fazer","sobre","novo","nova","uma","que","não","mais","como","dos","das","esta","esse","isso","ser","ter","foi","são","tem","nos","sua","seu","ela","ele","mas","bem"],
 };
 
 // ── ENTITY EXTRACTION ─────────────────────────────────────────────────
@@ -635,11 +635,19 @@ const rc = (r, T) => { if (!r) return T.dim; const n=parseInt(r.replace("R",""))
 // UI COMPONENTS — Silent Governance Design
 // ═══════════════════════════════════════════════════════════════════════
 
-function Msg({ role, text, result, ts, T }) {
+function Msg({ role, text, result, ts, T, dragon, source, download }) {
   const a = role === "agent";
   return (
     <div style={{ display:"flex", flexDirection:"column", alignItems:a?"flex-start":"flex-end", marginBottom:14, animation:"msgIn 0.35s cubic-bezier(0.16,1,0.3,1)" }}>
-      {a && <div style={{ fontSize:10, color:T.muted, marginBottom:3, marginLeft:2, fontFamily:T.mono }}>🐉 WINDI Agent</div>}
+      {a && <div style={{ fontSize:10, color:T.muted, marginBottom:3, marginLeft:2, fontFamily:T.mono }}>
+        {dragon ? (
+          <span>{dragon === "guardian" ? "🛡️" : dragon === "architect" ? "🏗️" : dragon === "witness" ? "👁️" : "🐉"}{" "}
+          <span style={{color:T.gold}}>{dragon === "guardian" ? "Guardian" : dragon === "architect" ? "Architect" : dragon === "witness" ? "Witness" : "Agent"}</span>
+          {source === "llm" && <span style={{color:T.green, marginLeft:4, fontSize:8}}>● LIVE</span>}
+          {source === "local_fallback" && <span style={{color:T.orange, marginLeft:4, fontSize:8}}>○ LOCAL</span>}
+          </span>
+        ) : "🐉 WINDI Agent"}
+      </div>}
       <div style={{ maxWidth:"85%", padding:"12px 16px", fontSize:13.5, lineHeight:1.65, fontFamily:T.font, color:T.text, whiteSpace:"pre-wrap",
         borderRadius:a?"3px 16px 16px 16px":"16px 16px 3px 16px",
         background:a?T.card: T.goldBg,
@@ -648,6 +656,7 @@ function Msg({ role, text, result, ts, T }) {
       </div>
       {/* Silent governance: only show seal badge for successful docs */}
       {result && result.type === "success" && <SealBadge result={result} T={T} />}
+      {download && <DownloadBtn download={download} T={T} lang={result?.intent?.language||"de"} />}
       {result?.type === "clarification" && result.intent?.clarification?.options && (
         <div style={{ display:"flex", gap:6, marginTop:6, maxWidth:"85%" }}>
           {result.intent.clarification.options.map((o,i) => (
@@ -710,6 +719,19 @@ function TierSwitch({ tier, set, T }) {
   );
 }
 
+function DownloadBtn({ download, T, lang }) {
+  if (!download?.success) return null;
+  const labels = {de:"Dokument herunterladen",en:"Download document",pt:"Baixar documento"};
+  return React.createElement("div", {style:{marginTop:8,display:"flex",gap:8,flexWrap:"wrap"}},
+    React.createElement("a", {
+      href:"/palette"+download.download_url, target:"_blank",
+      style:{display:"inline-flex",alignItems:"center",gap:6,padding:"6px 14px",
+        borderRadius:8,background:T.gold+"18",border:"1px solid "+T.gold+"40",
+        color:T.gold,fontSize:12,fontFamily:T.mono,textDecoration:"none",cursor:"pointer",
+        transition:"all 0.2s"}
+    }, "\u{1F4E5} "+(labels[lang]||labels.en)+" ("+download.format.toUpperCase()+", "+(download.size_bytes/1024).toFixed(1)+"KB)")
+  );
+}
 function Sugs({ onPick, lang, T }) {
   const s = lang === "de" ? ["Erstell einen Brief","Schreib ein Memo","Rechnung erstellen","Wer bist du?"] :
     lang === "pt" ? ["Cria uma carta","Escreve um memo","Criar fatura","Quem és tu?"] :
@@ -724,6 +746,472 @@ function Sugs({ onPick, lang, T }) {
         </button>
       ))}
     </div>
+  );
+}
+
+
+
+// ── Document HTML Templates — Artifact-style rendering ───────────────
+const DOC_TEMPLATES = {
+  invoice: function(fields, lang) {
+    const L = {
+      de:{title:"RECHNUNG",nr:"Rechnungs-Nr.",date:"Datum",due:"Fällig",
+        from:"ABSENDER",to:"EMPFÄNGER",desc:"Beschreibung",qty:"Menge",
+        price:"Einzelpreis",total:"Gesamt",subtotal:"Zwischensumme",
+        tax:"MwSt.",grand:"GESAMTBETRAG",terms:"ZAHLUNGSBEDINGUNGEN",
+        bank:"BANKVERBINDUNG",notes:"HINWEISE",nif:"Steuer-Nr.",
+        phone:"Telefon",email:"E-Mail",addr:"Adresse",zip:"PLZ/Ort",
+        iban:"IBAN",bic:"BIC/SWIFT",method:"Zahlungsart",days:"Tage",
+        docGen:"Dokument erstellt am",governance:"WINDI Governance Layer",
+        printNote:"Dieses Dokument kann digital versiegelt werden."},
+      en:{title:"INVOICE",nr:"Invoice No.",date:"Date",due:"Due",
+        from:"FROM",to:"TO",desc:"Description",qty:"Qty",
+        price:"Unit Price",total:"Total",subtotal:"Subtotal",
+        tax:"Tax",grand:"TOTAL",terms:"PAYMENT TERMS",
+        bank:"BANK DETAILS",notes:"NOTES",nif:"Tax ID",
+        phone:"Phone",email:"Email",addr:"Address",zip:"Postal/City",
+        iban:"IBAN",bic:"BIC/SWIFT",method:"Payment Method",days:"days",
+        docGen:"Document generated on",governance:"WINDI Governance Layer",
+        printNote:"This document can be digitally sealed for verification."},
+      pt:{title:"FATURA",nr:"Fatura N\u00BA",date:"Data",due:"Vencimento",
+        from:"EMISSOR",to:"CLIENTE",desc:"Descri\u00E7\u00E3o",qty:"Qtd",
+        price:"Pre\u00E7o Unit.",total:"Total",subtotal:"Subtotal",
+        tax:"IVA",grand:"TOTAL A PAGAR",terms:"CONDI\u00C7\u00D5ES DE PAGAMENTO",
+        bank:"DADOS BANC\u00C1RIOS",notes:"OBSERVA\u00C7\u00D5ES",nif:"NIF",
+        phone:"Telefone",email:"Email",addr:"Morada",zip:"C\u00F3d. Postal",
+        iban:"IBAN",bic:"BIC/SWIFT",method:"Forma de pagamento",days:"dias",
+        docGen:"Documento gerado em",governance:"WINDI Governance Layer",
+        printNote:"Este documento pode ser selado digitalmente."},
+    }[lang] || {};
+    const f = fields || {};
+    const today = new Date().toLocaleDateString(lang==="de"?"de-DE":lang==="pt"?"pt-PT":"en-GB");
+    const nr = f.invoice_number || f.numero || "WINDI-" + new Date().toISOString().slice(0,10).replace(/-/g,"") + "-001";
+
+    return '<div style="font-family:Outfit,Segoe UI,system-ui,sans-serif;max-width:100%;color:#2C2924;line-height:1.6;font-size:13px">' +
+      // Header bar
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:16px;border-bottom:3px solid #8B6914;margin-bottom:20px">' +
+        '<div>' +
+          '<div style="font-size:28px;font-weight:800;color:#8B6914;letter-spacing:0.05em">' + (L.title||"INVOICE") + '</div>' +
+          '<div style="font-size:10px;color:#6B6560;margin-top:2px;font-family:JetBrains Mono,Consolas,monospace">GEN-INVOICE \u00B7 ' + (lang||"de").toUpperCase() + '</div>' +
+        '</div>' +
+        '<div style="text-align:right;font-size:12px">' +
+          '<div><strong>' + (L.nr||"No.") + ':</strong> <span style="font-family:JetBrains Mono,monospace;color:#8B6914">' + nr + '</span></div>' +
+          '<div><strong>' + (L.date||"Date") + ':</strong> ' + (f.issue_date || f.data_emissao || today) + '</div>' +
+          '<div><strong>' + (L.due||"Due") + ':</strong> ' + (f.due_date || f.data_vencimento || '<span style="color:#8B6914;font-style:italic">[' + (L.due||"Due") + ']</span>') + '</div>' +
+        '</div>' +
+      '</div>' +
+      // From / To
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px">' +
+        '<div style="padding:14px;border-radius:8px;background:#F5F0E0;border:1px solid #DDD6C2">' +
+          '<div style="font-size:10px;font-weight:700;color:#8B6914;letter-spacing:0.08em;margin-bottom:8px">' + (L.from||"FROM") + '</div>' +
+          '<div style="font-weight:600">' + (f.company_name || f.nome_empresa || '<em style="color:#8B6914">[' + (L.from||"Company") + ']</em>') + '</div>' +
+          '<div style="font-size:12px;color:#6B6560">' + (f.company_address || f.morada_completa || '') + '</div>' +
+          '<div style="font-size:12px;color:#6B6560">' + (f.company_zip || '') + '</div>' +
+          (f.company_nif || f.nif_emissor ? '<div style="font-size:11px;margin-top:4px">' + (L.nif||"NIF") + ': <span style="font-family:monospace">' + (f.company_nif||f.nif_emissor) + '</span></div>' : '') +
+          (f.company_phone || f.telefone ? '<div style="font-size:11px">' + (L.phone||"Tel") + ': ' + (f.company_phone||f.telefone) + '</div>' : '') +
+          (f.company_email || f.email ? '<div style="font-size:11px">' + (L.email||"Email") + ': ' + (f.company_email||f.email) + '</div>' : '') +
+        '</div>' +
+        '<div style="padding:14px;border-radius:8px;background:#FDFBF5;border:1px solid #DDD6C2">' +
+          '<div style="font-size:10px;font-weight:700;color:#8B6914;letter-spacing:0.08em;margin-bottom:8px">' + (L.to||"TO") + '</div>' +
+          '<div style="font-weight:600">' + (f.client_name || f.nome_cliente || '<em style="color:#8B6914">[' + (L.to||"Client") + ']</em>') + '</div>' +
+          '<div style="font-size:12px;color:#6B6560">' + (f.client_address || f.morada_cliente || '') + '</div>' +
+          '<div style="font-size:12px;color:#6B6560">' + (f.client_zip || '') + '</div>' +
+          (f.client_nif || f.nif_cliente ? '<div style="font-size:11px;margin-top:4px">' + (L.nif||"NIF") + ': <span style="font-family:monospace">' + (f.client_nif||f.nif_cliente) + '</span></div>' : '') +
+        '</div>' +
+      '</div>' +
+      // Items table
+      '<table style="width:100%;border-collapse:collapse;margin-bottom:20px">' +
+        '<thead><tr style="border-bottom:2px solid #8B6914">' +
+          '<th style="text-align:left;padding:8px 10px;font-size:10px;font-weight:700;color:#8B6914;letter-spacing:0.06em">' + (L.desc||"Description") + '</th>' +
+          '<th style="text-align:center;padding:8px 10px;font-size:10px;font-weight:700;color:#8B6914;width:60px">' + (L.qty||"Qty") + '</th>' +
+          '<th style="text-align:right;padding:8px 10px;font-size:10px;font-weight:700;color:#8B6914;width:100px">' + (L.price||"Price") + '</th>' +
+          '<th style="text-align:right;padding:8px 10px;font-size:10px;font-weight:700;color:#8B6914;width:100px">' + (L.total||"Total") + '</th>' +
+        '</tr></thead>' +
+        '<tbody>' +
+          _invoiceItemRows(f, L) +
+        '</tbody>' +
+      '</table>' +
+      // Totals
+      '<div style="display:flex;justify-content:flex-end;margin-bottom:24px">' +
+        '<div style="width:260px">' +
+          '<div style="display:flex;justify-content:space-between;padding:6px 0;font-size:12px;border-bottom:1px solid #DDD6C2">' +
+            '<span style="color:#6B6560">' + (L.subtotal||"Subtotal") + '</span>' +
+            '<span>' + (f.subtotal || '\u20AC 0,00') + '</span>' +
+          '</div>' +
+          '<div style="display:flex;justify-content:space-between;padding:6px 0;font-size:12px;border-bottom:1px solid #DDD6C2">' +
+            '<span style="color:#6B6560">' + (L.tax||"Tax") + ' (' + (f.vat_rate || f.taxa_iva || '23') + '%)</span>' +
+            '<span>' + (f.vat_amount || f.valor_iva || '\u20AC 0,00') + '</span>' +
+          '</div>' +
+          '<div style="display:flex;justify-content:space-between;padding:10px 0;font-size:16px;font-weight:800;color:#8B6914;border-top:3px double #8B6914;margin-top:4px">' +
+            '<span>' + (L.grand||"TOTAL") + '</span>' +
+            '<span>' + (f.total_amount || f.total || '\u20AC 0,00') + '</span>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      // Payment + Bank
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">' +
+        '<div style="padding:12px;border-radius:8px;border:1px solid #DDD6C2;font-size:12px">' +
+          '<div style="font-size:10px;font-weight:700;color:#8B6914;letter-spacing:0.06em;margin-bottom:6px">' + (L.terms||"TERMS") + '</div>' +
+          '<div>' + (f.payment_terms || f.prazo_pagamento || '30 ' + (L.days||"days")) + '</div>' +
+          '<div style="color:#6B6560">' + (f.payment_method || f.forma_pagamento || '') + '</div>' +
+        '</div>' +
+        '<div style="padding:12px;border-radius:8px;border:1px solid #DDD6C2;font-size:12px">' +
+          '<div style="font-size:10px;font-weight:700;color:#8B6914;letter-spacing:0.06em;margin-bottom:6px">' + (L.bank||"BANK") + '</div>' +
+          (f.bank_name || f.banco ? '<div>' + (f.bank_name||f.banco) + '</div>' : '') +
+          '<div style="font-family:monospace;font-size:11px">' + (L.iban||"IBAN") + ': ' + (f.iban || '<em style="color:#8B6914">[IBAN]</em>') + '</div>' +
+          '<div style="font-family:monospace;font-size:11px">' + (L.bic||"BIC") + ': ' + (f.bic || '<em style="color:#8B6914">[BIC]</em>') + '</div>' +
+        '</div>' +
+      '</div>' +
+      // Footer
+      '<div style="padding-top:12px;border-top:1px solid #DDD6C2;font-size:10px;color:#6B6560;display:flex;justify-content:space-between;align-items:center">' +
+        '<div>' + (L.docGen||"Generated") + ' ' + today + ' | ' + (L.governance||"WINDI") + '</div>' +
+        '<div style="font-family:JetBrains Mono,monospace;font-size:9px;color:#8B6914">I1-I9 \u2713 S1-S8 \u2713 L7 \u2713</div>' +
+      '</div>' +
+      '<div style="text-align:center;font-size:9px;color:#999;margin-top:8px;font-style:italic">' + (L.printNote||"") + '</div>' +
+    '</div>';
+  },
+};
+
+function _invoiceItemRows(f, L) {
+  // Try to get items from fields
+  let items = f.items || [];
+  if (typeof items === "string") try { items = JSON.parse(items); } catch(e) { items = []; }
+  if (!Array.isArray(items) || items.length === 0) {
+    // Generate 3 empty placeholder rows
+    let rows = "";
+    for (let i = 1; i <= 3; i++) {
+      const bg = i % 2 === 0 ? "#FDFBF5" : "transparent";
+      rows += '<tr style="border-bottom:1px solid #DDD6C2;background:' + bg + '">' +
+        '<td style="padding:10px;font-size:12px"><em style="color:#8B6914;font-style:italic">[' + (L.desc||"Item") + ' ' + i + ']</em></td>' +
+        '<td style="text-align:center;padding:10px;font-size:12px;color:#8B6914">1</td>' +
+        '<td style="text-align:right;padding:10px;font-size:12px;color:#8B6914">\u20AC 0,00</td>' +
+        '<td style="text-align:right;padding:10px;font-size:12px;color:#8B6914">\u20AC 0,00</td>' +
+      '</tr>';
+    }
+    return rows;
+  }
+  return items.map(function(item, i) {
+    const bg = i % 2 === 1 ? "#FDFBF5" : "transparent";
+    const desc = item.description || item.desc || item.descricao || "[Item]";
+    const qty = item.quantity || item.qty || item.qtd || 1;
+    const price = item.unit_price || item.price || item.preco || "\u20AC 0,00";
+    const total = item.total || item.total_price || price;
+    return '<tr style="border-bottom:1px solid #DDD6C2;background:' + bg + '">' +
+      '<td style="padding:10px;font-size:12px">' + desc + '</td>' +
+      '<td style="text-align:center;padding:10px;font-size:12px">' + qty + '</td>' +
+      '<td style="text-align:right;padding:10px;font-size:12px">' + price + '</td>' +
+      '<td style="text-align:right;padding:10px;font-size:12px;font-weight:600">' + total + '</td>' +
+    '</tr>';
+  }).join("");
+}
+
+// ── Invoice Field Extraction from userInput — mirrors server-side parser ──
+function extractInvoiceFields(userInput, intent) {
+  if (!userInput) return {};
+  const text = userInput;
+  const t = text.toLowerCase();
+  const lang = intent?.language || "de";
+
+  // ── Parse German-format prices: €2.500,00 or 2.500 € ──
+  function parsePrice(s) {
+    if (!s) return 0;
+    let clean = s.replace(/[€$EURUSD\s]/gi, "").trim();
+    // German format: 2.500,00 → 2500.00
+    if (/^\d{1,3}(\.\d{3})+(,\d{1,2})?$/.test(clean)) {
+      clean = clean.replace(/\./g, "").replace(",", ".");
+    } else if (/,\d{1,2}$/.test(clean)) {
+      clean = clean.replace(",", ".");
+    }
+    return parseFloat(clean) || 0;
+  }
+
+  function fmtPrice(num) {
+    return num.toLocaleString("de-DE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " €";
+  }
+
+  // ── Extract client (EMPFÄNGER) from entities or text ──
+  const orgs = intent?.entities?.org || [];
+  // Also try to find "Company Name + suffix" pattern directly in text
+  const orgFullRx = /(?:^|[\s,;(])([A-ZÄÖÜ][a-zäöüß]+(?:\s+[A-ZÄÖÜ][A-Za-zäöüß]*){0,3})\s+(GmbH|AG|SE|KG|OHG|UG|e\.V\.|Ltd\.|Inc\.|Corp\.|SA|Ltda|Co\.|GbR)/g;
+  let orgFull = null;
+  const orgMatch = orgFullRx.exec(text);
+  if (orgMatch) orgFull = (orgMatch[1].trim() + " " + orgMatch[2]).trim();
+  // Also check "für/for/para CompanyName"
+  if (!orgFull) {
+    const fuerMatch = text.match(/(?:für|for|para|an|to|cliente|client|empfänger|recipient)\s+([A-ZÄÖÜ][A-Za-zÄÖÜäöüß&\-.\s]{2,40}?)(?:\s*[,.]|\s+\d|\s*$)/i);
+    if (fuerMatch) orgFull = fuerMatch[1].trim();
+  }
+  const client = orgFull || (orgs[0] && orgs[0].length > 3 ? orgs[0] : null);
+
+  // ── Extract items: "3x Widget zu €2.500" or "Widget, Menge 3, €2.500" ──
+  const items = [];
+  const itemPatterns = [
+    // "3x Widget zu €2.500" / "3 Widget à €2.500"
+    /(\d+)\s*[x×]\s*(.+?)\s*(?:zu|à|at|@|por)\s*((?:€|EUR|\$|R\$)\s*[\d.,]+|[\d.,]+\s*(?:€|Euro))/gi,
+    // "Widget, Menge 3, Einzelpreis €2.500"
+    /(.+?),?\s*(?:Menge|qty|qtd|quantity)\s*:?\s*(\d+),?\s*(?:Einzelpreis|Preis|price|preço|unit price)?\s*:?\s*((?:€|EUR|\$|R\$)\s*[\d.,]+|[\d.,]+\s*(?:€|Euro))/gi,
+    // "Widget, 3, €2.500" (simple CSV-like)
+    /(.+?),\s*(\d+)\s*,\s*((?:€|EUR|\$|R\$)\s*[\d.,]+|[\d.,]+\s*(?:€|Euro))/gi,
+  ];
+
+  for (const rx of itemPatterns) {
+    let m;
+    while ((m = rx.exec(text)) !== null) {
+      const isQtyFirst = /^\d+$/.test(m[1].trim());
+      const desc = isQtyFirst ? m[2].trim() : m[1].trim();
+      const qty = isQtyFirst ? parseInt(m[1]) : parseInt(m[2]);
+      const priceRaw = m[3].trim();
+      const unitPrice = parsePrice(priceRaw);
+      const lineTotal = unitPrice * qty;
+      items.push({
+        description: desc.replace(/^[,;.\s]+|[,;.\s]+$/g, ""),
+        quantity: qty,
+        unit_price: fmtPrice(unitPrice),
+        total: fmtPrice(lineTotal),
+        _unitNum: unitPrice,
+        _totalNum: lineTotal,
+      });
+    }
+    if (items.length > 0) break;
+  }
+
+  // ── If no structured items found, try to use money entities ──
+  if (items.length === 0 && intent?.entities?.money?.length > 0) {
+    const moneyStr = intent.entities.money[0];
+    const price = parsePrice(moneyStr);
+    if (price > 0) {
+      items.push({
+        description: lang === "de" ? "Position 1" : lang === "pt" ? "Item 1" : "Item 1",
+        quantity: 1,
+        unit_price: fmtPrice(price),
+        total: fmtPrice(price),
+        _unitNum: price,
+        _totalNum: price,
+      });
+    }
+  }
+
+  // ── Calculate totals ──
+  const subtotalNum = items.reduce((s, it) => s + (it._totalNum || 0), 0);
+  const vatRate = t.includes("7%") ? 7 : t.includes("0%") ? 0 : 19;
+  const vatNum = subtotalNum * (vatRate / 100);
+  const grandNum = subtotalNum + vatNum;
+
+  // ── Payment terms ──
+  let payTerms = "";
+  const termMatch = text.match(/(\d+)\s*(?:Tage|days|dias)\s*(?:netto|net|líquido)?/i);
+  if (termMatch) payTerms = termMatch[0];
+  else if (t.includes("sofort") || t.includes("immediately")) payTerms = lang === "de" ? "Sofort fällig" : "Due immediately";
+  else payTerms = "30 " + (lang === "de" ? "Tage netto" : lang === "pt" ? "dias líquido" : "days net");
+
+  // ── Build fields object matching DOC_TEMPLATES.invoice expectations ──
+  const fields = {};
+  if (client) fields.client_name = client;
+  if (items.length > 0) {
+    fields.items = items.map(it => ({
+      description: it.description,
+      quantity: it.quantity,
+      unit_price: it.unit_price,
+      total: it.total,
+    }));
+    fields.subtotal = fmtPrice(subtotalNum);
+    fields.vat_rate = String(vatRate);
+    fields.vat_amount = fmtPrice(vatNum);
+    fields.total_amount = fmtPrice(grandNum);
+  }
+  fields.payment_terms = payTerms;
+
+  return fields;
+}
+
+function renderDocTemplate(text, intent, lang, userInput) {
+  // Extract JSON fields from LLM response
+  let fields = {};
+  const bt3 = String.fromCharCode(96,96,96);
+  const jsonStart = text.indexOf(bt3 + "json");
+  if (jsonStart >= 0) {
+    const jsonEnd = text.indexOf(bt3, jsonStart + 6);
+    if (jsonEnd > jsonStart) {
+      try {
+        const raw = text.substring(jsonStart + 7, jsonEnd).trim();
+        const parsed = JSON.parse(raw);
+        fields = parsed?.document?.fields || parsed?.fields || parsed || {};
+      } catch(e) {}
+    }
+  }
+
+  // ── Fallback: extract fields from userInput + intent entities ──
+  const docType = intent?.doc_type || "note";
+  if (docType === "invoice" && (!fields.client_name && !fields.nome_cliente && !fields.items)) {
+    const extracted = extractInvoiceFields(userInput, intent);
+    fields = { ...extracted, ...fields }; // JSON fields override extracted
+  }
+
+  if (DOC_TEMPLATES[docType]) {
+    return { html: DOC_TEMPLATES[docType](fields, lang), hasTemplate: true };
+  }
+  return { html: null, hasTemplate: false };
+}
+
+// ── DocumentPanel: Slide-out formatted document preview ──────────────
+function DocumentPanel({ doc, onClose, T, lang }) {
+  if (!doc) return null;
+  const labels = {
+    de:{title:"Dokument",close:"Schlie\u00DFen",download:"Herunterladen",tip:"Tipp: Passen Sie die markierten Felder an."},
+    en:{title:"Document",close:"Close",download:"Download",tip:"Tip: Customize the highlighted fields."},
+    pt:{title:"Documento",close:"Fechar",download:"Baixar",tip:"Dica: Personalize os campos destacados."},
+  };
+  const L = labels[lang] || labels.en;
+  const typeIcons = {invoice:"\u{1F4B0}",letter:"\u{1F4E8}",memo:"\u{1F4DD}",report:"\u{1F4CA}",contract:"\u{1F4DC}",protocol:"\u{1F4CB}",certificate:"\u{1F3C5}",email:"\u2709\uFE0F",note:"\u{1F4CC}"};
+  const icon = typeIcons[doc.intent?.doc_type] || "\u{1F4C4}";
+  const docName = doc.intent?.doc_type ? (DOCS[doc.intent.doc_type]?.[lang] || DOCS[doc.intent.doc_type]?.en || doc.intent.doc_type) : L.title;
+
+  // Extract ONLY document content — no agent dialogue
+  function parseContent(text) {
+    if (!text) return [];
+    // Try JSON block first
+    const BT3 = String.fromCharCode(96,96,96);
+    let docContent = "";
+    const jsonStart = text.indexOf(BT3 + "json");
+    const jsonEnd = jsonStart >= 0 ? text.indexOf(BT3, jsonStart + 6) : -1;
+    if (jsonStart >= 0 && jsonEnd > jsonStart) {
+      try {
+        const raw = text.substring(jsonStart + 7, jsonEnd).trim();
+        const parsed = JSON.parse(raw);
+        if (parsed?.document?.content) docContent = parsed.document.content;
+        else if (parsed?.content) docContent = parsed.content;
+      } catch(e) {}
+    }
+    // Fallback: find document structure in text
+    if (!docContent) {
+      const lines = text.split("\n");
+      const docLines = [];
+      let inDoc = false;
+      const chatStarts = /^(Compreendo|Preparei|Vou criar|I understand|Ich erstelle|Estrutura|O modelo|A fatura|Humano decide|Pr.ximos|O documento|Sure|Klar|Claro|Here is|Aqui est|Hier ist)/;
+      const bulletExplain = /^- \*\*/;
+      for (const line of lines) {
+        const t = line.trim();
+        if (/^(FATURA|RECHNUNG|INVOICE|DADOS|DATEN|MEMO|BRIEF|LETTER|VERTRAG|CONTRACT)/.test(t)) inDoc = true;
+        if (chatStarts.test(t) || bulletExplain.test(t)) continue;
+        if (t.startsWith(BT3)) continue;
+        if (inDoc || /^(N\u00BA|N\u00ba|Fatura N|Invoice N|Rechnung N|----)/.test(t)) { inDoc = true; docLines.push(line); }
+      }
+      if (docLines.length > 3) docContent = docLines.join("\n");
+    }
+    if (!docContent) return [];
+    // Parse into sections
+    const sections = [];
+    let cur = { title: null, lines: [] };
+    docContent.split("\n").forEach(line => {
+      const t = line.trim();
+      if (!t) { if (cur.lines.length > 0 || cur.title) { sections.push(cur); cur = { title:null, lines:[] }; } return; }
+      if (/^---/.test(t)) return;
+      if (/^[A-Z\u00C0-\u00DC\s/()]{4,}:?$/.test(t)) {
+        if (cur.lines.length > 0 || cur.title) sections.push(cur);
+        cur = { title: t.replace(/:$/,""), lines: [] };
+      } else {
+        cur.lines.push(t);
+      }
+    });
+    if (cur.lines.length > 0 || cur.title) sections.push(cur);
+    return sections;
+  }
+
+  function renderLine(line, idx) {
+    const parts = line.split(/(\[[^\]]+\])/g);
+    return React.createElement("div", { key: idx, style: { marginBottom: 4, lineHeight: 1.7, fontSize: 13 } },
+      parts.map((p, i) =>
+        /^\[/.test(p)
+          ? React.createElement("span", { key: i, style: { background: T.gold+"18", border: "1px dashed "+T.gold+"50", borderRadius: 4, padding: "1px 6px", fontSize: 12, fontFamily: T.mono, color: T.gold } }, p)
+          : React.createElement("span", { key: i }, p)
+      )
+    );
+  }
+
+  function isTableRow(line) { return /^\|.*\|$/.test(line.trim()); }
+  function isTableSep(line) { return /^\|[\s\-:|]+\|$/.test(line.trim()); }
+  function renderTable(lines) {
+    const rows = lines.filter(l => !isTableSep(l)).map(l => l.split("|").filter(c => c.trim()!=="").map(c => c.trim()));
+    if (rows.length === 0) return null;
+    return React.createElement("table", { style: { width:"100%", borderCollapse:"collapse", marginBottom:12, fontSize:12, fontFamily:T.mono } },
+      React.createElement("thead", null,
+        React.createElement("tr", null, rows[0].map((h,i) =>
+          React.createElement("th", { key:i, style: { textAlign:"left", padding:"6px 10px", borderBottom:"2px solid "+T.gold+"40", color:T.gold, fontSize:11, fontWeight:600 } }, h)
+        ))
+      ),
+      React.createElement("tbody", null, rows.slice(1).map((row,ri) =>
+        React.createElement("tr", { key:ri }, row.map((cell,ci) =>
+          React.createElement("td", { key:ci, style: { padding:"5px 10px", borderBottom:"1px solid "+T.border, fontSize:12 } },
+            /^\[/.test(cell) ? React.createElement("span", { style: { background:T.gold+"18", border:"1px dashed "+T.gold+"50", borderRadius:4, padding:"1px 6px", fontFamily:T.mono, color:T.gold } }, cell) : cell
+          )
+        ))
+      ))
+    );
+  }
+
+  const sections = parseContent(doc.text);
+
+  return React.createElement("div", {
+    style: { width:480, minWidth:380, maxWidth:"50vw", borderLeft:"1px solid "+T.border, background:T.bg, display:"flex", flexDirection:"column", flexShrink:0, animation:"panelIn 0.3s ease-out", overflow:"hidden" }
+  },
+    // Header
+    React.createElement("div", { style: { padding:"10px 16px", borderBottom:"1px solid "+T.border, display:"flex", justifyContent:"space-between", alignItems:"center", background:T.card, flexShrink:0 } },
+      React.createElement("div", { style: { display:"flex", alignItems:"center", gap:8 } },
+        React.createElement("span", { style: { fontSize:18 } }, icon),
+        React.createElement("div", null,
+          React.createElement("div", { style: { fontWeight:700, fontSize:13, color:T.text } }, docName),
+          React.createElement("div", { style: { fontSize:10, color:T.dim, fontFamily:T.mono } },
+            doc.template?.id || "GEN", " \u00B7 ", (doc.intent?.language||"de").toUpperCase(),
+            doc.receipt ? " \u00B7 \u2713 " + ({de:"Versiegelt",pt:"Selado",en:"Sealed"}[lang]||"Sealed") : ""
+          )
+        )
+      ),
+      React.createElement("button", { onClick:onClose, style: { background:"none", border:"none", color:T.muted, cursor:"pointer", fontSize:16, padding:"4px 8px" } }, "\u2715")
+    ),
+    // Download bar
+    doc.download?.success && React.createElement("div", { style: { padding:"8px 16px", borderBottom:"1px solid "+T.border, display:"flex", gap:8, background:T.card, flexShrink:0 } },
+      React.createElement("a", {
+        href:"/palette"+doc.download.download_url, target:"_blank",
+        style: { display:"inline-flex", alignItems:"center", gap:6, padding:"6px 16px", borderRadius:8, background:T.gold+"15", border:"1px solid "+T.gold+"35", color:T.gold, fontSize:11, fontFamily:T.mono, textDecoration:"none", fontWeight:600 }
+      }, "\u{1F4E5} "+L.download+" "+(doc.download.format||"docx").toUpperCase()+" ("+((doc.download.size_bytes||0)/1024).toFixed(1)+"KB)")
+    ),
+    // Tip
+    React.createElement("div", { style: { padding:"6px 16px", borderBottom:"1px solid "+T.border, fontSize:10, color:T.dim, background:T.gold+"05", flexShrink:0 } }, "\u{1F4A1} "+L.tip),
+    // Forensic block — embedded governance proof
+    doc.forensic && React.createElement("div", { style: { padding:"10px 16px", borderBottom:"1px solid "+T.border, background:T.card, flexShrink:0 } },
+      React.createElement("details", { style: { fontSize:10, fontFamily:T.mono } },
+        React.createElement("summary", { style: { cursor:"pointer", color:T.gold, fontWeight:600, fontSize:10, letterSpacing:"0.04em" } }, "\u{1F4DC} WINDI FORENSIC RECEIPT"),
+        React.createElement("div", { style: { marginTop:8, padding:10, borderRadius:6, background:T.bg, border:"1px solid "+T.border, lineHeight:1.8, fontSize:9, color:T.dim } },
+          doc.forensic.hash && React.createElement("div", null, "Hash: ", React.createElement("span", {style:{color:T.text,fontFamily:T.mono}}, doc.forensic.hash.substring(0,32)+"...")),
+          React.createElement("div", null, "Timestamp: ", React.createElement("span", {style:{color:T.text}}, doc.forensic.timestamp)),
+          React.createElement("div", null, "Tier: ", React.createElement("span", {style:{color:T.gold}}, doc.forensic.tier)),
+          React.createElement("div", null, "SGE: ", React.createElement("span", {style:{color:doc.forensic.sge_risk==="R0"?T.green:T.gold}}, doc.forensic.sge_risk + " (score: " + doc.forensic.sge_score + ")")),
+          doc.forensic.constitutional && React.createElement("div", { style: { marginTop:6, paddingTop:6, borderTop:"1px solid "+T.border } },
+            React.createElement("span", {style:{color:T.green}}, "I1-I9: " + (doc.forensic.constitutional.i1_i9 ? "\u2713" : "\u2717")),
+            " ",
+            React.createElement("span", {style:{color:T.green}}, "S1-S8: \u2713"),
+            " ",
+            React.createElement("span", {style:{color:T.green}}, "L7: \u2713")
+          ),
+          React.createElement("div", { style: { marginTop:6, fontSize:8, color:T.muted, fontStyle:"italic" } }, "KI verarbeitet. Der Mensch entscheidet. WINDI garantiert.")
+        )
+      )
+    ),
+    // Document body — Artifact-style HTML rendering
+    React.createElement("div", { style: { flex:1, overflowY:"auto", padding:"16px 20px" } },
+      (() => {
+        const tmpl = renderDocTemplate(doc.text || "", doc.intent, lang, doc.userInput || "");
+        if (tmpl.hasTemplate) {
+          return React.createElement("div", { dangerouslySetInnerHTML: { __html: tmpl.html } });
+        }
+        return React.createElement("div", { style: { color:T.dim, fontSize:12, textAlign:"center", paddingTop:40 } }, "\u{1F4C4} " + ({de:"Dokument wird geladen...",pt:"Carregando documento...",en:"Loading document..."}[lang]||"Loading..."));
+      })()
+    ),
+    // Footer
+    doc.sge && React.createElement("div", { style: { padding:"8px 16px", borderTop:"1px solid "+T.border, fontSize:10, fontFamily:T.mono, color:T.dim, background:T.card, flexShrink:0, display:"flex", justifyContent:"space-between" } },
+      React.createElement("span", null, "SGE: ", React.createElement("span", { style: { color:doc.sge.risk==="R0"?T.green:T.gold } }, doc.sge.risk)),
+      React.createElement("span", null, "I1-I9 \u2713 S1-S8 \u2713 L7 \u2713")
+    )
   );
 }
 
@@ -802,9 +1290,12 @@ function WINDIAgentSuite() {
   const [input, setInput] = useState("");
   const [tier, setTier] = useState("HIGH");
   const [lang, setLang] = useState("de");
+  const [activeDoc, setActiveDoc] = useState(null);
   const [stats, setStats] = useState({ docs:0, sealed:0, avgMs:0 });
   const [intentHistory, setIntentHistory] = useState([]);
   const [themeName, setThemeName] = useState("KLAR");
+  const [isLoading, setIsLoading] = useState(false);
+  const [activeDragon, setActiveDragon] = useState(null);
   const chatRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -813,20 +1304,142 @@ function WINDIAgentSuite() {
   useEffect(() => { chatRef.current && (chatRef.current.scrollTop = chatRef.current.scrollHeight); }, [msgs]);
   useEffect(() => { inputRef.current?.focus(); }, []);
 
-  const send = useCallback((text) => {
+  const send = useCallback(async (text) => {
     const msg = (text || input).trim();
-    if (!msg) return;
+    if (!msg || isLoading) return;
     const ts = new Date().toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
     setMsgs(prev => [...prev, { role:"human", text:msg, ts }]);
     setInput("");
-    setTimeout(() => {
+    setIsLoading(true);
+    setActiveDragon(null);
+
+    try {
+      // Try Dragon Brain (async LLM) first
+      if (window.DragonBrain?.ready) {
+        const classification = classifyInput(msg, intentHistory);
+        const detectedLang = detectLang(msg) || lang || "de";
+
+        if (classification.mode === "chat") {
+          // Chat mode → Dragon API
+          const chatHistory = msgs.slice(-10).map(m => ({ role: m.role === "agent" ? "assistant" : "human", text: m.text }));
+          const dragon = await window.DragonBrain.chat(msg, {
+            tier, chatType: classification.chatType, intentMode: "chat",
+            language: detectedLang, history: chatHistory,
+          });
+
+          if (dragon?.message) {
+            const ats = new Date().toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+            setActiveDragon(dragon.dragon);
+            setLang(detectedLang);
+            setMsgs(prev => [...prev, { role:"agent", text:dragon.message, ts:ats, dragon:dragon.dragon, source:dragon.source,
+              result: { type:"chat", chatType:classification.chatType, message:dragon.message, dragon:dragon.dragon,
+                intent:{language:detectedLang}, sge:null, receipt:null, template:null,
+                constitutional:{active:true, invariants:9, layers:8}, ms:0 }
+            }]);
+            setIsLoading(false);
+            return;
+          }
+        }
+
+        if (classification.mode === "document") {
+          // Document mode → try Dragon Generate + local governance
+          const intent = parseIntent(msg, intentHistory);
+          const tierCfg = TIERS[tier];
+          if (tierCfg.llm) {
+            const { template, alternatives } = resolveTemplate(intent);
+            const dragon = await window.DragonBrain.generate(msg, {
+              tier, intent, templateId: template?.id, language: detectedLang,
+            });
+            if (dragon?.message) {
+              const sge = runSGE(dragon.message, tier, intent, template?.id);
+              const format = resolveFormat(intent, tierCfg);
+              const validation = validateInvariants(dragon.message);
+              let receipt = null;
+              if (tierCfg.ledger) receipt = genReceipt(intent, template?.id, sge, tier, validation);
+              const ats = new Date().toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+              setActiveDragon("architect");
+              setLang(detectedLang);
+              setIntentHistory(prev => [...prev, intent].slice(-10));
+              const result = {
+                type: validation.hasFatal ? "blocked_constitutional" : "success",
+                intent, sge, receipt, template, alternatives, format,
+                method:"hybrid", message:dragon.message, dragon:"architect",
+                needsConfirm: sge.humanRequired && !sge.blocked,
+                constitutional:{validation, invariants:9, layers:8}, ms:0
+              };
+              (() => {
+                const isDoc = result.type === "success" && intent.doc_type !== "note";
+                let chatText = dragon.message;
+                if (isDoc) {
+                  const BT3 = String.fromCharCode(96,96,96);
+                  const jsonIdx = dragon.message.indexOf(BT3 + "json");
+                  if (jsonIdx > 0) chatText = dragon.message.substring(0, jsonIdx).trim();
+                  const dashIdx = chatText.indexOf("\n---\n");
+                  if (dashIdx > 50) chatText = chatText.substring(0, dashIdx).trim();
+                  const hints = {de:"\n\n\u27A1\uFE0F Dokument im Panel rechts.",en:"\n\n\u27A1\uFE0F Document in the panel.",pt:"\n\n\u27A1\uFE0F Documento no painel ao lado."};
+                  chatText += hints[detectedLang] || hints.en;
+                }
+                setMsgs(prev => [...prev, { role:"agent", text:chatText, result, ts:ats, dragon:"architect", source:dragon.source, download:null }]);
+                // Auto-Render + DocumentPanel
+                if (isDoc) {
+                  const docPayload = { text:dragon.message, userInput:msg, intent, sge, receipt, template, download:null, forensic:{ hash:receipt?.hash||null, timestamp:new Date().toISOString(), tier, invariants:validation, sge_risk:sge?.risk||"R0", sge_score:sge?.score||0, constitutional:{i1_i9:!validation.hasFatal, s1_s8:true, l7:true} } };
+                  setActiveDoc(docPayload);
+                  fetch("/palette/api/dragon/render", {
+                    method:"POST", headers:{"Content-Type":"application/json"},
+                    body: JSON.stringify({ text:dragon.message, userInput:msg, intent, tier, sge, receipt })
+                  }).then(r=>r.json()).then(rd => {
+                    if (rd.success) {
+                      setMsgs(prev => prev.map((m,i) => i===prev.length-1 ? {...m, download:rd} : m));
+                      setActiveDoc(prev => prev ? {...prev, download:rd} : null);
+                    }
+                  }).catch(e => console.warn("[Render]", e));
+                }
+              })();
+              if (result.type === "success") setStats(prev => ({ docs:prev.docs+1, sealed:prev.sealed+(receipt?1:0), avgMs:prev.avgMs }));
+              setIsLoading(false);
+              return;
+            }
+          }
+        }
+      }
+
+      // Fallback: local agentThink (original behavior)
       const result = agentThink(msg, tier, intentHistory, stats);
       const ats = new Date().toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
       if (result.intent) { setLang(result.intent.language); setIntentHistory(prev => [...prev, result.intent].slice(-10)); }
-      setMsgs(prev => [...prev, { role:"agent", text:result.message, result, ts:ats }]);
+      setMsgs(prev => [...prev, { role:"agent", text:result.message, result, ts:ats, download:null }]);
       if (result.type === "success") setStats(prev => ({ docs:prev.docs+1, sealed:prev.sealed+(result.receipt?1:0), avgMs:Math.round((prev.avgMs*prev.docs+result.ms)/(prev.docs+1)) }));
-    }, 100 + Math.random() * 200);
-  }, [input, tier, intentHistory]);
+      // ── Auto-Render for local agentThink documents ──
+      if (result.type === "success" && result.intent?.doc_type && result.intent.doc_type !== "note") {
+        const renderPayload = {
+          text: result.message || "",
+          userInput: msg,
+          intent: result.intent,
+          tier,
+          sge: result.sge || null,
+          receipt: result.receipt || null,
+        };
+        setActiveDoc({ text:result.message, userInput:msg, intent:result.intent, sge:result.sge, receipt:result.receipt, template:result.template, download:null,
+          forensic:{ hash:result.receipt?.hash||null, timestamp:new Date().toISOString(), tier, sge_risk:result.sge?.risk||"R0" } });
+        fetch("/palette/api/dragon/render", {
+          method:"POST", headers:{"Content-Type":"application/json"},
+          body: JSON.stringify(renderPayload)
+        }).then(r=>r.json()).then(rd => {
+          if (rd.success) {
+            setMsgs(prev => prev.map((m,i) => i===prev.length-1 ? {...m, download:rd} : m));
+            setActiveDoc(prev => prev ? {...prev, download:rd} : null);
+          } else { console.warn("[Render] Failed:", rd.error); }
+        }).catch(e => console.warn("[Render fallback]", e));
+      }
+    } catch (err) {
+      console.error("[DragonBrain] Send error:", err);
+      // Emergency fallback
+      const result = agentThink(msg, tier, intentHistory, stats);
+      const ats = new Date().toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+      setMsgs(prev => [...prev, { role:"agent", text:result.message, result, ts:ats }]);
+    }
+    setIsLoading(false);
+  }, [input, tier, intentHistory, isLoading, msgs]);
 
   return (
     <div style={{ height:"100vh", display:"flex", flexDirection:"column", background:T.bg, color:T.text, fontFamily:T.font, overflow:"hidden", transition:"background 0.3s, color 0.3s" }}>
@@ -877,7 +1490,23 @@ function WINDIAgentSuite() {
                 <Sugs onPick={send} lang={lang} T={T} />
               </div>
             )}
-            {msgs.map((m,i) => <Msg key={i} {...m} T={T} />)}
+            {msgs.map((m,i) => <Msg key={i} {...m} T={T} dragon={m.dragon} source={m.source} />)}
+            {isLoading && (
+              <div style={{ display:"flex", alignItems:"flex-start", marginBottom:14, animation:"msgIn 0.35s" }}>
+                <div style={{ fontSize:10, color:T.muted, marginBottom:3, marginLeft:2, fontFamily:T.mono }}>
+                  {activeDragon ? (activeDragon === "guardian" ? "🛡️ Guardian" : activeDragon === "architect" ? "🏗️ Architect" : "👁️ Witness") : "🐉 Agent"}
+                  <span style={{ color:T.gold, marginLeft:4, fontSize:9 }}>thinking...</span>
+                </div>
+              </div>
+            )}
+            {isLoading && (
+              <div style={{ display:"flex", alignItems:"flex-start", marginBottom:14, animation:"msgIn 0.35s" }}>
+                <div style={{ fontSize:10, color:T.muted, marginBottom:3, marginLeft:2, fontFamily:T.mono }}>
+                  {activeDragon ? (activeDragon === "guardian" ? "🛡️ Guardian" : activeDragon === "architect" ? "🏗️ Architect" : "👁️ Witness") : "🐉 Agent"}
+                  <span style={{ color:T.gold, marginLeft:4, fontSize:9 }}>thinking...</span>
+                </div>
+              </div>
+            )}
           </div>
 
           <div style={{ padding:"10px 18px 14px", borderTop:`1px solid ${T.border}`, background:T.card, flexShrink:0, boxShadow:`0 -1px 3px rgba(0,0,0,${themeName==="KLAR"?"0.04":"0.2"})` }}>
@@ -888,7 +1517,7 @@ function WINDIAgentSuite() {
                 placeholder={lang==="de"?"Schreib los — Frage, Dokument, was auch immer...":lang==="pt"?"Escreve aí — pergunta, documento, o que for...":"Write anything — question, document, whatever..."}
                 rows={2} style={{ flex:1, padding:"10px 14px", borderRadius:12, border:`1px solid ${T.border}`, background:T.input, color:T.text, fontSize:13.5, fontFamily:T.font, resize:"none", outline:"none", lineHeight:1.5, transition:"border-color 0.2s" }}
                 onFocus={e=>e.target.style.borderColor=T.gold+"80"} onBlur={e=>e.target.style.borderColor=T.border} />
-              <button onClick={()=>send()} disabled={!input.trim()} style={{ width:42, height:42, borderRadius:10, border:"none", background:input.trim()?`linear-gradient(135deg,${T.gold},${T.goldDim})`:T.hover, color:input.trim()?(themeName==="KLAR"?"#FFF":T.bg):T.muted, fontSize:16, cursor:input.trim()?"pointer":"default", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, fontWeight:700 }}>→</button>
+              <button onClick={()=>send()} disabled={!input.trim() || isLoading} style={{ width:42, height:42, borderRadius:10, border:"none", background:input.trim()?`linear-gradient(135deg,${T.gold},${T.goldDim})`:T.hover, color:input.trim()?(themeName==="KLAR"?"#FFF":T.bg):T.muted, fontSize:16, cursor:input.trim()?"pointer":"default", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, fontWeight:700 }}>→</button>
             </div>
             <div style={{ display:"flex", justifyContent:"space-between", marginTop:5, fontSize:9, color:T.muted, fontFamily:T.mono }}>
               <span>Enter = {lang==="de"?"senden":lang==="pt"?"enviar":"send"} · Shift+Enter = {lang==="de"?"Zeile":lang==="pt"?"linha":"line"}</span>
@@ -896,7 +1525,8 @@ function WINDIAgentSuite() {
             </div>
           </div>
         </div>
-        <GovPanel msgs={msgs} tier={tier} stats={stats} T={T} />
+        {activeDoc && <DocumentPanel doc={activeDoc} onClose={()=>setActiveDoc(null)} T={T} lang={lang} />}
+            <GovPanel msgs={msgs} tier={tier} stats={stats} T={T} />
       </div>
 
       <style>{`

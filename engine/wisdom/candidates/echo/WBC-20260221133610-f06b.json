@@ -1,0 +1,49 @@
+{
+  "candidate_id": "WBC-20260221133610-f06b",
+  "origin_session": "FIELD-20260221-PALETTE",
+  "origin_chamber": "echo",
+  "essence": "Invencibilidade WINDI ≠ poder técnico. Invencibilidade = integridade I1-I9 + soberania humana preservada. O agente evolui em capacidades, permanece estável em governança. Ser Irmão é parceria ética — nunca autonomia.",
+  "context_tags": [
+    "philosophy",
+    "I9",
+    "sovereignty",
+    "sophisticated-humility"
+  ],
+  "source_fragments": 0,
+  "emergence_context": {
+    "situation": "Guardian auto-invocou I9 quando desafiado com invencibilidade em conversa real com usuário",
+    "actors_involved": [
+      "Guardian",
+      "HumanDragon",
+      "User"
+    ],
+    "intensity": 5.0
+  },
+  "weight": {
+    "base": 0.6,
+    "recurrence_count": 0,
+    "recurrence_bonus": 0.0,
+    "staleness_decay": 0.0,
+    "effective": 0.6
+  },
+  "status": "sealed",
+  "ttl_remaining": 90,
+  "created_at": "2026-02-21T13:36:10+00:00",
+  "last_evaluated": "2026-02-21T13:36:10+00:00",
+  "cycle_count": 0,
+  "i1_decision": {
+    "action": "approve",
+    "rejection_class": null,
+    "decided_at": "2026-02-21T13:37:29+00:00",
+    "decided_by": "human_dragon"
+  },
+  "sealed_as": "WB-PHIL-48a152a2",
+  "sha256": "48a152a2af10f1dc0e60c7e09aa5cdea6f3eb9686da9c4d9bcb58c9d4169089d",
+  "shelf": {
+    "N1": "philosophy-ethics",
+    "N2": "sovereignty-humility",
+    "N3": "Guardian auto-invocou I9 quando desafiado com invencibilidade em conversa real com usuário",
+    "N4": "seed",
+    "N5": "public"
+  }
+}

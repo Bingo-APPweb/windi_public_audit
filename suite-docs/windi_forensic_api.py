@@ -262,14 +262,14 @@ class ForensicLedgerHandler(BaseHTTPRequestHandler):
                     return
 
                 # Validate types
-                if r["doc_type"] not in ("doc", "xlsx", "pptx", "jmpg", "communique"):
+                if r["doc_type"] not in ("doc", "xlsx", "pptx", "jmpg", "communique", "compliance_passport"):
                     self._json(400, {
                         "ok": False,
                         "error": f"invalid doc_type: {r['doc_type']}",
                     })
                     return
 
-                if r["governance_level"] not in ("LOW", "MED", "MEDIUM", "HIGH", "CRIT"):
+                if r["governance_level"] not in ("LOW", "MED", "MEDIUM", "HIGH", "CRIT", "GOLD", "SILVER", "BRONZE"):
                     self._json(400, {
                         "ok": False,
                         "error": f"invalid governance_level: {r['governance_level']}",

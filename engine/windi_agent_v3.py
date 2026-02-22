@@ -293,6 +293,7 @@ import hashlib
 import re
 from datetime import datetime
 from typing import Dict, Tuple, Optional
+from dragon_apis import check_gate, get_gate, WINDI_TIER, ANTHROPIC_API_KEY
 
 # ═══════════════════════════════════════════════════════════════
 # WINDI Skills Engine
@@ -459,9 +460,9 @@ class WindiAgent:
 
     def __init__(self):
         self.system_prompt = WINDI_SYSTEM_PROMPT
-        self.api_key = os.environ.get('ANTHROPIC_API_KEY', '')
+        self.api_key = ANTHROPIC_API_KEY
         self.model = "claude-sonnet-4-20250514"
-        self.available = bool(self.api_key)
+        self.available = bool(self.api_key) and check_gate("claude")
         self.conversation_history = []
         self.version = "3.2-dual-channel"
 
@@ -507,84 +508,94 @@ class WindiAgent:
         # WINDI Skills Engine - Dynamic Skill Injection
         # ═══════════════════════════════════════════════════════════════
         activated_skills = []
-routing_decision = None
+        routing_decision = None
 
-# TÍTULO VII: Constitutional Routing
-if CONSTITUTIONAL_ROUTING_ENABLED:
-    try:
-        selected_skill, routing_log = CONSTITUTIONAL_ROUTER.route(user_message)
-        routing_decision = routing_log
-        
-        if selected_skill:
-            skill_name = selected_skill.get('name')
-            print(f"[WINDI] 🎯 Constitutional Route: {skill_name} (priority {selected_skill.get('priority')})")
-            
-            # Article 19: tutorial-mode has absolute precedence
-            if skill_name == 'tutorial-mode':
-                # Skip Anthropic API, return tutorial directly
-                tutorial_response = self.generate_tutorial_response(user_message)
-                
-                return {
-                    'response': tutorial_response,
-                    'document_type': 'tutorial',
-                    'model': 'windi-constitutional-router',
-                    'routing_decision': routing_decision,
-                    'constitutional_routing': True,
-                    'skill_applied': 'tutorial-mode',
-                    'receipt': f"WINDI-TUTORIAL-{datetime.now().strftime('%d%b%y').upper()}-{hashlib.md5(user_message.encode()).hexdigest()[:8]}"
-                }
-            
-            # For other skills, inject into system_prompt
-            elif skill_name == 'sge-analysis':
-                self.system_prompt += f"\n\n[SKILL: SGE Analysis Mode - Provide detailed semantic governance analysis]"
-                activated_skills.append('sge-analysis')
-            
-            elif skill_name == 'product-identity':
-                self.system_prompt += f"\n\n[SKILL: Product Identity - Answer questions about WINDI system, pricing, privacy]"
-                activated_skills.append('product-identity')
-            
-            elif skill_name == 'sovereign-handshake':
-                self.system_prompt += f"\n\n[SKILL: Sovereign Handshake - Verify identity and authority]"
-                activated_skills.append('sovereign-handshake')
-            
-            else:
-            # casual-chat or other - no special prompt
-                activated_skills.append(skill_name)
-        
-    except Exception as e:
-            print(f"[WINDI] Constitutional routing error: {e}")
-            routing_decision = {'error': str(e)}
+        # Constitutional Routing
+        if CONSTITUTIONAL_ROUTING_ENABLED:
+            try:
+                selected_skill, routing_log = CONSTITUTIONAL_ROUTER.route(user_message)
+                routing_decision = routing_log
 
-            # Fallback to old skills engine if constitutional routing disabled
-elif SKILLS_ENGINE_AVAILABLE:
-    try:
+                if selected_skill:
+                    skill_name = selected_skill.get('name')
+                    print(f"[WINDI] Constitutional Route: {skill_name} (priority {selected_skill.get('priority')})")
+
+                    # Article 19: tutorial-mode has absolute precedence
+                    if skill_name == 'tutorial-mode':
+                        tutorial_response = self.generate_tutorial_response(user_message)
+                        return {
+                            'response': tutorial_response,
+                            'document_type': 'tutorial',
+                            'model': 'windi-constitutional-router',
+                            'routing_decision': routing_decision,
+                            'constitutional_routing': True,
+                            'skill_applied': 'tutorial-mode',
+                            'receipt': f"WINDI-TUTORIAL-{datetime.now().strftime('%d%b%y').upper()}-{hashlib.md5(user_message.encode()).hexdigest()[:8]}"
+                        }
+
+                    elif skill_name == 'sge-analysis':
+                        self.system_prompt += "\n\n[SKILL: SGE Analysis Mode - Provide detailed semantic governance analysis]"
+                        activated_skills.append('sge-analysis')
+
+                    elif skill_name == 'product-identity':
+                        self.system_prompt += "\n\n[SKILL: Product Identity - Answer questions about WINDI system, pricing, privacy]"
+                        activated_skills.append('product-identity')
+
+                    elif skill_name == 'sovereign-handshake':
+                        self.system_prompt += "\n\n[SKILL: Sovereign Handshake - Verify identity and authority]"
+                        activated_skills.append('sovereign-handshake')
+
+                    else:
+                        # casual-chat or other - no special prompt
+                        activated_skills.append(skill_name)
+
+            except Exception as e:
+                print(f"[WINDI] Constitutional routing error: {e}")
+                routing_decision = {'error': str(e)}
+
+        # Fallback to old skills engine if constitutional routing disabled
+        elif SKILLS_ENGINE_AVAILABLE:
+            try:
                 skills_engine = get_skills_engine()
                 self.system_prompt, activated_skills = skills_engine.process_message(
-                self.system_prompt,
-                user_message
-        )
-           if activated_skills:
-           print(f"[WINDI Skills] Activated: {activated_skills}")
-           except Exception as e:
-           print(f"[WINDI Skills] Error: {e}")
+                    self.system_prompt,
+                    user_message
+                )
+                if activated_skills:
+                    print(f"[WINDI Skills] Activated: {activated_skills}")
+            except Exception as e:
+                print(f"[WINDI Skills] Error: {e}")
 
-           # NEW: Override prompt for casual chat
-           if is_casual:
+        # Override prompt for casual chat
+        if is_casual:
             self.system_prompt = self.system_prompt + "\n\n" + WINDI_CASUAL_CHAT_OVERRIDE
 
-           if not self.available:
+        if not self.available:
             return self._fallback_response(user_message, lang, receipt, is_doc_request)
 
+
+
+
         try:
+            # Gate Controller check
+            if not check_gate("claude"):
+                return {
+                    "success": False,
+                    "error": "GATE_BLOCKED: Claude not available in " + WINDI_TIER + " tier",
+                    "tier": WINDI_TIER,
+                    "fallback": self._fallback_response(user_message, lang, receipt, is_doc_request)
+                }
+
             import anthropic
             client = anthropic.Anthropic(api_key=self.api_key)
 
             messages = self.conversation_history.copy()
             messages.append({"role": "user", "content": user_message})
 
+            gate = get_gate()
             response = client.messages.create(
                 model=self.model,
-                max_tokens=2048,  # Increased for documents
+                max_tokens=gate["max_tokens"],
                 system=self.system_prompt,
                 messages=messages
             )

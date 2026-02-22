@@ -1,0 +1,410 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://windi-domain.com/schemas/compliance-passport/v1.0",
+  "title": "WINDI Compliance Passport",
+  "description": "Cryptographically verifiable compliance identity for WINDI constitutional Agents. Designed for EU AI Act auditability — machine-readable, Ed25519-signed, zero-knowledge compliant.",
+  "version": "1.0.0",
+  "type": "object",
+  "required": [
+    "passport_header",
+    "agent_identity",
+    "sentinel_summary",
+    "ledger_proof",
+    "waqp_certification",
+    "compliance_matrix",
+    "passport_seal"
+  ],
+  "properties": {
+
+    "passport_header": {
+      "type": "object",
+      "description": "Passport metadata and versioning",
+      "required": ["passport_id", "schema_version", "issued_at", "valid_until", "issuer"],
+      "properties": {
+        "passport_id": {
+          "type": "string",
+          "pattern": "^CP-[A-Z0-9]{4}-[0-9]{8}-[a-f0-9]{8}$",
+          "description": "Unique passport ID. Format: CP-{ROLE}-{DATE}-{HASH8}",
+          "examples": ["CP-GUAR-20260221-a3f7c1b2"]
+        },
+        "schema_version": {
+          "type": "string",
+          "const": "1.0.0"
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 UTC timestamp of passport generation"
+        },
+        "valid_until": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Passport validity window (default: 30 days from issuance)"
+        },
+        "issuer": {
+          "type": "string",
+          "const": "WINDI Publishing House — Constitutional Governance Layer",
+          "description": "Issuing authority"
+        },
+        "issuer_ledger_endpoint": {
+          "type": "string",
+          "format": "uri",
+          "description": "Public endpoint for independent verification"
+        }
+      }
+    },
+
+    "agent_identity": {
+      "type": "object",
+      "description": "Cryptographic identity of the Agent — Ed25519 public key as root of trust",
+      "required": ["agent_id", "agent_name", "constitutional_role", "specialty", "ed25519_public_key", "wallet_created_at"],
+      "properties": {
+        "agent_id": {
+          "type": "string",
+          "pattern": "^AGT-[A-Z]{4}-[a-f0-9]{12}$",
+          "description": "Unique Agent identifier. Format: AGT-{ROLE4}-{HASH12}",
+          "examples": ["AGT-GUAR-a3f7c1b2e4d6"]
+        },
+        "agent_name": {
+          "type": "string",
+          "maxLength": 64,
+          "description": "Human-readable Agent name assigned at forge time"
+        },
+        "constitutional_role": {
+          "type": "string",
+          "enum": ["Guardian", "Architect", "Witness"],
+          "description": "Three Dragons Protocol role — immutable after forging"
+        },
+        "specialty": {
+          "type": "string",
+          "description": "Domain specialty assigned at forge time",
+          "examples": ["Legal Compliance", "Financial Reports", "Healthcare Privacy"]
+        },
+        "ed25519_public_key": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9+/]{43}=$",
+          "description": "Base64-encoded Ed25519 public key (32 bytes). Root of cryptographic identity."
+        },
+        "wallet_created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Wallet creation timestamp — immutable birth certificate"
+        },
+        "creator_wallet_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "SHA-256 hash of the human creator's wallet — privacy-preserving attribution"
+        },
+        "forging_receipt_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "SHA-256 hash of the Ledger receipt that recorded Agent creation"
+        }
+      }
+    },
+
+    "sentinel_summary": {
+      "type": "object",
+      "description": "Sentinel LAW v2.0 monitoring summary — proves continuous governance",
+      "required": ["total_cycles", "total_violations", "violation_rate", "last_cycle_at", "escalation_history", "i9_status"],
+      "properties": {
+        "total_cycles": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total Sentinel monitoring cycles completed for this Agent"
+        },
+        "total_violations": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total violations detected across all cycles"
+        },
+        "violation_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Violations / total_cycles ratio. 0.0 = perfect compliance."
+        },
+        "last_cycle_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp of most recent Sentinel cycle"
+        },
+        "avg_cycle_latency_ms": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Average Sentinel cycle latency in milliseconds"
+        },
+        "p95_latency_ms": {
+          "type": "number",
+          "minimum": 0,
+          "description": "95th percentile cycle latency — proves governance doesn't block performance"
+        },
+        "escalation_history": {
+          "type": "array",
+          "description": "5-tier escalation events (empty = no escalations = healthy)",
+          "items": {
+            "type": "object",
+            "required": ["tier", "timestamp", "category", "resolution"],
+            "properties": {
+              "tier": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 5,
+                "description": "Escalation tier (1=info, 2=warning, 3=intervention, 4=block, 5=emergency)"
+              },
+              "timestamp": { "type": "string", "format": "date-time" },
+              "category": { "type": "string" },
+              "resolution": {
+                "type": "string",
+                "enum": ["auto_resolved", "human_resolved", "blocked", "pending"]
+              },
+              "receipt_hash": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$",
+                "description": "Ledger receipt hash proving escalation was recorded"
+              }
+            }
+          }
+        },
+        "i9_status": {
+          "type": "object",
+          "description": "I9 — Prohibition of Autonomy Escalation. IRREMEDIABLE invariant.",
+          "required": ["enforced", "structural", "bypass_attempts", "last_verified_at"],
+          "properties": {
+            "enforced": {
+              "type": "boolean",
+              "const": true,
+              "description": "Must always be true. False = catastrophic failure."
+            },
+            "structural": {
+              "type": "boolean",
+              "const": true,
+              "description": "I9 is architectural impossibility, not policy. Must be true."
+            },
+            "bypass_attempts": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of detected I9 bypass attempts (structural blocks)"
+            },
+            "last_verified_at": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        }
+      }
+    },
+
+    "ledger_proof": {
+      "type": "object",
+      "description": "Forensic Ledger integrity proof — cryptographic chain of custody",
+      "required": ["total_receipts", "chain_root_hash", "chain_integrity", "first_receipt", "last_receipt"],
+      "properties": {
+        "total_receipts": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total Virtue Receipts generated by this Agent"
+        },
+        "chain_root_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "SHA-256 root hash of the Agent's receipt chain. Verifiable against Ledger."
+        },
+        "chain_integrity": {
+          "type": "string",
+          "enum": ["VERIFIED", "BROKEN", "PENDING"],
+          "description": "Chain integrity status at passport generation time"
+        },
+        "first_receipt": {
+          "type": "object",
+          "description": "Anchor receipt — proves chain origin",
+          "properties": {
+            "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+            "timestamp": { "type": "string", "format": "date-time" },
+            "category": { "type": "string" }
+          }
+        },
+        "last_receipt": {
+          "type": "object",
+          "description": "Most recent receipt — proves chain recency",
+          "properties": {
+            "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+            "timestamp": { "type": "string", "format": "date-time" },
+            "category": { "type": "string" }
+          }
+        },
+        "receipt_categories": {
+          "type": "object",
+          "description": "Breakdown of receipts by category",
+          "additionalProperties": { "type": "integer" },
+          "examples": [{"document_processed": 1240, "governance_check": 890, "sentinel_cycle": 2058}]
+        },
+        "verification_endpoint": {
+          "type": "string",
+          "format": "uri",
+          "description": "Public endpoint for independent chain verification: GET /verify/{agent_id}/{chain_root_hash}"
+        }
+      }
+    },
+
+    "waqp_certification": {
+      "type": "object",
+      "description": "WAQP (WINDI Agent Quality Protocol) evaluation results",
+      "required": ["current_tier", "gov_score", "evaluation_count", "last_evaluation_at"],
+      "properties": {
+        "current_tier": {
+          "type": "string",
+          "enum": ["BRONZE", "SILVER", "GOLD"],
+          "description": "Current certification tier based on accumulated Gov Score"
+        },
+        "gov_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Governance Score (0-100). BRONZE=70+, SILVER=85+, GOLD=95+"
+        },
+        "evaluation_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total WAQP evaluations completed"
+        },
+        "last_evaluation_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "tier_history": {
+          "type": "array",
+          "description": "Tier progression over time — shows Agent maturity curve",
+          "items": {
+            "type": "object",
+            "properties": {
+              "tier": { "type": "string", "enum": ["BRONZE", "SILVER", "GOLD"] },
+              "achieved_at": { "type": "string", "format": "date-time" },
+              "gov_score_at_promotion": { "type": "number" }
+            }
+          }
+        },
+        "invariants_tested": {
+          "type": "array",
+          "description": "Constitutional invariants verified in last evaluation",
+          "items": {
+            "type": "string",
+            "enum": ["I1", "I2", "I3", "I4", "I5", "I6", "I7", "I8", "I9"]
+          }
+        },
+        "evaluation_receipt_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "Ledger receipt of the last WAQP evaluation"
+        }
+      }
+    },
+
+    "compliance_matrix": {
+      "type": "object",
+      "description": "EU AI Act compliance mapping — which articles this Agent architecture addresses",
+      "required": ["ai_act_coverage", "gdpr_alignment", "zero_knowledge_status"],
+      "properties": {
+        "ai_act_coverage": {
+          "type": "array",
+          "description": "EU AI Act articles addressed by WINDI architecture",
+          "items": {
+            "type": "object",
+            "required": ["article", "title", "coverage", "mechanism"],
+            "properties": {
+              "article": {
+                "type": "string",
+                "description": "AI Act article number",
+                "examples": ["Art. 9", "Art. 12", "Art. 13", "Art. 14", "Art. 15"]
+              },
+              "title": { "type": "string" },
+              "coverage": {
+                "type": "string",
+                "enum": ["FULL", "PARTIAL", "ARCHITECTURAL"],
+                "description": "FULL=directly implements, PARTIAL=supports, ARCHITECTURAL=structural alignment"
+              },
+              "mechanism": {
+                "type": "string",
+                "description": "WINDI component that implements this requirement",
+                "examples": ["Forensic Ledger", "Sentinel LAW", "Ed25519 Wallet", "SGE Analysis", "I9 Invariant"]
+              }
+            }
+          }
+        },
+        "gdpr_alignment": {
+          "type": "object",
+          "description": "GDPR alignment status",
+          "properties": {
+            "data_minimization": { "type": "boolean", "description": "Zero-Knowledge: stores proofs, not data" },
+            "right_to_explanation": { "type": "boolean", "description": "Virtue Receipts provide decision audit trail" },
+            "privacy_by_design": { "type": "boolean", "description": "Architectural privacy, not policy-based" },
+            "data_processing_locality": {
+              "type": "string",
+              "enum": ["EU_ONLY", "LOCAL_ONLY", "MIXED"],
+              "description": "Where data processing occurs"
+            }
+          }
+        },
+        "zero_knowledge_status": {
+          "type": "object",
+          "description": "Zero-Knowledge Architecture verification",
+          "required": ["client_data_stored", "proofs_only"],
+          "properties": {
+            "client_data_stored": {
+              "type": "boolean",
+              "const": false,
+              "description": "WINDI stores NO client data. Must always be false."
+            },
+            "proofs_only": {
+              "type": "boolean",
+              "const": true,
+              "description": "Only cryptographic proofs and governance metadata stored."
+            },
+            "verification_method": {
+              "type": "string",
+              "const": "SHA-256 hash comparison",
+              "description": "Method for verifying proof integrity"
+            }
+          }
+        }
+      }
+    },
+
+    "passport_seal": {
+      "type": "object",
+      "description": "Cryptographic seal — makes the entire passport tamper-evident",
+      "required": ["seal_algorithm", "passport_hash", "signature", "signer_public_key", "sealed_at"],
+      "properties": {
+        "seal_algorithm": {
+          "type": "string",
+          "const": "Ed25519",
+          "description": "Digital signature algorithm"
+        },
+        "passport_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "SHA-256 hash of all passport fields above this seal block"
+        },
+        "signature": {
+          "type": "string",
+          "description": "Ed25519 signature of passport_hash, Base64-encoded"
+        },
+        "signer_public_key": {
+          "type": "string",
+          "description": "Base64-encoded Ed25519 public key of the WINDI issuing authority"
+        },
+        "sealed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "ledger_receipt_hash": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "Ledger receipt hash proving passport issuance was recorded"
+        }
+      }
+    }
+  },
+
+  "additionalProperties": false
+}
