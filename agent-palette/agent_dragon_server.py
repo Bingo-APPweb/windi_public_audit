@@ -979,8 +979,9 @@ def handle_generate_document(body: dict) -> tuple:
     slides = body.get("slides", [])
     sections = body.get("sections", [])
 
-    # XLSX templates can work without content
-    if not content and not slides and not (fmt == "xlsx" and template != "default"):
+    # XLSX templates or custom data can work without content
+    has_xlsx_data = fmt == "xlsx" and (template != "default" or body.get("columns") or body.get("data"))
+    if not content and not slides and not has_xlsx_data:
         return {"error": "Content or slides required", "dragon": "architect"}, 400
 
     try:
