@@ -243,14 +243,21 @@ function LiveOutlook() {
               padding: "4px 10px", fontSize: 10, fontWeight: 600, border: "none", borderRadius: 4, cursor: "pointer",
               background: autoRefresh ? `${GREEN}20` : `${RED}20`, color: autoRefresh ? GREEN : RED,
             }}>
-              {autoRefresh ? "\u26A1 LIVE" : "\u23F8 PAUSED"}
+              {autoRefresh ? "⚡ LIVE" : "⏸ PAUSED"}
             </button>
             <button onClick={fetchAll} style={{
               padding: "4px 10px", fontSize: 10, fontWeight: 600, border: `1px solid ${BORDER}`,
               borderRadius: 4, cursor: "pointer", background: CARD, color: GOLD,
             }}>
-              {"\u21BB"} Refresh
+              ↻ Refresh
             </button>
+            <a href="/pulse/api/pulse/report.md" download style={{
+              padding: "4px 10px", fontSize: 10, fontWeight: 600, border: `1px solid ${GOLD}`,
+              borderRadius: 4, cursor: "pointer", background: `${GOLD}20`, color: GOLD,
+              textDecoration: "none", display: "inline-flex", alignItems: "center",
+            }}>
+              ⬇ .MD
+            </a>
           </div>
         </div>
 

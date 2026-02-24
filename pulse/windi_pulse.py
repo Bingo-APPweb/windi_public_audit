@@ -752,6 +752,73 @@ class PulseHandler(BaseHTTPRequestHandler):
                 "timestamp": datetime.now(timezone.utc).isoformat(),
             })
 
+        # ── Markdown Report ──
+        elif path == "/api/pulse/report.md":
+            with _scan_lock:
+                scan = _last_scan or full_scan()
+
+            lines = []
+            lines.append("# WINDI PULSE REPORT")
+            lines.append(f"> Generated: {scan['timestamp']}")
+            lines.append(f"> Server: 87.106.29.233 (Strato)")
+            lines.append("")
+
+            # Summary
+            summary = scan["summary"]
+            lines.append("## Summary")
+            lines.append("")
+            lines.append(f"| Metric | Value |")
+            lines.append(f"|--------|-------|")
+            lines.append(f"| Services | {summary['alive']}/{summary['total']} healthy |")
+            lines.append(f"| Health % | {summary['health_pct']}% |")
+            lines.append(f"| Wiring | {summary['wired']}/{summary['total_wires']} |")
+            lines.append(f"| Wire % | {summary['wire_pct']}% |")
+            lines.append("")
+
+            # Services table
+            lines.append("## Service Status")
+            lines.append("")
+            lines.append("| # | Service | Port | Status | HTTP |")
+            lines.append("|---|---------|------|--------|------|")
+            for i, svc in enumerate(scan["services"], 1):
+                status_label = {"alive": "UP", "degraded": "DEGRADED", "dead": "DOWN", "error": "ERROR"}.get(svc["status"], "?")
+                lines.append(f"| {i} | {svc['name']} | {svc['port']} | {status_label} | {svc['http_code']} |")
+            lines.append("")
+
+            # Wiring Progress
+            lines.append("## Wiring Progress")
+            lines.append("")
+            lines.append("| Wire | Feature | Status |")
+            lines.append("|------|---------|--------|")
+            for sprint_num, sprint_data in scan["sprints"].items():
+                for w in sprint_data["wires"]:
+                    status_label = "WIRED" if w["verified"] else "PENDING"
+                    lines.append(f"| {w['id']} | {w['name']} | {status_label} |")
+            lines.append("")
+
+            # Alerts
+            alerts = [s for s in scan["services"] if s["status"] != "alive"]
+            lines.append("## Alerts")
+            if alerts:
+                for a in alerts:
+                    lines.append(f"- **{a['name']}** (:{a['port']}) — {a['status'].upper()}")
+            else:
+                lines.append("- None")
+            lines.append("")
+
+            lines.append("---")
+            lines.append('*WINDI Pulse — "AI processes. Human decides. WINDI guarantees."*')
+
+            md_content = "\n".join(lines)
+            filename = f"WINDI_Pulse_{datetime.now().strftime('%Y%m%d_%H%M')}.md"
+
+            self.send_response(200)
+            self.send_header("Content-Type", "text/markdown; charset=utf-8")
+            self.send_header("Content-Disposition", f"attachment; filename={filename}")
+            self.send_header("Content-Length", len(md_content.encode("utf-8")))
+            self.end_headers()
+            self.wfile.write(md_content.encode("utf-8"))
+
         else:
             self._json_response({"error": "Not found", "path": path}, 404)
 
