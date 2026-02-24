@@ -1,0 +1,23 @@
+[Unit]
+Description=WINDI Agent Dragon Server v1.0.0 — Three Dragons AI
+Documentation=https://admin.windia4desk.tech/palette/
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=windi
+Group=windi
+WorkingDirectory=/opt/windi/agent-palette
+ExecStart=/usr/bin/python3 /opt/windi/agent-palette/agent_dragon_server.py
+Restart=always
+RestartSec=5
+StandardOutput=append:/opt/windi/logs/dragon.log
+StandardError=append:/opt/windi/logs/dragon.log
+
+NoNewPrivileges=yes
+ProtectSystem=strict
+ReadWritePaths=/opt/windi/data /opt/windi/logs /opt/windi/agent-palette /opt/windi/tsil
+
+[Install]
+WantedBy=multi-user.target
