@@ -17,11 +17,17 @@ import json
 import mimetypes
 import os
 import sys
+import uuid
 from pathlib import Path
 from download_security import generate_signed_url, verify_token, start_cleanup
-from ledger_sync import get_ledger_sync
+from ledger_sync import get_ledger_sync, TIER_TO_LEVEL
 from spec_sanitizer import sanitize_spec, sanitize_filename
 from urllib.parse import unquote
+from hash_injector import seal_document
+from serial_engine import get_serial_engine
+from qr_engine import generate_verify_url, generate_qr_image
+import base64
+from datetime import datetime, timezone
 
 # Add parent to path for imports
 sys.path.insert(0, str(Path(__file__).parent))
@@ -110,8 +116,69 @@ def handle_render_request(handler):
             "render_ms": result["render_ms"],
         })
 
+    # ═══════════════════════════════════════════════════════════════════════════
+    # N2+N3: SHA-256 SEAL + SERIAL NUMBER INJECTION
+    # Pipeline: render → serial(N3) → seal(N2) → ledger(N1) → download
+    # ═══════════════════════════════════════════════════════════════════════════
+
+    # N3: Generate unique sequential serial number
+    serial_engine = get_serial_engine()
+    serial = serial_engine.next_serial()
+
+    # Generate receipt_id and governance level (shared between N2 footer and N1 ledger)
+    receipt_id = f"VR-PAL-{uuid.uuid4().hex[:12]}"
+    governance_level = TIER_TO_LEVEL.get(tier.upper(), "LOW")
+
+    # Read pre-footer document bytes
+    filepath = Path(result["filepath"])
+    pre_footer_bytes = filepath.read_bytes()
+
+    # Inject WINDI seal into footer + metadata (N2+N3)
+    # Hash is computed from PRE-footer content (not circular)
+    # Serial is included in footer and metadata
+    sealed_bytes, content_hash = seal_document(
+        doc_bytes=pre_footer_bytes,
+        doc_format=result["format"],
+        receipt_id=receipt_id,
+        governance_level=governance_level,
+        doc_name=result["filename"],
+        serial=serial,
+    )
+
+    # Save sealed document back to file
+    filepath.write_bytes(sealed_bytes)
+
+    # Update result with sealed content info
+    result["size_bytes"] = len(sealed_bytes)
+    result["content_hash"] = content_hash  # Pre-footer hash (verification fingerprint)
+
     # Build signed download URL with TTL
     signed = generate_signed_url(result["filename"])
+
+    # ═══════════════════════════════════════════════════════════════════════════
+    # SOVEREIGNTY DATA — Trust Panel fields
+    # ═══════════════════════════════════════════════════════════════════════════
+
+    # Generate verification URL and QR code
+    verify_url = generate_verify_url(serial, content_hash)
+    qr_bytes = generate_qr_image(verify_url, size=150)
+    qr_base64 = base64.b64encode(qr_bytes).decode("ascii") if qr_bytes else None
+
+    # Extract SGE risk class from input
+    sge_data = data.get("sge", {})
+    sge_risk = sge_data.get("risk", "R0") if sge_data else "R0"
+    sge_score = sge_data.get("score", 0) if sge_data else 0
+    sge_blocked = sge_data.get("blocked", False) if sge_data else False
+    human_required = sge_data.get("humanRequired", False) if sge_data else False
+
+    # Determine if I9 gate is active (human decision required for high-impact actions)
+    i9_active = human_required or sge_blocked or governance_level == "HIGH"
+
+    # Compliance status based on tier
+    compliance_status = "GOLD" if tier.upper() == "HIGH" else "SILVER" if tier.upper() == "MED" else "BRONZE"
+
+    # Timestamp
+    created_at = datetime.now(timezone.utc).isoformat()
 
     response = {
         "success": True,
@@ -124,17 +191,46 @@ def handle_render_request(handler):
         "content_hash": result["content_hash"],
         "bundle_hash": result["bundle_hash"],
         "render_ms": result["render_ms"],
+        "serial": serial,
+        "receipt_id": receipt_id,
+        "governance_level": governance_level,
+        # ── Sovereignty Data (Trust Panel) ──
+        "sovereignty": {
+            "serial_id": serial,
+            "sha256_hash": content_hash,
+            "short_hash": content_hash[:16] if content_hash else None,
+            "verify_url": verify_url,
+            "qr_image_base64": qr_base64,
+            "created_at": created_at,
+            "sge_risk_class": sge_risk,
+            "sge_score": sge_score,
+            "compliance_tier": compliance_status,
+            "human_decision_required": human_required,
+            "i9_active": i9_active,
+            "ledger_status": "PENDING",  # Updated below after sync
+            "ledger_receipt_id": receipt_id,
+            "vault_url": f"https://admin.windia4desk.tech/vault/verify?serial={serial}&hash={content_hash[:16]}",
+        },
     }
 
-    # Async Ledger sync (non-blocking)
+    # Async Ledger sync (N1) with pre-computed hash from N2 and serial from N3
+    # Ensures: serial + hash in footer = serial + hash in Ledger = same truth
     try:
         ls = get_ledger_sync()
         tier_l = data.get("tier", "ANON")
         acct = data.get("account_id", "anonymous")
-        sync_r = ls.sync_render(result, data, tier_l, acct)
+        sync_r = ls.sync_render(
+            result, data, tier_l, acct,
+            content_hash=content_hash,
+            receipt_id=receipt_id,
+            governance_level=governance_level,
+            serial=serial,
+        )
         response["ledger_status"] = sync_r["status"]
+        response["sovereignty"]["ledger_status"] = sync_r["status"]
     except Exception:
         response["ledger_status"] = "SKIP"
+        response["sovereignty"]["ledger_status"] = "FAILED"
 
     return _json_response(handler, 200, response)
 
