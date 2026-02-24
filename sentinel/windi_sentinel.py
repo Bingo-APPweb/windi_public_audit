@@ -269,10 +269,21 @@ SERVICE_REGISTRY = [
         "display": "Agent Palette",
         "systemd_unit": "windi-palette.service",
         "port": 8108,
-        "health_endpoint": "/health",
+        "health_endpoint": "/api/multimodal/capabilities",
         "health_method": "http",
         "critical": False,
-        "description": "Agent Palette — AI agent collaboration hub",
+        "description": "Agent Palette Dragon Server — OCR, multimodal, document generation",
+    },
+    # ─── SOVEREIGNTY SERVICES (8095) — Added 24Feb26 ───────
+    {
+        "name": "windi-webhook",
+        "display": "Schnittstelle Webhook",
+        "systemd_unit": "windi-webhook.service",
+        "port": 8095,
+        "health_endpoint": "/webhook/paperless/health",
+        "health_method": "http",
+        "critical": True,
+        "description": "Paperless.io webhook — QES signing completion handler (I9 enforced)",
     },
 ]
 
