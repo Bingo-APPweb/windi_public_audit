@@ -49,6 +49,14 @@ try:
 except ImportError:
     HAS_DOCX = False
 
+try:
+    from openpyxl import Workbook
+    from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+    from openpyxl.utils import get_column_letter
+    HAS_XLSX = True
+except ImportError:
+    HAS_XLSX = False
+
 # WINDI Document Renderer Integration
 import sys as _renderer_sys
 _renderer_sys.path.insert(0, str(Path(__file__).parent / "renderer"))
@@ -99,7 +107,7 @@ API_URL = "https://api.anthropic.com/v1/messages"
 MODEL = "claude-sonnet-4-20250514"  # Cost-efficient for Agent responses
 MAX_TOKENS = 1024
 
-VERSION = "1.1.0"  # Sprint 1+2: Document Production + Seal
+VERSION = "1.2.0"  # Sprint Complete: XLSX + Communiqué + Outlook
 
 # Document generation services
 STAGING_DIR = BASE_DIR / "staging"
@@ -857,6 +865,111 @@ def generate_pptx(title: str, slides: list) -> bytes:
         input_file.unlink(missing_ok=True)
         output_file.unlink(missing_ok=True)
 
+def generate_xlsx(title: str, content: str, template: str = "default",
+                  columns: list = None, data: list = None, governance_level: str = "MEDIUM") -> bytes:
+    """Generate XLSX using openpyxl with WINDI governance metadata."""
+    if not HAS_XLSX:
+        raise RuntimeError("XLSX generation not available (openpyxl not installed)")
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = title[:31]  # Excel sheet name max 31 chars
+
+    # WINDI styling
+    gold_font = Font(name="Arial", bold=True, color="8B6914", size=12)
+    header_fill = PatternFill(start_color="F5F0E0", end_color="F5F0E0", fill_type="solid")
+    header_font = Font(name="Arial", bold=True, color="2C2924", size=10)
+    border_thin = Border(
+        left=Side(style="thin", color="DDD6C2"),
+        right=Side(style="thin", color="DDD6C2"),
+        top=Side(style="thin", color="DDD6C2"),
+        bottom=Side(style="thin", color="DDD6C2")
+    )
+
+    serial = get_next_serial()
+    ts = datetime.now(timezone.utc).isoformat()
+
+    # Row 1-4: WINDI Header
+    ws.merge_cells("A1:F1")
+    ws["A1"] = f"◆ WINDI — {title}"
+    ws["A1"].font = gold_font
+    ws["A2"] = "Serial:"
+    ws["B2"] = serial
+    ws["A3"] = "Erstellt:"
+    ws["B3"] = ts
+    ws["A4"] = "Governance:"
+    ws["B4"] = governance_level
+    ws["B4"].font = Font(name="Arial", bold=True,
+                         color="FF0000" if governance_level in ("HIGH", "CRITICAL") else "8B6914")
+
+    data_start_row = 6
+
+    # Template logic
+    if template == "finanzbericht":
+        columns = ["Kategorie", "Budget (€)", "Ist (€)", "Differenz (€)", "Auslastung (%)", "Status"]
+        data = [
+            ["Personal", 50000, 48000, "=C7-B7", "=IF(B7>0,C7/B7*100,0)", ""],
+            ["Betrieb", 30000, 21000, "=C8-B8", "=IF(B8>0,C8/B8*100,0)", ""],
+            ["IT & Infrastruktur", 20000, 22400, "=C9-B9", "=IF(B9>0,C9/B9*100,0)", ""],
+            ["Compliance & Governance", 15000, 9000, "=C10-B10", "=IF(B10>0,C10/B10*100,0)", ""],
+            ["GESAMT", "=SUM(B7:B10)", "=SUM(C7:C10)", "=C11-B11", "=IF(B11>0,C11/B11*100,0)", ""],
+        ]
+        governance_level = "HIGH"
+    elif template == "compliance-tracker":
+        columns = ["ID", "Anforderung", "Status", "Verantwortlich", "Frist", "Bewertung"]
+        data = [
+            ["C-001", "EU AI Act Art. 9 — Risk Management", "✅ Erfüllt", "CGO", "2026-03-01", "PASS"],
+            ["C-002", "DSGVO Art. 35 — DSFA", "🟡 In Bearbeitung", "DPO", "2026-04-15", "PENDING"],
+            ["C-003", "BSI C5 — Cloud Security", "🟡 In Bearbeitung", "CTO", "2026-06-01", "PENDING"],
+            ["C-004", "ISO 27001 — ISMS", "⬜ Geplant", "CISO", "2026-09-01", "PLANNED"],
+        ]
+        governance_level = "HIGH"
+    elif template == "audit-trail":
+        columns = ["Timestamp", "Action", "Document", "Actor", "Hash", "Result"]
+        data = []
+    else:
+        # Default: parse content as table data or use provided columns/data
+        if not columns:
+            columns = ["ID", "Name", "Wert", "Status"]
+        if not data:
+            # Try to parse content as simple table
+            data = []
+            for line in content.split('\n'):
+                if line.strip() and '|' in line:
+                    data.append([c.strip() for c in line.split('|')])
+
+    # Column Headers
+    for col_idx, header in enumerate(columns, 1):
+        cell = ws.cell(row=data_start_row, column=col_idx, value=header)
+        cell.font = header_font
+        cell.fill = header_fill
+        cell.border = border_thin
+        cell.alignment = Alignment(horizontal="center")
+        ws.column_dimensions[get_column_letter(col_idx)].width = max(len(str(header)) + 4, 15)
+
+    # Data Rows
+    for row_idx, row_data in enumerate(data, data_start_row + 1):
+        for col_idx, value in enumerate(row_data, 1):
+            cell = ws.cell(row=row_idx, column=col_idx, value=value)
+            cell.border = border_thin
+            cell.font = Font(name="Arial", size=10)
+
+    # WINDI Seal Footer
+    seal_row = data_start_row + len(data) + 3
+    ws.merge_cells(f"A{seal_row}:F{seal_row}")
+    ws[f"A{seal_row}"] = "─" * 40
+
+    seal_row += 1
+    ws[f"A{seal_row}"] = "◆ WINDI Seal: SEALED ✓"
+    ws[f"A{seal_row}"].font = gold_font
+    ws[f"A{seal_row+1}"] = f"Serial: {serial} | Governance: {governance_level} | {ts}"
+    ws[f"A{seal_row+1}"].font = Font(name="Arial", size=8, color="6B6560")
+
+    # Save to bytes
+    buffer = BytesIO()
+    wb.save(buffer)
+    return buffer.getvalue()
+
 def handle_generate_document(body: dict) -> tuple:
     """Handle /api/dragon/generate/{format} — document generation."""
     fmt = body.get("format", "pdf").lower()
@@ -866,7 +979,8 @@ def handle_generate_document(body: dict) -> tuple:
     slides = body.get("slides", [])
     sections = body.get("sections", [])
 
-    if not content and not slides:
+    # XLSX templates can work without content
+    if not content and not slides and not (fmt == "xlsx" and template != "default"):
         return {"error": "Content or slides required", "dragon": "architect"}, 400
 
     try:
@@ -874,6 +988,11 @@ def handle_generate_document(body: dict) -> tuple:
             data = generate_pdf(title, content, template)
         elif fmt == "docx":
             data = generate_docx(title, content, sections)
+        elif fmt == "xlsx":
+            columns = body.get("columns")
+            rows = body.get("data")
+            governance = body.get("governance_level", "MEDIUM")
+            data = generate_xlsx(title, content, template, columns, rows, governance)
         elif fmt == "pptx":
             if not slides:
                 slides = [{"title": title, "content": content}]
@@ -1026,6 +1145,7 @@ def handle_download(file_id: str) -> tuple:
     content_types = {
         "pdf": "application/pdf",
         "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         "pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
     }
     return {
@@ -1033,6 +1153,168 @@ def handle_download(file_id: str) -> tuple:
         "content_type": content_types.get(ext, "application/octet-stream"),
         "filename": file_id,
     }, 200
+
+# ═══════════════════════════════════════════════════════════════════════
+# SPRINT 2C: OUTLOOK STATUS ENGINE
+# ═══════════════════════════════════════════════════════════════════════
+
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
+OUTLOOK_FEATURES = {
+    "T00": {"name": "Dragon Server (LLM Brain)", "sprint": 0, "category": "core",
+            "checks": [{"type": "health", "url": "http://localhost:8108/api/dragon/health", "label": "Dragon Health"}]},
+    "E01": {"name": "PDF Export Engine", "sprint": 1, "category": "document",
+            "checks": [{"type": "health", "url": "http://localhost:8103/health", "label": "Export Engine"},
+                       {"type": "endpoint", "url": "http://localhost:8108/api/dragon/generate/pdf", "method": "OPTIONS", "label": "PDF via Palette"}]},
+    "E02": {"name": "DOCX Production", "sprint": 1, "category": "document",
+            "checks": [{"type": "endpoint", "url": "http://localhost:8108/api/dragon/generate/docx", "method": "OPTIONS", "label": "DOCX via Palette"}]},
+    "E03": {"name": "PPTX ISP Engine", "sprint": 1, "category": "document",
+            "checks": [{"type": "endpoint", "url": "http://localhost:8108/api/dragon/generate/pptx", "method": "OPTIONS", "label": "PPTX via Palette"}]},
+    "E04": {"name": "XLSX Spreadsheet Engine", "sprint": 1, "category": "document",
+            "checks": [{"type": "endpoint", "url": "http://localhost:8108/api/dragon/generate/xlsx", "method": "OPTIONS", "label": "XLSX via Palette"}]},
+    "F01": {"name": "Forensic Ledger", "sprint": 1, "category": "forensic",
+            "checks": [{"type": "health", "url": "http://localhost:8101/health", "label": "Ledger Service"}]},
+    "F03": {"name": "Wave1 Seal Pipeline (N1-N4)", "sprint": 1, "category": "forensic",
+            "checks": [{"type": "health", "url": "http://localhost:8101/health", "label": "Ledger"},
+                       {"type": "endpoint", "url": "http://localhost:8108/api/dragon/seal", "method": "OPTIONS", "label": "Seal via Palette"}]},
+    "F05": {"name": "Paperless.io Signature", "sprint": 2, "category": "forensic",
+            "checks": [{"type": "health", "url": "http://localhost:8095/health", "label": "Schnittstelle"}]},
+    "F02": {"name": "Forensic Vault", "sprint": 2, "category": "forensic",
+            "checks": [{"type": "health", "url": "http://localhost:8106/health", "label": "Vault Service"}]},
+    "F31": {"name": "Communiqué Engine", "sprint": 2, "category": "communication",
+            "checks": [{"type": "health", "url": "http://localhost:8105/health", "label": "Communiqué Service"},
+                       {"type": "endpoint", "url": "http://localhost:8108/api/dragon/communique/list", "method": "OPTIONS", "label": "Communiqué via Palette"}]},
+    "I02": {"name": "OCR / Multimodal", "sprint": 3, "category": "intelligence",
+            "checks": [{"type": "endpoint", "url": "http://localhost:8108/api/multimodal/ocr", "method": "OPTIONS", "label": "OCR via Palette"}]},
+    "I06": {"name": "Product Identity Skill", "sprint": 3, "category": "intelligence",
+            "checks": [{"type": "file_exists", "path": "/opt/windi/isp/", "label": "ISP directory"}]},
+    "S07": {"name": "Constitutional Panel (Via C)", "sprint": 3, "category": "governance",
+            "checks": [{"type": "health", "url": "http://localhost:8097/health", "label": "Command Bridge"}]},
+    "S04": {"name": "Sentinel LAW Monitor", "sprint": 4, "category": "governance",
+            "checks": [{"type": "health", "url": "http://localhost:8102/health", "label": "Sentinel LAW"}]},
+}
+
+def _check_single(check):
+    """Run a single check and return result."""
+    try:
+        if check["type"] in ("health", "endpoint"):
+            method = check.get("method", "GET")
+            req = urllib.request.Request(check["url"], method=method)
+            req.add_header("Content-Type", "application/json")
+            with urllib.request.urlopen(req, timeout=3) as resp:
+                status = resp.getcode()
+                return {"label": check["label"], "status": "ok" if status < 400 else "fail", "code": status}
+        elif check["type"] == "file_exists":
+            exists = os.path.exists(check["path"])
+            return {"label": check["label"], "status": "ok" if exists else "fail"}
+        else:
+            return {"label": check.get("label", "unknown"), "status": "skip"}
+    except Exception as e:
+        return {"label": check.get("label", "unknown"), "status": "fail", "error": str(e)[:50]}
+
+def get_outlook_status():
+    """Run ALL checks in parallel, return complete Outlook status."""
+    all_checks = []
+    for fid, feature in OUTLOOK_FEATURES.items():
+        for check in feature.get("checks", []):
+            all_checks.append((fid, check))
+
+    check_results = {}
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        future_map = {executor.submit(_check_single, check): (fid, check) for fid, check in all_checks}
+        for future in as_completed(future_map):
+            fid, check = future_map[future]
+            if fid not in check_results:
+                check_results[fid] = []
+            try:
+                check_results[fid].append(future.result())
+            except Exception as e:
+                check_results[fid].append({"label": check.get("label", "?"), "status": "fail", "error": str(e)[:50]})
+
+    results = {}
+    wired = on_server = not_built = down = 0
+    total = len(OUTLOOK_FEATURES)
+
+    for fid, feature in OUTLOOK_FEATURES.items():
+        checks = check_results.get(fid, [])
+        all_ok = all(c["status"] == "ok" for c in checks) if checks else False
+        any_ok = any(c["status"] == "ok" for c in checks) if checks else False
+
+        if all_ok:
+            status = "WIRED"
+            wired += 1
+        elif any_ok:
+            status = "ON_SERVER"
+            on_server += 1
+        else:
+            has_conn_error = any("Connection refused" in c.get("error", "") for c in checks)
+            if has_conn_error:
+                status = "DOWN"
+                down += 1
+            else:
+                status = "NOT_BUILT"
+                not_built += 1
+
+        results[fid] = {
+            "id": fid, "name": feature["name"], "sprint": feature["sprint"],
+            "category": feature["category"], "status": status, "checks": checks
+        }
+
+    return {
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "summary": {
+            "total": total, "wired": wired, "on_server": on_server,
+            "not_built": not_built, "down": down,
+            "wired_pct": round(wired / total * 100, 1) if total else 0
+        },
+        "features": results,
+        "sprints": {
+            0: {"name": "Ressuscitar Dragon", "features": [f for f in results if OUTLOOK_FEATURES[f]["sprint"] == 0]},
+            1: {"name": "Produção Documental", "features": [f for f in results if OUTLOOK_FEATURES[f]["sprint"] == 1]},
+            2: {"name": "Assinatura + Selo Forense", "features": [f for f in results if OUTLOOK_FEATURES[f]["sprint"] == 2]},
+            3: {"name": "Inteligência & Identidade", "features": [f for f in results if OUTLOOK_FEATURES[f]["sprint"] == 3]},
+            4: {"name": "Ecossistema & Futuro", "features": [f for f in results if OUTLOOK_FEATURES[f]["sprint"] == 4]},
+        }
+    }
+
+# ═══════════════════════════════════════════════════════════════════════
+# SPRINT 2B: COMMUNIQUÉ PROXY
+# ═══════════════════════════════════════════════════════════════════════
+
+COMMUNIQUE_API = "http://127.0.0.1:8105"
+
+def handle_communique_list() -> tuple:
+    """Proxy GET /api/dragon/communique/list → Communiqué :8105."""
+    try:
+        req = urllib.request.Request(f"{COMMUNIQUE_API}/api/communique/list")
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            data = json.loads(resp.read().decode())
+            return {"status": "ok", "dragon": "architect", "communiques": data}, 200
+    except Exception as e:
+        return {"status": "error", "code": "COMMUNIQUE_UNAVAILABLE", "message": str(e), "dragon": "architect"}, 503
+
+def handle_communique_create(body: dict) -> tuple:
+    """Proxy POST /api/dragon/communique/create → Communiqué :8105."""
+    try:
+        payload = json.dumps(body).encode()
+        req = urllib.request.Request(f"{COMMUNIQUE_API}/api/communique/create",
+                                       data=payload, headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            data = json.loads(resp.read().decode())
+            return {"status": "created", "dragon": "architect", "communique": data}, 201
+    except Exception as e:
+        return {"status": "error", "code": "COMMUNIQUE_CREATE_FAILED", "message": str(e), "dragon": "architect"}, 503
+
+def handle_communique_publish(comm_id: str) -> tuple:
+    """Proxy POST /api/dragon/communique/publish/{id} → Communiqué :8105."""
+    try:
+        req = urllib.request.Request(f"{COMMUNIQUE_API}/api/communique/publish/{comm_id}",
+                                       method="POST", headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            data = json.loads(resp.read().decode())
+            return {"status": "published", "dragon": "guardian", "communique": data}, 200
+    except Exception as e:
+        return {"status": "error", "code": "COMMUNIQUE_PUBLISH_FAILED", "message": str(e), "dragon": "guardian"}, 503
 
 # ═══════════════════════════════════════════════════════════════════════
 # FALLBACK MESSAGES (when API is unavailable)
@@ -1125,6 +1407,18 @@ class DragonHandler(http.server.BaseHTTPRequestHandler):
                 self._file_response(result["content"], result["filename"], result["content_type"])
             return
 
+        # Sprint 2C: Outlook status
+        if path == "/api/dragon/outlook/status":
+            data = get_outlook_status()
+            self._json_response(data, 200)
+            return
+
+        # Sprint 2B: Communiqué list
+        if path == "/api/dragon/communique/list":
+            data, code = handle_communique_list()
+            self._json_response(data, code)
+            return
+
         # Serve UI
         if path in ("/", "/index.html", ""):
             self._serve_ui()
@@ -1194,6 +1488,12 @@ class DragonHandler(http.server.BaseHTTPRequestHandler):
             log(f"PPTX generated: {data.get('file_id','?')}")
             self._json_response(data, code)
 
+        elif path == "/api/dragon/generate/xlsx":
+            body["format"] = "xlsx"
+            data, code = handle_generate_document(body)
+            log(f"XLSX generated: {data.get('file_id','?')}")
+            self._json_response(data, code)
+
         # Sprint 2: Seal endpoint
         elif path == "/api/dragon/seal":
             data, code = handle_seal_document(body)
@@ -1202,6 +1502,16 @@ class DragonHandler(http.server.BaseHTTPRequestHandler):
 
         elif path == "/api/dragon/health":
             data, code = handle_dragon_health(body)
+            self._json_response(data, code)
+
+        # Sprint 2B: Communiqué proxy
+        elif path == "/api/dragon/communique/create":
+            data, code = handle_communique_create(body)
+            self._json_response(data, code)
+
+        elif path.startswith("/api/dragon/communique/publish/"):
+            comm_id = path.split("/")[-1]
+            data, code = handle_communique_publish(comm_id)
             self._json_response(data, code)
 
         else:
