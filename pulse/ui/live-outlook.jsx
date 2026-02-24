@@ -1,0 +1,437 @@
+import { useState, useEffect, useCallback, useMemo } from "react";
+
+const GOLD = "#C9A227";
+const BG = "#090910";
+const CARD = "#101018";
+const CARD2 = "#151520";
+const BORDER = "#1C1C2E";
+const GREEN = "#22C55E";
+const RED = "#EF4444";
+const AMBER = "#F59E0B";
+const BLUE = "#3B82F6";
+const PURPLE = "#8B5CF6";
+const PINK = "#EC4899";
+const DIM = "#5E5E78";
+const TEXT = "#E2E2EA";
+
+const PULSE_BASE = "/palette/api/pulse"; // via nginx proxy
+
+const CAT_META = {
+  core: { icon: "🏛️", color: BLUE, label: "Core" },
+  extended: { icon: "🔧", color: DIM, label: "Extended" },
+  production: { icon: "🏭", color: GOLD, label: "Production" },
+  forensic: { icon: "🔐", color: GREEN, label: "Forensic" },
+  intelligence: { icon: "🧠", color: PURPLE, label: "Intelligence" },
+  governance: { icon: "⚖️", color: BLUE, label: "Governance" },
+  ecosystem: { icon: "🔗", color: PINK, label: "Ecosystem" },
+};
+
+const STATUS_COLOR = {
+  alive: GREEN,
+  degraded: AMBER,
+  dead: RED,
+  error: RED,
+  unknown: DIM,
+};
+
+function Pulse({ color, size = 8, animate = true }) {
+  return (
+    <span style={{ position: "relative", display: "inline-block", width: size, height: size }}>
+      <span style={{
+        display: "block", width: size, height: size, borderRadius: "50%",
+        background: color, position: "relative", zIndex: 1,
+      }} />
+      {animate && (
+        <span style={{
+          position: "absolute", top: -2, left: -2,
+          width: size + 4, height: size + 4, borderRadius: "50%",
+          background: color, opacity: 0.3,
+          animation: "pulse-ring 2s ease-out infinite",
+        }} />
+      )}
+    </span>
+  );
+}
+
+function Badge({ children, color, bg }) {
+  return (
+    <span style={{
+      display: "inline-flex", alignItems: "center", padding: "1px 6px",
+      borderRadius: 3, fontSize: 9, fontWeight: 700, letterSpacing: "0.04em",
+      color, background: bg || `${color}18`,
+      fontFamily: "'JetBrains Mono', monospace", whiteSpace: "nowrap",
+    }}>
+      {children}
+    </span>
+  );
+}
+
+function ProgressBar({ value, max, color, height = 6 }) {
+  const pct = max > 0 ? (value / max) * 100 : 0;
+  return (
+    <div style={{ height, background: "#1a1a2e", borderRadius: height / 2, overflow: "hidden", flex: 1 }}>
+      <div style={{
+        height: "100%", width: `${pct}%`, background: color,
+        borderRadius: height / 2, transition: "width 0.6s ease",
+      }} />
+    </div>
+  );
+}
+
+function ServiceRow({ svc }) {
+  const color = STATUS_COLOR[svc.status] || DIM;
+  const cat = CAT_META[svc.category] || { icon: "?", color: DIM, label: "?" };
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div onClick={() => setOpen(!open)} style={{
+      display: "flex", flexDirection: "column", gap: 0,
+      background: CARD, border: `1px solid ${open ? `${color}33` : BORDER}`,
+      borderLeft: `3px solid ${color}`, borderRadius: 6, padding: "7px 10px",
+      cursor: "pointer", transition: "all 0.15s",
+    }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+        <Pulse color={color} animate={svc.status === "alive"} />
+        <span style={{ fontSize: 10, color: DIM, fontFamily: "'JetBrains Mono', monospace", width: 38 }}>:{svc.port}</span>
+        <span style={{ fontSize: 12, color: TEXT, fontWeight: 600, flex: 1 }}>{svc.name}</span>
+        <Badge color={cat.color}>{cat.icon} {cat.label}</Badge>
+        <Badge color={color}>{svc.status.toUpperCase()}</Badge>
+        {svc.critical && <Badge color={RED} bg={`${RED}15`}>CRITICAL</Badge>}
+      </div>
+      {open && (
+        <div style={{ marginTop: 6, paddingTop: 6, borderTop: `1px solid ${BORDER}`, fontSize: 10, color: DIM, fontFamily: "'JetBrains Mono', monospace" }}>
+          <div>HTTP {svc.http_code} · systemd: {svc.systemd?.status || "no-unit"}</div>
+          {svc.extra_checks && Object.entries(svc.extra_checks).map(([name, ec]) => (
+            <div key={name} style={{ marginTop: 3 }}>
+              <Pulse color={ec.alive ? (ec.code < 400 ? GREEN : AMBER) : RED} size={6} animate={false} />
+              <span style={{ marginLeft: 6 }}>{name}: {ec.alive ? `HTTP ${ec.code}` : "DOWN"}</span>
+            </div>
+          ))}
+          {svc.snippet && <div style={{ marginTop: 3, color: `${DIM}88`, maxWidth: 500, overflow: "hidden", textOverflow: "ellipsis" }}>{svc.snippet}</div>}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function SprintCard({ num, sprint, color }) {
+  const done = sprint.wires?.filter(w => w.verified).length || 0;
+  const total = sprint.wires?.length || 0;
+  const pct = sprint.pct || 0;
+
+  return (
+    <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderTop: `3px solid ${color}`, borderRadius: 8, padding: "10px 12px" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 6 }}>
+        <span style={{ fontSize: 16, fontWeight: 800, color, fontFamily: "'JetBrains Mono', monospace" }}>S{num}</span>
+        <span style={{ fontSize: 11, fontWeight: 700, color: TEXT }}>{sprint.name}</span>
+        <span style={{ marginLeft: "auto", fontSize: 12, fontWeight: 800, color, fontFamily: "'JetBrains Mono', monospace" }}>{pct}%</span>
+      </div>
+      <ProgressBar value={done} max={total} color={color} />
+      <div style={{ marginTop: 6 }}>
+        {sprint.wires?.map(w => (
+          <div key={w.id} style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 9, fontFamily: "'JetBrains Mono', monospace", lineHeight: 2 }}>
+            <span style={{ color: w.verified ? GREEN : `${RED}88` }}>{w.verified ? "✓" : "○"}</span>
+            <span style={{ color: w.verified ? `${GREEN}cc` : DIM }}>{w.name}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function EventRow({ ev }) {
+  const sevColor = { critical: RED, warning: AMBER, info: BLUE }[ev.severity] || DIM;
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 10, lineHeight: 2, fontFamily: "'JetBrains Mono', monospace" }}>
+      <Pulse color={sevColor} size={5} animate={false} />
+      <span style={{ color: DIM, width: 52, flexShrink: 0 }}>
+        {new Date(ev.timestamp).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })}
+      </span>
+      <span style={{ color: TEXT, flex: 1 }}>{ev.message}</span>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MAIN COMPONENT
+// ═══════════════════════════════════════════════════════════════
+
+export default function LiveOutlook() {
+  const [scan, setScan] = useState(null);
+  const [outlook, setOutlook] = useState(null);
+  const [history, setHistory] = useState(null);
+  const [sentinel, setSentinel] = useState(null);
+  const [error, setError] = useState(null);
+  const [lastRefresh, setLastRefresh] = useState(null);
+  const [autoRefresh, setAutoRefresh] = useState(true);
+  const [view, setView] = useState("services");
+
+  const fetchAll = useCallback(async () => {
+    try {
+      const [scanRes, outlookRes, histRes, sentRes] = await Promise.allSettled([
+        fetch(`${PULSE_BASE}/scan`).then(r => r.json()),
+        fetch(`${PULSE_BASE}/outlook`).then(r => r.json()),
+        fetch(`${PULSE_BASE}/history`).then(r => r.json()),
+        fetch(`${PULSE_BASE}/sentinel`).then(r => r.json()),
+      ]);
+      if (scanRes.status === "fulfilled") setScan(scanRes.value);
+      if (outlookRes.status === "fulfilled") setOutlook(outlookRes.value);
+      if (histRes.status === "fulfilled") setHistory(histRes.value);
+      if (sentRes.status === "fulfilled") setSentinel(sentRes.value);
+      setError(null);
+      setLastRefresh(new Date());
+    } catch (e) {
+      setError(`Pulse unreachable: ${e.message}. Deploy windi_pulse.py on :8109 first.`);
+    }
+  }, []);
+
+  useEffect(() => { fetchAll(); }, [fetchAll]);
+
+  useEffect(() => {
+    if (!autoRefresh) return;
+    const interval = setInterval(fetchAll, 30000);
+    return () => clearInterval(interval);
+  }, [autoRefresh, fetchAll]);
+
+  const summary = scan?.summary || {};
+  const sprintColors = [RED, GOLD, GREEN, PURPLE, BLUE];
+
+  // Sort services: critical first, then by status severity
+  const sortedServices = useMemo(() => {
+    if (!scan?.services) return [];
+    const order = { dead: 0, degraded: 1, error: 2, alive: 3 };
+    return [...scan.services].sort((a, b) => {
+      if (a.critical !== b.critical) return b.critical - a.critical;
+      return (order[a.status] ?? 4) - (order[b.status] ?? 4);
+    });
+  }, [scan]);
+
+  return (
+    <div style={{ background: BG, minHeight: "100vh", color: TEXT, fontFamily: "'Bricolage Grotesque', system-ui, sans-serif", padding: "16px 14px" }}>
+      <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+      <style>{`
+        @keyframes pulse-ring {
+          0% { transform: scale(1); opacity: 0.4; }
+          100% { transform: scale(2); opacity: 0; }
+        }
+      `}</style>
+
+      <div style={{ maxWidth: 960, margin: "0 auto" }}>
+        {/* Header */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <span style={{ fontSize: 28 }}>🐉</span>
+            <div>
+              <h1 style={{ margin: 0, fontSize: 18, fontWeight: 800, color: GOLD }}>WINDI PULSE — LIVE OUTLOOK</h1>
+              <p style={{ margin: 0, fontSize: 10, color: DIM, fontFamily: "'JetBrains Mono', monospace" }}>
+                Ecosystem Health Monitor · {lastRefresh ? `Updated ${lastRefresh.toLocaleTimeString("de-DE")}` : "Loading..."}
+                {autoRefresh && " · Auto-refresh 30s"}
+              </p>
+            </div>
+          </div>
+          <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+            <button onClick={() => setAutoRefresh(!autoRefresh)} style={{
+              padding: "4px 10px", fontSize: 10, fontWeight: 600, border: "none", borderRadius: 4, cursor: "pointer",
+              background: autoRefresh ? `${GREEN}20` : `${RED}20`, color: autoRefresh ? GREEN : RED,
+            }}>
+              {autoRefresh ? "⚡ LIVE" : "⏸ PAUSED"}
+            </button>
+            <button onClick={fetchAll} style={{
+              padding: "4px 10px", fontSize: 10, fontWeight: 600, border: `1px solid ${BORDER}`,
+              borderRadius: 4, cursor: "pointer", background: CARD, color: GOLD,
+            }}>
+              ↻ Refresh
+            </button>
+          </div>
+        </div>
+
+        {/* Error State */}
+        {error && (
+          <div style={{ background: `${AMBER}10`, border: `1px solid ${AMBER}30`, borderRadius: 8, padding: 12, marginBottom: 14 }}>
+            <p style={{ margin: 0, fontSize: 12, color: AMBER }}>⚠️ {error}</p>
+            <p style={{ margin: "6px 0 0", fontSize: 11, color: DIM }}>
+              The Pulse service powers this dashboard. Deploy <code style={{ color: GOLD }}>windi_pulse.py</code> on port :8109 with systemd.
+              Until then, data shown is from the last successful scan.
+            </p>
+          </div>
+        )}
+
+        {/* Dashboard Metrics */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 6, marginBottom: 14 }}>
+          {[
+            { label: "SERVICES", value: summary.total || "—", sub: "registered", color: TEXT },
+            { label: "ALIVE", value: summary.alive || "—", sub: `${summary.health_pct || 0}%`, color: GREEN },
+            { label: "DEGRADED", value: summary.degraded || "0", sub: "partial", color: AMBER },
+            { label: "DEAD", value: summary.dead || "—", sub: "offline", color: RED },
+            { label: "WIRED", value: `${summary.wired || 0}/${summary.total_wires || 0}`, sub: `${summary.wire_pct || 0}%`, color: GOLD },
+            { label: "SENTINEL", value: summary.sentinel_status || "—", sub: sentinel?.invariants || "—", color: summary.sentinel_status === "GREEN" ? GREEN : AMBER },
+          ].map(m => (
+            <div key={m.label} style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 6, padding: "8px 10px", textAlign: "center" }}>
+              <div style={{ fontSize: 18, fontWeight: 800, color: m.color, fontFamily: "'JetBrains Mono', monospace" }}>{m.value}</div>
+              <div style={{ fontSize: 8, color: DIM, fontWeight: 700, letterSpacing: "0.06em" }}>{m.label}</div>
+              <div style={{ fontSize: 9, color: `${m.color}88`, fontFamily: "'JetBrains Mono', monospace" }}>{m.sub}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Dual Progress Bars */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 14 }}>
+          <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 8, padding: "10px 12px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6, fontSize: 10, fontWeight: 700 }}>
+              <span style={{ color: DIM }}>ECOSYSTEM HEALTH</span>
+              <span style={{ color: GREEN, fontFamily: "'JetBrains Mono', monospace" }}>{summary.health_pct || 0}%</span>
+            </div>
+            <ProgressBar value={summary.alive || 0} max={summary.total || 1} color={GREEN} height={8} />
+          </div>
+          <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 8, padding: "10px 12px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6, fontSize: 10, fontWeight: 700 }}>
+              <span style={{ color: DIM }}>PALETTE WIRING</span>
+              <span style={{ color: GOLD, fontFamily: "'JetBrains Mono', monospace" }}>{summary.wire_pct || 0}%</span>
+            </div>
+            <ProgressBar value={summary.wired || 0} max={summary.total_wires || 1} color={GOLD} height={8} />
+          </div>
+        </div>
+
+        {/* View Tabs */}
+        <div style={{ display: "flex", gap: 3, background: CARD, padding: 3, borderRadius: 6, border: `1px solid ${BORDER}`, marginBottom: 14, width: "fit-content" }}>
+          {[
+            { key: "services", label: "🫀 Services" },
+            { key: "sprints", label: "🏃 Sprints" },
+            { key: "events", label: "📋 Memory Loop" },
+            { key: "special", label: "🔬 Deep Checks" },
+          ].map(t => (
+            <button key={t.key} onClick={() => setView(t.key)} style={{
+              padding: "5px 12px", fontSize: 11, fontWeight: 600, border: "none", borderRadius: 4, cursor: "pointer",
+              background: view === t.key ? GOLD : "transparent", color: view === t.key ? BG : DIM,
+            }}>
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        {/* ── Services View ── */}
+        {view === "services" && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            {sortedServices.map(svc => <ServiceRow key={svc.id} svc={svc} />)}
+          </div>
+        )}
+
+        {/* ── Sprints View ── */}
+        {view === "sprints" && outlook?.sprints && (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280, 1fr))", gap: 10 }}>
+            {Object.entries(outlook.sprints).map(([num, sprint], i) => (
+              <SprintCard key={num} num={num} sprint={sprint} color={sprintColors[i] || DIM} />
+            ))}
+          </div>
+        )}
+
+        {/* ── Memory Loop View ── */}
+        {view === "events" && (
+          <div>
+            <h3 style={{ margin: "0 0 8px", fontSize: 13, fontWeight: 700, color: GOLD }}>📋 Memory Loop — Status Changes</h3>
+            {history?.events?.length > 0 ? (
+              <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 8, padding: "10px 12px" }}>
+                {history.events.map((ev, i) => <EventRow key={i} ev={ev} />)}
+              </div>
+            ) : (
+              <p style={{ fontSize: 12, color: DIM }}>No events yet. Changes are detected automatically every {PULSE_BASE ? "60s" : "scan cycle"}.</p>
+            )}
+
+            {history?.trends?.length > 0 && (
+              <>
+                <h3 style={{ margin: "16px 0 8px", fontSize: 13, fontWeight: 700, color: GOLD }}>📈 Health Trend (last {history.trends.length} scans)</h3>
+                <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 8, padding: "10px 12px", display: "flex", gap: 1, alignItems: "flex-end", height: 80 }}>
+                  {history.trends.map((t, i) => {
+                    const total = (t.alive || 0) + (t.dead || 0) + (t.degraded || 0);
+                    const pct = total > 0 ? ((t.alive || 0) / total) * 100 : 0;
+                    return (
+                      <div key={i} style={{
+                        flex: 1, maxWidth: 8,
+                        height: `${pct}%`, minHeight: 2,
+                        background: pct > 80 ? GREEN : pct > 50 ? AMBER : RED,
+                        borderRadius: "2px 2px 0 0", opacity: 0.8,
+                      }} title={`${t.alive}/${total} alive`} />
+                    );
+                  })}
+                </div>
+              </>
+            )}
+          </div>
+        )}
+
+        {/* ── Deep Checks View ── */}
+        {view === "special" && (
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+            {/* PPT Engine */}
+            <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 8, padding: 12 }}>
+              <h4 style={{ margin: "0 0 6px", fontSize: 12, fontWeight: 700, color: GOLD }}>🏭 PPT Engine</h4>
+              {scan?.special?.ppt_engine ? (
+                <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: DIM, lineHeight: 2 }}>
+                  <div>Engine: <span style={{ color: scan.special.ppt_engine.engine_exists ? GREEN : RED }}>{scan.special.ppt_engine.engine_exists ? "✓ Found" : "✗ Missing"}</span></div>
+                  <div>Node.js: <span style={{ color: scan.special.ppt_engine.node_available ? GREEN : RED }}>{scan.special.ppt_engine.node_available ? "✓ Available" : "✗ Missing"}</span></div>
+                  <div>ISPs: <span style={{ color: TEXT }}>{scan.special.ppt_engine.isps?.join(", ") || "none"}</span></div>
+                </div>
+              ) : <p style={{ fontSize: 10, color: DIM }}>No data</p>}
+            </div>
+
+            {/* Wisdom Chain */}
+            <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 8, padding: 12 }}>
+              <h4 style={{ margin: "0 0 6px", fontSize: 12, fontWeight: 700, color: PURPLE }}>🧠 Wisdom Chain</h4>
+              {scan?.special?.wisdom_chain ? (
+                <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: DIM, lineHeight: 2 }}>
+                  <div>DB: <span style={{ color: scan.special.wisdom_chain.exists ? GREEN : RED }}>{scan.special.wisdom_chain.exists ? "✓ Found" : "✗ Missing"}</span></div>
+                  <div>Blocks: <span style={{ color: GOLD }}>{scan.special.wisdom_chain.blocks}</span></div>
+                  {scan.special.wisdom_chain.latest && (
+                    <div>Latest: <span style={{ color: TEXT }}>{scan.special.wisdom_chain.latest.id} ({scan.special.wisdom_chain.latest.namespace})</span></div>
+                  )}
+                </div>
+              ) : <p style={{ fontSize: 10, color: DIM }}>No data</p>}
+            </div>
+
+            {/* Ledger */}
+            <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 8, padding: 12 }}>
+              <h4 style={{ margin: "0 0 6px", fontSize: 12, fontWeight: 700, color: GREEN }}>🔐 Forensic Ledger</h4>
+              {scan?.special?.ledger ? (
+                <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: DIM, lineHeight: 2 }}>
+                  <div>Receipts: <span style={{ color: GOLD }}>{JSON.stringify(scan.special.ledger.receipts)}</span></div>
+                </div>
+              ) : <p style={{ fontSize: 10, color: DIM }}>No data</p>}
+            </div>
+
+            {/* Skills */}
+            <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 8, padding: 12 }}>
+              <h4 style={{ margin: "0 0 6px", fontSize: 12, fontWeight: 700, color: AMBER }}>📦 Skills</h4>
+              {scan?.special?.skills ? (
+                <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: DIM, lineHeight: 2 }}>
+                  <div>Skills dir: <span style={{ color: scan.special.skills.skills_dir ? GREEN : RED }}>{scan.special.skills.skills_dir ? "✓" : "✗"}</span></div>
+                  <div>Product Identity: <span style={{ color: scan.special.skills.product_identity ? GREEN : RED }}>{scan.special.skills.product_identity ? "✓ Loaded" : "✗ Not loaded"}</span></div>
+                </div>
+              ) : <p style={{ fontSize: 10, color: DIM }}>No data</p>}
+            </div>
+
+            {/* Sentinel */}
+            <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 8, padding: 12, gridColumn: "1 / -1" }}>
+              <h4 style={{ margin: "0 0 6px", fontSize: 12, fontWeight: 700, color: BLUE }}>⚖️ Sentinel LAW</h4>
+              {sentinel ? (
+                <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: DIM, lineHeight: 2, display: "flex", gap: 20 }}>
+                  <div>Status: <span style={{ color: sentinel.sentinel_alive ? GREEN : RED }}>{sentinel.sentinel_alive ? "ALIVE" : "DOWN"}</span></div>
+                  <div>I9: <span style={{ color: GREEN }}>{sentinel.i9_status}</span></div>
+                  <div>Invariants: <span style={{ color: GOLD }}>{sentinel.invariants}</span></div>
+                </div>
+              ) : <p style={{ fontSize: 10, color: DIM }}>No data</p>}
+            </div>
+          </div>
+        )}
+
+        {/* Footer */}
+        <div style={{ marginTop: 20, textAlign: "center", fontSize: 9, color: DIM, lineHeight: 1.8 }}>
+          <div style={{ color: GOLD, fontWeight: 700, fontSize: 10 }}>"KI verarbeitet. Der Mensch entscheidet. WINDI garantiert."</div>
+          <div>WINDI Pulse v1.0.0 · Port :8109 · Scan every 60s · Memory Loop active</div>
+          <div style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+            Internal Document — Three Dragons Only 🐉🐉🐉
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
