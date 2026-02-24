@@ -1310,10 +1310,21 @@ def handle_communique_create(body: dict) -> tuple:
     except Exception as e:
         return {"status": "error", "code": "COMMUNIQUE_CREATE_FAILED", "message": str(e), "dragon": "architect"}, 503
 
+def handle_communique_review(comm_id: str) -> tuple:
+    """Proxy POST /api/dragon/communique/review/{id} → Communiqué :8105."""
+    try:
+        req = urllib.request.Request(f"{COMMUNIQUE_API}/api/communique/{comm_id}/review",
+                                       method="POST", headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            data = json.loads(resp.read().decode())
+            return {"status": "in_review", "dragon": "architect", "communique": data}, 200
+    except Exception as e:
+        return {"status": "error", "code": "COMMUNIQUE_REVIEW_FAILED", "message": str(e), "dragon": "architect"}, 503
+
 def handle_communique_publish(comm_id: str) -> tuple:
     """Proxy POST /api/dragon/communique/publish/{id} → Communiqué :8105."""
     try:
-        req = urllib.request.Request(f"{COMMUNIQUE_API}/api/communique/publish/{comm_id}",
+        req = urllib.request.Request(f"{COMMUNIQUE_API}/api/communique/{comm_id}/publish",
                                        method="POST", headers={"Content-Type": "application/json"})
         with urllib.request.urlopen(req, timeout=10) as resp:
             data = json.loads(resp.read().decode())
@@ -1512,6 +1523,11 @@ class DragonHandler(http.server.BaseHTTPRequestHandler):
         # Sprint 2B: Communiqué proxy
         elif path == "/api/dragon/communique/create":
             data, code = handle_communique_create(body)
+            self._json_response(data, code)
+
+        elif path.startswith("/api/dragon/communique/review/"):
+            comm_id = path.split("/")[-1]
+            data, code = handle_communique_review(comm_id)
             self._json_response(data, code)
 
         elif path.startswith("/api/dragon/communique/publish/"):
