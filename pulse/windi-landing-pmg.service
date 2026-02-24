@@ -1,0 +1,15 @@
+[Unit]
+Description=WINDI Landing P/M/G Server
+After=network.target
+
+[Service]
+Type=simple
+User=windi
+Group=windi
+WorkingDirectory=/opt/windi/landing-pmg
+ExecStart=/usr/bin/python3 /opt/windi/landing-pmg/landing_server.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

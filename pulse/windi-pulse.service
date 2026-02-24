@@ -1,0 +1,21 @@
+[Unit]
+Description=WINDI Pulse v1.0.0 — Ecosystem Health Monitor
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=windi
+Group=windi
+WorkingDirectory=/opt/windi/pulse
+ExecStart=/usr/bin/python3 /opt/windi/pulse/windi_pulse.py
+Restart=always
+RestartSec=10
+StandardOutput=append:/opt/windi/logs/pulse.log
+StandardError=append:/opt/windi/logs/pulse.log
+NoNewPrivileges=yes
+ProtectSystem=strict
+ReadWritePaths=/opt/windi/data /opt/windi/logs /opt/windi/pulse
+
+[Install]
+WantedBy=multi-user.target
