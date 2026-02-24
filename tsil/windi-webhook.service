@@ -1,0 +1,41 @@
+[Unit]
+Description=WINDI Paperless Webhook Handler
+Documentation=https://admin.windia4desk.tech/docs/schnittstelle
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=windi
+Group=windi
+WorkingDirectory=/opt/windi/tsil
+
+# Load environment variables
+EnvironmentFile=/opt/windi/tsil/.env
+
+# Main command
+ExecStart=/usr/bin/python3 /opt/windi/tsil/schnittstelle.py webhook-start
+
+# Restart policy: always restart on failure
+Restart=on-failure
+RestartSec=5
+StartLimitBurst=5
+StartLimitIntervalSec=60
+
+# Logging
+StandardOutput=append:/opt/windi/tsil/logs/webhook.log
+StandardError=append:/opt/windi/tsil/logs/webhook.log
+
+# Security hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/opt/windi/tsil /opt/windi/vault /opt/windi/data
+PrivateTmp=true
+
+# Resource limits
+LimitNOFILE=4096
+MemoryMax=256M
+
+[Install]
+WantedBy=multi-user.target

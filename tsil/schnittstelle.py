@@ -940,7 +940,7 @@ class WebhookHandler(BaseHTTPRequestHandler):
     def _handle_submission_completed(self, data: Dict[str, Any], request_id: str) -> Dict[str, Any]:
         """
         Process completed signing submission.
-        
+
         Extracts from Paperless Submission object (per swagger):
           - id: Submission ID
           - submittable_id: Document ID
@@ -948,6 +948,8 @@ class WebhookHandler(BaseHTTPRequestHandler):
           - sealed_pdf: URL to signed document
           - audit_trail_pdf: URL to Paperless audit trail
           - completed_at: completion timestamp
+
+        Auto-downloads sealed documents to /opt/windi/vault/signed/
         """
         submission_id = data.get("id")
         document_id = data.get("submittable_id")
@@ -955,7 +957,58 @@ class WebhookHandler(BaseHTTPRequestHandler):
         audit_url = data.get("audit_trail_pdf")
         completed_at = data.get("completed_at")
 
-        # Generate Virtue Receipt
+        # ── Auto-Download Signed Documents ──
+        vault_dir = Path("/opt/windi/vault/signed")
+        vault_dir.mkdir(parents=True, exist_ok=True)
+
+        download_results = {
+            "sealed_pdf": {"downloaded": False, "local_path": None, "content_hash": None},
+            "audit_trail": {"downloaded": False, "local_path": None, "content_hash": None},
+        }
+
+        # Download sealed PDF
+        if sealed_url and sealed_url.startswith("http"):
+            try:
+                sealed_filename = f"sealed_{submission_id}_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}.pdf"
+                sealed_path = vault_dir / sealed_filename
+                req = urllib.request.Request(sealed_url, headers={"User-Agent": "WINDI-Schnittstelle/1.1"})
+                with urllib.request.urlopen(req, timeout=30) as resp:
+                    pdf_data = resp.read()
+                    sealed_path.write_bytes(pdf_data)
+                    content_hash = hashlib.sha256(pdf_data).hexdigest()
+                    download_results["sealed_pdf"] = {
+                        "downloaded": True,
+                        "local_path": str(sealed_path),
+                        "content_hash": content_hash,
+                        "size_bytes": len(pdf_data),
+                    }
+                    logger.info(f"  [{request_id}] Downloaded sealed PDF: {sealed_filename} ({len(pdf_data)} bytes)")
+            except Exception as e:
+                logger.warning(f"  [{request_id}] Failed to download sealed PDF: {e}")
+                download_results["sealed_pdf"]["error"] = str(e)
+
+        # Download audit trail PDF
+        if audit_url and audit_url.startswith("http"):
+            try:
+                audit_filename = f"audit_{submission_id}_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}.pdf"
+                audit_path = vault_dir / audit_filename
+                req = urllib.request.Request(audit_url, headers={"User-Agent": "WINDI-Schnittstelle/1.1"})
+                with urllib.request.urlopen(req, timeout=30) as resp:
+                    pdf_data = resp.read()
+                    audit_path.write_bytes(pdf_data)
+                    content_hash = hashlib.sha256(pdf_data).hexdigest()
+                    download_results["audit_trail"] = {
+                        "downloaded": True,
+                        "local_path": str(audit_path),
+                        "content_hash": content_hash,
+                        "size_bytes": len(pdf_data),
+                    }
+                    logger.info(f"  [{request_id}] Downloaded audit trail: {audit_filename} ({len(pdf_data)} bytes)")
+            except Exception as e:
+                logger.warning(f"  [{request_id}] Failed to download audit trail: {e}")
+                download_results["audit_trail"]["error"] = str(e)
+
+        # Generate Virtue Receipt (enriched with download info)
         virtue_receipt = {
             "receipt_id": f"VR-SCH-{submission_id}-{secrets.token_hex(4)}",
             "request_id": request_id,
@@ -964,14 +1017,15 @@ class WebhookHandler(BaseHTTPRequestHandler):
             "submission_id": submission_id,
             "document_id": document_id,
             "completed_at": completed_at,
-            "sealed_pdf_hash": hashlib.sha256(
+            "sealed_pdf_url_hash": hashlib.sha256(
                 (sealed_url or "").encode()
             ).hexdigest()[:32],
-            "audit_trail_hash": hashlib.sha256(
+            "audit_trail_url_hash": hashlib.sha256(
                 (audit_url or "").encode()
             ).hexdigest()[:32],
             "sealed_available": bool(sealed_url),
             "audit_trail_available": bool(audit_url),
+            "downloads": download_results,
             "invariants_active": "I1-I9",
             "protocol": "THREE_DRAGONS_v1.1",
             "anchored_at": datetime.now(timezone.utc).isoformat(),
@@ -984,9 +1038,11 @@ class WebhookHandler(BaseHTTPRequestHandler):
             i9_gate=InvariantI9.gate("WEBHOOK_RECEIVE"),
         )
 
+        sealed_dl = "✓" if download_results["sealed_pdf"]["downloaded"] else "✗"
+        audit_dl = "✓" if download_results["audit_trail"]["downloaded"] else "✗"
         logger.info(
             f"  [{request_id}] ✓ Submission {submission_id} completed. "
-            f"Sealed: {bool(sealed_url)}. "
+            f"Sealed: {sealed_dl} Audit: {audit_dl} "
             f"Ledger: {entry_hash[:16]}..."
         )
 
@@ -995,6 +1051,10 @@ class WebhookHandler(BaseHTTPRequestHandler):
             "request_id": request_id,
             "virtue_receipt": virtue_receipt["receipt_id"],
             "ledger_hash": entry_hash,
+            "downloads": {
+                "sealed_pdf": download_results["sealed_pdf"]["downloaded"],
+                "audit_trail": download_results["audit_trail"]["downloaded"],
+            },
         }
 
     def do_GET(self):

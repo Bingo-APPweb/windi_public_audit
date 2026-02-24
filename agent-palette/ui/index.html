@@ -36,7 +36,7 @@ const { useState, useRef, useEffect, useCallback } = React;
 //   - Theme toggle: KLAR ↔ NOIR
 // ═══════════════════════════════════════════════════════════════════════
 
-const V = "0.7.1-D";
+const V = "0.7.2-D";
 
 // ═══════════════════════════════════════════════════════════════════════
 // CONSTITUTIONAL CORE — Invisible but Active
@@ -229,14 +229,31 @@ function chatRespond(chatType, lang, stats, tier) {
 
 function detectLang(text) {
   const t = text.toLowerCase();
-  const words = t.split(/\s+/);
+  const words = t.split(/\s+/).filter(w => w.length > 0);
   let scores = { de:0, en:0, pt:0 };
+  const totalWords = words.length;
   words.forEach(w => {
+    // Skip ambiguous single-char words (a, o, i) — they collide across languages
+    if (LANG_AMBIGUOUS.includes(w)) return;
     for (const [l, markers] of Object.entries(LANG)) {
-      if (markers.includes(w)) scores[l] += (markers.indexOf(w) < 15 ? 1.5 : 1);
+      if (markers.includes(w)) {
+        const idx = markers.indexOf(w);
+        scores[l] += (idx < 15 ? 1.5 : 1);
+      }
     }
   });
+  // Tiebreaker: if scores are very close, count matched words ratio
   const sorted = Object.entries(scores).sort((a,b) => b[1] - a[1]);
+  if (sorted.length >= 2 && sorted[0][1] > 0 && sorted[1][1] > 0) {
+    const diff = sorted[0][1] - sorted[1][1];
+    if (diff < 1.0) {
+      // Too close — add bonus for language with more unique matches
+      const countMatches = (lang) => words.filter(w => !LANG_AMBIGUOUS.includes(w) && LANG[lang].includes(w)).length;
+      const c0 = countMatches(sorted[0][0]);
+      const c1 = countMatches(sorted[1][0]);
+      if (c1 > c0) { sorted[0] = [sorted[1][0], sorted[1][1] + 0.5]; sorted[1] = [sorted[0][0], sorted[0][1]]; }
+    }
+  }
   return sorted[0][1] > 0 ? sorted[0][0] : null;
 }
 
@@ -298,10 +315,12 @@ const DOCS = {
 
 // ── LANG DETECTION ────────────────────────────────────────────────────
 const LANG = {
-  de:["der","die","das","und","für","mit","ein","eine","ist","bitte","erstell","schreib","über","neue","einen","oder","nicht","auch","aber","nach","von","werden","diese","wird","kann","alle","noch","nur","sein","sind","hat","bei","muss","dann","hier","jetzt","sehr"],
-  en:["the","and","for","with","please","create","write","draft","make","about","new","this","that","from","have","will","can","should","would","also","but","not","all","into","been","more","than","its","some","just","most","only","which"],
-  pt:["o","a","os","as","para","com","por","favor","cria","criar","fatura","gerar","escreve","faz","fazer","sobre","novo","nova","uma","que","não","mais","como","dos","das","esta","esse","isso","ser","ter","foi","são","tem","nos","sua","seu","ela","ele","mas","bem"],
+  de:["der","die","das","und","für","mit","ein","eine","ist","bitte","erstell","schreib","über","neue","einen","oder","nicht","auch","aber","nach","von","werden","diese","wird","kann","alle","noch","nur","sein","sind","hat","bei","muss","dann","hier","jetzt","sehr","ich","wir","sie","mein","dein","sein","ihr","uns","dem","den","des","wie","was","wann","warum","wer","wo","schon","immer","gerade","brauche","möchte","könnte","müsste"],
+  en:["the","and","for","with","please","create","write","draft","make","about","new","this","that","from","have","will","can","should","would","also","but","not","all","into","been","more","than","its","some","just","most","only","which","you","do","like","to","on","is","are","it","of","in","my","your","we","they","was","were","be","at","an","or","if","so","up","no","yes","how","what","when","where","who","why","does","did","get","got","go","going","want","need","could","may","might","let","help","any","each","every","very","much","here","there","then","now","still","too","out","over","after","before","based","generate","picture","document","image"],
+  pt:["os","as","para","com","por","favor","cria","criar","fatura","gerar","escreve","faz","fazer","sobre","novo","nova","uma","que","não","mais","como","dos","das","esta","esse","isso","ser","ter","foi","são","tem","nos","sua","seu","ela","ele","mas","bem","também","muito","ainda","então","porque","quando","onde","quem","qual","tudo","nada","cada","outro","já","sempre","agora","depois","antes","entre","aqui"],
 };
+// Single-char words ambiguous across languages — scored separately with low weight
+const LANG_AMBIGUOUS = ["a","o","i"];
 
 // ── ENTITY EXTRACTION ─────────────────────────────────────────────────
 const ENTITY_RX = {
@@ -345,7 +364,7 @@ function parseIntent(text, history = []) {
   const confidence = sorted.length > 0 ? sorted[0][1] : 0.15;
   const ambiguous = sorted.length >= 2 && sorted[0][1] - sorted[1][1] < 0.15;
   let langScores = { de:0, en:0, pt:0 };
-  words.forEach(w => { for (const [l, markers] of Object.entries(LANG)) { if (markers.includes(w)) langScores[l] += (markers.indexOf(w) < 15 ? 1.5 : 1); } });
+  words.forEach(w => { if (LANG_AMBIGUOUS.includes(w)) return; for (const [l, markers] of Object.entries(LANG)) { if (markers.includes(w)) langScores[l] += (markers.indexOf(w) < 15 ? 1.5 : 1); } });
   const langSorted = Object.entries(langScores).sort((a,b) => b[1] - a[1]);
   const lang = langSorted[0][1] > 0 ? langSorted[0][0] : "de";
   const urgencyMap = { critical:["asap","sofort","urgente","emergency","notfall","immediately","kritisch","crítico"], urgent:["urgent","dringend","schnell","rápido","soon","bald","logo"] };
@@ -657,6 +676,7 @@ function Msg({ role, text, result, ts, T, dragon, source, download }) {
       {/* Silent governance: only show seal badge for successful docs */}
       {result && result.type === "success" && <SealBadge result={result} T={T} />}
       {download && <DownloadBtn download={download} T={T} lang={result?.intent?.language||"de"} />}
+      {download && <WisdomBtn download={download} docData={result} T={T} lang={result?.intent?.language||"de"} />}
       {result?.type === "clarification" && result.intent?.clarification?.options && (
         <div style={{ display:"flex", gap:6, marginTop:6, maxWidth:"85%" }}>
           {result.intent.clarification.options.map((o,i) => (
@@ -731,6 +751,88 @@ function DownloadBtn({ download, T, lang }) {
         transition:"all 0.2s"}
     }, "\u{1F4E5} "+(labels[lang]||labels.en)+" ("+download.format.toUpperCase()+", "+(download.size_bytes/1024).toFixed(1)+"KB)")
   );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// Part 2A: Wisdom Candidate Button (🌀)
+// "Feed insights to the Wisdom Protocol"
+// ═══════════════════════════════════════════════════════════════════════════
+function WisdomBtn({ download, docData, T, lang }) {
+  const [status, setStatus] = useState(null);
+  const [showInput, setShowInput] = useState(false);
+  const [insight, setInsight] = useState("");
+
+  if (!download?.success) return null;
+
+  const labels = {
+    de: { btn: "Zur Wisdom", placeholder: "Was ist das Besondere an diesem Dokument?", submit: "Einreichen", success: "Eingereicht!", cancel: "Abbrechen" },
+    en: { btn: "To Wisdom", placeholder: "What's notable about this document?", submit: "Submit", success: "Submitted!", cancel: "Cancel" },
+    pt: { btn: "Para Wisdom", placeholder: "O que há de notável neste documento?", submit: "Enviar", success: "Enviado!", cancel: "Cancelar" },
+  };
+  const L = labels[lang] || labels.en;
+
+  const submitWisdom = async () => {
+    if (!insight.trim()) return;
+    setStatus("submitting");
+    try {
+      const res = await fetch("/palette/api/wisdom/candidate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          doc_serial: download.serial || "WINDI-UNKNOWN",
+          content_hash: download.content_hash || "",
+          insight: insight,
+          category: "insight",
+          source_type: docData?.intent?.doc_type || "document",
+          tier: docData?.forensic?.tier || "MED",
+          metadata: {
+            filename: download.filename,
+            format: download.format,
+            governance_level: download.governance_level,
+          }
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setStatus("success");
+        setTimeout(() => { setStatus(null); setShowInput(false); setInsight(""); }, 2000);
+      } else {
+        setStatus("error");
+      }
+    } catch (e) {
+      console.error("Wisdom submit error:", e);
+      setStatus("error");
+    }
+  };
+
+  if (showInput) {
+    return React.createElement("div", { style: { marginTop: 8, padding: 12, borderRadius: 8, background: T.gold + "08", border: "1px solid " + T.gold + "25" } },
+      React.createElement("div", { style: { fontSize: 10, color: T.gold, marginBottom: 6, fontWeight: 600 } }, "🌀 Wisdom Candidate"),
+      React.createElement("textarea", {
+        value: insight,
+        onChange: e => setInsight(e.target.value),
+        placeholder: L.placeholder,
+        style: { width: "100%", minHeight: 60, padding: 8, borderRadius: 6, border: "1px solid " + T.border, background: T.bg, color: T.text, fontSize: 11, fontFamily: T.font, resize: "vertical" }
+      }),
+      React.createElement("div", { style: { display: "flex", gap: 8, marginTop: 8 } },
+        React.createElement("button", {
+          onClick: submitWisdom,
+          disabled: !insight.trim() || status === "submitting",
+          style: { padding: "6px 14px", borderRadius: 6, border: "none", background: T.gold, color: "#FFF", fontSize: 11, cursor: insight.trim() ? "pointer" : "default", opacity: insight.trim() ? 1 : 0.5 }
+        }, status === "submitting" ? "..." : status === "success" ? "✓ " + L.success : L.submit),
+        React.createElement("button", {
+          onClick: () => { setShowInput(false); setInsight(""); setStatus(null); },
+          style: { padding: "6px 14px", borderRadius: 6, border: "1px solid " + T.border, background: "transparent", color: T.dim, fontSize: 11, cursor: "pointer" }
+        }, L.cancel)
+      )
+    );
+  }
+
+  return React.createElement("button", {
+    onClick: () => setShowInput(true),
+    title: "Submit to Wisdom Protocol",
+    style: { display: "inline-flex", alignItems: "center", gap: 4, padding: "6px 12px", borderRadius: 8, background: T.gold + "08", border: "1px solid " + T.gold + "25", color: T.gold, fontSize: 11, cursor: "pointer", transition: "all 0.2s" }
+  }, "🌀 " + L.btn);
 }
 function Sugs({ onPick, lang, T }) {
   const s = lang === "de" ? ["Erstell einen Brief","Schreib ein Memo","Rechnung erstellen","Wer bist du?"] :
@@ -1053,6 +1155,262 @@ function renderDocTemplate(text, intent, lang, userInput) {
   return { html: null, hasTemplate: false };
 }
 
+// ═══════════════════════════════════════════════════════════════════════════
+// TRUST PANEL — Sovereignty Dashboard
+// "AI processes. Human decides. WINDI guarantees."
+// ═══════════════════════════════════════════════════════════════════════════
+
+function TrustPanel({ sovereignty, T, lang }) {
+  if (!sovereignty) return null;
+
+  const [copied, setCopied] = useState(null);
+  const [showQr, setShowQr] = useState(false);
+
+  const labels = {
+    de: {
+      identity: "IDENTITÄT",
+      integrity: "INTEGRITÄT",
+      ledger: "LEDGER",
+      verification: "VERIFIZIERUNG",
+      governance: "GOVERNANCE",
+      serial: "Serial-Nr.",
+      hash: "SHA-256 Hash",
+      created: "Erstellt",
+      status: "Status",
+      receipt: "Beleg-ID",
+      viewVault: "Im Vault ansehen",
+      downloadQr: "QR herunterladen",
+      verify: "Verifizieren",
+      riskClass: "Risiko",
+      compliance: "Compliance",
+      copied: "Kopiert!",
+      copy: "Kopieren",
+      anchored: "Verankert",
+      pending: "Ausstehend",
+      failed: "Fehlgeschlagen",
+      humanRequired: "Menschliche Entscheidung erforderlich",
+      i9Active: "I9 Aktiv — Keine Autonomie-Eskalation",
+      verified: "VERIFIZIERT"
+    },
+    en: {
+      identity: "IDENTITY",
+      integrity: "INTEGRITY",
+      ledger: "LEDGER",
+      verification: "VERIFICATION",
+      governance: "GOVERNANCE",
+      serial: "Serial ID",
+      hash: "SHA-256 Hash",
+      created: "Created",
+      status: "Status",
+      receipt: "Receipt ID",
+      viewVault: "View in Vault",
+      downloadQr: "Download QR",
+      verify: "Verify",
+      riskClass: "Risk Class",
+      compliance: "Compliance",
+      copied: "Copied!",
+      copy: "Copy",
+      anchored: "Anchored",
+      pending: "Pending",
+      failed: "Failed",
+      humanRequired: "Human Decision Required",
+      i9Active: "I9 Active — No Autonomy Escalation",
+      verified: "VERIFIED"
+    },
+    pt: {
+      identity: "IDENTIDADE",
+      integrity: "INTEGRIDADE",
+      ledger: "LEDGER",
+      verification: "VERIFICAÇÃO",
+      governance: "GOVERNANÇA",
+      serial: "Nº Serial",
+      hash: "Hash SHA-256",
+      created: "Criado",
+      status: "Status",
+      receipt: "ID Recibo",
+      viewVault: "Ver no Vault",
+      downloadQr: "Baixar QR",
+      verify: "Verificar",
+      riskClass: "Risco",
+      compliance: "Compliance",
+      copied: "Copiado!",
+      copy: "Copiar",
+      anchored: "Ancorado",
+      pending: "Pendente",
+      failed: "Falhou",
+      humanRequired: "Decisão Humana Necessária",
+      i9Active: "I9 Ativo — Sem Escalação de Autonomia",
+      verified: "VERIFICADO"
+    }
+  };
+  const L = labels[lang] || labels.en;
+
+  const copyToClipboard = (text, field) => {
+    navigator.clipboard.writeText(text);
+    setCopied(field);
+    setTimeout(() => setCopied(null), 2000);
+  };
+
+  const ledgerStatusColor = sovereignty.ledger_status === "SYNCED" || sovereignty.ledger_status === "OK" ? "#2d8a4e" :
+                            sovereignty.ledger_status === "PENDING" ? "#d4a017" : "#c41e1e";
+  const ledgerStatusText = sovereignty.ledger_status === "SYNCED" || sovereignty.ledger_status === "OK" ? L.anchored :
+                           sovereignty.ledger_status === "PENDING" ? L.pending : L.failed;
+  const ledgerStatusIcon = sovereignty.ledger_status === "SYNCED" || sovereignty.ledger_status === "OK" ? "🟢" :
+                           sovereignty.ledger_status === "PENDING" ? "🟡" : "🔴";
+
+  const riskColors = { R0: "#2d8a4e", R1: "#6b8e4e", R2: "#d4a017", R3: "#d47017", R4: "#c45c1e", R5: "#c41e1e" };
+  const riskColor = riskColors[sovereignty.sge_risk_class] || T.muted;
+
+  const complianceColors = { GOLD: "#d4a017", SILVER: "#a0a0a0", BRONZE: "#cd7f32" };
+  const complianceColor = complianceColors[sovereignty.compliance_tier] || T.muted;
+
+  // Styles
+  const sectionStyle = { marginBottom: 12 };
+  const sectionTitleStyle = { fontSize: 9, fontWeight: 700, letterSpacing: "0.1em", color: T.dim, marginBottom: 6 };
+  const rowStyle = { display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 11, marginBottom: 4 };
+  const labelStyle = { color: T.muted, fontSize: 10 };
+  const valueStyle = { fontFamily: T.mono, fontSize: 10, color: T.text };
+  const copyBtnStyle = { background: "none", border: "none", color: T.muted, cursor: "pointer", fontSize: 10, padding: "2px 4px", marginLeft: 4 };
+  const hashStyle = { fontFamily: T.mono, fontSize: 9, color: T.text, wordBreak: "break-all", background: T.bg, padding: "4px 6px", borderRadius: 4, border: `1px solid ${T.border}` };
+  const badgeStyle = (color) => ({ display: "inline-block", padding: "2px 8px", borderRadius: 4, fontSize: 9, fontWeight: 600, background: color + "15", color: color, border: `1px solid ${color}40` });
+  const linkBtnStyle = { display: "inline-flex", alignItems: "center", gap: 4, padding: "4px 10px", borderRadius: 6, background: T.gold + "10", border: `1px solid ${T.gold}30`, color: T.gold, fontSize: 9, textDecoration: "none", cursor: "pointer", fontFamily: T.mono };
+
+  return React.createElement("div", {
+    style: {
+      background: T.card,
+      borderRadius: 8,
+      border: `1px solid ${T.border}`,
+      padding: 12,
+      marginBottom: 12,
+      boxShadow: `0 2px 8px rgba(0,0,0,${T.bg === "#0a0a0a" ? "0.3" : "0.05"})`
+    }
+  },
+    // Header
+    React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, marginBottom: 12, paddingBottom: 8, borderBottom: `1px solid ${T.border}` } },
+      React.createElement("span", { style: { fontSize: 16 } }, "🛡️"),
+      React.createElement("span", { style: { fontSize: 11, fontWeight: 700, color: T.gold, letterSpacing: "0.05em" } }, "SOVEREIGNTY PROOF"),
+      React.createElement("span", { style: badgeStyle("#2d8a4e") }, "✓ " + L.verified)
+    ),
+
+    // I9 Warning (if active)
+    sovereignty.i9_active && React.createElement("div", {
+      style: {
+        background: "#c41e1e10",
+        border: "1px solid #c41e1e30",
+        borderRadius: 6,
+        padding: "8px 10px",
+        marginBottom: 12,
+        display: "flex",
+        alignItems: "center",
+        gap: 8
+      }
+    },
+      React.createElement("span", { style: { fontSize: 14 } }, "⚖️"),
+      React.createElement("div", null,
+        React.createElement("div", { style: { fontSize: 10, fontWeight: 700, color: "#c41e1e" } }, L.humanRequired),
+        React.createElement("div", { style: { fontSize: 9, color: T.muted } }, L.i9Active)
+      )
+    ),
+
+    // IDENTITY Section
+    React.createElement("div", { style: sectionStyle },
+      React.createElement("div", { style: sectionTitleStyle }, "📋 " + L.identity),
+      React.createElement("div", { style: rowStyle },
+        React.createElement("span", { style: labelStyle }, L.serial),
+        React.createElement("div", { style: { display: "flex", alignItems: "center" } },
+          React.createElement("span", { style: { ...valueStyle, fontWeight: 600, color: T.gold } }, sovereignty.serial_id),
+          React.createElement("button", {
+            style: copyBtnStyle,
+            onClick: () => copyToClipboard(sovereignty.serial_id, "serial"),
+            title: L.copy
+          }, copied === "serial" ? "✓" : "📋")
+        )
+      ),
+      React.createElement("div", { style: rowStyle },
+        React.createElement("span", { style: labelStyle }, L.created),
+        React.createElement("span", { style: valueStyle }, new Date(sovereignty.created_at).toLocaleString(lang === "de" ? "de-DE" : lang === "pt" ? "pt-BR" : "en-US"))
+      )
+    ),
+
+    // INTEGRITY Section
+    React.createElement("div", { style: sectionStyle },
+      React.createElement("div", { style: sectionTitleStyle }, "🔐 " + L.integrity),
+      React.createElement("div", { style: { marginBottom: 6 } },
+        React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 } },
+          React.createElement("span", { style: labelStyle }, L.hash),
+          React.createElement("button", {
+            style: copyBtnStyle,
+            onClick: () => copyToClipboard(sovereignty.sha256_hash, "hash"),
+            title: L.copy
+          }, copied === "hash" ? "✓ " + L.copied : "📋 " + L.copy)
+        ),
+        React.createElement("div", { style: hashStyle }, sovereignty.sha256_hash)
+      )
+    ),
+
+    // LEDGER Section
+    React.createElement("div", { style: sectionStyle },
+      React.createElement("div", { style: sectionTitleStyle }, "⛓️ " + L.ledger),
+      React.createElement("div", { style: rowStyle },
+        React.createElement("span", { style: labelStyle }, L.status),
+        React.createElement("span", { style: { display: "flex", alignItems: "center", gap: 4 } },
+          React.createElement("span", null, ledgerStatusIcon),
+          React.createElement("span", { style: { ...valueStyle, color: ledgerStatusColor, fontWeight: 600 } }, ledgerStatusText)
+        )
+      ),
+      React.createElement("div", { style: rowStyle },
+        React.createElement("span", { style: labelStyle }, L.receipt),
+        React.createElement("span", { style: valueStyle }, sovereignty.ledger_receipt_id)
+      ),
+      React.createElement("a", {
+        href: sovereignty.vault_url,
+        target: "_blank",
+        style: { ...linkBtnStyle, marginTop: 6 }
+      }, "🔍 " + L.viewVault)
+    ),
+
+    // VERIFICATION Section (QR)
+    React.createElement("div", { style: sectionStyle },
+      React.createElement("div", { style: sectionTitleStyle }, "✅ " + L.verification),
+      React.createElement("div", { style: { display: "flex", gap: 8, flexWrap: "wrap" } },
+        sovereignty.qr_image_base64 && React.createElement("button", {
+          onClick: () => setShowQr(!showQr),
+          style: linkBtnStyle
+        }, showQr ? "🔼 Hide QR" : "📱 Show QR"),
+        React.createElement("a", {
+          href: sovereignty.verify_url,
+          target: "_blank",
+          style: linkBtnStyle
+        }, "🔗 " + L.verify)
+      ),
+      showQr && sovereignty.qr_image_base64 && React.createElement("div", {
+        style: { marginTop: 10, textAlign: "center", padding: 12, background: "#FDFBF5", borderRadius: 8, border: `1px solid ${T.border}` }
+      },
+        React.createElement("img", {
+          src: `data:image/png;base64,${sovereignty.qr_image_base64}`,
+          alt: "Verification QR",
+          style: { width: 120, height: 120 }
+        }),
+        React.createElement("div", { style: { fontSize: 8, color: "#666", marginTop: 6, fontFamily: T.mono } }, sovereignty.short_hash)
+      )
+    ),
+
+    // GOVERNANCE Section
+    React.createElement("div", { style: { ...sectionStyle, marginBottom: 0 } },
+      React.createElement("div", { style: sectionTitleStyle }, "⚖️ " + L.governance),
+      React.createElement("div", { style: { display: "flex", gap: 8, flexWrap: "wrap" } },
+        React.createElement("span", { style: badgeStyle(riskColor) }, L.riskClass + ": " + sovereignty.sge_risk_class),
+        React.createElement("span", { style: badgeStyle(complianceColor) }, L.compliance + ": " + sovereignty.compliance_tier)
+      )
+    ),
+
+    // Footer
+    React.createElement("div", { style: { marginTop: 12, paddingTop: 8, borderTop: `1px solid ${T.border}`, fontSize: 8, color: T.muted, fontStyle: "italic", textAlign: "center" } },
+      "KI verarbeitet. Der Mensch entscheidet. WINDI garantiert. 🐉"
+    )
+  );
+}
+
 // ── DocumentPanel: Slide-out formatted document preview ──────────────
 function DocumentPanel({ doc, onClose, T, lang }) {
   if (!doc) return null;
@@ -1168,17 +1526,22 @@ function DocumentPanel({ doc, onClose, T, lang }) {
       ),
       React.createElement("button", { onClick:onClose, style: { background:"none", border:"none", color:T.muted, cursor:"pointer", fontSize:16, padding:"4px 8px" } }, "\u2715")
     ),
-    // Download bar
-    doc.download?.success && React.createElement("div", { style: { padding:"8px 16px", borderBottom:"1px solid "+T.border, display:"flex", gap:8, background:T.card, flexShrink:0 } },
+    // Download bar + Wisdom button
+    doc.download?.success && React.createElement("div", { style: { padding:"8px 16px", borderBottom:"1px solid "+T.border, display:"flex", gap:8, alignItems:"center", flexWrap:"wrap", background:T.card, flexShrink:0 } },
       React.createElement("a", {
         href:"/palette"+doc.download.download_url, target:"_blank",
         style: { display:"inline-flex", alignItems:"center", gap:6, padding:"6px 16px", borderRadius:8, background:T.gold+"15", border:"1px solid "+T.gold+"35", color:T.gold, fontSize:11, fontFamily:T.mono, textDecoration:"none", fontWeight:600 }
-      }, "\u{1F4E5} "+L.download+" "+(doc.download.format||"docx").toUpperCase()+" ("+((doc.download.size_bytes||0)/1024).toFixed(1)+"KB)")
+      }, "\u{1F4E5} "+L.download+" "+(doc.download.format||"docx").toUpperCase()+" ("+((doc.download.size_bytes||0)/1024).toFixed(1)+"KB)"),
+      React.createElement(WisdomBtn, { download: doc.download, docData: doc, T: T, lang: lang })
     ),
     // Tip
     React.createElement("div", { style: { padding:"6px 16px", borderBottom:"1px solid "+T.border, fontSize:10, color:T.dim, background:T.gold+"05", flexShrink:0 } }, "\u{1F4A1} "+L.tip),
-    // Forensic block — embedded governance proof
-    doc.forensic && React.createElement("div", { style: { padding:"10px 16px", borderBottom:"1px solid "+T.border, background:T.card, flexShrink:0 } },
+    // TRUST PANEL — Sovereignty Dashboard (prominently displayed)
+    doc.download?.sovereignty && React.createElement("div", { style: { padding:"12px 16px", borderBottom:"1px solid "+T.border, background:T.bg, flexShrink:0, maxHeight:350, overflowY:"auto" } },
+      React.createElement(TrustPanel, { sovereignty: doc.download.sovereignty, T: T, lang: lang })
+    ),
+    // Forensic block — embedded governance proof (legacy, collapsible)
+    doc.forensic && !doc.download?.sovereignty && React.createElement("div", { style: { padding:"10px 16px", borderBottom:"1px solid "+T.border, background:T.card, flexShrink:0 } },
       React.createElement("details", { style: { fontSize:10, fontFamily:T.mono } },
         React.createElement("summary", { style: { cursor:"pointer", color:T.gold, fontWeight:600, fontSize:10, letterSpacing:"0.04em" } }, "\u{1F4DC} WINDI FORENSIC RECEIPT"),
         React.createElement("div", { style: { marginTop:8, padding:10, borderRadius:6, background:T.bg, border:"1px solid "+T.border, lineHeight:1.8, fontSize:9, color:T.dim } },
@@ -1296,8 +1659,17 @@ function WINDIAgentSuite() {
   const [themeName, setThemeName] = useState("KLAR");
   const [isLoading, setIsLoading] = useState(false);
   const [activeDragon, setActiveDragon] = useState(null);
+  // Multimodal states
+  const [showOcrModal, setShowOcrModal] = useState(false);
+  const [ocrResult, setOcrResult] = useState(null);
+  const [ocrLoading, setOcrLoading] = useState(false);
+  const [showUrlModal, setShowUrlModal] = useState(false);
+  const [urlInput, setUrlInput] = useState("");
+  const [urlResult, setUrlResult] = useState(null);
+  const [urlLoading, setUrlLoading] = useState(false);
   const chatRef = useRef(null);
   const inputRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   const T = THEMES[themeName];
 
@@ -1441,6 +1813,70 @@ function WINDIAgentSuite() {
     setIsLoading(false);
   }, [input, tier, intentHistory, isLoading, msgs]);
 
+  // ── OCR Image Upload Handler ──
+  const handleOcrUpload = useCallback(async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setOcrLoading(true);
+    setShowOcrModal(true);
+    setOcrResult(null);
+
+    const reader = new FileReader();
+    reader.onload = async () => {
+      try {
+        const base64 = reader.result.split(',')[1];
+        const res = await fetch("/palette/api/multimodal/ocr", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ image: base64, language: "deu+eng+por" })
+        });
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+        }
+        const data = await res.json();
+        setOcrResult(data);
+      } catch (err) {
+        setOcrResult({ error: err.message || "OCR processing failed" });
+      } finally {
+        setOcrLoading(false);
+      }
+    };
+    reader.onerror = () => {
+      setOcrResult({ error: "Failed to read file" });
+      setOcrLoading(false);
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  }, []);
+
+  // ── Insert OCR text into chat ──
+  const insertOcrText = useCallback(() => {
+    if (ocrResult?.text) {
+      setInput(prev => prev + (prev ? "\n" : "") + ocrResult.text);
+      setShowOcrModal(false);
+      inputRef.current?.focus();
+    }
+  }, [ocrResult]);
+
+  // ── URL Verification Handler ──
+  const handleUrlVerify = useCallback(async () => {
+    if (!urlInput.trim()) return;
+    setUrlLoading(true);
+    setUrlResult(null);
+    try {
+      const res = await fetch("/palette/api/multimodal/verify-url", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url: urlInput.trim() })
+      });
+      const data = await res.json();
+      setUrlResult(data);
+    } catch (err) {
+      setUrlResult({ error: err.message });
+    }
+    setUrlLoading(false);
+  }, [urlInput]);
+
   return (
     <div style={{ height:"100vh", display:"flex", flexDirection:"column", background:T.bg, color:T.text, fontFamily:T.font, overflow:"hidden", transition:"background 0.3s, color 0.3s" }}>
       {/* Header — Clean, professional */}
@@ -1517,10 +1953,15 @@ function WINDIAgentSuite() {
                 placeholder={lang==="de"?"Schreib los — Frage, Dokument, was auch immer...":lang==="pt"?"Escreve aí — pergunta, documento, o que for...":"Write anything — question, document, whatever..."}
                 rows={2} style={{ flex:1, padding:"10px 14px", borderRadius:12, border:`1px solid ${T.border}`, background:T.input, color:T.text, fontSize:13.5, fontFamily:T.font, resize:"none", outline:"none", lineHeight:1.5, transition:"border-color 0.2s" }}
                 onFocus={e=>e.target.style.borderColor=T.gold+"80"} onBlur={e=>e.target.style.borderColor=T.border} />
+              {/* Image OCR Button */}
+              <input ref={fileInputRef} type="file" accept="image/*" onChange={handleOcrUpload} style={{ display:"none" }} />
+              <button onClick={()=>fileInputRef.current?.click()} title={lang==="de"?"Bild für OCR":lang==="pt"?"Imagem para OCR":"Image for OCR"} style={{ width:42, height:42, borderRadius:10, border:`1px solid ${T.border}`, background:T.hover, color:T.muted, fontSize:16, cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>📷</button>
+              {/* URL Verify Button */}
+              <button onClick={()=>setShowUrlModal(true)} title={lang==="de"?"URL prüfen":lang==="pt"?"Verificar URL":"Verify URL"} style={{ width:42, height:42, borderRadius:10, border:`1px solid ${T.border}`, background:T.hover, color:T.muted, fontSize:16, cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>🔗</button>
               <button onClick={()=>send()} disabled={!input.trim() || isLoading} style={{ width:42, height:42, borderRadius:10, border:"none", background:input.trim()?`linear-gradient(135deg,${T.gold},${T.goldDim})`:T.hover, color:input.trim()?(themeName==="KLAR"?"#FFF":T.bg):T.muted, fontSize:16, cursor:input.trim()?"pointer":"default", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, fontWeight:700 }}>→</button>
             </div>
             <div style={{ display:"flex", justifyContent:"space-between", marginTop:5, fontSize:9, color:T.muted, fontFamily:T.mono }}>
-              <span>Enter = {lang==="de"?"senden":lang==="pt"?"enviar":"send"} · Shift+Enter = {lang==="de"?"Zeile":lang==="pt"?"linha":"line"}</span>
+              <span>📷 OCR · 🔗 URL · Enter = {lang==="de"?"senden":lang==="pt"?"enviar":"send"}</span>
               <span>v{V}</span>
             </div>
           </div>
@@ -1528,6 +1969,85 @@ function WINDIAgentSuite() {
         {activeDoc && <DocumentPanel doc={activeDoc} onClose={()=>setActiveDoc(null)} T={T} lang={lang} />}
             <GovPanel msgs={msgs} tier={tier} stats={stats} T={T} />
       </div>
+
+      {/* OCR Modal */}
+      {showOcrModal && (
+        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.7)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:1000 }} onClick={()=>setShowOcrModal(false)}>
+          <div style={{ background:T.card, borderRadius:16, padding:24, maxWidth:600, width:"90%", maxHeight:"80vh", overflow:"auto", border:`1px solid ${T.border}` }} onClick={e=>e.stopPropagation()}>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
+              <span style={{ fontSize:16, fontWeight:600, color:T.gold }}>📷 OCR — {lang==="de"?"Texterkennung":lang==="pt"?"Reconhecimento de Texto":"Text Recognition"}</span>
+              <button onClick={()=>setShowOcrModal(false)} style={{ background:"none", border:"none", color:T.muted, fontSize:20, cursor:"pointer" }}>×</button>
+            </div>
+            {ocrLoading ? (
+              <div style={{ textAlign:"center", padding:40, color:T.muted }}>
+                <div style={{ fontSize:24, marginBottom:8 }}>⏳</div>
+                {lang==="de"?"Analysiere Bild...":lang==="pt"?"Analisando imagem...":"Analyzing image..."}
+              </div>
+            ) : ocrResult?.error ? (
+              <div style={{ color:"#c41e1e", padding:16, background:"rgba(196,30,30,0.1)", borderRadius:8, fontSize:13 }}>
+                ❌ {ocrResult.error}
+              </div>
+            ) : ocrResult?.text ? (
+              <div>
+                <div style={{ background:T.input, borderRadius:8, padding:14, fontSize:13, lineHeight:1.6, maxHeight:300, overflow:"auto", whiteSpace:"pre-wrap", marginBottom:16, border:`1px solid ${T.border}` }}>
+                  {ocrResult.text}
+                </div>
+                <div style={{ display:"flex", gap:8, justifyContent:"flex-end" }}>
+                  <button onClick={()=>setShowOcrModal(false)} style={{ padding:"8px 16px", borderRadius:8, border:`1px solid ${T.border}`, background:"none", color:T.muted, cursor:"pointer" }}>
+                    {lang==="de"?"Abbrechen":lang==="pt"?"Cancelar":"Cancel"}
+                  </button>
+                  <button onClick={insertOcrText} style={{ padding:"8px 16px", borderRadius:8, border:"none", background:T.gold, color:themeName==="KLAR"?"#FFF":T.bg, cursor:"pointer", fontWeight:600 }}>
+                    ✓ {lang==="de"?"Text einfügen":lang==="pt"?"Inserir texto":"Insert text"}
+                  </button>
+                </div>
+                {ocrResult.confidence && <div style={{ marginTop:12, fontSize:10, color:T.muted, fontFamily:T.mono }}>Confidence: {(ocrResult.confidence*100).toFixed(1)}%</div>}
+              </div>
+            ) : (
+              <div style={{ textAlign:"center", padding:40, color:T.muted }}>
+                {lang==="de"?"Bild auswählen...":lang==="pt"?"Selecionar imagem...":"Select image..."}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* URL Verification Modal */}
+      {showUrlModal && (
+        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.7)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:1000 }} onClick={()=>setShowUrlModal(false)}>
+          <div style={{ background:T.card, borderRadius:16, padding:24, maxWidth:600, width:"90%", maxHeight:"80vh", overflow:"auto", border:`1px solid ${T.border}` }} onClick={e=>e.stopPropagation()}>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
+              <span style={{ fontSize:16, fontWeight:600, color:T.gold }}>🔗 URL — {lang==="de"?"Verifizierung":lang==="pt"?"Verificação":"Verification"}</span>
+              <button onClick={()=>setShowUrlModal(false)} style={{ background:"none", border:"none", color:T.muted, fontSize:20, cursor:"pointer" }}>×</button>
+            </div>
+            <div style={{ display:"flex", gap:8, marginBottom:16 }}>
+              <input value={urlInput} onChange={e=>setUrlInput(e.target.value)} placeholder="https://..."
+                style={{ flex:1, padding:"10px 14px", borderRadius:8, border:`1px solid ${T.border}`, background:T.input, color:T.text, fontSize:13, outline:"none" }}
+                onKeyDown={e=>{if(e.key==="Enter")handleUrlVerify();}} />
+              <button onClick={handleUrlVerify} disabled={urlLoading || !urlInput.trim()} style={{ padding:"10px 20px", borderRadius:8, border:"none", background:T.gold, color:themeName==="KLAR"?"#FFF":T.bg, cursor:urlInput.trim()?"pointer":"default", fontWeight:600, opacity:urlInput.trim()?1:0.5 }}>
+                {urlLoading ? "..." : "→"}
+              </button>
+            </div>
+            {urlResult?.error ? (
+              <div style={{ color:"#c41e1e", padding:16, background:"rgba(196,30,30,0.1)", borderRadius:8, fontSize:13 }}>
+                ❌ {urlResult.error}
+              </div>
+            ) : urlResult?.title ? (
+              <div style={{ background:T.input, borderRadius:8, padding:16, border:`1px solid ${T.border}` }}>
+                <div style={{ fontWeight:600, fontSize:14, marginBottom:8 }}>{urlResult.title}</div>
+                {urlResult.description && <div style={{ fontSize:13, color:T.muted, lineHeight:1.5, marginBottom:12 }}>{urlResult.description}</div>}
+                <div style={{ fontSize:10, color:T.dim, fontFamily:T.mono }}>
+                  {urlResult.content_type && <span style={{ marginRight:12 }}>Type: {urlResult.content_type}</span>}
+                  {urlResult.status_code && <span>Status: {urlResult.status_code}</span>}
+                </div>
+                <button onClick={()=>{setInput(prev=>prev+(prev?"\n":"")+`[${urlResult.title}](${urlInput})`);setShowUrlModal(false);inputRef.current?.focus();}}
+                  style={{ marginTop:12, padding:"8px 16px", borderRadius:8, border:"none", background:T.gold, color:themeName==="KLAR"?"#FFF":T.bg, cursor:"pointer", fontWeight:600, fontSize:12 }}>
+                  ✓ {lang==="de"?"Link einfügen":lang==="pt"?"Inserir link":"Insert link"}
+                </button>
+              </div>
+            ) : null}
+          </div>
+        </div>
+      )}
 
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
