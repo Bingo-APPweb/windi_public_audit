@@ -239,24 +239,26 @@ SERVICES = [
 # ═══════════════════════════════════════════════════════════════
 
 WIRING_MAP = [
-    {"id": "W01", "name": "PDF Export via Palette",         "service": "export-engine",  "route": "/api/palette/export/pdf",    "sprint": 1, "status": "pending"},
-    {"id": "W02", "name": "DOCX Export via Palette",        "service": "export-engine",  "route": "/api/palette/export/docx",   "sprint": 1, "status": "pending"},
-    {"id": "W03", "name": "PPTX Export via Palette",        "service": "ppt-engine",     "route": "/api/palette/export/pptx",   "sprint": 1, "status": "pending"},
-    {"id": "W04", "name": "Ledger Seal from Palette",       "service": "ledger",         "route": "/api/palette/seal",          "sprint": 1, "status": "pending"},
-    {"id": "W05", "name": "Wave1 N1-N4 Pipeline",           "service": "export-engine",  "route": "/api/palette/seal-export",   "sprint": 1, "status": "pending"},
-    {"id": "W06", "name": "Paperless Signature",            "service": "bridge",         "route": "/api/palette/sign",          "sprint": 2, "status": "pending"},
-    {"id": "W07", "name": "Vault Storage",                  "service": "vault",          "route": "/api/palette/vault",         "sprint": 2, "status": "pending"},
-    {"id": "W08", "name": "OCR Multimodal",                 "service": "palette",        "route": "/api/multimodal/ocr",        "sprint": 3, "status": "pending"},
-    {"id": "W09", "name": "Wisdom Chain",                   "service": "palette",        "route": "/api/wisdom/candidate",      "sprint": 3, "status": "pending"},
-    {"id": "W10", "name": "Product Identity Skill",         "service": "palette",        "route": "skill-load",                 "sprint": 3, "status": "pending"},
-    {"id": "W11", "name": "Constitutional Panel",           "service": "palette",        "route": "/api/constitution",          "sprint": 3, "status": "pending"},
-    {"id": "W12", "name": "Compliance Passport API",        "service": "palette",        "route": "/api/compliance/passport",   "sprint": 3, "status": "pending"},
-    {"id": "W13", "name": "Sentinel Status in Palette",     "service": "sentinel-law",   "route": "/api/sentinel/status",       "sprint": 4, "status": "pending"},
-    {"id": "W14", "name": "Communiqué from Palette",        "service": "communique",     "route": "/api/palette/communique",    "sprint": 4, "status": "pending"},
-    {"id": "W15", "name": "ISP Live API Fetch",             "service": "governance",     "route": "/api/isp/list",              "sprint": 4, "status": "pending"},
-    {"id": "W16", "name": "XLSX Export",                    "service": "new",            "route": "/api/palette/export/xlsx",   "sprint": 4, "status": "pending"},
-    {"id": "W17", "name": "Dragon Server systemd",          "service": "palette",        "route": "systemd",                    "sprint": 0, "status": "pending"},
-    {"id": "W18", "name": "Chat Persistence",               "service": "palette",        "route": "/api/palette/sessions",      "sprint": 4, "status": "pending"},
+    # Sprint 0: Dragon Server
+    {"id": "W00", "name": "Dragon Server Health",           "service": "palette",        "route": "/api/dragon/health",         "sprint": 0, "status": "pending"},
+    # Sprint 1: Document Production
+    {"id": "W01", "name": "PDF via Dragon",                 "service": "palette",        "route": "/api/dragon/generate/pdf",   "sprint": 1, "status": "pending"},
+    {"id": "W02", "name": "DOCX via Dragon",                "service": "palette",        "route": "/api/dragon/generate/docx",  "sprint": 1, "status": "pending"},
+    {"id": "W03", "name": "PPTX via Dragon",                "service": "palette",        "route": "/api/dragon/generate/pptx",  "sprint": 1, "status": "pending"},
+    {"id": "W04", "name": "XLSX via Dragon",                "service": "palette",        "route": "/api/dragon/generate/xlsx",  "sprint": 1, "status": "pending"},
+    {"id": "W05", "name": "Seal Pipeline",                  "service": "palette",        "route": "/api/dragon/seal",           "sprint": 1, "status": "pending"},
+    {"id": "W06", "name": "Ledger Integration",             "service": "ledger",         "route": "/health",                    "sprint": 1, "status": "pending"},
+    # Sprint 2: Seal & Sign
+    {"id": "W07", "name": "Paperless Schnittstelle",        "service": "schnittstelle",  "route": "/health",                    "sprint": 2, "status": "pending"},
+    {"id": "W08", "name": "Vault Storage",                  "service": "vault",          "route": "/health",                    "sprint": 2, "status": "pending"},
+    {"id": "W09", "name": "Communiqué via Dragon",          "service": "palette",        "route": "/api/dragon/communique/list","sprint": 2, "status": "pending"},
+    # Sprint 3: Intelligence
+    {"id": "W10", "name": "OCR Multimodal",                 "service": "palette",        "route": "/api/dragon/ocr",            "sprint": 3, "status": "pending"},
+    {"id": "W11", "name": "Product Identity (ISP)",         "service": "palette",        "route": "skill-load",                 "sprint": 3, "status": "pending"},
+    {"id": "W12", "name": "Command Bridge",                 "service": "bridge",         "route": "/health",                    "sprint": 3, "status": "pending"},
+    # Sprint 4: Ecosystem
+    {"id": "W13", "name": "Sentinel LAW",                   "service": "sentinel-law",   "route": "/health",                    "sprint": 4, "status": "pending"},
+    {"id": "W14", "name": "Outlook Status API",             "service": "palette",        "route": "/api/dragon/outlook/status", "sprint": 4, "status": "pending"},
 ]
 
 # ═══════════════════════════════════════════════════════════════
@@ -521,19 +523,34 @@ def full_scan():
     ledger_stats = check_ledger_stats()
     skills_status = check_skills()
 
-    # Wire status check
+    # Wire status check - map services to ports
+    SERVICE_PORTS = {
+        "palette": 8108,
+        "ledger": 8101,
+        "vault": 8106,
+        "schnittstelle": 8095,
+        "bridge": 8097,
+        "sentinel-law": 8102,
+        "governance": 8080,
+        "export-engine": 8103,
+        "communique": 8105,
+    }
+
     wired_count = 0
     pending_count = 0
     wire_results = []
     for w in WIRING_MAP:
+        port = SERVICE_PORTS.get(w["service"], 8108)
+        route = w["route"]
+
         # Check if the route actually responds
-        if w["route"].startswith("/api/"):
-            wc = check_port(8108, w["route"])
+        if route.startswith("/api/") or route.startswith("/health"):
+            wc = check_port(port, route)
             is_wired = wc["alive"] and wc["code"] < 404
-        elif w["route"] == "systemd":
+        elif route == "systemd":
             sc = check_systemd("windi-palette")
             is_wired = sc.get("status") == "active"
-        elif w["route"] == "skill-load":
+        elif route == "skill-load":
             is_wired = skills_status.get("product_identity", False)
         else:
             is_wired = False
@@ -680,31 +697,67 @@ class PulseHandler(BaseHTTPRequestHandler):
                     result = full_scan()
                     self._json_response(result)
 
-        # ── Outlook (Sprint Progress) ──
+        # ── Outlook (Sprint Progress) — now fetches from Dragon as source of truth ──
         elif path == "/api/pulse/outlook":
-            with _scan_lock:
-                scan = _last_scan or full_scan()
+            # Fetch from Dragon Outlook API as the source of truth
+            try:
+                import urllib.request
+                req = urllib.request.Request("http://127.0.0.1:8108/api/dragon/outlook/status")
+                with urllib.request.urlopen(req, timeout=10) as resp:
+                    dragon_outlook = json.loads(resp.read().decode())
 
-            sprints_summary = {}
-            for sprint_num, sprint_data in scan["sprints"].items():
-                wires = sprint_data["wires"]
-                done = sum(1 for w in wires if w["verified"])
-                total = len(wires)
-                sprints_summary[sprint_num] = {
-                    "name": sprint_data["name"],
-                    "progress": f"{done}/{total}",
-                    "pct": round((done / total) * 100) if total else 0,
-                    "status": "complete" if done == total else "in-progress" if done > 0 else "pending",
-                    "wires": wires,
-                }
+                # Transform Dragon Outlook format to Pulse format
+                sprints_summary = {}
+                for sprint_num, sprint_data in dragon_outlook.get("sprints", {}).items():
+                    features = sprint_data.get("features", [])
+                    wired_count = sum(1 for fid in features if dragon_outlook["features"].get(fid, {}).get("status") == "WIRED")
+                    total = len(features)
+                    sprints_summary[sprint_num] = {
+                        "name": sprint_data["name"],
+                        "progress": f"{wired_count}/{total}",
+                        "pct": round((wired_count / total) * 100) if total else 0,
+                        "status": "complete" if wired_count == total else "in-progress" if wired_count > 0 else "pending",
+                        "wires": [
+                            {"id": fid, "name": dragon_outlook["features"][fid]["name"], "verified": dragon_outlook["features"][fid]["status"] == "WIRED"}
+                            for fid in features if fid in dragon_outlook["features"]
+                        ],
+                    }
 
-            self._json_response({
-                "timestamp": scan["timestamp"],
-                "ecosystem_health": scan["summary"]["health_pct"],
-                "wiring_progress": scan["summary"]["wire_pct"],
-                "sprints": sprints_summary,
-                "special": scan["special"],
-            })
+                summary = dragon_outlook.get("summary", {})
+                self._json_response({
+                    "timestamp": dragon_outlook.get("timestamp"),
+                    "source": "dragon-outlook",
+                    "ecosystem_health": summary.get("wired_pct", 0),
+                    "wiring_progress": summary.get("wired_pct", 0),
+                    "wired": summary.get("wired", 0),
+                    "total": summary.get("total", 0),
+                    "sprints": sprints_summary,
+                })
+            except Exception as e:
+                # Fallback to local scan if Dragon is unavailable
+                with _scan_lock:
+                    scan = _last_scan or full_scan()
+                sprints_summary = {}
+                for sprint_num, sprint_data in scan["sprints"].items():
+                    wires = sprint_data["wires"]
+                    done = sum(1 for w in wires if w["verified"])
+                    total = len(wires)
+                    sprints_summary[sprint_num] = {
+                        "name": sprint_data["name"],
+                        "progress": f"{done}/{total}",
+                        "pct": round((done / total) * 100) if total else 0,
+                        "status": "complete" if done == total else "in-progress" if done > 0 else "pending",
+                        "wires": wires,
+                    }
+                self._json_response({
+                    "timestamp": scan["timestamp"],
+                    "source": "pulse-local",
+                    "fallback_reason": str(e),
+                    "ecosystem_health": scan["summary"]["health_pct"],
+                    "wiring_progress": scan["summary"]["wire_pct"],
+                    "sprints": sprints_summary,
+                    "special": scan["special"],
+                })
 
         # ── History (Memory Loop) ──
         elif path == "/api/pulse/history":
