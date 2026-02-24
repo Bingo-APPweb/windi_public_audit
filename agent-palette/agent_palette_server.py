@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-WINDI Agent Palette v0.3.0 — Cognitive Document Agent
+WINDI Agent Palette v0.4.0 — Cognitive Document Agent
 Port: 8108
 "80% local. 20% LLM. 100% governado."
 
@@ -10,6 +10,11 @@ Serves:
   GET  /api/engine      → Engine capabilities
   GET  /                → Agent Suite UI (React SPA)
   POST /api/generate    → Process document intent (backend mirror)
+  POST /api/wisdom/candidate    → Submit wisdom candidate (Part 2A)
+  GET  /api/wisdom/stats        → Wisdom pipeline stats
+  POST /api/multimodal/ocr      → OCR image (Part 2B)
+  POST /api/multimodal/verify-url → Verify URL
+  GET  /api/multimodal/capabilities → Multimodal capabilities
 """
 
 import json
@@ -33,10 +38,29 @@ except ImportError as _e:
     HAS_RENDERER = False
     print(f"[Palette] Document Renderer: NOT AVAILABLE ({_e})")
 
+# Part 2A: Wisdom Engine
+try:
+    from wisdom_engine import route_wisdom_api
+    HAS_WISDOM = True
+    print("[Palette] Wisdom Engine: LOADED")
+except ImportError as _e:
+    HAS_WISDOM = False
+    print(f"[Palette] Wisdom Engine: NOT AVAILABLE ({_e})")
+
+# Part 2B: Multimodal Engine
+try:
+    from multimodal_engine import route_multimodal_api
+    HAS_MULTIMODAL = True
+    print("[Palette] Multimodal Engine: LOADED")
+except ImportError as _e:
+    HAS_MULTIMODAL = False
+    print(f"[Palette] Multimodal Engine: NOT AVAILABLE ({_e})")
+
 PORT = int(os.environ.get("WINDI_PALETTE_PORT", 8108))
-VERSION = "0.3.0"
+VERSION = "0.4.0"
 BASE_DIR = Path(__file__).parent
 UI_FILE = BASE_DIR / "ui" / "index.html"
+GOVERNANCE_FILE = BASE_DIR / "ui" / "governance.html"
 LOG_DIR = Path("/opt/windi/logs")
 DATA_DIR = Path("/opt/windi/data")
 
@@ -96,6 +120,10 @@ class PaletteHandler(BaseHTTPRequestHandler):
         path = self._normalize_path(self.path.split("?")[0])
         if HAS_RENDERER and route_render_api(self, "GET", path):
             return
+        if HAS_WISDOM and route_wisdom_api(self, "GET", path):
+            return
+        if HAS_MULTIMODAL and route_multimodal_api(self, "GET", path):
+            return
         stats["requests"] += 1
 
         if path == "/health":
@@ -109,6 +137,11 @@ class PaletteHandler(BaseHTTPRequestHandler):
                     "isp_templates": 13,
                     "sge_layers": "7 + cross-correlation",
                     "languages": ["DE", "EN", "PT"],
+                },
+                "modules": {
+                    "renderer": HAS_RENDERER,
+                    "wisdom": HAS_WISDOM,
+                    "multimodal": HAS_MULTIMODAL,
                 },
                 "stats": stats,
                 "uptime_since": stats["start_time"],
@@ -147,12 +180,22 @@ class PaletteHandler(BaseHTTPRequestHandler):
             else:
                 self._send_html(self._fallback_ui())
 
+        elif path == "/governance" or path == "/governance/":
+            if GOVERNANCE_FILE.exists():
+                self._send_html(GOVERNANCE_FILE.read_text(encoding="utf-8"))
+            else:
+                self._send_json({"error": "Governance dashboard not found"}, 404)
+
         else:
             self._send_json({"error": "Not found", "path": path}, 404)
 
     def do_POST(self):
         path = self._normalize_path(self.path.split("?")[0])
         if HAS_RENDERER and route_render_api(self, "POST", path):
+            return
+        if HAS_WISDOM and route_wisdom_api(self, "POST", path):
+            return
+        if HAS_MULTIMODAL and route_multimodal_api(self, "POST", path):
             return
         stats["requests"] += 1
 
@@ -203,6 +246,7 @@ def main():
     server = HTTPServer(("0.0.0.0", PORT), PaletteHandler)
     print(f"🐉 WINDI Agent Palette v{VERSION} running on :{PORT}")
     print(f"   14 doc types · 13 ISP templates · 7-layer SGE")
+    print(f"   Modules: Renderer={'✓' if HAS_RENDERER else '✗'} Wisdom={'✓' if HAS_WISDOM else '✗'} Multimodal={'✓' if HAS_MULTIMODAL else '✗'}")
     print(f"   Health: http://localhost:{PORT}/health")
     print(f"   UI:     http://localhost:{PORT}/")
     try:

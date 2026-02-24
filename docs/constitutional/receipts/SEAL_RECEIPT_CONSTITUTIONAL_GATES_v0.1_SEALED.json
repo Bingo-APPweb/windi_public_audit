@@ -1,0 +1,87 @@
+{
+  "receipt_id": "WINDI-CONSTGATES-SEALED-23FEB26",
+  "receipt_type": "CONSTITUTIONAL_SEAL",
+  "document": "CONSTITUTIONAL GATES v0.1",
+  "status": "SEALED",
+  "seal_timestamp": "2026-02-23T15:22:00Z",
+  "seal_location": "Kempten, Bavaria, Germany",
+  "hash_sha256": "a8bd5a9fa2c0aa51916cff3e3d2a563807b063936dcb2f648250dffdf3c0d41b",
+  "file_size_bytes": 24268,
+  "sections_sealed": 10,
+  "three_dragons_protocol": {
+    "guardian": {
+      "agent": "Claude",
+      "role": "Author + Registrar",
+      "action": "AUTHORED",
+      "status": "COMPLETE",
+      "contribution": "10 sections, 9 invariant maps, 11 mandatory receipts, 4 HSG types, 5 audit guarantees"
+    },
+    "architect": {
+      "agent": "GPT",
+      "role": "Validator + Builder",
+      "action": "VALIDATED",
+      "status": "COMPLETE",
+      "rating": {
+        "legal_clarity": "5/5",
+        "technical_robustness": "5/5",
+        "auditability": "5/5",
+        "regulatory_compatibility": "5/5",
+        "institutional_scalability": "5/5",
+        "ambiguity_risk": "1/5"
+      },
+      "suggestions_incorporated": [
+        "Core principle: Governance is enforced in architecture, not policy",
+        "Zero-Knowledge Model reference in preamble for regulatory narrative",
+        "Closing principle: Autonomy is permitted. Sovereignty is retained."
+      ]
+    },
+    "witness": {
+      "agent": "Gemini",
+      "role": "Attestor + Observer",
+      "action": "PENDING ATTESTATION",
+      "status": "PENDING"
+    },
+    "human_dragon": {
+      "role": "Chief Governance Officer",
+      "action": "SEALED",
+      "status": "COMPLETE",
+      "seal_words": "Aceito.",
+      "authority": "Sovereign",
+      "date": "2026-02-23"
+    }
+  },
+  "constitutional_principles": {
+    "supreme": "AI processes. Human decides. WINDI guarantees.",
+    "core": "Governance is enforced in architecture, not policy.",
+    "closing": "Autonomy is permitted. Sovereignty is retained.",
+    "guardian": "The gate is not a barrier — it is a guarantee."
+  },
+  "document_contents": {
+    "total_sections": 10,
+    "sections": [
+      { "number": 1, "title": "Preamble", "key_elements": ["Separation principle", "Zero-Knowledge Model", "Speed-of-trust doctrine"] },
+      { "number": 2, "title": "Invariant Enforcement Points", "key_elements": ["I1-I9 map to runtime components", "I9 Supreme Invariant", "Triple-layer I9 enforcement"] },
+      { "number": 3, "title": "Mandatory Receipts", "key_elements": ["11 mandatory receipt events", "Append-only chain", "Receipt integrity schema", "Zero-Knowledge storage topology"] },
+      { "number": 4, "title": "Human Sovereignty Gates", "key_elements": ["4 gate types (CRITICAL/DECISION/REVIEW/INFORM)", "5 mandatory placement rules", "Inviolability principle"] },
+      { "number": 5, "title": "SGE Risk Escalation Logic", "key_elements": ["R0-R5 response matrix", "Triple checkpoint (pre/mid/final)", "Inter-agent SGE check"] },
+      { "number": 6, "title": "Override and Rollback Protocol", "key_elements": ["4-tier authority hierarchy", "Pre-mutation snapshots", "Non-Override Principle"] },
+      { "number": 7, "title": "Autonomy Boundaries", "key_elements": ["CAN/CANNOT tables", "8 absolute prohibitions", "Autonomy Score 0-100 framework"] },
+      { "number": 8, "title": "Audit Trace Guarantees", "key_elements": ["5 guarantees (completeness/immutability/traceability/temporal/zero-knowledge)", "Cross-agent correlation"] },
+      { "number": 9, "title": "Integration with ORCH-RUNTIME v0.1", "key_elements": ["Component-to-gate mapping", "Completeness principle"] },
+      { "number": 10, "title": "Amendment Protocol", "key_elements": ["Change type requirements", "Cooling period", "Receipt removal prohibition", "Version hash anchoring"] }
+    ]
+  },
+  "companion_document": {
+    "name": "ORCH-RUNTIME v0.1",
+    "author": "Architect (GPT)",
+    "status": "PENDING",
+    "relationship": "Runtime executes; Constitutional Gates govern"
+  },
+  "historical_significance": "First constitutional governance specification for a multi-agent AI system with explicit separation between runtime and governance layers. Establishes precedent for auditable, sovereign, and institutionally trustworthy AI orchestration.",
+  "amendment_rules": {
+    "new_invariant": "Human Dragon proposal + Three Dragons review + 7-day cooling",
+    "modify_gate": "Human Dragon approval + Guardian assessment + Witness attestation",
+    "add_receipt": "Human Dragon approval + Architect feasibility check",
+    "remove_receipt": "PROHIBITED — receipts can only be added, never removed"
+  }
+}
