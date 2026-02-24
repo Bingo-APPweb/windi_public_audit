@@ -105,6 +105,22 @@ except ImportError as _e:
     HAS_SOVEREIGN_ROUTER = False
     print(f"[Dragon] Sovereign Router: NOT AVAILABLE ({_e})")
 
+# WINDI Decision Journal (Memory on the Edge)
+try:
+    from decision_journal import (
+        record_decision, get_decision_stats, get_recent_decisions,
+        get_autonomy_intelligence, get_hesitation_patterns,
+        calculate_cognitive_score, detect_cognitive_hesitation,
+        detect_wisdom_candidates, get_cognitive_evolution,
+        get_outlook_cognitive_feature, get_pulse_cognitive_wire,
+        promote_wisdom_candidate, get_wisdom_blocks
+    )
+    HAS_DECISION_JOURNAL = True
+    print("[Dragon] Decision Journal: LOADED (Cognitive Observability v1.2)")
+except ImportError as _e:
+    HAS_DECISION_JOURNAL = False
+    print(f"[Dragon] Decision Journal: NOT AVAILABLE ({_e})")
+
 # ═══════════════════════════════════════════════════════════════════════
 # CONFIGURATION
 # ═══════════════════════════════════════════════════════════════════════
@@ -579,28 +595,78 @@ def handle_dragon_chat(body):
         if language == "de" and detected_lang != "de":
             language = detected_lang
 
-    # Map tier string to enum
-    tier_map = {"personal": Tier.PERSONAL, "professional": Tier.PROFESSIONAL,
-                "governance": Tier.GOVERNANCE, "high": Tier.GOVERNANCE,
-                "medium": Tier.PROFESSIONAL, "low": Tier.PERSONAL}
-    tier = tier_map.get(tier_str, Tier.PERSONAL) if HAS_SOVEREIGN_ROUTER else None
+    # ═══════════════════════════════════════════════════════════════
+    # SOVEREIGN ROUTING (I10: Continuidade) + MEMORY ON THE EDGE
+    # ═══════════════════════════════════════════════════════════════
+    _gate4_start = time.time()
 
-    # ═══════════════════════════════════════════════════════════════
-    # SOVEREIGN ROUTING (I10: Continuidade)
-    # ═══════════════════════════════════════════════════════════════
     if HAS_SOVEREIGN_ROUTER:
+        # Map tier string to enum (only when sovereign router is loaded)
+        tier_map = {"personal": Tier.PERSONAL, "professional": Tier.PROFESSIONAL,
+                    "governance": Tier.GOVERNANCE, "high": Tier.GOVERNANCE,
+                    "medium": Tier.PROFESSIONAL, "low": Tier.PERSONAL}
+        tier = tier_map.get(tier_str, Tier.PERSONAL)
         intent, is_local = classify_intent(message, tier)
+
+        # Calculate confidence (simplified - based on intent clarity)
+        _confidence = 0.95 if is_local else 0.75
 
         # Personal tier or local intent -> ALWAYS respond locally
         if tier == Tier.PERSONAL or is_local:
+            _latency_ms = int((time.time() - _gate4_start) * 1000)
+
+            # Record Decision Receipt (Memory on the Edge)
+            if HAS_DECISION_JOURNAL:
+                _reason = "TIER_PERSONAL_ENFORCE" if tier == Tier.PERSONAL else "LOCAL_PATTERN_MATCH"
+                _rejected = ["semantic_llm_layer"] if not is_local else []
+                record_decision(
+                    intent_detected=intent.value,
+                    confidence_score=_confidence,
+                    tier=tier.value,
+                    route_selected="local_sovereign_core",
+                    candidates_rejected=_rejected,
+                    reason_code=_reason,
+                    latency_ms=_latency_ms,
+                    uncertainty_detected=(_confidence < 0.8)
+                )
+
             return _handle_sovereign_local(intent, message, language, tier), 200
 
         # Premium tier with semantic intent -> try LLM, fallback to local
         # Check budget first
         allowed, budget_info = check_budget(tier_str.upper())
         if not allowed:
+            _latency_ms = int((time.time() - _gate4_start) * 1000)
+
+            # Record Decision Receipt for fallback (I10 Continuity)
+            if HAS_DECISION_JOURNAL:
+                record_decision(
+                    intent_detected=intent.value,
+                    confidence_score=_confidence,
+                    tier=tier.value,
+                    route_selected="local_sovereign_fallback",
+                    candidates_rejected=["semantic_llm_layer"],
+                    reason_code="BUDGET_EXHAUSTED_FALLBACK",
+                    latency_ms=_latency_ms,
+                    uncertainty_detected=False  # Fallback is intentional, not uncertain
+                )
+
             # I10: Budget exhausted is NOT an error, it's sovereign transition
             return _handle_sovereign_fallback(intent, message, language, tier, budget_info), 200
+
+        # Proceeding to semantic path - record this decision too
+        if HAS_DECISION_JOURNAL:
+            _latency_ms = int((time.time() - _gate4_start) * 1000)
+            record_decision(
+                intent_detected=intent.value,
+                confidence_score=_confidence,
+                tier=tier.value,
+                route_selected="semantic_llm_layer",
+                candidates_rejected=["local_sovereign_core"],
+                reason_code="SEMANTIC_INTENT_DETECTED",
+                latency_ms=_latency_ms,
+                uncertainty_detected=(_confidence < 0.7)
+            )
 
     # ═══════════════════════════════════════════════════════════════
     # SEMANTIC PATH (Premium tiers with available budget)
@@ -1255,6 +1321,10 @@ OUTLOOK_FEATURES = {
             "checks": [{"type": "health", "url": "http://localhost:8097/health", "label": "Command Bridge"}]},
     "S04": {"name": "Sentinel LAW Monitor", "sprint": 4, "category": "governance",
             "checks": [{"type": "health", "url": "http://localhost:8102/health", "label": "Sentinel LAW"}]},
+    # Sprint 5: Cognitive Observability (Phase 2.5)
+    "C01": {"name": "Cognitive Observability Engine", "sprint": 5, "category": "cognition",
+            "checks": [{"type": "endpoint", "url": "http://localhost:8108/api/dragon/cognitive/score", "method": "GET", "label": "Cognitive Score"},
+                       {"type": "endpoint", "url": "http://localhost:8108/api/dragon/decisions/stats", "method": "GET", "label": "Decision Journal"}]},
 }
 
 def _check_single(check):
@@ -1341,6 +1411,7 @@ def get_outlook_status():
             2: {"name": "Assinatura + Selo Forense", "features": [f for f in results if OUTLOOK_FEATURES[f]["sprint"] == 2]},
             3: {"name": "Inteligência & Identidade", "features": [f for f in results if OUTLOOK_FEATURES[f]["sprint"] == 3]},
             4: {"name": "Ecossistema & Futuro", "features": [f for f in results if OUTLOOK_FEATURES[f]["sprint"] == 4]},
+            5: {"name": "Cognitive Observability", "features": [f for f in results if OUTLOOK_FEATURES[f]["sprint"] == 5]},
         }
     }
 
@@ -1804,6 +1875,69 @@ class DragonHandler(http.server.BaseHTTPRequestHandler):
             self.wfile.write(md_content.encode("utf-8"))
             return
 
+        # Memory on the Edge: Decision Journal endpoints
+        if path == "/api/dragon/decisions/stats" and HAS_DECISION_JOURNAL:
+            data = get_decision_stats()
+            self._json_response(data, 200)
+            return
+
+        if path == "/api/dragon/decisions/recent" and HAS_DECISION_JOURNAL:
+            data = get_recent_decisions(limit=20)
+            self._json_response({"ok": True, "decisions": data}, 200)
+            return
+
+        if path == "/api/dragon/decisions/autonomy" and HAS_DECISION_JOURNAL:
+            data = get_autonomy_intelligence()
+            self._json_response(data, 200)
+            return
+
+        if path == "/api/dragon/decisions/hesitations" and HAS_DECISION_JOURNAL:
+            data = get_hesitation_patterns()
+            self._json_response({"ok": True, "hesitations": data}, 200)
+            return
+
+        # Phase 2.5: Cognitive Score
+        if path == "/api/dragon/cognitive/score" and HAS_DECISION_JOURNAL:
+            data = calculate_cognitive_score()
+            self._json_response(data, 200)
+            return
+
+        # Phase 2.5: Cognitive Hesitation Detection
+        if path == "/api/dragon/cognitive/hesitation" and HAS_DECISION_JOURNAL:
+            data = detect_cognitive_hesitation()
+            self._json_response(data, 200)
+            return
+
+        # Phase 2.5: Wisdom Candidates (Auto-Wisdom)
+        if path == "/api/dragon/cognitive/wisdom-candidates" and HAS_DECISION_JOURNAL:
+            data = detect_wisdom_candidates()
+            self._json_response({"ok": True, "candidates": data}, 200)
+            return
+
+        # Phase 2.5: Full Cognitive Evolution Report
+        if path == "/api/dragon/cognitive/evolution" and HAS_DECISION_JOURNAL:
+            data = get_cognitive_evolution()
+            self._json_response(data, 200)
+            return
+
+        # Phase 2.5: OUTLOOK Cognitive Feature (for ecosystem integration)
+        if path == "/api/dragon/cognitive/outlook" and HAS_DECISION_JOURNAL:
+            data = get_outlook_cognitive_feature()
+            self._json_response(data, 200)
+            return
+
+        # Phase 2.5: PULSE Cognitive Wire (for health monitoring)
+        if path == "/api/dragon/cognitive/pulse" and HAS_DECISION_JOURNAL:
+            data = get_pulse_cognitive_wire()
+            self._json_response(data, 200)
+            return
+
+        # Phase 2.5: Wisdom Blocks (promoted patterns)
+        if path == "/api/dragon/cognitive/wisdom-blocks" and HAS_DECISION_JOURNAL:
+            data = get_wisdom_blocks()
+            self._json_response({"ok": True, "wisdom_blocks": data}, 200)
+            return
+
         # Sprint 2B: Communiqué list
         if path == "/api/dragon/communique/list":
             data, code = handle_communique_list()
@@ -1965,6 +2099,18 @@ class DragonHandler(http.server.BaseHTTPRequestHandler):
             comm_id = path.split("/")[-1]
             data, code = handle_communique_publish(comm_id)
             self._json_response(data, code)
+
+        # Phase 2.5: Promote Wisdom Candidate (Human Dragon decision)
+        elif path == "/api/dragon/cognitive/promote-wisdom" and HAS_DECISION_JOURNAL:
+            pattern_id = body.get("pattern_id")
+            promoted_by = body.get("promoted_by", "Human Dragon")
+            if not pattern_id:
+                self._json_response({"error": "pattern_id required"}, 400)
+            else:
+                data = promote_wisdom_candidate(pattern_id, promoted_by)
+                code = 200 if data.get("success") else 400
+                log(f"WISDOM PROMOTION: {pattern_id} by {promoted_by} -> {data.get('success', False)}")
+                self._json_response(data, code)
 
         else:
             self._json_response({"error": "Unknown endpoint"}, 404)

@@ -259,6 +259,9 @@ WIRING_MAP = [
     # Sprint 4: Ecosystem
     {"id": "W13", "name": "Sentinel LAW",                   "service": "sentinel-law",   "route": "/health",                    "sprint": 4, "status": "pending"},
     {"id": "W14", "name": "Outlook Status API",             "service": "palette",        "route": "/api/dragon/outlook/status", "sprint": 4, "status": "pending"},
+    # Sprint 5: Cognitive Observability (Phase 2.5)
+    {"id": "W15", "name": "Cognitive Score",                "service": "palette",        "route": "/api/dragon/cognitive/score", "sprint": 5, "status": "pending"},
+    {"id": "W16", "name": "Decision Journal",               "service": "palette",        "route": "/api/dragon/decisions/stats", "sprint": 5, "status": "pending"},
 ]
 
 # ═══════════════════════════════════════════════════════════════
@@ -597,6 +600,7 @@ def full_scan():
             2: {"name": "Forensic Seal + Sign", "wires": [w for w in wire_results if w["sprint"] == 2]},
             3: {"name": "Intelligence + Governance", "wires": [w for w in wire_results if w["sprint"] == 3]},
             4: {"name": "Ecosystem + Ops", "wires": [w for w in wire_results if w["sprint"] == 4]},
+            5: {"name": "Cognitive Observability", "wires": [w for w in wire_results if w["sprint"] == 5]},
         },
     }
 
