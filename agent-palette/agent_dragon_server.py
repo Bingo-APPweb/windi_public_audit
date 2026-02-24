@@ -92,6 +92,19 @@ except ImportError as _e:
     HAS_WISDOM = False
     print(f"[Dragon] Wisdom Engine: NOT AVAILABLE ({_e})")
 
+# WINDI Sovereign Router (Intent Classification + Local Routing)
+try:
+    from sovereign_router import (
+        classify_intent, get_handler, get_format, detect_language,
+        Intent, Tier, SEMANTIC_INTENTS, LOCAL_INTENTS,
+        HELP_RESPONSES, FALLBACK_MESSAGES, sovereignty_metadata, capabilities_response
+    )
+    HAS_SOVEREIGN_ROUTER = True
+    print("[Dragon] Sovereign Router: LOADED (42 local, 3 semantic)")
+except ImportError as _e:
+    HAS_SOVEREIGN_ROUTER = False
+    print(f"[Dragon] Sovereign Router: NOT AVAILABLE ({_e})")
+
 # ═══════════════════════════════════════════════════════════════════════
 # CONFIGURATION
 # ═══════════════════════════════════════════════════════════════════════
@@ -539,9 +552,19 @@ def constitutional_filter(text):
 # ═══════════════════════════════════════════════════════════════════════
 
 def handle_dragon_chat(body):
-    """Handle /api/dragon/chat — conversational AI with dragon routing."""
+    """
+    Handle /api/dragon/chat — Sovereign Router v1.0
+
+    Principio: "Integridade e universal. Interpretacao e premium."
+    Invariante I10: Continuidade — degradacao != erro, = transicao soberana.
+
+    O Dragon pergunta:
+      1. Isto pode ser resolvido com soberania local?
+      2. SIM -> responder (42 funcoes)
+      3. NAO -> ativar camada semantica (se tier permitir)
+    """
     message = body.get("message", "").strip()
-    tier = body.get("tier", "HIGH")
+    tier_str = body.get("tier", "personal").lower()
     chat_type = body.get("chatType")
     intent_mode = body.get("intentMode", "chat")
     language = body.get("language", "de")
@@ -550,30 +573,62 @@ def handle_dragon_chat(body):
     if not message:
         return {"error": "Empty message"}, 400
 
-    # 1. Check budget
-    allowed, budget_info = check_budget(tier)
-    if not allowed:
-        return {
-            "dragon": "guardian",
-            "message": _budget_exhausted_msg(language, budget_info),
-            "source": "local",
-            "metadata": {"budget": budget_info},
-        }, 200
+    # Detect language if not specified
+    if HAS_SOVEREIGN_ROUTER:
+        detected_lang = detect_language(message)
+        if language == "de" and detected_lang != "de":
+            language = detected_lang
 
-    # 2. Route to dragon
+    # Map tier string to enum
+    tier_map = {"personal": Tier.PERSONAL, "professional": Tier.PROFESSIONAL,
+                "governance": Tier.GOVERNANCE, "high": Tier.GOVERNANCE,
+                "medium": Tier.PROFESSIONAL, "low": Tier.PERSONAL}
+    tier = tier_map.get(tier_str, Tier.PERSONAL) if HAS_SOVEREIGN_ROUTER else None
+
+    # ═══════════════════════════════════════════════════════════════
+    # SOVEREIGN ROUTING (I10: Continuidade)
+    # ═══════════════════════════════════════════════════════════════
+    if HAS_SOVEREIGN_ROUTER:
+        intent, is_local = classify_intent(message, tier)
+
+        # Personal tier or local intent -> ALWAYS respond locally
+        if tier == Tier.PERSONAL or is_local:
+            return _handle_sovereign_local(intent, message, language, tier), 200
+
+        # Premium tier with semantic intent -> try LLM, fallback to local
+        # Check budget first
+        allowed, budget_info = check_budget(tier_str.upper())
+        if not allowed:
+            # I10: Budget exhausted is NOT an error, it's sovereign transition
+            return _handle_sovereign_fallback(intent, message, language, tier, budget_info), 200
+
+    # ═══════════════════════════════════════════════════════════════
+    # SEMANTIC PATH (Premium tiers with available budget)
+    # ═══════════════════════════════════════════════════════════════
+
+    # Legacy budget check for non-sovereign path
+    if not HAS_SOVEREIGN_ROUTER:
+        allowed, budget_info = check_budget(tier_str.upper() if isinstance(tier_str, str) else "HIGH")
+        if not allowed:
+            return {
+                "dragon": "guardian",
+                "message": _budget_exhausted_msg(language, budget_info),
+                "source": "local",
+                "metadata": {"budget": budget_info},
+            }, 200
+
+    # Route to dragon
     dragon_name, scores = route_dragon(message, chat_type, intent_mode)
     dragon = DRAGONS[dragon_name]
 
-    # 3. Build conversation history for API
+    # Build conversation history for API
     api_messages = []
-    # Include last N messages for context (max 10)
     for h in history[-10:]:
         role = "user" if h.get("role") == "human" else "assistant"
         api_messages.append({"role": role, "content": h.get("text", "")})
-    # Add current message
     api_messages.append({"role": "user", "content": message})
 
-    # 4. Call Anthropic API
+    # Call Anthropic API
     result, error = call_anthropic(
         system_prompt=dragon["system"],
         messages=api_messages,
@@ -581,7 +636,12 @@ def handle_dragon_chat(body):
     )
 
     if error:
-        # Fallback to local response
+        # I10: LLM error -> sovereign transition, not failure
+        if HAS_SOVEREIGN_ROUTER:
+            return _handle_sovereign_fallback(
+                Intent.HELP if not is_local else intent,
+                message, language, tier, {"reason": str(error)}
+            ), 200
         return {
             "dragon": dragon_name,
             "message": _error_fallback_msg(language, error, dragon_name),
@@ -590,10 +650,10 @@ def handle_dragon_chat(body):
             "metadata": {"dragon_scores": scores},
         }, 200
 
-    # 5. Update budget
+    # Update budget
     budget = update_budget(result["input_tokens"], result["output_tokens"])
 
-    # 6. Constitutional filter
+    # Constitutional filter
     cf = constitutional_filter(result["text"])
 
     if cf["has_fatal"]:
@@ -605,11 +665,11 @@ def handle_dragon_chat(body):
             "violations": cf["violations"],
         }, 200
 
-    # 7. Return clean response
+    # Return clean response
     return {
         "dragon": dragon_name,
         "message": cf["text"],
-        "source": "llm",
+        "source": "semantic",
         "metadata": {
             "model": result["model"],
             "input_tokens": result["input_tokens"],
@@ -1445,6 +1505,197 @@ def handle_communique_publish(comm_id: str) -> tuple:
         return {"status": "error", "code": "COMMUNIQUE_PUBLISH_FAILED", "message": str(e), "dragon": "guardian"}, 503
 
 # ═══════════════════════════════════════════════════════════════════════
+# SOVEREIGN HANDLERS (I10: Continuidade)
+# ═══════════════════════════════════════════════════════════════════════
+
+def _handle_sovereign_local(intent, message, lang, tier):
+    """
+    Handle request using local sovereign functions.
+    NEVER returns an error. ALWAYS returns useful output.
+    Ratio: 42/45 = 93.3% sovereign
+    """
+    if not HAS_SOVEREIGN_ROUTER:
+        return {"error": "Sovereign router not available"}, 500
+
+    # HELP intent -> show full capabilities
+    if intent == Intent.HELP:
+        return {
+            "dragon": "guardian",
+            "message": HELP_RESPONSES.get(lang, HELP_RESPONSES["en"]),
+            "source": "sovereign",
+            "intent": intent.value,
+            "tier": tier.value if hasattr(tier, 'value') else str(tier),
+            "sovereignty": sovereignty_metadata(llm_used=False),
+        }
+
+    # Document generation intents
+    if intent in (Intent.GENERATE_PDF, Intent.GENERATE_DOCX,
+                  Intent.GENERATE_PPTX, Intent.GENERATE_XLSX):
+        doc_format = get_format(intent)
+        msg_map = {
+            "de": f"Ich erstelle ein {doc_format.upper()}-Dokument fur dich. Bitte nutze den Render-Endpoint /api/dragon/render mit type='{doc_format}' und deinem Inhalt.",
+            "en": f"I'll create a {doc_format.upper()} document for you. Please use the render endpoint /api/dragon/render with type='{doc_format}' and your content.",
+            "pt": f"Vou criar um documento {doc_format.upper()} para ti. Usa o endpoint /api/dragon/render com type='{doc_format}' e o teu conteudo.",
+        }
+        return {
+            "dragon": "architect",
+            "message": msg_map.get(lang, msg_map["en"]),
+            "source": "sovereign",
+            "intent": intent.value,
+            "handler": get_handler(intent),
+            "format": doc_format,
+            "sovereignty": sovereignty_metadata(llm_used=False),
+        }
+
+    # Dashboard intents
+    if intent in (Intent.PULSE_REPORT, Intent.HEALTH_CHECK,
+                  Intent.OUTLOOK_REPORT, Intent.WIRING_STATUS):
+        msg_map = {
+            "de": "Hier ist der Status deines Systems:",
+            "en": "Here's your system status:",
+            "pt": "Aqui esta o estado do teu sistema:",
+        }
+        # Try to fetch actual data
+        try:
+            if intent == Intent.PULSE_REPORT:
+                pulse_data = urllib.request.urlopen("http://localhost:8109/api/pulse/scan", timeout=5).read()
+                pulse_json = json.loads(pulse_data)
+                summary = pulse_json.get("summary", {})
+                status_msg = f"{msg_map.get(lang, msg_map['en'])}\n\n"
+                status_msg += f"Services: {summary.get('alive', 0)}/{summary.get('total', 0)} UP\n"
+                status_msg += f"Wiring: {summary.get('wired', 0)}/{summary.get('total_wires', 0)} ({summary.get('wire_pct', 0)}%)\n"
+                status_msg += f"Health: {summary.get('health_pct', 0)}%"
+            elif intent == Intent.OUTLOOK_REPORT:
+                outlook_data = urllib.request.urlopen("http://localhost:8108/api/dragon/outlook/status", timeout=5).read()
+                outlook_json = json.loads(outlook_data)
+                summary = outlook_json.get("summary", {})
+                status_msg = f"{msg_map.get(lang, msg_map['en'])}\n\n"
+                status_msg += f"Features: {summary.get('wired', 0)}/{summary.get('total', 0)} WIRED\n"
+                status_msg += f"Wiring: {summary.get('wired_pct', 0)}%"
+            else:
+                status_msg = msg_map.get(lang, msg_map["en"])
+        except Exception:
+            status_msg = msg_map.get(lang, msg_map["en"])
+
+        return {
+            "dragon": "witness",
+            "message": status_msg,
+            "source": "sovereign",
+            "intent": intent.value,
+            "handler": get_handler(intent),
+            "sovereignty": sovereignty_metadata(llm_used=False),
+        }
+
+    # Seal intents
+    if intent in (Intent.SEAL_DOCUMENT, Intent.SEAL_PIPELINE):
+        msg_map = {
+            "de": "Ich kann Dokumente versiegeln mit SHA-256 Hash, Seriennummer und QR-Code. Nutze /api/dragon/seal mit dem file_id.",
+            "en": "I can seal documents with SHA-256 hash, serial number and QR code. Use /api/dragon/seal with the file_id.",
+            "pt": "Posso selar documentos com hash SHA-256, numero de serie e QR code. Usa /api/dragon/seal com o file_id.",
+        }
+        return {
+            "dragon": "guardian",
+            "message": msg_map.get(lang, msg_map["en"]),
+            "source": "sovereign",
+            "intent": intent.value,
+            "handler": get_handler(intent),
+            "sovereignty": sovereignty_metadata(llm_used=False),
+        }
+
+    # Governance intents
+    if intent in (Intent.CHECK_COMPLIANCE, Intent.CHECK_INVARIANTS,
+                  Intent.CHECK_RISK, Intent.AUTONOMY_SCORE):
+        msg_map = {
+            "de": "Governance-Prufung: 9 Invarianten (I1-I9), 8 Stabilitatsschichten (S1-S8), SGE Risiko (R0-R5). Autonomie-Ratio: 93.3% souveran.",
+            "en": "Governance check: 9 invariants (I1-I9), 8 stability layers (S1-S8), SGE risk (R0-R5). Autonomy ratio: 93.3% sovereign.",
+            "pt": "Verificacao de governanca: 9 invariantes (I1-I9), 8 camadas de estabilidade (S1-S8), risco SGE (R0-R5). Ratio de autonomia: 93.3% soberano.",
+        }
+        return {
+            "dragon": "witness",
+            "message": msg_map.get(lang, msg_map["en"]),
+            "source": "sovereign",
+            "intent": intent.value,
+            "handler": get_handler(intent),
+            "sovereignty": sovereignty_metadata(llm_used=False),
+        }
+
+    # Ledger/Vault intents
+    if intent in (Intent.QUERY_LEDGER, Intent.VERIFY_HASH, Intent.STORE_VAULT):
+        # Try to get ledger count
+        try:
+            import sqlite3
+            conn = sqlite3.connect("/opt/windi/data/forensic_ledger.sqlite3")
+            count = conn.execute("SELECT COUNT(*) FROM receipts").fetchone()[0]
+            conn.close()
+            ledger_info = f" ({count:,} recibos)"
+        except Exception:
+            ledger_info = ""
+
+        msg_map = {
+            "de": f"Forensic Ledger{ledger_info}: Ich kann Recibos abfragen, Hashes verifizieren und Dokumente im Vault speichern.",
+            "en": f"Forensic Ledger{ledger_info}: I can query receipts, verify hashes and store documents in the Vault.",
+            "pt": f"Forensic Ledger{ledger_info}: Posso consultar recibos, verificar hashes e armazenar documentos no Vault.",
+        }
+        return {
+            "dragon": "guardian",
+            "message": msg_map.get(lang, msg_map["en"]),
+            "source": "sovereign",
+            "intent": intent.value,
+            "handler": get_handler(intent),
+            "sovereignty": sovereignty_metadata(llm_used=False),
+        }
+
+    # Workflow intents
+    if intent in (Intent.COMMUNIQUE_CREATE, Intent.COMMUNIQUE_REVIEW, Intent.COMMUNIQUE_PUBLISH):
+        msg_map = {
+            "de": "Communique-Workflow: criar -> revisar -> publicar = SELADO. Usa /api/dragon/communique/*",
+            "en": "Communique workflow: create -> review -> publish = SEALED. Use /api/dragon/communique/*",
+            "pt": "Workflow Communique: criar -> revisar -> publicar = SELADO. Usa /api/dragon/communique/*",
+        }
+        return {
+            "dragon": "architect",
+            "message": msg_map.get(lang, msg_map["en"]),
+            "source": "sovereign",
+            "intent": intent.value,
+            "handler": get_handler(intent),
+            "sovereignty": sovereignty_metadata(llm_used=False),
+        }
+
+    # Default: show capabilities
+    return {
+        "dragon": "guardian",
+        "message": HELP_RESPONSES.get(lang, HELP_RESPONSES["en"]),
+        "source": "sovereign",
+        "intent": intent.value if hasattr(intent, 'value') else "help",
+        "sovereignty": sovereignty_metadata(llm_used=False),
+    }
+
+
+def _handle_sovereign_fallback(intent, message, lang, tier, budget_info):
+    """
+    Handle semantic request when LLM is unavailable.
+    I10: Degradation is not error, it's sovereign transition.
+    """
+    if not HAS_SOVEREIGN_ROUTER:
+        return {"error": "Sovereign router not available"}, 500
+
+    fallback_msg = FALLBACK_MESSAGES.get(lang, FALLBACK_MESSAGES["en"])
+
+    return {
+        "dragon": "guardian",
+        "message": f"{fallback_msg}\n\n{HELP_RESPONSES.get(lang, HELP_RESPONSES['en'])}",
+        "source": "sovereign_fallback",
+        "intent": intent.value if hasattr(intent, 'value') else "help",
+        "tier": tier.value if hasattr(tier, 'value') else str(tier),
+        "sovereignty": {
+            **sovereignty_metadata(llm_used=False),
+            "fallback_reason": budget_info.get("reason", "LLM unavailable"),
+            "i10_active": True,
+        },
+    }
+
+
+# ═══════════════════════════════════════════════════════════════════════
 # FALLBACK MESSAGES (when API is unavailable)
 # ═══════════════════════════════════════════════════════════════════════
 
@@ -1577,6 +1828,42 @@ class DragonHandler(http.server.BaseHTTPRequestHandler):
                 "method_hint": "Use POST to generate documents",
                 "dragon": "architect" if engine != "seal" else "guardian",
             }, 200 if available else 503)
+            return
+
+        # Sovereign Router: Capabilities endpoint
+        if path == "/api/dragon/capabilities":
+            if HAS_SOVEREIGN_ROUTER:
+                self._json_response(capabilities_response(), 200)
+            else:
+                self._json_response({
+                    "error": "Sovereign router not loaded",
+                    "local_functions": 42,
+                    "semantic_functions": 3,
+                }, 503)
+            return
+
+        # Sovereign Router: Sovereignty status
+        if path == "/api/dragon/sovereignty":
+            if HAS_SOVEREIGN_ROUTER:
+                # Get ledger count
+                try:
+                    import sqlite3
+                    conn = sqlite3.connect("/opt/windi/data/forensic_ledger.sqlite3")
+                    ledger_count = conn.execute("SELECT COUNT(*) FROM receipts").fetchone()[0]
+                    conn.close()
+                except Exception:
+                    ledger_count = 0
+
+                self._json_response({
+                    "status": "operational",
+                    "sovereignty": sovereignty_metadata(llm_used=False),
+                    "ledger_receipts": ledger_count,
+                    "audit_ref": "AUDIT-SOVEREIGNTY-20260224",
+                    "principle": "Integridade e universal. Interpretacao e premium.",
+                    "i10": "Continuidade - degradacao != erro, = transicao soberana.",
+                }, 200)
+            else:
+                self._json_response({"error": "Sovereign router not loaded"}, 503)
             return
 
         # Serve UI
