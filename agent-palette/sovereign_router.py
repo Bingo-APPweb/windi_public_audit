@@ -1,27 +1,55 @@
 #!/usr/bin/env python3
 """
-WINDI Sovereign Router v1.0
+WINDI Sovereign Router v1.1
 ============================
 
-Princípio: "Integridade é universal. Interpretação é premium."
-Invariante I10: Continuidade — degradação ≠ erro, = transição soberana.
-Ratio Auditado: 93.3% local (42 funções) / 6.7% semântico (3 funções LLM)
+v1.1 Changelog (Guardian Audit):
+  - FIX A: Removed unused get_local_handler() mapping
+  - FIX B: Render parsing separates command from payload
+  - FIX C: Service URLs from environment
+  - FIX D: Single language detector
+  - FIX E: Tier trust with signed header validation
+  - FIX F: S02/S03 patterns added for semantic intents
+  - FIX G: Semantic fallback executes local work
+  - FIX H: Sovereign-by-default for ALL tiers
 
-O Dragon pergunta:
-  1. Isto pode ser resolvido com soberania local?
-  2. SIM → responder
-  3. NÃO → ativar camada semântica (se tier permitir)
+Principio: "Integridade e universal. Interpretacao e premium."
+Invariante I10: Continuidade — degradacao != erro, = transicao soberana.
+Ratio Auditado: 93.3% local (42 funcoes) / 6.7% semantico (3 funcoes LLM)
 
 Deploy: /opt/windi/agent-palette/sovereign_router.py
 Sealed: AUDIT-SOVEREIGNTY-20260224
 """
 
+import os
 import re
 from enum import Enum
 from typing import Tuple, Dict, Optional, List
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 __author__ = "WINDI Publishing House"
+
+
+# ═══════════════════════════════════════════════════════════════
+#  SERVICE URLS (from environment, FIX C)
+# ═══════════════════════════════════════════════════════════════
+
+LEDGER_URL = os.environ.get("WINDI_LEDGER_URL", "http://localhost:8101")
+VAULT_URL = os.environ.get("WINDI_VAULT_URL", "http://localhost:8106")
+COMMUNIQUE_URL = os.environ.get("WINDI_COMMUNIQUE_URL", "http://localhost:8105")
+OCR_URL = os.environ.get("WINDI_OCR_URL", "http://localhost:8095")
+SENTINEL_URL = os.environ.get("WINDI_SENTINEL_URL", "http://localhost:8102")
+WAR_ROOM_URL = os.environ.get("WINDI_WARROOM_URL", "http://localhost:8090")
+WALLET_URL = os.environ.get("WINDI_WALLET_URL", "http://localhost:8099")
+CLONE_URL = os.environ.get("WINDI_CLONE_URL", "http://localhost:8092")
+BRIDGE_URL = os.environ.get("WINDI_BRIDGE_URL", "http://localhost:8097")
+LANDING_URL = os.environ.get("WINDI_LANDING_URL", "http://localhost:8107")
+GENESIS_URL = os.environ.get("WINDI_GENESIS_URL", "http://localhost:8096")
+CORTEX_URL = os.environ.get("WINDI_CORTEX_URL", "http://localhost:8889")
+
+# Trusted tier header name (FIX E)
+TIER_HEADER = "X-WINDI-TIER"
+TIER_SECRET = os.environ.get("WINDI_TIER_SECRET", "")
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -31,13 +59,13 @@ __author__ = "WINDI Publishing House"
 class Intent(Enum):
     """45 total intents: 42 local + 3 semantic."""
 
-    # ── Document Production (4 local) ──
+    # Document Production (4 local)
     GENERATE_PDF = "generate_pdf"
     GENERATE_DOCX = "generate_docx"
     GENERATE_PPTX = "generate_pptx"
     GENERATE_XLSX = "generate_xlsx"
 
-    # ── Seal & Forensic (6 local) ──
+    # Seal & Forensic (6 local)
     SEAL_DOCUMENT = "seal_document"
     QUERY_LEDGER = "query_ledger"
     VERIFY_HASH = "verify_hash"
@@ -45,7 +73,7 @@ class Intent(Enum):
     SEAL_PIPELINE = "seal_pipeline"
     DOWNLOAD_FILE = "download_file"
 
-    # ── Governance & Compliance (8 local) ──
+    # Governance & Compliance (8 local)
     CHECK_COMPLIANCE = "check_compliance"
     CHECK_INVARIANTS = "check_invariants"
     CHECK_RISK = "check_risk"
@@ -55,7 +83,7 @@ class Intent(Enum):
     I9_CHECK = "i9_check"
     SGE_ANALYZE = "sge_analyze"
 
-    # ── Dashboards & Reporting (6 local) ──
+    # Dashboards & Reporting (6 local)
     PULSE_REPORT = "pulse_report"
     OUTLOOK_REPORT = "outlook_report"
     HEALTH_CHECK = "health_check"
@@ -63,7 +91,7 @@ class Intent(Enum):
     WAR_ROOM = "war_room"
     BUDGET_STATUS = "budget_status"
 
-    # ── Workflow & Pipeline (8 local) ──
+    # Workflow & Pipeline (8 local)
     COMMUNIQUE_CREATE = "communique_create"
     COMMUNIQUE_REVIEW = "communique_review"
     COMMUNIQUE_PUBLISH = "communique_publish"
@@ -73,7 +101,7 @@ class Intent(Enum):
     AUTOCAT_CLASSIFY = "autocat_classify"
     PAPERLESS_BRIDGE = "paperless_bridge"
 
-    # ── Infrastructure & System (10 local) ──
+    # Infrastructure & System (10 local)
     TRILINGUAL_DETECT = "trilingual_detect"
     THEME_TOGGLE = "theme_toggle"
     DRAGON_IDENTITY = "dragon_identity"
@@ -85,44 +113,59 @@ class Intent(Enum):
     CORTEX_STATUS = "cortex_status"
     HELP = "help"
 
-    # ── Semantic / LLM Required (3) ──
+    # Semantic / LLM Required (3)
     CHAT_INTERPRETIVE = "chat_interpretive"
     SEMANTIC_ANALYSIS = "semantic_analysis"
     TEXT_GENERATION = "text_generation"
 
 
 class Tier(Enum):
-    """WINDI service tiers. Sealed 24Feb2026."""
-    PERSONAL = "personal"         # 42 local functions, zero external keys
-    PROFESSIONAL = "professional"  # + semantic amplification
-    GOVERNANCE = "governance"      # + dedicated LLM, ISP custom, SLA
+    """WINDI service tiers."""
+    PERSONAL = "personal"
+    PROFESSIONAL = "professional"
+    GOVERNANCE = "governance"
 
 
 class SovereigntyLevel(Enum):
     """How the response was generated."""
-    SOVEREIGN = "sovereign"                # 100% local, no LLM
-    SOVEREIGN_FALLBACK = "sovereign_fallback"  # LLM was needed but unavailable
-    SEMANTIC = "semantic"                  # LLM was used
-    ERROR_SOVEREIGN = "error_sovereign"    # Error occurred but we still respond locally
+    SOVEREIGN = "sovereign"
+    SOVEREIGN_FALLBACK = "sovereign_fallback"
+    SEMANTIC = "semantic"
 
 
 # ═══════════════════════════════════════════════════════════════
-#  INTENT CLASSIFICATION
+#  INTENT SETS
 # ═══════════════════════════════════════════════════════════════
 
-# Intents that require LLM (only 3 out of 45)
 SEMANTIC_INTENTS = frozenset({
     Intent.CHAT_INTERPRETIVE,
     Intent.SEMANTIC_ANALYSIS,
     Intent.TEXT_GENERATION,
 })
 
-# All other intents are LOCAL (42 out of 45)
 LOCAL_INTENTS = frozenset(set(Intent) - SEMANTIC_INTENTS)
 
-# Keyword patterns for intent classification (trilingual: DE/EN/PT)
+DOCUMENT_INTENTS = frozenset({
+    Intent.GENERATE_PDF,
+    Intent.GENERATE_DOCX,
+    Intent.GENERATE_PPTX,
+    Intent.GENERATE_XLSX,
+})
+
+# FIX G: Maps semantic intent to best local alternative
+SEMANTIC_TO_LOCAL_FALLBACK: Dict[Intent, Intent] = {
+    Intent.CHAT_INTERPRETIVE: Intent.HELP,
+    Intent.SEMANTIC_ANALYSIS: Intent.CHECK_RISK,
+    Intent.TEXT_GENERATION: Intent.HELP,
+}
+
+
+# ═══════════════════════════════════════════════════════════════
+#  INTENT CLASSIFICATION
+# ═══════════════════════════════════════════════════════════════
+
 INTENT_PATTERNS: Dict[Intent, List[str]] = {
-    # ── Document generation ──
+    # Document generation
     Intent.GENERATE_PDF: [
         r'\b(gerar?\s*pdf|criar?\s*pdf|create\s*pdf|pdf\s*(erstellen|erzeugen)|exportar?\s*pdf)\b',
         r'\b(relat[oó]rio|report|bericht)\b.*\b(pdf)\b',
@@ -141,7 +184,7 @@ INTENT_PATTERNS: Dict[Intent, List[str]] = {
         r'\b(xlsx|excel|spreadsheet|planilha|tabelle|tabellenkalkulation)\b',
     ],
 
-    # ── Seal & Forensic ──
+    # Seal & Forensic
     Intent.SEAL_DOCUMENT: [
         r'\b(seal|selar|selo|siegel|versiegeln|stamp|carimbar)\b',
         r'\b(assinar?\s*document|sign\s*document|dokument\s*signieren)\b',
@@ -162,7 +205,7 @@ INTENT_PATTERNS: Dict[Intent, List[str]] = {
         r'\b(vault|cofre|tresor)\b.*\b(store|guardar|speichern|armazenar)\b',
     ],
 
-    # ── Governance ──
+    # Governance
     Intent.CHECK_COMPLIANCE: [
         r'\b(compliance|conformidade|konformit[aä]t|passport)\b',
         r'\b(eu\s*ai\s*act|regulament)\b',
@@ -194,7 +237,7 @@ INTENT_PATTERNS: Dict[Intent, List[str]] = {
         r'\b(metadata|metadados|metadaten)\b.*\b(classif|kategor)\b',
     ],
 
-    # ── Dashboards ──
+    # Dashboards
     Intent.PULSE_REPORT: [
         r'\b(pulse|pulso|puls)\b',
         r'\b(system\s*status|estado\s*do\s*sistema|systemstatus)\b',
@@ -217,7 +260,7 @@ INTENT_PATTERNS: Dict[Intent, List[str]] = {
         r'\b(budget|or[cç]amento|token|cr[eé]dito|verbrauch)\b',
     ],
 
-    # ── Workflow ──
+    # Workflow
     Intent.COMMUNIQUE_CREATE: [
         r'\b(communiqu[eé]|comunicado|mitteilung)\b.*\b(criar?|create|erstellen|new|nov)\b',
         r'\b(criar?\s*communiqu[eé]|create\s*communiqu[eé])\b',
@@ -246,12 +289,12 @@ INTENT_PATTERNS: Dict[Intent, List[str]] = {
         r'\b(paperless|schnittstelle|connector|bridge\s*paper)\b',
     ],
 
-    # ── System ──
+    # System
     Intent.HELP: [
         r'\b(help|ajuda|hilfe)\b',
         r'\b(o\s+que\s+(podes?|consegue)|what\s+can\s+you|was\s+kannst?\s+du)\b',
         r'\b(funcion|capabilit|f[aä]higkeit|capacidade)\b',
-        r'\b(ol[aá]|hello|hallo|hi|oi|bom\s*dia|good\s*morning|guten\s*morgen)\b',
+        r'\b(ol[aá]|hello|hallo|hi\b|oi\b|bom\s*dia|good\s*morning|guten\s*morgen)\b',
     ],
     Intent.DRAGON_IDENTITY: [
         r'\b(dragon|drag[aã]o|drache|guardian|architect|witness)\b.*\b(who|quem|wer|identit)\b',
@@ -266,32 +309,32 @@ INTENT_PATTERNS: Dict[Intent, List[str]] = {
     Intent.COMMAND_BRIDGE: [
         r'\b(command\s*bridge|ponte\s*de\s*comando|befehlsbr[uü]cke)\b',
     ],
+
+    # FIX F: Semantic intents WITH patterns
+    Intent.SEMANTIC_ANALYSIS: [
+        r'\b(analis[ae]\s*(profundamente|sem[aâ]ntic|semantic|detalhad))\b',
+        r'\b(interpret[ae]|explica\s*risco|risk\s*narrative|risikoanalyse)\b',
+        r'\b(deep\s*analy[sz]|tiefenanalyse|an[aá]lise\s*profunda)\b',
+    ],
+    Intent.TEXT_GENERATION: [
+        r'\b(escreve|redige|reformula|gerar?\s*texto|write\s*a\s*text|verfassen)\b',
+        r'\b(draft|rascunho|entwurf)\b.*\b(text|narrativa|narrative)\b',
+        r'\b(genera?te?\s*(text|content|conte[uú]do)|text\s*generieren)\b',
+    ],
 }
 
 
 def classify_intent(message: str, tier: Tier = Tier.PERSONAL) -> Tuple[Intent, bool]:
     """
-    Classify user intent using rule-based pattern matching.
-
-    The Dragon asks:
-        1. Can this be resolved with local sovereignty?
-        2. YES → respond (is_local=True)
-        3. NO → activate semantic layer if tier allows (is_local=False)
-
-    Args:
-        message: User message text
-        tier: Current user tier
-
-    Returns:
-        Tuple of (Intent, is_local) where is_local indicates sovereign routing.
+    Classify user intent. Sovereign-by-default for ALL tiers (FIX H).
+    Returns: (Intent, is_local)
     """
     msg_lower = message.lower().strip()
 
     if not msg_lower:
         return (Intent.HELP, True)
 
-    # Score each intent by pattern matches
-    best_intent = None
+    best_intent: Optional[Intent] = None
     best_score = 0
 
     for intent, patterns in INTENT_PATTERNS.items():
@@ -303,85 +346,65 @@ def classify_intent(message: str, tier: Tier = Tier.PERSONAL) -> Tuple[Intent, b
             best_score = score
             best_intent = intent
 
-    # If a local intent was matched, return it
+    # LOCAL intent matched -> always local
     if best_intent and best_intent in LOCAL_INTENTS:
         return (best_intent, True)
 
-    # If a semantic intent was matched
+    # SEMANTIC intent matched
     if best_intent and best_intent in SEMANTIC_INTENTS:
-        # Personal tier NEVER goes to LLM — route to HELP instead
         if tier == Tier.PERSONAL:
-            return (Intent.HELP, True)
+            fallback = SEMANTIC_TO_LOCAL_FALLBACK.get(best_intent, Intent.HELP)
+            return (fallback, True)
         return (best_intent, False)
 
-    # No pattern matched → classify by tier
+    # No match -> default by tier
     if tier == Tier.PERSONAL:
-        # Personal: always local, never LLM
         return (Intent.HELP, True)
     else:
-        # Premium tiers: default to interpretive chat
         return (Intent.CHAT_INTERPRETIVE, False)
 
 
 # ═══════════════════════════════════════════════════════════════
-#  HANDLER MAPPING
+#  TIER TRUST (FIX E)
 # ═══════════════════════════════════════════════════════════════
 
-HANDLER_MAP: Dict[Intent, str] = {
-    # Document generation → Dragon render API
-    Intent.GENERATE_PDF: "/api/dragon/render",
-    Intent.GENERATE_DOCX: "/api/dragon/render",
-    Intent.GENERATE_PPTX: "/api/dragon/render",
-    Intent.GENERATE_XLSX: "/api/dragon/render",
+def resolve_tier(request_data: dict, headers: Optional[dict] = None) -> Tier:
+    """Resolve tier with trust validation (FIX E)."""
+    if headers and TIER_HEADER in headers:
+        header_tier = headers[TIER_HEADER].lower().strip()
+        if TIER_SECRET:
+            sig = headers.get("X-WINDI-TIER-SIG", "")
+            if not _verify_tier_signature(header_tier, sig):
+                return Tier.PERSONAL
+        return _parse_tier(header_tier)
 
-    # Seal & Forensic
-    Intent.SEAL_DOCUMENT: "/api/dragon/seal",
-    Intent.SEAL_PIPELINE: "/api/dragon/seal",
-    Intent.QUERY_LEDGER: "http://localhost:8101/api/receipts",
-    Intent.VERIFY_HASH: "http://localhost:8101/api/receipts/verify",
-    Intent.STORE_VAULT: "http://localhost:8106/api/vault/store",
-    Intent.DOWNLOAD_FILE: "/api/dragon/download",
+    if not TIER_SECRET:
+        json_tier = request_data.get("tier", "personal").lower().strip()
+        return _parse_tier(json_tier)
 
-    # Governance
-    Intent.CHECK_COMPLIANCE: "/api/dragon/compliance",
-    Intent.CHECK_INVARIANTS: "/api/dragon/invariants",
-    Intent.CHECK_RISK: "/api/dragon/risk",
-    Intent.SGE_ANALYZE: "/api/dragon/sge",
-    Intent.AUTONOMY_SCORE: "/api/dragon/sovereignty",
-    Intent.SENTINEL_STATUS: "http://localhost:8102/health",
-    Intent.I9_CHECK: "/api/dragon/invariants",
-    Intent.METADATA_CLASSIFY: "/api/dragon/metadata",
+    return Tier.PERSONAL
 
-    # Dashboards
-    Intent.PULSE_REPORT: "/api/pulse/report.md",
-    Intent.OUTLOOK_REPORT: "/api/dragon/outlook/report.md",
-    Intent.HEALTH_CHECK: "/api/dragon/health",
-    Intent.WIRING_STATUS: "/api/dragon/outlook/report.md",
-    Intent.WAR_ROOM: "http://localhost:8090/war-room/",
-    Intent.BUDGET_STATUS: "/api/dragon/health",
 
-    # Workflow
-    Intent.COMMUNIQUE_CREATE: "http://localhost:8105/api/communique/create",
-    Intent.COMMUNIQUE_REVIEW: "http://localhost:8105/api/communique/review",
-    Intent.COMMUNIQUE_PUBLISH: "http://localhost:8105/api/communique/publish",
-    Intent.OCR_DOCUMENT: "http://localhost:8095/api/ocr",
-    Intent.ISP_SELECT: "/api/dragon/isp/resolve",
-    Intent.ISP_LIST: "/api/dragon/isp/list",
-    Intent.AUTOCAT_CLASSIFY: "/api/dragon/autocat",
-    Intent.PAPERLESS_BRIDGE: "http://localhost:8095/health",
+def _parse_tier(tier_str: str) -> Tier:
+    return {
+        "personal": Tier.PERSONAL,
+        "professional": Tier.PROFESSIONAL,
+        "governance": Tier.GOVERNANCE,
+    }.get(tier_str, Tier.PERSONAL)
 
-    # System
-    Intent.HELP: "/api/dragon/capabilities",
-    Intent.DRAGON_IDENTITY: "/api/dragon/identity",
-    Intent.WALLET_CHECK: "http://localhost:8099/health",
-    Intent.CLONE_STATUS: "http://localhost:8092/health",
-    Intent.COMMAND_BRIDGE: "http://localhost:8097/health",
-    Intent.LANDING_INFO: "http://localhost:8107/",
-    Intent.ID_GENESIS: "http://localhost:8096/health",
-    Intent.CORTEX_STATUS: "http://localhost:8889/health",
-    Intent.TRILINGUAL_DETECT: "/api/dragon/lang",
-    Intent.THEME_TOGGLE: "/api/dragon/theme",
-}
+
+def _verify_tier_signature(tier: str, signature: str) -> bool:
+    if not TIER_SECRET or not signature:
+        return False
+    import hmac
+    import hashlib
+    expected = hmac.new(TIER_SECRET.encode(), tier.encode(), hashlib.sha256).hexdigest()
+    return hmac.compare_digest(expected, signature)
+
+
+# ═══════════════════════════════════════════════════════════════
+#  RENDER PARSING (FIX B)
+# ═══════════════════════════════════════════════════════════════
 
 FORMAT_MAP: Dict[Intent, str] = {
     Intent.GENERATE_PDF: "pdf",
@@ -390,43 +413,111 @@ FORMAT_MAP: Dict[Intent, str] = {
     Intent.GENERATE_XLSX: "xlsx",
 }
 
-
-def get_handler(intent: Intent) -> str:
-    """Get the handler URL for an intent."""
-    return HANDLER_MAP.get(intent, "/api/dragon/capabilities")
+COMMAND_STRIP_PATTERNS = [
+    r'^(criar?|create|erstellen|gerar?|generate|exportar?|machen?)\s+',
+    r'\b(um|uma|ein|eine|a|an)\s+',
+    r'\b(pdf|docx|pptx|xlsx|word|excel|presentation|apresenta[cç][aã]o|pr[aä]sentation)\b',
+    r'\b(document|documento|dokument)\b',
+    r'\b(por\s*favor|please|bitte)\b',
+    r'^\s+|\s+$',
+]
 
 
 def get_format(intent: Intent) -> Optional[str]:
-    """Get the document format for a generation intent."""
     return FORMAT_MAP.get(intent)
 
 
+def get_handler(intent: Intent) -> str:
+    """Return handler name for an intent (for response metadata)."""
+    if intent in (Intent.GENERATE_PDF, Intent.GENERATE_DOCX,
+                  Intent.GENERATE_PPTX, Intent.GENERATE_XLSX):
+        return "document_renderer"
+    elif intent in (Intent.SEAL_DOCUMENT, Intent.SEAL_PIPELINE):
+        return "seal_engine"
+    elif intent in (Intent.QUERY_LEDGER, Intent.VERIFY_HASH):
+        return "ledger_api"
+    elif intent in (Intent.STORE_VAULT, Intent.DOWNLOAD_FILE):
+        return "vault_api"
+    elif intent in (Intent.CHAT_INTERPRETIVE, Intent.SEMANTIC_ANALYSIS, Intent.TEXT_GENERATION):
+        return "llm_semantic"
+    elif intent in (Intent.PULSE_REPORT, Intent.HEALTH_CHECK, Intent.WIRING_STATUS):
+        return "pulse_monitor"
+    elif intent in (Intent.OUTLOOK_REPORT,):
+        return "outlook_api"
+    elif intent == Intent.OCR_DOCUMENT:
+        return "multimodal_engine"
+    elif intent in (Intent.COMMUNIQUE_CREATE, Intent.COMMUNIQUE_REVIEW, Intent.COMMUNIQUE_PUBLISH):
+        return "communique_engine"
+    elif intent in (Intent.CHECK_COMPLIANCE, Intent.CHECK_INVARIANTS, Intent.CHECK_RISK,
+                    Intent.AUTONOMY_SCORE, Intent.SGE_ANALYZE, Intent.I9_CHECK):
+        return "governance_engine"
+    elif intent == Intent.HELP:
+        return "help_local"
+    else:
+        return "sovereign_local"
+
+
+def parse_render_request(message: str, request_data: dict, intent: Intent) -> dict:
+    """Parse document generation request (FIX B)."""
+    fmt = FORMAT_MAP.get(intent, "docx")
+
+    explicit_title = request_data.get("title", "").strip()
+    explicit_content = request_data.get("content", "").strip()
+
+    if explicit_title or explicit_content:
+        return {
+            "format": fmt,
+            "title": explicit_title or f"WINDI {fmt.upper()} Document",
+            "content": explicit_content or explicit_title,
+            "needs_input": False,
+        }
+
+    cleaned = message
+    for pattern in COMMAND_STRIP_PATTERNS:
+        cleaned = re.sub(pattern, ' ', cleaned, flags=re.IGNORECASE)
+    cleaned = re.sub(r'\s+', ' ', cleaned).strip()
+
+    if len(cleaned) > 10:
+        return {
+            "format": fmt,
+            "title": cleaned[:80],
+            "content": cleaned,
+            "needs_input": False,
+        }
+
+    return {
+        "format": fmt,
+        "title": "",
+        "content": "",
+        "needs_input": True,
+    }
+
+
 # ═══════════════════════════════════════════════════════════════
-#  LANGUAGE DETECTION
+#  LANGUAGE DETECTION (FIX D: single detector)
 # ═══════════════════════════════════════════════════════════════
 
 PT_MARKERS = frozenset([
     'pode', 'criar', 'gerar', 'como', 'preciso', 'quero', 'fazer',
-    'ajuda', 'documento', 'obrigado', 'por', 'favor', 'ola', 'bom',
+    'ajuda', 'documento', 'obrigado', 'por', 'favor', 'bom',
     'dia', 'boa', 'tarde', 'noite', 'verificar', 'mostrar', 'listar',
     'qual', 'quais', 'quando', 'onde', 'porque', 'sistema', 'estado',
+    'selar', 'selo', 'recibo', 'risco', 'governanca', 'relatorio',
 ])
 
 DE_MARKERS = frozenset([
-    'kann', 'erstellen', 'bitte', 'hilfe', 'dokument', 'wie',
+    'kann', 'kannst', 'erstellen', 'bitte', 'hilfe', 'dokument', 'wie',
     'brauche', 'mochte', 'machen', 'danke', 'guten', 'morgen',
     'tag', 'abend', 'zeigen', 'prufen', 'status', 'welche',
     'wann', 'warum', 'konnen', 'soll', 'bericht', 'uberprufen',
+    'versiegeln', 'siegel', 'quittung', 'risiko', 'governance',
+    'nicht', 'auch', 'noch', 'oder', 'aber', 'schon',
 ])
 
 
 def detect_language(text: str) -> str:
-    """
-    Simple trilingual detection (PT/DE/EN) based on keyword frequency.
-    Returns 'pt', 'de', or 'en' (default).
-    """
+    """Single trilingual detector (FIX D)."""
     words = set(text.lower().split())
-
     pt_score = len(words & PT_MARKERS)
     de_score = len(words & DE_MARKERS)
 
@@ -438,7 +529,7 @@ def detect_language(text: str) -> str:
 
 
 # ═══════════════════════════════════════════════════════════════
-#  SOVEREIGN RESPONSE TEMPLATES
+#  RESPONSE TEMPLATES
 # ═══════════════════════════════════════════════════════════════
 
 HELP_RESPONSES: Dict[str, str] = {
@@ -479,26 +570,64 @@ HELP_RESPONSES: Dict[str, str] = {
 
 FALLBACK_MESSAGES: Dict[str, str] = {
     "de": (
-        "Ich bearbeite deine Anfrage mit lokaler Governance. "
-        "Fur KI-erweiterte Interpretation steht dir der Professional-Tier "
-        "zur Verfugung - dort wird die semantische Schicht aktiviert."
+        "Ich arbeite gerade im souveranen Modus - keine externe API verfugbar.\n"
+        "Ich kann dir trotzdem helfen mit lokalen Funktionen:\n"
+        "Dokumente erstellen, versiegeln, Compliance prufen, Dashboards anzeigen.\n\n"
+        "Was mochtest du tun?"
     ),
     "en": (
-        "I'm processing your request with local governance. "
-        "For AI-enhanced interpretation, the Professional tier is available "
-        "- where the semantic layer is activated."
+        "I'm currently in sovereign mode - no external API available.\n"
+        "I can still help you with local functions:\n"
+        "Create documents, seal them, check compliance, show dashboards.\n\n"
+        "What would you like to do?"
     ),
     "pt": (
-        "Estou a processar o teu pedido com governanca local. "
-        "Para interpretacao amplificada por IA, o tier Professional "
-        "esta disponivel - onde a camada semantica e activada."
+        "Estou em modo soberano - sem API externa disponivel.\n"
+        "Posso ajudar-te com funcoes locais:\n"
+        "Criar documentos, selar, verificar compliance, mostrar dashboards.\n\n"
+        "O que desejas fazer?"
     ),
 }
 
-DOCUMENT_CREATED_MESSAGES: Dict[str, str] = {
-    "de": "Dokument erstellt und versiegelt.",
-    "en": "Document created and sealed.",
-    "pt": "Documento criado e selado.",
+RENDER_INPUT_PROMPTS: Dict[str, Dict[str, str]] = {
+    "pdf": {
+        "de": "Ich erstelle gerne ein PDF. Was soll der Inhalt sein?",
+        "en": "I'll create a PDF. What should the content be?",
+        "pt": "Vou criar um PDF. Qual deve ser o conteudo?",
+    },
+    "docx": {
+        "de": "Ich erstelle gerne ein Word-Dokument. Was soll der Inhalt sein?",
+        "en": "I'll create a Word document. What should the content be?",
+        "pt": "Vou criar um documento Word. Qual deve ser o conteudo?",
+    },
+    "pptx": {
+        "de": "Ich erstelle gerne eine Prasentation. Was ist das Thema?",
+        "en": "I'll create a presentation. What's the topic?",
+        "pt": "Vou criar uma apresentacao. Qual e o tema?",
+    },
+    "xlsx": {
+        "de": "Ich erstelle gerne eine Tabelle. Welche Daten soll sie enthalten?",
+        "en": "I'll create a spreadsheet. What data should it contain?",
+        "pt": "Vou criar uma tabela. Que dados deve conter?",
+    },
+}
+
+FALLBACK_WITH_ACTION: Dict[str, str] = {
+    "de": (
+        "Ich habe deine Anfrage mit lokaler Governance bearbeitet.\n"
+        "Hier sind die Ergebnisse:\n\n{local_result}\n\n"
+        "Fur KI-erweiterte Interpretation steht der Professional-Tier zur Verfugung."
+    ),
+    "en": (
+        "I've processed your request with local governance.\n"
+        "Here are the results:\n\n{local_result}\n\n"
+        "For AI-enhanced interpretation, the Professional tier is available."
+    ),
+    "pt": (
+        "Processei o teu pedido com governanca local.\n"
+        "Aqui estao os resultados:\n\n{local_result}\n\n"
+        "Para interpretacao amplificada por IA, o tier Professional esta disponivel."
+    ),
 }
 
 
@@ -507,7 +636,6 @@ DOCUMENT_CREATED_MESSAGES: Dict[str, str] = {
 # ═══════════════════════════════════════════════════════════════
 
 def sovereignty_metadata(llm_used: bool = False) -> dict:
-    """Generate sovereignty metadata for responses."""
     return {
         "total_functions": 45,
         "local_functions": 42,
@@ -521,61 +649,20 @@ def sovereignty_metadata(llm_used: bool = False) -> dict:
 
 
 def capabilities_response() -> dict:
-    """Full capabilities manifest."""
     return {
         "version": __version__,
         "sovereignty": sovereignty_metadata(),
         "capabilities": {
             "documents": ["PDF", "DOCX", "PPTX", "XLSX"],
-            "sealing": [
-                "SHA-256 hashing",
-                "Serial numbers (WINDI-2026-XXXX)",
-                "QR codes with verify URL",
-                "Forensic Ledger (18,238+ receipts)",
-                "Immutable Vault storage",
-            ],
-            "governance": [
-                "9 Constitutional Invariants (I1-I9)",
-                "I10 Continuity Invariant",
-                "8 Stability Layers (S1-S8)",
-                "SGE Risk Classification (R0-R5)",
-                "Compliance Passport (GOLD status)",
-                "Autonomy Score",
-            ],
-            "dashboards": [
-                "Pulse Report (20 services)",
-                "Product Outlook (14 features)",
-                "Health Check",
-                "Wiring Status (15 wires)",
-                "War Room",
-            ],
-            "workflows": [
-                "Communique (create -> review -> publish = SEALED)",
-                "OCR via Tesseract 5.3",
-                "ISP Templates (6 profiles, Grade A 97/100)",
-                "AutoCat (6 categories, 3 languages)",
-                "Seal Pipeline (N1-N4)",
-            ],
+            "sealing": ["SHA-256 hashing", "Serial numbers", "QR codes", "Forensic Ledger", "Vault storage"],
+            "governance": ["9 Invariants", "I10 Continuity", "8 Stability Layers", "SGE R0-R5", "Compliance Passport"],
+            "dashboards": ["Pulse", "Outlook", "Health", "Wiring", "War Room"],
+            "workflows": ["Communique", "OCR", "ISP Templates", "AutoCat", "Seal Pipeline"],
         },
         "tiers": {
-            "personal": {
-                "price": "Free",
-                "functions": 42,
-                "llm": False,
-                "description": "Full infrastructure, zero external keys",
-            },
-            "professional": {
-                "price": "EUR 25-40/user",
-                "functions": 45,
-                "llm": True,
-                "description": "+ semantic amplification",
-            },
-            "governance": {
-                "price": "EUR 80-120/user",
-                "functions": 45,
-                "llm": True,
-                "description": "+ dedicated LLM, ISP custom, SLA",
-            },
+            "personal": {"price": "Free", "functions": 42, "llm": False},
+            "professional": {"price": "EUR 25-40/user", "functions": 45, "llm": True},
+            "governance": {"price": "EUR 80-120/user", "functions": 45, "llm": True},
         },
     }
 
@@ -586,41 +673,19 @@ def capabilities_response() -> dict:
 
 if __name__ == "__main__":
     print(f"WINDI Sovereign Router v{__version__}")
-    print(f"Local intents: {len(LOCAL_INTENTS)}")
-    print(f"Semantic intents: {len(SEMANTIC_INTENTS)}")
-    print(f"Total: {len(Intent)}")
+    print(f"Local: {len(LOCAL_INTENTS)} | Semantic: {len(SEMANTIC_INTENTS)} | Total: {len(Intent)}")
     print()
 
-    # Test classification
-    test_cases = [
-        ("Criar um PDF com o relatorio", Tier.PERSONAL),
-        ("create a docx document", Tier.PERSONAL),
-        ("Pulse report bitte", Tier.PERSONAL),
-        ("verificar compliance", Tier.PERSONAL),
-        ("o que podes fazer?", Tier.PERSONAL),
-        ("analisa este texto semanticamente", Tier.PROFESSIONAL),
-        ("hello", Tier.PERSONAL),
-        ("selar este documento", Tier.PERSONAL),
-        ("show me the ledger receipts", Tier.PERSONAL),
-        ("criar uma apresentacao", Tier.PERSONAL),
+    tests = [
+        ("Criar um PDF", Tier.PERSONAL, True),
+        ("o que podes fazer?", Tier.PERSONAL, True),
+        ("analisa profundamente este texto", Tier.PERSONAL, True),
+        ("analisa profundamente este texto", Tier.GOVERNANCE, False),
     ]
 
-    print("Intent Classification Tests:")
-    print("-" * 70)
-    for msg, tier in test_cases:
+    for msg, tier, expected in tests:
         intent, is_local = classify_intent(msg, tier)
-        source = "LOCAL" if is_local else "SEMANTIC"
-        lang = detect_language(msg)
-        print(f"  [{source:9s}] [{lang}] {msg:45s} -> {intent.value}")
+        ok = "PASS" if is_local == expected else "FAIL"
+        print(f"  [{ok}] {msg[:40]} -> {intent.value} (local={is_local})")
 
-    print()
-    print("Language Detection Tests:")
-    print("-" * 40)
-    for text in ["Guten Morgen, bitte erstellen", "Criar um documento por favor", "Create a PDF please"]:
-        print(f"  [{detect_language(text)}] {text}")
-
-    print()
-    print(f"All {len(LOCAL_INTENTS)} local intents mapped")
-    print(f"All {len(SEMANTIC_INTENTS)} semantic intents mapped")
-    print(f"Ratio: {len(LOCAL_INTENTS)}/{len(Intent)} = "
-          f"{len(LOCAL_INTENTS)/len(Intent)*100:.1f}% sovereign")
+    print(f"\nRatio: {len(LOCAL_INTENTS)}/{len(Intent)} = {len(LOCAL_INTENTS)/len(Intent)*100:.1f}% sovereign")
