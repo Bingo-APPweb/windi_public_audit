@@ -1048,19 +1048,20 @@ def handle_seal_document(body: dict) -> tuple:
         doc_title = filepath.stem
         doc_format = filepath.suffix.lstrip('.')
 
-        # 1. Register with Ledger
+        # 1. Register with Ledger (using correct Ledger API fields)
+        # Map doc_format to valid Ledger doc_types: communique, compliance_passport, doc, jmpg, pptx
+        doc_type_map = {"pdf": "doc", "docx": "doc", "xlsx": "doc", "pptx": "pptx", "jmpg": "jmpg"}
+        ledger_doc_type = doc_type_map.get(doc_format.lower(), "doc")
+
         ledger_payload = {
+            "id": serial,
             "content_hash": content_hash,
-            "doc_type": "SEALED_DOCUMENT",
-            "impact_level": "MEDIUM",
-            "source": "palette-dragon",
-            "metadata": json.dumps({
-                "title": doc_title,
-                "format": doc_format,
-                "sealed_by": "Guardian",
-                "serial": serial,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
-            })
+            "doc_type": ledger_doc_type,
+            "actor": "guardian",
+            "app": "palette",
+            "doc_name": doc_title,
+            "governance_level": body.get("governance_level", "MEDIUM"),
+            "sge_score": 0.0,
         }
 
         ledger_req = urllib.request.Request(
@@ -1073,7 +1074,8 @@ def handle_seal_document(body: dict) -> tuple:
         try:
             with urllib.request.urlopen(ledger_req, timeout=10) as resp:
                 ledger_result = json.loads(resp.read().decode())
-                ledger_id = ledger_result.get("receipt_id") or ledger_result.get("id")
+                ledger_id = ledger_result.get("id") or serial
+                log(f"Sealed in Ledger: {ledger_id}")
         except Exception as e:
             log(f"Ledger error: {e}")
             ledger_id = f"local-{uuid.uuid4().hex[:8]}"
@@ -1555,6 +1557,26 @@ class DragonHandler(http.server.BaseHTTPRequestHandler):
         if path == "/api/dragon/communique/list":
             data, code = handle_communique_list()
             self._json_response(data, code)
+            return
+
+        # Engine status checks (GET returns readiness, POST generates)
+        engine_routes = {
+            "/api/dragon/generate/pdf": ("pdf", HAS_PDF, "reportlab"),
+            "/api/dragon/generate/docx": ("docx", HAS_DOCX, "python-docx"),
+            "/api/dragon/generate/pptx": ("pptx", True, "python-pptx"),
+            "/api/dragon/generate/xlsx": ("xlsx", HAS_XLSX, "openpyxl"),
+            "/api/dragon/seal": ("seal", True, "guardian"),
+            "/api/dragon/ocr": ("ocr", HAS_MULTIMODAL, "multimodal_engine"),
+        }
+        if path in engine_routes:
+            engine, available, lib = engine_routes[path]
+            self._json_response({
+                "status": "ready" if available else "unavailable",
+                "engine": engine,
+                "library": lib,
+                "method_hint": "Use POST to generate documents",
+                "dragon": "architect" if engine != "seal" else "guardian",
+            }, 200 if available else 503)
             return
 
         # Serve UI

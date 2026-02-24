@@ -118,7 +118,7 @@ function ServiceRow({ svc }) {
         <span style={{ fontSize: 12, color: TEXT, fontWeight: 600, flex: 1 }}>{svc.name}</span>
         <Badge color={cat.color}>{cat.icon} {cat.label}</Badge>
         <Badge color={color}>{svc.status.toUpperCase()}</Badge>
-        {svc.critical && <Badge color={RED} bg={`${RED}15`}>CRITICAL</Badge>}
+        {svc.critical && <Badge color={GOLD} bg={`${GOLD}15`}>CORE</Badge>}
       </div>
       {open && (
         <div style={{ marginTop: 6, paddingTop: 6, borderTop: `1px solid ${BORDER}`, fontSize: 10, color: DIM, fontFamily: "'JetBrains Mono', monospace" }}>
