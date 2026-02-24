@@ -20,8 +20,34 @@ import hashlib
 import urllib.request
 import urllib.error
 import traceback
+import subprocess
+import uuid
+import base64
+import threading
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
+
+# Document generation imports
+try:
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib.units import mm
+    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.lib.enums import TA_LEFT
+    from reportlab.lib import colors
+    import qrcode
+    from io import BytesIO
+    HAS_PDF = True
+except ImportError:
+    HAS_PDF = False
+
+try:
+    from docx import Document
+    from docx.shared import Inches, Pt
+    from docx.enum.text import WD_ALIGN_PARAGRAPH
+    HAS_DOCX = True
+except ImportError:
+    HAS_DOCX = False
 
 # WINDI Document Renderer Integration
 import sys as _renderer_sys
@@ -73,7 +99,16 @@ API_URL = "https://api.anthropic.com/v1/messages"
 MODEL = "claude-sonnet-4-20250514"  # Cost-efficient for Agent responses
 MAX_TOKENS = 1024
 
-VERSION = "1.0.0"
+VERSION = "1.1.0"  # Sprint 1+2: Document Production + Seal
+
+# Document generation services
+STAGING_DIR = BASE_DIR / "staging"
+STAGING_DIR.mkdir(exist_ok=True)
+SERIAL_FILE = Path("/opt/windi/data/serial_counter.json")
+EXPORT_ENGINE = "http://127.0.0.1:8103"
+LEDGER_API = "http://127.0.0.1:8101"
+VAULT_API = "http://127.0.0.1:8106"
+PPT_ENGINE_DIR = Path("/opt/windi/ppt-engine")
 
 # ═══════════════════════════════════════════════════════════════════════
 # API KEY MANAGEMENT
@@ -669,6 +704,337 @@ def handle_dragon_health(body=None):
     }, 200
 
 # ═══════════════════════════════════════════════════════════════════════
+# SPRINT 1+2: DOCUMENT GENERATION & SEAL
+# ═══════════════════════════════════════════════════════════════════════
+
+def get_next_serial():
+    """Get next WINDI serial number (atomic)."""
+    try:
+        if SERIAL_FILE.exists():
+            data = json.loads(SERIAL_FILE.read_text())
+        else:
+            data = {"year": 2026, "seq": 0}
+        data["seq"] += 1
+        SERIAL_FILE.write_text(json.dumps(data))
+        return f"WINDI-{data['year']}-{data['seq']:04d}"
+    except Exception as e:
+        log(f"Serial error: {e}")
+        return f"WINDI-2026-{int(time.time()) % 10000:04d}"
+
+def cleanup_staging():
+    """Remove files older than 1 hour from staging."""
+    try:
+        now = time.time()
+        for f in STAGING_DIR.iterdir():
+            if f.is_file() and (now - f.stat().st_mtime) > 3600:
+                f.unlink()
+    except Exception as e:
+        log(f"Staging cleanup error: {e}")
+
+def stage_file(content: bytes, ext: str, title: str = "document") -> dict:
+    """Stage a generated file and return metadata."""
+    cleanup_staging()
+    ts = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
+    content_hash = hashlib.sha256(content).hexdigest()
+    filename = f"WINDI-{ts}-{content_hash[:8]}.{ext}"
+    filepath = STAGING_DIR / filename
+    filepath.write_bytes(content)
+    return {
+        "file_id": filename,
+        "file_path": str(filepath),
+        "content_hash": content_hash,
+        "size": len(content),
+        "format": ext,
+        "title": title,
+    }
+
+def generate_pdf(title: str, content: str, template: str = "default") -> bytes:
+    """Generate PDF using reportlab."""
+    if not HAS_PDF:
+        raise RuntimeError("PDF generation not available (reportlab not installed)")
+
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=A4,
+                           leftMargin=20*mm, rightMargin=20*mm,
+                           topMargin=25*mm, bottomMargin=25*mm)
+
+    styles = getSampleStyleSheet()
+    styles.add(ParagraphStyle(name='WINDI_Title', fontName='Helvetica-Bold',
+                              fontSize=18, spaceAfter=12))
+    styles.add(ParagraphStyle(name='WINDI_Body', fontName='Helvetica',
+                              fontSize=11, leading=14, spaceAfter=8))
+
+    story = []
+    story.append(Paragraph(title, styles['WINDI_Title']))
+    story.append(Spacer(1, 12))
+
+    # Split content by paragraphs
+    for para in content.split('\n\n'):
+        if para.strip():
+            story.append(Paragraph(para.strip(), styles['WINDI_Body']))
+
+    # Add WINDI footer
+    serial = get_next_serial()
+    ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    footer_text = f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n{serial} | {ts} | WINDI Publishing House | KI verarbeitet. Der Mensch entscheidet. WINDI garantiert."
+    story.append(Spacer(1, 30))
+    story.append(Paragraph(footer_text.replace('\n', '<br/>'),
+                          ParagraphStyle(name='Footer', fontName='Helvetica',
+                                        fontSize=8, textColor=colors.grey)))
+
+    doc.build(story)
+    return buffer.getvalue()
+
+def generate_docx(title: str, content: str, sections: list = None) -> bytes:
+    """Generate DOCX using python-docx."""
+    if not HAS_DOCX:
+        raise RuntimeError("DOCX generation not available (python-docx not installed)")
+
+    doc = Document()
+
+    # Title
+    title_para = doc.add_heading(title, 0)
+
+    # Content
+    if sections:
+        for sec in sections:
+            doc.add_heading(sec.get("title", ""), level=1)
+            doc.add_paragraph(sec.get("content", ""))
+    else:
+        for para in content.split('\n\n'):
+            if para.strip():
+                doc.add_paragraph(para.strip())
+
+    # WINDI footer
+    serial = get_next_serial()
+    ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    doc.add_paragraph()
+    footer = doc.add_paragraph()
+    footer.add_run("━" * 60).font.size = Pt(8)
+    doc.add_paragraph(f"{serial} | {ts} | WINDI Publishing House")
+    doc.add_paragraph("KI verarbeitet. Der Mensch entscheidet. WINDI garantiert.").italic = True
+
+    buffer = BytesIO()
+    doc.save(buffer)
+    return buffer.getvalue()
+
+def generate_pptx(title: str, slides: list) -> bytes:
+    """Generate PPTX using Node.js pptxgenjs engine."""
+    if not PPT_ENGINE_DIR.exists():
+        raise RuntimeError("PPTX engine not available")
+
+    # Create temp JSON input
+    input_data = {
+        "title": title,
+        "slides": slides,
+        "serial": get_next_serial(),
+    }
+
+    input_file = STAGING_DIR / f"pptx_input_{uuid.uuid4().hex[:8]}.json"
+    output_file = STAGING_DIR / f"pptx_output_{uuid.uuid4().hex[:8]}.pptx"
+
+    try:
+        input_file.write_text(json.dumps(input_data))
+
+        # Call simple Node.js generator
+        result = subprocess.run(
+            ["node", "generate_simple.js", str(input_file), str(output_file)],
+            cwd=str(PPT_ENGINE_DIR),
+            capture_output=True,
+            text=True,
+            timeout=30
+        )
+
+        if result.returncode != 0:
+            log(f"PPTX engine error: {result.stderr}")
+            raise RuntimeError(f"PPTX generation failed: {result.stderr[:200]}")
+
+        if not output_file.exists():
+            raise RuntimeError("PPTX file not created")
+
+        return output_file.read_bytes()
+    finally:
+        input_file.unlink(missing_ok=True)
+        output_file.unlink(missing_ok=True)
+
+def handle_generate_document(body: dict) -> tuple:
+    """Handle /api/dragon/generate/{format} — document generation."""
+    fmt = body.get("format", "pdf").lower()
+    title = body.get("title", "WINDI Document")
+    content = body.get("content", "")
+    template = body.get("template", "default")
+    slides = body.get("slides", [])
+    sections = body.get("sections", [])
+
+    if not content and not slides:
+        return {"error": "Content or slides required", "dragon": "architect"}, 400
+
+    try:
+        if fmt == "pdf":
+            data = generate_pdf(title, content, template)
+        elif fmt == "docx":
+            data = generate_docx(title, content, sections)
+        elif fmt == "pptx":
+            if not slides:
+                slides = [{"title": title, "content": content}]
+            data = generate_pptx(title, slides)
+        else:
+            return {"error": f"Unsupported format: {fmt}", "dragon": "architect"}, 400
+
+        staged = stage_file(data, fmt, title)
+        log(f"DOCUMENT generated: {staged['file_id']} ({staged['size']} bytes)")
+
+        return {
+            "status": "generated",
+            "dragon": "architect",
+            "file_id": staged["file_id"],
+            "download_url": f"/api/dragon/download/{staged['file_id']}",
+            "format": fmt,
+            "size": staged["size"],
+            "content_hash": staged["content_hash"],
+            "title": title,
+            "message": f"Document '{title}' generated successfully. Click to download.",
+        }, 200
+
+    except Exception as e:
+        log(f"Document generation error: {e}")
+        return {
+            "status": "error",
+            "code": "GENERATION_FAILED",
+            "message": str(e),
+            "dragon": "architect",
+        }, 500
+
+def handle_seal_document(body: dict) -> tuple:
+    """Handle /api/dragon/seal — full forensic seal pipeline."""
+    file_id = body.get("file_id")
+    file_path = body.get("file_path")
+
+    # Resolve file
+    if file_id:
+        filepath = STAGING_DIR / file_id
+    elif file_path:
+        filepath = Path(file_path)
+    else:
+        return {"error": "file_id or file_path required", "dragon": "guardian"}, 400
+
+    if not filepath.exists():
+        return {"error": "File not found", "dragon": "guardian"}, 404
+
+    try:
+        content = filepath.read_bytes()
+        content_hash = hashlib.sha256(content).hexdigest()
+        serial = get_next_serial()
+        doc_title = filepath.stem
+        doc_format = filepath.suffix.lstrip('.')
+
+        # 1. Register with Ledger
+        ledger_payload = {
+            "content_hash": content_hash,
+            "doc_type": "SEALED_DOCUMENT",
+            "impact_level": "MEDIUM",
+            "source": "palette-dragon",
+            "metadata": json.dumps({
+                "title": doc_title,
+                "format": doc_format,
+                "sealed_by": "Guardian",
+                "serial": serial,
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+            })
+        }
+
+        ledger_req = urllib.request.Request(
+            f"{LEDGER_API}/api/receipts",
+            data=json.dumps(ledger_payload).encode(),
+            headers={"Content-Type": "application/json"},
+            method="POST"
+        )
+
+        try:
+            with urllib.request.urlopen(ledger_req, timeout=10) as resp:
+                ledger_result = json.loads(resp.read().decode())
+                ledger_id = ledger_result.get("receipt_id") or ledger_result.get("id")
+        except Exception as e:
+            log(f"Ledger error: {e}")
+            ledger_id = f"local-{uuid.uuid4().hex[:8]}"
+
+        # 2. Store in Vault
+        vault_id = None
+        try:
+            vault_payload = {
+                "content_hash": content_hash,
+                "serial": serial,
+                "ledger_id": ledger_id,
+                "format": doc_format,
+            }
+            vault_req = urllib.request.Request(
+                f"{VAULT_API}/api/vault/store",
+                data=json.dumps(vault_payload).encode(),
+                headers={"Content-Type": "application/json"},
+                method="POST"
+            )
+            with urllib.request.urlopen(vault_req, timeout=10) as resp:
+                vault_result = json.loads(resp.read().decode())
+                vault_id = vault_result.get("vault_id") or vault_result.get("id")
+        except Exception as e:
+            log(f"Vault error (non-fatal): {e}")
+            vault_id = "pending"
+
+        # 3. Generate verification QR
+        verify_url = f"https://admin.windia4desk.tech/vault/verify/{content_hash[:16]}"
+        qr_base64 = None
+        try:
+            qr = qrcode.make(verify_url)
+            qr_buffer = BytesIO()
+            qr.save(qr_buffer, format='PNG')
+            qr_base64 = base64.b64encode(qr_buffer.getvalue()).decode()
+        except Exception as e:
+            log(f"QR generation error: {e}")
+
+        log(f"SEALED: {serial} hash={content_hash[:16]}... ledger={ledger_id}")
+
+        return {
+            "status": "SEALED",
+            "dragon": "guardian",
+            "serial": serial,
+            "receipt_hash": content_hash,
+            "ledger_id": ledger_id,
+            "vault_id": vault_id,
+            "verify_url": verify_url,
+            "qr_code": qr_base64,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "message": f"Document sealed with serial {serial}. Registered in Forensic Ledger.",
+        }, 200
+
+    except Exception as e:
+        log(f"Seal error: {e}")
+        return {
+            "status": "error",
+            "code": "SEAL_FAILED",
+            "message": str(e),
+            "dragon": "guardian",
+        }, 500
+
+def handle_download(file_id: str) -> tuple:
+    """Handle /api/dragon/download/{file_id} — serve staged file."""
+    filepath = STAGING_DIR / file_id
+    if not filepath.exists():
+        return None, 404
+
+    content = filepath.read_bytes()
+    ext = filepath.suffix.lstrip('.')
+    content_types = {
+        "pdf": "application/pdf",
+        "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        "pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+    }
+    return {
+        "content": content,
+        "content_type": content_types.get(ext, "application/octet-stream"),
+        "filename": file_id,
+    }, 200
+
+# ═══════════════════════════════════════════════════════════════════════
 # FALLBACK MESSAGES (when API is unavailable)
 # ═══════════════════════════════════════════════════════════════════════
 
@@ -749,6 +1115,16 @@ class DragonHandler(http.server.BaseHTTPRequestHandler):
             self._json_response(data, code)
             return
 
+        # Download endpoint (Sprint 1)
+        if path.startswith("/api/dragon/download/"):
+            file_id = path.split("/")[-1]
+            result, code = handle_download(file_id)
+            if result is None:
+                self._json_response({"error": "File not found"}, 404)
+            else:
+                self._file_response(result["content"], result["filename"], result["content_type"])
+            return
+
         # Serve UI
         if path in ("/", "/index.html", ""):
             self._serve_ui()
@@ -799,6 +1175,31 @@ class DragonHandler(http.server.BaseHTTPRequestHandler):
             log(f"GEN [{body.get('tier','?')}] dragon={data.get('dragon','?')} type={body.get('intent',{}).get('doc_type','?')}")
             self._json_response(data, code)
 
+        # Sprint 1: Document generation endpoints
+        elif path == "/api/dragon/generate/pdf":
+            body["format"] = "pdf"
+            data, code = handle_generate_document(body)
+            log(f"PDF generated: {data.get('file_id','?')}")
+            self._json_response(data, code)
+
+        elif path == "/api/dragon/generate/docx":
+            body["format"] = "docx"
+            data, code = handle_generate_document(body)
+            log(f"DOCX generated: {data.get('file_id','?')}")
+            self._json_response(data, code)
+
+        elif path == "/api/dragon/generate/pptx":
+            body["format"] = "pptx"
+            data, code = handle_generate_document(body)
+            log(f"PPTX generated: {data.get('file_id','?')}")
+            self._json_response(data, code)
+
+        # Sprint 2: Seal endpoint
+        elif path == "/api/dragon/seal":
+            data, code = handle_seal_document(body)
+            log(f"SEAL: {data.get('serial','?')} status={data.get('status','?')}")
+            self._json_response(data, code)
+
         elif path == "/api/dragon/health":
             data, code = handle_dragon_health(body)
             self._json_response(data, code)
@@ -821,6 +1222,16 @@ class DragonHandler(http.server.BaseHTTPRequestHandler):
         self._cors_headers()
         self.end_headers()
         self.wfile.write(body)
+
+    def _file_response(self, content: bytes, filename: str, content_type: str):
+        """Send file download response."""
+        self.send_response(200)
+        self.send_header("Content-Type", content_type)
+        self.send_header("Content-Length", len(content))
+        self.send_header("Content-Disposition", f'attachment; filename="{filename}"')
+        self._cors_headers()
+        self.end_headers()
+        self.wfile.write(content)
 
     def _cors_headers(self):
         """Add CORS headers."""

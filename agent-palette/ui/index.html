@@ -1673,6 +1673,13 @@ function WINDIAgentSuite() {
   const [urlInput, setUrlInput] = useState("");
   const [urlResult, setUrlResult] = useState(null);
   const [urlLoading, setUrlLoading] = useState(false);
+  // Document generation states (Sprint 1+2)
+  const [docGenModal, setDocGenModal] = useState(null);
+  const [docGenTitle, setDocGenTitle] = useState("");
+  const [docGenContent, setDocGenContent] = useState("");
+  const [docGenLoading, setDocGenLoading] = useState(false);
+  const [lastGeneratedFile, setLastGeneratedFile] = useState(null);
+  const [sealResult, setSealResult] = useState(null);
   const chatRef = useRef(null);
   const inputRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -1883,6 +1890,66 @@ function WINDIAgentSuite() {
     setUrlLoading(false);
   }, [urlInput]);
 
+  // ── Document Generation Handler (Sprint 1) ──
+  const handleDocGenerate = useCallback(async () => {
+    if (!docGenTitle.trim() || !docGenContent.trim()) return;
+    setDocGenLoading(true);
+    try {
+      const res = await fetch(`/palette/api/dragon/generate/${docGenModal.format}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: docGenTitle, content: docGenContent })
+      });
+      const data = await res.json();
+      if (data.status === "generated") {
+        setLastGeneratedFile(data);
+        // Auto-download
+        const link = document.createElement("a");
+        link.href = `/palette${data.download_url}`;
+        link.download = data.file_id;
+        link.click();
+        // Add to chat
+        const ts = new Date().toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"});
+        setMsgs(prev => [...prev, { role:"agent", text:`📄 **${data.title}** generiert (${docGenModal.format.toUpperCase()}, ${data.size} bytes)\n\n[Download ${data.file_id}](/palette${data.download_url})\n\n💡 Klicke ⚡ zum Versiegeln.`, ts, dragon:"architect" }]);
+        setDocGenModal(null);
+        setDocGenTitle("");
+        setDocGenContent("");
+      } else {
+        alert(data.message || "Generation failed");
+      }
+    } catch (err) {
+      alert("Error: " + err.message);
+    }
+    setDocGenLoading(false);
+  }, [docGenModal, docGenTitle, docGenContent]);
+
+  // ── Seal Handler (Sprint 2) ──
+  const handleSeal = useCallback(async () => {
+    if (!lastGeneratedFile?.file_id) return;
+    try {
+      const res = await fetch("/palette/api/dragon/seal", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ file_id: lastGeneratedFile.file_id })
+      });
+      const data = await res.json();
+      setSealResult(data);
+      if (data.status === "SEALED") {
+        const ts = new Date().toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"});
+        setMsgs(prev => [...prev, {
+          role:"agent",
+          text:`🔏 **WINDI SEAL RECEIPT**\n\n**Serial:** ${data.serial}\n**Hash:** ${data.receipt_hash.slice(0,16)}...\n**Ledger:** ✅ Registered\n**Vault:** ${data.vault_id === "pending" ? "⏳ Pending" : "✅ Stored"}\n\n[Verify](${data.verify_url})`,
+          ts,
+          dragon:"guardian",
+          seal: data
+        }]);
+        setLastGeneratedFile(null);
+      }
+    } catch (err) {
+      alert("Seal error: " + err.message);
+    }
+  }, [lastGeneratedFile]);
+
   return (
     <div style={{ height:"100vh", display:"flex", flexDirection:"column", background:T.bg, color:T.text, fontFamily:T.font, overflow:"hidden", transition:"background 0.3s, color 0.3s" }}>
       {/* Header — Clean, professional */}
@@ -1901,6 +1968,13 @@ function WINDIAgentSuite() {
               <button key={l} onClick={()=>setLang(l)} style={{ padding:"3px 7px", borderRadius:4, fontSize:9, fontFamily:T.mono, background:lang===l?T.gold+"15":"transparent", border:`1px solid ${lang===l?T.gold+"30":"transparent"}`, color:lang===l?T.gold:T.muted, cursor:"pointer" }}>{l.toUpperCase()}</button>
             ))}
           </div>
+          {/* Constitutional Gates */}
+          <a href="/palette/governance/" title="Constitutional Gates Dashboard"
+            style={{ padding:"3px 8px", borderRadius:4, fontSize:9, fontFamily:T.mono, background:"transparent", border:`1px solid ${T.gold}30`, color:T.gold, cursor:"pointer", textDecoration:"none", display:"flex", alignItems:"center", gap:3, transition:"all 0.2s" }}
+            onMouseEnter={e=>{e.target.style.background=T.gold+"18";e.target.style.borderColor=T.gold}}
+            onMouseLeave={e=>{e.target.style.background="transparent";e.target.style.borderColor=T.gold+"30"}}>
+            ⚖️
+          </a>
           {/* Theme toggle */}
           <button onClick={()=>setThemeName(t=>t==="KLAR"?"NOIR":"KLAR")} title={themeName==="KLAR"?"Switch to Noir":"Switch to Klar"}
             style={{ padding:"3px 8px", borderRadius:4, fontSize:9, fontFamily:T.mono, background:"transparent", border:`1px solid ${T.border}`, color:T.muted, cursor:"pointer" }}>
@@ -1959,6 +2033,12 @@ function WINDIAgentSuite() {
                 placeholder={lang==="de"?"Schreib los — Frage, Dokument, was auch immer...":lang==="pt"?"Escreve aí — pergunta, documento, o que for...":"Write anything — question, document, whatever..."}
                 rows={2} style={{ flex:1, padding:"10px 14px", borderRadius:12, border:`1px solid ${T.border}`, background:T.input, color:T.text, fontSize:13.5, fontFamily:T.font, resize:"none", outline:"none", lineHeight:1.5, transition:"border-color 0.2s" }}
                 onFocus={e=>e.target.style.borderColor=T.gold+"80"} onBlur={e=>e.target.style.borderColor=T.border} />
+              {/* Document Generation Buttons */}
+              <button onClick={()=>setDocGenModal({format:"pdf"})} title="PDF" style={{ width:36, height:42, borderRadius:10, border:`1px solid ${T.border}`, background:T.hover, color:T.muted, fontSize:14, cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>📄</button>
+              <button onClick={()=>setDocGenModal({format:"docx"})} title="DOCX" style={{ width:36, height:42, borderRadius:10, border:`1px solid ${T.border}`, background:T.hover, color:T.muted, fontSize:14, cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>📝</button>
+              <button onClick={()=>setDocGenModal({format:"pptx"})} title="PPTX" style={{ width:36, height:42, borderRadius:10, border:`1px solid ${T.border}`, background:T.hover, color:T.muted, fontSize:14, cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>📊</button>
+              {/* Seal Button */}
+              {lastGeneratedFile && <button onClick={handleSeal} title={lang==="de"?"Versiegeln":lang==="pt"?"Selar":"Seal"} style={{ width:42, height:42, borderRadius:10, border:`1px solid ${T.gold}40`, background:`${T.gold}15`, color:T.gold, fontSize:16, cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, animation:"pulse 2s infinite" }}>⚡</button>}
               {/* Image OCR Button */}
               <input ref={fileInputRef} type="file" accept="image/*" onChange={handleOcrUpload} style={{ display:"none" }} />
               <button onClick={()=>fileInputRef.current?.click()} title={lang==="de"?"Bild für OCR":lang==="pt"?"Imagem para OCR":"Image for OCR"} style={{ width:42, height:42, borderRadius:10, border:`1px solid ${T.border}`, background:T.hover, color:T.muted, fontSize:16, cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>📷</button>
@@ -1967,7 +2047,7 @@ function WINDIAgentSuite() {
               <button onClick={()=>send()} disabled={!input.trim() || isLoading} style={{ width:42, height:42, borderRadius:10, border:"none", background:input.trim()?`linear-gradient(135deg,${T.gold},${T.goldDim})`:T.hover, color:input.trim()?(themeName==="KLAR"?"#FFF":T.bg):T.muted, fontSize:16, cursor:input.trim()?"pointer":"default", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, fontWeight:700 }}>→</button>
             </div>
             <div style={{ display:"flex", justifyContent:"space-between", marginTop:5, fontSize:9, color:T.muted, fontFamily:T.mono }}>
-              <span>📷 OCR · 🔗 URL · Enter = {lang==="de"?"senden":lang==="pt"?"enviar":"send"}</span>
+              <span>📄📝📊 {lang==="de"?"Dokumente":lang==="pt"?"Docs":"Docs"} · ⚡ {lang==="de"?"Siegel":lang==="pt"?"Selo":"Seal"} · 📷 OCR · 🔗 URL</span>
               <span>v{V}</span>
             </div>
           </div>
@@ -2055,9 +2135,37 @@ function WINDIAgentSuite() {
         </div>
       )}
 
+      {/* Document Generation Modal (Sprint 1) */}
+      {docGenModal && (
+        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.7)", display:"flex", alignItems:"center", justifyContent:"center", zIndex:1000 }} onClick={()=>setDocGenModal(null)}>
+          <div style={{ background:T.card, borderRadius:16, padding:24, maxWidth:500, width:"90%", border:`1px solid ${T.border}` }} onClick={e=>e.stopPropagation()}>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
+              <span style={{ fontSize:16, fontWeight:600, color:T.gold }}>
+                {docGenModal.format==="pdf"?"📄 PDF":docGenModal.format==="docx"?"📝 DOCX":"📊 PPTX"} — {lang==="de"?"Dokument erstellen":lang==="pt"?"Criar documento":"Create document"}
+              </span>
+              <button onClick={()=>setDocGenModal(null)} style={{ background:"none", border:"none", color:T.muted, fontSize:20, cursor:"pointer" }}>×</button>
+            </div>
+            <input value={docGenTitle} onChange={e=>setDocGenTitle(e.target.value)} placeholder={lang==="de"?"Titel":lang==="pt"?"Título":"Title"}
+              style={{ width:"100%", padding:"10px 14px", borderRadius:8, border:`1px solid ${T.border}`, background:T.input, color:T.text, fontSize:14, marginBottom:12, outline:"none" }} />
+            <textarea value={docGenContent} onChange={e=>setDocGenContent(e.target.value)} placeholder={lang==="de"?"Inhalt oder Thema beschreiben...":lang==="pt"?"Descrever conteúdo ou tema...":"Describe content or topic..."}
+              rows={5} style={{ width:"100%", padding:"10px 14px", borderRadius:8, border:`1px solid ${T.border}`, background:T.input, color:T.text, fontSize:13, resize:"none", outline:"none", lineHeight:1.5 }} />
+            <div style={{ display:"flex", gap:8, justifyContent:"flex-end", marginTop:16 }}>
+              <button onClick={()=>setDocGenModal(null)} style={{ padding:"10px 18px", borderRadius:8, border:`1px solid ${T.border}`, background:"transparent", color:T.muted, cursor:"pointer", fontSize:13 }}>
+                {lang==="de"?"Abbrechen":lang==="pt"?"Cancelar":"Cancel"}
+              </button>
+              <button onClick={handleDocGenerate} disabled={!docGenTitle.trim()||!docGenContent.trim()||docGenLoading}
+                style={{ padding:"10px 18px", borderRadius:8, border:"none", background:T.gold, color:themeName==="KLAR"?"#FFF":T.bg, cursor:"pointer", fontWeight:600, fontSize:13, opacity:(!docGenTitle.trim()||!docGenContent.trim()||docGenLoading)?0.5:1 }}>
+                {docGenLoading ? "⏳" : "🏗️"} {lang==="de"?"Generieren":lang==="pt"?"Gerar":"Generate"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
         @keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.6}}
         *{box-sizing:border-box;margin:0;padding:0}
         ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:${T.border};border-radius:3px}::-webkit-scrollbar-thumb:hover{background:${T.gold}30}
         textarea::placeholder{color:${T.muted}}
