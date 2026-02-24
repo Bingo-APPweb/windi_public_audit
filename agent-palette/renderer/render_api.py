@@ -46,6 +46,7 @@ MIME_TYPES = {
 }
 
 OUTPUT_DIR = Path(__file__).parent / "output"
+STAGING_DIR = Path(__file__).parent.parent / "staging"
 start_cleanup(str(OUTPUT_DIR))
 
 
@@ -239,10 +240,15 @@ def handle_download_request(handler, filename):
     """
     Handle GET /api/dragon/download/<filename>
     Serves the generated document file for download.
+    Checks both OUTPUT_DIR (renderer) and STAGING_DIR (dragon generate).
     """
     # Sanitize filename (prevent path traversal)
     safe_name = Path(filename).name
     filepath = OUTPUT_DIR / safe_name
+
+    # Fallback to staging directory (Sprint 1+2 document generation)
+    if not filepath.exists():
+        filepath = STAGING_DIR / safe_name
 
     if not filepath.exists():
         return _json_response(handler, 404, {"error": f"File not found: {safe_name}"})
