@@ -3,11 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WINDI Agent Suite v0.7.0-D — Three Dragons</title>
+<title>WINDI Agent Suite v1.0.0-W — Workspace Edition</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐉</text></svg>">
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<script src="genesis.js"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body, #root { height: 100%; overflow: hidden; }
@@ -36,7 +37,7 @@ const { useState, useRef, useEffect, useCallback } = React;
 //   - Theme toggle: KLAR ↔ NOIR
 // ═══════════════════════════════════════════════════════════════════════
 
-const V = "0.7.2-D";
+const V = "1.0.0-W";
 
 // ═══════════════════════════════════════════════════════════════════════
 // CONSTITUTIONAL CORE — Invisible but Active
@@ -649,6 +650,1288 @@ const THEMES = {
 };
 
 const rc = (r, T) => { if (!r) return T.dim; const n=parseInt(r.replace("R","")); return n<=1?T.green:n<=2?T.gold:n<=3?T.orange:T.red; };
+
+// ═══════════════════════════════════════════════════════════════════════
+// RESPIRADOURO — Ambient Intelligence Layer (Architect Dragon Design Reference)
+// "Inteligência que grita parece frágil. Inteligência que respira parece inevitável."
+// v0.9.0-R Trilingual Edition
+// ═══════════════════════════════════════════════════════════════════════
+
+const RESP_LANG = {
+  pt: { cogTitle:"Pontuação Cognitiva", sovereignty:"Soberania", confidence:"Confiança", stability:"Estabilidade", learning:"Aprendizagem", decisions:"Decisões", hesitation:"Hesitação", patterns:"Padrões", cogQuote:"\"O sistema não sente. Observa.\"", pulseTitle:"Sistema Nervoso", alive:"vivos", sovTitle:"Soberania", sovereign:"SOBERANO", localFuncs:"funções locais", llmLabel:"LLM" },
+  de: { cogTitle:"Kognitive Bewertung", sovereignty:"Souveränität", confidence:"Vertrauen", stability:"Stabilität", learning:"Lernen", decisions:"Entscheidungen", hesitation:"Zögern", patterns:"Muster", cogQuote:"\"Das System fühlt nicht. Es beobachtet.\"", pulseTitle:"Nervensystem", alive:"aktiv", sovTitle:"Souveränität", sovereign:"SOUVERÄN", localFuncs:"lokale Funktionen", llmLabel:"LLM" },
+  en: { cogTitle:"Cognitive Score", sovereignty:"Sovereignty", confidence:"Confidence", stability:"Stability", learning:"Learning", decisions:"Decisions", hesitation:"Hesitation", patterns:"Patterns", cogQuote:"\"The system doesn't feel. It observes.\"", pulseTitle:"System Nervous", alive:"alive", sovTitle:"Sovereignty", sovereign:"SOVEREIGN", localFuncs:"local functions", llmLabel:"LLM" },
+};
+
+// ═══════════════════════════════════════════════════════════════════════
+// v1.0.0-W WORKSPACE EDITION — Side Rail Navigation
+// ═══════════════════════════════════════════════════════════════════════
+
+const TAB_LABELS = {
+  pt: { chat:"Conversa", docs:"Documentos", files:"Arquivos", wallet:"Carteira", search:"Busca", products:"Produtos", history:"Histórico", settings:"Definições" },
+  de: { chat:"Chat", docs:"Dokumente", files:"Dateien", wallet:"Brieftasche", search:"Suche", products:"Produkte", history:"Verlauf", settings:"Einstellungen" },
+  en: { chat:"Chat", docs:"Documents", files:"Files", wallet:"Wallet", search:"Search", products:"Products", history:"History", settings:"Settings" },
+};
+
+const TABS = [
+  { id:"chat", icon:"💬", section:"main" },
+  { id:"docs", icon:"📄", section:"main", badge:true },
+  { id:"files", icon:"📁", section:"main" },
+  { id:"wallet", icon:"💰", section:"main" },
+  { id:"search", icon:"🔍", section:"main" },
+  { id:"products", icon:"📦", section:"main" },
+  { id:"history", icon:"🕐", section:"main" },
+  { id:"settings", icon:"⚙️", section:"bottom" },
+];
+
+// Sprint 1: Status Visual Language (from Witness Dragon)
+const STATUS_THEME = {
+  DRAFT:     { color:'dim',      opacity:0.7, icon:'⏳', glow:false },
+  REVIEW:    { color:'warning',  opacity:1.0, icon:'🔍', glow:true },
+  PUBLISHED: { color:'green',    opacity:1.0, icon:'✓',  glow:false },
+  ARCHIVED:  { color:'dim',      opacity:0.4, icon:'📦', glow:false },
+  REVOKED:   { color:'red',      opacity:0.6, icon:'✕',  glow:false },
+};
+
+const DOC_LABELS = {
+  pt: { title:"Documentos desta Sessão", published:"Publicado", draft:"Rascunho", review:"Em revisão", archived:"Arquivado", revoked:"Revogado", open:"Abrir", download:"Download", verify:"Verificar", archive:"Arquivar", publish:"Publicar", reviewBtn:"Revisar", empty:"Nenhum communiqué ainda. Cria um no Chat!", loading:"A carregar..." },
+  de: { title:"Dokumente dieser Sitzung", published:"Veröffentlicht", draft:"Entwurf", review:"In Prüfung", archived:"Archiviert", revoked:"Widerrufen", open:"Öffnen", download:"Download", verify:"Verifizieren", archive:"Archivieren", publish:"Veröffentlichen", reviewBtn:"Prüfen", empty:"Noch keine Communiqués. Erstelle eines im Chat!", loading:"Laden..." },
+  en: { title:"Session Documents", published:"Published", draft:"Draft", review:"In Review", archived:"Archived", revoked:"Revoked", open:"Open", download:"Download", verify:"Verify", archive:"Archive", publish:"Publish", reviewBtn:"Review", empty:"No communiqués yet. Create one in Chat!", loading:"Loading..." },
+};
+
+// ═══════════════════════════════════════════════════════════════════════
+// JORNALINE COMPOSER — Sprint J1: Citizen Journalism with Forensic Dignity
+// ═══════════════════════════════════════════════════════════════════════
+
+const ISP_TEMPLATES = [
+  { id: "ISP-COM-01", name: "Amtliches Kommuniqué", icon: "📜", governance: "HIGH" },
+  { id: "ISP-COM-02", name: "Jornaline", icon: "🗞️", governance: "MEDIUM" },
+  { id: "ISP-COM-03", name: "Feldbericht", icon: "📋", governance: "MEDIUM" },
+  { id: "ISP-COM-04", name: "Security Advisory", icon: "🔒", governance: "HIGH" },
+  { id: "ISP-COM-05", name: "Governance Decision", icon: "⚖️", governance: "HIGH" },
+  { id: "ISP-COM-06", name: "System Bulletin", icon: "📢", governance: "MEDIUM" },
+];
+
+const CATEGORIES = ["REPORT", "UPDATE", "ALERT", "GOVERNANCE", "LAUNCH"];
+const IMPACT_LEVELS = ["LOW", "MED", "HIGH", "CRIT"];
+
+const JORNALINE_LABELS = {
+  pt: {
+    title: "Nova Jornaline",
+    template: "Template",
+    category: "Categoria",
+    impact: "Impacto",
+    titleField: "Título",
+    titlePlaceholder: "O que aconteceu?",
+    bodyField: "Conteúdo",
+    bodyPlaceholder: "Descreve o que testemunhaste...",
+    forensic: "Protocolo Forense",
+    author: "Autor",
+    citizen: "Cidadão",
+    timestamp: "Timestamp",
+    device: "Dispositivo",
+    saveDraft: "Guardar Rascunho",
+    submit: "Submeter para Revisão",
+    success: "Jornaline criada!",
+    viewIt: "Ver",
+    close: "Fechar",
+    creating: "A criar...",
+    // Sprint J2: Multimedia
+    evidence: "Evidências Multimédia",
+    addImage: "Adicionar Imagem",
+    addVideo: "Link de Vídeo",
+    addLink: "Link Social",
+    dragDrop: "Arrasta imagens aqui ou clica para selecionar",
+    videoPlaceholder: "Cole URL do YouTube, Vimeo, ou vídeo direto...",
+    linkPlaceholder: "Cole link de rede social (Twitter, Instagram, etc.)...",
+    ocrExtract: "Extrair texto (OCR)",
+    removeItem: "Remover",
+    images: "Imagens",
+    videos: "Vídeos",
+    links: "Links",
+    verifying: "A verificar...",
+    verified: "Verificado",
+    pending: "Pendente",
+    // Tabs & UI
+    compose: "Compor",
+    edit: "Editar",
+    noLinks: "Nenhum link adicionado",
+    noImages: "Nenhuma imagem adicionada",
+    noVideos: "Nenhum vídeo adicionado",
+    platforms: "Plataformas suportadas",
+    ocrSuccess: "Texto extraído com sucesso",
+    ocrFailed: "Falha na extração OCR",
+    evidenceSummary: "Evidências anexadas",
+  },
+  de: {
+    title: "Neue Jornaline",
+    template: "Vorlage",
+    category: "Kategorie",
+    impact: "Auswirkung",
+    titleField: "Titel",
+    titlePlaceholder: "Was ist passiert?",
+    bodyField: "Inhalt",
+    bodyPlaceholder: "Beschreibe, was du erlebt hast...",
+    forensic: "Forensisches Protokoll",
+    author: "Autor",
+    citizen: "Bürger",
+    timestamp: "Zeitstempel",
+    device: "Gerät",
+    saveDraft: "Entwurf speichern",
+    submit: "Zur Prüfung einreichen",
+    success: "Jornaline erstellt!",
+    viewIt: "Anzeigen",
+    close: "Schließen",
+    creating: "Erstelle...",
+    // Sprint J2: Multimedia
+    evidence: "Multimedia-Beweise",
+    addImage: "Bild hinzufügen",
+    addVideo: "Video-Link",
+    addLink: "Social Link",
+    dragDrop: "Bilder hierher ziehen oder klicken zum Auswählen",
+    videoPlaceholder: "YouTube, Vimeo oder direkter Video-Link...",
+    linkPlaceholder: "Social Media Link einfügen (Twitter, Instagram, etc.)...",
+    ocrExtract: "Text extrahieren (OCR)",
+    removeItem: "Entfernen",
+    images: "Bilder",
+    videos: "Videos",
+    links: "Links",
+    verifying: "Verifiziere...",
+    verified: "Verifiziert",
+    pending: "Ausstehend",
+    // Tabs & UI
+    compose: "Verfassen",
+    edit: "Bearbeiten",
+    noLinks: "Keine Links hinzugefügt",
+    noImages: "Keine Bilder hinzugefügt",
+    noVideos: "Keine Videos hinzugefügt",
+    platforms: "Unterstützte Plattformen",
+    ocrSuccess: "Text erfolgreich extrahiert",
+    ocrFailed: "OCR-Extraktion fehlgeschlagen",
+    evidenceSummary: "Angehängte Beweise",
+  },
+  en: {
+    title: "New Jornaline",
+    template: "Template",
+    category: "Category",
+    impact: "Impact",
+    titleField: "Title",
+    titlePlaceholder: "What happened?",
+    bodyField: "Content",
+    bodyPlaceholder: "Describe what you witnessed...",
+    forensic: "Forensic Protocol",
+    author: "Author",
+    citizen: "Citizen",
+    timestamp: "Timestamp",
+    device: "Device",
+    saveDraft: "Save Draft",
+    submit: "Submit for Review",
+    success: "Jornaline created!",
+    viewIt: "View",
+    close: "Close",
+    creating: "Creating...",
+    // Sprint J2: Multimedia
+    evidence: "Multimedia Evidence",
+    addImage: "Add Image",
+    addVideo: "Video Link",
+    addLink: "Social Link",
+    // Tabs & UI
+    compose: "Compose",
+    edit: "Edit",
+    noLinks: "No links added",
+    noImages: "No images added",
+    noVideos: "No videos added",
+    platforms: "Supported platforms",
+    ocrSuccess: "Text extracted successfully",
+    ocrFailed: "OCR extraction failed",
+    evidenceSummary: "Evidence attached",
+    dragDrop: "Drag images here or click to select",
+    videoPlaceholder: "Paste YouTube, Vimeo, or direct video URL...",
+    linkPlaceholder: "Paste social media link (Twitter, Instagram, etc.)...",
+    ocrExtract: "Extract text (OCR)",
+    removeItem: "Remove",
+    images: "Images",
+    videos: "Videos",
+    links: "Links",
+    verifying: "Verifying...",
+    verified: "Verified",
+    pending: "Pending",
+  },
+};
+
+// Social media patterns for auto-detection
+const SOCIAL_PATTERNS = {
+  youtube: { rx: /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]+)/, icon: "▶️", name: "YouTube" },
+  vimeo: { rx: /vimeo\.com\/(\d+)/, icon: "🎬", name: "Vimeo" },
+  twitter: { rx: /(?:twitter\.com|x\.com)\/\w+\/status\/(\d+)/, icon: "𝕏", name: "X/Twitter" },
+  instagram: { rx: /instagram\.com\/(?:p|reel)\/([a-zA-Z0-9_-]+)/, icon: "📸", name: "Instagram" },
+  facebook: { rx: /facebook\.com\/.*\/(?:posts|videos)\//, icon: "📘", name: "Facebook" },
+  linkedin: { rx: /linkedin\.com\/(?:posts|feed)\//, icon: "💼", name: "LinkedIn" },
+  tiktok: { rx: /tiktok\.com\/@[\w.]+\/video\/(\d+)/, icon: "🎵", name: "TikTok" },
+};
+
+// ── SideRail: Collapsible left navigation ─────────────────────────────
+function SideRail({ activeTab, setActiveTab, expanded, setExpanded, T, lang, docCount }) {
+  const L = TAB_LABELS[lang] || TAB_LABELS.de;
+  const mainTabs = TABS.filter(t => t.section === "main");
+  const bottomTabs = TABS.filter(t => t.section === "bottom");
+
+  const TabButton = ({ tab }) => {
+    const isActive = activeTab === tab.id;
+    return React.createElement("button", {
+      onClick: () => setActiveTab(tab.id),
+      style: {
+        display:"flex", alignItems:"center", gap:12, width:"100%",
+        padding:"10px 12px", border:"none", background:isActive ? T.gold+"12" : "transparent",
+        cursor:"pointer", borderRadius:8, margin:"2px 4px", position:"relative",
+        transition:"all 0.2s ease",
+      },
+      onMouseEnter: e => !isActive && (e.currentTarget.style.background = T.hover || T.card),
+      onMouseLeave: e => !isActive && (e.currentTarget.style.background = "transparent"),
+    },
+      isActive && React.createElement("div", { style: {
+        position:"absolute", left:0, top:"25%", height:"50%", width:3,
+        borderRadius:"0 3px 3px 0", background:T.gold,
+      }}),
+      React.createElement("span", { style: {
+        fontSize:18, width:24, textAlign:"center", flexShrink:0,
+        filter: isActive ? `drop-shadow(0 0 4px ${T.gold}40)` : "none",
+      }}, tab.icon),
+      React.createElement("span", { style: {
+        fontFamily:T.font, fontSize:13, color:isActive ? T.text : T.muted,
+        fontWeight:isActive ? 600 : 400, whiteSpace:"nowrap",
+        opacity:expanded ? 1 : 0, transition:"opacity 0.2s ease 0.1s",
+      }}, L[tab.id]),
+      tab.badge && docCount > 0 && React.createElement("span", { style: {
+        position:"absolute", right:expanded ? 8 : 4, top:expanded ? "50%" : 4,
+        transform:expanded ? "translateY(-50%)" : "none",
+        minWidth:18, height:18, borderRadius:9, background:T.gold,
+        color:T.card, fontSize:10, fontFamily:T.mono, fontWeight:600,
+        display:"flex", alignItems:"center", justifyContent:"center", padding:"0 5px",
+      }}, docCount)
+    );
+  };
+
+  return React.createElement("nav", {
+    onMouseEnter: () => setExpanded(true),
+    onMouseLeave: () => setExpanded(false),
+    style: {
+      position:"fixed", left:0, top:0, bottom:0,
+      width:expanded ? 220 : 48, background:T.card,
+      borderRight:`1px solid ${T.border}`,
+      display:"flex", flexDirection:"column", zIndex:100,
+      transition:"width 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+      overflow:"hidden",
+      boxShadow:expanded ? `4px 0 24px rgba(0,0,0,${T.bg==="#0E0E14"?0.3:0.06})` : "none",
+    }
+  },
+    // Logo
+    React.createElement("div", { style: {
+      padding:"14px 12px", display:"flex", alignItems:"center", gap:10,
+      borderBottom:`1px solid ${T.border}30`, minHeight:52,
+    }},
+      React.createElement("span", { style:{ fontSize:20, flexShrink:0 }, className:"dragon-breathe" }, "🐉"),
+      React.createElement("span", { style: {
+        fontFamily:T.font, fontSize:12, fontWeight:700, color:T.gold,
+        whiteSpace:"nowrap", opacity:expanded ? 1 : 0,
+        transition:"opacity 0.2s ease 0.1s", letterSpacing:"0.5px",
+      }}, "WINDI")
+    ),
+    // Main tabs
+    React.createElement("div", { style:{ flex:1, padding:"8px 0", display:"flex", flexDirection:"column", gap:1 }},
+      mainTabs.map(tab => React.createElement(TabButton, { key:tab.id, tab }))
+    ),
+    // Bottom tabs
+    React.createElement("div", { style:{ padding:"8px 0", borderTop:`1px solid ${T.border}30` }},
+      bottomTabs.map(tab => React.createElement(TabButton, { key:tab.id, tab }))
+    )
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// Sprint 1: DocsView — Real Communiqué Data with Status Visual Language
+// ═══════════════════════════════════════════════════════════════════════
+
+function DocsView({ docs, stats, loading, T, lang, onAction }) {
+  const L = DOC_LABELS[lang] || DOC_LABELS.de;
+
+  // Stats header
+  const counts = stats?.counts || { published:0, draft:0, review:0, archived:0, total:0 };
+  const publishedPct = counts.total > 0 ? Math.round((counts.published / counts.total) * 100) : 0;
+
+  // Get status color from theme
+  const getStatusColor = (status) => {
+    const st = STATUS_THEME[status] || STATUS_THEME.DRAFT;
+    if (st.color === 'green') return T.green;
+    if (st.color === 'warning') return T.gold;
+    if (st.color === 'red') return T.red || '#c44';
+    return T.dim;
+  };
+
+  // Format time ago
+  const timeAgo = (isoDate) => {
+    if (!isoDate) return '';
+    const diff = Date.now() - new Date(isoDate).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 60) return `${mins}m`;
+    const hours = Math.floor(mins / 60);
+    if (hours < 24) return `${hours}h`;
+    return `${Math.floor(hours / 24)}d`;
+  };
+
+  // Action handler with optimistic UI
+  const handleAction = async (doc, action) => {
+    if (onAction) onAction(doc, action);
+  };
+
+  return React.createElement("div", { style: { padding:20, height:"100%", overflowY:"auto" } },
+    // Stats Header
+    React.createElement("div", { style: {
+      display:"flex", justifyContent:"space-between", alignItems:"center",
+      padding:"12px 16px", marginBottom:16, borderRadius:12,
+      background:T.card, border:`1px solid ${T.border}`,
+    }},
+      React.createElement("div", { style: { display:"flex", gap:16, alignItems:"center" } },
+        React.createElement("span", { style: { fontSize:10, color:T.green, fontFamily:T.mono, fontWeight:600 } },
+          `✓ ${counts.published}`),
+        React.createElement("span", { style: { fontSize:10, color:T.gold, fontFamily:T.mono } },
+          `🔍 ${counts.review}`),
+        React.createElement("span", { style: { fontSize:10, color:T.dim, fontFamily:T.mono } },
+          `⏳ ${counts.draft}`),
+        React.createElement("span", { style: { fontSize:10, color:T.muted, fontFamily:T.mono } },
+          `📦 ${counts.archived}`)
+      ),
+      React.createElement("div", { style: { display:"flex", alignItems:"center", gap:8 } },
+        React.createElement("div", { style: {
+          width:80, height:6, borderRadius:3, background:T.border+"40", overflow:"hidden"
+        }},
+          React.createElement("div", { style: {
+            width:`${publishedPct}%`, height:"100%", background:T.green, borderRadius:3,
+            transition:"width 0.5s ease"
+          }})
+        ),
+        React.createElement("span", { style: { fontSize:9, color:T.dim, fontFamily:T.mono } },
+          `${publishedPct}%`)
+      )
+    ),
+
+    // Loading state
+    loading && React.createElement("div", { style: { textAlign:"center", padding:40, color:T.muted } },
+      React.createElement("span", { style: { fontSize:24, display:"block", marginBottom:8 } }, "⏳"),
+      L.loading
+    ),
+
+    // Empty state
+    !loading && docs.length === 0 && React.createElement("div", { style: {
+      textAlign:"center", padding:60, color:T.muted
+    }},
+      React.createElement("span", { style: { fontSize:48, display:"block", marginBottom:16, opacity:0.3 } }, "📄"),
+      React.createElement("p", { style: { fontSize:13, fontFamily:T.font } }, L.empty)
+    ),
+
+    // Document list
+    !loading && docs.length > 0 && React.createElement("div", { style: { display:"flex", flexDirection:"column", gap:10 } },
+      docs.map((doc, i) => {
+        const st = STATUS_THEME[doc.status] || STATUS_THEME.DRAFT;
+        const statusColor = getStatusColor(doc.status);
+
+        return React.createElement("div", {
+          key: doc.id || i,
+          style: {
+            padding:16, borderRadius:12,
+            border:`1px solid ${st.glow ? statusColor+"40" : T.border}`,
+            background:T.card,
+            opacity:st.opacity,
+            boxShadow:st.glow ? `0 0 12px ${statusColor}15` : "none",
+            transition:"all 0.3s ease",
+          }
+        },
+          // Title row
+          React.createElement("div", { style: {
+            display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:8
+          }},
+            React.createElement("div", { style: { flex:1 } },
+              React.createElement("div", { style: {
+                fontSize:14, fontWeight:500, color:T.text, fontFamily:T.font,
+                textDecoration: doc.status === 'REVOKED' ? 'line-through' : 'none'
+              }},
+                `${st.icon} ${doc.title || doc.title_de || doc.title_en || 'Untitled'}`
+              ),
+              React.createElement("div", { style: {
+                display:"flex", gap:8, alignItems:"center", marginTop:4
+              }},
+                doc.isp_template && React.createElement("span", { style: {
+                  fontSize:9, padding:"2px 6px", borderRadius:4,
+                  background:T.gold+"15", color:T.gold, fontFamily:T.mono
+                }}, doc.isp_template),
+                doc.governance_level && React.createElement("span", { style: {
+                  fontSize:9, color:T.dim, fontFamily:T.mono
+                }}, doc.governance_level),
+                React.createElement("span", { style: {
+                  fontSize:9, color:T.dim, fontFamily:T.mono
+                }}, timeAgo(doc.updated_at || doc.created_at))
+              )
+            ),
+            // Status badge
+            React.createElement("span", { style: {
+              fontSize:9, padding:"3px 8px", borderRadius:10,
+              background:statusColor+"15", color:statusColor,
+              fontFamily:T.mono, fontWeight:600
+            }}, L[doc.status?.toLowerCase()] || doc.status)
+          ),
+
+          // Serial + Sovereignty row (for published)
+          doc.serial && React.createElement("div", { style: {
+            display:"flex", justifyContent:"space-between", alignItems:"center",
+            marginBottom:8, paddingTop:6, borderTop:`1px solid ${T.border}30`
+          }},
+            React.createElement("span", { style: { fontSize:9, color:T.muted, fontFamily:T.mono } },
+              doc.serial),
+            doc.sovereignty && React.createElement("div", { style: {
+              display:"flex", alignItems:"center", gap:4
+            }},
+              React.createElement("div", { style: {
+                width:40, height:4, borderRadius:2, background:T.border+"40", overflow:"hidden"
+              }},
+                React.createElement("div", { style: {
+                  width:`${doc.sovereignty.ratio || 93}%`, height:"100%",
+                  background:T.green, borderRadius:2
+                }})
+              ),
+              React.createElement("span", { style: { fontSize:8, color:T.dim, fontFamily:T.mono } },
+                `${Math.round(doc.sovereignty.ratio || 93)}%`)
+            )
+          ),
+
+          // Action buttons
+          React.createElement("div", { style: { display:"flex", gap:6, marginTop:8 } },
+            // Open button (always)
+            React.createElement("button", {
+              onClick: () => handleAction(doc, 'open'),
+              style: {
+                padding:"4px 10px", borderRadius:6, border:`1px solid ${T.border}`,
+                background:"transparent", fontSize:10, color:T.muted,
+                fontFamily:T.mono, cursor:"pointer", transition:"all 0.2s"
+              }
+            }, L.open),
+
+            // Download (published only)
+            doc.status === 'PUBLISHED' && React.createElement("button", {
+              onClick: () => handleAction(doc, 'download'),
+              style: {
+                padding:"4px 10px", borderRadius:6, border:`1px solid ${T.border}`,
+                background:"transparent", fontSize:10, color:T.muted,
+                fontFamily:T.mono, cursor:"pointer", transition:"all 0.2s"
+              }
+            }, L.download),
+
+            // Verify (published only)
+            doc.status === 'PUBLISHED' && React.createElement("button", {
+              onClick: () => handleAction(doc, 'verify'),
+              style: {
+                padding:"4px 10px", borderRadius:6, border:`1px solid ${T.border}`,
+                background:"transparent", fontSize:10, color:T.muted,
+                fontFamily:T.mono, cursor:"pointer", transition:"all 0.2s"
+              }
+            }, L.verify),
+
+            // Review (draft only)
+            doc.status === 'DRAFT' && React.createElement("button", {
+              onClick: () => handleAction(doc, 'review'),
+              style: {
+                padding:"4px 10px", borderRadius:6, border:`1px solid ${T.gold}40`,
+                background:T.gold+"10", fontSize:10, color:T.gold,
+                fontFamily:T.mono, cursor:"pointer", transition:"all 0.2s", fontWeight:600
+              }
+            }, L.reviewBtn),
+
+            // Publish (review only)
+            doc.status === 'REVIEW' && React.createElement("button", {
+              onClick: () => handleAction(doc, 'publish'),
+              style: {
+                padding:"4px 10px", borderRadius:6, border:`1px solid ${T.green}40`,
+                background:T.green+"10", fontSize:10, color:T.green,
+                fontFamily:T.mono, cursor:"pointer", transition:"all 0.2s", fontWeight:600
+              }
+            }, L.publish),
+
+            // Archive (published only)
+            doc.status === 'PUBLISHED' && React.createElement("button", {
+              onClick: () => handleAction(doc, 'archive'),
+              style: {
+                padding:"4px 10px", borderRadius:6, border:`1px solid ${T.border}`,
+                background:"transparent", fontSize:10, color:T.dim,
+                fontFamily:T.mono, cursor:"pointer", transition:"all 0.2s"
+              }
+            }, L.archive)
+          )
+        );
+      })
+    )
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// JORNALINE COMPOSER — Sprint J2: Multimedia Evidence Gallery
+// "Citizen journalism with forensic dignity — like imperial scrolls in modern multimedia"
+// ═══════════════════════════════════════════════════════════════════════
+
+function JornalineComposer({ data, onChange, onClose, onSubmit, T, lang, loading }) {
+  const L = JORNALINE_LABELS[lang] || JORNALINE_LABELS.de;
+  const fileInputRef = useRef(null);
+  const [activeTab, setActiveTab] = useState('compose'); // compose | media | links
+  const [dragOver, setDragOver] = useState(false);
+  const [ocrLoading, setOcrLoading] = useState(null); // image index being OCR'd
+  const [linkInput, setLinkInput] = useState('');
+  const [videoInput, setVideoInput] = useState('');
+
+  const handleChange = (field, value) => {
+    onChange({ ...data, [field]: value });
+  };
+
+  // Initialize arrays if not present
+  const images = data.images || [];
+  const videos = data.videos || [];
+  const links = data.links || [];
+
+  const isValid = data.title?.trim().length > 0 && data.body?.trim().length > 0;
+
+  // Get device/browser info for forensic preview
+  const deviceInfo = `${navigator.userAgent.match(/Chrome|Firefox|Safari|Edge/)?.[0] || 'Browser'}/${navigator.platform}`;
+  const timestamp = new Date().toISOString();
+
+  // Handle image file selection
+  const handleImageSelect = async (files) => {
+    const newImages = [];
+    for (const file of Array.from(files)) {
+      if (!file.type.startsWith('image/')) continue;
+      const reader = new FileReader();
+      const preview = await new Promise(resolve => {
+        reader.onload = e => resolve(e.target.result);
+        reader.readAsDataURL(file);
+      });
+      newImages.push({
+        id: `img-${Date.now()}-${Math.random().toString(36).slice(2,8)}`,
+        file,
+        preview,
+        name: file.name,
+        size: file.size,
+        timestamp: new Date().toISOString(),
+        ocrText: null,
+      });
+    }
+    handleChange('images', [...images, ...newImages]);
+  };
+
+  // Handle drag & drop
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setDragOver(false);
+    handleImageSelect(e.dataTransfer.files);
+  };
+
+  // Handle OCR extraction
+  const handleOcr = async (imgIndex) => {
+    const img = images[imgIndex];
+    if (!img?.preview) return;
+    setOcrLoading(imgIndex);
+    try {
+      const base64 = img.preview.split(',')[1];
+      const res = await fetch("/palette/api/multimodal/ocr", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ image: base64, language: "deu+eng+por" })
+      });
+      if (res.ok) {
+        const result = await res.json();
+        const updatedImages = [...images];
+        updatedImages[imgIndex] = { ...img, ocrText: result.text || '' };
+        handleChange('images', updatedImages);
+        // Optionally append to body
+        if (result.text) {
+          handleChange('body', (data.body || '') + '\n\n> ' + result.text.slice(0, 500));
+        }
+      }
+    } catch (e) { console.error('OCR failed:', e); }
+    setOcrLoading(null);
+  };
+
+  // Remove image
+  const removeImage = (idx) => {
+    handleChange('images', images.filter((_, i) => i !== idx));
+  };
+
+  // Detect social platform from URL
+  const detectPlatform = (url) => {
+    for (const [key, cfg] of Object.entries(SOCIAL_PATTERNS)) {
+      if (cfg.rx.test(url)) return { platform: key, ...cfg };
+    }
+    return { platform: 'link', icon: '🔗', name: 'Link' };
+  };
+
+  // Add video link
+  const addVideo = () => {
+    if (!videoInput.trim()) return;
+    const platform = detectPlatform(videoInput);
+    const newVideo = {
+      id: `vid-${Date.now()}`,
+      url: videoInput.trim(),
+      platform: platform.platform,
+      icon: platform.icon,
+      name: platform.name,
+      timestamp: new Date().toISOString(),
+      verified: false,
+    };
+    handleChange('videos', [...videos, newVideo]);
+    setVideoInput('');
+  };
+
+  // Add social link
+  const addLink = () => {
+    if (!linkInput.trim()) return;
+    const platform = detectPlatform(linkInput);
+    const newLink = {
+      id: `link-${Date.now()}`,
+      url: linkInput.trim(),
+      platform: platform.platform,
+      icon: platform.icon,
+      name: platform.name,
+      timestamp: new Date().toISOString(),
+      verified: false,
+    };
+    handleChange('links', [...links, newLink]);
+    setLinkInput('');
+  };
+
+  // Remove video/link
+  const removeVideo = (idx) => handleChange('videos', videos.filter((_, i) => i !== idx));
+  const removeLink = (idx) => handleChange('links', links.filter((_, i) => i !== idx));
+
+  // Evidence count for badge
+  const evidenceCount = images.length + videos.length + links.length;
+
+  return React.createElement("div", {
+    style: {
+      position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)",
+      display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000
+    },
+    onClick: onClose
+  },
+    React.createElement("div", {
+      style: {
+        background: T.card, borderRadius: 20, maxWidth: 720, width: "95%",
+        maxHeight: "92vh", overflow: "hidden", border: `1px solid ${T.gold}40`,
+        boxShadow: `0 12px 48px ${T.gold}20`, display: "flex", flexDirection: "column"
+      },
+      onClick: e => e.stopPropagation()
+    },
+      // Header with tabs
+      React.createElement("div", {
+        style: {
+          display: "flex", justifyContent: "space-between", alignItems: "center",
+          padding: "16px 24px", borderBottom: `1px solid ${T.border}`, background: T.bg
+        }
+      },
+        React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 16 } },
+          React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 10 } },
+            React.createElement("span", { style: { fontSize: 28 } }, "🗞️"),
+            React.createElement("span", {
+              style: { fontSize: 18, fontWeight: 700, color: T.gold, fontFamily: T.font }
+            }, L.title)
+          ),
+          // Tab switcher
+          React.createElement("div", { style: { display: "flex", gap: 4, marginLeft: 16 } },
+            [
+              { id: 'compose', icon: '✍️', label: L.compose },
+              { id: 'media', icon: '📷', label: L.evidence, badge: evidenceCount },
+              { id: 'links', icon: '🔗', label: L.links, badge: links.length },
+            ].map(tab =>
+              React.createElement("button", {
+                key: tab.id,
+                onClick: () => setActiveTab(tab.id),
+                style: {
+                  padding: "6px 12px", borderRadius: 8, fontSize: 11, fontFamily: T.mono,
+                  border: activeTab === tab.id ? `1px solid ${T.gold}` : `1px solid transparent`,
+                  background: activeTab === tab.id ? T.gold + "15" : "transparent",
+                  color: activeTab === tab.id ? T.gold : T.muted,
+                  cursor: "pointer", display: "flex", alignItems: "center", gap: 6
+                }
+              },
+                tab.icon,
+                tab.label,
+                tab.badge > 0 && React.createElement("span", {
+                  style: {
+                    background: T.gold, color: "#FFF", fontSize: 9, padding: "1px 5px",
+                    borderRadius: 8, fontWeight: 600
+                  }
+                }, tab.badge)
+              )
+            )
+          )
+        ),
+        React.createElement("button", {
+          onClick: onClose,
+          style: { background: "none", border: "none", color: T.muted, fontSize: 24, cursor: "pointer" }
+        }, "×")
+      ),
+
+      // Scrollable body
+      React.createElement("div", { style: { flex: 1, overflowY: "auto", padding: 24 } },
+
+        // TAB: Compose
+        activeTab === 'compose' && React.createElement(React.Fragment, null,
+          // Template + Category + Impact row
+          React.createElement("div", { style: { display: "flex", gap: 12, marginBottom: 20, flexWrap: "wrap" } },
+            React.createElement("div", { style: { flex: "1 1 180px" } },
+              React.createElement("label", { style: { fontSize: 10, color: T.dim, fontFamily: T.mono, display: "block", marginBottom: 6 } }, L.template),
+              React.createElement("select", {
+                value: data.template || "ISP-COM-02",
+                onChange: e => handleChange("template", e.target.value),
+                style: { width: "100%", padding: "10px 12px", borderRadius: 8, border: `1px solid ${T.border}`, background: T.input, color: T.text, fontSize: 13, fontFamily: T.font, cursor: "pointer", outline: "none" }
+              }, ISP_TEMPLATES.map(t => React.createElement("option", { key: t.id, value: t.id }, `${t.icon} ${t.name}`)))
+            ),
+            React.createElement("div", { style: { flex: "1 1 120px" } },
+              React.createElement("label", { style: { fontSize: 10, color: T.dim, fontFamily: T.mono, display: "block", marginBottom: 6 } }, L.category),
+              React.createElement("select", {
+                value: data.category || "REPORT",
+                onChange: e => handleChange("category", e.target.value),
+                style: { width: "100%", padding: "10px 12px", borderRadius: 8, border: `1px solid ${T.border}`, background: T.input, color: T.text, fontSize: 13, fontFamily: T.font, cursor: "pointer", outline: "none" }
+              }, CATEGORIES.map(c => React.createElement("option", { key: c, value: c }, c)))
+            ),
+            React.createElement("div", { style: { flex: "0 0 90px" } },
+              React.createElement("label", { style: { fontSize: 10, color: T.dim, fontFamily: T.mono, display: "block", marginBottom: 6 } }, L.impact),
+              React.createElement("select", {
+                value: data.impact || "MED",
+                onChange: e => handleChange("impact", e.target.value),
+                style: { width: "100%", padding: "10px 12px", borderRadius: 8, border: `1px solid ${T.border}`, background: T.input, color: T.text, fontSize: 13, fontFamily: T.font, cursor: "pointer", outline: "none" }
+              }, IMPACT_LEVELS.map(l => React.createElement("option", { key: l, value: l }, l)))
+            )
+          ),
+
+          // Title
+          React.createElement("div", { style: { marginBottom: 16 } },
+            React.createElement("label", { style: { fontSize: 10, color: T.dim, fontFamily: T.mono, display: "block", marginBottom: 6 } }, L.titleField),
+            React.createElement("input", {
+              type: "text", value: data.title || "", onChange: e => handleChange("title", e.target.value),
+              placeholder: L.titlePlaceholder,
+              style: { width: "100%", padding: "12px 14px", borderRadius: 10, border: `1px solid ${T.border}`, background: T.input, color: T.text, fontSize: 15, fontFamily: T.font, outline: "none" }
+            })
+          ),
+
+          // Body
+          React.createElement("div", { style: { marginBottom: 20 } },
+            React.createElement("label", { style: { fontSize: 10, color: T.dim, fontFamily: T.mono, display: "block", marginBottom: 6 } }, L.bodyField),
+            React.createElement("textarea", {
+              value: data.body || "", onChange: e => handleChange("body", e.target.value),
+              placeholder: L.bodyPlaceholder, rows: 6,
+              style: { width: "100%", padding: "12px 14px", borderRadius: 10, border: `1px solid ${T.border}`, background: T.input, color: T.text, fontSize: 14, fontFamily: T.font, resize: "vertical", outline: "none", lineHeight: 1.6, minHeight: 120 }
+            })
+          ),
+
+          // Quick evidence summary
+          evidenceCount > 0 && React.createElement("div", {
+            style: { padding: 12, borderRadius: 10, background: T.gold + "10", border: `1px solid ${T.gold}30`, marginBottom: 16 }
+          },
+            React.createElement("div", { style: { fontSize: 11, color: T.gold, fontFamily: T.mono, display: "flex", gap: 16, alignItems: "center" } },
+              images.length > 0 && React.createElement("span", null, `📷 ${images.length} ${L.images}`),
+              videos.length > 0 && React.createElement("span", null, `🎬 ${videos.length} ${L.videos}`),
+              links.length > 0 && React.createElement("span", null, `🔗 ${links.length} ${L.links}`),
+              React.createElement("button", {
+                onClick: () => setActiveTab('media'),
+                style: { marginLeft: "auto", padding: "4px 10px", borderRadius: 6, border: `1px solid ${T.gold}`, background: "transparent", color: T.gold, fontSize: 10, cursor: "pointer" }
+              }, L.edit)
+            )
+          )
+        ),
+
+        // TAB: Media (Images + Videos)
+        activeTab === 'media' && React.createElement(React.Fragment, null,
+          // Drag & Drop Zone
+          React.createElement("div", {
+            onDragOver: e => { e.preventDefault(); setDragOver(true); },
+            onDragLeave: () => setDragOver(false),
+            onDrop: handleDrop,
+            onClick: () => fileInputRef.current?.click(),
+            style: {
+              padding: 32, borderRadius: 12, border: `2px dashed ${dragOver ? T.gold : T.border}`,
+              background: dragOver ? T.gold + "10" : T.bg, textAlign: "center", cursor: "pointer",
+              transition: "all 0.2s", marginBottom: 20
+            }
+          },
+            React.createElement("input", { ref: fileInputRef, type: "file", accept: "image/*", multiple: true, onChange: e => handleImageSelect(e.target.files), style: { display: "none" } }),
+            React.createElement("span", { style: { fontSize: 36, display: "block", marginBottom: 8, opacity: 0.5 } }, "📷"),
+            React.createElement("p", { style: { fontSize: 13, color: T.muted, fontFamily: T.font } }, L.dragDrop)
+          ),
+
+          // Image gallery
+          images.length > 0 && React.createElement("div", { style: { marginBottom: 24 } },
+            React.createElement("label", { style: { fontSize: 10, color: T.dim, fontFamily: T.mono, display: "block", marginBottom: 10 } }, `📷 ${L.images} (${images.length})`),
+            React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: 12 } },
+              images.map((img, idx) =>
+                React.createElement("div", {
+                  key: img.id,
+                  style: { position: "relative", borderRadius: 10, overflow: "hidden", border: `1px solid ${T.border}`, background: T.bg }
+                },
+                  React.createElement("img", { src: img.preview, style: { width: "100%", height: 100, objectFit: "cover" } }),
+                  React.createElement("div", { style: { padding: 8 } },
+                    React.createElement("div", { style: { fontSize: 9, color: T.muted, fontFamily: T.mono, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, img.name),
+                    React.createElement("div", { style: { display: "flex", gap: 4, marginTop: 6 } },
+                      React.createElement("button", {
+                        onClick: () => handleOcr(idx), disabled: ocrLoading === idx,
+                        title: L.ocrExtract,
+                        style: { flex: 1, padding: "4px 6px", borderRadius: 4, border: `1px solid ${T.border}`, background: "transparent", color: T.muted, fontSize: 9, cursor: "pointer" }
+                      }, ocrLoading === idx ? "⏳" : "📝 OCR"),
+                      React.createElement("button", {
+                        onClick: () => removeImage(idx),
+                        style: { padding: "4px 8px", borderRadius: 4, border: `1px solid ${T.red || '#c44'}`, background: "transparent", color: T.red || '#c44', fontSize: 9, cursor: "pointer" }
+                      }, "×")
+                    ),
+                    img.ocrText && React.createElement("div", { style: { marginTop: 6, fontSize: 8, color: T.green, fontFamily: T.mono } }, `✓ ${img.ocrText.slice(0, 30)}...`)
+                  )
+                )
+              )
+            )
+          ),
+
+          // Video links section
+          React.createElement("div", { style: { marginBottom: 16 } },
+            React.createElement("label", { style: { fontSize: 10, color: T.dim, fontFamily: T.mono, display: "block", marginBottom: 8 } }, `🎬 ${L.addVideo}`),
+            React.createElement("div", { style: { display: "flex", gap: 8 } },
+              React.createElement("input", {
+                type: "text", value: videoInput, onChange: e => setVideoInput(e.target.value),
+                placeholder: L.videoPlaceholder, onKeyDown: e => e.key === 'Enter' && addVideo(),
+                style: { flex: 1, padding: "10px 12px", borderRadius: 8, border: `1px solid ${T.border}`, background: T.input, color: T.text, fontSize: 12, outline: "none" }
+              }),
+              React.createElement("button", {
+                onClick: addVideo, disabled: !videoInput.trim(),
+                style: { padding: "10px 16px", borderRadius: 8, border: "none", background: videoInput.trim() ? T.gold : T.hover, color: videoInput.trim() ? "#FFF" : T.muted, fontSize: 12, cursor: videoInput.trim() ? "pointer" : "default" }
+              }, "+")
+            )
+          ),
+
+          // Video list
+          videos.length > 0 && React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 8, marginBottom: 16 } },
+            videos.map((v, idx) =>
+              React.createElement("div", {
+                key: v.id,
+                style: { display: "flex", alignItems: "center", gap: 10, padding: "8px 12px", borderRadius: 8, background: T.bg, border: `1px solid ${T.border}` }
+              },
+                React.createElement("span", { style: { fontSize: 18 } }, v.icon),
+                React.createElement("div", { style: { flex: 1, overflow: "hidden" } },
+                  React.createElement("div", { style: { fontSize: 10, color: T.gold, fontFamily: T.mono } }, v.name),
+                  React.createElement("div", { style: { fontSize: 9, color: T.muted, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, v.url)
+                ),
+                React.createElement("button", { onClick: () => removeVideo(idx), style: { background: "none", border: "none", color: T.muted, cursor: "pointer", fontSize: 14 } }, "×")
+              )
+            )
+          )
+        ),
+
+        // TAB: Social Links
+        activeTab === 'links' && React.createElement(React.Fragment, null,
+          React.createElement("div", { style: { marginBottom: 20 } },
+            React.createElement("label", { style: { fontSize: 10, color: T.dim, fontFamily: T.mono, display: "block", marginBottom: 8 } }, `🔗 ${L.addLink}`),
+            React.createElement("div", { style: { display: "flex", gap: 8 } },
+              React.createElement("input", {
+                type: "text", value: linkInput, onChange: e => setLinkInput(e.target.value),
+                placeholder: L.linkPlaceholder, onKeyDown: e => e.key === 'Enter' && addLink(),
+                style: { flex: 1, padding: "10px 12px", borderRadius: 8, border: `1px solid ${T.border}`, background: T.input, color: T.text, fontSize: 12, outline: "none" }
+              }),
+              React.createElement("button", {
+                onClick: addLink, disabled: !linkInput.trim(),
+                style: { padding: "10px 16px", borderRadius: 8, border: "none", background: linkInput.trim() ? T.gold : T.hover, color: linkInput.trim() ? "#FFF" : T.muted, fontSize: 12, cursor: linkInput.trim() ? "pointer" : "default" }
+              }, "+")
+            )
+          ),
+
+          // Supported platforms hint
+          React.createElement("div", { style: { display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 20 } },
+            Object.entries(SOCIAL_PATTERNS).map(([key, cfg]) =>
+              React.createElement("span", {
+                key,
+                style: { padding: "4px 10px", borderRadius: 12, background: T.bg, border: `1px solid ${T.border}`, fontSize: 10, color: T.muted }
+              }, `${cfg.icon} ${cfg.name}`)
+            )
+          ),
+
+          // Links list
+          links.length > 0 && React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 8 } },
+            links.map((lnk, idx) =>
+              React.createElement("div", {
+                key: lnk.id,
+                style: { display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", borderRadius: 10, background: T.bg, border: `1px solid ${T.border}` }
+              },
+                React.createElement("span", { style: { fontSize: 20 } }, lnk.icon),
+                React.createElement("div", { style: { flex: 1, overflow: "hidden" } },
+                  React.createElement("div", { style: { fontSize: 11, color: T.gold, fontFamily: T.mono, fontWeight: 500 } }, lnk.name),
+                  React.createElement("a", { href: lnk.url, target: "_blank", rel: "noopener", style: { fontSize: 10, color: T.muted, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", display: "block", textDecoration: "none" } }, lnk.url)
+                ),
+                React.createElement("span", { style: { fontSize: 9, color: lnk.verified ? T.green : T.dim, fontFamily: T.mono } }, lnk.verified ? L.verified : L.pending),
+                React.createElement("button", { onClick: () => removeLink(idx), style: { background: "none", border: "none", color: T.muted, cursor: "pointer", fontSize: 14 } }, "×")
+              )
+            )
+          ),
+
+          links.length === 0 && React.createElement("div", { style: { textAlign: "center", padding: 40, color: T.muted } },
+            React.createElement("span", { style: { fontSize: 32, display: "block", marginBottom: 8, opacity: 0.3 } }, "🔗"),
+            React.createElement("p", { style: { fontSize: 12 } }, L.noLinks)
+          )
+        ),
+
+        // Forensic Preview (always visible at bottom)
+        React.createElement("div", {
+          style: { padding: 14, borderRadius: 10, background: T.bg, border: `1px solid ${T.border}`, marginTop: 16 }
+        },
+          React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, marginBottom: 10, paddingBottom: 8, borderBottom: `1px solid ${T.border}30` } },
+            React.createElement("span", { style: { fontSize: 12 } }, "🛡️"),
+            React.createElement("span", { style: { fontSize: 10, color: T.dim, fontFamily: T.mono, fontWeight: 600 } }, L.forensic)
+          ),
+          React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6px 16px", fontSize: 10 } },
+            React.createElement("div", { style: { color: T.dim, fontFamily: T.mono } }, `${L.author}: `, React.createElement("span", { style: { color: T.text } }, L.citizen)),
+            React.createElement("div", { style: { color: T.dim, fontFamily: T.mono } }, `${L.timestamp}: `, React.createElement("span", { style: { color: T.muted } }, timestamp.slice(11, 19))),
+            React.createElement("div", { style: { color: T.dim, fontFamily: T.mono } }, `ISP: `, React.createElement("span", { style: { color: T.gold } }, data.template || "ISP-COM-02")),
+            React.createElement("div", { style: { color: T.dim, fontFamily: T.mono } }, "📎 ", React.createElement("span", { style: { color: evidenceCount > 0 ? T.green : T.muted } }, `${images.length}📷 ${videos.length}🎬 ${links.length}🔗`))
+          )
+        )
+      ),
+
+      // Footer with actions
+      React.createElement("div", {
+        style: { display: "flex", justifyContent: "flex-end", gap: 12, padding: "16px 24px", borderTop: `1px solid ${T.border}`, background: T.bg, flexShrink: 0 }
+      },
+        React.createElement("button", {
+          onClick: onClose,
+          style: { padding: "12px 20px", borderRadius: 10, border: `1px solid ${T.border}`, background: "transparent", color: T.muted, fontSize: 13, fontFamily: T.font, cursor: "pointer" }
+        }, L.close),
+        React.createElement("button", {
+          onClick: () => onSubmit(data, "draft"), disabled: !isValid || loading,
+          style: { padding: "12px 20px", borderRadius: 10, border: `1px solid ${T.border}`, background: T.hover, color: T.text, fontSize: 13, fontFamily: T.font, cursor: isValid && !loading ? "pointer" : "default", opacity: isValid && !loading ? 1 : 0.5 }
+        }, loading ? "⏳" : `📝 ${L.saveDraft}`),
+        React.createElement("button", {
+          onClick: () => onSubmit(data, "review"), disabled: !isValid || loading,
+          style: { padding: "12px 24px", borderRadius: 10, border: "none", background: isValid ? `linear-gradient(135deg, ${T.gold}, ${T.goldDim})` : T.hover, color: isValid ? "#FFF" : T.muted, fontSize: 13, fontWeight: 600, fontFamily: T.font, cursor: isValid && !loading ? "pointer" : "default", opacity: isValid && !loading ? 1 : 0.5 }
+        }, loading ? L.creating : `🔍 ${L.submit}`)
+      )
+    )
+  );
+}
+
+// ── LivingOrb: Canvas 60fps breathing orb (Design Reference) ──────────
+function LivingOrb({ score, T, size, onClick, active }) {
+  const canvasRef = useRef(null);
+  const frameRef = useRef(0);
+  const pct = (score || 0) / 100;
+  const sz = size || 28;
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = sz * dpr;
+    canvas.height = sz * dpr;
+    ctx.scale(dpr, dpr);
+    let running = true;
+
+    function draw(time) {
+      if (!running) return;
+      ctx.clearRect(0, 0, sz, sz);
+      const cx = sz / 2, cy = sz / 2;
+      const breathRate = 0.001 + (1 - pct) * 0.001;
+      const breath = Math.sin(time * breathRate) * 0.5 + 0.5;
+      const breathScale = 0.7 + breath * 0.3 * pct;
+
+      // Outer glow
+      const glowR = (sz / 2 - 2) * breathScale;
+      const glow = ctx.createRadialGradient(cx, cy, glowR * 0.3, cx, cy, glowR);
+      glow.addColorStop(0, T.gold + "60");
+      glow.addColorStop(0.5, T.green + "20");
+      glow.addColorStop(1, "transparent");
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(cx, cy, glowR, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Core orb
+      const coreR = (sz / 2 - 6) * (0.6 + breathScale * 0.4);
+      const core = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreR);
+      core.addColorStop(0, T.gold + "FF");
+      core.addColorStop(0.6, T.green + "AA");
+      core.addColorStop(1, T.goldDim + "40");
+      ctx.fillStyle = core;
+      ctx.beginPath();
+      ctx.arc(cx, cy, coreR, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Pupil highlight
+      const pupilR = coreR * 0.3 * (0.8 + breath * 0.2);
+      const pupil = ctx.createRadialGradient(cx, cy, 0, cx, cy, pupilR);
+      pupil.addColorStop(0, "#FFFFFF" + (pct > 0.8 ? "CC" : "66"));
+      pupil.addColorStop(1, "transparent");
+      ctx.fillStyle = pupil;
+      ctx.beginPath();
+      ctx.arc(cx, cy, pupilR, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Progress ring
+      const ringR = sz / 2 - 2;
+      ctx.strokeStyle = T.gold + "30";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(cx, cy, ringR, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.strokeStyle = T.gold + (active ? "CC" : "66");
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.arc(cx, cy, ringR, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * pct);
+      ctx.stroke();
+
+      frameRef.current = requestAnimationFrame(draw);
+    }
+    frameRef.current = requestAnimationFrame(draw);
+    return () => { running = false; cancelAnimationFrame(frameRef.current); };
+  }, [score, T, sz, pct, active]);
+
+  return React.createElement("canvas", { ref: canvasRef, onClick: onClick,
+    style: { width: sz, height: sz, cursor: "pointer", transition: "transform 0.2s ease",
+      transform: active ? "scale(1.1)" : "scale(1)" } });
+}
+
+// ── NerveStrand: Particle system for service health (Design Reference) ─
+function NerveStrand({ services, T, width, onClick, active }) {
+  const canvasRef = useRef(null);
+  const frameRef = useRef(0);
+  const w = width || 180;
+  const h = 24;
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    ctx.scale(dpr, dpr);
+    let running = true;
+
+    const particles = (services || []).slice(0, 20).map((s, i) => ({
+      x: (i / Math.max(services.length, 1)) * w,
+      baseY: h / 2,
+      speed: s.up !== false ? 0.3 + Math.random() * 0.4 : 0,
+      amplitude: s.up !== false ? 2 + Math.random() * 3 : 0,
+      phase: Math.random() * Math.PI * 2,
+      up: s.up !== false, radius: s.up !== false ? 2 : 1.5,
+    }));
+
+    function draw(time) {
+      if (!running) return;
+      ctx.clearRect(0, 0, w, h);
+
+      // Baseline
+      ctx.strokeStyle = T.border + "40";
+      ctx.lineWidth = 0.5;
+      ctx.beginPath();
+      ctx.moveTo(0, h / 2);
+      ctx.lineTo(w, h / 2);
+      ctx.stroke();
+
+      particles.forEach((p, i) => {
+        const t = time * 0.001;
+        const waveX = p.x + Math.sin(t * p.speed + p.phase) * 8;
+        const waveY = p.baseY + Math.sin(t * p.speed * 2 + p.phase) * p.amplitude;
+        const displayX = ((waveX % w) + w) % w;
+
+        // Glow
+        const glowColor = p.up ? T.green : T.red;
+        const glow = ctx.createRadialGradient(displayX, waveY, 0, displayX, waveY, p.radius * 4);
+        glow.addColorStop(0, glowColor + "40");
+        glow.addColorStop(1, "transparent");
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(displayX, waveY, p.radius * 4, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Particle
+        ctx.fillStyle = p.up ? T.green + "DD" : T.red + "AA";
+        ctx.beginPath();
+        ctx.arc(displayX, waveY, p.radius, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      frameRef.current = requestAnimationFrame(draw);
+    }
+    frameRef.current = requestAnimationFrame(draw);
+    return () => { running = false; cancelAnimationFrame(frameRef.current); };
+  }, [services, T, w]);
+
+  return React.createElement("canvas", { ref: canvasRef, onClick: onClick,
+    style: { width: w, height: h, cursor: "pointer", borderRadius: 12,
+      background: active ? T.gold + "10" : "transparent", transition: "background 0.3s ease" } });
+}
+
+// ── SovereigntyGauge: CSS bar with numeric labels (Design Reference) ───
+function SovereigntyGauge({ local, total, T, onClick, active }) {
+  const ratio = (local || 42) / (total || 45);
+  const llm = (total || 45) - (local || 42);
+  return React.createElement("div", { onClick: onClick, style: { cursor: "pointer", display: "flex", alignItems: "center", gap: 6,
+    padding: "4px 8px", borderRadius: 8, background: active ? T.gold + "10" : "transparent", transition: "background 0.3s ease" } },
+    React.createElement("div", { style: { width: 60, height: 6, borderRadius: 3, background: T.border + "40", overflow: "hidden", position: "relative" } },
+      React.createElement("div", { style: { position: "absolute", left: 0, top: 0, height: "100%", borderRadius: 3,
+        width: `${ratio * 100}%`, background: `linear-gradient(90deg, ${T.green}, ${T.green}CC)`,
+        boxShadow: `0 0 8px ${T.green}30`, transition: "width 1s ease" } }),
+      React.createElement("div", { style: { position: "absolute", right: 0, top: 0, height: "100%",
+        width: `${(1 - ratio) * 100}%`, background: T.gold + "60", borderRadius: "0 3px 3px 0" } })
+    ),
+    React.createElement("span", { style: { fontSize: 9, fontFamily: T.mono, color: T.dim, letterSpacing: "0.3px" } },
+      React.createElement("span", { style: { color: T.green, fontWeight: 600 } }, Math.round(ratio * 100)),
+      React.createElement("span", { style: { opacity: 0.4 } }, "/"),
+      React.createElement("span", { style: { color: T.gold } }, Math.round((1 - ratio) * 100))
+    )
+  );
+}
+
+// ── RespiradouroBar: Combined ambient intelligence strip ─────────────
+function RespiradouroBar({ cogScore, services, T, lang, onExpand }) {
+  const [expanded, setExpanded] = useState(null);
+  const barRef = useRef(null);
+  const toggle = useCallback((p) => setExpanded(prev => prev === p ? null : p), []);
+
+  // Click outside to close
+  useEffect(() => {
+    const handler = (e) => {
+      if (barRef.current && !barRef.current.contains(e.target)) setExpanded(null);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const L = RESP_LANG[lang] || RESP_LANG.de;
+
+  return React.createElement("div", { ref: barRef, style: {
+    display: "flex", alignItems: "center", justifyContent: "center", gap: 12,
+    padding: "6px 20px", position: "relative",
+    background: T.card + "E8", backdropFilter: "blur(16px)",
+    borderBottom: `1px solid ${T.border}30`, minHeight: 38 } },
+
+    // LivingOrb
+    React.createElement("div", { style: { position: "relative" } },
+      React.createElement(LivingOrb, { score: cogScore, T: T, size: 28, onClick: () => toggle("cog"), active: expanded === "cog" }),
+      expanded === "cog" && React.createElement(CogPanelExpanded, { cogData: window._cogData, T: T, L: L })
+    ),
+
+    // NerveStrand
+    React.createElement("div", { style: { position: "relative" } },
+      React.createElement(NerveStrand, { services: services, T: T, width: 180, onClick: () => toggle("pulse"), active: expanded === "pulse" }),
+      expanded === "pulse" && React.createElement(PulsePanelExpanded, { services: services, T: T, L: L })
+    ),
+
+    // SovereigntyGauge
+    React.createElement("div", { style: { position: "relative" } },
+      React.createElement(SovereigntyGauge, { local: 42, total: 45, T: T, onClick: () => toggle("sov"), active: expanded === "sov" }),
+      expanded === "sov" && React.createElement(SovPanelExpanded, { T: T, L: L })
+    )
+  );
+}
+
+// ── CogPanelExpanded: Full cognitive breakdown ─────────────────────────
+function CogPanelExpanded({ cogData, T, L }) {
+  const data = cogData || { score: 89, grade: "AUTONOMOUS", components: { sovereignty: { score: 40, max: 40 }, confidence: { score: 23.8, max: 25 }, stability: { score: 20, max: 20 }, learning: { score: 5.2, max: 15 } }, total_decisions: 109, hesitation: 0, patterns: 7 };
+  const bars = [
+    { label: L.sovereignty, val: data.components?.sovereignty?.score || 40, max: 40, icon: "🛡️" },
+    { label: L.confidence, val: data.components?.confidence?.score || 23.8, max: 25, icon: "◆" },
+    { label: L.stability, val: data.components?.stability?.score || 20, max: 20, icon: "▣" },
+    { label: L.learning, val: data.components?.learning?.score || 5.2, max: 15, icon: "◐" },
+  ];
+  const color = (v, m) => (v / m) >= 0.8 ? T.green : (v / m) >= 0.5 ? T.gold : T.red;
+
+  return React.createElement("div", { style: { position: "absolute", top: "calc(100% + 10px)", left: 0, minWidth: 260,
+    background: T.card, border: `1px solid ${T.border}`, borderRadius: 14, padding: 18, zIndex: 200,
+    boxShadow: `0 12px 40px rgba(0,0,0,${T.bg === "#0E0E14" ? 0.5 : 0.14})`, backdropFilter: "blur(16px)", animation: "breatheIn 0.3s ease" } },
+    React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 } },
+      React.createElement("span", { style: { fontSize: 10, fontWeight: 600, color: T.gold, fontFamily: T.font, letterSpacing: "1px", textTransform: "uppercase" } }, L.cogTitle),
+      React.createElement("span", { style: { fontSize: 20, fontWeight: 700, color: T.text, fontFamily: T.mono } }, Math.round(data.score || 0))
+    ),
+    bars.map((b, i) => {
+      const pct = (b.val / b.max) * 100;
+      const c = color(b.val, b.max);
+      return React.createElement("div", { key: i, style: { marginBottom: 10 } },
+        React.createElement("div", { style: { display: "flex", justifyContent: "space-between", marginBottom: 3 } },
+          React.createElement("span", { style: { fontSize: 10, color: T.muted, fontFamily: T.font } }, b.icon + " " + b.label),
+          React.createElement("span", { style: { fontSize: 9, color: T.dim, fontFamily: T.mono } }, b.val.toFixed(1) + "/" + b.max)
+        ),
+        React.createElement("div", { style: { height: 3, borderRadius: 2, background: T.border + "40", overflow: "hidden" } },
+          React.createElement("div", { style: { height: "100%", borderRadius: 2, background: c, width: `${pct}%`, transition: "width 1s ease", boxShadow: `0 0 8px ${c}30` } })
+        )
+      );
+    }),
+    React.createElement("div", { style: { display: "flex", gap: 16, marginTop: 14, paddingTop: 12, borderTop: `1px solid ${T.border}40` } },
+      [{ v: data.total_decisions || 0, l: L.decisions }, { v: data.hesitation || 0, l: L.hesitation }, { v: data.patterns || 7, l: L.patterns }].map((d, i) =>
+        React.createElement("div", { key: i, style: { textAlign: "center" } },
+          React.createElement("div", { style: { fontSize: 16, fontWeight: 700, color: T.text, fontFamily: T.mono } }, d.v),
+          React.createElement("div", { style: { fontSize: 7, color: T.dim, fontFamily: T.mono, textTransform: "uppercase", letterSpacing: "0.8px" } }, d.l)
+        )
+      )
+    ),
+    React.createElement("div", { style: { marginTop: 12, paddingTop: 10, borderTop: `1px solid ${T.border}20` } },
+      React.createElement("div", { style: { fontSize: 8, color: T.dim, fontFamily: T.mono, fontStyle: "italic", textAlign: "center", lineHeight: 1.5 } }, L.cogQuote)
+    )
+  );
+}
+
+// ── PulsePanelExpanded: Service grid ───────────────────────────────────
+function PulsePanelExpanded({ services, T, L }) {
+  const svc = services || [];
+  const up = svc.filter(s => s.up !== false).length;
+  return React.createElement("div", { style: { position: "absolute", top: "calc(100% + 10px)", left: 0,
+    minWidth: 300, background: T.card, border: `1px solid ${T.border}`, borderRadius: 14, padding: 18, zIndex: 200,
+    boxShadow: `0 12px 40px rgba(0,0,0,${T.bg === "#0E0E14" ? 0.5 : 0.14})`, backdropFilter: "blur(16px)", animation: "breatheIn 0.3s ease",
+    maxHeight: 320, overflowY: "auto" } },
+    React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 } },
+      React.createElement("span", { style: { fontSize: 10, fontWeight: 600, color: T.gold, fontFamily: T.font, letterSpacing: "1px", textTransform: "uppercase" } }, L.pulseTitle),
+      React.createElement("span", { style: { fontSize: 9, padding: "3px 10px", borderRadius: 10, background: T.green + "15", color: T.green, fontFamily: T.mono, fontWeight: 600 } }, up + "/" + svc.length + " " + L.alive)
+    ),
+    React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 3 } },
+      svc.slice(0, 20).map((s, i) =>
+        React.createElement("div", { key: i, style: { display: "flex", alignItems: "center", gap: 6, padding: "4px 8px", borderRadius: 6 } },
+          React.createElement("span", { style: { width: 5, height: 5, borderRadius: "50%", flexShrink: 0,
+            background: s.up !== false ? T.green : T.red, boxShadow: `0 0 6px ${s.up !== false ? T.green : T.red}40` } }),
+          React.createElement("span", { style: { fontSize: 9, color: s.up !== false ? T.muted : T.red, fontFamily: T.mono, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" } }, s.name || s.id || "Service " + (i + 1))
+        )
+      )
+    )
+  );
+}
+
+// ── SovPanelExpanded: Sovereignty breakdown ────────────────────────────
+function SovPanelExpanded({ T, L }) {
+  const local = 42, llm = 3, total = 45;
+  return React.createElement("div", { style: { position: "absolute", top: "calc(100% + 10px)", right: 0, minWidth: 240,
+    background: T.card, border: `1px solid ${T.border}`, borderRadius: 14, padding: 18, zIndex: 200,
+    boxShadow: `0 12px 40px rgba(0,0,0,${T.bg === "#0E0E14" ? 0.5 : 0.14})`, backdropFilter: "blur(16px)", animation: "breatheIn 0.3s ease" } },
+    React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 } },
+      React.createElement("span", { style: { fontSize: 10, fontWeight: 600, color: T.gold, fontFamily: T.font, letterSpacing: "1px", textTransform: "uppercase" } }, L.sovTitle),
+      React.createElement("span", { style: { fontSize: 9, padding: "3px 10px", borderRadius: 10, background: T.green + "15", color: T.green, fontFamily: T.mono, fontWeight: 600 } }, L.sovereign)
+    ),
+    React.createElement("div", { style: { marginBottom: 16 } },
+      React.createElement("div", { style: { height: 8, borderRadius: 4, background: T.border + "30", overflow: "hidden", display: "flex" } },
+        React.createElement("div", { style: { width: `${(local / total) * 100}%`, background: `linear-gradient(90deg, ${T.green}CC, ${T.green})`,
+          borderRadius: "4px 0 0 4px", transition: "width 1s ease", boxShadow: `0 0 12px ${T.green}30` } }),
+        React.createElement("div", { style: { width: `${(llm / total) * 100}%`, background: T.gold + "80", borderRadius: "0 4px 4px 0" } })
+      ),
+      React.createElement("div", { style: { display: "flex", justifyContent: "space-between", marginTop: 6 } },
+        React.createElement("span", { style: { fontSize: 9, color: T.green, fontFamily: T.mono } }, local + " " + L.localFuncs),
+        React.createElement("span", { style: { fontSize: 9, color: T.gold, fontFamily: T.mono } }, llm + " " + L.llmLabel)
+      )
+    ),
+    React.createElement("div", { style: { display: "flex", gap: 8 } },
+      [{ label: "P", detail: "42 funcs", color: T.green }, { label: "M", detail: "+semantics", color: T.gold }, { label: "G", detail: "+LLM", color: T.gold }].map((tier, i) =>
+        React.createElement("div", { key: i, style: { flex: 1, padding: 8, borderRadius: 8, border: `1px solid ${T.border}40`, textAlign: "center" } },
+          React.createElement("div", { style: { fontSize: 10, fontWeight: 600, color: tier.color, fontFamily: T.mono, marginBottom: 2 } }, tier.label),
+          React.createElement("div", { style: { fontSize: 7, color: T.dim, fontFamily: T.mono } }, tier.detail)
+        )
+      )
+    )
+  );
+}
 
 // ═══════════════════════════════════════════════════════════════════════
 // UI COMPONENTS — Silent Governance Design
@@ -1680,11 +2963,149 @@ function WINDIAgentSuite() {
   const [docGenLoading, setDocGenLoading] = useState(false);
   const [lastGeneratedFile, setLastGeneratedFile] = useState(null);
   const [sealResult, setSealResult] = useState(null);
+  // Respiradouro states
+  const [cogData, setCogData] = useState(null);
+  const [pulseServices, setPulseServices] = useState([]);
+  const [showCogPanel, setShowCogPanel] = useState(false);
+  // v1.0.0-W Workspace Edition states
+  const [activeTab, setActiveTab] = useState("chat");
+  const [sideRailExpanded, setSideRailExpanded] = useState(false);
+  const [sessionDocs, setSessionDocs] = useState([]);
+  // Sprint 1: Communiqué Hydration
+  const [comStats, setComStats] = useState(null);
+  const [comDocs, setComDocs] = useState([]);
+  const [comLoading, setComLoading] = useState(false);
+  // Sprint J2: Jornaline Composer with Multimedia
+  const [jornalineOpen, setJornalineOpen] = useState(false);
+  const [jornalineData, setJornalineData] = useState({
+    template: "ISP-COM-02",
+    category: "REPORT",
+    impact: "MED",
+    title: "",
+    body: "",
+    images: [],   // { id, file, preview, name, size, timestamp, ocrText }
+    videos: [],   // { id, url, platform, icon, name, timestamp, verified }
+    links: [],    // { id, url, platform, icon, name, timestamp, verified }
+  });
+  const [jornalineLoading, setJornalineLoading] = useState(false);
   const chatRef = useRef(null);
   const inputRef = useRef(null);
   const fileInputRef = useRef(null);
 
   const T = THEMES[themeName];
+
+  // Fetch cognitive data every 60 seconds
+  useEffect(() => {
+    const fetchCog = async () => {
+      try {
+        const res = await fetch('/palette/api/dragon/cognitive/score');
+        if (res.ok) {
+          const data = await res.json();
+          setCogData(data);
+        }
+      } catch (e) { /* silent */ }
+    };
+    fetchCog();
+    const interval = setInterval(fetchCog, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Fetch pulse services (simplified)
+  useEffect(() => {
+    const fetchPulse = async () => {
+      try {
+        const res = await fetch('/palette/api/dragon/outlook/status');
+        if (res.ok) {
+          const data = await res.json();
+          const services = Object.values(data.features || {}).map(f => ({
+            id: f.id,
+            name: f.name,
+            status: f.status === 'WIRED' ? 'ok' : 'down',
+            up: f.status === 'WIRED'
+          }));
+          setPulseServices(services);
+        }
+      } catch (e) { /* silent */ }
+    };
+    fetchPulse();
+    const interval = setInterval(fetchPulse, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Genesis Onboarding Integration
+  useEffect(() => {
+    if (window.WINDIGenesis) {
+      window.WINDIGenesis.init({
+        theme: themeName,
+        lang: lang,
+        autoShow: true,
+        delay: 3000,
+      });
+    }
+  }, []);
+
+  // Sync theme to Genesis
+  useEffect(() => {
+    if (window.WINDIGenesis) {
+      window.WINDIGenesis.setTheme(themeName);
+    }
+  }, [themeName]);
+
+  // Sync lang to Genesis
+  useEffect(() => {
+    if (window.WINDIGenesis) {
+      window.WINDIGenesis.setLang(lang);
+    }
+  }, [lang]);
+
+  // Sprint 1: Fetch Communiqué stats (30s polling)
+  useEffect(() => {
+    const fetchComStats = async () => {
+      try {
+        const res = await fetch('/palette/api/communique/stats');
+        if (res.ok) {
+          const data = await res.json();
+          // Normalize to expected format
+          setComStats({
+            counts: {
+              draft: data.draft || 0,
+              review: data.review || 0,
+              published: data.published || 0,
+              archived: data.archived || 0,
+              revoked: data.revoked || 0,
+              total: data.total || 0,
+            },
+            governance: {
+              sovereignty_ratio: 93.3,
+              cog_score: cogData?.score || 89,
+            },
+          });
+        }
+      } catch (e) { /* silent */ }
+    };
+    fetchComStats();
+    const interval = setInterval(fetchComStats, 30000);
+    return () => clearInterval(interval);
+  }, [cogData]);
+
+  // Sprint 1: Fetch Communiqué list (60s polling, or on tab switch)
+  useEffect(() => {
+    const fetchComDocs = async () => {
+      if (activeTab !== 'docs') return;
+      setComLoading(true);
+      try {
+        const res = await fetch('/palette/api/communique/list');
+        if (res.ok) {
+          const data = await res.json();
+          setComDocs(data.communiques || []);
+        }
+      } catch (e) { /* silent */ }
+      setComLoading(false);
+    };
+    fetchComDocs();
+    const interval = setInterval(fetchComDocs, 60000);
+    return () => clearInterval(interval);
+  }, [activeTab]);
 
   useEffect(() => { chatRef.current && (chatRef.current.scrollTop = chatRef.current.scrollHeight); }, [msgs]);
   useEffect(() => { inputRef.current?.focus(); }, []);
@@ -1950,15 +3371,178 @@ function WINDIAgentSuite() {
     }
   }, [lastGeneratedFile]);
 
+  // Sprint 1: Doc action handler
+  const handleDocAction = useCallback(async (doc, action) => {
+    const baseUrl = '/palette/api/communique';
+    const viewUrl = '/palette/communique';
+
+    switch(action) {
+      case 'open':
+        window.open(`${viewUrl}/${doc.id}`, '_blank');
+        break;
+      case 'download':
+        window.open(`${viewUrl}/${doc.id}/pdf`, '_blank');
+        break;
+      case 'verify':
+        window.open(`${viewUrl}/${doc.id}/verify`, '_blank');
+        break;
+      case 'review':
+        try {
+          const res = await fetch(`${baseUrl}/${doc.id}/review`, { method: 'POST' });
+          if (res.ok) {
+            setComDocs(prev => prev.map(d => d.id === doc.id ? {...d, status: 'REVIEW'} : d));
+          }
+        } catch (e) { console.error('Review failed:', e); }
+        break;
+      case 'publish':
+        try {
+          const res = await fetch(`${baseUrl}/${doc.id}/publish`, { method: 'POST' });
+          if (res.ok) {
+            setComDocs(prev => prev.map(d => d.id === doc.id ? {...d, status: 'PUBLISHED'} : d));
+          }
+        } catch (e) { console.error('Publish failed:', e); }
+        break;
+      case 'archive':
+        try {
+          const res = await fetch(`${baseUrl}/${doc.id}/archive`, { method: 'POST' });
+          if (res.ok) {
+            setComDocs(prev => prev.map(d => d.id === doc.id ? {...d, status: 'ARCHIVED'} : d));
+          }
+        } catch (e) { console.error('Archive failed:', e); }
+        break;
+    }
+  }, []);
+
+  // Sprint J2: Jornaline submit handler with multimedia evidence
+  const handleJornalineSubmit = useCallback(async (jornalinePayload, action) => {
+    setJornalineLoading(true);
+    try {
+      // Build rich body with embedded media references
+      let richBody = jornalinePayload.body || '';
+
+      // Append video embeds
+      if (jornalinePayload.videos?.length > 0) {
+        richBody += '\n\n---\n\n**🎬 Vídeos:**\n';
+        jornalinePayload.videos.forEach(v => {
+          richBody += `\n- ${v.icon} [${v.name}](${v.url})`;
+        });
+      }
+
+      // Append social links
+      if (jornalinePayload.links?.length > 0) {
+        richBody += '\n\n**🔗 Referências:**\n';
+        jornalinePayload.links.forEach(l => {
+          richBody += `\n- ${l.icon} [${l.name}](${l.url})`;
+        });
+      }
+
+      // Build the payload for Communiqué API
+      const payload = {
+        title_de: jornalinePayload.title,
+        title_en: jornalinePayload.title,
+        title_pt: jornalinePayload.title,
+        body_de: `<p>${richBody.replace(/\n/g, '</p><p>')}</p>`,
+        body_en: `<p>${richBody.replace(/\n/g, '</p><p>')}</p>`,
+        body_pt: `<p>${richBody.replace(/\n/g, '</p><p>')}</p>`,
+        category: jornalinePayload.category || "REPORT",
+        impact_level: jornalinePayload.impact || "MED",
+        isp_template: jornalinePayload.template || "ISP-COM-02",
+        governance_level: "CITIZEN",
+        author_name: "Cidadão",
+        author_role: "citizen",
+        // Multimedia evidence metadata
+        evidence: {
+          images: (jornalinePayload.images || []).map(img => ({
+            name: img.name,
+            size: img.size,
+            timestamp: img.timestamp,
+            ocrText: img.ocrText,
+          })),
+          videos: jornalinePayload.videos || [],
+          links: jornalinePayload.links || [],
+        },
+        forensic: {
+          device: navigator.userAgent.slice(0, 100),
+          timestamp: new Date().toISOString(),
+          browser: navigator.userAgent.match(/Chrome|Firefox|Safari|Edge/)?.[0] || 'Browser',
+          evidence_count: {
+            images: (jornalinePayload.images || []).length,
+            videos: (jornalinePayload.videos || []).length,
+            links: (jornalinePayload.links || []).length,
+          },
+        },
+      };
+
+      const res = await fetch('/palette/api/communique/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+
+        // TODO: Upload images to evidence endpoint
+        // for (const img of jornalinePayload.images || []) {
+        //   await uploadEvidence(data.id, img);
+        // }
+
+        // Success - close modal and reset form
+        setJornalineOpen(false);
+        setJornalineData({
+          template: "ISP-COM-02", category: "REPORT", impact: "MED",
+          title: "", body: "", images: [], videos: [], links: []
+        });
+
+        // Build evidence summary for chat message
+        const evCount = (jornalinePayload.images?.length || 0) + (jornalinePayload.videos?.length || 0) + (jornalinePayload.links?.length || 0);
+        const evSummary = evCount > 0 ? `\n📎 Evidence: ${jornalinePayload.images?.length || 0}📷 ${jornalinePayload.videos?.length || 0}🎬 ${jornalinePayload.links?.length || 0}🔗` : '';
+
+        // Add success message to chat
+        const ts = new Date().toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" });
+        const successMsg = {
+          de: `🗞️ **Jornaline erstellt!**\n\n**${jornalinePayload.title}**\nStatus: ${action === 'review' ? '🔍 In Prüfung' : '⏳ Entwurf'}\nID: ${data.id || 'pending'}${evSummary}\n\n_${action === 'review' ? 'Wird nach Prüfung veröffentlicht.' : 'Entwurf gespeichert.'}_`,
+          en: `🗞️ **Jornaline created!**\n\n**${jornalinePayload.title}**\nStatus: ${action === 'review' ? '🔍 In Review' : '⏳ Draft'}\nID: ${data.id || 'pending'}${evSummary}\n\n_${action === 'review' ? 'Will be published after review.' : 'Draft saved.'}_`,
+          pt: `🗞️ **Jornaline criada!**\n\n**${jornalinePayload.title}**\nStatus: ${action === 'review' ? '🔍 Em Revisão' : '⏳ Rascunho'}\nID: ${data.id || 'pending'}${evSummary}\n\n_${action === 'review' ? 'Será publicada após revisão.' : 'Rascunho guardado.'}_`,
+        };
+        setMsgs(prev => [...prev, { role: "agent", text: successMsg[lang] || successMsg.de, ts, dragon: "architect" }]);
+
+        // Switch to docs tab to show the new document
+        setActiveTab('docs');
+
+        // If submitting for review, trigger the review endpoint
+        if (action === 'review' && data.id) {
+          await fetch(`/palette/api/communique/${data.id}/review`, { method: 'POST' });
+        }
+      } else {
+        const error = await res.json();
+        console.error('Jornaline create failed:', error);
+        alert('Error: ' + (error.message || 'Failed to create Jornaline'));
+      }
+    } catch (e) {
+      console.error('Jornaline submit error:', e);
+      alert('Error: ' + e.message);
+    }
+    setJornalineLoading(false);
+  }, [lang]);
+
+  // Badge count: drafts + reviews (action needed)
+  const docBadgeCount = comStats?.counts ? (comStats.counts.draft || 0) + (comStats.counts.review || 0) : 0;
+
   return (
-    <div style={{ height:"100vh", display:"flex", flexDirection:"column", background:T.bg, color:T.text, fontFamily:T.font, overflow:"hidden", transition:"background 0.3s, color 0.3s" }}>
+    <div style={{ height:"100vh", display:"flex", background:T.bg, color:T.text, fontFamily:T.font, overflow:"hidden", transition:"background 0.3s, color 0.3s" }}>
+      {/* v1.0.0-W Side Rail Navigation */}
+      <SideRail activeTab={activeTab} setActiveTab={setActiveTab} expanded={sideRailExpanded} setExpanded={setSideRailExpanded} T={T} lang={lang} docCount={docBadgeCount} />
+
+      {/* Main Content Area — shifts with rail */}
+      <div style={{ flex:1, display:"flex", flexDirection:"column", marginLeft:sideRailExpanded ? 220 : 48, transition:"margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1)", overflow:"hidden" }}>
       {/* Header — Clean, professional */}
       <header style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"8px 16px", borderBottom:`1px solid ${T.border}`, background:T.card, flexShrink:0, minHeight:48, boxShadow:T.shadow }}>
         <div style={{ display:"flex", alignItems:"center", gap:8 }}>
-          <span style={{ fontSize:20 }}>🐉</span>
           <div>
             <span style={{ fontWeight:700, fontSize:14, color:T.gold }}>WINDI</span>
             <span style={{ fontWeight:400, fontSize:14, marginLeft:5, color:T.text }}>Agent Suite</span>
+            <span style={{ marginLeft:6, padding:"2px 6px", borderRadius:4, fontSize:9, fontFamily:T.mono, background:T.gold+"15", color:T.gold, fontWeight:500 }}>v{V}</span>
           </div>
         </div>
         <div style={{ display:"flex", alignItems:"center", gap:8 }}>
@@ -1975,28 +3559,62 @@ function WINDIAgentSuite() {
             onMouseLeave={e=>{e.target.style.background="transparent";e.target.style.borderColor=T.gold+"30"}}>
             ⚖️
           </a>
-          {/* Theme toggle */}
+          {/* Theme toggle — KLAR/NOIR */}
           <button onClick={()=>setThemeName(t=>t==="KLAR"?"NOIR":"KLAR")} title={themeName==="KLAR"?"Switch to Noir":"Switch to Klar"}
-            style={{ padding:"3px 8px", borderRadius:4, fontSize:9, fontFamily:T.mono, background:"transparent", border:`1px solid ${T.border}`, color:T.muted, cursor:"pointer" }}>
-            {themeName==="KLAR"?"🌙":"☀️"}
+            style={{ padding:"3px 10px", borderRadius:6, fontSize:9, fontFamily:T.mono, background:T.gold+"10", border:`1px solid ${T.gold}30`, color:T.gold, cursor:"pointer", display:"flex", alignItems:"center", gap:4, transition:"all 0.3s" }}>
+            {themeName==="KLAR"?"☀️ KLAR":"🌙 NOIR"}
           </button>
         </div>
       </header>
 
-      <div style={{ flex:1, display:"flex", overflow:"hidden" }}>
+      {/* Respiradouro Bar — Ambient Intelligence (Architect Dragon Design) */}
+      {(() => { window._cogData = cogData; return null; })()}
+      <RespiradouroBar
+        cogScore={cogData?.score}
+        services={pulseServices}
+        T={T}
+        lang={lang}
+      />
+
+      <div style={{ flex:1, display:"flex", overflow:"hidden", position:"relative" }}>
+        {/* Tab Views — conditional rendering */}
+
+        {/* DOCS TAB */}
+        {activeTab === 'docs' && (
+          <DocsView
+            docs={comDocs}
+            stats={comStats}
+            loading={comLoading}
+            T={T}
+            lang={lang}
+            onAction={handleDocAction}
+          />
+        )}
+
+        {/* CHAT TAB (default) */}
+        {activeTab === 'chat' && (
         <div style={{ flex:1, display:"flex", flexDirection:"column", minWidth:0 }}>
           <div ref={chatRef} style={{ flex:1, overflowY:"auto", padding:"14px 18px" }}>
             {msgs.length === 0 && (
-              <div style={{ textAlign:"center", paddingTop:50 }}>
-                <div style={{ fontSize:44, marginBottom:14 }}>🐉</div>
-                <div style={{ fontSize:18, fontWeight:700, color:T.gold, marginBottom:8 }}>
+              <div style={{ textAlign:"center", paddingTop:40, paddingBottom:20 }}>
+                <div style={{ fontSize:56, marginBottom:16, animation:"breathe 4s ease-in-out infinite" }}>🐉</div>
+                <div style={{ fontSize:20, fontWeight:700, color:T.gold, marginBottom:10, letterSpacing:"-0.5px" }}>
                   {lang==="de"?"Willkommen! Wie kann ich helfen?":lang==="pt"?"Bem-vindo! No que posso ajudar?":"Welcome! How can I help?"}
                 </div>
-                <div style={{ fontSize:12, color:T.dim, maxWidth:440, margin:"0 auto 10px", lineHeight:1.6 }}>
+                <div style={{ fontSize:13, color:T.dim, maxWidth:460, margin:"0 auto 14px", lineHeight:1.7 }}>
                   {lang==="de"?"Dokumente erstellen, Fragen beantworten — einfach losschreiben.":
                    lang==="pt"?"Criar documentos, responder perguntas — só escrever.":
                    "Create documents, answer questions — just start writing."}
                 </div>
+                {/* Ambient governance status */}
+                {cogData && (
+                  <div style={{ display:"inline-flex", alignItems:"center", gap:8, padding:"6px 14px", borderRadius:20, background:T.gold+"08", border:`1px solid ${T.gold}20`, marginBottom:16 }}>
+                    <span style={{ width:8, height:8, borderRadius:"50%", background:T.green, animation:"sovereignPulse 2s ease-in-out infinite" }} />
+                    <span style={{ fontSize:10, color:T.dim, fontFamily:T.mono }}>
+                      {lang==="de"?"System bereit":lang==="pt"?"Sistema pronto":"System ready"} • {Math.round(cogData.score)}/100
+                    </span>
+                  </div>
+                )}
                 <div style={{ display:"flex", flexWrap:"wrap", justifyContent:"center", gap:4, margin:"8px auto 16px", maxWidth:480 }}>
                   {Object.entries(DOCS).slice(0,8).map(([k,d]) => (
                     <span key={k} style={{ padding:"3px 8px", borderRadius:12, fontSize:10, background:T.card, border:`1px solid ${T.border}`, color:T.dim, fontFamily:T.mono, boxShadow:T.shadow }}>{d.icon} {d[lang]||d.en}</span>
@@ -2011,15 +3629,7 @@ function WINDIAgentSuite() {
               <div style={{ display:"flex", alignItems:"flex-start", marginBottom:14, animation:"msgIn 0.35s" }}>
                 <div style={{ fontSize:10, color:T.muted, marginBottom:3, marginLeft:2, fontFamily:T.mono }}>
                   {activeDragon ? (activeDragon === "guardian" ? "🛡️ Guardian" : activeDragon === "architect" ? "🏗️ Architect" : "👁️ Witness") : "🐉 Agent"}
-                  <span style={{ color:T.gold, marginLeft:4, fontSize:9 }}>thinking...</span>
-                </div>
-              </div>
-            )}
-            {isLoading && (
-              <div style={{ display:"flex", alignItems:"flex-start", marginBottom:14, animation:"msgIn 0.35s" }}>
-                <div style={{ fontSize:10, color:T.muted, marginBottom:3, marginLeft:2, fontFamily:T.mono }}>
-                  {activeDragon ? (activeDragon === "guardian" ? "🛡️ Guardian" : activeDragon === "architect" ? "🏗️ Architect" : "👁️ Witness") : "🐉 Agent"}
-                  <span style={{ color:T.gold, marginLeft:4, fontSize:9 }}>thinking...</span>
+                  <span style={{ color:T.gold, marginLeft:4, fontSize:9, animation:"pulse 1.5s ease-in-out infinite" }}>thinking...</span>
                 </div>
               </div>
             )}
@@ -2033,10 +3643,23 @@ function WINDIAgentSuite() {
                 placeholder={lang==="de"?"Schreib los — Frage, Dokument, was auch immer...":lang==="pt"?"Escreve aí — pergunta, documento, o que for...":"Write anything — question, document, whatever..."}
                 rows={2} style={{ flex:1, padding:"10px 14px", borderRadius:12, border:`1px solid ${T.border}`, background:T.input, color:T.text, fontSize:13.5, fontFamily:T.font, resize:"none", outline:"none", lineHeight:1.5, transition:"border-color 0.2s" }}
                 onFocus={e=>e.target.style.borderColor=T.gold+"80"} onBlur={e=>e.target.style.borderColor=T.border} />
-              {/* Document Generation Buttons */}
-              <button onClick={()=>setDocGenModal({format:"pdf"})} title="PDF" style={{ width:36, height:42, borderRadius:10, border:`1px solid ${T.border}`, background:T.hover, color:T.muted, fontSize:14, cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>📄</button>
-              <button onClick={()=>setDocGenModal({format:"docx"})} title="DOCX" style={{ width:36, height:42, borderRadius:10, border:`1px solid ${T.border}`, background:T.hover, color:T.muted, fontSize:14, cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>📝</button>
-              <button onClick={()=>setDocGenModal({format:"pptx"})} title="PPTX" style={{ width:36, height:42, borderRadius:10, border:`1px solid ${T.border}`, background:T.hover, color:T.muted, fontSize:14, cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>📊</button>
+              {/* Document Generation Buttons with tooltips */}
+              <button onClick={()=>setDocGenModal({format:"pdf"})} title={lang==="de"?"PDF erstellen":"Create PDF"} style={{ width:36, height:42, borderRadius:10, border:`1px solid ${T.border}`, background:T.hover, color:T.muted, fontSize:14, cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}
+                onMouseEnter={e=>{e.target.style.borderColor=T.gold;e.target.style.background=T.gold+"15"}}
+                onMouseLeave={e=>{e.target.style.borderColor=T.border;e.target.style.background=T.hover}}>📄</button>
+              <button onClick={()=>setDocGenModal({format:"docx"})} title={lang==="de"?"Word erstellen":"Create Word"} style={{ width:36, height:42, borderRadius:10, border:`1px solid ${T.border}`, background:T.hover, color:T.muted, fontSize:14, cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}
+                onMouseEnter={e=>{e.target.style.borderColor=T.gold;e.target.style.background=T.gold+"15"}}
+                onMouseLeave={e=>{e.target.style.borderColor=T.border;e.target.style.background=T.hover}}>📝</button>
+              <button onClick={()=>setDocGenModal({format:"pptx"})} title={lang==="de"?"PowerPoint erstellen":"Create PowerPoint"} style={{ width:36, height:42, borderRadius:10, border:`1px solid ${T.border}`, background:T.hover, color:T.muted, fontSize:14, cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}
+                onMouseEnter={e=>{e.target.style.borderColor=T.gold;e.target.style.background=T.gold+"15"}}
+                onMouseLeave={e=>{e.target.style.borderColor=T.border;e.target.style.background=T.hover}}>📊</button>
+              <button onClick={()=>setDocGenModal({format:"xlsx"})} title={lang==="de"?"Excel erstellen":lang==="pt"?"Criar Tabela":"Create Spreadsheet"} style={{ width:36, height:42, borderRadius:10, border:`1px solid ${T.border}`, background:T.hover, color:T.muted, fontSize:14, cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}
+                onMouseEnter={e=>{e.target.style.borderColor=T.gold;e.target.style.background=T.gold+"15"}}
+                onMouseLeave={e=>{e.target.style.borderColor=T.border;e.target.style.background=T.hover}}>📈</button>
+              {/* Jornaline Composer Button — Sprint J1 */}
+              <button onClick={()=>setJornalineOpen(true)} title={lang==="de"?"Jornaline erstellen":lang==="pt"?"Criar Jornaline":"Create Jornaline"} style={{ width:42, height:42, borderRadius:10, border:`1px solid ${T.gold}40`, background:`${T.gold}10`, color:T.gold, fontSize:16, cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}
+                onMouseEnter={e=>{e.target.style.borderColor=T.gold;e.target.style.background=T.gold+"25"}}
+                onMouseLeave={e=>{e.target.style.borderColor=T.gold+"40";e.target.style.background=T.gold+"10"}}>🗞️</button>
               {/* Seal Button */}
               {lastGeneratedFile && <button onClick={handleSeal} title={lang==="de"?"Versiegeln":lang==="pt"?"Selar":"Seal"} style={{ width:42, height:42, borderRadius:10, border:`1px solid ${T.gold}40`, background:`${T.gold}15`, color:T.gold, fontSize:16, cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, animation:"pulse 2s infinite" }}>⚡</button>}
               {/* Image OCR Button */}
@@ -2046,14 +3669,116 @@ function WINDIAgentSuite() {
               <button onClick={()=>setShowUrlModal(true)} title={lang==="de"?"URL prüfen":lang==="pt"?"Verificar URL":"Verify URL"} style={{ width:42, height:42, borderRadius:10, border:`1px solid ${T.border}`, background:T.hover, color:T.muted, fontSize:16, cursor:"pointer", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>🔗</button>
               <button onClick={()=>send()} disabled={!input.trim() || isLoading} style={{ width:42, height:42, borderRadius:10, border:"none", background:input.trim()?`linear-gradient(135deg,${T.gold},${T.goldDim})`:T.hover, color:input.trim()?(themeName==="KLAR"?"#FFF":T.bg):T.muted, fontSize:16, cursor:input.trim()?"pointer":"default", transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0, fontWeight:700 }}>→</button>
             </div>
-            <div style={{ display:"flex", justifyContent:"space-between", marginTop:5, fontSize:9, color:T.muted, fontFamily:T.mono }}>
-              <span>📄📝📊 {lang==="de"?"Dokumente":lang==="pt"?"Docs":"Docs"} · ⚡ {lang==="de"?"Siegel":lang==="pt"?"Selo":"Seal"} · 📷 OCR · 🔗 URL</span>
-              <span>v{V}</span>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginTop:6, fontSize:10, color:T.dim, fontFamily:T.mono }}>
+              <div style={{ display:"flex", gap:8, alignItems:"center" }}>
+                <span style={{ cursor:"default" }} title={lang==="de"?"Dokumente generieren":"Generate documents"}>📄 {lang==="de"?"Dokumente":lang==="pt"?"Docs":"Docs"}</span>
+                <span style={{ width:3, height:3, borderRadius:"50%", background:T.border }} />
+                <span style={{ cursor:"default" }} title={lang==="de"?"Tabellen erstellen":lang==="pt"?"Criar tabelas":"Create tables"}>📊 {lang==="de"?"Tabellen":lang==="pt"?"Tabelas":"Tables"}</span>
+                <span style={{ width:3, height:3, borderRadius:"50%", background:T.border }} />
+                <span style={{ cursor:"default" }} title={lang==="de"?"Forensische Versiegelung":"Forensic sealing"}>🔒 {lang==="de"?"Siegel":lang==="pt"?"Selo":"Seal"}</span>
+                <span style={{ width:3, height:3, borderRadius:"50%", background:T.border }} />
+                <span style={{ cursor:"default" }} title={lang==="de"?"Texterkennung aus Bildern":"Text recognition from images"}>📷 OCR</span>
+                <span style={{ width:3, height:3, borderRadius:"50%", background:T.border }} />
+                <span style={{ cursor:"default" }} title={lang==="de"?"URL verifizieren":"Verify URL"}>🔗 URL</span>
+                <span style={{ width:3, height:3, borderRadius:"50%", background:T.border }} />
+                <span style={{ cursor:"default", color:T.gold }} title={lang==="de"?"Jornaline — Bürgerjournalismus":lang==="pt"?"Jornaline — Jornalismo Cidadão":"Jornaline — Citizen Journalism"}>🗞️ Jornaline</span>
+              </div>
+              <span style={{ color:T.muted }}>v{V}</span>
             </div>
           </div>
         </div>
+        )}
+        {/* END CHAT TAB */}
+
+        {/* PLACEHOLDER TABS — Sprint 2+ */}
+        {activeTab === 'files' && (
+          <div style={{ flex:1, display:"flex", alignItems:"center", justifyContent:"center", color:T.muted }}>
+            <div style={{ textAlign:"center" }}>
+              <span style={{ fontSize:48, display:"block", marginBottom:16, opacity:0.3 }}>📁</span>
+              <p style={{ fontSize:13 }}>{lang==="de"?"Dateien — Bald verfügbar":lang==="pt"?"Arquivos — Em breve":"Files — Coming soon"}</p>
+            </div>
+          </div>
+        )}
+        {activeTab === 'wallet' && (
+          <div style={{ flex:1, display:"flex", alignItems:"center", justifyContent:"center", color:T.muted }}>
+            <div style={{ textAlign:"center" }}>
+              <span style={{ fontSize:48, display:"block", marginBottom:16, opacity:0.3 }}>💰</span>
+              <p style={{ fontSize:13 }}>{lang==="de"?"Brieftasche — Bald verfügbar":lang==="pt"?"Carteira — Em breve":"Wallet — Coming soon"}</p>
+            </div>
+          </div>
+        )}
+        {activeTab === 'search' && (
+          <div style={{ flex:1, display:"flex", alignItems:"center", justifyContent:"center", color:T.muted }}>
+            <div style={{ textAlign:"center" }}>
+              <span style={{ fontSize:48, display:"block", marginBottom:16, opacity:0.3 }}>🔍</span>
+              <p style={{ fontSize:13 }}>{lang==="de"?"Suche — Bald verfügbar":lang==="pt"?"Busca — Em breve":"Search — Coming soon"}</p>
+            </div>
+          </div>
+        )}
+        {activeTab === 'products' && (
+          <div style={{ flex:1, display:"flex", alignItems:"center", justifyContent:"center", color:T.muted }}>
+            <div style={{ textAlign:"center" }}>
+              <span style={{ fontSize:48, display:"block", marginBottom:16, opacity:0.3 }}>📦</span>
+              <p style={{ fontSize:13 }}>{lang==="de"?"Produkte — Bald verfügbar":lang==="pt"?"Produtos — Em breve":"Products — Coming soon"}</p>
+            </div>
+          </div>
+        )}
+        {activeTab === 'history' && (
+          <div style={{ flex:1, display:"flex", alignItems:"center", justifyContent:"center", color:T.muted }}>
+            <div style={{ textAlign:"center" }}>
+              <span style={{ fontSize:48, display:"block", marginBottom:16, opacity:0.3 }}>🕐</span>
+              <p style={{ fontSize:13 }}>{lang==="de"?"Verlauf — Bald verfügbar":lang==="pt"?"Histórico — Em breve":"History — Coming soon"}</p>
+            </div>
+          </div>
+        )}
+        {activeTab === 'settings' && (
+          <div style={{ flex:1, padding:24, overflowY:"auto" }}>
+            <h3 style={{ fontSize:16, color:T.text, fontFamily:T.font, fontWeight:600, marginBottom:20 }}>
+              {lang==="de"?"Einstellungen":lang==="pt"?"Definições":"Settings"}
+            </h3>
+            <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
+              <div>
+                <div style={{ fontSize:10, color:T.dim, fontFamily:T.mono, textTransform:"uppercase", letterSpacing:"1px", marginBottom:8 }}>Theme</div>
+                <div style={{ display:"flex", gap:8 }}>
+                  {["KLAR","NOIR"].map(t => (
+                    <button key={t} onClick={()=>setThemeName(t)} style={{
+                      padding:"8px 20px", borderRadius:8, border:`1px solid ${themeName===t?T.gold:T.border}`,
+                      background:themeName===t?T.gold+"15":"transparent", color:themeName===t?T.gold:T.muted,
+                      fontSize:12, fontFamily:T.mono, fontWeight:themeName===t?600:400, cursor:"pointer"
+                    }}>{t==="KLAR"?"☀️":"🌙"} {t}</button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <div style={{ fontSize:10, color:T.dim, fontFamily:T.mono, textTransform:"uppercase", letterSpacing:"1px", marginBottom:8 }}>Language</div>
+                <div style={{ display:"flex", gap:8 }}>
+                  {[{l:"PT",f:"🇧🇷"},{l:"DE",f:"🇩🇪"},{l:"EN",f:"🇬🇧"}].map(({l,f}) => (
+                    <button key={l} onClick={()=>setLang(l.toLowerCase())} style={{
+                      padding:"8px 16px", borderRadius:8, border:`1px solid ${lang===l.toLowerCase()?T.gold:T.border}`,
+                      background:lang===l.toLowerCase()?T.gold+"15":"transparent", color:lang===l.toLowerCase()?T.gold:T.muted,
+                      fontSize:12, fontFamily:T.mono, fontWeight:lang===l.toLowerCase()?600:400, cursor:"pointer"
+                    }}>{f} {l}</button>
+                  ))}
+                </div>
+              </div>
+              <div style={{ marginTop:12, padding:12, borderRadius:8, background:T.card, border:`1px solid ${T.border}` }}>
+                <div style={{ fontSize:10, color:T.dim, fontFamily:T.mono }}>
+                  Version: <span style={{ color:T.gold }}>v{V}</span> · Workspace Edition
+                </div>
+                {comStats && (
+                  <div style={{ fontSize:10, color:T.dim, fontFamily:T.mono, marginTop:4 }}>
+                    CogScore: <span style={{ color:T.green }}>{Math.round(cogData?.score||0)}/100</span> ·
+                    Docs: <span style={{ color:T.green }}>{comStats.counts?.total||0}</span> ·
+                    Sovereignty: <span style={{ color:T.green }}>{Math.round(comStats.governance?.sovereignty_ratio||93)}%</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
         {activeDoc && <DocumentPanel doc={activeDoc} onClose={()=>setActiveDoc(null)} T={T} lang={lang} />}
-            <GovPanel msgs={msgs} tier={tier} stats={stats} T={T} />
+        <GovPanel msgs={msgs} tier={tier} stats={stats} T={T} />
       </div>
 
       {/* OCR Modal */}
@@ -2162,13 +3887,32 @@ function WINDIAgentSuite() {
         </div>
       )}
 
+      {/* Jornaline Composer Modal — Sprint J1 */}
+      {jornalineOpen && (
+        <JornalineComposer
+          data={jornalineData}
+          onChange={setJornalineData}
+          onClose={() => setJornalineOpen(false)}
+          onSubmit={handleJornalineSubmit}
+          T={T}
+          lang={lang}
+          loading={jornalineLoading}
+        />
+      )}
+      </div>{/* End Main Content Area */}
+
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
         @keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
         @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.6}}
+        @keyframes breatheIn{from{opacity:0;transform:translateY(-6px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+        @keyframes softPulse{0%,100%{opacity:1}50%{opacity:0.5}}
+        @keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.02)}}
         *{box-sizing:border-box;margin:0;padding:0}
-        ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:${T.border};border-radius:3px}::-webkit-scrollbar-thumb:hover{background:${T.gold}30}
+        ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:${T.border};border-radius:2px}
         textarea::placeholder{color:${T.muted}}
+        button:hover{filter:brightness(1.05)}
+        .dragon-breathe{animation:breathe 4s ease-in-out infinite}
       `}</style>
     </div>
   );
