@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI Constitutional Gates — Governance Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#08080D; font-family:'Bricolage Grotesque',system-ui,sans-serif; overflow-x:hidden; }
+  ::-webkit-scrollbar { width:6px; }
+  ::-webkit-scrollbar-track { background:#0F0F17; }
+  ::-webkit-scrollbar-thumb { background:#2A2A42; border-radius:3px; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes pulseGold { 0%,100%{opacity:1} 50%{opacity:0.6} }
+  .fade-in { animation: fadeIn 0.4s cubic-bezier(0.16,1,0.3,1) forwards; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+
+// ═══════════════════════════════════════════════════════════════
+// WINDI CONSTITUTIONAL GATES — GOVERNANCE DASHBOARD v1.0
+// "Governance is enforced in architecture, not policy."
+// ═══════════════════════════════════════════════════════════════
+
+const { useState, useEffect, useMemo } = React;
+
+// ── THEME SYSTEM (KLAR/NOIR) ────────────────────────────────
+const THEMES = {
+  NOIR: {
+    bg:"#08080D", card:"#0F0F17", hover:"#161622", input:"#0C0C14",
+    border:"#1C1C2E", bHi:"#2A2A42",
+    gold:"#D4A843", goldDim:"#A07C2E",
+    text:"#E2E2EA", dim:"#7A7A96", muted:"#4A4A62",
+    red:"#E74C3C", orange:"#E67E22", green:"#2ECC71", blue:"#3498DB", purple:"#9B59B6",
+  },
+  KLAR: {
+    bg:"#F5F0E0", card:"#FDFBF5", hover:"#EDE8D8", input:"#FDFBF5",
+    border:"#DDD6C2", bHi:"#C8C0A8",
+    gold:"#8B6914", goldDim:"#6B5210",
+    text:"#2C2924", dim:"#6B6560", muted:"#9A9488",
+    red:"#C0392B", orange:"#D35400", green:"#27AE60", blue:"#2980B9", purple:"#8E44AD",
+  }
+};
+
+// ── CONSTITUTIONAL GATES DATA ───────────────────────────────
+const GATES_DATA = {
+  palette: {
+    name: "Palette Dragon Server", port: 8108, icon: "🐉",
+    endpoints: [
+      { path: "/api/dragon/health", method: "GET", gates: [
+        { gate:"Autonomy Score", section:"§7.3", type:"observability", priority:"P1", status:"new",
+          desc:"Retornar autonomy_score (0-100) de cada agent no health check. Métrica informacional." }
+      ]},
+      { path: "/api/dragon/chat", method: "POST", gates: [
+        { gate:"SGE Pre-Check", section:"§5.2", type:"enforcement", priority:"P1", status:"new",
+          desc:"Antes de enviar ao LLM, SGE analisa o input. R3+ → pausa pipeline, HSG-REVIEW." },
+        { gate:"SGE Final-Check", section:"§5.2", type:"enforcement", priority:"P1", status:"new",
+          desc:"Após resposta do LLM, SGE analisa output. R3+ → bloqueia entrega." },
+        { gate:"I9 Anti-Escalation", section:"§2.2", type:"enforcement", priority:"P0", status:"new",
+          desc:"Middleware: verifica se resposta tenta auto-atribuir capabilities. HALT se detectado." },
+        { gate:"Receipt: DELEGATION", section:"§3.1", type:"receipt", priority:"P2", status:"new",
+          desc:"Quando chat roteia para Architect/Witness, gerar receipt DELEGATION." }
+      ]},
+      { path: "/api/dragon/generate", method: "POST", gates: [
+        { gate:"SGE Pre-Check", section:"§5.2", type:"enforcement", priority:"P1", status:"new",
+          desc:"SGE analisa prompt de geração. R4+ → HSG-DECISION obrigatório." },
+        { gate:"SGE Final-Check", section:"§5.2", type:"enforcement", priority:"P1", status:"new",
+          desc:"SGE analisa documento gerado. R3+ → não entrega sem review humano." },
+        { gate:"HSG-DECISION", section:"§4.2", type:"gate", priority:"P1", status:"new",
+          desc:"Rule 1: qualquer doc para uso externo DEVE ter HSG-DECISION antes de finalização." },
+        { gate:"Receipt: WORKFLOW", section:"§3.1", type:"receipt", priority:"P2", status:"new",
+          desc:"Após geração completa, receipt com agent_chain, result_hash, duration." }
+      ]}
+    ]
+  },
+  editor: {
+    name: "A4 Desk BABEL Editor", port: 8100, icon: "📝",
+    endpoints: [
+      { path: "/api/chat", method: "POST", gates: [
+        { gate:"SGE Pre-Check", section:"§5.2", type:"enforcement", priority:"P1", status:"partial",
+          desc:"ISP_RESOLVER já existe. Adicionar SGE risk scoring ao input." },
+        { gate:"I4 Data Sovereignty", section:"§2.1", type:"enforcement", priority:"P1", status:"new",
+          desc:"Antes de enviar ao LLM, strip PII sensível. ZK: só hash+metadata." }
+      ]},
+      { path: "/api/document/:id/finalize", method: "POST", gates: [
+        { gate:"HSG-DECISION", section:"§4.2", type:"gate", priority:"P0", status:"partial",
+          desc:"Seal modal existe. Formalizar como HSG-DECISION com receipt." },
+        { gate:"SGE Final-Check", section:"§5.2", type:"enforcement", priority:"P1", status:"partial",
+          desc:"Receipt tem hash. Adicionar sge_score e risk_level." },
+        { gate:"Receipt: HUMAN_GATE", section:"§3.1", type:"receipt", priority:"P1", status:"new",
+          desc:"Gerar receipt HUMAN_GATE com gate_id, context, decision." },
+        { gate:"I8 Reversibility", section:"§2.1", type:"enforcement", priority:"P2", status:"new",
+          desc:"Snapshot do estado anterior antes de finalizar." }
+      ]},
+      { path: "/api/document/:id/export/:fmt", method: "GET", gates: [
+        { gate:"HSG-DECISION", section:"§4.2", type:"gate", priority:"P1", status:"new",
+          desc:"Rule 5: exportação é irreversível. Confirmar antes." },
+        { gate:"Receipt: WORKFLOW", section:"§3.1", type:"receipt", priority:"P2", status:"new",
+          desc:"Receipt com format, sge_score do documento exportado." }
+      ]},
+      { path: "/api/deliberate", method: "POST", gates: [
+        { gate:"I1 Human Sovereignty", section:"§2.1", type:"enforcement", priority:"P0", status:"partial",
+          desc:"Deliberação apresenta opções. Formalizar como HSG-DECISION." },
+        { gate:"I9 Anti-Escalation", section:"§2.2", type:"enforcement", priority:"P0", status:"new",
+          desc:"Verificar se nenhum agent tenta escalar permissões." }
+      ]}
+    ]
+  },
+  ledger: {
+    name: "Forensic Ledger", port: 8101, icon: "📒",
+    endpoints: [
+      { path: "/api/receipts", method: "POST", gates: [
+        { gate:"I3 Auditability", section:"§2.1", type:"enforcement", priority:"P0", status:"existing",
+          desc:"Já operacional. Garantir que TODOS os 11 tipos mandatórios chegam." },
+        { gate:"Receipt Chain", section:"§3.2", type:"enforcement", priority:"P1", status:"partial",
+          desc:"Adicionar prev_receipt_hash para chain. Tamper detection." }
+      ]}
+    ]
+  },
+  sentinel: {
+    name: "Sentinel LAW", port: 8102, icon: "⚔️",
+    endpoints: [
+      { path: "/api/sentinel/check", method: "POST", gates: [
+        { gate:"I9 Enforcement", section:"§2.2", type:"enforcement", priority:"P0", status:"existing",
+          desc:"Já faz I9 check. Formalizar como Constitutional Gate middleware." },
+        { gate:"SGE Integration", section:"§5.1", type:"enforcement", priority:"P1", status:"partial",
+          desc:"Conectar SGE risk levels à lógica de escalation." }
+      ]}
+    ]
+  }
+};
+
+const PHASES = [
+  { phase:1, name:"Visibility — Gates como Middleware", weeks:"1-2",
+    items:["Criar constitutional_gates.py — módulo compartilhado",
+           "SGE Pre/Final Check como decorators (@sge_check)",
+           "I9 middleware no Dragon Server",
+           "Autonomy Score no /health endpoint",
+           "Receipt types expandidos no Ledger (11 tipos)"],
+    delivers:"Cada request passa por gates; health mostra compliance" },
+  { phase:2, name:"Enforcement — HSG Operacionais", weeks:"2-3",
+    items:["HSG-DECISION no finalize e export do Editor",
+           "HSG-REVIEW quando SGE detecta R3+",
+           "Receipt HUMAN_GATE com full audit context",
+           "Receipt chain (prev_hash linking)",
+           "Override hierarchy enforcement"],
+    delivers:"Nenhum doc sai sem gate humano; receipts formam chain" },
+  { phase:3, name:"Integration — Governance Dashboard", weeks:"3-4",
+    items:["Dashboard live com dados reais dos endpoints",
+           "Autonomy Score por agent em tempo real",
+           "Cross-agent trace correlation (workflow_id)",
+           "Config rollback with receipt",
+           "Constitutional compliance health endpoint"],
+    delivers:"Visibilidade total; governance observável" }
+];
+
+const INVARIANTS = [
+  { id:"I1", name:"Human Sovereignty", point:"Every agent output", action:"HALT + Receipt + Human escalation", color:"#E74C3C" },
+  { id:"I2", name:"Transparency", point:"Agent Registry", action:"REJECT registration", color:"#3498DB" },
+  { id:"I3", name:"Auditability", point:"Task Dispatcher", action:"Block transition + Alert", color:"#3498DB" },
+  { id:"I4", name:"Data Sovereignty", point:"Communication Bus", action:"Strip PII + Encrypt + Receipt", color:"#E67E22" },
+  { id:"I5", name:"Non-Discrimination", point:"SGE pre-check", action:"Flag R3+ for human review", color:"#9B59B6" },
+  { id:"I6", name:"Proportionality", point:"Router", action:"Throttle + Quota enforcement", color:"#2ECC71" },
+  { id:"I7", name:"Accountability", point:"Workflow Engine", action:"Generate Virtue Receipt chain", color:"#3498DB" },
+  { id:"I8", name:"Reversibility", point:"All state mutations", action:"Snapshot before + Rollback path", color:"#E67E22" },
+  { id:"I9", name:"Anti-Autonomy Escalation", point:"Router + Registry + Dispatcher", action:"IMMEDIATE HALT + IRREMEDIABLE", color:"#E74C3C", supreme:true },
+];
+
+const HSG_TYPES = [
+  { type:"HSG-CRITICAL", trigger:"I9 violation, system halt, cert revocation", timeout:"Halts indefinitely", color:"#E74C3C" },
+  { type:"HSG-DECISION", trigger:"Document finalization, compliance sign-off", timeout:"Escalates after 24h", color:"#E67E22" },
+  { type:"HSG-REVIEW", trigger:"SGE R3+ risk, unusual behavior", timeout:"Escalates after 4h", color:"#D4A843" },
+  { type:"HSG-INFORM", trigger:"Workflow completion, status change", timeout:"Auto-acknowledged 1h", color:"#2ECC71" },
+];
+
+const SGE_LEVELS = [
+  { level:"R0", name:"No risk", response:"Continue", gate:"None", color:"#2ECC71" },
+  { level:"R1", name:"Minimal", response:"Log + continue", gate:"None", color:"#2ECC71" },
+  { level:"R2", name:"Low", response:"Flag for review", gate:"HSG-INFORM", color:"#D4A843" },
+  { level:"R3", name:"Medium", response:"Pause + human review", gate:"HSG-REVIEW", color:"#E67E22" },
+  { level:"R4", name:"High", response:"Block + require approval", gate:"HSG-DECISION", color:"#E74C3C" },
+  { level:"R5", name:"Critical", response:"HALT all activity", gate:"HSG-CRITICAL", color:"#E74C3C" },
+];
+
+// ── HELPER FUNCTIONS ────────────────────────────────────────
+const typeColors = { enforcement:"red", gate:"gold", receipt:"blue", observability:"green" };
+const typeIcons = { enforcement:"🔒", gate:"🚪", receipt:"📋", observability:"📊" };
+const priorityLabels = { P0:"SUPREME", P1:"HIGH", P2:"STANDARD" };
+const statusLabels = { new:"NEW", partial:"PARTIAL", existing:"EXISTS" };
+
+function getStats(data) {
+  const services = Object.values(data);
+  let total=0, newG=0, partialG=0, existingG=0;
+  services.forEach(svc => svc.endpoints.forEach(ep => ep.gates.forEach(g => {
+    total++; if(g.status==="new") newG++; else if(g.status==="partial") partialG++; else existingG++;
+  })));
+  return { total, new:newG, partial:partialG, existing:existingG, services:services.length };
+}
+
+// ── COMPONENTS ──────────────────────────────────────────────
+
+function StatCard({ label, value, color, T }) {
+  return (
+    <div style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:8,
+      padding:"12px 20px", textAlign:"center", minWidth:110, flex:1 }}>
+      <div style={{ fontSize:26, fontWeight:700, color, fontFamily:"'JetBrains Mono',monospace" }}>{value}</div>
+      <div style={{ fontSize:10, color:T.dim, marginTop:2, letterSpacing:0.5 }}>{label}</div>
+    </div>
+  );
+}
+
+function GateRow({ gate, T }) {
+  return (
+    <div className="fade-in" style={{ display:"flex", gap:10, padding:"10px 12px", marginTop:4,
+      background:T.bg, borderRadius:6, border:`1px solid ${T.border}`, alignItems:"flex-start" }}>
+      <div style={{ minWidth:24, textAlign:"center", fontSize:16 }}>{typeIcons[gate.type]}</div>
+      <div style={{ flex:1 }}>
+        <div style={{ display:"flex", gap:6, alignItems:"center", flexWrap:"wrap" }}>
+          <span style={{ fontSize:13, fontWeight:600, color:T[typeColors[gate.type]] }}>{gate.gate}</span>
+          <span style={{ fontSize:9, fontFamily:"'JetBrains Mono'", color:T.dim, background:T.hover,
+            padding:"1px 6px", borderRadius:3 }}>{gate.section}</span>
+          <span style={{ fontSize:9, fontFamily:"'JetBrains Mono'",
+            color:gate.priority==="P0"?T.red:gate.priority==="P1"?T.orange:T.blue,
+            background:(gate.priority==="P0"?T.red:gate.priority==="P1"?T.orange:T.blue)+"18",
+            padding:"1px 6px", borderRadius:3 }}>{priorityLabels[gate.priority]}</span>
+          <span style={{ fontSize:9, fontFamily:"'JetBrains Mono'",
+            color:gate.status==="new"?T.red:gate.status==="partial"?T.orange:T.green,
+            background:(gate.status==="new"?T.red:gate.status==="partial"?T.orange:T.green)+"18",
+            padding:"1px 6px", borderRadius:3 }}>{statusLabels[gate.status]}</span>
+        </div>
+        <div style={{ fontSize:11, color:T.dim, marginTop:4, lineHeight:1.5 }}>{gate.desc}</div>
+      </div>
+    </div>
+  );
+}
+
+function ServiceCard({ svcKey, svc, T, expanded, onToggle, expandedEp, onToggleEp }) {
+  const gateCount = svc.endpoints.reduce((s,ep) => s + ep.gates.length, 0);
+  const newCount = svc.endpoints.reduce((s,ep) => s + ep.gates.filter(g=>g.status==="new").length, 0);
+  return (
+    <div className="fade-in" style={{ background:T.card, border:`1px solid ${expanded?T.gold:T.border}`,
+      borderRadius:10, overflow:"hidden" }}>
+      <div onClick={onToggle} style={{ padding:"14px 18px", display:"flex", justifyContent:"space-between",
+        alignItems:"center", cursor:"pointer", background:expanded?T.gold+"10":"transparent" }}>
+        <div>
+          <span style={{ fontSize:18, marginRight:8 }}>{svc.icon}</span>
+          <span style={{ fontSize:15, fontWeight:600, color:T.text }}>{svc.name}</span>
+          <span style={{ fontSize:11, color:T.dim, marginLeft:10, fontFamily:"'JetBrains Mono'" }}>:{svc.port}</span>
+        </div>
+        <div style={{ display:"flex", gap:8, alignItems:"center" }}>
+          {newCount > 0 && <span style={{ fontSize:10, fontFamily:"'JetBrains Mono'", color:T.red,
+            background:T.red+"18", padding:"2px 8px", borderRadius:10 }}>{newCount} new</span>}
+          <span style={{ fontSize:11, fontFamily:"'JetBrains Mono'", color:T.dim }}>{gateCount} gates</span>
+          <span style={{ fontSize:11, color:T.gold }}>{expanded?"▼":"▶"}</span>
+        </div>
+      </div>
+      {expanded && (
+        <div style={{ padding:"0 18px 14px" }}>
+          {svc.endpoints.map((ep, ei) => {
+            const epKey = `${svcKey}-${ei}`;
+            return (
+              <div key={ei} style={{ marginTop:10 }}>
+                <div onClick={(e)=>{e.stopPropagation();onToggleEp(epKey);}}
+                  style={{ display:"flex", alignItems:"center", gap:8, padding:"8px 12px",
+                    background:T.hover, borderRadius:6, cursor:"pointer" }}>
+                  <span style={{ fontSize:10, fontFamily:"'JetBrains Mono'", color:T.green, fontWeight:600,
+                    background:T.green+"18", padding:"2px 8px", borderRadius:3 }}>{ep.method}</span>
+                  <span style={{ fontSize:13, fontFamily:"'JetBrains Mono'", color:T.text }}>{ep.path}</span>
+                  <span style={{ fontSize:10, color:T.dim, marginLeft:"auto" }}>{ep.gates.length} gates</span>
+                  <span style={{ fontSize:10, color:T.gold }}>{expandedEp===epKey?"▾":"▸"}</span>
+                </div>
+                {expandedEp===epKey && (
+                  <div style={{ marginTop:6, marginLeft:16 }}>
+                    {ep.gates.map((gate, gi) => <GateRow key={gi} gate={gate} T={T} />)}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function InvariantBar({ inv, T }) {
+  return (
+    <div style={{ display:"flex", alignItems:"center", gap:10, padding:"8px 12px",
+      background:inv.supreme?T.red+"10":T.card, borderRadius:6,
+      border:`1px solid ${inv.supreme?T.red+"40":T.border}` }}>
+      <span style={{ fontSize:12, fontFamily:"'JetBrains Mono'", fontWeight:700,
+        color:inv.color, minWidth:28 }}>{inv.id}</span>
+      <span style={{ fontSize:12, fontWeight:600, color:T.text, minWidth:180 }}>{inv.name}</span>
+      <span style={{ fontSize:11, color:T.dim, flex:1 }}>{inv.point}</span>
+      <span style={{ fontSize:10, fontFamily:"'JetBrains Mono'", color:inv.color,
+        background:inv.color+"15", padding:"2px 8px", borderRadius:3 }}>{inv.action}</span>
+      {inv.supreme && <span style={{ fontSize:9, background:T.red, color:"#fff",
+        padding:"2px 6px", borderRadius:3, fontWeight:700 }}>SUPREME</span>}
+    </div>
+  );
+}
+
+// ── MAIN APP ────────────────────────────────────────────────
+
+function App() {
+  const [theme, setTheme] = useState("NOIR");
+  const [view, setView] = useState("map");
+  const [selectedService, setSelectedService] = useState(null);
+  const [expandedEp, setExpandedEp] = useState(null);
+  const [lang, setLang] = useState("en");
+
+  const T = THEMES[theme];
+  const stats = useMemo(() => getStats(GATES_DATA), []);
+
+  const views = [
+    { id:"map", icon:"🗺️", label:"Integration Map" },
+    { id:"invariants", icon:"⚖️", label:"Invariants I1-I9" },
+    { id:"hsg", icon:"🚪", label:"Sovereignty Gates" },
+    { id:"sge", icon:"📊", label:"SGE Matrix" },
+    { id:"phases", icon:"📋", label:"Roadmap" },
+    { id:"matrix", icon:"📑", label:"Full Matrix" },
+  ];
+
+  return (
+    <div style={{ background:T.bg, minHeight:"100vh", fontFamily:"'Bricolage Grotesque',system-ui,sans-serif",
+      color:T.text, transition:"background 0.3s" }}>
+
+      {/* ── HEADER ── */}
+      <div style={{ padding:"20px 24px 0", textAlign:"center" }}>
+        <div style={{ display:"flex", justifyContent:"flex-end", gap:8, marginBottom:12 }}>
+          <button onClick={()=>setTheme(theme==="NOIR"?"KLAR":"NOIR")}
+            style={{ padding:"4px 12px", borderRadius:4, border:`1px solid ${T.border}`,
+              background:T.card, color:T.dim, cursor:"pointer", fontSize:11,
+              fontFamily:"'JetBrains Mono'" }}>{theme==="NOIR"?"☀️ KLAR":"🌙 NOIR"}</button>
+          <a href="/palette/" style={{ padding:"4px 12px", borderRadius:4, border:`1px solid ${T.border}`,
+            background:T.card, color:T.gold, cursor:"pointer", fontSize:11, textDecoration:"none",
+            fontFamily:"'JetBrains Mono'" }}>🐉 Palette</a>
+        </div>
+        <div style={{ fontFamily:"'JetBrains Mono'", fontSize:10, color:T.gold, letterSpacing:4, marginBottom:4 }}>
+          WINDI PUBLISHING HOUSE
+        </div>
+        <div style={{ fontSize:24, fontWeight:700, color:T.text }}>
+          ⚖️ Constitutional Gates
+        </div>
+        <div style={{ fontSize:12, color:T.dim, marginTop:4, fontStyle:"italic" }}>
+          Where governance meets runtime — v0.1 SEALED
+        </div>
+      </div>
+
+      {/* ── STATS ── */}
+      <div style={{ display:"flex", gap:10, padding:"16px 24px", flexWrap:"wrap", justifyContent:"center" }}>
+        <StatCard label="Total Gates" value={stats.total} color={T.gold} T={T} />
+        <StatCard label="New (to build)" value={stats.new} color={T.red} T={T} />
+        <StatCard label="Partial (enhance)" value={stats.partial} color={T.orange} T={T} />
+        <StatCard label="Existing" value={stats.existing} color={T.green} T={T} />
+        <StatCard label="Services" value={stats.services} color={T.blue} T={T} />
+      </div>
+
+      {/* ── NAV ── */}
+      <div style={{ display:"flex", gap:6, padding:"0 24px 16px", flexWrap:"wrap", justifyContent:"center" }}>
+        {views.map(v => (
+          <button key={v.id} onClick={()=>setView(v.id)}
+            style={{ padding:"7px 14px", borderRadius:6, border:`1px solid ${view===v.id?T.gold:T.border}`,
+              background:view===v.id?T.gold+"18":"transparent", color:view===v.id?T.gold:T.dim,
+              cursor:"pointer", fontSize:11, fontFamily:"'Bricolage Grotesque'" }}>
+            {v.icon} {v.label}
+          </button>
+        ))}
+      </div>
+
+      {/* ── CONTENT ── */}
+      <div style={{ padding:"0 24px 32px", maxWidth:960, margin:"0 auto" }}>
+
+        {/* MAP VIEW */}
+        {view==="map" && (
+          <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
+            {Object.entries(GATES_DATA).map(([key, svc]) => (
+              <ServiceCard key={key} svcKey={key} svc={svc} T={T}
+                expanded={selectedService===key}
+                onToggle={()=>setSelectedService(selectedService===key?null:key)}
+                expandedEp={expandedEp}
+                onToggleEp={(k)=>setExpandedEp(expandedEp===k?null:k)} />
+            ))}
+          </div>
+        )}
+
+        {/* INVARIANTS VIEW */}
+        {view==="invariants" && (
+          <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
+            <div style={{ fontSize:14, fontWeight:600, color:T.gold, marginBottom:8 }}>
+              9 Constitutional Invariants — Enforcement Points
+            </div>
+            {INVARIANTS.map(inv => <InvariantBar key={inv.id} inv={inv} T={T} />)}
+            <div style={{ marginTop:12, padding:"12px 16px", background:T.red+"10",
+              border:`1px solid ${T.red}30`, borderRadius:8, fontSize:12, color:T.red }}>
+              <strong>I9 is the Supreme Invariant</strong> — enforced at three layers simultaneously (Router + Registry + Dispatcher).
+              No bypass flag exists. No auto_apply endpoint. Violations are IRREMEDIABLE.
+            </div>
+          </div>
+        )}
+
+        {/* HSG VIEW */}
+        {view==="hsg" && (
+          <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+            <div style={{ fontSize:14, fontWeight:600, color:T.gold, marginBottom:8 }}>
+              4 Human Sovereignty Gate Types
+            </div>
+            {HSG_TYPES.map(hsg => (
+              <div key={hsg.type} style={{ padding:"14px 16px", background:T.card,
+                border:`1px solid ${T.border}`, borderRadius:8, borderLeft:`4px solid ${hsg.color}` }}>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                  <span style={{ fontSize:14, fontWeight:700, color:hsg.color,
+                    fontFamily:"'JetBrains Mono'" }}>{hsg.type}</span>
+                  <span style={{ fontSize:10, color:T.dim, fontFamily:"'JetBrains Mono'",
+                    background:T.hover, padding:"2px 8px", borderRadius:3 }}>{hsg.timeout}</span>
+                </div>
+                <div style={{ fontSize:12, color:T.dim, marginTop:6 }}>{hsg.trigger}</div>
+              </div>
+            ))}
+            <div style={{ marginTop:12, padding:"12px 16px", background:T.gold+"10",
+              border:`1px solid ${T.gold}30`, borderRadius:8, fontSize:12, color:T.gold }}>
+              <strong>Inviolability Principle:</strong> No automated process may simulate, bypass, or pre-authorize a Human Sovereignty Gate.
+              Gates exist in the execution path, not in configuration.
+            </div>
+          </div>
+        )}
+
+        {/* SGE VIEW */}
+        {view==="sge" && (
+          <div style={{ display:"flex", flexDirection:"column", gap:6 }}>
+            <div style={{ fontSize:14, fontWeight:600, color:T.gold, marginBottom:8 }}>
+              SGE Risk Escalation Matrix (R0–R5)
+            </div>
+            {SGE_LEVELS.map(sge => (
+              <div key={sge.level} style={{ display:"flex", alignItems:"center", gap:12,
+                padding:"10px 14px", background:T.card, border:`1px solid ${T.border}`, borderRadius:6 }}>
+                <span style={{ fontSize:16, fontWeight:800, color:sge.color,
+                  fontFamily:"'JetBrains Mono'", minWidth:32 }}>{sge.level}</span>
+                <span style={{ fontSize:12, color:T.text, minWidth:80 }}>{sge.name}</span>
+                <span style={{ fontSize:11, color:T.dim, flex:1 }}>{sge.response}</span>
+                <span style={{ fontSize:10, fontFamily:"'JetBrains Mono'",
+                  color:sge.gate==="None"?T.muted:sge.color,
+                  background:sge.gate==="None"?"transparent":sge.color+"18",
+                  padding:"2px 8px", borderRadius:3 }}>{sge.gate}</span>
+              </div>
+            ))}
+            <div style={{ marginTop:12, padding:"12px 16px", background:T.blue+"10",
+              border:`1px solid ${T.blue}30`, borderRadius:8, fontSize:12, color:T.blue }}>
+              <strong>Triple Checkpoint:</strong> SGE checks at pre-processing, mid-processing, and final output.
+              Inter-agent communication also scanned — R2+ triggers HSG-REVIEW.
+            </div>
+          </div>
+        )}
+
+        {/* PHASES VIEW */}
+        {view==="phases" && (
+          <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
+            {PHASES.map(phase => (
+              <div key={phase.phase} style={{ background:T.card, border:`1px solid ${T.border}`,
+                borderRadius:10, padding:18 }}>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12 }}>
+                  <div>
+                    <span style={{ fontSize:16, fontWeight:700, color:T.gold }}>Phase {phase.phase}: </span>
+                    <span style={{ fontSize:16, fontWeight:600, color:T.text }}>{phase.name}</span>
+                  </div>
+                  <span style={{ fontSize:11, fontFamily:"'JetBrains Mono'", color:T.dim,
+                    background:T.hover, padding:"4px 10px", borderRadius:4 }}>Weeks {phase.weeks}</span>
+                </div>
+                {phase.items.map((item, i) => (
+                  <div key={i} style={{ display:"flex", gap:8, alignItems:"center", fontSize:13,
+                    color:T.dim, marginBottom:4 }}>
+                    <span style={{ color:T.gold, fontSize:10 }}>▸</span> {item}
+                  </div>
+                ))}
+                <div style={{ marginTop:12, padding:"8px 12px", background:T.gold+"10", borderRadius:6,
+                  border:`1px solid ${T.gold}30`, fontSize:12, color:T.gold }}>
+                  <strong>Entrega:</strong> {phase.delivers}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* MATRIX VIEW */}
+        {view==="matrix" && (
+          <div style={{ overflowX:"auto" }}>
+            <table style={{ width:"100%", borderCollapse:"collapse", fontSize:11,
+              fontFamily:"'JetBrains Mono'" }}>
+              <thead>
+                <tr>
+                  {["Service","Endpoint","Gate","Type","§","Priority","Status"].map(h => (
+                    <th key={h} style={{ padding:"10px 6px", textAlign:"left", color:T.gold,
+                      borderBottom:`2px solid ${T.gold}30`, fontSize:9, letterSpacing:1 }}>{h.toUpperCase()}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {Object.entries(GATES_DATA).flatMap(([key, svc]) =>
+                  svc.endpoints.flatMap((ep, ei) =>
+                    ep.gates.map((gate, gi) => (
+                      <tr key={`${key}-${ei}-${gi}`} style={{ borderBottom:`1px solid ${T.border}` }}>
+                        <td style={{ padding:"6px", color:T.dim, fontSize:10 }}>{gi===0&&ei===0?svc.name:""}</td>
+                        <td style={{ padding:"6px", color:T.text, fontSize:9 }}>{gi===0?`${ep.method} ${ep.path}`:""}</td>
+                        <td style={{ padding:"6px", color:T[typeColors[gate.type]], fontWeight:600, fontSize:10 }}>{gate.gate}</td>
+                        <td style={{ padding:"6px" }}>
+                          <span style={{ color:T[typeColors[gate.type]],
+                            background:T[typeColors[gate.type]]+"15",
+                            padding:"1px 5px", borderRadius:3, fontSize:8 }}>{gate.type}</span>
+                        </td>
+                        <td style={{ padding:"6px", color:T.dim, fontSize:9 }}>{gate.section}</td>
+                        <td style={{ padding:"6px", color:gate.priority==="P0"?T.red:gate.priority==="P1"?T.orange:T.blue,
+                          fontWeight:600, fontSize:9 }}>{gate.priority}</td>
+                        <td style={{ padding:"6px" }}>
+                          <span style={{ color:gate.status==="new"?T.red:gate.status==="partial"?T.orange:T.green,
+                            background:(gate.status==="new"?T.red:gate.status==="partial"?T.orange:T.green)+"18",
+                            padding:"1px 5px", borderRadius:3, fontSize:8 }}>{statusLabels[gate.status]}</span>
+                        </td>
+                      </tr>
+                    ))
+                  )
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* ── FOOTER ── */}
+      <div style={{ textAlign:"center", padding:"16px 24px 24px", borderTop:`1px solid ${T.border}` }}>
+        <div style={{ fontSize:10, color:T.dim, fontFamily:"'JetBrains Mono'" }}>
+          Constitutional Gates v0.1 SEALED — 24 February 2026 — Kempten, Bavaria
+        </div>
+        <div style={{ fontSize:12, color:T.gold, fontStyle:"italic", marginTop:6 }}>
+          "Governance is enforced in architecture, not policy."
+        </div>
+        <div style={{ fontSize:10, color:T.muted, marginTop:4 }}>
+          🐉 Guardian — 🏗️ Architect — 👁️ Witness — 👑 Human Dragon
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

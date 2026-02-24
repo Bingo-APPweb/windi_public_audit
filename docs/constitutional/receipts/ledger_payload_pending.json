@@ -1,0 +1,18 @@
+{
+  "type": "CONSTITUTIONAL_DEPLOYMENT",
+  "action": "DEPLOY",
+  "document": "CONSTITUTIONAL_GATES_v0.1",
+  "status": "SEALED",
+  "hash": "a8bd5a9fa2c0aa51916cff3e3d2a563807b063936dcb2f648250dffdf3c0d41b",
+  "metadata": {
+    "guardian": "AUTHORED",
+    "architect": "VALIDATED",
+    "witness": "PENDING",
+    "human_dragon": "SEALED",
+    "sections": 10,
+    "invariants_mapped": 9,
+    "mandatory_receipts": 11,
+    "hsg_types": 4,
+    "autonomy_prohibitions": 8
+  }
+}

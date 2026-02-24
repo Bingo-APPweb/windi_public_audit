@@ -1,0 +1,38 @@
+{
+  "manifest_type": "CONSTITUTIONAL_DEPLOYMENT",
+  "version": "0.1",
+  "status": "SEALED",
+  "deployed_at": "2026-02-24T08:58:32Z",
+  "deployed_by": "Human Dragon",
+  "location": "/opt/windi/docs/constitutional/",
+  "files": {
+    "document": {
+      "name": "WINDI_CONSTITUTIONAL_GATES_v0.1_SEALED.docx",
+      "sha256": "a8bd5a9fa2c0aa51916cff3e3d2a563807b063936dcb2f648250dffdf3c0d41b",
+      "status": "SEALED"
+    },
+    "receipt": {
+      "name": "SEAL_RECEIPT_CONSTITUTIONAL_GATES_v0.1_SEALED.json",
+      "sha256": "af7f9cda2dd91d51ed3d988a6121b10d13c006fe2291b1bd46219c71379a6cf1",
+      "location": "receipts/"
+    }
+  },
+  "three_dragons": {
+    "guardian": "AUTHORED — Claude",
+    "architect": "VALIDATED — GPT",
+    "witness": "PENDING — Gemini",
+    "human_dragon": "SEALED — 23 Feb 2026"
+  },
+  "constitutional_principles": {
+    "supreme": "AI processes. Human decides. WINDI guarantees.",
+    "core": "Governance is enforced in architecture, not policy.",
+    "closing": "Autonomy is permitted. Sovereignty is retained."
+  },
+  "amendment_rules": {
+    "add_invariant": "Human Dragon + Three Dragons + 7-day cooling",
+    "modify_gate": "Human Dragon + Guardian + Witness",
+    "add_receipt": "Human Dragon + Architect",
+    "remove_receipt": "PROHIBITED"
+  },
+  "companion_document": "ORCH-RUNTIME v0.1 (Architect — pending)"
+}
