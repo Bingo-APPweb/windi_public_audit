@@ -107,7 +107,7 @@ API_URL = "https://api.anthropic.com/v1/messages"
 MODEL = "claude-sonnet-4-20250514"  # Cost-efficient for Agent responses
 MAX_TOKENS = 1024
 
-VERSION = "1.2.0"  # Sprint Complete: XLSX + Communiqué + Outlook
+VERSION = "1.3.0"  # Sprint 2D: Markdown Reports
 
 # Document generation services
 STAGING_DIR = BASE_DIR / "staging"
@@ -1283,6 +1283,116 @@ def get_outlook_status():
     }
 
 # ═══════════════════════════════════════════════════════════════════════
+# SPRINT 2D: MARKDOWN REPORT GENERATION
+# ═══════════════════════════════════════════════════════════════════════
+
+def generate_outlook_md() -> str:
+    """Generate markdown report from Outlook status engine."""
+    status = get_outlook_status()
+    timestamp = status["timestamp"]
+    summary = status["summary"]
+
+    lines = []
+    lines.append("# WINDI PALETTE PRODUCT OUTLOOK")
+    lines.append(f"> Generated: {timestamp}")
+    lines.append(f"> Dragon Server: v{VERSION}")
+    lines.append("")
+
+    # Summary table
+    lines.append("## Summary")
+    lines.append("")
+    lines.append("| Metric | Value |")
+    lines.append("|--------|-------|")
+    lines.append(f"| Total Features | {summary['total']} |")
+    lines.append(f"| Fully Wired | {summary['wired']} |")
+    lines.append(f"| On Server | {summary['on_server']} |")
+    lines.append(f"| Down | {summary['down']} |")
+    lines.append(f"| Not Built | {summary['not_built']} |")
+    lines.append(f"| **Wired %** | **{summary['wired_pct']}%** |")
+    lines.append("")
+
+    # Progress bar (text-based)
+    filled = int(summary['wired_pct'] / 5)  # 20 chars = 100%
+    bar = "█" * filled + "░" * (20 - filled)
+    lines.append("```")
+    lines.append(f"Wiring: {bar} {summary['wired_pct']}%")
+    lines.append("```")
+    lines.append("")
+
+    # Features by Sprint
+    for sprint_num in sorted(status["sprints"].keys()):
+        sprint = status["sprints"][sprint_num]
+        feature_ids = sprint["features"]
+
+        if not feature_ids:
+            continue
+
+        # Sprint header with completion status
+        sprint_features = [status["features"][fid] for fid in feature_ids]
+        sprint_wired = sum(1 for f in sprint_features if f["status"] == "WIRED")
+        sprint_total = len(sprint_features)
+        sprint_icon = "DONE" if sprint_wired == sprint_total else "WIP" if sprint_wired > 0 else "TODO"
+
+        lines.append(f"## Sprint {sprint_num} — {sprint['name']} [{sprint_icon}] ({sprint_wired}/{sprint_total})")
+        lines.append("")
+        lines.append("| ID | Feature | Status | Checks |")
+        lines.append("|----|---------|--------|--------|")
+
+        for fid in feature_ids:
+            f = status["features"][fid]
+            status_label = {
+                "WIRED": "WIRED",
+                "ON_SERVER": "ON SERVER",
+                "DOWN": "DOWN",
+                "NOT_BUILT": "NOT BUILT"
+            }.get(f["status"], "?")
+
+            # Compact check summary
+            checks_summary = ", ".join(
+                f"{'OK' if c['status']=='ok' else 'FAIL'}:{c['label']}"
+                for c in f["checks"]
+            )
+
+            lines.append(f"| {fid} | {f['name']} | {status_label} | {checks_summary} |")
+
+        lines.append("")
+
+    # Action items
+    lines.append("## Action Items")
+    lines.append("")
+
+    down_features = [f for f in status["features"].values() if f["status"] == "DOWN"]
+    not_built = [f for f in status["features"].values() if f["status"] == "NOT_BUILT"]
+    on_server = [f for f in status["features"].values() if f["status"] == "ON_SERVER"]
+
+    if down_features:
+        lines.append("### DOWN (fix immediately)")
+        for f in down_features:
+            lines.append(f"- **{f['id']} {f['name']}** — service not responding")
+        lines.append("")
+
+    if on_server:
+        lines.append("### ON SERVER (wire to Palette)")
+        for f in on_server:
+            lines.append(f"- **{f['id']} {f['name']}** — running but not connected to Dragon")
+        lines.append("")
+
+    if not_built:
+        lines.append("### NOT BUILT (future)")
+        for f in not_built:
+            lines.append(f"- **{f['id']} {f['name']}**")
+        lines.append("")
+
+    if not (down_features or not_built or on_server):
+        lines.append("- None — all features wired!")
+        lines.append("")
+
+    lines.append("---")
+    lines.append('*WINDI Palette Outlook — "AI processes. Human decides. WINDI guarantees."*')
+
+    return "\n".join(lines)
+
+# ═══════════════════════════════════════════════════════════════════════
 # SPRINT 2B: COMMUNIQUÉ PROXY
 # ═══════════════════════════════════════════════════════════════════════
 
@@ -1427,6 +1537,18 @@ class DragonHandler(http.server.BaseHTTPRequestHandler):
         if path == "/api/dragon/outlook/status":
             data = get_outlook_status()
             self._json_response(data, 200)
+            return
+
+        # Sprint 2D: Outlook markdown report
+        if path == "/api/dragon/outlook/report.md":
+            md_content = generate_outlook_md()
+            filename = f"WINDI_Outlook_{datetime.now().strftime('%Y%m%d_%H%M')}.md"
+            self.send_response(200)
+            self.send_header("Content-Type", "text/markdown; charset=utf-8")
+            self.send_header("Content-Disposition", f"attachment; filename={filename}")
+            self.send_header("Content-Length", len(md_content.encode("utf-8")))
+            self.end_headers()
+            self.wfile.write(md_content.encode("utf-8"))
             return
 
         # Sprint 2B: Communiqué list
