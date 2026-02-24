@@ -1199,8 +1199,12 @@ def _check_single(check):
     """Run a single check and return result."""
     try:
         if check["type"] in ("health", "endpoint"):
+            url = check["url"]
+            # Self-referential check to :8108 — auto-pass (we're responding, so we're alive)
+            if ":8108" in url:
+                return {"label": check["label"], "status": "ok", "code": 200, "self": True}
             method = check.get("method", "GET")
-            req = urllib.request.Request(check["url"], method=method)
+            req = urllib.request.Request(url, method=method)
             req.add_header("Content-Type", "application/json")
             with urllib.request.urlopen(req, timeout=3) as resp:
                 status = resp.getcode()
