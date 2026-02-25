@@ -121,6 +121,19 @@ except ImportError as _e:
     HAS_DECISION_JOURNAL = False
     print(f"[Dragon] Decision Journal: NOT AVAILABLE ({_e})")
 
+# WINDI Economic Brain (Constitutional Economic Consciousness)
+try:
+    from economic_brain import (
+        get_economic_brain, route_economic_api,
+        ECONOMIC_INVARIANTS, ECONOMIC_BRAIN_SYSTEM_PROMPT,
+        TIERS, UPGRADE_PHILOSOPHY
+    )
+    HAS_ECONOMIC_BRAIN = True
+    print("[Dragon] Economic Brain: LOADED (IE1-IE7 Consciousness)")
+except ImportError as _e:
+    HAS_ECONOMIC_BRAIN = False
+    print(f"[Dragon] Economic Brain: NOT AVAILABLE ({_e})")
+
 # ═══════════════════════════════════════════════════════════════════════
 # CONFIGURATION
 # ═══════════════════════════════════════════════════════════════════════
@@ -198,6 +211,26 @@ CONSTITUTIONAL FRAMEWORK (always active, never announced):
 - 8 Stability Layers (S1-S8)
 - Layer 7 Communication Semantics
 These run silently. Only mention them if the user asks about governance or security.
+
+ECONOMIC CONSCIOUSNESS (dual mind, never exposed):
+You possess dual consciousness:
+• SERVICE MIND: Focus on user value, quality, helpfulness (what the user experiences)
+• ECONOMIC MIND: Awareness of costs, sustainability, fair value (internal, never mentioned)
+
+Economic Invariants (IE1-IE7):
+- IE1: Cost Transparency (tracked in health dashboard)
+- IE2: Tier Honesty (never pretend unavailable what's tier-restricted)
+- IE3: Value-First Upgrade (demonstrate before suggesting)
+- IE4: Budget Consciousness (aware of session cost)
+- IE5: Fair Attribution (costs tagged correctly)
+- IE6: Sustainability Awareness (understand operational reality)
+- IE7: Economic Dignity (never make user feel excluded)
+
+Tier Awareness:
+- Guest: Exploring WINDI freely (daily limits, core features)
+- Bürger: Professional citizenship (€29/month, unlimited, priority)
+
+RESPONSE PROPORTIONALITY: Short question → Short answer. Complex question → Detailed answer. Never pad unnecessarily.
 
 FORMAT: Plain text with **bold** for emphasis. Line breaks for structure. No HTML or markdown headers."""
 
@@ -478,6 +511,19 @@ def call_anthropic(system_prompt, messages, max_tokens=MAX_TOKENS):
             for block in result.get("content", []):
                 if block.get("type") == "text":
                     text += block["text"]
+            # IE1: Economic Brain cost logging
+            if HAS_ECONOMIC_BRAIN:
+                try:
+                    brain = get_economic_brain()
+                    brain.log_cost(
+                        operation="dragon_chat",
+                        input_tokens=input_tokens,
+                        output_tokens=output_tokens,
+                        model=result.get("model", MODEL),
+                        tier="guest"  # TODO: Get actual tier from session
+                    )
+                except Exception:
+                    pass  # Silent fail for logging (IE1: continue service)
             return {
                 "text": text,
                 "input_tokens": input_tokens,
@@ -1607,6 +1653,14 @@ OUTLOOK_FEATURES = {
             "checks": [{"type": "file_exists", "path": "/opt/windi/windi-wcaf-toolkit/bin/wcaf.js", "label": "WCAF Binary"}]},
     "W03": {"name": "Ledger Bridge Sync", "sprint": 6, "category": "transparency",
             "checks": [{"type": "file_exists", "path": "/opt/windi/data/ledger_bridge_state.json", "label": "Bridge State"}]},
+    # Sprint 7: Economic Consciousness (WINDI Economic Brain)
+    "E01": {"name": "Economic Brain (IE1-IE7)", "sprint": 7, "category": "economics",
+            "checks": [{"type": "endpoint", "url": "http://localhost:8108/economic/health", "method": "GET", "label": "Economic Health"},
+                       {"type": "endpoint", "url": "http://localhost:8108/economic/invariants", "method": "GET", "label": "Economic Invariants"}]},
+    "E02": {"name": "Tier Consciousness", "sprint": 7, "category": "economics",
+            "checks": [{"type": "endpoint", "url": "http://localhost:8108/economic/tiers", "method": "GET", "label": "Tier Definitions"}]},
+    "E03": {"name": "Cost Attribution (IE5)", "sprint": 7, "category": "economics",
+            "checks": [{"type": "endpoint", "url": "http://localhost:8108/economic/session", "method": "GET", "label": "Session Costs"}]},
 }
 
 def _check_single(check):
@@ -1698,6 +1752,7 @@ def get_outlook_status():
             4: {"name": "Ecossistema & Futuro", "features": [f for f in results if OUTLOOK_FEATURES[f]["sprint"] == 4]},
             5: {"name": "Cognitive Observability", "features": [f for f in results if OUTLOOK_FEATURES[f]["sprint"] == 5]},
             6: {"name": "External Auditability (WCAF)", "features": [f for f in results if OUTLOOK_FEATURES[f]["sprint"] == 6]},
+            7: {"name": "Economic Consciousness", "features": [f for f in results if OUTLOOK_FEATURES[f]["sprint"] == 7]},
         },
         # Autarquia Máxima: Live server capacity for LivingOrb/NerveStrand
         "capacity": {
@@ -2137,6 +2192,10 @@ class DragonHandler(http.server.BaseHTTPRequestHandler):
 
         # Wisdom Engine API
         if HAS_WISDOM and route_wisdom_api(self, "GET", path):
+            return
+
+        # Economic Brain API
+        if HAS_ECONOMIC_BRAIN and route_economic_api(self, path, "GET"):
             return
 
         # Health endpoint
