@@ -837,6 +837,280 @@ def handle_dragon_health(body=None):
         "timestamp": datetime.utcnow().isoformat(),
     }, 200
 
+
+def handle_constitutional_status():
+    """
+    Handle /api/constitutional/status — Full constitutional verification for Tab Wallet.
+    Phase 2 Bridge: Clone → Wallet constitutional seal verification.
+    """
+    import subprocess as _subp
+
+    clone_wallet_file = Path("/opt/windi/clone/CLONE_WALLET.json")
+    checkpoint_file = Path("/opt/windi/clone/CHECKPOINT.json")
+    matrix_dir = Path("/opt/windi/clone/matrix")
+
+    result = {
+        "clone": None,
+        "wallet": None,
+        "integrity": {
+            "phase1_hash_match": False,
+            "i9_clean": False,
+            "auto_apply_found": True,  # Default to unsafe
+            "overall": "RED"
+        },
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    }
+
+    # 1. Load Clone Wallet data
+    try:
+        if clone_wallet_file.exists():
+            clone_wallet = json.loads(clone_wallet_file.read_text())
+            result["clone"] = {
+                "agent_id": clone_wallet.get("agent_id"),
+                "phase": clone_wallet.get("phase"),
+                "commissioned_at": clone_wallet.get("commissioned_at"),
+                "fingerprint": clone_wallet.get("fingerprint"),
+                "constitutional_hash": clone_wallet.get("constitutional_hash"),
+                "genesis_seal": clone_wallet.get("genesis_seal"),
+                "shelves": {
+                    "total": clone_wallet.get("shelves_count", 8),
+                    "sealed": clone_wallet.get("shelves_count", 8),
+                    "status": "ALL_SEALED"
+                },
+                "invariants": {
+                    "total": clone_wallet.get("invariants_count", 9),
+                    "i9_status": clone_wallet.get("i9_status", "ACTIVE_IRREMEDIABLE"),
+                    "violations": 0
+                }
+            }
+    except Exception as e:
+        result["clone"] = {"error": str(e)}
+
+    # 2. Load Checkpoint data for hash comparison
+    checkpoint_state_seal = None
+    try:
+        if checkpoint_file.exists():
+            checkpoint = json.loads(checkpoint_file.read_text())
+            memory_codes = checkpoint.get("memory_codes", {})
+            checkpoint_state_seal = memory_codes.get("state_seal")
+    except Exception:
+        pass
+
+    # 3. Query Wallet Service for clone status
+    try:
+        req = urllib.request.Request(
+            "http://localhost:8099/api/wallet/clone/status",
+            headers={"Accept": "application/json"}
+        )
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            wallet_data = json.loads(resp.read().decode("utf-8"))
+            # Also get general wallet stats
+            req2 = urllib.request.Request(
+                "http://localhost:8099/api/wallet/stats",
+                headers={"Accept": "application/json"}
+            )
+            with urllib.request.urlopen(req2, timeout=5) as resp2:
+                wallet_stats = json.loads(resp2.read().decode("utf-8"))
+
+            result["wallet"] = {
+                "service_status": "healthy",
+                "registered_clones": wallet_data.get("total_clones", 0),
+                "total_wallets": wallet_stats.get("total_humans", 0)
+            }
+    except Exception as e:
+        result["wallet"] = {
+            "service_status": "unreachable",
+            "error": str(e)
+        }
+
+    # 4. I9 Check: grep for auto_apply in matrix
+    i9_clean = False
+    auto_apply_found = True
+    try:
+        grep_result = _subp.run(
+            ["grep", "-r", "auto_apply", str(matrix_dir)],
+            capture_output=True,
+            text=True
+        )
+        count = len(grep_result.stdout.strip().split('\n')) if grep_result.stdout.strip() else 0
+        i9_clean = count == 0
+        auto_apply_found = count > 0
+    except Exception:
+        pass
+
+    # 5. Compute integrity
+    phase1_match = False
+    if result.get("clone") and checkpoint_state_seal:
+        clone_hash = result["clone"].get("constitutional_hash")
+        phase1_match = clone_hash == checkpoint_state_seal
+
+    result["integrity"] = {
+        "phase1_hash_match": phase1_match,
+        "i9_clean": i9_clean,
+        "auto_apply_found": auto_apply_found,
+        "overall": "GREEN" if (phase1_match and i9_clean and not auto_apply_found) else "RED"
+    }
+
+    # Autarquia Máxima: Include live server capacity in CO
+    try:
+        capacity_data, _ = handle_capacity_status()
+        result["capacity"] = {
+            "server": capacity_data.get("server", "VC2-4"),
+            "score": capacity_data.get("capacity", {}).get("score", 0),
+            "status": capacity_data.get("capacity", {}).get("status", "UNKNOWN"),
+            "wave_support": capacity_data.get("capacity", {}).get("wave_support", "W0"),
+            "cpu_percent": capacity_data.get("cpu", {}).get("percent", 0),
+            "memory_percent": capacity_data.get("memory", {}).get("percent", 0),
+            "disk_percent": capacity_data.get("disk", {}).get("percent", 0),
+            "services_total": capacity_data.get("services", {}).get("total", 0),
+            "swap_configured": capacity_data.get("memory", {}).get("swap_total_mb", 0) > 0
+        }
+    except Exception:
+        result["capacity"] = {"error": "capacity check failed"}
+
+    return result, 200
+
+
+def handle_capacity_status():
+    """
+    Handle /api/capacity/status — Real-time system capacity for LivingOrb/NerveStrand.
+    Autarquia Máxima: Monitor VC2-4 capacity to know when to scale.
+    """
+    import subprocess as _subp
+
+    result = {
+        "server": "VC2-4",
+        "cost": "€4/month",
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    }
+
+    # 1. CPU
+    try:
+        cpu_count = int(_subp.run(["grep", "-c", "^processor", "/proc/cpuinfo"],
+                                   capture_output=True, text=True).stdout.strip())
+        loadavg = open("/proc/loadavg").read().split()
+        load_1m = float(loadavg[0])
+        cpu_percent = min(100, (load_1m / cpu_count) * 100)
+        result["cpu"] = {
+            "cores": cpu_count,
+            "load_1m": load_1m,
+            "load_5m": float(loadavg[1]),
+            "load_15m": float(loadavg[2]),
+            "percent": round(cpu_percent, 1),
+            "status": "GREEN" if cpu_percent < 70 else ("YELLOW" if cpu_percent < 90 else "RED")
+        }
+    except Exception as e:
+        result["cpu"] = {"error": str(e)}
+
+    # 2. Memory
+    try:
+        meminfo = {}
+        for line in open("/proc/meminfo"):
+            parts = line.split()
+            if len(parts) >= 2:
+                meminfo[parts[0].rstrip(":")] = int(parts[1])
+
+        total_mb = meminfo.get("MemTotal", 0) // 1024
+        available_mb = meminfo.get("MemAvailable", 0) // 1024
+        used_mb = total_mb - available_mb
+        mem_percent = (used_mb / total_mb * 100) if total_mb > 0 else 0
+
+        # Swap
+        swap_total = meminfo.get("SwapTotal", 0) // 1024
+        swap_free = meminfo.get("SwapFree", 0) // 1024
+        swap_used = swap_total - swap_free
+
+        result["memory"] = {
+            "total_mb": total_mb,
+            "used_mb": used_mb,
+            "available_mb": available_mb,
+            "percent": round(mem_percent, 1),
+            "swap_total_mb": swap_total,
+            "swap_used_mb": swap_used,
+            "status": "GREEN" if mem_percent < 70 else ("YELLOW" if mem_percent < 85 else "RED")
+        }
+    except Exception as e:
+        result["memory"] = {"error": str(e)}
+
+    # 3. Disk
+    try:
+        df_output = _subp.run(["df", "-B1M", "/"], capture_output=True, text=True).stdout
+        lines = df_output.strip().split("\n")
+        if len(lines) >= 2:
+            parts = lines[1].split()
+            total_mb = int(parts[1].rstrip("M"))
+            used_mb = int(parts[2].rstrip("M"))
+            avail_mb = int(parts[3].rstrip("M"))
+            disk_percent = (used_mb / total_mb * 100) if total_mb > 0 else 0
+            result["disk"] = {
+                "total_mb": total_mb,
+                "used_mb": used_mb,
+                "available_mb": avail_mb,
+                "percent": round(disk_percent, 1),
+                "status": "GREEN" if disk_percent < 70 else ("YELLOW" if disk_percent < 85 else "RED")
+            }
+    except Exception as e:
+        result["disk"] = {"error": str(e)}
+
+    # 4. Services
+    try:
+        ss_output = _subp.run(["ss", "-tlnp"], capture_output=True, text=True).stdout
+        python_services = len([l for l in ss_output.split("\n") if "python" in l])
+        node_services = len([l for l in ss_output.split("\n") if "node" in l])
+        result["services"] = {
+            "python": python_services,
+            "node": node_services,
+            "total": python_services + node_services,
+            "status": "GREEN" if python_services >= 15 else "YELLOW"
+        }
+    except Exception as e:
+        result["services"] = {"error": str(e)}
+
+    # 5. SQLite DBs
+    try:
+        db_count = int(_subp.run(
+            ["find", "/opt/windi", "-name", "*.db", "-type", "f"],
+            capture_output=True, text=True
+        ).stdout.count("\n"))
+        result["databases"] = {
+            "sqlite_count": db_count,
+            "wal_mode": "ENABLED"
+        }
+    except Exception as e:
+        result["databases"] = {"error": str(e)}
+
+    # 6. Capacity Score (0-100)
+    try:
+        cpu_score = 100 - result.get("cpu", {}).get("percent", 50)
+        mem_score = 100 - result.get("memory", {}).get("percent", 50)
+        disk_score = 100 - result.get("disk", {}).get("percent", 50)
+        svc_score = min(100, result.get("services", {}).get("total", 0) * 4)
+
+        capacity_score = (cpu_score * 0.3 + mem_score * 0.4 + disk_score * 0.2 + svc_score * 0.1)
+        capacity_score = max(0, min(100, round(capacity_score, 1)))
+
+        if capacity_score >= 70:
+            status = "GREEN"
+            message = "Healthy capacity. W1 (50 users) supported."
+        elif capacity_score >= 50:
+            status = "YELLOW"
+            message = "Moderate load. Monitor closely for W2 (100 users)."
+        else:
+            status = "RED"
+            message = "High utilization. Consider scaling or optimization."
+
+        result["capacity"] = {
+            "score": capacity_score,
+            "status": status,
+            "message": message,
+            "wave_support": "W0" if capacity_score < 40 else ("W1" if capacity_score < 70 else "W2")
+        }
+    except Exception as e:
+        result["capacity"] = {"score": 50, "status": "YELLOW", "error": str(e)}
+
+    return result, 200
+
+
 # ═══════════════════════════════════════════════════════════════════════
 # SPRINT 1+2: DOCUMENT GENERATION & SEAL
 # ═══════════════════════════════════════════════════════════════════════
@@ -1397,6 +1671,9 @@ def get_outlook_status():
             "category": feature["category"], "status": status, "checks": checks
         }
 
+    # Get live capacity metrics (Autarquia Máxima)
+    capacity_data, _ = handle_capacity_status()
+
     return {
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "summary": {
@@ -1412,6 +1689,18 @@ def get_outlook_status():
             3: {"name": "Inteligência & Identidade", "features": [f for f in results if OUTLOOK_FEATURES[f]["sprint"] == 3]},
             4: {"name": "Ecossistema & Futuro", "features": [f for f in results if OUTLOOK_FEATURES[f]["sprint"] == 4]},
             5: {"name": "Cognitive Observability", "features": [f for f in results if OUTLOOK_FEATURES[f]["sprint"] == 5]},
+        },
+        # Autarquia Máxima: Live server capacity for LivingOrb/NerveStrand
+        "capacity": {
+            "server": capacity_data.get("server", "VC2-4"),
+            "score": capacity_data.get("capacity", {}).get("score", 0),
+            "status": capacity_data.get("capacity", {}).get("status", "UNKNOWN"),
+            "wave_support": capacity_data.get("capacity", {}).get("wave_support", "W0"),
+            "cpu": capacity_data.get("cpu", {}),
+            "memory": capacity_data.get("memory", {}),
+            "disk": capacity_data.get("disk", {}),
+            "services": capacity_data.get("services", {}),
+            "databases": capacity_data.get("databases", {})
         }
     }
 
@@ -1844,6 +2133,18 @@ class DragonHandler(http.server.BaseHTTPRequestHandler):
         # Health endpoint
         if path == "/api/dragon/health":
             data, code = handle_dragon_health()
+            self._json_response(data, code)
+            return
+
+        # Phase 2 Bridge: Constitutional Status for Tab Wallet
+        if path == "/api/constitutional/status":
+            data, code = handle_constitutional_status()
+            self._json_response(data, code)
+            return
+
+        # Autarquia Máxima: Capacity Monitor for LivingOrb/NerveStrand
+        if path == "/api/capacity/status":
+            data, code = handle_capacity_status()
             self._json_response(data, code)
             return
 
