@@ -2934,6 +2934,75 @@ function Sec({ title, children, T }) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════
+// WALLET CTA — Organic Conversion Funnel (v1.1.0-W)
+// "Experimenta e depois decide se queres ser soberano." I9 compliant.
+// ═══════════════════════════════════════════════════════════════════════
+
+const WALLET_CTA_TEXTS = {
+  pt: {
+    title: "Os teus documentos merecem uma identidade",
+    body: "Cria o teu Wallet WINDI para guardar documentos, selos e provas com a tua assinatura soberana.",
+    cta: "Criar Wallet",
+    dismiss: "Agora não"
+  },
+  de: {
+    title: "Deine Dokumente verdienen eine Identität",
+    body: "Erstelle dein WINDI Wallet, um Dokumente, Siegel und Nachweise mit deiner souveränen Signatur zu speichern.",
+    cta: "Wallet erstellen",
+    dismiss: "Jetzt nicht"
+  },
+  en: {
+    title: "Your documents deserve an identity",
+    body: "Create your WINDI Wallet to store documents, seals, and proofs with your sovereign signature.",
+    cta: "Create Wallet",
+    dismiss: "Not now"
+  }
+};
+
+function WalletCTA({ sealed, turns, lang, T, onDismiss, visible }) {
+  if (!visible) return null;
+  const t = WALLET_CTA_TEXTS[lang] || WALLET_CTA_TEXTS.en;
+
+  const handleCreateWallet = () => {
+    // Session Bridge: pass anonymous session data to Wallet onboarding
+    const bridgeData = {
+      anonymous_docs: sealed,
+      language: lang,
+      source: 'palette',
+      tier_suggestion: sealed > 3 ? 'M' : 'P',
+      timestamp: new Date().toISOString()
+    };
+    try { sessionStorage.setItem('windi_bridge', JSON.stringify(bridgeData)); } catch(e) {}
+    window.open('/wallet/onboard.html?source=palette&lang=' + lang, '_blank');
+  };
+
+  return (
+    <div style={{
+      position:'fixed', bottom:24, right:24, maxWidth:360,
+      background:T.card, border:`1px solid ${T.gold}`,
+      borderRadius:12, padding:'20px 24px',
+      boxShadow:'0 8px 32px rgba(0,0,0,0.15)',
+      zIndex:9999, animation:'slideUp 0.4s ease-out',
+      fontFamily:"'Bricolage Grotesque', sans-serif"
+    }}>
+      <div style={{ fontSize:15, fontWeight:700, color:T.gold, marginBottom:8 }}>👛 {t.title}</div>
+      <div style={{ fontSize:13, color:T.text, lineHeight:1.5, marginBottom:16 }}>{t.body}</div>
+      <div style={{ display:'flex', gap:8, justifyContent:'flex-end' }}>
+        <button onClick={onDismiss} style={{
+          background:'none', border:'none', color:T.muted,
+          cursor:'pointer', fontSize:12, padding:'6px 12px'
+        }}>{t.dismiss}</button>
+        <button onClick={handleCreateWallet} style={{
+          background:T.gold, color:'#fff', border:'none',
+          borderRadius:8, padding:'8px 20px', cursor:'pointer',
+          fontSize:13, fontWeight:600
+        }}>{t.cta} →</button>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════
 // MAIN — KLAR Edition
 // ═══════════════════════════════════════════════════════════════════════
 
@@ -2988,11 +3057,22 @@ function WINDIAgentSuite() {
     links: [],    // { id, url, platform, icon, name, timestamp, verified }
   });
   const [jornalineLoading, setJornalineLoading] = useState(false);
+  // v1.1.0-W Wallet CTA Engagement Tracking
+  const [walletCtaVisible, setWalletCtaVisible] = useState(false);
+  const [walletCtaDismissed, setWalletCtaDismissed] = useState(false);
   const chatRef = useRef(null);
   const inputRef = useRef(null);
   const fileInputRef = useRef(null);
 
   const T = THEMES[themeName];
+
+  // v1.1.0-W Wallet CTA — trigger 3s after first sealed document
+  useEffect(() => {
+    if (!walletCtaDismissed && stats.sealed >= 1 && !walletCtaVisible) {
+      const timer = setTimeout(() => setWalletCtaVisible(true), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [stats.sealed, walletCtaDismissed, walletCtaVisible]);
 
   // Fetch cognitive data every 60 seconds
   useEffect(() => {
@@ -3239,10 +3319,15 @@ function WINDIAgentSuite() {
       }
     } catch (err) {
       console.error("[DragonBrain] Send error:", err);
-      // Emergency fallback
-      const result = agentThink(msg, tier, intentHistory, stats);
+      // Graceful error — NO agentThink reset (fixes TILT bug)
       const ats = new Date().toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
-      setMsgs(prev => [...prev, { role:"agent", text:result.message, result, ts:ats }]);
+      const errorMsgs = {
+        pt: "⚠️ Houve uma falha temporária na comunicação. Por favor, tenta novamente a tua pergunta.",
+        de: "⚠️ Vorübergehender Kommunikationsfehler. Bitte stelle deine Frage erneut.",
+        en: "⚠️ Temporary communication error. Please try your question again."
+      };
+      const errorText = errorMsgs[detectedLang] || errorMsgs.en;
+      setMsgs(prev => [...prev, { role:"agent", text:errorText, ts:ats, source:"local_fallback" }]);
     }
     setIsLoading(false);
   }, [input, tier, intentHistory, isLoading, msgs]);
@@ -3899,6 +3984,17 @@ function WINDIAgentSuite() {
           loading={jornalineLoading}
         />
       )}
+
+      {/* v1.1.0-W Wallet CTA — Organic Conversion Funnel */}
+      <WalletCTA
+        sealed={stats.sealed}
+        turns={msgs.filter(m => m.role === 'user').length}
+        lang={lang}
+        T={T}
+        visible={walletCtaVisible}
+        onDismiss={() => { setWalletCtaDismissed(true); setWalletCtaVisible(false); }}
+      />
+
       </div>{/* End Main Content Area */}
 
       <style>{`
@@ -3908,6 +4004,7 @@ function WINDIAgentSuite() {
         @keyframes breatheIn{from{opacity:0;transform:translateY(-6px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
         @keyframes softPulse{0%,100%{opacity:1}50%{opacity:0.5}}
         @keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.02)}}
+        @keyframes slideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
         *{box-sizing:border-box;margin:0;padding:0}
         ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:${T.border};border-radius:2px}
         textarea::placeholder{color:${T.muted}}
