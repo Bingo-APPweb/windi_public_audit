@@ -1599,6 +1599,14 @@ OUTLOOK_FEATURES = {
     "C01": {"name": "Cognitive Observability Engine", "sprint": 5, "category": "cognition",
             "checks": [{"type": "endpoint", "url": "http://localhost:8108/api/dragon/cognitive/score", "method": "GET", "label": "Cognitive Score"},
                        {"type": "endpoint", "url": "http://localhost:8108/api/dragon/decisions/stats", "method": "GET", "label": "Decision Journal"}]},
+    # Sprint 6: External Auditability (WCAF Transparency Layer)
+    "W01": {"name": "Transparency Anchor (CT-Style)", "sprint": 6, "category": "transparency",
+            "checks": [{"type": "health", "url": "http://localhost:4050/health", "label": "Anchor Service"},
+                       {"type": "endpoint", "url": "http://localhost:4050/sth", "method": "GET", "label": "Signed Tree Head"}]},
+    "W02": {"name": "WCAF CLI Toolkit", "sprint": 6, "category": "transparency",
+            "checks": [{"type": "file_exists", "path": "/opt/windi/windi-wcaf-toolkit/bin/wcaf.js", "label": "WCAF Binary"}]},
+    "W03": {"name": "Ledger Bridge Sync", "sprint": 6, "category": "transparency",
+            "checks": [{"type": "file_exists", "path": "/opt/windi/data/ledger_bridge_state.json", "label": "Bridge State"}]},
 }
 
 def _check_single(check):
@@ -1689,6 +1697,7 @@ def get_outlook_status():
             3: {"name": "Inteligência & Identidade", "features": [f for f in results if OUTLOOK_FEATURES[f]["sprint"] == 3]},
             4: {"name": "Ecossistema & Futuro", "features": [f for f in results if OUTLOOK_FEATURES[f]["sprint"] == 4]},
             5: {"name": "Cognitive Observability", "features": [f for f in results if OUTLOOK_FEATURES[f]["sprint"] == 5]},
+            6: {"name": "External Auditability (WCAF)", "features": [f for f in results if OUTLOOK_FEATURES[f]["sprint"] == 6]},
         },
         # Autarquia Máxima: Live server capacity for LivingOrb/NerveStrand
         "capacity": {
