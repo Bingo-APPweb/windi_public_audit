@@ -3003,6 +3003,117 @@ function WalletCTA({ sealed, turns, lang, T, onDismiss, visible }) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════
+// SESSION VITALITY MONITOR — Dragon Energy v1.1.0-W
+// "O Dragon não morre. Descansa para voar de novo."
+// ═══════════════════════════════════════════════════════════════════════
+
+const SESSION_LIMITS = {
+  P: { soft: 10, hard: 12, label: 'Personal' },
+  M: { soft: 17, hard: 20, label: 'Medium' },
+  G: { soft: 25, hard: 30, label: 'Governance' },
+  HIGH: { soft: 25, hard: 30, label: 'Governance' },
+  MEDIUM: { soft: 17, hard: 20, label: 'Medium' },
+  LOW: { soft: 10, hard: 12, label: 'Personal' },
+};
+
+const SESSION_VITALITY_TEXTS = {
+  pt: {
+    energy: ['TOTAL', 'FORTE', 'BOM', 'DESCANSANDO', 'BAIXA'],
+    soft: '🐉 O Dragon está a descansar. Para melhor qualidade, considera iniciar uma nova conversa.',
+    hard: '🐉 Sessão longa! Recomendo uma nova conversa para manter a qualidade das respostas.',
+    newSession: 'Nova Conversa',
+    turns: 'turnos',
+  },
+  de: {
+    energy: ['VOLL', 'STARK', 'GUT', 'RUHT', 'NIEDRIG'],
+    soft: '🐉 Der Drache ruht sich aus. Für beste Qualität, erwäge ein neues Gespräch.',
+    hard: '🐉 Lange Sitzung! Ich empfehle ein neues Gespräch für optimale Antwortqualität.',
+    newSession: 'Neues Gespräch',
+    turns: 'Runden',
+  },
+  en: {
+    energy: ['FULL', 'STRONG', 'GOOD', 'RESTING', 'LOW'],
+    soft: '🐉 The Dragon is resting. For best quality, consider starting a new conversation.',
+    hard: '🐉 Long session! I recommend a new conversation to maintain response quality.',
+    newSession: 'New Conversation',
+    turns: 'turns',
+  },
+};
+
+function calcDragonEnergy(turnCount, tier) {
+  const lim = SESSION_LIMITS[tier] || SESSION_LIMITS.P;
+  const ratio = turnCount / lim.hard;
+  if (ratio < 0.4) return { level: 5, bars: '⚡⚡⚡⚡⚡', idx: 0 };
+  if (ratio < 0.6) return { level: 4, bars: '⚡⚡⚡⚡○', idx: 1 };
+  if (ratio < 0.75) return { level: 3, bars: '⚡⚡⚡○○', idx: 2 };
+  if (ratio < 0.9) return { level: 2, bars: '⚡⚡○○○', idx: 3 };
+  return { level: 1, bars: '⚡○○○○', idx: 4 };
+}
+
+function SessionVitalityFooter({ turnCount, tier, lang, T }) {
+  const lim = SESSION_LIMITS[tier] || SESSION_LIMITS.P;
+  const energy = calcDragonEnergy(turnCount, tier);
+  const t = SESSION_VITALITY_TEXTS[lang] || SESSION_VITALITY_TEXTS.en;
+  const label = t.energy[energy.idx];
+
+  return React.createElement('div', {
+    style: {
+      display: 'flex', alignItems: 'center', gap: 8,
+      fontSize: 11, fontFamily: 'JetBrains Mono, monospace',
+      color: energy.level <= 2 ? '#E67E22' : T.muted,
+      padding: '4px 0',
+    }
+  },
+    React.createElement('span', { style: { letterSpacing: 1 } }, energy.bars),
+    React.createElement('span', { style: { opacity: 0.8 } }, `${turnCount}/${lim.hard}`),
+    React.createElement('span', { style: { fontSize: 9, opacity: 0.6 } }, label)
+  );
+}
+
+function SessionVitalityBanner({ turnCount, tier, lang, T, onNewSession, onDismiss }) {
+  const lim = SESSION_LIMITS[tier] || SESSION_LIMITS.P;
+  const t = SESSION_VITALITY_TEXTS[lang] || SESSION_VITALITY_TEXTS.en;
+
+  const isHard = turnCount >= lim.hard;
+  const isSoft = turnCount >= lim.soft && turnCount < lim.hard;
+
+  if (!isSoft && !isHard) return null;
+
+  const msg = isHard ? t.hard : t.soft;
+  const bgColor = isHard ? 'rgba(231, 76, 60, 0.1)' : 'rgba(230, 126, 34, 0.1)';
+  const borderColor = isHard ? 'rgba(231, 76, 60, 0.3)' : 'rgba(230, 126, 34, 0.3)';
+  const textColor = isHard ? '#E74C3C' : '#E67E22';
+
+  return React.createElement('div', {
+    style: {
+      position: 'fixed', bottom: 80, left: '50%', transform: 'translateX(-50%)',
+      background: bgColor, border: `1px solid ${borderColor}`,
+      borderRadius: 12, padding: '12px 20px', maxWidth: 500,
+      display: 'flex', alignItems: 'center', gap: 12,
+      boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+      animation: 'slideUp 0.3s ease-out', zIndex: 1000,
+    }
+  },
+    React.createElement('span', { style: { color: textColor, fontSize: 13, flex: 1 } }, msg),
+    isHard && React.createElement('button', {
+      onClick: onNewSession,
+      style: {
+        background: '#E74C3C', color: '#fff', border: 'none',
+        borderRadius: 6, padding: '6px 14px', cursor: 'pointer',
+        fontSize: 12, fontWeight: 600, whiteSpace: 'nowrap',
+      }
+    }, t.newSession),
+    !isHard && React.createElement('button', {
+      onClick: onDismiss,
+      style: {
+        background: 'none', border: 'none', color: T.muted,
+        cursor: 'pointer', fontSize: 18, padding: 4,
+      }
+    }, '×')
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════
 // MAIN — KLAR Edition
 // ═══════════════════════════════════════════════════════════════════════
 
@@ -3060,6 +3171,9 @@ function WINDIAgentSuite() {
   // v1.1.0-W Wallet CTA Engagement Tracking
   const [walletCtaVisible, setWalletCtaVisible] = useState(false);
   const [walletCtaDismissed, setWalletCtaDismissed] = useState(false);
+  // v1.1.0-W Session Vitality Monitor — Dragon Energy
+  const [sessionTurnCount, setSessionTurnCount] = useState(0);
+  const [vitalityBannerDismissed, setVitalityBannerDismissed] = useState(false);
   const chatRef = useRef(null);
   const inputRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -3195,6 +3309,7 @@ function WINDIAgentSuite() {
     if (!msg || isLoading) return;
     const ts = new Date().toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
     setMsgs(prev => [...prev, { role:"human", text:msg, ts }]);
+    setSessionTurnCount(prev => prev + 1); // Dragon Energy tracking
     setInput("");
     setIsLoading(true);
     setActiveDragon(null);
@@ -3768,7 +3883,10 @@ function WINDIAgentSuite() {
                 <span style={{ width:3, height:3, borderRadius:"50%", background:T.border }} />
                 <span style={{ cursor:"default", color:T.gold }} title={lang==="de"?"Jornaline — Bürgerjournalismus":lang==="pt"?"Jornaline — Jornalismo Cidadão":"Jornaline — Citizen Journalism"}>🗞️ Jornaline</span>
               </div>
-              <span style={{ color:T.muted }}>v{V}</span>
+              <div style={{ display:'flex', alignItems:'center', gap:12 }}>
+                <SessionVitalityFooter turnCount={sessionTurnCount} tier={tier} lang={lang} T={T} />
+                <span style={{ color:T.muted }}>v{V}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -3994,6 +4112,24 @@ function WINDIAgentSuite() {
         visible={walletCtaVisible}
         onDismiss={() => { setWalletCtaDismissed(true); setWalletCtaVisible(false); }}
       />
+
+      {/* v1.1.0-W Session Vitality Banner — Dragon Energy Signal */}
+      {!vitalityBannerDismissed && (
+        <SessionVitalityBanner
+          turnCount={sessionTurnCount}
+          tier={tier}
+          lang={lang}
+          T={T}
+          onNewSession={() => {
+            setMsgs([]);
+            setSessionTurnCount(0);
+            setVitalityBannerDismissed(false);
+            setActiveDoc(null);
+            setSessionDocs([]);
+          }}
+          onDismiss={() => setVitalityBannerDismissed(true)}
+        />
+      )}
 
       </div>{/* End Main Content Area */}
 
