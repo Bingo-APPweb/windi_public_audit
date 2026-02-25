@@ -1,0 +1,18 @@
+{
+  "wallet_type": "WindiCloneWallet",
+  "wallet_version": "1.0",
+  "clone_id": "CLONE-WINDI-GENESIS-001",
+  "agent_id": "W-00000000000000000000000000000001",
+  "tenant_id": "WINDI-PUBLISHING-HOUSE",
+  "public_key": "LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUNvd0JRWURLMlZ3QXlFQTBBbWpNSFl0SVFNSkpocHB4c3lqZHlra1luUGhIMjdJWFBCd1M0RjlmWWc9Ci0tLS0tRU5EIFBVQkxJQyBLRVktLS0tLQo=",
+  "fingerprint": "sha256:bce4c9d6a6679836a37d4803bfb05c38b6c243157644d5600096bb365926f0a1",
+  "constitutional_hash": "8e9b8074e25e24afcb98fd4d9d6bb994",
+  "genesis_seal": "44b666868d344928",
+  "phase1_hash": "2310a8e62252c63e1f0fc1e97cb0ec96",
+  "commissioned_at": "2026-02-25T09:27:21.687227+00:00",
+  "commissioned_by": "Human Dragon",
+  "phase": "PHASE_2_COMMISSIONED",
+  "invariants_count": 9,
+  "shelves_count": 8,
+  "i9_status": "ACTIVE_IRREMEDIABLE"
+}

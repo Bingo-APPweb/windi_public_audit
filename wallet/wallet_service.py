@@ -10,6 +10,9 @@ Endpoints:
     POST /api/wallet/context/<id>/freeze
     GET  /api/wallet/stats
     GET  /api/wallet/health
+    POST /api/wallet/clone/register
+    GET  /api/wallet/clone/verify/<agent_id>
+    GET  /api/wallet/clone/status
     POST /api/wallet/bridge/approve
     GET  /api/wallet/bridge/health
     GET  /health
@@ -33,7 +36,8 @@ if WALLET_DIR not in sys.path:
 from flask import Flask, request, jsonify
 from wallet_provisioning import (
     init_db, provision_wallet, get_wallet_by_email,
-    get_wallet_by_id, freeze_context, get_wallet_stats
+    get_wallet_by_id, freeze_context, get_wallet_stats,
+    register_clone_wallet, verify_clone_wallet, get_clone_status
 )
 from wallet_bridge import on_lead_approved
 
@@ -120,6 +124,37 @@ def endpoint_health():
         return jsonify({"status": "degraded", "error": str(e)}), 503
 
 
+# ─── Clone Wallet Endpoints (Phase 2 Bridge) ─────────────────────────────────
+
+@app.route("/api/wallet/clone/register", methods=["POST"])
+def endpoint_clone_register():
+    """Register a commissioned clone wallet."""
+    data = request.get_json(force=True)
+    try:
+        result = register_clone_wallet(data)
+        code = 200 if result.get("idempotent") else 201
+        return jsonify(result), code
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/wallet/clone/verify/<agent_id>", methods=["GET"])
+def endpoint_clone_verify(agent_id):
+    """Verify and return clone wallet data for Tab Wallet display."""
+    result = verify_clone_wallet(agent_id)
+    if not result:
+        return jsonify({"error": "clone not found", "agent_id": agent_id}), 404
+    return jsonify(result)
+
+
+@app.route("/api/wallet/clone/status", methods=["GET"])
+def endpoint_clone_status():
+    """Get status of all commissioned clones."""
+    return jsonify(get_clone_status())
+
+
 # ─── Bridge Endpoints ────────────────────────────────────────────────────────
 
 @app.route("/api/wallet/bridge/approve", methods=["POST"])
@@ -159,6 +194,9 @@ if __name__ == "__main__":
     print("    POST /api/wallet/context/<id>/freeze")
     print("    GET  /api/wallet/stats")
     print("    GET  /api/wallet/health")
+    print("    POST /api/wallet/clone/register")
+    print("    GET  /api/wallet/clone/verify/<agent_id>")
+    print("    GET  /api/wallet/clone/status")
     print("    POST /api/wallet/bridge/approve")
     print("    GET  /health")
     print()

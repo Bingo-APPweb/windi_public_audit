@@ -203,17 +203,39 @@ CREATE TABLE IF NOT EXISTS trust_events (
     source_ref      TEXT NOT NULL DEFAULT '{}',
     ledger_ref      TEXT
 );
+
+-- clone_wallets: commissioned clone agents (Phase 2 Bridge)
+CREATE TABLE IF NOT EXISTS clone_wallets (
+    id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    agent_id        TEXT UNIQUE NOT NULL,
+    clone_id        TEXT NOT NULL,
+    public_key      TEXT NOT NULL,
+    fingerprint     TEXT NOT NULL,
+    constitutional_hash TEXT NOT NULL,
+    genesis_seal    TEXT NOT NULL,
+    phase           TEXT DEFAULT 'PHASE_2_COMMISSIONED',
+    commissioned_at TEXT NOT NULL,
+    commissioned_by TEXT NOT NULL,
+    verified        INTEGER DEFAULT 0,
+    created_at      TEXT DEFAULT CURRENT_TIMESTAMP
+);
 """
 
 
 def get_db() -> sqlite3.Connection:
-    """Conecta ao SQLite do WALLET com WAL mode para concorrência."""
+    """Conecta ao SQLite do WALLET com Turbo PRAGMAs para alta concorrência."""
     db_path = Path(WALLET_DB_PATH)
     db_path.parent.mkdir(parents=True, exist_ok=True)
 
     conn = sqlite3.connect(str(db_path))
     conn.row_factory = sqlite3.Row
+    # Turbo PRAGMAs - Autarquia Máxima
     conn.execute("PRAGMA journal_mode=WAL")
+    conn.execute("PRAGMA synchronous=NORMAL")
+    conn.execute("PRAGMA cache_size=-8000")       # 8MB cache
+    conn.execute("PRAGMA mmap_size=268435456")    # 256MB mmap
+    conn.execute("PRAGMA busy_timeout=5000")      # 5s timeout
+    conn.execute("PRAGMA temp_store=MEMORY")
     conn.execute("PRAGMA foreign_keys=ON")
     return conn
 
@@ -858,6 +880,170 @@ def get_wallet_stats() -> dict:
             "db_path": WALLET_DB_PATH,
             "has_nacl": HAS_NACL,
             "has_uuid7": HAS_UUID7,
+        }
+    finally:
+        conn.close()
+
+
+# ============================================================================
+# CLONE WALLET: Registration & Verification (Phase 2 Bridge)
+# ============================================================================
+
+def register_clone_wallet(data: dict) -> dict:
+    """
+    Register a commissioned clone wallet.
+
+    Args:
+        data: dict with agent_id, public_key, fingerprint, constitutional_hash,
+              genesis_seal, clone_id, commissioned_at, commissioned_by
+
+    Returns:
+        dict with status, agent_id, fingerprint
+
+    Raises:
+        ValueError: invalid data
+    """
+    agent_id = data.get("agent_id")
+    if not agent_id:
+        raise ValueError("agent_id is required")
+
+    # Validate agent_id format: W-[32 hex digits]
+    import re
+    if not re.match(r"^W-[0-9a-fA-F]{32}$", agent_id):
+        raise ValueError(f"Invalid agent_id format: {agent_id}. Expected W-[32 hex digits]")
+
+    fingerprint = data.get("fingerprint", "")
+    if not fingerprint:
+        raise ValueError("fingerprint is required")
+
+    clone_id = data.get("clone_id", f"CLONE-{agent_id[-8:]}")
+    public_key = data.get("public_key", "")
+    constitutional_hash = data.get("constitutional_hash", "")
+    genesis_seal = data.get("genesis_seal", "")
+    phase = data.get("phase", "PHASE_2_COMMISSIONED")
+    commissioned_at = data.get("commissioned_at", datetime.now(timezone.utc).isoformat())
+    commissioned_by = data.get("commissioned_by", "system")
+
+    conn = get_db()
+    try:
+        # Check idempotency
+        existing = conn.execute(
+            "SELECT * FROM clone_wallets WHERE agent_id = ?",
+            (agent_id,)
+        ).fetchone()
+
+        if existing:
+            logger.info("Idempotent: clone %s already registered", agent_id)
+            return {
+                "status": "registered",
+                "idempotent": True,
+                "agent_id": agent_id,
+                "fingerprint": existing["fingerprint"],
+                "phase": existing["phase"],
+                "commissioned_at": existing["commissioned_at"],
+            }
+
+        # Insert new clone wallet
+        conn.execute(
+            """INSERT INTO clone_wallets
+               (agent_id, clone_id, public_key, fingerprint, constitutional_hash,
+                genesis_seal, phase, commissioned_at, commissioned_by)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (agent_id, clone_id, public_key, fingerprint, constitutional_hash,
+             genesis_seal, phase, commissioned_at, commissioned_by)
+        )
+        conn.commit()
+
+        logger.info("CLONE REGISTERED: %s | fingerprint=%s | phase=%s",
+                    agent_id, fingerprint[:32], phase)
+
+        return {
+            "status": "registered",
+            "agent_id": agent_id,
+            "clone_id": clone_id,
+            "fingerprint": fingerprint,
+            "phase": phase,
+            "commissioned_at": commissioned_at,
+            "commissioned_by": commissioned_by,
+        }
+    except Exception as e:
+        conn.rollback()
+        logger.error("Clone registration failed for %s: %s", agent_id, str(e))
+        raise
+    finally:
+        conn.close()
+
+
+def verify_clone_wallet(agent_id: str) -> Optional[dict]:
+    """
+    Verify and return clone wallet data for Tab Wallet display.
+
+    Args:
+        agent_id: The clone's agent ID (W-[32 hex digits])
+
+    Returns:
+        dict with clone wallet data or None if not found
+    """
+    conn = get_db()
+    try:
+        clone = conn.execute(
+            "SELECT * FROM clone_wallets WHERE agent_id = ?",
+            (agent_id,)
+        ).fetchone()
+
+        if not clone:
+            return None
+
+        return {
+            "agent_id": clone["agent_id"],
+            "clone_id": clone["clone_id"],
+            "fingerprint": clone["fingerprint"],
+            "constitutional_hash": clone["constitutional_hash"],
+            "genesis_seal": clone["genesis_seal"],
+            "phase": clone["phase"],
+            "commissioned_at": clone["commissioned_at"],
+            "commissioned_by": clone["commissioned_by"],
+            "verified": bool(clone["verified"]),
+            "created_at": clone["created_at"],
+        }
+    finally:
+        conn.close()
+
+
+def get_clone_status() -> dict:
+    """
+    Get status of all commissioned clones.
+
+    Returns:
+        dict with clones list and counts
+    """
+    conn = get_db()
+    try:
+        clones = conn.execute(
+            """SELECT agent_id, clone_id, fingerprint, phase,
+                      commissioned_at, commissioned_by, verified
+               FROM clone_wallets ORDER BY created_at DESC"""
+        ).fetchall()
+
+        total = len(clones)
+        verified_count = sum(1 for c in clones if c["verified"])
+
+        return {
+            "total_clones": total,
+            "verified_clones": verified_count,
+            "pending_verification": total - verified_count,
+            "clones": [
+                {
+                    "agent_id": c["agent_id"],
+                    "clone_id": c["clone_id"],
+                    "fingerprint": c["fingerprint"],
+                    "phase": c["phase"],
+                    "commissioned_at": c["commissioned_at"],
+                    "commissioned_by": c["commissioned_by"],
+                    "verified": bool(c["verified"]),
+                }
+                for c in clones
+            ],
         }
     finally:
         conn.close()
