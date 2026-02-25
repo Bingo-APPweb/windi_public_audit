@@ -278,20 +278,52 @@
   }
 
   async function joinWaitlist(email) {
-    // Store waitlist email locally (in production, would POST to server)
+    // POST to server waitlist endpoint (v1.1.0-W fix)
     try {
-      const waitlist = JSON.parse(localStorage.getItem('windi_genesis_waitlist') || '[]');
-      if (!waitlist.includes(email)) {
-        waitlist.push(email);
-        localStorage.setItem('windi_genesis_waitlist', JSON.stringify(waitlist));
+      const resp = await fetch(`${GENESIS_CONFIG.API_BASE}/waitlist`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: email,
+          source: 'genesis_palette',
+          lang: genesisState.lang,
+        }),
+      });
+
+      if (resp.ok) {
+        const data = await resp.json();
+        console.log('[Genesis] Waitlist joined:', data);
+        genesisState.waveCapacity.onWaitlist = true;
+        genesisState.email = email;
+        saveState();
+        return true;
+      } else {
+        const errData = await resp.json().catch(() => ({}));
+        console.warn('[Genesis] Waitlist API error:', errData);
+        // Fallback to localStorage
+        const waitlist = JSON.parse(localStorage.getItem('windi_genesis_waitlist') || '[]');
+        if (!waitlist.includes(email)) {
+          waitlist.push(email);
+          localStorage.setItem('windi_genesis_waitlist', JSON.stringify(waitlist));
+        }
+        return true;
       }
-      genesisState.waveCapacity.onWaitlist = true;
-      genesisState.email = email;
-      saveState();
-      return true;
     } catch (e) {
-      console.warn('[Genesis] Waitlist join failed:', e);
-      return false;
+      console.warn('[Genesis] Waitlist join failed, using localStorage fallback:', e);
+      // Fallback to localStorage if API unavailable
+      try {
+        const waitlist = JSON.parse(localStorage.getItem('windi_genesis_waitlist') || '[]');
+        if (!waitlist.includes(email)) {
+          waitlist.push(email);
+          localStorage.setItem('windi_genesis_waitlist', JSON.stringify(waitlist));
+        }
+        genesisState.waveCapacity.onWaitlist = true;
+        genesisState.email = email;
+        saveState();
+        return true;
+      } catch (e2) {
+        return false;
+      }
     }
   }
 

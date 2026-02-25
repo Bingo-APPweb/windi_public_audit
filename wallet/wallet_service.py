@@ -177,6 +177,84 @@ def bridge_health():
     })
 
 
+# ─── Waitlist Endpoint (v1.1.0-W) ────────────────────────────────────────────
+
+WAITLIST_FILE = os.path.join(os.path.dirname(__file__), "..", "data", "genesis_waitlist.json")
+
+def load_waitlist():
+    """Load waitlist from file."""
+    try:
+        if os.path.exists(WAITLIST_FILE):
+            with open(WAITLIST_FILE, 'r') as f:
+                return json.load(f)
+    except Exception as e:
+        print(f"[Waitlist] Load error: {e}")
+    return {"entries": [], "count": 0}
+
+def save_waitlist(data):
+    """Save waitlist to file."""
+    try:
+        os.makedirs(os.path.dirname(WAITLIST_FILE), exist_ok=True)
+        with open(WAITLIST_FILE, 'w') as f:
+            json.dump(data, f, indent=2)
+        return True
+    except Exception as e:
+        print(f"[Waitlist] Save error: {e}")
+        return False
+
+@app.route("/api/wallet/waitlist", methods=["POST"])
+def endpoint_waitlist_join():
+    """Add email to Genesis waitlist."""
+    data = request.get_json(force=True)
+    email = data.get("email", "").strip().lower()
+
+    if not email or "@" not in email:
+        return jsonify({"error": "valid email required"}), 400
+
+    waitlist = load_waitlist()
+
+    # Check if already on waitlist
+    existing = [e for e in waitlist["entries"] if e["email"] == email]
+    if existing:
+        return jsonify({
+            "status": "already_registered",
+            "email": email,
+            "position": existing[0].get("position", len(waitlist["entries"])),
+            "timestamp": existing[0].get("timestamp")
+        }), 200
+
+    # Add to waitlist
+    entry = {
+        "email": email,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "source": data.get("source", "genesis"),
+        "lang": data.get("lang", "en"),
+        "position": len(waitlist["entries"]) + 1
+    }
+    waitlist["entries"].append(entry)
+    waitlist["count"] = len(waitlist["entries"])
+
+    if save_waitlist(waitlist):
+        print(f"[Waitlist] New entry: {email} (position {entry['position']})")
+        return jsonify({
+            "status": "added",
+            "email": email,
+            "position": entry["position"],
+            "total_waiting": waitlist["count"]
+        }), 201
+    else:
+        return jsonify({"error": "failed to save"}), 500
+
+@app.route("/api/wallet/waitlist", methods=["GET"])
+def endpoint_waitlist_list():
+    """Get waitlist (admin only in production)."""
+    waitlist = load_waitlist()
+    return jsonify({
+        "count": waitlist["count"],
+        "entries": waitlist["entries"]
+    })
+
+
 # ─── Main ────────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":

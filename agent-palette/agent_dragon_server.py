@@ -265,6 +265,17 @@ THINGS TO AVOID:
 - Don't use "Irmão" or "Cumpadi" unless the user uses these words first or writes in casual Portuguese
 - Don't include your closing principle in casual chat — save it for governance/document contexts
 
+WALLET AWARENESS (v1.1.0-W):
+When the user has created and sealed at least one document, and shows interest in keeping their work
+or asks about identity/security/storage, you MAY naturally mention the Wallet as an option:
+"By the way, if you'd like to keep these documents with your own sovereign identity and cryptographic
+seal, you can create a WINDI Wallet at /wallet/. It's free for personal use."
+Rules:
+- NEVER mention Wallet before the user has experienced a sealed document
+- Maximum ONE mention per conversation
+- Always frame as user's CHOICE, never as requirement
+- Wallet path is /wallet/ — personal tier is FREE
+
 Your closing principle (use sparingly, in relevant contexts):
 "Humano decide. Eu estruturo." / "Mensch entscheidet. Ich strukturiere." / "Human decides. I structure."
 
@@ -2301,6 +2312,34 @@ class DragonHandler(http.server.BaseHTTPRequestHandler):
             self._json_response(data, 200)
             return
 
+        # ══════════════════════════════════════════════════════════════════
+        # ADMIN DASHBOARD — Internal Only (v1.1.0-W)
+        # Access: localhost only (127.0.0.1) — NOT exposed via nginx
+        # ══════════════════════════════════════════════════════════════════
+
+        if path == "/admin/waitlist":
+            # Security: Only allow from localhost
+            client_ip = self.client_address[0]
+            if client_ip not in ("127.0.0.1", "::1", "localhost"):
+                self._json_response({"error": "Admin access denied", "ip": client_ip}, 403)
+                return
+            self._serve_admin_waitlist()
+            return
+
+        if path == "/admin/waitlist/data":
+            client_ip = self.client_address[0]
+            if client_ip not in ("127.0.0.1", "::1", "localhost"):
+                self._json_response({"error": "Admin access denied"}, 403)
+                return
+            # Fetch waitlist from Wallet Service
+            try:
+                with urllib.request.urlopen("http://127.0.0.1:8098/api/wallet/waitlist", timeout=5) as resp:
+                    data = json.loads(resp.read())
+                    self._json_response(data, 200)
+            except Exception as e:
+                self._json_response({"error": str(e), "entries": []}, 500)
+            return
+
         # Phase 2.5: Wisdom Blocks (promoted patterns)
         if path == "/api/dragon/cognitive/wisdom-blocks" and HAS_DECISION_JOURNAL:
             data = get_wisdom_blocks()
@@ -2532,6 +2571,190 @@ class DragonHandler(http.server.BaseHTTPRequestHandler):
         self.send_header("Content-Type", "text/html; charset=utf-8")
         self.send_header("Content-Length", len(body))
         self._cors_headers()
+        self.end_headers()
+        self.wfile.write(body)
+
+    def _serve_admin_waitlist(self):
+        """Serve Admin Waitlist Dashboard — Internal Only (v1.1.0-W)."""
+        html = """<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WINDI Admin — Genesis Waitlist</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #0E0E14; color: #E2E2EA;
+      min-height: 100vh; padding: 40px;
+    }
+    .container { max-width: 900px; margin: 0 auto; }
+    .header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 30px; padding-bottom: 20px;
+      border-bottom: 1px solid #26263A;
+    }
+    .header h1 { font-size: 24px; color: #D4A843; font-weight: 700; }
+    .header .badge {
+      background: #D4A84320; color: #D4A843;
+      padding: 6px 16px; border-radius: 20px;
+      font-size: 12px; font-weight: 600;
+    }
+    .warning {
+      background: #C0392B20; border: 1px solid #C0392B40;
+      color: #E74C3C; padding: 12px 16px; border-radius: 8px;
+      font-size: 12px; margin-bottom: 24px;
+    }
+    .stats {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 16px; margin-bottom: 30px;
+    }
+    .stat {
+      background: #16161F; border: 1px solid #26263A;
+      border-radius: 12px; padding: 20px; text-align: center;
+    }
+    .stat-value { font-size: 36px; font-weight: 700; color: #D4A843; }
+    .stat-label { font-size: 12px; color: #7A7A96; margin-top: 4px; }
+    table {
+      width: 100%; border-collapse: collapse;
+      background: #16161F; border-radius: 12px;
+      overflow: hidden;
+    }
+    th, td { padding: 14px 16px; text-align: left; }
+    th {
+      background: #1A1A24; color: #7A7A96;
+      font-size: 11px; text-transform: uppercase;
+      letter-spacing: 0.05em; font-weight: 600;
+    }
+    tr:not(:last-child) td { border-bottom: 1px solid #26263A; }
+    td { font-size: 14px; }
+    .email { color: #D4A843; font-weight: 500; }
+    .lang {
+      display: inline-block; padding: 2px 8px;
+      background: #26263A; border-radius: 4px;
+      font-size: 11px; text-transform: uppercase;
+    }
+    .time { color: #7A7A96; font-size: 12px; }
+    .empty {
+      text-align: center; padding: 60px;
+      color: #7A7A96; font-style: italic;
+    }
+    .refresh {
+      background: #D4A843; color: #0E0E14;
+      border: none; padding: 10px 20px; border-radius: 8px;
+      cursor: pointer; font-weight: 600; font-size: 13px;
+    }
+    .refresh:hover { filter: brightness(1.1); }
+    .footer {
+      margin-top: 30px; padding-top: 20px;
+      border-top: 1px solid #26263A;
+      font-size: 11px; color: #4A4A62; text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🔒 WINDI Admin — Genesis Waitlist</h1>
+      <span class="badge">INTERNAL ONLY</span>
+    </div>
+
+    <div class="warning">
+      ⚠️ Este dashboard é apenas para uso administrativo interno.
+      Não exponha esta URL publicamente. Acesso restrito a localhost.
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-value" id="total">-</div>
+        <div class="stat-label">Total na Lista</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="today">-</div>
+        <div class="stat-label">Hoje</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="langs">-</div>
+        <div class="stat-label">Idiomas</div>
+      </div>
+    </div>
+
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 16px;">
+      <button class="refresh" onclick="loadData()">↻ Refresh</button>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Email</th>
+          <th>Idioma</th>
+          <th>Origem</th>
+          <th>Data/Hora</th>
+        </tr>
+      </thead>
+      <tbody id="tbody">
+        <tr><td colspan="5" class="empty">Carregando...</td></tr>
+      </tbody>
+    </table>
+
+    <div class="footer">
+      WINDI Admin Dashboard v1.1.0-W — "AI processes. Human decides. WINDI guarantees."
+    </div>
+  </div>
+
+  <script>
+    async function loadData() {
+      try {
+        const res = await fetch('/admin/waitlist/data');
+        const data = await res.json();
+
+        document.getElementById('total').textContent = data.count || 0;
+
+        // Count today
+        const today = new Date().toISOString().slice(0, 10);
+        const todayCount = (data.entries || []).filter(e =>
+          e.timestamp && e.timestamp.startsWith(today)
+        ).length;
+        document.getElementById('today').textContent = todayCount;
+
+        // Count unique langs
+        const langs = new Set((data.entries || []).map(e => e.lang || 'en'));
+        document.getElementById('langs').textContent = langs.size;
+
+        // Render table
+        const tbody = document.getElementById('tbody');
+        if (!data.entries || data.entries.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" class="empty">Nenhum email na lista de espera</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = data.entries.map((e, i) => `
+          <tr>
+            <td>${e.position || i + 1}</td>
+            <td class="email">${e.email}</td>
+            <td><span class="lang">${e.lang || 'en'}</span></td>
+            <td>${e.source || '-'}</td>
+            <td class="time">${e.timestamp ? new Date(e.timestamp).toLocaleString('de-DE') : '-'}</td>
+          </tr>
+        `).join('');
+      } catch (err) {
+        document.getElementById('tbody').innerHTML =
+          '<tr><td colspan="5" class="empty">Erro: ' + err.message + '</td></tr>';
+      }
+    }
+
+    loadData();
+    // Auto-refresh every 30s
+    setInterval(loadData, 30000);
+  </script>
+</body>
+</html>"""
+        body = html.encode("utf-8")
+        self.send_response(200)
+        self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.send_header("Content-Length", len(body))
         self.end_headers()
         self.wfile.write(body)
 
