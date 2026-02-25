@@ -2352,6 +2352,14 @@ class DragonHandler(http.server.BaseHTTPRequestHandler):
             self._json_response(data, code)
             return
 
+        # Communiqué stats (stub for frontend compatibility)
+        if path == "/api/communique/stats":
+            self._json_response({
+                "draft": 0, "review": 0, "published": 0, "archived": 0,
+                "total": 0, "source": "stub"
+            }, 200)
+            return
+
         # Engine status checks (GET returns readiness, POST generates)
         engine_routes = {
             "/api/dragon/generate/pdf": ("pdf", HAS_PDF, "reportlab"),
