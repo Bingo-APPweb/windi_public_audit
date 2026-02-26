@@ -1,0 +1,30 @@
+{
+  "_comment": "WINDI Legacy Receipts Allowlist — Pre-Cutover Exemptions",
+  "_cutover_date": "2026-02-26T23:59:59Z",
+  "_cutover_timestamp": 1772198399,
+  "_policy": "Receipts created before cutover are exempt from tenant_id and metadata_hash enforcement",
+
+  "exempt_missing_tenant_id": [
+    "hsbc-pilot",
+    "pre-tenant-rollout",
+    "legacy-2025"
+  ],
+
+  "exempt_metadata_hash": [
+    "hsbc-pilot"
+  ],
+
+  "legacy_receipt_prefixes": [
+    "TC-hsbc-pil-20260226-0015"
+  ],
+
+  "legacy_ledger_ids": [
+    "VR-COM-d71f7d8bc81b"
+  ],
+
+  "rules": {
+    "new_receipts": "MUST have tenant_id and valid metadata_hash",
+    "legacy_receipts": "Exempt but flagged in audit reports",
+    "migration": "Optional backfill with migration receipt in ledger"
+  }
+}
