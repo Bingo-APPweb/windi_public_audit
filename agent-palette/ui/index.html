@@ -9082,7 +9082,7 @@ ${lastSGE.findings?.map((f,i) => `${i+1}. [${f.risk_level}] ${f.category}: ${f.d
                   border:`1px solid ${T.gold}30`, color:T.gold, fontWeight:500,
                   display:"flex", alignItems:"center", gap:4, letterSpacing:"0.5px" }}>
                 <span style={{ width:5, height:5, borderRadius:"50%", background:T.green, boxShadow:`0 0 4px ${T.green}`, animation:"sovereignPulse 2s ease-in-out infinite" }}></span>
-                {governanceWatermark}
+                {governanceWatermark?.text || governanceWatermark}
               </span>
             )}
           </div>
