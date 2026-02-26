@@ -2203,7 +2203,187 @@ def _handle_sovereign_local(intent, message, lang, tier):
     if not HAS_SOVEREIGN_ROUTER:
         return {"error": "Sovereign router not available"}, 500
 
-    # HELP intent -> show full capabilities
+    # ═══════════════════════════════════════════════════════════════
+    # CONVERSATIONAL INTELLIGENCE (93% Brain) — Check BEFORE HELP
+    # Pattern matching for intelligent local responses
+    # ═══════════════════════════════════════════════════════════════
+    msg_lower = message.lower()
+
+    # Service/capability questions
+    if any(kw in msg_lower for kw in ['serviço', 'servico', 'service', 'dienst', 'disponível', 'available', 'verfügbar']):
+        service_responses = {
+            "pt": (
+                "**Serviços Disponíveis no WINDI**\n\n"
+                "🔹 **Documentos** — Criar cartas, memorandos, relatórios, contratos (4 tipos no Personal, 14 no Governance)\n\n"
+                "🔹 **Selagem Forense** — Cada documento recebe SHA-256 hash + número de série + QR code. Selado no Forensic Ledger.\n\n"
+                "🔹 **Análise SGE** — 6 camadas de análise semântica: Risco (R0-R5), Tom, Estrutura, Conformidade\n\n"
+                "🔹 **Dashboards** — Pulse (serviços), Outlook (funcionalidades), Health (sistema)\n\n"
+                "🔹 **Workflows** — Communiqué (criar→revisar→publicar), OCR, Templates ISP\n\n"
+                "**93.3% soberano** — Tudo corre localmente. LLM só para análise profunda.\n\n"
+                "O que queres fazer agora?"
+            ),
+            "de": (
+                "**Verfügbare WINDI-Dienste**\n\n"
+                "🔹 **Dokumente** — Briefe, Memos, Berichte, Verträge erstellen (4 Typen Personal, 14 Governance)\n\n"
+                "🔹 **Forensische Versiegelung** — Jedes Dokument erhält SHA-256 Hash + Seriennummer + QR-Code. Im Forensic Ledger versiegelt.\n\n"
+                "🔹 **SGE-Analyse** — 6 Schichten semantischer Analyse: Risiko (R0-R5), Ton, Struktur, Compliance\n\n"
+                "🔹 **Dashboards** — Pulse (Dienste), Outlook (Features), Health (System)\n\n"
+                "🔹 **Workflows** — Communiqué (erstellen→prüfen→veröffentlichen), OCR, ISP-Vorlagen\n\n"
+                "**93.3% souverän** — Alles läuft lokal. LLM nur für tiefe Analyse.\n\n"
+                "Was möchtest du jetzt tun?"
+            ),
+            "en": (
+                "**Available WINDI Services**\n\n"
+                "🔹 **Documents** — Create letters, memos, reports, contracts (4 types Personal, 14 Governance)\n\n"
+                "🔹 **Forensic Sealing** — Every document gets SHA-256 hash + serial number + QR code. Sealed in Forensic Ledger.\n\n"
+                "🔹 **SGE Analysis** — 6 layers of semantic analysis: Risk (R0-R5), Tone, Structure, Compliance\n\n"
+                "🔹 **Dashboards** — Pulse (services), Outlook (features), Health (system)\n\n"
+                "🔹 **Workflows** — Communiqué (create→review→publish), OCR, ISP Templates\n\n"
+                "**93.3% sovereign** — Everything runs locally. LLM only for deep analysis.\n\n"
+                "What would you like to do now?"
+            ),
+        }
+        return {
+            "dragon": "guardian",
+            "message": service_responses.get(lang, service_responses["en"]),
+            "source": "sovereign",
+            "intent": "service_inquiry",
+            "sovereignty": sovereignty_metadata(llm_used=False),
+        }
+
+    # Conversational / greeting
+    if any(kw in msg_lower for kw in ['olá', 'ola', 'hello', 'hallo', 'hi ', 'conversar', 'talk', 'sprechen', 'bom dia', 'boa tarde', 'guten']):
+        greeting_responses = {
+            "pt": (
+                "Olá! 🐉 Sou o Guardian Dragon do WINDI.\n\n"
+                "Posso ajudar-te com:\n"
+                "• Criar documentos (cartas, memos, relatórios)\n"
+                "• Explicar os serviços disponíveis\n"
+                "• Mostrar o estado da governança\n"
+                "• Selar documentos no Forensic Ledger\n\n"
+                "O que gostarias de fazer?"
+            ),
+            "de": (
+                "Hallo! 🐉 Ich bin der Guardian Dragon von WINDI.\n\n"
+                "Ich kann dir helfen mit:\n"
+                "• Dokumente erstellen (Briefe, Memos, Berichte)\n"
+                "• Verfügbare Dienste erklären\n"
+                "• Governance-Status anzeigen\n"
+                "• Dokumente im Forensic Ledger versiegeln\n\n"
+                "Was möchtest du tun?"
+            ),
+            "en": (
+                "Hello! 🐉 I'm the Guardian Dragon of WINDI.\n\n"
+                "I can help you with:\n"
+                "• Create documents (letters, memos, reports)\n"
+                "• Explain available services\n"
+                "• Show governance status\n"
+                "• Seal documents in Forensic Ledger\n\n"
+                "What would you like to do?"
+            ),
+        }
+        return {
+            "dragon": "guardian",
+            "message": greeting_responses.get(lang, greeting_responses["en"]),
+            "source": "sovereign",
+            "intent": "greeting",
+            "sovereignty": sovereignty_metadata(llm_used=False),
+        }
+
+    # Document questions
+    if any(kw in msg_lower for kw in ['documento', 'document', 'dokument', 'carta', 'letter', 'brief', 'memo', 'relatório', 'report', 'bericht']) and any(kw in msg_lower for kw in ['como', 'how', 'wie', 'criar', 'create', 'erstellen', 'tipo', 'type', 'art']):
+        doc_responses = {
+            "pt": (
+                "**Criação de Documentos no WINDI**\n\n"
+                "📄 **Tipos disponíveis:**\n"
+                "• Carta formal (Brief/Letter)\n"
+                "• Memorando interno (Memo)\n"
+                "• Nota/Anotação (Note/Notiz)\n"
+                "• E-mail profissional\n\n"
+                "📝 **Como criar:** Diz-me o que precisas, por exemplo:\n"
+                "\"Escreve uma carta para o meu senhorio sobre a extensão do contrato\"\n\n"
+                "🔏 **Selagem automática:** Cada documento é selado com hash SHA-256.\n\n"
+                "Que tipo de documento queres criar?"
+            ),
+            "de": (
+                "**Dokumentenerstellung in WINDI**\n\n"
+                "📄 **Verfügbare Typen:**\n"
+                "• Formeller Brief\n"
+                "• Internes Memo\n"
+                "• Notiz/Anmerkung\n"
+                "• Professionelle E-Mail\n\n"
+                "📝 **So erstellst du:** Sag mir was du brauchst, z.B.:\n"
+                "\"Schreib einen Brief an meinen Vermieter\"\n\n"
+                "🔏 **Automatische Versiegelung:** Mit SHA-256 Hash.\n\n"
+                "Welchen Dokumenttyp möchtest du erstellen?"
+            ),
+            "en": (
+                "**Document Creation in WINDI**\n\n"
+                "📄 **Available types:**\n"
+                "• Formal letter\n"
+                "• Internal memo\n"
+                "• Note/Annotation\n"
+                "• Professional email\n\n"
+                "📝 **How to create:** Tell me what you need, e.g.:\n"
+                "\"Write a letter to my landlord\"\n\n"
+                "🔏 **Automatic sealing:** With SHA-256 hash.\n\n"
+                "What type of document would you like to create?"
+            ),
+        }
+        return {
+            "dragon": "architect",
+            "message": doc_responses.get(lang, doc_responses["en"]),
+            "source": "sovereign",
+            "intent": "document_inquiry",
+            "sovereignty": sovereignty_metadata(llm_used=False),
+        }
+
+    # Compliance/governance questions
+    if any(kw in msg_lower for kw in ['compliance', 'governança', 'governance', 'risco', 'risk', 'risiko', 'invariante', 'invariant', 'sge', 'análise', 'analyse']):
+        gov_responses = {
+            "pt": (
+                "**Governança e Compliance no WINDI**\n\n"
+                "🛡️ **9 Invariantes Constitucionais (I1-I9)**\n"
+                "Regras invioláveis que garantem integridade e controlo humano.\n\n"
+                "⚖️ **Análise SGE (6 Camadas)**\n"
+                "• Risco (R0-R5): Mínimo → Crítico\n"
+                "• Tom, Estrutura, Conformidade\n\n"
+                "📊 **Ratio de Soberania: 93.3%**\n"
+                "42 de 45 funções correm localmente.\n\n"
+                "Queres ver o estado atual?"
+            ),
+            "de": (
+                "**Governance und Compliance in WINDI**\n\n"
+                "🛡️ **9 Verfassungsinvarianten (I1-I9)**\n"
+                "Unverletztliche Regeln für Integrität und menschliche Kontrolle.\n\n"
+                "⚖️ **SGE-Analyse (6 Schichten)**\n"
+                "• Risiko (R0-R5): Minimal → Kritisch\n"
+                "• Ton, Struktur, Compliance\n\n"
+                "📊 **Souveränitäts-Ratio: 93.3%**\n"
+                "42 von 45 Funktionen laufen lokal.\n\n"
+                "Möchtest du den Status sehen?"
+            ),
+            "en": (
+                "**Governance and Compliance in WINDI**\n\n"
+                "🛡️ **9 Constitutional Invariants (I1-I9)**\n"
+                "Inviolable rules for integrity and human control.\n\n"
+                "⚖️ **SGE Analysis (6 Layers)**\n"
+                "• Risk (R0-R5): Minimal → Critical\n"
+                "• Tone, Structure, Compliance\n\n"
+                "📊 **Sovereignty Ratio: 93.3%**\n"
+                "42 of 45 functions run locally.\n\n"
+                "Would you like to see the status?"
+            ),
+        }
+        return {
+            "dragon": "witness",
+            "message": gov_responses.get(lang, gov_responses["en"]),
+            "source": "sovereign",
+            "intent": "governance_inquiry",
+            "sovereignty": sovereignty_metadata(llm_used=False),
+        }
+
+    # HELP intent -> show full capabilities (fallback)
     if intent == Intent.HELP:
         return {
             "dragon": "guardian",
