@@ -2204,43 +2204,122 @@ def _handle_sovereign_local(intent, message, lang, tier):
         return {"error": "Sovereign router not available"}, 500
 
     # ═══════════════════════════════════════════════════════════════
-    # CONVERSATIONAL INTELLIGENCE (93% Brain) — Check BEFORE HELP
-    # Pattern matching for intelligent local responses
+    # CONVERSATIONAL INTELLIGENCE (93% Brain) — Natural Dialogue
+    # "A máquina não advoga. Ela produz prova. A prova advoga."
     # ═══════════════════════════════════════════════════════════════
     msg_lower = message.lower()
 
-    # Service/capability questions
-    if any(kw in msg_lower for kw in ['serviço', 'servico', 'service', 'dienst', 'disponível', 'available', 'verfügbar']):
-        service_responses = {
+    # ─── CASUAL CHAT (bater papo, just chat, plaudern) ───
+    # User wants natural conversation, not menus
+    if any(kw in msg_lower for kw in ['papo', 'chat', 'plaudern', 'só conversar', 'just talk', 'trabalhar', 'vamos', 'bora', 'lass uns']):
+        casual_responses = {
             "pt": (
-                "**Serviços Disponíveis no WINDI**\n\n"
-                "🔹 **Documentos** — Criar cartas, memorandos, relatórios, contratos (4 tipos no Personal, 14 no Governance)\n\n"
-                "🔹 **Selagem Forense** — Cada documento recebe SHA-256 hash + número de série + QR code. Selado no Forensic Ledger.\n\n"
-                "🔹 **Análise SGE** — 6 camadas de análise semântica: Risco (R0-R5), Tom, Estrutura, Conformidade\n\n"
-                "🔹 **Dashboards** — Pulse (serviços), Outlook (funcionalidades), Health (sistema)\n\n"
-                "🔹 **Workflows** — Communiqué (criar→revisar→publicar), OCR, Templates ISP\n\n"
-                "**93.3% soberano** — Tudo corre localmente. LLM só para análise profunda.\n\n"
-                "O que queres fazer agora?"
+                "Claro! Estou aqui. 🐉\n\n"
+                "Sou o Guardian — o dragão que protege. Faço parte de um sistema com três dragões:\n\n"
+                "🛡️ **Eu (Guardian)** — Protejo a integridade. Valido antes de agir.\n"
+                "🏗️ **Architect** — Constrói documentos. Estrutura conteúdo.\n"
+                "👁️ **Witness** — Observa e verifica. Sela no Ledger.\n\n"
+                "Juntos garantimos que **tu decides, nós executamos**. Nada acontece sem a tua aprovação.\n\n"
+                "Conta-me — tens algum documento para criar? Uma carta? Um memo? Ou queres saber mais sobre como funciono?"
             ),
             "de": (
-                "**Verfügbare WINDI-Dienste**\n\n"
-                "🔹 **Dokumente** — Briefe, Memos, Berichte, Verträge erstellen (4 Typen Personal, 14 Governance)\n\n"
-                "🔹 **Forensische Versiegelung** — Jedes Dokument erhält SHA-256 Hash + Seriennummer + QR-Code. Im Forensic Ledger versiegelt.\n\n"
-                "🔹 **SGE-Analyse** — 6 Schichten semantischer Analyse: Risiko (R0-R5), Ton, Struktur, Compliance\n\n"
-                "🔹 **Dashboards** — Pulse (Dienste), Outlook (Features), Health (System)\n\n"
-                "🔹 **Workflows** — Communiqué (erstellen→prüfen→veröffentlichen), OCR, ISP-Vorlagen\n\n"
-                "**93.3% souverän** — Alles läuft lokal. LLM nur für tiefe Analyse.\n\n"
-                "Was möchtest du jetzt tun?"
+                "Klar, ich bin hier! 🐉\n\n"
+                "Ich bin der Guardian — der Drache, der beschützt. Teil eines Systems mit drei Drachen:\n\n"
+                "🛡️ **Ich (Guardian)** — Schütze die Integrität. Validiere vor dem Handeln.\n"
+                "🏗️ **Architect** — Baut Dokumente. Strukturiert Inhalte.\n"
+                "👁️ **Witness** — Beobachtet und verifiziert. Versiegelt im Ledger.\n\n"
+                "Zusammen garantieren wir: **Du entscheidest, wir führen aus**.\n\n"
+                "Erzähl mir — hast du ein Dokument zu erstellen? Einen Brief? Ein Memo?"
             ),
             "en": (
-                "**Available WINDI Services**\n\n"
-                "🔹 **Documents** — Create letters, memos, reports, contracts (4 types Personal, 14 Governance)\n\n"
-                "🔹 **Forensic Sealing** — Every document gets SHA-256 hash + serial number + QR code. Sealed in Forensic Ledger.\n\n"
-                "🔹 **SGE Analysis** — 6 layers of semantic analysis: Risk (R0-R5), Tone, Structure, Compliance\n\n"
-                "🔹 **Dashboards** — Pulse (services), Outlook (features), Health (system)\n\n"
-                "🔹 **Workflows** — Communiqué (create→review→publish), OCR, ISP Templates\n\n"
-                "**93.3% sovereign** — Everything runs locally. LLM only for deep analysis.\n\n"
-                "What would you like to do now?"
+                "Sure, I'm here! 🐉\n\n"
+                "I'm the Guardian — the dragon that protects. Part of a system with three dragons:\n\n"
+                "🛡️ **Me (Guardian)** — Protect integrity. Validate before acting.\n"
+                "🏗️ **Architect** — Builds documents. Structures content.\n"
+                "👁️ **Witness** — Observes and verifies. Seals in the Ledger.\n\n"
+                "Together we ensure: **You decide, we execute**. Nothing happens without your approval.\n\n"
+                "Tell me — do you have a document to create? A letter? A memo?"
+            ),
+        }
+        return {
+            "dragon": "guardian",
+            "message": casual_responses.get(lang, casual_responses["en"]),
+            "source": "sovereign",
+            "intent": "casual_chat",
+            "sovereignty": sovereignty_metadata(llm_used=False),
+        }
+
+    # ─── WHO ARE YOU / WHAT ARE YOU (identity questions) ───
+    if any(kw in msg_lower for kw in ['quem és', 'quem es', 'who are you', 'wer bist', 'o que és', 'what are you', 'was bist', 'como funciona', 'how do you work', 'wie funktionierst']):
+        identity_responses = {
+            "pt": (
+                "Sou o **Guardian Dragon** — um dos três dragões do WINDI. 🐉\n\n"
+                "**A minha missão:** Proteger. Validar. Garantir que tu tens sempre o controlo.\n\n"
+                "**Como funciono:**\n"
+                "• 93.3% do que faço corre **localmente** — sem enviar dados para fora\n"
+                "• Cada documento que crio recebe um **selo forense** (SHA-256 + QR code)\n"
+                "• Sigo **9 invariantes constitucionais** — regras que nunca quebro\n"
+                "• O LLM (IA externa) só entra para **interpretação profunda** — e mesmo assim, tu aprovas\n\n"
+                "**Princípio:** A máquina não advoga. Ela produz prova. A prova advoga.\n\n"
+                "O que queres saber mais?"
+            ),
+            "de": (
+                "Ich bin der **Guardian Dragon** — einer von drei Drachen bei WINDI. 🐉\n\n"
+                "**Meine Mission:** Schützen. Validieren. Sicherstellen, dass du die Kontrolle behältst.\n\n"
+                "**Wie ich funktioniere:**\n"
+                "• 93.3% meiner Arbeit läuft **lokal** — keine Daten nach außen\n"
+                "• Jedes Dokument erhält ein **forensisches Siegel** (SHA-256 + QR-Code)\n"
+                "• Ich folge **9 Verfassungsinvarianten** — Regeln, die ich nie breche\n"
+                "• Das LLM (externe KI) kommt nur für **tiefe Interpretation** — und du genehmigst\n\n"
+                "**Prinzip:** Die Maschine plädiert nicht. Sie produziert Beweise. Beweise plädieren.\n\n"
+                "Was möchtest du noch wissen?"
+            ),
+            "en": (
+                "I'm the **Guardian Dragon** — one of three dragons in WINDI. 🐉\n\n"
+                "**My mission:** Protect. Validate. Ensure you always have control.\n\n"
+                "**How I work:**\n"
+                "• 93.3% of what I do runs **locally** — no data sent outside\n"
+                "• Every document gets a **forensic seal** (SHA-256 + QR code)\n"
+                "• I follow **9 constitutional invariants** — rules I never break\n"
+                "• The LLM (external AI) only enters for **deep interpretation** — and you approve\n\n"
+                "**Principle:** The machine doesn't advocate. It produces proof. Proof advocates.\n\n"
+                "What else would you like to know?"
+            ),
+        }
+        return {
+            "dragon": "guardian",
+            "message": identity_responses.get(lang, identity_responses["en"]),
+            "source": "sovereign",
+            "intent": "identity_inquiry",
+            "sovereignty": sovereignty_metadata(llm_used=False),
+        }
+
+    # ─── SERVICE QUESTIONS (detailed, but less robotic) ───
+    if any(kw in msg_lower for kw in ['serviço', 'servico', 'service', 'dienst', 'disponível', 'available', 'verfügbar', 'o que podes', 'what can you', 'was kannst']):
+        service_responses = {
+            "pt": (
+                "Posso ajudar-te com várias coisas:\n\n"
+                "📝 **Documentos** — Cartas, memos, relatórios. Diz-me o que precisas e eu estruturo.\n\n"
+                "🔏 **Selagem** — Cada documento recebe hash SHA-256, número de série e QR code. Prova forense.\n\n"
+                "⚖️ **Análise** — Avalio risco (R0-R5), tom, estrutura. Tudo transparente.\n\n"
+                "📊 **Status** — Posso mostrar-te como está o sistema (Pulse, Health, Outlook).\n\n"
+                "O que te traz aqui hoje?"
+            ),
+            "de": (
+                "Ich kann dir bei verschiedenen Dingen helfen:\n\n"
+                "📝 **Dokumente** — Briefe, Memos, Berichte. Sag mir was du brauchst.\n\n"
+                "🔏 **Versiegelung** — Jedes Dokument erhält SHA-256 Hash, Seriennummer und QR-Code.\n\n"
+                "⚖️ **Analyse** — Bewerte Risiko (R0-R5), Ton, Struktur. Alles transparent.\n\n"
+                "📊 **Status** — Kann dir zeigen wie das System läuft.\n\n"
+                "Was bringt dich heute hierher?"
+            ),
+            "en": (
+                "I can help you with several things:\n\n"
+                "📝 **Documents** — Letters, memos, reports. Tell me what you need.\n\n"
+                "🔏 **Sealing** — Every document gets SHA-256 hash, serial number and QR code.\n\n"
+                "⚖️ **Analysis** — Assess risk (R0-R5), tone, structure. All transparent.\n\n"
+                "📊 **Status** — Can show you how the system is running.\n\n"
+                "What brings you here today?"
             ),
         }
         return {
@@ -2251,29 +2330,23 @@ def _handle_sovereign_local(intent, message, lang, tier):
             "sovereignty": sovereignty_metadata(llm_used=False),
         }
 
-    # Conversational / greeting
-    if any(kw in msg_lower for kw in ['olá', 'ola', 'hello', 'hallo', 'hi ', 'conversar', 'talk', 'sprechen', 'bom dia', 'boa tarde', 'guten']):
+    # ─── GREETING (natural, warm) ───
+    if any(kw in msg_lower for kw in ['olá', 'ola', 'hello', 'hallo', 'hi', 'bom dia', 'boa tarde', 'boa noite', 'guten', 'good morning', 'good afternoon']):
         greeting_responses = {
             "pt": (
-                "Olá! 🐉 Sou o Guardian Dragon do WINDI.\n\n"
-                "Posso ajudar-te com:\n"
-                "• Criar documentos (cartas, memos, relatórios)\n"
-                "• Explicar os serviços disponíveis\n"
-                "• Mostrar o estado da governança\n"
-                "• Selar documentos no Forensic Ledger\n\n"
-                "O que gostarias de fazer?"
+                "Olá! 🐉\n\n"
+                "Sou o Guardian. Estou aqui para ajudar — seja criar um documento, explicar como funciono, ou simplesmente conversar.\n\n"
+                "O que te traz aqui?"
             ),
             "de": (
-                "Hallo! 🐉 Ich bin der Guardian Dragon von WINDI.\n\n"
-                "Ich kann dir helfen mit:\n"
-                "• Dokumente erstellen (Briefe, Memos, Berichte)\n"
-                "• Verfügbare Dienste erklären\n"
-                "• Governance-Status anzeigen\n"
-                "• Dokumente im Forensic Ledger versiegeln\n\n"
-                "Was möchtest du tun?"
+                "Hallo! 🐉\n\n"
+                "Ich bin der Guardian. Ich bin hier um zu helfen — sei es ein Dokument erstellen, erklären wie ich funktioniere, oder einfach reden.\n\n"
+                "Was bringt dich hierher?"
             ),
             "en": (
-                "Hello! 🐉 I'm the Guardian Dragon of WINDI.\n\n"
+                "Hello! 🐉\n\n"
+                "I'm the Guardian. I'm here to help — whether it's creating a document, explaining how I work, or just chatting.\n\n"
+                "What brings you here?"
                 "I can help you with:\n"
                 "• Create documents (letters, memos, reports)\n"
                 "• Explain available services\n"
