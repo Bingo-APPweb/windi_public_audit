@@ -1,0 +1,104 @@
+{
+  "passport_header": {
+    "passport_id": "CP-AUTO-20260223-SCORE01",
+    "schema_version": "1.0.0",
+    "issued_at": "2026-02-23T12:04:16.802556+00:00",
+    "valid_until": "2026-03-23T23:59:59+00:00",
+    "issuer": "WINDI Guardian + Human Dragon Assessment",
+    "type": "sovereignty_assessment"
+  },
+  "autonomy_assessment": {
+    "assessment_date": "2026-02-23",
+    "assessment_id": "AUTONOMY-SCORE-2026-02-23",
+    "current_score": {
+      "total_capabilities": 29,
+      "autonomous_capabilities": 26,
+      "key_dependent_capabilities": 3,
+      "autonomy_percentage": 89.7,
+      "governance_sovereignty_percentage": 100.0
+    },
+    "key_dependent_functions": [
+      {
+        "function": "deep_semantic_analysis",
+        "description": "Complex semantic understanding requiring LLM inference",
+        "status": "LLM_KEY_REQUIRED"
+      },
+      {
+        "function": "text_generation_summaries",
+        "description": "High-quality text generation for document creation",
+        "status": "LLM_KEY_REQUIRED"
+      },
+      {
+        "function": "interactive_chat_babel",
+        "description": "Natural language conversation in BABEL channel",
+        "status": "LLM_KEY_REQUIRED"
+      }
+    ],
+    "autonomous_modules": [
+      "N1 - Forensic Ledger Sync",
+      "N2 - SHA-256 Hash Injector",
+      "N3 - Serial Engine",
+      "N4 - QR Code Generator",
+      "Wisdom Protocol + Block Manager",
+      "Compliance Passport Generator",
+      "Vault Storage + Verification",
+      "Communiqué Publisher",
+      "Sentinel LAW v2.0",
+      "SIP (Sovereign Identity Protocol)",
+      "Desktop D1 Foundation",
+      "Agent Palette Document Renderer",
+      "SGE Risk Analysis (7-layer)",
+      "ISP Template Resolver",
+      "Intent Parser v2",
+      "Entity Extractor",
+      "Download Security (signed URLs)",
+      "Spec Sanitizer",
+      "Quota Engine"
+    ],
+    "new_autonomous_since_10feb": [
+      "Tesseract OCR Local (pending admin install)",
+      "Wisdom Auto-Categorizer (rule-based)"
+    ],
+    "projected_next_score": {
+      "total_capabilities": 31,
+      "autonomous_capabilities": 28,
+      "key_dependent_capabilities": 3,
+      "autonomy_percentage": 90.3,
+      "note": "+2 from OCR local + auto-categorizer"
+    }
+  },
+  "score_evolution": [
+    {
+      "date": "2026-02-10",
+      "score": 76.0,
+      "ratio": "13/17"
+    },
+    {
+      "date": "2026-02-13",
+      "score": 80.0,
+      "ratio": "~18/22"
+    },
+    {
+      "date": "2026-02-22",
+      "score": 90.0,
+      "ratio": "26/29"
+    },
+    {
+      "date": "2026-02-23",
+      "score": 89.7,
+      "ratio": "26/29",
+      "note": "Current assessment"
+    }
+  ],
+  "verdict": {
+    "status": "SOVEREIGN_GOVERNANCE_CONFIRMED",
+    "governance_score": 100.0,
+    "note": "All governance decisions remain under human sovereignty. LLM keys only affect 3 convenience functions. Core governance, sealing, verification, and audit are fully autonomous.",
+    "principle": "AI processes. Human decides. WINDI guarantees."
+  },
+  "wisdom_block_ref": "WB-SCORE-01",
+  "passport_seal": {
+    "hash": "720ad2abe33e2517b8349ea9a876ef9e58b8226b686ce1303f65f6f4d70c14ca",
+    "sealed_at": "2026-02-23T12:04:16.802592+00:00"
+  }
+}

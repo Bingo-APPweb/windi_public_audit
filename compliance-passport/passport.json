@@ -1,0 +1,137 @@
+{
+  "version": "1.0",
+  "entries": [
+    {
+      "id": "AUTONOMY-SCORE-2026-02-23",
+      "type": "sovereignty_assessment",
+      "date": "2026-02-23",
+      "timestamp": "2026-02-23T12:12:32.125422Z",
+      "score": {
+        "total_capabilities": 31,
+        "autonomous": 28,
+        "key_dependent": 3,
+        "autonomy_pct": 90.3,
+        "governance_sovereignty": 100.0
+      },
+      "key_dependent_functions": [
+        "deep_semantic_analysis",
+        "text_generation_summaries",
+        "interactive_chat_babel"
+      ],
+      "new_autonomous_modules": [
+        "tesseract_ocr_local",
+        "wisdom_auto_categorizer_rule_based"
+      ],
+      "evolution": {
+        "2026-02-10": {
+          "pct": 76,
+          "ratio": "13/17"
+        },
+        "2026-02-13": {
+          "pct": 80
+        },
+        "2026-02-22": {
+          "pct": 90,
+          "ratio": "26/29"
+        },
+        "2026-02-23": {
+          "pct": 90.3,
+          "ratio": "28/31"
+        }
+      },
+      "next_target": {
+        "modules": [
+          "url_verifier_local",
+          "image_hash_local"
+        ],
+        "projected_pct": "93-95%"
+      },
+      "verdict": "SOVEREIGN_GOVERNANCE_CONFIRMED",
+      "sealed": true
+    },
+    {
+      "id": "PAPERLESS-BRIDGE-v1.0-2026-02-23",
+      "type": "pipeline_certification",
+      "date": "2026-02-23",
+      "timestamp": "2026-02-23T12:36:52.760565+00:00",
+      "service": "windi-paperless-bridge",
+      "version": "1.0.0",
+      "status": "OPERATIONAL",
+      "components_verified": {
+        "ocr": {
+          "engine": "tesseract-5.3.0",
+          "langs": [
+            "deu",
+            "eng",
+            "por"
+          ],
+          "status": "ok",
+          "autonomous": true
+        },
+        "categorizer": {
+          "method": "rule_based_trilingual",
+          "categories": 6,
+          "status": "ok",
+          "autonomous": true
+        },
+        "ledger": {
+          "port": 8101,
+          "status": "ok",
+          "anchoring": "SHA-256"
+        },
+        "schnittstelle": {
+          "path": "/opt/windi/tsil/schnittstelle.py",
+          "status": "available",
+          "protocol": "OAuth2_QES"
+        }
+      },
+      "pipeline": "OCR \u2192 Classify \u2192 Hash \u2192 Ledger \u2192 [Paperless QES (human)]",
+      "invariant_i9": {
+        "status": "ENFORCED",
+        "tested": true,
+        "test_results": [
+          {
+            "doc_type": "INVOICE",
+            "impact": "MED",
+            "action": "PROCEEDED",
+            "receipt": "VR-PB-20260223122933"
+          },
+          {
+            "doc_type": "CONTRACT",
+            "impact": "HIGH",
+            "action": "AWAITING_HUMAN_DECISION",
+            "receipt": "VR-PB-20260223123412"
+          },
+          {
+            "doc_type": "GOVERNANCE",
+            "impact": "CRIT",
+            "action": "AWAITING_HUMAN_DECISION",
+            "receipt": "VR-PB-20260223123532"
+          }
+        ],
+        "verdict": "I9_COMPLIANCE_PROVEN_BOTH_DIRECTIONS"
+      },
+      "zero_knowledge": {
+        "policy": "client_retains_data_windi_retains_proofs",
+        "text_stored_in_ledger": false,
+        "fallback": "JSONL local queue with replay capability"
+      },
+      "autonomy": {
+        "requires_api_key": false,
+        "cloud_dependency": "none (OCR local, categorization local, hashing local)",
+        "paperless_dependency": "optional (only for QES signing, human-triggered)"
+      },
+      "trilingual_detection": {
+        "tested": true,
+        "languages": [
+          "de",
+          "en",
+          "pt"
+        ],
+        "example": "Beschluss(DE) + Governance(EN) + Resolu\u00e7\u00e3o(PT) = GOVERNANCE/CRIT"
+      },
+      "verdict": "PIPELINE_CERTIFIED_OPERATIONAL",
+      "sealed": true
+    }
+  ]
+}
