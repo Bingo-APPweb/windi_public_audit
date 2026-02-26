@@ -3394,6 +3394,32 @@ const TIERS = {
     types:["letter","memo","note","email","report","contract","invoice","protocol","analysis","presentation","security_advisory","governance_decision","communique","certificate"], formats:["docx","pdf","xlsx","pptx","jmpg"] },
 };
 
+// ═══════════════════════════════════════════════════════════════════════
+// TIER AUTO-DETECTION BY SUBDOMAIN (Prompt Definitivo)
+// clone.windia4desk.tech  → FREE  (Personal)
+// admin.windia4desk.tech  → MED   (Organization)
+// master.windia4desk.tech → HIGH  (Governance)
+// localhost / outros      → HIGH  (desenvolvimento)
+// ═══════════════════════════════════════════════════════════════════════
+function detectTier() {
+  const host = window.location.hostname.toLowerCase();
+  if (host.startsWith('clone'))  return 'FREE';
+  if (host.startsWith('admin'))  return 'MED';
+  if (host.startsWith('master')) return 'HIGH';
+  // Fallback: check URL param ?tier=FREE|MED|HIGH
+  const urlTier = new URLSearchParams(window.location.search).get('tier');
+  if (urlTier && TIERS[urlTier.toUpperCase()]) return urlTier.toUpperCase();
+  // Default: HIGH (full experience for development)
+  return 'HIGH';
+}
+
+// Subdomain redirect map for TierSwitch
+const SUBDOMAIN_MAP = {
+  FREE: 'https://clone.windia4desk.tech/palette/',
+  MED:  'https://admin.windia4desk.tech/palette/',
+  HIGH: 'https://master.windia4desk.tech/palette/'
+};
+
 // ── DOC TYPES (14 total) ──────────────────────────────────────────────
 const DOCS = {
   letter:     { icon:"✉️",  de:"Brief", en:"Letter", pt:"Carta",
@@ -5967,11 +5993,196 @@ function SealBadge({ result, T }) {
 }
 
 function TierSwitch({ tier, set, T }) {
+  // Redirect to subdomain instead of changing tier locally
+  const handleTierClick = (targetTier) => {
+    if (targetTier === tier) return; // Already on this tier
+    if (SUBDOMAIN_MAP[targetTier]) {
+      window.location.href = SUBDOMAIN_MAP[targetTier];
+    }
+  };
   return (
     <div style={{ display:"flex", gap:2, background:T.bg, borderRadius:8, padding:2, border:`1px solid ${T.border}` }}>
       {Object.entries(TIERS).map(([k,v]) => (
-        <button key={k} onClick={()=>set(k)} style={{ padding:"4px 10px", borderRadius:6, fontSize:10, fontFamily:T.mono, cursor:"pointer", transition:"all 0.2s", border:"none", background:tier===k?v.color+"15":"transparent", color:tier===k?v.color:T.muted, fontWeight:tier===k?600:400 }}>{v.label}</button>
+        <button key={k} onClick={()=>handleTierClick(k)} title={k===tier ? v.label : `Switch to ${v.label}`} style={{ padding:"4px 10px", borderRadius:6, fontSize:10, fontFamily:T.mono, cursor:k===tier?"default":"pointer", transition:"all 0.2s", border:"none", background:tier===k?v.color+"15":"transparent", color:tier===k?v.color:T.muted, fontWeight:tier===k?600:400 }}>{v.label}</button>
       ))}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// WALLET BANNER — DID Registration (Personal tier, 5 min trigger)
+// ═══════════════════════════════════════════════════════════════════════
+function WalletBanner({ show, onClose, onWalletCreated, T, lang }) {
+  const [step, setStep] = useState('intro'); // intro, form, success
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  if (!show) return null;
+
+  const labels = {
+    de: {
+      title: 'Ihre Dokumente verdienen Schutz',
+      desc: 'Mit einer digitalen Identität werden Ihre Dokumente im Forensic Ledger versiegelt.',
+      benefits: ['Virtue Receipt für jeden Brief', 'Forensic Ledger Nachweis', 'Kostenfrei & souverän'],
+      cta: 'Identität erstellen',
+      name: 'Ihr Name',
+      email: 'E-Mail (optional)',
+      creating: 'Erstelle Wallet...',
+      skip: 'Später',
+      success: 'Identität erstellt!',
+      sealed: 'Ihre Dokumente werden nun versiegelt.'
+    },
+    en: {
+      title: 'Your documents deserve protection',
+      desc: 'With a digital identity, your documents are sealed in the Forensic Ledger.',
+      benefits: ['Virtue Receipt for every letter', 'Forensic Ledger proof', 'Free & sovereign'],
+      cta: 'Create identity',
+      name: 'Your name',
+      email: 'Email (optional)',
+      creating: 'Creating wallet...',
+      skip: 'Later',
+      success: 'Identity created!',
+      sealed: 'Your documents will now be sealed.'
+    },
+    pt: {
+      title: 'Seus documentos merecem proteção',
+      desc: 'Com uma identidade digital, seus documentos são selados no Forensic Ledger.',
+      benefits: ['Virtue Receipt para cada carta', 'Prova no Forensic Ledger', 'Gratuito & soberano'],
+      cta: 'Criar identidade',
+      name: 'Seu nome',
+      email: 'E-mail (opcional)',
+      creating: 'Criando carteira...',
+      skip: 'Depois',
+      success: 'Identidade criada!',
+      sealed: 'Seus documentos agora serão selados.'
+    }
+  };
+  const L = labels[lang] || labels.en;
+
+  const handleDismiss = () => {
+    sessionStorage.setItem('windi_banner_dismissed', 'true');
+    onClose();
+  };
+
+  const handleSubmit = async () => {
+    if (!name.trim()) return;
+    setLoading(true);
+    setError(null);
+    try {
+      // Generate DID locally (sovereign approach)
+      const timestamp = Date.now();
+      const raw = `WINDI-DID:${name}:${timestamp}:${Math.random().toString(36).substr(2)}`;
+      const encoder = new TextEncoder();
+      const data = encoder.encode(raw);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const fingerprint = hashArray.slice(0, 8).map(b => b.toString(16).padStart(2, '0')).join('');
+
+      const walletData = {
+        wallet_id: `WLT-${fingerprint.toUpperCase()}`,
+        fingerprint: fingerprint,
+        name: name,
+        email: email || null,
+        created_at: new Date().toISOString()
+      };
+
+      // Store locally (sovereign)
+      localStorage.setItem('windi_wallet_id', walletData.wallet_id);
+      localStorage.setItem('windi_did', walletData.fingerprint);
+      localStorage.setItem('windi_did_name', walletData.name);
+
+      // Try to register with backend (optional, best-effort)
+      try {
+        await fetch('/palette/api/wallet/provision', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(walletData)
+        });
+      } catch (e) { /* Backend registration optional */ }
+
+      setStep('success');
+      setTimeout(() => {
+        onWalletCreated(walletData);
+      }, 2000);
+    } catch (e) {
+      setError(e.message);
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div style={{
+      position:'fixed', bottom:0, left:0, right:0, zIndex:10000,
+      background:`linear-gradient(135deg, ${T.card}, ${T.bg})`,
+      borderTop:`2px solid ${T.gold}40`,
+      boxShadow:`0 -4px 20px ${T.shadow}`,
+      padding:'20px 24px', animation:'slideUp 0.4s ease-out'
+    }}>
+      <style>{`@keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }`}</style>
+
+      {step === 'intro' && (
+        <div style={{ maxWidth:600, margin:'0 auto', textAlign:'center' }}>
+          <div style={{ fontSize:18, fontWeight:600, color:T.text, marginBottom:8 }}>
+            🪞 {L.title}
+          </div>
+          <div style={{ fontSize:13, color:T.muted, marginBottom:16 }}>{L.desc}</div>
+          <div style={{ display:'flex', justifyContent:'center', gap:16, marginBottom:16, flexWrap:'wrap' }}>
+            {L.benefits.map((b, i) => (
+              <span key={i} style={{ fontSize:11, color:T.gold, background:T.gold+'12', padding:'4px 10px', borderRadius:12 }}>
+                {['🔏','📜','⚡'][i]} {b}
+              </span>
+            ))}
+          </div>
+          <div style={{ display:'flex', justifyContent:'center', gap:12 }}>
+            <button onClick={()=>setStep('form')} style={{
+              padding:'10px 24px', borderRadius:8, border:'none', cursor:'pointer',
+              background:`linear-gradient(135deg, ${T.gold}, ${T.gold}cc)`,
+              color:'#000', fontWeight:600, fontSize:13
+            }}>{L.cta}</button>
+            <button onClick={handleDismiss} style={{
+              padding:'10px 16px', borderRadius:8, border:`1px solid ${T.border}`,
+              background:'transparent', color:T.muted, fontSize:12, cursor:'pointer'
+            }}>{L.skip}</button>
+          </div>
+        </div>
+      )}
+
+      {step === 'form' && (
+        <div style={{ maxWidth:400, margin:'0 auto' }}>
+          <div style={{ marginBottom:12 }}>
+            <input type="text" value={name} onChange={e=>setName(e.target.value)} placeholder={L.name}
+              style={{ width:'100%', padding:'10px 14px', borderRadius:8, border:`1px solid ${T.border}`,
+                background:T.bg, color:T.text, fontSize:14, boxSizing:'border-box' }} />
+          </div>
+          <div style={{ marginBottom:16 }}>
+            <input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder={L.email}
+              style={{ width:'100%', padding:'10px 14px', borderRadius:8, border:`1px solid ${T.border}`,
+                background:T.bg, color:T.muted, fontSize:13, boxSizing:'border-box' }} />
+          </div>
+          {error && <div style={{ color:'#e74c3c', fontSize:12, marginBottom:8 }}>{error}</div>}
+          <div style={{ display:'flex', gap:12 }}>
+            <button onClick={handleSubmit} disabled={loading || !name.trim()} style={{
+              flex:1, padding:'10px', borderRadius:8, border:'none', cursor:loading?'wait':'pointer',
+              background:loading ? T.muted : `linear-gradient(135deg, ${T.gold}, ${T.gold}cc)`,
+              color:'#000', fontWeight:600, fontSize:13, opacity:!name.trim()?0.5:1
+            }}>{loading ? L.creating : L.cta}</button>
+            <button onClick={handleDismiss} style={{
+              padding:'10px 16px', borderRadius:8, border:`1px solid ${T.border}`,
+              background:'transparent', color:T.muted, fontSize:12, cursor:'pointer'
+            }}>{L.skip}</button>
+          </div>
+        </div>
+      )}
+
+      {step === 'success' && (
+        <div style={{ maxWidth:400, margin:'0 auto', textAlign:'center' }}>
+          <div style={{ fontSize:32, marginBottom:8 }}>🪞</div>
+          <div style={{ fontSize:16, fontWeight:600, color:T.green }}>{L.success}</div>
+          <div style={{ fontSize:12, color:T.muted, marginTop:4 }}>{L.sealed}</div>
+        </div>
+      )}
     </div>
   );
 }
@@ -7582,7 +7793,10 @@ function JornalPanel({ T, lang }) {
 function WINDIAgentSuite() {
   const [msgs, setMsgs] = useState([]);
   const [input, setInput] = useState("");
-  const [tier, setTier] = useState("HIGH");
+  const [tier, setTier] = useState(detectTier);
+  // Wallet/DID states for Personal tier (Prompt Definitivo)
+  const [walletId, setWalletId] = useState(() => localStorage.getItem('windi_wallet_id') || null);
+  const [showWalletBanner, setShowWalletBanner] = useState(false);
   const [lang, setLang] = useState("de");
   const [activeDoc, setActiveDoc] = useState(null);
   const [stats, setStats] = useState({ docs:0, sealed:0, avgMs:0 });
@@ -7977,6 +8191,43 @@ function WINDIAgentSuite() {
       window.WINDI_onTenantChange = (profile) => setTenant(profile);
     }
     return () => { window.WINDI_onTenantChange = null; };
+  }, []);
+
+  // ═══ WALLET BANNER — SessionTimer (5 min active use) ═══════════════════
+  // Only for FREE tier without existing wallet
+  useEffect(() => {
+    const currentTier = detectTier();
+    if (currentTier !== 'FREE') return;
+    if (localStorage.getItem('windi_wallet_id')) return;
+    if (sessionStorage.getItem('windi_banner_dismissed')) return;
+
+    let activeMs = 0;
+    let lastActivity = Date.now();
+    const TRIGGER = 5 * 60 * 1000; // 5 minutes
+
+    const onActivity = () => {
+      const now = Date.now();
+      if (now - lastActivity < 10000) activeMs += (now - lastActivity);
+      lastActivity = now;
+    };
+
+    ['keydown','click','scroll','touchstart'].forEach(e =>
+      document.addEventListener(e, onActivity, { passive: true })
+    );
+
+    const check = setInterval(() => {
+      if (activeMs >= TRIGGER) {
+        setShowWalletBanner(true);
+        clearInterval(check);
+      }
+    }, 1000);
+
+    return () => {
+      clearInterval(check);
+      ['keydown','click','scroll','touchstart'].forEach(e =>
+        document.removeEventListener(e, onActivity)
+      );
+    };
   }, []);
 
   // 71: Trust state sync callback
@@ -8838,6 +9089,28 @@ ${lastSGE.findings?.map((f,i) => `${i+1}. [${f.risk_level}] ${f.category}: ${f.d
         </div>
         <div style={{ display:"flex", alignItems:"center", gap:8 }}>
           <TierSwitch tier={tier} set={setTier} T={T} />
+          {/* DID Identity Badge (Personal tier only) */}
+          {tier === 'FREE' && (
+            walletId ? (
+              <div style={{
+                display:'flex', alignItems:'center', gap:4,
+                padding:'3px 10px', borderRadius:12, fontSize:10,
+                fontFamily:T.mono, background:T.green+'12',
+                border:`1px solid ${T.green}30`, color:T.green
+              }}>
+                🪞 {localStorage.getItem('windi_did_name')?.split(' ')[0] || 'Identified'}
+              </div>
+            ) : (
+              <div style={{
+                display:'flex', alignItems:'center', gap:4,
+                padding:'3px 10px', borderRadius:12, fontSize:10,
+                fontFamily:T.mono, background:T.muted+'12',
+                border:`1px solid ${T.muted}30`, color:T.muted
+              }}>
+                👤 {lang==='de'?'Anonym':lang==='pt'?'Anônimo':'Anonymous'}
+              </div>
+            )
+          )}
           <div style={{ display:"flex", gap:2 }}>
             {["de","en","pt"].map(l => (
               <button key={l} onClick={()=>setLang(l)} style={{ padding:"3px 7px", borderRadius:4, fontSize:9, fontFamily:T.mono, background:lang===l?T.gold+"15":"transparent", border:`1px solid ${lang===l?T.gold+"30":"transparent"}`, color:lang===l?T.gold:T.muted, cursor:"pointer" }}>{l.toUpperCase()}</button>
@@ -9616,6 +9889,18 @@ ${lastSGE.findings?.map((f,i) => `${i+1}. [${f.risk_level}] ${f.category}: ${f.d
         .dragon-step.active{animation:dragonPulse 2s ease-in-out infinite}
         .dragon-handover{animation:dragonHandover 0.4s cubic-bezier(0.34,1.56,0.64,1)}
       `}</style>
+
+      {/* Wallet Banner — Personal tier, 5 min trigger */}
+      <WalletBanner
+        show={showWalletBanner}
+        onClose={() => setShowWalletBanner(false)}
+        onWalletCreated={(data) => {
+          setWalletId(data.wallet_id);
+          setShowWalletBanner(false);
+        }}
+        T={T}
+        lang={lang}
+      />
     </div>
   );
 }
