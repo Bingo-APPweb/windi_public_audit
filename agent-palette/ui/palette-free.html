@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI Palette — Personal</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐉</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/docx/8.5.0/docx.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<script src="shared/core.js"></script>
+<script src="shared/dragons.js"></script>
+<style>
+/* ═══════════════════════════════════════════════════════════════════════
+   WINDI PALETTE PERSONAL — KLAR THEME
+   "Dignidade do acesso. Humanamente completo."
+   v1.0.0-P
+   ═══════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* KLAR — Pergaminho (DEFAULT) */
+  --bg: #F5F0E0;
+  --card: #FDFBF5;
+  --hover: #EDE8D8;
+  --input: #FDFBF5;
+  --border: #DDD6C2;
+  --gold: #8B6914;
+  --text: #2C2924;
+  --dim: #6B6560;
+  --success: #2D5016;
+  --accent: #8B6914;
+  --paper: #FFFFFF;
+  --paper-shadow: rgba(0,0,0,0.08);
+}
+
+[data-theme="noir"] {
+  --bg: #0E0E14;
+  --card: #16161F;
+  --hover: #1C1C28;
+  --input: #1A1A24;
+  --border: #26263A;
+  --gold: #D4A843;
+  --text: #E2E2EA;
+  --dim: #7A7A96;
+  --success: #4A7C32;
+  --accent: #D4A843;
+  --paper: #1E1E28;
+  --paper-shadow: rgba(0,0,0,0.3);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  transition: background 0.3s, color 0.3s;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Bricolage Grotesque', sans-serif;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* ── HEADER ─────────────────────────────────────────────────────────── */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+  border-bottom: 3px solid var(--gold);
+  margin-bottom: 30px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header h1 {
+  font-size: 1.8em;
+  font-weight: 700;
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tier-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  color: var(--gold);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.85em;
+  font-weight: 600;
+  border: 2px solid var(--gold);
+}
+
+.header-subtitle {
+  font-size: 0.95em;
+  color: var(--dim);
+  margin-top: 4px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.lang-selector {
+  display: flex;
+  gap: 8px;
+}
+
+.lang-btn {
+  padding: 6px 10px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--dim);
+  cursor: pointer;
+  font-size: 0.8em;
+  transition: all 0.2s;
+}
+
+.lang-btn.active {
+  background: var(--gold);
+  color: white;
+  border-color: var(--gold);
+}
+
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.8em;
+  color: var(--dim);
+  transition: all 0.2s;
+}
+
+.theme-toggle:hover {
+  border-color: var(--gold);
+}
+
+/* ── WORKSPACE ──────────────────────────────────────────────────────── */
+.workspace-title {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.workspace-title h2 {
+  font-size: 1.5em;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.workspace-title p {
+  color: var(--dim);
+  font-size: 0.95em;
+}
+
+.doc-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 900px) {
+  .doc-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 500px) {
+  .doc-grid { grid-template-columns: 1fr; }
+}
+
+.doc-card {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.doc-card:hover {
+  border-color: var(--gold);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--paper-shadow);
+}
+
+.doc-card.active {
+  border-color: var(--gold);
+  background: var(--hover);
+}
+
+.doc-card .icon {
+  font-size: 2.5em;
+  margin-bottom: 12px;
+}
+
+.doc-card .name {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 1.1em;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.doc-card .desc {
+  font-size: 0.8em;
+  color: var(--dim);
+  line-height: 1.4;
+}
+
+/* ── TEMPLATES PRONTOS ──────────────────────────────────────────────── */
+.templates-section {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 30px;
+}
+
+.templates-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.templates-header h3 {
+  font-size: 1.1em;
+  font-weight: 600;
+  color: var(--gold);
+}
+
+.templates-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 700px) {
+  .templates-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.template-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.85em;
+}
+
+.template-chip:hover {
+  border-color: var(--gold);
+  background: var(--hover);
+}
+
+.template-chip .lang-flag {
+  font-size: 1.1em;
+}
+
+/* ── FORM WORKSPACE ─────────────────────────────────────────────────── */
+.form-workspace {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 30px;
+}
+
+@media (max-width: 800px) {
+  .form-workspace { grid-template-columns: 1fr; }
+}
+
+.form-panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.form-panel h3 {
+  font-size: 1.1em;
+  font-weight: 600;
+  color: var(--gold);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.85em;
+  font-weight: 500;
+  color: var(--dim);
+  margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 12px 14px;
+  background: var(--input);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.95em;
+  color: var(--text);
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+.form-group textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* ── PREVIEW PANEL ──────────────────────────────────────────────────── */
+.preview-panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.preview-panel h3 {
+  font-size: 1.1em;
+  font-weight: 600;
+  color: var(--gold);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.preview-paper {
+  flex: 1;
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 24px;
+  min-height: 300px;
+  box-shadow: 0 2px 8px var(--paper-shadow);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85em;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  color: var(--text);
+  overflow-y: auto;
+}
+
+.download-btn {
+  margin-top: 16px;
+  padding: 14px 24px;
+  background: var(--gold);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.download-btn:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(139, 105, 20, 0.3);
+}
+
+.download-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ── ASSISTANT ──────────────────────────────────────────────────────── */
+.assistant-section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 30px;
+}
+
+.assistant-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.assistant-header h3 {
+  font-size: 1.1em;
+  font-weight: 600;
+  color: var(--success);
+}
+
+.faq-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 600px) {
+  .faq-grid { grid-template-columns: 1fr; }
+}
+
+.faq-btn {
+  padding: 12px 16px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-align: left;
+  cursor: pointer;
+  font-size: 0.85em;
+  color: var(--text);
+  transition: all 0.2s;
+}
+
+.faq-btn:hover {
+  border-color: var(--success);
+  background: var(--hover);
+}
+
+.assistant-answer {
+  padding: 16px;
+  background: var(--bg);
+  border-radius: 8px;
+  border-left: 3px solid var(--success);
+  font-size: 0.9em;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.assistant-tip {
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, rgba(139,105,20,0.1), rgba(139,105,20,0.05));
+  border: 1px solid var(--gold);
+  border-radius: 8px;
+  font-size: 0.85em;
+  color: var(--dim);
+}
+
+.assistant-tip strong {
+  color: var(--gold);
+}
+
+/* ── FOOTER ─────────────────────────────────────────────────────────── */
+.footer {
+  text-align: center;
+  padding: 30px 0;
+  border-top: 1px solid var(--border);
+}
+
+.footer-motto {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 1.1em;
+  font-weight: 600;
+  color: var(--gold);
+  margin-bottom: 24px;
+}
+
+.tiers-compare {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.tier-card-mini {
+  padding: 16px 20px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  text-align: center;
+  min-width: 140px;
+  transition: all 0.2s;
+  text-decoration: none;
+  color: inherit;
+}
+
+.tier-card-mini:hover {
+  border-color: var(--gold);
+  transform: translateY(-2px);
+}
+
+.tier-card-mini .icon {
+  font-size: 1.5em;
+  margin-bottom: 8px;
+}
+
+.tier-card-mini .name {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-weight: 600;
+  font-size: 0.95em;
+  margin-bottom: 8px;
+}
+
+.tier-card-mini .features {
+  font-size: 0.75em;
+  color: var(--dim);
+  line-height: 1.5;
+}
+
+.footer-brand {
+  font-size: 0.8em;
+  color: var(--dim);
+}
+
+.footer-dragons {
+  margin-top: 8px;
+  font-size: 0.85em;
+  color: var(--dim);
+}
+
+/* ── UTILITIES ──────────────────────────────────────────────────────── */
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div id="app"></div>
+</div>
+
+<script type="text/babel">
+const { useState, useEffect, useMemo, useCallback } = React;
+
+// ═══════════════════════════════════════════════════════════════════════
+// WINDI PALETTE PERSONAL v1.0.0-P
+// "Dignidade do acesso. Humanamente completo."
+// ═══════════════════════════════════════════════════════════════════════
+
+// ── TRANSLATIONS ───────────────────────────────────────────────────────
+const T = {
+  de: {
+    title: 'WINDI Palette',
+    badge: 'Personal',
+    subtitle: 'Ihre Dokumente. Ihre Souveränität.',
+    workspaceTitle: 'Welches Dokument möchten Sie erstellen?',
+    workspaceDesc: 'Wählen Sie einen Typ und füllen Sie die Felder aus — professionelle Struktur garantiert.',
+    templatesTitle: 'Modellvorlagen',
+    formTitle: 'Dokument erstellen',
+    previewTitle: 'Vorschau',
+    downloadBtn: 'Download DOCX',
+    downloadEmpty: 'Füllen Sie die Felder aus',
+    assistantTitle: 'Guardian — Dokumentenassistent',
+    assistantTip: 'Im Organization-Tier analysiert der Guardian Ihre Dokumente automatisch mit KI.',
+    motto: 'KI verarbeitet. Mensch entscheidet. WINDI garantiert.',
+    brand: 'WINDI Governance Institute · v1.0.0-P',
+    dragons: '🛡️ Guardian · 🏗️ Architect · 👁️ Witness',
+    orgTier: 'Organization',
+    govTier: 'Governance',
+    orgFeatures: '10 Typen\n+ KI-Analyse\n+ Ledger',
+    govFeatures: '14 Typen\n+ Vault\n+ Multi-Tenant',
+    themeKlar: 'KLAR',
+    themeNoir: 'NOIR',
+  },
+  en: {
+    title: 'WINDI Palette',
+    badge: 'Personal',
+    subtitle: 'Your documents. Your sovereignty.',
+    workspaceTitle: 'What document do you need?',
+    workspaceDesc: 'Choose a type and fill in the fields — professional structure guaranteed.',
+    templatesTitle: 'Ready Templates',
+    formTitle: 'Create Document',
+    previewTitle: 'Preview',
+    downloadBtn: 'Download DOCX',
+    downloadEmpty: 'Fill in the fields',
+    assistantTitle: 'Guardian — Document Assistant',
+    assistantTip: 'In Organization tier, the Guardian analyzes your documents automatically with AI.',
+    motto: 'AI processes. Human decides. WINDI guarantees.',
+    brand: 'WINDI Governance Institute · v1.0.0-P',
+    dragons: '🛡️ Guardian · 🏗️ Architect · 👁️ Witness',
+    orgTier: 'Organization',
+    govTier: 'Governance',
+    orgFeatures: '10 types\n+ AI Analysis\n+ Ledger',
+    govFeatures: '14 types\n+ Vault\n+ Multi-Tenant',
+    themeKlar: 'KLAR',
+    themeNoir: 'NOIR',
+  },
+  pt: {
+    title: 'WINDI Palette',
+    badge: 'Personal',
+    subtitle: 'Seus documentos. Sua soberania.',
+    workspaceTitle: 'Qual documento você precisa criar?',
+    workspaceDesc: 'Escolha um tipo e preencha os campos — estrutura profissional garantida.',
+    templatesTitle: 'Modelos Prontos',
+    formTitle: 'Criar Documento',
+    previewTitle: 'Prévia',
+    downloadBtn: 'Download DOCX',
+    downloadEmpty: 'Preencha os campos',
+    assistantTitle: 'Guardian — Assistente de Documentos',
+    assistantTip: 'No tier Organization, o Guardian analisa seus documentos automaticamente com IA.',
+    motto: 'IA processa. Humano decide. WINDI garante.',
+    brand: 'WINDI Governance Institute · v1.0.0-P',
+    dragons: '🛡️ Guardião · 🏗️ Arquiteto · 👁️ Testemunha',
+    orgTier: 'Organization',
+    govTier: 'Governance',
+    orgFeatures: '10 tipos\n+ Análise IA\n+ Ledger',
+    govFeatures: '14 tipos\n+ Vault\n+ Multi-Tenant',
+    themeKlar: 'KLAR',
+    themeNoir: 'NOIR',
+  }
+};
+
+// ── DOCUMENT TYPES ─────────────────────────────────────────────────────
+const DOC_TYPES = {
+  brief: {
+    icon: '✉️',
+    name: { de: 'Brief', en: 'Letter', pt: 'Carta' },
+    desc: {
+      de: 'Formelle Korrespondenz',
+      en: 'Formal correspondence',
+      pt: 'Correspondência formal'
+    },
+    fields: [
+      { id: 'sender', label: { de: 'Absender', en: 'Sender', pt: 'Remetente' }, type: 'text' },
+      { id: 'recipient', label: { de: 'Empfänger', en: 'Recipient', pt: 'Destinatário' }, type: 'text' },
+      { id: 'date', label: { de: 'Datum', en: 'Date', pt: 'Data' }, type: 'date' },
+      { id: 'subject', label: { de: 'Betreff', en: 'Subject', pt: 'Assunto' }, type: 'text' },
+      { id: 'body', label: { de: 'Inhalt', en: 'Content', pt: 'Conteúdo' }, type: 'textarea' },
+      { id: 'closing', label: { de: 'Grußformel', en: 'Closing', pt: 'Encerramento' }, type: 'select',
+        options: {
+          de: ['Mit freundlichen Grüßen', 'Hochachtungsvoll', 'Beste Grüße'],
+          en: ['Sincerely', 'Best regards', 'Kind regards'],
+          pt: ['Atenciosamente', 'Cordialmente', 'Respeitosamente']
+        }
+      }
+    ],
+    template: {
+      de: '{sender}\n{date}\n\nAn: {recipient}\n\nBetreff: {subject}\n\nSehr geehrte Damen und Herren,\n\n{body}\n\n{closing}\n{sender}',
+      en: '{sender}\n{date}\n\nTo: {recipient}\n\nRe: {subject}\n\nDear Sir or Madam,\n\n{body}\n\n{closing}\n{sender}',
+      pt: '{sender}\n{date}\n\nPara: {recipient}\n\nAssunto: {subject}\n\nPrezado(a),\n\n{body}\n\n{closing}\n{sender}'
+    }
+  },
+  memo: {
+    icon: '📋',
+    name: { de: 'Memo', en: 'Memo', pt: 'Memorando' },
+    desc: {
+      de: 'Interne Kommunikation',
+      en: 'Internal communication',
+      pt: 'Comunicação interna'
+    },
+    fields: [
+      { id: 'to', label: { de: 'An', en: 'To', pt: 'Para' }, type: 'text' },
+      { id: 'from', label: { de: 'Von', en: 'From', pt: 'De' }, type: 'text' },
+      { id: 'date', label: { de: 'Datum', en: 'Date', pt: 'Data' }, type: 'date' },
+      { id: 'subject', label: { de: 'Betreff', en: 'Subject', pt: 'Assunto' }, type: 'text' },
+      { id: 'body', label: { de: 'Inhalt', en: 'Content', pt: 'Conteúdo' }, type: 'textarea' },
+      { id: 'action', label: { de: 'Erforderliche Maßnahmen', en: 'Action Required', pt: 'Ações Necessárias' }, type: 'textarea' }
+    ],
+    template: {
+      de: 'MEMORANDUM\n══════════════════════════════\n\nAn: {to}\nVon: {from}\nDatum: {date}\nBetreff: {subject}\n\n──────────────────────────────\n\n{body}\n\n──────────────────────────────\nErforderliche Maßnahmen:\n{action}',
+      en: 'MEMORANDUM\n══════════════════════════════\n\nTo: {to}\nFrom: {from}\nDate: {date}\nRe: {subject}\n\n──────────────────────────────\n\n{body}\n\n──────────────────────────────\nAction Required:\n{action}',
+      pt: 'MEMORANDO\n══════════════════════════════\n\nPara: {to}\nDe: {from}\nData: {date}\nAssunto: {subject}\n\n──────────────────────────────\n\n{body}\n\n──────────────────────────────\nAções Necessárias:\n{action}'
+    }
+  },
+  notiz: {
+    icon: '📝',
+    name: { de: 'Notiz', en: 'Note', pt: 'Nota' },
+    desc: {
+      de: 'Protokolle und Aufzeichnungen',
+      en: 'Meeting notes and records',
+      pt: 'Atas e registros'
+    },
+    fields: [
+      { id: 'title', label: { de: 'Titel', en: 'Title', pt: 'Título' }, type: 'text' },
+      { id: 'date', label: { de: 'Datum', en: 'Date', pt: 'Data' }, type: 'date' },
+      { id: 'participants', label: { de: 'Teilnehmer', en: 'Participants', pt: 'Participantes' }, type: 'text' },
+      { id: 'body', label: { de: 'Inhalt', en: 'Content', pt: 'Conteúdo' }, type: 'textarea' },
+      { id: 'decisions', label: { de: 'Beschlüsse', en: 'Decisions', pt: 'Decisões' }, type: 'textarea' },
+      { id: 'next_steps', label: { de: 'Nächste Schritte', en: 'Next Steps', pt: 'Próximos Passos' }, type: 'textarea' }
+    ],
+    template: {
+      de: 'NOTIZ: {title}\n══════════════════════════════\nDatum: {date}\nTeilnehmer: {participants}\n\n──────────────────────────────\n{body}\n\n──────────────────────────────\nBeschlüsse:\n{decisions}\n\nNächste Schritte:\n{next_steps}',
+      en: 'NOTE: {title}\n══════════════════════════════\nDate: {date}\nParticipants: {participants}\n\n──────────────────────────────\n{body}\n\n──────────────────────────────\nDecisions:\n{decisions}\n\nNext Steps:\n{next_steps}',
+      pt: 'NOTA: {title}\n══════════════════════════════\nData: {date}\nParticipantes: {participants}\n\n──────────────────────────────\n{body}\n\n──────────────────────────────\nDecisões:\n{decisions}\n\nPróximos Passos:\n{next_steps}'
+    }
+  },
+  email: {
+    icon: '📧',
+    name: { de: 'E-Mail', en: 'E-Mail', pt: 'E-Mail' },
+    desc: {
+      de: 'Professionelle E-Mails',
+      en: 'Professional emails',
+      pt: 'E-mails profissionais'
+    },
+    fields: [
+      { id: 'to', label: { de: 'An', en: 'To', pt: 'Para' }, type: 'text' },
+      { id: 'cc', label: { de: 'CC', en: 'CC', pt: 'CC' }, type: 'text' },
+      { id: 'subject', label: { de: 'Betreff', en: 'Subject', pt: 'Assunto' }, type: 'text' },
+      { id: 'greeting', label: { de: 'Anrede', en: 'Greeting', pt: 'Saudação' }, type: 'select',
+        options: {
+          de: ['Sehr geehrte Damen und Herren,', 'Sehr geehrter Herr/Frau,', 'Hallo,', 'Guten Tag,'],
+          en: ['Dear Sir or Madam,', 'Dear Mr./Ms.,', 'Hello,', 'Hi,'],
+          pt: ['Prezado(a),', 'Caro(a),', 'Olá,', 'Bom dia,']
+        }
+      },
+      { id: 'body', label: { de: 'Nachricht', en: 'Message', pt: 'Mensagem' }, type: 'textarea' },
+      { id: 'signature', label: { de: 'Signatur', en: 'Signature', pt: 'Assinatura' }, type: 'text' }
+    ],
+    template: {
+      de: 'An: {to}\nCC: {cc}\nBetreff: {subject}\n\n──────────────────────────────\n\n{greeting}\n\n{body}\n\nMit freundlichen Grüßen\n{signature}',
+      en: 'To: {to}\nCC: {cc}\nSubject: {subject}\n\n──────────────────────────────\n\n{greeting}\n\n{body}\n\nBest regards,\n{signature}',
+      pt: 'Para: {to}\nCC: {cc}\nAssunto: {subject}\n\n──────────────────────────────\n\n{greeting}\n\n{body}\n\nAtenciosamente,\n{signature}'
+    }
+  }
+};
+
+// ── READY TEMPLATES ────────────────────────────────────────────────────
+const READY_TEMPLATES = [
+  { id: 'brief_de', type: 'brief', lang: 'de', flag: '🇩🇪', name: 'Brief formal (DE)',
+    data: { sender: 'Max Mustermann\nMusterstraße 1\n12345 Musterstadt', recipient: 'Firma GmbH\nHauptstraße 100\n10115 Berlin',
+            date: new Date().toISOString().split('T')[0], subject: 'Anfrage zu Ihrem Angebot',
+            body: 'Mit großem Interesse habe ich Ihr Angebot erhalten und möchte hiermit weitere Informationen anfordern.\n\nBitte senden Sie mir die vollständigen Unterlagen zu.',
+            closing: 'Mit freundlichen Grüßen' }},
+  { id: 'memo_en', type: 'memo', lang: 'en', flag: '🇬🇧', name: 'Business Memo (EN)',
+    data: { to: 'All Team Members', from: 'Management', date: new Date().toISOString().split('T')[0],
+            subject: 'Q1 Review Meeting', body: 'Please be informed that our quarterly review meeting will be held next Monday at 10:00 AM in Conference Room A.',
+            action: '1. Review your quarterly reports\n2. Prepare a 5-minute summary\n3. Confirm attendance by Friday' }},
+  { id: 'notiz_pt', type: 'notiz', lang: 'pt', flag: '🇧🇷', name: 'Ata de Reunião (PT)',
+    data: { title: 'Reunião de Planejamento', date: new Date().toISOString().split('T')[0], participants: 'João, Maria, Pedro',
+            body: 'Discussão sobre os próximos passos do projeto e alocação de recursos.',
+            decisions: '1. Aprovar orçamento adicional\n2. Contratar consultor externo',
+            next_steps: '1. Maria: Preparar proposta até sexta\n2. João: Agendar reunião com fornecedores' }},
+  { id: 'email_en', type: 'email', lang: 'en', flag: '🇺🇸', name: 'Professional E-Mail (EN)',
+    data: { to: 'client@company.com', cc: 'manager@company.com', subject: 'Project Update - Week 12',
+            greeting: 'Dear Mr./Ms.,', body: 'I am writing to provide you with an update on our project progress.\n\nWe have completed Phase 1 and are on track to begin Phase 2 next week.\n\nPlease let me know if you have any questions.',
+            signature: 'John Smith\nProject Manager' }}
+];
+
+// ── KNOWLEDGE BASE ─────────────────────────────────────────────────────
+const KNOWLEDGE_BASE = [
+  { triggers: ['brief', 'letter', 'carta', 'formal', 'struktur'],
+    question: { de: 'Wie strukturiere ich einen Brief?', en: 'How to structure a letter?', pt: 'Como estruturar uma carta?' },
+    answer: { de: 'Ein formeller Brief hat 6 Elemente: Absender, Datum, Empfänger, Betreff, Haupttext und Grußformel. WINDI strukturiert das automatisch — Sie füllen nur die Felder aus.',
+              en: 'A formal letter has 6 elements: sender, date, recipient, subject, body, and closing. WINDI structures this automatically — you just fill in the fields.',
+              pt: 'Uma carta formal tem 6 elementos: remetente, data, destinatário, assunto, corpo e encerramento. O WINDI estrutura automaticamente — você só preenche os campos.' }},
+  { triggers: ['memo', 'notiz', 'unterschied', 'difference', 'diferença'],
+    question: { de: 'Memo vs. Notiz — was ist der Unterschied?', en: 'Memo vs. Note — what\'s the difference?', pt: 'Memo vs. Nota — qual a diferença?' },
+    answer: { de: 'Memo = Aufforderung zum Handeln (geht an andere). Notiz = Aufzeichnung (für sich selbst oder Protokoll). Das Memo fordert Aktion, die Notiz dokumentiert.',
+              en: 'Memo = call to action (goes to others). Note = record (for yourself or minutes). A memo requests action, a note documents.',
+              pt: 'Memo = convocação para ação (vai para outros). Nota = registro (para você ou ata). O memo pede ação, a nota documenta.' }},
+  { triggers: ['email', 'e-mail', 'professional', 'professionell'],
+    question: { de: 'Wie schreibe ich ein professionelles E-Mail?', en: 'How to write a professional email?', pt: 'Como escrever um e-mail profissional?' },
+    answer: { de: 'Ein professionelles E-Mail hat: klaren Betreff (max 8 Wörter), persönliche Anrede, einen Hauptpunkt pro Absatz, und eine eindeutige Handlungsaufforderung am Ende.',
+              en: 'A professional email has: clear subject (max 8 words), personal greeting, one main point per paragraph, and a clear call to action at the end.',
+              pt: 'Um e-mail profissional tem: assunto claro (máx 8 palavras), saudação pessoal, um ponto principal por parágrafo, e uma chamada à ação clara no final.' }},
+  { triggers: ['windi', 'about', 'über', 'sobre', 'governance'],
+    question: { de: 'Was ist WINDI?', en: 'What is WINDI?', pt: 'O que é WINDI?' },
+    answer: { de: 'WINDI ist ein Governance-System: KI verarbeitet, Mensch entscheidet, WINDI garantiert. Ihre Dokumente gehören Ihnen — wir geben ihnen Struktur und Würde.',
+              en: 'WINDI is a governance system: AI processes, Human decides, WINDI guarantees. Your documents belong to you — we give them structure and dignity.',
+              pt: 'WINDI é um sistema de governança: IA processa, Humano decide, WINDI garante. Seus documentos são seus — nós damos estrutura e dignidade.' }},
+  { triggers: ['dragon', 'drachen', 'dragão', 'guardian', 'architect', 'witness'],
+    question: { de: 'Was sind die drei Drachen?', en: 'What are the Three Dragons?', pt: 'O que são os Três Dragões?' },
+    answer: { de: 'Die drei Drachen schützen Ihre Dokumente: 🛡️ Guardian (Ethik & Schutz), 🏗️ Architect (Struktur & Aufbau), 👁️ Witness (Beobachtung & Validierung).',
+              en: 'The Three Dragons protect your documents: 🛡️ Guardian (Ethics & Protection), 🏗️ Architect (Structure & Build), 👁️ Witness (Observation & Validation).',
+              pt: 'Os Três Dragões protegem seus documentos: 🛡️ Guardião (Ética & Proteção), 🏗️ Arquiteto (Estrutura & Construção), 👁️ Testemunha (Observação & Validação).' }},
+  { triggers: ['sicher', 'safe', 'seguro', 'privacy', 'datenschutz', 'privacidade'],
+    question: { de: 'Sind meine Daten sicher?', en: 'Is my data safe?', pt: 'Meus dados estão seguros?' },
+    answer: { de: 'Im Personal-Tier werden alle Dokumente lokal in Ihrem Browser verarbeitet. Nichts wird an externe Server gesendet. Ihre Daten bleiben bei Ihnen.',
+              en: 'In Personal tier, all documents are processed locally in your browser. Nothing is sent to external servers. Your data stays with you.',
+              pt: 'No tier Personal, todos os documentos são processados localmente no seu navegador. Nada é enviado a servidores externos. Seus dados ficam com você.' }}
+];
+
+// ── MAIN APP ───────────────────────────────────────────────────────────
+function App() {
+  const [lang, setLang] = useState(() => {
+    const nav = navigator.language?.substring(0, 2);
+    return ['de', 'en', 'pt'].includes(nav) ? nav : 'de';
+  });
+  const [theme, setTheme] = useState(() => localStorage.getItem('windi_theme') || 'klar');
+  const [selectedType, setSelectedType] = useState(null);
+  const [formData, setFormData] = useState({});
+  const [assistantAnswer, setAssistantAnswer] = useState(null);
+
+  // Apply theme
+  useEffect(() => {
+    document.body.setAttribute('data-theme', theme === 'noir' ? 'noir' : '');
+    localStorage.setItem('windi_theme', theme);
+  }, [theme]);
+
+  const t = T[lang] || T.de;
+
+  // Generate preview text
+  const previewText = useMemo(() => {
+    if (!selectedType) return '';
+    const docType = DOC_TYPES[selectedType];
+    let text = docType.template[lang] || docType.template.de;
+    Object.keys(formData).forEach(key => {
+      text = text.replace(new RegExp(`\\{${key}\\}`, 'g'), formData[key] || `[${key}]`);
+    });
+    return text;
+  }, [selectedType, formData, lang]);
+
+  // Check if form is complete
+  const isFormComplete = useMemo(() => {
+    if (!selectedType) return false;
+    const docType = DOC_TYPES[selectedType];
+    return docType.fields.every(f => formData[f.id]?.trim());
+  }, [selectedType, formData]);
+
+  // Handle doc type selection
+  const selectDocType = (type) => {
+    setSelectedType(type);
+    setFormData({});
+  };
+
+  // Handle ready template selection
+  const loadTemplate = (template) => {
+    setSelectedType(template.type);
+    setFormData(template.data);
+    setLang(template.lang);
+  };
+
+  // Handle form field change
+  const handleFieldChange = (fieldId, value) => {
+    setFormData(prev => ({ ...prev, [fieldId]: value }));
+  };
+
+  // Handle FAQ click
+  const handleFaqClick = (kb) => {
+    setAssistantAnswer(kb.answer[lang] || kb.answer.de);
+  };
+
+  // Download DOCX
+  const downloadDocx = async () => {
+    if (!isFormComplete || !previewText) return;
+
+    const { Document, Packer, Paragraph, TextRun } = docx;
+
+    const doc = new Document({
+      sections: [{
+        properties: {},
+        children: previewText.split('\n').map(line =>
+          new Paragraph({
+            children: [new TextRun({ text: line, font: 'Arial', size: 24 })]
+          })
+        )
+      }]
+    });
+
+    const blob = await Packer.toBlob(doc);
+    const docType = DOC_TYPES[selectedType];
+    const filename = `WINDI_${docType.name[lang] || docType.name.de}_${new Date().toISOString().split('T')[0]}.docx`;
+    saveAs(blob, filename);
+  };
+
+  return (
+    <>
+      {/* ── HEADER ─────────────────────────────────────────────────────── */}
+      <header className="header">
+        <div className="header-left">
+          <div>
+            <h1>🐉 {t.title}</h1>
+            <div className="header-subtitle">{t.subtitle}</div>
+          </div>
+          <div className="tier-badge">✦ {t.badge}</div>
+        </div>
+        <div className="header-right">
+          <div className="lang-selector">
+            {['de', 'en', 'pt'].map(l => (
+              <button key={l} className={`lang-btn ${lang === l ? 'active' : ''}`} onClick={() => setLang(l)}>
+                {l.toUpperCase()}
+              </button>
+            ))}
+          </div>
+          <button className="theme-toggle" onClick={() => setTheme(theme === 'klar' ? 'noir' : 'klar')}>
+            {theme === 'klar' ? '🌙' : '☀️'} {theme === 'klar' ? t.themeNoir : t.themeKlar}
+          </button>
+        </div>
+      </header>
+
+      {/* ── WORKSPACE TITLE ────────────────────────────────────────────── */}
+      <div className="workspace-title">
+        <h2>{t.workspaceTitle}</h2>
+        <p>{t.workspaceDesc}</p>
+      </div>
+
+      {/* ── DOC TYPE CARDS ─────────────────────────────────────────────── */}
+      <div className="doc-grid">
+        {Object.entries(DOC_TYPES).map(([key, doc]) => (
+          <div key={key} className={`doc-card ${selectedType === key ? 'active' : ''}`} onClick={() => selectDocType(key)}>
+            <div className="icon">{doc.icon}</div>
+            <div className="name">{doc.name[lang] || doc.name.de}</div>
+            <div className="desc">{doc.desc[lang] || doc.desc.de}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* ── READY TEMPLATES ────────────────────────────────────────────── */}
+      <div className="templates-section">
+        <div className="templates-header">
+          <span>🎁</span>
+          <h3>{t.templatesTitle}</h3>
+        </div>
+        <div className="templates-grid">
+          {READY_TEMPLATES.map(tpl => (
+            <div key={tpl.id} className="template-chip" onClick={() => loadTemplate(tpl)}>
+              <span className="lang-flag">{tpl.flag}</span>
+              <span>{tpl.name}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── FORM + PREVIEW ─────────────────────────────────────────────── */}
+      {selectedType && (
+        <div className="form-workspace">
+          {/* Form Panel */}
+          <div className="form-panel">
+            <h3>🏗️ {t.formTitle}: {DOC_TYPES[selectedType].name[lang]}</h3>
+            {DOC_TYPES[selectedType].fields.map(field => (
+              <div key={field.id} className="form-group">
+                <label>{field.label[lang] || field.label.de}</label>
+                {field.type === 'textarea' ? (
+                  <textarea value={formData[field.id] || ''} onChange={e => handleFieldChange(field.id, e.target.value)} />
+                ) : field.type === 'select' ? (
+                  <select value={formData[field.id] || ''} onChange={e => handleFieldChange(field.id, e.target.value)}>
+                    <option value="">--</option>
+                    {(field.options[lang] || field.options.de).map(opt => (
+                      <option key={opt} value={opt}>{opt}</option>
+                    ))}
+                  </select>
+                ) : (
+                  <input type={field.type} value={formData[field.id] || ''} onChange={e => handleFieldChange(field.id, e.target.value)} />
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Preview Panel */}
+          <div className="preview-panel">
+            <h3>👁️ {t.previewTitle}</h3>
+            <div className="preview-paper">{previewText || '...'}</div>
+            <button className="download-btn" onClick={downloadDocx} disabled={!isFormComplete}>
+              📥 {isFormComplete ? t.downloadBtn : t.downloadEmpty}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ── ASSISTANT ──────────────────────────────────────────────────── */}
+      <div className="assistant-section">
+        <div className="assistant-header">
+          <span>🛡️</span>
+          <h3>{t.assistantTitle}</h3>
+        </div>
+        <div className="faq-grid">
+          {KNOWLEDGE_BASE.map((kb, i) => (
+            <button key={i} className="faq-btn" onClick={() => handleFaqClick(kb)}>
+              {kb.question[lang] || kb.question.de}
+            </button>
+          ))}
+        </div>
+        {assistantAnswer && (
+          <div className="assistant-answer">{assistantAnswer}</div>
+        )}
+        <div className="assistant-tip">
+          💡 <strong>Tip:</strong> {t.assistantTip}
+        </div>
+      </div>
+
+      {/* ── FOOTER ─────────────────────────────────────────────────────── */}
+      <footer className="footer">
+        <div className="footer-motto">"{t.motto}"</div>
+        <div className="tiers-compare">
+          <a href="palette-org.html" className="tier-card-mini">
+            <div className="icon">🏢</div>
+            <div className="name">{t.orgTier}</div>
+            <div className="features">{t.orgFeatures}</div>
+          </a>
+          <a href="palette-gov.html" className="tier-card-mini">
+            <div className="icon">🏛️</div>
+            <div className="name">{t.govTier}</div>
+            <div className="features">{t.govFeatures}</div>
+          </a>
+        </div>
+        <div className="footer-brand">{t.brand}</div>
+        <div className="footer-dragons">{t.dragons}</div>
+      </footer>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('app')).render(<App />);
+</script>
+
+</body>
+</html>
