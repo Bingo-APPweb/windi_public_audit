@@ -1,0 +1,13 @@
+{
+  "communique_id": "COM-20260226-0008",
+  "content_hash": "5cf24f80feab3209a91529820ff203ed545729dca40e59aa50aa78bc6f83d673",
+  "bundle_hash": "1c509d90f19a857afa43c7bf7f0d2f0514f81f1b0330fd8e4d075cb85d01f917",
+  "receipt_id": "VR-COM-4a9cdaa886dc",
+  "ledger_id": "VR-COM-4a9cdaa886dc",
+  "category": "UPDATE",
+  "impact_level": "MED",
+  "author": "WINDI Governance Institute",
+  "published_at": "2026-02-26T14:12:28Z",
+  "verify_url": "https://admin.windia4desk.tech/communique/COM-20260226-0008/verify",
+  "generated_at": "2026-02-26T14:12:28Z"
+}

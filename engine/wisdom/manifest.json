@@ -45,6 +45,34 @@
         "N5": "public"
       },
       "essence_preview": "Invencibilidade WINDI ≠ poder técnico. Invencibilidade = integridade I1-I9 + soberania hum"
+    },
+    {
+      "id": "WB-SCORE-01",
+      "sha256": "29d608f00197a5f96fc041468fa78bfaba65f6b2e4c88463cb7015e181b822f9",
+      "path": "/opt/windi/engine/wisdom/blocks/governance/WB-SCORE-01.json",
+      "sealed_at": "2026-02-23T12:01:05+00:00",
+      "shelf": {
+        "N1": "governance",
+        "N2": "autonomy-score",
+        "N3": "milestone",
+        "N4": "canonical",
+        "N5": "internal"
+      },
+      "essence_preview": "WINDI Autonomy Score 23Feb26: 26/29 autonomous (90%). Wave1 N1-N4 added Serial/Q..."
+    },
+    {
+      "id": "WB-BRIDGE-01",
+      "sha256": "287d6345ac7060363b40f215ea23828a8bdb23bf2c0364daa428041c1edab151",
+      "path": "/opt/windi/engine/wisdom/blocks/governance/WB-BRIDGE-01.json",
+      "sealed_at": "2026-02-23T12:43:10.573118+00:00",
+      "shelf": {
+        "N1": "governance",
+        "N2": "multimodal-sovereignty",
+        "N3": "milestone",
+        "N4": "canonical",
+        "N5": "internal"
+      },
+      "essence_preview": "Paperless Bridge v1.0 LIVE 23Feb26: primeiro pipeline soberano papel→digital. OCR local(Te"
     }
   ]
 }

@@ -1,0 +1,20 @@
+[
+  {
+    "block_id": "WB-SCORE-01",
+    "hash": "109b40543e1acb38394ea60a1d18cf134980dc3eafaec80fe8c9bb5a0d7e0e84",
+    "timestamp": "2026-02-23T12:10:55.523422Z",
+    "category": "decision"
+  },
+  {
+    "block_id": "WB-BRIDGE-01",
+    "hash": "287d6345ac7060363b40f215ea23828a8bdb23bf2c0364daa428041c1edab151",
+    "timestamp": "2026-02-23T12:43:10.573118+00:00",
+    "category": "decision"
+  },
+  {
+    "block_id": "WB-CONST-01",
+    "hash": "7c73626f0d2b1f3497856d6c994aa9d5205b93864210bb0e04757e87e0b550ff",
+    "timestamp": "2026-02-24T09:35:12.186394+00:00",
+    "category": "constitutional"
+  }
+]

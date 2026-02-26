@@ -46,7 +46,9 @@ def _get_db_bundle_hash(com_id):
     try:
         import sqlite3
         db_path = "/opt/windi/communique/data/communiques.db"
-        conn = sqlite3.connect(db_path)
+        conn = sqlite3.connect(db_path, timeout=10)
+        conn.execute("PRAGMA journal_mode=WAL")
+        conn.execute("PRAGMA busy_timeout=5000")
         cur = conn.execute("SELECT bundle_hash FROM communiques WHERE id=?", (com_id,))
         row = cur.fetchone()
         conn.close()

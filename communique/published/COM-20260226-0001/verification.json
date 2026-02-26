@@ -1,0 +1,13 @@
+{
+  "communique_id": "COM-20260226-0001",
+  "content_hash": "3f29ae76f953d12f3e5ef5464ed8c11a77e7484ba9a6eb486de41617eacb5749",
+  "bundle_hash": "55d47cf68bddee86b97972df044c4f1aacf85ec58f19c5c90d76697c88189181",
+  "receipt_id": "VR-COM-af840a3e3b2d",
+  "ledger_id": "VR-COM-af840a3e3b2d",
+  "category": "UPDATE",
+  "impact_level": "MED",
+  "author": "Jober Mögele Correa",
+  "published_at": "2026-02-26T13:38:31Z",
+  "verify_url": "https://admin.windia4desk.tech/communique/COM-20260226-0001/verify",
+  "generated_at": "2026-02-26T13:38:32Z"
+}

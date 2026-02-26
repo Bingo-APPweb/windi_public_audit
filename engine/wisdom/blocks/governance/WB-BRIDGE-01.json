@@ -1,0 +1,49 @@
+{
+  "id": "WB-BRIDGE-01",
+  "type": "decision",
+  "category": "multimodal_sovereignty",
+  "essence": "Paperless Bridge v1.0 LIVE 23Feb26: primeiro pipeline soberano papel→digital. OCR local(Tesseract 5.3.0) + classificação trilíngue(6 tipos,DE/EN/PT) + SHA-256 triple hash + Ledger anchor. I9 provado: INVOICE→prosseguiu, CONTRACT→parou, GOVERNANCE/CRIT→parou. ZK enforced: proofs only, zero text in ledger. 4/4 components GREEN. First receipt: VR-PB-20260223.",
+  "shelf": {
+    "N1": "governance",
+    "N2": "multimodal-sovereignty",
+    "N3": "milestone",
+    "N4": "canonical",
+    "N5": "internal"
+  },
+  "source": "Human Dragon + Three Dragons validation",
+  "chain_ref": "WB-SCORE-01 → WB-BRIDGE-01",
+  "ttl_hours": 6,
+  "sealed_at": "2026-02-23T12:43:10.573118+00:00",
+  "components": {
+    "ocr": {
+      "engine": "tesseract-5.3.0",
+      "langs": [
+        "deu",
+        "eng",
+        "por"
+      ],
+      "status": "ok"
+    },
+    "categorizer": {
+      "method": "rule_based_trilingual",
+      "categories": 6,
+      "status": "ok"
+    },
+    "ledger": {
+      "port": 8101,
+      "anchoring": "SHA-256",
+      "status": "ok"
+    },
+    "schnittstelle": {
+      "protocol": "OAuth2_QES",
+      "status": "available"
+    }
+  },
+  "i9_test_results": {
+    "INVOICE/MED": "PROCEEDED",
+    "CONTRACT/HIGH": "AWAITING_HUMAN_DECISION",
+    "GOVERNANCE/CRIT": "AWAITING_HUMAN_DECISION"
+  },
+  "first_receipt": "VR-PB-20260223122933",
+  "sha256": "287d6345ac7060363b40f215ea23828a8bdb23bf2c0364daa428041c1edab151"
+}
