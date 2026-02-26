@@ -32,3 +32,23 @@ windi-i18n-pack/
 windi-issuer-registry/
 windi-public-anchor-log/
 windi-transparency-anchor/
+
+# === SECRETS & KEYS ===
+*.pem
+*.key
+.dragon_key
+.elevenlabs_key
+.dragon_budget.json
+
+# === LOGS & PID ===
+*.log
+*.pid
+
+# === STAGING & TEMP ===
+staging/
+*_tmp/
+*.bak
+*.bak_*
+
+# === CLAUDE CONFIG ===
+.claude/

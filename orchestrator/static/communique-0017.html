@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dark" data-lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COM-20260226-0017 — WINDI Communiqué</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #C9A84C;
+  --gold-dim: #8B7535;
+  --noir-bg: #0D0D0D;
+  --noir-surface: #1A1A1A;
+  --noir-card: #222222;
+  --noir-border: #333333;
+  --noir-text: #E8E8E8;
+  --noir-muted: #999999;
+  --klar-bg: #FAFAF8;
+  --klar-surface: #FFFFFF;
+  --klar-card: #F5F5F0;
+  --klar-border: #E0E0D8;
+  --klar-text: #1A1A1A;
+  --klar-muted: #666666;
+}
+[data-theme="dark"] {
+  --bg: var(--noir-bg); --surface: var(--noir-surface); --card: var(--noir-card);
+  --border: var(--noir-border); --text: var(--noir-text); --muted: var(--noir-muted);
+}
+[data-theme="light"] {
+  --bg: var(--klar-bg); --surface: var(--klar-surface); --card: var(--klar-card);
+  --border: var(--klar-border); --text: var(--klar-text); --muted: var(--klar-muted);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text);
+  line-height: 1.7; min-height: 100vh;
+}
+.container { max-width: 800px; margin: 0 auto; padding: 24px 20px; }
+
+/* Header */
+.header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 0; border-bottom: 2px solid var(--gold); margin-bottom: 32px;
+}
+.header-brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text); }
+.header-logo {
+  width: 40px; height: 40px; background: var(--gold); color: var(--noir-bg);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Bricolage Grotesque', serif; font-weight: 700; font-size: 20px;
+  border-radius: 4px;
+}
+.header-title { font-family: 'Bricolage Grotesque', serif; font-weight: 700; font-size: 18px; }
+.header-subtitle { font-size: 11px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; }
+.controls { display: flex; gap: 8px; align-items: center; }
+.controls button, .controls select {
+  background: var(--card); color: var(--text); border: 1px solid var(--border);
+  padding: 6px 12px; border-radius: 4px; font-size: 12px; cursor: pointer;
+  font-family: 'JetBrains Mono', monospace;
+}
+.controls button:hover { border-color: var(--gold); }
+
+/* Status badge */
+.status-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 12px; border-radius: 16px; font-size: 12px; font-weight: 600;
+  font-family: 'JetBrains Mono', monospace;
+}
+.status-verified { background: rgba(39,174,96,0.15); color: #27AE60; border: 1px solid rgba(39,174,96,0.3); }
+.status-archived { background: rgba(149,165,166,0.15); color: #95A5A6; border: 1px solid rgba(149,165,166,0.3); }
+.status-revoked { background: rgba(231,76,60,0.15); color: #E74C3C; border: 1px solid rgba(231,76,60,0.3); }
+
+/* Meta bar */
+.meta-bar {
+  display: flex; gap: 16px; flex-wrap: wrap; padding: 12px 16px;
+  background: var(--card); border-radius: 6px; margin: 16px 0;
+  font-size: 13px; font-family: 'JetBrains Mono', monospace;
+}
+.meta-item { display: flex; align-items: center; gap: 6px; }
+.impact-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+
+/* Title */
+.com-title {
+  font-family: 'Bricolage Grotesque', serif; font-size: 28px; font-weight: 700;
+  line-height: 1.3; margin: 24px 0 8px;
+}
+.com-id { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--muted); }
+
+/* Body */
+.com-body { margin: 24px 0; font-size: 16px; line-height: 1.8; }
+.com-body p { margin-bottom: 16px; }
+
+/* Seal block */
+.seal-block {
+  border-top: 2px solid var(--gold); margin-top: 40px; padding-top: 24px;
+  display: grid; grid-template-columns: auto 1fr; gap: 24px; align-items: start;
+}
+.qr-placeholder {
+  width: 100px; height: 100px; background: var(--card); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center; border-radius: 6px;
+  font-size: 11px; color: var(--muted); text-align: center;
+}
+.seal-info { font-size: 13px; }
+.seal-info .author { font-family: 'Bricolage Grotesque', serif; font-weight: 600; font-size: 16px; }
+.seal-info .role { color: var(--muted); margin-bottom: 8px; }
+.seal-info .hash {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  color: var(--gold); word-break: break-all;
+}
+
+/* Actions */
+.actions { display: flex; gap: 12px; margin: 24px 0; flex-wrap: wrap; }
+.action-btn {
+  display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px;
+  background: var(--card); color: var(--text); border: 1px solid var(--border);
+  border-radius: 6px; text-decoration: none; font-size: 13px;
+  font-family: 'Outfit', sans-serif; transition: all 0.2s;
+}
+.action-btn:hover { border-color: var(--gold); color: var(--gold); }
+.action-btn.primary { background: var(--gold); color: var(--noir-bg); border-color: var(--gold); font-weight: 600; }
+.action-btn.primary:hover { background: var(--gold-dim); }
+
+/* Feed card */
+.feed-card {
+  padding: 20px; background: var(--card); border: 1px solid var(--border);
+  border-radius: 8px; margin-bottom: 16px; transition: border-color 0.2s;
+  text-decoration: none; display: block; color: var(--text);
+}
+.feed-card:hover { border-color: var(--gold); }
+.feed-card-title { font-family: 'Bricolage Grotesque', serif; font-weight: 600; font-size: 18px; margin-bottom: 8px; }
+.feed-card-meta { font-size: 12px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+
+/* Footer */
+.footer {
+  margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--border);
+  text-align: center; font-size: 12px; color: var(--muted);
+}
+.footer .principle { color: var(--gold); font-style: italic; margin-top: 4px; }
+
+/* Trilingual toggle */
+[data-lang="de"] [data-en], [data-lang="de"] [data-pt] { display: none; }
+[data-lang="en"] [data-de], [data-lang="en"] [data-pt] { display: none; }
+[data-lang="pt"] [data-de], [data-lang="pt"] [data-en] { display: none; }
+
+@media (max-width: 600px) {
+  .com-title { font-size: 22px; }
+  .seal-block { grid-template-columns: 1fr; }
+  .meta-bar { flex-direction: column; gap: 8px; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <a href="/communique/feed" class="header-brand">
+      <div class="header-logo">W</div>
+      <div>
+        <div class="header-title">WINDI COMMUNIQUÉ</div>
+        <div class="header-subtitle">Verified Institutional Communications</div>
+      </div>
+    </a>
+    <div class="controls">
+      <a href="/communique/feed" style="color:var(--muted);text-decoration:none;font-size:13px;">← Back</a>
+      <button onclick="setLang('de')">DE</button>
+      <button onclick="setLang('en')">EN</button>
+      <button onclick="setLang('pt')">PT</button>
+      <button onclick="toggleTheme()">◐</button>
+    </div>
+  </div>
+
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+    <span class="com-id">COM-20260226-0017</span>
+    <span class="status-badge status-verified">
+      🟢
+      <span data-de>Verifiziert</span><span data-en>Verified</span><span data-pt>Verificado</span>
+    </span>
+  </div>
+
+  <h1 class="com-title">
+    <span data-de>Multi-Tenant Forensic Isolation - Produktionsfreigabe</span><span data-en>Multi-Tenant Forensic Isolation - Production Release</span><span data-pt>Isolamento Forense Multi-Tenant - Lancamento em Producao</span>
+  </h1>
+
+  <div class="meta-bar">
+    <div class="meta-item">
+      📂 <span data-de>Markteinführung</span><span data-en>Launch</span><span data-pt>Lançamento</span>
+    </div>
+    <div class="meta-item">
+      <span class="impact-dot" style="background:#E74C3C"></span>
+      <span data-de>Hoch</span><span data-en>High</span><span data-pt>Alto</span>
+    </div>
+    <div class="meta-item">📅 2026-02-26</div>
+  </div>
+
+  <div class="com-body">
+    <div data-de><p>Das WINDI Governance Institute gibt die Produktionsfreigabe des Multi-Tenant Forensic Isolation Systems bekannt. Kernkomponenten: TenantAuditCollector.js, TenantStamp.js, Legacy-Allowlist. Cutover: 26.02.2026 23:59:59 UTC. Alle Tests bestanden.</p></div>
+    <div data-en><p>The WINDI Governance Institute announces the production release of the Multi-Tenant Forensic Isolation system. Core components: TenantAuditCollector.js, TenantStamp.js, Legacy Allowlist. Cutover: 2026-02-26 23:59:59 UTC. All tests passed.</p></div>
+    <div data-pt><p>O Instituto de Governanca WINDI anuncia o lancamento em producao do sistema de Isolamento Forense Multi-Tenant. Componentes: TenantAuditCollector.js, TenantStamp.js, Lista Legacy. Cutover: 26-02-2026 23:59:59 UTC. Testes aprovados.</p></div>
+  </div>
+
+  <div class="seal-block">
+    <div class="qr-placeholder">
+      <div>🔐<br><small>QR</small></div>
+    </div>
+    <div class="seal-info">
+      <div class="author">WINDI Governance Institute</div>
+      <div class="role">Architect Dragon</div>
+      <div style="margin-top:8px;">
+        <div style="color:var(--muted);font-size:12px;">Receipt</div>
+        <div class="hash">VR-COM-3e481f48b185</div>
+      </div>
+      <div style="margin-top:8px;">
+        <div style="color:var(--muted);font-size:12px;">Content Hash (SHA-256)</div>
+        <div class="hash">bc5047d30d154929a4a187f6dcc2ea402f161f46d023c65ce26e67e3826cbc2e</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <a href="/communique/COM-20260226-0017/verify" class="action-btn primary">
+      🔍 <span data-de>Verifizieren</span><span data-en>Verify</span><span data-pt>Verificar</span>
+    </a>
+    <a href="/communique/COM-20260226-0017/pdf" class="action-btn">
+      📄 PDF
+    </a>
+  </div>
+
+  <div class="footer">
+    <div>WINDI Publishing House · Kempten, Bavaria</div>
+    <div class="principle">"AI processes. Human decides. WINDI guarantees."</div>
+  </div>
+</div>
+
+<script>
+function toggleTheme() {
+  const html = document.documentElement;
+  html.dataset.theme = html.dataset.theme === 'dark' ? 'light' : 'dark';
+  localStorage.setItem('windi-theme', html.dataset.theme);
+}
+function setLang(lang) {
+  document.documentElement.dataset.lang = lang;
+  localStorage.setItem('windi-lang', lang);
+}
+// Restore preferences
+(function() {
+  const t = localStorage.getItem('windi-theme');
+  const l = localStorage.getItem('windi-lang');
+  if (t) document.documentElement.dataset.theme = t;
+  if (l) document.documentElement.dataset.lang = l;
+})();
+</script>
+</body></html>
