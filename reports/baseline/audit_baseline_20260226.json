@@ -1,0 +1,79 @@
+{
+  "meta": {
+    "type": "WINDI Audit Baseline",
+    "version": "1.0.0",
+    "generated_at": "2026-02-26T15:27:33.404512+00:00",
+    "generated_by": "WINDI Governance Institute",
+    "purpose": "Post-milestone stability verification"
+  },
+  "milestone": {
+    "name": "Multi-Tenant Forensic Isolation",
+    "date": "2026-02-26",
+    "communique_id": "COM-20260226-0017",
+    "ledger_receipt": "VR-COM-3e481f48b185"
+  },
+  "tests": {
+    "verify_tenant_isolation": {
+      "status": "PASS",
+      "legacy_exempt": 4,
+      "conflicts": 0,
+      "hash_failures": 0
+    },
+    "assert_tenant_presence": {
+      "status": "PASS",
+      "legacy_exempt": 27,
+      "missing_tenant": 0
+    },
+    "verify_tenant_boundary_events": {
+      "status": "PASS",
+      "boundary_events": 0,
+      "conflicts": 0
+    }
+  },
+  "services": {
+    "forensic_ledger": {
+      "port": 8101,
+      "status": "UP"
+    },
+    "forensic_api": {
+      "port": 8094,
+      "status": "UP"
+    },
+    "orchestrator": {
+      "port": 8104,
+      "status": "UP"
+    },
+    "communique_engine": {
+      "port": 8105,
+      "status": "UP"
+    },
+    "dragon_server": {
+      "port": 8106,
+      "status": "UP"
+    }
+  },
+  "ledger": {
+    "total_receipts": 500,
+    "all_sealed": true
+  },
+  "communiques": {
+    "total": 20,
+    "published": 15
+  },
+  "components_verified": [
+    "TenantAuditCollector.js",
+    "TenantStamp.js",
+    "legacy_receipts_allowlist.json",
+    "verify_tenant_isolation.py",
+    "assert_tenant_presence.py",
+    "verify_tenant_boundary_events.py",
+    "FORENSIC_TENANT_ISOLATION_LEGACY_POLICY.md"
+  ],
+  "cutover_policy": {
+    "date": "2026-02-26T23:59:59Z",
+    "timestamp": 1772198399,
+    "legacy_receipts_exempt": true
+  },
+  "overall_status": "PASS",
+  "baseline_hash": "808245fc512934f0b6b11caa2dadad5e7b5765cea16484fc2163d011358238ae"
+}
