@@ -1,0 +1,13 @@
+{
+  "communique_id": "COM-20260221-0002",
+  "content_hash": "16e84cb6ec9558651768572357fe6922368cd3b29dc770c8a99b7e8d24b2f63b",
+  "bundle_hash": "48589b67e38669fedfe0037e6f66a9c64d8221276f1c9f999c52bebf4794e827",
+  "receipt_id": "VR-COM-9b9af4e9c25b",
+  "ledger_id": "VR-COM-9b9af4e9c25b",
+  "category": "GOVERNANCE",
+  "impact_level": "HIGH",
+  "author": "Jober Mögele Correa",
+  "published_at": "2026-02-21T00:51:07Z",
+  "verify_url": "https://admin.windia4desk.tech/communique/COM-20260221-0002/verify",
+  "generated_at": "2026-02-21T00:51:07Z"
+}

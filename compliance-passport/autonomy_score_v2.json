@@ -1,0 +1,159 @@
+{
+  "version": "2.0",
+  "date": "2026-02-23T20:12:22Z",
+  "previous": {
+    "version": "1.0 (WB-SCORE-01)",
+    "score": "28/31",
+    "percentage": 90.3
+  },
+  "operational": {
+    "total_built": 31,
+    "autonomous": 29,
+    "pending": 2,
+    "percentage": 93.5,
+    "governance_score": 100.0
+  },
+  "roadmap": {
+    "total_inventory": 36,
+    "autonomous": 29,
+    "planned": 5,
+    "percentage": 80.6
+  },
+  "delta": {
+    "new_built": 0,
+    "new_autonomous": 1,
+    "growth": "+0 built, +1 autonomous"
+  },
+  "layers": {
+    "L1": {
+      "total": 5,
+      "autonomous": 5
+    },
+    "L2": {
+      "total": 5,
+      "autonomous": 5
+    },
+    "L3": {
+      "total": 4,
+      "autonomous": 4
+    },
+    "GOV": {
+      "total": 3,
+      "autonomous": 2
+    },
+    "INFRA": {
+      "total": 3,
+      "autonomous": 2
+    },
+    "PAL": {
+      "total": 2,
+      "autonomous": 2
+    },
+    "W1": {
+      "total": 4,
+      "autonomous": 4
+    },
+    "PB": {
+      "total": 5,
+      "autonomous": 5
+    },
+    "NEXT": {
+      "total": 5,
+      "autonomous": 0
+    }
+  },
+  "new_since_wb_score_01": [
+    {
+      "id": "M23",
+      "name": "Ledger Sync Engine",
+      "layer": "W1",
+      "autonomous": true
+    },
+    {
+      "id": "M24",
+      "name": "Hash Injector (SHA-256)",
+      "layer": "W1",
+      "autonomous": true
+    },
+    {
+      "id": "M25",
+      "name": "Serial Engine (WINDI-2026-XXXX)",
+      "layer": "W1",
+      "autonomous": true
+    },
+    {
+      "id": "M26",
+      "name": "QR Engine (Gold+VerifyURL)",
+      "layer": "W1",
+      "autonomous": true
+    },
+    {
+      "id": "M27",
+      "name": "OCR Engine (Tesseract 5.3.0)",
+      "layer": "PB",
+      "autonomous": true
+    },
+    {
+      "id": "M28",
+      "name": "AutoClassifier (Rule-Based)",
+      "layer": "PB",
+      "autonomous": true
+    },
+    {
+      "id": "M29",
+      "name": "Paperless Pipeline Orchestrator",
+      "layer": "PB",
+      "autonomous": true
+    },
+    {
+      "id": "M30",
+      "name": "I9 Gate (Scanned Documents)",
+      "layer": "PB",
+      "autonomous": true
+    },
+    {
+      "id": "M31",
+      "name": "ZK Proof Layer (Paperless)",
+      "layer": "PB",
+      "autonomous": true
+    }
+  ],
+  "pending_modules": [
+    {
+      "id": "M16",
+      "name": "SIP (Sovereign Identity)",
+      "notes": "3 layers defined, Layer1 passphrase PENDING"
+    },
+    {
+      "id": "M20",
+      "name": "Wallet 'O Espelho'",
+      "notes": "React tril\u00edngue, TrustRadar. Port 8099 reserved"
+    },
+    {
+      "id": "M32",
+      "name": "URL Verifier",
+      "notes": "PLANNED: next multimodal vector"
+    },
+    {
+      "id": "M33",
+      "name": "Image Hash Verification",
+      "notes": "PLANNED: ImgHash for visual integrity"
+    },
+    {
+      "id": "M34",
+      "name": "QES Integration",
+      "notes": "PLANNED: Qualified Electronic Signature"
+    },
+    {
+      "id": "M35",
+      "name": "Clone Deployment System",
+      "notes": "PLANNED: autonomous node replication"
+    },
+    {
+      "id": "M36",
+      "name": "Agent Creator",
+      "notes": "PLANNED: agent onboarding pipeline"
+    }
+  ],
+  "integrity_hash": "0024f92a12a9d87a"
+}

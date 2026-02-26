@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WINDI — Investor Relations</title>
+    <meta name="description" content="WINDI Publishing House — Constitutional AI Framework. Investor Relations Portal.">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #0a0a0a;
+            --bg-elevated: #0f0f0f;
+            --text: #e8e4dc;
+            --muted: #888;
+            --dim: #555;
+            --faint: #333;
+            --surface: rgba(255,255,255,0.025);
+            --border: rgba(255,255,255,0.07);
+            --gold: #d4a017;
+            --gold-dim: rgba(212, 160, 23, 0.15);
+            --gold-border: rgba(212, 160, 23, 0.25);
+            --green: #2d8a4e;
+            --green-dim: rgba(45, 138, 78, 0.12);
+            --mono: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
+            --serif: 'Crimson Pro', Georgia, serif;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--mono);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            opacity: 0.02;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px);
+            background-size: 48px 48px;
+            pointer-events: none;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes subtlePulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        .container {
+            max-width: 880px;
+            margin: 0 auto;
+            padding: 56px 28px 72px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ═══ HEADER ═══ */
+        .header {
+            margin-bottom: 64px;
+            padding-bottom: 40px;
+            border-bottom: 1px solid var(--border);
+            animation: fadeUp 0.6s ease;
+        }
+
+        .header__eyebrow {
+            font-size: 10px;
+            letter-spacing: 7px;
+            color: var(--dim);
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .header__dragon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            animation: subtlePulse 3s ease infinite;
+        }
+
+        .header__title {
+            font-family: var(--serif);
+            font-size: clamp(36px, 5.5vw, 52px);
+            font-weight: 300;
+            line-height: 1.1;
+            color: var(--text);
+            letter-spacing: -1px;
+            margin-bottom: 16px;
+        }
+
+        .header__subtitle {
+            font-family: var(--serif);
+            font-size: 18px;
+            color: var(--muted);
+            line-height: 1.6;
+            max-width: 600px;
+        }
+
+        .header__badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 14px;
+            font-size: 9px;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            border: 1px solid;
+        }
+
+        .badge--gold {
+            color: var(--gold);
+            border-color: var(--gold-border);
+            background: rgba(212, 160, 23, 0.04);
+        }
+
+        .badge--green {
+            color: var(--green);
+            border-color: rgba(45, 138, 78, 0.25);
+            background: rgba(45, 138, 78, 0.04);
+        }
+
+        /* ═══ PRINCIPLE ═══ */
+        .principle {
+            margin-bottom: 56px;
+            padding: 32px 36px;
+            border-left: 3px solid rgba(212, 160, 23, 0.2);
+            background: rgba(212, 160, 23, 0.015);
+            animation: fadeUp 0.6s ease 0.1s both;
+        }
+
+        .principle__text {
+            font-family: var(--serif);
+            font-size: 20px;
+            font-style: italic;
+            color: var(--text);
+            line-height: 1.6;
+            letter-spacing: 0.2px;
+        }
+
+        .principle__text em {
+            font-style: normal;
+            color: var(--gold);
+        }
+
+        .principle__source {
+            margin-top: 14px;
+            font-size: 10px;
+            letter-spacing: 3px;
+            color: var(--dim);
+            text-transform: uppercase;
+        }
+
+        /* ═══ MATERIALS GRID ═══ */
+        .materials {
+            margin-bottom: 56px;
+            animation: fadeUp 0.6s ease 0.2s both;
+        }
+
+        .materials__title {
+            font-size: 10px;
+            letter-spacing: 5px;
+            color: var(--dim);
+            text-transform: uppercase;
+            margin-bottom: 24px;
+        }
+
+        .materials__grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2px;
+        }
+
+        .material-card {
+            display: block;
+            padding: 28px 32px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .material-card:hover {
+            background: rgba(255,255,255,0.04);
+            border-color: rgba(255,255,255,0.12);
+            transform: translateX(4px);
+        }
+
+        .material-card--featured {
+            border-color: var(--gold-border);
+            background: rgba(212, 160, 23, 0.03);
+        }
+
+        .material-card--featured:hover {
+            border-color: rgba(212, 160, 23, 0.45);
+            background: rgba(212, 160, 23, 0.06);
+        }
+
+        .material-card__top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .material-card__label {
+            font-size: 10px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .material-card--featured .material-card__label { color: var(--gold); }
+
+        .material-card__status {
+            font-size: 9px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 3px 8px;
+        }
+
+        .status--live {
+            color: var(--green);
+            background: var(--green-dim);
+        }
+
+        .status--sealed {
+            color: var(--gold);
+            background: var(--gold-dim);
+        }
+
+        .status--coming {
+            color: var(--dim);
+            background: rgba(255,255,255,0.03);
+        }
+
+        .material-card__title {
+            font-family: var(--serif);
+            font-size: 22px;
+            font-weight: 400;
+            color: var(--text);
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .material-card__desc {
+            font-family: var(--serif);
+            font-size: 14px;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .material-card__arrow {
+            position: absolute;
+            right: 28px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            color: var(--dim);
+            transition: all 0.3s ease;
+        }
+
+        .material-card:hover .material-card__arrow {
+            color: var(--text);
+            transform: translateY(-50%) translateX(4px);
+        }
+
+        .material-card--disabled {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        /* ═══ KEY NUMBERS ═══ */
+        .numbers {
+            margin-bottom: 56px;
+            animation: fadeUp 0.6s ease 0.3s both;
+        }
+
+        .numbers__title {
+            font-size: 10px;
+            letter-spacing: 5px;
+            color: var(--dim);
+            text-transform: uppercase;
+            margin-bottom: 24px;
+        }
+
+        .numbers__grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 2px;
+        }
+
+        .number-card {
+            padding: 24px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+        }
+
+        .number-card__value {
+            font-size: 28px;
+            font-weight: 300;
+            color: var(--text);
+            letter-spacing: -1px;
+            margin-bottom: 6px;
+        }
+
+        .number-card__value--gold { color: var(--gold); }
+
+        .number-card__label {
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: var(--dim);
+            text-transform: uppercase;
+            line-height: 1.5;
+        }
+
+        /* ═══ DRAGONS ═══ */
+        .dragons {
+            margin-bottom: 56px;
+            padding: 28px 32px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            animation: fadeUp 0.6s ease 0.35s both;
+        }
+
+        .dragons__title {
+            font-size: 10px;
+            letter-spacing: 5px;
+            color: var(--dim);
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .dragons__grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+        }
+
+        .dragon-role {
+            padding: 16px;
+            border-left: 2px solid var(--border);
+        }
+
+        .dragon-role__name {
+            font-size: 11px;
+            letter-spacing: 2px;
+            color: var(--gold);
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .dragon-role__desc {
+            font-family: var(--serif);
+            font-size: 13.5px;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+
+        .dragon-role--human {
+            border-left-color: var(--gold-border);
+            background: rgba(212, 160, 23, 0.03);
+        }
+
+        .dragon-role--human .dragon-role__desc {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        /* ═══ FOOTER ═══ */
+        .footer {
+            padding-top: 32px;
+            border-top: 1px solid rgba(255,255,255,0.04);
+            animation: fadeIn 0.6s ease 0.4s both;
+        }
+
+        .footer__top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .footer__org {
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: var(--faint);
+        }
+
+        .footer__motto {
+            font-size: 10px;
+            color: var(--faint);
+            letter-spacing: 1px;
+        }
+
+        .footer__legal {
+            font-family: var(--serif);
+            font-size: 12px;
+            color: var(--faint);
+            line-height: 1.6;
+            font-style: italic;
+        }
+
+        /* ═══ RESPONSIVE ═══ */
+        @media (max-width: 640px) {
+            .container { padding: 32px 16px 48px; }
+            .header__title { font-size: 30px; }
+            .principle { padding: 24px; }
+            .material-card { padding: 20px 24px; }
+            .material-card__arrow { display: none; }
+            .numbers__grid { grid-template-columns: repeat(2, 1fr); }
+            .dragons__grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVIGATION -->
+    <nav style="position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,10,10,0.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.05);padding:12px 24px;display:flex;justify-content:space-between;align-items:center;">
+        <a href="https://master.windia4desk.tech/investor/" style="display:inline-flex;align-items:center;gap:8px;color:#888;text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1px;transition:color 0.2s;">
+            <span style="font-size:14px;">←</span> INVESTOR HUB
+        </a>
+        <a href="i9-stress-test.html" style="display:inline-flex;align-items:center;gap:8px;color:#d4a017;text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1px;transition:color 0.2s;">
+            I9 STRESS TEST <span style="font-size:14px;">→</span>
+        </a>
+    </nav>
+
+    <div class="container" style="padding-top:80px;">
+
+        <!-- HEADER -->
+        <header class="header">
+            <div class="header__eyebrow">Investor Relations</div>
+            <div class="header__dragon">🐉</div>
+            <h1 class="header__title">WINDI Publishing House</h1>
+            <p class="header__subtitle">
+                Constitutional AI Framework — the Pre-AI Governance Layer
+                that enforces human sovereignty over AI decision-making.
+            </p>
+            <div class="header__badges">
+                <span class="badge badge--gold">⚖️ Compliance Passport GOLD</span>
+                <span class="badge badge--green">✓ EU AI Act 8/8 Articles</span>
+                <span class="badge badge--gold">9/9 Constitutional Invariants</span>
+            </div>
+        </header>
+
+        <!-- PRINCIPLE -->
+        <div class="principle">
+            <p class="principle__text">
+                <em>AI processes.</em> The Human decides. <em>WINDI guarantees.</em>
+            </p>
+            <div class="principle__source">
+                Genesis Block WB-INSP-00000000 — Wisdom Chain Anchor
+            </div>
+        </div>
+
+        <!-- MATERIALS -->
+        <section class="materials">
+            <div class="materials__title">Investor Materials</div>
+            <div class="materials__grid">
+
+                <!-- I9 STRESS TEST — FEATURED -->
+                <a href="https://windi-domain.com/investor-relations/i9-stress-test.html" class="material-card material-card--featured">
+                    <div class="material-card__top">
+                        <span class="material-card__label">Interactive Demo</span>
+                        <span class="material-card__status status--live">● Live</span>
+                    </div>
+                    <div class="material-card__title">I9 — The Iron Grid Stress Test</div>
+                    <div class="material-card__desc">
+                        Watch five aggressive investor tactics attempt to break the constitutional
+                        prohibition of AI autonomy escalation. See the Guardian agent respond in real-time
+                        with constitutional citations, wisdom chain proofs, and sovereign alternatives.
+                    </div>
+                    <span class="material-card__arrow">→</span>
+                </a>
+
+                <!-- COMPLIANCE PASSPORT -->
+                <a href="#" class="material-card material-card--disabled">
+                    <div class="material-card__top">
+                        <span class="material-card__label">Governance Report</span>
+                        <span class="material-card__status status--sealed">Sealed</span>
+                    </div>
+                    <div class="material-card__title">Compliance Passport v2.0 — GOLD</div>
+                    <div class="material-card__desc">
+                        Full governance audit: 100% governance score, 93.5% operational,
+                        EU AI Act 8/8 articles compliant. Zero violations. 9/9 invariants enforced.
+                    </div>
+                    <span class="material-card__arrow">→</span>
+                </a>
+
+                <!-- DIGITAL CONSTITUTION -->
+                <a href="#" class="material-card material-card--disabled">
+                    <div class="material-card__top">
+                        <span class="material-card__label">Foundation Document</span>
+                        <span class="material-card__status status--sealed">Sealed</span>
+                    </div>
+                    <div class="material-card__title">Digitale Verfassung v1.0</div>
+                    <div class="material-card__desc">
+                        The trilingual constitutional charter — the foundational document
+                        that defines the system's physics, invariants, and governance architecture.
+                    </div>
+                    <span class="material-card__arrow">→</span>
+                </a>
+
+                <!-- MARKET OVERVIEW -->
+                <a href="#" class="material-card material-card--disabled">
+                    <div class="material-card__top">
+                        <span class="material-card__label">Market Analysis</span>
+                        <span class="material-card__status status--coming">Coming</span>
+                    </div>
+                    <div class="material-card__title">€65B GRC Market — WINDI Positioning</div>
+                    <div class="material-card__desc">
+                        TAM analysis, competitive landscape, pricing tiers, and go-to-market
+                        strategy for the Governance, Risk & Compliance market.
+                    </div>
+                    <span class="material-card__arrow">→</span>
+                </a>
+
+            </div>
+        </section>
+
+        <!-- KEY NUMBERS -->
+        <section class="numbers">
+            <div class="numbers__title">Key Metrics</div>
+            <div class="numbers__grid">
+                <div class="number-card">
+                    <div class="number-card__value number-card__value--gold">9/9</div>
+                    <div class="number-card__label">Constitutional<br>Invariants</div>
+                </div>
+                <div class="number-card">
+                    <div class="number-card__value">9,743+</div>
+                    <div class="number-card__label">Forensic<br>Receipts</div>
+                </div>
+                <div class="number-card">
+                    <div class="number-card__value">0</div>
+                    <div class="number-card__label">Governance<br>Violations</div>
+                </div>
+                <div class="number-card">
+                    <div class="number-card__value number-card__value--gold">8/8</div>
+                    <div class="number-card__label">EU AI Act<br>Articles</div>
+                </div>
+                <div class="number-card">
+                    <div class="number-card__value">17</div>
+                    <div class="number-card__label">Institutional<br>Style Profiles</div>
+                </div>
+                <div class="number-card">
+                    <div class="number-card__value">€65B</div>
+                    <div class="number-card__label">Target GRC<br>Market</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- THREE DRAGONS -->
+        <section class="dragons">
+            <div class="dragons__title">Three Dragons Protocol — Separation of Powers</div>
+            <div class="dragons__grid">
+                <div class="dragon-role">
+                    <div class="dragon-role__name">🐉 Guardian</div>
+                    <div class="dragon-role__desc">Proposes invariants and defines governance. Decides never.</div>
+                </div>
+                <div class="dragon-role">
+                    <div class="dragon-role__name">🐉 Architect</div>
+                    <div class="dragon-role__desc">Implements architecture and systems. Decides never.</div>
+                </div>
+                <div class="dragon-role">
+                    <div class="dragon-role__name">🐉 Witness</div>
+                    <div class="dragon-role__desc">Verifies, audits, and attests. Decides never.</div>
+                </div>
+                <div class="dragon-role dragon-role--human">
+                    <div class="dragon-role__name">⚖️ Human Dragon</div>
+                    <div class="dragon-role__desc">Decides. Always.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="footer">
+            <div class="footer__top">
+                <div class="footer__org">
+                    WINDI PUBLISHING HOUSE • KEMPTEN, BAVARIA, GERMANY
+                </div>
+                <div class="footer__motto">
+                    KI verarbeitet. Der Mensch entscheidet. WINDI garantiert. 🐉
+                </div>
+            </div>
+            <div class="footer__legal">
+                This material is confidential and intended solely for qualified investors.
+                Distribution or reproduction without written consent is prohibited.
+                All governance claims are cryptographically verifiable via the WINDI Forensic Stack.
+            </div>
+        </footer>
+
+    </div>
+</body>
+</html>

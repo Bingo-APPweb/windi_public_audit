@@ -1,0 +1,25 @@
+{
+  "id": "WB-SCORE-01",
+  "type": "insight",
+  "category": "autonomy_governance",
+  "essence": "WINDI Autonomy Score 23Feb26: 26/29 autonomous (90%). Wave1 N1-N4 added Serial/QR/HashInjector/LedgerSync. +8 sovereign modules (Vault/Communique/Passport/Wisdom/Palette/D1/Sentinel/SIP). LLM key dependency=3 functions only (semantic analysis/text gen/chat). Governance=100% sovereign. Next: Tesseract OCR local + rule-based categorizer -> 93-95%.",
+  "shelf": {
+    "N1": "governance",
+    "N2": "autonomy-score",
+    "N3": "milestone",
+    "N4": "canonical",
+    "N5": "internal"
+  },
+  "source": "Human Dragon + Guardian analysis",
+  "chain_ref": "WB-INSP-00000000 → WB-SCORE-01",
+  "ttl_hours": 6,
+  "sealed_at": "2026-02-23T12:01:05+00:00",
+  "metrics": {
+    "total_capabilities": 29,
+    "autonomous": 26,
+    "key_dependent": 3,
+    "autonomy_pct": 89.7,
+    "governance_sovereignty_pct": 100.0
+  },
+  "sha256": "29d608f00197a5f96fc041468fa78bfaba65f6b2e4c88463cb7015e181b822f9"
+}

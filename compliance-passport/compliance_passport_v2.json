@@ -1,0 +1,253 @@
+{
+  "passport_version": "2.0",
+  "generated_at": "2026-02-23T20:23:54Z",
+  "issuer": "WINDI Publishing House",
+  "officer": "Human Dragon \u2014 Chief Governance Officer",
+  "principle": "AI processes. Human decides. WINDI guarantees.",
+  "classification": {
+    "tier": "GOLD",
+    "governance_score": 100.0,
+    "previous_tier": "GOLD (v1.0, 21-Feb-2026)",
+    "upgrade_reason": "Autonomy Score v2.0 + Paperless Bridge v1.0 + Wave1 SEALED"
+  },
+  "autonomy_score": {
+    "version": "2.0",
+    "operational": {
+      "total_built": 31,
+      "autonomous": 29,
+      "pending": 2,
+      "percentage": 93.5,
+      "governance_score": 100.0
+    },
+    "roadmap": {
+      "total_inventory": 36,
+      "autonomous": 29,
+      "planned": 5,
+      "percentage": 80.6
+    },
+    "integrity_hash": "0024f92a12a9d87a",
+    "wisdom_block": "WB-SCORE-01 \u2192 WB-BRIDGE-01"
+  },
+  "eu_ai_act_compliance": {
+    "articles_covered": 8,
+    "compliant": 8,
+    "articles": [
+      {
+        "article": "Art. 9 \u2014 Risk Management",
+        "status": "COMPLIANT",
+        "evidence": "SGE 6-layer risk analysis (R0-R5), Sentinel LAW 5-tier escalation",
+        "modules": [
+          "M01",
+          "M06",
+          "M14"
+        ]
+      },
+      {
+        "article": "Art. 11 \u2014 Technical Documentation",
+        "status": "COMPLIANT",
+        "evidence": "Wisdom Protocol sealed blocks, ISP templates (17 profiles)",
+        "modules": [
+          "M05",
+          "M15",
+          "M17"
+        ]
+      },
+      {
+        "article": "Art. 12 \u2014 Record-Keeping",
+        "status": "COMPLIANT",
+        "evidence": "Forensic Ledger (:8101), Vault (:8106), 4629+ receipts, SHA-256 chain",
+        "modules": [
+          "M11",
+          "M12",
+          "M13"
+        ]
+      },
+      {
+        "article": "Art. 13 \u2014 Transparency",
+        "status": "COMPLIANT",
+        "evidence": "Three Dragons Protocol (roles visible, LLM names internal), KLAR/NOIR UI",
+        "modules": [
+          "M04",
+          "M07"
+        ]
+      },
+      {
+        "article": "Art. 14 \u2014 Human Oversight",
+        "status": "COMPLIANT",
+        "evidence": "I9 Gate (AI proposes, Human decides), Command Bridge sign flow",
+        "modules": [
+          "M06",
+          "M09",
+          "M30"
+        ]
+      },
+      {
+        "article": "Art. 15 \u2014 Accuracy/Robustness",
+        "status": "COMPLIANT",
+        "evidence": "Dual-hash verification, C14N canonical JSON, ZK proof layer",
+        "modules": [
+          "M11",
+          "M12",
+          "M31"
+        ]
+      },
+      {
+        "article": "Art. 17 \u2014 Quality Management",
+        "status": "COMPLIANT",
+        "evidence": "Compliance Passport self-verification, Autonomy Score tracking",
+        "modules": [
+          "M14",
+          "M15"
+        ]
+      },
+      {
+        "article": "Art. 52 \u2014 Transparency Obligations",
+        "status": "COMPLIANT",
+        "evidence": "AI disclosure in Three Dragons, no brand names in public UI",
+        "modules": [
+          "M07"
+        ]
+      }
+    ]
+  },
+  "invariants": {
+    "total": 9,
+    "enforced": 9,
+    "list": [
+      {
+        "id": "I1",
+        "name": "Human Decision Authority",
+        "status": "ENFORCED",
+        "method": "I9 Gate: AI proposes, never executes"
+      },
+      {
+        "id": "I2",
+        "name": "Zero-Knowledge Data",
+        "status": "ENFORCED",
+        "method": "Client=data, WINDI=proofs only"
+      },
+      {
+        "id": "I3",
+        "name": "Cryptographic Chain",
+        "status": "ENFORCED",
+        "method": "SHA-256 + Merkle, content NOT stored"
+      },
+      {
+        "id": "I4",
+        "name": "Template \u2260 Decision",
+        "status": "ENFORCED",
+        "method": "API decides level, template manifests"
+      },
+      {
+        "id": "I5",
+        "name": "Audit Trail Immutability",
+        "status": "ENFORCED",
+        "method": "Forensic Ledger append-only, Vault dual-hash"
+      },
+      {
+        "id": "I6",
+        "name": "Governance Score Integrity",
+        "status": "ENFORCED",
+        "method": "Autonomy Score v2.0, self-verifying hash"
+      },
+      {
+        "id": "I7",
+        "name": "Multimodal Sovereignty",
+        "status": "ENFORCED",
+        "method": "Paperless Bridge: OCR local, classify local, hash local"
+      },
+      {
+        "id": "I8",
+        "name": "Sentinel Escalation Protocol",
+        "status": "ENFORCED",
+        "method": "5-tier escalation, p95=32.7ms, probe isolation"
+      },
+      {
+        "id": "I9",
+        "name": "Document Flow Control",
+        "status": "ENFORCED",
+        "method": "INVOICE\u2192pass, CONTRACT/CRIT\u2192stop. Field-proven."
+      }
+    ]
+  },
+  "wisdom_chain": {
+    "protocol_version": "v0.1.0",
+    "blocks_sealed": 5,
+    "genesis": "WB-INSP-00000000",
+    "latest": "WB-BRIDGE-01",
+    "blocks": [
+      {
+        "id": "WB-INSP-00000000",
+        "type": "GENESIS",
+        "domain": "philosophy-ethics",
+        "visibility": "public"
+      },
+      {
+        "id": "WB-CONV-df1b601c",
+        "type": "CONVERGENCE",
+        "domain": "philosophy-ethics",
+        "visibility": "public"
+      },
+      {
+        "id": "WB-PHIL-48a152a2",
+        "type": "SOVEREIGNTY",
+        "domain": "philosophy-ethics",
+        "visibility": "public"
+      },
+      {
+        "id": "WB-SCORE-01",
+        "type": "AUTONOMY SCORE",
+        "domain": "governance",
+        "visibility": "internal"
+      },
+      {
+        "id": "WB-BRIDGE-01",
+        "type": "PAPERLESS BRIDGE",
+        "domain": "governance",
+        "visibility": "internal"
+      }
+    ]
+  },
+  "forensic_stack": {
+    "ledger": {
+      "port": 8101,
+      "type": "SQLite+SHA-256",
+      "status": "GREEN"
+    },
+    "vault": {
+      "port": 8106,
+      "type": "Dual-hash\u2192Ledger",
+      "status": "GREEN"
+    },
+    "receipts": "4629+",
+    "violations": 0,
+    "zk_enforced": true
+  },
+  "infrastructure": {
+    "server": "Strato VPS (87.106.29.233)",
+    "os": "Ubuntu 24",
+    "ports": "8080-8108",
+    "ssl": "Let's Encrypt (auto-renew)",
+    "services_systemd": [
+      "windi-brain",
+      "windi-bridge",
+      "windi-clone",
+      "windi-cortex",
+      "windi-gateway",
+      "windi-masterarbeit"
+    ]
+  },
+  "certifications_target": [
+    "BSI C5 (German Federal Cloud Security)",
+    "ISO 27001 (Information Security)",
+    "EU AI Act High-Risk System Compliance"
+  ],
+  "new_capabilities_v2": [
+    "Wave1 SEALED: Serial Engine (WINDI-2026-XXXX), Hash Injector, QR Engine, Ledger Sync",
+    "Paperless Bridge v1.0: OCR (Tesseract 5.3.0), AutoClassifier (6 types, 3 langs), ZK Proofs",
+    "I9 Gate field-proven: INVOICE\u2192pass, CONTRACT\u2192stop, GOVERNANCE/CRIT\u2192stop",
+    "Autonomy Score dual-metric: Operational (93.5%) + Roadmap (80.6%)",
+    "Wisdom Protocol: 5 sealed blocks across 2 domains"
+  ],
+  "passport_hash": "a0bdd8c7956cbac87ac0a448027eb393015d8d5a70b1d3e8a205faf6d8fe6839"
+}

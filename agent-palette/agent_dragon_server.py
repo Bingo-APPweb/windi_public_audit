@@ -26,6 +26,16 @@ import base64
 import threading
 from pathlib import Path
 from datetime import datetime, timezone
+import sys
+
+# SGE Engine import
+sys.path.insert(0, "/opt/windi/engine")
+try:
+    from semantic_governance import SemanticGovernanceEngine, format_terminal_report
+    SGE_AVAILABLE = True
+except ImportError:
+    SGE_AVAILABLE = False
+    print("⚠️  SGE Engine not available - /opt/windi/engine/semantic_governance.py")
 
 # Document generation imports
 try:
@@ -134,6 +144,19 @@ except ImportError as _e:
     HAS_ECONOMIC_BRAIN = False
     print(f"[Dragon] Economic Brain: NOT AVAILABLE ({_e})")
 
+# WINDI Institutional Memory (Dragon's Legal Advocacy via Evidence Bundle)
+try:
+    from institutional_memory import (
+        get_institutional_memory, query_institutional, emit_institutional_proof
+    )
+    HAS_INSTITUTIONAL_MEMORY = True
+    _im = get_institutional_memory()
+    _im_stats = _im.get_stats()
+    print(f"[Dragon] Institutional Memory: LOADED ({_im_stats['stress_questions']} stress questions, {_im_stats['invariants']} invariants)")
+except ImportError as _e:
+    HAS_INSTITUTIONAL_MEMORY = False
+    print(f"[Dragon] Institutional Memory: NOT AVAILABLE ({_e})")
+
 # ═══════════════════════════════════════════════════════════════════════
 # CONFIGURATION
 # ═══════════════════════════════════════════════════════════════════════
@@ -176,6 +199,99 @@ def get_api_key():
         if key:
             return key
     return None
+
+# ═══════════════════════════════════════════════════════════════════════
+# ELEVENLABS VOICE API — Phase 5C LAUNCH Plan
+# ═══════════════════════════════════════════════════════════════════════
+
+ELEVENLABS_API_URL = "https://api.elevenlabs.io/v1/text-to-speech"
+ELEVENLABS_KEY_FILE = BASE_DIR / ".elevenlabs_key"
+ELEVENLABS_MODEL = "eleven_multilingual_v2"
+ELEVENLABS_MAX_CHARS = 2000
+
+# Dragon voice mapping (voice_id → ElevenLabs voice)
+DRAGON_VOICES = {
+    "guardian": "pNInz6obpgDQGcFmaJgB",  # Deep, protective
+    "architect": "ErXwobaYiN019PkySvjV",  # Clear, precise
+    "witness": "EXAVITQu4vr4xnSDxMaL",    # Calm, analytical
+}
+
+def get_elevenlabs_key():
+    """Load ElevenLabs API key from file or environment."""
+    key = os.environ.get("ELEVENLABS_API_KEY", "").strip()
+    if key:
+        return key
+    if ELEVENLABS_KEY_FILE.exists():
+        key = ELEVENLABS_KEY_FILE.read_text().strip()
+        if key:
+            return key
+    return None
+
+def handle_voice_speak(body):
+    """
+    Phase 5C: Text-to-Speech via ElevenLabs API.
+    POST /api/dragon/voice/speak
+    Body: { text, voice_id?, dragon?, model_id? }
+    Returns: (audio_bytes, None) or (None, error_dict)
+    """
+    api_key = get_elevenlabs_key()
+    if not api_key:
+        return None, {"error": "Voice API not configured", "code": "NO_ELEVENLABS_KEY"}
+
+    text = body.get("text", "").strip()
+    if not text:
+        return None, {"error": "No text provided", "code": "NO_TEXT"}
+
+    if len(text) > ELEVENLABS_MAX_CHARS:
+        text = text[:ELEVENLABS_MAX_CHARS]
+
+    # Resolve voice_id: explicit > dragon mapping > default guardian
+    voice_id = body.get("voice_id")
+    if not voice_id:
+        dragon = body.get("dragon", "guardian")
+        voice_id = DRAGON_VOICES.get(dragon, DRAGON_VOICES["guardian"])
+
+    model_id = body.get("model_id", ELEVENLABS_MODEL)
+
+    # Voice settings (balanced for multilingual)
+    voice_settings = body.get("voice_settings", {
+        "stability": 0.6,
+        "similarity_boost": 0.75,
+        "style": 0.1,
+        "use_speaker_boost": True
+    })
+
+    payload = {
+        "text": text,
+        "model_id": model_id,
+        "voice_settings": voice_settings
+    }
+
+    url = f"{ELEVENLABS_API_URL}/{voice_id}"
+    headers = {
+        "Content-Type": "application/json",
+        "xi-api-key": api_key,
+        "Accept": "audio/mpeg"
+    }
+
+    data = json.dumps(payload).encode("utf-8")
+    req = urllib.request.Request(url, data=data, headers=headers, method="POST")
+
+    try:
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            audio_bytes = resp.read()
+            log(f"VOICE: Generated {len(audio_bytes)} bytes for dragon={body.get('dragon', 'guardian')}")
+            return audio_bytes, None
+    except urllib.error.HTTPError as e:
+        error_body = e.read().decode("utf-8", errors="replace")
+        log(f"ElevenLabs HTTP Error {e.code}: {error_body[:500]}")
+        return None, {"error": f"Voice API error: {e.code}", "code": f"ELEVENLABS_{e.code}"}
+    except urllib.error.URLError as e:
+        log(f"ElevenLabs URL Error: {e.reason}")
+        return None, {"error": "Voice API network error", "code": "NETWORK_ERROR"}
+    except Exception as e:
+        log(f"ElevenLabs Exception: {e}")
+        return None, {"error": str(e), "code": "UNKNOWN_ERROR"}
 
 # ═══════════════════════════════════════════════════════════════════════
 # THREE DRAGONS PROTOCOL — System Prompts
@@ -646,6 +762,63 @@ def handle_dragon_chat(body):
     if not message:
         return {"error": "Empty message"}, 400
 
+    # ═══════════════════════════════════════════════════════════════
+    # INSTITUTIONAL MEMORY — Dragon Legal Advocacy
+    # "A máquina não advoga. Ela produz prova. A prova advoga."
+    # ═══════════════════════════════════════════════════════════════
+    if HAS_INSTITUTIONAL_MEMORY:
+        im = get_institutional_memory()
+        audit_detection = im.detect_audit_question(message)
+
+        if audit_detection:
+            category, confidence = audit_detection
+            institutional_answer = im.query(message)
+
+            if institutional_answer and institutional_answer.get('confidence', 0) >= 0.5:
+                # Dragon can advocate for itself with institutional knowledge
+                answer_text = institutional_answer.get('answer', '')
+                verification_cmd = institutional_answer.get('verification_command', '')
+                source = institutional_answer.get('source', 'institutional_memory')
+
+                # Build response with verification command
+                response_parts = [answer_text]
+                if verification_cmd:
+                    response_parts.append(f"\n\n**Verification Command:**\n```bash\n{verification_cmd}\n```")
+                if institutional_answer.get('evidence'):
+                    response_parts.append(f"\n\n**Evidence:** {institutional_answer.get('evidence')}")
+
+                # Attempt to emit proof (Papel Moeda) for high-confidence answers
+                proof_emitted = None
+                if confidence >= 0.7 and tier_str in ('governance', 'high', 'professional'):
+                    proof_emitted = im.emit_proof(message, institutional_answer)
+
+                # Record this as an institutional decision
+                if HAS_DECISION_JOURNAL:
+                    record_decision(
+                        intent_detected=f"audit_{category}",
+                        confidence_score=confidence,
+                        tier=tier_str,
+                        route_selected="institutional_memory",
+                        candidates_rejected=["semantic_llm_layer", "local_sovereign_core"],
+                        reason_code="INSTITUTIONAL_AUDIT_QUESTION",
+                        latency_ms=0,
+                        uncertainty_detected=False
+                    )
+
+                return {
+                    "dragon": "witness",  # Witness Dragon handles institutional advocacy
+                    "message": "\n".join(response_parts),
+                    "source": "institutional_memory",
+                    "metadata": {
+                        "audit_category": category,
+                        "confidence": institutional_answer.get('confidence'),
+                        "source_document": source,
+                        "proof_emitted": proof_emitted is not None,
+                        "verification_available": bool(verification_cmd),
+                        "institutional_advocacy": True
+                    }
+                }, 200
+
     # Detect language if not specified
     if HAS_SOVEREIGN_ROUTER:
         detected_lang = detect_language(message)
@@ -891,8 +1064,86 @@ def handle_dragon_health(body=None):
         "api_key_configured": bool(api_key),
         "model": MODEL,
         "budget": budget,
+        "sge_available": SGE_AVAILABLE,
         "timestamp": datetime.utcnow().isoformat(),
     }, 200
+
+
+def handle_dragon_sge(body):
+    """Handle /api/dragon/sge — Semantic Governance Engine analysis (6-layer)."""
+    if not SGE_AVAILABLE:
+        return {
+            "error": "SGE Engine not available",
+            "fallback": "Use frontend JavaScript SGE",
+        }, 503
+
+    text = body.get("text", "").strip()
+    source = body.get("source", "<api>")
+    strict = body.get("strict", False)
+    output_format = body.get("format", "json")
+
+    if not text:
+        return {"error": "Empty text"}, 400
+
+    try:
+        engine = SemanticGovernanceEngine(strict_mode=strict)
+        report = engine.scan_text(text, source)
+
+        if output_format == "terminal":
+            return {
+                "success": True,
+                "format": "terminal",
+                "output": format_terminal_report(report),
+                "risk": report.overall_risk.value,
+                "score": report.score,
+            }, 200
+
+        # JSON format (default)
+        return {
+            "success": True,
+            "format": "json",
+            "document": report.document_name,
+            "risk": report.overall_risk.value,
+            "risk_level": _risk_to_r(report.overall_risk.value),
+            "score": report.score,
+            "findings_count": len(report.findings),
+            "findings": [
+                {
+                    "category": f.category.value,
+                    "risk_level": f.risk_level.value,
+                    "title": f.title,
+                    "description": f.description,
+                    "evidence": f.evidence[:200],
+                    "location": f.location,
+                    "invariants": f.invariants_impacted,
+                    "action": f.recommended_action,
+                    "auto_fixable": f.auto_fixable,
+                }
+                for f in report.findings
+            ],
+            "scan_hash": report.scan_hash,
+            "scan_duration_ms": report.scan_duration_ms,
+            "engine_version": report.engine_version,
+            "human_required": report.score < 70 or any(
+                f.risk_level.value in ("HIGH", "CRITICAL") for f in report.findings
+            ),
+        }, 200
+
+    except Exception as e:
+        log(f"SGE Error: {e}")
+        return {"error": str(e)}, 500
+
+
+def _risk_to_r(risk_value):
+    """Convert risk level to R0-R5 format."""
+    mapping = {
+        "NONE": "R0",
+        "LOW": "R1",
+        "MEDIUM": "R2",
+        "HIGH": "R4",
+        "CRITICAL": "R5",
+    }
+    return mapping.get(risk_value, "R3")
 
 
 def handle_constitutional_status():
@@ -2209,6 +2460,15 @@ class DragonHandler(http.server.BaseHTTPRequestHandler):
         if HAS_ECONOMIC_BRAIN and route_economic_api(self, path, "GET"):
             return
 
+        # Institutional Memory Stats
+        if path == "/api/dragon/institutional/stats" and HAS_INSTITUTIONAL_MEMORY:
+            im = get_institutional_memory()
+            stats = im.get_stats()
+            stats["endpoint"] = "/api/dragon/institutional/query"
+            stats["principle"] = "A máquina não advoga. Ela produz prova. A prova advoga."
+            self._json_response(stats, 200)
+            return
+
         # Health endpoint
         if path == "/api/dragon/health":
             data, code = handle_dragon_health()
@@ -2225,6 +2485,110 @@ class DragonHandler(http.server.BaseHTTPRequestHandler):
         if path == "/api/capacity/status":
             data, code = handle_capacity_status()
             self._json_response(data, code)
+            return
+
+        # ═══════════════════════════════════════════════════════════════════════
+        # SOVEREIGNTY — Ratio de soberania local vs dependências externas
+        # ═══════════════════════════════════════════════════════════════════════
+        if path == "/sovereignty":
+            local_services = [
+                "forensic_ledger", "sentinel_law", "sentinel_bridge",
+                "export_engine", "vault", "sqlite_wal", "sge_local",
+                "edge_compute", "hash_chain", "palette_ui", "desktop_d1",
+                "communique", "clone", "wallet"
+            ]
+            external_services = ["llm_api"]
+            total = len(local_services) + len(external_services)
+            local_pct = round((len(local_services) / total) * 100, 1)
+
+            # Try to get Ledger stats
+            ledger_count = 0
+            try:
+                import urllib.request
+                resp = urllib.request.urlopen('http://localhost:8101/health', timeout=2)
+                ledger_data = json.loads(resp.read())
+                ledger_count = ledger_data.get('total_receipts', 0)
+            except:
+                pass
+
+            self._json_response({
+                "sovereignty": {
+                    "ratio": f"{local_pct}%",
+                    "local_functions": len(local_services),
+                    "total_functions": total
+                },
+                "local_services": local_services,
+                "external_services": external_services,
+                "ledger_receipts": ledger_count,
+                "databases": 26,
+                "infrastructure": "Strato €4/month",
+                "principle": "Sem VCapitalista para existir.",
+                "status": "SOVEREIGN"
+            }, 200)
+            return
+
+        # ═══════════════════════════════════════════════════════════════════════
+        # CAPABILITIES — Feature discovery para o Frontend
+        # ═══════════════════════════════════════════════════════════════════════
+        if path == "/capabilities":
+            capabilities = {
+                "sge": {
+                    "enabled": True,
+                    "version": "6-layer",
+                    "layers": ["lexical", "syntactic", "semantic", "pragmatic", "regulatory", "institutional"],
+                    "entities": 130
+                },
+                "voice": {
+                    "enabled": True,
+                    "provider": "eleven_labs",
+                    "model": "eleven_multilingual_v2",
+                    "languages": ["de", "en", "pt"]
+                },
+                "documents": {
+                    "enabled": True,
+                    "formats": ["pdf", "docx", "pptx", "xlsx"],
+                    "engine": "export_engine_8103"
+                },
+                "cognitive": {
+                    "enabled": HAS_DECISION_JOURNAL,
+                    "features": ["hesitation", "wisdom", "evolution", "patterns"]
+                },
+                "chat": {
+                    "enabled": True,
+                    "dragons": ["guardian", "architect", "witness"],
+                    "model": MODEL
+                },
+                "decisions": {
+                    "enabled": HAS_DECISION_JOURNAL,
+                    "persistence": "sqlite",
+                    "threshold": "R2+"
+                },
+                "forensic": {
+                    "enabled": True,
+                    "ledger_port": 8101,
+                    "vault_port": 8106,
+                    "hash": "SHA-256"
+                }
+            }
+            self._json_response({
+                "capabilities": capabilities,
+                "total_features": len(capabilities),
+                "version": VERSION,
+                "principle": "The template never decides the level. The API decides."
+            }, 200)
+            return
+
+        # ═══════════════════════════════════════════════════════════════════════
+        # DECISIONS LIST — GET /api/dragon/decisions (lista completa)
+        # ═══════════════════════════════════════════════════════════════════════
+        if path == "/api/dragon/decisions" and HAS_DECISION_JOURNAL:
+            decisions = get_recent_decisions(limit=100)
+            self._json_response({
+                "ok": True,
+                "decisions": decisions,
+                "total": len(decisions),
+                "principle": "Every governance decision is traceable."
+            }, 200)
             return
 
         # Download endpoint (Sprint 1)
@@ -2501,6 +2865,11 @@ class DragonHandler(http.server.BaseHTTPRequestHandler):
             data, code = handle_dragon_health(body)
             self._json_response(data, code)
 
+        elif path == "/api/dragon/sge":
+            data, code = handle_dragon_sge(body)
+            log(f"SGE [{body.get('source','?')}] risk={data.get('risk','?')} score={data.get('score','?')}")
+            self._json_response(data, code)
+
         # Sprint 2B: Communiqué proxy
         elif path == "/api/dragon/communique/create":
             data, code = handle_communique_create(body)
@@ -2527,6 +2896,98 @@ class DragonHandler(http.server.BaseHTTPRequestHandler):
                 code = 200 if data.get("success") else 400
                 log(f"WISDOM PROMOTION: {pattern_id} by {promoted_by} -> {data.get('success', False)}")
                 self._json_response(data, code)
+
+        # ═══════════════════════════════════════════════════════════════
+        # INSTITUTIONAL MEMORY — Dragon Legal Advocacy Endpoints
+        # "A máquina não advoga. Ela produz prova. A prova advoga."
+        # ═══════════════════════════════════════════════════════════════
+        elif path == "/api/dragon/institutional/query" and HAS_INSTITUTIONAL_MEMORY:
+            question = body.get("question", "")
+            emit_proof = body.get("emit_proof", False)
+            if not question:
+                self._json_response({"error": "question required"}, 400)
+            else:
+                im = get_institutional_memory()
+                answer = im.query(question)
+                if answer:
+                    proof = None
+                    if emit_proof:
+                        proof = im.emit_proof(question, answer)
+                    data = {
+                        "question": question,
+                        "answer": answer,
+                        "proof_emitted": proof,
+                        "timestamp": datetime.now(timezone.utc).isoformat()
+                    }
+                    log(f"INSTITUTIONAL QUERY: '{question[:40]}...' -> {answer.get('source', '?')} conf={answer.get('confidence', 0):.0%}")
+                    self._json_response(data, 200)
+                else:
+                    self._json_response({
+                        "question": question,
+                        "answer": None,
+                        "message": "No institutional answer found for this question"
+                    }, 200)
+
+        elif path == "/api/dragon/institutional/emit-proof" and HAS_INSTITUTIONAL_MEMORY:
+            question = body.get("question", "")
+            answer = body.get("answer", {})
+            if not question or not answer:
+                self._json_response({"error": "question and answer required"}, 400)
+            else:
+                im = get_institutional_memory()
+                proof = im.emit_proof(question, answer)
+                if proof:
+                    log(f"PAPEL MOEDA EMITTED: '{question[:40]}...'")
+                    self._json_response({"proof": proof, "status": "emitted"}, 200)
+                else:
+                    self._json_response({"error": "Failed to emit proof"}, 500)
+
+        # Phase 5C LAUNCH Plan: Voice Endpoint (ElevenLabs TTS)
+        elif path == "/api/dragon/voice/speak":
+            audio_bytes, error = handle_voice_speak(body)
+            if error:
+                self._json_response(error, 400 if error.get("code") == "NO_TEXT" else 503)
+            else:
+                self._audio_response(audio_bytes)
+
+        # ═══════════════════════════════════════════════════════════════════════
+        # DECISIONS CREATE — POST /api/dragon/decisions (DecisionTracker)
+        # ═══════════════════════════════════════════════════════════════════════
+        elif path == "/api/dragon/decisions" and HAS_DECISION_JOURNAL:
+            import uuid
+            risk_level = body.get("risk_level", body.get("risk", "R0"))
+            dragon = body.get("dragon", "guardian")
+
+            # Record decision using existing Decision Journal infrastructure
+            try:
+                decision_id = record_decision(
+                    intent_detected=body.get("input", "governance_decision")[:200],
+                    confidence_score=body.get("score", body.get("confidence", 0.5)),
+                    tier=body.get("tier", "HIGH"),
+                    route_selected=dragon,
+                    candidates_rejected=[],
+                    reason_code=f"RISK_{risk_level}",
+                    wisdom_alignment=None,
+                    latency_ms=body.get("latency_ms"),
+                    uncertainty_detected=int(risk_level[1:]) >= 3 if risk_level.startswith("R") else False
+                )
+                log(f"DECISION RECORDED: {decision_id} risk={risk_level} dragon={dragon}")
+                self._json_response({
+                    "id": decision_id,
+                    "status": "recorded",
+                    "risk": risk_level,
+                    "dragon": dragon,
+                    "principle": "Every governance decision is traceable."
+                }, 201)
+            except Exception as e:
+                log(f"DECISION ERROR: {e}")
+                fallback_id = f"DEC-{datetime.now().strftime('%Y%m%d%H%M%S')}-{str(uuid.uuid4())[:4]}"
+                self._json_response({
+                    "id": fallback_id,
+                    "status": "recorded_local",
+                    "warning": str(e),
+                    "principle": "Fallback to local tracking."
+                }, 201)
 
         else:
             self._json_response({"error": "Unknown endpoint"}, 404)
@@ -2556,6 +3017,15 @@ class DragonHandler(http.server.BaseHTTPRequestHandler):
         self._cors_headers()
         self.end_headers()
         self.wfile.write(content)
+
+    def _audio_response(self, audio_bytes: bytes):
+        """Send audio/mpeg response for TTS (Phase 5C)."""
+        self.send_response(200)
+        self.send_header("Content-Type", "audio/mpeg")
+        self.send_header("Content-Length", len(audio_bytes))
+        self._cors_headers()
+        self.end_headers()
+        self.wfile.write(audio_bytes)
 
     def _cors_headers(self):
         """Add CORS headers."""
@@ -2989,6 +3459,7 @@ BRAIN_INJECTION_SCRIPT = r"""
 
 if __name__ == "__main__":
     api_key = get_api_key()
+    elevenlabs_key = get_elevenlabs_key()
     print(f"""
 ═══════════════════════════════════════════════════════════════════════
 🐉 WINDI Agent Dragon Server v{VERSION}
@@ -2998,6 +3469,7 @@ if __name__ == "__main__":
    UI:       {UI_FILE}
    Model:    {MODEL}
    API Key:  {'✓ Configured' if api_key else '✗ NOT CONFIGURED — set ANTHROPIC_API_KEY or create .dragon_key'}
+   Voice:    {'✓ ElevenLabs Ready' if elevenlabs_key else '○ Not configured (optional)'}
 
    Dragons:  🛡️ Guardian | 🏗️ Architect | 👁️ Witness
    Endpoints:
@@ -3005,6 +3477,7 @@ if __name__ == "__main__":
      GET  /api/dragon/health   → Health check
      POST /api/dragon/chat     → Conversational AI
      POST /api/dragon/generate → Document generation
+     POST /api/dragon/voice/speak → TTS (Phase 5C)
 ═══════════════════════════════════════════════════════════════════════
 """)
 

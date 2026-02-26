@@ -1,0 +1,233 @@
+{
+  "document": {
+    "id": "WINDI-MANIFESTO-SOV-001",
+    "type": "sovereignty_manifesto",
+    "version": "1.0.0",
+    "status": "SEALED",
+    "created": "2026-02-21T21:45:00Z",
+    "sealed_by": "VR-CP-GOLD-1771706708",
+    "language": ["en", "de", "pt"],
+    "classification": "PUBLIC — Strategic Transparency"
+  },
+  "doctrine": {
+    "name": "Offensive Transparency",
+    "principle": "Publish what. Protect how. Let transparency prove.",
+    "principle_de": "Veröffentliche das Was. Schütze das Wie. Lass Transparenz beweisen.",
+    "principle_pt": "Publica o quê. Protege o como. Deixa a transparência provar.",
+    "axiom": "Secrets protect products. Transparency legitimizes infrastructure. WINDI is trust infrastructure.",
+    "constitutional_basis": "Three Dragons Protocol — 9 Constitutional Invariants"
+  },
+  "sovereignty_metrics": {
+    "operational_independence_ratio": 0.93,
+    "sovereign_services_count": 9,
+    "port_range": "8100-8108",
+    "services": [
+      { "name": "D1 Desktop Editor", "port": 8100, "type": "sovereign", "layer": "document" },
+      { "name": "Forensic Ledger", "port": 8101, "type": "sovereign", "layer": "governance" },
+      { "name": "Sentinel LAW v2.0", "port": 8102, "type": "sovereign", "layer": "governance" },
+      { "name": "Wallet Espelho", "port": 8103, "type": "sovereign", "layer": "governance" },
+      { "name": "Wisdom Protocol", "port": 8104, "type": "sovereign", "layer": "governance" },
+      { "name": "Communiqué Engine", "port": 8105, "type": "sovereign", "layer": "document" },
+      { "name": "Vault", "port": 8106, "type": "sovereign", "layer": "document" },
+      { "name": "Agent Certification", "port": 8107, "type": "sovereign", "layer": "governance" },
+      { "name": "Agent Palette + Renderer", "port": 8108, "type": "sovereign", "layer": "document" }
+    ],
+    "pluggable_layer": {
+      "components": ["LLM Providers", "OCR / Vision", "SMTP"],
+      "ratio": 0.07,
+      "impact_on_governance": "ZERO",
+      "replaceable": true
+    },
+    "performance": {
+      "sentinel_p95_latency_ms": 1.4,
+      "renderer_latency_ms": 36,
+      "renderer_formats": 4,
+      "forensic_receipts_count": 9743,
+      "governance_violations": 0,
+      "chain_integrity": "VERIFIED"
+    }
+  },
+  "architecture": {
+    "layers": [
+      {
+        "name": "Core Governance Layer",
+        "sovereignty": "100% Local",
+        "components": ["Forensic Ledger", "Sentinel LAW", "Wallet Espelho", "Compliance Passport"],
+        "external_dependency": false
+      },
+      {
+        "name": "Document & Rendering Layer",
+        "sovereignty": "100% Local",
+        "components": ["D1 Desktop", "Communiqué Engine", "Renderer", "Vault"],
+        "external_dependency": false
+      },
+      {
+        "name": "Semantic Layer",
+        "sovereignty": "Pluggable & Replaceable",
+        "components": ["LLM Providers", "OCR / Vision", "SMTP"],
+        "external_dependency": true,
+        "governance_impact": "NONE — governance continues without this layer"
+      }
+    ],
+    "design_principles": {
+      "zero_knowledge": "Content never stored; only cryptographic proofs and governance metadata",
+      "pluggability": "Semantic layer replaceable without impact on governance",
+      "continuity_guarantee": "Documents don't stop. Governance doesn't stop. Compliance doesn't stop."
+    }
+  },
+  "competitive_position": {
+    "market_question_shift": {
+      "before": "Which AI do you use?",
+      "after": "How much of your system depends on third parties?"
+    },
+    "comparison": {
+      "criteria": [
+        {
+          "capability": "Local infrastructure ratio",
+          "windi": "93%",
+          "api_dependent": "~0%"
+        },
+        {
+          "capability": "Governance without external keys",
+          "windi": "Full independence",
+          "api_dependent": "API-key dependent"
+        },
+        {
+          "capability": "Operates if provider goes offline",
+          "windi": "All core services continue",
+          "api_dependent": "Core functionality unavailable"
+        },
+        {
+          "capability": "Cryptographic evidence chain",
+          "windi": "9,743 SHA-256 receipts",
+          "api_dependent": "Logs on external servers"
+        },
+        {
+          "capability": "Constitutional invariants",
+          "windi": "9 invariants + I9 irremediable",
+          "api_dependent": "Policy guidelines only"
+        },
+        {
+          "capability": "Vendor lock-in risk",
+          "windi": "Pluggable semantic layer",
+          "api_dependent": "Complete dependency"
+        },
+        {
+          "capability": "Data sovereignty",
+          "windi": "Zero-Knowledge Architecture",
+          "api_dependent": "Content stored externally"
+        }
+      ]
+    },
+    "moat": {
+      "traditional": ["patents", "trade secrets", "lock-in"],
+      "windi": ["verifiability", "trust", "demonstrable governance", "operational sovereignty", "accumulated evidence"],
+      "advantage": "This moat is harder to copy because it requires real maturity"
+    }
+  },
+  "eu_ai_act_alignment": {
+    "status": "GOLD",
+    "governance_score": 99.9,
+    "articles_mapped": [
+      {
+        "article": "Art. 9",
+        "requirement": "Risk Management",
+        "windi_implementation": "SGE 6-layer semantic risk analysis with R0–R5 classification"
+      },
+      {
+        "article": "Art. 11",
+        "requirement": "Technical Documentation",
+        "windi_implementation": "Forensic Ledger with 9,743 immutable receipts"
+      },
+      {
+        "article": "Art. 12",
+        "requirement": "Record-Keeping",
+        "windi_implementation": "SHA-256 cryptographic evidence chain, zero violations"
+      },
+      {
+        "article": "Art. 13",
+        "requirement": "Transparency",
+        "windi_implementation": "Compliance Passport GOLD with verifiable sovereignty ratio"
+      },
+      {
+        "article": "Art. 14",
+        "requirement": "Human Oversight",
+        "windi_implementation": "I9 Constitutional Invariant: irremediable prohibition of autonomy escalation"
+      },
+      {
+        "article": "Art. 15",
+        "requirement": "Accuracy & Robustness",
+        "windi_implementation": "93% local infrastructure, Sentinel LAW 1.4ms monitoring"
+      },
+      {
+        "article": "Art. 17",
+        "requirement": "Quality Management",
+        "windi_implementation": "Wisdom Protocol sealed blocks, virtue receipt audit trail"
+      },
+      {
+        "article": "Art. 25",
+        "requirement": "Provider Obligations",
+        "windi_implementation": "Zero-Knowledge Architecture, content never stored"
+      }
+    ]
+  },
+  "roadmap": {
+    "phases": [
+      {
+        "phase": "I",
+        "name": "Constitutional Foundation",
+        "status": "COMPLETED",
+        "milestones": [
+          "9 sovereign services deployed",
+          "Forensic Ledger operational (9,743 receipts)",
+          "Sentinel LAW v2.0 GREEN status",
+          "Three Dragons Protocol formalized",
+          "Compliance Passport GOLD sealed",
+          "Zero-Knowledge Architecture verified"
+        ]
+      },
+      {
+        "phase": "II",
+        "name": "Multimodal Sovereignty",
+        "status": "CURRENT",
+        "milestones": [
+          "OCR and image analysis integration",
+          "URL verification capabilities",
+          "Freemium engine with QuotaEngine and RateLimiter",
+          "Agent Palette UI evolution"
+        ]
+      },
+      {
+        "phase": "III",
+        "name": "Institutional Scale",
+        "status": "NEXT",
+        "milestones": [
+          "Clone deployment for distributed governance nodes",
+          "Multi-tenant ISP factory",
+          "Institutional onboarding pipeline"
+        ]
+      },
+      {
+        "phase": "IV",
+        "name": "European Trust Network",
+        "status": "HORIZON",
+        "milestones": [
+          "Federated governance mesh across institutions",
+          "Cross-border compliance passports",
+          "WINDI standard as European AI governance standard"
+        ]
+      }
+    ]
+  },
+  "cryptographic_seal": {
+    "receipt_id": "VR-CP-GOLD-1771706708",
+    "algorithm": "SHA-256",
+    "doc_type": "compliance_passport",
+    "governance_level": "GOLD",
+    "privacy": "content_not_stored",
+    "ledger": "Forensic Ledger",
+    "verifiable_via": "Compliance Passport CLI",
+    "location": "Kempten, Bavaria, Germany",
+    "timestamp": "2026-02-21T21:45:00Z"
+  }
+}

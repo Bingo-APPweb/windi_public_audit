@@ -1,0 +1,52 @@
+{
+  "id": "WB-CONST-01",
+  "type": "constitutional",
+  "category": "governance_architecture",
+  "essence": "Constitutional Gates v0.1 SEALED 24Feb26: First governance specification for WINDI multi-agent runtime. 10 sections, 9 invariants (I9 supreme—anti-autonomy escalation), 11 mandatory receipts (append-only, irremovable), 4 HSG types (CRITICAL/DECISION/REVIEW/INFORM), SGE R0-R5 matrix. Dashboard LIVE at /palette/governance/ with 6 views, 23 gates mapped across 4 services. Ledger registered: CONST-GATES-v0.1-DEPLOY. Principle: Governance enforced in architecture, not policy.",
+  "shelf": {
+    "N1": "governance",
+    "N2": "constitutional-gates",
+    "N3": "milestone",
+    "N4": "canonical",
+    "N5": "internal"
+  },
+  "source": "Human Dragon SEAL + Three Dragons Protocol",
+  "chain_ref": "WB-BRIDGE-01 → WB-CONST-01",
+  "ttl_hours": 6,
+  "sealed_at": "2026-02-24T10:30:00.000000+01:00",
+  "components": {
+    "document": {
+      "name": "WINDI_CONSTITUTIONAL_GATES_v0.1_SEALED.docx",
+      "hash": "a8bd5a9fa2c0aa51916cff3e3d2a563807b063936dcb2f648250dffdf3c0d41b",
+      "location": "/opt/windi/docs/constitutional/",
+      "status": "sealed"
+    },
+    "dashboard": {
+      "route": "/palette/governance/",
+      "views": 6,
+      "gates_mapped": 23,
+      "services": 4,
+      "status": "live"
+    },
+    "ledger": {
+      "receipt_id": "CONST-GATES-v0.1-DEPLOY-1771923572",
+      "sge_score": 100,
+      "governance_level": "HIGH",
+      "status": "registered"
+    },
+    "three_dragons": {
+      "guardian": "AUTHORED",
+      "architect": "VALIDATED",
+      "witness": "PENDING",
+      "human_dragon": "SEALED"
+    }
+  },
+  "invariants_sealed": ["I1","I2","I3","I4","I5","I6","I7","I8","I9"],
+  "hsg_types": ["HSG-CRITICAL","HSG-DECISION","HSG-REVIEW","HSG-INFORM"],
+  "mandatory_receipts": 11,
+  "principles": {
+    "supreme": "AI processes. Human decides. WINDI guarantees.",
+    "core": "Governance is enforced in architecture, not policy.",
+    "closing": "Autonomy is permitted. Sovereignty is retained."
+  }
+}
