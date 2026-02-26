@@ -2211,7 +2211,7 @@ def _handle_sovereign_local(intent, message, lang, tier):
 
     # ─── CASUAL CHAT (bater papo, just chat, plaudern) ───
     # User wants natural conversation, not menus
-    if any(kw in msg_lower for kw in ['papo', 'chat', 'plaudern', 'só conversar', 'just talk', 'trabalhar', 'vamos', 'bora', 'lass uns']):
+    if any(kw in msg_lower for kw in ['papo', 'conversar', 'entender', 'fala', 'tudo bem', 'como vai', 'irmao', 'irmão', 'chat', 'plaudern', 'reden', 'verstehen', 'just talk', 'understand', "what's up", 'trabalhar', 'vamos', 'bora', 'lass uns', 'let me', 'onde estou', 'where am i', 'wo bin ich']):
         casual_responses = {
             "pt": (
                 "Claro! Estou aqui. 🐉\n\n"
