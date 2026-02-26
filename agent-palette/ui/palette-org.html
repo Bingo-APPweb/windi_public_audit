@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI Palette — Organization</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐉</text></svg>">
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<script src="shared/core.js"></script>
+<script src="shared/dragons.js"></script>
+<style>
+:root {
+  --bg: #FAF8F5;
+  --card: #FFFFFF;
+  --text: #1A1A1A;
+  --accent: #B8860B;
+  --accent-light: #B8860B22;
+  --border: #E5E0D8;
+  --success: #2D5016;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+  border-bottom: 2px solid var(--accent);
+  margin-bottom: 20px;
+}
+.header h1 {
+  font-size: 1.6em;
+  font-weight: 600;
+  color: var(--accent);
+}
+.tier-badge {
+  display: inline-block;
+  background: var(--accent);
+  color: white;
+  padding: 6px 16px;
+  border-radius: 16px;
+  font-size: 0.85em;
+  font-weight: 500;
+}
+.status-bar {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding: 12px 16px;
+  background: var(--accent-light);
+  border-radius: 8px;
+  font-size: 0.85em;
+}
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--success);
+}
+.chat-area {
+  background: var(--card);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  min-height: 450px;
+  max-height: 55vh;
+  overflow-y: auto;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+.message {
+  margin-bottom: 16px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  max-width: 85%;
+}
+.message.human {
+  background: #F0EDE8;
+  margin-left: auto;
+}
+.message.agent {
+  background: linear-gradient(135deg, #F8F6F2, #F0EDE8);
+  border-left: 3px solid var(--accent);
+}
+.message .dragon {
+  font-size: 0.8em;
+  color: var(--accent);
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+.message .meta {
+  font-size: 0.75em;
+  color: #888;
+  margin-top: 8px;
+}
+.input-area {
+  display: flex;
+  gap: 12px;
+}
+.input-area input {
+  flex: 1;
+  padding: 16px 20px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  font-size: 1em;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.input-area input:focus {
+  border-color: var(--accent);
+}
+.input-area button {
+  padding: 16px 28px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: transform 0.1s;
+}
+.input-area button:hover {
+  transform: scale(1.02);
+}
+.input-area button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 20px;
+}
+.feature-card {
+  padding: 16px;
+  background: var(--card);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+.feature-card h4 {
+  font-size: 0.9em;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+.feature-card ul {
+  list-style: none;
+  font-size: 0.85em;
+}
+.feature-card li {
+  padding: 4px 0;
+}
+.llm-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--success);
+  color: white;
+  border-radius: 6px;
+  font-size: 0.8em;
+}
+.loading-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--accent);
+}
+.loading-indicator .spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--accent-light);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>🐉 WINDI Palette</h1>
+    <div class="tier-badge">Organization</div>
+  </div>
+
+  <div id="app"></div>
+</div>
+
+<script type="text/babel">
+const { useState, useRef, useEffect } = React;
+
+// ═══════════════════════════════════════════════════════════════════════
+// WINDI PALETTE ORGANIZATION — MED Tier
+// LLM enabled, Ledger, 10 doc types
+// ═══════════════════════════════════════════════════════════════════════
+
+const TIER = 'MED';
+const TIER_CONFIG = {
+  label: 'Organization',
+  llm: true,
+  llmBudget: 2000,
+  ledger: true,
+  vault: false,
+  maxDocs: 50,
+  types: ['letter', 'memo', 'note', 'email', 'report', 'contract', 'invoice', 'protocol', 'analysis', 'presentation'],
+  formats: ['docx', 'pdf', 'xlsx', 'pptx']
+};
+
+const DOC_TYPES = {
+  letter: { icon: '✉️', de: 'Brief', en: 'Letter', pt: 'Carta' },
+  memo: { icon: '📋', de: 'Memo', en: 'Memo', pt: 'Memorando' },
+  note: { icon: '📝', de: 'Notiz', en: 'Note', pt: 'Nota' },
+  email: { icon: '📧', de: 'E-Mail', en: 'E-Mail', pt: 'E-Mail' },
+  report: { icon: '📊', de: 'Bericht', en: 'Report', pt: 'Relatório' },
+  contract: { icon: '📜', de: 'Vertrag', en: 'Contract', pt: 'Contrato' },
+  invoice: { icon: '🧾', de: 'Rechnung', en: 'Invoice', pt: 'Fatura' },
+  protocol: { icon: '📑', de: 'Protokoll', en: 'Protocol', pt: 'Protocolo' },
+  analysis: { icon: '🔍', de: 'Analyse', en: 'Analysis', pt: 'Análise' },
+  presentation: { icon: '📽️', de: 'Präsentation', en: 'Presentation', pt: 'Apresentação' }
+};
+
+function App() {
+  const [msgs, setMsgs] = useState([]);
+  const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [lang, setLang] = useState('de');
+  const [dragonStatus, setDragonStatus] = useState({ connected: null, llm: false });
+  const [stats, setStats] = useState({ docs: 0, sealed: 0 });
+  const chatRef = useRef(null);
+
+  useEffect(() => {
+    // Check Dragon Server health
+    WINDI_Core.dragonHealth().then(health => {
+      setDragonStatus({
+        connected: health.status === 'alive',
+        llm: health.api_key_configured,
+        model: health.model
+      });
+    });
+
+    // Welcome message
+    const welcomeMsg = {
+      role: 'agent',
+      dragon: 'guardian',
+      text: `🐉 **WINDI Organization** bereit!\n\nIch kann dir mit **10 Dokumenttypen** helfen und nutze KI-Analyse für bessere Ergebnisse.\n\n${Object.entries(DOC_TYPES).slice(0, 5).map(([k, v]) => `${v.icon} ${v.de}`).join(' • ')}\n${Object.entries(DOC_TYPES).slice(5).map(([k, v]) => `${v.icon} ${v.de}`).join(' • ')}\n\n_Alle Dokumente werden im Forensic Ledger versiegelt._`,
+      ts: new Date().toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'})
+    };
+    setMsgs([welcomeMsg]);
+  }, []);
+
+  useEffect(() => {
+    if (chatRef.current) {
+      chatRef.current.scrollTop = chatRef.current.scrollHeight;
+    }
+  }, [msgs]);
+
+  const send = async () => {
+    if (!input.trim() || isLoading) return;
+
+    const userMsg = {
+      role: 'human',
+      text: input.trim(),
+      ts: new Date().toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'})
+    };
+    setMsgs(prev => [...prev, userMsg]);
+    setInput('');
+    setIsLoading(true);
+
+    const detectedLang = WINDI_Core.detectLang(userMsg.text) || lang;
+    setLang(detectedLang);
+
+    try {
+      // Organization tier: Use LLM via Dragon API
+      const dragon = await WINDI_Core.dragonChat(userMsg.text, {
+        tier: 'MED',
+        language: detectedLang,
+        history: msgs.slice(-6).map(m => ({ role: m.role, text: m.text }))
+      });
+
+      if (dragon && dragon.message) {
+        setMsgs(prev => [...prev, {
+          role: 'agent',
+          dragon: dragon.dragon || 'guardian',
+          text: dragon.message,
+          source: dragon.source,
+          metadata: dragon.metadata,
+          ts: new Date().toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'})
+        }]);
+
+        if (dragon.metadata?.budget_used) {
+          setStats(prev => ({ ...prev, docs: prev.docs + 1 }));
+        }
+      } else {
+        // Fallback to local response
+        setMsgs(prev => [...prev, {
+          role: 'agent',
+          dragon: 'guardian',
+          text: WINDI_Core.chatRespond('greeting', detectedLang),
+          source: 'local',
+          ts: new Date().toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'})
+        }]);
+      }
+    } catch (err) {
+      console.error('Chat error:', err);
+      setMsgs(prev => [...prev, {
+        role: 'agent',
+        dragon: 'guardian',
+        text: '⚠️ Connection issue. Please try again.',
+        source: 'error',
+        ts: new Date().toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'})
+      }]);
+    }
+
+    setIsLoading(false);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      send();
+    }
+  };
+
+  return (
+    <>
+      <div className="status-bar">
+        <div className="status-item">
+          <span className="status-dot" style={{ background: dragonStatus.connected ? '#2D5016' : '#888' }} />
+          Dragon: {dragonStatus.connected ? 'Online' : 'Offline'}
+        </div>
+        <div className="status-item">
+          <span className="status-dot" style={{ background: dragonStatus.llm ? '#2D5016' : '#888' }} />
+          LLM: {dragonStatus.llm ? 'Active' : 'Inactive'}
+        </div>
+        <div className="status-item">
+          <span className="status-dot" style={{ background: '#2D5016' }} />
+          Ledger: Active
+        </div>
+        <div className="status-item" style={{ marginLeft: 'auto' }}>
+          📄 {stats.docs} docs | 🔏 {stats.sealed} sealed
+        </div>
+      </div>
+
+      <div className="chat-area" ref={chatRef}>
+        {msgs.map((msg, i) => (
+          <div key={i} className={`message ${msg.role}`}>
+            {msg.role === 'agent' && (
+              <div className="dragon">
+                {WINDI_Dragons.dragonBadge(msg.dragon, lang)}
+                {msg.source && <span style={{ marginLeft: 8, opacity: 0.6 }}>({msg.source})</span>}
+              </div>
+            )}
+            <div dangerouslySetInnerHTML={{ __html: msg.text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br/>') }} />
+            {msg.metadata?.input_tokens && (
+              <div className="meta">
+                Tokens: {msg.metadata.input_tokens + msg.metadata.output_tokens} | Model: {msg.metadata.model?.split('-').slice(-1)[0]}
+              </div>
+            )}
+          </div>
+        ))}
+        {isLoading && (
+          <div className="message agent">
+            <div className="loading-indicator">
+              <div className="spinner" />
+              <span>Dragon is thinking...</span>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="input-area">
+        <input
+          type="text"
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder={lang === 'de' ? 'Nachricht eingeben...' : lang === 'pt' ? 'Digite sua mensagem...' : 'Type your message...'}
+          disabled={isLoading}
+        />
+        <button onClick={send} disabled={isLoading || !input.trim()}>
+          {isLoading ? '...' : (lang === 'de' ? 'Senden' : lang === 'pt' ? 'Enviar' : 'Send')}
+        </button>
+      </div>
+
+      <div className="features-grid">
+        <div className="feature-card">
+          <h4>📄 {lang === 'de' ? 'Dokumenttypen' : 'Document Types'}</h4>
+          <ul>
+            {Object.entries(DOC_TYPES).slice(0, 5).map(([k, v]) => (
+              <li key={k}>{v.icon} {v[lang] || v.de}</li>
+            ))}
+          </ul>
+        </div>
+        <div className="feature-card">
+          <h4>📄 {lang === 'de' ? 'Mehr Typen' : 'More Types'}</h4>
+          <ul>
+            {Object.entries(DOC_TYPES).slice(5).map(([k, v]) => (
+              <li key={k}>{v.icon} {v[lang] || v.de}</li>
+            ))}
+          </ul>
+        </div>
+        <div className="feature-card">
+          <h4>🔧 {lang === 'de' ? 'Funktionen' : 'Features'}</h4>
+          <ul>
+            <li>🤖 KI-Analyse</li>
+            <li>📜 Forensic Ledger</li>
+            <li>📤 PDF/DOCX/XLSX/PPTX</li>
+            <li>🔏 Digital Sealing</li>
+          </ul>
+        </div>
+      </div>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('app')).render(<App />);
+</script>
+
+</body>
+</html>
