@@ -701,66 +701,60 @@ class PulseHandler(BaseHTTPRequestHandler):
                     result = full_scan()
                     self._json_response(result)
 
-        # ── Outlook (Sprint Progress) — now fetches from Dragon as source of truth ──
+        # ── Outlook (Sprint Progress) — pass-through from Dragon as source of truth ──
         elif path == "/api/pulse/outlook":
-            # Fetch from Dragon Outlook API as the source of truth
+            # Pass through Dragon Outlook API response directly (outlook.html expects this format)
             try:
                 import urllib.request
                 req = urllib.request.Request("http://127.0.0.1:8108/api/dragon/outlook/status")
                 with urllib.request.urlopen(req, timeout=10) as resp:
                     dragon_outlook = json.loads(resp.read().decode())
-
-                # Transform Dragon Outlook format to Pulse format
-                sprints_summary = {}
-                for sprint_num, sprint_data in dragon_outlook.get("sprints", {}).items():
-                    features = sprint_data.get("features", [])
-                    wired_count = sum(1 for fid in features if dragon_outlook["features"].get(fid, {}).get("status") == "WIRED")
-                    total = len(features)
-                    sprints_summary[sprint_num] = {
-                        "name": sprint_data["name"],
-                        "progress": f"{wired_count}/{total}",
-                        "pct": round((wired_count / total) * 100) if total else 0,
-                        "status": "complete" if wired_count == total else "in-progress" if wired_count > 0 else "pending",
-                        "wires": [
-                            {"id": fid, "name": dragon_outlook["features"][fid]["name"], "verified": dragon_outlook["features"][fid]["status"] == "WIRED"}
-                            for fid in features if fid in dragon_outlook["features"]
-                        ],
-                    }
-
-                summary = dragon_outlook.get("summary", {})
-                self._json_response({
-                    "timestamp": dragon_outlook.get("timestamp"),
-                    "source": "dragon-outlook",
-                    "ecosystem_health": summary.get("wired_pct", 0),
-                    "wiring_progress": summary.get("wired_pct", 0),
-                    "wired": summary.get("wired", 0),
-                    "total": summary.get("total", 0),
-                    "sprints": sprints_summary,
-                })
+                # Pass through directly - outlook.html expects Dragon format
+                self._json_response(dragon_outlook)
             except Exception as e:
-                # Fallback to local scan if Dragon is unavailable
+                # Fallback: build compatible format from local scan
                 with _scan_lock:
                     scan = _last_scan or full_scan()
-                sprints_summary = {}
+
+                # Build features dict compatible with outlook.html
+                features = {}
+                sprints = {}
+
                 for sprint_num, sprint_data in scan["sprints"].items():
-                    wires = sprint_data["wires"]
-                    done = sum(1 for w in wires if w["verified"])
-                    total = len(wires)
-                    sprints_summary[sprint_num] = {
+                    sprint_features = []
+                    for w in sprint_data["wires"]:
+                        fid = w["id"]
+                        features[fid] = {
+                            "id": fid,
+                            "name": w["name"],
+                            "sprint": int(sprint_num),
+                            "category": "core",
+                            "status": "WIRED" if w["verified"] else "NOT_BUILT",
+                            "checks": []
+                        }
+                        sprint_features.append(fid)
+                    sprints[sprint_num] = {
                         "name": sprint_data["name"],
-                        "progress": f"{done}/{total}",
-                        "pct": round((done / total) * 100) if total else 0,
-                        "status": "complete" if done == total else "in-progress" if done > 0 else "pending",
-                        "wires": wires,
+                        "features": sprint_features
                     }
+
+                wired = sum(1 for f in features.values() if f["status"] == "WIRED")
+                total = len(features)
+
                 self._json_response({
                     "timestamp": scan["timestamp"],
-                    "source": "pulse-local",
+                    "source": "pulse-fallback",
                     "fallback_reason": str(e),
-                    "ecosystem_health": scan["summary"]["health_pct"],
-                    "wiring_progress": scan["summary"]["wire_pct"],
-                    "sprints": sprints_summary,
-                    "special": scan["special"],
+                    "summary": {
+                        "total": total,
+                        "wired": wired,
+                        "on_server": 0,
+                        "not_built": total - wired,
+                        "down": 0,
+                        "wired_pct": round((wired / total) * 100, 1) if total else 0
+                    },
+                    "features": features,
+                    "sprints": sprints
                 })
 
         # ── History (Memory Loop) ──
@@ -875,6 +869,90 @@ class PulseHandler(BaseHTTPRequestHandler):
             self.send_header("Content-Length", len(md_content.encode("utf-8")))
             self.end_headers()
             self.wfile.write(md_content.encode("utf-8"))
+
+        # ── Backend→Frontend Data Transfer Monitor ──
+        elif path == "/api/pulse/transfers":
+            transfers = []
+            # Collect transfer stats from key backend services
+            backend_services = [
+                ("governance", 8080, "/api/stats"),
+                ("hub-babel", 8085, "/api/stats"),
+                ("forensic", 8094, "/api/stats"),
+                ("command-bridge", 8097, "/api/stats"),
+                ("d1-desktop", 8100, "/api/stats"),
+            ]
+
+            for svc_id, port, stats_path in backend_services:
+                try:
+                    req = Request(f"http://127.0.0.1:{port}{stats_path}", headers={"Accept": "application/json"})
+                    with urlopen(req, timeout=3) as resp:
+                        stats = json.loads(resp.read().decode())
+                        transfers.append({
+                            "service": svc_id,
+                            "port": port,
+                            "status": "active",
+                            "requests": stats.get("requests", 0),
+                            "bytes_out": stats.get("bytes_out", 0),
+                            "avg_latency_ms": stats.get("avg_latency_ms", 0),
+                        })
+                except Exception:
+                    # Fallback - check if service is alive
+                    check = check_port(port, "/health")
+                    transfers.append({
+                        "service": svc_id,
+                        "port": port,
+                        "status": "alive" if check["alive"] else "down",
+                        "requests": None,
+                        "bytes_out": None,
+                        "avg_latency_ms": None,
+                    })
+
+            self._json_response({
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "transfers": transfers,
+                "summary": {
+                    "active_backends": sum(1 for t in transfers if t["status"] == "active" or t["status"] == "alive"),
+                    "total_backends": len(transfers),
+                },
+            })
+
+        # ── Serve UI Static Files ──
+        elif path.startswith("/ui"):
+            ui_path = path[3:] or "/index.html"  # Remove /ui prefix
+            if ui_path == "" or ui_path == "/":
+                ui_path = "/index.html"
+
+            file_path = f"/opt/windi/pulse/ui{ui_path}"
+
+            # Security: prevent directory traversal
+            if ".." in file_path:
+                self._json_response({"error": "Forbidden"}, 403)
+                return
+
+            try:
+                with open(file_path, "rb") as f:
+                    content = f.read()
+
+                # Determine content type
+                if file_path.endswith(".html"):
+                    content_type = "text/html; charset=utf-8"
+                elif file_path.endswith(".js") or file_path.endswith(".jsx"):
+                    content_type = "application/javascript; charset=utf-8"
+                elif file_path.endswith(".css"):
+                    content_type = "text/css; charset=utf-8"
+                elif file_path.endswith(".json"):
+                    content_type = "application/json; charset=utf-8"
+                else:
+                    content_type = "application/octet-stream"
+
+                self.send_response(200)
+                self.send_header("Content-Type", content_type)
+                self.send_header("Content-Length", len(content))
+                self._cors()
+                self.end_headers()
+                self.wfile.write(content)
+            except FileNotFoundError:
+                self._json_response({"error": "File not found", "path": ui_path}, 404)
 
         else:
             self._json_response({"error": "Not found", "path": path}, 404)
