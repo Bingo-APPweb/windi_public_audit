@@ -179,6 +179,7 @@ function LiveOutlook() {
   const [outlook, setOutlook] = useState(null);
   const [history, setHistory] = useState(null);
   const [sentinel, setSentinel] = useState(null);
+  const [frontend, setFrontend] = useState(null);
   const [error, setError] = useState(null);
   const [lastRefresh, setLastRefresh] = useState(null);
   const [autoRefresh, setAutoRefresh] = useState(true);
@@ -186,16 +187,18 @@ function LiveOutlook() {
 
   const fetchAll = useCallback(async () => {
     try {
-      const [scanRes, outlookRes, histRes, sentRes] = await Promise.allSettled([
+      const [scanRes, outlookRes, histRes, sentRes, frontRes] = await Promise.allSettled([
         fetch(`${PULSE_BASE}/scan`).then(r => r.json()),
         fetch(`${PULSE_BASE}/outlook`).then(r => r.json()),
         fetch(`${PULSE_BASE}/history`).then(r => r.json()),
         fetch(`${PULSE_BASE}/sentinel`).then(r => r.json()),
+        fetch(`${PULSE_BASE}/frontend`).then(r => r.json()),
       ]);
       if (scanRes.status === "fulfilled") setScan(scanRes.value);
       if (outlookRes.status === "fulfilled") setOutlook(outlookRes.value);
       if (histRes.status === "fulfilled") setHistory(histRes.value);
       if (sentRes.status === "fulfilled") setSentinel(sentRes.value);
+      if (frontRes.status === "fulfilled") setFrontend(frontRes.value);
       setError(null);
       setLastRefresh(new Date());
     } catch (e) {
@@ -272,7 +275,7 @@ function LiveOutlook() {
         )}
 
         {/* Dashboard Metrics */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 6, marginBottom: 14 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 6, marginBottom: 14 }}>
           {[
             { label: "SERVICES", value: summary.total || "\u2014", sub: "registered", color: TEXT },
             { label: "ALIVE", value: summary.alive || "\u2014", sub: `${summary.health_pct || 0}%`, color: GREEN },
@@ -280,6 +283,7 @@ function LiveOutlook() {
             { label: "DEAD", value: summary.dead || "\u2014", sub: "offline", color: RED },
             { label: "WIRED", value: `${summary.wired || 0}/${summary.total_wires || 0}`, sub: `${summary.wire_pct || 0}%`, color: GOLD },
             { label: "SENTINEL", value: summary.sentinel_status || "\u2014", sub: sentinel?.invariants || "\u2014", color: summary.sentinel_status === "GREEN" ? GREEN : AMBER },
+            { label: "FRONTEND", value: frontend?.score != null ? `${Math.round(frontend.score)}%` : "\u2014", sub: frontend?.status || "checking", color: frontend?.status === "GREEN" ? GREEN : frontend?.status === "RED" ? RED : AMBER },
           ].map(m => (
             <div key={m.label} style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 6, padding: "8px 10px", textAlign: "center" }}>
               <div style={{ fontSize: 18, fontWeight: 800, color: m.color, fontFamily: "'JetBrains Mono', monospace" }}>{m.value}</div>
@@ -289,8 +293,8 @@ function LiveOutlook() {
           ))}
         </div>
 
-        {/* Dual Progress Bars */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 14 }}>
+        {/* Triple Progress Bars */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 14 }}>
           <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 8, padding: "10px 12px" }}>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6, fontSize: 10, fontWeight: 700 }}>
               <span style={{ color: DIM }}>ECOSYSTEM HEALTH</span>
@@ -305,6 +309,13 @@ function LiveOutlook() {
             </div>
             <ProgressBar value={summary.wired || 0} max={summary.total_wires || 1} color={GOLD} height={8} />
           </div>
+          <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 8, padding: "10px 12px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6, fontSize: 10, fontWeight: 700 }}>
+              <span style={{ color: DIM }}>FRONTEND ALIGNMENT</span>
+              <span style={{ color: frontend?.status === "GREEN" ? GREEN : frontend?.status === "RED" ? RED : AMBER, fontFamily: "'JetBrains Mono', monospace" }}>{frontend?.score || 0}%</span>
+            </div>
+            <ProgressBar value={frontend?.summary?.pass || 0} max={frontend?.summary?.total || 1} color={frontend?.status === "GREEN" ? GREEN : frontend?.status === "RED" ? RED : AMBER} height={8} />
+          </div>
         </div>
 
         {/* View Tabs */}
@@ -314,6 +325,7 @@ function LiveOutlook() {
             { key: "sprints", label: "\u{1F3C3} Sprints" },
             { key: "events", label: "\u{1F4CB} Memory Loop" },
             { key: "special", label: "\u{1F52C} Deep Checks" },
+            { key: "frontend", label: "\u{1F5A5}\uFE0F Frontend" },
           ].map(t => (
             <button key={t.key} onClick={() => setView(t.key)} style={{
               padding: "5px 12px", fontSize: 11, fontWeight: 600, border: "none", borderRadius: 4, cursor: "pointer",
@@ -435,6 +447,53 @@ function LiveOutlook() {
                 </div>
               ) : <p style={{ fontSize: 10, color: DIM }}>No data</p>}
             </div>
+          </div>
+        )}
+
+        {/* Frontend View */}
+        {view === "frontend" && frontend && (
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            <div style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 8, padding: "10px 14px", marginBottom: 8 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span style={{ fontSize: 28, fontWeight: 800, fontFamily: "'JetBrains Mono', monospace",
+                  color: frontend.status === "GREEN" ? GREEN : frontend.status === "RED" ? RED : AMBER
+                }}>{frontend.score}%</span>
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: 700 }}>Frontend Sentinel L2</div>
+                  <div style={{ fontSize: 10, color: DIM }}>{frontend.summary.pass}/{frontend.summary.total} checks {"\u00B7"} {frontend.status}</div>
+                </div>
+              </div>
+            </div>
+            {Object.entries(frontend.checks).map(([key, check]) => (
+              <div key={key} style={{
+                background: CARD,
+                border: `1px solid ${check.status === "PASS" ? `${GREEN}33` : check.status === "FAIL" ? `${RED}33` : `${AMBER}33`}`,
+                borderLeft: `3px solid ${check.status === "PASS" ? GREEN : check.status === "FAIL" ? RED : check.status === "NOT_YET" ? DIM : AMBER}`,
+                borderRadius: 8, padding: "8px 12px",
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <span style={{ fontSize: 14 }}>
+                    {check.status === "PASS" ? "\u2705" : check.status === "FAIL" ? "\u274C" : check.status === "NOT_YET" ? "\u{1F52E}" : "\u26A0\uFE0F"}
+                  </span>
+                  <span style={{ fontSize: 12, fontWeight: 700, flex: 1, color: TEXT }}>{key.replace(/_/g, " ")}</span>
+                  <span style={{
+                    fontSize: 9, fontWeight: 700, padding: "2px 6px", borderRadius: 4,
+                    background: check.severity === "CRITICAL" ? `${RED}18` : check.severity === "HIGH" ? `${AMBER}18` : `${DIM}18`,
+                    color: check.severity === "CRITICAL" ? RED : check.severity === "HIGH" ? AMBER : DIM,
+                    fontFamily: "'JetBrains Mono', monospace",
+                  }}>{check.severity}</span>
+                  <span style={{
+                    fontSize: 9, fontWeight: 700, padding: "2px 6px", borderRadius: 4,
+                    background: check.status === "PASS" ? `${GREEN}18` : check.status === "FAIL" ? `${RED}18` : `${AMBER}18`,
+                    color: check.status === "PASS" ? GREEN : check.status === "FAIL" ? RED : AMBER,
+                    fontFamily: "'JetBrains Mono', monospace",
+                  }}>{check.status}</span>
+                </div>
+                <div style={{ fontSize: 10, color: DIM, marginTop: 4, fontFamily: "'JetBrains Mono', monospace" }}>
+                  {check.detail}
+                </div>
+              </div>
+            ))}
           </div>
         )}
 
