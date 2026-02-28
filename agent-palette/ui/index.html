@@ -460,6 +460,269 @@ const buildSealPayload = async (doc, wallet, sealPolicy) => {
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════════
+// EXPORT ENGINE WIRING — JMPG Package with full DNA
+// Wave 2.0: MEMO as golden path → structured fields → institutional document with QR
+// ═══════════════════════════════════════════════════════════════════════════════════
+
+const EXPORT_URL = window.location.hostname === 'localhost'
+  ? 'http://localhost:8103'
+  : 'https://admin.windia4desk.tech/export';
+
+// Map doc types to JMPG templates
+const DOC_TYPE_TO_TEMPLATE = {
+  memo: 'internal-memo',
+  letter: 'comunicado',
+  invoice: 'field-report',
+  contract: 'field-report',
+  report: 'field-report',
+  protocol: 'comunicado',
+  resolution: 'comunicado',
+  announcement: 'pressemitteilung',
+  note: 'generic',
+  minute: 'field-report',
+  certificate: 'comunicado',
+  policy: 'comunicado',
+  directive: 'comunicado',
+  warrant: 'comunicado',
+};
+
+// Transform structured fields to JMPG content_blocks
+const transformFieldsToBlocks = (docType, fields, schema, lang = 'en') => {
+  const blocks = [];
+  const lk = lang === 'de' ? 'de' : lang === 'pt' ? 'pt' : 'en';
+
+  // Header block with document metadata
+  if (docType === 'memo') {
+    // MEMO-specific header
+    blocks.push({
+      type: 'table',
+      id: 'memo-header',
+      data: {
+        rows: [
+          [{ text: schema?.to?.label?.[lk] || 'To', bold: true }, { text: fields.to || '' }],
+          [{ text: schema?.from?.label?.[lk] || 'From', bold: true }, { text: fields.from || '' }],
+          [{ text: schema?.date?.label?.[lk] || 'Date', bold: true }, { text: fields.date || new Date().toLocaleDateString() }],
+          [{ text: schema?.subject?.label?.[lk] || 'Subject', bold: true }, { text: fields.subject || '' }],
+          ...(fields.priority && fields.priority !== 'normal' ? [
+            [{ text: schema?.priority?.label?.[lk] || 'Priority', bold: true }, { text: fields.priority.toUpperCase(), style: 'badge-' + fields.priority }]
+          ] : []),
+        ],
+        style: 'memo-header'
+      }
+    });
+  } else if (docType === 'letter') {
+    // Letter header
+    blocks.push({
+      type: 'paragraph',
+      id: 'letter-recipient',
+      data: { text: fields.recipient || fields.to || '', style: 'recipient' }
+    });
+    if (fields.reference) {
+      blocks.push({
+        type: 'paragraph',
+        id: 'letter-ref',
+        data: { text: `Ref: ${fields.reference}`, style: 'reference' }
+      });
+    }
+  } else if (docType === 'invoice') {
+    // Invoice header table
+    blocks.push({
+      type: 'table',
+      id: 'invoice-header',
+      data: {
+        rows: [
+          [{ text: 'Invoice No.', bold: true }, { text: fields.invoiceNumber || fields.number || '' }],
+          [{ text: 'Date', bold: true }, { text: fields.date || new Date().toLocaleDateString() }],
+          [{ text: 'Bill To', bold: true }, { text: fields.billTo || fields.client || '' }],
+          ...(fields.dueDate ? [[{ text: 'Due Date', bold: true }, { text: fields.dueDate }]] : []),
+        ],
+        style: 'invoice-header'
+      }
+    });
+  }
+
+  // Subject/Title as heading (if not already in header)
+  if (fields.subject && docType !== 'memo') {
+    blocks.push({
+      type: 'heading',
+      id: 'doc-subject',
+      data: { text: fields.subject, level: 1 }
+    });
+  }
+
+  // Main body content
+  if (fields.body) {
+    blocks.push({
+      type: 'paragraph',
+      id: 'doc-body',
+      data: { text: fields.body, html: true }
+    });
+  } else if (fields.content) {
+    blocks.push({
+      type: 'paragraph',
+      id: 'doc-content',
+      data: { text: fields.content, html: true }
+    });
+  }
+
+  // Action required (MEMO specific)
+  if (fields.action) {
+    blocks.push({
+      type: 'quote',
+      id: 'action-required',
+      data: { text: `📌 ${schema?.action?.label?.[lk] || 'Required Action'}: ${fields.action}`, style: 'action-callout' }
+    });
+  }
+
+  // Invoice items (if present)
+  if (fields.items && Array.isArray(fields.items)) {
+    blocks.push({
+      type: 'table',
+      id: 'invoice-items',
+      data: {
+        headers: ['Description', 'Qty', 'Unit Price', 'Total'],
+        rows: fields.items.map(item => [
+          item.description || '',
+          String(item.quantity || 1),
+          item.unitPrice || '',
+          item.total || ''
+        ]),
+        style: 'invoice-items'
+      }
+    });
+  }
+
+  // Totals (invoice)
+  if (fields.total || fields.amount) {
+    blocks.push({
+      type: 'paragraph',
+      id: 'doc-total',
+      data: { text: `Total: ${fields.total || fields.amount}`, style: 'total-amount' }
+    });
+  }
+
+  // Signature block
+  if (fields.signature || fields.signedBy) {
+    blocks.push({
+      type: 'paragraph',
+      id: 'signature',
+      data: { text: fields.signature || fields.signedBy, style: 'signature' }
+    });
+  }
+
+  return blocks;
+};
+
+// Export document as JMPG package
+const exportDocument = async (docType, docTitle, docFields, wallet, lang = 'en') => {
+  const docDNA = DOCS[docType];
+  if (!docDNA) {
+    throw new Error(`Unknown document type: ${docType}`);
+  }
+
+  // Build seal payload with Merkle root
+  const seal = await buildSealPayload(
+    { type: docType, fields: docFields },
+    wallet,
+    docDNA.sealPolicy
+  );
+
+  // Detect current tier
+  const tierInfo = detectTierFromUrl();
+  const tier = tierInfo.tier;
+
+  // Transform fields to JMPG content_blocks
+  const contentBlocks = transformFieldsToBlocks(docType, docFields, docDNA.schema, lang);
+
+  // Build export request
+  const exportPayload = {
+    title: docTitle || docFields.subject || 'Untitled Document',
+    author: wallet?.name || 'Anonymous',
+    template: DOC_TYPE_TO_TEMPLATE[docType] || 'generic',
+    content_blocks: contentBlocks,
+    metadata: {
+      // Document DNA
+      doc_type: docType,
+      doc_type_label: docDNA.sealPolicy?.type || docType.toUpperCase(),
+      tier: tier,
+      complexity: docDNA.complexity,
+
+      // Seal data
+      doc_id: seal.doc_id,
+      fields_root: seal.fields_root,
+      field_hashes: seal.field_hashes,
+      created_at: seal.created_at,
+      signer_did: seal.signer_did,
+      anonymous: seal.anonymous,
+
+      // Policy flags
+      confidential: seal.confidential,
+      legal_document: seal.legal_document,
+      financial_document: seal.financial_document,
+      governance_document: seal.governance_document,
+      recipient_tracked: seal.recipient_tracked,
+
+      // AI Act compliance
+      ai_assisted: seal.ai_assisted,
+      ai_role: seal.ai_role,
+      human_authored: seal.human_authored,
+
+      // WINDI identity
+      wallet_id: wallet?.id || null,
+      wallet_name: wallet?.name || null,
+      trust_score: wallet?.trustScore || null,
+
+      // Verification hint
+      verify_url: `${window.location.origin}/verify/${seal.doc_id}`,
+    },
+    return_format: 'json'  // Get base64 for download
+  };
+
+  console.log('[WINDI Export] Sending to JMPG engine:', exportPayload.metadata.doc_id);
+
+  // Call Export Engine
+  const response = await fetch(`${EXPORT_URL}/api/export/jmpg`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(exportPayload),
+  });
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({ error: response.statusText }));
+    throw new Error(err.error || 'Export failed');
+  }
+
+  const result = await response.json();
+
+  // Download the file
+  if (result.success && result.data_base64) {
+    const byteChars = atob(result.data_base64);
+    const byteArray = new Uint8Array(byteChars.length);
+    for (let i = 0; i < byteChars.length; i++) {
+      byteArray[i] = byteChars.charCodeAt(i);
+    }
+    const blob = new Blob([byteArray], { type: 'application/vnd.windi.jmpg' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = result.filename || `${seal.doc_id}.jmpg`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  return {
+    success: result.success,
+    packageId: result.package_id,
+    receiptId: result.receipt_id,
+    ledgerRegistered: result.ledger_registered,
+    filename: result.filename,
+    contentHash: result.content_hash,
+  };
+};
+
+// ═══════════════════════════════════════════════════════════════════════════════════
 // DOCS REGISTRY — All 14 types with schema + flow + sealPolicy
 // ═══════════════════════════════════════════════════════════════════════════════════
 
@@ -1439,6 +1702,8 @@ function App(){
   const[receipt,setReceipt]=useState(null);
   const[contentHistory,setContentHistory]=useState([]); // FIX (M): undo
   const[savedDocs,setSavedDocs]=useState([]);
+  const[exporting,setExporting]=useState(false);
+  const[exportResult,setExportResult]=useState(null);
   const[lastSaved,setLastSaved]=useState(null);
 
   // ═══ A.1: COMMUNIQUÉ API STATE ═══
@@ -2321,6 +2586,27 @@ function App(){
     setMsgs([{role:"bot",text:t.chat.greet}]);setSidebarTab("chat");
   },[docTitle,docContent,docFields,docType,docStatus,wordCount,t]);
 
+  // ═══ WAVE 2.0: EXPORT HANDLER — JMPG with full DNA ═══
+  const handleExport=useCallback(async()=>{
+    if(!docTitle||!docContent){
+      flash("⚠️ Document needs title and content",2000);
+      return;
+    }
+    try{
+      setExporting(true);
+      setExportResult(null);
+      const result=await exportDocument(docType||'note',docTitle,docFields,wallet,lang);
+      setExportResult(result);
+      flash(`📦 ${result.filename} exported! Ledger: ${result.ledgerRegistered?'✅':'⏳'}`,3000);
+      console.log('[WINDI] Export complete:',result);
+    }catch(e){
+      console.error('[WINDI] Export error:',e);
+      flash(`❌ Export failed: ${e.message}`,3000);
+    }finally{
+      setExporting(false);
+    }
+  },[docType,docTitle,docContent,docFields,wallet,lang,flash]);
+
   // FIX (A): use theme.bg (NOT theme.gradient)
   const base={minHeight:"100vh",background:th.bg,color:th.text,fontFamily:"'Bricolage Grotesque',sans-serif"};
 
@@ -2463,6 +2749,9 @@ function App(){
                 {docStatus==="finalized"&&<>
                   <div style={{display:"flex",alignItems:"center",gap:6,color:th.success,fontSize:11}}>🛡️ {t.doc.finalized}</div>
                   <div style={{flex:1}}/>
+                  <button onClick={handleExport} disabled={exporting} style={{padding:"6px 14px",borderRadius:8,background:th.card,border:`1px solid ${th.gold}66`,color:th.gold,fontSize:11,fontWeight:600,cursor:"pointer",display:"flex",alignItems:"center",gap:5,opacity:exporting?0.6:1}}>
+                    {exporting?'⏳':'📦'} {lang==='de'?'Exportieren':lang==='pt'?'Exportar':'Export'}
+                  </button>
                   <button onClick={()=>setShowDistributeModal(true)} style={{padding:"6px 14px",borderRadius:8,background:th.gold,border:"none",color:"#FFF",fontSize:11,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",gap:5}}>
                     📤 {t.distribute.sendNow}
                   </button>
