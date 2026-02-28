@@ -328,6 +328,322 @@ const DOC_TYPES = {
   communique:{icon:"📡",tier:"HIGH",cat:"governance"},certificate:{icon:"🏛️",tier:"HIGH",cat:"governance"},
 };
 
+// ═══════════════════════════════════════════════════════════════════════════════════
+// DOC TYPE DNA — Structured Field Definitions & Guided Flows
+// "Publishing House publica conhecimento, não decoração."
+// Pattern: MEMO is the seed, 14 types are the forest.
+// ═══════════════════════════════════════════════════════════════════════════════════
+const DOC_TYPE_DNA = {
+  // ─── MEMO: Internal communication with recipient and traceability ───
+  memo: {
+    id: "memo",
+    fields: {
+      to:       { required: true,  type: "text",   label: { en: "To", de: "An", pt: "Para" } },
+      from:     { required: true,  type: "text",   label: { en: "From", de: "Von", pt: "De" }, default: "wallet" },
+      date:     { required: true,  type: "date",   label: { en: "Date", de: "Datum", pt: "Data" }, default: "today" },
+      subject:  { required: true,  type: "text",   label: { en: "Subject", de: "Betreff", pt: "Assunto" } },
+      priority: { required: false, type: "select", label: { en: "Priority", de: "Priorität", pt: "Prioridade" },
+                  options: ["normal", "important", "urgent", "confidential"] },
+      body:     { required: true,  type: "rich",   label: { en: "Content", de: "Inhalt", pt: "Conteúdo" } },
+      action:   { required: false, type: "text",   label: { en: "Required Action", de: "Erforderliche Aktion", pt: "Ação Requerida" } },
+    },
+    flow: [
+      { field: "to", prompt: { en: "📋 Memo — who is the recipient?", de: "📋 Memo — an wen geht es?", pt: "📋 Memorando — para quem?" } },
+      { field: "subject", prompt: { en: "What's the subject? (One clear sentence)", de: "Was ist der Betreff? (Ein klarer Satz)", pt: "Qual é o assunto? (Uma frase clara)" },
+        teach: { en: "💡 A good memo subject has action + context.\nEx: 'Approval needed: Q3 budget'", de: "💡 Ein guter Betreff hat Aktion + Kontext.\nBsp: 'Genehmigung benötigt: Q3 Budget'", pt: "💡 Um bom assunto tem ação + contexto.\nEx: 'Aprovação necessária: orçamento Q3'" } },
+      { field: "priority", prompt: { en: "Priority level?", de: "Prioritätsstufe?", pt: "Nível de prioridade?" }, chips: true, optional: true },
+      { field: "body", prompt: { en: "Now the content. What do you need to communicate?", de: "Nun der Inhalt. Was müssen Sie mitteilen?", pt: "Agora o conteúdo. O que você precisa comunicar?" } },
+      { field: "action", prompt: { en: "Is there a required action from the recipient? (or skip)", de: "Gibt es eine erforderliche Aktion? (oder überspringen)", pt: "Há uma ação requerida do destinatário? (ou pular)" }, optional: true },
+    ],
+    seal: { type: "MEMO", hashFields: ["to", "from", "date", "subject", "body"], metadata: ["priority", "action"], recipientTracked: true },
+    tierFeatures: {
+      FREE:  { fields: ["to", "from", "date", "subject", "body"] },
+      MED:   { fields: ["to", "from", "date", "subject", "body", "priority", "action"], templates: true },
+      HIGH:  { fields: "*", classification: true, retention: true, distributionTracking: true },
+    },
+  },
+
+  // ─── LETTER: Formal correspondence with greeting and closing ───
+  letter: {
+    id: "letter",
+    fields: {
+      to:       { required: true,  type: "text",   label: { en: "Recipient", de: "Empfänger", pt: "Destinatário" } },
+      from:     { required: true,  type: "text",   label: { en: "Sender", de: "Absender", pt: "Remetente" }, default: "wallet" },
+      date:     { required: true,  type: "date",   label: { en: "Date", de: "Datum", pt: "Data" }, default: "today" },
+      subject:  { required: false, type: "text",   label: { en: "Subject", de: "Betreff", pt: "Assunto" } },
+      greeting: { required: true,  type: "text",   label: { en: "Greeting", de: "Anrede", pt: "Saudação" } },
+      body:     { required: true,  type: "rich",   label: { en: "Content", de: "Inhalt", pt: "Conteúdo" } },
+      closing:  { required: true,  type: "text",   label: { en: "Closing", de: "Grußformel", pt: "Encerramento" } },
+    },
+    flow: [
+      { field: "to", prompt: { en: "✉️ Letter — who is the recipient?", de: "✉️ Brief — an wen geht er?", pt: "✉️ Carta — para quem?" } },
+      { field: "greeting", prompt: { en: "How should you greet them?", de: "Wie sollen Sie sie begrüßen?", pt: "Como você os cumprimenta?" },
+        chips: true, chipValues: { en: ["Dear Sir/Madam", "Dear [Name]", "Hello"], de: ["Sehr geehrte Damen und Herren", "Liebe/r [Name]", "Hallo"], pt: ["Prezado(a) Senhor(a)", "Caro(a) [Nome]", "Olá"] } },
+      { field: "subject", prompt: { en: "What's the subject of this letter? (optional)", de: "Was ist der Betreff? (optional)", pt: "Qual é o assunto? (opcional)" }, optional: true },
+      { field: "body", prompt: { en: "Now write the body of your letter.", de: "Nun schreiben Sie den Inhalt.", pt: "Agora escreva o corpo da carta." } },
+      { field: "closing", prompt: { en: "How would you like to close?", de: "Wie möchten Sie schließen?", pt: "Como você gostaria de encerrar?" },
+        chips: true, chipValues: { en: ["Sincerely", "Best regards", "Yours faithfully"], de: ["Mit freundlichen Grüßen", "Beste Grüße", "Hochachtungsvoll"], pt: ["Atenciosamente", "Cordialmente", "Respeitosamente"] } },
+    ],
+    seal: { type: "LETTER", hashFields: ["to", "from", "date", "body"], metadata: ["subject", "greeting", "closing"] },
+  },
+
+  // ─── NOTE: Simple text with title ───
+  note: {
+    id: "note",
+    fields: {
+      title: { required: true, type: "text", label: { en: "Title", de: "Titel", pt: "Título" } },
+      body:  { required: true, type: "rich", label: { en: "Content", de: "Inhalt", pt: "Conteúdo" } },
+    },
+    flow: [
+      { field: "title", prompt: { en: "📝 What's the title of your note?", de: "📝 Wie lautet der Titel?", pt: "📝 Qual é o título da nota?" } },
+      { field: "body", prompt: { en: "Go ahead, write your note.", de: "Schreiben Sie Ihre Notiz.", pt: "Escreva sua nota." } },
+    ],
+    seal: { type: "NOTE", hashFields: ["title", "body"] },
+    simple: true, // Flag for simple types
+  },
+
+  // ─── EMAIL: Digital correspondence ───
+  email: {
+    id: "email",
+    fields: {
+      to:      { required: true,  type: "text", label: { en: "To", de: "An", pt: "Para" } },
+      cc:      { required: false, type: "text", label: { en: "CC", de: "CC", pt: "CC" } },
+      from:    { required: true,  type: "text", label: { en: "From", de: "Von", pt: "De" }, default: "wallet" },
+      subject: { required: true,  type: "text", label: { en: "Subject", de: "Betreff", pt: "Assunto" } },
+      body:    { required: true,  type: "rich", label: { en: "Content", de: "Inhalt", pt: "Conteúdo" } },
+    },
+    flow: [
+      { field: "to", prompt: { en: "📧 Email — recipient address?", de: "📧 E-Mail — Empfängeradresse?", pt: "📧 Email — endereço do destinatário?" } },
+      { field: "subject", prompt: { en: "What's the subject line?", de: "Was ist die Betreffzeile?", pt: "Qual é o assunto?" } },
+      { field: "body", prompt: { en: "Write your email content.", de: "Schreiben Sie den E-Mail-Inhalt.", pt: "Escreva o conteúdo do email." } },
+    ],
+    seal: { type: "EMAIL", hashFields: ["to", "from", "subject", "body"], metadata: ["cc"] },
+  },
+
+  // ─── JOURNAL: Personal diary entry ───
+  journal: {
+    id: "journal",
+    fields: {
+      date:  { required: true, type: "date", label: { en: "Date", de: "Datum", pt: "Data" }, default: "today" },
+      mood:  { required: false, type: "select", label: { en: "Mood", de: "Stimmung", pt: "Humor" }, options: ["😊", "😐", "😔", "😤", "🤔", "😴"] },
+      title: { required: false, type: "text", label: { en: "Title", de: "Titel", pt: "Título" } },
+      body:  { required: true, type: "rich", label: { en: "Entry", de: "Eintrag", pt: "Entrada" } },
+    },
+    flow: [
+      { field: "mood", prompt: { en: "📖 How are you feeling today?", de: "📖 Wie fühlen Sie sich heute?", pt: "📖 Como você está se sentindo?" }, chips: true, optional: true },
+      { field: "title", prompt: { en: "Give this entry a title (optional)", de: "Geben Sie diesem Eintrag einen Titel (optional)", pt: "Dê um título a esta entrada (opcional)" }, optional: true },
+      { field: "body", prompt: { en: "What's on your mind?", de: "Was beschäftigt Sie?", pt: "O que está na sua mente?" } },
+    ],
+    seal: { type: "JOURNAL", hashFields: ["date", "body"], metadata: ["mood", "title"] },
+    simple: true,
+  },
+
+  // ─── RECIPE: Cooking instructions ───
+  recipe: {
+    id: "recipe",
+    fields: {
+      title:       { required: true, type: "text", label: { en: "Recipe Name", de: "Rezeptname", pt: "Nome da Receita" } },
+      servings:    { required: false, type: "text", label: { en: "Servings", de: "Portionen", pt: "Porções" } },
+      prepTime:    { required: false, type: "text", label: { en: "Prep Time", de: "Vorbereitungszeit", pt: "Tempo de Preparo" } },
+      ingredients: { required: true, type: "rich", label: { en: "Ingredients", de: "Zutaten", pt: "Ingredientes" } },
+      steps:       { required: true, type: "rich", label: { en: "Instructions", de: "Anleitung", pt: "Modo de Preparo" } },
+    },
+    flow: [
+      { field: "title", prompt: { en: "🍳 What are you making?", de: "🍳 Was kochen Sie?", pt: "🍳 O que você está fazendo?" } },
+      { field: "servings", prompt: { en: "How many servings? (optional)", de: "Wie viele Portionen? (optional)", pt: "Quantas porções? (opcional)" }, optional: true },
+      { field: "ingredients", prompt: { en: "List the ingredients:", de: "Listen Sie die Zutaten auf:", pt: "Liste os ingredientes:" } },
+      { field: "steps", prompt: { en: "Now the step-by-step instructions:", de: "Nun die Schritt-für-Schritt-Anleitung:", pt: "Agora o passo a passo:" } },
+    ],
+    seal: { type: "RECIPE", hashFields: ["title", "ingredients", "steps"] },
+  },
+
+  // ─── REPORT: Business document with sections ───
+  report: {
+    id: "report",
+    fields: {
+      title:    { required: true, type: "text", label: { en: "Report Title", de: "Berichtstitel", pt: "Título do Relatório" } },
+      author:   { required: true, type: "text", label: { en: "Author", de: "Autor", pt: "Autor" }, default: "wallet" },
+      date:     { required: true, type: "date", label: { en: "Date", de: "Datum", pt: "Data" }, default: "today" },
+      summary:  { required: true, type: "rich", label: { en: "Executive Summary", de: "Zusammenfassung", pt: "Resumo Executivo" } },
+      body:     { required: true, type: "rich", label: { en: "Report Body", de: "Berichtsinhalt", pt: "Corpo do Relatório" } },
+      findings: { required: false, type: "rich", label: { en: "Findings", de: "Erkenntnisse", pt: "Conclusões" } },
+    },
+    flow: [
+      { field: "title", prompt: { en: "📊 What's the report title?", de: "📊 Wie lautet der Berichtstitel?", pt: "📊 Qual é o título do relatório?" } },
+      { field: "summary", prompt: { en: "Write the executive summary (2-3 sentences):", de: "Schreiben Sie die Zusammenfassung (2-3 Sätze):", pt: "Escreva o resumo executivo (2-3 frases):" },
+        teach: { en: "💡 An executive summary should answer: What? Why? What next?", de: "💡 Eine Zusammenfassung sollte beantworten: Was? Warum? Was nun?", pt: "💡 Um resumo executivo deve responder: O quê? Por quê? E agora?" } },
+      { field: "body", prompt: { en: "Now the full report content:", de: "Nun der vollständige Berichtsinhalt:", pt: "Agora o conteúdo completo do relatório:" } },
+      { field: "findings", prompt: { en: "Any key findings or conclusions? (optional)", de: "Wichtige Erkenntnisse? (optional)", pt: "Conclusões importantes? (opcional)" }, optional: true },
+    ],
+    seal: { type: "REPORT", hashFields: ["title", "author", "date", "summary", "body"], metadata: ["findings"] },
+  },
+
+  // ─── CONTRACT: Legal agreement (MED+ tier) ───
+  contract: {
+    id: "contract",
+    fields: {
+      title:      { required: true, type: "text", label: { en: "Contract Title", de: "Vertragstitel", pt: "Título do Contrato" } },
+      parties:    { required: true, type: "rich", label: { en: "Parties", de: "Parteien", pt: "Partes" } },
+      date:       { required: true, type: "date", label: { en: "Date", de: "Datum", pt: "Data" }, default: "today" },
+      terms:      { required: true, type: "rich", label: { en: "Terms & Conditions", de: "Bedingungen", pt: "Termos e Condições" } },
+      duration:   { required: false, type: "text", label: { en: "Duration", de: "Laufzeit", pt: "Duração" } },
+      signatures: { required: false, type: "text", label: { en: "Signatures Required", de: "Erforderliche Unterschriften", pt: "Assinaturas Necessárias" } },
+    },
+    flow: [
+      { field: "title", prompt: { en: "📜 What type of contract is this?", de: "📜 Um welche Art von Vertrag handelt es sich?", pt: "📜 Que tipo de contrato é este?" } },
+      { field: "parties", prompt: { en: "Who are the parties involved? (List them)", de: "Wer sind die beteiligten Parteien?", pt: "Quem são as partes envolvidas?" } },
+      { field: "terms", prompt: { en: "What are the key terms and conditions?", de: "Was sind die wichtigsten Bedingungen?", pt: "Quais são os termos e condições principais?" } },
+      { field: "duration", prompt: { en: "Contract duration? (optional)", de: "Vertragslaufzeit? (optional)", pt: "Duração do contrato? (opcional)" }, optional: true },
+    ],
+    seal: { type: "CONTRACT", hashFields: ["title", "parties", "date", "terms"], metadata: ["duration", "signatures"], legalDocument: true },
+  },
+
+  // ─── INVOICE: Financial document (MED+ tier) ───
+  invoice: {
+    id: "invoice",
+    fields: {
+      invoiceNo: { required: true, type: "text", label: { en: "Invoice #", de: "Rechnungs-Nr.", pt: "Nº da Fatura" } },
+      billTo:    { required: true, type: "text", label: { en: "Bill To", de: "Rechnung an", pt: "Faturar Para" } },
+      date:      { required: true, type: "date", label: { en: "Date", de: "Datum", pt: "Data" }, default: "today" },
+      dueDate:   { required: false, type: "date", label: { en: "Due Date", de: "Fälligkeitsdatum", pt: "Data de Vencimento" } },
+      items:     { required: true, type: "rich", label: { en: "Items/Services", de: "Positionen", pt: "Itens/Serviços" } },
+      total:     { required: true, type: "text", label: { en: "Total Amount", de: "Gesamtbetrag", pt: "Valor Total" } },
+      notes:     { required: false, type: "text", label: { en: "Notes", de: "Anmerkungen", pt: "Observações" } },
+    },
+    flow: [
+      { field: "billTo", prompt: { en: "💰 Who is this invoice for?", de: "💰 An wen geht diese Rechnung?", pt: "💰 Para quem é esta fatura?" } },
+      { field: "items", prompt: { en: "List the items or services:", de: "Listen Sie die Positionen auf:", pt: "Liste os itens ou serviços:" } },
+      { field: "total", prompt: { en: "What's the total amount?", de: "Was ist der Gesamtbetrag?", pt: "Qual é o valor total?" } },
+      { field: "dueDate", prompt: { en: "Payment due date? (optional)", de: "Zahlungsfrist? (optional)", pt: "Data de vencimento? (opcional)" }, optional: true },
+    ],
+    seal: { type: "INVOICE", hashFields: ["invoiceNo", "billTo", "date", "items", "total"], metadata: ["dueDate", "notes"], financialDocument: true },
+  },
+
+  // Placeholder DNA for remaining types (to be expanded)
+  protocol:     { id: "protocol",     fields: { title: { required: true, type: "text", label: { en: "Title", de: "Titel", pt: "Título" } }, body: { required: true, type: "rich", label: { en: "Content", de: "Inhalt", pt: "Conteúdo" } } }, flow: [{ field: "title", prompt: { en: "📒 Protocol title?", de: "📒 Protokolltitel?", pt: "📒 Título do protocolo?" } }, { field: "body", prompt: { en: "Document the proceedings:", de: "Dokumentieren Sie den Verlauf:", pt: "Documente os procedimentos:" } }], seal: { type: "PROTOCOL", hashFields: ["title", "body"] } },
+  analysis:     { id: "analysis",     fields: { title: { required: true, type: "text", label: { en: "Title", de: "Titel", pt: "Título" } }, body: { required: true, type: "rich", label: { en: "Analysis", de: "Analyse", pt: "Análise" } } }, flow: [{ field: "title", prompt: { en: "🔬 Analysis title?", de: "🔬 Analysetitel?", pt: "🔬 Título da análise?" } }, { field: "body", prompt: { en: "Write your analysis:", de: "Schreiben Sie Ihre Analyse:", pt: "Escreva sua análise:" } }], seal: { type: "ANALYSIS", hashFields: ["title", "body"] } },
+  presentation: { id: "presentation", fields: { title: { required: true, type: "text", label: { en: "Title", de: "Titel", pt: "Título" } }, body: { required: true, type: "rich", label: { en: "Content", de: "Inhalt", pt: "Conteúdo" } } }, flow: [{ field: "title", prompt: { en: "📽️ Presentation title?", de: "📽️ Präsentationstitel?", pt: "📽️ Título da apresentação?" } }, { field: "body", prompt: { en: "Outline your presentation:", de: "Skizzieren Sie Ihre Präsentation:", pt: "Esboce sua apresentação:" } }], seal: { type: "PRESENTATION", hashFields: ["title", "body"] } },
+  communique:   { id: "communique",   fields: { title: { required: true, type: "text", label: { en: "Title", de: "Titel", pt: "Título" } }, classification: { required: true, type: "select", label: { en: "Classification", de: "Klassifizierung", pt: "Classificação" }, options: ["internal", "public", "confidential", "restricted"] }, body: { required: true, type: "rich", label: { en: "Content", de: "Inhalt", pt: "Conteúdo" } } }, flow: [{ field: "title", prompt: { en: "📡 Communiqué title?", de: "📡 Kommuniqué-Titel?", pt: "📡 Título do comunicado?" } }, { field: "classification", prompt: { en: "Classification level?", de: "Klassifizierungsstufe?", pt: "Nível de classificação?" }, chips: true }, { field: "body", prompt: { en: "Write the communiqué:", de: "Schreiben Sie das Kommuniqué:", pt: "Escreva o comunicado:" } }], seal: { type: "COMMUNIQUE", hashFields: ["title", "classification", "body"], governanceDocument: true } },
+  certificate:  { id: "certificate",  fields: { title: { required: true, type: "text", label: { en: "Certificate Title", de: "Zertifikatstitel", pt: "Título do Certificado" } }, recipient: { required: true, type: "text", label: { en: "Recipient", de: "Empfänger", pt: "Destinatário" } }, issuer: { required: true, type: "text", label: { en: "Issuer", de: "Aussteller", pt: "Emissor" }, default: "wallet" }, date: { required: true, type: "date", label: { en: "Date", de: "Datum", pt: "Data" }, default: "today" }, body: { required: true, type: "rich", label: { en: "Certificate Text", de: "Zertifikatstext", pt: "Texto do Certificado" } } }, flow: [{ field: "title", prompt: { en: "🏛️ Certificate title?", de: "🏛️ Zertifikatstitel?", pt: "🏛️ Título do certificado?" } }, { field: "recipient", prompt: { en: "Who receives this certificate?", de: "Wer erhält dieses Zertifikat?", pt: "Quem recebe este certificado?" } }, { field: "body", prompt: { en: "Write the certificate text:", de: "Schreiben Sie den Zertifikatstext:", pt: "Escreva o texto do certificado:" } }], seal: { type: "CERTIFICATE", hashFields: ["title", "recipient", "issuer", "date", "body"], governanceDocument: true, legalDocument: true } },
+};
+
+// Helper: Get DNA for a doc type
+const getDNA = (type) => DOC_TYPE_DNA[type] || null;
+
+// Helper: Check if type has DNA (structured fields)
+const hasDNA = (type) => !!DOC_TYPE_DNA[type]?.fields;
+
+// Helper: Render structured preview based on type DNA
+const renderStructuredPreview = (type, fields, th, lang) => {
+  const dna = getDNA(type);
+  if (!dna || !dna.fields || Object.keys(fields).length === 0) return null;
+
+  // ─── MEMO Preview ───
+  if (type === "memo") {
+    return React.createElement('div', { style: { fontFamily: "'Bricolage Grotesque',sans-serif" } },
+      // Header
+      React.createElement('div', { style: { borderBottom: `2px solid ${th.gold}`, paddingBottom: 12, marginBottom: 16 } },
+        React.createElement('div', { style: { fontSize: 22, fontWeight: 800, color: th.gold, display: 'flex', alignItems: 'center', gap: 8 } },
+          '📋', { en: 'MEMORANDUM', de: 'MEMORANDUM', pt: 'MEMORANDO' }[lang] || 'MEMORANDUM'
+        )
+      ),
+      // Fields Grid
+      React.createElement('div', { style: { display: 'grid', gridTemplateColumns: '90px 1fr', gap: '8px 12px', marginBottom: 16, fontSize: 13 } },
+        React.createElement('span', { style: { fontWeight: 700, color: th.dim } }, { en: 'TO:', de: 'AN:', pt: 'PARA:' }[lang]),
+        React.createElement('span', null, fields.to || '—'),
+        React.createElement('span', { style: { fontWeight: 700, color: th.dim } }, { en: 'FROM:', de: 'VON:', pt: 'DE:' }[lang]),
+        React.createElement('span', null, fields.from || '—'),
+        React.createElement('span', { style: { fontWeight: 700, color: th.dim } }, { en: 'DATE:', de: 'DATUM:', pt: 'DATA:' }[lang]),
+        React.createElement('span', null, fields.date || new Date().toLocaleDateString()),
+        React.createElement('span', { style: { fontWeight: 700, color: th.dim } }, { en: 'RE:', de: 'BETR.:', pt: 'ASSUNTO:' }[lang]),
+        React.createElement('span', { style: { fontWeight: 600 } }, fields.subject || '—'),
+        ...(fields.priority && fields.priority !== 'normal' ? [
+          React.createElement('span', { key: 'prio-label', style: { fontWeight: 700, color: th.dim } }, { en: 'PRIORITY:', de: 'PRIORITÄT:', pt: 'PRIORIDADE:' }[lang]),
+          React.createElement('span', { key: 'prio-value', style: {
+            padding: '2px 8px', borderRadius: 4, fontSize: 10, fontWeight: 700, display: 'inline-block',
+            background: fields.priority === 'urgent' ? th.error + '22' : fields.priority === 'confidential' ? th.warning + '22' : th.gold + '22',
+            color: fields.priority === 'urgent' ? th.error : fields.priority === 'confidential' ? th.warning : th.gold
+          } }, fields.priority.toUpperCase())
+        ] : [])
+      ),
+      // Body
+      fields.body && React.createElement('div', { style: { borderTop: `1px solid ${th.border}`, paddingTop: 16, fontSize: 14, lineHeight: 1.8, whiteSpace: 'pre-wrap' } }, fields.body),
+      // Action
+      fields.action && React.createElement('div', { style: { marginTop: 16, padding: 12, background: th.gold + '11', borderRadius: 8, borderLeft: `3px solid ${th.gold}` } },
+        React.createElement('div', { style: { fontSize: 11, fontWeight: 700, color: th.gold, marginBottom: 4 } }, { en: 'ACTION REQUIRED', de: 'ERFORDERLICHE AKTION', pt: 'AÇÃO REQUERIDA' }[lang]),
+        React.createElement('div', { style: { fontSize: 13 } }, fields.action)
+      )
+    );
+  }
+
+  // ─── LETTER Preview ───
+  if (type === "letter") {
+    return React.createElement('div', { style: { fontFamily: "'Bricolage Grotesque',sans-serif" } },
+      // Header with date
+      React.createElement('div', { style: { textAlign: 'right', fontSize: 12, color: th.dim, marginBottom: 20 } }, fields.date || new Date().toLocaleDateString()),
+      // Recipient
+      fields.to && React.createElement('div', { style: { marginBottom: 20, fontSize: 13 } }, fields.to),
+      // Subject (optional)
+      fields.subject && React.createElement('div', { style: { fontWeight: 700, marginBottom: 16 } }, fields.subject),
+      // Greeting
+      fields.greeting && React.createElement('div', { style: { marginBottom: 16, fontSize: 14 } }, fields.greeting + ','),
+      // Body
+      fields.body && React.createElement('div', { style: { fontSize: 14, lineHeight: 1.8, whiteSpace: 'pre-wrap', marginBottom: 20 } }, fields.body),
+      // Closing
+      fields.closing && React.createElement('div', { style: { marginTop: 20 } },
+        React.createElement('div', { style: { fontSize: 14 } }, fields.closing + ','),
+        React.createElement('div', { style: { fontSize: 14, fontWeight: 600, marginTop: 16 } }, fields.from || '')
+      )
+    );
+  }
+
+  // ─── INVOICE Preview ───
+  if (type === "invoice") {
+    return React.createElement('div', { style: { fontFamily: "'Bricolage Grotesque',sans-serif" } },
+      // Header
+      React.createElement('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: `2px solid ${th.gold}`, paddingBottom: 12, marginBottom: 16 } },
+        React.createElement('div', { style: { fontSize: 24, fontWeight: 800, color: th.gold } }, '💰 ' + ({ en: 'INVOICE', de: 'RECHNUNG', pt: 'FATURA' }[lang] || 'INVOICE')),
+        React.createElement('div', { style: { textAlign: 'right', fontSize: 12 } },
+          React.createElement('div', { style: { fontWeight: 700 } }, '#' + (fields.invoiceNo || '—')),
+          React.createElement('div', { style: { color: th.dim } }, fields.date || new Date().toLocaleDateString())
+        )
+      ),
+      // Bill To
+      React.createElement('div', { style: { marginBottom: 16 } },
+        React.createElement('div', { style: { fontSize: 11, fontWeight: 700, color: th.dim } }, { en: 'BILL TO:', de: 'RECHNUNG AN:', pt: 'FATURAR PARA:' }[lang]),
+        React.createElement('div', { style: { fontSize: 14, fontWeight: 600 } }, fields.billTo || '—')
+      ),
+      // Items
+      fields.items && React.createElement('div', { style: { borderTop: `1px solid ${th.border}`, paddingTop: 12, marginBottom: 16, fontSize: 13, whiteSpace: 'pre-wrap' } }, fields.items),
+      // Total
+      fields.total && React.createElement('div', { style: { borderTop: `2px solid ${th.text}`, paddingTop: 12, display: 'flex', justifyContent: 'space-between', fontSize: 16, fontWeight: 800 } },
+        React.createElement('span', null, { en: 'TOTAL:', de: 'GESAMT:', pt: 'TOTAL:' }[lang]),
+        React.createElement('span', { style: { color: th.gold } }, fields.total)
+      ),
+      // Due Date
+      fields.dueDate && React.createElement('div', { style: { marginTop: 12, fontSize: 12, color: th.warning } }, { en: 'Due:', de: 'Fällig:', pt: 'Vencimento:' }[lang] + ' ' + fields.dueDate)
+    );
+  }
+
+  // ─── Default Structured Preview (for other DNA types) ───
+  return React.createElement('div', { style: { fontFamily: "'Bricolage Grotesque',sans-serif" } },
+    // Type Header
+    React.createElement('div', { style: { fontSize: 18, fontWeight: 800, color: th.gold, marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8 } },
+      DOC_TYPES[type]?.icon || '📄',
+      (fields.title || fields.subject || type.toUpperCase())
+    ),
+    // Fields
+    Object.entries(dna.fields).filter(([k]) => fields[k] && k !== 'body' && k !== 'title' && k !== 'subject').map(([key, def]) =>
+      React.createElement('div', { key, style: { marginBottom: 8, display: 'grid', gridTemplateColumns: '100px 1fr', gap: 8, fontSize: 13 } },
+        React.createElement('span', { style: { fontWeight: 700, color: th.dim } }, (def.label[lang] || def.label.en || key) + ':'),
+        React.createElement('span', null, fields[key])
+      )
+    ),
+    // Body content
+    fields.body && React.createElement('div', { style: { borderTop: `1px solid ${th.border}`, paddingTop: 16, marginTop: 8, fontSize: 14, lineHeight: 1.8, whiteSpace: 'pre-wrap' } }, fields.body)
+  );
+};
+
 const EXPORTS = {
   docx:{icon:"📄",label:"DOC",tier:"FREE"},pdf:{icon:"📕",label:"PDF",tier:"MED"},
   xlsx:{icon:"📊",label:"Excel",tier:"MED"},pptx:{icon:"📽️",label:"PPT",tier:"MED"},
@@ -974,6 +1290,10 @@ function App(){
   const[docImages,setDocImages]=useState([]);
   const[docVideos,setDocVideos]=useState([]);
   const[docType,setDocType]=useState(null);
+  // ─── DOC TYPE DNA: Structured Fields & Guided Flow ───
+  const[docFields,setDocFields]=useState({});  // Structured fields per type
+  const[flowStep,setFlowStep]=useState(-1);    // -1 = not started, 0+ = flow step index
+  const[flowActive,setFlowActive]=useState(false);
   const[docStatus,setDocStatus]=useState("draft");
   const[receipt,setReceipt]=useState(null);
   const[contentHistory,setContentHistory]=useState([]); // FIX (M): undo
@@ -1376,7 +1696,7 @@ function App(){
     setVoiceText("");
   },[voiceText]); // send will be defined below, eslint will complain but it works
 
-  // Send chat — FIX (E) awaitingTitle + FIX (F) docContentRef + A.4 Dragon Chat
+  // Send chat — FIX (E) awaitingTitle + FIX (F) docContentRef + A.4 Dragon Chat + DNA Guided Flow
   const send=useCallback(async(text)=>{
     if(!text.trim()||docStatus==="finalized")return;
     const m=text.trim(),ml=m.toLowerCase();
@@ -1384,8 +1704,6 @@ function App(){
     const tc=turns+1;setTurns(tc);
 
     // ═══ A.4: DRAGON CHAT INTEGRATION ═══
-    // For MED/HIGH tiers, query Dragon Chat first (constitutional principles)
-    // Falls back to local motor if Dragon is unavailable
     let dragonResponse=null;
     if(dragonConnected&&windiTier!=="FREE"){
       dragonResponse=await queryDragon(m);
@@ -1397,9 +1715,7 @@ function App(){
 
       // ─── A.4: Dragon Response (MED/HIGH tier) ───────────────────────
       if(dragonResponse&&(dragonResponse.success&&dragonResponse.response||dragonResponse.message)){
-        // Use Dragon response, but still do document building
         resp=dragonResponse.response||dragonResponse.message;
-        // If Dragon detected an action, show confirmation buttons
         if(dragonResponse.action_pending){
           setDragonPending({type:dragonResponse.action_pending,buttons:dragonResponse.confirm_buttons});
         }
@@ -1414,25 +1730,179 @@ function App(){
         else if(ml.includes("schreib für")||ml.includes("write for")||ml.includes("escreve por")){
           resp=t.chat.noWrite;
         }
+        // ═══ DNA GUIDED FLOW ENGINE ═══════════════════════════════════
+        // Process guided flow steps when flowActive
+        else if(flowActive&&docType&&getDNA(docType)){
+          const dna=getDNA(docType);
+          const flow=dna.flow||[];
+          const step=flow[flowStep];
+
+          if(step){
+            const field=step.field;
+            const fieldDef=dna.fields[field];
+            const isSkip=ml==="skip"||ml==="pular"||ml==="überspringen"||ml==="/skip";
+
+            // Handle optional skip
+            if(step.optional&&isSkip){
+              const nextStep=flow[flowStep+1];
+              setFlowStep(p=>p+1);
+              if(nextStep){
+                resp=nextStep.prompt[lang]||nextStep.prompt.en;
+                if(nextStep.teach)resp+="\n\n"+(nextStep.teach[lang]||nextStep.teach.en);
+                if(nextStep.chips&&fieldDef?.options){
+                  resp+="\n\n"+fieldDef.options.map(o=>`[${o}]`).join("  ");
+                }
+              }else{
+                // Flow complete
+                setFlowActive(false);
+                setDocFields(p=>({...p,_flowComplete:true}));
+                resp="✅ "+({en:"Document ready for review.",de:"Dokument bereit zur Überprüfung.",pt:"Documento pronto para revisão."}[lang]||"Document ready.");
+                if(wallet)resp+="\n\n"+(wallet?t.chat.readyFinalize:t.chat.needDID);
+              }
+            }
+            // Handle select fields with chips
+            else if(fieldDef?.type==="select"&&fieldDef.options){
+              const selected=fieldDef.options.find(o=>ml.includes(o.toLowerCase()));
+              if(selected||!fieldDef.required){
+                const val=selected||m;
+                setDocFields(p=>({...p,[field]:val}));
+                upd=true;
+                const nextStep=flow[flowStep+1];
+                setFlowStep(p=>p+1);
+                resp=`✅ ${fieldDef.label[lang]||field}: ${val}`;
+                if(nextStep){
+                  resp+="\n\n"+(nextStep.prompt[lang]||nextStep.prompt.en);
+                  if(nextStep.teach)resp+="\n\n"+(nextStep.teach[lang]||nextStep.teach.en);
+                  const nextFieldDef=dna.fields[nextStep.field];
+                  if(nextStep.chips&&nextFieldDef?.options){
+                    resp+="\n\n"+nextFieldDef.options.map(o=>`[${o}]`).join("  ");
+                  }else if(nextStep.chipValues){
+                    resp+="\n\n"+(nextStep.chipValues[lang]||nextStep.chipValues.en).map(o=>`[${o}]`).join("  ");
+                  }
+                }else{
+                  setFlowActive(false);
+                  setDocFields(p=>({...p,_flowComplete:true}));
+                  resp+="\n\n✅ "+({en:"Document ready for review.",de:"Dokument bereit.",pt:"Documento pronto."}[lang]);
+                  if(wallet)resp+="\n\n"+t.chat.readyFinalize;
+                }
+              }else{
+                resp=({en:"Please select one of the options:",de:"Bitte wählen Sie eine Option:",pt:"Selecione uma opção:"}[lang])+"\n"+fieldDef.options.map(o=>`[${o}]`).join("  ");
+              }
+            }
+            // Handle text/rich fields
+            else{
+              let val=m;
+              // Apply default if field has one
+              if(fieldDef?.default==="wallet"&&wallet&&!m){val=wallet.name;}
+              if(fieldDef?.default==="today"&&!m){val=new Date().toLocaleDateString();}
+
+              setDocFields(p=>({...p,[field]:val}));
+              // Sync body field with docContent for backward compat
+              if(field==="body"||field==="steps"||field==="terms"||field==="items"){
+                setContentHistory(prev=>[...prev,docContentRef.current]);
+                setDocContent(prev=>prev?prev+"\n\n"+val:val);
+              }
+              // Sync title/subject with docTitle
+              if(field==="title"||field==="subject"){
+                setDocTitle(val);
+              }
+              upd=true;
+
+              const nextStep=flow[flowStep+1];
+              setFlowStep(p=>p+1);
+              resp=`✅ ${fieldDef?.label[lang]||field}: ${val.substring(0,50)}${val.length>50?"...":""}`;
+              if(nextStep){
+                resp+="\n\n"+(nextStep.prompt[lang]||nextStep.prompt.en);
+                if(nextStep.teach)resp+="\n\n"+(nextStep.teach[lang]||nextStep.teach.en);
+                const nextFieldDef=dna.fields[nextStep.field];
+                if(nextStep.chips&&nextFieldDef?.options){
+                  resp+="\n\n"+nextFieldDef.options.map(o=>`[${o}]`).join("  ");
+                }else if(nextStep.chipValues){
+                  resp+="\n\n"+(nextStep.chipValues[lang]||nextStep.chipValues.en).map(o=>`[${o}]`).join("  ");
+                }
+                if(nextStep.optional)resp+="\n\n"+({en:"(or type 'skip')",de:"(oder 'überspringen')",pt:"(ou 'pular')"}[lang]);
+              }else{
+                setFlowActive(false);
+                setDocFields(p=>({...p,_flowComplete:true}));
+                resp+="\n\n✅ "+({en:"Document ready for review.",de:"Dokument bereit.",pt:"Documento pronto."}[lang]);
+                if(wallet)resp+="\n\n"+t.chat.readyFinalize;
+              }
+            }
+          }else{
+            // No more steps, generic content append
+            setFlowActive(false);
+            let f=m.charAt(0).toUpperCase()+m.slice(1);
+            if(!/[.!?]$/.test(f))f+=".";
+            setContentHistory(prev=>[...prev,docContentRef.current]);
+            setDocContent(prev=>prev?prev+"\n\n"+f:f);
+            setDocFields(p=>({...p,body:(p.body||"")+"\n\n"+f}));
+            upd=true;
+            resp=t.chat.askMore[Math.min(tc-1,t.chat.askMore.length-1)];
+          }
+        }
+        // ═══ END DNA GUIDED FLOW ══════════════════════════════════════
         // FIX (E): Title capture ONLY when awaitingTitle is true
         else if(awaitingTitle&&!docTitle){
           setDocTitle(m);setAwaitingTitle(false);upd=true;
           resp=t.chat.confirmTitle(m);
+          // Start guided flow if type has DNA
+          const dna=getDNA(docType);
+          if(dna&&dna.flow&&dna.flow.length>0){
+            setFlowActive(true);setFlowStep(0);
+            // Set initial fields (from, date defaults)
+            const initFields={_type:docType};
+            Object.entries(dna.fields).forEach(([k,v])=>{
+              if(v.default==="wallet"&&wallet)initFields[k]=wallet.name;
+              if(v.default==="today")initFields[k]=new Date().toLocaleDateString();
+            });
+            // For types with subject field, use title as subject
+            if(dna.fields.subject)initFields.subject=m;
+            if(dna.fields.title)initFields.title=m;
+            setDocFields(initFields);
+            const firstStep=dna.flow[0];
+            // Skip first step if it's subject/title (already captured)
+            if(firstStep.field==="title"||firstStep.field==="subject"){
+              setFlowStep(1);
+              const secondStep=dna.flow[1];
+              if(secondStep){
+                resp+="\n\n"+(secondStep.prompt[lang]||secondStep.prompt.en);
+                if(secondStep.teach)resp+="\n\n"+(secondStep.teach[lang]||secondStep.teach.en);
+                const fieldDef=dna.fields[secondStep.field];
+                if(secondStep.chips&&fieldDef?.options){
+                  resp+="\n\n"+fieldDef.options.map(o=>`[${o}]`).join("  ");
+                }else if(secondStep.chipValues){
+                  resp+="\n\n"+(secondStep.chipValues[lang]||secondStep.chipValues.en).map(o=>`[${o}]`).join("  ");
+                }
+                if(secondStep.optional)resp+="\n\n"+({en:"(or type 'skip')",de:"(oder 'überspringen')",pt:"(ou 'pular')"}[lang]);
+              }
+            }else{
+              resp+="\n\n"+(firstStep.prompt[lang]||firstStep.prompt.en);
+              if(firstStep.teach)resp+="\n\n"+(firstStep.teach[lang]||firstStep.teach.en);
+            }
+          }
         }
-        // If no type and no title, and message mentions a doc type
+        // If no type and no title, detect doc type
         else if(!docType&&tc<=3){
           let detected=null;
           const typeMap={letter:["brief","letter","carta"],email:["email","e-mail","mail"],note:["notiz","note","nota"],
-            memo:["memo"],report:["bericht","report","relatório"],contract:["vertrag","contract","contrato"],
+            memo:["memo","memorando"],report:["bericht","report","relatório"],contract:["vertrag","contract","contrato"],
             invoice:["rechnung","invoice","fatura"],presentation:["präsentation","presentation","apresentação"],
-            communique:["communiqué","comunicado"],journal:["tagebuch","journal","diário"],recipe:["rezept","recipe","receita"]};
+            communique:["communiqué","comunicado"],journal:["tagebuch","journal","diário"],recipe:["rezept","recipe","receita"],
+            protocol:["protokoll","protocol","protocolo"],analysis:["analyse","analysis","análise"],certificate:["zertifikat","certificate","certificado"]};
           for(const[k,words]of Object.entries(typeMap)){
             if(words.some(w=>ml.includes(w))){detected=k;break;}
           }
           if(detected){
             setDocType(detected);
             const name=t.types[detected]||detected;
-            resp=t.chat.typeSelected(name)+"\n\n"+t.chat.askTitle;
+            const dna=getDNA(detected);
+            if(dna){
+              // DNA type: use guided prompt
+              resp=DOC_TYPES[detected].icon+" "+name+"\n\n"+({en:"Great choice! Let's build your "+name+".",de:"Gute Wahl! Lass uns dein "+name+" erstellen.",pt:"Ótima escolha! Vamos criar seu "+name+"."}[lang]);
+              resp+="\n\n"+t.chat.askTitle;
+            }else{
+              resp=t.chat.typeSelected(name)+"\n\n"+t.chat.askTitle;
+            }
             setAwaitingTitle(true);
           }else{
             resp=t.chat.askTitle;
@@ -1443,12 +1913,15 @@ function App(){
         else if(m.length>12){
           let f=m.charAt(0).toUpperCase()+m.slice(1);
           if(!/[.!?]$/.test(f))f+=".";
-          setContentHistory(prev=>[...prev,docContentRef.current]); // FIX (M): save for undo
+          setContentHistory(prev=>[...prev,docContentRef.current]);
           setDocContent(prev=>prev?prev+"\n\n"+f:f);
+          // Also update docFields.body if we have fields
+          if(Object.keys(docFields).length>0){
+            setDocFields(p=>({...p,body:(p.body||"")+"\n\n"+f}));
+          }
           upd=true;
           const fw=t.chat.askMore[Math.min(tc-1,t.chat.askMore.length-1)];
           let bonus="";if(tc%4===0&&tc<=12)bonus="\n\n"+t.chat.cognitive[Math.min(Math.floor(tc/4)-1,t.chat.cognitive.length-1)];
-          // FIX (F): use ref for accurate word count
           const wc=(docContentRef.current+" "+f).trim().split(/\s+/).filter(Boolean).length;
           resp=fw+bonus+(wc>80&&tc>3&&docTitle?"\n\n"+(wallet?t.chat.readyFinalize:t.chat.needDID):"");
         }
@@ -1456,11 +1929,9 @@ function App(){
       }
 
       // ─── Document building (always runs) ────────────────────────────
-      // Even with Dragon response, still extract content for document
-      if(!dragonResponse&&m.length>12&&!awaitingTitle){
-        // Already handled above in local motor
-      }else if(dragonResponse&&m.length>12&&docTitle&&!awaitingTitle){
-        // Extract content even when Dragon responded
+      if(!dragonResponse&&m.length>12&&!awaitingTitle&&!flowActive){
+        // Already handled above
+      }else if(dragonResponse&&m.length>12&&docTitle&&!awaitingTitle&&!flowActive){
         let f=m.charAt(0).toUpperCase()+m.slice(1);
         if(!/[.!?]$/.test(f))f+=".";
         setContentHistory(prev=>[...prev,docContentRef.current]);
@@ -1471,8 +1942,8 @@ function App(){
       if(upd)setMsgs(p=>[...p,{role:"system",text:t.chat.extracting},{role:"bot",text:resp,source:dragonResponse?.source||"local"}]);
       else setMsgs(p=>[...p,{role:"bot",text:resp,source:dragonResponse?.source||"local"}]);
       setTyping(false);
-    },dragonResponse?100:400+Math.random()*500); // Faster response when Dragon answers
-  },[turns,awaitingTitle,docTitle,docType,docStatus,wallet,t,dragonConnected,windiTier,queryDragon]);
+    },dragonResponse?100:400+Math.random()*500);
+  },[turns,awaitingTitle,docTitle,docType,docStatus,docFields,flowActive,flowStep,wallet,t,lang,dragonConnected,windiTier,queryDragon]);
 
   // Image + Video
   const addImage=useCallback(f=>{if(!f?.type.startsWith("image/"))return;const r=new FileReader();
@@ -1523,27 +1994,63 @@ function App(){
   },[wallet,docTitle,docContent]);
 
   const executeSeal=useCallback(async()=>{
-    const ch=await CryptoProvider.hash(docContent);
-    const bh=await CryptoProvider.hash(`${docTitle}|${docContent}|${docImages.length}|${wallet.id}`);
+    const dna=getDNA(docType);
+    let ch,bh,fieldHashes={},sealMeta={};
+
+    // ═══ DNA-AWARE SEAL: Field-level hashing for structured types ═══
+    if(dna&&dna.seal&&Object.keys(docFields).length>1){
+      // Hash each required field individually
+      for(const field of (dna.seal.hashFields||[])){
+        if(docFields[field]){
+          fieldHashes[field]=await CryptoProvider.hash(String(docFields[field]));
+        }
+      }
+      // Combined fields hash (Merkle-like)
+      const combinedInput=(dna.seal.hashFields||[]).map(f=>docFields[f]||"").join("|");
+      ch=await CryptoProvider.hash(combinedInput);
+      // Bundle hash includes all metadata
+      const bundleInput=`${dna.seal.type}|${JSON.stringify(docFields)}|${wallet.id}|${new Date().toISOString()}`;
+      bh=await CryptoProvider.hash(bundleInput);
+      // Seal metadata
+      sealMeta={
+        doc_type:dna.seal.type,
+        field_hashes:fieldHashes,
+        fields_hash:ch,
+        ai_assisted:true,ai_role:"structural_guidance",human_authored:true,
+        ...(docFields.priority==="confidential"?{classification:"CONFIDENTIAL",subject_redacted:true}:{}),
+        ...(dna.seal.recipientTracked?{recipient_hash:fieldHashes.to}:{}),
+        ...(dna.seal.legalDocument?{legal_document:true}:{}),
+        ...(dna.seal.financialDocument?{financial_document:true}:{}),
+        ...(dna.seal.governanceDocument?{governance_document:true}:{}),
+      };
+    }else{
+      // Legacy: simple content hash
+      ch=await CryptoProvider.hash(docContent);
+      bh=await CryptoProvider.hash(`${docTitle}|${docContent}|${docImages.length}|${wallet.id}`);
+      sealMeta={doc_type:docType?.toUpperCase()||"NOTE"};
+    }
+
     const r={id:CryptoProvider.receiptId(),serial:`WINDI-2026-${String(Math.floor(Math.random()*999999)).padStart(6,"0")}`,
       ts:new Date().toISOString(),ch,bh,sge:0.92,
-      url:`${CONFIG.VERIFY_BASE_URL}/${CryptoProvider.receiptId()}`}; // FIX (G): configurable URL
+      url:`${CONFIG.VERIFY_BASE_URL}/${CryptoProvider.receiptId()}`,
+      ...sealMeta}; // Include DNA seal metadata in receipt
     setReceipt(r);setDocStatus("finalized");setShowFinalizeModal(false);
-    setWallet(p=>({...p,trustScore:Math.min(p.trustScore+2,50),receipts:[...p.receipts,{id:r.id,title:docTitle,ts:r.ts}]}));
-    // Save to docs list
-    setSavedDocs(p=>[{id:Date.now(),title:docTitle,icon:DOC_TYPES[docType]?.icon||"📄",type:docType||"note",status:"sealed",date:new Date().toLocaleDateString(),words:wordCount},...p]);
+    setWallet(p=>({...p,trustScore:Math.min(p.trustScore+2,50),receipts:[...p.receipts,{id:r.id,title:docTitle,ts:r.ts,type:docType}]}));
+    // Save to docs list with fields for DNA types
+    setSavedDocs(p=>[{id:Date.now(),title:docTitle,icon:DOC_TYPES[docType]?.icon||"📄",type:docType||"note",status:"sealed",date:new Date().toLocaleDateString(),words:wordCount,fields:Object.keys(docFields).length>1?docFields:null},...p]);
     flash(`🛡️ ${t.doc.finalized}`);
     setTimeout(()=>setMsgs(p=>[...p,{role:"bot",text:t.chat.finalized}]),800);
-  },[wallet,docTitle,docContent,docImages,docType,wordCount,t,flash]);
+  },[wallet,docTitle,docContent,docFields,docImages,docType,wordCount,t,flash]);
 
   // New doc
   const newDoc=useCallback(()=>{
     if(docTitle&&docContent&&docStatus!=="finalized"){
-      setSavedDocs(p=>[{id:Date.now(),title:docTitle,icon:DOC_TYPES[docType]?.icon||"📄",type:docType||"note",status:"draft",date:new Date().toLocaleDateString(),words:wordCount},...p]);}
+      setSavedDocs(p=>[{id:Date.now(),title:docTitle,icon:DOC_TYPES[docType]?.icon||"📄",type:docType||"note",status:"draft",date:new Date().toLocaleDateString(),words:wordCount,fields:Object.keys(docFields).length>1?docFields:null},...p]);}
     setDocTitle("");setDocContent("");setDocImages([]);setDocVideos([]);setDocType(null);
+    setDocFields({});setFlowStep(-1);setFlowActive(false);  // Reset DNA state
     setDocStatus("draft");setReceipt(null);setAwaitingTitle(false);setTurns(0);setContentHistory([]);
     setMsgs([{role:"bot",text:t.chat.greet}]);setSidebarTab("chat");
-  },[docTitle,docContent,docType,docStatus,wordCount,t]);
+  },[docTitle,docContent,docFields,docType,docStatus,wordCount,t]);
 
   // FIX (A): use theme.bg (NOT theme.gradient)
   const base={minHeight:"100vh",background:th.bg,color:th.text,fontFamily:"'Bricolage Grotesque',sans-serif"};
@@ -1642,13 +2149,19 @@ function App(){
 
           {/* ═══ CHAT TAB ═══ */}
           {sidebarTab==="chat"&&(<>
-            {/* Doc Preview */}
+            {/* Doc Preview — DNA-aware structured preview */}
             <div style={{flex:"1 1 50%",display:isMobile?"none":"flex",flexDirection:"column",borderRight:`1px solid ${th.border}22`,overflow:"hidden"}}>
               <div style={{flex:1,overflowY:"auto",padding:"14px 16px"}}>
-                {docTitle?<h1 style={{fontSize:20,fontWeight:800,margin:"0 0 12px",lineHeight:1.3}}>{docTitle}</h1>
-                :<div style={{fontSize:13,color:th.dim+"66",fontStyle:"italic",marginBottom:12}}>{t.doc.titlePH}</div>}
-                {docContent?<div style={{fontSize:14,lineHeight:1.8,whiteSpace:"pre-wrap"}}>{docContent}</div>
-                :<div style={{fontSize:12,color:th.dim+"44",fontStyle:"italic"}}>{t.doc.bodyPH}</div>}
+                {/* Structured preview for DNA types */}
+                {docType&&hasDNA(docType)&&Object.keys(docFields).length>1?
+                  renderStructuredPreview(docType,docFields,th,lang)
+                :(<>
+                  {/* Fallback: simple title + content preview */}
+                  {docTitle?<h1 style={{fontSize:20,fontWeight:800,margin:"0 0 12px",lineHeight:1.3}}>{docTitle}</h1>
+                  :<div style={{fontSize:13,color:th.dim+"66",fontStyle:"italic",marginBottom:12}}>{t.doc.titlePH}</div>}
+                  {docContent?<div style={{fontSize:14,lineHeight:1.8,whiteSpace:"pre-wrap"}}>{docContent}</div>
+                  :<div style={{fontSize:12,color:th.dim+"44",fontStyle:"italic"}}>{t.doc.bodyPH}</div>}
+                </>)}
                 {docImages.length>0&&<div style={{marginTop:12,display:"flex",flexWrap:"wrap",gap:6}}>
                   {docImages.map(img=><div key={img.id} style={{width:90,height:60,borderRadius:6,overflow:"hidden",border:`1px solid ${th.border}`}}><img src={img.url} alt="" style={{width:"100%",height:"100%",objectFit:"cover"}}/></div>)}</div>}
                 {docVideos.length>0&&<div style={{marginTop:12,display:"flex",flexDirection:"column",gap:6}}>
