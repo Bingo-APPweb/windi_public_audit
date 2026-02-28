@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI Cognitive Insight Cards — Design System</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: #0a0a0a;
+  color: #f0efe8;
+  min-height: 100vh;
+  padding: 24px;
+}
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #c9a84c33; border-radius: 3px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+// ═══════════════════════════════════════════════════════════════════════════════════
+// WINDI COGNITIVE INSIGHT CARDS — Design System Component
+// "93% da consciência no backend → visível ao humano"
+// ═══════════════════════════════════════════════════════════════════════════════════
+
+const { useState, useEffect, useCallback } = React;
+
+// ─── THEME ──────────────────────────────────────────────────────────────────────
+const THEME = {
+  bg: '#0a0a0a',
+  card: '#111111',
+  cardHover: '#161616',
+  border: '#222222',
+  gold: '#c9a84c',
+  goldDim: '#8a7434',
+  success: '#4ade80',
+  warning: '#facc15',
+  danger: '#f87171',
+  info: '#60a5fa',
+  text: '#f0efe8',
+  dim: '#666666',
+  mono: "'JetBrains Mono', monospace",
+};
+
+// ─── IMPACT COLORS ──────────────────────────────────────────────────────────────
+const IMPACT_STYLES = {
+  addictive: {
+    gradient: 'linear-gradient(135deg, #c9a84c15 0%, #c9a84c08 100%)',
+    border: '#c9a84c55',
+    accent: '#c9a84c',
+    glow: '0 0 20px #c9a84c22',
+    badge: { bg: '#c9a84c22', color: '#c9a84c', label: 'DAILY' },
+  },
+  transformational: {
+    gradient: 'linear-gradient(135deg, #4ade8015 0%, #4ade8008 100%)',
+    border: '#4ade8055',
+    accent: '#4ade80',
+    glow: '0 0 20px #4ade8022',
+    badge: { bg: '#4ade8022', color: '#4ade80', label: 'CORE' },
+  },
+  high: {
+    gradient: 'linear-gradient(135deg, #60a5fa15 0%, #60a5fa08 100%)',
+    border: '#60a5fa55',
+    accent: '#60a5fa',
+    glow: '0 0 15px #60a5fa15',
+    badge: { bg: '#60a5fa22', color: '#60a5fa', label: 'HIGH' },
+  },
+  medium: {
+    gradient: 'linear-gradient(135deg, #facc1515 0%, #facc1508 100%)',
+    border: '#facc1555',
+    accent: '#facc15',
+    glow: 'none',
+    badge: { bg: '#facc1522', color: '#facc15', label: 'MED' },
+  },
+};
+
+// ─── TRANSLATIONS ───────────────────────────────────────────────────────────────
+const TRANSLATIONS = {
+  de: {
+    title: 'Kognitive Einsichten',
+    subtitle: '93% der Intelligenz jetzt sichtbar',
+    action: 'Aktion ausführen',
+    why: 'Warum?',
+    refresh: 'Aktualisieren',
+    momentum: 'Momentum',
+    today: 'Heute',
+    core: 'Kern',
+    channel: 'Kanal',
+    timing: 'Timing',
+  },
+  en: {
+    title: 'Cognitive Insights',
+    subtitle: '93% of intelligence now visible',
+    action: 'Take action',
+    why: 'Why?',
+    refresh: 'Refresh',
+    momentum: 'Momentum',
+    today: 'Today',
+    core: 'Core',
+    channel: 'Channel',
+    timing: 'Timing',
+  },
+  pt: {
+    title: 'Insights Cognitivos',
+    subtitle: '93% da inteligência agora visível',
+    action: 'Executar acção',
+    why: 'Porquê?',
+    refresh: 'Actualizar',
+    momentum: 'Momentum',
+    today: 'Hoje',
+    core: 'Núcleo',
+    channel: 'Canal',
+    timing: 'Timing',
+  },
+};
+
+// ═══════════════════════════════════════════════════════════════════════════════════
+// COGNITIVE INSIGHT CARD COMPONENT
+// ═══════════════════════════════════════════════════════════════════════════════════
+
+function CognitiveInsightCard({ insight, lang = 'en', onAction, onExplain, compact = false }) {
+  const [isHovered, setIsHovered] = useState(false);
+  const [showExplain, setShowExplain] = useState(false);
+
+  const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+  const style = IMPACT_STYLES[insight.impact] || IMPACT_STYLES.medium;
+
+  // Parse text for formatting (bold, etc.)
+  const formatText = (text) => {
+    if (!text) return '';
+    return text.split('\n').map((line, i) => {
+      // Bold text between **
+      const parts = line.split(/\*\*(.*?)\*\*/g);
+      return (
+        <div key={i} style={{ marginBottom: line === '' ? 8 : 2 }}>
+          {parts.map((part, j) =>
+            j % 2 === 1
+              ? <strong key={j} style={{ color: style.accent, fontWeight: 700 }}>{part}</strong>
+              : <span key={j}>{part}</span>
+          )}
+        </div>
+      );
+    });
+  };
+
+  return (
+    <div
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      style={{
+        background: style.gradient,
+        border: `1px solid ${isHovered ? style.accent : style.border}`,
+        borderRadius: 16,
+        padding: compact ? '14px 16px' : '20px 24px',
+        marginBottom: 12,
+        boxShadow: isHovered ? style.glow : 'none',
+        transition: 'all 0.3s ease',
+        cursor: 'default',
+      }}
+    >
+      {/* Header */}
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: compact ? 10 : 14 }}>
+        {/* Icon */}
+        <div style={{
+          width: compact ? 36 : 44,
+          height: compact ? 36 : 44,
+          borderRadius: 12,
+          background: `${style.accent}15`,
+          border: `1px solid ${style.accent}33`,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: compact ? 18 : 22,
+          flexShrink: 0,
+        }}>
+          {insight.type === 'momentum_score' && '📈'}
+          {insight.type === 'daily_delta' && '🔔'}
+          {insight.type === 'audience_core' && '🧠'}
+          {insight.type === 'channel_dominance' && '📡'}
+          {insight.type === 'optimal_timing' && '⏰'}
+          {insight.type === 'viral_amplifiers' && '🚀'}
+          {insight.type === 'frequency_warning' && '⚠️'}
+          {!['momentum_score', 'daily_delta', 'audience_core', 'channel_dominance', 'optimal_timing', 'viral_amplifiers', 'frequency_warning'].includes(insight.type) && '💡'}
+        </div>
+
+        {/* Title & Badge */}
+        <div style={{ flex: 1 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+            <span style={{
+              fontSize: 9,
+              fontFamily: THEME.mono,
+              fontWeight: 600,
+              padding: '2px 8px',
+              borderRadius: 4,
+              background: style.badge.bg,
+              color: style.badge.color,
+              letterSpacing: '0.5px',
+            }}>
+              {style.badge.label}
+            </span>
+            <span style={{
+              fontSize: 9,
+              fontFamily: THEME.mono,
+              color: THEME.dim,
+            }}>
+              {insight.type.replace(/_/g, ' ').toUpperCase()}
+            </span>
+          </div>
+          {/* Confidence */}
+          {insight.confidence && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <div style={{
+                flex: 1,
+                height: 3,
+                background: '#1a1a1a',
+                borderRadius: 2,
+                overflow: 'hidden',
+                maxWidth: 80,
+              }}>
+                <div style={{
+                  width: `${insight.confidence * 100}%`,
+                  height: '100%',
+                  background: style.accent,
+                  borderRadius: 2,
+                }} />
+              </div>
+              <span style={{ fontSize: 9, color: THEME.dim, fontFamily: THEME.mono }}>
+                {Math.round(insight.confidence * 100)}%
+              </span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Content */}
+      <div style={{
+        fontSize: compact ? 12 : 13,
+        lineHeight: 1.7,
+        color: THEME.text,
+        marginBottom: insight.action ? 16 : 0,
+      }}>
+        {formatText(insight.text)}
+      </div>
+
+      {/* Actions */}
+      {insight.action && (
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <button
+            onClick={() => onAction?.(insight)}
+            style={{
+              padding: '8px 16px',
+              borderRadius: 8,
+              background: style.accent,
+              border: 'none',
+              color: '#000',
+              fontSize: 11,
+              fontWeight: 700,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+            }}
+          >
+            {insight.action === 'invite_core_to_did' && '👥'}
+            {insight.action === 'view_momentum_details' && '📊'}
+            {insight.action === 'schedule_optimal' && '📅'}
+            {insight.action === 'prioritize_channel' && '📡'}
+            {t.action}
+          </button>
+          <button
+            onClick={() => setShowExplain(!showExplain)}
+            style={{
+              padding: '8px 12px',
+              borderRadius: 8,
+              background: 'transparent',
+              border: `1px solid ${THEME.border}`,
+              color: THEME.dim,
+              fontSize: 11,
+              cursor: 'pointer',
+            }}
+          >
+            🧠 {t.why}
+          </button>
+        </div>
+      )}
+
+      {/* Explainability */}
+      {showExplain && (
+        <div style={{
+          marginTop: 12,
+          padding: '12px 14px',
+          background: '#0a0a0a',
+          borderRadius: 8,
+          border: `1px solid ${THEME.border}`,
+          fontSize: 11,
+          color: THEME.dim,
+          lineHeight: 1.6,
+        }}>
+          <div style={{ fontWeight: 600, color: THEME.text, marginBottom: 6 }}>
+            🧠 {lang === 'de' ? 'Warum diese Einsicht?' : lang === 'pt' ? 'Porquê este insight?' : 'Why this insight?'}
+          </div>
+          <div>📊 {lang === 'de' ? 'Datenquellen' : lang === 'pt' ? 'Fontes de dados' : 'Data sources'}: Ledger, Metrics, Engagement</div>
+          <div>🎯 {lang === 'de' ? 'Konfidenz' : lang === 'pt' ? 'Confiança' : 'Confidence'}: {Math.round((insight.confidence || 0.8) * 100)}%</div>
+          <div>📈 {lang === 'de' ? 'Erwarteter Einfluss' : lang === 'pt' ? 'Impacto esperado' : 'Expected impact'}: {insight.impact}</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════════
+// COGNITIVE INSIGHTS PANEL — Container for all cards
+// ═══════════════════════════════════════════════════════════════════════════════════
+
+function CognitiveInsightsPanel({ lang = 'en', compact = false }) {
+  const [insights, setInsights] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const t = TRANSLATIONS[lang] || TRANSLATIONS.en;
+
+  // Fetch insights from Dragon Chat CIL
+  const fetchInsights = useCallback(async () => {
+    setLoading(true);
+    try {
+      // Try to fetch from Dragon Chat service via 8108
+      const insightsUrl = window.location.hostname === 'localhost'
+        ? 'http://localhost:8108/api/dragon'
+        : 'https://admin.windia4desk.tech/palette/api/dragon';
+      const res = await fetch(`${insightsUrl}/cognition/insights?lang=${lang}`);
+      if (res.ok) {
+        const data = await res.json();
+        setInsights(data.insights || []);
+      } else {
+        // Fallback: demo insights
+        setInsights(DEMO_INSIGHTS[lang] || DEMO_INSIGHTS.en);
+      }
+    } catch (e) {
+      // Fallback: demo insights
+      setInsights(DEMO_INSIGHTS[lang] || DEMO_INSIGHTS.en);
+    }
+    setLoading(false);
+  }, [lang]);
+
+  useEffect(() => {
+    fetchInsights();
+  }, [fetchInsights]);
+
+  const handleAction = (insight) => {
+    console.log('Action triggered:', insight.action, insight);
+    // In production: call API or navigate
+    alert(`Action: ${insight.action}`);
+  };
+
+  return (
+    <div style={{
+      background: THEME.bg,
+      borderRadius: 20,
+      padding: compact ? 16 : 24,
+      border: `1px solid ${THEME.border}`,
+    }}>
+      {/* Header */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginBottom: compact ? 16 : 20,
+        paddingBottom: compact ? 12 : 16,
+        borderBottom: `1px solid ${THEME.border}`,
+      }}>
+        <div>
+          <div style={{
+            fontSize: compact ? 16 : 20,
+            fontWeight: 800,
+            color: THEME.gold,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 10,
+          }}>
+            <span style={{ fontSize: compact ? 20 : 26 }}>🧠</span>
+            {t.title}
+          </div>
+          <div style={{ fontSize: 11, color: THEME.dim, marginTop: 4 }}>
+            {t.subtitle}
+          </div>
+        </div>
+        <button
+          onClick={fetchInsights}
+          disabled={loading}
+          style={{
+            padding: '6px 12px',
+            borderRadius: 8,
+            background: THEME.card,
+            border: `1px solid ${THEME.border}`,
+            color: THEME.dim,
+            fontSize: 11,
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+          }}
+        >
+          {loading ? '⏳' : '🔄'} {t.refresh}
+        </button>
+      </div>
+
+      {/* Insights */}
+      {error && (
+        <div style={{ padding: 16, color: THEME.danger, fontSize: 12 }}>
+          {error}
+        </div>
+      )}
+
+      {!error && insights.map((insight, i) => (
+        <CognitiveInsightCard
+          key={`${insight.type}-${i}`}
+          insight={insight}
+          lang={lang}
+          compact={compact}
+          onAction={handleAction}
+        />
+      ))}
+
+      {/* Footer */}
+      <div style={{
+        marginTop: 16,
+        padding: '12px 16px',
+        background: '#0d0d0d',
+        borderRadius: 10,
+        textAlign: 'center',
+        fontStyle: 'italic',
+        fontSize: 12,
+        color: THEME.dim,
+        lineHeight: 1.6,
+      }}>
+        {lang === 'de' && 'Du brauchst nicht mehr Follower.\nDu musst die erkennen, die deine Welt bereits verändern.'}
+        {lang === 'en' && "You don't need more followers.\nYou need to recognize the ones already changing your world."}
+        {lang === 'pt' && 'Não precisas de mais seguidores.\nPrecisas de reconhecer os que já mudam o teu mundo.'}
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════════
+// DEMO INSIGHTS — Used when API is unavailable
+// ═══════════════════════════════════════════════════════════════════════════════════
+
+const DEMO_INSIGHTS = {
+  en: [
+    {
+      type: 'momentum_score',
+      text: '**MOMENTUM SCORE: 7.3 → 7.8** (+7%)\n\nThis week vs. last week:\n  ↗️ Shares: +24%\n  ↗️ Reach: +16%\n  ↗️ Active amplifiers: +1\n\n🔮 At this pace:\n   → 1,541 viewers in 30 days\n   → 57 in DID core in 60 days',
+      confidence: 0.88,
+      impact: 'addictive',
+      action: 'view_momentum_details',
+    },
+    {
+      type: 'audience_core',
+      text: '**AUDIENCE CORE DETECTED**\n\n**18% of your viewers generate 72% of your shares.**\n\n👉 Invite these 34 viewers to DID network\n👉 Build your sovereign core\n👉 Estimated reach growth: +210%',
+      confidence: 0.85,
+      impact: 'transformational',
+      action: 'invite_core_to_did',
+    },
+    {
+      type: 'optimal_timing',
+      text: '**Sending at 18:40 increases completion rate by 41%.**\n\nYour audience is most attentive then.',
+      confidence: 0.82,
+      impact: 'high',
+      action: 'schedule_optimal',
+    },
+    {
+      type: 'channel_dominance',
+      text: '**WhatsApp delivers 3.2× more complete views than Instagram.**\n\nYour message actually lands there.',
+      confidence: 0.78,
+      impact: 'high',
+      action: 'prioritize_channel',
+    },
+  ],
+  pt: [
+    {
+      type: 'momentum_score',
+      text: '**MOMENTUM SCORE: 7.3 → 7.8** (+7%)\n\nEsta semana vs. semana passada:\n  ↗️ Partilhas: +24%\n  ↗️ Alcance: +16%\n  ↗️ Amplificadores activos: +1\n\n🔮 Se mantiveres este ritmo:\n   → 1.541 espectadores em 30 dias\n   → 57 no núcleo DID em 60 dias',
+      confidence: 0.88,
+      impact: 'addictive',
+      action: 'view_momentum_details',
+    },
+    {
+      type: 'audience_core',
+      text: '**NÚCLEO DE AUDIÊNCIA DETECTADO**\n\n**18% da tua audiência gera 72% das partilhas.**\n\n👉 Convidar estes 34 espectadores para a rede DID\n👉 Construir o teu núcleo soberano\n👉 Crescimento de alcance estimado: +210%',
+      confidence: 0.85,
+      impact: 'transformational',
+      action: 'invite_core_to_did',
+    },
+    {
+      type: 'optimal_timing',
+      text: '**Enviar às 18:40 aumenta a taxa de conclusão em 41%.**\n\nA tua audiência está mais atenta nessa hora.',
+      confidence: 0.82,
+      impact: 'high',
+      action: 'schedule_optimal',
+    },
+    {
+      type: 'channel_dominance',
+      text: '**WhatsApp entrega 3.2× mais visualizações completas que Instagram.**\n\nA tua mensagem realmente chega lá.',
+      confidence: 0.78,
+      impact: 'high',
+      action: 'prioritize_channel',
+    },
+  ],
+  de: [
+    {
+      type: 'momentum_score',
+      text: '**MOMENTUM SCORE: 7.3 → 7.8** (+7%)\n\nDiese Woche vs. letzte Woche:\n  ↗️ Teilungen: +24%\n  ↗️ Reichweite: +16%\n  ↗️ Aktive Verstärker: +1\n\n🔮 Bei diesem Tempo:\n   → 1.541 Zuschauer in 30 Tagen\n   → 57 im DID-Kern in 60 Tagen',
+      confidence: 0.88,
+      impact: 'addictive',
+      action: 'view_momentum_details',
+    },
+    {
+      type: 'audience_core',
+      text: '**AUDIENCE CORE ERKANNT**\n\n**18% deiner Zuschauer generieren 72% deiner Teilungen.**\n\n👉 Diese 34 Zuschauer ins DID-Netzwerk einladen\n👉 Deinen souveränen Kern aufbauen\n👉 Geschätztes Reichweitenwachstum: +210%',
+      confidence: 0.85,
+      impact: 'transformational',
+      action: 'invite_core_to_did',
+    },
+    {
+      type: 'optimal_timing',
+      text: '**Senden um 18:40 erhöht die Abschlussrate um 41%.**\n\nDein Publikum ist dann am aufmerksamsten.',
+      confidence: 0.82,
+      impact: 'high',
+      action: 'schedule_optimal',
+    },
+    {
+      type: 'channel_dominance',
+      text: '**WhatsApp liefert 3.2× mehr vollständige Ansichten als Instagram.**\n\nDeine Botschaft erreicht dort wirklich an.',
+      confidence: 0.78,
+      impact: 'high',
+      action: 'prioritize_channel',
+    },
+  ],
+};
+
+// ═══════════════════════════════════════════════════════════════════════════════════
+// DEMO APP
+// ═══════════════════════════════════════════════════════════════════════════════════
+
+function DemoApp() {
+  const [lang, setLang] = useState('pt');
+  const [compact, setCompact] = useState(false);
+
+  return (
+    <div style={{ maxWidth: 600, margin: '0 auto' }}>
+      {/* Language Selector */}
+      <div style={{
+        display: 'flex',
+        gap: 8,
+        marginBottom: 24,
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
+        {['pt', 'en', 'de'].map(l => (
+          <button
+            key={l}
+            onClick={() => setLang(l)}
+            style={{
+              padding: '8px 16px',
+              borderRadius: 8,
+              background: lang === l ? THEME.gold : THEME.card,
+              border: `1px solid ${lang === l ? THEME.gold : THEME.border}`,
+              color: lang === l ? '#000' : THEME.dim,
+              fontSize: 12,
+              fontWeight: 600,
+              cursor: 'pointer',
+            }}
+          >
+            {l.toUpperCase()}
+          </button>
+        ))}
+        <div style={{ width: 1, height: 20, background: THEME.border, margin: '0 8px' }} />
+        <button
+          onClick={() => setCompact(!compact)}
+          style={{
+            padding: '8px 12px',
+            borderRadius: 8,
+            background: compact ? THEME.gold : THEME.card,
+            border: `1px solid ${compact ? THEME.gold : THEME.border}`,
+            color: compact ? '#000' : THEME.dim,
+            fontSize: 11,
+            cursor: 'pointer',
+          }}
+        >
+          {compact ? 'Compact' : 'Full'}
+        </button>
+      </div>
+
+      {/* Panel */}
+      <CognitiveInsightsPanel lang={lang} compact={compact} />
+
+      {/* Design System Info */}
+      <div style={{
+        marginTop: 32,
+        padding: 20,
+        background: THEME.card,
+        borderRadius: 12,
+        border: `1px solid ${THEME.border}`,
+      }}>
+        <div style={{ fontSize: 14, fontWeight: 700, color: THEME.gold, marginBottom: 12 }}>
+          🎨 Design System
+        </div>
+        <div style={{ fontSize: 11, color: THEME.dim, lineHeight: 1.8 }}>
+          <div><strong>Impact Levels:</strong></div>
+          <div style={{ display: 'flex', gap: 8, marginTop: 6, flexWrap: 'wrap' }}>
+            {Object.entries(IMPACT_STYLES).map(([key, style]) => (
+              <span key={key} style={{
+                padding: '3px 8px',
+                borderRadius: 4,
+                background: style.badge.bg,
+                color: style.badge.color,
+                fontFamily: THEME.mono,
+                fontSize: 10,
+              }}>
+                {key.toUpperCase()}
+              </span>
+            ))}
+          </div>
+          <div style={{ marginTop: 12 }}><strong>Integration:</strong> Copy CognitiveInsightCard and CognitiveInsightsPanel into index.html</div>
+          <div style={{ marginTop: 4 }}><strong>API Endpoint:</strong> GET /cognition/insights?lang=en</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.render(<DemoApp />, document.getElementById('root'));
+</script>
+</body>
+</html>

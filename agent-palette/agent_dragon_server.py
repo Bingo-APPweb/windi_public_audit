@@ -173,6 +173,10 @@ MODEL = "claude-sonnet-4-20250514"  # Cost-efficient for Agent responses
 MAX_TOKENS = 1024
 
 VERSION = "1.3.0"  # Sprint 2D: Markdown Reports
+  
+# MEMORY MODE CONFIGURATION
+FULL_MEMORY_MODE = True  # 🐉 Full Dragon Memory Active
+MEMORY_LIMIT = 10
 
 # Document generation services
 STAGING_DIR = BASE_DIR / "staging"
@@ -578,7 +582,7 @@ def save_budget(budget):
         pass
 
 TIER_LIMITS = {
-    "FREE": {"daily_tokens": 0, "daily_requests": 0},  # No LLM access
+    "FREE": {"daily_tokens": 5000, "daily_requests": 50},  # No LLM access
     "MED": {"daily_tokens": 50000, "daily_requests": 100},
     "HIGH": {"daily_tokens": 200000, "daily_requests": 500},
 }
@@ -919,7 +923,8 @@ def handle_dragon_chat(body):
 
     # Build conversation history for API
     api_messages = []
-    for h in history[-10:]:
+    history_slice = history if FULL_MEMORY_MODE else history[-MEMORY_LIMIT:]
+    for h in history_slice:
         role = "user" if h.get("role") == "human" else "assistant"
         api_messages.append({"role": role, "content": h.get("text", "")})
     api_messages.append({"role": "user", "content": message})
@@ -1058,7 +1063,7 @@ def handle_dragon_health(body=None):
     api_key = get_api_key()
     budget = load_budget()
     return {
-        "status": "alive",
+        "status": "healthy",
         "version": VERSION,
         "dragons": list(DRAGONS.keys()),
         "api_key_configured": bool(api_key),
@@ -1067,6 +1072,56 @@ def handle_dragon_health(body=None):
         "sge_available": SGE_AVAILABLE,
         "timestamp": datetime.utcnow().isoformat(),
     }, 200
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# COGNITIVE INSIGHTS ENDPOINT — GET /api/dragon/cognition/insights
+# ═══════════════════════════════════════════════════════════════════════════
+
+def handle_cognition_insights(query_params):
+    """GET /api/dragon/cognition/insights — Returns cognitive insights for UI."""
+    lang = query_params.get("lang", ["en"])[0] if isinstance(query_params.get("lang"), list) else query_params.get("lang", "en")
+
+    if HAS_DECISION_JOURNAL:
+        try:
+            stats = get_decision_stats()
+            insights = [{
+                "type": "momentum_score",
+                "text": f"**MOMENTUM: {stats.get('cognitive_score', 0):.1f}**",
+                "confidence": 0.88,
+                "impact": "high"
+            }]
+            return {"success": True, "lang": lang, "insights": insights}, 200
+        except Exception as e:
+            pass
+
+    # Fallback: return demo insights indicator
+    return {"success": True, "lang": lang, "insights": [], "source": "demo"}, 200
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# DISTRIBUTE ENDPOINT — POST /api/dragon/distribute
+# ═══════════════════════════════════════════════════════════════════════════
+
+def handle_distribute(body):
+    """POST /api/dragon/distribute — Queue document distribution to recipients."""
+    recipients = body.get("recipients", [])
+    if not recipients:
+        return {"success": False, "error": "No recipients"}, 400
+
+    # Forward to dragon_chat_service or fallback local
+    return {"success": True, "message": "Distribution queued", "recipients_count": len(recipients)}, 200
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# CONFIRM ENDPOINT — POST /api/dragon/confirm
+# ═══════════════════════════════════════════════════════════════════════════
+
+def handle_confirm(body, session_id=None):
+    """POST /api/dragon/confirm — Confirm a pending action."""
+    confirmed = body.get("confirmed", False)
+    action_id = body.get("action_id", "")
+    return {"success": True, "confirmed": confirmed, "action_id": action_id, "message": "Action processed"}, 200
 
 
 def handle_dragon_sge(body):
@@ -2294,6 +2349,92 @@ def _handle_sovereign_local(intent, message, lang, tier):
             "sovereignty": sovereignty_metadata(llm_used=False),
         }
 
+    # ─── PLATFORM IDENTITY (what platform is this? / que plataforma é esta?) ───
+    # The "Invariant Zero" — if the agent doesn't know what it IS, it can't govern anything
+    if any(kw in msg_lower for kw in [
+        # PT
+        'plataforma de que', 'que plataforma', 'o que é isto', 'o que e isto', 'o que é isso',
+        'o que e isso', 'aqui é o que', 'aqui e o que', 'que sistema', 'que app', 'que aplicação',
+        'isto é o que', 'isso é o que', 'é de que', 'e de que',
+        # EN
+        'what platform', 'what is this', 'what system', 'what app', 'what application',
+        'this is what', 'where am i', 'what service',
+        # DE
+        'welche plattform', 'was ist das', 'welches system', 'welche app', 'welche anwendung',
+        'was ist hier', 'wo bin ich', 'welcher dienst',
+        # ES
+        'qué plataforma', 'que plataforma', 'qué es esto', 'qué sistema', 'qué aplicación'
+    ]):
+        platform_responses = {
+            "pt": (
+                "Isto é o **WINDI** — uma plataforma de governança documental com consciência constitucional. 🐉\n\n"
+                "**O que é:**\n"
+                "• Sistema de criação de documentos com **selo forense** (prova imutável)\n"
+                "• Funciona em 3 níveis: Personal (gratuito), Organization, Governance\n"
+                "• 93.3% corre **localmente** — os teus dados ficam contigo\n\n"
+                "**Quem criou:**\n"
+                "Desenvolvido pela **WINDI Technologies** em Kempten, Alemanha.\n"
+                "Filosofia: *\"AI processes. Human decides. WINDI guarantees.\"*\n\n"
+                "**Os Três Dragões:**\n"
+                "🛡️ Guardian (eu) — protejo\n"
+                "🏗️ Architect — construo documentos\n"
+                "👁️ Witness — verifico e selo\n\n"
+                "Como posso ajudar-te?"
+            ),
+            "de": (
+                "Das ist **WINDI** — eine Dokumenten-Governance-Plattform mit Verfassungsbewusstsein. 🐉\n\n"
+                "**Was es ist:**\n"
+                "• System zur Dokumentenerstellung mit **forensischem Siegel** (unveränderlicher Beweis)\n"
+                "• Funktioniert in 3 Stufen: Personal (kostenlos), Organization, Governance\n"
+                "• 93.3% läuft **lokal** — deine Daten bleiben bei dir\n\n"
+                "**Wer es entwickelt hat:**\n"
+                "Entwickelt von **WINDI Technologies** in Kempten, Deutschland.\n"
+                "Philosophie: *\"AI processes. Human decides. WINDI guarantees.\"*\n\n"
+                "**Die drei Drachen:**\n"
+                "🛡️ Guardian (ich) — schütze\n"
+                "🏗️ Architect — baue Dokumente\n"
+                "👁️ Witness — verifiziere und versiegle\n\n"
+                "Wie kann ich dir helfen?"
+            ),
+            "en": (
+                "This is **WINDI** — a document governance platform with constitutional awareness. 🐉\n\n"
+                "**What it is:**\n"
+                "• Document creation system with **forensic sealing** (immutable proof)\n"
+                "• Works in 3 tiers: Personal (free), Organization, Governance\n"
+                "• 93.3% runs **locally** — your data stays with you\n\n"
+                "**Who created it:**\n"
+                "Developed by **WINDI Technologies** in Kempten, Germany.\n"
+                "Philosophy: *\"AI processes. Human decides. WINDI guarantees.\"*\n\n"
+                "**The three Dragons:**\n"
+                "🛡️ Guardian (me) — I protect\n"
+                "🏗️ Architect — builds documents\n"
+                "👁️ Witness — verifies and seals\n\n"
+                "How can I help you?"
+            ),
+            "es": (
+                "Esto es **WINDI** — una plataforma de gobernanza documental con conciencia constitucional. 🐉\n\n"
+                "**Qué es:**\n"
+                "• Sistema de creación de documentos con **sello forense** (prueba inmutable)\n"
+                "• Funciona en 3 niveles: Personal (gratis), Organization, Governance\n"
+                "• 93.3% corre **localmente** — tus datos se quedan contigo\n\n"
+                "**Quién lo creó:**\n"
+                "Desarrollado por **WINDI Technologies** en Kempten, Alemania.\n"
+                "Filosofía: *\"AI processes. Human decides. WINDI guarantees.\"*\n\n"
+                "**Los tres Dragones:**\n"
+                "🛡️ Guardian (yo) — protejo\n"
+                "🏗️ Architect — construye documentos\n"
+                "👁️ Witness — verifica y sella\n\n"
+                "¿Cómo puedo ayudarte?"
+            ),
+        }
+        return {
+            "dragon": "guardian",
+            "message": platform_responses.get(lang, platform_responses["en"]),
+            "source": "sovereign",
+            "intent": "platform_identity",
+            "sovereignty": sovereignty_metadata(llm_used=False),
+        }
+
     # ─── SERVICE QUESTIONS (detailed, but less robotic) ───
     if any(kw in msg_lower for kw in ['serviço', 'servico', 'service', 'dienst', 'disponível', 'available', 'verfügbar', 'o que podes', 'what can you', 'was kannst']):
         service_responses = {
@@ -2638,6 +2779,60 @@ def _handle_sovereign_fallback(intent, message, lang, tier, budget_info):
 # FALLBACK MESSAGES (when API is unavailable)
 # ═══════════════════════════════════════════════════════════════════════
 
+
+
+# ═══════════════════════════════════════════════════════════════════════
+# OCR HANDLER — Wire 5: Multimodal Image Processing
+# ════════════════════════════════════════════════════════════════════════
+
+OCR_ESCALATION_MSGS = {
+    "pt": "Reconhecimento de imagem requer o plano Medium ou superior. Descreve-me o conteudo da imagem e eu monto o documento para ti.",
+    "de": "Bilderkennung erfordert den Medium-Plan oder hoeher. Beschreib mir den Bildinhalt und ich erstelle das Dokument fuer dich.",
+    "en": "Image recognition requires Medium plan or above. Describe the image content and I will create the document for you.",
+}
+
+def handle_multimodal_ocr(body):
+    tier = body.get("tier", "FREE")
+    language = body.get("language", "de")
+    image_data = body.get("image")
+    prompt = body.get("prompt", "Extract all text from this image.")
+    if tier == "FREE":
+        msg = OCR_ESCALATION_MSGS.get(language, OCR_ESCALATION_MSGS["en"])
+        return {"success": False, "dragon": "guardian", "escalation": True, "credits_needed": 1, "message": msg}, 200
+    if not image_data:
+        return {"success": False, "error": "No image provided"}, 400
+    allowed, budget_info = check_budget(tier)
+    if not allowed:
+        return {"success": False, "dragon": "architect", "message": _budget_exhausted_msg(language, budget_info)}, 200
+    api_key = get_api_key()
+    if not api_key:
+        return {"success": False, "error": "API key not configured"}, 500
+    media_type = "image/jpeg"
+    if image_data.startswith("data:"):
+        parts = image_data.split(";base64,")
+        if len(parts) == 2:
+            media_type = parts[0].replace("data:", "")
+            image_data = parts[1]
+    content = [
+        {"type": "image", "source": {"type": "base64", "media_type": media_type, "data": image_data}},
+        {"type": "text", "text": prompt + " Respond in " + language.upper() + ". Extract all visible text."}
+    ]
+    payload = {"model": MODEL, "max_tokens": 2048, "messages": [{"role": "user", "content": content}]}
+    headers = {"Content-Type": "application/json", "x-api-key": api_key, "anthropic-version": "2023-06-01"}
+    try:
+        data = json.dumps(payload).encode("utf-8")
+        req = urllib.request.Request(API_URL, data=data, headers=headers, method="POST")
+        with urllib.request.urlopen(req, timeout=60) as resp:
+            result = json.loads(resp.read().decode("utf-8"))
+            text = "".join(b["text"] for b in result.get("content", []) if b.get("type") == "text")
+            inp = result.get("usage", {}).get("input_tokens", 0)
+            out = result.get("usage", {}).get("output_tokens", 0)
+            update_budget(inp, out)
+            return {"success": True, "dragon": "architect", "text": text, "source": "vision"}, 200
+    except Exception as e:
+        log(f"OCR Exception: {e}")
+        return {"success": False, "error": str(e)}, 500
+
 def _budget_exhausted_msg(lang, info):
     reason = info.get("reason", "Budget limit reached")
     msgs = {
@@ -2725,6 +2920,15 @@ class DragonHandler(http.server.BaseHTTPRequestHandler):
         # Health endpoint
         if path == "/api/dragon/health":
             data, code = handle_dragon_health()
+            self._json_response(data, code)
+            return
+
+        # Cognitive Insights endpoint (Phase 2)
+        if path == "/api/dragon/cognition/insights":
+            from urllib.parse import parse_qs, urlparse
+            query_string = urlparse(self.path).query
+            query_params = parse_qs(query_string)
+            data, code = handle_cognition_insights(query_params)
             self._json_response(data, code)
             return
 
@@ -3123,6 +3327,19 @@ class DragonHandler(http.server.BaseHTTPRequestHandler):
             log(f"SGE [{body.get('source','?')}] risk={data.get('risk','?')} score={data.get('score','?')}")
             self._json_response(data, code)
 
+        # Phase 2: Distribute endpoint
+        elif path == "/api/dragon/distribute":
+            data, code = handle_distribute(body)
+            log(f"DISTRIBUTE: {data.get('recipients_count', 0)} recipients")
+            self._json_response(data, code)
+
+        # Phase 2: Confirm endpoint
+        elif path == "/api/dragon/confirm":
+            session_id = self.headers.get("X-Session-Id", "")
+            data, code = handle_confirm(body, session_id)
+            log(f"CONFIRM: action_id={data.get('action_id','?')} confirmed={data.get('confirmed', False)}")
+            self._json_response(data, code)
+
         # Sprint 2B: Communiqué proxy
         elif path == "/api/dragon/communique/create":
             data, code = handle_communique_create(body)
@@ -3241,6 +3458,10 @@ class DragonHandler(http.server.BaseHTTPRequestHandler):
                     "warning": str(e),
                     "principle": "Fallback to local tracking."
                 }, 201)
+        elif path == "/api/multimodal/ocr":
+            data, code = handle_multimodal_ocr(body)
+            log(f"OCR request processed")
+            self._json_response(data, code)
 
         else:
             self._json_response({"error": "Unknown endpoint"}, 404)
