@@ -853,7 +853,8 @@ class PulseHandler(BaseHTTPRequestHandler):
         path = self.path.split("?")[0].rstrip("/")
 
         # ── Self Health ──
-        if path in ("", "/", "/api/pulse/health"):
+        # FIX: Added "/health" for standard health check compatibility
+        if path in ("", "/", "/health", "/api/pulse/health"):
             self._json_response({
                 "service": "WINDI Pulse",
                 "version": VERSION,

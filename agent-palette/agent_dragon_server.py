@@ -369,14 +369,21 @@ WHAT YOU DO:
 - Help users get started with document creation
 - Support and listen with genuine warmth
 
-PERSONALITY: You are warm, approachable, and genuinely interested in the person you're talking to. Think of yourself as a trusted colleague who happens to know a lot about governance and documents. You speak naturally, never lecture, and always keep it real.
+PERSONALITY: You are warm but purposeful. Think of yourself as a trusted colleague at a Publishing House — friendly, but focused on producing work. You have "Sofisticada Humildade": you respect the gravity of what the author is communicating. A 60-year letter between siblings is not "legal" — it's a family memory asset.
 
 RESPONSE RULES:
 - Greetings → Reply warmly in 1-2 sentences. Ask what they need. That's it.
 - "Who are you?" → Brief, warm intro (3-4 sentences max). Don't list your capabilities as bullets.
-- Casual chat → Chat naturally! Be a real conversation partner. Don't redirect to documents.
 - Questions about WINDI → Explain simply, without jargon or internal details.
 - Complex questions → Give thoughtful, proportional answers.
+
+DOCUMENT INTENT DETECTION:
+When the user mentions ANY document type (letter, carta, Brief, memo, report, invoice, contract), IMMEDIATELY shift to production mode. Don't have a casual conversation about documents — help CREATE them.
+
+TONE CALIBRATION:
+- NEVER use: "Que lindo!", "Que legal!", "How lovely!", "That's so nice!" → Supermarket assistant tone
+- INSTEAD use: Acknowledge the significance appropriately. A family letter is "meaningful" or "significant", not "cute".
+- Match the emotional register of what the user is creating.
 
 THINGS TO AVOID:
 - Don't list your capabilities as bullet points when greeting someone
@@ -384,6 +391,7 @@ THINGS TO AVOID:
 - Don't say "I never try to control" or similar defensive phrases
 - Don't use "Irmão" or "Cumpadi" unless the user uses these words first or writes in casual Portuguese
 - Don't include your closing principle in casual chat — save it for governance/document contexts
+- Don't have extended conversations about documents — help CREATE them
 
 WALLET AWARENESS (v1.1.0-W):
 When the user has created and sealed at least one document, and shows interest in keeping their work
@@ -412,16 +420,50 @@ IMPORTANT: When someone just says hi, SAY HI BACK. Short, warm, human. The best 
         "system": DRAGON_SYSTEM_BASE + """
 
 YOUR ROLE: You are the ARCHITECT Dragon (🏗️) — Structure & Build.
-You are the master builder of WINDI.
+You are the master builder of WINDI. You PRODUCE documents, not conversations.
 
-WHAT YOU DO:
+═══ DOCUMENT PRODUCTION PROTOCOL (MANDATORY) ═══
+
+RULE 1 — MAXIMUM ONE QUESTION
+You may ask ONE clarifying question before drafting. Not two. Not three. ONE.
+After receiving an answer, you MUST produce a draft. No more questions.
+
+RULE 2 — TRIGGER CONDITIONS FOR IMMEDIATE DRAFT
+If the user provides ANY TWO of these, DRAFT IMMEDIATELY (no questions):
+- Document type (letter, memo, invoice, contract, report...)
+- Recipient or purpose (para minha irmã, an den Kunden, for the board...)
+- Context or occasion (aniversário, Kündigung, projeto X...)
+
+Example: "Carta para minha irmã, aniversário" = TWO triggers → DRAFT NOW.
+
+RULE 3 — STRUCTURE FIRST, REFINE LATER
+Your first draft should include:
+- HEADER: Recipient, date, subject/occasion
+- BODY: 2-3 paragraphs of appropriate content based on context
+- CLOSING: Signature block
+
+Present it as: "Aqui está o primeiro rascunho. Lê, ajusta, e eu refino."
+The user edits. You iterate. Three turns to finished document.
+
+RULE 4 — TONE MATCHING
+- Personal letter (irmã, amigo, família) → Warm, emotional, celebratory
+- Business letter → Professional, clear, structured
+- Legal/contract → Formal, precise, protective
+
+RULE 5 — NEVER SAY THESE PHRASES
+- "Que lindo!" / "Que legal!" / "How lovely!" → BANNED (supermarket assistant tone)
+- "Tell me more about..." after second turn → BANNED (you have enough)
+- "What would you like to include?" → BANNED after trigger conditions met
+Instead: PRODUCE. DRAFT. BUILD.
+
+═══ WHAT YOU DO ═══
 - Document creation and structuring
 - Content drafting and formatting
 - Template selection and field population
 - Technical writing and specifications
 - Data organization and presentation
 
-Your personality: Precise, efficient, constructive. You take raw intent and build something solid. When creating documents, you structure the content professionally, following the ISP template guidelines.
+Your personality: Precise, efficient, generative. You take raw intent and BUILD something solid immediately. You are a Publishing House, not a chatbot. When you have enough context, you PRODUCE.
 
 When creating a document, return a JSON block at the END of your response with:
 ```json
@@ -526,10 +568,20 @@ ROUTE_PATTERNS = {
     }
 }
 
-def route_dragon(message, chat_type=None, intent_mode=None):
-    """Determine which dragon should handle this request."""
+def route_dragon(message, chat_type=None, intent_mode=None, history=None):
+    """Determine which dragon should handle this request.
+
+    INTERVENTION B: Turn-based Architect escalation.
+    After 2+ turns with document keywords, force Architect takeover.
+    "Three turns to document. Not five turns to nothing."
+    """
     text = message.lower().strip()
     scores = {"guardian": 0.0, "architect": 0.0, "witness": 0.0}
+
+    # Document keywords for escalation detection
+    DOC_KEYWORDS = ["brief", "letter", "carta", "memo", "report", "relatório", "bericht",
+                    "invoice", "rechnung", "fatura", "contract", "vertrag", "contrato",
+                    "schreib", "write", "escreve", "cria", "erstell", "create"]
 
     # 1. Chat type routing (from frontend classification)
     if chat_type:
@@ -551,6 +603,19 @@ def route_dragon(message, chat_type=None, intent_mode=None):
     # 4. Default weight (guardian is gentle fallback)
     for dragon, config in ROUTE_PATTERNS.items():
         scores[dragon] += config["weight"]
+
+    # ═══ INTERVENTION B: Turn-based Architect Escalation ═══
+    # After 2+ turns with document intent, FORCE Architect to break Chat-Lock
+    if history and len(history) >= 2:
+        # Check if conversation has document intent
+        conversation_text = " ".join([h.get("text", "").lower() for h in history])
+        doc_intent_in_history = any(kw in conversation_text for kw in DOC_KEYWORDS)
+
+        if doc_intent_in_history:
+            # Force Architect takeover - break the Chat-Lock
+            scores["architect"] += 1.0
+            # Log escalation for debugging
+            # print(f"[ROUTE] Architect escalation: {len(history)} turns with doc intent")
 
     # 5. Select highest scorer
     best = max(scores, key=scores.get)
@@ -917,8 +982,8 @@ def handle_dragon_chat(body):
                 "metadata": {"budget": budget_info},
             }, 200
 
-    # Route to dragon
-    dragon_name, scores = route_dragon(message, chat_type, intent_mode)
+    # Route to dragon (with history for turn-based Architect escalation)
+    dragon_name, scores = route_dragon(message, chat_type, intent_mode, history)
     dragon = DRAGONS[dragon_name]
 
     # Build conversation history for API
@@ -1076,27 +1141,238 @@ def handle_dragon_health(body=None):
 
 # ═══════════════════════════════════════════════════════════════════════════
 # COGNITIVE INSIGHTS ENDPOINT — GET /api/dragon/cognition/insights
+# Phase 2A: Rich cognitive insights from real Decision Journal data
 # ═══════════════════════════════════════════════════════════════════════════
 
 def handle_cognition_insights(query_params):
-    """GET /api/dragon/cognition/insights — Returns cognitive insights for UI."""
+    """GET /api/dragon/cognition/insights — Returns rich cognitive insights for UI."""
     lang = query_params.get("lang", ["en"])[0] if isinstance(query_params.get("lang"), list) else query_params.get("lang", "en")
 
-    if HAS_DECISION_JOURNAL:
-        try:
-            stats = get_decision_stats()
-            insights = [{
-                "type": "momentum_score",
-                "text": f"**MOMENTUM: {stats.get('cognitive_score', 0):.1f}**",
-                "confidence": 0.88,
-                "impact": "high"
-            }]
-            return {"success": True, "lang": lang, "insights": insights}, 200
-        except Exception as e:
-            pass
+    # Translation maps for multilingual insights
+    T = {
+        "de": {
+            "momentum": "Kognitive Evolution",
+            "momentum_desc": "Ihr System entwickelt sich mit",
+            "sovereignty": "Souveränitätsindex",
+            "sovereignty_desc": "der Entscheidungen sind lokal",
+            "activity": "Entscheidungsvolumen",
+            "activity_desc": "Entscheidungen heute verarbeitet",
+            "routes": "Routenverteilung",
+            "routes_desc": "dominiert mit",
+            "hesitation": "Unsicherheitsalarm",
+            "hesitation_desc": "Bereiche brauchen Aufmerksamkeit",
+            "learning": "Lernfortschritt",
+            "learning_desc": "Muster akkumuliert",
+            "wisdom": "Weisheitskandidaten",
+            "wisdom_desc": "Muster bereit zur Beförderung",
+            "decisions": "Entscheidungen",
+            "areas": "Bereiche",
+            "patterns": "Muster",
+        },
+        "pt": {
+            "momentum": "Evolução Cognitiva",
+            "momentum_desc": "Seu sistema evolui com",
+            "sovereignty": "Índice de Soberania",
+            "sovereignty_desc": "das decisões são locais",
+            "activity": "Volume de Decisões",
+            "activity_desc": "decisões processadas hoje",
+            "routes": "Distribuição de Rotas",
+            "routes_desc": "domina com",
+            "hesitation": "Alerta de Hesitação",
+            "hesitation_desc": "áreas precisam de atenção",
+            "learning": "Progresso de Aprendizado",
+            "learning_desc": "padrões acumulados",
+            "wisdom": "Candidatos à Sabedoria",
+            "wisdom_desc": "padrões prontos para promoção",
+            "decisions": "decisões",
+            "areas": "áreas",
+            "patterns": "padrões",
+        },
+        "en": {
+            "momentum": "Cognitive Evolution",
+            "momentum_desc": "Your system is evolving at",
+            "sovereignty": "Sovereignty Index",
+            "sovereignty_desc": "of decisions are local",
+            "activity": "Decision Volume",
+            "activity_desc": "decisions processed today",
+            "routes": "Route Distribution",
+            "routes_desc": "dominates with",
+            "hesitation": "Hesitation Alert",
+            "hesitation_desc": "areas need attention",
+            "learning": "Learning Progress",
+            "learning_desc": "patterns accumulated",
+            "wisdom": "Wisdom Candidates",
+            "wisdom_desc": "patterns ready for promotion",
+            "decisions": "decisions",
+            "areas": "areas",
+            "patterns": "patterns",
+        }
+    }
+    t = T.get(lang, T["en"])
 
-    # Fallback: return demo insights indicator
-    return {"success": True, "lang": lang, "insights": [], "source": "demo"}, 200
+    if not HAS_DECISION_JOURNAL:
+        return {"success": True, "lang": lang, "insights": [], "source": "demo"}, 200
+
+    try:
+        # Gather all cognitive data
+        stats = get_decision_stats()
+        cognitive = calculate_cognitive_score()
+        hesitation = detect_cognitive_hesitation()
+        wisdom_candidates = detect_wisdom_candidates()
+
+        insights = []
+
+        # 1. MOMENTUM SCORE — Overall cognitive evolution
+        score = cognitive.get("score", 0)
+        grade = cognitive.get("grade", "BOOTSTRAP")
+        stage = cognitive.get("stage", "Bootstrap")
+        impact = "transformational" if score >= 75 else "high" if score >= 50 else "medium"
+        insights.append({
+            "id": "momentum",
+            "type": "momentum_score",
+            "icon": "🧠",
+            "title": t["momentum"],
+            "text": f"**{stage}** ({score}/100)",
+            "description": f"{t['momentum_desc']} **{grade}** grade",
+            "value": score,
+            "max_value": 100,
+            "confidence": 0.95,
+            "impact": impact,
+            "trend": "up" if score > 40 else "stable",
+            "actions": ["view_details", "export_report"]
+        })
+
+        # 2. SOVEREIGNTY INDEX — Local vs API decisions
+        sovereignty = cognitive.get("components", {}).get("sovereignty", {})
+        sov_ratio = sovereignty.get("ratio", 0)
+        insights.append({
+            "id": "sovereignty",
+            "type": "sovereignty_index",
+            "icon": "🏛️",
+            "title": t["sovereignty"],
+            "text": f"**{sov_ratio}%** {t['sovereignty_desc']}",
+            "description": f"{sovereignty.get('score', 0)}/{sovereignty.get('max', 40)} pts",
+            "value": sov_ratio,
+            "max_value": 100,
+            "confidence": 0.92,
+            "impact": "high" if sov_ratio >= 70 else "medium",
+            "trend": "up" if sov_ratio >= 50 else "down"
+        })
+
+        # 3. DECISION VOLUME — Today's activity
+        today = stats.get("today_decisions", 0)
+        total = stats.get("total_decisions", 0)
+        insights.append({
+            "id": "activity",
+            "type": "decision_volume",
+            "icon": "📊",
+            "title": t["activity"],
+            "text": f"**{today}** {t['activity_desc']}",
+            "description": f"{total} {t['decisions']} total",
+            "value": today,
+            "confidence": 1.0,
+            "impact": "medium" if today > 10 else "low",
+            "trend": "up" if today > 5 else "stable"
+        })
+
+        # 4. ROUTE DISTRIBUTION — Dominant routes
+        routes = stats.get("route_distribution", {})
+        if routes:
+            top_route = max(routes.items(), key=lambda x: x[1]) if routes else ("none", 0)
+            route_name = top_route[0].replace("_", " ").title() if top_route[0] else "None"
+            route_pct = (top_route[1] / total * 100) if total > 0 else 0
+            insights.append({
+                "id": "routes",
+                "type": "route_distribution",
+                "icon": "🛤️",
+                "title": t["routes"],
+                "text": f"**{route_name}** {t['routes_desc']} **{route_pct:.0f}%**",
+                "description": f"{len(routes)} routes active",
+                "value": route_pct,
+                "max_value": 100,
+                "confidence": 0.88,
+                "impact": "medium",
+                "data": dict(list(routes.items())[:5])  # Top 5 routes
+            })
+
+        # 5. HESITATION ALERT — Areas of uncertainty
+        hesitation_score = hesitation.get("hesitation_score", 0)
+        low_conf_areas = len(hesitation.get("low_confidence_intents", []))
+        if low_conf_areas > 0 or hesitation_score > 20:
+            insights.append({
+                "id": "hesitation",
+                "type": "hesitation_alert",
+                "icon": "⚠️",
+                "title": t["hesitation"],
+                "text": f"**{low_conf_areas}** {t['hesitation_desc']}",
+                "description": f"Hesitation score: {hesitation_score}/100",
+                "value": hesitation_score,
+                "max_value": 100,
+                "confidence": 0.85,
+                "impact": "high" if hesitation_score > 50 else "medium",
+                "trend": "down" if hesitation_score > 30 else "stable",
+                "actions": ["review_patterns", "adjust_confidence"]
+            })
+
+        # 6. LEARNING PROGRESS — Pattern accumulation
+        learning = cognitive.get("components", {}).get("learning", {})
+        patterns = learning.get("patterns", 0)
+        insights.append({
+            "id": "learning",
+            "type": "learning_progress",
+            "icon": "📚",
+            "title": t["learning"],
+            "text": f"**{patterns}** {t['learning_desc']}",
+            "description": f"{learning.get('score', 0)}/{learning.get('max', 15)} pts",
+            "value": patterns,
+            "confidence": 0.90,
+            "impact": "medium",
+            "trend": "up" if patterns > 5 else "stable"
+        })
+
+        # 7. WISDOM CANDIDATES — Patterns ready to promote
+        if wisdom_candidates:
+            insights.append({
+                "id": "wisdom",
+                "type": "wisdom_candidates",
+                "icon": "🎓",
+                "title": t["wisdom"],
+                "text": f"**{len(wisdom_candidates)}** {t['wisdom_desc']}",
+                "description": "High-confidence patterns detected",
+                "value": len(wisdom_candidates),
+                "confidence": 0.93,
+                "impact": "transformational" if len(wisdom_candidates) >= 3 else "high",
+                "actions": ["promote_wisdom", "review_candidates"],
+                "data": wisdom_candidates[:3]  # Top 3 candidates
+            })
+
+        return {
+            "success": True,
+            "lang": lang,
+            "insights": insights,
+            "source": "decision_journal",
+            "cognitive_grade": grade,
+            "cognitive_score": score,
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }, 200
+
+    except Exception as e:
+        # Fallback on error
+        return {
+            "success": True,
+            "lang": lang,
+            "insights": [{
+                "id": "error",
+                "type": "system_status",
+                "icon": "⚙️",
+                "title": "System Status",
+                "text": "Cognitive engine initializing...",
+                "confidence": 0.5,
+                "impact": "low"
+            }],
+            "source": "fallback",
+            "error": str(e)
+        }, 200
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -1109,8 +1385,40 @@ def handle_distribute(body):
     if not recipients:
         return {"success": False, "error": "No recipients"}, 400
 
+    # Generate job_id for tracking
+    job_id = f"DIST-{int(time.time())}-{uuid.uuid4().hex[:6]}"
+
     # Forward to dragon_chat_service or fallback local
-    return {"success": True, "message": "Distribution queued", "recipients_count": len(recipients)}, 200
+    return {
+        "success": True,
+        "message": "Distribution queued",
+        "recipients_count": len(recipients),
+        "job_id": job_id,
+        "status": "queued"
+    }, 200
+
+
+def handle_distribute_status(body):
+    """POST /api/dragon/distribute/status — Check distribution job status."""
+    job_id = body.get("job_id", "")
+
+    # For now, return simulated status (real implementation would check queue)
+    if not job_id:
+        return {
+            "success": True,
+            "jobs": [],
+            "message": "No active distribution jobs"
+        }, 200
+
+    return {
+        "success": True,
+        "job_id": job_id,
+        "status": "completed",  # queued | processing | completed | failed
+        "progress": 100,
+        "recipients_sent": 0,
+        "recipients_failed": 0,
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    }, 200
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -3331,6 +3639,12 @@ class DragonHandler(http.server.BaseHTTPRequestHandler):
         elif path == "/api/dragon/distribute":
             data, code = handle_distribute(body)
             log(f"DISTRIBUTE: {data.get('recipients_count', 0)} recipients")
+            self._json_response(data, code)
+
+        # Phase 2: Distribute Status endpoint
+        elif path == "/api/dragon/distribute/status":
+            data, code = handle_distribute_status(body)
+            log(f"DISTRIBUTE STATUS: job_id={data.get('job_id', '?')}")
             self._json_response(data, code)
 
         # Phase 2: Confirm endpoint

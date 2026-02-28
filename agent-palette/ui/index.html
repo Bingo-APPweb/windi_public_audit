@@ -14,6 +14,22 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #8B691433; border-radius: 3px; }
+/* Seal Progression Animation */
+@keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.8; } }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+/* Vault Biofeedback Animation — Phase 1B */
+@keyframes vaultPulse {
+  0% { box-shadow: 0 0 0 0 rgba(139, 105, 20, 0.4); transform: scale(1); }
+  50% { box-shadow: 0 0 20px 10px rgba(139, 105, 20, 0.2); transform: scale(1.02); }
+  100% { box-shadow: 0 0 0 0 rgba(139, 105, 20, 0); transform: scale(1); }
+}
+@keyframes numberBump {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.3); color: #8B6914; }
+  100% { transform: scale(1); }
+}
+.vault-pulse { animation: vaultPulse 0.8s ease-out; }
+.number-bump { animation: numberBump 0.6s ease-out; }
 </style>
 </head>
 <body>
@@ -28,7 +44,115 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
   'use strict';
   
   window.WINDI = window.WINDI || {};
-  
+
+  // ─── EVENT BUS — Sistema Nervoso Central ────────────────────────────────────
+  // "O Palette respira quando os órgãos se comunicam."
+  // ─────────────────────────────────────────────────────────────────────────────
+  var EventBus = (function() {
+    var listeners = {};
+
+    // Event Types — o vocabulário do sistema nervoso
+    var EVENTS = {
+      // Document lifecycle
+      DOCUMENT_CREATED: 'windi:document:created',
+      DOCUMENT_SEALED: 'windi:document:sealed',
+      DOCUMENT_EXPORTED: 'windi:document:exported',
+
+      // Dragon communication
+      DRAGON_RESPONSE: 'windi:dragon:response',
+      DRAGON_SUGGESTION: 'windi:dragon:suggestion',
+      DRAGON_PENDING: 'windi:dragon:pending',
+
+      // Wallet/Identity
+      WALLET_CREATED: 'windi:wallet:created',
+      TRUST_UPDATED: 'windi:trust:updated',
+      RECEIPT_ADDED: 'windi:receipt:added',
+
+      // Connectors
+      CONNECTOR_STATUS: 'windi:connector:status',
+      SERVICE_ONLINE: 'windi:service:online',
+      SERVICE_OFFLINE: 'windi:service:offline',
+
+      // UI State
+      TAB_CHANGED: 'windi:tab:changed',
+      THEME_CHANGED: 'windi:theme:changed',
+      LANG_CHANGED: 'windi:lang:changed',
+
+      // Seal progression (visual feedback)
+      SEAL_STARTED: 'windi:seal:started',
+      SEAL_FIELD_HASHED: 'windi:seal:field_hashed',
+      SEAL_MERKLE_BUILDING: 'windi:seal:merkle_building',
+      SEAL_ROOT_COMPUTED: 'windi:seal:root_computed',
+      SEAL_COMPLETE: 'windi:seal:complete'
+    };
+
+    function emit(eventType, payload) {
+      // Dispatch to window for cross-component communication
+      var event = new CustomEvent(eventType, {
+        detail: {
+          ...payload,
+          timestamp: new Date().toISOString(),
+          source: 'palette'
+        },
+        bubbles: true
+      });
+      window.dispatchEvent(event);
+
+      // Also notify internal listeners
+      if (listeners[eventType]) {
+        listeners[eventType].forEach(function(cb) {
+          try { cb(payload); } catch(e) { console.warn('[EventBus] Listener error:', e); }
+        });
+      }
+
+      // Console feedback for debugging
+      console.log('[WINDI:EventBus]', eventType, payload?.summary || '');
+    }
+
+    function on(eventType, callback) {
+      if (!listeners[eventType]) listeners[eventType] = [];
+      listeners[eventType].push(callback);
+
+      // Also add window listener for CustomEvents
+      var windowHandler = function(e) { callback(e.detail); };
+      window.addEventListener(eventType, windowHandler);
+
+      // Return unsubscribe function
+      return function off() {
+        listeners[eventType] = listeners[eventType].filter(function(cb) { return cb !== callback; });
+        window.removeEventListener(eventType, windowHandler);
+      };
+    }
+
+    function once(eventType, callback) {
+      var unsub = on(eventType, function(payload) {
+        unsub();
+        callback(payload);
+      });
+      return unsub;
+    }
+
+    // Convenience: emit seal progression
+    function emitSealProgress(stage, data) {
+      var eventMap = {
+        'started': EVENTS.SEAL_STARTED,
+        'field_hashed': EVENTS.SEAL_FIELD_HASHED,
+        'merkle_building': EVENTS.SEAL_MERKLE_BUILDING,
+        'root_computed': EVENTS.SEAL_ROOT_COMPUTED,
+        'complete': EVENTS.SEAL_COMPLETE
+      };
+      emit(eventMap[stage] || EVENTS.SEAL_STARTED, data);
+    }
+
+    return {
+      EVENTS: EVENTS,
+      emit: emit,
+      on: on,
+      once: once,
+      emitSealProgress: emitSealProgress
+    };
+  })();
+
   // ─── P1: TIER DETECTION ───────────────────────────────────────────────────────
   var TIER_FREE = 'FREE';
   var TIER_MED = 'MED';
@@ -231,7 +355,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
       seal: function(payload) {
         var c = connectors.ledger;
         if (!c.endpoint || c.status === 'offline') return Promise.resolve({ fallback: true });
-        return fetch(c.endpoint + '/api/receipt', {
+        // FIX: Ledger expects /api/receipts (plural), not /api/receipt
+        return fetch(c.endpoint + '/api/receipts', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
@@ -263,9 +388,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
   window.WINDI.calculateSovereignty = calculateSovereignty;
   window.WINDI.createConnectors = createConnectors;
   window.WINDI.INVARIANTS = INVARIANTS;
+  window.WINDI.EventBus = EventBus;  // Sistema Nervoso Central
   window.WINDI.ready = true;
-  
-  console.log('[WINDI] Modules loaded. Tier:', detectTier().tier);
+
+  console.log('[WINDI] Modules loaded. Tier:', detectTier().tier, '| EventBus: ✓');
 })();
 </script>
 
@@ -326,6 +452,7 @@ const DOC_TYPES = {
   invoice:{icon:"💰",tier:"MED",cat:"business"},protocol:{icon:"📒",tier:"MED",cat:"business"},
   analysis:{icon:"🔬",tier:"MED",cat:"business"},presentation:{icon:"📽️",tier:"MED",cat:"business"},
   communique:{icon:"📡",tier:"HIGH",cat:"governance"},certificate:{icon:"🏛️",tier:"HIGH",cat:"governance"},
+  creativeVirtue:{icon:"🎨",tier:"HIGH",cat:"governance"},
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════════
@@ -525,6 +652,87 @@ const FIELD_NARRATIVES = {
     en: 'The required action is documented. The recipient is accountable.',
     pt: 'A ação requerida é documentada. O destinatário é responsável.',
     governance: 'accountability',
+  },
+
+  // ═══ CREATIVE VIRTUE FIELDS → Proof of Human Authorship ═══
+  workTitle: {
+    weight: 'critical',
+    de: 'Der Titel wird zur permanenten Identität Ihres Werks im Forensic Ledger.',
+    en: 'The title becomes the permanent identity of your work in the Forensic Ledger.',
+    pt: 'O título torna-se a identidade permanente da sua obra no Forensic Ledger.',
+    governance: 'creative_identity',
+  },
+  workType: {
+    weight: 'high',
+    de: 'Der Werktyp bestimmt die anwendbaren Urheberrechtsregeln.',
+    en: 'The work type determines applicable copyright rules.',
+    pt: 'O tipo de obra determina as regras de direitos autorais aplicáveis.',
+    governance: 'classification',
+  },
+  aiAssisted: {
+    weight: 'critical',
+    values: {
+      none: {
+        de: '✨ Keine KI-Hilfe: Ihr Werk hat den höchsten Authentizitätsgrad.',
+        en: '✨ No AI assistance: Your work has the highest authenticity grade.',
+        pt: '✨ Sem assistência de IA: Sua obra tem o maior grau de autenticidade.',
+      },
+      research: {
+        de: 'KI-Recherche: Assistenz bei Informationssammlung, kreative Entscheidungen sind Ihre.',
+        en: 'AI research: Assistance in gathering information, creative decisions are yours.',
+        pt: 'Pesquisa com IA: Assistência na coleta de informações, decisões criativas são suas.',
+      },
+      generation_substantial: {
+        de: '⚠️ Wesentliche KI-Generierung: Dokumentieren Sie sorgfältig Ihre menschlichen Beiträge.',
+        en: '⚠️ Substantial AI generation: Document carefully your human contributions.',
+        pt: '⚠️ Geração substancial por IA: Documente cuidadosamente suas contribuições humanas.',
+      },
+    },
+    governance: 'ai_disclosure',
+  },
+  humanDecisions: {
+    weight: 'critical',
+    de: '🧠 Dies ist der Kern Ihres Beweises. Jede aufgelistete Entscheidung wird kryptographisch versiegelt.',
+    en: '🧠 This is the core of your proof. Each decision listed is cryptographically sealed.',
+    pt: '🧠 Este é o núcleo da sua prova. Cada decisão listada é selada criptograficamente.',
+    governance: 'human_agency',
+  },
+  creatorShare: {
+    weight: 'critical',
+    values: {
+      '75%': {
+        de: '75%: WINDI-Standard. Faire Vergütung für menschliche Kreativität.',
+        en: '75%: WINDI standard. Fair compensation for human creativity.',
+        pt: '75%: Padrão WINDI. Compensação justa pela criatividade humana.',
+      },
+      '100%': {
+        de: '100%: Maximale Vergütung. Nur für Werke ohne Infrastrukturkosten.',
+        en: '100%: Maximum share. Only for works without infrastructure costs.',
+        pt: '100%: Participação máxima. Apenas para obras sem custos de infraestrutura.',
+      },
+    },
+    governance: 'economic_terms',
+  },
+  licenseType: {
+    weight: 'high',
+    de: 'Die Lizenz definiert, wie andere Ihr Werk nutzen können. Diese Entscheidung ist dauerhaft.',
+    en: 'The license defines how others can use your work. This decision is permanent.',
+    pt: 'A licença define como outros podem usar sua obra. Esta decisão é permanente.',
+    governance: 'licensing',
+  },
+  integrityStatement: {
+    weight: 'critical',
+    de: '🛡️ Ihre Integritätserklärung ist Ihr kryptographischer Eid. Sie wird unwiderruflich versiegelt.',
+    en: '🛡️ Your integrity statement is your cryptographic oath. It will be sealed irrevocably.',
+    pt: '🛡️ Sua declaração de integridade é seu juramento criptográfico. Será selada irrevogavelmente.',
+    governance: 'integrity_oath',
+  },
+  originalWork: {
+    weight: 'critical',
+    de: 'Ihre Originalitätserklärung ist rechtlich bindend und wird im Forensic Ledger aufgezeichnet.',
+    en: 'Your originality declaration is legally binding and recorded in the Forensic Ledger.',
+    pt: 'Sua declaração de originalidade é legalmente vinculante e registrada no Forensic Ledger.',
+    governance: 'originality',
   },
 };
 
@@ -736,6 +944,118 @@ const buildSealPayload = async (doc, wallet, sealPolicy) => {
   return seal;
 };
 
+// ─── SEAL BUILDER v2.1: With Progress Callbacks ─────────────────────────────────
+// "O usuário sente a prova matemática sendo construída."
+const buildSealPayloadWithProgress = async (doc, wallet, sealPolicy, onProgress) => {
+  const { type, fields } = doc;
+  const policy = sealPolicy || {};
+  const isConfidential = fields.priority === 'confidential' || fields.classification === 'confidential';
+  const fieldNames = policy.hashFields || Object.keys(fields);
+  const totalFields = fieldNames.filter(f => fields[f] !== undefined && fields[f] !== '').length;
+
+  // ═══ STAGE 1: Field-level SHA-256 hashing ═══
+  onProgress?.({ stage: 1, message: 'Hashing fields...', field: '', hash: '', progress: 0 });
+  await new Promise(r => setTimeout(r, 200)); // Visual pause
+
+  const fieldHashes = {};
+  const hashOrder = [];
+  let fieldIdx = 0;
+
+  for (const fieldName of fieldNames) {
+    if (fields[fieldName] !== undefined && fields[fieldName] !== '') {
+      const hash = await merkleHash(fields[fieldName]);
+      fieldHashes[fieldName] = hash;
+      hashOrder.push(hash);
+      fieldIdx++;
+
+      // Report each field being hashed
+      onProgress?.({
+        stage: 1,
+        message: `Hashing: ${fieldName}`,
+        field: fieldName,
+        hash: hash.substring(0, 16) + '...',
+        progress: Math.round((fieldIdx / totalFields) * 25) // 0-25%
+      });
+
+      // Emit EventBus for each field
+      if (window.WINDI?.EventBus) {
+        window.WINDI.EventBus.emitSealProgress('field_hashed', { field: fieldName, hash: hash.substring(0, 16) });
+      }
+
+      await new Promise(r => setTimeout(r, 150)); // Visual pause per field
+    }
+  }
+
+  // ═══ STAGE 2: Merkle tree building ═══
+  onProgress?.({ stage: 2, message: 'Building Merkle tree...', field: '', hash: '', progress: 50 });
+  if (window.WINDI?.EventBus) {
+    window.WINDI.EventBus.emitSealProgress('merkle_building', { fields: totalFields });
+  }
+  await new Promise(r => setTimeout(r, 400)); // Visual pause
+
+  // ═══ STAGE 3: Root computation ═══
+  onProgress?.({ stage: 3, message: 'Computing Merkle root...', field: '', hash: '', progress: 75 });
+  const fieldsRoot = await merkleRoot(hashOrder);
+
+  onProgress?.({
+    stage: 3,
+    message: 'Root computed!',
+    field: '',
+    hash: fieldsRoot.substring(0, 24) + '...',
+    progress: 80
+  });
+
+  if (window.WINDI?.EventBus) {
+    window.WINDI.EventBus.emitSealProgress('root_computed', { root: fieldsRoot.substring(0, 16) });
+  }
+  await new Promise(r => setTimeout(r, 300)); // Visual pause
+
+  // ═══ STAGE 4: Build final payload ═══
+  onProgress?.({ stage: 4, message: 'Registering in Ledger...', field: '', hash: '', progress: 90 });
+
+  const seal = {
+    doc_type: policy.type || type.toUpperCase(),
+    doc_id: CryptoProvider.receiptId(),
+    created_at: new Date().toISOString(),
+    signer_did: wallet?.id || null,
+    anonymous: !wallet,
+    field_hashes: fieldHashes,
+    fields_root: fieldsRoot,
+    hash_algorithm: 'sha256-merkle',
+    redacted_hints: {},
+    confidential: isConfidential,
+    legal_document: policy.legalDocument || false,
+    financial_document: policy.financialDocument || false,
+    governance_document: policy.governanceDocument || false,
+    recipient_tracked: policy.recipientTracked || false,
+    ai_assisted: true,
+    ai_role: 'structural_guidance',
+    human_authored: true,
+  };
+
+  // GDPR redaction
+  for (const fieldName of GDPR_PII_FIELDS) {
+    if (fields[fieldName]) {
+      seal.redacted_hints[fieldName] = redactForLedger(fields[fieldName]);
+    }
+  }
+
+  if (isConfidential) {
+    seal.subject_redacted = true;
+    seal.body_redacted = true;
+    seal.distribution_restricted = true;
+  }
+
+  await new Promise(r => setTimeout(r, 200)); // Final pause
+  onProgress?.({ stage: 4, message: 'Sealed!', field: '', hash: seal.doc_id, progress: 100 });
+
+  if (window.WINDI?.EventBus) {
+    window.WINDI.EventBus.emitSealProgress('complete', { doc_id: seal.doc_id, root: fieldsRoot.substring(0, 16) });
+  }
+
+  return seal;
+};
+
 // ═══════════════════════════════════════════════════════════════════════════════════
 // EXPORT ENGINE WIRING — JMPG Package with full DNA
 // Wave 2.0: MEMO as golden path → structured fields → institutional document with QR
@@ -761,6 +1081,7 @@ const DOC_TYPE_TO_TEMPLATE = {
   policy: 'comunicado',
   directive: 'comunicado',
   warrant: 'comunicado',
+  creativeVirtue: 'comunicado',  // Creative Virtue Receipt
 };
 
 // Transform structured fields to JMPG content_blocks
@@ -913,6 +1234,199 @@ const transformFieldsToBlocks = (docType, fields, schema, lang = 'en') => {
     }
   }
 
+  // ─── CREATIVE VIRTUE RECEIPT ────────────────────────────────────────────────
+  else if (docType === 'creativeVirtue') {
+    const cvLabels = {
+      en: {
+        workIdentity: 'Work Identity',
+        authorInfo: 'Creator Information',
+        aiDisclosure: 'AI Assistance Disclosure',
+        humanContrib: 'Human Creative Contribution',
+        economicTerms: 'Economic Terms',
+        integrity: 'Integrity Statement',
+        certification: 'Creator Certification'
+      },
+      de: {
+        workIdentity: 'Werkidentität',
+        authorInfo: 'Schöpferinformationen',
+        aiDisclosure: 'KI-Unterstützungserklärung',
+        humanContrib: 'Menschlicher kreativer Beitrag',
+        economicTerms: 'Wirtschaftliche Bedingungen',
+        integrity: 'Integritätserklärung',
+        certification: 'Schöpferzertifizierung'
+      },
+      pt: {
+        workIdentity: 'Identidade da Obra',
+        authorInfo: 'Informações do Criador',
+        aiDisclosure: 'Declaração de Assistência IA',
+        humanContrib: 'Contribuição Criativa Humana',
+        economicTerms: 'Termos Econômicos',
+        integrity: 'Declaração de Integridade',
+        certification: 'Certificação do Criador'
+      }
+    };
+    const cvl = cvLabels[lk] || cvLabels.en;
+
+    // Document Title
+    blocks.push({
+      type: 'heading',
+      id: 'cv-title',
+      data: { text: '🎨 ' + (fields.workTitle || 'Creative Virtue Receipt'), level: 1 }
+    });
+
+    // ─── WORK IDENTITY SECTION ───────────────────────────────────────────────
+    blocks.push({
+      type: 'heading',
+      id: 'cv-work-section',
+      data: { text: cvl.workIdentity, level: 2 }
+    });
+    const workTypeLabels = {
+      music: '🎵 Music', visual_art: '🎨 Visual Art', literature: '📚 Literature',
+      video: '🎬 Video', software: '💻 Software', design: '✏️ Design', other: '📦 Other'
+    };
+    blocks.push({
+      type: 'table',
+      id: 'cv-work-table',
+      data: {
+        content: [
+          [label('workTitle'), fields.workTitle || '—'],
+          [label('workType'), workTypeLabels[fields.workType] || fields.workType || '—']
+        ]
+      }
+    });
+    if (fields.description) {
+      blocks.push({
+        type: 'paragraph',
+        id: 'cv-description',
+        data: { text: fields.description, html: true, style: 'work-description' }
+      });
+    }
+
+    // ─── AUTHOR SECTION ──────────────────────────────────────────────────────
+    blocks.push({
+      type: 'heading',
+      id: 'cv-author-section',
+      data: { text: cvl.authorInfo, level: 2 }
+    });
+    blocks.push({
+      type: 'table',
+      id: 'cv-author-table',
+      data: {
+        content: [
+          [label('authorName'), fields.authorName || '—'],
+          [label('authorRole'), fields.authorRole || '—']
+        ]
+      }
+    });
+
+    // ─── AI DISCLOSURE SECTION (CRITICAL) ────────────────────────────────────
+    blocks.push({
+      type: 'heading',
+      id: 'cv-ai-section',
+      data: { text: '⚠️ ' + cvl.aiDisclosure, level: 2 }
+    });
+    const aiLevelLabels = {
+      none: '✅ No AI assistance',
+      research: '📊 AI used for research only',
+      drafting: '📝 AI assisted in drafting',
+      editing: '✂️ AI assisted in editing',
+      generation_partial: '🤖 AI generated partial content',
+      generation_substantial: '🤖⚠️ AI generated substantial content'
+    };
+    blocks.push({
+      type: 'paragraph',
+      id: 'cv-ai-level',
+      data: { text: aiLevelLabels[fields.aiAssisted] || fields.aiAssisted || 'Not disclosed', style: 'ai-disclosure-level' }
+    });
+    blocks.push({
+      type: 'table',
+      id: 'cv-ai-table',
+      data: {
+        content: [
+          [label('creatorShare'), fields.creatorShare || '—']
+        ]
+      }
+    });
+
+    // ─── HUMAN CREATIVE DECISIONS (CORE PROOF) ───────────────────────────────
+    blocks.push({
+      type: 'heading',
+      id: 'cv-human-section',
+      data: { text: '🧠 ' + cvl.humanContrib, level: 2 }
+    });
+    if (fields.humanDecisions) {
+      blocks.push({
+        type: 'paragraph',
+        id: 'cv-human-decisions',
+        data: { text: fields.humanDecisions, html: true, style: 'human-decisions-proof' }
+      });
+    }
+
+    // ─── ECONOMIC TERMS ──────────────────────────────────────────────────────
+    blocks.push({
+      type: 'heading',
+      id: 'cv-economic-section',
+      data: { text: cvl.economicTerms, level: 2 }
+    });
+    const licenseLabels = {
+      all_rights: '© All Rights Reserved',
+      cc_by: 'CC BY - Attribution',
+      cc_by_sa: 'CC BY-SA - Attribution ShareAlike',
+      cc_by_nc: 'CC BY-NC - Attribution NonCommercial',
+      public_domain: '🌍 Public Domain'
+    };
+    blocks.push({
+      type: 'table',
+      id: 'cv-economic-table',
+      data: {
+        content: [
+          [label('licenseType'), licenseLabels[fields.licenseType] || fields.licenseType || '—'],
+          [label('originalWork'), fields.originalWork === 'yes' ? '✅ Original Work' : fields.originalWork === 'derivative' ? '🔀 Derivative Work' : '—']
+        ]
+      }
+    });
+
+    // ─── INTEGRITY STATEMENT ─────────────────────────────────────────────────
+    blocks.push({
+      type: 'heading',
+      id: 'cv-integrity-section',
+      data: { text: '📜 ' + cvl.integrity, level: 2 }
+    });
+    if (fields.integrityStatement) {
+      blocks.push({
+        type: 'quote',
+        id: 'cv-integrity-quote',
+        data: { text: fields.integrityStatement, style: 'integrity-statement' }
+      });
+    }
+
+    // ─── DECLARATIONS ────────────────────────────────────────────────────────
+    if (fields.declarations) {
+      blocks.push({
+        type: 'paragraph',
+        id: 'cv-declarations',
+        data: { text: fields.declarations, html: true, style: 'declarations' }
+      });
+    }
+
+    // ─── CREATOR CERTIFICATION ───────────────────────────────────────────────
+    blocks.push({
+      type: 'heading',
+      id: 'cv-cert-section',
+      data: { text: '✍️ ' + cvl.certification, level: 2 }
+    });
+    blocks.push({
+      type: 'table',
+      id: 'cv-cert-table',
+      data: {
+        content: [
+          [label('signedBy'), fields.signedBy || '—'],
+          [label('signedDate'), fields.signedDate || '—']
+        ]
+      }
+    });
+  }
+
   // ─── LETTER HEADER ─────────────────────────────────────────────────────────
   else if (docType === 'letter') {
     blocks.push({
@@ -931,7 +1445,7 @@ const transformFieldsToBlocks = (docType, fields, schema, lang = 'en') => {
 
   // ─── GENERIC TITLE/SUBJECT ─────────────────────────────────────────────────
   // For types without specific headers
-  if (!['memo', 'invoice', 'contract'].includes(docType)) {
+  if (!['memo', 'invoice', 'contract', 'creativeVirtue'].includes(docType)) {
     if (fields.title) {
       blocks.push({
         type: 'heading',
@@ -949,8 +1463,8 @@ const transformFieldsToBlocks = (docType, fields, schema, lang = 'en') => {
   }
 
   // ─── MAIN BODY CONTENT ─────────────────────────────────────────────────────
-  // Skip for invoice/contract which handle body differently
-  if (!['invoice', 'contract'].includes(docType)) {
+  // Skip for invoice/contract/creativeVirtue which handle body differently
+  if (!['invoice', 'contract', 'creativeVirtue'].includes(docType)) {
     if (fields.body) {
       blocks.push({
         type: 'paragraph',
@@ -976,7 +1490,7 @@ const transformFieldsToBlocks = (docType, fields, schema, lang = 'en') => {
   }
 
   // ─── GENERIC SIGNATURE BLOCK ───────────────────────────────────────────────
-  if (docType !== 'contract' && (fields.signature || fields.signedBy)) {
+  if (!['contract', 'creativeVirtue'].includes(docType) && (fields.signature || fields.signedBy)) {
     blocks.push({
       type: 'paragraph',
       id: 'signature',
@@ -1290,6 +1804,178 @@ const DOCS = defineDocs({
   presentation: { complexity: DOC_COMPLEXITY.STRUCTURED, schema: { title: { required: true, type: "text", label: { en: "Title", de: "Titel", pt: "Título" } }, body: { required: true, type: "rich", label: { en: "Content", de: "Inhalt", pt: "Conteúdo" } } }, flow: [{ field: "title", prompt: { en: "📽️ Presentation title?", de: "📽️ Präsentationstitel?", pt: "📽️ Título da apresentação?" } }, { field: "body", prompt: { en: "Outline your presentation:", de: "Skizzieren Sie Ihre Präsentation:", pt: "Esboce sua apresentação:" } }], sealPolicy: { type: "PRESENTATION", hashFields: ["title", "body"] } },
   communique:   { complexity: DOC_COMPLEXITY.GOVERNANCE, schema: { title: { required: true, type: "text", label: { en: "Title", de: "Titel", pt: "Título" } }, classification: { required: true, type: "select", label: { en: "Classification", de: "Klassifizierung", pt: "Classificação" }, options: ["internal", "public", "confidential", "restricted"] }, body: { required: true, type: "rich", label: { en: "Content", de: "Inhalt", pt: "Conteúdo" } } }, flow: [{ field: "title", prompt: { en: "📡 Communiqué title?", de: "📡 Kommuniqué-Titel?", pt: "📡 Título do comunicado?" } }, { field: "classification", prompt: { en: "Classification level?", de: "Klassifizierungsstufe?", pt: "Nível de classificação?" }, chips: true }, { field: "body", prompt: { en: "Write the communiqué:", de: "Schreiben Sie das Kommuniqué:", pt: "Escreva o comunicado:" } }], sealPolicy: { type: "COMMUNIQUE", hashFields: ["title", "classification", "body"], governanceDocument: true } },
   certificate:  { complexity: DOC_COMPLEXITY.GOVERNANCE, schema: { title: { required: true, type: "text", label: { en: "Certificate Title", de: "Zertifikatstitel", pt: "Título do Certificado" } }, recipient: { required: true, type: "text", label: { en: "Recipient", de: "Empfänger", pt: "Destinatário" } }, issuer: { required: true, type: "text", label: { en: "Issuer", de: "Aussteller", pt: "Emissor" }, default: "wallet" }, date: { required: true, type: "date", label: { en: "Date", de: "Datum", pt: "Data" }, default: "today" }, body: { required: true, type: "rich", label: { en: "Certificate Text", de: "Zertifikatstext", pt: "Texto do Certificado" } } }, flow: [{ field: "title", prompt: { en: "🏛️ Certificate title?", de: "🏛️ Zertifikatstitel?", pt: "🏛️ Título do certificado?" } }, { field: "recipient", prompt: { en: "Who receives this certificate?", de: "Wer erhält dieses Zertifikat?", pt: "Quem recebe este certificado?" } }, { field: "body", prompt: { en: "Write the certificate text:", de: "Schreiben Sie den Zertifikatstext:", pt: "Escreva o texto do certificado:" } }], sealPolicy: { type: "CERTIFICATE", hashFields: ["title", "recipient", "issuer", "date", "body"], governanceDocument: true, legalDocument: true } },
+
+  // ═══════════════════════════════════════════════════════════════════════════════
+  // CREATIVE VIRTUE RECEIPT — Proof of Human Authorship
+  // "Não apenas o que foi criado, mas COMO foi decidido."
+  // ═══════════════════════════════════════════════════════════════════════════════
+  creativeVirtue: {
+    complexity: DOC_COMPLEXITY.GOVERNANCE,
+    schema: {
+      // Work Identity
+      workTitle:    { required: true, type: "text", label: { en: "Work Title", de: "Werktitel", pt: "Título da Obra" } },
+      workType:     { required: true, type: "select", label: { en: "Work Type", de: "Werktyp", pt: "Tipo de Obra" },
+                      options: ["music", "visual_art", "literature", "video", "software", "design", "other"] },
+      description:  { required: true, type: "rich", label: { en: "Work Description", de: "Werkbeschreibung", pt: "Descrição da Obra" } },
+      creationDate: { required: true, type: "date", label: { en: "Creation Date", de: "Erstellungsdatum", pt: "Data de Criação" }, default: "today" },
+
+      // Authorship Declaration
+      authorName:   { required: true, type: "text", label: { en: "Author Name", de: "Autorenname", pt: "Nome do Autor" }, default: "wallet" },
+      authorRole:   { required: true, type: "select", label: { en: "Author Role", de: "Autorenrolle", pt: "Papel do Autor" },
+                      options: ["sole_creator", "lead_creator", "collaborator", "contributor"] },
+      collaborators:{ required: false, type: "text", label: { en: "Collaborators", de: "Mitarbeiter", pt: "Colaboradores" } },
+
+      // AI Disclosure (Honesty)
+      aiAssisted:   { required: true, type: "select", label: { en: "AI Assistance", de: "KI-Unterstützung", pt: "Assistência de IA" },
+                      options: ["none", "research", "drafting", "editing", "generation_partial", "generation_substantial"] },
+      aiRole:       { required: false, type: "text", label: { en: "AI Role Description", de: "Rolle der KI", pt: "Descrição do Papel da IA" } },
+
+      // Human Decisions (The Core)
+      humanDecisions:{ required: true, type: "rich", label: { en: "Human Creative Decisions", de: "Menschliche Entscheidungen", pt: "Decisões Criativas Humanas" } },
+
+      // Economic Terms
+      creatorShare: { required: true, type: "select", label: { en: "Creator Revenue Share", de: "Umsatzbeteiligung", pt: "Participação do Criador" },
+                      options: ["75%", "80%", "85%", "90%", "100%"] },
+      licenseType:  { required: true, type: "select", label: { en: "License Type", de: "Lizenztyp", pt: "Tipo de Licença" },
+                      options: ["all_rights_reserved", "cc_by", "cc_by_sa", "cc_by_nc", "public_domain", "custom"] },
+      commercialUse:{ required: true, type: "select", label: { en: "Commercial Use", de: "Kommerzielle Nutzung", pt: "Uso Comercial" },
+                      options: ["allowed", "restricted", "prohibited"] },
+
+      // Integrity Declaration
+      originalWork: { required: true, type: "select", label: { en: "Originality Declaration", de: "Originalitätserklärung", pt: "Declaração de Originalidade" },
+                      options: ["fully_original", "derivative_licensed", "contains_samples", "remix_authorized"] },
+      integrityStatement: { required: true, type: "rich", label: { en: "Integrity Statement", de: "Integritätserklärung", pt: "Declaração de Integridade" } },
+    },
+    flow: [
+      // Step 1: Work Identity
+      { field: "workTitle", prompt: {
+          en: "🎨 CREATIVE VIRTUE RECEIPT\n\nThis document proves human authorship and creative process.\n\nWhat is the title of your work?",
+          de: "🎨 KREATIVES TUGEND-ZERTIFIKAT\n\nDieses Dokument beweist menschliche Autorschaft.\n\nWie lautet der Titel Ihres Werks?",
+          pt: "🎨 RECIBO DE VIRTUDE CRIATIVA\n\nEste documento comprova autoria e processo humano.\n\nQual é o título da sua obra?"
+        }
+      },
+      { field: "workType", prompt: {
+          en: "What type of creative work is this?",
+          de: "Um welche Art von kreativem Werk handelt es sich?",
+          pt: "Que tipo de obra criativa é esta?"
+        }, chips: true
+      },
+      { field: "description", prompt: {
+          en: "Describe your work. What makes it unique?",
+          de: "Beschreiben Sie Ihr Werk. Was macht es einzigartig?",
+          pt: "Descreva sua obra. O que a torna única?"
+        },
+        teach: {
+          en: "💡 This description becomes part of the immutable record. Focus on the creative vision, not technical details.",
+          de: "💡 Diese Beschreibung wird Teil der unveränderlichen Aufzeichnung. Fokussieren Sie auf die kreative Vision.",
+          pt: "💡 Esta descrição torna-se parte do registro imutável. Foque na visão criativa, não nos detalhes técnicos."
+        }
+      },
+
+      // Step 2: Authorship
+      { field: "authorRole", prompt: {
+          en: "What is your role in creating this work?",
+          de: "Welche Rolle spielen Sie bei der Erstellung?",
+          pt: "Qual é o seu papel na criação desta obra?"
+        }, chips: true
+      },
+      { field: "collaborators", prompt: {
+          en: "Any collaborators? (names or 'skip' if solo work)",
+          de: "Mitarbeiter? (Namen oder 'überspringen')",
+          pt: "Colaboradores? (nomes ou 'pular' se trabalho solo)"
+        }, optional: true
+      },
+
+      // Step 3: AI Disclosure (Critical for proof)
+      { field: "aiAssisted", prompt: {
+          en: "🤖 AI DISCLOSURE\n\nHonesty is the foundation of creative virtue.\n\nDid AI assist in creating this work?",
+          de: "🤖 KI-OFFENLEGUNG\n\nEhrlichkeit ist die Grundlage kreativer Tugend.\n\nHat KI bei der Erstellung geholfen?",
+          pt: "🤖 DIVULGAÇÃO DE IA\n\nHonestidade é a base da virtude criativa.\n\nA IA auxiliou na criação desta obra?"
+        }, chips: true,
+        teach: {
+          en: "💡 'none' = no AI used. 'research' = AI helped gather info. 'drafting' = AI suggested structure. 'generation_partial' = AI created some elements. Be honest—this is your proof of humanity.",
+          de: "💡 Seien Sie ehrlich—dies ist Ihr Beweis der Menschlichkeit.",
+          pt: "💡 Seja honesto—isto é a sua prova de humanidade."
+        }
+      },
+      { field: "aiRole", prompt: {
+          en: "If AI assisted, describe specifically what it did (or 'skip'):",
+          de: "Falls KI assistiert hat, beschreiben Sie konkret was sie tat (oder 'überspringen'):",
+          pt: "Se a IA auxiliou, descreva especificamente o que ela fez (ou 'pular'):"
+        }, optional: true
+      },
+
+      // Step 4: Human Decisions (The Core Proof)
+      { field: "humanDecisions", prompt: {
+          en: "🧠 HUMAN CREATIVE DECISIONS\n\nThis is the heart of your proof.\n\nList the key creative decisions YOU made:\n(theme, style, structure, revisions, artistic choices...)",
+          de: "🧠 MENSCHLICHE ENTSCHEIDUNGEN\n\nDies ist der Kern Ihres Beweises.\n\nListen Sie die kreativen Entscheidungen auf, die SIE getroffen haben:",
+          pt: "🧠 DECISÕES CRIATIVAS HUMANAS\n\nEste é o coração da sua prova.\n\nListe as decisões criativas que VOCÊ tomou:\n(tema, estilo, estrutura, revisões, escolhas artísticas...)"
+        },
+        teach: {
+          en: "💡 Each decision you list is cryptographically sealed. This proves human agency even if AI assisted with execution.",
+          de: "💡 Jede Entscheidung wird kryptographisch versiegelt. Dies beweist menschliche Handlungsfähigkeit.",
+          pt: "💡 Cada decisão é selada criptograficamente. Isto prova agência humana mesmo que IA ajudou na execução."
+        }
+      },
+
+      // Step 5: Economic Terms
+      { field: "creatorShare", prompt: {
+          en: "💰 ECONOMIC TERMS\n\nWhat revenue share do you claim as creator?",
+          de: "💰 WIRTSCHAFTLICHE BEDINGUNGEN\n\nWelchen Umsatzanteil beanspruchen Sie?",
+          pt: "💰 TERMOS ECONÔMICOS\n\nQual participação você reivindica como criador?"
+        }, chips: true,
+        teach: {
+          en: "💡 The WINDI standard is 75% to creator. Higher percentages are for works with greater human involvement.",
+          de: "💡 Der WINDI-Standard ist 75% für den Schöpfer.",
+          pt: "💡 O padrão WINDI é 75% para o criador. Percentuais maiores para obras com maior envolvimento humano."
+        }
+      },
+      { field: "licenseType", prompt: {
+          en: "What license applies to this work?",
+          de: "Welche Lizenz gilt für dieses Werk?",
+          pt: "Qual licença se aplica a esta obra?"
+        }, chips: true
+      },
+      { field: "commercialUse", prompt: {
+          en: "Is commercial use of this work allowed?",
+          de: "Ist kommerzielle Nutzung erlaubt?",
+          pt: "O uso comercial desta obra é permitido?"
+        }, chips: true
+      },
+
+      // Step 6: Integrity
+      { field: "originalWork", prompt: {
+          en: "⚖️ ORIGINALITY\n\nDeclare the originality status of this work:",
+          de: "⚖️ ORIGINALITÄT\n\nErklären Sie den Originalitätsstatus:",
+          pt: "⚖️ ORIGINALIDADE\n\nDeclare o status de originalidade desta obra:"
+        }, chips: true
+      },
+      { field: "integrityStatement", prompt: {
+          en: "🛡️ FINAL DECLARATION\n\nWrite your integrity statement. This seals your creative virtue:\n\n(Example: 'I declare that the creative decisions, artistic vision, and human judgment in this work are mine...')",
+          de: "🛡️ ABSCHLIESSENDE ERKLÄRUNG\n\nSchreiben Sie Ihre Integritätserklärung:",
+          pt: "🛡️ DECLARAÇÃO FINAL\n\nEscreva sua declaração de integridade. Isto sela sua virtude criativa:\n\n(Exemplo: 'Declaro que as decisões criativas, visão artística e julgamento humano nesta obra são meus...')"
+        },
+        teach: {
+          en: "💡 This statement becomes your cryptographic oath. It proves you understood the implications of your declaration.",
+          de: "💡 Diese Erklärung wird Ihr kryptographischer Eid.",
+          pt: "💡 Esta declaração torna-se seu juramento criptográfico. Prova que você entendeu as implicações."
+        }
+      },
+    ],
+    sealPolicy: {
+      type: "CREATIVE_VIRTUE",
+      hashFields: ["workTitle", "workType", "description", "authorName", "authorRole", "aiAssisted", "humanDecisions", "creatorShare", "licenseType", "originalWork", "integrityStatement"],
+      legalDocument: true,
+      governanceDocument: true,
+      creativeWork: true,
+      requiresSignature: true,
+    },
+    tierFeatures: {
+      FREE:  { fields: ["workTitle", "workType", "description", "authorName", "aiAssisted", "humanDecisions"] },
+      MED:   { fields: "*", economicTerms: true },
+      HIGH:  { fields: "*", economicTerms: true, blockchainAnchor: true, ipfsStorage: true },
+    },
+  },
 });
 
 // ─── COMPATIBILITY LAYER: Map DOCS to old DOC_TYPE_DNA interface ─────────────────
@@ -1400,6 +2086,85 @@ const renderStructuredPreview = (type, fields, th, lang) => {
       ),
       // Due Date
       fields.dueDate && React.createElement('div', { style: { marginTop: 12, fontSize: 12, color: th.warning } }, { en: 'Due:', de: 'Fällig:', pt: 'Vencimento:' }[lang] + ' ' + fields.dueDate)
+    );
+  }
+
+  // ─── CREATIVE VIRTUE RECEIPT Preview ───
+  if (type === "creativeVirtue") {
+    const cvLabels = {
+      en: { title: 'CREATIVE VIRTUE RECEIPT', work: 'Work Identity', author: 'Creator', ai: 'AI Disclosure', human: 'Human Decisions', econ: 'Economic Terms', integrity: 'Integrity' },
+      de: { title: 'KREATIVES TUGEND-ZERTIFIKAT', work: 'Werkidentität', author: 'Schöpfer', ai: 'KI-Offenlegung', human: 'Menschliche Entscheidungen', econ: 'Wirtschaft', integrity: 'Integrität' },
+      pt: { title: 'RECIBO DE VIRTUDE CRIATIVA', work: 'Identidade', author: 'Criador', ai: 'Divulgação IA', human: 'Decisões Humanas', econ: 'Econômico', integrity: 'Integridade' }
+    };
+    const cvl = cvLabels[lang] || cvLabels.en;
+    const aiLevels = { none: '✅ None', research: '📊 Research', drafting: '📝 Drafting', editing: '✂️ Editing', generation_partial: '🤖 Partial', generation_substantial: '🤖⚠️ Substantial' };
+
+    return React.createElement('div', { style: { fontFamily: "'Bricolage Grotesque',sans-serif" } },
+      // Header
+      React.createElement('div', { style: { borderBottom: `3px solid ${th.gold}`, paddingBottom: 12, marginBottom: 16 } },
+        React.createElement('div', { style: { fontSize: 22, fontWeight: 800, color: th.gold, display: 'flex', alignItems: 'center', gap: 8 } },
+          '🎨', cvl.title
+        ),
+        fields.workTitle && React.createElement('div', { style: { fontSize: 18, fontWeight: 600, marginTop: 8 } }, fields.workTitle)
+      ),
+
+      // Work Identity Section
+      React.createElement('div', { style: { marginBottom: 16 } },
+        React.createElement('div', { style: { fontSize: 12, fontWeight: 700, color: th.dim, marginBottom: 8 } }, cvl.work),
+        React.createElement('div', { style: { display: 'grid', gridTemplateColumns: '100px 1fr', gap: '6px 12px', fontSize: 13 } },
+          React.createElement('span', { style: { fontWeight: 600, color: th.dim } }, 'Type:'),
+          React.createElement('span', null, fields.workType ? fields.workType.replace(/_/g, ' ') : '—'),
+          fields.creationDate && React.createElement('span', { key: 'cd-l', style: { fontWeight: 600, color: th.dim } }, 'Date:'),
+          fields.creationDate && React.createElement('span', { key: 'cd-v' }, fields.creationDate)
+        ),
+        fields.description && React.createElement('div', { style: { marginTop: 8, fontSize: 13, fontStyle: 'italic', color: th.text + 'bb' } }, fields.description)
+      ),
+
+      // Author Section
+      React.createElement('div', { style: { marginBottom: 16, padding: 12, background: th.bg2 || th.surface + '44', borderRadius: 8 } },
+        React.createElement('div', { style: { fontSize: 12, fontWeight: 700, color: th.dim, marginBottom: 8 } }, cvl.author),
+        React.createElement('div', { style: { fontSize: 15, fontWeight: 600 } }, fields.authorName || '—'),
+        fields.authorRole && React.createElement('div', { style: { fontSize: 12, color: th.dim } }, fields.authorRole.replace(/_/g, ' ')),
+        fields.collaborators && React.createElement('div', { style: { marginTop: 6, fontSize: 12 } }, '+ ' + fields.collaborators)
+      ),
+
+      // AI Disclosure (Critical - highlighted)
+      React.createElement('div', { style: { marginBottom: 16, padding: 12, background: fields.aiAssisted === 'none' ? th.success + '11' : fields.aiAssisted?.includes('generation') ? th.warning + '22' : th.gold + '11', borderRadius: 8, borderLeft: `4px solid ${fields.aiAssisted === 'none' ? th.success : fields.aiAssisted?.includes('generation') ? th.warning : th.gold}` } },
+        React.createElement('div', { style: { fontSize: 12, fontWeight: 700, color: th.dim, marginBottom: 6 } }, '🤖 ' + cvl.ai),
+        React.createElement('div', { style: { fontSize: 14, fontWeight: 700 } }, aiLevels[fields.aiAssisted] || fields.aiAssisted || 'Not disclosed'),
+        fields.aiRole && React.createElement('div', { style: { marginTop: 6, fontSize: 12, fontStyle: 'italic' } }, fields.aiRole),
+        fields.creatorShare && React.createElement('div', { style: { marginTop: 8, fontSize: 13 } }, 'Creator Share: ', React.createElement('strong', null, fields.creatorShare))
+      ),
+
+      // Human Decisions (The Core Proof)
+      fields.humanDecisions && React.createElement('div', { style: { marginBottom: 16, padding: 12, background: th.success + '11', borderRadius: 8, borderLeft: `4px solid ${th.success}` } },
+        React.createElement('div', { style: { fontSize: 12, fontWeight: 700, color: th.success, marginBottom: 8 } }, '🧠 ' + cvl.human),
+        React.createElement('div', { style: { fontSize: 13, lineHeight: 1.6, whiteSpace: 'pre-wrap' } }, fields.humanDecisions)
+      ),
+
+      // Economic Terms
+      (fields.licenseType || fields.commercialUse) && React.createElement('div', { style: { marginBottom: 16, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 } },
+        fields.licenseType && React.createElement('div', { style: { padding: 8, background: th.surface + '44', borderRadius: 6, fontSize: 12 } },
+          React.createElement('div', { style: { fontWeight: 700, color: th.dim, marginBottom: 4 } }, 'License'),
+          React.createElement('div', null, fields.licenseType.replace(/_/g, ' '))
+        ),
+        fields.commercialUse && React.createElement('div', { style: { padding: 8, background: th.surface + '44', borderRadius: 6, fontSize: 12 } },
+          React.createElement('div', { style: { fontWeight: 700, color: th.dim, marginBottom: 4 } }, 'Commercial'),
+          React.createElement('div', null, fields.commercialUse)
+        )
+      ),
+
+      // Integrity Statement
+      fields.integrityStatement && React.createElement('div', { style: { marginBottom: 16, padding: 12, borderLeft: `3px solid ${th.gold}`, background: th.gold + '08', fontStyle: 'italic', fontSize: 13, lineHeight: 1.6 } },
+        React.createElement('div', { style: { fontSize: 11, fontWeight: 700, color: th.gold, marginBottom: 6, fontStyle: 'normal' } }, '📜 ' + cvl.integrity),
+        fields.integrityStatement
+      ),
+
+      // Signature Footer
+      React.createElement('div', { style: { borderTop: `2px solid ${th.border}`, paddingTop: 12, marginTop: 16, display: 'flex', justifyContent: 'space-between', fontSize: 12, color: th.dim } },
+        React.createElement('span', null, fields.authorName || '—'),
+        React.createElement('span', null, fields.creationDate || new Date().toLocaleDateString())
+      )
     );
   }
 
@@ -2094,6 +2859,8 @@ function App(){
   const[vaultStats,setVaultStats]=useState({total:0,today:0,doc_types:0,chain_ok:false});
   const[vaultHealth,setVaultHealth]=useState({status:"unknown",version:"",receipts:0});
   const[vaultLoading,setVaultLoading]=useState(false);
+  const[vaultPulse,setVaultPulse]=useState(false); // Phase 1B: Biofeedback pulse on seal
+  const[vaultLastSealed,setVaultLastSealed]=useState(null); // Last sealed document info
 
   // ═══ DISTRIBUTION LAYER — Send sealed documents via channels ═══
   const[showDistributeModal,setShowDistributeModal]=useState(false);
@@ -2145,6 +2912,7 @@ function App(){
   const[dragonConnected,setDragonConnected]=useState(false);
   const[toast,setToast]=useState({m:"",v:false});
   const[showFinalizeModal,setShowFinalizeModal]=useState(false); // FIX (J): 2-step
+  const[sealProgress,setSealProgress]=useState({stage:0,field:'',hash:'',message:'',progress:0}); // Seal Progression 4-stage
   const[finalizeStep,setFinalizeStep]=useState(1);
   const[showVoiceModal,setShowVoiceModal]=useState(false); // FIX (I): voice
   const[voiceText,setVoiceText]=useState("");
@@ -2200,6 +2968,59 @@ function App(){
 
   const flash=useCallback(m=>{setToast({m,v:true});setTimeout(()=>setToast(x=>({...x,v:false})),2600);},[]);
 
+  // ═══ EVENT BUS LISTENERS — Cross-Component Sync ═══
+  useEffect(()=>{
+    if(!window.WINDI?.EventBus)return;
+    const EB=window.WINDI.EventBus;
+    const unsubs=[];
+
+    // ═══ Phase 1B: Vault Biofeedback ═══
+    // When document is sealed, trigger pulse animation + refresh vault stats
+    unsubs.push(EB.on(EB.EVENTS.DOCUMENT_SEALED,(e)=>{
+      console.log('[EventBus:UI] Document sealed:',e.summary);
+
+      // 1. Trigger pulse animation on Vault banner
+      setVaultPulse(true);
+      setTimeout(()=>setVaultPulse(false),1000);
+
+      // 2. Store last sealed info for contextual message
+      // Payload structure: {summary, receiptId, merkleRoot/contentHash, docType, trustDelta, walletId}
+      const hash = e.merkleRoot || e.contentHash || e.receiptId || '';
+      const titlePart = e.summary?.split(':')?.[1] || e.docType || 'Dokument';
+      setVaultLastSealed({
+        title: titlePart,
+        hash: hash.slice(0,12),
+        timestamp: new Date().toISOString(),
+        number: (wallet?.receipts?.length||0)+1
+      });
+
+      // 3. Refresh vault stats immediately (don't wait for 30s interval)
+      fetchVaultStats();
+
+      // Note: Toast is already shown by the seal function, no need to duplicate
+    }));
+
+    // When trust is updated, could animate wallet badge
+    unsubs.push(EB.on(EB.EVENTS.TRUST_UPDATED,(e)=>{
+      console.log('[EventBus:UI] Trust updated:',e.summary);
+    }));
+
+    // When dragon suggests a document, could auto-select type
+    unsubs.push(EB.on(EB.EVENTS.DRAGON_SUGGESTION,(e)=>{
+      console.log('[EventBus:UI] Dragon suggestion:',e.summary);
+      if(e.document?.type&&!docType){
+        // Could auto-set docType here
+      }
+    }));
+
+    // When export completes, could refresh docs tab
+    unsubs.push(EB.on(EB.EVENTS.DOCUMENT_EXPORTED,(e)=>{
+      console.log('[EventBus:UI] Export complete:',e.summary);
+    }));
+
+    return()=>unsubs.forEach(u=>u&&u());
+  },[docType,fetchVaultStats,flash,lang,wallet]);
+
   // ═══ A.1: COMMUNIQUÉ API FETCH ═══
   const baseUrl=window.location.protocol==='https:'?'https://admin.windia4desk.tech':'http://localhost';
 
@@ -2235,12 +3056,14 @@ function App(){
   },[communiques,comFilter]);
 
   // ═══ A.2: VAULT API FETCH ═══
+  // FIX: Use correct Vault endpoints (8106 serves /api/stats and /health directly)
+  const vaultApiUrl=window.location.hostname==='localhost'?'http://localhost:8106':'https://admin.windia4desk.tech/vault';
   const fetchVaultStats=useCallback(async()=>{
     try{
       setVaultLoading(true);
       const[statsRes,healthRes]=await Promise.all([
-        fetch(baseUrl+'/vault/api/stats'),
-        fetch(baseUrl+'/vault/health')
+        fetch(vaultApiUrl+'/api/stats'),
+        fetch(vaultApiUrl+'/health')
       ]);
       const statsData=await statsRes.json();
       const healthData=await healthRes.json();
@@ -2251,7 +3074,7 @@ function App(){
     }finally{
       setVaultLoading(false);
     }
-  },[baseUrl]);
+  },[vaultApiUrl]);
 
   // Vault polling every 30s
   useEffect(()=>{
@@ -2645,8 +3468,23 @@ function App(){
       let resp="",upd=false;
 
       // ─── A.4: Dragon Response (MED/HIGH tier) ───────────────────────
+      // ═══ DRAGON→DESKTOP BRIDGE: Extract document block from Architect ═══
+      let dragonDocument=null;
       if(dragonResponse&&(dragonResponse.success&&dragonResponse.response||dragonResponse.message)){
         resp=dragonResponse.response||dragonResponse.message;
+        // Parse embedded JSON document block from Architect response
+        // Format: ```json\n{"document": {...}}\n```
+        const jsonMatch=resp.match(/```json\s*(\{[\s\S]*?"document"[\s\S]*?\})\s*```/);
+        if(jsonMatch){
+          try{
+            const parsed=JSON.parse(jsonMatch[1]);
+            if(parsed.document){
+              dragonDocument=parsed.document;
+              // Clean the response text (remove JSON block for cleaner display)
+              resp=resp.replace(/```json[\s\S]*?```/g,'').trim();
+            }
+          }catch(e){console.log("[Bridge] JSON parse error:",e);}
+        }
         if(dragonResponse.action_pending){
           setDragonPending({type:dragonResponse.action_pending,buttons:dragonResponse.confirm_buttons});
         }
@@ -2871,9 +3709,35 @@ function App(){
         upd=true;
       }
 
-      if(upd)setMsgs(p=>[...p,{role:"system",text:t.chat.extracting},{role:"bot",text:resp,source:dragonResponse?.source||"local"}]);
-      else setMsgs(p=>[...p,{role:"bot",text:resp,source:dragonResponse?.source||"local"}]);
+      // ═══ DRAGON→DESKTOP BRIDGE: Include document in message for "Open in Editor" button ═══
+      const msgObj={role:"bot",text:resp,source:dragonResponse?.source||"local",document:dragonDocument};
+      if(upd)setMsgs(p=>[...p,{role:"system",text:t.chat.extracting},msgObj]);
+      else setMsgs(p=>[...p,msgObj]);
       setTyping(false);
+
+      // ═══ EVENT BUS: Dragon Response ═══
+      if(window.WINDI?.EventBus&&resp){
+        window.WINDI.EventBus.emit(window.WINDI.EventBus.EVENTS.DRAGON_RESPONSE,{
+          summary:resp.substring(0,50)+'...',
+          source:dragonResponse?.source||'local',
+          hasDocument:!!dragonDocument,
+          dragon:dragonResponse?.dragon||'guardian',
+          docType:dragonDocument?.type||docType
+        });
+        if(dragonDocument){
+          window.WINDI.EventBus.emit(window.WINDI.EventBus.EVENTS.DRAGON_SUGGESTION,{
+            summary:`Document: ${dragonDocument.type||'draft'}`,
+            document:dragonDocument
+          });
+        }
+        if(dragonResponse?.action_pending){
+          window.WINDI.EventBus.emit(window.WINDI.EventBus.EVENTS.DRAGON_PENDING,{
+            summary:dragonResponse.action_pending,
+            action:dragonResponse.action_pending,
+            buttons:dragonResponse.confirm_buttons
+          });
+        }
+      }
     },dragonResponse?100:400+Math.random()*500);
   },[turns,awaitingTitle,docTitle,docType,docStatus,docFields,flowActive,flowStep,wallet,t,lang,dragonConnected,windiTier,queryDragon]);
 
@@ -2896,6 +3760,17 @@ function App(){
       if(persist){try{const raw=JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEY)||"{}");raw.wallet=w;localStorage.setItem(CONFIG.STORAGE_KEY,JSON.stringify(raw));}catch(e){}}
       flash(`🛡️ ${t.did.success} — ${w.id}`);
       setMsgs(p=>[...p,{role:"system",text:`🛡️ ${w.id}`},{role:"bot",text:`${t.did.success} ${w.name}! T1/50 ✅`}]);
+
+      // ═══ EVENT BUS: Wallet Created ═══
+      if(window.WINDI?.EventBus){
+        window.WINDI.EventBus.emit(window.WINDI.EventBus.EVENTS.WALLET_CREATED,{
+          summary:`${w.name} (${w.id})`,
+          walletId:w.id,
+          name:w.name,
+          type:w.type,
+          trustScore:1
+        });
+      }
     },1800);
   },[didForm,t,flash,persist]);
 
@@ -2929,13 +3804,18 @@ function App(){
     const doc = getDoc(docType);
     const dna = getDNA(docType); // Backward compat
 
-    // ═══ SEAL v2.0: Merkle root + GDPR compliance ═══
+    // ═══ SEAL v2.1: Merkle root + GDPR compliance + VISUAL PROGRESSION ═══
     if(doc?.sealPolicy && Object.keys(docFields).length > 1){
-      // Use new buildSealPayload with Merkle root
-      const sealData = await buildSealPayload(
+      // Show step 3 (sealing progress)
+      setFinalizeStep(3);
+      setSealProgress({ stage: 0, field: '', hash: '', message: 'Preparing...', progress: 0 });
+
+      // Use new buildSealPayloadWithProgress for visual feedback
+      const sealData = await buildSealPayloadWithProgress(
         { type: docType, fields: docFields },
         wallet,
-        doc.sealPolicy
+        doc.sealPolicy,
+        (progress) => setSealProgress(progress) // Progress callback
       );
 
       const r = {
@@ -2956,6 +3836,30 @@ function App(){
       setSavedDocs(p=>[{id:Date.now(),title:docTitle,icon:DOC_TYPES[docType]?.icon||"📄",type:docType||"note",status:"sealed",date:new Date().toLocaleDateString(),words:wordCount,fields:docFields},...p]);
       flash(`🛡️ ${t.doc.finalized}`);
       setTimeout(()=>setMsgs(p=>[...p,{role:"bot",text:t.chat.finalized}]),800);
+
+      // ═══ EVENT BUS: Seal Complete ═══
+      if(window.WINDI?.EventBus){
+        window.WINDI.EventBus.emit(window.WINDI.EventBus.EVENTS.DOCUMENT_SEALED,{
+          summary:`${docType}:${docTitle}`,
+          receiptId:r.id,
+          merkleRoot:r.ch,
+          docType,
+          trustDelta:2,
+          walletId:wallet?.id
+        });
+        window.WINDI.EventBus.emit(window.WINDI.EventBus.EVENTS.TRUST_UPDATED,{
+          summary:`+2 → T${Math.min((wallet?.trustScore||0)+2,50)}`,
+          walletId:wallet?.id,
+          newScore:Math.min((wallet?.trustScore||0)+2,50),
+          reason:'document_sealed'
+        });
+        window.WINDI.EventBus.emit(window.WINDI.EventBus.EVENTS.RECEIPT_ADDED,{
+          summary:r.id,
+          receipt:r,
+          docTitle,
+          docType
+        });
+      }
     }
     // ═══ LEGACY FALLBACK ═══
     else {
@@ -2976,6 +3880,25 @@ function App(){
       setSavedDocs(p=>[{id:Date.now(),title:docTitle,icon:DOC_TYPES[docType]?.icon||"📄",type:docType||"note",status:"sealed",date:new Date().toLocaleDateString(),words:wordCount},...p]);
       flash(`🛡️ ${t.doc.finalized}`);
       setTimeout(()=>setMsgs(p=>[...p,{role:"bot",text:t.chat.finalized}]),800);
+
+      // ═══ EVENT BUS: Seal Complete (Legacy) ═══
+      if(window.WINDI?.EventBus){
+        window.WINDI.EventBus.emit(window.WINDI.EventBus.EVENTS.DOCUMENT_SEALED,{
+          summary:`${docType||'note'}:${docTitle}`,
+          receiptId:r.id,
+          contentHash:ch,
+          docType:docType||'note',
+          trustDelta:2,
+          walletId:wallet?.id,
+          legacy:true
+        });
+        window.WINDI.EventBus.emit(window.WINDI.EventBus.EVENTS.TRUST_UPDATED,{
+          summary:`+2 → T${Math.min((wallet?.trustScore||0)+2,50)}`,
+          walletId:wallet?.id,
+          newScore:Math.min((wallet?.trustScore||0)+2,50),
+          reason:'document_sealed'
+        });
+      }
     }
   },[wallet,docTitle,docContent,docFields,docImages,docType,wordCount,t,flash]);
 
@@ -3002,6 +3925,18 @@ function App(){
       setExportResult(result);
       flash(`📦 ${result.filename} exported! Ledger: ${result.ledgerRegistered?'✅':'⏳'}`,3000);
       console.log('[WINDI] Export complete:',result);
+
+      // ═══ EVENT BUS: Export Complete ═══
+      if(window.WINDI?.EventBus){
+        window.WINDI.EventBus.emit(window.WINDI.EventBus.EVENTS.DOCUMENT_EXPORTED,{
+          summary:`${result.filename}`,
+          filename:result.filename,
+          format:result.format||'jmpg',
+          docType:docType||'note',
+          ledgerRegistered:result.ledgerRegistered,
+          walletId:wallet?.id
+        });
+      }
     }catch(e){
       console.error('[WINDI] Export error:',e);
       flash(`❌ Export failed: ${e.message}`,3000);
@@ -3011,7 +3946,8 @@ function App(){
   },[docType,docTitle,docContent,docFields,wallet,lang,flash]);
 
   // FIX (A): use theme.bg (NOT theme.gradient)
-  const base={minHeight:"100vh",background:th.bg,color:th.text,fontFamily:"'Bricolage Grotesque',sans-serif"};
+  // Z-INDEX: Ensure content stays above Drive In video background (z-index: 0)
+  const base={minHeight:"100vh",background:th.bg,color:th.text,fontFamily:"'Bricolage Grotesque',sans-serif",position:"relative",zIndex:1};
 
   // ═══ ONBOARDING ═══
   if(view==="onboard"){
@@ -3053,7 +3989,16 @@ function App(){
         <div style={{padding:"12px 0",textAlign:"center",borderBottom:`1px solid ${th.border}22`}}><span style={{fontSize:20}}>🐉</span></div>
         <div style={{flex:1,padding:"8px 0",display:"flex",flexDirection:"column",gap:2}}>
           {SIDEBAR.map(item=>(
-            <button key={item.id} onClick={()=>{setSidebarTab(item.id);if(isMobile)setSidebarOpen(false);}}
+            <button key={item.id} onClick={()=>{
+              setSidebarTab(item.id);
+              if(isMobile)setSidebarOpen(false);
+              // ═══ EVENT BUS: Tab Changed ═══
+              if(window.WINDI?.EventBus){
+                window.WINDI.EventBus.emit(window.WINDI.EventBus.EVENTS.TAB_CHANGED,{
+                  summary:item.id,tab:item.id,previous:sidebarTab
+                });
+              }
+            }}
               title={t.sidebar[item.id]} style={{display:"flex",alignItems:"center",gap:10,
                 padding:isMobile?"10px 16px":"10px 0",justifyContent:isMobile?"flex-start":"center",
                 cursor:"pointer",border:"none",background:sidebarTab===item.id?th.sidebarActive:th.sidebarBg,
@@ -3188,6 +4133,79 @@ function App(){
                 </div>
               )}
               <div style={{flex:1,overflowY:"auto",padding:"10px 8px"}}>
+                {/* ═══ DOCUMENT SHELF — "Prateleira de Documentos" ═══ */}
+                {/* Shows when chat is empty, offers 12 document types as clickable cards */}
+                {msgs.length===0&&(()=>{
+                  const SHELF_LABELS={
+                    de:{title:'Was möchten Sie erstellen?',sub:'Wählen Sie einen Dokumenttyp — der Dragon begleitet Sie.'},
+                    en:{title:'What would you like to create?',sub:'Choose a document type — the Dragon will guide you.'},
+                    pt:{title:'O que deseja criar?',sub:'Escolha um tipo de documento — o Dragon guia você.'}
+                  };
+                  const SHELF_PROMPTS={
+                    letter:{de:'Ich möchte einen Brief schreiben',en:'I want to write a letter',pt:'Quero escrever uma carta'},
+                    email:{de:'Ich möchte eine E-Mail verfassen',en:'I want to compose an email',pt:'Quero compor um e-mail'},
+                    note:{de:'Ich möchte eine Notiz erstellen',en:'I want to create a note',pt:'Quero criar uma nota'},
+                    memo:{de:'Ich möchte ein Memo erstellen',en:'I want to create a memo',pt:'Quero criar um memorando'},
+                    journal:{de:'Ich möchte einen Journaleintrag schreiben',en:'I want to write a journal entry',pt:'Quero escrever uma entrada de diário'},
+                    recipe:{de:'Ich möchte ein Rezept dokumentieren',en:'I want to document a recipe',pt:'Quero documentar uma receita'},
+                    report:{de:'Ich möchte einen Bericht erstellen',en:'I want to create a report',pt:'Quero criar um relatório'},
+                    contract:{de:'Ich möchte einen Vertrag aufsetzen',en:'I want to draft a contract',pt:'Quero redigir um contrato'},
+                    invoice:{de:'Ich möchte eine Rechnung erstellen',en:'I want to create an invoice',pt:'Quero criar uma factura'},
+                    protocol:{de:'Ich möchte ein Protokoll schreiben',en:'I want to write meeting minutes',pt:'Quero escrever uma ata'},
+                    analysis:{de:'Ich möchte eine Analyse erstellen',en:'I want to create an analysis',pt:'Quero criar uma análise'},
+                    presentation:{de:'Ich möchte eine Präsentation erstellen',en:'I want to create a presentation',pt:'Quero criar uma apresentação'},
+                    communique:{de:'Ich möchte ein Communiqué veröffentlichen',en:'I want to publish a communiqué',pt:'Quero publicar um comunicado'},
+                    certificate:{de:'Ich möchte ein Zertifikat ausstellen',en:'I want to issue a certificate',pt:'Quero emitir um certificado'},
+                    creativeVirtue:{de:'Ich möchte ein Kreatives Tugend-Zertifikat erstellen',en:'I want to create a Creative Virtue Receipt',pt:'Quero criar um Recibo de Virtude Criativa'}
+                  };
+                  const SHELF_NAMES={
+                    letter:{de:'Brief',en:'Letter',pt:'Carta'},email:{de:'E-Mail',en:'Email',pt:'E-mail'},
+                    note:{de:'Notiz',en:'Note',pt:'Nota'},memo:{de:'Memo',en:'Memo',pt:'Memorando'},
+                    journal:{de:'Journal',en:'Journal',pt:'Diário'},recipe:{de:'Rezept',en:'Recipe',pt:'Receita'},
+                    report:{de:'Bericht',en:'Report',pt:'Relatório'},contract:{de:'Vertrag',en:'Contract',pt:'Contrato'},
+                    invoice:{de:'Rechnung',en:'Invoice',pt:'Factura'},protocol:{de:'Protokoll',en:'Protocol',pt:'Ata'},
+                    analysis:{de:'Analyse',en:'Analysis',pt:'Análise'},presentation:{de:'Präsentation',en:'Presentation',pt:'Apresentação'},
+                    communique:{de:'Communiqué',en:'Communiqué',pt:'Comunicado'},certificate:{de:'Zertifikat',en:'Certificate',pt:'Certificado'},
+                    creativeVirtue:{de:'Kreatives Tugend',en:'Creative Virtue',pt:'Virtude Criativa'}
+                  };
+                  const TIER_LEVEL={FREE:0,MED:1,HIGH:2};
+                  const currentLevel=TIER_LEVEL[windiTier]||0;
+                  const shelfDocs=Object.entries(DOC_TYPES).filter(([k])=>k!=='creativeVirtue'||windiTier==='HIGH');
+                  const sl=SHELF_LABELS[lang]||SHELF_LABELS.en;
+                  return React.createElement('div',{style:{padding:16,maxWidth:600,margin:'0 auto'}},
+                    React.createElement('div',{style:{textAlign:'center',marginBottom:20}},
+                      React.createElement('div',{style:{fontSize:36,marginBottom:8}},'🐉'),
+                      React.createElement('h2',{style:{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:18,fontWeight:700,color:th.text,marginBottom:6,margin:0}},sl.title),
+                      React.createElement('p',{style:{fontSize:12,color:th.dim,margin:0,fontFamily:"'Bricolage Grotesque',sans-serif"}},sl.sub)
+                    ),
+                    React.createElement('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(130px,1fr))',gap:8}},
+                      ...shelfDocs.map(([id,dt])=>{
+                        const docTierLevel=TIER_LEVEL[dt.tier]||0;
+                        const locked=currentLevel<docTierLevel;
+                        const nm=SHELF_NAMES[id]||{};
+                        return React.createElement('div',{
+                          key:id,
+                          onClick:()=>{if(!locked){
+                            const msg=(SHELF_PROMPTS[id]||{})[lang]||(SHELF_PROMPTS[id]||{}).en||`Create ${id}`;
+                            setChatIn(msg);
+                            setTimeout(()=>send(msg),150);
+                          }},
+                          style:{
+                            background:locked?(th.card+'88'):th.card,border:'1px solid '+th.border,borderRadius:10,
+                            padding:'12px 8px',cursor:locked?'not-allowed':'pointer',textAlign:'center',
+                            transition:'all 0.2s',opacity:locked?0.5:1,position:'relative'
+                          },
+                          onMouseEnter:e=>{if(!locked){e.currentTarget.style.borderColor=th.gold;e.currentTarget.style.transform='translateY(-2px)';}},
+                          onMouseLeave:e=>{e.currentTarget.style.borderColor=th.border;e.currentTarget.style.transform='none';}
+                        },
+                          React.createElement('div',{style:{fontSize:24,marginBottom:4}},dt.icon),
+                          React.createElement('div',{style:{fontFamily:"'Bricolage Grotesque',sans-serif",fontWeight:600,fontSize:12,color:th.text}},nm[lang]||nm.en||id),
+                          locked&&React.createElement('span',{style:{position:'absolute',top:4,right:4,background:th.gold,color:'#fff',fontSize:8,padding:'2px 5px',borderRadius:3,fontWeight:700}},dt.tier)
+                        );
+                      })
+                    )
+                  );
+                })()}
                 {msgs.map((m,i)=>{
                   if(m.role==="system")return<div key={i} style={{textAlign:"center",padding:"3px 0",margin:"4px 0"}}><span style={{fontSize:9,color:th.dim,background:th.card,padding:"2px 8px",borderRadius:6}}>{m.text}</span></div>;
                   const isU=m.role==="user";
@@ -3198,6 +4216,28 @@ function App(){
                     <div style={{maxWidth:"82%"}}>
                       <div style={{padding:"7px 11px",borderRadius:12,background:isU?th.chatUser:th.chatBot,border:`1px solid ${isU?th.border:th.gold+"22"}`,fontSize:12.5,lineHeight:1.6,whiteSpace:"pre-wrap",borderTopLeftRadius:isU?12:3,borderTopRightRadius:isU?3:12}}>{m.text}</div>
                       {!isU&&sourceIcon&&<div style={{fontSize:8,color:th.dim,marginTop:2,marginLeft:4}}>{sourceIcon} {m.source}</div>}
+                      {/* ═══ DRAGON→DESKTOP BRIDGE: "Open in Editor" button ═══ */}
+                      {!isU&&m.document&&<button onClick={()=>{
+                        const desktopUrl=window.location.hostname==='localhost'?'http://localhost:8100':'https://admin.windia4desk.tech/desktop';
+                        fetch(desktopUrl+'/api/documents/create-from-dragon',{
+                          method:'POST',headers:{'Content-Type':'application/json'},
+                          body:JSON.stringify(m.document)
+                        }).then(r=>r.json()).then(d=>{
+                          if(d.success||d.id){
+                            window.open(desktopUrl+'/?doc='+encodeURIComponent(d.id||'draft'),'_blank');
+                          }else{
+                            // Fallback: open Desktop with document in localStorage
+                            localStorage.setItem('windi_dragon_draft',JSON.stringify(m.document));
+                            window.open(desktopUrl+'/?from=dragon','_blank');
+                          }
+                        }).catch(()=>{
+                          localStorage.setItem('windi_dragon_draft',JSON.stringify(m.document));
+                          window.open(desktopUrl+'/?from=dragon','_blank');
+                        });
+                      }} style={{marginTop:6,padding:"5px 12px",borderRadius:8,background:th.gold,border:"none",color:"#fff",fontSize:10,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",gap:4}}>
+                        <span>📝</span>
+                        <span>{lang==="de"?"Im Editor öffnen":lang==="pt"?"Abrir no Editor":"Open in Editor"}</span>
+                      </button>}
                     </div>
                   </div>;
                 })}
@@ -3324,11 +4364,11 @@ function App(){
           {/* ═══ WALLET TAB ═══ */}
           {sidebarTab==="wallet"&&(
             <div style={{flex:1,overflowY:"auto",padding:"20px",display:"flex",flexDirection:"column",alignItems:"center"}}>
-              {/* A.2: VAULT STATS BANNER */}
-              <div style={{width:"100%",maxWidth:340,padding:"14px 16px",borderRadius:12,background:th.card,border:`1px solid ${th.border}`,marginBottom:20}}>
+              {/* A.2: VAULT STATS BANNER — Phase 1B: Biofeedback */}
+              <div className={vaultPulse?"vault-pulse":""} style={{width:"100%",maxWidth:340,padding:"14px 16px",borderRadius:12,background:th.card,border:`1px solid ${vaultPulse?th.gold:th.border}`,marginBottom:20,transition:"border-color 0.3s ease"}}>
                 <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
                   <div style={{display:"flex",alignItems:"center",gap:8}}>
-                    <span style={{fontSize:20}}>🏛️</span>
+                    <span style={{fontSize:20}}>{vaultPulse?"✨":"🏛️"}</span>
                     <span style={{fontSize:13,fontWeight:700}}>Forensic Vault</span>
                   </div>
                   <div style={{display:"flex",alignItems:"center",gap:6}}>
@@ -3337,8 +4377,8 @@ function App(){
                   </div>
                 </div>
                 <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
-                  <div style={{padding:"10px 12px",background:th.hover,borderRadius:8,textAlign:"center"}}>
-                    <div style={{fontSize:20,fontWeight:800,color:th.gold}}>{vaultStats.total.toLocaleString()}</div>
+                  <div style={{padding:"10px 12px",background:vaultPulse?th.gold+"15":th.hover,borderRadius:8,textAlign:"center",transition:"background 0.3s ease"}}>
+                    <div className={vaultPulse?"number-bump":""} style={{fontSize:20,fontWeight:800,color:th.gold}}>{vaultStats.total.toLocaleString()}</div>
                     <div style={{fontSize:9,color:th.dim,marginTop:2}}>Receipts</div>
                   </div>
                   <div style={{padding:"10px 12px",background:th.hover,borderRadius:8,textAlign:"center"}}>
@@ -3346,6 +4386,17 @@ function App(){
                     <div style={{fontSize:9,color:th.dim,marginTop:2}}>Dokumenttypen</div>
                   </div>
                 </div>
+                {/* Phase 1B: Contextual last sealed message */}
+                {vaultLastSealed&&(
+                  <div style={{marginTop:10,padding:"8px 10px",background:th.success+"10",borderRadius:6,borderLeft:`3px solid ${th.success}`}}>
+                    <div style={{fontSize:10,color:th.success,fontWeight:600}}>
+                      {lang==="de"?`Zuletzt: Dokument #${vaultLastSealed.number}`:lang==="pt"?`Último: Documento #${vaultLastSealed.number}`:`Last: Document #${vaultLastSealed.number}`}
+                    </div>
+                    <div style={{fontSize:9,color:th.dim,marginTop:2,fontFamily:"'JetBrains Mono',monospace"}}>
+                      {vaultLastSealed.hash}... · {new Date(vaultLastSealed.timestamp).toLocaleTimeString()}
+                    </div>
+                  </div>
+                )}
                 <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginTop:10,paddingTop:10,borderTop:`1px solid ${th.border}`}}>
                   <div style={{display:"flex",alignItems:"center",gap:6}}>
                     <span style={{fontSize:10,color:vaultStats.chain_ok?th.success:th.dim}}>{vaultStats.chain_ok?"🔗 Chain OK":"⚠️ Chain pending"}</span>
@@ -3427,7 +4478,7 @@ function App(){
                       {layer.type==="text"&&(
                         <div contentEditable={deskSelected===layer.id&&!layer.locked} suppressContentEditableWarning
                           onBlur={e=>deskUpdateLayer(layer.id,{content:e.target.innerText})}
-                          style={{width:"100%",height:"100%",padding:"8px 10px",fontSize:layer.fontSize||16,fontWeight:layer.fontWeight||400,color:layer.color||th.text,background:layer.bgColor||"transparent",fontFamily:"'Bricolage Grotesque',sans-serif",outline:"none",lineHeight:1.6,wordBreak:"break-word",cursor:deskSelected===layer.id?"text":"move"}}>
+                          style={{width:"100%",height:"100%",padding:"8px 10px",fontSize:layer.fontSize||16,fontWeight:layer.fontWeight||400,fontStyle:layer.fontStyle||"normal",textDecoration:layer.textDecoration||"none",textAlign:layer.textAlign||"left",color:layer.color||th.text,background:layer.bgColor||"transparent",fontFamily:"'Bricolage Grotesque',sans-serif",outline:"none",lineHeight:1.6,wordBreak:"break-word",cursor:deskSelected===layer.id?"text":"move"}}>
                           {layer.content||"Type here..."}
                         </div>
                       )}
@@ -3493,10 +4544,33 @@ function App(){
                       ))}
                     </div>
                     {(sl.type==="text"||sl.type==="shape")&&(
+                      <>
+                      {/* ═══ TEXT FORMATTING TOOLBAR — "Os Músculos" ═══ */}
+                      {/* Quick format buttons: B I U + Alignment + Heading presets */}
+                      <div style={{display:"flex",gap:2,marginBottom:6,flexWrap:"wrap"}}>
+                        {/* Bold/Italic/Underline toggles */}
+                        <button onClick={()=>deskUpdateLayer(sl.id,{fontWeight:(sl.fontWeight||400)>=700?400:700})} title="Bold" style={{width:24,height:24,borderRadius:4,border:"1px solid "+((sl.fontWeight||400)>=700?th.gold:th.border),background:(sl.fontWeight||400)>=700?th.gold+"22":th.card,color:(sl.fontWeight||400)>=700?th.gold:th.text,fontSize:11,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>B</button>
+                        <button onClick={()=>deskUpdateLayer(sl.id,{fontStyle:sl.fontStyle==="italic"?"normal":"italic"})} title="Italic" style={{width:24,height:24,borderRadius:4,border:"1px solid "+(sl.fontStyle==="italic"?th.gold:th.border),background:sl.fontStyle==="italic"?th.gold+"22":th.card,color:sl.fontStyle==="italic"?th.gold:th.text,fontSize:11,fontStyle:"italic",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>I</button>
+                        <button onClick={()=>deskUpdateLayer(sl.id,{textDecoration:sl.textDecoration==="underline"?"none":"underline"})} title="Underline" style={{width:24,height:24,borderRadius:4,border:"1px solid "+(sl.textDecoration==="underline"?th.gold:th.border),background:sl.textDecoration==="underline"?th.gold+"22":th.card,color:sl.textDecoration==="underline"?th.gold:th.text,fontSize:11,textDecoration:"underline",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>U</button>
+                        <div style={{width:1,background:th.border,margin:"2px 4px"}}/>
+                        {/* Text alignment */}
+                        <button onClick={()=>deskUpdateLayer(sl.id,{textAlign:"left"})} title="Align Left" style={{width:24,height:24,borderRadius:4,border:"1px solid "+((sl.textAlign||"left")==="left"?th.gold:th.border),background:(sl.textAlign||"left")==="left"?th.gold+"22":th.card,color:(sl.textAlign||"left")==="left"?th.gold:th.text,fontSize:9,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>☰</button>
+                        <button onClick={()=>deskUpdateLayer(sl.id,{textAlign:"center"})} title="Align Center" style={{width:24,height:24,borderRadius:4,border:"1px solid "+(sl.textAlign==="center"?th.gold:th.border),background:sl.textAlign==="center"?th.gold+"22":th.card,color:sl.textAlign==="center"?th.gold:th.text,fontSize:9,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>≡</button>
+                        <button onClick={()=>deskUpdateLayer(sl.id,{textAlign:"right"})} title="Align Right" style={{width:24,height:24,borderRadius:4,border:"1px solid "+(sl.textAlign==="right"?th.gold:th.border),background:sl.textAlign==="right"?th.gold+"22":th.card,color:sl.textAlign==="right"?th.gold:th.text,fontSize:9,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>⫶</button>
+                      </div>
+                      {/* Heading presets */}
+                      <div style={{display:"flex",gap:2,marginBottom:6}}>
+                        {[{id:"h1",label:"H1",size:28,weight:700},{id:"h2",label:"H2",size:22,weight:700},{id:"h3",label:"H3",size:18,weight:600},{id:"p",label:"P",size:14,weight:400},{id:"s",label:"S",size:11,weight:400}].map(h=>{
+                          const isActive=(sl.fontSize||16)===h.size&&(sl.fontWeight||400)===h.weight;
+                          return <button key={h.id} onClick={()=>deskUpdateLayer(sl.id,{fontSize:h.size,fontWeight:h.weight})} title={h.label} style={{flex:1,padding:"3px 0",borderRadius:4,border:"1px solid "+(isActive?th.gold:th.border),background:isActive?th.gold+"22":th.card,color:isActive?th.gold:th.text,fontSize:9,fontWeight:600,cursor:"pointer"}}>{h.label}</button>;
+                        })}
+                      </div>
+                      {/* Font size + weight selects */}
                       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:3,marginBottom:6}}>
                         <select value={sl.fontSize||16} onChange={e=>deskUpdateLayer(sl.id,{fontSize:Number(e.target.value)})} style={{padding:"3px",borderRadius:3,border:"1px solid "+th.border,background:th.input,color:th.text,fontSize:9,outline:"none"}}>{FONT_SIZES.map(s=><option key={s} value={s}>{s}px</option>)}</select>
                         <select value={sl.fontWeight||400} onChange={e=>deskUpdateLayer(sl.id,{fontWeight:Number(e.target.value)})} style={{padding:"3px",borderRadius:3,border:"1px solid "+th.border,background:th.input,color:th.text,fontSize:9,outline:"none"}}>{[300,400,500,600,700,800].map(w=><option key={w} value={w}>{w}</option>)}</select>
                       </div>
+                      </>
                     )}
                     <div style={{display:"flex",gap:6,marginBottom:6}}>
                       <div style={{flex:1}}><span style={{fontSize:8,color:th.dim}}>Color</span><input type="color" value={sl.color||"#2C2924"} onChange={e=>deskUpdateLayer(sl.id,{color:e.target.value})} style={{width:"100%",height:22,border:"1px solid "+th.border,borderRadius:3,cursor:"pointer"}}/></div>
@@ -3705,8 +4779,8 @@ function App(){
             <button onClick={wipeIdentity} style={{padding:"5px 12px",borderRadius:6,background:th.card,border:`1px solid ${th.danger}33`,color:th.danger,fontSize:9,cursor:"pointer"}}>🗑️ {t.did.wipeData}</button>
           </div></div></div>}
 
-      {/* ═══ FIX (J): FINALIZE 2-STEP MODAL ═══ */}
-      {showFinalizeModal&&<div style={{position:"fixed",inset:0,background:"#000A",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:16}} onClick={()=>setShowFinalizeModal(false)}>
+      {/* ═══ FIX (J): FINALIZE 2-STEP MODAL + SEAL PROGRESSION ═══ */}
+      {showFinalizeModal&&<div style={{position:"fixed",inset:0,background:"#000A",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:16}} onClick={()=>{if(finalizeStep!==3)setShowFinalizeModal(false);}}>
         <div onClick={e=>e.stopPropagation()} style={{background:th.card,borderRadius:18,padding:"24px 20px",maxWidth:420,width:"100%",border:`1px solid ${th.gold}33`,maxHeight:"90vh",overflowY:"auto"}}>
           <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:16}}>
             <span style={{fontSize:24}}>🛡️</span>
@@ -3753,6 +4827,84 @@ function App(){
             <div style={{display:"flex",gap:8}}>
               <button onClick={()=>setFinalizeStep(1)} style={{flex:1,padding:"10px",borderRadius:10,background:th.card,border:`1px solid ${th.border}`,color:th.dim,fontSize:12,cursor:"pointer"}}>← {t.finalize.step1}</button>
               <button onClick={executeSeal} style={{flex:1,padding:"10px",borderRadius:10,background:th.gold,border:"none",color:"#FFF",fontSize:13,fontWeight:700,cursor:"pointer",boxShadow:`0 4px 16px ${th.gold}33`}}>{t.finalize.sealNow}</button>
+            </div>
+          </>}
+
+          {/* ═══ STEP 3: SEALING PROGRESSION (4 Stages) ═══ */}
+          {finalizeStep===3&&<>
+            <div style={{textAlign:"center",padding:"16px 0"}}>
+              {/* Animated seal icon */}
+              <div style={{fontSize:56,marginBottom:12,animation:"pulse 1s ease-in-out infinite"}}>
+                {sealProgress.stage===4&&sealProgress.progress===100?"✅":"🔐"}
+              </div>
+
+              {/* Progress ring */}
+              <div style={{position:"relative",width:120,height:120,margin:"0 auto 16px"}}>
+                <svg width="120" height="120" style={{transform:"rotate(-90deg)"}}>
+                  <circle cx="60" cy="60" r="54" fill="none" stroke={th.border} strokeWidth="8"/>
+                  <circle cx="60" cy="60" r="54" fill="none" stroke={th.gold} strokeWidth="8"
+                    strokeDasharray={`${(sealProgress.progress||0)*3.39} 339`}
+                    strokeLinecap="round" style={{transition:"stroke-dasharray 0.3s ease"}}/>
+                </svg>
+                <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",
+                  fontSize:24,fontWeight:800,color:th.gold}}>{sealProgress.progress||0}%</div>
+              </div>
+
+              {/* Stage indicators */}
+              <div style={{display:"flex",justifyContent:"center",gap:6,marginBottom:16}}>
+                {[1,2,3,4].map(s=>(
+                  <div key={s} style={{
+                    width:28,height:28,borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",
+                    background:sealProgress.stage>=s?th.gold:th.border,color:sealProgress.stage>=s?"#FFF":th.dim,
+                    fontSize:11,fontWeight:700,transition:"all 0.3s"
+                  }}>{s}</div>
+                ))}
+              </div>
+
+              {/* Stage labels */}
+              <div style={{fontSize:11,color:th.dim,marginBottom:8}}>
+                {sealProgress.stage===1&&(lang==="de"?"1/4 — Feld-Hashing (SHA-256)":lang==="pt"?"1/4 — Hashing de campos (SHA-256)":"1/4 — Field Hashing (SHA-256)")}
+                {sealProgress.stage===2&&(lang==="de"?"2/4 — Merkle-Baum wird erstellt":lang==="pt"?"2/4 — Construindo árvore Merkle":"2/4 — Building Merkle Tree")}
+                {sealProgress.stage===3&&(lang==="de"?"3/4 — Merkle-Wurzel berechnet":lang==="pt"?"3/4 — Raiz Merkle calculada":"3/4 — Merkle Root Computed")}
+                {sealProgress.stage===4&&(lang==="de"?"4/4 — Im Ledger registriert":lang==="pt"?"4/4 — Registrado no Ledger":"4/4 — Registered in Ledger")}
+              </div>
+
+              {/* Current operation message */}
+              <div style={{fontSize:13,fontWeight:600,color:th.text,marginBottom:8}}>
+                {sealProgress.message}
+              </div>
+
+              {/* Field being hashed (stage 1 only) */}
+              {sealProgress.stage===1&&sealProgress.field&&(
+                <div style={{padding:"8px 12px",borderRadius:8,background:th.hover,border:`1px solid ${th.border}`,marginBottom:8}}>
+                  <div style={{fontSize:10,color:th.dim,marginBottom:2}}>
+                    {lang==="de"?"Aktuelles Feld:":lang==="pt"?"Campo actual:":"Current field:"}
+                  </div>
+                  <div style={{fontSize:12,fontWeight:600,color:th.gold,fontFamily:"'JetBrains Mono',monospace"}}>
+                    {sealProgress.field}
+                  </div>
+                </div>
+              )}
+
+              {/* Hash preview (stages 1,3,4) */}
+              {sealProgress.hash&&(
+                <div style={{padding:"8px 12px",borderRadius:8,background:"#0002",border:`1px solid ${th.gold}22`}}>
+                  <div style={{fontSize:10,color:th.dim,marginBottom:2}}>
+                    {sealProgress.stage===3?"Merkle Root:":sealProgress.stage===4?"Document ID:":"Hash:"}
+                  </div>
+                  <div style={{fontSize:11,fontWeight:500,color:th.gold,fontFamily:"'JetBrains Mono',monospace",wordBreak:"break-all"}}>
+                    {sealProgress.hash}
+                  </div>
+                </div>
+              )}
+
+              {/* Educational text */}
+              <div style={{fontSize:10,color:th.dim,marginTop:12,lineHeight:1.5,maxWidth:280,margin:"12px auto 0"}}>
+                {sealProgress.stage===1&&(lang==="de"?"Jedes Feld wird einzeln gehasht für Integrität.":lang==="pt"?"Cada campo é hasheado individualmente para integridade.":"Each field is individually hashed for integrity.")}
+                {sealProgress.stage===2&&(lang==="de"?"Die Hashes werden zu einem Merkle-Baum kombiniert.":lang==="pt"?"Os hashes são combinados numa árvore Merkle.":"Hashes are combined into a Merkle tree.")}
+                {sealProgress.stage===3&&(lang==="de"?"Die Wurzel beweist mathematisch die Integrität aller Felder.":lang==="pt"?"A raiz prova matematicamente a integridade de todos os campos.":"The root mathematically proves integrity of all fields.")}
+                {sealProgress.stage===4&&(lang==="de"?"Dein Dokument existiert jetzt als unveränderliche Wahrheit.":lang==="pt"?"O teu documento existe agora como verdade imutável.":"Your document now exists as immutable truth.")}
+              </div>
             </div>
           </>}
         </div></div>}
@@ -4028,5 +5180,6 @@ function App(){
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<App />);
 </script>
+<!-- DISABLED FOR DEBUG: <script src="/palette/static/windi-drivein.js"></script> -->
 </body>
 </html>
