@@ -487,31 +487,157 @@ const DOC_TYPE_TO_TEMPLATE = {
 };
 
 // Transform structured fields to JMPG content_blocks
+// Wave 2.1: MEMO + Invoice + Contract as golden path templates
 const transformFieldsToBlocks = (docType, fields, schema, lang = 'en') => {
   const blocks = [];
   const lk = lang === 'de' ? 'de' : lang === 'pt' ? 'pt' : 'en';
+  const label = (field) => schema?.[field]?.label?.[lk] || field.charAt(0).toUpperCase() + field.slice(1);
 
-  // Header block with document metadata
+  // ─── MEMO HEADER ───────────────────────────────────────────────────────────
   if (docType === 'memo') {
-    // MEMO-specific header
     blocks.push({
       type: 'table',
       id: 'memo-header',
       data: {
         rows: [
-          [{ text: schema?.to?.label?.[lk] || 'To', bold: true }, { text: fields.to || '' }],
-          [{ text: schema?.from?.label?.[lk] || 'From', bold: true }, { text: fields.from || '' }],
-          [{ text: schema?.date?.label?.[lk] || 'Date', bold: true }, { text: fields.date || new Date().toLocaleDateString() }],
-          [{ text: schema?.subject?.label?.[lk] || 'Subject', bold: true }, { text: fields.subject || '' }],
+          [{ text: label('to'), bold: true }, { text: fields.to || '' }],
+          [{ text: label('from'), bold: true }, { text: fields.from || '' }],
+          [{ text: label('date'), bold: true }, { text: fields.date || new Date().toLocaleDateString() }],
+          [{ text: label('subject'), bold: true }, { text: fields.subject || '' }],
           ...(fields.priority && fields.priority !== 'normal' ? [
-            [{ text: schema?.priority?.label?.[lk] || 'Priority', bold: true }, { text: fields.priority.toUpperCase(), style: 'badge-' + fields.priority }]
+            [{ text: label('priority'), bold: true }, { text: fields.priority.toUpperCase(), style: 'badge-' + fields.priority }]
           ] : []),
         ],
         style: 'memo-header'
       }
     });
-  } else if (docType === 'letter') {
-    // Letter header
+  }
+
+  // ─── INVOICE HEADER ────────────────────────────────────────────────────────
+  else if (docType === 'invoice') {
+    // Professional invoice header
+    blocks.push({
+      type: 'heading',
+      id: 'invoice-title',
+      data: { text: lk === 'de' ? 'RECHNUNG' : lk === 'pt' ? 'FATURA' : 'INVOICE', level: 1, style: 'invoice-title' }
+    });
+    blocks.push({
+      type: 'table',
+      id: 'invoice-header',
+      data: {
+        rows: [
+          [{ text: label('invoiceNo'), bold: true }, { text: fields.invoiceNo || '' }],
+          [{ text: label('date'), bold: true }, { text: fields.date || new Date().toLocaleDateString() }],
+          [{ text: label('billTo'), bold: true }, { text: fields.billTo || '' }],
+          ...(fields.dueDate ? [[{ text: label('dueDate'), bold: true }, { text: fields.dueDate }]] : []),
+        ],
+        style: 'invoice-header'
+      }
+    });
+
+    // Items/Services section
+    if (fields.items) {
+      blocks.push({
+        type: 'heading',
+        id: 'items-heading',
+        data: { text: label('items'), level: 2 }
+      });
+      blocks.push({
+        type: 'paragraph',
+        id: 'invoice-items',
+        data: { text: fields.items, html: true, style: 'invoice-items' }
+      });
+    }
+
+    // Total amount (prominent)
+    if (fields.total) {
+      blocks.push({
+        type: 'table',
+        id: 'invoice-total',
+        data: {
+          rows: [[{ text: label('total'), bold: true, style: 'total-label' }, { text: fields.total, bold: true, style: 'total-amount' }]],
+          style: 'invoice-total'
+        }
+      });
+    }
+
+    // Notes
+    if (fields.notes) {
+      blocks.push({
+        type: 'paragraph',
+        id: 'invoice-notes',
+        data: { text: `${label('notes')}: ${fields.notes}`, style: 'notes' }
+      });
+    }
+  }
+
+  // ─── CONTRACT HEADER ───────────────────────────────────────────────────────
+  else if (docType === 'contract') {
+    // Contract title
+    blocks.push({
+      type: 'heading',
+      id: 'contract-title',
+      data: { text: fields.title || (lk === 'de' ? 'VERTRAG' : lk === 'pt' ? 'CONTRATO' : 'CONTRACT'), level: 1, style: 'contract-title' }
+    });
+
+    // Contract metadata
+    blocks.push({
+      type: 'table',
+      id: 'contract-header',
+      data: {
+        rows: [
+          [{ text: label('date'), bold: true }, { text: fields.date || new Date().toLocaleDateString() }],
+          ...(fields.duration ? [[{ text: label('duration'), bold: true }, { text: fields.duration }]] : []),
+        ],
+        style: 'contract-header'
+      }
+    });
+
+    // Parties section
+    if (fields.parties) {
+      blocks.push({
+        type: 'heading',
+        id: 'parties-heading',
+        data: { text: label('parties'), level: 2 }
+      });
+      blocks.push({
+        type: 'paragraph',
+        id: 'contract-parties',
+        data: { text: fields.parties, html: true, style: 'contract-parties' }
+      });
+    }
+
+    // Terms & Conditions
+    if (fields.terms) {
+      blocks.push({
+        type: 'heading',
+        id: 'terms-heading',
+        data: { text: label('terms'), level: 2 }
+      });
+      blocks.push({
+        type: 'paragraph',
+        id: 'contract-terms',
+        data: { text: fields.terms, html: true, style: 'contract-terms' }
+      });
+    }
+
+    // Signatures section
+    if (fields.signatures) {
+      blocks.push({
+        type: 'heading',
+        id: 'signatures-heading',
+        data: { text: label('signatures'), level: 2 }
+      });
+      blocks.push({
+        type: 'paragraph',
+        id: 'contract-signatures',
+        data: { text: fields.signatures, style: 'signature-block' }
+      });
+    }
+  }
+
+  // ─── LETTER HEADER ─────────────────────────────────────────────────────────
+  else if (docType === 'letter') {
     blocks.push({
       type: 'paragraph',
       id: 'letter-recipient',
@@ -524,85 +650,56 @@ const transformFieldsToBlocks = (docType, fields, schema, lang = 'en') => {
         data: { text: `Ref: ${fields.reference}`, style: 'reference' }
       });
     }
-  } else if (docType === 'invoice') {
-    // Invoice header table
-    blocks.push({
-      type: 'table',
-      id: 'invoice-header',
-      data: {
-        rows: [
-          [{ text: 'Invoice No.', bold: true }, { text: fields.invoiceNumber || fields.number || '' }],
-          [{ text: 'Date', bold: true }, { text: fields.date || new Date().toLocaleDateString() }],
-          [{ text: 'Bill To', bold: true }, { text: fields.billTo || fields.client || '' }],
-          ...(fields.dueDate ? [[{ text: 'Due Date', bold: true }, { text: fields.dueDate }]] : []),
-        ],
-        style: 'invoice-header'
-      }
-    });
   }
 
-  // Subject/Title as heading (if not already in header)
-  if (fields.subject && docType !== 'memo') {
-    blocks.push({
-      type: 'heading',
-      id: 'doc-subject',
-      data: { text: fields.subject, level: 1 }
-    });
+  // ─── GENERIC TITLE/SUBJECT ─────────────────────────────────────────────────
+  // For types without specific headers
+  if (!['memo', 'invoice', 'contract'].includes(docType)) {
+    if (fields.title) {
+      blocks.push({
+        type: 'heading',
+        id: 'doc-title',
+        data: { text: fields.title, level: 1 }
+      });
+    }
+    if (fields.subject) {
+      blocks.push({
+        type: 'heading',
+        id: 'doc-subject',
+        data: { text: fields.subject, level: 1 }
+      });
+    }
   }
 
-  // Main body content
-  if (fields.body) {
-    blocks.push({
-      type: 'paragraph',
-      id: 'doc-body',
-      data: { text: fields.body, html: true }
-    });
-  } else if (fields.content) {
-    blocks.push({
-      type: 'paragraph',
-      id: 'doc-content',
-      data: { text: fields.content, html: true }
-    });
+  // ─── MAIN BODY CONTENT ─────────────────────────────────────────────────────
+  // Skip for invoice/contract which handle body differently
+  if (!['invoice', 'contract'].includes(docType)) {
+    if (fields.body) {
+      blocks.push({
+        type: 'paragraph',
+        id: 'doc-body',
+        data: { text: fields.body, html: true }
+      });
+    } else if (fields.content) {
+      blocks.push({
+        type: 'paragraph',
+        id: 'doc-content',
+        data: { text: fields.content, html: true }
+      });
+    }
   }
 
-  // Action required (MEMO specific)
-  if (fields.action) {
+  // ─── MEMO: ACTION REQUIRED ─────────────────────────────────────────────────
+  if (docType === 'memo' && fields.action) {
     blocks.push({
       type: 'quote',
       id: 'action-required',
-      data: { text: `📌 ${schema?.action?.label?.[lk] || 'Required Action'}: ${fields.action}`, style: 'action-callout' }
+      data: { text: `📌 ${label('action')}: ${fields.action}`, style: 'action-callout' }
     });
   }
 
-  // Invoice items (if present)
-  if (fields.items && Array.isArray(fields.items)) {
-    blocks.push({
-      type: 'table',
-      id: 'invoice-items',
-      data: {
-        headers: ['Description', 'Qty', 'Unit Price', 'Total'],
-        rows: fields.items.map(item => [
-          item.description || '',
-          String(item.quantity || 1),
-          item.unitPrice || '',
-          item.total || ''
-        ]),
-        style: 'invoice-items'
-      }
-    });
-  }
-
-  // Totals (invoice)
-  if (fields.total || fields.amount) {
-    blocks.push({
-      type: 'paragraph',
-      id: 'doc-total',
-      data: { text: `Total: ${fields.total || fields.amount}`, style: 'total-amount' }
-    });
-  }
-
-  // Signature block
-  if (fields.signature || fields.signedBy) {
+  // ─── GENERIC SIGNATURE BLOCK ───────────────────────────────────────────────
+  if (docType !== 'contract' && (fields.signature || fields.signedBy)) {
     blocks.push({
       type: 'paragraph',
       id: 'signature',
