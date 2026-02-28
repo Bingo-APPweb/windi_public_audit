@@ -393,6 +393,283 @@ const redactForLedger = (value) => {
   return str[0] + '*'.repeat(Math.min(str.length - 2, 5)) + str[str.length - 1];
 };
 
+// ═══════════════════════════════════════════════════════════════════════════════════
+// DRAGON MENTOR LAYER — Wave 2.2: Contextual Consciousness
+// "O sistema educa quem o usa. Não através de manuais, mas através da interface."
+// ═══════════════════════════════════════════════════════════════════════════════════
+
+// ─── FIELD NARRATIVES: Semantic meaning per field type ─────────────────────────────
+// Each field carries governance weight. The Dragon reveals it.
+const FIELD_NARRATIVES = {
+  // Recipient fields → Chain of responsibility
+  to: {
+    weight: 'high',
+    de: 'Der Empfänger wird benachrichtigt und erhält verifizierbaren Zugang.',
+    en: 'The recipient will be notified and gain verifiable access.',
+    pt: 'O destinatário será notificado e terá acesso verificável.',
+    governance: 'recipient_tracking',
+  },
+  from: {
+    weight: 'high',
+    de: 'Dies ist Ihre digitale Unterschrift. Sie übernehmen Verantwortung.',
+    en: 'This is your digital signature. You assume responsibility.',
+    pt: 'Esta é a sua assinatura digital. Você assume responsabilidade.',
+    governance: 'authorship',
+  },
+  cc: {
+    weight: 'medium',
+    de: 'CC-Empfänger werden dokumentiert, aber nicht zur Aktion verpflichtet.',
+    en: 'CC recipients are documented but not obligated to act.',
+    pt: 'Destinatários em CC são documentados mas não obrigados a agir.',
+    governance: 'awareness_chain',
+  },
+
+  // Subject/Title → Document identity
+  subject: {
+    weight: 'high',
+    de: 'Der Betreff wird Teil des unveränderlichen Hashings.',
+    en: 'The subject becomes part of the immutable hash.',
+    pt: 'O assunto torna-se parte do hash imutável.',
+    governance: 'identity',
+  },
+  title: {
+    weight: 'high',
+    de: 'Der Titel identifiziert dieses Dokument im Forensic Ledger.',
+    en: 'The title identifies this document in the Forensic Ledger.',
+    pt: 'O título identifica este documento no Forensic Ledger.',
+    governance: 'identity',
+  },
+
+  // Priority/Classification → Legal implications
+  priority: {
+    weight: 'critical',
+    values: {
+      confidential: {
+        de: '⚠️ Vertraulich: Erfordert gesetzlichen Schutz. Verbreitung ist eingeschränkt.',
+        en: '⚠️ Confidential: Requires legal protection. Distribution is restricted.',
+        pt: '⚠️ Confidencial: Requer proteção legal. Distribuição é restrita.',
+      },
+      urgent: {
+        de: 'Dringend: Erfordert sofortige Aufmerksamkeit des Empfängers.',
+        en: 'Urgent: Requires immediate attention from recipient.',
+        pt: 'Urgente: Requer atenção imediata do destinatário.',
+      },
+      important: {
+        de: 'Wichtig: Priorisierte Bearbeitung erwartet.',
+        en: 'Important: Prioritized handling expected.',
+        pt: 'Importante: Tratamento prioritário esperado.',
+      },
+    },
+    governance: 'classification',
+  },
+
+  // Financial fields → Audit trail
+  invoiceNo: {
+    weight: 'critical',
+    de: 'Diese Nummer wird im Forensic Ledger für Audit-Zwecke registriert.',
+    en: 'This number will be registered in the Forensic Ledger for audit purposes.',
+    pt: 'Este número será registrado no Forensic Ledger para fins de auditoria.',
+    governance: 'financial_tracking',
+  },
+  total: {
+    weight: 'critical',
+    de: 'Der Betrag wird kryptographisch versiegelt und ist unveränderlich.',
+    en: 'The amount will be cryptographically sealed and immutable.',
+    pt: 'O valor será selado criptograficamente e será imutável.',
+    governance: 'financial_integrity',
+  },
+  billTo: {
+    weight: 'high',
+    de: 'Der Rechnungsempfänger wird im Audit-Trail dokumentiert.',
+    en: 'The billing recipient is documented in the audit trail.',
+    pt: 'O destinatário da fatura é documentado na trilha de auditoria.',
+    governance: 'financial_tracking',
+  },
+
+  // Legal fields → Binding implications
+  parties: {
+    weight: 'critical',
+    de: 'Die Parteien werden rechtlich an dieses Dokument gebunden.',
+    en: 'The parties will be legally bound to this document.',
+    pt: 'As partes serão legalmente vinculadas a este documento.',
+    governance: 'legal_binding',
+  },
+  terms: {
+    weight: 'critical',
+    de: 'Diese Bedingungen werden Teil einer rechtlich durchsetzbaren Vereinbarung.',
+    en: 'These terms become part of a legally enforceable agreement.',
+    pt: 'Estes termos tornam-se parte de um acordo legalmente exequível.',
+    governance: 'legal_binding',
+  },
+  signatures: {
+    weight: 'critical',
+    de: 'Unterschriften bestätigen die Zustimmung aller Parteien.',
+    en: 'Signatures confirm consent of all parties.',
+    pt: 'Assinaturas confirmam o consentimento de todas as partes.',
+    governance: 'consent_verification',
+  },
+
+  // Body/Content → The substance
+  body: {
+    weight: 'medium',
+    de: 'Der Inhalt wird gehasht. Jede Änderung nach der Versiegelung ist erkennbar.',
+    en: 'The content will be hashed. Any change after sealing is detectable.',
+    pt: 'O conteúdo será hasheado. Qualquer alteração após selagem é detectável.',
+    governance: 'content_integrity',
+  },
+
+  // Action → Accountability
+  action: {
+    weight: 'high',
+    de: 'Die geforderte Aktion wird dokumentiert. Der Empfänger ist verantwortlich.',
+    en: 'The required action is documented. The recipient is accountable.',
+    pt: 'A ação requerida é documentada. O destinatário é responsável.',
+    governance: 'accountability',
+  },
+};
+
+// ─── DOCUMENT STATE NARRATIVES: What the Dragon says at key moments ────────────────
+const STATE_NARRATIVES = {
+  // When document is empty
+  empty: {
+    de: 'Beginne mit dem Dokumenttyp. Jede Entscheidung wird aufgezeichnet.',
+    en: 'Start with the document type. Every decision is recorded.',
+    pt: 'Comece pelo tipo de documento. Cada decisão é registrada.',
+  },
+
+  // When flow is active
+  flowActive: {
+    de: 'Ich führe dich durch jeden Schritt. Deine Antworten formen das Dokument.',
+    en: "I'll guide you through each step. Your answers shape the document.",
+    pt: 'Vou guiar-te por cada passo. As tuas respostas moldam o documento.',
+  },
+
+  // When document is ready to seal
+  readyToSeal: {
+    de: '🛡️ Bereit zur Versiegelung. Dies wird eine unveränderliche Aufzeichnung erstellen.',
+    en: '🛡️ Ready to seal. This will create an immutable record.',
+    pt: '🛡️ Pronto para selar. Isto criará um registo imutável.',
+  },
+
+  // When sealing
+  sealing: {
+    de: 'Berechne Merkle-Root... Registriere im Forensic Ledger...',
+    en: 'Computing Merkle root... Registering in Forensic Ledger...',
+    pt: 'Calculando Merkle root... Registrando no Forensic Ledger...',
+  },
+
+  // After seal
+  sealed: {
+    de: '✓ Versiegelt. Dieses Dokument existiert jetzt als verifizierbare Wahrheit.',
+    en: '✓ Sealed. This document now exists as verifiable truth.',
+    pt: '✓ Selado. Este documento existe agora como verdade verificável.',
+  },
+
+  // When exporting
+  exporting: {
+    de: 'Exportiere mit vollem DNA... Das Dokument behält seine Identität.',
+    en: 'Exporting with full DNA... The document retains its identity.',
+    pt: 'Exportando com DNA completo... O documento mantém a sua identidade.',
+  },
+
+  // Confidential document warning
+  confidentialWarning: {
+    de: '⚠️ Vertrauliches Dokument. Verbreitung nur an autorisierte Empfänger.',
+    en: '⚠️ Confidential document. Distribution only to authorized recipients.',
+    pt: '⚠️ Documento confidencial. Distribuição apenas para destinatários autorizados.',
+  },
+
+  // Legal document notice
+  legalNotice: {
+    de: '⚖️ Rechtliches Dokument. Erfordert besondere Sorgfalt bei der Verbreitung.',
+    en: '⚖️ Legal document. Requires special care in distribution.',
+    pt: '⚖️ Documento legal. Requer cuidado especial na distribuição.',
+  },
+
+  // Financial document notice
+  financialNotice: {
+    de: '💰 Finanzdokument. Alle Beträge werden für Audit-Zwecke aufgezeichnet.',
+    en: '💰 Financial document. All amounts are recorded for audit purposes.',
+    pt: '💰 Documento financeiro. Todos os valores são registrados para auditoria.',
+  },
+};
+
+// ─── DRAGON MENTOR: Get contextual whisper based on state ──────────────────────────
+const getDragonWhisper = (context) => {
+  const { field, value, docType, docFields, docStatus, sealPolicy, lang = 'en' } = context;
+
+  // If we have a specific field being edited
+  if (field && FIELD_NARRATIVES[field]) {
+    const narrative = FIELD_NARRATIVES[field];
+
+    // Check for value-specific narratives (like priority levels)
+    if (narrative.values && value && narrative.values[value]) {
+      return {
+        text: narrative.values[value][lang] || narrative.values[value].en,
+        weight: 'critical',
+        governance: narrative.governance,
+      };
+    }
+
+    // Return general field narrative
+    return {
+      text: narrative[lang] || narrative.en,
+      weight: narrative.weight,
+      governance: narrative.governance,
+    };
+  }
+
+  // Document state-based whispers
+  if (docStatus === 'sealed') {
+    return { text: STATE_NARRATIVES.sealed[lang] || STATE_NARRATIVES.sealed.en, weight: 'info' };
+  }
+
+  // Check for special document policies
+  if (sealPolicy) {
+    if (sealPolicy.legalDocument) {
+      return { text: STATE_NARRATIVES.legalNotice[lang] || STATE_NARRATIVES.legalNotice.en, weight: 'high' };
+    }
+    if (sealPolicy.financialDocument) {
+      return { text: STATE_NARRATIVES.financialNotice[lang] || STATE_NARRATIVES.financialNotice.en, weight: 'high' };
+    }
+  }
+
+  // Check if confidential
+  if (docFields?.priority === 'confidential' || docFields?.classification === 'confidential') {
+    return { text: STATE_NARRATIVES.confidentialWarning[lang] || STATE_NARRATIVES.confidentialWarning.en, weight: 'critical' };
+  }
+
+  // Check if ready to seal
+  const docDNA = DOCS?.[docType];
+  if (docDNA && docStatus === 'draft') {
+    const requiredFields = docDNA.requiredFields || [];
+    const allFilled = requiredFields.every(f => docFields?.[f]);
+    if (allFilled && requiredFields.length > 0) {
+      return { text: STATE_NARRATIVES.readyToSeal[lang] || STATE_NARRATIVES.readyToSeal.en, weight: 'info' };
+    }
+  }
+
+  return null;
+};
+
+// ─── DRAGON MENTOR: Format whisper for display ─────────────────────────────────────
+const formatDragonWhisper = (whisper, theme) => {
+  if (!whisper) return null;
+
+  const weightStyles = {
+    critical: { color: theme?.warning || '#E6A23C', fontWeight: 600 },
+    high: { color: theme?.gold || '#C9A84C', fontWeight: 500 },
+    medium: { color: theme?.dim || '#888', fontWeight: 400 },
+    info: { color: theme?.success || '#67C23A', fontWeight: 400 },
+  };
+
+  return {
+    text: whisper.text,
+    style: weightStyles[whisper.weight] || weightStyles.medium,
+    governance: whisper.governance,
+  };
+};
+
 // ─── SEAL BUILDER: Merkle root + GDPR compliance ─────────────────────────────────
 const buildSealPayload = async (doc, wallet, sealPolicy) => {
   const { type, fields } = doc;
@@ -1803,6 +2080,10 @@ function App(){
   const[exportResult,setExportResult]=useState(null);
   const[lastSaved,setLastSaved]=useState(null);
 
+  // ═══ WAVE 2.2: DRAGON MENTOR STATE ═══
+  const[dragonWhisper,setDragonWhisper]=useState(null);
+  const[lastEditedField,setLastEditedField]=useState(null);
+
   // ═══ A.1: COMMUNIQUÉ API STATE ═══
   const[communiques,setCommuniques]=useState([]);
   const[comStats,setComStats]=useState({draft:0,review:0,published:0,archived:0,revoked:0,total:0});
@@ -2020,6 +2301,30 @@ function App(){
   useEffect(()=>{
     if(sidebarTab==='journal'){fetchJournalArticles();}
   },[sidebarTab,fetchJournalArticles]);
+
+  // ═══ WAVE 2.2: DRAGON MENTOR — Contextual Whispers ═══
+  // Updates the Dragon's guidance based on document state and field focus
+  useEffect(()=>{
+    if(!docType||sidebarTab!=='docs')return;
+    const docDNA=DOCS[docType];
+    if(!docDNA)return;
+
+    const whisper=getDragonWhisper({
+      field:lastEditedField,
+      value:lastEditedField?docFields[lastEditedField]:null,
+      docType,
+      docFields,
+      docStatus,
+      sealPolicy:docDNA.sealPolicy,
+      lang,
+    });
+
+    if(whisper){
+      setDragonWhisper(formatDragonWhisper(whisper,th));
+    }else{
+      setDragonWhisper(null);
+    }
+  },[docType,docFields,docStatus,lastEditedField,lang,sidebarTab,th]);
 
   // ═══ WAVE 1: FILES UPLOAD HANDLER ═══
   const handleFilesUpload=useCallback(async(files)=>{
@@ -2423,6 +2728,7 @@ function App(){
               if(fieldDef?.default==="today"&&!m){val=new Date().toLocaleDateString();}
 
               setDocFields(p=>({...p,[field]:val}));
+              setLastEditedField(field); // Track for Dragon Mentor
               // Sync body field with docContent for backward compat
               if(field==="body"||field==="steps"||field==="terms"||field==="items"){
                 setContentHistory(prev=>[...prev,docContentRef.current]);
@@ -2874,6 +3180,13 @@ function App(){
                 <div style={{fontSize:8,padding:"2px 6px",borderRadius:4,background:windiTier==="HIGH"?th.gold+"22":windiTier==="MED"?th.success+"22":th.dim+"22",
                   color:windiTier==="HIGH"?th.gold:windiTier==="MED"?th.success:th.dim,fontWeight:600}}>{windiTier}</div>
               </div>
+              {/* ═══ WAVE 2.2: DRAGON MENTOR WHISPER BAR ═══ */}
+              {dragonWhisper&&sidebarTab==='docs'&&docType&&(
+                <div style={{padding:"6px 10px",background:th.gold+"08",borderBottom:`1px solid ${th.gold}22`,display:"flex",alignItems:"center",gap:6,transition:"all 0.3s ease"}}>
+                  <span style={{fontSize:11}}>💡</span>
+                  <span style={{fontSize:10,lineHeight:1.4,...dragonWhisper.style}}>{dragonWhisper.text}</span>
+                </div>
+              )}
               <div style={{flex:1,overflowY:"auto",padding:"10px 8px"}}>
                 {msgs.map((m,i)=>{
                   if(m.role==="system")return<div key={i} style={{textAlign:"center",padding:"3px 0",margin:"4px 0"}}><span style={{fontSize:9,color:th.dim,background:th.card,padding:"2px 8px",borderRadius:6}}>{m.text}</span></div>;
