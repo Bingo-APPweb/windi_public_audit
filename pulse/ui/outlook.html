@@ -127,6 +127,7 @@ function FeatureRow({ f, expanded, onToggle }) {
 
 function PaletteOutlook() {
   const [data, setData] = useState(null);
+  const [frontend, setFrontend] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [expandedId, setExpandedId] = useState(null);
@@ -136,10 +137,12 @@ function PaletteOutlook() {
 
   const fetchData = useCallback(async () => {
     try {
-      const res = await fetch(DRAGON_API);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const json = await res.json();
-      setData(json);
+      const [outlookRes, frontendRes] = await Promise.allSettled([
+        fetch(DRAGON_API).then(r => r.json()),
+        fetch("/pulse/api/pulse/frontend").then(r => r.json()),
+      ]);
+      if (outlookRes.status === "fulfilled") setData(outlookRes.value);
+      if (frontendRes.status === "fulfilled") setFrontend(frontendRes.value);
       setError(null);
       setLastRefresh(new Date());
     } catch (e) {
@@ -250,13 +253,14 @@ function PaletteOutlook() {
         )}
 
         {/* Dashboard Cards */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 8, marginBottom: 16 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 8, marginBottom: 16 }}>
           {[
             { label: "Total Features", value: summary.total, color: TEXT },
             { label: "Fully Wired", value: summary.wired, color: GREEN },
             { label: "On Server", value: summary.on_server, color: AMBER },
             { label: "Not Built", value: summary.not_built, color: RED },
             { label: "Wired %", value: `${summary.wired_pct.toFixed(0)}%`, color: summary.wired_pct === 100 ? GREEN : summary.wired_pct >= 50 ? AMBER : RED },
+            { label: "Frontend", value: frontend?.score != null ? `${Math.round(frontend.score)}%` : "\u2014", color: frontend?.status === "GREEN" ? GREEN : frontend?.status === "RED" ? RED : AMBER },
           ].map(s => (
             <div key={s.label} style={{ background: CARD, border: `1px solid ${BORDER}`, borderRadius: 8, padding: "10px 12px", textAlign: "center" }}>
               <div style={{ fontSize: 22, fontWeight: 800, color: s.color, fontFamily: "'JetBrains Mono', monospace" }}>{s.value}</div>

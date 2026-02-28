@@ -11,6 +11,7 @@
 ║    GET /api/pulse/history   → change log (memory loop)       ║
 ║    GET /api/pulse/outlook   → sprint progress + gaps         ║
 ║    GET /api/pulse/sentinel  → sentinel integration           ║
+║    GET /api/pulse/frontend  → L2 frontend alignment          ║
 ║                                                              ║
 ║  "AI processes. Human decides. WINDI guarantees."            ║
 ╚══════════════════════════════════════════════════════════════╝
@@ -23,6 +24,7 @@ import time
 import os
 import subprocess
 import threading
+import re
 from datetime import datetime, timezone
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.request import urlopen, Request
@@ -36,6 +38,160 @@ PORT = 8109
 SCAN_INTERVAL = 60  # seconds between background scans
 DB_PATH = "/opt/windi/data/pulse.db"
 VERSION = "1.0.0"
+
+
+# ═══════════════════════════════════════════════════════════════
+# L2: FRONTEND SENTINEL — "O restaurante tem comida. E a porta?"
+# ═══════════════════════════════════════════════════════════════
+
+class FrontendSentinel:
+    """Reads Palette HTML and verifies frontend↔backend alignment.
+    Pure static analysis — no browser needed."""
+
+    PALETTE_URL = "http://127.0.0.1:8108/"
+
+    def run_all(self):
+        timestamp = datetime.now(timezone.utc).isoformat()
+        try:
+            req = Request(self.PALETTE_URL, headers={"Accept": "text/html"})
+            with urlopen(req, timeout=5) as resp:
+                html = resp.read().decode("utf-8", errors="ignore")
+        except Exception as e:
+            return {
+                "timestamp": timestamp, "status": "UNREACHABLE",
+                "score": 0, "error": str(e), "checks": {},
+                "summary": {"total": 0, "pass": 0, "warn": 0, "fail": 0}
+            }
+
+        checks = {}
+
+        # ── C01: Ghost Port 8111 — CRITICAL ──
+        refs = html.count("8111")
+        checks["ghost_8111"] = {
+            "status": "PASS" if refs == 0 else "FAIL",
+            "detail": f"{refs} references to port 8111",
+            "severity": "CRITICAL"
+        }
+
+        # ── C02: dragonUrl → :8108 — CRITICAL ──
+        m = re.search(r"const dragonUrl\s*=\s*[^;]+", html)
+        val = m.group(0) if m else ""
+        ok = "palette/api/dragon" in val and "8111" not in val
+        checks["dragon_url"] = {
+            "status": "PASS" if ok else "FAIL",
+            "detail": val[:120] or "dragonUrl not found",
+            "severity": "CRITICAL"
+        }
+
+        # ── C03: Brand Leaks — HIGH ──
+        brands = ["Claude", "GPT", "Gemini", "OpenAI", "Anthropic"]
+        leaks = {b: html.count(b) for b in brands if html.count(b) > 0}
+        checks["brand_leaks"] = {
+            "status": "PASS" if not leaks else "FAIL",
+            "detail": f"{leaks}" if leaks else "zero brand mentions",
+            "severity": "HIGH"
+        }
+
+        # ── C04: TDZ Bug — HIGH ──
+        # TDZ bug = baseUrl used in its OWN definition: const baseUrl = ... : baseUrl + '/path'
+        # Valid use = baseUrl + '/path' AFTER baseUrl is already defined
+        has_tdz = bool(re.search(r"const\s+baseUrl\s*=\s*[^;]*:\s*baseUrl\s*\+", html))
+        checks["tdz_bug"] = {
+            "status": "PASS" if not has_tdz else "FAIL",
+            "detail": "self-referencing baseUrl " + ("still present!" if has_tdz else "fixed"),
+            "severity": "HIGH"
+        }
+
+        # ── C05: Tier Detection — HIGH ──
+        checks["tier_detect"] = {
+            "status": "PASS" if "detectTier" in html else "FAIL",
+            "detail": "detectTier() " + ("present" if "detectTier" in html else "MISSING"),
+            "severity": "HIGH"
+        }
+
+        # ── C06: Health String — MEDIUM ──
+        alive = '"alive"' in html or "'alive'" in html
+        healthy = '"healthy"' in html or "'healthy'" in html
+        checks["health_string"] = {
+            "status": "PASS" if (alive or healthy) else "WARN",
+            "detail": f"accepts alive={alive}, healthy={healthy}",
+            "severity": "MEDIUM"
+        }
+
+        # ── C07: Governance — MEDIUM ──
+        inv = html.count("validateInvariants") + html.count("INVARIANTS")
+        checks["governance"] = {
+            "status": "PASS" if inv >= 3 else "WARN",
+            "detail": f"{inv} governance references",
+            "severity": "MEDIUM"
+        }
+
+        # ── C08: Connectors Count — MEDIUM ──
+        conns = re.findall(r"(\w+)\s*:\s*\{\s*name\s*:", html)
+        checks["connectors"] = {
+            "status": "PASS" if len(conns) >= 8 else "WARN",
+            "detail": f"{len(conns)} connectors configured",
+            "severity": "MEDIUM"
+        }
+
+        # ── C09: Themes KLAR+NOIR — LOW ──
+        has_klar = "#F5F0E0" in html
+        has_noir = "#0E0E14" in html
+        checks["themes"] = {
+            "status": "PASS" if (has_klar and has_noir) else "WARN",
+            "detail": f"KLAR={has_klar}, NOIR={has_noir}",
+            "severity": "LOW"
+        }
+
+        # ── C10: Three Dragons — LOW ──
+        g = "guardian" in html.lower()
+        a = "architect" in html.lower()
+        w = "witness" in html.lower()
+        checks["three_dragons"] = {
+            "status": "PASS" if (g and a and w) else "WARN",
+            "detail": f"Guardian={g}, Architect={a}, Witness={w}",
+            "severity": "LOW"
+        }
+
+        # ── C11: Doc Intelligence — INFO (future, no score impact) ──
+        has_dna = "dna" in html.lower() and "fields:" in html
+        checks["doc_intelligence"] = {
+            "status": "PASS" if has_dna else "NOT_YET",
+            "detail": "Doc type DNA " + ("present" if has_dna else "planned — Phase 4 Healthy Plan"),
+            "severity": "INFO"
+        }
+
+        # ── SCORE ──
+        W = {"CRITICAL": 15, "HIGH": 10, "MEDIUM": 5, "LOW": 3, "INFO": 0}
+        scored = {k: v for k, v in checks.items() if v["severity"] != "INFO"}
+        total = sum(W[c["severity"]] for c in scored.values())
+        earned = sum(
+            W[c["severity"]] * (1.0 if c["status"] == "PASS" else 0.5 if c["status"] == "WARN" else 0.0)
+            for c in scored.values()
+        )
+        score = round(earned / total * 100, 1) if total else 0
+
+        crit_fails = sum(1 for c in scored.values()
+                         if c["status"] == "FAIL" and c["severity"] == "CRITICAL")
+        status = "RED" if crit_fails else ("GREEN" if score >= 90 else "YELLOW")
+
+        return {
+            "timestamp": timestamp,
+            "layer": "L2",
+            "name": "Frontend Sentinel",
+            "principle": "O restaurante tem comida. A porta da frente esta aberta?",
+            "status": status,
+            "score": score,
+            "summary": {
+                "total": len(scored),
+                "pass": sum(1 for c in checks.values() if c["status"] == "PASS"),
+                "warn": sum(1 for c in checks.values() if c["status"] == "WARN"),
+                "fail": sum(1 for c in checks.values() if c["status"] == "FAIL"),
+                "info": sum(1 for c in checks.values() if c["status"] in ("NOT_YET",)),
+            },
+            "checks": checks,
+        }
+
 
 # ═══════════════════════════════════════════════════════════════
 # SERVICE REGISTRY — Everything WINDI has or plans to have
@@ -604,6 +760,22 @@ def full_scan():
         },
     }
 
+    # L2: Frontend Alignment
+    try:
+        fe = FrontendSentinel().run_all()
+        result["frontend"] = {
+            "score": fe["score"],
+            "status": fe["status"],
+            "pass": fe["summary"]["pass"],
+            "total": fe["summary"]["total"],
+        }
+        result["summary"]["frontend_score"] = fe["score"]
+        result["summary"]["frontend_status"] = fe["status"]
+    except Exception:
+        result["frontend"] = {"score": 0, "status": "ERROR"}
+        result["summary"]["frontend_score"] = 0
+        result["summary"]["frontend_status"] = "ERROR"
+
     return result
 
 
@@ -870,6 +1042,12 @@ class PulseHandler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(md_content.encode("utf-8"))
 
+        # ── L2: Frontend Sentinel ──
+        elif path == "/api/pulse/frontend":
+            sentinel = FrontendSentinel()
+            result = sentinel.run_all()
+            self._json_response(result)
+
         # ── Backend→Frontend Data Transfer Monitor ──
         elif path == "/api/pulse/transfers":
             transfers = []
@@ -991,6 +1169,7 @@ def main():
     print(f"  GET /api/pulse/outlook   → sprint progress")
     print(f"  GET /api/pulse/history   → memory loop events")
     print(f"  GET /api/pulse/sentinel  → sentinel integration")
+    print(f"  GET /api/pulse/frontend  → L2 frontend alignment")
 
     try:
         server.serve_forever()
