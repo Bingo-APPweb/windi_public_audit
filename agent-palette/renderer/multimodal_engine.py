@@ -462,8 +462,13 @@ def handle_ocr_request(handler):
 
         if "application/json" in content_type:
             data = json.loads(body.decode("utf-8"))
-            if "image" not in data:
-                return _json_response(handler, 400, {"error": "Missing 'image' field"})
+            tier = data.get('tier', 'FREE')
+            lang = data.get('language', 'de')
+            if tier == 'FREE' and 'image' not in data:
+                msgs = {'pt': 'Reconhecimento de imagem requer o plano Medium ou superior. Descreve-me o conteudo da imagem e eu monto o documento para ti.', 'de': 'Bilderkennung erfordert den Medium-Plan oder hoeher. Beschreib mir den Bildinhalt und ich erstelle das Dokument fuer dich.', 'en': 'Image recognition requires Medium plan or above. Describe the image content and I will create the document for you.'}
+                return _json_response(handler, 200, {'success': False, 'dragon': 'guardian', 'escalation': True, 'credits_needed': 1, 'message': msgs.get(lang, msgs['en'])})
+            if 'image' not in data:
+                return _json_response(handler, 400, {'error': 'Missing image field'})
 
             result = engine.ocr_base64(
                 data["image"],
@@ -496,8 +501,13 @@ def handle_image_analysis(handler):
 
         if "application/json" in content_type:
             data = json.loads(body.decode("utf-8"))
-            if "image" not in data:
-                return _json_response(handler, 400, {"error": "Missing 'image' field"})
+            tier = data.get('tier', 'FREE')
+            lang = data.get('language', 'de')
+            if tier == 'FREE' and 'image' not in data:
+                msgs = {'pt': 'Reconhecimento de imagem requer o plano Medium ou superior. Descreve-me o conteudo da imagem e eu monto o documento para ti.', 'de': 'Bilderkennung erfordert den Medium-Plan oder hoeher. Beschreib mir den Bildinhalt und ich erstelle das Dokument fuer dich.', 'en': 'Image recognition requires Medium plan or above. Describe the image content and I will create the document for you.'}
+                return _json_response(handler, 200, {'success': False, 'dragon': 'guardian', 'escalation': True, 'credits_needed': 1, 'message': msgs.get(lang, msgs['en'])})
+            if 'image' not in data:
+                return _json_response(handler, 400, {'error': 'Missing image field'})
 
             # Decode base64
             base64_data = data["image"]
