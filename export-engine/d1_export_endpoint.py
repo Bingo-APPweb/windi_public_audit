@@ -76,6 +76,11 @@ app.add_middleware(
 # ROUTES
 # ═══════════════════════════════════════════════════════════════
 
+
+@app.get("/health")
+async def health_root():
+    return {"status": "sovereign", "engine": "export", "port": 8103, "version": "M3"}
+
 @app.get("/api/export/health")
 async def export_health():
     """Health check for the export engine."""
