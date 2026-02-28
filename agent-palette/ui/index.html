@@ -329,15 +329,145 @@ const DOC_TYPES = {
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════════
-// DOC TYPE DNA — Structured Field Definitions & Guided Flows
+// DOC FRAMEWORK v2.0 — defineDoc Pattern + Merkle Seal + GDPR Compliance
 // "Publishing House publica conhecimento, não decoração."
-// Pattern: MEMO is the seed, 14 types are the forest.
+// Architect spec: schema + flow + preview + sealPolicy per type
 // ═══════════════════════════════════════════════════════════════════════════════════
-const DOC_TYPE_DNA = {
+
+// ─── FRAMEWORK: defineDoc / defineDocs ───────────────────────────────────────────
+const REQUIRED_DOC_KEYS = ['schema', 'flow', 'sealPolicy'];
+const DOC_COMPLEXITY = { SIMPLE: 1, STRUCTURED: 2, FORM: 3, GOVERNANCE: 4 };
+
+const defineDoc = (config) => {
+  // Validate required keys
+  for (const key of REQUIRED_DOC_KEYS) {
+    if (!config[key]) console.warn(`[defineDoc] Missing required key: ${key}`);
+  }
+  // Add computed properties
+  return {
+    ...config,
+    complexity: config.complexity || DOC_COMPLEXITY.STRUCTURED,
+    hasFlow: Array.isArray(config.flow) && config.flow.length > 0,
+    requiredFields: Object.entries(config.schema || {}).filter(([,v]) => v.required).map(([k]) => k),
+  };
+};
+
+const defineDocs = (docs) => {
+  const registry = {};
+  for (const [id, config] of Object.entries(docs)) {
+    registry[id] = defineDoc({ id, ...config });
+  }
+  return registry;
+};
+
+// ─── MERKLE UTILITIES: Field-level hashing with Merkle root ──────────────────────
+const merkleHash = async (value) => {
+  const normalized = String(value || '').trim().toLowerCase();
+  return await CryptoProvider.hash(normalized);
+};
+
+const merkleRoot = async (hashes) => {
+  if (!hashes || hashes.length === 0) return await CryptoProvider.hash('empty');
+  if (hashes.length === 1) return hashes[0];
+
+  // Build Merkle tree bottom-up
+  let level = [...hashes];
+  while (level.length > 1) {
+    const nextLevel = [];
+    for (let i = 0; i < level.length; i += 2) {
+      const left = level[i];
+      const right = level[i + 1] || left; // Duplicate if odd
+      nextLevel.push(await CryptoProvider.hash(left + right));
+    }
+    level = nextLevel;
+  }
+  return level[0];
+};
+
+// ─── GDPR: Redaction utilities ───────────────────────────────────────────────────
+const GDPR_PII_FIELDS = ['to', 'from', 'cc', 'recipient', 'billTo', 'parties'];
+const redactForLedger = (value) => {
+  if (!value) return null;
+  const str = String(value);
+  if (str.length <= 3) return '***';
+  return str[0] + '*'.repeat(Math.min(str.length - 2, 5)) + str[str.length - 1];
+};
+
+// ─── SEAL BUILDER: Merkle root + GDPR compliance ─────────────────────────────────
+const buildSealPayload = async (doc, wallet, sealPolicy) => {
+  const { type, fields } = doc;
+  const policy = sealPolicy || {};
+  const isConfidential = fields.priority === 'confidential' || fields.classification === 'confidential';
+
+  // Build field hashes
+  const fieldHashes = {};
+  const hashOrder = [];
+  for (const fieldName of (policy.hashFields || Object.keys(fields))) {
+    if (fields[fieldName] !== undefined && fields[fieldName] !== '') {
+      const isPII = GDPR_PII_FIELDS.includes(fieldName);
+      fieldHashes[fieldName] = await merkleHash(fields[fieldName]);
+      hashOrder.push(fieldHashes[fieldName]);
+    }
+  }
+
+  // Compute Merkle root
+  const fieldsRoot = await merkleRoot(hashOrder);
+
+  // Build seal payload (GDPR compliant - no PII in clear)
+  const seal = {
+    doc_type: policy.type || type.toUpperCase(),
+    doc_id: CryptoProvider.receiptId(),
+    created_at: new Date().toISOString(),
+    signer_did: wallet?.id || null,
+    anonymous: !wallet,
+
+    // Merkle structure
+    field_hashes: fieldHashes,
+    fields_root: fieldsRoot,
+    hash_algorithm: 'sha256-merkle',
+
+    // GDPR: redacted hints (optional, for UX only)
+    redacted_hints: {},
+
+    // Policy flags
+    confidential: isConfidential,
+    legal_document: policy.legalDocument || false,
+    financial_document: policy.financialDocument || false,
+    governance_document: policy.governanceDocument || false,
+    recipient_tracked: policy.recipientTracked || false,
+
+    // AI Act compliance
+    ai_assisted: true,
+    ai_role: 'structural_guidance',
+    human_authored: true,
+  };
+
+  // Add redacted hints for PII fields (not stored in ledger, just for local UX)
+  for (const fieldName of GDPR_PII_FIELDS) {
+    if (fields[fieldName]) {
+      seal.redacted_hints[fieldName] = redactForLedger(fields[fieldName]);
+    }
+  }
+
+  // Confidential policy enforcement
+  if (isConfidential) {
+    seal.subject_redacted = true;
+    seal.body_redacted = true;
+    seal.distribution_restricted = true;
+  }
+
+  return seal;
+};
+
+// ═══════════════════════════════════════════════════════════════════════════════════
+// DOCS REGISTRY — All 14 types with schema + flow + sealPolicy
+// ═══════════════════════════════════════════════════════════════════════════════════
+
+const DOCS = defineDocs({
   // ─── MEMO: Internal communication with recipient and traceability ───
   memo: {
-    id: "memo",
-    fields: {
+    complexity: DOC_COMPLEXITY.STRUCTURED,
+    schema: {
       to:       { required: true,  type: "text",   label: { en: "To", de: "An", pt: "Para" } },
       from:     { required: true,  type: "text",   label: { en: "From", de: "Von", pt: "De" }, default: "wallet" },
       date:     { required: true,  type: "date",   label: { en: "Date", de: "Datum", pt: "Data" }, default: "today" },
@@ -355,7 +485,7 @@ const DOC_TYPE_DNA = {
       { field: "body", prompt: { en: "Now the content. What do you need to communicate?", de: "Nun der Inhalt. Was müssen Sie mitteilen?", pt: "Agora o conteúdo. O que você precisa comunicar?" } },
       { field: "action", prompt: { en: "Is there a required action from the recipient? (or skip)", de: "Gibt es eine erforderliche Aktion? (oder überspringen)", pt: "Há uma ação requerida do destinatário? (ou pular)" }, optional: true },
     ],
-    seal: { type: "MEMO", hashFields: ["to", "from", "date", "subject", "body"], metadata: ["priority", "action"], recipientTracked: true },
+    sealPolicy: { type: "MEMO", hashFields: ["to", "from", "date", "subject", "body"], recipientTracked: true },
     tierFeatures: {
       FREE:  { fields: ["to", "from", "date", "subject", "body"] },
       MED:   { fields: ["to", "from", "date", "subject", "body", "priority", "action"], templates: true },
@@ -363,10 +493,10 @@ const DOC_TYPE_DNA = {
     },
   },
 
-  // ─── LETTER: Formal correspondence with greeting and closing ───
+  // ─── LETTER: Formal correspondence ───
   letter: {
-    id: "letter",
-    fields: {
+    complexity: DOC_COMPLEXITY.STRUCTURED,
+    schema: {
       to:       { required: true,  type: "text",   label: { en: "Recipient", de: "Empfänger", pt: "Destinatário" } },
       from:     { required: true,  type: "text",   label: { en: "Sender", de: "Absender", pt: "Remetente" }, default: "wallet" },
       date:     { required: true,  type: "date",   label: { en: "Date", de: "Datum", pt: "Data" }, default: "today" },
@@ -384,13 +514,13 @@ const DOC_TYPE_DNA = {
       { field: "closing", prompt: { en: "How would you like to close?", de: "Wie möchten Sie schließen?", pt: "Como você gostaria de encerrar?" },
         chips: true, chipValues: { en: ["Sincerely", "Best regards", "Yours faithfully"], de: ["Mit freundlichen Grüßen", "Beste Grüße", "Hochachtungsvoll"], pt: ["Atenciosamente", "Cordialmente", "Respeitosamente"] } },
     ],
-    seal: { type: "LETTER", hashFields: ["to", "from", "date", "body"], metadata: ["subject", "greeting", "closing"] },
+    sealPolicy: { type: "LETTER", hashFields: ["to", "from", "date", "body"], recipientTracked: true },
   },
 
-  // ─── NOTE: Simple text with title ───
+  // ─── NOTE: Simple text ───
   note: {
-    id: "note",
-    fields: {
+    complexity: DOC_COMPLEXITY.SIMPLE,
+    schema: {
       title: { required: true, type: "text", label: { en: "Title", de: "Titel", pt: "Título" } },
       body:  { required: true, type: "rich", label: { en: "Content", de: "Inhalt", pt: "Conteúdo" } },
     },
@@ -398,14 +528,13 @@ const DOC_TYPE_DNA = {
       { field: "title", prompt: { en: "📝 What's the title of your note?", de: "📝 Wie lautet der Titel?", pt: "📝 Qual é o título da nota?" } },
       { field: "body", prompt: { en: "Go ahead, write your note.", de: "Schreiben Sie Ihre Notiz.", pt: "Escreva sua nota." } },
     ],
-    seal: { type: "NOTE", hashFields: ["title", "body"] },
-    simple: true, // Flag for simple types
+    sealPolicy: { type: "NOTE", hashFields: ["title", "body"] },
   },
 
   // ─── EMAIL: Digital correspondence ───
   email: {
-    id: "email",
-    fields: {
+    complexity: DOC_COMPLEXITY.STRUCTURED,
+    schema: {
       to:      { required: true,  type: "text", label: { en: "To", de: "An", pt: "Para" } },
       cc:      { required: false, type: "text", label: { en: "CC", de: "CC", pt: "CC" } },
       from:    { required: true,  type: "text", label: { en: "From", de: "Von", pt: "De" }, default: "wallet" },
@@ -417,13 +546,13 @@ const DOC_TYPE_DNA = {
       { field: "subject", prompt: { en: "What's the subject line?", de: "Was ist die Betreffzeile?", pt: "Qual é o assunto?" } },
       { field: "body", prompt: { en: "Write your email content.", de: "Schreiben Sie den E-Mail-Inhalt.", pt: "Escreva o conteúdo do email." } },
     ],
-    seal: { type: "EMAIL", hashFields: ["to", "from", "subject", "body"], metadata: ["cc"] },
+    sealPolicy: { type: "EMAIL", hashFields: ["to", "from", "subject", "body"], recipientTracked: true },
   },
 
-  // ─── JOURNAL: Personal diary entry ───
+  // ─── JOURNAL: Personal diary ───
   journal: {
-    id: "journal",
-    fields: {
+    complexity: DOC_COMPLEXITY.SIMPLE,
+    schema: {
       date:  { required: true, type: "date", label: { en: "Date", de: "Datum", pt: "Data" }, default: "today" },
       mood:  { required: false, type: "select", label: { en: "Mood", de: "Stimmung", pt: "Humor" }, options: ["😊", "😐", "😔", "😤", "🤔", "😴"] },
       title: { required: false, type: "text", label: { en: "Title", de: "Titel", pt: "Título" } },
@@ -434,14 +563,13 @@ const DOC_TYPE_DNA = {
       { field: "title", prompt: { en: "Give this entry a title (optional)", de: "Geben Sie diesem Eintrag einen Titel (optional)", pt: "Dê um título a esta entrada (opcional)" }, optional: true },
       { field: "body", prompt: { en: "What's on your mind?", de: "Was beschäftigt Sie?", pt: "O que está na sua mente?" } },
     ],
-    seal: { type: "JOURNAL", hashFields: ["date", "body"], metadata: ["mood", "title"] },
-    simple: true,
+    sealPolicy: { type: "JOURNAL", hashFields: ["date", "body"] },
   },
 
   // ─── RECIPE: Cooking instructions ───
   recipe: {
-    id: "recipe",
-    fields: {
+    complexity: DOC_COMPLEXITY.STRUCTURED,
+    schema: {
       title:       { required: true, type: "text", label: { en: "Recipe Name", de: "Rezeptname", pt: "Nome da Receita" } },
       servings:    { required: false, type: "text", label: { en: "Servings", de: "Portionen", pt: "Porções" } },
       prepTime:    { required: false, type: "text", label: { en: "Prep Time", de: "Vorbereitungszeit", pt: "Tempo de Preparo" } },
@@ -454,13 +582,13 @@ const DOC_TYPE_DNA = {
       { field: "ingredients", prompt: { en: "List the ingredients:", de: "Listen Sie die Zutaten auf:", pt: "Liste os ingredientes:" } },
       { field: "steps", prompt: { en: "Now the step-by-step instructions:", de: "Nun die Schritt-für-Schritt-Anleitung:", pt: "Agora o passo a passo:" } },
     ],
-    seal: { type: "RECIPE", hashFields: ["title", "ingredients", "steps"] },
+    sealPolicy: { type: "RECIPE", hashFields: ["title", "ingredients", "steps"] },
   },
 
-  // ─── REPORT: Business document with sections ───
+  // ─── REPORT: Business document ───
   report: {
-    id: "report",
-    fields: {
+    complexity: DOC_COMPLEXITY.STRUCTURED,
+    schema: {
       title:    { required: true, type: "text", label: { en: "Report Title", de: "Berichtstitel", pt: "Título do Relatório" } },
       author:   { required: true, type: "text", label: { en: "Author", de: "Autor", pt: "Autor" }, default: "wallet" },
       date:     { required: true, type: "date", label: { en: "Date", de: "Datum", pt: "Data" }, default: "today" },
@@ -475,13 +603,13 @@ const DOC_TYPE_DNA = {
       { field: "body", prompt: { en: "Now the full report content:", de: "Nun der vollständige Berichtsinhalt:", pt: "Agora o conteúdo completo do relatório:" } },
       { field: "findings", prompt: { en: "Any key findings or conclusions? (optional)", de: "Wichtige Erkenntnisse? (optional)", pt: "Conclusões importantes? (opcional)" }, optional: true },
     ],
-    seal: { type: "REPORT", hashFields: ["title", "author", "date", "summary", "body"], metadata: ["findings"] },
+    sealPolicy: { type: "REPORT", hashFields: ["title", "author", "date", "summary", "body"] },
   },
 
-  // ─── CONTRACT: Legal agreement (MED+ tier) ───
+  // ─── CONTRACT: Legal agreement (MED+) ───
   contract: {
-    id: "contract",
-    fields: {
+    complexity: DOC_COMPLEXITY.FORM,
+    schema: {
       title:      { required: true, type: "text", label: { en: "Contract Title", de: "Vertragstitel", pt: "Título do Contrato" } },
       parties:    { required: true, type: "rich", label: { en: "Parties", de: "Parteien", pt: "Partes" } },
       date:       { required: true, type: "date", label: { en: "Date", de: "Datum", pt: "Data" }, default: "today" },
@@ -495,13 +623,13 @@ const DOC_TYPE_DNA = {
       { field: "terms", prompt: { en: "What are the key terms and conditions?", de: "Was sind die wichtigsten Bedingungen?", pt: "Quais são os termos e condições principais?" } },
       { field: "duration", prompt: { en: "Contract duration? (optional)", de: "Vertragslaufzeit? (optional)", pt: "Duração do contrato? (opcional)" }, optional: true },
     ],
-    seal: { type: "CONTRACT", hashFields: ["title", "parties", "date", "terms"], metadata: ["duration", "signatures"], legalDocument: true },
+    sealPolicy: { type: "CONTRACT", hashFields: ["title", "parties", "date", "terms"], legalDocument: true },
   },
 
-  // ─── INVOICE: Financial document (MED+ tier) ───
+  // ─── INVOICE: Financial document (MED+) ───
   invoice: {
-    id: "invoice",
-    fields: {
+    complexity: DOC_COMPLEXITY.FORM,
+    schema: {
       invoiceNo: { required: true, type: "text", label: { en: "Invoice #", de: "Rechnungs-Nr.", pt: "Nº da Fatura" } },
       billTo:    { required: true, type: "text", label: { en: "Bill To", de: "Rechnung an", pt: "Faturar Para" } },
       date:      { required: true, type: "date", label: { en: "Date", de: "Datum", pt: "Data" }, default: "today" },
@@ -516,22 +644,35 @@ const DOC_TYPE_DNA = {
       { field: "total", prompt: { en: "What's the total amount?", de: "Was ist der Gesamtbetrag?", pt: "Qual é o valor total?" } },
       { field: "dueDate", prompt: { en: "Payment due date? (optional)", de: "Zahlungsfrist? (optional)", pt: "Data de vencimento? (opcional)" }, optional: true },
     ],
-    seal: { type: "INVOICE", hashFields: ["invoiceNo", "billTo", "date", "items", "total"], metadata: ["dueDate", "notes"], financialDocument: true },
+    sealPolicy: { type: "INVOICE", hashFields: ["invoiceNo", "billTo", "date", "items", "total"], financialDocument: true },
   },
 
-  // Placeholder DNA for remaining types (to be expanded)
-  protocol:     { id: "protocol",     fields: { title: { required: true, type: "text", label: { en: "Title", de: "Titel", pt: "Título" } }, body: { required: true, type: "rich", label: { en: "Content", de: "Inhalt", pt: "Conteúdo" } } }, flow: [{ field: "title", prompt: { en: "📒 Protocol title?", de: "📒 Protokolltitel?", pt: "📒 Título do protocolo?" } }, { field: "body", prompt: { en: "Document the proceedings:", de: "Dokumentieren Sie den Verlauf:", pt: "Documente os procedimentos:" } }], seal: { type: "PROTOCOL", hashFields: ["title", "body"] } },
-  analysis:     { id: "analysis",     fields: { title: { required: true, type: "text", label: { en: "Title", de: "Titel", pt: "Título" } }, body: { required: true, type: "rich", label: { en: "Analysis", de: "Analyse", pt: "Análise" } } }, flow: [{ field: "title", prompt: { en: "🔬 Analysis title?", de: "🔬 Analysetitel?", pt: "🔬 Título da análise?" } }, { field: "body", prompt: { en: "Write your analysis:", de: "Schreiben Sie Ihre Analyse:", pt: "Escreva sua análise:" } }], seal: { type: "ANALYSIS", hashFields: ["title", "body"] } },
-  presentation: { id: "presentation", fields: { title: { required: true, type: "text", label: { en: "Title", de: "Titel", pt: "Título" } }, body: { required: true, type: "rich", label: { en: "Content", de: "Inhalt", pt: "Conteúdo" } } }, flow: [{ field: "title", prompt: { en: "📽️ Presentation title?", de: "📽️ Präsentationstitel?", pt: "📽️ Título da apresentação?" } }, { field: "body", prompt: { en: "Outline your presentation:", de: "Skizzieren Sie Ihre Präsentation:", pt: "Esboce sua apresentação:" } }], seal: { type: "PRESENTATION", hashFields: ["title", "body"] } },
-  communique:   { id: "communique",   fields: { title: { required: true, type: "text", label: { en: "Title", de: "Titel", pt: "Título" } }, classification: { required: true, type: "select", label: { en: "Classification", de: "Klassifizierung", pt: "Classificação" }, options: ["internal", "public", "confidential", "restricted"] }, body: { required: true, type: "rich", label: { en: "Content", de: "Inhalt", pt: "Conteúdo" } } }, flow: [{ field: "title", prompt: { en: "📡 Communiqué title?", de: "📡 Kommuniqué-Titel?", pt: "📡 Título do comunicado?" } }, { field: "classification", prompt: { en: "Classification level?", de: "Klassifizierungsstufe?", pt: "Nível de classificação?" }, chips: true }, { field: "body", prompt: { en: "Write the communiqué:", de: "Schreiben Sie das Kommuniqué:", pt: "Escreva o comunicado:" } }], seal: { type: "COMMUNIQUE", hashFields: ["title", "classification", "body"], governanceDocument: true } },
-  certificate:  { id: "certificate",  fields: { title: { required: true, type: "text", label: { en: "Certificate Title", de: "Zertifikatstitel", pt: "Título do Certificado" } }, recipient: { required: true, type: "text", label: { en: "Recipient", de: "Empfänger", pt: "Destinatário" } }, issuer: { required: true, type: "text", label: { en: "Issuer", de: "Aussteller", pt: "Emissor" }, default: "wallet" }, date: { required: true, type: "date", label: { en: "Date", de: "Datum", pt: "Data" }, default: "today" }, body: { required: true, type: "rich", label: { en: "Certificate Text", de: "Zertifikatstext", pt: "Texto do Certificado" } } }, flow: [{ field: "title", prompt: { en: "🏛️ Certificate title?", de: "🏛️ Zertifikatstitel?", pt: "🏛️ Título do certificado?" } }, { field: "recipient", prompt: { en: "Who receives this certificate?", de: "Wer erhält dieses Zertifikat?", pt: "Quem recebe este certificado?" } }, { field: "body", prompt: { en: "Write the certificate text:", de: "Schreiben Sie den Zertifikatstext:", pt: "Escreva o texto do certificado:" } }], seal: { type: "CERTIFICATE", hashFields: ["title", "recipient", "issuer", "date", "body"], governanceDocument: true, legalDocument: true } },
-};
+  // ─── Remaining types (simplified) ───
+  protocol:     { complexity: DOC_COMPLEXITY.STRUCTURED, schema: { title: { required: true, type: "text", label: { en: "Title", de: "Titel", pt: "Título" } }, body: { required: true, type: "rich", label: { en: "Content", de: "Inhalt", pt: "Conteúdo" } } }, flow: [{ field: "title", prompt: { en: "📒 Protocol title?", de: "📒 Protokolltitel?", pt: "📒 Título do protocolo?" } }, { field: "body", prompt: { en: "Document the proceedings:", de: "Dokumentieren Sie den Verlauf:", pt: "Documente os procedimentos:" } }], sealPolicy: { type: "PROTOCOL", hashFields: ["title", "body"] } },
+  analysis:     { complexity: DOC_COMPLEXITY.STRUCTURED, schema: { title: { required: true, type: "text", label: { en: "Title", de: "Titel", pt: "Título" } }, body: { required: true, type: "rich", label: { en: "Analysis", de: "Analyse", pt: "Análise" } } }, flow: [{ field: "title", prompt: { en: "🔬 Analysis title?", de: "🔬 Analysetitel?", pt: "🔬 Título da análise?" } }, { field: "body", prompt: { en: "Write your analysis:", de: "Schreiben Sie Ihre Analyse:", pt: "Escreva sua análise:" } }], sealPolicy: { type: "ANALYSIS", hashFields: ["title", "body"] } },
+  presentation: { complexity: DOC_COMPLEXITY.STRUCTURED, schema: { title: { required: true, type: "text", label: { en: "Title", de: "Titel", pt: "Título" } }, body: { required: true, type: "rich", label: { en: "Content", de: "Inhalt", pt: "Conteúdo" } } }, flow: [{ field: "title", prompt: { en: "📽️ Presentation title?", de: "📽️ Präsentationstitel?", pt: "📽️ Título da apresentação?" } }, { field: "body", prompt: { en: "Outline your presentation:", de: "Skizzieren Sie Ihre Präsentation:", pt: "Esboce sua apresentação:" } }], sealPolicy: { type: "PRESENTATION", hashFields: ["title", "body"] } },
+  communique:   { complexity: DOC_COMPLEXITY.GOVERNANCE, schema: { title: { required: true, type: "text", label: { en: "Title", de: "Titel", pt: "Título" } }, classification: { required: true, type: "select", label: { en: "Classification", de: "Klassifizierung", pt: "Classificação" }, options: ["internal", "public", "confidential", "restricted"] }, body: { required: true, type: "rich", label: { en: "Content", de: "Inhalt", pt: "Conteúdo" } } }, flow: [{ field: "title", prompt: { en: "📡 Communiqué title?", de: "📡 Kommuniqué-Titel?", pt: "📡 Título do comunicado?" } }, { field: "classification", prompt: { en: "Classification level?", de: "Klassifizierungsstufe?", pt: "Nível de classificação?" }, chips: true }, { field: "body", prompt: { en: "Write the communiqué:", de: "Schreiben Sie das Kommuniqué:", pt: "Escreva o comunicado:" } }], sealPolicy: { type: "COMMUNIQUE", hashFields: ["title", "classification", "body"], governanceDocument: true } },
+  certificate:  { complexity: DOC_COMPLEXITY.GOVERNANCE, schema: { title: { required: true, type: "text", label: { en: "Certificate Title", de: "Zertifikatstitel", pt: "Título do Certificado" } }, recipient: { required: true, type: "text", label: { en: "Recipient", de: "Empfänger", pt: "Destinatário" } }, issuer: { required: true, type: "text", label: { en: "Issuer", de: "Aussteller", pt: "Emissor" }, default: "wallet" }, date: { required: true, type: "date", label: { en: "Date", de: "Datum", pt: "Data" }, default: "today" }, body: { required: true, type: "rich", label: { en: "Certificate Text", de: "Zertifikatstext", pt: "Texto do Certificado" } } }, flow: [{ field: "title", prompt: { en: "🏛️ Certificate title?", de: "🏛️ Zertifikatstitel?", pt: "🏛️ Título do certificado?" } }, { field: "recipient", prompt: { en: "Who receives this certificate?", de: "Wer erhält dieses Zertifikat?", pt: "Quem recebe este certificado?" } }, { field: "body", prompt: { en: "Write the certificate text:", de: "Schreiben Sie den Zertifikatstext:", pt: "Escreva o texto do certificado:" } }], sealPolicy: { type: "CERTIFICATE", hashFields: ["title", "recipient", "issuer", "date", "body"], governanceDocument: true, legalDocument: true } },
+});
 
-// Helper: Get DNA for a doc type
-const getDNA = (type) => DOC_TYPE_DNA[type] || null;
+// ─── COMPATIBILITY LAYER: Map DOCS to old DOC_TYPE_DNA interface ─────────────────
+// This allows gradual migration without breaking existing code
+const DOC_TYPE_DNA = {};
+for (const [id, doc] of Object.entries(DOCS)) {
+  DOC_TYPE_DNA[id] = {
+    ...doc,
+    fields: doc.schema,  // Map schema → fields for backward compat
+    seal: doc.sealPolicy, // Map sealPolicy → seal for backward compat
+  };
+}
 
-// Helper: Check if type has DNA (structured fields)
-const hasDNA = (type) => !!DOC_TYPE_DNA[type]?.fields;
+// Helper: Get doc config (prefers DOCS, falls back to DOC_TYPE_DNA)
+const getDoc = (type) => DOCS[type] || null;
+const getDNA = (type) => DOC_TYPE_DNA[type] || null; // Backward compat
+
+// Helper: Check if type has schema
+const hasDNA = (type) => !!(DOCS[type]?.schema || DOC_TYPE_DNA[type]?.fields);
+const hasSchema = (type) => !!DOCS[type]?.schema;
 
 // Helper: Render structured preview based on type DNA
 const renderStructuredPreview = (type, fields, th, lang) => {
@@ -1325,6 +1466,20 @@ function App(){
   const[distributeSent,setDistributeSent]=useState([]);
   const[showChannelSettings,setShowChannelSettings]=useState(false);
 
+  // ═══ WAVE 1: JOURNAL, FILES, SEARCH STATE ═══
+  const[journalArticles,setJournalArticles]=useState([]);
+  const[journalLoading,setJournalLoading]=useState(false);
+  const[journalError,setJournalError]=useState(null);
+
+  const[uploadedFiles,setUploadedFiles]=useState([]);
+  const[filesUploading,setFilesUploading]=useState(false);
+  const[fileDragOver,setFileDragOver]=useState(false);
+  const filesInputRef=useRef(null);
+
+  const[searchQuery,setSearchQuery]=useState("");
+  const[searchResults,setSearchResults]=useState([]);
+  const[searchLoading,setSearchLoading]=useState(false);
+
   // Chat
   const[msgs,setMsgs]=useState([]);
   const[chatIn,setChatIn]=useState("");
@@ -1461,6 +1616,115 @@ function App(){
     const iv=setInterval(fetchVaultStats,30000);
     return()=>clearInterval(iv);
   },[fetchVaultStats]);
+
+  // ═══ WAVE 1: JOURNAL FETCH (from Communiqué API) ═══
+  const communiqueApiUrl=window.location.hostname==='localhost'?'http://localhost:8105':'https://admin.windia4desk.tech/communique';
+  const fetchJournalArticles=useCallback(async()=>{
+    try{
+      setJournalLoading(true);
+      setJournalError(null);
+      const res=await fetch(communiqueApiUrl+'/api/communique/list');
+      const data=await res.json();
+      // Lang suffix for multilingual fields (de/en/pt)
+      const lk=lang==='de'?'_de':lang==='pt'?'_pt':'_en';
+      // Filter for published articles with display-ready fields
+      const articles=(data.communiques||[])
+        .filter(c=>c.status?.toUpperCase()==='PUBLISHED')
+        .map(c=>{
+          const title=c['title'+lk]||c.title_en||c.title||'Untitled';
+          const body=c['body'+lk]||c.body_en||c.content||c.text||'';
+          return{
+            id:c.id,
+            title,
+            excerpt:body.slice(0,140),
+            author:c.author||'WINDI Governance',
+            date:c.created_at||c.date||new Date().toISOString(),
+            category:c.category||'News',
+            tags:c.tags||[],
+            thumbnail:c.thumbnail||null,
+            readTime:Math.max(1,Math.ceil(body.length/800))
+          };
+        });
+      setJournalArticles(articles);
+    }catch(e){
+      console.warn('[WINDI] Journal fetch error:',e.message);
+      setJournalError(e.message);
+    }finally{
+      setJournalLoading(false);
+    }
+  },[communiqueApiUrl,lang]);
+
+  // Fetch journal when tab is active
+  useEffect(()=>{
+    if(sidebarTab==='journal'){fetchJournalArticles();}
+  },[sidebarTab,fetchJournalArticles]);
+
+  // ═══ WAVE 1: FILES UPLOAD HANDLER ═══
+  const handleFilesUpload=useCallback(async(files)=>{
+    if(!files||files.length===0)return;
+    setFilesUploading(true);
+    const newFiles=[];
+    for(const file of files){
+      const id=Date.now()+Math.random().toString(36).slice(2,8);
+      const reader=new FileReader();
+      const dataUrl=await new Promise((resolve)=>{
+        reader.onload=e=>resolve(e.target.result);
+        reader.readAsDataURL(file);
+      });
+      newFiles.push({
+        id,name:file.name,size:file.size,type:file.type,
+        thumbnail:file.type.startsWith('image/')?dataUrl:null,
+        dataUrl,uploadedAt:new Date().toISOString()
+      });
+    }
+    setUploadedFiles(prev=>[...newFiles,...prev]);
+    setFilesUploading(false);
+  },[]);
+
+  const handleFilesDrop=useCallback((e)=>{
+    e.preventDefault();
+    setFileDragOver(false);
+    const files=e.dataTransfer?.files;
+    if(files)handleFilesUpload(Array.from(files));
+  },[handleFilesUpload]);
+
+  const handleFilesInputChange=useCallback((e)=>{
+    const files=e.target?.files;
+    if(files)handleFilesUpload(Array.from(files));
+    e.target.value=''; // Reset for re-upload
+  },[handleFilesUpload]);
+
+  const deleteUploadedFile=useCallback((fileId)=>{
+    setUploadedFiles(prev=>prev.filter(f=>f.id!==fileId));
+  },[]);
+
+  // ═══ WAVE 1: SEARCH ACROSS DOCS + COMMUNIQUÉS ═══
+  const performSearch=useCallback((query)=>{
+    if(!query.trim()){setSearchResults([]);return;}
+    setSearchLoading(true);
+    const q=query.toLowerCase();
+    const results=[];
+    // Search savedDocs
+    savedDocs.forEach(doc=>{
+      if(doc.title?.toLowerCase().includes(q)||doc.type?.toLowerCase().includes(q)){
+        results.push({type:'doc',id:doc.id,title:doc.title,icon:doc.icon,subtype:doc.type,date:doc.date,status:doc.status});
+      }
+    });
+    // Search communiqués
+    communiques.forEach(c=>{
+      if(c.title?.toLowerCase().includes(q)||c.content?.toLowerCase().includes(q)||c.text?.toLowerCase().includes(q)){
+        results.push({type:'communique',id:c.id,title:c.title||'Communiqué',icon:'📰',subtype:c.status,date:c.created_at||c.date});
+      }
+    });
+    setSearchResults(results);
+    setSearchLoading(false);
+  },[savedDocs,communiques]);
+
+  // Debounced search on query change
+  useEffect(()=>{
+    const timer=setTimeout(()=>performSearch(searchQuery),300);
+    return()=>clearTimeout(timer);
+  },[searchQuery,performSearch]);
 
   // ═══ A.4: DRAGON CHAT API ═══
   // Constitutional Chat integration with 5 principles
@@ -1994,52 +2258,57 @@ function App(){
   },[wallet,docTitle,docContent]);
 
   const executeSeal=useCallback(async()=>{
-    const dna=getDNA(docType);
-    let ch,bh,fieldHashes={},sealMeta={};
+    const doc = getDoc(docType);
+    const dna = getDNA(docType); // Backward compat
 
-    // ═══ DNA-AWARE SEAL: Field-level hashing for structured types ═══
-    if(dna&&dna.seal&&Object.keys(docFields).length>1){
-      // Hash each required field individually
-      for(const field of (dna.seal.hashFields||[])){
-        if(docFields[field]){
-          fieldHashes[field]=await CryptoProvider.hash(String(docFields[field]));
-        }
-      }
-      // Combined fields hash (Merkle-like)
-      const combinedInput=(dna.seal.hashFields||[]).map(f=>docFields[f]||"").join("|");
-      ch=await CryptoProvider.hash(combinedInput);
-      // Bundle hash includes all metadata
-      const bundleInput=`${dna.seal.type}|${JSON.stringify(docFields)}|${wallet.id}|${new Date().toISOString()}`;
-      bh=await CryptoProvider.hash(bundleInput);
-      // Seal metadata
-      sealMeta={
-        doc_type:dna.seal.type,
-        field_hashes:fieldHashes,
-        fields_hash:ch,
-        ai_assisted:true,ai_role:"structural_guidance",human_authored:true,
-        ...(docFields.priority==="confidential"?{classification:"CONFIDENTIAL",subject_redacted:true}:{}),
-        ...(dna.seal.recipientTracked?{recipient_hash:fieldHashes.to}:{}),
-        ...(dna.seal.legalDocument?{legal_document:true}:{}),
-        ...(dna.seal.financialDocument?{financial_document:true}:{}),
-        ...(dna.seal.governanceDocument?{governance_document:true}:{}),
+    // ═══ SEAL v2.0: Merkle root + GDPR compliance ═══
+    if(doc?.sealPolicy && Object.keys(docFields).length > 1){
+      // Use new buildSealPayload with Merkle root
+      const sealData = await buildSealPayload(
+        { type: docType, fields: docFields },
+        wallet,
+        doc.sealPolicy
+      );
+
+      const r = {
+        id: sealData.doc_id,
+        serial: `WINDI-2026-${String(Math.floor(Math.random()*999999)).padStart(6,"0")}`,
+        ts: sealData.created_at,
+        ch: sealData.fields_root,  // Merkle root
+        bh: await CryptoProvider.hash(`${docType}|${JSON.stringify(docFields)}|${wallet?.id||'anon'}|${sealData.created_at}`),
+        sge: 0.92,
+        url: `${CONFIG.VERIFY_BASE_URL}/${sealData.doc_id}`,
+        // Merkle seal metadata
+        ...sealData,
       };
-    }else{
-      // Legacy: simple content hash
-      ch=await CryptoProvider.hash(docContent);
-      bh=await CryptoProvider.hash(`${docTitle}|${docContent}|${docImages.length}|${wallet.id}`);
-      sealMeta={doc_type:docType?.toUpperCase()||"NOTE"};
+      setReceipt(r);
+      setDocStatus("finalized");
+      setShowFinalizeModal(false);
+      setWallet(p=>({...p,trustScore:Math.min(p.trustScore+2,50),receipts:[...p.receipts,{id:r.id,title:docTitle,ts:r.ts,type:docType}]}));
+      setSavedDocs(p=>[{id:Date.now(),title:docTitle,icon:DOC_TYPES[docType]?.icon||"📄",type:docType||"note",status:"sealed",date:new Date().toLocaleDateString(),words:wordCount,fields:docFields},...p]);
+      flash(`🛡️ ${t.doc.finalized}`);
+      setTimeout(()=>setMsgs(p=>[...p,{role:"bot",text:t.chat.finalized}]),800);
     }
-
-    const r={id:CryptoProvider.receiptId(),serial:`WINDI-2026-${String(Math.floor(Math.random()*999999)).padStart(6,"0")}`,
-      ts:new Date().toISOString(),ch,bh,sge:0.92,
-      url:`${CONFIG.VERIFY_BASE_URL}/${CryptoProvider.receiptId()}`,
-      ...sealMeta}; // Include DNA seal metadata in receipt
-    setReceipt(r);setDocStatus("finalized");setShowFinalizeModal(false);
-    setWallet(p=>({...p,trustScore:Math.min(p.trustScore+2,50),receipts:[...p.receipts,{id:r.id,title:docTitle,ts:r.ts,type:docType}]}));
-    // Save to docs list with fields for DNA types
-    setSavedDocs(p=>[{id:Date.now(),title:docTitle,icon:DOC_TYPES[docType]?.icon||"📄",type:docType||"note",status:"sealed",date:new Date().toLocaleDateString(),words:wordCount,fields:Object.keys(docFields).length>1?docFields:null},...p]);
-    flash(`🛡️ ${t.doc.finalized}`);
-    setTimeout(()=>setMsgs(p=>[...p,{role:"bot",text:t.chat.finalized}]),800);
+    // ═══ LEGACY FALLBACK ═══
+    else {
+      const ch = await CryptoProvider.hash(docContent);
+      const bh = await CryptoProvider.hash(`${docTitle}|${docContent}|${docImages.length}|${wallet?.id||'anon'}`);
+      const r = {
+        id: CryptoProvider.receiptId(),
+        serial: `WINDI-2026-${String(Math.floor(Math.random()*999999)).padStart(6,"0")}`,
+        ts: new Date().toISOString(),
+        ch, bh, sge: 0.92,
+        url: `${CONFIG.VERIFY_BASE_URL}/${CryptoProvider.receiptId()}`,
+        doc_type: docType?.toUpperCase() || "NOTE",
+      };
+      setReceipt(r);
+      setDocStatus("finalized");
+      setShowFinalizeModal(false);
+      setWallet(p=>({...p,trustScore:Math.min(p.trustScore+2,50),receipts:[...p.receipts,{id:r.id,title:docTitle,ts:r.ts,type:docType}]}));
+      setSavedDocs(p=>[{id:Date.now(),title:docTitle,icon:DOC_TYPES[docType]?.icon||"📄",type:docType||"note",status:"sealed",date:new Date().toLocaleDateString(),words:wordCount},...p]);
+      flash(`🛡️ ${t.doc.finalized}`);
+      setTimeout(()=>setMsgs(p=>[...p,{role:"bot",text:t.chat.finalized}]),800);
+    }
   },[wallet,docTitle,docContent,docFields,docImages,docType,wordCount,t,flash]);
 
   // New doc
@@ -2555,8 +2824,132 @@ function App(){
             </div>
           )}
 
-          {/* ═══ OTHER TABS ═══ */}
-          {!["chat","docs","wallet"].includes(sidebarTab)&&(
+          {/* ═══ WAVE 1: JOURNAL TAB ═══ */}
+          {sidebarTab==='journal'&&(
+            <div style={{flex:1,display:'flex',flexDirection:'column',overflow:'hidden'}}>
+              <div style={{padding:'12px 16px',borderBottom:'1px solid '+th.border,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+                <div style={{display:'flex',alignItems:'center',gap:8}}>
+                  <span style={{fontSize:20}}>📰</span>
+                  <span style={{fontSize:14,fontWeight:700}}>{t.sidebar?.journal||'Journal'}</span>
+                </div>
+                <button onClick={fetchJournalArticles} disabled={journalLoading} style={{padding:'4px 10px',borderRadius:6,border:'1px solid '+th.border,background:th.card,color:th.dim,fontSize:10,cursor:'pointer',opacity:journalLoading?0.5:1}}>
+                  {journalLoading?'⏳':'🔄'} Refresh
+                </button>
+              </div>
+              <div style={{flex:1,overflowY:'auto',padding:12}}>
+                {journalError&&<div style={{padding:12,background:th.danger+'11',borderRadius:8,color:th.danger,fontSize:11,marginBottom:12}}>⚠️ {journalError}</div>}
+                {journalLoading&&journalArticles.length===0&&<div style={{textAlign:'center',padding:40,color:th.dim}}>⏳ Loading articles...</div>}
+                {!journalLoading&&journalArticles.length===0&&!journalError&&(
+                  <div style={{textAlign:'center',padding:40,color:th.dim}}>
+                    <div style={{fontSize:32,marginBottom:8}}>📭</div>
+                    <div style={{fontSize:12}}>No published articles yet</div>
+                  </div>
+                )}
+                {journalArticles.map(article=>(
+                  <div key={article.id} style={{background:th.card,border:'1px solid '+th.border,borderRadius:10,padding:12,marginBottom:10,cursor:'pointer',transition:'all 0.2s'}} onMouseOver={e=>e.currentTarget.style.borderColor=th.gold} onMouseOut={e=>e.currentTarget.style.borderColor=th.border}>
+                    <div style={{display:'flex',gap:10}}>
+                      {article.thumbnail&&<img src={article.thumbnail} style={{width:48,height:48,borderRadius:6,objectFit:'cover'}} alt=""/>}
+                      <div style={{flex:1,minWidth:0}}>
+                        <div style={{fontSize:12,fontWeight:700,marginBottom:4,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{article.title}</div>
+                        <div style={{fontSize:10,color:th.dim,lineHeight:1.4,display:'-webkit-box',WebkitLineClamp:2,WebkitBoxOrient:'vertical',overflow:'hidden'}}>{article.excerpt}</div>
+                      </div>
+                    </div>
+                    <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:8,fontSize:9,color:th.dim}}>
+                      <span>{article.category}</span>
+                      <span>{article.readTime} min read · {new Date(article.date).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ═══ WAVE 1: FILES TAB ═══ */}
+          {sidebarTab==='files'&&(
+            <div style={{flex:1,display:'flex',flexDirection:'column',overflow:'hidden'}}>
+              <div style={{padding:'12px 16px',borderBottom:'1px solid '+th.border,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+                <div style={{display:'flex',alignItems:'center',gap:8}}>
+                  <span style={{fontSize:20}}>📁</span>
+                  <span style={{fontSize:14,fontWeight:700}}>{t.sidebar?.files||'Files'}</span>
+                  <span style={{fontSize:10,color:th.dim,background:th.hover,padding:'2px 6px',borderRadius:4}}>{uploadedFiles.length}</span>
+                </div>
+                <button onClick={()=>filesInputRef.current?.click()} style={{padding:'4px 10px',borderRadius:6,background:th.gold,border:'none',color:'#fff',fontSize:10,cursor:'pointer',fontWeight:600}}>+ Upload</button>
+              </div>
+              <input ref={filesInputRef} type="file" multiple style={{display:'none'}} onChange={handleFilesInputChange}/>
+              <div style={{flex:1,overflowY:'auto',padding:12}}>
+                {/* Drop Zone */}
+                <div onDragOver={e=>{e.preventDefault();setFileDragOver(true);}} onDragLeave={()=>setFileDragOver(false)} onDrop={handleFilesDrop} style={{border:'2px dashed '+(fileDragOver?th.gold:th.border),borderRadius:10,padding:24,textAlign:'center',marginBottom:12,background:fileDragOver?th.gold+'08':'transparent',transition:'all 0.2s',cursor:'pointer'}} onClick={()=>filesInputRef.current?.click()}>
+                  <div style={{fontSize:28,marginBottom:8}}>{filesUploading?'⏳':'📤'}</div>
+                  <div style={{fontSize:11,color:th.dim}}>{filesUploading?'Uploading...':'Drag files here or click to upload'}</div>
+                </div>
+                {/* File List */}
+                {uploadedFiles.length===0&&!filesUploading&&(
+                  <div style={{textAlign:'center',padding:20,color:th.dim}}>
+                    <div style={{fontSize:10}}>No files uploaded yet</div>
+                  </div>
+                )}
+                <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(100px,1fr))',gap:10}}>
+                  {uploadedFiles.map(file=>(
+                    <div key={file.id} style={{background:th.card,border:'1px solid '+th.border,borderRadius:8,overflow:'hidden',position:'relative'}}>
+                      <div style={{height:70,background:th.hover,display:'flex',alignItems:'center',justifyContent:'center'}}>
+                        {file.thumbnail?<img src={file.thumbnail} style={{width:'100%',height:'100%',objectFit:'cover'}} alt=""/>:
+                        <span style={{fontSize:24}}>{file.type?.includes('pdf')?'📄':file.type?.includes('video')?'🎬':file.type?.includes('audio')?'🎵':'📎'}</span>}
+                      </div>
+                      <div style={{padding:6}}>
+                        <div style={{fontSize:9,fontWeight:600,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{file.name}</div>
+                        <div style={{fontSize:8,color:th.dim}}>{(file.size/1024).toFixed(1)} KB</div>
+                      </div>
+                      <button onClick={()=>deleteUploadedFile(file.id)} style={{position:'absolute',top:4,right:4,width:18,height:18,borderRadius:4,background:'#000A',border:'none',color:'#fff',fontSize:10,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}>×</button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ═══ WAVE 1: SEARCH TAB ═══ */}
+          {sidebarTab==='search'&&(
+            <div style={{flex:1,display:'flex',flexDirection:'column',overflow:'hidden'}}>
+              <div style={{padding:'12px 16px',borderBottom:'1px solid '+th.border}}>
+                <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:10}}>
+                  <span style={{fontSize:20}}>🔍</span>
+                  <span style={{fontSize:14,fontWeight:700}}>{t.sidebar?.search||'Search'}</span>
+                </div>
+                <div style={{position:'relative'}}>
+                  <input value={searchQuery} onChange={e=>setSearchQuery(e.target.value)} placeholder="Search documents & communiqués..." style={{width:'100%',padding:'10px 12px',paddingRight:32,borderRadius:8,border:'1px solid '+th.border,background:th.input,color:th.text,fontSize:12,outline:'none',boxSizing:'border-box'}}/>
+                  {searchLoading&&<span style={{position:'absolute',right:10,top:'50%',transform:'translateY(-50%)',fontSize:12}}>⏳</span>}
+                </div>
+              </div>
+              <div style={{flex:1,overflowY:'auto',padding:12}}>
+                {searchQuery&&searchResults.length===0&&!searchLoading&&(
+                  <div style={{textAlign:'center',padding:20,color:th.dim}}>
+                    <div style={{fontSize:24,marginBottom:8}}>🔎</div>
+                    <div style={{fontSize:11}}>No results for "{searchQuery}"</div>
+                  </div>
+                )}
+                {!searchQuery&&(
+                  <div style={{textAlign:'center',padding:30,color:th.dim}}>
+                    <div style={{fontSize:28,marginBottom:8}}>🔍</div>
+                    <div style={{fontSize:11}}>Search across all your documents</div>
+                    <div style={{fontSize:10,marginTop:4}}>{savedDocs.length} docs · {communiques.length} communiqués</div>
+                  </div>
+                )}
+                {searchResults.map(result=>(
+                  <div key={result.type+'-'+result.id} style={{display:'flex',alignItems:'center',gap:10,padding:'10px 12px',background:th.card,border:'1px solid '+th.border,borderRadius:8,marginBottom:8,cursor:'pointer'}} onMouseOver={e=>e.currentTarget.style.borderColor=th.gold} onMouseOut={e=>e.currentTarget.style.borderColor=th.border}>
+                    <span style={{fontSize:18}}>{result.icon}</span>
+                    <div style={{flex:1,minWidth:0}}>
+                      <div style={{fontSize:12,fontWeight:600,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{result.title}</div>
+                      <div style={{fontSize:9,color:th.dim}}>{result.type==='doc'?'Document':'Communiqué'} · {result.subtype} · {result.date}</div>
+                    </div>
+                    <span style={{fontSize:10,color:result.type==='doc'?th.gold:th.success}}>{result.type==='doc'?'📄':'📰'}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ═══ OTHER TABS (Fallback) ═══ */}
+          {!["chat","docs","wallet","desk","journal","files","search"].includes(sidebarTab)&&(
             <div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
               <div style={{textAlign:"center"}}>
                 <div style={{fontSize:40,marginBottom:12}}>{SIDEBAR.find(s=>s.id===sidebarTab)?.icon}</div>
