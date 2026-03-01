@@ -2996,6 +2996,10 @@ function App(){
   const[fileDragOver,setFileDragOver]=useState(false);
   const filesInputRef=useRef(null);
 
+  // ═══ SPRINT 3: PRODUCTS CATALOG (ISP Templates) ═══
+  const[ispProfiles,setIspProfiles]=useState([]);
+  const[productsLoading,setProductsLoading]=useState(false);
+
   const[searchQuery,setSearchQuery]=useState("");
   const[searchResults,setSearchResults]=useState([]);
   const[searchLoading,setSearchLoading]=useState(false);
@@ -3028,6 +3032,11 @@ function App(){
   const[voiceText,setVoiceText]=useState("");
   const[selectedReceipt,setSelectedReceipt]=useState(null); // FIX (N): clickable receipts
 
+  // ═══ SPRINT 3: VOICE RECORDING STATE ═══
+  const[isVoiceRecording,setIsVoiceRecording]=useState(false);
+  const[voiceInterim,setVoiceInterim]=useState('');
+  const voiceRecognitionRef=useRef(null);
+
   const th=THEMES[themeName];
   const t=L[lang]||L.en;
 
@@ -3056,6 +3065,72 @@ function App(){
     if(!persist)return;
     try{localStorage.setItem(CONFIG.STORAGE_KEY,JSON.stringify({wallet,savedDocs,theme:themeName,lang}));}catch(e){}
   },[wallet,savedDocs,themeName,lang,persist]);
+
+  // ═══ SPRINT 3: FILES PERSISTENCE ═══
+  // Load files on mount
+  useEffect(()=>{
+    try{
+      const saved=localStorage.getItem('windi_files');
+      if(saved){setUploadedFiles(JSON.parse(saved));}
+    }catch(e){}
+  },[]);
+
+  // Save files on change
+  useEffect(()=>{
+    if(uploadedFiles.length>0){
+      try{
+        const metadata=uploadedFiles.map(f=>({
+          id:f.id,name:f.name,type:f.type,size:f.size,
+          uploadedAt:f.uploadedAt||new Date().toISOString(),
+          content:(f.size<50000&&f.type?.startsWith('text/'))?f.content:null,
+          thumbnail:f.thumbnail||null
+        }));
+        localStorage.setItem('windi_files',JSON.stringify(metadata));
+      }catch(e){}
+    }else{
+      localStorage.removeItem('windi_files');
+    }
+  },[uploadedFiles]);
+
+  // ═══ SPRINT 3: FETCH ISP PROFILES ON MOUNT ═══
+  useEffect(()=>{
+    fetchIspProfiles();
+  },[fetchIspProfiles]);
+
+  // ═══ SPRINT 3: WEB SPEECH API INITIALIZATION ═══
+  useEffect(()=>{
+    const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+    if(SR){
+      const r=new SR();
+      r.continuous=true;
+      r.interimResults=true;
+      r.lang=lang==='de'?'de-DE':lang==='pt'?'pt-BR':'en-US';
+      r.onresult=(e)=>{
+        let final='',inter='';
+        for(let i=e.resultIndex;i<e.results.length;i++){
+          if(e.results[i].isFinal)final+=e.results[i][0].transcript;
+          else inter+=e.results[i][0].transcript;
+        }
+        if(final)setVoiceText(p=>p+final+' ');
+        setVoiceInterim(inter);
+      };
+      r.onerror=()=>setIsVoiceRecording(false);
+      r.onend=()=>setIsVoiceRecording(false);
+      voiceRecognitionRef.current=r;
+    }
+    return()=>voiceRecognitionRef.current?.stop();
+  },[lang]);
+
+  const toggleVoiceRecording=useCallback(()=>{
+    if(isVoiceRecording){
+      voiceRecognitionRef.current?.stop();
+    }else{
+      setVoiceText('');
+      setVoiceInterim('');
+      voiceRecognitionRef.current?.start();
+      setIsVoiceRecording(true);
+    }
+  },[isVoiceRecording]);
 
   // FIX (L): Auto-save draft
   useEffect(()=>{
@@ -3357,6 +3432,69 @@ function App(){
 
   const deleteUploadedFile=useCallback((fileId)=>{
     setUploadedFiles(prev=>prev.filter(f=>f.id!==fileId));
+  },[]);
+
+  // ═══ SPRINT 3: EXPORT FILES ═══
+  const exportFile=useCallback((file)=>{
+    const blob=new Blob([file.content||''],{type:file.type||'text/plain'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download=file.name;a.click();
+    URL.revokeObjectURL(url);
+  },[]);
+
+  const exportAllFiles=useCallback(()=>{
+    const bundle={exported:new Date().toISOString(),files:uploadedFiles};
+    const blob=new Blob([JSON.stringify(bundle,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;a.download=`windi-files-${Date.now()}.json`;a.click();
+    URL.revokeObjectURL(url);
+  },[uploadedFiles]);
+
+  // ═══ SPRINT 3: PRODUCTS CATALOG (ISP Templates) ═══
+  const getApiUrl=()=>window.location.hostname==='localhost'?'http://localhost:8108/api/dragon':'/app/api/dragon';
+
+  const fetchIspProfiles=useCallback(async()=>{
+    setProductsLoading(true);
+    try{
+      const res=await fetch(`${getApiUrl()}/isp/list`);
+      if(res.ok){
+        const data=await res.json();
+        setIspProfiles(data.profiles||[]);
+      }
+    }catch(e){
+      console.error('Failed to fetch ISP profiles:',e);
+    }finally{
+      setProductsLoading(false);
+    }
+  },[]);
+
+  const createFromTemplate=useCallback(async(profile)=>{
+    try{
+      const res=await fetch(`${getApiUrl()}/isp/load/${profile.id}`);
+      const fullProfile=await res.json();
+      const newDoc={
+        id:Date.now(),
+        type:profile.type||'document',
+        title:`New ${profile.name}`,
+        content:'',
+        ispProfile:profile.id,
+        fields:fullProfile.fields?.reduce((acc,f)=>{acc[f.id]=f.default||'';return acc;},{})||{},
+        status:'draft',
+        date:new Date().toISOString(),
+        icon:profile.icon||'📄'
+      };
+      setSavedDocs(prev=>[...prev,newDoc]);
+      setSelectedDoc(newDoc);
+      setDocTitle(newDoc.title);
+      setDocContent('');
+      setDocType(profile.type||'document');
+      setSidebarTab('docs');
+      setMsgs(prev=>[...prev,{role:'system',text:`📦 Created from template: ${profile.name}`}]);
+    }catch(e){
+      console.error('Failed to create from template:',e);
+    }
   },[]);
 
   // ═══ WAVE 1: SEARCH ACROSS DOCS + COMMUNIQUÉS ═══
@@ -4868,7 +5006,7 @@ function App(){
             </div>
           )}
 
-          {/* ═══ WAVE 1: FILES TAB ═══ */}
+          {/* ═══ SPRINT 3: FILES TAB (with persistence + export) ═══ */}
           {sidebarTab==='files'&&(
             <div style={{flex:1,display:'flex',flexDirection:'column',overflow:'hidden'}}>
               <div style={{padding:'12px 16px',borderBottom:'1px solid '+th.border,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
@@ -4877,7 +5015,10 @@ function App(){
                   <span style={{fontSize:14,fontWeight:700}}>{t.sidebar?.files||'Files'}</span>
                   <span style={{fontSize:10,color:th.dim,background:th.hover,padding:'2px 6px',borderRadius:4}}>{uploadedFiles.length}</span>
                 </div>
-                <button onClick={()=>filesInputRef.current?.click()} style={{padding:'4px 10px',borderRadius:6,background:th.gold,border:'none',color:'#fff',fontSize:10,cursor:'pointer',fontWeight:600}}>+ Upload</button>
+                <div style={{display:'flex',gap:6}}>
+                  {uploadedFiles.length>0&&<button onClick={exportAllFiles} title="Export all as JSON" style={{padding:'4px 8px',borderRadius:6,background:th.card,border:'1px solid '+th.border,color:th.dim,fontSize:10,cursor:'pointer'}}>📤</button>}
+                  <button onClick={()=>filesInputRef.current?.click()} style={{padding:'4px 10px',borderRadius:6,background:th.gold,border:'none',color:'#fff',fontSize:10,cursor:'pointer',fontWeight:600}}>+ Upload</button>
+                </div>
               </div>
               <input ref={filesInputRef} type="file" multiple style={{display:'none'}} onChange={handleFilesInputChange}/>
               <div style={{flex:1,overflowY:'auto',padding:12}}>
@@ -4890,22 +5031,43 @@ function App(){
                 {uploadedFiles.length===0&&!filesUploading&&(
                   <div style={{textAlign:'center',padding:20,color:th.dim}}>
                     <div style={{fontSize:10}}>No files uploaded yet</div>
+                    <div style={{fontSize:9,marginTop:4,color:th.dim}}>Files persist across sessions</div>
                   </div>
                 )}
                 <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(100px,1fr))',gap:10}}>
-                  {uploadedFiles.map(file=>(
-                    <div key={file.id} style={{background:th.card,border:'1px solid '+th.border,borderRadius:8,overflow:'hidden',position:'relative'}}>
-                      <div style={{height:70,background:th.hover,display:'flex',alignItems:'center',justifyContent:'center'}}>
-                        {file.thumbnail?<img src={file.thumbnail} style={{width:'100%',height:'100%',objectFit:'cover'}} alt=""/>:
-                        <span style={{fontSize:24}}>{file.type?.includes('pdf')?'📄':file.type?.includes('video')?'🎬':file.type?.includes('audio')?'🎵':'📎'}</span>}
+                  {uploadedFiles.map(file=>{
+                    const getIcon=(type)=>{
+                      if(type?.includes('pdf'))return'📕';
+                      if(type?.includes('image'))return'🖼️';
+                      if(type?.includes('video'))return'🎬';
+                      if(type?.includes('audio'))return'🎵';
+                      if(type?.includes('json'))return'📋';
+                      if(type?.startsWith('text/'))return'📄';
+                      return'📎';
+                    };
+                    const formatSize=(bytes)=>{
+                      if(bytes<1024)return bytes+' B';
+                      if(bytes<1024*1024)return(bytes/1024).toFixed(1)+' KB';
+                      return(bytes/(1024*1024)).toFixed(1)+' MB';
+                    };
+                    return(
+                      <div key={file.id} style={{background:th.card,border:'1px solid '+th.border,borderRadius:8,overflow:'hidden',position:'relative'}}>
+                        <div style={{height:70,background:th.hover,display:'flex',alignItems:'center',justifyContent:'center'}}>
+                          {file.thumbnail?<img src={file.thumbnail} style={{width:'100%',height:'100%',objectFit:'cover'}} alt=""/>:
+                          <span style={{fontSize:24}}>{getIcon(file.type)}</span>}
+                        </div>
+                        <div style={{padding:6}}>
+                          <div style={{fontSize:9,fontWeight:600,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{file.name}</div>
+                          <div style={{fontSize:8,color:th.dim}}>{formatSize(file.size)}</div>
+                        </div>
+                        {/* Action buttons */}
+                        <div style={{position:'absolute',top:4,right:4,display:'flex',gap:2}}>
+                          {file.content&&<button onClick={(e)=>{e.stopPropagation();exportFile(file);}} title="Download" style={{width:18,height:18,borderRadius:4,background:'#000A',border:'none',color:'#fff',fontSize:10,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}>⬇</button>}
+                          <button onClick={()=>deleteUploadedFile(file.id)} title="Delete" style={{width:18,height:18,borderRadius:4,background:'#000A',border:'none',color:'#fff',fontSize:10,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}>×</button>
+                        </div>
                       </div>
-                      <div style={{padding:6}}>
-                        <div style={{fontSize:9,fontWeight:600,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{file.name}</div>
-                        <div style={{fontSize:8,color:th.dim}}>{(file.size/1024).toFixed(1)} KB</div>
-                      </div>
-                      <button onClick={()=>deleteUploadedFile(file.id)} style={{position:'absolute',top:4,right:4,width:18,height:18,borderRadius:4,background:'#000A',border:'none',color:'#fff',fontSize:10,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}>×</button>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -5006,8 +5168,65 @@ function App(){
             </div>
           )}
 
+          {/* ═══ SPRINT 3: PRODUCTS TAB (ISP Templates Catalog) ═══ */}
+          {sidebarTab==='products'&&(
+            <div style={{flex:1,display:'flex',flexDirection:'column',overflow:'hidden'}}>
+              <div style={{padding:'12px 16px',borderBottom:'1px solid '+th.border,display:'flex',alignItems:'center',gap:8}}>
+                <span style={{fontSize:20}}>📦</span>
+                <span style={{fontSize:14,fontWeight:700}}>{t.sidebar?.products||'Products'}</span>
+                <span style={{marginLeft:'auto',fontSize:10,color:th.dim}}>{ispProfiles.length} templates</span>
+              </div>
+              <div style={{flex:1,overflowY:'auto',padding:12}}>
+                {productsLoading?(
+                  <div style={{textAlign:'center',padding:40,color:th.dim}}>
+                    <div style={{fontSize:24,marginBottom:8}}>⏳</div>
+                    <div style={{fontSize:11}}>Loading templates...</div>
+                  </div>
+                ):ispProfiles.length===0?(
+                  <div style={{textAlign:'center',padding:30,color:th.dim}}>
+                    <div style={{fontSize:28,marginBottom:8}}>📦</div>
+                    <div style={{fontSize:11}}>No templates available</div>
+                    <div style={{fontSize:10,marginTop:4}}>ISP profiles not configured</div>
+                  </div>
+                ):(
+                  <div style={{display:'flex',flexDirection:'column',gap:8}}>
+                    {/* Group by category */}
+                    {Object.entries(ispProfiles.reduce((acc,p)=>{
+                      const cat=p.category||'other';
+                      if(!acc[cat])acc[cat]=[];
+                      acc[cat].push(p);
+                      return acc;
+                    },{})).map(([cat,profiles])=>(
+                      <div key={cat}>
+                        <div style={{fontSize:10,fontWeight:700,color:th.gold,textTransform:'uppercase',letterSpacing:0.5,marginBottom:6,marginTop:8}}>
+                          {cat==='communique'?'📜':cat==='governance'?'⚖️':cat==='legal'?'📋':cat==='technical'?'⚙️':cat==='creative'?'🎨':'📦'} {cat}
+                        </div>
+                        {profiles.map(profile=>(
+                          <div key={profile.id} onClick={()=>createFromTemplate(profile)} style={{
+                            padding:'12px 14px',background:th.card,border:'1px solid '+th.border,borderRadius:10,
+                            cursor:'pointer',marginBottom:6,transition:'all 0.2s'
+                          }} onMouseOver={e=>e.currentTarget.style.borderColor=th.gold} onMouseOut={e=>e.currentTarget.style.borderColor=th.border}>
+                            <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:4}}>
+                              <span style={{fontSize:16}}>{profile.icon||'📄'}</span>
+                              <span style={{fontSize:13,fontWeight:600}}>{profile.name}</span>
+                            </div>
+                            <div style={{fontSize:10,color:th.dim,marginBottom:6,lineHeight:1.4}}>{profile.description||'No description'}</div>
+                            <div style={{display:'flex',gap:8,fontSize:9,color:th.dim}}>
+                              <span>{profile.fields?.length||0} fields</span>
+                              {profile.governance?.retention&&<span>• {profile.governance.retention}</span>}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* ═══ OTHER TABS (Fallback) ═══ */}
-          {!["chat","docs","wallet","desk","journal","files","search","history","insights"].includes(sidebarTab)&&(
+          {!["chat","docs","wallet","desk","journal","files","search","history","insights","products"].includes(sidebarTab)&&(
             <div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
               <div style={{textAlign:"center"}}>
                 <div style={{fontSize:40,marginBottom:12}}>{SIDEBAR.find(s=>s.id===sidebarTab)?.icon}</div>
@@ -5194,27 +5413,55 @@ function App(){
           </>}
         </div></div>}
 
-      {/* ═══ FIX (I): VOICE PASTE MODAL ═══ */}
-      {showVoiceModal&&<div style={{position:"fixed",inset:0,background:"#000A",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:16}} onClick={()=>setShowVoiceModal(false)}>
+      {/* ═══ SPRINT 3: VOICE MODAL WITH WEB SPEECH API ═══ */}
+      {showVoiceModal&&<div style={{position:"fixed",inset:0,background:"#000A",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:16}} onClick={()=>{voiceRecognitionRef.current?.stop();setIsVoiceRecording(false);setShowVoiceModal(false);}}>
         <div onClick={e=>e.stopPropagation()} style={{background:th.card,borderRadius:18,padding:"24px 20px",maxWidth:400,width:"100%",border:`1px solid ${th.gold}33`}}>
           <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
             <span style={{fontSize:24}}>🎙️</span>
-            <h2 style={{fontSize:16,fontWeight:800,margin:0}}>{t.doc.addVoice}</h2></div>
-          <p style={{fontSize:12,color:th.dim,marginBottom:12,lineHeight:1.5}}>
-            {lang==="de"?"Sprich dein Transkript oder kopiere es von einer Sprach-App hier rein.":
-             lang==="pt"?"Cola a tua transcrição de uma app de voz aqui.":
-             "Paste your voice transcript from a speech app here."}</p>
+            <h2 style={{fontSize:16,fontWeight:800,margin:0}}>{t.doc.addVoice}</h2>
+          </div>
+
+          {/* Web Speech API Controls */}
+          {(window.SpeechRecognition||window.webkitSpeechRecognition)?(
+            <div style={{textAlign:'center',marginBottom:16}}>
+              <button onClick={toggleVoiceRecording} style={{
+                width:64,height:64,borderRadius:'50%',border:'none',cursor:'pointer',
+                background:isVoiceRecording?'#ef4444':'#22c55e',
+                boxShadow:isVoiceRecording?'0 0 20px #ef444466':'0 0 20px #22c55e66',
+                transition:'all 0.2s',fontSize:24
+              }}>
+                {isVoiceRecording?'⏹️':'🎤'}
+              </button>
+              <div style={{fontSize:11,color:th.dim,marginTop:8}}>
+                {isVoiceRecording?(lang==='de'?'Aufnahme läuft...':lang==='pt'?'Gravando...':'Recording...'):(lang==='de'?'Klicken zum Aufnehmen':lang==='pt'?'Clique para gravar':'Click to record')}
+              </div>
+              {isVoiceRecording&&voiceInterim&&(
+                <div style={{fontSize:12,color:th.gold,fontStyle:'italic',marginTop:8,padding:'8px',background:th.hover,borderRadius:8}}>
+                  {voiceInterim}
+                </div>
+              )}
+            </div>
+          ):(
+            <div style={{textAlign:'center',padding:'12px',background:'#f59e0b11',border:'1px solid #f59e0b33',borderRadius:8,marginBottom:12}}>
+              <span style={{fontSize:12,color:'#f59e0b'}}>⚠️ {lang==='de'?'Web Speech API nicht verfügbar':lang==='pt'?'Web Speech API indisponível':'Web Speech API not available'}</span>
+            </div>
+          )}
+
+          <p style={{fontSize:11,color:th.dim,marginBottom:8,lineHeight:1.4}}>
+            {lang==="de"?"Oder füge Text manuell ein:":lang==="pt"?"Ou cole texto manualmente:":"Or paste text manually:"}
+          </p>
           <textarea value={voiceText} onChange={e=>setVoiceText(e.target.value)}
-            placeholder={lang==="de"?"Transkript hier einfügen...":lang==="pt"?"Colar transcrição aqui...":"Paste transcript here..."}
-            style={{width:"100%",minHeight:100,padding:"10px 12px",borderRadius:10,border:`1px solid ${th.border}`,
+            placeholder={lang==="de"?"Transkript hier...":lang==="pt"?"Transcrição aqui...":"Transcript here..."}
+            style={{width:"100%",minHeight:80,padding:"10px 12px",borderRadius:10,border:`1px solid ${th.border}`,
               background:th.input,color:th.text,fontSize:13,outline:"none",resize:"vertical",boxSizing:"border-box",
               fontFamily:"'Bricolage Grotesque',sans-serif"}}/>
           <div style={{display:"flex",gap:8,marginTop:12}}>
-            <button onClick={()=>setShowVoiceModal(false)} style={{flex:1,padding:"10px",borderRadius:10,background:th.card,border:`1px solid ${th.border}`,color:th.dim,fontSize:12,cursor:"pointer"}}>{t.did.close}</button>
-            <button onClick={()=>{if(voiceText.trim()){send(voiceText.trim());setVoiceText("");setShowVoiceModal(false);}}} disabled={!voiceText.trim()}
+            <button onClick={()=>{voiceRecognitionRef.current?.stop();setIsVoiceRecording(false);setShowVoiceModal(false);}} style={{flex:1,padding:"10px",borderRadius:10,background:th.card,border:`1px solid ${th.border}`,color:th.dim,fontSize:12,cursor:"pointer"}}>{t.did.close}</button>
+            <button onClick={()=>{if(voiceText.trim()){voiceRecognitionRef.current?.stop();setIsVoiceRecording(false);send(voiceText.trim());setVoiceText("");setShowVoiceModal(false);}}} disabled={!voiceText.trim()}
               style={{flex:1,padding:"10px",borderRadius:10,background:voiceText.trim()?th.gold:th.dim,border:"none",color:"#FFF",fontSize:12,fontWeight:700,cursor:"pointer",opacity:voiceText.trim()?1:0.4}}>→ {t.sidebar.chat}</button>
           </div>
-        </div></div>}
+        </div>
+      </div>}
 
       {/* ═══ DISTRIBUTION MODAL — Send sealed documents ═══ */}
       {showDistributeModal&&<div style={{position:"fixed",inset:0,background:"#000A",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:16}} onClick={()=>setShowDistributeModal(false)}>
