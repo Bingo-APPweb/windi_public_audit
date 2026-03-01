@@ -3259,6 +3259,11 @@ function App(){
     return communiques.filter(c=>c.status?.toLowerCase()===comFilter);
   },[communiques,comFilter]);
 
+  // ═══ A.4: DRAGON URL (moved here to fix TDZ) ═══
+  // Production uses /app/api/dragon nginx route → 8108
+  // Local uses direct port 8108
+  const dragonUrl = window.location.hostname === 'localhost' ? 'http://localhost:8108/api/dragon' : '/app/api/dragon';
+
   // ═══ A.1b: COMMUNIQUÉ CREATE & WORKFLOW ACTIONS ═══
   const createCommuniqueInBackend=useCallback(async(fields,walletData)=>{
     const payload={
@@ -3529,10 +3534,7 @@ function App(){
   },[searchQuery,performSearch]);
 
   // ═══ A.4: DRAGON CHAT API ═══
-  // Constitutional Chat integration with 5 principles
-  // Production uses /palette/api/dragon nginx route → 8108
-  // Local uses direct port 8108
-  const dragonUrl = window.location.hostname === 'localhost' ? 'http://localhost:8108/api/dragon' : '/app/api/dragon';
+  // NOTE: dragonUrl moved to line ~3265 to fix TDZ error
 
   // ═══ DISTRIBUTION: Check channel status when modal opens ═══
   useEffect(()=>{
