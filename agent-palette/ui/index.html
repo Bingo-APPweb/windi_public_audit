@@ -3916,6 +3916,32 @@ function App(){
     },
     // ═══ COMMUNIQUÉ ACTION — Trilingual institutional documents ═══
     create_communique:async(payload)=>{
+      // 1. Load content into editor (German as primary, with trilingual structure)
+      const title=payload.title_de||payload.title_en||payload.title_pt||'Communiqué';
+      const bodyParts=[];
+      if(payload.body_de){bodyParts.push('🇩🇪 DEUTSCH\n'+payload.body_de);}
+      if(payload.body_en){bodyParts.push('🇬🇧 ENGLISH\n'+payload.body_en);}
+      if(payload.body_pt){bodyParts.push('🇧🇷 PORTUGUÊS\n'+payload.body_pt);}
+      const content=bodyParts.join('\n\n───────────────────\n\n')||'';
+
+      setDocTitle(title);
+      setDocContent(content);
+      setDocType('communique');
+      setSidebarTab('chat');  // Stay in chat tab with document preview (NOT desk/canvas)
+
+      // 2. Store trilingual fields for API submission
+      setDocFields({
+        title_de:payload.title_de||'',
+        title_en:payload.title_en||'',
+        title_pt:payload.title_pt||'',
+        body_de:payload.body_de||'',
+        body_en:payload.body_en||'',
+        body_pt:payload.body_pt||'',
+        category:payload.category||'UPDATE',
+        impact_level:payload.impact_level||'MEDIUM'
+      });
+
+      // 3. POST to Communiqué Engine to create DRAFT
       const comApiUrl=window.location.hostname==='localhost'?'http://localhost:8105':'/communique';
       try{
         const res=await fetch(comApiUrl+'/api/communique',{
@@ -3939,7 +3965,9 @@ function App(){
           flash('📡 Communiqué DRAFT: '+data.id);
           setActiveCommuniqueId(data.id);
           fetchCommuniques();
-          setTimeout(()=>setShowCommuniqueWorkflow(true),300);
+          // 4. Show workflow modal after brief delay
+          setTimeout(()=>setShowCommuniqueWorkflow(true),500);
+          if(window.WINDI?.EventBus)window.WINDI.EventBus.emit('COMMUNIQUE_CREATED',{id:data.id,title});
           return{success:true,message:'Communiqué '+data.id+' created'};
         }else{
           flash('❌ '+(data.error||'Failed to create communiqué'));
@@ -6068,12 +6096,12 @@ function App(){
              "This communiqué was created as a draft. Choose the next action:"}
           </p>
           <div style={{display:"flex",flexDirection:"column",gap:10}}>
+            {/* 📝 Submit for Review */}
             <button onClick={async()=>{
               setCommuniqueWorkflowLoading(true);
               const result=await submitCommuniqueForReview(activeCommuniqueId,wallet?.name);
               if(result.success){
-                flash(`✅ ${activeCommuniqueId} submitted for review`);
-                setShowCommuniqueWorkflow(false);
+                flash(`📝 ${activeCommuniqueId} → REVIEW`);
                 fetchCommuniques();
               }else{
                 flash(`❌ ${result.error||'Failed to submit'}`);
@@ -6081,9 +6109,38 @@ function App(){
               setCommuniqueWorkflowLoading(false);
             }} disabled={communiqueWorkflowLoading}
               style={{padding:"12px 16px",borderRadius:10,background:`${th.gold}15`,border:`1px solid ${th.gold}44`,color:th.gold,fontSize:13,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:8,opacity:communiqueWorkflowLoading?0.6:1}}>
-              <span>👁️</span>
+              <span>📝</span>
               <span>{communiqueWorkflowLoading?(lang==="de"?"Sende...":"Sending..."):(lang==="de"?"Zur Prüfung einreichen":lang==="pt"?"Enviar para revisão":"Submit for Review")}</span>
             </button>
+            {/* 🔐 Publish & Seal */}
+            <button onClick={async()=>{
+              const confirmMsg=lang==="de"?"Kommuniqué veröffentlichen und versiegeln? Diese Aktion ist unwiderruflich.":lang==="pt"?"Publicar e selar este comunicado? Esta ação é irreversível.":"Publish and seal this communiqué? This action is irreversible.";
+              if(!confirm(confirmMsg))return;
+              setCommuniqueWorkflowLoading(true);
+              const result=await publishCommunique(activeCommuniqueId,wallet?.name);
+              if(result.success){
+                flash(`🔐 ${activeCommuniqueId} PUBLISHED!`);
+                setShowCommuniqueWorkflow(false);
+                fetchCommuniques();
+              }else{
+                flash(`❌ ${result.error||'Publish failed'}`);
+              }
+              setCommuniqueWorkflowLoading(false);
+            }} disabled={communiqueWorkflowLoading}
+              style={{padding:"12px 16px",borderRadius:10,background:"#16A34A22",border:"1px solid #16A34A44",color:"#16A34A",fontSize:13,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:8,opacity:communiqueWorkflowLoading?0.6:1}}>
+              <span>🔐</span>
+              <span>{lang==="de"?"Veröffentlichen & Versiegeln":lang==="pt"?"Publicar & Selar":"Publish & Seal"}</span>
+            </button>
+            {/* 👁️ Preview */}
+            <button onClick={()=>{
+              const comApiUrl=window.location.hostname==='localhost'?'http://localhost:8105':'';
+              window.open(comApiUrl+'/communique/'+activeCommuniqueId,'_blank');
+            }}
+              style={{padding:"12px 16px",borderRadius:10,background:th.hover,border:`1px solid ${th.border}`,color:th.text,fontSize:13,fontWeight:600,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:8}}>
+              <span>👁️</span>
+              <span>{lang==="de"?"Vorschau":lang==="pt"?"Pré-visualizar":"Preview"}</span>
+            </button>
+            {/* Close */}
             <button onClick={()=>setShowCommuniqueWorkflow(false)}
               style={{padding:"12px 16px",borderRadius:10,background:th.card,border:`1px solid ${th.border}`,color:th.dim,fontSize:13,fontWeight:600,cursor:"pointer"}}>
               {lang==="de"?"Als Entwurf behalten":lang==="pt"?"Manter como rascunho":"Keep as Draft"}
