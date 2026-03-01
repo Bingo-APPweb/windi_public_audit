@@ -1501,6 +1501,25 @@ const transformFieldsToBlocks = (docType, fields, schema, lang = 'en') => {
   return blocks;
 };
 
+// Detect tier from URL/localStorage (FIX: was undefined)
+const detectTierFromUrl = () => {
+  // Check window.WINDI context first
+  if (window.WINDI && window.WINDI.tier) {
+    return { tier: window.WINDI.tier };
+  }
+  // Check localStorage
+  const stored = localStorage.getItem('windi_tier');
+  if (stored) {
+    return { tier: stored };
+  }
+  // Fallback: detect from hostname
+  const host = window.location.hostname;
+  if (host.includes('admin') || host.includes('pro')) {
+    return { tier: 'HIGH' };
+  }
+  return { tier: 'FREE' };
+};
+
 // Export document as JMPG package
 const exportDocument = async (docType, docTitle, docFields, wallet, lang = 'en') => {
   const docDNA = DOCS[docType];
@@ -5855,16 +5874,29 @@ function App(){
           {/* Actions */}
           <div style={{display:"flex",gap:8}}>
             <button onClick={()=>setShowDistributeModal(false)} style={{flex:1,padding:"10px",borderRadius:10,background:th.card,border:`1px solid ${th.border}`,color:th.dim,fontSize:12,cursor:"pointer"}}>{t.distribute.close}</button>
-            <button onClick={()=>setShowDistributeModal(false)} style={{padding:"10px 16px",borderRadius:10,background:th.card,border:`1px solid ${th.border}`,color:th.text,fontSize:12,cursor:"pointer"}}>📅 {t.distribute.schedule}</button>
+            <button onClick={()=>{flash(lang==='de'?'📅 Planung bald verfügbar':lang==='pt'?'📅 Agendamento disponível em breve':'📅 Scheduling coming soon');}} style={{padding:"10px 16px",borderRadius:10,background:th.card,border:`1px solid ${th.border}`,color:th.text,fontSize:12,cursor:"pointer"}}>📅 {t.distribute.schedule}</button>
             <button
-              disabled={distributeRecipients.length===0||distributeSending}
+              disabled={distributeSending}
               onClick={async()=>{
+                // Auto-add input value if user didn't click "+"
+                const inp=document.getElementById("newRecipient");
+                let recipients=[...distributeRecipients];
+                if(inp?.value?.trim()){
+                  const val=inp.value.trim();
+                  const channel=val.includes("@")?"email":val.startsWith("+")?"whatsapp":"sms";
+                  recipients.push({channel,value:val});
+                  inp.value="";
+                }
+                if(recipients.length===0){
+                  flash(lang==='de'?'⚠️ Bitte Empfänger hinzufügen':lang==='pt'?'⚠️ Adicione um destinatário':'⚠️ Add a recipient');
+                  return;
+                }
                 setDistributeSending(true);
                 const results={sent:[],failed:[],opened:[]};
-                const vaultLink=receipt?.id?`https://windi-domain.com/vault/verify/${receipt.id}`:'';
+                const vaultLink=receipt?.id?'https://windi-domain.com/vault/verify/'+receipt.id:'';
 
-                // Process each recipient by channel
-                for(const r of distributeRecipients){
+                // Process each recipient by channel (use local recipients which may include auto-added input)
+                for(const r of recipients){
                   const cleanPhone=r.value.replace(/[\s\-\(\)]/g,'');
 
                   // ═══ WHATSAPP — Deeplink (opens WhatsApp) ═══
