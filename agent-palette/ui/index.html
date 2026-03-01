@@ -1802,7 +1802,72 @@ const DOCS = defineDocs({
   protocol:     { complexity: DOC_COMPLEXITY.STRUCTURED, schema: { title: { required: true, type: "text", label: { en: "Title", de: "Titel", pt: "Título" } }, body: { required: true, type: "rich", label: { en: "Content", de: "Inhalt", pt: "Conteúdo" } } }, flow: [{ field: "title", prompt: { en: "📒 Protocol title?", de: "📒 Protokolltitel?", pt: "📒 Título do protocolo?" } }, { field: "body", prompt: { en: "Document the proceedings:", de: "Dokumentieren Sie den Verlauf:", pt: "Documente os procedimentos:" } }], sealPolicy: { type: "PROTOCOL", hashFields: ["title", "body"] } },
   analysis:     { complexity: DOC_COMPLEXITY.STRUCTURED, schema: { title: { required: true, type: "text", label: { en: "Title", de: "Titel", pt: "Título" } }, body: { required: true, type: "rich", label: { en: "Analysis", de: "Analyse", pt: "Análise" } } }, flow: [{ field: "title", prompt: { en: "🔬 Analysis title?", de: "🔬 Analysetitel?", pt: "🔬 Título da análise?" } }, { field: "body", prompt: { en: "Write your analysis:", de: "Schreiben Sie Ihre Analyse:", pt: "Escreva sua análise:" } }], sealPolicy: { type: "ANALYSIS", hashFields: ["title", "body"] } },
   presentation: { complexity: DOC_COMPLEXITY.STRUCTURED, schema: { title: { required: true, type: "text", label: { en: "Title", de: "Titel", pt: "Título" } }, body: { required: true, type: "rich", label: { en: "Content", de: "Inhalt", pt: "Conteúdo" } } }, flow: [{ field: "title", prompt: { en: "📽️ Presentation title?", de: "📽️ Präsentationstitel?", pt: "📽️ Título da apresentação?" } }, { field: "body", prompt: { en: "Outline your presentation:", de: "Skizzieren Sie Ihre Präsentation:", pt: "Esboce sua apresentação:" } }], sealPolicy: { type: "PRESENTATION", hashFields: ["title", "body"] } },
-  communique:   { complexity: DOC_COMPLEXITY.GOVERNANCE, schema: { title: { required: true, type: "text", label: { en: "Title", de: "Titel", pt: "Título" } }, classification: { required: true, type: "select", label: { en: "Classification", de: "Klassifizierung", pt: "Classificação" }, options: ["internal", "public", "confidential", "restricted"] }, body: { required: true, type: "rich", label: { en: "Content", de: "Inhalt", pt: "Conteúdo" } } }, flow: [{ field: "title", prompt: { en: "📡 Communiqué title?", de: "📡 Kommuniqué-Titel?", pt: "📡 Título do comunicado?" } }, { field: "classification", prompt: { en: "Classification level?", de: "Klassifizierungsstufe?", pt: "Nível de classificação?" }, chips: true }, { field: "body", prompt: { en: "Write the communiqué:", de: "Schreiben Sie das Kommuniqué:", pt: "Escreva o comunicado:" } }], sealPolicy: { type: "COMMUNIQUE", hashFields: ["title", "classification", "body"], governanceDocument: true } },
+  // ═══ COMMUNIQUÉ — Official institutional announcements (wired to :8105 API) ═══
+  communique: {
+    complexity: DOC_COMPLEXITY.GOVERNANCE,
+    schema: {
+      // German (primary - required by API)
+      title_de:     { required: true, type: "text", label: { en: "Title (German)", de: "Titel", pt: "Título (Alemão)" } },
+      body_de:      { required: true, type: "rich", label: { en: "Content (German)", de: "Inhalt", pt: "Conteúdo (Alemão)" } },
+      // Author info (required)
+      author_name:  { required: true, type: "text", label: { en: "Author Name", de: "Autorenname", pt: "Nome do Autor" }, default: "wallet" },
+      author_role:  { required: true, type: "select", label: { en: "Author Role", de: "Autorenrolle", pt: "Papel do Autor" },
+                      options: ["CEO", "CTO", "Governance", "Legal", "PR", "Editor"] },
+      // Classification (required)
+      category:     { required: true, type: "select", label: { en: "Category", de: "Kategorie", pt: "Categoria" },
+                      options: ["LAUNCH", "UPDATE", "ALERT", "GOVERNANCE", "REPORT"] },
+      impact_level: { required: true, type: "select", label: { en: "Impact Level", de: "Auswirkungsstufe", pt: "Nível de Impacto" },
+                      options: ["LOW", "MED", "HIGH", "CRIT"] },
+      // Optional translations
+      title_en:     { required: false, type: "text", label: { en: "Title (English)", de: "Titel (Englisch)", pt: "Título (Inglês)" } },
+      body_en:      { required: false, type: "rich", label: { en: "Content (English)", de: "Inhalt (Englisch)", pt: "Conteúdo (Inglês)" } },
+    },
+    flow: [
+      { field: "title_de", prompt: {
+          en: "📡 COMMUNIQUÉ\n\nOfficial institutional announcement.\n\nTitle (German version required):",
+          de: "📡 KOMMUNIQUÉ\n\nOffizielle institutionelle Ankündigung.\n\nTitel:",
+          pt: "📡 COMUNICADO\n\nAnúncio institucional oficial.\n\nTítulo (versão alemã obrigatória):"
+        }
+      },
+      { field: "category", prompt: {
+          en: "Category of this communiqué?",
+          de: "Kategorie dieses Kommuniqués?",
+          pt: "Categoria deste comunicado?"
+        }, chips: true
+      },
+      { field: "impact_level", prompt: {
+          en: "Impact level?",
+          de: "Auswirkungsstufe?",
+          pt: "Nível de impacto?"
+        }, chips: true
+      },
+      { field: "author_role", prompt: {
+          en: "Your role?",
+          de: "Ihre Rolle?",
+          pt: "Seu papel?"
+        }, chips: true
+      },
+      { field: "body_de", prompt: {
+          en: "Write the communiqué content (German):",
+          de: "Schreiben Sie den Kommuniqué-Inhalt:",
+          pt: "Escreva o conteúdo do comunicado (alemão):"
+        }
+      },
+      { field: "title_en", prompt: {
+          en: "English title? (optional - type 'skip' to continue)",
+          de: "Englischer Titel? (optional - 'skip' eingeben zum Fortfahren)",
+          pt: "Título em inglês? (opcional - digite 'skip' para continuar)"
+        }, optional: true
+      },
+      { field: "body_en", prompt: {
+          en: "English content? (optional - type 'skip' to continue)",
+          de: "Englischer Inhalt? (optional - 'skip' eingeben zum Fortfahren)",
+          pt: "Conteúdo em inglês? (opcional - digite 'skip' para continuar)"
+        }, optional: true
+      },
+    ],
+    sealPolicy: { type: "COMMUNIQUE", hashFields: ["title_de", "body_de", "category", "impact_level"], governanceDocument: true, communiqueApi: true }
+  },
   certificate:  { complexity: DOC_COMPLEXITY.GOVERNANCE, schema: { title: { required: true, type: "text", label: { en: "Certificate Title", de: "Zertifikatstitel", pt: "Título do Certificado" } }, recipient: { required: true, type: "text", label: { en: "Recipient", de: "Empfänger", pt: "Destinatário" } }, issuer: { required: true, type: "text", label: { en: "Issuer", de: "Aussteller", pt: "Emissor" }, default: "wallet" }, date: { required: true, type: "date", label: { en: "Date", de: "Datum", pt: "Data" }, default: "today" }, body: { required: true, type: "rich", label: { en: "Certificate Text", de: "Zertifikatstext", pt: "Texto do Certificado" } } }, flow: [{ field: "title", prompt: { en: "🏛️ Certificate title?", de: "🏛️ Zertifikatstitel?", pt: "🏛️ Título do certificado?" } }, { field: "recipient", prompt: { en: "Who receives this certificate?", de: "Wer erhält dieses Zertifikat?", pt: "Quem recebe este certificado?" } }, { field: "body", prompt: { en: "Write the certificate text:", de: "Schreiben Sie den Zertifikatstext:", pt: "Escreva o texto do certificado:" } }], sealPolicy: { type: "CERTIFICATE", hashFields: ["title", "recipient", "issuer", "date", "body"], governanceDocument: true, legalDocument: true } },
 
   // ═══════════════════════════════════════════════════════════════════════════════
@@ -2876,6 +2941,11 @@ function App(){
   const[distributeSent,setDistributeSent]=useState([]);
   const[showChannelSettings,setShowChannelSettings]=useState(false);
 
+  // ═══ COMMUNIQUÉ WORKFLOW — Create & Publish via :8105 API ═══
+  const[activeCommuniqueId,setActiveCommuniqueId]=useState(null);
+  const[showCommuniqueWorkflow,setShowCommuniqueWorkflow]=useState(false);
+  const[communiqueWorkflowLoading,setCommuniqueWorkflowLoading]=useState(false);
+
   // ═══ WAVE 1: JOURNAL, FILES, SEARCH STATE ═══
   const[journalArticles,setJournalArticles]=useState([]);
   const[journalLoading,setJournalLoading]=useState(false);
@@ -3075,6 +3145,67 @@ function App(){
     if(comFilter==="all")return communiques;
     return communiques.filter(c=>c.status?.toLowerCase()===comFilter);
   },[communiques,comFilter]);
+
+  // ═══ A.1b: COMMUNIQUÉ CREATE & WORKFLOW ACTIONS ═══
+  const createCommuniqueInBackend=useCallback(async(fields,walletData)=>{
+    const payload={
+      title_de: fields.title_de||fields.title||"",
+      title_en: fields.title_en||"",
+      title_pt: fields.title_pt||"",
+      body_de: fields.body_de||fields.body||"",
+      body_en: fields.body_en||"",
+      body_pt: fields.body_pt||"",
+      category: fields.category||"UPDATE",
+      impact_level: fields.impact_level||"MED",
+      author_name: fields.author_name||walletData?.name||"Unknown",
+      author_role: fields.author_role||"Editor",
+      tags: fields.tags||[],
+      related_docs: fields.related_docs||[]
+    };
+    try{
+      const res=await fetch(dragonUrl+'/communique/create',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(payload)
+      });
+      const data=await res.json();
+      if(data.status==='created'&&data.communique?.id){
+        return{success:true,id:data.communique.id,status:'DRAFT'};
+      }else{
+        return{success:false,error:data.message||data.error||'Creation failed'};
+      }
+    }catch(e){
+      return{success:false,error:e.message};
+    }
+  },[dragonUrl]);
+
+  const submitCommuniqueForReview=useCallback(async(comId,actor)=>{
+    try{
+      const res=await fetch(dragonUrl+'/communique/review/'+comId,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({actor:actor||wallet?.name||'user'})
+      });
+      const data=await res.json();
+      return{success:data.status==='in_review',data};
+    }catch(e){
+      return{success:false,error:e.message};
+    }
+  },[dragonUrl,wallet]);
+
+  const publishCommunique=useCallback(async(comId,actor)=>{
+    try{
+      const res=await fetch(dragonUrl+'/communique/publish/'+comId,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({actor:actor||wallet?.name||'user'})
+      });
+      const data=await res.json();
+      return{success:data.status==='published',data};
+    }catch(e){
+      return{success:false,error:e.message};
+    }
+  },[dragonUrl,wallet]);
 
   // Vault polling every 30s
   useEffect(()=>{
@@ -3804,6 +3935,51 @@ function App(){
     const doc = getDoc(docType);
     const dna = getDNA(docType); // Backward compat
 
+    // ═══ COMMUNIQUÉ SPECIAL HANDLING — Create via :8105 API ═══
+    if(doc?.sealPolicy?.communiqueApi){
+      setFinalizeStep(3);
+      setSealProgress({ stage: 0, field: '', hash: '', message: 'Creating Communiqué...', progress: 10 });
+
+      // Create in Communiqué backend
+      const createResult = await createCommuniqueInBackend(docFields, wallet);
+
+      if(!createResult.success){
+        flash(`❌ Communiqué creation failed: ${createResult.error}`);
+        setShowFinalizeModal(false);
+        return;
+      }
+
+      setSealProgress({ stage: 1, field: '', hash: '', message: `Created ${createResult.id}`, progress: 50 });
+
+      // Store communiqué ID for workflow
+      setActiveCommuniqueId(createResult.id);
+
+      // Mark as finalized (draft in backend)
+      setDocStatus("finalized");
+      setShowFinalizeModal(false);
+
+      // Update local state
+      const r = {
+        id: createResult.id,
+        serial: createResult.id,
+        ts: new Date().toISOString(),
+        ch: 'pending-publish',
+        status: 'DRAFT'
+      };
+      setReceipt(r);
+      setWallet(p=>({...p,receipts:[...p.receipts,{id:r.id,title:docTitle,ts:r.ts,type:'communique'}]}));
+      setSavedDocs(p=>[{id:Date.now(),title:docTitle,icon:"📡",type:"communique",status:"draft",date:new Date().toLocaleDateString(),words:wordCount,comId:createResult.id},...p]);
+
+      flash(`✅ Communiqué ${createResult.id} created as DRAFT`);
+
+      // Refresh list
+      fetchCommuniques();
+
+      // Show workflow modal
+      setTimeout(()=>setShowCommuniqueWorkflow(true),500);
+      return;
+    }
+
     // ═══ SEAL v2.1: Merkle root + GDPR compliance + VISUAL PROGRESSION ═══
     if(doc?.sealPolicy && Object.keys(docFields).length > 1){
       // Show step 3 (sealing progress)
@@ -3900,7 +4076,7 @@ function App(){
         });
       }
     }
-  },[wallet,docTitle,docContent,docFields,docImages,docType,wordCount,t,flash]);
+  },[wallet,docTitle,docContent,docFields,docImages,docType,wordCount,t,flash,createCommuniqueInBackend,fetchCommuniques]);
 
   // New doc
   const newDoc=useCallback(()=>{
@@ -4304,7 +4480,7 @@ function App(){
                 {filteredCommuniques.slice(0,20).map(c=>{
                   const statusColors={DRAFT:{bg:th.dim+"15",fg:th.dim},REVIEW:{bg:"#eab30822",fg:"#eab308"},PUBLISHED:{bg:th.success+"15",fg:th.success},ARCHIVED:{bg:th.dim+"10",fg:th.dim+"88"},REVOKED:{bg:th.danger+"15",fg:th.danger}};
                   const st=statusColors[c.status]||statusColors.DRAFT;
-                  const catIcons={LAUNCH:"🚀",UPDATE:"🔄",POLICY:"📋",ALERT:"⚠️"};
+                  const catIcons={LAUNCH:"🚀",UPDATE:"🔄",POLICY:"📋",ALERT:"⚠️",GOVERNANCE:"🏛️",REPORT:"📊"};
                   return<div key={c.id} style={{padding:"12px 14px",borderRadius:10,background:th.card,border:`1px solid ${th.border}`,cursor:"pointer",transition:"all 0.2s"}}
                     onMouseEnter={e=>e.currentTarget.style.borderColor=th.gold}
                     onMouseLeave={e=>e.currentTarget.style.borderColor=th.border}>
@@ -4318,6 +4494,21 @@ function App(){
                           <span style={{fontSize:9,color:th.dim,fontFamily:"'JetBrains Mono',monospace"}}>{c.id}</span>
                           {c.ledger_id&&<span style={{fontSize:9,color:th.success}}>🛡️ Ledger</span>}
                         </div>
+                        {/* Workflow Actions */}
+                        {(c.status==='DRAFT'||c.status==='REVIEW')&&<div style={{display:"flex",gap:6,marginTop:8,paddingTop:8,borderTop:`1px solid ${th.border}`}}>
+                          {c.status==='DRAFT'&&<button onClick={async(e)=>{
+                            e.stopPropagation();
+                            const result=await submitCommuniqueForReview(c.id,wallet?.name);
+                            if(result.success){flash(`✅ ${c.id} submitted for review`);fetchCommuniques();}
+                            else{flash(`❌ ${result.error||'Failed'}`);}
+                          }} style={{padding:"4px 10px",borderRadius:6,background:th.gold+"15",border:`1px solid ${th.gold}44`,color:th.gold,fontSize:10,fontWeight:600,cursor:"pointer"}}>👁️ Review</button>}
+                          {c.status==='REVIEW'&&<button onClick={async(e)=>{
+                            e.stopPropagation();
+                            const result=await publishCommunique(c.id,wallet?.name);
+                            if(result.success){flash(`✅ ${c.id} published!`);fetchCommuniques();}
+                            else{flash(`❌ ${result.error||'Failed'}`);}
+                          }} style={{padding:"4px 10px",borderRadius:6,background:th.success+"15",border:`1px solid ${th.success}44`,color:th.success,fontSize:10,fontWeight:600,cursor:"pointer"}}>🚀 Publish</button>}
+                        </div>}
                       </div>
                     </div>
                   </div>;})}
@@ -5102,6 +5293,48 @@ function App(){
 
           <div style={{display:"flex",gap:8,marginTop:16}}>
             <button onClick={()=>setShowChannelSettings(false)} style={{flex:1,padding:"10px",borderRadius:10,background:th.gold,border:"none",color:"#FFF",fontSize:12,fontWeight:700,cursor:"pointer"}}>✓ {t.did.close}</button>
+          </div>
+        </div>
+      </div>}
+
+      {/* ═══ COMMUNIQUÉ WORKFLOW MODAL ═══ */}
+      {showCommuniqueWorkflow&&activeCommuniqueId&&<div style={{position:"fixed",inset:0,background:"#000A",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:16}} onClick={()=>setShowCommuniqueWorkflow(false)}>
+        <div onClick={e=>e.stopPropagation()} style={{background:th.card,borderRadius:18,padding:"24px 20px",maxWidth:400,width:"100%",border:`1px solid ${th.gold}33`}}>
+          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:16}}>
+            <span style={{fontSize:24}}>📡</span>
+            <h2 style={{fontSize:16,fontWeight:800,margin:0}}>{lang==="de"?"Kommuniqué Workflow":lang==="pt"?"Fluxo do Comunicado":"Communiqué Workflow"}</h2>
+            <span style={{marginLeft:"auto",cursor:"pointer",fontSize:18,color:th.dim}} onClick={()=>setShowCommuniqueWorkflow(false)}>×</span>
+          </div>
+          <div style={{padding:"12px",borderRadius:10,background:th.hover,border:`1px solid ${th.border}`,marginBottom:16}}>
+            <div style={{fontSize:11,color:th.dim,marginBottom:4}}>Document ID</div>
+            <div style={{fontSize:13,fontFamily:"'JetBrains Mono',monospace"}}>{activeCommuniqueId}</div>
+          </div>
+          <p style={{fontSize:12,color:th.dim,marginBottom:20,lineHeight:1.5}}>
+            {lang==="de"?"Dieses Kommuniqué wurde als Entwurf erstellt. Wählen Sie die nächste Aktion:":
+             lang==="pt"?"Este comunicado foi criado como rascunho. Escolha a próxima ação:":
+             "This communiqué was created as a draft. Choose the next action:"}
+          </p>
+          <div style={{display:"flex",flexDirection:"column",gap:10}}>
+            <button onClick={async()=>{
+              setCommuniqueWorkflowLoading(true);
+              const result=await submitCommuniqueForReview(activeCommuniqueId,wallet?.name);
+              if(result.success){
+                flash(`✅ ${activeCommuniqueId} submitted for review`);
+                setShowCommuniqueWorkflow(false);
+                fetchCommuniques();
+              }else{
+                flash(`❌ ${result.error||'Failed to submit'}`);
+              }
+              setCommuniqueWorkflowLoading(false);
+            }} disabled={communiqueWorkflowLoading}
+              style={{padding:"12px 16px",borderRadius:10,background:`${th.gold}15`,border:`1px solid ${th.gold}44`,color:th.gold,fontSize:13,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:8,opacity:communiqueWorkflowLoading?0.6:1}}>
+              <span>👁️</span>
+              <span>{communiqueWorkflowLoading?(lang==="de"?"Sende...":"Sending..."):(lang==="de"?"Zur Prüfung einreichen":lang==="pt"?"Enviar para revisão":"Submit for Review")}</span>
+            </button>
+            <button onClick={()=>setShowCommuniqueWorkflow(false)}
+              style={{padding:"12px 16px",borderRadius:10,background:th.card,border:`1px solid ${th.border}`,color:th.dim,fontSize:13,fontWeight:600,cursor:"pointer"}}>
+              {lang==="de"?"Als Entwurf behalten":lang==="pt"?"Manter como rascunho":"Keep as Draft"}
+            </button>
           </div>
         </div>
       </div>}
