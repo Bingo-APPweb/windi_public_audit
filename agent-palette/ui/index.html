@@ -3759,7 +3759,103 @@ function App(){
     setVoiceText("");
   },[voiceText]); // send will be defined below, eslint will complain but it works
 
-  // ═══ ACTION BRIDGE — Dragon suggests, Human decides (I9 Governance) ═══
+  // ═══════════════════════════════════════════════════════════════════════
+  // ACTION BRIDGE v1.0 — Dragon suggests, Human decides (I9 Governance)
+  // ═══════════════════════════════════════════════════════════════════════
+
+  // ─── Feature 1: Documentable Detection ───
+  const isDocumentable=useCallback((content)=>{
+    if(!content||typeof content!=='string')return false;
+    const hasLength=content.length>200;
+    const hasGreeting=/^(Querida?|Prezada?|Caro|Exmo|Dear|Sehr geehrte|Liebe)/mi.test(content);
+    const hasTitle=/\*\*(RASCUNHO|CARTA|RELATÓRIO|COMUNICADO|MEMORANDO|PROPOSTA|DRAFT|LETTER|REPORT)/i.test(content);
+    const hasSignature=/(\[Seu nome\]|\[Ihr Name\]|\[Your name\]|Atenciosamente|Mit freundlichen|Best regards|Cordialmente)/i.test(content);
+    const hasSections=(content.match(/\n#{1,3}\s/g)||[]).length>=2;
+    return hasLength&&(hasGreeting||hasTitle||hasSignature||hasSections);
+  },[]);
+
+  const detectDocType=useCallback((content)=>{
+    if(/carta|letter|aniversário|birthday|parabéns|geburtstag/i.test(content))return'carta_pessoal';
+    if(/prezad[oa]|formal|senhor|senhora|sehr geehrte/i.test(content))return'carta_formal';
+    if(/relatório|report|análise|analysis|bericht/i.test(content))return'relatorio';
+    if(/comunicado|communiqué|nota oficial|pressemitteilung/i.test(content))return'comunicado';
+    if(/memorando|memo|interno|internal/i.test(content))return'memorando';
+    if(/proposta|proposal|orçamento|budget|angebot/i.test(content))return'proposta';
+    return'documento_geral';
+  },[]);
+
+  // ─── Feature 4: Toast — uses existing flash() function defined at line ~3154 ───
+
+  // ─── Feature 3: Append/Replace State ───
+  const[transferDialog,setTransferDialog]=useState(null);
+
+  // ─── Feature 7: Transfer History ───
+  const[transferLog,setTransferLog]=useState([]);
+  const[showTransferLog,setShowTransferLog]=useState(false);
+
+  // ─── Feature 6: Mark transferred messages ───
+  const markAsTransferred=useCallback((msgIndex)=>{
+    setMsgs(prev=>prev.map((m,i)=>
+      i===msgIndex?{...m,transferred:true,transferredAt:new Date().toISOString()}:m
+    ));
+  },[]);
+
+  // ─── Feature 1+3+4+6+7: Transfer to Editor ───
+  const transferToEditor=useCallback((content,msgIndex,mode='replace')=>{
+    const detectedType=detectDocType(content);
+    const title=content.match(/\*\*([^*]+)\*\*/)?.[1]||`${detectedType} ${new Date().toLocaleDateString()}`;
+
+    if(mode==='replace'){
+      setDocTitle(title);
+      setDocContent(content);
+    }else{
+      setDocContent(prev=>prev?(prev+'\n\n---\n\n'+content):content);
+      if(!docTitle)setDocTitle(title);
+    }
+    setDocType(detectedType);
+    setSidebarTab('desk');
+
+    // Mark message as transferred
+    markAsTransferred(msgIndex);
+
+    // Log transfer
+    setTransferLog(prev=>[...prev,{
+      id:Date.now(),
+      msgIndex,
+      mode,
+      docType:detectedType,
+      preview:content.substring(0,80)+'...',
+      timestamp:new Date().toISOString()
+    }]);
+
+    // Show toast using existing flash() function
+    const typeLabels={carta_pessoal:'💌 Carta pessoal',carta_formal:'📨 Carta formal',relatorio:'📊 Relatório',comunicado:'📢 Comunicado',memorando:'📝 Memorando',proposta:'📋 Proposta',documento_geral:'📄 Documento'};
+    flash(`✅ ${typeLabels[detectedType]||'📄 Conteúdo'} ${mode==='append'?'adicionado ao':'enviado para o'} Editor`);
+
+    setTransferDialog(null);
+  },[detectDocType,markAsTransferred,flash,docTitle]);
+
+  // ─── Feature 3: Handle 📄 click ───
+  const handleDocumentButton=useCallback((content,msgIndex)=>{
+    const editorHasContent=docContent&&docContent.trim().length>0;
+    if(!editorHasContent){
+      transferToEditor(content,msgIndex,'replace');
+    }else{
+      setTransferDialog({content,msgIndex});
+    }
+  },[docContent,transferToEditor]);
+
+  // ─── Feature 8: Return to Dragon ───
+  const returnToDragon=useCallback(()=>{
+    if(!docContent||!docContent.trim())return;
+    const prefix=lang==='de'?'Verfeinere diesen Text, behalte die gleiche Struktur und den gleichen Ton:\n\n':
+                 lang==='pt'?'Refine este texto, mantendo a mesma estrutura e tom:\n\n':
+                 'Refine this text, keeping the same structure and tone:\n\n';
+    send(prefix+docContent);
+    setSidebarTab('chat');
+  },[docContent,lang]);
+
+  // ─── Original ACTION_HANDLERS (enhanced) ───
   const ACTION_HANDLERS={
     create_document:(payload)=>{
       setDocTitle(payload.title||'Untitled');
@@ -4507,6 +4603,10 @@ function App(){
                   <button onClick={()=>{const url=prompt("Video URL:");if(url)addVideo(url);}} style={{padding:"6px 10px",borderRadius:8,background:th.card,border:`1px solid ${th.border}`,color:th.dim,fontSize:10,cursor:"pointer"}}>🎬{t.doc.addVideo}</button>
                   <button onClick={()=>setShowVoiceModal(true)} style={{padding:"6px 10px",borderRadius:8,background:th.card,border:`1px solid ${th.border}`,color:th.dim,fontSize:10,cursor:"pointer"}}>🎙️{t.doc.addVoice}</button>
                   {contentHistory.length>0&&<button onClick={undoLast} style={{padding:"6px 10px",borderRadius:8,background:th.card,border:`1px solid ${th.border}`,color:th.warning,fontSize:10,cursor:"pointer"}}>↩️{t.doc.undo}</button>}
+                  {/* ═══ ACTION BRIDGE v1.0: Return to Dragon ═══ */}
+                  {docContent&&docContent.trim().length>50&&<button onClick={returnToDragon} style={{padding:"6px 10px",borderRadius:8,background:th.card,border:`1px solid ${th.gold}44`,color:th.gold,fontSize:10,cursor:"pointer"}} title={lang==='de'?'An Dragon zur Verfeinerung senden':lang==='pt'?'Devolver ao Dragon para refinamento':'Return to Dragon for refinement'}>↩️🐉</button>}
+                  {/* ═══ ACTION BRIDGE v1.0: Transfer History ═══ */}
+                  {transferLog.length>0&&<button onClick={()=>setShowTransferLog(!showTransferLog)} style={{padding:"6px 10px",borderRadius:8,background:showTransferLog?th.gold+'22':th.card,border:`1px solid ${showTransferLog?th.gold:th.border}`,color:showTransferLog?th.gold:th.dim,fontSize:10,cursor:"pointer"}} title={lang==='de'?'Transfer-Verlauf':lang==='pt'?'Histórico de transferências':'Transfer history'}>🕐{transferLog.length}</button>}
                   <input ref={fileRef} type="file" accept="image/*" style={{display:"none"}} onChange={e=>{if(e.target.files?.[0])addImage(e.target.files[0]);e.target.value="";}}/>
                   <div style={{flex:1}}/>
                   <button onClick={startFinalize} disabled={!docTitle.trim()||!docContent.trim()} style={{padding:"6px 16px",borderRadius:8,background:(docTitle.trim()&&docContent.trim())?th.gold:th.dim,border:"none",color:"#FFF",fontSize:11,fontWeight:700,cursor:"pointer",opacity:(!docTitle.trim()||!docContent.trim())?0.4:1}}>🛡️{t.doc.finalize}</button>
@@ -4525,6 +4625,23 @@ function App(){
                   </button>
                 </>}
               </div>
+              {/* ═══ ACTION BRIDGE v1.0: Transfer History Panel ═══ */}
+              {showTransferLog&&<div style={{position:"absolute",top:44,right:8,width:280,maxHeight:260,overflowY:"auto",background:th.card,border:`1px solid ${th.gold}33`,borderRadius:10,padding:10,boxShadow:"0 4px 20px #0003",zIndex:50}}>
+                <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:8,paddingBottom:6,borderBottom:`1px solid ${th.border}`}}>
+                  <span style={{fontSize:14}}>🕐</span>
+                  <span style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontWeight:600,fontSize:12}}>{lang==='de'?'Transfer-Verlauf':lang==='pt'?'Histórico':' History'}</span>
+                  <span style={{marginLeft:"auto",cursor:"pointer",fontSize:14,color:th.dim}} onClick={()=>setShowTransferLog(false)}>×</span>
+                </div>
+                {transferLog.map(entry=><div key={entry.id} style={{padding:"6px 0",borderBottom:`1px solid ${th.border}22`,fontSize:10}}>
+                  <div style={{display:"flex",alignItems:"center",gap:4,marginBottom:2}}>
+                    <span style={{color:th.gold}}>{entry.mode==='replace'?'🔄':'➕'}</span>
+                    <span style={{fontWeight:600,color:th.text}}>{entry.docType}</span>
+                    <span style={{marginLeft:"auto",fontSize:8,color:th.dim}}>{new Date(entry.timestamp).toLocaleTimeString()}</span>
+                  </div>
+                  <div style={{color:th.dim,fontSize:9,lineHeight:1.3}}>{entry.preview}</div>
+                </div>)}
+                {transferLog.length===0&&<div style={{color:th.dim,fontSize:11,textAlign:"center",padding:10}}>{lang==='de'?'Keine Transfers':lang==='pt'?'Sem transferências':'No transfers'}</div>}
+              </div>}
             </div>
 
             {/* Chat Panel — A.4: Constitutional Dragon Integration */}
@@ -4654,10 +4771,23 @@ function App(){
                   const isU=m.role==="user";
                   // A.4: Show source indicator for Dragon responses
                   const sourceIcon=m.source==="council"?"👁️":m.source==="guardian"?"🛡️":"";
-                  return<div key={i} style={{display:"flex",justifyContent:isU?"flex-end":"flex-start",marginBottom:6}}>
+                  const canDocument=!isU&&isDocumentable(m.text)&&!m.transferred;
+                  return<div key={i} style={{display:"flex",justifyContent:isU?"flex-end":"flex-start",marginBottom:6,position:'relative'}}>
                     {!isU&&<div style={{width:22,height:22,borderRadius:"50%",marginRight:5,flexShrink:0,background:`${th.gold}15`,border:`1px solid ${th.gold}33`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,marginTop:2}}>🐉</div>}
-                    <div style={{maxWidth:"82%"}}>
+                    <div style={{maxWidth:"82%",position:'relative'}}>
                       <div style={{padding:"7px 11px",borderRadius:12,background:isU?th.chatUser:th.chatBot,border:`1px solid ${isU?th.border:th.gold+"22"}`,fontSize:12.5,lineHeight:1.6,whiteSpace:"pre-wrap",borderTopLeftRadius:isU?12:3,borderTopRightRadius:isU?3:12}}>{m.text}</div>
+                      {/* ═══ ACTION BRIDGE v1.0: 📄 Document Button ═══ */}
+                      {canDocument&&<button
+                        onClick={()=>handleDocumentButton(m.text,i)}
+                        title={lang==='de'?'Zum Editor senden':lang==='pt'?'Enviar para Editor':'Send to Editor'}
+                        style={{position:'absolute',top:4,right:4,width:24,height:24,borderRadius:6,background:th.card,border:`1px solid ${th.border}`,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',fontSize:12,opacity:0.5,transition:'all 0.2s'}}
+                        onMouseEnter={e=>{e.currentTarget.style.opacity='1';e.currentTarget.style.borderColor=th.gold;e.currentTarget.style.background=th.gold+'22';}}
+                        onMouseLeave={e=>{e.currentTarget.style.opacity='0.5';e.currentTarget.style.borderColor=th.border;e.currentTarget.style.background=th.card;}}
+                      >📄</button>}
+                      {/* ═══ ACTION BRIDGE v1.0: Transferred Seal ═══ */}
+                      {m.transferred&&<div style={{display:'inline-flex',alignItems:'center',gap:4,fontSize:9,fontFamily:"'JetBrains Mono',monospace",color:th.gold,opacity:0.7,marginTop:4,padding:'2px 8px',borderRadius:4,background:th.gold+'11'}}>
+                        📄→✎ {lang==='de'?'An Editor gesendet':lang==='pt'?'Enviado ao Editor':'Sent to Editor'}
+                      </div>}
                       {!isU&&sourceIcon&&<div style={{fontSize:8,color:th.dim,marginTop:2,marginLeft:4}}>{sourceIcon} {m.source}</div>}
                       {/* ═══ DRAGON→DESKTOP BRIDGE: "Open in Editor" button ═══ */}
                       {!isU&&m.document&&<button onClick={()=>{
@@ -5548,6 +5678,30 @@ function App(){
             <button onClick={()=>{voiceRecognitionRef.current?.stop();setIsVoiceRecording(false);setShowVoiceModal(false);}} style={{flex:1,padding:"10px",borderRadius:10,background:th.card,border:`1px solid ${th.border}`,color:th.dim,fontSize:12,cursor:"pointer"}}>{t.did.close}</button>
             <button onClick={()=>{if(voiceText.trim()){voiceRecognitionRef.current?.stop();setIsVoiceRecording(false);send(voiceText.trim());setVoiceText("");setShowVoiceModal(false);}}} disabled={!voiceText.trim()}
               style={{flex:1,padding:"10px",borderRadius:10,background:voiceText.trim()?th.gold:th.dim,border:"none",color:"#FFF",fontSize:12,fontWeight:700,cursor:"pointer",opacity:voiceText.trim()?1:0.4}}>→ {t.sidebar.chat}</button>
+          </div>
+        </div>
+      </div>}
+
+      {/* ═══ ACTION BRIDGE v1.0: Append/Replace Dialog ═══ */}
+      {transferDialog&&<div style={{position:"fixed",inset:0,background:"#0008",zIndex:1001,display:"flex",alignItems:"center",justifyContent:"center",padding:16}} onClick={()=>setTransferDialog(null)}>
+        <div onClick={e=>e.stopPropagation()} style={{background:th.card,borderRadius:14,padding:"20px",maxWidth:340,width:"100%",border:`1px solid ${th.gold}44`,boxShadow:'0 8px 32px #0004'}}>
+          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
+            <span style={{fontSize:20}}>📄</span>
+            <span style={{fontSize:14,fontWeight:700,color:th.text}}>{lang==='de'?'Editor hat Inhalt':lang==='pt'?'Editor tem conteúdo':'Editor has content'}</span>
+            <span style={{marginLeft:"auto",cursor:"pointer",fontSize:16,color:th.dim}} onClick={()=>setTransferDialog(null)}>×</span>
+          </div>
+          <p style={{fontSize:11,color:th.dim,marginBottom:16,lineHeight:1.5}}>{lang==='de'?'Wie soll der neue Inhalt eingefügt werden?':lang==='pt'?'Como inserir o novo conteúdo?':'How should the new content be inserted?'}</p>
+          <div style={{display:"flex",gap:10}}>
+            <button onClick={()=>transferToEditor(transferDialog.content,transferDialog.msgIndex,'replace')} style={{flex:1,padding:"10px 14px",borderRadius:8,background:th.gold,border:"none",color:"#fff",fontSize:12,fontWeight:600,cursor:"pointer"}}>
+              🔄 {lang==='de'?'Ersetzen':lang==='pt'?'Substituir':'Replace'}
+            </button>
+            <button onClick={()=>transferToEditor(transferDialog.content,transferDialog.msgIndex,'append')} style={{flex:1,padding:"10px 14px",borderRadius:8,background:th.hover,border:`1px solid ${th.border}`,color:th.text,fontSize:12,fontWeight:600,cursor:"pointer"}}>
+              ➕ {lang==='de'?'Hinzufügen':lang==='pt'?'Adicionar':'Append'}
+            </button>
+          </div>
+          <div style={{marginTop:12,padding:10,background:th.hover,borderRadius:8,maxHeight:100,overflow:'hidden'}}>
+            <div style={{fontSize:9,color:th.dim,marginBottom:4}}>{lang==='de'?'Vorschau:':lang==='pt'?'Pré-visualização:':'Preview:'}</div>
+            <div style={{fontSize:10,color:th.text,opacity:0.8,lineHeight:1.4}}>{transferDialog.content?.substring(0,120)}...</div>
           </div>
         </div>
       </div>}
