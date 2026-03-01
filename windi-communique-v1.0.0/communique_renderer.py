@@ -11,7 +11,7 @@ import html as html_lib
 from datetime import datetime
 
 
-BASE_DOMAIN = "admin.windia4desk.tech"
+BASE_DOMAIN = "windi-domain.com"
 
 IMPACT_COLORS = {
     "LOW": "#27AE60",

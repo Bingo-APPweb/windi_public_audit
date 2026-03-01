@@ -2174,7 +2174,7 @@ def handle_seal_document(body: dict) -> tuple:
             vault_id = "pending"
 
         # 3. Generate verification QR
-        verify_url = f"https://admin.windia4desk.tech/vault/verify/{content_hash[:16]}"
+        verify_url = f"https://windi-domain.com/vault/verify/{content_hash[:16]}"
         qr_base64 = None
         try:
             qr = qrcode.make(verify_url)
@@ -3192,6 +3192,13 @@ class DragonHandler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
         """Serve UI files and health endpoint."""
         path = self.path.split("?")[0]
+
+        # Canonical /health endpoint (One Tree Gateway standard)
+        if path == "/health":
+            data, code = handle_dragon_health()
+            self._json_response(data, code)
+            return
+
         # Document Renderer routing
         if HAS_RENDERER and route_render_api(self, "GET", path):
             return

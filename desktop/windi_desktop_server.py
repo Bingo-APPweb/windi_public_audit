@@ -38,12 +38,12 @@ from pathlib import Path
 from functools import wraps
 
 try:
-    from flask import Flask, send_from_directory, jsonify, request, abort
+    from flask import Flask, send_from_directory, jsonify, request, abort, make_response
     from flask_cors import CORS
 except ImportError:
     print("Installing Flask dependencies...")
     os.system(f"{sys.executable} -m pip install flask flask-cors --break-system-packages -q")
-    from flask import Flask, send_from_directory, jsonify, request, abort
+    from flask import Flask, send_from_directory, jsonify, request, abort, make_response
     from flask_cors import CORS
 
 try:
@@ -97,7 +97,7 @@ log = logging.getLogger("windi-desktop")
 # ═══════════════════════════════════════════════════════════
 
 app = Flask(__name__, static_folder=str(STATIC_DIR))
-CORS(app, origins=["https://admin.windia4desk.tech", "http://localhost:*"])
+CORS(app, origins=["https://windi-domain.com", "http://localhost:*"])
 
 # ═══════════════════════════════════════════════════════════
 # FORENSIC HEARTBEAT — Self-Monitoring Thread
@@ -429,6 +429,96 @@ def i9_check():
         "message": "Desktop suggests. Human Dragon decides.",
         "timestamp": datetime.now(timezone.utc).isoformat(),
     })
+
+# ═══════════════════════════════════════════════════════════
+# DRAGON → DESKTOP BRIDGE — Document Handoff from Chat to Editor
+# "O arquitecto desenhou. Agora o estaleiro constrói."
+# ═══════════════════════════════════════════════════════════
+
+# In-memory draft storage (could be upgraded to Redis/SQLite later)
+_dragon_drafts = {}
+
+@app.route("/api/documents/create-from-dragon", methods=["POST", "OPTIONS"])
+def create_from_dragon():
+    """
+    Receive a document draft from Dragon Architect and prepare it for the editor.
+
+    Expected payload:
+    {
+        "title": "Birthday Letter",
+        "type": "letter",
+        "content": "Dear sister...",
+        "fields": {"recipient": "Sister", "occasion": "60th Birthday"}
+    }
+
+    Returns:
+    {
+        "success": true,
+        "id": "draft_1709...",
+        "editor_url": "/desktop/?doc=draft_1709..."
+    }
+    """
+    # Handle CORS preflight
+    if request.method == "OPTIONS":
+        response = make_response()
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+        return response
+
+    try:
+        data = request.get_json() or {}
+
+        # Validate required fields
+        if not data.get("title") and not data.get("content"):
+            return jsonify({"success": False, "error": "Missing title or content"}), 400
+
+        # Generate draft ID
+        import hashlib
+        draft_id = "draft_" + hashlib.sha256(
+            (str(datetime.now()) + str(data.get("title", ""))).encode()
+        ).hexdigest()[:12]
+
+        # Store draft
+        draft = {
+            "id": draft_id,
+            "title": data.get("title", "Dragon Draft"),
+            "type": data.get("type", "letter"),
+            "content": data.get("content", ""),
+            "fields": data.get("fields", {}),
+            "source": "dragon_architect",
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "status": "draft",
+        }
+        _dragon_drafts[draft_id] = draft
+
+        log.info("[Dragon→Desktop] Draft created: %s (type=%s)", draft_id, draft["type"])
+
+        response = jsonify({
+            "success": True,
+            "id": draft_id,
+            "title": draft["title"],
+            "type": draft["type"],
+            "editor_url": f"/desktop/?doc={draft_id}",
+            "message": "Draft ready for editing",
+        })
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        return response
+
+    except Exception as e:
+        log.error("[Dragon→Desktop] Error: %s", str(e))
+        return jsonify({"success": False, "error": str(e)[:100]}), 500
+
+@app.route("/api/documents/dragon-draft/<draft_id>", methods=["GET"])
+def get_dragon_draft(draft_id):
+    """Retrieve a Dragon draft by ID for loading into the editor."""
+    draft = _dragon_drafts.get(draft_id)
+    if not draft:
+        return jsonify({"success": False, "error": "Draft not found"}), 404
+
+    response = jsonify({"success": True, "draft": draft})
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    return response
 
 # ═══════════════════════════════════════════════════════════
 # ERROR HANDLERS

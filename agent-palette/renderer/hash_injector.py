@@ -8,7 +8,7 @@ The hash is computed from PRE-footer content (not circular).
 
 Seal format (N3 serial FIRST for human readability):
     WINDI Seal  |  WINDI-2026-XXXX  |  VR-PAL-xxx  |  SHA-256: {hash[:12]}...  |  Gov: {level}  |  {timestamp}  [QR]
-    Verify: admin.windia4desk.tech/vault/verify
+    Verify: windi-domain.com/vault/verify
 
 QR code (N4) links to verification URL with serial and short hash.
 """
@@ -33,7 +33,7 @@ WINDI_GOLD_RGB = (0x8B, 0x69, 0x14)
 WINDI_DIM_RGB = (0x6B, 0x65, 0x60)
 FONT_SEAL = "JetBrains Mono"
 FONT_SEAL_FALLBACK = "Consolas"
-VERIFY_URL = "admin.windia4desk.tech/vault/verify"
+VERIFY_URL = "windi-domain.com/vault/verify"
 
 
 def compute_content_hash(content_bytes: bytes) -> str:

@@ -494,7 +494,7 @@ def package_communique(
                     "size_bytes": ef.size_bytes,
                     "mime": ef.mime_type,
                     "vault_locator": f"sha256:{ef.sha256}",
-                    "retrieval": "https://admin.windia4desk.tech/vault/multimedia/",
+                    "retrieval": "https://windi-domain.com/vault/multimedia/",
                     "note": "Full file stored in WINDI Vault. Use hash_locator to retrieve.",
                 },
                 indent=2,

@@ -17,7 +17,7 @@ import io
 from urllib.parse import urlencode
 
 # ── Configuration ──
-VERIFY_BASE_URL = "https://admin.windia4desk.tech/vault/verify"
+VERIFY_BASE_URL = "https://windi-domain.com/vault/verify"
 WINDI_GOLD = "#8B6914"
 KLAR_WHITE = "#FDFBF5"
 DEFAULT_SIZE = 150
@@ -49,7 +49,7 @@ def generate_verify_url(serial: str, content_hash: str) -> str:
         content_hash: Full SHA-256 hex digest
 
     Returns:
-        Verify URL: https://admin.windia4desk.tech/vault/verify?serial=X&hash=Y
+        Verify URL: https://windi-domain.com/vault/verify?serial=X&hash=Y
     """
     # Use short hash (16 chars) in URL - full hash is in document metadata
     short_hash = content_hash[:16] if content_hash else ""

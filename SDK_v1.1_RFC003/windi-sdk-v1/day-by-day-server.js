@@ -6,6 +6,16 @@
 const express = require('express');
 const app = express();
 
+// ── Health endpoint (canonical /health for One Tree audit) ──
+app.get('/health', (req, res) => {
+  res.json({
+    service: 'windi-warroom',
+    version: '1.1.0',
+    status: 'operational',
+    port: process.env.DAY_BY_DAY_PORT || 8090
+  });
+});
+
 // Mount the Day-by-Day API aggregator
 const dayByDayApi = require('./day-by-day-api');
 app.use('/api', dayByDayApi);

@@ -32,7 +32,7 @@ const[err,setErr]=useState(null);
 
 useEffect(()=>{const t=setInterval(()=>setClock(new Date()),1000);return()=>clearInterval(t)},[]);
 useEffect(()=>{
-function load(){fetch("https://admin.windia4desk.tech/api/briefing").then(r=>r.json()).then(r=>{if(r.success){setData(r.data);setErr(null)}else setErr("API error")}).catch(x=>setErr(x.message))}
+function load(){fetch("/api/briefing").then(r=>r.json()).then(r=>{if(r.success){setData(r.data);setErr(null)}else setErr("API error")}).catch(x=>setErr(x.message))}
 load();const t=setInterval(load,30000);return()=>clearInterval(t)},[]);
 
 if(err)return e("div",{style:{padding:60,textAlign:"center"}},e("div",{style:{fontSize:24,color:"#f87171"}},"\u26a0 Connection Error"),e("div",{style:{fontSize:13,color:"#64748b",marginTop:12}},err));

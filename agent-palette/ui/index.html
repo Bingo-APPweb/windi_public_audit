@@ -188,9 +188,9 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     if (hostname === 'localhost' && port === '8108') {
       return { tier: TIER_HIGH, hostname: hostname, reason: 'dev_mode' };
     }
-    // Admin domain
-    if (hostname === 'admin.windia4desk.tech' || hostname === 'master.windia4desk.tech') {
-      return { tier: TIER_HIGH, hostname: hostname, reason: 'admin_domain' };
+    // Production domain (One Tree)
+    if (hostname === 'windi-domain.com' || hostname === 'www.windi-domain.com') {
+      return { tier: TIER_HIGH, hostname: hostname, reason: 'production_domain' };
     }
     // Palette path
     if (path.indexOf('/palette/') === 0) {
@@ -228,7 +228,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     var config = getTierConfig(tier);
     var currentLevel = TIER_LEVEL[tier];
     var endpoints = {};
-    var baseUrl = window.location.protocol === 'https:' ? 'https://admin.windia4desk.tech' : 'http://localhost';
+    var baseUrl = window.location.protocol === 'https:' ? 'https://windi-domain.com' : 'http://localhost';
     
     Object.keys(SERVICES).forEach(function(key) {
       var svc = SERVICES[key];
@@ -256,7 +256,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     var local = 0;
     Object.keys(ctx.endpoints).forEach(function(key) {
       var ep = ctx.endpoints[key];
-      if (ep && (ep.indexOf('localhost') >= 0 || ep.indexOf('windia4desk') >= 0)) {
+      if (ep && (ep.indexOf('localhost') >= 0 || ep.indexOf('windi-domain') >= 0)) {
         local++;
       }
     });
@@ -266,7 +266,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
   // ─── P5: CONNECTORS (A.3: Real Health Checks) ──────────────────────────────────
   function createConnectors(ctx) {
     var isLocal = window.location.hostname === 'localhost';
-    var baseUrl = isLocal ? 'http://localhost' : 'https://admin.windia4desk.tech';
+    var baseUrl = isLocal ? 'http://localhost' : 'https://windi-domain.com';
 
     // A.3: Real health endpoints — Direct ports for localhost, proxy paths for production
     // P5 CONNECTORS: 11 services (5 original + 6 new: Bridge, Sentinel LAW, Schnittstelle, Cortex, ID Genesis, Sentinel)
@@ -421,7 +421,7 @@ const { useState, useEffect, useRef, useCallback, useMemo } = React;
 
 // ─── CONFIG (configurable, not hardcoded) ───
 const CONFIG = {
-  VERIFY_BASE_URL: "https://admin.windia4desk.tech/verify",
+  VERIFY_BASE_URL: "/verify",
   CRYPTO_MODE: "sim", // "sim" | "real"
   ANON_SECONDS: 300,
   AUTO_SAVE_MS: 5000,
@@ -1063,7 +1063,7 @@ const buildSealPayloadWithProgress = async (doc, wallet, sealPolicy, onProgress)
 
 const EXPORT_URL = window.location.hostname === 'localhost'
   ? 'http://localhost:8103'
-  : 'https://admin.windia4desk.tech/export';
+  : '/export';
 
 // Map doc types to JMPG templates
 const DOC_TYPE_TO_TEMPLATE = {
@@ -2678,7 +2678,7 @@ function CognitiveInsightsPanel({ lang = 'en', theme, compact = false }) {
     setLoading(true);
     try {
       const isLocal = window.location.hostname === 'localhost';
-      const baseUrl = isLocal ? 'http://localhost:8108/api/dragon' : 'https://admin.windia4desk.tech/palette/api/dragon';
+      const baseUrl = isLocal ? 'http://localhost:8108/api/dragon' : '/app/api/dragon';
       const res = await fetch(`${baseUrl}/cognition/insights?lang=${lang}`);
       if (res.ok) {
         const data = await res.json();
@@ -3022,7 +3022,7 @@ function App(){
   },[docType,fetchVaultStats,flash,lang,wallet]);
 
   // ═══ A.1: COMMUNIQUÉ API FETCH ═══
-  const baseUrl=window.location.protocol==='https:'?'https://admin.windia4desk.tech':'http://localhost';
+  const baseUrl=window.location.protocol==='https:'?'https://windi-domain.com':'http://localhost';
 
   const fetchCommuniques=useCallback(async()=>{
     try{
@@ -3057,7 +3057,7 @@ function App(){
 
   // ═══ A.2: VAULT API FETCH ═══
   // FIX: Use correct Vault endpoints (8106 serves /api/stats and /health directly)
-  const vaultApiUrl=window.location.hostname==='localhost'?'http://localhost:8106':'https://admin.windia4desk.tech/vault';
+  const vaultApiUrl=window.location.hostname==='localhost'?'http://localhost:8106':'/vault';
   const fetchVaultStats=useCallback(async()=>{
     try{
       setVaultLoading(true);
@@ -3084,7 +3084,7 @@ function App(){
   },[fetchVaultStats]);
 
   // ═══ WAVE 1: JOURNAL FETCH (from Communiqué API) ═══
-  const communiqueApiUrl=window.location.hostname==='localhost'?'http://localhost:8105':'https://admin.windia4desk.tech/communique';
+  const communiqueApiUrl=window.location.hostname==='localhost'?'http://localhost:8105':'/communique';
   const fetchJournalArticles=useCallback(async()=>{
     try{
       setJournalLoading(true);
@@ -3220,7 +3220,7 @@ function App(){
   // Constitutional Chat integration with 5 principles
   // Production uses /palette/api/dragon nginx route → 8108
   // Local uses direct port 8108
-  const dragonUrl = window.location.hostname === 'localhost' ? 'http://localhost:8108/api/dragon' : 'https://admin.windia4desk.tech/palette/api/dragon';
+  const dragonUrl = window.location.hostname === 'localhost' ? 'http://localhost:8108/api/dragon' : '/app/api/dragon';
 
   // ═══ DISTRIBUTION: Check channel status when modal opens ═══
   useEffect(()=>{
@@ -4218,7 +4218,7 @@ function App(){
                       {!isU&&sourceIcon&&<div style={{fontSize:8,color:th.dim,marginTop:2,marginLeft:4}}>{sourceIcon} {m.source}</div>}
                       {/* ═══ DRAGON→DESKTOP BRIDGE: "Open in Editor" button ═══ */}
                       {!isU&&m.document&&<button onClick={()=>{
-                        const desktopUrl=window.location.hostname==='localhost'?'http://localhost:8100':'https://admin.windia4desk.tech/desktop';
+                        const desktopUrl=window.location.hostname==='localhost'?'http://localhost:8100':'/desktop';
                         fetch(desktopUrl+'/api/documents/create-from-dragon',{
                           method:'POST',headers:{'Content-Type':'application/json'},
                           body:JSON.stringify(m.document)

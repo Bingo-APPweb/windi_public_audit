@@ -335,7 +335,7 @@ function CognitiveInsightsPanel({ lang = 'en', compact = false }) {
       // Try to fetch from Dragon Chat service via 8108
       const insightsUrl = window.location.hostname === 'localhost'
         ? 'http://localhost:8108/api/dragon'
-        : 'https://admin.windia4desk.tech/palette/api/dragon';
+        : '/api/dragon';
       const res = await fetch(`${insightsUrl}/cognition/insights?lang=${lang}`);
       if (res.ok) {
         const data = await res.json();
