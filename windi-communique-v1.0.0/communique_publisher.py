@@ -23,7 +23,7 @@ from datetime import datetime, timezone
 # Configuration
 LEDGER_URL = os.environ.get("LEDGER_URL", "http://127.0.0.1:8101")
 EXPORT_URL = os.environ.get("EXPORT_URL", "http://127.0.0.1:8103")
-BASE_DOMAIN = os.environ.get("COMMUNIQUE_DOMAIN", "admin.windia4desk.tech")
+BASE_DOMAIN = os.environ.get("COMMUNIQUE_DOMAIN", "windi-domain.com")
 PUBLISHED_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "published")
 
 

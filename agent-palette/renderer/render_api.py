@@ -210,7 +210,7 @@ def handle_render_request(handler):
             "i9_active": i9_active,
             "ledger_status": "PENDING",  # Updated below after sync
             "ledger_receipt_id": receipt_id,
-            "vault_url": f"https://admin.windia4desk.tech/vault/verify?serial={serial}&hash={content_hash[:16]}",
+            "vault_url": f"https://windi-domain.com/vault/verify?serial={serial}&hash={content_hash[:16]}",
         },
     }
 

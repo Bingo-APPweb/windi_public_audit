@@ -289,7 +289,7 @@ def create_jmpg_package(
         f"Media:        {len(media_files)}\n"
         f"Ledger ID:    {manifest['governance']['receipt_id'] or 'PENDING'}\n"
         f"{'=' * 40}\n"
-        f"Verify at: https://admin.windia4desk.tech/desktop/jmpg/\n"
+        f"Verify at: https://windi-domain.com/desktop/jmpg/\n"
     )
 
     # 8. Generate preview text (structured summary for quick inspection)
