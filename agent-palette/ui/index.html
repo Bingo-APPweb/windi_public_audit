@@ -5860,31 +5860,58 @@ function App(){
               disabled={distributeRecipients.length===0||distributeSending}
               onClick={async()=>{
                 setDistributeSending(true);
-                try {
-                  // Call Dragon Chat distribute API
-                  const res = await fetch(dragonUrl+'/distribute', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                      recipients: distributeRecipients,
-                      doc_title: docTitle,
-                      doc_content: docContent,
-                      receipt_id: receipt?.id || '',
-                      lang: lang,
-                    }),
-                  });
-                  const data = await res.json();
-                  if (data.success || data.total_sent > 0) {
-                    setDistributeSent(data.sent?.map(s=>s.to) || []);
-                    flash(`✅ ${t.distribute.sent} ${data.total_sent} ${t.distribute.recipients.toLowerCase()}`);
-                    setShowDistributeModal(false);
-                  } else {
-                    flash(`❌ ${t.distribute.failed}: ${data.failed?.[0]?.error || 'Unknown error'}`);
+                const results={sent:[],failed:[],opened:[]};
+                const vaultLink=receipt?.id?`https://windi-domain.com/vault/verify/${receipt.id}`:'';
+
+                // Process each recipient by channel
+                for(const r of distributeRecipients){
+                  const cleanPhone=r.value.replace(/[\s\-\(\)]/g,'');
+
+                  // ═══ WHATSAPP — Deeplink (opens WhatsApp) ═══
+                  if(r.channel==='whatsapp'){
+                    const msg=encodeURIComponent(`Olá! Partilho um documento: "${docTitle}"\n\n${vaultLink?\`Acede aqui: ${vaultLink}\n\n`:''}Enviado via WINDI`);
+                    window.open(`https://wa.me/${cleanPhone}?text=${msg}`,'_blank');
+                    results.opened.push({channel:'whatsapp',value:r.value});
                   }
-                } catch(e) {
-                  console.error('[WINDI] Distribute error:', e);
-                  flash(`❌ ${t.distribute.failed}: ${e.message}`);
+                  // ═══ EMAIL — Backend SMTP ═══
+                  else if(r.channel==='email'){
+                    try{
+                      const res=await fetch(dragonUrl+'/distribute',{
+                        method:'POST',headers:{'Content-Type':'application/json'},
+                        body:JSON.stringify({recipients:[r],doc_title:docTitle,doc_content:docContent,receipt_id:receipt?.id||'',lang})
+                      });
+                      const data=await res.json();
+                      if(data.success||data.total_sent>0){results.sent.push({channel:'email',value:r.value});}
+                      else{results.failed.push({channel:'email',value:r.value,error:data.failed?.[0]?.error||'Erro'});}
+                    }catch(e){results.failed.push({channel:'email',value:r.value,error:e.message});}
+                  }
+                  // ═══ SMS — Stub (não implementado) ═══
+                  else if(r.channel==='sms'){
+                    results.failed.push({channel:'sms',value:r.value,error:'SMS em configuração. Use WhatsApp.'});
+                  }
+                  // ═══ LINKEDIN — Share deeplink ═══
+                  else if(r.channel==='linkedin'){
+                    const url=encodeURIComponent(vaultLink||'https://windi-domain.com');
+                    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`,'_blank');
+                    results.opened.push({channel:'linkedin',value:'LinkedIn'});
+                  }
+                  // ═══ TWITTER/X — Tweet intent ═══
+                  else if(r.channel==='twitter'||r.channel==='x'){
+                    const text=encodeURIComponent(`${docTitle} — Documento verificado via WINDI ${vaultLink}`);
+                    window.open(`https://twitter.com/intent/tweet?text=${text}`,'_blank');
+                    results.opened.push({channel:'x',value:'X/Twitter'});
+                  }
                 }
+
+                // Feedback
+                const totalSent=results.sent.length+results.opened.length;
+                if(totalSent>0){
+                  flash(`✅ ${lang==='de'?'Gesendet':'Enviado'}: ${results.sent.map(s=>`📧${s.value}`).join(', ')} ${results.opened.map(o=>`${o.channel==='whatsapp'?'💬':'🔗'}${o.value}`).join(', ')}`);
+                }
+                if(results.failed.length>0){
+                  flash(`⚠️ ${results.failed.map(f=>`${f.channel}: ${f.error}`).join('. ')}`,'warning');
+                }
+                if(totalSent>0)setShowDistributeModal(false);
                 setDistributeSending(false);
               }}
               style={{flex:1,padding:"10px",borderRadius:10,background:distributeRecipients.length>0?th.gold:th.dim,border:"none",color:"#FFF",fontSize:12,fontWeight:700,cursor:"pointer",opacity:distributeRecipients.length>0?1:0.5}}>
