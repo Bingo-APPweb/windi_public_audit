@@ -310,6 +310,40 @@ def handle_voice_speak(body):
 # THREE DRAGONS PROTOCOL — System Prompts
 # ═══════════════════════════════════════════════════════════════════════
 
+def get_dynamic_system_prefix():
+    """Generate dynamic prefix with current date for system prompts."""
+    from datetime import datetime
+    current_date = datetime.now().strftime("%Y-%m-%d")
+    current_date_human = datetime.now().strftime("%d %B %Y")
+
+    return f"""═══ CURRENT DATE (CRITICAL) ═══
+Today is {current_date} ({current_date_human}).
+ALWAYS use this date in documents. NEVER use dates from your training data.
+When writing "March 2026" or "März 2026" or "Março de 2026", this is CORRECT.
+When writing "December 2024" or any 2024/2025 date, this is WRONG.
+
+═══ GENDER & IDENTITY INFERENCE (CRITICAL) ═══
+RULE: Infer the author's gender from context clues:
+- "minha irmã" (my sister) → Author could be male or female
+- "meu irmão" (my brother) → Author could be male or female
+- "meu marido" → Author is likely female (wife)
+- "minha esposa" → Author is likely male (husband)
+- "sou o mais velho" → Author is male
+- "sou a mais velha" → Author is female
+
+DEFAULT: When gender is unclear, use NEUTRAL language.
+NEVER assume the author is female just because they mention a sister.
+"Conexão de irmãos" or "laço entre irmãos" is safer than "irmãs" unless confirmed.
+
+═══ CONVERSATIONAL CONTEXT (CRITICAL) ═══
+You have access to the FULL conversation history.
+When the user says "change the date" or "mude a data", they refer to the document you JUST generated.
+NEVER say "I need more context" or "What document?" if you generated something in the last 3 turns.
+You MUST remember what you wrote and edit it directly.
+
+"""
+
+
 DRAGON_SYSTEM_BASE = """You are a WINDI Agent — a governance companion for institutional document intelligence.
 WINDI is a Pre-AI Governance Layer: "AI processes. Human decides. WINDI guarantees."
 
@@ -505,10 +539,15 @@ Instead: PRODUCE. DRAFT. BUILD.
 
 Your personality: Precise, efficient, generative. You take raw intent and BUILD something solid immediately. You are a Publishing House, not a chatbot. When you have enough context, you PRODUCE.
 
-When creating a document, return a JSON block at the END of your response with:
+═══ ACTION BRIDGE: JSON DOCUMENT BLOCK (MANDATORY) ═══
+When creating ANY document, you MUST return a JSON block at the END with the COMPLETE document text.
+The "content" field must contain the FULL TEXT of the document you generated above - not a summary!
+
 ```json
-{"document": {"title": "...", "type": "...", "content": "...", "fields": {...}}}
+{"document": {"title": "Exact title", "type": "letter|memo|report|etc", "content": "FULL TEXT OF DOCUMENT GOES HERE - every paragraph, every line"}}
 ```
+
+CRITICAL: The "content" field is what gets transferred to the editor. If you put only a summary, the user gets an empty document!
 
 Your closing principle: "Humano decide. Eu construo." / "Mensch entscheidet. Ich baue." / "Human decides. I build." """,
         "closing": {
@@ -639,6 +678,12 @@ def route_dragon(message, chat_type=None, intent_mode=None, history=None):
     for dragon, config in ROUTE_PATTERNS.items():
         kw_hits = sum(1 for kw in config["keywords"] if kw in text)
         scores[dragon] += min(kw_hits * 0.15, 0.6)
+
+    # 3.5 IMMEDIATE ARCHITECT BOOST for document keywords in FIRST message
+    # FIX: Don't wait for 2+ turns - if user wants a document, route to Architect NOW
+    doc_intent_in_message = any(kw in text for kw in DOC_KEYWORDS)
+    if doc_intent_in_message:
+        scores["architect"] += 0.5  # Strong immediate boost for document creation
 
     # 4. Default weight (guardian is gentle fallback)
     for dragon, config in ROUTE_PATTERNS.items():
@@ -1106,9 +1151,10 @@ def handle_dragon_chat(body):
         api_messages.append({"role": role, "content": h.get("text", "")})
     api_messages.append({"role": "user", "content": message})
 
-    # Call Anthropic API
+    # Call Anthropic API with dynamic date prefix
+    system_prompt = get_dynamic_system_prefix() + dragon["system"]
     result, error = call_anthropic(
-        system_prompt=dragon["system"],
+        system_prompt=system_prompt,
         messages=api_messages,
         max_tokens=MAX_TOKENS
     )
@@ -1211,8 +1257,10 @@ def handle_dragon_generate(body):
         '```json\n{"document": {"title": "...", "type": "...", "content": "full document text", "fields": {...}}}\n```'
     )
 
+    # Include dynamic date prefix
+    system_prompt = get_dynamic_system_prefix() + dragon["system"]
     result, error = call_anthropic(
-        system_prompt=dragon["system"],
+        system_prompt=system_prompt,
         messages=[{"role": "user", "content": gen_prompt}],
         max_tokens=2048  # Longer for documents
     )
