@@ -3065,12 +3065,15 @@ function App(){
   // Fonts
   useEffect(()=>{const l=document.createElement("link");l.href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap";l.rel="stylesheet";document.head.appendChild(l);},[]);
 
-  // FIX (K): Load persisted data
+  // FIX (K): Load persisted data + auto-skip onboarding if wallet exists
   useEffect(()=>{
     try{
       const raw=localStorage.getItem(CONFIG.STORAGE_KEY);
       if(raw){const d=JSON.parse(raw);
-        if(d.wallet)setWallet(d.wallet);
+        if(d.wallet){
+          setWallet(d.wallet);
+          setView("main"); // FIX: Skip onboarding — Pioneer session restored
+        }
         if(d.savedDocs)setSavedDocs(d.savedDocs);
         if(d.theme)setThemeName(d.theme);
         if(d.lang)setLang(d.lang);
@@ -4262,7 +4265,9 @@ function App(){
       const w={id:CryptoProvider.walletId(),uuid:CryptoProvider.generateUUID(),fp:CryptoProvider.generateFingerprint(),
         ...didForm,name:didForm.name.trim(),trustScore:1,created_at:new Date().toISOString(),receipts:[]};
       setWallet(w);setShowDID(false);setDidCreating(false);
-      if(persist){try{const raw=JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEY)||"{}");raw.wallet=w;localStorage.setItem(CONFIG.STORAGE_KEY,JSON.stringify(raw));}catch(e){}}
+      // FIX: Auto-enable persistence on wallet creation - Pioneer session must survive refresh
+      setPersist(true);
+      try{const raw=JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEY)||"{}");raw.wallet=w;localStorage.setItem(CONFIG.STORAGE_KEY,JSON.stringify(raw));}catch(e){}
       flash(`🛡️ ${t.did.success} — ${w.id}`);
       setMsgs(p=>[...p,{role:"system",text:`🛡️ ${w.id}`},{role:"bot",text:`${t.did.success} ${w.name}! T1/50 ✅`}]);
 
