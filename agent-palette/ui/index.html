@@ -3093,9 +3093,7 @@ function App(){
   },[uploadedFiles]);
 
   // ═══ SPRINT 3: FETCH ISP PROFILES ON MOUNT ═══
-  useEffect(()=>{
-    fetchIspProfiles();
-  },[fetchIspProfiles]);
+  // NOTE: useEffect moved to after fetchIspProfiles definition (line ~3471) to fix TDZ error
 
   // ═══ SPRINT 3: WEB SPEECH API INITIALIZATION ═══
   useEffect(()=>{
@@ -3469,6 +3467,11 @@ function App(){
       setProductsLoading(false);
     }
   },[]);
+
+  // ═══ SPRINT 3: FETCH ISP PROFILES ON MOUNT (moved here to fix TDZ) ═══
+  useEffect(()=>{
+    fetchIspProfiles();
+  },[fetchIspProfiles]);
 
   const createFromTemplate=useCallback(async(profile)=>{
     try{
