@@ -3564,13 +3564,22 @@ function App(){
   },[dragonUrl]);
 
   // Dragon Chat API call — ALL tiers can use (Knowledge Base + Conversational don't need LLM)
-  const queryDragon=useCallback(async(message)=>{
+  // BUG FIX: Now sends conversation history for context retention
+  const queryDragon=useCallback(async(message,chatHistory=[])=>{
     if(!dragonConnected)return null;
     try{
+      // Convert chat history to format backend expects: {role: "human"|"assistant", text: "..."}
+      const history=chatHistory
+        .filter(m=>m.role==='user'||m.role==='bot')  // Only user/bot messages, not system
+        .map(m=>({
+          role:m.role==='user'?'human':'assistant',
+          text:m.text||''
+        }));
+
       const res=await fetch(dragonUrl+'/chat',{
         method:'POST',
         headers:{'Content-Type':'application/json','X-Session-ID':dragonSessionId||'','X-Tier':windiTier},
-        body:JSON.stringify({message,tier:windiTier,session_id:dragonSessionId})
+        body:JSON.stringify({message,tier:windiTier,session_id:dragonSessionId,history})
       });
       const data=await res.json();
       if(data.session_id&&!dragonSessionId)setDragonSessionId(data.session_id);
@@ -3863,10 +3872,12 @@ function App(){
   // ─── Original ACTION_HANDLERS (enhanced) ───
   const ACTION_HANDLERS={
     create_document:(payload)=>{
+      // BUG FIX: Stay in 'chat' tab where Document Preview panel shows content
+      // 'desk' tab is canvas/layers system - wrong for text documents
       setDocTitle(payload.title||'Untitled');
       setDocContent(payload.content||'');
       setDocType(payload.doc_type||'document');
-      setSidebarTab('desk');
+      setSidebarTab('chat');  // FIX: was 'desk' (canvas/layers), now 'chat' (doc preview)
       if(window.WINDI?.EventBus)window.WINDI.EventBus.emit('DOCUMENT_CREATED_FROM_CHAT',{title:payload.title});
       return{success:true,message:`Created: ${payload.title}`};
     },
@@ -3927,9 +3938,11 @@ function App(){
     const tc=turns+1;setTurns(tc);
 
     // ═══ A.4: DRAGON CHAT INTEGRATION ═══
+    // BUG FIX: Pass conversation history to Dragon for context retention
     let dragonResponse=null;
     if(dragonConnected&&windiTier!=="FREE"){
-      dragonResponse=await queryDragon(m);
+      // Pass current msgs as history (queryDragon will format for backend)
+      dragonResponse=await queryDragon(m,msgs);
     }
 
     // Process response (local motor + Dragon enhancement)
