@@ -67,11 +67,11 @@ def send_document_email(to_address, doc_title, doc_content, receipt_id, lang="en
     msg["From"] = f"WINDI Palette <{config['from_addr']}>"
     msg["To"] = to_address
 
-    # Multilingual footer
+    # Multilingual footer (FIX: windi.app → windi-domain.com)
     footers = {
-        "en": f"Document sealed by WINDI Forensic Ledger.\nReceipt ID: {receipt_id}\n\nVerify: https://windi.app/verify/{receipt_id}",
-        "de": f"Dokument versiegelt durch WINDI Forensic Ledger.\nQuittungs-ID: {receipt_id}\n\nVerifizieren: https://windi.app/verify/{receipt_id}",
-        "pt": f"Documento selado pelo WINDI Forensic Ledger.\nID do Recibo: {receipt_id}\n\nVerificar: https://windi.app/verify/{receipt_id}"
+        "en": f"Document sealed by WINDI Forensic Ledger.\nReceipt ID: {receipt_id}\n\nVerify: https://windi-domain.com/verify/{receipt_id}",
+        "de": f"Dokument versiegelt durch WINDI Forensic Ledger.\nQuittungs-ID: {receipt_id}\n\nVerifizieren: https://windi-domain.com/verify/{receipt_id}",
+        "pt": f"Documento selado pelo WINDI Forensic Ledger.\nID do Recibo: {receipt_id}\n\nVerificar: https://windi-domain.com/verify/{receipt_id}"
     }
     footer = footers.get(lang, footers["en"])
 
@@ -106,7 +106,7 @@ def send_document_email(to_address, doc_title, doc_content, receipt_id, lang="en
                         <div style="font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 12px; color: #1a1a1a;">{receipt_id}</div>
                     </td>
                     <td style="text-align: right; vertical-align: top;">
-                        <a href="https://windi.app/verify/{receipt_id}" style="display: inline-block; padding: 8px 16px; background: #C5A572; color: #ffffff; text-decoration: none; border-radius: 6px; font-size: 12px; font-weight: 600;">Verify</a>
+                        <a href="https://windi-domain.com/verify/{receipt_id}" style="display: inline-block; padding: 8px 16px; background: #C5A572; color: #ffffff; text-decoration: none; border-radius: 6px; font-size: 12px; font-weight: 600;">Verify</a>
                     </td>
                 </tr>
             </table>
