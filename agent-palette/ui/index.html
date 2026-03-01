@@ -5869,8 +5869,11 @@ function App(){
 
                   // ═══ WHATSAPP — Deeplink (opens WhatsApp) ═══
                   if(r.channel==='whatsapp'){
-                    const msg=encodeURIComponent(`Olá! Partilho um documento: "${docTitle}"\n\n${vaultLink?\`Acede aqui: ${vaultLink}\n\n`:''}Enviado via WINDI`);
-                    window.open(`https://wa.me/${cleanPhone}?text=${msg}`,'_blank');
+                    // FIX: No nested template literals (Babel inline doesn't support)
+                    var waMsg='Olá! Partilho um documento: "'+docTitle+'"\n\n';
+                    if(vaultLink){waMsg+='Acede aqui: '+vaultLink+'\n\n';}
+                    waMsg+='Enviado via WINDI';
+                    window.open('https://wa.me/'+cleanPhone+'?text='+encodeURIComponent(waMsg),'_blank');
                     results.opened.push({channel:'whatsapp',value:r.value});
                   }
                   // ═══ EMAIL — Backend SMTP ═══
@@ -5891,14 +5894,14 @@ function App(){
                   }
                   // ═══ LINKEDIN — Share deeplink ═══
                   else if(r.channel==='linkedin'){
-                    const url=encodeURIComponent(vaultLink||'https://windi-domain.com');
-                    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`,'_blank');
+                    var linkedInUrl=encodeURIComponent(vaultLink||'https://windi-domain.com');
+                    window.open('https://www.linkedin.com/sharing/share-offsite/?url='+linkedInUrl,'_blank');
                     results.opened.push({channel:'linkedin',value:'LinkedIn'});
                   }
                   // ═══ TWITTER/X — Tweet intent ═══
                   else if(r.channel==='twitter'||r.channel==='x'){
-                    const text=encodeURIComponent(`${docTitle} — Documento verificado via WINDI ${vaultLink}`);
-                    window.open(`https://twitter.com/intent/tweet?text=${text}`,'_blank');
+                    var tweetText=docTitle+' — Documento verificado via WINDI '+(vaultLink||'');
+                    window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(tweetText),'_blank');
                     results.opened.push({channel:'x',value:'X/Twitter'});
                   }
                 }
