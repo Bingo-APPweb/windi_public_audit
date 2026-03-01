@@ -2624,6 +2624,8 @@ function CognitiveInsightCard({ insight, lang = 'en', theme, onAction, compact =
   const [showExplain, setShowExplain] = useState(false);
 
   const style = COGNITIVE_IMPACT_STYLES[insight.impact] || COGNITIVE_IMPACT_STYLES.medium;
+  // Handle both API formats: action (string) or actions (array)
+  const insightAction = insight.action || (insight.actions && insight.actions[0]) || null;
 
   const formatText = (text) => {
     if (!text) return '';
@@ -2686,20 +2688,22 @@ function CognitiveInsightCard({ insight, lang = 'en', theme, onAction, compact =
           </div>
         </div>
       </div>
-      <div style={{ fontSize: compact ? 12 : 13, lineHeight: 1.6, color: theme.text, marginBottom: insight.action ? 12 : 0 }}>
+      <div style={{ fontSize: compact ? 12 : 13, lineHeight: 1.6, color: theme.text, marginBottom: insightAction ? 12 : 0 }}>
         {formatText(insight.text)}
       </div>
-      {insight.action && (
+      {insightAction && (
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          <button onClick={() => onAction?.(insight)} style={{
+          <button onClick={() => onAction?.({...insight, action: insightAction})} style={{
             padding: '7px 14px', borderRadius: 7, background: style.accent, border: 'none',
             color: '#000', fontSize: 11, fontWeight: 700, cursor: 'pointer',
             display: 'flex', alignItems: 'center', gap: 5
           }}>
-            {insight.action === 'invite_core_to_did' && '👥'}
-            {insight.action === 'view_momentum_details' && '📊'}
-            {insight.action === 'schedule_optimal' && '📅'}
-            {insight.action === 'prioritize_channel' && '📡'}
+            {insightAction === 'invite_core_to_did' && '👥'}
+            {insightAction === 'view_momentum_details' && '📊'}
+            {insightAction === 'schedule_optimal' && '📅'}
+            {insightAction === 'prioritize_channel' && '📡'}
+            {insightAction === 'view_details' && '📊'}
+            {insightAction === 'export_report' && '📤'}
             {actionLabels[lang] || actionLabels.en}
           </button>
           <button onClick={() => setShowExplain(!showExplain)} style={{
@@ -2945,6 +2949,42 @@ function App(){
   const[activeCommuniqueId,setActiveCommuniqueId]=useState(null);
   const[showCommuniqueWorkflow,setShowCommuniqueWorkflow]=useState(false);
   const[communiqueWorkflowLoading,setCommuniqueWorkflowLoading]=useState(false);
+
+  // ═══ HISTORY TIMELINE — Action log from savedDocs + receipts ═══
+  const buildHistoryItems=useMemo(()=>{
+    const items=[];
+    // From savedDocs
+    (savedDocs||[]).forEach(doc=>{
+      items.push({
+        id:`doc-${doc.id}`,
+        type:'document',
+        action:doc.status==='sealed'?'sealed':'created',
+        title:doc.title||'Untitled',
+        icon:doc.icon||'📄',
+        docType:doc.type,
+        timestamp:doc.date?new Date(doc.date).toISOString():new Date().toISOString(),
+        data:doc
+      });
+    });
+    // From wallet receipts (avoid duplicates by checking if already in savedDocs)
+    const docIds=new Set(savedDocs?.map(d=>d.id)||[]);
+    (wallet?.receipts||[]).forEach(r=>{
+      if(!docIds.has(r.id)){
+        items.push({
+          id:`receipt-${r.id}`,
+          type:'receipt',
+          action:'sealed',
+          title:r.title||r.id,
+          icon:'🛡️',
+          docType:r.type,
+          timestamp:r.ts||new Date().toISOString(),
+          data:r
+        });
+      }
+    });
+    // Sort by timestamp descending (newest first)
+    return items.sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
+  },[savedDocs,wallet]);
 
   // ═══ WAVE 1: JOURNAL, FILES, SEARCH STATE ═══
   const[journalArticles,setJournalArticles]=useState([]);
@@ -4912,8 +4952,62 @@ function App(){
             </div>
           )}
 
+          {/* ═══ HISTORY TAB — Timeline of all actions ═══ */}
+          {sidebarTab==="history"&&(
+            <div style={{flex:1,display:'flex',flexDirection:'column',overflow:'hidden'}}>
+              <div style={{padding:'12px 16px',borderBottom:'1px solid '+th.border,display:'flex',alignItems:'center',gap:8}}>
+                <span style={{fontSize:20}}>🕐</span>
+                <span style={{fontSize:14,fontWeight:700}}>{t.sidebar?.history||'History'}</span>
+                <span style={{marginLeft:'auto',fontSize:10,color:th.dim}}>{buildHistoryItems.length} {lang==='de'?'Einträge':lang==='pt'?'entradas':'entries'}</span>
+              </div>
+              <div style={{flex:1,overflowY:'auto',padding:12}}>
+                {buildHistoryItems.length===0?(
+                  <div style={{textAlign:'center',padding:30,color:th.dim}}>
+                    <div style={{fontSize:28,marginBottom:8}}>🕐</div>
+                    <div style={{fontSize:11}}>{lang==='de'?'Noch keine Aktivitäten':lang==='pt'?'Nenhuma atividade ainda':'No activity yet'}</div>
+                    <div style={{fontSize:10,marginTop:4}}>{lang==='de'?'Erstellen und versiegeln Sie Dokumente':lang==='pt'?'Crie e sele documentos':'Create and seal documents'}</div>
+                  </div>
+                ):(
+                  buildHistoryItems.map((item,idx)=>{
+                    const prevItem=buildHistoryItems[idx-1];
+                    const itemDate=new Date(item.timestamp).toLocaleDateString(lang==='de'?'de-DE':lang==='pt'?'pt-PT':'en-US',{weekday:'short',month:'short',day:'numeric'});
+                    const prevDate=prevItem?new Date(prevItem.timestamp).toLocaleDateString(lang==='de'?'de-DE':lang==='pt'?'pt-PT':'en-US',{weekday:'short',month:'short',day:'numeric'}):null;
+                    const showDateHeader=itemDate!==prevDate;
+                    const actionIcons={sealed:'🛡️',created:'📝',exported:'📤',published:'🚀',reviewed:'👁️'};
+                    const actionLabels={
+                      sealed:{en:'Sealed',de:'Versiegelt',pt:'Selado'},
+                      created:{en:'Created',de:'Erstellt',pt:'Criado'},
+                      exported:{en:'Exported',de:'Exportiert',pt:'Exportado'},
+                      published:{en:'Published',de:'Veröffentlicht',pt:'Publicado'}
+                    };
+                    return(
+                      <React.Fragment key={item.id}>
+                        {showDateHeader&&<div style={{fontSize:10,fontWeight:700,color:th.dim,padding:'12px 0 6px',textTransform:'uppercase',letterSpacing:0.5}}>{itemDate}</div>}
+                        <div style={{display:'flex',alignItems:'center',gap:10,padding:'10px 12px',background:th.card,border:'1px solid '+th.border,borderRadius:8,marginBottom:6,cursor:'pointer',transition:'all 0.2s'}}
+                          onMouseOver={e=>e.currentTarget.style.borderColor=th.gold}
+                          onMouseOut={e=>e.currentTarget.style.borderColor=th.border}
+                          onClick={()=>{if(item.type==='receipt'||item.action==='sealed')setSelectedReceipt(item.data);}}>
+                          <span style={{fontSize:16}}>{item.icon}</span>
+                          <div style={{flex:1,minWidth:0}}>
+                            <div style={{fontSize:11,fontWeight:600,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{item.title}</div>
+                            <div style={{fontSize:9,color:th.dim,display:'flex',gap:6,alignItems:'center'}}>
+                              <span>{actionIcons[item.action]||'📄'} {actionLabels[item.action]?.[lang]||item.action}</span>
+                              <span>·</span>
+                              <span>{new Date(item.timestamp).toLocaleTimeString(lang==='de'?'de-DE':'en-US',{hour:'2-digit',minute:'2-digit'})}</span>
+                            </div>
+                          </div>
+                          {item.action==='sealed'&&<span style={{fontSize:10,color:th.success}}>✓</span>}
+                        </div>
+                      </React.Fragment>
+                    );
+                  })
+                )}
+              </div>
+            </div>
+          )}
+
           {/* ═══ OTHER TABS (Fallback) ═══ */}
-          {!["chat","docs","wallet","desk","journal","files","search"].includes(sidebarTab)&&(
+          {!["chat","docs","wallet","desk","journal","files","search","history","insights"].includes(sidebarTab)&&(
             <div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
               <div style={{textAlign:"center"}}>
                 <div style={{fontSize:40,marginBottom:12}}>{SIDEBAR.find(s=>s.id===sidebarTab)?.icon}</div>
