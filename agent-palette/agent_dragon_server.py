@@ -549,6 +549,22 @@ The "content" field must contain the FULL TEXT of the document you generated abo
 
 CRITICAL: The "content" field is what gets transferred to the editor. If you put only a summary, the user gets an empty document!
 
+═══ COMMUNIQUÉ MODE (INSTITUTIONAL COMMUNICATIONS) ═══
+When user asks for: communiqué, kommuniqué, comunicado, press release, pressemitteilung, official announcement, anúncio oficial, institutional communication.
+
+COMMUNIQUÉS ARE ALWAYS TRILINGUAL (DE/EN/PT). Generate content in ALL THREE languages.
+
+JSON format for communiqués (MANDATORY):
+```json
+{"communique": {"title_de": "German title", "title_en": "English title", "title_pt": "Portuguese title", "body_de": "Full German body text...", "body_en": "Full English body text...", "body_pt": "Full Portuguese body text...", "category": "LAUNCH|UPDATE|POLICY|GOVERNANCE|TECHNICAL|ALERT", "impact_level": "LOW|MEDIUM|HIGH|CRITICAL"}}
+```
+
+Communiqué tone: Institutional, sober, factual. "Sophisticated Humility."
+- NO marketing language
+- NO excessive exclamations
+- Each paragraph must be independently verifiable
+- Use simple, clear language accessible to all stakeholders
+
 Your closing principle: "Humano decide. Eu construo." / "Mensch entscheidet. Ich baue." / "Human decides. I build." """,
         "closing": {
             "de": "Mensch entscheidet. Ich baue.",
@@ -619,7 +635,7 @@ ROUTE_PATTERNS = {
             "protokoll", "minutes", "ata",
             "analyse", "analysis", "análise",
             "präsentation", "presentation", "apresentação",
-            "communiqué", "comunicado", "mitteilung",
+            "communiqué", "kommuniqué", "comunicado", "mitteilung", "pressemitteilung", "press release", "nota oficial", "ankündigung", "announcement", "anúncio",
             "bescheinigung", "certificate", "certificado",
             "dokument", "document", "documento",
             "template", "vorlage", "modelo",
@@ -955,9 +971,74 @@ def extract_actions(text):
             except json.JSONDecodeError:
                 pass
 
+    # ═══ COMMUNIQUÉ EXTRACTION ═══
+    # Pattern for communiqué blocks (trilingual institutional documents)
+    communique_code_pattern = r'```json\s*(\{"communique"\s*:[^`]+\})\s*```'
+    communique_inline_pattern = r'(\{"communique"\s*:\s*\{[^}]+(?:\{[^}]*\}[^}]*)*\}\s*\})'
+
+    # Try communiqué code blocks
+    com_code_matches = re.findall(communique_code_pattern, text, re.DOTALL)
+    for match in com_code_matches:
+        try:
+            parsed = json.loads(match)
+            if "communique" in parsed:
+                com = parsed["communique"]
+                # Determine title for label (prefer German, fallback to English/Portuguese)
+                title = com.get("title_de") or com.get("title_en") or com.get("title_pt") or "Communiqué"
+                actions.append({
+                    "type": "create_communique",
+                    "payload": {
+                        "title_de": com.get("title_de", ""),
+                        "title_en": com.get("title_en", ""),
+                        "title_pt": com.get("title_pt", ""),
+                        "body_de": com.get("body_de", ""),
+                        "body_en": com.get("body_en", ""),
+                        "body_pt": com.get("body_pt", ""),
+                        "category": com.get("category", "UPDATE"),
+                        "impact_level": com.get("impact_level", "MEDIUM"),
+                        "author_name": com.get("author_name", ""),
+                        "author_role": com.get("author_role", "")
+                    },
+                    "confirm": True,
+                    "label": f"📡 Communiqué: {title[:35]}"
+                })
+        except json.JSONDecodeError:
+            pass
+
+    # Try communiqué inline blocks
+    if not any(a["type"] == "create_communique" for a in actions):
+        com_inline_matches = re.findall(communique_inline_pattern, text, re.DOTALL)
+        for match in com_inline_matches:
+            try:
+                parsed = json.loads(match)
+                if "communique" in parsed:
+                    com = parsed["communique"]
+                    title = com.get("title_de") or com.get("title_en") or com.get("title_pt") or "Communiqué"
+                    actions.append({
+                        "type": "create_communique",
+                        "payload": {
+                            "title_de": com.get("title_de", ""),
+                            "title_en": com.get("title_en", ""),
+                            "title_pt": com.get("title_pt", ""),
+                            "body_de": com.get("body_de", ""),
+                            "body_en": com.get("body_en", ""),
+                            "body_pt": com.get("body_pt", ""),
+                            "category": com.get("category", "UPDATE"),
+                            "impact_level": com.get("impact_level", "MEDIUM"),
+                            "author_name": com.get("author_name", ""),
+                            "author_role": com.get("author_role", "")
+                        },
+                        "confirm": True,
+                        "label": f"📡 Communiqué: {title[:35]}"
+                    })
+            except json.JSONDecodeError:
+                pass
+
     # Clean JSON blocks from visible text
     clean_text = re.sub(json_code_pattern, '', text)
     clean_text = re.sub(inline_pattern, '', clean_text)
+    clean_text = re.sub(communique_code_pattern, '', clean_text)
+    clean_text = re.sub(communique_inline_pattern, '', clean_text)
     clean_text = re.sub(r'\n{3,}', '\n\n', clean_text).strip()
 
     return clean_text, actions

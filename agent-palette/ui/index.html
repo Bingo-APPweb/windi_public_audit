@@ -3913,6 +3913,42 @@ function App(){
         return{success:true,message:'Ready to seal'};
       }
       return{success:false,message:'No document to seal'};
+    },
+    // ═══ COMMUNIQUÉ ACTION — Trilingual institutional documents ═══
+    create_communique:async(payload)=>{
+      const comApiUrl=window.location.hostname==='localhost'?'http://localhost:8105':'/communique';
+      try{
+        const res=await fetch(comApiUrl+'/api/communique',{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({
+            title_de:payload.title_de||'',
+            title_en:payload.title_en||'',
+            title_pt:payload.title_pt||'',
+            body_de:payload.body_de||'',
+            body_en:payload.body_en||'',
+            body_pt:payload.body_pt||'',
+            category:payload.category||'UPDATE',
+            impact_level:payload.impact_level||'MEDIUM',
+            author_name:payload.author_name||wallet?.name||'Unknown',
+            author_role:payload.author_role||wallet?.role||'Contributor'
+          })
+        });
+        const data=await res.json();
+        if(res.ok&&data.id){
+          flash('📡 Communiqué DRAFT: '+data.id);
+          setActiveCommuniqueId(data.id);
+          fetchCommuniques();
+          setTimeout(()=>setShowCommuniqueWorkflow(true),300);
+          return{success:true,message:'Communiqué '+data.id+' created'};
+        }else{
+          flash('❌ '+(data.error||'Failed to create communiqué'));
+          return{success:false,message:data.error||'Creation failed'};
+        }
+      }catch(e){
+        flash('❌ Engine offline: '+e.message);
+        return{success:false,message:'Engine connection failed'};
+      }
     }
   };
 
@@ -4829,9 +4865,16 @@ function App(){
                   if(m.role==="action")return<div key={i} style={{marginBottom:8,marginLeft:28}}>
                     <div style={{padding:'12px 14px',background:th.card,border:`1px solid ${th.gold}44`,borderRadius:12,borderLeft:`3px solid ${th.gold}`}}>
                       <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:8}}>
-                        <span style={{fontSize:18}}>{m.actionType==='create_document'?'📄':m.actionType==='seal_document'?'🛡️':'📤'}</span>
+                        <span style={{fontSize:18}}>{m.actionType==='create_communique'?'📡':m.actionType==='create_document'?'📄':m.actionType==='seal_document'?'🛡️':'📤'}</span>
                         <span style={{fontWeight:600,fontSize:13,color:th.text}}>{m.label}</span>
                       </div>
+                      {/* Communiqué trilingual preview */}
+                      {m.actionType==='create_communique'&&m.payload&&m.status==='pending'&&<div style={{marginBottom:10,padding:10,background:th.bg,borderRadius:8,fontSize:11,lineHeight:1.5}}>
+                        <div style={{marginBottom:6}}><span style={{fontWeight:700,color:th.dim}}>🇩🇪</span> {(m.payload.title_de||'').substring(0,60)}{m.payload.title_de?.length>60?'...':''}</div>
+                        <div style={{marginBottom:6}}><span style={{fontWeight:700,color:th.dim}}>🇬🇧</span> {(m.payload.title_en||'').substring(0,60)}{m.payload.title_en?.length>60?'...':''}</div>
+                        <div><span style={{fontWeight:700,color:th.dim}}>🇧🇷</span> {(m.payload.title_pt||'').substring(0,60)}{m.payload.title_pt?.length>60?'...':''}</div>
+                        {m.payload.category&&<div style={{marginTop:8,display:'flex',gap:6}}><span style={{padding:'2px 6px',background:th.gold+'22',color:th.gold,borderRadius:4,fontSize:9,fontWeight:600}}>{m.payload.category}</span><span style={{padding:'2px 6px',background:th.dim+'22',color:th.dim,borderRadius:4,fontSize:9}}>{m.payload.impact_level||'MEDIUM'}</span></div>}
+                      </div>}
                       {m.status==='pending'&&<div style={{display:'flex',gap:8}}>
                         <button onClick={()=>executeAction(m.actionType,m.payload,i)} style={{padding:'8px 16px',background:th.gold,border:'none',borderRadius:8,color:'#fff',fontWeight:600,fontSize:11,cursor:'pointer',display:'flex',alignItems:'center',gap:4}}>
                           <span>✓</span><span>{lang==='de'?'Ja, erstellen':lang==='pt'?'Sim, criar':'Yes, create'}</span>
