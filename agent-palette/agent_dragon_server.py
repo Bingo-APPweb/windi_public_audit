@@ -815,6 +815,78 @@ def constitutional_filter(text):
     }
 
 # ═══════════════════════════════════════════════════════════════════════
+# ACTION BRIDGE — Extract actions from LLM responses
+# "O Dragão sugere. O Humano decide." (I9 Governance)
+# ═══════════════════════════════════════════════════════════════════════
+
+def extract_actions(text):
+    """Extract action blocks from LLM response text.
+
+    Looks for JSON blocks like:
+    {"document": {"title": "...", "content": "...", "type": "..."}}
+
+    Returns (clean_text, actions_list)
+    """
+    import re
+    actions = []
+
+    # Pattern to find JSON document blocks (including nested braces)
+    # Match ```json blocks first
+    json_code_pattern = r'```json\s*(\{[^`]+\})\s*```'
+    # Match inline JSON blocks
+    inline_pattern = r'(\{"document"\s*:\s*\{[^}]+(?:\{[^}]*\}[^}]*)*\}\s*\})'
+
+    # Try code blocks first
+    code_matches = re.findall(json_code_pattern, text, re.DOTALL)
+    for match in code_matches:
+        try:
+            parsed = json.loads(match)
+            if "document" in parsed:
+                doc = parsed["document"]
+                actions.append({
+                    "type": "create_document",
+                    "payload": {
+                        "title": doc.get("title", "Untitled"),
+                        "content": doc.get("content", ""),
+                        "doc_type": doc.get("type", "document"),
+                        "fields": doc.get("fields", {})
+                    },
+                    "confirm": True,
+                    "label": f"Create: {doc.get('title', 'Document')[:40]}"
+                })
+        except json.JSONDecodeError:
+            pass
+
+    # Try inline blocks if no code blocks found
+    if not actions:
+        inline_matches = re.findall(inline_pattern, text, re.DOTALL)
+        for match in inline_matches:
+            try:
+                parsed = json.loads(match)
+                if "document" in parsed:
+                    doc = parsed["document"]
+                    actions.append({
+                        "type": "create_document",
+                        "payload": {
+                            "title": doc.get("title", "Untitled"),
+                            "content": doc.get("content", ""),
+                            "doc_type": doc.get("type", "document"),
+                            "fields": doc.get("fields", {})
+                        },
+                        "confirm": True,
+                        "label": f"Create: {doc.get('title', 'Document')[:40]}"
+                    })
+            except json.JSONDecodeError:
+                pass
+
+    # Clean JSON blocks from visible text
+    clean_text = re.sub(json_code_pattern, '', text)
+    clean_text = re.sub(inline_pattern, '', clean_text)
+    clean_text = re.sub(r'\n{3,}', '\n\n', clean_text).strip()
+
+    return clean_text, actions
+
+# ═══════════════════════════════════════════════════════════════════════
 # API HANDLERS
 # ═══════════════════════════════════════════════════════════════════════
 
@@ -1040,11 +1112,15 @@ def handle_dragon_chat(body):
             "violations": cf["violations"],
         }, 200
 
-    # Return clean response
+    # Extract actions from response (Action Bridge)
+    clean_message, actions = extract_actions(cf["text"])
+
+    # Return clean response with actions
     return {
         "dragon": dragon_name,
-        "message": cf["text"],
+        "message": clean_message,
         "source": "semantic",
+        "actions": actions,  # Action Bridge — Dragon suggests, Human decides
         "metadata": {
             "model": result["model"],
             "input_tokens": result["input_tokens"],
@@ -1052,6 +1128,7 @@ def handle_dragon_chat(body):
             "dragon_scores": scores,
             "violations": cf["violations"] if cf["violations"] else None,
             "budget_used": budget["tokens"],
+            "actions_extracted": len(actions),
         }
     }, 200
 
@@ -1120,15 +1197,20 @@ def handle_dragon_generate(body):
     budget = update_budget(result["input_tokens"], result["output_tokens"])
     cf = constitutional_filter(result["text"])
 
+    # Extract actions from generated document (Action Bridge)
+    clean_message, actions = extract_actions(cf["text"])
+
     return {
         "dragon": "architect",
-        "message": cf["text"],
+        "message": clean_message,
         "source": "llm",
+        "actions": actions,  # Action Bridge — Dragon suggests, Human decides
         "metadata": {
             "model": result["model"],
             "input_tokens": result["input_tokens"],
             "output_tokens": result["output_tokens"],
             "budget_used": budget["tokens"],
+            "actions_extracted": len(actions),
         }
     }, 200
 

@@ -3759,6 +3759,65 @@ function App(){
     setVoiceText("");
   },[voiceText]); // send will be defined below, eslint will complain but it works
 
+  // ═══ ACTION BRIDGE — Dragon suggests, Human decides (I9 Governance) ═══
+  const ACTION_HANDLERS={
+    create_document:(payload)=>{
+      setDocTitle(payload.title||'Untitled');
+      setDocContent(payload.content||'');
+      setDocType(payload.doc_type||'document');
+      setSidebarTab('desk');
+      if(window.WINDI?.EventBus)window.WINDI.EventBus.emit('DOCUMENT_CREATED_FROM_CHAT',{title:payload.title});
+      return{success:true,message:`Created: ${payload.title}`};
+    },
+    open_distribution:(payload)=>{
+      setShowDistributeModal(true);
+      return{success:true,message:'Distribution modal opened'};
+    },
+    seal_document:(payload)=>{
+      if(docTitle&&docContent){
+        setShowFinalizeModal(true);
+        return{success:true,message:'Ready to seal'};
+      }
+      return{success:false,message:'No document to seal'};
+    }
+  };
+
+  const processActions=useCallback((actions)=>{
+    if(!actions||!Array.isArray(actions)||actions.length===0)return;
+    actions.forEach(action=>{
+      if(action.confirm){
+        // Add action card to chat (requires user confirmation)
+        setMsgs(prev=>[...prev,{
+          role:'action',
+          actionType:action.type,
+          payload:action.payload,
+          label:action.label||action.type,
+          status:'pending'
+        }]);
+      }else{
+        // Execute immediately (no confirmation needed)
+        const handler=ACTION_HANDLERS[action.type];
+        if(handler)handler(action.payload);
+      }
+    });
+  },[]);
+
+  const executeAction=useCallback((actionType,payload,msgIndex)=>{
+    const handler=ACTION_HANDLERS[actionType];
+    if(handler){
+      const result=handler(payload);
+      setMsgs(prev=>prev.map((m,i)=>
+        i===msgIndex?{...m,status:result.success?'executed':'failed',result}:m
+      ));
+    }
+  },[]);
+
+  const dismissAction=useCallback((msgIndex)=>{
+    setMsgs(prev=>prev.map((m,i)=>
+      i===msgIndex?{...m,status:'dismissed'}:m
+    ));
+  },[]);
+
   // Send chat — FIX (E) awaitingTitle + FIX (F) docContentRef + A.4 Dragon Chat + DNA Guided Flow
   const send=useCallback(async(text)=>{
     if(!text.trim()||docStatus==="finalized")return;
@@ -3796,6 +3855,10 @@ function App(){
         }
         if(dragonResponse.action_pending){
           setDragonPending({type:dragonResponse.action_pending,buttons:dragonResponse.confirm_buttons});
+        }
+        // ═══ ACTION BRIDGE: Process actions from Dragon response ═══
+        if(dragonResponse.actions&&dragonResponse.actions.length>0){
+          processActions(dragonResponse.actions);
         }
       }
       // ─── Local Motor (FREE tier or Dragon fallback) ─────────────────
@@ -4562,6 +4625,32 @@ function App(){
                 })()}
                 {msgs.map((m,i)=>{
                   if(m.role==="system")return<div key={i} style={{textAlign:"center",padding:"3px 0",margin:"4px 0"}}><span style={{fontSize:9,color:th.dim,background:th.card,padding:"2px 8px",borderRadius:6}}>{m.text}</span></div>;
+                  // ═══ ACTION BRIDGE: Action confirmation cards ═══
+                  if(m.role==="action")return<div key={i} style={{marginBottom:8,marginLeft:28}}>
+                    <div style={{padding:'12px 14px',background:th.card,border:`1px solid ${th.gold}44`,borderRadius:12,borderLeft:`3px solid ${th.gold}`}}>
+                      <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:8}}>
+                        <span style={{fontSize:18}}>{m.actionType==='create_document'?'📄':m.actionType==='seal_document'?'🛡️':'📤'}</span>
+                        <span style={{fontWeight:600,fontSize:13,color:th.text}}>{m.label}</span>
+                      </div>
+                      {m.status==='pending'&&<div style={{display:'flex',gap:8}}>
+                        <button onClick={()=>executeAction(m.actionType,m.payload,i)} style={{padding:'8px 16px',background:th.gold,border:'none',borderRadius:8,color:'#fff',fontWeight:600,fontSize:11,cursor:'pointer',display:'flex',alignItems:'center',gap:4}}>
+                          <span>✓</span><span>{lang==='de'?'Ja, erstellen':lang==='pt'?'Sim, criar':'Yes, create'}</span>
+                        </button>
+                        <button onClick={()=>dismissAction(i)} style={{padding:'8px 16px',background:th.hover,border:`1px solid ${th.border}`,borderRadius:8,color:th.dim,fontSize:11,cursor:'pointer'}}>
+                          {lang==='de'?'Nein':lang==='pt'?'Não':'No'}
+                        </button>
+                      </div>}
+                      {m.status==='executed'&&<div style={{color:th.success,fontSize:11,display:'flex',alignItems:'center',gap:4}}>
+                        <span>✓</span><span>{m.result?.message||'Action completed'}</span>
+                      </div>}
+                      {m.status==='dismissed'&&<div style={{color:th.dim,fontSize:11,fontStyle:'italic'}}>
+                        {lang==='de'?'Aktion abgelehnt':lang==='pt'?'Acção descartada':'Action dismissed'}
+                      </div>}
+                      {m.status==='failed'&&<div style={{color:th.danger||'#ef4444',fontSize:11}}>
+                        ✗ {m.result?.message||'Action failed'}
+                      </div>}
+                    </div>
+                  </div>;
                   const isU=m.role==="user";
                   // A.4: Show source indicator for Dragon responses
                   const sourceIcon=m.source==="council"?"👁️":m.source==="guardian"?"🛡️":"";
