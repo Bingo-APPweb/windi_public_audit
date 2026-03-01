@@ -67,6 +67,15 @@ try:
 except ImportError:
     HAS_XLSX = False
 
+# Email Distribution Module
+try:
+    from email_sender import send_document_email
+    HAS_EMAIL_SENDER = True
+    print("[Dragon] Email Sender: LOADED")
+except ImportError:
+    HAS_EMAIL_SENDER = False
+    print("[Dragon] Email Sender: NOT AVAILABLE")
+
 # WINDI Document Renderer Integration
 import sys as _renderer_sys
 _renderer_sys.path.insert(0, str(Path(__file__).parent / "renderer"))
@@ -1380,21 +1389,67 @@ def handle_cognition_insights(query_params):
 # ═══════════════════════════════════════════════════════════════════════════
 
 def handle_distribute(body):
-    """POST /api/dragon/distribute — Queue document distribution to recipients."""
+    """POST /api/dragon/distribute — Send sealed document to recipients via email."""
     recipients = body.get("recipients", [])
     if not recipients:
         return {"success": False, "error": "No recipients"}, 400
 
+    doc_title = body.get("doc_title", "WINDI Document")
+    doc_content = body.get("doc_content", "")
+    receipt_id = body.get("receipt_id", "DRAFT")
+    lang = body.get("lang", "en")
+
     # Generate job_id for tracking
     job_id = f"DIST-{int(time.time())}-{uuid.uuid4().hex[:6]}"
 
-    # Forward to dragon_chat_service or fallback local
+    sent = []
+    failed = []
+
+    for recipient in recipients:
+        channel = recipient.get("channel", "email")
+        value = recipient.get("value", "")
+
+        if not value:
+            failed.append({"to": value, "channel": channel, "error": "Empty recipient"})
+            continue
+
+        if channel == "email" and HAS_EMAIL_SENDER:
+            # Send via SMTP
+            result = send_document_email(
+                to_address=value,
+                doc_title=doc_title,
+                doc_content=doc_content,
+                receipt_id=receipt_id,
+                lang=lang
+            )
+            if result["success"]:
+                sent.append(result)
+                print(f"[Dragon] Email sent to {value}")
+            else:
+                failed.append(result)
+                print(f"[Dragon] Email failed to {value}: {result['error']}")
+        elif channel == "email" and not HAS_EMAIL_SENDER:
+            failed.append({
+                "to": value,
+                "channel": channel,
+                "error": "Email sender module not available"
+            })
+        else:
+            # WhatsApp/SMS - Phase 2
+            failed.append({
+                "to": value,
+                "channel": channel,
+                "error": f"Channel '{channel}' not yet implemented (Phase 2)"
+            })
+
     return {
-        "success": True,
-        "message": "Distribution queued",
-        "recipients_count": len(recipients),
+        "success": len(sent) > 0,
         "job_id": job_id,
-        "status": "queued"
+        "total_sent": len(sent),
+        "total_failed": len(failed),
+        "sent": sent,
+        "failed": failed,
+        "timestamp": datetime.now(timezone.utc).isoformat()
     }, 200
 
 
