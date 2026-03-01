@@ -455,6 +455,50 @@ const DOC_TYPES = {
   creativeVirtue:{icon:"🎨",tier:"HIGH",cat:"governance"},
 };
 
+// ─── DOC ROUTING HUB — Each type routes to correct workspace ───
+// "Nicht alles ist ein Text-Editor und nicht alles ist ein Canvas."
+const DOC_ROUTING = {
+  // GRUPPE A: Text-Editor (10 types) — Guardian guides
+  letter:       { tab: 'chat', workspace: 'editor' },
+  email:        { tab: 'chat', workspace: 'editor' },
+  note:         { tab: 'chat', workspace: 'editor' },
+  memo:         { tab: 'chat', workspace: 'editor' },
+  journal:      { tab: 'chat', workspace: 'editor' },
+  recipe:       { tab: 'chat', workspace: 'editor' },
+  report:       { tab: 'chat', workspace: 'editor' },
+  contract:     { tab: 'chat', workspace: 'editor' },
+  protocol:     { tab: 'chat', workspace: 'editor' },
+  analysis:     { tab: 'chat', workspace: 'editor' },
+  // GRUPPE B: Communiqué Workflow — Architect generates trilingual
+  // GRUPPE B: Communiqué → Canvas for visual layout (newspaper/magazine style)
+  communique:   { tab: 'desk', workspace: 'canvas', workflow: 'communique' },
+  // GRUPPE C: Template-based — structured fields
+  invoice:      { tab: 'chat', workspace: 'editor', template: true },
+  certificate:  { tab: 'chat', workspace: 'editor', template: true },
+  // GRUPPE D: Canvas/Design — ONLY these use desk/canvas!
+  presentation: { tab: 'desk', workspace: 'canvas' },
+  creativeVirtue: { tab: 'desk', workspace: 'canvas' },
+};
+
+// ─── Dragon Greetings per Document Type (trilingual) ───
+const DOC_GREETINGS = {
+  letter:   { de:'Ich helfe beim Brief. An wen soll er gehen?', en:'I\'ll help with your letter. Who is it for?', pt:'Vou ajudar com a carta. Para quem é?' },
+  email:    { de:'Ich helfe bei der E-Mail. Was ist das Thema?', en:'I\'ll help with your email. What\'s the topic?', pt:'Vou ajudar com o e-mail. Qual é o tema?' },
+  note:     { de:'Schreib los — ich bin hier wenn du mich brauchst.', en:'Start writing — I\'m here if you need me.', pt:'Escreve à vontade — estou aqui se precisares.' },
+  memo:     { de:'Ich helfe beim Memo. Was ist der Anlass?', en:'I\'ll help with the memo. What\'s the occasion?', pt:'Vou ajudar com o memorando. Qual é a situação?' },
+  journal:  { de:'Ich begleite dein Journal. Was beschäftigt dich?', en:'I\'ll accompany your journal. What\'s on your mind?', pt:'Vou acompanhar o diário. O que te ocupa?' },
+  recipe:   { de:'Ich helfe beim Rezept. Was möchtest du kochen?', en:'I\'ll help with the recipe. What do you want to cook?', pt:'Vou ajudar com a receita. O que queres cozinhar?' },
+  report:   { de:'Ich helfe beim Bericht. Was soll dokumentiert werden?', en:'I\'ll help with the report. What should be documented?', pt:'Vou ajudar com o relatório. O que deve ser documentado?' },
+  contract: { de:'Ich helfe beim Vertrag. Zwischen welchen Parteien?', en:'I\'ll help with the contract. Between which parties?', pt:'Vou ajudar com o contrato. Entre quais partes?' },
+  protocol: { de:'Ich helfe beim Protokoll. Was war das Thema der Sitzung?', en:'I\'ll help with the minutes. What was the meeting about?', pt:'Vou ajudar com a ata. Qual foi o tema da reunião?' },
+  analysis: { de:'Ich helfe bei der Analyse. Was soll untersucht werden?', en:'I\'ll help with the analysis. What should be examined?', pt:'Vou ajudar com a análise. O que deve ser examinado?' },
+  invoice:  { de:'Ich helfe bei der Rechnung. An wen geht sie?', en:'I\'ll help with the invoice. Who is it for?', pt:'Vou ajudar com a factura. Para quem é?' },
+  certificate: { de:'Ich helfe beim Zertifikat. Was wird bescheinigt?', en:'I\'ll help with the certificate. What is being certified?', pt:'Vou ajudar com o certificado. O que está sendo certificado?' },
+  presentation: { de:'Präsentations-Canvas geöffnet. Füge Elemente hinzu!', en:'Presentation canvas open. Add elements!', pt:'Canvas de apresentação aberto. Adiciona elementos!' },
+  communique: { de:'Kommuniqué-Canvas geöffnet. Gestalte deine Publikation!', en:'Communiqué canvas open. Design your publication!', pt:'Canvas de comunicado aberto. Desenha a tua publicação!' },
+  creativeVirtue: { de:'Kreatives Canvas. Gestalte frei!', en:'Creative canvas. Design freely!', pt:'Canvas criativo. Desenha livremente!' },
+};
+
 // ═══════════════════════════════════════════════════════════════════════════════════
 // DOC FRAMEWORK v2.0 — defineDoc Pattern + Merkle Seal + GDPR Compliance
 // "Publishing House publica conhecimento, não decoração."
@@ -3914,22 +3958,56 @@ function App(){
       }
       return{success:false,message:'No document to seal'};
     },
-    // ═══ COMMUNIQUÉ ACTION — Trilingual institutional documents ═══
+    // ═══ COMMUNIQUÉ ACTION — Canvas/Design for visual layout ═══
     create_communique:async(payload)=>{
-      // 1. Load content into editor (German as primary, with trilingual structure)
       const title=payload.title_de||payload.title_en||payload.title_pt||'Communiqué';
-      const bodyParts=[];
-      if(payload.body_de){bodyParts.push('🇩🇪 DEUTSCH\n'+payload.body_de);}
-      if(payload.body_en){bodyParts.push('🇬🇧 ENGLISH\n'+payload.body_en);}
-      if(payload.body_pt){bodyParts.push('🇧🇷 PORTUGUÊS\n'+payload.body_pt);}
-      const content=bodyParts.join('\n\n───────────────────\n\n')||'';
 
-      setDocTitle(title);
-      setDocContent(content);
+      // 1. Switch to Canvas/Design mode (NOT text editor)
       setDocType('communique');
-      setSidebarTab('chat');  // Stay in chat tab with document preview (NOT desk/canvas)
+      setSidebarTab('desk');  // Open canvas for visual layout
 
-      // 2. Store trilingual fields for API submission
+      // 2. Auto-populate Canvas with layers from Dragon content
+      const newLayers=[];
+      let yPos=50;
+
+      // Layer 1: Title (large header)
+      newLayers.push({
+        id:layerUid(),type:'text',x:50,y:yPos,w:694,h:50,
+        content:title,fontSize:28,fontWeight:700,color:'#1a1a1a',
+        bgColor:'transparent',opacity:1,rotation:0,borderRadius:0,locked:false,zIndex:0
+      });
+      yPos+=60;
+
+      // Layer 2: Date line
+      const dateStr=new Date().toLocaleDateString(lang==='de'?'de-DE':lang==='pt'?'pt-PT':'en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+      newLayers.push({
+        id:layerUid(),type:'text',x:50,y:yPos,w:694,h:24,
+        content:dateStr,fontSize:12,fontWeight:400,color:'#666666',
+        bgColor:'transparent',opacity:1,rotation:0,borderRadius:0,locked:false,zIndex:1
+      });
+      yPos+=40;
+
+      // Layer 3+: Body paragraphs as separate blocks (German primary)
+      const bodyText=payload.body_de||payload.body_en||payload.body_pt||'';
+      const paragraphs=bodyText.split(/\n\n+/).filter(p=>p.trim());
+      paragraphs.forEach((para,i)=>{
+        const isHeading=para.startsWith('**')||para.startsWith('#')||para.toUpperCase()===para;
+        const cleanText=para.replace(/\*\*/g,'').replace(/^#+\s*/,'');
+        const lineCount=Math.ceil(cleanText.length/80);
+        const blockH=Math.max(40,lineCount*22+16);
+        newLayers.push({
+          id:layerUid(),type:'text',x:50,y:yPos,w:isHeading?694:340,h:blockH,
+          content:cleanText,fontSize:isHeading?18:13,fontWeight:isHeading?700:400,
+          color:isHeading?'#1a1a1a':'#333333',bgColor:'transparent',
+          opacity:1,rotation:0,borderRadius:0,locked:false,zIndex:i+2
+        });
+        yPos+=blockH+12;
+      });
+
+      setDeskLayers(newLayers);
+      flash('🎨 Canvas mit '+newLayers.length+' Ebenen geladen');
+
+      // 3. Store trilingual fields for API submission
       setDocFields({
         title_de:payload.title_de||'',
         title_en:payload.title_en||'',
@@ -4866,7 +4944,36 @@ function App(){
                         const nm=SHELF_NAMES[id]||{};
                         return React.createElement('div',{
                           key:id,
-                          onClick:()=>{if(!locked){
+                          onClick:()=>{
+                            // ═══ TIER GATE — Show upgrade hint for locked tiles ═══
+                            if(locked){
+                              const typeName=(nm[lang]||nm.en||id);
+                              const tierName=dt.tier==='HIGH'?(lang==='de'?'Governance':lang==='pt'?'Governança':'Governance'):(lang==='de'?'Organization':lang==='pt'?'Organização':'Organization');
+                              const msgs={
+                                de:'🔒 "'+typeName+'" ist ab dem '+tierName+'-Tier verfügbar.\n\nUpgrade für professionelle Werkzeuge mit LLM, Forensic Seal und Governanz.',
+                                en:'🔒 "'+typeName+'" is available from the '+tierName+' tier.\n\nUpgrade for professional tools with LLM, Forensic Seal and governance.',
+                                pt:'🔒 "'+typeName+'" está disponível a partir do tier '+tierName+'.\n\nFaça upgrade para ferramentas profissionais com LLM, Selo Forense e governança.'
+                              };
+                              flash(msgs[lang]||msgs.de);
+                              return;
+                            }
+                            // ═══ DOC ROUTING HUB — Route to correct workspace ═══
+                            const route=DOC_ROUTING[id]||{tab:'chat',workspace:'editor'};
+
+                            // 1. Set document type FIRST
+                            setDocType(id);
+
+                            // 2. Route to correct tab (chat=text editor, desk=canvas)
+                            setSidebarTab(route.tab);
+
+                            // 3. For canvas types, show greeting and done
+                            if(route.workspace==='canvas'){
+                              const greeting=(DOC_GREETINGS[id]||{})[lang]||(DOC_GREETINGS[id]||{}).en||'Canvas bereit.';
+                              setMsgs(prev=>[...prev,{role:'bot',text:greeting}]);
+                              return;
+                            }
+
+                            // 4. For text editor types, send prompt to Dragon
                             const msg=(SHELF_PROMPTS[id]||{})[lang]||(SHELF_PROMPTS[id]||{}).en||`Create ${id}`;
                             setChatIn(msg);
                             setTimeout(()=>send(msg),150);
@@ -4874,14 +4981,33 @@ function App(){
                           style:{
                             background:locked?(th.card+'88'):th.card,border:'1px solid '+th.border,borderRadius:10,
                             padding:'12px 8px',cursor:locked?'not-allowed':'pointer',textAlign:'center',
-                            transition:'all 0.2s',opacity:locked?0.5:1,position:'relative'
+                            transition:'all 0.3s ease',opacity:locked?0.45:1,position:'relative',
+                            filter:locked?'grayscale(100%)':'none'
                           },
-                          onMouseEnter:e=>{if(!locked){e.currentTarget.style.borderColor=th.gold;e.currentTarget.style.transform='translateY(-2px)';}},
-                          onMouseLeave:e=>{e.currentTarget.style.borderColor=th.border;e.currentTarget.style.transform='none';}
+                          onMouseEnter:e=>{
+                            if(!locked){
+                              e.currentTarget.style.borderColor=th.gold;
+                              e.currentTarget.style.transform='translateY(-2px)';
+                              e.currentTarget.style.boxShadow='0 4px 12px rgba(0,0,0,0.08)';
+                            }else{
+                              // TEASER: Brief color flash on locked tiles — "so könnte es aussehen"
+                              e.currentTarget.style.opacity='0.65';
+                              e.currentTarget.style.filter='grayscale(60%)';
+                            }
+                          },
+                          onMouseLeave:e=>{
+                            e.currentTarget.style.borderColor=th.border;
+                            e.currentTarget.style.transform='none';
+                            e.currentTarget.style.boxShadow='none';
+                            if(locked){
+                              e.currentTarget.style.opacity='0.45';
+                              e.currentTarget.style.filter='grayscale(100%)';
+                            }
+                          }
                         },
-                          React.createElement('div',{style:{fontSize:24,marginBottom:4}},dt.icon),
-                          React.createElement('div',{style:{fontFamily:"'Bricolage Grotesque',sans-serif",fontWeight:600,fontSize:12,color:th.text}},nm[lang]||nm.en||id),
-                          locked&&React.createElement('span',{style:{position:'absolute',top:4,right:4,background:th.gold,color:'#fff',fontSize:8,padding:'2px 5px',borderRadius:3,fontWeight:700}},dt.tier)
+                          React.createElement('div',{style:{fontSize:24,marginBottom:4,transition:'all 0.3s'}},dt.icon),
+                          React.createElement('div',{style:{fontFamily:"'Bricolage Grotesque',sans-serif",fontWeight:600,fontSize:12,color:locked?th.dim:th.text}},nm[lang]||nm.en||id),
+                          locked&&React.createElement('span',{style:{position:'absolute',bottom:4,right:4,background:dt.tier==='HIGH'?'#8B250022':'#B8860B22',color:dt.tier==='HIGH'?'#8B2500':'#B8860B',border:'1px solid '+(dt.tier==='HIGH'?'#8B250044':'#B8860B44'),fontSize:8,padding:'2px 6px',borderRadius:8,fontWeight:600,fontFamily:"'JetBrains Mono',monospace"}},dt.tier==='HIGH'?(lang==='de'?'Governance':lang==='pt'?'Governança':'Governance'):(lang==='de'?'Organization':lang==='pt'?'Organização':'Organization'))
                         );
                       })
                     )
