@@ -2968,6 +2968,27 @@ function App(){
 
   const flash=useCallback(m=>{setToast({m,v:true});setTimeout(()=>setToast(x=>({...x,v:false})),2600);},[]);
 
+  // ═══ A.2: VAULT API FETCH ═══
+  // FIX: Use correct Vault endpoints (8106 serves /api/stats and /health directly)
+  const vaultApiUrl=window.location.hostname==='localhost'?'http://localhost:8106':'/vault';
+  const fetchVaultStats=useCallback(async()=>{
+    try{
+      setVaultLoading(true);
+      const[statsRes,healthRes]=await Promise.all([
+        fetch(vaultApiUrl+'/api/stats'),
+        fetch(vaultApiUrl+'/health')
+      ]);
+      const statsData=await statsRes.json();
+      const healthData=await healthRes.json();
+      setVaultStats(statsData);
+      setVaultHealth(healthData);
+    }catch(e){
+      console.warn('[WINDI] Vault API offline:',e.message);
+    }finally{
+      setVaultLoading(false);
+    }
+  },[vaultApiUrl]);
+
   // ═══ EVENT BUS LISTENERS — Cross-Component Sync ═══
   useEffect(()=>{
     if(!window.WINDI?.EventBus)return;
@@ -3054,27 +3075,6 @@ function App(){
     if(comFilter==="all")return communiques;
     return communiques.filter(c=>c.status?.toLowerCase()===comFilter);
   },[communiques,comFilter]);
-
-  // ═══ A.2: VAULT API FETCH ═══
-  // FIX: Use correct Vault endpoints (8106 serves /api/stats and /health directly)
-  const vaultApiUrl=window.location.hostname==='localhost'?'http://localhost:8106':'/vault';
-  const fetchVaultStats=useCallback(async()=>{
-    try{
-      setVaultLoading(true);
-      const[statsRes,healthRes]=await Promise.all([
-        fetch(vaultApiUrl+'/api/stats'),
-        fetch(vaultApiUrl+'/health')
-      ]);
-      const statsData=await statsRes.json();
-      const healthData=await healthRes.json();
-      setVaultStats(statsData);
-      setVaultHealth(healthData);
-    }catch(e){
-      console.warn('[WINDI] Vault API offline:',e.message);
-    }finally{
-      setVaultLoading(false);
-    }
-  },[vaultApiUrl]);
 
   // Vault polling every 30s
   useEffect(()=>{
