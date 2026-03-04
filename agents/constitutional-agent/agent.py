@@ -420,15 +420,37 @@ class WindiAgent:
 
 def create_agent_api(agent: WindiAgent):
     """Create Flask API for the Constitutional Execution Agent."""
-    
+
     try:
         from flask import Flask, request, jsonify
     except ImportError:
         print("Flask not installed. Install with: pip install flask")
         return None
-    
+
     app = Flask(__name__)
-    
+
+    # ═══ DOMAIN EXTENSIONS ═══
+    try:
+        from blueprints.legal_blueprint import legal_bp
+        app.register_blueprint(legal_bp)
+        print("  [Justica] Legal Agent v0.2.0 loaded on /legal/*")
+    except ImportError as e:
+        print(f"  [Justica] Legal Agent not loaded: {e}")
+
+    try:
+        from blueprints.notary_blueprint import notary_bp
+        app.register_blueprint(notary_bp)
+        print("  [Notarial] Notary Agent v0.1.0 loaded on /notary/*")
+    except ImportError as e:
+        print(f"  [Notarial] Notary Agent not loaded: {e}")
+
+    try:
+        from blueprints.compliance_blueprint import compliance_bp
+        app.register_blueprint(compliance_bp)
+        print("  [Compliance] Compliance Agent v0.1.0 loaded on /compliance/*")
+    except ImportError as e:
+        print(f"  [Compliance] Compliance Agent not loaded: {e}")
+
     @app.route("/agent/health", methods=["GET"])
     def health():
         return jsonify({
