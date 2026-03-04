@@ -472,6 +472,13 @@ def create_agent_api(agent: WindiAgent):
     except ImportError as e:
         print(f"  [Auditor] Audit Agent not loaded: {e}")
 
+    try:
+        from blueprints.accounting_blueprint import accounting_bp
+        app.register_blueprint(accounting_bp)
+        print("  [Contabilidade] Accounting Agent v0.1.0 loaded on /accounting/*")
+    except ImportError as e:
+        print(f"  [Contabilidade] Accounting Agent not loaded: {e}")
+
     @app.route("/agent/health", methods=["GET"])
     def health():
         return jsonify({
