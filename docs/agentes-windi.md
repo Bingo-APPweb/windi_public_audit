@@ -102,28 +102,40 @@ Classifica risco de documentos (R0-R5) via 6 camadas de governança semântica. 
 
 ---
 
-# PARTE II — Triângulo Constitucional (Sandbox Core :8091)
+# PARTE II — Constelação Constitucional (Sandbox Core :8091)
 
 Domain extensions do Sandbox Core — agentes que rodam como blueprints Flask integrados.
 
 ```
-                 JUSTIÇA
-                (processa)
-                    △
-                   /|\
-                  / | \
-                 /  |  \
-                /   |   \
-               /    |    \
-              /     |     \
-        NOTARIAL ───┴─── COMPLIANCE
-       (certifica)      (monitora)
+                       JUSTIÇA
+                      (processa)
+                          △
+                         /|\
+                        / | \
+                       /  |  \
+                      /   |   \
+                     /    |    \
+                    /     |     \
+              NOTARIAL ───┴─── COMPLIANCE
+             (certifica)      (monitora)
+                    \         /
+                     \       /
+                      \     /
+                       \   /
+                        \ /
+                     COMMUNIQUÉ
+                (Document Intelligence Hub)
+                         │
+                         │
+                         ▼
+                    JORNALISTA
+              (Pipeline Editorial J1-J6)
 ```
 
 **Localização:** `/opt/windi/agents/constitutional-agent/`
 **Porta:** 8091
-**PID:** 1506896
-**Total Endpoints:** 51
+**PID:** 1513310
+**Total Endpoints:** ~83
 
 ---
 
@@ -218,16 +230,133 @@ Monitora conformidade contínua com invariantes e regulamentos.
 
 ---
 
+## 9. Communiqué — Document Intelligence Hub (W-COMM-001)
+**Prefix:** `/communique/*` | **Versão:** 2.0.0 | **Endpoints:** 18
+
+Hub central de documentos — processa todos os tipos com routing para renderers especializados.
+
+**Arquitetura:**
+```
+1 agente + N ISPs + N renderers = arquitetura limpa
+```
+
+**Capacidades:**
+- CRUD completo de documentos (create, list, get, update, review, publish, archive, revoke)
+- ISP Resolver: matching automático de templates por keywords
+- Dragon AI: geração de rascunhos via :8108
+- Canvas: edição InDesign-style
+- Ledger: query + write para Forensic Ledger :8101
+- Feed público: JSON/HTML para documentos publicados
+- Verificação: hash + Ledger seal check
+
+**Document Types Suportados:**
+| Tipo | Renderer | Status |
+|------|----------|--------|
+| communique | renderer_communique | LIVE (:8091) |
+| invoice | renderer_invoice | LIVE (:8103) |
+| letter | renderer_letter | STUB (Wave3) |
+| email | renderer_email | STUB (Wave3) |
+| contract | renderer_contract | STUB (Wave3) |
+| report | renderer_report | STUB (Wave3) |
+| presentation | renderer_presentation | STUB (Wave3) |
+| spreadsheet | renderer_spreadsheet | STUB (Wave3) |
+
+**Teste:** OPERACIONAL
+- Health: GREEN
+- Database: 57 documentos (55 migrados + 2 testes)
+- ISP: 6 templates carregados
+- Dragon: integrado (:8108)
+- doc_type routing: funcional
+- Retrocompatibilidade: 100%
+
+**Database:** `/opt/windi/communique/data/communiques.db` (2 tabelas)
+
+**Integrações:**
+- Dragon (:8108) — geração AI
+- Ledger (:8101) — selo forense
+- Export (:8103) — renderização PDF/invoice
+
+**Regra de Ouro:**
+> Não criar novos agentes para novos doc_types.
+> Apenas implementar o renderer correspondente quando necessário.
+
+---
+
+## 10. Jornalista (W-JOURN-001)
+**Prefix:** `/journalist/*` | **Versão:** 0.1.0 | **Endpoints:** 14
+
+Agente editorial com invariantes jornalísticos próprios (J1-J6).
+
+**Filosofia:**
+```
+"Documentos jurídicos têm verdade contratual.
+ Jornalismo tem verdade factual — mais frágil, mais disputada, mais humana.
+ Por isso J6 existe: o leitor tem direito de saber onde termina
+ o humano e começa a máquina."
+```
+
+**Capacidades:**
+- Draft: geração de rascunhos com structure_score embutido
+- Edit: edição preservando voz do autor (HARDCODED)
+- Style-check: pirâmide invertida, lead 5W1H, voz ativa, jargão
+- Fact-check: verificação de claims vs fontes
+- Sources: gestão de fontes (anônimas protegidas por J4)
+- AI-declare: disclaimers trilíngues automáticos
+- Publish: pipeline para Communiqué (J6 GATE)
+- Corrections: correções públicas (J5)
+
+**Invariantes Jornalísticos (J1-J6):**
+| Código | Nome | Descrição |
+|--------|------|-----------|
+| J1 | veracidade | Nenhum conteúdo sem fonte verificável |
+| J2 | independência | Sem pressão comercial sobre pauta |
+| J3 | imparcialidade | Contraditório sempre buscado |
+| J4 | minimização_dano | Proteção de vulneráveis e fontes |
+| J5 | responsabilidade | Correção pública quando erro detectado |
+| J6 | transparência_ia | Todo conteúdo IA-assistido = declarado **(MANDATORY)** |
+
+**Gêneros Suportados:**
+| Gênero | Tom | Requisitos |
+|--------|-----|------------|
+| noticia | factual | lead obrigatório, zero adjetivos |
+| reportagem | narrativo | humanização, profundidade alta |
+| editorial | opinião | disclosure obrigatório |
+| entrevista | serviço | autor invisível |
+| analise | especialista | dados obrigatórios |
+
+**Teste:** OPERACIONAL
+- Health: GREEN
+- Status: 6/6 invariantes COMPLIANT
+- J6 mandatory: TRUE
+- draft() com structure_score breakdown
+- preserve_voice: HARDCODED true
+
+**Database:** `data/journalist.db` (6 tabelas)
+
+**Regras Críticas:**
+- `preserve_voice=True` — HARDCODED, não é feature flag
+- J6 gate no `publish()` — sem ai_participation = BLOCKED
+- Fontes anônimas — real_identity NUNCA exposta (J4)
+
+**Integrações:**
+- Dragon (:8108) — geração de drafts
+- Communiqué (W-COMM-001) — publicação com doc_type="article"
+- Ledger (:8101) — prova forense
+
+---
+
 # Resumo da Constelação
 
 ```
-SANDBOX CORE (:8091) — PID 1506896
-├── [Core]       /agent/*       7 endpoints
-├── [1] Justiça    W-LEGAL-001   /legal/*       16 endpoints ✅
-├── [2] Notarial   W-NOTARY-001  /notary/*      12 endpoints ✅
-└── [3] Compliance W-COMPLY-001  /compliance/*  16 endpoints ✅
-    ═══════════════════════════════════════════════════════════
-    TOTAL: 51 endpoints — TRIÂNGULO CONSTITUCIONAL VIVO
+SANDBOX CORE (:8091) — PID 1513310
+├── [Core]         /agent/*       7 endpoints
+├── [1] Justiça      W-LEGAL-001   /legal/*       16 endpoints ✅
+├── [2] Notarial     W-NOTARY-001  /notary/*      12 endpoints ✅
+├── [3] Compliance   W-COMPLY-001  /compliance/*  16 endpoints ✅
+├── [4] Communiqué   W-COMM-001    /communique/*  18 endpoints ✅
+└── [5] Jornalista   W-JOURN-001   /journalist/*  14 endpoints ✅
+    ════════════════════════════════════════════════════════════════
+    TOTAL: ~83 endpoints — CONSTELAÇÃO EDITORIAL COMPLETA
 ```
 
 | Agente | Função | Integra com |
@@ -235,6 +364,97 @@ SANDBOX CORE (:8091) — PID 1506896
 | Justiça | Processa casos e evidências | Notarial, Ledger |
 | Notarial | Certifica e sela atos | Ledger, Vault, Export |
 | Compliance | Monitora I1-I9 e EU AI Act | Ledger, todos os agentes |
+| Communiqué | Document Intelligence Hub | Dragon, Ledger, Export, ISP |
+| Jornalista | Pipeline editorial com J1-J6 | Dragon, Communiqué, Ledger |
+
+---
+
+## Arquitetura Document Intelligence Hub
+
+```
+                    ┌─────────────────────────┐
+                    │   W-COMM-001 (:8091)    │
+                    │  Document Intelligence  │
+                    │         Hub             │
+                    └───────────┬─────────────┘
+                                │
+        ┌───────────────────────┼───────────────────────┐
+        │                       │                       │
+        ▼                       ▼                       ▼
+   ┌─────────┐            ┌─────────┐            ┌─────────┐
+   │   ISP   │            │ Dragon  │            │ Ledger  │
+   │Templates│            │ :8108   │            │ :8101   │
+   └─────────┘            └─────────┘            └─────────┘
+        │
+        ▼
+┌───────────────────────────────────────────────────────────┐
+│                      RENDERERS                            │
+├─────────────┬─────────────┬─────────────┬─────────────────┤
+│ communique  │   invoice   │   letter    │     email       │
+│   (LIVE)    │ (LIVE:8103) │   (STUB)    │    (STUB)       │
+├─────────────┼─────────────┼─────────────┼─────────────────┤
+│  contract   │   report    │presentation │  spreadsheet    │
+│   (STUB)    │   (STUB)    │   (STUB)    │    (STUB)       │
+└─────────────┴─────────────┴─────────────┴─────────────────┘
+```
+
+**Princípio:** 1 agente + N ISPs + N renderers = arquitetura limpa
+
+---
+
+## Pipeline Editorial WINDI
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    W-JOURN-001 Jornalista                       │
+│                     (cria/edita/verifica)                       │
+└─────────────────────────┬───────────────────────────────────────┘
+                          │
+    ┌─────────────────────┼─────────────────────┐
+    │                     │                     │
+    ▼                     ▼                     ▼
+┌────────┐          ┌──────────┐          ┌──────────┐
+│draft() │          │  edit()  │          │fact-check│
+│        │          │          │          │          │
+│structure│         │preserve_ │          │claims vs │
+│_score  │          │voice=TRUE│          │sources   │
+│embutido│          │HARDCODED │          │          │
+└────┬───┘          └────┬─────┘          └────┬─────┘
+     │                   │                     │
+     └───────────────────┼─────────────────────┘
+                         │
+                         ▼
+              ┌──────────────────────┐
+              │     publish()        │
+              │                      │
+              │   ══ J6 GATE ══      │
+              │ ai_participation     │
+              │ obrigatório ou       │
+              │ BLOCKED              │
+              └──────────┬───────────┘
+                         │
+                         ▼
+              ┌──────────────────────┐
+              │  W-COMM-001          │
+              │  Communiqué          │
+              │  doc_type="article"  │
+              └──────────┬───────────┘
+                         │
+                         ▼
+              ┌──────────────────────┐
+              │  Ledger :8101        │
+              │  (prova forense)     │
+              └──────────┬───────────┘
+                         │
+                         ▼
+              ┌──────────────────────┐
+              │  Vault :8106         │
+              │  (arquiva imutável)  │
+              └──────────────────────┘
+```
+
+**Princípio Jornalístico:**
+> "O leitor tem direito de saber onde termina o humano e começa a máquina."
 
 ---
 
