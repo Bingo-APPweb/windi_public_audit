@@ -451,6 +451,20 @@ def create_agent_api(agent: WindiAgent):
     except ImportError as e:
         print(f"  [Compliance] Compliance Agent not loaded: {e}")
 
+    try:
+        from blueprints.communique_blueprint import communique_bp
+        app.register_blueprint(communique_bp)
+        print("  [Communique] Communique Engine v2.0.0 loaded on /communique/*")
+    except ImportError as e:
+        print(f"  [Communique] Communique Engine not loaded: {e}")
+
+    try:
+        from blueprints.journalist_blueprint import journalist_bp
+        app.register_blueprint(journalist_bp)
+        print("  [Jornalista] Journalist Agent v0.1.0 loaded on /journalist/*")
+    except ImportError as e:
+        print(f"  [Jornalista] Journalist Agent not loaded: {e}")
+
     @app.route("/agent/health", methods=["GET"])
     def health():
         return jsonify({
