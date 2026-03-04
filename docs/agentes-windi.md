@@ -130,12 +130,18 @@ Domain extensions do Sandbox Core — agentes que rodam como blueprints Flask in
                          ▼
                     JORNALISTA
               (Pipeline Editorial J1-J6)
+                         │
+                         │
+                         ▼
+                      AUDITOR
+         (Fechamento do Ciclo Constitucional)
+                    A1-A6 ↺
 ```
 
 **Localização:** `/opt/windi/agents/constitutional-agent/`
 **Porta:** 8091
-**PID:** 1513310
-**Total Endpoints:** ~83
+**PID:** 1516842
+**Total Endpoints:** ~90
 
 ---
 
@@ -345,18 +351,79 @@ Agente editorial com invariantes jornalísticos próprios (J1-J6).
 
 ---
 
+## 11. Auditor (W-AUDIT-001)
+**Prefix:** `/audit/*` | **Versão:** 1.0.0 | **Endpoints:** 7
+
+Fechamento do ciclo constitucional — verifica que o criado é o prometido.
+
+**Filosofia:**
+```
+"O Auditor não cria nada. Ele verifica que o que foi
+ criado é o que foi prometido."
+```
+
+**Capacidades:**
+- Document Audit: verifica integridade de documento individual
+- Chain Audit: valida toda a cadeia de um documento (criação → selos → publish)
+- Batch Audit: auditoria em lote de múltiplos documentos
+- Constellation Audit: health check de todos os agentes
+- Public Verify: verificação pública por hash (sem autenticação)
+
+**Invariantes de Auditoria (A1-A6):**
+| Código | Nome | Descrição |
+|--------|------|-----------|
+| A1 | imutabilidade | Auditor não altera — apenas lê e reporta |
+| A2 | rastreabilidade | Todo audit gera receipt próprio no Ledger |
+| A3 | reproducibilidade | Mesmo hash → mesmo resultado, sempre |
+| A4 | independência | Auditor não conhece intenção — apenas evidência |
+| A5 | transparência | Resultado de audit é público para quem tem o hash |
+| A6 | completude | Audit incompleto = audit inválido (sem meio-termo) |
+
+**Endpoints:**
+| Rota | Método | Função |
+|------|--------|--------|
+| /audit/health | GET | Status do agente |
+| /audit/status | GET | Invariantes A1-A6 |
+| /audit/document/<id> | GET | Audita documento específico |
+| /audit/chain | POST | Audita cadeia completa |
+| /audit/batch | POST | Auditoria em lote |
+| /audit/constellation | GET | Health de todos agentes |
+| /audit/verify/<hash> | GET | Verificação pública (sem auth) |
+
+**Teste:** OPERACIONAL
+- Health: GREEN
+- Status: 6/6 invariantes COMPLIANT
+- Ledger: disponível
+- read_only: TRUE
+- Constellation audit: 6/6 agentes healthy
+
+**Database:** `/opt/windi/audit/audit.db`
+
+**Regras Críticas:**
+- READ-ONLY — nenhuma operação de escrita em dados auditados
+- A5 — `/audit/verify/<hash>` acessível sem autenticação
+- A6 — sem audits parciais; completo ou inválido
+
+**Integrações:**
+- Communiqué (W-COMM-001) — lê documentos
+- Ledger (:8101) — lê receipts, gera receipts de audit
+- Todos os agentes — constellation health check
+
+---
+
 # Resumo da Constelação
 
 ```
-SANDBOX CORE (:8091) — PID 1513310
+SANDBOX CORE (:8091) — PID 1516842
 ├── [Core]         /agent/*       7 endpoints
 ├── [1] Justiça      W-LEGAL-001   /legal/*       16 endpoints ✅
 ├── [2] Notarial     W-NOTARY-001  /notary/*      12 endpoints ✅
 ├── [3] Compliance   W-COMPLY-001  /compliance/*  16 endpoints ✅
 ├── [4] Communiqué   W-COMM-001    /communique/*  18 endpoints ✅
-└── [5] Jornalista   W-JOURN-001   /journalist/*  14 endpoints ✅
+├── [5] Jornalista   W-JOURN-001   /journalist/*  14 endpoints ✅
+└── [6] Auditor      W-AUDIT-001   /audit/*        7 endpoints ✅
     ════════════════════════════════════════════════════════════════
-    TOTAL: ~83 endpoints — CONSTELAÇÃO EDITORIAL COMPLETA
+    TOTAL: ~90 endpoints — CONSTELAÇÃO CONSTITUCIONAL COMPLETA
 ```
 
 | Agente | Função | Integra com |
@@ -366,6 +433,7 @@ SANDBOX CORE (:8091) — PID 1513310
 | Compliance | Monitora I1-I9 e EU AI Act | Ledger, todos os agentes |
 | Communiqué | Document Intelligence Hub | Dragon, Ledger, Export, ISP |
 | Jornalista | Pipeline editorial com J1-J6 | Dragon, Communiqué, Ledger |
+| Auditor | Fechamento do ciclo — verifica | Communiqué, Ledger, todos |
 
 ---
 
@@ -455,6 +523,66 @@ SANDBOX CORE (:8091) — PID 1513310
 
 **Princípio Jornalístico:**
 > "O leitor tem direito de saber onde termina o humano e começa a máquina."
+
+---
+
+## Ciclo Constitucional Completo
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                    CICLO CONSTITUCIONAL WINDI                        │
+│                                                                      │
+│    ┌──────────┐      ┌──────────┐      ┌──────────┐                 │
+│    │ JUSTIÇA  │      │ NOTARIAL │      │COMPLIANCE│                 │
+│    │(processa)│◄────►│(certifica│◄────►│(monitora)│                 │
+│    └────┬─────┘      └────┬─────┘      └────┬─────┘                 │
+│         │                 │                 │                        │
+│         └─────────────────┼─────────────────┘                        │
+│                           │                                          │
+│                           ▼                                          │
+│                    ┌─────────────┐                                   │
+│                    │ COMMUNIQUÉ  │                                   │
+│                    │  (doc hub)  │                                   │
+│                    └──────┬──────┘                                   │
+│                           │                                          │
+│                           ▼                                          │
+│                    ┌─────────────┐                                   │
+│                    │ JORNALISTA  │                                   │
+│                    │  (J1-J6)    │                                   │
+│                    └──────┬──────┘                                   │
+│                           │                                          │
+│                           ▼                                          │
+│                    ┌─────────────┐                                   │
+│                    │   LEDGER    │                                   │
+│                    │   :8101     │                                   │
+│                    └──────┬──────┘                                   │
+│                           │                                          │
+│         ┌─────────────────┴─────────────────┐                        │
+│         │                                   │                        │
+│         ▼                                   ▼                        │
+│  ┌─────────────┐                     ┌─────────────┐                 │
+│  │   VAULT     │                     │   AUDITOR   │ ◄── FECHAMENTO  │
+│  │   :8106     │                     │   (A1-A6)   │                 │
+│  │ (arquiva)   │                     │ (verifica)  │                 │
+│  └─────────────┘                     └──────┬──────┘                 │
+│                                             │                        │
+│                                             │                        │
+│                           ╔═════════════════╧═════════════════╗      │
+│                           ║  "O Auditor não cria nada.        ║      │
+│                           ║   Ele verifica que o que foi      ║      │
+│                           ║   criado é o que foi prometido."  ║      │
+│                           ╚═══════════════════════════════════╝      │
+│                                                                      │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+**Princípio do Ciclo:**
+> Criar → Certificar → Publicar → Selar → **Auditar** ↺
+
+O Auditor fecha o ciclo com verificação read-only, garantindo que:
+- O que foi criado corresponde ao que foi prometido
+- Toda verificação gera seu próprio receipt (A2)
+- Resultados são públicos para quem tem o hash (A5)
 
 ---
 
