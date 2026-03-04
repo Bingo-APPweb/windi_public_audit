@@ -69,7 +69,7 @@ Base Dir: /opt/windi/
 | 8102 | Sentinel LAW | /opt/windi/sentinel-law/ | systemd | BaseHTTPRequestHandler |
 | 8103 | Export Engine | /opt/windi/export-engine/ | systemd | reportlab+qrcode |
 | 8104 | JMPG Viewer | /opt/windi/jmpg-viewer/ | systemd | python3 |
-| 8105 | Communiqué Engine | /opt/windi/communique/ | systemd | python3 |
+| 8105 | Communiqué Engine | /opt/windi/communique/ | ~~systemd~~ | ⚠️ MIGRADO → :8091/communique/* |
 | 8106 | Forensic Vault | /opt/windi/forensic-vault/ | systemd | python3 |
 | 8107 | Landing P/M/G | /opt/windi/landing-pmg/ | systemd | python3 |
 | 8108 | Agent Palette | /opt/windi/palette/ | systemd | python3 |
@@ -82,14 +82,37 @@ Base Dir: /opt/windi/
 **Deploy:** 04 Mar 2026
 **Pattern:** Domain extension — um processo hospeda uma constelação
 
-### Triângulo Constitucional
+### Constelação Completa (6 Agentes)
 | ID | Agente | Version | Prefix | Endpoints |
 |----|--------|---------|--------|-----------|
 | W-LEGAL-001  | Justiça    | v0.2.0 | /legal/*      | 16 |
 | W-NOTARY-001 | Notarial   | v0.1.0 | /notary/*     | 12 |
 | W-COMPLY-001 | Compliance | v0.1.0 | /compliance/* | 16 |
+| W-COMM-001   | Communiqué | v2.0.0 | /communique/* | 18 |
+| W-JOURN-001  | Jornalista | v0.1.0 | /journalist/* | 14 |
+| W-AUDIT-001  | Auditor    | v1.0.0 | /audit/*      |  7 |
 | [Core]       | Agent      | v1.0.0 | /agent/*      |  7 |
-| **TOTAL**    |            |        |               | **51** |
+| **TOTAL**    |            |        |               | **~90** |
+
+### Communiqué — Document Intelligence Hub
+- **Migrado de:** standalone :8105 → Flask Blueprint :8091
+- **Database:** `/opt/windi/communique/data/communiques.db` (57 docs)
+- **doc_type routing:** 8 tipos (2 LIVE, 6 STUB para Wave3)
+- **Integrações:** Dragon :8108, Ledger :8101, Export :8103
+
+### Jornalista — Pipeline Editorial
+- **Invariantes próprios:** J1-J6 (jornalísticos)
+- **J6 MANDATORY:** Todo conteúdo IA-assistido deve ser declarado
+- **preserve_voice=True:** HARDCODED, não é feature flag
+- **Database:** `data/journalist.db` (6 tabelas)
+- **Pipeline:** Journalist → Communiqué → Ledger → Vault
+
+### Auditor — Fechamento do Ciclo Constitucional
+- **Invariantes próprios:** A1-A6 (auditoria)
+- **READ-ONLY:** Não altera dados — apenas lê e reporta
+- **A5 público:** `/audit/verify/<hash>` sem autenticação
+- **Database:** `/opt/windi/audit/audit.db`
+- **Princípio:** "O Auditor não cria nada. Ele verifica que o que foi criado é o que foi prometido."
 
 ### Invariants I1-I9
 ```
@@ -106,24 +129,62 @@ I9 no_autonomy_escalation ✅ compliant (IRREMEDIABLE)
 OVERALL: 9/9 COMPLIANT
 ```
 
+### Invariantes Jornalísticos (J1-J6)
+```
+J1 veracidade            ✅ compliant
+J2 independência         ✅ compliant
+J3 imparcialidade        ✅ compliant
+J4 minimização_dano      ✅ compliant
+J5 responsabilidade      ✅ compliant
+J6 transparência_ia      ✅ compliant (MANDATORY)
+─────────────────────────────────────
+OVERALL: 6/6 COMPLIANT
+```
+
+### Invariantes de Auditoria (A1-A6)
+```
+A1 imutabilidade         ✅ compliant (read-only)
+A2 rastreabilidade       ✅ compliant (receipt próprio)
+A3 reproducibilidade     ✅ compliant (hash → resultado)
+A4 independência         ✅ compliant (sem intenção)
+A5 transparência         ✅ compliant (público por hash)
+A6 completude            ✅ compliant (sem parciais)
+─────────────────────────────────────
+OVERALL: 6/6 COMPLIANT
+```
+
 ### Backups
 - `constitutional-agent_pre-justica_20260304_104129`
 - `constitutional-agent_pre-notary_20260304_104913`
 - `constitutional-agent_pre-comply_20260304_105535`
+- `communique_pre-blueprint_20260304_111136`
+- `constitutional-agent_pre-journalist_20260304_*`
+- `constitutional-agent_pre-auditor_20260304_113944`
 
 ### Databases
 - `data/legal.db` — 7 tabelas (cases, evidence, provenance, etc.)
 - `data/notary.db` — 7 tabelas (acts, parties, certifications, etc.)
 - `data/compliance.db` — 7 tabelas (invariants, audit, breach, etc.)
+- `data/journalist.db` — 6 tabelas (articles, sources, fact_checks, etc.)
+- `/opt/windi/communique/data/communiques.db` — 2 tabelas (communiques, audit)
+- `/opt/windi/audit/audit.db` — audits performed, receipts
 
 ## Dependency Chain
 ```
 Desktop(:8100) → Export(:8103) → Ledger(:8101)
-Communiqué(:8105) → Ledger(:8101)
 Vault(:8106) → Ledger(:8101) [read-only]
 Sentinel LAW(:8102) → Ledger(:8101) [monitors]
 Viewer(:8104) → Ledger(:8101) [verifies]
 Palette(:8108) → Ledger(:8101) [Wave1 target: seal_to_ledger]
+
+Sandbox Core(:8091):
+  Jornalista → Communiqué → Ledger(:8101)
+  Communiqué → Dragon(:8108), Export(:8103)
+  Justiça → Ledger(:8101)
+  Notarial → Ledger(:8101), Vault(:8106)
+  Compliance → Ledger(:8101) [monitors all]
+  Auditor → Communiqué [read], Ledger(:8101) [read+write receipt]
+  Auditor → All agents [constellation health check]
 ```
 
 ## Key Filesystem Paths
