@@ -73,6 +73,48 @@ Base Dir: /opt/windi/
 | 8106 | Forensic Vault | /opt/windi/forensic-vault/ | systemd | python3 |
 | 8107 | Landing P/M/G | /opt/windi/landing-pmg/ | systemd | python3 |
 | 8108 | Agent Palette | /opt/windi/palette/ | systemd | python3 |
+| 8091 | Sandbox Core | /opt/windi/agents/constitutional-agent/ | nohup | Flask |
+
+## Sandbox Core :8091 — Constelação Constitucional
+
+**Arquivo:** `/opt/windi/agents/constitutional-agent/agent.py`
+**Processo:** nohup (PID rotativo)
+**Deploy:** 04 Mar 2026
+**Pattern:** Domain extension — um processo hospeda uma constelação
+
+### Triângulo Constitucional
+| ID | Agente | Version | Prefix | Endpoints |
+|----|--------|---------|--------|-----------|
+| W-LEGAL-001  | Justiça    | v0.2.0 | /legal/*      | 16 |
+| W-NOTARY-001 | Notarial   | v0.1.0 | /notary/*     | 12 |
+| W-COMPLY-001 | Compliance | v0.1.0 | /compliance/* | 16 |
+| [Core]       | Agent      | v1.0.0 | /agent/*      |  7 |
+| **TOTAL**    |            |        |               | **51** |
+
+### Invariants I1-I9
+```
+I1 sovereignty           ✅ compliant
+I2 transparency          ✅ compliant
+I3 auditability          ✅ compliant
+I4 reversibility         ✅ compliant
+I5 proportionality       ✅ compliant
+I6 dignity               ✅ compliant
+I7 accountability        ✅ compliant
+I8 subsidiarity          ✅ compliant
+I9 no_autonomy_escalation ✅ compliant (IRREMEDIABLE)
+─────────────────────────────────────
+OVERALL: 9/9 COMPLIANT
+```
+
+### Backups
+- `constitutional-agent_pre-justica_20260304_104129`
+- `constitutional-agent_pre-notary_20260304_104913`
+- `constitutional-agent_pre-comply_20260304_105535`
+
+### Databases
+- `data/legal.db` — 7 tabelas (cases, evidence, provenance, etc.)
+- `data/notary.db` — 7 tabelas (acts, parties, certifications, etc.)
+- `data/compliance.db` — 7 tabelas (invariants, audit, breach, etc.)
 
 ## Dependency Chain
 ```
