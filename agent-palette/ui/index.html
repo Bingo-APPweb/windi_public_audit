@@ -188,12 +188,12 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     if (hostname === 'localhost' && port === '8108') {
       return { tier: TIER_HIGH, hostname: hostname, reason: 'dev_mode' };
     }
-    // Production domain (One Tree)
-    if (hostname === 'windi-domain.com' || hostname === 'www.windi-domain.com') {
-      return { tier: TIER_HIGH, hostname: hostname, reason: 'production_domain' };
+    // Admin domain
+    if (hostname === 'admin.windia4desk.tech' || hostname === 'master.windia4desk.tech') {
+      return { tier: TIER_HIGH, hostname: hostname, reason: 'admin_domain' };
     }
     // Palette path
-    if (path.indexOf('/palette/') === 0) {
+    if (path.indexOf('/palette/') === 0 || path.indexOf('/app/') === 0) {
       return { tier: TIER_HIGH, hostname: hostname, reason: 'palette_path' };
     }
     // Org path
@@ -228,7 +228,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     var config = getTierConfig(tier);
     var currentLevel = TIER_LEVEL[tier];
     var endpoints = {};
-    var baseUrl = window.location.protocol === 'https:' ? 'https://windi-domain.com' : 'http://localhost';
+    var baseUrl = window.location.protocol === 'https:' ? 'https://admin.windia4desk.tech' : 'http://localhost';
     
     Object.keys(SERVICES).forEach(function(key) {
       var svc = SERVICES[key];
@@ -256,7 +256,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     var local = 0;
     Object.keys(ctx.endpoints).forEach(function(key) {
       var ep = ctx.endpoints[key];
-      if (ep && (ep.indexOf('localhost') >= 0 || ep.indexOf('windi-domain') >= 0)) {
+      if (ep && (ep.indexOf('localhost') >= 0 || ep.indexOf('windia4desk') >= 0)) {
         local++;
       }
     });
@@ -266,7 +266,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
   // ─── P5: CONNECTORS (A.3: Real Health Checks) ──────────────────────────────────
   function createConnectors(ctx) {
     var isLocal = window.location.hostname === 'localhost';
-    var baseUrl = isLocal ? 'http://localhost' : 'https://windi-domain.com';
+    var baseUrl = isLocal ? 'http://localhost' : 'https://admin.windia4desk.tech';
 
     // A.3: Real health endpoints — Direct ports for localhost, proxy paths for production
     // P5 CONNECTORS: 11 services (5 original + 6 new: Bridge, Sentinel LAW, Schnittstelle, Cortex, ID Genesis, Sentinel)
@@ -288,7 +288,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
       export:       baseUrl + '/export/health',
       vault:        baseUrl + '/vault/health',
       communique:   baseUrl + '/communique/health',
-      dragon:       baseUrl + '/palette/api/dragon/health',  // Dragon Server via 8108
+      dragon:       'https://windi-domain.com/app/api/dragon/health',  // Dragon Server via 8108
       // NEW (G1)
       bridge:       baseUrl + '/bridge/health',
       sentinelLaw:  baseUrl + '/sentinel-law/health',
@@ -303,7 +303,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
       export:       { name: 'Export Engine',     endpoint: ctx.endpoints.export,     healthUrl: healthEndpoints.export,       status: 'unknown', version: '' },
       vault:        { name: 'Forensic Vault',    endpoint: ctx.endpoints.vault,      healthUrl: healthEndpoints.vault,        status: 'unknown', version: '' },
       communique:   { name: 'Communiqué Engine', endpoint: ctx.endpoints.communique, healthUrl: healthEndpoints.communique,   status: 'unknown', version: '' },
-      dragon:       { name: 'Dragon Server',     endpoint: isLocal ? 'http://localhost:8108/api/dragon' : baseUrl + '/palette/api/dragon', healthUrl: healthEndpoints.dragon, status: 'unknown', version: '' },
+      dragon:       { name: 'Dragon Server',     endpoint: isLocal ? 'http://localhost:8108/api/dragon' : 'https://windi-domain.com/app/api/dragon', healthUrl: healthEndpoints.dragon, status: 'unknown', version: '' },
       // NEW (G1) - 6 additional services
       bridge:       { name: 'Command Bridge',    endpoint: isLocal ? 'http://localhost:8097' : baseUrl + '/bridge',       healthUrl: healthEndpoints.bridge,       status: 'unknown', version: '' },
       sentinelLaw:  { name: 'Sentinel LAW',      endpoint: isLocal ? 'http://localhost:8102' : baseUrl + '/sentinel-law', healthUrl: healthEndpoints.sentinelLaw,  status: 'unknown', version: '' },
@@ -421,7 +421,7 @@ const { useState, useEffect, useRef, useCallback, useMemo } = React;
 
 // ─── CONFIG (configurable, not hardcoded) ───
 const CONFIG = {
-  VERIFY_BASE_URL: "/verify",
+  VERIFY_BASE_URL: "https://admin.windia4desk.tech/verify",
   CRYPTO_MODE: "sim", // "sim" | "real"
   ANON_SECONDS: 300,
   AUTO_SAVE_MS: 5000,
@@ -453,50 +453,6 @@ const DOC_TYPES = {
   analysis:{icon:"🔬",tier:"MED",cat:"business"},presentation:{icon:"📽️",tier:"MED",cat:"business"},
   communique:{icon:"📡",tier:"HIGH",cat:"governance"},certificate:{icon:"🏛️",tier:"HIGH",cat:"governance"},
   creativeVirtue:{icon:"🎨",tier:"HIGH",cat:"governance"},
-};
-
-// ─── DOC ROUTING HUB — Each type routes to correct workspace ───
-// "Nicht alles ist ein Text-Editor und nicht alles ist ein Canvas."
-const DOC_ROUTING = {
-  // GRUPPE A: Text-Editor (10 types) — Guardian guides
-  letter:       { tab: 'chat', workspace: 'editor' },
-  email:        { tab: 'chat', workspace: 'editor' },
-  note:         { tab: 'chat', workspace: 'editor' },
-  memo:         { tab: 'chat', workspace: 'editor' },
-  journal:      { tab: 'chat', workspace: 'editor' },
-  recipe:       { tab: 'chat', workspace: 'editor' },
-  report:       { tab: 'chat', workspace: 'editor' },
-  contract:     { tab: 'chat', workspace: 'editor' },
-  protocol:     { tab: 'chat', workspace: 'editor' },
-  analysis:     { tab: 'chat', workspace: 'editor' },
-  // GRUPPE B: Communiqué Workflow — Architect generates trilingual
-  // GRUPPE B: Communiqué → Canvas for visual layout (newspaper/magazine style)
-  communique:   { tab: 'desk', workspace: 'canvas', workflow: 'communique' },
-  // GRUPPE C: Template-based — structured fields
-  invoice:      { tab: 'chat', workspace: 'editor', template: true },
-  certificate:  { tab: 'chat', workspace: 'editor', template: true },
-  // GRUPPE D: Canvas/Design — ONLY these use desk/canvas!
-  presentation: { tab: 'desk', workspace: 'canvas' },
-  creativeVirtue: { tab: 'desk', workspace: 'canvas' },
-};
-
-// ─── Dragon Greetings per Document Type (trilingual) ───
-const DOC_GREETINGS = {
-  letter:   { de:'Ich helfe beim Brief. An wen soll er gehen?', en:'I\'ll help with your letter. Who is it for?', pt:'Vou ajudar com a carta. Para quem é?' },
-  email:    { de:'Ich helfe bei der E-Mail. Was ist das Thema?', en:'I\'ll help with your email. What\'s the topic?', pt:'Vou ajudar com o e-mail. Qual é o tema?' },
-  note:     { de:'Schreib los — ich bin hier wenn du mich brauchst.', en:'Start writing — I\'m here if you need me.', pt:'Escreve à vontade — estou aqui se precisares.' },
-  memo:     { de:'Ich helfe beim Memo. Was ist der Anlass?', en:'I\'ll help with the memo. What\'s the occasion?', pt:'Vou ajudar com o memorando. Qual é a situação?' },
-  journal:  { de:'Ich begleite dein Journal. Was beschäftigt dich?', en:'I\'ll accompany your journal. What\'s on your mind?', pt:'Vou acompanhar o diário. O que te ocupa?' },
-  recipe:   { de:'Ich helfe beim Rezept. Was möchtest du kochen?', en:'I\'ll help with the recipe. What do you want to cook?', pt:'Vou ajudar com a receita. O que queres cozinhar?' },
-  report:   { de:'Ich helfe beim Bericht. Was soll dokumentiert werden?', en:'I\'ll help with the report. What should be documented?', pt:'Vou ajudar com o relatório. O que deve ser documentado?' },
-  contract: { de:'Ich helfe beim Vertrag. Zwischen welchen Parteien?', en:'I\'ll help with the contract. Between which parties?', pt:'Vou ajudar com o contrato. Entre quais partes?' },
-  protocol: { de:'Ich helfe beim Protokoll. Was war das Thema der Sitzung?', en:'I\'ll help with the minutes. What was the meeting about?', pt:'Vou ajudar com a ata. Qual foi o tema da reunião?' },
-  analysis: { de:'Ich helfe bei der Analyse. Was soll untersucht werden?', en:'I\'ll help with the analysis. What should be examined?', pt:'Vou ajudar com a análise. O que deve ser examinado?' },
-  invoice:  { de:'Ich helfe bei der Rechnung. An wen geht sie?', en:'I\'ll help with the invoice. Who is it for?', pt:'Vou ajudar com a factura. Para quem é?' },
-  certificate: { de:'Ich helfe beim Zertifikat. Was wird bescheinigt?', en:'I\'ll help with the certificate. What is being certified?', pt:'Vou ajudar com o certificado. O que está sendo certificado?' },
-  presentation: { de:'Präsentations-Canvas geöffnet. Füge Elemente hinzu!', en:'Presentation canvas open. Add elements!', pt:'Canvas de apresentação aberto. Adiciona elementos!' },
-  communique: { de:'Kommuniqué-Canvas geöffnet. Gestalte deine Publikation!', en:'Communiqué canvas open. Design your publication!', pt:'Canvas de comunicado aberto. Desenha a tua publicação!' },
-  creativeVirtue: { de:'Kreatives Canvas. Gestalte frei!', en:'Creative canvas. Design freely!', pt:'Canvas criativo. Desenha livremente!' },
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════════
@@ -1107,7 +1063,7 @@ const buildSealPayloadWithProgress = async (doc, wallet, sealPolicy, onProgress)
 
 const EXPORT_URL = window.location.hostname === 'localhost'
   ? 'http://localhost:8103'
-  : '/export';
+  : 'https://windi-domain.com/export';
 
 // Map doc types to JMPG templates
 const DOC_TYPE_TO_TEMPLATE = {
@@ -1545,25 +1501,6 @@ const transformFieldsToBlocks = (docType, fields, schema, lang = 'en') => {
   return blocks;
 };
 
-// Detect tier from URL/localStorage (FIX: was undefined)
-const detectTierFromUrl = () => {
-  // Check window.WINDI context first
-  if (window.WINDI && window.WINDI.tier) {
-    return { tier: window.WINDI.tier };
-  }
-  // Check localStorage
-  const stored = localStorage.getItem('windi_tier');
-  if (stored) {
-    return { tier: stored };
-  }
-  // Fallback: detect from hostname
-  const host = window.location.hostname;
-  if (host.includes('admin') || host.includes('pro')) {
-    return { tier: 'HIGH' };
-  }
-  return { tier: 'FREE' };
-};
-
 // Export document as JMPG package
 const exportDocument = async (docType, docTitle, docFields, wallet, lang = 'en') => {
   const docDNA = DOCS[docType];
@@ -1865,72 +1802,7 @@ const DOCS = defineDocs({
   protocol:     { complexity: DOC_COMPLEXITY.STRUCTURED, schema: { title: { required: true, type: "text", label: { en: "Title", de: "Titel", pt: "Título" } }, body: { required: true, type: "rich", label: { en: "Content", de: "Inhalt", pt: "Conteúdo" } } }, flow: [{ field: "title", prompt: { en: "📒 Protocol title?", de: "📒 Protokolltitel?", pt: "📒 Título do protocolo?" } }, { field: "body", prompt: { en: "Document the proceedings:", de: "Dokumentieren Sie den Verlauf:", pt: "Documente os procedimentos:" } }], sealPolicy: { type: "PROTOCOL", hashFields: ["title", "body"] } },
   analysis:     { complexity: DOC_COMPLEXITY.STRUCTURED, schema: { title: { required: true, type: "text", label: { en: "Title", de: "Titel", pt: "Título" } }, body: { required: true, type: "rich", label: { en: "Analysis", de: "Analyse", pt: "Análise" } } }, flow: [{ field: "title", prompt: { en: "🔬 Analysis title?", de: "🔬 Analysetitel?", pt: "🔬 Título da análise?" } }, { field: "body", prompt: { en: "Write your analysis:", de: "Schreiben Sie Ihre Analyse:", pt: "Escreva sua análise:" } }], sealPolicy: { type: "ANALYSIS", hashFields: ["title", "body"] } },
   presentation: { complexity: DOC_COMPLEXITY.STRUCTURED, schema: { title: { required: true, type: "text", label: { en: "Title", de: "Titel", pt: "Título" } }, body: { required: true, type: "rich", label: { en: "Content", de: "Inhalt", pt: "Conteúdo" } } }, flow: [{ field: "title", prompt: { en: "📽️ Presentation title?", de: "📽️ Präsentationstitel?", pt: "📽️ Título da apresentação?" } }, { field: "body", prompt: { en: "Outline your presentation:", de: "Skizzieren Sie Ihre Präsentation:", pt: "Esboce sua apresentação:" } }], sealPolicy: { type: "PRESENTATION", hashFields: ["title", "body"] } },
-  // ═══ COMMUNIQUÉ — Official institutional announcements (wired to :8105 API) ═══
-  communique: {
-    complexity: DOC_COMPLEXITY.GOVERNANCE,
-    schema: {
-      // German (primary - required by API)
-      title_de:     { required: true, type: "text", label: { en: "Title (German)", de: "Titel", pt: "Título (Alemão)" } },
-      body_de:      { required: true, type: "rich", label: { en: "Content (German)", de: "Inhalt", pt: "Conteúdo (Alemão)" } },
-      // Author info (required)
-      author_name:  { required: true, type: "text", label: { en: "Author Name", de: "Autorenname", pt: "Nome do Autor" }, default: "wallet" },
-      author_role:  { required: true, type: "select", label: { en: "Author Role", de: "Autorenrolle", pt: "Papel do Autor" },
-                      options: ["CEO", "CTO", "Governance", "Legal", "PR", "Editor"] },
-      // Classification (required)
-      category:     { required: true, type: "select", label: { en: "Category", de: "Kategorie", pt: "Categoria" },
-                      options: ["LAUNCH", "UPDATE", "ALERT", "GOVERNANCE", "REPORT"] },
-      impact_level: { required: true, type: "select", label: { en: "Impact Level", de: "Auswirkungsstufe", pt: "Nível de Impacto" },
-                      options: ["LOW", "MED", "HIGH", "CRIT"] },
-      // Optional translations
-      title_en:     { required: false, type: "text", label: { en: "Title (English)", de: "Titel (Englisch)", pt: "Título (Inglês)" } },
-      body_en:      { required: false, type: "rich", label: { en: "Content (English)", de: "Inhalt (Englisch)", pt: "Conteúdo (Inglês)" } },
-    },
-    flow: [
-      { field: "title_de", prompt: {
-          en: "📡 COMMUNIQUÉ\n\nOfficial institutional announcement.\n\nTitle (German version required):",
-          de: "📡 KOMMUNIQUÉ\n\nOffizielle institutionelle Ankündigung.\n\nTitel:",
-          pt: "📡 COMUNICADO\n\nAnúncio institucional oficial.\n\nTítulo (versão alemã obrigatória):"
-        }
-      },
-      { field: "category", prompt: {
-          en: "Category of this communiqué?",
-          de: "Kategorie dieses Kommuniqués?",
-          pt: "Categoria deste comunicado?"
-        }, chips: true
-      },
-      { field: "impact_level", prompt: {
-          en: "Impact level?",
-          de: "Auswirkungsstufe?",
-          pt: "Nível de impacto?"
-        }, chips: true
-      },
-      { field: "author_role", prompt: {
-          en: "Your role?",
-          de: "Ihre Rolle?",
-          pt: "Seu papel?"
-        }, chips: true
-      },
-      { field: "body_de", prompt: {
-          en: "Write the communiqué content (German):",
-          de: "Schreiben Sie den Kommuniqué-Inhalt:",
-          pt: "Escreva o conteúdo do comunicado (alemão):"
-        }
-      },
-      { field: "title_en", prompt: {
-          en: "English title? (optional - type 'skip' to continue)",
-          de: "Englischer Titel? (optional - 'skip' eingeben zum Fortfahren)",
-          pt: "Título em inglês? (opcional - digite 'skip' para continuar)"
-        }, optional: true
-      },
-      { field: "body_en", prompt: {
-          en: "English content? (optional - type 'skip' to continue)",
-          de: "Englischer Inhalt? (optional - 'skip' eingeben zum Fortfahren)",
-          pt: "Conteúdo em inglês? (opcional - digite 'skip' para continuar)"
-        }, optional: true
-      },
-    ],
-    sealPolicy: { type: "COMMUNIQUE", hashFields: ["title_de", "body_de", "category", "impact_level"], governanceDocument: true, communiqueApi: true }
-  },
+  communique:   { complexity: DOC_COMPLEXITY.GOVERNANCE, schema: { title: { required: true, type: "text", label: { en: "Title", de: "Titel", pt: "Título" } }, classification: { required: true, type: "select", label: { en: "Classification", de: "Klassifizierung", pt: "Classificação" }, options: ["internal", "public", "confidential", "restricted"] }, body: { required: true, type: "rich", label: { en: "Content", de: "Inhalt", pt: "Conteúdo" } } }, flow: [{ field: "title", prompt: { en: "📡 Communiqué title?", de: "📡 Kommuniqué-Titel?", pt: "📡 Título do comunicado?" } }, { field: "classification", prompt: { en: "Classification level?", de: "Klassifizierungsstufe?", pt: "Nível de classificação?" }, chips: true }, { field: "body", prompt: { en: "Write the communiqué:", de: "Schreiben Sie das Kommuniqué:", pt: "Escreva o comunicado:" } }], sealPolicy: { type: "COMMUNIQUE", hashFields: ["title", "classification", "body"], governanceDocument: true } },
   certificate:  { complexity: DOC_COMPLEXITY.GOVERNANCE, schema: { title: { required: true, type: "text", label: { en: "Certificate Title", de: "Zertifikatstitel", pt: "Título do Certificado" } }, recipient: { required: true, type: "text", label: { en: "Recipient", de: "Empfänger", pt: "Destinatário" } }, issuer: { required: true, type: "text", label: { en: "Issuer", de: "Aussteller", pt: "Emissor" }, default: "wallet" }, date: { required: true, type: "date", label: { en: "Date", de: "Datum", pt: "Data" }, default: "today" }, body: { required: true, type: "rich", label: { en: "Certificate Text", de: "Zertifikatstext", pt: "Texto do Certificado" } } }, flow: [{ field: "title", prompt: { en: "🏛️ Certificate title?", de: "🏛️ Zertifikatstitel?", pt: "🏛️ Título do certificado?" } }, { field: "recipient", prompt: { en: "Who receives this certificate?", de: "Wer erhält dieses Zertifikat?", pt: "Quem recebe este certificado?" } }, { field: "body", prompt: { en: "Write the certificate text:", de: "Schreiben Sie den Zertifikatstext:", pt: "Escreva o texto do certificado:" } }], sealPolicy: { type: "CERTIFICATE", hashFields: ["title", "recipient", "issuer", "date", "body"], governanceDocument: true, legalDocument: true } },
 
   // ═══════════════════════════════════════════════════════════════════════════════
@@ -2687,8 +2559,6 @@ function CognitiveInsightCard({ insight, lang = 'en', theme, onAction, compact =
   const [showExplain, setShowExplain] = useState(false);
 
   const style = COGNITIVE_IMPACT_STYLES[insight.impact] || COGNITIVE_IMPACT_STYLES.medium;
-  // Handle both API formats: action (string) or actions (array)
-  const insightAction = insight.action || (insight.actions && insight.actions[0]) || null;
 
   const formatText = (text) => {
     if (!text) return '';
@@ -2751,22 +2621,20 @@ function CognitiveInsightCard({ insight, lang = 'en', theme, onAction, compact =
           </div>
         </div>
       </div>
-      <div style={{ fontSize: compact ? 12 : 13, lineHeight: 1.6, color: theme.text, marginBottom: insightAction ? 12 : 0 }}>
+      <div style={{ fontSize: compact ? 12 : 13, lineHeight: 1.6, color: theme.text, marginBottom: insight.action ? 12 : 0 }}>
         {formatText(insight.text)}
       </div>
-      {insightAction && (
+      {insight.action && (
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          <button onClick={() => onAction?.({...insight, action: insightAction})} style={{
+          <button onClick={() => onAction?.(insight)} style={{
             padding: '7px 14px', borderRadius: 7, background: style.accent, border: 'none',
             color: '#000', fontSize: 11, fontWeight: 700, cursor: 'pointer',
             display: 'flex', alignItems: 'center', gap: 5
           }}>
-            {insightAction === 'invite_core_to_did' && '👥'}
-            {insightAction === 'view_momentum_details' && '📊'}
-            {insightAction === 'schedule_optimal' && '📅'}
-            {insightAction === 'prioritize_channel' && '📡'}
-            {insightAction === 'view_details' && '📊'}
-            {insightAction === 'export_report' && '📤'}
+            {insight.action === 'invite_core_to_did' && '👥'}
+            {insight.action === 'view_momentum_details' && '📊'}
+            {insight.action === 'schedule_optimal' && '📅'}
+            {insight.action === 'prioritize_channel' && '📡'}
             {actionLabels[lang] || actionLabels.en}
           </button>
           <button onClick={() => setShowExplain(!showExplain)} style={{
@@ -2810,7 +2678,7 @@ function CognitiveInsightsPanel({ lang = 'en', theme, compact = false }) {
     setLoading(true);
     try {
       const isLocal = window.location.hostname === 'localhost';
-      const baseUrl = isLocal ? 'http://localhost:8108/api/dragon' : '/app/api/dragon';
+      const baseUrl = isLocal ? 'http://localhost:8108/api/dragon' : 'https://windi-domain.com/app/api/dragon';
       const res = await fetch(`${baseUrl}/cognition/insights?lang=${lang}`);
       if (res.ok) {
         const data = await res.json();
@@ -2872,6 +2740,26 @@ function CognitiveInsightsPanel({ lang = 'en', theme, compact = false }) {
 // MAIN APP
 // ═══════════════
 function App(){
+  // ═══ A.2: VAULT API FETCH ═══
+  // FIX: Use correct Vault endpoints (8106 serves /api/stats and /health directly)
+  const vaultApiUrl=window.location.hostname==='localhost'?'http://localhost:8106':'https://admin.windia4desk.tech/vault';
+  const fetchVaultStats=useCallback(async()=>{
+    try{
+      setVaultLoading(true);
+      const[statsRes,healthRes]=await Promise.all([
+        fetch(vaultApiUrl+'/api/stats'),
+        fetch(vaultApiUrl+'/health')
+      ]);
+      const statsData=await statsRes.json();
+      const healthData=await healthRes.json();
+      setVaultStats(statsData);
+      setVaultHealth(healthData);
+    }catch(e){
+      console.warn('[WINDI] Vault API offline:',e.message);
+    }finally{
+      setVaultLoading(false);
+    }
+  },[vaultApiUrl]);
   const[themeName,setThemeName]=useState("KLAR");
   // ═══════════════════════════════════════════════════════════════════════════════════
   // WINDI MODULES INTEGRATION (P1-P7)
@@ -2881,7 +2769,17 @@ function App(){
   const[connectors,setConnectors]=useState(null);
   const[govDrawerOpen,setGovDrawerOpen]=useState(false);
   // ═══ LAYER DESK STATE ═══
-  const[deskLayers,setDeskLayers]=useState([]);
+  // ═══ CANVAS PERSISTENCE ═══
+  const CANVAS_SAVE_KEY='windi_canvas_layers_v1';
+  const[deskLayers,setDeskLayers]=useState(()=>{
+    try{const s=localStorage.getItem(CANVAS_SAVE_KEY);return s?JSON.parse(s):[];}
+    catch{return[];}
+  });
+  // Auto-save sempre que layers mudam
+  useEffect(()=>{
+    try{localStorage.setItem(CANVAS_SAVE_KEY,JSON.stringify(deskLayers));}
+    catch(e){console.warn('[Canvas] Save error:',e);}
+  },[deskLayers]);
   const[deskSelected,setDeskSelected]=useState(null);
   const[deskZoom,setDeskZoom]=useState(0.65);
   const[deskShowGrid,setDeskShowGrid]=useState(true);
@@ -3008,47 +2906,6 @@ function App(){
   const[distributeSent,setDistributeSent]=useState([]);
   const[showChannelSettings,setShowChannelSettings]=useState(false);
 
-  // ═══ COMMUNIQUÉ WORKFLOW — Create & Publish via :8105 API ═══
-  const[activeCommuniqueId,setActiveCommuniqueId]=useState(null);
-  const[showCommuniqueWorkflow,setShowCommuniqueWorkflow]=useState(false);
-  const[communiqueWorkflowLoading,setCommuniqueWorkflowLoading]=useState(false);
-
-  // ═══ HISTORY TIMELINE — Action log from savedDocs + receipts ═══
-  const buildHistoryItems=useMemo(()=>{
-    const items=[];
-    // From savedDocs
-    (savedDocs||[]).forEach(doc=>{
-      items.push({
-        id:`doc-${doc.id}`,
-        type:'document',
-        action:doc.status==='sealed'?'sealed':'created',
-        title:doc.title||'Untitled',
-        icon:doc.icon||'📄',
-        docType:doc.type,
-        timestamp:doc.date?new Date(doc.date).toISOString():new Date().toISOString(),
-        data:doc
-      });
-    });
-    // From wallet receipts (avoid duplicates by checking if already in savedDocs)
-    const docIds=new Set(savedDocs?.map(d=>d.id)||[]);
-    (wallet?.receipts||[]).forEach(r=>{
-      if(!docIds.has(r.id)){
-        items.push({
-          id:`receipt-${r.id}`,
-          type:'receipt',
-          action:'sealed',
-          title:r.title||r.id,
-          icon:'🛡️',
-          docType:r.type,
-          timestamp:r.ts||new Date().toISOString(),
-          data:r
-        });
-      }
-    });
-    // Sort by timestamp descending (newest first)
-    return items.sort((a,b)=>new Date(b.timestamp)-new Date(a.timestamp));
-  },[savedDocs,wallet]);
-
   // ═══ WAVE 1: JOURNAL, FILES, SEARCH STATE ═══
   const[journalArticles,setJournalArticles]=useState([]);
   const[journalLoading,setJournalLoading]=useState(false);
@@ -3058,10 +2915,6 @@ function App(){
   const[filesUploading,setFilesUploading]=useState(false);
   const[fileDragOver,setFileDragOver]=useState(false);
   const filesInputRef=useRef(null);
-
-  // ═══ SPRINT 3: PRODUCTS CATALOG (ISP Templates) ═══
-  const[ispProfiles,setIspProfiles]=useState([]);
-  const[productsLoading,setProductsLoading]=useState(false);
 
   const[searchQuery,setSearchQuery]=useState("");
   const[searchResults,setSearchResults]=useState([]);
@@ -3095,11 +2948,6 @@ function App(){
   const[voiceText,setVoiceText]=useState("");
   const[selectedReceipt,setSelectedReceipt]=useState(null); // FIX (N): clickable receipts
 
-  // ═══ SPRINT 3: VOICE RECORDING STATE ═══
-  const[isVoiceRecording,setIsVoiceRecording]=useState(false);
-  const[voiceInterim,setVoiceInterim]=useState('');
-  const voiceRecognitionRef=useRef(null);
-
   const th=THEMES[themeName];
   const t=L[lang]||L.en;
 
@@ -3109,15 +2957,12 @@ function App(){
   // Fonts
   useEffect(()=>{const l=document.createElement("link");l.href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap";l.rel="stylesheet";document.head.appendChild(l);},[]);
 
-  // FIX (K): Load persisted data + auto-skip onboarding if wallet exists
+  // FIX (K): Load persisted data
   useEffect(()=>{
     try{
       const raw=localStorage.getItem(CONFIG.STORAGE_KEY);
       if(raw){const d=JSON.parse(raw);
-        if(d.wallet){
-          setWallet(d.wallet);
-          setView("main"); // FIX: Skip onboarding — Pioneer session restored
-        }
+        if(d.wallet)setWallet(d.wallet);
         if(d.savedDocs)setSavedDocs(d.savedDocs);
         if(d.theme)setThemeName(d.theme);
         if(d.lang)setLang(d.lang);
@@ -3131,70 +2976,6 @@ function App(){
     if(!persist)return;
     try{localStorage.setItem(CONFIG.STORAGE_KEY,JSON.stringify({wallet,savedDocs,theme:themeName,lang}));}catch(e){}
   },[wallet,savedDocs,themeName,lang,persist]);
-
-  // ═══ SPRINT 3: FILES PERSISTENCE ═══
-  // Load files on mount
-  useEffect(()=>{
-    try{
-      const saved=localStorage.getItem('windi_files');
-      if(saved){setUploadedFiles(JSON.parse(saved));}
-    }catch(e){}
-  },[]);
-
-  // Save files on change
-  useEffect(()=>{
-    if(uploadedFiles.length>0){
-      try{
-        const metadata=uploadedFiles.map(f=>({
-          id:f.id,name:f.name,type:f.type,size:f.size,
-          uploadedAt:f.uploadedAt||new Date().toISOString(),
-          content:(f.size<50000&&f.type?.startsWith('text/'))?f.content:null,
-          thumbnail:f.thumbnail||null
-        }));
-        localStorage.setItem('windi_files',JSON.stringify(metadata));
-      }catch(e){}
-    }else{
-      localStorage.removeItem('windi_files');
-    }
-  },[uploadedFiles]);
-
-  // ═══ SPRINT 3: FETCH ISP PROFILES ON MOUNT ═══
-  // NOTE: useEffect moved to after fetchIspProfiles definition (line ~3471) to fix TDZ error
-
-  // ═══ SPRINT 3: WEB SPEECH API INITIALIZATION ═══
-  useEffect(()=>{
-    const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-    if(SR){
-      const r=new SR();
-      r.continuous=true;
-      r.interimResults=true;
-      r.lang=lang==='de'?'de-DE':lang==='pt'?'pt-BR':'en-US';
-      r.onresult=(e)=>{
-        let final='',inter='';
-        for(let i=e.resultIndex;i<e.results.length;i++){
-          if(e.results[i].isFinal)final+=e.results[i][0].transcript;
-          else inter+=e.results[i][0].transcript;
-        }
-        if(final)setVoiceText(p=>p+final+' ');
-        setVoiceInterim(inter);
-      };
-      r.onerror=()=>setIsVoiceRecording(false);
-      r.onend=()=>setIsVoiceRecording(false);
-      voiceRecognitionRef.current=r;
-    }
-    return()=>voiceRecognitionRef.current?.stop();
-  },[lang]);
-
-  const toggleVoiceRecording=useCallback(()=>{
-    if(isVoiceRecording){
-      voiceRecognitionRef.current?.stop();
-    }else{
-      setVoiceText('');
-      setVoiceInterim('');
-      voiceRecognitionRef.current?.start();
-      setIsVoiceRecording(true);
-    }
-  },[isVoiceRecording]);
 
   // FIX (L): Auto-save draft
   useEffect(()=>{
@@ -3217,27 +2998,6 @@ function App(){
 
   const flash=useCallback(m=>{setToast({m,v:true});setTimeout(()=>setToast(x=>({...x,v:false})),2600);},[]);
 
-  // ═══ A.2: VAULT API FETCH ═══
-  // FIX: Use correct Vault endpoints (8106 serves /api/stats and /health directly)
-  const vaultApiUrl=window.location.hostname==='localhost'?'http://localhost:8106':'/vault';
-  const fetchVaultStats=useCallback(async()=>{
-    try{
-      setVaultLoading(true);
-      const[statsRes,healthRes]=await Promise.all([
-        fetch(vaultApiUrl+'/api/stats'),
-        fetch(vaultApiUrl+'/health')
-      ]);
-      const statsData=await statsRes.json();
-      const healthData=await healthRes.json();
-      setVaultStats(statsData);
-      setVaultHealth(healthData);
-    }catch(e){
-      console.warn('[WINDI] Vault API offline:',e.message);
-    }finally{
-      setVaultLoading(false);
-    }
-  },[vaultApiUrl]);
-
   // ═══ EVENT BUS LISTENERS — Cross-Component Sync ═══
   useEffect(()=>{
     if(!window.WINDI?.EventBus)return;
@@ -3253,7 +3013,10 @@ function App(){
       setVaultPulse(true);
       setTimeout(()=>setVaultPulse(false),1000);
 
-      // 2. Store last sealed info for contextual message
+    
+
+
+  // 2. Store last sealed info for contextual message
       // Payload structure: {summary, receiptId, merkleRoot/contentHash, docType, trustDelta, walletId}
       const hash = e.merkleRoot || e.contentHash || e.receiptId || '';
       const titlePart = e.summary?.split(':')?.[1] || e.docType || 'Dokument';
@@ -3292,7 +3055,7 @@ function App(){
   },[docType,fetchVaultStats,flash,lang,wallet]);
 
   // ═══ A.1: COMMUNIQUÉ API FETCH ═══
-  const baseUrl=window.location.protocol==='https:'?'https://windi-domain.com':'http://localhost';
+  const baseUrl=window.location.protocol==='https:'?'https://admin.windia4desk.tech':'http://localhost';
 
   const fetchCommuniques=useCallback(async()=>{
     try{
@@ -3325,71 +3088,6 @@ function App(){
     return communiques.filter(c=>c.status?.toLowerCase()===comFilter);
   },[communiques,comFilter]);
 
-  // ═══ A.4: DRAGON URL (moved here to fix TDZ) ═══
-  // Production uses /app/api/dragon nginx route → 8108
-  // Local uses direct port 8108
-  const dragonUrl = window.location.hostname === 'localhost' ? 'http://localhost:8108/api/dragon' : '/app/api/dragon';
-
-  // ═══ A.1b: COMMUNIQUÉ CREATE & WORKFLOW ACTIONS ═══
-  const createCommuniqueInBackend=useCallback(async(fields,walletData)=>{
-    const payload={
-      title_de: fields.title_de||fields.title||"",
-      title_en: fields.title_en||"",
-      title_pt: fields.title_pt||"",
-      body_de: fields.body_de||fields.body||"",
-      body_en: fields.body_en||"",
-      body_pt: fields.body_pt||"",
-      category: fields.category||"UPDATE",
-      impact_level: fields.impact_level||"MED",
-      author_name: fields.author_name||walletData?.name||"Unknown",
-      author_role: fields.author_role||"Editor",
-      tags: fields.tags||[],
-      related_docs: fields.related_docs||[]
-    };
-    try{
-      const res=await fetch(dragonUrl+'/communique/create',{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify(payload)
-      });
-      const data=await res.json();
-      if(data.status==='created'&&data.communique?.id){
-        return{success:true,id:data.communique.id,status:'DRAFT'};
-      }else{
-        return{success:false,error:data.message||data.error||'Creation failed'};
-      }
-    }catch(e){
-      return{success:false,error:e.message};
-    }
-  },[dragonUrl]);
-
-  const submitCommuniqueForReview=useCallback(async(comId,actor)=>{
-    try{
-      const res=await fetch(dragonUrl+'/communique/review/'+comId,{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({actor:actor||wallet?.name||'user'})
-      });
-      const data=await res.json();
-      return{success:data.status==='in_review',data};
-    }catch(e){
-      return{success:false,error:e.message};
-    }
-  },[dragonUrl,wallet]);
-
-  const publishCommunique=useCallback(async(comId,actor)=>{
-    try{
-      const res=await fetch(dragonUrl+'/communique/publish/'+comId,{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({actor:actor||wallet?.name||'user'})
-      });
-      const data=await res.json();
-      return{success:data.status==='published',data};
-    }catch(e){
-      return{success:false,error:e.message};
-    }
-  },[dragonUrl,wallet]);
 
   // Vault polling every 30s
   useEffect(()=>{
@@ -3399,7 +3097,7 @@ function App(){
   },[fetchVaultStats]);
 
   // ═══ WAVE 1: JOURNAL FETCH (from Communiqué API) ═══
-  const communiqueApiUrl=window.location.hostname==='localhost'?'http://localhost:8105':'/communique';
+  const communiqueApiUrl=window.location.hostname==='localhost'?'http://localhost:8105':'https://admin.windia4desk.tech/communique';
   const fetchJournalArticles=useCallback(async()=>{
     try{
       setJournalLoading(true);
@@ -3503,74 +3201,6 @@ function App(){
     setUploadedFiles(prev=>prev.filter(f=>f.id!==fileId));
   },[]);
 
-  // ═══ SPRINT 3: EXPORT FILES ═══
-  const exportFile=useCallback((file)=>{
-    const blob=new Blob([file.content||''],{type:file.type||'text/plain'});
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement('a');
-    a.href=url;a.download=file.name;a.click();
-    URL.revokeObjectURL(url);
-  },[]);
-
-  const exportAllFiles=useCallback(()=>{
-    const bundle={exported:new Date().toISOString(),files:uploadedFiles};
-    const blob=new Blob([JSON.stringify(bundle,null,2)],{type:'application/json'});
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement('a');
-    a.href=url;a.download=`windi-files-${Date.now()}.json`;a.click();
-    URL.revokeObjectURL(url);
-  },[uploadedFiles]);
-
-  // ═══ SPRINT 3: PRODUCTS CATALOG (ISP Templates) ═══
-  const getApiUrl=()=>window.location.hostname==='localhost'?'http://localhost:8108/api/dragon':'/app/api/dragon';
-
-  const fetchIspProfiles=useCallback(async()=>{
-    setProductsLoading(true);
-    try{
-      const res=await fetch(`${getApiUrl()}/isp/list`);
-      if(res.ok){
-        const data=await res.json();
-        setIspProfiles(data.profiles||[]);
-      }
-    }catch(e){
-      console.error('Failed to fetch ISP profiles:',e);
-    }finally{
-      setProductsLoading(false);
-    }
-  },[]);
-
-  // ═══ SPRINT 3: FETCH ISP PROFILES ON MOUNT (moved here to fix TDZ) ═══
-  useEffect(()=>{
-    fetchIspProfiles();
-  },[fetchIspProfiles]);
-
-  const createFromTemplate=useCallback(async(profile)=>{
-    try{
-      const res=await fetch(`${getApiUrl()}/isp/load/${profile.id}`);
-      const fullProfile=await res.json();
-      const newDoc={
-        id:Date.now(),
-        type:profile.type||'document',
-        title:`New ${profile.name}`,
-        content:'',
-        ispProfile:profile.id,
-        fields:fullProfile.fields?.reduce((acc,f)=>{acc[f.id]=f.default||'';return acc;},{})||{},
-        status:'draft',
-        date:new Date().toISOString(),
-        icon:profile.icon||'📄'
-      };
-      setSavedDocs(prev=>[...prev,newDoc]);
-      setSelectedDoc(newDoc);
-      setDocTitle(newDoc.title);
-      setDocContent('');
-      setDocType(profile.type||'document');
-      setSidebarTab('docs');
-      setMsgs(prev=>[...prev,{role:'system',text:`📦 Created from template: ${profile.name}`}]);
-    }catch(e){
-      console.error('Failed to create from template:',e);
-    }
-  },[]);
-
   // ═══ WAVE 1: SEARCH ACROSS DOCS + COMMUNIQUÉS ═══
   const performSearch=useCallback((query)=>{
     if(!query.trim()){setSearchResults([]);return;}
@@ -3600,7 +3230,10 @@ function App(){
   },[searchQuery,performSearch]);
 
   // ═══ A.4: DRAGON CHAT API ═══
-  // NOTE: dragonUrl moved to line ~3265 to fix TDZ error
+  // Constitutional Chat integration with 5 principles
+  // Production uses /palette/api/dragon nginx route → 8108
+  // Local uses direct port 8108
+  const dragonUrl = window.location.hostname === 'localhost' ? 'http://localhost:8108/api/dragon' : 'https://windi-domain.com/app/api/dragon';
 
   // ═══ DISTRIBUTION: Check channel status when modal opens ═══
   useEffect(()=>{
@@ -3630,22 +3263,13 @@ function App(){
   },[dragonUrl]);
 
   // Dragon Chat API call — ALL tiers can use (Knowledge Base + Conversational don't need LLM)
-  // BUG FIX: Now sends conversation history for context retention
-  const queryDragon=useCallback(async(message,chatHistory=[])=>{
+  const queryDragon=useCallback(async(message)=>{
     if(!dragonConnected)return null;
     try{
-      // Convert chat history to format backend expects: {role: "human"|"assistant", text: "..."}
-      const history=chatHistory
-        .filter(m=>m.role==='user'||m.role==='bot')  // Only user/bot messages, not system
-        .map(m=>({
-          role:m.role==='user'?'human':'assistant',
-          text:m.text||''
-        }));
-
       const res=await fetch(dragonUrl+'/chat',{
         method:'POST',
         headers:{'Content-Type':'application/json','X-Session-ID':dragonSessionId||'','X-Tier':windiTier},
-        body:JSON.stringify({message,tier:windiTier,session_id:dragonSessionId,history})
+        body:JSON.stringify({message,tier:windiTier,session_id:dragonSessionId})
       });
       const data=await res.json();
       if(data.session_id&&!dragonSessionId)setDragonSessionId(data.session_id);
@@ -3726,6 +3350,19 @@ function App(){
     const newLayers=deskLayers.filter(l=>l.id!==id);
     setDeskLayers(newLayers);setDeskSelected(null);deskPushHistory(newLayers);
   },[deskLayers,deskPushHistory]);
+
+  // ═══ Keyboard: Delete/Backspace deleta layer selecionado ═══
+  useEffect(()=>{
+    const handler=(e)=>{
+      if((e.key==="Delete"||e.key==="Backspace")&&deskSelected){
+        const active=document.activeElement;
+        const isEditing=active&&(active.isContentEditable||active.tagName==="INPUT"||active.tagName==="TEXTAREA");
+        if(!isEditing) deskDeleteLayer(deskSelected);
+      }
+    };
+    window.addEventListener("keydown",handler);
+    return()=>window.removeEventListener("keydown",handler);
+  },[deskSelected,deskDeleteLayer]);
 
   const deskDuplicateLayer=useCallback(id=>{
     const src=deskLayers.find(l=>l.id===id);if(!src)return;
@@ -3839,261 +3476,6 @@ function App(){
     setVoiceText("");
   },[voiceText]); // send will be defined below, eslint will complain but it works
 
-  // ═══════════════════════════════════════════════════════════════════════
-  // ACTION BRIDGE v1.0 — Dragon suggests, Human decides (I9 Governance)
-  // ═══════════════════════════════════════════════════════════════════════
-
-  // ─── Feature 1: Documentable Detection ───
-  const isDocumentable=useCallback((content)=>{
-    if(!content||typeof content!=='string')return false;
-    const hasLength=content.length>200;
-    const hasGreeting=/^(Querida?|Prezada?|Caro|Exmo|Dear|Sehr geehrte|Liebe)/mi.test(content);
-    const hasTitle=/\*\*(RASCUNHO|CARTA|RELATÓRIO|COMUNICADO|MEMORANDO|PROPOSTA|DRAFT|LETTER|REPORT)/i.test(content);
-    const hasSignature=/(\[Seu nome\]|\[Ihr Name\]|\[Your name\]|Atenciosamente|Mit freundlichen|Best regards|Cordialmente)/i.test(content);
-    const hasSections=(content.match(/\n#{1,3}\s/g)||[]).length>=2;
-    return hasLength&&(hasGreeting||hasTitle||hasSignature||hasSections);
-  },[]);
-
-  const detectDocType=useCallback((content)=>{
-    if(/carta|letter|aniversário|birthday|parabéns|geburtstag/i.test(content))return'carta_pessoal';
-    if(/prezad[oa]|formal|senhor|senhora|sehr geehrte/i.test(content))return'carta_formal';
-    if(/relatório|report|análise|analysis|bericht/i.test(content))return'relatorio';
-    if(/comunicado|communiqué|nota oficial|pressemitteilung/i.test(content))return'comunicado';
-    if(/memorando|memo|interno|internal/i.test(content))return'memorando';
-    if(/proposta|proposal|orçamento|budget|angebot/i.test(content))return'proposta';
-    return'documento_geral';
-  },[]);
-
-  // ─── Feature 4: Toast — uses existing flash() function defined at line ~3154 ───
-
-  // ─── Feature 3: Append/Replace State ───
-  const[transferDialog,setTransferDialog]=useState(null);
-
-  // ─── Feature 7: Transfer History ───
-  const[transferLog,setTransferLog]=useState([]);
-  const[showTransferLog,setShowTransferLog]=useState(false);
-
-  // ─── Feature 6: Mark transferred messages ───
-  const markAsTransferred=useCallback((msgIndex)=>{
-    setMsgs(prev=>prev.map((m,i)=>
-      i===msgIndex?{...m,transferred:true,transferredAt:new Date().toISOString()}:m
-    ));
-  },[]);
-
-  // ─── Feature 1+3+4+6+7: Transfer to Editor ───
-  const transferToEditor=useCallback((content,msgIndex,mode='replace')=>{
-    const detectedType=detectDocType(content);
-    const title=content.match(/\*\*([^*]+)\*\*/)?.[1]||`${detectedType} ${new Date().toLocaleDateString()}`;
-
-    if(mode==='replace'){
-      setDocTitle(title);
-      setDocContent(content);
-    }else{
-      setDocContent(prev=>prev?(prev+'\n\n---\n\n'+content):content);
-      if(!docTitle)setDocTitle(title);
-    }
-    setDocType(detectedType);
-    setSidebarTab('desk');
-
-    // Mark message as transferred
-    markAsTransferred(msgIndex);
-
-    // Log transfer
-    setTransferLog(prev=>[...prev,{
-      id:Date.now(),
-      msgIndex,
-      mode,
-      docType:detectedType,
-      preview:content.substring(0,80)+'...',
-      timestamp:new Date().toISOString()
-    }]);
-
-    // Show toast using existing flash() function
-    const typeLabels={carta_pessoal:'💌 Carta pessoal',carta_formal:'📨 Carta formal',relatorio:'📊 Relatório',comunicado:'📢 Comunicado',memorando:'📝 Memorando',proposta:'📋 Proposta',documento_geral:'📄 Documento'};
-    flash(`✅ ${typeLabels[detectedType]||'📄 Conteúdo'} ${mode==='append'?'adicionado ao':'enviado para o'} Editor`);
-
-    setTransferDialog(null);
-  },[detectDocType,markAsTransferred,flash,docTitle]);
-
-  // ─── Feature 3: Handle 📄 click ───
-  const handleDocumentButton=useCallback((content,msgIndex)=>{
-    const editorHasContent=docContent&&docContent.trim().length>0;
-    if(!editorHasContent){
-      transferToEditor(content,msgIndex,'replace');
-    }else{
-      setTransferDialog({content,msgIndex});
-    }
-  },[docContent,transferToEditor]);
-
-  // ─── Feature 8: Return to Dragon ───
-  const returnToDragon=useCallback(()=>{
-    if(!docContent||!docContent.trim())return;
-    const prefix=lang==='de'?'Verfeinere diesen Text, behalte die gleiche Struktur und den gleichen Ton:\n\n':
-                 lang==='pt'?'Refine este texto, mantendo a mesma estrutura e tom:\n\n':
-                 'Refine this text, keeping the same structure and tone:\n\n';
-    send(prefix+docContent);
-    setSidebarTab('chat');
-  },[docContent,lang]);
-
-  // ─── Original ACTION_HANDLERS (enhanced) ───
-  const ACTION_HANDLERS={
-    create_document:(payload)=>{
-      // BUG FIX: Stay in 'chat' tab where Document Preview panel shows content
-      // 'desk' tab is canvas/layers system - wrong for text documents
-      setDocTitle(payload.title||'Untitled');
-      setDocContent(payload.content||'');
-      setDocType(payload.doc_type||'document');
-      setSidebarTab('chat');  // FIX: was 'desk' (canvas/layers), now 'chat' (doc preview)
-      if(window.WINDI?.EventBus)window.WINDI.EventBus.emit('DOCUMENT_CREATED_FROM_CHAT',{title:payload.title});
-      return{success:true,message:`Created: ${payload.title}`};
-    },
-    open_distribution:(payload)=>{
-      setShowDistributeModal(true);
-      return{success:true,message:'Distribution modal opened'};
-    },
-    seal_document:(payload)=>{
-      if(docTitle&&docContent){
-        setShowFinalizeModal(true);
-        return{success:true,message:'Ready to seal'};
-      }
-      return{success:false,message:'No document to seal'};
-    },
-    // ═══ COMMUNIQUÉ ACTION — Canvas/Design for visual layout ═══
-    create_communique:async(payload)=>{
-      const title=payload.title_de||payload.title_en||payload.title_pt||'Communiqué';
-
-      // 1. Switch to Canvas/Design mode (NOT text editor)
-      setDocType('communique');
-      setSidebarTab('desk');  // Open canvas for visual layout
-
-      // 2. Auto-populate Canvas with layers from Dragon content
-      const newLayers=[];
-      let yPos=50;
-
-      // Layer 1: Title (large header)
-      newLayers.push({
-        id:layerUid(),type:'text',x:50,y:yPos,w:694,h:50,
-        content:title,fontSize:28,fontWeight:700,color:'#1a1a1a',
-        bgColor:'transparent',opacity:1,rotation:0,borderRadius:0,locked:false,zIndex:0
-      });
-      yPos+=60;
-
-      // Layer 2: Date line
-      const dateStr=new Date().toLocaleDateString(lang==='de'?'de-DE':lang==='pt'?'pt-PT':'en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-      newLayers.push({
-        id:layerUid(),type:'text',x:50,y:yPos,w:694,h:24,
-        content:dateStr,fontSize:12,fontWeight:400,color:'#666666',
-        bgColor:'transparent',opacity:1,rotation:0,borderRadius:0,locked:false,zIndex:1
-      });
-      yPos+=40;
-
-      // Layer 3+: Body paragraphs as separate blocks (German primary)
-      const bodyText=payload.body_de||payload.body_en||payload.body_pt||'';
-      const paragraphs=bodyText.split(/\n\n+/).filter(p=>p.trim());
-      paragraphs.forEach((para,i)=>{
-        const isHeading=para.startsWith('**')||para.startsWith('#')||para.toUpperCase()===para;
-        const cleanText=para.replace(/\*\*/g,'').replace(/^#+\s*/,'');
-        const lineCount=Math.ceil(cleanText.length/80);
-        const blockH=Math.max(40,lineCount*22+16);
-        newLayers.push({
-          id:layerUid(),type:'text',x:50,y:yPos,w:isHeading?694:340,h:blockH,
-          content:cleanText,fontSize:isHeading?18:13,fontWeight:isHeading?700:400,
-          color:isHeading?'#1a1a1a':'#333333',bgColor:'transparent',
-          opacity:1,rotation:0,borderRadius:0,locked:false,zIndex:i+2
-        });
-        yPos+=blockH+12;
-      });
-
-      setDeskLayers(newLayers);
-      flash('🎨 Canvas mit '+newLayers.length+' Ebenen geladen');
-
-      // 3. Store trilingual fields for API submission
-      setDocFields({
-        title_de:payload.title_de||'',
-        title_en:payload.title_en||'',
-        title_pt:payload.title_pt||'',
-        body_de:payload.body_de||'',
-        body_en:payload.body_en||'',
-        body_pt:payload.body_pt||'',
-        category:payload.category||'UPDATE',
-        impact_level:payload.impact_level||'MEDIUM'
-      });
-
-      // 3. POST to Communiqué Engine to create DRAFT
-      const comApiUrl=window.location.hostname==='localhost'?'http://localhost:8105':'/communique';
-      try{
-        const res=await fetch(comApiUrl+'/api/communique',{
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({
-            title_de:payload.title_de||'',
-            title_en:payload.title_en||'',
-            title_pt:payload.title_pt||'',
-            body_de:payload.body_de||'',
-            body_en:payload.body_en||'',
-            body_pt:payload.body_pt||'',
-            category:payload.category||'UPDATE',
-            impact_level:payload.impact_level||'MEDIUM',
-            author_name:payload.author_name||wallet?.name||'Unknown',
-            author_role:payload.author_role||wallet?.role||'Contributor'
-          })
-        });
-        const data=await res.json();
-        if(res.ok&&data.id){
-          flash('📡 Communiqué DRAFT: '+data.id);
-          setActiveCommuniqueId(data.id);
-          fetchCommuniques();
-          // 4. Show workflow modal after brief delay
-          setTimeout(()=>setShowCommuniqueWorkflow(true),500);
-          if(window.WINDI?.EventBus)window.WINDI.EventBus.emit('COMMUNIQUE_CREATED',{id:data.id,title});
-          return{success:true,message:'Communiqué '+data.id+' created'};
-        }else{
-          flash('❌ '+(data.error||'Failed to create communiqué'));
-          return{success:false,message:data.error||'Creation failed'};
-        }
-      }catch(e){
-        flash('❌ Engine offline: '+e.message);
-        return{success:false,message:'Engine connection failed'};
-      }
-    }
-  };
-
-  const processActions=useCallback((actions)=>{
-    if(!actions||!Array.isArray(actions)||actions.length===0)return;
-    actions.forEach(action=>{
-      if(action.confirm){
-        // Add action card to chat (requires user confirmation)
-        setMsgs(prev=>[...prev,{
-          role:'action',
-          actionType:action.type,
-          payload:action.payload,
-          label:action.label||action.type,
-          status:'pending'
-        }]);
-      }else{
-        // Execute immediately (no confirmation needed)
-        const handler=ACTION_HANDLERS[action.type];
-        if(handler)handler(action.payload);
-      }
-    });
-  },[]);
-
-  const executeAction=useCallback((actionType,payload,msgIndex)=>{
-    const handler=ACTION_HANDLERS[actionType];
-    if(handler){
-      const result=handler(payload);
-      setMsgs(prev=>prev.map((m,i)=>
-        i===msgIndex?{...m,status:result.success?'executed':'failed',result}:m
-      ));
-    }
-  },[]);
-
-  const dismissAction=useCallback((msgIndex)=>{
-    setMsgs(prev=>prev.map((m,i)=>
-      i===msgIndex?{...m,status:'dismissed'}:m
-    ));
-  },[]);
-
   // Send chat — FIX (E) awaitingTitle + FIX (F) docContentRef + A.4 Dragon Chat + DNA Guided Flow
   const send=useCallback(async(text)=>{
     if(!text.trim()||docStatus==="finalized")return;
@@ -4102,11 +3484,9 @@ function App(){
     const tc=turns+1;setTurns(tc);
 
     // ═══ A.4: DRAGON CHAT INTEGRATION ═══
-    // BUG FIX: Pass conversation history to Dragon for context retention
     let dragonResponse=null;
     if(dragonConnected&&windiTier!=="FREE"){
-      // Pass current msgs as history (queryDragon will format for backend)
-      dragonResponse=await queryDragon(m,msgs);
+      dragonResponse=await queryDragon(m);
     }
 
     // Process response (local motor + Dragon enhancement)
@@ -4131,12 +3511,15 @@ function App(){
             }
           }catch(e){console.log("[Bridge] JSON parse error:",e);}
         }
+        // ═══ FALLBACK: Read document from actions[] (Backend Action Bridge) ═══
+        if(!dragonDocument && dragonResponse.actions && dragonResponse.actions.length>0){
+          const docAction=dragonResponse.actions.find(a=>a.type==='create_document');
+          if(docAction && docAction.payload){
+            dragonDocument=docAction.payload;
+          }
+        }
         if(dragonResponse.action_pending){
           setDragonPending({type:dragonResponse.action_pending,buttons:dragonResponse.confirm_buttons});
-        }
-        // ═══ ACTION BRIDGE: Process actions from Dragon response ═══
-        if(dragonResponse.actions&&dragonResponse.actions.length>0){
-          processActions(dragonResponse.actions);
         }
       }
       // ─── Local Motor (FREE tier or Dragon fallback) ─────────────────
@@ -4407,9 +3790,7 @@ function App(){
       const w={id:CryptoProvider.walletId(),uuid:CryptoProvider.generateUUID(),fp:CryptoProvider.generateFingerprint(),
         ...didForm,name:didForm.name.trim(),trustScore:1,created_at:new Date().toISOString(),receipts:[]};
       setWallet(w);setShowDID(false);setDidCreating(false);
-      // FIX: Auto-enable persistence on wallet creation - Pioneer session must survive refresh
-      setPersist(true);
-      try{const raw=JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEY)||"{}");raw.wallet=w;localStorage.setItem(CONFIG.STORAGE_KEY,JSON.stringify(raw));}catch(e){}
+      if(persist){try{const raw=JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEY)||"{}");raw.wallet=w;localStorage.setItem(CONFIG.STORAGE_KEY,JSON.stringify(raw));}catch(e){}}
       flash(`🛡️ ${t.did.success} — ${w.id}`);
       setMsgs(p=>[...p,{role:"system",text:`🛡️ ${w.id}`},{role:"bot",text:`${t.did.success} ${w.name}! T1/50 ✅`}]);
 
@@ -4446,6 +3827,49 @@ function App(){
   },[wallet,flash]);
 
   // FIX (J): 2-step finalize
+  // ═══ CANVAS FINALIZE — serializa layers → jmpg ═══
+  const startDeskFinalize=useCallback(async()=>{
+    if(!wallet){setShowDID(true);return;}
+    if(deskLayers.length===0)return;
+    flash('🔐 Sealing canvas...');
+    try{
+      // Serializa layers como content_blocks
+      const blocks=deskLayers.map(l=>({
+        type:l.type==="text"?"paragraph":l.type,
+        text:l.content||"",
+        metadata:{x:l.x,y:l.y,w:l.w,h:l.h,fontSize:l.fontSize,fontWeight:l.fontWeight,fontFamily:l.fontFamily,color:l.color,zIndex:l.zIndex,isEmbed:l.isEmbed||false}
+      }));
+      const exportUrl=window.location.hostname==='localhost'?'http://localhost:8103':'https://windi-domain.com/export';
+      const r=await fetch(exportUrl+'/api/export/jmpg',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          content_blocks:blocks,
+          metadata:{
+            doc_type:'canvas_jornaline',
+            title:'WINDI Canvas — '+new Date().toLocaleDateString(),
+            author:wallet?.name||'Human Dragon',
+            wallet_id:wallet?.id||'anon',
+            layers:deskLayers.length,
+            format:'jmpg'
+          }
+        })
+      });
+      if(!r.ok){const e=await r.json();throw new Error(e.error||'Export failed');}
+      const result=await r.arrayBuffer();
+      const blob=new Blob([result],{type:'application/vnd.windi.jmpg'});
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');
+      a.href=url;a.download='canvas-'+Date.now()+'.jmpg';
+      document.body.appendChild(a);a.click();
+      document.body.removeChild(a);URL.revokeObjectURL(url);
+      flash('✅ Canvas sealed & downloaded as .jmpg!');
+    }catch(e){
+      console.error('[WINDI Canvas] Export error:',e);
+      flash('❌ Export failed: '+e.message);
+    }
+  },[wallet,deskLayers,flash]);
+
   const startFinalize=useCallback(()=>{
     if(!wallet){setShowDID(true);return;}
     if(!docTitle.trim()||!docContent.trim())return;
@@ -4455,51 +3879,6 @@ function App(){
   const executeSeal=useCallback(async()=>{
     const doc = getDoc(docType);
     const dna = getDNA(docType); // Backward compat
-
-    // ═══ COMMUNIQUÉ SPECIAL HANDLING — Create via :8105 API ═══
-    if(doc?.sealPolicy?.communiqueApi){
-      setFinalizeStep(3);
-      setSealProgress({ stage: 0, field: '', hash: '', message: 'Creating Communiqué...', progress: 10 });
-
-      // Create in Communiqué backend
-      const createResult = await createCommuniqueInBackend(docFields, wallet);
-
-      if(!createResult.success){
-        flash(`❌ Communiqué creation failed: ${createResult.error}`);
-        setShowFinalizeModal(false);
-        return;
-      }
-
-      setSealProgress({ stage: 1, field: '', hash: '', message: `Created ${createResult.id}`, progress: 50 });
-
-      // Store communiqué ID for workflow
-      setActiveCommuniqueId(createResult.id);
-
-      // Mark as finalized (draft in backend)
-      setDocStatus("finalized");
-      setShowFinalizeModal(false);
-
-      // Update local state
-      const r = {
-        id: createResult.id,
-        serial: createResult.id,
-        ts: new Date().toISOString(),
-        ch: 'pending-publish',
-        status: 'DRAFT'
-      };
-      setReceipt(r);
-      setWallet(p=>({...p,receipts:[...p.receipts,{id:r.id,title:docTitle,ts:r.ts,type:'communique'}]}));
-      setSavedDocs(p=>[{id:Date.now(),title:docTitle,icon:"📡",type:"communique",status:"draft",date:new Date().toLocaleDateString(),words:wordCount,comId:createResult.id},...p]);
-
-      flash(`✅ Communiqué ${createResult.id} created as DRAFT`);
-
-      // Refresh list
-      fetchCommuniques();
-
-      // Show workflow modal
-      setTimeout(()=>setShowCommuniqueWorkflow(true),500);
-      return;
-    }
 
     // ═══ SEAL v2.1: Merkle root + GDPR compliance + VISUAL PROGRESSION ═══
     if(doc?.sealPolicy && Object.keys(docFields).length > 1){
@@ -4597,7 +3976,7 @@ function App(){
         });
       }
     }
-  },[wallet,docTitle,docContent,docFields,docImages,docType,wordCount,t,flash,createCommuniqueInBackend,fetchCommuniques]);
+  },[wallet,docTitle,docContent,docFields,docImages,docType,wordCount,t,flash]);
 
   // New doc
   const newDoc=useCallback(()=>{
@@ -4756,52 +4135,11 @@ function App(){
                 {docType&&hasDNA(docType)&&Object.keys(docFields).length>1?
                   renderStructuredPreview(docType,docFields,th,lang)
                 :(<>
-                  {/* ═══ EDITABLE DOCUMENT — "Agent ajudou. Humano completou." ═══ */}
-                  {/* Mini Toolbar */}
-                  {docStatus!=="finalized"&&<div style={{display:"flex",alignItems:"center",gap:4,marginBottom:12,paddingBottom:8,borderBottom:`1px solid ${th.border}22`,flexWrap:"wrap"}}>
-                    <span style={{fontSize:10,color:th.dim,marginRight:8}}>✍️ {lang==='de'?'Bearbeiten':lang==='pt'?'Editar':'Edit'}</span>
-                    <button onClick={()=>{const sel=window.getSelection()?.toString();if(sel){setDocContent(docContent.replace(sel,`**${sel}**`))}}} style={{padding:"3px 8px",borderRadius:4,background:th.card,border:`1px solid ${th.border}`,color:th.dim,fontSize:10,cursor:"pointer",fontWeight:700}} title="Bold">B</button>
-                    <button onClick={()=>{const sel=window.getSelection()?.toString();if(sel){setDocContent(docContent.replace(sel,`*${sel}*`))}}} style={{padding:"3px 8px",borderRadius:4,background:th.card,border:`1px solid ${th.border}`,color:th.dim,fontSize:10,cursor:"pointer",fontStyle:"italic"}} title="Italic">I</button>
-                    <button onClick={()=>setDocContent(docContent+"\n\n---\n\n")} style={{padding:"3px 8px",borderRadius:4,background:th.card,border:`1px solid ${th.border}`,color:th.dim,fontSize:10,cursor:"pointer"}} title="Horizontal line">─</button>
-                    <div style={{flex:1}}/>
-                    {contentHistory.length>0&&<button onClick={undoLast} style={{padding:"3px 8px",borderRadius:4,background:th.card,border:`1px solid ${th.border}`,color:th.warning,fontSize:10,cursor:"pointer"}}>↩️ Undo</button>}
-                    <button onClick={()=>{setContentHistory(prev=>[...prev,docContent]);setDocContent("")}} style={{padding:"3px 8px",borderRadius:4,background:th.card,border:`1px solid ${th.border}`,color:th.danger||"#ef4444",fontSize:10,cursor:"pointer"}} title="Clear">🗑️</button>
-                  </div>}
-                  {/* Title Input */}
-                  <input
-                    value={docTitle}
-                    onChange={e=>setDocTitle(e.target.value)}
-                    placeholder={t.doc.titlePH}
-                    disabled={docStatus==="finalized"}
-                    style={{
-                      width:"100%",fontSize:20,fontWeight:800,margin:"0 0 12px",lineHeight:1.3,
-                      background:"transparent",border:"none",borderBottom:`1px solid ${docTitle?'transparent':th.border}`,
-                      color:th.text,outline:"none",fontFamily:"'Bricolage Grotesque',sans-serif",
-                      padding:"4px 0",cursor:docStatus==="finalized"?"default":"text"
-                    }}
-                  />
-                  {/* Content Textarea — Auto-grow */}
-                  <textarea
-                    value={docContent}
-                    onChange={e=>setDocContent(e.target.value)}
-                    placeholder={t.doc.bodyPH}
-                    disabled={docStatus==="finalized"}
-                    style={{
-                      width:"100%",minHeight:"300px",fontSize:14,lineHeight:1.8,
-                      background:"transparent",border:`1px solid ${docContent?'transparent':th.border}`,
-                      borderRadius:8,color:th.text,outline:"none",resize:"vertical",
-                      fontFamily:"'Outfit',sans-serif",padding:"12px",
-                      cursor:docStatus==="finalized"?"default":"text"
-                    }}
-                    onFocus={e=>e.target.style.borderColor=th.gold+"44"}
-                    onBlur={e=>e.target.style.borderColor=docContent?'transparent':th.border}
-                  />
-                  {/* Editing hint */}
-                  {docContent&&docStatus!=="finalized"&&<div style={{fontSize:10,color:th.dim,marginTop:6,display:"flex",alignItems:"center",gap:4}}>
-                    <span>✍️</span>
-                    <span>{lang==='de'?'Klicken zum Bearbeiten':lang==='pt'?'Clique para editar':'Click to edit'}</span>
-                    {docContent.includes('[')&&<span style={{color:th.gold,marginLeft:8}}>• {lang==='de'?'Felder ausfüllen':lang==='pt'?'Preencha os campos':'Fill in fields'} [...]</span>}
-                  </div>}
+                  {/* Fallback: simple title + content preview */}
+                  {docTitle?<h1 style={{fontSize:20,fontWeight:800,margin:"0 0 12px",lineHeight:1.3}}>{docTitle}</h1>
+                  :<div style={{fontSize:13,color:th.dim+"66",fontStyle:"italic",marginBottom:12}}>{t.doc.titlePH}</div>}
+                  {docContent?<div style={{fontSize:14,lineHeight:1.8,whiteSpace:"pre-wrap"}}>{docContent}</div>
+                  :<div style={{fontSize:12,color:th.dim+"44",fontStyle:"italic"}}>{t.doc.bodyPH}</div>}
                 </>)}
                 {docImages.length>0&&<div style={{marginTop:12,display:"flex",flexWrap:"wrap",gap:6}}>
                   {docImages.map(img=><div key={img.id} style={{width:90,height:60,borderRadius:6,overflow:"hidden",border:`1px solid ${th.border}`}}><img src={img.url} alt="" style={{width:"100%",height:"100%",objectFit:"cover"}}/></div>)}</div>}
@@ -4828,10 +4166,6 @@ function App(){
                   <button onClick={()=>{const url=prompt("Video URL:");if(url)addVideo(url);}} style={{padding:"6px 10px",borderRadius:8,background:th.card,border:`1px solid ${th.border}`,color:th.dim,fontSize:10,cursor:"pointer"}}>🎬{t.doc.addVideo}</button>
                   <button onClick={()=>setShowVoiceModal(true)} style={{padding:"6px 10px",borderRadius:8,background:th.card,border:`1px solid ${th.border}`,color:th.dim,fontSize:10,cursor:"pointer"}}>🎙️{t.doc.addVoice}</button>
                   {contentHistory.length>0&&<button onClick={undoLast} style={{padding:"6px 10px",borderRadius:8,background:th.card,border:`1px solid ${th.border}`,color:th.warning,fontSize:10,cursor:"pointer"}}>↩️{t.doc.undo}</button>}
-                  {/* ═══ ACTION BRIDGE v1.0: Return to Dragon ═══ */}
-                  {docContent&&docContent.trim().length>50&&<button onClick={returnToDragon} style={{padding:"6px 10px",borderRadius:8,background:th.card,border:`1px solid ${th.gold}44`,color:th.gold,fontSize:10,cursor:"pointer"}} title={lang==='de'?'An Dragon zur Verfeinerung senden':lang==='pt'?'Devolver ao Dragon para refinamento':'Return to Dragon for refinement'}>↩️🐉</button>}
-                  {/* ═══ ACTION BRIDGE v1.0: Transfer History ═══ */}
-                  {transferLog.length>0&&<button onClick={()=>setShowTransferLog(!showTransferLog)} style={{padding:"6px 10px",borderRadius:8,background:showTransferLog?th.gold+'22':th.card,border:`1px solid ${showTransferLog?th.gold:th.border}`,color:showTransferLog?th.gold:th.dim,fontSize:10,cursor:"pointer"}} title={lang==='de'?'Transfer-Verlauf':lang==='pt'?'Histórico de transferências':'Transfer history'}>🕐{transferLog.length}</button>}
                   <input ref={fileRef} type="file" accept="image/*" style={{display:"none"}} onChange={e=>{if(e.target.files?.[0])addImage(e.target.files[0]);e.target.value="";}}/>
                   <div style={{flex:1}}/>
                   <button onClick={startFinalize} disabled={!docTitle.trim()||!docContent.trim()} style={{padding:"6px 16px",borderRadius:8,background:(docTitle.trim()&&docContent.trim())?th.gold:th.dim,border:"none",color:"#FFF",fontSize:11,fontWeight:700,cursor:"pointer",opacity:(!docTitle.trim()||!docContent.trim())?0.4:1}}>🛡️{t.doc.finalize}</button>
@@ -4850,23 +4184,6 @@ function App(){
                   </button>
                 </>}
               </div>
-              {/* ═══ ACTION BRIDGE v1.0: Transfer History Panel ═══ */}
-              {showTransferLog&&<div style={{position:"absolute",top:44,right:8,width:280,maxHeight:260,overflowY:"auto",background:th.card,border:`1px solid ${th.gold}33`,borderRadius:10,padding:10,boxShadow:"0 4px 20px #0003",zIndex:50}}>
-                <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:8,paddingBottom:6,borderBottom:`1px solid ${th.border}`}}>
-                  <span style={{fontSize:14}}>🕐</span>
-                  <span style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontWeight:600,fontSize:12}}>{lang==='de'?'Transfer-Verlauf':lang==='pt'?'Histórico':' History'}</span>
-                  <span style={{marginLeft:"auto",cursor:"pointer",fontSize:14,color:th.dim}} onClick={()=>setShowTransferLog(false)}>×</span>
-                </div>
-                {transferLog.map(entry=><div key={entry.id} style={{padding:"6px 0",borderBottom:`1px solid ${th.border}22`,fontSize:10}}>
-                  <div style={{display:"flex",alignItems:"center",gap:4,marginBottom:2}}>
-                    <span style={{color:th.gold}}>{entry.mode==='replace'?'🔄':'➕'}</span>
-                    <span style={{fontWeight:600,color:th.text}}>{entry.docType}</span>
-                    <span style={{marginLeft:"auto",fontSize:8,color:th.dim}}>{new Date(entry.timestamp).toLocaleTimeString()}</span>
-                  </div>
-                  <div style={{color:th.dim,fontSize:9,lineHeight:1.3}}>{entry.preview}</div>
-                </div>)}
-                {transferLog.length===0&&<div style={{color:th.dim,fontSize:11,textAlign:"center",padding:10}}>{lang==='de'?'Keine Transfers':lang==='pt'?'Sem transferências':'No transfers'}</div>}
-              </div>}
             </div>
 
             {/* Chat Panel — A.4: Constitutional Dragon Integration */}
@@ -4944,36 +4261,7 @@ function App(){
                         const nm=SHELF_NAMES[id]||{};
                         return React.createElement('div',{
                           key:id,
-                          onClick:()=>{
-                            // ═══ TIER GATE — Show upgrade hint for locked tiles ═══
-                            if(locked){
-                              const typeName=(nm[lang]||nm.en||id);
-                              const tierName=dt.tier==='HIGH'?(lang==='de'?'Governance':lang==='pt'?'Governança':'Governance'):(lang==='de'?'Organization':lang==='pt'?'Organização':'Organization');
-                              const msgs={
-                                de:'🔒 "'+typeName+'" ist ab dem '+tierName+'-Tier verfügbar.\n\nUpgrade für professionelle Werkzeuge mit LLM, Forensic Seal und Governanz.',
-                                en:'🔒 "'+typeName+'" is available from the '+tierName+' tier.\n\nUpgrade for professional tools with LLM, Forensic Seal and governance.',
-                                pt:'🔒 "'+typeName+'" está disponível a partir do tier '+tierName+'.\n\nFaça upgrade para ferramentas profissionais com LLM, Selo Forense e governança.'
-                              };
-                              flash(msgs[lang]||msgs.de);
-                              return;
-                            }
-                            // ═══ DOC ROUTING HUB — Route to correct workspace ═══
-                            const route=DOC_ROUTING[id]||{tab:'chat',workspace:'editor'};
-
-                            // 1. Set document type FIRST
-                            setDocType(id);
-
-                            // 2. Route to correct tab (chat=text editor, desk=canvas)
-                            setSidebarTab(route.tab);
-
-                            // 3. For canvas types, show greeting and done
-                            if(route.workspace==='canvas'){
-                              const greeting=(DOC_GREETINGS[id]||{})[lang]||(DOC_GREETINGS[id]||{}).en||'Canvas bereit.';
-                              setMsgs(prev=>[...prev,{role:'bot',text:greeting}]);
-                              return;
-                            }
-
-                            // 4. For text editor types, send prompt to Dragon
+                          onClick:()=>{if(!locked){
                             const msg=(SHELF_PROMPTS[id]||{})[lang]||(SHELF_PROMPTS[id]||{}).en||`Create ${id}`;
                             setChatIn(msg);
                             setTimeout(()=>send(msg),150);
@@ -4981,33 +4269,14 @@ function App(){
                           style:{
                             background:locked?(th.card+'88'):th.card,border:'1px solid '+th.border,borderRadius:10,
                             padding:'12px 8px',cursor:locked?'not-allowed':'pointer',textAlign:'center',
-                            transition:'all 0.3s ease',opacity:locked?0.45:1,position:'relative',
-                            filter:locked?'grayscale(100%)':'none'
+                            transition:'all 0.2s',opacity:locked?0.5:1,position:'relative'
                           },
-                          onMouseEnter:e=>{
-                            if(!locked){
-                              e.currentTarget.style.borderColor=th.gold;
-                              e.currentTarget.style.transform='translateY(-2px)';
-                              e.currentTarget.style.boxShadow='0 4px 12px rgba(0,0,0,0.08)';
-                            }else{
-                              // TEASER: Brief color flash on locked tiles — "so könnte es aussehen"
-                              e.currentTarget.style.opacity='0.65';
-                              e.currentTarget.style.filter='grayscale(60%)';
-                            }
-                          },
-                          onMouseLeave:e=>{
-                            e.currentTarget.style.borderColor=th.border;
-                            e.currentTarget.style.transform='none';
-                            e.currentTarget.style.boxShadow='none';
-                            if(locked){
-                              e.currentTarget.style.opacity='0.45';
-                              e.currentTarget.style.filter='grayscale(100%)';
-                            }
-                          }
+                          onMouseEnter:e=>{if(!locked){e.currentTarget.style.borderColor=th.gold;e.currentTarget.style.transform='translateY(-2px)';}},
+                          onMouseLeave:e=>{e.currentTarget.style.borderColor=th.border;e.currentTarget.style.transform='none';}
                         },
-                          React.createElement('div',{style:{fontSize:24,marginBottom:4,transition:'all 0.3s'}},dt.icon),
-                          React.createElement('div',{style:{fontFamily:"'Bricolage Grotesque',sans-serif",fontWeight:600,fontSize:12,color:locked?th.dim:th.text}},nm[lang]||nm.en||id),
-                          locked&&React.createElement('span',{style:{position:'absolute',bottom:4,right:4,background:dt.tier==='HIGH'?'#8B250022':'#B8860B22',color:dt.tier==='HIGH'?'#8B2500':'#B8860B',border:'1px solid '+(dt.tier==='HIGH'?'#8B250044':'#B8860B44'),fontSize:8,padding:'2px 6px',borderRadius:8,fontWeight:600,fontFamily:"'JetBrains Mono',monospace"}},dt.tier==='HIGH'?(lang==='de'?'Governance':lang==='pt'?'Governança':'Governance'):(lang==='de'?'Organization':lang==='pt'?'Organização':'Organization'))
+                          React.createElement('div',{style:{fontSize:24,marginBottom:4}},dt.icon),
+                          React.createElement('div',{style:{fontFamily:"'Bricolage Grotesque',sans-serif",fontWeight:600,fontSize:12,color:th.text}},nm[lang]||nm.en||id),
+                          locked&&React.createElement('span',{style:{position:'absolute',top:4,right:4,background:th.gold,color:'#fff',fontSize:8,padding:'2px 5px',borderRadius:3,fontWeight:700}},dt.tier)
                         );
                       })
                     )
@@ -5015,63 +4284,17 @@ function App(){
                 })()}
                 {msgs.map((m,i)=>{
                   if(m.role==="system")return<div key={i} style={{textAlign:"center",padding:"3px 0",margin:"4px 0"}}><span style={{fontSize:9,color:th.dim,background:th.card,padding:"2px 8px",borderRadius:6}}>{m.text}</span></div>;
-                  // ═══ ACTION BRIDGE: Action confirmation cards ═══
-                  if(m.role==="action")return<div key={i} style={{marginBottom:8,marginLeft:28}}>
-                    <div style={{padding:'12px 14px',background:th.card,border:`1px solid ${th.gold}44`,borderRadius:12,borderLeft:`3px solid ${th.gold}`}}>
-                      <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:8}}>
-                        <span style={{fontSize:18}}>{m.actionType==='create_communique'?'📡':m.actionType==='create_document'?'📄':m.actionType==='seal_document'?'🛡️':'📤'}</span>
-                        <span style={{fontWeight:600,fontSize:13,color:th.text}}>{m.label}</span>
-                      </div>
-                      {/* Communiqué trilingual preview */}
-                      {m.actionType==='create_communique'&&m.payload&&m.status==='pending'&&<div style={{marginBottom:10,padding:10,background:th.bg,borderRadius:8,fontSize:11,lineHeight:1.5}}>
-                        <div style={{marginBottom:6}}><span style={{fontWeight:700,color:th.dim}}>🇩🇪</span> {(m.payload.title_de||'').substring(0,60)}{m.payload.title_de?.length>60?'...':''}</div>
-                        <div style={{marginBottom:6}}><span style={{fontWeight:700,color:th.dim}}>🇬🇧</span> {(m.payload.title_en||'').substring(0,60)}{m.payload.title_en?.length>60?'...':''}</div>
-                        <div><span style={{fontWeight:700,color:th.dim}}>🇧🇷</span> {(m.payload.title_pt||'').substring(0,60)}{m.payload.title_pt?.length>60?'...':''}</div>
-                        {m.payload.category&&<div style={{marginTop:8,display:'flex',gap:6}}><span style={{padding:'2px 6px',background:th.gold+'22',color:th.gold,borderRadius:4,fontSize:9,fontWeight:600}}>{m.payload.category}</span><span style={{padding:'2px 6px',background:th.dim+'22',color:th.dim,borderRadius:4,fontSize:9}}>{m.payload.impact_level||'MEDIUM'}</span></div>}
-                      </div>}
-                      {m.status==='pending'&&<div style={{display:'flex',gap:8}}>
-                        <button onClick={()=>executeAction(m.actionType,m.payload,i)} style={{padding:'8px 16px',background:th.gold,border:'none',borderRadius:8,color:'#fff',fontWeight:600,fontSize:11,cursor:'pointer',display:'flex',alignItems:'center',gap:4}}>
-                          <span>✓</span><span>{lang==='de'?'Ja, erstellen':lang==='pt'?'Sim, criar':'Yes, create'}</span>
-                        </button>
-                        <button onClick={()=>dismissAction(i)} style={{padding:'8px 16px',background:th.hover,border:`1px solid ${th.border}`,borderRadius:8,color:th.dim,fontSize:11,cursor:'pointer'}}>
-                          {lang==='de'?'Nein':lang==='pt'?'Não':'No'}
-                        </button>
-                      </div>}
-                      {m.status==='executed'&&<div style={{color:th.success,fontSize:11,display:'flex',alignItems:'center',gap:4}}>
-                        <span>✓</span><span>{m.result?.message||'Action completed'}</span>
-                      </div>}
-                      {m.status==='dismissed'&&<div style={{color:th.dim,fontSize:11,fontStyle:'italic'}}>
-                        {lang==='de'?'Aktion abgelehnt':lang==='pt'?'Acção descartada':'Action dismissed'}
-                      </div>}
-                      {m.status==='failed'&&<div style={{color:th.danger||'#ef4444',fontSize:11}}>
-                        ✗ {m.result?.message||'Action failed'}
-                      </div>}
-                    </div>
-                  </div>;
                   const isU=m.role==="user";
                   // A.4: Show source indicator for Dragon responses
                   const sourceIcon=m.source==="council"?"👁️":m.source==="guardian"?"🛡️":"";
-                  const canDocument=!isU&&isDocumentable(m.text)&&!m.transferred;
-                  return<div key={i} style={{display:"flex",justifyContent:isU?"flex-end":"flex-start",marginBottom:6,position:'relative'}}>
+                  return<div key={i} style={{display:"flex",justifyContent:isU?"flex-end":"flex-start",marginBottom:6}}>
                     {!isU&&<div style={{width:22,height:22,borderRadius:"50%",marginRight:5,flexShrink:0,background:`${th.gold}15`,border:`1px solid ${th.gold}33`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,marginTop:2}}>🐉</div>}
-                    <div style={{maxWidth:"82%",position:'relative'}}>
+                    <div style={{maxWidth:"82%"}}>
                       <div style={{padding:"7px 11px",borderRadius:12,background:isU?th.chatUser:th.chatBot,border:`1px solid ${isU?th.border:th.gold+"22"}`,fontSize:12.5,lineHeight:1.6,whiteSpace:"pre-wrap",borderTopLeftRadius:isU?12:3,borderTopRightRadius:isU?3:12}}>{m.text}</div>
-                      {/* ═══ ACTION BRIDGE v1.0: 📄 Document Button ═══ */}
-                      {canDocument&&<button
-                        onClick={()=>handleDocumentButton(m.text,i)}
-                        title={lang==='de'?'Zum Editor senden':lang==='pt'?'Enviar para Editor':'Send to Editor'}
-                        style={{position:'absolute',top:4,right:4,width:24,height:24,borderRadius:6,background:th.card,border:`1px solid ${th.border}`,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',fontSize:12,opacity:0.5,transition:'all 0.2s'}}
-                        onMouseEnter={e=>{e.currentTarget.style.opacity='1';e.currentTarget.style.borderColor=th.gold;e.currentTarget.style.background=th.gold+'22';}}
-                        onMouseLeave={e=>{e.currentTarget.style.opacity='0.5';e.currentTarget.style.borderColor=th.border;e.currentTarget.style.background=th.card;}}
-                      >📄</button>}
-                      {/* ═══ ACTION BRIDGE v1.0: Transferred Seal ═══ */}
-                      {m.transferred&&<div style={{display:'inline-flex',alignItems:'center',gap:4,fontSize:9,fontFamily:"'JetBrains Mono',monospace",color:th.gold,opacity:0.7,marginTop:4,padding:'2px 8px',borderRadius:4,background:th.gold+'11'}}>
-                        📄→✎ {lang==='de'?'An Editor gesendet':lang==='pt'?'Enviado ao Editor':'Sent to Editor'}
-                      </div>}
                       {!isU&&sourceIcon&&<div style={{fontSize:8,color:th.dim,marginTop:2,marginLeft:4}}>{sourceIcon} {m.source}</div>}
                       {/* ═══ DRAGON→DESKTOP BRIDGE: "Open in Editor" button ═══ */}
                       {!isU&&m.document&&<button onClick={()=>{
-                        const desktopUrl=window.location.hostname==='localhost'?'http://localhost:8100':'/desktop';
+                        const desktopUrl=window.location.hostname==='localhost'?'http://localhost:8100':'https://windi-domain.com/desktop';
                         fetch(desktopUrl+'/api/documents/create-from-dragon',{
                           method:'POST',headers:{'Content-Type':'application/json'},
                           body:JSON.stringify(m.document)
@@ -5157,7 +4380,7 @@ function App(){
                 {filteredCommuniques.slice(0,20).map(c=>{
                   const statusColors={DRAFT:{bg:th.dim+"15",fg:th.dim},REVIEW:{bg:"#eab30822",fg:"#eab308"},PUBLISHED:{bg:th.success+"15",fg:th.success},ARCHIVED:{bg:th.dim+"10",fg:th.dim+"88"},REVOKED:{bg:th.danger+"15",fg:th.danger}};
                   const st=statusColors[c.status]||statusColors.DRAFT;
-                  const catIcons={LAUNCH:"🚀",UPDATE:"🔄",POLICY:"📋",ALERT:"⚠️",GOVERNANCE:"🏛️",REPORT:"📊"};
+                  const catIcons={LAUNCH:"🚀",UPDATE:"🔄",POLICY:"📋",ALERT:"⚠️"};
                   return<div key={c.id} style={{padding:"12px 14px",borderRadius:10,background:th.card,border:`1px solid ${th.border}`,cursor:"pointer",transition:"all 0.2s"}}
                     onMouseEnter={e=>e.currentTarget.style.borderColor=th.gold}
                     onMouseLeave={e=>e.currentTarget.style.borderColor=th.border}>
@@ -5171,21 +4394,6 @@ function App(){
                           <span style={{fontSize:9,color:th.dim,fontFamily:"'JetBrains Mono',monospace"}}>{c.id}</span>
                           {c.ledger_id&&<span style={{fontSize:9,color:th.success}}>🛡️ Ledger</span>}
                         </div>
-                        {/* Workflow Actions */}
-                        {(c.status==='DRAFT'||c.status==='REVIEW')&&<div style={{display:"flex",gap:6,marginTop:8,paddingTop:8,borderTop:`1px solid ${th.border}`}}>
-                          {c.status==='DRAFT'&&<button onClick={async(e)=>{
-                            e.stopPropagation();
-                            const result=await submitCommuniqueForReview(c.id,wallet?.name);
-                            if(result.success){flash(`✅ ${c.id} submitted for review`);fetchCommuniques();}
-                            else{flash(`❌ ${result.error||'Failed'}`);}
-                          }} style={{padding:"4px 10px",borderRadius:6,background:th.gold+"15",border:`1px solid ${th.gold}44`,color:th.gold,fontSize:10,fontWeight:600,cursor:"pointer"}}>👁️ Review</button>}
-                          {c.status==='REVIEW'&&<button onClick={async(e)=>{
-                            e.stopPropagation();
-                            const result=await publishCommunique(c.id,wallet?.name);
-                            if(result.success){flash(`✅ ${c.id} published!`);fetchCommuniques();}
-                            else{flash(`❌ ${result.error||'Failed'}`);}
-                          }} style={{padding:"4px 10px",borderRadius:6,background:th.success+"15",border:`1px solid ${th.success}44`,color:th.success,fontSize:10,fontWeight:600,cursor:"pointer"}}>🚀 Publish</button>}
-                        </div>}
                       </div>
                     </div>
                   </div>;})}
@@ -5322,6 +4530,8 @@ function App(){
                     <button key={key} onClick={()=>deskAddLayer(key)} style={{display:"flex",alignItems:"center",gap:3,padding:"4px 8px",borderRadius:6,background:th.card,border:"1px solid "+th.border,color:th.text,fontSize:10,fontWeight:600,cursor:"pointer"}}>{cfg.icon}</button>
                   ))}
                   <div style={{width:1,height:20,background:th.border}}/>
+                  <button onClick={()=>{if(confirm('Limpar canvas? O trabalho atual será perdido.')){setDeskLayers([]);localStorage.removeItem(CANVAS_SAVE_KEY);setDeskSelected(null);flash('🗑️ Canvas limpo');}}} title="Limpar canvas" style={{padding:"3px 6px",borderRadius:4,background:th.card,border:"1px solid "+th.border,color:th.dim,fontSize:11,cursor:"pointer"}}>🗑️</button>
+                  <button onClick={()=>{try{localStorage.setItem(CANVAS_SAVE_KEY,JSON.stringify(deskLayers));flash('💾 Canvas salvo!');}catch(e){flash('❌ Erro ao salvar');}}} title="Salvar canvas" style={{padding:"3px 6px",borderRadius:4,background:th.card,border:"1px solid "+th.border,color:th.gold,fontSize:11,cursor:"pointer"}}>💾</button>
                   <button onClick={deskUndo} style={{padding:"3px 6px",borderRadius:4,background:th.card,border:"1px solid "+th.border,color:th.dim,fontSize:12,cursor:"pointer"}}>↩</button>
                   <button onClick={deskRedo} style={{padding:"3px 6px",borderRadius:4,background:th.card,border:"1px solid "+th.border,color:th.dim,fontSize:12,cursor:"pointer"}}>↪</button>
                   <div style={{width:1,height:20,background:th.border}}/>
@@ -5332,7 +4542,7 @@ function App(){
                   <button onClick={()=>setDeskZoom(z=>Math.min(2,z+0.1))} style={{padding:"2px 5px",borderRadius:4,background:th.card,border:"1px solid "+th.border,color:th.dim,fontSize:11,cursor:"pointer"}}>+</button>
                   <div style={{flex:1}}/>
                   <span style={{fontSize:9,color:th.dim,fontFamily:"'JetBrains Mono',monospace"}}>{deskLayers.length} layers</span>
-                  <button onClick={startFinalize} disabled={deskLayers.length===0} style={{padding:"4px 10px",borderRadius:6,background:deskLayers.length>0?th.gold:th.dim,border:"none",color:"#FFFDF5",fontSize:10,fontWeight:700,cursor:"pointer",opacity:deskLayers.length>0?1:0.4}}>🛡️</button>
+                  <button onClick={startDeskFinalize} disabled={deskLayers.length===0} style={{padding:"4px 10px",borderRadius:6,background:deskLayers.length>0?th.gold:th.dim,border:"none",color:"#FFFDF5",fontSize:10,fontWeight:700,cursor:"pointer",opacity:deskLayers.length>0?1:0.4}}>🛡️</button>
                 </div>
 
                 {/* A4 CANVAS */}
@@ -5340,13 +4550,13 @@ function App(){
 
                   {/* Render layers */}
                   {[...deskLayers].sort((a,b)=>(a.zIndex||0)-(b.zIndex||0)).map(layer=>(
-                    <div key={layer.id} onMouseDown={e=>{e.stopPropagation();deskStartDrag(e,layer.id);}}
+                    <div key={layer.id} onMouseDown={e=>{e.stopPropagation();if(layer.type==="text"&&deskSelected===layer.id)return;deskStartDrag(e,layer.id);}}
                       style={{position:"absolute",left:layer.x,top:layer.y,width:layer.w,height:layer.h,opacity:layer.opacity??1,borderRadius:layer.borderRadius??0,transform:layer.rotation?"rotate("+layer.rotation+"deg)":"none",outline:deskSelected===layer.id?"2px solid "+th.gold:"none",outlineOffset:2,boxShadow:deskSelected===layer.id?"0 0 0 1px "+th.gold+"44,0 4px 16px rgba(0,0,0,0.1)":"0 1px 4px rgba(0,0,0,0.08)",cursor:layer.locked?"not-allowed":"move",overflow:"hidden"}}>
 
                       {layer.type==="text"&&(
                         <div contentEditable={deskSelected===layer.id&&!layer.locked} suppressContentEditableWarning
                           onBlur={e=>deskUpdateLayer(layer.id,{content:e.target.innerText})}
-                          style={{width:"100%",height:"100%",padding:"8px 10px",fontSize:layer.fontSize||16,fontWeight:layer.fontWeight||400,fontStyle:layer.fontStyle||"normal",textDecoration:layer.textDecoration||"none",textAlign:layer.textAlign||"left",color:layer.color||th.text,background:layer.bgColor||"transparent",fontFamily:"'Bricolage Grotesque',sans-serif",outline:"none",lineHeight:1.6,wordBreak:"break-word",cursor:deskSelected===layer.id?"text":"move"}}>
+                          style={{width:"100%",height:"100%",padding:"8px 10px",fontSize:layer.fontSize||16,fontWeight:layer.fontWeight||400,fontStyle:layer.fontStyle||"normal",textDecoration:layer.textDecoration||"none",textAlign:layer.textAlign||"left",color:layer.color||th.text,background:layer.bgColor||"transparent",fontFamily:(layer.fontFamily||"Bricolage Grotesque")+",sans-serif",outline:"none",lineHeight:1.6,wordBreak:"break-word",cursor:deskSelected===layer.id?"text":"move"}}>
                           {layer.content||"Type here..."}
                         </div>
                       )}
@@ -5359,15 +4569,18 @@ function App(){
 
                       {layer.type==="video"&&(
                         layer.content?
-                          <video src={layer.content} controls style={{width:"100%",height:"100%",objectFit:"contain",background:"#000"}}/>:
-                          <div style={{width:"100%",height:"100%",display:"flex",alignItems:"center",justifyContent:"center",background:"#111",color:"#888",fontSize:11}}>🎬 Video URL</div>
+                          (layer.isEmbed?
+                            <iframe src={layer.content} style={{width:"100%",height:"100%",border:"none"}} allow="autoplay;encrypted-media" allowFullScreen/>:
+                            <video src={layer.content} controls style={{width:"100%",height:"100%",objectFit:"contain",background:"#000"}}/>):
+                          <div style={{width:"100%",height:"100%",display:"flex",alignItems:"center",justifyContent:"center",background:"#111",color:"#888",fontSize:11,flexDirection:"column",gap:4}}><div>🎬</div><div style={{fontSize:9}}>Cole URL ou upload MP4</div></div>
                       )}
 
                       {layer.type==="shape"&&(
                         <div style={{width:"100%",height:"100%",background:layer.bgColor||th.gold+"22",border:"2px solid "+(layer.bgColor||th.gold)+"44",display:"flex",alignItems:"center",justifyContent:"center",fontSize:layer.fontSize||14,color:layer.color||th.text}}>{layer.content}</div>
                       )}
 
-                      {deskSelected===layer.id&&!layer.locked&&["nw","n","ne","e","se","s","sw","w"].map(pos=>{
+                      {deskSelected===layer.id&&<button onMouseDown={e=>{e.stopPropagation();deskDeleteLayer(layer.id);}} style={{position:"absolute",top:-10,right:-10,width:20,height:20,borderRadius:"50%",background:"#A94442",border:"2px solid #fff",color:"#fff",fontSize:11,fontWeight:700,cursor:"pointer",zIndex:20,display:"flex",alignItems:"center",justifyContent:"center",lineHeight:1,boxShadow:"0 2px 6px rgba(0,0,0,0.3)"}}>×</button>}
+      {deskSelected===layer.id&&!layer.locked&&["nw","n","ne","e","se","s","sw","w"].map(pos=>{
                         const posMap={nw:{top:-4,left:-4},n:{top:-4,left:"50%",transform:"translateX(-50%)"},ne:{top:-4,right:-4},e:{top:"50%",right:-4,transform:"translateY(-50%)"},se:{bottom:-4,right:-4},s:{bottom:-4,left:"50%",transform:"translateX(-50%)"},sw:{bottom:-4,left:-4},w:{top:"50%",left:-4,transform:"translateY(-50%)"}};
                         const curMap={nw:"nw-resize",n:"n-resize",ne:"ne-resize",e:"e-resize",se:"se-resize",s:"s-resize",sw:"sw-resize",w:"w-resize"};
                         return <div key={pos} onMouseDown={e=>{e.stopPropagation();deskStartResize(e,pos);}} style={{position:"absolute",...posMap[pos],width:8,height:8,background:th.gold,borderRadius:2,cursor:curMap[pos],zIndex:10,border:"1px solid #fff",boxShadow:"0 1px 3px rgba(0,0,0,0.3)"}}/>;
@@ -5428,9 +4641,9 @@ function App(){
                       </div>
                       {/* Heading presets */}
                       <div style={{display:"flex",gap:2,marginBottom:6}}>
-                        {[{id:"h1",label:"H1",size:28,weight:700},{id:"h2",label:"H2",size:22,weight:700},{id:"h3",label:"H3",size:18,weight:600},{id:"p",label:"P",size:14,weight:400},{id:"s",label:"S",size:11,weight:400}].map(h=>{
+                        {[{id:"h1",label:"H1",size:28,weight:700},{id:"h2",label:"H2",size:22,weight:700},{id:"h3",label:"H3",size:18,weight:600},{id:"p",label:"P",size:14,weight:400},{id:"s",label:"S",size:11,weight:400},{id:"q",label:"Q",size:15,weight:400,style:"italic"},{id:"c",label:"C",size:10,weight:400}].map(h=>{
                           const isActive=(sl.fontSize||16)===h.size&&(sl.fontWeight||400)===h.weight;
-                          return <button key={h.id} onClick={()=>deskUpdateLayer(sl.id,{fontSize:h.size,fontWeight:h.weight})} title={h.label} style={{flex:1,padding:"3px 0",borderRadius:4,border:"1px solid "+(isActive?th.gold:th.border),background:isActive?th.gold+"22":th.card,color:isActive?th.gold:th.text,fontSize:9,fontWeight:600,cursor:"pointer"}}>{h.label}</button>;
+                          return <button key={h.id} onClick={()=>deskUpdateLayer(sl.id,{fontSize:h.size,fontWeight:h.weight,fontStyle:h.style||"normal"})} title={h.label} style={{flex:1,padding:"3px 0",borderRadius:4,border:"1px solid "+(isActive?th.gold:th.border),background:isActive?th.gold+"22":th.card,color:isActive?th.gold:th.text,fontSize:9,fontWeight:600,cursor:"pointer"}}>{h.label}</button>;
                         })}
                       </div>
                       {/* Font size + weight selects */}
@@ -5438,6 +4651,7 @@ function App(){
                         <select value={sl.fontSize||16} onChange={e=>deskUpdateLayer(sl.id,{fontSize:Number(e.target.value)})} style={{padding:"3px",borderRadius:3,border:"1px solid "+th.border,background:th.input,color:th.text,fontSize:9,outline:"none"}}>{FONT_SIZES.map(s=><option key={s} value={s}>{s}px</option>)}</select>
                         <select value={sl.fontWeight||400} onChange={e=>deskUpdateLayer(sl.id,{fontWeight:Number(e.target.value)})} style={{padding:"3px",borderRadius:3,border:"1px solid "+th.border,background:th.input,color:th.text,fontSize:9,outline:"none"}}>{[300,400,500,600,700,800].map(w=><option key={w} value={w}>{w}</option>)}</select>
                       </div>
+                      <select value={sl.fontFamily||"Bricolage Grotesque"} onChange={e=>deskUpdateLayer(sl.id,{fontFamily:e.target.value})} style={{width:"100%",padding:"3px",borderRadius:3,border:"1px solid "+th.border,background:th.input,color:th.text,fontSize:9,outline:"none",marginBottom:6}}>{["Bricolage Grotesque","JetBrains Mono","Georgia","Arial","Times New Roman"].map(f=><option key={f} value={f}>{f}</option>)}</select>
                       </>
                     )}
                     <div style={{display:"flex",gap:6,marginBottom:6}}>
@@ -5447,8 +4661,8 @@ function App(){
                     <div style={{marginBottom:4}}><div style={{display:"flex",justifyContent:"space-between"}}><span style={{fontSize:8,color:th.dim}}>Opacity</span><span style={{fontSize:8,color:th.dim,fontFamily:"'JetBrains Mono',monospace"}}>{Math.round((sl.opacity??1)*100)}%</span></div><input type="range" min="0" max="100" value={Math.round((sl.opacity??1)*100)} onChange={e=>deskUpdateLayer(sl.id,{opacity:Number(e.target.value)/100})} style={{width:"100%",accentColor:th.gold}}/></div>
                     <div style={{marginBottom:4}}><div style={{display:"flex",justifyContent:"space-between"}}><span style={{fontSize:8,color:th.dim}}>Rotation</span><span style={{fontSize:8,color:th.dim,fontFamily:"'JetBrains Mono',monospace"}}>{sl.rotation||0}°</span></div><input type="range" min="-180" max="180" value={sl.rotation||0} onChange={e=>deskUpdateLayer(sl.id,{rotation:Number(e.target.value)})} style={{width:"100%",accentColor:th.gold}}/></div>
                     <div style={{marginBottom:4}}><div style={{display:"flex",justifyContent:"space-between"}}><span style={{fontSize:8,color:th.dim}}>Radius</span><span style={{fontSize:8,color:th.dim,fontFamily:"'JetBrains Mono',monospace"}}>{sl.borderRadius||0}px</span></div><input type="range" min="0" max="50" value={sl.borderRadius||0} onChange={e=>deskUpdateLayer(sl.id,{borderRadius:Number(e.target.value)})} style={{width:"100%",accentColor:th.gold}}/></div>
-                    {sl.type==="image"&&<button onClick={()=>deskFileRef.current?.click()} style={{width:"100%",padding:"5px",borderRadius:5,background:th.card,border:"1px dashed "+th.gold+"44",color:th.gold,fontSize:9,cursor:"pointer",marginBottom:4}}>📸 Upload</button>}
-                    {sl.type==="video"&&<button onClick={()=>{const u=prompt("Video URL:");if(u)deskUpdateLayer(sl.id,{content:u});}} style={{width:"100%",padding:"5px",borderRadius:5,background:th.card,border:"1px dashed "+th.gold+"44",color:th.gold,fontSize:9,cursor:"pointer",marginBottom:4}}>🎬 Set URL</button>}
+                    {sl.type==="image"&&<div style={{marginBottom:4}}><div style={{display:"flex",gap:3,marginBottom:4}}><button onClick={()=>deskFileRef.current?.click()} style={{flex:1,padding:"5px",borderRadius:5,background:th.card,border:"1px dashed "+th.gold+"44",color:th.gold,fontSize:9,cursor:"pointer"}}>📁 Upload</button><button onClick={()=>{const u=prompt("Image URL (https://...):");if(u)deskUpdateLayer(sl.id,{content:u});}} style={{flex:1,padding:"5px",borderRadius:5,background:th.card,border:"1px dashed "+th.gold+"44",color:th.gold,fontSize:9,cursor:"pointer"}}>🔗 URL</button></div></div>}
+                    {sl.type==="video"&&<div style={{marginBottom:4}}><div style={{fontSize:8,color:th.dim,marginBottom:3}}>🎬 Video URL (YouTube/Vimeo/MP4)</div><input type="text" placeholder="https://..." defaultValue={sl.content||""} onBlur={e=>{const raw=e.target.value.trim();if(!raw)return;let url=raw;const ytMatch=raw.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/);const vmMatch=raw.match(/vimeo\.com\/(\d+)/);if(ytMatch)url="https://www.youtube.com/embed/"+ytMatch[1];else if(vmMatch)url="https://player.vimeo.com/video/"+vmMatch[1];deskUpdateLayer(sl.id,{content:url,isEmbed:!!(ytMatch||vmMatch)});}} style={{width:"100%",padding:"4px 6px",borderRadius:4,border:"1px solid "+th.border,background:th.input,color:th.text,fontSize:9,outline:"none",boxSizing:"border-box",marginBottom:3}}/><button onClick={()=>window._deskVideoRef?.click()} style={{width:"100%",padding:"4px",borderRadius:4,background:th.card,border:"1px dashed "+th.gold+"44",color:th.gold,fontSize:9,cursor:"pointer"}}>📁 Upload MP4</button></div>}
                     <div style={{display:"flex",gap:3,flexWrap:"wrap",marginTop:4}}>
                       <button onClick={()=>deskUpdateLayer(sl.id,{locked:!sl.locked})} style={{flex:1,padding:"4px",borderRadius:4,background:th.card,border:"1px solid "+th.border,color:th.dim,fontSize:8,cursor:"pointer"}}>{sl.locked?"🔓":"🔒"}</button>
                       <button onClick={()=>deskDuplicateLayer(sl.id)} style={{flex:1,padding:"4px",borderRadius:4,background:th.card,border:"1px solid "+th.border,color:th.dim,fontSize:8,cursor:"pointer"}}>📋</button>
@@ -5462,6 +4676,7 @@ function App(){
               </aside>
 
               <input ref={deskFileRef} type="file" accept="image/*" style={{display:"none"}} onChange={deskHandleImageUpload}/>
+            <input ref={el=>window._deskVideoRef=el} type="file" accept="video/*" style={{display:"none"}} onChange={e=>{const file=e.target.files[0];if(!file)return;const r=new FileReader();r.onload=ev=>deskUpdateLayer(deskSelected,{content:ev.target.result,isEmbed:false});r.readAsDataURL(file);}}/>
             </div>
           )}
 
@@ -5505,7 +4720,7 @@ function App(){
             </div>
           )}
 
-          {/* ═══ SPRINT 3: FILES TAB (with persistence + export) ═══ */}
+          {/* ═══ WAVE 1: FILES TAB ═══ */}
           {sidebarTab==='files'&&(
             <div style={{flex:1,display:'flex',flexDirection:'column',overflow:'hidden'}}>
               <div style={{padding:'12px 16px',borderBottom:'1px solid '+th.border,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
@@ -5514,10 +4729,7 @@ function App(){
                   <span style={{fontSize:14,fontWeight:700}}>{t.sidebar?.files||'Files'}</span>
                   <span style={{fontSize:10,color:th.dim,background:th.hover,padding:'2px 6px',borderRadius:4}}>{uploadedFiles.length}</span>
                 </div>
-                <div style={{display:'flex',gap:6}}>
-                  {uploadedFiles.length>0&&<button onClick={exportAllFiles} title="Export all as JSON" style={{padding:'4px 8px',borderRadius:6,background:th.card,border:'1px solid '+th.border,color:th.dim,fontSize:10,cursor:'pointer'}}>📤</button>}
-                  <button onClick={()=>filesInputRef.current?.click()} style={{padding:'4px 10px',borderRadius:6,background:th.gold,border:'none',color:'#fff',fontSize:10,cursor:'pointer',fontWeight:600}}>+ Upload</button>
-                </div>
+                <button onClick={()=>filesInputRef.current?.click()} style={{padding:'4px 10px',borderRadius:6,background:th.gold,border:'none',color:'#fff',fontSize:10,cursor:'pointer',fontWeight:600}}>+ Upload</button>
               </div>
               <input ref={filesInputRef} type="file" multiple style={{display:'none'}} onChange={handleFilesInputChange}/>
               <div style={{flex:1,overflowY:'auto',padding:12}}>
@@ -5530,43 +4742,22 @@ function App(){
                 {uploadedFiles.length===0&&!filesUploading&&(
                   <div style={{textAlign:'center',padding:20,color:th.dim}}>
                     <div style={{fontSize:10}}>No files uploaded yet</div>
-                    <div style={{fontSize:9,marginTop:4,color:th.dim}}>Files persist across sessions</div>
                   </div>
                 )}
                 <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(100px,1fr))',gap:10}}>
-                  {uploadedFiles.map(file=>{
-                    const getIcon=(type)=>{
-                      if(type?.includes('pdf'))return'📕';
-                      if(type?.includes('image'))return'🖼️';
-                      if(type?.includes('video'))return'🎬';
-                      if(type?.includes('audio'))return'🎵';
-                      if(type?.includes('json'))return'📋';
-                      if(type?.startsWith('text/'))return'📄';
-                      return'📎';
-                    };
-                    const formatSize=(bytes)=>{
-                      if(bytes<1024)return bytes+' B';
-                      if(bytes<1024*1024)return(bytes/1024).toFixed(1)+' KB';
-                      return(bytes/(1024*1024)).toFixed(1)+' MB';
-                    };
-                    return(
-                      <div key={file.id} style={{background:th.card,border:'1px solid '+th.border,borderRadius:8,overflow:'hidden',position:'relative'}}>
-                        <div style={{height:70,background:th.hover,display:'flex',alignItems:'center',justifyContent:'center'}}>
-                          {file.thumbnail?<img src={file.thumbnail} style={{width:'100%',height:'100%',objectFit:'cover'}} alt=""/>:
-                          <span style={{fontSize:24}}>{getIcon(file.type)}</span>}
-                        </div>
-                        <div style={{padding:6}}>
-                          <div style={{fontSize:9,fontWeight:600,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{file.name}</div>
-                          <div style={{fontSize:8,color:th.dim}}>{formatSize(file.size)}</div>
-                        </div>
-                        {/* Action buttons */}
-                        <div style={{position:'absolute',top:4,right:4,display:'flex',gap:2}}>
-                          {file.content&&<button onClick={(e)=>{e.stopPropagation();exportFile(file);}} title="Download" style={{width:18,height:18,borderRadius:4,background:'#000A',border:'none',color:'#fff',fontSize:10,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}>⬇</button>}
-                          <button onClick={()=>deleteUploadedFile(file.id)} title="Delete" style={{width:18,height:18,borderRadius:4,background:'#000A',border:'none',color:'#fff',fontSize:10,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}>×</button>
-                        </div>
+                  {uploadedFiles.map(file=>(
+                    <div key={file.id} style={{background:th.card,border:'1px solid '+th.border,borderRadius:8,overflow:'hidden',position:'relative'}}>
+                      <div style={{height:70,background:th.hover,display:'flex',alignItems:'center',justifyContent:'center'}}>
+                        {file.thumbnail?<img src={file.thumbnail} style={{width:'100%',height:'100%',objectFit:'cover'}} alt=""/>:
+                        <span style={{fontSize:24}}>{file.type?.includes('pdf')?'📄':file.type?.includes('video')?'🎬':file.type?.includes('audio')?'🎵':'📎'}</span>}
                       </div>
-                    );
-                  })}
+                      <div style={{padding:6}}>
+                        <div style={{fontSize:9,fontWeight:600,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{file.name}</div>
+                        <div style={{fontSize:8,color:th.dim}}>{(file.size/1024).toFixed(1)} KB</div>
+                      </div>
+                      <button onClick={()=>deleteUploadedFile(file.id)} style={{position:'absolute',top:4,right:4,width:18,height:18,borderRadius:4,background:'#000A',border:'none',color:'#fff',fontSize:10,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}>×</button>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -5613,119 +4804,8 @@ function App(){
             </div>
           )}
 
-          {/* ═══ HISTORY TAB — Timeline of all actions ═══ */}
-          {sidebarTab==="history"&&(
-            <div style={{flex:1,display:'flex',flexDirection:'column',overflow:'hidden'}}>
-              <div style={{padding:'12px 16px',borderBottom:'1px solid '+th.border,display:'flex',alignItems:'center',gap:8}}>
-                <span style={{fontSize:20}}>🕐</span>
-                <span style={{fontSize:14,fontWeight:700}}>{t.sidebar?.history||'History'}</span>
-                <span style={{marginLeft:'auto',fontSize:10,color:th.dim}}>{buildHistoryItems.length} {lang==='de'?'Einträge':lang==='pt'?'entradas':'entries'}</span>
-              </div>
-              <div style={{flex:1,overflowY:'auto',padding:12}}>
-                {buildHistoryItems.length===0?(
-                  <div style={{textAlign:'center',padding:30,color:th.dim}}>
-                    <div style={{fontSize:28,marginBottom:8}}>🕐</div>
-                    <div style={{fontSize:11}}>{lang==='de'?'Noch keine Aktivitäten':lang==='pt'?'Nenhuma atividade ainda':'No activity yet'}</div>
-                    <div style={{fontSize:10,marginTop:4}}>{lang==='de'?'Erstellen und versiegeln Sie Dokumente':lang==='pt'?'Crie e sele documentos':'Create and seal documents'}</div>
-                  </div>
-                ):(
-                  buildHistoryItems.map((item,idx)=>{
-                    const prevItem=buildHistoryItems[idx-1];
-                    const itemDate=new Date(item.timestamp).toLocaleDateString(lang==='de'?'de-DE':lang==='pt'?'pt-PT':'en-US',{weekday:'short',month:'short',day:'numeric'});
-                    const prevDate=prevItem?new Date(prevItem.timestamp).toLocaleDateString(lang==='de'?'de-DE':lang==='pt'?'pt-PT':'en-US',{weekday:'short',month:'short',day:'numeric'}):null;
-                    const showDateHeader=itemDate!==prevDate;
-                    const actionIcons={sealed:'🛡️',created:'📝',exported:'📤',published:'🚀',reviewed:'👁️'};
-                    const actionLabels={
-                      sealed:{en:'Sealed',de:'Versiegelt',pt:'Selado'},
-                      created:{en:'Created',de:'Erstellt',pt:'Criado'},
-                      exported:{en:'Exported',de:'Exportiert',pt:'Exportado'},
-                      published:{en:'Published',de:'Veröffentlicht',pt:'Publicado'}
-                    };
-                    return(
-                      <React.Fragment key={item.id}>
-                        {showDateHeader&&<div style={{fontSize:10,fontWeight:700,color:th.dim,padding:'12px 0 6px',textTransform:'uppercase',letterSpacing:0.5}}>{itemDate}</div>}
-                        <div style={{display:'flex',alignItems:'center',gap:10,padding:'10px 12px',background:th.card,border:'1px solid '+th.border,borderRadius:8,marginBottom:6,cursor:'pointer',transition:'all 0.2s'}}
-                          onMouseOver={e=>e.currentTarget.style.borderColor=th.gold}
-                          onMouseOut={e=>e.currentTarget.style.borderColor=th.border}
-                          onClick={()=>{if(item.type==='receipt'||item.action==='sealed')setSelectedReceipt(item.data);}}>
-                          <span style={{fontSize:16}}>{item.icon}</span>
-                          <div style={{flex:1,minWidth:0}}>
-                            <div style={{fontSize:11,fontWeight:600,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{item.title}</div>
-                            <div style={{fontSize:9,color:th.dim,display:'flex',gap:6,alignItems:'center'}}>
-                              <span>{actionIcons[item.action]||'📄'} {actionLabels[item.action]?.[lang]||item.action}</span>
-                              <span>·</span>
-                              <span>{new Date(item.timestamp).toLocaleTimeString(lang==='de'?'de-DE':'en-US',{hour:'2-digit',minute:'2-digit'})}</span>
-                            </div>
-                          </div>
-                          {item.action==='sealed'&&<span style={{fontSize:10,color:th.success}}>✓</span>}
-                        </div>
-                      </React.Fragment>
-                    );
-                  })
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* ═══ SPRINT 3: PRODUCTS TAB (ISP Templates Catalog) ═══ */}
-          {sidebarTab==='products'&&(
-            <div style={{flex:1,display:'flex',flexDirection:'column',overflow:'hidden'}}>
-              <div style={{padding:'12px 16px',borderBottom:'1px solid '+th.border,display:'flex',alignItems:'center',gap:8}}>
-                <span style={{fontSize:20}}>📦</span>
-                <span style={{fontSize:14,fontWeight:700}}>{t.sidebar?.products||'Products'}</span>
-                <span style={{marginLeft:'auto',fontSize:10,color:th.dim}}>{ispProfiles.length} templates</span>
-              </div>
-              <div style={{flex:1,overflowY:'auto',padding:12}}>
-                {productsLoading?(
-                  <div style={{textAlign:'center',padding:40,color:th.dim}}>
-                    <div style={{fontSize:24,marginBottom:8}}>⏳</div>
-                    <div style={{fontSize:11}}>Loading templates...</div>
-                  </div>
-                ):ispProfiles.length===0?(
-                  <div style={{textAlign:'center',padding:30,color:th.dim}}>
-                    <div style={{fontSize:28,marginBottom:8}}>📦</div>
-                    <div style={{fontSize:11}}>No templates available</div>
-                    <div style={{fontSize:10,marginTop:4}}>ISP profiles not configured</div>
-                  </div>
-                ):(
-                  <div style={{display:'flex',flexDirection:'column',gap:8}}>
-                    {/* Group by category */}
-                    {Object.entries(ispProfiles.reduce((acc,p)=>{
-                      const cat=p.category||'other';
-                      if(!acc[cat])acc[cat]=[];
-                      acc[cat].push(p);
-                      return acc;
-                    },{})).map(([cat,profiles])=>(
-                      <div key={cat}>
-                        <div style={{fontSize:10,fontWeight:700,color:th.gold,textTransform:'uppercase',letterSpacing:0.5,marginBottom:6,marginTop:8}}>
-                          {cat==='communique'?'📜':cat==='governance'?'⚖️':cat==='legal'?'📋':cat==='technical'?'⚙️':cat==='creative'?'🎨':'📦'} {cat}
-                        </div>
-                        {profiles.map(profile=>(
-                          <div key={profile.id} onClick={()=>createFromTemplate(profile)} style={{
-                            padding:'12px 14px',background:th.card,border:'1px solid '+th.border,borderRadius:10,
-                            cursor:'pointer',marginBottom:6,transition:'all 0.2s'
-                          }} onMouseOver={e=>e.currentTarget.style.borderColor=th.gold} onMouseOut={e=>e.currentTarget.style.borderColor=th.border}>
-                            <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:4}}>
-                              <span style={{fontSize:16}}>{profile.icon||'📄'}</span>
-                              <span style={{fontSize:13,fontWeight:600}}>{profile.name}</span>
-                            </div>
-                            <div style={{fontSize:10,color:th.dim,marginBottom:6,lineHeight:1.4}}>{profile.description||'No description'}</div>
-                            <div style={{display:'flex',gap:8,fontSize:9,color:th.dim}}>
-                              <span>{profile.fields?.length||0} fields</span>
-                              {profile.governance?.retention&&<span>• {profile.governance.retention}</span>}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
           {/* ═══ OTHER TABS (Fallback) ═══ */}
-          {!["chat","docs","wallet","desk","journal","files","search","history","insights","products"].includes(sidebarTab)&&(
+          {!["chat","docs","wallet","desk","journal","files","search"].includes(sidebarTab)&&(
             <div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
               <div style={{textAlign:"center"}}>
                 <div style={{fontSize:40,marginBottom:12}}>{SIDEBAR.find(s=>s.id===sidebarTab)?.icon}</div>
@@ -5912,79 +4992,27 @@ function App(){
           </>}
         </div></div>}
 
-      {/* ═══ SPRINT 3: VOICE MODAL WITH WEB SPEECH API ═══ */}
-      {showVoiceModal&&<div style={{position:"fixed",inset:0,background:"#000A",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:16}} onClick={()=>{voiceRecognitionRef.current?.stop();setIsVoiceRecording(false);setShowVoiceModal(false);}}>
+      {/* ═══ FIX (I): VOICE PASTE MODAL ═══ */}
+      {showVoiceModal&&<div style={{position:"fixed",inset:0,background:"#000A",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:16}} onClick={()=>setShowVoiceModal(false)}>
         <div onClick={e=>e.stopPropagation()} style={{background:th.card,borderRadius:18,padding:"24px 20px",maxWidth:400,width:"100%",border:`1px solid ${th.gold}33`}}>
           <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
             <span style={{fontSize:24}}>🎙️</span>
-            <h2 style={{fontSize:16,fontWeight:800,margin:0}}>{t.doc.addVoice}</h2>
-          </div>
-
-          {/* Web Speech API Controls */}
-          {(window.SpeechRecognition||window.webkitSpeechRecognition)?(
-            <div style={{textAlign:'center',marginBottom:16}}>
-              <button onClick={toggleVoiceRecording} style={{
-                width:64,height:64,borderRadius:'50%',border:'none',cursor:'pointer',
-                background:isVoiceRecording?'#ef4444':'#22c55e',
-                boxShadow:isVoiceRecording?'0 0 20px #ef444466':'0 0 20px #22c55e66',
-                transition:'all 0.2s',fontSize:24
-              }}>
-                {isVoiceRecording?'⏹️':'🎤'}
-              </button>
-              <div style={{fontSize:11,color:th.dim,marginTop:8}}>
-                {isVoiceRecording?(lang==='de'?'Aufnahme läuft...':lang==='pt'?'Gravando...':'Recording...'):(lang==='de'?'Klicken zum Aufnehmen':lang==='pt'?'Clique para gravar':'Click to record')}
-              </div>
-              {isVoiceRecording&&voiceInterim&&(
-                <div style={{fontSize:12,color:th.gold,fontStyle:'italic',marginTop:8,padding:'8px',background:th.hover,borderRadius:8}}>
-                  {voiceInterim}
-                </div>
-              )}
-            </div>
-          ):(
-            <div style={{textAlign:'center',padding:'12px',background:'#f59e0b11',border:'1px solid #f59e0b33',borderRadius:8,marginBottom:12}}>
-              <span style={{fontSize:12,color:'#f59e0b'}}>⚠️ {lang==='de'?'Web Speech API nicht verfügbar':lang==='pt'?'Web Speech API indisponível':'Web Speech API not available'}</span>
-            </div>
-          )}
-
-          <p style={{fontSize:11,color:th.dim,marginBottom:8,lineHeight:1.4}}>
-            {lang==="de"?"Oder füge Text manuell ein:":lang==="pt"?"Ou cole texto manualmente:":"Or paste text manually:"}
-          </p>
+            <h2 style={{fontSize:16,fontWeight:800,margin:0}}>{t.doc.addVoice}</h2></div>
+          <p style={{fontSize:12,color:th.dim,marginBottom:12,lineHeight:1.5}}>
+            {lang==="de"?"Sprich dein Transkript oder kopiere es von einer Sprach-App hier rein.":
+             lang==="pt"?"Cola a tua transcrição de uma app de voz aqui.":
+             "Paste your voice transcript from a speech app here."}</p>
           <textarea value={voiceText} onChange={e=>setVoiceText(e.target.value)}
-            placeholder={lang==="de"?"Transkript hier...":lang==="pt"?"Transcrição aqui...":"Transcript here..."}
-            style={{width:"100%",minHeight:80,padding:"10px 12px",borderRadius:10,border:`1px solid ${th.border}`,
+            placeholder={lang==="de"?"Transkript hier einfügen...":lang==="pt"?"Colar transcrição aqui...":"Paste transcript here..."}
+            style={{width:"100%",minHeight:100,padding:"10px 12px",borderRadius:10,border:`1px solid ${th.border}`,
               background:th.input,color:th.text,fontSize:13,outline:"none",resize:"vertical",boxSizing:"border-box",
               fontFamily:"'Bricolage Grotesque',sans-serif"}}/>
           <div style={{display:"flex",gap:8,marginTop:12}}>
-            <button onClick={()=>{voiceRecognitionRef.current?.stop();setIsVoiceRecording(false);setShowVoiceModal(false);}} style={{flex:1,padding:"10px",borderRadius:10,background:th.card,border:`1px solid ${th.border}`,color:th.dim,fontSize:12,cursor:"pointer"}}>{t.did.close}</button>
-            <button onClick={()=>{if(voiceText.trim()){voiceRecognitionRef.current?.stop();setIsVoiceRecording(false);send(voiceText.trim());setVoiceText("");setShowVoiceModal(false);}}} disabled={!voiceText.trim()}
+            <button onClick={()=>setShowVoiceModal(false)} style={{flex:1,padding:"10px",borderRadius:10,background:th.card,border:`1px solid ${th.border}`,color:th.dim,fontSize:12,cursor:"pointer"}}>{t.did.close}</button>
+            <button onClick={()=>{if(voiceText.trim()){send(voiceText.trim());setVoiceText("");setShowVoiceModal(false);}}} disabled={!voiceText.trim()}
               style={{flex:1,padding:"10px",borderRadius:10,background:voiceText.trim()?th.gold:th.dim,border:"none",color:"#FFF",fontSize:12,fontWeight:700,cursor:"pointer",opacity:voiceText.trim()?1:0.4}}>→ {t.sidebar.chat}</button>
           </div>
-        </div>
-      </div>}
-
-      {/* ═══ ACTION BRIDGE v1.0: Append/Replace Dialog ═══ */}
-      {transferDialog&&<div style={{position:"fixed",inset:0,background:"#0008",zIndex:1001,display:"flex",alignItems:"center",justifyContent:"center",padding:16}} onClick={()=>setTransferDialog(null)}>
-        <div onClick={e=>e.stopPropagation()} style={{background:th.card,borderRadius:14,padding:"20px",maxWidth:340,width:"100%",border:`1px solid ${th.gold}44`,boxShadow:'0 8px 32px #0004'}}>
-          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
-            <span style={{fontSize:20}}>📄</span>
-            <span style={{fontSize:14,fontWeight:700,color:th.text}}>{lang==='de'?'Editor hat Inhalt':lang==='pt'?'Editor tem conteúdo':'Editor has content'}</span>
-            <span style={{marginLeft:"auto",cursor:"pointer",fontSize:16,color:th.dim}} onClick={()=>setTransferDialog(null)}>×</span>
-          </div>
-          <p style={{fontSize:11,color:th.dim,marginBottom:16,lineHeight:1.5}}>{lang==='de'?'Wie soll der neue Inhalt eingefügt werden?':lang==='pt'?'Como inserir o novo conteúdo?':'How should the new content be inserted?'}</p>
-          <div style={{display:"flex",gap:10}}>
-            <button onClick={()=>transferToEditor(transferDialog.content,transferDialog.msgIndex,'replace')} style={{flex:1,padding:"10px 14px",borderRadius:8,background:th.gold,border:"none",color:"#fff",fontSize:12,fontWeight:600,cursor:"pointer"}}>
-              🔄 {lang==='de'?'Ersetzen':lang==='pt'?'Substituir':'Replace'}
-            </button>
-            <button onClick={()=>transferToEditor(transferDialog.content,transferDialog.msgIndex,'append')} style={{flex:1,padding:"10px 14px",borderRadius:8,background:th.hover,border:`1px solid ${th.border}`,color:th.text,fontSize:12,fontWeight:600,cursor:"pointer"}}>
-              ➕ {lang==='de'?'Hinzufügen':lang==='pt'?'Adicionar':'Append'}
-            </button>
-          </div>
-          <div style={{marginTop:12,padding:10,background:th.hover,borderRadius:8,maxHeight:100,overflow:'hidden'}}>
-            <div style={{fontSize:9,color:th.dim,marginBottom:4}}>{lang==='de'?'Vorschau:':lang==='pt'?'Pré-visualização:':'Preview:'}</div>
-            <div style={{fontSize:10,color:th.text,opacity:0.8,lineHeight:1.4}}>{transferDialog.content?.substring(0,120)}...</div>
-          </div>
-        </div>
-      </div>}
+        </div></div>}
 
       {/* ═══ DISTRIBUTION MODAL — Send sealed documents ═══ */}
       {showDistributeModal&&<div style={{position:"fixed",inset:0,background:"#000A",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:16}} onClick={()=>setShowDistributeModal(false)}>
@@ -6076,79 +5104,36 @@ function App(){
           {/* Actions */}
           <div style={{display:"flex",gap:8}}>
             <button onClick={()=>setShowDistributeModal(false)} style={{flex:1,padding:"10px",borderRadius:10,background:th.card,border:`1px solid ${th.border}`,color:th.dim,fontSize:12,cursor:"pointer"}}>{t.distribute.close}</button>
-            <button onClick={()=>{flash(lang==='de'?'📅 Planung bald verfügbar':lang==='pt'?'📅 Agendamento disponível em breve':'📅 Scheduling coming soon');}} style={{padding:"10px 16px",borderRadius:10,background:th.card,border:`1px solid ${th.border}`,color:th.text,fontSize:12,cursor:"pointer"}}>📅 {t.distribute.schedule}</button>
+            <button onClick={()=>setShowDistributeModal(false)} style={{padding:"10px 16px",borderRadius:10,background:th.card,border:`1px solid ${th.border}`,color:th.text,fontSize:12,cursor:"pointer"}}>📅 {t.distribute.schedule}</button>
             <button
-              disabled={distributeSending}
+              disabled={distributeRecipients.length===0||distributeSending}
               onClick={async()=>{
-                // Auto-add input value if user didn't click "+"
-                const inp=document.getElementById("newRecipient");
-                let recipients=[...distributeRecipients];
-                if(inp?.value?.trim()){
-                  const val=inp.value.trim();
-                  const channel=val.includes("@")?"email":val.startsWith("+")?"whatsapp":"sms";
-                  recipients.push({channel,value:val});
-                  inp.value="";
-                }
-                if(recipients.length===0){
-                  flash(lang==='de'?'⚠️ Bitte Empfänger hinzufügen':lang==='pt'?'⚠️ Adicione um destinatário':'⚠️ Add a recipient');
-                  return;
-                }
                 setDistributeSending(true);
-                const results={sent:[],failed:[],opened:[]};
-                const vaultLink=receipt?.id?'https://windi-domain.com/vault/verify/'+receipt.id:'';
-
-                // Process each recipient by channel (use local recipients which may include auto-added input)
-                for(const r of recipients){
-                  const cleanPhone=r.value.replace(/[\s\-\(\)]/g,'');
-
-                  // ═══ WHATSAPP — Deeplink (opens WhatsApp) ═══
-                  if(r.channel==='whatsapp'){
-                    // FIX: No nested template literals (Babel inline doesn't support)
-                    var waMsg='Olá! Partilho um documento: "'+docTitle+'"\n\n';
-                    if(vaultLink){waMsg+='Acede aqui: '+vaultLink+'\n\n';}
-                    waMsg+='Enviado via WINDI';
-                    window.open('https://wa.me/'+cleanPhone+'?text='+encodeURIComponent(waMsg),'_blank');
-                    results.opened.push({channel:'whatsapp',value:r.value});
+                try {
+                  // Call Dragon Chat distribute API
+                  const res = await fetch(dragonUrl+'/distribute', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                      recipients: distributeRecipients,
+                      doc_title: docTitle,
+                      doc_content: docContent,
+                      receipt_id: receipt?.id || '',
+                      lang: lang,
+                    }),
+                  });
+                  const data = await res.json();
+                  if (data.success || data.total_sent > 0) {
+                    setDistributeSent(data.sent?.map(s=>s.to) || []);
+                    flash(`✅ ${t.distribute.sent} ${data.total_sent} ${t.distribute.recipients.toLowerCase()}`);
+                    setShowDistributeModal(false);
+                  } else {
+                    flash(`❌ ${t.distribute.failed}: ${data.failed?.[0]?.error || 'Unknown error'}`);
                   }
-                  // ═══ EMAIL — Backend SMTP ═══
-                  else if(r.channel==='email'){
-                    try{
-                      const res=await fetch(dragonUrl+'/distribute',{
-                        method:'POST',headers:{'Content-Type':'application/json'},
-                        body:JSON.stringify({recipients:[r],doc_title:docTitle,doc_content:docContent,receipt_id:receipt?.id||'',lang})
-                      });
-                      const data=await res.json();
-                      if(data.success||data.total_sent>0){results.sent.push({channel:'email',value:r.value});}
-                      else{results.failed.push({channel:'email',value:r.value,error:data.failed?.[0]?.error||'Erro'});}
-                    }catch(e){results.failed.push({channel:'email',value:r.value,error:e.message});}
-                  }
-                  // ═══ SMS — Stub (não implementado) ═══
-                  else if(r.channel==='sms'){
-                    results.failed.push({channel:'sms',value:r.value,error:'SMS em configuração. Use WhatsApp.'});
-                  }
-                  // ═══ LINKEDIN — Share deeplink ═══
-                  else if(r.channel==='linkedin'){
-                    var linkedInUrl=encodeURIComponent(vaultLink||'https://windi-domain.com');
-                    window.open('https://www.linkedin.com/sharing/share-offsite/?url='+linkedInUrl,'_blank');
-                    results.opened.push({channel:'linkedin',value:'LinkedIn'});
-                  }
-                  // ═══ TWITTER/X — Tweet intent ═══
-                  else if(r.channel==='twitter'||r.channel==='x'){
-                    var tweetText=docTitle+' — Documento verificado via WINDI '+(vaultLink||'');
-                    window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(tweetText),'_blank');
-                    results.opened.push({channel:'x',value:'X/Twitter'});
-                  }
+                } catch(e) {
+                  console.error('[WINDI] Distribute error:', e);
+                  flash(`❌ ${t.distribute.failed}: ${e.message}`);
                 }
-
-                // Feedback
-                const totalSent=results.sent.length+results.opened.length;
-                if(totalSent>0){
-                  flash(`✅ ${lang==='de'?'Gesendet':'Enviado'}: ${results.sent.map(s=>`📧${s.value}`).join(', ')} ${results.opened.map(o=>`${o.channel==='whatsapp'?'💬':'🔗'}${o.value}`).join(', ')}`);
-                }
-                if(results.failed.length>0){
-                  flash(`⚠️ ${results.failed.map(f=>`${f.channel}: ${f.error}`).join('. ')}`,'warning');
-                }
-                if(totalSent>0)setShowDistributeModal(false);
                 setDistributeSending(false);
               }}
               style={{flex:1,padding:"10px",borderRadius:10,background:distributeRecipients.length>0?th.gold:th.dim,border:"none",color:"#FFF",fontSize:12,fontWeight:700,cursor:"pointer",opacity:distributeRecipients.length>0?1:0.5}}>
@@ -6200,77 +5185,6 @@ function App(){
 
           <div style={{display:"flex",gap:8,marginTop:16}}>
             <button onClick={()=>setShowChannelSettings(false)} style={{flex:1,padding:"10px",borderRadius:10,background:th.gold,border:"none",color:"#FFF",fontSize:12,fontWeight:700,cursor:"pointer"}}>✓ {t.did.close}</button>
-          </div>
-        </div>
-      </div>}
-
-      {/* ═══ COMMUNIQUÉ WORKFLOW MODAL ═══ */}
-      {showCommuniqueWorkflow&&activeCommuniqueId&&<div style={{position:"fixed",inset:0,background:"#000A",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:16}} onClick={()=>setShowCommuniqueWorkflow(false)}>
-        <div onClick={e=>e.stopPropagation()} style={{background:th.card,borderRadius:18,padding:"24px 20px",maxWidth:400,width:"100%",border:`1px solid ${th.gold}33`}}>
-          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:16}}>
-            <span style={{fontSize:24}}>📡</span>
-            <h2 style={{fontSize:16,fontWeight:800,margin:0}}>{lang==="de"?"Kommuniqué Workflow":lang==="pt"?"Fluxo do Comunicado":"Communiqué Workflow"}</h2>
-            <span style={{marginLeft:"auto",cursor:"pointer",fontSize:18,color:th.dim}} onClick={()=>setShowCommuniqueWorkflow(false)}>×</span>
-          </div>
-          <div style={{padding:"12px",borderRadius:10,background:th.hover,border:`1px solid ${th.border}`,marginBottom:16}}>
-            <div style={{fontSize:11,color:th.dim,marginBottom:4}}>Document ID</div>
-            <div style={{fontSize:13,fontFamily:"'JetBrains Mono',monospace"}}>{activeCommuniqueId}</div>
-          </div>
-          <p style={{fontSize:12,color:th.dim,marginBottom:20,lineHeight:1.5}}>
-            {lang==="de"?"Dieses Kommuniqué wurde als Entwurf erstellt. Wählen Sie die nächste Aktion:":
-             lang==="pt"?"Este comunicado foi criado como rascunho. Escolha a próxima ação:":
-             "This communiqué was created as a draft. Choose the next action:"}
-          </p>
-          <div style={{display:"flex",flexDirection:"column",gap:10}}>
-            {/* 📝 Submit for Review */}
-            <button onClick={async()=>{
-              setCommuniqueWorkflowLoading(true);
-              const result=await submitCommuniqueForReview(activeCommuniqueId,wallet?.name);
-              if(result.success){
-                flash(`📝 ${activeCommuniqueId} → REVIEW`);
-                fetchCommuniques();
-              }else{
-                flash(`❌ ${result.error||'Failed to submit'}`);
-              }
-              setCommuniqueWorkflowLoading(false);
-            }} disabled={communiqueWorkflowLoading}
-              style={{padding:"12px 16px",borderRadius:10,background:`${th.gold}15`,border:`1px solid ${th.gold}44`,color:th.gold,fontSize:13,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:8,opacity:communiqueWorkflowLoading?0.6:1}}>
-              <span>📝</span>
-              <span>{communiqueWorkflowLoading?(lang==="de"?"Sende...":"Sending..."):(lang==="de"?"Zur Prüfung einreichen":lang==="pt"?"Enviar para revisão":"Submit for Review")}</span>
-            </button>
-            {/* 🔐 Publish & Seal */}
-            <button onClick={async()=>{
-              const confirmMsg=lang==="de"?"Kommuniqué veröffentlichen und versiegeln? Diese Aktion ist unwiderruflich.":lang==="pt"?"Publicar e selar este comunicado? Esta ação é irreversível.":"Publish and seal this communiqué? This action is irreversible.";
-              if(!confirm(confirmMsg))return;
-              setCommuniqueWorkflowLoading(true);
-              const result=await publishCommunique(activeCommuniqueId,wallet?.name);
-              if(result.success){
-                flash(`🔐 ${activeCommuniqueId} PUBLISHED!`);
-                setShowCommuniqueWorkflow(false);
-                fetchCommuniques();
-              }else{
-                flash(`❌ ${result.error||'Publish failed'}`);
-              }
-              setCommuniqueWorkflowLoading(false);
-            }} disabled={communiqueWorkflowLoading}
-              style={{padding:"12px 16px",borderRadius:10,background:"#16A34A22",border:"1px solid #16A34A44",color:"#16A34A",fontSize:13,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:8,opacity:communiqueWorkflowLoading?0.6:1}}>
-              <span>🔐</span>
-              <span>{lang==="de"?"Veröffentlichen & Versiegeln":lang==="pt"?"Publicar & Selar":"Publish & Seal"}</span>
-            </button>
-            {/* 👁️ Preview */}
-            <button onClick={()=>{
-              const comApiUrl=window.location.hostname==='localhost'?'http://localhost:8105':'';
-              window.open(comApiUrl+'/communique/'+activeCommuniqueId,'_blank');
-            }}
-              style={{padding:"12px 16px",borderRadius:10,background:th.hover,border:`1px solid ${th.border}`,color:th.text,fontSize:13,fontWeight:600,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:8}}>
-              <span>👁️</span>
-              <span>{lang==="de"?"Vorschau":lang==="pt"?"Pré-visualizar":"Preview"}</span>
-            </button>
-            {/* Close */}
-            <button onClick={()=>setShowCommuniqueWorkflow(false)}
-              style={{padding:"12px 16px",borderRadius:10,background:th.card,border:`1px solid ${th.border}`,color:th.dim,fontSize:13,fontWeight:600,cursor:"pointer"}}>
-              {lang==="de"?"Als Entwurf behalten":lang==="pt"?"Manter como rascunho":"Keep as Draft"}
-            </button>
           </div>
         </div>
       </div>}
@@ -6349,6 +5263,6 @@ function App(){
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<App />);
 </script>
-<!-- DISABLED FOR DEBUG: <script src="/palette/static/windi-drivein.js"></script> -->
+<script src="/app/static/windi-drivein.js"></script>
 </body>
 </html>

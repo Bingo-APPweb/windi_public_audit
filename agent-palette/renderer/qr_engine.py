@@ -17,7 +17,7 @@ import io
 from urllib.parse import urlencode
 
 # ── Configuration ──
-VERIFY_BASE_URL = "https://windi-domain.com/vault/verify"
+VERIFY_BASE_URL = "https://windi-domain.com/verify-public/"
 WINDI_GOLD = "#8B6914"
 KLAR_WHITE = "#FDFBF5"
 DEFAULT_SIZE = 150
@@ -54,12 +54,7 @@ def generate_verify_url(serial: str, content_hash: str) -> str:
     # Use short hash (16 chars) in URL - full hash is in document metadata
     short_hash = content_hash[:16] if content_hash else ""
 
-    params = {
-        "serial": serial or "",
-        "hash": short_hash,
-    }
-
-    return f"{VERIFY_BASE_URL}?{urlencode(params)}"
+    return f"{VERIFY_BASE_URL}?id={serial or short_hash}"
 
 
 def generate_qr_image(url: str, size: int = DEFAULT_SIZE,
