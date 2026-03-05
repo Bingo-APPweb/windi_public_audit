@@ -37,6 +37,16 @@ except ImportError:
     SGE_AVAILABLE = False
     print("⚠️  SGE Engine not available - /opt/windi/engine/semantic_governance.py")
 
+# Dragon Hub — Agent Corps Router (inserted 05Mar26)
+try:
+    from dragon_hub import hub as _dragon_hub, resolve_intent as _hub_resolve_intent
+    import asyncio as _hub_asyncio
+    HAS_DRAGON_HUB = True
+    print("[Dragon] Hub: LOADED — Agent Corps router active")
+except ImportError as _e:
+    HAS_DRAGON_HUB = False
+    print(f"[Dragon] Hub: NOT AVAILABLE ({_e})")
+
 # Document generation imports
 try:
     from reportlab.lib.pagesizes import A4
@@ -3890,6 +3900,23 @@ class DragonHandler(http.server.BaseHTTPRequestHandler):
             return
 
         if path == "/api/dragon/chat":
+            # ── Dragon Hub Router (05Mar26) ──────────────────────────────
+            if HAS_DRAGON_HUB:
+                intent = _hub_resolve_intent(body.get("message", ""), body.get("intent"))
+                if intent != "guardian":
+                    # Route to Agent Corps via Hub
+                    async def _guardian_fallback(payload, history):
+                        result, _ = handle_dragon_chat(payload)
+                        return result
+                    try:
+                        data = _hub_asyncio.run(_dragon_hub.handle(body, guardian_fallback=_guardian_fallback))
+                        code = 200 if data.get("agent") else 500
+                        log(f"HUB [{body.get('tier','?')}] agent={data.get('agent','?')} intent={intent} msg={body.get('message','')[:40]}...")
+                        self._json_response(data, code)
+                        return
+                    except Exception as _hub_err:
+                        log(f"HUB ERROR: {_hub_err} — fallback to guardian")
+            # ── Original Dragon Logic (fallback) ─────────────────────────
             data, code = handle_dragon_chat(body)
             log(f"CHAT [{body.get('tier','?')}] dragon={data.get('dragon','?')} src={data.get('source','?')} msg={body.get('message','')[:60]}...")
             self._json_response(data, code)
@@ -4443,6 +4470,12 @@ BRAIN_INJECTION_SCRIPT = r"""
   // is to override the agentThink function to be async-aware.
   // We patch it via a global hook that the React component checks.
 
+  window.__dragonSessionHistory ??= [];  // Persistent session memory
+  // Recupera memória do sessionStorage se existir
+  if (sessionStorage.getItem('dragon_history')) {
+    window.__dragonSessionHistory = JSON.parse(sessionStorage.getItem('dragon_history'));
+  }
+
   window.__dragonBrainHook = async function(userInput, tier, intentHistory, stats, setMsgs, setLang, setIntentHistory, setStats) {
     // Run the original classification (synchronous)
     const classification = classifyInput(userInput, intentHistory);
@@ -4450,21 +4483,21 @@ BRAIN_INJECTION_SCRIPT = r"""
 
     if (classification.mode === 'chat') {
       // ── ASYNC: Call Dragon API for chat ──
-      const chatHistory = [];
-      // Build message history from DOM (simplified)
-      document.querySelectorAll('[data-msg-role]').forEach(el => {
-        chatHistory.push({ role: el.dataset.msgRole, text: el.dataset.msgText || el.textContent });
-      });
+      // Persistent session memory (survives re-renders)
+      window.__dragonSessionHistory.push({ role: 'user', text: userInput });
+      sessionStorage.setItem('dragon_history', JSON.stringify(window.__dragonSessionHistory));
 
       const dragon = await dragonChat(userInput, {
         tier,
         chatType: classification.chatType,
         intentMode: 'chat',
         language: detectedLang,
-        history: chatHistory.slice(-10),
+        history: __dragonSessionHistory.slice(-20),
       });
 
       if (dragon && dragon.message) {
+        window.__dragonSessionHistory.push({ role: 'assistant', text: dragon.message });
+        sessionStorage.setItem('dragon_history', JSON.stringify(window.__dragonSessionHistory));
         const emoji = DRAGON_EMOJIS[dragon.dragon] || '🐉';
         const name = DRAGON_NAMES[dragon.dragon] || 'Agent';
         return {
