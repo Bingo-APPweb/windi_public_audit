@@ -220,6 +220,17 @@ systemd:     /etc/systemd/system/windi-*.service
 - **nginx:** alias /vault/multimedia/ → immutable static files
 - **Endpoints:** /api/receipts?doc_type=X, /health
 
+## Verify Public (:8114) — I11 IRREMEDIABLE
+- **Master Spec:** /opt/windi/docs/verify/WINDI_VERIFY_MasterSpec_v1.0.md
+- **Status:** SEALED — 05 Mar 2026
+- **Constitutional Basis:** I11 — Public Verifiability (cannot be revoked)
+- **Genesis Record:** WINDI-VERIFY-GENESIS-20260305
+- **Public URL:** windi-domain.com/verify-public/
+- **Direct Verify:** windi-domain.com/verify/{hash}
+- **How to Use:** /verify-public/docs/WINDI_VERIFY_HowToUse_v1.0.pdf
+- **Endpoints:** /api/verify/{id}, /api/receipts/
+- **Modes:** v1.x WINDI-only (ACTIVE) → v2.x FREMDE analysis → v3.x Constitutional scanner
+
 ## Virtue Receipt Structure
 ```
 hash + categories(type, impact, domain, value_range R1-R5)
