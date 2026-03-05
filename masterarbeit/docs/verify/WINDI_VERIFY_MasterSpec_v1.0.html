@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI Verify Master Spec v1.0 — I11 IRREMEDIABLE</title>
+<meta name="description" content="WINDI Verify System Master Specification. Constitutional basis I11: Every sealed document must be publicly verifiable. Forever.">
+<link rel="stylesheet" href="../../windi-internal.css">
+<style>
+.invariant-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, rgba(212,168,67,0.15), rgba(212,168,67,0.05));
+  border: 1px solid rgba(212,168,67,0.4);
+  border-radius: 4px;
+  padding: 12px 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: #D4A843;
+  margin: 24px 0;
+}
+.invariant-badge::before {
+  content: '🔒';
+  font-size: 18px;
+}
+.spec-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 24px 0;
+  font-size: 14px;
+}
+.spec-table th, .spec-table td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color, #2a2a3a);
+}
+.spec-table th {
+  background: var(--bg-secondary, #1a1a26);
+  font-weight: 600;
+  color: var(--text-primary, #e2e8f0);
+  width: 180px;
+}
+.spec-table td {
+  color: var(--text-secondary, #94a3b8);
+}
+/* Light theme fixes */
+[data-theme="light"] .spec-table th {
+  background: #f0ede5;
+  color: #1a1a2e;
+}
+[data-theme="light"] .spec-table td {
+  color: #4a4a6a;
+}
+[data-theme="light"] .spec-table {
+  border-color: #d8d4cc;
+}
+[data-theme="light"] .spec-table th,
+[data-theme="light"] .spec-table td {
+  border-bottom-color: #d8d4cc;
+}
+[data-theme="light"] .pipeline-diagram {
+  background: #f5f2ec;
+  border-color: #d8d4cc;
+  color: #4a4a6a;
+}
+[data-theme="light"] .roadmap-item {
+  border-bottom-color: #d8d4cc;
+}
+[data-theme="light"] .seal-record {
+  background: linear-gradient(135deg, rgba(154,123,16,0.08), transparent);
+  border-color: rgba(154,123,16,0.3);
+}
+.status-live {
+  color: #22c55e;
+  font-weight: 600;
+}
+.status-planned {
+  color: #D4A843;
+}
+.status-future {
+  color: #64748b;
+}
+.pipeline-diagram {
+  background: var(--bg-secondary, #1a1a26);
+  border: 1px solid var(--border-color, #2a2a3a);
+  border-radius: 6px;
+  padding: 24px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  line-height: 2;
+  color: var(--text-secondary, #94a3b8);
+  margin: 24px 0;
+  overflow-x: auto;
+}
+.pipeline-diagram .highlight {
+  color: #D4A843;
+}
+.pipeline-diagram .success {
+  color: #22c55e;
+}
+.pipeline-diagram .warning {
+  color: #f59e0b;
+}
+.pipeline-diagram .error {
+  color: #ef4444;
+}
+.roadmap-item {
+  display: flex;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border-color, #2a2a3a);
+}
+.roadmap-version {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  min-width: 80px;
+}
+.roadmap-status {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 3px;
+  min-width: 70px;
+  text-align: center;
+}
+.roadmap-status.live {
+  background: rgba(34,197,94,0.15);
+  color: #22c55e;
+}
+.roadmap-status.next {
+  background: rgba(212,168,67,0.15);
+  color: #D4A843;
+}
+.roadmap-status.planned {
+  background: rgba(100,116,139,0.15);
+  color: #94a3b8;
+}
+.seal-record {
+  background: linear-gradient(135deg, rgba(212,168,67,0.08), transparent);
+  border: 1px solid rgba(212,168,67,0.3);
+  border-radius: 6px;
+  padding: 24px;
+  margin: 32px 0;
+}
+.seal-record h4 {
+  color: #D4A843;
+  margin-bottom: 16px;
+  font-size: 14px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+</style>
+</head>
+<body data-theme="dark" data-lang="en">
+
+<!-- Header -->
+<header class="site-header">
+  <a href="../" class="header-back" style="color:#94a3b8;text-decoration:none;font-size:13px;margin-right:20px;">← Index</a>
+  <a href="/docs/" class="header-brand">
+    <div class="header-logo">W</div>
+    <div class="header-title-group">
+      <span class="header-title">WINDI</span>
+      <span class="header-subtitle">Verify System</span>
+    </div>
+  </a>
+  <div class="header-center">
+    <div class="header-status">
+      <span class="status-dot"></span>
+      <span>I11 ACTIVE</span>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="lang-switcher">
+      <button class="lang-btn" onclick="setLang('de')">DE</button>
+      <button class="lang-btn active" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('pt')">PT</button>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+      <div class="theme-toggle-track"></div>
+      <div class="theme-toggle-thumb" id="themeThumb"></div>
+    </button>
+  </div>
+</header>
+
+<!-- Main Content -->
+<main class="main-content" style="max-width: 900px; margin: 0 auto;">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-breadcrumb">
+      <a href="/docs/">Docs</a> / <a href="/docs/">Constitutional</a> /
+      <span class="breadcrumb-current">Verify Master Spec</span>
+    </div>
+    <div class="page-meta-bar">
+      <span class="page-tag page-tag-gov">ARCHITECTURAL</span>
+      <span class="page-tag" style="background:rgba(34,197,94,0.15);color:#22c55e;">I11 IRREMEDIABLE</span>
+      <span class="page-date">2026-03-05</span>
+    </div>
+    <h1 class="page-title">WINDI VERIFY</h1>
+    <p class="page-subtitle">Master Specification v1.0</p>
+    <div class="page-divider"></div>
+  </div>
+
+  <!-- Content -->
+  <div class="content-prose">
+
+    <!-- Invariant Badge -->
+    <div class="invariant-badge">
+      I11 — PUBLIC VERIFIABILITY: "Every sealed document must be publicly verifiable. Forever."
+    </div>
+
+    <!-- Document Overview -->
+    <h2>Document Overview</h2>
+    <table class="spec-table">
+      <tr><th>Document ID</th><td>WINDI-VERIFY-MASTER-SPEC-20260305</td></tr>
+      <tr><th>Version</th><td>1.0.0</td></tr>
+      <tr><th>Status</th><td><span class="status-live">ACTIVE — SEALED</span></td></tr>
+      <tr><th>Classification</th><td>INTERNAL / ARCHITECTURAL</td></tr>
+      <tr><th>Author</th><td>Three Dragons Protocol (Human Dragon + Architect)</td></tr>
+      <tr><th>Date</th><td>05 March 2026</td></tr>
+      <tr><th>Related Invariant</th><td>I11 — Public Verifiability (IRREMEDIABLE)</td></tr>
+      <tr><th>Genesis Record</th><td>WINDI-VERIFY-GENESIS-20260305</td></tr>
+    </table>
+
+    <!-- Constitutional Basis -->
+    <h2>Constitutional Basis</h2>
+    <h3>Invariant I11 — Public Verifiability</h3>
+    <div class="doc-quote">
+      <p>"Every sealed document must be publicly verifiable. Forever."</p>
+    </div>
+    <p>Invariant I11 is <strong>irremediable</strong>. It cannot be revoked, suspended, or modified by any operator, administrator, or system update. Its activation on 05 March 2026 permanently commits the WINDI infrastructure to maintaining public verifiability for all sealed documents.</p>
+
+    <!-- Infrastructure -->
+    <h2>Infrastructure</h2>
+    <table class="spec-table">
+      <tr><th>Service Port</th><td>:8114</td></tr>
+      <tr><th>Public URL</th><td><a href="https://windi-domain.com/verify-public/" target="_blank">windi-domain.com/verify-public/</a></td></tr>
+      <tr><th>Direct Verify URL</th><td>windi-domain.com/verify/{hash}</td></tr>
+      <tr><th>Nginx Path</th><td>/verify-public/ → proxy_pass :8114</td></tr>
+      <tr><th>Process Manager</th><td>systemd</td></tr>
+      <tr><th>Database Source</th><td>Forensic Ledger :8101 (SQLite + SHA-256)</td></tr>
+      <tr><th>API: verify</th><td>GET /api/verify/{id}</td></tr>
+      <tr><th>API: receipts</th><td>POST /api/receipts</td></tr>
+      <tr><th>Total Receipts</th><td>39,711+ (05.03.26)</td></tr>
+    </table>
+
+    <!-- Verification Pipeline -->
+    <h2>Verification Pipeline</h2>
+    <div class="pipeline-diagram">
+<span class="highlight">INPUT:</span> QR scan | File upload | Document ID | Direct URL
+       ↓
+<span class="highlight">HASH EXTRACTION:</span> SHA-256 fingerprint from document
+       ↓
+<span class="highlight">LEDGER QUERY:</span> GET /api/verify/{hash} → :8101
+       ↓
+<span class="success">RESULT A:</span> hash found     → VERIFIED ✔
+<span class="error">RESULT B:</span> hash not found → NOT FOUND ✗
+<span class="warning">RESULT C:</span> structure only → ANALYSIS ⚠
+    </div>
+
+    <!-- Verification Modes -->
+    <h2>Verification Modes</h2>
+
+    <h3>Mode 1 — WINDI Verification (Primary)</h3>
+    <p>The authoritative mode. Used for all documents produced and sealed within the WINDI ecosystem.</p>
+    <ul>
+      <li><strong>Input:</strong> WINDI document (PDF with embedded hash and QR code)</li>
+      <li><strong>Process:</strong> SHA-256 hash extracted → queried against Forensic Ledger</li>
+      <li><strong>Output:</strong> VERIFIED ✔ with full metadata, or NOT FOUND ✗</li>
+      <li><strong>Authority:</strong> Maximum — backed by constitutional I11 guarantee</li>
+    </ul>
+    <p>This mode is the sole basis for legal and institutional claims of document authenticity.</p>
+
+    <h3>Mode 2 — Generic Analysis (Secondary) — Planned</h3>
+    <p>An analytical mode for documents not produced by WINDI. Provides structural analysis without making authenticity claims.</p>
+    <ul>
+      <li><strong>Input:</strong> Any document file</li>
+      <li><strong>Process:</strong> Detect cryptographic elements (hash, QR, PGP, OpenTimestamp)</li>
+      <li><strong>Output:</strong> Analysis report — no WINDI verification claim</li>
+      <li><strong>Status:</strong> <span class="status-planned">Medium-term roadmap</span></li>
+    </ul>
+
+    <h3>Mode 3 — Constitutional Scanner — Future</h3>
+    <p>The long-term vision: WINDI Verify as an authenticity antivirus. Any document enters. The system answers one question:</p>
+    <div class="doc-quote">
+      <p>"Does this document have cryptographic proof of existence?"</p>
+    </div>
+
+    <!-- FREMDE Policy -->
+    <h2>FREMDE Data Policy</h2>
+    <p>FREMDE (external/foreign) data refers to documents and cryptographic elements not originating from WINDI.</p>
+    <table class="spec-table">
+      <tr><th>Phase</th><th>Policy</th><th>Rationale</th></tr>
+      <tr><td><strong>NOW (v1.x)</strong></td><td>Zero FREMDE. WINDI documents only.</td><td>Authority-building phase. No ambiguity.</td></tr>
+      <tr><td><strong>MEDIUM (v2.x)</strong></td><td>FREMDE read, not certified.</td><td>WINDI still = superior standard.</td></tr>
+      <tr><td><strong>FUTURE (v3.x)</strong></td><td>Constitutional scanner. Any document.</td><td>WINDI = authenticity infrastructure.</td></tr>
+    </table>
+    <p><strong>Principle:</strong> WINDI Verify first builds authority, then expands jurisdiction. FREMDE analysis never dilutes WINDI certification.</p>
+
+    <!-- Liveness Detection -->
+    <h2>Liveness Detection (Planned)</h2>
+    <p>Camera capture for liveness detection is a planned capability for HIGH-tier document signing and DID creation.</p>
+
+    <h3>Use Cases</h3>
+    <ul>
+      <li>DID creation — PF (natural person) identity establishment</li>
+      <li>HIGH-tier document signing — contracts, procurations, notarial acts</li>
+      <li>War Room access — re-authentication for sensitive sessions</li>
+    </ul>
+
+    <h3>Technical Approach</h3>
+    <table class="spec-table">
+      <tr><th>Passive liveness</th><td>Micro-movement analysis — blink, breath, natural motion</td></tr>
+      <tr><th>Active liveness</th><td>User prompted — turn, blink, smile, finger count</td></tr>
+      <tr><th>Storage policy</th><td><strong>NO face image or video stored</strong> — constitutional requirement</td></tr>
+      <tr><th>Ledger record</th><td>liveness_confirmed=true + timestamp + event_hash ONLY</td></tr>
+      <tr><th>GDPR basis</th><td>Explicit consent required — biometric data category</td></tr>
+      <tr><th>I9 compliance</th><td>Camera does not escalate AI autonomy — human confirms presence</td></tr>
+    </table>
+
+    <!-- Roadmap -->
+    <h2>Roadmap</h2>
+    <div class="roadmap-item">
+      <span class="roadmap-version">v1.0</span>
+      <span class="roadmap-status live">LIVE</span>
+      <span>Verify Public :8114. QR + Upload + ID. WINDI-only. I11 sealed. Genesis record.</span>
+    </div>
+    <div class="roadmap-item">
+      <span class="roadmap-version">v1.1</span>
+      <span class="roadmap-status next">NEXT</span>
+      <span>QR in documents → direct verify URL. Verify button in all email correspondence.</span>
+    </div>
+    <div class="roadmap-item">
+      <span class="roadmap-version">v1.2</span>
+      <span class="roadmap-status planned">PLANNED</span>
+      <span>Verify Public UI refinement. Institutional design. Public documentation.</span>
+    </div>
+    <div class="roadmap-item">
+      <span class="roadmap-version">v2.0</span>
+      <span class="roadmap-status planned">MEDIUM</span>
+      <span>FREMDE structural analysis. Hash/QR/signature detection without WINDI claim.</span>
+    </div>
+    <div class="roadmap-item">
+      <span class="roadmap-version">v2.1</span>
+      <span class="roadmap-status planned">MEDIUM</span>
+      <span>Liveness detection for HIGH-tier signing. eIDAS substantial compliance.</span>
+    </div>
+    <div class="roadmap-item">
+      <span class="roadmap-version">v3.0</span>
+      <span class="roadmap-status planned">FUTURE</span>
+      <span>Constitutional scanner. Universal authenticity analysis. WINDI = standard.</span>
+    </div>
+
+    <!-- Seal Record -->
+    <div class="seal-record">
+      <h4>Document Sealing Record</h4>
+      <table class="spec-table" style="margin:0;">
+        <tr><th>Document type</th><td>ARCHITECTURAL_SPEC</td></tr>
+        <tr><th>Impact level</th><td>CRITICAL</td></tr>
+        <tr><th>Risk level</th><td>R5 — Institutional</td></tr>
+        <tr><th>Seal requirement</th><td>Mandatory — Three Dragons Protocol</td></tr>
+        <tr><th>Retention</th><td>Permanent — I11 scope</td></tr>
+        <tr><th>Distribution</th><td>Internal — WINDI Architecture team</td></tr>
+        <tr><th>Sealed hash</th><td>[TO BE FILLED ON SEALING]</td></tr>
+        <tr><th>Serial</th><td>[WINDI-2026-XXXX]</td></tr>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- Page Footer -->
+  <footer class="page-footer">
+    <div class="page-footer-meta">
+      <span>WINDI-VERIFY-MASTER-SPEC-20260305</span>
+      <span>I11 IRREMEDIABLE</span>
+    </div>
+    <p class="page-footer-quittung">WINDI PUBLISHING HOUSE</p>
+    <p class="page-footer-principle">"AI processes. Human decides. WINDI guarantees."</p>
+  </footer>
+
+</main>
+
+<!-- JavaScript -->
+<script>
+function toggleTheme() {
+  const body = document.body;
+  const isLight = body.getAttribute('data-theme') === 'light';
+  body.setAttribute('data-theme', isLight ? 'dark' : 'light');
+  try { localStorage.setItem('windi-theme', isLight ? 'dark' : 'light'); } catch(e) {}
+}
+
+function setLang(lang) {
+  document.body.setAttribute('data-lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
+  try { localStorage.setItem('windi-lang', lang); } catch(e) {}
+}
+
+(function init() {
+  try {
+    const theme = localStorage.getItem('windi-theme');
+    const lang = localStorage.getItem('windi-lang');
+    if (theme) document.body.setAttribute('data-theme', theme);
+    if (lang) setLang(lang);
+  } catch(e) {}
+})();
+</script>
+
+</body>
+</html>
