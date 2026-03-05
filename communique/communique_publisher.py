@@ -23,7 +23,7 @@ from datetime import datetime, timezone
 # Configuration
 LEDGER_URL = os.environ.get("LEDGER_URL", "http://127.0.0.1:8101")
 EXPORT_URL = os.environ.get("EXPORT_URL", "http://127.0.0.1:8103")
-BASE_DOMAIN = os.environ.get("COMMUNIQUE_DOMAIN", "admin.windia4desk.tech")
+BASE_DOMAIN = os.environ.get("COMMUNIQUE_DOMAIN", "windi-domain.com")
 PUBLISHED_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "published")
 
 
@@ -137,7 +137,7 @@ def generate_pdf(communique, content_hash, output_path):
         return {"success": False, "error": "reportlab or qrcode not installed"}
 
     com_id = communique["id"]
-    verify_url = f"https://{BASE_DOMAIN}/communique/{com_id}/verify"
+    verify_url = f"https://windi-domain.com/verify-public/?id={com_id}"
 
     # Generate QR code
     qr = qrcode.QRCode(version=1, box_size=6, border=2)
@@ -312,7 +312,7 @@ def generate_verification_json(communique, content_hash, bundle_hash=None):
         "impact_level": communique.get("impact_level"),
         "author": communique.get("author_name"),
         "published_at": communique.get("published_at"),
-        "verify_url": f"https://{BASE_DOMAIN}/communique/{communique['id']}/verify",
+        "verify_url": f"https://windi-domain.com/verify-public/?id={communique['id']}",
         "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     }
 

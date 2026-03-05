@@ -164,7 +164,9 @@ def generate_qr_code(data_dict, size_px=200):
     Returns a PIL Image.
     """
     # Compact JSON for QR
-    qr_payload = json.dumps({
+    verify_url = f"https://windi-domain.com/verify-public/?id={data_dict.get('receipt_id', '')}"
+    qr_payload = verify_url  # URL direta — escaneável por qualquer leitor
+    _qr_payload_meta = json.dumps({
         "sys": "WINDI",
         "ver": "1.0",
         "rid": data_dict.get("receipt_id", ""),
@@ -179,7 +181,7 @@ def generate_qr_code(data_dict, size_px=200):
         box_size=8,
         border=2,
     )
-    qr.add_data(qr_payload)
+    qr.add_data(verify_url)
     qr.make(fit=True)
 
     img = qr.make_image(fill_color="#1A1A1A", back_color="#F5F5F0")
