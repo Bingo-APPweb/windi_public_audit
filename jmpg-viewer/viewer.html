@@ -590,7 +590,7 @@
 
         // Generate QR after render
         setTimeout(() => {
-          const verifyUrl = `https://admin.windia4desk.tech/suite-docs/api/receipts/${encodeURIComponent(receiptIdForQR)}`;
+          const verifyUrl = `https://windi-domain.com/suite-docs/api/receipts/${encodeURIComponent(receiptIdForQR)}`;
           try {
             new QRCode(document.getElementById('mainQR'), {
               text: verifyUrl,

@@ -747,7 +747,7 @@ body {
 // "Trust before reading. Verify before rendering."
 // ═══════════════════════════════════════════════════════════════
 
-const LEDGER_BASE = "https://admin.windia4desk.tech/communique";
+const LEDGER_BASE = "https://windi-domain.com/communique";
 
 // ── Theme Toggle ─────────────────────────────────────────────
 const themeBtn = document.getElementById("themeToggle");
@@ -1137,7 +1137,7 @@ async function processFile(file) {
     document.getElementById("verificationGate").style.display = "block";
     renderSteps();
     
-    const vaultURL = `https://admin.windia4desk.tech/vault/multimedia/${comId}.jmpg`;
+    const vaultURL = `https://windi-domain.com/vault/multimedia/${comId}.jmpg`;
     setStep("fetch", "running", `Fetching from WINDI Vault: ${comId}...`);
     
     try {
