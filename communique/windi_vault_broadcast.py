@@ -35,7 +35,7 @@ VAULT_MANIFEST = os.path.join(VAULT_BASE, "broadcast_manifest.json")
 LEDGER_URL = os.environ.get("WINDI_LEDGER_URL", "http://127.0.0.1:8101")
 VAULT_PUBLIC_BASE = os.environ.get(
     "WINDI_VAULT_PUBLIC_URL",
-    "https://admin.windia4desk.tech/vault/multimedia"
+    "https://windi-domain.com/vault/multimedia"
 )
 
 LOG_PATH = os.environ.get("WINDI_VAULT_LOG", "/opt/windi/logs/vault_broadcast.log")
@@ -344,7 +344,7 @@ Usage:
 Environment:
     WINDI_VAULT_BASE     = /opt/windi/vault
     WINDI_LEDGER_URL     = http://127.0.0.1:8101
-    WINDI_VAULT_PUBLIC_URL = https://admin.windia4desk.tech/vault/multimedia
+    WINDI_VAULT_PUBLIC_URL = https://windi-domain.com/vault/multimedia
 """)
         sys.exit(0)
 

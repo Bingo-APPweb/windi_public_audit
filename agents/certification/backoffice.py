@@ -6,7 +6,7 @@ DOC-ID: CERT-BACKOFFICE-2026-001
 Date: 10 February 2026
 Author: Three Dragons Protocol (Guardian)
 
-Adds to the existing admin.windia4desk.tech Flask app:
+Adds to the existing windi-domain.com Flask app:
 - GET /api/applications — List all applications (protected)
 - GET /api/applications/<id> — Get single application
 - POST /api/applications/<id>/review — Approve/Reject/Request Info
@@ -214,7 +214,7 @@ Operator: {application['operator_name']} ({application['operator_email']})
 Motivation: {application.get('motivation', 'None provided')}
 Submitted: {application.get('created_at', 'N/A')}
 
-Review at: https://admin.windia4desk.tech/admin?token={ADMIN_TOKEN}
+Review at: https://windi-domain.com/admin?token={ADMIN_TOKEN}
 
 — WINDI Certification System
 "AI processes. Human decides. WINDI guarantees."
@@ -240,7 +240,7 @@ Review at: https://admin.windia4desk.tech/admin?token={ADMIN_TOKEN}
         <td style="padding:8px;font-style:italic;">{application.get('motivation', 'None')}</td></tr>
   </table>
   <div style="text-align:center;margin-top:25px;">
-    <a href="https://admin.windia4desk.tech/admin?token={ADMIN_TOKEN}"
+    <a href="https://windi-domain.com/admin?token={ADMIN_TOKEN}"
        style="display:inline-block;padding:14px 30px;background:#c9a227;color:#0a0a0f;
               text-decoration:none;border-radius:8px;font-weight:bold;">
       Review Application →

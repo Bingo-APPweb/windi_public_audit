@@ -282,8 +282,8 @@ def build_manifest(files, counters, com_id, title="", category="INCIDENT",
             "department_code": "GOV"
         },
         "verification": {
-            "verify_url": f"https://admin.windia4desk.tech/communique/{com_id}/verify",
-            "evidence_verify_url": f"https://admin.windia4desk.tech/communique/{com_id}/evidence/verify",
+            "verify_url": f"https://windi-domain.com/communique/{com_id}/verify",
+            "evidence_verify_url": f"https://windi-domain.com/communique/{com_id}/evidence/verify",
             "immutable": False,
             "immutable_since": None
         }
