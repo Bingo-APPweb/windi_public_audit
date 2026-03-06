@@ -189,7 +189,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
       return { tier: TIER_HIGH, hostname: hostname, reason: 'dev_mode' };
     }
     // Admin domain
-    if (hostname === 'admin.windia4desk.tech' || hostname === 'master.windia4desk.tech') {
+    if (hostname === 'windi-domain.com' || hostname === 'www.windi-domain.com' || hostname === 'admin.windia4desk.tech' || hostname === 'master.windia4desk.tech') {
       return { tier: TIER_HIGH, hostname: hostname, reason: 'admin_domain' };
     }
     // Palette path
@@ -228,7 +228,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
     var config = getTierConfig(tier);
     var currentLevel = TIER_LEVEL[tier];
     var endpoints = {};
-    var baseUrl = window.location.protocol === 'https:' ? 'https://admin.windia4desk.tech' : 'http://localhost';
+    var baseUrl = window.location.protocol === 'https:' ? 'https://windi-domain.com' : 'http://localhost';
     
     Object.keys(SERVICES).forEach(function(key) {
       var svc = SERVICES[key];
@@ -266,7 +266,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
   // ─── P5: CONNECTORS (A.3: Real Health Checks) ──────────────────────────────────
   function createConnectors(ctx) {
     var isLocal = window.location.hostname === 'localhost';
-    var baseUrl = isLocal ? 'http://localhost' : 'https://admin.windia4desk.tech';
+    var baseUrl = isLocal ? 'http://localhost' : 'https://windi-domain.com';
 
     // A.3: Real health endpoints — Direct ports for localhost, proxy paths for production
     // P5 CONNECTORS: 11 services (5 original + 6 new: Bridge, Sentinel LAW, Schnittstelle, Cortex, ID Genesis, Sentinel)
@@ -421,7 +421,7 @@ const { useState, useEffect, useRef, useCallback, useMemo } = React;
 
 // ─── CONFIG (configurable, not hardcoded) ───
 const CONFIG = {
-  VERIFY_BASE_URL: "https://admin.windia4desk.tech/verify",
+  VERIFY_BASE_URL: "https://windi-domain.com/verify-public",
   CRYPTO_MODE: "sim", // "sim" | "real"
   ANON_SECONDS: 300,
   AUTO_SAVE_MS: 5000,
@@ -1516,6 +1516,7 @@ const exportDocument = async (docType, docTitle, docFields, wallet, lang = 'en')
   );
 
   // Detect current tier
+const detectTierFromUrl = () => { if (window.WINDI && window.WINDI.tier) { return { tier: window.WINDI.tier }; } const stored = localStorage.getItem("windi_tier"); if (stored) { return { tier: stored }; } const host = window.location.hostname; if (host.includes("admin") || host.includes("pro")) { return { tier: "HIGH" }; } return { tier: "FREE" }; }; // restored 2026-03-06
   const tierInfo = detectTierFromUrl();
   const tier = tierInfo.tier;
 
@@ -2742,7 +2743,7 @@ function CognitiveInsightsPanel({ lang = 'en', theme, compact = false }) {
 function App(){
   // ═══ A.2: VAULT API FETCH ═══
   // FIX: Use correct Vault endpoints (8106 serves /api/stats and /health directly)
-  const vaultApiUrl=window.location.hostname==='localhost'?'http://localhost:8106':'https://admin.windia4desk.tech/vault';
+  const vaultApiUrl=window.location.hostname==='localhost'?'http://localhost:8106':'https://windi-domain.com/vault';
   const fetchVaultStats=useCallback(async()=>{
     try{
       setVaultLoading(true);
@@ -3062,7 +3063,7 @@ function App(){
   },[docType,fetchVaultStats,flash,lang,wallet]);
 
   // ═══ A.1: COMMUNIQUÉ API FETCH ═══
-  const baseUrl=window.location.protocol==='https:'?'https://admin.windia4desk.tech':'http://localhost';
+  const baseUrl=window.location.protocol==='https:'?'https://windi-domain.com':'http://localhost';
 
   const fetchCommuniques=useCallback(async()=>{
     try{
@@ -3104,7 +3105,7 @@ function App(){
   },[fetchVaultStats]);
 
   // ═══ WAVE 1: JOURNAL FETCH (from Communiqué API) ═══
-  const communiqueApiUrl=window.location.hostname==='localhost'?'http://localhost:8105':'https://admin.windia4desk.tech/communique';
+  const communiqueApiUrl=window.location.hostname==='localhost'?'http://localhost:8105':'https://windi-domain.com/communique';
   const fetchJournalArticles=useCallback(async()=>{
     try{
       setJournalLoading(true);
@@ -3913,6 +3914,7 @@ function App(){
         ...sealData,
       };
       setReceipt(r);
+      fetch("/api/anchor/anchor",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({receipt_id:r.id,combined_hash:r.ch||r.bh,doc_type:r.doc_type||docType,entry_data:{title:docTitle,actor:"agent-palette",wallet:wallet?.id}})}).catch(e=>console.warn("[WINDI] Anchor write failed:",e));
       setDocStatus("finalized");
       setShowFinalizeModal(false);
       setWallet(p=>({...p,trustScore:Math.min(p.trustScore+2,50),receipts:[...p.receipts,{id:r.id,title:docTitle,ts:r.ts,type:docType}]}));
@@ -3957,6 +3959,7 @@ function App(){
         doc_type: docType?.toUpperCase() || "NOTE",
       };
       setReceipt(r);
+      fetch("/api/anchor/anchor",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({receipt_id:r.id,combined_hash:r.ch||r.bh,doc_type:r.doc_type||docType,entry_data:{title:docTitle,actor:"agent-palette",wallet:wallet?.id}})}).catch(e=>console.warn("[WINDI] Anchor write failed:",e));
       setDocStatus("finalized");
       setShowFinalizeModal(false);
       setWallet(p=>({...p,trustScore:Math.min(p.trustScore+2,50),receipts:[...p.receipts,{id:r.id,title:docTitle,ts:r.ts,type:docType}]}));
@@ -5116,8 +5119,9 @@ function App(){
             <button onClick={()=>setShowDistributeModal(false)} style={{flex:1,padding:"10px",borderRadius:10,background:th.card,border:`1px solid ${th.border}`,color:th.dim,fontSize:12,cursor:"pointer"}}>{t.distribute.close}</button>
             <button onClick={()=>setShowDistributeModal(false)} style={{padding:"10px 16px",borderRadius:10,background:th.card,border:`1px solid ${th.border}`,color:th.text,fontSize:12,cursor:"pointer"}}>📅 {t.distribute.schedule}</button>
             <button
-              disabled={distributeRecipients.length===0||distributeSending}
+              disabled={distributeSending&&distributeRecipients.length===0&&!document.getElementById("newRecipient")?.value?.trim()}
               onClick={async()=>{
+                const inp=document.getElementById("newRecipient");if(inp&&inp.value&&inp.value.trim()){const ch=inp.value.includes("@")?"email":inp.value.startsWith("+")?"whatsapp":"sms";distributeRecipients.push({channel:ch,value:inp.value.trim()});inp.value="";}
                 setDistributeSending(true);
                 try {
                   // Call Dragon Chat distribute API
@@ -5223,7 +5227,7 @@ function App(){
                       method: 'POST',
                       headers: {'Content-Type': 'application/json'},
                       body: JSON.stringify({
-                        artifact_id: receipt?.id,
+                        artifact_id: receipt?.doc_id || receipt?.id,
                         visibility: wickVisibility,
                         confirm: true,
                       }),
