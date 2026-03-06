@@ -479,6 +479,13 @@ def create_agent_api(agent: WindiAgent):
     except ImportError as e:
         print(f"  [Contabilidade] Accounting Agent not loaded: {e}")
 
+    try:
+        from blueprints.page_blueprint import page_bp
+        app.register_blueprint(page_bp)
+        print("  [Page] Sovereign Page Generator v0.1.0 loaded on /page/*")
+    except ImportError as e:
+        print(f"  [Page] Page Agent not loaded: {e}")
+
     @app.route("/agent/health", methods=["GET"])
     def health():
         return jsonify({
