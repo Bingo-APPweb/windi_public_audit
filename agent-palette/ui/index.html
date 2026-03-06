@@ -2892,6 +2892,13 @@ function App(){
   const[vaultPulse,setVaultPulse]=useState(false); // Phase 1B: Biofeedback pulse on seal
   const[vaultLastSealed,setVaultLastSealed]=useState(null); // Last sealed document info
 
+  // ═══ W-WICKTHIS LAYER — Publish to Evidence Graph ═══
+  const[showWickModal,setShowWickModal]=useState(false);
+  const[wickVisibility,setWickVisibility]=useState("private");
+  const[wickPublishing,setWickPublishing]=useState(false);
+  const[wickPublished,setWickPublished]=useState(false);
+  const[wickResult,setWickResult]=useState(null);
+
   // ═══ DISTRIBUTION LAYER — Send sealed documents via channels ═══
   const[showDistributeModal,setShowDistributeModal]=useState(false);
   const[distributeRecipients,setDistributeRecipients]=useState([]);
@@ -4176,6 +4183,9 @@ function App(){
                   <button onClick={handleExport} disabled={exporting} style={{padding:"6px 14px",borderRadius:8,background:th.card,border:`1px solid ${th.gold}66`,color:th.gold,fontSize:11,fontWeight:600,cursor:"pointer",display:"flex",alignItems:"center",gap:5,opacity:exporting?0.6:1}}>
                     {exporting?'⏳':'📦'} {lang==='de'?'Exportieren':lang==='pt'?'Exportar':'Export'}
                   </button>
+                  <button onClick={()=>{setWickVisibility("private");setWickPublished(false);setWickResult(null);setShowWickModal(true);}} style={{padding:"6px 14px",borderRadius:8,background:"linear-gradient(135deg,#8B5CF6,#6366F1)",border:"none",color:"#FFF",fontSize:11,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",gap:5}}>
+                    📡 W-WICKTHIS
+                  </button>
                   <button onClick={()=>setShowDistributeModal(true)} style={{padding:"6px 14px",borderRadius:8,background:th.gold,border:"none",color:"#FFF",fontSize:11,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",gap:5}}>
                     📤 {t.distribute.sendNow}
                   </button>
@@ -5140,6 +5150,129 @@ function App(){
               {distributeSending?t.distribute.sending:`📤 ${t.distribute.sendNow}`}
             </button>
           </div>
+        </div>
+      </div>}
+
+      {/* ═══ W-WICKTHIS MODAL — Publish to Evidence Graph ═══ */}
+      {showWickModal&&<div style={{position:"fixed",inset:0,background:"#000A",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:16}} onClick={()=>setShowWickModal(false)}>
+        <div onClick={e=>e.stopPropagation()} style={{background:th.card,borderRadius:18,padding:"24px 20px",maxWidth:420,width:"100%",border:"1px solid #8B5CF633"}}>
+          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}>
+            <span style={{fontSize:24}}>📡</span>
+            <h2 style={{fontSize:16,fontWeight:800,margin:0}}>W-WICKTHIS</h2>
+            <span style={{marginLeft:"auto",cursor:"pointer",fontSize:18,color:th.dim}} onClick={()=>setShowWickModal(false)}>×</span>
+          </div>
+          <p style={{fontSize:11,color:th.dim,marginBottom:16}}>
+            {lang==="de"?"Dokument im Evidence Graph veröffentlichen":
+             lang==="pt"?"Publicar documento no Evidence Graph":
+             "Publish document to Evidence Graph"}
+          </p>
+
+          {!wickPublished?<>
+            {/* Document info */}
+            <div style={{padding:"10px 12px",borderRadius:10,background:th.hover,border:`1px solid ${th.border}`,marginBottom:12}}>
+              <div style={{fontSize:13,fontWeight:700,marginBottom:2}}>{docTitle}</div>
+              <div style={{fontSize:10,color:th.dim,fontFamily:"monospace"}}>🔐 {receipt?.combined_hash?.slice(0,24)}...</div>
+              <div style={{fontSize:10,color:th.success,marginTop:4}}>🛡️ {receipt?.id}</div>
+            </div>
+
+            {/* Visibility selection */}
+            <div style={{marginBottom:16}}>
+              <div style={{fontSize:12,fontWeight:700,marginBottom:8,color:"#8B5CF6"}}>
+                {lang==="de"?"Sichtbarkeit":lang==="pt"?"Visibilidade":"Visibility"}
+              </div>
+              <div style={{display:"flex",flexDirection:"column",gap:8}}>
+                {[
+                  {key:"private",icon:"🔒",label:lang==="de"?"Privat (nur ich)":lang==="pt"?"Privado (só eu)":"Private (only me)"},
+                  {key:"workspace",icon:"👥",label:lang==="de"?"Workspace (Team)":lang==="pt"?"Workspace (equipa)":"Workspace (team)"},
+                  {key:"public",icon:"📡",label:lang==="de"?"Öffentlich (verifizierbar)":lang==="pt"?"Público (verificável)":"Public (verifiable)"},
+                ].map(v=>(
+                  <div key={v.key} onClick={()=>setWickVisibility(v.key)} style={{
+                    display:"flex",alignItems:"center",gap:10,padding:"12px",borderRadius:10,cursor:"pointer",
+                    background:wickVisibility===v.key?"#8B5CF612":th.hover,
+                    border:`1px solid ${wickVisibility===v.key?"#8B5CF6":th.border}`
+                  }}>
+                    <span style={{fontSize:16}}>{v.icon}</span>
+                    <span style={{fontSize:12,fontWeight:wickVisibility===v.key?700:500,flex:1}}>{v.label}</span>
+                    <div style={{width:16,height:16,borderRadius:"50%",border:`2px solid ${wickVisibility===v.key?"#8B5CF6":th.border}`,
+                      background:wickVisibility===v.key?"#8B5CF6":"transparent",display:"flex",alignItems:"center",justifyContent:"center"}}>
+                      {wickVisibility===v.key&&<div style={{width:6,height:6,borderRadius:"50%",background:"#FFF"}}/>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Warning for public */}
+            {wickVisibility==="public"&&<div style={{padding:"10px 12px",borderRadius:8,background:"#F59E0B12",border:"1px solid #F59E0B33",marginBottom:16,fontSize:10,color:"#F59E0B"}}>
+              ⚠️ {lang==="de"?"Öffentlich ist unwiderruflich. Nur Versionierung oder Anfechtung möglich.":
+                   lang==="pt"?"Público é irrevogável. Só versionamento ou contestação.":
+                   "Public is irrevocable. Only versioning or contestation allowed."}
+            </div>}
+
+            {/* Actions */}
+            <div style={{display:"flex",gap:8}}>
+              <button onClick={()=>setShowWickModal(false)} style={{flex:1,padding:"10px",borderRadius:10,background:th.card,border:`1px solid ${th.border}`,color:th.dim,fontSize:12,cursor:"pointer"}}>
+                {lang==="de"?"Abbrechen":lang==="pt"?"Cancelar":"Cancel"}
+              </button>
+              <button
+                disabled={wickPublishing}
+                onClick={async()=>{
+                  setWickPublishing(true);
+                  try {
+                    const res = await fetch('/api/sandbox/wick/publish', {
+                      method: 'POST',
+                      headers: {'Content-Type': 'application/json'},
+                      body: JSON.stringify({
+                        artifact_id: receipt?.id,
+                        visibility: wickVisibility,
+                        confirm: true,
+                      }),
+                    });
+                    const data = await res.json();
+                    if (res.ok && data.status === 'published') {
+                      setWickResult(data);
+                      setWickPublished(true);
+                      flash(`✅ W-WICKTHIS: ${lang==="de"?"Veröffentlicht":lang==="pt"?"Publicado":"Published"} (${wickVisibility})`);
+                    } else {
+                      flash(`❌ ${data.error || 'Failed to publish'}`);
+                    }
+                  } catch(e) {
+                    console.error('[WINDI] W-WICKTHIS error:', e);
+                    flash(`❌ ${e.message}`);
+                  }
+                  setWickPublishing(false);
+                }}
+                style={{flex:1,padding:"10px",borderRadius:10,background:"linear-gradient(135deg,#8B5CF6,#6366F1)",border:"none",color:"#FFF",fontSize:12,fontWeight:700,cursor:"pointer",opacity:wickPublishing?0.7:1}}>
+                {wickPublishing?"⏳":"📡"} W-WICKTHIS
+              </button>
+            </div>
+          </>:<>
+            {/* Success state */}
+            <div style={{textAlign:"center",padding:"20px 0"}}>
+              <div style={{fontSize:48,marginBottom:12}}>✅</div>
+              <div style={{fontSize:14,fontWeight:700,marginBottom:8}}>
+                {lang==="de"?"Im Evidence Graph veröffentlicht":
+                 lang==="pt"?"Publicado no Evidence Graph":
+                 "Published to Evidence Graph"}
+              </div>
+              <div style={{fontSize:11,color:th.dim,marginBottom:16}}>
+                {wickResult?.visibility==="public"&&(lang==="de"?"Öffentlich und verifizierbar":lang==="pt"?"Público e verificável":"Public and verifiable")}
+                {wickResult?.visibility==="workspace"&&(lang==="de"?"Workspace-Zugang":lang==="pt"?"Acesso workspace":"Workspace access")}
+                {wickResult?.visibility==="private"&&(lang==="de"?"Nur für dich sichtbar":lang==="pt"?"Visível só para ti":"Visible only to you")}
+              </div>
+              <div style={{padding:"10px 12px",borderRadius:8,background:th.hover,border:`1px solid ${th.border}`,marginBottom:16,textAlign:"left"}}>
+                <div style={{fontSize:10,color:th.dim,marginBottom:4}}>Artifact ID</div>
+                <div style={{fontSize:11,fontFamily:"monospace",wordBreak:"break-all"}}>{wickResult?.artifact_id}</div>
+              </div>
+              {wickResult?.visibility==="public"&&<a href={wickResult?.urls?.verify} target="_blank" rel="noopener noreferrer"
+                style={{display:"inline-flex",alignItems:"center",gap:6,padding:"8px 14px",borderRadius:8,background:"#8B5CF612",border:"1px solid #8B5CF633",color:"#8B5CF6",fontSize:11,fontWeight:600,textDecoration:"none"}}>
+                🔍 {lang==="de"?"Öffentlich verifizieren":lang==="pt"?"Verificar publicamente":"Verify publicly"}
+              </a>}
+            </div>
+            <button onClick={()=>setShowWickModal(false)} style={{width:"100%",padding:"10px",borderRadius:10,background:th.card,border:`1px solid ${th.border}`,color:th.text,fontSize:12,cursor:"pointer"}}>
+              {lang==="de"?"Schließen":lang==="pt"?"Fechar":"Close"}
+            </button>
+          </>}
         </div>
       </div>}
 
