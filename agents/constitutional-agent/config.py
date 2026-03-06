@@ -30,9 +30,12 @@ class InvariantID(Enum):
     I6 = "I6"
     I7 = "I7"
     I8 = "I8"
-    I9 = "I9"  # Prohibition of Autonomy Escalation — IRREMEDIABLE
+    I9 = "I9"   # Prohibition of Autonomy Escalation — IRREMEDIABLE
+    I10 = "I10"
+    I11 = "I11"
+    I12 = "I12"  # Web of Proofs — IRREMEDIABLE
 
-IRREMEDIABLE_INVARIANTS = [InvariantID.I9]
+IRREMEDIABLE_INVARIANTS = [InvariantID.I9, InvariantID.I12]
 
 # ═══ OPERATIONAL MODES ═══
 

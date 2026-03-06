@@ -264,6 +264,11 @@ def page_status(page_id: str):
         "created_at": page["created_at"],
         "sealed_at": page["sealed_at"],
         "html_hash": page["html_hash"],
+        "css_hash": page["css_hash"],
+        "js_hash": page["js_hash"],
+        "combined_hash": page["combined_hash"],
+        "content_hash": page["content_hash"],
+        "template_version": page["template_version"],
         "receipt_id": page["receipt_id"],
         "ledger_anchor": page["ledger_anchor"],
     })
