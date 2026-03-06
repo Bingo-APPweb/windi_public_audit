@@ -297,31 +297,59 @@ def publish():
             "allowed": [v.value for v in Visibility],
         }), 400
 
-    # ── Fetch page data from W-PAGE-001 ──
+    # ── Fetch document data (try W-PAGE-001 first, then Ledger) ──
+    import urllib.request
+    page_data = None
+    source_type = None
+
+    # Try W-PAGE-001 first
     try:
-        import urllib.request
         page_url = f"{PAGE_AGENT_URL}/status/{artifact_id}"
         req = urllib.request.Request(page_url, headers={"Accept": "application/json"})
         with urllib.request.urlopen(req, timeout=5) as response:
             page_data = json.loads(response.read().decode())
-    except Exception as e:
+            source_type = "W-PAGE-001"
+    except Exception:
+        pass  # Will try Ledger next
+
+    # Fallback: Try Forensic Ledger directly
+    if not page_data:
+        try:
+            ledger_url = f"{LEDGER_URL.replace('/api/receipts', '')}/api/receipts/{artifact_id}"
+            req = urllib.request.Request(ledger_url, headers={"Accept": "application/json"})
+            with urllib.request.urlopen(req, timeout=5) as response:
+                ledger_response = json.loads(response.read().decode())
+                if ledger_response.get("ok") and ledger_response.get("receipt"):
+                    receipt = ledger_response["receipt"]
+                    # Map Ledger receipt to page_data format
+                    page_data = {
+                        "id": receipt["id"],
+                        "title": receipt.get("doc_name", artifact_id),
+                        "doc_type": receipt.get("doc_type", "doc"),
+                        "status": receipt.get("status", "sealed"),
+                        "receipt_id": receipt["id"],
+                        "html_hash": receipt.get("content_hash"),
+                        "content_hash": receipt.get("content_hash"),
+                        "ledger_anchor": receipt["id"],
+                        "created_at": receipt.get("created_at"),
+                        "metadata": receipt.get("metadata", {}),
+                    }
+                    source_type = "LEDGER"
+        except Exception:
+            pass
+
+    if not page_data:
         return jsonify({
-            "error": "Page not found",
-            "message": f"Could not fetch page {artifact_id}: {str(e)}",
+            "error": "Document not found",
+            "message": f"Could not find document {artifact_id} in W-PAGE-001 or Forensic Ledger.",
         }), 404
 
-    # ── Validate: Page must be sealed ──
-    if page_data.get("status") != "sealed":
+    # ── Validate: Document must be sealed ──
+    if page_data.get("status") not in ["sealed", "SEALED"]:
         return jsonify({
-            "error": "Page not sealed",
+            "error": "Document not sealed",
             "message": "Only sealed documents can be published to the Evidence Graph.",
             "current_status": page_data.get("status"),
-        }), 400
-
-    if not page_data.get("receipt_id"):
-        return jsonify({
-            "error": "No ledger receipt",
-            "message": "Document must have a Forensic Ledger receipt before publishing.",
         }), 400
 
     # ── Check if already published ──
@@ -377,6 +405,10 @@ def publish():
     now = datetime.now(timezone.utc).isoformat()
 
     cursor = conn.cursor()
+    # Determine artifact type based on source
+    artifact_type = "page" if source_type == "W-PAGE-001" else "doc"
+    page_url_value = f"/p/{artifact_id}" if source_type == "W-PAGE-001" else None
+
     cursor.execute("""
         INSERT INTO artifacts (
             id, wick_id, type, title, description,
@@ -389,15 +421,15 @@ def publish():
     """, (
         artifact_id,
         wick_id,
-        "page",
+        artifact_type,
         page_data.get("title", artifact_id),
         description,
         author_actor_id,
         author_name,
         artifact_id,
-        "W-PAGE-001",
-        f"/p/{artifact_id}",
-        page_data.get("html_hash"),
+        source_type,
+        page_url_value,
+        page_data.get("html_hash") or page_data.get("content_hash"),
         page_data.get("css_hash"),
         page_data.get("js_hash"),
         page_data.get("combined_hash"),
