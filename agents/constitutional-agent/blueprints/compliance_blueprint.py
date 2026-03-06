@@ -62,7 +62,7 @@ EXPORT_URL = os.environ.get("WINDI_EXPORT_URL", "http://localhost:8103")
 
 
 # ═══════════════════════════════════════════════════════════════
-#  INVARIANTS DEFINITION (I1-I9)
+#  INVARIANTS DEFINITION (I1-I12)
 # ═══════════════════════════════════════════════════════════════
 
 class Invariant(Enum):
@@ -75,6 +75,9 @@ class Invariant(Enum):
     I7 = ("I7", "accountability", "Clear accountability chain")
     I8 = ("I8", "subsidiarity", "AI assists, not replaces")
     I9 = ("I9", "no_autonomy_escalation", "IRREMEDIABLE: AI cannot escalate own authority")
+    I10 = ("I10", "forensic_integrity", "Forensic Ledger entries are immutable")
+    I11 = ("I11", "verify_irremediable", "IRREMEDIABLE: Verification proofs cannot be deleted")
+    I12 = ("I12", "web_of_proofs", "IRREMEDIABLE: Relations between documents are evidence. Evidence has proof. Proofs are immutable.")
 
     def __init__(self, code: str, name: str, description: str):
         self._code = code

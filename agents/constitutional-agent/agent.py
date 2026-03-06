@@ -486,6 +486,13 @@ def create_agent_api(agent: WindiAgent):
     except ImportError as e:
         print(f"  [Page] Page Agent not loaded: {e}")
 
+    try:
+        from blueprints.wick_blueprint import wick_bp
+        app.register_blueprint(wick_bp)
+        print("  [WICK] Evidence Graph v0.1.0 loaded on /wick/*")
+    except ImportError as e:
+        print(f"  [WICK] Evidence Graph not loaded: {e}")
+
     @app.route("/agent/health", methods=["GET"])
     def health():
         return jsonify({
