@@ -4186,7 +4186,7 @@ function App(){
                   <button onClick={handleExport} disabled={exporting} style={{padding:"6px 14px",borderRadius:8,background:th.card,border:`1px solid ${th.gold}66`,color:th.gold,fontSize:11,fontWeight:600,cursor:"pointer",display:"flex",alignItems:"center",gap:5,opacity:exporting?0.6:1}}>
                     {exporting?'⏳':'📦'} {lang==='de'?'Exportieren':lang==='pt'?'Exportar':'Export'}
                   </button>
-                  <button onClick={()=>{setWickVisibility("private");setWickPublished(false);setWickResult(null);setShowWickModal(true);}} style={{padding:"6px 14px",borderRadius:8,background:"linear-gradient(135deg,#8B5CF6,#6366F1)",border:"none",color:"#FFF",fontSize:11,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",gap:5}}>
+                  <button onClick={()=>{setWickVisibility("private");setWickPublished(false);setWickResult(null);setShowWickModal(true);}} style={{padding:"6px 14px",borderRadius:8,background:th.gold,border:"none",color:"#FFF",fontSize:11,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",gap:5}}>
                     📡 W-WICKTHIS
                   </button>
                   <button onClick={()=>setShowDistributeModal(true)} style={{padding:"6px 14px",borderRadius:8,background:th.gold,border:"none",color:"#FFF",fontSize:11,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",gap:5}}>
@@ -5159,7 +5159,7 @@ function App(){
 
       {/* ═══ W-WICKTHIS MODAL — Publish to Evidence Graph ═══ */}
       {showWickModal&&<div style={{position:"fixed",inset:0,background:"#000A",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:16}} onClick={()=>setShowWickModal(false)}>
-        <div onClick={e=>e.stopPropagation()} style={{background:th.card,borderRadius:18,padding:"24px 20px",maxWidth:420,width:"100%",border:"1px solid #8B5CF633"}}>
+        <div onClick={e=>e.stopPropagation()} style={{background:th.card,borderRadius:18,padding:"24px 20px",maxWidth:420,width:"100%",border:`1px solid ${th.gold}33`}}>
           <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}>
             <span style={{fontSize:24}}>📡</span>
             <h2 style={{fontSize:16,fontWeight:800,margin:0}}>W-WICKTHIS</h2>
@@ -5181,7 +5181,7 @@ function App(){
 
             {/* Visibility selection */}
             <div style={{marginBottom:16}}>
-              <div style={{fontSize:12,fontWeight:700,marginBottom:8,color:"#8B5CF6"}}>
+              <div style={{fontSize:12,fontWeight:700,marginBottom:8,color:th.gold}}>
                 {lang==="de"?"Sichtbarkeit":lang==="pt"?"Visibilidade":"Visibility"}
               </div>
               <div style={{display:"flex",flexDirection:"column",gap:8}}>
@@ -5192,13 +5192,13 @@ function App(){
                 ].map(v=>(
                   <div key={v.key} onClick={()=>setWickVisibility(v.key)} style={{
                     display:"flex",alignItems:"center",gap:10,padding:"12px",borderRadius:10,cursor:"pointer",
-                    background:wickVisibility===v.key?"#8B5CF612":th.hover,
-                    border:`1px solid ${wickVisibility===v.key?"#8B5CF6":th.border}`
+                    background:wickVisibility===v.key?`${th.gold}12`:th.hover,
+                    border:`1px solid ${wickVisibility===v.key?th.gold:th.border}`
                   }}>
                     <span style={{fontSize:16}}>{v.icon}</span>
                     <span style={{fontSize:12,fontWeight:wickVisibility===v.key?700:500,flex:1}}>{v.label}</span>
-                    <div style={{width:16,height:16,borderRadius:"50%",border:`2px solid ${wickVisibility===v.key?"#8B5CF6":th.border}`,
-                      background:wickVisibility===v.key?"#8B5CF6":"transparent",display:"flex",alignItems:"center",justifyContent:"center"}}>
+                    <div style={{width:16,height:16,borderRadius:"50%",border:`2px solid ${wickVisibility===v.key?th.gold:th.border}`,
+                      background:wickVisibility===v.key?th.gold:"transparent",display:"flex",alignItems:"center",justifyContent:"center"}}>
                       {wickVisibility===v.key&&<div style={{width:6,height:6,borderRadius:"50%",background:"#FFF"}}/>}
                     </div>
                   </div>
@@ -5246,7 +5246,7 @@ function App(){
                   }
                   setWickPublishing(false);
                 }}
-                style={{flex:1,padding:"10px",borderRadius:10,background:"linear-gradient(135deg,#8B5CF6,#6366F1)",border:"none",color:"#FFF",fontSize:12,fontWeight:700,cursor:"pointer",opacity:wickPublishing?0.7:1}}>
+                style={{flex:1,padding:"10px",borderRadius:10,background:th.gold,border:"none",color:"#FFF",fontSize:12,fontWeight:700,cursor:"pointer",opacity:wickPublishing?0.7:1}}>
                 {wickPublishing?"⏳":"📡"} W-WICKTHIS
               </button>
             </div>
@@ -5269,7 +5269,7 @@ function App(){
                 <div style={{fontSize:11,fontFamily:"monospace",wordBreak:"break-all"}}>{wickResult?.artifact_id}</div>
               </div>
               {wickResult?.visibility==="public"&&<a href={wickResult?.urls?.verify} target="_blank" rel="noopener noreferrer"
-                style={{display:"inline-flex",alignItems:"center",gap:6,padding:"8px 14px",borderRadius:8,background:"#8B5CF612",border:"1px solid #8B5CF633",color:"#8B5CF6",fontSize:11,fontWeight:600,textDecoration:"none"}}>
+                style={{display:"inline-flex",alignItems:"center",gap:6,padding:"8px 14px",borderRadius:8,background:`${th.gold}12`,border:`1px solid ${th.gold}33`,color:th.gold,fontSize:11,fontWeight:600,textDecoration:"none"}}>
                 🔍 {lang==="de"?"Öffentlich verifizieren":lang==="pt"?"Verificar publicamente":"Verify publicly"}
               </a>}
             </div>
