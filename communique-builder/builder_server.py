@@ -1,5 +1,5 @@
 """
-WINDI Communiqué Builder — v1.0.0
+WINDI Communiqué Builder — v2.1.0
 Port: 8115 | Path: /builder/
 "AI processes. Human decides. WINDI guarantees."
 """
@@ -11,14 +11,24 @@ import hashlib
 import datetime
 import urllib.request
 import urllib.error
+import smtplib
+import ssl
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
 
-PORT         = int(os.getenv("PORT", 8115))
+PORT           = int(os.getenv("PORT", 8115))
 COMMUNIQUE_URL = os.getenv("COMMUNIQUE_ENGINE_URL", "http://127.0.0.1:8105")
 LEDGER_URL     = os.getenv("LEDGER_URL",             "http://127.0.0.1:8101")
 STATIC_DIR     = Path(__file__).parent / "static"
-VERSION        = "1.0.0"
+VERSION        = "2.1.0"
+
+# SMTP Configuration (Strato)
+SMTP_HOST      = os.getenv("SMTP_HOST", "smtp.strato.de")
+SMTP_PORT      = int(os.getenv("SMTP_PORT", "465"))
+SMTP_USER      = os.getenv("SMTP_USER", "info@a4desk.de")
+SMTP_PASS      = os.getenv("SMTP_PASS", "")
 
 
 # ── helpers ──────────────────────────────────────────────────────────────────
@@ -77,9 +87,10 @@ class BuilderHandler(SimpleHTTPRequestHandler):
         body = json.loads(self.rfile.read(length)) if length else {}
 
         routes = {
-            "/builder/api/preview":  (self._preview, body),
-            "/builder/api/publish":  (self._publish, body),
-            "/builder/api/draft":    (self._draft,   body),
+            "/builder/api/preview":    (self._preview,    body),
+            "/builder/api/publish":    (self._publish,    body),
+            "/builder/api/draft":      (self._draft,      body),
+            "/builder/api/distribute": (self._distribute, body),
         }
 
         if path in routes:
@@ -182,6 +193,123 @@ class BuilderHandler(SimpleHTTPRequestHandler):
             "engine":       render_result,
             "ledger":       ledger_result,
             "verify_url":   f"https://windi-domain.com/verify-public/?id={receipt_id}",
+            "ts":           datetime.datetime.utcnow().isoformat() + "Z",
+        })
+        self._respond(status, ct, data)
+
+    def _distribute(self, body: dict):
+        """Distribute document via Email/SMTP. Human approved."""
+        channel = body.get("channel", "email")
+        recipients = body.get("recipients", [])
+        title = body.get("title", "WINDI Communiqué")
+        content = body.get("body", "")
+        sender_name = body.get("sender", "WINDI System")
+        receipt_id = body.get("receipt_id", "")
+
+        if not recipients:
+            status, ct, data = _json({"error": "No recipients provided"}, 400)
+            self._respond(status, ct, data)
+            return
+
+        if channel != "email":
+            status, ct, data = _json({"error": f"Channel '{channel}' not yet supported"}, 400)
+            self._respond(status, ct, data)
+            return
+
+        if not SMTP_PASS:
+            status, ct, data = _json({"error": "SMTP not configured (missing SMTP_PASS)"}, 500)
+            self._respond(status, ct, data)
+            return
+
+        # Build email
+        results = []
+        for recipient in recipients:
+            try:
+                msg = MIMEMultipart("alternative")
+                msg["Subject"] = f"[WINDI] {title}"
+                msg["From"] = f"{sender_name} <{SMTP_USER}>"
+                msg["To"] = recipient
+
+                # Plain text version
+                text_body = f"""
+WINDI Communiqué
+================
+{title}
+
+{content}
+
+---
+Receipt ID: {receipt_id}
+Verify: https://windi-domain.com/verify-public/?id={receipt_id}
+
+"AI processes. Human decides. WINDI guarantees."
+                """.strip()
+
+                # HTML version
+                html_body = f"""
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="font-family: 'Segoe UI', sans-serif; background: #0d1117; color: #c9d1d9; padding: 20px;">
+  <div style="max-width: 600px; margin: 0 auto; background: #161b22; border-radius: 8px; padding: 24px; border: 1px solid #30363d;">
+    <h1 style="color: #58a6ff; margin-top: 0;">{title}</h1>
+    <div style="white-space: pre-wrap; line-height: 1.6;">{content}</div>
+    <hr style="border: none; border-top: 1px solid #30363d; margin: 20px 0;">
+    <p style="font-size: 12px; color: #8b949e;">
+      Receipt ID: <code style="background: #21262d; padding: 2px 6px; border-radius: 4px;">{receipt_id}</code><br>
+      <a href="https://windi-domain.com/verify-public/?id={receipt_id}" style="color: #58a6ff;">Verify Document</a>
+    </p>
+    <p style="font-size: 11px; color: #6e7681; font-style: italic;">
+      "AI processes. Human decides. WINDI guarantees."
+    </p>
+  </div>
+</body>
+</html>
+                """.strip()
+
+                msg.attach(MIMEText(text_body, "plain", "utf-8"))
+                msg.attach(MIMEText(html_body, "html", "utf-8"))
+
+                # Send via SMTP SSL
+                context = ssl.create_default_context()
+                with smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT, context=context) as server:
+                    server.login(SMTP_USER, SMTP_PASS)
+                    server.sendmail(SMTP_USER, recipient, msg.as_string())
+
+                results.append({"recipient": recipient, "status": "sent"})
+                print(f"[DISTRIBUTE] Email sent to {recipient}")
+
+            except Exception as e:
+                results.append({"recipient": recipient, "status": "failed", "error": str(e)})
+                print(f"[DISTRIBUTE] Failed to send to {recipient}: {e}")
+
+        # Log to Forensic Ledger
+        dist_id = f"DIST-{datetime.datetime.utcnow().strftime('%Y%m%d')}-{uuid.uuid4().hex[:8].upper()}"
+        ledger_payload = {
+            "id":               dist_id,
+            "actor":            sender_name,
+            "app":              "communique-builder",
+            "doc_name":         f"Distribution: {title}",
+            "doc_type":         "distribution",
+            "governance_level": "MEDIUM",
+            "hash":             hashlib.sha256(json.dumps(body, sort_keys=True).encode()).hexdigest(),
+            "metadata": {
+                "channel":     channel,
+                "recipients":  len(recipients),
+                "receipt_id":  receipt_id,
+            }
+        }
+        ledger_result = _proxy_post(f"{LEDGER_URL}/api/receipts", ledger_payload)
+
+        sent_count = sum(1 for r in results if r["status"] == "sent")
+        status, ct, data = _json({
+            "status":       "distributed",
+            "dist_id":      dist_id,
+            "channel":      channel,
+            "sent":         sent_count,
+            "total":        len(recipients),
+            "results":      results,
+            "ledger":       ledger_result,
             "ts":           datetime.datetime.utcnow().isoformat() + "Z",
         })
         self._respond(status, ct, data)
