@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WINDI Personal Editor v6.0 — Dignity First</title>
+<title>WINDI Personal Editor v0.7.0-G — Dignity First</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐉</text></svg>">
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
@@ -445,14 +445,14 @@ const THEMES = {
 
 // ─── 14 Document Types ───
 const DOC_TYPES = {
-  letter:{icon:"✉️",tier:"FREE",cat:"personal"},email:{icon:"📧",tier:"FREE",cat:"personal"},
-  note:{icon:"📝",tier:"FREE",cat:"personal"},memo:{icon:"📋",tier:"FREE",cat:"personal"},
-  journal:{icon:"📖",tier:"FREE",cat:"personal"},recipe:{icon:"🍳",tier:"FREE",cat:"personal"},
-  report:{icon:"📊",tier:"MED",cat:"business"},contract:{icon:"📜",tier:"MED",cat:"business"},
-  invoice:{icon:"💰",tier:"MED",cat:"business"},protocol:{icon:"📒",tier:"MED",cat:"business"},
-  analysis:{icon:"🔬",tier:"MED",cat:"business"},presentation:{icon:"📽️",tier:"MED",cat:"business"},
-  communique:{icon:"📡",tier:"HIGH",cat:"governance"},certificate:{icon:"🏛️",tier:"HIGH",cat:"governance"},
-  creativeVirtue:{icon:"🎨",tier:"HIGH",cat:"governance"},
+  letter:{icon:"✉️",tier:"FREE",cat:"personal",breath:{en:"Send intention",de:"Absicht senden",pt:"Enviar intenção"}},email:{icon:"📧",tier:"FREE",cat:"personal",breath:{en:"Quick reach",de:"Schnell verbinden",pt:"Conexão rápida"}},
+  note:{icon:"📝",tier:"FREE",cat:"personal",breath:{en:"Capture the moment",de:"Moment festhalten",pt:"Capturar o momento"}},memo:{icon:"📋",tier:"FREE",cat:"personal",breath:{en:"Inform & align",de:"Informieren & abstimmen",pt:"Informar & alinhar"}},
+  journal:{icon:"📖",tier:"FREE",cat:"personal",breath:{en:"Witness yourself",de:"Sich bezeugen",pt:"Testemunhar a si mesmo"}},recipe:{icon:"🍳",tier:"FREE",cat:"personal",breath:{en:"Share a ritual",de:"Ritual teilen",pt:"Compartilhar ritual"}},
+  report:{icon:"📊",tier:"MED",cat:"business",breath:{en:"Evidence matures",de:"Belege reifen",pt:"Evidências amadurecem"}},contract:{icon:"📜",tier:"MED",cat:"business",breath:{en:"Terms take root",de:"Bedingungen wurzeln",pt:"Termos se enraízam"}},
+  invoice:{icon:"💰",tier:"MED",cat:"business",breath:{en:"Value declared",de:"Wert erklärt",pt:"Valor declarado"}},protocol:{icon:"📒",tier:"MED",cat:"business",breath:{en:"Proceedings sealed",de:"Verlauf gesiegelt",pt:"Procedimentos selados"}},
+  analysis:{icon:"🔬",tier:"MED",cat:"business",breath:{en:"Clarity distilled",de:"Klarheit destilliert",pt:"Clareza destilada"}},presentation:{icon:"📽️",tier:"MED",cat:"business",breath:{en:"Story takes shape",de:"Geschichte formt sich",pt:"História toma forma"}},
+  communique:{icon:"📡",tier:"HIGH",cat:"governance",breath:{en:"Bloom · Witness",de:"Blühen · Bezeugen",pt:"Florescer · Testemunhar"}},certificate:{icon:"🏛️",tier:"HIGH",cat:"governance",breath:{en:"Permanent record",de:"Dauerhafter Nachweis",pt:"Registro permanente"}},
+  creativeVirtue:{icon:"🎨",tier:"HIGH",cat:"governance",breath:{en:"Proof of creation",de:"Schöpfungsnachweis",pt:"Prova da criação"}},
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════════
@@ -4167,7 +4167,9 @@ function App(){
                   <div style={{marginTop:8,paddingTop:6,borderTop:"1px solid #2E7D3222",display:"flex",alignItems:"center",gap:8}}>
                     <div style={{width:40,height:40,background:"#fff",borderRadius:4,display:"flex",alignItems:"center",justifyContent:"center",fontSize:8,color:"#333",fontWeight:600}}>QR📱</div>
                     <div style={{fontSize:8,color:"#81C784",wordBreak:"break-all"}}>{receipt.url}</div>
-                  </div></div>}
+                  </div>
+                  <a href={`https://wa.me/?text=${encodeURIComponent((lang==="pt"?"✅ Documento verificado: ":lang==="de"?"✅ Dokument verifiziert: ":"✅ Verified document: ")+receipt.id+"\nhttps://windi-domain.com/verify-public/?id="+encodeURIComponent(receipt.id))}`} target="_blank" rel="noopener" style={{display:"inline-flex",alignItems:"center",gap:5,marginTop:10,padding:"8px 14px",background:"#25D366",color:"#fff",borderRadius:6,fontSize:10,fontWeight:700,textDecoration:"none",letterSpacing:"0.03em"}}><span>💬</span><span>{lang==="pt"?"Partilhar no WhatsApp":lang==="de"?"WhatsApp teilen":"Share on WhatsApp"}</span></a>
+                </div>}
               </div>
               {/* Doc Actions */}
               <div style={{display:"flex",gap:6,padding:"8px 12px",borderTop:`1px solid ${th.border}22`,flexShrink:0,flexWrap:"wrap"}}>
@@ -4415,14 +4417,17 @@ function App(){
               </div>
 
               {/* DOCUMENT TYPES (existing) */}
-              <h3 style={{fontSize:13,fontWeight:700,margin:"16px 0 10px",color:th.dim}}>📝 Neues Dokument erstellen</h3>
-              <div style={{display:"flex",gap:6,marginBottom:12,flexWrap:"wrap"}}>
+              <h3 style={{fontSize:13,fontWeight:700,margin:"16px 0 8px",color:th.dim}}>
+                🌱 {lang==="de"?"Dokument anlegen":lang==="pt"?"Plantar documento":"New Document"}
+              </h3>
+              <div style={{display:"flex",gap:6,marginBottom:8,flexWrap:"wrap"}}>
                 {["all","personal","business","governance"].map(f=>
                   <button key={f} onClick={()=>setTypeFilter(f)} style={{padding:"4px 10px",borderRadius:6,
                     background:typeFilter===f?th.gold+"18":th.card,border:`1px solid ${typeFilter===f?th.gold:th.border}`,
                     color:typeFilter===f?th.gold:th.dim,fontSize:10,fontWeight:600,cursor:"pointer"}}>
                     {t.doc[f==="all"?"allTypes":f]||f}</button>)}
               </div>
+              {typeFilter!=="all"&&(()=>{const cg={personal:{en:"🌱 Seed · ideas take root here",de:"🌱 Säen · Ideen wurzeln hier",pt:"🌱 Plantar · ideias brotam aqui"},business:{en:"🌿 Grow · work matures here",de:"🌿 Wachsen · Arbeit reift hier",pt:"🌿 Crescer · trabalho amadurece aqui"},governance:{en:"🌳 Bloom & Witness · proof lives here",de:"🌳 Blühen & Bezeugen · Beweise leben hier",pt:"🌳 Florescer & Testemunhar · prova vive aqui"}};return cg[typeFilter]?<div style={{fontSize:9,color:th.gold+"BB",marginBottom:10,fontStyle:"italic",paddingLeft:2,letterSpacing:"0.3px"}}>{cg[typeFilter][lang]||cg[typeFilter].en}</div>:null;})()}
               <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(90px,1fr))",gap:8}}>
                 {filteredTypes.map(([key,info])=>{
                   const ok=info.tier==="FREE";
@@ -4431,6 +4436,7 @@ function App(){
                     display:"flex",flexDirection:"column",alignItems:"center",gap:3,transition:"all 0.2s"}}>
                     <span style={{fontSize:20}}>{info.icon}</span>
                     <span style={{fontSize:10,fontWeight:600,color:th.text}}>{t.types[key]}</span>
+                    {info.breath&&<span style={{fontSize:8,color:th.dim,fontStyle:"italic",textAlign:"center",lineHeight:1.2,maxWidth:"80px"}}>{info.breath[lang]||info.breath.en}</span>}
                   </button>;})}
               </div>
 
