@@ -614,13 +614,15 @@ class DistributionHandler(BaseHTTPRequestHandler):
                 print(f"[DISTRIBUTE] ✗ Failed: {r} — {msg}")
 
         # Seal in Forensic Ledger
+        # Use receipt_id if provided (from Communiqué), otherwise use dist_id
+        seal_id = receipt_id if receipt_id else dist_id
         ledger_result = seal_in_ledger(
-            dist_id=dist_id,
+            dist_id=seal_id,
             user_email=user_email,
             recipient=", ".join(recipients),
             doc_title=title,
             content_hash=content_hash,
-            metadata={"recipients_count": len(recipients), "tier": tier}
+            metadata={"recipients_count": len(recipients), "tier": tier, "dist_id": dist_id}
         )
 
         # Calculate results

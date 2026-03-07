@@ -354,7 +354,8 @@ function PropsPanel({block,onChange}){
     {block.type==='cta'&&<><TP label={t(DICT,'headlineProp',lang)} val={c.headline||''} set={v=>uc('headline',v)} ml/><TP label={t(DICT,'subProp',lang)} val={c.sub||''} set={v=>uc('sub',v)}/><TP label={t(DICT,'btnLabel',lang)} val={c.btnText||''} set={v=>uc('btnText',v)}/><TP label={t(DICT,'btnUrl',lang)} val={c.btnUrl||'#'} set={v=>uc('btnUrl',v)}/><TP label={t(DICT,'btnLabel2',lang)} val={c.btnSecText||''} set={v=>uc('btnSecText',v)}/></>}
     {block.type==='testimonial'&&<><TP label={t(DICT,'quoteProp',lang)} val={c.quote||''} set={v=>uc('quote',v)} ml/><TP label={t(DICT,'authorProp',lang)} val={c.author||''} set={v=>uc('author',v)}/><TP label={t(DICT,'roleProp',lang)} val={c.role||''} set={v=>uc('role',v)}/><TP label={t(DICT,'initialsProp',lang)} val={c.avatar||''} set={v=>uc('avatar',v)}/></>}
     {block.type==='footer'&&<><TP label={t(DICT,'brandProp',lang)} val={c.brand||''} set={v=>uc('brand',v)}/><TP label={t(DICT,'taglineProp',lang)} val={c.tagline||''} set={v=>uc('tagline',v)}/><TP label={t(DICT,'copyrightProp',lang)} val={c.copy||''} set={v=>uc('copy',v)}/></>}
-    {['gallery','features','stats','imagebox'].includes(block.type)&&<div style={{background:T.surface,borderRadius:8,padding:11,border:`1px solid ${T.border}`,fontSize:11,color:T.dim}}>{t(DICT,'multiItemNote',lang)}</div>}
+    {block.type==='imagebox'&&<ImageUpload block={block} onUpdate={onChange}/>}
+    {['gallery','features','stats'].includes(block.type)&&<div style={{background:T.surface,borderRadius:8,padding:11,border:`1px solid ${T.border}`,fontSize:11,color:T.dim}}>{t(DICT,'multiItemNote',lang)}</div>}
   </div>);
 }
 
@@ -374,7 +375,7 @@ function genHTML(blocks,meta){
 // ═══════════════════════════════════════════════════════════════════
 // EXPORT MODAL
 // ═══════════════════════════════════════════════════════════════════
-function ExportModal({blocks,meta,setMeta,onClose}){
+function ExportModal({blocks,meta,setMeta,onClose,onSeal}){
   const lang=useLang();
   const[html,setHtml]=useState(()=>genHTML(blocks,{...meta,lang}));
   const[copied,setCopied]=useState(false);
@@ -387,6 +388,7 @@ function ExportModal({blocks,meta,setMeta,onClose}){
         <div style={{padding:'15px 22px',borderBottom:`1px solid ${T.border}`,display:'flex',alignItems:'center',gap:8}}>
           <div><div style={{fontSize:15,fontWeight:800}}>⬇ {t(DICT,'exportTitle',lang)}</div><div style={{fontSize:11,color:T.dim}}>{t(DICT,'exportSub',lang)}</div></div>
           <div style={{marginLeft:'auto',display:'flex',gap:7}}>
+            <button onClick={onSeal} style={{background:T.accentGreen+'22',border:`1px solid ${T.accentGreen}66`,borderRadius:8,padding:'6px 12px',color:T.accentGreen,fontSize:12,fontWeight:700,cursor:'pointer'}}>{t(DICT,'sealBtn',lang)}</button>
             <button onClick={copy} style={{background:copied?T.accentGreen+'22':T.card,border:`1px solid ${copied?T.accentGreen:T.border}`,borderRadius:8,padding:'6px 12px',color:copied?T.accentGreen:T.text,fontSize:12,fontWeight:600,cursor:'pointer'}}>{copied?t(DICT,'copiedBtn',lang):t(DICT,'copyBtn',lang)}</button>
             <button onClick={dl} style={{background:`linear-gradient(135deg,${T.accent},${T.accentHot})`,border:'none',borderRadius:8,padding:'6px 13px',color:'#fff',fontSize:13,fontWeight:700,cursor:'pointer'}}>⬇ .html</button>
             <button onClick={onClose} style={{background:'transparent',border:`1px solid ${T.border}`,borderRadius:8,padding:'6px 10px',color:T.dim,cursor:'pointer'}}>✕</button>
@@ -443,6 +445,133 @@ function TemplatesModal({onSelect,onClose}){
 }
 
 // ═══════════════════════════════════════════════════════════════════
+// LEDGER SEAL MODAL
+// ═══════════════════════════════════════════════════════════════════
+function LedgerModal({html,meta,onClose}){
+  const lang=useLang();
+  const[st,setSt]=useState('idle');
+  const[receipt,setReceipt]=useState(null);
+  const[docName,setDocName]=useState(meta.title||'html-page');
+  const[gov,setGov]=useState('LOW');
+  const[actor,setActor]=useState('html-builder');
+
+  const seal=async()=>{
+    setSt('sealing');
+    try{
+      const enc=new TextEncoder();
+      const buf=await crypto.subtle.digest('SHA-256',enc.encode(html));
+      const hash=Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+      const id=`WINDI-HTML-${Date.now()}`;
+      const payload={id,actor,app:'windi-html-builder',doc_name:docName,doc_type:'doc',governance_level:gov,content_hash:hash,sge_score:0.85,metadata:{page_title:meta.title,builder:'v3.0',lang,html_bytes:html.length}};
+      const res=await fetch(`${LEDGER_URL}/api/receipts`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+      const data=await res.json();
+      setReceipt({id,hash,verifyUrl:VERIFY_BASE+id,offline:!res.ok||!data.ok,ledgerResponse:data});
+      setSt('sealed');
+    }catch(_e){
+      const enc=new TextEncoder();
+      const buf=await crypto.subtle.digest('SHA-256',enc.encode(html));
+      const hash=Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+      setReceipt({id:`LOCAL-${Date.now()}`,hash,verifyUrl:'',offline:true});
+      setSt('sealed');
+    }
+  };
+
+  return(<div style={{position:'fixed',inset:0,background:'rgba(0,0,0,.88)',zIndex:300,display:'flex',alignItems:'center',justifyContent:'center',padding:24}} onClick={onClose}>
+    <div style={{background:T.surface,borderRadius:16,border:`1px solid ${T.border}`,width:'100%',maxWidth:540,overflow:'hidden'}} onClick={e=>e.stopPropagation()}>
+      <div style={{padding:'17px 22px',borderBottom:`1px solid ${T.border}`,display:'flex',alignItems:'center',gap:10}}>
+        <span style={{fontSize:20}}>🔐</span>
+        <div><div style={{fontSize:14,fontWeight:800}}>{t(DICT,'ledgerTitle',lang)}</div><div style={{fontSize:11,color:T.dim}}>{t(DICT,'ledgerSub',lang)}</div></div>
+        <button onClick={onClose} style={{marginLeft:'auto',background:'transparent',border:'none',color:T.dim,cursor:'pointer',fontSize:18}}>✕</button>
+      </div>
+      <div style={{padding:22}}>
+        {st==='idle'&&(<>
+          <div style={{background:T.accentGold+'15',border:`1px solid ${T.accentGold}44`,borderRadius:9,padding:'10px 14px',marginBottom:16,fontSize:12,color:T.accentGold}}>{t(DICT,'ledgerInfo',lang)}</div>
+          <TP label={t(DICT,'ledgerDocName',lang)} val={docName} set={setDocName}/>
+          <TP label={t(DICT,'ledgerActor',lang)} val={actor} set={setActor}/>
+          <SP label={t(DICT,'ledgerGov',lang)} val={gov} set={setGov} opts={[{v:'LOW',l:t(DICT,'govLow',lang)},{v:'MEDIUM',l:t(DICT,'govMed',lang)},{v:'HIGH',l:t(DICT,'govHigh',lang)}]}/>
+          <div style={{display:'flex',gap:8,marginTop:10}}>
+            <button onClick={seal} style={{flex:1,background:`linear-gradient(135deg,${T.accentGreen},#00a86b)`,border:'none',borderRadius:9,padding:'11px 0',color:'#fff',fontSize:14,fontWeight:700,cursor:'pointer'}}>{t(DICT,'sealNowBtn',lang)}</button>
+            <button onClick={onClose} style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:9,padding:'11px 16px',color:T.dim,cursor:'pointer',fontSize:13}}>{t(DICT,'cancelBtn',lang)}</button>
+          </div>
+        </>)}
+        {st==='sealing'&&<div style={{textAlign:'center',padding:'28px 0'}}><div style={{fontSize:36,marginBottom:10}}>⏳</div><div style={{color:T.accentTeal,fontSize:13}}>{t(DICT,'sealing',lang)}</div></div>}
+        {st==='sealed'&&receipt&&(<div>
+          {receipt.offline&&<div style={{background:'#ffaa4420',border:'1px solid #ffaa4466',borderRadius:8,padding:'8px 12px',marginBottom:12,fontSize:11,color:'#ffaa44'}}>{t(DICT,'ledgerOfflineWarn',lang)}</div>}
+          <div style={{background:T.accentGreen+'15',border:`1px solid ${T.accentGreen}44`,borderRadius:11,padding:18,marginBottom:16}}>
+            <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:12}}><span style={{fontSize:16}}>✅</span><span style={{fontWeight:800,color:T.accentGreen,fontSize:13}}>{t(DICT,'sealedTitle',lang)}</span></div>
+            {[[t(DICT,'sealedReceiptId',lang),receipt.id],[t(DICT,'sealedHash',lang),receipt.hash?.substring(0,32)+'…'],[t(DICT,'sealedDoc',lang),docName],[t(DICT,'sealedGov',lang),gov]].map(([k,v])=>(<div key={k} style={{display:'flex',gap:10,fontSize:11,marginBottom:5}}><span style={{color:T.dim,minWidth:80}}>{k}</span><span style={{fontFamily:'monospace',color:T.text,wordBreak:'break-all'}}>{v}</span></div>))}
+          </div>
+          {receipt.verifyUrl&&<><div style={{fontSize:10,color:T.dim,marginBottom:5,letterSpacing:1,textTransform:'uppercase'}}>{t(DICT,'sealedVerifyUrl',lang)}</div>
+          <div style={{background:T.card,borderRadius:8,padding:'9px 13px',marginBottom:14,fontSize:11,color:T.accent,fontFamily:'monospace',wordBreak:'break-all'}}>{receipt.verifyUrl}</div></>}
+          <button onClick={onClose} style={{width:'100%',background:T.card,border:`1px solid ${T.border}`,borderRadius:9,padding:'9px 0',color:T.text,cursor:'pointer',fontWeight:600}}>{t(DICT,'closeBtn',lang)}</button>
+        </div>)}
+      </div>
+    </div>
+  </div>);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// IMAGE UPLOAD WITH VAULT INTEGRATION
+// ═══════════════════════════════════════════════════════════════════
+function ImageUpload({block,onUpdate}){
+  const lang=useLang();
+  const[uploading,setUploading]=useState(false);
+  const[msg,setMsg]=useState('');
+  const ref=useRef();
+
+  const handleFile=async(file)=>{
+    if(!file)return;
+    setUploading(true);setMsg(t(DICT,'vaultUploading',lang));
+    try{
+      const fd=new FormData();
+      fd.append('file',file);
+      fd.append('actor','html-builder');
+      fd.append('app','windi-html-builder');
+      fd.append('doc_name',file.name);
+      fd.append('doc_type','doc');
+      fd.append('governance_level','LOW');
+      const res=await fetch(`${VAULT_URL}/api/upload`,{method:'POST',body:fd});
+      if(res.ok){
+        const d=await res.json();
+        const vaultId=d.receipt_id||d.id||'VAULT-'+Date.now();
+        const url=d.url||d.file_url||URL.createObjectURL(file);
+        onUpdate({...block,content:{...block.content,url,vaultId}});
+        setMsg(`${t(DICT,'vaultSuccess',lang)} ${vaultId}`);
+      }else{
+        const url=URL.createObjectURL(file);
+        onUpdate({...block,content:{...block.content,url,vaultId:''}});
+        setMsg(t(DICT,'vaultOffline',lang));
+      }
+    }catch(_e){
+      const url=URL.createObjectURL(file);
+      onUpdate({...block,content:{...block.content,url,vaultId:''}});
+      setMsg(t(DICT,'vaultOffline',lang));
+    }
+    setUploading(false);
+  };
+
+  const c=block.content;const s=block.style;
+  return(<div>
+    <div style={{marginBottom:12}}>
+      <div style={{fontSize:10,color:T.dim,letterSpacing:1,textTransform:'uppercase',marginBottom:6}}>{t(DICT,'vaultUploadTitle',lang)}</div>
+      <div onClick={()=>ref.current?.click()} style={{border:`2px dashed ${s.accentColor}55`,borderRadius:10,padding:'16px',textAlign:'center',cursor:'pointer',background:s.accentColor+'08'}}>
+        <div style={{fontSize:22,marginBottom:4}}>🖼</div>
+        <div style={{fontSize:11,color:T.dim}}>{t(DICT,'vaultClickHint',lang)}</div>
+        <div style={{fontSize:9,color:T.dim,marginTop:2}}>PNG · JPG · WebP · GIF</div>
+      </div>
+      <input ref={ref} type="file" accept="image/*" style={{display:'none'}} onChange={e=>handleFile(e.target.files[0])}/>
+      {uploading&&<div style={{marginTop:5,fontSize:11,color:T.accentTeal}}>⏳ {msg}</div>}
+      {!uploading&&msg&&<div style={{marginTop:5,fontSize:11,color:msg.includes('✓')?T.accentGreen:'#ffaa44'}}>{msg}</div>}
+    </div>
+    <div style={{fontSize:10,color:T.dim,marginBottom:5,letterSpacing:1,textTransform:'uppercase'}}>{t(DICT,'orExternalUrl',lang)}</div>
+    <TP label={t(DICT,'imgUrl',lang)} val={c.url||''} set={v=>onUpdate({...block,content:{...block.content,url:v}})}/>
+    <TP label={t(DICT,'imgAlt',lang)} val={c.alt||''} set={v=>onUpdate({...block,content:{...block.content,alt:v}})}/>
+    <TP label={t(DICT,'imgCaption',lang)} val={c.caption||''} set={v=>onUpdate({...block,content:{...block.content,caption:v}})}/>
+    {c.vaultId&&<div style={{background:T.accentGreen+'15',border:`1px solid ${T.accentGreen}33`,borderRadius:7,padding:'6px 11px',marginTop:5,fontSize:10,color:T.accentGreen}}>🔐 Vault: {c.vaultId}</div>}
+  </div>);
+}
+
+// ═══════════════════════════════════════════════════════════════════
 // LANGUAGE SWITCHER
 // ═══════════════════════════════════════════════════════════════════
 const LANGS = [
@@ -476,6 +605,7 @@ function App(){
   const[leftTab,setLeftTab]=useState('blocos');
   const[showExport,setShowExport]=useState(false);
   const[showTpl,setShowTpl]=useState(false);
+  const[showLedger,setShowLedger]=useState(false);
   const[meta,setMeta]=useState({title:'Minha Página',description:''});
 
   const CATALOG=getCatalog(lang);
@@ -625,8 +755,9 @@ function App(){
       </div>
 
       {/* MODALS */}
-      {showExport&&<ExportModal blocks={blocks} meta={meta} setMeta={setMeta} onClose={()=>setShowExport(false)}/>}
+      {showExport&&<ExportModal blocks={blocks} meta={meta} setMeta={setMeta} onClose={()=>setShowExport(false)} onSeal={()=>{setShowExport(false);setShowLedger(true);}}/>}
       {showTpl&&<TemplatesModal onSelect={loadTpl} onClose={()=>setShowTpl(false)}/>}
+      {showLedger&&<LedgerModal html={genHTML(blocks,{...meta,lang})} meta={meta} onClose={()=>setShowLedger(false)}/>}
 
     </div>
     </LangCtx.Provider>
