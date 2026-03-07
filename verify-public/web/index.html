@@ -84,6 +84,8 @@ input[type=text]:focus{border-color:var(--gold)}
 .wa-btn:hover{opacity:.88}
 .wa-btn svg{width:16px;height:16px;fill:#fff;flex-shrink:0}
 .cp-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:none;border:1.5px solid var(--border);border-radius:6px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .15s}
+.share-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:var(--gold);border:none;border-radius:6px;font-size:12px;font-weight:700;color:#fff;cursor:pointer;font-family:inherit;transition:all .15s}
+.share-btn:hover{opacity:.9}
 .cp-btn:hover{border-color:var(--gold);color:var(--noir)}
 .cp-btn.copied{border-color:var(--green);color:var(--green)}
 .dtbtn:hover{border-color:var(--gold);color:var(--noir)}
@@ -216,13 +218,16 @@ function render(d){
   const waText=encodeURIComponent('✅ Documento verificado pelo WINDI:\n'+docTitle+'\n\nVerifica aqui: '+verifyUrl);
   const waHref='https://wa.me/?text='+waText;
   const shareRow=s==='verified'?`
-    <div class="share-row">
+    <div class="share-row" data-receipt-id="${docId}">
+      <button class="share-btn" onclick="windiShareVerification('${docId}','${docTitle}')">
+        📤 Share Verification
+      </button>
       <a class="wa-btn" href="${waHref}" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.374 0 0 5.373 0 12c0 2.116.554 4.129 1.521 5.877L.057 23.882a.5.5 0 00.609.61l6.098-1.451A11.934 11.934 0 0012 24c6.626 0 12-5.373 12-12S18.626 0 12 0z"/></svg>
-        Partilhar no WhatsApp
+        WhatsApp
       </a>
       <button class="cp-btn" id="cpbtn" onclick="cpLink('${verifyUrl}')">
-        🔗 Copiar link
+        🔗 Copy
       </button>
     </div>`:''
   ;
@@ -231,7 +236,28 @@ function render(d){
   if(s==='verified'&&docId){document.title='WINDI — Verificado: '+docId;const ogTitle=document.querySelector('meta[property="og:title"]');const ogDesc=document.querySelector('meta[property="og:description"]');const ogUrl=document.querySelector('meta[property="og:url"]');if(ogTitle)ogTitle.setAttribute('content','WINDI — Documento Verificado: '+docId);if(ogDesc)ogDesc.setAttribute('content','Documento '+docId+' autenticado pelo WINDI Forensic Ledger. Integridade confirmada.');if(ogUrl)ogUrl.setAttribute('content',verifyUrl);}
 }
 function tgd(){const p=document.getElementById('tp'),b=document.querySelector('.dtbtn');if(p.classList.toggle('open')){b.textContent='Hide technical details'}else{b.textContent='Show technical details'}}
-function cpLink(url){navigator.clipboard.writeText(url).then(()=>{const b=document.getElementById('cpbtn');if(b){b.textContent='✅ Copiado!';b.classList.add('copied');setTimeout(()=>{b.textContent='🔗 Copiar link';b.classList.remove('copied')},2000)}}).catch(()=>{const t=document.createElement('textarea');t.value=url;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t)})}
+function cpLink(url){navigator.clipboard.writeText(url).then(()=>{const b=document.getElementById('cpbtn');if(b){b.textContent='✅ Copiado!';b.classList.add('copied');setTimeout(()=>{b.textContent='🔗 Copy';b.classList.remove('copied')},2000)}}).catch(()=>{const t=document.createElement('textarea');t.value=url;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t)})}
+
+// WINDI Web Share API — seed distribution (patch do Gêmeo)
+function windiShareVerification(receiptId, docTitle) {
+  const verifyUrl = 'https://windi-domain.com/verify-public/?id=' + encodeURIComponent(receiptId);
+  const shareData = {
+    title: '✅ Document verified by WINDI',
+    text: 'This document has been cryptographically verified by WINDI Forensic Ledger.\n\nReceipt: ' + receiptId + '\n\nVerify here:',
+    url: verifyUrl
+  };
+  // Web Share API — mobile: WhatsApp, Telegram, etc.
+  if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+    navigator.share(shareData)
+      .then(function() { console.log('[WINDI] Shared successfully'); })
+      .catch(function(err) {
+        if (err.name !== 'AbortError') cpLink(verifyUrl);
+      });
+  } else {
+    // Desktop fallback → copy link
+    cpLink(verifyUrl);
+  }
+}
 </script>
 </body>
 </html>
