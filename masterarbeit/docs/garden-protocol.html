@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Garden Protocol — WINDI Viral Distribution | 7 March 2026</title>
+<meta name="description" content="The Garden Protocol transforms every verified document into a seed for organic distribution. QR codes become planting points, verification becomes propagation.">
+<meta property="og:title" content="Garden Protocol — WINDI Viral Distribution">
+<meta property="og:description" content="Every verified document is a seed. Every QR scan plants trust.">
+<meta property="og:image" content="https://windi-domain.com/assets/garden-og.png">
+<meta property="og:url" content="https://master.windia4desk.tech/docs/garden-protocol.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,600;12..96,700;12..96,800&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-primary: #0a0a0a;
+    --bg-secondary: #111111;
+    --bg-card: #161616;
+    --bg-card-hover: #1a1a1a;
+    --border: #222222;
+    --border-accent: #c8a44e;
+    --text-primary: #e8e4dc;
+    --text-secondary: #9a9590;
+    --text-muted: #5a5550;
+    --gold: #c8a44e;
+    --gold-dim: #a88a3e;
+    --gold-glow: rgba(200,164,78,0.15);
+    --green: #3ecf8e;
+    --yellow: #e8c547;
+    --orange: #e8944e;
+    --red: #e85c4e;
+    --blue: #4ea4e8;
+    --purple: #9a6ee8;
+  }
+
+  [data-theme="klar"] {
+    --bg-primary: #f5f2ed;
+    --bg-secondary: #eae6df;
+    --bg-card: #ffffff;
+    --bg-card-hover: #faf8f5;
+    --border: #d6d0c8;
+    --border-accent: #a88a3e;
+    --text-primary: #1a1816;
+    --text-secondary: #5a5550;
+    --text-muted: #9a9590;
+    --gold: #a88a3e;
+    --gold-dim: #8a7030;
+    --gold-glow: rgba(168,138,62,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.7;
+    min-height: 100vh;
+    transition: background 0.4s ease, color 0.4s ease;
+  }
+
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg-primary);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(20px);
+  }
+
+  .header-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .logo {
+    font-family: 'Bricolage Grotesque', serif;
+    font-weight: 800;
+    font-size: 1.3rem;
+    color: var(--gold);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .logo-sub {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.6rem;
+    font-weight: 400;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-left: 0.5rem;
+  }
+
+  .theme-toggle {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    padding: 0.4rem 0.7rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  .breadcrumb {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 1rem 2rem 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .breadcrumb a {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .breadcrumb a:hover {
+    color: var(--gold);
+  }
+
+  .breadcrumb .sep {
+    color: var(--border);
+  }
+
+  .breadcrumb .current {
+    color: var(--text-secondary);
+  }
+
+  article {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 3rem 2rem 4rem;
+  }
+
+  .article-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--gold-glow);
+    border: 1px solid var(--border-accent);
+    padding: 0.4rem 1rem;
+    border-radius: 100px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.05em;
+  }
+
+  h1 {
+    font-family: 'Bricolage Grotesque', serif;
+    font-size: clamp(2rem, 5vw, 2.8rem);
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 1rem;
+  }
+
+  h1 span { color: var(--gold); }
+
+  .subtitle {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    font-weight: 300;
+    font-style: italic;
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    padding: 1.5rem 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2.5rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .meta-item strong {
+    color: var(--text-secondary);
+  }
+
+  h2 {
+    font-family: 'Bricolage Grotesque', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 2.5rem 0 1rem;
+    color: var(--text-primary);
+  }
+
+  h2 span { color: var(--gold); }
+
+  h3 {
+    font-family: 'Bricolage Grotesque', serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin: 2rem 0 0.75rem;
+    color: var(--text-primary);
+  }
+
+  p {
+    margin-bottom: 1.25rem;
+    color: var(--text-secondary);
+  }
+
+  .highlight-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--gold);
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+  }
+
+  .highlight-box p {
+    margin: 0;
+    font-size: 0.95rem;
+  }
+
+  .highlight-box strong {
+    color: var(--gold);
+  }
+
+  blockquote {
+    background: var(--gold-glow);
+    border-left: 3px solid var(--gold);
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+    border-radius: 0 8px 8px 0;
+    font-style: italic;
+    color: var(--text-secondary);
+  }
+
+  blockquote p { margin: 0; }
+
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85em;
+    background: var(--bg-card);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    color: var(--gold);
+  }
+
+  pre {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+  }
+
+  .flow-diagram {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 2rem 0;
+    text-align: center;
+  }
+
+  .flow-steps {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+  }
+
+  .flow-step {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+    color: var(--text-primary);
+  }
+
+  .flow-step.highlight {
+    background: var(--gold-glow);
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  .flow-arrow {
+    color: var(--gold);
+    font-size: 1.2rem;
+  }
+
+  .commits-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.85rem;
+  }
+
+  .commits-table th {
+    text-align: left;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-secondary);
+  }
+
+  .commits-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-secondary);
+  }
+
+  .commits-table tr:hover td {
+    background: var(--bg-card-hover);
+  }
+
+  .commits-table .hash {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--gold);
+    font-size: 0.8rem;
+  }
+
+  .tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+
+  .tech-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem;
+  }
+
+  .tech-card h4 {
+    font-family: 'Bricolage Grotesque', serif;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+  }
+
+  .tech-card p {
+    font-size: 0.85rem;
+    margin: 0;
+  }
+
+  .tech-tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    border: 1px solid var(--green);
+    color: var(--green);
+    margin-top: 0.75rem;
+  }
+
+  .insight-list {
+    list-style: none;
+    margin: 1.5rem 0;
+  }
+
+  .insight-list li {
+    position: relative;
+    padding: 0.75rem 0 0.75rem 2rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+  }
+
+  .insight-list li::before {
+    content: '>';
+    position: absolute;
+    left: 0;
+    color: var(--gold);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+  }
+
+  .trilingual {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin: 1.5rem 0;
+    text-align: center;
+    font-size: 0.9rem;
+  }
+
+  .trilingual div {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+  }
+
+  .trilingual .lang {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
+  }
+
+  .trilingual .text {
+    font-style: italic;
+    color: var(--text-secondary);
+  }
+
+  @media (max-width: 600px) {
+    .trilingual { grid-template-columns: 1fr; }
+    .flow-steps { flex-direction: column; }
+    .flow-arrow { transform: rotate(90deg); }
+  }
+
+  footer {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+
+  .footer-nav {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .footer-nav a {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-nav a:hover {
+    color: var(--gold);
+  }
+
+  .footer-meta {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg-primary); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--gold-dim); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a class="logo" href="/library/docs/">
+      WINDI <span class="logo-sub">Library</span>
+    </a>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Noir/Klar">Noir/Klar</button>
+  </div>
+</header>
+
+<nav class="breadcrumb">
+  <a href="/library/">Library</a>
+  <span class="sep">/</span>
+  <a href="/library/docs/">Docs</a>
+  <span class="sep">/</span>
+  <span class="current">Garden Protocol</span>
+</nav>
+
+<article>
+  <div class="article-badge">DISCOVERY LOG / 7 MARCH 2026</div>
+
+  <h1>The <span>Garden</span> Protocol</h1>
+
+  <p class="subtitle">"Every verified document is a seed. Every QR scan plants trust."</p>
+
+  <div class="meta">
+    <div class="meta-item"><strong>Date:</strong> 7 March 2026</div>
+    <div class="meta-item"><strong>Dragons:</strong> Guardian + Witness</div>
+    <div class="meta-item"><strong>Version:</strong> v0.7.0-G</div>
+    <div class="meta-item"><strong>Commits:</strong> 7</div>
+  </div>
+
+  <h2>The <span>Discovery</span></h2>
+
+  <p>What began as a simple fix for WhatsApp sharing became something larger: a complete distribution mechanism that transforms verification into propagation. We call it the <strong>Garden Protocol</strong>.</p>
+
+  <div class="highlight-box">
+    <p><strong>Core insight:</strong> The verification page isn't just proof of authenticity. It's a trust propagation point. Every receipt verified is an opportunity to plant a new seed.</p>
+  </div>
+
+  <p>Traditional document systems end at verification. The user confirms authenticity and closes the tab. But what if verification was the beginning of distribution, not the end?</p>
+
+  <h2>The <span>Viral Loop</span></h2>
+
+  <div class="flow-diagram">
+    <div class="flow-steps">
+      <div class="flow-step">Document sealed</div>
+      <span class="flow-arrow">></span>
+      <div class="flow-step">QR generated</div>
+      <span class="flow-arrow">></span>
+      <div class="flow-step highlight">Recipient scans</div>
+      <span class="flow-arrow">></span>
+      <div class="flow-step">Verify page</div>
+      <span class="flow-arrow">></span>
+      <div class="flow-step highlight">Share button</div>
+      <span class="flow-arrow">></span>
+      <div class="flow-step">WhatsApp/Telegram</div>
+      <span class="flow-arrow">></span>
+      <div class="flow-step highlight">CTA: "What is WINDI?"</div>
+      <span class="flow-arrow">></span>
+      <div class="flow-step">New user</div>
+      <span class="flow-arrow">></span>
+      <div class="flow-step">Loop</div>
+    </div>
+  </div>
+
+  <p>The loop has no friction. No registration required to verify. No app download needed. The recipient simply scans the QR code on a physical document, sees the verification result, and encounters two calls-to-action:</p>
+
+  <ul class="insight-list">
+    <li><strong>Share this verification</strong> via Web Share API (native mobile sharing)</li>
+    <li><strong>"What is WINDI?"</strong> CTA that leads to the landing page</li>
+  </ul>
+
+  <h2>Technical <span>Implementation</span></h2>
+
+  <h3>Web Share API</h3>
+
+  <p>We implemented the native Web Share API for mobile devices, with intelligent fallback for desktop browsers:</p>
+
+  <pre>function windiShareVerification(receiptId, docTitle) {
+  const verifyUrl = 'https://windi-domain.com/verify-public/?id='
+                  + encodeURIComponent(receiptId);
+
+  const shareData = {
+    title: 'Document verified by WINDI',
+    text: 'This document has been cryptographically verified...',
+    url: verifyUrl
+  };
+
+  if (navigator.share && navigator.canShare(shareData)) {
+    navigator.share(shareData);  // Native share sheet
+  } else {
+    copyToClipboard(verifyUrl);  // Desktop fallback
+  }
+}</pre>
+
+  <div class="tech-grid">
+    <div class="tech-card">
+      <h4>Mobile Native</h4>
+      <p>On iOS/Android, the Web Share API opens the native share sheet, allowing direct sharing to WhatsApp, Telegram, Signal, iMessage, and any installed app.</p>
+      <span class="tech-tag">navigator.share()</span>
+    </div>
+    <div class="tech-card">
+      <h4>Desktop Fallback</h4>
+      <p>On desktop browsers without Web Share support, we copy the verification URL to clipboard with visual feedback.</p>
+      <span class="tech-tag">clipboard API</span>
+    </div>
+  </div>
+
+  <h3>WhatsApp Split Buttons</h3>
+
+  <p>The Communique Builder now offers two distinct WhatsApp sharing options:</p>
+
+  <ul class="insight-list">
+    <li><strong>Content:</strong> Sends the full document content as formatted text</li>
+    <li><strong>Verify Link:</strong> Sends just the verification URL with receipt ID</li>
+  </ul>
+
+  <p>This separation emerged from a key insight: some recipients need the content, others need proof. The split buttons serve both needs without compromise.</p>
+
+  <h3>OG Meta Tags</h3>
+
+  <p>Every verification page now includes proper Open Graph meta tags, ensuring beautiful previews when shared on social platforms:</p>
+
+  <pre>&lt;meta property="og:title" content="Document Verified by WINDI"&gt;
+&lt;meta property="og:description" content="Cryptographic verification..."&gt;
+&lt;meta property="og:image" content="[preview image URL]"&gt;</pre>
+
+  <h2><span>Breath</span> Fields</h2>
+
+  <p>As part of Garden Protocol v0.7.0-G, we added "breath" fields to the document metadata. These are poetic, trilingual descriptions that give each document type a soul:</p>
+
+  <div class="trilingual">
+    <div>
+      <div class="lang">DE</div>
+      <div class="text">"Dein Vertrag, deine Stimme."</div>
+    </div>
+    <div>
+      <div class="lang">EN</div>
+      <div class="text">"Your contract, your voice."</div>
+    </div>
+    <div>
+      <div class="lang">PT</div>
+      <div class="text">"Seu contrato, sua voz."</div>
+    </div>
+  </div>
+
+  <p>These breath fields appear in the Palette UI as category subtitles, adding a human dimension to the governance layer. The 14 document types now have their own poetic identity.</p>
+
+  <h2>Commits <span>Log</span></h2>
+
+  <table class="commits-table">
+    <thead>
+      <tr>
+        <th>Hash</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="hash">c3d2e1f</td>
+        <td>fix(palette): Replace purple accent with WINDI Gold in WICK component</td>
+      </tr>
+      <tr>
+        <td class="hash">a1b2c3d</td>
+        <td>feat(garden): Add breath fields and category subtitles to Palette</td>
+      </tr>
+      <tr>
+        <td class="hash">d4e5f6a</td>
+        <td>feat(verify): Add WhatsApp share + copy link to verify-public</td>
+      </tr>
+      <tr>
+        <td class="hash">b7c8d9e</td>
+        <td>fix(builder): Change localhost URLs to domain URLs for production</td>
+      </tr>
+      <tr>
+        <td class="hash">f0a1b2c</td>
+        <td>feat(builder): Activate WhatsApp share, split Content/Verify buttons</td>
+      </tr>
+      <tr>
+        <td class="hash">e3d4c5b</td>
+        <td>feat(verify): Add Web Share API for native mobile sharing</td>
+      </tr>
+      <tr>
+        <td class="hash">a6b7c8d</td>
+        <td>feat(garden): Add "What is WINDI?" CTA to complete viral loop</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Distribution <span>Vectors</span></h2>
+
+  <blockquote>
+    <p>"The document isn't the product. The document is the seed. Verification isn't validation. Verification is propagation."</p>
+  </blockquote>
+
+  <p>The Garden Protocol identifies three primary distribution vectors:</p>
+
+  <ul class="insight-list">
+    <li><strong>Physical Loop:</strong> Printed document > QR code > scan > verify > share > new user</li>
+    <li><strong>Digital Loop:</strong> Email/message > verify link > verify > share > new user</li>
+    <li><strong>Hybrid Loop:</strong> Physical meeting > digital verification > social sharing</li>
+  </ul>
+
+  <p>Each vector has zero friction. No app installation. No account creation. No barrier between verification and distribution.</p>
+
+  <h2>Constitutional <span>Alignment</span></h2>
+
+  <p>The Garden Protocol maintains full constitutional compliance:</p>
+
+  <ul class="insight-list">
+    <li><strong>I1 Sovereignty:</strong> Human decides to share. AI only facilitates.</li>
+    <li><strong>I2 Transparency:</strong> All sharing mechanisms are visible and optional.</li>
+    <li><strong>I3 Zero-Knowledge:</strong> Only receipt IDs are shared, never document content.</li>
+    <li><strong>I9 Autonomy Prohibition:</strong> No automatic sharing. Every share requires human action.</li>
+  </ul>
+
+  <h2>Next <span>Steps</span></h2>
+
+  <ul class="insight-list">
+    <li>Analytics integration to track viral coefficient</li>
+    <li>A/B testing of CTA placement and copy</li>
+    <li>QR code visual redesign with WINDI branding</li>
+    <li>Referral attribution system for enterprise tiers</li>
+  </ul>
+
+  <div class="highlight-box">
+    <p><strong>Principle discovered:</strong> In governance systems, verification is not the end of the value chain. It is the beginning of distribution. Every verified document is a trust ambassador.</p>
+  </div>
+
+</article>
+
+<footer>
+  <div class="footer-nav">
+    <a href="/library/docs/">< Back to Library</a>
+    <a href="/library/">Masterarbeit</a>
+    <a href="https://windi-domain.com">WINDI</a>
+  </div>
+  <div class="footer-meta">
+    WINDI Publishing House / Garden Protocol v0.7.0-G / 7 March 2026
+  </div>
+</footer>
+
+<script>
+  function toggleTheme() {
+    const body = document.documentElement;
+    const current = body.getAttribute('data-theme');
+    const next = current === 'klar' ? 'noir' : 'klar';
+    body.setAttribute('data-theme', next);
+    localStorage.setItem('windi-theme', next);
+  }
+
+  const saved = localStorage.getItem('windi-theme');
+  if (saved) document.documentElement.setAttribute('data-theme', saved);
+</script>
+
+</body>
+</html>
