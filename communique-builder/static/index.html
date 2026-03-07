@@ -30,8 +30,8 @@ var useState = React.useState;
 var useCallback = React.useCallback;
 
 var BASE_URL   = "https://windi-domain.com";
-var LEDGER_URL = "http://localhost:8101";
-var EXPORT_URL = "http://localhost:8105";
+var LEDGER_URL = "https://windi-domain.com/api/ledger";
+var EXPORT_URL = "https://windi-domain.com/communique";
 
 var KLAR = {bg:"#F5F0E0",card:"#FDFBF5",border:"#E2D9C8",text:"#1A1612",dim:"#8C7E6A",hover:"#EDE6D3",gold:"#8B6914",input:"#F5F0E0",success:"#2D7A4F",error:"#C0392B"};
 var NOIR = {bg:"#0E0D0B",card:"#1A1814",border:"#2E2A24",text:"#F5F0E0",dim:"#6B6158",hover:"#252018",gold:"#C9A84C",input:"#1A1814",success:"#3DAA6F",error:"#E05542"};
@@ -501,7 +501,7 @@ function App() {
                 <div style={{display:"flex",alignItems:"center",gap:9}}>
                   <span style={{fontSize:16}}>💬</span>
                   <span style={{fontSize:13,fontWeight:600}}>WhatsApp</span>
-                  <a href={"https://wa.me/?text="+encodeURIComponent("✅ Documento verificado pelo WINDI:\n"+(receipt?.id||receipt?.receipt_id||"Documento")+"\n\nVerifica aqui: https://windi-domain.com/verify-public/?id="+encodeURIComponent(receipt?.id||receipt?.receipt_id||""))} target="_blank" rel="noopener" style={{marginLeft:"auto",display:"inline-flex",alignItems:"center",gap:5,padding:"5px 10px",background:"#25D366",color:"#fff",borderRadius:5,fontSize:10,fontWeight:700,textDecoration:"none"}}>📤 Partilhar</a>
+                  <a href={"https://wa.me/?text="+encodeURIComponent("📡 Communiqué enviado via WINDI:\n"+(receipt?.id||receipt?.receipt_id||"Documento")+"\n\n🔐 Verificar integridade: https://windi-domain.com/verify-public/?id="+encodeURIComponent(receipt?.id||receipt?.receipt_id||""))} target="_blank" rel="noopener" style={{marginLeft:"auto",display:"inline-flex",alignItems:"center",gap:5,padding:"5px 10px",background:"#25D366",color:"#fff",borderRadius:5,fontSize:10,fontWeight:700,textDecoration:"none"}}>📤 Partilhar</a>
                 </div>
               </div>
 
