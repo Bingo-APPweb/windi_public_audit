@@ -498,10 +498,14 @@ function App() {
 
               {/* WhatsApp */}
               <div style={{marginBottom:10,padding:"12px",borderRadius:10,border:"1.5px solid #25D366",background:T.hover}}>
-                <div style={{display:"flex",alignItems:"center",gap:9}}>
+                <div style={{display:"flex",alignItems:"center",gap:9,marginBottom:8}}>
                   <span style={{fontSize:16}}>💬</span>
                   <span style={{fontSize:13,fontWeight:600}}>WhatsApp</span>
-                  <a href={"https://wa.me/?text="+encodeURIComponent("📡 Communiqué enviado via WINDI:\n"+(receipt?.id||receipt?.receipt_id||"Documento")+"\n\n🔐 Verificar integridade: https://windi-domain.com/verify-public/?id="+encodeURIComponent(receipt?.id||receipt?.receipt_id||""))} target="_blank" rel="noopener" style={{marginLeft:"auto",display:"inline-flex",alignItems:"center",gap:5,padding:"5px 10px",background:"#25D366",color:"#fff",borderRadius:5,fontSize:10,fontWeight:700,textDecoration:"none"}}>📤 Partilhar</a>
+                  <span style={{fontSize:9,color:T.success,marginLeft:"auto",background:T.success+"22",padding:"2px 6px",borderRadius:4}}>✓ Ativo</span>
+                </div>
+                <div style={{display:"flex",gap:6}}>
+                  <a href={"https://wa.me/?text="+encodeURIComponent("📡 *"+(docTitle||"WINDI Communiqué")+"*\n\n"+blocks.filter(function(b){return b.type==="paragraph"||b.type==="lead";}).map(function(b){return b.text;}).join("\n\n").slice(0,800)+(blocks.filter(function(b){return b.type==="paragraph"||b.type==="lead";}).map(function(b){return b.text;}).join("\n\n").length>800?"...":""))} target="_blank" rel="noopener" style={{flex:1,display:"inline-flex",alignItems:"center",justifyContent:"center",gap:5,padding:"8px 12px",background:"#25D366",color:"#fff",borderRadius:6,fontSize:11,fontWeight:700,textDecoration:"none"}}>📄 Enviar Conteúdo</a>
+                  <a href={"https://wa.me/?text="+encodeURIComponent("🔐 Documento verificável:\n"+(receipt?.id||receipt?.receipt_id||"")+"\n\nhttps://windi-domain.com/verify-public/?id="+encodeURIComponent(receipt?.id||receipt?.receipt_id||""))} target="_blank" rel="noopener" style={{display:"inline-flex",alignItems:"center",justifyContent:"center",gap:5,padding:"8px 12px",background:T.hover,border:"1.5px solid #25D366",color:"#25D366",borderRadius:6,fontSize:11,fontWeight:600,textDecoration:"none"}}>🔗 Link Verify</a>
                 </div>
               </div>
 
