@@ -86,6 +86,8 @@ input[type=text]:focus{border-color:var(--gold)}
 .cp-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:none;border:1.5px solid var(--border);border-radius:6px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .15s}
 .share-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:var(--gold);border:none;border-radius:6px;font-size:12px;font-weight:700;color:#fff;cursor:pointer;font-family:inherit;transition:all .15s}
 .share-btn:hover{opacity:.9}
+.windi-cta{display:block;text-align:center;margin-top:14px;font-size:12px;color:var(--muted);text-decoration:none;transition:color .15s}
+.windi-cta:hover{color:var(--gold)}
 .cp-btn:hover{border-color:var(--gold);color:var(--noir)}
 .cp-btn.copied{border-color:var(--green);color:var(--green)}
 .dtbtn:hover{border-color:var(--gold);color:var(--noir)}
@@ -229,7 +231,8 @@ function render(d){
       <button class="cp-btn" id="cpbtn" onclick="cpLink('${verifyUrl}')">
         🔗 Copy
       </button>
-    </div>`:''
+    </div>
+    <a href="https://windi-domain.com" target="_blank" rel="noopener" class="windi-cta">🌱 What is WINDI?</a>`:''
   ;
   document.getElementById('result').innerHTML='<div class="rbox '+s+'"><div class="rstamp">'+stamps[s]+'</div><div class="rverdict '+s+'">'+verdicts[s]+'</div><div class="rmeta">'+id+dt+ig+ca+'</div><div class="rmsg">'+msgs[s]+'</div>'+dtbtn+tech+shareRow+'</div>';
 
