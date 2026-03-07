@@ -497,11 +497,11 @@ function App() {
               </div>
 
               {/* WhatsApp */}
-              <div style={{marginBottom:10,padding:"12px",borderRadius:10,border:"1px solid "+T.border,background:"transparent",opacity:0.6}}>
+              <div style={{marginBottom:10,padding:"12px",borderRadius:10,border:"1.5px solid #25D366",background:T.hover}}>
                 <div style={{display:"flex",alignItems:"center",gap:9}}>
                   <span style={{fontSize:16}}>💬</span>
-                  <span style={{fontSize:13,fontWeight:500}}>WhatsApp</span>
-                  <span style={{fontSize:9,color:T.dim,marginLeft:"auto",border:"1px solid "+T.border,padding:"2px 6px",borderRadius:4}}>Em breve</span>
+                  <span style={{fontSize:13,fontWeight:600}}>WhatsApp</span>
+                  <a href={"https://wa.me/?text="+encodeURIComponent("✅ Documento verificado pelo WINDI:\n"+(receipt?.id||receipt?.receipt_id||"Documento")+"\n\nVerifica aqui: https://windi-domain.com/verify-public/?id="+encodeURIComponent(receipt?.id||receipt?.receipt_id||""))} target="_blank" rel="noopener" style={{marginLeft:"auto",display:"inline-flex",alignItems:"center",gap:5,padding:"5px 10px",background:"#25D366",color:"#fff",borderRadius:5,fontSize:10,fontWeight:700,textDecoration:"none"}}>📤 Partilhar</a>
                 </div>
               </div>
 
