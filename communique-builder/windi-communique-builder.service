@@ -1,5 +1,5 @@
 [Unit]
-Description=WINDI Communique Builder v1.0.0
+Description=WINDI Communique Builder v2.1.0
 After=network.target
 Documentation=https://windi-domain.com
 

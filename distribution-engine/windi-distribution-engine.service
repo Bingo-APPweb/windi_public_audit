@@ -1,0 +1,17 @@
+[Unit]
+Description=WINDI Distribution Engine v1.0.0 — Publishing House
+After=network.target windi-forensic-ledger.service
+Documentation=https://windi-domain.com
+
+[Service]
+Type=simple
+User=windi
+Group=windi
+WorkingDirectory=/opt/windi/distribution-engine
+EnvironmentFile=/opt/windi/distribution-engine/.env
+ExecStart=/usr/bin/python3 /opt/windi/distribution-engine/distribution_server.py
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
