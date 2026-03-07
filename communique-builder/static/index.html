@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>WINDI Communique Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Bricolage Grotesque',Georgia,serif}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-thumb{background:#8B6914;border-radius:3px}
+@keyframes slideUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+.wa{animation:slideUp .3s ease}
+.wp{animation:pulse 1s infinite}
+.ws{animation:spin 2s linear infinite}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+
+var useState = React.useState;
+var useCallback = React.useCallback;
+
+var BASE_URL   = "https://windi-domain.com";
+var LEDGER_URL = "http://localhost:8101";
+var EXPORT_URL = "http://localhost:8105";
+
+var KLAR = {bg:"#F5F0E0",card:"#FDFBF5",border:"#E2D9C8",text:"#1A1612",dim:"#8C7E6A",hover:"#EDE6D3",gold:"#8B6914",input:"#F5F0E0",success:"#2D7A4F",error:"#C0392B"};
+var NOIR = {bg:"#0E0D0B",card:"#1A1814",border:"#2E2A24",text:"#F5F0E0",dim:"#6B6158",hover:"#252018",gold:"#C9A84C",input:"#1A1814",success:"#3DAA6F",error:"#E05542"};
+
+var today = new Date().toLocaleDateString("pt-BR");
+
+var TEMPLATES = [
+  {id:"communique",label:"Communique",icon:"📜",cat:"institutional",blocks:[
+    {id:"b1",type:"heading",text:"COMMUNIQUE"},
+    {id:"b2",type:"meta",label:"De",value:""},
+    {id:"b3",type:"meta",label:"Para",value:""},
+    {id:"b4",type:"meta",label:"Data",value:today},
+    {id:"b5",type:"divider"},
+    {id:"b6",type:"lead",text:""},
+    {id:"b7",type:"paragraph",text:""},
+  ]},
+  {id:"press",label:"Press Release",icon:"📡",cat:"media",blocks:[
+    {id:"b1",type:"heading",text:"PRESS RELEASE"},
+    {id:"b2",type:"meta",label:"Empresa",value:""},
+    {id:"b3",type:"meta",label:"Data",value:today},
+    {id:"b4",type:"divider"},
+    {id:"b5",type:"lead",text:"[CIDADE] — "},
+    {id:"b6",type:"paragraph",text:""},
+    {id:"b7",type:"quote",text:"",author:""},
+  ]},
+  {id:"memo",label:"Memorandum",icon:"📋",cat:"corporate",blocks:[
+    {id:"b1",type:"heading",text:"MEMORANDUM"},
+    {id:"b2",type:"meta",label:"Para",value:""},
+    {id:"b3",type:"meta",label:"De",value:""},
+    {id:"b4",type:"meta",label:"Data",value:today},
+    {id:"b5",type:"divider"},
+    {id:"b6",type:"paragraph",text:""},
+  ]},
+  {id:"article",label:"Web Article",icon:"🌐",cat:"media",blocks:[
+    {id:"b1",type:"heading",text:"Titulo do Artigo"},
+    {id:"b2",type:"meta",label:"Autor",value:""},
+    {id:"b3",type:"divider"},
+    {id:"b4",type:"lead",text:"Paragrafo introdutorio..."},
+    {id:"b5",type:"paragraph",text:""},
+  ]},
+  {id:"report",label:"Report",icon:"📊",cat:"corporate",blocks:[
+    {id:"b1",type:"heading",text:"REPORT"},
+    {id:"b2",type:"meta",label:"Departamento",value:""},
+    {id:"b3",type:"meta",label:"Data",value:today},
+    {id:"b4",type:"divider"},
+    {id:"b5",type:"paragraph",text:"Sumario executivo..."},
+    {id:"b6",type:"list",items:["Ponto 1","Ponto 2"]},
+  ]},
+  {id:"decl",label:"Declaracao",icon:"🏛️",cat:"institutional",blocks:[
+    {id:"b1",type:"heading",text:"DECLARACAO"},
+    {id:"b2",type:"meta",label:"Requerente",value:""},
+    {id:"b3",type:"meta",label:"Data",value:today},
+    {id:"b4",type:"divider"},
+    {id:"b5",type:"paragraph",text:"Declaro para os devidos efeitos que..."},
+  ]},
+];
+
+var FORMATS = [
+  {id:"jmpg",label:".jmpg",icon:"📦",desc:"Capsula soberana blindada"},
+  {id:"html",label:".html",icon:"🌐",desc:"Verified Web Page"},
+  {id:"both",label:"Ambos",icon:"⚁",desc:".jmpg + .html"},
+];
+
+var PIPE_STEPS = [
+  {id:"s",label:"Serializando Content Model",icon:"⬡"},
+  {id:"r",label:"Renderizando artefatos",icon:"🖨"},
+  {id:"h",label:"Calculando SHA-256",icon:"🔐"},
+  {id:"a",label:"Ancorando no Ledger",icon:"⚓"},
+  {id:"c",label:"Confirmando consistencia",icon:"✓"},
+];
+
+function StepBar(props) {
+  var step = props.step;
+  var T = props.T;
+  var names = ["Template","Editor","Pipeline","Feito"];
+  return React.createElement("div", {style:{display:"flex",alignItems:"center",gap:6,marginBottom:20}},
+    names.map(function(name, i) {
+      var done = step > i;
+      var active = step === i;
+      var dot = React.createElement("div", {
+        key:"dot",
+        className: active && !done ? "wp" : "",
+        style:{
+          width:22,height:22,borderRadius:"50%",
+          background: done ? T.gold : active ? T.gold+"22" : T.border,
+          border: active ? "2px solid "+T.gold : done ? "none" : "1.5px solid "+T.border,
+          display:"flex",alignItems:"center",justifyContent:"center",
+          fontSize:9,fontWeight:700,
+          color: done ? "#FFF" : active ? T.gold : T.dim,
+        }
+      }, done ? "✓" : String(i+1));
+      var label = React.createElement("span", {key:"lbl",style:{fontSize:11,fontWeight:active?600:400,color:step<i?T.dim:T.text}}, name);
+      var group = React.createElement("div", {key:"g"+i,style:{display:"flex",alignItems:"center",gap:5}}, dot, label);
+      var line = i < names.length-1
+        ? React.createElement("div", {key:"l"+i,style:{flex:1,height:1,background:done?T.gold:T.border}})
+        : null;
+      return [group, line];
+    })
+  );
+}
+
+function BlockRow(props) {
+  var b = props.block;
+  var T = props.T;
+  var onChange = props.onChange;
+  var onRemove = props.onRemove;
+  var inp = {background:"transparent",border:"none",outline:"none",color:T.text,fontFamily:"'Bricolage Grotesque',serif",width:"100%",resize:"vertical"};
+  var wrap = {padding:"8px 10px",borderRadius:8,marginBottom:6,border:"1px solid "+T.border,background:T.card,position:"relative"};
+
+  var content = null;
+  if (b.type === "heading") {
+    content = React.createElement("textarea", {value:b.text,rows:1,onChange:function(e){onChange("text",e.target.value)},style:{...inp,fontSize:18,fontWeight:800}});
+  } else if (b.type === "lead") {
+    content = React.createElement("textarea", {value:b.text,rows:2,placeholder:"Lead...",onChange:function(e){onChange("text",e.target.value)},style:{...inp,fontSize:14,fontStyle:"italic"}});
+  } else if (b.type === "paragraph") {
+    content = React.createElement("textarea", {value:b.text,rows:3,placeholder:"Paragrafo...",onChange:function(e){onChange("text",e.target.value)},style:{...inp,fontSize:13,lineHeight:1.6}});
+  } else if (b.type === "meta") {
+    content = React.createElement("div", {style:{display:"flex",gap:8,alignItems:"center"}},
+      React.createElement("span", {style:{fontSize:10,fontWeight:700,color:T.gold,fontFamily:"'JetBrains Mono',monospace",textTransform:"uppercase",letterSpacing:".08em",minWidth:60}}, b.label),
+      React.createElement("input", {value:b.value,onChange:function(e){onChange("value",e.target.value)},style:{...inp,fontSize:13,borderBottom:"1px solid "+T.border,paddingBottom:2}})
+    );
+  } else if (b.type === "quote") {
+    content = React.createElement("div", {style:{borderLeft:"3px solid "+T.gold,paddingLeft:12}},
+      React.createElement("textarea", {value:b.text,rows:2,placeholder:"Citacao...",onChange:function(e){onChange("text",e.target.value)},style:{...inp,fontSize:13,fontStyle:"italic"}}),
+      React.createElement("input", {value:b.author||"",placeholder:"— Autor",onChange:function(e){onChange("author",e.target.value)},style:{...inp,fontSize:11,color:T.dim,marginTop:4}})
+    );
+  } else if (b.type === "list") {
+    var items = (b.items||[]).map(function(item, i) {
+      return React.createElement("div", {key:i,style:{display:"flex",alignItems:"center",gap:6,marginBottom:3}},
+        React.createElement("span", {style:{color:T.gold,fontSize:12}}, "►"),
+        React.createElement("input", {value:item,style:{...inp,fontSize:13},onChange:function(e){
+          var it = (b.items||[]).slice();
+          it[i] = e.target.value;
+          onChange("items",it);
+        }}),
+        React.createElement("button", {onClick:function(){onChange("items",(b.items||[]).filter(function(_,j){return j!==i}));},style:{background:"transparent",border:"none",color:T.dim,cursor:"pointer",fontSize:12}}, "×")
+      );
+    });
+    content = React.createElement("div", null,
+      items,
+      React.createElement("button", {onClick:function(){onChange("items",(b.items||[]).concat(["Novo item"]));},style:{background:"transparent",border:"1px dashed "+T.border,borderRadius:6,padding:"4px 10px",color:T.dim,fontSize:11,cursor:"pointer",marginTop:4}}, "+ item")
+    );
+  } else if (b.type === "divider") {
+    content = React.createElement("div", {style:{height:1,background:T.border,margin:"4px 0"}});
+  }
+
+  var removeBtn = b.type !== "heading"
+    ? React.createElement("button", {onClick:onRemove,style:{position:"absolute",right:5,top:5,background:"transparent",border:"none",color:T.dim,cursor:"pointer",fontSize:11}}, "✕")
+    : null;
+
+  return React.createElement("div", {style:wrap}, content, removeBtn);
+}
+
+function App() {
+  var themeState = useState("klar");
+  var theme = themeState[0];
+  var setTheme = themeState[1];
+  var T = theme === "klar" ? KLAR : NOIR;
+
+  var stepState = useState(0);
+  var step = stepState[0];
+  var setStep = stepState[1];
+
+  var tplState = useState(null);
+  var selTpl = tplState[0];
+  var setSelTpl = tplState[1];
+
+  var fmtState = useState("jmpg");
+  var fmt = fmtState[0];
+  var setFmt = fmtState[1];
+
+  var blocksState = useState([]);
+  var blocks = blocksState[0];
+  var setBlocks = blocksState[1];
+
+  var titleState = useState("");
+  var docTitle = titleState[0];
+  var setDocTitle = titleState[1];
+
+  var catState = useState("all");
+  var filterCat = catState[0];
+  var setFilterCat = catState[1];
+
+  var pipeStepState = useState(-1);
+  var pipeStep = pipeStepState[0];
+  var setPipeStep = pipeStepState[1];
+
+  var runningState = useState(false);
+  var running = runningState[0];
+  var setRunning = runningState[1];
+
+  var receiptState = useState(null);
+  var receipt = receiptState[0];
+  var setReceipt = receiptState[1];
+
+  var dlState = useState({});
+  var dlLinks = dlState[0];
+  var setDlLinks = dlState[1];
+
+  var errState = useState(null);
+  var pipeErr = errState[0];
+  var setPipeErr = errState[1];
+
+  var distState = useState(false);
+  var showDist = distState[0];
+  var setShowDist = distState[1];
+
+  var emailState = useState("");
+  var distEmail = emailState[0];
+  var setDistEmail = emailState[1];
+
+  var sendingState = useState(false);
+  var distSending = sendingState[0];
+  var setDistSending = sendingState[1];
+
+  var sentState = useState(false);
+  var distSent = sentState[0];
+  var setDistSent = sentState[1];
+
+  var isReady = !!(selTpl && blocks.length > 0 && !running);
+  var cats = ["all"].concat(TEMPLATES.map(function(t){return t.cat;}).filter(function(v,i,a){return a.indexOf(v)===i;}));
+
+  function reset() {
+    setStep(0); setSelTpl(null); setBlocks([]); setDocTitle("");
+    setPipeStep(-1); setRunning(false); setReceipt(null); setDlLinks({}); setPipeErr(null);
+  }
+
+  function selectTpl(tpl) {
+    setSelTpl(tpl);
+    setBlocks(tpl.blocks.map(function(b){return Object.assign({},b,{id:b.id+"_"+Date.now()});}));
+    setDocTitle(tpl.label);
+    setStep(1);
+  }
+
+  function updateBlock(id, field, val) {
+    setBlocks(function(bs){return bs.map(function(b){return b.id===id ? Object.assign({},b,{[field]:val}) : b;});});
+  }
+
+  function addBlock(type) {
+    var id = "b"+Date.now();
+    var defs = {paragraph:{type:"paragraph",text:""},meta:{type:"meta",label:"Campo",value:""},quote:{type:"quote",text:"",author:""},list:{type:"list",items:["Item 1"]},divider:{type:"divider"},lead:{type:"lead",text:""}};
+    setBlocks(function(bs){return bs.concat([Object.assign({id:id},defs[type]||defs.paragraph)]);});
+  }
+
+  function removeBlock(id) {
+    setBlocks(function(bs){return bs.filter(function(b){return b.id!==id;});});
+  }
+
+  async function runPipeline() {
+    if (!isReady) return;
+    setRunning(true); setStep(2); setPipeStep(0); setPipeErr(null);
+    try {
+      await new Promise(function(r){setTimeout(r,600);});
+      var payload = {template_id:selTpl.id,title:docTitle||selTpl.label,blocks:blocks,output_format:fmt,metadata:{created_at:new Date().toISOString(),theme:theme}};
+      setPipeStep(1);
+      var exportData = {receipt_id:"COM-"+new Date().getFullYear()+"-"+String(Date.now()).slice(-4),hash:"",links:{}};
+      try {
+        var res = await fetch(EXPORT_URL+"/export",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+        if (res.ok) exportData = await res.json();
+      } catch(e) { console.warn("Export offline"); }
+      await new Promise(function(r){setTimeout(r,700);});
+      setPipeStep(2);
+      await new Promise(function(r){setTimeout(r,700);});
+      setPipeStep(3);
+      var lp = {id:exportData.receipt_id,actor:"communique-builder",app:"WINDI Communique Builder",doc_name:payload.title,doc_type:"communique",governance_level:"HIGH",hash:exportData.hash||"",metadata:{template:selTpl.id,format:fmt}};
+      var lr = null;
+      try {
+        var lres = await fetch(LEDGER_URL+"/api/receipts",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(lp)});
+        if (lres.ok) lr = await lres.json();
+      } catch(e) { console.warn("Ledger offline"); }
+      await new Promise(function(r){setTimeout(r,500);});
+      setPipeStep(4);
+      await new Promise(function(r){setTimeout(r,600);});
+      setReceipt(lr||lp); setDlLinks(exportData.links||{}); setStep(3);
+    } catch(err) {
+      console.error(err); setPipeErr(err.message);
+    } finally {
+      setRunning(false);
+    }
+  }
+
+  var bg = {minHeight:"100vh",background:T.bg,color:T.text,fontFamily:"'Bricolage Grotesque',Georgia,serif"};
+
+  return (
+    <div style={bg}>
+      {/* HEADER */}
+      <div style={{padding:"14px 24px",borderBottom:"1px solid "+T.border,display:"flex",alignItems:"center",justifyContent:"space-between",background:T.card,position:"sticky",top:0,zIndex:100}}>
+        <div style={{display:"flex",alignItems:"center",gap:10}}>
+          <div style={{width:28,height:28,background:T.gold,borderRadius:6,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13}}>📜</div>
+          <div>
+            <div style={{fontWeight:800,fontSize:14}}>Communique Builder</div>
+            <div style={{fontSize:9,color:T.dim,fontFamily:"'JetBrains Mono',monospace",letterSpacing:".06em"}}>WINDI SOVEREIGN PUBLISHING ENGINE v2.1</div>
+          </div>
+        </div>
+        <div style={{display:"flex",gap:8}}>
+          {step > 0 && <button onClick={reset} style={{background:"transparent",border:"1px solid "+T.border,borderRadius:7,padding:"5px 12px",color:T.dim,cursor:"pointer",fontSize:11}}>↺ Reiniciar</button>}
+          <button onClick={function(){setTheme(function(t){return t==="klar"?"noir":"klar";});}} style={{background:T.hover,border:"1px solid "+T.border,borderRadius:7,padding:"5px 10px",color:T.text,cursor:"pointer",fontSize:11}}>
+            {theme==="klar"?"🌙 NOIR":"☀️ KLAR"}
+          </button>
+        </div>
+      </div>
+
+      {/* BODY */}
+      <div style={{maxWidth:720,margin:"0 auto",padding:"24px 20px"}}>
+
+        {step === 0 && (
+          <div className="wa">
+            <div style={{marginBottom:18}}>
+              <div style={{fontWeight:800,fontSize:18,marginBottom:4}}>Escolhe o Template</div>
+              <div style={{fontSize:12,color:T.dim}}>Seleciona o tipo de documento</div>
+            </div>
+            <div style={{display:"flex",gap:6,marginBottom:16,flexWrap:"wrap"}}>
+              {cats.map(function(cat) {
+                return <button key={cat} onClick={function(){setFilterCat(cat);}} style={{padding:"4px 12px",borderRadius:20,fontSize:11,fontWeight:600,cursor:"pointer",background:filterCat===cat?T.gold:T.hover,color:filterCat===cat?"#FFF":T.dim,border:filterCat===cat?"none":"1px solid "+T.border}}>{cat==="all"?"Todos":cat}</button>;
+              })}
+            </div>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(185px,1fr))",gap:10}}>
+              {TEMPLATES.filter(function(t){return filterCat==="all"||t.cat===filterCat;}).map(function(tpl) {
+                return (
+                  <div key={tpl.id} onClick={function(){selectTpl(tpl);}} style={{background:T.card,border:"1.5px solid "+T.border,borderRadius:12,padding:"16px 14px",cursor:"pointer"}}>
+                    <div style={{fontSize:22,marginBottom:8}}>{tpl.icon}</div>
+                    <div style={{fontWeight:700,fontSize:13,marginBottom:3}}>{tpl.label}</div>
+                    <div style={{fontSize:10,color:T.dim,textTransform:"uppercase",letterSpacing:".06em"}}>{tpl.cat}</div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {step === 1 && (
+          <div className="wa">
+            <StepBar step={step} T={T}/>
+            <div style={{marginBottom:16}}>
+              <div style={{fontSize:11,fontWeight:700,color:T.dim,letterSpacing:".08em",textTransform:"uppercase",marginBottom:8}}>Formato de saida</div>
+              <div style={{display:"flex",gap:8}}>
+                {FORMATS.map(function(f) {
+                  return (
+                    <div key={f.id} onClick={function(){setFmt(f.id);}} style={{flex:1,border:"1.5px solid "+(fmt===f.id?T.gold:T.border),borderRadius:10,padding:"10px 12px",textAlign:"center",cursor:"pointer",background:fmt===f.id?T.hover:T.card}}>
+                      <div style={{fontSize:16,marginBottom:4}}>{f.icon}</div>
+                      <div style={{fontWeight:700,fontSize:12,fontFamily:"'JetBrains Mono',monospace",color:fmt===f.id?T.gold:T.text}}>{f.label}</div>
+                      <div style={{fontSize:9,color:T.dim,marginTop:3}}>{f.desc}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            <div style={{marginBottom:14}}>
+              <div style={{fontSize:11,fontWeight:700,color:T.dim,letterSpacing:".08em",textTransform:"uppercase",marginBottom:6}}>Titulo</div>
+              <input value={docTitle} onChange={function(e){setDocTitle(e.target.value);}} style={{width:"100%",padding:"10px 14px",borderRadius:10,border:"1.5px solid "+T.border,background:T.card,color:T.text,fontSize:14,fontWeight:600,fontFamily:"'Bricolage Grotesque',serif",outline:"none"}}/>
+            </div>
+            <div style={{background:T.bg,border:"1px solid "+T.border,borderRadius:12,padding:14,marginBottom:14}}>
+              <div style={{fontSize:11,fontWeight:700,color:T.dim,letterSpacing:".08em",textTransform:"uppercase",marginBottom:10}}>Conteudo — {blocks.length} blocos</div>
+              {blocks.map(function(b) {
+                return <BlockRow key={b.id} block={b} T={T} onChange={function(f,v){updateBlock(b.id,f,v);}} onRemove={function(){removeBlock(b.id);}}/>;
+              })}
+              <div style={{display:"flex",gap:6,marginTop:10,flexWrap:"wrap"}}>
+                {["paragraph","meta","quote","list","divider","lead"].map(function(t) {
+                  return <button key={t} onClick={function(){addBlock(t);}} style={{background:"transparent",border:"1px dashed "+T.border,borderRadius:6,padding:"5px 10px",color:T.dim,fontSize:11,cursor:"pointer"}}>+ {t}</button>;
+                })}
+              </div>
+            </div>
+            <button onClick={runPipeline} disabled={!isReady} style={{width:"100%",background:isReady?T.gold:"#999",color:"#FDFBF5",borderRadius:12,padding:"15px",fontSize:15,fontWeight:700,border:"none",cursor:isReady?"pointer":"not-allowed",display:"flex",alignItems:"center",justifyContent:"center",gap:10,opacity:isReady?1:.5}}>
+              <span>⚓</span>
+              Selar e Exportar
+              <span style={{fontSize:11,opacity:.8}}>({fmt==="both"?".jmpg + .html":fmt==="jmpg"?".jmpg":".html"})</span>
+            </button>
+          </div>
+        )}
+
+        {step === 2 && (
+          <div className="wa" style={{display:"flex",flexDirection:"column",alignItems:"center",padding:"40px 0"}}>
+            <div className={running?"ws":""} style={{width:56,height:56,borderRadius:"50%",background:T.gold+"22",border:"2px solid "+T.gold,display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,marginBottom:20}}>⚓</div>
+            <div style={{fontWeight:800,fontSize:18,marginBottom:6}}>{running?"Processando...":pipeErr?"Erro":"Concluido"}</div>
+            <div style={{fontSize:12,color:T.dim,marginBottom:32}}>Pipeline constitucional WINDI</div>
+            <div style={{width:"100%",maxWidth:400}}>
+              {PIPE_STEPS.map(function(s,i) {
+                var done = pipeStep > i;
+                var active = pipeStep === i;
+                return (
+                  <div key={s.id} style={{display:"flex",alignItems:"center",gap:12,marginBottom:12}}>
+                    <div className={active&&running?"wp":""} style={{width:32,height:32,borderRadius:"50%",flexShrink:0,background:done?T.gold:active?T.gold+"33":T.hover,border:active?"2px solid "+T.gold:done?"none":"1.5px solid "+T.border,display:"flex",alignItems:"center",justifyContent:"center",fontSize:done?12:14,color:done?"#FFF":active?T.gold:T.dim}}>
+                      {done?"✓":s.icon}
+                    </div>
+                    <div>
+                      <div style={{fontWeight:active||done?600:400,fontSize:13,color:active||done?T.text:T.dim}}>{s.label}</div>
+                      {active&&running&&<div className="wp" style={{fontSize:10,color:T.gold}}>em execucao...</div>}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            {pipeErr && (
+              <div style={{marginTop:20,padding:"12px 16px",background:T.error+"22",border:"1px solid "+T.error,borderRadius:8,color:T.error,fontSize:12,maxWidth:400,width:"100%"}}>
+                ⚠ {pipeErr}
+                <button onClick={function(){setPipeErr(null);setStep(1);}} style={{display:"block",marginTop:8,background:"transparent",border:"1px solid "+T.error,borderRadius:6,padding:"4px 12px",color:T.error,cursor:"pointer",fontSize:11}}>← Voltar</button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {step === 3 && receipt && (
+          <div className="wa">
+            <div style={{textAlign:"center",padding:"28px 0 24px",borderBottom:"1px solid "+T.border,marginBottom:20}}>
+              <div style={{fontSize:36,marginBottom:10}}>⚓</div>
+              <div style={{fontWeight:800,fontSize:20,marginBottom:4,color:T.gold}}>Documento Selado</div>
+              <div style={{fontSize:12,color:T.dim}}>Pipeline constitucional concluido com sucesso</div>
+            </div>
+            <div style={{background:T.card,border:"1.5px solid "+T.gold,borderRadius:12,padding:16,marginBottom:16}}>
+              <div style={{fontSize:11,fontWeight:700,color:T.dim,letterSpacing:".08em",textTransform:"uppercase",marginBottom:10}}>🧾 Forensic Receipt</div>
+              <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:12,color:T.gold,marginBottom:8}}>{receipt.id||receipt.receipt_id}</div>
+              {receipt.hash&&<div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:10,color:T.dim,wordBreak:"break-all"}}>SHA-256: {receipt.hash}</div>}
+              <div style={{display:"flex",gap:8,marginTop:10,flexWrap:"wrap"}}>
+                <span style={{fontSize:10,padding:"2px 8px",background:T.gold+"22",color:T.gold,borderRadius:4,fontWeight:600}}>HIGH GOVERNANCE</span>
+                <span style={{fontSize:10,padding:"2px 8px",background:T.success+"22",color:T.success,borderRadius:4,fontWeight:600}}>✓ SELADO</span>
+                {selTpl&&<span style={{fontSize:10,padding:"2px 8px",background:T.hover,color:T.dim,borderRadius:4}}>{selTpl.label}</span>}
+              </div>
+            </div>
+            {Object.keys(dlLinks).length>0&&(
+              <div style={{marginBottom:16}}>
+                <div style={{fontSize:11,fontWeight:700,color:T.dim,letterSpacing:".08em",textTransform:"uppercase",marginBottom:10}}>Downloads</div>
+                {Object.keys(dlLinks).map(function(f) {
+                  return <a key={f} href={dlLinks[f]} download style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"11px 14px",borderRadius:10,border:"1px solid "+T.border,marginBottom:6,background:T.card,color:T.text,textDecoration:"none",fontSize:13,fontWeight:500}}><span>{f==="jmpg"?"📦":"🌐"} {f.toUpperCase()}</span><span style={{fontSize:11,color:T.gold}}>⬇ Download</span></a>;
+                })}
+              </div>
+            )}
+            <div style={{background:T.hover,borderRadius:8,padding:"9px 12px",marginBottom:16,display:"flex",alignItems:"center",justifyContent:"space-between",fontSize:11}}>
+              <span style={{color:T.dim}}>🔍 Verificar</span>
+              <a href={BASE_URL+"/verify-public/?id="+(receipt.id||receipt.receipt_id)} target="_blank" rel="noreferrer" style={{color:T.gold,textDecoration:"none",fontFamily:"'JetBrains Mono',monospace",fontSize:10}}>windi-domain.com/verify-public/</a>
+            </div>
+            <div style={{display:"flex",gap:9}}>
+              <button onClick={function(){setShowDist(true);}} style={{flex:2,padding:"12px",borderRadius:10,background:T.gold,border:"none",color:"#FFF",fontSize:13,fontWeight:700,cursor:"pointer"}}>📤 Distribuir</button>
+              <button onClick={reset} style={{flex:1,padding:"12px",borderRadius:10,border:"1.5px solid "+T.border,background:"transparent",color:T.text,fontSize:13,fontWeight:600,cursor:"pointer"}}>+ Novo</button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <footer style={{borderTop:"1px solid "+T.border,padding:"11px 24px",display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:20}}>
+        <span style={{fontSize:10,color:T.dim,fontFamily:"'JetBrains Mono',monospace"}}>AI processes. Human decides. WINDI guarantees.</span>
+        <span style={{fontSize:10,color:T.dim,fontFamily:"'JetBrains Mono',monospace"}}>Sovereign Publishing Engine v2.1.0</span>
+      </footer>
+
+      {showDist&&(
+        <div onClick={function(){setShowDist(false);}} style={{position:"fixed",inset:0,background:"rgba(0,0,0,.65)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:16}}>
+          <div onClick={function(e){e.stopPropagation();}} className="wa" style={{background:T.card,borderRadius:16,padding:28,width:"100%",maxWidth:440,border:"1.5px solid "+T.gold,boxShadow:"0 20px 60px rgba(0,0,0,.5)"}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:18}}>
+              <div><div style={{fontWeight:800,fontSize:16}}>📤 Enviar Documento</div><div style={{fontSize:11,color:T.dim,marginTop:2}}>Escolhe canais e destinatarios</div></div>
+              <button onClick={function(){setShowDist(false);}} style={{background:"transparent",border:"none",fontSize:18,color:T.dim,cursor:"pointer"}}>✕</button>
+            </div>
+            {receipt&&<div style={{background:T.hover,borderRadius:8,padding:"9px 12px",marginBottom:16,fontSize:11,fontFamily:"'JetBrains Mono',monospace",color:T.gold}}>🧾 {receipt.id||receipt.receipt_id}</div>}
+            <div style={{marginBottom:16}}>
+              <div style={{fontSize:11,fontWeight:600,color:T.dim,letterSpacing:".06em",textTransform:"uppercase",marginBottom:10}}>Canais</div>
+              {[{icon:"📧",label:"Email",active:true},{icon:"💬",label:"WhatsApp",active:false},{icon:"📱",label:"SMS",active:false},{icon:"💼",label:"LinkedIn",active:false}].map(function(ch) {
+                return <div key={ch.label} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 12px",borderRadius:8,border:"1px solid "+T.border,marginBottom:6,background:ch.active?T.hover:"transparent",opacity:ch.active?1:0.5}}><div style={{display:"flex",alignItems:"center",gap:9}}><span>{ch.icon}</span><span style={{fontSize:13,fontWeight:500}}>{ch.label}</span></div>{ch.active?<span style={{fontSize:10,color:T.success}}>✓ Ativo</span>:<span style={{fontSize:10,color:T.dim,border:"1px solid "+T.border,borderRadius:4,padding:"2px 7px"}}>Configurar</span>}</div>;
+              })}
+            </div>
+            <div style={{marginBottom:16}}>
+              <div style={{fontSize:11,fontWeight:600,color:T.dim,letterSpacing:".06em",textTransform:"uppercase",marginBottom:8}}>Destinatario</div>
+              <input value={distEmail} onChange={function(e){setDistEmail(e.target.value);}} placeholder="email@exemplo.com" style={{width:"100%",padding:"10px 12px",borderRadius:8,border:"1px solid "+T.border,background:T.input,color:T.text,fontSize:13,outline:"none",fontFamily:"'Bricolage Grotesque',serif"}}/>
+            </div>
+            <div style={{display:"flex",gap:9}}>
+              <button onClick={function(){setShowDist(false);}} style={{flex:1,padding:"11px",borderRadius:8,border:"1px solid "+T.border,background:"transparent",color:T.text,fontSize:13,fontWeight:500,cursor:"pointer"}}>Fechar</button>
+              <button disabled={!distEmail||distSending||distSent} onClick={async function(){
+                setDistSending(true);
+                await new Promise(function(r){setTimeout(r,1400);});
+                setDistSending(false); setDistSent(true);
+                setTimeout(function(){setDistSent(false);setShowDist(false);},2000);
+              }} style={{flex:2,padding:"11px",borderRadius:8,background:T.gold,border:"none",color:"#FFF",fontSize:13,fontWeight:700,cursor:"pointer",opacity:!distEmail||distSending||distSent?0.6:1}}>
+                {distSent?"✓ Enviado!":distSending?"A enviar...":"📤 Enviar agora"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App, null));
+</script>
+</body>
+</html>

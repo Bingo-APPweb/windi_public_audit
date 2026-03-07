@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WINDI Communiqué Builder</title>
+  <meta name="windi-service" content="communique-builder">
+  <meta name="windi-version" content="1.0.0">
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Bricolage Grotesque',Georgia,serif;background:#F5F0E0;color:#2C2924;}
+    ::-webkit-scrollbar{width:5px;}
+    ::-webkit-scrollbar-track{background:transparent;}
+    ::-webkit-scrollbar-thumb{background:#DDD6C2;border-radius:3px;}
+    textarea,input{outline:none;font-family:inherit;}
+    @import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useCallback, useRef, useEffect } = React;
+
+/* ─── CONSTANTS ─────────────────────────────────────────────────── */
+const BASE_URL = "https://windi-domain.com";
+const LEDGER_URL = `${BASE_URL}/api/ledger`;
+const EXPORT_URL = `${BASE_URL}/api/export`;
+
+const KLAR = {
+  bg:"#F5F0E0",card:"#FDFBF5",hover:"#EDE8D8",input:"#FDFBF5",
+  border:"#DDD6C2",gold:"#8B6914",goldLight:"#B8901A",
+  text:"#2C2924",dim:"#6B6560",success:"#1A5C2E",successBg:"#EFF7F1",
+};
+const NOIR = {
+  bg:"#0E0E14",card:"#16161F",hover:"#1C1C28",input:"#12121A",
+  border:"#26263A",gold:"#D4A843",goldLight:"#E8C060",
+  text:"#E2E2EA",dim:"#7A7A96",success:"#4CAF6E",successBg:"#0D1F14",
+};
+
+const TEMPLATES = [
+  {id:"comunicado",label:"Comunicado",icon:"📢",category:"institutional",
+   blocks:[{type:"heading",text:"Comunicado Oficial"},{type:"meta",label:"Para",value:""},{type:"meta",label:"De",value:""},{type:"meta",label:"Data",value:new Date().toLocaleDateString("pt-BR")},{type:"divider"},{type:"paragraph",text:"Comunicamos a todas as partes interessadas que..."},{type:"paragraph",text:""},{type:"signature",text:""}]},
+  {id:"jornaline",label:"Jornaline",icon:"📰",category:"journalism",
+   blocks:[{type:"heading",text:"Título da Nota"},{type:"meta",label:"Local",value:""},{type:"meta",label:"Fontes",value:""},{type:"divider"},{type:"lead",text:"Em [cidade], [data] — "},{type:"paragraph",text:"Fontes confirmam que..."},{type:"quote",text:"",author:""},{type:"paragraph",text:""}]},
+  {id:"field_report",label:"Field Report",ioon:"🔎",category:"journalism",
+   blocks:[{type:"heading",text:"FIELD REPORT"},{type:"meta",label:"Local",value:""},{type:"meta",label:"Timestamp",value:new Date().toISOString()},{type:"divider"},{type:"paragraph",text:"Situação observada..."},{type:"list",items:["Observação 1","Observação 2"]},{type:"paragraph",text:"Conclusão:"}]},
+  {id:"memorandum",label:"Memorandum",icon:"📋",category:"corporate",
+   blocks:[{type:"heading",text:"MEMORANDUM"},{type:"meta",label:"PARA",value:""},{type:"meta",label:"DE",value:""},{type:"meta",label:"REF",value:""},{type:"meta",label:"DATA",value:new Date().toLocaleDateString("pt-BR")},{type:"divider"},type:"paragraph",text:"Em resposta a..."},{type:"paragraph",text:""}]},
+  {id:"web_article",label:"Web Article",icon:"🌐",category:"web",
+   blocks:[{type:"heading",text:"Título do Artigo"},{type:"meta",label:"Autor",value:""},{type:"meta",label:"Publicação",value:""},{type:"divider"},{ype:"lead",text:"Parágrafo introdutório..."},{ype:"paragraph",text:""},{type:"quote",text:"",author:""},{type:"list",items:["Ponto chave 1","Ponto chave 2"]}]},
+  {id:"press_release",label:"Press Release",icon:"📡",category:"web",
+   blocks:[{type:"heading",text:"PRESS RELEASE"},type:"meta",label:"Empresa",value:""},{type:"meta",label:"Contato",value:""},{type:"divider"},{type:"lead",text:"[CIDADE] —  "},{type:"paragraph",text:""},{type:"quote",text:"",author:""},{type:"paragraph",text:"###"}]},
+];
+
+const OUTPUT_FORMATS = [
+  {id:"jmpg",label:".jmpg",icon":"📦",desc:"Cápsula soberana blindada"},
+  {id:"html",label:".html",icon:"🌐",desc:"Verified Web Page (VWP)"},
+  {id:"both",label:"Ambos",icon:"⚁",desc:"JMPG + HTML · mesmo receipt_id"},
+];
+
+const PIPELINE_STEPS = [
+  {id:"serialize",label:"Serializando Content Model",icon"⬡"},
+  {id:"render",label:"Renderizando artefatos",icon:"🖨️"},
+  {id:"hash",label:"Calculando SHA-256",ioon:"🔐"},
+  {id:"anchor",label:"Ancorando no Ledger",icon:"⚓"},
+  {id:"confirm",label:"Confirmando consistência global",icon:"✓"},
+];0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    .tmpl-card{cursor:pointer;transition:all .18s;}
+    .tmpl-card:hover{transform:translateY(-2px);box-shadow:0 4px 14px ${T.gold}33;}
+    .tmpl-card.sel{border-color:${T.gold}!important;}
+    .fmt-card{cursor:pointer;transition:all .18s;}
+    .fmt-card:hover{background:${T.hover}!important;}
+    .fmt-card.sel{border-color:${T.gold}!important;background:${T.hover}!important;}
+    .seal-btn{transition:all .2s;cursor:pointer;border:none;}
+    .seal-btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 6px 20px ${T.gold}55;}
+    .seal-btn:disabled{opacity:.38;cursor:not-allowed;}
+    .tab-btn{cursor:pointer;transition:all .15s;border:none;background:transparent;}
+    .copy-btn{cursor:pointer;opacity:.7;transition:opacity .15s;background:transparent;border:none;}
+    .copy-btn:hover{opacity:1;}
+    .dl-card{cursor:pointer;transition:all .18s;}
+    .dl-card:hover{border-color:${T.gold}!important;color:${T.gold}!important;}
+  `;
+
+  const [showDist, setShowDist] = React.useState(false);
+  const [distEmail, setDistEmail] = React.useState("");
+  const [distSending, setDistSending] = React.useState(false);
+  const [distSent, setDistSent] = React.useState(false);
+
+  return (
+    <div style={{minHeight:"100vh",background:T.bg,fontFamily:"'Bricolage Grotesque',Georgia,serif",color:T.text,transition:"background .3s,color .3s"}}>
+      <style>{S}</style>
+
+      {/* HEADER */}
+      <header style={{borderBottom:`1px solid ${T.border}`,padding:"13px 24px",display:"flex",alignItems:"center",justifyContent:"space-between",background:T.card,position:"sticky",top:0,zIndex:100}}>
+        <div style={{display:"flex",alignItems:"center",gap:10}}>
+          <span style={{fontSize:17}}>🐉</span>
+          <div>
+            <div style={{fontWeight:700,fontSize:13,color:T.gold,letterSpacing:"-.02em"}}>WINDI Sovereign Publishing Engine</div>
+            <div style={{fontSize:10,color:T.dim,fontFamily:"'JetBrains Mono',monospace"}}>v1.0.0 · .jmpg + .html · Verified Web Pages</div>
+          </div>
+        </div>
+        <div style={{display:"flex",gap:8}}>
+          <button onClick={()=>setGovOpen(o=>!o)} style={{background:govOpen?T.hover:"transparent",border:`1px solid ${T.border}`,borderRadius:6,padding:"5px 10px",fontSize:11,color:T.dim,cursor:"pointer",fontFamily:"'JetBrains Mono',monospace"}}>🛡️ Gov</button>
+          <button onClick={()=>setTheme(t=>t==="KLAR"?"NOIR":"KLAR")} style={{background:T.hover,border:`1px solid ${T.border}`,borderRadius:6,padding:"5px 12px",fontSize:11,color:T.text,cursor:"pointer",fontFamily:"'JetBrains Mono',monospace",fontWeight:500}}>
+            {theme==="KLAR"?"◐ NOIR":"◑ KLAR"}
+          </button>
+        </div>
+      </header>
+
+      {/* GOVPANEL */}
+      {govOpen && (
+        <div style={{background:T.card,borderBottom:`1px solid ${T.border}`,padding:"10px 24px",animation:"slideIn .2s ease"}}>
+          <div style={{display:"flex",gap:24,flexWrap:"wrap",marginBottom:5}}>
+            {["🛡️ Guardian — Proteção & Ética","🏗️ Architect — Estrutura & Build","👁️ Witness — Observação & Validação"].map(d=><span key={d} style={{fontSize:11,color:T.dim,fontFamily:"'JetBrains Mono',monospace"}}>{d}</span>)}
+          </div>
+          <div style={{fontSize:10,color:T.dim,fontFamily:"'JetBrains Mono',monospace"}}>I1-I9 ACTIVE · I11 IRREMEDIÁVEL · Content Model Neutro · Polimorfismo de Prova</div>
+        </div>
+      )}
+
+      <div style={{maxWidth:860,margin:"0 auto",padding:"24px 16px"}}>
+
+        {/* ══ IDLE ══ */}
+        {phase==="idle" && (
+          <div style={{animation:"slideIn .3s ease"}}>
+
+            {/* Templates */}
+            <div style={{marginBottom:22}}>
+              <div style={{fontSize:11,fontWeight:600,color:T.dim,letterSpacing:".08em",textTransform:"uppercase",marginBottom:10}}>Template</div>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(6,1fr)",gap:7}}>
+                {TEMPLATES.map(tmpl=>(
+                  <div key={tmpl.id} className={`tmpl-card ${template.id===tmpl.id?"sel":""}`} onClick={()=>selectTemplate(tmpl)}
+                    style={{background:T.card,border:`1.5px solid ${template.id===tmpl.id?T.gold:T.border}`,borderRadius:10,padding:"11px 6px",textAlign:"center"}}>
+                    <div style={{fontSize:18,marginBottom:3}}>{tmpl.icon}</div>
+                    <div style={{fontSize:11,fontWeight:600,color:T.text,marginBottom:2}}>{tmpl.label}</div>
+                    <div style={{fontSize:9,color:T.dim}}>{tmpl.category}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Output format */}
+            <div style={{marginBottom:22}}>
+              <div style={{fontSize:11,fontWeight:600,color:T.dim,letterSpacing:".08em",textTransform:"uppercase",marginBottom:10}}>Formato de Saída</div>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8}}>
+                {OUTPUT_FORMATS.map(fmt=>(
+                  <div key={fmt.id} className={`fmt-card ${outputFormat===fmt.id?"sel":""}`} onClick={()=>setOutputFormat(fmt.id)}
+                    style={{background:T.card,border:`1.5px solid ${outputFormat===fmt.id?T.gold:T.border}`,borderRadius:10,padding:"11px 13px",display:"flex",alignItems:"center",gap:10}}>
+                    <span style={{fontSize:18}}>{fmt.icon}</span>
+                    <div>
+                      <div style={{fontWeight:700,fontSize:12,fontFamily:"'JetBrains Mono',monospace",color:outputFormat===fmt.id?T.gold:T.text}}>{fmt.label}</div>
+                      <div style={{fontSize:10,color:T.dim}}>{fmt.desc}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Tabs */}
+            <div style={{marginBottom:14,borderBottom:`1px solid ${T.border}`}}>
+              {[{id:"editor",label:"✏️ Editor"},{id:"preview",label:"👁️ Preview"}].map(tab=>(
+                <button key={tab.id} className="tab-btn" onClick={()=>setActiveTab(tab.id)}
+                  style={{padding:"9px 16px",fontSize:13,fontWeight:500,color:activeTab===tab.id?T.gold:T.dim,cursor:"pointer",
+                    borderBottom:activeTab===tab.id?`2px solid ${T.gold}`:"2px solid transparent",marginBottom:-1}}>
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            {activeTab==="editor" && (
+              <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:12,padding:"18px 22px",marginBottom:18,animation:"fadeIn .2s ease"}}>
+                <BlockEditor blocks={blocks} onChange={b=>{setBlocks(b);const h=b.find(x=>x.type==="heading");if(h)setTitle(h.text);}} T={T}/>
+              </div>
+            )}
+
+            {activeTab==="preview" && (
+              <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:12,padding:"20px 24px",marginBottom:18,animation:"fadeIn .2s ease"}}>
+                <div style={{fontSize:10,color:T.dim,fontFamily:"'JetBrains Mono',monospace",marginBottom:12,textTransform:"uppercase",letterSpacing:".06em"}}>Preview</div>
+                <pre style={{fontFamily:"Georgia,serif",fontSize:13,lineHeight:1.8,color:T.text,whiteSpace:"pre-wrap",wordBreak:"break-word"}}>{previewText||"(sem conteúdo)"}</pre>
+              </div>
+            )}
+
+            {/* Wallet */}
+            <div style={{marginBottom:18}}>
+              <div style={{fontSize:11,fontWeight:600,color:T.dim,letterSpacing:".08em",textTransform:"uppercase",marginBottom:7}}>Autor / Wallet ID</div>
+              <input value={wallet} onChange={e=>setWallet(e.target.value)} placeholder="wallet_id ou DID (opcional)"
+                style={{width:"100%",background:T.input,border:`1.5px solid ${T.border}`,borderRadius:8,padding:"10px 13px",fontSize:13,color:T.text,fontFamily:"'JetBrains Mono',monospace",outline:"none",transition:"border-color .2s"}}
+                onFocus={e=>e.target.style.borderColor=T.gold} onBlur={e=>e.target.style.borderColor=T.border}
+              />
+            </div>
+
+            {/* Seal button */}
+            <button className="seal-btn" onClick={runPipeline} disabled={!isReady}
+              style={{width:"100%",background:T.gold,color:"#FDFBF5",borderRadius:10,padding:"14px",fontSize:15,fontWeight:700,letterSpacing:".02em",display:"flex",alignItems:"center",justifyContent:"center",gap:10}}>
+              <span>⚓</span> Selar e Exportar
+              {outputFormat!=="jmpg"&&<span style={{fontSize:11,opacity:.8}}>({outputFormat==="both"?".jmpg + .html":".html"})</span>}
+            </button>
+            {!isReady&&<div style={{textAlign:"center",marginTop:7,fontSize:11,color:T.dim}}>Preencha ao menos um parágrafo para ativar o selo</div>}
+          </div>
+        )}
+
+        {/* ══ SEALING ══ */}
+        {phase==="sealing" && (
+          <div style={{animation:"slideIn .3s ease",textAlign:"center"}}>
+            <div style={{marginBottom:32}}>
+              <div style={{fontSize:36,marginBottom:9,animation:"pulse 1.4s infinite"}}>⚓</div>
+              <div style={{fontSize:19,fontWeight:700,color:T.gold,marginBottom:3}}>Fundindo a Verdade</div>
+              <div style={{fontSize:12,color:T.dim}}>{outputFormat==="both"?"Gerando .jmpg + .html com mesmo receipt_id":outputFormat==="html"?"Gerando Verified Web Page":"Selando cápsula .jmpg"}</div>
+            </div>
+            <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:12,padding:"18px 24px",maxWidth:440,margin:"0 auto"}}>
+              {PIPELINE_STEPS.map((step,i)=>{
+                const done=pipelineStep>i, active=pipelineStep===i;
+                return (
+                  <div key={step.id} style={{display:"flex",alignItems:"center",gap:12,padding:"8px 0",borderBottom:i<PIPELINE_STEPS.length-1?`1px solid ${T.border}`:"none",opacity:done?1:active?1:.3,animation:done?"fadeIn .3s ease":"none"}}>
+                    <div style={{width:24,height:24,borderRadius:"50%",background:done?T.gold:active?T.hover:T.input,border:`1.5px solid ${done?T.gold:T.border}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:10,animation:active?"pulse .8s infinite":"none"}}>
+                      {done?"✓":step.icon}
+                    </div>
+                    <span style={{fontSize:12,fontFamily:"'JetBrains Mono',monospace",color:done?T.gold:T.text,fontWeight:done?500:400}}>{step.label}</span>
+                    {done&&<span style={{marginLeft:"auto",fontSize:9,color:T.dim,fontFamily:"'JetBrains Mono',monospace"}}>OK</span>}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* ══ SEALED ══ */}
+        {phase==="sealed" && receipt && (
+          <div style={{animation:"slideIn .35s ease"}}>
+
+            {/* Banner */}
+            <div style={{background:T.successBg,border:`1.5px solid ${T.success}`,borderRadius:12,padding:"14px 18px",marginBottom:18,display:"flex",gap:12,alignItems:"center"}}>
+              <span style={{fontSize:24}}>✅</span>
+              <div>
+                <div style={{fontWeight:700,fontSize:14,color:T.success}}>Publicação Soberana Selada</div>
+                <div style={{fontSize:11,color:T.dim,marginTop:2}}>
+                  {receipt.ledgerStored?"Ledger confirmou escrita. receipt_id é o cordão umbilical de todas as saídas.":"Receipt local gerado. Ledger offline — será sincronizado na próxima sessão."}
+                </div>
+              </div>
+            </div>
+
+            {/* Receipt */}
+            <div style={{background:T.card,border:`1.5px solid ${T.gold}`,borderRadius:12,overflow:"hidden",marginBottom:16}}>
+              <div style={{background:T.gold,padding:"11px 18px",display:"flex",alignItems:"center",gap:9}}>
+                <span style={{fontSize:13}}>🧾</span>
+                <span style={{fontWeight:700,fontSize:12,color:"#FDFBF5",letterSpacing:".04em"}}>VIRTUE RECEIPT — WINDI FORENSIC LEDGER</span>
+                <span style={{marginLeft:"auto",fontSize:9,color:"#FDFBF5aa",fontFamily:"'JetBrains Mono',monospace"}}>I11 IRREMEDIÁVEL</span>
+              </div>
+              <div style={{padding:"14px 18px"}}>
+                {[
+                  {label:"Receipt ID",value:receipt.id,mono:true,accent:true,ck:"id"},
+                  {label:"SHA-256",value:receipt.hash,mono:true,ck:"hash"},
+                  {label:"Template",value:TEMPLATES.find(t=>t.id===receipt.template)?.label},
+                  {label:"Saídas",value:receipt.formats.join(" + "),mono:true},
+                  {label:"Autor",value:receipt.wallet},
+                  {label:"Timestamp",value:new Date(receipt.timestamp).toLocaleString("pt-BR",{timeZone:"Europe/Berlin"}),mono:true},
+                  {label:"Governance",value:"HIGH · Risk R0 · Polimorfismo de Prova",mono:true},
+                ].map(f=>(
+                  <div key={f.label} style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",padding:"8px 0",borderBottom:`1px solid ${T.border}`,gap:12}}>
+                    <div style={{fontSize:10,color:T.dim,letterSpacing:".06em",textTransform:"uppercase",minWidth:130,paddingTop:2}}>{f.label}</div>
+                    <div style={{display:"flex",alignItems:"center",gap:7}}>
+                      <span style={{fontSize:f.mono?11:12,fontFamily:f.mono?"'JetBrains Mono',monospace":"inherit",color:f.accent?T.gold:T.text,fontWeight:f.accent?700:400,wordBreak:"break-all",textAlign:"right"}}>{f.value}</span>
+                      {f.ck&&<button className="copy-btn" onClick={()=>copy(f.value,f.ck)} style={{fontSize:12,color:T.dim}}>{copied===f.ck?"✓":"📋"}</button>}
+                    </div>
+                  </div>
+                ))}
+                {/* Verify URL */}
+                <div style={{paddingTop:12}}>
+                  <div style={{fontSize:10,color:T.dim,letterSpacing:".06em",textTransform:"uppercase",marginBottom:7}}>Verify URL</div>
+                  <div style={{background:T.hover,border:`1px solid ${T.border}`,borderRadius:7,padding:"9px 11px",display:"flex",alignItems:"center",justifyContent:"space-between",gap:8}}>
+                    <span style={{fontFamily:"'JetBrains Mono',monospace",fontSize:11,color:T.gold,wordBreak:"break-all"}}>{receipt.verifyUrl}</span>
+                    <button className="copy-btn" onClick={()=>copy(receipt.verifyUrl,"url")} style={{fontSize:13,color:T.dim,flexShrink:0}}>{copied==="url"?"✓":"📋"}</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Downloads */}
+            <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:12,padding:"14px 18px",marginBottom:14}}>
+              <div style={{fontSize:10,color:T.dim,letterSpacing:".06em",textTransform:"uppercase",marginBottom:12}}>Downloads</div>
+              <div style={{display:"flex",gap:9,flexWrap:"wrap"}}>
+                {[
+                  {label:"📦 .jmpg",desc:"Cápsula soberana",show:outputFormat!=="html"},
+                  {label:"🌐 .html",desc:"Verified Web Page",show:outputFormat!=="jmpg",onClick:downloadHTML},
+                  {label:"📄 PDF",desc:"Legado visual",show:true},
+                  {label:"🔗 QR Code",desc:"Verificação",show:true},
+                ].filter(d=>d.show).map(d=>(
+                  <div key={d.label} className="dl-card" onClick={d.onClick}
+                    style={{flex:"1 1 130px",background:T.hover,border:`1px solid ${T.border}`,borderRadius:8,padding:"11px 12px",textAlign:"center"}}>
+                    <div style={{fontWeight:600,fontSize:12,marginBottom:2}}>{d.label}</div>
+                    <div style={{fontSize:10,color:T.dim}}>{d.desc}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* HTML preview */}
+            {htmlOutput && (
+              <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:12,padding:"13px 18px",marginBottom:14}}>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:9}}>
+                  <div style={{fontSize:10,color:T.dim,letterSpacing:".06em",textTransform:"uppercase"}}>Meta-Tags Criptográficas Embutidas</div>
+                  <button className="copy-btn" onClick={()=>copy(htmlOutput,"html")} style={{border:`1px solid ${T.border}`,borderRadius:4,padding:"3px 7px",fontSize:10,color:T.dim,cursor:"pointer"}}>
+                    {copied==="html"?"✓ copiado":"📋 copiar HTML"}
+                  </button>
+                </div>
+                <pre style={{fontSize:10,fontFamily:"'JetBrains Mono',monospace",color:T.dim,background:T.hover,borderRadius:6,padding:"10px",overflow:"auto",maxHeight:160,whiteSpace:"pre-wrap",wordBreak:"break-all",lineHeight:1.5}}>
+                  {htmlOutput.slice(0,700)+"..."}
+                </pre>
+              </div>
+            )}
+
+            {/* SealBadge */}
+            <div style={{textAlign:"center",marginBottom:14}}>
+              <span style={{fontSize:10,color:T.dim,fontFamily:"'JetBrains Mono',monospace"}}>✓ Sealed · WINDI Forensic Ledger · I11 IRREMEDIÁVEL · Polimorfismo de Prova</span>
+            </div>
+
+            <div style={{display:"flex",gap:9,marginBottom:10}}>
+              <button onClick={()=>setShowDist(true)}
+                style={{flex:1,background:T.gold,border:"none",borderRadius:10,padding:"12px",fontSize:13,fontWeight:700,color:"#FFF",cursor:"pointer"}}>
+                📤 Distribuir
+              </button>
+              <button onClick={()=>window.open(`https://windi-domain.com/app/`,"_blank")}
+                style={{flex:1,background:T.card,border:`1.5px solid ${T.border}`,borderRadius:10,padding:"12px",fontSize:13,fontWeight:600,color:T.text,cursor:"pointer"}}>
+                🎯 Abrir Palette
+              </button>
+            </div>
+            <button onClick={reset} className="dl-card"
+              style={{width:"100%",background:"transparent",border:`1.5px solid ${T.border}`,borderRadius:10,padding:"12px",fontSize:13,fontWeight:600,color:T.text,cursor:"pointer"}}>
+              + Novo Documento
+            </button>
+          </div>
+        )}
+      </div>
+
+      <footer style={{borderTop:`1px solid ${T.border}`,padding:"11px 24px",display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:20}}>
+        <span style={{fontSize:10,color:T.dim,fontFamily:"'JetBrains Mono',monospace"}}>AI processes. Human decides. WINDI guarantees.</span>
+        <span style={{fontSize:10,color:T.dim,fontFamily:"'JetBrains Mono',monospace"}}>Sovereign Publishing Engine v1.0.0</span>
+      </footer>
+
+      {/* ══ DISTRIBUTE MODAL ══ */}
+      {showDist && (
+        <div onClick={()=>setShowDist(false)} style={{position:"fixed",inset:0,background:"#000A",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:16}}>
+          <div onClick={e=>e.stopPropagation()} style={{background:T.card,borderRadius:16,padding:28,width:"100%",maxWidth:440,border:`1.5px solid ${T.gold}`,boxShadow:"0 20px 60px #0006"}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:18}}>
+              <div>
+                <div style={{fontWeight:800,fontSize:16,color:T.text}}>📤 Enviar Documento</div>
+                <div style={{fontSize:11,color:T.dim,marginTop:2}}>Escolhe canais e destinatários</div>
+              </div>
+              <button onClick={()=>setShowDist(false)} style={{background:"transparent",border:"none",fontSize:18,color:T.dim,cursor:"pointer"}}>✕</button>
+            </div>
+            {receipt && (
+              <div style={{background:T.hover,borderRadius:8,padding:"9px 12px",marginBottom:16,fontSize:11,fontFamily:"'JetBrains Mono',monospace",color:T.gold}}>
+                🧾 {receipt.id}
+              </div>
+            )}
+            <div style={{marginBottom:16}}>
+              <div style={{fontSize:11,fontWeight:600,color:T.dim,letterSpacing:".06em",textTransform:"uppercase",marginBottom:10}}>Canais Disponíveis</div>
+              {[
+                {icon:"📧",label:"Email",active:true},
+                {icon:"💬",label:"WhatsApp",active:false},
+                {icon:"📱",label:"SMS",active:false},
+                {icon:"💼",label:"LinkedIn",active:false},
+              ].map(ch=>(
+                <div key={ch.label} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 12px",borderRadius:8,border:`1px solid ${T.border}`,marginBottom:6,background:ch.active?T.hover:"transparent",opacity:ch.active?1:0.5}}>
+                  <div style={{display:"flex",alignItems:"center",gap:9}}>
+                    <span>{ch.icon}</span>
+                    <span style={{fontSize:13,fontWeight:500}}>{ch.label}</span>
+                  </div>
+                  {!ch.active && <span style={{fontSize:10,color:T.dim,border:`1px solid ${T.border}`,borderRadius:4,padding:"2px 7px"}}>Configurar</span>}
+                  {ch.active && <span style={{fontSize:10,color:T.success}}>✓ Ativo</span>}
+                </div>
+              ))}
+            </div>
+            <div style={{marginBottom:16}}>
+              <div style={{fontSize:11,fontWeight:600,color:T.dim,letterSpacing:".06em",textTransform:"uppercase",marginBottom:8}}>Destinatários</div>
+              <input value={distEmail} onChange={e=>setDistEmail(e.target.value)} placeholder="email@exemplo.com"
+                style={{width:"100%",padding:"10px 12px",borderRadius:8,border:`1px solid ${T.border}`,background:T.input,color:T.text,fontSize:13}} />
+              <div style={{fontSize:10,color:T.dim,marginTop:5}}>⏰ Hora óptima: 18:40</div>
+            </div>
+            <div style={{display:"flex",gap:9}}>
+              <button onClick={()=>setShowDist(false)}
+                style={{flex:1,padding:"11px",borderRadius:8,border:`1px solid ${T.border}`,background:"transparent",color:T.text,fontSize:13,fontWeight:500,cursor:"pointer"}}>
+                Fechar
+              </button>
+              <button disabled={!distEmail||distSending||distSent} onClick={async()=>{
+                  setDistSending(true);
+                  await new Promise(r=>setTimeout(r,1400));
+                  setDistSending(false);setDistSent(true);
+                  setTimeout(()=>{setDistSent(false);setShowDist(false);},2000);
+                }}
+                style={{flex:2,padding:"11px",borderRadius:8,background:T.gold,border:"none",color:"#FFF",fontSize:13,fontWeight:700,cursor:"pointer",opacity:(!distEmail||distSending||distSent)?0.6:1}}>
+                {distSent?"✓ Enviado!":distSending?"A enviar...":"📤 Enviar agora"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>

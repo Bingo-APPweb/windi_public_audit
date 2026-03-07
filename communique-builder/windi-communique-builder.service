@@ -1,0 +1,17 @@
+[Unit]
+Description=WINDI Communique Builder v1.0.0
+After=network.target
+Documentation=https://windi-domain.com
+
+[Service]
+Type=simple
+User=windi
+Group=windi
+WorkingDirectory=/opt/windi/communique-builder
+EnvironmentFile=/opt/windi/communique-builder/.env
+ExecStart=/usr/bin/python3 /opt/windi/communique-builder/builder_server.py
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
