@@ -3274,6 +3274,7 @@ function App(){
 
   // Dragon Chat API call — ALL tiers can use (Knowledge Base + Conversational don't need LLM)
   // FIX 2026-03-08: Now accepts history array to cure Alzheimer
+  // FIX 2026-03-08c: Send wallet_name for VIP founder detection
   const queryDragon=useCallback(async(message,history=[])=>{
     if(!dragonConnected)return null;
     try{
@@ -3286,7 +3287,7 @@ function App(){
       const res=await fetch(dragonUrl+'/chat',{
         method:'POST',
         headers:{'Content-Type':'application/json','X-Session-ID':dragonSessionId||'','X-Tier':windiTier},
-        body:JSON.stringify({message,tier:windiTier,session_id:dragonSessionId,history:apiHistory})
+        body:JSON.stringify({message,tier:windiTier,session_id:dragonSessionId,history:apiHistory,wallet_name:wallet?.name||''})
       });
       const data=await res.json();
       if(data.session_id&&!dragonSessionId)setDragonSessionId(data.session_id);
@@ -3299,7 +3300,7 @@ function App(){
       console.warn('[WINDI] Dragon Chat error:',e.message);
       return null;
     }
-  },[dragonUrl,dragonConnected,dragonSessionId,windiTier]);
+  },[dragonUrl,dragonConnected,dragonSessionId,windiTier,wallet]);
 
   // Confirm Dragon action (Principle 1: never execute without confirmation)
   const confirmDragonAction=useCallback(async(confirmed)=>{
@@ -3502,8 +3503,9 @@ function App(){
 
     // ═══ A.4: DRAGON CHAT INTEGRATION ═══
     // FIX 2026-03-08: Pass msgs as history to cure Alzheimer
+    // FIX 2026-03-08b: ALL tiers can use Dragon (Knowledge Base is universal)
     let dragonResponse=null;
-    if(dragonConnected&&windiTier!=="FREE"){
+    if(dragonConnected){
       dragonResponse=await queryDragon(m,msgs);
     }
 
