@@ -1,8 +1,8 @@
 {
   "constellation": "WINDI Skills Memory",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "created": "2026-03-08",
-  "last_updated": "2026-03-08T14:00:00Z",
+  "last_updated": "2026-03-08T18:20:00Z",
   "architect": "Human Dragon + Gêmeo (Claude Opus 4.5)",
 
   "epochs": [
@@ -11,6 +11,14 @@
       "codename": "Garden Protocol Day",
       "summary": "WhatsApp integration + viral distribution system + trilingual UX",
       "skills_unlocked": 13
+    },
+    {
+      "date": "2026-03-08",
+      "codename": "Palette Surgery Day",
+      "summary": "4 sprints executed: ActionBridge fix, Grove Welcome, Menu Redesign, WICK Vivo",
+      "skills_unlocked": 12,
+      "sprints": ["S0", "S1", "S2", "S3"],
+      "audit_source": "WINDI_USER_JOURNEY_AUDIT_20260308.md"
     }
   ],
 
@@ -239,6 +247,247 @@
       "file": "/opt/windi/verify-public/web/index.html",
       "meta_dependency": false,
       "key_message": "You don't have to believe the person who sent the document. You can verify it yourself."
+    },
+
+    "action_bridge": {
+      "id": "S0-BRIDGE-v1.0.0",
+      "name": "ActionBridge Dragon→Desktop",
+      "category": "integration",
+      "created": "2026-03-08",
+      "sprint": "S0-1",
+      "status": "active",
+      "description": "Bridge that transfers Dragon-generated documents to Desktop editor",
+      "functions": [
+        "loadDragonDraft()",
+        "parseURLParams()",
+        "convertToTiptapJSON()"
+      ],
+      "files": [
+        "/opt/windi/desktop/frontend/src/stores/docStore.js",
+        "/opt/windi/desktop/frontend/src/App.jsx"
+      ],
+      "flow": "Palette → localStorage/API → Desktop → Tiptap editor",
+      "commit": "b2610c4",
+      "connects_to": ["palette", "desktop"]
+    },
+
+    "guardian_cta_protocol": {
+      "id": "S0-CTA-v1.0.0",
+      "name": "Guardian CTA Protocol",
+      "category": "ux",
+      "created": "2026-03-08",
+      "sprint": "S0-3",
+      "status": "active",
+      "description": "Mandatory action buttons after document approval - never end with just text",
+      "rules": [
+        "After positive interaction → SHOW ACTION",
+        "Draft approved → Show [Open in Editor] [Seal] [Export]",
+        "Every promise = delivered button",
+        "Celebration without next step → BANNED"
+      ],
+      "file": "/opt/windi/agent-palette/agent_dragon_server.py",
+      "commit": "dc7c778",
+      "constitutional_alignment": "I1 (Human Primacy)"
+    },
+
+    "grove_welcome": {
+      "id": "S1-GROVE-v1.0.0",
+      "name": "Grove Welcome Component",
+      "category": "onboarding",
+      "created": "2026-03-08",
+      "sprint": "S1-1",
+      "status": "active",
+      "description": "First-time user welcome card in Grove tab with Gardener's Journey visual",
+      "components": [
+        "Dragon guide icon",
+        "Welcome message (trilingual)",
+        "Gardener's Journey: Grove→Doc→Ledger→WICK",
+        "Dismiss button with localStorage persistence"
+      ],
+      "localStorage_key": "windi_grove_welcomed",
+      "file": "/opt/windi/agent-palette/ui/index.html",
+      "commit": "0cbd7e1"
+    },
+
+    "html_builder_tab": {
+      "id": "S1-BUILDER-v1.0.0",
+      "name": "HTML Builder Tab",
+      "category": "ui",
+      "created": "2026-03-08",
+      "sprint": "S1-2",
+      "status": "active",
+      "description": "HTML Builder integrated in Palette sidebar with embedded iframe",
+      "icon": "🏗️",
+      "components": [
+        "Back button to Chat",
+        "Open in New Tab button",
+        "Embedded iframe"
+      ],
+      "url": "/html-builder/",
+      "file": "/opt/windi/agent-palette/ui/index.html",
+      "commit": "0cbd7e1"
+    },
+
+    "unified_communique": {
+      "id": "S1-UNIFIED-v1.0.0",
+      "name": "Unified Communiqué",
+      "category": "ui",
+      "created": "2026-03-08",
+      "sprint": "S1-4",
+      "status": "active",
+      "description": "Text/Canvas mode toggle within Chat tab - unified editing experience",
+      "modes": ["text", "canvas"],
+      "state_key": "chatMode",
+      "components": [
+        "Mode toggle buttons",
+        "Mini canvas preview",
+        "Quick access to full Desk tab"
+      ],
+      "file": "/opt/windi/agent-palette/ui/index.html",
+      "commit": "0cbd7e1"
+    },
+
+    "modelos_tab": {
+      "id": "S2-MODELOS-v1.0.0",
+      "name": "Modelos Tab",
+      "category": "ui",
+      "created": "2026-03-08",
+      "sprint": "S2-1",
+      "status": "active",
+      "description": "Visual template cards with category filters (Marketing/Utility/Auth)",
+      "icon": "🎭",
+      "renamed_from": "templates",
+      "components": [
+        "Category filter buttons",
+        "Visual template cards grid",
+        "Template editor panel"
+      ],
+      "file": "/opt/windi/agent-palette/ui/index.html",
+      "commit": "fe3cd7c"
+    },
+
+    "publicacoes_tab": {
+      "id": "S2-PUB-v1.0.0",
+      "name": "Publicações Tab",
+      "category": "ui",
+      "created": "2026-03-08",
+      "sprint": "S2-2",
+      "status": "active",
+      "description": "Published content feed with grid layout and quick stats",
+      "icon": "📢",
+      "renamed_from": "journal",
+      "components": [
+        "Quick stats (articles, verified, WICK)",
+        "Article cards grid",
+        "Create document CTA"
+      ],
+      "file": "/opt/windi/agent-palette/ui/index.html",
+      "commit": "fe3cd7c"
+    },
+
+    "busca_tab": {
+      "id": "S2-BUSCA-v1.0.0",
+      "name": "Busca Tab",
+      "category": "ui",
+      "created": "2026-03-08",
+      "sprint": "S2-3",
+      "status": "active",
+      "description": "Unified search with filters (All/Docs/Sealed/WICK)",
+      "icon": "🔎",
+      "renamed_from": "search",
+      "components": [
+        "Search input with icon",
+        "Filter buttons",
+        "Results list with hover effects",
+        "Stats display"
+      ],
+      "file": "/opt/windi/agent-palette/ui/index.html",
+      "commit": "fe3cd7c"
+    },
+
+    "wallet_quick_actions": {
+      "id": "S2-WALLET-v1.0.0",
+      "name": "Wallet Quick Actions",
+      "category": "ui",
+      "created": "2026-03-08",
+      "sprint": "S2-4",
+      "status": "active",
+      "description": "Quick action buttons in Wallet tab header",
+      "icon": "🏛️",
+      "actions": [
+        "New document",
+        "Search",
+        "WICK"
+      ],
+      "file": "/opt/windi/agent-palette/ui/index.html",
+      "commit": "fe3cd7c"
+    },
+
+    "ficheiros_tab": {
+      "id": "S2-FILES-v1.0.0",
+      "name": "Ficheiros Tab",
+      "category": "ui",
+      "created": "2026-03-08",
+      "sprint": "S2-5",
+      "status": "active",
+      "description": "File manager with category filters and storage stats",
+      "icon": "📂",
+      "renamed_from": "files",
+      "components": [
+        "Category filters (All/Images/PDFs/Videos)",
+        "Storage stats display",
+        "Drag-drop upload zone",
+        "File grid with thumbnails"
+      ],
+      "file": "/opt/windi/agent-palette/ui/index.html",
+      "commit": "fe3cd7c"
+    },
+
+    "wick_url_soberana": {
+      "id": "S3-URL-v1.0.0",
+      "name": "WICK URL Soberana",
+      "category": "infrastructure",
+      "created": "2026-03-08",
+      "sprint": "S3-1",
+      "status": "active",
+      "description": "Sovereign URL for WICK artifacts with nginx routing to Constitutional Agent",
+      "url_pattern": "windi-domain.com/wick/{artifact_id}",
+      "endpoints": [
+        "GET /wick/health",
+        "GET /wick/artifacts",
+        "GET /wick/feed",
+        "GET /wick/artifact/{id}",
+        "POST /wick/publish",
+        "POST /wick/link"
+      ],
+      "backend_port": 8091,
+      "nginx_modifier": "location /wick/",
+      "human_decision": "SELADO 2026-03-08",
+      "connects_to": ["constitutional_agent", "forensic_ledger"]
+    },
+
+    "wick_html_view": {
+      "id": "S3-VIEW-v1.0.0",
+      "name": "WICK HTML View",
+      "category": "ui",
+      "created": "2026-03-08",
+      "sprint": "S3-2",
+      "status": "active",
+      "description": "HTML view for WICK artifacts with OG tags for social sharing",
+      "url_pattern": "windi-domain.com/wick/view/{artifact_id}",
+      "features": [
+        "OG tags (title, description, url, image)",
+        "Twitter Cards support",
+        "Visibility check (private → 403)",
+        "Verify link embedded",
+        "WINDI brand styling"
+      ],
+      "backend_port": 8114,
+      "nginx_modifier": "location ^~ /wick/view/",
+      "file": "/opt/windi/verify-public/app/main.py",
+      "commit": "5be81ec",
+      "human_decision": "Privado por defeito — SELADO 2026-03-08",
+      "constitutional_alignment": "I12 (Web of Proofs), GDPR"
     }
   },
 
@@ -257,6 +506,22 @@
       "version": "1.1.0",
       "meta_dependency": false,
       "channels": 7
+    },
+    "palette_surgery": {
+      "name": "Palette Surgery (S0-S2)",
+      "skills": ["action_bridge", "guardian_cta_protocol", "grove_welcome", "html_builder_tab", "unified_communique", "modelos_tab", "publicacoes_tab", "busca_tab", "wallet_quick_actions", "ficheiros_tab"],
+      "service": "agent-palette",
+      "version": "2.0.0",
+      "port": 8108,
+      "audit": "WINDI_USER_JOURNEY_AUDIT_20260308.md"
+    },
+    "wick_evidence_graph": {
+      "name": "WICK Evidence Graph (S3)",
+      "skills": ["wick_url_soberana", "wick_html_view"],
+      "services": ["constitutional_agent", "verify_public"],
+      "ports": [8091, 8114],
+      "version": "1.0.0",
+      "constitutional_alignment": "I12 (Web of Proofs)"
     }
   },
 
@@ -271,11 +536,17 @@
       "P7": "GovDrawer (governance)",
       "P8": "WhatsAppSuite (distribution)"
     },
+    "sidebar_structure": {
+      "main": ["grove", "chat", "docs", "desk", "modelos", "publicacoes", "busca", "wallet", "ficheiros", "wick"],
+      "extra": ["htmlbuilder", "products", "history"]
+    },
     "services": {
       "dragon_chat": {"port": 8111, "version": "2.6.0"},
       "forensic_ledger": {"port": 8101},
-      "palette": {"port": 8108},
-      "verify_public": {"path": "/verify-public/"}
+      "palette": {"port": 8108, "version": "2.0.0"},
+      "verify_public": {"port": 8114, "path": "/verify-public/"},
+      "constitutional_agent": {"port": 8091, "version": "1.0.0"},
+      "desktop": {"port": 8100}
     }
   },
 
@@ -286,20 +557,77 @@
       {"hash": "9f34397", "message": "feat(verify-public): Add Telegram share button to Garden Protocol"},
       {"hash": "aea06c3", "message": "feat(verify-public): Add Email share button to Garden Protocol"},
       {"hash": "9645ed5", "message": "feat(verify-public): Add Share Card visual generator to Garden Protocol"},
-      {"hash": "11fd6cc", "message": "docs(debriefing): Add Garden Protocol v1.0 section"}
+      {"hash": "11fd6cc", "message": "docs(debriefing): Add Garden Protocol v1.0 section"},
+      {"hash": "b2610c4", "message": "fix(desktop): S0-1 — ActionBridge receiver implementado"},
+      {"hash": "af1b1b8", "message": "fix(palette): S0-2 — Remove Insights tab and JSON from chat"},
+      {"hash": "dc7c778", "message": "feat(dragon): S0-3 — Guardian CTA Protocol added to system prompt"},
+      {"hash": "0cbd7e1", "message": "feat(palette-s1): Grove Welcome + HTML Builder + Unified Communiqué"},
+      {"hash": "fe3cd7c", "message": "feat(palette-s2): Menu Redesign (Modelos, Publicações, Busca, Wallet, Ficheiros)"},
+      {"hash": "5be81ec", "message": "feat(verify-public): S3-2 — WICK View with OG tags"}
     ]
+  },
+
+  "sprints": {
+    "S0": {
+      "name": "Critical Surgery",
+      "status": "complete",
+      "tasks": [
+        {"id": "S0-1", "name": "ActionBridge", "status": "done", "commit": "b2610c4"},
+        {"id": "S0-2", "name": "Remove UI técnica", "status": "done", "commit": "af1b1b8"},
+        {"id": "S0-3", "name": "Guardian CTA Protocol", "status": "done", "commit": "dc7c778"}
+      ]
+    },
+    "S1": {
+      "name": "Grove Welcome + HTML Builder",
+      "status": "complete",
+      "tasks": [
+        {"id": "S1-1", "name": "Grove Welcome Component", "status": "done"},
+        {"id": "S1-2", "name": "HTML Builder in menu", "status": "done"},
+        {"id": "S1-3", "name": "HTML Builder back button", "status": "done"},
+        {"id": "S1-4", "name": "Unified Communiqué", "status": "done"}
+      ],
+      "commit": "0cbd7e1"
+    },
+    "S2": {
+      "name": "Menu Redesign",
+      "status": "complete",
+      "tasks": [
+        {"id": "S2-1", "name": "Modelos Tab", "status": "done"},
+        {"id": "S2-2", "name": "Publicações Tab", "status": "done"},
+        {"id": "S2-3", "name": "Busca Tab", "status": "done"},
+        {"id": "S2-4", "name": "Wallet Quick Actions", "status": "done"},
+        {"id": "S2-5", "name": "Ficheiros Tab", "status": "done"}
+      ],
+      "commit": "fe3cd7c"
+    },
+    "S3": {
+      "name": "WICK Vivo",
+      "status": "complete",
+      "human_decisions": [
+        "URL soberana: windi-domain.com/wick/{receipt_id} — SELADO",
+        "Privado por defeito — SELADO"
+      ],
+      "tasks": [
+        {"id": "S3-1", "name": "URL soberana + nginx", "status": "done"},
+        {"id": "S3-2", "name": "HTML View with OG tags", "status": "done", "commit": "5be81ec"}
+      ]
+    }
   },
 
   "principles": {
     "constitutional": [
+      "I1 — Human Primacy (Guardian CTA Protocol)",
       "I11 — Permanência de Evidência Criptográfica",
+      "I12 — Web of Proofs (WICK Evidence Graph)",
       "Zero raw phone numbers in Ledger (GDPR)",
-      "SHA-256 hash of recipients always"
+      "SHA-256 hash of recipients always",
+      "Private by default (WICK visibility)"
     ],
     "strategic": [
       "Zero Meta Business API dependency for viral distribution",
       "Peer-to-peer distribution via Web native APIs",
-      "BSUID ready 90 days before Meta deadline"
+      "BSUID ready 90 days before Meta deadline",
+      "20 problems → 4 sprints → Production in one day"
     ]
   },
 
