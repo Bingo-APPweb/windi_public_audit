@@ -3271,13 +3271,20 @@ function App(){
   },[dragonUrl]);
 
   // Dragon Chat API call — ALL tiers can use (Knowledge Base + Conversational don't need LLM)
-  const queryDragon=useCallback(async(message)=>{
+  // FIX 2026-03-08: Now accepts history array to cure Alzheimer
+  const queryDragon=useCallback(async(message,history=[])=>{
     if(!dragonConnected)return null;
     try{
+      // Convert local msgs format to backend format (last 20 exchanges max)
+      // Backend expects: role='human' for user, role='assistant' for bot, and 'text' field
+      const apiHistory=history
+        .filter(m=>m.role==='user'||m.role==='bot')
+        .slice(-40)
+        .map(m=>({role:m.role==='user'?'human':'assistant',text:m.text}));
       const res=await fetch(dragonUrl+'/chat',{
         method:'POST',
         headers:{'Content-Type':'application/json','X-Session-ID':dragonSessionId||'','X-Tier':windiTier},
-        body:JSON.stringify({message,tier:windiTier,session_id:dragonSessionId})
+        body:JSON.stringify({message,tier:windiTier,session_id:dragonSessionId,history:apiHistory})
       });
       const data=await res.json();
       if(data.session_id&&!dragonSessionId)setDragonSessionId(data.session_id);
@@ -3492,9 +3499,10 @@ function App(){
     const tc=turns+1;setTurns(tc);
 
     // ═══ A.4: DRAGON CHAT INTEGRATION ═══
+    // FIX 2026-03-08: Pass msgs as history to cure Alzheimer
     let dragonResponse=null;
     if(dragonConnected&&windiTier!=="FREE"){
-      dragonResponse=await queryDragon(m);
+      dragonResponse=await queryDragon(m,msgs);
     }
 
     // Process response (local motor + Dragon enhancement)
@@ -3780,7 +3788,7 @@ function App(){
         }
       }
     },dragonResponse?100:400+Math.random()*500);
-  },[turns,awaitingTitle,docTitle,docType,docStatus,docFields,flowActive,flowStep,wallet,t,lang,dragonConnected,windiTier,queryDragon]);
+  },[turns,awaitingTitle,docTitle,docType,docStatus,docFields,flowActive,flowStep,wallet,t,lang,dragonConnected,windiTier,queryDragon,msgs]);
 
   // Image + Video
   const addImage=useCallback(f=>{if(!f?.type.startsWith("image/"))return;const r=new FileReader();
