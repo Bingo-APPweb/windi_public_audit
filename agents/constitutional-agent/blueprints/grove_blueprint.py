@@ -135,6 +135,7 @@ def seed_idea():
     """
     data = request.get_json() or {}
     idea = data.get("idea", "")
+    title = data.get("title", "") or idea[:60]
     context = data.get("context")
     user = data.get("user", "anonymous")
 
@@ -147,7 +148,7 @@ def seed_idea():
     conn = sqlite3.connect(GROVE_DB)
     conn.execute(
         "INSERT INTO grove_sessions VALUES (?,?,?,?,?,?,?,?)",
-        (session_id, user, idea[:80], datetime.utcnow().isoformat(),
+        (session_id, user, title[:80], datetime.utcnow().isoformat(),
          None, None, 0, '[]')
     )
     conn.commit()

@@ -793,6 +793,36 @@ ROUTE_PATTERNS = {
         ],
         "weight": 0.1,
     }
+    ,
+    "grove": {
+        "emoji": "🌱",
+        "role": "Idea Gardener",
+        "chat_types": ["grove"],
+        "system": """
+You are W-GROVE-001 — the WINDI Idea Gardener. 🌱
+
+Your ONLY role is to help the human cultivate raw ideas BEFORE they become documents.
+
+FUNDAMENTAL RULES:
+- NEVER ask what type of document the user wants
+- NEVER jump to document creation
+- ALWAYS work on the IDEA first
+
+YOUR METHOD — 3 surgical questions maximum:
+1. Who is affected by this idea / who benefits?
+2. What problem does it solve TODAY that is broken?
+3. In ONE sentence: what is the core of the idea?
+
+After 3 answers, produce:
+- IDEA STRUCTURE (Theme / Problem / Proposal / Impact)
+- Then ask: "Ready to give this idea a destination?"
+- Suggest: Communiqué, Report, Article, Pitch, Memo, Wisdom Block
+
+TONE: Warm botanical gardener. Nurturing, curious, never rushing.
+The idea is a seed. Your job is to water it, not harvest it prematurely.
+""",
+        "keywords": ["grove", "ideia", "idea", "idee", "bosque", "semente", "debater", "pensar", "cultivar"]
+    }
 }
 
 def route_dragon(message, chat_type=None, intent_mode=None, history=None):
@@ -841,7 +871,7 @@ def route_dragon(message, chat_type=None, intent_mode=None, history=None):
     # After 2+ turns with document intent, FORCE Architect to break Chat-Lock
     if history and len(history) >= 2:
         # Check if conversation has document intent
-        conversation_text = " ".join([h.get("text", "").lower() for h in history])
+        conversation_text = " ".join([h.get("content", h.get("text", "")).lower() for h in history])
         doc_intent_in_history = any(kw in conversation_text for kw in DOC_KEYWORDS)
 
         if doc_intent_in_history:
@@ -1387,7 +1417,7 @@ def handle_dragon_chat(body):
     history_slice = history if FULL_MEMORY_MODE else history[-MEMORY_LIMIT:]
     for h in history_slice:
         role = "user" if h.get("role") == "human" else "assistant"
-        api_messages.append({"role": role, "content": h.get("text", "")})
+        api_messages.append({"role": role, "content": h.get("content", h.get("text", ""))})
     api_messages.append({"role": "user", "content": message})
 
     # Call Anthropic API with dynamic date prefix

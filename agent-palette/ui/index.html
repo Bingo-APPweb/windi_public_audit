@@ -276,26 +276,14 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
       vault:        'http://localhost:8106/health',
       communique:   'http://localhost:8105/health',
       dragon:       'http://localhost:8108/api/dragon/health',
-      // NEW (G1) - 6 additional services
-      bridge:       'http://localhost:8097/health',
-      sentinelLaw:  'http://localhost:8102/health',
-      schnittstelle:'http://localhost:8095/health',
-      cortex:       'http://localhost:8889/health',
-      idGenesis:    'http://localhost:8096/health',
-      sentinel:     'http://localhost:8098/health'
+      sentinelLaw:  'http://localhost:8102/health'
     } : {
-      ledger:       baseUrl + '/ledger/health',
-      export:       baseUrl + '/export/health',
-      vault:        baseUrl + '/vault/health',
-      communique:   baseUrl + '/communique/health',
-      dragon:       'https://windi-domain.com/app/api/dragon/health',  // Dragon Server via 8108
-      // NEW (G1)
-      bridge:       baseUrl + '/bridge/health',
-      sentinelLaw:  baseUrl + '/sentinel-law/health',
-      schnittstelle:baseUrl + '/schnittstelle/health',
-      cortex:       baseUrl + '/cortex/health',
-      idGenesis:    baseUrl + '/id-genesis/health',
-      sentinel:     baseUrl + '/sentinel/health'
+      ledger:       baseUrl + '/api/ledger/health',
+      export:       baseUrl + '/api/export/health',
+      vault:        baseUrl + '/api/vault/health',
+      communique:   baseUrl + '/api/communique/health',
+      dragon:       'https://windi-domain.com/app/api/dragon/health',
+      sentinel:     baseUrl + '/api/sentinel-core/health'
     };
 
     var connectors = {
@@ -303,14 +291,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
       export:       { name: 'Export Engine',     endpoint: ctx.endpoints.export,     healthUrl: healthEndpoints.export,       status: 'unknown', version: '' },
       vault:        { name: 'Forensic Vault',    endpoint: ctx.endpoints.vault,      healthUrl: healthEndpoints.vault,        status: 'unknown', version: '' },
       communique:   { name: 'Communiqué Engine', endpoint: ctx.endpoints.communique, healthUrl: healthEndpoints.communique,   status: 'unknown', version: '' },
-      dragon:       { name: 'Dragon Server',     endpoint: isLocal ? 'http://localhost:8108/api/dragon' : 'https://windi-domain.com/app/api/dragon', healthUrl: healthEndpoints.dragon, status: 'unknown', version: '' },
-      // NEW (G1) - 6 additional services
-      bridge:       { name: 'Command Bridge',    endpoint: isLocal ? 'http://localhost:8097' : baseUrl + '/bridge',       healthUrl: healthEndpoints.bridge,       status: 'unknown', version: '' },
       sentinelLaw:  { name: 'Sentinel LAW',      endpoint: isLocal ? 'http://localhost:8102' : baseUrl + '/sentinel-law', healthUrl: healthEndpoints.sentinelLaw,  status: 'unknown', version: '' },
-      schnittstelle:{ name: 'Schnittstelle',     endpoint: isLocal ? 'http://localhost:8095' : baseUrl + '/schnittstelle',healthUrl: healthEndpoints.schnittstelle,status: 'unknown', version: '' },
-      cortex:       { name: 'Cortex',            endpoint: isLocal ? 'http://localhost:8889' : baseUrl + '/cortex',       healthUrl: healthEndpoints.cortex,       status: 'unknown', version: '' },
-      idGenesis:    { name: 'ID Genesis',        endpoint: isLocal ? 'http://localhost:8096' : baseUrl + '/id-genesis',   healthUrl: healthEndpoints.idGenesis,    status: 'unknown', version: '' },
-      sentinel:     { name: 'Sentinel',          endpoint: isLocal ? 'http://localhost:8098' : baseUrl + '/sentinel',     healthUrl: healthEndpoints.sentinel,     status: 'unknown', version: '' }
+      dragon:       { name: 'Dragon Server',     endpoint: isLocal ? 'http://localhost:8108/api/dragon' : 'https://windi-domain.com/app/api/dragon', healthUrl: healthEndpoints.dragon, status: 'unknown', version: '' },
     };
 
     var pollingInterval = null;
@@ -2938,6 +2920,17 @@ function App(){
   const[tplStatus,setTplStatus]=useState("idle"); // idle|loading|success|error
   const[tplError,setTplError]=useState("");
 
+  // ═══ W-GROVE-001: Debate Chat State ═══
+  const[groveDebateOpen,setGroveDebateOpen]=useState(false);
+  const[groveSession,setGroveSession]=useState(null); // {session_id, root_node_id, suggested_agents}
+  const[groveNodes,setGroveNodes]=useState([]);
+  const[groveEdges,setGroveEdges]=useState([]);
+  const[groveLoading,setGroveLoading]=useState(false);
+  const[groveSelectedAgents,setGroveSelectedAgents]=useState([]);
+  const[groveMsgs,setGroveMsgs]=useState([]); // Chat messages: {role:'user'|'agent', agent_id?, content, ts}
+  const[groveInput,setGroveInput]=useState(""); // Follow-up input
+  const[groveActiveAgents,setGroveActiveAgents]=useState([]); // Agents participating in debate
+
   // DID
   const[wallet,setWallet]=useState(null);
   const[showDID,setShowDID]=useState(false);
@@ -3427,7 +3420,7 @@ function App(){
       const apiHistory=history
         .filter(m=>m.role==='user'||m.role==='bot')
         .slice(-40)
-        .map(m=>({role:m.role==='user'?'human':'assistant',text:m.text}));
+        .map(m=>({role:m.role==='user'?'human':'assistant',content:m.text}));
       const res=await fetch(dragonUrl+'/chat',{
         method:'POST',
         headers:{'Content-Type':'application/json','X-Session-ID':dragonSessionId||'','X-Tier':windiTier},
@@ -4430,10 +4423,13 @@ function App(){
               {/* Grove Notes List */}
               <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:20}}>
                 {(JSON.parse(localStorage.getItem("windi_grove_notes")||"[]")).map((note,i)=>(
-                  <div key={i} onClick={()=>{document.getElementById("groveEditor").value=note.content;document.getElementById("groveTitle").value=note.title;}} style={{padding:"12px 14px",borderRadius:10,background:th.card,border:`1px solid ${th.border}`,cursor:"pointer"}}>
-                    <div style={{fontSize:13,fontWeight:600,marginBottom:4}}>{note.title||lang==="pt"?"Sem título":lang==="de"?"Ohne Titel":"Untitled"}</div>
-                    <div style={{fontSize:10,color:th.dim}}>{note.content?.slice(0,100)}...</div>
-                    <div style={{fontSize:9,color:th.dim,marginTop:6}}>{new Date(note.ts).toLocaleString()}</div>
+                  <div key={i} style={{padding:"12px 14px",borderRadius:10,background:th.card,border:`1px solid ${th.border}`,position:"relative"}}>
+                    <div onClick={()=>{document.getElementById("groveEditor").value=note.content;document.getElementById("groveTitle").value=note.title;}} style={{cursor:"pointer"}}>
+                      <div style={{fontSize:13,fontWeight:600,marginBottom:4,paddingRight:24}}>{note.title||lang==="pt"?"Sem título":lang==="de"?"Ohne Titel":"Untitled"}</div>
+                      <div style={{fontSize:10,color:th.dim}}>{note.content?.slice(0,100)}...</div>
+                      <div style={{fontSize:9,color:th.dim,marginTop:6}}>{new Date(note.ts).toLocaleString()}</div>
+                    </div>
+                    <button onClick={(e)=>{e.stopPropagation();const notes=JSON.parse(localStorage.getItem("windi_grove_notes")||"[]");notes.splice(i,1);localStorage.setItem("windi_grove_notes",JSON.stringify(notes));setSidebarTab("grove");}} style={{position:"absolute",top:8,right:8,width:20,height:20,borderRadius:"50%",background:"transparent",border:`1px solid ${th.border}`,color:th.dim,fontSize:11,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",lineHeight:1}}>✕</button>
                   </div>
                 ))}
                 {(JSON.parse(localStorage.getItem("windi_grove_notes")||"[]")).length===0&&(
@@ -4470,13 +4466,191 @@ function App(){
                   }} style={{padding:"10px 20px",borderRadius:8,background:th.card,border:`1px solid ${th.gold}`,color:th.gold,fontSize:12,fontWeight:600,cursor:"pointer"}}>
                     📄 {lang==="pt"?"Criar Documento":lang==="de"?"Dokument erstellen":"Create Document"}
                   </button>
+                  <button onClick={async()=>{
+                    const title=document.getElementById("groveTitle").value.trim();
+                    const content=document.getElementById("groveEditor").value.trim();
+                    if(!content){flash("⚠️ "+{pt:"Escreva algo primeiro",de:"Schreib zuerst etwas",en:"Write something first"}[lang]);return;}
+                    setGroveLoading(true);
+                    flash("🌱 "+(lang==="pt"?"A plantar a semente...":lang==="de"?"Pflanze die Idee...":"Planting the seed..."));
+                    try{
+                      const res=await fetch('/grove/seed',{
+                        method:'POST',
+                        headers:{'Content-Type':'application/json'},
+                        body:JSON.stringify({idea:content,title:title||'',user:wallet?.name||'anonymous'})
+                      });
+                      const data=await res.json();
+                      if(data.session_id){
+                        setGroveSession({...data, title: title||content.slice(0,50)});
+                        setGroveSelectedAgents(data.suggested_agents||[]);
+                        setGroveDebateOpen(true);
+                        setGroveNodes([{id:data.root_node_id,type:'idea',title:title||'Ideia',content,author:wallet?.name||'user'}]);
+                        setGroveMsgs([{role:'user',content:`${title?title+": ":""}${content}`,ts:new Date().toISOString()}]);
+                        setGroveActiveAgents([]);
+                        flash("🌱 "+(lang==="pt"?"Semente plantada! Convide agentes.":lang==="de"?"Samen gepflanzt! Lade Agenten ein.":"Seed planted! Invite agents."));
+                      }else{
+                        flash("⚠️ Grove error: "+(data.error||"unknown"));
+                      }
+                    }catch(e){flash("⚠️ Grove offline: "+e.message);}
+                    setGroveLoading(false);
+                  }} disabled={groveLoading} style={{padding:"10px 20px",borderRadius:8,background:groveLoading?th.dim:`linear-gradient(135deg,#2d5a27,#4a8c3f)`,border:"none",color:"#FFF",fontSize:12,fontWeight:700,cursor:groveLoading?"wait":"pointer"}}>
+                    {groveLoading?"⏳":"🌱"} {lang==="pt"?"Debater a Ideia":lang==="de"?"Idee debattieren":"Debate the Idea"}
+                  </button>
                 </div>
               </div>
+
+              {/* ═══ W-GROVE-001: Debate CHAT Panel ═══ */}
+              {groveDebateOpen&&groveSession&&(
+                <div style={{marginTop:16,background:th.card,borderRadius:12,border:`2px solid ${th.gold}`,display:"flex",flexDirection:"column",height:"60vh",maxHeight:500}}>
+                  {/* Header */}
+                  <div style={{padding:"12px 16px",borderBottom:`1px solid ${th.border}`,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                    <div style={{display:"flex",alignItems:"center",gap:8,flex:1,minWidth:0}}>
+                      <span style={{fontSize:20}}>🌳</span>
+                      <span style={{fontSize:14,fontWeight:700,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{groveSession.title||"Debate"}</span>
+                      <span style={{fontSize:9,color:th.dim,background:th.bg,padding:"2px 6px",borderRadius:8,flexShrink:0}}>{groveSession.session_id}</span>
+                    </div>
+                    <div style={{display:"flex",alignItems:"center",gap:8}}>
+                      {groveMsgs.length>1&&(
+                        <button onClick={async()=>{
+                          setGroveLoading(true);
+                          try{
+                            const res=await fetch(`/grove/ideas/${groveSession.session_id}/seal`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({session_id:groveSession.session_id,user:wallet?.name||'anonymous'})});
+                            const data=await res.json();
+                            if(data.status==='sealed'){flash("🔐 Sealed: "+data.receipt_id);setGroveDebateOpen(false);setGroveSession(null);setGroveMsgs([]);setGroveActiveAgents([]);}
+                          }catch(e){flash("⚠️ "+e.message);}
+                          setGroveLoading(false);
+                        }} style={{padding:"4px 10px",borderRadius:6,background:`linear-gradient(135deg,#8B4513,#D2691E)`,border:"none",color:"#FFF",fontSize:10,fontWeight:600,cursor:"pointer"}}>
+                          🔐 {lang==="pt"?"Selar":lang==="de"?"Versiegeln":"Seal"}
+                        </button>
+                      )}
+                      <button onClick={()=>{setGroveDebateOpen(false);setGroveSession(null);setGroveMsgs([]);setGroveActiveAgents([]);}} style={{background:"none",border:"none",color:th.dim,cursor:"pointer",fontSize:16}}>✕</button>
+                    </div>
+                  </div>
+
+                  {/* Agent Selection Bar */}
+                  {groveActiveAgents.length===0&&(
+                    <div style={{padding:12,borderBottom:`1px solid ${th.border}`,background:`${th.gold}08`}}>
+                      <div style={{fontSize:10,fontWeight:600,marginBottom:6}}>{lang==="pt"?"Convide agentes para o debate:":lang==="de"?"Lade Agenten zur Debatte ein:":"Invite agents to debate:"}</div>
+                      <div style={{display:"flex",flexWrap:"wrap",gap:4}}>
+                        {["W-LEGAL-001","W-NOTARY-001","W-COMPLY-001","W-COMM-001","W-JOURN-001","W-AUDIT-001","W-ACCT-001"].map(a=>(
+                          <button key={a} onClick={()=>setGroveSelectedAgents(p=>p.includes(a)?p.filter(x=>x!==a):[...p,a])} style={{padding:"3px 8px",borderRadius:4,fontSize:9,fontWeight:600,border:`1px solid ${groveSelectedAgents.includes(a)?th.gold:th.border}`,background:groveSelectedAgents.includes(a)?th.gold:th.bg,color:groveSelectedAgents.includes(a)?"#FFF":th.text,cursor:"pointer"}}>
+                            {({
+                              "W-LEGAL-001":"⚖️ Legal",
+                              "W-NOTARY-001":"📜 Notário",
+                              "W-COMPLY-001":"✅ Compliance",
+                              "W-COMM-001":"📝 Communiqué",
+                              "W-JOURN-001":"📰 Jornalista",
+                              "W-AUDIT-001":"🔍 Auditor",
+                              "W-ACCT-001":"💰 Contabilidade"
+                            })[a]}
+                          </button>
+                        ))}
+                      </div>
+                      {groveSelectedAgents.length>0&&(
+                        <button onClick={async()=>{
+                          setGroveLoading(true);
+                          setGroveActiveAgents(groveSelectedAgents);
+                          setGroveMsgs(p=>[...p,{role:'system',content:`${groveSelectedAgents.length} agentes entraram no debate: ${groveSelectedAgents.map(a=>a.replace("W-","").replace("-001","")).join(", ")}`,ts:new Date().toISOString()}]);
+                          // Call debate endpoint
+                          try{
+                            const res=await fetch('/grove/debate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({idea_id:groveSession.root_node_id,user_response:groveMsgs[0]?.content||'',confirm_agents:groveSelectedAgents})});
+                            const data=await res.json();
+                            // Fetch graph to get agent responses
+                            const graphRes=await fetch(`/grove/ideas/${groveSession.session_id}/graph`);
+                            const graph=await graphRes.json();
+                            // Add agent messages
+                            (graph.nodes||[]).filter(n=>n.agent_source).forEach(n=>{
+                              setGroveMsgs(p=>[...p,{role:'agent',agent_id:n.agent_source,content:n.content,ts:n.created_at}]);
+                            });
+                          }catch(e){setGroveMsgs(p=>[...p,{role:'system',content:"⚠️ Erro: "+e.message,ts:new Date().toISOString()}]);}
+                          setGroveLoading(false);
+                        }} disabled={groveLoading} style={{marginTop:8,padding:"6px 14px",borderRadius:6,background:`linear-gradient(135deg,#2d5a27,#4a8c3f)`,border:"none",color:"#FFF",fontSize:10,fontWeight:700,cursor:"pointer"}}>
+                          {groveLoading?"⏳":"🗣️"} {lang==="pt"?"Iniciar Debate":lang==="de"?"Debatte starten":"Start Debate"} ({groveSelectedAgents.length})
+                        </button>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Chat Messages */}
+                  <div style={{flex:1,overflow:"auto",padding:12,display:"flex",flexDirection:"column",gap:10}}>
+                    {groveMsgs.map((m,i)=>(
+                      <div key={i} style={{display:"flex",flexDirection:"column",alignItems:m.role==='user'?'flex-end':m.role==='system'?'center':'flex-start'}}>
+                        {m.role==='system'?(
+                          <div style={{fontSize:9,color:th.dim,background:th.bg,padding:"4px 10px",borderRadius:10}}>{m.content}</div>
+                        ):m.role==='user'?(
+                          <div style={{maxWidth:"80%",background:th.gold,color:"#FFF",padding:"8px 12px",borderRadius:"12px 12px 2px 12px",fontSize:12}}>
+                            <div>{m.content}</div>
+                            <div style={{fontSize:8,opacity:0.7,marginTop:4,textAlign:"right"}}>{new Date(m.ts).toLocaleTimeString()}</div>
+                          </div>
+                        ):(
+                          <div style={{maxWidth:"85%",display:"flex",gap:8}}>
+                            <div style={{width:28,height:28,borderRadius:"50%",background:`linear-gradient(135deg,${th.gold},${th.border})`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,flexShrink:0}}>
+                              {({"W-LEGAL-001":"⚖️","W-NOTARY-001":"📜","W-COMPLY-001":"✅","W-COMM-001":"📝","W-JOURN-001":"📰","W-AUDIT-001":"🔍","W-ACCT-001":"💰"})[m.agent_id]||"🤖"}
+                            </div>
+                            <div style={{background:th.bg,border:`1px solid ${th.border}`,padding:"8px 12px",borderRadius:"2px 12px 12px 12px",fontSize:12}}>
+                              <div style={{fontSize:9,fontWeight:700,color:th.gold,marginBottom:4}}>{m.agent_id?.replace("W-","").replace("-001","")}</div>
+                              <div style={{lineHeight:1.5}}>{m.content}</div>
+                              <div style={{fontSize:8,color:th.dim,marginTop:4}}>{new Date(m.ts).toLocaleTimeString()}</div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                    {groveLoading&&<div style={{textAlign:"center",color:th.dim,fontSize:11}}>⏳ {lang==="pt"?"Agentes a pensar...":lang==="de"?"Agenten denken...":"Agents thinking..."}</div>}
+                  </div>
+
+                  {/* Input */}
+                  {groveActiveAgents.length>0&&(
+                    <div style={{padding:12,borderTop:`1px solid ${th.border}`,display:"flex",gap:8}}>
+                      <input value={groveInput} onChange={e=>setGroveInput(e.target.value)} onKeyDown={async(e)=>{
+                        if(e.key==='Enter'&&groveInput.trim()&&!groveLoading){
+                          const msg=groveInput.trim();
+                          setGroveInput("");
+                          setGroveMsgs(p=>[...p,{role:'user',content:msg,ts:new Date().toISOString()}]);
+                          setGroveLoading(true);
+                          try{
+                            const res=await fetch('/grove/debate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({idea_id:groveSession.root_node_id,user_response:msg,confirm_agents:groveActiveAgents})});
+                            const data=await res.json();
+                            const graphRes=await fetch(`/grove/ideas/${groveSession.session_id}/graph`);
+                            const graph=await graphRes.json();
+                            const existingIds=new Set(groveMsgs.filter(m=>m.node_id).map(m=>m.node_id));
+                            (graph.nodes||[]).filter(n=>n.agent_source&&!existingIds.has(n.id)).forEach(n=>{
+                              setGroveMsgs(p=>[...p,{role:'agent',agent_id:n.agent_source,content:n.content,ts:n.created_at,node_id:n.id}]);
+                            });
+                          }catch(e){setGroveMsgs(p=>[...p,{role:'system',content:"⚠️ "+e.message,ts:new Date().toISOString()}]);}
+                          setGroveLoading(false);
+                        }
+                      }} placeholder={lang==="pt"?"Continua o debate...":lang==="de"?"Debatte fortsetzen...":"Continue the debate..."} style={{flex:1,padding:"10px 14px",borderRadius:8,border:`1px solid ${th.border}`,background:th.input,color:th.text,fontSize:12}}/>
+                      <button onClick={async()=>{
+                        if(!groveInput.trim()||groveLoading)return;
+                        const msg=groveInput.trim();
+                        setGroveInput("");
+                        setGroveMsgs(p=>[...p,{role:'user',content:msg,ts:new Date().toISOString()}]);
+                        setGroveLoading(true);
+                        try{
+                          const res=await fetch('/grove/debate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({idea_id:groveSession.root_node_id,user_response:msg,confirm_agents:groveActiveAgents})});
+                          const graphRes=await fetch(`/grove/ideas/${groveSession.session_id}/graph`);
+                          const graph=await graphRes.json();
+                          const existingIds=new Set(groveMsgs.filter(m=>m.node_id).map(m=>m.node_id));
+                          (graph.nodes||[]).filter(n=>n.agent_source&&!existingIds.has(n.id)).forEach(n=>{
+                            setGroveMsgs(p=>[...p,{role:'agent',agent_id:n.agent_source,content:n.content,ts:n.created_at,node_id:n.id}]);
+                          });
+                        }catch(e){setGroveMsgs(p=>[...p,{role:'system',content:"⚠️ "+e.message,ts:new Date().toISOString()}]);}
+                        setGroveLoading(false);
+                      }} disabled={groveLoading||!groveInput.trim()} style={{padding:"10px 16px",borderRadius:8,background:`linear-gradient(135deg,#2d5a27,#4a8c3f)`,border:"none",color:"#FFF",fontSize:12,fontWeight:700,cursor:"pointer"}}>
+                        ➤
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Grove → Communiqué flow hint */}
-              <div style={{marginTop:20,padding:"12px 14px",borderRadius:10,background:`${th.gold}08`,border:`1px solid ${th.gold}22`,fontSize:11,color:th.dim}}>
-                <strong style={{color:th.gold}}>🌳 {lang==="pt"?"Jornada do Jardineiro":lang==="de"?"Die Reise des Gärtners":"Gardener's Journey"}:</strong><br/>
-                {lang==="pt"?"Grove (pensar) → Documento (estruturar) → Ledger (selar) → WICK (partilhar)":lang==="de"?"Hain (denken) → Dokument (strukturieren) → Ledger (versiegeln) → WICK (teilen)":"Grove (think) → Document (structure) → Ledger (seal) → WICK (share)"}
-              </div>
+              {!groveDebateOpen&&(
+                <div style={{marginTop:20,padding:"12px 14px",borderRadius:10,background:`${th.gold}08`,border:`1px solid ${th.gold}22`,fontSize:11,color:th.dim}}>
+                  <strong style={{color:th.gold}}>🌳 {lang==="pt"?"Jornada do Jardineiro":lang==="de"?"Die Reise des Gärtners":"Gardener's Journey"}:</strong><br/>
+                  {lang==="pt"?"Grove (pensar) → Documento (estruturar) → Ledger (selar) → WICK (partilhar)":lang==="de"?"Hain (denken) → Dokument (strukturieren) → Ledger (versiegeln) → WICK (teilen)":"Grove (think) → Document (structure) → Ledger (seal) → WICK (share)"}
+                </div>
+              )}
             </div>
           )}
 
