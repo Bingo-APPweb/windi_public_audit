@@ -2279,7 +2279,7 @@ const CANVAS_TEMPLATES={
 
 const SIDEBAR = [
   {id:"grove",icon:"🌱",klass:"main"},{id:"chat",icon:"💬",klass:"main"},{id:"docs",icon:"📄",klass:"main"},{id:"desk",icon:"🎨",klass:"main"},
-  {id:"files",icon:"📁",klass:"main"},{id:"wallet",icon:"👛",klass:"main"},{id:"wick",icon:"🌐",klass:"main"},
+  {id:"htmlbuilder",icon:"🏗️",klass:"main"},{id:"files",icon:"📁",klass:"main"},{id:"wallet",icon:"👛",klass:"main"},{id:"wick",icon:"🌐",klass:"main"},
   {id:"search",icon:"🔍",klass:"main"},{id:"products",icon:"🛒",klass:"extra"},
   {id:"journal",icon:"📰",klass:"extra"},{id:"history",icon:"🕐",klass:"extra"},
   {id:"templates",icon:"📋",klass:"extra"},
@@ -2917,6 +2917,7 @@ function App(){
   const[view,setView]=useState(()=>localStorage.getItem("windi_onboarded")==="1"?"main":"onboard");
   const[onboardStep,setOnboardStep]=useState(0);
   const[sidebarTab,setSidebarTab]=useState("grove");
+  const[chatMode,setChatMode]=useState("text"); // S1-4: "text" | "canvas" — unified Communiqué
   const[sidebarOpen,setSidebarOpen]=useState(false);
   const[typeFilter,setTypeFilter]=useState("all");
 
@@ -4389,6 +4390,36 @@ function App(){
                   <p style={{margin:"4px 0 0",fontSize:11,color:th.dim}}>{lang==="pt"?"Rascunhos que só você vê. Pense antes de publicar.":lang==="de"?"Entwürfe nur für dich. Denk nach, bevor du veröffentlichst.":"Drafts only you see. Think before you publish."}</p>
                 </div>
               </div>
+
+              {/* ═══ S1-1: GROVE WELCOME — First-Time User Card ═══ */}
+              {!localStorage.getItem("windi_grove_welcomed")&&(
+                <div style={{marginBottom:20,padding:"20px",borderRadius:14,background:`linear-gradient(135deg, ${th.gold}11 0%, ${th.gold}05 100%)`,border:`1px solid ${th.gold}33`,position:"relative"}}>
+                  <div style={{display:"flex",alignItems:"flex-start",gap:16}}>
+                    <div style={{fontSize:48,lineHeight:1}}>🐉</div>
+                    <div style={{flex:1}}>
+                      <h3 style={{margin:"0 0 8px",fontSize:16,fontWeight:700,color:th.gold}}>
+                        {lang==="pt"?"Bem-vindo ao seu Bosque Privado!":lang==="de"?"Willkommen in deinem privaten Hain!":"Welcome to your Private Grove!"}
+                      </h3>
+                      <p style={{margin:"0 0 12px",fontSize:12,color:th.text,lineHeight:1.5}}>
+                        {lang==="pt"?"Aqui você cultiva ideias em segurança. Ninguém mais vê o que você escreve até você decidir publicar.":lang==="de"?"Hier kultivierst du Ideen sicher. Niemand sieht was du schreibst, bis du es veröffentlichst.":"Here you cultivate ideas safely. No one sees what you write until you decide to publish."}
+                      </p>
+                      <div style={{display:"flex",alignItems:"center",gap:8,padding:"10px 14px",borderRadius:10,background:th.card,marginBottom:12}}>
+                        <span style={{fontSize:16}}>🌱</span><span style={{fontSize:11,color:th.dim}}>{lang==="pt"?"Pensar":lang==="de"?"Denken":"Think"}</span>
+                        <span style={{color:th.gold}}>→</span>
+                        <span style={{fontSize:16}}>📄</span><span style={{fontSize:11,color:th.dim}}>{lang==="pt"?"Estruturar":lang==="de"?"Strukturieren":"Structure"}</span>
+                        <span style={{color:th.gold}}>→</span>
+                        <span style={{fontSize:16}}>🔐</span><span style={{fontSize:11,color:th.dim}}>{lang==="pt"?"Selar":lang==="de"?"Versiegeln":"Seal"}</span>
+                        <span style={{color:th.gold}}>→</span>
+                        <span style={{fontSize:16}}>🌐</span><span style={{fontSize:11,color:th.dim}}>{lang==="pt"?"Partilhar":lang==="de"?"Teilen":"Share"}</span>
+                      </div>
+                      <button onClick={()=>{localStorage.setItem("windi_grove_welcomed","1");setSidebarTab("grove");}} style={{padding:"8px 16px",borderRadius:8,background:th.gold,border:"none",color:"#FFF",fontSize:11,fontWeight:700,cursor:"pointer"}}>
+                        ✓ {lang==="pt"?"Entendido!":lang==="de"?"Verstanden!":"Got it!"}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Grove Notes List */}
               <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:20}}>
                 {(JSON.parse(localStorage.getItem("windi_grove_notes")||"[]")).map((note,i)=>(
@@ -4442,11 +4473,44 @@ function App(){
             </div>
           )}
 
+          {/* ═══ S1-2: HTML BUILDER TAB — Visual Page Builder ═══ */}
+          {sidebarTab==="htmlbuilder"&&(
+            <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
+              {/* Header with back button (S1-3) */}
+              <div style={{padding:"12px 16px",borderBottom:`1px solid ${th.border}`,display:"flex",alignItems:"center",gap:12,background:th.card}}>
+                <button onClick={()=>setSidebarTab("chat")} style={{padding:"6px 12px",borderRadius:8,background:th.bg,border:`1px solid ${th.border}`,color:th.text,fontSize:12,cursor:"pointer",display:"flex",alignItems:"center",gap:6}}>
+                  ← {lang==="pt"?"Voltar":lang==="de"?"Zurück":"Back"}
+                </button>
+                <div style={{flex:1}}>
+                  <h2 style={{margin:0,fontSize:16,fontWeight:700}}>🏗️ HTML Builder</h2>
+                  <p style={{margin:"2px 0 0",fontSize:10,color:th.dim}}>{lang==="pt"?"Crie páginas visuais arrastando blocos":lang==="de"?"Erstelle visuelle Seiten per Drag & Drop":"Create visual pages by dragging blocks"}</p>
+                </div>
+                <a href="/html-builder/" target="_blank" rel="noopener" style={{padding:"6px 12px",borderRadius:8,background:th.gold,color:"#FFF",fontSize:11,fontWeight:600,textDecoration:"none",display:"flex",alignItems:"center",gap:6}}>
+                  ↗ {lang==="pt"?"Abrir em Nova Aba":lang==="de"?"In neuem Tab öffnen":"Open in New Tab"}
+                </a>
+              </div>
+              {/* Embedded iframe */}
+              <iframe src="/html-builder/" style={{flex:1,border:"none",width:"100%",height:"100%"}} title="HTML Builder"/>
+            </div>
+          )}
+
           {/* ═══ CHAT TAB ═══ */}
           {sidebarTab==="chat"&&(<>
             {/* Doc Preview — DNA-aware structured preview */}
             <div style={{flex:"1 1 50%",display:isMobile?"none":"flex",flexDirection:"column",borderRight:`1px solid ${th.border}22`,overflow:"hidden"}}>
-              <div style={{flex:1,overflowY:"auto",padding:"14px 16px"}}>
+              {/* S1-4: Mode Toggle — Unified Communiqué */}
+              <div style={{display:"flex",alignItems:"center",gap:8,padding:"8px 16px",borderBottom:`1px solid ${th.border}`,background:th.card}}>
+                <button onClick={()=>setChatMode("text")} style={{padding:"5px 12px",borderRadius:6,background:chatMode==="text"?th.gold:th.bg,border:`1px solid ${chatMode==="text"?th.gold:th.border}`,color:chatMode==="text"?"#FFF":th.text,fontSize:10,fontWeight:600,cursor:"pointer",display:"flex",alignItems:"center",gap:4}}>
+                  📝 {lang==="pt"?"Texto":lang==="de"?"Text":"Text"}
+                </button>
+                <button onClick={()=>setChatMode("canvas")} style={{padding:"5px 12px",borderRadius:6,background:chatMode==="canvas"?th.gold:th.bg,border:`1px solid ${chatMode==="canvas"?th.gold:th.border}`,color:chatMode==="canvas"?"#FFF":th.text,fontSize:10,fontWeight:600,cursor:"pointer",display:"flex",alignItems:"center",gap:4}}>
+                  🎨 Canvas
+                </button>
+                <div style={{flex:1}}/>
+                <span style={{fontSize:9,color:th.dim}}>{lang==="pt"?"Modo de edição":lang==="de"?"Bearbeitungsmodus":"Editing mode"}</span>
+              </div>
+              {/* Text Mode Content */}
+              {chatMode==="text"&&<div style={{flex:1,overflowY:"auto",padding:"14px 16px"}}>
                 {/* Structured preview for DNA types */}
                 {docType&&hasDNA(docType)&&Object.keys(docFields).length>1?
                   renderStructuredPreview(docType,docFields,th,lang)
@@ -4503,7 +4567,42 @@ function App(){
                     <a href={receipt.url} target="_blank" rel="noopener" style={{display:"inline-flex",alignItems:"center",gap:5,padding:"8px 14px",background:th.card,color:th.text,border:`1px solid ${th.border}`,borderRadius:6,fontSize:10,fontWeight:600,textDecoration:"none"}}><span>🔗</span><span>{lang==="pt"?"Abrir Verify":lang==="de"?"Verify öffnen":"Open Verify"}</span></a>
                   </div>
                 </div>}
-              </div>
+              </div>}
+
+              {/* Canvas Mode Content — S1-4: Unified Communiqué */}
+              {chatMode==="canvas"&&(
+                <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"auto",padding:12,background:th.bg}}>
+                  {/* Mini Canvas Toolbar */}
+                  <div style={{display:"flex",gap:4,padding:"8px 12px",background:th.card,borderRadius:10,border:`1px solid ${th.border}`,marginBottom:12,flexWrap:"wrap",alignItems:"center"}}>
+                    {Object.entries(LAYER_TYPES).slice(0,4).map(([key,cfg])=>(
+                      <button key={key} onClick={()=>deskAddLayer(key)} style={{display:"flex",alignItems:"center",gap:3,padding:"5px 10px",borderRadius:6,background:th.bg,border:`1px solid ${th.border}`,color:th.text,fontSize:10,fontWeight:600,cursor:"pointer"}}>{cfg.icon} {cfg.label?.en||key}</button>
+                    ))}
+                    <div style={{flex:1}}/>
+                    <button onClick={()=>setSidebarTab("desk")} style={{padding:"5px 10px",borderRadius:6,background:th.card,border:`1px solid ${th.gold}`,color:th.gold,fontSize:10,fontWeight:600,cursor:"pointer"}}>
+                      ↗ {lang==="pt"?"Tela Cheia":lang==="de"?"Vollbild":"Full Canvas"}
+                    </button>
+                  </div>
+                  {/* Mini Canvas Preview */}
+                  <div style={{flex:1,background:th.card,borderRadius:10,border:`1px solid ${th.border}`,position:"relative",overflow:"hidden",minHeight:300}}>
+                    <div style={{transform:"scale(0.5)",transformOrigin:"top left",width:CANVAS_W,minHeight:CANVAS_H,background:"#FFF",position:"absolute"}}>
+                      {deskLayers.map(layer=>(
+                        <div key={layer.id} style={{position:"absolute",left:layer.x,top:layer.y,width:layer.w,height:layer.h,opacity:layer.opacity??1,borderRadius:layer.borderRadius??0,overflow:"hidden"}}>
+                          {layer.type==="text"&&<div style={{padding:8,fontSize:layer.fontSize||16,color:layer.color||"#333"}}>{layer.content||"Text"}</div>}
+                          {layer.type==="image"&&layer.content&&<img src={layer.content} style={{width:"100%",height:"100%",objectFit:"cover"}}/>}
+                          {layer.type==="shape"&&<div style={{width:"100%",height:"100%",background:layer.bgColor||"#E0E0E0"}}/>}
+                        </div>
+                      ))}
+                    </div>
+                    {deskLayers.length===0&&(
+                      <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",color:th.dim,fontSize:12,flexDirection:"column",gap:8}}>
+                        <span style={{fontSize:32}}>🎨</span>
+                        <span>{lang==="pt"?"Canvas vazio. Adicione elementos acima.":lang==="de"?"Leere Leinwand. Füge Elemente hinzu.":"Empty canvas. Add elements above."}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
               {/* Doc Actions */}
               <div style={{display:"flex",gap:6,padding:"8px 12px",borderTop:`1px solid ${th.border}22`,flexShrink:0,flexWrap:"wrap"}}>
                 {docStatus!=="finalized"&&<>
