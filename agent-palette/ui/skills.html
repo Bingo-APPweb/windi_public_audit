@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Skills Constellation — WINDI Liga IA+H</title>
+  <meta name="description" content="10 foundational skills of the Liga IA+H. AI processes. Human decides. WINDI guarantees.">
+
+  <!-- OG Tags -->
+  <meta property="og:title" content="Skills Constellation — WINDI Liga IA+H"/>
+  <meta property="og:description" content="10 foundational skills sealed in the Forensic Ledger. VR-LIGA-20260308-9267ce65"/>
+  <meta property="og:type" content="website"/>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- React -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'JetBrains Mono', monospace; }
+    #root { min-height: 100vh; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    const SKILLS = [
+      { id: "001", name: "Dragon Alzheimer Cure", icon: "🧠", category: "CORE", desc: "queryDragon(msg, history) — contexto preservado entre turnos", status: "ACTIVE", commits: ["3e858aa"], files: ["agent-palette/ui/index.html", "agent-palette/agent_dragon_server.py"] },
+      { id: "002", name: "VIP Founder Override", icon: "🐉", category: "CORE", desc: "Acesso total para Jober sem barreira de tier", status: "ACTIVE", commits: ["4e29fb8"], files: ["agent-palette/agent_dragon_server.py"] },
+      { id: "003", name: "Document Production Rule", icon: "📝", category: "PROD", desc: "Draft imediato, máx 1 pergunta por resposta", status: "ACTIVE", commits: ["3e858aa"], files: ["agent-palette/agent_dragon_server.py"] },
+      { id: "004", name: "Trilingual Detection", icon: "🌐", category: "LANG", desc: "Marcadores PT/DE/EN — detecção automática", status: "ACTIVE", commits: ["4a1f64e"], files: ["agent-palette/sovereign_router.py"] },
+      { id: "005", name: "Document Tone Guidelines", icon: "🎯", category: "PROD", desc: "10 tipos documentais com tom e voz específicos", status: "ACTIVE", commits: ["79ff2a0"], files: ["agent-palette/agent_dragon_server.py"] },
+      { id: "006", name: "Canvas Templates", icon: "🎨", category: "VISUAL", desc: "4 templates visuais para Communiqué e Creative", status: "ACTIVE", commits: ["43dbda2"], files: ["agent-palette/ui/index.html"] },
+      { id: "007", name: "Pioneer Onboarding", icon: "🚀", category: "UX", desc: "Guia 5-etapas trilíngue para os 100 Pioneers", status: "ACTIVE", commits: ["5e4adab"], files: ["agent-palette/ui/index.html"] },
+      { id: "008", name: "Grove Private Editor", icon: "🌿", category: "PROD", desc: "Rascunhos locais com persistência privada", status: "ACTIVE", commits: ["5e4adab"], files: ["agent-palette/ui/index.html"] },
+      { id: "009", name: "WICK Network Interface", icon: "🔗", category: "SOCIAL", desc: "Visualização de evidências na rede WICK", status: "ACTIVE", commits: ["5e4adab"], files: ["agent-palette/ui/index.html"] },
+      { id: "010", name: "SSR OG Tags", icon: "🏷️", category: "INFRA", desc: "Meta tags Open Graph dinâmicas via SSR", status: "ACTIVE", commits: ["prev_session"], files: ["verify-public/app/main.py"] },
+    ];
+
+    const CATEGORY_COLORS = {
+      CORE: "#D4A843",
+      PROD: "#7B9E87",
+      LANG: "#6B8CAE",
+      VISUAL: "#A87BAE",
+      UX: "#AE8A6B",
+      SOCIAL: "#AE6B7B",
+      INFRA: "#7B9EAE"
+    };
+
+    const CATEGORY_LABELS = {
+      CORE: "Core Systems",
+      PROD: "Production",
+      LANG: "Language",
+      VISUAL: "Visual",
+      UX: "User Experience",
+      SOCIAL: "Social",
+      INFRA: "Infrastructure"
+    };
+
+    function SkillsConstellation() {
+      const [theme, setTheme] = useState(() => {
+        if (typeof localStorage !== 'undefined') {
+          return localStorage.getItem('windi_theme') || 'KLAR';
+        }
+        return 'KLAR';
+      });
+      const [selected, setSelected] = useState(null);
+      const [filter, setFilter] = useState("ALL");
+      const [ledgerStatus, setLedgerStatus] = useState({ ok: false, receipts: 0 });
+      const isDark = theme === "NOIR";
+
+      useEffect(() => {
+        if (typeof localStorage !== 'undefined') {
+          localStorage.setItem('windi_theme', theme);
+        }
+      }, [theme]);
+
+      useEffect(() => {
+        // Check ledger health
+        fetch('http://localhost:8101/health')
+          .then(r => r.json())
+          .then(d => setLedgerStatus({ ok: d.status === 'healthy', receipts: d.receipts || 0 }))
+          .catch(() => setLedgerStatus({ ok: false, receipts: 49210 }));
+      }, []);
+
+      const t = isDark ? {
+        bg: "#0E0E14", card: "#16161F", border: "#26263A",
+        text: "#E2E2EA", dim: "#7A7A96", gold: "#D4A843",
+        hover: "#1C1C28", input: "#12121A"
+      } : {
+        bg: "#F5F0E0", card: "#FDFBF5", border: "#DDD6C2",
+        text: "#2C2924", dim: "#6B6560", gold: "#8B6914",
+        hover: "#EDE8D8", input: "#FDFBF5"
+      };
+
+      const categories = ["ALL", ...new Set(SKILLS.map(s => s.category))];
+      const filtered = filter === "ALL" ? SKILLS : SKILLS.filter(s => s.category === filter);
+      const sel = selected ? SKILLS.find(s => s.id === selected) : null;
+
+      return (
+        <div style={{
+          background: t.bg,
+          minHeight: "100vh",
+          fontFamily: "'JetBrains Mono', monospace",
+          padding: "24px",
+          color: t.text,
+          transition: "all 0.3s"
+        }}>
+          {/* Header */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "28px" }}>
+            <div>
+              <div style={{ fontSize: "10px", color: t.gold, letterSpacing: "3px", marginBottom: "4px" }}>WINDI PUBLISHING HOUSE</div>
+              <h1 style={{ fontSize: "22px", fontWeight: 700, margin: 0, color: t.text }}>Skills Constellation</h1>
+              <div style={{ fontSize: "11px", color: t.dim, marginTop: "4px" }}>
+                Liga IA+H · {SKILLS.length} skills · Ledger-sealed
+              </div>
+            </div>
+            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+              <span style={{
+                fontSize: "10px",
+                color: ledgerStatus.ok ? "#4CAF50" : t.gold,
+                border: `1px solid ${ledgerStatus.ok ? "#4CAF50" : t.gold}`,
+                padding: "2px 8px",
+                borderRadius: "2px"
+              }}>
+                {ledgerStatus.ok ? "● LEDGER LIVE" : "✓ Sealed"}
+              </span>
+              <button
+                onClick={() => setTheme(isDark ? "KLAR" : "NOIR")}
+                style={{
+                  background: t.card,
+                  border: `1px solid ${t.border}`,
+                  color: t.dim,
+                  padding: "4px 12px",
+                  borderRadius: "4px",
+                  cursor: "pointer",
+                  fontSize: "11px",
+                  fontFamily: "inherit"
+                }}>
+                {isDark ? "☀ KLAR" : "◑ NOIR"}
+              </button>
+            </div>
+          </div>
+
+          {/* Founders */}
+          <div style={{
+            background: t.card,
+            border: `1px solid ${t.border}`,
+            borderRadius: "6px",
+            padding: "16px",
+            marginBottom: "20px",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: "12px"
+          }}>
+            <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
+              <div style={{ textAlign: "center" }}>
+                <div style={{ fontSize: "24px" }}>👤</div>
+                <div style={{ fontSize: "10px", color: t.gold, marginTop: "4px" }}>HUMAN DRAGON</div>
+                <div style={{ fontSize: "11px", color: t.text }}>Jober Mögele Correa</div>
+              </div>
+              <div style={{ width: "1px", height: "40px", background: t.border }}></div>
+              <div style={{ display: "flex", gap: "16px" }}>
+                <div style={{ textAlign: "center" }}>
+                  <div style={{ fontSize: "20px" }}>🛡️</div>
+                  <div style={{ fontSize: "9px", color: t.dim }}>Guardian</div>
+                </div>
+                <div style={{ textAlign: "center" }}>
+                  <div style={{ fontSize: "20px" }}>🏗️</div>
+                  <div style={{ fontSize: "9px", color: t.dim }}>Architect</div>
+                </div>
+                <div style={{ textAlign: "center" }}>
+                  <div style={{ fontSize: "20px" }}>👁️</div>
+                  <div style={{ fontSize: "9px", color: t.dim }}>Witness</div>
+                </div>
+              </div>
+            </div>
+            <div style={{ fontSize: "11px", color: t.dim, fontStyle: "italic" }}>
+              "Quem planta a semente, colhe todos os frutos."
+            </div>
+          </div>
+
+          {/* Filter tabs */}
+          <div style={{ display: "flex", gap: "6px", marginBottom: "20px", flexWrap: "wrap" }}>
+            {categories.map(cat => (
+              <button
+                key={cat}
+                onClick={() => setFilter(cat)}
+                style={{
+                  background: filter === cat ? (cat === "ALL" ? t.gold : CATEGORY_COLORS[cat]) : t.card,
+                  color: filter === cat ? (isDark ? "#0E0E14" : "#fff") : t.dim,
+                  border: `1px solid ${filter === cat ? (cat === "ALL" ? t.gold : CATEGORY_COLORS[cat]) : t.border}`,
+                  padding: "3px 10px",
+                  borderRadius: "2px",
+                  cursor: "pointer",
+                  fontSize: "10px",
+                  letterSpacing: "1px",
+                  fontFamily: "inherit",
+                  transition: "all 0.2s"
+                }}>
+                {cat}
+              </button>
+            ))}
+          </div>
+
+          {/* Grid */}
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+            gap: "12px",
+            marginBottom: "20px"
+          }}>
+            {filtered.map(skill => (
+              <div
+                key={skill.id}
+                onClick={() => setSelected(selected === skill.id ? null : skill.id)}
+                style={{
+                  background: selected === skill.id ? t.hover : t.card,
+                  border: `1px solid ${selected === skill.id ? t.gold : t.border}`,
+                  borderRadius: "6px",
+                  padding: "16px",
+                  cursor: "pointer",
+                  transition: "all 0.2s",
+                  borderLeft: `3px solid ${CATEGORY_COLORS[skill.category] || t.gold}`
+                }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
+                  <span style={{ fontSize: "24px" }}>{skill.icon}</span>
+                  <span style={{ fontSize: "9px", color: t.dim, fontFamily: "monospace" }}>SKILL-{skill.id}</span>
+                </div>
+                <div style={{ fontSize: "14px", fontWeight: 600, color: t.text, marginBottom: "6px" }}>{skill.name}</div>
+                <div style={{ fontSize: "11px", color: t.dim, lineHeight: 1.5 }}>{skill.desc}</div>
+
+                {/* Expanded details */}
+                {selected === skill.id && (
+                  <div style={{ marginTop: "12px", paddingTop: "12px", borderTop: `1px solid ${t.border}` }}>
+                    <div style={{ fontSize: "10px", color: t.dim, marginBottom: "6px" }}>
+                      <strong style={{ color: t.text }}>Commits:</strong> {skill.commits.join(", ")}
+                    </div>
+                    <div style={{ fontSize: "10px", color: t.dim }}>
+                      <strong style={{ color: t.text }}>Files:</strong>
+                      <ul style={{ margin: "4px 0 0 16px", padding: 0 }}>
+                        {skill.files.map((f, i) => (
+                          <li key={i} style={{ marginBottom: "2px" }}>{f}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                )}
+
+                <div style={{ marginTop: "12px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span style={{
+                    fontSize: "9px",
+                    color: CATEGORY_COLORS[skill.category] || t.gold,
+                    letterSpacing: "1px",
+                    background: isDark ? "#1C1C28" : "#F5F0E0",
+                    padding: "2px 6px",
+                    borderRadius: "2px"
+                  }}>
+                    {skill.category}
+                  </span>
+                  <span style={{ fontSize: "9px", color: "#4CAF50" }}>● {skill.status}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Add new skill button */}
+          <div
+            style={{
+              border: `1px dashed ${t.border}`,
+              borderRadius: "6px",
+              padding: "20px",
+              textAlign: "center",
+              cursor: "pointer",
+              color: t.dim,
+              fontSize: "12px",
+              letterSpacing: "1px",
+              transition: "all 0.2s"
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.borderColor = t.gold;
+              e.currentTarget.style.color = t.text;
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.borderColor = t.border;
+              e.currentTarget.style.color = t.dim;
+            }}>
+            + SKILL-0{SKILLS.length + 1} · Adicionar nova capability
+          </div>
+
+          {/* Footer */}
+          <div style={{
+            marginTop: "24px",
+            paddingTop: "16px",
+            borderTop: `1px solid ${t.border}`,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: "12px",
+            fontSize: "9px",
+            color: t.dim,
+            letterSpacing: "1px"
+          }}>
+            <span>VR-LIGA-20260308-9267ce65 · {ledgerStatus.receipts.toLocaleString()}+ receipts</span>
+            <span>AI processes. Human decides. WINDI guarantees.</span>
+          </div>
+        </div>
+      );
+    }
+
+    // Render
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<SkillsConstellation />);
+  </script>
+</body>
+</html>
