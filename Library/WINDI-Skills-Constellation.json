@@ -1,0 +1,290 @@
+{
+  "constellation": "WINDI Skills Memory",
+  "version": "1.0.0",
+  "created": "2026-03-08",
+  "last_updated": "2026-03-08T11:30:00Z",
+  "architect": "Human Dragon + Gêmeo (Claude Opus 4.5)",
+
+  "epochs": [
+    {
+      "date": "2026-03-08",
+      "codename": "Garden Protocol Day",
+      "summary": "WhatsApp integration + viral distribution system",
+      "skills_unlocked": 12
+    }
+  ],
+
+  "skills": {
+    "whatsapp_media_layer": {
+      "id": "WA-MEDIA-v1.0.0",
+      "name": "WhatsApp Media Layer",
+      "category": "distribution",
+      "created": "2026-03-08",
+      "status": "active",
+      "description": "Send images, videos, documents via WhatsApp Business API",
+      "endpoints": [
+        "POST /whatsapp/send-image",
+        "POST /whatsapp/send-video",
+        "POST /whatsapp/send-document",
+        "POST /whatsapp/upload-media",
+        "POST /whatsapp/send"
+      ],
+      "functions": [
+        "send_whatsapp_image()",
+        "send_whatsapp_video()",
+        "send_whatsapp_document()",
+        "upload_media_to_whatsapp()",
+        "seal_whatsapp_media_send()"
+      ],
+      "file": "/opt/windi/engine/dragon_chat_service.py",
+      "connects_to": ["forensic_ledger", "whatsapp_api"],
+      "constitutional_alignment": "I11 (Permanência de Evidência Criptográfica)"
+    },
+
+    "bsuid_ready": {
+      "id": "WA-BSUID-v1.1.0",
+      "name": "BSUID Ready System",
+      "category": "identity",
+      "created": "2026-03-08",
+      "status": "active",
+      "description": "Support for Meta's new Business Scoped User ID (deadline June 2026)",
+      "endpoints": [
+        "POST /whatsapp/send-any",
+        "POST /whatsapp/detect-id",
+        "POST /whatsapp/webhook"
+      ],
+      "functions": [
+        "detect_wa_id_type()",
+        "resolve_wa_recipient()",
+        "parse_wa_webhook()",
+        "send_whatsapp_any_id()"
+      ],
+      "file": "/opt/windi/engine/dragon_chat_service.py",
+      "connects_to": ["forensic_ledger", "did_system"],
+      "meta_deadline": "2026-06",
+      "supported_ids": ["phone", "bsuid", "username"]
+    },
+
+    "template_messages": {
+      "id": "WA-TPL-v1.2.0",
+      "name": "Template Messages System",
+      "category": "distribution",
+      "created": "2026-03-08",
+      "status": "active",
+      "description": "Pre-approved Meta templates for initiating WhatsApp conversations",
+      "endpoints": [
+        "POST /whatsapp/templates",
+        "POST /whatsapp/templates/render",
+        "POST /whatsapp/templates/send",
+        "POST /whatsapp/templates/{name}"
+      ],
+      "functions": [
+        "get_template()",
+        "list_templates()",
+        "render_template()",
+        "send_whatsapp_template()"
+      ],
+      "templates": [
+        "windi_document_ready",
+        "windi_seal_complete",
+        "windi_verification_code",
+        "windi_welcome",
+        "windi_payment_reminder",
+        "windi_appointment"
+      ],
+      "languages": ["de", "en", "pt"],
+      "file": "/opt/windi/engine/dragon_chat_service.py",
+      "connects_to": ["forensic_ledger", "whatsapp_api"]
+    },
+
+    "palette_templates_tab": {
+      "id": "PALETTE-TPL-v1.1.0",
+      "name": "Palette Templates Tab",
+      "category": "ui",
+      "created": "2026-03-08",
+      "status": "active",
+      "description": "Templates tab in Palette sidebar for sending WhatsApp template messages",
+      "components": [
+        "Template selector dropdown",
+        "Language selector (DE/EN/PT)",
+        "Dynamic variable fields",
+        "Recipient input",
+        "Live preview",
+        "Send button with status"
+      ],
+      "files": [
+        "/opt/windi/agent-palette/ui/modules/P6_Tabs.js",
+        "/opt/windi/agent-palette/ui/index.html"
+      ],
+      "connects_to": ["dragon_chat_service", "template_messages"],
+      "tier_required": "HIGH"
+    },
+
+    "palette_whatsapp_suite": {
+      "id": "PALETTE-WA-v1.0.0",
+      "name": "WhatsApp Suite Modal",
+      "category": "ui",
+      "created": "2026-03-08",
+      "status": "active",
+      "description": "Modal for sending images, videos, documents via WhatsApp from Palette",
+      "file": "/opt/windi/agent-palette/ui/modules/P8_WhatsAppSuite.js",
+      "connects_to": ["dragon_chat_service", "whatsapp_media_layer"]
+    },
+
+    "garden_protocol_share": {
+      "id": "GARDEN-SHARE-v1.0.0",
+      "name": "Web Share API",
+      "category": "viral_distribution",
+      "created": "2026-03-08",
+      "status": "active",
+      "description": "Native mobile share menu for verification results",
+      "function": "windiShareVerification()",
+      "file": "/opt/windi/verify-public/web/index.html",
+      "api": "navigator.share()",
+      "fallback": "clipboard copy",
+      "meta_dependency": false
+    },
+
+    "garden_protocol_whatsapp": {
+      "id": "GARDEN-WA-v1.0.0",
+      "name": "WhatsApp Direct Share",
+      "category": "viral_distribution",
+      "created": "2026-03-08",
+      "status": "active",
+      "description": "Direct WhatsApp share via wa.me link",
+      "url_pattern": "https://wa.me/?text={encoded_message}",
+      "file": "/opt/windi/verify-public/web/index.html",
+      "meta_dependency": false
+    },
+
+    "garden_protocol_telegram": {
+      "id": "GARDEN-TG-v1.0.0",
+      "name": "Telegram Share",
+      "category": "viral_distribution",
+      "created": "2026-03-08",
+      "status": "active",
+      "description": "Telegram share via t.me/share/url",
+      "function": "windiTelegramShare()",
+      "url_pattern": "https://t.me/share/url?url={url}&text={text}",
+      "file": "/opt/windi/verify-public/web/index.html",
+      "commit": "9f34397",
+      "meta_dependency": false
+    },
+
+    "garden_protocol_email": {
+      "id": "GARDEN-EMAIL-v1.0.0",
+      "name": "Email Share",
+      "category": "viral_distribution",
+      "created": "2026-03-08",
+      "status": "active",
+      "description": "Native email client share via mailto:",
+      "function": "windiEmailShare()",
+      "url_pattern": "mailto:?subject={subject}&body={body}",
+      "file": "/opt/windi/verify-public/web/index.html",
+      "commit": "aea06c3",
+      "meta_dependency": false
+    },
+
+    "garden_protocol_copy": {
+      "id": "GARDEN-COPY-v1.0.0",
+      "name": "Clipboard Copy",
+      "category": "viral_distribution",
+      "created": "2026-03-08",
+      "status": "active",
+      "description": "Copy verification link to clipboard",
+      "function": "cpLink()",
+      "api": "navigator.clipboard.writeText()",
+      "file": "/opt/windi/verify-public/web/index.html",
+      "meta_dependency": false
+    },
+
+    "garden_protocol_card": {
+      "id": "GARDEN-CARD-v1.0.0",
+      "name": "Share Card Generator",
+      "category": "viral_distribution",
+      "created": "2026-03-08",
+      "status": "active",
+      "description": "Canvas-generated PNG card for Stories/Status sharing",
+      "functions": [
+        "generateShareCard()",
+        "showShareCard()"
+      ],
+      "output": "PNG 1080x1080",
+      "api": "Canvas API",
+      "file": "/opt/windi/verify-public/web/index.html",
+      "commit": "9645ed5",
+      "meta_dependency": false,
+      "visual_elements": [
+        "Dragon icon",
+        "Checkmark",
+        "AUTHENTIC DOCUMENT",
+        "Receipt ID",
+        "Date",
+        "WINDI branding"
+      ]
+    }
+  },
+
+  "constellations": {
+    "whatsapp_integration": {
+      "name": "WhatsApp Integration",
+      "skills": ["whatsapp_media_layer", "bsuid_ready", "template_messages", "palette_templates_tab", "palette_whatsapp_suite"],
+      "service": "dragon_chat_service.py",
+      "version": "2.6.0",
+      "port": 8111
+    },
+    "garden_protocol": {
+      "name": "Garden Protocol",
+      "skills": ["garden_protocol_share", "garden_protocol_whatsapp", "garden_protocol_telegram", "garden_protocol_email", "garden_protocol_copy", "garden_protocol_card"],
+      "service": "verify-public",
+      "version": "1.0.0",
+      "meta_dependency": false,
+      "channels": 6
+    }
+  },
+
+  "architecture": {
+    "palette_modules": {
+      "P1": "TierDetect (infra)",
+      "P2": "Context (infra)",
+      "P3": "SovMeter (infra)",
+      "P4": "Orb (visual)",
+      "P5": "Connectors (integration)",
+      "P6": "Tabs (UI core)",
+      "P7": "GovDrawer (governance)",
+      "P8": "WhatsAppSuite (distribution)"
+    },
+    "services": {
+      "dragon_chat": {"port": 8111, "version": "2.6.0"},
+      "forensic_ledger": {"port": 8101},
+      "palette": {"port": 8108},
+      "verify_public": {"path": "/verify-public/"}
+    }
+  },
+
+  "commits": {
+    "2026-03-08": [
+      {"hash": "d6713f8", "message": "refactor(palette): rename P6_WhatsAppSuite → P8_WhatsAppSuite"},
+      {"hash": "cd25fd1", "message": "feat(palette-p6): Add Templates tab to Smart Tabs sidebar v1.2.0"},
+      {"hash": "9f34397", "message": "feat(verify-public): Add Telegram share button to Garden Protocol"},
+      {"hash": "aea06c3", "message": "feat(verify-public): Add Email share button to Garden Protocol"},
+      {"hash": "9645ed5", "message": "feat(verify-public): Add Share Card visual generator to Garden Protocol"},
+      {"hash": "11fd6cc", "message": "docs(debriefing): Add Garden Protocol v1.0 section"}
+    ]
+  },
+
+  "principles": {
+    "constitutional": [
+      "I11 — Permanência de Evidência Criptográfica",
+      "Zero raw phone numbers in Ledger (GDPR)",
+      "SHA-256 hash of recipients always"
+    ],
+    "strategic": [
+      "Zero Meta Business API dependency for viral distribution",
+      "Peer-to-peer distribution via Web native APIs",
+      "BSUID ready 90 days before Meta deadline"
+    ]
+  },
+
+  "om_shanti": true
+}
