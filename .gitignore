@@ -49,7 +49,9 @@ staging/
 *_tmp/
 *.bak
 *.bak_*
+*.bak-*
 *.bak2
+*.bak3
 *.backup*
 *.broken*
 *.pre-*
