@@ -10,7 +10,7 @@
  * - HIGH:  + products, journal (8 tabs)
  * 
  * @module P6_Tabs
- * @version 1.0.0
+ * @version 1.1.0 — Templates tab added
  */
 
 const { useState, useEffect } = React;
@@ -74,11 +74,18 @@ const TAB_CONFIGS = {
     tier: TIER_MED,
     connects: "Ledger(:8101)",
     badgeKey: null
+  },
+  templates: {
+    id: "templates",
+    icon: "📋",
+    tier: TIER_HIGH,
+    connects: "DragonChat(:8111)",
+    badgeKey: "templateCount"
   }
 };
 
 // Tab order
-const TAB_ORDER = ["chat", "docs", "files", "wallet", "search", "products", "journal", "history"];
+const TAB_ORDER = ["chat", "docs", "files", "wallet", "search", "products", "journal", "history", "templates"];
 
 // ─── TIER HIERARCHY ───────────────────────────────────────────────────────────
 const TIER_LEVEL = {
@@ -98,6 +105,7 @@ const TAB_LABELS = {
     products: "Produkte",
     journal: "Zeitung",
     history: "Verlauf",
+    templates: "Vorlagen",
     upgrade: "Upgrade zu",
     locked: "Gesperrt"
   },
@@ -110,6 +118,7 @@ const TAB_LABELS = {
     products: "Products",
     journal: "Journal",
     history: "History",
+    templates: "Templates",
     upgrade: "Upgrade to",
     locked: "Locked"
   },
@@ -122,6 +131,7 @@ const TAB_LABELS = {
     products: "Produtos",
     journal: "Jornal",
     history: "Histórico",
+    templates: "Modelos",
     upgrade: "Actualizar para",
     locked: "Bloqueado"
   }

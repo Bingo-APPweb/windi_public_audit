@@ -2213,6 +2213,7 @@ const SIDEBAR = [
   {id:"files",icon:"📁",klass:"main"},{id:"wallet",icon:"👛",klass:"main"},{id:"wick",icon:"🌐",klass:"main"},
   {id:"search",icon:"🔍",klass:"main"},{id:"products",icon:"🛒",klass:"extra"},
   {id:"journal",icon:"📰",klass:"extra"},{id:"history",icon:"🕐",klass:"extra"},
+  {id:"templates",icon:"📋",klass:"extra"},
 ];
 
 // ═══════════════════════════════════════════════════════════════════════════════════
@@ -2329,7 +2330,7 @@ const CryptoProvider = {
 // ═══════════════════════════════
 const L = {
   de: {
-    sidebar:{grove:"Hain",chat:"Chat",insights:"Einsichten",docs:"Dokumente",desk:"Freie Desk",files:"Dateien",wallet:"Brieftasche",wick:"WICK Netz",search:"Suche",products:"Produkte",journal:"Zeitung",history:"Verlauf"},
+    sidebar:{grove:"Hain",chat:"Chat",insights:"Einsichten",docs:"Dokumente",desk:"Freie Desk",files:"Dateien",wallet:"Brieftasche",wick:"WICK Netz",search:"Suche",products:"Produkte",journal:"Zeitung",history:"Verlauf",templates:"Vorlagen"},
     types:{letter:"Brief",email:"E-Mail",note:"Notiz",memo:"Memo",journal:"Tagebuch",recipe:"Rezept",report:"Bericht",contract:"Vertrag",invoice:"Rechnung",protocol:"Protokoll",analysis:"Analyse",presentation:"Präsentation",communique:"Communiqué",certificate:"Bescheinigung"},
     chat:{
       greet:"Hallo! 🐉 Ich bin dein Guardian.\n\nWähle links einen Dokumenttyp — oder erzähl mir einfach, was du brauchst.",
@@ -2398,7 +2399,7 @@ const L = {
     forensic:{title:"WINDI Virtue Receipt",receipt:"Receipt-ID",serial:"Serie",hash:"Hash",bundle:"Bundle",time:"Zeit",signer:"Unterzeichner",verify:"Prüfen"},
   },
   en: {
-    sidebar:{grove:"Grove",chat:"Chat",insights:"Insights",docs:"Documents",desk:"Free Desk",files:"Files",wallet:"Wallet",wick:"WICK Network",search:"Search",products:"Products",journal:"Journal",history:"History"},
+    sidebar:{grove:"Grove",chat:"Chat",insights:"Insights",docs:"Documents",desk:"Free Desk",files:"Files",wallet:"Wallet",wick:"WICK Network",search:"Search",products:"Products",journal:"Journal",history:"History",templates:"Templates"},
     types:{letter:"Letter",email:"Email",note:"Note",memo:"Memo",journal:"Journal",recipe:"Recipe",report:"Report",contract:"Contract",invoice:"Invoice",protocol:"Minutes",analysis:"Analysis",presentation:"Presentation",communique:"Communiqué",certificate:"Certificate"},
     chat:{
       greet:"Hello! 🐉 I'm your Guardian.\n\nPick a document type on the left — or just tell me what you need.",
@@ -2465,7 +2466,7 @@ const L = {
     forensic:{title:"WINDI Virtue Receipt",receipt:"Receipt ID",serial:"Serial",hash:"Hash",bundle:"Bundle",time:"Time",signer:"Signer",verify:"Verify"},
   },
   pt: {
-    sidebar:{grove:"Bosque",chat:"Chat",insights:"Insights",docs:"Documentos",desk:"Desk Livre",files:"Ficheiros",wallet:"Carteira",wick:"Rede WICK",search:"Busca",products:"Produtos",journal:"Jornal",history:"Histórico"},
+    sidebar:{grove:"Bosque",chat:"Chat",insights:"Insights",docs:"Documentos",desk:"Desk Livre",files:"Ficheiros",wallet:"Carteira",wick:"Rede WICK",search:"Busca",products:"Produtos",journal:"Jornal",history:"Histórico",templates:"Modelos"},
     types:{letter:"Carta",email:"E-mail",note:"Nota",memo:"Memorando",journal:"Diário",recipe:"Receita",report:"Relatório",contract:"Contrato",invoice:"Fatura",protocol:"Ata",analysis:"Análise",presentation:"Apresentação",communique:"Comunicado",certificate:"Certificado"},
     chat:{
       greet:"Olá! 🐉 Sou o teu Guardian.\n\nEscolhe um tipo à esquerda — ou conta-me o que precisas.",
@@ -2850,6 +2851,16 @@ function App(){
   const[sidebarOpen,setSidebarOpen]=useState(false);
   const[typeFilter,setTypeFilter]=useState("all");
 
+  // Templates (WhatsApp Template Messages)
+  const[tplList,setTplList]=useState([]);
+  const[tplSelected,setTplSelected]=useState("");
+  const[tplVars,setTplVars]=useState({});
+  const[tplRecipient,setTplRecipient]=useState("");
+  const[tplLang,setTplLang]=useState("de");
+  const[tplPreview,setTplPreview]=useState(null);
+  const[tplStatus,setTplStatus]=useState("idle"); // idle|loading|success|error
+  const[tplError,setTplError]=useState("");
+
   // DID
   const[wallet,setWallet]=useState(null);
   const[showDID,setShowDID]=useState(false);
@@ -3143,6 +3154,60 @@ function App(){
       setJournalLoading(false);
     }
   },[communiqueApiUrl,lang]);
+
+  // ─── TEMPLATES: WhatsApp Template Messages ─────────────────────────────────
+  const fetchTemplates=useCallback(async()=>{
+    try{
+      const res=await fetch('http://localhost:8111/whatsapp/templates',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
+      const data=await res.json();
+      if(data.success&&data.templates){setTplList(data.templates);}
+    }catch(e){console.warn('[WINDI] Templates fetch error:',e.message);}
+  },[]);
+
+  const fetchTemplatePreview=useCallback(async(templateName,lang,vars)=>{
+    try{
+      setTplStatus('loading');
+      const res=await fetch('http://localhost:8111/whatsapp/templates/render',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({template:templateName,lang,variables:vars})
+      });
+      const data=await res.json();
+      if(data.success){setTplPreview(data.rendered);setTplStatus('idle');}
+      else{setTplError(data.error||'Preview failed');setTplStatus('error');}
+    }catch(e){setTplError(e.message);setTplStatus('error');}
+  },[]);
+
+  const sendTemplate=useCallback(async()=>{
+    if(!tplSelected||!tplRecipient){setTplError('Select template and recipient');setTplStatus('error');return;}
+    try{
+      setTplStatus('loading');
+      const res=await fetch('http://localhost:8111/whatsapp/templates/send',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({to:tplRecipient,template:tplSelected,lang:tplLang,variables:tplVars})
+      });
+      const data=await res.json();
+      if(data.success){
+        setTplStatus('success');
+        flash('✅ Template sent via WhatsApp');
+        setTimeout(()=>setTplStatus('idle'),3000);
+      }else{
+        setTplError(data.error||'Send failed');
+        setTplStatus('error');
+      }
+    }catch(e){setTplError(e.message);setTplStatus('error');}
+  },[tplSelected,tplRecipient,tplLang,tplVars,flash]);
+
+  // Fetch templates when tab opens
+  useEffect(()=>{
+    if(sidebarTab==='templates'){fetchTemplates();}
+  },[sidebarTab,fetchTemplates]);
+
+  // Update preview when template/vars change
+  useEffect(()=>{
+    if(tplSelected&&tplLang){fetchTemplatePreview(tplSelected,tplLang,tplVars);}
+  },[tplSelected,tplLang,tplVars,fetchTemplatePreview]);
 
   // Fetch journal when tab is active
   useEffect(()=>{
@@ -5067,8 +5132,83 @@ function App(){
             </div>
           )}
 
+          {/* ═══ TEMPLATES TAB — WhatsApp Template Messages ═══ */}
+          {sidebarTab==='templates'&&(
+            <div style={{flex:1,display:'flex',flexDirection:'column',overflow:'hidden'}}>
+              <div style={{padding:'12px 16px',borderBottom:'1px solid '+th.border}}>
+                <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:10}}>
+                  <span style={{fontSize:20}}>📋</span>
+                  <span style={{fontSize:14,fontWeight:700}}>{t.sidebar?.templates||'Templates'}</span>
+                  <span style={{marginLeft:'auto',fontSize:9,color:th.dim,fontFamily:'JetBrains Mono,monospace'}}>WhatsApp</span>
+                </div>
+                {/* Template selector */}
+                <select value={tplSelected} onChange={e=>{setTplSelected(e.target.value);setTplVars({});}} style={{width:'100%',padding:'10px 12px',borderRadius:8,border:'1px solid '+th.border,background:th.input,color:th.text,fontSize:12,outline:'none',cursor:'pointer'}}>
+                  <option value="">{lang==='de'?'Vorlage wählen...':lang==='pt'?'Escolher modelo...':'Choose template...'}</option>
+                  {tplList.map(tpl=>(
+                    <option key={tpl.name} value={tpl.name}>{tpl.name.replace('windi_','').replace(/_/g,' ')} ({tpl.category})</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Template content */}
+              <div style={{flex:1,overflowY:'auto',padding:12}}>
+                {!tplSelected&&(
+                  <div style={{textAlign:'center',padding:30,color:th.dim}}>
+                    <div style={{fontSize:28,marginBottom:8}}>📋</div>
+                    <div style={{fontSize:11}}>{lang==='de'?'Wähle eine Vorlage aus':lang==='pt'?'Seleciona um modelo':'Select a template'}</div>
+                    <div style={{fontSize:10,marginTop:4}}>{tplList.length} {lang==='de'?'Vorlagen verfügbar':lang==='pt'?'modelos disponíveis':'templates available'}</div>
+                  </div>
+                )}
+
+                {tplSelected&&(
+                  <>
+                    {/* Language selector */}
+                    <div style={{display:'flex',gap:6,marginBottom:12}}>
+                      {['de','en','pt'].map(l=>(
+                        <button key={l} onClick={()=>setTplLang(l)} style={{flex:1,padding:'6px 0',borderRadius:6,border:'1px solid '+(tplLang===l?th.gold:th.border),background:tplLang===l?th.gold+'15':th.card,color:tplLang===l?th.gold:th.dim,fontSize:10,fontWeight:600,cursor:'pointer'}}>{l.toUpperCase()}</button>
+                      ))}
+                    </div>
+
+                    {/* Variable fields */}
+                    {tplList.find(t=>t.name===tplSelected)?.variables?.map(v=>(
+                      <div key={v} style={{marginBottom:10}}>
+                        <label style={{display:'block',fontSize:10,color:th.dim,marginBottom:4}}>{v.replace(/_/g,' ')}</label>
+                        <input value={tplVars[v]||''} onChange={e=>setTplVars(prev=>({...prev,[v]:e.target.value}))} placeholder={v} style={{width:'100%',padding:'8px 10px',borderRadius:6,border:'1px solid '+th.border,background:th.input,color:th.text,fontSize:11,outline:'none',boxSizing:'border-box'}}/>
+                      </div>
+                    ))}
+
+                    {/* Recipient */}
+                    <div style={{marginBottom:12,paddingTop:8,borderTop:'1px solid '+th.border}}>
+                      <label style={{display:'block',fontSize:10,color:th.dim,marginBottom:4}}>{lang==='de'?'Empfänger (WhatsApp)':lang==='pt'?'Destinatário (WhatsApp)':'Recipient (WhatsApp)'}</label>
+                      <input value={tplRecipient} onChange={e=>setTplRecipient(e.target.value)} placeholder="+49 123 456789" style={{width:'100%',padding:'8px 10px',borderRadius:6,border:'1px solid '+th.border,background:th.input,color:th.text,fontSize:11,outline:'none',boxSizing:'border-box'}}/>
+                    </div>
+
+                    {/* Preview */}
+                    {tplPreview&&tplPreview.rendered&&(
+                      <div style={{background:th.card,border:'1px solid '+th.border,borderRadius:8,padding:12,marginBottom:12}}>
+                        <div style={{fontSize:9,color:th.gold,marginBottom:6,fontWeight:600}}>{lang==='de'?'VORSCHAU':lang==='pt'?'PRÉ-VISUALIZAÇÃO':'PREVIEW'}</div>
+                        {tplPreview.rendered.header&&<div style={{fontSize:12,fontWeight:700,marginBottom:6}}>{tplPreview.rendered.header.text}</div>}
+                        <div style={{fontSize:11,color:th.text,whiteSpace:'pre-wrap',lineHeight:1.5}}>{tplPreview.rendered.body}</div>
+                        {tplPreview.rendered.footer&&<div style={{fontSize:9,color:th.dim,marginTop:8}}>{tplPreview.rendered.footer}</div>}
+                      </div>
+                    )}
+
+                    {/* Status */}
+                    {tplStatus==='error'&&<div style={{padding:8,background:'#FF4D4D15',border:'1px solid #FF4D4D33',borderRadius:6,fontSize:10,color:'#FF4D4D',marginBottom:10}}>{tplError}</div>}
+                    {tplStatus==='success'&&<div style={{padding:8,background:th.success+'15',border:'1px solid '+th.success+'33',borderRadius:6,fontSize:10,color:th.success,marginBottom:10}}>✅ {lang==='de'?'Gesendet!':lang==='pt'?'Enviado!':'Sent!'}</div>}
+
+                    {/* Send button */}
+                    <button onClick={sendTemplate} disabled={tplStatus==='loading'||!tplRecipient} style={{width:'100%',padding:'12px 0',borderRadius:8,border:'none',background:tplRecipient?th.gold:th.border,color:tplRecipient?'#FFF':th.dim,fontSize:12,fontWeight:700,cursor:tplRecipient?'pointer':'not-allowed',opacity:tplStatus==='loading'?0.7:1}}>
+                      {tplStatus==='loading'?'⏳':(lang==='de'?'📤 Vorlage senden':lang==='pt'?'📤 Enviar modelo':'📤 Send Template')}
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* ═══ OTHER TABS (Fallback) ═══ */}
-          {!["chat","docs","wallet","desk","journal","files","search"].includes(sidebarTab)&&(
+          {!["chat","docs","wallet","desk","journal","files","search","templates"].includes(sidebarTab)&&(
             <div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
               <div style={{textAlign:"center"}}>
                 <div style={{fontSize:40,marginBottom:12}}>{SIDEBAR.find(s=>s.id===sidebarTab)?.icon}</div>
