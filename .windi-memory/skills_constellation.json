@@ -1,0 +1,182 @@
+{
+  "constellation": "Liga IA+H Skills",
+  "version": "1.0.0",
+  "created": "2026-03-08",
+  "founders": {
+    "human": {
+      "name": "Jober Mögele Correa",
+      "role": "Human Dragon",
+      "authority": "Chief Governance Officer — Único decisor humano"
+    },
+    "ai": [
+      {"name": "Guardian", "emoji": "🛡️", "role": "Protection & Ethics"},
+      {"name": "Architect", "emoji": "🏗️", "role": "Structure & Construction"},
+      {"name": "Witness", "emoji": "👁️", "role": "Observation & Immutable Record"}
+    ]
+  },
+  "principle": "AI processes. Human decides. WINDI guarantees.",
+
+  "skills": {
+    "dragon_alzheimer_cure": {
+      "id": "SKILL-001",
+      "name": "Dragon Alzheimer Cure",
+      "description": "Fix for Dragon chat losing conversation history",
+      "commits": ["3e858aa"],
+      "files": ["agent-palette/ui/index.html", "agent-palette/agent_dragon_server.py"],
+      "solution": {
+        "frontend": "queryDragon(message, msgs) — passa histórico como array",
+        "backend": "api_messages[] recebe history convertido com role:'human'/'assistant'",
+        "format": {"role": "human|assistant", "text": "message content"}
+      },
+      "test": "Conversa mantém contexto após múltiplas trocas"
+    },
+
+    "vip_founder_override": {
+      "id": "SKILL-002",
+      "name": "VIP Founder Override",
+      "description": "Acesso total para fundadores sem restrições de tier",
+      "commits": ["4e29fb8"],
+      "files": ["agent-palette/agent_dragon_server.py"],
+      "solution": {
+        "vip_list": ["jober", "jober mögele correa", "jober mogele correa", "founder"],
+        "check": "is_vip_founder(body) → verifica wallet_name, session_id prefix",
+        "bypass": "tier → governance, budget → unlimited, path → semantic"
+      },
+      "principle": "Quem planta a semente, colhe todos os frutos."
+    },
+
+    "document_production_rule": {
+      "id": "SKILL-003",
+      "name": "Document Production Rule",
+      "description": "Dragon produz rascunho imediatamente, máximo 1 pergunta",
+      "commits": ["3e858aa"],
+      "files": ["agent-palette/agent_dragon_server.py"],
+      "solution": {
+        "rule": "PRODUCE A DRAFT IMMEDIATELY with reasonable assumptions",
+        "max_questions": 1,
+        "forbidden": "NEVER say 'I need more information'",
+        "philosophy": "The Dragon PRODUCES. The Human REFINES."
+      }
+    },
+
+    "trilingual_detection": {
+      "id": "SKILL-004",
+      "name": "Trilingual Language Detection",
+      "description": "Detecção automática DE/PT/EN com markers expandidos",
+      "commits": ["4a1f64e"],
+      "files": ["agent-palette/sovereign_router.py"],
+      "solution": {
+        "pt_markers": ["fatura", "carta", "contrato", "ofício", "ata", "meu", "minha", "para", "com"],
+        "de_markers": ["Rechnung", "Brief", "Vertrag", "Bescheid", "mein", "meine", "für", "mit"],
+        "priority": ["explicit_param", "message_detection", "doc_type_hint", "default"]
+      }
+    },
+
+    "document_tone_guidelines": {
+      "id": "SKILL-005",
+      "name": "Document Type Tone Guidelines",
+      "description": "Tom/natureza específico por tipo de documento",
+      "commits": ["79ff2a0"],
+      "files": ["agent-palette/agent_dragon_server.py"],
+      "types": {
+        "letter": {"tone": "Personal, affectionate", "pt": "Querido/a, Com carinho", "de": "Liebe/r, Herzliche Grüße"},
+        "memo": {"tone": "Internal, direct, professional", "structure": "TO → SUBJECT → MESSAGE → ACTION"},
+        "report": {"tone": "Analytical, structured", "structure": "Summary → Body → Findings"},
+        "contract": {"tone": "Legal, precise", "structure": "PARTIES → OBJECT → TERMS → SIGNATURES"},
+        "bescheid": {"tone": "Administrative German", "includes": "Rechtsgrundlage"},
+        "protocol": {"tone": "Factual, chronological", "structure": "DATE → PARTICIPANTS → DECISIONS"},
+        "declaration": {"tone": "Formal, short, assertive", "pattern": "Declaro, sob as penas da lei..."},
+        "email": {"tone": "Concise, professional", "style": "Short paragraphs"}
+      }
+    },
+
+    "canvas_templates": {
+      "id": "SKILL-006",
+      "name": "Canvas Visual Templates",
+      "description": "4 templates visuais para documentos Canvas",
+      "commits": ["43dbda2"],
+      "files": ["agent-palette/ui/index.html"],
+      "templates": {
+        "communique": {"icon": "📰", "style": "Visual, editorial, InDesign"},
+        "presentation": {"icon": "📊", "style": "Slides, storytelling, NOIR theme"},
+        "certificate": {"icon": "🏆", "style": "Celebratory, formal, classic frame"},
+        "creative": {"icon": "🎨", "style": "Free, artistic, geometric shapes"}
+      },
+      "ui": "Template ▾ dropdown no toolbar do Canvas"
+    },
+
+    "pioneer_onboarding": {
+      "id": "SKILL-007",
+      "name": "Pioneer Onboarding Flow",
+      "description": "5-step onboarding trilingual para novos utilizadores",
+      "commits": ["5e4adab"],
+      "files": ["agent-palette/ui/index.html"],
+      "steps": [
+        {"icon": "🐉", "title": "Welcome to WINDI"},
+        {"icon": "🌱", "title": "The Grove — Private Space"},
+        {"icon": "📄", "title": "14 Document Types"},
+        {"icon": "🛡️", "title": "Seal & Verify"},
+        {"icon": "🪞", "title": "Dignity ID"}
+      ],
+      "persistence": "localStorage.windi_onboarded"
+    },
+
+    "grove_private_editor": {
+      "id": "SKILL-008",
+      "name": "Grove Private Editor",
+      "description": "Espaço privado para rascunhos antes de publicar",
+      "commits": ["5e4adab"],
+      "files": ["agent-palette/ui/index.html"],
+      "features": ["Draft saving", "Local storage", "No seal required"],
+      "position": "First tab in sidebar (🌱)"
+    },
+
+    "wick_network_interface": {
+      "id": "SKILL-009",
+      "name": "WICK Network Interface",
+      "description": "Interface pública para visualizar evidências na rede",
+      "commits": ["5e4adab"],
+      "files": ["agent-palette/ui/index.html"],
+      "features": ["Public evidence viewer", "Network visualization"]
+    },
+
+    "ssr_og_tags": {
+      "id": "SKILL-010",
+      "name": "SSR OG Tags for Verify Public",
+      "description": "Meta tags dinâmicas para partilha em WhatsApp/Telegram",
+      "commits": ["prev_session"],
+      "files": ["verify-public/app/main.py"],
+      "solution": {
+        "function": "inject_og_tags(html, doc_id, meta)",
+        "metadata": "get_document_metadata(doc_id) from Ledger",
+        "tags": ["og:title", "og:description", "og:url", "twitter:card"]
+      }
+    }
+  },
+
+  "architecture": {
+    "services": {
+      "dragon": {"port": 8108, "file": "agent_dragon_server.py"},
+      "dragon_chat": {"port": 8111, "file": "dragon_chat_service.py"},
+      "ledger": {"port": 8101, "purpose": "Forensic receipts"},
+      "export": {"port": 8103, "purpose": "PDF/DOCX/PPTX generation"},
+      "verify_public": {"port": 8114, "purpose": "Public verification with SSR"},
+      "communique": {"port": 8105, "purpose": "Multi-channel distribution"}
+    },
+    "frontend": {
+      "main": "agent-palette/ui/index.html",
+      "framework": "React 18 + Babel standalone",
+      "themes": ["KLAR (light)", "NOIR (dark)"]
+    }
+  },
+
+  "constitutional_rules": [
+    "I. O Human Dragon é o único decisor. A Liga IA+H propõe, o humano aprova.",
+    "II. Nenhuma alteração em nginx, portas, systemd sem aprovação explícita.",
+    "III. READ FIRST. Propose ≠ Execute.",
+    "IV. Git = 5º Dragon. Fim de sessão → commit + push.",
+    "V. O template nunca decide o nível. A API decide.",
+    "VI. nginx -t SEMPRE antes de reload.",
+    "VII. A Liga existe para servir o Humano, não para substituí-lo."
+  ]
+}

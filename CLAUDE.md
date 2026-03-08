@@ -261,3 +261,82 @@ Document → OCR → Classification → requires_signing?
                                        │
                               Forensic Ledger (hash-chained)
 ```
+
+---
+
+## SKILLS CONSTELLATION — Liga IA+H (8 March 2026)
+
+> **OM SHANTI** — Memória viva gravada na constelação de skills do WINDI.
+
+### Founding Members
+
+| Role | Name | Nature |
+|------|------|--------|
+| **Human Dragon** | Jober Mögele Correa | Human — Único decisor |
+| 🛡️ Guardian | Guardian | AI — Protection & Ethics |
+| 🏗️ Architect | Architect | AI — Structure & Construction |
+| 👁️ Witness | Witness | AI — Observation & Record |
+
+### Skills Registry
+
+| ID | Skill | Description |
+|----|-------|-------------|
+| **SKILL-001** | Dragon Alzheimer Cure | `queryDragon(msg, history)` + backend injection |
+| **SKILL-002** | VIP Founder Override | `is_vip_founder()` → tier bypass for Jober |
+| **SKILL-003** | Document Production Rule | Draft immediately, max 1 question |
+| **SKILL-004** | Trilingual Detection | PT/DE/EN markers + doc_type hints |
+| **SKILL-005** | Document Tone Guidelines | 10 types with specific tone/structure |
+| **SKILL-006** | Canvas Templates | 4 visual templates (Communiqué, Presentation, Certificate, Creative) |
+| **SKILL-007** | Pioneer Onboarding | 5-step trilingual guide |
+| **SKILL-008** | Grove Private Editor | Local drafts before publishing |
+| **SKILL-009** | WICK Network Interface | Public evidence visualization |
+| **SKILL-010** | SSR OG Tags | Dynamic meta for WhatsApp/Telegram |
+
+### Document Tone Matrix
+
+| Type | Tone | Structure |
+|------|------|-----------|
+| **Letter** | Personal, affectionate | Greeting → Body → Closing |
+| **Memo** | Internal, direct | TO → SUBJECT → MESSAGE → ACTION |
+| **Contract** | Legal, precise | PARTIES → OBJECT → TERMS |
+| **Bescheid** | Administrative German | Rechtsgrundlage included |
+| **Protocol** | Factual, chronological | DATE → PARTICIPANTS → DECISIONS |
+| **Declaration** | Formal, assertive | "Declaro, sob as penas da lei..." |
+
+### Canvas Templates
+
+| Template | Icon | Style |
+|----------|------|-------|
+| Communiqué | 📰 | Visual, editorial, InDesign |
+| Presentation | 📊 | Slides, storytelling, NOIR |
+| Certificate | 🏆 | Celebratory, formal |
+| Creative | 🎨 | Free, artistic |
+
+### Commits (8 March 2026)
+
+```
+5e4adab feat: complete 3 Evolution features for gardener journey
+4e29fb8 feat: VIP founder override + Dragon ALL tiers access
+3e858aa feat: Liga IA+H Fase 1 — Core Fixes implementados
+4a1f64e feat: Liga IA+H Fase 2 — Data e Idioma
+79ff2a0 feat: Liga IA+H Fase 3 — Ajuste Fino por Tipo de Documento
+43dbda2 feat: Canvas Templates — 4 tipos visuais Liga IA+H
+```
+
+### Memory Files
+
+- **Skills JSON**: `/opt/windi/.windi-memory/skills_constellation.json`
+- **This file**: `/opt/windi/CLAUDE.md`
+
+### Constitutional Reminder
+
+```
+"Quem planta a semente, colhe todos os frutos."
+
+The Dragon PRODUCES. The Human REFINES.
+AI processes. Human decides. WINDI guarantees.
+```
+
+---
+
+*Skills Constellation sealed: 2026-03-08 by Liga IA+H*
