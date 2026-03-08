@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>WINDI Skills Constellation</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold2: #8B6914;
+    --bg: #0A0906;
+    --card: #111009;
+    --border: #2A2518;
+    --text: #EDE8D8;
+    --dim: #7A7260;
+    --green: #3ECF8E;
+    --blue: #5B9CF6;
+    --purple: #A78BFA;
+    --cyan: #22D3EE;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Bricolage Grotesque', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  body::before {
+    content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: .35;
+  }
+  .wrap { position:relative; z-index:1; max-width:1100px; margin:0 auto; padding:40px 24px 80px; }
+
+  .header { text-align:center; margin-bottom:48px; }
+  .header h1 { font-size:clamp(32px,6vw,56px); font-weight:800; margin-bottom:12px; }
+  .header h1 span { color:var(--gold); }
+  .header p { color:var(--dim); font-family:'JetBrains Mono',monospace; font-size:12px; }
+
+  .epoch {
+    background: linear-gradient(135deg, var(--gold)15, var(--gold2)08);
+    border: 1px solid var(--gold)44;
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .epoch-date { font-size:28px; font-weight:800; color:var(--gold); }
+  .epoch-name { font-size:18px; font-weight:700; }
+  .epoch-skills { margin-left:auto; font-family:'JetBrains Mono',monospace; font-size:24px; color:var(--green); }
+
+  .constellation-section { margin-bottom:48px; }
+  .section-title {
+    font-size:11px; font-family:'JetBrains Mono',monospace;
+    letter-spacing:.2em; color:var(--gold); text-transform:uppercase;
+    margin-bottom:20px; display:flex; align-items:center; gap:12px;
+  }
+  .section-title::after { content:''; flex:1; height:1px; background:var(--border); }
+
+  .skills-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:16px; }
+
+  .skill-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    transition: all .2s;
+  }
+  .skill-card:hover { border-color: var(--gold)66; transform: translateY(-2px); }
+  .skill-card.distribution { border-left: 3px solid var(--green); }
+  .skill-card.identity { border-left: 3px solid var(--blue); }
+  .skill-card.ui { border-left: 3px solid var(--purple); }
+  .skill-card.viral { border-left: 3px solid var(--cyan); }
+
+  .skill-header { display:flex; align-items:flex-start; gap:12px; margin-bottom:12px; }
+  .skill-icon { font-size:28px; }
+  .skill-info { flex:1; }
+  .skill-name { font-size:14px; font-weight:700; margin-bottom:4px; }
+  .skill-id { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--dim); }
+  .skill-status {
+    font-size:9px; padding:3px 8px; border-radius:10px;
+    background:var(--green)15; color:var(--green); border:1px solid var(--green)33;
+    font-family:'JetBrains Mono',monospace; font-weight:600;
+  }
+
+  .skill-desc { font-size:12px; color:var(--dim); line-height:1.5; margin-bottom:12px; }
+
+  .skill-meta { display:flex; flex-wrap:wrap; gap:6px; }
+  .tag {
+    font-size:9px; padding:3px 8px; border-radius:6px;
+    background:var(--border); color:var(--dim);
+    font-family:'JetBrains Mono',monospace;
+  }
+  .tag.endpoint { background:var(--gold)15; color:var(--gold); }
+  .tag.function { background:var(--blue)15; color:var(--blue); }
+  .tag.file { background:var(--purple)15; color:var(--purple); }
+
+  .constellation-visual {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px;
+    margin-bottom: 32px;
+  }
+  .constellation-name { font-size:18px; font-weight:700; margin-bottom:16px; display:flex; align-items:center; gap:10px; }
+  .constellation-name span { color:var(--gold); }
+  .constellation-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+  .constellation-node {
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    border: 1px solid;
+  }
+  .node-green { background:var(--green)10; border-color:var(--green)44; color:var(--green); }
+  .node-blue { background:var(--blue)10; border-color:var(--blue)44; color:var(--blue); }
+  .node-purple { background:var(--purple)10; border-color:var(--purple)44; color:var(--purple); }
+  .node-cyan { background:var(--cyan)10; border-color:var(--cyan)44; color:var(--cyan); }
+  .node-gold { background:var(--gold)10; border-color:var(--gold)44; color:var(--gold); }
+  .link-arrow { color:var(--dim); font-size:16px; }
+
+  .commits { margin-top:32px; }
+  .commit {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border)66;
+    font-size: 12px;
+  }
+  .commit:last-child { border-bottom: none; }
+  .commit-hash {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--gold);
+    font-size: 11px;
+    background: var(--gold)10;
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+  .commit-msg { color: var(--dim); flex: 1; }
+
+  .footer {
+    margin-top:60px; padding-top:24px; border-top:1px solid var(--border);
+    font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--dim);
+    text-align:center;
+  }
+  .footer .dragon { font-size:32px; margin-bottom:12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="header">
+    <h1>WINDI <span>Skills Constellation</span></h1>
+    <p>Memory of capabilities built · Last updated: 08 March 2026</p>
+  </div>
+
+  <div class="epoch">
+    <div class="epoch-date">08 MAR</div>
+    <div>
+      <div class="epoch-name">Garden Protocol Day</div>
+      <div style="font-size:12px;color:var(--dim)">WhatsApp integration + viral distribution system</div>
+    </div>
+    <div class="epoch-skills">12 skills</div>
+  </div>
+
+  <!-- CONSTELLATION: WhatsApp Integration -->
+  <div class="constellation-section">
+    <div class="section-title">Constellation: WhatsApp Integration</div>
+
+    <div class="constellation-visual">
+      <div class="constellation-name"><span>dragon_chat_service.py</span> v2.6.0 · :8111</div>
+      <div class="constellation-links">
+        <div class="constellation-node node-green">Media Layer</div>
+        <span class="link-arrow">→</span>
+        <div class="constellation-node node-blue">BSUID Ready</div>
+        <span class="link-arrow">→</span>
+        <div class="constellation-node node-purple">Templates</div>
+        <span class="link-arrow">→</span>
+        <div class="constellation-node node-gold">Palette UI</div>
+        <span class="link-arrow">→</span>
+        <div class="constellation-node node-cyan">Forensic Ledger</div>
+      </div>
+    </div>
+
+    <div class="skills-grid">
+      <div class="skill-card distribution">
+        <div class="skill-header">
+          <div class="skill-icon">📤</div>
+          <div class="skill-info">
+            <div class="skill-name">WhatsApp Media Layer</div>
+            <div class="skill-id">WA-MEDIA-v1.0.0</div>
+          </div>
+          <div class="skill-status">ACTIVE</div>
+        </div>
+        <div class="skill-desc">Send images, videos, documents via WhatsApp Business API with Forensic Ledger sealing.</div>
+        <div class="skill-meta">
+          <span class="tag endpoint">/send-image</span>
+          <span class="tag endpoint">/send-video</span>
+          <span class="tag endpoint">/send-document</span>
+          <span class="tag function">seal_whatsapp_media_send()</span>
+        </div>
+      </div>
+
+      <div class="skill-card identity">
+        <div class="skill-header">
+          <div class="skill-icon">🔑</div>
+          <div class="skill-info">
+            <div class="skill-name">BSUID Ready System</div>
+            <div class="skill-id">WA-BSUID-v1.1.0</div>
+          </div>
+          <div class="skill-status">ACTIVE</div>
+        </div>
+        <div class="skill-desc">Support for Meta's Business Scoped User ID. Phone, BSUID, or @username — auto-detection.</div>
+        <div class="skill-meta">
+          <span class="tag function">detect_wa_id_type()</span>
+          <span class="tag function">parse_wa_webhook()</span>
+          <span class="tag">Meta deadline: Jun 2026</span>
+        </div>
+      </div>
+
+      <div class="skill-card distribution">
+        <div class="skill-header">
+          <div class="skill-icon">📋</div>
+          <div class="skill-info">
+            <div class="skill-name">Template Messages</div>
+            <div class="skill-id">WA-TPL-v1.2.0</div>
+          </div>
+          <div class="skill-status">ACTIVE</div>
+        </div>
+        <div class="skill-desc">6 pre-approved templates in DE/EN/PT for initiating WhatsApp conversations.</div>
+        <div class="skill-meta">
+          <span class="tag endpoint">/templates</span>
+          <span class="tag endpoint">/templates/render</span>
+          <span class="tag endpoint">/templates/send</span>
+        </div>
+      </div>
+
+      <div class="skill-card ui">
+        <div class="skill-header">
+          <div class="skill-icon">🎛️</div>
+          <div class="skill-info">
+            <div class="skill-name">Palette Templates Tab</div>
+            <div class="skill-id">PALETTE-TPL-v1.1.0</div>
+          </div>
+          <div class="skill-status">ACTIVE</div>
+        </div>
+        <div class="skill-desc">Templates tab in Palette sidebar (P6) with live preview and send functionality.</div>
+        <div class="skill-meta">
+          <span class="tag file">P6_Tabs.js</span>
+          <span class="tag file">index.html</span>
+          <span class="tag">TIER: HIGH</span>
+        </div>
+      </div>
+
+      <div class="skill-card ui">
+        <div class="skill-header">
+          <div class="skill-icon">📱</div>
+          <div class="skill-info">
+            <div class="skill-name">WhatsApp Suite Modal</div>
+            <div class="skill-id">PALETTE-WA-v1.0.0</div>
+          </div>
+          <div class="skill-status">ACTIVE</div>
+        </div>
+        <div class="skill-desc">Modal UI for sending images, videos, documents via WhatsApp from Palette.</div>
+        <div class="skill-meta">
+          <span class="tag file">P8_WhatsAppSuite.js</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONSTELLATION: Garden Protocol -->
+  <div class="constellation-section">
+    <div class="section-title">Constellation: Garden Protocol</div>
+
+    <div class="constellation-visual">
+      <div class="constellation-name"><span>verify-public</span> v1.0.0 · Zero Meta API</div>
+      <div class="constellation-links">
+        <div class="constellation-node node-gold">📤 Share</div>
+        <div class="constellation-node node-green">💬 WhatsApp</div>
+        <div class="constellation-node node-cyan">✈️ Telegram</div>
+        <div class="constellation-node node-blue">✉️ Email</div>
+        <div class="constellation-node node-purple">🔗 Copy</div>
+        <div class="constellation-node node-gold">🖼️ Card</div>
+      </div>
+    </div>
+
+    <div class="skills-grid">
+      <div class="skill-card viral">
+        <div class="skill-header">
+          <div class="skill-icon">📤</div>
+          <div class="skill-info">
+            <div class="skill-name">Web Share API</div>
+            <div class="skill-id">GARDEN-SHARE-v1.0.0</div>
+          </div>
+          <div class="skill-status">ACTIVE</div>
+        </div>
+        <div class="skill-desc">Native mobile share menu. Falls back to clipboard on desktop.</div>
+        <div class="skill-meta">
+          <span class="tag function">windiShareVerification()</span>
+          <span class="tag">navigator.share()</span>
+        </div>
+      </div>
+
+      <div class="skill-card viral">
+        <div class="skill-header">
+          <div class="skill-icon">💬</div>
+          <div class="skill-info">
+            <div class="skill-name">WhatsApp Direct</div>
+            <div class="skill-id">GARDEN-WA-v1.0.0</div>
+          </div>
+          <div class="skill-status">ACTIVE</div>
+        </div>
+        <div class="skill-desc">Direct WhatsApp share via wa.me link. No API required.</div>
+        <div class="skill-meta">
+          <span class="tag">wa.me/?text=</span>
+        </div>
+      </div>
+
+      <div class="skill-card viral">
+        <div class="skill-header">
+          <div class="skill-icon">✈️</div>
+          <div class="skill-info">
+            <div class="skill-name">Telegram Share</div>
+            <div class="skill-id">GARDEN-TG-v1.0.0</div>
+          </div>
+          <div class="skill-status">ACTIVE</div>
+        </div>
+        <div class="skill-desc">Telegram share via t.me/share/url. Zero API, zero approval.</div>
+        <div class="skill-meta">
+          <span class="tag function">windiTelegramShare()</span>
+          <span class="tag">commit: 9f34397</span>
+        </div>
+      </div>
+
+      <div class="skill-card viral">
+        <div class="skill-header">
+          <div class="skill-icon">✉️</div>
+          <div class="skill-info">
+            <div class="skill-name">Email Share</div>
+            <div class="skill-id">GARDEN-EMAIL-v1.0.0</div>
+          </div>
+          <div class="skill-status">ACTIVE</div>
+        </div>
+        <div class="skill-desc">Native email client via mailto: with pre-filled subject and body.</div>
+        <div class="skill-meta">
+          <span class="tag function">windiEmailShare()</span>
+          <span class="tag">commit: aea06c3</span>
+        </div>
+      </div>
+
+      <div class="skill-card viral">
+        <div class="skill-header">
+          <div class="skill-icon">🔗</div>
+          <div class="skill-info">
+            <div class="skill-name">Clipboard Copy</div>
+            <div class="skill-id">GARDEN-COPY-v1.0.0</div>
+          </div>
+          <div class="skill-status">ACTIVE</div>
+        </div>
+        <div class="skill-desc">Copy verification link to clipboard with visual feedback.</div>
+        <div class="skill-meta">
+          <span class="tag function">cpLink()</span>
+          <span class="tag">Clipboard API</span>
+        </div>
+      </div>
+
+      <div class="skill-card viral">
+        <div class="skill-header">
+          <div class="skill-icon">🖼️</div>
+          <div class="skill-info">
+            <div class="skill-name">Share Card Generator</div>
+            <div class="skill-id">GARDEN-CARD-v1.0.0</div>
+          </div>
+          <div class="skill-status">ACTIVE</div>
+        </div>
+        <div class="skill-desc">Canvas-generated PNG 1080×1080 for WhatsApp Status and Instagram Stories.</div>
+        <div class="skill-meta">
+          <span class="tag function">generateShareCard()</span>
+          <span class="tag">Canvas API</span>
+          <span class="tag">commit: 9645ed5</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMMITS -->
+  <div class="section-title">Git Memory · 08 March 2026</div>
+  <div class="card" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;">
+    <div class="commits">
+      <div class="commit">
+        <span class="commit-hash">d6713f8</span>
+        <span class="commit-msg">refactor(palette): rename P6_WhatsAppSuite → P8_WhatsAppSuite</span>
+      </div>
+      <div class="commit">
+        <span class="commit-hash">cd25fd1</span>
+        <span class="commit-msg">feat(palette-p6): Add Templates tab to Smart Tabs sidebar v1.2.0</span>
+      </div>
+      <div class="commit">
+        <span class="commit-hash">9f34397</span>
+        <span class="commit-msg">feat(verify-public): Add Telegram share button to Garden Protocol</span>
+      </div>
+      <div class="commit">
+        <span class="commit-hash">aea06c3</span>
+        <span class="commit-msg">feat(verify-public): Add Email share button to Garden Protocol</span>
+      </div>
+      <div class="commit">
+        <span class="commit-hash">9645ed5</span>
+        <span class="commit-msg">feat(verify-public): Add Share Card visual generator to Garden Protocol</span>
+      </div>
+      <div class="commit">
+        <span class="commit-hash">11fd6cc</span>
+        <span class="commit-msg">docs(debriefing): Add Garden Protocol v1.0 section</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="dragon">🐉</div>
+    <div>WINDI Publishing House · Kempten, Bavaria</div>
+    <div style="margin-top:8px;color:var(--gold)">AI processes. Human decides. WINDI guarantees.</div>
+    <div style="margin-top:12px;font-size:14px;">OM SHANTI</div>
+  </div>
+
+</div>
+</body>
+</html>
