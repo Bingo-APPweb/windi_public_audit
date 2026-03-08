@@ -276,3 +276,59 @@ const useDocStore = create((set, get) => ({
 }));
 
 export default useDocStore;
+
+// ═══════════════════════════════════════════════════════════════════
+// DRAGON BRIDGE — ActionBridge Receiver
+// "O arquitecto desenhou. O Desktop constrói."
+// ═══════════════════════════════════════════════════════════════════
+
+export async function loadDragonDraft(draftId) {
+  let payload = null;
+
+  // Tentativa 1: API backend (draft em memória)
+  if (draftId) {
+    try {
+      const res = await fetch(`/desktop/api/documents/dragon-draft/${draftId}`);
+      if (res.ok) {
+        const data = await res.json();
+        payload = data.draft || data;
+      }
+    } catch (e) {
+      console.warn('[Dragon Bridge] API fetch failed:', e.message);
+    }
+  }
+
+  // Tentativa 2: localStorage fallback
+  if (!payload) {
+    try {
+      const raw = localStorage.getItem('windi_dragon_draft');
+      if (raw) {
+        payload = JSON.parse(raw);
+        localStorage.removeItem('windi_dragon_draft'); // consumir uma vez
+      }
+    } catch (e) {
+      console.warn('[Dragon Bridge] localStorage parse failed:', e.message);
+    }
+  }
+
+  if (!payload) return null;
+
+  // Normalizar: aceita {document:{...}} ou {...} directo
+  const doc = payload.document || payload;
+
+  // Converter texto plain → Tiptap JSON
+  const textContent = doc.content || doc.body || '';
+  const tiptapContent = {
+    type: 'doc',
+    content: textContent.split('\n\n').map(para => ({
+      type: 'paragraph',
+      content: para.trim() ? [{ type: 'text', text: para }] : []
+    }))
+  };
+
+  return {
+    title: doc.title || 'Documento WINDI',
+    content: tiptapContent,
+    docType: doc.type || doc.docType || 'generic',
+  };
+}

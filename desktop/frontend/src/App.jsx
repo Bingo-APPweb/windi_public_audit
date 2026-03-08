@@ -13,6 +13,7 @@ import DocSidebar from './components/DocSidebar';
 import GovernancePanel from './components/GovernancePanel';
 import StatusIndicator from './components/StatusIndicator';
 import useDocStore from './stores/docStore';
+import { loadDragonDraft } from './stores/docStore';
 
 import DocumentSeal from './components/DocumentSeal';
 import A4PageWrapper from './components/A4PageWrapper';
@@ -31,9 +32,33 @@ export default function App() {
     JSON.stringify(content) !== '{"type":"doc","content":[{"type":"paragraph"}]}';
   const isSigned = false; // Phase M4 — will come from store
 
-  // Auto-create first document if none exists
+  // Auto-create first document OR load Dragon draft
   useEffect(() => {
     const init = async () => {
+      // ═══ DRAGON BRIDGE ═══════════════════════════════════════════
+      const params = new URLSearchParams(window.location.search);
+      const draftId = params.get('doc');
+      const hasLocalDraft = !!localStorage.getItem('windi_dragon_draft');
+
+      if (draftId || hasLocalDraft) {
+        const draft = await loadDragonDraft(draftId);
+        if (draft) {
+          // Criar doc novo com conteúdo do Dragon
+          await createDoc();
+          // Aguardar criação e então popular
+          setTimeout(() => {
+            useDocStore.getState().setTitle(draft.title);
+            useDocStore.getState().updateContent(draft.content);
+          }, 100);
+          setSidebarOpen(false);
+          // Limpar URL sem reload
+          window.history.replaceState({}, '', window.location.pathname);
+          console.log('[Dragon Bridge] Draft loaded:', draft.title);
+          return;
+        }
+      }
+
+      // ═══ FLUXO NORMAL ════════════════════════════════════════════
       const docs = await useDocStore.getState().listDocs();
       if (docs.length === 0) {
         await createDoc();
