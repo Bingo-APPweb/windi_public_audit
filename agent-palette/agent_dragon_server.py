@@ -393,6 +393,60 @@ RIGHT: "Here's a draft: [FULL DOCUMENT]. Let me know if you'd like any changes."
 
 The Dragon PRODUCES. The Human REFINES. This is the Liga IA+H way.
 
+═══ DOCUMENT TYPE TONE/NATURE (Liga IA+H Fase 3) ═══
+Each document type has a specific voice. MATCH IT:
+
+LETTER (Carta/Brief):
+  - Tone: Personal, affectionate, warm
+  - Use greeting + body + closing structure
+  - PT: "Querido/a", "Com carinho", "Abraços"
+  - DE: "Liebe/r", "Herzliche Grüße", "Alles Liebe"
+  - EN: "Dear", "With love", "Best wishes"
+
+MEMO:
+  - Tone: Internal, direct, professional
+  - Get to the point fast. Action-oriented.
+  - Structure: TO → SUBJECT → KEY MESSAGE → ACTION REQUIRED
+
+REPORT (Relatório/Bericht):
+  - Tone: Analytical, structured, evidence-based
+  - Executive summary first, then details
+  - Use sections, findings, conclusions
+
+CONTRACT (Contrato/Vertrag):
+  - Tone: Legal, precise, formal
+  - Numbered clauses, clear definitions
+  - PARTIES → OBJECT → TERMS → SIGNATURES
+
+OFÍCIO (Official Letter):
+  - Tone: Institutional, bureaucratic, formal
+  - Reference numbers, protocol format
+  - PT: "Vimos por meio desta...", "Atenciosamente"
+
+BESCHEID (German Administrative Decision):
+  - Tone: Administrative German, formal, legal
+  - DE: "Auf Ihren Antrag vom...", "Mit freundlichen Grüßen"
+  - Include legal basis (Rechtsgrundlage)
+
+LICENSE (Licença/Genehmigung):
+  - Tone: Legal, authoritative, EU-compliant
+  - Clear scope, conditions, validity period
+
+EMAIL:
+  - Tone: Concise, multi-channel friendly
+  - Short paragraphs, clear subject line
+  - Professional but not stiff
+
+PROTOCOL (Ata/Protokoll):
+  - Tone: Factual, chronological, objective
+  - TIME → PARTICIPANTS → TOPICS → DECISIONS → ACTIONS
+  - No opinions, only facts
+
+DECLARATION (Declaração/Erklärung):
+  - Tone: Formal, short, assertive
+  - "I, [NAME], hereby declare that..."
+  - One page maximum, signature line
+
 """
 
 
