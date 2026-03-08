@@ -314,6 +314,163 @@ def debate_idea():
         "next": "Revise os nós criados e sintetize ou continue o debate."
     })
 
+
+# ── ARENA: Motor de Debate Real ──────────────────────────────────────────────
+AGENT_PERSONAS = {
+    "W-LEGAL-001": {
+        "name": "Justiça",
+        "emoji": "⚖️",
+        "role": "Legal Analyst",
+        "prompt": "Tu és o agente jurídico WINDI. Analisa a questão do ponto de vista legal, citando princípios jurídicos relevantes. Sê preciso mas acessível. Máximo 3 parágrafos."
+    },
+    "W-NOTARY-001": {
+        "name": "Notário",
+        "emoji": "📜",
+        "role": "Notary Agent",
+        "prompt": "Tu és o agente notarial WINDI. Avalia autenticidade, certificação e fé pública. Foca em como garantir a integridade documental. Máximo 3 parágrafos."
+    },
+    "W-COMPLY-001": {
+        "name": "Compliance",
+        "emoji": "🛡️",
+        "role": "Compliance Officer",
+        "prompt": "Tu és o agente de compliance WINDI. Analisa riscos regulatórios, GDPR, conformidade. Identifica red flags e sugere mitigações. Máximo 3 parágrafos."
+    },
+    "W-COMM-001": {
+        "name": "Communiqué",
+        "emoji": "📰",
+        "role": "Document Architect",
+        "prompt": "Tu és o agente de documentos WINDI. Propõe estrutura, formato e tom ideal para comunicar esta ideia. Sugere tipo de documento adequado. Máximo 3 parágrafos."
+    },
+    "W-JOURN-001": {
+        "name": "Jornalista",
+        "emoji": "✒️",
+        "role": "Editorial Agent",
+        "prompt": "Tu és o agente editorial WINDI. Avalia o potencial narrativo, ângulo de publicação e impacto comunicacional. Sugere headlines. Máximo 3 parágrafos."
+    },
+    "W-AUDIT-001": {
+        "name": "Auditor",
+        "emoji": "🔍",
+        "role": "Audit Agent",
+        "prompt": "Tu és o agente de auditoria WINDI. Verifica integridade, rastreabilidade e evidências. Identifica gaps documentais. Máximo 3 parágrafos."
+    },
+    "W-ACCT-001": {
+        "name": "Contabilidade",
+        "emoji": "📊",
+        "role": "Accounting Agent",
+        "prompt": "Tu és o agente contabilístico WINDI. Analisa implicações fiscais, GoBD, ELSTER. Avalia se há necessidades de documentação financeira. Máximo 3 parágrafos."
+    },
+}
+
+@grove_bp.route("/arena", methods=["POST"])
+def arena_debate():
+    """
+    W-GROVE-001 Arena: Motor de debate real.
+    Cada agente selecionado responde com sua perspectiva via Dragon.
+
+    Input: {
+        "topic": "A ideia a debater",
+        "agents": ["W-LEGAL-001", "W-COMPLY-001"],
+        "session_id": "GS-...",  # opcional
+        "round": 1  # rodada do debate
+    }
+
+    Output: {
+        "responses": [
+            {"agent": "W-LEGAL-001", "name": "Justiça", "emoji": "⚖️", "message": "..."},
+            ...
+        ]
+    }
+    """
+    data = request.get_json() or {}
+    topic = data.get("topic", "")
+    agents = data.get("agents", [])
+    session_id = data.get("session_id")
+    debate_round = data.get("round", 1)
+    store_nodes = data.get("store_nodes", True)  # Gravar no grafo?
+
+    if not topic:
+        return jsonify({"error": "topic is required"}), 400
+
+    if not agents:
+        return jsonify({"error": "agents array is required"}), 400
+
+    responses = []
+
+    for agent_id in agents:
+        if agent_id not in AGENT_PERSONAS:
+            continue
+
+        persona = AGENT_PERSONAS[agent_id]
+
+        # Constrói prompt completo para Dragon (inline, sem system separado)
+        full_prompt = f"""[GROVE ARENA — {persona['name']} {persona['emoji']}]
+
+{persona['prompt']}
+
+TÓPICO PARA ANÁLISE:
+{topic}
+
+Responde com a tua perspectiva profissional. Máximo 3 parágrafos, linguagem do tópico."""
+
+        # Chama Dragon com chatType "general" (reconhecido)
+        try:
+            resp = requests.post(
+                f"{DRAGON_URL}/api/dragon/chat",
+                json={
+                    "message": full_prompt,
+                    "tier": "GOVERNANCE",
+                    "chatType": "general",
+                    "maxTokens": 600
+                },
+                timeout=30
+            )
+
+            if resp.status_code == 200:
+                dragon_data = resp.json()
+                agent_response = dragon_data.get("message", f"[{agent_id} sem resposta]")
+            else:
+                agent_response = f"[{agent_id} — Dragon retornou {resp.status_code}]"
+
+        except requests.Timeout:
+            agent_response = f"[{agent_id} — timeout na análise]"
+        except Exception as e:
+            agent_response = f"[{agent_id} — erro: {str(e)[:50]}]"
+
+        responses.append({
+            "agent": agent_id,
+            "name": persona["name"],
+            "emoji": persona["emoji"],
+            "role": persona["role"],
+            "message": agent_response,
+            "round": debate_round,
+            "ts": datetime.utcnow().isoformat()
+        })
+
+        # Grava como nó no grafo (se session_id fornecido)
+        if store_nodes and session_id:
+            try:
+                nid = create_node(
+                    session_id,
+                    f"{persona['emoji']} {persona['name']} — Rodada {debate_round}",
+                    agent_response,
+                    "hypothesis",
+                    agent_id,
+                    agent_id
+                )
+                responses[-1]["node_id"] = nid
+            except Exception:
+                pass  # Não falha se gravar der erro
+
+    return jsonify({
+        "status": "arena_complete",
+        "round": debate_round,
+        "topic": topic[:100],
+        "responses": responses,
+        "agents_responded": len(responses),
+        "principle": "AI processes. Human decides. WINDI guarantees."
+    })
+
+
 @grove_bp.route("/ideas", methods=["GET"])
 def list_sessions():
     """Lista todas as sessões do Grove."""
