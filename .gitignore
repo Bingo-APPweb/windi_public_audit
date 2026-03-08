@@ -49,6 +49,10 @@ staging/
 *_tmp/
 *.bak
 *.bak_*
+*.bak2
+*.backup*
+*.broken*
+*.pre-*
 
 # === CLAUDE CONFIG ===
 .claude/
