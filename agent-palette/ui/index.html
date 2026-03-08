@@ -3276,7 +3276,8 @@ function App(){
   // Dragon Chat API call — ALL tiers can use (Knowledge Base + Conversational don't need LLM)
   // FIX 2026-03-08: Now accepts history array to cure Alzheimer
   // FIX 2026-03-08c: Send wallet_name for VIP founder detection
-  const queryDragon=useCallback(async(message,history=[])=>{
+  // Liga IA+H Fase 2: Pass docType and language for context-aware responses
+  const queryDragon=useCallback(async(message,history=[],docTypeCtx=null,langCtx=null)=>{
     if(!dragonConnected)return null;
     try{
       // Convert local msgs format to backend format (last 20 exchanges max)
@@ -3288,7 +3289,15 @@ function App(){
       const res=await fetch(dragonUrl+'/chat',{
         method:'POST',
         headers:{'Content-Type':'application/json','X-Session-ID':dragonSessionId||'','X-Tier':windiTier},
-        body:JSON.stringify({message,tier:windiTier,session_id:dragonSessionId,history:apiHistory,wallet_name:wallet?.name||''})
+        body:JSON.stringify({
+          message,
+          tier:windiTier,
+          session_id:dragonSessionId,
+          history:apiHistory,
+          wallet_name:wallet?.name||'',
+          doc_type:docTypeCtx||docType||null,
+          language:langCtx||lang
+        })
       });
       const data=await res.json();
       if(data.session_id&&!dragonSessionId)setDragonSessionId(data.session_id);
@@ -3301,7 +3310,7 @@ function App(){
       console.warn('[WINDI] Dragon Chat error:',e.message);
       return null;
     }
-  },[dragonUrl,dragonConnected,dragonSessionId,windiTier,wallet]);
+  },[dragonUrl,dragonConnected,dragonSessionId,windiTier,wallet,docType,lang]);
 
   // Confirm Dragon action (Principle 1: never execute without confirmation)
   const confirmDragonAction=useCallback(async(confirmed)=>{
@@ -5898,7 +5907,7 @@ function App(){
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<App />);
 </script>
-<script src="modules/P6_WhatsAppSuite.js"></script>
+<script src="modules/P8_WhatsAppSuite.js"></script>
 <script src="/app/static/windi-drivein.js"></script>
 </body>
 </html>
