@@ -4089,6 +4089,8 @@ function App(){
         ...sealData,
       };
       setReceipt(r);
+      // FIX: Write to Forensic Ledger (was missing!)
+      fetch("/api/ledger/receipts",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({id:r.id,actor:wallet?.name||"agent-palette",app:"palette",doc_name:docTitle,doc_type:docType||"doc",content_hash:r.ch||r.bh,governance_level:"MEDIUM",sge_score:r.sge||0.5,metadata:{wallet_id:wallet?.id,fields_count:Object.keys(docFields).length}})}).catch(e=>console.warn("[WINDI] Ledger write failed:",e));
       fetch("/api/anchor/anchor",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({receipt_id:r.id,combined_hash:r.ch||r.bh,doc_type:r.doc_type||docType,entry_data:{title:docTitle,actor:"agent-palette",wallet:wallet?.id}})}).catch(e=>console.warn("[WINDI] Anchor write failed:",e));
       setDocStatus("finalized");
       setShowFinalizeModal(false);
@@ -4136,6 +4138,8 @@ function App(){
         doc_type: docType?.toUpperCase() || "NOTE",
       };
       setReceipt(r);
+      // FIX: Write to Forensic Ledger (was missing!)
+      fetch("/api/ledger/receipts",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({id:r.id,actor:wallet?.name||"agent-palette",app:"palette",doc_name:docTitle,doc_type:docType||"doc",content_hash:r.ch||r.bh,governance_level:"LOW",sge_score:r.sge||0.5})}).catch(e=>console.warn("[WINDI] Ledger write failed:",e));
       fetch("/api/anchor/anchor",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({receipt_id:r.id,combined_hash:r.ch||r.bh,doc_type:r.doc_type||docType,entry_data:{title:docTitle,actor:"agent-palette",wallet:wallet?.id}})}).catch(e=>console.warn("[WINDI] Anchor write failed:",e));
       setDocStatus("finalized");
       setShowFinalizeModal(false);
