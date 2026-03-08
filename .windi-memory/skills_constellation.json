@@ -151,6 +151,21 @@
         "metadata": "get_document_metadata(doc_id) from Ledger",
         "tags": ["og:title", "og:description", "og:url", "twitter:card"]
       }
+    },
+
+    "pre_deploy_validation": {
+      "id": "SKILL-011",
+      "name": "Pre-Deploy Validation Script",
+      "description": "Executable tool to verify all services before deploying changes",
+      "commits": ["cda5cd2"],
+      "files": ["tools/pre-deploy-check.sh"],
+      "solution": {
+        "executable": "/opt/windi/tools/pre-deploy-check.sh",
+        "checks": ["nginx", "services", "dirs", "dbs", "sync", "systemd", "disk", "git"],
+        "flags": ["--verbose", "--fix"],
+        "exit_codes": {"0": "safe to deploy", "1": "failures detected"}
+      },
+      "philosophy": "Real prevention through executable code, not documentation."
     }
   },
 
@@ -177,6 +192,7 @@
     "IV. Git = 5º Dragon. Fim de sessão → commit + push.",
     "V. O template nunca decide o nível. A API decide.",
     "VI. nginx -t SEMPRE antes de reload.",
-    "VII. A Liga existe para servir o Humano, não para substituí-lo."
+    "VII. A Liga existe para servir o Humano, não para substituí-lo.",
+    "VIII. pre-deploy-check.sh ANTES de deploy em produção."
   ]
 }
