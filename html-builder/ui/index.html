@@ -190,19 +190,105 @@ const VAULT_URL   = 'http://localhost:8106';
 const VERIFY_BASE = 'https://windi-domain.com/verify-public/?id=';
 
 // ═══════════════════════════════════════════════════════════════════
+// DEFAULT CONTENT — TRILINGUAL (PT/DE/EN)
+// ═══════════════════════════════════════════════════════════════════
+const DC = {
+  hero: {
+    badge:    {pt:'Novidade',de:'Neuheit',en:'New'},
+    headline: {pt:'Crie algo\nExtraordinário',de:'Schaffen Sie etwas\nAußergewöhnliches',en:'Create something\nExtraordinary'},
+    subtitle: {pt:'Uma descrição poderosa que conecta e transforma.',de:'Eine kraftvolle Beschreibung, die verbindet und transformiert.',en:'A powerful description that connects and transforms.'},
+    btnText:  {pt:'Comece Agora',de:'Jetzt starten',en:'Get Started'},
+  },
+  features: {
+    title:    {pt:'Por que nos escolher?',de:'Warum uns wählen?',en:'Why choose us?'},
+    item1:    {icon:'🚀',title:{pt:'Rápido',de:'Schnell',en:'Fast'},text:{pt:'Performance desde o primeiro clique.',de:'Performance ab dem ersten Klick.',en:'Performance from the first click.'}},
+    item2:    {icon:'🎨',title:{pt:'Bonito',de:'Schön',en:'Beautiful'},text:{pt:'Design pensado para cada detalhe.',de:'Design für jedes Detail durchdacht.',en:'Design crafted for every detail.'}},
+    item3:    {icon:'🔒',title:{pt:'Seguro',de:'Sicher',en:'Secure'},text:{pt:'Sua privacidade é prioridade.',de:'Ihre Privatsphäre hat Priorität.',en:'Your privacy is a priority.'}},
+  },
+  textblock: {
+    label:    {pt:'Nossa História',de:'Unsere Geschichte',en:'Our Story'},
+    title:    {pt:'Feito com propósito,\nconstruído com paixão',de:'Mit Absicht gemacht,\nmit Leidenschaft gebaut',en:'Made with purpose,\nbuilt with passion'},
+    body:     {pt:'Aqui você conta sua história, missão ou conteúdo relevante.',de:'Hier erzählen Sie Ihre Geschichte, Mission oder relevanten Inhalt.',en:'Here you tell your story, mission or relevant content.'},
+  },
+  gallery: {
+    title:    {pt:'Nossa Galeria',de:'Unsere Galerie',en:'Our Gallery'},
+  },
+  cta: {
+    headline: {pt:'Pronto para começar?',de:'Bereit zu starten?',en:'Ready to get started?'},
+    sub:      {pt:'Junte-se a milhares que já começaram.',de:'Schließen Sie sich Tausenden an, die bereits begonnen haben.',en:'Join thousands who have already started.'},
+    btnText:  {pt:'Quero Entrar',de:'Ich will dabei sein',en:'I Want In'},
+    btnSec:   {pt:'Saiba mais',de:'Mehr erfahren',en:'Learn more'},
+  },
+  testimonial: {
+    quote:    {pt:'Esta ferramenta mudou como trabalhamos. Incrível e muito intuitivo.',de:'Dieses Tool hat unsere Arbeitsweise verändert. Unglaublich und sehr intuitiv.',en:'This tool changed how we work. Amazing and very intuitive.'},
+    author:   {pt:'Marina Costa',de:'Maria Schmidt',en:'Marina Costa'},
+    role:     {pt:'Designer, Studio Nova',de:'Designerin, Studio Nova',en:'Designer, Studio Nova'},
+    avatar:   {pt:'MC',de:'MS',en:'MC'},
+  },
+  stats: {
+    title:    {pt:'Números que falam',de:'Zahlen, die sprechen',en:'Numbers that speak'},
+    lbl1:     {pt:'Usuários',de:'Benutzer',en:'Users'},
+    lbl2:     {pt:'Satisfação',de:'Zufriedenheit',en:'Satisfaction'},
+    lbl3:     {pt:'Projetos',de:'Projekte',en:'Projects'},
+    lbl4:     {pt:'Suporte',de:'Support',en:'Support'},
+  },
+  footer: {
+    brand:    {pt:'MeuSite',de:'MeineSeite',en:'MySite'},
+    tagline:  {pt:'Feito com criatividade.',de:'Mit Kreativität gemacht.',en:'Made with creativity.'},
+    links:    {pt:['Início','Sobre','Serviços','Contato'],de:['Startseite','Über','Dienste','Kontakt'],en:['Home','About','Services','Contact']},
+    copy:     {pt:'© 2026 MeuSite.',de:'© 2026 MeineSeite.',en:'© 2026 MySite.'},
+  },
+  // Templates
+  tplLanding: {
+    badge:    {pt:'Lançamento',de:'Neu',en:'Launch'},
+    headline: {pt:'O produto que\nvocê estava esperando',de:'Das Produkt, auf das\nSie gewartet haben',en:'The product you\nwere waiting for'},
+    subtitle: {pt:'Simples de usar, poderoso por dentro.',de:'Einfach zu bedienen, leistungsstark im Inneren.',en:'Simple to use, powerful inside.'},
+    btnText:  {pt:'Experimente Grátis',de:'Kostenlos testen',en:'Try Free'},
+    featTitle:{pt:'Tudo que você precisa',de:'Alles, was Sie brauchen',en:'Everything you need'},
+    feat1:    {icon:'⚡',title:{pt:'Ultra Rápido',de:'Ultraschnell',en:'Ultra Fast'},text:{pt:'Resultados em milissegundos.',de:'Ergebnisse in Millisekunden.',en:'Results in milliseconds.'}},
+    feat2:    {icon:'🎯',title:{pt:'Preciso',de:'Präzise',en:'Precise'},text:{pt:'Algoritmos calibrados.',de:'Kalibrierte Algorithmen.',en:'Calibrated algorithms.'}},
+    feat3:    {icon:'🌍',title:{pt:'Global',de:'Global',en:'Global'},text:{pt:'Funciona em qualquer lugar.',de:'Funktioniert überall.',en:'Works anywhere.'}},
+    ctaHead:  {pt:'Pronto para decolar?',de:'Bereit zum Abheben?',en:'Ready to take off?'},
+    ctaSub:   {pt:'Milhares já começaram.',de:'Tausende haben bereits begonnen.',en:'Thousands have already started.'},
+    ctaBtn:   {pt:'Começar Agora',de:'Jetzt starten',en:'Start Now'},
+    ctaSec:   {pt:'Ver demo',de:'Demo ansehen',en:'See demo'},
+    brand:    {pt:'MeuProduto',de:'MeinProdukt',en:'MyProduct'},
+    tagline:  {pt:'Inovação que transforma.',de:'Innovation, die transformiert.',en:'Innovation that transforms.'},
+    fLinks:   {pt:['Início','Produto','Preços'],de:['Start','Produkt','Preise'],en:['Home','Product','Pricing']},
+    fCopy:    {pt:'© 2026 MeuProduto.',de:'© 2026 MeinProdukt.',en:'© 2026 MyProduct.'},
+  },
+  tplPortfolio: {
+    badge:    {pt:'Disponível para projetos',de:'Verfügbar für Projekte',en:'Available for projects'},
+    headline: {pt:'Olá, eu sou\nAna Silva',de:'Hallo, ich bin\nAnna Schmidt',en:'Hello, I am\nAna Silva'},
+    subtitle: {pt:'Designer visual.',de:'Visual Designerin.',en:'Visual designer.'},
+    btnText:  {pt:'Ver Projetos',de:'Projekte ansehen',en:'View Projects'},
+    label:    {pt:'Sobre mim',de:'Über mich',en:'About me'},
+    title:    {pt:'Criatividade com\npropósito',de:'Kreativität mit\nZweck',en:'Creativity with\npurpose'},
+    body:     {pt:'8 anos de experiência em design.',de:'8 Jahre Erfahrung im Design.',en:'8 years of design experience.'},
+    ctaHead:  {pt:'Vamos criar algo incrível?',de:'Lassen Sie uns etwas Erstaunliches schaffen?',en:'Let\'s create something amazing?'},
+    ctaSub:   {pt:'Aberta a novos projetos.',de:'Offen für neue Projekte.',en:'Open to new projects.'},
+    ctaBtn:   {pt:'Contato',de:'Kontakt',en:'Contact'},
+    brand:    {pt:'Ana Silva',de:'Anna Schmidt',en:'Ana Silva'},
+    tagline:  {pt:'Design com alma.',de:'Design mit Seele.',en:'Design with soul.'},
+    fLinks:   {pt:['Início','Projetos','Contato'],de:['Start','Projekte','Kontakt'],en:['Home','Projects','Contact']},
+    fCopy:    {pt:'© 2026 Ana Silva.',de:'© 2026 Anna Schmidt.',en:'© 2026 Ana Silva.'},
+  },
+};
+
+// ═══════════════════════════════════════════════════════════════════
 // BLOCK CATALOG
 // ═══════════════════════════════════════════════════════════════════
 const getCatalog = (lang) => [
-  { type:'hero',       label:t(DICT,'blockHero',lang),       icon:'⚡', cat:t(DICT,'catSections',lang),   preview:t(DICT,'blockHeroPrev',lang),        defaultContent:{badge:'Novidade',headline:'Crie algo\nExtraordinário',subtitle:'Uma descrição poderosa que conecta e transforma.',btnText:'Comece Agora',btnUrl:'#'}, defaultStyle:{bg:'#0f0c29',bg2:'#302b63',textColor:'#ffffff',accentColor:'#a855f7',align:'center',minHeight:520} },
-  { type:'features',   label:t(DICT,'blockFeatures',lang),   icon:'✦',  cat:t(DICT,'catSections',lang),   preview:t(DICT,'blockFeaturesPrev',lang),     defaultContent:{title:'Por que nos escolher?',items:[{icon:'🚀',title:'Rápido',text:'Performance desde o primeiro clique.'},{icon:'🎨',title:'Bonito',text:'Design pensado para cada detalhe.'},{icon:'🔒',title:'Seguro',text:'Sua privacidade é prioridade.'}]}, defaultStyle:{bg:'#ffffff',textColor:'#1a1a2e',accentColor:'#7c4dff',cardBg:'#f8f7ff'} },
-  { type:'textblock',  label:t(DICT,'blockText',lang),        icon:'¶',  cat:t(DICT,'catContent',lang),    preview:t(DICT,'blockTextPrev',lang),         defaultContent:{label:'Nossa História',title:'Feito com propósito,\nconstruído com paixão',body:'Aqui você conta sua história, missão ou conteúdo relevante.'}, defaultStyle:{bg:'#faf9ff',textColor:'#1a1a2e',accentColor:'#7c4dff',align:'left',maxWidth:680} },
+  { type:'hero',       label:t(DICT,'blockHero',lang),       icon:'⚡', cat:t(DICT,'catSections',lang),   preview:t(DICT,'blockHeroPrev',lang),        defaultContent:{badge:DC.hero.badge[lang],headline:DC.hero.headline[lang],subtitle:DC.hero.subtitle[lang],btnText:DC.hero.btnText[lang],btnUrl:'#'}, defaultStyle:{bg:'#0f0c29',bg2:'#302b63',textColor:'#ffffff',accentColor:'#a855f7',align:'center',minHeight:520} },
+  { type:'features',   label:t(DICT,'blockFeatures',lang),   icon:'✦',  cat:t(DICT,'catSections',lang),   preview:t(DICT,'blockFeaturesPrev',lang),     defaultContent:{title:DC.features.title[lang],items:[{icon:DC.features.item1.icon,title:DC.features.item1.title[lang],text:DC.features.item1.text[lang]},{icon:DC.features.item2.icon,title:DC.features.item2.title[lang],text:DC.features.item2.text[lang]},{icon:DC.features.item3.icon,title:DC.features.item3.title[lang],text:DC.features.item3.text[lang]}]}, defaultStyle:{bg:'#ffffff',textColor:'#1a1a2e',accentColor:'#7c4dff',cardBg:'#f8f7ff'} },
+  { type:'textblock',  label:t(DICT,'blockText',lang),        icon:'¶',  cat:t(DICT,'catContent',lang),    preview:t(DICT,'blockTextPrev',lang),         defaultContent:{label:DC.textblock.label[lang],title:DC.textblock.title[lang],body:DC.textblock.body[lang]}, defaultStyle:{bg:'#faf9ff',textColor:'#1a1a2e',accentColor:'#7c4dff',align:'left',maxWidth:680} },
   { type:'imagebox',   label:t(DICT,'blockImage',lang),       icon:'🖼', cat:t(DICT,'catMedia',lang),      preview:t(DICT,'blockImagePrev',lang),        defaultContent:{url:'',alt:'',caption:'',vaultId:''}, defaultStyle:{bg:'#ffffff',accentColor:'#7c4dff',radius:12,maxWidth:900} },
-  { type:'gallery',    label:t(DICT,'blockGallery',lang),     icon:'◫',  cat:t(DICT,'catMedia',lang),      preview:t(DICT,'blockGalleryPrev',lang),      defaultContent:{title:'Nossa Galeria',images:[{url:'https://picsum.photos/seed/w1/600/400',alt:'1'},{url:'https://picsum.photos/seed/w2/600/400',alt:'2'},{url:'https://picsum.photos/seed/w3/600/400',alt:'3'},{url:'https://picsum.photos/seed/w4/600/400',alt:'4'},{url:'https://picsum.photos/seed/w5/600/400',alt:'5'},{url:'https://picsum.photos/seed/w6/600/400',alt:'6'}]}, defaultStyle:{bg:'#ffffff',textColor:'#1a1a2e',accentColor:'#ff4081',columns:3,gap:12} },
-  { type:'cta',        label:t(DICT,'blockCta',lang),         icon:'▶',  cat:t(DICT,'catConversion',lang), preview:t(DICT,'blockCtaPrev',lang),          defaultContent:{headline:'Pronto para começar?',sub:'Junte-se a milhares que já começaram.',btnText:'Quero Entrar',btnUrl:'#',btnSecText:'Saiba mais'}, defaultStyle:{bg:'#7c4dff',textColor:'#ffffff',accentColor:'#ffd600',align:'center'} },
-  { type:'testimonial',label:t(DICT,'blockTestimonial',lang), icon:'❝',  cat:t(DICT,'catSocial',lang),     preview:t(DICT,'blockTestimonialPrev',lang),  defaultContent:{quote:'Esta ferramenta mudou como trabalhamos. Incrível e muito intuitivo.',author:'Marina Costa',role:'Designer, Studio Nova',avatar:'MC'}, defaultStyle:{bg:'#0f172a',textColor:'#ffffff',accentColor:'#ffd600',align:'center'} },
-  { type:'stats',      label:t(DICT,'blockStats',lang),       icon:'◎',  cat:t(DICT,'catSocial',lang),     preview:t(DICT,'blockStatsPrev',lang),        defaultContent:{title:'Números que falam',items:[{value:'10K+',label:'Usuários'},{value:'98%',label:'Satisfação'},{value:'200+',label:'Projetos'},{value:'24/7',label:'Suporte'}]}, defaultStyle:{bg:'#1a1a2e',textColor:'#ffffff',accentColor:'#00e5cc'} },
+  { type:'gallery',    label:t(DICT,'blockGallery',lang),     icon:'◫',  cat:t(DICT,'catMedia',lang),      preview:t(DICT,'blockGalleryPrev',lang),      defaultContent:{title:DC.gallery.title[lang],images:[{url:'https://picsum.photos/seed/w1/600/400',alt:'1'},{url:'https://picsum.photos/seed/w2/600/400',alt:'2'},{url:'https://picsum.photos/seed/w3/600/400',alt:'3'},{url:'https://picsum.photos/seed/w4/600/400',alt:'4'},{url:'https://picsum.photos/seed/w5/600/400',alt:'5'},{url:'https://picsum.photos/seed/w6/600/400',alt:'6'}]}, defaultStyle:{bg:'#ffffff',textColor:'#1a1a2e',accentColor:'#ff4081',columns:3,gap:12} },
+  { type:'cta',        label:t(DICT,'blockCta',lang),         icon:'▶',  cat:t(DICT,'catConversion',lang), preview:t(DICT,'blockCtaPrev',lang),          defaultContent:{headline:DC.cta.headline[lang],sub:DC.cta.sub[lang],btnText:DC.cta.btnText[lang],btnUrl:'#',btnSecText:DC.cta.btnSec[lang]}, defaultStyle:{bg:'#7c4dff',textColor:'#ffffff',accentColor:'#ffd600',align:'center'} },
+  { type:'testimonial',label:t(DICT,'blockTestimonial',lang), icon:'❝',  cat:t(DICT,'catSocial',lang),     preview:t(DICT,'blockTestimonialPrev',lang),  defaultContent:{quote:DC.testimonial.quote[lang],author:DC.testimonial.author[lang],role:DC.testimonial.role[lang],avatar:DC.testimonial.avatar[lang]}, defaultStyle:{bg:'#0f172a',textColor:'#ffffff',accentColor:'#ffd600',align:'center'} },
+  { type:'stats',      label:t(DICT,'blockStats',lang),       icon:'◎',  cat:t(DICT,'catSocial',lang),     preview:t(DICT,'blockStatsPrev',lang),        defaultContent:{title:DC.stats.title[lang],items:[{value:'10K+',label:DC.stats.lbl1[lang]},{value:'98%',label:DC.stats.lbl2[lang]},{value:'200+',label:DC.stats.lbl3[lang]},{value:'24/7',label:DC.stats.lbl4[lang]}]}, defaultStyle:{bg:'#1a1a2e',textColor:'#ffffff',accentColor:'#00e5cc'} },
   { type:'divider',    label:t(DICT,'blockDivider',lang),     icon:'—',  cat:t(DICT,'catLayout',lang),     preview:t(DICT,'blockDividerPrev',lang),      defaultContent:{}, defaultStyle:{bg:'#ffffff',color:'#7c4dff',height:60} },
-  { type:'footer',     label:t(DICT,'blockFooter',lang),      icon:'⊟',  cat:t(DICT,'catLayout',lang),     preview:t(DICT,'blockFooterPrev',lang),       defaultContent:{brand:'MeuSite',tagline:'Feito com criatividade.',links:['Início','Sobre','Serviços','Contato'],copy:'© 2026 MeuSite.'}, defaultStyle:{bg:'#0c0c14',textColor:'#e8e8f0',accentColor:'#7c4dff'} },
+  { type:'footer',     label:t(DICT,'blockFooter',lang),      icon:'⊟',  cat:t(DICT,'catLayout',lang),     preview:t(DICT,'blockFooterPrev',lang),       defaultContent:{brand:DC.footer.brand[lang],tagline:DC.footer.tagline[lang],links:DC.footer.links[lang],copy:DC.footer.copy[lang]}, defaultStyle:{bg:'#0c0c14',textColor:'#e8e8f0',accentColor:'#7c4dff'} },
 ];
 
 const getCategories = (lang) => [
@@ -220,10 +306,10 @@ const getTemplates = (lang) => [
     name: t(DICT,'tplLandingName',lang),
     desc: t(DICT,'tplLandingDesc',lang),
     blocks:[
-      {type:'hero',      content:{badge:'Lançamento',headline:'O produto que\nvocê estava esperando',subtitle:'Simples de usar, poderoso por dentro.',btnText:'Experimente Grátis',btnUrl:'#'}, style:{bg:'#0f0c29',bg2:'#302b63',textColor:'#ffffff',accentColor:'#a855f7',align:'center',minHeight:520}},
-      {type:'features',  content:{title:'Tudo que você precisa',items:[{icon:'⚡',title:'Ultra Rápido',text:'Resultados em milissegundos.'},{icon:'🎯',title:'Preciso',text:'Algoritmos calibrados.'},{icon:'🌍',title:'Global',text:'Funciona em qualquer lugar.'}]}, style:{bg:'#ffffff',textColor:'#1a1a2e',accentColor:'#7c4dff',cardBg:'#f8f7ff'}},
-      {type:'cta',       content:{headline:'Pronto para decolar?',sub:'Milhares já começaram.',btnText:'Começar Agora',btnUrl:'#',btnSecText:'Ver demo'}, style:{bg:'#7c4dff',textColor:'#ffffff',accentColor:'#ffd600',align:'center'}},
-      {type:'footer',    content:{brand:'MeuProduto',tagline:'Inovação que transforma.',links:['Início','Produto','Preços'],copy:'© 2026 MeuProduto.'}, style:{bg:'#0c0c14',textColor:'#e8e8f0',accentColor:'#7c4dff'}},
+      {type:'hero',      content:{badge:DC.tplLanding.badge[lang],headline:DC.tplLanding.headline[lang],subtitle:DC.tplLanding.subtitle[lang],btnText:DC.tplLanding.btnText[lang],btnUrl:'#'}, style:{bg:'#0f0c29',bg2:'#302b63',textColor:'#ffffff',accentColor:'#a855f7',align:'center',minHeight:520}},
+      {type:'features',  content:{title:DC.tplLanding.featTitle[lang],items:[{icon:DC.tplLanding.feat1.icon,title:DC.tplLanding.feat1.title[lang],text:DC.tplLanding.feat1.text[lang]},{icon:DC.tplLanding.feat2.icon,title:DC.tplLanding.feat2.title[lang],text:DC.tplLanding.feat2.text[lang]},{icon:DC.tplLanding.feat3.icon,title:DC.tplLanding.feat3.title[lang],text:DC.tplLanding.feat3.text[lang]}]}, style:{bg:'#ffffff',textColor:'#1a1a2e',accentColor:'#7c4dff',cardBg:'#f8f7ff'}},
+      {type:'cta',       content:{headline:DC.tplLanding.ctaHead[lang],sub:DC.tplLanding.ctaSub[lang],btnText:DC.tplLanding.ctaBtn[lang],btnUrl:'#',btnSecText:DC.tplLanding.ctaSec[lang]}, style:{bg:'#7c4dff',textColor:'#ffffff',accentColor:'#ffd600',align:'center'}},
+      {type:'footer',    content:{brand:DC.tplLanding.brand[lang],tagline:DC.tplLanding.tagline[lang],links:DC.tplLanding.fLinks[lang],copy:DC.tplLanding.fCopy[lang]}, style:{bg:'#0c0c14',textColor:'#e8e8f0',accentColor:'#7c4dff'}},
     ],
   },
   {
@@ -231,10 +317,10 @@ const getTemplates = (lang) => [
     name: t(DICT,'tplPortfolioName',lang),
     desc: t(DICT,'tplPortfolioDesc',lang),
     blocks:[
-      {type:'hero',        content:{badge:'Disponível para projetos',headline:'Olá, eu sou\nAna Silva',subtitle:'Designer visual.',btnText:'Ver Projetos',btnUrl:'#'}, style:{bg:'#0a0a0a',bg2:'#1a0533',textColor:'#ffffff',accentColor:'#ff4081',align:'center',minHeight:480}},
-      {type:'textblock',   content:{label:'Sobre mim',title:'Criatividade com\npropósito',body:'8 anos de experiência em design.'}, style:{bg:'#fafafa',textColor:'#1a1a2e',accentColor:'#ff4081',align:'left',maxWidth:680}},
-      {type:'cta',         content:{headline:'Vamos criar algo incrível?',sub:'Aberta a novos projetos.',btnText:'Contato',btnUrl:'mailto:ana@email.com',btnSecText:''}, style:{bg:'#ff4081',textColor:'#ffffff',accentColor:'#ffd600',align:'center'}},
-      {type:'footer',      content:{brand:'Ana Silva',tagline:'Design com alma.',links:['Início','Projetos','Contato'],copy:'© 2026 Ana Silva.'}, style:{bg:'#0a0a0a',textColor:'#e8e8f0',accentColor:'#ff4081'}},
+      {type:'hero',        content:{badge:DC.tplPortfolio.badge[lang],headline:DC.tplPortfolio.headline[lang],subtitle:DC.tplPortfolio.subtitle[lang],btnText:DC.tplPortfolio.btnText[lang],btnUrl:'#'}, style:{bg:'#0a0a0a',bg2:'#1a0533',textColor:'#ffffff',accentColor:'#ff4081',align:'center',minHeight:480}},
+      {type:'textblock',   content:{label:DC.tplPortfolio.label[lang],title:DC.tplPortfolio.title[lang],body:DC.tplPortfolio.body[lang]}, style:{bg:'#fafafa',textColor:'#1a1a2e',accentColor:'#ff4081',align:'left',maxWidth:680}},
+      {type:'cta',         content:{headline:DC.tplPortfolio.ctaHead[lang],sub:DC.tplPortfolio.ctaSub[lang],btnText:DC.tplPortfolio.ctaBtn[lang],btnUrl:'mailto:ana@email.com',btnSecText:''}, style:{bg:'#ff4081',textColor:'#ffffff',accentColor:'#ffd600',align:'center'}},
+      {type:'footer',      content:{brand:DC.tplPortfolio.brand[lang],tagline:DC.tplPortfolio.tagline[lang],links:DC.tplPortfolio.fLinks[lang],copy:DC.tplPortfolio.fCopy[lang]}, style:{bg:'#0a0a0a',textColor:'#e8e8f0',accentColor:'#ff4081'}},
     ],
   },
 ];
@@ -596,9 +682,14 @@ function LangSwitcher({lang,setLang}){
 let idctr=0;const uid=()=>`b${++idctr}_${Date.now()}`;
 const mkBlock=(item)=>({id:uid(),type:item.type,label:item.label,content:JSON.parse(JSON.stringify(item.defaultContent)),style:JSON.parse(JSON.stringify(item.defaultStyle))});
 
+// Detect browser language → pt/de/en
+const detectLang=()=>{const nav=(navigator.language||'').toLowerCase();if(nav.startsWith('de'))return'de';if(nav.startsWith('en'))return'en';return'pt';};
+const META_TITLE={pt:'Minha Página',de:'Meine Seite',en:'My Page'};
+
 function App(){
-  const[lang,setLang]=useState('pt');
-  const[blocks,setBlocks]=useState(()=>{const CATALOG=getCatalog('pt');return[mkBlock(CATALOG[0])];});
+  const initLang=detectLang();
+  const[lang,setLang]=useState(initLang);
+  const[blocks,setBlocks]=useState(()=>{const CATALOG=getCatalog(initLang);return[mkBlock(CATALOG[0])];});
   const[selId,setSelId]=useState(null);
   const[cat,setCat]=useState(null);
   const[preview,setPreview]=useState(false);
@@ -606,7 +697,7 @@ function App(){
   const[showExport,setShowExport]=useState(false);
   const[showTpl,setShowTpl]=useState(false);
   const[showLedger,setShowLedger]=useState(false);
-  const[meta,setMeta]=useState({title:'Minha Página',description:''});
+  const[meta,setMeta]=useState({title:META_TITLE[initLang],description:''});
 
   const CATALOG=getCatalog(lang);
   const CATS=getCategories(lang);
