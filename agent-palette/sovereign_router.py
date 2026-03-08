@@ -498,20 +498,44 @@ def parse_render_request(message: str, request_data: dict, intent: Intent) -> di
 # ═══════════════════════════════════════════════════════════════
 
 PT_MARKERS = frozenset([
+    # Verbos e expressões comuns
     'pode', 'criar', 'gerar', 'como', 'preciso', 'quero', 'fazer',
     'ajuda', 'documento', 'obrigado', 'por', 'favor', 'bom',
     'dia', 'boa', 'tarde', 'noite', 'verificar', 'mostrar', 'listar',
     'qual', 'quais', 'quando', 'onde', 'porque', 'sistema', 'estado',
     'selar', 'selo', 'recibo', 'risco', 'governanca', 'relatorio',
+    # Liga IA+H Fase 2: Tipos de documento PT
+    'fatura', 'carta', 'contrato', 'oficio', 'ata', 'memorando',
+    'declaracao', 'licenca', 'certidao', 'procuracao', 'requerimento',
+    'comunicado', 'convite', 'parecer', 'laudo', 'orcamento',
+    # Conectores e preposições PT
+    'para', 'com', 'sobre', 'desde', 'entre', 'ate', 'pela', 'pelo',
+    'uma', 'uns', 'umas', 'este', 'esta', 'esse', 'essa', 'isso',
+    'meu', 'minha', 'seu', 'sua', 'nosso', 'nossa', 'dele', 'dela',
+    # Saudações e expressões PT
+    'ola', 'oi', 'tudo', 'bem', 'certo', 'entao', 'agora', 'depois',
+    'antes', 'sempre', 'nunca', 'muito', 'pouco', 'mais', 'menos',
 ])
 
 DE_MARKERS = frozenset([
+    # Verben und Ausdrücke
     'kann', 'kannst', 'erstellen', 'bitte', 'hilfe', 'dokument', 'wie',
     'brauche', 'mochte', 'machen', 'danke', 'guten', 'morgen',
     'tag', 'abend', 'zeigen', 'prufen', 'status', 'welche',
     'wann', 'warum', 'konnen', 'soll', 'bericht', 'uberprufen',
     'versiegeln', 'siegel', 'quittung', 'risiko', 'governance',
     'nicht', 'auch', 'noch', 'oder', 'aber', 'schon',
+    # Liga IA+H Fase 2: Dokumenttypen DE
+    'rechnung', 'brief', 'vertrag', 'bescheid', 'protokoll', 'memo',
+    'erklarung', 'genehmigung', 'zeugnis', 'vollmacht', 'antrag',
+    'mitteilung', 'einladung', 'gutachten', 'angebot', 'kostenvoranschlag',
+    # Konnektoren und Präpositionen DE
+    'fur', 'mit', 'uber', 'seit', 'zwischen', 'bis', 'durch', 'gegen',
+    'eine', 'einer', 'eines', 'dieser', 'diese', 'dieses', 'jener',
+    'mein', 'meine', 'dein', 'deine', 'sein', 'seine', 'ihr', 'ihre',
+    # Grüße und Ausdrücke DE
+    'hallo', 'servus', 'alles', 'klar', 'genau', 'also', 'jetzt', 'spater',
+    'vorher', 'immer', 'nie', 'viel', 'wenig', 'mehr', 'weniger',
 ])
 
 

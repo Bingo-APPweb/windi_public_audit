@@ -1117,6 +1117,8 @@ def handle_dragon_chat(body):
     intent_mode = body.get("intentMode", "chat")
     language = body.get("language", "de")
     history = body.get("history", [])
+    # Liga IA+H Fase 2: Document type context
+    doc_type = body.get("doc_type")  # e.g., "letter", "memo", "contract"
 
     if not message:
         return {"error": "Empty message"}, 400
@@ -1187,11 +1189,25 @@ def handle_dragon_chat(body):
                     }
                 }, 200
 
-    # Detect language if not specified
+    # Liga IA+H Fase 2: Smart language detection
+    # Priority: 1) Explicit language param, 2) Message detection, 3) DocType hint, 4) Default
     if HAS_SOVEREIGN_ROUTER:
         detected_lang = detect_language(message)
-        if language == "de" and detected_lang != "de":
+        # DocType hints for German documents
+        DE_DOC_TYPES = {"rechnung", "bescheid", "brief", "genehmigung", "zeugnis", "protokoll"}
+        # DocType hints for Portuguese documents
+        PT_DOC_TYPES = {"fatura", "carta", "oficio", "certidao", "procuracao", "declaracao"}
+
+        if detected_lang != "en":
+            # User message has clear language markers
             language = detected_lang
+        elif doc_type and doc_type.lower() in DE_DOC_TYPES:
+            # DocType suggests German
+            language = "de"
+        elif doc_type and doc_type.lower() in PT_DOC_TYPES:
+            # DocType suggests Portuguese
+            language = "pt"
+        # Otherwise keep the passed language or default
 
     # ═══════════════════════════════════════════════════════════════
     # SOVEREIGN ROUTING (I10: Continuidade) + MEMORY ON THE EDGE
