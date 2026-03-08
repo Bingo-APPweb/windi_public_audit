@@ -4556,22 +4556,20 @@ function App(){
                         <button onClick={async()=>{
                           setGroveLoading(true);
                           setGroveActiveAgents(groveSelectedAgents);
-                          setGroveMsgs(p=>[...p,{role:'system',content:`${groveSelectedAgents.length} agentes entraram no debate: ${groveSelectedAgents.map(a=>a.replace("W-","").replace("-001","")).join(", ")}`,ts:new Date().toISOString()}]);
-                          // Call debate endpoint
+                          setGroveMsgs(p=>[...p,{role:'system',content:`${groveSelectedAgents.length} agentes entraram na arena: ${groveSelectedAgents.map(a=>a.replace("W-","").replace("-001","")).join(", ")}`,ts:new Date().toISOString()}]);
+                          // Call ARENA endpoint (new real debate engine)
                           try{
-                            const res=await fetch('/grove/debate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({idea_id:groveSession.root_node_id,user_response:groveMsgs[0]?.content||'',confirm_agents:groveSelectedAgents})});
+                            const topic=groveSession.title||groveMsgs[0]?.content||'Ideia sem título';
+                            const res=await fetch('/grove/arena',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({topic:topic,agents:groveSelectedAgents,session_id:groveSession.session_id,round:1})});
                             const data=await res.json();
-                            // Fetch graph to get agent responses
-                            const graphRes=await fetch(`/grove/ideas/${groveSession.session_id}/graph`);
-                            const graph=await graphRes.json();
-                            // Add agent messages
-                            (graph.nodes||[]).filter(n=>n.agent_source).forEach(n=>{
-                              setGroveMsgs(p=>[...p,{role:'agent',agent_id:n.agent_source,content:n.content,ts:n.created_at}]);
+                            // Add each agent response as chat message
+                            (data.responses||[]).forEach(r=>{
+                              setGroveMsgs(p=>[...p,{role:'agent',agent_id:r.agent,name:r.name,emoji:r.emoji,content:r.message,ts:r.ts,node_id:r.node_id}]);
                             });
-                          }catch(e){setGroveMsgs(p=>[...p,{role:'system',content:"⚠️ Erro: "+e.message,ts:new Date().toISOString()}]);}
+                          }catch(e){setGroveMsgs(p=>[...p,{role:'system',content:"⚠️ Arena erro: "+e.message,ts:new Date().toISOString()}]);}
                           setGroveLoading(false);
                         }} disabled={groveLoading} style={{marginTop:8,padding:"6px 14px",borderRadius:6,background:`linear-gradient(135deg,#2d5a27,#4a8c3f)`,border:"none",color:"#FFF",fontSize:10,fontWeight:700,cursor:"pointer"}}>
-                          {groveLoading?"⏳":"🗣️"} {lang==="pt"?"Iniciar Debate":lang==="de"?"Debatte starten":"Start Debate"} ({groveSelectedAgents.length})
+                          {groveLoading?"⏳":"🏟️"} {lang==="pt"?"Iniciar Arena":lang==="de"?"Arena starten":"Start Arena"} ({groveSelectedAgents.length})
                         </button>
                       )}
                     </div>
@@ -4590,12 +4588,12 @@ function App(){
                           </div>
                         ):(
                           <div style={{maxWidth:"85%",display:"flex",gap:8}}>
-                            <div style={{width:28,height:28,borderRadius:"50%",background:`linear-gradient(135deg,${th.gold},${th.border})`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,flexShrink:0}}>
-                              {({"W-LEGAL-001":"⚖️","W-NOTARY-001":"📜","W-COMPLY-001":"✅","W-COMM-001":"📝","W-JOURN-001":"📰","W-AUDIT-001":"🔍","W-ACCT-001":"💰"})[m.agent_id]||"🤖"}
+                            <div style={{width:28,height:28,borderRadius:"50%",background:`linear-gradient(135deg,${th.gold},${th.border})`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,flexShrink:0}}>
+                              {m.emoji||({"W-LEGAL-001":"⚖️","W-NOTARY-001":"📜","W-COMPLY-001":"🛡️","W-COMM-001":"📰","W-JOURN-001":"✒️","W-AUDIT-001":"🔍","W-ACCT-001":"📊"})[m.agent_id]||"🤖"}
                             </div>
                             <div style={{background:th.bg,border:`1px solid ${th.border}`,padding:"8px 12px",borderRadius:"2px 12px 12px 12px",fontSize:12}}>
-                              <div style={{fontSize:9,fontWeight:700,color:th.gold,marginBottom:4}}>{m.agent_id?.replace("W-","").replace("-001","")}</div>
-                              <div style={{lineHeight:1.5}}>{m.content}</div>
+                              <div style={{fontSize:9,fontWeight:700,color:th.gold,marginBottom:4}}>{m.name||m.agent_id?.replace("W-","").replace("-001","")}</div>
+                              <div style={{lineHeight:1.5,whiteSpace:"pre-wrap"}}>{m.content}</div>
                               <div style={{fontSize:8,color:th.dim,marginTop:4}}>{new Date(m.ts).toLocaleTimeString()}</div>
                             </div>
                           </div>
@@ -4611,17 +4609,15 @@ function App(){
                       <input value={groveInput} onChange={e=>setGroveInput(e.target.value)} onKeyDown={async(e)=>{
                         if(e.key==='Enter'&&groveInput.trim()&&!groveLoading){
                           const msg=groveInput.trim();
+                          const round=groveMsgs.filter(m=>m.role==='user').length+1;
                           setGroveInput("");
                           setGroveMsgs(p=>[...p,{role:'user',content:msg,ts:new Date().toISOString()}]);
                           setGroveLoading(true);
                           try{
-                            const res=await fetch('/grove/debate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({idea_id:groveSession.root_node_id,user_response:msg,confirm_agents:groveActiveAgents})});
+                            const res=await fetch('/grove/arena',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({topic:msg,agents:groveActiveAgents,session_id:groveSession.session_id,round:round})});
                             const data=await res.json();
-                            const graphRes=await fetch(`/grove/ideas/${groveSession.session_id}/graph`);
-                            const graph=await graphRes.json();
-                            const existingIds=new Set(groveMsgs.filter(m=>m.node_id).map(m=>m.node_id));
-                            (graph.nodes||[]).filter(n=>n.agent_source&&!existingIds.has(n.id)).forEach(n=>{
-                              setGroveMsgs(p=>[...p,{role:'agent',agent_id:n.agent_source,content:n.content,ts:n.created_at,node_id:n.id}]);
+                            (data.responses||[]).forEach(r=>{
+                              setGroveMsgs(p=>[...p,{role:'agent',agent_id:r.agent,name:r.name,emoji:r.emoji,content:r.message,ts:r.ts,node_id:r.node_id}]);
                             });
                           }catch(e){setGroveMsgs(p=>[...p,{role:'system',content:"⚠️ "+e.message,ts:new Date().toISOString()}]);}
                           setGroveLoading(false);
@@ -4630,16 +4626,15 @@ function App(){
                       <button onClick={async()=>{
                         if(!groveInput.trim()||groveLoading)return;
                         const msg=groveInput.trim();
+                        const round=groveMsgs.filter(m=>m.role==='user').length+1;
                         setGroveInput("");
                         setGroveMsgs(p=>[...p,{role:'user',content:msg,ts:new Date().toISOString()}]);
                         setGroveLoading(true);
                         try{
-                          const res=await fetch('/grove/debate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({idea_id:groveSession.root_node_id,user_response:msg,confirm_agents:groveActiveAgents})});
-                          const graphRes=await fetch(`/grove/ideas/${groveSession.session_id}/graph`);
-                          const graph=await graphRes.json();
-                          const existingIds=new Set(groveMsgs.filter(m=>m.node_id).map(m=>m.node_id));
-                          (graph.nodes||[]).filter(n=>n.agent_source&&!existingIds.has(n.id)).forEach(n=>{
-                            setGroveMsgs(p=>[...p,{role:'agent',agent_id:n.agent_source,content:n.content,ts:n.created_at,node_id:n.id}]);
+                          const res=await fetch('/grove/arena',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({topic:msg,agents:groveActiveAgents,session_id:groveSession.session_id,round:round})});
+                          const data=await res.json();
+                          (data.responses||[]).forEach(r=>{
+                            setGroveMsgs(p=>[...p,{role:'agent',agent_id:r.agent,name:r.name,emoji:r.emoji,content:r.message,ts:r.ts,node_id:r.node_id}]);
                           });
                         }catch(e){setGroveMsgs(p=>[...p,{role:'system',content:"⚠️ "+e.message,ts:new Date().toISOString()}]);}
                         setGroveLoading(false);
