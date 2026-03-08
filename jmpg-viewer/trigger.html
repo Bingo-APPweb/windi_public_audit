@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JMPG Trigger Viewer — WINDI</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700&family=JetBrains+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* NOIR Theme (default) */
+      --bg: #08080a;
+      --surface: #0f0f12;
+      --surface-2: #18181b;
+      --border: #27272a;
+      --text: #e4e4e7;
+      --text-dim: #a1a1aa;
+      --text-dimmer: #71717a;
+      --gold: #c4940f;
+      --gold-dim: #8a6a0a;
+      --green: #22c55e;
+      --green-bg: rgba(34, 197, 94, 0.1);
+      --red: #ef4444;
+      --red-bg: rgba(239, 68, 68, 0.1);
+      --blue: #3b82f6;
+    }
+    .klar {
+      --bg: #f8f7f5;
+      --surface: #ffffff;
+      --surface-2: #f4f4f5;
+      --border: #e4e4e7;
+      --text: #18181b;
+      --text-dim: #52525b;
+      --text-dimmer: #a1a1aa;
+      --gold: #8a6a0a;
+      --gold-dim: #c4940f;
+      --green-bg: rgba(34, 197, 94, 0.15);
+      --red-bg: rgba(239, 68, 68, 0.15);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Outfit', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      transition: background 0.3s, color 0.3s;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 24px 16px;
+    }
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 24px;
+    }
+    .logo {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo-icon { font-size: 24px; }
+    .theme-toggle {
+      display: flex;
+      background: var(--surface-2);
+      border-radius: 8px;
+      padding: 4px;
+      gap: 2px;
+    }
+    .theme-btn {
+      padding: 8px 16px;
+      border: none;
+      background: transparent;
+      color: var(--text-dim);
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .theme-btn.active {
+      background: var(--gold);
+      color: #000;
+    }
+    /* Drop Zone */
+    .drop-zone {
+      border: 2px dashed var(--border);
+      border-radius: 16px;
+      padding: 48px 24px;
+      text-align: center;
+      background: var(--surface);
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    .drop-zone:hover, .drop-zone.dragover {
+      border-color: var(--gold);
+      background: var(--surface-2);
+    }
+    .drop-zone.dragover {
+      transform: scale(1.01);
+    }
+    .drop-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+      opacity: 0.8;
+    }
+    .drop-title {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .drop-subtitle {
+      color: var(--text-dim);
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+    .drop-subtitle.dimmer { color: var(--text-dimmer); font-size: 13px; }
+    .drop-subtitle.dimmest { color: var(--text-dimmer); opacity: 0.6; font-size: 12px; }
+    .drop-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 12px 24px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn:hover {
+      border-color: var(--gold);
+      background: var(--surface);
+    }
+    .btn-gold {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: #000;
+    }
+    .btn-gold:hover {
+      background: var(--gold-dim);
+    }
+    input[type="file"] { display: none; }
+    .url-input {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .url-input input {
+      flex: 1;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      background: var(--surface-2);
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      border-radius: 8px;
+      outline: none;
+    }
+    .url-input input:focus {
+      border-color: var(--gold);
+    }
+    .url-input input::placeholder {
+      color: var(--text-dimmer);
+    }
+    /* Results Dashboard */
+    .dashboard { display: none; }
+    .dashboard.visible { display: block; }
+    /* Seal Status */
+    .seal-status {
+      padding: 24px;
+      border-radius: 12px;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .seal-status.valid {
+      background: var(--green-bg);
+      border: 1px solid var(--green);
+    }
+    .seal-status.invalid {
+      background: var(--red-bg);
+      border: 1px solid var(--red);
+    }
+    .seal-icon { font-size: 48px; margin-bottom: 12px; }
+    .seal-text {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 24px;
+      font-weight: 700;
+    }
+    .seal-status.valid .seal-text { color: var(--green); }
+    .seal-status.invalid .seal-text { color: var(--red); }
+    .seal-computed {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 8px;
+      word-break: break-all;
+    }
+    /* Header Table */
+    .info-table {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    .info-row {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      border-bottom: 1px solid var(--border);
+    }
+    .info-row:last-child { border-bottom: none; }
+    .info-label {
+      padding: 12px 16px;
+      background: var(--surface-2);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .info-value {
+      padding: 12px 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      word-break: break-all;
+    }
+    .info-value .flags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .flag-badge {
+      padding: 2px 8px;
+      background: var(--gold);
+      color: #000;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 500;
+    }
+    /* Manifest Panel */
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    .panel-header {
+      padding: 16px 20px;
+      background: var(--surface-2);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+    .panel-title {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .panel-toggle {
+      font-size: 18px;
+      transition: transform 0.3s;
+    }
+    .panel.collapsed .panel-toggle { transform: rotate(-90deg); }
+    .panel.collapsed .panel-content { display: none; }
+    .panel-content {
+      padding: 16px 20px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .json-view {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+    .json-key { color: var(--text-dim); }
+    .json-string { color: var(--green); }
+    .json-number { color: var(--blue); }
+    .json-bool { color: var(--gold); }
+    .json-null { color: var(--text-dimmer); }
+    /* Actions */
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    /* Ledger Result */
+    .ledger-result {
+      padding: 16px 20px;
+      border-radius: 8px;
+      margin-top: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      display: none;
+    }
+    .ledger-result.visible { display: block; }
+    .ledger-result.success {
+      background: var(--green-bg);
+      border: 1px solid var(--green);
+    }
+    .ledger-result.error {
+      background: var(--red-bg);
+      border: 1px solid var(--red);
+    }
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      padding: 12px 24px;
+      background: var(--gold);
+      color: #000;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      opacity: 0;
+      transition: all 0.3s;
+      z-index: 1000;
+    }
+    .toast.visible {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+    /* Loading */
+    .loading {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid var(--border);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    /* Responsive */
+    @media (max-width: 600px) {
+      .container { padding: 16px 12px; }
+      header { flex-direction: column; gap: 12px; padding: 12px 16px; }
+      .logo { font-size: 18px; }
+      .drop-zone { padding: 32px 16px; }
+      .drop-icon { font-size: 48px; }
+      .drop-title { font-size: 20px; }
+      .info-row { grid-template-columns: 100px 1fr; }
+      .info-label, .info-value { padding: 10px 12px; font-size: 11px; }
+      .seal-text { font-size: 20px; }
+      .actions { flex-direction: column; }
+      .btn { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">
+        <span class="logo-icon">📡</span>
+        <span>JMPG Trigger Viewer</span>
+      </div>
+      <div class="theme-toggle">
+        <button class="theme-btn active" data-theme="noir">NOIR</button>
+        <button class="theme-btn" data-theme="klar">KLAR</button>
+      </div>
+    </header>
+
+    <!-- Drop Zone -->
+    <div class="drop-zone" id="dropZone">
+      <div class="drop-icon">📡</div>
+      <div class="drop-title">JMPG Trigger Viewer v1.0</div>
+      <div class="drop-subtitle">Drop a .jmpg file to verify its sovereign seal</div>
+      <div class="drop-subtitle dimmer">Ziehe eine .jmpg-Datei hierher, um das Siegel zu prüfen</div>
+      <div class="drop-subtitle dimmest">Arrasta um ficheiro .jmpg para verificar o selo soberano</div>
+      <div class="drop-actions">
+        <button class="btn" onclick="document.getElementById('fileInput').click()">
+          📁 Choose file
+        </button>
+        <input type="file" id="fileInput" accept=".jmpg">
+      </div>
+      <div class="url-input">
+        <input type="text" id="urlInput" placeholder="Paste trigger URL...">
+        <button class="btn btn-gold" onclick="fetchFromUrl()">Fetch</button>
+      </div>
+    </div>
+
+    <!-- Dashboard (hidden initially) -->
+    <div class="dashboard" id="dashboard">
+      <!-- Seal Status -->
+      <div class="seal-status" id="sealStatus">
+        <div class="seal-icon" id="sealIcon">✅</div>
+        <div class="seal-text" id="sealText">SEAL VALID</div>
+        <div class="seal-computed" id="sealComputed"></div>
+      </div>
+
+      <!-- Info Table -->
+      <div class="info-table" id="infoTable">
+        <div class="info-row">
+          <div class="info-label">MAGIC</div>
+          <div class="info-value" id="valMagic">—</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">VERSION</div>
+          <div class="info-value" id="valVersion">—</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">FLAGS</div>
+          <div class="info-value"><div class="flags" id="valFlags"></div></div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">CODEC</div>
+          <div class="info-value" id="valCodec">—</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">DURATION</div>
+          <div class="info-value" id="valDuration">—</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">DID_HASH</div>
+          <div class="info-value" id="valDidHash">—</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">MANIFEST</div>
+          <div class="info-value" id="valManifestSize">—</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">CONTENT</div>
+          <div class="info-value" id="valContentSize">—</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">SEAL</div>
+          <div class="info-value" id="valSeal">—</div>
+        </div>
+        <div class="info-row">
+          <div class="info-label">TOTAL SIZE</div>
+          <div class="info-value" id="valTotalSize">—</div>
+        </div>
+      </div>
+
+      <!-- Manifest Panel -->
+      <div class="panel" id="manifestPanel">
+        <div class="panel-header" onclick="togglePanel('manifestPanel')">
+          <div class="panel-title">📜 Manifest</div>
+          <div class="panel-toggle">▼</div>
+        </div>
+        <div class="panel-content">
+          <div class="json-view" id="manifestJson"></div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="actions">
+        <button class="btn btn-gold" onclick="verifyOnLedger()">
+          <span id="ledgerBtnText">🔍 Verify on Ledger</span>
+        </button>
+        <button class="btn" onclick="copySeal()">📋 Copy Seal</button>
+        <button class="btn" onclick="downloadOriginal()">📥 Download Original</button>
+        <button class="btn" onclick="shareUrl()">🔗 Share URL</button>
+        <button class="btn" onclick="resetViewer()">🔄 New File</button>
+      </div>
+
+      <!-- Ledger Result -->
+      <div class="ledger-result" id="ledgerResult"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // State
+    let currentParsed = null;
+    let currentArrayBuffer = null;
+    let currentFileName = 'trigger.jmpg';
+
+    // Theme Toggle
+    document.querySelectorAll('.theme-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        if (btn.dataset.theme === 'klar') {
+          document.body.classList.add('klar');
+        } else {
+          document.body.classList.remove('klar');
+        }
+      });
+    });
+
+    // Panel Toggle
+    function togglePanel(id) {
+      document.getElementById(id).classList.toggle('collapsed');
+    }
+
+    // Toast
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('visible');
+      setTimeout(() => toast.classList.remove('visible'), 2500);
+    }
+
+    // Drag & Drop
+    const dropZone = document.getElementById('dropZone');
+
+    dropZone.addEventListener('dragover', e => {
+      e.preventDefault();
+      dropZone.classList.add('dragover');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.classList.remove('dragover');
+    });
+
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+      const file = e.dataTransfer.files[0];
+      if (file) processFile(file);
+    });
+
+    // File Input
+    document.getElementById('fileInput').addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (file) processFile(file);
+    });
+
+    // Fetch from URL
+    async function fetchFromUrl() {
+      const url = document.getElementById('urlInput').value.trim();
+      if (!url) return;
+
+      try {
+        showToast('Fetching...');
+        const resp = await fetch(url);
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const buffer = await resp.arrayBuffer();
+        currentFileName = url.split('/').pop() || 'trigger.jmpg';
+        await processArrayBuffer(buffer);
+      } catch (e) {
+        showToast('Fetch failed: ' + e.message);
+      }
+    }
+
+    // Process File
+    function processFile(file) {
+      currentFileName = file.name;
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        await processArrayBuffer(e.target.result);
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    // Parse JMPG Binary
+    function parseJMPG(arrayBuffer) {
+      const view = new DataView(arrayBuffer);
+      let offset = 0;
+
+      // Check minimum size
+      if (arrayBuffer.byteLength < 81) {
+        return { valid: false, error: 'File too small (min 81 bytes)' };
+      }
+
+      // MAGIC (4B) — must be "JMPG"
+      const magic = String.fromCharCode(
+        view.getUint8(0), view.getUint8(1), view.getUint8(2), view.getUint8(3)
+      );
+      if (magic !== 'JMPG') return { valid: false, error: 'Invalid MAGIC: ' + magic };
+      offset = 4;
+
+      // VERSION (2B LE)
+      const version = view.getUint16(offset, true);
+      const versionMajor = (version >> 8) & 0xFF;
+      const versionMinor = version & 0xFF;
+      const versionStr = versionMajor + '.' + versionMinor;
+      offset += 2;
+
+      // FLAGS (2B LE)
+      const flags = view.getUint16(offset, true);
+      offset += 2;
+      const flagNames = [];
+      if (flags & 0x01) flagNames.push('VIDEO');
+      if (flags & 0x02) flagNames.push('AUDIO');
+      if (flags & 0x04) flagNames.push('TEXT');
+      if (flags & 0x08) flagNames.push('SEAL');
+      if (flags & 0x10) flagNames.push('ENCRYPTED');
+      if (flags & 0x20) flagNames.push('CHAPTERS');
+      if (flags & 0x40) flagNames.push('PREMIUM');
+
+      // CODEC_ID (1B)
+      const codecId = view.getUint8(offset);
+      offset += 1;
+      const codecMap = { 1: 'H.264', 2: 'AV1', 3: 'VP9' };
+      const codecName = codecMap[codecId] || 'Unknown (' + codecId + ')';
+
+      // DURATION (4B LE)
+      const durationMs = view.getUint32(offset, true);
+      offset += 4;
+
+      // DID_HASH (32B)
+      const didHashBytes = new Uint8Array(arrayBuffer, offset, 32);
+      const didHash = Array.from(didHashBytes).map(b => b.toString(16).padStart(2, '0')).join('');
+      offset += 32;
+
+      // MANIFEST_LEN (4B LE)
+      const manifestLen = view.getUint32(offset, true);
+      offset += 4;
+
+      // MANIFEST (var, zlib compressed)
+      let manifest = {};
+      let manifestError = null;
+      if (manifestLen > 0 && offset + manifestLen <= arrayBuffer.byteLength - 36) {
+        const manifestCompressed = new Uint8Array(arrayBuffer, offset, manifestLen);
+        try {
+          const manifestJson = pako.inflate(manifestCompressed, { to: 'string' });
+          manifest = JSON.parse(manifestJson);
+        } catch (e) {
+          manifestError = 'Decompression failed: ' + e.message;
+          manifest = { error: manifestError };
+        }
+        offset += manifestLen;
+      }
+
+      // CONTENT_LEN (4B LE)
+      const contentLen = view.getUint32(offset, true);
+      offset += 4;
+      const contentStart = offset;
+      offset += contentLen;
+
+      // SEAL (32B) — last 32 bytes of file
+      const sealOffset = offset;
+      const sealBytes = new Uint8Array(arrayBuffer, sealOffset, 32);
+      const sealHex = Array.from(sealBytes).map(b => b.toString(16).padStart(2, '0')).join('');
+
+      // Body = everything before SEAL
+      const body = new Uint8Array(arrayBuffer, 0, sealOffset);
+
+      return {
+        valid: true,
+        magic,
+        version: versionStr,
+        versionRaw: version,
+        flags,
+        flagNames,
+        codecId,
+        codecName,
+        durationMs,
+        durationS: (durationMs / 1000).toFixed(1),
+        didHash,
+        manifestLen,
+        manifest,
+        manifestError,
+        contentLen,
+        contentStart,
+        sealHex,
+        sealOffset,
+        body,
+        arrayBuffer,
+        totalSize: arrayBuffer.byteLength
+      };
+    }
+
+    // Verify Seal with crypto.subtle
+    async function verifySeal(parsed) {
+      const hashBuffer = await crypto.subtle.digest('SHA-256', parsed.body);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const computedSeal = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      return {
+        valid: computedSeal === parsed.sealHex,
+        computed: computedSeal,
+        stored: parsed.sealHex
+      };
+    }
+
+    // Process ArrayBuffer
+    async function processArrayBuffer(arrayBuffer) {
+      currentArrayBuffer = arrayBuffer;
+      const parsed = parseJMPG(arrayBuffer);
+
+      if (!parsed.valid) {
+        showToast('Parse error: ' + parsed.error);
+        return;
+      }
+
+      currentParsed = parsed;
+      const sealResult = await verifySeal(parsed);
+
+      // Show dashboard
+      document.getElementById('dropZone').style.display = 'none';
+      document.getElementById('dashboard').classList.add('visible');
+
+      // Update Seal Status
+      const sealStatus = document.getElementById('sealStatus');
+      const sealIcon = document.getElementById('sealIcon');
+      const sealText = document.getElementById('sealText');
+      const sealComputed = document.getElementById('sealComputed');
+
+      if (sealResult.valid) {
+        sealStatus.className = 'seal-status valid';
+        sealIcon.textContent = '✅';
+        sealText.textContent = 'SEAL VALID';
+        sealComputed.textContent = 'SHA-256: ' + sealResult.computed;
+      } else {
+        sealStatus.className = 'seal-status invalid';
+        sealIcon.textContent = '❌';
+        sealText.textContent = 'SEAL TAMPERED';
+        sealComputed.innerHTML =
+          'Stored: ' + sealResult.stored + '<br>' +
+          'Computed: ' + sealResult.computed;
+      }
+
+      // Update Info Table
+      document.getElementById('valMagic').textContent = parsed.magic;
+      document.getElementById('valVersion').textContent = parsed.version;
+
+      const flagsDiv = document.getElementById('valFlags');
+      flagsDiv.innerHTML = '';
+      parsed.flagNames.forEach(f => {
+        const badge = document.createElement('span');
+        badge.className = 'flag-badge';
+        badge.textContent = f;
+        flagsDiv.appendChild(badge);
+      });
+
+      document.getElementById('valCodec').textContent = parsed.codecName;
+      document.getElementById('valDuration').textContent = parsed.durationS + 's (' + parsed.durationMs + ' ms)';
+      document.getElementById('valDidHash').textContent = parsed.didHash.substring(0, 32) + '...';
+      document.getElementById('valManifestSize').textContent = parsed.manifestLen + ' bytes (compressed)';
+      document.getElementById('valContentSize').textContent = parsed.contentLen + ' bytes';
+      document.getElementById('valSeal').textContent = parsed.sealHex;
+
+      const kb = (parsed.totalSize / 1024).toFixed(2);
+      document.getElementById('valTotalSize').textContent = parsed.totalSize + ' bytes (' + kb + ' KB)';
+
+      // Update Manifest JSON
+      document.getElementById('manifestJson').innerHTML = syntaxHighlight(parsed.manifest);
+    }
+
+    // JSON Syntax Highlighting
+    function syntaxHighlight(obj) {
+      const json = JSON.stringify(obj, null, 2);
+      return json.replace(/(".*?")(:)?|(\d+\.?\d*)|true|false|null/g, (match, str, colon, num) => {
+        if (str) {
+          if (colon) {
+            return '<span class="json-key">' + str + '</span>:';
+          }
+          return '<span class="json-string">' + str + '</span>';
+        }
+        if (num) return '<span class="json-number">' + num + '</span>';
+        if (match === 'true' || match === 'false') return '<span class="json-bool">' + match + '</span>';
+        if (match === 'null') return '<span class="json-null">' + match + '</span>';
+        return match;
+      });
+    }
+
+    // Actions
+    async function verifyOnLedger() {
+      if (!currentParsed) return;
+
+      const btn = document.getElementById('ledgerBtnText');
+      btn.innerHTML = '<span class="loading"></span> Verifying...';
+
+      const result = document.getElementById('ledgerResult');
+      result.classList.remove('visible', 'success', 'error');
+
+      try {
+        const resp = await fetch('/export/api/trigger/' + currentParsed.sealHex + '/verify');
+        const data = await resp.json();
+
+        result.classList.add('visible');
+        if (data.valid) {
+          result.classList.add('success');
+          result.innerHTML = '✅ <strong>Ledger Verification OK</strong><br>' +
+            'Package verified on Export Engine<br>' +
+            'Seal: ' + (data.seal || currentParsed.sealHex).substring(0, 32) + '...';
+        } else {
+          result.classList.add('error');
+          result.innerHTML = '⚠️ <strong>Not found on Ledger</strong><br>' +
+            (data.error || 'Trigger not registered or different seal');
+        }
+      } catch (e) {
+        result.classList.add('visible', 'error');
+        result.innerHTML = '❌ <strong>Connection failed</strong><br>' + e.message;
+      }
+
+      btn.textContent = '🔍 Verify on Ledger';
+    }
+
+    function copySeal() {
+      if (!currentParsed) return;
+      navigator.clipboard.writeText(currentParsed.sealHex);
+      showToast('Seal copied to clipboard');
+    }
+
+    function downloadOriginal() {
+      if (!currentArrayBuffer) return;
+      const blob = new Blob([currentArrayBuffer], { type: 'application/octet-stream' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = currentFileName;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('Download started');
+    }
+
+    function shareUrl() {
+      if (!currentParsed) return;
+      const url = window.location.origin + window.location.pathname + '?seal=' + currentParsed.sealHex;
+      navigator.clipboard.writeText(url);
+      showToast('Verification URL copied');
+    }
+
+    function resetViewer() {
+      currentParsed = null;
+      currentArrayBuffer = null;
+      document.getElementById('dropZone').style.display = 'block';
+      document.getElementById('dashboard').classList.remove('visible');
+      document.getElementById('ledgerResult').classList.remove('visible');
+      document.getElementById('fileInput').value = '';
+      document.getElementById('urlInput').value = '';
+    }
+
+    // Check URL params on load
+    window.addEventListener('load', () => {
+      const params = new URLSearchParams(window.location.search);
+      const seal = params.get('seal');
+      if (seal) {
+        document.getElementById('urlInput').value = '/export/api/trigger/' + seal.substring(0, 24) + '/verify';
+        // Could auto-fetch here
+      }
+    });
+  </script>
+</body>
+</html>

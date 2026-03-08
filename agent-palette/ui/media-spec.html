@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>WINDI Media Infrastructure Spec — v1.0.0</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js"></script>
+<style>
+:root {
+  --bg:#F5F0E0; --card:#FDFBF5; --hover:#EDE8D8; --border:#DDD6C2;
+  --gold:#8B6914; --text:#2C2924; --dim:#6B6560; --success:#4A7C59;
+  --warning:#B8860B; --danger:#A94442; --sealed:#1B4332; --forensic:#2A6B4A;
+  --blue:#5B8DEF; --purple:#7C5BEF; --orange:#EF8B5B;
+}
+[data-theme="noir"] {
+  --bg:#0E0E14; --card:#16161F; --hover:#1C1C28; --border:#26263A;
+  --gold:#D4A843; --text:#E2E2EA; --dim:#7A7A96; --success:#5A9C69;
+  --warning:#D4A843; --danger:#CF6679; --sealed:#1B4332; --forensic:#2A6B4A;
+  --blue:#5B8DEF; --purple:#7C5BEF; --orange:#EF8B5B;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family:'Bricolage Grotesque',sans-serif;
+  background:var(--bg); color:var(--text);
+  line-height:1.6; transition:all 0.3s;
+}
+code, .mono { font-family:'JetBrains Mono',monospace; }
+.spec-header {
+  background:var(--card); border-bottom:1px solid var(--border);
+  padding:24px 32px; display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+}
+.spec-header h1 { font-size:20px; font-weight:800; color:var(--gold); letter-spacing:1px; flex:1; }
+.spec-header .subtitle { font-size:11px; color:var(--dim); font-style:italic; }
+.spec-header .controls { display:flex; gap:6px; align-items:center; }
+.spec-header .controls button {
+  padding:4px 12px; border-radius:6px; font-size:10px; font-weight:700;
+  cursor:pointer; border:1px solid var(--border); background:var(--card); color:var(--dim);
+  font-family:inherit; transition:all 0.2s;
+}
+.spec-header .controls button.active { background:color-mix(in srgb, var(--gold) 15%, transparent); border-color:var(--gold); color:var(--gold); }
+.theme-toggle { background:none!important; border:none!important; font-size:16px!important; cursor:pointer; }
+.spec-nav {
+  display:flex; gap:4px; padding:16px 32px; flex-wrap:wrap;
+  border-bottom:1px solid var(--border); background:var(--card);
+}
+.spec-nav button {
+  padding:10px 18px; border-radius:10px; font-size:12px; font-weight:600;
+  cursor:pointer; display:flex; align-items:center; gap:6px;
+  background:var(--card); border:1.5px solid var(--border); color:var(--dim);
+  font-family:inherit; transition:all 0.2s;
+}
+.spec-nav button.active { background:color-mix(in srgb, var(--gold) 12%, transparent); border-color:var(--gold); color:var(--gold); }
+.spec-nav button:hover { border-color:var(--gold); }
+.content { padding:24px 32px 60px; max-width:1200px; margin:0 auto; }
+.section { display:none; }
+.section.active { display:block; }
+.card {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:16px; padding:24px; margin-bottom:20px;
+}
+.card h2 { font-size:18px; font-weight:800; margin-bottom:16px; display:flex; align-items:center; gap:10px; }
+.card h3 { font-size:14px; font-weight:700; margin:16px 0 10px; color:var(--gold); }
+.card p { font-size:13px; line-height:1.7; margin-bottom:12px; }
+.mermaid-container {
+  background:var(--hover); border:1px solid var(--border);
+  border-radius:12px; padding:20px; margin:16px 0; overflow-x:auto;
+}
+.mermaid { text-align:center; }
+.mermaid-caption {
+  font-size:11px; color:var(--dim); text-align:center;
+  margin-top:8px; font-style:italic;
+}
+.spec-table { width:100%; border-collapse:collapse; margin:16px 0; font-size:12px; }
+.spec-table th {
+  background:var(--hover); padding:10px 14px; text-align:left;
+  font-weight:700; border-bottom:2px solid var(--border); font-size:11px;
+  color:var(--dim); text-transform:uppercase; letter-spacing:0.5px;
+}
+.spec-table td { padding:10px 14px; border-bottom:1px solid var(--border); vertical-align:top; }
+.spec-table tr:hover td { background:var(--hover); }
+.spec-table .highlight { background:color-mix(in srgb, var(--gold) 8%, transparent); }
+.spec-table .gold { color:var(--gold); font-weight:700; }
+.spec-table .success { color:var(--success); }
+.spec-table .danger { color:var(--danger); }
+.spec-table .mono { font-size:11px; }
+.tier-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:16px; margin:20px 0; }
+.tier-card {
+  background:var(--card); border:1.5px solid var(--border);
+  border-radius:14px; padding:20px; transition:all 0.3s;
+}
+.tier-card:hover { border-color:var(--gold); transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,0,0,0.08); }
+.tier-card .tier-icon { font-size:28px; margin-bottom:8px; }
+.tier-card .tier-name { font-size:16px; font-weight:800; margin-bottom:4px; }
+.tier-card .tier-price { font-size:22px; font-weight:800; color:var(--gold); margin-bottom:12px; }
+.tier-card .tier-price span { font-size:12px; font-weight:400; color:var(--dim); }
+.tier-card ul { list-style:none; padding:0; }
+.tier-card ul li { font-size:11px; padding:4px 0; display:flex; align-items:flex-start; gap:6px; }
+.tier-card ul li::before { content:"✓"; color:var(--success); font-weight:700; flex-shrink:0; }
+.tier-featured { border-color:var(--gold)!important; background:color-mix(in srgb, var(--gold) 5%, var(--card)); }
+.stat-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:12px; margin:16px 0; }
+.stat-card {
+  background:var(--hover); border-radius:12px; padding:16px; text-align:center;
+  border:1px solid var(--border);
+}
+.stat-card .stat-value { font-size:28px; font-weight:800; color:var(--gold); }
+.stat-card .stat-label { font-size:10px; color:var(--dim); margin-top:4px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; }
+.sealed-box {
+  background:color-mix(in srgb, var(--sealed) 94%, white);
+  border:1.5px solid var(--forensic); border-radius:14px;
+  padding:20px; color:#E8F5E9; margin:20px 0;
+}
+.sealed-box h3 { color:#81C784; margin-bottom:8px; font-size:14px; }
+.sealed-box p { color:#A5D6A7; font-size:12px; }
+.sealed-box .mono { color:#81C784; }
+.flow-step {
+  display:flex; align-items:center; gap:12px; padding:12px 16px;
+  border-radius:10px; margin:6px 0; transition:all 0.2s;
+  border:1px solid transparent;
+}
+.flow-step:hover { background:var(--hover); border-color:var(--border); }
+.flow-step .step-num {
+  width:32px; height:32px; border-radius:50%; display:flex;
+  align-items:center; justify-content:center; font-size:12px;
+  font-weight:800; flex-shrink:0;
+}
+.flow-step .step-content h4 { font-size:13px; font-weight:700; }
+.flow-step .step-content p { font-size:11px; color:var(--dim); margin:0; }
+.badge {
+  display:inline-block; padding:3px 10px; border-radius:6px;
+  font-size:9px; font-weight:700; letter-spacing:0.5px;
+}
+.badge-gold { background:color-mix(in srgb, var(--gold) 15%, transparent); color:var(--gold); border:1px solid color-mix(in srgb, var(--gold) 30%, transparent); }
+.badge-green { background:color-mix(in srgb, var(--success) 15%, transparent); color:var(--success); border:1px solid color-mix(in srgb, var(--success) 30%, transparent); }
+.badge-blue { background:color-mix(in srgb, var(--blue) 15%, transparent); color:var(--blue); border:1px solid color-mix(in srgb, var(--blue) 30%, transparent); }
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+.three-col { display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; }
+@media (max-width:768px) { .two-col, .three-col { grid-template-columns:1fr; } }
+.spec-footer {
+  text-align:center; padding:30px 32px; border-top:1px solid var(--border);
+  font-size:11px; color:var(--dim);
+}
+.spec-footer a { color:var(--gold); text-decoration:none; }
+.continuum-bar {
+  display:flex; height:56px; border-radius:12px; overflow:hidden;
+  border:2px solid var(--gold); margin:20px 0;
+}
+.continuum-segment {
+  display:flex; align-items:center; justify-content:center;
+  font-size:11px; font-weight:700; color:#fff; transition:all 0.3s;
+}
+.continuum-onboard { background:var(--success); flex:1; }
+.continuum-handoff { background:var(--warning); flex:0.3; font-size:9px; }
+.continuum-stream { background:var(--blue); flex:2; }
+.bar-chart { display:flex; align-items:flex-end; gap:12px; height:200px; padding:20px 0; }
+.bar-item { flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; }
+.bar-fill { width:100%; border-radius:8px 8px 0 0; transition:height 0.6s ease; min-height:4px; }
+.bar-label { font-size:9px; color:var(--dim); font-weight:600; text-align:center; }
+.bar-value { font-size:11px; font-weight:700; color:var(--gold); font-family:'JetBrains Mono',monospace; }
+.margin-bar {
+  height:24px; border-radius:6px; display:flex; overflow:hidden; margin:8px 0;
+  border:1px solid var(--border);
+}
+.margin-cost { background:var(--danger); display:flex; align-items:center; justify-content:center; font-size:9px; color:#fff; font-weight:700; }
+.margin-profit { background:var(--success); display:flex; align-items:center; justify-content:center; font-size:9px; color:#fff; font-weight:700; }
+@media print {
+  .spec-header .controls, .spec-nav, .theme-toggle { display:none; }
+  .section { display:block!important; page-break-inside:avoid; }
+  body { background:#fff; color:#000; }
+}
+</style>
+</head>
+<body>
+<header class="spec-header">
+  <div>
+    <h1>📡 WINDI MEDIA INFRASTRUCTURE SPEC</h1>
+    <div class="subtitle">v1.0.0 · .jmpg Continuum · Sovereign Streaming Network · Vault-as-a-Service</div>
+  </div>
+  <div class="controls">
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">☀</button>
+    <button class="active" onclick="setLang('en',this)">EN</button>
+    <button onclick="setLang('de',this)">DE</button>
+    <button onclick="setLang('pt',this)">PT</button>
+  </div>
+</header>
+<nav class="spec-nav">
+  <button class="active" onclick="showSection('overview',this)">📋 Overview</button>
+  <button onclick="showSection('continuum',this)">🎬 Continuum Protocol</button>
+  <button onclick="showSection('broadcast',this)">📡 Broadcasting Architecture</button>
+  <button onclick="showSection('transport',this)">🌐 Transport Matrix</button>
+  <button onclick="showSection('vaas',this)">🗄️ Vault-as-a-Service</button>
+  <button onclick="showSection('pricing',this)">💰 Pricing & Revenue</button>
+  <button onclick="showSection('projections',this)">📊 Financial Projections</button>
+</nav>
+<div class="content">
+<div id="overview" class="section active">
+  <div class="card">
+    <h2>📋 WINDI Media Infrastructure — Executive Summary</h2>
+    <p>A sovereign media distribution protocol that transforms any creator with a €4/month server into an independent broadcaster. Built on the .jmpg container format with the Continuum Protocol for seamless offline-to-streaming transitions.</p>
+    <div class="sealed-box">
+      <h3>🐉 Core Principle</h3>
+      <p>"I produce. My server stores. The .jmpg transports. Any channel distributes. Sovereignty is mine."</p>
+      <p class="mono" style="margin-top:8px; font-size:10px;">Eu produzo. Meu servidor armazena. O .jmpg transporta. Qualquer canal distribui. A soberania é minha.</p>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-value">€4</div><div class="stat-label">Min. Infrastructure / Month</div></div>
+      <div class="stat-card"><div class="stat-value">€0</div><div class="stat-label">Distribution Cost</div></div>
+      <div class="stat-card"><div class="stat-value">100%</div><div class="stat-label">Creator Sovereignty</div></div>
+      <div class="stat-card"><div class="stat-value">75%+</div><div class="stat-label">Profit Margin</div></div>
+      <div class="stat-card"><div class="stat-value">93.3%</div><div class="stat-label">EU Data Sovereignty</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>🏗️ Three Revenue Layers</h2>
+    <div class="mermaid-container">
+      <pre class="mermaid">
+graph TB
+  subgraph L1["LAYER 1 — SOFTWARE"]
+    A1[Palette / Editor / SGE]
+    A2[Ledger / Seal / DID]
+    A3["FREE → PRO → Enterprise"]
+  end
+  subgraph L2["LAYER 2 — PROTOCOL"]
+    B1[".jmpg Continuum Format"]
+    B2["Sovereign Streaming"]
+    B3["Media Tiers + Pay-As-You-Go"]
+  end
+  subgraph L3["LAYER 3 — INFRASTRUCTURE"]
+    C1["Vault-as-a-Service (VaaS)"]
+    C2["Managed Server Hosting"]
+    C3["SEED → GROW → FOREST → MOUNTAIN"]
+  end
+  L1 --> L2
+  L2 --> L3
+  style L1 fill:#4A7C59,stroke:#2A6B4A,color:#fff
+  style L2 fill:#8B6914,stroke:#6B5010,color:#fff
+  style L3 fill:#5B8DEF,stroke:#3A6BCF,color:#fff
+      </pre>
+      <div class="mermaid-caption">Fig 1 — Three-layer revenue architecture: Software → Protocol → Infrastructure</div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>⚡ The Inversion Model</h2>
+    <div class="two-col">
+      <div>
+        <h3>❌ Current Model (YouTube/Netflix)</h3>
+        <div class="mermaid-container">
+          <pre class="mermaid">
+graph LR
+  CR[Creator] --> PL[Platform]
+  PL --> AU[Audience]
+  PL -->|Controls| ALG[Algorithm]
+  PL -->|Takes| REV["45% Revenue"]
+  PL -->|Owns| DATA[User Data]
+  style PL fill:#A94442,stroke:#8B3636,color:#fff
+          </pre>
+        </div>
+        <p style="font-size:11px; color:var(--danger);">Platform controls algorithm, monetization, data, and distribution.</p>
+      </div>
+      <div>
+        <h3>✅ WINDI Model (.jmpg Continuum)</h3>
+        <div class="mermaid-container">
+          <pre class="mermaid">
+graph LR
+  CR[Creator] --> VLT[Own Vault]
+  VLT --> JMPG[".jmpg"]
+  JMPG --> WA[WhatsApp]
+  JMPG --> EM[Email]
+  JMPG --> WEB[Web]
+  JMPG --> TG[Telegram]
+  CR -->|Keeps| REV["100% Revenue"]
+  CR -->|Owns| DATA[All Data]
+  style CR fill:#4A7C59,stroke:#2A6B4A,color:#fff
+  style VLT fill:#8B6914,stroke:#6B5010,color:#fff
+          </pre>
+        </div>
+        <p style="font-size:11px; color:var(--success);">Creator controls everything. Channel is "dumb" — just a transport tube.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="continuum" class="section">
+  <div class="card">
+    <h2>🎬 The Continuum Protocol — Solid-to-Fluid Transition</h2>
+    <p>A world-first protocol where content begins as a solid embedded clip inside the .jmpg container and seamlessly transitions to a live stream. The viewer never perceives the handoff. Zero latency on start. Zero dependency on initial connectivity.</p>
+    <div class="sealed-box">
+      <h3>💡 The Innovation</h3>
+      <p>"The document breathes. Born on paper, lives in the stream. Governance covers both."</p>
+      <p class="mono" style="margin-top:6px; font-size:10px;">O documento respira. Nasce no papel, vive no stream. A governança é contínua.</p>
+    </div>
+    <h3>Continuum Timeline</h3>
+    <div class="continuum-bar">
+      <div class="continuum-onboard" style="flex:1; background:var(--success); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700; font-size:11px;">📦 ONBOARD [0-30s]<br><span style="font-size:9px; font-weight:400;">Embedded · Offline-capable</span></div>
+      <div class="continuum-handoff" style="flex:0.3; background:var(--warning); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700; font-size:9px;">🔗<br>HANDOFF</div>
+      <div class="continuum-stream" style="flex:2; background:var(--blue); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700; font-size:11px;">📡 STREAM [30s → ∞]<br><span style="font-size:9px; font-weight:400;">From Vault/CDN · DID-verified</span></div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>🔄 Handoff Decision Tree</h2>
+    <div class="mermaid-container">
+      <pre class="mermaid">
+flowchart TD
+  A["Viewer opens .jmpg"] --> B["Onboard clip plays (0-30s)"]
+  B --> C{"Second 28: Handoff Check"}
+  C -->|DID verified + Active subscription| D["✅ Stream continues seamless (30s → ∞)"]
+  C -->|DID verified + FREE tier| E["⏳ 60s preview → Soft paywall"]
+  C -->|DID not recognized| F["🔒 30s end → Subscribe CTA"]
+  C -->|No internet connection| G["🔄 Loop 30s / Static frame + Reconnect prompt"]
+  D --> H["Full content · Analytics · DID-locked"]
+  E --> I["Upsell moment · Tier upgrade path"]
+  F --> J["Onboarding · DID creation · Trial offer"]
+  G --> K["Offline experience preserved · Never breaks"]
+  style D fill:#4A7C59,stroke:#2A6B4A,color:#fff
+  style E fill:#B8860B,stroke:#8B6914,color:#fff
+  style F fill:#5B8DEF,stroke:#3A6BCF,color:#fff
+  style G fill:#6B6560,stroke:#4A4540,color:#fff
+      </pre>
+      <div class="mermaid-caption">Fig 2 — Continuum Handoff Decision Tree: tier-based stream authorization</div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>📦 .jmpg Continuum Container Structure</h2>
+    <div class="mermaid-container">
+      <pre class="mermaid">
+block-beta
+  columns 1
+  block:container["📦 .jmpg CONTINUUM CONTAINER"]
+    columns 2
+    A["📋 Header + Seal + DIDs"] B["🔐 Encryption Layer"]
+    C["✏️ Text Layers (article)"] D["🖼️ Image Thumbnails"]
+    E["🎬 Video Onboard\n[0-30s, ~8MB, H.264]"] F["📡 Stream Manifest:\n· stream_url\n· handoff_at: 30s\n· did_auth: required\n· segments_hash[]\n· expiry / fallback"]
+    G["📱 QR Verification"] H["✅ Integrity Check"]
+  end
+  style container fill:#FDFBF5,stroke:#8B6914,color:#2C2924
+      </pre>
+      <div class="mermaid-caption">Fig 3 — Internal structure of a .jmpg Continuum container with onboard video + stream manifest</div>
+    </div>
+    <h3>Stream Manifest Specification</h3>
+    <div style="background:var(--hover); border-radius:10px; padding:16px; font-size:12px; border:1px solid var(--border);">
+<pre class="mono" style="font-size:11px; line-height:1.8; color:var(--text);">{
+  "manifest_version": "1.0.0",
+  "stream_url": "https://vault.creator.com/media/video-{uuid}/master.m3u8",
+  "handoff_at": 30,
+  "onboard_codec": "H.264/AAC",
+  "onboard_size_bytes": 8388608,
+  "stream_protocol": "HLS",
+  "adaptive_bitrates": ["360p", "720p", "1080p"],
+  "did_auth": "required",
+  "tier_required": "subscriber",
+  "segments_hash": ["sha256:7a3f...", "sha256:c8e2..."],
+  "expiry": null,
+  "fallback": "loop_onboard",
+  "temporal_sovereignty": {
+    "max_views": null,
+    "auto_destruct": false,
+    "read_receipt_hash": true
+  }
+}</pre>
+    </div>
+  </div>
+  <div class="card">
+    <h2>📏 Size Classes (Updated)</h2>
+    <table class="spec-table">
+      <thead><tr><th>Class</th><th>Range</th><th>Use Case</th><th>Transport</th></tr></thead>
+      <tbody>
+        <tr><td class="gold">MICRO</td><td class="mono">&lt; 64KB</td><td>Text-only docs, notes</td><td>SMS, QR, Bluetooth</td></tr>
+        <tr><td class="gold">STANDARD</td><td class="mono">64KB — 512KB</td><td>Communiqués, reports</td><td>Any channel</td></tr>
+        <tr><td class="gold">MEDIA</td><td class="mono">512KB — 5MB</td><td>Image-heavy portfolios</td><td>Email, WhatsApp, Web</td></tr>
+        <tr class="highlight"><td class="gold">CONTINUUM ✨</td><td class="mono">5MB — 50MB</td><td>Onboard video + stream manifest</td><td>WhatsApp, Telegram, Web</td></tr>
+        <tr><td class="gold">ARCHIVE</td><td class="mono">50MB+</td><td>Full video embedded</td><td>Web download, USB</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div id="broadcast" class="section">
+  <div class="card">
+    <h2>📡 Production-to-Distribution Pipeline</h2>
+    <div class="mermaid-container">
+      <pre class="mermaid">
+flowchart LR
+  subgraph PRODUCTION["🎬 PRODUCTION"]
+    A[Creator records video] --> B[Upload to Vault :8106]
+  end
+  subgraph PROCESSING["⚙️ VAULT PROCESSING"]
+    B --> C[Transcode → HLS segments]
+    C --> D["SHA-256 per segment"]
+    D --> E[Thumbnail extraction]
+  end
+  subgraph TRIGGER["📦 JMPG TRIGGER"]
+    E --> F[Capture first 30s]
+    F --> G[Generate stream manifest]
+    G --> H["Package .jmpg Continuum"]
+    H --> I["Seal via Ledger :8101"]
+  end
+  subgraph DISTRIBUTION["🌐 DISTRIBUTION"]
+    I --> J[WhatsApp]
+    I --> K[Email]
+    I --> L[Telegram]
+    I --> M[Web/QR]
+    I --> N[RSS Feed]
+    I --> O[Bluetooth/NFC]
+  end
+  style PRODUCTION fill:#4A7C59,stroke:#2A6B4A,color:#fff
+  style PROCESSING fill:#8B6914,stroke:#6B5010,color:#fff
+  style TRIGGER fill:#5B8DEF,stroke:#3A6BCF,color:#fff
+  style DISTRIBUTION fill:#7C5BEF,stroke:#5C3BCF,color:#fff
+      </pre>
+      <div class="mermaid-caption">Fig 4 — End-to-end production pipeline: Record → Process → Trigger → Distribute</div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>🏗️ Sovereign Streaming Network (SSN)</h2>
+    <div class="mermaid-container">
+      <pre class="mermaid">
+graph TB
+  subgraph CREATOR_A["🎬 Creator A (Berlin)"]
+    VA[Vault A] --> LA[Ledger A]
+    VA --> JA[JMPG Trigger A]
+  end
+  subgraph CREATOR_B["🎬 Creator B (São Paulo)"]
+    VB[Vault B] --> LB[Ledger B]
+    VB --> JB[JMPG Trigger B]
+  end
+  subgraph CREATOR_C["🎬 Creator C (Lisboa)"]
+    VC[Vault C] --> LC[Ledger C]
+    VC --> JC[JMPG Trigger C]
+  end
+  JA --> AGG
+  JB --> AGG
+  JC --> AGG
+  subgraph AGG["📰 AGGREGATOR (Pott)"]
+    CUR["Curator selects best .jmpg"]
+    CUR --> FEED["Thematic Feed"]
+    CUR --> APP["Channel / App"]
+  end
+  FEED --> DIST["📱 Distribution: Combined Networks\nCreator A: 50K + B: 80K + C: 30K\n= 160K direct reach"]
+  APP --> DIST
+  style CREATOR_A fill:#4A7C59,stroke:#2A6B4A,color:#fff
+  style CREATOR_B fill:#8B6914,stroke:#6B5010,color:#fff
+  style CREATOR_C fill:#5B8DEF,stroke:#3A6BCF,color:#fff
+  style AGG fill:#7C5BEF,stroke:#5C3BCF,color:#fff
+      </pre>
+      <div class="mermaid-caption">Fig 5 — Federated Sovereign Streaming Network: each creator maintains their Vault, aggregator curates</div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>🔄 The Pott Model — Federated Creator Networks</h2>
+    <div class="mermaid-container">
+      <pre class="mermaid">
+flowchart TB
+  subgraph POTT["🫕 POTT ECOSYSTEM"]
+    direction TB
+    CR1["🧑‍🍳 Creator 1\nSEED Vault\n€15/mo"] -->|produces .jmpg| POOL
+    CR2["🎓 Creator 2\nSEED Vault\n€15/mo"] -->|produces .jmpg| POOL
+    CR3["🎵 Creator 3\nSEED Vault\n€15/mo"] -->|produces .jmpg| POOL
+    CR4["📰 Creator 4\nSEED Vault\n€15/mo"] -->|produces .jmpg| POOL
+    POOL["📦 Content Pool"] --> CURATOR["👁️ Curator / Aggregator\nGROW Vault · €35/mo"]
+    CURATOR --> WEEKLY["📰 Weekly Feed"]
+    CURATOR --> CHANNEL["📺 Thematic Channel"]
+    WEEKLY --> SUB["👥 Subscribers\nDID-verified · Tier-gated"]
+    CHANNEL --> SUB
+  end
+  subgraph REVENUE["💰 REVENUE SPLIT"]
+    direction TB
+    R1["Creator: 85%"]
+    R2["Aggregator: 15% curation fee"]
+    R3["WINDI: VaaS subscription"]
+  end
+  style POTT fill:#FDFBF5,stroke:#8B6914
+  style REVENUE fill:#4A7C59,stroke:#2A6B4A,color:#fff
+      </pre>
+      <div class="mermaid-caption">Fig 6 — Pott Model: creators federate under a curator, revenue split 85/15, WINDI earns infrastructure fees</div>
+    </div>
+    <h3>Pott Scenarios</h3>
+    <table class="spec-table">
+      <thead><tr><th>Pott Type</th><th>Creators</th><th>Content</th><th>Total Infra Cost</th><th>Combined Reach</th></tr></thead>
+      <tbody>
+        <tr><td>🧑‍🍳 Cooking Collective</td><td>5 chefs</td><td>Recipe videos + articles</td><td class="mono">5 × €15 = €75/mo</td><td>160K contacts</td></tr>
+        <tr><td>📰 Indie Journalism</td><td>5 journalists</td><td>Investigative video reports</td><td class="mono">5 × €15 = €75/mo</td><td>200K contacts</td></tr>
+        <tr><td>🎓 Distributed University</td><td>10 professors</td><td>Lectures + courses</td><td class="mono">10 × €15 = €150/mo</td><td>50K students</td></tr>
+        <tr><td>🎵 Indie Music Label</td><td>8 artists</td><td>Singles + live sessions</td><td class="mono">8 × €15 = €120/mo</td><td>300K fans</td></tr>
+        <tr><td>🏘️ Local Community</td><td>20 businesses</td><td>Promos + events + menus</td><td class="mono">20 × €15 = €300/mo</td><td>40K locals</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <h2>📺 Viewer Playback Architecture</h2>
+    <div class="mermaid-container">
+      <pre class="mermaid">
+sequenceDiagram
+  participant V as 📱 Viewer
+  participant J as 📦 .jmpg Container
+  participant P as ▶️ Player Engine
+  participant AUTH as 🔐 DID Auth
+  participant VLT as 🗄️ Creator Vault
+  V->>J: Open .jmpg file
+  J->>P: Load onboard clip [30s]
+  P->>V: ▶️ Instant playback (0 latency)
+  Note over P,AUTH: Background: Pre-buffer during onboard
+  P->>AUTH: Verify viewer DID
+  AUTH->>AUTH: Check tier (FREE/PRO/Enterprise)
+  AUTH->>VLT: Request stream authorization
+  VLT->>AUTH: ✅ Authorized (tier: subscriber)
+  P->>VLT: Fetch HLS segments (from second 28)
+  VLT->>P: Stream segments + integrity hashes
+  Note over P: Second 30: Seamless handoff
+  P->>V: ▶️ Continuous playback (no interruption)
+  P->>VLT: Continue fetching segments
+  Note over V,VLT: Viewer never perceives the transition
+      </pre>
+      <div class="mermaid-caption">Fig 7 — Sequence diagram: viewer experience from .jmpg open to continuous stream</div>
+    </div>
+  </div>
+</div>
+<div id="transport" class="section">
+  <div class="card">
+    <h2>🌐 Channel-Agnostic Transport Matrix</h2>
+    <p>The .jmpg container treats every distribution channel as a "dumb pipe." All intelligence — seal, encryption, DID-lock, integrity — lives in the container, not the channel.</p>
+    <table class="spec-table">
+      <thead><tr><th>Channel</th><th>Limit</th><th>MICRO</th><th>STANDARD</th><th>CONTINUUM</th><th>Cost</th><th>DID-Lock</th></tr></thead>
+      <tbody>
+        <tr><td>🌐 Browser (download)</td><td class="mono">Unlimited</td><td class="success">✅</td><td class="success">✅</td><td class="success">✅</td><td class="gold">€0</td><td class="success">✅</td></tr>
+        <tr><td>📱 WhatsApp (document)</td><td class="mono">100MB</td><td class="success">✅</td><td class="success">✅</td><td class="success">✅ (~228)</td><td class="gold">€0</td><td class="success">✅</td></tr>
+        <tr><td>✈️ Telegram (document)</td><td class="mono">2GB</td><td class="success">✅</td><td class="success">✅</td><td class="success">✅ (~4,500)</td><td class="gold">€0</td><td class="success">✅</td></tr>
+        <tr><td>📧 Email (attachment)</td><td class="mono">25MB</td><td class="success">✅</td><td class="success">✅</td><td class="success">✅ (~5)</td><td class="gold">€0</td><td class="success">✅</td></tr>
+        <tr><td>📶 Bluetooth/NFC</td><td class="mono">~10MB</td><td class="success">✅</td><td class="success">✅</td><td class="success">✅ (1-2)</td><td class="gold">€0</td><td class="success">✅</td></tr>
+        <tr><td>📱 QR Code (deep link)</td><td class="mono">URL ref</td><td class="success">✅ ref</td><td class="success">✅ ref</td><td class="success">✅ ref</td><td class="gold">€0</td><td class="success">✅</td></tr>
+        <tr><td>💬 SMS/MMS</td><td class="mono">600KB</td><td class="success">✅</td><td class="success">✅ (1)</td><td class="danger">❌ too large</td><td>~€0.02</td><td class="success">✅</td></tr>
+        <tr><td>💾 USB/SD offline</td><td class="mono">GB+</td><td class="success">✅</td><td class="success">✅</td><td class="success">✅ (thousands)</td><td class="gold">€0</td><td class="success">✅</td></tr>
+        <tr><td>📡 RSS/Atom Feed</td><td class="mono">URL ref</td><td class="success">✅ ref</td><td class="success">✅ ref</td><td class="success">✅ ref</td><td class="gold">€0</td><td class="success">✅</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <h2>📰 Jornal do Futuro — Multimedia Edition</h2>
+    <table class="spec-table">
+      <thead><tr><th>Format</th><th>Size (18 articles)</th><th>Distribution Cost</th><th>Sovereignty</th><th>Fits in WhatsApp?</th></tr></thead>
+      <tbody>
+        <tr><td>Text-only (MICRO)</td><td class="mono">~720KB</td><td class="gold">€0</td><td class="success">✅ Total</td><td class="success">✅</td></tr>
+        <tr><td>Text + thumbnails (STANDARD)</td><td class="mono">~7.7MB</td><td class="gold">€0</td><td class="success">✅ Total</td><td class="success">✅</td></tr>
+        <tr><td>Text + video clips 30s (CONTINUUM)</td><td class="mono">~90MB</td><td class="gold">€0</td><td class="success">✅ Total</td><td class="success">✅ (via Telegram)</td></tr>
+        <tr><td>Text + stream refs (STANDARD)</td><td class="mono">~800KB</td><td class="gold">€0</td><td class="success">✅ Total</td><td class="success">✅</td></tr>
+      </tbody>
+    </table>
+    <div class="sealed-box" style="margin-top:16px;">
+      <p>A complete multimedia newspaper — sealed, verifiable, DID-locked — distributed via WhatsApp for <span class="mono" style="font-weight:700;">€0</span>.</p>
+    </div>
+  </div>
+  <div class="card">
+    <h2>🔀 Transport Agnosticism Diagram</h2>
+    <div class="mermaid-container">
+      <pre class="mermaid">
+graph TB
+  JMPG["📦 Same .jmpg file"]
+  JMPG --> CH1["📱 WhatsApp"]
+  JMPG --> CH2["📧 Email"]
+  JMPG --> CH3["✈️ Telegram"]
+  JMPG --> CH4["🌐 Web Download"]
+  JMPG --> CH5["📱 QR Scan"]
+  JMPG --> CH6["📶 Bluetooth"]
+  CH1 --> VER["✅ Same seal\n✅ Same DID-lock\n✅ Same integrity\n✅ Same verification"]
+  CH2 --> VER
+  CH3 --> VER
+  CH4 --> VER
+  CH5 --> VER
+  CH6 --> VER
+  style JMPG fill:#8B6914,stroke:#6B5010,color:#fff
+  style VER fill:#4A7C59,stroke:#2A6B4A,color:#fff
+      </pre>
+      <div class="mermaid-caption">Fig 8 — Transport Agnosticism: same container, same verification, any channel</div>
+    </div>
+  </div>
+</div>
+<div id="vaas" class="section">
+  <div class="card">
+    <h2>🗄️ Vault-as-a-Service (VaaS) — Server Services</h2>
+    <p>Most creators don't want to manage servers. VaaS provides fully managed sovereign infrastructure where creators only need to upload content and distribute. Zero technical skill required.</p>
+    <div class="mermaid-container">
+      <pre class="mermaid">
+flowchart LR
+  subgraph SELF["Option A: Self-Hosted"]
+    S1["Creator installs Vault"] --> S2["Manages server"]
+    S2 --> S3["€4-8/mo direct to host"]
+    S3 --> S4["Requires Linux skills"]
+  end
+  subgraph VAAS["Option B: VaaS (Managed)"]
+    V1["Creator signs up"] --> V2["WINDI provisions everything"]
+    V2 --> V3["€15-499/mo to WINDI"]
+    V3 --> V4["Zero technical skill needed"]
+  end
+  style SELF fill:#6B6560,stroke:#4A4540,color:#fff
+  style VAAS fill:#4A7C59,stroke:#2A6B4A,color:#fff
+      </pre>
+      <div class="mermaid-caption">Fig 9 — Self-hosted vs VaaS: same sovereignty, different operational burden</div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>📦 VaaS Tier Packages</h2>
+    <div class="tier-grid">
+      <div class="tier-card">
+        <div class="tier-icon">🌱</div>
+        <div class="tier-name">SEED</div>
+        <div class="tier-price">€15 <span>/month</span></div>
+        <span class="badge badge-green">Individual Creator</span>
+        <ul style="margin-top:12px;">
+          <li>1 Vault managed</li>
+          <li>25GB storage</li>
+          <li>500GB bandwidth/mo</li>
+          <li>JMPG Trigger automatic</li>
+          <li>Seal + Ledger included</li>
+          <li>SSL + subdomain</li>
+          <li>Weekly backup</li>
+        </ul>
+        <div class="margin-bar" style="margin-top:12px;">
+          <div class="margin-cost" style="width:53%">Cost €8</div>
+          <div class="margin-profit" style="width:47%">Profit €7</div>
+        </div>
+        <div style="font-size:9px; color:var(--dim); text-align:center; margin-top:4px;">47% margin</div>
+      </div>
+      <div class="tier-card tier-featured">
+        <div class="tier-icon">🌿</div>
+        <div class="tier-name">GROW</div>
+        <div class="tier-price">€35 <span>/month</span></div>
+        <span class="badge badge-gold">Professional / Small Pott</span>
+        <ul style="margin-top:12px;">
+          <li>1 Vault + custom domain</li>
+          <li>100GB storage</li>
+          <li>2TB bandwidth/mo</li>
+          <li>Analytics dashboard</li>
+          <li>Tier detection</li>
+          <li>Pott: aggregate up to 5 creators</li>
+          <li>Daily backup</li>
+        </ul>
+        <div class="margin-bar" style="margin-top:12px;">
+          <div class="margin-cost" style="width:34%">Cost €12</div>
+          <div class="margin-profit" style="width:66%">Profit €23</div>
+        </div>
+        <div style="font-size:9px; color:var(--dim); text-align:center; margin-top:4px;">66% margin</div>
+      </div>
+      <div class="tier-card">
+        <div class="tier-icon">🌳</div>
+        <div class="tier-name">FOREST</div>
+        <div class="tier-price">€99 <span>/month</span></div>
+        <span class="badge badge-blue">Creator Network / Organization</span>
+        <ul style="margin-top:12px;">
+          <li>Multi-Vault federated (up to 10)</li>
+          <li>500GB storage</li>
+          <li>10TB bandwidth/mo</li>
+          <li>White-label complete</li>
+          <li>Forensic Ledger</li>
+          <li>Unlimited Pott aggregation</li>
+          <li>EU CDN included</li>
+        </ul>
+        <div class="margin-bar" style="margin-top:12px;">
+          <div class="margin-cost" style="width:30%">Cost €30</div>
+          <div class="margin-profit" style="width:70%">Profit €69</div>
+        </div>
+        <div style="font-size:9px; color:var(--dim); text-align:center; margin-top:4px;">70% margin</div>
+      </div>
+      <div class="tier-card">
+        <div class="tier-icon">🏔️</div>
+        <div class="tier-name">MOUNTAIN</div>
+        <div class="tier-price">€499+ <span>/month</span></div>
+        <span class="badge badge-gold">Enterprise / Broadcaster</span>
+        <ul style="margin-top:12px;">
+          <li>Dedicated infrastructure</li>
+          <li>Custom storage + bandwidth</li>
+          <li>SLA 99.9%</li>
+          <li>Multi-region EU</li>
+          <li>Compliance pack</li>
+          <li>Full API/SDK</li>
+          <li>Dedicated success manager</li>
+        </ul>
+        <div class="margin-bar" style="margin-top:12px;">
+          <div class="margin-cost" style="width:24%">Cost €120</div>
+          <div class="margin-profit" style="width:76%">Profit €379</div>
+        </div>
+        <div style="font-size:9px; color:var(--dim); text-align:center; margin-top:4px;">76% margin</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>⚙️ Auto-Provisioning Pipeline</h2>
+    <div class="mermaid-container">
+      <pre class="mermaid">
+sequenceDiagram
+  participant C as 🧑‍💼 Creator
+  participant W as 🌐 WINDI Portal
+  participant P as ⚙️ Provisioner
+  participant S as 🗄️ Strato/Hetzner
+  participant V as 🏗️ Vault Instance
+  C->>W: Sign up for SEED (€15/mo)
+  W->>P: Provision request
+  P->>S: Allocate container/VPS
+  S->>P: Instance ready
+  P->>V: Install Vault + Ledger + Trigger
+  P->>V: Configure nginx + SSL
+  P->>V: Set subdomain
+  P->>V: Activate JMPG Trigger
+  V->>W: ✅ Ready
+  W->>C: 🎉 Your Vault is live!
+  Note over C,V: Total time: ~3 minutes (automated)
+      </pre>
+      <div class="mermaid-caption">Fig 10 — Auto-provisioning: from signup to live Vault in ~3 minutes</div>
+    </div>
+  </div>
+</div>
+<div id="pricing" class="section">
+  <div class="card">
+    <h2>💰 Complete Pricing Architecture</h2>
+    <p>Three revenue layers with consistent tier logic across software, protocol, and infrastructure.</p>
+    <h3>Layer 1 — Software Subscriptions</h3>
+    <table class="spec-table">
+      <thead><tr><th>Tier</th><th>Price</th><th>Features</th><th>LLM Usage</th><th>Cost/User</th><th>Margin</th></tr></thead>
+      <tbody>
+        <tr class="highlight"><td class="gold">FREE</td><td>€0</td><td>Editor, Basic SGE, 3 ISP templates, Chat</td><td>100% local</td><td class="mono">~€0.20/mo</td><td class="success">Conversion</td></tr>
+        <tr><td class="gold">PRO</td><td>€25-40/user/mo</td><td>Full SGE, unlimited ISPs, Analytics</td><td>80% local / 20% LLM</td><td class="mono">~€3/mo</td><td class="success">88-92%</td></tr>
+        <tr><td class="gold">ENTERPRISE</td><td>€80-120/user/mo</td><td>Controller Dashboard, Multi-Clone, EU AI Act Pack</td><td>70% local / 30% LLM</td><td class="mono">~€8/mo</td><td class="success">90-93%</td></tr>
+      </tbody>
+    </table>
+    <h3>Layer 2 — Media Protocol</h3>
+    <table class="spec-table">
+      <thead><tr><th>Model</th><th>Price</th><th>Includes</th></tr></thead>
+      <tbody>
+        <tr><td class="gold">Included in Software Tier</td><td>€0 extra</td><td>JMPG Trigger, Seal, Ledger for subscribers</td></tr>
+        <tr><td class="gold">Pay-As-You-Go</td><td>€0.10/container</td><td>Per .jmpg Continuum generated</td></tr>
+        <tr><td class="gold">Streaming metered</td><td>€0.01/GB</td><td>Bandwidth served from Vault</td></tr>
+        <tr><td class="gold">Seal + Ledger</td><td>€0.005/entry</td><td>Per forensic seal operation</td></tr>
+      </tbody>
+    </table>
+    <h3>Layer 3 — Server Services (VaaS)</h3>
+    <table class="spec-table">
+      <thead><tr><th>Tier</th><th>Price</th><th>Storage</th><th>Bandwidth</th><th>Cost</th><th>Margin</th></tr></thead>
+      <tbody>
+        <tr><td class="gold">🌱 SEED</td><td>€15/mo</td><td class="mono">25GB</td><td class="mono">500GB/mo</td><td class="mono">~€8</td><td class="success">47%</td></tr>
+        <tr class="highlight"><td class="gold">🌿 GROW</td><td>€35/mo</td><td class="mono">100GB</td><td class="mono">2TB/mo</td><td class="mono">~€12</td><td class="success">66%</td></tr>
+        <tr><td class="gold">🌳 FOREST</td><td>€99/mo</td><td class="mono">500GB</td><td class="mono">10TB/mo</td><td class="mono">~€30</td><td class="success">70%</td></tr>
+        <tr><td class="gold">🏔️ MOUNTAIN</td><td>€499+/mo</td><td class="mono">Custom</td><td class="mono">Custom</td><td class="mono">~€120</td><td class="success">76%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <h2>⚖️ Competitive Comparison</h2>
+    <table class="spec-table">
+      <thead><tr><th>Platform</th><th>Revenue to Creator</th><th>Data Ownership</th><th>Algorithm Control</th><th>Monthly Cost</th><th>Sovereignty</th></tr></thead>
+      <tbody>
+        <tr><td>YouTube</td><td class="danger">55%</td><td class="danger">Google owns all</td><td class="danger">Algorithm decides</td><td class="mono">€0</td><td class="danger">0%</td></tr>
+        <tr><td>Vimeo Pro</td><td>~90%</td><td class="danger">Vimeo hosts</td><td>Neutral</td><td class="mono">€15/mo</td><td>~30%</td></tr>
+        <tr><td>Patreon + hosting</td><td>~88%</td><td class="danger">Split across services</td><td>Neutral</td><td class="mono">€30-100/mo</td><td>~40%</td></tr>
+        <tr class="highlight"><td class="gold">WINDI VaaS (SEED)</td><td class="success">100%</td><td class="success">Creator owns all</td><td class="success">No algorithm</td><td class="mono gold">€15/mo</td><td class="success">100%</td></tr>
+        <tr class="highlight"><td class="gold">WINDI Self-Hosted</td><td class="success">100%</td><td class="success">Creator owns all</td><td class="success">No algorithm</td><td class="mono gold">€4/mo</td><td class="success">100%</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div id="projections" class="section">
+  <div class="card">
+    <h2>📊 Revenue Projection — Year 1</h2>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-value">€368K</div><div class="stat-label">Annual Revenue</div></div>
+      <div class="stat-card"><div class="stat-value">€277K</div><div class="stat-label">Annual Profit</div></div>
+      <div class="stat-card"><div class="stat-value">75%</div><div class="stat-label">Global Margin</div></div>
+      <div class="stat-card"><div class="stat-value">€0</div><div class="stat-label">VC Dependency</div></div>
+    </div>
+    <h3>Revenue by Layer</h3>
+    <div class="bar-chart">
+      <div class="bar-item">
+        <div class="bar-value">€258K</div>
+        <div class="bar-fill" style="height:85%; background:var(--success);"></div>
+        <div class="bar-label">Software<br>Subscriptions</div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-value">€18K</div>
+        <div class="bar-fill" style="height:12%; background:var(--gold);"></div>
+        <div class="bar-label">Protocol<br>Pay-As-You-Go</div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-value">€18K</div>
+        <div class="bar-fill" style="height:12%; background:var(--blue);"></div>
+        <div class="bar-label">VaaS<br>SEED ×100</div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-value">€21K</div>
+        <div class="bar-fill" style="height:15%; background:var(--purple);"></div>
+        <div class="bar-label">VaaS<br>GROW ×50</div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-value">€24K</div>
+        <div class="bar-fill" style="height:18%; background:var(--orange);"></div>
+        <div class="bar-label">VaaS<br>FOREST ×20</div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-value">€30K</div>
+        <div class="bar-fill" style="height:22%; background:var(--forensic);"></div>
+        <div class="bar-label">VaaS<br>MOUNTAIN ×5</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>📈 Detailed Breakdown by Tier</h2>
+    <table class="spec-table">
+      <thead><tr><th>Source</th><th>Users/Orgs</th><th>Price</th><th>Annual Revenue</th><th>Annual Cost</th><th>Profit</th><th>Margin</th></tr></thead>
+      <tbody>
+        <tr><td>FREE (software)</td><td class="mono">100 users</td><td>€0</td><td class="mono">€0</td><td class="mono">€240</td><td class="mono danger">-€240</td><td>Conversion</td></tr>
+        <tr><td>PRO (software)</td><td class="mono">50 users</td><td>€30/mo avg</td><td class="mono">€18,000</td><td class="mono">€1,800</td><td class="mono success">€16,200</td><td class="success">90%</td></tr>
+        <tr><td>Enterprise (software)</td><td class="mono">10 orgs ×20 users</td><td>€100/user/mo</td><td class="mono">€240,000</td><td class="mono">€19,200</td><td class="mono success">€220,800</td><td class="success">92%</td></tr>
+        <tr><td>Pay-As-You-Go</td><td class="mono">500 users</td><td>~€3/mo avg</td><td class="mono">€18,000</td><td class="mono">€2,400</td><td class="mono success">€15,600</td><td class="success">87%</td></tr>
+        <tr style="border-top:2px solid var(--border);"><td>🌱 SEED (VaaS)</td><td class="mono">100</td><td>€15/mo</td><td class="mono">€18,000</td><td class="mono">€9,600</td><td class="mono success">€8,400</td><td class="success">47%</td></tr>
+        <tr><td>🌿 GROW (VaaS)</td><td class="mono">50</td><td>€35/mo</td><td class="mono">€21,000</td><td class="mono">€7,200</td><td class="mono success">€13,800</td><td class="success">66%</td></tr>
+        <tr><td>🌳 FOREST (VaaS)</td><td class="mono">20</td><td>€99/mo</td><td class="mono">€23,760</td><td class="mono">€7,200</td><td class="mono success">€16,560</td><td class="success">70%</td></tr>
+        <tr><td>🏔️ MOUNTAIN (VaaS)</td><td class="mono">5</td><td>€499/mo</td><td class="mono">€29,940</td><td class="mono">€7,200</td><td class="mono success">€22,740</td><td class="success">76%</td></tr>
+        <tr style="background:var(--hover); font-weight:700;"><td>TOTAL</td><td></td><td></td><td class="gold mono">€368,700</td><td class="mono">€54,840</td><td class="success mono">€313,860</td><td class="success" style="font-weight:800;">85.1%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card">
+    <h2>🚀 Growth Flywheel</h2>
+    <div class="mermaid-container">
+      <pre class="mermaid">
+graph TB
+  A["🌱 Creator signs up (SEED €15/mo)"] --> B["📦 Produces .jmpg content"]
+  B --> C["📱 Distributes via own network"]
+  C --> D["👥 Audience grows"]
+  D --> E["⬆️ Upgrades to GROW (€35/mo)"]
+  E --> F["🤝 Invites other creators → Pott"]
+  F --> G["🌱 Each new creator = new SEED (€15/mo)"]
+  G --> H["🌳 Pott grows → FOREST (€99/mo)"]
+  H --> I["🔄 Cycle repeats"]
+  I --> A
+  style A fill:#4A7C59,stroke:#2A6B4A,color:#fff
+  style E fill:#8B6914,stroke:#6B5010,color:#fff
+  style H fill:#5B8DEF,stroke:#3A6BCF,color:#fff
+      </pre>
+      <div class="mermaid-caption">Fig 11 — Self-reinforcing growth flywheel: each creator brings more creators</div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>🔮 Year 1 → Year 3 Projection</h2>
+    <div class="mermaid-container">
+      <pre class="mermaid">
+xychart-beta
+  title "Revenue Growth Projection (Annual €K)"
+  x-axis ["Year 1", "Year 2 (2x)", "Year 3 (3.5x)"]
+  y-axis "Revenue (€K)" 0 --> 1400
+  bar [369, 738, 1290]
+  line [277, 590, 1032]
+      </pre>
+      <div class="mermaid-caption">Fig 12 — Revenue (bar) vs Profit (line) projection over 3 years</div>
+    </div>
+    <div class="three-col" style="margin-top:16px;">
+      <div style="background:var(--hover); border-radius:12px; padding:16px; text-align:center; border:1px solid var(--border);">
+        <div style="font-size:11px; color:var(--dim); font-weight:600;">YEAR 1</div>
+        <div style="font-size:24px; font-weight:800; color:var(--gold);">€369K</div>
+        <div style="font-size:10px; color:var(--success);">Profit: €277K (75%)</div>
+      </div>
+      <div style="background:var(--hover); border-radius:12px; padding:16px; text-align:center; border:1px solid var(--border);">
+        <div style="font-size:11px; color:var(--dim); font-weight:600;">YEAR 2 (2× growth)</div>
+        <div style="font-size:24px; font-weight:800; color:var(--gold);">€738K</div>
+        <div style="font-size:10px; color:var(--success);">Profit: €590K (80%)</div>
+      </div>
+      <div style="background:var(--hover); border-radius:12px; padding:16px; text-align:center; border:1px solid var(--border);">
+        <div style="font-size:11px; color:var(--dim); font-weight:600;">YEAR 3 (3.5× growth)</div>
+        <div style="font-size:24px; font-weight:800; color:var(--gold);">€1.29M</div>
+        <div style="font-size:10px; color:var(--success);">Profit: €1.03M (80%)</div>
+      </div>
+    </div>
+  </div>
+  <div class="sealed-box">
+    <h3>🐉 The WINDI Promise</h3>
+    <p style="font-size:14px; font-weight:700; margin-bottom:8px;">No venture capital. No ads. No data selling. No platform dependency.</p>
+    <p>100% EU sovereignty. €4/month base infrastructure. Revenue from governance tools and sovereign infrastructure — not from exploiting creators or audiences.</p>
+    <p class="mono" style="margin-top:12px; font-size:10px;">Sem VC. Sem ads. Sem venda de dados. Sem dependência de plataforma.</p>
+  </div>
+</div>
+</div>
+<footer class="spec-footer">
+  <div style="margin-bottom:8px;">
+    <strong style="color:var(--gold);">WINDI MEDIA INFRASTRUCTURE SPEC v1.0.0</strong>
+  </div>
+  <div>WINDI Publishing House · Kempten, Bavaria, DE · "AI processes. Human decides. WINDI guarantees."</div>
+  <div style="margin-top:8px;">
+    <a href="/palette/">← Back to Palette</a> · 
+    <a href="/palette/protocol.html">Transport Protocol</a> · 
+    <a href="/palette/media-kit.html">Media Kit</a> ·
+    Document SEALED · <span class="mono">SHA-256 verified</span>
+  </div>
+</footer>
+<script>
+function toggleTheme() {
+  const body = document.body;
+  const isNoir = body.getAttribute('data-theme') === 'noir';
+  body.setAttribute('data-theme', isNoir ? '' : 'noir');
+  document.querySelector('.theme-toggle').textContent = isNoir ? '☀' : '🌙';
+  setTimeout(() => {
+    mermaid.initialize({ 
+      theme: isNoir ? 'default' : 'dark',
+      themeVariables: isNoir ? {} : { primaryColor: '#D4A843', primaryTextColor: '#E2E2EA' }
+    });
+  }, 100);
+}
+function setLang(lang, btn) {
+  document.querySelectorAll('.controls button:not(.theme-toggle)').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.spec-nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  setTimeout(() => mermaid.run(), 100);
+}
+mermaid.initialize({ 
+  startOnLoad: true, 
+  theme: 'default',
+  securityLevel: 'loose',
+  flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'basis' },
+  sequence: { useMaxWidth: true, mirrorActors: false },
+});
+</script>
+</body>
+</html>

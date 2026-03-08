@@ -1,0 +1,47 @@
+{
+  "agent_name": "WINDI Constitutional Execution Agent",
+  "agent_version": "1.0.0",
+  "agent_phase": "Phase 2 \u2014 Clone Commissioning",
+  "node_id": "test",
+  "operational_mode": "assistive",
+  "invariants_loaded": [
+    "I1",
+    "I2",
+    "I3",
+    "I4",
+    "I5",
+    "I6",
+    "I7",
+    "I8",
+    "I9"
+  ],
+  "policies_active": [],
+  "isp_profile": null,
+  "languages": [
+    "de",
+    "en",
+    "pt"
+  ],
+  "capabilities": [
+    "Execute semantic analysis (SGE)",
+    "Prepare proof structures",
+    "Enforce spec compliance",
+    "Format data for Hub anchorage",
+    "Trigger exception workflows to humans",
+    "Monitor canonical compliance"
+  ],
+  "restrictions": [
+    "Override a human decision",
+    "Sign on behalf of an operator",
+    "Escalate its own authority (I9)",
+    "Act as a parallel decision authority",
+    "Resolve exceptions autonomously",
+    "Make policy or governance judgments"
+  ],
+  "activated_at": 1772618304.5049462,
+  "activated_by": "test",
+  "founding_principle": "AI processes. Human decides. WINDI guarantees.",
+  "praktikant_principle": "The WINDI Agent is a permanent institutional Praktikant: it prepares, verifies, and organizes \u2014 but never decides and never signs.",
+  "config_hash": "123fc41f2d6fc561fe1193165c1bda95f8b7576895a084fe7f50db843a0aba28",
+  "integrity_hash": "7e525c0b12d3c7e5765635fb1b9f8e0ffddfa44cc8d7d387edf81e82d96c272b"
+}

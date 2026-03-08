@@ -1,0 +1,13 @@
+{
+  "communique_id": "COM-20260301-0001",
+  "content_hash": "3071d54306cdc9eb986122e8ff0f3a8ba717d1006c7f81789bf4b13fd11f0d64",
+  "bundle_hash": "155d17b10ee2a2f0b4feff8bbe6228912f76d5a5280ea6662ed6c02947202fa1",
+  "receipt_id": "VR-COM-84738f3a331d",
+  "ledger_id": "VR-COM-84738f3a331d",
+  "category": "UPDATE",
+  "impact_level": "LOW",
+  "author": "Claude Code",
+  "published_at": "2026-03-01T09:38:43Z",
+  "verify_url": "https://admin.windia4desk.tech/communique/COM-20260301-0001/verify",
+  "generated_at": "2026-03-01T09:38:43Z"
+}

@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>JMPG Sovereign Spec — Pillar 3: The Pott Governance</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌐</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:#F5F0E0; --card:#FDFBF5; --hover:#EDE8D8; --border:#DDD6C2;
+  --gold:#8B6914; --text:#2C2924; --dim:#6B6560; --success:#4A7C59;
+  --warning:#B8860B; --danger:#A94442; --sealed:#1B4332; --forensic:#2A6B4A;
+  --blue:#5B8DEF; --purple:#7C5BEF; --orange:#EF8B5B;
+}
+[data-theme="noir"] {
+  --bg:#0E0E14; --card:#16161F; --hover:#1C1C28; --border:#26263A;
+  --gold:#D4A843; --text:#E2E2EA; --dim:#7A7A96; --success:#5A9C69;
+  --warning:#D4A843; --danger:#CF6679; --sealed:#1B4332; --forensic:#2A6B4A;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Bricolage Grotesque',sans-serif; background:var(--bg); color:var(--text); line-height:1.7; }
+code, .mono { font-family:'JetBrains Mono',monospace; font-size:0.9em; }
+pre { background:var(--hover); border:1px solid var(--border); border-radius:8px; padding:16px; overflow-x:auto; font-size:11px; line-height:1.6; }
+.header { background:var(--card); border-bottom:1px solid var(--border); padding:20px 32px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; position:sticky; top:0; z-index:100; }
+.header h1 { font-size:18px; font-weight:800; color:var(--gold); flex:1; }
+.header .meta { font-size:10px; color:var(--dim); display:flex; gap:12px; flex-wrap:wrap; }
+.header .meta span { background:var(--hover); padding:3px 8px; border-radius:4px; border:1px solid var(--border); }
+.theme-toggle { background:none; border:none; font-size:16px; cursor:pointer; color:var(--dim); }
+.nav { display:flex; gap:4px; padding:12px 32px; flex-wrap:wrap; border-bottom:1px solid var(--border); background:var(--card); overflow-x:auto; }
+.nav button { padding:8px 14px; border-radius:8px; font-size:11px; font-weight:600; cursor:pointer; background:var(--card); border:1px solid var(--border); color:var(--dim); font-family:inherit; white-space:nowrap; }
+.nav button.active { background:color-mix(in srgb, var(--gold) 12%, transparent); border-color:var(--gold); color:var(--gold); }
+.content { padding:24px 32px 60px; max-width:1000px; margin:0 auto; }
+.section { display:none; }
+.section.active { display:block; }
+.card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:24px; margin-bottom:20px; }
+.card h2 { font-size:18px; font-weight:800; margin-bottom:12px; color:var(--gold); display:flex; align-items:center; gap:8px; }
+.card h3 { font-size:14px; font-weight:700; margin:20px 0 10px; color:var(--text); border-bottom:1px solid var(--border); padding-bottom:6px; }
+.card h4 { font-size:12px; font-weight:700; margin:16px 0 8px; color:var(--dim); }
+.card p { font-size:13px; margin-bottom:12px; }
+.card ul, .card ol { font-size:13px; padding-left:20px; margin-bottom:12px; }
+.card li { margin-bottom:6px; }
+.sealed-box { background:color-mix(in srgb, var(--sealed) 94%, white); border:1.5px solid var(--forensic); border-radius:12px; padding:18px; color:#E8F5E9; margin:16px 0; }
+.sealed-box h4 { color:#81C784; margin-bottom:6px; font-size:12px; }
+.sealed-box p { color:#A5D6A7; font-size:12px; margin:0; }
+.sealed-box .mono { color:#81C784; }
+.role-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:12px; margin:16px 0; }
+.role-card { background:var(--hover); border:1px solid var(--border); border-radius:10px; padding:14px; }
+.role-card .icon { font-size:24px; margin-bottom:6px; }
+.role-card .title { font-size:14px; font-weight:700; margin-bottom:6px; color:var(--gold); }
+.role-card .desc { font-size:11px; color:var(--dim); line-height:1.5; }
+.role-card ul { font-size:11px; color:var(--text); margin-top:8px; padding-left:16px; }
+.role-card li { margin:4px 0; }
+.spec-table { width:100%; border-collapse:collapse; margin:16px 0; font-size:11px; }
+.spec-table th { background:var(--hover); padding:8px 10px; text-align:left; font-weight:700; border-bottom:2px solid var(--border); color:var(--dim); text-transform:uppercase; font-size:10px; }
+.spec-table td { padding:8px 10px; border-bottom:1px solid var(--border); vertical-align:top; }
+.spec-table tr:hover td { background:var(--hover); }
+.spec-table .mono { font-size:10px; }
+.spec-table .gold { color:var(--gold); font-weight:600; }
+.spec-table .success { color:var(--success); }
+.spec-table .highlight { background:color-mix(in srgb, var(--gold) 6%, transparent); }
+.stage-list { display:flex; flex-direction:column; gap:8px; margin:16px 0; }
+.stage-item { display:flex; gap:12px; padding:12px 14px; background:var(--hover); border-radius:10px; border:1px solid var(--border); }
+.stage-item .num { width:28px; height:28px; border-radius:6px; background:var(--gold); color:#fff; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; flex-shrink:0; }
+.stage-item .content h4 { font-size:12px; font-weight:700; margin:0 0 4px; }
+.stage-item .content p { font-size:11px; color:var(--dim); margin:0; line-height:1.5; }
+.flow-step { display:flex; align-items:center; gap:8px; padding:8px 12px; background:var(--hover); border-radius:8px; margin:4px 0; font-size:11px; }
+.flow-step .step { width:24px; height:24px; border-radius:50%; background:var(--gold); color:#fff; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:800; flex-shrink:0; }
+.archetype-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:12px; margin:16px 0; }
+.archetype-card { background:var(--hover); border:1.5px solid var(--border); border-radius:12px; padding:16px; }
+.archetype-card .icon { font-size:28px; margin-bottom:8px; }
+.archetype-card .name { font-size:13px; font-weight:800; color:var(--gold); margin-bottom:6px; }
+.archetype-card .desc { font-size:10px; color:var(--dim); margin-bottom:8px; }
+.archetype-card .examples { font-size:10px; color:var(--text); }
+.archetype-card .examples strong { color:var(--success); }
+.revenue-box { background:color-mix(in srgb, var(--gold) 8%, transparent); border:1.5px solid var(--gold); border-radius:12px; padding:18px; margin:16px 0; }
+.revenue-box .split { display:flex; align-items:center; gap:16px; margin-bottom:12px; }
+.revenue-box .split .percent { font-size:32px; font-weight:800; color:var(--gold); }
+.revenue-box .split .label { font-size:13px; }
+.revenue-box .split .label strong { display:block; font-size:11px; color:var(--dim); }
+.flywheel { display:flex; flex-direction:column; gap:6px; margin:16px 0; }
+.flywheel-step { display:flex; align-items:center; gap:10px; padding:10px 14px; background:var(--hover); border-radius:8px; border-left:3px solid var(--gold); }
+.flywheel-step .num { font-size:11px; font-weight:800; color:var(--gold); width:24px; }
+.flywheel-step .text { font-size:12px; }
+.flywheel-step .arrow { color:var(--gold); font-size:14px; margin-left:auto; }
+.footer { text-align:center; padding:24px 32px; border-top:1px solid var(--border); font-size:11px; color:var(--dim); }
+.footer a { color:var(--gold); text-decoration:none; }
+.badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:9px; font-weight:700; }
+.badge-gold { background:color-mix(in srgb, var(--gold) 15%, transparent); color:var(--gold); border:1px solid color-mix(in srgb, var(--gold) 30%, transparent); }
+.badge-sealed { background:var(--sealed); color:#81C784; border:1px solid var(--forensic); }
+@media print { .header, .nav { position:static; } .section { display:block!important; page-break-inside:avoid; } }
+</style>
+</head>
+<body>
+<header class="header">
+  <h1>🌐 PILLAR 3 — The Pott Governance</h1>
+  <div class="meta">
+    <span>JMPG-SPEC-P3-v1.0</span>
+    <span class="badge badge-sealed">🔐 CONFIDENTIAL</span>
+    <span>Feb 2026</span>
+    <span>Depends: P1, P2</span>
+  </div>
+  <button class="theme-toggle" onclick="toggleTheme()">☀</button>
+</header>
+<nav class="nav">
+  <button class="active" onclick="showSection('abstract',this)">1. Abstract</button>
+  <button onclick="showSection('problem',this)">2. The Problem</button>
+  <button onclick="showSection('roles',this)">3. Roles</button>
+  <button onclick="showSection('revenue',this)">4. Revenue Protocol</button>
+  <button onclick="showSection('charter',this)">5. Pott Charter</button>
+  <button onclick="showSection('privacy',this)">6. Data Boundaries</button>
+  <button onclick="showSection('disputes',this)">7. Dispute Resolution</button>
+  <button onclick="showSection('archetypes',this)">8. Archetypes</button>
+  <button onclick="showSection('api',this)">9. Technical API</button>
+  <button onclick="showSection('flywheel',this)">10. The Flywheel</button>
+  <button onclick="showSection('economics',this)">11. Economic Model</button>
+  <button onclick="showSection('closing',this)">12. Closing</button>
+</nav>
+<div class="content">
+
+<!-- §1 ABSTRACT -->
+<div id="abstract" class="section active">
+  <div class="card">
+    <h2>📋 1. Abstract — Pott as Trust Federation</h2>
+    <p>This document specifies the <strong>Pott</strong>: the federated governance layer that enables creators to form distribution collectives while preserving individual sovereignty.</p>
+    <p>A Pott is <strong>not</strong> a platform. It is:</p>
+    <ul>
+      <li>A <strong>trust federation</strong> — creators voluntarily joining for mutual benefit</li>
+      <li>A <strong>discovery network</strong> — cross-promotion without algorithmic manipulation</li>
+      <li>A <strong>revenue collective</strong> — shared audience, transparent splits</li>
+      <li>A <strong>governance contract</strong> — rules encoded, disputes resolved</li>
+    </ul>
+    <div class="sealed-box">
+      <h4>🐉 Core Definition</h4>
+      <p>A Pott is a <strong>democratic alternative to platforms</strong>: creators get network effects of scale while retaining sovereignty of their Vault.</p>
+    </div>
+    <p>This document covers roles, revenue protocol, charter structure, data boundaries, dispute resolution, technical integration, and the economic model that makes federation sustainable.</p>
+    <div class="sealed-box">
+      <h4>💡 The Federation Principle</h4>
+      <p class="mono">"Alone, a creator is sovereign. Together, creators are unstoppable. The Pott is the architecture of collective sovereignty."</p>
+    </div>
+  </div>
+</div>
+
+<!-- §2 PROBLEM -->
+<div id="problem" class="section">
+  <div class="card">
+    <h2>⚡ 2. The Problem Potts Solve</h2>
+    <p>Individual creators face a fundamental <strong>Scale Paradox</strong>:</p>
+
+    <h3>2.1 The Scale Paradox</h3>
+    <ul>
+      <li><strong>Sovereignty requires independence</strong> — own your content, own your audience</li>
+      <li><strong>Discovery requires scale</strong> — new audiences come from larger networks</li>
+      <li><strong>Platforms offer scale but extract sovereignty</strong> — the trap</li>
+    </ul>
+
+    <div class="sealed-box">
+      <h4>⚠️ The Platform Trap</h4>
+      <p>Platforms grow by aggregating creators. Once aggregated, they extract: 30-55% revenue cuts, algorithmic control, data ownership, policy unilateralism. <strong>Scale becomes a prison.</strong></p>
+    </div>
+
+    <h3>2.2 What Creators Actually Need</h3>
+    <table class="spec-table">
+      <thead><tr><th>Need</th><th>Platform Solution</th><th>Pott Solution</th></tr></thead>
+      <tbody>
+        <tr><td class="gold">Discovery</td><td>Algorithm decides</td><td class="success">Creator-curated cross-promotion</td></tr>
+        <tr><td class="gold">Revenue</td><td>Platform takes 30-55%</td><td class="success">85% to creator, 15% curation fee</td></tr>
+        <tr><td class="gold">Data</td><td>Platform owns all</td><td class="success">Creator retains; aggregates anonymized</td></tr>
+        <tr><td class="gold">Exit</td><td>Lose everything</td><td class="success">Vault portable; exit at will</td></tr>
+        <tr><td class="gold">Rules</td><td>Platform unilateral</td><td class="success">Charter-governed; member vote</td></tr>
+      </tbody>
+    </table>
+
+    <p>The Pott is <strong>network effects without lock-in</strong>. Federation without feudalism.</p>
+  </div>
+</div>
+
+<!-- §3 ROLES -->
+<div id="roles" class="section">
+  <div class="card">
+    <h2>👥 3. Roles in the Pott Ecosystem</h2>
+    <p>Three distinct roles with clear responsibilities and rights:</p>
+
+    <div class="role-grid">
+      <div class="role-card">
+        <div class="icon">🏛️</div>
+        <div class="title">Creator (Vault Operator)</div>
+        <div class="desc">The sovereign content owner. Operates a Vault, produces content, retains full ownership.</div>
+        <ul>
+          <li>Chooses which Potts to join (can join multiple)</li>
+          <li>Sets content visibility per Pott</li>
+          <li>Receives 85% of subscription revenue attributed to their content</li>
+          <li>Can exit any Pott at any time with full content/data</li>
+          <li>Votes on Charter amendments (1 creator = 1 vote)</li>
+        </ul>
+      </div>
+      <div class="role-card">
+        <div class="icon">🔮</div>
+        <div class="title">Curator (Pott Operator)</div>
+        <div class="desc">The federation organizer. Creates the Pott, recruits creators, manages curation.</div>
+        <ul>
+          <li>Defines Pott Charter (rules, focus, revenue split)</li>
+          <li>Curates which creators are featured</li>
+          <li>Receives 15% curation fee from attributed revenue</li>
+          <li>Handles first-tier dispute resolution</li>
+          <li>Can be a creator themselves (common case)</li>
+        </ul>
+      </div>
+      <div class="role-card">
+        <div class="icon">👁️</div>
+        <div class="title">Subscriber</div>
+        <div class="desc">The audience member. Subscribes to Potts or individual creators.</div>
+        <ul>
+          <li>Single subscription = access to all Pott creators</li>
+          <li>View history determines revenue attribution</li>
+          <li>DID-based identity (privacy-preserving)</li>
+          <li>Can subscribe to multiple Potts</li>
+          <li>No lock-in: cancel anytime</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="sealed-box">
+      <h4>🔄 Role Fluidity</h4>
+      <p>A single person can be all three: Creator of their own content, Curator of a Pott, Subscriber to other Potts. The system is <strong>composable</strong>.</p>
+    </div>
+  </div>
+</div>
+
+<!-- §4 REVENUE -->
+<div id="revenue" class="section">
+  <div class="card">
+    <h2>💰 4. The 85/15 Revenue Protocol</h2>
+    <p>Revenue flows transparently from subscriber to creator, with curation fee to the Pott operator.</p>
+
+    <div class="revenue-box">
+      <div class="split">
+        <div class="percent">85%</div>
+        <div class="label"><strong>CREATOR</strong>Content producer, Vault operator</div>
+      </div>
+      <div class="split">
+        <div class="percent">15%</div>
+        <div class="label"><strong>CURATOR</strong>Pott operator, discovery provider</div>
+      </div>
+    </div>
+
+    <h3>4.1 Attribution Mechanics</h3>
+    <p>When a subscriber pays for a Pott subscription, revenue is <strong>attributed by watch time</strong>:</p>
+
+    <div class="stage-list">
+      <div class="stage-item">
+        <div class="num">1</div>
+        <div class="content">
+          <h4>WATCH TIME TRACKING</h4>
+          <p>Each creator's Vault logs watch events (content_id, duration, timestamp). Aggregated daily.</p>
+        </div>
+      </div>
+      <div class="stage-item">
+        <div class="num">2</div>
+        <div class="content">
+          <h4>ATTRIBUTION CALCULATION</h4>
+          <p>Subscriber's monthly watch time summed per creator. Percentage of total = attribution weight.</p>
+        </div>
+      </div>
+      <div class="stage-item">
+        <div class="num">3</div>
+        <div class="content">
+          <h4>REVENUE SPLIT</h4>
+          <p>Subscription fee × attribution weight × 0.85 = creator payout. Remaining 15% to Curator.</p>
+        </div>
+      </div>
+      <div class="stage-item">
+        <div class="num">4</div>
+        <div class="content">
+          <h4>MONTHLY SETTLEMENT</h4>
+          <p>Payouts processed monthly. Creator receives direct deposit. Full transparency via Ledger.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3>4.2 Example Calculation</h3>
+    <table class="spec-table">
+      <thead><tr><th>Subscriber</th><th>Pott Fee</th><th>Creator A (60%)</th><th>Creator B (30%)</th><th>Creator C (10%)</th><th>Curator</th></tr></thead>
+      <tbody>
+        <tr class="highlight">
+          <td>Maria</td>
+          <td class="mono">€10.00</td>
+          <td class="success">€5.10</td>
+          <td class="success">€2.55</td>
+          <td class="success">€0.85</td>
+          <td class="gold">€1.50</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size:11px;color:var(--dim);">Maria watched 60% Creator A, 30% Creator B, 10% Creator C. Each creator gets 85% of their attributed share.</p>
+
+    <div class="sealed-box">
+      <h4>📊 Transparency Guarantee</h4>
+      <p>Every revenue calculation is logged in both the Pott Ledger and each Creator's Vault Ledger. <strong>Full auditability.</strong> No hidden fees, no opaque algorithms.</p>
+    </div>
+  </div>
+</div>
+
+<!-- §5 CHARTER -->
+<div id="charter" class="section">
+  <div class="card">
+    <h2>📜 5. The Pott Charter</h2>
+    <p>Every Pott is governed by a <strong>Charter</strong>: a machine-readable contract that defines rules, rights, and governance.</p>
+
+    <h3>5.1 Charter Structure</h3>
+<pre>{
+  "pott_id": "pott:culinary-masters-eu",
+  "version": "1.0.0",
+  "created": "2026-02-01T00:00:00Z",
+  "curator": {
+    "did": "did:windi:ed25519:curator-key",
+    "name": "European Culinary Collective",
+    "contact": "curator@culinary-masters.eu"
+  },
+
+  "membership": {
+    "model": "curated",           // "open" | "curated" | "invite-only"
+    "min_content_count": 10,
+    "min_vault_age_days": 30,
+    "content_categories": ["cooking", "baking", "food-science"],
+    "geographic_focus": "EU",
+    "language": ["en", "de", "fr", "it", "es"]
+  },
+
+  "revenue": {
+    "subscription_price_eur": 9.99,
+    "creator_share_pct": 85,
+    "curator_share_pct": 15,
+    "attribution_method": "watch_time",
+    "payout_frequency": "monthly",
+    "min_payout_eur": 10
+  },
+
+  "governance": {
+    "amendment_threshold_pct": 67,
+    "voting_period_days": 14,
+    "quorum_pct": 50,
+    "curator_veto": false
+  },
+
+  "content_policy": {
+    "required_sealing": true,
+    "max_free_preview_pct": 20,
+    "cross_post_allowed": true,
+    "exclusivity_required": false
+  },
+
+  "exit_terms": {
+    "notice_period_days": 0,
+    "content_removal": "immediate",
+    "revenue_settlement": "next_cycle"
+  }
+}</pre>
+
+    <h3>5.2 Charter Amendments</h3>
+    <p>Any member can propose a Charter amendment. Process:</p>
+    <ol>
+      <li>Proposal submitted with rationale</li>
+      <li>14-day discussion period</li>
+      <li>Vote (1 creator = 1 vote, weighted by tenure optional)</li>
+      <li>Passes if ≥67% approve and ≥50% quorum</li>
+      <li>New Charter version published to all Vaults</li>
+    </ol>
+
+    <div class="sealed-box">
+      <h4>⚖️ No Unilateral Changes</h4>
+      <p>Unlike platforms, the Curator <strong>cannot change rules unilaterally</strong>. Revenue splits, content policies, and exit terms are locked until member vote approves changes.</p>
+    </div>
+  </div>
+</div>
+
+<!-- §6 PRIVACY -->
+<div id="privacy" class="section">
+  <div class="card">
+    <h2>🔒 6. Data Boundaries — Privacy by Architecture</h2>
+    <p>The Pott protocol enforces strict data boundaries. <strong>Privacy is not a policy; it is architecture.</strong></p>
+
+    <h3>6.1 Data Classification</h3>
+    <table class="spec-table">
+      <thead><tr><th>Data Type</th><th>Stored Where</th><th>Visible To</th><th>Shared With Pott</th></tr></thead>
+      <tbody>
+        <tr><td class="gold">Content Files</td><td>Creator's Vault</td><td>Authorized subscribers</td><td class="danger">Never</td></tr>
+        <tr><td class="gold">Watch Events</td><td>Creator's Vault</td><td>Creator only</td><td class="success">Aggregated totals only</td></tr>
+        <tr><td class="gold">Subscriber DIDs</td><td>Creator's Vault</td><td>Creator only</td><td class="danger">Never (hashed count only)</td></tr>
+        <tr><td class="gold">Revenue Data</td><td>Creator's Vault + Pott Ledger</td><td>Creator + Curator</td><td class="success">Attribution percentages</td></tr>
+        <tr><td class="gold">Pott Analytics</td><td>Pott Coordinator</td><td>All members</td><td class="success">Anonymized aggregates</td></tr>
+      </tbody>
+    </table>
+
+    <h3>6.2 What the Curator Can See</h3>
+    <ul>
+      <li>Total subscriber count (not identities)</li>
+      <li>Aggregate watch time per creator (not per subscriber)</li>
+      <li>Revenue attribution percentages</li>
+      <li>Content metadata (titles, categories, publish dates)</li>
+    </ul>
+
+    <h3>6.3 What the Curator Cannot See</h3>
+    <ul>
+      <li>Individual subscriber identities or DIDs</li>
+      <li>Per-subscriber watch history</li>
+      <li>Creator's other Pott memberships</li>
+      <li>Creator's direct subscriber revenue (outside Pott)</li>
+      <li>Content files (only metadata + thumbnail)</li>
+    </ul>
+
+    <div class="sealed-box">
+      <h4>🛡️ GDPR by Design</h4>
+      <p>The architecture ensures GDPR compliance: personal data stays in the Vault, only anonymized aggregates flow to Pott. No consent forms needed — <strong>data simply doesn't leave</strong>.</p>
+    </div>
+  </div>
+</div>
+
+<!-- §7 DISPUTES -->
+<div id="disputes" class="section">
+  <div class="card">
+    <h2>⚖️ 7. Dispute Resolution</h2>
+    <p>Disputes are inevitable in any collective. The Pott protocol provides a <strong>three-tier escalation</strong> system.</p>
+
+    <h3>7.1 Three-Tier Escalation</h3>
+    <div class="stage-list">
+      <div class="stage-item">
+        <div class="num">T1</div>
+        <div class="content">
+          <h4>CURATOR MEDIATION</h4>
+          <p>First stop. Curator reviews dispute, proposes resolution. Most disputes (80%+) resolve here. Response within 7 days. Non-binding recommendation.</p>
+        </div>
+      </div>
+      <div class="stage-item">
+        <div class="num">T2</div>
+        <div class="content">
+          <h4>MEMBER ARBITRATION</h4>
+          <p>If T1 fails, 3 random members form arbitration panel. Review evidence, hear both sides. Binding decision within 14 days. Simple majority.</p>
+        </div>
+      </div>
+      <div class="stage-item">
+        <div class="num">T3</div>
+        <div class="content">
+          <h4>WINDI ARBITRATION</h4>
+          <p>Final appeal. WINDI neutral party reviews case. Binding decision within 30 days. Reserved for Charter violations or revenue disputes >€1000. Fee: €50 (refunded if appellant wins).</p>
+        </div>
+      </div>
+    </div>
+
+    <h3>7.2 Common Dispute Types</h3>
+    <table class="spec-table">
+      <thead><tr><th>Type</th><th>Typical Resolution</th><th>Usual Tier</th></tr></thead>
+      <tbody>
+        <tr><td class="gold">Revenue Attribution</td><td>Ledger audit, recalculation if error</td><td>T1</td></tr>
+        <tr><td class="gold">Content Policy Violation</td><td>Warning → temporary exclusion → exit</td><td>T1-T2</td></tr>
+        <tr><td class="gold">Curator Misconduct</td><td>Member vote to replace Curator</td><td>T2</td></tr>
+        <tr><td class="gold">Charter Violation</td><td>Forced compliance or exit</td><td>T2-T3</td></tr>
+        <tr><td class="gold">Exit Terms Dispute</td><td>Contract interpretation by arbitration</td><td>T3</td></tr>
+      </tbody>
+    </table>
+
+    <div class="sealed-box">
+      <h4>📋 Evidence from Ledgers</h4>
+      <p>All disputes reference <strong>immutable Ledger entries</strong>. No "he said/she said" — the Forensic Ledger provides timestamped, sealed evidence of all actions.</p>
+    </div>
+  </div>
+</div>
+
+<!-- §8 ARCHETYPES -->
+<div id="archetypes" class="section">
+  <div class="card">
+    <h2>🎭 8. Pott Archetypes</h2>
+    <p>Different communities need different structures. Five proven archetypes:</p>
+
+    <div class="archetype-grid">
+      <div class="archetype-card">
+        <div class="icon">📚</div>
+        <div class="name">EDUCATION</div>
+        <div class="desc">Courses, tutorials, certifications. High production value, structured curriculum.</div>
+        <div class="examples"><strong>Examples:</strong> Culinary Academy, Photography Masterclass, Language Learning Collective</div>
+      </div>
+      <div class="archetype-card">
+        <div class="icon">📰</div>
+        <div class="name">JOURNALISM</div>
+        <div class="desc">Independent news, investigations, commentary. Editorial standards, fact-checking.</div>
+        <div class="examples"><strong>Examples:</strong> Regional News Consortium, Tech Analysis Network, Investigative Collective</div>
+      </div>
+      <div class="archetype-card">
+        <div class="icon">🎵</div>
+        <div class="name">MUSIC</div>
+        <div class="desc">Artists, labels, producers. Album releases, live sessions, behind-the-scenes.</div>
+        <div class="examples"><strong>Examples:</strong> Indie Label Collective, Jazz Federation, Electronic Producers Network</div>
+      </div>
+      <div class="archetype-card">
+        <div class="icon">🏘️</div>
+        <div class="name">LOCAL COMMUNITY</div>
+        <div class="desc">Geographic focus. Local events, businesses, culture. Hyper-local audience.</div>
+        <div class="examples"><strong>Examples:</strong> Munich Creators, Lisbon Local, Barcelona Digital</div>
+      </div>
+      <div class="archetype-card">
+        <div class="icon">🏢</div>
+        <div class="name">CORPORATE</div>
+        <div class="desc">Internal communications, training, stakeholder updates. Enterprise governance.</div>
+        <div class="examples"><strong>Examples:</strong> Company Training Hub, Investor Relations, Partner Network</div>
+      </div>
+    </div>
+
+    <h3>8.1 Archetype Configuration Differences</h3>
+    <table class="spec-table">
+      <thead><tr><th>Archetype</th><th>Membership</th><th>Price Range</th><th>Exclusivity</th><th>Special Features</th></tr></thead>
+      <tbody>
+        <tr><td class="gold">Education</td><td>Curated</td><td class="mono">€15-50/mo</td><td>Optional</td><td>Progress tracking, certificates</td></tr>
+        <tr><td class="gold">Journalism</td><td>Invite-only</td><td class="mono">€5-15/mo</td><td>No</td><td>Breaking news priority, fact-check badges</td></tr>
+        <tr><td class="gold">Music</td><td>Open</td><td class="mono">€5-10/mo</td><td>No</td><td>Release calendars, live stream integration</td></tr>
+        <tr><td class="gold">Local</td><td>Geographic</td><td class="mono">€3-8/mo</td><td>No</td><td>Event integration, local business directory</td></tr>
+        <tr><td class="gold">Corporate</td><td>Invite-only</td><td class="mono">Custom</td><td>Yes</td><td>SSO, compliance logs, role-based access</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- §9 API -->
+<div id="api" class="section">
+  <div class="card">
+    <h2>🔌 9. Technical Integration — Pott API</h2>
+    <p>Every Pott exposes a standard API for Vault integration. Seven core endpoints:</p>
+
+    <table class="spec-table">
+      <thead><tr><th>Endpoint</th><th>Method</th><th>Auth</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr class="highlight"><td class="mono">/pott/charter</td><td>GET</td><td>Public</td><td>Retrieve current Charter JSON</td></tr>
+        <tr><td class="mono">/pott/members</td><td>GET</td><td>Member</td><td>List all member DIDs + metadata</td></tr>
+        <tr><td class="mono">/pott/join</td><td>POST</td><td>Creator DID</td><td>Request membership (if open/curated)</td></tr>
+        <tr><td class="mono">/pott/leave</td><td>POST</td><td>Member</td><td>Exit Pott (content removed per exit_terms)</td></tr>
+        <tr class="highlight"><td class="mono">/pott/content/register</td><td>POST</td><td>Member</td><td>Register content for Pott discovery</td></tr>
+        <tr><td class="mono">/pott/revenue/report</td><td>POST</td><td>Member</td><td>Submit monthly watch time aggregates</td></tr>
+        <tr><td class="mono">/pott/revenue/statement</td><td>GET</td><td>Member</td><td>Retrieve revenue statement for period</td></tr>
+      </tbody>
+    </table>
+
+    <h3>9.1 Content Registration</h3>
+<pre>POST /pott/content/register
+Authorization: DID-Signature creator-did:signature
+
+{
+  "content_id": "jmpg:uuid-v7",
+  "title": "Perfect Risotto Technique",
+  "category": "cooking",
+  "duration_s": 1847,
+  "thumbnail_url": "https://vault.creator.com/thumb/abc.webp",
+  "visibility": "pott-subscribers",
+  "published_at": "2026-02-27T10:00:00Z"
+}</pre>
+
+    <h3>9.2 Revenue Reporting</h3>
+<pre>POST /pott/revenue/report
+Authorization: DID-Signature creator-did:signature
+
+{
+  "period": "2026-02",
+  "vault_id": "vault-uuid",
+  "total_watch_seconds": 847293,
+  "unique_viewers_hash": "sha256:anonymized-count",
+  "content_breakdown": [
+    { "content_id": "jmpg:abc", "watch_seconds": 412847 },
+    { "content_id": "jmpg:def", "watch_seconds": 293847 }
+  ],
+  "ledger_proof": "sha256:ledger-chain-hash"
+}</pre>
+
+    <div class="sealed-box">
+      <h4>🔐 DID Authentication</h4>
+      <p>All authenticated endpoints use <strong>DID-Signature</strong> headers. Creator signs request with Ed25519 private key. Pott verifies against registered public key. No passwords, no tokens to steal.</p>
+    </div>
+  </div>
+</div>
+
+<!-- §10 FLYWHEEL -->
+<div id="flywheel" class="section">
+  <div class="card">
+    <h2>🔄 10. The Pott Flywheel</h2>
+    <p>Network effects without lock-in. The Pott Flywheel creates sustainable growth:</p>
+
+    <div class="flywheel">
+      <div class="flywheel-step"><span class="num">1</span><span class="text"><strong>Quality Curation</strong> — Curator selects creators with complementary content</span><span class="arrow">→</span></div>
+      <div class="flywheel-step"><span class="num">2</span><span class="text"><strong>Discovery Value</strong> — Subscribers find new creators they wouldn't find alone</span><span class="arrow">→</span></div>
+      <div class="flywheel-step"><span class="num">3</span><span class="text"><strong>Subscriber Growth</strong> — Word-of-mouth, bundle value attracts more subscribers</span><span class="arrow">→</span></div>
+      <div class="flywheel-step"><span class="num">4</span><span class="text"><strong>Creator Revenue</strong> — More subscribers = more revenue for each creator</span><span class="arrow">→</span></div>
+      <div class="flywheel-step"><span class="num">5</span><span class="text"><strong>Creator Attraction</strong> — Revenue draws more quality creators to join</span><span class="arrow">→</span></div>
+      <div class="flywheel-step"><span class="num">6</span><span class="text"><strong>Richer Catalog</strong> — More creators = more diverse, valuable content</span><span class="arrow">↺</span></div>
+    </div>
+
+    <h3>10.1 Why It Doesn't Become a Platform</h3>
+    <table class="spec-table">
+      <thead><tr><th>Platform Trap</th><th>Pott Prevention</th></tr></thead>
+      <tbody>
+        <tr><td class="gold">Revenue extraction increases</td><td class="success">85/15 split locked in Charter; changes require 67% vote</td></tr>
+        <tr><td class="gold">Algorithm controls discovery</td><td class="success">No algorithm — human curation, creator cross-promotion</td></tr>
+        <tr><td class="gold">Exit means losing audience</td><td class="success">Creator keeps direct subscribers; exits with all data</td></tr>
+        <tr><td class="gold">Policy changes unilaterally</td><td class="success">Charter amendments require member vote</td></tr>
+        <tr><td class="gold">Data used against creators</td><td class="success">Data stays in Vault; only aggregates shared</td></tr>
+      </tbody>
+    </table>
+
+    <div class="sealed-box">
+      <h4>🐉 The Anti-Enshittification Architecture</h4>
+      <p>Potts are <strong>structurally unable to enshittify</strong>. The Curator cannot raise fees without votes. Creators can leave with their audience. The flywheel runs on <strong>mutual benefit, not extraction</strong>.</p>
+    </div>
+  </div>
+</div>
+
+<!-- §11 ECONOMICS -->
+<div id="economics" class="section">
+  <div class="card">
+    <h2>📊 11. Economic Model</h2>
+    <p>Revenue scenarios for different Pott configurations:</p>
+
+    <h3>11.1 Small Pott (5 Creators, 200 Subscribers)</h3>
+    <table class="spec-table">
+      <thead><tr><th>Metric</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td class="gold">Subscription Price</td><td class="mono">€9.99/mo</td></tr>
+        <tr><td class="gold">Monthly Revenue</td><td class="mono">€1,998</td></tr>
+        <tr><td class="gold">Creator Pool (85%)</td><td class="success">€1,698</td></tr>
+        <tr><td class="gold">Per Creator (equal split)</td><td class="success">€339.60/mo</td></tr>
+        <tr><td class="gold">Curator Revenue (15%)</td><td class="gold">€299.70/mo</td></tr>
+      </tbody>
+    </table>
+
+    <h3>11.2 Medium Pott (20 Creators, 2,000 Subscribers)</h3>
+    <table class="spec-table">
+      <thead><tr><th>Metric</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td class="gold">Subscription Price</td><td class="mono">€14.99/mo</td></tr>
+        <tr><td class="gold">Monthly Revenue</td><td class="mono">€29,980</td></tr>
+        <tr><td class="gold">Creator Pool (85%)</td><td class="success">€25,483</td></tr>
+        <tr><td class="gold">Per Creator (equal split)</td><td class="success">€1,274/mo</td></tr>
+        <tr><td class="gold">Curator Revenue (15%)</td><td class="gold">€4,497/mo</td></tr>
+      </tbody>
+    </table>
+
+    <h3>11.3 Large Pott (50 Creators, 10,000 Subscribers)</h3>
+    <table class="spec-table">
+      <thead><tr><th>Metric</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td class="gold">Subscription Price</td><td class="mono">€19.99/mo</td></tr>
+        <tr><td class="gold">Monthly Revenue</td><td class="mono">€199,900</td></tr>
+        <tr><td class="gold">Creator Pool (85%)</td><td class="success">€169,915</td></tr>
+        <tr><td class="gold">Per Creator (equal split)</td><td class="success">€3,398/mo</td></tr>
+        <tr><td class="gold">Curator Revenue (15%)</td><td class="gold">€29,985/mo</td></tr>
+      </tbody>
+    </table>
+
+    <div class="sealed-box">
+      <h4>💡 Real Distribution Note</h4>
+      <p>Equal split shown for simplicity. Actual distribution follows <strong>watch time attribution</strong>. Top creators earn more; long-tail creators still earn fairly. The 85/15 ensures even the Curator taking 15% leaves 5.67× more to creators than YouTube's 45/55.</p>
+    </div>
+
+    <h3>11.4 Comparison: Platform vs. Pott</h3>
+    <table class="spec-table">
+      <thead><tr><th>Scenario</th><th>YouTube (45%)</th><th>Patreon (8-12%)</th><th>Pott (15%)</th></tr></thead>
+      <tbody>
+        <tr><td class="gold">€10,000 gross revenue</td><td>€4,500 to creator</td><td>€8,800 to creator</td><td class="success">€8,500 to creator</td></tr>
+        <tr><td class="gold">+ Discovery</td><td class="success">Yes (algo)</td><td class="danger">No</td><td class="success">Yes (curation)</td></tr>
+        <tr><td class="gold">+ Data ownership</td><td class="danger">No</td><td>Partial</td><td class="success">Full</td></tr>
+        <tr><td class="gold">+ Exit rights</td><td class="danger">Lose all</td><td>Partial</td><td class="success">Full export</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- §12 CLOSING -->
+<div id="closing" class="section">
+  <div class="card">
+    <h2>🐉 12. Closing — Federation as Democracy of Distribution</h2>
+    <p>The Pott is not a product. It is a <strong>political architecture</strong>.</p>
+    <ul>
+      <li>Platforms are <strong>monarchies</strong> — one entity makes all rules</li>
+      <li>Potts are <strong>federations</strong> — members govern themselves</li>
+      <li>Platforms extract <strong>rent</strong> — value flows to shareholders</li>
+      <li>Potts distribute <strong>dividends</strong> — value flows to creators</li>
+    </ul>
+
+    <div class="sealed-box">
+      <h4>💡 The Political Economy of Distribution</h4>
+      <p>Every distribution system encodes power relations. Platforms encode <strong>extraction</strong>. Potts encode <strong>cooperation</strong>. The .jmpg protocol makes cooperation <em>technically enforceable</em>.</p>
+    </div>
+
+    <p>The question is not "how do we compete with platforms?" The question is: <strong>"how do we make platforms irrelevant?"</strong></p>
+
+    <p>The answer is federation:</p>
+    <ul>
+      <li>Creators keep their sovereignty (Vaults)</li>
+      <li>Creators gain network effects (Potts)</li>
+      <li>Curators earn fairly for real value (15%)</li>
+      <li>Subscribers get better content, better prices</li>
+      <li>Everyone can exit at any time</li>
+    </ul>
+
+    <div class="sealed-box">
+      <h4>🐉 The Final Word</h4>
+      <p><strong>Alone, we are content. Together, we are culture. The Pott is the organizational form of digital sovereignty at scale.</strong></p>
+    </div>
+  </div>
+</div>
+
+</div>
+<footer class="footer">
+  <div style="margin-bottom:8px;"><strong style="color:var(--gold);">JMPG SOVEREIGN SPEC — PILLAR 3 — v1.0.0</strong></div>
+  <div>WINDI Publishing House · Kempten, Bavaria, EU · "AI processes. Human decides. WINDI guarantees."</div>
+  <div style="margin-top:8px;">
+    <a href="/palette/">← Palette</a> ·
+    <a href="/palette/pillar-1.html">Pillar 1</a> ·
+    <a href="/palette/pillar-2.html">Pillar 2</a> ·
+    <a href="/palette/media-spec.html">Infrastructure Spec</a> ·
+    <span class="mono">JMPG-SPEC-P3-v1.0 · SHA-256 sealed</span>
+  </div>
+</footer>
+<script>
+function toggleTheme() {
+  const body = document.body;
+  const isNoir = body.getAttribute('data-theme') === 'noir';
+  body.setAttribute('data-theme', isNoir ? '' : 'noir');
+  document.querySelector('.theme-toggle').textContent = isNoir ? '☀' : '🌙';
+}
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>

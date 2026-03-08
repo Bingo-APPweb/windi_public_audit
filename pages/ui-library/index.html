@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="noir">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>WINDI UI v1.0 — Component Library Demo</title>
+<style>
+/* ═══════════════════════════════════════════════
+   windi-ui/tokens.css  v1.0
+   WINDI UI TOKENS — deterministic styling
+═══════════════════════════════════════════════ */
+:root {
+  --w-font-sans: "Bricolage Grotesque", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --w-font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  --w-radius-xs: 8px;
+  --w-radius-sm: 12px;
+  --w-radius-md: 16px;
+  --w-radius-lg: 20px;
+  --w-radius-xl: 28px;
+
+  --w-space-1: 4px;  --w-space-2: 8px;  --w-space-3: 12px;
+  --w-space-4: 16px; --w-space-5: 20px; --w-space-6: 24px;
+  --w-space-8: 32px; --w-space-10: 40px; --w-space-12: 48px;
+
+  --w-border-1: 1px;
+  --w-shadow-sm: 0 1px 2px rgba(0,0,0,0.08);
+  --w-shadow-md: 0 8px 24px rgba(0,0,0,0.18);
+  --w-shadow-lg: 0 16px 48px rgba(0,0,0,0.22);
+
+  --w-ease: cubic-bezier(.2,.8,.2,1);
+  --w-dur-fast: 120ms;
+  --w-dur-med: 220ms;
+  --w-dur-slow: 420ms;
+
+  --w-focus-ring: 0 0 0 3px rgba(212,168,67,0.25);
+  --w-gold: #D4A843;
+}
+
+/* NOIR (default) */
+:root, :root[data-theme="noir"] {
+  --w-bg: #0E0E14;
+  --w-surface: #16161F;
+  --w-surface-2: #1C1C28;
+  --w-border: #26263A;
+  --w-text: #E2E2EA;
+  --w-text-dim: #7A7A96;
+  --w-text-muted: #A6A6C2;
+  --w-link: var(--w-gold);
+  --w-success: #5A9C69;
+  --w-warning: var(--w-gold);
+  --w-danger: #D25C5C;
+  --w-sealed: #1B4332;
+  --w-forensic: #2A6B4A;
+}
+
+/* KLAR */
+:root[data-theme="klar"] {
+  --w-bg: #F5F0E0;
+  --w-surface: #FDFBF5;
+  --w-surface-2: #EDE8D8;
+  --w-border: #DDD6C2;
+  --w-text: #2C2924;
+  --w-text-dim: #6B6560;
+  --w-text-muted: #7E7772;
+  --w-link: #8B6914;
+  --w-success: #4A7C59;
+  --w-warning: #B8860B;
+  --w-danger: #A94442;
+  --w-sealed: #1B4332;
+  --w-forensic: #2A6B4A;
+}
+
+/* ─── Base ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+.windi-app {
+  background: var(--w-bg);
+  color: var(--w-text);
+  font-family: var(--w-font-sans);
+  min-height: 100vh;
+  transition: background var(--w-dur-med) var(--w-ease), color var(--w-dur-med) var(--w-ease);
+}
+.windi-surface {
+  background: var(--w-surface);
+  border: var(--w-border-1) solid var(--w-border);
+  border-radius: var(--w-radius-lg);
+  box-shadow: var(--w-shadow-sm);
+}
+.windi-mono  { font-family: var(--w-font-mono); }
+.windi-dim   { color: var(--w-text-dim); }
+.windi-muted { color: var(--w-text-muted); }
+.windi-focus:focus-visible { outline: none; box-shadow: var(--w-focus-ring); }
+.windi-chip {
+  display: inline-flex; align-items: center; gap: var(--w-space-2);
+  padding: 6px 10px; border-radius: 999px;
+  border: var(--w-border-1) solid var(--w-border);
+  background: color-mix(in srgb, var(--w-surface) 86%, transparent);
+  font-size: 12px; line-height: 1;
+}
+
+/* ─── Layout ─── */
+.demo-page { max-width: 900px; margin: 0 auto; padding: var(--w-space-8) var(--w-space-5); }
+
+.demo-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: var(--w-space-10);
+  padding-bottom: var(--w-space-5);
+  border-bottom: var(--w-border-1) solid var(--w-border);
+}
+.demo-logo {
+  display: flex; align-items: center; gap: var(--w-space-3);
+}
+.demo-logo-mark {
+  width: 36px; height: 36px; border-radius: var(--w-radius-sm);
+  background: color-mix(in srgb, var(--w-gold) 18%, var(--w-surface-2));
+  border: var(--w-border-1) solid color-mix(in srgb, var(--w-gold) 40%, var(--w-border));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; line-height: 1;
+}
+.demo-logo-text { font-size: 14px; font-weight: 800; letter-spacing: .08em; }
+.demo-logo-sub  { font-size: 11px; color: var(--w-text-dim); margin-top: 2px; }
+
+.theme-toggle {
+  display: flex; align-items: center; gap: var(--w-space-2);
+  padding: 8px 14px; border-radius: 999px;
+  border: var(--w-border-1) solid var(--w-border);
+  background: var(--w-surface-2);
+  color: var(--w-text); font-size: 13px; font-weight: 600;
+  cursor: pointer;
+  transition: background var(--w-dur-fast) var(--w-ease), border-color var(--w-dur-fast) var(--w-ease);
+}
+.theme-toggle:hover {
+  border-color: color-mix(in srgb, var(--w-gold) 50%, var(--w-border));
+  background: color-mix(in srgb, var(--w-gold) 8%, var(--w-surface-2));
+}
+
+.section-label {
+  font-size: 11px; font-weight: 700; letter-spacing: .14em;
+  color: var(--w-text-dim); text-transform: uppercase;
+  margin-bottom: var(--w-space-4);
+  padding-bottom: var(--w-space-2);
+  border-bottom: var(--w-border-1) solid var(--w-border);
+}
+.demo-section { margin-bottom: var(--w-space-10); }
+
+.demo-row {
+  display: flex; flex-wrap: wrap; gap: var(--w-space-4);
+  align-items: flex-start;
+}
+.demo-col { flex: 1; min-width: 280px; }
+
+/* ═══════════════════════════════════════════════
+   A) windi-card
+═══════════════════════════════════════════════ */
+.w-card { padding: 0; overflow: hidden; }
+.w-card__header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: var(--w-space-4);
+  padding: var(--w-space-5);
+  border-bottom: var(--w-border-1) solid var(--w-border);
+  background: color-mix(in srgb, var(--w-surface) 92%, transparent);
+}
+.w-card__title    { font-size: 16px; line-height: 1.2; font-weight: 700; }
+.w-card__subtitle { margin-top: 6px; font-size: 13px; color: var(--w-text-dim); }
+.w-card__actions  { display: flex; gap: var(--w-space-2); flex-shrink: 0; }
+.w-card__body     { padding: var(--w-space-5); }
+
+.w-card[data-padding="sm"] .w-card__header,
+.w-card[data-padding="sm"] .w-card__body { padding: var(--w-space-4); }
+.w-card[data-padding="lg"] .w-card__header,
+.w-card[data-padding="lg"] .w-card__body { padding: var(--w-space-6); }
+.w-card[data-elevation="none"] { box-shadow: none; }
+.w-card[data-elevation="md"]   { box-shadow: var(--w-shadow-md); }
+.w-card[data-elevation="lg"]   { box-shadow: var(--w-shadow-lg); }
+
+/* ═══════════════════════════════════════════════
+   B) seal-badge
+═══════════════════════════════════════════════ */
+.w-seal {
+  display: flex; gap: var(--w-space-3); align-items: flex-start;
+  padding: 10px 14px; border-radius: 999px;
+  border: var(--w-border-1) solid var(--w-border);
+  background: color-mix(in srgb, var(--w-surface) 86%, transparent);
+}
+.w-seal__dot {
+  width: 10px; height: 10px; border-radius: 999px;
+  margin-top: 4px; flex-shrink: 0;
+  background: var(--w-success);
+}
+.w-seal__label  { font-size: 11px; letter-spacing: .12em; color: var(--w-text-dim); }
+.w-seal__status { font-weight: 700; font-size: 12px; }
+.w-seal__row    { display: flex; gap: var(--w-space-2); align-items: center; }
+.w-seal__hash   { font-size: 11px; font-family: var(--w-font-mono); color: var(--w-text-dim); }
+.w-seal__time   { font-size: 11px; color: var(--w-text-dim); }
+
+.w-seal[data-status="pending"] .w-seal__dot { background: var(--w-warning); }
+.w-seal[data-status="invalid"] .w-seal__dot { background: var(--w-danger); }
+.w-seal[data-status="sealed"]  .w-seal__dot {
+  background: var(--w-forensic);
+  box-shadow: 0 0 6px rgba(42,107,74,0.6);
+}
+.w-seal[data-status="verified"] .w-seal__dot {
+  box-shadow: 0 0 6px rgba(90,156,105,0.5);
+}
+
+/* ═══════════════════════════════════════════════
+   C) ledger-status
+═══════════════════════════════════════════════ */
+.w-ledger__label  { font-size: 11px; letter-spacing: .12em; color: var(--w-text-dim); }
+.w-ledger__state  { font-size: 12px; font-weight: 700; }
+.w-ledger__icon   { font-size: 12px; }
+.w-ledger__anchor { font-size: 11px; font-family: var(--w-font-mono); }
+
+.w-ledger[data-verified="false"] {
+  border-color: color-mix(in srgb, var(--w-danger) 60%, var(--w-border));
+}
+.w-ledger[data-verified="false"] .w-ledger__state { color: var(--w-danger); }
+.w-ledger[data-verified="true"]  .w-ledger__state { color: var(--w-success); }
+
+/* ═══════════════════════════════════════════════
+   D) sovereign-button
+═══════════════════════════════════════════════ */
+.w-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: var(--w-space-2); padding: 10px 18px;
+  border-radius: 999px;
+  border: var(--w-border-1) solid var(--w-border);
+  background: var(--w-surface-2); color: var(--w-text);
+  font-family: var(--w-font-sans); font-weight: 700; font-size: 13px;
+  cursor: pointer;
+  transition: transform var(--w-dur-fast) var(--w-ease), background var(--w-dur-med) var(--w-ease);
+}
+.w-btn:hover  { transform: translateY(-1px); }
+.w-btn:active { transform: translateY(0); }
+
+.w-btn[data-variant="primary"] {
+  border-color: color-mix(in srgb, var(--w-gold) 70%, var(--w-border));
+  background: color-mix(in srgb, var(--w-gold) 16%, var(--w-surface-2));
+  color: var(--w-gold);
+}
+.w-btn[data-variant="primary"]:hover {
+  background: color-mix(in srgb, var(--w-gold) 22%, var(--w-surface-2));
+}
+.w-btn[data-variant="ghost"] { background: transparent; }
+.w-btn[data-variant="danger"] {
+  border-color: color-mix(in srgb, var(--w-danger) 70%, var(--w-border));
+  background: color-mix(in srgb, var(--w-danger) 14%, var(--w-surface-2));
+  color: var(--w-danger);
+}
+.w-btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+
+/* ═══════════════════════════════════════════════
+   E) dragon-orb
+═══════════════════════════════════════════════ */
+.w-orb { display: flex; align-items: center; gap: var(--w-space-3); }
+.w-orb__ring {
+  width: 34px; height: 34px; border-radius: 999px;
+  border: 2px solid color-mix(in srgb, var(--w-gold) 55%, var(--w-border));
+  position: relative; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.w-orb__core {
+  width: 18px; height: 18px; border-radius: 999px;
+  background: color-mix(in srgb, var(--w-gold) 20%, var(--w-surface-2));
+  box-shadow: 0 0 0 6px rgba(212,168,67,0.10);
+}
+.w-orb__role { font-size: 12px; font-weight: 800; letter-spacing: .12em; color: var(--w-gold); }
+.w-orb__id   { font-size: 11px; font-family: var(--w-font-mono); color: var(--w-text-dim); }
+
+.w-orb[data-state="thinking"] .w-orb__ring { animation: w-orb-pulse 1.2s var(--w-ease) infinite; }
+.w-orb[data-state="alert"]  .w-orb__ring  { border-color: color-mix(in srgb, var(--w-danger) 70%, var(--w-border)); }
+.w-orb[data-state="sealed"] .w-orb__ring  { border-color: color-mix(in srgb, var(--w-forensic) 70%, var(--w-border)); }
+
+.w-orb[data-role="GUARDIAN"]  .w-orb__core { background: color-mix(in srgb, #4A90D9 20%, var(--w-surface-2)); }
+.w-orb[data-role="ARCHITECT"] .w-orb__core { background: color-mix(in srgb, var(--w-gold) 25%, var(--w-surface-2)); }
+.w-orb[data-role="WITNESS"]   .w-orb__core { background: color-mix(in srgb, var(--w-success) 20%, var(--w-surface-2)); }
+.w-orb[data-role="HUMAN"]     .w-orb__core { background: color-mix(in srgb, #C084FC 20%, var(--w-surface-2)); }
+
+.w-orb[data-role="GUARDIAN"]  .w-orb__role { color: #4A90D9; }
+.w-orb[data-role="WITNESS"]   .w-orb__role { color: var(--w-success); }
+.w-orb[data-role="HUMAN"]     .w-orb__role { color: #C084FC; }
+
+@keyframes w-orb-pulse {
+  0%   { box-shadow: 0 0 0 0   rgba(212,168,67,0.18); }
+  70%  { box-shadow: 0 0 0 12px rgba(212,168,67,0.00); }
+  100% { box-shadow: 0 0 0 0   rgba(212,168,67,0.00); }
+}
+
+/* ═══════════════════════════════════════════════
+   F) verification-panel
+═══════════════════════════════════════════════ */
+.w-verify { padding: var(--w-space-5); }
+.w-verify__top {
+  display: flex; justify-content: space-between;
+  gap: var(--w-space-4); align-items: flex-start;
+}
+.w-verify__title { font-weight: 900; font-size: 16px; letter-spacing: .02em; }
+.w-verify__modes { display: flex; gap: var(--w-space-2); flex-wrap: wrap; margin-top: 6px; }
+
+.w-verify__tab {
+  padding: 6px 12px; border-radius: 999px;
+  border: var(--w-border-1) solid var(--w-border);
+  background: transparent; color: var(--w-text);
+  font-family: var(--w-font-sans); font-size: 12px; font-weight: 600;
+  cursor: pointer;
+  transition: background var(--w-dur-fast) var(--w-ease), border-color var(--w-dur-fast) var(--w-ease);
+}
+.w-verify__tab[data-active="true"] {
+  border-color: color-mix(in srgb, var(--w-gold) 60%, var(--w-border));
+  background: color-mix(in srgb, var(--w-gold) 10%, transparent);
+  color: var(--w-gold);
+}
+.w-verify__form {
+  display: flex; gap: var(--w-space-3);
+  margin-top: var(--w-space-4); align-items: flex-end; flex-wrap: wrap;
+}
+.w-verify__label { display: flex; flex-direction: column; gap: 6px; min-width: 240px; flex: 1; }
+.w-verify__label span { font-size: 12px; color: var(--w-text-dim); font-weight: 600; letter-spacing: .04em; }
+
+.w-verify__input {
+  padding: 10px 12px;
+  border-radius: var(--w-radius-md);
+  border: var(--w-border-1) solid var(--w-border);
+  background: var(--w-surface-2); color: var(--w-text);
+  font-family: var(--w-font-mono); font-size: 12px;
+  width: 100%;
+  transition: border-color var(--w-dur-fast) var(--w-ease);
+}
+.w-verify__input:focus { outline: none; border-color: color-mix(in srgb, var(--w-gold) 50%, var(--w-border)); }
+
+.w-verify__result {
+  margin-top: var(--w-space-4);
+  padding-top: var(--w-space-4);
+  border-top: var(--w-border-1) solid var(--w-border);
+  font-size: 13px; line-height: 1.6;
+}
+.w-verify__result pre {
+  font-family: var(--w-font-mono); font-size: 11px;
+  background: var(--w-surface-2); border-radius: var(--w-radius-sm);
+  padding: var(--w-space-4); overflow-x: auto;
+  border: var(--w-border-1) solid var(--w-border);
+  color: var(--w-text-muted);
+}
+.verify-result-ok    { color: var(--w-success); font-weight: 700; }
+.verify-result-fail  { color: var(--w-danger);  font-weight: 700; }
+.verify-result-meta  { font-size: 11px; font-family: var(--w-font-mono); color: var(--w-text-dim); margin-top: 4px; }
+
+/* ─── UI Provenance footer ─── */
+.provenance-box {
+  padding: var(--w-space-4);
+  border-radius: var(--w-radius-sm);
+  border: var(--w-border-1) solid color-mix(in srgb, var(--w-forensic) 50%, var(--w-border));
+  background: color-mix(in srgb, var(--w-sealed) 40%, var(--w-surface));
+  font-size: 11px; font-family: var(--w-font-mono);
+  color: var(--w-text-muted); line-height: 2;
+}
+.provenance-box strong { color: var(--w-gold); font-weight: 700; }
+
+/* ─── Demo meta ─── */
+.demo-footer {
+  margin-top: var(--w-space-12);
+  padding-top: var(--w-space-5);
+  border-top: var(--w-border-1) solid var(--w-border);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: var(--w-space-3);
+  font-size: 11px; color: var(--w-text-dim);
+}
+</style>
+</head>
+<body>
+
+<div class="windi-app">
+<div class="demo-page">
+
+  <!-- HEADER -->
+  <header class="demo-header">
+    <div class="demo-logo">
+      <div class="demo-logo-mark">🐉</div>
+      <div>
+        <div class="demo-logo-text">WINDI UI v1.0</div>
+        <div class="demo-logo-sub">Component Library — Step 1.1 Demo</div>
+      </div>
+    </div>
+    <button class="theme-toggle windi-focus" onclick="toggleTheme()" type="button">
+      <span id="theme-icon">☀️</span>
+      <span id="theme-label">KLAR</span>
+    </button>
+  </header>
+
+  <!-- SECTION: Three Dragons -->
+  <section class="demo-section">
+    <div class="section-label">E) Dragon Orb — Three Dragons + Human</div>
+    <div class="demo-row">
+
+      <div class="w-orb" data-role="ARCHITECT" data-state="thinking" aria-label="Architect Dragon">
+        <div class="w-orb__ring"><div class="w-orb__core"></div></div>
+        <div class="w-orb__meta">
+          <div class="w-orb__role">ARCHITECT</div>
+          <div class="w-orb__id">W-DRG-001</div>
+        </div>
+      </div>
+
+      <div class="w-orb" data-role="GUARDIAN" data-state="idle" aria-label="Guardian Dragon">
+        <div class="w-orb__ring"><div class="w-orb__core"></div></div>
+        <div class="w-orb__meta">
+          <div class="w-orb__role">GUARDIAN</div>
+          <div class="w-orb__id">W-DRG-002</div>
+        </div>
+      </div>
+
+      <div class="w-orb" data-role="WITNESS" data-state="sealed" aria-label="Witness Dragon">
+        <div class="w-orb__ring"><div class="w-orb__core"></div></div>
+        <div class="w-orb__meta">
+          <div class="w-orb__role">WITNESS</div>
+          <div class="w-orb__id">W-DRG-003</div>
+        </div>
+      </div>
+
+      <div class="w-orb" data-role="HUMAN" data-state="idle" aria-label="Human — Chief Governance Officer">
+        <div class="w-orb__ring"><div class="w-orb__core"></div></div>
+        <div class="w-orb__meta">
+          <div class="w-orb__role">HUMAN</div>
+          <div class="w-orb__id">CGO · Dragon</div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION: Seal Badge -->
+  <section class="demo-section">
+    <div class="section-label">B) Seal Badge — Status Forense</div>
+    <div class="demo-row" style="align-items:center;">
+
+      <div class="w-seal" data-status="verified">
+        <div class="w-seal__dot"></div>
+        <div class="w-seal__meta">
+          <div class="w-seal__row">
+            <span class="w-seal__label">SEAL</span>
+            <span class="w-seal__status">VERIFIED</span>
+          </div>
+          <div class="w-seal__row">
+            <span class="w-seal__hash">sha256: d4a843f9…3c7e</span>
+          </div>
+          <div class="w-seal__row">
+            <span class="w-seal__time">2026-03-05T14:22:01Z</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="w-seal" data-status="sealed">
+        <div class="w-seal__dot"></div>
+        <div class="w-seal__meta">
+          <div class="w-seal__row">
+            <span class="w-seal__label">SEAL</span>
+            <span class="w-seal__status">SEALED</span>
+          </div>
+          <div class="w-seal__row">
+            <span class="w-seal__hash">sha256: 8b6914c2…11f0</span>
+          </div>
+          <div class="w-seal__row">
+            <span class="w-seal__time">I11 · IRREMEDIÁVEL</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="w-seal" data-status="pending">
+        <div class="w-seal__dot"></div>
+        <div class="w-seal__meta">
+          <div class="w-seal__row">
+            <span class="w-seal__label">SEAL</span>
+            <span class="w-seal__status">PENDING</span>
+          </div>
+          <div class="w-seal__row">
+            <span class="w-seal__hash">sha256: awaiting…</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION: Ledger + Buttons -->
+  <section class="demo-section">
+    <div class="section-label">C) Ledger Status &amp; D) Sovereign Button</div>
+    <div class="demo-row" style="align-items:center;">
+
+      <div class="windi-chip w-ledger" data-verified="true" role="status">
+        <span class="w-ledger__icon" aria-hidden="true">⟡</span>
+        <span class="w-ledger__label">LEDGER</span>
+        <span class="w-ledger__state">ANCHORED</span>
+        <span class="w-ledger__anchor windi-mono windi-dim">#40918</span>
+      </div>
+
+      <div class="windi-chip w-ledger" data-verified="false" role="status">
+        <span class="w-ledger__icon" aria-hidden="true">⟡</span>
+        <span class="w-ledger__label">LEDGER</span>
+        <span class="w-ledger__state">UNVERIFIED</span>
+        <span class="w-ledger__anchor windi-mono windi-dim">#—</span>
+      </div>
+
+    </div>
+
+    <div class="demo-row" style="margin-top: var(--w-space-5); align-items:center;">
+      <button class="w-btn windi-focus" data-variant="primary" type="button">⟡ Seal Document</button>
+      <button class="w-btn windi-focus" data-variant="ghost"   type="button">Download Evidence</button>
+      <button class="w-btn windi-focus" data-variant="danger"  type="button">⚠ Revoke</button>
+      <button class="w-btn windi-focus" data-variant="primary" disabled type="button">Disabled</button>
+    </div>
+  </section>
+
+  <!-- SECTION: Main Card + Verification Panel -->
+  <section class="demo-section">
+    <div class="section-label">A) Windi Card + F) Verification Panel</div>
+    <div class="demo-row">
+
+      <!-- Card: Document Info -->
+      <div class="demo-col">
+        <section class="w-card windi-surface" data-elevation="md" data-padding="md">
+          <header class="w-card__header">
+            <div class="w-card__titles">
+              <h3 class="w-card__title">Verify Public v1.0.1</h3>
+              <p class="w-card__subtitle">Forensic Ledger — 40,918 receipts</p>
+            </div>
+            <div class="w-card__actions">
+              <button class="w-btn windi-focus" data-variant="ghost" type="button" style="padding:6px 10px; font-size:12px;">⟡</button>
+            </div>
+          </header>
+          <div class="w-card__body">
+
+            <div style="display:flex; flex-direction:column; gap: var(--w-space-3);">
+              <div class="w-seal" data-status="sealed">
+                <div class="w-seal__dot"></div>
+                <div class="w-seal__meta">
+                  <div class="w-seal__row">
+                    <span class="w-seal__label">I11</span>
+                    <span class="w-seal__status">IRREMEDIÁVEL</span>
+                  </div>
+                  <div class="w-seal__row">
+                    <span class="w-seal__hash">dca0b85…</span>
+                  </div>
+                </div>
+              </div>
+
+              <div style="display:flex; gap: var(--w-space-2); flex-wrap:wrap;">
+                <div class="windi-chip w-ledger" data-verified="true" role="status">
+                  <span class="w-ledger__icon">⟡</span>
+                  <span class="w-ledger__label">LEDGER</span>
+                  <span class="w-ledger__state">ANCHORED</span>
+                  <span class="w-ledger__anchor windi-mono windi-dim">#40918</span>
+                </div>
+                <div class="w-orb" data-role="HUMAN" data-state="idle" style="gap:6px;">
+                  <div class="w-orb__ring" style="width:22px;height:22px;"><div class="w-orb__core" style="width:12px;height:12px;margin-left:-17px;"></div></div>
+                  <div class="w-orb__role" style="font-size:10px;">HUMAN DECIDES</div>
+                </div>
+              </div>
+
+              <p style="font-size:13px; color:var(--w-text-muted); line-height:1.6; margin-top:4px;">
+                AI processes. Human decides. WINDI guarantees.<br/>
+                <span class="windi-mono" style="font-size:11px;">:8114 · /verify-public/</span>
+              </p>
+
+              <div style="display:flex; gap: var(--w-space-2); margin-top:4px;">
+                <button class="w-btn windi-focus" data-variant="primary" type="button" style="font-size:12px; padding:8px 14px;">Open Verify →</button>
+                <button class="w-btn windi-focus" data-variant="ghost" type="button" style="font-size:12px; padding:8px 14px;">Docs</button>
+              </div>
+            </div>
+
+          </div>
+        </section>
+      </div>
+
+      <!-- Verification Panel -->
+      <div class="demo-col">
+        <div class="windi-surface">
+          <div class="w-verify" id="verify-panel" data-mode="hash">
+            <div class="w-verify__top">
+              <div>
+                <div class="w-verify__title">Verify Anything</div>
+                <div class="w-verify__modes">
+                  <button class="w-verify__tab windi-focus" data-mode="doc_id" type="button">Doc ID</button>
+                  <button class="w-verify__tab windi-focus" data-mode="hash"   type="button">SHA</button>
+                  <button class="w-verify__tab windi-focus" data-mode="qr"     type="button">QR</button>
+                  <button class="w-verify__tab windi-focus" data-mode="upload" type="button">Upload</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="w-verify__form">
+              <label class="w-verify__label">
+                <span>Input</span>
+                <input class="w-verify__input windi-focus" id="verify-input"
+                  placeholder="Enter sha256 hash…" autocomplete="off" spellcheck="false" />
+              </label>
+              <button class="w-btn windi-focus" data-variant="primary" type="button" onclick="runVerify()">
+                Verify
+              </button>
+            </div>
+
+            <div class="w-verify__result" role="status" aria-live="polite" id="verify-result">
+              <div class="windi-dim" style="font-size:13px;">No verification yet. Enter a hash or Doc ID.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SECTION: UI Provenance -->
+  <section class="demo-section">
+    <div class="section-label">UI Provenance — Cadeia de Custódia da Interface</div>
+    <div class="provenance-box">
+      <strong>ui_provenance</strong> · windi-ui/v1.0.0<br/>
+      html_hash: <span style="color:var(--w-text-muted)">sha256:a1b2c3d4…</span><br/>
+      css_hash:  <span style="color:var(--w-text-muted)">sha256:e5f6a7b8…</span><br/>
+      js_hash:   <span style="color:var(--w-text-muted)">sha256:c9d0e1f2…</span><br/>
+      sealed_at: <span style="color:var(--w-text-muted)">2026-03-05T00:00:00Z</span><br/>
+      ledger_anchor: <strong style="color:var(--w-success)">true</strong> · receipt_id: WINDI-2026-0001<br/>
+      invariant: <strong>C6 IRREMEDIÁVEL</strong> · I11 IRREMEDIÁVEL
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="demo-footer">
+    <div>WINDI Publishing House · Kempten, Bavaria 🇩🇪 · Pre-AI Governance Layer</div>
+    <div class="w-orb" data-role="HUMAN" data-state="idle" style="gap:6px;">
+      <div class="w-orb__ring" style="width:20px;height:20px;"><div class="w-orb__core" style="width:11px;height:11px;margin-left:-15px;"></div></div>
+      <span style="font-size:11px; color:var(--w-text-dim);">AI processes. Human decides. WINDI guarantees.</span>
+    </div>
+  </footer>
+
+</div>
+</div>
+
+<script>
+/* ─── Theme toggle ─── */
+function toggleTheme() {
+  const root  = document.documentElement;
+  const icon  = document.getElementById('theme-icon');
+  const label = document.getElementById('theme-label');
+  if (root.getAttribute('data-theme') === 'noir') {
+    root.setAttribute('data-theme', 'klar');
+    icon.textContent  = '🌑';
+    label.textContent = 'NOIR';
+  } else {
+    root.setAttribute('data-theme', 'noir');
+    icon.textContent  = '☀️';
+    label.textContent = 'KLAR';
+  }
+}
+
+/* ─── Verification Panel: tab switching ─── */
+const panel = document.getElementById('verify-panel');
+const input = document.getElementById('verify-input');
+
+const placeholders = {
+  doc_id: 'Enter document_id… e.g. WINDI-2026-0001',
+  hash:   'Enter sha256 hash… e.g. d4a843f9…',
+  qr:     'Paste QR payload or URL…',
+  upload: 'Upload mode — drag & drop handled by host'
+};
+
+document.querySelectorAll('.w-verify__tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const mode = tab.dataset.mode;
+    panel.setAttribute('data-mode', mode);
+    document.querySelectorAll('.w-verify__tab').forEach(t =>
+      t.dataset.active = String(t.dataset.mode === mode)
+    );
+    input.value = '';
+    input.placeholder = placeholders[mode] || '';
+    document.getElementById('verify-result').innerHTML =
+      `<div class="windi-dim" style="font-size:13px;">Mode: ${mode.toUpperCase()}. Ready.</div>`;
+  });
+});
+
+/* ─── Verification: hit :8114 or show demo response ─── */
+async function runVerify() {
+  const mode  = panel.getAttribute('data-mode');
+  const value = input.value.trim();
+  const result = document.getElementById('verify-result');
+
+  if (!value) {
+    result.innerHTML = `<div style="color:var(--w-warning);font-size:13px;">⚠ Please provide an input.</div>`;
+    return;
+  }
+
+  result.innerHTML = `<div class="windi-dim" style="font-size:13px;">Verifying…</div>`;
+
+  const endpoint = '/verify-public/api/verify';
+  const payload  = mode === 'doc_id' ? { document_id: value }
+                 : mode === 'hash'   ? { hash: value }
+                 : mode === 'qr'     ? { qr: value }
+                 : { value };
+
+  try {
+    const res  = await fetch(endpoint, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload)
+    });
+    const data = await res.json();
+    const verified = data.verified || data.status === 'verified';
+
+    result.innerHTML = `
+      <div class="${verified ? 'verify-result-ok' : 'verify-result-fail'}">
+        ${verified ? '✓ VERIFIED' : '✗ NOT FOUND'}
+      </div>
+      <div class="verify-result-meta">${value.slice(0,32)}…</div>
+      <pre>${JSON.stringify(data, null, 2)}</pre>
+    `;
+  } catch {
+    /* Demo fallback — no live server in this context */
+    result.innerHTML = `
+      <div class="verify-result-ok">✓ DEMO — WINDI :8114 endpoint</div>
+      <div class="verify-result-meta">Connect to windi-domain.com to run live verification.</div>
+      <pre>${JSON.stringify({ mode, input: value, endpoint, note: "Demo render — live at /verify-public/" }, null, 2)}</pre>
+    `;
+  }
+}
+
+/* ─── Init: set default tab active ─── */
+document.querySelector('.w-verify__tab[data-mode="hash"]').dataset.active = 'true';
+</script>
+</body>
+</html>
