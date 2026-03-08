@@ -453,6 +453,7 @@ const DOC_TYPES = {
   analysis:{icon:"🔬",tier:"MED",cat:"business",breath:{en:"Clarity distilled",de:"Klarheit destilliert",pt:"Clareza destilada"}},presentation:{icon:"📽️",tier:"MED",cat:"business",breath:{en:"Story takes shape",de:"Geschichte formt sich",pt:"História toma forma"}},
   communique:{icon:"📡",tier:"HIGH",cat:"governance",breath:{en:"Bloom · Witness",de:"Blühen · Bezeugen",pt:"Florescer · Testemunhar"}},certificate:{icon:"🏛️",tier:"HIGH",cat:"governance",breath:{en:"Permanent record",de:"Dauerhafter Nachweis",pt:"Registro permanente"}},
   creativeVirtue:{icon:"🎨",tier:"HIGH",cat:"governance",breath:{en:"Proof of creation",de:"Schöpfungsnachweis",pt:"Prova da criação"}},
+  htmlbuilder:{icon:"🌐",tier:"FREE",cat:"personal",externalUrl:"https://windi-domain.com/html-builder/",breath:{en:"Page that converts",de:"Seite die überzeugt",pt:"Página que converte"}},
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════════
@@ -2399,7 +2400,7 @@ const CryptoProvider = {
 const L = {
   de: {
     sidebar:{grove:"Hain",chat:"Chat",insights:"Einsichten",docs:"Dokumente",desk:"Freie Desk",files:"Dateien",wallet:"Brieftasche",wick:"WICK Netz",search:"Suche",products:"Produkte",journal:"Zeitung",history:"Verlauf",templates:"Vorlagen"},
-    types:{letter:"Brief",email:"E-Mail",note:"Notiz",memo:"Memo",journal:"Tagebuch",recipe:"Rezept",report:"Bericht",contract:"Vertrag",invoice:"Rechnung",protocol:"Protokoll",analysis:"Analyse",presentation:"Präsentation",communique:"Communiqué",certificate:"Bescheinigung"},
+    types:{letter:"Brief",email:"E-Mail",note:"Notiz",memo:"Memo",journal:"Tagebuch",recipe:"Rezept",report:"Bericht",contract:"Vertrag",invoice:"Rechnung",protocol:"Protokoll",analysis:"Analyse",presentation:"Präsentation",communique:"Communiqué",certificate:"Bescheinigung",htmlbuilder:"HTML Builder"},
     chat:{
       greet:"Hallo! 🐉 Ich bin dein Guardian.\n\nWähle links einen Dokumenttyp — oder erzähl mir einfach, was du brauchst.",
       placeholder:"Erzähl mir, was ins Dokument soll...",
@@ -2468,7 +2469,7 @@ const L = {
   },
   en: {
     sidebar:{grove:"Grove",chat:"Chat",insights:"Insights",docs:"Documents",desk:"Free Desk",files:"Files",wallet:"Wallet",wick:"WICK Network",search:"Search",products:"Products",journal:"Journal",history:"History",templates:"Templates"},
-    types:{letter:"Letter",email:"Email",note:"Note",memo:"Memo",journal:"Journal",recipe:"Recipe",report:"Report",contract:"Contract",invoice:"Invoice",protocol:"Minutes",analysis:"Analysis",presentation:"Presentation",communique:"Communiqué",certificate:"Certificate"},
+    types:{letter:"Letter",email:"Email",note:"Note",memo:"Memo",journal:"Journal",recipe:"Recipe",report:"Report",contract:"Contract",invoice:"Invoice",protocol:"Minutes",analysis:"Analysis",presentation:"Presentation",communique:"Communiqué",certificate:"Certificate",htmlbuilder:"HTML Builder"},
     chat:{
       greet:"Hello! 🐉 I'm your Guardian.\n\nPick a document type on the left — or just tell me what you need.",
       placeholder:"Tell me what goes in the document...",
@@ -2535,7 +2536,7 @@ const L = {
   },
   pt: {
     sidebar:{grove:"Bosque",chat:"Chat",insights:"Insights",docs:"Documentos",desk:"Desk Livre",files:"Ficheiros",wallet:"Carteira",wick:"Rede WICK",search:"Busca",products:"Produtos",journal:"Jornal",history:"Histórico",templates:"Modelos"},
-    types:{letter:"Carta",email:"E-mail",note:"Nota",memo:"Memorando",journal:"Diário",recipe:"Receita",report:"Relatório",contract:"Contrato",invoice:"Fatura",protocol:"Ata",analysis:"Análise",presentation:"Apresentação",communique:"Comunicado",certificate:"Certificado"},
+    types:{letter:"Carta",email:"E-mail",note:"Nota",memo:"Memorando",journal:"Diário",recipe:"Receita",report:"Relatório",contract:"Contrato",invoice:"Fatura",protocol:"Ata",analysis:"Análise",presentation:"Apresentação",communique:"Comunicado",certificate:"Certificado",htmlbuilder:"HTML Builder"},
     chat:{
       greet:"Olá! 🐉 Sou o teu Guardian.\n\nEscolhe um tipo à esquerda — ou conta-me o que precisas.",
       placeholder:"Conta-me o que entra no documento...",
@@ -4577,7 +4578,8 @@ function App(){
                     presentation:{de:'Ich möchte eine Präsentation erstellen',en:'I want to create a presentation',pt:'Quero criar uma apresentação'},
                     communique:{de:'Ich möchte ein Communiqué veröffentlichen',en:'I want to publish a communiqué',pt:'Quero publicar um comunicado'},
                     certificate:{de:'Ich möchte ein Zertifikat ausstellen',en:'I want to issue a certificate',pt:'Quero emitir um certificado'},
-                    creativeVirtue:{de:'Ich möchte ein Kreatives Tugend-Zertifikat erstellen',en:'I want to create a Creative Virtue Receipt',pt:'Quero criar um Recibo de Virtude Criativa'}
+                    creativeVirtue:{de:'Ich möchte ein Kreatives Tugend-Zertifikat erstellen',en:'I want to create a Creative Virtue Receipt',pt:'Quero criar um Recibo de Virtude Criativa'},
+                    htmlbuilder:{de:'HTML Builder öffnen',en:'Open HTML Builder',pt:'Abrir HTML Builder'}
                   };
                   const SHELF_NAMES={
                     letter:{de:'Brief',en:'Letter',pt:'Carta'},email:{de:'E-Mail',en:'Email',pt:'E-mail'},
@@ -4587,7 +4589,8 @@ function App(){
                     invoice:{de:'Rechnung',en:'Invoice',pt:'Factura'},protocol:{de:'Protokoll',en:'Protocol',pt:'Ata'},
                     analysis:{de:'Analyse',en:'Analysis',pt:'Análise'},presentation:{de:'Präsentation',en:'Presentation',pt:'Apresentação'},
                     communique:{de:'Communiqué',en:'Communiqué',pt:'Comunicado'},certificate:{de:'Zertifikat',en:'Certificate',pt:'Certificado'},
-                    creativeVirtue:{de:'Kreatives Tugend',en:'Creative Virtue',pt:'Virtude Criativa'}
+                    creativeVirtue:{de:'Kreatives Tugend',en:'Creative Virtue',pt:'Virtude Criativa'},
+                    htmlbuilder:{de:'HTML Builder',en:'HTML Builder',pt:'HTML Builder'}
                   };
                   const TIER_LEVEL={FREE:0,MED:1,HIGH:2};
                   const currentLevel=TIER_LEVEL[windiTier]||0;
@@ -4607,6 +4610,7 @@ function App(){
                         return React.createElement('div',{
                           key:id,
                           onClick:()=>{if(!locked){
+                            if(dt.externalUrl){window.open(dt.externalUrl,'_blank');return;}
                             const msg=(SHELF_PROMPTS[id]||{})[lang]||(SHELF_PROMPTS[id]||{}).en||`Create ${id}`;
                             setChatIn(msg);
                             setTimeout(()=>send(msg),150);
@@ -4761,7 +4765,7 @@ function App(){
               <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(90px,1fr))",gap:8}}>
                 {filteredTypes.map(([key,info])=>{
                   const ok=info.tier==="FREE";
-                  return<button key={key} onClick={()=>ok&&selectType(key)} style={{padding:"10px 6px",borderRadius:10,cursor:ok?"pointer":"default",
+                  return<button key={key} onClick={()=>{if(ok){if(info.externalUrl){window.open(info.externalUrl,'_blank');}else{selectType(key);}}}} style={{padding:"10px 6px",borderRadius:10,cursor:ok?"pointer":"default",
                     background:th.card,border:`1px solid ${th.border}`,textAlign:"center",opacity:ok?1:0.4,
                     display:"flex",flexDirection:"column",alignItems:"center",gap:3,transition:"all 0.2s"}}>
                     <span style={{fontSize:20}}>{info.icon}</span>
