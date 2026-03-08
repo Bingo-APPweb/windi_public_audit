@@ -2843,7 +2843,8 @@ function App(){
   const windiConfig=window.WINDI?window.WINDI.getTierConfig(windiTier):null;
 
   const[lang,setLang]=useState("de");
-  const[view,setView]=useState("onboard");
+  // FIX 4: Onboarding persistence — only show once per device
+  const[view,setView]=useState(()=>localStorage.getItem("windi_onboarded")==="1"?"main":"onboard");
   const[onboardStep,setOnboardStep]=useState(0);
   const[sidebarTab,setSidebarTab]=useState("grove");
   const[sidebarOpen,setSidebarOpen]=useState(false);
@@ -3467,7 +3468,7 @@ function App(){
 
 
   const wordCount=docContent.trim().split(/\s+/).filter(Boolean).length;
-  const startApp=useCallback(()=>{setMsgs([{role:"bot",text:t.chat.greet}]);setView("main");},[t]);
+  const startApp=useCallback(()=>{localStorage.setItem("windi_onboarded","1");setMsgs([{role:"bot",text:t.chat.greet}]);setView("main");},[t]);
 
   // FIX (H): Select doc type — prominent first choice
   const selectType=useCallback(key=>{
