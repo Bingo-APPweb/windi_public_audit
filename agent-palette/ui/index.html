@@ -2278,7 +2278,7 @@ const CANVAS_TEMPLATES={
 };
 
 const SIDEBAR = [
-  {id:"grove",icon:"🌱",klass:"main"},{id:"chat",icon:"💬",klass:"main"},{id:"insights",icon:"🧠",klass:"main"},{id:"docs",icon:"📄",klass:"main"},{id:"desk",icon:"🎨",klass:"main"},
+  {id:"grove",icon:"🌱",klass:"main"},{id:"chat",icon:"💬",klass:"main"},{id:"docs",icon:"📄",klass:"main"},{id:"desk",icon:"🎨",klass:"main"},
   {id:"files",icon:"📁",klass:"main"},{id:"wallet",icon:"👛",klass:"main"},{id:"wick",icon:"🌐",klass:"main"},
   {id:"search",icon:"🔍",klass:"main"},{id:"products",icon:"🛒",klass:"extra"},
   {id:"journal",icon:"📰",klass:"extra"},{id:"history",icon:"🕐",klass:"extra"},
@@ -3688,6 +3688,8 @@ function App(){
               dragonDocument=parsed.document;
               // Clean the response text (remove JSON block for cleaner display)
               resp=resp.replace(/```json[\s\S]*?```/g,'').trim();
+              // Also remove inline JSON {"document":...} without code fences
+              resp=resp.replace(/\{"document"\s*:\s*\{[\s\S]*?\}\s*\}/g,'').trim();
             }
           }catch(e){console.log("[Bridge] JSON parse error:",e);}
         }
@@ -4692,13 +4694,6 @@ function App(){
               </div>
             </div>
           </>)}
-
-          {/* ═══ INSIGHTS TAB — COGNITIVE INTERFACE LAYER ═══ */}
-          {sidebarTab==="insights"&&(
-            <div style={{flex:1,overflowY:"auto",padding:"16px"}}>
-              <CognitiveInsightsPanel lang={lang} theme={th} compact={false} />
-            </div>
-          )}
 
           {/* ═══ DOCS TAB ═══ */}
           {sidebarTab==="docs"&&(
