@@ -85,6 +85,8 @@ input[type=text]:focus{border-color:var(--gold)}
 .wa-btn svg{width:16px;height:16px;fill:#fff;flex-shrink:0}
 .tg-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:#229ED9;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;text-decoration:none;font-family:inherit;transition:opacity .15s;letter-spacing:.03em}
 .tg-btn:hover{opacity:.88}
+.email-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:#fff;border:1.5px solid var(--border);border-radius:6px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .15s}
+.email-btn:hover{border-color:var(--gold);color:var(--noir)}
 .cp-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:none;border:1.5px solid var(--border);border-radius:6px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .15s}
 .share-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:var(--gold);border:none;border-radius:6px;font-size:12px;font-weight:700;color:#fff;cursor:pointer;font-family:inherit;transition:all .15s}
 .share-btn:hover{opacity:.9}
@@ -233,6 +235,9 @@ function render(d){
       <button class="tg-btn" onclick="windiTelegramShare('${docId}')">
         ✈️ Telegram
       </button>
+      <button class="email-btn" onclick="windiEmailShare('${docId}')">
+        ✉️ Email
+      </button>
       <button class="cp-btn" id="cpbtn" onclick="cpLink('${verifyUrl}')">
         🔗 Copy
       </button>
@@ -245,6 +250,20 @@ function render(d){
 }
 function tgd(){const p=document.getElementById('tp'),b=document.querySelector('.dtbtn');if(p.classList.toggle('open')){b.textContent='Hide technical details'}else{b.textContent='Show technical details'}}
 function cpLink(url){navigator.clipboard.writeText(url).then(()=>{const b=document.getElementById('cpbtn');if(b){b.textContent='✅ Copiado!';b.classList.add('copied');setTimeout(()=>{b.textContent='🔗 Copy';b.classList.remove('copied')},2000)}}).catch(()=>{const t=document.createElement('textarea');t.value=url;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t)})}
+
+// WINDI Email Share — native mailto: (Garden Protocol)
+function windiEmailShare(receiptId) {
+  const verifyUrl = 'https://windi-domain.com/verify-public/?id=' + encodeURIComponent(receiptId);
+  const subject = encodeURIComponent('Document Verified — ' + receiptId);
+  const body = encodeURIComponent(
+    'Hello,\n\nThis document has been cryptographically verified by WINDI Forensic Ledger.\n\n' +
+    'Receipt ID: ' + receiptId + '\n' +
+    'Integrity: ✅ Confirmed\n\n' +
+    'Verify here:\n' + verifyUrl + '\n\n' +
+    '---\nWINDI Publishing House\nAI processes. Human decides. WINDI guarantees.\nwindi-domain.com'
+  );
+  window.location.href = 'mailto:?subject=' + subject + '&body=' + body;
+}
 
 // WINDI Telegram Share — zero API, zero approval (Garden Protocol)
 function windiTelegramShare(receiptId) {
