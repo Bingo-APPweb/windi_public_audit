@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>WINDI × WhatsApp — Debriefing Pioneiro 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --gold:   #C9A84C;
+    --gold2:  #8B6914;
+    --bg:     #0A0906;
+    --card:   #111009;
+    --border: #2A2518;
+    --text:   #EDE8D8;
+    --dim:    #7A7260;
+    --green:  #3ECF8E;
+    --red:    #FF4D4D;
+    --blue:   #5B9CF6;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Bricolage Grotesque', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* ── Grain overlay ── */
+  body::before {
+    content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: .35;
+  }
+
+  .wrap { position:relative; z-index:1; max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  /* ── Header ── */
+  .header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 32px;
+    margin-bottom: 48px;
+  }
+  .tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .15em;
+    color: var(--gold);
+    background: rgba(201,168,76,.08);
+    border: 1px solid rgba(201,168,76,.25);
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+  }
+  h1 {
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -.02em;
+    margin-bottom: 16px;
+  }
+  h1 span { color: var(--gold); }
+  .subtitle {
+    font-size: 15px;
+    color: var(--dim);
+    font-family: 'JetBrains Mono', monospace;
+    line-height: 1.6;
+  }
+
+  /* ── Section titles ── */
+  .section-title {
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: .2em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-title::after {
+    content:'';
+    flex:1;
+    height:1px;
+    background: var(--border);
+  }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* ── Timeline ── */
+  .timeline { position: relative; padding-left: 28px; }
+  .timeline::before {
+    content:'';
+    position:absolute; left:7px; top:6px; bottom:0;
+    width:1px; background: var(--border);
+  }
+  .tl-item {
+    position: relative;
+    margin-bottom: 28px;
+  }
+  .tl-item::before {
+    content:'';
+    position:absolute; left:-24px; top:6px;
+    width:8px; height:8px; border-radius:50%;
+    background: var(--gold2);
+    border: 2px solid var(--gold);
+  }
+  .tl-item.done::before  { background: var(--green); border-color: var(--green); }
+  .tl-item.now::before   { background: var(--gold);  border-color: var(--gold);
+    box-shadow: 0 0 0 4px rgba(201,168,76,.15); }
+  .tl-item.next::before  { background: var(--blue);  border-color: var(--blue); }
+  .tl-item.future::before{ background: var(--border);border-color: var(--dim); }
+
+  .tl-date {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--dim);
+    margin-bottom: 4px;
+  }
+  .tl-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+  .tl-body  { font-size: 13px; color: var(--dim); line-height: 1.6; }
+
+  /* ── Matrix table ── */
+  .matrix {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .matrix th {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .1em;
+    color: var(--dim);
+    text-transform: uppercase;
+    text-align: left;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .matrix td {
+    padding: 12px 12px;
+    border-bottom: 1px solid rgba(42,37,24,.5);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  .matrix tr:last-child td { border-bottom: none; }
+  .matrix tr:hover td { background: rgba(201,168,76,.03); }
+  .pill {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    white-space: nowrap;
+  }
+  .pill.green { background: rgba(62,207,142,.1); color: var(--green); border: 1px solid rgba(62,207,142,.2); }
+  .pill.gold  { background: rgba(201,168,76,.1); color: var(--gold);  border: 1px solid rgba(201,168,76,.2); }
+  .pill.blue  { background: rgba(91,156,246,.1); color: var(--blue);  border: 1px solid rgba(91,156,246,.2); }
+  .pill.dim   { background: rgba(122,114,96,.1); color: var(--dim);   border: 1px solid rgba(122,114,96,.2); }
+
+  /* ── Code block ── */
+  .code {
+    background: #07060400;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--gold2);
+    border-radius: 8px;
+    padding: 16px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    color: #C8B97A;
+    overflow-x: auto;
+    margin: 12px 0;
+    white-space: pre;
+  }
+
+  /* ── Alert box ── */
+  .alert {
+    background: rgba(201,168,76,.06);
+    border: 1px solid rgba(201,168,76,.2);
+    border-radius: 10px;
+    padding: 16px 20px;
+    font-size: 13px;
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+  .alert strong { color: var(--gold); }
+
+  /* ── Stat blocks ── */
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 32px; }
+  .stat {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 16px;
+    text-align: center;
+  }
+  .stat-num {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--dim);
+    text-transform: uppercase;
+    letter-spacing: .1em;
+  }
+
+  /* ── Footer ── */
+  .footer {
+    margin-top: 60px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--dim);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* ── Spacing helpers ── */
+  .mb8  { margin-bottom: 8px; }
+  .mb16 { margin-bottom: 16px; }
+  .mb24 { margin-bottom: 24px; }
+  .mb32 { margin-bottom: 32px; }
+  .mb48 { margin-bottom: 48px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ─── HEADER ──────────────────────────────────── -->
+  <div class="header">
+    <div class="tag">🐉 WINDI Intelligence Debrief · 08 Mar 2026</div>
+    <h1>WhatsApp vai além<br/>do número.<br/><span>WINDI já está lá.</span></h1>
+    <div class="subtitle">
+      Análise estratégica: transição BSUID · Posição pioneira · Roadmap de execução<br/>
+      Confidencial — Human Dragon / CGO / Kempten, Bavaria
+    </div>
+  </div>
+
+  <!-- ─── STATS ────────────────────────────────────── -->
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num">Jun</div>
+      <div class="stat-label">Deadline Meta<br/>2026</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">✓</div>
+      <div class="stat-label">BSUID Ready<br/>08 Mar 2026</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">6</div>
+      <div class="stat-label">Canais<br/>Garden Protocol</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">0</div>
+      <div class="stat-label">Dependências<br/>Meta API</div>
+    </div>
+  </div>
+
+  <!-- ─── O QUE ESTÁ ACONTECENDO ──────────────────── -->
+  <div class="section-title">01 · O que o WhatsApp está fazendo</div>
+
+  <div class="alert mb24">
+    <strong>Mudança histórica:</strong> O WhatsApp está substituindo o número de telefone como identificador primário. A partir de junho 2026, o campo <code style="color:var(--gold)">to/from</code> nos webhooks pode ser um BSUID — não mais um número E.164. Quem não atualizar vai quebrar silenciosamente.
+  </div>
+
+  <div class="card mb8">
+    <div class="card-title">📱 Username — o que é</div>
+    <div style="font-size:13px; color:var(--dim); line-height:1.6">
+      Cada usuário poderá ter um handle único (ex: <code style="color:var(--gold)">@joberdragon</code>). Voz, vídeo e chat funcionarão via username — sem revelar número. Opcional para usuários, <strong style="color:var(--text)">obrigatório que empresas suportem</strong>.
+    </div>
+  </div>
+
+  <div class="card mb8">
+    <div class="card-title">🔑 BSUID — o que é tecnicamente</div>
+    <div class="code">// Formato: até 128 chars alfanuméricos (+ código de país 2 letras)
+// Único POR PAR (empresa ↔ usuário) — mesmo user = BSUIDs diferentes por empresa
+// Aparece em TODOS os webhooks já agora (mesmo sem username ativo)
+// Substitui número quando user adota username
+
+webhook payload HOJE:   { "from": "+49151234567",  "ExternalUserId": "DE_abc123xyz..." }
+webhook payload JUN/26: { "from": "DE_abc123xyz...", "ExternalUserId": "DE_abc123xyz..." }
+</div>
+  </div>
+
+  <div class="card mb32">
+    <div class="card-title">📈 Novo limite de mensagens (bônus)</div>
+    <div style="font-size:13px; color:var(--dim); line-height:1.6">
+      Meta também elimina os tiers 2K e 10K. Negócios verificados saltam direto para <strong style="color:var(--green)">100.000 msgs/dia</strong> — sem escalonamento gradual. Começa Q1/Q2 2026. Para a WINDI isso significa escala imediata quando necessário.
+    </div>
+  </div>
+
+  <!-- ─── POSIÇÃO WINDI ─────────────────────────────── -->
+  <div class="section-title">02 · Posição WINDI no ecossistema</div>
+
+  <table class="matrix mb32">
+    <thead>
+      <tr>
+        <th>O que o mercado precisa construir</th>
+        <th>WINDI — estado atual</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Parar de usar telefone como ID primário</td>
+        <td>DID soberano (wallet_id, Ed25519, UUIDv7) — ativo desde Fev 2026</td>
+        <td><span class="pill green">✓ PRONTO</span></td>
+      </tr>
+      <tr>
+        <td>Suportar BSUID nos webhooks e CRM</td>
+        <td>dragon_chat_service.py v2.6.0 — <code style="color:var(--gold)">detect_wa_id_type()</code> + <code style="color:var(--gold)">parse_wa_webhook()</code></td>
+        <td><span class="pill green">✓ PRONTO</span></td>
+      </tr>
+      <tr>
+        <td>Template Messages (iniciar conversas)</td>
+        <td>Patch v1.2.0 — 6 templates trilíngues (DE/EN/PT) pré-definidos + API endpoints</td>
+        <td><span class="pill green">✓ PRONTO</span></td>
+      </tr>
+      <tr>
+        <td>Hash de destinatário (GDPR)</td>
+        <td><code style="color:var(--gold)">seal_whatsapp_media_send()</code> — SHA-256, nunca número raw no Ledger</td>
+        <td><span class="pill green">✓ PRONTO</span></td>
+      </tr>
+      <tr>
+        <td>Identidade por username/handle</td>
+        <td>DID Cycle completo — <code style="color:var(--gold)">@windi_handle</code> = extensão natural do DID</td>
+        <td><span class="pill green">✓ PRONTO</span></td>
+      </tr>
+      <tr>
+        <td>Atualizar CRM / sistemas internos</td>
+        <td>Forensic Ledger (:8101) — campos <code style="color:var(--gold)">bsuid</code> + <code style="color:var(--gold)">wa_id_type</code> no seal</td>
+        <td><span class="pill green">✓ PRONTO</span></td>
+      </tr>
+      <tr>
+        <td>Envio de mídia (imagem, vídeo, doc)</td>
+        <td>Patch v1.0.0 gerado hoje — 4 endpoints prontos</td>
+        <td><span class="pill green">✓ PRONTO</span></td>
+      </tr>
+      <tr>
+        <td>Reservar username @WINDI</td>
+        <td>Janela de reserva abre H1 2026 — ação pendente</td>
+        <td><span class="pill blue">⟳ AGENDAR</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ─── TIMELINE ─────────────────────────────────── -->
+  <div class="section-title">03 · Linha do tempo — WINDI como pioneiro</div>
+
+  <div class="timeline mb48">
+
+    <div class="tl-item done">
+      <div class="tl-date">08 Mar 2026 — HOJE</div>
+      <div class="tl-title">✅ Patch v1.0.0 — WhatsApp Mídia</div>
+      <div class="tl-body">
+        Imagem · Vídeo · Documento · Upload via Meta API · Ledger seal GDPR-compliant.<br/>
+        <span class="pill green" style="margin-top:6px;display:inline-block">deploy pendente no Strato</span>
+      </div>
+    </div>
+
+    <div class="tl-item done">
+      <div class="tl-date">08 Mar 2026 — CONCLUÍDO</div>
+      <div class="tl-title">✅ Patch v1.1.0 — Suporte BSUID nativo</div>
+      <div class="tl-body">
+        Campo <code style="color:var(--gold)">bsuid</code> e <code style="color:var(--gold)">wa_id_type</code> no schema do Ledger.<br/>
+        Função <code style="color:var(--gold)">send_whatsapp_any_id()</code>: aceita número E.164 OU BSUID OU @username — detecção automática.<br/>
+        Webhook receiver: <code style="color:var(--gold)">parse_wa_webhook()</code> extrai e persiste BSUID.<br/>
+        <span class="pill green" style="margin-top:6px;display:inline-block">deploy Strato ✓</span>
+      </div>
+    </div>
+
+    <div class="tl-item done">
+      <div class="tl-date">08 Mar 2026 — CONCLUÍDO</div>
+      <div class="tl-title">✅ Patch v1.2.0 — Template Messages System</div>
+      <div class="tl-body">
+        6 templates pré-definidos para iniciar conversas: <code style="color:var(--gold)">document_ready</code>, <code style="color:var(--gold)">seal_complete</code>, <code style="color:var(--gold)">verification_code</code>, <code style="color:var(--gold)">welcome</code>, <code style="color:var(--gold)">payment_reminder</code>, <code style="color:var(--gold)">appointment</code>.<br/>
+        Trilíngue (DE/EN/PT) — alinhado com WINDI Constitutional.<br/>
+        Endpoints: <code style="color:var(--gold)">/templates</code>, <code style="color:var(--gold)">/templates/render</code>, <code style="color:var(--gold)">/templates/send</code>.<br/>
+        <span class="pill green" style="margin-top:6px;display:inline-block">deploy Strato ✓</span>
+      </div>
+    </div>
+
+    <div class="tl-item done">
+      <div class="tl-date">08 Mar 2026 — CONCLUÍDO</div>
+      <div class="tl-title">🌱 Garden Protocol v1.0 — Distribuição Viral</div>
+      <div class="tl-body">
+        6 canais de distribuição peer-to-peer sem Meta API:<br/>
+        <code style="color:var(--gold)">📤 Share</code> (Web Share API) · <code style="color:var(--gold)">💬 WhatsApp</code> (wa.me) · <code style="color:var(--gold)">✈️ Telegram</code> (t.me/share) · <code style="color:var(--gold)">✉️ Email</code> (mailto:) · <code style="color:var(--gold)">🔗 Copy</code> · <code style="color:var(--gold)">🖼️ Card</code> (Canvas PNG).<br/>
+        Loop viral: documento → QR → verify-public → share → novo usuário → 🔄<br/>
+        <span class="pill green" style="margin-top:6px;display:inline-block">produção ✓</span>
+      </div>
+    </div>
+
+    <div class="tl-item next">
+      <div class="tl-date">Abr 2026 — Meta lança Contact Book</div>
+      <div class="tl-title">📒 W-COMM-001 v2.2 — BSUID Contact Book</div>
+      <div class="tl-body">
+        Meta lança feature de contact book automático (número ↔ BSUID pairs).<br/>
+        WINDI conecta: wallet_id ↔ BSUID mapeados no Ledger como identidade dual.<br/>
+        Reservar handles <code style="color:var(--gold)">@windi</code> e <code style="color:var(--gold)">@windiverify</code> na janela de reserva.
+      </div>
+    </div>
+
+    <div class="tl-item next">
+      <div class="tl-date">Jun 2026 — Deadline Meta</div>
+      <div class="tl-title">🏆 WINDI Full BSUID — antes do deadline</div>
+      <div class="tl-body">
+        100% dos sistemas WINDI processam BSUID como identificador primário.<br/>
+        Palette UI atualizada: campo "Destino" aceita número / @username / BSUID transparentemente.<br/>
+        <strong style="color:var(--text)">Mercado ainda está se adaptando — WINDI já está operacional.</strong>
+      </div>
+    </div>
+
+    <div class="tl-item future">
+      <div class="tl-date">H2 2026 — Horizonte</div>
+      <div class="tl-title">🌐 WINDI DID como hub cross-platform</div>
+      <div class="tl-body">
+        DID WINDI ↔ WhatsApp username ↔ Signal username ↔ RCS handle.<br/>
+        Um DID soberano que fala com todos os canais — sem depender de número.<br/>
+        Alinhamento com Digital Markets Act (EU interoperabilidade).
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ─── PATCH v1.1.0 SPEC ───────────────────────── -->
+  <div class="section-title">04 · Especificação Patch v1.1.0 — BSUID Ready</div>
+
+  <div class="card mb16">
+    <div class="card-title">🔧 Função universal de detecção de ID</div>
+    <div class="code">def detect_wa_id_type(recipient: str) -> dict:
+    """
+    Detecta automaticamente o tipo de identificador WhatsApp.
+    Retorna {"type": "phone"|"bsuid"|"username", "value": ...}
+    """
+    import re
+    r = recipient.strip()
+
+    # E.164 phone number
+    if re.match(r'^\+\d{7,15}', r):
+        return {"type": "phone", "value": r}
+
+    # BSUID (formato Meta: 2-letter country + 128 alphanumeric)
+    if re.match(r'^[A-Z]{2}_[A-Za-z0-9]{10,128}', r):
+        return {"type": "bsuid", "value": r}
+
+    # Username handle
+    if r.startswith('@'):
+        return {"type": "username", "value": r}
+
+    # Fallback: tratar como número sem +
+    return {"type": "phone", "value": r}
+
+
+def resolve_wa_recipient(recipient: str) -> str:
+    """
+    Normaliza qualquer identificador para uso no payload Meta API.
+    BSUID e username vão direto. Número: garantir formato E.164.
+    """
+    info = detect_wa_id_type(recipient)
+    if info["type"] == "phone":
+        v = info["value"]
+        return v if v.startswith('+') else '+' + v
+    return info["value"]  # BSUID ou @username passam direto</div>
+  </div>
+
+  <div class="card mb16">
+    <div class="card-title">📋 Schema Ledger — campo BSUID</div>
+    <div class="code">-- Adicionar ao Forensic Ledger (:8101) schema:
+ALTER TABLE receipts ADD COLUMN bsuid TEXT;
+ALTER TABLE receipts ADD COLUMN wa_id_type TEXT DEFAULT 'phone';
+
+-- Ao selar envio WhatsApp:
+{
+  "id": "WINDI-WA-IMAGE-20260308-0001",
+  "actor": "Human Dragon",
+  "bsuid": "DE_abc123xyz...",        -- NOVO: quando disponível
+  "wa_id_type": "bsuid",             -- NOVO: phone | bsuid | username
+  "recipient_hash": "sha256(...)",   -- mantido: GDPR sempre
+  "governance_level": "MEDIUM"
+}</div>
+  </div>
+
+  <div class="card mb32">
+    <div class="card-title">📥 Webhook Receiver — extrair BSUID</div>
+    <div class="code">def parse_wa_webhook(payload: dict) -> dict:
+    """
+    Extrai identificadores do webhook Meta (suporte dual phone/BSUID).
+    Compatível com formato pré e pós junho 2026.
+    """
+    value = payload.get("entry", [{}])[0] \
+                   .get("changes", [{}])[0] \
+                   .get("value", {})
+
+    msg = value.get("messages", [{}])[0]
+
+    # Meta retorna BSUID em ExternalUserId (quando disponível)
+    from_id = msg.get("from", "")              # pode ser phone OU bsuid
+    bsuid   = value.get("contacts", [{}])[0] \
+                   .get("wa_id", from_id)      # fallback
+    external_uid = msg.get("ExternalUserId")   # campo novo Meta 2026
+
+    return {
+        "from":         from_id,
+        "bsuid":        external_uid or bsuid,
+        "id_type":      detect_wa_id_type(from_id)["type"],
+        "message_id":   msg.get("id"),
+        "timestamp":    msg.get("timestamp"),
+        "type":         msg.get("type"),
+        "text":         msg.get("text", {}).get("body"),
+    }</div>
+  </div>
+
+  <!-- ─── PATCH v1.2.0 SPEC ───────────────────────── -->
+  <div class="section-title">04b · Especificação Patch v1.2.0 — Template Messages</div>
+
+  <div class="card mb16">
+    <div class="card-title">📨 Templates pré-aprovados Meta</div>
+    <div class="code">WINDI_WHATSAPP_TEMPLATES = {
+    "windi_document_ready":   # Notifica documento disponível
+    "windi_seal_complete":    # Selo criptográfico aplicado
+    "windi_verification_code": # Autenticação 2FA
+    "windi_welcome":          # Onboarding novos usuários
+    "windi_payment_reminder": # Lembrete de pagamento
+    "windi_appointment":      # Confirmação de agendamento
+}
+
+# Todos os templates são trilíngues: DE / EN / PT
+# Categorias Meta: UTILITY, AUTHENTICATION, MARKETING</div>
+  </div>
+
+  <div class="card mb16">
+    <div class="card-title">🔧 Endpoints API — Template Messages</div>
+    <div class="code">POST /whatsapp/templates
+→ Lista todos os 6 templates disponíveis
+
+POST /whatsapp/templates/render
+→ Preview renderizado com variáveis substituídas
+   Body: {"template": "windi_document_ready", "lang": "de", "variables": {...}}
+
+POST /whatsapp/templates/send
+→ Envia template message para iniciar conversa
+   Body: {"to": "+49...", "template": "...", "lang": "de", "variables": {...}}
+
+POST /whatsapp/templates/{template_name}
+→ Detalhes de um template específico</div>
+  </div>
+
+  <div class="card mb32">
+    <div class="card-title">📋 Exemplo: Template windi_document_ready (DE)</div>
+    <div class="code">{
+  "header": "📄 Dokument bereit",
+  "body": "Hallo {{recipient_name}},\n\nIhr Dokument \"{{document_title}}\" ist
+           bereit und wurde kryptographisch versiegelt.\n\n🛡️ Receipt-ID: {{receipt_id}}\n\n
+           Klicken Sie auf den Link unten, um es zu verifizieren.",
+  "footer": "WINDI Publishing · Kempten, Bavaria",
+  "buttons": [{"type": "URL", "text": "Dokument öffnen",
+               "url": "https://windi.publishing.de/verify/{{receipt_id_for_url}}"}]
+}</div>
+  </div>
+
+  <!-- ─── GARDEN PROTOCOL ───────────────────────────── -->
+  <div class="section-title">04c · Garden Protocol v1.0 — Distribuição Peer-to-Peer</div>
+
+  <div class="alert mb24">
+    <strong>Decisão estratégica:</strong> NÃO usar Meta Business API para distribuição viral. Motivo: burocracia bloqueante, aprovações arbitrárias, dependência externa. Estratégia: distribuição peer-to-peer via Web nativa. Zero dependência de terceiros.
+  </div>
+
+  <div class="card mb16">
+    <div class="card-title">🌱 Loop Viral — verify-public</div>
+    <div class="code">documento selado com QR
+        ↓
+pessoa externa escaneia QR
+        ↓
+verify-public abre no browser
+        ↓
+✅ AUTHENTIC DOCUMENT
+        ↓
+[📤 Share] [💬 WA] [✈️ TG] [✉️ Email] [🔗 Copy] [🖼️ Card]
+        ↓
+🌱 What is WINDI?
+        ↓
+windi-domain.com
+        ↓
+novo usuário → emite documento → QR
+        ↓
+loop reinicia 🔄</div>
+  </div>
+
+  <div class="card mb16">
+    <div class="card-title">📤 6 Canais de Distribuição Ativos</div>
+    <table style="width:100%; border-collapse:collapse; font-size:13px;">
+      <tr style="border-bottom:1px solid var(--border)">
+        <td style="padding:8px 0; width:100px;"><span style="font-size:16px">📤</span> Share</td>
+        <td style="padding:8px 12px;">Web Share API — menu nativo iOS/Android</td>
+        <td style="padding:8px 0; text-align:right"><span class="pill green">✓ Ativo</span></td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--border)">
+        <td style="padding:8px 0;"><span style="font-size:16px">💬</span> WhatsApp</td>
+        <td style="padding:8px 12px;"><code style="color:var(--gold)">wa.me/?text=</code> — link direto</td>
+        <td style="padding:8px 0; text-align:right"><span class="pill green">✓ Ativo</span></td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--border)">
+        <td style="padding:8px 0;"><span style="font-size:16px">✈️</span> Telegram</td>
+        <td style="padding:8px 12px;"><code style="color:var(--gold)">t.me/share/url</code> — zero API</td>
+        <td style="padding:8px 0; text-align:right"><span class="pill green">✓ Ativo</span></td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--border)">
+        <td style="padding:8px 0;"><span style="font-size:16px">✉️</span> Email</td>
+        <td style="padding:8px 12px;"><code style="color:var(--gold)">mailto:</code> — cliente nativo</td>
+        <td style="padding:8px 0; text-align:right"><span class="pill green">✓ Ativo</span></td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--border)">
+        <td style="padding:8px 0;"><span style="font-size:16px">🔗</span> Copy</td>
+        <td style="padding:8px 12px;">Clipboard API — copiar link</td>
+        <td style="padding:8px 0; text-align:right"><span class="pill green">✓ Ativo</span></td>
+      </tr>
+      <tr>
+        <td style="padding:8px 0;"><span style="font-size:16px">🖼️</span> Card</td>
+        <td style="padding:8px 12px;">Canvas API — PNG 1080×1080 para Stories/Status</td>
+        <td style="padding:8px 0; text-align:right"><span class="pill green">✓ Ativo</span></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card mb16">
+    <div class="card-title">🖼️ Share Card — Canvas API</div>
+    <div class="code">function generateShareCard(receiptId, issuedOn) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 1080;   // Instagram/WhatsApp Story size
+  canvas.height = 1080;
+  const ctx = canvas.getContext('2d');
+
+  // Background pergaminho WINDI
+  ctx.fillStyle = '#F5F0E0';
+  ctx.fillRect(0, 0, 1080, 1080);
+
+  // Borda gold + inner border
+  ctx.strokeStyle = '#8B6914';
+  ctx.lineWidth = 8;
+  ctx.strokeRect(40, 40, 1000, 1000);
+
+  // ✅ AUTHENTIC DOCUMENT + receipt + WINDI branding
+  // ... (ver código completo em verify-public/web/index.html)
+
+  return canvas.toDataURL('image/png');
+}</div>
+  </div>
+
+  <div class="card mb32">
+    <div class="card-title">⚡ Vantagem: Zero Dependência</div>
+    <div style="font-size:13px; color:var(--dim); line-height:1.6">
+      <table style="width:100%; border-collapse:collapse; font-size:12px; margin-top:8px;">
+        <tr>
+          <td style="padding:6px 0; color:var(--red)">❌ Meta Business API</td>
+          <td style="padding:6px 12px;">Burocracia, aprovação 2-4 semanas, pode ser revogada</td>
+        </tr>
+        <tr>
+          <td style="padding:6px 0; color:var(--green)">✅ Garden Protocol</td>
+          <td style="padding:6px 12px;">Web nativa, funciona hoje, qualquer país, qualquer browser</td>
+        </tr>
+      </table>
+      <div style="margin-top:12px;">
+        <strong style="color:var(--text)">Commits 08 Mar 2026:</strong><br/>
+        <code style="color:var(--gold)">9f34397</code> — Telegram button<br/>
+        <code style="color:var(--gold)">aea06c3</code> — Email button<br/>
+        <code style="color:var(--gold)">9645ed5</code> — Share Card PNG
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── VANTAGEM ESTRATÉGICA ─────────────────────── -->
+  <div class="section-title">05 · Vantagem estratégica WINDI</div>
+
+  <div class="card mb8">
+    <div class="card-title">🛡️ Invariante Constitucional já protege</div>
+    <div style="font-size:13px; color:var(--dim); line-height:1.6">
+      <strong style="color:var(--text)">I11 (Permanência de Evidência Criptográfica)</strong> — cada envio de mídia é selado no Ledger com hash SHA-256 do destinatário. Quando o BSUID substituir o número, o hash muda de objeto mas a lógica de governança é idêntica. Zero refactor constitucional.
+    </div>
+  </div>
+
+  <div class="card mb8">
+    <div class="card-title">🏗️ DID WINDI = WhatsApp username nativo</div>
+    <div style="font-size:13px; color:var(--dim); line-height:1.6">
+      O DID cycle WINDI (Ed25519 + UUIDv7) já gera identidade soberana sem número. O username WhatsApp será simplesmente mais um <em>handle</em> desse DID — não uma dependência nova, mas uma extensão da arquitetura existente.
+    </div>
+  </div>
+
+  <div class="card mb32">
+    <div class="card-title">⚡ 90 dias de vantagem sobre o mercado</div>
+    <div style="font-size:13px; color:var(--dim); line-height:1.6">
+      O deadline Meta é junho 2026. A maioria das empresas ainda usa telefone como chave primária nos seus CRMs — e vai quebrar. A WINDI estará com <strong style="color:var(--green)">BSUID totalmente integrado em março</strong>, 90 dias à frente. Isso é posição de pioneiro, não de seguidor.
+    </div>
+  </div>
+
+  <!-- ─── PRÓXIMOS PASSOS ───────────────────────────── -->
+  <div class="section-title">06 · Próximos passos — Alta Performance</div>
+
+  <div class="card">
+    <table style="width:100%; border-collapse:collapse; font-size:13px;">
+      <tr style="border-bottom:1px solid var(--border)">
+        <td style="padding:10px 0; color:var(--dim); width:100px; font-family:'JetBrains Mono',monospace; font-size:11px;">✓ 08 MAR</td>
+        <td style="padding:10px 12px;">✅ Deploy patch v1.0.0 no Strato (mídia WhatsApp)</td>
+        <td style="padding:10px 0; text-align:right"><span class="pill green">Concluído ✓</span></td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--border)">
+        <td style="padding:10px 0; color:var(--dim); font-family:'JetBrains Mono',monospace; font-size:11px;">✓ 08 MAR</td>
+        <td style="padding:10px 12px;">✅ Patch v1.1.0 — função <code style="color:var(--gold)">detect_wa_id_type()</code> + BSUID no Ledger</td>
+        <td style="padding:10px 0; text-align:right"><span class="pill green">Concluído ✓</span></td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--border)">
+        <td style="padding:10px 0; color:var(--dim); font-family:'JetBrains Mono',monospace; font-size:11px;">✓ 08 MAR</td>
+        <td style="padding:10px 12px;">✅ Webhook receiver com extração de BSUID/ExternalUserId</td>
+        <td style="padding:10px 0; text-align:right"><span class="pill green">Concluído ✓</span></td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--border)">
+        <td style="padding:10px 0; color:var(--dim); font-family:'JetBrains Mono',monospace; font-size:11px;">✓ 08 MAR</td>
+        <td style="padding:10px 12px;">✅ Patch v1.2.0 — Template Messages System (6 templates trilíngues)</td>
+        <td style="padding:10px 0; text-align:right"><span class="pill green">Concluído ✓</span></td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--border)">
+        <td style="padding:10px 0; color:var(--dim); font-family:'JetBrains Mono',monospace; font-size:11px;">✓ 08 MAR</td>
+        <td style="padding:10px 12px;">🌱 Garden Protocol v1.0 — 6 canais de distribuição viral (WA, TG, Email, Card...)</td>
+        <td style="padding:10px 0; text-align:right"><span class="pill green">Concluído ✓</span></td>
+      </tr>
+      <tr style="border-bottom:1px solid var(--border)">
+        <td style="padding:10px 0; color:var(--dim); font-family:'JetBrains Mono',monospace; font-size:11px;">ABRIL</td>
+        <td style="padding:10px 12px;">📒 Integrar Meta Contact Book + reservar @windi handles</td>
+        <td style="padding:10px 0; text-align:right"><span class="pill gold">Human Dragon</span></td>
+      </tr>
+      <tr>
+        <td style="padding:10px 0; color:var(--dim); font-family:'JetBrains Mono',monospace; font-size:11px;">JUNHO</td>
+        <td style="padding:10px 12px;">🏆 WINDI 100% BSUID-ready — antes do deadline Meta</td>
+        <td style="padding:10px 0; text-align:right"><span class="pill green">Pioneer ✓</span></td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- ─── FOOTER ───────────────────────────────────── -->
+  <div class="footer">
+    <span>WINDI Publishing House · Kempten, Bavaria</span>
+    <span>Confidencial · CGO Human Dragon</span>
+    <span>OM SHANTI 🐉</span>
+  </div>
+
+</div>
+</body>
+</html>
