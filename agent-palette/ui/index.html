@@ -2913,6 +2913,7 @@ function App(){
   const[distributeSending,setDistributeSending]=useState(false);
   const[distributeSent,setDistributeSent]=useState([]);
   const[showChannelSettings,setShowChannelSettings]=useState(false);
+  const[showWhatsAppSuite,setShowWhatsAppSuite]=useState(false);
 
   // ═══ WAVE 1: JOURNAL, FILES, SEARCH STATE ═══
   const[journalArticles,setJournalArticles]=useState([]);
@@ -4043,6 +4044,45 @@ function App(){
     }
   },[docType,docTitle,docContent,docFields,wallet,lang,flash]);
 
+  // ═══ PDF EXPORT HANDLER ═══
+  const handleExportPdf=useCallback(async()=>{
+    if(!docTitle||!docContent){
+      flash("⚠️ Document needs title and content",2000);
+      return;
+    }
+    try{
+      setExporting(true);
+      const exportUrl=window.location.hostname==='localhost'?'http://localhost:8103':'https://windi-domain.com/export';
+      const response=await fetch(exportUrl+'/api/export/pdf',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          title:docTitle,
+          content:docContent,
+          receipt_id:receipt?.id||`VR-${Date.now()}`,
+          author:wallet?.name||'Anonymous',
+          doc_type:docType||'document'
+        })
+      });
+      if(!response.ok)throw new Error('PDF export failed');
+      const blob=await response.blob();
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');
+      a.href=url;
+      a.download=`WINDI_${docTitle.replace(/[^\w\s-]/g,'').slice(0,30).trim().replace(/\s+/g,'_')}_${receipt?.id||'draft'}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      flash(`📄 PDF exported: ${a.download}`,3000);
+    }catch(e){
+      console.error('[WINDI] PDF export error:',e);
+      flash(`❌ PDF export failed: ${e.message}`,3000);
+    }finally{
+      setExporting(false);
+    }
+  },[docTitle,docContent,receipt,wallet,docType,flash]);
+
   // FIX (A): use theme.bg (NOT theme.gradient)
   // Z-INDEX: Ensure content stays above Drive In video background (z-index: 0)
   const base={minHeight:"100vh",background:th.bg,color:th.text,fontFamily:"'Bricolage Grotesque',sans-serif",position:"relative",zIndex:1};
@@ -4167,6 +4207,28 @@ function App(){
                   {docImages.map(img=><div key={img.id} style={{width:90,height:60,borderRadius:6,overflow:"hidden",border:`1px solid ${th.border}`}}><img src={img.url} alt="" style={{width:"100%",height:"100%",objectFit:"cover"}}/></div>)}</div>}
                 {docVideos.length>0&&<div style={{marginTop:12,display:"flex",flexDirection:"column",gap:6}}>
                   {docVideos.map(v=><div key={v.id} style={{padding:"6px 10px",borderRadius:6,background:th.hover,border:`1px solid ${th.border}`,fontSize:11,display:"flex",alignItems:"center",gap:6}}>🎬<a href={v.url} target="_blank" rel="noreferrer" style={{color:th.gold,wordBreak:"break-all",fontSize:10}}>{v.url}</a></div>)}</div>}
+                {/* Next Steps Card - shown after seal */}
+                {receipt&&docStatus==="finalized"&&<div style={{background:`${th.gold}12`,borderRadius:12,padding:14,marginTop:14,border:`1.5px solid ${th.gold}33`}}>
+                  <div style={{fontSize:12,fontWeight:700,marginBottom:10,color:th.gold}}>{lang==="pt"?"✨ Documento Selado! Próximos passos:":lang==="de"?"✨ Dokument versiegelt! Nächste Schritte:":"✨ Document Sealed! Next steps:"}</div>
+                  <div style={{display:"flex",flexDirection:"column",gap:8}}>
+                    <div onClick={()=>setShowDistributeModal(true)} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 12px",borderRadius:8,background:th.card,border:`1px solid ${th.border}`,cursor:"pointer"}}>
+                      <span style={{fontSize:18}}>📤</span>
+                      <div><div style={{fontSize:11,fontWeight:600}}>{lang==="pt"?"Distribuir por Email":lang==="de"?"Per E-Mail verteilen":"Distribute via Email"}</div><div style={{fontSize:9,color:th.dim}}>{lang==="pt"?"Enviar documento selado para destinatários":lang==="de"?"Versiegeltes Dokument an Empfänger senden":"Send sealed document to recipients"}</div></div>
+                    </div>
+                    <div onClick={()=>setShowWhatsAppSuite(true)} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 12px",borderRadius:8,background:th.card,border:`1px solid ${th.border}`,cursor:"pointer"}}>
+                      <span style={{fontSize:18}}>📲</span>
+                      <div><div style={{fontSize:11,fontWeight:600}}>{lang==="pt"?"WhatsApp Suite":lang==="de"?"WhatsApp Suite":"WhatsApp Suite"}</div><div style={{fontSize:9,color:th.dim}}>{lang==="pt"?"Enviar imagens, vídeos, documentos":lang==="de"?"Bilder, Videos, Dokumente senden":"Send images, videos, documents"}</div></div>
+                    </div>
+                    <div onClick={handleExportPdf} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 12px",borderRadius:8,background:th.card,border:`1px solid ${th.border}`,cursor:"pointer"}}>
+                      <span style={{fontSize:18}}>📄</span>
+                      <div><div style={{fontSize:11,fontWeight:600}}>{lang==="pt"?"Exportar PDF":lang==="de"?"PDF exportieren":"Export PDF"}</div><div style={{fontSize:9,color:th.dim}}>{lang==="pt"?"Download do documento com receipt":lang==="de"?"Dokument mit Beleg herunterladen":"Download document with receipt"}</div></div>
+                    </div>
+                    <div onClick={()=>{navigator.clipboard.writeText(receipt.url);flash("📋 "+(lang==="pt"?"Link copiado!":lang==="de"?"Link kopiert!":"Link copied!"));}} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 12px",borderRadius:8,background:th.card,border:`1px solid ${th.border}`,cursor:"pointer"}}>
+                      <span style={{fontSize:18}}>🔗</span>
+                      <div><div style={{fontSize:11,fontWeight:600}}>{lang==="pt"?"Copiar Link de Verificação":lang==="de"?"Verifizierungslink kopieren":"Copy Verification Link"}</div><div style={{fontSize:9,color:th.dim}}>{receipt.url}</div></div>
+                    </div>
+                  </div>
+                </div>}
                 {receipt&&<div style={{background:th.sealed+"F0",color:"#E8F5E9",borderRadius:12,padding:14,marginTop:14,border:`1.5px solid ${th.forensic}`,fontFamily:"'JetBrains Mono',monospace",fontSize:10}}>
                   <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:10}}><span style={{fontSize:16}}>🛡️</span><span style={{fontSize:13,fontWeight:700,fontFamily:"'Bricolage Grotesque',sans-serif"}}>{t.forensic.title}</span></div>
                   <div style={{display:"grid",gridTemplateColumns:"auto 1fr",gap:"4px 8px",lineHeight:1.6}}>
@@ -4180,7 +4242,12 @@ function App(){
                     <div style={{width:40,height:40,background:"#fff",borderRadius:4,display:"flex",alignItems:"center",justifyContent:"center",fontSize:8,color:"#333",fontWeight:600}}>QR📱</div>
                     <div style={{fontSize:8,color:"#81C784",wordBreak:"break-all"}}>{receipt.url}</div>
                   </div>
-                  <a href={`https://wa.me/?text=${encodeURIComponent((lang==="pt"?"✅ Documento verificado: ":lang==="de"?"✅ Dokument verifiziert: ":"✅ Verified document: ")+receipt.id+"\nhttps://windi-domain.com/verify-public/?id="+encodeURIComponent(receipt.id))}`} target="_blank" rel="noopener" style={{display:"inline-flex",alignItems:"center",gap:5,marginTop:10,padding:"8px 14px",background:"#25D366",color:"#fff",borderRadius:6,fontSize:10,fontWeight:700,textDecoration:"none",letterSpacing:"0.03em"}}><span>💬</span><span>{lang==="pt"?"Partilhar no WhatsApp":lang==="de"?"WhatsApp teilen":"Share on WhatsApp"}</span></a>
+                  {/* Post-seal action buttons */}
+                  <div style={{display:"flex",flexWrap:"wrap",gap:6,marginTop:10}}>
+                    <button onClick={()=>{navigator.clipboard.writeText(receipt.url);flash("📋 "+(lang==="pt"?"Link copiado!":lang==="de"?"Link kopiert!":"Link copied!"));}} style={{display:"inline-flex",alignItems:"center",gap:5,padding:"8px 14px",background:th.gold,color:"#fff",borderRadius:6,fontSize:10,fontWeight:700,border:"none",cursor:"pointer"}}><span>📋</span><span>{lang==="pt"?"Copiar Link":lang==="de"?"Link kopieren":"Copy Link"}</span></button>
+                    <a href={`https://wa.me/?text=${encodeURIComponent((lang==="pt"?"✅ Documento verificado: ":lang==="de"?"✅ Dokument verifiziert: ":"✅ Verified document: ")+receipt.id+"\nhttps://windi-domain.com/verify-public/?id="+encodeURIComponent(receipt.id))}`} target="_blank" rel="noopener" style={{display:"inline-flex",alignItems:"center",gap:5,padding:"8px 14px",background:"#25D366",color:"#fff",borderRadius:6,fontSize:10,fontWeight:700,textDecoration:"none"}}><span>💬</span><span>WhatsApp</span></a>
+                    <a href={receipt.url} target="_blank" rel="noopener" style={{display:"inline-flex",alignItems:"center",gap:5,padding:"8px 14px",background:th.card,color:th.text,border:`1px solid ${th.border}`,borderRadius:6,fontSize:10,fontWeight:600,textDecoration:"none"}}><span>🔗</span><span>{lang==="pt"?"Abrir Verify":lang==="de"?"Verify öffnen":"Open Verify"}</span></a>
+                  </div>
                 </div>}
               </div>
               {/* Doc Actions */}
@@ -5175,6 +5242,263 @@ function App(){
         </div>
       </div>}
 
+      {/* ═══ WHATSAPP SUITE MODAL — Send images, videos, documents via WhatsApp ═══ */}
+      {showWhatsAppSuite&&<div style={{position:"fixed",inset:0,background:"#000A",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:16}} onClick={()=>setShowWhatsAppSuite(false)}>
+        <div onClick={e=>e.stopPropagation()} style={{background:th.card,borderRadius:18,padding:"24px 20px",maxWidth:480,width:"100%",border:`1px solid ${th.gold}33`,maxHeight:"90vh",overflowY:"auto"}}>
+          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}>
+            <span style={{fontSize:24}}>📲</span>
+            <h2 style={{fontSize:16,fontWeight:800,margin:0}}>WhatsApp Suite</h2>
+            <span id="wa-seal-badge" style={{display:"none",marginLeft:8,fontSize:11,color:th.gold,background:`${th.gold}12`,border:`1px solid ${th.gold}33`,borderRadius:20,padding:"2px 10px"}}>✓ {lang==="de"?"Versiegelt":lang==="pt"?"Selado":"Sealed"}</span>
+            <span style={{marginLeft:"auto",cursor:"pointer",fontSize:18,color:th.dim}} onClick={()=>setShowWhatsAppSuite(false)}>×</span>
+          </div>
+          <p style={{fontSize:11,color:th.dim,marginBottom:16}}>
+            {lang==="de"?"Bilder, Videos und Dokumente via WhatsApp senden":
+             lang==="pt"?"Enviar imagens, vídeos e documentos via WhatsApp":
+             "Send images, videos and documents via WhatsApp"}
+          </p>
+
+          {/* Recipient */}
+          <div style={{marginBottom:12}}>
+            <label style={{fontSize:12,color:th.dim,display:"block",marginBottom:4}}>
+              {lang==="de"?"Empfänger (WhatsApp)":lang==="pt"?"Destinatário (WhatsApp)":"Recipient (WhatsApp)"}
+            </label>
+            <input id="wa-to" type="tel" placeholder={lang==="de"?"+49 xxx xxx xxxx":lang==="pt"?"+351 xxx xxx xxx":"+49 xxx xxx xxxx"} style={{
+              width:"100%",boxSizing:"border-box",
+              background:th.input,border:`1px solid ${th.border}`,
+              borderRadius:8,padding:"9px 12px",
+              fontSize:14,color:th.text,outline:"none"
+            }}/>
+          </div>
+
+          {/* Type Selector */}
+          <div style={{marginBottom:14}}>
+            <label style={{fontSize:12,color:th.dim,display:"block",marginBottom:6}}>
+              {lang==="de"?"Nachrichtentyp":lang==="pt"?"Tipo de Mensagem":"Message Type"}
+            </label>
+            <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+              {[
+                {type:"text",icon:"💬",label:lang==="de"?"Text":lang==="pt"?"Texto":"Text"},
+                {type:"image",icon:"🖼️",label:lang==="de"?"Bild":lang==="pt"?"Imagem":"Image"},
+                {type:"video",icon:"🎬",label:lang==="de"?"Video":lang==="pt"?"Vídeo":"Video"},
+                {type:"document",icon:"📄",label:lang==="de"?"Dokument":lang==="pt"?"Documento":"Document"},
+              ].map(item=>(
+                <button key={item.type} className="wa-type-btn" data-type={item.type}
+                  onClick={()=>{
+                    document.querySelectorAll('.wa-type-btn').forEach(b=>{
+                      const isActive=b.dataset.type===item.type;
+                      b.style.background=isActive?th.gold:'transparent';
+                      b.style.color=isActive?'#FFF':th.dim;
+                      b.style.borderColor=isActive?th.gold:th.border;
+                    });
+                    ['text','image','video','document'].forEach(t=>{
+                      const p=document.getElementById(`wa-panel-${t}`);
+                      if(p)p.style.display=t===item.type?'block':'none';
+                    });
+                    const status=document.getElementById('wa-status');
+                    if(status)status.style.display='none';
+                  }}
+                  style={{
+                    background:item.type==='text'?th.gold:'transparent',
+                    border:`1px solid ${item.type==='text'?th.gold:th.border}`,
+                    borderRadius:20,padding:"5px 14px",fontSize:12,
+                    color:item.type==='text'?'#FFF':th.dim,
+                    cursor:"pointer",fontFamily:"'Bricolage Grotesque',sans-serif"
+                  }}>
+                  {item.icon} {item.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Panel: Text */}
+          <div id="wa-panel-text">
+            <label style={{fontSize:12,color:th.dim,display:"block",marginBottom:4}}>
+              {lang==="de"?"Nachricht":lang==="pt"?"Mensagem":"Message"}
+            </label>
+            <textarea id="wa-text-body" rows={4} placeholder={lang==="de"?"Nachricht eingeben...":lang==="pt"?"Escreve a tua mensagem...":"Type your message..."} style={{
+              width:"100%",boxSizing:"border-box",
+              background:th.input,border:`1px solid ${th.border}`,
+              borderRadius:8,padding:"9px 12px",
+              fontSize:14,color:th.text,resize:"vertical",outline:"none"
+            }}/>
+          </div>
+
+          {/* Panel: Image */}
+          <div id="wa-panel-image" style={{display:"none"}}>
+            <label style={{fontSize:12,color:th.dim,display:"block",marginBottom:4}}>
+              {lang==="de"?"Bild-URL":lang==="pt"?"URL da Imagem":"Image URL"}
+              <span style={{opacity:0.6}}> (JPEG/PNG/WebP · max 5MB)</span>
+            </label>
+            <input id="wa-image-url" type="url" placeholder="https://example.com/image.jpg" style={{
+              width:"100%",boxSizing:"border-box",
+              background:th.input,border:`1px solid ${th.border}`,
+              borderRadius:8,padding:"9px 12px",
+              fontSize:14,color:th.text,outline:"none"
+            }} onBlur={(e)=>{
+              const url=e.target.value.trim();
+              const preview=document.getElementById('wa-img-preview');
+              const tag=document.getElementById('wa-img-preview-tag');
+              if(url&&/\.(jpg|jpeg|png|webp|gif)(\?.*)?$/i.test(url)){
+                if(tag)tag.src=url;
+                if(preview)preview.style.display='block';
+              }else{
+                if(preview)preview.style.display='none';
+              }
+            }}/>
+            <div id="wa-img-preview" style={{marginTop:8,display:"none",borderRadius:8,overflow:"hidden",maxHeight:160,textAlign:"center",background:th.hover}}>
+              <img id="wa-img-preview-tag" style={{maxHeight:160,maxWidth:"100%",objectFit:"contain"}} alt="preview"/>
+            </div>
+            <div style={{marginTop:8}}>
+              <input id="wa-image-caption" type="text" placeholder={lang==="de"?"Beschriftung (optional)":lang==="pt"?"Legenda (opcional)":"Caption (optional)"} style={{
+                width:"100%",boxSizing:"border-box",
+                background:th.input,border:`1px solid ${th.border}`,
+                borderRadius:8,padding:"8px 12px",
+                fontSize:13,color:th.text,outline:"none"
+              }}/>
+            </div>
+          </div>
+
+          {/* Panel: Video */}
+          <div id="wa-panel-video" style={{display:"none"}}>
+            <label style={{fontSize:12,color:th.dim,display:"block",marginBottom:4}}>
+              {lang==="de"?"Video-URL":lang==="pt"?"URL do Vídeo":"Video URL"}
+              <span style={{opacity:0.6}}> (MP4/3GPP · max 16MB)</span>
+            </label>
+            <input id="wa-video-url" type="url" placeholder="https://example.com/video.mp4" style={{
+              width:"100%",boxSizing:"border-box",
+              background:th.input,border:`1px solid ${th.border}`,
+              borderRadius:8,padding:"9px 12px",
+              fontSize:14,color:th.text,outline:"none"
+            }}/>
+            <div style={{marginTop:8}}>
+              <input id="wa-video-caption" type="text" placeholder={lang==="de"?"Beschriftung (optional)":lang==="pt"?"Legenda (opcional)":"Caption (optional)"} style={{
+                width:"100%",boxSizing:"border-box",
+                background:th.input,border:`1px solid ${th.border}`,
+                borderRadius:8,padding:"8px 12px",
+                fontSize:13,color:th.text,outline:"none"
+              }}/>
+            </div>
+          </div>
+
+          {/* Panel: Document */}
+          <div id="wa-panel-document" style={{display:"none"}}>
+            <label style={{fontSize:12,color:th.dim,display:"block",marginBottom:4}}>
+              {lang==="de"?"Dokument-URL":lang==="pt"?"URL do Documento":"Document URL"}
+              <span style={{opacity:0.6}}> (PDF/DOCX/JMPG · max 100MB)</span>
+            </label>
+            <input id="wa-doc-url" type="url" placeholder="https://example.com/document.pdf" style={{
+              width:"100%",boxSizing:"border-box",
+              background:th.input,border:`1px solid ${th.border}`,
+              borderRadius:8,padding:"9px 12px",
+              fontSize:14,color:th.text,outline:"none"
+            }}/>
+            <div style={{marginTop:8,display:"flex",gap:8}}>
+              <input id="wa-doc-filename" type="text" placeholder={lang==="de"?"Dateiname.pdf":lang==="pt"?"ficheiro.pdf":"filename.pdf"} style={{
+                flex:1,
+                background:th.input,border:`1px solid ${th.border}`,
+                borderRadius:8,padding:"8px 12px",
+                fontSize:13,color:th.text,outline:"none"
+              }}/>
+              <input id="wa-doc-caption" type="text" placeholder={lang==="de"?"Beschriftung":lang==="pt"?"Legenda":"Caption"} style={{
+                flex:1,
+                background:th.input,border:`1px solid ${th.border}`,
+                borderRadius:8,padding:"8px 12px",
+                fontSize:13,color:th.text,outline:"none"
+              }}/>
+            </div>
+          </div>
+
+          {/* Status */}
+          <div id="wa-status" style={{display:"none",marginTop:12,fontSize:12,padding:"8px 12px",borderRadius:8,fontFamily:"'JetBrains Mono',monospace"}}></div>
+
+          {/* Actions */}
+          <div style={{display:"flex",gap:8,marginTop:14}}>
+            <button onClick={()=>setShowWhatsAppSuite(false)} style={{flex:1,padding:"10px",borderRadius:10,background:th.card,border:`1px solid ${th.border}`,color:th.dim,fontSize:12,cursor:"pointer"}}>
+              {lang==="de"?"Abbrechen":lang==="pt"?"Cancelar":"Cancel"}
+            </button>
+            <button id="wa-send-btn" onClick={async()=>{
+              const to=(document.getElementById('wa-to')?.value||'').trim();
+              const status=document.getElementById('wa-status');
+              const btn=document.getElementById('wa-send-btn');
+              const badge=document.getElementById('wa-seal-badge');
+
+              const setStatus=(msg,type)=>{
+                if(!status)return;
+                const colors={success:{bg:'#E8F5E9',color:'#2E7D32',border:'#A5D6A7'},error:{bg:'#FFEBEE',color:'#C62828',border:'#EF9A9A'},warn:{bg:'#FFF8E1',color:'#E65100',border:'#FFE082'},info:{bg:'#E3F2FD',color:'#1565C0',border:'#90CAF9'}};
+                const c=colors[type]||colors.info;
+                status.style.display='block';
+                status.style.background=c.bg;
+                status.style.color=c.color;
+                status.style.border=`1px solid ${c.border}`;
+                status.textContent=msg;
+              };
+
+              if(!to){setStatus(`⚠️ ${lang==="de"?"Empfänger erforderlich":lang==="pt"?"Destinatário obrigatório":"Recipient required"}`,'warn');return;}
+              if(!/^\+\d{7,15}$/.test(to)){setStatus(`⚠️ ${lang==="de"?"Format: +49xxxxxxxxx":lang==="pt"?"Formato: +351xxxxxxxxx":"Format: +49xxxxxxxxx"}`,'warn');return;}
+
+              const activeType=[...document.querySelectorAll('.wa-type-btn')].find(b=>b.style.background.includes(th.gold.replace('#','')))?.dataset?.type||'text';
+
+              if(btn){btn.disabled=true;btn.textContent=`⏳ ${lang==="de"?"Sende...":lang==="pt"?"A enviar...":"Sending..."}`;}
+              setStatus(`🔄 ${lang==="de"?"Verarbeite...":lang==="pt"?"A processar...":"Processing..."}`,'info');
+
+              try{
+                let endpoint='',payload={to};
+                switch(activeType){
+                  case 'text':{
+                    const body=document.getElementById('wa-text-body')?.value?.trim();
+                    if(!body)throw new Error(lang==="de"?"Nachricht erforderlich":lang==="pt"?"Mensagem obrigatória":"Message required");
+                    endpoint='/whatsapp/send';payload.message=body;break;
+                  }
+                  case 'image':{
+                    const url=document.getElementById('wa-image-url')?.value?.trim();
+                    const caption=document.getElementById('wa-image-caption')?.value?.trim();
+                    if(!url)throw new Error(lang==="de"?"URL erforderlich":lang==="pt"?"URL obrigatório":"URL required");
+                    endpoint='/whatsapp/send-image';payload.image_url=url;if(caption)payload.caption=caption;break;
+                  }
+                  case 'video':{
+                    const url=document.getElementById('wa-video-url')?.value?.trim();
+                    const caption=document.getElementById('wa-video-caption')?.value?.trim();
+                    if(!url)throw new Error(lang==="de"?"URL erforderlich":lang==="pt"?"URL obrigatório":"URL required");
+                    endpoint='/whatsapp/send-video';payload.video_url=url;if(caption)payload.caption=caption;break;
+                  }
+                  case 'document':{
+                    const url=document.getElementById('wa-doc-url')?.value?.trim();
+                    const caption=document.getElementById('wa-doc-caption')?.value?.trim();
+                    const filename=document.getElementById('wa-doc-filename')?.value?.trim()||'documento.pdf';
+                    if(!url)throw new Error(lang==="de"?"URL erforderlich":lang==="pt"?"URL obrigatório":"URL required");
+                    endpoint='/whatsapp/send-document';payload.doc_url=url;payload.filename=filename;if(caption)payload.caption=caption;break;
+                  }
+                }
+
+                const res=await fetch(dragonUrl+endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+                const data=await res.json();
+
+                if(data.success){
+                  const typeLabel={text:lang==="de"?"Text":lang==="pt"?"Texto":"Text",image:lang==="de"?"Bild":lang==="pt"?"Imagem":"Image",video:lang==="de"?"Video":lang==="pt"?"Vídeo":"Video",document:lang==="de"?"Dokument":lang==="pt"?"Documento":"Document"}[activeType];
+                  const receiptInfo=data.receipt?.sealed?` · 🔒 ${data.receipt.receipt_id}`:'';
+                  setStatus(`✅ ${typeLabel} ${lang==="de"?"gesendet":lang==="pt"?"enviado":"sent"}${receiptInfo}`,'success');
+                  if(badge&&data.receipt?.sealed)badge.style.display='block';
+                  flash(`✅ WhatsApp ${typeLabel} ${lang==="de"?"gesendet":lang==="pt"?"enviado":"sent"}`);
+                  setTimeout(()=>{
+                    ['wa-text-body','wa-image-url','wa-image-caption','wa-video-url','wa-video-caption','wa-doc-url','wa-doc-caption','wa-doc-filename'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+                    const preview=document.getElementById('wa-img-preview');if(preview)preview.style.display='none';
+                    if(status)status.style.display='none';
+                  },3000);
+                }else{
+                  throw new Error(data.error||'Unknown error');
+                }
+              }catch(err){
+                setStatus(`❌ ${err.message||String(err)}`,'error');
+              }finally{
+                if(btn){btn.disabled=false;btn.textContent=`📤 ${lang==="de"?"Senden + Versiegeln":lang==="pt"?"Enviar + Selar":"Send + Seal"}`;}
+              }
+            }} style={{flex:1,padding:"10px",borderRadius:10,background:`linear-gradient(135deg, ${th.gold}, #A07820)`,border:"none",color:"#FFF",fontSize:12,fontWeight:700,cursor:"pointer"}}>
+              📤 {lang==="de"?"Senden + Versiegeln":lang==="pt"?"Enviar + Selar":"Send + Seal"}
+            </button>
+          </div>
+        </div>
+      </div>}
+
       {/* ═══ W-WICKTHIS MODAL — Publish to Evidence Graph ═══ */}
       {showWickModal&&<div style={{position:"fixed",inset:0,background:"#000A",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:16}} onClick={()=>setShowWickModal(false)}>
         <div onClick={e=>e.stopPropagation()} style={{background:th.card,borderRadius:18,padding:"24px 20px",maxWidth:420,width:"100%",border:`1px solid ${th.gold}33`}}>
@@ -5418,6 +5742,7 @@ function App(){
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<App />);
 </script>
+<script src="modules/P6_WhatsAppSuite.js"></script>
 <script src="/app/static/windi-drivein.js"></script>
 </body>
 </html>

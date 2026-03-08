@@ -40,6 +40,13 @@ try:
 except ImportError:
     TRIGGER_AVAILABLE = False
 
+# Import PDF Export Engine (M3 Dynamic Header Seal)
+try:
+    from windi_export_engine import export_document_pdf
+    PDF_EXPORT_AVAILABLE = True
+except ImportError:
+    PDF_EXPORT_AVAILABLE = False
+
 # ─── CONFIG ──────────────────────────────────────────────────
 PORT = 8103
 LEDGER_URL = "http://127.0.0.1:8101"
@@ -489,7 +496,7 @@ class JMPGExportHandler(BaseHTTPRequestHandler):
         else:
             self._json_response(404, {"error": "Not found", "available": [
                 "/health", "/api/export/spec", "/api/export/templates",
-                "POST /api/export/jmpg", "POST /api/trigger/build",
+                "POST /api/export/jmpg", "POST /api/export/pdf", "POST /api/trigger/build",
                 "GET /api/trigger/{id}.jmpg", "GET /api/trigger/status",
                 "GET /api/trigger/{seal}/verify"
             ]})
@@ -501,6 +508,8 @@ class JMPGExportHandler(BaseHTTPRequestHandler):
             self._handle_preview()
         elif self.path == "/api/trigger/build":
             self._handle_trigger_build()
+        elif self.path == "/api/export/pdf":
+            self._handle_pdf_export()
         else:
             self._json_response(404, {"error": "Unknown endpoint"})
 
@@ -619,6 +628,64 @@ class JMPGExportHandler(BaseHTTPRequestHandler):
             self._json_response(500, {"error": str(e)})
 
     # ─── TRIGGER API HANDLERS (P1 Sovereign Spec) ─────────────────
+    def _handle_pdf_export(self):
+        """
+        POST /api/export/pdf
+
+        Body: {
+            "title": "Document Title",
+            "content": "Document content (plain text or HTML)",
+            "receipt_id": "RECEIPT-xxx",
+            "author": "Author Name",
+            "doc_type": "letter|memo|report|etc"
+        }
+
+        Returns: PDF file as binary response
+        """
+        if not PDF_EXPORT_AVAILABLE:
+            self._json_response(503, {
+                "error": "PDF export not available",
+                "hint": "windi_export_engine module not found"
+            })
+            return
+
+        try:
+            body = self._read_body()
+
+            title = body.get("title", "Untitled Document")
+            content = body.get("content", "")
+            receipt_id = body.get("receipt_id", f"VR-{int(time.time())}")
+            author = body.get("author", "Anonymous")
+            doc_type = body.get("doc_type", "document")
+
+            # Generate PDF
+            pdf_bytes = export_document_pdf(
+                title=title,
+                content=content,
+                receipt_id=receipt_id,
+                author=author,
+                doc_type=doc_type
+            )
+
+            # Create safe filename
+            safe_title = re.sub(r'[^\w\s-]', '', title)[:30].strip().replace(' ', '_')
+            filename = f"WINDI_{safe_title}_{receipt_id}.pdf"
+
+            # Return PDF binary
+            self.send_response(200)
+            self.send_header("Content-Type", "application/pdf")
+            self.send_header("Content-Disposition", f'attachment; filename="{filename}"')
+            self.send_header("Content-Length", str(len(pdf_bytes)))
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            self.wfile.write(pdf_bytes)
+
+            _log(f"PDF exported: {filename} ({len(pdf_bytes)} bytes)")
+
+        except Exception as e:
+            _log(f"PDF export error: {e}")
+            self._json_response(500, {"error": str(e)})
+
     def _handle_trigger_build(self):
         """
         POST /api/trigger/build
