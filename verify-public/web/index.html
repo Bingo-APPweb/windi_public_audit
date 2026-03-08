@@ -94,6 +94,24 @@ input[type=text]:focus{border-color:var(--gold)}
 .share-btn:hover{opacity:.9}
 .windi-cta{display:block;text-align:center;margin-top:14px;font-size:12px;color:var(--muted);text-decoration:none;transition:color .15s}
 .windi-cta:hover{color:var(--gold)}
+.explain-section{margin-top:20px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.explain-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--pg);cursor:pointer;transition:background .15s}
+.explain-header:hover{background:#EDE8D0}
+.explain-title{font-size:13px;font-weight:600;color:var(--noir);display:flex;align-items:center;gap:8px}
+.explain-arrow{font-size:12px;color:var(--muted);transition:transform .2s}
+.explain-arrow.open{transform:rotate(180deg)}
+.explain-content{display:none;padding:20px;background:#fff;border-top:1px solid var(--border)}
+.explain-content.open{display:block}
+.explain-tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.explain-tab{padding:6px 14px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;transition:all .15s}
+.explain-tab.active{background:var(--gold);border-color:var(--gold);color:#fff}
+.explain-text{font-size:13px;line-height:1.7;color:var(--noir)}
+.explain-text h4{font-size:14px;font-weight:700;margin:16px 0 8px;color:var(--noir)}
+.explain-text h4:first-child{margin-top:0}
+.explain-text ul{margin:8px 0;padding-left:20px}
+.explain-text li{margin:4px 0}
+.explain-text .highlight{background:var(--gold);color:#fff;padding:12px 16px;border-radius:6px;margin:16px 0;font-weight:600;text-align:center}
+.explain-text .tagline{margin-top:20px;padding-top:16px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);text-align:center;font-style:italic}
 .cp-btn:hover{border-color:var(--gold);color:var(--noir)}
 .cp-btn.copied{border-color:var(--green);color:var(--green)}
 .dtbtn:hover{border-color:var(--gold);color:var(--noir)}
@@ -248,7 +266,47 @@ function render(d){
         🖼️ Card
       </button>
     </div>
-    <a href="https://windi-domain.com" target="_blank" rel="noopener" class="windi-cta">🌱 What is WINDI?</a>`:''
+    <a href="https://windi-domain.com" target="_blank" rel="noopener" class="windi-cta">🌱 What is WINDI?</a>
+    <div class="explain-section">
+      <button class="explain-header" onclick="toggleExplain()">
+        <span>💡 What does this mean?</span>
+        <span class="explain-arrow" id="explainArrow">▼</span>
+      </button>
+      <div class="explain-content" id="explainContent" style="display:none">
+        <div class="explain-tabs">
+          <button class="explain-tab active" onclick="switchLang('en')">EN</button>
+          <button class="explain-tab" onclick="switchLang('de')">DE</button>
+          <button class="explain-tab" onclick="switchLang('pt')">PT</button>
+        </div>
+        <div class="explain-text" id="explainEN">
+          <strong>What you are holding:</strong><br><br>
+          This document was <strong>forensically sealed by WINDI</strong> — a cryptographic notarization system.<br><br>
+          <strong>What this means:</strong><br>
+          • The document has NOT been modified since it was sealed<br>
+          • The seal date is permanently recorded<br>
+          • Anyone can verify this — no special software needed<br><br>
+          <em>You don't have to believe the person who sent the document.<br>You can verify it yourself.</em>
+        </div>
+        <div class="explain-text" id="explainDE" style="display:none">
+          <strong>Was Sie in den Händen halten:</strong><br><br>
+          Dieses Dokument wurde <strong>forensisch von WINDI versiegelt</strong> — ein kryptografisches Notarisierungssystem.<br><br>
+          <strong>Was das bedeutet:</strong><br>
+          • Das Dokument wurde NICHT verändert seit der Versiegelung<br>
+          • Das Versiegelungsdatum ist dauerhaft aufgezeichnet<br>
+          • Jeder kann dies überprüfen — keine spezielle Software erforderlich<br><br>
+          <em>Sie müssen der Person, die das Dokument gesendet hat, nicht glauben.<br>Sie können es selbst überprüfen.</em>
+        </div>
+        <div class="explain-text" id="explainPT" style="display:none">
+          <strong>O que você tem em mãos:</strong><br><br>
+          Este documento foi <strong>selado forensicamente pelo WINDI</strong> — um sistema de notarização criptográfica.<br><br>
+          <strong>O que isso significa:</strong><br>
+          • O documento NÃO foi modificado desde que foi selado<br>
+          • A data do selo está permanentemente registrada<br>
+          • Qualquer pessoa pode verificar isso — sem necessidade de software especial<br><br>
+          <em>Você não precisa acreditar na pessoa que enviou o documento.<br>Você pode verificar por conta própria.</em>
+        </div>
+      </div>
+    </div>`:''
   ;
   document.getElementById('result').innerHTML='<div class="rbox '+s+'"><div class="rstamp">'+stamps[s]+'</div><div class="rverdict '+s+'">'+verdicts[s]+'</div><div class="rmeta">'+id+dt+ig+ca+'</div><div class="rmsg">'+msgs[s]+'</div>'+dtbtn+tech+shareRow+'</div>';
 
@@ -256,6 +314,30 @@ function render(d){
 }
 function tgd(){const p=document.getElementById('tp'),b=document.querySelector('.dtbtn');if(p.classList.toggle('open')){b.textContent='Hide technical details'}else{b.textContent='Show technical details'}}
 function cpLink(url){navigator.clipboard.writeText(url).then(()=>{const b=document.getElementById('cpbtn');if(b){b.textContent='✅ Copiado!';b.classList.add('copied');setTimeout(()=>{b.textContent='🔗 Copy';b.classList.remove('copied')},2000)}}).catch(()=>{const t=document.createElement('textarea');t.value=url;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t)})}
+
+// Trilingual Explanation Toggle (Garden Protocol)
+function toggleExplain(){
+  const content=document.getElementById('explainContent');
+  const arrow=document.getElementById('explainArrow');
+  if(content.style.display==='none'){
+    content.style.display='block';
+    arrow.textContent='▲';
+  }else{
+    content.style.display='none';
+    arrow.textContent='▼';
+  }
+}
+function switchLang(lang){
+  const langs=['en','de','pt'];
+  langs.forEach(l=>{
+    const el=document.getElementById('explain'+l.toUpperCase());
+    if(el)el.style.display=l===lang?'block':'none';
+  });
+  document.querySelectorAll('.explain-tab').forEach(tab=>{
+    tab.classList.remove('active');
+    if(tab.textContent.toLowerCase()===lang)tab.classList.add('active');
+  });
+}
 
 // WINDI Share Card Generator — Canvas API (Garden Protocol)
 function generateShareCard(receiptId, issuedOn) {

@@ -52,6 +52,7 @@ import time
 import urllib.request
 import urllib.error
 import smtplib
+import mimetypes
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime
@@ -107,7 +108,7 @@ except ImportError:
 # CONFIGURATION
 # ═══════════════════════════════════════════════════════════════════════════════════
 
-VERSION = "2.3.0"
+VERSION = "2.6.0"  # Template Messages System — Patch v1.2.0
 PORT = 8111
 
 # Action #1: Orchestrator as execution backend
@@ -1454,6 +1455,790 @@ def send_whatsapp(to: str, message: str) -> dict:
         return {"success": False, "message": f"WhatsApp failed: {e}", "channel": "whatsapp"}
 
 
+# ═══════════════════════════════════════════════════════════════════════════════════
+# WHATSAPP MEDIA LAYER v1.0.0 — Images, Videos, Documents, Stickers
+# Added: 2026-03-08 | Meta Graph API v17.0
+# ═══════════════════════════════════════════════════════════════════════════════════
+
+WHATSAPP_GRAPH_URL = "https://graph.facebook.com/v17.0"
+LEDGER_URL_INTERNAL = "http://127.0.0.1:8101"
+
+
+# ═══════════════════════════════════════════════════════════════════════════════════
+# PATCH v1.1.0 — BSUID Ready (Meta username transition June 2026)
+# Supports: E.164 phone | BSUID (DE_abc123...) | @username
+# Added: 2026-03-08
+# ═══════════════════════════════════════════════════════════════════════════════════
+
+def detect_wa_id_type(recipient: str) -> dict:
+    """
+    Automatically detect WhatsApp identifier type.
+    Returns {"type": "phone"|"bsuid"|"username", "value": ..., "country": ...}
+
+    Formats:
+    - phone:    +49151234567 (E.164)
+    - bsuid:    DE_abc123xyz... (2-letter country + underscore + 10-128 alphanumeric)
+    - username: @joberdragon (starts with @)
+    """
+    r = recipient.strip()
+
+    # E.164 phone number: starts with + followed by 7-15 digits
+    if re.match(r'^\+\d{7,15}$', r):
+        return {"type": "phone", "value": r, "country": None}
+
+    # BSUID format: 2-letter country code + underscore + 10-128 alphanumeric
+    bsuid_match = re.match(r'^([A-Z]{2})_([A-Za-z0-9]{10,128})$', r)
+    if bsuid_match:
+        return {"type": "bsuid", "value": r, "country": bsuid_match.group(1)}
+
+    # Username handle: starts with @
+    if r.startswith('@') and len(r) > 1:
+        return {"type": "username", "value": r, "country": None}
+
+    # Fallback: treat as phone without + (try to normalize)
+    if re.match(r'^\d{7,15}$', r):
+        return {"type": "phone", "value": f"+{r}", "country": None}
+
+    # Unknown format — pass through as-is
+    return {"type": "unknown", "value": r, "country": None}
+
+
+def resolve_wa_recipient(recipient: str) -> str:
+    """
+    Normalize any identifier for use in Meta API payload.
+    BSUID and username pass through directly.
+    Phone numbers: ensure E.164 format and strip + for API.
+    """
+    info = detect_wa_id_type(recipient)
+
+    if info["type"] == "phone":
+        # Meta API expects number without + prefix
+        v = info["value"]
+        return v.lstrip('+') if v.startswith('+') else v
+
+    # BSUID and @username pass directly to Meta API
+    return info["value"]
+
+
+def parse_wa_webhook(payload: dict) -> dict:
+    """
+    Extract identifiers from Meta webhook (dual phone/BSUID support).
+    Compatible with pre and post June 2026 format.
+
+    Returns:
+        {
+            "from": str,           # phone OR bsuid (depends on user settings)
+            "bsuid": str,          # ExternalUserId when available
+            "id_type": str,        # "phone" | "bsuid" | "username"
+            "message_id": str,
+            "timestamp": str,
+            "type": str,           # "text" | "image" | "video" | etc.
+            "text": str,           # message body (if text)
+            "contact_name": str,   # user's WhatsApp name
+        }
+    """
+    try:
+        entry = payload.get("entry", [{}])[0]
+        changes = entry.get("changes", [{}])[0]
+        value = changes.get("value", {})
+
+        messages = value.get("messages", [])
+        msg = messages[0] if messages else {}
+
+        contacts = value.get("contacts", [])
+        contact = contacts[0] if contacts else {}
+
+        # Meta returns BSUID in ExternalUserId (when available, post-2026)
+        from_id = msg.get("from", "")
+        wa_id = contact.get("wa_id", from_id)
+        external_uid = msg.get("ExternalUserId")  # New Meta 2026 field
+
+        # Determine effective BSUID
+        bsuid = external_uid or (wa_id if detect_wa_id_type(wa_id)["type"] == "bsuid" else None)
+
+        return {
+            "from": from_id,
+            "bsuid": bsuid,
+            "id_type": detect_wa_id_type(from_id)["type"],
+            "message_id": msg.get("id"),
+            "timestamp": msg.get("timestamp"),
+            "type": msg.get("type"),
+            "text": msg.get("text", {}).get("body") if msg.get("type") == "text" else None,
+            "contact_name": contact.get("profile", {}).get("name"),
+            "wa_id": wa_id,
+        }
+    except Exception as e:
+        return {"error": str(e), "raw": payload}
+
+
+def send_whatsapp_any_id(to: str, message: str = None, media_type: str = None,
+                         media_id: str = None, media_url: str = None,
+                         caption: str = "", filename: str = None) -> dict:
+    """
+    Universal WhatsApp send function — accepts any identifier type.
+    Automatically detects: E.164 phone | BSUID | @username
+
+    Args:
+        to:         Any WhatsApp identifier (+49xxx, DE_abc123..., @username)
+        message:    Text message (if sending text)
+        media_type: "image" | "video" | "document" | "audio" (if sending media)
+        media_id:   Media ID from upload (if sending media)
+        media_url:  Public media URL (if sending media)
+        caption:    Caption for media
+        filename:   Filename for documents
+
+    Returns:
+        {"success": True/False, "message_id": ..., "id_type": ..., "resolved_to": ...}
+    """
+    id_info = detect_wa_id_type(to)
+    resolved = resolve_wa_recipient(to)
+
+    # Determine what to send
+    if message and not media_type:
+        # Text message
+        result = send_whatsapp(to, message)
+    elif media_type:
+        # Media message
+        result = send_whatsapp_media(
+            to=to,
+            media_type=media_type,
+            media_id=media_id,
+            media_url=media_url,
+            caption=caption,
+            filename=filename
+        )
+    else:
+        return {"success": False, "error": "Provide message or media_type"}
+
+    # Enrich result with ID type info
+    if result.get("success"):
+        result["id_type"] = id_info["type"]
+        result["resolved_to"] = resolved
+        if id_info["country"]:
+            result["country"] = id_info["country"]
+
+    return result
+
+
+def upload_media_to_whatsapp(file_bytes: bytes, filename: str, mime_type: str = None) -> dict:
+    """
+    Upload media file to Meta WhatsApp API.
+    Returns {"success": True, "media_id": "..."} or {"success": False, "error": "..."}
+
+    Supported types:
+    - Image: image/jpeg, image/png, image/webp (max 5MB)
+    - Video: video/mp4, video/3gpp (max 16MB)
+    - Doc:   application/pdf, application/vnd.openxmlformats-officedocument... (max 100MB)
+    - Audio: audio/aac, audio/mpeg, audio/ogg (max 16MB)
+    """
+    if not WHATSAPP_TOKEN or not WHATSAPP_PHONE_ID:
+        return {"success": False, "error": "WHATSAPP_API_TOKEN or WHATSAPP_PHONE_ID not configured"}
+
+    if mime_type is None:
+        mime_type, _ = mimetypes.guess_type(filename)
+        mime_type = mime_type or "application/octet-stream"
+
+    # Size limits by type
+    size_mb = len(file_bytes) / (1024 * 1024)
+    size_limits = {"image": 5, "video": 16, "audio": 16, "application": 100}
+    media_category = mime_type.split("/")[0]
+    limit = size_limits.get(media_category, 100)
+    if size_mb > limit:
+        return {"success": False, "error": f"File too large: {size_mb:.1f}MB (max {limit}MB for {media_category})"}
+
+    try:
+        boundary = "WINDIBoundary20260308"
+        body_parts = []
+        body_parts.append(f"--{boundary}".encode())
+        body_parts.append(f'Content-Disposition: form-data; name="file"; filename="{filename}"'.encode())
+        body_parts.append(f"Content-Type: {mime_type}".encode())
+        body_parts.append(b"")
+        body_parts.append(file_bytes)
+        body_parts.append(f"--{boundary}".encode())
+        body_parts.append(b'Content-Disposition: form-data; name="messaging_product"')
+        body_parts.append(b"")
+        body_parts.append(b"whatsapp")
+        body_parts.append(f"--{boundary}--".encode())
+
+        body = b"\r\n".join(body_parts)
+
+        url = f"{WHATSAPP_GRAPH_URL}/{WHATSAPP_PHONE_ID}/media"
+        req = urllib.request.Request(url, data=body, method="POST")
+        req.add_header("Authorization", f"Bearer {WHATSAPP_TOKEN}")
+        req.add_header("Content-Type", f"multipart/form-data; boundary={boundary}")
+
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            result = json.loads(resp.read().decode())
+            media_id = result.get("id")
+            if media_id:
+                return {"success": True, "media_id": media_id, "mime_type": mime_type}
+            return {"success": False, "error": f"Meta API did not return media_id: {result}"}
+
+    except Exception as e:
+        return {"success": False, "error": f"Upload error: {str(e)}"}
+
+
+def send_whatsapp_media(to: str, media_type: str, media_id: str = None,
+                        media_url: str = None, caption: str = "", filename: str = None) -> dict:
+    """
+    Send media via WhatsApp (image, video, document, audio).
+
+    Args:
+        to:         Destination number (+49xxx)
+        media_type: "image" | "video" | "document" | "audio"
+        media_id:   ID from upload_media_to_whatsapp() [preferred, GDPR safer]
+        media_url:  Public direct URL [alternative if no upload]
+        caption:    Caption (not supported in audio/document without caption)
+        filename:   Filename (required for document)
+
+    Returns: {"success": True/False, "message_id": "...", "error": "..."}
+    """
+    if not WHATSAPP_TOKEN or not WHATSAPP_PHONE_ID:
+        return {"success": False, "error": "WhatsApp credentials not configured"}
+
+    if not media_id and not media_url:
+        return {"success": False, "error": "Provide media_id (upload) or media_url"}
+
+    # Build media payload
+    if media_id:
+        media_payload = {"id": media_id}
+    else:
+        media_payload = {"link": media_url}
+
+    if caption and media_type in ("image", "video", "document"):
+        media_payload["caption"] = caption
+
+    if media_type == "document":
+        media_payload["filename"] = filename or "documento_windi.pdf"
+
+    payload = {
+        "messaging_product": "whatsapp",
+        "recipient_type": "individual",
+        "to": to.replace("+", "").replace(" ", ""),
+        "type": media_type,
+        media_type: media_payload,
+    }
+
+    try:
+        url = f"{WHATSAPP_GRAPH_URL}/{WHATSAPP_PHONE_ID}/messages"
+        data = json.dumps(payload).encode("utf-8")
+        req = urllib.request.Request(url, data=data, method="POST")
+        req.add_header("Authorization", f"Bearer {WHATSAPP_TOKEN}")
+        req.add_header("Content-Type", "application/json")
+
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            result = json.loads(resp.read().decode())
+            msg_id = result.get("messages", [{}])[0].get("id")
+            return {
+                "success": True,
+                "message_id": msg_id,
+                "media_type": media_type,
+                "to": to,
+                "had_caption": bool(caption),
+            }
+
+    except urllib.error.HTTPError as e:
+        error_body = e.read().decode() if hasattr(e, 'read') else str(e)
+        return {"success": False, "error": f"HTTP {e.code}: {error_body}"}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+def send_whatsapp_image(to: str, image_url: str = None, image_id: str = None,
+                        caption: str = "") -> dict:
+    """Shortcut: send image (JPEG/PNG/WebP, max 5MB)."""
+    return send_whatsapp_media(to, "image", media_id=image_id,
+                               media_url=image_url, caption=caption)
+
+
+def send_whatsapp_video(to: str, video_url: str = None, video_id: str = None,
+                        caption: str = "") -> dict:
+    """Shortcut: send video (MP4/3GPP, max 16MB)."""
+    return send_whatsapp_media(to, "video", media_id=video_id,
+                               media_url=video_url, caption=caption)
+
+
+def send_whatsapp_document(to: str, doc_url: str = None, doc_id: str = None,
+                           caption: str = "", filename: str = "documento.pdf") -> dict:
+    """Shortcut: send document (PDF/DOCX/JMPG, max 100MB)."""
+    return send_whatsapp_media(to, "document", media_id=doc_id,
+                               media_url=doc_url, caption=caption, filename=filename)
+
+
+def send_whatsapp_sticker(to: str, sticker_url: str = None, sticker_id: str = None) -> dict:
+    """Shortcut: send sticker (static WebP, max 100KB)."""
+    return send_whatsapp_media(to, "sticker", media_id=sticker_id, media_url=sticker_url)
+
+
+# ═══════════════════════════════════════════════════════════════════════════════════
+# WHATSAPP TEMPLATE MESSAGES SYSTEM v1.0.0
+# Meta requires pre-approved templates to initiate conversations
+# Added: 2026-03-08
+# ═══════════════════════════════════════════════════════════════════════════════════
+
+# WINDI Pre-defined Templates (submit to Meta for approval)
+# Format: template_name -> {languages, category, components}
+WINDI_WHATSAPP_TEMPLATES = {
+    # ── Document Delivery ──────────────────────────────────────────
+    "windi_document_ready": {
+        "category": "UTILITY",
+        "languages": ["de", "en", "pt"],
+        "components": {
+            "de": {
+                "header": {"type": "text", "text": "📄 Dokument bereit"},
+                "body": "Hallo {{1}},\n\nIhr Dokument \"{{2}}\" ist bereit und wurde kryptographisch versiegelt.\n\n🛡️ Receipt-ID: {{3}}\n\nKlicken Sie auf den Link unten, um es zu verifizieren.",
+                "footer": "WINDI Publishing · Kempten, Bavaria",
+                "buttons": [{"type": "URL", "text": "Dokument öffnen", "url": "https://windi.publishing.de/verify/{{4}}"}]
+            },
+            "en": {
+                "header": {"type": "text", "text": "📄 Document Ready"},
+                "body": "Hello {{1}},\n\nYour document \"{{2}}\" is ready and has been cryptographically sealed.\n\n🛡️ Receipt ID: {{3}}\n\nClick the link below to verify it.",
+                "footer": "WINDI Publishing · Kempten, Bavaria",
+                "buttons": [{"type": "URL", "text": "Open Document", "url": "https://windi.publishing.de/verify/{{4}}"}]
+            },
+            "pt": {
+                "header": {"type": "text", "text": "📄 Documento Pronto"},
+                "body": "Olá {{1}},\n\nO seu documento \"{{2}}\" está pronto e foi selado criptograficamente.\n\n🛡️ Receipt ID: {{3}}\n\nClique no link abaixo para verificar.",
+                "footer": "WINDI Publishing · Kempten, Bavaria",
+                "buttons": [{"type": "URL", "text": "Abrir Documento", "url": "https://windi.publishing.de/verify/{{4}}"}]
+            },
+        },
+        "variables": ["recipient_name", "document_title", "receipt_id", "receipt_id_for_url"],
+    },
+
+    # ── Seal Notification ──────────────────────────────────────────
+    "windi_seal_complete": {
+        "category": "UTILITY",
+        "languages": ["de", "en", "pt"],
+        "components": {
+            "de": {
+                "header": {"type": "text", "text": "🛡️ Versiegelung abgeschlossen"},
+                "body": "Dokument \"{{1}}\" wurde erfolgreich versiegelt.\n\n📋 Receipt: {{2}}\n🕐 Zeit: {{3}}\n🔐 Hash: {{4}}...\n\nDieses Dokument ist jetzt kryptographisch verifizierbar.",
+                "footer": "WINDI Forensic Ledger",
+            },
+            "en": {
+                "header": {"type": "text", "text": "🛡️ Seal Complete"},
+                "body": "Document \"{{1}}\" has been successfully sealed.\n\n📋 Receipt: {{2}}\n🕐 Time: {{3}}\n🔐 Hash: {{4}}...\n\nThis document is now cryptographically verifiable.",
+                "footer": "WINDI Forensic Ledger",
+            },
+            "pt": {
+                "header": {"type": "text", "text": "🛡️ Selagem Concluída"},
+                "body": "O documento \"{{1}}\" foi selado com sucesso.\n\n📋 Receipt: {{2}}\n🕐 Hora: {{3}}\n🔐 Hash: {{4}}...\n\nEste documento é agora criptograficamente verificável.",
+                "footer": "WINDI Forensic Ledger",
+            },
+        },
+        "variables": ["document_title", "receipt_id", "timestamp", "hash_preview"],
+    },
+
+    # ── Verification Code ──────────────────────────────────────────
+    "windi_verification_code": {
+        "category": "AUTHENTICATION",
+        "languages": ["de", "en", "pt"],
+        "components": {
+            "de": {
+                "body": "Dein WINDI Verifizierungscode ist: *{{1}}*\n\nGültig für 10 Minuten. Teile diesen Code mit niemandem.",
+                "footer": "WINDI Security",
+            },
+            "en": {
+                "body": "Your WINDI verification code is: *{{1}}*\n\nValid for 10 minutes. Do not share this code with anyone.",
+                "footer": "WINDI Security",
+            },
+            "pt": {
+                "body": "O teu código de verificação WINDI é: *{{1}}*\n\nVálido por 10 minutos. Não partilhes este código com ninguém.",
+                "footer": "WINDI Security",
+            },
+        },
+        "variables": ["verification_code"],
+    },
+
+    # ── Welcome Message ────────────────────────────────────────────
+    "windi_welcome": {
+        "category": "MARKETING",
+        "languages": ["de", "en", "pt"],
+        "components": {
+            "de": {
+                "header": {"type": "text", "text": "🐉 Willkommen bei WINDI"},
+                "body": "Hallo {{1}},\n\nWillkommen bei WINDI Publishing! Wir freuen uns, dich an Bord zu haben.\n\nMit WINDI kannst du:\n✓ Dokumente kryptographisch versiegeln\n✓ Forensische Beweise erstellen\n✓ Souveräne digitale Identität nutzen\n\nBei Fragen sind wir hier.",
+                "footer": "Human decides. WINDI observes.",
+            },
+            "en": {
+                "header": {"type": "text", "text": "🐉 Welcome to WINDI"},
+                "body": "Hello {{1}},\n\nWelcome to WINDI Publishing! We're glad to have you on board.\n\nWith WINDI you can:\n✓ Cryptographically seal documents\n✓ Create forensic evidence\n✓ Use sovereign digital identity\n\nWe're here if you have questions.",
+                "footer": "Human decides. WINDI observes.",
+            },
+            "pt": {
+                "header": {"type": "text", "text": "🐉 Bem-vindo ao WINDI"},
+                "body": "Olá {{1}},\n\nBem-vindo ao WINDI Publishing! Estamos felizes por te ter connosco.\n\nCom o WINDI podes:\n✓ Selar documentos criptograficamente\n✓ Criar evidências forenses\n✓ Usar identidade digital soberana\n\nEstamos aqui se tiveres dúvidas.",
+                "footer": "Human decides. WINDI observes.",
+            },
+        },
+        "variables": ["recipient_name"],
+    },
+
+    # ── Payment Reminder ───────────────────────────────────────────
+    "windi_payment_reminder": {
+        "category": "UTILITY",
+        "languages": ["de", "en", "pt"],
+        "components": {
+            "de": {
+                "header": {"type": "text", "text": "💳 Zahlungserinnerung"},
+                "body": "Hallo {{1}},\n\nDies ist eine freundliche Erinnerung an die ausstehende Zahlung:\n\n📋 Rechnung: {{2}}\n💰 Betrag: {{3}}\n📅 Fällig: {{4}}\n\nBei Fragen kontaktiere uns bitte.",
+                "footer": "WINDI Wallet",
+            },
+            "en": {
+                "header": {"type": "text", "text": "💳 Payment Reminder"},
+                "body": "Hello {{1}},\n\nThis is a friendly reminder about your pending payment:\n\n📋 Invoice: {{2}}\n💰 Amount: {{3}}\n📅 Due: {{4}}\n\nPlease contact us if you have any questions.",
+                "footer": "WINDI Wallet",
+            },
+            "pt": {
+                "header": {"type": "text", "text": "💳 Lembrete de Pagamento"},
+                "body": "Olá {{1}},\n\nEste é um lembrete amigável sobre o pagamento pendente:\n\n📋 Fatura: {{2}}\n💰 Valor: {{3}}\n📅 Vencimento: {{4}}\n\nContacta-nos se tiveres dúvidas.",
+                "footer": "WINDI Wallet",
+            },
+        },
+        "variables": ["recipient_name", "invoice_id", "amount", "due_date"],
+    },
+
+    # ── Appointment Confirmation ───────────────────────────────────
+    "windi_appointment": {
+        "category": "UTILITY",
+        "languages": ["de", "en", "pt"],
+        "components": {
+            "de": {
+                "header": {"type": "text", "text": "📅 Terminbestätigung"},
+                "body": "Hallo {{1}},\n\nDein Termin wurde bestätigt:\n\n📋 Betreff: {{2}}\n📅 Datum: {{3}}\n🕐 Uhrzeit: {{4}}\n📍 Ort: {{5}}\n\nWir freuen uns auf dich!",
+                "footer": "WINDI Scheduling",
+            },
+            "en": {
+                "header": {"type": "text", "text": "📅 Appointment Confirmed"},
+                "body": "Hello {{1}},\n\nYour appointment has been confirmed:\n\n📋 Subject: {{2}}\n📅 Date: {{3}}\n🕐 Time: {{4}}\n📍 Location: {{5}}\n\nWe look forward to seeing you!",
+                "footer": "WINDI Scheduling",
+            },
+            "pt": {
+                "header": {"type": "text", "text": "📅 Compromisso Confirmado"},
+                "body": "Olá {{1}},\n\nO teu compromisso foi confirmado:\n\n📋 Assunto: {{2}}\n📅 Data: {{3}}\n🕐 Hora: {{4}}\n📍 Local: {{5}}\n\nEstamos à tua espera!",
+                "footer": "WINDI Scheduling",
+            },
+        },
+        "variables": ["recipient_name", "subject", "date", "time", "location"],
+    },
+}
+
+
+def get_template(template_name: str, lang: str = "en") -> dict:
+    """
+    Get a WINDI WhatsApp template by name and language.
+
+    Returns:
+        {"found": True, "template": {...}, "variables": [...]} or
+        {"found": False, "error": "..."}
+    """
+    template = WINDI_WHATSAPP_TEMPLATES.get(template_name)
+    if not template:
+        available = list(WINDI_WHATSAPP_TEMPLATES.keys())
+        return {"found": False, "error": f"Template '{template_name}' not found", "available": available}
+
+    # Get language-specific components
+    components = template.get("components", {})
+    lang_components = components.get(lang) or components.get("en") or list(components.values())[0]
+
+    return {
+        "found": True,
+        "template_name": template_name,
+        "language": lang,
+        "category": template.get("category"),
+        "components": lang_components,
+        "variables": template.get("variables", []),
+        "supported_languages": template.get("languages", []),
+    }
+
+
+def list_templates(category: str = None, lang: str = None) -> list:
+    """
+    List all available WINDI WhatsApp templates.
+
+    Args:
+        category: Filter by category (UTILITY, MARKETING, AUTHENTICATION)
+        lang: Filter by language support
+
+    Returns:
+        List of template summaries
+    """
+    results = []
+    for name, template in WINDI_WHATSAPP_TEMPLATES.items():
+        # Apply filters
+        if category and template.get("category") != category:
+            continue
+        if lang and lang not in template.get("languages", []):
+            continue
+
+        results.append({
+            "name": name,
+            "category": template.get("category"),
+            "languages": template.get("languages"),
+            "variables": template.get("variables"),
+            "variable_count": len(template.get("variables", [])),
+        })
+
+    return results
+
+
+def render_template(template_name: str, lang: str, variables: dict) -> dict:
+    """
+    Render a template with actual variable values.
+
+    Args:
+        template_name: Name of the template
+        lang: Language code (de, en, pt)
+        variables: Dict mapping variable names to values
+
+    Returns:
+        {"success": True, "rendered": {...}} or {"success": False, "error": "..."}
+    """
+    tpl = get_template(template_name, lang)
+    if not tpl.get("found"):
+        return {"success": False, "error": tpl.get("error")}
+
+    components = tpl["components"]
+    expected_vars = tpl["variables"]
+
+    # Check all required variables are provided
+    missing = [v for v in expected_vars if v not in variables]
+    if missing:
+        return {"success": False, "error": f"Missing variables: {missing}", "required": expected_vars}
+
+    # Build variable list in order ({{1}}, {{2}}, etc.)
+    var_values = [str(variables.get(v, "")) for v in expected_vars]
+
+    # Render body text
+    rendered_body = components.get("body", "")
+    for i, val in enumerate(var_values, 1):
+        rendered_body = rendered_body.replace(f"{{{{{i}}}}}", val)
+
+    # Render header if exists
+    rendered_header = None
+    if "header" in components:
+        rendered_header = components["header"].copy()
+        if rendered_header.get("type") == "text":
+            header_text = rendered_header.get("text", "")
+            for i, val in enumerate(var_values, 1):
+                header_text = header_text.replace(f"{{{{{i}}}}}", val)
+            rendered_header["text"] = header_text
+
+    # Render buttons if exist
+    rendered_buttons = None
+    if "buttons" in components:
+        rendered_buttons = []
+        for btn in components["buttons"]:
+            new_btn = btn.copy()
+            if "url" in new_btn:
+                url = new_btn["url"]
+                for i, val in enumerate(var_values, 1):
+                    url = url.replace(f"{{{{{i}}}}}", val)
+                new_btn["url"] = url
+            rendered_buttons.append(new_btn)
+
+    return {
+        "success": True,
+        "template_name": template_name,
+        "language": lang,
+        "rendered": {
+            "header": rendered_header,
+            "body": rendered_body,
+            "footer": components.get("footer"),
+            "buttons": rendered_buttons,
+        },
+        "variable_values": var_values,
+    }
+
+
+def send_whatsapp_template(to: str, template_name: str, lang: str,
+                           variables: dict, header_media: dict = None) -> dict:
+    """
+    Send a WhatsApp template message.
+
+    Args:
+        to: Recipient (phone/BSUID/@username)
+        template_name: Name of the approved template
+        lang: Language code (de, en, pt)
+        variables: Dict mapping variable names to values
+        header_media: Optional media for header {"type": "image"|"video"|"document", "link": "..."}
+
+    Returns:
+        {"success": True, "message_id": "...", ...} or {"success": False, "error": "..."}
+    """
+    if not WHATSAPP_TOKEN or not WHATSAPP_PHONE_ID:
+        return {"success": False, "error": "WhatsApp credentials not configured"}
+
+    # Get and validate template
+    tpl = get_template(template_name, lang)
+    if not tpl.get("found"):
+        return {"success": False, "error": tpl.get("error")}
+
+    # Build variable list
+    expected_vars = tpl["variables"]
+    missing = [v for v in expected_vars if v not in variables]
+    if missing:
+        return {"success": False, "error": f"Missing variables: {missing}"}
+
+    var_values = [str(variables.get(v, "")) for v in expected_vars]
+
+    # Resolve recipient
+    resolved_to = resolve_wa_recipient(to)
+
+    # Build Meta API payload for template message
+    # https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-message-templates
+
+    components = []
+
+    # Header component (if template has header)
+    if header_media:
+        components.append({
+            "type": "header",
+            "parameters": [{
+                "type": header_media["type"],
+                header_media["type"]: {"link": header_media["link"]}
+            }]
+        })
+
+    # Body component with variables
+    if var_values:
+        body_params = [{"type": "text", "text": v} for v in var_values]
+        components.append({
+            "type": "body",
+            "parameters": body_params
+        })
+
+    # Button component (if URL button with variable)
+    tpl_components = tpl.get("components", {})
+    if "buttons" in tpl_components:
+        for idx, btn in enumerate(tpl_components["buttons"]):
+            if btn.get("type") == "URL" and "{{" in btn.get("url", ""):
+                # URL has variable - need to pass it
+                # Find which variable index is used in URL
+                for i, var in enumerate(expected_vars, 1):
+                    if f"{{{{{i}}}}}" in btn.get("url", ""):
+                        components.append({
+                            "type": "button",
+                            "sub_type": "url",
+                            "index": str(idx),
+                            "parameters": [{"type": "text", "text": var_values[i-1]}]
+                        })
+                        break
+
+    payload = {
+        "messaging_product": "whatsapp",
+        "recipient_type": "individual",
+        "to": resolved_to,
+        "type": "template",
+        "template": {
+            "name": template_name,
+            "language": {"code": lang},
+            "components": components if components else None
+        }
+    }
+
+    # Remove None components
+    if payload["template"]["components"] is None:
+        del payload["template"]["components"]
+
+    try:
+        url = f"{WHATSAPP_GRAPH_URL}/{WHATSAPP_PHONE_ID}/messages"
+        data = json.dumps(payload).encode("utf-8")
+        req = urllib.request.Request(url, data=data, method="POST")
+        req.add_header("Authorization", f"Bearer {WHATSAPP_TOKEN}")
+        req.add_header("Content-Type", "application/json")
+
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            result = json.loads(resp.read().decode())
+            msg_id = result.get("messages", [{}])[0].get("id")
+
+            # Detect ID type
+            id_info = detect_wa_id_type(to)
+
+            return {
+                "success": True,
+                "message_id": msg_id,
+                "template_name": template_name,
+                "language": lang,
+                "variables_sent": var_values,
+                "id_type": id_info["type"],
+                "to": to,
+            }
+
+    except urllib.error.HTTPError as e:
+        error_body = e.read().decode() if hasattr(e, 'read') else str(e)
+        return {"success": False, "error": f"HTTP {e.code}: {error_body}"}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
+def seal_whatsapp_media_send(to: str, media_type: str, caption: str,
+                             message_id: str, actor: str = "Dragon",
+                             bsuid: str = None) -> dict:
+    """
+    Seal WhatsApp media send in Forensic Ledger.
+    GDPR: recipient identifier is hashed, never stored raw.
+
+    PATCH v1.1.0: Now supports BSUID for Meta username transition (June 2026).
+    - Detects identifier type automatically (phone/bsuid/username)
+    - Stores wa_id_type for analytics
+    - BSUID stored when available (also hashed for GDPR)
+    """
+    # Detect identifier type
+    id_info = detect_wa_id_type(to)
+    wa_id_type = id_info["type"]
+
+    # GDPR: always hash the identifier
+    to_hash = hashlib.sha256(to.encode()).hexdigest()[:16]
+    bsuid_hash = hashlib.sha256(bsuid.encode()).hexdigest()[:16] if bsuid else None
+
+    receipt_id = f"WINDI-WA-{media_type.upper()}-{datetime.utcnow().strftime('%Y%m%d%H%M%S')}"
+
+    payload = {
+        "id": receipt_id,
+        "actor": actor,
+        "app": "dragon_chat_service",
+        "doc_name": f"WhatsApp {media_type} → {to_hash}",
+        "doc_type": "communique",
+        "governance_level": "MEDIUM",
+        # PATCH v1.1.0: BSUID fields at top level for Ledger schema
+        "bsuid": bsuid_hash,           # Hashed BSUID when available
+        "wa_id_type": wa_id_type,      # "phone" | "bsuid" | "username"
+        "metadata": {
+            "channel": "whatsapp",
+            "media_type": media_type,
+            "recipient_hash": to_hash,
+            "bsuid_hash": bsuid_hash,  # Also in metadata for redundancy
+            "wa_id_type": wa_id_type,
+            "country": id_info.get("country"),  # From BSUID prefix (e.g., "DE")
+            "message_id": message_id,
+            "caption_length": len(caption) if caption else 0,
+            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "patch_version": "1.1.0",
+        }
+    }
+
+    try:
+        data = json.dumps(payload).encode("utf-8")
+        req = urllib.request.Request(
+            f"{LEDGER_URL_INTERNAL}/api/receipts",
+            data=data, method="POST"
+        )
+        req.add_header("Content-Type", "application/json")
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            result = json.loads(resp.read().decode())
+            return {
+                "sealed": True,
+                "receipt_id": receipt_id,
+                "wa_id_type": wa_id_type,
+                "ledger": result
+            }
+    except Exception as e:
+        # Ledger seal is best-effort — does not block send
+        return {"sealed": False, "error": str(e), "wa_id_type": wa_id_type}
+
+
 def create_document_email_html(doc_title: str, doc_content: str, receipt_id: str, lang: str = "en") -> str:
     """
     Create HTML email template for document distribution.
@@ -1621,6 +2406,25 @@ class DragonChatHandler(BaseHTTPRequestHandler):
                     "week2": ["#4 NeedsLLM", "#5 LocalQueries", "#7 Layer7Semantics"],
                     "v2.2": ["KnowledgeBase", "ConversationalHandler", "SessionContext"],
                     "v2.3": ["CognitiveInterface", "InsightGenerator", "ProactiveMessages"],
+                    "v2.4": ["WhatsAppMedia", "ImageVideoDocument", "LedgerSeal"],
+                    "v2.5": ["BSUID_Ready", "detect_wa_id_type", "parse_wa_webhook", "send_any_id"],
+                    "v2.6": ["TemplateMessages", "render_template", "send_template", "pre_approved_templates"],
+                },
+                "whatsapp_patch": {
+                    "version": "1.2.0",
+                    "bsuid_ready": True,
+                    "templates_ready": True,
+                    "supported_ids": ["phone", "bsuid", "username"],
+                    "meta_deadline": "June 2026",
+                    "endpoints": [
+                        "/whatsapp/send-any",
+                        "/whatsapp/detect-id",
+                        "/whatsapp/webhook",
+                        "/whatsapp/templates",
+                        "/whatsapp/templates/{name}",
+                        "/whatsapp/templates/render",
+                        "/whatsapp/templates/send",
+                    ],
                 },
                 "knowledge_base": list(KNOWLEDGE_BASE.keys()),
                 "principles": [
@@ -1631,7 +2435,7 @@ class DragonChatHandler(BaseHTTPRequestHandler):
                     "5. Speaks user's language (guardian-local detection)"
                 ],
                 "active_sessions": len(SESSIONS),
-                "refactoring": "A.4 v2.3 — Cognitive Interface Layer (93% visible)"
+                "refactoring": "A.4 v2.6 — Template Messages System (Meta pre-approved)"
             })
             return
 
@@ -1814,6 +2618,291 @@ class DragonChatHandler(BaseHTTPRequestHandler):
                 },
                 "recent_distributions": DISTRIBUTION_LOG[-10:],
             })
+            return
+
+        # ─── WHATSAPP MEDIA ENDPOINTS v1.0.0 ────────────────────────────
+        if path == "/whatsapp/send-image":
+            # Body: {"to": "+49xxx", "image_url": "https://...", "caption": "..."}
+            # OR:   {"to": "+49xxx", "image_id": "meta_media_id", "caption": "..."}
+            to = body.get("to", "")
+            img_url = body.get("image_url")
+            img_id = body.get("image_id")
+            caption = body.get("caption", "")
+
+            if not to:
+                self._json_response({"success": False, "error": "Field 'to' required"}, 400)
+                return
+
+            result = send_whatsapp_image(to, image_url=img_url, image_id=img_id, caption=caption)
+            if result.get("success"):
+                seal = seal_whatsapp_media_send(to, "image", caption, result.get("message_id", ""))
+                result["receipt"] = seal
+            self._json_response(result)
+            return
+
+        if path == "/whatsapp/send-video":
+            # Body: {"to": "+49xxx", "video_url": "https://...", "caption": "..."}
+            to = body.get("to", "")
+            vid_url = body.get("video_url")
+            vid_id = body.get("video_id")
+            caption = body.get("caption", "")
+
+            if not to:
+                self._json_response({"success": False, "error": "Field 'to' required"}, 400)
+                return
+
+            result = send_whatsapp_video(to, video_url=vid_url, video_id=vid_id, caption=caption)
+            if result.get("success"):
+                seal = seal_whatsapp_media_send(to, "video", caption, result.get("message_id", ""))
+                result["receipt"] = seal
+            self._json_response(result)
+            return
+
+        if path == "/whatsapp/send-document":
+            # Body: {"to": "+49xxx", "doc_url": "https://...file.pdf", "caption": "...", "filename": "relatorio.pdf"}
+            to = body.get("to", "")
+            doc_url = body.get("doc_url")
+            doc_id = body.get("doc_id")
+            caption = body.get("caption", "")
+            filename = body.get("filename", "documento_windi.pdf")
+
+            if not to:
+                self._json_response({"success": False, "error": "Field 'to' required"}, 400)
+                return
+
+            result = send_whatsapp_document(to, doc_url=doc_url, doc_id=doc_id,
+                                            caption=caption, filename=filename)
+            if result.get("success"):
+                seal = seal_whatsapp_media_send(to, "document", caption, result.get("message_id", ""))
+                result["receipt"] = seal
+            self._json_response(result)
+            return
+
+        if path == "/whatsapp/upload-media":
+            # Body JSON: {"file_url": "https://...", "filename": "imagem.jpg", "mime_type": "image/jpeg"}
+            # Returns {"media_id": "...", "mime_type": "..."}
+            file_url = body.get("file_url")
+            filename = body.get("filename", "upload.bin")
+            mime_type = body.get("mime_type")
+
+            if file_url:
+                try:
+                    with urllib.request.urlopen(file_url, timeout=20) as r:
+                        file_bytes = r.read()
+                    result = upload_media_to_whatsapp(file_bytes, filename, mime_type)
+                    self._json_response(result)
+                except Exception as e:
+                    self._json_response({"success": False, "error": f"Failed to download file: {e}"}, 400)
+            else:
+                self._json_response({"success": False, "error": "Provide 'file_url' for upload"}, 400)
+            return
+
+        if path == "/whatsapp/send":
+            # Text-only send (existing compatibility)
+            to = body.get("to", "")
+            message = body.get("message", "")
+
+            if not to or not message:
+                self._json_response({"success": False, "error": "Fields 'to' and 'message' required"}, 400)
+                return
+
+            result = send_whatsapp(to, message)
+            self._json_response(result)
+            return
+
+        # ─── PATCH v1.1.0: BSUID-READY ENDPOINTS ────────────────────────
+
+        if path == "/whatsapp/send-any":
+            # Universal send: accepts phone, BSUID, or @username
+            # Body: {"to": "+49xxx" | "DE_abc123..." | "@username", "message": "..." OR media fields}
+            to = body.get("to", "")
+            message = body.get("message")
+            media_type = body.get("media_type")
+            media_id = body.get("media_id")
+            media_url = body.get("media_url") or body.get("image_url") or body.get("video_url") or body.get("doc_url")
+            caption = body.get("caption", "")
+            filename = body.get("filename")
+
+            if not to:
+                self._json_response({"success": False, "error": "Field 'to' required"}, 400)
+                return
+
+            result = send_whatsapp_any_id(
+                to=to,
+                message=message,
+                media_type=media_type,
+                media_id=media_id,
+                media_url=media_url,
+                caption=caption,
+                filename=filename
+            )
+
+            # Seal if successful
+            if result.get("success") and (message or media_type):
+                seal = seal_whatsapp_media_send(
+                    to=to,
+                    media_type=media_type or "text",
+                    caption=caption or message or "",
+                    message_id=result.get("message_id", ""),
+                    bsuid=to if result.get("id_type") == "bsuid" else None
+                )
+                result["receipt"] = seal
+
+            self._json_response(result)
+            return
+
+        if path == "/whatsapp/detect-id":
+            # Utility: detect identifier type without sending
+            # Body: {"recipient": "+49xxx" | "DE_abc123..." | "@username"}
+            recipient = body.get("recipient", body.get("to", ""))
+            if not recipient:
+                self._json_response({"success": False, "error": "Field 'recipient' required"}, 400)
+                return
+
+            info = detect_wa_id_type(recipient)
+            resolved = resolve_wa_recipient(recipient)
+            self._json_response({
+                "success": True,
+                "recipient": recipient,
+                "type": info["type"],
+                "resolved": resolved,
+                "country": info.get("country"),
+            })
+            return
+
+        if path == "/whatsapp/webhook":
+            # Webhook receiver: parse incoming Meta webhook and extract BSUID
+            # POST from Meta: {"entry": [{"changes": [...]}]}
+            parsed = parse_wa_webhook(body)
+            if "error" in parsed:
+                self._json_response({"success": False, "error": parsed["error"]}, 400)
+                return
+
+            # Log to distribution log for audit
+            DISTRIBUTION_LOG.append({
+                "channel": "whatsapp_webhook",
+                "direction": "incoming",
+                "from": parsed.get("from"),
+                "bsuid": parsed.get("bsuid"),
+                "id_type": parsed.get("id_type"),
+                "message_id": parsed.get("message_id"),
+                "type": parsed.get("type"),
+                "timestamp": datetime.now().isoformat(),
+            })
+
+            self._json_response({
+                "success": True,
+                "parsed": parsed,
+                "bsuid_detected": parsed.get("bsuid") is not None,
+            })
+            return
+
+        # ─── WHATSAPP TEMPLATE MESSAGES v1.0.0 ────────────────────────────
+        # Pre-approved Meta templates for initiating conversations
+        # Templates must be submitted to Meta for approval before use
+
+        if path == "/whatsapp/templates":
+            # List all available templates
+            # Body (optional): {"category": "UTILITY", "lang": "en"}
+            category = body.get("category")
+            lang = body.get("lang")
+            templates = list_templates(category=category, lang=lang)
+            self._json_response({
+                "success": True,
+                "count": len(templates),
+                "templates": templates,
+                "note": "Templates must be approved by Meta before use"
+            })
+            return
+
+        if path == "/whatsapp/templates/render":
+            # Preview a rendered template before sending
+            # Body: {"template": "windi_document_ready", "lang": "de", "variables": {...}}
+            template_name = body.get("template")
+            lang = body.get("lang", "en")
+            variables = body.get("variables", {})
+
+            if not template_name:
+                self._json_response({"success": False, "error": "Field 'template' required"}, 400)
+                return
+
+            rendered = render_template(template_name, lang, variables)
+            if "error" in rendered:
+                self._json_response({"success": False, "error": rendered["error"]}, 400)
+                return
+
+            self._json_response({
+                "success": True,
+                "template": template_name,
+                "lang": lang,
+                "rendered": rendered,
+                "preview": True
+            })
+            return
+
+        if path == "/whatsapp/templates/send":
+            # Send a template message to initiate conversation
+            # Body: {
+            #   "to": "+49xxx" | "DE_abc123..." | "@username",
+            #   "template": "windi_document_ready",
+            #   "lang": "de",
+            #   "variables": {"recipient_name": "Max", "document_title": "Vertrag", ...},
+            #   "header_media": {"type": "document", "link": "https://..."} (optional)
+            # }
+            to = body.get("to")
+            template_name = body.get("template")
+            lang = body.get("lang", "en")
+            variables = body.get("variables", {})
+            header_media = body.get("header_media")
+
+            if not to:
+                self._json_response({"success": False, "error": "Field 'to' required"}, 400)
+                return
+
+            if not template_name:
+                self._json_response({"success": False, "error": "Field 'template' required"}, 400)
+                return
+
+            result = send_whatsapp_template(
+                to=to,
+                template_name=template_name,
+                lang=lang,
+                variables=variables,
+                header_media=header_media
+            )
+
+            # Seal if successful
+            if result.get("success"):
+                seal = seal_whatsapp_media_send(
+                    to=to,
+                    media_type="template",
+                    caption=f"Template: {template_name} ({lang})",
+                    message_id=result.get("message_id", ""),
+                    bsuid=to if result.get("id_type") == "bsuid" else None
+                )
+                result["receipt"] = seal
+
+            self._json_response(result)
+            return
+
+        # Get specific template by name: /whatsapp/templates/{template_name}
+        # NOTE: Must come AFTER /render and /send routes
+        if path.startswith("/whatsapp/templates/") and path.count("/") == 3:
+            template_name = path.split("/")[-1]
+            lang = body.get("lang", "en")
+            template = get_template(template_name, lang)
+            if template:
+                self._json_response({
+                    "success": True,
+                    "template": template,
+                    "lang": lang
+                })
+            else:
+                self._json_response({
+                    "success": False,
+                    "error": f"Template '{template_name}' not found",
+                    "available": list_templates()
+                }, 404)
             return
 
         # ─── CLEAR SESSION ENDPOINT ──────────────────────────────────────
