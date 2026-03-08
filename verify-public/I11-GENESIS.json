@@ -1,0 +1,25 @@
+{
+  "title": "WINDI Constitutional Invariant I11",
+  "subtitle": "Permanência de Evidência Criptográfica",
+  "status": "IRREMEDIÁVEL",
+  "class": "Evidential Sovereignty",
+  "origin_date": "2026-03-05",
+  "origin_document": "Email da Xuxuzinha — primeiro documento WINDI verificado publicamente",
+  "statement": "Todo documento selado pelo WINDI deve conter sua prova criptográfica impressa no próprio corpo do documento, independente de qualquer URL, serviço, domínio ou infraestrutura externa.",
+  "principle": "O link pode morrer. O domínio pode mudar. O servidor pode migrar. A empresa pode evoluir. O hash não muda nunca.",
+  "requirements": [
+    "R1: SHA-256 hash impresso no corpo",
+    "R2: Receipt ID legível",
+    "R3: Data e hora ISO 8601 UTC",
+    "R4: URL de verificação vigente",
+    "R5: Instrução de verificação independente de URL"
+  ],
+  "classification": {
+    "type": "IRREMEDIÁVEL",
+    "exceptions": "ZERO",
+    "revogável": "NÃO"
+  },
+  "approved_by": "Human Dragon — Chief Governance Officer — WINDI Publishing House — Kempten, Bavaria",
+  "sealed_at": "2026-03-05T03:30:33.267683Z",
+  "sha256": "38d44edbb98af702c429734c9c119923558a318e0dd03a16c3b2ab6aade0c8eb"
+}

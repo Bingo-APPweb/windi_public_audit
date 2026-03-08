@@ -1,0 +1,68 @@
+{
+  "title": "WINDI Verify Public — Genesis Record",
+  "date": "2026-03-05",
+  "location": "Kempten, Bavaria, Germany",
+  "sequence": [
+    {
+      "time": "~09:00",
+      "event": "Blueprint do Arquiteto recebido"
+    },
+    {
+      "time": "~10:00",
+      "event": "Decisões arquiteturais: Python, :8114, /verify-public/"
+    },
+    {
+      "time": "~11:00",
+      "event": "verify_engine.py + main.py escritos"
+    },
+    {
+      "time": "~12:00",
+      "event": "Deploy no Strato — operational"
+    },
+    {
+      "time": "~13:00",
+      "event": "UI v2.0 — três camadas públicas"
+    },
+    {
+      "time": "~14:00",
+      "event": "Auto-verify por URL direta"
+    },
+    {
+      "time": "~15:00",
+      "event": "Email da Xuxuzinha — primeiro documento real"
+    },
+    {
+      "time": "~16:00",
+      "event": "I11 nasceu — Permanência de Evidência Criptográfica"
+    },
+    {
+      "time": "03:42",
+      "event": "WINDI-I11-CONSTITUTIONAL-20260305 — VERIFIED ✅"
+    }
+  ],
+  "first_verified_document": {
+    "id": "WINDI-I11-CONSTITUTIONAL-20260305",
+    "hash": "fbcae07416635239d0cb6947f7929659b09cd08356b7e221418e228c9c761f99",
+    "issued": "2026-03-05T03:34:00Z",
+    "verified_at": "2026-03-05T03:42:38Z",
+    "url": "https://windi-domain.com/verify-public/WINDI-I11-CONSTITUTIONAL-20260305",
+    "origin": "Email da Xuxuzinha — primeiro documento WINDI verificado publicamente"
+  },
+  "system_state": {
+    "ledger_receipts": 39711,
+    "verify_agent": "v1.0.1",
+    "port": 8114,
+    "path": "/verify-public/",
+    "sovereignty": "93.3% local",
+    "infra_cost": "4 EUR/month"
+  },
+  "witnesses": [
+    "Human Dragon — Chief Governance Officer",
+    "Guardian — Three Dragons Protocol",
+    "Architect — Three Dragons Protocol",
+    "Witness — Three Dragons Protocol"
+  ],
+  "principle": "Verify nunca cria. Verify nunca altera. Verify apenas prova.",
+  "sealed_at": "2026-03-05T03:45:27.926858Z",
+  "sha256": "aaa505d1cd8b9a12d0b9b11ffe144b5f270ffb9a8dea3f832de5cefd6009b04a"
+}

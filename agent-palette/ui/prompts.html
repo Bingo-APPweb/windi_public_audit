@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>WINDI CCode Production Prompts — 27 Feb 2026</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐉</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:#F5F0E0; --card:#FDFBF5; --hover:#EDE8D8; --border:#DDD6C2;
+  --gold:#8B6914; --text:#2C2924; --dim:#6B6560; --success:#4A7C59;
+  --warning:#B8860B; --danger:#A94442; --sealed:#1B4332; --forensic:#2A6B4A;
+  --blue:#5B8DEF; --purple:#7C5BEF; --orange:#EF8B5B; --cyan:#5BC0DE;
+}
+[data-theme="noir"] {
+  --bg:#0E0E14; --card:#16161F; --hover:#1C1C28; --border:#26263A;
+  --gold:#D4A843; --text:#E2E2EA; --dim:#7A7A96; --success:#5A9C69;
+  --warning:#D4A843; --danger:#CF6679; --sealed:#1B4332; --forensic:#2A6B4A;
+  --blue:#5B8DEF; --purple:#A855F7; --orange:#F59E0B; --cyan:#22D3EE;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Bricolage Grotesque',sans-serif; background:var(--bg); color:var(--text); line-height:1.7; }
+code, .mono { font-family:'JetBrains Mono',monospace; font-size:0.9em; }
+pre { background:var(--hover); border:1px solid var(--border); border-radius:8px; padding:16px; overflow-x:auto; font-size:10px; line-height:1.5; white-space:pre-wrap; word-break:break-word; max-height:400px; overflow-y:auto; }
+.header { background:var(--card); border-bottom:1px solid var(--border); padding:20px 32px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; position:sticky; top:0; z-index:100; }
+.header h1 { font-size:18px; font-weight:800; color:var(--gold); flex:1; }
+.header .meta { font-size:10px; color:var(--dim); display:flex; gap:12px; flex-wrap:wrap; }
+.header .meta span { background:var(--hover); padding:3px 8px; border-radius:4px; border:1px solid var(--border); }
+.theme-toggle { background:none; border:none; font-size:16px; cursor:pointer; color:var(--dim); }
+.nav { display:flex; gap:4px; padding:12px 32px; flex-wrap:wrap; border-bottom:1px solid var(--border); background:var(--card); overflow-x:auto; }
+.nav button { padding:8px 14px; border-radius:8px; font-size:11px; font-weight:600; cursor:pointer; background:var(--card); border:1px solid var(--border); color:var(--dim); font-family:inherit; white-space:nowrap; }
+.nav button.active { background:color-mix(in srgb, var(--gold) 12%, transparent); border-color:var(--gold); color:var(--gold); }
+.content { padding:24px 32px 60px; max-width:1100px; margin:0 auto; }
+.section { display:none; }
+.section.active { display:block; }
+.card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:24px; margin-bottom:20px; }
+.card h2 { font-size:18px; font-weight:800; margin-bottom:12px; color:var(--gold); display:flex; align-items:center; gap:8px; }
+.card h3 { font-size:14px; font-weight:700; margin:20px 0 10px; color:var(--text); border-bottom:1px solid var(--border); padding-bottom:6px; }
+.card p { font-size:13px; margin-bottom:12px; }
+.card ul { font-size:13px; padding-left:20px; margin-bottom:12px; }
+.card li { margin-bottom:6px; }
+.sealed-box { background:color-mix(in srgb, var(--sealed) 94%, white); border:1.5px solid var(--forensic); border-radius:12px; padding:18px; color:#E8F5E9; margin:16px 0; }
+.sealed-box h4 { color:#81C784; margin-bottom:6px; font-size:12px; }
+.sealed-box p { color:#A5D6A7; font-size:12px; margin:0; line-height:1.6; }
+.sealed-box .mono { color:#81C784; }
+.spec-table { width:100%; border-collapse:collapse; margin:16px 0; font-size:11px; }
+.spec-table th { background:var(--hover); padding:8px 10px; text-align:left; font-weight:700; border-bottom:2px solid var(--border); color:var(--dim); text-transform:uppercase; font-size:10px; }
+.spec-table td { padding:8px 10px; border-bottom:1px solid var(--border); vertical-align:top; }
+.spec-table tr:hover td { background:var(--hover); }
+.spec-table .mono { font-size:10px; }
+.spec-table .gold { color:var(--gold); font-weight:600; }
+.spec-table .success { color:var(--success); }
+.prompt-box { background:var(--card); border:2px solid var(--gold); border-radius:12px; margin:16px 0; overflow:hidden; }
+.prompt-header { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; background:color-mix(in srgb, var(--gold) 10%, transparent); border-bottom:1px solid var(--border); }
+.prompt-title { font-size:13px; font-weight:700; color:var(--gold); display:flex; align-items:center; gap:8px; }
+.prompt-title .badge { font-size:10px; padding:2px 8px; border-radius:4px; font-weight:600; }
+.prompt-title .badge.high { background:color-mix(in srgb, var(--danger) 15%, transparent); color:var(--danger); }
+.prompt-title .badge.med { background:color-mix(in srgb, var(--warning) 15%, transparent); color:var(--warning); }
+.prompt-title .badge.low { background:color-mix(in srgb, var(--success) 15%, transparent); color:var(--success); }
+.copy-btn { background:var(--gold); color:#fff; border:none; padding:6px 14px; border-radius:6px; font-size:11px; font-weight:600; cursor:pointer; font-family:inherit; display:flex; align-items:center; gap:6px; }
+.copy-btn:hover { opacity:0.9; }
+.copy-btn.copied { background:var(--success); }
+.prompt-content { padding:16px; }
+.prompt-content pre { margin:0; background:var(--bg); }
+.prompt-meta { display:flex; gap:16px; padding:12px 16px; background:var(--hover); border-top:1px solid var(--border); font-size:10px; color:var(--dim); }
+.prompt-meta span { display:flex; align-items:center; gap:4px; }
+.phase-badge { display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border-radius:6px; font-weight:800; font-size:12px; margin-right:8px; }
+.phase-badge.phase-0 { background:var(--dim); color:#fff; }
+.phase-badge.phase-a { background:var(--blue); color:#fff; }
+.phase-badge.phase-b { background:var(--gold); color:#fff; }
+.phase-badge.phase-c { background:var(--purple); color:#fff; }
+.phase-badge.phase-d { background:var(--orange); color:#fff; }
+.phase-badge.phase-e { background:var(--success); color:#fff; }
+.rule-box { background:color-mix(in srgb, var(--warning) 10%, transparent); border:1px solid var(--warning); border-radius:8px; padding:12px 16px; margin:12px 0; }
+.rule-box .rule-title { font-size:11px; font-weight:700; color:var(--warning); margin-bottom:6px; }
+.rule-box .rule-text { font-size:11px; color:var(--text); font-family:'JetBrains Mono',monospace; }
+.footer { text-align:center; padding:24px 32px; border-top:1px solid var(--border); font-size:11px; color:var(--dim); }
+.footer a { color:var(--gold); text-decoration:none; }
+</style>
+</head>
+<body>
+<header class="header">
+  <h1>🐉 CCode Production Prompts</h1>
+  <div class="meta">
+    <span>27 Feb 2026</span>
+    <span>13 Prompts · 5 Fases</span>
+    <span>~4.5h Execução</span>
+  </div>
+  <button class="theme-toggle" onclick="toggleTheme()">☀</button>
+</header>
+<nav class="nav">
+  <button class="active" onclick="showSection('overview',this)">Overview</button>
+  <button onclick="showSection('phase0',this)">0: nginx</button>
+  <button onclick="showSection('phaseA',this)">A: Hydration</button>
+  <button onclick="showSection('phaseB',this)">B: JMPG</button>
+  <button onclick="showSection('phaseC',this)">C: Pott</button>
+  <button onclick="showSection('phaseD',this)">D: Playbook</button>
+  <button onclick="showSection('phaseE',this)">E: Integration</button>
+</nav>
+<div class="content">
+
+<!-- OVERVIEW -->
+<div id="overview" class="section active">
+  <div class="card">
+    <h2>📋 CCode Production Prompts</h2>
+    <p>13 prompts executáveis para transformar os 4 Pilares JMPG em código real. Cada prompt é auto-contido com dados verificados LIVE.</p>
+
+    <div class="rule-box">
+      <div class="rule-title">⚠️ REGRAS CRÍTICAS</div>
+      <div class="rule-text">
+        • Regra Palette: NUNCA separar HTML por tier. UMA aplicação para todos.<br/>
+        • Regra Debug: ss+ps FIRST, kill nohup zombies, purge __pycache__ antes de systemd.<br/>
+        • Regra nginx: Injectar ANTES de 'listen 443', nginx -t primeiro.
+      </div>
+    </div>
+
+    <h3>Sequência de Execução</h3>
+    <table class="spec-table">
+      <thead><tr><th>Ordem</th><th>Prompt</th><th>Entrega</th><th>Tempo</th></tr></thead>
+      <tbody>
+        <tr><td class="gold">1</td><td>0.1</td><td>nginx routes (Ledger, Dragon, Export)</td><td class="mono">5 min</td></tr>
+        <tr><td class="gold">2</td><td>B.1</td><td>jmpg_trigger_builder.py (binário real)</td><td class="mono">30 min</td></tr>
+        <tr><td class="gold">3</td><td>B.2</td><td>Trigger API no Export Engine</td><td class="mono">20 min</td></tr>
+        <tr><td class="gold">4</td><td>B.3</td><td>Trigger Viewer no browser</td><td class="mono">30 min</td></tr>
+        <tr><td class="gold">5</td><td>A.1</td><td>Docs tab → Communiqué API</td><td class="mono">20 min</td></tr>
+        <tr><td class="gold">6</td><td>A.2</td><td>Wallet tab → Vault receipts</td><td class="mono">15 min</td></tr>
+        <tr><td class="gold">7</td><td>A.3</td><td>Health respiradouro real</td><td class="mono">15 min</td></tr>
+        <tr><td class="gold">8</td><td>A.4</td><td>Chat tab → Dragon Server</td><td class="mono">20 min</td></tr>
+        <tr><td class="gold">9</td><td>C.1</td><td>Pott Engine :8110 completo</td><td class="mono">45 min</td></tr>
+        <tr><td class="gold">10</td><td>D.1</td><td>Playbook Engine :8111 completo</td><td class="mono">45 min</td></tr>
+        <tr><td class="gold">11</td><td>D.2</td><td>Playbook integrado no Palette</td><td class="mono">20 min</td></tr>
+        <tr><td class="gold">12</td><td>E.1</td><td>Cross-pillar navigation</td><td class="mono">10 min</td></tr>
+        <tr><td class="gold">13</td><td>E.2</td><td>Sidebar specs links</td><td class="mono">10 min</td></tr>
+      </tbody>
+    </table>
+
+    <h3>APIs Verificadas LIVE</h3>
+    <table class="spec-table">
+      <thead><tr><th>Endpoint</th><th>Status</th><th>Response</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">/communique/list</td><td class="success">✅ 200</td><td>50 communiqués (33 published)</td></tr>
+        <tr><td class="mono">/communique/stats</td><td class="success">✅ 200</td><td>{draft:13, review:1, published:33}</td></tr>
+        <tr><td class="mono">/vault/api/stats</td><td class="success">✅ 200</td><td>26.625 receipts</td></tr>
+        <tr><td class="mono">/vault/health</td><td class="success">✅ 200</td><td>v1.0.0 healthy</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- PHASE 0 -->
+<div id="phase0" class="section">
+  <div class="card">
+    <h2><span class="phase-badge phase-0">0</span> Infraestrutura nginx</h2>
+    <p>Pré-requisito para todas as outras fases. Cria rotas nginx para Ledger, Dragon, e Export.</p>
+  </div>
+
+  <div class="prompt-box">
+    <div class="prompt-header">
+      <div class="prompt-title"><span class="phase-badge phase-0">0.1</span> nginx Routes</div>
+      <button class="copy-btn" onclick="copyPrompt(this, 'prompt01')">📋 Copy</button>
+    </div>
+    <div class="prompt-content">
+      <pre id="prompt01">Lê /etc/nginx/sites-enabled/admin.windia4desk.tech.
+
+Injeta ANTES da linha 'listen 443 ssl;' as seguintes location blocks:
+
+    # Forensic Ledger (:8101)
+    location /ledger/ {
+        proxy_pass http://127.0.0.1:8101/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # Dragon Server (:8108)
+    location /dragon/ {
+        proxy_pass http://127.0.0.1:8108/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # Export Engine (:8103)
+    location /export/ {
+        proxy_pass http://127.0.0.1:8103/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+Faz backup primeiro:
+  cp /etc/nginx/sites-enabled/admin.windia4desk.tech /opt/windi/backups/nginx_admin_pre_routes_$(date +%Y%m%d).conf
+
+Valida: sudo nginx -t
+Se OK: sudo systemctl reload nginx
+
+Testa:
+  curl -s https://admin.windia4desk.tech/ledger/ | head -5
+  curl -s https://admin.windia4desk.tech/export/ | head -5</pre>
+    </div>
+    <div class="prompt-meta">
+      <span>⏱️ ~5 min</span>
+      <span>📁 /etc/nginx/sites-enabled/</span>
+      <span>🔧 Fundação</span>
+    </div>
+  </div>
+</div>
+
+<!-- PHASE A -->
+<div id="phaseA" class="section">
+  <div class="card">
+    <h2><span class="phase-badge phase-a">A</span> DESK Hydration</h2>
+    <p>Hidratar o Palette com dados reais das APIs. Transforma o showroom em cockpit operacional.</p>
+  </div>
+
+  <div class="prompt-box">
+    <div class="prompt-header">
+      <div class="prompt-title"><span class="phase-badge phase-a">A.1</span> Docs Tab → Communiqué API <span class="badge high">ALTA</span></div>
+      <button class="copy-btn" onclick="copyPrompt(this, 'promptA1')">📋 Copy</button>
+    </div>
+    <div class="prompt-content">
+      <pre id="promptA1">Lê /opt/windi/agent-palette/ui/index.html (112KB, 1522 linhas).
+
+CONTEXTO: O ficheiro é um React 18 + Babel standalone monolith.
+Tem window.WINDI com createConnectors, calculateSovereignty, INVARIANTS.
+Tem 9 tabs: chat, docs, desk, files, wallet, search, products, journal, history.
+O baseUrl é: var baseUrl = window.location.protocol === 'https:' ? 'https://admin.windia4desk.tech' : 'http://localhost';
+
+TAREFA: Hidratar a tab "docs" (📄) com dados reais do Communiqué Engine.
+
+ENDPOINT VERIFICADO:
+  GET https://admin.windia4desk.tech/communique/list
+  Retorna: {
+    "communiques": [{
+      "id": "COM-20260226-0017",
+      "title_de": "...", "title_en": "...", "title_pt": "...",
+      "body_de": "...", "body_en": "...", "body_pt": "...",
+      "category": "LAUNCH"|"UPDATE"|"POLICY"|"ALERT",
+      "impact_level": "HIGH"|"MED"|"LOW",
+      "status": "DRAFT"|"REVIEW"|"PUBLISHED"|"ARCHIVED"|"REVOKED",
+      "author_name": "...",
+      "content_hash": "bc5047d3...",
+      "ledger_id": "VR-COM-3e481f48b185",
+      "receipt_id": "VR-COM-3e481f48b185",
+      "created_at": "2026-02-26T15:04:15Z",
+      "published_at": "2026-02-26T15:04:28Z"
+    }, ...]
+  }
+
+  GET https://admin.windia4desk.tech/communique/stats
+  Retorna: {"draft":13,"review":1,"published":33,"archived":3,"revoked":0,"total":50}
+
+IMPLEMENTAÇÃO:
+1. Encontra onde a tab "docs" renderiza o conteúdo.
+
+2. Cria função de fetch:
+   async function fetchCommuniques() {
+     try {
+       const [listRes, statsRes] = await Promise.all([
+         fetch(baseUrl + '/communique/list'),
+         fetch(baseUrl + '/communique/stats')
+       ]);
+       const listData = await listRes.json();
+       const statsData = await statsRes.json();
+       return { communiques: listData.communiques || [], stats: statsData };
+     } catch(e) {
+       console.warn('[WINDI] Communiqué API offline:', e.message);
+       return { communiques: [], stats: { draft:0, review:0, published:0, archived:0, total:0 } };
+     }
+   }
+
+3. Na tab "docs", renderiza:
+   - Header com stats: "50 Dokumente · 33 veröffentlicht · 13 Entwürfe"
+   - Lista de communiqués como cards com status badge colorido
+   - Filtro por status (All, Draft, Review, Published, Archived)
+   - Polling: setInterval(fetchCommuniques, 60000)
+
+4. STATUS THEME (NOIR/KLAR):
+   DRAFT: cinza, REVIEW: amarelo, PUBLISHED: verde, ARCHIVED: dim
+
+NÃO alterar outras tabs. MANTER design system intacto.</pre>
+    </div>
+    <div class="prompt-meta">
+      <span>⏱️ ~20 min</span>
+      <span>📁 index.html</span>
+      <span>🎯 Tab docs</span>
+    </div>
+  </div>
+
+  <div class="prompt-box">
+    <div class="prompt-header">
+      <div class="prompt-title"><span class="phase-badge phase-a">A.2</span> Wallet Tab → Vault Receipts <span class="badge med">MÉDIA</span></div>
+      <button class="copy-btn" onclick="copyPrompt(this, 'promptA2')">📋 Copy</button>
+    </div>
+    <div class="prompt-content">
+      <pre id="promptA2">Lê /opt/windi/agent-palette/ui/index.html.
+
+TAREFA: Hidratar a tab "wallet" (👛) com dados reais do Forensic Vault.
+
+ENDPOINTS VERIFICADOS:
+  GET https://admin.windia4desk.tech/vault/api/stats
+  Retorna: {"total":26625,"today":0,"doc_types":5,"chain_ok":false,"timestamp":"..."}
+
+  GET https://admin.windia4desk.tech/vault/health
+  Retorna: {"service":"WINDI Forensic Vault","version":"1.0.0","status":"healthy","receipts":26625}
+
+IMPLEMENTAÇÃO:
+1. Cria função fetchVaultStats()
+2. Renderiza na tab wallet:
+   - Stats banner: "26.625 Receipts · 5 Dokumenttypen · Vault v1.0.0"
+   - Health indicator verde/vermelho
+   - Chain integrity badge
+   - Polling: setInterval(fetchVaultStats, 30000)
+
+NÃO alterar outras tabs. MANTER design system NOIR/KLAR.</pre>
+    </div>
+    <div class="prompt-meta">
+      <span>⏱️ ~15 min</span>
+      <span>📁 index.html</span>
+      <span>🎯 Tab wallet</span>
+    </div>
+  </div>
+
+  <div class="prompt-box">
+    <div class="prompt-header">
+      <div class="prompt-title"><span class="phase-badge phase-a">A.3</span> Health Respiradouro Real <span class="badge low">BAIXA</span></div>
+      <button class="copy-btn" onclick="copyPrompt(this, 'promptA3')">📋 Copy</button>
+    </div>
+    <div class="prompt-content">
+      <pre id="promptA3">Lê /opt/windi/agent-palette/ui/index.html.
+
+TAREFA: Evoluir createConnectors para health check real com JSON.
+
+IMPLEMENTAÇÃO:
+1. Encontra createConnectors no WINDI MODULES BUNDLE.
+
+2. Substitui HEAD check por fetch real:
+   var healthEndpoints = {
+     communique: baseUrl + '/communique/health',
+     vault:      baseUrl + '/vault/health',
+     ledger:     baseUrl + '/ledger/',
+     export:     baseUrl + '/export/',
+     dragon:     baseUrl + '/dragon/health'
+   };
+
+3. Cada check retorna status + version do JSON response.
+
+4. Actualiza calculateSovereignty para contar 'online' vs total.
+
+5. Sovereignty Meter mostra: "93% Souverän · 5/6 Dienste lokal"
+
+6. Polling: setInterval a cada 15000ms
+
+NÃO alterar tier detection. NÃO alterar exports.</pre>
+    </div>
+    <div class="prompt-meta">
+      <span>⏱️ ~15 min</span>
+      <span>📁 index.html</span>
+      <span>🎯 WINDI namespace</span>
+    </div>
+  </div>
+
+  <div class="prompt-box">
+    <div class="prompt-header">
+      <div class="prompt-title"><span class="phase-badge phase-a">A.4</span> Chat Tab → Dragon Server <span class="badge med">MÉDIA</span></div>
+      <button class="copy-btn" onclick="copyPrompt(this, 'promptA4')">📋 Copy</button>
+    </div>
+    <div class="prompt-content">
+      <pre id="promptA4">Lê /opt/windi/agent-palette/ui/index.html.
+
+PRÉ-REQUISITO: Prompt 0.1 executado (rota /dragon/ no nginx).
+
+TAREFA: Hidratar tab "chat" (💬) para conversar com Dragon Server (:8108).
+
+ENDPOINT:
+  POST https://admin.windia4desk.tech/dragon/chat
+  Body: {"message":"Olá","tier":"LOW","language":"de"}
+  Response: {"reply":"...","confidence":0.9,"processing":"local"|"llm","receipt_id":"..."}
+
+IMPLEMENTAÇÃO:
+1. Mini-chat UI na tab chat:
+   - Input bar + Send button 🐉
+   - Mensagens em bolhas (user/dragon)
+   - Badge processing: "🟢 Lokal" ou "🟡 LLM"
+
+2. Função sendToDragon(message) com fetch POST
+
+3. Fallback se offline: "🐉 Der Drache ruht gerade."
+
+MANTER KLAR/NOIR. Usar fonts do design system.</pre>
+    </div>
+    <div class="prompt-meta">
+      <span>⏱️ ~20 min</span>
+      <span>📁 index.html</span>
+      <span>🎯 Tab chat</span>
+    </div>
+  </div>
+</div>
+
+<!-- PHASE B -->
+<div id="phaseB" class="section">
+  <div class="card">
+    <h2><span class="phase-badge phase-b">B</span> JMPG Continuum</h2>
+    <p>P1 Sovereign Spec em código. Implementa o formato binário .jmpg real.</p>
+
+    <div class="sealed-box">
+      <h4>📡 JMPG Binary Layout</h4>
+      <p class="mono">
+MAGIC(4B) + VERSION(2B) + FLAGS(2B) + CODEC_ID(1B) + DURATION(4B) + DID_HASH(32B) + MANIFEST(var) + CONTENT(var) + SEAL(32B)
+      </p>
+    </div>
+  </div>
+
+  <div class="prompt-box">
+    <div class="prompt-header">
+      <div class="prompt-title"><span class="phase-badge phase-b">B.1</span> JMPG Trigger Builder <span class="badge high">ALTA</span></div>
+      <button class="copy-btn" onclick="copyPrompt(this, 'promptB1')">📋 Copy</button>
+    </div>
+    <div class="prompt-content">
+      <pre id="promptB1">Cria /opt/windi/export-engine/jmpg_trigger_builder.py
+
+import struct, hashlib, json, zlib
+from datetime import datetime, timezone
+
+class JMPGTriggerBuilder:
+    MAGIC = b'\x4A\x4D\x50\x47'  # "JMPG"
+    VERSION = 0x0100
+    CODEC_H264, CODEC_AV1, CODEC_VP9 = 0x01, 0x02, 0x03
+    FLAG_HAS_VIDEO, FLAG_HAS_AUDIO, FLAG_HAS_TEXT, FLAG_HAS_SEAL = 0x01, 0x02, 0x04, 0x08
+
+    def __init__(self, creator_did_hash: str, codec_id: int = 0x01):
+        assert len(creator_did_hash) == 64
+        self.creator_did_hash = creator_did_hash
+        self.codec_id = codec_id
+        self.flags = self.FLAG_HAS_SEAL
+        self.duration_ms = 0
+        self.onboard_bytes = b''
+        self.manifest = {}
+        self._built = None
+
+    def set_onboard(self, video_bytes: bytes, duration_ms: int):
+        assert duration_ms <= 30000
+        self.onboard_bytes = video_bytes
+        self.duration_ms = duration_ms
+        if video_bytes: self.flags |= self.FLAG_HAS_VIDEO
+
+    def set_manifest(self, stream_url, vault_ref, chapters=None, receipt_id=None):
+        self.manifest = {
+            "stream_url": stream_url, "vault_ref": vault_ref,
+            "chapters": chapters or [], "onboard_duration_ms": self.duration_ms,
+            "governance_receipt_id": receipt_id or "",
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "protocol_version": "1.0", "creator_did_hash": self.creator_did_hash
+        }
+
+    def build(self) -> bytes:
+        manifest_json = json.dumps(self.manifest, separators=(',',':'), sort_keys=True).encode()
+        manifest_compressed = zlib.compress(manifest_json, level=9)
+        parts = bytearray()
+        parts.extend(self.MAGIC)
+        parts.extend(struct.pack('<H', self.VERSION))
+        parts.extend(struct.pack('<H', self.flags))
+        parts.extend(struct.pack('B', self.codec_id))
+        parts.extend(struct.pack('<I', self.duration_ms))
+        parts.extend(bytes.fromhex(self.creator_did_hash))
+        parts.extend(struct.pack('<I', len(manifest_compressed)))
+        parts.extend(manifest_compressed)
+        parts.extend(struct.pack('<I', len(self.onboard_bytes)))
+        parts.extend(self.onboard_bytes)
+        seal = hashlib.sha256(bytes(parts)).digest()
+        parts.extend(seal)
+        self._built = bytes(parts)
+        return self._built
+
+    def seal_hex(self) -> str:
+        if not self._built: self.build()
+        return self._built[-32:].hex()
+
+    def package_id(self) -> str:
+        return f"JMPG-{datetime.now(timezone.utc).strftime('%Y%m%d')}-{self.seal_hex()[:8].upper()}"
+
+class JMPGTriggerParser:
+    MAGIC = b'\x4A\x4D\x50\x47'
+
+    def __init__(self, data: bytes):
+        self.data = data
+        self.valid = False
+        self.header = {}
+        self.manifest = {}
+        self._parse()
+
+    def _parse(self):
+        # Parse binary, verify seal, decompress manifest
+        # (full implementation ~80 lines)
+        pass
+
+    def verify(self) -> dict:
+        return {"valid": self.valid, "seal": self.seal, "header": self.header}
+
+# CLI test
+if __name__ == '__main__':
+    did_hash = hashlib.sha256(b'test').hexdigest()
+    builder = JMPGTriggerBuilder(did_hash)
+    builder.set_onboard(b'TEST', 30000)
+    builder.set_manifest("https://vault.test/s1", "VR-001", [], "VR-T-001")
+    data = builder.build()
+    print(f"Package: {builder.package_id()}, Size: {len(data)}B, Seal: {builder.seal_hex()}")</pre>
+    </div>
+    <div class="prompt-meta">
+      <span>⏱️ ~30 min</span>
+      <span>📁 /opt/windi/export-engine/</span>
+      <span>🎯 P1 Sovereign Spec</span>
+    </div>
+  </div>
+
+  <div class="prompt-box">
+    <div class="prompt-header">
+      <div class="prompt-title"><span class="phase-badge phase-b">B.2</span> Trigger API Endpoint <span class="badge high">ALTA</span></div>
+      <button class="copy-btn" onclick="copyPrompt(this, 'promptB2')">📋 Copy</button>
+    </div>
+    <div class="prompt-content">
+      <pre id="promptB2">Lê /opt/windi/export-engine/ — encontra o ficheiro principal FastAPI.
+
+TAREFA: Adicionar endpoint POST /api/trigger/build
+
+Input: {
+  "creator_did": "hex string",
+  "video_base64": "base64 (max 5MB)",
+  "duration_ms": 30000,
+  "codec": "h264"|"av1"|"vp9",
+  "stream_url": "URL do Vault",
+  "vault_ref": "Vault receipt",
+  "chapters": [{"title":"...","offset_ms":0}]
+}
+
+Pipeline:
+1. Decode video_base64 → bytes
+2. Hash creator_did → SHA-256
+3. JMPGTriggerBuilder → build()
+4. POST http://127.0.0.1:8101/api/receipt → registar no Ledger
+5. Rebuild com receipt_id
+6. Guardar em /opt/windi/export-engine/triggers/
+7. Retornar {package_id, seal, size, receipt_id, download_url}
+
+Endpoint GET /api/trigger/{package_id}.jmpg para download.
+
+Reiniciar: sudo systemctl restart windi-export</pre>
+    </div>
+    <div class="prompt-meta">
+      <span>⏱️ ~20 min</span>
+      <span>📁 Export Engine</span>
+      <span>🎯 API endpoint</span>
+    </div>
+  </div>
+
+  <div class="prompt-box">
+    <div class="prompt-header">
+      <div class="prompt-title"><span class="phase-badge phase-b">B.3</span> Trigger Viewer Browser <span class="badge high">ALTA</span></div>
+      <button class="copy-btn" onclick="copyPrompt(this, 'promptB3')">📋 Copy</button>
+    </div>
+    <div class="prompt-content">
+      <pre id="promptB3">Cria /opt/windi/jmpg-viewer/trigger.html
+
+HTML standalone que permite:
+1. Drag & drop de ficheiro .jmpg
+2. Ou input URL para verificação remota
+3. Parseia binário com DataView:
+   - Verifica MAGIC === 0x4A4D5047
+   - Lê VERSION, FLAGS, CODEC_ID, DURATION, DID_HASH
+   - Decompress manifest com pako.js (zlib)
+   - Calcula SHA-256 com crypto.subtle.digest
+   - Compara com SEAL → VALID ou TAMPERED
+
+4. Dashboard de verificação:
+   - ✅ SEAL VALID ou ❌ TAMPERED
+   - Header fields em tabela
+   - Manifest JSON formatado
+   - Botão "Verify on Ledger"
+   - QR code de verificação
+
+5. Design WINDI KLAR/NOIR toggle
+
+Incluir pako.js inline (~40KB) para zlib.
+
+nginx: /viewer/ → /opt/windi/jmpg-viewer/</pre>
+    </div>
+    <div class="prompt-meta">
+      <span>⏱️ ~30 min</span>
+      <span>📁 /opt/windi/jmpg-viewer/</span>
+      <span>🎯 Browser verification</span>
+    </div>
+  </div>
+</div>
+
+<!-- PHASE C -->
+<div id="phaseC" class="section">
+  <div class="card">
+    <h2><span class="phase-badge phase-c">C</span> Pott Federation</h2>
+    <p>P3 Governança de Criadores. API de federação com modelo 85/15.</p>
+  </div>
+
+  <div class="prompt-box">
+    <div class="prompt-header">
+      <div class="prompt-title"><span class="phase-badge phase-c">C.1</span> Pott Engine :8110 <span class="badge high">ALTA</span></div>
+      <button class="copy-btn" onclick="copyPrompt(this, 'promptC1')">📋 Copy</button>
+    </div>
+    <div class="prompt-content">
+      <pre id="promptC1">Cria /opt/windi/pott-engine/ com estrutura:
+  pott_engine.py (FastAPI), models.py (SQLite), requirements.txt
+
+PORTA: 8110
+DB: /opt/windi/data/pott.db
+
+SCHEMA:
+CREATE TABLE potts (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    vertical TEXT NOT NULL,  -- cooking|education|music|local|tech
+    curator_did TEXT NOT NULL,
+    split_creator REAL DEFAULT 0.85,
+    split_pott REAL DEFAULT 0.15,
+    rules TEXT DEFAULT '{}',
+    status TEXT DEFAULT 'active',
+    sealed_hash TEXT, ledger_receipt TEXT,
+    created_at TEXT, updated_at TEXT
+);
+
+CREATE TABLE pott_members (...);
+CREATE TABLE pott_featured (...);
+
+ENDPOINTS:
+POST /api/pott/create → Cria Pott, registra Ledger
+GET /api/pott/{id} → Detalhes + membros + stats
+POST /api/pott/{id}/join → {creator_did, role?}
+GET /api/pott/{id}/feed → Triggers featured
+POST /api/pott/{id}/curate → {trigger_id, action, curator_did}
+GET /api/pott/{id}/metrics → Stats
+GET /api/pott/discover → Lista pública
+GET /health → Status
+
+GOVERNANÇA:
+- Data boundaries: audiência NUNCA cruza
+- Attribution 85/15: toda receita via Pott registada
+- Exit freedom: /leave leva conteúdo
+- Receipts: toda acção gera Virtue Receipt
+
+SYSTEMD: windi-pott.service na porta 8110
+NGINX: /pott/ → proxy_pass http://127.0.0.1:8110
+
+Deploy:
+  pip install fastapi uvicorn aiosqlite --break-system-packages
+  sudo systemctl daemon-reload && sudo systemctl enable windi-pott
+  sudo systemctl start windi-pott
+  sudo nginx -t && sudo systemctl reload nginx</pre>
+    </div>
+    <div class="prompt-meta">
+      <span>⏱️ ~45 min</span>
+      <span>📁 /opt/windi/pott-engine/</span>
+      <span>🎯 P3 Federation</span>
+    </div>
+  </div>
+</div>
+
+<!-- PHASE D -->
+<div id="phaseD" class="section">
+  <div class="card">
+    <h2><span class="phase-badge phase-d">D</span> P4 Operational Playbook</h2>
+    <p>Distribution Playbook executável com task tracking, templates, e manifesto generator.</p>
+  </div>
+
+  <div class="prompt-box">
+    <div class="prompt-header">
+      <div class="prompt-title"><span class="phase-badge phase-d">D.1</span> Playbook Engine :8111 <span class="badge high">ALTA</span></div>
+      <button class="copy-btn" onclick="copyPrompt(this, 'promptD1')">📋 Copy</button>
+    </div>
+    <div class="prompt-content">
+      <pre id="promptD1">Cria /opt/windi/playbook-engine/ com:
+  playbook_engine.py, templates.py, manifesto_gen.py, requirements.txt
+
+PORTA: 8111
+DB: /opt/windi/data/playbook.db
+
+SCHEMA:
+CREATE TABLE playbook_states (
+    id INTEGER PRIMARY KEY, creator_id TEXT,
+    day_index INTEGER DEFAULT 1, channels_selected TEXT DEFAULT '[]',
+    pricing_model TEXT DEFAULT 'free', status TEXT DEFAULT 'active',
+    ledger_receipt TEXT, created_at TEXT, updated_at TEXT
+);
+CREATE TABLE playbook_tasks (...);
+CREATE TABLE distribution_assets (...);
+
+TASK REGISTRY: 7 dias × 2-3 tasks cada (trilíngue DE/EN/PT)
+
+ENDPOINTS:
+POST /api/pillar4/launch/start → {creator_id} → Inicia Day 1
+POST /api/pillar4/launch/task → {state_id, task_id} → Completa task
+POST /api/pillar4/templates/generate → {channel, language, creator_name, vault_link}
+POST /api/pillar4/qr/generate → {creator_id, vault_link, feed_link?}
+POST /api/pillar4/metrics/snapshot → {creator_id, metrics:{8 métricas}}
+POST /api/pillar4/manifesto/generate → {creator_name, vertical, vault_link, language}
+  → Gera PDF + imagem 1080×1080 + .jmpg trigger
+GET /api/pillar4/status → Estado actual
+GET /health → Status
+
+TEMPLATES (templates.py): 5 canais × 3 idiomas
+  WhatsApp, Email, Instagram DM, Telegram, SMS
+
+SYSTEMD + NGINX: Mesmo padrão, porta 8111
+pip install fastapi uvicorn aiosqlite qrcode Pillow reportlab --break-system-packages</pre>
+    </div>
+    <div class="prompt-meta">
+      <span>⏱️ ~45 min</span>
+      <span>📁 /opt/windi/playbook-engine/</span>
+      <span>🎯 P4 Playbook</span>
+    </div>
+  </div>
+
+  <div class="prompt-box">
+    <div class="prompt-header">
+      <div class="prompt-title"><span class="phase-badge phase-d">D.2</span> Playbook no Palette <span class="badge med">MÉDIA</span></div>
+      <button class="copy-btn" onclick="copyPrompt(this, 'promptD2')">📋 Copy</button>
+    </div>
+    <div class="prompt-content">
+      <pre id="promptD2">Lê /opt/windi/agent-palette/ui/index.html.
+
+PRÉ-REQUISITO: Prompt D.1 executado.
+
+TAREFA: Na tab "products" (🛒), adicionar secção "7-Day Sovereign Launch".
+
+IMPLEMENTAÇÃO:
+1. Card "🚀 7-Tage Souveräner Launch"
+   - Botão "Launch starten" → POST /playbook/api/pillar4/launch/start
+
+2. Quando launch activo:
+   - Day tracker: 7 circles (complete=preenchido, actual=gold, futuro=dim)
+   - Tasks como checklist → POST /launch/task
+   - Barra progresso: "Day 3/7 · 8/15 Tasks · 53%"
+
+3. Quick actions:
+   - "📱 Template generieren" → modal canal + idioma
+   - "🔲 QR Pack" → gera e mostra QR inline
+   - "📜 Manifesto erstellen" → formulário → 3 formatos
+
+4. Métricas (Day 5+): 8 gauges circulares com trends
+
+MANTER NOIR/KLAR. NÃO alterar outras tabs.</pre>
+    </div>
+    <div class="prompt-meta">
+      <span>⏱️ ~20 min</span>
+      <span>📁 index.html</span>
+      <span>🎯 Tab products</span>
+    </div>
+  </div>
+</div>
+
+<!-- PHASE E -->
+<div id="phaseE" class="section">
+  <div class="card">
+    <h2><span class="phase-badge phase-e">E</span> Cross-Integration</h2>
+    <p>Fechar a roda. Navegação entre todos os Pilares.</p>
+  </div>
+
+  <div class="prompt-box">
+    <div class="prompt-header">
+      <div class="prompt-title"><span class="phase-badge phase-e">E.1</span> Cross-Pillar Navigation <span class="badge low">BAIXA</span></div>
+      <button class="copy-btn" onclick="copyPrompt(this, 'promptE1')">📋 Copy</button>
+    </div>
+    <div class="prompt-content">
+      <pre id="promptE1">Lê /opt/windi/agent-palette/ui/index.html.
+
+TAREFA: Quando Day 7 completo, mostrar painel "Próximos Passos":
+
+1. Card "📡 Sovereign Spec" → /palette/protocol.html
+2. Card "🔐 Vault Health" → /vault/
+3. Card "🏺 Pott Discovery" → /pott/api/pott/discover
+4. Card "📰 Media Kit" → /palette/media-kit.html
+
+Estilo: 4 cards em grid, cada um com ícone, título, link.
+Aparece APENAS quando day_index >= 7 e todas tasks completas.</pre>
+    </div>
+    <div class="prompt-meta">
+      <span>⏱️ ~10 min</span>
+      <span>📁 index.html</span>
+      <span>🎯 Navigation</span>
+    </div>
+  </div>
+
+  <div class="prompt-box">
+    <div class="prompt-header">
+      <div class="prompt-title"><span class="phase-badge phase-e">E.2</span> Sidebar Specs Links <span class="badge low">BAIXA</span></div>
+      <button class="copy-btn" onclick="copyPrompt(this, 'promptE2')">📋 Copy</button>
+    </div>
+    <div class="prompt-content">
+      <pre id="promptE2">Lê /opt/windi/agent-palette/ui/index.html.
+
+TAREFA: No sidebar/nav, adicionar secção "Sovereign Specs":
+
+Links:
+- 📡 Transport Protocol → /palette/protocol.html
+- 🎬 Media Kit → /palette/media-kit.html
+- 🏗️ Media Spec → /palette/media-spec.html
+- 🏺 Pott Discovery → /pott/api/pott/discover
+- 🚀 Playbook → /playbook/api/pillar4/status
+
+Estilo: label "SPECS" em JetBrains Mono, ícones dourados.
+Posicionar ABAIXO das 9 tabs principais.</pre>
+    </div>
+    <div class="prompt-meta">
+      <span>⏱️ ~10 min</span>
+      <span>📁 index.html</span>
+      <span>🎯 Sidebar</span>
+    </div>
+  </div>
+</div>
+
+</div>
+<footer class="footer">
+  <div style="margin-bottom:8px;"><strong style="color:var(--gold);">WINDI CCODE PRODUCTION PROMPTS — 27 Feb 2026</strong></div>
+  <div>Three Dragons Protocol — Guardian × Architect × Witness</div>
+  <div style="margin-top:8px;">
+    <a href="/palette/">← Palette</a> ·
+    <a href="/palette/roadmap.html">Roadmap</a> ·
+    <a href="/palette/pillar-1.html">P1</a> ·
+    <a href="/palette/pillar-2.html">P2</a> ·
+    <a href="/palette/pillar-3.html">P3</a> ·
+    <a href="/palette/pillar-4.html">P4</a> ·
+    <span class="mono">"AI processes. Human decides. WINDI guarantees."</span>
+  </div>
+</footer>
+<script>
+function toggleTheme() {
+  const body = document.body;
+  const isNoir = body.getAttribute('data-theme') === 'noir';
+  body.setAttribute('data-theme', isNoir ? '' : 'noir');
+  document.querySelector('.theme-toggle').textContent = isNoir ? '☀' : '🌙';
+}
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+function copyPrompt(btn, id) {
+  const text = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.classList.add('copied');
+    btn.innerHTML = '✓ Copied';
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.innerHTML = '📋 Copy';
+    }, 2000);
+  });
+}
+</script>
+</body>
+</html>

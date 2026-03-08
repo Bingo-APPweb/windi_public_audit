@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>WINDI Development Roadmap — 27 Feb 2026</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐉</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:#F5F0E0; --card:#FDFBF5; --hover:#EDE8D8; --border:#DDD6C2;
+  --gold:#8B6914; --text:#2C2924; --dim:#6B6560; --success:#4A7C59;
+  --warning:#B8860B; --danger:#A94442; --sealed:#1B4332; --forensic:#2A6B4A;
+  --blue:#5B8DEF; --purple:#7C5BEF; --orange:#EF8B5B; --cyan:#5BC0DE;
+}
+[data-theme="noir"] {
+  --bg:#0E0E14; --card:#16161F; --hover:#1C1C28; --border:#26263A;
+  --gold:#D4A843; --text:#E2E2EA; --dim:#7A7A96; --success:#5A9C69;
+  --warning:#D4A843; --danger:#CF6679; --sealed:#1B4332; --forensic:#2A6B4A;
+  --blue:#5B8DEF; --purple:#A855F7; --orange:#F59E0B; --cyan:#22D3EE;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Bricolage Grotesque',sans-serif; background:var(--bg); color:var(--text); line-height:1.7; }
+code, .mono { font-family:'JetBrains Mono',monospace; font-size:0.9em; }
+pre { background:var(--hover); border:1px solid var(--border); border-radius:8px; padding:16px; overflow-x:auto; font-size:11px; line-height:1.5; white-space:pre-wrap; word-break:break-word; }
+.header { background:var(--card); border-bottom:1px solid var(--border); padding:20px 32px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; position:sticky; top:0; z-index:100; }
+.header h1 { font-size:18px; font-weight:800; color:var(--gold); flex:1; }
+.header .meta { font-size:10px; color:var(--dim); display:flex; gap:12px; flex-wrap:wrap; }
+.header .meta span { background:var(--hover); padding:3px 8px; border-radius:4px; border:1px solid var(--border); }
+.theme-toggle { background:none; border:none; font-size:16px; cursor:pointer; color:var(--dim); }
+.nav { display:flex; gap:4px; padding:12px 32px; flex-wrap:wrap; border-bottom:1px solid var(--border); background:var(--card); overflow-x:auto; }
+.nav button { padding:8px 14px; border-radius:8px; font-size:11px; font-weight:600; cursor:pointer; background:var(--card); border:1px solid var(--border); color:var(--dim); font-family:inherit; white-space:nowrap; }
+.nav button.active { background:color-mix(in srgb, var(--gold) 12%, transparent); border-color:var(--gold); color:var(--gold); }
+.content { padding:24px 32px 60px; max-width:1100px; margin:0 auto; }
+.section { display:none; }
+.section.active { display:block; }
+.card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:24px; margin-bottom:20px; }
+.card h2 { font-size:18px; font-weight:800; margin-bottom:12px; color:var(--gold); display:flex; align-items:center; gap:8px; }
+.card h3 { font-size:14px; font-weight:700; margin:20px 0 10px; color:var(--text); border-bottom:1px solid var(--border); padding-bottom:6px; }
+.card p { font-size:13px; margin-bottom:12px; }
+.card ul, .card ol { font-size:13px; padding-left:20px; margin-bottom:12px; }
+.card li { margin-bottom:6px; }
+.sealed-box { background:color-mix(in srgb, var(--sealed) 94%, white); border:1.5px solid var(--forensic); border-radius:12px; padding:18px; color:#E8F5E9; margin:16px 0; }
+.sealed-box h4 { color:#81C784; margin-bottom:6px; font-size:12px; }
+.sealed-box p { color:#A5D6A7; font-size:12px; margin:0; line-height:1.6; }
+.sealed-box .mono { color:#81C784; }
+.spec-table { width:100%; border-collapse:collapse; margin:16px 0; font-size:11px; }
+.spec-table th { background:var(--hover); padding:8px 10px; text-align:left; font-weight:700; border-bottom:2px solid var(--border); color:var(--dim); text-transform:uppercase; font-size:10px; }
+.spec-table td { padding:8px 10px; border-bottom:1px solid var(--border); vertical-align:top; }
+.spec-table tr:hover td { background:var(--hover); }
+.spec-table .mono { font-size:10px; }
+.spec-table .gold { color:var(--gold); font-weight:600; }
+.spec-table .success { color:var(--success); }
+.spec-table .danger { color:var(--danger); }
+.phase-card { background:var(--hover); border:2px solid var(--border); border-radius:14px; padding:20px; margin:12px 0; position:relative; overflow:hidden; }
+.phase-card.phase-a { border-color:var(--blue); }
+.phase-card.phase-b { border-color:var(--gold); }
+.phase-card.phase-c { border-color:var(--purple); }
+.phase-card.phase-d { border-color:var(--orange); }
+.phase-card .phase-badge { position:absolute; top:0; right:0; padding:8px 16px; font-size:11px; font-weight:800; border-radius:0 12px 0 12px; }
+.phase-card.phase-a .phase-badge { background:var(--blue); color:#fff; }
+.phase-card.phase-b .phase-badge { background:var(--gold); color:#fff; }
+.phase-card.phase-c .phase-badge { background:var(--purple); color:#fff; }
+.phase-card.phase-d .phase-badge { background:var(--orange); color:#fff; }
+.phase-card .phase-icon { font-size:32px; margin-bottom:8px; }
+.phase-card .phase-title { font-size:16px; font-weight:800; margin-bottom:4px; }
+.phase-card.phase-a .phase-title { color:var(--blue); }
+.phase-card.phase-b .phase-title { color:var(--gold); }
+.phase-card.phase-c .phase-title { color:var(--purple); }
+.phase-card.phase-d .phase-title { color:var(--orange); }
+.phase-card .phase-sub { font-size:12px; color:var(--dim); margin-bottom:12px; }
+.phase-card .phase-desc { font-size:12px; line-height:1.6; margin-bottom:16px; }
+.task-list { display:flex; flex-direction:column; gap:6px; }
+.task-item { display:flex; align-items:center; gap:10px; padding:8px 12px; background:var(--card); border:1px solid var(--border); border-radius:8px; font-size:11px; }
+.task-item .task-id { font-family:'JetBrains Mono',monospace; font-weight:700; min-width:28px; }
+.task-item.high .task-id { color:var(--danger); }
+.task-item.medium .task-id { color:var(--warning); }
+.task-item.low .task-id { color:var(--success); }
+.task-item .task-label { flex:1; }
+.task-item .task-priority { font-family:'JetBrains Mono',monospace; font-size:9px; padding:2px 6px; border-radius:3px; }
+.task-item.high .task-priority { background:color-mix(in srgb, var(--danger) 15%, transparent); color:var(--danger); }
+.task-item.medium .task-priority { background:color-mix(in srgb, var(--warning) 15%, transparent); color:var(--warning); }
+.task-item.low .task-priority { background:color-mix(in srgb, var(--success) 15%, transparent); color:var(--success); }
+.prompt-box { background:var(--card); border:2px dashed var(--gold); border-radius:10px; padding:16px; margin:16px 0; position:relative; }
+.prompt-box .prompt-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+.prompt-box .prompt-title { font-size:11px; font-weight:700; color:var(--gold); }
+.prompt-box .copy-btn { background:var(--gold); color:#fff; border:none; padding:4px 10px; border-radius:4px; font-size:10px; font-weight:600; cursor:pointer; font-family:inherit; }
+.prompt-box .copy-btn:hover { opacity:0.9; }
+.prompt-box pre { margin:0; font-size:10px; max-height:300px; overflow-y:auto; }
+.port-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(140px, 1fr)); gap:8px; margin:16px 0; }
+.port-card { padding:12px; background:var(--card); border:1px solid var(--border); border-radius:8px; text-align:center; }
+.port-card.live { border-color:var(--success); background:color-mix(in srgb, var(--success) 5%, var(--card)); }
+.port-card.new { border-color:var(--gold); background:color-mix(in srgb, var(--gold) 8%, var(--card)); }
+.port-card .port-num { font-family:'JetBrains Mono',monospace; font-size:16px; font-weight:800; }
+.port-card.live .port-num { color:var(--success); }
+.port-card.new .port-num { color:var(--gold); }
+.port-card .port-name { font-size:11px; color:var(--dim); margin-top:4px; }
+.port-card .port-status { font-size:10px; margin-top:4px; }
+.flow-diagram { display:flex; align-items:center; justify-content:center; gap:0; flex-wrap:wrap; padding:20px 0; }
+.flow-node { width:80px; height:80px; border-radius:50%; display:flex; flex-direction:column; align-items:center; justify-content:center; border:3px solid; }
+.flow-node.a { border-color:var(--blue); background:color-mix(in srgb, var(--blue) 10%, transparent); }
+.flow-node.b { border-color:var(--gold); background:color-mix(in srgb, var(--gold) 10%, transparent); }
+.flow-node.c { border-color:var(--purple); background:color-mix(in srgb, var(--purple) 10%, transparent); }
+.flow-node.d { border-color:var(--orange); background:color-mix(in srgb, var(--orange) 10%, transparent); }
+.flow-node .node-letter { font-size:20px; font-weight:800; }
+.flow-node.a .node-letter { color:var(--blue); }
+.flow-node.b .node-letter { color:var(--gold); }
+.flow-node.c .node-letter { color:var(--purple); }
+.flow-node.d .node-letter { color:var(--orange); }
+.flow-node .node-days { font-size:9px; color:var(--dim); font-family:'JetBrains Mono',monospace; }
+.flow-arrow { width:40px; height:2px; background:var(--border); position:relative; }
+.flow-arrow::after { content:'→'; position:absolute; right:-4px; top:-8px; color:var(--dim); font-size:14px; }
+.binary-row { display:flex; align-items:stretch; border-bottom:1px solid var(--border); }
+.binary-row:last-child { border-bottom:none; }
+.binary-bar { width:6px; flex-shrink:0; }
+.binary-field { flex:0 0 90px; padding:10px 12px; font-family:'JetBrains Mono',monospace; font-weight:700; font-size:11px; }
+.binary-size { flex:0 0 60px; padding:10px 8px; font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--dim); }
+.binary-value { flex:0 0 100px; padding:10px 8px; font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--dim); }
+.binary-desc { flex:1; padding:10px 12px; font-size:11px; }
+.footer { text-align:center; padding:24px 32px; border-top:1px solid var(--border); font-size:11px; color:var(--dim); }
+.footer a { color:var(--gold); text-decoration:none; }
+</style>
+</head>
+<body>
+<header class="header">
+  <h1>🐉 WINDI Development Roadmap</h1>
+  <div class="meta">
+    <span>27 Feb 2026</span>
+    <span>4 Fases · 17 Dias · 26 Tasks</span>
+    <span>CCode Ready</span>
+  </div>
+  <button class="theme-toggle" onclick="toggleTheme()">☀</button>
+</header>
+<nav class="nav">
+  <button class="active" onclick="showSection('overview',this)">Overview</button>
+  <button onclick="showSection('phaseA',this)">A: Hydration</button>
+  <button onclick="showSection('phaseB',this)">B: Continuum</button>
+  <button onclick="showSection('phaseC',this)">C: Pott</button>
+  <button onclick="showSection('phaseD',this)">D: Playbook</button>
+  <button onclick="showSection('ports',this)">Port Map</button>
+  <button onclick="showSection('binary',this)">JMPG Spec</button>
+</nav>
+<div class="content">
+
+<!-- OVERVIEW -->
+<div id="overview" class="section active">
+  <div class="card">
+    <h2>📋 Roadmap Overview</h2>
+    <p>4 fases sequenciais transformando os 4 Pilares JMPG em código executável. Cada fase entrega valor independente e alimenta a próxima.</p>
+
+    <div class="flow-diagram">
+      <div class="flow-node a"><span class="node-letter">A</span><span class="node-days">3 dias</span></div>
+      <div class="flow-arrow"></div>
+      <div class="flow-node b"><span class="node-letter">B</span><span class="node-days">4 dias</span></div>
+      <div class="flow-arrow"></div>
+      <div class="flow-node c"><span class="node-letter">C</span><span class="node-days">5 dias</span></div>
+      <div class="flow-arrow"></div>
+      <div class="flow-node d"><span class="node-letter">D</span><span class="node-days">5 dias</span></div>
+    </div>
+
+    <table class="spec-table">
+      <thead><tr><th>Fase</th><th>Nome</th><th>Pilar</th><th>Entrega</th><th>Porta</th></tr></thead>
+      <tbody>
+        <tr><td class="gold">A</td><td>DESK Hydration</td><td>—</td><td>Palette cockpit vivo com APIs reais</td><td class="mono">Modifica existentes</td></tr>
+        <tr><td class="gold">B</td><td>JMPG Continuum</td><td>P1</td><td>Primeiro .jmpg trigger real selado</td><td class="mono">:8103 (Export)</td></tr>
+        <tr><td class="gold">C</td><td>Pott Federation</td><td>P3</td><td>Federação funcional com Discovery</td><td class="mono">:8110 (novo)</td></tr>
+        <tr><td class="gold">D</td><td>P4 Operational</td><td>P4</td><td>Playbook executável com receipts</td><td class="mono">:8111 (novo)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="sealed-box">
+      <h4>🐉 Stack Confirmado</h4>
+      <p><strong>Controllers:</strong> FastAPI/Python (Dragon :8108, Export :8103, Communiqué :8105, novos :8110/:8111)<br/>
+      <strong>UI:</strong> React 18 CDN + Babel standalone (single HTML pattern)<br/>
+      <strong>Data:</strong> SQLite (Ledger, Vault, Pott, Playbook)<br/>
+      <strong>Reverse Proxy:</strong> nginx com /api/ routing</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📊 Status Quo — O Que Está LIVE</h2>
+    <table class="spec-table">
+      <thead><tr><th>Porta</th><th>Serviço</th><th>Status</th><th>Stack</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">8099</td><td>Wallet</td><td class="success">✅ LIVE</td><td>FastAPI</td></tr>
+        <tr><td class="mono">8100</td><td>Desktop</td><td class="success">✅ LIVE</td><td>FastAPI</td></tr>
+        <tr><td class="mono">8101</td><td>Ledger</td><td class="success">✅ LIVE</td><td>BaseHTTPRequestHandler</td></tr>
+        <tr><td class="mono">8102</td><td>Sentinel</td><td class="success">✅ LIVE</td><td>BaseHTTPRequestHandler</td></tr>
+        <tr><td class="mono">8103</td><td>Export</td><td class="success">✅ LIVE</td><td>FastAPI</td></tr>
+        <tr><td class="mono">8104</td><td>JMPG Viewer</td><td class="success">✅ LIVE</td><td>Static HTML</td></tr>
+        <tr><td class="mono">8105</td><td>Communiqué</td><td class="success">✅ LIVE</td><td>FastAPI</td></tr>
+        <tr><td class="mono">8106</td><td>Vault</td><td class="success">✅ LIVE</td><td>FastAPI</td></tr>
+        <tr><td class="mono">8108</td><td>Dragon/Palette</td><td class="success">✅ LIVE</td><td>FastAPI + nginx</td></tr>
+        <tr><td class="mono">8109</td><td>Pulse</td><td class="success">✅ LIVE</td><td>FastAPI</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- PHASE A -->
+<div id="phaseA" class="section">
+  <div class="phase-card phase-a">
+    <span class="phase-badge">3 DIAS</span>
+    <div class="phase-icon">💧</div>
+    <div class="phase-title">Fase A — DESK Hydration</div>
+    <div class="phase-sub">Palette como Cockpit Vivo</div>
+    <div class="phase-desc">Hidratar as tabs do Editor v6.0 (112KB) com APIs reais. Docs, Wallet, Chat, Products — tudo com dados LIVE dos serviços existentes.</div>
+
+    <h3 style="font-size:12px;color:var(--blue);margin:16px 0 8px;">Tarefas</h3>
+    <div class="task-list">
+      <div class="task-item high"><span class="task-id">A1</span><span class="task-label">Docs tab → /api/communique/list</span><span class="task-priority">ALTA</span></div>
+      <div class="task-item high"><span class="task-id">A2</span><span class="task-label">Stats header → /api/communique/stats</span><span class="task-priority">ALTA</span></div>
+      <div class="task-item high"><span class="task-id">A3</span><span class="task-label">Workflow buttons: review/publish/archive</span><span class="task-priority">ALTA</span></div>
+      <div class="task-item medium"><span class="task-id">A4</span><span class="task-label">Wallet tab → /api/receipts</span><span class="task-priority">MÉDIA</span></div>
+      <div class="task-item medium"><span class="task-id">A5</span><span class="task-label">Chat tab → /api/dragon/chat</span><span class="task-priority">MÉDIA</span></div>
+      <div class="task-item medium"><span class="task-id">A6</span><span class="task-label">Products → 6 ISP templates</span><span class="task-priority">MÉDIA</span></div>
+      <div class="task-item low"><span class="task-id">A7</span><span class="task-label">Health check real dos serviços</span><span class="task-priority">BAIXA</span></div>
+    </div>
+
+    <h3 style="font-size:12px;color:var(--dim);margin:20px 0 8px;">Endpoints Consumidos</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:4px;">
+      <span class="mono" style="font-size:10px;padding:3px 8px;background:var(--hover);border-radius:4px;border:1px solid var(--border);">GET /api/communique/list</span>
+      <span class="mono" style="font-size:10px;padding:3px 8px;background:var(--hover);border-radius:4px;border:1px solid var(--border);">GET /api/communique/stats</span>
+      <span class="mono" style="font-size:10px;padding:3px 8px;background:var(--hover);border-radius:4px;border:1px solid var(--border);">POST /api/communique/{id}/{action}</span>
+      <span class="mono" style="font-size:10px;padding:3px 8px;background:var(--hover);border-radius:4px;border:1px solid var(--border);">GET /api/receipts</span>
+      <span class="mono" style="font-size:10px;padding:3px 8px;background:var(--hover);border-radius:4px;border:1px solid var(--border);">POST /api/dragon/chat</span>
+    </div>
+  </div>
+
+  <div class="prompt-box">
+    <div class="prompt-header">
+      <span class="prompt-title">📋 CCode Prompt — Task A1</span>
+      <button class="copy-btn" onclick="copyPrompt('promptA1')">Copy</button>
+    </div>
+    <pre id="promptA1">Lê /opt/windi/agent-palette/ui/index.html.
+Encontra a secção MOCK_DOCS (array estático de documentos).
+Substitui por fetch real:
+
+const loadDocs = async () => {
+  try {
+    const res = await fetch('/api/communique/list');
+    const data = await res.json();
+    setDocuments(data.communiques || []);
+  } catch (e) {
+    console.warn('Communiqué API offline, using cache');
+  }
+};
+
+useEffect(() => {
+  loadDocs();
+  const interval = setInterval(loadDocs, 60000);
+  return () => clearInterval(interval);
+}, []);
+
+Mapeia os campos: id, title, status (DRAFT/REVIEW/PUBLISHED/ARCHIVED), created_at, content_hash.
+Mantém o design system KLAR/NOIR intacto.</pre>
+  </div>
+
+  <div class="sealed-box">
+    <h4>✅ Entregável Fase A</h4>
+    <p>Palette cockpit operacional com dados reais em 4 tabs (docs, wallet, chat, products). Polling automático (30s stats, 60s docs). Fallback gracioso se API offline.</p>
+  </div>
+</div>
+
+<!-- PHASE B -->
+<div id="phaseB" class="section">
+  <div class="phase-card phase-b">
+    <span class="phase-badge">4 DIAS</span>
+    <div class="phase-icon">📡</div>
+    <div class="phase-title">Fase B — JMPG Continuum</div>
+    <div class="phase-sub">P1 Sovereign Spec em Código</div>
+    <div class="phase-desc">Implementar o JMPG Trigger como binário real — MAGIC 0x4A4D5047, onboard 30s comprimido, manifest encriptado, DID_HASH do criador, SEAL SHA-256.</div>
+
+    <h3 style="font-size:12px;color:var(--gold);margin:16px 0 8px;">Tarefas</h3>
+    <div class="task-list">
+      <div class="task-item high"><span class="task-id">B1</span><span class="task-label">jmpg_trigger_builder.py (binário real)</span><span class="task-priority">ALTA</span></div>
+      <div class="task-item high"><span class="task-id">B2</span><span class="task-label">jmpg_trigger_parser.py (verificação)</span><span class="task-priority">ALTA</span></div>
+      <div class="task-item high"><span class="task-id">B3</span><span class="task-label">Trigger Viewer (browser HTML)</span><span class="task-priority">ALTA</span></div>
+      <div class="task-item medium"><span class="task-id">B4</span><span class="task-label">Ledger event TRIGGER_CREATED</span><span class="task-priority">MÉDIA</span></div>
+      <div class="task-item medium"><span class="task-id">B5</span><span class="task-label">Integração Export Engine (:8103)</span><span class="task-priority">MÉDIA</span></div>
+      <div class="task-item medium"><span class="task-id">B6</span><span class="task-label">Wallet DID_HASH signing (:8099)</span><span class="task-priority">MÉDIA</span></div>
+    </div>
+  </div>
+
+  <div class="prompt-box">
+    <div class="prompt-header">
+      <span class="prompt-title">📋 CCode Prompt — Task B1 (jmpg_trigger_builder.py)</span>
+      <button class="copy-btn" onclick="copyPrompt('promptB1')">Copy</button>
+    </div>
+    <pre id="promptB1">Cria /opt/windi/export-engine/jmpg_trigger_builder.py.
+
+Classe JMPGTriggerBuilder:
+  - __init__(self, creator_did_hash, codec_id=0x01)
+  - set_onboard(self, video_bytes, duration_ms)
+  - set_manifest(self, stream_url, vault_ref, chapters, receipt_id)
+  - build(self) → bytes  # retorna o binário completo
+  - seal(self) → str     # retorna SHA-256 hex do package
+
+Formato binário:
+  MAGIC:     b'\x4A\x4D\x50\x47'
+  VERSION:   struct.pack('<H', 0x0100)
+  FLAGS:     struct.pack('<H', flags)
+  CODEC_ID:  struct.pack('B', codec_id)
+  DURATION:  struct.pack('<I', duration_ms)
+  DID_HASH:  bytes.fromhex(creator_did_hash)  # 32 bytes
+  MANIFEST:  zlib.compress(json.dumps(manifest, separators=(',',':')).encode())
+  CONTENT:   onboard_bytes
+  SEAL:      hashlib.sha256(all_above).digest()
+
+Testa com:
+python3 -c "from jmpg_trigger_builder import *; t = JMPGTriggerBuilder('a'*64); t.set_onboard(b'test', 30000); t.set_manifest('https://vault.example/stream', 'VR-001', [], 'VR-TRIGGER-001'); data = t.build(); print(f'Size: {len(data)}B, Seal: {t.seal()}')"</pre>
+  </div>
+
+  <div class="sealed-box">
+    <h4>✅ Entregável Fase B</h4>
+    <p>Builder + Parser Python. Trigger Viewer no browser. <strong>Primeiro .jmpg trigger real selado no Ledger.</strong></p>
+  </div>
+</div>
+
+<!-- PHASE C -->
+<div id="phaseC" class="section">
+  <div class="phase-card phase-c">
+    <span class="phase-badge">5 DIAS</span>
+    <div class="phase-icon">🏺</div>
+    <div class="phase-title">Fase C — Pott Federation</div>
+    <div class="phase-sub">P3 Governança de Criadores</div>
+    <div class="phase-desc">API de federação: criadores agrupam-se em Potts, curadoria 85/15, data boundaries, Discovery Index público. Nova porta :8110.</div>
+
+    <h3 style="font-size:12px;color:var(--purple);margin:16px 0 8px;">Tarefas</h3>
+    <div class="task-list">
+      <div class="task-item high"><span class="task-id">C1</span><span class="task-label">Pott Engine FastAPI (:8110)</span><span class="task-priority">ALTA</span></div>
+      <div class="task-item high"><span class="task-id">C2</span><span class="task-label">POST /api/pott/create + receipt</span><span class="task-priority">ALTA</span></div>
+      <div class="task-item high"><span class="task-id">C3</span><span class="task-label">POST /api/pott/{id}/join (com DID)</span><span class="task-priority">ALTA</span></div>
+      <div class="task-item high"><span class="task-id">C4</span><span class="task-label">GET /api/pott/{id}/feed (triggers)</span><span class="task-priority">ALTA</span></div>
+      <div class="task-item medium"><span class="task-id">C5</span><span class="task-label">POST /api/pott/{id}/curate</span><span class="task-priority">MÉDIA</span></div>
+      <div class="task-item medium"><span class="task-id">C6</span><span class="task-label">GET /api/pott/discover (público)</span><span class="task-priority">MÉDIA</span></div>
+      <div class="task-item high"><span class="task-id">C7</span><span class="task-label">Data boundaries enforcement</span><span class="task-priority">ALTA</span></div>
+    </div>
+
+    <h3 style="font-size:12px;color:var(--dim);margin:20px 0 8px;">7 Endpoints</h3>
+    <div style="display:flex;flex-wrap:wrap;gap:4px;">
+      <span class="mono" style="font-size:10px;padding:3px 8px;background:var(--hover);border-radius:4px;border:1px solid var(--border);">POST /api/pott/create</span>
+      <span class="mono" style="font-size:10px;padding:3px 8px;background:var(--hover);border-radius:4px;border:1px solid var(--border);">GET /api/pott/{id}</span>
+      <span class="mono" style="font-size:10px;padding:3px 8px;background:var(--hover);border-radius:4px;border:1px solid var(--border);">POST /api/pott/{id}/join</span>
+      <span class="mono" style="font-size:10px;padding:3px 8px;background:var(--hover);border-radius:4px;border:1px solid var(--border);">GET /api/pott/{id}/feed</span>
+      <span class="mono" style="font-size:10px;padding:3px 8px;background:var(--hover);border-radius:4px;border:1px solid var(--border);">POST /api/pott/{id}/curate</span>
+      <span class="mono" style="font-size:10px;padding:3px 8px;background:var(--hover);border-radius:4px;border:1px solid var(--border);">GET /api/pott/discover</span>
+      <span class="mono" style="font-size:10px;padding:3px 8px;background:var(--hover);border-radius:4px;border:1px solid var(--border);">GET /api/pott/{id}/metrics</span>
+    </div>
+  </div>
+
+  <div class="prompt-box">
+    <div class="prompt-header">
+      <span class="prompt-title">📋 CCode Prompt — Task C1 (Pott Engine)</span>
+      <button class="copy-btn" onclick="copyPrompt('promptC1')">Copy</button>
+    </div>
+    <pre id="promptC1">Cria /opt/windi/pott-engine/ com estrutura:
+  pott_engine.py (FastAPI main)
+  models.py (Pott, PottMembership, PottDiscoveryIndex)
+  database.py (SQLite /opt/windi/data/pott.db)
+
+Porta: 8110
+
+Modelo Pott:
+  id: str               # "POTT-{vertical}-{hash8}"
+  name: str             # "Bavarian Chefs"
+  vertical: str         # cooking | education | music | local | tech
+  members: list[str]    # lista de creator DIDs
+  curator_did: str      # DID do curador principal
+  split_creator: float  # 0.85 (85%)
+  split_pott: float     # 0.15 (15%)
+  rules: dict           # data boundaries, content policies
+  created_at: str
+  sealed_hash: str
+  ledger_receipt: str
+
+Princípios:
+1. Data Boundaries: dados de audiência nunca cruzam entre criadores
+2. Attribution 85/15: toda receita via Pott: 85% criador, 15% treasury
+3. Exit Freedom: criador sai quando quiser, leva todo o conteúdo
+4. Receipts: toda acção gera Virtue Receipt no Ledger (:8101)
+
+Cria systemd unit: windi-pott.service
+Configura nginx: /api/pott/ → proxy_pass http://127.0.0.1:8110</pre>
+  </div>
+
+  <div class="sealed-box">
+    <h4>✅ Entregável Fase C</h4>
+    <p>Pott Engine com 7 endpoints. <strong>Primeiro Pott criado e selado.</strong> Discovery Index público funcional.</p>
+  </div>
+</div>
+
+<!-- PHASE D -->
+<div id="phaseD" class="section">
+  <div class="phase-card phase-d">
+    <span class="phase-badge">5 DIAS</span>
+    <div class="phase-icon">🚀</div>
+    <div class="phase-title">Fase D — P4 Operational</div>
+    <div class="phase-sub">Distribution Playbook Executável</div>
+    <div class="phase-desc">Jornada 7 dias com task tracking, templates trilíngues (DE/EN/PT), QR packs, manifesto gerador (PDF + imagem + .jmpg), dashboard das 8 métricas soberanas. Nova porta :8111.</div>
+
+    <h3 style="font-size:12px;color:var(--orange);margin:16px 0 8px;">Tarefas</h3>
+    <div class="task-list">
+      <div class="task-item high"><span class="task-id">D1</span><span class="task-label">Playbook Engine FastAPI (:8111)</span><span class="task-priority">ALTA</span></div>
+      <div class="task-item high"><span class="task-id">D2</span><span class="task-label">POST /launch/start (inicia Day 1)</span><span class="task-priority">ALTA</span></div>
+      <div class="task-item high"><span class="task-id">D3</span><span class="task-label">POST /launch/task (completa tarefa)</span><span class="task-priority">ALTA</span></div>
+      <div class="task-item high"><span class="task-id">D4</span><span class="task-label">POST /templates/generate (copy trilíngue)</span><span class="task-priority">ALTA</span></div>
+      <div class="task-item medium"><span class="task-id">D5</span><span class="task-label">POST /qr/generate (QR Pack)</span><span class="task-priority">MÉDIA</span></div>
+      <div class="task-item high"><span class="task-id">D6</span><span class="task-label">POST /manifesto/generate (3 formatos)</span><span class="task-priority">ALTA</span></div>
+      <div class="task-item medium"><span class="task-id">D7</span><span class="task-label">Dashboard 8 métricas soberanas</span><span class="task-priority">MÉDIA</span></div>
+    </div>
+
+    <h3 style="font-size:12px;color:var(--dim);margin:20px 0 8px;">As 8 Métricas Soberanas</h3>
+    <table class="spec-table">
+      <thead><tr><th>#</th><th>Métrica</th><th>Fórmula</th><th>Meta Day 7</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Direct Reach</td><td>contactos reais alcançados</td><td class="success">>100</td></tr>
+        <tr><td>2</td><td>Open Rate</td><td>aberturas / enviados por canal</td><td class="success">>40%</td></tr>
+        <tr><td>3</td><td>Click-to-Play</td><td>plays / aberturas</td><td class="success">>60%</td></tr>
+        <tr><td>4</td><td>Completion Rate</td><td>30s completos / plays</td><td class="success">>70%</td></tr>
+        <tr><td>5</td><td>Stream Continuation</td><td>stream / onboard completo</td><td class="success">>30%</td></tr>
+        <tr><td>6</td><td>Shares/100</td><td>partilhas / 100 viewers</td><td class="success">>5</td></tr>
+        <tr><td>7</td><td>Conversion</td><td>subscribers / viewers únicos</td><td class="success">>3%</td></tr>
+        <tr><td>8</td><td>Revenue/100 Fans</td><td>receita / 100 fans activos</td><td>tracking</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="prompt-box">
+    <div class="prompt-header">
+      <span class="prompt-title">📋 CCode Prompt — Task D6 (Manifesto Generator)</span>
+      <button class="copy-btn" onclick="copyPrompt('promptD6')">Copy</button>
+    </div>
+    <pre id="promptD6">Adiciona endpoint POST /api/pillar4/manifesto/generate ao Playbook Engine.
+
+Input:
+{
+  "creator_name": "Chef Maria",
+  "vertical": "cooking",
+  "vault_link": "https://maria.windi-vault.eu",
+  "did_signature": "...",
+  "language": "pt"
+}
+
+Output:
+{
+  "pdf_url": "/assets/manifesto-maria-pt.pdf",
+  "image_url": "/assets/manifesto-maria-pt.png",
+  "jmpg_trigger_url": "/assets/manifesto-maria-pt.jmpg",
+  "ledger_receipt": "VR-MANIFESTO-001"
+}
+
+O manifesto é um .jmpg trigger de 30s que funciona como "cartão de visita soberano":
+- Nome do criador
+- Vertical
+- QR para Vault
+- Mensagem "BE FREE — I just stopped asking permission"
+
+Exporta em 3 formatos:
+1. PDF A4 (imprimível)
+2. Imagem 1080×1080 (redes sociais)
+3. .jmpg trigger (partilhável)
+
+Gera receipt no Ledger: MANIFESTO_CREATED</pre>
+  </div>
+
+  <div class="sealed-box">
+    <h4>✅ Entregável Fase D</h4>
+    <p>Playbook Engine com 7 endpoints. Task tracker para jornada 7 dias. Template generator trilingual. <strong>Manifesto personalizado (.jmpg + PDF + imagem).</strong> Dashboard das 8 métricas soberanas.</p>
+  </div>
+</div>
+
+<!-- PORT MAP -->
+<div id="ports" class="section">
+  <div class="card">
+    <h2>🔌 Port Map — Ecosystem Completo</h2>
+
+    <h3>Portas LIVE (8080-8109)</h3>
+    <div class="port-grid">
+      <div class="port-card live"><div class="port-num">8099</div><div class="port-name">Wallet</div><div class="port-status">✅</div></div>
+      <div class="port-card live"><div class="port-num">8100</div><div class="port-name">Desktop</div><div class="port-status">✅</div></div>
+      <div class="port-card live"><div class="port-num">8101</div><div class="port-name">Ledger</div><div class="port-status">✅</div></div>
+      <div class="port-card live"><div class="port-num">8102</div><div class="port-name">Sentinel</div><div class="port-status">✅</div></div>
+      <div class="port-card live"><div class="port-num">8103</div><div class="port-name">Export</div><div class="port-status">✅</div></div>
+      <div class="port-card live"><div class="port-num">8104</div><div class="port-name">JMPG Viewer</div><div class="port-status">✅</div></div>
+      <div class="port-card live"><div class="port-num">8105</div><div class="port-name">Communiqué</div><div class="port-status">✅</div></div>
+      <div class="port-card live"><div class="port-num">8106</div><div class="port-name">Vault</div><div class="port-status">✅</div></div>
+      <div class="port-card live"><div class="port-num">8108</div><div class="port-name">Dragon/Palette</div><div class="port-status">✅</div></div>
+      <div class="port-card live"><div class="port-num">8109</div><div class="port-name">Pulse</div><div class="port-status">✅</div></div>
+    </div>
+
+    <h3>Portas Novas (Roadmap)</h3>
+    <div class="port-grid">
+      <div class="port-card new"><div class="port-num">8110</div><div class="port-name">Pott Engine</div><div class="port-status">🆕 Fase C</div></div>
+      <div class="port-card new"><div class="port-num">8111</div><div class="port-name">Playbook Engine</div><div class="port-status">🆕 Fase D</div></div>
+    </div>
+
+    <h3>Portas Sovereign Vaults (P2)</h3>
+    <div class="port-grid">
+      <div class="port-card new"><div class="port-num">9100</div><div class="port-name">Trigger</div><div class="port-status">🆕 P2</div></div>
+      <div class="port-card new"><div class="port-num">9101</div><div class="port-name">Sealer</div><div class="port-status">🆕 P2</div></div>
+      <div class="port-card new"><div class="port-num">9102</div><div class="port-name">Gatekeeper</div><div class="port-status">🆕 P2</div></div>
+      <div class="port-card new"><div class="port-num">9103</div><div class="port-name">Analytics</div><div class="port-status">🆕 P2</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- BINARY SPEC -->
+<div id="binary" class="section">
+  <div class="card">
+    <h2>📡 JMPG Trigger — Binary Layout</h2>
+    <p>P1 Sovereign Spec — o formato que faltava ao mundo.</p>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:16px 0;">
+      <div class="binary-row"><div class="binary-bar" style="background:var(--gold);"></div><div class="binary-field" style="color:var(--gold);">MAGIC</div><div class="binary-size">4B</div><div class="binary-value">0x4A4D5047</div><div class="binary-desc">'JMPG' em ASCII</div></div>
+      <div class="binary-row"><div class="binary-bar" style="background:var(--blue);"></div><div class="binary-field" style="color:var(--blue);">VERSION</div><div class="binary-size">2B</div><div class="binary-value">0x0100</div><div class="binary-desc">v1.0</div></div>
+      <div class="binary-row"><div class="binary-bar" style="background:var(--blue);"></div><div class="binary-field" style="color:var(--blue);">FLAGS</div><div class="binary-size">2B</div><div class="binary-value">bit0-3</div><div class="binary-desc">hasVideo | hasAudio | hasText | hasSeal</div></div>
+      <div class="binary-row"><div class="binary-bar" style="background:var(--purple);"></div><div class="binary-field" style="color:var(--purple);">CODEC_ID</div><div class="binary-size">1B</div><div class="binary-value">0x01-03</div><div class="binary-desc">H.264 | AV1 | VP9</div></div>
+      <div class="binary-row"><div class="binary-bar" style="background:var(--purple);"></div><div class="binary-field" style="color:var(--purple);">DURATION</div><div class="binary-size">4B</div><div class="binary-value">uint32 LE</div><div class="binary-desc">Duração em ms</div></div>
+      <div class="binary-row"><div class="binary-bar" style="background:var(--success);"></div><div class="binary-field" style="color:var(--success);">DID_HASH</div><div class="binary-size">32B</div><div class="binary-value">SHA-256</div><div class="binary-desc">Hash do DID do criador</div></div>
+      <div class="binary-row"><div class="binary-bar" style="background:var(--orange);"></div><div class="binary-field" style="color:var(--orange);">MANIFEST</div><div class="binary-size">var</div><div class="binary-value">zlib JSON</div><div class="binary-desc">stream_url + vault_ref + chapters + receipt</div></div>
+      <div class="binary-row"><div class="binary-bar" style="background:var(--danger);"></div><div class="binary-field" style="color:var(--danger);">CONTENT</div><div class="binary-size">var</div><div class="binary-value">bytes</div><div class="binary-desc">Onboard segment (max 30s)</div></div>
+      <div class="binary-row"><div class="binary-bar" style="background:var(--gold);"></div><div class="binary-field" style="color:var(--gold);">SEAL</div><div class="binary-size">32B</div><div class="binary-value">SHA-256</div><div class="binary-desc">Hash do package completo</div></div>
+    </div>
+
+    <div class="sealed-box">
+      <h4>🔄 Pipeline</h4>
+      <p class="mono" style="line-height:2;">
+Creator → Desktop(:8100) → Export(:8103) → trigger_builder.py<br/>
+&nbsp;&nbsp;├── Extrai 30s onboard<br/>
+&nbsp;&nbsp;├── Comprime manifest (zlib)<br/>
+&nbsp;&nbsp;├── DID_HASH ← Wallet(:8099)<br/>
+&nbsp;&nbsp;├── Receipt ← Ledger(:8101)<br/>
+&nbsp;&nbsp;├── SEAL SHA-256<br/>
+&nbsp;&nbsp;└── → .jmpg trigger (~4.2KB envelope)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓<br/>
+WhatsApp / Email / SMS / QR → Viewer(:8104) → Vault(:8106)
+      </p>
+    </div>
+  </div>
+</div>
+
+</div>
+<footer class="footer">
+  <div style="margin-bottom:8px;"><strong style="color:var(--gold);">WINDI DEVELOPMENT ROADMAP — 27 Feb 2026</strong></div>
+  <div>Three Dragons Protocol — Guardian × Architect × Witness</div>
+  <div style="margin-top:8px;">
+    <a href="/palette/">← Palette</a> ·
+    <a href="/palette/pillar-1.html">P1</a> ·
+    <a href="/palette/pillar-2.html">P2</a> ·
+    <a href="/palette/pillar-3.html">P3</a> ·
+    <a href="/palette/pillar-4.html">P4</a> ·
+    <span class="mono">"AI processes. Human decides. WINDI guarantees."</span>
+  </div>
+</footer>
+<script>
+function toggleTheme() {
+  const body = document.body;
+  const isNoir = body.getAttribute('data-theme') === 'noir';
+  body.setAttribute('data-theme', isNoir ? '' : 'noir');
+  document.querySelector('.theme-toggle').textContent = isNoir ? '☀' : '🌙';
+}
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+function copyPrompt(id) {
+  const text = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target;
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = orig, 1500);
+  });
+}
+</script>
+</body>
+</html>

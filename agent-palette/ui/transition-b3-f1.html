@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B.3 → F.1 Transition Spec — WINDI Sovereign Architecture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #08080a; --surface: #0f0f12; --surface-2: #18181b; --border: #27272a;
+  --text: #e4e4e7; --dim: #a1a1aa; --dimmer: #71717a;
+  --gold: #c4940f; --gold-dim: #8a6a0a;
+  --green: #22c55e; --red: #ef4444; --blue: #3b82f6; --purple: #a855f7;
+}
+.klar {
+  --bg: #f8f7f5; --surface: #ffffff; --surface-2: #f4f4f5; --border: #e4e4e7;
+  --text: #18181b; --dim: #52525b; --dimmer: #a1a1aa;
+  --gold: #8a6a0a; --gold-dim: #c4940f;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Outfit', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+.container { max-width: 1000px; margin: 0 auto; padding: 32px 20px; }
+header { text-align: center; margin-bottom: 48px; padding-bottom: 32px; border-bottom: 1px solid var(--border); }
+.badge { display: inline-block; padding: 6px 16px; background: var(--gold); color: #000; font-size: 12px; font-weight: 700; border-radius: 20px; margin-bottom: 16px; letter-spacing: 1px; }
+h1 { font-family: 'Bricolage Grotesque', sans-serif; font-size: clamp(28px, 5vw, 42px); font-weight: 800; margin-bottom: 12px; }
+.subtitle { font-size: 18px; color: var(--dim); margin-bottom: 20px; }
+.meta { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; font-size: 13px; color: var(--dimmer); }
+.meta span { display: flex; align-items: center; gap: 6px; }
+
+/* Theme Toggle */
+.theme-toggle { position: fixed; top: 20px; right: 20px; display: flex; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 4px; z-index: 100; }
+.theme-btn { padding: 8px 14px; border: none; background: transparent; color: var(--dim); font-size: 12px; font-weight: 600; border-radius: 6px; cursor: pointer; }
+.theme-btn.active { background: var(--gold); color: #000; }
+
+/* TOC */
+.toc { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 40px; }
+.toc h3 { font-family: 'Bricolage Grotesque', sans-serif; font-size: 16px; margin-bottom: 16px; color: var(--gold); }
+.toc-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 8px; }
+.toc-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--surface-2); border-radius: 8px; text-decoration: none; color: var(--text); font-size: 13px; transition: all 0.2s; }
+.toc-item:hover { border-color: var(--gold); background: var(--gold)10; }
+.toc-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--gold); font-weight: 600; }
+
+/* Sections */
+.section { margin-bottom: 48px; }
+.section-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+.section-num { font-family: 'JetBrains Mono', monospace; font-size: 14px; padding: 8px 14px; background: var(--gold); color: #000; border-radius: 8px; font-weight: 700; }
+.section-title { font-family: 'Bricolage Grotesque', sans-serif; font-size: 24px; font-weight: 700; }
+
+/* Cards */
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+.card h4 { font-family: 'Bricolage Grotesque', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+.card p { color: var(--dim); font-size: 14px; margin-bottom: 16px; }
+
+/* Tables */
+table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; }
+th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); }
+th { background: var(--surface-2); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--dim); }
+td { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+td:first-child { color: var(--text); font-family: 'Outfit', sans-serif; font-weight: 500; }
+.status-pending { color: var(--dimmer); }
+.status-done { color: var(--green); }
+
+/* Code Blocks */
+pre { background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 12px; line-height: 1.5; margin: 16px 0; }
+code { font-family: 'JetBrains Mono', monospace; background: var(--surface-2); padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+
+/* Highlight Box */
+.highlight { background: linear-gradient(135deg, var(--gold)15, var(--gold)05); border: 1px solid var(--gold)44; border-radius: 12px; padding: 24px; margin: 24px 0; }
+.highlight h4 { color: var(--gold); margin-bottom: 12px; }
+.highlight p { color: var(--text); }
+
+/* Sovereign Channel Box */
+.sovereign-channel { background: linear-gradient(135deg, var(--purple)15, var(--blue)10); border: 2px solid var(--purple); border-radius: 16px; padding: 32px; margin: 32px 0; text-align: center; }
+.sovereign-channel .icon { font-size: 48px; margin-bottom: 16px; }
+.sovereign-channel h3 { font-family: 'Bricolage Grotesque', sans-serif; font-size: 28px; font-weight: 800; margin-bottom: 12px; background: linear-gradient(90deg, var(--purple), var(--blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.sovereign-channel p { color: var(--dim); font-size: 15px; max-width: 600px; margin: 0 auto 20px; }
+
+/* Flow Diagram */
+.flow { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 20px 0; font-family: 'JetBrains Mono', monospace; font-size: 12px; white-space: pre; overflow-x: auto; line-height: 1.4; }
+
+/* Comparison Table */
+.comparison { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 24px 0; }
+.comparison-item { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center; }
+.comparison-item.sovereign { border-color: var(--green); background: var(--green)08; }
+.comparison-item h5 { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+.comparison-item p { font-size: 12px; color: var(--dim); font-style: italic; }
+.comparison-item.sovereign p { color: var(--green); }
+
+/* Principle */
+.principle { background: var(--surface); border-left: 4px solid var(--gold); padding: 24px; margin: 32px 0; font-style: italic; }
+.principle p { margin-bottom: 8px; color: var(--dim); }
+.principle .new { color: var(--green); font-weight: 600; }
+.principle .source { text-align: right; color: var(--gold); font-size: 13px; margin-top: 16px; }
+
+/* Lifecycle */
+.lifecycle { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 16px 0; }
+.lifecycle-step { padding: 8px 14px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; font-size: 11px; font-family: 'JetBrains Mono', monospace; }
+.lifecycle-arrow { color: var(--gold); font-weight: bold; }
+
+/* Week Timeline */
+.timeline { display: grid; gap: 12px; margin: 24px 0; }
+.timeline-item { display: flex; gap: 16px; padding: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; }
+.timeline-week { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--gold); font-weight: 600; min-width: 60px; }
+.timeline-content { font-size: 13px; }
+
+@media (max-width: 768px) {
+  .container { padding: 20px 16px; }
+  .comparison { grid-template-columns: 1fr; }
+  .meta { flex-direction: column; gap: 8px; }
+  .theme-toggle { top: 10px; right: 10px; }
+}
+</style>
+</head>
+<body>
+
+<div class="theme-toggle">
+  <button class="theme-btn active" onclick="setTheme('noir')">NOIR</button>
+  <button class="theme-btn" onclick="setTheme('klar')">KLAR</button>
+</div>
+
+<div class="container">
+  <header>
+    <div class="badge">TRANSITION SPEC v1.0.0</div>
+    <h1>B.3 Closure → F.1 Router Engine</h1>
+    <p class="subtitle">WINDI Sovereign Architecture — The Bridge Document</p>
+    <div class="meta">
+      <span>📅 2026-02-27</span>
+      <span>📋 Status: DRAFT → awaiting B.3 SEAL</span>
+      <span>🐉 Human Dragon + Claude Dragon</span>
+    </div>
+  </header>
+
+  <!-- TOC -->
+  <nav class="toc">
+    <h3>📑 Contents</h3>
+    <div class="toc-list">
+      <a href="#part1" class="toc-item"><span class="toc-num">1</span> B.3 Closure Checklist</a>
+      <a href="#part2" class="toc-item"><span class="toc-num">2</span> Delivery Plan Contract</a>
+      <a href="#part3" class="toc-item"><span class="toc-num">3</span> F.1 Minimal Router Engine</a>
+      <a href="#channel0" class="toc-item"><span class="toc-num">0</span> Channel Zero: DID-to-DID</a>
+      <a href="#principles" class="toc-item"><span class="toc-num">§</span> Constitutional Principles</a>
+      <a href="#timeline" class="toc-item"><span class="toc-num">→</span> Implementation Timeline</a>
+    </div>
+  </nav>
+
+  <!-- CHANNEL ZERO - The Sovereign Channel -->
+  <section id="channel0" class="section">
+    <div class="sovereign-channel">
+      <div class="icon">🔗</div>
+      <h3>Channel Zero: DID-to-DID</h3>
+      <p>The 7th Channel. Zero intermediaries. Zero dependence. Zero surveillance. When both parties have a WINDI Wallet, the Router delivers encrypted triggers directly — wallet to wallet.</p>
+      <code style="display: block; margin-top: 16px; padding: 12px; background: var(--surface); border-radius: 8px; font-size: 11px;">Creator Wallet → Router → Recipient Wallet (E2E Encrypted)</code>
+    </div>
+
+    <div class="card">
+      <h4>🌐 The Problem with 6 Channels</h4>
+      <p>Every traditional channel has an intermediary with power over your delivery:</p>
+      <table>
+        <tr><th>Channel</th><th>Intermediary</th><th>Risk</th></tr>
+        <tr><td>WhatsApp</td><td>Meta</td><td>Can block, rate-limit, surveil</td></tr>
+        <tr><td>Email</td><td>SMTP servers</td><td>Spam filters, server policies</td></tr>
+        <tr><td>SMS</td><td>Telco operators</td><td>Expensive, rate limited</td></tr>
+        <tr><td>Embed</td><td>Platform hosting</td><td>Terms of service</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h4>✨ DID-to-DID: The Sovereign Solution</h4>
+      <p>When both creator and recipient have WINDI Wallets with DIDs (Ed25519), the delivery is direct:</p>
+      <div class="flow">Creator triggers .jmpg
+    ↓
+Router reads manifest → finds recipient DID
+    ↓
+Router resolves DID → gets DID Document
+    ↓
+DID Document contains service endpoint (#inbox)
+    ↓
+Router sends encrypted trigger DIRECTLY to Wallet inbox
+    ↓
+Wallet receives → notifies recipient → plays .jmpg
+    ↓
+Ledger records: DELIVERY_SENT (channel: "did_direct")</div>
+    </div>
+
+    <div class="comparison">
+      <div class="comparison-item">
+        <h5>📧 Email</h5>
+        <p>"I trust Google to deliver my message"</p>
+      </div>
+      <div class="comparison-item">
+        <h5>💬 WhatsApp</h5>
+        <p>"I trust Meta not to block my content"</p>
+      </div>
+      <div class="comparison-item sovereign">
+        <h5>🔗 DID-to-DID</h5>
+        <p>"My key speaks directly to your key"</p>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <h4>🔐 Native End-to-End Encryption</h4>
+      <p>With Ed25519 on both sides, the trigger is encrypted using X25519 Diffie-Hellman key exchange. The Router delivers an encrypted package that <strong>only the recipient Wallet can open</strong>. This is E2E encryption without a central server — something even Signal cannot achieve without its servers.</p>
+      <pre>{
+  "encryption": {
+    "method": "X25519-XSalsa20-Poly1305",
+    "sender_did": "did:windi:creator_public_key",
+    "ephemeral_key": "hex (one-time key for this delivery)"
+  }
+}</pre>
+    </div>
+
+    <div class="card">
+      <h4>📈 The Network Effect</h4>
+      <p>Each Wallet installed creates a <strong>free, private delivery channel</strong>. The flywheel:</p>
+      <div class="flow">More Wallets → more DID-to-DID deliveries → less API costs
+           → better privacy → more trust → more Wallets</div>
+      <p style="margin-top: 16px; color: var(--green);">The Wallet transforms from "feature" to <strong>critical network infrastructure</strong>.</p>
+    </div>
+
+    <div class="card">
+      <h4>🎯 Channel Selection Logic</h4>
+      <pre>def select_channel(allowed, contact, engagement_history):
+    # DID Direct is ALWAYS preferred when available
+    if contact.has_wallet and contact.did_service_endpoint:
+        return "did_direct"  # sovereign channel first
+
+    # Fallback to traditional channels
+    for preferred in contact.channel_preferences:
+        if preferred in allowed:
+            return preferred
+
+    return None</pre>
+    </div>
+
+    <div class="card">
+      <h4>📄 DID Document with Inbox Service</h4>
+      <pre>{
+  "id": "did:windi:recipient_public_key",
+  "verificationMethod": [{
+    "id": "did:windi:recipient_public_key#key-1",
+    "type": "Ed25519VerificationKey2020",
+    "publicKeyMultibase": "z6Mk..."
+  }],
+  "service": [{
+    "id": "did:windi:recipient_public_key#inbox",
+    "type": "WINDIInbox",
+    "serviceEndpoint": "https://wallet.windi-domain.com/inbox/recipient_did"
+  }]
+}</pre>
+    </div>
+  </section>
+
+  <!-- PART 1 -->
+  <section id="part1" class="section">
+    <div class="section-header">
+      <span class="section-num">PART 1</span>
+      <h2 class="section-title">B.3 Closure Checklist</h2>
+    </div>
+
+    <div class="card">
+      <h4>📦 Binary Trigger: Complete .jmpg Package</h4>
+      <p>Before transition to F.1, every component must be validated:</p>
+      <table>
+        <tr><th>Component</th><th>Status</th><th>Validation</th></tr>
+        <tr><td>Video payload (H.264/VP9)</td><td class="status-pending">☐</td><td>Binary integrity check</td></tr>
+        <tr><td>Manifest JSON (embedded)</td><td class="status-pending">☐</td><td>Schema validation</td></tr>
+        <tr><td>Onboard layer (optional)</td><td class="status-pending">☐</td><td>Duration ≤ 5s, skip-after-first</td></tr>
+        <tr><td>Thumbnail (poster frame)</td><td class="status-pending">☐</td><td>1280×720 minimum</td></tr>
+        <tr><td>DID signature (Ed25519)</td><td class="status-pending">☐</td><td>Creator DID signs manifest hash</td></tr>
+        <tr><td>Seal hash (SHA-256)</td><td class="status-pending">☐</td><td>Covers entire binary package</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h4>📜 Manifest Schema (Embedded in .jmpg)</h4>
+      <pre>{
+  "$schema": "windi-manifest-v1",
+  "version": "1.0.0",
+  "jmpg_id": "jmpg_UUIDv7",
+  "created_at": "ISO8601",
+  "creator": {
+    "did": "did:windi:Ed25519PublicKey",
+    "display_name": "string",
+    "tier": "FREE | MED | HIGH"
+  },
+  "content": {
+    "title": "string (max 120 chars)",
+    "description": "string (max 500 chars)",
+    "language": "ISO639-1",
+    "duration_ms": "integer",
+    "has_onboard": "boolean",
+    "vertical": "string (category tag)"
+  },
+  "distribution": {
+    "channels_allowed": ["did_direct", "whatsapp", "email", "sms", "pott", "embed", "direct"],
+    "max_recipients_per_trigger": "integer | null",
+    "frequency_cap": {
+      "per_recipient": "integer",
+      "period_hours": "integer"
+    },
+    "geo_restrict": ["ISO3166-1 codes"],
+    "timezone_preference": "IANA timezone | recipient_local",
+    "expiry": "ISO8601 | null"
+  },
+  "playbook_ref": "playbook_UUIDv7 | null",
+  "seal": {
+    "algorithm": "SHA-256",
+    "hash": "hex string",
+    "signed_by": "did:windi:...",
+    "signature": "Ed25519 signature hex",
+    "sealed_at": "ISO8601"
+  }
+}</pre>
+    </div>
+
+    <div class="card">
+      <h4>📋 Ledger Events for B.3 SEAL</h4>
+      <div class="lifecycle">
+        <span class="lifecycle-step">JMPG_CREATED</span>
+        <span class="lifecycle-arrow">→</span>
+        <span class="lifecycle-step">JMPG_MANIFEST_SET</span>
+        <span class="lifecycle-arrow">→</span>
+        <span class="lifecycle-step">JMPG_SEALED</span>
+        <span class="lifecycle-arrow">→</span>
+        <span class="lifecycle-step">JMPG_VAULT_STORED</span>
+      </div>
+      <p style="margin-top: 16px;"><strong>B.3 SEAL Criteria:</strong> All 4 events in Ledger + seal_hash matches recalculated = <span style="color: var(--green);">B.3 SEALED ✓</span></p>
+    </div>
+  </section>
+
+  <!-- PART 2 -->
+  <section id="part2" class="section">
+    <div class="section-header">
+      <span class="section-num">PART 2</span>
+      <h2 class="section-title">Delivery Plan Contract</h2>
+    </div>
+
+    <div class="card">
+      <h4>🌉 The Bridge Object</h4>
+      <p>The Delivery Plan transforms a sealed .jmpg + Playbook into actionable delivery instructions. It's the output of the Router and input of the execution layer.</p>
+    </div>
+
+    <div class="card">
+      <h4>📄 Delivery Plan Schema</h4>
+      <pre>{
+  "$schema": "windi-delivery-plan-v1",
+  "plan_id": "plan_UUIDv7",
+  "created_at": "ISO8601",
+  "jmpg_id": "jmpg_UUIDv7",
+  "trigger_type": "manual | scheduled | event",
+  "triggered_by": "did:windi:...",
+  "playbook_id": "playbook_UUIDv7",
+  "total_recipients": "integer",
+  "deliveries": [{
+    "delivery_id": "del_UUIDv7",
+    "recipient": {
+      "did": "did:windi:... | null",
+      "contact_ref": "contact_UUIDv7"
+    },
+    "channel": "did_direct | whatsapp | email | sms | pott | embed | direct",
+    "channel_address": "encrypted_string",
+    "scheduled_at": "ISO8601",
+    "priority": "high | normal | low",
+    "reason": {
+      "channel_selected_because": "string",
+      "time_selected_because": "string"
+    },
+    "status": "pending | sent | delivered | opened | skipped | failed",
+    "skip_reason": "frequency_cap | geo_block | channel_unavailable | opt_out | null"
+  }],
+  "plan_seal": {
+    "algorithm": "SHA-256",
+    "hash": "hex",
+    "created_at": "ISO8601"
+  }
+}</pre>
+    </div>
+
+    <div class="highlight">
+      <h4>🎯 Design Principles</h4>
+      <ul style="margin-left: 20px; color: var(--dim);">
+        <li><code>reason</code> — every routing decision is explainable and auditable</li>
+        <li><code>skip_reason</code> — skipped deliveries are documented, not silent</li>
+        <li><code>channel_address</code> — encrypted at rest; purged after execution</li>
+        <li><code>plan_seal</code> — the plan itself is sealed for Ledger integrity</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h4>📊 Delivery Plan Lifecycle</h4>
+      <div class="lifecycle">
+        <span class="lifecycle-step">PLAN_CREATED</span>
+        <span class="lifecycle-arrow">→</span>
+        <span class="lifecycle-step">SCHEDULED</span>
+        <span class="lifecycle-arrow">→</span>
+        <span class="lifecycle-step">SENT</span>
+        <span class="lifecycle-arrow">→</span>
+        <span class="lifecycle-step">DELIVERED</span>
+        <span class="lifecycle-arrow">→</span>
+        <span class="lifecycle-step">OPENED</span>
+      </div>
+      <div class="lifecycle" style="margin-top: 8px;">
+        <span style="color: var(--dimmer);">alt:</span>
+        <span class="lifecycle-step" style="background: var(--red)15; border-color: var(--red);">SKIPPED</span>
+        <span class="lifecycle-step" style="background: var(--red)15; border-color: var(--red);">FAILED</span>
+        <span class="lifecycle-arrow">→</span>
+        <span class="lifecycle-step">PLAN_COMPLETED</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- PART 3 -->
+  <section id="part3" class="section">
+    <div class="section-header">
+      <span class="section-num">PART 3</span>
+      <h2 class="section-title">F.1 Minimal Router Engine</h2>
+    </div>
+
+    <div class="card">
+      <h4>🏗️ Architecture Overview</h4>
+      <div class="flow">                ┌─────────────────────┐
+                │   ROUTER ENGINE      │
+                │      :8112           │
+                │                      │
+.jmpg manifest ─▶│  1. Read Manifest    │
+                │  2. Load Playbook    │
+Playbook ───────▶│  3. Apply Rules      │
+                │  4. Generate Plan    │
+Metrics Brain ──▶│  5. Seal Plan        │
+ (future F.5)   │  6. Write Ledger     │
+                │  7. Execute/Queue    │
+                └──────────┬───────────┘
+                           │
+                ┌──────────▼───────────┐
+                │     LEDGER :8101      │
+                └──────────────────────┘</div>
+    </div>
+
+    <div class="card">
+      <h4>🔌 API Endpoints</h4>
+      <table>
+        <tr><th>Method</th><th>Endpoint</th><th>Description</th></tr>
+        <tr><td>POST</td><td><code>/api/v1/router/plan</code></td><td>Create delivery plan</td></tr>
+        <tr><td>GET</td><td><code>/api/v1/router/plan/:plan_id</code></td><td>Get plan status</td></tr>
+        <tr><td>POST</td><td><code>/api/v1/router/execute</code></td><td>Execute pending plan</td></tr>
+        <tr><td>POST</td><td><code>/api/v1/router/cancel</code></td><td>Cancel pending deliveries</td></tr>
+        <tr><td>GET</td><td><code>/api/v1/router/health</code></td><td>Service health</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h4>⚙️ Channel Configuration</h4>
+      <pre>channels:
+  did_direct:
+    adapter: "windi.channels.did_direct"
+    rate_limit_per_minute: 1000
+    priority: 0  # highest priority
+  whatsapp:
+    adapter: "windi.channels.whatsapp"
+    rate_limit_per_minute: 30
+  email:
+    adapter: "windi.channels.email"
+    rate_limit_per_minute: 100
+  sms:
+    adapter: "windi.channels.sms"
+    rate_limit_per_minute: 20
+  pott:
+    adapter: "windi.channels.pott"
+    rate_limit_per_minute: 500</pre>
+    </div>
+
+    <div class="card">
+      <h4>🔄 Migration Path: v1.0 → v2.0</h4>
+      <table>
+        <tr><th>v1.0 (Minimal)</th><th>v2.0 (With Metrics Brain)</th></tr>
+        <tr><td>Static channel selection</td><td>Weighted scoring based on engagement</td></tr>
+        <tr><td>Timezone scheduling (09-21h)</td><td>Per-recipient optimal windows</td></tr>
+        <tr><td>Frequency cap enforcement</td><td>A/B delivery testing</td></tr>
+        <tr><td>Full Ledger integration</td><td>Performance-based priority</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- PRINCIPLES -->
+  <section id="principles" class="section">
+    <div class="section-header">
+      <span class="section-num">§</span>
+      <h2 class="section-title">Constitutional Principles</h2>
+    </div>
+
+    <div class="principle">
+      <p>O algoritmo executa, não decide.</p>
+      <p>O criador configura, não adivinha.</p>
+      <p>O Ledger registra, não esconde.</p>
+      <p>O humano mantém soberania.</p>
+      <p class="new">A Wallet entrega, sem intermediário.</p>
+      <div class="source">— Princípio Constitucional dos Algoritmos WINDI</div>
+    </div>
+  </section>
+
+  <!-- TIMELINE -->
+  <section id="timeline" class="section">
+    <div class="section-header">
+      <span class="section-num">→</span>
+      <h2 class="section-title">Implementation Timeline</h2>
+    </div>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <span class="timeline-week">Week 1</span>
+        <span class="timeline-content">B.3 SEAL validation + Manifest schema finalization</span>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-week">Week 2</span>
+        <span class="timeline-content">Playbook data model + contact store (SQLite or :8114)</span>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-week">Week 3</span>
+        <span class="timeline-content">Router core — plan generation + channel selection v1</span>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-week">Week 4</span>
+        <span class="timeline-content">Ledger event integration + plan sealing</span>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-week">Week 5</span>
+        <span class="timeline-content">Channel adapters (DID-direct first, then email, WhatsApp)</span>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-week">Week 6</span>
+        <span class="timeline-content">API endpoints + health check + smoke tests → <strong style="color: var(--green);">F.1 SEALED</strong></span>
+      </div>
+    </div>
+  </section>
+
+  <footer style="text-align: center; padding: 48px 0; border-top: 1px solid var(--border); margin-top: 48px; color: var(--dimmer); font-size: 13px;">
+    <p>WINDI Publishing House — Sovereign Architecture Division</p>
+    <p style="margin-top: 8px;">"AI processes. Human decides. WINDI guarantees."</p>
+  </footer>
+</div>
+
+<script>
+function setTheme(theme) {
+  document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  if (theme === 'klar') {
+    document.body.classList.add('klar');
+  } else {
+    document.body.classList.remove('klar');
+  }
+}
+</script>
+</body>
+</html>

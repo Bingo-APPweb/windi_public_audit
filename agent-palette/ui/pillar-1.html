@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>JMPG Sovereign Spec — Pillar 1: The Sovereign Spec</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐉</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:#F5F0E0; --card:#FDFBF5; --hover:#EDE8D8; --border:#DDD6C2;
+  --gold:#8B6914; --text:#2C2924; --dim:#6B6560; --success:#4A7C59;
+  --warning:#B8860B; --danger:#A94442; --sealed:#1B4332; --forensic:#2A6B4A;
+  --blue:#5B8DEF; --purple:#7C5BEF; --orange:#EF8B5B;
+}
+[data-theme="noir"] {
+  --bg:#0E0E14; --card:#16161F; --hover:#1C1C28; --border:#26263A;
+  --gold:#D4A843; --text:#E2E2EA; --dim:#7A7A96; --success:#5A9C69;
+  --warning:#D4A843; --danger:#CF6679; --sealed:#1B4332; --forensic:#2A6B4A;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Bricolage Grotesque',sans-serif; background:var(--bg); color:var(--text); line-height:1.7; }
+code, .mono { font-family:'JetBrains Mono',monospace; font-size:0.9em; }
+pre { background:var(--hover); border:1px solid var(--border); border-radius:8px; padding:16px; overflow-x:auto; font-size:11px; line-height:1.6; }
+.header { background:var(--card); border-bottom:1px solid var(--border); padding:20px 32px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; position:sticky; top:0; z-index:100; }
+.header h1 { font-size:18px; font-weight:800; color:var(--gold); flex:1; }
+.header .meta { font-size:10px; color:var(--dim); display:flex; gap:12px; flex-wrap:wrap; }
+.header .meta span { background:var(--hover); padding:3px 8px; border-radius:4px; border:1px solid var(--border); }
+.theme-toggle { background:none; border:none; font-size:16px; cursor:pointer; color:var(--dim); }
+.nav { display:flex; gap:4px; padding:12px 32px; flex-wrap:wrap; border-bottom:1px solid var(--border); background:var(--card); overflow-x:auto; }
+.nav button { padding:8px 14px; border-radius:8px; font-size:11px; font-weight:600; cursor:pointer; background:var(--card); border:1px solid var(--border); color:var(--dim); font-family:inherit; white-space:nowrap; }
+.nav button.active { background:color-mix(in srgb, var(--gold) 12%, transparent); border-color:var(--gold); color:var(--gold); }
+.content { padding:24px 32px 60px; max-width:1000px; margin:0 auto; }
+.section { display:none; }
+.section.active { display:block; }
+.card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:24px; margin-bottom:20px; }
+.card h2 { font-size:18px; font-weight:800; margin-bottom:12px; color:var(--gold); display:flex; align-items:center; gap:8px; }
+.card h3 { font-size:14px; font-weight:700; margin:20px 0 10px; color:var(--text); border-bottom:1px solid var(--border); padding-bottom:6px; }
+.card h4 { font-size:12px; font-weight:700; margin:16px 0 8px; color:var(--dim); }
+.card p { font-size:13px; margin-bottom:12px; }
+.card ul, .card ol { font-size:13px; padding-left:20px; margin-bottom:12px; }
+.card li { margin-bottom:6px; }
+.sealed-box { background:color-mix(in srgb, var(--sealed) 94%, white); border:1.5px solid var(--forensic); border-radius:12px; padding:18px; color:#E8F5E9; margin:16px 0; }
+.sealed-box h4 { color:#81C784; margin-bottom:6px; font-size:12px; }
+.sealed-box p { color:#A5D6A7; font-size:12px; margin:0; }
+.sealed-box .mono { color:#81C784; }
+.principle-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:12px; margin:16px 0; }
+.principle-card { background:var(--hover); border:1px solid var(--border); border-radius:10px; padding:14px; }
+.principle-card .num { font-size:11px; font-weight:800; color:var(--gold); margin-bottom:4px; }
+.principle-card .title { font-size:13px; font-weight:700; margin-bottom:6px; }
+.principle-card .desc { font-size:11px; color:var(--dim); line-height:1.5; }
+.spec-table { width:100%; border-collapse:collapse; margin:16px 0; font-size:11px; }
+.spec-table th { background:var(--hover); padding:8px 10px; text-align:left; font-weight:700; border-bottom:2px solid var(--border); color:var(--dim); text-transform:uppercase; font-size:10px; }
+.spec-table td { padding:8px 10px; border-bottom:1px solid var(--border); vertical-align:top; }
+.spec-table tr:hover td { background:var(--hover); }
+.spec-table .mono { font-size:10px; }
+.spec-table .gold { color:var(--gold); font-weight:600; }
+.spec-table .success { color:var(--success); }
+.spec-table .highlight { background:color-mix(in srgb, var(--gold) 6%, transparent); }
+.stage-list { display:flex; flex-direction:column; gap:8px; margin:16px 0; }
+.stage-item { display:flex; gap:12px; padding:12px 14px; background:var(--hover); border-radius:10px; border:1px solid var(--border); }
+.stage-item .num { width:28px; height:28px; border-radius:6px; background:var(--gold); color:#fff; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; flex-shrink:0; }
+.stage-item .content h4 { font-size:12px; font-weight:700; margin:0 0 4px; }
+.stage-item .content p { font-size:11px; color:var(--dim); margin:0; line-height:1.5; }
+.state-machine { display:flex; flex-wrap:wrap; gap:8px; margin:16px 0; }
+.state-card { flex:1 1 180px; padding:14px; background:var(--hover); border-radius:10px; border:1px solid var(--border); text-align:center; }
+.state-card .state-num { font-size:18px; font-weight:800; color:var(--gold); }
+.state-card .state-name { font-size:11px; font-weight:700; margin:4px 0; }
+.state-card .state-desc { font-size:10px; color:var(--dim); }
+.timeline { display:flex; flex-direction:column; gap:0; margin:16px 0; }
+.timeline-item { display:flex; gap:16px; position:relative; padding:16px 0; }
+.timeline-item::before { content:''; position:absolute; left:15px; top:40px; bottom:0; width:2px; background:var(--border); }
+.timeline-item:last-child::before { display:none; }
+.timeline-item .phase { width:32px; height:32px; border-radius:50%; background:var(--gold); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; flex-shrink:0; z-index:1; }
+.timeline-item .details { flex:1; }
+.timeline-item .details h4 { font-size:13px; font-weight:700; margin-bottom:4px; }
+.timeline-item .details p { font-size:11px; color:var(--dim); margin:0; }
+.footer { text-align:center; padding:24px 32px; border-top:1px solid var(--border); font-size:11px; color:var(--dim); }
+.footer a { color:var(--gold); text-decoration:none; }
+.badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:9px; font-weight:700; }
+.badge-gold { background:color-mix(in srgb, var(--gold) 15%, transparent); color:var(--gold); border:1px solid color-mix(in srgb, var(--gold) 30%, transparent); }
+.badge-sealed { background:var(--sealed); color:#81C784; border:1px solid var(--forensic); }
+@media print { .header, .nav { position:static; } .section { display:block!important; page-break-inside:avoid; } }
+</style>
+</head>
+<body>
+<header class="header">
+  <h1>📦 PILLAR 1 — The Sovereign Spec</h1>
+  <div class="meta">
+    <span>JMPG-SPEC-P1-v1.0</span>
+    <span class="badge badge-sealed">🔐 CONFIDENTIAL</span>
+    <span>Feb 2026</span>
+  </div>
+  <button class="theme-toggle" onclick="toggleTheme()">☀</button>
+</header>
+<nav class="nav">
+  <button class="active" onclick="showSection('abstract',this)">1. Abstract</button>
+  <button onclick="showSection('principles',this)">2. Principles</button>
+  <button onclick="showSection('binary',this)">3. Binary Structure</button>
+  <button onclick="showSection('trigger',this)">4. JMPG Trigger</button>
+  <button onclick="showSection('player',this)">5. Player</button>
+  <button onclick="showSection('security',this)">6. Security</button>
+  <button onclick="showSection('codec',this)">7. Codec Strategy</button>
+  <button onclick="showSection('distribution',this)">8. Distribution</button>
+  <button onclick="showSection('discovery',this)">9. Discovery</button>
+  <button onclick="showSection('integration',this)">10. Integration</button>
+  <button onclick="showSection('roadmap',this)">11. Roadmap</button>
+</nav>
+<div class="content">
+
+<!-- §1 ABSTRACT -->
+<div id="abstract" class="section active">
+  <div class="card">
+    <h2>📋 1. Abstract</h2>
+    <p>This document specifies the <strong>.jmpg Continuum protocol</strong>: a portable, self-contained binary format for sovereign video distribution. The .jmpg object encapsulates:</p>
+    <ul>
+      <li>A <strong>playable onboard segment</strong> (30 seconds of video)</li>
+      <li>A <strong>cryptographically signed streaming manifest</strong></li>
+    </ul>
+    <p>Within a single file. This design ensures:</p>
+    <ul>
+      <li>Instant playback without network dependency</li>
+      <li>Seamless transition to full-length streaming from the creator's sovereign Vault</li>
+      <li>Verifiable content integrity via SHA-256 sealing</li>
+      <li>Distribution through any channel capable of transmitting a binary file</li>
+    </ul>
+    <div class="sealed-box">
+      <h4>🐉 Core Definition</h4>
+      <p>A .jmpg is not a file format. It is a <strong>sovereignty assertion</strong> wrapped in a playable container.</p>
+    </div>
+    <p>The protocol is designed to be <strong>codec-agnostic</strong>, <strong>transport-agnostic</strong>, and <strong>platform-agnostic</strong>, operating on the principle that video distribution should not require permission from any intermediary.</p>
+  </div>
+</div>
+
+<!-- §2 PRINCIPLES -->
+<div id="principles" class="section">
+  <div class="card">
+    <h2>⚖️ 2. Design Principles</h2>
+    <p>The .jmpg protocol is governed by <strong>seven invariant design principles</strong> that cannot be violated by any implementation.</p>
+    <div class="principle-grid">
+      <div class="principle-card">
+        <div class="num">P1 — OFFLINE-FIRST</div>
+        <div class="title">The File IS the Experience</div>
+        <div class="desc">The onboard segment must be fully playable without any network connection. The file itself is the experience.</div>
+      </div>
+      <div class="principle-card">
+        <div class="num">P2 — INSTANT START</div>
+        <div class="title">&lt; 200ms to Play</div>
+        <div class="desc">Playback must begin within 200ms of file access. No buffering wheel. No loading screen. No negotiation.</div>
+      </div>
+      <div class="principle-card">
+        <div class="num">P3 — CREATOR SOVEREIGNTY</div>
+        <div class="title">Vault-Only Streaming</div>
+        <div class="desc">The streaming manifest points exclusively to the creator's Vault. No intermediary may intercept without explicit cryptographic authorization.</div>
+      </div>
+      <div class="principle-card">
+        <div class="num">P4 — VERIFIABLE INTEGRITY</div>
+        <div class="title">SHA-256 + Ledger</div>
+        <div class="desc">Every .jmpg includes a SHA-256 seal of both onboard and manifest, registered in the WINDI Forensic Ledger. Any tampering is detectable.</div>
+      </div>
+      <div class="principle-card">
+        <div class="num">P5 — TRANSPORT AGNOSTICISM</div>
+        <div class="title">Any Binary Channel</div>
+        <div class="desc">Transmissible via WhatsApp, Telegram, email, HTTP, QR code, Bluetooth, NFC, USB, or any medium that can carry a binary payload.</div>
+      </div>
+      <div class="principle-card">
+        <div class="num">P6 — CODEC FLEXIBILITY</div>
+        <div class="title">Negotiate, Don't Mandate</div>
+        <div class="desc">Supports any video codec (H.264 baseline for compatibility, H.265/AV1 for efficiency). The manifest declares; the player negotiates.</div>
+      </div>
+      <div class="principle-card">
+        <div class="num">P7 — PROGRESSIVE SOVEREIGNTY</div>
+        <div class="title">Tiered Access</div>
+        <div class="desc">Supports FREE onboard / subscriber-only stream without platform authentication. Tier detection embedded in manifest, resolved by Vault.</div>
+      </div>
+    </div>
+    <div class="sealed-box">
+      <h4>💡 The Template Principle</h4>
+      <p class="mono">"The template never decides the level. The API decides. The template merely manifests."</p>
+    </div>
+  </div>
+</div>
+
+<!-- §3 BINARY STRUCTURE -->
+<div id="binary" class="section">
+  <div class="card">
+    <h2>🔧 3. Binary Structure of a .jmpg Object</h2>
+    <p>A .jmpg file is a structured binary container composed of <strong>four sequential regions</strong>. Total object size for a typical 30-second onboard at 720p with H.264 encoding: <strong>3–8 MB</strong>.</p>
+    
+    <h3>3.1 Container Layout</h3>
+    <table class="spec-table">
+      <thead><tr><th>Field</th><th>Offset</th><th>Length</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr class="highlight"><td class="gold">MAGIC</td><td class="mono">0x00</td><td class="mono">4 bytes</td><td>Magic number: <code>0x4A4D5047</code> (ASCII "JMPG")</td></tr>
+        <tr><td class="gold">VERSION</td><td class="mono">0x04</td><td class="mono">2 bytes</td><td>Protocol version (major.minor, uint16)</td></tr>
+        <tr><td class="gold">FLAGS</td><td class="mono">0x06</td><td class="mono">2 bytes</td><td>Bitfield: encryption, tier, DID-lock</td></tr>
+        <tr><td class="gold">HEADER_LEN</td><td class="mono">0x08</td><td class="mono">4 bytes</td><td>Length of header section in bytes</td></tr>
+        <tr><td class="gold">HEADER</td><td class="mono">0x0C</td><td class="mono">variable</td><td>JSON metadata (see §3.2)</td></tr>
+        <tr><td class="gold">ONBOARD_LEN</td><td class="mono">var</td><td class="mono">4 bytes</td><td>Length of onboard video in bytes</td></tr>
+        <tr class="highlight"><td class="gold">ONBOARD</td><td class="mono">var+4</td><td class="mono">variable</td><td>Playable video segment (30s, muxed)</td></tr>
+        <tr><td class="gold">MANIFEST_LEN</td><td class="mono">var</td><td class="mono">4 bytes</td><td>Length of manifest in bytes</td></tr>
+        <tr><td class="gold">MANIFEST</td><td class="mono">var+4</td><td class="mono">variable</td><td>Signed streaming manifest (see §3.3)</td></tr>
+        <tr class="highlight"><td class="gold">SEAL</td><td class="mono">EOF-64</td><td class="mono">64 bytes</td><td>SHA-256 hash of [HEADER+ONBOARD+MANIFEST]</td></tr>
+      </tbody>
+    </table>
+
+    <h3>3.2 Header Structure (JSON)</h3>
+<pre>{
+  "jmpg_version": "1.0.0",
+  "content_id": "uuid-v7-timestamp-based",
+  "created_at": "2026-02-27T14:30:00Z",
+  "creator": {
+    "did": "did:windi:ed25519:abc123...",
+    "display_name": "Chef Maria Lisboa",
+    "vault_url": "https://maria.windi-media.com"
+  },
+  "content": {
+    "title": "Bacalhau à Brás — A Receita da Minha Avó",
+    "description": "Traditional Portuguese recipe...",
+    "language": "pt",
+    "duration_total": 1847,
+    "duration_onboard": 30,
+    "tags": ["cooking", "portuguese", "traditional"]
+  },
+  "onboard": {
+    "codec": "h264",
+    "profile": "baseline",
+    "resolution": "1280x720",
+    "bitrate_kbps": 1200,
+    "audio_codec": "aac",
+    "audio_bitrate_kbps": 128,
+    "container": "mp4"
+  },
+  "tier": {
+    "onboard_access": "FREE",
+    "stream_access": "SUBSCRIBER",
+    "preview_seconds": 30
+  },
+  "governance": {
+    "ledger_ref": "WINDI-L-2026-00847",
+    "seal_algorithm": "SHA-256",
+    "sge_risk_level": "R0",
+    "eu_ai_act_compliant": true
+  }
+}</pre>
+    <p style="font-size:11px; color:var(--dim);">Required fields: <code>jmpg_version</code>, <code>content_id</code>, <code>creator.did</code>. All others optional with graceful degradation.</p>
+
+    <h3>3.3 Streaming Manifest</h3>
+<pre>{
+  "manifest_version": "1.0.0",
+  "stream_type": "HLS",
+  "vault_endpoint": "https://maria.windi-media.com/stream/",
+  "content_path": "/v/bacalhau-avoa/master.m3u8",
+  "auth_method": "DID_CHALLENGE",
+  "adaptive_profiles": [
+    { "resolution": "1920x1080", "bitrate_kbps": 4500, "codec": "h265" },
+    { "resolution": "1280x720",  "bitrate_kbps": 2000, "codec": "h264" },
+    { "resolution": "854x480",   "bitrate_kbps": 800,  "codec": "h264" },
+    { "resolution": "640x360",   "bitrate_kbps": 400,  "codec": "h264" }
+  ],
+  "continuity": {
+    "onboard_end_pts": 30000,
+    "stream_start_pts": 30000,
+    "crossfade_ms": 500
+  },
+  "fallback": {
+    "offline_message": "Full video available when connected.",
+    "retry_interval_ms": 5000,
+    "max_retries": 12
+  },
+  "signature": "ed25519:<base64-signature-of-manifest-body>"
+}</pre>
+    <p style="font-size:11px; color:var(--dim);">The <code>continuity</code> object aligns onboard end with stream start for seamless crossfade.</p>
+  </div>
+</div>
+
+<!-- §4 JMPG TRIGGER -->
+<div id="trigger" class="section">
+  <div class="card">
+    <h2>⚙️ 4. The JMPG Trigger: Packaging Pipeline</h2>
+    <p>The JMPG Trigger transforms a raw video upload into a distributable .jmpg object. It runs <strong>entirely locally</strong> on the creator's Vault, consuming <strong>zero external API calls</strong> and incurring <strong>zero variable cost</strong>.</p>
+    
+    <h3>4.1 Pipeline Stages</h3>
+    <div class="stage-list">
+      <div class="stage-item">
+        <div class="num">1</div>
+        <div class="content">
+          <h4>INGEST</h4>
+          <p>Creator uploads video (MP4, MOV, MKV, WebM). Trigger validates file, extracts metadata (duration, resolution, codec), creates content_id (UUIDv7).</p>
+        </div>
+      </div>
+      <div class="stage-item">
+        <div class="num">2</div>
+        <div class="content">
+          <h4>TRANSCODE ONBOARD</h4>
+          <p>ffmpeg extracts first 30s → H.264 Baseline 720p/1200kbps + AAC 128kbps. MP4 with moov atom at front (faststart) for instant playback.</p>
+        </div>
+      </div>
+      <div class="stage-item">
+        <div class="num">3</div>
+        <div class="content">
+          <h4>TRANSCODE STREAM</h4>
+          <p>ffmpeg generates adaptive HLS: 1080p/4500kbps (H.265), 720p/2000kbps, 480p/800kbps, 360p/400kbps. 6-second segments, GZIP manifests.</p>
+        </div>
+      </div>
+      <div class="stage-item">
+        <div class="num">4</div>
+        <div class="content">
+          <h4>GENERATE MANIFEST</h4>
+          <p>Construct streaming manifest JSON with vault_endpoint, content_path, adaptive_profiles, continuity timing. Sign with creator's Ed25519 key.</p>
+        </div>
+      </div>
+      <div class="stage-item">
+        <div class="num">5</div>
+        <div class="content">
+          <h4>ASSEMBLE BINARY</h4>
+          <p>Concatenate MAGIC + VERSION + FLAGS + HEADER + ONBOARD + MANIFEST. Compute SHA-256 seal over combined payload. Append as final 64 bytes.</p>
+        </div>
+      </div>
+      <div class="stage-item">
+        <div class="num">6</div>
+        <div class="content">
+          <h4>REGISTER IN LEDGER</h4>
+          <p>Write content_id, seal hash, creator DID, timestamp to WINDI Forensic Ledger (SQLite + SHA-256 chain). Immutable record of authorship.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3>4.2 Processing Performance</h3>
+    <p>All processing runs on a standard VPS (2 vCPU, 4GB RAM — the €4/month Strato instance). Benchmarks for 30-minute source video:</p>
+    <table class="spec-table">
+      <thead><tr><th>Stage</th><th>Time (approx.)</th></tr></thead>
+      <tbody>
+        <tr><td>Ingest + validate</td><td class="mono">&lt; 2 seconds</td></tr>
+        <tr><td>Transcode onboard (30s, 720p)</td><td class="mono">8–15 seconds</td></tr>
+        <tr><td>Transcode HLS (4 profiles, 30min)</td><td class="mono">4–8 minutes</td></tr>
+        <tr><td>Generate manifest + sign</td><td class="mono">&lt; 1 second</td></tr>
+        <tr><td>Assemble .jmpg binary</td><td class="mono">&lt; 1 second</td></tr>
+        <tr><td>Ledger registration</td><td class="mono">&lt; 50ms</td></tr>
+        <tr class="highlight"><td class="gold">Total pipeline</td><td class="mono gold">5–10 minutes</td></tr>
+      </tbody>
+    </table>
+    <div class="sealed-box">
+      <h4>💡 Cost Model Inversion</h4>
+      <p>The .jmpg, once created, can be sent to millions of recipients with <strong>no additional server processing</strong>. Distribution cost = €0.</p>
+    </div>
+  </div>
+</div>
+
+<!-- §5 PLAYER -->
+<div id="player" class="section">
+  <div class="card">
+    <h2>▶️ 5. Player Architecture</h2>
+    <p>The .jmpg player is a lightweight JavaScript module (<strong>&lt; 50KB gzipped</strong>) implementing the following playback state machine.</p>
+    
+    <h3>5.1 Playback State Machine</h3>
+    <div class="state-machine">
+      <div class="state-card">
+        <div class="state-num">S0</div>
+        <div class="state-name">INIT</div>
+        <div class="state-desc">Receive binary, parse MAGIC, validate version, extract HEADER</div>
+      </div>
+      <div class="state-card">
+        <div class="state-num">S1</div>
+        <div class="state-name">ONBOARD</div>
+        <div class="state-desc">Create Blob URL from ONBOARD bytes, play via &lt;video&gt;. &lt;200ms. No network.</div>
+      </div>
+      <div class="state-card">
+        <div class="state-num">S2</div>
+        <div class="state-name">HANDOFF</div>
+        <div class="state-desc">At (end−500ms), fetch HLS manifest from Vault. DID challenge if required.</div>
+      </div>
+      <div class="state-card">
+        <div class="state-num">S3</div>
+        <div class="state-name">STREAMING</div>
+        <div class="state-desc">Crossfade to HLS stream. Adaptive bitrate. Seamless continuation.</div>
+      </div>
+      <div class="state-card">
+        <div class="state-num">S4</div>
+        <div class="state-name">GATED</div>
+        <div class="state-desc">No stream access → subscription prompt after onboard. Fair gate.</div>
+      </div>
+      <div class="state-card">
+        <div class="state-num">S5</div>
+        <div class="state-name">OFFLINE</div>
+        <div class="state-desc">No network → show fallback message, retry silently. Never breaks.</div>
+      </div>
+    </div>
+
+    <h3>5.2 Verification Flow</h3>
+    <p>At any point, verify integrity by computing SHA-256 over [HEADER + ONBOARD + MANIFEST] and comparing against SEAL bytes. If registered in Ledger, verification extends to provenance. <strong>Privacy by design</strong>: no personal data from viewer required.</p>
+  </div>
+</div>
+
+<!-- §6 SECURITY -->
+<div id="security" class="section">
+  <div class="card">
+    <h2>🔐 6. Security and Governance</h2>
+    
+    <h3>6.1 Content Integrity</h3>
+    <p>The SHA-256 seal provides <strong>tamper detection at binary level</strong>. If any byte is modified, the seal breaks. The Forensic Ledger provides a second layer: even if an attacker replaces the entire file with a new valid seal, the Ledger retains the original hash.</p>
+
+    <h3>6.2 Identity and Authentication</h3>
+    <ul>
+      <li><strong>Creator identity:</strong> WINDI DID Cycle (Ed25519 + UUIDv7)</li>
+      <li><strong>Manifest signature:</strong> Proves streaming endpoint authorized by creator's private key</li>
+      <li><strong>Viewer authentication:</strong> DID Challenge protocol — Vault issues nonce, viewer signs, Vault verifies</li>
+      <li><strong>No passwords. No cookies. No third-party OAuth.</strong> The DID is the identity.</li>
+    </ul>
+
+    <h3>6.3 Tier Detection and Access Control</h3>
+    <p>The FLAGS bitfield encodes tier information:</p>
+    <table class="spec-table">
+      <thead><tr><th>Bit</th><th>Meaning</th><th>Values</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">Bit 0</td><td>Encryption</td><td>0 = clear, 1 = AES-256-CTR</td></tr>
+        <tr><td class="mono">Bit 1</td><td>DID-lock</td><td>0 = open, 1 = requires DID challenge</td></tr>
+        <tr><td class="mono">Bits 2–3</td><td>Access tier</td><td>00=FREE, 01=SUBSCRIBER, 10=PREMIUM, 11=PRIVATE</td></tr>
+      </tbody>
+    </table>
+    <div class="sealed-box">
+      <h4>💡 Separation of Concerns</h4>
+      <p>The .jmpg contains only the <strong>policy declaration</strong>. The Vault <strong>enforces</strong> it. The template never decides the level — the API decides.</p>
+    </div>
+
+    <h3>6.4 EU AI Act Compliance</h3>
+    <p>Every .jmpg is born with a governance trail:</p>
+    <ul>
+      <li>Header includes SGE risk classification (R0–R5)</li>
+      <li>Explicit <code>eu_ai_act_compliant</code> flag</li>
+      <li>Ledger provides audit trail per Articles 13–15 EU AI Act</li>
+      <li>Human authorship declaration for non-AI content</li>
+    </ul>
+  </div>
+</div>
+
+<!-- §7 CODEC -->
+<div id="codec" class="section">
+  <div class="card">
+    <h2>🎬 7. Codec Strategy and Compatibility</h2>
+    <p>The protocol is codec-agnostic by design but recommends specific profiles for maximum interoperability.</p>
+    
+    <table class="spec-table">
+      <thead><tr><th>Component</th><th>Recommended Codec</th><th>Compatibility</th></tr></thead>
+      <tbody>
+        <tr class="highlight"><td class="gold">Onboard video</td><td>H.264 Baseline L3.1</td><td class="success">99.7% devices since 2012</td></tr>
+        <tr><td class="gold">Onboard audio</td><td>AAC-LC stereo</td><td class="success">Universal browser/mobile</td></tr>
+        <tr><td class="gold">Stream (high)</td><td>H.265 Main / AV1</td><td>Modern devices, 60% saving</td></tr>
+        <tr><td class="gold">Stream (compat)</td><td>H.264 High L4.1</td><td>Fallback for older devices</td></tr>
+        <tr><td class="gold">Stream (low)</td><td>H.264 Baseline</td><td>2G/3G networks, old devices</td></tr>
+        <tr><td class="gold">Container (onboard)</td><td>MP4 (faststart)</td><td class="success">Universal, instant seek</td></tr>
+        <tr><td class="gold">Container (stream)</td><td>HLS (fMP4 segments)</td><td class="success">iOS native, Android, web</td></tr>
+      </tbody>
+    </table>
+    <div class="sealed-box">
+      <h4>📌 Two-Tier Codec Strategy</h4>
+      <p>The <strong>onboard always uses H.264 Baseline</strong> (most conservative) to guarantee playback on any device. The <strong>stream can use efficient codecs</strong> because Vault serves adaptive profiles. Onboard must never fail; stream can optimize.</p>
+    </div>
+  </div>
+</div>
+
+<!-- §8 DISTRIBUTION -->
+<div id="distribution" class="section">
+  <div class="card">
+    <h2>🌐 8. Distribution Mechanics</h2>
+    <p>A .jmpg file (3–8 MB) is within attachment limits of every major messaging platform.</p>
+    
+    <table class="spec-table">
+      <thead><tr><th>Channel</th><th>Max Attachment</th><th>JMPG Compatible</th></tr></thead>
+      <tbody>
+        <tr><td>📱 WhatsApp</td><td class="mono">2 GB</td><td class="success">✅ Full .jmpg as document</td></tr>
+        <tr><td>✈️ Telegram</td><td class="mono">2 GB</td><td class="success">✅ Full .jmpg as file</td></tr>
+        <tr><td>📧 Email (Gmail)</td><td class="mono">25 MB</td><td class="success">✅ Full .jmpg as attachment</td></tr>
+        <tr><td>📧 Email (Outlook)</td><td class="mono">20 MB</td><td class="success">✅ Full .jmpg as attachment</td></tr>
+        <tr><td>📱 QR Code</td><td class="mono">Link only</td><td class="success">✅ Deep link to hosted .jmpg</td></tr>
+        <tr><td>📶 Bluetooth / NFC</td><td class="mono">No limit</td><td class="success">✅ Direct binary transfer</td></tr>
+        <tr><td>🌐 Web embed</td><td class="mono">N/A</td><td class="success">✅ Player loads .jmpg via URL</td></tr>
+        <tr><td>💾 USB / SD card</td><td class="mono">No limit</td><td class="success">✅ Direct file copy</td></tr>
+      </tbody>
+    </table>
+    <div class="sealed-box">
+      <h4>💡 Cost Model Inversion</h4>
+      <p><strong>WINDI pays zero distribution cost.</strong> Messaging platforms deliver the .jmpg at their own expense. Creator's Vault only handles streaming traffic for viewers who progress past onboard.</p>
+    </div>
+  </div>
+</div>
+
+<!-- §9 DISCOVERY -->
+<div id="discovery" class="section">
+  <div class="card">
+    <h2>🔍 9. WINDI.Tube: The Sovereign Discovery Layer</h2>
+    <p>While .jmpg enables sovereign distribution, discovery requires an additional layer.</p>
+
+    <h3>9.1 Architecture Principle</h3>
+    <p>WINDI.Tube does <strong>not</strong> host videos. It does <strong>not</strong> store content. It does <strong>not</strong> control distribution. It indexes .jmpg metadata (title, tags, creator DID, thumbnail, governance classification) and serves as a search interface. The video always lives in the creator's Vault.</p>
+
+    <h3>9.2 Discovery Mechanisms</h3>
+    <ul>
+      <li><strong>Human Curated Feeds (Potts):</strong> Federated groups of creators curate thematic feeds. Discovery driven by human trust, not algorithmic manipulation.</li>
+      <li><strong>Reputation-Based Ranking:</strong> Cryptographic proofs of authorship, cumulative publishing history, peer recommendations, institutional certifications. Reputation accrues over time and cannot be bought.</li>
+      <li><strong>Semantic Search:</strong> Full-text and tag-based search across the index. Runs on metadata only; no content is ever copied.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- §10 INTEGRATION -->
+<div id="integration" class="section">
+  <div class="card">
+    <h2>🔗 10. Integration with WINDI Production Stack</h2>
+    <p>The .jmpg protocol integrates with every major component without architectural changes.</p>
+    
+    <table class="spec-table">
+      <thead><tr><th>Component</th><th>Integration</th></tr></thead>
+      <tbody>
+        <tr><td class="gold">Editor (D1, :8100)</td><td>Upload interface; JMPG Trigger initiated from Editor workflow</td></tr>
+        <tr><td class="gold">Ledger (:8101)</td><td>Receives seal hash + content_id + creator DID for every .jmpg</td></tr>
+        <tr><td class="gold">Export (:8103)</td><td>Generates .jmpg as export format alongside PDF, DOCX</td></tr>
+        <tr><td class="gold">Communiqué (:8105)</td><td>Publishes .jmpg links in Jornal do Futuro articles</td></tr>
+        <tr><td class="gold">Vault (:8106)</td><td>Stores onboard + HLS segments; serves streaming via nginx</td></tr>
+        <tr><td class="gold">Sentinel LAW</td><td>Monitors .jmpg access patterns; 5-tier escalation</td></tr>
+        <tr><td class="gold">SGE Analyzer</td><td>Classifies .jmpg content risk (R0–R5) before Ledger</td></tr>
+        <tr><td class="gold">Orchestrator (:8109)</td><td>Routes prompts to JMPG Trigger via Dragon Router</td></tr>
+        <tr><td class="gold">Palette (UNIFIED)</td><td>Displays .jmpg library, player embed, distribution controls</td></tr>
+        <tr><td class="gold">DID Cycle</td><td>Anchors creator identity (Ed25519 + UUIDv7) for manifest signing</td></tr>
+      </tbody>
+    </table>
+    <div class="sealed-box">
+      <h4>📌 Zero New Infrastructure</h4>
+      <p>Extends the existing 27-service stack running on <strong>€4/month</strong> at <strong>93.3% local sovereignty</strong>.</p>
+    </div>
+  </div>
+</div>
+
+<!-- §11 ROADMAP -->
+<div id="roadmap" class="section">
+  <div class="card">
+    <h2>🗺️ 11. Implementation Roadmap (MVP)</h2>
+    
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="phase">1</div>
+        <div class="details">
+          <h4>Foundation (Weeks 1–4)</h4>
+          <p>JMPG Trigger pipeline (ffmpeg transcode + binary assembly + Ledger). Universal player (HTML5 + HLS.js, &lt;50KB). Basic Vault streaming endpoint.</p>
+          <p style="color:var(--success); margin-top:6px;"><strong>Result:</strong> Creator uploads video, receives .jmpg, shares via WhatsApp with instant playback.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="phase">2</div>
+        <div class="details">
+          <h4>Discovery (Weeks 5–8)</h4>
+          <p>WINDI.Tube federated index. Tag-based and full-text search. Thumbnail generation. Preview cards.</p>
+          <p style="color:var(--success); margin-top:6px;"><strong>Result:</strong> Viewers discover .jmpg content beyond direct sharing.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="phase">3</div>
+        <div class="details">
+          <h4>Federation (Weeks 9–12)</h4>
+          <p>Pott governance framework (curator onboarding, 85/15 revenue split, federated feeds). Human-curated thematic channels.</p>
+          <p style="color:var(--success); margin-top:6px;"><strong>Result:</strong> Creators form collectives that amplify reach without surrendering sovereignty.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="phase">4</div>
+        <div class="details">
+          <h4>Monetization (Weeks 13–16)</h4>
+          <p>DID-based tier gating. Direct payment integration (Stripe, SEPA, Lightning). Subscription management in Palette.</p>
+          <p style="color:var(--success); margin-top:6px;"><strong>Result:</strong> Creators earn directly from audience with zero intermediary fees.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>🐉 12. Closing: The Protocol as Sovereignty Assertion</h2>
+    <p>A .jmpg file is not a video format. It is a <strong>declaration of independence</strong> from intermediary control. Every .jmpg carries within it the proof that:</p>
+    <ul>
+      <li>A human creator produced specific content</li>
+      <li>Stored it on their own infrastructure</li>
+      <li>Sealed it with cryptographic integrity</li>
+      <li>Distributed it through channels they chose</li>
+    </ul>
+    <div class="sealed-box">
+      <h4>🐉 The WINDI Manifesto</h4>
+      <p>"The network already exists. The audience already exists. The content already exists. The .jmpg is the operating system that awakens the network that already exists."</p>
+      <p style="margin-top:8px;"><strong>This is not disruption. It is restoration.</strong></p>
+    </div>
+  </div>
+</div>
+
+</div>
+<footer class="footer">
+  <div style="margin-bottom:8px;"><strong style="color:var(--gold);">JMPG SOVEREIGN SPEC — PILLAR 1 — v1.0.0</strong></div>
+  <div>WINDI Publishing House · Kempten, Bavaria, EU · "AI processes. Human decides. WINDI guarantees."</div>
+  <div style="margin-top:8px;">
+    <a href="/palette/">← Palette</a> · 
+    <a href="/palette/media-spec.html">Infrastructure Spec</a> · 
+    <a href="/palette/protocol.html">Transport Protocol</a> ·
+    <span class="mono">JMPG-SPEC-P1-v1.0 · SHA-256 sealed</span>
+  </div>
+</footer>
+<script>
+function toggleTheme() {
+  const body = document.body;
+  const isNoir = body.getAttribute('data-theme') === 'noir';
+  body.setAttribute('data-theme', isNoir ? '' : 'noir');
+  document.querySelector('.theme-toggle').textContent = isNoir ? '☀' : '🌙';
+}
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>

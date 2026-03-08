@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="NOIR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Page — WINDI</title>
+    <meta name="generator" content="WINDI W-PAGE-001 v0.1.0">
+    <meta name="windi:page-id" content="prev_d3de36ac">
+    <meta name="windi:generator" content="W-PAGE-001 v0.1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,700;12..96,800&family=Cormorant+Garamond:wght@300;400;600;700&family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+
+:root {
+  /* Typography */
+  --w-font-sans: "Bricolage Grotesque", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --w-font-serif: "Cormorant Garamond", ui-serif, Georgia, serif;
+  --w-font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Spacing */
+  --w-radius-xs: 8px;
+  --w-radius-sm: 12px;
+  --w-radius-md: 16px;
+  --w-radius-lg: 20px;
+  --w-radius-xl: 28px;
+
+  --w-space-1: 4px;  --w-space-2: 8px;  --w-space-3: 12px;
+  --w-space-4: 16px; --w-space-5: 20px; --w-space-6: 24px;
+  --w-space-8: 32px; --w-space-10: 40px; --w-space-12: 48px;
+
+  /* Effects */
+  --w-border-1: 1px;
+  --w-shadow-sm: 0 1px 2px rgba(0,0,0,0.08);
+  --w-shadow-md: 0 8px 24px rgba(0,0,0,0.18);
+  --w-shadow-lg: 0 16px 48px rgba(0,0,0,0.22);
+
+  --w-ease: cubic-bezier(.2,.8,.2,1);
+  --w-dur-fast: 120ms;
+  --w-dur-med: 220ms;
+  --w-dur-slow: 420ms;
+
+  --w-focus-ring: 0 0 0 3px rgba(212,168,67,0.25);
+  --w-gold: #D4A843;
+}
+
+/* NOIR Theme (default) */
+:root, :root[data-theme="noir"] {
+  --w-bg: #0E0E14;
+  --w-surface: #16161F;
+  --w-surface-2: #1C1C28;
+  --w-border: #26263A;
+  --w-text: #E2E2EA;
+  --w-text-dim: #7A7A96;
+  --w-text-muted: #A6A6C2;
+  --w-link: var(--w-gold);
+  --w-success: #5A9C69;
+  --w-warning: var(--w-gold);
+  --w-danger: #D25C5C;
+  --w-sealed: #1B4332;
+  --w-forensic: #2A6B4A;
+}
+
+/* KLAR Theme */
+:root[data-theme="klar"] {
+  --w-bg: #F5F0E0;
+  --w-surface: #FDFBF5;
+  --w-surface-2: #EDE8D8;
+  --w-border: #DDD6C2;
+  --w-text: #2C2924;
+  --w-text-dim: #6B6560;
+  --w-text-muted: #7E7772;
+  --w-link: #8B6914;
+  --w-success: #4A7C59;
+  --w-warning: #B8860B;
+  --w-danger: #A94442;
+  --w-sealed: #1B4332;
+  --w-forensic: #2A6B4A;
+}
+
+/* Base Reset */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--w-bg);
+  color: var(--w-text);
+  font-family: var(--w-font-sans);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+.windi-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--w-space-8);
+}
+
+/* Utility Classes */
+.windi-mono  { font-family: var(--w-font-mono); }
+.windi-serif { font-family: var(--w-font-serif); }
+.windi-dim   { color: var(--w-text-dim); }
+.windi-muted { color: var(--w-text-muted); }
+.windi-gold  { color: var(--w-gold); }
+
+
+/* ═══ windi-card ═══ */
+.w-card {
+  background: var(--w-surface);
+  border: var(--w-border-1) solid var(--w-border);
+  border-radius: var(--w-radius-lg);
+  box-shadow: var(--w-shadow-sm);
+  overflow: hidden;
+}
+.w-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--w-space-4);
+  padding: var(--w-space-5);
+  border-bottom: var(--w-border-1) solid var(--w-border);
+  background: color-mix(in srgb, var(--w-surface) 92%, transparent);
+}
+.w-card__title { font-size: 18px; font-weight: 700; }
+.w-card__subtitle { margin-top: 6px; font-size: 14px; color: var(--w-text-dim); }
+.w-card__body { padding: var(--w-space-5); }
+.w-card[data-elevation="md"] { box-shadow: var(--w-shadow-md); }
+.w-card[data-elevation="lg"] { box-shadow: var(--w-shadow-lg); }
+
+/* ═══ seal-badge ═══ */
+.w-seal {
+  display: inline-flex;
+  gap: var(--w-space-3);
+  align-items: center;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: var(--w-border-1) solid var(--w-border);
+  background: color-mix(in srgb, var(--w-surface) 86%, transparent);
+  font-size: 12px;
+}
+.w-seal__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--w-success);
+}
+.w-seal__label { letter-spacing: .12em; color: var(--w-text-dim); }
+.w-seal__status { font-weight: 700; }
+.w-seal[data-status="sealed"] .w-seal__dot { background: var(--w-warning); }
+.w-seal[data-status="invalid"] .w-seal__dot { background: var(--w-danger); }
+.w-seal[data-status="sealed"] .w-seal__dot {
+  background: var(--w-forensic);
+  box-shadow: 0 0 6px rgba(42,107,74,0.6);
+}
+.w-seal[data-status="verified"] .w-seal__dot {
+  box-shadow: 0 0 6px rgba(90,156,105,0.5);
+}
+
+/* ═══ ledger-status ═══ */
+.w-ledger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--w-space-2);
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: var(--w-border-1) solid var(--w-border);
+  background: color-mix(in srgb, var(--w-surface) 86%, transparent);
+  font-size: 12px;
+}
+.w-ledger__icon { font-size: 14px; }
+.w-ledger__label { letter-spacing: .12em; color: var(--w-text-dim); }
+.w-ledger__state { font-weight: 700; }
+.w-ledger__anchor { font-family: var(--w-font-mono); color: var(--w-text-dim); }
+.w-ledger[data-verified="true"] .w-ledger__state { color: var(--w-success); }
+.w-ledger[data-verified="true"] .w-ledger__state { color: var(--w-danger); }
+
+/* ═══ sovereign-button ═══ */
+.w-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--w-space-2);
+  padding: 12px 20px;
+  border-radius: 999px;
+  border: var(--w-border-1) solid var(--w-border);
+  background: var(--w-surface-2);
+  color: var(--w-text);
+  font-family: var(--w-font-sans);
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform var(--w-dur-fast) var(--w-ease), background var(--w-dur-med) var(--w-ease);
+}
+.w-btn:hover { transform: translateY(-1px); }
+.w-btn:active { transform: translateY(0); }
+.w-btn[data-variant="primary"] {
+  border-color: color-mix(in srgb, var(--w-gold) 70%, var(--w-border));
+  background: color-mix(in srgb, var(--w-gold) 16%, var(--w-surface-2));
+  color: var(--w-gold);
+}
+.w-btn[data-variant="ghost"] { background: transparent; }
+.w-btn[data-variant="danger"] {
+  border-color: color-mix(in srgb, var(--w-danger) 70%, var(--w-border));
+  color: var(--w-danger);
+}
+.w-btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+
+/* ═══ dragon-orb ═══ */
+.w-orb {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--w-space-3);
+}
+.w-orb__ring {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  border: 2px solid color-mix(in srgb, var(--w-gold) 55%, var(--w-border));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.w-orb__core {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--w-gold) 20%, var(--w-surface-2));
+}
+.w-orb__role { font-size: 12px; font-weight: 800; letter-spacing: .12em; color: var(--w-gold); }
+.w-orb[data-role="ARCHITECT"] .w-orb__core { background: color-mix(in srgb, var(--w-gold) 25%, var(--w-surface-2)); }
+.w-orb[data-role="GUARDIAN"] .w-orb__core { background: color-mix(in srgb, #4A90D9 20%, var(--w-surface-2)); }
+.w-orb[data-role="WITNESS"] .w-orb__core { background: color-mix(in srgb, var(--w-success) 20%, var(--w-surface-2)); }
+.w-orb[data-role="HUMAN"] .w-orb__core { background: color-mix(in srgb, #C084FC 20%, var(--w-surface-2)); }
+.w-orb[data-role="GUARDIAN"] .w-orb__role { color: #4A90D9; }
+.w-orb[data-role="WITNESS"] .w-orb__role { color: var(--w-success); }
+.w-orb[data-role="HUMAN"] .w-orb__role { color: #C084FC; }
+
+/* ═══ verification-panel ═══ */
+.w-verify {
+  background: var(--w-surface);
+  border: var(--w-border-1) solid var(--w-border);
+  border-radius: var(--w-radius-lg);
+  padding: var(--w-space-5);
+}
+.w-verify__title { font-weight: 900; font-size: 18px; margin-bottom: var(--w-space-4); }
+.w-verify__hash {
+  font-family: var(--w-font-mono);
+  font-size: 12px;
+  padding: var(--w-space-3);
+  background: var(--w-surface-2);
+  border-radius: var(--w-radius-sm);
+  word-break: break-all;
+  color: var(--w-text-muted);
+}
+.w-verify__qr {
+  width: 120px;
+  height: 120px;
+  background: white;
+  border-radius: var(--w-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ═══ provenance-box ═══ */
+.w-provenance {
+  padding: var(--w-space-4);
+  border-radius: var(--w-radius-sm);
+  border: var(--w-border-1) solid color-mix(in srgb, var(--w-forensic) 50%, var(--w-border));
+  background: color-mix(in srgb, var(--w-sealed) 40%, var(--w-surface));
+  font-size: 11px;
+  font-family: var(--w-font-mono);
+  color: var(--w-text-muted);
+  line-height: 2;
+}
+.w-provenance strong { color: var(--w-gold); font-weight: 700; }
+
+/* ═══ Header & Footer ═══ */
+.w-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--w-space-5) 0;
+  border-bottom: var(--w-border-1) solid var(--w-border);
+  margin-bottom: var(--w-space-8);
+}
+.w-header__logo {
+  display: flex;
+  align-items: center;
+  gap: var(--w-space-3);
+}
+.w-header__mark {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--w-radius-sm);
+  background: color-mix(in srgb, var(--w-gold) 18%, var(--w-surface-2));
+  border: var(--w-border-1) solid color-mix(in srgb, var(--w-gold) 40%, var(--w-border));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+.w-header__title { font-size: 16px; font-weight: 800; letter-spacing: .08em; }
+
+.w-footer {
+  margin-top: var(--w-space-12);
+  padding-top: var(--w-space-5);
+  border-top: var(--w-border-1) solid var(--w-border);
+  font-size: 12px;
+  color: var(--w-text-dim);
+  text-align: center;
+}
+
+    </style>
+</head>
+<body>
+    <div class="windi-page">
+        <header class="w-header">
+            <div class="w-header__logo">
+                <div class="w-header__mark">🐉</div>
+                <div class="w-header__title">WINDI</div>
+            </div>
+            <div class="w-orb" data-role="WITNESS">
+                <div class="w-orb__ring"><div class="w-orb__core"></div></div>
+                <span class="w-orb__role">VERIFIED</span>
+            </div>
+        </header>
+
+        <main>
+
+        <section class="w-card" data-elevation="md">
+            <header class="w-card__header">
+                <div>
+                    <h2 class="w-card__title">Test Page</h2>
+                    <p class="w-card__subtitle">Generated 2026-03-06 07:33 UTC</p>
+                </div>
+            </header>
+            <div class="w-card__body">
+                
+                    <p style="color: var(--w-text-muted); margin-bottom: var(--w-space-4);">
+                        Document content.
+                    </p>
+                    <div style="display: flex; gap: var(--w-space-4); flex-wrap: wrap; margin-top: var(--w-space-4);">
+                        
+        <div class="w-seal" data-status="sealed">
+            <div class="w-seal__dot"></div>
+            <div>
+                <span class="w-seal__label">SEAL</span>
+                <span class="w-seal__status">PENDING</span>
+                
+                
+            </div>
+        </div>
+                        
+        <div class="w-ledger" data-verified="true">
+            <span class="w-ledger__icon">⟡</span>
+            <span class="w-ledger__label">LEDGER</span>
+            <span class="w-ledger__state">ANCHORED</span>
+            <span class="w-ledger__anchor">#C264C1</span>
+        </div>
+                    </div>
+                
+            </div>
+        </section>
+
+        <div class="w-verify">
+            <h3 class="w-verify__title">Verify This Document</h3>
+            <p style="margin-bottom: var(--w-space-4); color: var(--w-text-muted);">
+                Document ID: <strong>prev_d3de36ac</strong>
+            </p>
+            <div class="w-verify__hash">
+                Pending verification...
+            </div>
+            <p style="margin-top: var(--w-space-4); font-size: 13px; color: var(--w-text-dim);">
+                Verify at: <a href="https://www.windi-domain.com/verify-public/" style="color: var(--w-gold);">https://www.windi-domain.com/verify-public/</a>
+            </p>
+        </div>
+        </main>
+
+        <footer class="w-footer">
+            
+    <div class="w-provenance">
+        <strong>ui_provenance</strong> · windi-ui-v1.0<br>
+        html_hash: sha256:01b7c5ca712144fcefa56dd10...<br>
+        combined_hash: sha256:9c383f9e32990e7825df9c0b8...<br>
+        generator: W-PAGE-001 v0.1.0<br>
+        
+        invariant: <strong>C6 · I9 · I11</strong>
+    </div>
+            <p style="margin-top: var(--w-space-4);">
+                AI processes. Human decides. WINDI guarantees.<br>
+                <span class="windi-dim">WINDI Publishing House · Kempten, Bavaria 🇩🇪</span>
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

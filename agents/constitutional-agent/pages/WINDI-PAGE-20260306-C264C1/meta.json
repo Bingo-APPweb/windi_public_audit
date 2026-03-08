@@ -1,0 +1,18 @@
+{
+  "page_id": "WINDI-PAGE-20260306-C264C1",
+  "title": "Test Page",
+  "doc_type": "generic",
+  "created_at": "2026-03-06T07:33:51.549715+00:00",
+  "sealed_at": "2026-03-06T07:34:36.928307+00:00",
+  "provenance": {
+    "html_hash": "sha256:48304b30e31ee03c84d2ec17948e6e1f6059c2f6634666f1bc06ffa6bacc2dae",
+    "css_hash": "sha256:f9631258b749f8438467089580bc3547440dc4ff34e76d083f519a20a3813e9f",
+    "js_hash": "sha256:empty",
+    "combined_hash": "sha256:2c4c1e9098c7f89c6b2c793eaa4dadbb76b8bbc3981419a9e5bf7e63d2b22bac",
+    "content_hash": "sha256:e2969fb66c93238ba6177b9777da4c8b744b9ee62f21543c2f33997aa73ab8e5",
+    "template_version": "windi-ui-v1.0",
+    "generator": "W-PAGE-001 v0.1.0"
+  },
+  "receipt_id": "WINDI-PAGE-20260306-C264C1",
+  "invariants": "C6,I9,I11"
+}

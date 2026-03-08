@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>JMPG Sovereign Spec — Pillar 4: The Distribution Playbook</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📡</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:#F5F0E0; --card:#FDFBF5; --hover:#EDE8D8; --border:#DDD6C2;
+  --gold:#8B6914; --text:#2C2924; --dim:#6B6560; --success:#4A7C59;
+  --warning:#B8860B; --danger:#A94442; --sealed:#1B4332; --forensic:#2A6B4A;
+  --blue:#5B8DEF; --purple:#7C5BEF; --orange:#EF8B5B;
+}
+[data-theme="noir"] {
+  --bg:#0E0E14; --card:#16161F; --hover:#1C1C28; --border:#26263A;
+  --gold:#D4A843; --text:#E2E2EA; --dim:#7A7A96; --success:#5A9C69;
+  --warning:#D4A843; --danger:#CF6679; --sealed:#1B4332; --forensic:#2A6B4A;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Bricolage Grotesque',sans-serif; background:var(--bg); color:var(--text); line-height:1.7; }
+code, .mono { font-family:'JetBrains Mono',monospace; font-size:0.9em; }
+pre { background:var(--hover); border:1px solid var(--border); border-radius:8px; padding:16px; overflow-x:auto; font-size:11px; line-height:1.6; }
+.header { background:var(--card); border-bottom:1px solid var(--border); padding:20px 32px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; position:sticky; top:0; z-index:100; }
+.header h1 { font-size:18px; font-weight:800; color:var(--gold); flex:1; }
+.header .meta { font-size:10px; color:var(--dim); display:flex; gap:12px; flex-wrap:wrap; }
+.header .meta span { background:var(--hover); padding:3px 8px; border-radius:4px; border:1px solid var(--border); }
+.theme-toggle { background:none; border:none; font-size:16px; cursor:pointer; color:var(--dim); }
+.nav { display:flex; gap:4px; padding:12px 32px; flex-wrap:wrap; border-bottom:1px solid var(--border); background:var(--card); overflow-x:auto; }
+.nav button { padding:8px 14px; border-radius:8px; font-size:11px; font-weight:600; cursor:pointer; background:var(--card); border:1px solid var(--border); color:var(--dim); font-family:inherit; white-space:nowrap; }
+.nav button.active { background:color-mix(in srgb, var(--gold) 12%, transparent); border-color:var(--gold); color:var(--gold); }
+.content { padding:24px 32px 60px; max-width:1000px; margin:0 auto; }
+.section { display:none; }
+.section.active { display:block; }
+.card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:24px; margin-bottom:20px; }
+.card h2 { font-size:18px; font-weight:800; margin-bottom:12px; color:var(--gold); display:flex; align-items:center; gap:8px; }
+.card h3 { font-size:14px; font-weight:700; margin:20px 0 10px; color:var(--text); border-bottom:1px solid var(--border); padding-bottom:6px; }
+.card h4 { font-size:12px; font-weight:700; margin:16px 0 8px; color:var(--dim); }
+.card p { font-size:13px; margin-bottom:12px; }
+.card ul, .card ol { font-size:13px; padding-left:20px; margin-bottom:12px; }
+.card li { margin-bottom:6px; }
+.sealed-box { background:color-mix(in srgb, var(--sealed) 94%, white); border:1.5px solid var(--forensic); border-radius:12px; padding:18px; color:#E8F5E9; margin:16px 0; }
+.sealed-box h4 { color:#81C784; margin-bottom:6px; font-size:12px; }
+.sealed-box p { color:#A5D6A7; font-size:12px; margin:0; }
+.sealed-box .mono { color:#81C784; }
+.spec-table { width:100%; border-collapse:collapse; margin:16px 0; font-size:11px; }
+.spec-table th { background:var(--hover); padding:8px 10px; text-align:left; font-weight:700; border-bottom:2px solid var(--border); color:var(--dim); text-transform:uppercase; font-size:10px; }
+.spec-table td { padding:8px 10px; border-bottom:1px solid var(--border); vertical-align:top; }
+.spec-table tr:hover td { background:var(--hover); }
+.spec-table .mono { font-size:10px; }
+.spec-table .gold { color:var(--gold); font-weight:600; }
+.spec-table .success { color:var(--success); }
+.spec-table .danger { color:var(--danger); }
+.spec-table .highlight { background:color-mix(in srgb, var(--gold) 6%, transparent); }
+.day-card { background:var(--hover); border:2px solid var(--border); border-radius:12px; padding:18px; margin:12px 0; position:relative; }
+.day-card.active-day { border-color:var(--gold); background:color-mix(in srgb, var(--gold) 5%, var(--hover)); }
+.day-card .day-badge { position:absolute; top:-10px; left:16px; background:var(--gold); color:#fff; font-size:11px; font-weight:800; padding:4px 12px; border-radius:6px; }
+.day-card .day-title { font-size:14px; font-weight:700; margin:8px 0 6px; color:var(--text); }
+.day-card .day-objective { font-size:12px; color:var(--dim); margin-bottom:10px; font-style:italic; }
+.day-card .day-content { font-size:12px; line-height:1.6; }
+.day-card .day-deliverable { background:color-mix(in srgb, var(--success) 10%, transparent); border:1px solid var(--success); border-radius:8px; padding:10px 12px; margin-top:12px; font-size:11px; }
+.day-card .day-deliverable strong { color:var(--success); }
+.channel-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:12px; margin:16px 0; }
+.channel-card { background:var(--hover); border:1px solid var(--border); border-radius:10px; padding:16px; }
+.channel-card .icon { font-size:28px; margin-bottom:8px; }
+.channel-card .name { font-size:14px; font-weight:700; color:var(--gold); margin-bottom:6px; }
+.channel-card .stats { font-size:11px; color:var(--dim); margin-bottom:10px; }
+.channel-card .stats span { display:inline-block; margin-right:12px; }
+.channel-card .stats .rate { color:var(--success); font-weight:600; }
+.channel-card .best { font-size:11px; color:var(--text); }
+.channel-card .best strong { color:var(--gold); }
+.step-flow { display:flex; flex-direction:column; gap:0; margin:16px 0; }
+.step-item { display:flex; gap:14px; padding:14px 16px; background:var(--hover); border:1px solid var(--border); border-radius:0; position:relative; }
+.step-item:first-child { border-radius:10px 10px 0 0; }
+.step-item:last-child { border-radius:0 0 10px 10px; }
+.step-item:not(:last-child) { border-bottom:none; }
+.step-item .num { width:32px; height:32px; border-radius:50%; background:var(--gold); color:#fff; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:800; flex-shrink:0; }
+.step-item .step-content { flex:1; }
+.step-item .step-content h4 { font-size:13px; font-weight:700; margin:0 0 4px; color:var(--text); }
+.step-item .step-content p { font-size:11px; color:var(--dim); margin:0; line-height:1.5; }
+.manifesto { background:linear-gradient(135deg, var(--sealed) 0%, color-mix(in srgb, var(--sealed) 80%, black) 100%); border:2px solid var(--forensic); border-radius:14px; padding:24px; color:#E8F5E9; margin:16px 0; }
+.manifesto p { font-size:14px; line-height:2; margin:0; color:#C8E6C9; }
+.manifesto p strong { color:#81C784; font-weight:700; }
+.quick-ref { background:color-mix(in srgb, var(--gold) 8%, transparent); border:2px solid var(--gold); border-radius:14px; padding:20px; margin:16px 0; }
+.quick-ref .title { font-size:14px; font-weight:800; color:var(--gold); margin-bottom:12px; }
+.quick-ref .steps { display:flex; flex-direction:column; gap:8px; }
+.quick-ref .qr-step { display:flex; align-items:center; gap:12px; font-size:12px; }
+.quick-ref .qr-step .qr-num { width:26px; height:26px; border-radius:50%; background:var(--gold); color:#fff; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; flex-shrink:0; }
+.quick-ref .qr-step .qr-text strong { color:var(--gold); }
+.metric-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:10px; margin:16px 0; }
+.metric-card { background:var(--hover); border:1px solid var(--border); border-radius:8px; padding:12px; }
+.metric-card .metric-name { font-size:11px; font-weight:700; color:var(--gold); margin-bottom:4px; }
+.metric-card .metric-desc { font-size:10px; color:var(--dim); margin-bottom:6px; }
+.metric-card .metric-target { font-size:10px; color:var(--success); font-weight:600; }
+.footer { text-align:center; padding:24px 32px; border-top:1px solid var(--border); font-size:11px; color:var(--dim); }
+.footer a { color:var(--gold); text-decoration:none; }
+.badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:9px; font-weight:700; }
+.badge-gold { background:color-mix(in srgb, var(--gold) 15%, transparent); color:var(--gold); border:1px solid color-mix(in srgb, var(--gold) 30%, transparent); }
+.badge-public { background:color-mix(in srgb, var(--success) 15%, transparent); color:var(--success); border:1px solid color-mix(in srgb, var(--success) 30%, transparent); }
+@media print { .header, .nav { position:static; } .section { display:block!important; page-break-inside:avoid; } }
+</style>
+</head>
+<body>
+<header class="header">
+  <h1>📡 PILLAR 4 — The Distribution Playbook</h1>
+  <div class="meta">
+    <span>JMPG-SPEC-P4-v1.0</span>
+    <span class="badge badge-public">🌍 PUBLIC</span>
+    <span>Feb 2026</span>
+    <span>Depends: P1, P2</span>
+  </div>
+  <button class="theme-toggle" onclick="toggleTheme()">☀</button>
+</header>
+<nav class="nav">
+  <button class="active" onclick="showSection('mindset',this)">1. Mindset</button>
+  <button onclick="showSection('launch',this)">2. 7-Day Launch</button>
+  <button onclick="showSection('channels',this)">3. Channels</button>
+  <button onclick="showSection('monetization',this)">4. Monetization</button>
+  <button onclick="showSection('growth',this)">5. Growth</button>
+  <button onclick="showSection('metrics',this)">6. Metrics</button>
+  <button onclick="showSection('manifesto',this)">7. Manifesto</button>
+  <button onclick="showSection('quickref',this)">8. Quick Ref</button>
+  <button onclick="showSection('closing',this)">9. Closing</button>
+</nav>
+<div class="content">
+
+<!-- §1 MINDSET -->
+<div id="mindset" class="section active">
+  <div class="card">
+    <h2>🧠 1. The Mindset Shift: You Are the Network</h2>
+    <p>Before touching any tool, the sovereign creator must internalize one truth: <strong>you already own a broadcasting network</strong>.</p>
+    <p>Your WhatsApp contacts, your email list, your Instagram followers, your Telegram subscribers — these are not "social media connections." They are <strong>your audience</strong>. The only difference between you and a television channel is that the television channel knows it is a broadcaster.</p>
+    <p>After reading this playbook, so will you.</p>
+
+    <div class="sealed-box">
+      <h4>🐉 The Core Insight</h4>
+      <p>Followers on a platform are not your audience; they are <strong>the platform's audience</strong> that you are allowed to address, conditionally. Direct contacts are your audience: people who chose to receive messages from you, through a channel you control, with an open rate that no algorithm can throttle.</p>
+    </div>
+
+    <h3>The Numbers That Matter</h3>
+    <table class="spec-table">
+      <thead><tr><th>Channel</th><th>Typical Reach</th><th>Open Rate</th><th>You Control It?</th></tr></thead>
+      <tbody>
+        <tr class="highlight"><td class="gold">WhatsApp contacts</td><td class="mono">200–1,000</td><td class="success">70–95%</td><td class="success">Yes</td></tr>
+        <tr class="highlight"><td class="gold">WhatsApp broadcast</td><td class="mono">Up to 256/list</td><td class="success">70–90%</td><td class="success">Yes</td></tr>
+        <tr class="highlight"><td class="gold">Telegram channel</td><td class="mono">Unlimited</td><td class="success">30–60%</td><td class="success">Yes</td></tr>
+        <tr class="highlight"><td class="gold">Email newsletter</td><td class="mono">Unlimited</td><td class="success">20–40%</td><td class="success">Yes</td></tr>
+        <tr><td>Instagram followers</td><td class="mono">Unlimited</td><td>5–15%</td><td class="danger">No (platform)</td></tr>
+        <tr><td>YouTube subscribers</td><td class="mono">Unlimited</td><td>5–10%</td><td class="danger">No (platform)</td></tr>
+      </tbody>
+    </table>
+
+    <p>A WhatsApp group has a <strong>70–95% open rate</strong>. A YouTube notification reaches <strong>5–10%</strong>.</p>
+    <p>The question is not how to build an audience. The question is <strong>why you are still giving your existing audience to someone else</strong>.</p>
+  </div>
+</div>
+
+<!-- §2 7-DAY LAUNCH -->
+<div id="launch" class="section">
+  <div class="card">
+    <h2>🚀 2. The 7-Day Sovereign Launch</h2>
+    <p>A step-by-step operational plan to go from zero sovereign presence to a fully functional .jmpg distribution channel in seven days. Each day has one primary objective and one deliverable.</p>
+
+    <div class="day-card">
+      <span class="day-badge">DAY 1</span>
+      <div class="day-title">Audit Your Existing Network</div>
+      <div class="day-objective">Objective: Map every distribution channel you already have and quantify its reach.</div>
+      <div class="day-content">
+        <p>Open your phone. Count your WhatsApp contacts (not groups — individual contacts who know you). Count your WhatsApp broadcast lists. Count your Telegram subscribers. Count your email newsletter subscribers. Count your Instagram followers.</p>
+        <p>Write down the total. This is your <strong>Sovereign Reach Number</strong>. For most creators with any online presence, this number is between 500 and 50,000. This is not a vanity metric; it is a real delivery network where every message arrives.</p>
+      </div>
+      <div class="day-deliverable"><strong>Deliverable:</strong> A written inventory of all channels with reach numbers. Highlight the channels you own.</div>
+    </div>
+
+    <div class="day-card">
+      <span class="day-badge">DAY 2</span>
+      <div class="day-title">Activate Your Vault</div>
+      <div class="day-objective">Objective: Set up your sovereign Vault and verify it works.</div>
+      <div class="day-content">
+        <p>Choose your deployment mode:</p>
+        <ul>
+          <li><strong>Self-hosted:</strong> Rent a VPS from Strato, Hetzner, or any European provider (€4–8/month), install the WINDI Vault runtime, configure your domain.</li>
+          <li><strong>VaaS:</strong> Subscribe to a SEED plan (€15/month) — Vault provisioned automatically in under 5 minutes with subdomain or custom domain.</li>
+        </ul>
+        <p>Verify by accessing <code>https://yourdomain.com/health</code>. You should see status: HEALTHY.</p>
+      </div>
+      <div class="day-deliverable"><strong>Deliverable:</strong> A live Vault with working domain, SSL certificate, and passing health check.</div>
+    </div>
+
+    <div class="day-card active-day">
+      <span class="day-badge">DAY 3</span>
+      <div class="day-title">Create Your First .jmpg</div>
+      <div class="day-objective">Objective: Record, upload, and package your first sovereign video.</div>
+      <div class="day-content">
+        <p>Record a video. It does not need to be perfect. Introduce yourself, explain what your channel will offer, and give viewers a reason to come back. Keep it between 2 and 10 minutes.</p>
+        <p>Upload to your Vault. The JMPG Trigger will automatically:</p>
+        <ul>
+          <li>Extract the first 30 seconds as the onboard segment</li>
+          <li>Transcode the full video into adaptive HLS streams</li>
+          <li>Assemble the .jmpg binary and seal it with SHA-256</li>
+          <li>Register it in your Ledger</li>
+        </ul>
+        <p>Total processing time: 5–10 minutes. Download and test on your phone.</p>
+      </div>
+      <div class="day-deliverable"><strong>Deliverable:</strong> One .jmpg file, sealed in your Ledger, streamable from your Vault.</div>
+    </div>
+
+    <div class="day-card">
+      <span class="day-badge">DAY 4</span>
+      <div class="day-title">Distribute to Your Inner Circle</div>
+      <div class="day-objective">Objective: Send your .jmpg to 20–50 trusted contacts and collect feedback.</div>
+      <div class="day-content">
+        <p>Select your most engaged contacts: friends, family, loyal followers, fellow creators. Send them your .jmpg via WhatsApp (as a document attachment), Telegram, or email.</p>
+        <p>Include a personal message explaining what you are doing. Ask: did it play immediately? Was the transition to streaming smooth? Would you share this with someone?</p>
+      </div>
+      <div class="day-deliverable"><strong>Deliverable:</strong> Feedback from 20+ contacts confirming the .jmpg experience works.</div>
+    </div>
+
+    <div class="day-card">
+      <span class="day-badge">DAY 5</span>
+      <div class="day-title">Build Your Distribution Routine</div>
+      <div class="day-objective">Objective: Design a sustainable publishing schedule and channel strategy.</div>
+      <div class="day-content">
+        <p>Define your publishing frequency (weekly is ideal for most creators). Assign channels to content types:</p>
+        <ul>
+          <li><strong>WhatsApp broadcasts:</strong> High-value drops (new episode, special announcement)</li>
+          <li><strong>Telegram channels:</strong> Regular updates and community interaction</li>
+          <li><strong>Email newsletters:</strong> Weekly digests with multiple .jmpg links</li>
+          <li><strong>Social media:</strong> Teasers that drive traffic to sovereign channels</li>
+        </ul>
+      </div>
+      <div class="day-deliverable"><strong>Deliverable:</strong> A written publishing calendar with channel assignments for the next 4 weeks.</div>
+    </div>
+
+    <div class="day-card">
+      <span class="day-badge">DAY 6</span>
+      <div class="day-title">Announce Your Sovereign Channel</div>
+      <div class="day-objective">Objective: Public launch to your full contact network.</div>
+      <div class="day-content">
+        <p>Send a broadcast message to your entire sovereign network. The message should contain:</p>
+        <ul>
+          <li>Your first .jmpg as an attachment or link</li>
+          <li>A clear explanation: "I'm launching my own independent video channel — no YouTube, no algorithm, just me directly to you"</li>
+          <li>An invitation to share the .jmpg with anyone interested</li>
+          <li>If applicable, information about your subscription model</li>
+        </ul>
+      </div>
+      <div class="day-deliverable"><strong>Deliverable:</strong> Public announcement sent to your full network. First .jmpg distributed at scale.</div>
+    </div>
+
+    <div class="day-card">
+      <span class="day-badge">DAY 7</span>
+      <div class="day-title">Measure, Learn, Iterate</div>
+      <div class="day-objective">Objective: Analyze your first distribution cycle and optimize.</div>
+      <div class="day-content">
+        <p>Check your Vault's analytics dashboard:</p>
+        <ul>
+          <li>How many times was the .jmpg opened?</li>
+          <li>How many viewers progressed from onboard to full stream?</li>
+          <li>Which distribution channel drove the most views?</li>
+          <li>How many people shared the .jmpg with others?</li>
+        </ul>
+        <p>Compare these numbers with your platform metrics. If your WhatsApp distribution generated more actual views than a typical YouTube upload, you have <strong>empirical proof</strong> that sovereign distribution works.</p>
+      </div>
+      <div class="day-deliverable"><strong>Deliverable:</strong> A one-page analysis comparing sovereign distribution metrics to your previous platform metrics.</div>
+    </div>
+  </div>
+</div>
+
+<!-- §3 CHANNELS -->
+<div id="channels" class="section">
+  <div class="card">
+    <h2>📱 3. Channel Strategy: Maximizing Each Platform</h2>
+
+    <div class="channel-grid">
+      <div class="channel-card">
+        <div class="icon">💬</div>
+        <div class="name">WhatsApp</div>
+        <div class="stats"><span class="rate">70–95% open rate</span> <span>256/list cap</span> <span>2GB files</span></div>
+        <div class="best">
+          <strong>Best practice:</strong> Send .jmpg as document (not video — avoids recompression). Include 2–3 sentence description. Time broadcasts for 8–10 AM or 7–9 PM. Limit to 1–2/week.
+        </div>
+      </div>
+      <div class="channel-card">
+        <div class="icon">✈️</div>
+        <div class="name">Telegram</div>
+        <div class="stats"><span class="rate">30–60% open rate</span> <span>Unlimited subs</span> <span>2GB files</span></div>
+        <div class="best">
+          <strong>Best practice:</strong> Pin latest .jmpg at top. Use scheduled posting. Create linked discussion group. Use polls for audience input.
+        </div>
+      </div>
+      <div class="channel-card">
+        <div class="icon">📧</div>
+        <div class="name">Email</div>
+        <div class="stats"><span class="rate">20–40% open rate</span> <span>Highest longevity</span> <span>Rich formatting</span></div>
+        <div class="best">
+          <strong>Best practice:</strong> Include thumbnail preview with deep link (not full binary). Structure as mini-magazine. Send weekly on same day/time.
+        </div>
+      </div>
+      <div class="channel-card">
+        <div class="icon">📲</div>
+        <div class="name">QR Codes</div>
+        <div class="stats"><span>Physical → Digital</span> <span>Unlimited reach</span> <span>Offline trigger</span></div>
+        <div class="best">
+          <strong>Best practice:</strong> Use short URL (vault.yourname.com/q/abc). Include WINDI badge. Test in low-light conditions before printing.
+        </div>
+      </div>
+    </div>
+
+    <h3>3.5 Social Media: The Migration Funnel</h3>
+    <p>Existing social media accounts (Instagram, TikTok, YouTube) are not discarded; they are <strong>repurposed as migration funnels</strong>.</p>
+    <ul>
+      <li>Post 15-second teasers from the .jmpg onboard segment</li>
+      <li>Call to action: "Watch the full video on my sovereign channel — link in bio"</li>
+      <li>Use Stories and Reels to drive traffic to WhatsApp/Telegram</li>
+      <li><strong>Never upload your full content to a platform</strong></li>
+    </ul>
+
+    <div class="sealed-box">
+      <h4>🔄 The Migration Goal</h4>
+      <p>Every follower you move from a platform to a direct channel is a follower you can never lose to an algorithm change. That 10% at 70–95% open rate delivers more actual engagement than the full 100% at 5–10% platform notification rate.</p>
+    </div>
+  </div>
+</div>
+
+<!-- §4 MONETIZATION -->
+<div id="monetization" class="section">
+  <div class="card">
+    <h2>💰 4. Monetization Strategies</h2>
+    <p>Sovereign creators have full control over their monetization model. No platform dictating CPM rates, no algorithm throttling reach, and no 45% revenue share.</p>
+
+    <h3>4.1 Direct Subscription</h3>
+    <p>The most predictable and sustainable model. Subscribers pay a monthly fee (€3–25) for access to gated .jmpg streams. The 30-second onboard is always free (it serves as the marketing asset). The creator receives <strong>100% of subscription revenue</strong> (minus payment processor fees of 1.5–3%).</p>
+
+    <h3>4.2 Per-Episode Access</h3>
+    <p>For creators who produce irregular or high-value content (masterclasses, investigative reports, premium tutorials). Typical pricing: €1–5 per episode. The Vault's Gatekeeper supports per-content access tokens.</p>
+
+    <h3>4.3 Community Support (Patronage)</h3>
+    <p>For creators who want to keep all content free but accept voluntary support. The .jmpg player displays a support button after the onboard. Works well for community journalism, educational content, and open-source creators.</p>
+
+    <h3>4.4 Bundled Courses and Series</h3>
+    <p>Package multiple .jmpg episodes into a course with a single purchase price (€20–200). The Gatekeeper supports series-level access: one payment unlocks all .jmpg in the series.</p>
+
+    <h3>4.5 The 1,000 True Fans Math</h3>
+    <table class="spec-table">
+      <thead><tr><th>Subscribers</th><th>Price/mo</th><th>Monthly Rev.</th><th>Annual Rev.</th><th>After 15% Pott</th></tr></thead>
+      <tbody>
+        <tr><td class="gold">100 fans</td><td class="mono">€5</td><td class="mono">€500</td><td class="mono">€6,000</td><td class="success">€5,100</td></tr>
+        <tr><td class="gold">500 fans</td><td class="mono">€8</td><td class="mono">€4,000</td><td class="mono">€48,000</td><td class="success">€40,800</td></tr>
+        <tr class="highlight"><td class="gold">1,000 fans</td><td class="mono">€10</td><td class="mono">€10,000</td><td class="mono">€120,000</td><td class="success">€102,000</td></tr>
+        <tr><td class="gold">2,500 fans</td><td class="mono">€10</td><td class="mono">€25,000</td><td class="mono">€300,000</td><td class="success">€255,000</td></tr>
+        <tr><td class="gold">5,000 fans</td><td class="mono">€15</td><td class="mono">€75,000</td><td class="mono">€900,000</td><td class="success">€765,000</td></tr>
+      </tbody>
+    </table>
+
+    <div class="sealed-box">
+      <h4>💡 The Insight</h4>
+      <p>A creator does not need millions of views. They need hundreds of subscribers who value their work enough to pay for it. This is the highest-quality relationship between creator and audience. And the infrastructure cost is <strong>€4–15/month</strong>.</p>
+    </div>
+  </div>
+</div>
+
+<!-- §5 GROWTH -->
+<div id="growth" class="section">
+  <div class="card">
+    <h2>📈 5. Growth Strategies: From Hundreds to Thousands</h2>
+
+    <h3>5.1 The Sovereign Referral Loop</h3>
+    <p>The .jmpg file is inherently viral: any recipient can share it with anyone else in one click. The 30-second onboard plays immediately for the new viewer, requiring no account, no app, and no commitment.</p>
+    <p>To amplify this loop, include a verbal call to action at the end of the onboard: <strong>"If you enjoyed this, forward it to someone who would too."</strong> Every share is a self-contained marketing asset.</p>
+
+    <h3>5.2 Pott Cross-Promotion</h3>
+    <p>Joining a Pott (Pillar 3) is the single most effective growth strategy. When 10 creators with 5,000 contacts each cross-promote a weekly Pott feed, every member's content potentially reaches <strong>50,000 people</strong>.</p>
+    <p>The Pott's Curator selects your best .jmpg for the feed; your best work reaches audiences who have never heard of you but trust the Curator's judgment.</p>
+
+    <h3>5.3 QR-to-Digital Bridge</h3>
+    <p>For creators with a physical presence (restaurants, shops, live events, conferences), QR codes are a growth engine. Every QR scan converts a physical encounter into a digital relationship.</p>
+    <ul>
+      <li>A chef places a QR code on the menu → diners watch a .jmpg of the dish being prepared → subscribe for weekly recipes</li>
+      <li>A musician places a QR code on the concert poster → passersby hear a 30-second preview → subscribe for upcoming releases</li>
+    </ul>
+
+    <h3>5.4 Platform Migration Campaign</h3>
+    <div class="step-flow">
+      <div class="step-item">
+        <div class="num">W1</div>
+        <div class="step-content">
+          <h4>Week 1: Announce</h4>
+          <p>Announce the sovereign channel on all platforms. Build anticipation.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="num">W2</div>
+        <div class="step-content">
+          <h4>Week 2: Exclusive</h4>
+          <p>Post exclusive content only on the sovereign channel, with teasers on platforms.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="num">W3</div>
+        <div class="step-content">
+          <h4>Week 3: Incentivize</h4>
+          <p>Offer an incentive (bonus .jmpg, early access, community perk) for sovereign subscribers.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="num">W4</div>
+        <div class="step-content">
+          <h4>Week 4: Reduce</h4>
+          <p>Begin reducing platform posting frequency. A well-executed migration converts 10–25% of followers.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="sealed-box">
+      <h4>📊 The Math</h4>
+      <p>That 10% at 70–95% open rate delivers <strong>more actual engagement</strong> than the full 100% at 5–10% platform notification rate. Quality over quantity.</p>
+    </div>
+  </div>
+</div>
+
+<!-- §6 METRICS -->
+<div id="metrics" class="section">
+  <div class="card">
+    <h2>📊 6. Metrics That Matter: Sovereign Analytics</h2>
+    <p>Platform metrics are designed to keep you on the platform. Sovereign metrics measure what actually matters.</p>
+
+    <div class="metric-grid">
+      <div class="metric-card">
+        <div class="metric-name">Sovereign Reach</div>
+        <div class="metric-desc">Total direct contacts across all owned channels</div>
+        <div class="metric-target">Your real audience size, immune to algorithm changes</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-name">Delivery Rate</div>
+        <div class="metric-desc">% of sent .jmpg that were opened</div>
+        <div class="metric-target">Target: 70–95% is healthy</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-name">Onboard Completion</div>
+        <div class="metric-desc">% of openers who watched full 30s</div>
+        <div class="metric-target">Target: >80% is excellent</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-name">Stream Conversion</div>
+        <div class="metric-desc">% of onboard viewers who continued to stream</div>
+        <div class="metric-target">Target: >40% is strong</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-name">Subscription Rate</div>
+        <div class="metric-desc">% of free viewers who became paying subscribers</div>
+        <div class="metric-target">Typical: 3–8%, exceptional: >10%</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-name">Revenue per Subscriber</div>
+        <div class="metric-desc">Monthly revenue / total subscribers</div>
+        <div class="metric-target">Target: €5–15 is healthy range</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-name">Share Rate</div>
+        <div class="metric-desc">% of viewers who forwarded the .jmpg</div>
+        <div class="metric-target">Target: >5% drives compounding growth</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-name">Pott Attribution</div>
+        <div class="metric-desc">% of new subscribers from Pott feeds</div>
+        <div class="metric-target">Shows Pott ROI vs. solo distribution</div>
+      </div>
+    </div>
+
+    <div class="sealed-box">
+      <h4>🎯 The Single Most Important Number</h4>
+      <p><strong>Revenue per Subscriber × Subscriber Count</strong> = your monthly sovereign income. It depends on no one's permission but your own.</p>
+    </div>
+  </div>
+</div>
+
+<!-- §7 MANIFESTO -->
+<div id="manifesto" class="section">
+  <div class="card">
+    <h2>📜 7. The Sovereign Creator Manifesto</h2>
+    <p>This section can be shared publicly as a standalone declaration. It is designed to be printed, posted, and distributed as the philosophical anchor of the sovereign creator movement.</p>
+
+    <div class="manifesto">
+      <p><strong>I create content.</strong></p>
+      <p><strong>I own my content.</strong></p>
+      <p><strong>I distribute my content through channels I control.</strong></p>
+      <p><strong>I monetize on my terms.</strong></p>
+      <p>No algorithm decides who sees my work.</p>
+      <p>No platform takes a share of my revenue.</p>
+      <p>No terms of service threaten my livelihood.</p>
+      <p><strong>My audience is mine. My data is mine. My Vault is my territory.</strong></p>
+      <p>I am not a user. <strong>I am a broadcaster.</strong></p>
+      <p>I am not a creator on someone else's platform. <strong>I am a sovereign publisher on my own infrastructure.</strong></p>
+      <p>The network already exists. The audience already exists. The content already exists.</p>
+      <p><strong>I just stopped asking permission.</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- §8 QUICK REF -->
+<div id="quickref" class="section">
+  <div class="card">
+    <h2>⚡ 8. Quick Reference: Broadcaster in 30 Seconds</h2>
+    <p>The minimum viable workflow for sovereign video distribution, distilled to its essence.</p>
+
+    <div class="quick-ref">
+      <div class="title">5 Steps to Sovereign Broadcasting</div>
+      <div class="steps">
+        <div class="qr-step">
+          <span class="qr-num">1</span>
+          <span class="qr-text"><strong>RECORD</strong> — Film your video (any device, any length)</span>
+        </div>
+        <div class="qr-step">
+          <span class="qr-num">2</span>
+          <span class="qr-text"><strong>UPLOAD</strong> — Upload to your Vault (drag and drop or API)</span>
+        </div>
+        <div class="qr-step">
+          <span class="qr-num">3</span>
+          <span class="qr-text"><strong>WAIT</strong> — JMPG Trigger processes (5–10 min). You receive a .jmpg file</span>
+        </div>
+        <div class="qr-step">
+          <span class="qr-num">4</span>
+          <span class="qr-text"><strong>SEND</strong> — Share via WhatsApp, Telegram, email, QR, or any channel</span>
+        </div>
+        <div class="qr-step">
+          <span class="qr-num">5</span>
+          <span class="qr-text"><strong>EARN</strong> — Viewers watch, subscribe, and pay you directly. 100% yours.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sealed-box">
+      <h4>🐉 That's It</h4>
+      <p>Five steps. No algorithm. No intermediary. No permission. <strong>You are now a sovereign broadcaster.</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- §9 CLOSING -->
+<div id="closing" class="section">
+  <div class="card">
+    <h2>🐉 9. Closing: The Audience You Already Have</h2>
+    <p>The most valuable asset a creator possesses is not their content. It is their <strong>relationship with their audience</strong>.</p>
+    <p>Platforms understood this decades ago, which is why they built walls around that relationship: gatekeeping access, throttling notifications, and extracting rent at every touchpoint.</p>
+    <p>The .jmpg protocol and the WINDI Vault return that relationship to its rightful owner. <strong>The creator.</strong></p>
+
+    <ul>
+      <li>Your contacts are your distribution network</li>
+      <li>Your phone is your broadcasting studio</li>
+      <li>Your Vault is your television station</li>
+    </ul>
+
+    <p>This playbook is not asking you to build something new. It is asking you to <strong>use what you already have</strong>.</p>
+
+    <div class="sealed-box">
+      <h4>🐉 The Final Word</h4>
+      <p><strong>This is not disruption. It is restoration. Welcome to the age of the sovereign creator.</strong></p>
+    </div>
+  </div>
+</div>
+
+</div>
+<footer class="footer">
+  <div style="margin-bottom:8px;"><strong style="color:var(--gold);">JMPG SOVEREIGN SPEC — PILLAR 4 — v1.0.0</strong></div>
+  <div>WINDI Publishing House · Kempten, Bavaria, EU · "AI processes. Human decides. WINDI guarantees."</div>
+  <div style="margin-top:8px;">
+    <a href="/palette/">← Palette</a> ·
+    <a href="/palette/pillar-1.html">Pillar 1</a> ·
+    <a href="/palette/pillar-2.html">Pillar 2</a> ·
+    <a href="/palette/pillar-3.html">Pillar 3</a> ·
+    <a href="/palette/media-spec.html">Infrastructure Spec</a> ·
+    <span class="mono">JMPG-SPEC-P4-v1.0 · SHA-256 sealed</span>
+  </div>
+</footer>
+<script>
+function toggleTheme() {
+  const body = document.body;
+  const isNoir = body.getAttribute('data-theme') === 'noir';
+  body.setAttribute('data-theme', isNoir ? '' : 'noir');
+  document.querySelector('.theme-toggle').textContent = isNoir ? '☀' : '🌙';
+}
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>

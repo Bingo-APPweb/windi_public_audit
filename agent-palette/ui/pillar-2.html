@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>JMPG Sovereign Spec — Pillar 2: The Vault Architecture</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏛️</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:#F5F0E0; --card:#FDFBF5; --hover:#EDE8D8; --border:#DDD6C2;
+  --gold:#8B6914; --text:#2C2924; --dim:#6B6560; --success:#4A7C59;
+  --warning:#B8860B; --danger:#A94442; --sealed:#1B4332; --forensic:#2A6B4A;
+  --blue:#5B8DEF; --purple:#7C5BEF; --orange:#EF8B5B;
+}
+[data-theme="noir"] {
+  --bg:#0E0E14; --card:#16161F; --hover:#1C1C28; --border:#26263A;
+  --gold:#D4A843; --text:#E2E2EA; --dim:#7A7A96; --success:#5A9C69;
+  --warning:#D4A843; --danger:#CF6679; --sealed:#1B4332; --forensic:#2A6B4A;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Bricolage Grotesque',sans-serif; background:var(--bg); color:var(--text); line-height:1.7; }
+code, .mono { font-family:'JetBrains Mono',monospace; font-size:0.9em; }
+pre { background:var(--hover); border:1px solid var(--border); border-radius:8px; padding:16px; overflow-x:auto; font-size:11px; line-height:1.6; }
+.header { background:var(--card); border-bottom:1px solid var(--border); padding:20px 32px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; position:sticky; top:0; z-index:100; }
+.header h1 { font-size:18px; font-weight:800; color:var(--gold); flex:1; }
+.header .meta { font-size:10px; color:var(--dim); display:flex; gap:12px; flex-wrap:wrap; }
+.header .meta span { background:var(--hover); padding:3px 8px; border-radius:4px; border:1px solid var(--border); }
+.theme-toggle { background:none; border:none; font-size:16px; cursor:pointer; color:var(--dim); }
+.nav { display:flex; gap:4px; padding:12px 32px; flex-wrap:wrap; border-bottom:1px solid var(--border); background:var(--card); overflow-x:auto; }
+.nav button { padding:8px 14px; border-radius:8px; font-size:11px; font-weight:600; cursor:pointer; background:var(--card); border:1px solid var(--border); color:var(--dim); font-family:inherit; white-space:nowrap; }
+.nav button.active { background:color-mix(in srgb, var(--gold) 12%, transparent); border-color:var(--gold); color:var(--gold); }
+.content { padding:24px 32px 60px; max-width:1000px; margin:0 auto; }
+.section { display:none; }
+.section.active { display:block; }
+.card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:24px; margin-bottom:20px; }
+.card h2 { font-size:18px; font-weight:800; margin-bottom:12px; color:var(--gold); display:flex; align-items:center; gap:8px; }
+.card h3 { font-size:14px; font-weight:700; margin:20px 0 10px; color:var(--text); border-bottom:1px solid var(--border); padding-bottom:6px; }
+.card h4 { font-size:12px; font-weight:700; margin:16px 0 8px; color:var(--dim); }
+.card p { font-size:13px; margin-bottom:12px; }
+.card ul, .card ol { font-size:13px; padding-left:20px; margin-bottom:12px; }
+.card li { margin-bottom:6px; }
+.sealed-box { background:color-mix(in srgb, var(--sealed) 94%, white); border:1.5px solid var(--forensic); border-radius:12px; padding:18px; color:#E8F5E9; margin:16px 0; }
+.sealed-box h4 { color:#81C784; margin-bottom:6px; font-size:12px; }
+.sealed-box p { color:#A5D6A7; font-size:12px; margin:0; }
+.sealed-box .mono { color:#81C784; }
+.invariant-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:12px; margin:16px 0; }
+.invariant-card { background:var(--hover); border:1px solid var(--border); border-radius:10px; padding:14px; }
+.invariant-card .num { font-size:11px; font-weight:800; color:var(--gold); margin-bottom:4px; }
+.invariant-card .title { font-size:13px; font-weight:700; margin-bottom:6px; }
+.invariant-card .desc { font-size:11px; color:var(--dim); line-height:1.5; }
+.spec-table { width:100%; border-collapse:collapse; margin:16px 0; font-size:11px; }
+.spec-table th { background:var(--hover); padding:8px 10px; text-align:left; font-weight:700; border-bottom:2px solid var(--border); color:var(--dim); text-transform:uppercase; font-size:10px; }
+.spec-table td { padding:8px 10px; border-bottom:1px solid var(--border); vertical-align:top; }
+.spec-table tr:hover td { background:var(--hover); }
+.spec-table .mono { font-size:10px; }
+.spec-table .gold { color:var(--gold); font-weight:600; }
+.spec-table .success { color:var(--success); }
+.spec-table .highlight { background:color-mix(in srgb, var(--gold) 6%, transparent); }
+.stage-list { display:flex; flex-direction:column; gap:8px; margin:16px 0; }
+.stage-item { display:flex; gap:12px; padding:12px 14px; background:var(--hover); border-radius:10px; border:1px solid var(--border); }
+.stage-item .num { width:28px; height:28px; border-radius:6px; background:var(--gold); color:#fff; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; flex-shrink:0; }
+.stage-item .content h4 { font-size:12px; font-weight:700; margin:0 0 4px; }
+.stage-item .content p { font-size:11px; color:var(--dim); margin:0; line-height:1.5; }
+.fs-tree { background:var(--hover); border:1px solid var(--border); border-radius:10px; padding:16px; font-family:'JetBrains Mono',monospace; font-size:11px; line-height:1.8; white-space:pre; overflow-x:auto; }
+.fs-tree .dir { color:var(--gold); font-weight:600; }
+.fs-tree .file { color:var(--dim); }
+.fs-tree .comment { color:var(--success); font-style:italic; }
+.tier-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin:16px 0; }
+.tier-card { background:var(--hover); border:1.5px solid var(--border); border-radius:12px; padding:16px; text-align:center; }
+.tier-card.featured { border-color:var(--gold); background:color-mix(in srgb, var(--gold) 5%, var(--hover)); }
+.tier-card .tier-icon { font-size:24px; margin-bottom:6px; }
+.tier-card .tier-name { font-size:14px; font-weight:800; }
+.tier-card .tier-price { font-size:18px; font-weight:800; color:var(--gold); margin:4px 0; }
+.tier-card .tier-price span { font-size:10px; font-weight:400; color:var(--dim); }
+.tier-card .specs { font-size:10px; color:var(--dim); margin-top:8px; text-align:left; }
+.tier-card .specs div { padding:3px 0; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; }
+.tier-card .specs div:last-child { border:none; }
+.flow-step { display:flex; align-items:center; gap:8px; padding:8px 12px; background:var(--hover); border-radius:8px; margin:4px 0; font-size:11px; }
+.flow-step .step { width:24px; height:24px; border-radius:50%; background:var(--gold); color:#fff; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:800; flex-shrink:0; }
+.footer { text-align:center; padding:24px 32px; border-top:1px solid var(--border); font-size:11px; color:var(--dim); }
+.footer a { color:var(--gold); text-decoration:none; }
+.badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:9px; font-weight:700; }
+.badge-gold { background:color-mix(in srgb, var(--gold) 15%, transparent); color:var(--gold); border:1px solid color-mix(in srgb, var(--gold) 30%, transparent); }
+.badge-sealed { background:var(--sealed); color:#81C784; border:1px solid var(--forensic); }
+@media print { .header, .nav { position:static; } .section { display:block!important; page-break-inside:avoid; } }
+</style>
+</head>
+<body>
+<header class="header">
+  <h1>🏛️ PILLAR 2 — The Vault Architecture</h1>
+  <div class="meta">
+    <span>JMPG-SPEC-P2-v1.0</span>
+    <span class="badge badge-sealed">🔐 CONFIDENTIAL</span>
+    <span>Feb 2026</span>
+    <span>Depends: P1</span>
+  </div>
+  <button class="theme-toggle" onclick="toggleTheme()">☀</button>
+</header>
+<nav class="nav">
+  <button class="active" onclick="showSection('abstract',this)">1. Abstract</button>
+  <button onclick="showSection('invariants',this)">2. Invariants</button>
+  <button onclick="showSection('filesystem',this)">3. Filesystem</button>
+  <button onclick="showSection('services',this)">4. Services</button>
+  <button onclick="showSection('config',this)">5. Config</button>
+  <button onclick="showSection('provisioning',this)">6. Provisioning</button>
+  <button onclick="showSection('security',this)">7. Security</button>
+  <button onclick="showSection('scaling',this)">8. Scaling</button>
+  <button onclick="showSection('backup',this)">9. Backup</button>
+  <button onclick="showSection('tiers',this)">10. VaaS Tiers</button>
+  <button onclick="showSection('ops',this)">11. Operations</button>
+</nav>
+<div class="content">
+
+<!-- §1 ABSTRACT -->
+<div id="abstract" class="section active">
+  <div class="card">
+    <h2>📋 1. Abstract</h2>
+    <p>This document specifies the architecture of the <strong>WINDI Sovereign Vault</strong>: the self-hosted or managed infrastructure that stores, processes, seals, and serves a creator's media content.</p>
+    <p>The Vault is the <strong>physical manifestation of digital sovereignty</strong>. It is:</p>
+    <ul>
+      <li>The server that no platform can shut down</li>
+      <li>The database that no algorithm can manipulate</li>
+      <li>The endpoint that no intermediary can intercept</li>
+    </ul>
+    <div class="sealed-box">
+      <h4>🐉 Core Definition</h4>
+      <p>A Vault is not a server. It is a <strong>sovereign territory in cyberspace</strong>.</p>
+    </div>
+    <p>This document covers filesystem layout, service topology, provisioning automation, security model, scaling strategy, and operational procedures for both self-hosted and VaaS deployments.</p>
+    <div class="sealed-box">
+      <h4>💡 The Sovereignty Principle</h4>
+      <p class="mono">"The creator who owns their Vault cannot be evicted. The creator who controls their stream cannot be silenced. The creator who seals their content cannot be plagiarized."</p>
+    </div>
+  </div>
+</div>
+
+<!-- §2 INVARIANTS -->
+<div id="invariants" class="section">
+  <div class="card">
+    <h2>⚖️ 2. Design Invariants</h2>
+    <p>The Vault architecture is governed by <strong>six invariants</strong> that every implementation must satisfy, whether self-hosted on a €4/month VPS or managed by WINDI at enterprise scale.</p>
+    <div class="invariant-grid">
+      <div class="invariant-card">
+        <div class="num">V1 — SINGLE-TENANT SOVEREIGNTY</div>
+        <div class="title">One Vault = One Creator</div>
+        <div class="desc">Each Vault serves exactly one creator (or one organization). No multi-tenant mixing of content, keys, or governance data. In VaaS, isolation is enforced via Linux namespaces and dedicated systemd units.</div>
+      </div>
+      <div class="invariant-card">
+        <div class="num">V2 — LOCAL-FIRST PROCESSING</div>
+        <div class="title">80/20 Compute Rule</div>
+        <div class="desc">All transcoding, packaging, sealing, and manifest generation happens on the Vault's own CPU. No content is ever sent to external services. 80% compute local; only streaming delivery exits.</div>
+      </div>
+      <div class="invariant-card">
+        <div class="num">V3 — IMMUTABLE AUDIT TRAIL</div>
+        <div class="title">Append-Only Ledger</div>
+        <div class="desc">Every operation (upload, transcode, seal, publish, access) is logged in the Vault's local Ledger (SQLite + SHA-256 chain). Append-only. Deletion requires a logged governance action.</div>
+      </div>
+      <div class="invariant-card">
+        <div class="num">V4 — KEY CUSTODY</div>
+        <div class="title">Creator Holds Keys</div>
+        <div class="desc">Ed25519 private key resides exclusively on the Vault (or creator's hardware wallet). WINDI never holds, copies, or accesses private keys, even in VaaS. Key rotation supported.</div>
+      </div>
+      <div class="invariant-card">
+        <div class="num">V5 — EXPORTABILITY</div>
+        <div class="title">No Lock-In</div>
+        <div class="desc">Creator can export entire Vault (content, metadata, Ledger, keys) as portable archive at any time. Migration VaaS↔self-hosted completes within 24 hours for &lt;100GB.</div>
+      </div>
+      <div class="invariant-card">
+        <div class="num">V6 — MINIMUM VIABLE COST</div>
+        <div class="title">€4-8/month Ceiling</div>
+        <div class="desc">Functional Vault must operate on 2 vCPU, 4GB RAM, 80GB SSD, 2TB bandwidth (≤€8/month). Sovereignty must not be a luxury.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- §3 FILESYSTEM -->
+<div id="filesystem" class="section">
+  <div class="card">
+    <h2>📁 3. Filesystem Layout</h2>
+    <p>Every Vault follows a <strong>canonical directory structure</strong>. This consistency enables automated provisioning, backup, migration, and debugging.</p>
+    <div class="fs-tree"><span class="dir">/srv/windi-vault/</span>
+├── <span class="dir">config/</span>
+│   ├── <span class="file">vault.yaml</span>          <span class="comment"># Master config (ports, domain, tier)</span>
+│   ├── <span class="dir">keys/</span>
+│   │   ├── <span class="file">creator.pub</span>      <span class="comment"># Ed25519 public key</span>
+│   │   └── <span class="file">creator.key</span>      <span class="comment"># Ed25519 private (chmod 600)</span>
+│   ├── <span class="file">nginx.conf</span>           <span class="comment"># Vault-specific nginx server block</span>
+│   └── <span class="dir">ssl/</span>                 <span class="comment"># Let's Encrypt certificates</span>
+├── <span class="dir">content/</span>
+│   ├── <span class="dir">originals/</span>           <span class="comment"># Raw uploaded files (never modified)</span>
+│   ├── <span class="dir">onboard/</span>             <span class="comment"># 30s MP4 segments (H.264 Baseline)</span>
+│   ├── <span class="dir">hls/</span>                 <span class="comment"># Adaptive streaming segments</span>
+│   │   └── <span class="dir">{content_id}/</span>
+│   │       ├── <span class="file">master.m3u8</span>
+│   │       ├── <span class="dir">1080p/</span> <span class="dir">720p/</span> <span class="dir">480p/</span> <span class="dir">360p/</span>
+│   ├── <span class="dir">jmpg/</span>                <span class="comment"># Assembled .jmpg binaries</span>
+│   └── <span class="dir">thumbnails/</span>          <span class="comment"># Auto-generated preview images</span>
+├── <span class="dir">data/</span>
+│   ├── <span class="file">ledger.db</span>            <span class="comment"># SQLite Forensic Ledger</span>
+│   ├── <span class="file">analytics.db</span>         <span class="comment"># View counts, geo, device stats</span>
+│   ├── <span class="file">subscribers.db</span>       <span class="comment"># DID-based access control list</span>
+│   └── <span class="file">sge_cache.db</span>         <span class="comment"># SGE risk classifications</span>
+├── <span class="dir">services/</span>
+│   ├── <span class="dir">trigger/</span>             <span class="comment"># JMPG Trigger (FastAPI)</span>
+│   ├── <span class="dir">streamer/</span>            <span class="comment"># HLS auth + delivery (nginx + lua)</span>
+│   ├── <span class="dir">sealer/</span>              <span class="comment"># SHA-256 seal + Ledger writer</span>
+│   ├── <span class="dir">gatekeeper/</span>          <span class="comment"># DID challenge + tier resolution</span>
+│   └── <span class="dir">analytics/</span>           <span class="comment"># Event collector + aggregator</span>
+├── <span class="dir">logs/</span>                    <span class="comment"># Structured JSON logs</span>
+└── <span class="dir">backups/</span>                 <span class="comment"># Encrypted daily snapshots</span></div>
+    <div class="sealed-box">
+      <h4>📌 Write-Once Originals</h4>
+      <p>The <code>originals/</code> directory is <strong>write-once</strong>. Once uploaded, files are never modified or moved. All derived content is regenerated from original if needed.</p>
+    </div>
+  </div>
+</div>
+
+<!-- §4 SERVICES -->
+<div id="services" class="section">
+  <div class="card">
+    <h2>⚙️ 4. Service Topology</h2>
+    <p>The Vault runs <strong>five microservices</strong>, each as a dedicated systemd unit, communicating via localhost HTTP. Only nginx is exposed to the public internet.</p>
+    <table class="spec-table">
+      <thead><tr><th>Service</th><th>Port</th><th>Stack</th><th>Responsibility</th></tr></thead>
+      <tbody>
+        <tr class="highlight"><td class="gold">Trigger</td><td class="mono">9100</td><td>FastAPI</td><td>Video ingest, ffmpeg orchestration, .jmpg assembly</td></tr>
+        <tr><td class="gold">Sealer</td><td class="mono">9101</td><td>FastAPI</td><td>SHA-256 computation, Ed25519 signing, Ledger writes</td></tr>
+        <tr><td class="gold">Gatekeeper</td><td class="mono">9102</td><td>FastAPI</td><td>DID challenge/response, tier resolution, ACL enforcement</td></tr>
+        <tr><td class="gold">Analytics</td><td class="mono">9103</td><td>FastAPI</td><td>Event ingestion, aggregation, dashboard API</td></tr>
+        <tr class="highlight"><td class="gold">nginx</td><td class="mono">443</td><td>nginx+lua</td><td>TLS termination, HLS delivery, static .jmpg, reverse proxy</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:11px; color:var(--dim);">Port range 9100–9103 reserved for Vault services. In VaaS multi-tenant: 9100+N*10 per tenant.</p>
+    
+    <h3>4.1 Request Flow: Stream Access</h3>
+    <div class="stage-list">
+      <div class="flow-step"><span class="step">1</span>Player sends GET to <code>vault_endpoint/v/{id}/master.m3u8</code> with DID token</div>
+      <div class="flow-step"><span class="step">2</span>nginx extracts DID token, forwards to Gatekeeper at 127.0.0.1:9102/verify</div>
+      <div class="flow-step"><span class="step">3</span>Gatekeeper validates Ed25519 signature, checks subscriber DB, returns ALLOW/DENY</div>
+      <div class="flow-step"><span class="step">4</span>If ALLOW: nginx serves HLS segments. If tier limits: filter manifest profiles</div>
+      <div class="flow-step"><span class="step">5</span>Analytics receives access event via async POST from nginx lua module</div>
+    </div>
+    <div class="sealed-box">
+      <h4>⚡ Performance</h4>
+      <p>Entire flow from request to first HLS segment: <strong>&lt;100ms</strong> on €4/month VPS. Gatekeeper decision cached 5 minutes per DID.</p>
+    </div>
+  </div>
+</div>
+
+<!-- §5 CONFIG -->
+<div id="config" class="section">
+  <div class="card">
+    <h2>📝 5. Vault Configuration: vault.yaml</h2>
+    <p>Master configuration file. Every field has sensible defaults. Minimal deployment requires only <code>domain</code> and <code>creator.did</code>.</p>
+<pre># vault.yaml — WINDI Sovereign Vault Configuration
+
+vault:
+  id: "vault-uuid-v7"
+  domain: "maria.windi-media.com"
+  mode: "standalone"        # standalone | vaas-managed
+  tier: "SEED"              # SEED | GROW | FOREST | MOUNTAIN
+
+creator:
+  did: "did:windi:ed25519:abc123..."
+  display_name: "Chef Maria Lisboa"
+  public_key_path: "/srv/windi-vault/config/keys/creator.pub"
+  private_key_path: "/srv/windi-vault/config/keys/creator.key"
+
+storage:
+  max_gb: 25                 # SEED default
+  warn_threshold_pct: 85
+  originals_retention: "forever"
+  hls_segment_duration_s: 6
+
+streaming:
+  profiles:
+    - { res: "1920x1080", bitrate: 4500, codec: "h265" }
+    - { res: "1280x720",  bitrate: 2000, codec: "h264" }
+    - { res: "854x480",   bitrate: 800,  codec: "h264" }
+    - { res: "640x360",   bitrate: 400,  codec: "h264" }
+  onboard_duration_s: 30
+  onboard_codec: "h264"
+  onboard_profile: "baseline"
+  crossfade_ms: 500
+
+governance:
+  ledger_enabled: true
+  sge_enabled: false          # true for PRO/Enterprise
+  seal_algorithm: "SHA-256"
+  eu_ai_act_compliance: true
+
+security:
+  ssl_mode: "letsencrypt"
+  gatekeeper_cache_ttl_s: 300
+  rate_limit_rps: 100
+  did_challenge_expiry_s: 60
+
+backup:
+  enabled: true
+  schedule: "daily"
+  encrypt: true
+  retention_days: 30</pre>
+  </div>
+</div>
+
+<!-- §6 PROVISIONING -->
+<div id="provisioning" class="section">
+  <div class="card">
+    <h2>🚀 6. Provisioning Automation</h2>
+    <p>Vault provisioning is <strong>fully automated</strong> for VaaS scalability. When a creator subscribes to SEED (€15/month), the following pipeline executes without human intervention.</p>
+    
+    <h3>6.1 Automated Pipeline</h3>
+    <div class="stage-list">
+      <div class="stage-item">
+        <div class="num">1</div>
+        <div class="content">
+          <h4>IDENTITY BOOTSTRAP</h4>
+          <p>Generate UUIDv7 vault_id, create Ed25519 key pair, register DID in WINDI DID Cycle. Private key encrypted at rest (XChaCha20-Poly1305 + Argon2id).</p>
+        </div>
+      </div>
+      <div class="stage-item">
+        <div class="num">2</div>
+        <div class="content">
+          <h4>FILESYSTEM SCAFFOLD</h4>
+          <p>Create canonical directory structure. Set permissions 750. Initialize SQLite databases with empty schemas.</p>
+        </div>
+      </div>
+      <div class="stage-item">
+        <div class="num">3</div>
+        <div class="content">
+          <h4>SERVICE DEPLOYMENT</h4>
+          <p>Generate 4 systemd unit files from templates. Set resource limits (SEED: CPUQuota=50%, MemoryMax=512M). Start and enable services.</p>
+        </div>
+      </div>
+      <div class="stage-item">
+        <div class="num">4</div>
+        <div class="content">
+          <h4>NGINX CONFIGURATION</h4>
+          <p>Generate server block for subdomain. SSL via Let's Encrypt + certbot. HLS delivery, Gatekeeper proxy, static .jmpg hosting. Validate and reload.</p>
+        </div>
+      </div>
+      <div class="stage-item">
+        <div class="num">5</div>
+        <div class="content">
+          <h4>DNS REGISTRATION</h4>
+          <p>Create A record for subdomain (or CNAME instructions for custom domain). Validate DNS propagation before SSL cert request.</p>
+        </div>
+      </div>
+      <div class="stage-item">
+        <div class="num">6</div>
+        <div class="content">
+          <h4>SMOKE TEST</h4>
+          <p>Upload 5s test video, run full Trigger pipeline, verify .jmpg SEAL, test HLS streaming, confirm Gatekeeper. If pass: status = ACTIVE.</p>
+        </div>
+      </div>
+    </div>
+    <div class="sealed-box">
+      <h4>⚡ Provisioning Time</h4>
+      <p>From subscription to ACTIVE status: <strong>&lt;5 minutes</strong>. No human intervention. Same pipeline scales to 100+ Vaults.</p>
+    </div>
+
+    <h3>6.2 Multi-Tenant Isolation (VaaS)</h3>
+    <table class="spec-table">
+      <thead><tr><th>Isolation Level</th><th>Mechanism</th></tr></thead>
+      <tbody>
+        <tr><td class="gold">Process</td><td>Dedicated Linux user per Vault. systemd ProtectHome=true, PrivateTmp=true</td></tr>
+        <tr><td class="gold">Network</td><td>Unique localhost ports (9100+N*10). nginx routes by server_name</td></tr>
+        <tr><td class="gold">Storage</td><td>Filesystem owned by dedicated user. Disk quotas enforce tier limits</td></tr>
+        <tr><td class="gold">Resource</td><td>systemd CPUQuota + MemoryMax prevent starvation</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- §7 SECURITY -->
+<div id="security" class="section">
+  <div class="card">
+    <h2>🔐 7. Security Architecture</h2>
+    
+    <h3>7.1 Key Management</h3>
+    <ul>
+      <li>Ed25519 key pair is <strong>root of trust</strong> for entire Vault</li>
+      <li>Private key signs manifests, authorizes publication, authenticates admin API</li>
+      <li>Generated on Vault (never transmitted), encrypted at rest: <code>XChaCha20-Poly1305</code> + <code>Argon2id</code></li>
+      <li>In VaaS: encrypted key accessible only to vault's Linux user (chmod 600)</li>
+      <li>WINDI operators <strong>cannot decrypt</strong> without creator's passphrase</li>
+    </ul>
+
+    <h3>7.2 TLS and Transport</h3>
+    <ul>
+      <li>All external communication: <strong>TLS 1.3 only</strong></li>
+      <li>Let's Encrypt auto-provisioned, auto-renewed via certbot timer</li>
+      <li>Internal localhost communication: no TLS (OS loopback isolation)</li>
+      <li>HSTS headers: 1-year max-age, includeSubDomains</li>
+    </ul>
+
+    <h3>7.3 DID Challenge Protocol</h3>
+    <div class="stage-list">
+      <div class="flow-step"><span class="step">1</span>Gatekeeper issues challenge: nonce + content_id + 60s expiry</div>
+      <div class="flow-step"><span class="step">2</span>Viewer client signs challenge with DID private key</div>
+      <div class="flow-step"><span class="step">3</span>Gatekeeper verifies signature against DID public key (WINDI registry)</div>
+      <div class="flow-step"><span class="step">4</span>Check subscriber DB for access rights</div>
+      <div class="flow-step"><span class="step">5</span>Issue short-lived access token (5-min TTL) → nginx header</div>
+    </div>
+
+    <h3>7.4 Content Encryption (Optional)</h3>
+    <p>For PREMIUM/PRIVATE tier: HLS segments encrypted with <strong>AES-256-CTR</strong>. Key unique per content, stored in Sealer DB, deliverable only to authenticated viewers. Onboard segment is <strong>never encrypted</strong> (must play offline).</p>
+  </div>
+</div>
+
+<!-- §8 SCALING -->
+<div id="scaling" class="section">
+  <div class="card">
+    <h2>📈 8. Scaling Strategy</h2>
+    
+    <h3>8.1 Vertical: Single Server Capacity</h3>
+    <p>Single Strato VPS (4 vCPU, 8GB RAM, 200GB SSD, €8/month) serves <strong>20 SEED Vaults</strong>. Bottleneck: concurrent transcoding (1-2 vCPU per ffmpeg). Redis-backed job queue serializes transcoding while other operations proceed.</p>
+
+    <h3>8.2 Horizontal: Multi-Server Federation</h3>
+    <ul>
+      <li>At 80% capacity (16+ SEED Vaults or avg CPU &gt;70%): new subs → new server</li>
+      <li>Each server fully independent: own nginx, services, DNS</li>
+      <li><strong>No shared state</strong> between servers</li>
+      <li>Control Plane tracks inventory + routing, never touches content/keys</li>
+      <li>If Control Plane down: existing Vaults continue serving</li>
+    </ul>
+
+    <h3>8.3 CDN Integration (FOREST/MOUNTAIN)</h3>
+    <p>European CDN layer for high-traffic Vaults. CDN caches only encrypted/public segments. Vault remains origin. Immediate cache invalidation via purge API. Optional per vault.yaml.</p>
+  </div>
+</div>
+
+<!-- §9 BACKUP -->
+<div id="backup" class="section">
+  <div class="card">
+    <h2>💾 9. Backup and Disaster Recovery</h2>
+    <p><strong>Data loss is sovereignty loss.</strong> Backup strategy survives hardware failure, accidental deletion, and ransomware.</p>
+    
+    <h3>Daily Incremental Backup</h3>
+    <ul>
+      <li>rsync-based incremental: <code>content/</code>, <code>data/</code>, <code>config/</code></li>
+      <li>Encrypted with creator's public key (only creator can decrypt)</li>
+      <li>Retention: 30 days (SEED/GROW), 90 days (FOREST), 365 days (MOUNTAIN)</li>
+    </ul>
+
+    <h3>Ledger Integrity Check</h3>
+    <ul>
+      <li>Every backup verifies SHA-256 chain of ledger.db</li>
+      <li>If chain broken: alert creator + WINDI monitoring</li>
+      <li>Most recent valid Ledger snapshot preserved separately</li>
+    </ul>
+
+    <h3>Recovery Time Objective (RTO)</h3>
+    <table class="spec-table">
+      <thead><tr><th>Tier</th><th>Size</th><th>RTO</th></tr></thead>
+      <tbody>
+        <tr><td>SEED/GROW</td><td class="mono">&lt;100GB</td><td class="success">2 hours</td></tr>
+        <tr><td>FOREST</td><td class="mono">&lt;500GB</td><td>8 hours</td></tr>
+        <tr><td>MOUNTAIN</td><td class="mono">Any</td><td class="success">&lt;1 hour (hot standby)</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Export and Migration</h3>
+    <p><code>windi-vault export</code> generates portable .wva archive (content, DBs, config, encrypted keys). Import on any Linux server with WINDI runtime. Includes SHA-256 manifest for integrity verification. <strong>Zero lock-in.</strong></p>
+  </div>
+</div>
+
+<!-- §10 TIERS -->
+<div id="tiers" class="section">
+  <div class="card">
+    <h2>📦 10. VaaS Tier Specifications</h2>
+    <p>All tiers include full WINDI Forensic Stack (Ledger + Seal + DID). Differences are in resource allocation, not capability.</p>
+    
+    <div class="tier-grid">
+      <div class="tier-card">
+        <div class="tier-icon">🌱</div>
+        <div class="tier-name">SEED</div>
+        <div class="tier-price">€15 <span>/mo</span></div>
+        <div class="specs">
+          <div><span>Storage</span><span class="mono">25 GB</span></div>
+          <div><span>Bandwidth</span><span class="mono">500 GB/mo</span></div>
+          <div><span>CPU</span><span class="mono">50%</span></div>
+          <div><span>RAM</span><span class="mono">512 MB</span></div>
+          <div><span>Domain</span><span>Subdomain</span></div>
+          <div><span>Backup</span><span>Weekly</span></div>
+          <div><span>RTO</span><span>4 hours</span></div>
+        </div>
+      </div>
+      <div class="tier-card featured">
+        <div class="tier-icon">🌿</div>
+        <div class="tier-name">GROW</div>
+        <div class="tier-price">€35 <span>/mo</span></div>
+        <div class="specs">
+          <div><span>Storage</span><span class="mono">100 GB</span></div>
+          <div><span>Bandwidth</span><span class="mono">2 TB/mo</span></div>
+          <div><span>CPU</span><span class="mono">100%</span></div>
+          <div><span>RAM</span><span class="mono">1 GB</span></div>
+          <div><span>Domain</span><span>Custom</span></div>
+          <div><span>Pott</span><span>5 members</span></div>
+          <div><span>Backup</span><span>Daily</span></div>
+          <div><span>RTO</span><span>2 hours</span></div>
+        </div>
+      </div>
+      <div class="tier-card">
+        <div class="tier-icon">🌳</div>
+        <div class="tier-name">FOREST</div>
+        <div class="tier-price">€99 <span>/mo</span></div>
+        <div class="specs">
+          <div><span>Storage</span><span class="mono">500 GB</span></div>
+          <div><span>Bandwidth</span><span class="mono">10 TB/mo</span></div>
+          <div><span>CPU</span><span>Dedicated</span></div>
+          <div><span>RAM</span><span class="mono">4 GB</span></div>
+          <div><span>CDN</span><span>EU CDN</span></div>
+          <div><span>Pott</span><span>Unlimited</span></div>
+          <div><span>Backup</span><span>Daily (90d)</span></div>
+          <div><span>RTO</span><span>8 hours</span></div>
+        </div>
+      </div>
+      <div class="tier-card">
+        <div class="tier-icon">🏔️</div>
+        <div class="tier-name">MOUNTAIN</div>
+        <div class="tier-price">€499+ <span>/mo</span></div>
+        <div class="specs">
+          <div><span>Storage</span><span>Unlimited</span></div>
+          <div><span>Bandwidth</span><span>Custom SLA</span></div>
+          <div><span>CPU</span><span>Dedicated HA</span></div>
+          <div><span>CDN</span><span>Global CDN</span></div>
+          <div><span>White-label</span><span>Full stack</span></div>
+          <div><span>Backup</span><span>Real-time</span></div>
+          <div><span>RTO</span><span>&lt;1 hour</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- §11 OPS -->
+<div id="ops" class="section">
+  <div class="card">
+    <h2>🔧 11. Operational Procedures</h2>
+    
+    <h3>11.1 Health Check Protocol</h3>
+    <p>Every Vault exposes <code>/health</code> endpoint returning JSON status. VaaS: polled every 60s.</p>
+<pre>{
+  "vault_id": "vault-uuid-v7",
+  "status": "HEALTHY",
+  "uptime_s": 864000,
+  "services": {
+    "trigger": "UP", "sealer": "UP",
+    "gatekeeper": "UP", "analytics": "UP"
+  },
+  "storage": { "used_gb": 18.4, "limit_gb": 25, "utilization_pct": 73.6 },
+  "ledger": { "entries": 847, "chain_valid": true },
+  "content": { "jmpg_count": 42, "total_views_24h": 1847 }
+}</pre>
+
+    <h3>11.2 Debug Procedure (ss+ps FIRST)</h3>
+    <div class="sealed-box">
+      <h4>⚠️ Standard WINDI Debug Protocol</h4>
+      <p>When service fails: <span class="mono">ss -tlnp</span> + <span class="mono">ps aux</span> → identify port conflicts + zombies → kill nohup orphans → purge <code>__pycache__</code> → then restart systemd unit. Prevents zombie holding port.</p>
+    </div>
+
+    <h3>11.3 Upgrade Path</h3>
+    <ul>
+      <li>Atomic releases: stop services → replace binaries → run migrations → restart → smoke test</li>
+      <li>If smoke test fails: <strong>auto-rollback &lt;30s</strong></li>
+      <li>Content and configuration never modified during updates</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>🐉 12. Closing: The Vault as Sovereign Territory</h2>
+    <p>In the physical world, sovereignty begins with territory. In the digital world, sovereignty begins with infrastructure.</p>
+    <ul>
+      <li>Cannot be seized by a platform's policy change</li>
+      <li>Cannot be silenced by an algorithm's whim</li>
+      <li>Cannot be monetized by anyone other than its owner</li>
+    </ul>
+    <div class="sealed-box">
+      <h4>🐉 The Final Word</h4>
+      <p><strong>The creator who owns their Vault has already won. Everything else is distribution.</strong></p>
+    </div>
+  </div>
+</div>
+
+</div>
+<footer class="footer">
+  <div style="margin-bottom:8px;"><strong style="color:var(--gold);">JMPG SOVEREIGN SPEC — PILLAR 2 — v1.0.0</strong></div>
+  <div>WINDI Publishing House · Kempten, Bavaria, EU · "AI processes. Human decides. WINDI guarantees."</div>
+  <div style="margin-top:8px;">
+    <a href="/palette/">← Palette</a> · 
+    <a href="/palette/pillar-1.html">Pillar 1</a> · 
+    <a href="/palette/media-spec.html">Infrastructure Spec</a> ·
+    <span class="mono">JMPG-SPEC-P2-v1.0 · SHA-256 sealed</span>
+  </div>
+</footer>
+<script>
+function toggleTheme() {
+  const body = document.body;
+  const isNoir = body.getAttribute('data-theme') === 'noir';
+  body.setAttribute('data-theme', isNoir ? '' : 'noir');
+  document.querySelector('.theme-toggle').textContent = isNoir ? '☀' : '🌙';
+}
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>

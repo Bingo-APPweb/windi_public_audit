@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>.jmpg Transport Protocol — WINDI Documentation</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐉</text></svg>">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family: 'Bricolage Grotesque', sans-serif; }
+    ::-webkit-scrollbar { width:6px; height:6px; }
+    ::-webkit-scrollbar-track { background:transparent; }
+    ::-webkit-scrollbar-thumb { background:#DDD6C2; border-radius:3px; }
+    .NOIR ::-webkit-scrollbar-thumb { background:#26263A; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+// ═══════════════════════════════════════════════════════════════════════════
+// .JMPG TRANSPORT PROTOCOL — Deep Architecture Documentation
+// "Só o hash viaja. O conteúdo só existe no destino."
+// ═══════════════════════════════════════════════════════════════════════════
+
+const { useState, useEffect, useCallback } = React;
+
+const THEMES = {
+  KLAR: {
+    bg:"#F5F0E0",card:"#FDFBF5",hover:"#EDE8D8",border:"#DDD6C2",
+    gold:"#8B6914",text:"#2C2924",dim:"#6B6560",success:"#4A7C59",
+    warning:"#B8860B",danger:"#A94442",sealed:"#1B4332",forensic:"#2A6B4A",
+  },
+  NOIR: {
+    bg:"#0E0E14",card:"#16161F",hover:"#1C1C28",border:"#26263A",
+    gold:"#D4A843",text:"#E2E2EA",dim:"#7A7A96",success:"#5A9C69",
+    warning:"#D4A843",danger:"#CF6679",sealed:"#1B4332",forensic:"#2A6B4A",
+  }
+};
+
+// ─── SIZE BREAKDOWN for Communiqué (13 layers) ───
+const SIZE_BLOCKS = [
+  { id:"header", label:"JMPG Header", bytes:256, color:"#D4A843", icon:"📋",
+    detail:"Magic bytes, version, created timestamp, format flags" },
+  { id:"seal", label:"Seal Block", bytes:512, color:"#4A7C59", icon:"🔐",
+    detail:"SHA-256 content hash + bundle hash + receipt ID + serial + ledger ref + vault ref" },
+  { id:"did_creator", label:"Creator DID", bytes:384, color:"#5B8DEF", icon:"👤",
+    detail:"Ed25519 public key + fingerprint + wallet ID + signature" },
+  { id:"did_recipients", label:"Recipient DIDs (×5)", bytes:1920, color:"#7C5BEF", icon:"👥",
+    detail:"5 × Ed25519 public keys + permission flags + DID-lock encryption keys" },
+  { id:"layer_meta", label:"Layer Metadata (×13)", bytes:2600, color:"#EF8B5B", icon:"📚",
+    detail:"13 layers × ~200B each: type, x, y, w, h, fontSize, color, opacity, rotation, zIndex" },
+  { id:"text_content", label:"Text Content", bytes:3200, color:"#5BEFA0", icon:"✏️",
+    detail:"All text from 7 text layers, UTF-8 encoded, ~3.2KB total" },
+  { id:"shapes", label:"Shape Definitions", bytes:800, color:"#EF5B8D", icon:"◆",
+    detail:"5 shapes: coordinates, colors, border radius, labels" },
+  { id:"images_thumb", label:"Image Thumbnails", bytes:15360, color:"#D4A843", icon:"🖼️",
+    detail:"Low-res previews for offline/preview mode, ~15KB compressed" },
+  { id:"images_full", label:"Full Images (encrypted)", bytes:358400, color:"#B8860B", icon:"📸",
+    detail:"High-res images, individually encrypted per recipient DID, ~350KB" },
+  { id:"video_refs", label:"Video References", bytes:256, color:"#C62828", icon:"🎬",
+    detail:"URL refs (not embedded), integrity hashes for remote verification" },
+  { id:"fonts", label:"Font Subset", bytes:45056, color:"#6B6560", icon:"🔤",
+    detail:"Bricolage Grotesque + JetBrains Mono subsets for exact rendering" },
+  { id:"qr", label:"QR Verification", bytes:2048, color:"#2A6B4A", icon:"📱",
+    detail:"Embedded QR code PNG for offline verification scan" },
+  { id:"encryption", label:"Encryption Overhead", bytes:8192, color:"#A94442", icon:"🛡️",
+    detail:"AES-256-GCM envelope + key wrapping per recipient + HMAC" },
+  { id:"integrity", label:"Integrity Check", bytes:128, color:"#1B4332", icon:"✅",
+    detail:"Final SHA-256 of entire container + byte count verification" },
+];
+
+// ─── PRIVACY LAYERS (onion model) ───
+const PRIVACY_LAYERS = [
+  { level:1, name:"Integrity", icon:"✅", color:"#4A7C59",
+    title:{ de:"Integrität",en:"Integrity",pt:"Integridade" },
+    desc:{ 
+      de:"SHA-256 Dual-Hash garante dass kein Byte verändert wurde. Content-Hash + Bundle-Hash bilden eine Kette.",
+      en:"SHA-256 Dual-Hash ensures not a single byte was altered. Content-Hash + Bundle-Hash form a chain.",
+      pt:"SHA-256 Dual-Hash garante que nenhum byte foi alterado. Content-Hash + Bundle-Hash formam uma cadeia."
+    },
+    tech:"SHA-256 · Dual hash chain · Merkle-like verification",
+    analogy:{ de:"Wie ein Wachssiegel auf einem Brief",en:"Like a wax seal on a letter",pt:"Como um selo de cera numa carta" },
+  },
+  { level:2, name:"Authentication", icon:"👤", color:"#5B8DEF",
+    title:{ de:"Authentifikation",en:"Authentication",pt:"Autenticação" },
+    desc:{
+      de:"Ed25519 Signatur des Erstellers. Der Fingerprint beweist kryptographisch WER das Dokument erstellt hat. Unabstreitbar.",
+      en:"Ed25519 signature of the creator. The fingerprint cryptographically proves WHO created the document. Non-repudiable.",
+      pt:"Assinatura Ed25519 do criador. A impressão digital prova criptograficamente QUEM criou o documento. Irrefutável."
+    },
+    tech:"Ed25519 · 256-bit key · Non-repudiation · DID binding",
+    analogy:{ de:"Wie ein notariell beglaubigter Fingerabdruck",en:"Like a notarized fingerprint",pt:"Como uma impressão digital notarizada" },
+  },
+  { level:3, name:"Authorization", icon:"🔑", color:"#7C5BEF",
+    title:{ de:"Autorisierung",en:"Authorization",pt:"Autorização" },
+    desc:{
+      de:"Dokument ist an spezifische Empfänger-DIDs gebunden. Jeder Layer wird individuell mit dem öffentlichen Schlüssel des Empfängers verschlüsselt. Nur die aufgeführten DIDs können entschlüsseln.",
+      en:"Document is bound to specific recipient DIDs. Each layer is individually encrypted with the recipient's public key. Only listed DIDs can decrypt.",
+      pt:"Documento está vinculado a DIDs de destinatários específicos. Cada layer é encriptado individualmente com a chave pública do destinatário. Só DIDs listados podem desencriptar."
+    },
+    tech:"X25519 key exchange · Per-layer encryption · DID-locked decryption",
+    analogy:{ de:"Wie ein Safe der nur mit bestimmten Schlüsseln öffnet",en:"Like a safe that only opens with specific keys",pt:"Como um cofre que só abre com chaves específicas" },
+  },
+  { level:4, name:"Confidentiality", icon:"🔒", color:"#D4A843",
+    title:{ de:"Vertraulichkeit",en:"Confidentiality",pt:"Confidencialidade" },
+    desc:{
+      de:"AES-256-GCM Verschlüsselung des gesamten Layer-Blocks. Im Transport ist der Inhalt eine opake Binärmasse. Kein Intermediär kann Layers, Text oder Bilder sehen.",
+      en:"AES-256-GCM encryption of the entire layer block. In transport the content is an opaque binary mass. No intermediary can see layers, text or images.",
+      pt:"Encriptação AES-256-GCM de todo o bloco de layers. Em transporte o conteúdo é uma massa binária opaca. Nenhum intermediário pode ver layers, texto ou imagens."
+    },
+    tech:"AES-256-GCM · Authenticated encryption · Random IV per container",
+    analogy:{ de:"Wie ein diplomatischer Koffer — versiegelt und undurchsichtig",en:"Like a diplomatic pouch — sealed and opaque",pt:"Como uma mala diplomática — selada e opaca" },
+  },
+  { level:5, name:"Zero-Knowledge Transit", icon:"👁️‍🗨️", color:"#A94442",
+    title:{ de:"Zero-Knowledge Transport",en:"Zero-Knowledge Transit",pt:"Transporte Zero-Knowledge" },
+    desc:{
+      de:"Im Transit sind nur sichtbar: Container-Größe, Hash, Empfänger-Anzahl. KEIN Inhalt, KEINE Layer-Struktur, KEINE Metadaten. Selbst der Dokumenttyp ist verschlüsselt.",
+      en:"In transit only visible: container size, hash, recipient count. NO content, NO layer structure, NO metadata. Even the document type is encrypted.",
+      pt:"Em trânsito apenas visível: tamanho do contentor, hash, número de destinatários. SEM conteúdo, SEM estrutura de layers, SEM metadados. Até o tipo de documento está encriptado."
+    },
+    tech:"Envelope encryption · Metadata stripping · Constant-size padding",
+    analogy:{ de:"Wie ein Paket ohne Absender — man sieht nur dass es existiert",en:"Like a package with no return address — you only see it exists",pt:"Como um pacote sem remetente — só se vê que existe" },
+  },
+  { level:6, name:"Temporal Sovereignty", icon:"⏳", color:"#1B4332",
+    title:{ de:"Zeitliche Souveränität",en:"Temporal Sovereignty",pt:"Soberania Temporal" },
+    desc:{
+      de:"Optionaler Zeitschloss: Dokument kann nach X Tagen ablaufen, sich selbst als gelesen markieren, oder Zugriff nach dem ersten Öffnen einschränken. Der Ersteller behält die zeitliche Kontrolle.",
+      en:"Optional time-lock: document can expire after X days, self-mark as read, or restrict access after first opening. The creator retains temporal control.",
+      pt:"Time-lock opcional: documento pode expirar após X dias, auto-marcar como lido, ou restringir acesso após primeira abertura. O criador mantém controlo temporal."
+    },
+    tech:"Time-locked encryption · Read-receipt hash · Expiry flag · Forward secrecy",
+    analogy:{ de:"Wie eine Nachricht die nach dem Lesen verschwindet — aber beweisbar existierte",en:"Like a message that vanishes after reading — but provably existed",pt:"Como uma mensagem que desaparece após leitura — mas comprovadamente existiu" },
+  },
+];
+
+// ─── WHAT'S VISIBLE AT EACH POINT ───
+const TRANSIT_POINTS = [
+  { id:"origin", icon:"📝", label:{de:"Ursprung",en:"Origin",pt:"Origem"},
+    visible:["All layers","All content","All images","Creator DID","Recipient list"],
+    encrypted:[], hidden:[] },
+  { id:"sealed", icon:"🔐", label:{de:"Versiegelt",en:"Sealed",pt:"Selado"},
+    visible:["All layers","All content","All images","Creator DID","Receipt"],
+    encrypted:[], hidden:[] },
+  { id:"packaged", icon:"📦", label:{de:"Verpackt",en:"Packaged",pt:"Empacotado"},
+    visible:["Container size","Hash","Recipient count"],
+    encrypted:["Layers","Content","Images","Metadata","DID details"],
+    hidden:["Document type","Layer count","Text content"] },
+  { id:"transit", icon:"🌐", label:{de:"Im Transit",en:"In Transit",pt:"Em Trânsito"},
+    visible:["438KB opaque blob","Hash: 7a3f...c8e2","Recipients: 5"],
+    encrypted:["Everything else"],
+    hidden:["All content","All structure","All metadata"] },
+  { id:"intercept", icon:"🚫", label:{de:"Abfang-Versuch",en:"Interception",pt:"Intercepção"},
+    visible:["438KB binary data","Hash (useless without key)"],
+    encrypted:["Cannot decrypt without recipient DID"],
+    hidden:["100% of meaningful content"] },
+  { id:"destination", icon:"✅", label:{de:"Empfänger",en:"Recipient",pt:"Destinatário"},
+    visible:["All layers restored","All content readable","All images rendered","Receipt verified","Integrity confirmed"],
+    encrypted:[], hidden:[] },
+];
+
+const totalBytes = SIZE_BLOCKS.reduce((sum, b) => sum + b.bytes, 0);
+const formatBytes = (b) => b < 1024 ? b+"B" : b < 1048576 ? (b/1024).toFixed(1)+"KB" : (b/1048576).toFixed(1)+"MB";
+
+function App() {
+  const [themeName, setThemeName] = useState("KLAR");
+  const [lang, setLang] = useState("en");
+  const [activeView, setActiveView] = useState("size");
+  const [hoveredBlock, setHoveredBlock] = useState(null);
+  const [hoveredPrivacy, setHoveredPrivacy] = useState(null);
+  const [transitPoint, setTransitPoint] = useState(0);
+  const [animating, setAnimating] = useState(false);
+  const th = THEMES[themeName];
+  const t = (obj) => (typeof obj === "object" && obj !== null && !Array.isArray(obj)) ? (obj[lang] || obj.en) : obj;
+
+  const playTransit = useCallback(() => {
+    setAnimating(true); setTransitPoint(0);
+    let i = 0;
+    const iv = setInterval(() => {
+      i++; setTransitPoint(i);
+      if (i >= TRANSIT_POINTS.length - 1) { clearInterval(iv); setAnimating(false); }
+    }, 1200);
+  }, []);
+
+  return (
+    <div className={themeName} style={{ minHeight:"100vh", background:th.bg, color:th.text,
+      fontFamily:"'Bricolage Grotesque',sans-serif" }}>
+
+      {/* ═══ HEADER ═══ */}
+      <header style={{ padding:"20px 24px", borderBottom:"1px solid "+th.border,
+        background:th.card, display:"flex", alignItems:"center", gap:12, flexWrap:"wrap" }}>
+        <span style={{ fontSize:28 }}>📦</span>
+        <div style={{ flex:1 }}>
+          <div style={{ fontSize:16, fontWeight:800, color:th.gold, letterSpacing:1 }}>
+            .JMPG TRANSPORT PROTOCOL
+          </div>
+          <div style={{ fontSize:11, color:th.dim, marginTop:2, fontStyle:"italic" }}>
+            {lang==="de"?"Nur der Hash reist. Der Inhalt existiert nur am Ziel.":
+             lang==="pt"?"Só o hash viaja. O conteúdo só existe no destino.":
+             "Only the hash travels. Content only exists at the destination."}
+          </div>
+        </div>
+        <div style={{ display:"flex", gap:6, alignItems:"center" }}>
+          <button onClick={() => setThemeName(n => n==="KLAR"?"NOIR":"KLAR")}
+            style={{ background:"none", border:"none", cursor:"pointer", fontSize:16, color:th.dim }}>
+            {themeName==="KLAR"?"☀":"🌙"}</button>
+          {["de","en","pt"].map(l => (
+            <button key={l} onClick={() => setLang(l)}
+              style={{ padding:"4px 10px", borderRadius:6, fontSize:10, fontWeight:700, cursor:"pointer",
+                background:lang===l?th.gold+"18":th.card, border:"1px solid "+(lang===l?th.gold:th.border),
+                color:lang===l?th.gold:th.dim }}>{l.toUpperCase()}</button>
+          ))}
+        </div>
+      </header>
+
+      {/* ═══ TABS ═══ */}
+      <div style={{ display:"flex", gap:4, padding:"16px 24px", flexWrap:"wrap" }}>
+        {[
+          { id:"size", icon:"📊", label:{de:"Container-Größe",en:"Container Size",pt:"Tamanho do Contentor"} },
+          { id:"privacy", icon:"🧅", label:{de:"Privacy-Schichten",en:"Privacy Layers",pt:"Camadas de Privacidade"} },
+          { id:"transit", icon:"🌐", label:{de:"Transit-Simulation",en:"Transit Simulation",pt:"Simulação de Trânsito"} },
+          { id:"compare", icon:"⚖️", label:{de:"Protokoll-Vergleich",en:"Protocol Comparison",pt:"Comparação de Protocolos"} },
+        ].map(tab => (
+          <button key={tab.id} onClick={() => setActiveView(tab.id)}
+            style={{ padding:"10px 18px", borderRadius:10, fontSize:12, fontWeight:600, cursor:"pointer",
+              display:"flex", alignItems:"center", gap:6,
+              background: activeView===tab.id ? th.gold+"15" : th.card,
+              border: "1.5px solid "+(activeView===tab.id ? th.gold : th.border),
+              color: activeView===tab.id ? th.gold : th.dim }}>
+            <span>{tab.icon}</span>{t(tab.label)}
+          </button>
+        ))}
+      </div>
+
+      <div style={{ padding:"0 24px 40px" }}>
+
+        {/* ═══ SIZE BREAKDOWN ═══ */}
+        {activeView === "size" && (
+          <div style={{ display:"flex", gap:20, flexWrap:"wrap" }}>
+            {/* Visual size bar */}
+            <div style={{ flex:"1 1 500px", background:th.card, borderRadius:16, padding:24,
+              border:"1px solid "+th.border }}>
+              <div style={{ display:"flex", alignItems:"baseline", gap:10, marginBottom:6 }}>
+                <h2 style={{ fontSize:20, fontWeight:800, margin:0 }}>
+                  {formatBytes(totalBytes)}
+                </h2>
+                <span style={{ fontSize:12, color:th.dim }}>
+                  {lang==="de"?"Gesamtgröße Communiqué":lang==="pt"?"Tamanho total Comunicado":"Total Communiqué Size"}
+                </span>
+              </div>
+              <div style={{ fontSize:11, color:th.dim, marginBottom:20 }}>
+                13 layers · 7 text · 1 image · 5 shapes · 1 QR · sealed + encrypted
+              </div>
+
+              {/* Stacked bar */}
+              <div style={{ display:"flex", height:40, borderRadius:8, overflow:"hidden", marginBottom:20,
+                border:"1px solid "+th.border }}>
+                {SIZE_BLOCKS.map((block) => {
+                  const pct = (block.bytes / totalBytes) * 100;
+                  if (pct < 0.5) return null;
+                  return (
+                    <div key={block.id}
+                      onMouseEnter={() => setHoveredBlock(block.id)}
+                      onMouseLeave={() => setHoveredBlock(null)}
+                      style={{
+                        width:pct+"%", background:block.color+"BB", cursor:"pointer",
+                        transition:"all 0.2s", display:"flex", alignItems:"center", justifyContent:"center",
+                        opacity: hoveredBlock && hoveredBlock !== block.id ? 0.4 : 1,
+                        borderRight:"1px solid "+th.bg,
+                      }}>
+                      {pct > 4 && <span style={{ fontSize:9, color:"#fff", fontWeight:600 }}>{block.icon}</span>}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Hovered detail */}
+              {hoveredBlock && (() => {
+                const b = SIZE_BLOCKS.find(x => x.id === hoveredBlock);
+                return b ? (
+                  <div style={{ padding:14, borderRadius:10, background:b.color+"12",
+                    border:"1.5px solid "+b.color+"33", marginBottom:16, transition:"all 0.3s" }}>
+                    <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:6 }}>
+                      <span style={{ fontSize:20 }}>{b.icon}</span>
+                      <div>
+                        <div style={{ fontSize:14, fontWeight:700 }}>{b.label}</div>
+                        <div style={{ fontSize:11, color:th.dim, fontFamily:"'JetBrains Mono',monospace" }}>
+                          {formatBytes(b.bytes)} · {((b.bytes/totalBytes)*100).toFixed(1)}%
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{ fontSize:12, color:th.text, lineHeight:1.5 }}>{b.detail}</div>
+                  </div>
+                ) : null;
+              })()}
+
+              {/* Itemized list */}
+              <div style={{ display:"flex", flexDirection:"column", gap:4 }}>
+                {SIZE_BLOCKS.map(block => {
+                  const pct = (block.bytes / totalBytes) * 100;
+                  return (
+                    <div key={block.id}
+                      onMouseEnter={() => setHoveredBlock(block.id)}
+                      onMouseLeave={() => setHoveredBlock(null)}
+                      style={{ display:"flex", alignItems:"center", gap:8, padding:"6px 10px",
+                        borderRadius:8, cursor:"pointer", transition:"all 0.15s",
+                        background: hoveredBlock===block.id ? block.color+"12" : "transparent",
+                        border:"1px solid "+(hoveredBlock===block.id ? block.color+"33" : "transparent") }}>
+                      <div style={{ width:8, height:8, borderRadius:2, background:block.color, flexShrink:0 }}/>
+                      <span style={{ fontSize:12 }}>{block.icon}</span>
+                      <span style={{ fontSize:11, fontWeight:600, flex:1 }}>{block.label}</span>
+                      <span style={{ fontSize:10, color:th.dim, fontFamily:"'JetBrains Mono',monospace" }}>
+                        {formatBytes(block.bytes)}
+                      </span>
+                      <span style={{ fontSize:9, color:th.dim, fontFamily:"'JetBrains Mono',monospace",
+                        minWidth:40, textAlign:"right" }}>
+                        {pct.toFixed(1)}%
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Key insight */}
+            <div style={{ flex:"1 1 280px", display:"flex", flexDirection:"column", gap:16 }}>
+              <div style={{ background:th.sealed+"F0", borderRadius:16, padding:20,
+                border:"1.5px solid "+th.forensic, color:"#E8F5E9" }}>
+                <div style={{ fontSize:14, fontWeight:800, marginBottom:10 }}>
+                  📧 {lang==="de"?"E-Mail Vergleich":lang==="pt"?"Comparação Email":"Email Comparison"}
+                </div>
+                <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:11, lineHeight:2 }}>
+                  <div><span style={{color:"#81C784"}}>PDF</span> same doc: ~<span style={{fontWeight:700}}>2.1MB</span> (flat, unprotected)</div>
+                  <div><span style={{color:"#81C784"}}>DOCX</span> same doc: ~<span style={{fontWeight:700}}>1.8MB</span> (linear, modifiable)</div>
+                  <div><span style={{color:"#D4A843"}}>.jmpg</span> same doc: ~<span style={{fontWeight:700}}>{formatBytes(totalBytes)}</span> (layers + seal + E2E)</div>
+                </div>
+                <div style={{ marginTop:12, fontSize:11, color:"#A5D6A7", lineHeight:1.5 }}>
+                  {lang==="de"?"Kleiner als PDF, aber mit Layers, Siegel, DID-Lock und Zero-Knowledge Transport.":
+                   lang==="pt"?"Menor que PDF, mas com Layers, Selo, DID-Lock e transporte Zero-Knowledge.":
+                   "Smaller than PDF, but with Layers, Seal, DID-Lock and Zero-Knowledge transport."}
+                </div>
+              </div>
+
+              <div style={{ background:th.card, borderRadius:16, padding:20, border:"1px solid "+th.border }}>
+                <div style={{ fontSize:14, fontWeight:800, marginBottom:12 }}>
+                  🎯 {lang==="de"?"Größen-Optimierung":lang==="pt"?"Optimização de Tamanho":"Size Optimization"}
+                </div>
+                {[
+                  { label:"Font subsetting", desc:"Only glyphs used, not full fonts", saving:"−180KB" },
+                  { label:"Image compression", desc:"WebP @ quality 85, progressive", saving:"−60%" },
+                  { label:"Delta layers", desc:"Shapes as vectors, not bitmaps", saving:"−90%" },
+                  { label:"Constant-size padding", desc:"All containers same size class", saving:"Privacy ++" },
+                ].map((opt,i) => (
+                  <div key={i} style={{ display:"flex", gap:8, marginBottom:8 }}>
+                    <div style={{ width:6, height:6, borderRadius:3, background:th.gold, marginTop:5, flexShrink:0 }}/>
+                    <div>
+                      <div style={{ fontSize:11, fontWeight:600 }}>{opt.label}</div>
+                      <div style={{ fontSize:10, color:th.dim }}>{opt.desc}</div>
+                    </div>
+                    <div style={{ marginLeft:"auto", fontSize:9, color:th.success, fontWeight:700,
+                      fontFamily:"'JetBrains Mono',monospace", flexShrink:0 }}>{opt.saving}</div>
+                  </div>
+                ))}
+              </div>
+
+              <div style={{ background:th.card, borderRadius:16, padding:20, border:"1px solid "+th.border }}>
+                <div style={{ fontSize:14, fontWeight:800, marginBottom:8 }}>
+                  📏 {lang==="de"?"Größenklassen":lang==="pt"?"Classes de Tamanho":"Size Classes"}
+                </div>
+                <div style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:10, lineHeight:2 }}>
+                  {[
+                    { cls:"MICRO", range:"< 64KB", use:"Text-only docs, notes" },
+                    { cls:"STANDARD", range:"64KB—512KB", use:"Communiqués, reports" },
+                    { cls:"MEDIA", range:"512KB—5MB", use:"Image-heavy portfolios" },
+                    { cls:"ARCHIVE", range:"5MB—50MB", use:"Video refs + hi-res images" },
+                  ].map(s => (
+                    <div key={s.cls} style={{ display:"flex", gap:8 }}>
+                      <span style={{ color:th.gold, fontWeight:700, minWidth:70 }}>{s.cls}</span>
+                      <span style={{ color:th.dim, minWidth:80 }}>{s.range}</span>
+                      <span>{s.use}</span>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ marginTop:10, padding:"8px 12px", borderRadius:8,
+                  background:th.gold+"12", border:"1px solid "+th.gold+"22",
+                  fontSize:11, color:th.gold, fontWeight:600 }}>
+                  📡 Communiqué = STANDARD class (~438KB)
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ═══ PRIVACY LAYERS (Onion) ═══ */}
+        {activeView === "privacy" && (
+          <div style={{ display:"flex", gap:20, flexWrap:"wrap" }}>
+            {/* Onion visual */}
+            <div style={{ flex:"1 1 320px", background:th.card, borderRadius:16, padding:24,
+              border:"1px solid "+th.border, display:"flex", flexDirection:"column", alignItems:"center" }}>
+              <h3 style={{ fontSize:16, fontWeight:800, margin:"0 0 20px" }}>
+                🧅 {lang==="de"?"Zwiebel-Modell":lang==="pt"?"Modelo Cebola":"Onion Model"}
+              </h3>
+              {/* Concentric circles */}
+              <div style={{ position:"relative", width:300, height:300 }}>
+                {[...PRIVACY_LAYERS].reverse().map((layer, i) => {
+                  const size = 300 - (i * 44);
+                  const isHovered = hoveredPrivacy === layer.level;
+                  return (
+                    <div key={layer.level}
+                      onMouseEnter={() => setHoveredPrivacy(layer.level)}
+                      onMouseLeave={() => setHoveredPrivacy(null)}
+                      style={{
+                        position:"absolute",
+                        left: (300 - size) / 2,
+                        top: (300 - size) / 2,
+                        width: size, height: size,
+                        borderRadius: "50%",
+                        background: isHovered ? layer.color+"25" : layer.color+"10",
+                        border: "2px solid "+(isHovered ? layer.color : layer.color+"44"),
+                        display:"flex", alignItems:"center", justifyContent:"center",
+                        cursor:"pointer", transition:"all 0.3s ease",
+                        boxShadow: isHovered ? "0 0 30px "+layer.color+"22" : "none",
+                      }}>
+                      {i === PRIVACY_LAYERS.length - 1 && (
+                        <div style={{ textAlign:"center" }}>
+                          <div style={{ fontSize:24 }}>📄</div>
+                          <div style={{ fontSize:8, fontWeight:700, color:th.dim }}>CONTENT</div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+                {/* Labels around the circle */}
+                {PRIVACY_LAYERS.map((layer, i) => {
+                  const angle = -90 + (i * 60);
+                  const r = 168;
+                  const x = 150 + r * Math.cos(angle * Math.PI / 180);
+                  const y = 150 + r * Math.sin(angle * Math.PI / 180);
+                  return (
+                    <div key={"label-"+layer.level}
+                      onMouseEnter={() => setHoveredPrivacy(layer.level)}
+                      onMouseLeave={() => setHoveredPrivacy(null)}
+                      style={{
+                        position:"absolute", left:x-20, top:y-12,
+                        fontSize:18, cursor:"pointer", transition:"all 0.2s",
+                        transform: hoveredPrivacy===layer.level ? "scale(1.3)" : "scale(1)",
+                        filter: hoveredPrivacy===layer.level ? "drop-shadow(0 0 8px "+layer.color+")" : "none",
+                      }}>
+                      {layer.icon}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Layer details */}
+            <div style={{ flex:"1 1 400px", display:"flex", flexDirection:"column", gap:8 }}>
+              {PRIVACY_LAYERS.map(layer => {
+                const isActive = hoveredPrivacy === layer.level;
+                return (
+                  <div key={layer.level}
+                    onMouseEnter={() => setHoveredPrivacy(layer.level)}
+                    onMouseLeave={() => setHoveredPrivacy(null)}
+                    style={{
+                      padding: isActive ? "16px 18px" : "10px 14px",
+                      borderRadius:12, cursor:"pointer", transition:"all 0.3s ease",
+                      background: isActive ? layer.color+"12" : th.card,
+                      border: "1.5px solid "+(isActive ? layer.color : th.border),
+                      boxShadow: isActive ? "0 4px 20px "+layer.color+"15" : "none",
+                    }}>
+                    <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                      <div style={{ width:28, height:28, borderRadius:8,
+                        background:layer.color+"20", border:"1.5px solid "+layer.color+"44",
+                        display:"flex", alignItems:"center", justifyContent:"center",
+                        fontSize:14, flexShrink:0 }}>{layer.icon}</div>
+                      <div style={{ flex:1 }}>
+                        <div style={{ fontSize:13, fontWeight:700 }}>
+                          L{layer.level} — {t(layer.title)}
+                        </div>
+                        <div style={{ fontSize:9, color:layer.color, fontFamily:"'JetBrains Mono',monospace" }}>
+                          {layer.name}
+                        </div>
+                      </div>
+                    </div>
+                    {isActive && (
+                      <div style={{ marginTop:10 }}>
+                        <p style={{ fontSize:12, lineHeight:1.6, margin:"0 0 8px" }}>{t(layer.desc)}</p>
+                        <div style={{ fontSize:10, color:th.dim, fontFamily:"'JetBrains Mono',monospace",
+                          padding:"6px 10px", borderRadius:6, background:th.hover,
+                          border:"1px solid "+th.border }}>{layer.tech}</div>
+                        <div style={{ fontSize:11, color:layer.color, fontStyle:"italic", marginTop:6 }}>
+                          💡 {t(layer.analogy)}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* ═══ TRANSIT SIMULATION ═══ */}
+        {activeView === "transit" && (
+          <div style={{ background:th.card, borderRadius:16, padding:24, border:"1px solid "+th.border }}>
+            <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:20, flexWrap:"wrap", gap:10 }}>
+              <h3 style={{ fontSize:16, fontWeight:800, margin:0 }}>
+                🌐 {lang==="de"?"Was ist sichtbar an jedem Punkt?":lang==="pt"?"O que é visível em cada ponto?":"What's visible at each point?"}
+              </h3>
+              <button onClick={playTransit} disabled={animating}
+                style={{ padding:"8px 18px", borderRadius:10, background:th.gold, border:"none",
+                  color:"#FFFDF5", fontSize:12, fontWeight:700, cursor:"pointer",
+                  opacity:animating?0.5:1 }}>
+                ▶ {lang==="de"?"Simulation starten":lang==="pt"?"Iniciar simulação":"Start simulation"}
+              </button>
+            </div>
+
+            {/* Transit points */}
+            <div style={{ display:"flex", gap:4, overflowX:"auto", paddingBottom:16 }}>
+              {TRANSIT_POINTS.map((point, i) => (
+                <div key={point.id} onClick={() => !animating && setTransitPoint(i)}
+                  style={{
+                    flex:"1 1 150px", minWidth:150, padding:16, borderRadius:12, cursor:"pointer",
+                    background: transitPoint===i ? (point.id==="intercept"?"#A9444215":th.gold+"12") : th.hover,
+                    border: "2px solid "+(transitPoint===i ? (point.id==="intercept"?th.danger:th.gold) : th.border),
+                    transition:"all 0.4s ease", textAlign:"center",
+                    opacity: animating && transitPoint < i ? 0.3 : 1,
+                    transform: transitPoint===i ? "scale(1.02)" : "scale(1)",
+                  }}>
+                  <div style={{ fontSize:28, marginBottom:6,
+                    filter: transitPoint===i ? "drop-shadow(0 0 8px "+(point.id==="intercept"?th.danger:th.gold)+"44)" : "none" }}>
+                    {point.icon}</div>
+                  <div style={{ fontSize:11, fontWeight:700 }}>{t(point.label)}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Detail for selected point */}
+            {(() => {
+              const p = TRANSIT_POINTS[transitPoint];
+              return (
+                <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit, minmax(200px, 1fr))", gap:12, marginTop:8 }}>
+                  {/* Visible */}
+                  <div style={{ padding:16, borderRadius:12, background:th.success+"08",
+                    border:"1px solid "+th.success+"22" }}>
+                    <div style={{ fontSize:12, fontWeight:700, color:th.success, marginBottom:8 }}>
+                      👁️ {lang==="de"?"Sichtbar":lang==="pt"?"Visível":"Visible"}
+                    </div>
+                    {p.visible.map((item,i) => (
+                      <div key={i} style={{ fontSize:11, padding:"3px 0", display:"flex", gap:6 }}>
+                        <span style={{color:th.success}}>●</span> {item}
+                      </div>
+                    ))}
+                  </div>
+                  {/* Encrypted */}
+                  {p.encrypted.length > 0 && (
+                    <div style={{ padding:16, borderRadius:12, background:th.warning+"08",
+                      border:"1px solid "+th.warning+"22" }}>
+                      <div style={{ fontSize:12, fontWeight:700, color:th.warning, marginBottom:8 }}>
+                        🔒 {lang==="de"?"Verschlüsselt":lang==="pt"?"Encriptado":"Encrypted"}
+                      </div>
+                      {p.encrypted.map((item,i) => (
+                        <div key={i} style={{ fontSize:11, padding:"3px 0", display:"flex", gap:6 }}>
+                          <span style={{color:th.warning}}>●</span> {item}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {/* Hidden */}
+                  {p.hidden.length > 0 && (
+                    <div style={{ padding:16, borderRadius:12, background:th.danger+"08",
+                      border:"1px solid "+th.danger+"22" }}>
+                      <div style={{ fontSize:12, fontWeight:700, color:th.danger, marginBottom:8 }}>
+                        🚫 {lang==="de"?"Unsichtbar":lang==="pt"?"Invisível":"Hidden"}
+                      </div>
+                      {p.hidden.map((item,i) => (
+                        <div key={i} style={{ fontSize:11, padding:"3px 0", display:"flex", gap:6 }}>
+                          <span style={{color:th.danger}}>●</span> {item}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
+          </div>
+        )}
+
+        {/* ═══ PROTOCOL COMPARISON ═══ */}
+        {activeView === "compare" && (
+          <div style={{ background:th.card, borderRadius:16, padding:24, border:"1px solid "+th.border, overflowX:"auto" }}>
+            <h3 style={{ fontSize:16, fontWeight:800, margin:"0 0 20px" }}>
+              ⚖️ {lang==="de"?"Protokoll-Vergleich":lang==="pt"?"Comparação de Protocolos":"Protocol Comparison"}
+            </h3>
+            <div style={{ minWidth:700 }}>
+              {/* Header row */}
+              <div style={{ display:"grid", gridTemplateColumns:"180px repeat(5, 1fr)", gap:2, marginBottom:2 }}>
+                <div style={{ padding:"10px 12px", background:th.hover, borderRadius:"8px 0 0 0",
+                  fontSize:11, fontWeight:700, color:th.dim }}>Feature</div>
+                {[
+                  { name:".jmpg", icon:"🐉", highlight:true },
+                  { name:"PDF", icon:"📕" },
+                  { name:"DOCX", icon:"📄" },
+                  { name:"Signal msg", icon:"💬" },
+                  { name:"PGP email", icon:"🔑" },
+                ].map((p, i) => (
+                  <div key={p.name} style={{ padding:"10px 8px", textAlign:"center",
+                    background: p.highlight ? th.gold+"15" : th.hover,
+                    borderRadius: i===4 ? "0 8px 0 0" : 0,
+                    border: p.highlight ? "1px solid "+th.gold+"33" : "none" }}>
+                    <div style={{ fontSize:16 }}>{p.icon}</div>
+                    <div style={{ fontSize:11, fontWeight:700, color: p.highlight ? th.gold : th.text }}>{p.name}</div>
+                  </div>
+                ))}
+              </div>
+              {/* Data rows */}
+              {[
+                { feature:"Free-form layers", jmpg:"✅", pdf:"❌", docx:"❌", signal:"❌", pgp:"❌" },
+                { feature:"Cryptographic seal", jmpg:"✅ SHA-256", pdf:"❌", docx:"❌", signal:"❌", pgp:"✅ partial" },
+                { feature:"DID identity binding", jmpg:"✅ Ed25519", pdf:"❌", docx:"❌", signal:"❌", pgp:"✅ key-based" },
+                { feature:"Per-recipient lock", jmpg:"✅ DID-lock", pdf:"❌", docx:"🟡 password", signal:"✅", pgp:"✅" },
+                { feature:"Zero-knowledge transit", jmpg:"✅", pdf:"❌", docx:"❌", signal:"✅", pgp:"🟡 metadata leaks" },
+                { feature:"Integrity verification", jmpg:"✅ QR+URL", pdf:"❌", docx:"❌", signal:"✅ per-msg", pgp:"✅ signature" },
+                { feature:"Ledger/audit trail", jmpg:"✅ :8101", pdf:"❌", docx:"❌", signal:"❌", pgp:"❌" },
+                { feature:"Composition preserved", jmpg:"✅ exact", pdf:"🟡 flat", docx:"🟡 reflow", signal:"❌", pgp:"❌" },
+                { feature:"Offline verification", jmpg:"✅ QR scan", pdf:"❌", docx:"❌", signal:"❌", pgp:"✅ key verify" },
+                { feature:"Temporal control", jmpg:"✅ expiry", pdf:"❌", docx:"❌", signal:"✅ disappear", pgp:"❌" },
+                { feature:"EU sovereignty", jmpg:"✅ 93.3%", pdf:"❌ Adobe", docx:"❌ Microsoft", signal:"🟡 US", pgp:"✅ self-host" },
+                { feature:"Typical size", jmpg:"~438KB", pdf:"~2.1MB", docx:"~1.8MB", signal:"text only", pgp:"text+attach" },
+              ].map((row, i) => (
+                <div key={i} style={{ display:"grid", gridTemplateColumns:"180px repeat(5, 1fr)", gap:2, marginBottom:2 }}>
+                  <div style={{ padding:"8px 12px", background:th.hover, fontSize:11, fontWeight:600,
+                    display:"flex", alignItems:"center" }}>{row.feature}</div>
+                  {["jmpg","pdf","docx","signal","pgp"].map(col => (
+                    <div key={col} style={{ padding:"8px", textAlign:"center", fontSize:10,
+                      background: col==="jmpg" ? th.gold+"08" : (i%2===0 ? th.hover+"88" : "transparent"),
+                      border: col==="jmpg" ? "1px solid "+th.gold+"15" : "none",
+                      color: row[col].startsWith("✅") ? th.success : row[col].startsWith("❌") ? th.danger :
+                        row[col].startsWith("🟡") ? th.warning : th.dim }}>
+                      {row[col]}
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+
+            {/* Bottom insight */}
+            <div style={{ marginTop:20, padding:16, borderRadius:12, background:th.sealed+"F0",
+              border:"1.5px solid "+th.forensic, color:"#E8F5E9", textAlign:"center" }}>
+              <div style={{ fontSize:14, fontWeight:800, marginBottom:6 }}>
+                🐉 .jmpg = {lang==="de"?"Layers + Siegel + Identität + Transport in EINEM Container":
+                  lang==="pt"?"Layers + Selo + Identidade + Transporte num SÓ contentor":
+                  "Layers + Seal + Identity + Transport in ONE container"}
+              </div>
+              <div style={{ fontSize:11, color:"#A5D6A7", fontFamily:"'JetBrains Mono',monospace" }}>
+                {lang==="de"?"Kein anderes Format kombiniert freie Komposition mit kryptographischer Souveränität.":
+                 lang==="pt"?"Nenhum outro formato combina composição livre com soberania criptográfica.":
+                 "No other format combines free composition with cryptographic sovereignty."}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Footer */}
+      <footer style={{ padding:"16px 24px", borderTop:"1px solid "+th.border, background:th.card,
+        display:"flex", justifyContent:"space-between", alignItems:"center", flexWrap:"wrap", gap:10 }}>
+        <div style={{ fontSize:10, color:th.dim }}>
+          WINDI Protocol Documentation · v1.0.0 · 2026
+        </div>
+        <div style={{ display:"flex", gap:12 }}>
+          <a href="/palette/" style={{ fontSize:10, color:th.gold, textDecoration:"none" }}>← Back to Palette</a>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
+  </script>
+</body>
+</html>
