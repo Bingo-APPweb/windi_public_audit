@@ -493,6 +493,13 @@ def create_agent_api(agent: WindiAgent):
     except ImportError as e:
         print(f"  [WICK] Evidence Graph not loaded: {e}")
 
+    try:
+        from blueprints.grove_blueprint import grove_bp
+        app.register_blueprint(grove_bp)
+        print("  [Grove] Grove Orchestrator v1.0.0 loaded on /grove/*")
+    except ImportError as e:
+        print(f"  [Grove] Grove Orchestrator not loaded: {e}")
+
     @app.route("/agent/health", methods=["GET"])
     def health():
         return jsonify({

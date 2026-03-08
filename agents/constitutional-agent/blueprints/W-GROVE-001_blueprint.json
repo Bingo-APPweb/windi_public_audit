@@ -1,0 +1,125 @@
+{
+  "agent_id": "W-GROVE-001",
+  "name": "Grove Orchestrator",
+  "version": "1.0.0",
+  "role": "Idea Gardener & Agent Maestro",
+  "description": "Portal de entrada de ideias no Sandbox Core. Orquestra dinamicamente os agentes especializados, estrutura o debate como grafo semântico e sela a constelação no Ledger.",
+  "constitutional_basis": {
+    "invariants": ["I1", "I3", "I9", "I11"],
+    "principle": "AI processes. Human decides. WINDI guarantees.",
+    "iron_rule": "W-GROVE-001 is a domain extension of constitutional-agent. It never operates standalone."
+  },
+  "sandbox_integration": {
+    "host": ":8091",
+    "mount_prefix": "/grove/",
+    "endpoints": [
+      "POST /grove/seed",
+      "POST /grove/debate",
+      "GET  /grove/ideas",
+      "GET  /grove/ideas/{idea_id}",
+      "GET  /grove/ideas/{idea_id}/graph",
+      "POST /grove/ideas/{idea_id}/seal"
+    ]
+  },
+  "agent_registry": {
+    "description": "Agentes que o Grove pode ativar dinamicamente",
+    "agents": {
+      "W-LEGAL-001":  { "topics": ["jurídico","lei","contrato","evidência","jurisdição"],  "endpoint": "/legal/analyze" },
+      "W-NOTARY-001": { "topics": ["autenticidade","assinatura","certificação"],           "endpoint": "/notary/certify" },
+      "W-COMPLY-001": { "topics": ["conformidade","regulação","GDPR","risco"],             "endpoint": "/compliance/check" },
+      "W-COMM-001":   { "topics": ["documento","whitepaper","rascunho","estrutura"],       "endpoint": "/comm/draft" },
+      "W-JOURN-001":  { "topics": ["publicação","notícia","manifesto","comunicado"],       "endpoint": "/journal/publish" },
+      "W-AUDIT-001":  { "topics": ["auditoria","verificação","integridade"],               "endpoint": "/audit/verify" },
+      "W-ACCT-001":   { "topics": ["financeiro","contabilidade","fatura","ELSTER"],        "endpoint": "/accounting/review" }
+    }
+  },
+  "idea_graph_schema": {
+    "node_types": ["idea", "question", "hypothesis", "objection", "synthesis", "decision"],
+    "edge_types": ["supports", "contradicts", "derives_from", "refines", "questions", "leads_to", "synthesizes", "motivates", "enables"],
+    "IdeaNode": {
+      "id":          "string (UUID)",
+      "type":        "node_type",
+      "title":       "string",
+      "content":     "string",
+      "created_at":  "ISO8601",
+      "author":      "wallet_id | 'W-GROVE-001'",
+      "agent_source":"string (qual agente contribuiu)",
+      "ledger_receipt": "string | null"
+    },
+    "IdeaEdge": {
+      "id":           "string (UUID)",
+      "source_id":    "IdeaNode.id",
+      "target_id":    "IdeaNode.id",
+      "relation_type":"edge_type",
+      "created_at":   "ISO8601",
+      "debate_round": "integer"
+    }
+  },
+  "orchestration_flow": {
+    "step_1_seed": {
+      "input":  "{ idea: string, context?: object, user: wallet_id }",
+      "action": "W-GROVE-001 cria IdeaNode inicial, identifica temas semânticos"
+    },
+    "step_2_route": {
+      "action":  "Compara temas com agent_registry.topics",
+      "output":  "suggested_agents: string[]",
+      "rule":    "Máximo 3 agentes por rodada. Humano confirma antes de activar."
+    },
+    "step_3_debate": {
+      "action":  "Para cada agente activado: POST /sandbox/dispatch → agente → retorna insight",
+      "output":  "Novos IdeaNodes + IdeaEdges criados automaticamente"
+    },
+    "step_4_synthesis": {
+      "action":  "W-GROVE-001 sintetiza insights em Derived Node do tipo 'synthesis'",
+      "output":  "{ nodes[], edges[], summary, suggested_next_actions[] }"
+    },
+    "step_5_seal": {
+      "trigger": "Humano aprova síntese",
+      "action":  "POST :8101/api/receipts → receipt WINDI-GROVE-{id}",
+      "ledger_payload": {
+        "id":              "WINDI-GROVE-{uuid}",
+        "actor":           "W-GROVE-001",
+        "app":             "grove",
+        "doc_name":        "Idea Graph — {title}",
+        "doc_type":        "doc",
+        "governance_level":"MEDIUM",
+        "metadata":        "{ node_count, edge_count, agents_consulted[], idea_title }"
+      }
+    }
+  },
+  "sovereignty_config": {
+    "internal_processing": "93%",
+    "external_key_usage":  "7% — apenas quando nenhum agente local cobre o tema",
+    "fallback_order":      ["W-COMM-001 genérico", "constitutional-agent base", "external KEY"],
+    "never_external_for":  ["sealing", "ledger", "graph structure", "routing decisions"]
+  },
+  "sqlite_schema": {
+    "database": "grove.db",
+    "location": "/opt/windi/agents/constitutional-agent/grove.db",
+    "tables": {
+      "grove_ideas": "id TEXT PK, type TEXT, title TEXT, content TEXT, created_at TEXT, author TEXT, agent_source TEXT, ledger_receipt TEXT",
+      "grove_edges": "id TEXT PK, source_id TEXT FK, target_id TEXT FK, relation_type TEXT, created_at TEXT, debate_round INTEGER",
+      "grove_sessions": "id TEXT PK, user TEXT, created_at TEXT, sealed_at TEXT, receipt_id TEXT, node_count INTEGER, agents_used TEXT"
+    }
+  },
+  "deployment": {
+    "type":     "nohup (domain extension — NÃO systemd separado)",
+    "process":  "Registar blueprint no constitutional-agent, não criar serviço novo",
+    "restart":  "kill PID constitucional + nohup restart",
+    "rule":     "Iron Rule — W-GROVE-001 vive DENTRO do :8091, não numa porta própria"
+  },
+  "grove_ui_contract": {
+    "panel_component": "GroveDebatePanel",
+    "trigger":         "setGroveDebateOpen(true) — NUNCA setSidebarTab('chat')",
+    "data_contract": {
+      "input":  "{ ideaId, userId, context }",
+      "output": "{ nodes[], edges[], agents_consulted[], seal_available: boolean }"
+    },
+    "principle": "O utilizador NUNCA sai do Grove. Contexto preservado."
+  },
+  "genesis_receipt": {
+    "id":      "WINDI-GROVE-GENESIS-20260308",
+    "note":    "W-GROVE-001 nasce de uma conversa filosófica sobre epistemologia aplicada. Primeiro agente do Sandbox Core criado por princípio, não por necessidade técnica.",
+    "seal_when": "Primeiro blueprint deployado e smoke test passed"
+  }
+}
