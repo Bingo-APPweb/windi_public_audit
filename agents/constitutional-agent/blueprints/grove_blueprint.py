@@ -182,6 +182,22 @@ def debate_idea():
     if not idea_id:
         return jsonify({"error": "idea_id is required"}), 400
 
+    # VALIDATE: idea_id must exist in database BEFORE processing
+    conn = sqlite3.connect(GROVE_DB)
+    row = conn.execute(
+        "SELECT id, session_id FROM grove_ideas WHERE id = ?", (idea_id,)
+    ).fetchone()
+    conn.close()
+
+    if not row:
+        return jsonify({
+            "error": "idea_id not found",
+            "idea_id": idea_id,
+            "hint": "Use the root_node_id from /grove/seed response"
+        }), 404
+
+    session_id = row[1]  # Pre-fetched, used for all nodes
+
     new_nodes = []
     new_edges = []
     agents_used = []
@@ -202,15 +218,7 @@ def debate_idea():
         except Exception:
             insight = f"[{agent_id} offline — insight pendente]"
 
-        # Cria nó do agente
-        # Find session_id from idea_id (node)
-        conn = sqlite3.connect(GROVE_DB)
-        row = conn.execute(
-            "SELECT session_id FROM grove_ideas WHERE id = ?", (idea_id,)
-        ).fetchone()
-        conn.close()
-        session_id = row[0] if row else idea_id[:20]
-
+        # Cria nó do agente (session_id já validado)
         nid = create_node(
             session_id, f"Perspetiva: {agent_id}",
             str(insight), "hypothesis", agent_id, agent_id
@@ -221,12 +229,12 @@ def debate_idea():
         new_edges.append(eid)
         agents_used.append(agent_id)
 
-    # Regista agentes usados na sessão
+    # Regista agentes usados na sessão (session_id já validado no início)
     if agents_used:
         conn = sqlite3.connect(GROVE_DB)
         conn.execute(
-            "UPDATE grove_sessions SET agents_used = ? WHERE id LIKE ?",
-            (json.dumps(agents_used), f"%{idea_id[:8]}%")
+            "UPDATE grove_sessions SET agents_used = ? WHERE id = ?",
+            (json.dumps(agents_used), session_id)
         )
         conn.commit()
         conn.close()
