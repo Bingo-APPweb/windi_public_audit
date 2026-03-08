@@ -197,6 +197,35 @@ VERSION = "1.3.0"  # Sprint 2D: Markdown Reports
 FULL_MEMORY_MODE = True  # 🐉 Full Dragon Memory Active
 MEMORY_LIMIT = 10
 
+# ═══════════════════════════════════════════════════════════════════════
+# VIP FOUNDERS — Full access, no tier restrictions
+# "Quem planta a semente, colhe todos os frutos."
+# ═══════════════════════════════════════════════════════════════════════
+VIP_FOUNDERS = [
+    "jober",
+    "jober mögele correa",
+    "jober mogele correa",
+    "jober correa",
+    "founder",
+    "windi-founder",
+]
+
+def is_vip_founder(body):
+    """Check if request is from a VIP founder — bypasses all tier restrictions."""
+    # Check wallet name
+    wallet_name = body.get("wallet_name", "").lower().strip()
+    if any(vip in wallet_name for vip in VIP_FOUNDERS):
+        return True
+    # Check session ID prefix
+    session_id = body.get("session_id", "").lower()
+    if session_id.startswith("founder-") or session_id.startswith("vip-"):
+        return True
+    # Check X-User header (passed from frontend)
+    user_header = body.get("user", "").lower().strip()
+    if any(vip in user_header for vip in VIP_FOUNDERS):
+        return True
+    return False
+
 # Document generation services
 STAGING_DIR = BASE_DIR / "staging"
 STAGING_DIR.mkdir(exist_ok=True)
@@ -1080,6 +1109,15 @@ def handle_dragon_chat(body):
         return {"error": "Empty message"}, 400
 
     # ═══════════════════════════════════════════════════════════════
+    # VIP FOUNDER OVERRIDE — Full semantic access, no restrictions
+    # "Quem planta a semente, colhe todos os frutos."
+    # ═══════════════════════════════════════════════════════════════
+    _is_vip = is_vip_founder(body)
+    if _is_vip:
+        tier_str = "governance"  # VIP gets highest tier
+        log(f"[VIP] Founder access granted — full semantic path")
+
+    # ═══════════════════════════════════════════════════════════════
     # INSTITUTIONAL MEMORY — Dragon Legal Advocacy
     # "A máquina não advoga. Ela produz prova. A prova advoga."
     # ═══════════════════════════════════════════════════════════════
@@ -1159,7 +1197,8 @@ def handle_dragon_chat(body):
         _confidence = 0.95 if is_local else 0.75
 
         # Personal tier or local intent -> ALWAYS respond locally
-        if tier == Tier.PERSONAL or is_local:
+        # EXCEPT: VIP founders always get semantic path
+        if (tier == Tier.PERSONAL or is_local) and not _is_vip:
             _latency_ms = int((time.time() - _gate4_start) * 1000)
 
             # Record Decision Receipt (Memory on the Edge)
@@ -1180,9 +1219,9 @@ def handle_dragon_chat(body):
             return _handle_sovereign_local(intent, message, language, tier), 200
 
         # Premium tier with semantic intent -> try LLM, fallback to local
-        # Check budget first
+        # Check budget first (VIP founders bypass budget limits)
         allowed, budget_info = check_budget(tier_str.upper())
-        if not allowed:
+        if not allowed and not _is_vip:
             _latency_ms = int((time.time() - _gate4_start) * 1000)
 
             # Record Decision Receipt for fallback (I10 Continuity)
