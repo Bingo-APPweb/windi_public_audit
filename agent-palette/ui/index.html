@@ -2209,8 +2209,8 @@ const LAYER_TYPES={
 };
 
 const SIDEBAR = [
-  {id:"chat",icon:"💬",klass:"main"},{id:"insights",icon:"🧠",klass:"main"},{id:"docs",icon:"📄",klass:"main"},{id:"desk",icon:"🎨",klass:"main"},
-  {id:"files",icon:"📁",klass:"main"},{id:"wallet",icon:"👛",klass:"main"},
+  {id:"grove",icon:"🌱",klass:"main"},{id:"chat",icon:"💬",klass:"main"},{id:"insights",icon:"🧠",klass:"main"},{id:"docs",icon:"📄",klass:"main"},{id:"desk",icon:"🎨",klass:"main"},
+  {id:"files",icon:"📁",klass:"main"},{id:"wallet",icon:"👛",klass:"main"},{id:"wick",icon:"🌐",klass:"main"},
   {id:"search",icon:"🔍",klass:"main"},{id:"products",icon:"🛒",klass:"extra"},
   {id:"journal",icon:"📰",klass:"extra"},{id:"history",icon:"🕐",klass:"extra"},
 ];
@@ -2329,7 +2329,7 @@ const CryptoProvider = {
 // ═══════════════════════════════
 const L = {
   de: {
-    sidebar:{chat:"Chat",insights:"Einsichten",docs:"Dokumente",desk:"Freie Desk",files:"Dateien",wallet:"Brieftasche",search:"Suche",products:"Produkte",journal:"Zeitung",history:"Verlauf"},
+    sidebar:{grove:"Hain",chat:"Chat",insights:"Einsichten",docs:"Dokumente",desk:"Freie Desk",files:"Dateien",wallet:"Brieftasche",wick:"WICK Netz",search:"Suche",products:"Produkte",journal:"Zeitung",history:"Verlauf"},
     types:{letter:"Brief",email:"E-Mail",note:"Notiz",memo:"Memo",journal:"Tagebuch",recipe:"Rezept",report:"Bericht",contract:"Vertrag",invoice:"Rechnung",protocol:"Protokoll",analysis:"Analyse",presentation:"Präsentation",communique:"Communiqué",certificate:"Bescheinigung"},
     chat:{
       greet:"Hallo! 🐉 Ich bin dein Guardian.\n\nWähle links einen Dokumenttyp — oder erzähl mir einfach, was du brauchst.",
@@ -2398,7 +2398,7 @@ const L = {
     forensic:{title:"WINDI Virtue Receipt",receipt:"Receipt-ID",serial:"Serie",hash:"Hash",bundle:"Bundle",time:"Zeit",signer:"Unterzeichner",verify:"Prüfen"},
   },
   en: {
-    sidebar:{chat:"Chat",insights:"Insights",docs:"Documents",desk:"Free Desk",files:"Files",wallet:"Wallet",search:"Search",products:"Products",journal:"Journal",history:"History"},
+    sidebar:{grove:"Grove",chat:"Chat",insights:"Insights",docs:"Documents",desk:"Free Desk",files:"Files",wallet:"Wallet",wick:"WICK Network",search:"Search",products:"Products",journal:"Journal",history:"History"},
     types:{letter:"Letter",email:"Email",note:"Note",memo:"Memo",journal:"Journal",recipe:"Recipe",report:"Report",contract:"Contract",invoice:"Invoice",protocol:"Minutes",analysis:"Analysis",presentation:"Presentation",communique:"Communiqué",certificate:"Certificate"},
     chat:{
       greet:"Hello! 🐉 I'm your Guardian.\n\nPick a document type on the left — or just tell me what you need.",
@@ -2465,7 +2465,7 @@ const L = {
     forensic:{title:"WINDI Virtue Receipt",receipt:"Receipt ID",serial:"Serial",hash:"Hash",bundle:"Bundle",time:"Time",signer:"Signer",verify:"Verify"},
   },
   pt: {
-    sidebar:{chat:"Chat",insights:"Insights",docs:"Documentos",desk:"Desk Livre",files:"Ficheiros",wallet:"Carteira",search:"Busca",products:"Produtos",journal:"Jornal",history:"Histórico"},
+    sidebar:{grove:"Bosque",chat:"Chat",insights:"Insights",docs:"Documentos",desk:"Desk Livre",files:"Ficheiros",wallet:"Carteira",wick:"Rede WICK",search:"Busca",products:"Produtos",journal:"Jornal",history:"Histórico"},
     types:{letter:"Carta",email:"E-mail",note:"Nota",memo:"Memorando",journal:"Diário",recipe:"Receita",report:"Relatório",contract:"Contrato",invoice:"Fatura",protocol:"Ata",analysis:"Análise",presentation:"Apresentação",communique:"Comunicado",certificate:"Certificado"},
     chat:{
       greet:"Olá! 🐉 Sou o teu Guardian.\n\nEscolhe um tipo à esquerda — ou conta-me o que precisas.",
@@ -2844,7 +2844,8 @@ function App(){
 
   const[lang,setLang]=useState("de");
   const[view,setView]=useState("onboard");
-  const[sidebarTab,setSidebarTab]=useState("chat");
+  const[onboardStep,setOnboardStep]=useState(0);
+  const[sidebarTab,setSidebarTab]=useState("grove");
   const[sidebarOpen,setSidebarOpen]=useState(false);
   const[typeFilter,setTypeFilter]=useState("all");
 
@@ -4088,21 +4089,47 @@ function App(){
   const base={minHeight:"100vh",background:th.bg,color:th.text,fontFamily:"'Bricolage Grotesque',sans-serif",position:"relative",zIndex:1};
 
   // ═══ ONBOARDING ═══
+  // Pioneer Onboarding Steps
+  const ONBOARD_STEPS = [
+    {icon:"🐉",title:{de:"Willkommen bei WINDI",en:"Welcome to WINDI",pt:"Bem-vindo ao WINDI"},
+     desc:{de:"Dein Begleiter für souveräne Dokumente. KI verarbeitet. Mensch entscheidet. WINDI garantiert.",en:"Your companion for sovereign documents. AI processes. Human decides. WINDI guarantees.",pt:"O seu companheiro para documentos soberanos. IA processa. Humano decide. WINDI garante."}},
+    {icon:"🌱",title:{de:"Der Hain — Dein privater Raum",en:"The Grove — Your Private Space",pt:"O Bosque — Seu Espaço Privado"},
+     desc:{de:"Beginne mit Entwürfen. Denke nach, bevor du veröffentlichst. Alles bleibt privat bis du es teilst.",en:"Start with drafts. Think before you publish. Everything stays private until you share it.",pt:"Comece com rascunhos. Pense antes de publicar. Tudo permanece privado até você compartilhar."}},
+    {icon:"📄",title:{de:"14 Dokumenttypen",en:"14 Document Types",pt:"14 Tipos de Documentos"},
+     desc:{de:"Briefe, Verträge, Berichte, Rechnungen... Jeder Typ hat DNA — Struktur die zu dir passt.",en:"Letters, contracts, reports, invoices... Each type has DNA — structure that fits you.",pt:"Cartas, contratos, relatórios, faturas... Cada tipo tem DNA — estrutura que se adapta a você."}},
+    {icon:"🛡️",title:{de:"Versiegeln & Verifizieren",en:"Seal & Verify",pt:"Selar & Verificar"},
+     desc:{de:"Jedes Dokument wird kryptografisch versiegelt. QR-Code für öffentliche Prüfung. Unveränderlich.",en:"Every document is cryptographically sealed. QR code for public verification. Immutable.",pt:"Cada documento é selado criptograficamente. QR code para verificação pública. Imutável."}},
+    {icon:"🪞",title:{de:"Dignity ID — Deine Identität",en:"Dignity ID — Your Identity",pt:"Dignity ID — Sua Identidade"},
+     desc:{de:"Optional aber empfohlen. Deine Signatur auf Dokumenten. Vertrauenswert der wächst.",en:"Optional but recommended. Your signature on documents. Trust score that grows.",pt:"Opcional mas recomendado. Sua assinatura em documentos. Pontuação de confiança que cresce."}}
+  ];
+
   if(view==="onboard"){
+    const step = ONBOARD_STEPS[onboardStep];
     return(<div style={base}><div style={{minHeight:"100vh",display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center",padding:"32px 20px"}}>
-      <div style={{width:80,height:80,borderRadius:"50%",margin:"0 auto 16px",background:`${th.gold}12`,border:`2px solid ${th.gold}33`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:36,boxShadow:`0 0 50px ${th.gold}15`}}>🐉</div>
-      <div style={{fontSize:13,letterSpacing:5,textTransform:"uppercase",color:th.gold,fontWeight:700}}>WINDI A4DESK</div>
-      <div style={{fontSize:12,color:th.dim,marginTop:8,fontStyle:"italic",maxWidth:280,lineHeight:1.5,textAlign:"center"}}>
-        {lang==="de"?"Erzähl mir, was du brauchst.":lang==="pt"?"Conta-me o que precisas.":"Tell me what you need."}</div>
-      <div style={{display:"flex",gap:10,margin:"28px 0",flexWrap:"wrap",justifyContent:"center"}}>
-        {[{c:"de",f:"🇩🇪",l:"Deutsch"},{c:"en",f:"🇬🇧",l:"English"},{c:"pt",f:"🇧🇷",l:"Português"}].map(x=>
-          <button key={x.c} onClick={()=>setLang(x.c)} style={{padding:"12px 20px",borderRadius:12,cursor:"pointer",
-            background:lang===x.c?th.gold+"18":th.card,border:`2px solid ${lang===x.c?th.gold:th.border}`,
-            color:th.text,fontSize:14,fontWeight:600,display:"flex",alignItems:"center",gap:8}}><span style={{fontSize:18}}>{x.f}</span>{x.l}</button>)}
+      {/* Progress dots */}
+      <div style={{display:"flex",gap:8,marginBottom:24}}>
+        {ONBOARD_STEPS.map((_,i)=><div key={i} onClick={()=>setOnboardStep(i)} style={{width:8,height:8,borderRadius:"50%",background:i===onboardStep?th.gold:th.border,cursor:"pointer",transition:"all 0.3s"}}/>)}
       </div>
-      <button onClick={startApp} style={{padding:"14px 36px",borderRadius:14,cursor:"pointer",background:th.gold,
-        border:"none",color:"#FFFDF5",fontSize:15,fontWeight:700,boxShadow:`0 4px 20px ${th.gold}44`,
-        display:"flex",alignItems:"center",gap:10}}>🐉 {t.sidebar.chat}</button>
+      {/* Step content */}
+      <div style={{width:90,height:90,borderRadius:"50%",margin:"0 auto 20px",background:`${th.gold}12`,border:`2px solid ${th.gold}33`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:44,boxShadow:`0 0 50px ${th.gold}15`,animation:"pulse 2s infinite"}}>{step.icon}</div>
+      <h1 style={{fontSize:20,fontWeight:800,margin:"0 0 12px",textAlign:"center",color:th.text}}>{step.title[lang]}</h1>
+      <p style={{fontSize:13,color:th.dim,maxWidth:320,lineHeight:1.6,textAlign:"center",margin:"0 0 24px"}}>{step.desc[lang]}</p>
+      {/* Language selector on first step */}
+      {onboardStep===0&&<div style={{display:"flex",gap:8,marginBottom:20}}>
+        {[{c:"de",f:"🇩🇪"},{c:"en",f:"🇬🇧"},{c:"pt",f:"🇧🇷"}].map(x=>
+          <button key={x.c} onClick={()=>setLang(x.c)} style={{padding:"8px 14px",borderRadius:8,cursor:"pointer",
+            background:lang===x.c?th.gold:th.card,border:`1px solid ${lang===x.c?th.gold:th.border}`,
+            color:lang===x.c?"#FFF":th.text,fontSize:16}}>{x.f}</button>)}
+      </div>}
+      {/* Navigation */}
+      <div style={{display:"flex",gap:12}}>
+        {onboardStep>0&&<button onClick={()=>setOnboardStep(s=>s-1)} style={{padding:"12px 24px",borderRadius:12,cursor:"pointer",background:th.card,border:`1px solid ${th.border}`,color:th.text,fontSize:13,fontWeight:600}}>← {lang==="de"?"Zurück":lang==="pt"?"Voltar":"Back"}</button>}
+        {onboardStep<ONBOARD_STEPS.length-1?
+          <button onClick={()=>setOnboardStep(s=>s+1)} style={{padding:"12px 28px",borderRadius:12,cursor:"pointer",background:th.gold,border:"none",color:"#FFF",fontSize:13,fontWeight:700,boxShadow:`0 4px 20px ${th.gold}44`}}>{lang==="de"?"Weiter":lang==="pt"?"Próximo":"Next"} →</button>
+          :<button onClick={startApp} style={{padding:"14px 32px",borderRadius:14,cursor:"pointer",background:th.gold,border:"none",color:"#FFF",fontSize:14,fontWeight:700,boxShadow:`0 4px 20px ${th.gold}44`,display:"flex",alignItems:"center",gap:8}}>🐉 {lang==="de"?"Los geht's!":lang==="pt"?"Vamos lá!":"Let's go!"}</button>}
+      </div>
+      {/* Skip */}
+      <button onClick={startApp} style={{marginTop:20,background:"none",border:"none",color:th.dim,fontSize:11,cursor:"pointer"}}>{lang==="de"?"Überspringen":lang==="pt"?"Pular":"Skip"}</button>
     </div></div>);
   }
 
@@ -4187,6 +4214,69 @@ function App(){
 
         {/* Content */}
         <div style={{flex:1,display:"flex",overflow:"hidden"}}>
+
+          {/* ═══ GROVE TAB — Private Drafts ═══ */}
+          {sidebarTab==="grove"&&(
+            <div style={{flex:1,display:"flex",flexDirection:"column",padding:20,overflow:"auto"}}>
+              <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:20}}>
+                <span style={{fontSize:32}}>🌱</span>
+                <div>
+                  <h2 style={{margin:0,fontSize:18,fontWeight:800}}>{lang==="pt"?"Bosque Privado":lang==="de"?"Privater Hain":"Private Grove"}</h2>
+                  <p style={{margin:"4px 0 0",fontSize:11,color:th.dim}}>{lang==="pt"?"Rascunhos que só você vê. Pense antes de publicar.":lang==="de"?"Entwürfe nur für dich. Denk nach, bevor du veröffentlichst.":"Drafts only you see. Think before you publish."}</p>
+                </div>
+              </div>
+              {/* Grove Notes List */}
+              <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:20}}>
+                {(JSON.parse(localStorage.getItem("windi_grove_notes")||"[]")).map((note,i)=>(
+                  <div key={i} onClick={()=>{document.getElementById("groveEditor").value=note.content;document.getElementById("groveTitle").value=note.title;}} style={{padding:"12px 14px",borderRadius:10,background:th.card,border:`1px solid ${th.border}`,cursor:"pointer"}}>
+                    <div style={{fontSize:13,fontWeight:600,marginBottom:4}}>{note.title||lang==="pt"?"Sem título":lang==="de"?"Ohne Titel":"Untitled"}</div>
+                    <div style={{fontSize:10,color:th.dim}}>{note.content?.slice(0,100)}...</div>
+                    <div style={{fontSize:9,color:th.dim,marginTop:6}}>{new Date(note.ts).toLocaleString()}</div>
+                  </div>
+                ))}
+                {(JSON.parse(localStorage.getItem("windi_grove_notes")||"[]")).length===0&&(
+                  <div style={{padding:20,textAlign:"center",color:th.dim,fontSize:12}}>{lang==="pt"?"Nenhum rascunho ainda. Comece a escrever abaixo.":lang==="de"?"Noch keine Entwürfe. Schreib unten los.":"No drafts yet. Start writing below."}</div>
+                )}
+              </div>
+              {/* Grove Editor */}
+              <div style={{background:th.card,borderRadius:12,padding:16,border:`1px solid ${th.border}`}}>
+                <input id="groveTitle" placeholder={lang==="pt"?"Título do rascunho...":lang==="de"?"Entwurfstitel...":"Draft title..."} style={{width:"100%",padding:"10px 12px",borderRadius:8,border:`1px solid ${th.border}`,background:th.input,color:th.text,fontSize:14,fontWeight:600,marginBottom:10,boxSizing:"border-box"}}/>
+                <textarea id="groveEditor" placeholder={lang==="pt"?"Escreva seus pensamentos aqui... Isto é privado.":lang==="de"?"Schreib deine Gedanken hier... Das ist privat.":"Write your thoughts here... This is private."} style={{width:"100%",minHeight:200,padding:"12px",borderRadius:8,border:`1px solid ${th.border}`,background:th.input,color:th.text,fontSize:13,lineHeight:1.6,resize:"vertical",boxSizing:"border-box"}}/>
+                <div style={{display:"flex",gap:8,marginTop:12}}>
+                  <button onClick={()=>{
+                    const title=document.getElementById("groveTitle").value.trim();
+                    const content=document.getElementById("groveEditor").value.trim();
+                    if(!content){flash("⚠️ "+{pt:"Escreva algo primeiro",de:"Schreib zuerst etwas",en:"Write something first"}[lang]);return;}
+                    const notes=JSON.parse(localStorage.getItem("windi_grove_notes")||"[]");
+                    notes.unshift({title:title||"Draft",content,ts:new Date().toISOString()});
+                    localStorage.setItem("windi_grove_notes",JSON.stringify(notes.slice(0,50)));
+                    document.getElementById("groveTitle").value="";
+                    document.getElementById("groveEditor").value="";
+                    flash("🌱 "+(lang==="pt"?"Rascunho salvo!":lang==="de"?"Entwurf gespeichert!":"Draft saved!"));
+                    setSidebarTab("grove");// force re-render
+                  }} style={{padding:"10px 20px",borderRadius:8,background:th.gold,border:"none",color:"#FFF",fontSize:12,fontWeight:700,cursor:"pointer"}}>
+                    💾 {lang==="pt"?"Salvar Rascunho":lang==="de"?"Entwurf speichern":"Save Draft"}
+                  </button>
+                  <button onClick={()=>{
+                    const title=document.getElementById("groveTitle").value.trim();
+                    const content=document.getElementById("groveEditor").value.trim();
+                    if(!content){flash("⚠️ "+{pt:"Escreva algo primeiro",de:"Schreib zuerst etwas",en:"Write something first"}[lang]);return;}
+                    setDocTitle(title||"From Grove");
+                    setDocContent(content);
+                    setSidebarTab("chat");
+                    flash("🌳 "+(lang==="pt"?"Movido para documento!":lang==="de"?"In Dokument verschoben!":"Moved to document!"));
+                  }} style={{padding:"10px 20px",borderRadius:8,background:th.card,border:`1px solid ${th.gold}`,color:th.gold,fontSize:12,fontWeight:600,cursor:"pointer"}}>
+                    📄 {lang==="pt"?"Criar Documento":lang==="de"?"Dokument erstellen":"Create Document"}
+                  </button>
+                </div>
+              </div>
+              {/* Grove → Communiqué flow hint */}
+              <div style={{marginTop:20,padding:"12px 14px",borderRadius:10,background:`${th.gold}08`,border:`1px solid ${th.gold}22`,fontSize:11,color:th.dim}}>
+                <strong style={{color:th.gold}}>🌳 {lang==="pt"?"Jornada do Jardineiro":lang==="de"?"Die Reise des Gärtners":"Gardener's Journey"}:</strong><br/>
+                {lang==="pt"?"Grove (pensar) → Documento (estruturar) → Ledger (selar) → WICK (partilhar)":lang==="de"?"Hain (denken) → Dokument (strukturieren) → Ledger (versiegeln) → WICK (teilen)":"Grove (think) → Document (structure) → Ledger (seal) → WICK (share)"}
+              </div>
+            </div>
+          )}
 
           {/* ═══ CHAT TAB ═══ */}
           {sidebarTab==="chat"&&(<>
@@ -4775,6 +4865,69 @@ function App(){
 
               <input ref={deskFileRef} type="file" accept="image/*" style={{display:"none"}} onChange={deskHandleImageUpload}/>
             <input ref={el=>window._deskVideoRef=el} type="file" accept="video/*" style={{display:"none"}} onChange={e=>{const file=e.target.files[0];if(!file)return;const r=new FileReader();r.onload=ev=>deskUpdateLayer(deskSelected,{content:ev.target.result,isEmbed:false});r.readAsDataURL(file);}}/>
+            </div>
+          )}
+
+          {/* ═══ WICK TAB — Public Evidence Network ═══ */}
+          {sidebarTab==='wick'&&(
+            <div style={{flex:1,display:'flex',flexDirection:'column',overflow:'hidden'}}>
+              <div style={{padding:'16px 20px',borderBottom:'1px solid '+th.border}}>
+                <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:12}}>
+                  <span style={{fontSize:28}}>🌐</span>
+                  <div>
+                    <h2 style={{margin:0,fontSize:16,fontWeight:800}}>WICK</h2>
+                    <p style={{margin:'2px 0 0',fontSize:10,color:th.dim}}>{lang==='pt'?'Rede de Conhecimento Coletivo':lang==='de'?'Kollektives Wissensnetz':'Collective Knowledge Network'}</p>
+                  </div>
+                </div>
+                <p style={{fontSize:11,color:th.dim,lineHeight:1.5}}>{lang==='pt'?'Documentos selados publicamente formam uma rede de evidências verificável. A Internet da Evidência.':lang==='de'?'Öffentlich versiegelte Dokumente bilden ein verifizierbares Beweissnetz. Das Internet der Evidenz.':'Publicly sealed documents form a verifiable evidence network. The Internet of Evidence.'}</p>
+              </div>
+              {/* WICK Stats */}
+              <div style={{padding:'16px 20px',display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:12}}>
+                <div style={{padding:'14px',borderRadius:10,background:th.card,border:'1px solid '+th.border,textAlign:'center'}}>
+                  <div style={{fontSize:22,fontWeight:800,color:th.gold}}>{vaultStats.total.toLocaleString()}</div>
+                  <div style={{fontSize:9,color:th.dim,marginTop:4}}>{lang==='pt'?'Documentos Selados':lang==='de'?'Versiegelte Dokumente':'Sealed Documents'}</div>
+                </div>
+                <div style={{padding:'14px',borderRadius:10,background:th.card,border:'1px solid '+th.border,textAlign:'center'}}>
+                  <div style={{fontSize:22,fontWeight:800,color:th.success}}>✓</div>
+                  <div style={{fontSize:9,color:th.dim,marginTop:4}}>{lang==='pt'?'100% Verificável':lang==='de'?'100% verifizierbar':'100% Verifiable'}</div>
+                </div>
+                <div style={{padding:'14px',borderRadius:10,background:th.card,border:'1px solid '+th.border,textAlign:'center'}}>
+                  <div style={{fontSize:22,fontWeight:800,color:th.text}}>{vaultStats.doc_types}</div>
+                  <div style={{fontSize:9,color:th.dim,marginTop:4}}>{lang==='pt'?'Tipos de Doc':lang==='de'?'Dokumenttypen':'Doc Types'}</div>
+                </div>
+              </div>
+              {/* Public WICK Feed */}
+              <div style={{flex:1,overflowY:'auto',padding:'0 20px 20px'}}>
+                <h3 style={{fontSize:12,fontWeight:700,marginBottom:12,color:th.gold}}>{lang==='pt'?'📡 Atividade Recente na Rede':lang==='de'?'📡 Aktuelle Netzaktivität':'📡 Recent Network Activity'}</h3>
+                {(wallet?.receipts||[]).slice(0,10).map((r,i)=>(
+                  <div key={i} style={{padding:'12px 14px',borderRadius:10,background:th.card,border:'1px solid '+th.border,marginBottom:8}}>
+                    <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start'}}>
+                      <div>
+                        <div style={{fontSize:12,fontWeight:600}}>{r.title||r.type}</div>
+                        <div style={{fontSize:9,color:th.dim,marginTop:2,fontFamily:"'JetBrains Mono',monospace"}}>{r.id}</div>
+                      </div>
+                      <span style={{fontSize:16}}>🛡️</span>
+                    </div>
+                    <div style={{display:'flex',gap:8,marginTop:8}}>
+                      <a href={'https://windi-domain.com/verify-public/?id='+encodeURIComponent(r.id)} target='_blank' rel='noopener' style={{fontSize:9,color:th.gold,textDecoration:'none'}}>🔗 {lang==='pt'?'Verificar':lang==='de'?'Verifizieren':'Verify'}</a>
+                      <span style={{fontSize:9,color:th.dim}}>{r.ts?new Date(r.ts).toLocaleDateString():''}</span>
+                    </div>
+                  </div>
+                ))}
+                {(!wallet?.receipts||wallet.receipts.length===0)&&(
+                  <div style={{padding:'30px 20px',textAlign:'center',color:th.dim}}>
+                    <div style={{fontSize:40,marginBottom:12}}>🌱</div>
+                    <p style={{fontSize:12,marginBottom:16}}>{lang==='pt'?'Nenhum documento seu na rede ainda.':lang==='de'?'Noch keine Dokumente von dir im Netz.':'No documents of yours in the network yet.'}</p>
+                    <button onClick={()=>setSidebarTab('chat')} style={{padding:'10px 20px',borderRadius:8,background:th.gold,border:'none',color:'#FFF',fontSize:12,fontWeight:600,cursor:'pointer'}}>{lang==='pt'?'Criar Primeiro Documento':lang==='de'?'Erstes Dokument erstellen':'Create First Document'}</button>
+                  </div>
+                )}
+              </div>
+              {/* WICK Vision */}
+              <div style={{padding:'14px 20px',borderTop:'1px solid '+th.border,background:th.gold+'08'}}>
+                <p style={{fontSize:10,color:th.dim,lineHeight:1.5,margin:0}}>
+                  <strong style={{color:th.gold}}>🌳 {lang==='pt'?'Visão WICK':lang==='de'?'WICK Vision':'WICK Vision'}:</strong> {lang==='pt'?'Cada documento selado é uma evidência verificável. Juntos, formamos uma rede de confiança onde a verdade pode ser comprovada.':lang==='de'?'Jedes versiegelte Dokument ist ein verifizierbarer Beweis. Zusammen bilden wir ein Vertrauensnetz, in dem Wahrheit nachweisbar ist.':'Every sealed document is verifiable evidence. Together, we form a trust network where truth can be proven.'}
+                </p>
+              </div>
             </div>
           )}
 
