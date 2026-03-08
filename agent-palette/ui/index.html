@@ -3929,6 +3929,8 @@ function App(){
       setSavedDocs(p=>[{id:Date.now(),title:docTitle,icon:DOC_TYPES[docType]?.icon||"📄",type:docType||"note",status:"sealed",date:new Date().toLocaleDateString(),words:wordCount,fields:docFields},...p]);
       flash(`🛡️ ${t.doc.finalized}`);
       setTimeout(()=>setMsgs(p=>[...p,{role:"bot",text:t.chat.finalized}]),800);
+      // FIX 2026-03-08: Auto-open Distribution modal after seal
+      setTimeout(()=>setShowDistributeModal(true),1200);
 
       // ═══ EVENT BUS: Seal Complete ═══
       if(window.WINDI?.EventBus){
@@ -3974,6 +3976,8 @@ function App(){
       setSavedDocs(p=>[{id:Date.now(),title:docTitle,icon:DOC_TYPES[docType]?.icon||"📄",type:docType||"note",status:"sealed",date:new Date().toLocaleDateString(),words:wordCount},...p]);
       flash(`🛡️ ${t.doc.finalized}`);
       setTimeout(()=>setMsgs(p=>[...p,{role:"bot",text:t.chat.finalized}]),800);
+      // FIX 2026-03-08: Auto-open Distribution modal after seal
+      setTimeout(()=>setShowDistributeModal(true),1200);
 
       // ═══ EVENT BUS: Seal Complete (Legacy) ═══
       if(window.WINDI?.EventBus){
