@@ -3,7 +3,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 // Purpose:  Subliminal video background layer (5% default, 0→100% slider)
 // Inject:   Inside Palette UNIFIED HTML, before </body>
-// Video:    /palette/static/dragons-forest.mp4 (loop, muted, autoplay)
+// Video:    DISABLED — video background removed
 // Version:  1.0.0-W
 // Date:     2026-02-28
 // ═══════════════════════════════════════════════════════════════════════════
@@ -14,7 +14,7 @@
   // ── CONFIG ──────────────────────────────────────────────────
   const DRIVE_IN_CONFIG = {
     defaultOpacity: 5,          // Start at 5% — subliminal
-    videoSrc: '/palette/static/dragons-forest.mp4',
+    videoSrc: '',  // DISABLED — video background removed
     fallbackPoster: '',         // Optional: first frame as image
     storageKey: 'windi-drivein-opacity',
     zIndex: 0,                  // Behind everything
