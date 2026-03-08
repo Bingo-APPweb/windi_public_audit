@@ -182,6 +182,158 @@ def inject_og_tags(html: str, doc_id: str, meta: dict) -> str:
     return html
 
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# S3-2: WICK VIEW — HTML render with OG tags + embedded Verify
+# URL: windi-domain.com/wick/{artifact_id}
+# Decisão Human Dragon 2026-03-08: Privado por defeito
+# ═══════════════════════════════════════════════════════════════════════════════
+
+@app.get("/wick/view/{artifact_id}")
+async def wick_artifact_view(artifact_id: str):
+    """S3-2: HTML view for WICK artifacts with OG tags.
+    URL: windi-domain.com/wick/view/{artifact_id}
+    """
+    # 1. Fetch artifact from Constitutional Agent
+    try:
+        async with httpx.AsyncClient(timeout=5.0) as client:
+            r = await client.get(f"http://localhost:8091/wick/artifact/{artifact_id}")
+            if r.status_code == 404:
+                return HTMLResponse(
+                    "<html><body style='font-family:system-ui;text-align:center;padding:60px;'>"
+                    "<h1>🔍 Artifact not found</h1>"
+                    f"<p>ID: <code>{artifact_id}</code></p>"
+                    "<a href='/verify-public/'>Go to Verify</a>"
+                    "</body></html>",
+                    status_code=404
+                )
+            data = r.json()
+    except Exception as e:
+        log.error(f"[WICK] Failed to fetch artifact {artifact_id}: {e}")
+        return HTMLResponse(
+            "<html><body style='font-family:system-ui;text-align:center;padding:60px;'>"
+            "<h1>⚠️ Service unavailable</h1>"
+            "<p>Please try again later.</p>"
+            "</body></html>",
+            status_code=503
+        )
+
+    artifact = data.get("artifact", {})
+
+    # 2. Check visibility (private = 403, GDPR compliant)
+    visibility = artifact.get("visibility", "private")
+    if visibility == "private":
+        return HTMLResponse(
+            "<html><body style='font-family:system-ui;text-align:center;padding:60px;'>"
+            "<h1>🔒 Private Artifact</h1>"
+            "<p>This artifact is private. Only the owner can view it.</p>"
+            "<p style='color:#666;font-size:14px;'>I12 — Web of Proofs · Privacy by Default</p>"
+            "</body></html>",
+            status_code=403
+        )
+
+    # 3. Build HTML with OG tags
+    title = artifact.get("title", artifact_id)
+    author = artifact.get("author_name", "WINDI")
+    artifact_type = artifact.get("type", "document")
+    created_at = artifact.get("created_at", "")[:10] if artifact.get("created_at") else ""
+    page_url = artifact.get("page_url", "")
+    verify_url = f"https://windi-domain.com/verify-public/?id={artifact_id}"
+    wick_url = f"https://windi-domain.com/wick/{artifact_id}"
+
+    # Escape HTML in title/author
+    import html as html_escape
+    title_safe = html_escape.escape(title)
+    author_safe = html_escape.escape(author)
+
+    html = f'''<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✓ {title_safe} — WINDI</title>
+
+    <!-- OG Tags for Social Sharing -->
+    <meta property="og:title" content="✓ {title_safe} — WINDI Verified"/>
+    <meta property="og:description" content="Document by {author_safe}. Verified on WINDI Forensic Ledger. Type: {artifact_type}."/>
+    <meta property="og:url" content="{wick_url}"/>
+    <meta property="og:type" content="article"/>
+    <meta property="og:image" content="https://windi-domain.com/verify-public/og-preview.png"/>
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary"/>
+    <meta name="twitter:title" content="✓ {title_safe} — WINDI Verified"/>
+    <meta name="twitter:description" content="Document by {author_safe}. Verified on WINDI."/>
+
+    <style>
+        * {{ margin:0; padding:0; box-sizing:border-box; }}
+        body {{ font-family: 'Bricolage Grotesque', system-ui, sans-serif; background: #FFFDF5; color: #1a1a1a; min-height: 100vh; }}
+        .container {{ max-width: 800px; margin: 0 auto; padding: 40px 20px; }}
+        header {{ border-bottom: 3px solid #C9A84C; padding-bottom: 20px; margin-bottom: 30px; }}
+        .badge {{ display: inline-block; background: #C9A84C; color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-bottom: 12px; }}
+        h1 {{ font-size: 28px; font-weight: 800; margin-bottom: 8px; }}
+        .meta {{ color: #666; font-size: 14px; }}
+        .meta span {{ margin-right: 16px; }}
+        .card {{ background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 24px; margin-bottom: 20px; }}
+        .card h2 {{ font-size: 16px; font-weight: 700; margin-bottom: 12px; color: #C9A84C; }}
+        .info-grid {{ display: grid; grid-template-columns: 120px 1fr; gap: 8px; font-size: 14px; }}
+        .info-grid dt {{ color: #666; }}
+        .info-grid dd {{ font-family: 'JetBrains Mono', monospace; word-break: break-all; }}
+        .actions {{ display: flex; gap: 12px; flex-wrap: wrap; margin-top: 30px; }}
+        .btn {{ display: inline-flex; align-items: center; gap: 8px; padding: 14px 24px; border-radius: 10px; font-size: 14px; font-weight: 700; text-decoration: none; transition: transform 0.2s; }}
+        .btn:hover {{ transform: translateY(-2px); }}
+        .btn-primary {{ background: #C9A84C; color: #fff; }}
+        .btn-secondary {{ background: #fff; color: #1a1a1a; border: 2px solid #e0e0e0; }}
+        footer {{ margin-top: 60px; padding-top: 20px; border-top: 1px solid #e0e0e0; text-align: center; color: #999; font-size: 12px; }}
+        .dragon {{ font-size: 24px; }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <span class="badge">🛡️ WICK Evidence Graph</span>
+            <h1>{title_safe}</h1>
+            <p class="meta">
+                <span>👤 {author_safe}</span>
+                <span>📄 {artifact_type}</span>
+                {f'<span>📅 {created_at}</span>' if created_at else ''}
+                <span>🔓 {visibility}</span>
+            </p>
+        </header>
+
+        <div class="card">
+            <h2>📋 Artifact Details</h2>
+            <dl class="info-grid">
+                <dt>ID:</dt>
+                <dd>{artifact_id}</dd>
+                <dt>Type:</dt>
+                <dd>{artifact_type}</dd>
+                <dt>Visibility:</dt>
+                <dd>{visibility}</dd>
+                <dt>Ledger Receipt:</dt>
+                <dd>{artifact.get("ledger_receipt_id", "—")}</dd>
+            </dl>
+        </div>
+
+        {f'<div class="card"><h2>🔗 Original Page</h2><p><a href="{page_url}" style="color:#C9A84C;">{page_url}</a></p></div>' if page_url else ''}
+
+        <div class="actions">
+            <a href="{verify_url}" class="btn btn-primary">🛡️ Verify on Ledger</a>
+            {f'<a href="{page_url}" class="btn btn-secondary">📄 View Original</a>' if page_url else ''}
+            <a href="/wick/feed" class="btn btn-secondary">📡 WICK Feed</a>
+        </div>
+
+        <footer>
+            <p class="dragon">🐉</p>
+            <p style="margin-top:8px;">AI processes. Human decides. WINDI guarantees.</p>
+            <p style="margin-top:4px;">I12 — Web of Proofs · windi-domain.com</p>
+        </footer>
+    </div>
+</body>
+</html>'''
+
+    return HTMLResponse(content=html, status_code=200)
+
+
 @app.get("/verify-public/{doc_id}")
 async def verify_direct_url(doc_id: str):
     """URL limpa: /verify-public/VR-BABEL-0001 — serve UI com OG tags dinâmicas."""
