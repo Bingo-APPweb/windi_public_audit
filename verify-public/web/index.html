@@ -87,6 +87,8 @@ input[type=text]:focus{border-color:var(--gold)}
 .tg-btn:hover{opacity:.88}
 .email-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:#fff;border:1.5px solid var(--border);border-radius:6px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .15s}
 .email-btn:hover{border-color:var(--gold);color:var(--noir)}
+.card-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:linear-gradient(135deg,#F5F0E0 0%,#E8DFC8 100%);border:1.5px solid var(--gold);border-radius:6px;font-size:12px;font-weight:600;color:var(--gold);cursor:pointer;font-family:inherit;transition:all .15s}
+.card-btn:hover{background:var(--gold);color:#fff}
 .cp-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:none;border:1.5px solid var(--border);border-radius:6px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .15s}
 .share-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:var(--gold);border:none;border-radius:6px;font-size:12px;font-weight:700;color:#fff;cursor:pointer;font-family:inherit;transition:all .15s}
 .share-btn:hover{opacity:.9}
@@ -213,7 +215,8 @@ function render(d){
   const verdicts={verified:'AUTHENTIC DOCUMENT',not_found:'DOCUMENT NOT FOUND',tampered:'INTEGRITY WARNING',error:'VERIFICATION ERROR'};
   const msgs={verified:'This document is authentic. Its content has not been altered since it was issued.',not_found:'This document was not found in the WINDI system. It may not have been issued through WINDI.',tampered:'This document may have been altered after it was issued. Do not trust its contents.',error:'The verification could not be completed. Please try again.'};
   const id=d.document_id?'<div class="rf"><div class="rl">Document ID</div><div class="rv">'+d.document_id+'</div></div>':'';
-  const dt=d.timestamp?'<div class="rf"><div class="rl">Issued on</div><div class="rv">'+new Date(d.timestamp).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})+'</div></div>':'';
+  const issuedOnText=d.timestamp?new Date(d.timestamp).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}):'';
+  const dt=d.timestamp?'<div class="rf"><div class="rl">Issued on</div><div class="rv">'+issuedOnText+'</div></div>':'';
   const ig='<div class="rf"><div class="rl">Integrity</div><div class="rv '+(d.integrity==='valid'?'ok':'tuk')+'">'+(d.integrity==='valid'?'✔ Confirmed':'— Unknown')+'</div></div>';
   const ca='<div class="rf"><div class="rl">Checked at</div><div class="rv">'+new Date(d.checked_at).toLocaleTimeString()+'</div></div>';
   const tech=d.hash?'<div class="tech" id="tp"><div class="tr"><span class="tl">SHA-256</span><span class="tv">'+d.hash+'</span></div><div class="tr"><span class="tl">Integrity</span><span class="tv">'+tv(d.integrity)+'</span></div><div class="tr"><span class="tl">Signature</span><span class="tv">'+tv(d.signature)+'</span></div><div class="tr"><span class="tl">Ledger</span><span class="tv">'+(d.ledger_anchor?'<span class="tok">✔ Anchored</span>':'<span class="tno">✘ Not found</span>')+'</span></div><div class="tr"><span class="tl">Timestamp</span><span class="tv">'+d.checked_at+'</span></div></div>':'';
@@ -241,6 +244,9 @@ function render(d){
       <button class="cp-btn" id="cpbtn" onclick="cpLink('${verifyUrl}')">
         🔗 Copy
       </button>
+      <button class="card-btn" onclick="showShareCard('${docId}','${issuedOnText}')">
+        🖼️ Card
+      </button>
     </div>
     <a href="https://windi-domain.com" target="_blank" rel="noopener" class="windi-cta">🌱 What is WINDI?</a>`:''
   ;
@@ -250,6 +256,123 @@ function render(d){
 }
 function tgd(){const p=document.getElementById('tp'),b=document.querySelector('.dtbtn');if(p.classList.toggle('open')){b.textContent='Hide technical details'}else{b.textContent='Show technical details'}}
 function cpLink(url){navigator.clipboard.writeText(url).then(()=>{const b=document.getElementById('cpbtn');if(b){b.textContent='✅ Copiado!';b.classList.add('copied');setTimeout(()=>{b.textContent='🔗 Copy';b.classList.remove('copied')},2000)}}).catch(()=>{const t=document.createElement('textarea');t.value=url;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t)})}
+
+// WINDI Share Card Generator — Canvas API (Garden Protocol)
+function generateShareCard(receiptId, issuedOn) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 1080;
+  canvas.height = 1080;
+  const ctx = canvas.getContext('2d');
+
+  // Background pergaminho
+  ctx.fillStyle = '#F5F0E0';
+  ctx.fillRect(0, 0, 1080, 1080);
+
+  // Borda gold
+  ctx.strokeStyle = '#8B6914';
+  ctx.lineWidth = 8;
+  ctx.strokeRect(40, 40, 1000, 1000);
+
+  // Inner border
+  ctx.strokeStyle = '#D4C89A';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(60, 60, 960, 960);
+
+  // Dragon icon area
+  ctx.font = '80px serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('🐉', 540, 200);
+
+  // Checkmark icon
+  ctx.font = 'bold 100px serif';
+  ctx.fillText('✅', 540, 340);
+
+  // AUTHENTIC DOCUMENT
+  ctx.fillStyle = '#2D5A27';
+  ctx.font = 'bold 64px serif';
+  ctx.fillText('AUTHENTIC', 540, 460);
+  ctx.fillText('DOCUMENT', 540, 540);
+
+  // Divider line
+  ctx.strokeStyle = '#8B6914';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(240, 590);
+  ctx.lineTo(840, 590);
+  ctx.stroke();
+
+  // Receipt ID
+  ctx.fillStyle = '#333';
+  ctx.font = '32px monospace';
+  ctx.fillText(receiptId, 540, 660);
+
+  // Data
+  ctx.font = '28px serif';
+  ctx.fillStyle = '#666';
+  ctx.fillText(issuedOn || new Date().toLocaleDateString('en-GB', {day: 'numeric', month: 'long', year: 'numeric'}), 540, 720);
+
+  // Integrity confirmed
+  ctx.fillStyle = '#2D7A4F';
+  ctx.font = 'bold 24px serif';
+  ctx.fillText('✔ Integrity Confirmed', 540, 790);
+
+  // WINDI branding
+  ctx.fillStyle = '#8B6914';
+  ctx.font = 'bold 36px serif';
+  ctx.fillText('WINDI Publishing House', 540, 880);
+
+  ctx.fillStyle = '#7A6E55';
+  ctx.font = '22px serif';
+  ctx.fillText('windi-domain.com/verify-public', 540, 930);
+
+  ctx.font = 'italic 18px serif';
+  ctx.fillText('AI processes. Human decides. WINDI guarantees.', 540, 980);
+
+  return canvas.toDataURL('image/png');
+}
+
+function showShareCard(receiptId, issuedOnText) {
+  const cardDataUrl = generateShareCard(receiptId, issuedOnText);
+
+  // Check if card section already exists
+  let cardSection = document.getElementById('windi-card-section');
+  if (cardSection) {
+    cardSection.remove();
+  }
+
+  // Create card section
+  cardSection = document.createElement('div');
+  cardSection.id = 'windi-card-section';
+  cardSection.style.cssText = 'margin-top:16px;padding:16px;background:#fff;border:1px solid var(--border);border-radius:8px;text-align:center;';
+
+  // Image
+  const img = document.createElement('img');
+  img.src = cardDataUrl;
+  img.style.cssText = 'width:100%;max-width:320px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.1);';
+  img.alt = 'WINDI Verification Card';
+
+  // Download button
+  const dlBtn = document.createElement('a');
+  dlBtn.href = cardDataUrl;
+  dlBtn.download = 'WINDI-verified-' + receiptId + '.png';
+  dlBtn.textContent = '⬇️ Save Card Image';
+  dlBtn.style.cssText = 'display:block;margin-top:12px;padding:10px 18px;background:var(--gold);color:#fff;border-radius:6px;text-decoration:none;font-size:13px;font-weight:600;';
+
+  // Hint
+  const hint = document.createElement('div');
+  hint.textContent = 'Share on WhatsApp Status, Instagram, or save for later';
+  hint.style.cssText = 'margin-top:8px;font-size:11px;color:var(--muted);';
+
+  cardSection.appendChild(img);
+  cardSection.appendChild(dlBtn);
+  cardSection.appendChild(hint);
+
+  // Insert after share-row
+  const shareRow = document.querySelector('.share-row');
+  if (shareRow) {
+    shareRow.parentNode.insertBefore(cardSection, shareRow.nextSibling);
+  }
+}
 
 // WINDI Email Share — native mailto: (Garden Protocol)
 function windiEmailShare(receiptId) {
