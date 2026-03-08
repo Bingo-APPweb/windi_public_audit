@@ -10,7 +10,8 @@ import httpx
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, HTMLResponse
+import re
 from pydantic import BaseModel
 
 sys.path.insert(0, os.path.dirname(__file__))
@@ -119,13 +120,89 @@ async def verify_timeline(document_id: str):
     return await engine.get_timeline(document_id)
 
 
+async def get_document_metadata(doc_id: str) -> dict:
+    """Fetch document metadata from Ledger for OG tags."""
+    try:
+        async with httpx.AsyncClient(timeout=3.0) as client:
+            # Try Ledger receipt endpoint
+            r = await client.get(f"{LEDGER_URL}/api/receipts/{doc_id}")
+            if r.status_code == 200:
+                data = r.json()
+                return {
+                    "title": data.get("doc_title") or data.get("title") or doc_id,
+                    "doc_type": data.get("doc_type", "Document"),
+                    "created_at": data.get("created_at", data.get("ts", "")),
+                    "issuer": data.get("issuer") or data.get("actor") or "WINDI",
+                    "status": "verified"
+                }
+    except Exception as e:
+        log.warning(f"[OG] Failed to fetch metadata for {doc_id}: {e}")
+    return {"title": doc_id, "doc_type": "Document", "created_at": "", "issuer": "WINDI", "status": "pending"}
+
+
+def inject_og_tags(html: str, doc_id: str, meta: dict) -> str:
+    """Inject dynamic OG tags into HTML for social sharing."""
+    title = f"✓ {meta['title']} — WINDI Verified"
+    description = f"Document {doc_id} authenticated by WINDI Forensic Ledger. Type: {meta['doc_type']}. Issuer: {meta['issuer']}. Integrity confirmed."
+    url = f"https://windi-domain.com/verify-public/{doc_id}"
+
+    # Replace OG tags
+    html = re.sub(
+        r'<meta property="og:title" content="[^"]*"/>',
+        f'<meta property="og:title" content="{title}"/>',
+        html
+    )
+    html = re.sub(
+        r'<meta property="og:description" content="[^"]*"/>',
+        f'<meta property="og:description" content="{description}"/>',
+        html
+    )
+    html = re.sub(
+        r'<meta property="og:url" content="[^"]*"/>',
+        f'<meta property="og:url" content="{url}"/>',
+        html
+    )
+    # Twitter cards
+    html = re.sub(
+        r'<meta name="twitter:title" content="[^"]*"/>',
+        f'<meta name="twitter:title" content="{title}"/>',
+        html
+    )
+    html = re.sub(
+        r'<meta name="twitter:description" content="[^"]*"/>',
+        f'<meta name="twitter:description" content="{description}"/>',
+        html
+    )
+    # Page title
+    html = re.sub(
+        r'<title>[^<]*</title>',
+        f'<title>{title}</title>',
+        html
+    )
+    return html
+
+
 @app.get("/verify-public/{doc_id}")
 async def verify_direct_url(doc_id: str):
-    """URL limpa: /verify-public/VR-BABEL-0001 — serve UI com auto-verify."""
+    """URL limpa: /verify-public/VR-BABEL-0001 — serve UI com OG tags dinâmicas."""
     index = os.path.join(WEB_DIR, "index.html")
-    if os.path.exists(index):
+    if not os.path.exists(index):
+        return JSONResponse({"id": doc_id})
+
+    # Skip SSR for static assets
+    if doc_id in ["favicon.ico", "og-preview.png", "static"] or "." in doc_id:
         return FileResponse(index)
-    return JSONResponse({"id": doc_id})
+
+    # Fetch document metadata for OG tags
+    meta = await get_document_metadata(doc_id)
+
+    # Read and inject OG tags
+    with open(index, "r", encoding="utf-8") as f:
+        html = f.read()
+
+    html = inject_og_tags(html, doc_id, meta)
+
+    return HTMLResponse(content=html, status_code=200)
 
 if __name__ == "__main__":
     import uvicorn
