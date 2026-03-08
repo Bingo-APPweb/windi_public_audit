@@ -1,12 +1,14 @@
 """
 W-GROVE-001 — Grove Orchestrator
 Domain extension do constitutional-agent (:8091)
-Version: 1.0.0
+Version: 1.0.2
 
 Iron Rule: Este arquivo é registado em blueprints/ e importado
 pelo constitutional-agent/agent.py — NÃO cria porta própria.
 
 Converted from FastAPI to Flask Blueprint for constitutional-agent integration.
+
+v1.0.2: IA-Auto-Titling — Grove nunca deixa uma ideia sem nome
 """
 
 from flask import Blueprint, request, jsonify
@@ -14,6 +16,7 @@ import sqlite3
 import uuid
 import json
 import requests
+import re
 from datetime import datetime
 from pathlib import Path
 
@@ -21,6 +24,56 @@ from pathlib import Path
 GROVE_DB   = Path("/opt/windi/agents/constitutional-agent/grove.db")
 LEDGER_URL = "http://127.0.0.1:8101"
 SANDBOX    = "http://127.0.0.1:8091"
+DRAGON_URL = "http://127.0.0.1:8108"
+
+# ── IA-Auto-Titling ───────────────────────────────────────────────────────────
+def generate_sophisticated_title(thought_text: str) -> str:
+    """
+    W-GROVE-001 v1.0.2: Gera título sofisticado quando o humano não fornece.
+    Tenta primeiro via Dragon API, fallback para extração local.
+    """
+    if not thought_text or len(thought_text.strip()) < 5:
+        return "Semente de Pensamento"
+
+    text = thought_text.strip()
+
+    # Tenta chamar Dragon para síntese sofisticada
+    try:
+        resp = requests.post(
+            f"{DRAGON_URL}/api/dragon/chat",
+            json={
+                "message": f"Sintetiza este pensamento em um título de 3-6 palavras, sofisticado e denso. Responde APENAS com o título, sem aspas nem explicação:\n\n{text[:500]}",
+                "tier": "ADMIN",
+                "chatType": "grove_titling"
+            },
+            timeout=5
+        )
+        if resp.status_code == 200:
+            data = resp.json()
+            ai_title = data.get("message", "").strip()
+            # Limpa e valida
+            ai_title = re.sub(r'^["\']|["\']$', '', ai_title)  # Remove aspas
+            ai_title = ai_title.split('\n')[0].strip()  # Só primeira linha
+            if 3 <= len(ai_title) <= 80 and not ai_title.lower().startswith(("aqui", "claro", "ok")):
+                return ai_title
+    except Exception:
+        pass  # Fallback para extração local
+
+    # Fallback: Extração inteligente local
+    # Remove pontuação final e pega primeira frase/segmento
+    first_sentence = re.split(r'[.!?\n]', text)[0].strip()
+
+    # Se muito longo, pega primeiras palavras significativas
+    words = first_sentence.split()
+    if len(words) > 8:
+        # Pega até 6 palavras, evitando cortar no meio
+        title = ' '.join(words[:6])
+        if not title.endswith(('de', 'da', 'do', 'e', 'ou', 'para', 'com', 'em', 'a', 'o')):
+            return title + "..."
+        title = ' '.join(words[:5])
+        return title + "..."
+
+    return first_sentence[:60] if len(first_sentence) <= 60 else first_sentence[:57] + "..."
 
 grove_bp = Blueprint('grove', __name__, url_prefix='/grove')
 
@@ -123,7 +176,8 @@ def grove_health():
     return jsonify({
         "status": "alive",
         "agent": "W-GROVE-001",
-        "version": "1.0.0",
+        "version": "1.0.2",
+        "features": ["auto-titling", "debate", "seal"],
         "principle": "AI processes. Human decides. WINDI guarantees."
     })
 
@@ -132,15 +186,25 @@ def seed_idea():
     """
     Planta a semente: recebe ideia bruta, cria sessão + nó inicial,
     sugere agentes. NÃO activa agentes ainda — humano confirma primeiro.
+
+    v1.0.2: IA-Auto-Titling — se título vazio, Grove batiza a ideia.
     """
     data = request.get_json() or {}
     idea = data.get("idea", "")
-    title = data.get("title", "") or idea[:60]
+    raw_title = data.get("title", "").strip()
     context = data.get("context")
     user = data.get("user", "anonymous")
 
     if not idea:
         return jsonify({"error": "idea is required"}), 400
+
+    # IA-Auto-Titling: se título vazio ou genérico, Grove batiza
+    auto_titled = False
+    if not raw_title or raw_title.lower() in ["sem título", "ohne titel", "untitled", ""]:
+        title = generate_sophisticated_title(idea)
+        auto_titled = True
+    else:
+        title = raw_title
 
     session_id = f"GS-{datetime.utcnow().strftime('%Y%m%d')}-{uuid.uuid4().hex[:6].upper()}"
 
@@ -154,8 +218,8 @@ def seed_idea():
     conn.commit()
     conn.close()
 
-    # Cria nó raiz
-    root_id = create_node(session_id, idea[:80], idea, "idea", user)
+    # Cria nó raiz (usa title, não idea[:80])
+    root_id = create_node(session_id, title, idea, "idea", user)
 
     # Sugestão de agentes (sem activar)
     suggested = suggest_agents(idea)
@@ -165,7 +229,9 @@ def seed_idea():
         "session_id": session_id,
         "root_node_id": root_id,
         "suggested_agents": suggested,
-        "message": "Ideia plantada. Confirme os agentes a activar.",
+        "title": title,
+        "auto_titled": auto_titled,  # True se Grove batizou a ideia
+        "message": f"{'🌱 Grove batizou: ' if auto_titled else ''}Ideia plantada. Confirme os agentes.",
         "principle": "Humano confirma. WINDI processa. Grove regista."
     })
 
