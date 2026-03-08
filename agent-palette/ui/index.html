@@ -4480,8 +4480,11 @@ function App(){
                       });
                       const data=await res.json();
                       if(data.session_id){
-                        setGroveSession({...data, title: title||content.slice(0,50)});
+                        // v1.0.2: Usa título do response (pode ser auto-gerado pelo Grove)
+                        const finalTitle = data.title || title || content.slice(0,50);
+                        setGroveSession({...data, title: finalTitle});
                         setGroveSelectedAgents(data.suggested_agents||[]);
+                        if(data.auto_titled) flash("🌱 Grove batizou: "+finalTitle);
                         setGroveDebateOpen(true);
                         setGroveNodes([{id:data.root_node_id,type:'idea',title:title||'Ideia',content,author:wallet?.name||'user'}]);
                         setGroveMsgs([{role:'user',content:`${title?title+": ":""}${content}`,ts:new Date().toISOString()}]);
