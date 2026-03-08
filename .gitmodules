@@ -1,0 +1,3 @@
+[submodule "plugins/windi-core"]
+	path = plugins/windi-core
+	url = https://github.com/Bingo-APPweb/windi-core.git
