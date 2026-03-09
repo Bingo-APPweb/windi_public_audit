@@ -4518,17 +4518,54 @@ function App(){
                     </div>
                     <div style={{display:"flex",alignItems:"center",gap:8}}>
                       {groveMsgs.length>1&&(
-                        <button onClick={async()=>{
-                          setGroveLoading(true);
-                          try{
-                            const res=await fetch(`/grove/ideas/${groveSession.session_id}/seal`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({session_id:groveSession.session_id,user:wallet?.name||'anonymous'})});
-                            const data=await res.json();
-                            if(data.status==='sealed'){flash("🔐 Sealed: "+data.receipt_id);setGroveDebateOpen(false);setGroveSession(null);setGroveMsgs([]);setGroveActiveAgents([]);setGroveEstimate(null);setGroveSelectedAgents([]);}
-                          }catch(e){flash("⚠️ "+e.message);}
-                          setGroveLoading(false);
-                        }} style={{padding:"4px 10px",borderRadius:6,background:`linear-gradient(135deg,#8B4513,#D2691E)`,border:"none",color:"#FFF",fontSize:10,fontWeight:600,cursor:"pointer"}}>
-                          🔐 {lang==="pt"?"Selar":lang==="de"?"Versiegeln":"Seal"}
-                        </button>
+                        <>
+                          <button onClick={async()=>{
+                            setGroveLoading(true);
+                            try{
+                              // Preparar dados dos agentes a partir das mensagens
+                              const agentMsgs=groveMsgs.filter(m=>m.role==='agent');
+                              const agents=agentMsgs.map(m=>({
+                                agent_id:m.agent_id,
+                                name:m.name||m.agent_id?.replace("W-","").replace("-001",""),
+                                emoji:m.emoji||"🤖",
+                                tier:({"W-LEGAL-001":"elite","W-COMPLY-001":"elite","W-NOTARY-001":"estrutural","W-AUDIT-001":"estrutural","W-ACCT-001":"estrutural","W-COMM-001":"narrativo","W-JOURN-001":"narrativo","W-ARCH-001":"narrativo"})[m.agent_id]||"narrativo",
+                                message:m.content
+                              }));
+                              const topic=groveSession.title||groveMsgs.find(m=>m.role==='user')?.content||"Debate";
+                              const res=await fetch('/grove/arena/report',{
+                                method:'POST',
+                                headers:{'Content-Type':'application/json'},
+                                body:JSON.stringify({
+                                  session_id:groveSession.session_id,
+                                  topic:topic,
+                                  agents:agents,
+                                  rounds:groveMsgs.filter(m=>m.role==='user').length||1,
+                                  wallet_id:wallet?.did||'anonymous',
+                                  identity:wallet?.type==='pioneer'?'pioneer':wallet?.did?'did':'free'
+                                })
+                              });
+                              const data=await res.json();
+                              if(data.ok){
+                                flash("📄 Parecer: "+data.receipt_id);
+                                window.open(data.report_url,'_blank');
+                              }else{flash("⚠️ "+(data.error||"Erro ao gerar parecer"));}
+                            }catch(e){flash("⚠️ "+e.message);}
+                            setGroveLoading(false);
+                          }} style={{padding:"4px 10px",borderRadius:6,background:`linear-gradient(135deg,#1a4a1a,#2d6a2d)`,border:"none",color:"#FFF",fontSize:10,fontWeight:600,cursor:"pointer"}}>
+                            📄 {lang==="pt"?"Parecer":lang==="de"?"Gutachten":"Report"}
+                          </button>
+                          <button onClick={async()=>{
+                            setGroveLoading(true);
+                            try{
+                              const res=await fetch(`/grove/ideas/${groveSession.session_id}/seal`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({session_id:groveSession.session_id,user:wallet?.name||'anonymous'})});
+                              const data=await res.json();
+                              if(data.status==='sealed'){flash("🔐 Sealed: "+data.receipt_id);setGroveDebateOpen(false);setGroveSession(null);setGroveMsgs([]);setGroveActiveAgents([]);setGroveEstimate(null);setGroveSelectedAgents([]);}
+                            }catch(e){flash("⚠️ "+e.message);}
+                            setGroveLoading(false);
+                          }} style={{padding:"4px 10px",borderRadius:6,background:`linear-gradient(135deg,#8B4513,#D2691E)`,border:"none",color:"#FFF",fontSize:10,fontWeight:600,cursor:"pointer"}}>
+                            🔐 {lang==="pt"?"Selar":lang==="de"?"Versiegeln":"Seal"}
+                          </button>
+                        </>
                       )}
                       <button onClick={()=>{setGroveDebateOpen(false);setGroveSession(null);setGroveMsgs([]);setGroveActiveAgents([]);setGroveEstimate(null);setGroveSelectedAgents([]);}} style={{background:"none",border:"none",color:th.dim,cursor:"pointer",fontSize:16}}>✕</button>
                     </div>

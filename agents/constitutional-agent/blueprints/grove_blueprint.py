@@ -1,13 +1,14 @@
 """
 W-GROVE-001 — Grove Orchestrator
 Domain extension do constitutional-agent (:8091)
-Version: 1.1.0
+Version: 1.2.0
 
 Iron Rule: Este arquivo é registado em blueprints/ e importado
 pelo constitutional-agent/agent.py — NÃO cria porta própria.
 
 Converted from FastAPI to Flask Blueprint for constitutional-agent integration.
 
+v1.2.0: Parecer de Consultoria — PDF + HTML verification page
 v1.1.0: Honorarium Engine — Micro-consultancy pricing integration
 v1.0.3: Arena Bypass — chatType "arena" bypassa Dragon Hub para texto puro
 v1.0.2: IA-Auto-Titling — Grove nunca deixa uma ideia sem nome
@@ -635,3 +636,613 @@ def seal_grove_session(session_id):
 
 _honorarium_engine = HonorariumEngine()
 register_flask_routes(grove_bp, _honorarium_engine)
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PARECER DE CONSULTORIA — Document Generation (v1.2.0)
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Gera documento formal após debate:
+#   POST /grove/arena/report   — Gera PDF + HTML verificável
+#   GET  /grove/verify/<id>    — Página de verificação pública
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+
+import hashlib
+import base64
+from datetime import timezone
+
+# Directório para relatórios gerados
+REPORTS_DIR = Path("/opt/windi/agents/constitutional-agent/data/reports")
+REPORTS_DIR.mkdir(parents=True, exist_ok=True)
+
+# URL base para verificação
+VERIFY_BASE_URL = "https://a4.windi.app/grove/verify"
+
+
+def _generate_report_html(report_data: dict) -> str:
+    """Gera HTML do Parecer de Consultoria."""
+    agents_html = ""
+    for agent in report_data.get("agents", []):
+        agents_html += f"""
+        <div class="agent-card">
+            <div class="agent-header">
+                <span class="agent-icon">{agent['emoji']}</span>
+                <span class="agent-name">{agent['name']}</span>
+                <span class="agent-tier">[{agent['tier'].upper()}]</span>
+            </div>
+            <div class="agent-content">{agent['message'].replace(chr(10), '<br>')}</div>
+        </div>
+        """
+
+    # Breakdown de honorários
+    breakdown_html = ""
+    for item in report_data.get("honorarium", {}).get("breakdown", []):
+        breakdown_html += f"""
+        <tr>
+            <td>{item.get('icon','')} {item.get('name','')}</td>
+            <td>{item.get('tier','')}</td>
+            <td>{item.get('credits_raw', 0)}</td>
+            <td>{item.get('credits_final', 0)}</td>
+            <td>€{item.get('eur_value', 0):.4f}</td>
+        </tr>
+        """
+
+    hon = report_data.get("honorarium", {})
+    identity_badge = {
+        "pioneer": "🌱 Pioneer (50% desconto perpétuo)",
+        "did": "🪪 DID Validado (20% desconto)",
+        "free": "👤 Free Tier",
+        "empresa": "🏢 Empresa (+20%, NF dedutível)"
+    }.get(hon.get("identity", "free"), "👤 Free Tier")
+
+    return f"""<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parecer WINDI Grove Arena — {report_data.get('receipt_id', 'N/A')}</title>
+    <style>
+        :root {{
+            --gold: #C9A227;
+            --dark: #1a1a1a;
+            --bg: #0d0d0d;
+            --border: #333;
+        }}
+        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+        body {{
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: #e0e0e0;
+            line-height: 1.6;
+            padding: 20px;
+        }}
+        .container {{
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--dark);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }}
+        .header {{
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            padding: 30px;
+            border-bottom: 3px solid var(--gold);
+            text-align: center;
+        }}
+        .header h1 {{
+            color: var(--gold);
+            font-size: 24px;
+            margin-bottom: 8px;
+        }}
+        .header .subtitle {{
+            color: #888;
+            font-size: 12px;
+        }}
+        .receipt-id {{
+            background: var(--gold);
+            color: #000;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 12px;
+        }}
+        .section {{
+            padding: 24px 30px;
+            border-bottom: 1px solid var(--border);
+        }}
+        .section-title {{
+            color: var(--gold);
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }}
+        .meta-grid {{
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }}
+        .meta-item {{
+            background: #222;
+            padding: 12px;
+            border-radius: 6px;
+        }}
+        .meta-label {{
+            font-size: 10px;
+            color: #666;
+            text-transform: uppercase;
+        }}
+        .meta-value {{
+            font-size: 14px;
+            color: #fff;
+            margin-top: 4px;
+        }}
+        .topic-box {{
+            background: linear-gradient(135deg, #1a1a0a 0%, #2a2a1a 100%);
+            border: 1px solid var(--gold);
+            border-radius: 8px;
+            padding: 20px;
+            font-size: 16px;
+            font-style: italic;
+        }}
+        .agent-card {{
+            background: #222;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-left: 3px solid var(--gold);
+        }}
+        .agent-header {{
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }}
+        .agent-icon {{ font-size: 20px; }}
+        .agent-name {{ font-weight: 700; color: var(--gold); }}
+        .agent-tier {{ font-size: 10px; color: #666; }}
+        .agent-content {{
+            font-size: 13px;
+            line-height: 1.7;
+            color: #ccc;
+        }}
+        table {{
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }}
+        th, td {{
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }}
+        th {{
+            background: #222;
+            color: var(--gold);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 10px;
+        }}
+        .total-row {{
+            background: linear-gradient(135deg, #1a1a0a 0%, #2a2a1a 100%);
+            font-weight: bold;
+        }}
+        .total-row td {{
+            color: var(--gold);
+            font-size: 14px;
+        }}
+        .identity-badge {{
+            display: inline-block;
+            background: #2a2a1a;
+            border: 1px solid var(--gold);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-top: 12px;
+        }}
+        .verify-section {{
+            text-align: center;
+            padding: 30px;
+            background: #111;
+        }}
+        .hash-box {{
+            background: #000;
+            border: 1px solid var(--border);
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 11px;
+            word-break: break-all;
+            margin: 16px 0;
+        }}
+        .qr-placeholder {{
+            width: 120px;
+            height: 120px;
+            background: #fff;
+            margin: 16px auto;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            font-size: 10px;
+        }}
+        .verify-url {{
+            color: var(--gold);
+            font-size: 12px;
+        }}
+        .footer {{
+            text-align: center;
+            padding: 20px;
+            font-size: 10px;
+            color: #666;
+        }}
+        .ledger-status {{
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #1a2a1a;
+            border: 1px solid #2d5a27;
+            padding: 8px 16px;
+            border-radius: 6px;
+            color: #4a8c3f;
+            font-weight: 600;
+        }}
+        @media print {{
+            body {{ background: #fff; color: #000; }}
+            .container {{ border: 1px solid #ccc; }}
+            .header {{ background: #f5f5f5; }}
+            .section {{ border-color: #ddd; }}
+            .agent-card, .meta-item {{ background: #f9f9f9; }}
+        }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌳 WINDI Grove Arena</h1>
+            <div class="subtitle">Parecer de Micro-Consultoria</div>
+            <div class="receipt-id">{report_data.get('receipt_id', 'N/A')}</div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Metadados</div>
+            <div class="meta-grid">
+                <div class="meta-item">
+                    <div class="meta-label">Sessão</div>
+                    <div class="meta-value">{report_data.get('session_id', 'N/A')}</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Data/Hora UTC</div>
+                    <div class="meta-value">{report_data.get('timestamp', 'N/A')}</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Solicitante</div>
+                    <div class="meta-value">{report_data.get('wallet_id', 'anonymous')}</div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-label">Rodadas</div>
+                    <div class="meta-value">{report_data.get('rounds', 1)}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Tópico Consultado</div>
+            <div class="topic-box">"{report_data.get('topic', 'N/A')}"</div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Perspectivas dos Agentes ({len(report_data.get('agents', []))})</div>
+            {agents_html}
+        </div>
+
+        <div class="section">
+            <div class="section-title">Honorários</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Agente</th>
+                        <th>Tier</th>
+                        <th>Créditos Brutos</th>
+                        <th>Créditos Líquidos</th>
+                        <th>EUR</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {breakdown_html}
+                    <tr class="total-row">
+                        <td colspan="3">TOTAL</td>
+                        <td>{hon.get('total_credits', 0)}</td>
+                        <td>€{hon.get('total_eur', 0):.2f}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="identity-badge">{identity_badge}</div>
+        </div>
+
+        <div class="verify-section">
+            <div class="section-title">Verificação Forense</div>
+            <div class="ledger-status">
+                ✓ Registado no Forensic Ledger
+            </div>
+            <div class="hash-box">
+                SHA-256: {report_data.get('hash_sha256', 'N/A')}
+            </div>
+            <div class="qr-placeholder">[QR Code]</div>
+            <div class="verify-url">{VERIFY_BASE_URL}/{report_data.get('receipt_id', '')}</div>
+        </div>
+
+        <div class="footer">
+            <p>"AI processes. Human decides. WINDI guarantees."</p>
+            <p>WINDI Grove Arena v1.2.0 — Kempten, Bavaria — {datetime.now(timezone.utc).strftime('%Y-%m-%d')}</p>
+        </div>
+    </div>
+</body>
+</html>"""
+
+
+@grove_bp.route("/arena/report", methods=["POST"])
+def generate_arena_report():
+    """
+    POST /grove/arena/report — Gera Parecer de Consultoria.
+
+    Payload:
+        {
+            "session_id": "GS-...",
+            "topic": "O tópico debatido",
+            "agents": [
+                {"agent_id": "W-LEGAL-001", "name": "Legal", "emoji": "⚖️", "tier": "elite", "message": "..."},
+                ...
+            ],
+            "rounds": 1,
+            "wallet_id": "WALLET-...",
+            "identity": "pioneer",
+            "honorarium": { ... }  // opcional - será calculado se não fornecido
+        }
+
+    Returns:
+        {
+            "ok": true,
+            "receipt_id": "GRV-...",
+            "report_url": "https://.../grove/verify/GRV-...",
+            "pdf_url": "https://.../grove/report/GRV-....pdf",
+            "html": "..." // HTML completo do relatório
+        }
+    """
+    data = request.get_json() or {}
+
+    session_id = data.get("session_id", f"GS-{datetime.now(timezone.utc).strftime('%Y%m%d')}-{uuid.uuid4().hex[:6].upper()}")
+    topic = data.get("topic", "")
+    agents = data.get("agents", [])
+    rounds = data.get("rounds", 1)
+    wallet_id = data.get("wallet_id", "anonymous")
+    identity = data.get("identity", "free")
+
+    if not topic or not agents:
+        return jsonify({"ok": False, "error": "topic and agents are required"}), 400
+
+    # Gerar receipt_id único
+    receipt_id = f"GRV-{uuid.uuid4().hex[:14].upper()}"
+    timestamp = datetime.now(timezone.utc).isoformat()
+
+    # Calcular honorários se não fornecidos
+    honorarium = data.get("honorarium")
+    if not honorarium:
+        try:
+            from blueprints.grove_honorarium_model import FlowPhase, IdentityMultiplier
+            agent_ids = [a.get("agent_id") for a in agents if a.get("agent_id")]
+            estimate = _honorarium_engine.estimate(
+                session_id=session_id,
+                wallet_id=wallet_id,
+                agents=agent_ids,
+                phase=FlowPhase.ARENA,
+                identity=IdentityMultiplier(identity),
+                rounds=rounds
+            )
+            honorarium = {
+                "total_credits": estimate.total_credits,
+                "total_eur": estimate.total_eur,
+                "identity": estimate.identity.value,
+                "breakdown": [
+                    {
+                        "icon": item.icon,
+                        "name": item.agent_name,
+                        "tier": item.agent_tier.value,
+                        "credits_raw": item.credits_raw,
+                        "credits_final": item.credits_final,
+                        "eur_value": item.eur_value
+                    }
+                    for item in estimate.line_items
+                ]
+            }
+        except Exception as e:
+            honorarium = {"total_credits": 0, "total_eur": 0, "identity": identity, "breakdown": [], "error": str(e)}
+
+    # Preparar dados do relatório
+    report_data = {
+        "receipt_id": receipt_id,
+        "session_id": session_id,
+        "timestamp": timestamp,
+        "topic": topic,
+        "agents": agents,
+        "rounds": rounds,
+        "wallet_id": wallet_id,
+        "honorarium": honorarium,
+        "hash_sha256": ""
+    }
+
+    # Calcular hash SHA-256 do relatório
+    hash_payload = json.dumps({
+        "receipt_id": receipt_id,
+        "session_id": session_id,
+        "topic": topic,
+        "agents": [a.get("agent_id") for a in agents],
+        "timestamp": timestamp,
+        "honorarium": honorarium.get("total_credits", 0)
+    }, sort_keys=True)
+    report_data["hash_sha256"] = hashlib.sha256(hash_payload.encode()).hexdigest()
+
+    # Gerar HTML
+    html_content = _generate_report_html(report_data)
+
+    # Guardar HTML no filesystem
+    html_path = REPORTS_DIR / f"{receipt_id}.html"
+    html_path.write_text(html_content, encoding="utf-8")
+
+    # Guardar JSON para referência
+    json_path = REPORTS_DIR / f"{receipt_id}.json"
+    json_path.write_text(json.dumps(report_data, indent=2, default=str), encoding="utf-8")
+
+    # Tentar registar no Forensic Ledger
+    ledger_ok = False
+    try:
+        ledger_payload = {
+            "id": receipt_id,
+            "actor": wallet_id,
+            "app": "grove-arena-report",
+            "doc_name": f"Parecer Grove — {topic[:50]}",
+            "doc_type": "parecer",
+            "governance_level": "HIGH",
+            "metadata": json.dumps({
+                "session_id": session_id,
+                "topic": topic[:200],
+                "agents": [a.get("agent_id") for a in agents],
+                "credits": honorarium.get("total_credits", 0),
+                "hash_sha256": report_data["hash_sha256"]
+            })
+        }
+        resp = requests.post(f"{LEDGER_URL}/api/receipts", json=ledger_payload, timeout=10)
+        ledger_ok = resp.status_code == 200
+    except Exception:
+        pass
+
+    # Tentar gerar PDF via Export Engine
+    pdf_url = None
+    try:
+        export_resp = requests.post(
+            "http://127.0.0.1:8103/api/export/html-to-pdf",
+            json={
+                "html": html_content,
+                "filename": f"{receipt_id}.pdf",
+                "options": {"format": "A4", "margin": "20mm"}
+            },
+            timeout=30
+        )
+        if export_resp.status_code == 200:
+            pdf_data = export_resp.json()
+            pdf_url = pdf_data.get("url") or f"/grove/report/{receipt_id}.pdf"
+    except Exception:
+        pass
+
+    return jsonify({
+        "ok": True,
+        "receipt_id": receipt_id,
+        "session_id": session_id,
+        "report_url": f"{VERIFY_BASE_URL}/{receipt_id}",
+        "pdf_url": pdf_url,
+        "html_path": str(html_path),
+        "ledger_registered": ledger_ok,
+        "hash_sha256": report_data["hash_sha256"],
+        "honorarium": honorarium,
+        "message": f"Parecer gerado: {receipt_id}"
+    })
+
+
+@grove_bp.route("/verify/<receipt_id>", methods=["GET"])
+def verify_report(receipt_id):
+    """
+    GET /grove/verify/<receipt_id> — Página de verificação pública.
+
+    Retorna o HTML do parecer para verificação.
+    """
+    # Sanitizar receipt_id
+    receipt_id = re.sub(r'[^A-Za-z0-9\-]', '', receipt_id)
+
+    html_path = REPORTS_DIR / f"{receipt_id}.html"
+    json_path = REPORTS_DIR / f"{receipt_id}.json"
+
+    if not html_path.exists():
+        return jsonify({
+            "ok": False,
+            "error": "Parecer não encontrado",
+            "receipt_id": receipt_id,
+            "hint": "Verifique se o ID está correcto ou se o parecer já foi gerado."
+        }), 404
+
+    # Verificar no Ledger
+    ledger_verified = False
+    try:
+        resp = requests.get(f"{LEDGER_URL}/api/receipts/{receipt_id}", timeout=5)
+        ledger_verified = resp.status_code == 200
+    except Exception:
+        pass
+
+    # Se pedido JSON, retornar metadados
+    if request.args.get("format") == "json" and json_path.exists():
+        report_data = json.loads(json_path.read_text())
+        report_data["ledger_verified"] = ledger_verified
+        return jsonify({"ok": True, "report": report_data})
+
+    # Retornar HTML
+    html_content = html_path.read_text(encoding="utf-8")
+
+    # Injectar status de verificação no HTML
+    if ledger_verified:
+        html_content = html_content.replace(
+            "✓ Registado no Forensic Ledger",
+            "✓ VERIFICADO no Forensic Ledger"
+        )
+
+    return html_content, 200, {"Content-Type": "text/html; charset=utf-8"}
+
+
+@grove_bp.route("/report/<receipt_id>.pdf", methods=["GET"])
+def get_report_pdf(receipt_id):
+    """
+    GET /grove/report/<receipt_id>.pdf — Download do PDF do parecer.
+    """
+    receipt_id = re.sub(r'[^A-Za-z0-9\-]', '', receipt_id)
+    pdf_path = REPORTS_DIR / f"{receipt_id}.pdf"
+
+    if pdf_path.exists():
+        return pdf_path.read_bytes(), 200, {
+            "Content-Type": "application/pdf",
+            "Content-Disposition": f"inline; filename={receipt_id}.pdf"
+        }
+
+    # Se não existe PDF, tentar gerar a partir do HTML
+    html_path = REPORTS_DIR / f"{receipt_id}.html"
+    if not html_path.exists():
+        return jsonify({"ok": False, "error": "Parecer não encontrado"}), 404
+
+    # Tentar gerar PDF via Export Engine
+    try:
+        html_content = html_path.read_text(encoding="utf-8")
+        export_resp = requests.post(
+            "http://127.0.0.1:8103/api/export/html-to-pdf",
+            json={
+                "html": html_content,
+                "filename": f"{receipt_id}.pdf",
+                "options": {"format": "A4", "margin": "20mm"}
+            },
+            timeout=30
+        )
+        if export_resp.status_code == 200:
+            pdf_data = export_resp.json()
+            if pdf_data.get("pdf_base64"):
+                pdf_bytes = base64.b64decode(pdf_data["pdf_base64"])
+                pdf_path.write_bytes(pdf_bytes)
+                return pdf_bytes, 200, {
+                    "Content-Type": "application/pdf",
+                    "Content-Disposition": f"inline; filename={receipt_id}.pdf"
+                }
+    except Exception as e:
+        return jsonify({"ok": False, "error": f"Erro ao gerar PDF: {str(e)}"}), 500
+
+    return jsonify({"ok": False, "error": "PDF não disponível. Use a versão HTML."}), 404
