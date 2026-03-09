@@ -4430,7 +4430,7 @@ function App(){
                 {(JSON.parse(localStorage.getItem("windi_grove_notes")||"[]")).map((note,i)=>(
                   <div key={i} style={{padding:"12px 14px",borderRadius:10,background:th.card,border:`1px solid ${th.border}`,position:"relative"}}>
                     <div onClick={()=>{document.getElementById("groveEditor").value=note.content;document.getElementById("groveTitle").value=note.title;}} style={{cursor:"pointer"}}>
-                      <div style={{fontSize:13,fontWeight:600,marginBottom:4,paddingRight:24}}>{note.title||lang==="pt"?"Sem título":lang==="de"?"Ohne Titel":"Untitled"}</div>
+                      <div style={{fontSize:13,fontWeight:600,marginBottom:4,paddingRight:24}}>{note.title||(lang==="pt"?"Sem título":lang==="de"?"Ohne Titel":"Untitled")}</div>
                       <div style={{fontSize:10,color:th.dim}}>{note.content?.slice(0,100)}...</div>
                       <div style={{fontSize:9,color:th.dim,marginTop:6}}>{new Date(note.ts).toLocaleString()}</div>
                     </div>
