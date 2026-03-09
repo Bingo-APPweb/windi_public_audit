@@ -843,6 +843,8 @@ def route_dragon(message, chat_type=None, intent_mode=None, history=None):
     # 1. Chat type routing (from frontend classification)
     if chat_type:
         for dragon, config in ROUTE_PATTERNS.items():
+            if dragon not in scores:
+                continue  # Skip non-main dragons (grove, etc.)
             if chat_type in config["chat_types"]:
                 scores[dragon] += 0.5
 
@@ -854,6 +856,8 @@ def route_dragon(message, chat_type=None, intent_mode=None, history=None):
 
     # 3. Keyword scoring
     for dragon, config in ROUTE_PATTERNS.items():
+        if dragon not in scores:
+            continue  # Skip non-main dragons (grove, etc.)
         kw_hits = sum(1 for kw in config["keywords"] if kw in text)
         scores[dragon] += min(kw_hits * 0.15, 0.6)
 
@@ -865,6 +869,8 @@ def route_dragon(message, chat_type=None, intent_mode=None, history=None):
 
     # 4. Default weight (guardian is gentle fallback)
     for dragon, config in ROUTE_PATTERNS.items():
+        if dragon not in scores:
+            continue  # Skip non-main dragons (grove, etc.)
         scores[dragon] += config["weight"]
 
     # ═══ INTERVENTION B: Turn-based Architect Escalation ═══
@@ -910,9 +916,10 @@ def save_budget(budget):
         pass
 
 TIER_LIMITS = {
-    "FREE": {"daily_tokens": 5000, "daily_requests": 50},  # No LLM access
-    "MED": {"daily_tokens": 50000, "daily_requests": 100},
-    "HIGH": {"daily_tokens": 200000, "daily_requests": 500},
+    "FREE": {"daily_tokens": 10000, "daily_requests": 100},    # Basic access
+    "MED": {"daily_tokens": 500000, "daily_requests": 1000},   # Standard usage
+    "HIGH": {"daily_tokens": 2000000, "daily_requests": 5000}, # Heavy usage
+    "GOVERNANCE": {"daily_tokens": 5000000, "daily_requests": 10000},  # Arena/Governance unlimited
 }
 
 def check_budget(tier):
@@ -1337,7 +1344,9 @@ def handle_dragon_chat(body):
 
         # Personal tier or local intent -> ALWAYS respond locally
         # EXCEPT: VIP founders always get semantic path
-        if (tier == Tier.PERSONAL or is_local) and not _is_vip:
+        # EXCEPT: Arena debates MUST use semantic path for agent personas
+        _is_arena = chat_type == "arena"
+        if (tier == Tier.PERSONAL or is_local) and not _is_vip and not _is_arena:
             _latency_ms = int((time.time() - _gate4_start) * 1000)
 
             # Record Decision Receipt (Memory on the Edge)
@@ -4078,6 +4087,17 @@ class DragonHandler(http.server.BaseHTTPRequestHandler):
             return
 
         if path == "/api/dragon/chat":
+            # ── W-GROVE-001 Arena Bypass (09Mar26) ────────────────────────
+            # Arena debates MUST always use Dragon LLM for text responses.
+            # Hub would route "legal/compliance" keywords to Agent Corps,
+            # which returns case objects instead of prose.
+            chat_type = body.get("chatType", "")
+            if chat_type == "arena":
+                data, code = handle_dragon_chat(body)
+                log(f"ARENA [{body.get('tier','?')}] dragon={data.get('dragon','?')} topic={body.get('message','')[:40]}...")
+                self._json_response(data, code)
+                return
+
             # ── Dragon Hub Router (05Mar26) ──────────────────────────────
             if HAS_DRAGON_HUB:
                 intent = _hub_resolve_intent(body.get("message", ""), body.get("intent"))

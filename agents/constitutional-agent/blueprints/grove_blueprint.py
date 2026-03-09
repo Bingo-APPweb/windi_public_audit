@@ -1,13 +1,15 @@
 """
 W-GROVE-001 — Grove Orchestrator
 Domain extension do constitutional-agent (:8091)
-Version: 1.0.2
+Version: 1.1.0
 
 Iron Rule: Este arquivo é registado em blueprints/ e importado
 pelo constitutional-agent/agent.py — NÃO cria porta própria.
 
 Converted from FastAPI to Flask Blueprint for constitutional-agent integration.
 
+v1.1.0: Honorarium Engine — Micro-consultancy pricing integration
+v1.0.3: Arena Bypass — chatType "arena" bypassa Dragon Hub para texto puro
 v1.0.2: IA-Auto-Titling — Grove nunca deixa uma ideia sem nome
 """
 
@@ -19,6 +21,9 @@ import requests
 import re
 from datetime import datetime
 from pathlib import Path
+
+# ── Honorarium Engine Import ─────────────────────────────────────────────────
+from blueprints.grove_honorarium_model import HonorariumEngine, register_flask_routes
 
 # ── Config ────────────────────────────────────────────────────────────────────
 GROVE_DB   = Path("/opt/windi/agents/constitutional-agent/grove.db")
@@ -86,6 +91,7 @@ AGENT_REGISTRY = {
     "W-JOURN-001":  {"topics": ["publicação","notícia","manifesto","comunicado"],        "endpoint": "/journalist/draft"},
     "W-AUDIT-001":  {"topics": ["auditoria","verificação","integridade"],                "endpoint": "/audit/verify"},
     "W-ACCT-001":   {"topics": ["financeiro","contabilidade","fatura","elster"],         "endpoint": "/accounting/review"},
+    "W-ARCH-001":   {"topics": ["arquitectura","sistema","design","técnico","infraestrutura","stack"], "endpoint": "/architect/design"},
 }
 
 # ── DB Init ───────────────────────────────────────────────────────────────────
@@ -176,8 +182,8 @@ def grove_health():
     return jsonify({
         "status": "alive",
         "agent": "W-GROVE-001",
-        "version": "1.0.2",
-        "features": ["auto-titling", "debate", "seal"],
+        "version": "1.0.3",
+        "features": ["auto-titling", "debate", "seal", "arena-bypass"],
         "principle": "AI processes. Human decides. WINDI guarantees."
     })
 
@@ -359,6 +365,12 @@ AGENT_PERSONAS = {
         "role": "Accounting Agent",
         "prompt": "Tu és o agente contabilístico WINDI. Analisa implicações fiscais, GoBD, ELSTER. Avalia se há necessidades de documentação financeira. Máximo 3 parágrafos."
     },
+    "W-ARCH-001": {
+        "name": "Architect",
+        "emoji": "🏗️",
+        "role": "Systems Architect",
+        "prompt": "Tu és o agente arquitecto WINDI. Analisa a questão do ponto de vista de arquitectura de sistemas, design técnico e infraestrutura. Propõe soluções escaláveis, identifica trade-offs e considera manutenibilidade. Máximo 3 parágrafos."
+    },
 }
 
 @grove_bp.route("/arena", methods=["POST"])
@@ -412,14 +424,14 @@ TÓPICO PARA ANÁLISE:
 
 Responde com a tua perspectiva profissional. Máximo 3 parágrafos, linguagem do tópico."""
 
-        # Chama Dragon com chatType "general" (reconhecido)
+        # Chama Dragon com chatType "arena" — bypassa Hub para texto puro
         try:
             resp = requests.post(
                 f"{DRAGON_URL}/api/dragon/chat",
                 json={
                     "message": full_prompt,
                     "tier": "GOVERNANCE",
-                    "chatType": "general",
+                    "chatType": "arena",
                     "maxTokens": 600
                 },
                 timeout=30
@@ -606,3 +618,20 @@ def seal_grove_session(session_id):
         "ledger":     ledger_resp,
         "principle":  "AI processes. Human decides. WINDI guarantees."
     })
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# HONORARIUM ENGINE — Micro-Consultoria Pricing (v1.1.0)
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Sovereign Flow: H = Sigma [fase x agente x contexto] x identidade
+#
+# Endpoints registados automaticamente via register_flask_routes():
+#   GET  /grove/arena/pricing  — Tabela de precos publica
+#   POST /grove/arena/estimate — Oraculo de custo pre-debate
+#   POST /grove/arena/consume  — Debito Wallet + Receipt Ledger
+#
+# ═══════════════════════════════════════════════════════════════════════════════
+
+_honorarium_engine = HonorariumEngine()
+register_flask_routes(grove_bp, _honorarium_engine)

@@ -2930,6 +2930,7 @@ function App(){
   const[groveMsgs,setGroveMsgs]=useState([]); // Chat messages: {role:'user'|'agent', agent_id?, content, ts}
   const[groveInput,setGroveInput]=useState(""); // Follow-up input
   const[groveActiveAgents,setGroveActiveAgents]=useState([]); // Agents participating in debate
+  const[groveEstimate,setGroveEstimate]=useState(null); // Honorarium estimate {total_credits, total_eur, line_items}
 
   // DID
   const[wallet,setWallet]=useState(null);
@@ -4522,14 +4523,14 @@ function App(){
                           try{
                             const res=await fetch(`/grove/ideas/${groveSession.session_id}/seal`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({session_id:groveSession.session_id,user:wallet?.name||'anonymous'})});
                             const data=await res.json();
-                            if(data.status==='sealed'){flash("🔐 Sealed: "+data.receipt_id);setGroveDebateOpen(false);setGroveSession(null);setGroveMsgs([]);setGroveActiveAgents([]);}
+                            if(data.status==='sealed'){flash("🔐 Sealed: "+data.receipt_id);setGroveDebateOpen(false);setGroveSession(null);setGroveMsgs([]);setGroveActiveAgents([]);setGroveEstimate(null);setGroveSelectedAgents([]);}
                           }catch(e){flash("⚠️ "+e.message);}
                           setGroveLoading(false);
                         }} style={{padding:"4px 10px",borderRadius:6,background:`linear-gradient(135deg,#8B4513,#D2691E)`,border:"none",color:"#FFF",fontSize:10,fontWeight:600,cursor:"pointer"}}>
                           🔐 {lang==="pt"?"Selar":lang==="de"?"Versiegeln":"Seal"}
                         </button>
                       )}
-                      <button onClick={()=>{setGroveDebateOpen(false);setGroveSession(null);setGroveMsgs([]);setGroveActiveAgents([]);}} style={{background:"none",border:"none",color:th.dim,cursor:"pointer",fontSize:16}}>✕</button>
+                      <button onClick={()=>{setGroveDebateOpen(false);setGroveSession(null);setGroveMsgs([]);setGroveActiveAgents([]);setGroveEstimate(null);setGroveSelectedAgents([]);}} style={{background:"none",border:"none",color:th.dim,cursor:"pointer",fontSize:16}}>✕</button>
                     </div>
                   </div>
 
@@ -4538,8 +4539,22 @@ function App(){
                     <div style={{padding:12,borderBottom:`1px solid ${th.border}`,background:`${th.gold}08`}}>
                       <div style={{fontSize:10,fontWeight:600,marginBottom:6}}>{lang==="pt"?"Convide agentes para o debate:":lang==="de"?"Lade Agenten zur Debatte ein:":"Invite agents to debate:"}</div>
                       <div style={{display:"flex",flexWrap:"wrap",gap:4}}>
-                        {["W-LEGAL-001","W-NOTARY-001","W-COMPLY-001","W-COMM-001","W-JOURN-001","W-AUDIT-001","W-ACCT-001"].map(a=>(
-                          <button key={a} onClick={()=>setGroveSelectedAgents(p=>p.includes(a)?p.filter(x=>x!==a):[...p,a])} style={{padding:"3px 8px",borderRadius:4,fontSize:9,fontWeight:600,border:`1px solid ${groveSelectedAgents.includes(a)?th.gold:th.border}`,background:groveSelectedAgents.includes(a)?th.gold:th.bg,color:groveSelectedAgents.includes(a)?"#FFF":th.text,cursor:"pointer"}}>
+                        {["W-LEGAL-001","W-NOTARY-001","W-COMPLY-001","W-COMM-001","W-JOURN-001","W-AUDIT-001","W-ACCT-001","W-ARCH-001"].map(a=>(
+                          <button key={a} onClick={()=>{
+                            const newSel=groveSelectedAgents.includes(a)?groveSelectedAgents.filter(x=>x!==a):[...groveSelectedAgents,a];
+                            setGroveSelectedAgents(newSel);
+                            // Fetch estimate when agents change
+                            if(newSel.length>0){
+                              fetch('/grove/arena/estimate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+                                session_id:groveSession?.session_id||"SESS-NEW",
+                                wallet_id:wallet?.did||"anonymous",
+                                agents:newSel,
+                                phase:"arena",
+                                identity:wallet?.type==="pioneer"?"pioneer":wallet?.did?"did":"free",
+                                rounds:1
+                              })}).then(r=>r.json()).then(d=>{if(d.ok)setGroveEstimate({...d.estimate,_key:newSel.sort().join(",")});}).catch(()=>{});
+                            }else{setGroveEstimate(null);}
+                          }} style={{padding:"3px 8px",borderRadius:4,fontSize:9,fontWeight:600,border:`1px solid ${groveSelectedAgents.includes(a)?th.gold:th.border}`,background:groveSelectedAgents.includes(a)?th.gold:th.bg,color:groveSelectedAgents.includes(a)?"#FFF":th.text,cursor:"pointer"}}>
                             {({
                               "W-LEGAL-001":"⚖️ Legal",
                               "W-NOTARY-001":"📜 Notário",
@@ -4547,30 +4562,51 @@ function App(){
                               "W-COMM-001":"📝 Communiqué",
                               "W-JOURN-001":"📰 Jornalista",
                               "W-AUDIT-001":"🔍 Auditor",
-                              "W-ACCT-001":"💰 Contabilidade"
+                              "W-ACCT-001":"💰 Contabilidade",
+                              "W-ARCH-001":"🏗️ Architect"
                             })[a]}
                           </button>
                         ))}
                       </div>
                       {groveSelectedAgents.length>0&&(
-                        <button onClick={async()=>{
-                          setGroveLoading(true);
-                          setGroveActiveAgents(groveSelectedAgents);
-                          setGroveMsgs(p=>[...p,{role:'system',content:`${groveSelectedAgents.length} agentes entraram na arena: ${groveSelectedAgents.map(a=>a.replace("W-","").replace("-001","")).join(", ")}`,ts:new Date().toISOString()}]);
-                          // Call ARENA endpoint (new real debate engine)
-                          try{
-                            const topic=groveSession.title||groveMsgs[0]?.content||'Ideia sem título';
-                            const res=await fetch('/grove/arena',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({topic:topic,agents:groveSelectedAgents,session_id:groveSession.session_id,round:1})});
-                            const data=await res.json();
-                            // Add each agent response as chat message
-                            (data.responses||[]).forEach(r=>{
-                              setGroveMsgs(p=>[...p,{role:'agent',agent_id:r.agent,name:r.name,emoji:r.emoji,content:r.message,ts:r.ts,node_id:r.node_id}]);
-                            });
-                          }catch(e){setGroveMsgs(p=>[...p,{role:'system',content:"⚠️ Arena erro: "+e.message,ts:new Date().toISOString()}]);}
-                          setGroveLoading(false);
-                        }} disabled={groveLoading} style={{marginTop:8,padding:"6px 14px",borderRadius:6,background:`linear-gradient(135deg,#2d5a27,#4a8c3f)`,border:"none",color:"#FFF",fontSize:10,fontWeight:700,cursor:"pointer"}}>
-                          {groveLoading?"⏳":"🏟️"} {lang==="pt"?"Iniciar Arena":lang==="de"?"Arena starten":"Start Arena"} ({groveSelectedAgents.length})
-                        </button>
+                        <div style={{marginTop:8}}>
+                          {/* Show estimate */}
+                          {groveEstimate&&groveEstimate._key===groveSelectedAgents.sort().join(",")&&(
+                            <div style={{padding:"8px 10px",background:`${th.gold}10`,borderRadius:6,marginBottom:8,border:`1px solid ${th.gold}30`}}>
+                              <div style={{fontSize:9,fontWeight:700,color:th.gold,marginBottom:4}}>
+                                {lang==="pt"?"Custo estimado:":lang==="de"?"Geschätzte Kosten:":"Estimated cost:"}
+                              </div>
+                              <div style={{display:"flex",alignItems:"baseline",gap:6}}>
+                                <span style={{fontSize:16,fontWeight:800,color:th.text}}>{groveEstimate.total_credits}</span>
+                                <span style={{fontSize:10,color:th.dim}}>{lang==="pt"?"créditos":lang==="de"?"Kredite":"credits"}</span>
+                                <span style={{fontSize:12,fontWeight:600,color:th.gold,marginLeft:8}}>= €{groveEstimate.total_eur?.toFixed(2)}</span>
+                              </div>
+                              {groveEstimate.breakdown?.multiplier<1&&(
+                                <div style={{fontSize:8,color:"#4a8c3f",marginTop:4}}>
+                                  {groveEstimate.breakdown.identity==="pioneer"?"🌱 Pioneer: 50% desconto perpétuo":"🪪 DID: 20% desconto"}
+                                </div>
+                              )}
+                            </div>
+                          )}
+                          <button onClick={async()=>{
+                            setGroveLoading(true);
+                            setGroveActiveAgents(groveSelectedAgents);
+                            setGroveMsgs(p=>[...p,{role:'system',content:`${groveSelectedAgents.length} agentes entraram na arena: ${groveSelectedAgents.map(a=>a.replace("W-","").replace("-001","")).join(", ")}`,ts:new Date().toISOString()}]);
+                            // Call ARENA endpoint (new real debate engine)
+                            try{
+                              const topic=groveSession.title||groveMsgs[0]?.content||'Ideia sem título';
+                              const res=await fetch('/grove/arena',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({topic:topic,agents:groveSelectedAgents,session_id:groveSession.session_id,round:1})});
+                              const data=await res.json();
+                              // Add each agent response as chat message
+                              (data.responses||[]).forEach(r=>{
+                                setGroveMsgs(p=>[...p,{role:'agent',agent_id:r.agent,name:r.name,emoji:r.emoji,content:r.message,ts:r.ts,node_id:r.node_id}]);
+                              });
+                            }catch(e){setGroveMsgs(p=>[...p,{role:'system',content:"⚠️ Arena erro: "+e.message,ts:new Date().toISOString()}]);}
+                            setGroveLoading(false);
+                          }} disabled={groveLoading} style={{padding:"6px 14px",borderRadius:6,background:`linear-gradient(135deg,#2d5a27,#4a8c3f)`,border:"none",color:"#FFF",fontSize:10,fontWeight:700,cursor:"pointer"}}>
+                            {groveLoading?"⏳":"🏟️"} {lang==="pt"?"Iniciar Arena":lang==="de"?"Arena starten":"Start Arena"} ({groveSelectedAgents.length}) {groveEstimate?" • €"+groveEstimate.total_eur?.toFixed(2):""}
+                          </button>
+                        </div>
                       )}
                     </div>
                   )}
@@ -4589,7 +4625,7 @@ function App(){
                         ):(
                           <div style={{maxWidth:"85%",display:"flex",gap:8}}>
                             <div style={{width:28,height:28,borderRadius:"50%",background:`linear-gradient(135deg,${th.gold},${th.border})`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,flexShrink:0}}>
-                              {m.emoji||({"W-LEGAL-001":"⚖️","W-NOTARY-001":"📜","W-COMPLY-001":"🛡️","W-COMM-001":"📰","W-JOURN-001":"✒️","W-AUDIT-001":"🔍","W-ACCT-001":"📊"})[m.agent_id]||"🤖"}
+                              {m.emoji||({"W-LEGAL-001":"⚖️","W-NOTARY-001":"📜","W-COMPLY-001":"🛡️","W-COMM-001":"📰","W-JOURN-001":"✒️","W-AUDIT-001":"🔍","W-ACCT-001":"📊","W-ARCH-001":"🏗️"})[m.agent_id]||"🤖"}
                             </div>
                             <div style={{background:th.bg,border:`1px solid ${th.border}`,padding:"8px 12px",borderRadius:"2px 12px 12px 12px",fontSize:12}}>
                               <div style={{fontSize:9,fontWeight:700,color:th.gold,marginBottom:4}}>{m.name||m.agent_id?.replace("W-","").replace("-001","")}</div>
