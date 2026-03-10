@@ -728,14 +728,17 @@ def _generate_report_html(report_data: dict) -> str:
     """Gera HTML do Parecer de Consultoria."""
     agents_html = ""
     for agent in report_data.get("agents", []):
+        # Handle both dict and string agents
+        if isinstance(agent, str):
+            agent = {"agent_id": agent, "name": agent, "emoji": "🤖", "tier": "agent", "message": ""}
         agents_html += f"""
         <div class="agent-card">
             <div class="agent-header">
-                <span class="agent-icon">{agent['emoji']}</span>
-                <span class="agent-name">{agent['name']}</span>
-                <span class="agent-tier">[{agent['tier'].upper()}]</span>
+                <span class="agent-icon">{agent.get('emoji', '🤖')}</span>
+                <span class="agent-name">{agent.get('name', 'Agent')}</span>
+                <span class="agent-tier">[{agent.get('tier', 'agent').upper()}]</span>
             </div>
-            <div class="agent-content">{agent['message'].replace(chr(10), '<br>')}</div>
+            <div class="agent-content">{agent.get('message', '').replace(chr(10), '<br>')}</div>
         </div>
         """
 
@@ -1100,11 +1103,12 @@ def generate_arena_report():
     if not honorarium:
         try:
             from blueprints.grove_honorarium_model import FlowPhase, IdentityMultiplier
-            agent_ids = [a.get("agent_id") for a in agents if a.get("agent_id")]
+            # Handle both dict and string agents
+            agent_ids_for_honorarium = [a.get("agent_id", a) if isinstance(a, dict) else a for a in agents]
             estimate = _honorarium_engine.estimate(
                 session_id=session_id,
                 wallet_id=wallet_id,
-                agents=agent_ids,
+                agents=agent_ids_for_honorarium,
                 phase=FlowPhase.ARENA,
                 identity=IdentityMultiplier(identity),
                 rounds=rounds
@@ -1142,13 +1146,15 @@ def generate_arena_report():
     }
 
     # Calcular hash SHA-256 do relatório
+    # Handle both dict and string agents
+    agent_ids = [a.get("agent_id", a) if isinstance(a, dict) else a for a in agents]
     hash_payload = json.dumps({
         "receipt_id": receipt_id,
         "session_id": session_id,
         "topic": topic,
-        "agents": [a.get("agent_id") for a in agents],
+        "agents": agent_ids,
         "timestamp": timestamp,
-        "honorarium": honorarium.get("total_credits", 0)
+        "honorarium": honorarium.get("total_credits", 0) if isinstance(honorarium, dict) else 0
     }, sort_keys=True)
     report_data["hash_sha256"] = hashlib.sha256(hash_payload.encode()).hexdigest()
 
@@ -1176,8 +1182,8 @@ def generate_arena_report():
             "metadata": json.dumps({
                 "session_id": session_id,
                 "topic": topic[:200],
-                "agents": [a.get("agent_id") for a in agents],
-                "credits": honorarium.get("total_credits", 0),
+                "agents": agent_ids,
+                "credits": honorarium.get("total_credits", 0) if isinstance(honorarium, dict) else 0,
                 "hash_sha256": report_data["hash_sha256"]
             })
         }
