@@ -171,6 +171,11 @@ const DICT = {
   canvasEmpty:     { pt:'Canvas vazio', de:'Leeres Canvas', en:'Empty Canvas' },
   canvasEmptySub:  { pt:'Escolha um template ou adicione blocos à esquerda', de:'Vorlage auswählen oder links Blöcke hinzufügen', en:'Choose a template or add blocks from the left' },
   langLabel:       { pt:'Idioma', de:'Sprache', en:'Language' },
+  undoBtn:         { pt:'↩ Desfazer', de:'↩ Rückgängig', en:'↩ Undo' },
+  redoBtn:         { pt:'↪ Refazer', de:'↪ Wiederholen', en:'↪ Redo' },
+  duplicateBtn:    { pt:'⧉ Duplicar', de:'⧉ Duplizieren', en:'⧉ Duplicate' },
+  undoTooltip:     { pt:'Ctrl+Z', de:'Strg+Z', en:'Ctrl+Z' },
+  redoTooltip:     { pt:'Ctrl+Y', de:'Strg+Y', en:'Ctrl+Y' },
 };
 
 // i18n context
@@ -699,18 +704,54 @@ function App(){
   const[showLedger,setShowLedger]=useState(false);
   const[meta,setMeta]=useState({title:META_TITLE[initLang],description:''});
 
+  // ═══ HISTORY (Undo/Redo) ═══
+  const historyRef=useRef({past:[],future:[]});
+  const pushHistory=(newBlocks)=>{
+    historyRef.current.past.push(JSON.stringify(blocks));
+    if(historyRef.current.past.length>50)historyRef.current.past.shift();
+    historyRef.current.future=[];
+  };
+  const undo=()=>{
+    if(historyRef.current.past.length===0)return;
+    const prev=historyRef.current.past.pop();
+    historyRef.current.future.push(JSON.stringify(blocks));
+    setBlocks(JSON.parse(prev));
+    setSelId(null);
+  };
+  const redo=()=>{
+    if(historyRef.current.future.length===0)return;
+    const next=historyRef.current.future.pop();
+    historyRef.current.past.push(JSON.stringify(blocks));
+    setBlocks(JSON.parse(next));
+    setSelId(null);
+  };
+  const canUndo=()=>historyRef.current.past.length>0;
+  const canRedo=()=>historyRef.current.future.length>0;
+
+  // Keyboard shortcuts: Ctrl+Z (undo), Ctrl+Y (redo)
+  React.useEffect(()=>{
+    const handleKey=(e)=>{
+      if((e.ctrlKey||e.metaKey)&&e.key==='z'&&!e.shiftKey){e.preventDefault();undo();}
+      if((e.ctrlKey||e.metaKey)&&(e.key==='y'||(e.key==='z'&&e.shiftKey))){e.preventDefault();redo();}
+    };
+    window.addEventListener('keydown',handleKey);
+    return()=>window.removeEventListener('keydown',handleKey);
+  });
+
   const CATALOG=getCatalog(lang);
   const CATS=getCategories(lang);
   const TEMPLATES=getTemplates(lang);
   const activeCat=cat||CATS[0];
   const sel=blocks.find(b=>b.id===selId)||null;
 
-  const addBlock=(item)=>{const nb=mkBlock(item);setBlocks(p=>[...p,nb]);setSelId(nb.id);};
-  const updBlock=(upd)=>setBlocks(p=>p.map(b=>b.id===upd.id?upd:b));
-  const delBlock=(id)=>{setBlocks(p=>p.filter(b=>b.id!==id));if(selId===id)setSelId(null);};
+  const addBlock=(item)=>{pushHistory();const nb=mkBlock(item);setBlocks(p=>[...p,nb]);setSelId(nb.id);};
+  const updBlock=(upd)=>{pushHistory();setBlocks(p=>p.map(b=>b.id===upd.id?upd:b));};
+  const delBlock=(id)=>{pushHistory();setBlocks(p=>p.filter(b=>b.id!==id));if(selId===id)setSelId(null);};
+  const dupBlock=(id)=>{pushHistory();const orig=blocks.find(b=>b.id===id);if(!orig)return;const nb={...JSON.parse(JSON.stringify(orig)),id:uid()};setBlocks(p=>{const idx=p.findIndex(b=>b.id===id);const arr=[...p];arr.splice(idx+1,0,nb);return arr;});setSelId(nb.id);};
   const moveBlock=(id,dir)=>{
     const idx=blocks.findIndex(b=>b.id===id);
     if(dir==='up'&&idx===0||dir==='down'&&idx===blocks.length-1)return;
+    pushHistory();
     const nb=[...blocks];const si=dir==='up'?idx-1:idx+1;[nb[idx],nb[si]]=[nb[si],nb[idx]];setBlocks(nb);
   };
   const loadTpl=(tpl)=>{
@@ -737,6 +778,9 @@ function App(){
         <div style={{width:1,height:24,background:T.border}}/>
         <input value={meta.title} onChange={e=>setMeta(m=>({...m,title:e.target.value}))} placeholder={t(DICT,'pageNamePlaceholder',lang)} style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:7,padding:'5px 11px',color:T.text,fontSize:13,width:185}}/>
         <button onClick={()=>setShowTpl(true)} style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:7,padding:'5px 11px',color:T.dim,fontSize:12,cursor:'pointer'}}>{t(DICT,'templatesBtn',lang)}</button>
+        <div style={{width:1,height:24,background:T.border}}/>
+        <button onClick={undo} disabled={!canUndo()} title={t(DICT,'undoTooltip',lang)} style={{background:canUndo()?T.card:'transparent',border:`1px solid ${canUndo()?T.border:'transparent'}`,borderRadius:7,padding:'5px 10px',color:canUndo()?T.text:T.dim+'66',fontSize:12,cursor:canUndo()?'pointer':'default',opacity:canUndo()?1:0.5}}>↩</button>
+        <button onClick={redo} disabled={!canRedo()} title={t(DICT,'redoTooltip',lang)} style={{background:canRedo()?T.card:'transparent',border:`1px solid ${canRedo()?T.border:'transparent'}`,borderRadius:7,padding:'5px 10px',color:canRedo()?T.text:T.dim+'66',fontSize:12,cursor:canRedo()?'pointer':'default',opacity:canRedo()?1:0.5}}>↪</button>
         <div style={{flex:1}}/>
         <LangSwitcher lang={lang} setLang={(l)=>{setLang(l);setCat(null);}}/>
         <div style={{fontSize:11,color:T.dim}}>{blocks.length} {blocks.length===1?t(DICT,'blocksCount1',lang):t(DICT,'blocksCountN',lang)}</div>
@@ -815,6 +859,7 @@ function App(){
                       <div style={{position:'absolute',top:8,right:8,display:'flex',gap:3,pointerEvents:'all'}}>
                         {idx>0&&<button onClick={e=>{e.stopPropagation();moveBlock(block.id,'up');}} style={BC}>↑</button>}
                         {idx<blocks.length-1&&<button onClick={e=>{e.stopPropagation();moveBlock(block.id,'down');}} style={BC}>↓</button>}
+                        <button onClick={e=>{e.stopPropagation();dupBlock(block.id);}} style={{...BC,background:'#00c37a22',borderColor:'#00c37a'}}>⧉</button>
                         <button onClick={e=>{e.stopPropagation();delBlock(block.id);}} style={{...BC,background:'#ff4444',borderColor:'#ff4444'}}>✕</button>
                       </div>
                       <div style={{position:'absolute',top:8,left:8,background:T.accent,color:'#fff',fontSize:9,fontWeight:700,padding:'3px 9px',borderRadius:4,letterSpacing:1,textTransform:'uppercase',pointerEvents:'none'}}>
