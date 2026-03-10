@@ -508,6 +508,14 @@ def create_agent_api(agent: WindiAgent):
     except ImportError as e:
         print(f"  [VPR] VPR Manage not loaded: {e}")
 
+    try:
+        from blueprints.w_meta_001 import meta_bp, init_meta_db
+        init_meta_db()
+        app.register_blueprint(meta_bp)
+        print("  [META] W-META-001 v1.0.0 loaded on /meta/*")
+    except ImportError as e:
+        print(f"  [META] W-META-001 not loaded: {e}")
+
     @app.route("/agent/health", methods=["GET"])
     def health():
         return jsonify({
