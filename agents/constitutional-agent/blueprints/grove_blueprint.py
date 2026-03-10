@@ -521,6 +521,40 @@ def arena_debate():
                 infra_lines.append(f"  • CRIPTOGRAFIA: {crypto['status']}")
             infra_section = chr(10).join(infra_lines) if infra_lines else ""
 
+            # GAP 1: Communication Channels
+            comm_channels = briefing.get("communication_channels", {})
+            comm_section = ""
+            if comm_channels.get("endpoints"):
+                comm_lines = ["CANAIS DE COMUNICAÇÃO DISPONÍVEIS:"]
+                for ch_key, ch_data in comm_channels.get("endpoints", {}).items():
+                    if isinstance(ch_data, dict):
+                        comm_lines.append(f"  • {ch_key.upper()}: {ch_data.get('endpoint','')} — {ch_data.get('purpose','')}")
+                        comm_lines.append(f"    Executor: {ch_data.get('executor','')}")
+                comm_section = chr(10).join(comm_lines)
+
+            # GAP 2: Crisis Governance Defaults
+            crisis_gov = briefing.get("crisis_governance_defaults", {})
+            crisis_section = ""
+            if crisis_gov.get("states"):
+                crisis_lines = ["ESTADOS DE CRISE (valores padrão):"]
+                for state_key, state_data in crisis_gov.get("states", {}).items():
+                    if isinstance(state_data, dict):
+                        ttl = state_data.get('ttl_hours', 'N/A')
+                        crisis_lines.append(f"  • {state_key}: TTL={ttl}h → {state_data.get('on_expiry','')}")
+                if crisis_gov.get("principle"):
+                    crisis_lines.append(f"  PRINCÍPIO: {crisis_gov['principle']}")
+                crisis_section = chr(10).join(crisis_lines)
+
+            # GAP 3: Dragon Unavailability Protocol
+            dragon_unavail = briefing.get("dragon_unavailability_protocol", {})
+            unavail_section = ""
+            if dragon_unavail.get("constitutional_response"):
+                resp = dragon_unavail["constitutional_response"]
+                unavail_section = f"""PROTOCOLO DRAGON INDISPONÍVEL:
+  • Imediato: {resp.get('immediate', 'Manter último estado')}
+  • Documentação: {resp.get('documentation', 'Registar no Ledger')}
+  • Failsafe: {dragon_unavail.get('failsafe_invariant', 'NUNCA decide sozinho')}"""
+
             bibliotecario_context = f"""
 ═══ CONTEXTO CONSTITUCIONAL (W-LIB-001 Bibliotecário) ═══
 PRINCÍPIO FUNDADOR: {anchor.get('principle', 'IA processa. Humano decide. WINDI garante.')}
@@ -535,6 +569,12 @@ REGRAS DO DEBATE:
 • {rules.get('rule_3', 'Propor, nunca impor')}
 
 {f"INFRAESTRUTURA JÁ OPERACIONAL (NÃO PROPONHA CRIAR):{chr(10)}{infra_section}" if infra_section else ""}
+
+{comm_section}
+
+{crisis_section}
+
+{unavail_section}
 ═══════════════════════════════════════════════════════════
 """
     except Exception as e:
