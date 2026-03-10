@@ -9,10 +9,12 @@ description: >
   "o que sabe o Bibliotecário", "como os agentes recebem contexto", "qual agente guarda
   as regras", ou qualquer pergunta sobre fluxo de conhecimento constitucional no ecossistema
   WINDI. Este skill é a memória arquitectural do Bibliotecário — active generosamente.
-version: 1.1.0
+version: 2.0.0
 category: constitutional
 created: 2026-03-10
+updated: 2026-03-10
 author: Human Dragon + AI Dragon (Irmão + Gêmeo merge)
+ledger_seal: WINDI-LIB-V2-20260310
 ---
 
 # W-LIB-001 Bibliotecário — Arquitectura de Conhecimento Constitucional
@@ -40,6 +42,50 @@ author: Human Dragon + AI Dragon (Irmão + Gêmeo merge)
 > Toda a constelação opera sob os mesmos 11 invariantes.
 >
 > *"O Bibliotecário não cria — ele preserva, organiza e ilumina."*
+
+---
+
+## v2.0 — Infrastructure Reality Check (INFRA_REALITY)
+
+**Selado:** `WINDI-LIB-V2-20260310` | **Data:** 2026-03-10
+
+O Bibliotecário evoluiu de **guardião de normas** para **guardião de realidade operacional**.
+
+### O Problema (Amnésia de Infraestrutura)
+Agentes propunham criar sistemas que já existiam:
+- "implementar logs de decisões" → FORENSIC_LEDGER já tem 40.918+ eventos
+- "criar interface de verificação" → VERIFY_PUBLIC já está em :8114
+- "adicionar assinaturas criptográficas" → VPR com genesis hash já deployed
+
+### A Solução (4º Bloco no grove-brief)
+O `/library/grove-brief` agora injeta `infrastructure_exists`:
+
+```json
+{
+  "infrastructure_exists": {
+    "warning": "NÃO PROPONHA criar o que já existe.",
+    "services": {
+      "forensic_ledger": { "port": 8101, "dont_propose": "sistema de logs, trilha de auditoria" },
+      "verify_public": { "port": 8114, "dont_propose": "interface de validação, QR público" },
+      "export_engine": { "port": 8103, "dont_propose": "exportação PDF, geração de documentos" },
+      "dragon_api": { "port": 8108, "dont_propose": "integração com IA" },
+      "grove_arena": { "port": 8091, "dont_propose": "sistema de deliberação" }
+    },
+    "cryptography": { "status": "100% IMPLEMENTADO" }
+  }
+}
+```
+
+### Validação
+Teste com prompt: *"Como o WINDI pode provar sua integridade para um auditor externo hoje, sem implementar nada novo?"*
+
+| Agente | Resultado |
+|--------|-----------|
+| W-LEGAL-001 | ✅ "O sistema WINDI já dispõe de FORENSIC_LEDGER operacional" |
+| W-COMPLY-001 | ✅ "O sistema WINDI já dispõe de FORENSIC_LEDGER operacional" |
+| W-AUDIT-001 | ✅ "O sistema WINDI já dispõe de múltiplas camadas de auditoria operacional" |
+
+**Nenhum agente propôs criar o que já existe. Amnésia curada.**
 
 ---
 
