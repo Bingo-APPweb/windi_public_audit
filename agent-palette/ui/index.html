@@ -276,14 +276,26 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
       vault:        'http://localhost:8106/health',
       communique:   'http://localhost:8105/health',
       dragon:       'http://localhost:8108/api/dragon/health',
-      sentinelLaw:  'http://localhost:8102/health'
+      // NEW (G1) - 6 additional services
+      bridge:       'http://localhost:8097/health',
+      sentinelLaw:  'http://localhost:8102/health',
+      schnittstelle:'http://localhost:8095/health',
+      cortex:       'http://localhost:8889/health',
+      idGenesis:    'http://localhost:8096/health',
+      sentinel:     'http://localhost:8098/health'
     } : {
-      ledger:       baseUrl + '/api/ledger/health',
-      export:       baseUrl + '/api/export/health',
-      vault:        baseUrl + '/api/vault/health',
-      communique:   baseUrl + '/api/communique/health',
-      dragon:       'https://windi-domain.com/app/api/dragon/health',
-      sentinel:     baseUrl + '/api/sentinel-core/health'
+      ledger:       baseUrl + '/ledger/health',
+      export:       baseUrl + '/export/health',
+      vault:        baseUrl + '/vault/health',
+      communique:   baseUrl + '/communique/health',
+      dragon:       'https://windi-domain.com/app/api/dragon/health',  // Dragon Server via 8108
+      // NEW (G1)
+      bridge:       baseUrl + '/bridge/health',
+      sentinelLaw:  baseUrl + '/sentinel-law/health',
+      schnittstelle:baseUrl + '/schnittstelle/health',
+      cortex:       baseUrl + '/cortex/health',
+      idGenesis:    baseUrl + '/id-genesis/health',
+      sentinel:     baseUrl + '/sentinel/health'
     };
 
     var connectors = {
@@ -291,8 +303,14 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
       export:       { name: 'Export Engine',     endpoint: ctx.endpoints.export,     healthUrl: healthEndpoints.export,       status: 'unknown', version: '' },
       vault:        { name: 'Forensic Vault',    endpoint: ctx.endpoints.vault,      healthUrl: healthEndpoints.vault,        status: 'unknown', version: '' },
       communique:   { name: 'Communiqué Engine', endpoint: ctx.endpoints.communique, healthUrl: healthEndpoints.communique,   status: 'unknown', version: '' },
-      sentinelLaw:  { name: 'Sentinel LAW',      endpoint: isLocal ? 'http://localhost:8102' : baseUrl + '/sentinel-law', healthUrl: healthEndpoints.sentinelLaw,  status: 'unknown', version: '' },
       dragon:       { name: 'Dragon Server',     endpoint: isLocal ? 'http://localhost:8108/api/dragon' : 'https://windi-domain.com/app/api/dragon', healthUrl: healthEndpoints.dragon, status: 'unknown', version: '' },
+      // NEW (G1) - 6 additional services
+      bridge:       { name: 'Command Bridge',    endpoint: isLocal ? 'http://localhost:8097' : baseUrl + '/bridge',       healthUrl: healthEndpoints.bridge,       status: 'unknown', version: '' },
+      sentinelLaw:  { name: 'Sentinel LAW',      endpoint: isLocal ? 'http://localhost:8102' : baseUrl + '/sentinel-law', healthUrl: healthEndpoints.sentinelLaw,  status: 'unknown', version: '' },
+      schnittstelle:{ name: 'Schnittstelle',     endpoint: isLocal ? 'http://localhost:8095' : baseUrl + '/schnittstelle',healthUrl: healthEndpoints.schnittstelle,status: 'unknown', version: '' },
+      cortex:       { name: 'Cortex',            endpoint: isLocal ? 'http://localhost:8889' : baseUrl + '/cortex',       healthUrl: healthEndpoints.cortex,       status: 'unknown', version: '' },
+      idGenesis:    { name: 'ID Genesis',        endpoint: isLocal ? 'http://localhost:8096' : baseUrl + '/id-genesis',   healthUrl: healthEndpoints.idGenesis,    status: 'unknown', version: '' },
+      sentinel:     { name: 'Sentinel',          endpoint: isLocal ? 'http://localhost:8098' : baseUrl + '/sentinel',     healthUrl: healthEndpoints.sentinel,     status: 'unknown', version: '' }
     };
 
     var pollingInterval = null;
@@ -2260,11 +2278,11 @@ const CANVAS_TEMPLATES={
 };
 
 const SIDEBAR = [
-  // S2: Redesigned menu structure
-  {id:"grove",icon:"🌱",klass:"main"},{id:"chat",icon:"💬",klass:"main"},{id:"docs",icon:"📄",klass:"main"},{id:"desk",icon:"🎨",klass:"main"},
-  {id:"modelos",icon:"🎭",klass:"main"},{id:"publicacoes",icon:"📢",klass:"main"},{id:"busca",icon:"🔎",klass:"main"},
-  {id:"wallet",icon:"🏛️",klass:"main"},{id:"ficheiros",icon:"📂",klass:"main"},{id:"wick",icon:"🌐",klass:"main"},
-  {id:"htmlbuilder",icon:"🏗️",klass:"extra"},{id:"products",icon:"🛒",klass:"extra"},{id:"history",icon:"🕐",klass:"extra"},
+  {id:"grove",icon:"🌱",klass:"main"},{id:"chat",icon:"💬",klass:"main"},{id:"insights",icon:"🧠",klass:"main"},{id:"docs",icon:"📄",klass:"main"},{id:"desk",icon:"🎨",klass:"main"},
+  {id:"files",icon:"📁",klass:"main"},{id:"wallet",icon:"👛",klass:"main"},{id:"wick",icon:"🌐",klass:"main"},
+  {id:"search",icon:"🔍",klass:"main"},{id:"products",icon:"🛒",klass:"extra"},
+  {id:"journal",icon:"📰",klass:"extra"},{id:"history",icon:"🕐",klass:"extra"},
+  {id:"templates",icon:"📋",klass:"extra"},
 ];
 
 // ═══════════════════════════════════════════════════════════════════════════════════
@@ -2899,38 +2917,18 @@ function App(){
   const[view,setView]=useState(()=>localStorage.getItem("windi_onboarded")==="1"?"main":"onboard");
   const[onboardStep,setOnboardStep]=useState(0);
   const[sidebarTab,setSidebarTab]=useState("grove");
-  const[chatMode,setChatMode]=useState("text"); // S1-4: "text" | "canvas" — unified Communiqué
   const[sidebarOpen,setSidebarOpen]=useState(false);
   const[typeFilter,setTypeFilter]=useState("all");
 
-  // Templates (WhatsApp Template Messages) — S2-1: Modelos
+  // Templates (WhatsApp Template Messages)
   const[tplList,setTplList]=useState([]);
   const[tplSelected,setTplSelected]=useState("");
   const[tplVars,setTplVars]=useState({});
   const[tplRecipient,setTplRecipient]=useState("");
   const[tplLang,setTplLang]=useState("de");
-  const[tplCategory,setTplCategory]=useState("all"); // S2-1: category filter
-
-  // S2-3: Search filters
-  const[searchFilter,setSearchFilter]=useState("all");
-
-  // S2-5: File filters
-  const[fileFilter,setFileFilter]=useState("all");
   const[tplPreview,setTplPreview]=useState(null);
   const[tplStatus,setTplStatus]=useState("idle"); // idle|loading|success|error
   const[tplError,setTplError]=useState("");
-
-  // ═══ W-GROVE-001: Debate Chat State ═══
-  const[groveDebateOpen,setGroveDebateOpen]=useState(false);
-  const[groveSession,setGroveSession]=useState(null); // {session_id, root_node_id, suggested_agents}
-  const[groveNodes,setGroveNodes]=useState([]);
-  const[groveEdges,setGroveEdges]=useState([]);
-  const[groveLoading,setGroveLoading]=useState(false);
-  const[groveSelectedAgents,setGroveSelectedAgents]=useState([]);
-  const[groveMsgs,setGroveMsgs]=useState([]); // Chat messages: {role:'user'|'agent', agent_id?, content, ts}
-  const[groveInput,setGroveInput]=useState(""); // Follow-up input
-  const[groveActiveAgents,setGroveActiveAgents]=useState([]); // Agents participating in debate
-  const[groveEstimate,setGroveEstimate]=useState(null); // Honorarium estimate {total_credits, total_eur, line_items}
 
   // DID
   const[wallet,setWallet]=useState(null);
@@ -3270,9 +3268,9 @@ function App(){
     }catch(e){setTplError(e.message);setTplStatus('error');}
   },[tplSelected,tplRecipient,tplLang,tplVars,flash]);
 
-  // Fetch templates when tab opens (S2: renamed to modelos)
+  // Fetch templates when tab opens
   useEffect(()=>{
-    if(sidebarTab==='modelos'){fetchTemplates();}
+    if(sidebarTab==='templates'){fetchTemplates();}
   },[sidebarTab,fetchTemplates]);
 
   // Update preview when template/vars change
@@ -3280,9 +3278,9 @@ function App(){
     if(tplSelected&&tplLang){fetchTemplatePreview(tplSelected,tplLang,tplVars);}
   },[tplSelected,tplLang,tplVars,fetchTemplatePreview]);
 
-  // Fetch journal when tab is active (S2: renamed to publicacoes)
+  // Fetch journal when tab is active
   useEffect(()=>{
-    if(sidebarTab==='publicacoes'){fetchJournalArticles();}
+    if(sidebarTab==='journal'){fetchJournalArticles();}
   },[sidebarTab,fetchJournalArticles]);
 
   // ═══ WAVE 2.2: DRAGON MENTOR — Contextual Whispers ═══
@@ -3421,7 +3419,7 @@ function App(){
       const apiHistory=history
         .filter(m=>m.role==='user'||m.role==='bot')
         .slice(-40)
-        .map(m=>({role:m.role==='user'?'human':'assistant',content:m.text}));
+        .map(m=>({role:m.role==='user'?'human':'assistant',text:m.text}));
       const res=await fetch(dragonUrl+'/chat',{
         method:'POST',
         headers:{'Content-Type':'application/json','X-Session-ID':dragonSessionId||'','X-Tier':windiTier},
@@ -3520,106 +3518,6 @@ function App(){
     flash(`✨ ${tpl.label[lang]||tpl.label.en}`);
   },[deskLayers.length,lang,th,deskPushHistory]);
   const[showTemplateMenu,setShowTemplateMenu]=useState(false);
-
-  // ═══ TEMPLATE REGISTRY — Canvas Integration v1.0 ═══
-  const TMPL_API='/api/vault/api/templates';
-  const[showTmplRegistry,setShowTmplRegistry]=useState(false);
-  const[tmplRegistryItems,setTmplRegistryItems]=useState([]);
-  const[tmplLoading,setTmplLoading]=useState(false);
-  const[tmplFilter,setTmplFilter]=useState({search:'',category:'',lang:''});
-
-  const loadTmplRegistry=useCallback(async()=>{
-    setTmplLoading(true);
-    try{
-      const resp=await fetch(`${TMPL_API}/`);
-      if(!resp.ok)throw new Error(`HTTP ${resp.status}`);
-      const data=await resp.json();
-      setTmplRegistryItems(data.templates||[]);
-    }catch(err){
-      console.warn('[TmplRegistry] Vault offline, trying localStorage');
-      try{
-        const local=JSON.parse(localStorage.getItem('windi_templates_v1')||'[]');
-        setTmplRegistryItems(local);
-      }catch{setTmplRegistryItems([]);}
-    }finally{setTmplLoading(false);}
-  },[]);
-
-  const openTmplRegistry=useCallback(()=>{
-    setShowTmplRegistry(true);
-    loadTmplRegistry();
-  },[loadTmplRegistry]);
-
-  const itemsToCanvasLayers=useCallback((tmplData)=>{
-    // Format Bridge: HTML Builder items → Canvas layers
-    const html=tmplData.html||(tmplData.items||[]).map(item=>{
-      switch(item.type){
-        case 'h1':case 'heading':return `<h1 style="margin:0 0 8px">${item.content||''}</h1>`;
-        case 'h2':return `<h2 style="margin:0 0 8px">${item.content||''}</h2>`;
-        case 'h3':return `<h3 style="margin:0 0 6px">${item.content||''}</h3>`;
-        case 'p':case 'paragraph':return `<p style="margin:0 0 8px">${item.content||''}</p>`;
-        case 'ul':case 'list':return `<ul>${(item.content||'').split('\n').filter(Boolean).map(l=>`<li>${l.trim()}</li>`).join('')}</ul>`;
-        case 'ol':return `<ol>${(item.content||'').split('\n').filter(Boolean).map(l=>`<li>${l.trim()}</li>`).join('')}</ol>`;
-        case 'blockquote':case 'quote':return `<blockquote style="border-left:3px solid #8B6914;padding-left:12px;margin:8px 0">${item.content||''}</blockquote>`;
-        case 'hr':case 'divider':return `<hr style="border:none;border-top:2px solid #8B6914;margin:16px 0"/>`;
-        case 'img':case 'image':return `<img src="${item.src||item.content||''}" alt="${item.alt||''}" style="max-width:100%"/>`;
-        default:return `<div>${item.content||''}</div>`;
-      }
-    }).join('\n');
-    return[{
-      id:`layer_tmpl_${Date.now()}`,
-      type:'text',
-      content:html,
-      x:40,y:60,w:714,h:800,
-      zIndex:deskLayers.length,
-      fontSize:14,fontWeight:400,
-      color:th.text,bgColor:'transparent',
-      opacity:1,rotation:0,borderRadius:0,locked:false,
-      fromTemplate:tmplData.id
-    }];
-  },[deskLayers.length,th.text]);
-
-  const loadTemplateFromRegistry=useCallback(async(tmplId,append=false)=>{
-    try{
-      const resp=await fetch(`${TMPL_API}/${tmplId}`);
-      if(!resp.ok)throw new Error(`HTTP ${resp.status}`);
-      const tmpl=await resp.json();
-      const newLayers=itemsToCanvasLayers(tmpl);
-      if(append){
-        const merged=[...deskLayers,...newLayers];
-        setDeskLayers(merged);
-        deskPushHistory(merged);
-        flash(`✓ ${tmpl.name} ${lang==='de'?'angehängt':lang==='pt'?'anexado':'appended'}`);
-      }else{
-        if(deskLayers.length>0&&!confirm(lang==='de'?'Canvas ersetzen?':lang==='pt'?'Substituir canvas?':'Replace canvas?'))return;
-        setDeskLayers(newLayers);
-        setDeskSelected(null);
-        deskPushHistory(newLayers);
-        flash(`✓ ${tmpl.name} ${lang==='de'?'geladen':lang==='pt'?'carregado':'loaded'}`);
-      }
-      setShowTmplRegistry(false);
-    }catch(err){
-      flash(`❌ ${err.message}`);
-    }
-  },[deskLayers,itemsToCanvasLayers,lang,deskPushHistory,flash]);
-
-  const deleteTmplFromRegistry=useCallback(async(tmplId)=>{
-    if(!confirm(lang==='de'?'Template löschen?':lang==='pt'?'Remover template?':'Delete template?'))return;
-    try{
-      const resp=await fetch(`${TMPL_API}/${tmplId}`,{method:'DELETE'});
-      if(!resp.ok&&resp.status!==204)throw new Error(`HTTP ${resp.status}`);
-      setTmplRegistryItems(prev=>prev.filter(t=>t.id!==tmplId));
-      flash(lang==='de'?'Template gelöscht':lang==='pt'?'Template removido':'Template deleted');
-    }catch(err){flash(`❌ ${err.message}`);}
-  },[lang,flash]);
-
-  const filteredTmplItems=useMemo(()=>{
-    return tmplRegistryItems.filter(t=>{
-      const matchSearch=!tmplFilter.search||t.name.toLowerCase().includes(tmplFilter.search.toLowerCase())||(t.description||'').toLowerCase().includes(tmplFilter.search.toLowerCase());
-      const matchCat=!tmplFilter.category||t.category===tmplFilter.category;
-      const matchLang=!tmplFilter.lang||t.lang===tmplFilter.lang||t.lang==='all';
-      return matchSearch&&matchCat&&matchLang;
-    });
-  },[tmplRegistryItems,tmplFilter]);
 
   const deskUpdateLayer=useCallback((id,updates)=>{
     setDeskLayers(prev=>prev.map(l=>l.id===id?{...l,...updates}:l));
@@ -3790,8 +3688,6 @@ function App(){
               dragonDocument=parsed.document;
               // Clean the response text (remove JSON block for cleaner display)
               resp=resp.replace(/```json[\s\S]*?```/g,'').trim();
-              // Also remove inline JSON {"document":...} without code fences
-              resp=resp.replace(/\{"document"\s*:\s*\{[\s\S]*?\}\s*\}/g,'').trim();
             }
           }catch(e){console.log("[Bridge] JSON parse error:",e);}
         }
@@ -4190,8 +4086,6 @@ function App(){
         ...sealData,
       };
       setReceipt(r);
-      // FIX: Write to Forensic Ledger (was missing!)
-      fetch("/api/ledger/receipts",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({id:r.id,actor:wallet?.name||"agent-palette",app:"palette",doc_name:docTitle,doc_type:docType||"doc",content_hash:r.ch||r.bh,governance_level:"MEDIUM",sge_score:r.sge||0.5,metadata:{wallet_id:wallet?.id,fields_count:Object.keys(docFields).length}})}).catch(e=>console.warn("[WINDI] Ledger write failed:",e));
       fetch("/api/anchor/anchor",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({receipt_id:r.id,combined_hash:r.ch||r.bh,doc_type:r.doc_type||docType,entry_data:{title:docTitle,actor:"agent-palette",wallet:wallet?.id}})}).catch(e=>console.warn("[WINDI] Anchor write failed:",e));
       setDocStatus("finalized");
       setShowFinalizeModal(false);
@@ -4239,8 +4133,6 @@ function App(){
         doc_type: docType?.toUpperCase() || "NOTE",
       };
       setReceipt(r);
-      // FIX: Write to Forensic Ledger (was missing!)
-      fetch("/api/ledger/receipts",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({id:r.id,actor:wallet?.name||"agent-palette",app:"palette",doc_name:docTitle,doc_type:docType||"doc",content_hash:r.ch||r.bh,governance_level:"LOW",sge_score:r.sge||0.5})}).catch(e=>console.warn("[WINDI] Ledger write failed:",e));
       fetch("/api/anchor/anchor",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({receipt_id:r.id,combined_hash:r.ch||r.bh,doc_type:r.doc_type||docType,entry_data:{title:docTitle,actor:"agent-palette",wallet:wallet?.id}})}).catch(e=>console.warn("[WINDI] Anchor write failed:",e));
       setDocStatus("finalized");
       setShowFinalizeModal(false);
@@ -4495,46 +4387,13 @@ function App(){
                   <p style={{margin:"4px 0 0",fontSize:11,color:th.dim}}>{lang==="pt"?"Rascunhos que só você vê. Pense antes de publicar.":lang==="de"?"Entwürfe nur für dich. Denk nach, bevor du veröffentlichst.":"Drafts only you see. Think before you publish."}</p>
                 </div>
               </div>
-
-              {/* ═══ S1-1: GROVE WELCOME — First-Time User Card ═══ */}
-              {!localStorage.getItem("windi_grove_welcomed")&&(
-                <div style={{marginBottom:20,padding:"20px",borderRadius:14,background:`linear-gradient(135deg, ${th.gold}11 0%, ${th.gold}05 100%)`,border:`1px solid ${th.gold}33`,position:"relative"}}>
-                  <div style={{display:"flex",alignItems:"flex-start",gap:16}}>
-                    <div style={{fontSize:48,lineHeight:1}}>🐉</div>
-                    <div style={{flex:1}}>
-                      <h3 style={{margin:"0 0 8px",fontSize:16,fontWeight:700,color:th.gold}}>
-                        {lang==="pt"?"Bem-vindo ao seu Bosque Privado!":lang==="de"?"Willkommen in deinem privaten Hain!":"Welcome to your Private Grove!"}
-                      </h3>
-                      <p style={{margin:"0 0 12px",fontSize:12,color:th.text,lineHeight:1.5}}>
-                        {lang==="pt"?"Aqui você cultiva ideias em segurança. Ninguém mais vê o que você escreve até você decidir publicar.":lang==="de"?"Hier kultivierst du Ideen sicher. Niemand sieht was du schreibst, bis du es veröffentlichst.":"Here you cultivate ideas safely. No one sees what you write until you decide to publish."}
-                      </p>
-                      <div style={{display:"flex",alignItems:"center",gap:8,padding:"10px 14px",borderRadius:10,background:th.card,marginBottom:12}}>
-                        <span style={{fontSize:16}}>🌱</span><span style={{fontSize:11,color:th.dim}}>{lang==="pt"?"Pensar":lang==="de"?"Denken":"Think"}</span>
-                        <span style={{color:th.gold}}>→</span>
-                        <span style={{fontSize:16}}>📄</span><span style={{fontSize:11,color:th.dim}}>{lang==="pt"?"Estruturar":lang==="de"?"Strukturieren":"Structure"}</span>
-                        <span style={{color:th.gold}}>→</span>
-                        <span style={{fontSize:16}}>🔐</span><span style={{fontSize:11,color:th.dim}}>{lang==="pt"?"Selar":lang==="de"?"Versiegeln":"Seal"}</span>
-                        <span style={{color:th.gold}}>→</span>
-                        <span style={{fontSize:16}}>🌐</span><span style={{fontSize:11,color:th.dim}}>{lang==="pt"?"Partilhar":lang==="de"?"Teilen":"Share"}</span>
-                      </div>
-                      <button onClick={()=>{localStorage.setItem("windi_grove_welcomed","1");setSidebarTab("grove");}} style={{padding:"8px 16px",borderRadius:8,background:th.gold,border:"none",color:"#FFF",fontSize:11,fontWeight:700,cursor:"pointer"}}>
-                        ✓ {lang==="pt"?"Entendido!":lang==="de"?"Verstanden!":"Got it!"}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
-
               {/* Grove Notes List */}
               <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:20}}>
                 {(JSON.parse(localStorage.getItem("windi_grove_notes")||"[]")).map((note,i)=>(
-                  <div key={i} style={{padding:"12px 14px",borderRadius:10,background:th.card,border:`1px solid ${th.border}`,position:"relative"}}>
-                    <div onClick={()=>{document.getElementById("groveEditor").value=note.content;document.getElementById("groveTitle").value=note.title;}} style={{cursor:"pointer"}}>
-                      <div style={{fontSize:13,fontWeight:600,marginBottom:4,paddingRight:24}}>{note.title||(lang==="pt"?"Sem título":lang==="de"?"Ohne Titel":"Untitled")}</div>
-                      <div style={{fontSize:10,color:th.dim}}>{note.content?.slice(0,100)}...</div>
-                      <div style={{fontSize:9,color:th.dim,marginTop:6}}>{new Date(note.ts).toLocaleString()}</div>
-                    </div>
-                    <button onClick={(e)=>{e.stopPropagation();const notes=JSON.parse(localStorage.getItem("windi_grove_notes")||"[]");notes.splice(i,1);localStorage.setItem("windi_grove_notes",JSON.stringify(notes));setSidebarTab("grove");}} style={{position:"absolute",top:8,right:8,width:20,height:20,borderRadius:"50%",background:"transparent",border:`1px solid ${th.border}`,color:th.dim,fontSize:11,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",lineHeight:1}}>✕</button>
+                  <div key={i} onClick={()=>{document.getElementById("groveEditor").value=note.content;document.getElementById("groveTitle").value=note.title;}} style={{padding:"12px 14px",borderRadius:10,background:th.card,border:`1px solid ${th.border}`,cursor:"pointer"}}>
+                    <div style={{fontSize:13,fontWeight:600,marginBottom:4}}>{note.title||lang==="pt"?"Sem título":lang==="de"?"Ohne Titel":"Untitled"}</div>
+                    <div style={{fontSize:10,color:th.dim}}>{note.content?.slice(0,100)}...</div>
+                    <div style={{fontSize:9,color:th.dim,marginTop:6}}>{new Date(note.ts).toLocaleString()}</div>
                   </div>
                 ))}
                 {(JSON.parse(localStorage.getItem("windi_grove_notes")||"[]")).length===0&&(
@@ -4571,282 +4430,13 @@ function App(){
                   }} style={{padding:"10px 20px",borderRadius:8,background:th.card,border:`1px solid ${th.gold}`,color:th.gold,fontSize:12,fontWeight:600,cursor:"pointer"}}>
                     📄 {lang==="pt"?"Criar Documento":lang==="de"?"Dokument erstellen":"Create Document"}
                   </button>
-                  <button onClick={async()=>{
-                    const title=document.getElementById("groveTitle").value.trim();
-                    const content=document.getElementById("groveEditor").value.trim();
-                    if(!content){flash("⚠️ "+{pt:"Escreva algo primeiro",de:"Schreib zuerst etwas",en:"Write something first"}[lang]);return;}
-                    setGroveLoading(true);
-                    flash("🌱 "+(lang==="pt"?"A plantar a semente...":lang==="de"?"Pflanze die Idee...":"Planting the seed..."));
-                    try{
-                      const res=await fetch('/grove/seed',{
-                        method:'POST',
-                        headers:{'Content-Type':'application/json'},
-                        body:JSON.stringify({idea:content,title:title||'',user:wallet?.name||'anonymous'})
-                      });
-                      const data=await res.json();
-                      if(data.session_id){
-                        // v1.0.2: Usa título do response (pode ser auto-gerado pelo Grove)
-                        const finalTitle = data.title || title || content.slice(0,50);
-                        setGroveSession({...data, title: finalTitle});
-                        setGroveSelectedAgents(data.suggested_agents||[]);
-                        if(data.auto_titled) flash("🌱 Grove batizou: "+finalTitle);
-                        setGroveDebateOpen(true);
-                        setGroveNodes([{id:data.root_node_id,type:'idea',title:title||'Ideia',content,author:wallet?.name||'user'}]);
-                        setGroveMsgs([{role:'user',content:`${title?title+": ":""}${content}`,ts:new Date().toISOString()}]);
-                        setGroveActiveAgents([]);
-                        flash("🌱 "+(lang==="pt"?"Semente plantada! Convide agentes.":lang==="de"?"Samen gepflanzt! Lade Agenten ein.":"Seed planted! Invite agents."));
-                      }else{
-                        flash("⚠️ Grove error: "+(data.error||"unknown"));
-                      }
-                    }catch(e){flash("⚠️ Grove offline: "+e.message);}
-                    setGroveLoading(false);
-                  }} disabled={groveLoading} style={{padding:"10px 20px",borderRadius:8,background:groveLoading?th.dim:`linear-gradient(135deg,#2d5a27,#4a8c3f)`,border:"none",color:"#FFF",fontSize:12,fontWeight:700,cursor:groveLoading?"wait":"pointer"}}>
-                    {groveLoading?"⏳":"🌱"} {lang==="pt"?"Debater a Ideia":lang==="de"?"Idee debattieren":"Debate the Idea"}
-                  </button>
                 </div>
               </div>
-
-              {/* ═══ W-GROVE-001: Debate CHAT Panel ═══ */}
-              {groveDebateOpen&&groveSession&&(
-                <div style={{marginTop:16,background:th.card,borderRadius:12,border:`2px solid ${th.gold}`,display:"flex",flexDirection:"column",height:"60vh",maxHeight:500}}>
-                  {/* Header */}
-                  <div style={{padding:"12px 16px",borderBottom:`1px solid ${th.border}`,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-                    <div style={{display:"flex",alignItems:"center",gap:8,flex:1,minWidth:0}}>
-                      <span style={{fontSize:20}}>🌳</span>
-                      <span style={{fontSize:14,fontWeight:700,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{groveSession.title||"Debate"}</span>
-                      <span style={{fontSize:9,color:th.dim,background:th.bg,padding:"2px 6px",borderRadius:8,flexShrink:0}}>{groveSession.session_id}</span>
-                    </div>
-                    <div style={{display:"flex",alignItems:"center",gap:8}}>
-                      {groveMsgs.length>1&&(
-                        <>
-                          <button onClick={async()=>{
-                            setGroveLoading(true);
-                            try{
-                              // Preparar dados dos agentes a partir das mensagens
-                              const agentMsgs=groveMsgs.filter(m=>m.role==='agent');
-                              const agents=agentMsgs.map(m=>({
-                                agent_id:m.agent_id,
-                                name:m.name||m.agent_id?.replace("W-","").replace("-001",""),
-                                emoji:m.emoji||"🤖",
-                                tier:({"W-LEGAL-001":"elite","W-COMPLY-001":"elite","W-NOTARY-001":"estrutural","W-AUDIT-001":"estrutural","W-ACCT-001":"estrutural","W-COMM-001":"narrativo","W-JOURN-001":"narrativo","W-ARCH-001":"narrativo"})[m.agent_id]||"narrativo",
-                                message:m.content
-                              }));
-                              const topic=groveSession.title||groveMsgs.find(m=>m.role==='user')?.content||"Debate";
-                              const res=await fetch('/grove/arena/report',{
-                                method:'POST',
-                                headers:{'Content-Type':'application/json'},
-                                body:JSON.stringify({
-                                  session_id:groveSession.session_id,
-                                  topic:topic,
-                                  agents:agents,
-                                  rounds:groveMsgs.filter(m=>m.role==='user').length||1,
-                                  wallet_id:wallet?.did||'anonymous',
-                                  identity:wallet?.type==='pioneer'?'pioneer':wallet?.did?'did':'free'
-                                })
-                              });
-                              const data=await res.json();
-                              if(data.ok){
-                                flash("📄 Parecer: "+data.receipt_id);
-                                window.open(data.report_url,'_blank');
-                              }else{flash("⚠️ "+(data.error||"Erro ao gerar parecer"));}
-                            }catch(e){flash("⚠️ "+e.message);}
-                            setGroveLoading(false);
-                          }} style={{padding:"4px 10px",borderRadius:6,background:`linear-gradient(135deg,#1a4a1a,#2d6a2d)`,border:"none",color:"#FFF",fontSize:10,fontWeight:600,cursor:"pointer"}}>
-                            📄 {lang==="pt"?"Parecer":lang==="de"?"Gutachten":"Report"}
-                          </button>
-                          <button onClick={async()=>{
-                            setGroveLoading(true);
-                            try{
-                              const res=await fetch(`/grove/ideas/${groveSession.session_id}/seal`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({session_id:groveSession.session_id,user:wallet?.name||'anonymous'})});
-                              const data=await res.json();
-                              if(data.status==='sealed'){flash("🔐 Sealed: "+data.receipt_id);setGroveDebateOpen(false);setGroveSession(null);setGroveMsgs([]);setGroveActiveAgents([]);setGroveEstimate(null);setGroveSelectedAgents([]);}
-                            }catch(e){flash("⚠️ "+e.message);}
-                            setGroveLoading(false);
-                          }} style={{padding:"4px 10px",borderRadius:6,background:`linear-gradient(135deg,#8B4513,#D2691E)`,border:"none",color:"#FFF",fontSize:10,fontWeight:600,cursor:"pointer"}}>
-                            🔐 {lang==="pt"?"Selar":lang==="de"?"Versiegeln":"Seal"}
-                          </button>
-                        </>
-                      )}
-                      <button onClick={()=>{setGroveDebateOpen(false);setGroveSession(null);setGroveMsgs([]);setGroveActiveAgents([]);setGroveEstimate(null);setGroveSelectedAgents([]);}} style={{background:"none",border:"none",color:th.dim,cursor:"pointer",fontSize:16}}>✕</button>
-                    </div>
-                  </div>
-
-                  {/* Agent Selection Bar */}
-                  {groveActiveAgents.length===0&&(
-                    <div style={{padding:12,borderBottom:`1px solid ${th.border}`,background:`${th.gold}08`}}>
-                      <div style={{fontSize:10,fontWeight:600,marginBottom:6}}>{lang==="pt"?"Convide agentes para o debate:":lang==="de"?"Lade Agenten zur Debatte ein:":"Invite agents to debate:"}</div>
-                      <div style={{display:"flex",flexWrap:"wrap",gap:4}}>
-                        {["W-LEGAL-001","W-NOTARY-001","W-COMPLY-001","W-COMM-001","W-JOURN-001","W-AUDIT-001","W-ACCT-001","W-ARCH-001"].map(a=>(
-                          <button key={a} onClick={()=>{
-                            const newSel=groveSelectedAgents.includes(a)?groveSelectedAgents.filter(x=>x!==a):[...groveSelectedAgents,a];
-                            setGroveSelectedAgents(newSel);
-                            // Fetch estimate when agents change
-                            if(newSel.length>0){
-                              fetch('/grove/arena/estimate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
-                                session_id:groveSession?.session_id||"SESS-NEW",
-                                wallet_id:wallet?.did||"anonymous",
-                                agents:newSel,
-                                phase:"arena",
-                                identity:wallet?.type==="pioneer"?"pioneer":wallet?.did?"did":"free",
-                                rounds:1
-                              })}).then(r=>r.json()).then(d=>{if(d.ok)setGroveEstimate({...d.estimate,_key:newSel.sort().join(",")});}).catch(()=>{});
-                            }else{setGroveEstimate(null);}
-                          }} style={{padding:"3px 8px",borderRadius:4,fontSize:9,fontWeight:600,border:`1px solid ${groveSelectedAgents.includes(a)?th.gold:th.border}`,background:groveSelectedAgents.includes(a)?th.gold:th.bg,color:groveSelectedAgents.includes(a)?"#FFF":th.text,cursor:"pointer"}}>
-                            {({
-                              "W-LEGAL-001":"⚖️ Legal",
-                              "W-NOTARY-001":"📜 Notário",
-                              "W-COMPLY-001":"✅ Compliance",
-                              "W-COMM-001":"📝 Communiqué",
-                              "W-JOURN-001":"📰 Jornalista",
-                              "W-AUDIT-001":"🔍 Auditor",
-                              "W-ACCT-001":"💰 Contabilidade",
-                              "W-ARCH-001":"🏗️ Architect"
-                            })[a]}
-                          </button>
-                        ))}
-                      </div>
-                      {groveSelectedAgents.length>0&&(
-                        <div style={{marginTop:8}}>
-                          {/* Show estimate */}
-                          {groveEstimate&&groveEstimate._key===groveSelectedAgents.sort().join(",")&&(
-                            <div style={{padding:"8px 10px",background:`${th.gold}10`,borderRadius:6,marginBottom:8,border:`1px solid ${th.gold}30`}}>
-                              <div style={{fontSize:9,fontWeight:700,color:th.gold,marginBottom:4}}>
-                                {lang==="pt"?"Custo estimado:":lang==="de"?"Geschätzte Kosten:":"Estimated cost:"}
-                              </div>
-                              <div style={{display:"flex",alignItems:"baseline",gap:6}}>
-                                <span style={{fontSize:16,fontWeight:800,color:th.text}}>{groveEstimate.total_credits}</span>
-                                <span style={{fontSize:10,color:th.dim}}>{lang==="pt"?"créditos":lang==="de"?"Kredite":"credits"}</span>
-                                <span style={{fontSize:12,fontWeight:600,color:th.gold,marginLeft:8}}>= €{groveEstimate.total_eur?.toFixed(2)}</span>
-                              </div>
-                              {groveEstimate.breakdown?.multiplier<1&&(
-                                <div style={{fontSize:8,color:"#4a8c3f",marginTop:4}}>
-                                  {groveEstimate.breakdown.identity==="pioneer"?"🌱 Pioneer: 50% desconto perpétuo":"🪪 DID: 20% desconto"}
-                                </div>
-                              )}
-                            </div>
-                          )}
-                          <button onClick={async()=>{
-                            setGroveLoading(true);
-                            setGroveActiveAgents(groveSelectedAgents);
-                            setGroveMsgs(p=>[...p,{role:'system',content:`${groveSelectedAgents.length} agentes entraram na arena: ${groveSelectedAgents.map(a=>a.replace("W-","").replace("-001","")).join(", ")}`,ts:new Date().toISOString()}]);
-                            // Call ARENA endpoint (new real debate engine)
-                            try{
-                              const topic=groveSession.title||groveMsgs[0]?.content||'Ideia sem título';
-                              const res=await fetch('/grove/arena',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({topic:topic,agents:groveSelectedAgents,session_id:groveSession.session_id,round:1})});
-                              const data=await res.json();
-                              // Add each agent response as chat message
-                              (data.responses||[]).forEach(r=>{
-                                setGroveMsgs(p=>[...p,{role:'agent',agent_id:r.agent,name:r.name,emoji:r.emoji,content:r.message,ts:r.ts,node_id:r.node_id}]);
-                              });
-                            }catch(e){setGroveMsgs(p=>[...p,{role:'system',content:"⚠️ Arena erro: "+e.message,ts:new Date().toISOString()}]);}
-                            setGroveLoading(false);
-                          }} disabled={groveLoading} style={{padding:"6px 14px",borderRadius:6,background:`linear-gradient(135deg,#2d5a27,#4a8c3f)`,border:"none",color:"#FFF",fontSize:10,fontWeight:700,cursor:"pointer"}}>
-                            {groveLoading?"⏳":"🏟️"} {lang==="pt"?"Iniciar Arena":lang==="de"?"Arena starten":"Start Arena"} ({groveSelectedAgents.length}) {groveEstimate?" • €"+groveEstimate.total_eur?.toFixed(2):""}
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Chat Messages */}
-                  <div style={{flex:1,overflow:"auto",padding:12,display:"flex",flexDirection:"column",gap:10}}>
-                    {groveMsgs.map((m,i)=>(
-                      <div key={i} style={{display:"flex",flexDirection:"column",alignItems:m.role==='user'?'flex-end':m.role==='system'?'center':'flex-start'}}>
-                        {m.role==='system'?(
-                          <div style={{fontSize:9,color:th.dim,background:th.bg,padding:"4px 10px",borderRadius:10}}>{m.content}</div>
-                        ):m.role==='user'?(
-                          <div style={{maxWidth:"80%",background:th.gold,color:"#FFF",padding:"8px 12px",borderRadius:"12px 12px 2px 12px",fontSize:12}}>
-                            <div>{m.content}</div>
-                            <div style={{fontSize:8,opacity:0.7,marginTop:4,textAlign:"right"}}>{new Date(m.ts).toLocaleTimeString()}</div>
-                          </div>
-                        ):(
-                          <div style={{maxWidth:"85%",display:"flex",gap:8}}>
-                            <div style={{width:28,height:28,borderRadius:"50%",background:`linear-gradient(135deg,${th.gold},${th.border})`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,flexShrink:0}}>
-                              {m.emoji||({"W-LEGAL-001":"⚖️","W-NOTARY-001":"📜","W-COMPLY-001":"🛡️","W-COMM-001":"📰","W-JOURN-001":"✒️","W-AUDIT-001":"🔍","W-ACCT-001":"📊","W-ARCH-001":"🏗️"})[m.agent_id]||"🤖"}
-                            </div>
-                            <div style={{background:th.bg,border:`1px solid ${th.border}`,padding:"8px 12px",borderRadius:"2px 12px 12px 12px",fontSize:12}}>
-                              <div style={{fontSize:9,fontWeight:700,color:th.gold,marginBottom:4}}>{m.name||m.agent_id?.replace("W-","").replace("-001","")}</div>
-                              <div style={{lineHeight:1.5,whiteSpace:"pre-wrap"}}>{m.content}</div>
-                              <div style={{fontSize:8,color:th.dim,marginTop:4}}>{new Date(m.ts).toLocaleTimeString()}</div>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                    {groveLoading&&<div style={{textAlign:"center",color:th.dim,fontSize:11}}>⏳ {lang==="pt"?"Agentes a pensar...":lang==="de"?"Agenten denken...":"Agents thinking..."}</div>}
-                  </div>
-
-                  {/* Input */}
-                  {groveActiveAgents.length>0&&(
-                    <div style={{padding:12,borderTop:`1px solid ${th.border}`,display:"flex",gap:8}}>
-                      <input value={groveInput} onChange={e=>setGroveInput(e.target.value)} onKeyDown={async(e)=>{
-                        if(e.key==='Enter'&&groveInput.trim()&&!groveLoading){
-                          const msg=groveInput.trim();
-                          const round=groveMsgs.filter(m=>m.role==='user').length+1;
-                          setGroveInput("");
-                          setGroveMsgs(p=>[...p,{role:'user',content:msg,ts:new Date().toISOString()}]);
-                          setGroveLoading(true);
-                          try{
-                            const res=await fetch('/grove/arena',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({topic:msg,agents:groveActiveAgents,session_id:groveSession.session_id,round:round})});
-                            const data=await res.json();
-                            (data.responses||[]).forEach(r=>{
-                              setGroveMsgs(p=>[...p,{role:'agent',agent_id:r.agent,name:r.name,emoji:r.emoji,content:r.message,ts:r.ts,node_id:r.node_id}]);
-                            });
-                          }catch(e){setGroveMsgs(p=>[...p,{role:'system',content:"⚠️ "+e.message,ts:new Date().toISOString()}]);}
-                          setGroveLoading(false);
-                        }
-                      }} placeholder={lang==="pt"?"Continua o debate...":lang==="de"?"Debatte fortsetzen...":"Continue the debate..."} style={{flex:1,padding:"10px 14px",borderRadius:8,border:`1px solid ${th.border}`,background:th.input,color:th.text,fontSize:12}}/>
-                      <button onClick={async()=>{
-                        if(!groveInput.trim()||groveLoading)return;
-                        const msg=groveInput.trim();
-                        const round=groveMsgs.filter(m=>m.role==='user').length+1;
-                        setGroveInput("");
-                        setGroveMsgs(p=>[...p,{role:'user',content:msg,ts:new Date().toISOString()}]);
-                        setGroveLoading(true);
-                        try{
-                          const res=await fetch('/grove/arena',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({topic:msg,agents:groveActiveAgents,session_id:groveSession.session_id,round:round})});
-                          const data=await res.json();
-                          (data.responses||[]).forEach(r=>{
-                            setGroveMsgs(p=>[...p,{role:'agent',agent_id:r.agent,name:r.name,emoji:r.emoji,content:r.message,ts:r.ts,node_id:r.node_id}]);
-                          });
-                        }catch(e){setGroveMsgs(p=>[...p,{role:'system',content:"⚠️ "+e.message,ts:new Date().toISOString()}]);}
-                        setGroveLoading(false);
-                      }} disabled={groveLoading||!groveInput.trim()} style={{padding:"10px 16px",borderRadius:8,background:`linear-gradient(135deg,#2d5a27,#4a8c3f)`,border:"none",color:"#FFF",fontSize:12,fontWeight:700,cursor:"pointer"}}>
-                        ➤
-                      </button>
-                    </div>
-                  )}
-                </div>
-              )}
-
               {/* Grove → Communiqué flow hint */}
-              {!groveDebateOpen&&(
-                <div style={{marginTop:20,padding:"12px 14px",borderRadius:10,background:`${th.gold}08`,border:`1px solid ${th.gold}22`,fontSize:11,color:th.dim}}>
-                  <strong style={{color:th.gold}}>🌳 {lang==="pt"?"Jornada do Jardineiro":lang==="de"?"Die Reise des Gärtners":"Gardener's Journey"}:</strong><br/>
-                  {lang==="pt"?"Grove (pensar) → Documento (estruturar) → Ledger (selar) → WICK (partilhar)":lang==="de"?"Hain (denken) → Dokument (strukturieren) → Ledger (versiegeln) → WICK (teilen)":"Grove (think) → Document (structure) → Ledger (seal) → WICK (share)"}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* ═══ S1-2: HTML BUILDER TAB — Visual Page Builder ═══ */}
-          {sidebarTab==="htmlbuilder"&&(
-            <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
-              {/* Header with back button (S1-3) */}
-              <div style={{padding:"12px 16px",borderBottom:`1px solid ${th.border}`,display:"flex",alignItems:"center",gap:12,background:th.card}}>
-                <button onClick={()=>setSidebarTab("chat")} style={{padding:"6px 12px",borderRadius:8,background:th.bg,border:`1px solid ${th.border}`,color:th.text,fontSize:12,cursor:"pointer",display:"flex",alignItems:"center",gap:6}}>
-                  ← {lang==="pt"?"Voltar":lang==="de"?"Zurück":"Back"}
-                </button>
-                <div style={{flex:1}}>
-                  <h2 style={{margin:0,fontSize:16,fontWeight:700}}>🏗️ HTML Builder</h2>
-                  <p style={{margin:"2px 0 0",fontSize:10,color:th.dim}}>{lang==="pt"?"Crie páginas visuais arrastando blocos":lang==="de"?"Erstelle visuelle Seiten per Drag & Drop":"Create visual pages by dragging blocks"}</p>
-                </div>
-                <a href="/html-builder/" target="_blank" rel="noopener" style={{padding:"6px 12px",borderRadius:8,background:th.gold,color:"#FFF",fontSize:11,fontWeight:600,textDecoration:"none",display:"flex",alignItems:"center",gap:6}}>
-                  ↗ {lang==="pt"?"Abrir em Nova Aba":lang==="de"?"In neuem Tab öffnen":"Open in New Tab"}
-                </a>
+              <div style={{marginTop:20,padding:"12px 14px",borderRadius:10,background:`${th.gold}08`,border:`1px solid ${th.gold}22`,fontSize:11,color:th.dim}}>
+                <strong style={{color:th.gold}}>🌳 {lang==="pt"?"Jornada do Jardineiro":lang==="de"?"Die Reise des Gärtners":"Gardener's Journey"}:</strong><br/>
+                {lang==="pt"?"Grove (pensar) → Documento (estruturar) → Ledger (selar) → WICK (partilhar)":lang==="de"?"Hain (denken) → Dokument (strukturieren) → Ledger (versiegeln) → WICK (teilen)":"Grove (think) → Document (structure) → Ledger (seal) → WICK (share)"}
               </div>
-              {/* Embedded iframe */}
-              <iframe src="/html-builder/" style={{flex:1,border:"none",width:"100%",height:"100%"}} title="HTML Builder"/>
             </div>
           )}
 
@@ -4854,19 +4444,7 @@ function App(){
           {sidebarTab==="chat"&&(<>
             {/* Doc Preview — DNA-aware structured preview */}
             <div style={{flex:"1 1 50%",display:isMobile?"none":"flex",flexDirection:"column",borderRight:`1px solid ${th.border}22`,overflow:"hidden"}}>
-              {/* S1-4: Mode Toggle — Unified Communiqué */}
-              <div style={{display:"flex",alignItems:"center",gap:8,padding:"8px 16px",borderBottom:`1px solid ${th.border}`,background:th.card}}>
-                <button onClick={()=>setChatMode("text")} style={{padding:"5px 12px",borderRadius:6,background:chatMode==="text"?th.gold:th.bg,border:`1px solid ${chatMode==="text"?th.gold:th.border}`,color:chatMode==="text"?"#FFF":th.text,fontSize:10,fontWeight:600,cursor:"pointer",display:"flex",alignItems:"center",gap:4}}>
-                  📝 {lang==="pt"?"Texto":lang==="de"?"Text":"Text"}
-                </button>
-                <button onClick={()=>setChatMode("canvas")} style={{padding:"5px 12px",borderRadius:6,background:chatMode==="canvas"?th.gold:th.bg,border:`1px solid ${chatMode==="canvas"?th.gold:th.border}`,color:chatMode==="canvas"?"#FFF":th.text,fontSize:10,fontWeight:600,cursor:"pointer",display:"flex",alignItems:"center",gap:4}}>
-                  🎨 Canvas
-                </button>
-                <div style={{flex:1}}/>
-                <span style={{fontSize:9,color:th.dim}}>{lang==="pt"?"Modo de edição":lang==="de"?"Bearbeitungsmodus":"Editing mode"}</span>
-              </div>
-              {/* Text Mode Content */}
-              {chatMode==="text"&&<div style={{flex:1,overflowY:"auto",padding:"14px 16px"}}>
+              <div style={{flex:1,overflowY:"auto",padding:"14px 16px"}}>
                 {/* Structured preview for DNA types */}
                 {docType&&hasDNA(docType)&&Object.keys(docFields).length>1?
                   renderStructuredPreview(docType,docFields,th,lang)
@@ -4923,42 +4501,7 @@ function App(){
                     <a href={receipt.url} target="_blank" rel="noopener" style={{display:"inline-flex",alignItems:"center",gap:5,padding:"8px 14px",background:th.card,color:th.text,border:`1px solid ${th.border}`,borderRadius:6,fontSize:10,fontWeight:600,textDecoration:"none"}}><span>🔗</span><span>{lang==="pt"?"Abrir Verify":lang==="de"?"Verify öffnen":"Open Verify"}</span></a>
                   </div>
                 </div>}
-              </div>}
-
-              {/* Canvas Mode Content — S1-4: Unified Communiqué */}
-              {chatMode==="canvas"&&(
-                <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"auto",padding:12,background:th.bg}}>
-                  {/* Mini Canvas Toolbar */}
-                  <div style={{display:"flex",gap:4,padding:"8px 12px",background:th.card,borderRadius:10,border:`1px solid ${th.border}`,marginBottom:12,flexWrap:"wrap",alignItems:"center"}}>
-                    {Object.entries(LAYER_TYPES).slice(0,4).map(([key,cfg])=>(
-                      <button key={key} onClick={()=>deskAddLayer(key)} style={{display:"flex",alignItems:"center",gap:3,padding:"5px 10px",borderRadius:6,background:th.bg,border:`1px solid ${th.border}`,color:th.text,fontSize:10,fontWeight:600,cursor:"pointer"}}>{cfg.icon} {cfg.label?.en||key}</button>
-                    ))}
-                    <div style={{flex:1}}/>
-                    <button onClick={()=>setSidebarTab("desk")} style={{padding:"5px 10px",borderRadius:6,background:th.card,border:`1px solid ${th.gold}`,color:th.gold,fontSize:10,fontWeight:600,cursor:"pointer"}}>
-                      ↗ {lang==="pt"?"Tela Cheia":lang==="de"?"Vollbild":"Full Canvas"}
-                    </button>
-                  </div>
-                  {/* Mini Canvas Preview */}
-                  <div style={{flex:1,background:th.card,borderRadius:10,border:`1px solid ${th.border}`,position:"relative",overflow:"hidden",minHeight:300}}>
-                    <div style={{transform:"scale(0.5)",transformOrigin:"top left",width:CANVAS_W,minHeight:CANVAS_H,background:"#FFF",position:"absolute"}}>
-                      {deskLayers.map(layer=>(
-                        <div key={layer.id} style={{position:"absolute",left:layer.x,top:layer.y,width:layer.w,height:layer.h,opacity:layer.opacity??1,borderRadius:layer.borderRadius??0,overflow:"hidden"}}>
-                          {layer.type==="text"&&<div style={{padding:8,fontSize:layer.fontSize||16,color:layer.color||"#333"}}>{layer.content||"Text"}</div>}
-                          {layer.type==="image"&&layer.content&&<img src={layer.content} style={{width:"100%",height:"100%",objectFit:"cover"}}/>}
-                          {layer.type==="shape"&&<div style={{width:"100%",height:"100%",background:layer.bgColor||"#E0E0E0"}}/>}
-                        </div>
-                      ))}
-                    </div>
-                    {deskLayers.length===0&&(
-                      <div style={{position:"absolute",inset:0,display:"flex",alignItems:"center",justifyContent:"center",color:th.dim,fontSize:12,flexDirection:"column",gap:8}}>
-                        <span style={{fontSize:32}}>🎨</span>
-                        <span>{lang==="pt"?"Canvas vazio. Adicione elementos acima.":lang==="de"?"Leere Leinwand. Füge Elemente hinzu.":"Empty canvas. Add elements above."}</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-
+              </div>
               {/* Doc Actions */}
               <div style={{display:"flex",gap:6,padding:"8px 12px",borderTop:`1px solid ${th.border}22`,flexShrink:0,flexWrap:"wrap"}}>
                 {docStatus!=="finalized"&&<>
@@ -5150,6 +4693,13 @@ function App(){
             </div>
           </>)}
 
+          {/* ═══ INSIGHTS TAB — COGNITIVE INTERFACE LAYER ═══ */}
+          {sidebarTab==="insights"&&(
+            <div style={{flex:1,overflowY:"auto",padding:"16px"}}>
+              <CognitiveInsightsPanel lang={lang} theme={th} compact={false} />
+            </div>
+          )}
+
           {/* ═══ DOCS TAB ═══ */}
           {sidebarTab==="docs"&&(
             <div style={{flex:1,overflowY:"auto",padding:"16px"}}>
@@ -5240,55 +4790,9 @@ function App(){
                   </div>)}</div></>}
             </div>)}
 
-          {/* ═══ S2-4: WALLET TAB — Enhanced with Quick Actions ═══ */}
+          {/* ═══ WALLET TAB ═══ */}
           {sidebarTab==="wallet"&&(
             <div style={{flex:1,overflowY:"auto",padding:"20px",display:"flex",flexDirection:"column",alignItems:"center"}}>
-              {/* S2-4: Quick Actions Bar */}
-              <div style={{width:"100%",maxWidth:340,display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8,marginBottom:16}}>
-                <button onClick={()=>setSidebarTab("chat")} style={{padding:"12px 8px",borderRadius:10,background:th.card,border:"1px solid "+th.border,cursor:"pointer",textAlign:"center",transition:"all 0.2s"}} onMouseOver={e=>e.currentTarget.style.borderColor=th.gold} onMouseOut={e=>e.currentTarget.style.borderColor=th.border}>
-                  <div style={{fontSize:20,marginBottom:4}}>📄</div>
-                  <div style={{fontSize:9,color:th.dim}}>{lang==="de"?"Neu":lang==="pt"?"Novo":"New"}</div>
-                </button>
-                <button onClick={()=>setSidebarTab("busca")} style={{padding:"12px 8px",borderRadius:10,background:th.card,border:"1px solid "+th.border,cursor:"pointer",textAlign:"center",transition:"all 0.2s"}} onMouseOver={e=>e.currentTarget.style.borderColor=th.gold} onMouseOut={e=>e.currentTarget.style.borderColor=th.border}>
-                  <div style={{fontSize:20,marginBottom:4}}>🔎</div>
-                  <div style={{fontSize:9,color:th.dim}}>{lang==="de"?"Suche":lang==="pt"?"Busca":"Search"}</div>
-                </button>
-                <button onClick={()=>setSidebarTab("wick")} style={{padding:"12px 8px",borderRadius:10,background:th.card,border:"1px solid "+th.border,cursor:"pointer",textAlign:"center",transition:"all 0.2s"}} onMouseOver={e=>e.currentTarget.style.borderColor=th.gold} onMouseOut={e=>e.currentTarget.style.borderColor=th.border}>
-                  <div style={{fontSize:20,marginBottom:4}}>🌐</div>
-                  <div style={{fontSize:9,color:th.dim}}>WICK</div>
-                </button>
-              </div>
-
-              {/* ═══ VPR: IDENTITY & VERIFICATION TILES ═══ */}
-              <div style={{width:"100%",maxWidth:340,marginBottom:16}}>
-                <div style={{fontSize:9,fontWeight:500,letterSpacing:"0.15em",textTransform:"uppercase",color:th.dim,marginBottom:10,paddingTop:8,borderTop:`1px solid ${th.border}`}}>
-                  {lang==="de"?"IDENTITÄT & VERIFIZIERUNG":lang==="pt"?"IDENTIDADE & VERIFICAÇÃO":"IDENTITY & VERIFICATION"}
-                </div>
-                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
-                  {/* Tile: Verify */}
-                  <div onClick={()=>window.open("https://windi-domain.com/verify-public/","_blank")} style={{padding:"14px 12px",borderRadius:10,background:th.card,border:`1px solid ${th.border}`,cursor:"pointer",transition:"all 0.2s",minHeight:100,display:"flex",flexDirection:"column"}} onMouseOver={e=>{e.currentTarget.style.borderColor=th.gold;e.currentTarget.style.boxShadow=`0 2px 12px ${th.gold}15`}} onMouseOut={e=>{e.currentTarget.style.borderColor=th.border;e.currentTarget.style.boxShadow="none"}}>
-                    <div style={{fontSize:18,marginBottom:6}}>🔍</div>
-                    <div style={{fontSize:13,fontWeight:600,color:th.text,marginBottom:4}}>{lang==="de"?"Verifizieren":lang==="pt"?"Verificar":"Verify"}</div>
-                    <div style={{fontSize:10,color:th.dim,lineHeight:1.4,flex:1}}>{lang==="de"?"Dokument oder QR prüfen":lang==="pt"?"Verificar documento ou QR":"Verify document or QR"}</div>
-                    <div style={{fontSize:9,color:th.gold,marginTop:6}}>→ Verify Public</div>
-                  </div>
-                  {/* Tile: My Record (VPR) */}
-                  <div onClick={async()=>{
-                    if(!wallet?.id)return;
-                    try{
-                      const r=await fetch(`http://127.0.0.1:8114/api/did/by-wallet/${wallet.id}`);
-                      if(r.ok){const d=await r.json();window.open(`https://windi-domain.com/verify-public/vpr/${d.did_short}`,"_blank");}
-                      else{flash(lang==="de"?"Kein VPR gefunden":lang==="pt"?"VPR não encontrado":"No VPR found");}
-                    }catch(e){flash("VPR offline");}
-                  }} style={{padding:"14px 12px",borderRadius:10,background:th.card,border:`1px solid ${th.border}`,cursor:wallet?"pointer":"not-allowed",opacity:wallet?1:0.5,transition:"all 0.2s",minHeight:100,display:"flex",flexDirection:"column"}} onMouseOver={e=>{if(wallet){e.currentTarget.style.borderColor=th.gold;e.currentTarget.style.boxShadow=`0 2px 12px ${th.gold}15`}}} onMouseOut={e=>{e.currentTarget.style.borderColor=th.border;e.currentTarget.style.boxShadow="none"}}>
-                    <div style={{fontSize:18,marginBottom:6}}>🪪</div>
-                    <div style={{fontSize:13,fontWeight:600,color:th.text,marginBottom:4}}>{lang==="de"?"Mein Profil":lang==="pt"?"Meu Perfil":"My Record"}</div>
-                    <div style={{fontSize:10,color:th.dim,lineHeight:1.4,flex:1}}>{lang==="de"?"Öffentliches Profil":lang==="pt"?"Perfil público verificável":"Public verified record"}</div>
-                    <div style={{fontSize:9,color:th.gold,marginTop:6}}>→ VPR</div>
-                  </div>
-                </div>
-              </div>
-
               {/* A.2: VAULT STATS BANNER — Phase 1B: Biofeedback */}
               <div className={vaultPulse?"vault-pulse":""} style={{width:"100%",maxWidth:340,padding:"14px 16px",borderRadius:12,background:th.card,border:`1px solid ${vaultPulse?th.gold:th.border}`,marginBottom:20,transition:"border-color 0.3s ease"}}>
                 <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
@@ -5397,7 +4901,6 @@ function App(){
                       </div>
                     )}
                   </div>
-                  <button onClick={openTmplRegistry} title={lang==='de'?'Template Registry öffnen':lang==='pt'?'Abrir Template Registry':'Open Template Registry'} style={{display:"flex",alignItems:"center",gap:4,padding:"4px 10px",borderRadius:6,background:showTmplRegistry?th.gold+"18":th.card,border:"1px solid "+(showTmplRegistry?th.gold:th.border),color:showTmplRegistry?th.gold:th.text,fontSize:10,fontWeight:600,cursor:"pointer"}}>📂 Registry</button>
                   <button onClick={()=>{if(confirm('Limpar canvas? O trabalho atual será perdido.')){setDeskLayers([]);localStorage.removeItem(CANVAS_SAVE_KEY);setDeskSelected(null);flash('🗑️ Canvas limpo');}}} title="Limpar canvas" style={{padding:"3px 6px",borderRadius:4,background:th.card,border:"1px solid "+th.border,color:th.dim,fontSize:11,cursor:"pointer"}}>🗑️</button>
                   <button onClick={()=>{try{localStorage.setItem(CANVAS_SAVE_KEY,JSON.stringify(deskLayers));flash('💾 Canvas salvo!');}catch(e){flash('❌ Erro ao salvar');}}} title="Salvar canvas" style={{padding:"3px 6px",borderRadius:4,background:th.card,border:"1px solid "+th.border,color:th.gold,fontSize:11,cursor:"pointer"}}>💾</button>
                   <button onClick={deskUndo} style={{padding:"3px 6px",borderRadius:4,background:th.card,border:"1px solid "+th.border,color:th.dim,fontSize:12,cursor:"pointer"}}>↩</button>
@@ -5545,74 +5048,6 @@ function App(){
 
               <input ref={deskFileRef} type="file" accept="image/*" style={{display:"none"}} onChange={deskHandleImageUpload}/>
             <input ref={el=>window._deskVideoRef=el} type="file" accept="video/*" style={{display:"none"}} onChange={e=>{const file=e.target.files[0];if(!file)return;const r=new FileReader();r.onload=ev=>deskUpdateLayer(deskSelected,{content:ev.target.result,isEmbed:false});r.readAsDataURL(file);}}/>
-
-              {/* ═══ TEMPLATE REGISTRY DRAWER ═══ */}
-              {showTmplRegistry&&(
-                <>
-                  <div onClick={()=>setShowTmplRegistry(false)} style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.5)',zIndex:9000}}/>
-                  <div style={{position:'fixed',top:0,right:0,height:'100vh',width:380,background:th.bg,borderLeft:'1px solid '+th.border,zIndex:9001,display:'flex',flexDirection:'column',overflow:'hidden',fontFamily:'var(--font-sans)'}}>
-                    <div style={{padding:'16px 20px',borderBottom:'1px solid '+th.border,display:'flex',alignItems:'center',justifyContent:'space-between',background:th.card}}>
-                      <div>
-                        <div style={{fontWeight:700,fontSize:14,color:th.text}}>📂 Template Registry</div>
-                        <div style={{fontSize:11,color:th.dim,marginTop:2}}>{lang==='de'?'Zentrale Vorlagenbibliothek':lang==='pt'?'Hub central de templates':'Central template hub'}</div>
-                      </div>
-                      <button onClick={()=>setShowTmplRegistry(false)} style={{background:'none',border:'none',cursor:'pointer',fontSize:18,color:th.dim,padding:4}}>✕</button>
-                    </div>
-                    <div style={{padding:'12px 20px',borderBottom:'1px solid '+th.border,background:th.card}}>
-                      <input type="text" placeholder={lang==='de'?'🔍 Suchen...':lang==='pt'?'🔍 Buscar...':'🔍 Search...'} value={tmplFilter.search} onChange={e=>setTmplFilter(f=>({...f,search:e.target.value}))} style={{width:'100%',padding:'7px 10px',border:'1px solid '+th.border,borderRadius:6,fontSize:12,background:th.input,color:th.text,boxSizing:'border-box',marginBottom:8,outline:'none'}}/>
-                      <div style={{display:'flex',gap:8}}>
-                        <select value={tmplFilter.category} onChange={e=>setTmplFilter(f=>({...f,category:e.target.value}))} style={{flex:1,padding:'5px 8px',border:'1px solid '+th.border,borderRadius:6,fontSize:11,background:th.input,color:th.text}}>
-                          <option value="">{lang==='de'?'Alle Kategorien':lang==='pt'?'Todas categorias':'All categories'}</option>
-                          <option value="report">{lang==='de'?'Bericht':lang==='pt'?'Relatório':'Report'}</option>
-                          <option value="invoice">{lang==='de'?'Rechnung':lang==='pt'?'Fatura':'Invoice'}</option>
-                          <option value="communique">Communiqué</option>
-                          <option value="presentation">{lang==='de'?'Präsentation':lang==='pt'?'Apresentação':'Presentation'}</option>
-                          <option value="certificate">{lang==='de'?'Zertifikat':lang==='pt'?'Certificado':'Certificate'}</option>
-                          <option value="letter">{lang==='de'?'Brief':lang==='pt'?'Carta':'Letter'}</option>
-                          <option value="generic">{lang==='de'?'Generisch':lang==='pt'?'Genérico':'Generic'}</option>
-                        </select>
-                        <select value={tmplFilter.lang} onChange={e=>setTmplFilter(f=>({...f,lang:e.target.value}))} style={{flex:1,padding:'5px 8px',border:'1px solid '+th.border,borderRadius:6,fontSize:11,background:th.input,color:th.text}}>
-                          <option value="">{lang==='de'?'Alle Sprachen':lang==='pt'?'Todos idiomas':'All languages'}</option>
-                          <option value="pt">PT</option>
-                          <option value="de">DE</option>
-                          <option value="en">EN</option>
-                        </select>
-                      </div>
-                    </div>
-                    <div style={{flex:1,overflowY:'auto',padding:'12px 20px'}}>
-                      {tmplLoading?(
-                        <div style={{textAlign:'center',padding:40,color:th.dim,fontSize:13}}>⏳ {lang==='de'?'Laden...':lang==='pt'?'Carregando...':'Loading...'}</div>
-                      ):filteredTmplItems.length===0?(
-                        <div style={{textAlign:'center',padding:40,color:th.dim,fontSize:13}}>{lang==='de'?'Keine Templates gefunden':lang==='pt'?'Nenhum template encontrado':'No templates found'}<br/><small>{lang==='de'?'Erstellen Sie Templates im HTML Builder':lang==='pt'?'Crie templates no HTML Builder':'Create templates in HTML Builder'}</small></div>
-                      ):(
-                        filteredTmplItems.map(tmpl=>{
-                          const catEmoji={report:'📊',invoice:'🧾',communique:'📰',presentation:'🎯',certificate:'🏅',letter:'✉️',generic:'📄'};
-                          const govColor={LOW:'#27ae60',MEDIUM:'#f39c12',HIGH:'#8B6914'};
-                          return(
-                            <div key={tmpl.id} style={{border:'1px solid '+th.border,borderRadius:8,marginBottom:10,padding:12,background:th.card}}>
-                              <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',marginBottom:6}}>
-                                <div>
-                                  <span style={{fontSize:14,marginRight:6}}>{catEmoji[tmpl.category]||'📄'}</span>
-                                  <strong style={{fontSize:13,color:th.text}}>{tmpl.name}</strong>
-                                </div>
-                                <span style={{fontSize:10,fontFamily:'monospace',color:govColor[tmpl.governance]||th.dim,background:th.bg,padding:'2px 6px',borderRadius:4,border:'1px solid currentColor'}}>{tmpl.governance}</span>
-                              </div>
-                              {tmpl.description&&<div style={{fontSize:11,color:th.dim,marginBottom:6}}>{tmpl.description}</div>}
-                              <div style={{fontSize:10,color:th.dim,marginBottom:8}}>{tmpl.category} · {tmpl.lang} · {new Date(tmpl.created_at).toLocaleDateString(lang==='de'?'de-DE':lang==='pt'?'pt-BR':'en-US')}</div>
-                              <div style={{display:'flex',gap:6}}>
-                                <button onClick={()=>loadTemplateFromRegistry(tmpl.id,false)} style={{flex:1,padding:'6px 0',fontSize:11,fontWeight:600,background:th.gold,color:'#fff',border:'none',borderRadius:5,cursor:'pointer'}}>⬇ {lang==='de'?'Laden':lang==='pt'?'Carregar':'Load'}</button>
-                                <button onClick={()=>loadTemplateFromRegistry(tmpl.id,true)} style={{flex:1,padding:'6px 0',fontSize:11,fontWeight:600,background:'transparent',color:th.gold,border:'1px solid '+th.gold,borderRadius:5,cursor:'pointer'}}>+ {lang==='de'?'Anhängen':lang==='pt'?'Anexar':'Append'}</button>
-                                <button onClick={()=>deleteTmplFromRegistry(tmpl.id)} style={{padding:'6px 10px',fontSize:11,background:'transparent',color:'#c0392b',border:'1px solid #c0392b',borderRadius:5,cursor:'pointer'}} title={lang==='de'?'Löschen':lang==='pt'?'Remover':'Delete'}>🗑</button>
-                              </div>
-                            </div>
-                          );
-                        })
-                      )}
-                    </div>
-                    <div style={{padding:'12px 20px',borderTop:'1px solid '+th.border,background:th.card,fontSize:11,color:th.dim,textAlign:'center'}}>Template Registry v1.0 · Vault :8106</div>
-                  </div>
-                </>
-              )}
             </div>
           )}
 
@@ -5680,237 +5115,154 @@ function App(){
           )}
 
           {/* ═══ WAVE 1: JOURNAL TAB ═══ */}
-          {/* ═══ S2-2: PUBLICAÇÕES TAB — Published Content Feed ═══ */}
-          {sidebarTab==='publicacoes'&&(
+          {sidebarTab==='journal'&&(
             <div style={{flex:1,display:'flex',flexDirection:'column',overflow:'hidden'}}>
-              <div style={{padding:'12px 16px',borderBottom:'1px solid '+th.border}}>
-                <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:10}}>
-                  <div style={{display:'flex',alignItems:'center',gap:8}}>
-                    <span style={{fontSize:20}}>📢</span>
-                    <span style={{fontSize:14,fontWeight:700}}>{lang==='de'?'Veröffentlichungen':lang==='pt'?'Publicações':'Publications'}</span>
-                  </div>
-                  <button onClick={fetchJournalArticles} disabled={journalLoading} style={{padding:'5px 12px',borderRadius:6,background:th.gold,border:'none',color:'#fff',fontSize:10,cursor:'pointer',fontWeight:600,opacity:journalLoading?0.6:1}}>
-                    {journalLoading?'⏳':'+'} {lang==='de'?'Neu':lang==='pt'?'Nova':'New'}
-                  </button>
+              <div style={{padding:'12px 16px',borderBottom:'1px solid '+th.border,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+                <div style={{display:'flex',alignItems:'center',gap:8}}>
+                  <span style={{fontSize:20}}>📰</span>
+                  <span style={{fontSize:14,fontWeight:700}}>{t.sidebar?.journal||'Journal'}</span>
                 </div>
-                {/* Quick Stats */}
-                <div style={{display:'flex',gap:8}}>
-                  <div style={{flex:1,padding:'8px 10px',background:th.card,borderRadius:8,border:'1px solid '+th.border,textAlign:'center'}}>
-                    <div style={{fontSize:16,fontWeight:700,color:th.gold}}>{journalArticles.length}</div>
-                    <div style={{fontSize:8,color:th.dim}}>{lang==='de'?'Artikel':lang==='pt'?'Artigos':'Articles'}</div>
-                  </div>
-                  <div style={{flex:1,padding:'8px 10px',background:th.card,borderRadius:8,border:'1px solid '+th.border,textAlign:'center'}}>
-                    <div style={{fontSize:16,fontWeight:700,color:th.success}}>✓</div>
-                    <div style={{fontSize:8,color:th.dim}}>{lang==='de'?'Verifiziert':lang==='pt'?'Verificados':'Verified'}</div>
-                  </div>
-                  <div style={{flex:1,padding:'8px 10px',background:th.card,borderRadius:8,border:'1px solid '+th.border,textAlign:'center'}}>
-                    <div style={{fontSize:16,fontWeight:700,color:th.text}}>🌐</div>
-                    <div style={{fontSize:8,color:th.dim}}>WICK</div>
-                  </div>
-                </div>
+                <button onClick={fetchJournalArticles} disabled={journalLoading} style={{padding:'4px 10px',borderRadius:6,border:'1px solid '+th.border,background:th.card,color:th.dim,fontSize:10,cursor:'pointer',opacity:journalLoading?0.5:1}}>
+                  {journalLoading?'⏳':'🔄'} Refresh
+                </button>
               </div>
               <div style={{flex:1,overflowY:'auto',padding:12}}>
                 {journalError&&<div style={{padding:12,background:th.danger+'11',borderRadius:8,color:th.danger,fontSize:11,marginBottom:12}}>⚠️ {journalError}</div>}
-                {journalLoading&&journalArticles.length===0&&<div style={{textAlign:'center',padding:40,color:th.dim}}>⏳ {lang==='de'?'Lade...':lang==='pt'?'A carregar...':'Loading...'}</div>}
+                {journalLoading&&journalArticles.length===0&&<div style={{textAlign:'center',padding:40,color:th.dim}}>⏳ Loading articles...</div>}
                 {!journalLoading&&journalArticles.length===0&&!journalError&&(
                   <div style={{textAlign:'center',padding:40,color:th.dim}}>
-                    <div style={{fontSize:48,marginBottom:12}}>📢</div>
-                    <div style={{fontSize:14,fontWeight:600,marginBottom:6}}>{lang==='de'?'Noch keine Veröffentlichungen':lang==='pt'?'Ainda sem publicações':'No publications yet'}</div>
-                    <div style={{fontSize:11,marginBottom:16}}>{lang==='de'?'Versiegelte Dokumente hier veröffentlichen':lang==='pt'?'Publique documentos selados aqui':'Publish sealed documents here'}</div>
-                    <button onClick={()=>setSidebarTab('chat')} style={{padding:'10px 20px',borderRadius:8,background:th.gold,border:'none',color:'#fff',fontSize:12,fontWeight:600,cursor:'pointer'}}>
-                      📄 {lang==='de'?'Dokument erstellen':lang==='pt'?'Criar documento':'Create document'}
-                    </button>
+                    <div style={{fontSize:32,marginBottom:8}}>📭</div>
+                    <div style={{fontSize:12}}>No published articles yet</div>
                   </div>
                 )}
-                {/* Article Cards Grid */}
-                <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(160px,1fr))',gap:12}}>
-                  {journalArticles.map(article=>(
-                    <div key={article.id} style={{background:th.card,border:'1px solid '+th.border,borderRadius:12,overflow:'hidden',cursor:'pointer',transition:'all 0.2s'}} onMouseOver={e=>e.currentTarget.style.transform='translateY(-2px)'} onMouseOut={e=>e.currentTarget.style.transform='none'}>
-                      <div style={{height:80,background:th.hover,display:'flex',alignItems:'center',justifyContent:'center'}}>
-                        {article.thumbnail?<img src={article.thumbnail} style={{width:'100%',height:'100%',objectFit:'cover'}} alt=""/>:<span style={{fontSize:32}}>📄</span>}
-                      </div>
-                      <div style={{padding:10}}>
-                        <div style={{fontSize:11,fontWeight:700,marginBottom:4,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{article.title}</div>
-                        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',fontSize:9,color:th.dim}}>
-                          <span style={{background:th.gold+'15',color:th.gold,padding:'2px 6px',borderRadius:4}}>{article.category}</span>
-                          <span>{new Date(article.date).toLocaleDateString()}</span>
-                        </div>
+                {journalArticles.map(article=>(
+                  <div key={article.id} style={{background:th.card,border:'1px solid '+th.border,borderRadius:10,padding:12,marginBottom:10,cursor:'pointer',transition:'all 0.2s'}} onMouseOver={e=>e.currentTarget.style.borderColor=th.gold} onMouseOut={e=>e.currentTarget.style.borderColor=th.border}>
+                    <div style={{display:'flex',gap:10}}>
+                      {article.thumbnail&&<img src={article.thumbnail} style={{width:48,height:48,borderRadius:6,objectFit:'cover'}} alt=""/>}
+                      <div style={{flex:1,minWidth:0}}>
+                        <div style={{fontSize:12,fontWeight:700,marginBottom:4,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{article.title}</div>
+                        <div style={{fontSize:10,color:th.dim,lineHeight:1.4,display:'-webkit-box',WebkitLineClamp:2,WebkitBoxOrient:'vertical',overflow:'hidden'}}>{article.excerpt}</div>
                       </div>
                     </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* ═══ WAVE 1: FILES TAB ═══ */}
-          {/* ═══ S2-5: FICHEIROS TAB — File Manager ═══ */}
-          {sidebarTab==='ficheiros'&&(
-            <div style={{flex:1,display:'flex',flexDirection:'column',overflow:'hidden'}}>
-              <div style={{padding:'12px 16px',borderBottom:'1px solid '+th.border}}>
-                <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:10}}>
-                  <div style={{display:'flex',alignItems:'center',gap:8}}>
-                    <span style={{fontSize:20}}>📂</span>
-                    <span style={{fontSize:14,fontWeight:700}}>{lang==='de'?'Dateien':lang==='pt'?'Ficheiros':'Files'}</span>
-                    <span style={{fontSize:10,color:th.gold,background:th.gold+'15',padding:'2px 8px',borderRadius:10}}>{uploadedFiles.length}</span>
-                  </div>
-                  <button onClick={()=>filesInputRef.current?.click()} style={{padding:'5px 12px',borderRadius:6,background:th.gold,border:'none',color:'#fff',fontSize:10,cursor:'pointer',fontWeight:600}}>+ Upload</button>
-                </div>
-                {/* Category Filters */}
-                <div style={{display:'flex',gap:6}}>
-                  {[{id:'all',icon:'📂',label:{de:'Alle',pt:'Todos',en:'All'}},{id:'image',icon:'🖼️',label:{de:'Bilder',pt:'Imagens',en:'Images'}},{id:'pdf',icon:'📄',label:{de:'PDFs',pt:'PDFs',en:'PDFs'}},{id:'video',icon:'🎬',label:{de:'Videos',pt:'Vídeos',en:'Videos'}}].map(cat=>(
-                    <button key={cat.id} onClick={()=>setFileFilter?.(cat.id)} style={{flex:1,padding:'5px 8px',borderRadius:6,border:'1px solid '+((!fileFilter||fileFilter===cat.id)?th.gold:th.border),background:(!fileFilter||fileFilter===cat.id)?th.gold+'15':th.card,color:(!fileFilter||fileFilter===cat.id)?th.gold:th.dim,fontSize:9,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:4}}>
-                      {cat.icon} {cat.label[lang]||cat.label.en}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <input ref={filesInputRef} type="file" multiple style={{display:'none'}} onChange={handleFilesInputChange}/>
-              <div style={{flex:1,overflowY:'auto',padding:12}}>
-                {/* Drop Zone */}
-                <div onDragOver={e=>{e.preventDefault();setFileDragOver(true);}} onDragLeave={()=>setFileDragOver(false)} onDrop={handleFilesDrop} style={{border:'2px dashed '+(fileDragOver?th.gold:th.border),borderRadius:12,padding:20,textAlign:'center',marginBottom:16,background:fileDragOver?th.gold+'08':'transparent',transition:'all 0.2s',cursor:'pointer'}} onClick={()=>filesInputRef.current?.click()}>
-                  <div style={{fontSize:32,marginBottom:8}}>{filesUploading?'⏳':'📤'}</div>
-                  <div style={{fontSize:12,fontWeight:600,marginBottom:4}}>{lang==='de'?'Dateien hierher ziehen':lang==='pt'?'Arraste ficheiros aqui':'Drag files here'}</div>
-                  <div style={{fontSize:10,color:th.dim}}>{lang==='de'?'oder klicken zum Hochladen':lang==='pt'?'ou clique para enviar':'or click to upload'}</div>
-                </div>
-                {/* Storage Stats */}
-                <div style={{display:'flex',gap:8,marginBottom:16}}>
-                  <div style={{flex:1,padding:'10px 12px',background:th.card,borderRadius:10,border:'1px solid '+th.border}}>
-                    <div style={{fontSize:9,color:th.dim,marginBottom:4}}>{lang==='de'?'Speicher':lang==='pt'?'Armazenamento':'Storage'}</div>
-                    <div style={{fontSize:14,fontWeight:700}}>{(uploadedFiles.reduce((a,f)=>a+(f.size||0),0)/1024/1024).toFixed(1)} MB</div>
-                  </div>
-                  <div style={{flex:1,padding:'10px 12px',background:th.card,borderRadius:10,border:'1px solid '+th.border}}>
-                    <div style={{fontSize:9,color:th.dim,marginBottom:4}}>{lang==='de'?'Dateien':lang==='pt'?'Ficheiros':'Files'}</div>
-                    <div style={{fontSize:14,fontWeight:700}}>{uploadedFiles.length}</div>
-                  </div>
-                </div>
-                {/* File Grid */}
-                {uploadedFiles.length===0&&!filesUploading&&(
-                  <div style={{textAlign:'center',padding:30,color:th.dim}}>
-                    <div style={{fontSize:11}}>{lang==='de'?'Noch keine Dateien':lang==='pt'?'Ainda sem ficheiros':'No files yet'}</div>
-                  </div>
-                )}
-                <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(110px,1fr))',gap:12}}>
-                  {uploadedFiles.filter(f=>!fileFilter||fileFilter==='all'||(fileFilter==='image'&&f.type?.includes('image'))||(fileFilter==='pdf'&&f.type?.includes('pdf'))||(fileFilter==='video'&&f.type?.includes('video'))).map(file=>(
-                    <div key={file.id} style={{background:th.card,border:'1px solid '+th.border,borderRadius:10,overflow:'hidden',position:'relative'}}>
-                      <div style={{height:80,background:th.hover,display:'flex',alignItems:'center',justifyContent:'center'}}>
-                        {file.thumbnail?<img src={file.thumbnail} style={{width:'100%',height:'100%',objectFit:'cover'}} alt=""/>:
-                        <span style={{fontSize:28}}>{file.type?.includes('pdf')?'📄':file.type?.includes('video')?'🎬':file.type?.includes('audio')?'🎵':'📎'}</span>}
-                      </div>
-                      <div style={{padding:8}}>
-                        <div style={{fontSize:10,fontWeight:600,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{file.name}</div>
-                        <div style={{fontSize:9,color:th.dim,marginTop:2}}>{(file.size/1024).toFixed(1)} KB</div>
-                      </div>
-                      <button onClick={()=>deleteUploadedFile(file.id)} style={{position:'absolute',top:6,right:6,width:20,height:20,borderRadius:6,background:'#000A',border:'none',color:'#fff',fontSize:11,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',backdropFilter:'blur(4px)'}}>×</button>
+                    <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:8,fontSize:9,color:th.dim}}>
+                      <span>{article.category}</span>
+                      <span>{article.readTime} min read · {new Date(article.date).toLocaleDateString()}</span>
                     </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* ═══ S2-3: BUSCA TAB — Unified Search ═══ */}
-          {sidebarTab==='busca'&&(
-            <div style={{flex:1,display:'flex',flexDirection:'column',overflow:'hidden'}}>
-              <div style={{padding:'12px 16px',borderBottom:'1px solid '+th.border}}>
-                <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:10}}>
-                  <span style={{fontSize:20}}>🔎</span>
-                  <span style={{fontSize:14,fontWeight:700}}>{lang==='de'?'Suche':lang==='pt'?'Busca':'Search'}</span>
-                </div>
-                <div style={{position:'relative',marginBottom:10}}>
-                  <input value={searchQuery} onChange={e=>setSearchQuery(e.target.value)} placeholder={lang==='de'?'Dokumente durchsuchen...':lang==='pt'?'Pesquisar documentos...':'Search documents...'} style={{width:'100%',padding:'12px 14px',paddingRight:40,borderRadius:10,border:'1px solid '+th.border,background:th.input,color:th.text,fontSize:13,outline:'none',boxSizing:'border-box'}}/>
-                  <span style={{position:'absolute',right:12,top:'50%',transform:'translateY(-50%)',fontSize:14,color:searchLoading?th.gold:th.dim}}>{searchLoading?'⏳':'🔎'}</span>
-                </div>
-                {/* Search Filters */}
-                <div style={{display:'flex',gap:6}}>
-                  {[{id:'all',icon:'📋',label:{de:'Alle',pt:'Todos',en:'All'}},{id:'doc',icon:'📄',label:{de:'Dokumente',pt:'Documentos',en:'Documents'}},{id:'sealed',icon:'🛡️',label:{de:'Versiegelt',pt:'Selados',en:'Sealed'}},{id:'wick',icon:'🌐',label:{de:'WICK',pt:'WICK',en:'WICK'}}].map(f=>(
-                    <button key={f.id} onClick={()=>setSearchFilter?.(f.id)} style={{flex:1,padding:'5px 8px',borderRadius:6,border:'1px solid '+((!searchFilter||searchFilter===f.id)?th.gold:th.border),background:(!searchFilter||searchFilter===f.id)?th.gold+'15':th.card,color:(!searchFilter||searchFilter===f.id)?th.gold:th.dim,fontSize:9,cursor:'pointer'}}>
-                      {f.icon} {f.label[lang]||f.label.en}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div style={{flex:1,overflowY:'auto',padding:12}}>
-                {searchQuery&&searchResults.length===0&&!searchLoading&&(
-                  <div style={{textAlign:'center',padding:30,color:th.dim}}>
-                    <div style={{fontSize:32,marginBottom:8}}>🔎</div>
-                    <div style={{fontSize:12,fontWeight:600}}>{lang==='de'?'Keine Ergebnisse':lang==='pt'?'Sem resultados':'No results'}</div>
-                    <div style={{fontSize:10,marginTop:4}}>"{searchQuery}"</div>
-                  </div>
-                )}
-                {!searchQuery&&(
-                  <div style={{textAlign:'center',padding:30,color:th.dim}}>
-                    <div style={{fontSize:48,marginBottom:12}}>🔎</div>
-                    <div style={{fontSize:14,fontWeight:600,marginBottom:6}}>{lang==='de'?'Überall suchen':lang==='pt'?'Buscar em tudo':'Search everywhere'}</div>
-                    <div style={{fontSize:11}}>{lang==='de'?'Dokumente, Versiegelungen, WICK':lang==='pt'?'Documentos, selagens, WICK':'Documents, seals, WICK'}</div>
-                    <div style={{display:'flex',gap:12,justifyContent:'center',marginTop:16}}>
-                      <div style={{textAlign:'center'}}>
-                        <div style={{fontSize:18,fontWeight:700,color:th.gold}}>{savedDocs.length}</div>
-                        <div style={{fontSize:9,color:th.dim}}>{lang==='de'?'Dokumente':lang==='pt'?'Documentos':'Documents'}</div>
-                      </div>
-                      <div style={{textAlign:'center'}}>
-                        <div style={{fontSize:18,fontWeight:700,color:th.success}}>{communiques.length}</div>
-                        <div style={{fontSize:9,color:th.dim}}>Communiqués</div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                {searchResults.map(result=>(
-                  <div key={result.type+'-'+result.id} style={{display:'flex',alignItems:'center',gap:12,padding:'12px 14px',background:th.card,border:'1px solid '+th.border,borderRadius:10,marginBottom:10,cursor:'pointer',transition:'all 0.2s'}} onMouseOver={e=>{e.currentTarget.style.borderColor=th.gold;e.currentTarget.style.transform='translateX(4px)';}} onMouseOut={e=>{e.currentTarget.style.borderColor=th.border;e.currentTarget.style.transform='none';}}>
-                    <div style={{width:36,height:36,borderRadius:8,background:th.hover,display:'flex',alignItems:'center',justifyContent:'center',fontSize:18}}>{result.icon}</div>
-                    <div style={{flex:1,minWidth:0}}>
-                      <div style={{fontSize:12,fontWeight:600,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{result.title}</div>
-                      <div style={{fontSize:9,color:th.dim,marginTop:2}}>{result.type==='doc'?(lang==='de'?'Dokument':lang==='pt'?'Documento':'Document'):'Communiqué'} · {result.subtype} · {result.date}</div>
-                    </div>
-                    <span style={{fontSize:12,color:result.type==='doc'?th.gold:th.success,fontWeight:600}}>{result.type==='doc'?'📄':'📰'}</span>
                   </div>
                 ))}
               </div>
             </div>
           )}
 
-          {/* ═══ S2-1: MODELOS TAB — Visual Templates ═══ */}
-          {sidebarTab==='modelos'&&(
+          {/* ═══ WAVE 1: FILES TAB ═══ */}
+          {sidebarTab==='files'&&(
             <div style={{flex:1,display:'flex',flexDirection:'column',overflow:'hidden'}}>
-              <div style={{padding:'12px 16px',borderBottom:'1px solid '+th.border}}>
-                <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:10}}>
-                  <span style={{fontSize:20}}>🎭</span>
-                  <span style={{fontSize:14,fontWeight:700}}>{lang==='de'?'Vorlagen':lang==='pt'?'Modelos':'Templates'}</span>
-                  <span style={{marginLeft:'auto',fontSize:9,color:th.gold,background:th.gold+'15',padding:'2px 8px',borderRadius:10}}>WhatsApp</span>
+              <div style={{padding:'12px 16px',borderBottom:'1px solid '+th.border,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+                <div style={{display:'flex',alignItems:'center',gap:8}}>
+                  <span style={{fontSize:20}}>📁</span>
+                  <span style={{fontSize:14,fontWeight:700}}>{t.sidebar?.files||'Files'}</span>
+                  <span style={{fontSize:10,color:th.dim,background:th.hover,padding:'2px 6px',borderRadius:4}}>{uploadedFiles.length}</span>
                 </div>
-                {/* Category Filter */}
-                <div style={{display:'flex',gap:6,marginBottom:10}}>
-                  {['all','MARKETING','UTILITY','AUTHENTICATION'].map(cat=>(
-                    <button key={cat} onClick={()=>setTplCategory?.(cat)} style={{flex:cat==='all'?0:1,padding:'5px 10px',borderRadius:6,border:'1px solid '+((!tplCategory||tplCategory===cat)?th.gold:th.border),background:(!tplCategory||tplCategory===cat)?th.gold+'15':th.card,color:(!tplCategory||tplCategory===cat)?th.gold:th.dim,fontSize:9,fontWeight:600,cursor:'pointer'}}>
-                      {cat==='all'?'📋':(cat==='MARKETING'?'📢':(cat==='UTILITY'?'🔧':'🔐'))} {cat==='all'?(lang==='de'?'Alle':lang==='pt'?'Todos':'All'):cat.slice(0,4)}
-                    </button>
-                  ))}
-                </div>
+                <button onClick={()=>filesInputRef.current?.click()} style={{padding:'4px 10px',borderRadius:6,background:th.gold,border:'none',color:'#fff',fontSize:10,cursor:'pointer',fontWeight:600}}>+ Upload</button>
               </div>
-
-              {/* Template Cards Grid */}
+              <input ref={filesInputRef} type="file" multiple style={{display:'none'}} onChange={handleFilesInputChange}/>
               <div style={{flex:1,overflowY:'auto',padding:12}}>
-                {tplList.length===0&&(
-                  <div style={{textAlign:'center',padding:30,color:th.dim}}>
-                    <div style={{fontSize:28,marginBottom:8}}>🎭</div>
-                    <div style={{fontSize:11}}>{lang==='de'?'Lade Vorlagen...':lang==='pt'?'A carregar modelos...':'Loading templates...'}</div>
+                {/* Drop Zone */}
+                <div onDragOver={e=>{e.preventDefault();setFileDragOver(true);}} onDragLeave={()=>setFileDragOver(false)} onDrop={handleFilesDrop} style={{border:'2px dashed '+(fileDragOver?th.gold:th.border),borderRadius:10,padding:24,textAlign:'center',marginBottom:12,background:fileDragOver?th.gold+'08':'transparent',transition:'all 0.2s',cursor:'pointer'}} onClick={()=>filesInputRef.current?.click()}>
+                  <div style={{fontSize:28,marginBottom:8}}>{filesUploading?'⏳':'📤'}</div>
+                  <div style={{fontSize:11,color:th.dim}}>{filesUploading?'Uploading...':'Drag files here or click to upload'}</div>
+                </div>
+                {/* File List */}
+                {uploadedFiles.length===0&&!filesUploading&&(
+                  <div style={{textAlign:'center',padding:20,color:th.dim}}>
+                    <div style={{fontSize:10}}>No files uploaded yet</div>
                   </div>
                 )}
-                {/* Visual Template Cards */}
-                <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(140px,1fr))',gap:10}}>
-                  {tplList.filter(t=>!tplCategory||tplCategory==='all'||t.category===tplCategory).map(tpl=>(
-                    <div key={tpl.name} onClick={()=>{setTplSelected(tpl.name);setTplVars({});}} style={{background:tplSelected===tpl.name?th.gold+'15':th.card,border:'1px solid '+(tplSelected===tpl.name?th.gold:th.border),borderRadius:10,padding:12,cursor:'pointer',transition:'all 0.2s'}}>
-                      <div style={{fontSize:24,marginBottom:8}}>{tpl.category==='MARKETING'?'📢':(tpl.category==='UTILITY'?'🔧':'🔐')}</div>
-                      <div style={{fontSize:11,fontWeight:600,marginBottom:4}}>{tpl.name.replace('windi_','').replace(/_/g,' ')}</div>
-                      <div style={{fontSize:9,color:th.dim}}>{tpl.category} · {tpl.variables?.length||0} vars</div>
+                <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(100px,1fr))',gap:10}}>
+                  {uploadedFiles.map(file=>(
+                    <div key={file.id} style={{background:th.card,border:'1px solid '+th.border,borderRadius:8,overflow:'hidden',position:'relative'}}>
+                      <div style={{height:70,background:th.hover,display:'flex',alignItems:'center',justifyContent:'center'}}>
+                        {file.thumbnail?<img src={file.thumbnail} style={{width:'100%',height:'100%',objectFit:'cover'}} alt=""/>:
+                        <span style={{fontSize:24}}>{file.type?.includes('pdf')?'📄':file.type?.includes('video')?'🎬':file.type?.includes('audio')?'🎵':'📎'}</span>}
+                      </div>
+                      <div style={{padding:6}}>
+                        <div style={{fontSize:9,fontWeight:600,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{file.name}</div>
+                        <div style={{fontSize:8,color:th.dim}}>{(file.size/1024).toFixed(1)} KB</div>
+                      </div>
+                      <button onClick={()=>deleteUploadedFile(file.id)} style={{position:'absolute',top:4,right:4,width:18,height:18,borderRadius:4,background:'#000A',border:'none',color:'#fff',fontSize:10,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}>×</button>
                     </div>
                   ))}
                 </div>
+              </div>
+            </div>
+          )}
 
-                {/* Selected Template Editor */}
-                {!tplSelected&&tplList.length>0&&(
-                  <div style={{textAlign:'center',padding:20,color:th.dim,marginTop:20}}>
-                    <div style={{fontSize:10}}>{lang==='de'?'Klicke auf eine Vorlage':lang==='pt'?'Clica num modelo':'Click a template'}</div>
+          {/* ═══ WAVE 1: SEARCH TAB ═══ */}
+          {sidebarTab==='search'&&(
+            <div style={{flex:1,display:'flex',flexDirection:'column',overflow:'hidden'}}>
+              <div style={{padding:'12px 16px',borderBottom:'1px solid '+th.border}}>
+                <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:10}}>
+                  <span style={{fontSize:20}}>🔍</span>
+                  <span style={{fontSize:14,fontWeight:700}}>{t.sidebar?.search||'Search'}</span>
+                </div>
+                <div style={{position:'relative'}}>
+                  <input value={searchQuery} onChange={e=>setSearchQuery(e.target.value)} placeholder="Search documents & communiqués..." style={{width:'100%',padding:'10px 12px',paddingRight:32,borderRadius:8,border:'1px solid '+th.border,background:th.input,color:th.text,fontSize:12,outline:'none',boxSizing:'border-box'}}/>
+                  {searchLoading&&<span style={{position:'absolute',right:10,top:'50%',transform:'translateY(-50%)',fontSize:12}}>⏳</span>}
+                </div>
+              </div>
+              <div style={{flex:1,overflowY:'auto',padding:12}}>
+                {searchQuery&&searchResults.length===0&&!searchLoading&&(
+                  <div style={{textAlign:'center',padding:20,color:th.dim}}>
+                    <div style={{fontSize:24,marginBottom:8}}>🔎</div>
+                    <div style={{fontSize:11}}>No results for "{searchQuery}"</div>
+                  </div>
+                )}
+                {!searchQuery&&(
+                  <div style={{textAlign:'center',padding:30,color:th.dim}}>
+                    <div style={{fontSize:28,marginBottom:8}}>🔍</div>
+                    <div style={{fontSize:11}}>Search across all your documents</div>
+                    <div style={{fontSize:10,marginTop:4}}>{savedDocs.length} docs · {communiques.length} communiqués</div>
+                  </div>
+                )}
+                {searchResults.map(result=>(
+                  <div key={result.type+'-'+result.id} style={{display:'flex',alignItems:'center',gap:10,padding:'10px 12px',background:th.card,border:'1px solid '+th.border,borderRadius:8,marginBottom:8,cursor:'pointer'}} onMouseOver={e=>e.currentTarget.style.borderColor=th.gold} onMouseOut={e=>e.currentTarget.style.borderColor=th.border}>
+                    <span style={{fontSize:18}}>{result.icon}</span>
+                    <div style={{flex:1,minWidth:0}}>
+                      <div style={{fontSize:12,fontWeight:600,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{result.title}</div>
+                      <div style={{fontSize:9,color:th.dim}}>{result.type==='doc'?'Document':'Communiqué'} · {result.subtype} · {result.date}</div>
+                    </div>
+                    <span style={{fontSize:10,color:result.type==='doc'?th.gold:th.success}}>{result.type==='doc'?'📄':'📰'}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ═══ TEMPLATES TAB — WhatsApp Template Messages ═══ */}
+          {sidebarTab==='templates'&&(
+            <div style={{flex:1,display:'flex',flexDirection:'column',overflow:'hidden'}}>
+              <div style={{padding:'12px 16px',borderBottom:'1px solid '+th.border}}>
+                <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:10}}>
+                  <span style={{fontSize:20}}>📋</span>
+                  <span style={{fontSize:14,fontWeight:700}}>{t.sidebar?.templates||'Templates'}</span>
+                  <span style={{marginLeft:'auto',fontSize:9,color:th.dim,fontFamily:'JetBrains Mono,monospace'}}>WhatsApp</span>
+                </div>
+                {/* Template selector */}
+                <select value={tplSelected} onChange={e=>{setTplSelected(e.target.value);setTplVars({});}} style={{width:'100%',padding:'10px 12px',borderRadius:8,border:'1px solid '+th.border,background:th.input,color:th.text,fontSize:12,outline:'none',cursor:'pointer'}}>
+                  <option value="">{lang==='de'?'Vorlage wählen...':lang==='pt'?'Escolher modelo...':'Choose template...'}</option>
+                  {tplList.map(tpl=>(
+                    <option key={tpl.name} value={tpl.name}>{tpl.name.replace('windi_','').replace(/_/g,' ')} ({tpl.category})</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Template content */}
+              <div style={{flex:1,overflowY:'auto',padding:12}}>
+                {!tplSelected&&(
+                  <div style={{textAlign:'center',padding:30,color:th.dim}}>
+                    <div style={{fontSize:28,marginBottom:8}}>📋</div>
+                    <div style={{fontSize:11}}>{lang==='de'?'Wähle eine Vorlage aus':lang==='pt'?'Seleciona um modelo':'Select a template'}</div>
+                    <div style={{fontSize:10,marginTop:4}}>{tplList.length} {lang==='de'?'Vorlagen verfügbar':lang==='pt'?'modelos disponíveis':'templates available'}</div>
                   </div>
                 )}
 
@@ -5962,7 +5314,7 @@ function App(){
           )}
 
           {/* ═══ OTHER TABS (Fallback) ═══ */}
-          {!["grove","chat","docs","wallet","desk","publicacoes","ficheiros","busca","modelos","htmlbuilder","wick"].includes(sidebarTab)&&(
+          {!["chat","docs","wallet","desk","journal","files","search","templates"].includes(sidebarTab)&&(
             <div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
               <div style={{textAlign:"center"}}>
                 <div style={{fontSize:40,marginBottom:12}}>{SIDEBAR.find(s=>s.id===sidebarTab)?.icon}</div>
