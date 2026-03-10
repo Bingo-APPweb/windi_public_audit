@@ -28,6 +28,11 @@ const LABELS = {
     txt: 'Nur Text',
     html: 'Webseite',
     print: 'Drucken',
+    send: 'Per E-Mail senden',
+    sendTo: 'Empfänger E-Mail:',
+    sending: 'Wird gesendet…',
+    sent: 'Gesendet!',
+    sendError: 'Senden fehlgeschlagen',
     save: 'Speichern',
     saved: 'Gespeichert',
     saving: 'Speichert…',
@@ -63,6 +68,11 @@ const LABELS = {
     txt: 'Plain Text',
     html: 'Web Page',
     print: 'Print',
+    send: 'Send via Email',
+    sendTo: 'Recipient Email:',
+    sending: 'Sending…',
+    sent: 'Sent!',
+    sendError: 'Send failed',
     save: 'Save',
     saved: 'Saved',
     saving: 'Saving…',
@@ -98,6 +108,11 @@ const LABELS = {
     txt: 'Texto Puro',
     html: 'Página Web',
     print: 'Imprimir',
+    send: 'Enviar por Email',
+    sendTo: 'Email do destinatário:',
+    sending: 'Enviando…',
+    sent: 'Enviado!',
+    sendError: 'Falha ao enviar',
     save: 'Salvar',
     saved: 'Salvo',
     saving: 'Salvando…',
@@ -250,6 +265,7 @@ export default function ExportMenu({
     { id: 'html', icon: '🌐', label: l.html, ext: '.html' },
     { id: 'sep2' },
     { id: 'print', icon: '🖨️', label: l.print, ext: '' },
+    { id: 'send',  icon: '📤', label: l.send,  ext: '', email: true },
   ];
 
   /**
@@ -267,6 +283,46 @@ export default function ExportMenu({
     if (format === 'print') {
       setOpen(false);
       window.print();
+      return;
+    }
+
+    // ═══════════════════════════════════════
+    // SEND VIA EMAIL — Dragon Distribute API
+    // ═══════════════════════════════════════
+    if (format === 'send') {
+      const recipient = window.prompt(l.sendTo);
+      if (!recipient || !recipient.includes('@')) {
+        setOpen(false);
+        return;
+      }
+
+      setExporting(format);
+      try {
+        const htmlContent = getEditorHTML();
+        const response = await fetch('/api/dragon/distribute', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            recipients: [{ channel: 'email', value: recipient }],
+            doc_title: title || l.untitled,
+            doc_content: htmlContent,
+            receipt_id: sealData?.receiptId || 'DRAFT',
+            lang: lang,
+          }),
+        });
+
+        const data = await response.json();
+        if (data.success || data.total_sent > 0) {
+          setFeedback('sent');
+        } else {
+          setFeedback('sendError');
+        }
+      } catch (err) {
+        console.error('Send failed:', err);
+        setFeedback('sendError');
+      }
+      setExporting(null);
+      setOpen(false);
       return;
     }
 
@@ -434,9 +490,12 @@ export default function ExportMenu({
         title={l.exportAs}
       >
         {exporting === 'pdf' ? l.exportingPdf :
+         exporting === 'send' ? l.sending :
          exporting ? l.exporting :
          feedback === 'success' ? '✅ ' + l.success :
+         feedback === 'sent' ? '✅ ' + l.sent :
          feedback === 'error' ? '❌ ' + l.error :
+         feedback === 'sendError' ? '❌ ' + l.sendError :
          l.export + ' ▾'}
       </button>
 
