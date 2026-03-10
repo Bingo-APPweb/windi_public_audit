@@ -3521,6 +3521,106 @@ function App(){
   },[deskLayers.length,lang,th,deskPushHistory]);
   const[showTemplateMenu,setShowTemplateMenu]=useState(false);
 
+  // ═══ TEMPLATE REGISTRY — Canvas Integration v1.0 ═══
+  const TMPL_API='/api/vault/api/templates';
+  const[showTmplRegistry,setShowTmplRegistry]=useState(false);
+  const[tmplRegistryItems,setTmplRegistryItems]=useState([]);
+  const[tmplLoading,setTmplLoading]=useState(false);
+  const[tmplFilter,setTmplFilter]=useState({search:'',category:'',lang:''});
+
+  const loadTmplRegistry=useCallback(async()=>{
+    setTmplLoading(true);
+    try{
+      const resp=await fetch(`${TMPL_API}/`);
+      if(!resp.ok)throw new Error(`HTTP ${resp.status}`);
+      const data=await resp.json();
+      setTmplRegistryItems(data.templates||[]);
+    }catch(err){
+      console.warn('[TmplRegistry] Vault offline, trying localStorage');
+      try{
+        const local=JSON.parse(localStorage.getItem('windi_templates_v1')||'[]');
+        setTmplRegistryItems(local);
+      }catch{setTmplRegistryItems([]);}
+    }finally{setTmplLoading(false);}
+  },[]);
+
+  const openTmplRegistry=useCallback(()=>{
+    setShowTmplRegistry(true);
+    loadTmplRegistry();
+  },[loadTmplRegistry]);
+
+  const itemsToCanvasLayers=useCallback((tmplData)=>{
+    // Format Bridge: HTML Builder items → Canvas layers
+    const html=tmplData.html||(tmplData.items||[]).map(item=>{
+      switch(item.type){
+        case 'h1':case 'heading':return `<h1 style="margin:0 0 8px">${item.content||''}</h1>`;
+        case 'h2':return `<h2 style="margin:0 0 8px">${item.content||''}</h2>`;
+        case 'h3':return `<h3 style="margin:0 0 6px">${item.content||''}</h3>`;
+        case 'p':case 'paragraph':return `<p style="margin:0 0 8px">${item.content||''}</p>`;
+        case 'ul':case 'list':return `<ul>${(item.content||'').split('\n').filter(Boolean).map(l=>`<li>${l.trim()}</li>`).join('')}</ul>`;
+        case 'ol':return `<ol>${(item.content||'').split('\n').filter(Boolean).map(l=>`<li>${l.trim()}</li>`).join('')}</ol>`;
+        case 'blockquote':case 'quote':return `<blockquote style="border-left:3px solid #8B6914;padding-left:12px;margin:8px 0">${item.content||''}</blockquote>`;
+        case 'hr':case 'divider':return `<hr style="border:none;border-top:2px solid #8B6914;margin:16px 0"/>`;
+        case 'img':case 'image':return `<img src="${item.src||item.content||''}" alt="${item.alt||''}" style="max-width:100%"/>`;
+        default:return `<div>${item.content||''}</div>`;
+      }
+    }).join('\n');
+    return[{
+      id:`layer_tmpl_${Date.now()}`,
+      type:'text',
+      content:html,
+      x:40,y:60,w:714,h:800,
+      zIndex:deskLayers.length,
+      fontSize:14,fontWeight:400,
+      color:th.text,bgColor:'transparent',
+      opacity:1,rotation:0,borderRadius:0,locked:false,
+      fromTemplate:tmplData.id
+    }];
+  },[deskLayers.length,th.text]);
+
+  const loadTemplateFromRegistry=useCallback(async(tmplId,append=false)=>{
+    try{
+      const resp=await fetch(`${TMPL_API}/${tmplId}`);
+      if(!resp.ok)throw new Error(`HTTP ${resp.status}`);
+      const tmpl=await resp.json();
+      const newLayers=itemsToCanvasLayers(tmpl);
+      if(append){
+        const merged=[...deskLayers,...newLayers];
+        setDeskLayers(merged);
+        deskPushHistory(merged);
+        flash(`✓ ${tmpl.name} ${lang==='de'?'angehängt':lang==='pt'?'anexado':'appended'}`);
+      }else{
+        if(deskLayers.length>0&&!confirm(lang==='de'?'Canvas ersetzen?':lang==='pt'?'Substituir canvas?':'Replace canvas?'))return;
+        setDeskLayers(newLayers);
+        setDeskSelected(null);
+        deskPushHistory(newLayers);
+        flash(`✓ ${tmpl.name} ${lang==='de'?'geladen':lang==='pt'?'carregado':'loaded'}`);
+      }
+      setShowTmplRegistry(false);
+    }catch(err){
+      flash(`❌ ${err.message}`);
+    }
+  },[deskLayers,itemsToCanvasLayers,lang,deskPushHistory,flash]);
+
+  const deleteTmplFromRegistry=useCallback(async(tmplId)=>{
+    if(!confirm(lang==='de'?'Template löschen?':lang==='pt'?'Remover template?':'Delete template?'))return;
+    try{
+      const resp=await fetch(`${TMPL_API}/${tmplId}`,{method:'DELETE'});
+      if(!resp.ok&&resp.status!==204)throw new Error(`HTTP ${resp.status}`);
+      setTmplRegistryItems(prev=>prev.filter(t=>t.id!==tmplId));
+      flash(lang==='de'?'Template gelöscht':lang==='pt'?'Template removido':'Template deleted');
+    }catch(err){flash(`❌ ${err.message}`);}
+  },[lang,flash]);
+
+  const filteredTmplItems=useMemo(()=>{
+    return tmplRegistryItems.filter(t=>{
+      const matchSearch=!tmplFilter.search||t.name.toLowerCase().includes(tmplFilter.search.toLowerCase())||(t.description||'').toLowerCase().includes(tmplFilter.search.toLowerCase());
+      const matchCat=!tmplFilter.category||t.category===tmplFilter.category;
+      const matchLang=!tmplFilter.lang||t.lang===tmplFilter.lang||t.lang==='all';
+      return matchSearch&&matchCat&&matchLang;
+    });
+  },[tmplRegistryItems,tmplFilter]);
+
   const deskUpdateLayer=useCallback((id,updates)=>{
     setDeskLayers(prev=>prev.map(l=>l.id===id?{...l,...updates}:l));
   },[]);
@@ -5297,6 +5397,7 @@ function App(){
                       </div>
                     )}
                   </div>
+                  <button onClick={openTmplRegistry} title={lang==='de'?'Template Registry öffnen':lang==='pt'?'Abrir Template Registry':'Open Template Registry'} style={{display:"flex",alignItems:"center",gap:4,padding:"4px 10px",borderRadius:6,background:showTmplRegistry?th.gold+"18":th.card,border:"1px solid "+(showTmplRegistry?th.gold:th.border),color:showTmplRegistry?th.gold:th.text,fontSize:10,fontWeight:600,cursor:"pointer"}}>📂 Registry</button>
                   <button onClick={()=>{if(confirm('Limpar canvas? O trabalho atual será perdido.')){setDeskLayers([]);localStorage.removeItem(CANVAS_SAVE_KEY);setDeskSelected(null);flash('🗑️ Canvas limpo');}}} title="Limpar canvas" style={{padding:"3px 6px",borderRadius:4,background:th.card,border:"1px solid "+th.border,color:th.dim,fontSize:11,cursor:"pointer"}}>🗑️</button>
                   <button onClick={()=>{try{localStorage.setItem(CANVAS_SAVE_KEY,JSON.stringify(deskLayers));flash('💾 Canvas salvo!');}catch(e){flash('❌ Erro ao salvar');}}} title="Salvar canvas" style={{padding:"3px 6px",borderRadius:4,background:th.card,border:"1px solid "+th.border,color:th.gold,fontSize:11,cursor:"pointer"}}>💾</button>
                   <button onClick={deskUndo} style={{padding:"3px 6px",borderRadius:4,background:th.card,border:"1px solid "+th.border,color:th.dim,fontSize:12,cursor:"pointer"}}>↩</button>
@@ -5444,6 +5545,74 @@ function App(){
 
               <input ref={deskFileRef} type="file" accept="image/*" style={{display:"none"}} onChange={deskHandleImageUpload}/>
             <input ref={el=>window._deskVideoRef=el} type="file" accept="video/*" style={{display:"none"}} onChange={e=>{const file=e.target.files[0];if(!file)return;const r=new FileReader();r.onload=ev=>deskUpdateLayer(deskSelected,{content:ev.target.result,isEmbed:false});r.readAsDataURL(file);}}/>
+
+              {/* ═══ TEMPLATE REGISTRY DRAWER ═══ */}
+              {showTmplRegistry&&(
+                <>
+                  <div onClick={()=>setShowTmplRegistry(false)} style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.5)',zIndex:9000}}/>
+                  <div style={{position:'fixed',top:0,right:0,height:'100vh',width:380,background:th.bg,borderLeft:'1px solid '+th.border,zIndex:9001,display:'flex',flexDirection:'column',overflow:'hidden',fontFamily:'var(--font-sans)'}}>
+                    <div style={{padding:'16px 20px',borderBottom:'1px solid '+th.border,display:'flex',alignItems:'center',justifyContent:'space-between',background:th.card}}>
+                      <div>
+                        <div style={{fontWeight:700,fontSize:14,color:th.text}}>📂 Template Registry</div>
+                        <div style={{fontSize:11,color:th.dim,marginTop:2}}>{lang==='de'?'Zentrale Vorlagenbibliothek':lang==='pt'?'Hub central de templates':'Central template hub'}</div>
+                      </div>
+                      <button onClick={()=>setShowTmplRegistry(false)} style={{background:'none',border:'none',cursor:'pointer',fontSize:18,color:th.dim,padding:4}}>✕</button>
+                    </div>
+                    <div style={{padding:'12px 20px',borderBottom:'1px solid '+th.border,background:th.card}}>
+                      <input type="text" placeholder={lang==='de'?'🔍 Suchen...':lang==='pt'?'🔍 Buscar...':'🔍 Search...'} value={tmplFilter.search} onChange={e=>setTmplFilter(f=>({...f,search:e.target.value}))} style={{width:'100%',padding:'7px 10px',border:'1px solid '+th.border,borderRadius:6,fontSize:12,background:th.input,color:th.text,boxSizing:'border-box',marginBottom:8,outline:'none'}}/>
+                      <div style={{display:'flex',gap:8}}>
+                        <select value={tmplFilter.category} onChange={e=>setTmplFilter(f=>({...f,category:e.target.value}))} style={{flex:1,padding:'5px 8px',border:'1px solid '+th.border,borderRadius:6,fontSize:11,background:th.input,color:th.text}}>
+                          <option value="">{lang==='de'?'Alle Kategorien':lang==='pt'?'Todas categorias':'All categories'}</option>
+                          <option value="report">{lang==='de'?'Bericht':lang==='pt'?'Relatório':'Report'}</option>
+                          <option value="invoice">{lang==='de'?'Rechnung':lang==='pt'?'Fatura':'Invoice'}</option>
+                          <option value="communique">Communiqué</option>
+                          <option value="presentation">{lang==='de'?'Präsentation':lang==='pt'?'Apresentação':'Presentation'}</option>
+                          <option value="certificate">{lang==='de'?'Zertifikat':lang==='pt'?'Certificado':'Certificate'}</option>
+                          <option value="letter">{lang==='de'?'Brief':lang==='pt'?'Carta':'Letter'}</option>
+                          <option value="generic">{lang==='de'?'Generisch':lang==='pt'?'Genérico':'Generic'}</option>
+                        </select>
+                        <select value={tmplFilter.lang} onChange={e=>setTmplFilter(f=>({...f,lang:e.target.value}))} style={{flex:1,padding:'5px 8px',border:'1px solid '+th.border,borderRadius:6,fontSize:11,background:th.input,color:th.text}}>
+                          <option value="">{lang==='de'?'Alle Sprachen':lang==='pt'?'Todos idiomas':'All languages'}</option>
+                          <option value="pt">PT</option>
+                          <option value="de">DE</option>
+                          <option value="en">EN</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div style={{flex:1,overflowY:'auto',padding:'12px 20px'}}>
+                      {tmplLoading?(
+                        <div style={{textAlign:'center',padding:40,color:th.dim,fontSize:13}}>⏳ {lang==='de'?'Laden...':lang==='pt'?'Carregando...':'Loading...'}</div>
+                      ):filteredTmplItems.length===0?(
+                        <div style={{textAlign:'center',padding:40,color:th.dim,fontSize:13}}>{lang==='de'?'Keine Templates gefunden':lang==='pt'?'Nenhum template encontrado':'No templates found'}<br/><small>{lang==='de'?'Erstellen Sie Templates im HTML Builder':lang==='pt'?'Crie templates no HTML Builder':'Create templates in HTML Builder'}</small></div>
+                      ):(
+                        filteredTmplItems.map(tmpl=>{
+                          const catEmoji={report:'📊',invoice:'🧾',communique:'📰',presentation:'🎯',certificate:'🏅',letter:'✉️',generic:'📄'};
+                          const govColor={LOW:'#27ae60',MEDIUM:'#f39c12',HIGH:'#8B6914'};
+                          return(
+                            <div key={tmpl.id} style={{border:'1px solid '+th.border,borderRadius:8,marginBottom:10,padding:12,background:th.card}}>
+                              <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',marginBottom:6}}>
+                                <div>
+                                  <span style={{fontSize:14,marginRight:6}}>{catEmoji[tmpl.category]||'📄'}</span>
+                                  <strong style={{fontSize:13,color:th.text}}>{tmpl.name}</strong>
+                                </div>
+                                <span style={{fontSize:10,fontFamily:'monospace',color:govColor[tmpl.governance]||th.dim,background:th.bg,padding:'2px 6px',borderRadius:4,border:'1px solid currentColor'}}>{tmpl.governance}</span>
+                              </div>
+                              {tmpl.description&&<div style={{fontSize:11,color:th.dim,marginBottom:6}}>{tmpl.description}</div>}
+                              <div style={{fontSize:10,color:th.dim,marginBottom:8}}>{tmpl.category} · {tmpl.lang} · {new Date(tmpl.created_at).toLocaleDateString(lang==='de'?'de-DE':lang==='pt'?'pt-BR':'en-US')}</div>
+                              <div style={{display:'flex',gap:6}}>
+                                <button onClick={()=>loadTemplateFromRegistry(tmpl.id,false)} style={{flex:1,padding:'6px 0',fontSize:11,fontWeight:600,background:th.gold,color:'#fff',border:'none',borderRadius:5,cursor:'pointer'}}>⬇ {lang==='de'?'Laden':lang==='pt'?'Carregar':'Load'}</button>
+                                <button onClick={()=>loadTemplateFromRegistry(tmpl.id,true)} style={{flex:1,padding:'6px 0',fontSize:11,fontWeight:600,background:'transparent',color:th.gold,border:'1px solid '+th.gold,borderRadius:5,cursor:'pointer'}}>+ {lang==='de'?'Anhängen':lang==='pt'?'Anexar':'Append'}</button>
+                                <button onClick={()=>deleteTmplFromRegistry(tmpl.id)} style={{padding:'6px 10px',fontSize:11,background:'transparent',color:'#c0392b',border:'1px solid #c0392b',borderRadius:5,cursor:'pointer'}} title={lang==='de'?'Löschen':lang==='pt'?'Remover':'Delete'}>🗑</button>
+                              </div>
+                            </div>
+                          );
+                        })
+                      )}
+                    </div>
+                    <div style={{padding:'12px 20px',borderTop:'1px solid '+th.border,background:th.card,fontSize:11,color:th.dim,textAlign:'center'}}>Template Registry v1.0 · Vault :8106</div>
+                  </div>
+                </>
+              )}
             </div>
           )}
 
