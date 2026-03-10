@@ -290,6 +290,13 @@ export default function ExportMenu({
     // SEND VIA EMAIL — Dragon Distribute API
     // ═══════════════════════════════════════
     if (format === 'send') {
+      // Check if document is sealed (has valid receipt ID)
+      if (!sealData?.receiptId || sealData?.status === 'DRAFT') {
+        window.alert(l.errorNoReceipt);
+        setOpen(false);
+        return;
+      }
+
       const recipient = window.prompt(l.sendTo);
       if (!recipient || !recipient.includes('@')) {
         setOpen(false);
@@ -306,7 +313,7 @@ export default function ExportMenu({
             recipients: [{ channel: 'email', value: recipient }],
             doc_title: title || l.untitled,
             doc_content: htmlContent,
-            receipt_id: sealData?.receiptId || 'DRAFT',
+            receipt_id: sealData.receiptId,
             lang: lang,
           }),
         });
