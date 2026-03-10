@@ -500,6 +500,14 @@ def create_agent_api(agent: WindiAgent):
     except ImportError as e:
         print(f"  [Grove] Grove Orchestrator not loaded: {e}")
 
+    try:
+        from blueprints.vpr_manage_blueprint import vpr_manage_bp, init_vpr_manage_db
+        init_vpr_manage_db()
+        app.register_blueprint(vpr_manage_bp)
+        print("  [VPR] VPR Manage v1.0.0 loaded on /vpr/*")
+    except ImportError as e:
+        print(f"  [VPR] VPR Manage not loaded: {e}")
+
     @app.route("/agent/health", methods=["GET"])
     def health():
         return jsonify({

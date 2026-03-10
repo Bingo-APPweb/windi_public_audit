@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VPR Manage — WINDI</title>
+  <style>
+    /* ─── Design System: KLAR (#F5F0E0) + NOIR ───────────────── */
+    :root {
+      --bg:       #F5F0E0;
+      --surface:  #FDFBF5;
+      --border:   #D4CCB8;
+      --text:     #1A1A1A;
+      --muted:    #6B6455;
+      --gold:     #8B6914;
+      --gold-light: #C9A227;
+      --green:    #2D6A4F;
+      --red:      #8B1A1A;
+      --accent:   #1A3A6B;
+      --radius:   6px;
+      --mono:     'JetBrains Mono', 'Fira Code', monospace;
+      --sans:     'Bricolage Grotesque', 'Inter', sans-serif;
+    }
+    [data-theme="noir"] {
+      --bg:      #0E0E10;
+      --surface: #1A1A1E;
+      --border:  #2A2A2E;
+      --text:    #E8E4D8;
+      --muted:   #8A8478;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ─── Layout ──────────────────────────────────────────────── */
+    .app { display: flex; flex-direction: column; min-height: 100vh; }
+
+    .topbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .topbar-left { display: flex; align-items: center; gap: 12px; }
+    .logo { font-family: var(--mono); font-size: 13px; color: var(--gold); font-weight: 700; }
+    .did-badge {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .topbar-right { display: flex; gap: 8px; align-items: center; }
+    .btn-icon {
+      background: none; border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 6px 10px; cursor: pointer;
+      font-size: 12px; color: var(--muted);
+      transition: all 0.15s;
+    }
+    .btn-icon:hover { border-color: var(--gold); color: var(--gold); }
+
+    .main { display: flex; flex: 1; }
+
+    /* ─── Sidebar ─────────────────────────────────────────────── */
+    .sidebar {
+      width: 200px;
+      min-width: 200px;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 20px 0;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 20px; cursor: pointer;
+      font-size: 13px; color: var(--muted);
+      border-left: 3px solid transparent;
+      transition: all 0.15s;
+    }
+    .nav-item:hover { color: var(--text); background: var(--bg); }
+    .nav-item.active {
+      color: var(--gold);
+      border-left-color: var(--gold);
+      background: var(--bg);
+      font-weight: 600;
+    }
+    .nav-icon { font-size: 16px; }
+    .nav-section {
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--muted);
+      padding: 16px 20px 6px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* ─── Content ─────────────────────────────────────────────── */
+    .content { flex: 1; padding: 32px; overflow-y: auto; max-width: 860px; }
+    .page-title {
+      font-family: var(--sans);
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .page-sub {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 28px;
+    }
+
+    /* ─── Cards ───────────────────────────────────────────────── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .seal-badge {
+      font-family: var(--mono);
+      font-size: 10px;
+      background: var(--gold);
+      color: white;
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+
+    /* ─── Form Fields ─────────────────────────────────────────── */
+    .form-row { margin-bottom: 16px; }
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .form-input {
+      width: 100%;
+      padding: 9px 12px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-family: var(--sans);
+      font-size: 14px;
+      color: var(--text);
+      transition: border-color 0.15s;
+    }
+    .form-input:focus { outline: none; border-color: var(--gold); }
+    textarea.form-input { resize: vertical; min-height: 80px; }
+    .char-count {
+      font-size: 11px;
+      color: var(--muted);
+      text-align: right;
+      margin-top: 4px;
+    }
+    .char-count.warn { color: var(--red); }
+
+    /* Tags input */
+    .tags-container {
+      display: flex; flex-wrap: wrap; gap: 6px;
+      padding: 6px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      min-height: 42px;
+      cursor: text;
+    }
+    .tag {
+      background: var(--gold);
+      color: white;
+      padding: 3px 8px;
+      border-radius: 3px;
+      font-size: 12px;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .tag-remove {
+      cursor: pointer; opacity: 0.7;
+      background: none; border: none; color: white; font-size: 12px;
+    }
+    .tag-remove:hover { opacity: 1; }
+    .tag-input {
+      border: none; background: none;
+      font-size: 13px; color: var(--text);
+      outline: none; min-width: 80px; flex: 1;
+      font-family: var(--sans);
+    }
+
+    /* ─── Buttons ─────────────────────────────────────────────── */
+    .btn-primary {
+      background: var(--gold);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      padding: 10px 20px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-primary:hover { background: var(--gold-light); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-secondary {
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 9px 18px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    .btn-secondary:hover { border-color: var(--gold); }
+    .btn-row { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+
+    /* ─── Feedback ────────────────────────────────────────────── */
+    .toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--green);
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      font-size: 13px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      z-index: 1000;
+      transform: translateX(120%);
+      transition: transform 0.3s ease;
+    }
+    .toast.show { transform: translateX(0); }
+    .toast.error { border-left-color: var(--red); }
+    .receipt-line {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    /* ─── Login Screen ────────────────────────────────────────── */
+    .login-screen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: var(--bg);
+    }
+    .login-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 40px;
+      width: 380px;
+      text-align: center;
+    }
+    .login-logo {
+      font-family: var(--mono);
+      font-size: 22px;
+      color: var(--gold);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .login-sub {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 28px;
+    }
+
+    /* ─── History Table ───────────────────────────────────────── */
+    .history-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .history-table th {
+      text-align: left; padding: 8px 12px;
+      background: var(--bg);
+      font-weight: 600;
+      color: var(--muted);
+      border-bottom: 1px solid var(--border);
+    }
+    .history-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .history-table tr:last-child td { border-bottom: none; }
+    .mono-small { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+
+    /* ─── Responsive ──────────────────────────────────────────── */
+    @media (max-width: 680px) {
+      .sidebar { display: none; }
+      .content { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<div class="toast" id="toast">
+  <div id="toast-msg">Salvo com sucesso</div>
+  <div class="receipt-line" id="toast-receipt"></div>
+</div>
+
+<script>
+// ─── State ─────────────────────────────────────────────────────────────────
+const DID_SHORT  = window.location.pathname.split('/').find((p, i, arr) => arr[i+1] === 'manage' && p !== '') || 'unknown';
+const API_BASE   = `/vpr/${DID_SHORT}/manage`;
+let TOKEN        = sessionStorage.getItem('vpr_token') || '';
+let CURRENT_PAGE = 'profile';
+let PROFILE      = {};
+let HISTORY      = [];
+let THEME        = localStorage.getItem('vpr_theme') || 'klar';
+
+if (THEME === 'noir') document.documentElement.setAttribute('data-theme', 'noir');
+
+// ─── API ───────────────────────────────────────────────────────────────────
+async function api(path, method = 'GET', body = null) {
+  const opts = {
+    method,
+    headers: { 'Content-Type': 'application/json' }
+  };
+  if (TOKEN) opts.headers['Authorization'] = `Bearer ${TOKEN}`;
+  if (body)  opts.body = JSON.stringify(body);
+  const res = await fetch(API_BASE + path, opts);
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.detail || `HTTP ${res.status}`);
+  return data;
+}
+
+// ─── Toast ─────────────────────────────────────────────────────────────────
+function toast(msg, receipt = '', isError = false) {
+  const el = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  document.getElementById('toast-receipt').textContent = receipt ? `receipt: ${receipt}` : '';
+  el.className = 'toast show' + (isError ? ' error' : '');
+  setTimeout(() => el.className = 'toast', 3500);
+}
+
+// ─── Router ────────────────────────────────────────────────────────────────
+function navigate(page) {
+  CURRENT_PAGE = page;
+  render();
+}
+
+// ─── Tags Input ────────────────────────────────────────────────────────────
+function createTagsInput(containerId, values, onChange) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  function redraw() {
+    container.innerHTML = '';
+    values.forEach((v, i) => {
+      const tag = document.createElement('span');
+      tag.className = 'tag';
+      tag.innerHTML = `${v} <button class="tag-remove" data-i="${i}">\u00d7</button>`;
+      container.appendChild(tag);
+    });
+    const inp = document.createElement('input');
+    inp.className = 'tag-input';
+    inp.placeholder = values.length === 0 ? 'Digite e Enter...' : '';
+    inp.onkeydown = e => {
+      if ((e.key === 'Enter' || e.key === ',') && inp.value.trim()) {
+        e.preventDefault();
+        const val = inp.value.trim().replace(',', '');
+        if (!values.includes(val)) { values.push(val); onChange(values); redraw(); }
+        else inp.value = '';
+      }
+      if (e.key === 'Backspace' && !inp.value && values.length > 0) {
+        values.pop(); onChange(values); redraw();
+      }
+    };
+    container.appendChild(inp);
+    container.querySelectorAll('.tag-remove').forEach(btn => {
+      btn.onclick = e => {
+        e.stopPropagation();
+        values.splice(+btn.dataset.i, 1);
+        onChange(values);
+        redraw();
+      };
+    });
+    container.onclick = () => inp.focus();
+  }
+  redraw();
+}
+
+// ─── Pages ─────────────────────────────────────────────────────────────────
+
+function renderLogin() {
+  document.getElementById('root').innerHTML = `
+    <div class="login-screen">
+      <div class="login-card">
+        <div class="login-logo">WINDI VPR</div>
+        <div class="login-sub">Painel Privado de Gestao<br><span style="font-family:monospace;font-size:11px;opacity:.6">${DID_SHORT}</span></div>
+        <div class="form-row">
+          <label class="form-label">Wallet ID</label>
+          <input id="login-wallet" class="form-input" placeholder="wallet_id" />
+        </div>
+        <div class="form-row">
+          <label class="form-label">DID Short</label>
+          <input id="login-did" class="form-input" value="${DID_SHORT}" readonly style="opacity:.6" />
+        </div>
+        <button class="btn-primary" style="width:100%;margin-top:8px" onclick="doLogin()">
+          Entrar no Painel
+        </button>
+        <div style="margin-top:16px;font-size:11px;color:var(--muted)">
+          Sessao: 6h | JWT local
+        </div>
+      </div>
+    </div>`;
+}
+
+async function doLogin() {
+  const wallet_id = document.getElementById('login-wallet').value.trim();
+  if (!wallet_id) { toast('Wallet ID obrigatorio', '', true); return; }
+  try {
+    const data = await api('/login', 'POST', { wallet_id, did_short: DID_SHORT });
+    TOKEN = data.token;
+    sessionStorage.setItem('vpr_token', TOKEN);
+    await loadProfile();
+    render();
+  } catch(e) { toast('Erro de login: ' + e.message, '', true); }
+}
+
+async function doLogout() {
+  try { await api('/logout', 'POST'); } catch(e) {}
+  TOKEN = '';
+  sessionStorage.removeItem('vpr_token');
+  render();
+}
+
+function renderApp() {
+  const navItems = [
+    { id: 'profile',      icon: 'P', label: 'Perfil' },
+    { id: 'curation',     icon: 'C', label: 'Curar', disabled: true, soon: true },
+    { id: 'confirm',      icon: 'OK', label: 'Confirmacoes', disabled: true, soon: true },
+    { id: 'privacy',      icon: 'L', label: 'Privacidade', disabled: true, soon: true },
+    { id: 'jurisdiction', icon: 'J', label: 'Jurisdicao', disabled: true, soon: true },
+    { id: 'certs',        icon: 'D', label: 'Certif.', disabled: true, soon: true },
+    { id: 'analytics',    icon: 'A', label: 'Analytics', disabled: true, soon: true },
+  ];
+
+  document.getElementById('root').innerHTML = `
+    <div class="app">
+      <div class="topbar">
+        <div class="topbar-left">
+          <span class="logo">VPR MANAGE</span>
+          <span class="did-badge">${DID_SHORT}</span>
+        </div>
+        <div class="topbar-right">
+          <button class="btn-icon" onclick="toggleTheme()">
+            ${THEME === 'noir' ? 'KLAR' : 'NOIR'}
+          </button>
+          <a href="/vpr/${DID_SHORT}" class="btn-icon" style="text-decoration:none">Ver Publico</a>
+          <button class="btn-icon" onclick="doLogout()">Sair</button>
+        </div>
+      </div>
+      <div class="main">
+        <div class="sidebar">
+          <div class="nav-section">Gestao</div>
+          ${navItems.map(n => `
+            <div class="nav-item ${n.id === CURRENT_PAGE ? 'active' : ''} ${n.disabled ? 'disabled' : ''}"
+              onclick="${n.disabled ? '' : `navigate('${n.id}')`}"
+              style="${n.disabled ? 'opacity:.4;cursor:not-allowed' : ''}">
+              <span class="nav-icon">${n.icon}</span>
+              <span>${n.label}</span>
+              ${n.soon ? '<span style="font-size:9px;background:#8B6914;color:white;padding:1px 4px;border-radius:2px;margin-left:auto">EM BREVE</span>' : ''}
+            </div>
+          `).join('')}
+        </div>
+        <div class="content" id="page-content"></div>
+      </div>
+    </div>`;
+
+  renderPage();
+}
+
+function renderPage() {
+  const el = document.getElementById('page-content');
+  if (!el) return;
+  if (CURRENT_PAGE === 'profile') renderProfile(el);
+}
+
+// ─── Profile Page ──────────────────────────────────────────────────────────
+
+let profileEdits = {};
+
+function renderProfile(el) {
+  const p = PROFILE;
+  const availFor = Array.isArray(p.available_for) ? [...p.available_for] : [];
+  const langs = Array.isArray(p.languages) ? [...p.languages] : ['PT'];
+
+  el.innerHTML = `
+    <div class="page-title">Perfil</div>
+    <div class="page-sub">Como voce aparece no VPR publico. Cada edicao e selada no Ledger.</div>
+
+    <div class="card">
+      <div class="card-title">
+        Identidade Profissional
+        <span class="seal-badge">I1 ATIVO</span>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">Papel / Cargo</label>
+        <input id="p-role" class="form-input" value="${p.role || ''}" placeholder="ex: Jornalista Forense | Fundador" oninput="profileEdits.role=this.value" />
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">Localizacao</label>
+        <input id="p-loc" class="form-input" value="${p.location || ''}" placeholder="ex: Kempten, Bavaria, DE" oninput="profileEdits.location=this.value" />
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">Bio <span style="font-weight:400;text-transform:none">(max 400 chars)</span></label>
+        <textarea id="p-bio" class="form-input" placeholder="Descreva sua atuacao profissional..." oninput="profileEdits.bio=this.value;updateCharCount()">${p.bio || ''}</textarea>
+        <div class="char-count" id="bio-count">${(p.bio || '').length}/400</div>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">Disponivel para (tags)</label>
+        <div id="tags-available" class="tags-container"></div>
+      </div>
+
+      <div class="form-row">
+        <label class="form-label">Idiomas (tags)</label>
+        <div id="tags-langs" class="tags-container"></div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-secondary" onclick="reloadProfile()">Descartar</button>
+        <button class="btn-primary" onclick="saveProfile()" id="save-btn">
+          Salvar e Selar
+        </button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        Historico de Edicoes
+        <span style="font-size:11px;color:var(--muted);font-weight:400">append-only (I1)</span>
+      </div>
+      ${renderHistory()}
+    </div>
+  `;
+
+  // Init tags
+  createTagsInput('tags-available', availFor, v => { profileEdits.available_for = [...v]; });
+  createTagsInput('tags-langs', langs, v => { profileEdits.languages = [...v]; });
+}
+
+function updateCharCount() {
+  const val = document.getElementById('p-bio')?.value || '';
+  const el = document.getElementById('bio-count');
+  if (el) { el.textContent = `${val.length}/400`; el.className = 'char-count' + (val.length > 380 ? ' warn' : ''); }
+}
+
+function renderHistory() {
+  if (!HISTORY.length) {
+    return '<div style="color:var(--muted);font-size:13px;text-align:center;padding:20px">Nenhuma edicao ainda.</div>';
+  }
+  return `<table class="history-table">
+    <thead><tr><th>Campo</th><th>Novo Valor</th><th>Data</th><th>Receipt</th></tr></thead>
+    <tbody>
+      ${HISTORY.slice(-10).reverse().map(h => `
+        <tr>
+          <td style="font-weight:600">${h.field_changed}</td>
+          <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${h.new_value}</td>
+          <td class="mono-small">${new Date(h.ts).toLocaleDateString('pt-BR')}</td>
+          <td class="mono-small">${(h.ledger_receipt||'').substring(0,20)}...</td>
+        </tr>`).join('')}
+    </tbody>
+  </table>`;
+}
+
+async function saveProfile() {
+  const btn = document.getElementById('save-btn');
+  if (!Object.keys(profileEdits).length) { toast('Nenhuma alteracao', '', false); return; }
+  btn.disabled = true; btn.textContent = 'Selando...';
+  try {
+    const data = await api('/profile', 'POST', profileEdits);
+    toast(`${data.updated_fields?.join(', ')} atualizado`, data.receipt);
+    profileEdits = {};
+    await loadProfile();
+    renderPage();
+  } catch(e) {
+    toast('Erro: ' + e.message, '', true);
+  } finally {
+    btn.disabled = false; btn.textContent = 'Salvar e Selar';
+  }
+}
+
+async function reloadProfile() {
+  profileEdits = {};
+  await loadProfile();
+  renderPage();
+}
+
+// ─── Data Loaders ──────────────────────────────────────────────────────────
+
+async function loadProfile() {
+  try {
+    const data = await api('/profile');
+    PROFILE = data.profile;
+  } catch(e) {
+    if (e.message.includes('404')) PROFILE = {};
+  }
+}
+
+async function loadHistory() {
+  // Placeholder — endpoint de historico implementado na Fase 2
+  HISTORY = [];
+}
+
+// ─── Theme ─────────────────────────────────────────────────────────────────
+
+function toggleTheme() {
+  THEME = THEME === 'klar' ? 'noir' : 'klar';
+  localStorage.setItem('vpr_theme', THEME);
+  document.documentElement.setAttribute('data-theme', THEME === 'noir' ? 'noir' : '');
+  render();
+}
+
+// ─── Main Render ───────────────────────────────────────────────────────────
+
+async function render() {
+  if (!TOKEN) { renderLogin(); return; }
+  // Verifica token valido
+  try {
+    await loadProfile();
+    renderApp();
+  } catch(e) {
+    // Token invalido
+    TOKEN = '';
+    sessionStorage.removeItem('vpr_token');
+    renderLogin();
+  }
+}
+
+// ─── Boot ──────────────────────────────────────────────────────────────────
+render();
+</script>
+</body>
+</html>
