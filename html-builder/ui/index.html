@@ -1,908 +1,1430 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WINDI HTML Builder v3.0</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@400;700;900&display=swap" rel="stylesheet">
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #0C0C14; overflow: hidden; }
-    #root { height: 100vh; }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>WINDI HTML Builder v3.1</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+/* ══════════════════════════════════════════════════
+   WINDI HTML Builder v3.1 — Guardian Edition
+   Design System: KLAR + NOIR | Bricolage Grotesque
+   ══════════════════════════════════════════════════ */
+
+:root {
+  --bg:        #F5F0E0;
+  --bg2:       #EDE8D4;
+  --bg3:       #E0D9C4;
+  --border:    #C8C0A8;
+  --text:      #1A1814;
+  --text2:     #4A4540;
+  --text3:     #7A7268;
+  --gold:      #8B6914;
+  --gold-lt:   #B8900A;
+  --gold-bg:   #F5EDD0;
+  --red:       #C0392B;
+  --green:     #27AE60;
+  --blue:      #2471A3;
+  --radius:    6px;
+  --radius-lg: 12px;
+  --shadow:    0 2px 8px rgba(0,0,0,0.12);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.16);
+  --font:      'Bricolage Grotesque', sans-serif;
+  --mono:      'JetBrains Mono', monospace;
+  --trans:     all 0.18s ease;
+}
+
+[data-theme="noir"] {
+  --bg:        #0F0E0C;
+  --bg2:       #1A1916;
+  --bg3:       #252320;
+  --border:    #3A3830;
+  --text:      #F0ECD8;
+  --text2:     #B8B0A0;
+  --text3:     #807870;
+  --gold:      #D4A820;
+  --gold-lt:   #E8C040;
+  --gold-bg:   #1F1C10;
+  --shadow:    0 2px 8px rgba(0,0,0,0.4);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.5);
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* ─── Layout ─────────────────────────────────── */
+.app { display:flex; flex-direction:column; height:100vh; overflow:hidden; }
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  height: 48px;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: 8px;
+}
+
+.topbar-brand .logo {
+  width: 28px; height: 28px;
+  background: var(--gold);
+  border-radius: 4px;
+  display: flex; align-items:center; justify-content:center;
+  font-size: 14px; font-weight: 700; color: #fff;
+  letter-spacing: -0.5px;
+}
+
+.topbar-brand .name {
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  color: var(--gold);
+}
+
+.topbar-brand .version {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text3);
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+.divider { width:1px; height:24px; background:var(--border); }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: var(--radius);
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: var(--trans);
+  white-space: nowrap;
+  user-select: none;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text2);
+  border-color: transparent;
+}
+.btn-ghost:hover { background:var(--bg3); color:var(--text); }
+.btn-ghost:disabled { opacity:0.4; cursor:not-allowed; }
+
+.btn-outline {
+  background: transparent;
+  color: var(--text2);
+  border-color: var(--border);
+}
+.btn-outline:hover { background:var(--bg3); color:var(--text); border-color:var(--text3); }
+
+.btn-gold {
+  background: var(--gold);
+  color: #fff;
+  border-color: var(--gold);
+}
+.btn-gold:hover { background:var(--gold-lt); border-color:var(--gold-lt); }
+.btn-gold:disabled { opacity:0.5; cursor:not-allowed; }
+
+.btn-danger {
+  background: transparent;
+  color: var(--red);
+  border-color: transparent;
+}
+.btn-danger:hover { background: rgba(192,57,43,0.1); }
+
+.topbar-actions { display:flex; align-items:center; gap:4px; }
+.topbar-right { margin-left:auto; display:flex; align-items:center; gap:6px; }
+
+/* ─── Status bar ─────────────────────────────── */
+.statusbar {
+  height: 26px;
+  background: var(--bg3);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 16px;
+  font-size: 11px;
+  font-family: var(--mono);
+  color: var(--text3);
+  flex-shrink: 0;
+}
+.statusbar .sep { color: var(--border); }
+.status-dot { width:6px;height:6px;border-radius:50%;background:var(--green); display:inline-block; }
+.status-dot.warn { background:var(--gold); }
+.status-dot.err  { background:var(--red); }
+
+/* ─── Main workspace ─────────────────────────── */
+.workspace {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ─── Sidebar ─────────────────────────────────── */
+.sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sidebar-header {
+  padding: 10px 12px 8px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sidebar-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--text3);
+}
+
+.item-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.item-list::-webkit-scrollbar { width:4px; }
+.item-list::-webkit-scrollbar-track { background:transparent; }
+.item-list::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+
+.item-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 10px;
+  margin-bottom: 4px;
+  cursor: pointer;
+  transition: var(--trans);
+  position: relative;
+  user-select: none;
+}
+
+.item-card:hover { border-color: var(--gold); box-shadow: var(--shadow); }
+.item-card.active {
+  border-color: var(--gold);
+  background: var(--gold-bg);
+  box-shadow: var(--shadow);
+}
+.item-card.dragging { opacity:0.5; }
+
+.item-card-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.item-badge {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 500;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text3);
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.item-badge.type-h1, .item-badge.type-h2, .item-badge.type-h3 { background:#EEF4FF; border-color:#B0C8F0; color:#2471A3; }
+.item-badge.type-p  { background:#F0F4EE; border-color:#B0C8A8; color:#27AE60; }
+.item-badge.type-ul, .item-badge.type-ol { background:#FDF5E8; border-color:#E0C890; color:#8B6914; }
+.item-badge.type-img { background:#F8E8F8; border-color:#D090D0; color:#8B3090; }
+.item-badge.type-div { background:#E8F0F8; border-color:#90A8C8; color:#204070; }
+.item-badge.type-code { background:#1A1814; border-color:#3A3430; color:#D4A820; }
+.item-badge.type-hr { background:var(--bg3); }
+.item-badge.type-blockquote { background:#FFF0E8; border-color:#E0B090; color:#804020; }
+.item-badge.type-table { background:#E8F8F0; border-color:#90C8A8; color:#206840; }
+.item-badge.type-video { background:#FFE8E8; border-color:#E09090; color:#A02020; }
+.item-badge.type-iframe { background:#E8E8FF; border-color:#9090D0; color:#4040A0; }
+
+[data-theme="noir"] .item-badge.type-h1,
+[data-theme="noir"] .item-badge.type-h2,
+[data-theme="noir"] .item-badge.type-h3 { background:#0A1020; border-color:#1A3050; color:#6090D0; }
+[data-theme="noir"] .item-badge.type-p  { background:#0A140A; border-color:#1A3018; color:#50A868; }
+
+.item-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.item-preview {
+  font-size: 11px;
+  color: var(--text3);
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.item-actions {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: none;
+  gap: 2px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2px;
+}
+.item-card:hover .item-actions { display:flex; }
+
+.item-action-btn {
+  width: 22px; height: 22px;
+  border-radius: 3px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display:flex; align-items:center; justify-content:center;
+  font-size: 11px;
+  color: var(--text3);
+  transition: var(--trans);
+}
+.item-action-btn:hover { background:var(--bg3); color:var(--text); }
+.item-action-btn.del:hover { background:rgba(192,57,43,0.1); color:var(--red); }
+
+/* ─── Add item panel ─────────────────────────── */
+.add-panel {
+  padding: 8px;
+  border-top: 1px solid var(--border);
+  background: var(--bg2);
+}
+
+.add-panel-title {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 6px;
+  padding: 0 2px;
+}
+
+.type-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+}
+
+.type-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 2px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg);
+  cursor: pointer;
+  transition: var(--trans);
+  font-family: var(--font);
+}
+.type-btn:hover { background:var(--gold-bg); border-color:var(--gold); }
+.type-btn .icon { font-size: 14px; }
+.type-btn .label { font-size: 9px; font-weight:500; color:var(--text3); letter-spacing:0.3px; }
+.type-btn:hover .label { color:var(--gold); }
+
+/* ─── Editor pane ────────────────────────────── */
+.editor-pane {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.editor-toolbar {
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg2);
+  flex-shrink: 0;
+}
+
+.editor-toolbar .path {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text3);
+  flex: 1;
+}
+
+.editor-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 32px;
+}
+
+.editor-area::-webkit-scrollbar { width:6px; }
+.editor-area::-webkit-scrollbar-track { background:transparent; }
+.editor-area::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+
+/* ─── Item Editor (inline form) ──────────────── */
+.item-editor {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+
+.item-editor-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.item-editor-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.field-group {
+  margin-bottom: 14px;
+}
+
+.field-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text3);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+.field-input, .field-textarea, .field-select {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 10px;
+  font-family: var(--font);
+  font-size: 13px;
+  color: var(--text);
+  transition: var(--trans);
+  outline: none;
+}
+
+.field-input:focus, .field-textarea:focus, .field-select:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 2px rgba(139,105,20,0.12);
+}
+
+.field-textarea {
+  resize: vertical;
+  min-height: 80px;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.field-select {
+  cursor: pointer;
+}
+
+.field-row { display:flex; gap:10px; }
+.field-row .field-group { flex:1; }
+
+.item-editor-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+/* ─── Empty state ────────────────────────────── */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  height: 100%;
+  color: var(--text3);
+  text-align: center;
+  padding: 40px;
+}
+
+.empty-icon { font-size: 48px; opacity:0.3; }
+.empty-title { font-size: 16px; font-weight: 600; }
+.empty-sub { font-size: 13px; max-width: 280px; line-height:1.6; }
+
+/* ─── Preview pane ───────────────────────────── */
+.preview-pane {
+  width: 380px;
+  flex-shrink: 0;
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.preview-header {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.preview-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--text3);
+}
+
+.preview-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.preview-area::-webkit-scrollbar { width:4px; }
+.preview-area::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
+
+/* ─── Preview HTML rendering ─────────────────── */
+.preview-output {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  min-height: 200px;
+  font-family: Georgia, serif;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #222;
+}
+
+.preview-output h1 { font-size:2em; margin-bottom:.5em; font-family:Arial,sans-serif; }
+.preview-output h2 { font-size:1.5em; margin-bottom:.4em; font-family:Arial,sans-serif; }
+.preview-output h3 { font-size:1.17em; margin-bottom:.3em; font-family:Arial,sans-serif; }
+.preview-output p  { margin-bottom:.8em; }
+.preview-output ul, .preview-output ol { padding-left:1.5em; margin-bottom:.8em; }
+.preview-output li { margin-bottom:.2em; }
+.preview-output blockquote { border-left:3px solid #ccc; padding-left:12px; margin:1em 0; color:#555; font-style:italic; }
+.preview-output hr { border:none; border-top:1px solid #ddd; margin:1em 0; }
+.preview-output code, .preview-output pre { font-family:monospace; background:#f4f4f4; padding:2px 5px; border-radius:3px; font-size:.9em; }
+.preview-output pre { padding:12px; overflow-x:auto; white-space:pre-wrap; }
+.preview-output img { max-width:100%; border-radius:4px; }
+.preview-output table { border-collapse:collapse; width:100%; margin-bottom:.8em; }
+.preview-output th, .preview-output td { border:1px solid #ddd; padding:6px 10px; text-align:left; }
+.preview-output th { background:#f8f8f8; font-weight:600; }
+.preview-output video { max-width:100%; border-radius:4px; margin-bottom:.8em; }
+.preview-output iframe { max-width:100%; border-radius:4px; margin-bottom:.8em; }
+
+/* ─── Seal panel ─────────────────────────────── */
+.seal-panel {
+  padding: 12px;
+  border-top: 1px solid var(--border);
+  background: var(--bg2);
+  flex-shrink: 0;
+}
+
+.seal-panel-title {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 8px;
+}
+
+.seal-meta { display:flex; flex-direction:column; gap:5px; margin-bottom:10px; }
+.seal-field { display:flex; flex-direction:column; gap:3px; }
+.seal-field label { font-size:10px; font-weight:600; color:var(--text3); text-transform:uppercase; letter-spacing:0.4px; }
+.seal-field input, .seal-field select {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 5px 8px;
+  font-family: var(--font);
+  font-size: 12px;
+  color: var(--text);
+  outline: none;
+}
+.seal-field input:focus, .seal-field select:focus { border-color:var(--gold); }
+
+/* ─── Receipt display ────────────────────────── */
+.receipt-box {
+  background: var(--gold-bg);
+  border: 1px solid var(--gold);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  margin-top: 8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--gold);
+  word-break: break-all;
+  line-height: 1.6;
+}
+
+/* ─── Toast ──────────────────────────────────── */
+.toast-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.toast {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-size: 12px;
+  color: var(--text);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: slideIn 0.2s ease;
+  min-width: 240px;
+}
+
+.toast.success { border-color:var(--green); }
+.toast.error   { border-color:var(--red);   }
+.toast.info    { border-color:var(--gold);  }
+
+@keyframes slideIn {
+  from { transform:translateX(20px); opacity:0; }
+  to   { transform:translateX(0);    opacity:1; }
+}
+
+/* ─── Scroll ─────────────────────────────────── */
+::-webkit-scrollbar { width:6px; height:6px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
+
+/* ─── Code output area ───────────────────────── */
+.code-output {
+  background: #0F0E0C;
+  border: 1px solid #3A3830;
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: #D4C8A8;
+  overflow-x: auto;
+  white-space: pre;
+  word-break: break-all;
+  white-space: pre-wrap;
+  line-height: 1.7;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+/* ─── Stats chips ────────────────────────────── */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 2px 8px;
+  font-size: 11px;
+  color: var(--text3);
+  font-family: var(--mono);
+}
+</style>
 </head>
 <body>
-  <div id="root"></div>
-  <script type="text/babel" data-presets="react">
-// ═══════════════════════════════════════════════════════════════════
-// WINDI HTML Builder v3.0 — Trilingual (PT/DE/EN)
+<div id="root"></div>
+<script>
+// ══════════════════════════════════════════════════════════════
+// WINDI HTML Builder v3.1 — Guardian Edition
 // Port: 8117 | Path: /html-builder/
-// ═══════════════════════════════════════════════════════════════════
+// Novidades: Undo/Redo · Auto-save · Item Editor · Duplicate · Reorder
+// AI processes. Human decides. WINDI guarantees.
+// Kempten, Bavaria — 10.03.2026
+// ══════════════════════════════════════════════════════════════
 
-const { useState, useRef, createContext, useContext } = React;
-
-// ═══════════════════════════════════════════════════════════════════
-// DESIGN TOKENS
-// ═══════════════════════════════════════════════════════════════════
-const T = {
-  bg:'#0C0C14', surface:'#13131F', card:'#1A1A2A',
-  border:'#252538', accent:'#7C4DFF', accentHot:'#FF4081',
-  accentGold:'#FFD600', accentTeal:'#00E5CC', accentGreen:'#00C37A',
-  text:'#E8E8F0', dim:'#6B6B8A',
-};
-
-// ═══════════════════════════════════════════════════════════════════
-// i18n — TRILINGUAL DICTIONARY  PT · DE · EN
-// ═══════════════════════════════════════════════════════════════════
-const DICT = {
-  appName:         { pt:'HTML Builder', de:'HTML Builder', en:'HTML Builder' },
-  appVersion:      { pt:'v3.0 · Trilingue', de:'v3.0 · Dreisprachig', en:'v3.0 · Trilingual' },
-  pageNamePlaceholder: { pt:'Nome da página…', de:'Seitenname…', en:'Page name…' },
-  templatesBtn:    { pt:'🎨 Templates', de:'🎨 Vorlagen', en:'🎨 Templates' },
-  blocksCount1:    { pt:'bloco', de:'Block', en:'block' },
-  blocksCountN:    { pt:'blocos', de:'Blöcke', en:'blocks' },
-  previewBtn:      { pt:'👁️ Preview', de:'👁️ Vorschau', en:'👁️ Preview' },
-  editBtn:         { pt:'✏️ Editar', de:'✏️ Bearbeiten', en:'✏️ Edit' },
-  exportBtn:       { pt:'⬇ Exportar HTML', de:'⬇ HTML Exportieren', en:'⬇ Export HTML' },
-  tabBlocks:       { pt:'⊞ Blocos', de:'⊞ Blöcke', en:'⊞ Blocks' },
-  tabTemplates:    { pt:'🎨 Templates', de:'🎨 Vorlagen', en:'🎨 Templates' },
-  hintBlocks:      { pt:'← Clique para adicionar ao canvas', de:'← Klicken zum Hinzufügen', en:'← Click to add to canvas' },
-  hintTemplates:   { pt:'← Clique para carregar template', de:'← Klicken zum Laden', en:'← Click to load template' },
-  catSections:     { pt:'Seções', de:'Abschnitte', en:'Sections' },
-  catContent:      { pt:'Conteúdo', de:'Inhalt', en:'Content' },
-  catMedia:        { pt:'Mídia', de:'Medien', en:'Media' },
-  catConversion:   { pt:'Conversão', de:'Conversion', en:'Conversion' },
-  catSocial:       { pt:'Social Proof', de:'Social Proof', en:'Social Proof' },
-  catLayout:       { pt:'Layout', de:'Layout', en:'Layout' },
-  blockHero:       { pt:'Hero', de:'Hero', en:'Hero' },
-  blockHeroPrev:   { pt:'Grande título + subtítulo + CTA', de:'Großer Titel + Untertitel + CTA', en:'Large title + subtitle + CTA' },
-  blockFeatures:   { pt:'Features', de:'Features', en:'Features' },
-  blockFeaturesPrev:{ pt:'3 colunas de benefícios', de:'3 Vorteilsspalten', en:'3 benefit columns' },
-  blockText:       { pt:'Texto', de:'Text', en:'Text' },
-  blockTextPrev:   { pt:'Label + título editorial + corpo', de:'Label + Titel + Fließtext', en:'Label + editorial title + body' },
-  blockImage:      { pt:'Imagem', de:'Bild', en:'Image' },
-  blockImagePrev:  { pt:'Imagem + legenda + upload Vault', de:'Bild + Bildunterschrift + Vault-Upload', en:'Image + caption + Vault upload' },
-  blockGallery:    { pt:'Galeria', de:'Galerie', en:'Gallery' },
-  blockGalleryPrev:{ pt:'Grade 3×2 de imagens', de:'3×2 Bildraster', en:'3×2 image grid' },
-  blockCta:        { pt:'CTA Banner', de:'CTA-Banner', en:'CTA Banner' },
-  blockCtaPrev:    { pt:'Faixa de chamada para ação', de:'Call-to-Action-Streifen', en:'Call-to-action strip' },
-  blockTestimonial:{ pt:'Depoimento', de:'Testimonial', en:'Testimonial' },
-  blockTestimonialPrev:{ pt:'Citação + autor + avatar', de:'Zitat + Autor + Avatar', en:'Quote + author + avatar' },
-  blockStats:      { pt:'Números', de:'Kennzahlen', en:'Numbers' },
-  blockStatsPrev:  { pt:'Métricas e estatísticas', de:'Metriken und Statistiken', en:'Metrics and statistics' },
-  blockDivider:    { pt:'Divisor', de:'Trennlinie', en:'Divider' },
-  blockDividerPrev:{ pt:'Wave SVG separador de seções', de:'Wellenförmiger SVG-Trenner', en:'Wave SVG section separator' },
-  blockFooter:     { pt:'Rodapé', de:'Fußzeile', en:'Footer' },
-  blockFooterPrev: { pt:'Rodapé com logo, links e créditos', de:'Fußzeile mit Logo, Links und Credits', en:'Footer with logo, links and credits' },
-  quickAdd:        { pt:'Adicionar rápido', de:'Schnell hinzufügen', en:'Quick add' },
-  propTitle:       { pt:'Propriedades', de:'Eigenschaften', en:'Properties' },
-  propEmpty:       { pt:'Clique em um bloco para editar', de:'Block anklicken zum Bearbeiten', en:'Click a block to edit' },
-  propStyle:       { pt:'ESTILO', de:'STIL', en:'STYLE' },
-  propContent:     { pt:'CONTEÚDO', de:'INHALT', en:'CONTENT' },
-  propBg:          { pt:'Fundo', de:'Hintergrund', en:'Background' },
-  propBg2:         { pt:'Fundo 2 (gradiente)', de:'Hintergrund 2 (Verlauf)', en:'Background 2 (gradient)' },
-  propTextColor:   { pt:'Texto', de:'Textfarbe', en:'Text color' },
-  propAccent:      { pt:'Destaque', de:'Akzentfarbe', en:'Accent color' },
-  propCard:        { pt:'Card', de:'Karte', en:'Card' },
-  propAlign:       { pt:'Alinhamento', de:'Ausrichtung', en:'Alignment' },
-  alignLeft:       { pt:'Esquerda', de:'Links', en:'Left' },
-  alignCenter:     { pt:'Centro', de:'Mitte', en:'Center' },
-  alignRight:      { pt:'Direita', de:'Rechts', en:'Right' },
-  badge:           { pt:'Badge', de:'Abzeichen', en:'Badge' },
-  headline:        { pt:'Título (Enter p/ quebra)', de:'Titel (Enter für Zeilenumbruch)', en:'Title (Enter for line break)' },
-  subtitle:        { pt:'Subtítulo', de:'Untertitel', en:'Subtitle' },
-  btnLabel:        { pt:'Botão', de:'Schaltfläche', en:'Button' },
-  btnLabel2:       { pt:'Botão 2', de:'Schaltfläche 2', en:'Button 2' },
-  btnUrl:          { pt:'URL do Botão', de:'Schaltflächen-URL', en:'Button URL' },
-  labelProp:       { pt:'Label superior', de:'Oberes Label', en:'Top label' },
-  titleProp:       { pt:'Título', de:'Titel', en:'Title' },
-  bodyProp:        { pt:'Corpo', de:'Fließtext', en:'Body text' },
-  headlineProp:    { pt:'Headline', de:'Überschrift', en:'Headline' },
-  subProp:         { pt:'Subtítulo', de:'Untertitel', en:'Subtitle' },
-  quoteProp:       { pt:'Citação', de:'Zitat', en:'Quote' },
-  authorProp:      { pt:'Autor', de:'Autor', en:'Author' },
-  roleProp:        { pt:'Cargo', de:'Funktion', en:'Role' },
-  initialsProp:    { pt:'Iniciais do Avatar', de:'Avatar-Initialen', en:'Avatar initials' },
-  brandProp:       { pt:'Nome da marca', de:'Markenname', en:'Brand name' },
-  taglineProp:     { pt:'Tagline', de:'Slogan', en:'Tagline' },
-  copyrightProp:   { pt:'Copyright', de:'Urheberrecht', en:'Copyright' },
-  vaultUploadTitle:{ pt:'Upload → Vault (:8106)', de:'Upload → Vault (:8106)', en:'Upload → Vault (:8106)' },
-  vaultClickHint:  { pt:'Clique para selecionar imagem', de:'Klicken zum Bildauswählen', en:'Click to select image' },
-  orExternalUrl:   { pt:'— ou URL externa', de:'— oder externe URL', en:'— or external URL' },
-  imgUrl:          { pt:'URL da Imagem', de:'Bild-URL', en:'Image URL' },
-  imgAlt:          { pt:'Texto alternativo', de:'Alternativtext', en:'Alt text' },
-  imgCaption:      { pt:'Legenda', de:'Bildunterschrift', en:'Caption' },
-  vaultUploading:  { pt:'Enviando para o Vault…', de:'Wird in den Vault hochgeladen…', en:'Uploading to Vault…' },
-  vaultSuccess:    { pt:'✓ Selado no Vault:', de:'✓ Im Vault versiegelt:', en:'✓ Sealed in Vault:' },
-  vaultOffline:    { pt:'⚠️ Vault offline — imagem carregada localmente', de:'⚠️ Vault offline — Bild lokal geladen', en:'⚠️ Vault offline — image loaded locally' },
-  multiItemNote:   { pt:'ℹ️ Edição de itens individuais em breve.', de:'ℹ️ Einzelelement-Bearbeitung folgt.', en:'ℹ️ Individual item editing coming soon.' },
-  tplModalTitle:   { pt:'Templates Prontos', de:'Fertige Vorlagen', en:'Ready-Made Templates' },
-  tplModalSub:     { pt:'Escolha um template e personalize no canvas', de:'Vorlage wählen und im Canvas anpassen', en:'Choose a template and customize in the canvas' },
-  tplBlocks:       { pt:'blocos', de:'Blöcke', en:'blocks' },
-  tplFooter:       { pt:'FREE · disponível para todos · MED · Tier Medium ou superior', de:'FREE · für alle verfügbar · MED · ab Medium-Tier', en:'FREE · available for all · MED · Medium tier or above' },
-  exportTitle:     { pt:'Exportar HTML', de:'HTML Exportieren', en:'Export HTML' },
-  exportSub:       { pt:'Standalone · Sem dependências externas', de:'Eigenständig · Ohne externe Abhängigkeiten', en:'Standalone · No external dependencies' },
-  sealBtn:         { pt:'🔐 Selar no Ledger', de:'🔐 Im Ledger versiegeln', en:'🔐 Seal in Ledger' },
-  copyBtn:         { pt:'⎘ Copiar', de:'⎘ Kopieren', en:'⎘ Copy' },
-  copiedBtn:       { pt:'✓ Copiado!', de:'✓ Kopiert!', en:'✓ Copied!' },
-  pageTitle:       { pt:'Título da Página', de:'Seitentitel', en:'Page Title' },
-  seoDesc:         { pt:'Descrição SEO', de:'SEO-Beschreibung', en:'SEO Description' },
-  exportFooter:    { pt:'linhas', de:'Zeilen', en:'lines' },
-  ledgerTitle:     { pt:'Selar no Forensic Ledger', de:'Im Forensic Ledger versiegeln', en:'Seal in Forensic Ledger' },
-  ledgerSub:       { pt:'Prova criptográfica SHA-256 · Ledger :8101', de:'Kryptographischer SHA-256-Beweis · Ledger :8101', en:'Cryptographic SHA-256 proof · Ledger :8101' },
-  ledgerInfo:      { pt:'O HTML será hasheado com SHA-256 e registrado com recibo verificável publicamente.', de:'Das HTML wird SHA-256-gehasht und mit öffentlich prüfbarem Beleg registriert.', en:'The HTML will be SHA-256 hashed and recorded with a publicly verifiable receipt.' },
-  ledgerDocName:   { pt:'Nome do documento', de:'Dokumentname', en:'Document name' },
-  ledgerActor:     { pt:'Actor', de:'Akteur', en:'Actor' },
-  ledgerGov:       { pt:'Nível de governança', de:'Governance-Stufe', en:'Governance level' },
-  govLow:          { pt:'LOW — Criativo', de:'LOW — Kreativ', en:'LOW — Creative' },
-  govMed:          { pt:'MEDIUM — Comercial', de:'MEDIUM — Kommerziell', en:'MEDIUM — Commercial' },
-  govHigh:         { pt:'HIGH — Institucional', de:'HIGH — Institutionell', en:'HIGH — Institutional' },
-  sealNowBtn:      { pt:'🔐 Selar Agora', de:'🔐 Jetzt versiegeln', en:'🔐 Seal Now' },
-  cancelBtn:       { pt:'Cancelar', de:'Abbrechen', en:'Cancel' },
-  closeBtn:        { pt:'Fechar', de:'Schließen', en:'Close' },
-  sealing:         { pt:'Calculando hash e registrando no Ledger…', de:'Hash wird berechnet und im Ledger registriert…', en:'Computing hash and recording in Ledger…' },
-  sealedTitle:     { pt:'HTML Selado com Sucesso', de:'HTML erfolgreich versiegelt', en:'HTML Successfully Sealed' },
-  sealedReceiptId: { pt:'Receipt ID', de:'Beleg-ID', en:'Receipt ID' },
-  sealedHash:      { pt:'SHA-256', de:'SHA-256', en:'SHA-256' },
-  sealedDoc:       { pt:'Documento', de:'Dokument', en:'Document' },
-  sealedGov:       { pt:'Governança', de:'Governance', en:'Governance' },
-  sealedVerifyUrl: { pt:'URL de Verificação', de:'Prüf-URL', en:'Verification URL' },
-  ledgerOfflineWarn:{ pt:'⚠️ Ledger offline — hash calculado localmente. Registre quando o servidor estiver disponível.', de:'⚠️ Ledger offline — Hash lokal berechnet. Bei Serververfügbarkeit registrieren.', en:'⚠️ Ledger offline — hash computed locally. Register when server is available.' },
-  ledgerError:     { pt:'Erro ao conectar com o Ledger.', de:'Fehler beim Verbinden mit dem Ledger.', en:'Error connecting to the Ledger.' },
-  retryBtn:        { pt:'Tentar novamente', de:'Erneut versuchen', en:'Try again' },
-  paletteTitle:    { pt:'Spec de Integração com Palette', de:'Palette-Integrations-Spezifikation', en:'Palette Integration Spec' },
-  paletteSub:      { pt:'JSON para adicionar o HTML Builder como tile', de:'JSON zum Hinzufügen als Palette-Kachel', en:'JSON to add HTML Builder as a tile' },
-  paletteCopyBtn:  { pt:'⎘ Copiar JSON', de:'⎘ JSON kopieren', en:'⎘ Copy JSON' },
-  palettePort:     { pt:'Porta sugerida:', de:'Empfohlener Port:', en:'Suggested port:' },
-  paletteNginx:    { pt:'nginx path:', de:'nginx-Pfad:', en:'nginx path:' },
-  paletteTiers:    { pt:'FREE: todos os blocos + 2 templates · MED: todos os templates + Ledger seal', de:'FREE: alle Blöcke + 2 Vorlagen · MED: alle Vorlagen + Ledger-Versiegelung', en:'FREE: all blocks + 2 templates · MED: all templates + Ledger seal' },
-  tplLandingName:  { pt:'Landing Page', de:'Landingpage', en:'Landing Page' },
-  tplLandingDesc:  { pt:'Produto ou SaaS com Hero + Features + CTA', de:'Produkt oder SaaS mit Hero + Features + CTA', en:'Product or SaaS with Hero + Features + CTA' },
-  tplPortfolioName:{ pt:'Portfólio', de:'Portfolio', en:'Portfolio' },
-  tplPortfolioDesc:{ pt:'Criativo ou freelancer com galeria + bio', de:'Kreative oder Freelancer mit Galerie + Bio', en:'Creative or freelancer with gallery + bio' },
-  tplEventName:    { pt:'Evento', de:'Veranstaltung', en:'Event' },
-  tplEventDesc:    { pt:'Conferência, show ou lançamento', de:'Konferenz, Show oder Launch', en:'Conference, show or launch' },
-  tplLinkBioName:  { pt:'Link-in-Bio', de:'Link-in-Bio', en:'Link-in-Bio' },
-  tplLinkBioDesc:  { pt:'Página de links para redes sociais', de:'Link-Seite für soziale Netzwerke', en:'Social media link page' },
-  confirmLoadTpl:  { pt:'Carregar template "{name}"? O canvas atual será substituído.', de:'Vorlage "{name}" laden? Der aktuelle Canvas wird ersetzt.', en:'Load template "{name}"? The current canvas will be replaced.' },
-  canvasEmpty:     { pt:'Canvas vazio', de:'Leeres Canvas', en:'Empty Canvas' },
-  canvasEmptySub:  { pt:'Escolha um template ou adicione blocos à esquerda', de:'Vorlage auswählen oder links Blöcke hinzufügen', en:'Choose a template or add blocks from the left' },
-  langLabel:       { pt:'Idioma', de:'Sprache', en:'Language' },
-  undoBtn:         { pt:'↩ Desfazer', de:'↩ Rückgängig', en:'↩ Undo' },
-  redoBtn:         { pt:'↪ Refazer', de:'↪ Wiederholen', en:'↪ Redo' },
-  duplicateBtn:    { pt:'⧉ Duplicar', de:'⧉ Duplizieren', en:'⧉ Duplicate' },
-  undoTooltip:     { pt:'Ctrl+Z', de:'Strg+Z', en:'Ctrl+Z' },
-  redoTooltip:     { pt:'Ctrl+Y', de:'Strg+Y', en:'Ctrl+Y' },
-};
-
-// i18n context
-const LangCtx = createContext('pt');
-const useLang = () => useContext(LangCtx);
-const t = (dict, key, lang, vars = {}) => {
-  let str = (dict[key] && dict[key][lang]) ? dict[key][lang] : (dict[key] && dict[key]['en']) ? dict[key]['en'] : key;
-  Object.entries(vars).forEach(([k, v]) => { str = str.replace(`{${k}}`, v); });
-  return str;
-};
-
-// ═══════════════════════════════════════════════════════════════════
-// INFRA
-// ═══════════════════════════════════════════════════════════════════
 const LEDGER_URL  = '/api/ledger';
 const VAULT_URL   = '/vault';
 const VERIFY_BASE = 'https://windi-domain.com/verify-public/?id=';
+const AUTOSAVE_KEY = 'windi_htmlbuilder_v31';
+const AUTOSAVE_INTERVAL = 15000;
+const TEMPLATES_URL = '/vault/api/templates';
 
-// ═══════════════════════════════════════════════════════════════════
-// DEFAULT CONTENT — TRILINGUAL (PT/DE/EN)
-// ═══════════════════════════════════════════════════════════════════
-const DC = {
-  hero: {
-    badge:    {pt:'Novidade',de:'Neuheit',en:'New'},
-    headline: {pt:'Crie algo\nExtraordinário',de:'Schaffen Sie etwas\nAußergewöhnliches',en:'Create something\nExtraordinary'},
-    subtitle: {pt:'Uma descrição poderosa que conecta e transforma.',de:'Eine kraftvolle Beschreibung, die verbindet und transformiert.',en:'A powerful description that connects and transforms.'},
-    btnText:  {pt:'Comece Agora',de:'Jetzt starten',en:'Get Started'},
+const { useState, useReducer, useEffect, useRef, useCallback } = React;
+const { createRoot } = ReactDOM;
+
+// ─── i18n Dictionary ───────────────────────────────────────────
+const I18N = {
+  de: {
+    undo: '↩ Rückgängig', redo: '↪ Wiederholen',
+    save: '💾 Speichern', clear: '🗑 Leeren',
+    preview: '◧ Vorschau', previewOff: '□ Vorschau',
+    code: '</> Code', codeOff: '</> Code',
+    download: '⬇ HTML', seal: '🔏 Siegeln', sealing: '⏳ Siegelt…',
+    themeKlar: '☀ KLAR', themeNoir: '🌙 NOIR',
+    structure: 'Struktur',
+    addElement: '+ Element hinzufügen',
+    items: 'Elemente', chars: 'Zeichen', unsaved: '● ungespeichert',
+    autosave: 'auto-gespeichert',
+    noItem: '/ (kein ausgewählt)',
+    closeEditor: '✕ Editor schließen', editBtn: '✎ Bearbeiten',
+    duplicate: '⎘ Duplizieren',
+    editTitle: 'Bearbeiten',
+    internalLabel: 'Bezeichnung (intern)',
+    cssClass: 'CSS-Klasse',
+    htmlId: 'HTML-ID',
+    imageUrl: 'Bild-URL',
+    altText: 'Alternativtext (alt)',
+    language: 'Sprache',
+    tableData: 'Tabellendaten (pipe-getrennt, eine Zeile pro Reihe)',
+    listItems: 'Einträge (einer pro Zeile)',
+    htmlInner: 'Inneres HTML',
+    content: 'Inhalt',
+    apply: '✓ Anwenden', cancel: 'Abbrechen',
+    docMeta: 'Dokumentmetadaten',
+    docTitle: 'Titel', lang: 'Sprache', governance: 'Governance',
+    globalCss: 'Globales CSS (optional)',
+    previewTitle: 'Vorschau',
+    noContent: '<p style="color:#999;font-style:italic">Noch kein Inhalt.</p>',
+    sealTitle: '🔏 Ledger / Governance',
+    docName: 'Dok-Name',
+    sealBtn: '🔏 Im Ledger siegeln', sealingBtn: '⏳ Siegelt im Ledger…',
+    emptyIcon: '⟨/⟩', emptyTitle: 'Leere Arbeitsfläche',
+    emptySub: 'Elemente über das linke Panel hinzufügen. H1, P, UL zur Strukturierung verwenden.',
+    editIcon: '✎',
+    selectItem: 'Element in der Liste auswählen, um es zu bearbeiten.',
+    elements: (n) => `${n} ${n === 1 ? 'Element' : 'Elemente'}`,
+    addBelow: 'Elemente unten hinzufügen ↓',
+    htmlGenerated: 'Generiertes HTML',
+    copy: '⎘ Kopieren',
+    savedAt: (t) => `gespeichert ${t}`,
+    restoredSnap: (n) => `Auto-Speicherung wiederhergestellt (${n} Elemente)`,
+    duplicated: 'Element dupliziert',
+    cleared: 'Arbeitsfläche geleert',
+    clearConfirm: 'Alle Elemente löschen? Kann mit Strg+Z rückgängig gemacht werden.',
+    savedMsg: (t) => `💾 Gespeichert um ${t}`,
+    saveErr: 'Fehler beim Speichern: ',
+    noItemSeal: 'Keine Elemente zum Siegeln',
+    sealedMsg: (id) => `🔏 Gesiegelt: ${id}`,
+    sealErr: 'Fehler beim Siegeln: ',
+    htmlCopied: 'HTML kopiert', copyErr: 'Kopieren fehlgeschlagen',
+    htmlExported: 'HTML exportiert',
+    copyHtml: '⎘ Kopieren',
+    moveUp: '↑', moveDown: '↓', del: '×', dup: '⎘',
+    titleMoveUp: 'Nach oben', titleMoveDown: 'Nach unten', titleDup: 'Duplizieren', titleDel: 'Entfernen',
+    videoUrl: 'Video-URL', posterUrl: 'Poster-URL (optional)', embedUrl: 'Embed-URL (YouTube, Vimeo, etc.)', width: 'Breite', height: 'Höhe',
+    // Templates
+    templates: 'Vorlagen', saveTemplate: '💾 Als Vorlage speichern', loadTemplate: '📂 Vorlage laden',
+    templateName: 'Name der Vorlage', templateDesc: 'Beschreibung', templateCat: 'Kategorie', templateLang: 'Sprache',
+    templateShared: 'Geteilt', templateSaved: (n) => `Vorlage gespeichert: ${n}`, templateLoaded: (n) => `Vorlage geladen: ${n} Elemente`,
+    noTemplates: 'Keine Vorlagen', loadReplace: 'Ersetzen', loadAppend: 'Anhängen',
+    cats: { report:'Bericht', invoice:'Rechnung', communique:'Communiqué', presentation:'Präsentation', legal:'Rechtlich', generic:'Allgemein' },
   },
-  features: {
-    title:    {pt:'Por que nos escolher?',de:'Warum uns wählen?',en:'Why choose us?'},
-    item1:    {icon:'🚀',title:{pt:'Rápido',de:'Schnell',en:'Fast'},text:{pt:'Performance desde o primeiro clique.',de:'Performance ab dem ersten Klick.',en:'Performance from the first click.'}},
-    item2:    {icon:'🎨',title:{pt:'Bonito',de:'Schön',en:'Beautiful'},text:{pt:'Design pensado para cada detalhe.',de:'Design für jedes Detail durchdacht.',en:'Design crafted for every detail.'}},
-    item3:    {icon:'🔒',title:{pt:'Seguro',de:'Sicher',en:'Secure'},text:{pt:'Sua privacidade é prioridade.',de:'Ihre Privatsphäre hat Priorität.',en:'Your privacy is a priority.'}},
+  en: {
+    undo: '↩ Undo', redo: '↪ Redo',
+    save: '💾 Save', clear: '🗑 Clear',
+    preview: '◧ Preview', previewOff: '□ Preview',
+    code: '</> Code', codeOff: '</> Code',
+    download: '⬇ HTML', seal: '🔏 Seal', sealing: '⏳ Sealing…',
+    themeKlar: '☀ KLAR', themeNoir: '🌙 NOIR',
+    structure: 'Structure',
+    addElement: '+ Add Element',
+    items: 'items', chars: 'chars', unsaved: '● unsaved',
+    autosave: 'auto-saved',
+    noItem: '/ (none selected)',
+    closeEditor: '✕ Close editor', editBtn: '✎ Edit',
+    duplicate: '⎘ Duplicate',
+    editTitle: 'Edit',
+    internalLabel: 'Label (internal)',
+    cssClass: 'CSS class',
+    htmlId: 'HTML ID',
+    imageUrl: 'Image URL',
+    altText: 'Alt text',
+    language: 'Language',
+    tableData: 'Table data (pipe-separated, one line per row)',
+    listItems: 'Items (one per line)',
+    htmlInner: 'Inner HTML',
+    content: 'Content',
+    apply: '✓ Apply', cancel: 'Cancel',
+    docMeta: 'Document Metadata',
+    docTitle: 'Title', lang: 'Language', governance: 'Governance',
+    globalCss: 'Global CSS (optional)',
+    previewTitle: 'Preview',
+    noContent: '<p style="color:#999;font-style:italic">No content yet.</p>',
+    sealTitle: '🔏 Ledger / Governance',
+    docName: 'Doc Name',
+    sealBtn: '🔏 Seal in Ledger', sealingBtn: '⏳ Sealing in Ledger…',
+    emptyIcon: '⟨/⟩', emptyTitle: 'Empty canvas',
+    emptySub: 'Add elements using the left panel. Use H1, P, UL to structure content.',
+    editIcon: '✎',
+    selectItem: 'Select an item in the list to edit it.',
+    elements: (n) => `${n} ${n === 1 ? 'element' : 'elements'}`,
+    addBelow: 'Add elements below ↓',
+    htmlGenerated: 'Generated HTML',
+    copy: '⎘ Copy',
+    savedAt: (t) => `saved ${t}`,
+    restoredSnap: (n) => `Auto-save restored (${n} items)`,
+    duplicated: 'Item duplicated',
+    cleared: 'Canvas cleared',
+    clearConfirm: 'Clear all items? This can be undone with Ctrl+Z.',
+    savedMsg: (t) => `💾 Saved at ${t}`,
+    saveErr: 'Save error: ',
+    noItemSeal: 'No items to seal',
+    sealedMsg: (id) => `🔏 Sealed: ${id}`,
+    sealErr: 'Seal error: ',
+    htmlCopied: 'HTML copied', copyErr: 'Failed to copy',
+    htmlExported: 'HTML exported',
+    copyHtml: '⎘ Copy',
+    moveUp: '↑', moveDown: '↓', del: '×', dup: '⎘',
+    titleMoveUp: 'Move up', titleMoveDown: 'Move down', titleDup: 'Duplicate', titleDel: 'Remove',
+    videoUrl: 'Video URL', posterUrl: 'Poster URL (optional)', embedUrl: 'Embed URL (YouTube, Vimeo, etc.)', width: 'Width', height: 'Height',
+    // Templates
+    templates: 'Templates', saveTemplate: '💾 Save as Template', loadTemplate: '📂 Load Template',
+    templateName: 'Template name', templateDesc: 'Description', templateCat: 'Category', templateLang: 'Language',
+    templateShared: 'Shared', templateSaved: (n) => `Template saved: ${n}`, templateLoaded: (n) => `Template loaded: ${n} items`,
+    noTemplates: 'No templates', loadReplace: 'Replace', loadAppend: 'Append',
+    cats: { report:'Report', invoice:'Invoice', communique:'Communiqué', presentation:'Presentation', legal:'Legal', generic:'Generic' },
   },
-  textblock: {
-    label:    {pt:'Nossa História',de:'Unsere Geschichte',en:'Our Story'},
-    title:    {pt:'Feito com propósito,\nconstruído com paixão',de:'Mit Absicht gemacht,\nmit Leidenschaft gebaut',en:'Made with purpose,\nbuilt with passion'},
-    body:     {pt:'Aqui você conta sua história, missão ou conteúdo relevante.',de:'Hier erzählen Sie Ihre Geschichte, Mission oder relevanten Inhalt.',en:'Here you tell your story, mission or relevant content.'},
-  },
-  gallery: {
-    title:    {pt:'Nossa Galeria',de:'Unsere Galerie',en:'Our Gallery'},
-  },
-  cta: {
-    headline: {pt:'Pronto para começar?',de:'Bereit zu starten?',en:'Ready to get started?'},
-    sub:      {pt:'Junte-se a milhares que já começaram.',de:'Schließen Sie sich Tausenden an, die bereits begonnen haben.',en:'Join thousands who have already started.'},
-    btnText:  {pt:'Quero Entrar',de:'Ich will dabei sein',en:'I Want In'},
-    btnSec:   {pt:'Saiba mais',de:'Mehr erfahren',en:'Learn more'},
-  },
-  testimonial: {
-    quote:    {pt:'Esta ferramenta mudou como trabalhamos. Incrível e muito intuitivo.',de:'Dieses Tool hat unsere Arbeitsweise verändert. Unglaublich und sehr intuitiv.',en:'This tool changed how we work. Amazing and very intuitive.'},
-    author:   {pt:'Marina Costa',de:'Maria Schmidt',en:'Marina Costa'},
-    role:     {pt:'Designer, Studio Nova',de:'Designerin, Studio Nova',en:'Designer, Studio Nova'},
-    avatar:   {pt:'MC',de:'MS',en:'MC'},
-  },
-  stats: {
-    title:    {pt:'Números que falam',de:'Zahlen, die sprechen',en:'Numbers that speak'},
-    lbl1:     {pt:'Usuários',de:'Benutzer',en:'Users'},
-    lbl2:     {pt:'Satisfação',de:'Zufriedenheit',en:'Satisfaction'},
-    lbl3:     {pt:'Projetos',de:'Projekte',en:'Projects'},
-    lbl4:     {pt:'Suporte',de:'Support',en:'Support'},
-  },
-  footer: {
-    brand:    {pt:'MeuSite',de:'MeineSeite',en:'MySite'},
-    tagline:  {pt:'Feito com criatividade.',de:'Mit Kreativität gemacht.',en:'Made with creativity.'},
-    links:    {pt:['Início','Sobre','Serviços','Contato'],de:['Startseite','Über','Dienste','Kontakt'],en:['Home','About','Services','Contact']},
-    copy:     {pt:'© 2026 MeuSite.',de:'© 2026 MeineSeite.',en:'© 2026 MySite.'},
-  },
-  // Templates
-  tplLanding: {
-    badge:    {pt:'Lançamento',de:'Neu',en:'Launch'},
-    headline: {pt:'O produto que\nvocê estava esperando',de:'Das Produkt, auf das\nSie gewartet haben',en:'The product you\nwere waiting for'},
-    subtitle: {pt:'Simples de usar, poderoso por dentro.',de:'Einfach zu bedienen, leistungsstark im Inneren.',en:'Simple to use, powerful inside.'},
-    btnText:  {pt:'Experimente Grátis',de:'Kostenlos testen',en:'Try Free'},
-    featTitle:{pt:'Tudo que você precisa',de:'Alles, was Sie brauchen',en:'Everything you need'},
-    feat1:    {icon:'⚡',title:{pt:'Ultra Rápido',de:'Ultraschnell',en:'Ultra Fast'},text:{pt:'Resultados em milissegundos.',de:'Ergebnisse in Millisekunden.',en:'Results in milliseconds.'}},
-    feat2:    {icon:'🎯',title:{pt:'Preciso',de:'Präzise',en:'Precise'},text:{pt:'Algoritmos calibrados.',de:'Kalibrierte Algorithmen.',en:'Calibrated algorithms.'}},
-    feat3:    {icon:'🌍',title:{pt:'Global',de:'Global',en:'Global'},text:{pt:'Funciona em qualquer lugar.',de:'Funktioniert überall.',en:'Works anywhere.'}},
-    ctaHead:  {pt:'Pronto para decolar?',de:'Bereit zum Abheben?',en:'Ready to take off?'},
-    ctaSub:   {pt:'Milhares já começaram.',de:'Tausende haben bereits begonnen.',en:'Thousands have already started.'},
-    ctaBtn:   {pt:'Começar Agora',de:'Jetzt starten',en:'Start Now'},
-    ctaSec:   {pt:'Ver demo',de:'Demo ansehen',en:'See demo'},
-    brand:    {pt:'MeuProduto',de:'MeinProdukt',en:'MyProduct'},
-    tagline:  {pt:'Inovação que transforma.',de:'Innovation, die transformiert.',en:'Innovation that transforms.'},
-    fLinks:   {pt:['Início','Produto','Preços'],de:['Start','Produkt','Preise'],en:['Home','Product','Pricing']},
-    fCopy:    {pt:'© 2026 MeuProduto.',de:'© 2026 MeinProdukt.',en:'© 2026 MyProduct.'},
-  },
-  tplPortfolio: {
-    badge:    {pt:'Disponível para projetos',de:'Verfügbar für Projekte',en:'Available for projects'},
-    headline: {pt:'Olá, eu sou\nAna Silva',de:'Hallo, ich bin\nAnna Schmidt',en:'Hello, I am\nAna Silva'},
-    subtitle: {pt:'Designer visual.',de:'Visual Designerin.',en:'Visual designer.'},
-    btnText:  {pt:'Ver Projetos',de:'Projekte ansehen',en:'View Projects'},
-    label:    {pt:'Sobre mim',de:'Über mich',en:'About me'},
-    title:    {pt:'Criatividade com\npropósito',de:'Kreativität mit\nZweck',en:'Creativity with\npurpose'},
-    body:     {pt:'8 anos de experiência em design.',de:'8 Jahre Erfahrung im Design.',en:'8 years of design experience.'},
-    ctaHead:  {pt:'Vamos criar algo incrível?',de:'Lassen Sie uns etwas Erstaunliches schaffen?',en:'Let\'s create something amazing?'},
-    ctaSub:   {pt:'Aberta a novos projetos.',de:'Offen für neue Projekte.',en:'Open to new projects.'},
-    ctaBtn:   {pt:'Contato',de:'Kontakt',en:'Contact'},
-    brand:    {pt:'Ana Silva',de:'Anna Schmidt',en:'Ana Silva'},
-    tagline:  {pt:'Design com alma.',de:'Design mit Seele.',en:'Design with soul.'},
-    fLinks:   {pt:['Início','Projetos','Contato'],de:['Start','Projekte','Kontakt'],en:['Home','Projects','Contact']},
-    fCopy:    {pt:'© 2026 Ana Silva.',de:'© 2026 Anna Schmidt.',en:'© 2026 Ana Silva.'},
+  pt: {
+    undo: '↩ Desfazer', redo: '↪ Refazer',
+    save: '💾 Salvar', clear: '🗑 Limpar',
+    preview: '◧ Preview', previewOff: '□ Preview',
+    code: '</> Código', codeOff: '</> Código',
+    download: '⬇ HTML', seal: '🔏 Selar', sealing: '⏳ Selando…',
+    themeKlar: '☀ KLAR', themeNoir: '🌙 NOIR',
+    structure: 'Estrutura',
+    addElement: '+ Adicionar Elemento',
+    items: 'itens', chars: 'chars', unsaved: '● não salvo',
+    autosave: 'auto-save',
+    noItem: '/ (nenhum selecionado)',
+    closeEditor: '✕ Fechar editor', editBtn: '✎ Editar',
+    duplicate: '⎘ Duplicar',
+    editTitle: 'Editar',
+    internalLabel: 'Rótulo (interno)',
+    cssClass: 'CSS class',
+    htmlId: 'ID HTML',
+    imageUrl: 'URL da imagem',
+    altText: 'Texto alternativo (alt)',
+    language: 'Linguagem',
+    tableData: 'Dados da tabela (pipe-separated, uma linha por row)',
+    listItems: 'Itens (um por linha)',
+    htmlInner: 'HTML interno',
+    content: 'Conteúdo',
+    apply: '✓ Aplicar', cancel: 'Cancelar',
+    docMeta: 'Metadados do Documento',
+    docTitle: 'Título', lang: 'Idioma', governance: 'Governança',
+    globalCss: 'CSS global (opcional)',
+    previewTitle: 'Preview',
+    noContent: '<p style="color:#999;font-style:italic">Nenhum conteúdo ainda.</p>',
+    sealTitle: '🔏 Ledger / Governança',
+    docName: 'Doc Name',
+    sealBtn: '🔏 Selar no Ledger', sealingBtn: '⏳ Selando no Ledger…',
+    emptyIcon: '⟨/⟩', emptyTitle: 'Canvas vazio',
+    emptySub: 'Adicione elementos usando o painel à esquerda. Use H1, P, UL para estruturar o conteúdo.',
+    editIcon: '✎',
+    selectItem: 'Clique em um item na lista para editar.',
+    elements: (n) => `${n} ${n === 1 ? 'elemento' : 'elementos'}`,
+    addBelow: 'Adicione elementos abaixo ↓',
+    htmlGenerated: 'HTML Gerado',
+    copy: '⎘ Copiar',
+    savedAt: (t) => `auto-save ${t}`,
+    restoredSnap: (n) => `Auto-save restaurado (${n} itens)`,
+    duplicated: 'Item duplicado',
+    cleared: 'Canvas limpo',
+    clearConfirm: 'Limpar todos os itens? Esta ação pode ser desfeita com Ctrl+Z.',
+    savedMsg: (t) => `💾 Salvo às ${t}`,
+    saveErr: 'Erro ao salvar: ',
+    noItemSeal: 'Nenhum item para selar',
+    sealedMsg: (id) => `🔏 Selado: ${id}`,
+    sealErr: 'Erro ao selar: ',
+    htmlCopied: 'HTML copiado', copyErr: 'Falha ao copiar',
+    htmlExported: 'HTML exportado',
+    copyHtml: '⎘ Copiar',
+    moveUp: '↑', moveDown: '↓', del: '×', dup: '⎘',
+    titleMoveUp: 'Mover acima', titleMoveDown: 'Mover abaixo', titleDup: 'Duplicar', titleDel: 'Remover',
+    videoUrl: 'URL do Vídeo', posterUrl: 'URL do Poster (opcional)', embedUrl: 'URL do Embed (YouTube, Vimeo, etc.)', width: 'Largura', height: 'Altura',
+    // Templates
+    templates: 'Templates', saveTemplate: '💾 Salvar como Template', loadTemplate: '📂 Carregar Template',
+    templateName: 'Nome do template', templateDesc: 'Descrição', templateCat: 'Categoria', templateLang: 'Idioma',
+    templateShared: 'Compartilhado', templateSaved: (n) => `Template salvo: ${n}`, templateLoaded: (n) => `Template carregado: ${n} itens`,
+    noTemplates: 'Nenhum template', loadReplace: 'Substituir', loadAppend: 'Anexar',
+    cats: { report:'Relatório', invoice:'Fatura', communique:'Communiqué', presentation:'Apresentação', legal:'Jurídico', generic:'Genérico' },
   },
 };
 
-// ═══════════════════════════════════════════════════════════════════
-// BLOCK CATALOG
-// ═══════════════════════════════════════════════════════════════════
-const getCatalog = (lang) => [
-  { type:'hero',       label:t(DICT,'blockHero',lang),       icon:'⚡', cat:t(DICT,'catSections',lang),   preview:t(DICT,'blockHeroPrev',lang),        defaultContent:{badge:DC.hero.badge[lang],headline:DC.hero.headline[lang],subtitle:DC.hero.subtitle[lang],btnText:DC.hero.btnText[lang],btnUrl:'#'}, defaultStyle:{bg:'#0f0c29',bg2:'#302b63',textColor:'#ffffff',accentColor:'#a855f7',align:'center',minHeight:520} },
-  { type:'features',   label:t(DICT,'blockFeatures',lang),   icon:'✦',  cat:t(DICT,'catSections',lang),   preview:t(DICT,'blockFeaturesPrev',lang),     defaultContent:{title:DC.features.title[lang],items:[{icon:DC.features.item1.icon,title:DC.features.item1.title[lang],text:DC.features.item1.text[lang]},{icon:DC.features.item2.icon,title:DC.features.item2.title[lang],text:DC.features.item2.text[lang]},{icon:DC.features.item3.icon,title:DC.features.item3.title[lang],text:DC.features.item3.text[lang]}]}, defaultStyle:{bg:'#ffffff',textColor:'#1a1a2e',accentColor:'#7c4dff',cardBg:'#f8f7ff'} },
-  { type:'textblock',  label:t(DICT,'blockText',lang),        icon:'¶',  cat:t(DICT,'catContent',lang),    preview:t(DICT,'blockTextPrev',lang),         defaultContent:{label:DC.textblock.label[lang],title:DC.textblock.title[lang],body:DC.textblock.body[lang]}, defaultStyle:{bg:'#faf9ff',textColor:'#1a1a2e',accentColor:'#7c4dff',align:'left',maxWidth:680} },
-  { type:'imagebox',   label:t(DICT,'blockImage',lang),       icon:'🖼', cat:t(DICT,'catMedia',lang),      preview:t(DICT,'blockImagePrev',lang),        defaultContent:{url:'',alt:'',caption:'',vaultId:''}, defaultStyle:{bg:'#ffffff',accentColor:'#7c4dff',radius:12,maxWidth:900} },
-  { type:'gallery',    label:t(DICT,'blockGallery',lang),     icon:'◫',  cat:t(DICT,'catMedia',lang),      preview:t(DICT,'blockGalleryPrev',lang),      defaultContent:{title:DC.gallery.title[lang],images:[{url:'https://picsum.photos/seed/w1/600/400',alt:'1'},{url:'https://picsum.photos/seed/w2/600/400',alt:'2'},{url:'https://picsum.photos/seed/w3/600/400',alt:'3'},{url:'https://picsum.photos/seed/w4/600/400',alt:'4'},{url:'https://picsum.photos/seed/w5/600/400',alt:'5'},{url:'https://picsum.photos/seed/w6/600/400',alt:'6'}]}, defaultStyle:{bg:'#ffffff',textColor:'#1a1a2e',accentColor:'#ff4081',columns:3,gap:12} },
-  { type:'cta',        label:t(DICT,'blockCta',lang),         icon:'▶',  cat:t(DICT,'catConversion',lang), preview:t(DICT,'blockCtaPrev',lang),          defaultContent:{headline:DC.cta.headline[lang],sub:DC.cta.sub[lang],btnText:DC.cta.btnText[lang],btnUrl:'#',btnSecText:DC.cta.btnSec[lang]}, defaultStyle:{bg:'#7c4dff',textColor:'#ffffff',accentColor:'#ffd600',align:'center'} },
-  { type:'testimonial',label:t(DICT,'blockTestimonial',lang), icon:'❝',  cat:t(DICT,'catSocial',lang),     preview:t(DICT,'blockTestimonialPrev',lang),  defaultContent:{quote:DC.testimonial.quote[lang],author:DC.testimonial.author[lang],role:DC.testimonial.role[lang],avatar:DC.testimonial.avatar[lang]}, defaultStyle:{bg:'#0f172a',textColor:'#ffffff',accentColor:'#ffd600',align:'center'} },
-  { type:'stats',      label:t(DICT,'blockStats',lang),       icon:'◎',  cat:t(DICT,'catSocial',lang),     preview:t(DICT,'blockStatsPrev',lang),        defaultContent:{title:DC.stats.title[lang],items:[{value:'10K+',label:DC.stats.lbl1[lang]},{value:'98%',label:DC.stats.lbl2[lang]},{value:'200+',label:DC.stats.lbl3[lang]},{value:'24/7',label:DC.stats.lbl4[lang]}]}, defaultStyle:{bg:'#1a1a2e',textColor:'#ffffff',accentColor:'#00e5cc'} },
-  { type:'divider',    label:t(DICT,'blockDivider',lang),     icon:'—',  cat:t(DICT,'catLayout',lang),     preview:t(DICT,'blockDividerPrev',lang),      defaultContent:{}, defaultStyle:{bg:'#ffffff',color:'#7c4dff',height:60} },
-  { type:'footer',     label:t(DICT,'blockFooter',lang),      icon:'⊟',  cat:t(DICT,'catLayout',lang),     preview:t(DICT,'blockFooterPrev',lang),       defaultContent:{brand:DC.footer.brand[lang],tagline:DC.footer.tagline[lang],links:DC.footer.links[lang],copy:DC.footer.copy[lang]}, defaultStyle:{bg:'#0c0c14',textColor:'#e8e8f0',accentColor:'#7c4dff'} },
-];
+// ─── Item Types (trilingual) ────────────────────────────────────
+const ITEM_TYPES_I18N = {
+  de: [
+    { type:'h1',         icon:'H1',   label:'H1',          defaultContent:'Haupttitel' },
+    { type:'h2',         icon:'H2',   label:'H2',          defaultContent:'Untertitel' },
+    { type:'h3',         icon:'H3',   label:'H3',          defaultContent:'Abschnitt' },
+    { type:'p',          icon:'¶',    label:'Absatz',       defaultContent:'Text hier eingeben…' },
+    { type:'ul',         icon:'•',    label:'Liste',        defaultContent:'Punkt 1\nPunkt 2\nPunkt 3' },
+    { type:'ol',         icon:'1.',   label:'Nummeriert',   defaultContent:'Erstens\nZweitens\nDrittens' },
+    { type:'blockquote', icon:'❝',    label:'Zitat',        defaultContent:'Zitat hier…' },
+    { type:'hr',         icon:'─',    label:'Trennlinie',   defaultContent:'' },
+    { type:'img',        icon:'🖼',   label:'Bild',         defaultContent:'' },
+    { type:'code',       icon:'</>',  label:'Code',         defaultContent:'// Code hier' },
+    { type:'table',      icon:'⊞',   label:'Tabelle',      defaultContent:'Sp1|Sp2|Sp3\nA|B|C\nD|E|F' },
+    { type:'div',        icon:'[ ]',  label:'Container',    defaultContent:'' },
+    { type:'video',      icon:'▶',    label:'Video',        defaultContent:'' },
+    { type:'iframe',     icon:'⧉',    label:'Embed',        defaultContent:'' },
+  ],
+  en: [
+    { type:'h1',         icon:'H1',   label:'H1',           defaultContent:'Main Title' },
+    { type:'h2',         icon:'H2',   label:'H2',           defaultContent:'Subtitle' },
+    { type:'h3',         icon:'H3',   label:'H3',           defaultContent:'Section' },
+    { type:'p',          icon:'¶',    label:'Paragraph',    defaultContent:'Type your text here…' },
+    { type:'ul',         icon:'•',    label:'List',         defaultContent:'Item 1\nItem 2\nItem 3' },
+    { type:'ol',         icon:'1.',   label:'Numbered',     defaultContent:'First\nSecond\nThird' },
+    { type:'blockquote', icon:'❝',    label:'Quote',        defaultContent:'Quote text here…' },
+    { type:'hr',         icon:'─',    label:'Divider',      defaultContent:'' },
+    { type:'img',        icon:'🖼',   label:'Image',        defaultContent:'' },
+    { type:'code',       icon:'</>',  label:'Code',         defaultContent:'// your code here' },
+    { type:'table',      icon:'⊞',   label:'Table',        defaultContent:'Col1|Col2|Col3\nA|B|C\nD|E|F' },
+    { type:'div',        icon:'[ ]',  label:'Container',    defaultContent:'' },
+    { type:'video',      icon:'▶',    label:'Video',        defaultContent:'' },
+    { type:'iframe',     icon:'⧉',    label:'Embed',        defaultContent:'' },
+  ],
+  pt: [
+    { type:'h1',         icon:'H1',   label:'H1',           defaultContent:'Título Principal' },
+    { type:'h2',         icon:'H2',   label:'H2',           defaultContent:'Subtítulo' },
+    { type:'h3',         icon:'H3',   label:'H3',           defaultContent:'Seção' },
+    { type:'p',          icon:'¶',    label:'Parágrafo',    defaultContent:'Digite seu texto aqui…' },
+    { type:'ul',         icon:'•',    label:'Lista',        defaultContent:'Item 1\nItem 2\nItem 3' },
+    { type:'ol',         icon:'1.',   label:'Numerada',     defaultContent:'Primeiro\nSegundo\nTerceiro' },
+    { type:'blockquote', icon:'❝',    label:'Citação',      defaultContent:'Texto da citação…' },
+    { type:'hr',         icon:'─',    label:'Divisor',      defaultContent:'' },
+    { type:'img',        icon:'🖼',   label:'Imagem',       defaultContent:'' },
+    { type:'code',       icon:'</>',  label:'Código',       defaultContent:'// seu código aqui' },
+    { type:'table',      icon:'⊞',   label:'Tabela',       defaultContent:'Col1|Col2|Col3\nA|B|C\nD|E|F' },
+    { type:'div',        icon:'[ ]',  label:'Container',    defaultContent:'' },
+    { type:'video',      icon:'▶',    label:'Vídeo',        defaultContent:'' },
+    { type:'iframe',     icon:'⧉',    label:'Embed',        defaultContent:'' },
+  ],
+};
+const ITEM_TYPES = ITEM_TYPES_I18N.pt;
 
-const getCategories = (lang) => [
-  t(DICT,'catSections',lang), t(DICT,'catContent',lang),
-  t(DICT,'catMedia',lang),    t(DICT,'catConversion',lang),
-  t(DICT,'catSocial',lang),   t(DICT,'catLayout',lang),
-];
+let _seq = 1;
+const genId = () => `item_${Date.now()}_${_seq++}`;
 
-// ═══════════════════════════════════════════════════════════════════
-// TEMPLATES
-// ═══════════════════════════════════════════════════════════════════
-const getTemplates = (lang) => [
-  {
-    id:'landing', icon:'🚀', tier:'FREE',
-    name: t(DICT,'tplLandingName',lang),
-    desc: t(DICT,'tplLandingDesc',lang),
-    blocks:[
-      {type:'hero',      content:{badge:DC.tplLanding.badge[lang],headline:DC.tplLanding.headline[lang],subtitle:DC.tplLanding.subtitle[lang],btnText:DC.tplLanding.btnText[lang],btnUrl:'#'}, style:{bg:'#0f0c29',bg2:'#302b63',textColor:'#ffffff',accentColor:'#a855f7',align:'center',minHeight:520}},
-      {type:'features',  content:{title:DC.tplLanding.featTitle[lang],items:[{icon:DC.tplLanding.feat1.icon,title:DC.tplLanding.feat1.title[lang],text:DC.tplLanding.feat1.text[lang]},{icon:DC.tplLanding.feat2.icon,title:DC.tplLanding.feat2.title[lang],text:DC.tplLanding.feat2.text[lang]},{icon:DC.tplLanding.feat3.icon,title:DC.tplLanding.feat3.title[lang],text:DC.tplLanding.feat3.text[lang]}]}, style:{bg:'#ffffff',textColor:'#1a1a2e',accentColor:'#7c4dff',cardBg:'#f8f7ff'}},
-      {type:'cta',       content:{headline:DC.tplLanding.ctaHead[lang],sub:DC.tplLanding.ctaSub[lang],btnText:DC.tplLanding.ctaBtn[lang],btnUrl:'#',btnSecText:DC.tplLanding.ctaSec[lang]}, style:{bg:'#7c4dff',textColor:'#ffffff',accentColor:'#ffd600',align:'center'}},
-      {type:'footer',    content:{brand:DC.tplLanding.brand[lang],tagline:DC.tplLanding.tagline[lang],links:DC.tplLanding.fLinks[lang],copy:DC.tplLanding.fCopy[lang]}, style:{bg:'#0c0c14',textColor:'#e8e8f0',accentColor:'#7c4dff'}},
-    ],
-  },
-  {
-    id:'portfolio', icon:'🎨', tier:'FREE',
-    name: t(DICT,'tplPortfolioName',lang),
-    desc: t(DICT,'tplPortfolioDesc',lang),
-    blocks:[
-      {type:'hero',        content:{badge:DC.tplPortfolio.badge[lang],headline:DC.tplPortfolio.headline[lang],subtitle:DC.tplPortfolio.subtitle[lang],btnText:DC.tplPortfolio.btnText[lang],btnUrl:'#'}, style:{bg:'#0a0a0a',bg2:'#1a0533',textColor:'#ffffff',accentColor:'#ff4081',align:'center',minHeight:480}},
-      {type:'textblock',   content:{label:DC.tplPortfolio.label[lang],title:DC.tplPortfolio.title[lang],body:DC.tplPortfolio.body[lang]}, style:{bg:'#fafafa',textColor:'#1a1a2e',accentColor:'#ff4081',align:'left',maxWidth:680}},
-      {type:'cta',         content:{headline:DC.tplPortfolio.ctaHead[lang],sub:DC.tplPortfolio.ctaSub[lang],btnText:DC.tplPortfolio.ctaBtn[lang],btnUrl:'mailto:ana@email.com',btnSecText:''}, style:{bg:'#ff4081',textColor:'#ffffff',accentColor:'#ffd600',align:'center'}},
-      {type:'footer',      content:{brand:DC.tplPortfolio.brand[lang],tagline:DC.tplPortfolio.tagline[lang],links:DC.tplPortfolio.fLinks[lang],copy:DC.tplPortfolio.fCopy[lang]}, style:{bg:'#0a0a0a',textColor:'#e8e8f0',accentColor:'#ff4081'}},
-    ],
-  },
-];
+// ─── History Reducer (Undo/Redo) ───────────────────────────────
+const MAX_HISTORY = 50;
 
-// ═══════════════════════════════════════════════════════════════════
-// BLOCK RENDERERS
-// ═══════════════════════════════════════════════════════════════════
-function BHero({b}){const{content:c,style:s}=b;return(<div style={{background:`linear-gradient(135deg,${s.bg} 0%,${s.bg2||s.bg} 100%)`,color:s.textColor,minHeight:s.minHeight,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',textAlign:s.align,padding:'80px 40px'}}>
-{c.badge&&<span style={{background:s.accentColor+'33',border:`1px solid ${s.accentColor}66`,color:s.accentColor,borderRadius:100,padding:'4px 16px',fontSize:12,fontWeight:600,letterSpacing:2,textTransform:'uppercase',marginBottom:24}}>{c.badge}</span>}
-<h1 style={{fontSize:'clamp(36px,6vw,72px)',fontWeight:900,lineHeight:1.1,margin:'0 0 24px',fontFamily:"'Playfair Display',Georgia,serif",maxWidth:800}}>{(c.headline||'').split('\n').map((l,i,a)=><span key={i}>{l}{i<a.length-1&&<br/>}</span>)}</h1>
-{c.subtitle&&<p style={{fontSize:18,opacity:.8,maxWidth:560,margin:'0 0 40px',lineHeight:1.6}}>{c.subtitle}</p>}
-{c.btnText&&<a href={c.btnUrl} style={{background:s.accentColor,color:'#fff',padding:'14px 36px',borderRadius:100,fontWeight:700,fontSize:15,textDecoration:'none',boxShadow:`0 8px 32px ${s.accentColor}66`}}>{c.btnText}</a>}
-</div>);}
-
-function BFeatures({b}){const{content:c,style:s}=b;return(<div style={{background:s.bg,padding:'80px 40px',color:s.textColor}}>
-{c.title&&<h2 style={{textAlign:'center',fontSize:36,fontWeight:800,margin:'0 0 56px',fontFamily:"'Playfair Display',Georgia,serif"}}>{c.title}</h2>}
-<div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:24,maxWidth:960,margin:'0 auto'}}>
-{(c.items||[]).map((item,i)=>(<div key={i} style={{background:s.cardBg,borderRadius:16,padding:32,border:`1px solid ${s.accentColor}22`}}><div style={{fontSize:36,marginBottom:16}}>{item.icon}</div><h3 style={{fontSize:20,fontWeight:700,margin:'0 0 12px'}}>{item.title}</h3><p style={{color:s.textColor+'CC',lineHeight:1.6,margin:0,fontSize:15}}>{item.text}</p></div>))}
-</div></div>);}
-
-function BTextblock({b}){const{content:c,style:s}=b;return(<div style={{background:s.bg,padding:'80px 40px',color:s.textColor}}>
-<div style={{maxWidth:s.maxWidth||680,margin:'0 auto',textAlign:s.align}}>
-{c.label&&<span style={{color:s.accentColor,fontWeight:700,fontSize:12,letterSpacing:3,textTransform:'uppercase',display:'block',marginBottom:16}}>{c.label}</span>}
-{c.title&&<h2 style={{fontSize:40,fontWeight:800,lineHeight:1.15,margin:'0 0 24px',fontFamily:"'Playfair Display',Georgia,serif"}}>{c.title.split('\n').map((l,i,a)=><span key={i}>{l}{i<a.length-1&&<br/>}</span>)}</h2>}
-{c.body&&<p style={{fontSize:17,lineHeight:1.8,opacity:.8,margin:0}}>{c.body}</p>}
-</div></div>);}
-
-function BImagebox({b}){const{content:c,style:s}=b;const has=c.url&&c.url.length>0;return(<div style={{background:s.bg,padding:'60px 40px'}}>
-<div style={{maxWidth:s.maxWidth||900,margin:'0 auto'}}>
-{has?(<div><img src={c.url} alt={c.alt} style={{width:'100%',borderRadius:s.radius||12,display:'block'}}/>{c.caption&&<div style={{textAlign:'center',marginTop:12,fontSize:13,opacity:.6,fontStyle:'italic'}}>{c.caption}</div>}</div>)
-:(<div style={{border:`2px dashed ${s.accentColor}55`,borderRadius:s.radius||12,padding:'60px 40px',textAlign:'center',background:s.accentColor+'08'}}><div style={{fontSize:40,marginBottom:12}}>🖼</div><div style={{fontSize:14,opacity:.5}}>Upload an image in the properties panel</div></div>)}
-</div></div>);}
-
-function BGallery({b}){const{content:c,style:s}=b;return(<div style={{background:s.bg,padding:'80px 40px'}}>
-{c.title&&<h2 style={{textAlign:'center',fontSize:36,fontWeight:800,margin:'0 0 48px',color:s.textColor,fontFamily:"'Playfair Display',Georgia,serif"}}>{c.title}</h2>}
-<div style={{display:'grid',gridTemplateColumns:`repeat(${s.columns||3},1fr)`,gap:s.gap||12,maxWidth:1000,margin:'0 auto'}}>
-{(c.images||[]).map((img,i)=>(<div key={i} style={{borderRadius:12,overflow:'hidden',aspectRatio:'4/3',background:'#eee'}}><img src={img.url} alt={img.alt} style={{width:'100%',height:'100%',objectFit:'cover'}}/></div>))}
-</div></div>);}
-
-function BCta({b}){const{content:c,style:s}=b;return(<div style={{background:s.bg,padding:'80px 40px',textAlign:s.align,color:s.textColor}}>
-<h2 style={{fontSize:'clamp(28px,4vw,48px)',fontWeight:900,margin:'0 auto 16px',fontFamily:"'Playfair Display',Georgia,serif",maxWidth:700}}>{c.headline}</h2>
-{c.sub&&<p style={{opacity:.85,fontSize:18,margin:'0 0 40px'}}>{c.sub}</p>}
-<div style={{display:'flex',gap:16,justifyContent:'center',flexWrap:'wrap'}}>
-{c.btnText&&<a href={c.btnUrl} style={{background:s.accentColor,color:'#000',padding:'14px 36px',borderRadius:100,fontWeight:800,fontSize:15,textDecoration:'none'}}>{c.btnText}</a>}
-{c.btnSecText&&<a href="#" style={{border:'2px solid rgba(255,255,255,.4)',color:s.textColor,padding:'14px 36px',borderRadius:100,fontWeight:600,fontSize:15,textDecoration:'none'}}>{c.btnSecText}</a>}
-</div></div>);}
-
-function BTestimonial({b}){const{content:c,style:s}=b;return(<div style={{background:s.bg,padding:'80px 40px',textAlign:s.align,color:s.textColor}}>
-<div style={{maxWidth:680,margin:'0 auto'}}>
-<div style={{fontSize:64,color:s.accentColor,lineHeight:1,marginBottom:16,fontFamily:'Georgia,serif'}}>❝</div>
-<p style={{fontSize:22,lineHeight:1.7,fontStyle:'italic',margin:'0 0 40px',opacity:.95}}>{c.quote}</p>
-<div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:16}}>
-<div style={{width:48,height:48,borderRadius:'50%',background:s.accentColor,display:'flex',alignItems:'center',justifyContent:'center',fontWeight:800,fontSize:16}}>{c.avatar}</div>
-<div style={{textAlign:'left'}}><div style={{fontWeight:700,fontSize:16}}>{c.author}</div><div style={{opacity:.6,fontSize:14}}>{c.role}</div></div>
-</div></div></div>);}
-
-function BStats({b}){const{content:c,style:s}=b;return(<div style={{background:s.bg,padding:'80px 40px',color:s.textColor,textAlign:'center'}}>
-{c.title&&<h2 style={{fontSize:36,fontWeight:800,margin:'0 0 56px',fontFamily:"'Playfair Display',Georgia,serif"}}>{c.title}</h2>}
-<div style={{display:'flex',justifyContent:'center',gap:64,flexWrap:'wrap'}}>
-{(c.items||[]).map((item,i)=>(<div key={i}><div style={{fontSize:52,fontWeight:900,color:s.accentColor,lineHeight:1}}>{item.value}</div><div style={{opacity:.6,fontSize:14,marginTop:8,letterSpacing:1,textTransform:'uppercase'}}>{item.label}</div></div>))}
-</div></div>);}
-
-function BDivider({b}){const{style:s}=b;return(<div style={{background:s.bg,lineHeight:0}}><svg viewBox="0 0 1200 60" preserveAspectRatio="none" style={{display:'block',width:'100%',height:s.height||60}}><path d="M0,0 C300,60 900,60 1200,0 L1200,60 L0,60 Z" fill={s.color}/></svg></div>);}
-
-function BFooter({b}){const{content:c,style:s}=b;return(<div style={{background:s.bg,color:s.textColor,padding:'60px 40px 32px'}}>
-<div style={{maxWidth:960,margin:'0 auto'}}>
-<div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:48,flexWrap:'wrap',gap:32}}>
-<div><div style={{fontSize:24,fontWeight:900,color:s.accentColor,marginBottom:8}}>{c.brand}</div>{c.tagline&&<div style={{opacity:.6,maxWidth:260,lineHeight:1.6,fontSize:14}}>{c.tagline}</div>}</div>
-<div style={{display:'flex',gap:32,flexWrap:'wrap'}}>{(c.links||[]).map((l,i)=><a key={i} href="#" style={{color:s.textColor,opacity:.7,textDecoration:'none',fontSize:14}}>{l}</a>)}</div>
-</div>
-<div style={{borderTop:`1px solid ${s.textColor}22`,paddingTop:24,opacity:.4,fontSize:13}}>{c.copy}</div>
-</div></div>);}
-
-function BlockRenderer({block}){
-  switch(block.type){
-    case 'hero': return <BHero b={block}/>;case 'features': return <BFeatures b={block}/>;
-    case 'textblock': return <BTextblock b={block}/>;case 'imagebox': return <BImagebox b={block}/>;
-    case 'gallery': return <BGallery b={block}/>;case 'cta': return <BCta b={block}/>;
-    case 'testimonial': return <BTestimonial b={block}/>;case 'stats': return <BStats b={block}/>;
-    case 'divider': return <BDivider b={block}/>;case 'footer': return <BFooter b={block}/>;
-    default: return <div style={{padding:32,background:'#eee',textAlign:'center'}}>{block.type}</div>;
+function historyReducer(state, action) {
+  const { past, present, future } = state;
+  switch (action.type) {
+    case 'SET': {
+      if (JSON.stringify(present) === JSON.stringify(action.payload)) return state;
+      return { past: [...past.slice(-MAX_HISTORY + 1), present], present: action.payload, future: [] };
+    }
+    case 'UNDO': {
+      if (past.length === 0) return state;
+      return { past: past.slice(0, -1), present: past[past.length - 1], future: [present, ...future] };
+    }
+    case 'REDO': {
+      if (future.length === 0) return state;
+      return { past: [...past, present], present: future[0], future: future.slice(1) };
+    }
+    case 'RESET': return { past: [], present: action.payload, future: [] };
+    default: return state;
   }
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// FORM HELPERS
-// ═══════════════════════════════════════════════════════════════════
-const IS=(x={})=>({width:'100%',background:T.card,border:`1px solid ${T.border}`,borderRadius:8,padding:'7px 12px',color:T.text,fontSize:13,fontFamily:'inherit',boxSizing:'border-box',...x});
-function CP({label,val,set}){return(<div style={{marginBottom:12}}><div style={{fontSize:10,color:T.dim,letterSpacing:1,textTransform:'uppercase',marginBottom:5}}>{label}</div><div style={{display:'flex',gap:6,alignItems:'center'}}><input type="color" value={val} onChange={e=>set(e.target.value)} style={{width:30,height:30,border:'none',borderRadius:6,cursor:'pointer',background:'transparent',padding:2}}/><input type="text" value={val} onChange={e=>set(e.target.value)} style={{...IS(),flex:1,fontFamily:'monospace',fontSize:11}}/></div></div>);}
-function TP({label,val,set,ml}){const s={...IS(),...(ml?{resize:'vertical',minHeight:68}:{})};return(<div style={{marginBottom:12}}><div style={{fontSize:10,color:T.dim,letterSpacing:1,textTransform:'uppercase',marginBottom:5}}>{label}</div>{ml?<textarea value={val} onChange={e=>set(e.target.value)} style={s}/>:<input type="text" value={val} onChange={e=>set(e.target.value)} style={s}/>}</div>);}
-function SP({label,val,opts,set}){return(<div style={{marginBottom:12}}><div style={{fontSize:10,color:T.dim,letterSpacing:1,textTransform:'uppercase',marginBottom:5}}>{label}</div><select value={val} onChange={e=>set(e.target.value)} style={IS()}>{opts.map(o=><option key={o.v} value={o.v}>{o.l}</option>)}</select></div>);}
-
-// ═══════════════════════════════════════════════════════════════════
-// PROPERTIES PANEL
-// ═══════════════════════════════════════════════════════════════════
-function PropsPanel({block,onChange}){
-  const lang=useLang();
-  const CATALOG=getCatalog(lang);
-  if(!block)return(<div style={{padding:24,textAlign:'center',color:T.dim}}><div style={{fontSize:32,marginBottom:10}}>◫</div><div style={{fontSize:13}}>{t(DICT,'propEmpty',lang)}</div></div>);
-  const us=(k,v)=>onChange({...block,style:{...block.style,[k]:v}});
-  const uc=(k,v)=>onChange({...block,content:{...block.content,[k]:v}});
-  const{content:c,style:s}=block;
-  const cat=CATALOG.find(x=>x.type===block.type);
-  const SH=(label)=><div style={{fontSize:10,fontWeight:700,color:T.dim,letterSpacing:2,textTransform:'uppercase',margin:'14px 0 8px',paddingBottom:5,borderBottom:`1px solid ${T.border}`}}>{label}</div>;
-  return(<div style={{padding:14,overflowY:'auto',height:'100%'}}>
-    <div style={{fontSize:11,fontWeight:700,letterSpacing:2,textTransform:'uppercase',color:T.accent,marginBottom:16,display:'flex',alignItems:'center',gap:6}}><span>{cat?.icon}</span>{cat?.label}</div>
-    {SH(t(DICT,'propStyle',lang))}
-    <CP label={t(DICT,'propBg',lang)} val={s.bg||'#fff'} set={v=>us('bg',v)}/>
-    {s.bg2!==undefined&&<CP label={t(DICT,'propBg2',lang)} val={s.bg2} set={v=>us('bg2',v)}/>}
-    {s.textColor!==undefined&&<CP label={t(DICT,'propTextColor',lang)} val={s.textColor} set={v=>us('textColor',v)}/>}
-    <CP label={t(DICT,'propAccent',lang)} val={s.accentColor||'#7c4dff'} set={v=>us('accentColor',v)}/>
-    {s.cardBg!==undefined&&<CP label={t(DICT,'propCard',lang)} val={s.cardBg} set={v=>us('cardBg',v)}/>}
-    {s.align!==undefined&&<SP label={t(DICT,'propAlign',lang)} val={s.align} set={v=>us('align',v)} opts={[{v:'left',l:t(DICT,'alignLeft',lang)},{v:'center',l:t(DICT,'alignCenter',lang)},{v:'right',l:t(DICT,'alignRight',lang)}]}/>}
-    {SH(t(DICT,'propContent',lang))}
-    {block.type==='hero'&&<><TP label={t(DICT,'badge',lang)} val={c.badge||''} set={v=>uc('badge',v)}/><TP label={t(DICT,'headline',lang)} val={c.headline||''} set={v=>uc('headline',v)} ml/><TP label={t(DICT,'subtitle',lang)} val={c.subtitle||''} set={v=>uc('subtitle',v)} ml/><TP label={t(DICT,'btnLabel',lang)} val={c.btnText||''} set={v=>uc('btnText',v)}/><TP label={t(DICT,'btnUrl',lang)} val={c.btnUrl||'#'} set={v=>uc('btnUrl',v)}/></>}
-    {block.type==='textblock'&&<><TP label={t(DICT,'labelProp',lang)} val={c.label||''} set={v=>uc('label',v)}/><TP label={t(DICT,'titleProp',lang)} val={c.title||''} set={v=>uc('title',v)} ml/><TP label={t(DICT,'bodyProp',lang)} val={c.body||''} set={v=>uc('body',v)} ml/></>}
-    {block.type==='cta'&&<><TP label={t(DICT,'headlineProp',lang)} val={c.headline||''} set={v=>uc('headline',v)} ml/><TP label={t(DICT,'subProp',lang)} val={c.sub||''} set={v=>uc('sub',v)}/><TP label={t(DICT,'btnLabel',lang)} val={c.btnText||''} set={v=>uc('btnText',v)}/><TP label={t(DICT,'btnUrl',lang)} val={c.btnUrl||'#'} set={v=>uc('btnUrl',v)}/><TP label={t(DICT,'btnLabel2',lang)} val={c.btnSecText||''} set={v=>uc('btnSecText',v)}/></>}
-    {block.type==='testimonial'&&<><TP label={t(DICT,'quoteProp',lang)} val={c.quote||''} set={v=>uc('quote',v)} ml/><TP label={t(DICT,'authorProp',lang)} val={c.author||''} set={v=>uc('author',v)}/><TP label={t(DICT,'roleProp',lang)} val={c.role||''} set={v=>uc('role',v)}/><TP label={t(DICT,'initialsProp',lang)} val={c.avatar||''} set={v=>uc('avatar',v)}/></>}
-    {block.type==='footer'&&<><TP label={t(DICT,'brandProp',lang)} val={c.brand||''} set={v=>uc('brand',v)}/><TP label={t(DICT,'taglineProp',lang)} val={c.tagline||''} set={v=>uc('tagline',v)}/><TP label={t(DICT,'copyrightProp',lang)} val={c.copy||''} set={v=>uc('copy',v)}/></>}
-    {block.type==='imagebox'&&<ImageUpload block={block} onUpdate={onChange}/>}
-    {['gallery','features','stats'].includes(block.type)&&<div style={{background:T.surface,borderRadius:8,padding:11,border:`1px solid ${T.border}`,fontSize:11,color:T.dim}}>{t(DICT,'multiItemNote',lang)}</div>}
-  </div>);
+function useHistory(initial) {
+  const [state, dispatch] = useReducer(historyReducer, { past: [], present: initial, future: [] });
+  const set   = useCallback(val => dispatch({ type:'SET',   payload: val }), []);
+  const undo  = useCallback(()  => dispatch({ type:'UNDO' }), []);
+  const redo  = useCallback(()  => dispatch({ type:'REDO' }), []);
+  const reset = useCallback(val => dispatch({ type:'RESET', payload: val }), []);
+  return { items: state.present, canUndo: state.past.length > 0, canRedo: state.future.length > 0, set, undo, redo, reset };
 }
 
-// ═══════════════════════════════════════════════════════════════════
-// HTML EXPORT GENERATOR
-// ═══════════════════════════════════════════════════════════════════
-function genHTML(blocks,meta){
-  const rows=blocks.map(b=>{const{style:s,content:c}=b;switch(b.type){
-    case 'hero':return `<section style="background:linear-gradient(135deg,${s.bg} 0%,${s.bg2||s.bg} 100%);color:${s.textColor};min-height:${s.minHeight}px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:${s.align};padding:80px 40px">${c.badge?`<span style="background:${s.accentColor}33;border:1px solid ${s.accentColor}66;color:${s.accentColor};border-radius:100px;padding:4px 16px;font-size:12px;font-weight:600">${c.badge}</span>`:''}<h1 style="font-size:clamp(36px,6vw,72px);font-weight:900;line-height:1.1;margin:24px 0;font-family:'Playfair Display',Georgia,serif">${(c.headline||'').replace(/\n/g,'<br>')}</h1>${c.subtitle?`<p style="font-size:18px;opacity:.8;max-width:560px;margin:0 0 40px">${c.subtitle}</p>`:''}${c.btnText?`<a href="${c.btnUrl}" style="background:${s.accentColor};color:#fff;padding:14px 36px;border-radius:100px;font-weight:700;text-decoration:none">${c.btnText}</a>`:''}</section>`;
-    case 'cta':return `<section style="background:${s.bg};padding:80px 40px;text-align:${s.align};color:${s.textColor}"><h2 style="font-size:clamp(28px,4vw,48px);font-weight:900;margin:0 auto 16px;max-width:700px">${c.headline||''}</h2>${c.sub?`<p style="opacity:.85;font-size:18px;margin:0 0 40px">${c.sub}</p>`:''}${c.btnText?`<a href="${c.btnUrl||'#'}" style="background:${s.accentColor};color:#000;padding:14px 36px;border-radius:100px;font-weight:800;text-decoration:none">${c.btnText}</a>`:''}</section>`;
-    case 'footer':return `<footer style="background:${s.bg};color:${s.textColor};padding:60px 40px 32px"><div style="max-width:960px;margin:0 auto"><div style="font-size:24px;font-weight:900;color:${s.accentColor};margin-bottom:8px">${c.brand||''}</div>${c.tagline?`<div style="opacity:.6;font-size:14px;margin-bottom:48px">${c.tagline}</div>`:''}<div style="border-top:1px solid rgba(255,255,255,.1);padding-top:24px;opacity:.4;font-size:13px">${c.copy||''}</div></div></footer>`;
-    default:return `<section style="background:${s.bg||'#fff'};padding:60px 40px"><!-- ${b.type} --></section>`;
-  }}).join('\n');
-  return `<!DOCTYPE html>\n<html lang="${meta.lang||'pt'}">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width,initial-scale=1.0">\n  <title>${meta.title||'Minha Página'}</title>\n  <meta name="description" content="${meta.description||''}">\n  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&display=swap" rel="stylesheet">\n  <style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}img{max-width:100%;display:block}</style>\n</head>\n<body>\n${rows}\n</body>\n</html>`;
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// EXPORT MODAL
-// ═══════════════════════════════════════════════════════════════════
-function ExportModal({blocks,meta,setMeta,onClose,onSeal}){
-  const lang=useLang();
-  const[html,setHtml]=useState(()=>genHTML(blocks,{...meta,lang}));
-  const[copied,setCopied]=useState(false);
-  const copy=()=>{navigator.clipboard.writeText(html);setCopied(true);setTimeout(()=>setCopied(false),2000);};
-  const dl=()=>{const b=new Blob([html],{type:'text/html'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=`${(meta.title||'page').replace(/\s+/g,'-').toLowerCase()}.html`;a.click();URL.revokeObjectURL(u);};
-  const refresh=(m)=>setHtml(genHTML(blocks,{...m,lang}));
-  return(
-    <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,.87)',zIndex:200,display:'flex',alignItems:'center',justifyContent:'center',padding:24}} onClick={onClose}>
-      <div style={{background:T.surface,borderRadius:16,border:`1px solid ${T.border}`,width:'100%',maxWidth:780,maxHeight:'88vh',display:'flex',flexDirection:'column',overflow:'hidden'}} onClick={e=>e.stopPropagation()}>
-        <div style={{padding:'15px 22px',borderBottom:`1px solid ${T.border}`,display:'flex',alignItems:'center',gap:8}}>
-          <div><div style={{fontSize:15,fontWeight:800}}>⬇ {t(DICT,'exportTitle',lang)}</div><div style={{fontSize:11,color:T.dim}}>{t(DICT,'exportSub',lang)}</div></div>
-          <div style={{marginLeft:'auto',display:'flex',gap:7}}>
-            <button onClick={onSeal} style={{background:T.accentGreen+'22',border:`1px solid ${T.accentGreen}66`,borderRadius:8,padding:'6px 12px',color:T.accentGreen,fontSize:12,fontWeight:700,cursor:'pointer'}}>{t(DICT,'sealBtn',lang)}</button>
-            <button onClick={copy} style={{background:copied?T.accentGreen+'22':T.card,border:`1px solid ${copied?T.accentGreen:T.border}`,borderRadius:8,padding:'6px 12px',color:copied?T.accentGreen:T.text,fontSize:12,fontWeight:600,cursor:'pointer'}}>{copied?t(DICT,'copiedBtn',lang):t(DICT,'copyBtn',lang)}</button>
-            <button onClick={dl} style={{background:`linear-gradient(135deg,${T.accent},${T.accentHot})`,border:'none',borderRadius:8,padding:'6px 13px',color:'#fff',fontSize:13,fontWeight:700,cursor:'pointer'}}>⬇ .html</button>
-            <button onClick={onClose} style={{background:'transparent',border:`1px solid ${T.border}`,borderRadius:8,padding:'6px 10px',color:T.dim,cursor:'pointer'}}>✕</button>
-          </div>
-        </div>
-        <div style={{padding:'11px 22px',borderBottom:`1px solid ${T.border}`,display:'flex',gap:12}}>
-          {[['pageTitle','title'],['seoDesc','description']].map(([dk,mk])=>(
-            <div key={mk} style={{flex:1}}>
-              <div style={{fontSize:9,color:T.dim,letterSpacing:1,textTransform:'uppercase',marginBottom:4}}>{t(DICT,dk,lang)}</div>
-              <input value={meta[mk]} onChange={e=>{const m={...meta,[mk]:e.target.value};setMeta(m);refresh(m);}} style={{width:'100%',background:T.card,border:`1px solid ${T.border}`,borderRadius:7,padding:'6px 10px',color:T.text,fontSize:12,boxSizing:'border-box'}}/>
-            </div>))}
-        </div>
-        <pre style={{flex:1,overflowY:'auto',margin:0,padding:'12px 22px',fontSize:10,lineHeight:1.6,color:'#a8e6cf',fontFamily:"'JetBrains Mono','Fira Code',monospace",background:'#090912'}}>{html}</pre>
-        <div style={{padding:'8px 22px',borderTop:`1px solid ${T.border}`,display:'flex',fontSize:10,color:T.dim}}>
-          <span>✓ {html.split('\n').length} {t(DICT,'exportFooter',lang)} · {(html.length/1024).toFixed(1)}KB · {blocks.length} {t(DICT,blocks.length===1?'blocksCount1':'blocksCountN',lang)}</span>
-          <span style={{marginLeft:'auto'}}>🐉 WINDI HTML Builder v3.0</span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// TEMPLATES MODAL
-// ═══════════════════════════════════════════════════════════════════
-function TemplatesModal({onSelect,onClose}){
-  const lang=useLang();
-  const TEMPLATES=getTemplates(lang);
-  const CATALOG=getCatalog(lang);
-  const tc={FREE:T.accentGreen,MED:T.accentGold};
-  return(<div style={{position:'fixed',inset:0,background:'rgba(0,0,0,.88)',zIndex:200,display:'flex',alignItems:'center',justifyContent:'center',padding:24}} onClick={onClose}>
-    <div style={{background:T.surface,borderRadius:16,border:`1px solid ${T.border}`,width:'100%',maxWidth:860,overflow:'hidden'}} onClick={e=>e.stopPropagation()}>
-      <div style={{padding:'17px 26px',borderBottom:`1px solid ${T.border}`,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-        <div><div style={{fontSize:15,fontWeight:800}}>🎨 {t(DICT,'tplModalTitle',lang)}</div><div style={{fontSize:11,color:T.dim,marginTop:2}}>{t(DICT,'tplModalSub',lang)}</div></div>
-        <button onClick={onClose} style={{background:'transparent',border:'none',color:T.dim,cursor:'pointer',fontSize:20}}>✕</button>
-      </div>
-      <div style={{padding:22,display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:14}}>
-        {TEMPLATES.map(tpl=>(
-          <div key={tpl.id} onClick={()=>onSelect(tpl)} style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:13,padding:20,cursor:'pointer',position:'relative',transition:'all .15s'}}
-            onMouseEnter={e=>{e.currentTarget.style.borderColor=T.accent;}}
-            onMouseLeave={e=>{e.currentTarget.style.borderColor=T.border;}}>
-            <span style={{position:'absolute',top:12,right:12,background:tc[tpl.tier]+'22',border:`1px solid ${tc[tpl.tier]}66`,color:tc[tpl.tier],fontSize:8,fontWeight:800,padding:'2px 7px',borderRadius:100}}>{tpl.tier}</span>
-            <div style={{fontSize:32,marginBottom:9}}>{tpl.icon}</div>
-            <div style={{fontSize:15,fontWeight:800,marginBottom:4}}>{tpl.name}</div>
-            <div style={{fontSize:12,color:T.dim,lineHeight:1.5,marginBottom:11}}>{tpl.desc}</div>
-            <div style={{display:'flex',gap:4,flexWrap:'wrap'}}>
-              {tpl.blocks.map((b,i)=>{const ci=CATALOG.find(x=>x.type===b.type);return(<span key={i} style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:5,padding:'2px 6px',fontSize:9,color:T.dim}}>{ci?.icon} {ci?.label}</span>);})}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  </div>);
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// LEDGER SEAL MODAL
-// ═══════════════════════════════════════════════════════════════════
-function LedgerModal({html,meta,onClose}){
-  const lang=useLang();
-  const[st,setSt]=useState('idle');
-  const[receipt,setReceipt]=useState(null);
-  const[docName,setDocName]=useState(meta.title||'html-page');
-  const[gov,setGov]=useState('LOW');
-  const[actor,setActor]=useState('html-builder');
-
-  const seal=async()=>{
-    setSt('sealing');
-    try{
-      const enc=new TextEncoder();
-      const buf=await crypto.subtle.digest('SHA-256',enc.encode(html));
-      const hash=Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
-      const id=`WINDI-HTML-${Date.now()}`;
-      const payload={id,actor,app:'windi-html-builder',doc_name:docName,doc_type:'doc',governance_level:gov,content_hash:hash,sge_score:0.85,metadata:{page_title:meta.title,builder:'v3.0',lang,html_bytes:html.length}};
-      const res=await fetch(`${LEDGER_URL}/api/receipts`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-      const data=await res.json();
-      setReceipt({id,hash,verifyUrl:VERIFY_BASE+id,offline:!res.ok||!data.ok,ledgerResponse:data});
-      setSt('sealed');
-    }catch(_e){
-      const enc=new TextEncoder();
-      const buf=await crypto.subtle.digest('SHA-256',enc.encode(html));
-      const hash=Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
-      setReceipt({id:`LOCAL-${Date.now()}`,hash,verifyUrl:'',offline:true});
-      setSt('sealed');
-    }
-  };
-
-  return(<div style={{position:'fixed',inset:0,background:'rgba(0,0,0,.88)',zIndex:300,display:'flex',alignItems:'center',justifyContent:'center',padding:24}} onClick={onClose}>
-    <div style={{background:T.surface,borderRadius:16,border:`1px solid ${T.border}`,width:'100%',maxWidth:540,overflow:'hidden'}} onClick={e=>e.stopPropagation()}>
-      <div style={{padding:'17px 22px',borderBottom:`1px solid ${T.border}`,display:'flex',alignItems:'center',gap:10}}>
-        <span style={{fontSize:20}}>🔐</span>
-        <div><div style={{fontSize:14,fontWeight:800}}>{t(DICT,'ledgerTitle',lang)}</div><div style={{fontSize:11,color:T.dim}}>{t(DICT,'ledgerSub',lang)}</div></div>
-        <button onClick={onClose} style={{marginLeft:'auto',background:'transparent',border:'none',color:T.dim,cursor:'pointer',fontSize:18}}>✕</button>
-      </div>
-      <div style={{padding:22}}>
-        {st==='idle'&&(<>
-          <div style={{background:T.accentGold+'15',border:`1px solid ${T.accentGold}44`,borderRadius:9,padding:'10px 14px',marginBottom:16,fontSize:12,color:T.accentGold}}>{t(DICT,'ledgerInfo',lang)}</div>
-          <TP label={t(DICT,'ledgerDocName',lang)} val={docName} set={setDocName}/>
-          <TP label={t(DICT,'ledgerActor',lang)} val={actor} set={setActor}/>
-          <SP label={t(DICT,'ledgerGov',lang)} val={gov} set={setGov} opts={[{v:'LOW',l:t(DICT,'govLow',lang)},{v:'MEDIUM',l:t(DICT,'govMed',lang)},{v:'HIGH',l:t(DICT,'govHigh',lang)}]}/>
-          <div style={{display:'flex',gap:8,marginTop:10}}>
-            <button onClick={seal} style={{flex:1,background:`linear-gradient(135deg,${T.accentGreen},#00a86b)`,border:'none',borderRadius:9,padding:'11px 0',color:'#fff',fontSize:14,fontWeight:700,cursor:'pointer'}}>{t(DICT,'sealNowBtn',lang)}</button>
-            <button onClick={onClose} style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:9,padding:'11px 16px',color:T.dim,cursor:'pointer',fontSize:13}}>{t(DICT,'cancelBtn',lang)}</button>
-          </div>
-        </>)}
-        {st==='sealing'&&<div style={{textAlign:'center',padding:'28px 0'}}><div style={{fontSize:36,marginBottom:10}}>⏳</div><div style={{color:T.accentTeal,fontSize:13}}>{t(DICT,'sealing',lang)}</div></div>}
-        {st==='sealed'&&receipt&&(<div>
-          {receipt.offline&&<div style={{background:'#ffaa4420',border:'1px solid #ffaa4466',borderRadius:8,padding:'8px 12px',marginBottom:12,fontSize:11,color:'#ffaa44'}}>{t(DICT,'ledgerOfflineWarn',lang)}</div>}
-          <div style={{background:T.accentGreen+'15',border:`1px solid ${T.accentGreen}44`,borderRadius:11,padding:18,marginBottom:16}}>
-            <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:12}}><span style={{fontSize:16}}>✅</span><span style={{fontWeight:800,color:T.accentGreen,fontSize:13}}>{t(DICT,'sealedTitle',lang)}</span></div>
-            {[[t(DICT,'sealedReceiptId',lang),receipt.id],[t(DICT,'sealedHash',lang),receipt.hash?.substring(0,32)+'…'],[t(DICT,'sealedDoc',lang),docName],[t(DICT,'sealedGov',lang),gov]].map(([k,v])=>(<div key={k} style={{display:'flex',gap:10,fontSize:11,marginBottom:5}}><span style={{color:T.dim,minWidth:80}}>{k}</span><span style={{fontFamily:'monospace',color:T.text,wordBreak:'break-all'}}>{v}</span></div>))}
-          </div>
-          {receipt.verifyUrl&&<><div style={{fontSize:10,color:T.dim,marginBottom:5,letterSpacing:1,textTransform:'uppercase'}}>{t(DICT,'sealedVerifyUrl',lang)}</div>
-          <div style={{background:T.card,borderRadius:8,padding:'9px 13px',marginBottom:14,fontSize:11,color:T.accent,fontFamily:'monospace',wordBreak:'break-all'}}>{receipt.verifyUrl}</div></>}
-          <button onClick={onClose} style={{width:'100%',background:T.card,border:`1px solid ${T.border}`,borderRadius:9,padding:'9px 0',color:T.text,cursor:'pointer',fontWeight:600}}>{t(DICT,'closeBtn',lang)}</button>
-        </div>)}
-      </div>
-    </div>
-  </div>);
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// IMAGE UPLOAD WITH VAULT INTEGRATION
-// ═══════════════════════════════════════════════════════════════════
-function ImageUpload({block,onUpdate}){
-  const lang=useLang();
-  const[uploading,setUploading]=useState(false);
-  const[msg,setMsg]=useState('');
-  const ref=useRef();
-
-  const handleFile=async(file)=>{
-    if(!file)return;
-    setUploading(true);setMsg(t(DICT,'vaultUploading',lang));
-    try{
-      const fd=new FormData();
-      fd.append('file',file);
-      fd.append('actor','html-builder');
-      fd.append('app','windi-html-builder');
-      fd.append('doc_name',file.name);
-      fd.append('doc_type','doc');
-      fd.append('governance_level','LOW');
-      const res=await fetch(`${VAULT_URL}/api/upload`,{method:'POST',body:fd});
-      if(res.ok){
-        const d=await res.json();
-        const vaultId=d.receipt_id||d.id||'VAULT-'+Date.now();
-        const url=d.url||d.file_url||URL.createObjectURL(file);
-        onUpdate({...block,content:{...block.content,url,vaultId}});
-        setMsg(`${t(DICT,'vaultSuccess',lang)} ${vaultId}`);
-      }else{
-        const url=URL.createObjectURL(file);
-        onUpdate({...block,content:{...block.content,url,vaultId:''}});
-        setMsg(t(DICT,'vaultOffline',lang));
+// ─── HTML Generator ────────────────────────────────────────────
+function buildHTML(items, docMeta) {
+  const lines = items.map(item => {
+    const cls = item.className ? ` class="${item.className}"` : '';
+    const id  = item.id_attr   ? ` id="${item.id_attr}"`      : '';
+    const attrs = cls + id;
+    switch (item.type) {
+      case 'h1': return `<h1${attrs}>${item.content||''}</h1>`;
+      case 'h2': return `<h2${attrs}>${item.content||''}</h2>`;
+      case 'h3': return `<h3${attrs}>${item.content||''}</h3>`;
+      case 'p':  return `<p${attrs}>${item.content||''}</p>`;
+      case 'ul': { const lis = (item.content||'').split('\n').filter(Boolean).map(l => `  <li>${l.trim()}</li>`).join('\n'); return `<ul${attrs}>\n${lis}\n</ul>`; }
+      case 'ol': { const lis = (item.content||'').split('\n').filter(Boolean).map(l => `  <li>${l.trim()}</li>`).join('\n'); return `<ol${attrs}>\n${lis}\n</ol>`; }
+      case 'blockquote': return `<blockquote${attrs}>${item.content||''}</blockquote>`;
+      case 'hr': return `<hr${attrs}/>`;
+      case 'img': { const src = item.src || item.content || ''; const alt = item.alt || ''; return `<img${attrs} src="${src}" alt="${alt}" style="max-width:100%;"/>`; }
+      case 'code': { const lang = item.lang || ''; return `<pre${attrs}><code class="language-${lang}">${item.content||''}</code></pre>`; }
+      case 'table': {
+        const rows = (item.content||'').split('\n').filter(Boolean).map(r => r.split('|'));
+        if (!rows.length) return `<table${attrs}></table>`;
+        const [hRow, ...bodyRows] = rows;
+        const ths = hRow.map(c => `<th>${c.trim()}</th>`).join('');
+        const trs = bodyRows.map(r => `  <tr>${r.map(c=>`<td>${c.trim()}</td>`).join('')}</tr>`).join('\n');
+        return `<table${attrs}>\n  <thead><tr>${ths}</tr></thead>\n  <tbody>\n${trs}\n  </tbody>\n</table>`;
       }
-    }catch(_e){
-      const url=URL.createObjectURL(file);
-      onUpdate({...block,content:{...block.content,url,vaultId:''}});
-      setMsg(t(DICT,'vaultOffline',lang));
+      case 'div': { const inner = item.content ? `\n  ${item.content}\n` : ''; return `<div${attrs}>${inner}</div>`; }
+      case 'video': { const src = item.src || item.content || ''; const poster = item.poster ? ` poster="${item.poster}"` : ''; const autoplay = item.autoplay ? ' autoplay' : ''; const loop = item.loop ? ' loop' : ''; const muted = item.muted ? ' muted' : ''; return `<video${attrs} src="${src}"${poster} controls${autoplay}${loop}${muted} style="max-width:100%;"></video>`; }
+      case 'iframe': { const src = item.src || item.content || ''; const w = item.width || '560'; const h = item.height || '315'; return `<iframe${attrs} src="${src}" width="${w}" height="${h}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="max-width:100%;"></iframe>`; }
+      default: return `<!-- unknown: ${item.type} -->`;
     }
-    setUploading(false);
-  };
-
-  const c=block.content;const s=block.style;
-  return(<div>
-    <div style={{marginBottom:12}}>
-      <div style={{fontSize:10,color:T.dim,letterSpacing:1,textTransform:'uppercase',marginBottom:6}}>{t(DICT,'vaultUploadTitle',lang)}</div>
-      <div onClick={()=>ref.current?.click()} style={{border:`2px dashed ${s.accentColor}55`,borderRadius:10,padding:'16px',textAlign:'center',cursor:'pointer',background:s.accentColor+'08'}}>
-        <div style={{fontSize:22,marginBottom:4}}>🖼</div>
-        <div style={{fontSize:11,color:T.dim}}>{t(DICT,'vaultClickHint',lang)}</div>
-        <div style={{fontSize:9,color:T.dim,marginTop:2}}>PNG · JPG · WebP · GIF</div>
-      </div>
-      <input ref={ref} type="file" accept="image/*" style={{display:'none'}} onChange={e=>handleFile(e.target.files[0])}/>
-      {uploading&&<div style={{marginTop:5,fontSize:11,color:T.accentTeal}}>⏳ {msg}</div>}
-      {!uploading&&msg&&<div style={{marginTop:5,fontSize:11,color:msg.includes('✓')?T.accentGreen:'#ffaa44'}}>{msg}</div>}
-    </div>
-    <div style={{fontSize:10,color:T.dim,marginBottom:5,letterSpacing:1,textTransform:'uppercase'}}>{t(DICT,'orExternalUrl',lang)}</div>
-    <TP label={t(DICT,'imgUrl',lang)} val={c.url||''} set={v=>onUpdate({...block,content:{...block.content,url:v}})}/>
-    <TP label={t(DICT,'imgAlt',lang)} val={c.alt||''} set={v=>onUpdate({...block,content:{...block.content,alt:v}})}/>
-    <TP label={t(DICT,'imgCaption',lang)} val={c.caption||''} set={v=>onUpdate({...block,content:{...block.content,caption:v}})}/>
-    {c.vaultId&&<div style={{background:T.accentGreen+'15',border:`1px solid ${T.accentGreen}33`,borderRadius:7,padding:'6px 11px',marginTop:5,fontSize:10,color:T.accentGreen}}>🔐 Vault: {c.vaultId}</div>}
-  </div>);
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// LANGUAGE SWITCHER
-// ═══════════════════════════════════════════════════════════════════
-const LANGS = [
-  { code:'pt', flag:'🇧🇷', label:'PT' },
-  { code:'de', flag:'🇩🇪', label:'DE' },
-  { code:'en', flag:'🇺🇸', label:'EN' },
-];
-function LangSwitcher({lang,setLang}){
-  return(<div style={{display:'flex',gap:2,background:T.card,border:`1px solid ${T.border}`,borderRadius:8,padding:3}}>
-    {LANGS.map(l=>(
-      <button key={l.code} onClick={()=>setLang(l.code)} style={{background:lang===l.code?T.accent:'transparent',border:'none',borderRadius:6,padding:'4px 8px',cursor:'pointer',display:'flex',alignItems:'center',gap:4}}>
-        <span style={{fontSize:14}}>{l.flag}</span>
-        <span style={{fontSize:11,fontWeight:lang===l.code?700:400,color:lang===l.code?'#fff':T.dim}}>{l.label}</span>
-      </button>
-    ))}
-  </div>);
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// MAIN APP
-// ═══════════════════════════════════════════════════════════════════
-let idctr=0;const uid=()=>`b${++idctr}_${Date.now()}`;
-const mkBlock=(item)=>({id:uid(),type:item.type,label:item.label,content:JSON.parse(JSON.stringify(item.defaultContent)),style:JSON.parse(JSON.stringify(item.defaultStyle))});
-
-// Detect browser language → pt/de/en
-const detectLang=()=>{const nav=(navigator.language||'').toLowerCase();if(nav.startsWith('de'))return'de';if(nav.startsWith('en'))return'en';return'pt';};
-const META_TITLE={pt:'Minha Página',de:'Meine Seite',en:'My Page'};
-
-function App(){
-  const initLang=detectLang();
-  const[lang,setLang]=useState(initLang);
-  const[blocks,setBlocks]=useState(()=>{const CATALOG=getCatalog(initLang);return[mkBlock(CATALOG[0])];});
-  const[selId,setSelId]=useState(null);
-  const[cat,setCat]=useState(null);
-  const[preview,setPreview]=useState(false);
-  const[leftTab,setLeftTab]=useState('blocos');
-  const[showExport,setShowExport]=useState(false);
-  const[showTpl,setShowTpl]=useState(false);
-  const[showLedger,setShowLedger]=useState(false);
-  const[meta,setMeta]=useState({title:META_TITLE[initLang],description:''});
-
-  // ═══ HISTORY (Undo/Redo) ═══
-  const historyRef=useRef({past:[],future:[]});
-  const pushHistory=(newBlocks)=>{
-    historyRef.current.past.push(JSON.stringify(blocks));
-    if(historyRef.current.past.length>50)historyRef.current.past.shift();
-    historyRef.current.future=[];
-  };
-  const undo=()=>{
-    if(historyRef.current.past.length===0)return;
-    const prev=historyRef.current.past.pop();
-    historyRef.current.future.push(JSON.stringify(blocks));
-    setBlocks(JSON.parse(prev));
-    setSelId(null);
-  };
-  const redo=()=>{
-    if(historyRef.current.future.length===0)return;
-    const next=historyRef.current.future.pop();
-    historyRef.current.past.push(JSON.stringify(blocks));
-    setBlocks(JSON.parse(next));
-    setSelId(null);
-  };
-  const canUndo=()=>historyRef.current.past.length>0;
-  const canRedo=()=>historyRef.current.future.length>0;
-
-  // Keyboard shortcuts: Ctrl+Z (undo), Ctrl+Y (redo)
-  React.useEffect(()=>{
-    const handleKey=(e)=>{
-      if((e.ctrlKey||e.metaKey)&&e.key==='z'&&!e.shiftKey){e.preventDefault();undo();}
-      if((e.ctrlKey||e.metaKey)&&(e.key==='y'||(e.key==='z'&&e.shiftKey))){e.preventDefault();redo();}
-    };
-    window.addEventListener('keydown',handleKey);
-    return()=>window.removeEventListener('keydown',handleKey);
   });
+  return lines.join('\n\n');
+}
 
-  const CATALOG=getCatalog(lang);
-  const CATS=getCategories(lang);
-  const TEMPLATES=getTemplates(lang);
-  const activeCat=cat||CATS[0];
-  const sel=blocks.find(b=>b.id===selId)||null;
+function buildFullHTML(items, docMeta) {
+  const body = buildHTML(items, docMeta);
+  const title = docMeta.title || 'WINDI Document';
+  return `<!DOCTYPE html>\n<html lang="${docMeta.lang || 'pt-BR'}">\n<head>\n  <meta charset="UTF-8"/>\n  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>\n  <title>${title}</title>\n  ${docMeta.css ? `<style>\n${docMeta.css}\n  </style>` : ''}\n</head>\n<body>\n${body}\n</body>\n</html>`;
+}
 
-  const addBlock=(item)=>{pushHistory();const nb=mkBlock(item);setBlocks(p=>[...p,nb]);setSelId(nb.id);};
-  const updBlock=(upd)=>{pushHistory();setBlocks(p=>p.map(b=>b.id===upd.id?upd:b));};
-  const delBlock=(id)=>{pushHistory();setBlocks(p=>p.filter(b=>b.id!==id));if(selId===id)setSelId(null);};
-  const dupBlock=(id)=>{pushHistory();const orig=blocks.find(b=>b.id===id);if(!orig)return;const nb={...JSON.parse(JSON.stringify(orig)),id:uid()};setBlocks(p=>{const idx=p.findIndex(b=>b.id===id);const arr=[...p];arr.splice(idx+1,0,nb);return arr;});setSelId(nb.id);};
-  const moveBlock=(id,dir)=>{
-    const idx=blocks.findIndex(b=>b.id===id);
-    if(dir==='up'&&idx===0||dir==='down'&&idx===blocks.length-1)return;
-    pushHistory();
-    const nb=[...blocks];const si=dir==='up'?idx-1:idx+1;[nb[idx],nb[si]]=[nb[si],nb[idx]];setBlocks(nb);
-  };
-  const loadTpl=(tpl)=>{
-    if(!window.confirm(t(DICT,'confirmLoadTpl',lang,{name:tpl.name})))return;
-    setBlocks(tpl.blocks.map(b=>{const ci=CATALOG.find(x=>x.type===b.type)||CATALOG[0];return{id:uid(),type:b.type,label:ci.label,content:JSON.parse(JSON.stringify(b.content)),style:JSON.parse(JSON.stringify(b.style))};}));
-    setSelId(null);setShowTpl(false);setMeta(m=>({...m,title:tpl.name}));
-  };
+async function sha256(text) {
+  const enc = new TextEncoder();
+  const buf = await crypto.subtle.digest('SHA-256', enc.encode(text));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
 
-  const BC={background:'rgba(10,10,20,.92)',border:'1px solid rgba(255,255,255,.15)',borderRadius:6,width:28,height:28,color:'#fff',fontSize:13,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',fontWeight:700};
-
-  return(
-    <LangCtx.Provider value={lang}>
-    <div style={{display:'flex',flexDirection:'column',height:'100vh',background:T.bg,color:T.text,fontFamily:"'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",fontSize:14}}>
-
-      {/* TOP BAR */}
-      <div style={{height:52,background:T.surface,borderBottom:`1px solid ${T.border}`,display:'flex',alignItems:'center',padding:'0 14px',gap:8,flexShrink:0,zIndex:10}}>
-        <div style={{display:'flex',alignItems:'center',gap:7,marginRight:4}}>
-          <span style={{fontSize:18}}>🐉</span>
-          <div>
-            <div style={{fontSize:12,fontWeight:800,color:T.accent,lineHeight:1}}>WINDI</div>
-            <div style={{fontSize:8,color:T.dim,letterSpacing:1.5,textTransform:'uppercase',lineHeight:1}}>{t(DICT,'appVersion',lang)}</div>
-          </div>
-        </div>
-        <div style={{width:1,height:24,background:T.border}}/>
-        <input value={meta.title} onChange={e=>setMeta(m=>({...m,title:e.target.value}))} placeholder={t(DICT,'pageNamePlaceholder',lang)} style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:7,padding:'5px 11px',color:T.text,fontSize:13,width:185}}/>
-        <button onClick={()=>setShowTpl(true)} style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:7,padding:'5px 11px',color:T.dim,fontSize:12,cursor:'pointer'}}>{t(DICT,'templatesBtn',lang)}</button>
-        <div style={{width:1,height:24,background:T.border}}/>
-        <button onClick={undo} disabled={!canUndo()} title={t(DICT,'undoTooltip',lang)} style={{background:canUndo()?T.card:'transparent',border:`1px solid ${canUndo()?T.border:'transparent'}`,borderRadius:7,padding:'5px 10px',color:canUndo()?T.text:T.dim+'66',fontSize:12,cursor:canUndo()?'pointer':'default',opacity:canUndo()?1:0.5}}>↩</button>
-        <button onClick={redo} disabled={!canRedo()} title={t(DICT,'redoTooltip',lang)} style={{background:canRedo()?T.card:'transparent',border:`1px solid ${canRedo()?T.border:'transparent'}`,borderRadius:7,padding:'5px 10px',color:canRedo()?T.text:T.dim+'66',fontSize:12,cursor:canRedo()?'pointer':'default',opacity:canRedo()?1:0.5}}>↪</button>
-        <div style={{flex:1}}/>
-        <LangSwitcher lang={lang} setLang={(l)=>{setLang(l);setCat(null);}}/>
-        <div style={{fontSize:11,color:T.dim}}>{blocks.length} {blocks.length===1?t(DICT,'blocksCount1',lang):t(DICT,'blocksCountN',lang)}</div>
-        <button onClick={()=>setPreview(!preview)} style={{background:preview?T.accent+'33':T.card,border:`1px solid ${preview?T.accent:T.border}`,borderRadius:7,padding:'5px 12px',color:preview?T.accent:T.text,fontSize:12,fontWeight:600,cursor:'pointer'}}>
-          {preview?t(DICT,'editBtn',lang):t(DICT,'previewBtn',lang)}
-        </button>
-        <button onClick={()=>setShowExport(true)} style={{background:`linear-gradient(135deg,${T.accent},${T.accentHot})`,border:'none',borderRadius:7,padding:'6px 14px',color:'#fff',fontSize:13,fontWeight:700,cursor:'pointer'}}>{t(DICT,'exportBtn',lang)}</button>
-      </div>
-
-      {/* MAIN AREA */}
-      <div style={{flex:1,display:'flex',overflow:'hidden'}}>
-
-        {/* LEFT PANEL */}
-        {!preview&&(<div style={{width:222,background:T.surface,borderRight:`1px solid ${T.border}`,display:'flex',flexDirection:'column',flexShrink:0}}>
-          <div style={{display:'flex',borderBottom:`1px solid ${T.border}`}}>
-            {[['blocos',t(DICT,'tabBlocks',lang)],['templates',t(DICT,'tabTemplates',lang)]].map(([tab,lbl])=>(
-              <button key={tab} onClick={()=>setLeftTab(tab)} style={{flex:1,padding:'9px 0',background:'transparent',border:'none',borderBottom:leftTab===tab?`2px solid ${T.accent}`:'2px solid transparent',color:leftTab===tab?T.text:T.dim,fontSize:11,fontWeight:leftTab===tab?700:400,cursor:'pointer',marginBottom:-1}}>{lbl}</button>
-            ))}
-          </div>
-
-          {leftTab==='blocos'&&(<>
-            <div style={{padding:'8px 8px 4px',borderBottom:`1px solid ${T.border}`}}>
-              <div style={{display:'flex',flexWrap:'wrap',gap:3}}>
-                {CATS.map(c=><button key={c} onClick={()=>setCat(c)} style={{background:activeCat===c?T.accent+'33':'transparent',border:`1px solid ${activeCat===c?T.accent+'66':T.border}`,borderRadius:5,padding:'2px 7px',color:activeCat===c?T.accent:T.dim,fontSize:9,cursor:'pointer',fontWeight:activeCat===c?700:400}}>{c}</button>)}
-              </div>
-            </div>
-            <div style={{overflowY:'auto',flex:1,padding:7}}>
-              {CATALOG.filter(b=>b.cat===activeCat).map(item=>(
-                <div key={item.type} onClick={()=>addBlock(item)} style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:9,padding:'9px 11px',marginBottom:5,cursor:'pointer'}}
-                  onMouseEnter={e=>{e.currentTarget.style.borderColor=T.accent+'88';}}
-                  onMouseLeave={e=>{e.currentTarget.style.borderColor=T.border;}}>
-                  <div style={{display:'flex',alignItems:'center',gap:6,marginBottom:2}}><span style={{fontSize:15}}>{item.icon}</span><span style={{fontSize:12,fontWeight:700}}>{item.label}</span></div>
-                  <div style={{fontSize:10,color:T.dim,lineHeight:1.4}}>{item.preview}</div>
-                </div>
-              ))}
-            </div>
-          </>)}
-
-          {leftTab==='templates'&&(
-            <div style={{overflowY:'auto',flex:1,padding:7}}>
-              {TEMPLATES.map(tpl=>{const tc={FREE:T.accentGreen,MED:T.accentGold}[tpl.tier];return(
-                <div key={tpl.id} onClick={()=>loadTpl(tpl)} style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:9,padding:'11px',marginBottom:5,cursor:'pointer',position:'relative'}}
-                  onMouseEnter={e=>{e.currentTarget.style.borderColor=T.accent+'88';}}
-                  onMouseLeave={e=>{e.currentTarget.style.borderColor=T.border;}}>
-                  <span style={{position:'absolute',top:9,right:9,background:tc+'22',border:`1px solid ${tc}66`,color:tc,fontSize:7,fontWeight:800,padding:'1px 6px',borderRadius:100}}>{tpl.tier}</span>
-                  <div style={{fontSize:18,marginBottom:3}}>{tpl.icon}</div>
-                  <div style={{fontSize:12,fontWeight:700,marginBottom:2}}>{tpl.name}</div>
-                  <div style={{fontSize:10,color:T.dim,lineHeight:1.4,marginBottom:4}}>{tpl.desc}</div>
-                  <div style={{fontSize:9,color:T.dim}}>{tpl.blocks.length} {t(DICT,'tplBlocks',lang)}</div>
-                </div>
-              );})}
-            </div>
-          )}
-
-          <div style={{padding:'7px 10px',borderTop:`1px solid ${T.border}`,fontSize:8,color:T.dim,textAlign:'center'}}>
-            {leftTab==='blocos'?t(DICT,'hintBlocks',lang):t(DICT,'hintTemplates',lang)}
-          </div>
-        </div>)}
-
-        {/* CANVAS */}
-        <div style={{flex:1,overflowY:'auto',background:preview?'#fff':'#191926',display:'flex',justifyContent:'center',padding:preview?0:'22px'}}
-          onClick={e=>{if(e.target===e.currentTarget)setSelId(null);}}>
-          <div style={{width:'100%',maxWidth:preview?'100%':920,background:'#fff',borderRadius:preview?0:12,overflow:'hidden',minHeight:400,boxShadow:preview?'none':'0 40px 100px rgba(0,0,0,.7)'}}>
-            {blocks.length===0&&(
-              <div style={{padding:80,textAlign:'center',color:'#999',background:'#f8f8f8'}}>
-                <div style={{fontSize:48,marginBottom:16}}>◫</div>
-                <div style={{fontSize:16,fontWeight:700,marginBottom:8}}>{t(DICT,'canvasEmpty',lang)}</div>
-                <div style={{fontSize:13}}>{t(DICT,'canvasEmptySub',lang)}</div>
-              </div>
-            )}
-            {blocks.map((block,idx)=>(
-              <div key={block.id} style={{position:'relative'}} onClick={e=>{e.stopPropagation();if(!preview)setSelId(block.id);}}>
-                {!preview&&(
-                  <div style={{position:'absolute',inset:0,zIndex:5,pointerEvents:'none',outline:selId===block.id?`2px solid ${T.accent}`:'2px solid transparent',outlineOffset:-2}}>
-                    {selId===block.id&&(<>
-                      <div style={{position:'absolute',top:8,right:8,display:'flex',gap:3,pointerEvents:'all'}}>
-                        {idx>0&&<button onClick={e=>{e.stopPropagation();moveBlock(block.id,'up');}} style={BC}>↑</button>}
-                        {idx<blocks.length-1&&<button onClick={e=>{e.stopPropagation();moveBlock(block.id,'down');}} style={BC}>↓</button>}
-                        <button onClick={e=>{e.stopPropagation();dupBlock(block.id);}} style={{...BC,background:'#00c37a22',borderColor:'#00c37a'}}>⧉</button>
-                        <button onClick={e=>{e.stopPropagation();delBlock(block.id);}} style={{...BC,background:'#ff4444',borderColor:'#ff4444'}}>✕</button>
-                      </div>
-                      <div style={{position:'absolute',top:8,left:8,background:T.accent,color:'#fff',fontSize:9,fontWeight:700,padding:'3px 9px',borderRadius:4,letterSpacing:1,textTransform:'uppercase',pointerEvents:'none'}}>
-                        {CATALOG.find(x=>x.type===block.type)?.label||block.type}
-                      </div>
-                    </>)}
-                    {selId!==block.id&&<div style={{position:'absolute',inset:0,pointerEvents:'all',cursor:'pointer'}} onMouseEnter={e=>e.currentTarget.style.background='rgba(124,77,255,.04)'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}/>}
-                  </div>
-                )}
-                <BlockRenderer block={block}/>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* RIGHT PANEL: PROPERTIES */}
-        {!preview&&(
-          <div style={{width:270,background:T.surface,borderLeft:`1px solid ${T.border}`,display:'flex',flexDirection:'column',flexShrink:0,overflow:'hidden'}}>
-            <div style={{padding:'11px 14px',borderBottom:`1px solid ${T.border}`,fontSize:9,fontWeight:700,color:T.dim,letterSpacing:2,textTransform:'uppercase'}}>{t(DICT,'propTitle',lang)}</div>
-            <div style={{flex:1,overflowY:'auto'}}><PropsPanel block={sel} onChange={updBlock}/></div>
-            <div style={{padding:9,borderTop:`1px solid ${T.border}`,background:T.bg}}>
-              <div style={{fontSize:8,color:T.dim,marginBottom:5,textAlign:'center',letterSpacing:1,textTransform:'uppercase'}}>{t(DICT,'quickAdd',lang)}</div>
-              <div style={{display:'flex',gap:3,flexWrap:'wrap',justifyContent:'center'}}>
-                {['hero','imagebox','cta','divider','footer'].map(type=>{const item=CATALOG.find(b=>b.type===type);if(!item)return null;return(<button key={type} onClick={()=>addBlock(item)} style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:5,padding:'3px 7px',color:T.dim,fontSize:9,cursor:'pointer'}}>{item.icon} {item.label}</button>);})}
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* MODALS */}
-      {showExport&&<ExportModal blocks={blocks} meta={meta} setMeta={setMeta} onClose={()=>setShowExport(false)} onSeal={()=>{setShowExport(false);setShowLedger(true);}}/>}
-      {showTpl&&<TemplatesModal onSelect={loadTpl} onClose={()=>setShowTpl(false)}/>}
-      {showLedger&&<LedgerModal html={genHTML(blocks,{...meta,lang})} meta={meta} onClose={()=>setShowLedger(false)}/>}
-
-    </div>
-    </LangCtx.Provider>
+// ─── ItemCard ──────────────────────────────────────────────────
+function ItemCard({ item, active, onSelect, onDelete, onDuplicate, onMoveUp, onMoveDown, isFirst, isLast, t }) {
+  const _t = t || I18N.pt;
+  const preview = item.type === 'hr' ? '─────────' : item.type === 'img' ? (item.src || item.content || '(no src)') : (item.content || '').replace(/\n/g, ' ').slice(0, 40);
+  const typeDef = ITEM_TYPES.find(td => td.type === item.type) || { icon:'?', label: item.type };
+  return React.createElement('div', { className: `item-card ${active ? 'active' : ''}`, onClick: onSelect },
+    React.createElement('div', { className:'item-card-header' },
+      React.createElement('span', { className:`item-badge type-${item.type}` }, typeDef.icon),
+      React.createElement('span', { className:'item-name' }, item.label || typeDef.label),
+    ),
+    preview && React.createElement('div', { className:'item-preview' }, preview),
+    React.createElement('div', { className:'item-actions', onClick: e => e.stopPropagation() },
+      React.createElement('button', { className:'item-action-btn', title:_t.titleMoveUp, disabled:isFirst, onClick:onMoveUp }, _t.moveUp),
+      React.createElement('button', { className:'item-action-btn', title:_t.titleMoveDown, disabled:isLast, onClick:onMoveDown }, _t.moveDown),
+      React.createElement('button', { className:'item-action-btn', title:_t.titleDup, onClick:onDuplicate }, _t.dup),
+      React.createElement('button', { className:'item-action-btn del', title:_t.titleDel, onClick:onDelete }, _t.del),
+    )
   );
 }
 
-// Mount
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<App />);
-  </script>
+// ─── ItemEditor ────────────────────────────────────────────────
+function ItemEditor({ item, onChange, onClose, t: tProp }) {
+  const _t = tProp || I18N.pt;
+  const [draft, setDraft] = useState({ ...item });
+  const typeDef = ITEM_TYPES.find(td => td.type === draft.type) || {};
+  const update = (key, val) => setDraft(d => ({ ...d, [key]: val }));
+  const apply = () => { onChange(draft); onClose(); };
+  const needsContent = !['hr', 'img', 'video', 'iframe'].includes(draft.type);
+  const needsSrc = draft.type === 'img';
+  const needsLang = draft.type === 'code';
+  const needsTable = draft.type === 'table';
+  const needsVideo = draft.type === 'video';
+  const needsIframe = draft.type === 'iframe';
+
+  return React.createElement('div', { className:'item-editor' },
+    React.createElement('div', { className:'item-editor-header' },
+      React.createElement('span', { className:`item-badge type-${draft.type}` }, typeDef.icon),
+      React.createElement('span', { className:'item-editor-title' }, `${_t.editTitle}: ${typeDef.label}`),
+    ),
+    React.createElement('div', { className:'field-row' },
+      React.createElement('div', { className:'field-group' },
+        React.createElement('label', { className:'field-label' }, _t.internalLabel),
+        React.createElement('input', { className:'field-input', value: draft.label||'', placeholder: typeDef.label, onChange: e => update('label', e.target.value) })
+      ),
+      React.createElement('div', { className:'field-group' },
+        React.createElement('label', { className:'field-label' }, _t.cssClass),
+        React.createElement('input', { className:'field-input', value: draft.className||'', placeholder: 'ex: my-class', onChange: e => update('className', e.target.value) })
+      ),
+      React.createElement('div', { className:'field-group' },
+        React.createElement('label', { className:'field-label' }, _t.htmlId),
+        React.createElement('input', { className:'field-input', value: draft.id_attr||'', placeholder: 'ex: section-1', onChange: e => update('id_attr', e.target.value) })
+      ),
+    ),
+    needsSrc && React.createElement('div', { className:'field-group' },
+      React.createElement('label', { className:'field-label' }, _t.imageUrl),
+      React.createElement('input', { className:'field-input', value: draft.src||'', placeholder: 'https://example.com/image.png', onChange: e => update('src', e.target.value) }),
+      React.createElement('label', { className:'field-label', style:{marginTop:8} }, _t.altText),
+      React.createElement('input', { className:'field-input', value: draft.alt||'', placeholder: _t.altText, onChange: e => update('alt', e.target.value) }),
+    ),
+    needsLang && React.createElement('div', { className:'field-group' },
+      React.createElement('label', { className:'field-label' }, _t.language),
+      React.createElement('select', { className:'field-select', value: draft.lang||'', onChange: e => update('lang', e.target.value) },
+        ['', 'html', 'css', 'javascript', 'python', 'bash', 'json', 'sql', 'yaml'].map(l => React.createElement('option', { key:l, value:l }, l || '—'))
+      ),
+    ),
+    needsTable && React.createElement('div', { className:'field-group' },
+      React.createElement('label', { className:'field-label' }, _t.tableData),
+      React.createElement('textarea', { className:'field-textarea', value: draft.content||'', placeholder: 'Col1|Col2|Col3\nVal1|Val2|Val3', style:{minHeight:100}, onChange: e => update('content', e.target.value) }),
+    ),
+    needsVideo && React.createElement('div', { className:'field-group' },
+      React.createElement('label', { className:'field-label' }, _t.videoUrl || 'Video URL'),
+      React.createElement('input', { className:'field-input', value: draft.src||'', placeholder: 'https://example.com/video.mp4', onChange: e => update('src', e.target.value) }),
+      React.createElement('label', { className:'field-label', style:{marginTop:8} }, _t.posterUrl || 'Poster URL'),
+      React.createElement('input', { className:'field-input', value: draft.poster||'', placeholder: 'https://example.com/poster.jpg', onChange: e => update('poster', e.target.value) }),
+      React.createElement('div', { style:{display:'flex', gap:16, marginTop:10} },
+        React.createElement('label', { style:{display:'flex', alignItems:'center', gap:4, fontSize:12, color:'var(--text2)'} },
+          React.createElement('input', { type:'checkbox', checked:!!draft.autoplay, onChange: e => update('autoplay', e.target.checked) }), 'Autoplay'),
+        React.createElement('label', { style:{display:'flex', alignItems:'center', gap:4, fontSize:12, color:'var(--text2)'} },
+          React.createElement('input', { type:'checkbox', checked:!!draft.loop, onChange: e => update('loop', e.target.checked) }), 'Loop'),
+        React.createElement('label', { style:{display:'flex', alignItems:'center', gap:4, fontSize:12, color:'var(--text2)'} },
+          React.createElement('input', { type:'checkbox', checked:!!draft.muted, onChange: e => update('muted', e.target.checked) }), 'Muted'),
+      ),
+    ),
+    needsIframe && React.createElement('div', { className:'field-group' },
+      React.createElement('label', { className:'field-label' }, _t.embedUrl || 'Embed URL (YouTube, Vimeo, etc.)'),
+      React.createElement('input', { className:'field-input', value: draft.src||'', placeholder: 'https://www.youtube.com/embed/VIDEO_ID', onChange: e => update('src', e.target.value) }),
+      React.createElement('div', { className:'field-row', style:{marginTop:8} },
+        React.createElement('div', { className:'field-group' },
+          React.createElement('label', { className:'field-label' }, _t.width || 'Width'),
+          React.createElement('input', { className:'field-input', value: draft.width||'560', placeholder: '560', onChange: e => update('width', e.target.value) })),
+        React.createElement('div', { className:'field-group' },
+          React.createElement('label', { className:'field-label' }, _t.height || 'Height'),
+          React.createElement('input', { className:'field-input', value: draft.height||'315', placeholder: '315', onChange: e => update('height', e.target.value) })),
+      ),
+    ),
+    needsContent && !needsSrc && !needsTable && React.createElement('div', { className:'field-group' },
+      React.createElement('label', { className:'field-label' }, draft.type === 'ul' || draft.type === 'ol' ? _t.listItems : draft.type === 'div' ? _t.htmlInner : _t.content),
+      React.createElement('textarea', { className:'field-textarea', value: draft.content||'', placeholder: typeDef.defaultContent, onChange: e => update('content', e.target.value) }),
+    ),
+    React.createElement('div', { className:'item-editor-actions' },
+      React.createElement('button', { className:'btn btn-gold', onClick:apply }, _t.apply),
+      React.createElement('button', { className:'btn btn-ghost', onClick:onClose }, _t.cancel),
+    )
+  );
+}
+
+// ─── Template Library ─────────────────────────────────────────────
+function TemplateLibrary({ items, docMeta, onLoad, t, uiLang }) {
+  const _t = t || I18N.pt;
+  const [tab, setTab] = useState('browse');
+  const [templates, setTemplates] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [catFilter, setCatFilter] = useState('');
+  const [saveName, setSaveName] = useState('');
+  const [saveDesc, setSaveDesc] = useState('');
+  const [saveCat, setSaveCat] = useState('generic');
+  const [saveLang, setSaveLang] = useState(uiLang || 'pt');
+  const [saveShared, setSaveShared] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  const fetchTemplates = useCallback(async () => {
+    setLoading(true);
+    try {
+      let url = TEMPLATES_URL + '?shared_only=false';
+      if (catFilter) url += `&category=${catFilter}`;
+      const resp = await fetch(url);
+      if (resp.ok) { const data = await resp.json(); setTemplates(data.templates || []); }
+      else { const raw = localStorage.getItem('windi_templates_local'); setTemplates(raw ? JSON.parse(raw) : []); }
+    } catch { const raw = localStorage.getItem('windi_templates_local'); setTemplates(raw ? JSON.parse(raw) : []); }
+    finally { setLoading(false); }
+  }, [catFilter]);
+
+  useEffect(() => { if (tab === 'browse') fetchTemplates(); }, [tab, catFilter]);
+
+  async function handleSave() {
+    if (!saveName.trim()) return;
+    setSaving(true);
+    const html = buildFullHTML(items, docMeta);
+    const payload = { name: saveName, description: saveDesc, category: saveCat, isp: 'windi', lang: saveLang, items, html, governance: docMeta.governance || 'MEDIUM', shared: saveShared };
+    try {
+      const resp = await fetch(TEMPLATES_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      if (resp.ok) { const data = await resp.json(); const existing = JSON.parse(localStorage.getItem('windi_templates_local') || '[]'); existing.unshift({ ...payload, id: data.template_id, created_at: new Date().toISOString(), preview: '' }); localStorage.setItem('windi_templates_local', JSON.stringify(existing.slice(0, 50))); alert(_t.templateSaved(saveName)); setSaveName(''); setSaveDesc(''); setTab('browse'); }
+      else throw new Error('HTTP ' + resp.status);
+    } catch (e) { const existing = JSON.parse(localStorage.getItem('windi_templates_local') || '[]'); existing.unshift({ ...payload, id: 'LOCAL-' + Date.now(), created_at: new Date().toISOString(), preview: '' }); localStorage.setItem('windi_templates_local', JSON.stringify(existing.slice(0, 50))); alert(_t.templateSaved(saveName) + ' (local)'); setSaveName(''); setSaveDesc(''); setTab('browse'); }
+    finally { setSaving(false); }
+  }
+
+  async function handleLoad(tmpl, mode) {
+    try {
+      let fullItems = tmpl.items;
+      if (!fullItems || !fullItems.length) { const resp = await fetch(TEMPLATES_URL + '/' + tmpl.id); if (resp.ok) { const data = await resp.json(); fullItems = data.items || []; } }
+      if (!fullItems || !fullItems.length) { alert('Template vazio'); return; }
+      const withNewIds = fullItems.map(it => ({ ...it, id: `item_${Date.now()}_${Math.random().toString(36).slice(2,6)}` }));
+      onLoad(withNewIds, mode);
+    } catch (e) { alert('Erro: ' + e.message); }
+  }
+
+  async function handleDelete(id) {
+    if (!confirm('Remover template?')) return;
+    try { await fetch(TEMPLATES_URL + '/' + id, { method: 'DELETE' }); } catch {}
+    const existing = JSON.parse(localStorage.getItem('windi_templates_local') || '[]');
+    localStorage.setItem('windi_templates_local', JSON.stringify(existing.filter(t => t.id !== id)));
+    setTemplates(ts => ts.filter(t => t.id !== id));
+  }
+
+  const CATS = ['', 'report', 'invoice', 'communique', 'presentation', 'legal', 'generic'];
+  const catLabel = (c) => _t.cats?.[c] || c || 'Todos';
+
+  return React.createElement('div', { style: { display:'flex', flexDirection:'column', height:'100%', padding:8 } },
+    React.createElement('div', { style: { display:'flex', borderBottom:'1px solid var(--border)', marginBottom:8 } },
+      ['browse', 'save'].map(tb => React.createElement('button', { key: tb, onClick: () => setTab(tb), style: { flex: 1, padding:'6px 0', fontSize:10, fontWeight:600, fontFamily:'var(--mono)', border:'none', cursor:'pointer', background: tab === tb ? 'var(--gold)' : 'transparent', color: tab === tb ? '#fff' : 'var(--text3)', borderRadius: tab === tb ? '3px 3px 0 0' : 0 } }, tb === 'browse' ? '📂 Browse' : '💾 Save'))
+    ),
+    tab === 'browse' && React.createElement('div', { style:{ display:'flex', flexDirection:'column', gap:6, flex:1, overflow:'hidden' } },
+      React.createElement('div', { style:{ display:'flex', gap:4 } },
+        React.createElement('select', { style:{ flex:1, fontSize:10, padding:'3px 4px', background:'var(--bg)', border:'1px solid var(--border)', color:'var(--text)', borderRadius:3 }, value: catFilter, onChange: e => setCatFilter(e.target.value) }, CATS.map(c => React.createElement('option', { key:c, value:c }, catLabel(c)))),
+        React.createElement('button', { onClick: fetchTemplates, style:{ fontSize:10, padding:'3px 8px', background:'var(--bg3)', border:'1px solid var(--border)', color:'var(--text2)', borderRadius:3, cursor:'pointer' } }, '↺'),
+      ),
+      React.createElement('div', { style:{ overflowY:'auto', flex:1, display:'flex', flexDirection:'column', gap:4 } },
+        loading && React.createElement('div', { style:{textAlign:'center', color:'var(--text3)', fontSize:11, padding:16} }, '…'),
+        !loading && templates.length === 0 && React.createElement('div', { style:{textAlign:'center', color:'var(--text3)', fontSize:11, padding:16} }, _t.noTemplates),
+        !loading && templates.map(tmpl => React.createElement('div', { key: tmpl.id, style:{ background:'var(--bg)', border:'1px solid var(--border)', borderRadius:'var(--radius)', padding:'6px 8px' } },
+          React.createElement('div', { style:{ display:'flex', justifyContent:'space-between', alignItems:'flex-start' } },
+            React.createElement('div', null, React.createElement('div', { style:{ fontSize:11, fontWeight:600, color:'var(--text)' } }, tmpl.name), React.createElement('div', { style:{ fontSize:9, color:'var(--text3)' } }, `${catLabel(tmpl.category)} · ${tmpl.lang}`)),
+            React.createElement('button', { onClick: () => handleDelete(tmpl.id), style:{ fontSize:10, background:'none', border:'none', color:'var(--text3)', cursor:'pointer' } }, '✕'),
+          ),
+          React.createElement('div', { style:{ display:'flex', gap:4, marginTop:6 } },
+            React.createElement('button', { onClick: () => handleLoad(tmpl, 'replace'), style:{ flex:1, fontSize:9, padding:'3px 0', background:'var(--gold)', border:'none', color:'#fff', borderRadius:3, cursor:'pointer', fontWeight:600 } }, _t.loadReplace),
+            React.createElement('button', { onClick: () => handleLoad(tmpl, 'append'), style:{ flex:1, fontSize:9, padding:'3px 0', background:'var(--bg3)', border:'1px solid var(--border)', color:'var(--text2)', borderRadius:3, cursor:'pointer' } }, _t.loadAppend),
+          )
+        ))
+      )
+    ),
+    tab === 'save' && React.createElement('div', { style:{ display:'flex', flexDirection:'column', gap:8, flex:1 } },
+      React.createElement('div', { style:{ fontSize:10, color:'var(--text3)' } }, `${items.length} elemento${items.length !== 1 ? 's' : ''}`),
+      React.createElement('input', { placeholder: _t.templateName, value: saveName, onChange: e => setSaveName(e.target.value), style:{ padding:'5px 8px', fontSize:11, background:'var(--bg)', border:'1px solid var(--border)', color:'var(--text)', borderRadius:3 } }),
+      React.createElement('input', { placeholder: _t.templateDesc, value: saveDesc, onChange: e => setSaveDesc(e.target.value), style:{ padding:'5px 8px', fontSize:11, background:'var(--bg)', border:'1px solid var(--border)', color:'var(--text)', borderRadius:3 } }),
+      React.createElement('div', { style:{ display:'flex', gap:6 } },
+        React.createElement('select', { value: saveCat, onChange: e => setSaveCat(e.target.value), style:{ flex:1, padding:'5px', fontSize:10, background:'var(--bg)', border:'1px solid var(--border)', color:'var(--text)', borderRadius:3 } }, CATS.filter(Boolean).map(c => React.createElement('option', { key:c, value:c }, catLabel(c)))),
+        React.createElement('select', { value: saveLang, onChange: e => setSaveLang(e.target.value), style:{ width:60, padding:'5px', fontSize:10, background:'var(--bg)', border:'1px solid var(--border)', color:'var(--text)', borderRadius:3 } }, ['all','pt','de','en'].map(l => React.createElement('option', { key:l, value:l }, l.toUpperCase()))),
+      ),
+      React.createElement('label', { style:{ display:'flex', alignItems:'center', gap:6, fontSize:10, color:'var(--text2)' } }, React.createElement('input', { type:'checkbox', checked:saveShared, onChange:e => setSaveShared(e.target.checked) }), _t.templateShared),
+      React.createElement('button', { onClick: handleSave, disabled: saving || !saveName.trim() || items.length === 0, style:{ padding:'8px 0', fontSize:11, fontWeight:700, background: saving || !saveName.trim() ? 'var(--bg3)' : 'var(--gold)', color: saving || !saveName.trim() ? 'var(--text3)' : '#fff', border:'none', borderRadius:'var(--radius)', cursor: saving ? 'wait' : 'pointer' } }, saving ? '…' : _t.saveTemplate)
+    )
+  );
+}
+
+// ─── Main App ──────────────────────────────────────────────────
+function App() {
+  const { items, canUndo, canRedo, set, undo, redo, reset } = useHistory([]);
+  const [uiLang, setUiLang] = useState('pt');
+  const t = I18N[uiLang] || I18N.pt;
+  const TYPES = ITEM_TYPES_I18N[uiLang] || ITEM_TYPES_I18N.pt;
+  const [theme, setTheme] = useState('klar');
+  const [activeId, setActiveId] = useState(null);
+  const [editingId, setEditingId] = useState(null);
+  const [showPreview, setShowPreview] = useState(true);
+  const [showCode, setShowCode] = useState(false);
+  const [toasts, setToasts] = useState([]);
+  const [sealing, setSealing] = useState(false);
+  const [receipt, setReceipt] = useState(null);
+  const [savedAt, setSavedAt] = useState(null);
+  const [docMeta, setDocMeta] = useState({ title: 'Documento WINDI', lang: 'pt-BR', governance: 'MEDIUM', css: '' });
+  const [sideTab, setSideTab] = useState('structure'); // 'structure' | 'templates'
+  const autosaveTimer = useRef(null);
+
+  useEffect(() => { document.documentElement.setAttribute('data-theme', theme === 'noir' ? 'noir' : ''); }, [theme]);
+
+  useEffect(() => {
+    clearTimeout(autosaveTimer.current);
+    autosaveTimer.current = setTimeout(() => {
+      try { const snapshot = JSON.stringify({ items, docMeta, savedAt: new Date().toISOString() }); localStorage.setItem(AUTOSAVE_KEY, snapshot); setSavedAt(new Date().toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit', second:'2-digit' })); } catch(e) {}
+    }, AUTOSAVE_INTERVAL);
+    return () => clearTimeout(autosaveTimer.current);
+  }, [items, docMeta]);
+
+  useEffect(() => {
+    try { const raw = localStorage.getItem(AUTOSAVE_KEY); if (raw) { const snap = JSON.parse(raw); if (snap.items && snap.items.length > 0) { reset(snap.items); if (snap.docMeta) setDocMeta(snap.docMeta); toast('info', t.restoredSnap(snap.items.length)); } } } catch(e) {}
+  }, []);
+
+  useEffect(() => {
+    const handler = e => { const ctrl = e.ctrlKey || e.metaKey; if (ctrl && e.key === 'z' && !e.shiftKey) { e.preventDefault(); undo(); } if (ctrl && (e.key === 'y' || (e.key === 'z' && e.shiftKey))) { e.preventDefault(); redo(); } if (ctrl && e.key === 's') { e.preventDefault(); handleSave(); } };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [items, docMeta]);
+
+  function toast(type, msg, duration = 3000) { const id = Date.now(); setToasts(ts => [...ts, { id, type, msg }]); setTimeout(() => setToasts(ts => ts.filter(x => x.id !== id)), duration); }
+
+  const activeItem = items.find(i => i.id === activeId);
+  const editingItem = items.find(i => i.id === editingId);
+
+  function addItem(type) { const typeDef = TYPES.find(td => td.type === type); const newItem = { id: genId(), type, label: typeDef?.label || type, content: typeDef?.defaultContent || '' }; const next = [...items, newItem]; set(next); setActiveId(newItem.id); setEditingId(newItem.id); }
+  function updateItem(id, data) { set(items.map(i => i.id === id ? { ...i, ...data } : i)); }
+  function deleteItem(id) { const next = items.filter(i => i.id !== id); set(next); if (activeId === id) setActiveId(null); if (editingId === id) setEditingId(null); }
+  function duplicateItem(id) { const idx = items.findIndex(i => i.id === id); if (idx < 0) return; const copy = { ...items[idx], id: genId(), label: items[idx].label + ' (cópia)' }; const next = [...items.slice(0, idx+1), copy, ...items.slice(idx+1)]; set(next); setActiveId(copy.id); toast('info', t.duplicated); }
+  function moveItem(id, dir) { const idx = items.findIndex(i => i.id === id); if (idx < 0) return; const next = [...items]; const swapIdx = dir === 'up' ? idx - 1 : idx + 1; if (swapIdx < 0 || swapIdx >= next.length) return; [next[idx], next[swapIdx]] = [next[swapIdx], next[idx]]; set(next); }
+
+  function handleSave() { try { const snapshot = JSON.stringify({ items, docMeta, savedAt: new Date().toISOString() }); localStorage.setItem(AUTOSAVE_KEY, snapshot); const ts = new Date().toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit', second:'2-digit' }); setSavedAt(ts); toast('success', t.savedMsg(ts)); } catch(e) { toast('error', t.saveErr + e.message); } }
+  function handleClear() { if (!confirm(t.clearConfirm)) return; set([]); setActiveId(null); setEditingId(null); setReceipt(null); toast('info', t.cleared); }
+
+  function handleLoadTemplate(newItems, mode) {
+    if (mode === 'replace') { reset(newItems); setActiveId(null); setEditingId(null); }
+    else { set([...items, ...newItems]); }
+    setSideTab('structure');
+    toast('success', t.templateLoaded(newItems.length));
+  }
+
+  const htmlOutput = buildHTML(items, docMeta);
+  const fullHTML = buildFullHTML(items, docMeta);
+
+  async function handleSeal() {
+    if (items.length === 0) { toast('error', t.noItemSeal); return; }
+    setSealing(true);
+    try {
+      const content = fullHTML; const hash = await sha256(content); const now = new Date();
+      const receiptId = `WINDI-HTMLB-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${Math.random().toString(36).slice(2,8).toUpperCase()}`;
+      const payload = { id: receiptId, actor: 'html-builder-v31', app: 'windi-html-builder', doc_name: docMeta.title || 'HTML Document', doc_type: 'doc', governance_level: docMeta.governance || 'MEDIUM', content_hash: hash, item_count: items.length, char_count: content.length, timestamp: now.toISOString() };
+      const resp = await fetch(LEDGER_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      if (!resp.ok) throw new Error(`Ledger: HTTP ${resp.status}`);
+      const data = await resp.json(); const rid = data.receipt_id || receiptId;
+      setReceipt({ id: rid, hash: hash.slice(0,16) + '…', ts: now.toLocaleString('pt-BR'), url: VERIFY_BASE + rid });
+      toast('success', t.sealedMsg(rid));
+    } catch(e) { toast('error', t.sealErr + e.message); } finally { setSealing(false); }
+  }
+
+  function handleDownload() { const blob = new Blob([fullHTML], { type:'text/html;charset=utf-8' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = (docMeta.title || 'documento').replace(/\s+/g,'-').toLowerCase() + '.html'; a.click(); URL.revokeObjectURL(url); toast('success', t.htmlExported); }
+  function handleCopyHTML() { navigator.clipboard.writeText(htmlOutput).then(() => toast('success', t.htmlCopied)).catch(() => toast('error', t.copyErr)); }
+
+  return React.createElement('div', { className:'app' },
+    React.createElement('div', { className:'topbar' },
+      React.createElement('div', { className:'topbar-brand' }, React.createElement('div', { className:'logo' }, 'W'), React.createElement('div', { className:'name' }, 'HTML BUILDER'), React.createElement('div', { className:'version' }, 'v3.1')),
+      React.createElement('div', { className:'divider' }),
+      React.createElement('div', { className:'topbar-actions' }, React.createElement('button', { className:'btn btn-ghost', onClick:undo, disabled:!canUndo, title:'Undo (Ctrl+Z)' }, t.undo), React.createElement('button', { className:'btn btn-ghost', onClick:redo, disabled:!canRedo, title:'Redo (Ctrl+Y)' }, t.redo)),
+      React.createElement('div', { className:'divider' }),
+      React.createElement('div', { className:'topbar-actions' }, React.createElement('button', { className:'btn btn-ghost', onClick:handleSave, title:'Save (Ctrl+S)' }, t.save), React.createElement('button', { className:'btn btn-ghost', onClick:handleClear }, t.clear)),
+      React.createElement('div', { className:'topbar-right' },
+        React.createElement('button', { className:'btn btn-ghost', onClick:()=>setShowPreview(p=>!p) }, showPreview ? t.preview : t.previewOff),
+        React.createElement('button', { className:'btn btn-ghost', onClick:()=>setShowCode(c=>!c) }, showCode ? t.code : t.codeOff),
+        React.createElement('button', { className:'btn btn-outline', onClick:handleDownload }, t.download),
+        React.createElement('button', { className:'btn btn-gold', onClick:handleSeal, disabled:sealing }, sealing ? t.sealing : t.seal),
+        React.createElement('div', { className:'divider' }),
+        React.createElement('div', { style:{display:'flex', gap:2, background:'var(--bg3)', border:'1px solid var(--border)', borderRadius:'var(--radius)', padding:'2px'} },
+          ['de','en','pt'].map(lg => React.createElement('button', { key: lg, className: 'btn btn-ghost', style: { padding: '3px 8px', fontSize: 11, fontFamily: 'var(--mono)', fontWeight: 600, background: uiLang === lg ? 'var(--gold)' : 'transparent', color: uiLang === lg ? '#fff' : 'var(--text3)', borderRadius: 3 }, onClick: () => setUiLang(lg) }, lg.toUpperCase()))
+        ),
+        React.createElement('div', { className:'divider' }),
+        React.createElement('button', { className:'btn btn-ghost', onClick: () => setTheme(th => th === 'noir' ? 'klar' : 'noir') }, theme === 'noir' ? t.themeKlar : t.themeNoir),
+      ),
+    ),
+    React.createElement('div', { className:'statusbar' },
+      React.createElement('span', null, React.createElement('span', { className:'status-dot' }), ' v3.1'),
+      React.createElement('span', { className:'sep' }, '|'),
+      React.createElement('span', null, `${items.length} ${t.items}`),
+      React.createElement('span', { className:'sep' }, '|'),
+      React.createElement('span', null, `${htmlOutput.length} ${t.chars}`),
+      canUndo && React.createElement(React.Fragment, null, React.createElement('span', { className:'sep' }, '|'), React.createElement('span', { style:{color:'var(--gold)'} }, t.unsaved)),
+      savedAt && React.createElement(React.Fragment, null, React.createElement('span', { className:'sep' }, '|'), React.createElement('span', null, t.savedAt(savedAt))),
+      receipt && React.createElement(React.Fragment, null, React.createElement('span', { className:'sep' }, '|'), React.createElement('span', { style:{color:'var(--green)'} }, `🔏 ${receipt.id}`)),
+    ),
+    React.createElement('div', { className:'workspace' },
+      React.createElement('div', { className:'sidebar' },
+        // Tab header
+        React.createElement('div', { style:{ display:'flex', borderBottom:'1px solid var(--border)' } },
+          [['structure', t.structure], ['templates', t.templates]].map(([tb, label]) =>
+            React.createElement('button', { key: tb, onClick: () => setSideTab(tb), style:{ flex:1, padding:'8px 4px', fontSize:10, fontWeight:700, fontFamily:'var(--mono)', border:'none', cursor:'pointer', background: sideTab === tb ? 'var(--bg2)' : 'var(--bg)', color: sideTab === tb ? 'var(--gold)' : 'var(--text3)', borderBottom: sideTab === tb ? '2px solid var(--gold)' : '2px solid transparent' } }, label.toUpperCase())
+          )
+        ),
+        // Structure tab
+        sideTab === 'structure' && React.createElement(React.Fragment, null,
+          React.createElement('div', { className:'sidebar-header' }, React.createElement('span', { className:'sidebar-title' }, t.structure), React.createElement('span', { className:'chip' }, items.length)),
+          React.createElement('div', { className:'item-list' },
+            items.length === 0 && React.createElement('div', { style:{ padding:'20px 8px', textAlign:'center', color:'var(--text3)', fontSize:12 } }, t.addBelow),
+            items.map((item, idx) => React.createElement(ItemCard, { key: item.id, item, active: item.id === activeId, isFirst: idx === 0, isLast: idx === items.length - 1, t, onSelect: () => { setActiveId(item.id); setEditingId(item.id); }, onDelete: (e) => { e.stopPropagation(); deleteItem(item.id); }, onDuplicate: (e) => { e.stopPropagation(); duplicateItem(item.id); }, onMoveUp: (e) => { e.stopPropagation(); moveItem(item.id, 'up'); }, onMoveDown: (e) => { e.stopPropagation(); moveItem(item.id, 'down'); } })),
+          ),
+          React.createElement('div', { className:'add-panel' },
+            React.createElement('div', { className:'add-panel-title' }, t.addElement),
+            React.createElement('div', { className:'type-grid' }, TYPES.map(({ type, icon, label }) => React.createElement('button', { key: type, className: 'type-btn', onClick: () => addItem(type), title: label }, React.createElement('span', { className:'icon' }, icon), React.createElement('span', { className:'label' }, label)))),
+          ),
+        ),
+        // Templates tab
+        sideTab === 'templates' && React.createElement(TemplateLibrary, { items, docMeta, uiLang, t, onLoad: handleLoadTemplate }),
+      ),
+      React.createElement('div', { className:'editor-pane' },
+        React.createElement('div', { className:'editor-toolbar' },
+          React.createElement('span', { className:'path' }, activeItem ? `/ ${activeItem.label || activeItem.type}` : t.noItem),
+          activeItem && React.createElement(React.Fragment, null,
+            editingId === activeItem.id ? React.createElement('button', { className:'btn btn-ghost', onClick:()=>setEditingId(null) }, t.closeEditor) : React.createElement('button', { className:'btn btn-outline', onClick:()=>setEditingId(activeItem.id) }, t.editBtn),
+            React.createElement('button', { className:'btn btn-ghost', onClick:()=>duplicateItem(activeItem.id) }, t.duplicate),
+            React.createElement('button', { className:'btn btn-danger', onClick:()=>deleteItem(activeItem.id) }, '🗑'),
+          ),
+          !activeItem && React.createElement('span', { style:{ fontSize:12, color:'var(--text3)' } }, t.selectItem),
+        ),
+        React.createElement('div', { className:'editor-area' },
+          React.createElement('div', { className:'item-editor', style:{marginBottom:16} },
+            React.createElement('div', { className:'item-editor-header' }, React.createElement('span', { className:'item-badge' }, '📄'), React.createElement('span', { className:'item-editor-title' }, t.docMeta)),
+            React.createElement('div', { className:'field-row' },
+              React.createElement('div', { className:'field-group' }, React.createElement('label', { className:'field-label' }, t.docTitle), React.createElement('input', { className:'field-input', value: docMeta.title, onChange: e => setDocMeta(m => ({ ...m, title: e.target.value })) })),
+              React.createElement('div', { className:'field-group', style:{maxWidth:120} }, React.createElement('label', { className:'field-label' }, t.lang), React.createElement('select', { className:'field-select', value: docMeta.lang, onChange: e => setDocMeta(m => ({ ...m, lang: e.target.value })) }, ['pt-BR','de','en','es','fr'].map(l => React.createElement('option', { key:l, value:l }, l)))),
+              React.createElement('div', { className:'field-group', style:{maxWidth:130} }, React.createElement('label', { className:'field-label' }, t.governance), React.createElement('select', { className:'field-select', value: docMeta.governance, onChange: e => setDocMeta(m => ({ ...m, governance: e.target.value })) }, ['LOW','MEDIUM','HIGH'].map(g => React.createElement('option', { key:g, value:g }, g)))),
+            ),
+            React.createElement('div', { className:'field-group' }, React.createElement('label', { className:'field-label' }, t.globalCss), React.createElement('textarea', { className:'field-textarea', value: docMeta.css, placeholder: 'body { font-family: Arial; }', style:{ minHeight:60 }, onChange: e => setDocMeta(m => ({ ...m, css: e.target.value })) })),
+          ),
+          editingItem && React.createElement(ItemEditor, { key: editingItem.id, item: editingItem, t, onChange: data => updateItem(editingItem.id, data), onClose: () => setEditingId(null) }),
+          showCode && React.createElement('div', { style:{marginBottom:16} },
+            React.createElement('div', { style:{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:8 } }, React.createElement('span', { style:{fontSize:11, fontWeight:600, color:'var(--text3)', textTransform:'uppercase', letterSpacing:'0.6px'} }, t.htmlGenerated), React.createElement('button', { className:'btn btn-ghost', onClick:handleCopyHTML }, t.copyHtml)),
+            React.createElement('div', { className:'code-output' }, htmlOutput || '<!-- no items -->'),
+          ),
+          !editingItem && !showCode && items.length === 0 && React.createElement('div', { className:'empty-state' }, React.createElement('div', { className:'empty-icon' }, t.emptyIcon), React.createElement('div', { className:'empty-title' }, t.emptyTitle), React.createElement('div', { className:'empty-sub' }, t.emptySub)),
+          !editingItem && !showCode && items.length > 0 && React.createElement('div', { className:'empty-state' }, React.createElement('div', { className:'empty-icon' }, t.editIcon), React.createElement('div', { className:'empty-title' }, t.elements(items.length)), React.createElement('div', { className:'empty-sub' }, t.selectItem)),
+        ),
+      ),
+      showPreview && React.createElement('div', { className:'preview-pane' },
+        React.createElement('div', { className:'preview-header' }, React.createElement('span', { className:'preview-title' }, t.previewTitle), React.createElement('button', { className:'btn btn-ghost', style:{fontSize:11}, onClick:()=>setShowPreview(false) }, '✕')),
+        React.createElement('div', { className:'preview-area' }, React.createElement('div', { className:'preview-output', dangerouslySetInnerHTML:{ __html: htmlOutput || t.noContent } })),
+        React.createElement('div', { className:'seal-panel' },
+          React.createElement('div', { className:'seal-panel-title' }, t.sealTitle),
+          React.createElement('div', { className:'seal-meta' }, React.createElement('div', { className:'seal-field' }, React.createElement('label', null, t.docName), React.createElement('input', { value: docMeta.title, onChange: e => setDocMeta(m => ({ ...m, title: e.target.value })) }))),
+          React.createElement('button', { className:'btn btn-gold', style:{width:'100%', justifyContent:'center'}, onClick: handleSeal, disabled: sealing || items.length === 0 }, sealing ? t.sealingBtn : t.sealBtn),
+          receipt && React.createElement('div', { className:'receipt-box' }, `ID: ${receipt.id}\n`, `Hash: ${receipt.hash}\n`, `Ts: ${receipt.ts}\n`, React.createElement('a', { href: receipt.url, target:'_blank', style:{ color:'var(--gold)', fontSize:10 } }, receipt.url)),
+        ),
+      ),
+    ),
+    React.createElement('div', { className:'toast-container' }, toasts.map(toast => React.createElement('div', { key:toast.id, className:`toast ${toast.type}` }, toast.type === 'success' ? '✓' : toast.type === 'error' ? '✕' : 'ℹ', toast.msg))),
+  );
+}
+
+const root = createRoot(document.getElementById('root'));
+root.render(React.createElement(App));
+</script>
 </body>
 </html>
