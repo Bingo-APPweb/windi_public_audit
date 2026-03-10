@@ -673,6 +673,86 @@ def grove_brief():
                 "implementation": "Se humano não assina, hash não fecha. Ponto final.",
                 "dont_propose": "mecanismos de veto, controlo humano, override"
             }
+        },
+
+        # ════════════════════════════════════════════════════════════════════════
+        # GAP 1 — COMMUNICATION CHANNELS (endpoints de notificação em crise)
+        # ════════════════════════════════════════════════════════════════════════
+        "communication_channels": {
+            "warning": "Use estes endpoints para notificações — não proponha criar novos.",
+            "endpoints": {
+                "diplomatic_notify": {
+                    "endpoint": "POST /communique/diplomatic",
+                    "port": 8105,
+                    "purpose": "Notificação formal a jurisdições/reguladores",
+                    "payload": {"recipient": "str", "severity": "LOW|MED|HIGH|CRITICAL", "message": "str", "attachments": "[]"},
+                    "executor": "Human Dragon aprova, sistema envia"
+                },
+                "internal_alert": {
+                    "endpoint": "POST /grove/alert",
+                    "port": 8091,
+                    "purpose": "Alerta interno para stakeholders WINDI",
+                    "payload": {"level": "INFO|WARN|CRITICAL", "message": "str", "require_ack": "bool"},
+                    "executor": "Agente pode disparar, Human Dragon recebe"
+                },
+                "ledger_incident": {
+                    "endpoint": "POST /api/receipts",
+                    "port": 8101,
+                    "purpose": "Registo de incidente no Forensic Ledger",
+                    "payload": {"id": "INC-...", "doc_type": "incident", "governance_level": "CRIT"},
+                    "executor": "Automático com timestamp imutável"
+                }
+            },
+            "protocol": "Toda notificação externa requer aprovação Human Dragon (I9). Notificações internas podem ser automáticas mas documentadas no Ledger."
+        },
+
+        # ════════════════════════════════════════════════════════════════════════
+        # GAP 2 — CRISIS GOVERNANCE DEFAULTS (timeouts e escalation)
+        # ════════════════════════════════════════════════════════════════════════
+        "crisis_governance_defaults": {
+            "warning": "Estes são os valores padrão do sistema em situações de crise.",
+            "states": {
+                "HUMAN_SOVEREIGNTY_PENDING": {
+                    "description": "Aguarda decisão humana — sistema em pausa",
+                    "ttl_hours": 72,
+                    "on_expiry": "FREEZE_TOTAL — nenhuma acção até sinal humano",
+                    "escalation": "Human Dragon only — sem delegação automática",
+                    "ledger_event": "SOVEREIGNTY_TIMEOUT registado automaticamente"
+                },
+                "SUSPENDED": {
+                    "description": "Transação/processo suspenso por ordem externa",
+                    "ttl_hours": 168,
+                    "on_expiry": "Mantém SUSPENDED + alerta diário ao Human Dragon",
+                    "escalation": "Requer decisão explícita para retomar ou cancelar"
+                },
+                "REGULATORY_HOLD": {
+                    "description": "Bloqueio por exigência regulatória",
+                    "ttl_hours": "INDEFINIDO — até ordem contrária do regulador",
+                    "on_expiry": "N/A",
+                    "escalation": "Human Dragon + assessoria jurídica externa"
+                }
+            },
+            "principle": "Em dúvida, FREEZE. Melhor paralisar que violar soberania humana."
+        },
+
+        # ════════════════════════════════════════════════════════════════════════
+        # GAP 3 — DRAGON UNAVAILABILITY PROTOCOL (failsafe constitucional)
+        # ════════════════════════════════════════════════════════════════════════
+        "dragon_unavailability_protocol": {
+            "warning": "O que fazer quando Human Dragon está indisponível.",
+            "scenario": "Human Dragon não responde após período de timeout",
+            "constitutional_response": {
+                "immediate": "Sistema mantém ÚLTIMO ESTADO CONHECIDO — zero mudanças",
+                "documentation": "Evento DRAGON_UNAVAILABLE registado no Ledger com timestamp",
+                "no_delegation": "I9 proíbe delegação automática a qualquer entidade",
+                "no_trustee": "Não existe trustee designado — soberania é intransferível"
+            },
+            "timeout_thresholds": {
+                "routine_decisions": "24h — após isto, operação suspensa",
+                "critical_decisions": "4h — após isto, FREEZE imediato",
+                "regulatory_response": "Conforme prazo legal — sistema alerta antes de expirar"
+            },
+            "failsafe_invariant": "Em ausência de sinal humano, o sistema preserva estado e documenta. NUNCA decide sozinho. NUNCA assume consentimento. NUNCA delega autoridade."
         }
     }
 
