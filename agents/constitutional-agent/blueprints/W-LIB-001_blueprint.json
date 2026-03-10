@@ -1,0 +1,128 @@
+{
+  "agent_id": "W-LIB-001",
+  "name": "Bibliotecario",
+  "version": "1.0.0",
+  "role": "Constitutional Knowledge Guardian",
+  "description": "Repositorio vivo de conhecimento constitucional WINDI. Alimenta os outros agentes com contexto filosofico, historico e governanca. O Bibliotecario nao cria — ele preserva, organiza e ilumina.",
+  "created_at": "2026-03-10T17:00:00Z",
+  "constitutional_basis": {
+    "invariants": ["I1", "I2", "I3", "I6", "I9", "I11"],
+    "principle": "AI processes. Human decides. WINDI guarantees.",
+    "iron_rule": "W-LIB-001 is a domain extension of constitutional-agent. It serves as the single source of constitutional truth for all agents."
+  },
+  "sandbox_integration": {
+    "host": ":8091",
+    "mount_prefix": "/library/",
+    "endpoints": [
+      "GET  /library/health",
+      "GET  /library/invariants",
+      "GET  /library/principles",
+      "GET  /library/agents",
+      "GET  /library/wisdom",
+      "GET  /library/knowledge",
+      "POST /library/knowledge",
+      "POST /library/context",
+      "POST /library/grove-brief"
+    ]
+  },
+  "knowledge_repository": {
+    "immutable_core": {
+      "invariants": {
+        "count": 11,
+        "codes": ["I1", "I2", "I3", "I4", "I5", "I6", "I7", "I8", "I9", "I10", "I11"],
+        "severity": "IRREMEDIAVEL",
+        "description": "Constitutional invariants that cannot be overridden by any agent"
+      },
+      "principles": {
+        "count": 8,
+        "codes": ["GP-001", "GP-002", "GP-003", "GP-004", "GP-005", "GP-006", "GP-007", "GP-008"],
+        "description": "Governance principles that guide all agent behavior"
+      },
+      "three_dragons": {
+        "guardian": "Protection & Ethics — guards constitutional limits",
+        "architect": "Structure & Build — designs auditable systems",
+        "witness": "Observation & Validation — nothing happens without record"
+      }
+    },
+    "sealed_wisdom": {
+      "count": 5,
+      "blocks": [
+        {"id": "WB-001", "title": "Nascimento da Ideia", "maturity": "N5"},
+        {"id": "WB-002", "title": "A Arvore do Conhecimento", "maturity": "N5"},
+        {"id": "WB-003", "title": "Constelacao WINDI", "maturity": "N4"},
+        {"id": "WB-004", "title": "Three Dragons Protocol", "maturity": "N5"},
+        {"id": "WB-005", "title": "Semantic Governance Engine", "maturity": "N4"}
+      ]
+    },
+    "extensible_knowledge": {
+      "storage": "JSON file or SQLite",
+      "location": "/opt/windi/engine/wisdom/library_knowledge.json",
+      "i9_gate": "human_approved=true required for any addition"
+    }
+  },
+  "agent_registry": {
+    "description": "All agents in the WINDI constellation that can request context",
+    "agents": {
+      "W-LIB-001":   {"name": "Bibliotecario", "port": 8091, "route": "/library"},
+      "W-LED-001":   {"name": "Forensic Ledger", "port": 8101, "route": "/api/receipts"},
+      "W-VLT-001":   {"name": "Secure Vault", "port": 8106, "route": "/api"},
+      "W-SGE-001":   {"name": "Semantic Governance Engine", "port": 8091, "route": "/sge"},
+      "W-GRV-001":   {"name": "Grove Arena", "port": 8091, "route": "/grove"},
+      "W-WIS-001":   {"name": "Wisdom Manager", "port": 8091, "route": "/wisdom"},
+      "W-COM-001":   {"name": "Communique Engine", "port": 8109, "route": "/api"},
+      "W-EXP-001":   {"name": "Export Engine", "port": 8102, "route": "/api"},
+      "W-DSK-001":   {"name": "a4Desk Desktop", "port": 8100, "route": "/"}
+    }
+  },
+  "context_distribution": {
+    "flow": "Bibliotecario (center) → Agents (periphery)",
+    "endpoints": {
+      "/context": "On-demand constitutional context for any agent",
+      "/grove-brief": "Pre-debate briefing injection for Grove Arena"
+    },
+    "action_type_reminders": {
+      "EXPORT": ["I2: Forensic integrity", "I3: Trilingual output"],
+      "DECISION": ["I9: Human approval required", "I6: Must be explainable"],
+      "COMMUNICATION": ["I3: Trilingual", "GP-006: Native languages"],
+      "DATA_PROCESSING": ["I4: Privacy by design", "I8: Full auditability"],
+      "GENERAL": ["GP-001: Core principle", "I9: AI proposes only"]
+    }
+  },
+  "grove_integration": {
+    "endpoint": "POST /library/grove-brief",
+    "purpose": "Inject constitutional briefing before any Grove Arena debate",
+    "briefing_includes": [
+      "governance_anchor (GP-001, GP-002)",
+      "binding_invariants (I9, I6)",
+      "debate_rules (5 rules)",
+      "participant_missions"
+    ]
+  },
+  "trilingual_support": {
+    "languages": ["pt", "en", "de"],
+    "all_content": "Every invariant, principle, and wisdom block has trilingual text",
+    "api_param": "?lang=pt|en|de"
+  },
+  "sovereignty_config": {
+    "knowledge_source": "100% local",
+    "no_external_for": ["invariants", "principles", "constitutional context"],
+    "human_gate": "All knowledge additions require human_approved=true"
+  },
+  "skill_reference": {
+    "skill_id": "bibliotecario-arch",
+    "path": "/opt/windi/skills/bibliotecario-arch/SKILL.md",
+    "category": "constitutional",
+    "triggers": ["knowledge", "invariant", "principle", "constitutional", "bibliotecario", "context"]
+  },
+  "deployment": {
+    "type": "Flask Blueprint (domain extension)",
+    "process": "Registered in constitutional-agent/agent.py",
+    "restart": "kill PID + nohup restart of constitutional-agent",
+    "rule": "W-LIB-001 lives INSIDE :8091, not on a separate port"
+  },
+  "genesis_receipt": {
+    "id": "WINDI-LIB-GENESIS-20260310",
+    "note": "W-LIB-001 born from the need to provide constitutional context to all agents before they act. The Bibliotecario does not create — it preserves, organizes, and illuminates.",
+    "sealed": "2026-03-10T17:00:00Z"
+  }
+}
