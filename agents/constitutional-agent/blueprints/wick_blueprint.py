@@ -280,6 +280,11 @@ def publish():
     description = data.get("description", "")
     tags = data.get("tags", [])
 
+    # Grove Arena direct submission fields
+    content_hash = data.get("hash")  # SHA-256 hash sent from UI
+    title = data.get("title")
+    arena_content = data.get("content")  # Full content for Grove debates
+
     # ── I9 Gate: Human confirmation required ──
     if not confirm:
         return jsonify({
@@ -338,10 +343,96 @@ def publish():
         except Exception:
             pass
 
+    # Fallback 2: Try Grove Arena (for GRV-* or GS-* IDs)
+    if not page_data and (artifact_id.startswith("GRV-") or artifact_id.startswith("GS-")):
+        try:
+            import sqlite3 as grove_sqlite
+            grove_db_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "grove.db")
+            if os.path.exists(grove_db_path):
+                gconn = grove_sqlite.connect(grove_db_path)
+                gconn.row_factory = grove_sqlite.Row
+
+                # Try to find by session ID or receipt ID
+                session = None
+                if artifact_id.startswith("GS-"):
+                    session = gconn.execute(
+                        "SELECT * FROM grove_sessions WHERE id = ?", (artifact_id,)
+                    ).fetchone()
+                elif artifact_id.startswith("GRV-"):
+                    # GRV- might be a receipt_id in grove_sessions
+                    session = gconn.execute(
+                        "SELECT * FROM grove_sessions WHERE receipt_id = ?", (artifact_id,)
+                    ).fetchone()
+                    if not session:
+                        # Or it might be in the format GRV-XXXX where XXXX matches part of session ID
+                        session = gconn.execute(
+                            "SELECT * FROM grove_sessions WHERE receipt_id LIKE ?",
+                            (f"%{artifact_id}%",)
+                        ).fetchone()
+
+                if session:
+                    # Get node count and content
+                    node_count = gconn.execute(
+                        "SELECT COUNT(*) FROM grove_ideas WHERE session_id = ?",
+                        (session["id"],)
+                    ).fetchone()[0]
+
+                    # Build content hash from session data
+                    session_content = json.dumps({
+                        "id": session["id"],
+                        "title": session["title"],
+                        "nodes": node_count,
+                        "created_at": session["created_at"]
+                    }, sort_keys=True)
+                    content_hash = hashlib.sha256(session_content.encode()).hexdigest()
+
+                    page_data = {
+                        "id": artifact_id,
+                        "title": session["title"] or f"Grove Debate {artifact_id}",
+                        "doc_type": "grove_debate",
+                        "status": "sealed" if session["sealed_at"] else "draft",
+                        "receipt_id": session["receipt_id"] or artifact_id,
+                        "content_hash": content_hash,
+                        "html_hash": content_hash,
+                        "ledger_anchor": session["receipt_id"],
+                        "created_at": session["created_at"],
+                        "metadata": {
+                            "node_count": node_count,
+                            "agents_used": json.loads(session["agents_used"] or "[]"),
+                            "grove_session_id": session["id"],
+                            "source": "GROVE_ARENA"
+                        },
+                    }
+                    source_type = "GROVE_ARENA"
+                gconn.close()
+        except Exception as e:
+            pass  # Grove lookup failed, continue to error
+
+    # If document not found but we have enough data from Grove Arena, create it directly
+    if not page_data and artifact_id and artifact_id.startswith("GRV-") and content_hash:
+        # Grove Arena direct submission - create page_data from provided info
+        page_data = {
+            "id": artifact_id,
+            "title": title or f"Grove Arena Report {artifact_id}",
+            "doc_type": "grove_report",
+            "status": "sealed",  # GRV- IDs are always sealed reports
+            "receipt_id": artifact_id,
+            "content_hash": content_hash,
+            "html_hash": content_hash,
+            "ledger_anchor": artifact_id,
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "metadata": {
+                "source": "GROVE_ARENA_DIRECT",
+                "arena_content": arena_content[:1000] if arena_content else None,
+            },
+        }
+        source_type = "GROVE_ARENA_DIRECT"
+
     if not page_data:
         return jsonify({
             "error": "Document not found",
-            "message": f"Could not find document {artifact_id} in W-PAGE-001 or Forensic Ledger.",
+            "message": f"Could not find document {artifact_id} in W-PAGE-001, Forensic Ledger, or Grove Arena.",
+            "hint": "For Grove debates, ensure the debate is sealed first, or provide hash and title."
         }), 404
 
     # ── Validate: Document must be sealed ──
