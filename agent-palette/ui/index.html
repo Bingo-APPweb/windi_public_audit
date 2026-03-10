@@ -3334,9 +3334,14 @@ function App(){
 
     try{
       // Step 1: Execute debate (POST /grove/arena)
+      // Timeout: 180s (8 agents ~80s, with margin)
+      const arenaController=new AbortController();
+      const arenaTimeout=setTimeout(()=>arenaController.abort(),180000);
+
       const arenaRes=await fetch(`${arenaBaseUrl}/grove/arena`,{
         method:"POST",
         headers:{"Content-Type":"application/json"},
+        signal:arenaController.signal,
         body:JSON.stringify({
           topic:arenaTopic,
           context:arenaContext||undefined,
@@ -3345,6 +3350,7 @@ function App(){
           store_nodes:true
         })
       });
+      clearTimeout(arenaTimeout);
       const arenaData=await arenaRes.json();
 
       if(arenaData.error){
@@ -3366,9 +3372,14 @@ function App(){
       setArenaMsgs(responses);
 
       // Step 2: Generate report (POST /grove/arena/report)
+      // Timeout: 60s for report generation + ledger seal
+      const reportController=new AbortController();
+      const reportTimeout=setTimeout(()=>reportController.abort(),60000);
+
       const reportRes=await fetch(`${arenaBaseUrl}/grove/arena/report`,{
         method:"POST",
         headers:{"Content-Type":"application/json"},
+        signal:reportController.signal,
         body:JSON.stringify({
           session_id:arenaData.session_id||arenaSession,
           topic:arenaTopic,
@@ -3384,6 +3395,7 @@ function App(){
           identity:getArenaIdentity()
         })
       });
+      clearTimeout(reportTimeout);
       const reportData=await reportRes.json();
 
       if(reportData.ok){
@@ -3413,9 +3425,13 @@ function App(){
       }
     }catch(e){
       console.error("[Arena] Debate failed:",e);
-      setArenaError(e.message);
+      const isTimeout=e.name==="AbortError";
+      const errMsg=isTimeout
+        ?`Timeout: debate com ${arenaAgents.length} agentes excedeu limite. Tente com menos agentes.`
+        :e.message;
+      setArenaError(errMsg);
       setArenaStatus("error");
-      flash(`❌ ${e.message}`);
+      flash(`❌ ${errMsg}`);
     }finally{
       setArenaLoading(false);
     }
