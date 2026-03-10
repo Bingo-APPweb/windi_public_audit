@@ -5158,6 +5158,37 @@ function App(){
                   <div style={{fontSize:9,color:th.dim}}>WICK</div>
                 </button>
               </div>
+
+              {/* ═══ VPR: IDENTITY & VERIFICATION TILES ═══ */}
+              <div style={{width:"100%",maxWidth:340,marginBottom:16}}>
+                <div style={{fontSize:9,fontWeight:500,letterSpacing:"0.15em",textTransform:"uppercase",color:th.dim,marginBottom:10,paddingTop:8,borderTop:`1px solid ${th.border}`}}>
+                  {lang==="de"?"IDENTITÄT & VERIFIZIERUNG":lang==="pt"?"IDENTIDADE & VERIFICAÇÃO":"IDENTITY & VERIFICATION"}
+                </div>
+                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+                  {/* Tile: Verify */}
+                  <div onClick={()=>window.open("https://windi-domain.com/verify-public/","_blank")} style={{padding:"14px 12px",borderRadius:10,background:th.card,border:`1px solid ${th.border}`,cursor:"pointer",transition:"all 0.2s",minHeight:100,display:"flex",flexDirection:"column"}} onMouseOver={e=>{e.currentTarget.style.borderColor=th.gold;e.currentTarget.style.boxShadow=`0 2px 12px ${th.gold}15`}} onMouseOut={e=>{e.currentTarget.style.borderColor=th.border;e.currentTarget.style.boxShadow="none"}}>
+                    <div style={{fontSize:18,marginBottom:6}}>🔍</div>
+                    <div style={{fontSize:13,fontWeight:600,color:th.text,marginBottom:4}}>{lang==="de"?"Verifizieren":lang==="pt"?"Verificar":"Verify"}</div>
+                    <div style={{fontSize:10,color:th.dim,lineHeight:1.4,flex:1}}>{lang==="de"?"Dokument oder QR prüfen":lang==="pt"?"Verificar documento ou QR":"Verify document or QR"}</div>
+                    <div style={{fontSize:9,color:th.gold,marginTop:6}}>→ Verify Public</div>
+                  </div>
+                  {/* Tile: My Record (VPR) */}
+                  <div onClick={async()=>{
+                    if(!wallet?.id)return;
+                    try{
+                      const r=await fetch(`http://127.0.0.1:8114/api/did/by-wallet/${wallet.id}`);
+                      if(r.ok){const d=await r.json();window.open(`https://windi-domain.com/verify-public/vpr/${d.did_short}`,"_blank");}
+                      else{flash(lang==="de"?"Kein VPR gefunden":lang==="pt"?"VPR não encontrado":"No VPR found");}
+                    }catch(e){flash("VPR offline");}
+                  }} style={{padding:"14px 12px",borderRadius:10,background:th.card,border:`1px solid ${th.border}`,cursor:wallet?"pointer":"not-allowed",opacity:wallet?1:0.5,transition:"all 0.2s",minHeight:100,display:"flex",flexDirection:"column"}} onMouseOver={e=>{if(wallet){e.currentTarget.style.borderColor=th.gold;e.currentTarget.style.boxShadow=`0 2px 12px ${th.gold}15`}}} onMouseOut={e=>{e.currentTarget.style.borderColor=th.border;e.currentTarget.style.boxShadow="none"}}>
+                    <div style={{fontSize:18,marginBottom:6}}>🪪</div>
+                    <div style={{fontSize:13,fontWeight:600,color:th.text,marginBottom:4}}>{lang==="de"?"Mein Profil":lang==="pt"?"Meu Perfil":"My Record"}</div>
+                    <div style={{fontSize:10,color:th.dim,lineHeight:1.4,flex:1}}>{lang==="de"?"Öffentliches Profil":lang==="pt"?"Perfil público verificável":"Public verified record"}</div>
+                    <div style={{fontSize:9,color:th.gold,marginTop:6}}>→ VPR</div>
+                  </div>
+                </div>
+              </div>
+
               {/* A.2: VAULT STATS BANNER — Phase 1B: Biofeedback */}
               <div className={vaultPulse?"vault-pulse":""} style={{width:"100%",maxWidth:340,padding:"14px 16px",borderRadius:12,background:th.card,border:`1px solid ${vaultPulse?th.gold:th.border}`,marginBottom:20,transition:"border-color 0.3s ease"}}>
                 <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
