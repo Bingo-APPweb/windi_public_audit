@@ -721,7 +721,7 @@ REPORTS_DIR = Path("/opt/windi/agents/constitutional-agent/data/reports")
 REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 
 # URL base para verificação
-VERIFY_BASE_URL = "https://a4.windi.app/grove/verify"
+VERIFY_BASE_URL = "https://windi-domain.com/grove/verify"
 
 
 def _generate_report_html(report_data: dict) -> str:
