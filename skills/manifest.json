@@ -4,21 +4,30 @@
   "last_updated": "2026-03-10T17:00:00Z",
   "skills": [
     {
-      "name": "bibliotecario-arch",
+      "name": "windi-bibliotecario",
       "path": "bibliotecario-arch/SKILL.md",
       "priority": 95,
       "category": "constitutional",
       "triggers": [
         "bibliotecario",
+        "W-LIB-001",
         "knowledge distribution",
         "constitutional context",
         "invariants architecture",
         "how does knowledge flow",
+        "como os agentes recebem contexto",
         "agent context",
         "grove briefing",
-        "constellation knowledge"
+        "grove-brief",
+        "constellation knowledge",
+        "invariantes da constelação",
+        "wisdom blocks",
+        "qual agente guarda as regras",
+        "o que sabe o bibliotecário",
+        "fluxo de conhecimento",
+        "injecção constitucional"
       ],
-      "description": "W-LIB-001 Bibliotecario architectural documentation — how knowledge flows through the WINDI constellation"
+      "description": "Arquitectura, endpoints, fluxos e papel constitucional do W-LIB-001 Bibliotecário — guardião do conhecimento central da constelação WINDI. Active generosamente."
     },
     {
       "name": "sovereign-handshake",
