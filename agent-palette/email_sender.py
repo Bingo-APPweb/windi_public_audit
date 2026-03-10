@@ -69,9 +69,9 @@ def send_document_email(to_address, doc_title, doc_content, receipt_id, lang="en
 
     # Multilingual footer (FIX: windi.app → windi-domain.com)
     footers = {
-        "en": f"Document sealed by WINDI Forensic Ledger.\nReceipt ID: {receipt_id}\n\nVerify: https://windi-domain.com/verify/{receipt_id}",
-        "de": f"Dokument versiegelt durch WINDI Forensic Ledger.\nQuittungs-ID: {receipt_id}\n\nVerifizieren: https://windi-domain.com/verify/{receipt_id}",
-        "pt": f"Documento selado pelo WINDI Forensic Ledger.\nID do Recibo: {receipt_id}\n\nVerificar: https://windi-domain.com/verify/{receipt_id}"
+        "en": f"Document sealed by WINDI Forensic Ledger.\nReceipt ID: {receipt_id}\n\nVerify: https://windi-domain.com/verify-public/?id={receipt_id}",
+        "de": f"Dokument versiegelt durch WINDI Forensic Ledger.\nQuittungs-ID: {receipt_id}\n\nVerifizieren: https://windi-domain.com/verify-public/?id={receipt_id}",
+        "pt": f"Documento selado pelo WINDI Forensic Ledger.\nID do Recibo: {receipt_id}\n\nVerificar: https://windi-domain.com/verify-public/?id={receipt_id}"
     }
     footer = footers.get(lang, footers["en"])
 
@@ -97,19 +97,23 @@ def send_document_email(to_address, doc_title, doc_content, receipt_id, lang="en
 {doc_content}
         </div>
 
-        <!-- Forensic Footer -->
+        <!-- Forensic Footer with QR Code -->
         <div style="padding: 16px 24px; background: #f3f4f6; border-top: 1px solid #e5e7eb;">
             <table style="width: 100%;">
                 <tr>
-                    <td style="vertical-align: top;">
-                        <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">WINDI Forensic Seal</div>
-                        <div style="font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 12px; color: #1a1a1a;">{receipt_id}</div>
+                    <td style="vertical-align: middle; width: 80px;">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=70x70&data=https://windi-domain.com/verify-public/?id={receipt_id}" alt="QR Code" style="width: 70px; height: 70px; border-radius: 4px;"/>
                     </td>
-                    <td style="text-align: right; vertical-align: top;">
-                        <a href="https://windi-domain.com/verify/{receipt_id}" style="display: inline-block; padding: 8px 16px; background: #C5A572; color: #ffffff; text-decoration: none; border-radius: 6px; font-size: 12px; font-weight: 600;">Verify</a>
+                    <td style="vertical-align: middle; padding-left: 12px;">
+                        <div style="font-size: 11px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">WINDI Forensic Seal</div>
+                        <div style="font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 12px; color: #1a1a1a; margin-bottom: 8px;">{receipt_id}</div>
+                        <a href="https://windi-domain.com/verify-public/?id={receipt_id}" style="display: inline-block; padding: 8px 16px; background: #C5A572; color: #ffffff; text-decoration: none; border-radius: 6px; font-size: 12px; font-weight: 600;">✓ Verify Document</a>
                     </td>
                 </tr>
             </table>
+            <div style="margin-top: 8px; font-size: 10px; color: #9ca3af; text-align: center;">
+                Scan QR code or click button to verify authenticity
+            </div>
         </div>
     </div>
 
