@@ -21,8 +21,9 @@ from urllib.parse import urlparse, parse_qs
 # === Configuration ===
 PORT = int(os.environ.get("VAULT_PORT", 8106))
 LEDGER_DB = os.environ.get("LEDGER_DB", "/opt/windi/data/forensic_ledger.sqlite3")
+TEMPLATES_DB = os.environ.get("TEMPLATES_DB", "/opt/windi/data/windi_templates.sqlite3")
 PAGE_SIZE = int(os.environ.get("PAGE_SIZE", 25))
-VERSION = "1.0.0"
+VERSION = "1.1.0"
 SERVICE_NAME = "WINDI Forensic Vault"
 
 # === Database Helper ===
@@ -47,6 +48,51 @@ def safe_query(query, params=(), fetchone=False):
         return result
     except Exception as e:
         return {"error": str(e)}
+
+
+# === Template Registry Database ===
+def get_templates_db():
+    """Read-write connection to the Templates database."""
+    import re
+    conn = sqlite3.connect(TEMPLATES_DB)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+def init_templates_db():
+    """Initialize the templates database."""
+    os.makedirs(os.path.dirname(TEMPLATES_DB), exist_ok=True)
+    conn = sqlite3.connect(TEMPLATES_DB)
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS templates (
+            id              TEXT PRIMARY KEY,
+            name            TEXT NOT NULL,
+            description     TEXT DEFAULT '',
+            category        TEXT DEFAULT 'generic',
+            isp             TEXT DEFAULT 'windi',
+            lang            TEXT DEFAULT 'all',
+            items_json      TEXT NOT NULL,
+            html            TEXT DEFAULT '',
+            preview         TEXT DEFAULT '',
+            governance      TEXT DEFAULT 'MEDIUM',
+            shared          INTEGER DEFAULT 1,
+            created_by      TEXT DEFAULT 'html-builder',
+            ledger_receipt  TEXT DEFAULT '',
+            created_at      TEXT NOT NULL,
+            updated_at      TEXT NOT NULL
+        )
+    """)
+    conn.commit()
+    conn.close()
+    print(f"[VAULT] Templates DB initialized: {TEMPLATES_DB}")
+
+# Initialize templates DB on startup
+init_templates_db()
+
+def gen_template_id(name):
+    """Generate unique template ID."""
+    ts = datetime.now(timezone.utc).strftime("%Y%m%d")
+    slug = hashlib.md5(name.encode()).hexdigest()[:6].upper()
+    return f"TMPL-{ts}-{slug}"
 
 
 # === HTML Template ===
@@ -1205,7 +1251,7 @@ class VaultHandler(BaseHTTPRequestHandler):
     def do_OPTIONS(self):
         self.send_response(204)
         self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, OPTIONS")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
         self.end_headers()
 
@@ -1251,6 +1297,38 @@ class VaultHandler(BaseHTTPRequestHandler):
         elif path == "/api/export":
             self._handle_export(params)
 
+        # === Template Registry Routes ===
+        elif path == "/api/templates":
+            self._handle_templates_list(params)
+
+        elif path == "/api/templates/categories":
+            self._handle_template_categories()
+
+        elif path.startswith("/api/templates/"):
+            template_id = path.split("/api/templates/")[1]
+            self._handle_template_detail(template_id)
+
+        else:
+            self._send_json({"error": "Not found"}, 404)
+
+    def do_POST(self):
+        """Handle POST requests for template creation."""
+        parsed = urlparse(self.path)
+        path = parsed.path.rstrip("/")
+
+        if path == "/api/templates":
+            self._handle_template_save()
+        else:
+            self._send_json({"error": "Not found"}, 404)
+
+    def do_DELETE(self):
+        """Handle DELETE requests for template deletion."""
+        parsed = urlparse(self.path)
+        path = parsed.path.rstrip("/")
+
+        if path.startswith("/api/templates/"):
+            template_id = path.split("/api/templates/")[1]
+            self._handle_template_delete(template_id)
         else:
             self._send_json({"error": "Not found"}, 404)
 
@@ -1453,6 +1531,175 @@ class VaultHandler(BaseHTTPRequestHandler):
 
             filename = f"vault_export_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
             self._send_csv(output.getvalue(), filename)
+        except Exception as e:
+            self._send_json({"error": str(e)}, 500)
+
+    # === Template Registry Handlers ===
+
+    def _handle_templates_list(self, params):
+        """List templates with optional filters."""
+        try:
+            def p(key, default=None):
+                return params.get(key, [default])[0]
+
+            conn = get_templates_db()
+            cur = conn.cursor()
+
+            query = "SELECT * FROM templates WHERE 1=1"
+            values = []
+
+            category = p("category")
+            if category:
+                query += " AND category = ?"
+                values.append(category)
+
+            lang = p("lang")
+            if lang and lang != "all":
+                query += " AND (lang = ? OR lang = 'all')"
+                values.append(lang)
+
+            isp = p("isp")
+            if isp:
+                query += " AND isp = ?"
+                values.append(isp)
+
+            shared_only = p("shared_only")
+            if shared_only == "true":
+                query += " AND shared = 1"
+
+            query += " ORDER BY created_at DESC"
+
+            cur.execute(query, values)
+            rows = cur.fetchall()
+            conn.close()
+
+            templates = []
+            for r in rows:
+                t = dict(r)
+                t["shared"] = bool(t.get("shared", 0))
+                # Don't include full items_json and html in list view
+                t.pop("items_json", None)
+                t.pop("html", None)
+                templates.append(t)
+
+            self._send_json({"templates": templates, "total": len(templates)})
+        except Exception as e:
+            self._send_json({"error": str(e)}, 500)
+
+    def _handle_template_detail(self, template_id):
+        """Get full template detail including items."""
+        try:
+            conn = get_templates_db()
+            cur = conn.cursor()
+            cur.execute("SELECT * FROM templates WHERE id = ?", (template_id,))
+            row = cur.fetchone()
+            conn.close()
+
+            if not row:
+                self._send_json({"error": "Template not found"}, 404)
+                return
+
+            t = dict(row)
+            t["shared"] = bool(t.get("shared", 0))
+            # Parse items_json
+            import re
+            items_json = t.pop("items_json", "[]")
+            try:
+                t["items"] = json.loads(items_json)
+            except:
+                t["items"] = []
+
+            self._send_json(t)
+        except Exception as e:
+            self._send_json({"error": str(e)}, 500)
+
+    def _handle_template_categories(self):
+        """List categories with counts."""
+        try:
+            conn = get_templates_db()
+            cur = conn.cursor()
+            cur.execute("""
+                SELECT category, COUNT(*) as count
+                FROM templates GROUP BY category ORDER BY count DESC
+            """)
+            rows = cur.fetchall()
+            conn.close()
+
+            categories = [{"category": r[0], "count": r[1]} for r in rows]
+            self._send_json({"categories": categories})
+        except Exception as e:
+            self._send_json({"error": str(e)}, 500)
+
+    def _handle_template_save(self):
+        """Save a new template."""
+        try:
+            import re
+            content_length = int(self.headers.get('Content-Length', 0))
+            body = self.rfile.read(content_length).decode('utf-8')
+            data = json.loads(body)
+
+            name = data.get("name", "").strip()
+            if not name:
+                self._send_json({"error": "Name is required"}, 400)
+                return
+
+            tid = gen_template_id(name)
+            now = datetime.now(timezone.utc).isoformat()
+
+            items = data.get("items", [])
+            html = data.get("html", "")
+            # Create text preview (strip HTML tags)
+            preview_text = re.sub(r'<[^>]+>', '', html[:200])[:120] if html else ""
+
+            conn = get_templates_db()
+            conn.execute("""
+                INSERT OR REPLACE INTO templates
+                (id, name, description, category, isp, lang, items_json, html,
+                 preview, governance, shared, created_by, created_at, updated_at)
+                VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+            """, (
+                tid,
+                name,
+                data.get("description", ""),
+                data.get("category", "generic"),
+                data.get("isp", "windi"),
+                data.get("lang", "all"),
+                json.dumps(items),
+                html,
+                preview_text,
+                data.get("governance", "MEDIUM"),
+                1 if data.get("shared", True) else 0,
+                data.get("created_by", "html-builder"),
+                now,
+                now
+            ))
+            conn.commit()
+            conn.close()
+
+            self.send_response(201)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            self.wfile.write(json.dumps({
+                "template_id": tid,
+                "name": name,
+                "created_at": now
+            }).encode())
+
+        except Exception as e:
+            self._send_json({"error": str(e)}, 500)
+
+    def _handle_template_delete(self, template_id):
+        """Delete a template."""
+        try:
+            conn = get_templates_db()
+            conn.execute("DELETE FROM templates WHERE id = ?", (template_id,))
+            conn.commit()
+            conn.close()
+
+            self.send_response(204)
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
         except Exception as e:
             self._send_json({"error": str(e)}, 500)
 
