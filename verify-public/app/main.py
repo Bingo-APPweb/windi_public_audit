@@ -534,6 +534,11 @@ async def get_receipts_by_did(did_short: str, limit: int = 10):
     finally:
         ldb.close()
 
+    def _format_ts(ts):
+        if isinstance(ts, (int, float)):
+            return datetime.fromtimestamp(ts, tz=timezone.utc).strftime("%Y-%m-%d")
+        return str(ts)[:10] if ts else "—"
+
     return [
         {
             "receipt_id":       r["id"],
@@ -542,7 +547,7 @@ async def get_receipts_by_did(did_short: str, limit: int = 10):
             "governance_level": r["governance_level"],
             "jurisdiction":     [j.strip() for j in (r["jurisdiction"] or "").split(",") if j.strip()],
             "declaration":      r["declaration"] or "operator",
-            "sealed_at":        r["created_at"],
+            "sealed_at":        _format_ts(r["created_at"]),
             "hash":             r["content_hash"]
         }
         for r in rows
@@ -616,7 +621,7 @@ async def vpr_page(request: Request, did_short: str):
                 "receipts":     receipts_data,
                 "generated_at": profile_data["generated_at"],
                 "ledger_node":  profile_data["ledger_node"],
-                "record_id":    f"VPR-{did_short.upper()}",
+                "record_id":    did_short.upper(),
                 "verify_base":  "https://windi-domain.com/verify-public"
             })
         except Exception as e:
