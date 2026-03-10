@@ -516,6 +516,14 @@ def create_agent_api(agent: WindiAgent):
     except ImportError as e:
         print(f"  [META] W-META-001 not loaded: {e}")
 
+    try:
+        from blueprints.w_virtue_001 import virtue_bp, init_virtue_db
+        init_virtue_db()
+        app.register_blueprint(virtue_bp)
+        print("  [VIRTUE] W-VIRTUE-001 v1.0.0 loaded on /virtue/*")
+    except ImportError as e:
+        print(f"  [VIRTUE] W-VIRTUE-001 not loaded: {e}")
+
     @app.route("/agent/health", methods=["GET"])
     def health():
         return jsonify({
