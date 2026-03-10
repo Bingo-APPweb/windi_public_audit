@@ -4426,6 +4426,8 @@ function App(){
       };
       setReceipt(r);
       fetch("/api/anchor/anchor",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({receipt_id:r.id,combined_hash:r.ch||r.bh,doc_type:r.doc_type||docType,entry_data:{title:docTitle,actor:"agent-palette",wallet:wallet?.id}})}).catch(e=>console.warn("[WINDI] Anchor write failed:",e));
+      // ═══ FIX 2026-03-10: Store content in W-PAGE-001 (Gêmeo patch) ═══
+      fetch("http://127.0.0.1:8091/page/generate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({intent:docContent,title:docTitle,doc_type:docType||"note",wallet_id:wallet?.id,receipt_id:r.id,lang:lang,fields:docFields})}).then(res=>res.json()).then(d=>{if(d.page_id)console.log("[WINDI] Page stored:",d.page_id);}).catch(e=>console.warn("[WINDI] Page storage failed:",e));
       setDocStatus("finalized");
       setShowFinalizeModal(false);
       setWallet(p=>({...p,trustScore:Math.min(p.trustScore+2,50),receipts:[...p.receipts,{id:r.id,title:docTitle,ts:r.ts,type:docType}]}));
@@ -4473,6 +4475,8 @@ function App(){
       };
       setReceipt(r);
       fetch("/api/anchor/anchor",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({receipt_id:r.id,combined_hash:r.ch||r.bh,doc_type:r.doc_type||docType,entry_data:{title:docTitle,actor:"agent-palette",wallet:wallet?.id}})}).catch(e=>console.warn("[WINDI] Anchor write failed:",e));
+      // ═══ FIX 2026-03-10: Store content in W-PAGE-001 (Gêmeo patch) ═══
+      fetch("http://127.0.0.1:8091/page/generate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({intent:docContent,title:docTitle,doc_type:docType||"note",wallet_id:wallet?.id,receipt_id:r.id,lang:lang})}).then(res=>res.json()).then(d=>{if(d.page_id)console.log("[WINDI] Page stored:",d.page_id);}).catch(e=>console.warn("[WINDI] Page storage failed:",e));
       setDocStatus("finalized");
       setShowFinalizeModal(false);
       setWallet(p=>({...p,trustScore:Math.min(p.trustScore+2,50),receipts:[...p.receipts,{id:r.id,title:docTitle,ts:r.ts,type:docType}]}));
