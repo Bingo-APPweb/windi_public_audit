@@ -420,7 +420,7 @@
         <div class="receipt-content">
           <div class="receipt-title">{{ r.title }}</div>
           <div class="receipt-tags">
-            <span class="receipt-date">{{ (r.sealed_at | string)[:10] }}</span>
+            <span class="receipt-date">{{ r.sealed_at }}</span>
             <span class="tag tag-op">Operator declared</span>
             {% if r.declaration == 'operator_confirmed' %}
               <span class="tag tag-ok">Client confirmed</span>
@@ -443,7 +443,7 @@
           <div class="detail-item"><strong>doc_type</strong>{{ r.doc_type }}</div>
           <div class="detail-item"><strong>governance</strong>{{ r.governance_level }}</div>
           <div class="detail-item"><strong>hash</strong>{{ r.hash }}</div>
-          <div class="detail-item"><strong>sealed</strong>{{ r.sealed_at | string }}</div>
+          <div class="detail-item"><strong>sealed</strong>{{ r.sealed_at }}</div>
           <div class="detail-item"><strong>declared by</strong>
             {% if r.declaration == 'operator_confirmed' %}Operator · Confirmed by Client
             {% else %}Operator only{% endif %}
