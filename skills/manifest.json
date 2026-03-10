@@ -1,8 +1,25 @@
 {
-  "version": "2.0.0",
+  "version": "2.1.0",
   "constitutional_routing": true,
-  "last_updated": "2026-02-11T22:00:00Z",
+  "last_updated": "2026-03-10T17:00:00Z",
   "skills": [
+    {
+      "name": "bibliotecario-arch",
+      "path": "bibliotecario-arch/SKILL.md",
+      "priority": 95,
+      "category": "constitutional",
+      "triggers": [
+        "bibliotecario",
+        "knowledge distribution",
+        "constitutional context",
+        "invariants architecture",
+        "how does knowledge flow",
+        "agent context",
+        "grove briefing",
+        "constellation knowledge"
+      ],
+      "description": "W-LIB-001 Bibliotecario architectural documentation — how knowledge flows through the WINDI constellation"
+    },
     {
       "name": "sovereign-handshake",
       "path": "core/sovereign-handshake/SKILL.md",
