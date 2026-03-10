@@ -377,8 +377,9 @@ AGENT_PERSONAS = {
 @grove_bp.route("/arena", methods=["POST"])
 def arena_debate():
     """
-    W-GROVE-001 Arena: Motor de debate real.
-    Cada agente selecionado responde com sua perspectiva via Dragon.
+    W-GROVE-001 Arena: Motor de debate real com contexto do Bibliotecário.
+    Cada agente selecionado responde com sua perspectiva via Dragon,
+    INFORMADO pelo conhecimento constitucional do W-LIB-001.
 
     Input: {
         "topic": "A ideia a debater",
@@ -396,6 +397,7 @@ def arena_debate():
     """
     data = request.get_json() or {}
     topic = data.get("topic", "")
+    context = data.get("context", "")
     agents = data.get("agents", [])
     session_id = data.get("session_id")
     debate_round = data.get("round", 1)
@@ -407,6 +409,64 @@ def arena_debate():
     if not agents:
         return jsonify({"error": "agents array is required"}), 400
 
+    # ══════════════════════════════════════════════════════════════════════════
+    # BIBLIOTECÁRIO INJECTION — Constitutional context before debate
+    # ══════════════════════════════════════════════════════════════════════════
+    bibliotecario_context = ""
+    try:
+        lib_resp = requests.get(
+            f"{SANDBOX}/library/grove-brief",
+            params={"topic": topic, "participants": ",".join(agents), "lang": "pt"},
+            timeout=5
+        )
+        if lib_resp.status_code == 200:
+            briefing = lib_resp.json()
+            # Extract key governance anchors
+            anchor = briefing.get("governance_anchor", {})
+            invariants = briefing.get("binding_invariants", [])
+            rules = briefing.get("debate_rules", {})
+            infra = briefing.get("infrastructure_exists", {})
+            services = infra.get("services", {})
+            crypto = infra.get("cryptography", {})
+
+            # Build infrastructure awareness section
+            infra_lines = []
+            if infra.get("warning"):
+                infra_lines.append(f"⚠️ {infra['warning']}")
+            for svc_key, svc_data in services.items():
+                if isinstance(svc_data, dict) and svc_data.get("dont_propose"):
+                    infra_lines.append(f"  • {svc_key.upper()}: {svc_data.get('dont_propose', '')}")
+            if crypto.get("status"):
+                infra_lines.append(f"  • CRIPTOGRAFIA: {crypto['status']}")
+            infra_section = chr(10).join(infra_lines) if infra_lines else ""
+
+            bibliotecario_context = f"""
+═══ CONTEXTO CONSTITUCIONAL (W-LIB-001 Bibliotecário) ═══
+PRINCÍPIO FUNDADOR: {anchor.get('principle', 'IA processa. Humano decide. WINDI garante.')}
+TRÊS DRAGÕES: {anchor.get('three_dragons', '')}
+
+INVARIANTES VINCULATIVAS:
+{chr(10).join([f"• {inv.get('code', '')} [{inv.get('name', '')}]: {inv.get('description', '')}" for inv in invariants])}
+
+REGRAS DO DEBATE:
+• {rules.get('rule_1', 'Responder na língua do tópico')}
+• {rules.get('rule_2', 'Fundamentar com princípios constitucionais')}
+• {rules.get('rule_3', 'Propor, nunca impor')}
+
+{f"INFRAESTRUTURA JÁ OPERACIONAL (NÃO PROPONHA CRIAR):{chr(10)}{infra_section}" if infra_section else ""}
+═══════════════════════════════════════════════════════════
+"""
+    except Exception as e:
+        print(f"[Arena] Bibliotecário unavailable: {e}")
+        # Fallback minimal context
+        bibliotecario_context = """
+═══ CONTEXTO WINDI (Fallback) ═══
+PRINCÍPIO: IA processa. Humano decide. WINDI garante.
+INVARIANTE I9: Proibição de Autonomia — Agentes propõem, humanos decidem.
+INVARIANTE I1: Soberania do Humano — Veto absoluto sobre qualquer decisão.
+═════════════════════════════════
+"""
+
     responses = []
 
     for agent_id in agents:
@@ -415,15 +475,19 @@ def arena_debate():
 
         persona = AGENT_PERSONAS[agent_id]
 
-        # Constrói prompt completo para Dragon (inline, sem system separado)
+        # Constrói prompt completo para Dragon COM contexto do Bibliotecário
         full_prompt = f"""[GROVE ARENA — {persona['name']} {persona['emoji']}]
+
+{bibliotecario_context}
+
+⚠️ REGRA OBRIGATÓRIA: A infraestrutura listada acima JÁ EXISTE e está operacional. Se o tópico pede algo que já existe (ex: logs → FORENSIC_LEDGER), a tua primeira frase DEVE ser: "O sistema WINDI já dispõe de [X] operacional." Depois propõe melhorias, nunca criação do zero.
 
 {persona['prompt']}
 
-TÓPICO PARA ANÁLISE:
-{topic}
+TÓPICO: {topic}
+{f"CONTEXTO: {context}" if context else ""}
 
-Responde com a tua perspectiva profissional. Máximo 3 parágrafos, linguagem do tópico."""
+Máximo 3 parágrafos, linguagem do tópico."""
 
         # Chama Dragon com chatType "arena" — bypassa Hub para texto puro
         try:

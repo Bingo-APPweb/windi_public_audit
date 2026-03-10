@@ -617,6 +617,62 @@ def grove_brief():
         "participant_missions": {
             agent_id: get_trilingual_text(CONSTELLATION_AGENTS.get(agent_id, {}).get("mission", "Unknown agent"), lang)
             for agent_id in participants if agent_id in CONSTELLATION_AGENTS
+        },
+
+        # ════════════════════════════════════════════════════════════════════════
+        # INFRASTRUCTURE REALITY CHECK — O que JÁ EXISTE (não propor criar)
+        # Sprint 2: Bibliotecário educa os consultores sobre ferramentas existentes
+        # ════════════════════════════════════════════════════════════════════════
+        "infrastructure_exists": {
+            "warning": "NÃO PROPONHA criar o que já existe. Use a infraestrutura disponível.",
+            "services": {
+                "forensic_ledger": {
+                    "port": 8101,
+                    "status": "OPERACIONAL",
+                    "capability": "Registo imutável de eventos com hash SHA-256 encadeado",
+                    "events_registered": "40.918+",
+                    "dont_propose": "sistema de logs, trilha de auditoria, registo de eventos"
+                },
+                "verify_public": {
+                    "port": 8114,
+                    "status": "OPERACIONAL",
+                    "capability": "Interface pública de verificação de documentos (VPR)",
+                    "url": "https://windi-domain.com/verify-public/",
+                    "dont_propose": "interface de validação, página de verificação, QR público"
+                },
+                "export_engine": {
+                    "port": 8103,
+                    "status": "OPERACIONAL",
+                    "capability": "Geração de PDF com hash e QR code",
+                    "dont_propose": "exportação PDF, geração de documentos"
+                },
+                "dragon_api": {
+                    "port": 8108,
+                    "status": "OPERACIONAL",
+                    "capability": "LLM constitucional com 5 princípios",
+                    "dont_propose": "integração com IA, processamento de linguagem"
+                },
+                "grove_arena": {
+                    "port": 8091,
+                    "status": "OPERACIONAL",
+                    "capability": "Debate multi-agente com parecer verificável",
+                    "dont_propose": "sistema de deliberação, consulta multi-perspectiva"
+                }
+            },
+            "cryptography": {
+                "status": "100% IMPLEMENTADO",
+                "features": [
+                    "Hashes SHA-256 encadeados (não propor 'implementar hashes')",
+                    "Assinatura digital Ed25519 (não propor 'adicionar assinaturas')",
+                    "Timestamps imutáveis (não propor 'registo temporal')",
+                    "Merkle roots por documento (não propor 'árvore de hashes')"
+                ]
+            },
+            "human_sovereignty": {
+                "mechanism": "Invariante I9 é TRAVA DE HARDWARE, não objetivo",
+                "implementation": "Se humano não assina, hash não fecha. Ponto final.",
+                "dont_propose": "mecanismos de veto, controlo humano, override"
+            }
         }
     }
 
