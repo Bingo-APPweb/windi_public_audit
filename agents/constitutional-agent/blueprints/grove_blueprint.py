@@ -183,8 +183,8 @@ def grove_health():
     return jsonify({
         "status": "alive",
         "agent": "W-GROVE-001",
-        "version": "1.0.3",
-        "features": ["auto-titling", "debate", "seal", "arena-bypass"],
+        "version": "1.2.0",
+        "features": ["auto-titling", "debate", "seal", "arena-bypass", "honorarium", "parecer", "verify"],
         "principle": "AI processes. Human decides. WINDI guarantees."
     })
 
