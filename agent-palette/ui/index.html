@@ -8,6 +8,7 @@
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
@@ -4858,6 +4859,21 @@ function App(){
                   <div style={{textAlign:"right"}}>
                     <div style={{fontSize:9,color:"#A5D6A7"}}>{t.arena?.hash||"Hash"}: {arenaSealResult.hash_sha256?.slice(0,12)}...</div>
                   </div>
+                  {/* QR Code — Real render */}
+                  <div
+                    ref={el=>{
+                      if(el&&!el.hasChildNodes()&&window.QRCode){
+                        new window.QRCode(el,{
+                          text:`https://windi-domain.com/grove/verify/${arenaSealResult.receipt_id}`,
+                          width:80,
+                          height:80,
+                          colorDark:"#1B4332",
+                          colorLight:"#FFFFFF"
+                        });
+                      }
+                    }}
+                    style={{background:"#fff",padding:4,borderRadius:6}}
+                  />
                 </div>
 
                 {/* Viral Loop — Micro-Ajuste 1: Frase clicável */}
