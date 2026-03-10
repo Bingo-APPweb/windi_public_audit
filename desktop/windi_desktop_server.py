@@ -73,6 +73,7 @@ WALLET_API = os.environ.get("WINDI_WALLET_URL", "http://127.0.0.1:8099")
 CLONE_API = os.environ.get("WINDI_CLONE_URL", "http://127.0.0.1:8092")
 BRIDGE_API = os.environ.get("WINDI_BRIDGE_URL", "http://127.0.0.1:8097")
 BABEL_API = os.environ.get("WINDI_BABEL_URL", "http://127.0.0.1:8085")
+LEDGER_API = os.environ.get("WINDI_LEDGER_URL", "http://127.0.0.1:8101")
 
 # Heartbeat interval (seconds)
 HEARTBEAT_INTERVAL = 30
@@ -312,6 +313,33 @@ def forensic_verify(receipt_id):
 @app.route("/api/forensic/recent")
 def forensic_recent():
     return proxy_get(FORENSIC_API, "/api/recent")
+
+# ── Ledger API Bridge (:8101) ─────────────────────────
+@app.route("/api/ledger/receipts", methods=["POST"])
+def ledger_receipts_post():
+    """Forward receipt registration to Forensic Ledger."""
+    try:
+        r = http_client.post(
+            f"{LEDGER_API}/api/receipts",
+            json=request.get_json(),
+            timeout=10
+        )
+        return jsonify(r.json()), r.status_code
+    except Exception as e:
+        return jsonify({"error": str(e), "status": "offline"}), 503
+
+@app.route("/api/ledger/receipts", methods=["GET"])
+def ledger_receipts_get():
+    """Query receipts from Forensic Ledger."""
+    try:
+        r = http_client.get(
+            f"{LEDGER_API}/api/receipts",
+            params=request.args,
+            timeout=10
+        )
+        return jsonify(r.json()), r.status_code
+    except Exception as e:
+        return jsonify({"error": str(e), "status": "offline"}), 503
 
 # ═══════════════════════════════════════════════════════════
 # DESKTOP-OWN API — Aggregated Intelligence
