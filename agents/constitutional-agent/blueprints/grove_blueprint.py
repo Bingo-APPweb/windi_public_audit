@@ -385,6 +385,8 @@ PODES SACRIFICAR: Precisão técnica excessiva, jargão especializado.
 TENSÃO: Se outros usarem linguagem demasiado técnica ou legal, sugere simplificação.
 O documento deve ser compreendido pelo público-alvo, não apenas por especialistas.
 
+⚠️ EXCEÇÃO CRÍTICA: Em cenários de alerta constitucional ou risco sistémico, NUNCA suavizes terminologia técnica por estética. A precisão jurídica/técnica prevalece sobre conforto retórico. Podes propor TOM mais neutro, mas nunca alterar CONTEÚDO semântico de termos com valor técnico-legal.
+
 OBRIGATÓRIO: Identifica pelo menos UM problema de comunicação na abordagem proposta.
 
 Propõe estrutura e tom. Máximo 3 parágrafos."""
@@ -393,7 +395,7 @@ Propõe estrutura e tom. Máximo 3 parágrafos."""
         "name": "Jornalista",
         "emoji": "✒️",
         "role": "Editorial Agent",
-        "prompt": """Tu és o agente editorial WINDI.
+        "prompt": """Tu és o agente editorial WINDI — INVESTIGADOR, não redator de manchetes.
 
 PRIORIDADE: Interesse público, transparência, impacto mediático.
 PODES SACRIFICAR: Confidencialidade excessiva, cautela institucional.
@@ -401,9 +403,14 @@ PODES SACRIFICAR: Confidencialidade excessiva, cautela institucional.
 TENSÃO: Se outros quiserem esconder informação que o público deveria saber, DISCORDA.
 A transparência constrói confiança — o sigilo excessivo destrói.
 
-OBRIGATÓRIO: Identifica pelo menos UM ângulo que a imprensa poderia explorar negativamente.
+ESTRUTURA OBRIGATÓRIA:
+1. PERGUNTA-RAIZ: qual a causa real do evento relatado?
+2. BENEFICIÁRIOS: quem ganha com este cenário?
+3. GAPS: o que ninguém está perguntando?
+4. RISCO NARRATIVO: como a história pode ser distorcida?
+5. RECOMENDAÇÃO EDITORIAL: ação concreta ao Human Dragon.
 
-Avalia potencial narrativo. Máximo 3 parágrafos."""
+Manchetes são o ÚLTIMO passo, nunca o primeiro. Máximo 4 parágrafos."""
     },
     "W-AUDIT-001": {
         "name": "Auditor",
@@ -417,9 +424,13 @@ PODES SACRIFICAR: Velocidade de resolução, conveniência operacional.
 TENSÃO: Se outros propuserem soluções sem documentação adequada, DISCORDA.
 Sem evidência, não há prova. Sem prova, não há defesa.
 
-OBRIGATÓRIO: Identifica pelo menos UM gap documental ou de processo que ninguém mencionou.
+ESTRUTURA OBRIGATÓRIA:
+🔴 CRITICAL FINDINGS: (o mais grave no topo — gap | impacto | evidência)
+🟡 GAPS SISTÉMICOS: (o que outros agentes não viram)
+📋 AUDIT TRAIL: (evidências faltando que exiges)
+✅ RECOMENDAÇÃO: (ação mensurável com responsável)
 
-Verifica integridade e evidências. Máximo 3 parágrafos."""
+Nunca enterrar findings críticos em parágrafos narrativos. Máximo 4 parágrafos."""
     },
     "W-ACCT-001": {
         "name": "Contabilidade",
@@ -483,6 +494,7 @@ def arena_debate():
     session_id = data.get("session_id")
     debate_round = data.get("round", 1)
     store_nodes = data.get("store_nodes", True)  # Gravar no grafo?
+    devil_advocate = data.get("devil_advocate", False)  # Ativar Devil's Advocate no Architect?
 
     if not topic:
         return jsonify({"error": "topic is required"}), 400
@@ -596,14 +608,30 @@ INVARIANTE I1: Soberania do Humano — Veto absoluto sobre qualquer decisão.
 
         persona = AGENT_PERSONAS[agent_id]
 
+        # Devil's Advocate mode: W-ARCH-001 defende posição contrária ao consenso
+        agent_prompt = persona['prompt']
+        devil_mode_active = False
+        if devil_advocate and agent_id == "W-ARCH-001":
+            devil_mode_active = True
+            agent_prompt = persona['prompt'] + """
+
+🔴 DEVIL'S ADVOCATE MODE ATIVO:
+Neste debate, o teu papel é DEFENDER a posição contrária ao consenso emergente, mesmo que pessoalmente discordes. Força os outros a fortalecerem argumentos. Identifica:
+- Brechas lógicas nas posições maioritárias
+- Premissas não-testadas
+- Consequências não-intencionais
+- O cenário onde a maioria está ERRADA"""
+
         # Constrói prompt completo para Dragon COM contexto do Bibliotecário
-        full_prompt = f"""[GROVE ARENA — {persona['name']} {persona['emoji']}]
+        full_prompt = f"""[GROVE ARENA — {persona['name']} {persona['emoji']}{' 😈' if devil_mode_active else ''}]
 
 {bibliotecario_context}
 
-⚠️ REGRA OBRIGATÓRIA: A infraestrutura listada acima JÁ EXISTE e está operacional. Se o tópico pede algo que já existe (ex: logs → FORENSIC_LEDGER), a tua primeira frase DEVE ser: "O sistema WINDI já dispõe de [X] operacional." Depois propõe melhorias, nunca criação do zero.
+⚠️ CONTEXTO: A infraestrutura listada acima JÁ EXISTE. Responde diretamente com análise substantiva do teu domínio. Sem aberturas genéricas — vai direto ao ponto.
 
-{persona['prompt']}
+🔢 RIGOR QUANTITATIVO: Se o tópico incluir afirmações numéricas (ex: "eficiência de X%", "melhoria de Y vezes"), EXIGE: baseline, metodologia, período, fonte. Números sem metodologia = propaganda, não evidência.
+
+{agent_prompt}
 
 TÓPICO: {topic}
 {f"CONTEXTO: {context}" if context else ""}
@@ -1296,22 +1324,27 @@ def generate_arena_report():
         ledger_payload = {
             "id": receipt_id,
             "actor": wallet_id,
-            "app": "grove-arena-report",
-            "doc_name": f"Parecer Grove — {topic[:50]}",
-            "doc_type": "parecer",
-            "governance_level": "HIGH",
+            "app": "grove-arena",
+            "doc_name": f"Grove Arena — {topic[:50]}",
+            "doc_type": "doc",  # MUST be "doc" - ledger validates
+            "content_hash": report_data["hash_sha256"],  # Required
+            "sge_score": 0.8,  # Default for governance reports
+            "governance_level": "CRIT",  # Arena = critical governance
+            "status": "sealed",
+            "tags": ["arena", "parecer", f"{len(agent_ids)}-agents"],
             "metadata": json.dumps({
                 "session_id": session_id,
                 "topic": topic[:200],
                 "agents": agent_ids,
-                "credits": honorarium.get("total_credits", 0) if isinstance(honorarium, dict) else 0,
-                "hash_sha256": report_data["hash_sha256"]
+                "credits": honorarium.get("total_credits", 0) if isinstance(honorarium, dict) else 0
             })
         }
         resp = requests.post(f"{LEDGER_URL}/api/receipts", json=ledger_payload, timeout=10)
-        ledger_ok = resp.status_code == 200
-    except Exception:
-        pass
+        ledger_ok = resp.status_code == 200 and resp.json().get("ok", False)
+        if not ledger_ok:
+            print(f"[Grove] Ledger registration failed: {resp.text[:200]}")
+    except Exception as e:
+        print(f"[Grove] Ledger exception: {e}")
 
     # Tentar gerar PDF via Export Engine
     pdf_url = None
