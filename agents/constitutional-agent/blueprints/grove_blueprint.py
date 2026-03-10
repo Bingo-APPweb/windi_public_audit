@@ -1340,11 +1340,14 @@ def generate_arena_report():
             })
         }
         resp = requests.post(f"{LEDGER_URL}/api/receipts", json=ledger_payload, timeout=10)
-        ledger_ok = resp.status_code == 200 and resp.json().get("ok", False)
+        resp_json = resp.json()
+        ledger_ok = resp.status_code in (200, 201) and resp_json.get("ok", False)
         if not ledger_ok:
-            print(f"[Grove] Ledger registration failed: {resp.text[:200]}")
+            import sys
+            print(f"[Grove] Ledger failed: status={resp.status_code} body={resp.text[:300]}", file=sys.stderr, flush=True)
     except Exception as e:
-        print(f"[Grove] Ledger exception: {e}")
+        import sys
+        print(f"[Grove] Ledger exception: {type(e).__name__}: {e}", file=sys.stderr, flush=True)
 
     # Tentar gerar PDF via Export Engine
     pdf_url = None
