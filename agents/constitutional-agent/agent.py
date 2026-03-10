@@ -524,6 +524,13 @@ def create_agent_api(agent: WindiAgent):
     except ImportError as e:
         print(f"  [VIRTUE] W-VIRTUE-001 not loaded: {e}")
 
+    try:
+        from blueprints.library_blueprint import library_bp
+        app.register_blueprint(library_bp)
+        print("  [Library] W-LIB-001 Bibliotecário v1.0.0 loaded on /library/*")
+    except ImportError as e:
+        print(f"  [Library] Bibliotecário not loaded: {e}")
+
     @app.route("/agent/health", methods=["GET"])
     def health():
         return jsonify({
