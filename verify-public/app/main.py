@@ -12,7 +12,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse, HTMLResponse
 import re
+import sqlite3
 from pydantic import BaseModel
+from fastapi import Request
+from fastapi.templating import Jinja2Templates
 
 sys.path.insert(0, os.path.dirname(__file__))
 from verify_engine import VerifyEngine
@@ -54,6 +57,31 @@ if os.path.isdir(WEB_DIR):
 DOCS_DIR = os.path.join(WEB_DIR, "docs")
 if os.path.isdir(DOCS_DIR):
     app.mount("/verify-public/docs", StaticFiles(directory=DOCS_DIR), name="docs")
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# VPR — Verified Professional Record (v2.0)
+# WINDI-VPR-SPEC-v2.0 · 2026-03-10
+# ═══════════════════════════════════════════════════════════════════════════════
+
+WALLET_DB = "/opt/windi/data/wallet.db"
+LEDGER_DB = "/opt/windi/data/forensic_ledger.sqlite3"
+TEMPLATES_DIR = os.path.join(os.path.dirname(__file__), "..", "templates")
+os.makedirs(TEMPLATES_DIR, exist_ok=True)
+
+# Jinja2 templates para VPR
+vpr_templates = Jinja2Templates(directory=TEMPLATES_DIR) if os.path.isdir(TEMPLATES_DIR) else None
+
+def wallet_conn():
+    """Connection to wallet.db."""
+    c = sqlite3.connect(f"file:{WALLET_DB}?mode=ro&immutable=1", uri=True, check_same_thread=False)
+    c.row_factory = sqlite3.Row
+    return c
+
+def ledger_conn():
+    """Connection to forensic_ledger.sqlite3."""
+    c = sqlite3.connect(f"file:{LEDGER_DB}?mode=ro&immutable=1", uri=True, check_same_thread=False)
+    c.row_factory = sqlite3.Row
+    return c
 
 class VerifyResult(BaseModel):
     status: str
@@ -355,6 +383,348 @@ async def verify_direct_url(doc_id: str):
     html = inject_og_tags(html, doc_id, meta)
 
     return HTMLResponse(content=html, status_code=200)
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# VPR ENDPOINTS — Verified Professional Record
+# ═══════════════════════════════════════════════════════════════════════════════
+
+@app.get("/api/did/{did_short}")
+async def get_did_profile(did_short: str):
+    """
+    VPR Profile + Governance Score.
+    did_short = fingerprint[:8] da tabela wallet_human.
+    """
+    # Resolver fingerprint[:8] → human_id
+    wdb = wallet_conn()
+    try:
+        row = wdb.execute("""
+            SELECT human_id, display_name, email, pubkey_ed25519,
+                   fingerprint, created_at
+            FROM wallet_human
+            WHERE fingerprint LIKE ? AND status = 'active'
+            LIMIT 1
+        """, (did_short + "%",)).fetchone()
+    finally:
+        wdb.close()
+
+    if not row:
+        raise HTTPException(404, "DID not found")
+
+    profile = dict(row)
+    human_id = profile["human_id"]
+
+    # Buscar wallet_context para role e governance_level
+    wdb = wallet_conn()
+    try:
+        ctx = wdb.execute("""
+            SELECT wallet_id, governance_level, role
+            FROM wallet_context
+            WHERE human_id = ? AND state = 'active'
+            ORDER BY created_at DESC LIMIT 1
+        """, (human_id,)).fetchone()
+
+        # Buscar todos os aliases deste human
+        aliases = [r["alias"] for r in wdb.execute(
+            "SELECT alias FROM actor_alias WHERE human_id = ?",
+            (human_id,)
+        ).fetchall()]
+    finally:
+        wdb.close()
+
+    # Adicionar wallet_id como alias também
+    if ctx:
+        aliases.append(ctx["wallet_id"])
+    aliases.append(human_id)
+    aliases = list(set(aliases))
+
+    # Calcular governance com todos os aliases
+    placeholders = ",".join("?" * len(aliases))
+    ldb = ledger_conn()
+    try:
+        receipts_rows = ldb.execute(f"""
+            SELECT governance_level, jurisdiction, isp_context
+            FROM receipts
+            WHERE actor IN ({placeholders})
+        """, aliases).fetchall()
+    finally:
+        ldb.close()
+
+    total = len(receipts_rows)
+    jurisdictions = set()
+    for r in receipts_rows:
+        raw = r["jurisdiction"] or r["isp_context"] or ""
+        for j in raw.split(","):
+            j = j.strip()
+            if j and len(j) <= 5:
+                jurisdictions.add(j.upper())
+
+    violations = 0  # tabela futura
+
+    score = "HIGH"   if (total >= 5 and violations == 0) else \
+            "MEDIUM" if (total >= 2) else "LOW"
+
+    return {
+        "did":       f"did:windi:{profile['fingerprint']}",
+        "did_short": did_short,
+        "profile": {
+            "name":      profile["display_name"],
+            "role":      ctx["role"] if ctx else "",
+            "network":   "Grove Network",
+            "registered": profile["created_at"],
+            "crypto_method": "Ed25519"
+        },
+        "governance": {
+            "score":         score,
+            "documents":     total,
+            "jurisdictions": sorted(list(jurisdictions)),
+            "violations":    violations
+        },
+        "generated_at": now_iso(),
+        "ledger_node":  "windi-domain.com:8101"
+    }
+
+
+@app.get("/api/receipts/by-did/{did_short}")
+async def get_receipts_by_did(did_short: str, limit: int = 10):
+    """Receipts públicos de um profissional (últimos N)."""
+    wdb = wallet_conn()
+    try:
+        row = wdb.execute(
+            "SELECT human_id FROM wallet_human WHERE fingerprint LIKE ? LIMIT 1",
+            (did_short + "%",)
+        ).fetchone()
+    finally:
+        wdb.close()
+
+    if not row:
+        raise HTTPException(404, "DID not found")
+
+    human_id = row["human_id"]
+
+    wdb = wallet_conn()
+    try:
+        aliases = [r["alias"] for r in wdb.execute(
+            "SELECT alias FROM actor_alias WHERE human_id = ?", (human_id,)
+        ).fetchall()]
+        ctx = wdb.execute(
+            "SELECT wallet_id FROM wallet_context WHERE human_id = ? LIMIT 1",
+            (human_id,)
+        ).fetchone()
+    finally:
+        wdb.close()
+
+    if ctx:
+        aliases.append(ctx["wallet_id"])
+    aliases.append(human_id)
+    aliases = list(set(aliases))
+
+    placeholders = ",".join("?" * len(aliases))
+    ldb = ledger_conn()
+    try:
+        rows = ldb.execute(f"""
+            SELECT id, doc_name, doc_type, governance_level,
+                   vpr_title, jurisdiction, declaration,
+                   content_hash, created_at
+            FROM receipts
+            WHERE actor IN ({placeholders})
+            ORDER BY created_at DESC
+            LIMIT ?
+        """, aliases + [limit]).fetchall()
+    finally:
+        ldb.close()
+
+    return [
+        {
+            "receipt_id":       r["id"],
+            "title":            r["vpr_title"] or r["doc_name"],
+            "doc_type":         r["doc_type"],
+            "governance_level": r["governance_level"],
+            "jurisdiction":     [j.strip() for j in (r["jurisdiction"] or "").split(",") if j.strip()],
+            "declaration":      r["declaration"] or "operator",
+            "sealed_at":        r["created_at"],
+            "hash":             r["content_hash"]
+        }
+        for r in rows
+    ]
+
+
+@app.get("/api/did/by-wallet/{wallet_id}")
+async def did_by_wallet(wallet_id: str):
+    """Resolve wallet_id → did_short (para o tile do Palette)."""
+    wdb = wallet_conn()
+    try:
+        row = wdb.execute("""
+            SELECT wh.fingerprint
+            FROM wallet_context wc
+            JOIN wallet_human wh ON wc.human_id = wh.human_id
+            WHERE wc.wallet_id = ? AND wc.state = 'active'
+            LIMIT 1
+        """, (wallet_id,)).fetchone()
+    finally:
+        wdb.close()
+
+    if not row:
+        raise HTTPException(404, "Wallet not found")
+
+    return {"did_short": row["fingerprint"][:8]}
+
+
+@app.get("/vpr/{did_short}", response_class=HTMLResponse)
+@app.get("/verify-public/vpr/{did_short}", response_class=HTMLResponse)
+async def vpr_page(request: Request, did_short: str):
+    """
+    Verified Professional Record — página pública dinâmica.
+    URL: /vpr/{fingerprint[:8]} ou /verify-public/vpr/{fingerprint[:8]}
+    """
+    try:
+        profile_data  = await get_did_profile(did_short)
+        receipts_data = await get_receipts_by_did(did_short, limit=5)
+    except HTTPException as e:
+        if e.status_code == 404:
+            return HTMLResponse(
+                f"<html><body style='font-family:system-ui;padding:40px;text-align:center;'>"
+                f"<h1>🔍 Record not found</h1>"
+                f"<p>DID: <code>{did_short}</code></p>"
+                f"<p>No verified professional record exists for this identifier.</p>"
+                f"<p style='color:#666;margin-top:20px;'>I11 — Permanência de Evidência Criptográfica</p>"
+                f"</body></html>",
+                status_code=404
+            )
+        return HTMLResponse("Ledger unavailable", status_code=503)
+
+    # Se não tem receipts, retorna 404 (I11)
+    if profile_data["governance"]["documents"] == 0:
+        return HTMLResponse(
+            f"<html><body style='font-family:system-ui;padding:40px;text-align:center;'>"
+            f"<h1>🔍 No verified work</h1>"
+            f"<p>This professional has no documents on the Forensic Ledger yet.</p>"
+            f"<p style='color:#666;'>VPR requires at least one sealed document.</p>"
+            f"</body></html>",
+            status_code=404
+        )
+
+    # Usar template se existir, senão inline HTML
+    if vpr_templates:
+        try:
+            return vpr_templates.TemplateResponse("vpr.html", {
+                "request":      request,
+                "profile":      profile_data["profile"],
+                "did":          profile_data["did"],
+                "did_short":    did_short,
+                "governance":   profile_data["governance"],
+                "receipts":     receipts_data,
+                "generated_at": profile_data["generated_at"],
+                "ledger_node":  profile_data["ledger_node"],
+                "record_id":    f"VPR-{did_short.upper()}",
+                "verify_base":  "https://windi-domain.com/verify-public"
+            })
+        except Exception as e:
+            log.warning(f"[VPR] Template error: {e}, falling back to inline HTML")
+
+    # Fallback: Inline HTML (estilo KLAR)
+    p = profile_data["profile"]
+    g = profile_data["governance"]
+    score_color = {"HIGH": "#2d5a27", "MEDIUM": "#b8860b", "LOW": "#8b0000"}.get(g["score"], "#666")
+
+    receipts_html = ""
+    for r in receipts_data[:3]:
+        decl = "✓ Operator + Client" if r["declaration"] == "operator_confirmed" else "○ Operator declared"
+        receipts_html += f'''
+        <div style="background:#f9f9f7;border:1px solid #e0e0e0;border-radius:8px;padding:16px;margin-bottom:12px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+                <div>
+                    <div style="font-weight:700;font-size:14px;">{r["title"]}</div>
+                    <div style="font-size:11px;color:#666;margin-top:4px;">
+                        {r["receipt_id"]} · {r["doc_type"]} · {r["governance_level"]}
+                    </div>
+                </div>
+                <a href="https://windi-domain.com/verify-public/?id={r["receipt_id"]}"
+                   style="background:#C9A84C;color:#fff;padding:6px 12px;border-radius:6px;text-decoration:none;font-size:11px;font-weight:600;">
+                    Verify
+                </a>
+            </div>
+            <div style="font-size:10px;color:#888;margin-top:8px;">{decl}</div>
+        </div>'''
+
+    html = f'''<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VPR-{did_short.upper()} — {p["name"]} — WINDI</title>
+    <meta property="og:title" content="✓ {p["name"]} — WINDI Verified Professional"/>
+    <meta property="og:description" content="{g["documents"]} documents verified. Governance: {g["score"]}. Member of Grove Network."/>
+    <meta property="og:url" content="https://windi-domain.com/verify-public/vpr/{did_short}"/>
+    <style>
+        * {{ margin:0; padding:0; box-sizing:border-box; }}
+        body {{ font-family: 'Bricolage Grotesque', system-ui, sans-serif; background: #FFFDF5; color: #1a1a1a; min-height:100vh; }}
+        .crown {{ background:#1a1a1a; color:#C9A84C; text-align:center; padding:12px; font-size:11px; font-weight:700; letter-spacing:2px; border-bottom:3px solid #C9A84C; }}
+        .container {{ max-width:700px; margin:0 auto; padding:40px 20px; }}
+        .header {{ text-align:center; margin-bottom:30px; }}
+        .record-id {{ background:#C9A84C; color:#fff; padding:4px 14px; border-radius:20px; font-size:11px; font-weight:700; display:inline-block; }}
+        h1 {{ font-size:28px; font-weight:800; margin:16px 0 4px; }}
+        .role {{ color:#666; font-size:14px; }}
+        .did {{ font-family:'JetBrains Mono',monospace; font-size:10px; color:#888; margin-top:12px; word-break:break-all; }}
+        .governance {{ display:flex; gap:20px; justify-content:center; margin:30px 0; flex-wrap:wrap; }}
+        .gov-card {{ background:#fff; border:1px solid #e0e0e0; border-radius:10px; padding:20px 30px; text-align:center; }}
+        .gov-score {{ font-size:24px; font-weight:800; color:{score_color}; }}
+        .gov-label {{ font-size:10px; color:#888; margin-top:4px; text-transform:uppercase; letter-spacing:1px; }}
+        .section {{ margin-top:30px; }}
+        .section-title {{ font-size:12px; font-weight:700; color:#C9A84C; text-transform:uppercase; letter-spacing:1px; margin-bottom:16px; border-bottom:1px solid #e0e0e0; padding-bottom:8px; }}
+        .footer {{ margin-top:40px; padding-top:20px; border-top:3px solid #C9A84C; text-align:center; }}
+        .footer p {{ font-size:10px; color:#888; margin:4px 0; }}
+        .disclaimer {{ background:#f5f5f0; border:1px solid #e0e0e0; border-radius:8px; padding:12px; font-size:10px; color:#666; margin-top:20px; text-align:center; }}
+    </style>
+</head>
+<body>
+    <div class="crown">WINDI VERIFIED PROFESSIONAL RECORD</div>
+    <div class="container">
+        <div class="header">
+            <span class="record-id">VPR-{did_short.upper()}</span>
+            <h1>{p["name"]}</h1>
+            <div class="role">{p["role"]} · {p["network"]}</div>
+            <div class="did">{profile_data["did"]}</div>
+            <div style="font-size:10px;color:#888;margin-top:4px;">Ed25519 · Registered {p["registered"][:10] if p["registered"] else "—"}</div>
+        </div>
+
+        <div class="governance">
+            <div class="gov-card">
+                <div class="gov-score">{g["score"]}</div>
+                <div class="gov-label">Governance</div>
+            </div>
+            <div class="gov-card">
+                <div class="gov-score">{g["documents"]}</div>
+                <div class="gov-label">Documents</div>
+            </div>
+            <div class="gov-card">
+                <div class="gov-score">{g["violations"]}</div>
+                <div class="gov-label">Violations</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">Recent Verified Work</div>
+            {receipts_html if receipts_html else '<p style="color:#888;font-size:12px;">No recent documents.</p>'}
+        </div>
+
+        <div class="disclaimer">
+            <strong>WINDI certifies existence, integrity, and authorship.</strong><br>
+            It does not certify quality, competence, or outcome.<br>
+            Declaration model: Operator-declared · Client-confirmable (Modelo B)
+        </div>
+
+        <div class="footer">
+            <p style="font-size:18px;">🐉</p>
+            <p>AI processes. Human decides. WINDI guarantees.</p>
+            <p>Generated {profile_data["generated_at"]} · {profile_data["ledger_node"]}</p>
+        </div>
+    </div>
+</body>
+</html>'''
+
+    return HTMLResponse(content=html, status_code=200)
+
 
 if __name__ == "__main__":
     import uvicorn
