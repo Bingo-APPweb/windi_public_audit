@@ -754,3 +754,112 @@ def create_link():
         "created_at": now,
         "invariant": "I12 — This relation is now immutable evidence.",
     }), 201
+
+
+# ═══════════════════════════════════════════════════════════════
+#  GROVE ARENA EVIDENCE SUBMISSION
+# ═══════════════════════════════════════════════════════════════
+
+@wick_bp.route("/evidence", methods=["POST"])
+def submit_evidence():
+    """
+    Submit evidence directly from Grove Arena.
+
+    This endpoint allows consultants to publish Grove Parecer
+    (consolidated reports) directly to the Evidence Graph without
+    requiring a pre-sealed document.
+
+    Payload:
+    - title: Topic/title of the consultation
+    - content: Full debate + parecer content
+    - type: Evidence type (e.g., 'grove_parecer')
+    - source: Source identifier (e.g., 'grove-arena')
+    - agents: List of participating agents
+    - session_id: Grove session ID (optional)
+
+    Returns:
+    - evidence_id: Unique evidence identifier
+    - content_hash: SHA-256 hash of content
+    - created_at: Timestamp
+    """
+    data = request.get_json() or {}
+
+    title = data.get("title", "Grove Arena Evidence")
+    content = data.get("content", "")
+    evidence_type = data.get("type", "grove_parecer")
+    source = data.get("source", "grove-arena")
+    agents = data.get("agents", [])
+    session_id = data.get("session_id")
+    author_actor_id = data.get("author_actor_id", "CGO@windi.dev")
+    author_name = data.get("author_name", "Grove Consultant")
+    visibility = data.get("visibility", "workspace")
+
+    if not content:
+        return jsonify({"error": "content is required"}), 400
+
+    # Generate evidence ID and content hash
+    now = datetime.now(timezone.utc).isoformat()
+    evidence_id = f"GE-{datetime.now().strftime('%Y%m%d')}-{uuid.uuid4().hex[:6].upper()}"
+    content_hash = hashlib.sha256(content.encode()).hexdigest()
+
+    # Store metadata
+    metadata = {
+        "type": evidence_type,
+        "source": source,
+        "agents": agents,
+        "session_id": session_id,
+        "content_length": len(content),
+    }
+
+    conn = get_db()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("""
+            INSERT INTO artifacts (
+                id, type, title, description,
+                author_actor_id, author_name,
+                source_id, source_type,
+                content_hash, visibility,
+                tags, metadata, schema_version, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            evidence_id,
+            "snippet",  # Using 'snippet' type for text-based evidence
+            title[:200],  # Truncate title
+            content[:5000],  # Store first 5000 chars as description
+            author_actor_id,
+            author_name,
+            session_id,
+            source,
+            content_hash,
+            visibility,
+            json.dumps(agents) if agents else None,
+            json.dumps(metadata),
+            SCHEMA_VERSION,
+            now,
+        ))
+        conn.commit()
+    except Exception as e:
+        conn.close()
+        return jsonify({"error": str(e)}), 500
+
+    conn.close()
+
+    return jsonify({
+        "status": "submitted",
+        "evidence_id": evidence_id,
+        "id": evidence_id,  # Alias for frontend compatibility
+        "content_hash": content_hash,
+        "title": title[:200],
+        "type": evidence_type,
+        "source": source,
+        "agents": agents,
+        "visibility": visibility,
+        "created_at": now,
+        "urls": {
+            "artifact": f"/wick/artifact/{evidence_id}",
+            "feed": "/wick/feed",
+        },
+        "invariant": "I12 — Evidence recorded in the Graph.",
+    }), 201

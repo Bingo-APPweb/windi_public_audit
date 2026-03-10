@@ -457,6 +457,22 @@ const DOC_TYPES = {
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════════
+// GROVE ARENA — Agent Catalog for Multi-Agent Deliberation
+// Spec: Grove Arena v1.0 · Phase 1 (Debate Engine)
+// ═══════════════════════════════════════════════════════════════════════════════════
+const ARENA_AGENTS = {
+  "W-LEGAL-001":   { tier:"elite",      name:{pt:"Legal",de:"Recht",en:"Legal"},           icon:"⚖️",  credits:3, preselect:true },
+  "W-COMPLY-001":  { tier:"elite",      name:{pt:"Compliance",de:"Compliance",en:"Compliance"}, icon:"✅", credits:3, preselect:true },
+  "W-NOTARY-001":  { tier:"estrutural", name:{pt:"Notário",de:"Notar",en:"Notary"},        icon:"📜",  credits:3 },
+  "W-AUDIT-001":   { tier:"estrutural", name:{pt:"Auditor",de:"Revisor",en:"Auditor"},     icon:"🔍",  credits:3, preselect:true },
+  "W-ACCT-001":    { tier:"estrutural", name:{pt:"Contabilidade",de:"Buchhaltung",en:"Accounting"}, icon:"💰", credits:4 },
+  "W-COMM-001":    { tier:"narrativo",  name:{pt:"Communiqué",de:"Communiqué",en:"Communiqué"}, icon:"📝", credits:4 },
+  "W-JOURN-001":   { tier:"narrativo",  name:{pt:"Jornalista",de:"Journalist",en:"Journalist"}, icon:"✒️", credits:3 },
+  "W-ARCH-001":    { tier:"narrativo",  name:{pt:"Architect",de:"Architekt",en:"Architect"}, icon:"🏗️", credits:3 },
+};
+const ARENA_DEFAULT_AGENTS = Object.keys(ARENA_AGENTS).filter(k => ARENA_AGENTS[k].preselect);
+
+// ═══════════════════════════════════════════════════════════════════════════════════
 // DOC FRAMEWORK v2.0 — defineDoc Pattern + Merkle Seal + GDPR Compliance
 // "Publishing House publica conhecimento, não decoração."
 // Architect spec: schema + flow + preview + sealPolicy per type
@@ -2278,7 +2294,7 @@ const CANVAS_TEMPLATES={
 };
 
 const SIDEBAR = [
-  {id:"grove",icon:"🌱",klass:"main"},{id:"chat",icon:"💬",klass:"main"},{id:"insights",icon:"🧠",klass:"main"},{id:"docs",icon:"📄",klass:"main"},{id:"desk",icon:"🎨",klass:"main"},
+  {id:"grove",icon:"🌳",klass:"main"},{id:"chat",icon:"💬",klass:"main"},{id:"insights",icon:"🧠",klass:"main"},{id:"docs",icon:"📄",klass:"main"},{id:"desk",icon:"🎨",klass:"main"},
   {id:"files",icon:"📁",klass:"main"},{id:"wallet",icon:"👛",klass:"main"},{id:"wick",icon:"🌐",klass:"main"},
   {id:"search",icon:"🔍",klass:"main"},{id:"products",icon:"🛒",klass:"extra"},
   {id:"journal",icon:"📰",klass:"extra"},{id:"history",icon:"🕐",klass:"extra"},
@@ -2399,7 +2415,7 @@ const CryptoProvider = {
 // ═══════════════════════════════
 const L = {
   de: {
-    sidebar:{grove:"Hain",chat:"Chat",insights:"Einsichten",docs:"Dokumente",desk:"Freie Desk",files:"Dateien",wallet:"Brieftasche",wick:"WICK Netz",search:"Suche",products:"Produkte",journal:"Zeitung",history:"Verlauf",templates:"Vorlagen"},
+    sidebar:{grove:"Arena",chat:"Chat",insights:"Einsichten",docs:"Dokumente",desk:"Freie Desk",files:"Dateien",wallet:"Brieftasche",wick:"WICK Netz",search:"Suche",products:"Produkte",journal:"Zeitung",history:"Verlauf",templates:"Vorlagen"},
     types:{letter:"Brief",email:"E-Mail",note:"Notiz",memo:"Memo",journal:"Tagebuch",recipe:"Rezept",report:"Bericht",contract:"Vertrag",invoice:"Rechnung",protocol:"Protokoll",analysis:"Analyse",presentation:"Präsentation",communique:"Communiqué",certificate:"Bescheinigung",htmlbuilder:"HTML Builder"},
     chat:{
       greet:"Hallo! 🐉 Ich bin dein Guardian.\n\nWähle links einen Dokumenttyp — oder erzähl mir einfach, was du brauchst.",
@@ -2466,9 +2482,29 @@ const L = {
     },
     chips:["Brief schreiben","E-Mail erstellen","Notiz machen","Tabelle erstellen","Präsentation","Was ist Dignity ID?"],
     forensic:{title:"WINDI Virtue Receipt",receipt:"Receipt-ID",serial:"Serie",hash:"Hash",bundle:"Bundle",time:"Zeit",signer:"Unterzeichner",verify:"Prüfen"},
+    arena:{
+      title:"Grove Arena",subtitle:"Multi-Agenten Deliberation",
+      topicLabel:"Thema",topicPH:"Was soll analysiert werden? (min. 10 Zeichen)",
+      contextLabel:"Kontext",showContext:"Kontext hinzufügen",hideContext:"Kontext ausblenden",
+      selectAgents:"Agenten auswählen",preSelected:"Vorausgewählt",
+      credits:"Kredite",estimatedCost:"Geschätzte Kosten",
+      startDebate:"Debatte starten",debating:"Deliberation läuft...",
+      waiting:"Wartet",done:"Fertig",error:"Fehler",
+      parecer:"Konsolidiertes Gutachten",honorarios:"Honorarübersicht",
+      receiptBanner:"Im Forensic Ledger registriert",hash:"Hash",
+      downloadPdf:"PDF",downloadMd:".MD",shareWick:"WICK",saveVault:"Vault",
+      sendEmail:"Email",shareLinkedin:"LinkedIn",copyLink:"Link kopieren",copied:"Kopiert!",
+      fullscreen:"Vollbild",exitFullscreen:"Beenden",newDebate:"Neue Debatte",
+      errMinChars:"Thema muss mindestens 10 Zeichen haben",
+      errNoAgents:"Mindestens ein Agent erforderlich",
+      errNetwork:"Netzwerkfehler. Bitte erneut versuchen.",
+      errDebate:"Debatte fehlgeschlagen",errReport:"Bericht konnte nicht erstellt werden",
+      tryAgain:"Erneut versuchen",pioneer:"Pioneer -50%",
+      verifyPublic:"Jeder kann diese Analyse verifizieren.",
+    },
   },
   en: {
-    sidebar:{grove:"Grove",chat:"Chat",insights:"Insights",docs:"Documents",desk:"Free Desk",files:"Files",wallet:"Wallet",wick:"WICK Network",search:"Search",products:"Products",journal:"Journal",history:"History",templates:"Templates"},
+    sidebar:{grove:"Arena",chat:"Chat",insights:"Insights",docs:"Documents",desk:"Free Desk",files:"Files",wallet:"Wallet",wick:"WICK Network",search:"Search",products:"Products",journal:"Journal",history:"History",templates:"Templates"},
     types:{letter:"Letter",email:"Email",note:"Note",memo:"Memo",journal:"Journal",recipe:"Recipe",report:"Report",contract:"Contract",invoice:"Invoice",protocol:"Minutes",analysis:"Analysis",presentation:"Presentation",communique:"Communiqué",certificate:"Certificate",htmlbuilder:"HTML Builder"},
     chat:{
       greet:"Hello! 🐉 I'm your Guardian.\n\nPick a document type on the left — or just tell me what you need.",
@@ -2533,9 +2569,29 @@ const L = {
     },
     chips:["Write a letter","Create email","Make a note","Create table","Presentation","What is Dignity ID?"],
     forensic:{title:"WINDI Virtue Receipt",receipt:"Receipt ID",serial:"Serial",hash:"Hash",bundle:"Bundle",time:"Time",signer:"Signer",verify:"Verify"},
+    arena:{
+      title:"Grove Arena",subtitle:"Multi-Agent Deliberation",
+      topicLabel:"Topic",topicPH:"What should be analyzed? (min. 10 chars)",
+      contextLabel:"Context",showContext:"Add context",hideContext:"Hide context",
+      selectAgents:"Select agents",preSelected:"Pre-selected",
+      credits:"credits",estimatedCost:"Estimated cost",
+      startDebate:"Start Debate",debating:"Deliberation in progress...",
+      waiting:"Waiting",done:"Done",error:"Error",
+      parecer:"Consolidated Opinion",honorarios:"Honorarium Breakdown",
+      receiptBanner:"Registered in Forensic Ledger",hash:"Hash",
+      downloadPdf:"PDF",downloadMd:".MD",shareWick:"WICK",saveVault:"Vault",
+      sendEmail:"Email",shareLinkedin:"LinkedIn",copyLink:"Copy Link",copied:"Copied!",
+      fullscreen:"Fullscreen",exitFullscreen:"Exit",newDebate:"New Debate",
+      errMinChars:"Topic must have at least 10 characters",
+      errNoAgents:"At least one agent required",
+      errNetwork:"Network error. Please try again.",
+      errDebate:"Debate failed",errReport:"Could not generate report",
+      tryAgain:"Try Again",pioneer:"Pioneer -50%",
+      verifyPublic:"Anyone can verify this analysis.",
+    },
   },
   pt: {
-    sidebar:{grove:"Bosque",chat:"Chat",insights:"Insights",docs:"Documentos",desk:"Desk Livre",files:"Ficheiros",wallet:"Carteira",wick:"Rede WICK",search:"Busca",products:"Produtos",journal:"Jornal",history:"Histórico",templates:"Modelos"},
+    sidebar:{grove:"Arena",chat:"Chat",insights:"Insights",docs:"Documentos",desk:"Desk Livre",files:"Ficheiros",wallet:"Carteira",wick:"Rede WICK",search:"Busca",products:"Produtos",journal:"Jornal",history:"Histórico",templates:"Modelos"},
     types:{letter:"Carta",email:"E-mail",note:"Nota",memo:"Memorando",journal:"Diário",recipe:"Receita",report:"Relatório",contract:"Contrato",invoice:"Fatura",protocol:"Ata",analysis:"Análise",presentation:"Apresentação",communique:"Comunicado",certificate:"Certificado",htmlbuilder:"HTML Builder"},
     chat:{
       greet:"Olá! 🐉 Sou o teu Guardian.\n\nEscolhe um tipo à esquerda — ou conta-me o que precisas.",
@@ -2600,6 +2656,26 @@ const L = {
     },
     chips:["Escrever carta","Criar email","Fazer nota","Criar tabela","Apresentação","O que é Dignity ID?"],
     forensic:{title:"WINDI Recibo Virtue",receipt:"ID Recibo",serial:"Série",hash:"Hash",bundle:"Bundle",time:"Data",signer:"Assinante",verify:"Verificar"},
+    arena:{
+      title:"Grove Arena",subtitle:"Deliberação Multi-Agente",
+      topicLabel:"Tópico",topicPH:"O que quer analisar? (min. 10 caracteres)",
+      contextLabel:"Contexto",showContext:"Contexto adicional",hideContext:"Ocultar contexto",
+      selectAgents:"Selecionar agentes",preSelected:"Pré-selecionados",
+      credits:"créditos",estimatedCost:"Custo estimado",
+      startDebate:"Iniciar Debate",debating:"Deliberação em curso...",
+      waiting:"Aguardando",done:"Concluído",error:"Erro",
+      parecer:"Parecer Consolidado",honorarios:"Detalhamento de Honorários",
+      receiptBanner:"Registado no Forensic Ledger",hash:"Hash",
+      downloadPdf:"PDF",downloadMd:".MD",shareWick:"WICK",saveVault:"Vault",
+      sendEmail:"Email",shareLinkedin:"LinkedIn",copyLink:"Copiar Link",copied:"Copiado!",
+      fullscreen:"Tela Cheia",exitFullscreen:"Sair",newDebate:"Nova Debate",
+      errMinChars:"Tópico deve ter pelo menos 10 caracteres",
+      errNoAgents:"Pelo menos um agente necessário",
+      errNetwork:"Erro de rede. Tente novamente.",
+      errDebate:"Debate falhou",errReport:"Não foi possível gerar relatório",
+      tryAgain:"Tentar Novamente",pioneer:"Pioneer -50%",
+      verifyPublic:"Qualquer pessoa pode verificar esta análise.",
+    },
   },
 };
 
@@ -2962,6 +3038,22 @@ function App(){
   const[dragonWhisper,setDragonWhisper]=useState(null);
   const[lastEditedField,setLastEditedField]=useState(null);
 
+  // ═══ GROVE ARENA STATE — Multi-Agent Deliberation ═══
+  const[arenaTopic,setArenaTopic]=useState("");
+  const[arenaContext,setArenaContext]=useState("");
+  const[arenaContextOpen,setArenaContextOpen]=useState(false);
+  const[arenaAgents,setArenaAgents]=useState(ARENA_DEFAULT_AGENTS);
+  const[arenaEstimate,setArenaEstimate]=useState(null);
+  const[arenaFullscreen,setArenaFullscreen]=useState(false);
+  const[arenaSession,setArenaSession]=useState(null);
+  const[arenaStatus,setArenaStatus]=useState("idle"); // idle | running | completed | error
+  const[arenaMsgs,setArenaMsgs]=useState([]);
+  const[arenaLoading,setArenaLoading]=useState(false);
+  const[arenaAgentStatus,setArenaAgentStatus]=useState({});
+  const[arenaReport,setArenaReport]=useState(null);
+  const[arenaSealResult,setArenaSealResult]=useState(null);
+  const[arenaError,setArenaError]=useState(null);
+
   // ═══ A.1: COMMUNIQUÉ API STATE ═══
   const[communiques,setCommuniques]=useState([]);
   const[comStats,setComStats]=useState({draft:0,review:0,published:0,archived:0,revoked:0,total:0});
@@ -3144,6 +3236,236 @@ function App(){
 
     return()=>unsubs.forEach(u=>u&&u());
   },[docType,fetchVaultStats,flash,lang,wallet]);
+
+  // ═══════════════════════════════════════════════════════════════════════════════════
+  // GROVE ARENA FUNCTIONS — Multi-Agent Deliberation Engine
+  // Spec: Grove Arena v1.0 · Phase 1 (Debate Engine)
+  // Flow: IDLE → [estimate] → RUNNING → [arena + report] → COMPLETED
+  // ═══════════════════════════════════════════════════════════════════════════════════
+  const arenaBaseUrl=window.location.protocol==='https:'?'https://windi-domain.com':'http://localhost';
+
+  // Get identity for pricing (Pioneer gets -50%)
+  const getArenaIdentity=useCallback(()=>{
+    if(!wallet)return"free";
+    if(wallet.pioneer||wallet.id?.includes("PIONEER"))return"pioneer";
+    if(wallet.verified)return"did";
+    return"free";
+  },[wallet]);
+
+  // Fetch cost estimate when agents change
+  const fetchArenaEstimate=useCallback(async(agents)=>{
+    if(!agents||agents.length===0){setArenaEstimate(null);return;}
+    try{
+      const res=await fetch(`${arenaBaseUrl}/grove/arena/estimate`,{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+          session_id:arenaSession||"preview",
+          wallet_id:wallet?.id||"anonymous",
+          agents:agents,
+          phase:"arena",
+          identity:getArenaIdentity(),
+          rounds:1
+        })
+      });
+      const data=await res.json();
+      if(data.ok&&data.estimate){
+        setArenaEstimate(data.estimate);
+      }
+    }catch(e){
+      console.warn("[Arena] Estimate failed:",e);
+    }
+  },[arenaSession,wallet,getArenaIdentity]);
+
+  // Debounce ref for estimate calls (Spec Ajuste 3: 400ms debounce)
+  const estimateTimeoutRef=useRef(null);
+  const debouncedEstimate=useCallback((agents)=>{
+    if(estimateTimeoutRef.current)clearTimeout(estimateTimeoutRef.current);
+    estimateTimeoutRef.current=setTimeout(()=>fetchArenaEstimate(agents),400);
+  },[fetchArenaEstimate]);
+
+  // Toggle agent selection
+  const toggleArenaAgent=useCallback((agentId)=>{
+    setArenaAgents(prev=>{
+      const newAgents=prev.includes(agentId)?prev.filter(a=>a!==agentId):[...prev,agentId];
+      debouncedEstimate(newAgents);
+      return newAgents;
+    });
+  },[debouncedEstimate]);
+
+  // Reset arena to IDLE state
+  const resetArena=useCallback(()=>{
+    setArenaTopic("");
+    setArenaContext("");
+    setArenaContextOpen(false);
+    setArenaAgents(ARENA_DEFAULT_AGENTS);
+    setArenaEstimate(null);
+    setArenaSession(null);
+    setArenaStatus("idle");
+    setArenaMsgs([]);
+    setArenaLoading(false);
+    setArenaAgentStatus({});
+    setArenaReport(null);
+    setArenaSealResult(null);
+    setArenaError(null);
+  },[]);
+
+  // Start debate flow: POST /grove/arena → POST /grove/arena/report
+  const startArenaDebate=useCallback(async()=>{
+    const ta=t.arena||{};
+    // Validation
+    if(arenaTopic.trim().length<10){
+      flash(`⚠️ ${ta.errMinChars||"Minimum 10 characters"}`);
+      return;
+    }
+    if(arenaAgents.length===0){
+      flash(`⚠️ ${ta.errNoAgents||"At least one agent required"}`);
+      return;
+    }
+
+    setArenaStatus("running");
+    setArenaLoading(true);
+    setArenaError(null);
+    // Initialize agent status
+    const initStatus={};
+    arenaAgents.forEach(a=>{initStatus[a]="waiting";});
+    setArenaAgentStatus(initStatus);
+
+    try{
+      // Step 1: Execute debate (POST /grove/arena)
+      const arenaRes=await fetch(`${arenaBaseUrl}/grove/arena`,{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+          topic:arenaTopic,
+          context:arenaContext||undefined,
+          agents:arenaAgents,
+          round:1,
+          store_nodes:true
+        })
+      });
+      const arenaData=await arenaRes.json();
+
+      if(arenaData.error){
+        throw new Error(arenaData.error);
+      }
+
+      // Update session from response
+      if(arenaData.session_id){
+        setArenaSession(arenaData.session_id);
+      }
+
+      // Update agent status and messages
+      const newStatus={};
+      const responses=arenaData.responses||[];
+      responses.forEach(r=>{
+        newStatus[r.agent]=r.message?.startsWith("[")||r.error?"error":"done";
+      });
+      setArenaAgentStatus(newStatus);
+      setArenaMsgs(responses);
+
+      // Step 2: Generate report (POST /grove/arena/report)
+      const reportRes=await fetch(`${arenaBaseUrl}/grove/arena/report`,{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+          session_id:arenaData.session_id||arenaSession,
+          topic:arenaTopic,
+          agents:responses.map(r=>({
+            agent_id:r.agent,
+            name:r.name,
+            emoji:r.emoji,
+            tier:ARENA_AGENTS[r.agent]?.tier||"narrativo",
+            message:r.message
+          })),
+          rounds:1,
+          wallet_id:wallet?.id||"anonymous",
+          identity:getArenaIdentity()
+        })
+      });
+      const reportData=await reportRes.json();
+
+      if(reportData.ok){
+        setArenaReport(reportData);
+        setArenaSealResult({
+          receipt_id:reportData.receipt_id,
+          hash_sha256:reportData.hash_sha256,
+          report_url:reportData.report_url,
+          pdf_url:reportData.pdf_url,
+          ledger_registered:reportData.ledger_registered
+        });
+        setArenaStatus("completed");
+        flash(`🌳 ${ta.receiptBanner||"Registered"}: ${reportData.receipt_id}`);
+        // Save to localStorage history
+        try{
+          const history=JSON.parse(localStorage.getItem("windi_arena_history_v1")||"[]");
+          history.unshift({
+            receipt_id:reportData.receipt_id,
+            topic:arenaTopic,
+            agents:arenaAgents,
+            timestamp:new Date().toISOString()
+          });
+          localStorage.setItem("windi_arena_history_v1",JSON.stringify(history.slice(0,20)));
+        }catch(e){}
+      }else{
+        throw new Error(reportData.error||"Report generation failed");
+      }
+    }catch(e){
+      console.error("[Arena] Debate failed:",e);
+      setArenaError(e.message);
+      setArenaStatus("error");
+      flash(`❌ ${e.message}`);
+    }finally{
+      setArenaLoading(false);
+    }
+  },[arenaTopic,arenaContext,arenaAgents,arenaSession,wallet,t,flash,getArenaIdentity]);
+
+  // Download PDF
+  const downloadArenaPdf=useCallback(()=>{
+    if(!arenaSealResult?.pdf_url)return;
+    window.open(arenaSealResult.pdf_url,"_blank");
+  },[arenaSealResult]);
+
+  // Download .MD (client-side generation)
+  const downloadArenaMd=useCallback(()=>{
+    if(!arenaSealResult||!arenaMsgs.length)return;
+    const ta=t.arena||{};
+    const dateStr=new Date().toISOString().split("T")[0];
+    let md=`# Grove Arena — ${arenaTopic}\n\n`;
+    md+=`**${ta.topicLabel||"Topic"}:** ${dateStr}  ·  **Receipt:** ${arenaSealResult.receipt_id}\n`;
+    md+=`**Verify:** ${arenaSealResult.report_url}\n\n---\n\n`;
+    md+=`## Agentes\n\n`;
+    arenaMsgs.forEach(m=>{
+      md+=`### ${m.emoji} ${m.name}\n\n${m.message}\n\n`;
+    });
+    if(arenaReport?.parecer){
+      md+=`---\n\n## 🌿 ${ta.parecer||"Consolidated Opinion"}\n\n${arenaReport.parecer}\n\n`;
+    }
+    md+=`---\n\n**Hash SHA-256:** ${arenaSealResult.hash_sha256}\n`;
+    md+=`**${ta.honorarios||"Honorarium"}:** ${arenaReport?.honorarium?.total_credits||0} ${ta.credits||"credits"} · €${(arenaReport?.honorarium?.total_eur||0).toFixed(2)}\n`;
+
+    const blob=new Blob([md],{type:"text/markdown"});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    a.href=url;
+    a.download=`grove-arena-${dateStr}-${arenaSealResult.receipt_id.slice(-6)}.md`;
+    a.click();
+    URL.revokeObjectURL(url);
+  },[arenaTopic,arenaMsgs,arenaReport,arenaSealResult,t]);
+
+  // Copy verification link
+  const copyArenaLink=useCallback(()=>{
+    if(!arenaSealResult?.report_url)return;
+    navigator.clipboard.writeText(arenaSealResult.report_url);
+    flash(`📋 ${t.arena?.copied||"Copied!"}`);
+  },[arenaSealResult,flash,t]);
+
+  // Initial estimate on mount with default agents
+  useEffect(()=>{
+    if(arenaAgents.length>0&&!arenaEstimate){
+      fetchArenaEstimate(arenaAgents);
+    }
+  },[]);// eslint-disable-line
 
   // ═══ A.1: COMMUNIQUÉ API FETCH ═══
   const baseUrl=window.location.protocol==='https:'?'https://windi-domain.com':'http://localhost';
@@ -4377,66 +4699,256 @@ function App(){
         {/* Content */}
         <div style={{flex:1,display:"flex",overflow:"hidden"}}>
 
-          {/* ═══ GROVE TAB — Private Drafts ═══ */}
+          {/* ═══ GROVE ARENA TAB — Multi-Agent Deliberation ═══ */}
           {sidebarTab==="grove"&&(
-            <div style={{flex:1,display:"flex",flexDirection:"column",padding:20,overflow:"auto"}}>
-              <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:20}}>
-                <span style={{fontSize:32}}>🌱</span>
-                <div>
-                  <h2 style={{margin:0,fontSize:18,fontWeight:800}}>{lang==="pt"?"Bosque Privado":lang==="de"?"Privater Hain":"Private Grove"}</h2>
-                  <p style={{margin:"4px 0 0",fontSize:11,color:th.dim}}>{lang==="pt"?"Rascunhos que só você vê. Pense antes de publicar.":lang==="de"?"Entwürfe nur für dich. Denk nach, bevor du veröffentlichst.":"Drafts only you see. Think before you publish."}</p>
-                </div>
-              </div>
-              {/* Grove Notes List */}
-              <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:20}}>
-                {(JSON.parse(localStorage.getItem("windi_grove_notes")||"[]")).map((note,i)=>(
-                  <div key={i} onClick={()=>{document.getElementById("groveEditor").value=note.content;document.getElementById("groveTitle").value=note.title;}} style={{padding:"12px 14px",borderRadius:10,background:th.card,border:`1px solid ${th.border}`,cursor:"pointer"}}>
-                    <div style={{fontSize:13,fontWeight:600,marginBottom:4}}>{note.title||lang==="pt"?"Sem título":lang==="de"?"Ohne Titel":"Untitled"}</div>
-                    <div style={{fontSize:10,color:th.dim}}>{note.content?.slice(0,100)}...</div>
-                    <div style={{fontSize:9,color:th.dim,marginTop:6}}>{new Date(note.ts).toLocaleString()}</div>
+            <div style={{
+              flex:1,display:"flex",flexDirection:"column",
+              padding:arenaFullscreen?0:20,overflow:"auto",
+              position:arenaFullscreen?"fixed":"relative",
+              top:arenaFullscreen?0:"auto",left:arenaFullscreen?0:"auto",
+              right:arenaFullscreen?0:"auto",bottom:arenaFullscreen?0:"auto",
+              zIndex:arenaFullscreen?9999:"auto",background:th.bg
+            }}>
+              {/* Header */}
+              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20,padding:arenaFullscreen?"20px":"0"}}>
+                <div style={{display:"flex",alignItems:"center",gap:12}}>
+                  <span style={{fontSize:32}}>🌳</span>
+                  <div>
+                    <h2 style={{margin:0,fontSize:18,fontWeight:800,color:th.gold}}>{t.arena?.title||"Grove Arena"}</h2>
+                    <p style={{margin:"4px 0 0",fontSize:11,color:th.dim}}>{t.arena?.subtitle||"Multi-Agent Deliberation"}</p>
                   </div>
-                ))}
-                {(JSON.parse(localStorage.getItem("windi_grove_notes")||"[]")).length===0&&(
-                  <div style={{padding:20,textAlign:"center",color:th.dim,fontSize:12}}>{lang==="pt"?"Nenhum rascunho ainda. Comece a escrever abaixo.":lang==="de"?"Noch keine Entwürfe. Schreib unten los.":"No drafts yet. Start writing below."}</div>
-                )}
-              </div>
-              {/* Grove Editor */}
-              <div style={{background:th.card,borderRadius:12,padding:16,border:`1px solid ${th.border}`}}>
-                <input id="groveTitle" placeholder={lang==="pt"?"Título do rascunho...":lang==="de"?"Entwurfstitel...":"Draft title..."} style={{width:"100%",padding:"10px 12px",borderRadius:8,border:`1px solid ${th.border}`,background:th.input,color:th.text,fontSize:14,fontWeight:600,marginBottom:10,boxSizing:"border-box"}}/>
-                <textarea id="groveEditor" placeholder={lang==="pt"?"Escreva seus pensamentos aqui... Isto é privado.":lang==="de"?"Schreib deine Gedanken hier... Das ist privat.":"Write your thoughts here... This is private."} style={{width:"100%",minHeight:200,padding:"12px",borderRadius:8,border:`1px solid ${th.border}`,background:th.input,color:th.text,fontSize:13,lineHeight:1.6,resize:"vertical",boxSizing:"border-box"}}/>
-                <div style={{display:"flex",gap:8,marginTop:12}}>
-                  <button onClick={()=>{
-                    const title=document.getElementById("groveTitle").value.trim();
-                    const content=document.getElementById("groveEditor").value.trim();
-                    if(!content){flash("⚠️ "+{pt:"Escreva algo primeiro",de:"Schreib zuerst etwas",en:"Write something first"}[lang]);return;}
-                    const notes=JSON.parse(localStorage.getItem("windi_grove_notes")||"[]");
-                    notes.unshift({title:title||"Draft",content,ts:new Date().toISOString()});
-                    localStorage.setItem("windi_grove_notes",JSON.stringify(notes.slice(0,50)));
-                    document.getElementById("groveTitle").value="";
-                    document.getElementById("groveEditor").value="";
-                    flash("🌱 "+(lang==="pt"?"Rascunho salvo!":lang==="de"?"Entwurf gespeichert!":"Draft saved!"));
-                    setSidebarTab("grove");// force re-render
-                  }} style={{padding:"10px 20px",borderRadius:8,background:th.gold,border:"none",color:"#FFF",fontSize:12,fontWeight:700,cursor:"pointer"}}>
-                    💾 {lang==="pt"?"Salvar Rascunho":lang==="de"?"Entwurf speichern":"Save Draft"}
+                </div>
+                <div style={{display:"flex",gap:8}}>
+                  <button onClick={()=>setArenaFullscreen(!arenaFullscreen)} style={{padding:"6px 12px",borderRadius:8,background:th.card,border:`1px solid ${th.border}`,color:th.dim,fontSize:10,cursor:"pointer"}}>
+                    {arenaFullscreen?"⬜":"⬛"} {arenaFullscreen?(t.arena?.exitFullscreen||"Exit"):(t.arena?.fullscreen||"Fullscreen")}
                   </button>
-                  <button onClick={()=>{
-                    const title=document.getElementById("groveTitle").value.trim();
-                    const content=document.getElementById("groveEditor").value.trim();
-                    if(!content){flash("⚠️ "+{pt:"Escreva algo primeiro",de:"Schreib zuerst etwas",en:"Write something first"}[lang]);return;}
-                    setDocTitle(title||"From Grove");
-                    setDocContent(content);
-                    setSidebarTab("chat");
-                    flash("🌳 "+(lang==="pt"?"Movido para documento!":lang==="de"?"In Dokument verschoben!":"Moved to document!"));
-                  }} style={{padding:"10px 20px",borderRadius:8,background:th.card,border:`1px solid ${th.gold}`,color:th.gold,fontSize:12,fontWeight:600,cursor:"pointer"}}>
-                    📄 {lang==="pt"?"Criar Documento":lang==="de"?"Dokument erstellen":"Create Document"}
-                  </button>
+                  {arenaStatus==="completed"&&(
+                    <button onClick={resetArena} style={{padding:"6px 12px",borderRadius:8,background:th.gold,border:"none",color:"#FFF",fontSize:10,fontWeight:700,cursor:"pointer"}}>
+                      🔄 {t.arena?.newDebate||"New Debate"}
+                    </button>
+                  )}
                 </div>
               </div>
-              {/* Grove → Communiqué flow hint */}
-              <div style={{marginTop:20,padding:"12px 14px",borderRadius:10,background:`${th.gold}08`,border:`1px solid ${th.gold}22`,fontSize:11,color:th.dim}}>
-                <strong style={{color:th.gold}}>🌳 {lang==="pt"?"Jornada do Jardineiro":lang==="de"?"Die Reise des Gärtners":"Gardener's Journey"}:</strong><br/>
-                {lang==="pt"?"Grove (pensar) → Documento (estruturar) → Ledger (selar) → WICK (partilhar)":lang==="de"?"Hain (denken) → Dokument (strukturieren) → Ledger (versiegeln) → WICK (teilen)":"Grove (think) → Document (structure) → Ledger (seal) → WICK (share)"}
-              </div>
+
+              {/* ═══ IDLE STATE ═══ */}
+              {arenaStatus==="idle"&&(<>
+                {/* Topic Input */}
+                <div style={{marginBottom:16}}>
+                  <label style={{fontSize:11,fontWeight:600,color:th.dim,marginBottom:6,display:"block"}}>{t.arena?.topicLabel||"Topic"}</label>
+                  <textarea
+                    value={arenaTopic}
+                    onChange={e=>setArenaTopic(e.target.value)}
+                    placeholder={t.arena?.topicPH||"What should be analyzed? (min. 10 chars)"}
+                    style={{width:"100%",minHeight:100,padding:12,borderRadius:10,border:`1px solid ${th.border}`,background:th.input,color:th.text,fontSize:14,lineHeight:1.6,resize:"vertical",boxSizing:"border-box"}}
+                  />
+                  <div style={{fontSize:10,color:arenaTopic.length<10?th.warning:th.success,marginTop:4}}>{arenaTopic.length}/10 min</div>
+                </div>
+
+                {/* Collapsible Context */}
+                <div style={{marginBottom:16}}>
+                  <button onClick={()=>setArenaContextOpen(!arenaContextOpen)} style={{background:"none",border:"none",color:th.gold,fontSize:11,fontWeight:600,cursor:"pointer",padding:0}}>
+                    {arenaContextOpen?"▼":"▶"} {arenaContextOpen?(t.arena?.hideContext||"Hide context"):(t.arena?.showContext||"Add context")}
+                  </button>
+                  {arenaContextOpen&&(
+                    <textarea
+                      value={arenaContext}
+                      onChange={e=>setArenaContext(e.target.value)}
+                      placeholder={t.arena?.contextLabel||"Context..."}
+                      style={{width:"100%",minHeight:80,padding:12,borderRadius:10,border:`1px solid ${th.border}`,background:th.input,color:th.text,fontSize:13,marginTop:8,resize:"vertical",boxSizing:"border-box"}}
+                    />
+                  )}
+                </div>
+
+                {/* Agent Selection */}
+                <div style={{marginBottom:20}}>
+                  <label style={{fontSize:11,fontWeight:600,color:th.dim,marginBottom:10,display:"block"}}>{t.arena?.selectAgents||"Select Agents"}</label>
+                  <div style={{display:"flex",flexWrap:"wrap",gap:8}}>
+                    {Object.entries(ARENA_AGENTS).map(([id,agent])=>{
+                      const isSelected=arenaAgents.includes(id);
+                      const agentName=agent.name[lang]||agent.name.en;
+                      return(
+                        <button
+                          key={id}
+                          onClick={()=>toggleArenaAgent(id)}
+                          style={{
+                            display:"flex",alignItems:"center",gap:6,
+                            padding:"8px 12px",borderRadius:20,
+                            background:isSelected?th.gold+"22":th.card,
+                            border:`2px solid ${isSelected?th.gold:th.border}`,
+                            color:isSelected?th.gold:th.text,
+                            fontSize:11,fontWeight:600,cursor:"pointer",
+                            transition:"all 0.2s"
+                          }}
+                        >
+                          <span style={{fontSize:16}}>{agent.icon}</span>
+                          <span>{agentName}</span>
+                          <span style={{fontSize:9,color:th.dim}}>{agent.credits}cr €{(agent.credits*0.01).toFixed(2)}</span>
+                          {agent.preselect&&isSelected&&<span style={{fontSize:8,background:th.gold,color:"#FFF",padding:"1px 4px",borderRadius:4}}>★</span>}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Cost Estimate */}
+                {arenaEstimate&&(
+                  <div style={{background:`${th.gold}11`,border:`1px solid ${th.gold}33`,borderRadius:10,padding:14,marginBottom:20}}>
+                    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                      <span style={{fontSize:12,fontWeight:600,color:th.dim}}>{t.arena?.estimatedCost||"Estimated cost"}</span>
+                      <div style={{textAlign:"right"}}>
+                        <span style={{fontSize:16,fontWeight:800,color:th.gold}}>
+                          {arenaEstimate.total_credits} {t.arena?.credits||"credits"} · €{(arenaEstimate.total_eur||0).toFixed(2)}
+                        </span>
+                        {getArenaIdentity()==="pioneer"&&<div style={{fontSize:10,color:th.success}}>🌱 {t.arena?.pioneer||"Pioneer -50%"}</div>}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Start Button */}
+                <button
+                  onClick={startArenaDebate}
+                  disabled={arenaTopic.length<10||arenaAgents.length===0||arenaLoading}
+                  style={{
+                    width:"100%",padding:"14px 24px",borderRadius:12,
+                    background:(arenaTopic.length>=10&&arenaAgents.length>0)?th.gold:th.dim,
+                    border:"none",color:"#FFF",fontSize:14,fontWeight:700,cursor:"pointer",
+                    opacity:(arenaTopic.length>=10&&arenaAgents.length>0)?1:0.5
+                  }}
+                >
+                  🏟️ {t.arena?.startDebate||"Start Debate"}
+                </button>
+              </>)}
+
+              {/* ═══ RUNNING STATE ═══ */}
+              {arenaStatus==="running"&&(
+                <div style={{textAlign:"center",padding:40}}>
+                  <div style={{fontSize:48,marginBottom:20,animation:"pulse 2s infinite"}}>🌳</div>
+                  <h3 style={{color:th.gold,marginBottom:20}}>{t.arena?.debating||"Deliberation in progress..."}</h3>
+                  <div style={{display:"flex",flexWrap:"wrap",justifyContent:"center",gap:12}}>
+                    {arenaAgents.map(agentId=>{
+                      const agent=ARENA_AGENTS[agentId];
+                      const status=arenaAgentStatus[agentId]||"waiting";
+                      const agentName=agent?.name[lang]||agent?.name.en||agentId;
+                      return(
+                        <div key={agentId} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 14px",borderRadius:20,background:th.card,border:`1px solid ${th.border}`}}>
+                          <span style={{fontSize:18}}>{agent?.icon}</span>
+                          <span style={{fontSize:11,fontWeight:600}}>{agentName}</span>
+                          {status==="waiting"&&<span style={{fontSize:10,color:th.warning}}>⏳</span>}
+                          {status==="done"&&<span style={{fontSize:10,color:th.success}}>✓</span>}
+                          {status==="error"&&<span style={{fontSize:10,color:th.danger}}>✗</span>}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* ═══ COMPLETED STATE ═══ */}
+              {arenaStatus==="completed"&&arenaSealResult&&(<>
+                {/* Receipt Banner */}
+                <div style={{background:th.sealed,borderRadius:10,padding:14,marginBottom:20,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                  <div style={{display:"flex",alignItems:"center",gap:10}}>
+                    <span style={{fontSize:24}}>🛡️</span>
+                    <div>
+                      <div style={{fontSize:10,color:"#81C784"}}>{t.arena?.receiptBanner||"Registered in Forensic Ledger"}</div>
+                      <div style={{fontSize:14,fontWeight:700,color:"#E8F5E9",fontFamily:"'JetBrains Mono',monospace"}}>{arenaSealResult.receipt_id}</div>
+                    </div>
+                  </div>
+                  <div style={{textAlign:"right"}}>
+                    <div style={{fontSize:9,color:"#A5D6A7"}}>{t.arena?.hash||"Hash"}: {arenaSealResult.hash_sha256?.slice(0,12)}...</div>
+                  </div>
+                </div>
+
+                {/* Viral Loop — Micro-Ajuste 1: Frase clicável */}
+                <a
+                  href={`/verify-public/?id=${arenaSealResult.receipt_id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{fontSize:11,color:th.gold,textDecoration:"none",display:"block",marginBottom:16,marginTop:-12}}
+                >
+                  ↳ {t.arena?.verifyPublic||"Anyone can verify this analysis."} 🔗
+                </a>
+
+                {/* Agent Responses */}
+                <div style={{marginBottom:20}}>
+                  {arenaMsgs.map((msg,i)=>(
+                    <div key={i} style={{background:th.card,borderRadius:12,padding:16,marginBottom:12,borderLeft:`4px solid ${th.gold}`}}>
+                      <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
+                        <span style={{fontSize:24}}>{msg.emoji}</span>
+                        <span style={{fontSize:14,fontWeight:700,color:th.gold}}>{msg.name}</span>
+                        {msg.role&&<span style={{fontSize:10,color:th.dim}}>[{msg.role}]</span>}
+                      </div>
+                      <div style={{fontSize:13,lineHeight:1.7,color:th.text,whiteSpace:"pre-wrap"}}>{msg.message}</div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Parecer Consolidado */}
+                {arenaReport?.parecer&&(
+                  <div style={{background:`${th.gold}11`,borderRadius:12,padding:16,marginBottom:20,border:`1px solid ${th.gold}33`}}>
+                    <h4 style={{margin:"0 0 12px",fontSize:14,fontWeight:700,color:th.gold}}>🌿 {t.arena?.parecer||"Consolidated Opinion"}</h4>
+                    <div style={{fontSize:13,lineHeight:1.7,color:th.text,whiteSpace:"pre-wrap"}}>{arenaReport.parecer}</div>
+                  </div>
+                )}
+
+                {/* Honorarium Breakdown */}
+                {arenaReport?.honorarium&&(
+                  <div style={{background:th.card,borderRadius:12,padding:16,marginBottom:20,border:`1px solid ${th.border}`}}>
+                    <h4 style={{margin:"0 0 12px",fontSize:13,fontWeight:700,color:th.gold}}>{t.arena?.honorarios||"Honorarium"}</h4>
+                    <div style={{fontSize:11}}>
+                      {arenaReport.honorarium.breakdown?.map((item,i)=>(
+                        <div key={i} style={{display:"flex",justifyContent:"space-between",padding:"6px 0",borderBottom:`1px solid ${th.border}22`}}>
+                          <span>{item.icon||"•"} {item.agent_name||item.name}</span>
+                          <span style={{color:th.gold}}>{item.credits_final||item.credits}cr · €{(item.eur_value||0).toFixed(4)}</span>
+                        </div>
+                      ))}
+                      <div style={{display:"flex",justifyContent:"space-between",padding:"10px 0",fontWeight:700}}>
+                        <span>TOTAL</span>
+                        <span style={{color:th.gold}}>{arenaReport.honorarium.total_credits}cr · €{(arenaReport.honorarium.total_eur||0).toFixed(2)}</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Action Toolbar */}
+                <div style={{display:"flex",flexWrap:"wrap",gap:8}}>
+                  <button onClick={downloadArenaPdf} style={{padding:"10px 16px",borderRadius:8,background:th.gold,border:"none",color:"#FFF",fontSize:11,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",gap:6}}>
+                    📄 {t.arena?.downloadPdf||"PDF"}
+                  </button>
+                  <button onClick={downloadArenaMd} style={{padding:"10px 16px",borderRadius:8,background:th.card,border:`1px solid ${th.border}`,color:th.text,fontSize:11,fontWeight:600,cursor:"pointer"}}>
+                    📝 {t.arena?.downloadMd||".MD"}
+                  </button>
+                  <button onClick={()=>{setWickVisibility("public");setShowWickModal(true);}} style={{padding:"10px 16px",borderRadius:8,background:"#4A90D9",border:"none",color:"#FFF",fontSize:11,fontWeight:700,cursor:"pointer"}}>
+                    📡 {t.arena?.shareWick||"WICK"}
+                  </button>
+                  <button onClick={()=>{flash("🏛️ Saved to Vault");}} style={{padding:"10px 16px",borderRadius:8,background:th.card,border:`1px solid ${th.border}`,color:th.text,fontSize:11,fontWeight:600,cursor:"pointer"}}>
+                    🏛️ {t.arena?.saveVault||"Vault"}
+                  </button>
+                  <button onClick={()=>setShowDistributeModal(true)} style={{padding:"10px 16px",borderRadius:8,background:th.card,border:`1px solid ${th.border}`,color:th.text,fontSize:11,fontWeight:600,cursor:"pointer"}}>
+                    📧 {t.arena?.sendEmail||"Email"}
+                  </button>
+                  <button onClick={()=>window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(arenaSealResult.report_url)}`,"_blank")} style={{padding:"10px 16px",borderRadius:8,background:"#0077B5",border:"none",color:"#FFF",fontSize:11,fontWeight:700,cursor:"pointer"}}>
+                    💼 {t.arena?.shareLinkedin||"LinkedIn"}
+                  </button>
+                  <button onClick={copyArenaLink} style={{padding:"10px 16px",borderRadius:8,background:th.card,border:`1px solid ${th.border}`,color:th.text,fontSize:11,fontWeight:600,cursor:"pointer"}}>
+                    📋 {t.arena?.copyLink||"Copy Link"}
+                  </button>
+                </div>
+              </>)}
+
+              {/* ═══ ERROR STATE ═══ */}
+              {arenaStatus==="error"&&(
+                <div style={{textAlign:"center",padding:40}}>
+                  <div style={{fontSize:48,marginBottom:20}}>❌</div>
+                  <h3 style={{color:th.danger,marginBottom:12}}>{t.arena?.errDebate||"Debate failed"}</h3>
+                  <p style={{color:th.dim,marginBottom:20,fontSize:12}}>{arenaError}</p>
+                  <button onClick={resetArena} style={{padding:"12px 24px",borderRadius:10,background:th.gold,border:"none",color:"#FFF",fontSize:13,fontWeight:700,cursor:"pointer"}}>
+                    🔄 {t.arena?.tryAgain||"Try Again"}
+                  </button>
+                </div>
+              )}
+
             </div>
           )}
 
