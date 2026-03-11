@@ -1,0 +1,14 @@
+/* WINDI Command Center — Minimal Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
