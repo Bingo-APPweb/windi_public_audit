@@ -139,6 +139,13 @@ TWILIO_FROM = os.environ.get("TWILIO_PHONE_NUMBER", "")
 WHATSAPP_TOKEN = os.environ.get("WHATSAPP_API_TOKEN", "")
 WHATSAPP_PHONE_ID = os.environ.get("WHATSAPP_PHONE_ID", "")
 
+# LinkedIn API (optional)
+LINKEDIN_CLIENT_ID = os.environ.get("LINKEDIN_CLIENT_ID", "")
+LINKEDIN_CLIENT_SECRET = os.environ.get("LINKEDIN_CLIENT_SECRET", "")
+LINKEDIN_ACCESS_TOKEN = os.environ.get("LINKEDIN_ACCESS_TOKEN", "")
+LINKEDIN_ORG_ID = os.environ.get("LINKEDIN_ORG_ID", "")  # For company page posts
+LINKEDIN_API_URL = "https://api.linkedin.com/v2"
+
 # Distribution log (for audit)
 DISTRIBUTION_LOG = []
 
@@ -1925,6 +1932,226 @@ WINDI_WHATSAPP_TEMPLATES = {
 }
 
 
+# ═══════════════════════════════════════════════════════════════════════════════════
+# HTML BUILDER MESSAGE TEMPLATES v1.0.0
+# Distribution templates for Email, SMS, WhatsApp — used by /html-builder Send feature
+# Added: 2026-03-11
+# ═══════════════════════════════════════════════════════════════════════════════════
+
+MESSAGE_TEMPLATES = {
+    # ── Default Email Template ──────────────────────────────────────
+    "MSG-DEFAULT-EMAIL": {
+        "id": "MSG-DEFAULT-EMAIL",
+        "name": {
+            "de": "Dokumentlieferung",
+            "en": "Document Delivery",
+            "pt": "Entrega de Documento"
+        },
+        "channel": "email",
+        "subject": {
+            "de": "📄 Dokument: {doc_title}",
+            "en": "📄 Document: {doc_title}",
+            "pt": "📄 Documento: {doc_title}"
+        },
+        "body": {
+            "de": "Hallo,\n\nSie haben ein neues Dokument von WINDI erhalten:\n\n📄 {doc_title}\n\n{doc_preview}\n\n🛡️ Versiegelungsnachweis: {receipt_id}\n\nVerifizieren Sie das Dokument unter:\n{verify_url}\n\nMit freundlichen Grüßen,\nWINDI Publishing",
+            "en": "Hello,\n\nYou have received a new document from WINDI:\n\n📄 {doc_title}\n\n{doc_preview}\n\n🛡️ Seal Receipt: {receipt_id}\n\nVerify the document at:\n{verify_url}\n\nBest regards,\nWINDI Publishing",
+            "pt": "Olá,\n\nRecebeu um novo documento do WINDI:\n\n📄 {doc_title}\n\n{doc_preview}\n\n🛡️ Recibo de Selagem: {receipt_id}\n\nVerifique o documento em:\n{verify_url}\n\nCom os melhores cumprimentos,\nWINDI Publishing"
+        },
+        "variables": ["doc_title", "doc_preview", "receipt_id", "verify_url"],
+        "category": "document"
+    },
+
+    # ── Default SMS Template ────────────────────────────────────────
+    "MSG-DEFAULT-SMS": {
+        "id": "MSG-DEFAULT-SMS",
+        "name": {
+            "de": "Kurznachricht",
+            "en": "Short Message",
+            "pt": "Mensagem Curta"
+        },
+        "channel": "sms",
+        "body": {
+            "de": "WINDI: {doc_title} (ID: {receipt_id})\nVerifizieren: {verify_url}",
+            "en": "WINDI: {doc_title} (ID: {receipt_id})\nVerify: {verify_url}",
+            "pt": "WINDI: {doc_title} (ID: {receipt_id})\nVerificar: {verify_url}"
+        },
+        "variables": ["doc_title", "receipt_id", "verify_url"],
+        "max_length": 160,
+        "category": "document"
+    },
+
+    # ── Default WhatsApp Template ───────────────────────────────────
+    "MSG-DEFAULT-WA": {
+        "id": "MSG-DEFAULT-WA",
+        "name": {
+            "de": "WhatsApp Nachricht",
+            "en": "WhatsApp Message",
+            "pt": "Mensagem WhatsApp"
+        },
+        "channel": "whatsapp",
+        "body": {
+            "de": "📄 *{doc_title}*\n\n{doc_preview}\n\n🛡️ Receipt: `{receipt_id}`\n\n🔗 Verifizieren: {verify_url}",
+            "en": "📄 *{doc_title}*\n\n{doc_preview}\n\n🛡️ Receipt: `{receipt_id}`\n\n🔗 Verify: {verify_url}",
+            "pt": "📄 *{doc_title}*\n\n{doc_preview}\n\n🛡️ Receipt: `{receipt_id}`\n\n🔗 Verificar: {verify_url}"
+        },
+        "variables": ["doc_title", "doc_preview", "receipt_id", "verify_url"],
+        "category": "document"
+    },
+
+    # ── Formal Document Template ────────────────────────────────────
+    "MSG-FORMAL-EMAIL": {
+        "id": "MSG-FORMAL-EMAIL",
+        "name": {
+            "de": "Formelle Mitteilung",
+            "en": "Formal Notification",
+            "pt": "Notificação Formal"
+        },
+        "channel": "email",
+        "subject": {
+            "de": "Offizielle Mitteilung: {doc_title}",
+            "en": "Official Notification: {doc_title}",
+            "pt": "Notificação Oficial: {doc_title}"
+        },
+        "body": {
+            "de": "Sehr geehrte Damen und Herren,\n\nhiermit übersenden wir Ihnen das folgende kryptographisch versiegelte Dokument:\n\n{doc_title}\n\n{doc_preview}\n\nDieses Dokument wurde am {timestamp} im WINDI Forensic Ledger registriert.\n\nVersiegelungs-ID: {receipt_id}\nVerifikation: {verify_url}\n\nMit freundlichen Grüßen",
+            "en": "Dear Sir or Madam,\n\nPlease find attached the following cryptographically sealed document:\n\n{doc_title}\n\n{doc_preview}\n\nThis document was registered in the WINDI Forensic Ledger on {timestamp}.\n\nSeal ID: {receipt_id}\nVerification: {verify_url}\n\nKind regards",
+            "pt": "Exmo(a) Senhor(a),\n\nEnviamos o seguinte documento selado criptograficamente:\n\n{doc_title}\n\n{doc_preview}\n\nEste documento foi registado no WINDI Forensic Ledger em {timestamp}.\n\nID de Selagem: {receipt_id}\nVerificação: {verify_url}\n\nCom os melhores cumprimentos"
+        },
+        "variables": ["doc_title", "doc_preview", "receipt_id", "verify_url", "timestamp"],
+        "category": "formal"
+    },
+
+    # ── Brief Notification ──────────────────────────────────────────
+    "MSG-BRIEF-WA": {
+        "id": "MSG-BRIEF-WA",
+        "name": {
+            "de": "Kurze Benachrichtigung",
+            "en": "Brief Notification",
+            "pt": "Notificação Breve"
+        },
+        "channel": "whatsapp",
+        "body": {
+            "de": "📄 Neues Dokument: *{doc_title}*\n🔗 {verify_url}",
+            "en": "📄 New document: *{doc_title}*\n🔗 {verify_url}",
+            "pt": "📄 Novo documento: *{doc_title}*\n🔗 {verify_url}"
+        },
+        "variables": ["doc_title", "verify_url"],
+        "category": "brief"
+    },
+}
+
+
+def get_message_template(template_id: str, lang: str = "en") -> dict:
+    """
+    Get a message template by ID and language.
+
+    Args:
+        template_id: Template ID (e.g., "MSG-DEFAULT-EMAIL")
+        lang: Language code (de, en, pt)
+
+    Returns:
+        {"found": True, "template": {...}} or {"found": False, "error": "..."}
+    """
+    template = MESSAGE_TEMPLATES.get(template_id)
+    if not template:
+        return {
+            "found": False,
+            "error": f"Template '{template_id}' not found",
+            "available": list(MESSAGE_TEMPLATES.keys())
+        }
+
+    # Resolve language-specific fields
+    name = template["name"].get(lang, template["name"].get("en", ""))
+    subject = template.get("subject", {}).get(lang, template.get("subject", {}).get("en", "")) if "subject" in template else None
+    body = template["body"].get(lang, template["body"].get("en", ""))
+
+    return {
+        "found": True,
+        "id": template_id,
+        "name": name,
+        "channel": template["channel"],
+        "subject": subject,
+        "body": body,
+        "variables": template.get("variables", []),
+        "category": template.get("category", "general"),
+        "max_length": template.get("max_length"),
+    }
+
+
+def list_message_templates(channel: str = None, lang: str = "en") -> list:
+    """
+    List available message templates.
+
+    Args:
+        channel: Filter by channel (email, sms, whatsapp)
+        lang: Language for template names
+
+    Returns:
+        List of template summaries
+    """
+    results = []
+    for tid, template in MESSAGE_TEMPLATES.items():
+        if channel and template["channel"] != channel:
+            continue
+
+        name = template["name"].get(lang, template["name"].get("en", ""))
+
+        results.append({
+            "id": tid,
+            "name": name,
+            "channel": template["channel"],
+            "category": template.get("category", "general"),
+            "variables": template.get("variables", []),
+        })
+
+    return results
+
+
+def render_message_template(template_id: str, lang: str, variables: dict) -> dict:
+    """
+    Render a message template with variable substitution.
+
+    Args:
+        template_id: Template ID
+        lang: Language code
+        variables: Dict of variable values
+
+    Returns:
+        {"success": True, "rendered": {...}} or {"success": False, "error": "..."}
+    """
+    tpl = get_message_template(template_id, lang)
+    if not tpl.get("found"):
+        return {"success": False, "error": tpl.get("error")}
+
+    # Render subject (if applicable)
+    rendered_subject = tpl.get("subject", "")
+    if rendered_subject:
+        for key, value in variables.items():
+            rendered_subject = rendered_subject.replace(f"{{{key}}}", str(value))
+
+    # Render body
+    rendered_body = tpl["body"]
+    for key, value in variables.items():
+        rendered_body = rendered_body.replace(f"{{{key}}}", str(value))
+
+    # Apply max_length for SMS
+    if tpl.get("max_length") and len(rendered_body) > tpl["max_length"]:
+        rendered_body = rendered_body[:tpl["max_length"] - 3] + "..."
+
+    return {
+        "success": True,
+        "template_id": template_id,
+        "channel": tpl["channel"],
+        "language": lang,
+        "rendered": {
+            "subject": rendered_subject if rendered_subject else None,
+            "body": rendered_body,
+        },
+        "variables_used": list(variables.keys()),
+    }
+
+
 def get_template(template_name: str, lang: str = "en") -> dict:
     """
     Get a WINDI WhatsApp template by name and language.
@@ -2313,12 +2540,201 @@ def create_document_email_html(doc_title: str, doc_content: str, receipt_id: str
     return html, t['subject']
 
 
+# ═══════════════════════════════════════════════════════════════════════════════════
+# LINKEDIN INTEGRATION v1.0.0 — Share Posts & Direct Messages
+# Added: 2026-03-12 | LinkedIn API v2
+# ═══════════════════════════════════════════════════════════════════════════════════
+
+def send_linkedin_post(message: str, doc_title: str = None, verify_url: str = None) -> dict:
+    """
+    Post content to LinkedIn (organization page or personal profile).
+
+    Args:
+        message: Text content to post
+        doc_title: Optional document title for structured post
+        verify_url: Optional verification URL to include
+
+    Returns:
+        {"success": True/False, "message": "...", "channel": "linkedin"}
+    """
+    if not LINKEDIN_ACCESS_TOKEN:
+        return {"success": False, "message": "LinkedIn not configured", "channel": "linkedin"}
+
+    try:
+        # Build post text
+        post_text = message
+        if doc_title:
+            post_text = f"📄 {doc_title}\n\n{message}"
+        if verify_url:
+            post_text += f"\n\n🔐 Verify: {verify_url}"
+
+        # Determine author: organization or personal profile
+        if LINKEDIN_ORG_ID:
+            author = f"urn:li:organization:{LINKEDIN_ORG_ID}"
+        else:
+            # Need to get user's profile URN from /me endpoint
+            me_req = urllib.request.Request(
+                f"{LINKEDIN_API_URL}/me",
+                headers={"Authorization": f"Bearer {LINKEDIN_ACCESS_TOKEN}"},
+            )
+            with urllib.request.urlopen(me_req, timeout=10) as resp:
+                me_data = json.loads(resp.read().decode())
+                author = f"urn:li:person:{me_data['id']}"
+
+        # Create UGC post (User Generated Content)
+        post_data = json.dumps({
+            "author": author,
+            "lifecycleState": "PUBLISHED",
+            "specificContent": {
+                "com.linkedin.ugc.ShareContent": {
+                    "shareCommentary": {
+                        "text": post_text
+                    },
+                    "shareMediaCategory": "NONE"
+                }
+            },
+            "visibility": {
+                "com.linkedin.ugc.MemberNetworkVisibility": "PUBLIC"
+            }
+        }).encode()
+
+        req = urllib.request.Request(
+            f"{LINKEDIN_API_URL}/ugcPosts",
+            data=post_data,
+            headers={
+                "Authorization": f"Bearer {LINKEDIN_ACCESS_TOKEN}",
+                "Content-Type": "application/json",
+                "X-Restli-Protocol-Version": "2.0.0",
+            },
+        )
+
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            result = json.loads(resp.read().decode())
+
+        log_entry = {
+            "channel": "linkedin",
+            "type": "post",
+            "post_id": result.get("id"),
+            "timestamp": datetime.now().isoformat(),
+            "success": True,
+        }
+        DISTRIBUTION_LOG.append(log_entry)
+
+        return {"success": True, "message": "LinkedIn post published", "channel": "linkedin", "post_id": result.get("id")}
+
+    except urllib.error.HTTPError as e:
+        error_body = e.read().decode() if e.fp else str(e)
+        log_entry = {
+            "channel": "linkedin",
+            "type": "post",
+            "error": error_body,
+            "timestamp": datetime.now().isoformat(),
+            "success": False,
+        }
+        DISTRIBUTION_LOG.append(log_entry)
+        return {"success": False, "message": f"LinkedIn post failed: {error_body}", "channel": "linkedin"}
+    except Exception as e:
+        log_entry = {
+            "channel": "linkedin",
+            "type": "post",
+            "error": str(e),
+            "timestamp": datetime.now().isoformat(),
+            "success": False,
+        }
+        DISTRIBUTION_LOG.append(log_entry)
+        return {"success": False, "message": f"LinkedIn post failed: {e}", "channel": "linkedin"}
+
+
+def send_linkedin_dm(recipient_urn: str, message: str, doc_title: str = None, verify_url: str = None) -> dict:
+    """
+    Send a direct message on LinkedIn.
+
+    Args:
+        recipient_urn: LinkedIn member URN (urn:li:person:xxx) or profile ID
+        message: Message content
+        doc_title: Optional document title
+        verify_url: Optional verification URL
+
+    Returns:
+        {"success": True/False, "message": "...", "channel": "linkedin"}
+    """
+    if not LINKEDIN_ACCESS_TOKEN:
+        return {"success": False, "message": "LinkedIn not configured", "channel": "linkedin"}
+
+    try:
+        # Normalize recipient URN
+        if not recipient_urn.startswith("urn:li:"):
+            recipient_urn = f"urn:li:person:{recipient_urn}"
+
+        # Build message text
+        msg_text = message
+        if doc_title:
+            msg_text = f"📄 {doc_title}\n\n{message}"
+        if verify_url:
+            msg_text += f"\n\n🔐 Verify: {verify_url}"
+
+        # LinkedIn Messaging API
+        dm_data = json.dumps({
+            "recipients": [recipient_urn],
+            "body": msg_text,
+            "messageType": "MEMBER_TO_MEMBER"
+        }).encode()
+
+        req = urllib.request.Request(
+            f"{LINKEDIN_API_URL}/messages",
+            data=dm_data,
+            headers={
+                "Authorization": f"Bearer {LINKEDIN_ACCESS_TOKEN}",
+                "Content-Type": "application/json",
+                "X-Restli-Protocol-Version": "2.0.0",
+            },
+        )
+
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            result = json.loads(resp.read().decode())
+
+        log_entry = {
+            "channel": "linkedin",
+            "type": "dm",
+            "to": recipient_urn,
+            "timestamp": datetime.now().isoformat(),
+            "success": True,
+        }
+        DISTRIBUTION_LOG.append(log_entry)
+
+        return {"success": True, "message": f"LinkedIn DM sent to {recipient_urn}", "channel": "linkedin"}
+
+    except urllib.error.HTTPError as e:
+        error_body = e.read().decode() if e.fp else str(e)
+        log_entry = {
+            "channel": "linkedin",
+            "type": "dm",
+            "to": recipient_urn,
+            "error": error_body,
+            "timestamp": datetime.now().isoformat(),
+            "success": False,
+        }
+        DISTRIBUTION_LOG.append(log_entry)
+        return {"success": False, "message": f"LinkedIn DM failed: {error_body}", "channel": "linkedin"}
+    except Exception as e:
+        log_entry = {
+            "channel": "linkedin",
+            "type": "dm",
+            "to": recipient_urn,
+            "error": str(e),
+            "timestamp": datetime.now().isoformat(),
+            "success": False,
+        }
+        DISTRIBUTION_LOG.append(log_entry)
+        return {"success": False, "message": f"LinkedIn DM failed: {e}", "channel": "linkedin"}
+
+
 def distribute_document(recipients: list, doc_title: str, doc_content: str, receipt_id: str, lang: str = "en") -> dict:
     """
     Distribute a sealed document to multiple recipients via their preferred channels.
 
     Args:
-        recipients: List of {"channel": "email"|"sms"|"whatsapp", "value": "address/number"}
+        recipients: List of {"channel": "email"|"sms"|"whatsapp"|"linkedin_post"|"linkedin_dm", "value": "address/number/urn"}
         doc_title: Document title
         doc_content: Document content
         receipt_id: Virtue Receipt ID
@@ -2331,7 +2747,8 @@ def distribute_document(recipients: list, doc_title: str, doc_content: str, rece
     failed = []
 
     html_body, subject = create_document_email_html(doc_title, doc_content, receipt_id, lang)
-    plain_message = f"📄 {doc_title}\n\n{doc_content[:500]}...\n\n🛡️ Receipt: {receipt_id}\n\nVerify: https://windi-domain.com/verify/{receipt_id}"
+    verify_url = f"https://windi-domain.com/verify/{receipt_id}"
+    plain_message = f"📄 {doc_title}\n\n{doc_content[:500]}...\n\n🛡️ Receipt: {receipt_id}\n\nVerify: {verify_url}"
 
     for recipient in recipients:
         channel = recipient.get("channel", "email")
@@ -2343,6 +2760,12 @@ def distribute_document(recipients: list, doc_title: str, doc_content: str, rece
             result = send_sms(value, plain_message[:160])  # SMS short version
         elif channel == "whatsapp":
             result = send_whatsapp(value, plain_message)
+        elif channel == "linkedin_post":
+            # LinkedIn post (value can be empty for org page, or custom text)
+            result = send_linkedin_post(doc_content[:500], doc_title, verify_url)
+        elif channel == "linkedin_dm":
+            # LinkedIn DM (value is recipient URN or profile ID)
+            result = send_linkedin_dm(value, plain_message, doc_title, verify_url)
         else:
             result = {"success": False, "message": f"Unknown channel: {channel}", "channel": channel}
 
@@ -2443,6 +2866,31 @@ class DragonChatHandler(BaseHTTPRequestHandler):
             self._json_response(gate_status())
             return
 
+        # ─── DISTRIBUTE STATUS (GET) — Check channel configuration ────────────
+        if path == "/distribute/status":
+            self._json_response({
+                "success": True,
+                "channels": {
+                    "email": {
+                        "configured": bool(SMTP_HOST),
+                        "from": SMTP_FROM,
+                    },
+                    "sms": {
+                        "configured": bool(TWILIO_SID and TWILIO_TOKEN),
+                    },
+                    "whatsapp": {
+                        "configured": bool(WHATSAPP_TOKEN and WHATSAPP_PHONE_ID),
+                    },
+                    "linkedin": {
+                        "configured": bool(LINKEDIN_ACCESS_TOKEN),
+                        "org_id": LINKEDIN_ORG_ID if LINKEDIN_ORG_ID else None,
+                        "features": ["post", "dm"] if LINKEDIN_ACCESS_TOKEN else [],
+                    },
+                },
+                "recent_distributions": DISTRIBUTION_LOG[-10:],
+            })
+            return
+
         if path == "/identity":
             query = parse_qs(urlparse(self.path).query)
             lang = query.get("lang", ["de"])[0]
@@ -2509,6 +2957,34 @@ class DragonChatHandler(BaseHTTPRequestHandler):
                     self._json_response({"success": False, "error": str(e)}, 500)
             else:
                 self._json_response({"success": False, "error": "CIL not available"}, 503)
+            return
+
+        # ─── MESSAGE TEMPLATES ENDPOINT — For HTML Builder distribution ───
+        if path == "/message-templates":
+            query = parse_qs(urlparse(self.path).query)
+            channel = query.get("channel", [None])[0]
+            lang = query.get("lang", ["en"])[0]
+
+            templates = list_message_templates(channel=channel, lang=lang)
+            self._json_response({
+                "success": True,
+                "templates": templates,
+                "count": len(templates),
+                "channels": ["email", "sms", "whatsapp"],
+            })
+            return
+
+        if path.startswith("/message-templates/") and not path.endswith("/render"):
+            # GET /message-templates/{id}
+            template_id = path.split("/")[-1]
+            query = parse_qs(urlparse(self.path).query)
+            lang = query.get("lang", ["en"])[0]
+
+            result = get_message_template(template_id, lang)
+            if result.get("found"):
+                self._json_response({"success": True, **result})
+            else:
+                self._json_response({"success": False, "error": result.get("error")}, 404)
             return
 
         self._json_response({"error": "Not found"}, 404)
@@ -2580,6 +3056,20 @@ class DragonChatHandler(BaseHTTPRequestHandler):
             })
             return
 
+        # ─── MESSAGE TEMPLATES RENDER — For HTML Builder distribution ─────
+        if path == "/message-templates/render":
+            template_id = body.get("template_id", "")
+            lang = body.get("lang", "en")
+            variables = body.get("variables", {})
+
+            if not template_id:
+                self._json_response({"success": False, "error": "template_id required"}, 400)
+                return
+
+            result = render_message_template(template_id, lang, variables)
+            self._json_response(result)
+            return
+
         # ─── DISTRIBUTE ENDPOINT — Send documents via channels ───────────
         if path == "/distribute":
             recipients = body.get("recipients", [])
@@ -2587,6 +3077,8 @@ class DragonChatHandler(BaseHTTPRequestHandler):
             doc_content = body.get("doc_content", "")
             receipt_id = body.get("receipt_id", "")
             lang = body.get("lang", "en")
+            template_id = body.get("template_id")  # Optional: use template instead of default
+            custom_message = body.get("custom_message")  # Optional: custom message body
 
             if not recipients:
                 self._json_response({"success": False, "error": "No recipients provided"}, 400)
@@ -2596,7 +3088,30 @@ class DragonChatHandler(BaseHTTPRequestHandler):
                 self._json_response({"success": False, "error": "doc_title and receipt_id required"}, 400)
                 return
 
-            result = distribute_document(recipients, doc_title, doc_content, receipt_id, lang)
+            # Build verify URL
+            verify_url = f"https://windi-domain.com/verify/{receipt_id}"
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
+
+            # Use custom message or template if provided
+            final_content = doc_content
+            if custom_message:
+                final_content = custom_message
+            elif template_id:
+                # Render template with variables
+                variables = {
+                    "doc_title": doc_title,
+                    "doc_preview": doc_content[:300] + "..." if len(doc_content) > 300 else doc_content,
+                    "receipt_id": receipt_id,
+                    "verify_url": verify_url,
+                    "timestamp": timestamp,
+                }
+                rendered = render_message_template(template_id, lang, variables)
+                if rendered.get("success"):
+                    final_content = rendered["rendered"]["body"]
+
+            result = distribute_document(recipients, doc_title, final_content, receipt_id, lang)
+            result["template_used"] = template_id if template_id else "default"
+            result["custom_message_used"] = bool(custom_message)
             self._json_response(result)
             return
 
@@ -2614,6 +3129,11 @@ class DragonChatHandler(BaseHTTPRequestHandler):
                     },
                     "whatsapp": {
                         "configured": bool(WHATSAPP_TOKEN and WHATSAPP_PHONE_ID),
+                    },
+                    "linkedin": {
+                        "configured": bool(LINKEDIN_ACCESS_TOKEN),
+                        "org_id": LINKEDIN_ORG_ID if LINKEDIN_ORG_ID else None,
+                        "features": ["post", "dm"] if LINKEDIN_ACCESS_TOKEN else [],
                     },
                 },
                 "recent_distributions": DISTRIBUTION_LOG[-10:],
