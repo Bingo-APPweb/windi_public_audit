@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>WINDI HTML Builder v3.1</title>
+<title>WINDI HTML Builder v3.2</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
 /* ══════════════════════════════════════════════════
-   WINDI HTML Builder v3.1 — Guardian Edition
+   WINDI HTML Builder v3.2 — Guardian Edition
    Design System: KLAR + NOIR | Bricolage Grotesque
    ══════════════════════════════════════════════════ */
 
@@ -110,6 +110,9 @@ body {
 }
 
 .divider { width:1px; height:24px; background:var(--border); }
+
+.back-link { font-size: 12px; color: var(--text2); border: 1px solid var(--border); }
+.back-link:hover { color: var(--gold); border-color: var(--gold); }
 
 .btn {
   display: inline-flex;
@@ -472,6 +475,25 @@ body {
 .field-row { display:flex; gap:10px; }
 .field-row .field-group { flex:1; }
 
+/* ─── Color Picker ──────────────────────────── */
+.color-picker-row { display:flex; gap:12px; margin-top:8px; }
+.color-picker-group { flex:1; }
+.color-picker-label { font-size:11px; font-weight:600; color:var(--text3); margin-bottom:6px; display:block; }
+.color-swatches { display:flex; flex-wrap:wrap; gap:4px; margin-bottom:6px; }
+.color-swatch {
+  width:22px; height:22px; border-radius:4px; cursor:pointer; border:2px solid transparent;
+  transition: transform 0.1s, border-color 0.1s;
+}
+.color-swatch:hover { transform:scale(1.15); }
+.color-swatch.active { border-color:var(--gold); }
+.color-swatch.transparent { background: linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%), linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%); background-size:8px 8px; background-position:0 0, 4px 4px; }
+.color-input-row { display:flex; gap:4px; align-items:center; }
+.color-hex-input { flex:1; font-family:var(--mono); font-size:11px; padding:4px 6px; border:1px solid var(--border); border-radius:4px; background:var(--bg); color:var(--text); }
+.color-native-picker { width:28px; height:28px; padding:0; border:1px solid var(--border); border-radius:4px; cursor:pointer; }
+.color-preview { width:28px; height:28px; border-radius:4px; border:1px solid var(--border); }
+.color-clear-btn { font-size:10px; padding:2px 6px; background:var(--bg3); border:1px solid var(--border); border-radius:3px; cursor:pointer; color:var(--text3); }
+.color-clear-btn:hover { background:var(--bg2); color:var(--text); }
+
 .item-editor-actions {
   display: flex;
   gap: 8px;
@@ -555,6 +577,7 @@ body {
 .preview-output ul, .preview-output ol { padding-left:1.5em; margin-bottom:.8em; }
 .preview-output li { margin-bottom:.2em; }
 .preview-output blockquote { border-left:3px solid #ccc; padding-left:12px; margin:1em 0; color:#555; font-style:italic; }
+.preview-output [style*="background-color"] { padding:8px 12px; border-radius:4px; margin-bottom:.8em; }
 .preview-output hr { border:none; border-top:1px solid #ddd; margin:1em 0; }
 .preview-output code, .preview-output pre { font-family:monospace; background:#f4f4f4; padding:2px 5px; border-radius:3px; font-size:.9em; }
 .preview-output pre { padding:12px; overflow-x:auto; white-space:pre-wrap; }
@@ -683,13 +706,213 @@ body {
   color: var(--text3);
   font-family: var(--mono);
 }
+
+/* ─── Distribution Modal ────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(4px);
+}
+
+.distribution-modal {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  width: 500px;
+  max-width: 90vw;
+  max-height: 85vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.dist-modal-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg2);
+}
+
+.dist-modal-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dist-modal-body {
+  padding: 16px 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.dist-modal-footer {
+  padding: 12px 20px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  background: var(--bg2);
+}
+
+.channel-status {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 500;
+  border: 1px solid var(--border);
+  background: var(--bg2);
+  color: var(--text3);
+}
+
+.status-badge.configured { color: var(--green); border-color: var(--green); }
+.status-badge.disabled { color: var(--text3); opacity: 0.6; cursor: not-allowed; }
+.status-badge .dot { width: 6px; height: 6px; border-radius: 50%; }
+.status-badge.configured .dot { background: var(--green); }
+.status-badge.disabled .dot { background: var(--text3); }
+
+.recipient-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.recipient-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.recipient-row select {
+  width: 110px;
+  padding: 6px 8px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 12px;
+  color: var(--text);
+}
+
+.recipient-row input {
+  flex: 1;
+  padding: 6px 10px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 12px;
+  color: var(--text);
+}
+
+.recipient-row input:focus, .recipient-row select:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+.recipient-row .remove-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius);
+  border: none;
+  background: transparent;
+  color: var(--text3);
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.recipient-row .remove-btn:hover {
+  background: rgba(192,57,43,0.1);
+  color: var(--red);
+}
+
+.add-recipient-btn {
+  width: 100%;
+  padding: 8px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text3);
+  font-size: 12px;
+  cursor: pointer;
+  transition: var(--trans);
+}
+
+.add-recipient-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.dist-section {
+  margin-bottom: 16px;
+}
+
+.dist-section-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text3);
+  margin-bottom: 6px;
+}
+
+.dist-section select, .dist-section textarea {
+  width: 100%;
+  padding: 8px 10px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 12px;
+  color: var(--text);
+  font-family: var(--font);
+}
+
+.dist-section textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.dist-section select:focus, .dist-section textarea:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+.dist-receipt-info {
+  background: var(--gold-bg);
+  border: 1px solid var(--gold);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  margin-bottom: 16px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--gold);
+}
 </style>
 </head>
 <body>
 <div id="root"></div>
 <script>
 // ══════════════════════════════════════════════════════════════
-// WINDI HTML Builder v3.1 — Guardian Edition
+// WINDI HTML Builder v3.2 — Guardian Edition
 // Port: 8117 | Path: /html-builder/
 // Novidades: Undo/Redo · Auto-save · Item Editor · Duplicate · Reorder
 // AI processes. Human decides. WINDI guarantees.
@@ -702,6 +925,7 @@ const VERIFY_BASE = 'https://windi-domain.com/verify-public/?id=';
 const AUTOSAVE_KEY = 'windi_htmlbuilder_v31';
 const AUTOSAVE_INTERVAL = 15000;
 const TEMPLATES_URL = '/vault/api/templates';
+const DRAGON_CHAT_URL = '/api/dragon-chat';
 
 const { useState, useReducer, useEffect, useRef, useCallback } = React;
 const { createRoot } = ReactDOM;
@@ -715,6 +939,7 @@ const I18N = {
     code: '</> Code', codeOff: '</> Code',
     download: '⬇ HTML', seal: '🔏 Siegeln', sealing: '⏳ Siegelt…',
     themeKlar: '☀ KLAR', themeNoir: '🌙 NOIR',
+    palette: 'Palette', backToPalette: 'Zurück zur Palette',
     structure: 'Struktur',
     addElement: '+ Element hinzufügen',
     items: 'Elemente', chars: 'Zeichen', unsaved: '● ungespeichert',
@@ -763,6 +988,8 @@ const I18N = {
     htmlCopied: 'HTML kopiert', copyErr: 'Kopieren fehlgeschlagen',
     htmlExported: 'HTML exportiert',
     copyHtml: '⎘ Kopieren',
+    // Color Picker
+    textColor: 'Textfarbe', bgColor: 'Hintergrund', clearColor: 'Löschen', transparent: 'Transparent',
     moveUp: '↑', moveDown: '↓', del: '×', dup: '⎘',
     titleMoveUp: 'Nach oben', titleMoveDown: 'Nach unten', titleDup: 'Duplizieren', titleDel: 'Entfernen',
     videoUrl: 'Video-URL', posterUrl: 'Poster-URL (optional)', embedUrl: 'Embed-URL (YouTube, Vimeo, etc.)', width: 'Breite', height: 'Höhe',
@@ -772,6 +999,19 @@ const I18N = {
     templateShared: 'Geteilt', templateSaved: (n) => `Vorlage gespeichert: ${n}`, templateLoaded: (n) => `Vorlage geladen: ${n} Elemente`,
     noTemplates: 'Keine Vorlagen', loadReplace: 'Ersetzen', loadAppend: 'Anhängen',
     cats: { report:'Bericht', invoice:'Rechnung', communique:'Communiqué', presentation:'Präsentation', legal:'Rechtlich', generic:'Allgemein' },
+    // Distribution
+    send: 'Senden', sendTitle: 'Dokument verteilen', sending: 'Sendet…',
+    channels: 'Kanäle', recipients: 'Empfänger', addRecipient: '+ Empfänger',
+    channelEmail: 'E-Mail', channelSms: 'SMS', channelWhatsapp: 'WhatsApp', channelLinkedin: 'LinkedIn',
+    channelLinkedinPost: 'LinkedIn Post', channelLinkedinDm: 'LinkedIn DM',
+    configured: 'Konfiguriert', notConfigured: 'Nicht konfiguriert',
+    messageTemplate: 'Nachrichtenvorlage', customMessage: 'Benutzerdefinierte Nachricht',
+    recipientPlaceholder: 'E-Mail / Telefon / WhatsApp',
+    sendBtn: 'Senden', sendingBtn: 'Sendet…',
+    noReceipt: 'Erst siegeln, dann senden',
+    sentSuccess: (n) => `Erfolgreich an ${n} Empfänger gesendet`,
+    sentPartial: (s, f) => `${s} gesendet, ${f} fehlgeschlagen`,
+    sendErr: 'Sendefehler: ',
   },
   en: {
     undo: '↩ Undo', redo: '↪ Redo',
@@ -780,6 +1020,7 @@ const I18N = {
     code: '</> Code', codeOff: '</> Code',
     download: '⬇ HTML', seal: '🔏 Seal', sealing: '⏳ Sealing…',
     themeKlar: '☀ KLAR', themeNoir: '🌙 NOIR',
+    palette: 'Palette', backToPalette: 'Back to Palette',
     structure: 'Structure',
     addElement: '+ Add Element',
     items: 'items', chars: 'chars', unsaved: '● unsaved',
@@ -828,6 +1069,8 @@ const I18N = {
     htmlCopied: 'HTML copied', copyErr: 'Failed to copy',
     htmlExported: 'HTML exported',
     copyHtml: '⎘ Copy',
+    // Color Picker
+    textColor: 'Text Color', bgColor: 'Background', clearColor: 'Clear', transparent: 'Transparent',
     moveUp: '↑', moveDown: '↓', del: '×', dup: '⎘',
     titleMoveUp: 'Move up', titleMoveDown: 'Move down', titleDup: 'Duplicate', titleDel: 'Remove',
     videoUrl: 'Video URL', posterUrl: 'Poster URL (optional)', embedUrl: 'Embed URL (YouTube, Vimeo, etc.)', width: 'Width', height: 'Height',
@@ -837,6 +1080,19 @@ const I18N = {
     templateShared: 'Shared', templateSaved: (n) => `Template saved: ${n}`, templateLoaded: (n) => `Template loaded: ${n} items`,
     noTemplates: 'No templates', loadReplace: 'Replace', loadAppend: 'Append',
     cats: { report:'Report', invoice:'Invoice', communique:'Communiqué', presentation:'Presentation', legal:'Legal', generic:'Generic' },
+    // Distribution
+    send: 'Send', sendTitle: 'Distribute Document', sending: 'Sending…',
+    channels: 'Channels', recipients: 'Recipients', addRecipient: '+ Recipient',
+    channelEmail: 'Email', channelSms: 'SMS', channelWhatsapp: 'WhatsApp', channelLinkedin: 'LinkedIn',
+    channelLinkedinPost: 'LinkedIn Post', channelLinkedinDm: 'LinkedIn DM',
+    configured: 'Configured', notConfigured: 'Not configured',
+    messageTemplate: 'Message Template', customMessage: 'Custom Message',
+    recipientPlaceholder: 'Email / Phone / WhatsApp',
+    sendBtn: 'Send', sendingBtn: 'Sending…',
+    noReceipt: 'Seal first, then send',
+    sentSuccess: (n) => `Successfully sent to ${n} recipient${n !== 1 ? 's' : ''}`,
+    sentPartial: (s, f) => `${s} sent, ${f} failed`,
+    sendErr: 'Send error: ',
   },
   pt: {
     undo: '↩ Desfazer', redo: '↪ Refazer',
@@ -845,6 +1101,7 @@ const I18N = {
     code: '</> Código', codeOff: '</> Código',
     download: '⬇ HTML', seal: '🔏 Selar', sealing: '⏳ Selando…',
     themeKlar: '☀ KLAR', themeNoir: '🌙 NOIR',
+    palette: 'Palette', backToPalette: 'Voltar à Palette',
     structure: 'Estrutura',
     addElement: '+ Adicionar Elemento',
     items: 'itens', chars: 'chars', unsaved: '● não salvo',
@@ -893,6 +1150,8 @@ const I18N = {
     htmlCopied: 'HTML copiado', copyErr: 'Falha ao copiar',
     htmlExported: 'HTML exportado',
     copyHtml: '⎘ Copiar',
+    // Color Picker
+    textColor: 'Cor do Texto', bgColor: 'Fundo', clearColor: 'Limpar', transparent: 'Transparente',
     moveUp: '↑', moveDown: '↓', del: '×', dup: '⎘',
     titleMoveUp: 'Mover acima', titleMoveDown: 'Mover abaixo', titleDup: 'Duplicar', titleDel: 'Remover',
     videoUrl: 'URL do Vídeo', posterUrl: 'URL do Poster (opcional)', embedUrl: 'URL do Embed (YouTube, Vimeo, etc.)', width: 'Largura', height: 'Altura',
@@ -902,6 +1161,19 @@ const I18N = {
     templateShared: 'Compartilhado', templateSaved: (n) => `Template salvo: ${n}`, templateLoaded: (n) => `Template carregado: ${n} itens`,
     noTemplates: 'Nenhum template', loadReplace: 'Substituir', loadAppend: 'Anexar',
     cats: { report:'Relatório', invoice:'Fatura', communique:'Communiqué', presentation:'Apresentação', legal:'Jurídico', generic:'Genérico' },
+    // Distribution
+    send: 'Enviar', sendTitle: 'Distribuir Documento', sending: 'Enviando…',
+    channels: 'Canais', recipients: 'Destinatários', addRecipient: '+ Destinatário',
+    channelEmail: 'Email', channelSms: 'SMS', channelWhatsapp: 'WhatsApp', channelLinkedin: 'LinkedIn',
+    channelLinkedinPost: 'LinkedIn Post', channelLinkedinDm: 'LinkedIn DM',
+    configured: 'Configurado', notConfigured: 'Não configurado',
+    messageTemplate: 'Modelo de Mensagem', customMessage: 'Mensagem Personalizada',
+    recipientPlaceholder: 'Email / Telefone / WhatsApp',
+    sendBtn: 'Enviar', sendingBtn: 'Enviando…',
+    noReceipt: 'Sele primeiro, depois envie',
+    sentSuccess: (n) => `Enviado com sucesso para ${n} destinatário${n !== 1 ? 's' : ''}`,
+    sentPartial: (s, f) => `${s} enviado${s !== 1 ? 's' : ''}, ${f} falhou`,
+    sendErr: 'Erro ao enviar: ',
   },
 };
 
@@ -958,6 +1230,20 @@ const ITEM_TYPES_I18N = {
 };
 const ITEM_TYPES = ITEM_TYPES_I18N.pt;
 
+// ─── WINDI Color Palette ────────────────────────────────────────
+const WINDI_COLORS = [
+  { name: 'Gold',       hex: '#8B6914', label: { de: 'Gold', en: 'Gold', pt: 'Dourado' } },
+  { name: 'Pergaminho', hex: '#F5F0E0', label: { de: 'Pergament', en: 'Parchment', pt: 'Pergaminho' } },
+  { name: 'Preto',      hex: '#1A1A1A', label: { de: 'Schwarz', en: 'Black', pt: 'Preto' } },
+  { name: 'Cinza',      hex: '#6B6B6B', label: { de: 'Grau', en: 'Gray', pt: 'Cinza' } },
+  { name: 'Branco',     hex: '#FFFFFF', label: { de: 'Weiß', en: 'White', pt: 'Branco' } },
+  { name: 'Noir BG',    hex: '#1E1E1E', label: { de: 'Noir Hg', en: 'Noir BG', pt: 'Noir Fundo' } },
+  { name: 'Noir Card',  hex: '#2A2A2A', label: { de: 'Noir Karte', en: 'Noir Card', pt: 'Noir Card' } },
+  { name: 'Vermelho',   hex: '#C0392B', label: { de: 'Rot', en: 'Red', pt: 'Vermelho' } },
+  { name: 'Verde',      hex: '#27AE60', label: { de: 'Grün', en: 'Green', pt: 'Verde' } },
+  { name: 'Azul',       hex: '#2C5F8A', label: { de: 'Blau', en: 'Blue', pt: 'Azul' } },
+];
+
 let _seq = 1;
 const genId = () => `item_${Date.now()}_${_seq++}`;
 
@@ -998,7 +1284,12 @@ function buildHTML(items, docMeta) {
   const lines = items.map(item => {
     const cls = item.className ? ` class="${item.className}"` : '';
     const id  = item.id_attr   ? ` id="${item.id_attr}"`      : '';
-    const attrs = cls + id;
+    // Build inline styles for colors
+    const colorStyles = [];
+    if (item.textColor) colorStyles.push(`color:${item.textColor}`);
+    if (item.bgColor) colorStyles.push(`background-color:${item.bgColor}`);
+    const styleAttr = colorStyles.length > 0 ? ` style="${colorStyles.join(';')}"` : '';
+    const attrs = cls + id + styleAttr;
     switch (item.type) {
       case 'h1': return `<h1${attrs}>${item.content||''}</h1>`;
       case 'h2': return `<h2${attrs}>${item.content||''}</h2>`;
@@ -1007,8 +1298,8 @@ function buildHTML(items, docMeta) {
       case 'ul': { const lis = (item.content||'').split('\n').filter(Boolean).map(l => `  <li>${l.trim()}</li>`).join('\n'); return `<ul${attrs}>\n${lis}\n</ul>`; }
       case 'ol': { const lis = (item.content||'').split('\n').filter(Boolean).map(l => `  <li>${l.trim()}</li>`).join('\n'); return `<ol${attrs}>\n${lis}\n</ol>`; }
       case 'blockquote': return `<blockquote${attrs}>${item.content||''}</blockquote>`;
-      case 'hr': return `<hr${attrs}/>`;
-      case 'img': { const src = item.src || item.content || ''; const alt = item.alt || ''; return `<img${attrs} src="${src}" alt="${alt}" style="max-width:100%;"/>`; }
+      case 'hr': return `<hr${cls}${id}/>`;
+      case 'img': { const src = item.src || item.content || ''; const alt = item.alt || ''; const imgStyle = colorStyles.length > 0 ? `max-width:100%;${colorStyles.join(';')}` : 'max-width:100%'; return `<img${cls}${id} src="${src}" alt="${alt}" style="${imgStyle}"/>`; }
       case 'code': { const lang = item.lang || ''; return `<pre${attrs}><code class="language-${lang}">${item.content||''}</code></pre>`; }
       case 'table': {
         const rows = (item.content||'').split('\n').filter(Boolean).map(r => r.split('|'));
@@ -1019,8 +1310,8 @@ function buildHTML(items, docMeta) {
         return `<table${attrs}>\n  <thead><tr>${ths}</tr></thead>\n  <tbody>\n${trs}\n  </tbody>\n</table>`;
       }
       case 'div': { const inner = item.content ? `\n  ${item.content}\n` : ''; return `<div${attrs}>${inner}</div>`; }
-      case 'video': { const src = item.src || item.content || ''; const poster = item.poster ? ` poster="${item.poster}"` : ''; const autoplay = item.autoplay ? ' autoplay' : ''; const loop = item.loop ? ' loop' : ''; const muted = item.muted ? ' muted' : ''; return `<video${attrs} src="${src}"${poster} controls${autoplay}${loop}${muted} style="max-width:100%;"></video>`; }
-      case 'iframe': { const src = item.src || item.content || ''; const w = item.width || '560'; const h = item.height || '315'; return `<iframe${attrs} src="${src}" width="${w}" height="${h}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="max-width:100%;"></iframe>`; }
+      case 'video': { const src = item.src || item.content || ''; const poster = item.poster ? ` poster="${item.poster}"` : ''; const autoplay = item.autoplay ? ' autoplay' : ''; const loop = item.loop ? ' loop' : ''; const muted = item.muted ? ' muted' : ''; const vidStyle = colorStyles.length > 0 ? `max-width:100%;${colorStyles.join(';')}` : 'max-width:100%'; return `<video${cls}${id} src="${src}"${poster} controls${autoplay}${loop}${muted} style="${vidStyle}"></video>`; }
+      case 'iframe': { const src = item.src || item.content || ''; const w = item.width || '560'; const h = item.height || '315'; const ifrStyle = colorStyles.length > 0 ? `max-width:100%;${colorStyles.join(';')}` : 'max-width:100%'; return `<iframe${cls}${id} src="${src}" width="${w}" height="${h}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="${ifrStyle}"></iframe>`; }
       default: return `<!-- unknown: ${item.type} -->`;
     }
   });
@@ -1044,10 +1335,15 @@ function ItemCard({ item, active, onSelect, onDelete, onDuplicate, onMoveUp, onM
   const _t = t || I18N.pt;
   const preview = item.type === 'hr' ? '─────────' : item.type === 'img' ? (item.src || item.content || '(no src)') : (item.content || '').replace(/\n/g, ' ').slice(0, 40);
   const typeDef = ITEM_TYPES.find(td => td.type === item.type) || { icon:'?', label: item.type };
+  const hasColors = item.textColor || item.bgColor;
   return React.createElement('div', { className: `item-card ${active ? 'active' : ''}`, onClick: onSelect },
     React.createElement('div', { className:'item-card-header' },
       React.createElement('span', { className:`item-badge type-${item.type}` }, typeDef.icon),
       React.createElement('span', { className:'item-name' }, item.label || typeDef.label),
+      hasColors && React.createElement('span', { style:{marginLeft:'auto', display:'flex', gap:2} },
+        item.textColor && React.createElement('span', { style:{width:10, height:10, borderRadius:2, backgroundColor:item.textColor, border:'1px solid rgba(0,0,0,0.2)'}, title:'Text' }),
+        item.bgColor && React.createElement('span', { style:{width:10, height:10, borderRadius:2, backgroundColor:item.bgColor, border:'1px solid rgba(0,0,0,0.2)'}, title:'BG' })
+      ),
     ),
     preview && React.createElement('div', { className:'item-preview' }, preview),
     React.createElement('div', { className:'item-actions', onClick: e => e.stopPropagation() },
@@ -1060,7 +1356,7 @@ function ItemCard({ item, active, onSelect, onDelete, onDuplicate, onMoveUp, onM
 }
 
 // ─── ItemEditor ────────────────────────────────────────────────
-function ItemEditor({ item, onChange, onClose, t: tProp }) {
+function ItemEditor({ item, onChange, onClose, t: tProp, uiLang = 'pt' }) {
   const _t = tProp || I18N.pt;
   const [draft, setDraft] = useState({ ...item });
   const typeDef = ITEM_TYPES.find(td => td.type === draft.type) || {};
@@ -1137,6 +1433,80 @@ function ItemEditor({ item, onChange, onClose, t: tProp }) {
     needsContent && !needsSrc && !needsTable && React.createElement('div', { className:'field-group' },
       React.createElement('label', { className:'field-label' }, draft.type === 'ul' || draft.type === 'ol' ? _t.listItems : draft.type === 'div' ? _t.htmlInner : _t.content),
       React.createElement('textarea', { className:'field-textarea', value: draft.content||'', placeholder: typeDef.defaultContent, onChange: e => update('content', e.target.value) }),
+    ),
+    // ─── Color Picker Section ───────────────────────────────────
+    draft.type !== 'hr' && React.createElement('div', { className:'color-picker-row' },
+      // Text Color
+      React.createElement('div', { className:'color-picker-group' },
+        React.createElement('span', { className:'color-picker-label' }, _t.textColor || 'Text Color'),
+        React.createElement('div', { className:'color-swatches' },
+          WINDI_COLORS.map(c => React.createElement('div', {
+            key: c.hex,
+            className: `color-swatch ${draft.textColor === c.hex ? 'active' : ''}`,
+            style: { backgroundColor: c.hex },
+            title: c.label[uiLang] || c.name,
+            onClick: () => update('textColor', c.hex)
+          }))
+        ),
+        React.createElement('div', { className:'color-input-row' },
+          React.createElement('input', {
+            type: 'color',
+            className: 'color-native-picker',
+            value: draft.textColor || '#1A1A1A',
+            onChange: e => update('textColor', e.target.value)
+          }),
+          React.createElement('input', {
+            type: 'text',
+            className: 'color-hex-input',
+            placeholder: '#HEX',
+            value: draft.textColor || '',
+            onChange: e => update('textColor', e.target.value)
+          }),
+          draft.textColor && React.createElement('button', {
+            className: 'color-clear-btn',
+            onClick: () => update('textColor', ''),
+            title: _t.clearColor || 'Clear'
+          }, '✕')
+        )
+      ),
+      // Background Color
+      React.createElement('div', { className:'color-picker-group' },
+        React.createElement('span', { className:'color-picker-label' }, _t.bgColor || 'Background'),
+        React.createElement('div', { className:'color-swatches' },
+          React.createElement('div', {
+            className: `color-swatch transparent ${!draft.bgColor ? 'active' : ''}`,
+            title: _t.transparent || 'Transparent',
+            onClick: () => update('bgColor', '')
+          }),
+          WINDI_COLORS.map(c => React.createElement('div', {
+            key: c.hex,
+            className: `color-swatch ${draft.bgColor === c.hex ? 'active' : ''}`,
+            style: { backgroundColor: c.hex },
+            title: c.label[uiLang] || c.name,
+            onClick: () => update('bgColor', c.hex)
+          }))
+        ),
+        React.createElement('div', { className:'color-input-row' },
+          React.createElement('input', {
+            type: 'color',
+            className: 'color-native-picker',
+            value: draft.bgColor || '#FFFFFF',
+            onChange: e => update('bgColor', e.target.value)
+          }),
+          React.createElement('input', {
+            type: 'text',
+            className: 'color-hex-input',
+            placeholder: '#HEX',
+            value: draft.bgColor || '',
+            onChange: e => update('bgColor', e.target.value)
+          }),
+          draft.bgColor && React.createElement('button', {
+            className: 'color-clear-btn',
+            onClick: () => update('bgColor', ''),
+            title: _t.clearColor || 'Clear'
+          }, '✕')
+        )
+      )
     ),
     React.createElement('div', { className:'item-editor-actions' },
       React.createElement('button', { className:'btn btn-gold', onClick:apply }, _t.apply),
@@ -1248,10 +1618,10 @@ function TemplateLibrary({ items, docMeta, onLoad, t, uiLang }) {
 // ─── Main App ──────────────────────────────────────────────────
 function App() {
   const { items, canUndo, canRedo, set, undo, redo, reset } = useHistory([]);
-  const [uiLang, setUiLang] = useState('pt');
+  const [uiLang, setUiLang] = useState(() => localStorage.getItem('windi_hb_lang') || 'pt');
   const t = I18N[uiLang] || I18N.pt;
   const TYPES = ITEM_TYPES_I18N[uiLang] || ITEM_TYPES_I18N.pt;
-  const [theme, setTheme] = useState('klar');
+  const [theme, setTheme] = useState(() => localStorage.getItem('windi_hb_theme') || 'klar');
   const [activeId, setActiveId] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [showPreview, setShowPreview] = useState(true);
@@ -1263,8 +1633,17 @@ function App() {
   const [docMeta, setDocMeta] = useState({ title: 'Documento WINDI', lang: 'pt-BR', governance: 'MEDIUM', css: '' });
   const [sideTab, setSideTab] = useState('structure'); // 'structure' | 'templates'
   const autosaveTimer = useRef(null);
+  // Distribution state
+  const [showDistribute, setShowDistribute] = useState(false);
+  const [distRecipients, setDistRecipients] = useState([{ channel: 'email', value: '' }]);
+  const [distSending, setDistSending] = useState(false);
+  const [channelStatus, setChannelStatus] = useState(null);
+  const [msgTemplates, setMsgTemplates] = useState([]);
+  const [selectedTemplate, setSelectedTemplate] = useState('');
+  const [customMessage, setCustomMessage] = useState('');
 
-  useEffect(() => { document.documentElement.setAttribute('data-theme', theme === 'noir' ? 'noir' : ''); }, [theme]);
+  useEffect(() => { document.documentElement.setAttribute('data-theme', theme === 'noir' ? 'noir' : ''); localStorage.setItem('windi_hb_theme', theme); }, [theme]);
+  useEffect(() => { localStorage.setItem('windi_hb_lang', uiLang); }, [uiLang]);
 
   useEffect(() => {
     clearTimeout(autosaveTimer.current);
@@ -1327,9 +1706,187 @@ function App() {
   function handleDownload() { const blob = new Blob([fullHTML], { type:'text/html;charset=utf-8' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = (docMeta.title || 'documento').replace(/\s+/g,'-').toLowerCase() + '.html'; a.click(); URL.revokeObjectURL(url); toast('success', t.htmlExported); }
   function handleCopyHTML() { navigator.clipboard.writeText(htmlOutput).then(() => toast('success', t.htmlCopied)).catch(() => toast('error', t.copyErr)); }
 
+  // ─── Distribution Functions ───────────────────────────────────
+  async function fetchChannelStatus() {
+    try {
+      const resp = await fetch(DRAGON_CHAT_URL + '/distribute/status');
+      if (resp.ok) { const data = await resp.json(); setChannelStatus(data.channels); }
+    } catch (e) { console.error('Failed to fetch channel status:', e); }
+  }
+
+  async function fetchMsgTemplates() {
+    try {
+      const resp = await fetch(DRAGON_CHAT_URL + '/message-templates?lang=' + uiLang);
+      if (resp.ok) { const data = await resp.json(); setMsgTemplates(data.templates || []); }
+    } catch (e) { console.error('Failed to fetch templates:', e); }
+  }
+
+  function openDistributeModal() {
+    if (!receipt) { toast('error', t.noReceipt); return; }
+    fetchChannelStatus();
+    fetchMsgTemplates();
+    setShowDistribute(true);
+  }
+
+  function addDistRecipient() {
+    setDistRecipients(rs => [...rs, { channel: 'email', value: '' }]);
+  }
+
+  function updateDistRecipient(idx, field, value) {
+    setDistRecipients(rs => rs.map((r, i) => i === idx ? { ...r, [field]: value } : r));
+  }
+
+  function removeDistRecipient(idx) {
+    setDistRecipients(rs => rs.filter((_, i) => i !== idx));
+  }
+
+  async function handleDistribute() {
+    const validRecipients = distRecipients.filter(r => r.value.trim());
+    if (validRecipients.length === 0) { toast('error', t.sendErr + 'No recipients'); return; }
+    if (!receipt) { toast('error', t.noReceipt); return; }
+
+    setDistSending(true);
+    try {
+      const payload = {
+        recipients: validRecipients,
+        doc_title: docMeta.title || 'HTML Document',
+        doc_content: htmlOutput.slice(0, 500),
+        receipt_id: receipt.id,
+        lang: uiLang,
+        template_id: selectedTemplate || null,
+        custom_message: customMessage || null,
+      };
+      const resp = await fetch(DRAGON_CHAT_URL + '/distribute', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await resp.json();
+      if (data.success) {
+        toast('success', t.sentSuccess(data.total_sent));
+        setShowDistribute(false);
+        setDistRecipients([{ channel: 'email', value: '' }]);
+        setCustomMessage('');
+        setSelectedTemplate('');
+      } else if (data.total_sent > 0) {
+        toast('info', t.sentPartial(data.total_sent, data.total_failed));
+      } else {
+        toast('error', t.sendErr + (data.failed?.[0]?.error || 'Unknown error'));
+      }
+    } catch (e) {
+      toast('error', t.sendErr + e.message);
+    } finally {
+      setDistSending(false);
+    }
+  }
+
+  // ─── Distribution Modal Component ─────────────────────────────
+  function DistributionModal() {
+    const channels = ['email', 'sms', 'whatsapp', 'linkedin'];
+    const channelLabels = { email: t.channelEmail, sms: t.channelSms, whatsapp: t.channelWhatsapp, linkedin: t.channelLinkedin };
+
+    return React.createElement('div', { className: 'modal-overlay', onClick: () => setShowDistribute(false) },
+      React.createElement('div', { className: 'distribution-modal', onClick: e => e.stopPropagation() },
+        // Header
+        React.createElement('div', { className: 'dist-modal-header' },
+          React.createElement('span', { className: 'dist-modal-title' }, '📤 ', t.sendTitle),
+          React.createElement('button', { className: 'btn btn-ghost', onClick: () => setShowDistribute(false) }, '✕')
+        ),
+        // Body
+        React.createElement('div', { className: 'dist-modal-body' },
+          // Receipt info
+          receipt && React.createElement('div', { className: 'dist-receipt-info' },
+            '🔏 ', receipt.id, ' • ', docMeta.title
+          ),
+          // Channel status
+          React.createElement('div', { className: 'dist-section' },
+            React.createElement('div', { className: 'dist-section-label' }, t.channels),
+            React.createElement('div', { className: 'channel-status' },
+              channels.map(ch => {
+                const isConfigured = channelStatus?.[ch]?.configured;
+                return React.createElement('span', {
+                  key: ch,
+                  className: `status-badge ${isConfigured ? 'configured' : ''}`,
+                  title: isConfigured ? t.configured : t.notConfigured
+                },
+                  React.createElement('span', { className: 'dot' }),
+                  channelLabels[ch]
+                );
+              })
+            )
+          ),
+          // Recipients
+          React.createElement('div', { className: 'dist-section' },
+            React.createElement('div', { className: 'dist-section-label' }, t.recipients),
+            React.createElement('div', { className: 'recipient-list' },
+              distRecipients.map((r, idx) =>
+                React.createElement('div', { key: idx, className: 'recipient-row' },
+                  React.createElement('select', {
+                    value: r.channel,
+                    onChange: e => updateDistRecipient(idx, 'channel', e.target.value)
+                  },
+                    React.createElement('option', { value: 'email' }, t.channelEmail),
+                    React.createElement('option', { value: 'sms' }, t.channelSms),
+                    React.createElement('option', { value: 'whatsapp' }, t.channelWhatsapp),
+                    React.createElement('option', { value: 'linkedin_post', disabled: !channelStatus?.linkedin?.configured }, t.channelLinkedinPost),
+                    React.createElement('option', { value: 'linkedin_dm', disabled: !channelStatus?.linkedin?.configured }, t.channelLinkedinDm)
+                  ),
+                  r.channel !== 'linkedin_post' && React.createElement('input', {
+                    type: 'text',
+                    placeholder: r.channel === 'linkedin_dm' ? 'LinkedIn Profile ID' : t.recipientPlaceholder,
+                    value: r.value,
+                    onChange: e => updateDistRecipient(idx, 'value', e.target.value)
+                  }),
+                  r.channel === 'linkedin_post' && React.createElement('span', { className: 'post-note' }, '→ Posts to company page'),
+                  distRecipients.length > 1 && React.createElement('button', {
+                    className: 'remove-btn',
+                    onClick: () => removeDistRecipient(idx)
+                  }, '×')
+                )
+              ),
+              React.createElement('button', { className: 'add-recipient-btn', onClick: addDistRecipient }, t.addRecipient)
+            )
+          ),
+          // Template selection
+          React.createElement('div', { className: 'dist-section' },
+            React.createElement('div', { className: 'dist-section-label' }, t.messageTemplate),
+            React.createElement('select', {
+              value: selectedTemplate,
+              onChange: e => setSelectedTemplate(e.target.value)
+            },
+              React.createElement('option', { value: '' }, '— Default —'),
+              msgTemplates.map(tmpl =>
+                React.createElement('option', { key: tmpl.id, value: tmpl.id }, tmpl.name, ' (', tmpl.channel, ')')
+              )
+            )
+          ),
+          // Custom message
+          React.createElement('div', { className: 'dist-section' },
+            React.createElement('div', { className: 'dist-section-label' }, t.customMessage),
+            React.createElement('textarea', {
+              placeholder: t.customMessage + '…',
+              value: customMessage,
+              onChange: e => setCustomMessage(e.target.value)
+            })
+          )
+        ),
+        // Footer
+        React.createElement('div', { className: 'dist-modal-footer' },
+          React.createElement('button', { className: 'btn btn-ghost', onClick: () => setShowDistribute(false) }, t.cancel),
+          React.createElement('button', {
+            className: 'btn btn-gold',
+            onClick: handleDistribute,
+            disabled: distSending || distRecipients.every(r => !r.value.trim())
+          }, distSending ? t.sendingBtn : t.sendBtn)
+        )
+      )
+    );
+  }
+
   return React.createElement('div', { className:'app' },
     React.createElement('div', { className:'topbar' },
-      React.createElement('div', { className:'topbar-brand' }, React.createElement('div', { className:'logo' }, 'W'), React.createElement('div', { className:'name' }, 'HTML BUILDER'), React.createElement('div', { className:'version' }, 'v3.1')),
+      React.createElement('a', { href:'/app/', className:'btn btn-ghost back-link', title: t.backToPalette, style:{marginRight:8, textDecoration:'none'} }, '← ' + t.palette),
+      React.createElement('div', { className:'topbar-brand' }, React.createElement('div', { className:'logo' }, 'W'), React.createElement('div', { className:'name' }, 'HTML BUILDER'), React.createElement('div', { className:'version' }, 'v3.2')),
       React.createElement('div', { className:'divider' }),
       React.createElement('div', { className:'topbar-actions' }, React.createElement('button', { className:'btn btn-ghost', onClick:undo, disabled:!canUndo, title:'Undo (Ctrl+Z)' }, t.undo), React.createElement('button', { className:'btn btn-ghost', onClick:redo, disabled:!canRedo, title:'Redo (Ctrl+Y)' }, t.redo)),
       React.createElement('div', { className:'divider' }),
@@ -1339,6 +1896,7 @@ function App() {
         React.createElement('button', { className:'btn btn-ghost', onClick:()=>setShowCode(c=>!c) }, showCode ? t.code : t.codeOff),
         React.createElement('button', { className:'btn btn-outline', onClick:handleDownload }, t.download),
         React.createElement('button', { className:'btn btn-gold', onClick:handleSeal, disabled:sealing }, sealing ? t.sealing : t.seal),
+        React.createElement('button', { className:'btn btn-gold', onClick:openDistributeModal, disabled:!receipt, title:!receipt ? t.noReceipt : '' }, '📤 ' + t.send),
         React.createElement('div', { className:'divider' }),
         React.createElement('div', { style:{display:'flex', gap:2, background:'var(--bg3)', border:'1px solid var(--border)', borderRadius:'var(--radius)', padding:'2px'} },
           ['de','en','pt'].map(lg => React.createElement('button', { key: lg, className: 'btn btn-ghost', style: { padding: '3px 8px', fontSize: 11, fontFamily: 'var(--mono)', fontWeight: 600, background: uiLang === lg ? 'var(--gold)' : 'transparent', color: uiLang === lg ? '#fff' : 'var(--text3)', borderRadius: 3 }, onClick: () => setUiLang(lg) }, lg.toUpperCase()))
@@ -1348,7 +1906,7 @@ function App() {
       ),
     ),
     React.createElement('div', { className:'statusbar' },
-      React.createElement('span', null, React.createElement('span', { className:'status-dot' }), ' v3.1'),
+      React.createElement('span', null, React.createElement('span', { className:'status-dot' }), ' v3.2'),
       React.createElement('span', { className:'sep' }, '|'),
       React.createElement('span', null, `${items.length} ${t.items}`),
       React.createElement('span', { className:'sep' }, '|'),
@@ -1400,7 +1958,7 @@ function App() {
             ),
             React.createElement('div', { className:'field-group' }, React.createElement('label', { className:'field-label' }, t.globalCss), React.createElement('textarea', { className:'field-textarea', value: docMeta.css, placeholder: 'body { font-family: Arial; }', style:{ minHeight:60 }, onChange: e => setDocMeta(m => ({ ...m, css: e.target.value })) })),
           ),
-          editingItem && React.createElement(ItemEditor, { key: editingItem.id, item: editingItem, t, onChange: data => updateItem(editingItem.id, data), onClose: () => setEditingId(null) }),
+          editingItem && React.createElement(ItemEditor, { key: editingItem.id, item: editingItem, t, uiLang, onChange: data => updateItem(editingItem.id, data), onClose: () => setEditingId(null) }),
           showCode && React.createElement('div', { style:{marginBottom:16} },
             React.createElement('div', { style:{ display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:8 } }, React.createElement('span', { style:{fontSize:11, fontWeight:600, color:'var(--text3)', textTransform:'uppercase', letterSpacing:'0.6px'} }, t.htmlGenerated), React.createElement('button', { className:'btn btn-ghost', onClick:handleCopyHTML }, t.copyHtml)),
             React.createElement('div', { className:'code-output' }, htmlOutput || '<!-- no items -->'),
@@ -1420,6 +1978,9 @@ function App() {
         ),
       ),
     ),
+    // Distribution Modal
+    showDistribute && React.createElement(DistributionModal, null),
+    // Toasts
     React.createElement('div', { className:'toast-container' }, toasts.map(toast => React.createElement('div', { key:toast.id, className:`toast ${toast.type}` }, toast.type === 'success' ? '✓' : toast.type === 'error' ? '✕' : 'ℹ', toast.msg))),
   );
 }
