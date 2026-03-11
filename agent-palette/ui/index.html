@@ -124,6 +124,160 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
   align-items: center;
   justify-content: center;
 }
+
+/* ═══════════════════════════════════════════════════════
+   USER AREA — Dropdown Panel v1.0
+   "SIDEBAR = FERRAMENTAS | USER AREA = IDENTIDADE"
+   ═══════════════════════════════════════════════════════ */
+.user-area-trigger {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+.user-area-trigger:hover {
+  transform: scale(1.05);
+}
+.user-area-trigger.active {
+  box-shadow: 0 0 0 3px rgba(139, 105, 20, 0.3);
+}
+.user-area-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+.user-area-status-dot {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  background: #10b981;
+  border: 2px solid var(--windi-bg, #f5f0e0);
+  border-radius: 50%;
+}
+.user-area-panel {
+  position: fixed;
+  bottom: 80px;
+  left: 64px;
+  width: 300px;
+  border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  z-index: 1001;
+  animation: uaFadeIn 0.15s ease;
+}
+@keyframes uaFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.ua-header {
+  padding: 16px;
+}
+.ua-identity-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.ua-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+}
+.ua-identity { flex: 1; min-width: 0; }
+.ua-name { font-weight: 700; font-size: 14px; margin-bottom: 2px; }
+.ua-email { font-size: 10px; font-family: 'JetBrains Mono', monospace; }
+.ua-badges { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.ua-tier-badge {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+.ua-pioneer-badge { font-size: 9px; font-family: 'JetBrains Mono', monospace; }
+.ua-did-row {
+  padding: 4px 8px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 10px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.ua-section {
+  padding: 12px 16px;
+  border-top: 1px solid rgba(0,0,0,0.08);
+}
+.ua-section-title {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  opacity: 0.5;
+}
+.ua-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  margin-bottom: 2px;
+}
+.ua-menu-item:hover { background: rgba(0,0,0,0.05); }
+.ua-menu-item-icon { font-size: 15px; width: 18px; text-align: center; opacity: 0.7; }
+.ua-menu-item-content { flex: 1; min-width: 0; }
+.ua-menu-item-label { font-size: 13px; font-weight: 500; }
+.ua-menu-item-sublabel { font-size: 10px; opacity: 0.6; font-family: 'JetBrains Mono', monospace; margin-top: 1px; }
+.ua-menu-item-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.ua-wallet-preview {
+  margin: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+}
+.ua-wallet-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.ua-wallet-label { font-size: 10px; font-family: 'JetBrains Mono', monospace; opacity: 0.6; }
+.ua-wallet-amount { font-size: 22px; font-weight: 800; line-height: 1.1; }
+.ua-wallet-unit { font-size: 12px; font-weight: 600; }
+.ua-credits-bar { margin-top: 6px; }
+.ua-credits-bar-labels { display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 3px; font-family: 'JetBrains Mono', monospace; opacity: 0.6; }
+.ua-credits-bar-track { height: 4px; border-radius: 2px; overflow: hidden; }
+.ua-credits-bar-fill { height: 100%; border-radius: 2px; transition: width 0.6s ease; }
+.ua-gov-score {
+  margin: 8px 12px 0;
+  padding: 8px 12px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.ua-gov-item-label { font-size: 10px; font-family: 'JetBrains Mono', monospace; opacity: 0.6; }
+.ua-gov-item-value { font-size: 18px; font-weight: 800; }
 </style>
 </head>
 <body>
@@ -3168,6 +3322,10 @@ function App(){
   const[didCreating,setDidCreating]=useState(false);
   const[persist,setPersist]=useState(false); // FIX (K): localStorage toggle
 
+  // ═══ USER AREA STATE ═══
+  const[userAreaOpen,setUserAreaOpen]=useState(false);
+  const[userAreaData,setUserAreaData]=useState(null);
+
   // Document
   const[docTitle,setDocTitle]=useState("");
   const[docContent,setDocContent]=useState("");
@@ -4838,8 +4996,91 @@ function App(){
         <div style={{padding:"8px",borderTop:`1px solid ${th.border}22`,display:"flex",flexDirection:"column",gap:4,alignItems:"center"}}>
           <button onClick={()=>setThemeName(n=>n==="KLAR"?"NOIR":"KLAR")} style={{background:"none",border:"none",cursor:"pointer",fontSize:14,color:th.dim}}>{themeName==="KLAR"?"☀":"🌙"}</button>
           <select value={lang} onChange={e=>setLang(e.target.value)} style={{background:th.input,border:`1px solid ${th.border}`,borderRadius:4,padding:"2px",color:th.text,fontSize:9,cursor:"pointer",width:36,textAlign:"center"}}><option value="de">DE</option><option value="en">EN</option><option value="pt">PT</option></select>
+          {/* ═══ USER AREA TRIGGER ═══ */}
+          {wallet&&<div className={`user-area-trigger ${userAreaOpen?"active":""}`} onClick={()=>setUserAreaOpen(p=>!p)} style={{background:th.gold,marginTop:6}}>
+            <div className="user-area-avatar" style={{background:th.gold,color:"#FFF"}}>{wallet.name?.split(" ").map(n=>n[0]).join("").substring(0,2).toUpperCase()||"??"}</div>
+            <div className="user-area-status-dot" style={{borderColor:th.sidebarBg}}/>
+          </div>}
         </div>
       </aside>
+
+      {/* ═══ USER AREA DROPDOWN ═══ */}
+      {userAreaOpen&&wallet&&<>
+        <div style={{position:"fixed",inset:0,zIndex:1000}} onClick={()=>setUserAreaOpen(false)}/>
+        <div className="user-area-panel" style={{background:th.card,border:`1px solid ${th.border}`}} onClick={e=>e.stopPropagation()}>
+        <div className="ua-header" style={{background:`linear-gradient(135deg, ${th.text} 0%, ${th.dim} 100%)`}}>
+          <div className="ua-identity-row">
+            <div className="ua-avatar" style={{background:th.gold,color:"#FFF",border:`2px solid ${th.gold}33`}}>{wallet.name?.split(" ").map(n=>n[0]).join("").substring(0,2).toUpperCase()||"??"}</div>
+            <div className="ua-identity">
+              <div className="ua-name" style={{color:"#FFF"}}>{wallet.name||"Anonymous"}</div>
+              <div className="ua-email" style={{color:th.gold}}>{wallet.email||"—"}</div>
+            </div>
+            <div className="ua-badges">
+              <span className="ua-tier-badge" style={{background:"#fef3c7",color:"#92400e"}}>{wallet.tier||(wallet.id?"STARTER":"FREE")}</span>
+              {wallet.pioneer&&<span className="ua-pioneer-badge" style={{color:th.gold}}>Pioneer #{wallet.pioneer}</span>}
+            </div>
+          </div>
+          {wallet.id&&<div className="ua-did-row" style={{background:"#0003"}}>
+            <span>🪪 <span style={{color:th.gold}}>{wallet.id.substring(0,20)}...</span></span>
+            {(wallet.verified||wallet.did)&&<span style={{color:"#10b981"}}>● verified</span>}
+          </div>}
+        </div>
+        {/* WALLET PREVIEW */}
+        <div className="ua-wallet-preview" style={{background:th.gold+"11",border:`1px solid ${th.gold}22`}}>
+          <div className="ua-wallet-header">
+            <div>
+              <div className="ua-wallet-label">WALLET</div>
+              <div className="ua-wallet-amount" style={{color:th.text}}>{wallet.credits||0} <span className="ua-wallet-unit" style={{color:th.gold}}>credits</span></div>
+            </div>
+            <button style={{fontSize:11,fontWeight:700,color:th.gold,background:th.gold+"22",border:"none",borderRadius:8,padding:"6px 12px",cursor:"pointer"}}>Manage →</button>
+          </div>
+          <div className="ua-credits-bar">
+            <div className="ua-credits-bar-labels" style={{color:th.dim}}>
+              <span>{(wallet.tokensUsed||0).toLocaleString()}</span>
+              <span>{(wallet.tokensLimit||50000).toLocaleString()}</span>
+            </div>
+            <div className="ua-credits-bar-track" style={{background:th.border}}>
+              <div className="ua-credits-bar-fill" style={{width:`${Math.min(((wallet.tokensUsed||0)/(wallet.tokensLimit||50000))*100,100)}%`,background:"#10b981"}}/>
+            </div>
+          </div>
+        </div>
+        {/* GOV SCORE */}
+        <div className="ua-gov-score" style={{background:"#f0fdf4",border:"1px solid #bbf7d0"}}>
+          <div><div className="ua-gov-item-label">GOV SCORE</div><div className="ua-gov-item-value" style={{color:"#166534"}}>{wallet.govScore||97.2}%</div></div>
+          <div><div className="ua-gov-item-label">RECEIPTS</div><div className="ua-gov-item-value" style={{color:"#166534"}}>{(Array.isArray(wallet.receipts)?wallet.receipts.length:(wallet.receipts||0)).toLocaleString()}</div></div>
+        </div>
+        {/* ACCOUNT SECTION */}
+        <div className="ua-section">
+          <div className="ua-section-title" style={{color:th.dim}}>ACCOUNT</div>
+          <div className="ua-menu-item" onClick={()=>{setUserAreaOpen(false);alert("Settings — Coming soon");}}>
+            <span className="ua-menu-item-icon">⚙️</span>
+            <div className="ua-menu-item-content"><div className="ua-menu-item-label" style={{color:th.text}}>Settings</div><div className="ua-menu-item-sublabel">Preferences, language</div></div>
+          </div>
+          <div className="ua-menu-item" onClick={()=>{setUserAreaOpen(false);alert("API Keys — Coming soon");}}>
+            <span className="ua-menu-item-icon">🔑</span>
+            <div className="ua-menu-item-content"><div className="ua-menu-item-label" style={{color:th.text}}>API Keys</div><div className="ua-menu-item-sublabel">{wallet.keys?.length||0} keys active</div></div>
+          </div>
+          <div className="ua-menu-item" onClick={()=>{setUserAreaOpen(false);wallet.id?setShowWallet(true):setShowDID(true);}}>
+            <span className="ua-menu-item-icon">👤</span>
+            <div className="ua-menu-item-content"><div className="ua-menu-item-label" style={{color:th.text}}>Profile & DID</div><div className="ua-menu-item-sublabel">{wallet.id?"Verified ✓":"Setup identity"}</div></div>
+          </div>
+        </div>
+        {/* ADMIN (role-based) */}
+        {wallet.role==="admin"&&<div className="ua-section">
+          <div className="ua-section-title" style={{color:th.dim}}>ADMINISTRATION</div>
+          <div className="ua-menu-item" onClick={()=>window.location.href="/dashboard/"}>
+            <span className="ua-menu-item-icon">🛡️</span>
+            <div className="ua-menu-item-content"><div className="ua-menu-item-label" style={{color:"#92400e"}}>Admin Panel</div><div className="ua-menu-item-sublabel">Governance, ledger</div></div>
+          </div>
+        </div>}
+        {/* LOGOUT */}
+        <div className="ua-section">
+          <div className="ua-menu-item" onClick={()=>{if(confirm("Log out from WINDI?")){setWallet(null);setUserAreaOpen(false);}}}>
+            <span className="ua-menu-item-icon">↪️</span>
+            <div className="ua-menu-item-content"><div className="ua-menu-item-label" style={{color:"#dc2626"}}>Log out</div></div>
+          </div>
+        </div>
+      </div></>}
 
       {/* ═══ MAIN AREA ═══ */}
       <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden",minWidth:0}}>
