@@ -1170,8 +1170,10 @@ function truncHash(h) { return h ? h.substring(0, 16) + '…' : '—'; }
 function escHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 function fmtDate(d) {
   if (!d) return '—';
-  try { return new Date(d).toLocaleString(currentLang === 'de' ? 'de-DE' : currentLang === 'pt' ? 'pt-BR' : 'en-GB', { dateStyle: 'medium', timeStyle: 'short' }); }
-  catch { return d; }
+  try {
+    const ts = typeof d === 'number' && d < 9999999999 ? d * 1000 : d;
+    return new Date(ts).toLocaleString(currentLang === 'de' ? 'de-DE' : currentLang === 'pt' ? 'pt-BR' : 'en-GB', { dateStyle: 'medium', timeStyle: 'short' });
+  } catch { return d; }
 }
 
 function copyText(text) {
