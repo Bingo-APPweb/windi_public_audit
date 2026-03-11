@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>JMPG Trigger Viewer — WINDI</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Crect width='20' height='20' rx='4' fill='%231A1208'/%3E%3Cellipse cx='10' cy='11' rx='4.5' ry='4' transform='rotate(-15 10 11)' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='7' cy='7.5' r='2.8' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='6.2' cy='6.8' r='0.7' fill='%238B6914'/%3E%3Cpath d='M7.5 4.8 C7 3.5 8 2.5 8.5 2' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M7 10 C5 8.5 3 8 2 9 C1.5 9.8 2.5 11 4 10.5' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M13 9.5 C15 8 17 8 17.5 9.5 C17.8 10.5 16.5 11 15 10.5' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M14 13 C16 14 17 15.5 16 16.5 C15 17.5 13.5 16.5 13.5 15' stroke='%238B6914' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -404,7 +405,7 @@
       <div class="drop-subtitle dimmest">Arrasta um ficheiro .jmpg para verificar o selo soberano</div>
       <div class="drop-actions">
         <button class="btn" onclick="document.getElementById('fileInput').click()">
-          📁 Choose file
+          <svg style="width:16px;height:16px;vertical-align:middle;margin-right:6px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V16C3 17 4 18 5 18H15C16 18 17 17 17 16V7"/><path d="M14 7V5C14 4 13 3 12 3H8C7 3 6 4 6 5V7"/><path d="M3 7H17"/></svg>Choose file
         </button>
         <input type="file" id="fileInput" accept=".jmpg">
       </div>
@@ -418,7 +419,7 @@
     <div class="dashboard" id="dashboard">
       <!-- Seal Status -->
       <div class="seal-status" id="sealStatus">
-        <div class="seal-icon" id="sealIcon">✅</div>
+        <div class="seal-icon" id="sealIcon"><svg style="width:48px;height:48px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="8"/><path d="M6 10L9 13L14 7"/></svg></div>
         <div class="seal-text" id="sealText">SEAL VALID</div>
         <div class="seal-computed" id="sealComputed"></div>
       </div>
@@ -470,7 +471,7 @@
       <!-- Manifest Panel -->
       <div class="panel" id="manifestPanel">
         <div class="panel-header" onclick="togglePanel('manifestPanel')">
-          <div class="panel-title">📜 Manifest</div>
+          <div class="panel-title"><svg style="width:16px;height:16px;vertical-align:middle;margin-right:6px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2H12L16 6V18H4V2Z"/><path d="M12 2V6H16"/><line x1="7" y1="10" x2="13" y2="10"/><line x1="7" y1="13" x2="13" y2="13"/></svg>Manifest</div>
           <div class="panel-toggle">▼</div>
         </div>
         <div class="panel-content">
@@ -481,12 +482,12 @@
       <!-- Actions -->
       <div class="actions">
         <button class="btn btn-gold" onclick="verifyOnLedger()">
-          <span id="ledgerBtnText">🔍 Verify on Ledger</span>
+          <span id="ledgerBtnText"><svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="6"/><path d="M14 14L18 18"/></svg>Verify on Ledger</span>
         </button>
-        <button class="btn" onclick="copySeal()">📋 Copy Seal</button>
-        <button class="btn" onclick="downloadOriginal()">📥 Download Original</button>
-        <button class="btn" onclick="shareUrl()">🔗 Share URL</button>
-        <button class="btn" onclick="resetViewer()">🔄 New File</button>
+        <button class="btn" onclick="copySeal()"><svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="11" height="12" rx="1.5"/><path d="M6 14H4.5C3.7 14 3 13.3 3 12.5V3.5C3 2.7 3.7 2 4.5 2H12.5C13.3 2 14 2.7 14 3.5V6"/></svg>Copy Seal</button>
+        <button class="btn" onclick="downloadOriginal()"><svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3V13"/><path d="M6 10L10 14L14 10"/><path d="M4 17H16"/></svg>Download</button>
+        <button class="btn" onclick="shareUrl()"><svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 12C8 12 6 10 6 8C6 6 8 4 10 4L14 4C16 4 18 6 18 8C18 10 16 12 14 12"/><path d="M12 8C12 8 14 10 14 12C14 14 12 16 10 16L6 16C4 16 2 14 2 12C2 10 4 8 6 8"/></svg>Share URL</button>
+        <button class="btn" onclick="resetViewer()"><svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4C16 5 17 7 17 10C17 13 16 15 14 16"/><path d="M6 16C4 15 3 13 3 10C3 7 4 5 6 4"/><path d="M14 4L16 2"/><path d="M14 4L16 6"/><path d="M6 16L4 14"/><path d="M6 16L4 18"/></svg>New File</button>
       </div>
 
       <!-- Ledger Result -->

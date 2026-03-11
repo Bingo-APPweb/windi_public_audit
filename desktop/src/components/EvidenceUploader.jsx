@@ -754,8 +754,8 @@ export default function EvidenceUploader() {
 
         {files.length === 0 ? (
           <>
-            <div style={{ fontSize: 36, marginBottom: 12, opacity: 0.6 }}>
-              🛡️
+            <div style={{ marginBottom: 12, opacity: 0.6 }}>
+              <svg width="36" height="36" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10 2L3 5V10C3 14.4 6 18 10 19C14 18 17 14.4 17 10V5L10 2Z"/></svg>
             </div>
             <div
               style={{

@@ -190,7 +190,7 @@ const GovernanceTrail = ({ entries }) => {
           <div key={entry.receipt_id} className="trail-entry" style={{ animationDelay: `${i * 0.05}s` }}>
             {/* Human-readable layer */}
             <div className="trail-entry-human" onClick={() => setExpandedId(expandedId === entry.receipt_id ? null : entry.receipt_id)}>
-              <div className="trail-entry-icon">🛡️</div>
+              <div className="trail-entry-icon"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10 2L3 5V10C3 14.4 6 18 10 19C14 18 17 14.4 17 10V5L10 2Z"/></svg></div>
               <div className="trail-entry-info">
                 <span className="trail-entry-label">
                   {entry.status === "RECEIPT_CREATED" ? "Integrity Checkpoint" : 

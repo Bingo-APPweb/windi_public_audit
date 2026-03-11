@@ -120,14 +120,14 @@ export default function App() {
             onClick={() => setGovPanelOpen(!govPanelOpen)}
             title="Governance trail"
           >
-            🛡
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10 2L3 5V10C3 14.4 6 18 10 19C14 18 17 14.4 17 10V5L10 2Z"/></svg>
           </button>
           <button
             className={`btn-save ${saveStatus === 'saved' ? 'saved' : ''}`}
             onClick={() => { /* trigger save */ }}
             title="Save document"
           >
-            💾 {saveStatus === 'saved' ? 'Saved' : 'Save'}
+            <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 2H14L18 6V18H2V2H4Z"/><path d="M14 2V6H18"/><rect x="5" y="10" width="10" height="6"/><path d="M7 2V6H12"/></svg> {saveStatus === 'saved' ? 'Saved' : 'Save'}
           </button>
           <button
             className="btn-print"

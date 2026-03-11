@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WINDI — Document Governance</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Crect width='20' height='20' rx='4' fill='%231A1208'/%3E%3Cellipse cx='10' cy='11' rx='4.5' ry='4' transform='rotate(-15 10 11)' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='7' cy='7.5' r='2.8' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='6.2' cy='6.8' r='0.7' fill='%238B6914'/%3E%3Cpath d='M7.5 4.8 C7 3.5 8 2.5 8.5 2' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M7 10 C5 8.5 3 8 2 9 C1.5 9.8 2.5 11 4 10.5' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M13 9.5 C15 8 17 8 17.5 9.5 C17.8 10.5 16.5 11 15 10.5' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M14 13 C16 14 17 15.5 16 16.5 C15 17.5 13.5 16.5 13.5 15' stroke='%238B6914' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════════════════════
@@ -168,13 +169,21 @@ input[type="file"] { display:none; }
   .sa { flex-direction:column; }
   .rf { flex-direction:column; text-align:center; }
 }
+
+/* WINDI Dragon Signature v1.0 */
+:root{--dragon-color:#8B6914;--dragon-glow:rgba(139,105,20,0.4)}
+[data-theme="noir"]{--dragon-color:#D4A843;--dragon-glow:rgba(212,168,67,0.5)}
+.windi-dragon-logo{display:flex;align-items:center;justify-content:center;border-radius:50%;border:1.5px solid var(--dragon-color);color:var(--dragon-color);filter:drop-shadow(0 0 4px var(--dragon-glow));transition:filter 0.3s ease}
+.windi-dragon-logo:hover{filter:drop-shadow(0 0 10px var(--dragon-glow))}
+.windi-dragon-signature{color:var(--dragon-color);animation:dragon-breathe 2.8s ease-in-out infinite}
+@keyframes dragon-breathe{0%,100%{filter:drop-shadow(0 0 6px var(--dragon-glow))}50%{filter:drop-shadow(0 0 14px var(--dragon-glow))}}
 </style>
 </head>
 <body>
 
 <header class="hdr">
   <div class="hdr-l">
-    <div class="logo">🛡️</div>
+    <div class="logo"><svg style="width:18px;height:18px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2L3 5V10C3 14 6 17 10 18C14 17 17 14 17 10V5L10 2Z"/><path d="M7 10L9 12L13 8"/></svg></div>
     <div class="logo-t">WINDI</div>
   </div>
   <div class="hdr-r">
@@ -185,7 +194,7 @@ input[type="file"] { display:none; }
     </div>
     <div class="tt" onclick="toggleTheme()"></div>
     <div class="uc" id="chip" onclick="resetProfile()">
-      <span id="cI">👤</span><span id="cN">—</span>
+      <span id="cI"><svg style="width:14px;height:14px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="7" r="3.5"/><path d="M3 18C3 14.7 6.1 12 10 12C13.9 12 17 14.7 17 18"/></svg></span><span id="cN">—</span>
     </div>
   </div>
 </header>
@@ -195,27 +204,27 @@ input[type="file"] { display:none; }
     <h2 id="obT"></h2>
     <p id="obD"></p>
     <div class="rg">
-      <div class="rc" onclick="pick('biz')"><div class="ri">🏢</div><div class="rn" id="rn_biz"></div><div class="rd" id="rd_biz"></div></div>
-      <div class="rc" onclick="pick('free')"><div class="ri">💼</div><div class="rn" id="rn_free"></div><div class="rd" id="rd_free"></div></div>
-      <div class="rc" onclick="pick('comp')"><div class="ri">⚖️</div><div class="rn" id="rn_comp"></div><div class="rd" id="rd_comp"></div></div>
-      <div class="rc" onclick="pick('priv')"><div class="ri">👤</div><div class="rn" id="rn_priv"></div><div class="rd" id="rd_priv"></div></div>
-      <div class="rc" onclick="pick('ctrl')"><div class="ri">📊</div><div class="rn" id="rn_ctrl"></div><div class="rd" id="rd_ctrl"></div></div>
-      <div class="rc" onclick="pick('exec')"><div class="ri">🏛️</div><div class="rn" id="rn_exec"></div><div class="rd" id="rd_exec"></div></div>
+      <div class="rc" onclick="pick('biz')"><div class="ri"><svg style="width:26px;height:26px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="14" height="14" rx="1"/><line x1="3" y1="8" x2="17" y2="8"/><line x1="7" y1="4" x2="7" y2="8"/><line x1="13" y1="4" x2="13" y2="8"/><rect x="6" y="11" width="3" height="3"/><rect x="11" y="11" width="3" height="3"/></svg></div><div class="rn" id="rn_biz"></div><div class="rd" id="rd_biz"></div></div>
+      <div class="rc" onclick="pick('free')"><div class="ri"><svg style="width:26px;height:26px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="16" height="11" rx="1.5"/><path d="M6 5V4C6 3 7 2 8 2H12C13 2 14 3 14 4V5"/><line x1="2" y1="10" x2="18" y2="10"/></svg></div><div class="rn" id="rn_free"></div><div class="rd" id="rd_free"></div></div>
+      <div class="rc" onclick="pick('comp')"><div class="ri"><svg style="width:26px;height:26px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="10" y1="3" x2="10" y2="17"/><line x1="6" y1="3" x2="14" y2="3"/><path d="M5 8L3 12H7L5 8Z"/><path d="M15 8L13 12H17L15 8Z"/><line x1="7" y1="17" x2="13" y2="17"/></svg></div><div class="rn" id="rn_comp"></div><div class="rd" id="rd_comp"></div></div>
+      <div class="rc" onclick="pick('priv')"><div class="ri"><svg style="width:26px;height:26px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="7" r="3.5"/><path d="M3 18C3 14.7 6.1 12 10 12C13.9 12 17 14.7 17 18"/></svg></div><div class="rn" id="rn_priv"></div><div class="rd" id="rd_priv"></div></div>
+      <div class="rc" onclick="pick('ctrl')"><div class="ri"><svg style="width:26px;height:26px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="2" width="14" height="16" rx="1.5"/><rect x="6" y="10" width="2" height="5"/><rect x="9" y="7" width="2" height="8"/><rect x="12" y="9" width="2" height="6"/></svg></div><div class="rn" id="rn_ctrl"></div><div class="rd" id="rd_ctrl"></div></div>
+      <div class="rc" onclick="pick('exec')"><div class="ri"><svg style="width:26px;height:26px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18V8L10 3L17 8V18"/><line x1="3" y1="18" x2="17" y2="18"/><line x1="7" y1="10" x2="7" y2="18"/><line x1="10" y1="10" x2="10" y2="18"/><line x1="13" y1="10" x2="13" y2="18"/><line x1="5" y1="8" x2="15" y2="8"/></svg></div><div class="rn" id="rn_exec"></div><div class="rd" id="rd_exec"></div></div>
     </div>
   </div>
 
   <div id="ws" class="ws">
     <div class="wb"><h2 id="wT"></h2><p id="wS"></p></div>
     <div class="dz" id="dz" onclick="document.getElementById('fi').click()">
-      <div class="dz-i">📄</div><div class="dz-t" id="dzT"></div><div class="dz-s" id="dzS"></div>
+      <div class="dz-i"><svg style="width:32px;height:32px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2H12L16 6V18H4V2Z"/><path d="M12 2V6H16"/><line x1="7" y1="10" x2="13" y2="10"/><line x1="7" y1="13" x2="13" y2="13"/></svg></div><div class="dz-t" id="dzT"></div><div class="dz-s" id="dzS"></div>
     </div>
     <input type="file" id="fi" accept=".pdf,.docx,.doc,.txt,.rtf" onchange="hFile(this.files[0])">
     <div>
-      <div class="tg" onclick="tTxt()"><span>✏️</span><span id="tgL"></span></div>
+      <div class="tg" onclick="tTxt()"><span><svg style="width:14px;height:14px;vertical-align:middle" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3L17 6L7 16H4V13L14 3Z"/><line x1="12" y1="5" x2="15" y2="8"/></svg></span><span id="tgL"></span></div>
       <div class="tw" id="tw">
         <textarea id="dt" placeholder=""></textarea>
         <div class="sa">
-          <button class="bt bt-p" id="bA" onclick="scan()">🔬 <span id="bAL"></span></button>
+          <button class="bt bt-p" id="bA" onclick="scan()"><svg style="width:15px;height:15px;vertical-align:middle;margin-right:4px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="8" cy="12" r="5"/><path d="M8 7V3"/><path d="M5 5L8 3L11 5"/><path d="M6 11L8 14L10 11"/></svg><span id="bAL"></span></button>
           <button class="bt bt-g" onclick="clr()"><span id="bRL"></span></button>
         </div>
       </div>
@@ -462,7 +471,14 @@ pt: {
 let L='de', R=null, TH='klar';
 const API = window.location.origin+'/api/sanctuary';
 const RMAP = { biz:'business', free:'plain', comp:'expert', priv:'plain', ctrl:'expert', exec:'executive' };
-const ICONS = { biz:'🏢', free:'💼', comp:'⚖️', priv:'👤', ctrl:'📊', exec:'🏛️' };
+const ICONS = {
+  biz:'<svg style="width:14px;height:14px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="14" height="14" rx="1"/><line x1="3" y1="8" x2="17" y2="8"/><line x1="7" y1="4" x2="7" y2="8"/><line x1="13" y1="4" x2="13" y2="8"/></svg>',
+  free:'<svg style="width:14px;height:14px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="5" width="16" height="11" rx="1.5"/><path d="M6 5V4C6 3 7 2 8 2H12C13 2 14 3 14 4V5"/></svg>',
+  comp:'<svg style="width:14px;height:14px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="10" y1="3" x2="10" y2="17"/><line x1="6" y1="3" x2="14" y2="3"/><path d="M5 8L3 12H7L5 8Z"/><path d="M15 8L13 12H17L15 8Z"/></svg>',
+  priv:'<svg style="width:14px;height:14px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="10" cy="7" r="3.5"/><path d="M3 18C3 14.7 6.1 12 10 12C13.9 12 17 14.7 17 18"/></svg>',
+  ctrl:'<svg style="width:14px;height:14px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="2" width="14" height="16" rx="1.5"/><rect x="6" y="10" width="2" height="5"/><rect x="9" y="7" width="2" height="8"/><rect x="12" y="9" width="2" height="6"/></svg>',
+  exec:'<svg style="width:14px;height:14px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 18V8L10 3L17 8V18"/><line x1="3" y1="18" x2="17" y2="18"/><line x1="7" y1="10" x2="7" y2="18"/><line x1="10" y1="10" x2="10" y2="18"/><line x1="13" y1="10" x2="13" y2="18"/></svg>'
+};
 
 // ═══ i18n APPLY ═══
 function apply() {
@@ -513,7 +529,7 @@ function pick(r) {
   document.getElementById('wT').textContent=w[0];
   document.getElementById('wS').textContent=w[1];
   const c=document.getElementById('chip'); c.classList.add('on');
-  document.getElementById('cI').textContent=ICONS[r];
+  document.getElementById('cI').innerHTML=ICONS[r];
   document.getElementById('cN').textContent=t[r];
 }
 
@@ -563,7 +579,7 @@ async function scan(){
     const r=await fetch(API+'/scan',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({content:c,document_type:'contract',scan_mode:'full',agent_id:'user-'+(R||'pub')})});
     render(await r.json());
   }catch(e){renderOff()}
-  finally{ b.disabled=false; b.innerHTML='🔬 <span>'+T[L].bA+'</span>'; }
+  finally{ b.disabled=false; b.innerHTML='<svg style="width:15px;height:15px;vertical-align:middle;margin-right:4px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="8" cy="12" r="5"/><path d="M8 7V3"/><path d="M5 5L8 3L11 5"/><path d="M6 11L8 14L10 11"/></svg><span>'+T[L].bA+'</span>'; }
 }
 
 // ═══ RENDER ═══

@@ -17,6 +17,7 @@
 <meta name="twitter:description" content="Integrity confirmed by WINDI Forensic Ledger."/>
 <meta name="twitter:image" content="https://windi-domain.com/verify-public/og-preview.png"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Crect width='20' height='20' rx='4' fill='%231A1208'/%3E%3Cellipse cx='10' cy='11' rx='4.5' ry='4' transform='rotate(-15 10 11)' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='7' cy='7.5' r='2.8' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='6.2' cy='6.8' r='0.7' fill='%238B6914'/%3E%3Cpath d='M7.5 4.8 C7 3.5 8 2.5 8.5 2' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M7 10 C5 8.5 3 8 2 9 C1.5 9.8 2.5 11 4 10.5' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M13 9.5 C15 8 17 8 17.5 9.5 C17.8 10.5 16.5 11 15 10.5' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M14 13 C16 14 17 15.5 16 16.5 C15 17.5 13.5 16.5 13.5 15' stroke='%238B6914' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E">
 <title>WINDI VERIFY</title>
 <style>
 :root{--pg:#F5F0E0;--noir:#1A1A1A;--gold:#8B6914;--green:#2D7A4F;--red:#C0392B;--amber:#D4850A;--border:#D4C89A;--muted:#7A6E55}
@@ -128,11 +129,18 @@ input[type=text]:focus{border-color:var(--gold)}
 @keyframes spin{to{transform:rotate(360deg)}}
 footer{border-top:1px solid var(--border);padding:16px 40px;text-align:center;font-size:11px;color:var(--muted)}
 @media(max-width:480px){header{padding:14px 16px}main{padding:28px 14px}.rmeta{grid-template-columns:1fr}}
+
+/* WINDI Dragon Signature v1.0 */
+:root{--dragon-color:#8B6914;--dragon-glow:rgba(139,105,20,0.4)}
+.windi-dragon-logo{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;border:1.5px solid var(--dragon-color);color:var(--dragon-color);filter:drop-shadow(0 0 4px var(--dragon-glow));transition:filter 0.3s ease;flex-shrink:0}
+.windi-dragon-logo:hover{filter:drop-shadow(0 0 10px var(--dragon-glow))}
+.windi-dragon-signature{color:var(--dragon-color);animation:dragon-breathe 2.8s ease-in-out infinite}
+@keyframes dragon-breathe{0%,100%{filter:drop-shadow(0 0 6px var(--dragon-glow))}50%{filter:drop-shadow(0 0 14px var(--dragon-glow))}}
 </style>
 </head>
 <body>
 <header>
-  <div class="brand"><div style="font-size:26px">🐉</div><div><h1>WINDI VERIFY</h1><span>Document Authentication</span></div></div>
+  <div class="brand"><div class="windi-dragon-logo"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="10" cy="11" rx="4.5" ry="4" transform="rotate(-15 10 11)"/><circle cx="7" cy="7.5" r="2.8"/><path d="M4.5 8.2 C3.5 8 3.2 9 4 9.5" stroke-width="1.1"/><circle cx="6.2" cy="6.8" r="0.7" fill="currentColor" stroke="none"/><path d="M7.5 4.8 C7 3.5 8 2.5 8.5 2" stroke-width="1"/><path d="M7 10 C5 8.5 3 8 2 9 C1.5 9.8 2.5 11 4 10.5" stroke-width="1"/><path d="M13 9.5 C15 8 17 8 17.5 9.5 C17.8 10.5 16.5 11 15 10.5" stroke-width="1"/><path d="M14 13 C16 14 17 15.5 16 16.5 C15 17.5 13.5 16.5 13.5 15" stroke-width="1.1"/></svg></div><div><h1>WINDI VERIFY</h1><span>Document Authentication</span></div></div>
   <div class="pbadge">Public Service</div>
   <a href="/verify-public/docs/WINDI_VERIFY_HowToUse_v1.0.pdf" class="help-btn" target="_blank">? How to Use</a>
 </header>
@@ -144,13 +152,13 @@ footer{border-top:1px solid var(--border);padding:16px 40px;text-align:center;fo
   </div>
   <div class="card">
     <div class="tabs">
-      <button class="tab active" onclick="sw('qr')"><span class="ti">📷</span>Scan QR</button>
-      <button class="tab" onclick="sw('file')"><span class="ti">📄</span>Upload PDF</button>
-      <button class="tab" onclick="sw('id')"><span class="ti">🔢</span>Enter ID</button>
+      <button class="tab active" onclick="sw('qr')"><span class="ti"><svg style="width:20px;height:20px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="14" height="14" rx="2"/><circle cx="10" cy="10" r="3"/><path d="M14 6V6.01"/></svg></span>Scan QR</button>
+      <button class="tab" onclick="sw('file')"><span class="ti"><svg style="width:20px;height:20px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2H12L16 6V18H4V2Z"/><path d="M12 2V6H16"/><line x1="7" y1="10" x2="13" y2="10"/><line x1="7" y1="13" x2="13" y2="13"/></svg></span>Upload PDF</button>
+      <button class="tab" onclick="sw('id')"><span class="ti"><svg style="width:20px;height:20px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="14" height="12" rx="1.5"/><line x1="7" y1="8" x2="7" y2="8.01"/><line x1="10" y1="8" x2="10" y2="8.01"/><line x1="13" y1="8" x2="13" y2="8.01"/><line x1="7" y1="12" x2="13" y2="12"/></svg></span>Enter ID</button>
     </div>
     <div class="panel active" id="panel-qr">
       <div class="qarea" id="qa" onclick="startQR()">
-        <div class="qi">📷</div>
+        <div class="qi"><svg style="width:40px;height:40px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="14" height="14" rx="2"/><circle cx="10" cy="10" r="3"/><path d="M14 6V6.01"/></svg></div>
         <h3>Scan QR Code</h3>
         <p>Tap to open camera and scan the QR code on the document</p>
       </div>
@@ -159,7 +167,7 @@ footer{border-top:1px solid var(--border);padding:16px 40px;text-align:center;fo
     </div>
     <div class="panel" id="panel-file">
       <div class="drop" id="drop" onclick="document.getElementById('inf').click()" ondragover="dov(event,1)" ondragleave="dov(event,0)" ondrop="ddp(event)">
-        <div class="di">📄</div><h3>Upload document</h3><p>Click or drag a PDF — hashed locally, never stored</p>
+        <div class="di"><svg style="width:32px;height:32px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2H12L16 6V18H4V2Z"/><path d="M12 2V6H16"/><line x1="7" y1="10" x2="13" y2="10"/><line x1="7" y1="13" x2="13" y2="13"/></svg></div><h3>Upload document</h3><p>Click or drag a PDF — hashed locally, never stored</p>
       </div>
       <input type="file" id="inf" accept=".pdf" style="display:none" onchange="sf(event)"/>
       <div id="fn"></div>
@@ -249,33 +257,33 @@ function render(d){
   const shareRow=s==='verified'?`
     <div class="share-row" data-receipt-id="${docId}">
       <button class="share-btn" onclick="windiShareVerification('${docId}','${docTitle}')">
-        📤 Share Verification
+        <svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3V13"/><path d="M6 7L10 3L14 7"/><path d="M4 13V16H16V13"/></svg>Share
       </button>
       <a class="wa-btn" href="${waHref}" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.374 0 0 5.373 0 12c0 2.116.554 4.129 1.521 5.877L.057 23.882a.5.5 0 00.609.61l6.098-1.451A11.934 11.934 0 0012 24c6.626 0 12-5.373 12-12S18.626 0 12 0z"/></svg>
         WhatsApp
       </a>
       <button class="tg-btn" onclick="windiTelegramShare('${docId}')">
-        ✈️ Telegram
+        <svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 10L18 3L14 17L10 12L14 8"/><path d="M10 12V17"/></svg>Telegram
       </button>
       <button class="email-btn" onclick="windiEmailShare('${docId}')">
-        ✉️ Email
+        <svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="16" height="12" rx="1.5"/><path d="M2 6L10 11L18 6"/></svg>Email
       </button>
       <button class="li-btn" onclick="windiLinkedInShare('${docId}')">
-        💼 LinkedIn
+        <svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="14" height="14" rx="2"/><path d="M7 8V13"/><path d="M7 8V8.01"/><path d="M10 13V10C10 9 11 8 12 8C13 8 13 9 13 10V13"/></svg>LinkedIn
       </button>
       <button class="cp-btn" id="cpbtn" onclick="cpLink('${verifyUrl}')">
-        🔗 Copy
+        <svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 12C8 12 6 10 6 8C6 6 8 4 10 4L14 4C16 4 18 6 18 8C18 10 16 12 14 12"/><path d="M12 8C12 8 14 10 14 12C14 14 12 16 10 16L6 16C4 16 2 14 2 12C2 10 4 8 6 8"/></svg>Copy
       </button>
       <button class="card-btn" onclick="showShareCard('${docId}','${issuedOnText}')">
-        🖼️ Card
+        <svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="16" height="14" rx="1.5"/><circle cx="7" cy="9" r="2"/><path d="M18 17L13 12L9 16L6 13L2 17"/></svg>Card
       </button>
     </div>
-    <a href="https://windi-domain.com/app/?tab=grove&source=verify" target="_blank" rel="noopener" class="windi-cta" style="display:block;margin-top:16px;padding:12px 20px;background:linear-gradient(135deg,#2D7A4F 0%,#1B4332 100%);color:#fff;border-radius:8px;font-weight:700;text-decoration:none;text-align:center">🌳 Faça a sua própria análise verificável →</a>
-    <a href="https://windi-domain.com" target="_blank" rel="noopener" class="windi-cta" style="margin-top:8px">🌱 What is WINDI?</a>
+    <a href="https://windi-domain.com/app/?tab=grove&source=verify" target="_blank" rel="noopener" class="windi-cta" style="display:block;margin-top:16px;padding:12px 20px;background:linear-gradient(135deg,#2D7A4F 0%,#1B4332 100%);color:#fff;border-radius:8px;font-weight:700;text-decoration:none;text-align:center"><svg style="width:16px;height:16px;vertical-align:middle;margin-right:6px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 18V10"/><path d="M10 10C8 10 6 8 6 6C6 4 8 2 10 2C12 2 14 4 14 6C14 8 12 10 10 10Z"/><path d="M6 14C4 14 3 15 3 16"/><path d="M14 14C16 14 17 15 17 16"/></svg>Faça a sua própria análise verificável →</a>
+    <a href="https://windi-domain.com" target="_blank" rel="noopener" class="windi-cta" style="margin-top:8px"><svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 18V12"/><path d="M10 12C7 12 5 10 5 7C5 4 7 2 10 2C13 2 15 4 15 7C15 10 13 12 10 12Z"/><path d="M7 7C7 6 8 5 10 5"/></svg>What is WINDI?</a>
     <div class="explain-section">
       <button class="explain-header" onclick="toggleExplain()">
-        <span>💡 What does this mean?</span>
+        <span><svg style="width:16px;height:16px;vertical-align:middle;margin-right:6px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2C7 2 5 4 5 7C5 9 6 10 7 11C7.5 11.5 8 12 8 13V14H12V13C12 12 12.5 11.5 13 11C14 10 15 9 15 7C15 4 13 2 10 2Z"/><line x1="8" y1="17" x2="12" y2="17"/><line x1="9" y1="14" x2="9" y2="17"/><line x1="11" y1="14" x2="11" y2="17"/></svg>What does this mean?</span>
         <span class="explain-arrow" id="explainArrow">▼</span>
       </button>
       <div class="explain-content" id="explainContent" style="display:none">
@@ -443,7 +451,7 @@ function showShareCard(receiptId, issuedOnText) {
   const dlBtn = document.createElement('a');
   dlBtn.href = cardDataUrl;
   dlBtn.download = 'WINDI-verified-' + receiptId + '.png';
-  dlBtn.textContent = '⬇️ Save Card Image';
+  dlBtn.innerHTML = '<svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3V13"/><path d="M6 10L10 14L14 10"/><path d="M4 17H16"/></svg>Save Card Image';
   dlBtn.style.cssText = 'display:block;margin-top:12px;padding:10px 18px;background:var(--gold);color:#fff;border-radius:6px;text-decoration:none;font-size:13px;font-weight:600;';
 
   // Hint

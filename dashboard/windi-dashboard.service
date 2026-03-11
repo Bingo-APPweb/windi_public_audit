@@ -1,0 +1,17 @@
+[Unit]
+Description=WINDI Command Center Dashboard
+After=network.target
+
+[Service]
+Type=simple
+User=windi
+Group=windi
+WorkingDirectory=/opt/windi/dashboard/dist
+ExecStart=/usr/bin/python3 -m http.server 8118
+Restart=always
+RestartSec=5
+StandardOutput=append:/opt/windi/logs/dashboard.log
+StandardError=append:/opt/windi/logs/dashboard.log
+
+[Install]
+WantedBy=multi-user.target

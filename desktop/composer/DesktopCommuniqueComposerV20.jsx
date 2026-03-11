@@ -893,12 +893,12 @@ export default function DesktopCommuniqueComposer() {
               <div style={{ display: "flex", gap: 6, marginTop: 8, flexWrap: "wrap" }}>
                 {publishResult.viewer_url && (
                   <button style={s.viewerBtn} onClick={() => window.open(publishResult.viewer_url, "_blank")}>
-                    🔍 {t("openViewer", lang)}
+                    <svg style={{width:14,height:14,verticalAlign:"middle",marginRight:4}} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="9" r="6"/><path d="M14 14L18 18"/></svg>{t("openViewer", lang)}
                   </button>
                 )}
                 {publishResult.public_url && (
                   <button style={s.viewerBtn} onClick={() => window.open(publishResult.public_url, "_blank")}>
-                    🌐 {t("openPublic", lang)}
+                    <svg style={{width:14,height:14,verticalAlign:"middle",marginRight:4}} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="10" cy="10" r="8"/><path d="M2 10H18"/><ellipse cx="10" cy="10" rx="4" ry="8"/></svg>{t("openPublic", lang)}
                   </button>
                 )}
               </div>
@@ -914,7 +914,7 @@ export default function DesktopCommuniqueComposer() {
             ○ {t("saveDraft", lang)}
           </button>
           <button style={s.actionBtn("secondary")} onClick={() => { if (validate()) setShowConfirm("jmpg"); }}>
-            📰 {t("exportJmpg", lang)}
+            <svg style={{width:14,height:14,verticalAlign:"middle",marginRight:4}} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="2" width="14" height="16" rx="2"/><line x1="7" y1="6" x2="13" y2="6"/><line x1="7" y1="10" x2="13" y2="10"/><line x1="7" y1="14" x2="10" y2="14"/></svg>{t("exportJmpg", lang)}
           </button>
         </div>
         <button style={s.actionBtn("primary")} onClick={() => { if (validate()) setShowConfirm("publish"); }}
@@ -967,7 +967,7 @@ export default function DesktopCommuniqueComposer() {
             <div style={{ display: "flex", justifyContent: "flex-end", gap: 6 }}>
               <button style={s.actionBtn("ghost")} onClick={() => setShowConfirm(null)}>Cancel</button>
               <button style={s.actionBtn("primary")} onClick={showConfirm === "publish" ? handlePublish : handleExportJmpg}>
-                {showConfirm === "publish" ? "◆ SEAL & PUBLISH" : "📰 SEAL & EXPORT"}
+                {showConfirm === "publish" ? "◆ SEAL & PUBLISH" : <><svg style={{width:14,height:14,verticalAlign:"middle",marginRight:4}} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="2" width="14" height="16" rx="2"/><line x1="7" y1="6" x2="13" y2="6"/><line x1="7" y1="10" x2="13" y2="10"/><line x1="7" y1="14" x2="10" y2="14"/></svg>SEAL &amp; EXPORT</>}
               </button>
             </div>
           </div>
