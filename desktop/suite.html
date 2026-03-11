@@ -484,13 +484,14 @@ body {
   margin-top: 2px;
 }
 </style>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Crect width='20' height='20' rx='4' fill='%231A1208'/%3E%3Cellipse cx='10' cy='11' rx='4.5' ry='4' transform='rotate(-15 10 11)' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='7' cy='7.5' r='2.8' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='6.2' cy='6.8' r='0.7' fill='%238B6914'/%3E%3Cpath d='M7.5 4.8 C7 3.5 8 2.5 8.5 2' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M7 10 C5 8.5 3 8 2 9 C1.5 9.8 2.5 11 4 10.5' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M13 9.5 C15 8 17 8 17.5 9.5 C17.8 10.5 16.5 11 15 10.5' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M14 13 C16 14 17 15.5 16 16.5 C15 17.5 13.5 16.5 13.5 15' stroke='%238B6914' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E">
 </head>
 <body>
 
 <!-- ═══ IDENTITY BAR (shown when logged in) ═══ -->
 <div class="identity-bar" id="identityBar">
   <div class="identity-bar-inner">
-    <div class="id-seal"><div class="dot"></div> <span>🔐</span></div>
+    <div class="id-seal"><div class="dot"></div> <span><svg style="width:14px;height:14px;vertical-align:middle" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="9" width="12" height="9" rx="1.5"/><path d="M7 9V6C7 4 8.5 2 10 2C11.5 2 13 4 13 6V9"/><circle cx="10" cy="13" r="1"/></svg></span></div>
     <span class="id-value" id="idBarValue">—</span>
     <span class="id-tier" id="idBarTier">—</span>
     <span class="id-signing">
@@ -547,9 +548,9 @@ body {
   <div class="welcome-inner">
     <button class="welcome-dismiss" onclick="dismissWelcome()">✕</button>
     <div class="welcome-title">
-      <span data-i18n="wt_de">Willkommen im WINDI-Ökosystem ✨</span>
-      <span data-i18n="wt_en" style="display:none">Welcome to the WINDI ecosystem ✨</span>
-      <span data-i18n="wt_pt" style="display:none">Bem-vindo ao ecossistema WINDI ✨</span>
+      <span data-i18n="wt_de">Willkommen im WINDI-Ökosystem</span>
+      <span data-i18n="wt_en" style="display:none">Welcome to the WINDI ecosystem</span>
+      <span data-i18n="wt_pt" style="display:none">Bem-vindo ao ecossistema WINDI</span>
     </div>
     <div class="welcome-text">
       <span data-i18n="wm_de">Ihre souveräne Identität ist aktiv. Jedes Dokument, das Sie erstellen, wird mit Ihrer Signatur versiegelt und im Forensic Ledger registriert. Wählen Sie Ihren ersten Schritt:</span>
@@ -558,7 +559,7 @@ body {
     </div>
     <div class="welcome-actions">
       <a href="/palette/" class="welcome-action">
-        <span class="welcome-action-icon">🤖</span>
+        <span class="welcome-action-icon"><svg style="width:24px;height:24px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="12" height="12" rx="2"/><circle cx="8" cy="9" r="1.5"/><circle cx="12" cy="9" r="1.5"/><path d="M7 13C8 14 12 14 13 13"/></svg></span>
         <div>
           <div class="welcome-action-label">
             <span data-i18n="wa1_de">Dokument erstellen</span>
@@ -569,7 +570,7 @@ body {
         </div>
       </a>
       <a href="/communique/feed" class="welcome-action">
-        <span class="welcome-action-icon">📡</span>
+        <span class="welcome-action-icon"><svg style="width:24px;height:24px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="14" r="2"/><path d="M6 10C7 9 8.5 8 10 8C11.5 8 13 9 14 10"/><path d="M3 7C5 5 7.5 4 10 4C12.5 4 15 5 17 7"/></svg></span>
         <div>
           <div class="welcome-action-label">
             <span data-i18n="wa2_de">Communiqué lesen</span>
@@ -580,7 +581,7 @@ body {
         </div>
       </a>
       <a href="/jornal/" class="welcome-action">
-        <span class="welcome-action-icon">📰</span>
+        <span class="welcome-action-icon"><svg style="width:24px;height:24px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="16" height="14" rx="1.5"/><line x1="5" y1="7" x2="10" y2="7"/><line x1="5" y1="10" x2="15" y2="10"/><line x1="5" y1="13" x2="15" y2="13"/><rect x="12" y="6" width="3" height="3"/></svg></span>
         <div>
           <div class="welcome-action-label">
             <span data-i18n="wa3_de">Nachrichten lesen</span>
@@ -600,7 +601,7 @@ body {
   <!-- JORNAL DO FUTURO -->
   <a href="/jornal/" class="suite-card">
     <div class="card-header">
-      <div class="card-icon gold">📰</div>
+      <div class="card-icon gold"><svg style="width:24px;height:24px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="16" height="14" rx="1.5"/><line x1="5" y1="7" x2="10" y2="7"/><line x1="5" y1="10" x2="15" y2="10"/><line x1="5" y1="13" x2="15" y2="13"/><rect x="12" y="6" width="3" height="3"/></svg></div>
       <div class="card-title">
         <span data-i18n="j_de">Zeitung der Zukunft</span>
         <span data-i18n="j_en" style="display:none">Journal of the Future</span>
@@ -621,7 +622,7 @@ body {
   <!-- AGENT PALETTE -->
   <a href="/palette/" class="suite-card">
     <div class="card-header">
-      <div class="card-icon green">🤖</div>
+      <div class="card-icon green"><svg style="width:24px;height:24px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="12" height="12" rx="2"/><circle cx="8" cy="9" r="1.5"/><circle cx="12" cy="9" r="1.5"/><path d="M7 13C8 14 12 14 13 13"/></svg></div>
       <div class="card-title">Agent Palette</div>
     </div>
     <div class="card-desc">
@@ -638,7 +639,7 @@ body {
   <!-- COMMUNIQUÉ FEED -->
   <a href="/communique/feed" class="suite-card">
     <div class="card-header">
-      <div class="card-icon blue">📡</div>
+      <div class="card-icon blue"><svg style="width:24px;height:24px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="14" r="2"/><path d="M6 10C7 9 8.5 8 10 8C11.5 8 13 9 14 10"/><path d="M3 7C5 5 7.5 4 10 4C12.5 4 15 5 17 7"/></svg></div>
       <div class="card-title">Communiqué Feed</div>
     </div>
     <div class="card-desc">
@@ -655,7 +656,7 @@ body {
   <!-- FORENSIC VAULT -->
   <a href="/vault/" class="suite-card">
     <div class="card-header">
-      <div class="card-icon purple">🔐</div>
+      <div class="card-icon purple"><svg style="width:24px;height:24px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="9" width="12" height="9" rx="1.5"/><path d="M7 9V6C7 4 8.5 2 10 2C11.5 2 13 4 13 6V9"/><circle cx="10" cy="13" r="1"/><path d="M10 14V16"/></svg></div>
       <div class="card-title">Forensic Vault</div>
     </div>
     <div class="card-desc">
@@ -672,7 +673,7 @@ body {
   <!-- JMPG VIEWER -->
   <a href="/viewer/" class="suite-card" id="card-viewer">
     <div class="card-header">
-      <div class="card-icon orange">🔍</div>
+      <div class="card-icon orange"><svg style="width:24px;height:24px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="9" r="6"/><path d="M14 14L18 18"/></svg></div>
       <div class="card-title">JMPG Viewer</div>
     </div>
     <div class="card-desc">
@@ -689,7 +690,7 @@ body {
   <!-- D1 DESKTOP -->
   <a href="/desktop/" class="suite-card">
     <div class="card-header">
-      <div class="card-icon gold">✏️</div>
+      <div class="card-icon gold"><svg style="width:24px;height:24px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3L17 6L7 16H4V13L14 3Z"/><line x1="12" y1="5" x2="15" y2="8"/></svg></div>
       <div class="card-title">D1 Desktop</div>
     </div>
     <div class="card-desc">
@@ -713,9 +714,9 @@ body {
     <span data-i18n="fc_pt" style="display:none">WINDI Publishing House © 2026</span>
   </div>
   <div class="footer-dragons">
-    <span class="footer-dragon g">🛡️ Guardian</span>
-    <span class="footer-dragon a">🏗️ Architect</span>
-    <span class="footer-dragon w">👁️ Witness</span>
+    <span class="footer-dragon g"><svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2L3 5V10C3 14 6 17 10 18C14 17 17 14 17 10V5L10 2Z"/><path d="M7 10L9 12L13 8"/></svg>Guardian</span>
+    <span class="footer-dragon a"><svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18V8L10 3L17 8V18"/><line x1="3" y1="18" x2="17" y2="18"/><line x1="7" y1="10" x2="7" y2="18"/><line x1="10" y1="10" x2="10" y2="18"/><line x1="13" y1="10" x2="13" y2="18"/></svg>Architect</span>
+    <span class="footer-dragon w"><svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="10" cy="10" rx="8" ry="5"/><circle cx="10" cy="10" r="3"/><circle cx="10" cy="10" r="1" fill="currentColor" stroke="none"/></svg>Witness</span>
   </div>
   <div class="footer-i9">I9 ACTIVE</div>
 </footer>

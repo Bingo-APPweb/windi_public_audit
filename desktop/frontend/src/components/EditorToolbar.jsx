@@ -157,7 +157,7 @@ function LinkButton({ editor }) {
       active={editor.isActive('link')}
       title="Insert Link"
     >
-      🔗
+      <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M8 12L12 8"/><path d="M9 7L7 7A3 3 0 0 0 7 13L9 13"/><path d="M11 13L13 13A3 3 0 0 0 13 7L11 7"/></svg>
     </ToolbarButton>
   );
 }

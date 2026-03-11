@@ -85,7 +85,7 @@
   const slider = document.createElement('div');
   slider.id = 'windi-drivein-slider';
   slider.innerHTML = `
-    <span class="windi-di-icon">🐉</span>
+    <span class="windi-di-icon"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14 C4 10 6 6 10 5 C14 4 16 7 15 10 C14 13 11 14 9 13"/><path d="M9 13 C7 14 5 16 6 17 C7 18 9 17 10 16 C11 15 11 17 13 17"/><circle cx="11.5" cy="6" r="0.8" fill="currentColor" stroke="none"/></svg></span>
     <input type="range" min="0" max="100" value="${currentOpacity}"
            class="windi-di-range" id="windi-di-range" />
     <span class="windi-di-val" id="windi-di-val">${currentOpacity}%</span>

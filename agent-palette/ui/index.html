@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WINDI Personal Editor v0.7.0-G — Dignity First</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐉</text></svg>">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Crect width='20' height='20' rx='4' fill='%231A1208'/%3E%3Cellipse cx='10' cy='11' rx='4.5' ry='4' transform='rotate(-15 10 11)' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='7' cy='7.5' r='2.8' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='6.2' cy='6.8' r='0.7' fill='%238B6914'/%3E%3Cpath d='M7.5 4.8 C7 3.5 8 2.5 8.5 2' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M7 10 C5 8.5 3 8 2 9 C1.5 9.8 2.5 11 4 10.5' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M13 9.5 C15 8 17 8 17.5 9.5 C17.8 10.5 16.5 11 15 10.5' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M14 13 C16 14 17 15.5 16 16.5 C15 17.5 13.5 16.5 13.5 15' stroke='%238B6914' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E">
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
@@ -31,6 +31,99 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 }
 .vault-pulse { animation: vaultPulse 0.8s ease-out; }
 .number-bump { animation: numberBump 0.6s ease-out; }
+
+/* ═══════════════════════════════════════════════════════
+   WINDI ICON DESIGN SYSTEM v1.0
+   Padrao canonico — todas as camadas
+   "Governanca silenciosa — o icone serve, nao performa"
+   ═══════════════════════════════════════════════════════ */
+:root {
+  --icon-active:    #8B6914;
+  --icon-hover:     rgba(139, 105, 20, 0.65);
+  --icon-inactive:  rgba(139, 105, 20, 0.35);
+  --icon-size:      18px;
+  --icon-stroke:    1.5;
+}
+[data-theme="noir"], .noir-theme {
+  --icon-active:    #F5F0E0;
+  --icon-hover:     rgba(245, 240, 224, 0.65);
+  --icon-inactive:  rgba(245, 240, 224, 0.35);
+}
+.w-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: var(--icon-inactive);
+  transition: color 0.15s ease;
+}
+.w-icon svg {
+  width: 100%;
+  height: 100%;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.w-icon-active { color: var(--icon-active); }
+.w-icon:hover { color: var(--icon-hover); }
+.windi-dragon-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--icon-active);
+  filter: drop-shadow(0 0 4px rgba(139,105,20,0.35));
+  transition: filter 0.3s ease;
+}
+[data-theme="noir"] .windi-dragon-logo,
+.noir-theme .windi-dragon-logo {
+  filter: drop-shadow(0 0 6px rgba(212,168,67,0.45));
+}
+.windi-dragon-logo:hover {
+  filter: drop-shadow(0 0 9px rgba(139,105,20,0.65));
+}
+
+/* WINDI Dragon Signature v1.0 */
+:root {
+  --dragon-color:     #8B6914;
+  --dragon-glow:      rgba(139,105,20,0.4);
+}
+[data-theme="noir"] {
+  --dragon-color:     #D4A843;
+  --dragon-glow:      rgba(212,168,67,0.5);
+}
+
+/* Glyph — sidebar/favicon */
+.windi-dragon-glyph {
+  color: var(--dragon-color);
+  transition: filter 0.3s ease;
+}
+.windi-dragon-glyph:hover {
+  filter: drop-shadow(0 0 6px var(--dragon-glow));
+}
+
+/* Seal — receipts, documentos */
+.windi-dragon-signature {
+  color: var(--dragon-color);
+  animation: dragon-breathe 2.8s ease-in-out infinite;
+}
+@keyframes dragon-breathe {
+  0%, 100% { filter: drop-shadow(0 0 6px var(--dragon-glow)); }
+  50%       { filter: drop-shadow(0 0 14px var(--dragon-glow)); }
+}
+
+/* Seal container — fundo de caverna */
+.windi-seal-container {
+  background: #0A0A0F;
+  border-radius: 16px;
+  padding: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
 </style>
 </head>
 <body>
@@ -444,17 +537,17 @@ const THEMES = {
   }
 };
 
-// ─── 14 Document Types ───
+// ─── 14 Document Types (icons via WINDI_ICONS) ───
 const DOC_TYPES = {
-  letter:{icon:"✉️",tier:"FREE",cat:"personal",breath:{en:"Send intention",de:"Absicht senden",pt:"Enviar intenção"}},email:{icon:"📧",tier:"FREE",cat:"personal",breath:{en:"Quick reach",de:"Schnell verbinden",pt:"Conexão rápida"}},
-  note:{icon:"📝",tier:"FREE",cat:"personal",breath:{en:"Capture the moment",de:"Moment festhalten",pt:"Capturar o momento"}},memo:{icon:"📋",tier:"FREE",cat:"personal",breath:{en:"Inform & align",de:"Informieren & abstimmen",pt:"Informar & alinhar"}},
-  journal:{icon:"📖",tier:"FREE",cat:"personal",breath:{en:"Witness yourself",de:"Sich bezeugen",pt:"Testemunhar a si mesmo"}},recipe:{icon:"🍳",tier:"FREE",cat:"personal",breath:{en:"Share a ritual",de:"Ritual teilen",pt:"Compartilhar ritual"}},
-  report:{icon:"📊",tier:"MED",cat:"business",breath:{en:"Evidence matures",de:"Belege reifen",pt:"Evidências amadurecem"}},contract:{icon:"📜",tier:"MED",cat:"business",breath:{en:"Terms take root",de:"Bedingungen wurzeln",pt:"Termos se enraízam"}},
-  invoice:{icon:"💰",tier:"MED",cat:"business",breath:{en:"Value declared",de:"Wert erklärt",pt:"Valor declarado"}},protocol:{icon:"📒",tier:"MED",cat:"business",breath:{en:"Proceedings sealed",de:"Verlauf gesiegelt",pt:"Procedimentos selados"}},
-  analysis:{icon:"🔬",tier:"MED",cat:"business",breath:{en:"Clarity distilled",de:"Klarheit destilliert",pt:"Clareza destilada"}},presentation:{icon:"📽️",tier:"MED",cat:"business",breath:{en:"Story takes shape",de:"Geschichte formt sich",pt:"História toma forma"}},
-  communique:{icon:"📡",tier:"HIGH",cat:"governance",breath:{en:"Bloom · Witness",de:"Blühen · Bezeugen",pt:"Florescer · Testemunhar"}},certificate:{icon:"🏛️",tier:"HIGH",cat:"governance",breath:{en:"Permanent record",de:"Dauerhafter Nachweis",pt:"Registro permanente"}},
-  creativeVirtue:{icon:"🎨",tier:"HIGH",cat:"governance",breath:{en:"Proof of creation",de:"Schöpfungsnachweis",pt:"Prova da criação"}},
-  htmlbuilder:{icon:"🌐",tier:"FREE",cat:"personal",externalUrl:"https://windi-domain.com/html-builder/",breath:{en:"Page that converts",de:"Seite die überzeugt",pt:"Página que converte"}},
+  letter:{icon:"letter",tier:"FREE",cat:"personal",breath:{en:"Send intention",de:"Absicht senden",pt:"Enviar intenção"}},email:{icon:"email",tier:"FREE",cat:"personal",breath:{en:"Quick reach",de:"Schnell verbinden",pt:"Conexão rápida"}},
+  note:{icon:"note",tier:"FREE",cat:"personal",breath:{en:"Capture the moment",de:"Moment festhalten",pt:"Capturar o momento"}},memo:{icon:"memo",tier:"FREE",cat:"personal",breath:{en:"Inform & align",de:"Informieren & abstimmen",pt:"Informar & alinhar"}},
+  journal:{icon:"book",tier:"FREE",cat:"personal",breath:{en:"Witness yourself",de:"Sich bezeugen",pt:"Testemunhar a si mesmo"}},recipe:{icon:"recipe",tier:"FREE",cat:"personal",breath:{en:"Share a ritual",de:"Ritual teilen",pt:"Compartilhar ritual"}},
+  report:{icon:"report",tier:"MED",cat:"business",breath:{en:"Evidence matures",de:"Belege reifen",pt:"Evidências amadurecem"}},contract:{icon:"contract",tier:"MED",cat:"business",breath:{en:"Terms take root",de:"Bedingungen wurzeln",pt:"Termos se enraízam"}},
+  invoice:{icon:"invoice",tier:"MED",cat:"business",breath:{en:"Value declared",de:"Wert erklärt",pt:"Valor declarado"}},protocol:{icon:"protocol",tier:"MED",cat:"business",breath:{en:"Proceedings sealed",de:"Verlauf gesiegelt",pt:"Procedimentos selados"}},
+  analysis:{icon:"analysis",tier:"MED",cat:"business",breath:{en:"Clarity distilled",de:"Klarheit destilliert",pt:"Clareza destilada"}},presentation:{icon:"slides",tier:"MED",cat:"business",breath:{en:"Story takes shape",de:"Geschichte formt sich",pt:"História toma forma"}},
+  communique:{icon:"broadcast",tier:"HIGH",cat:"governance",breath:{en:"Bloom · Witness",de:"Blühen · Bezeugen",pt:"Florescer · Testemunhar"}},certificate:{icon:"certificate",tier:"HIGH",cat:"governance",breath:{en:"Permanent record",de:"Dauerhafter Nachweis",pt:"Registro permanente"}},
+  creativeVirtue:{icon:"creative",tier:"HIGH",cat:"governance",breath:{en:"Proof of creation",de:"Schöpfungsnachweis",pt:"Prova da criação"}},
+  htmlbuilder:{icon:"globe",tier:"FREE",cat:"personal",externalUrl:"https://windi-domain.com/html-builder/",breath:{en:"Page that converts",de:"Seite die überzeugt",pt:"Página que converte"}},
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════════
@@ -462,14 +555,14 @@ const DOC_TYPES = {
 // Spec: Grove Arena v1.0 · Phase 1 (Debate Engine)
 // ═══════════════════════════════════════════════════════════════════════════════════
 const ARENA_AGENTS = {
-  "W-LEGAL-001":   { tier:"elite",      name:{pt:"Legal",de:"Recht",en:"Legal"},           icon:"⚖️",  credits:3, preselect:true },
-  "W-COMPLY-001":  { tier:"elite",      name:{pt:"Compliance",de:"Compliance",en:"Compliance"}, icon:"✅", credits:3, preselect:true },
-  "W-NOTARY-001":  { tier:"estrutural", name:{pt:"Notário",de:"Notar",en:"Notary"},        icon:"📜",  credits:3 },
-  "W-AUDIT-001":   { tier:"estrutural", name:{pt:"Auditor",de:"Revisor",en:"Auditor"},     icon:"🔍",  credits:3, preselect:true },
-  "W-ACCT-001":    { tier:"estrutural", name:{pt:"Contabilidade",de:"Buchhaltung",en:"Accounting"}, icon:"💰", credits:4 },
-  "W-COMM-001":    { tier:"narrativo",  name:{pt:"Communiqué",de:"Communiqué",en:"Communiqué"}, icon:"📝", credits:4 },
-  "W-JOURN-001":   { tier:"narrativo",  name:{pt:"Jornalista",de:"Journalist",en:"Journalist"}, icon:"✒️", credits:3 },
-  "W-ARCH-001":    { tier:"narrativo",  name:{pt:"Architect",de:"Architekt",en:"Architect"}, icon:"🏗️", credits:3 },
+  "W-LEGAL-001":   { tier:"elite",      name:{pt:"Legal",de:"Recht",en:"Legal"},           icon:"legal",  credits:3, preselect:true },
+  "W-COMPLY-001":  { tier:"elite",      name:{pt:"Compliance",de:"Compliance",en:"Compliance"}, icon:"comply", credits:3, preselect:true },
+  "W-NOTARY-001":  { tier:"estrutural", name:{pt:"Notário",de:"Notar",en:"Notary"},        icon:"notary",  credits:3 },
+  "W-AUDIT-001":   { tier:"estrutural", name:{pt:"Auditor",de:"Revisor",en:"Auditor"},     icon:"audit",  credits:3, preselect:true },
+  "W-ACCT-001":    { tier:"estrutural", name:{pt:"Contabilidade",de:"Buchhaltung",en:"Accounting"}, icon:"acct", credits:4 },
+  "W-COMM-001":    { tier:"narrativo",  name:{pt:"Communiqué",de:"Communiqué",en:"Communiqué"}, icon:"comm", credits:4 },
+  "W-JOURN-001":   { tier:"narrativo",  name:{pt:"Jornalista",de:"Journalist",en:"Journalist"}, icon:"journ", credits:3 },
+  "W-ARCH-001":    { tier:"narrativo",  name:{pt:"Architect",de:"Architekt",en:"Architect"}, icon:"arch", credits:3 },
 };
 const ARENA_DEFAULT_AGENTS = Object.keys(ARENA_AGENTS).filter(k => ARENA_AGENTS[k].preselect);
 
@@ -2207,9 +2300,9 @@ const renderStructuredPreview = (type, fields, th, lang) => {
 };
 
 const EXPORTS = {
-  docx:{icon:"📄",label:"DOC",tier:"FREE"},pdf:{icon:"📕",label:"PDF",tier:"MED"},
-  xlsx:{icon:"📊",label:"Excel",tier:"MED"},pptx:{icon:"📽️",label:"PPT",tier:"MED"},
-  jmpg:{icon:"🛡️",label:"JMPG",tier:"HIGH"},
+  docx:{icon:"docs",label:"DOC",tier:"FREE"},pdf:{icon:"contract",label:"PDF",tier:"MED"},
+  xlsx:{icon:"report",label:"Excel",tier:"MED"},pptx:{icon:"slides",label:"PPT",tier:"MED"},
+  jmpg:{icon:"comply",label:"JMPG",tier:"HIGH"},
 };
 
 
@@ -2220,10 +2313,10 @@ const CANVAS_W=794;const CANVAS_H=1123;const GRID_SIZE=16;const MIN_LAYER_SIZE=4
 const FONT_SIZES=[10,12,14,16,18,20,24,28,32,36,42,48,56,64,72,96];
 let _layerId=0;const layerUid=()=>"layer-"+(++_layerId)+"-"+Date.now().toString(36);
 const LAYER_TYPES={
-  text:{icon:"✏️",label:"Text",defaultW:300,defaultH:60},
-  image:{icon:"📸",label:"Image",defaultW:280,defaultH:200},
-  video:{icon:"🎬",label:"Video",defaultW:320,defaultH:200},
-  shape:{icon:"◆",label:"Shape",defaultW:120,defaultH:120}
+  text:{icon:"comm",label:"Text",defaultW:300,defaultH:60},
+  image:{icon:"creative",label:"Image",defaultW:280,defaultH:200},
+  video:{icon:"slides",label:"Video",defaultW:320,defaultH:200},
+  shape:{icon:"desk",label:"Shape",defaultW:120,defaultH:120}
 };
 
 // ═══ CANVAS TEMPLATES — Liga IA+H Fase 3 ═══
@@ -2294,12 +2387,71 @@ const CANVAS_TEMPLATES={
   }
 };
 
+// ═══════════════════════════════════════════════════════════════════════════════════
+// WINDI ICON SYSTEM v1.0 — SVG Monoline Library
+// "Governanca silenciosa — o icone serve, nao performa"
+// ═══════════════════════════════════════════════════════════════════════════════════
+const WINDI_ICONS = {
+  // ─── SIDEBAR ICONS (GEMEO v1.0 — stroke-width 1.3) ─────────────
+  grove:     '<svg viewBox="0 0 20 20" fill="none"><path d="M10 2L13 7H11.2L14 11.5H11.8L14.5 16H5.5L8.2 11.5H6L8.8 7H7Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" fill="none"/><line x1="10" y1="16" x2="10" y2="18.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><line x1="7.5" y1="18.5" x2="12.5" y2="18.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>',
+  chat:      '<svg viewBox="0 0 20 20" fill="none"><path d="M3.5 4C3.5 3.45 3.95 3 4.5 3H15.5C16.05 3 16.5 3.45 16.5 4V12C16.5 12.55 16.05 13 15.5 13H7L3.5 17V4Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" fill="none"/><line x1="6" y1="7" x2="14" y2="7" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/><line x1="6" y1="10" x2="11" y2="10" stroke="currentColor" stroke-width="1.1" stroke-linecap="round"/></svg>',
+  insights:  '<svg viewBox="0 0 20 20" fill="none"><path d="M10 3.5C8 3.5 6.5 5 6.5 6.8C6.5 7.5 6.7 8.1 7.1 8.6C6.1 9 5.3 9.9 5.3 11C5.3 12.5 6.4 13.7 7.8 13.9C7.9 15 8.8 16 10 16C11.2 16 12.1 15 12.2 13.9C13.6 13.7 14.7 12.5 14.7 11C14.7 9.9 13.9 9 12.9 8.6C13.3 8.1 13.5 7.5 13.5 6.8C13.5 5 12 3.5 10 3.5Z" stroke="currentColor" stroke-width="1.3" fill="none"/><line x1="10" y1="3.5" x2="10" y2="16" stroke="currentColor" stroke-width="1.0" stroke-dasharray="1.5 1.5" opacity="0.5"/><path d="M7.5 9.5 C8.5 10.5 9 11 10 11" stroke="currentColor" stroke-width="1.0" stroke-linecap="round" opacity="0.7"/><path d="M12.5 9.5 C11.5 10.5 11 11 10 11" stroke="currentColor" stroke-width="1.0" stroke-linecap="round" opacity="0.7"/></svg>',
+  docs:      '<svg viewBox="0 0 20 20" fill="none"><path d="M5 3H12.5L16 6.5V17H5V3Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" fill="none"/><path d="M12.5 3V6.5H16" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" fill="none"/><line x1="7.5" y1="9" x2="13.5" y2="9" stroke="currentColor" stroke-width="1.0" stroke-linecap="round"/><line x1="7.5" y1="11.5" x2="13.5" y2="11.5" stroke="currentColor" stroke-width="1.0" stroke-linecap="round"/><line x1="7.5" y1="14" x2="11" y2="14" stroke="currentColor" stroke-width="1.0" stroke-linecap="round"/></svg>',
+  desk:      '<svg viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.3" fill="none"/><path d="M3 8H17" stroke="currentColor" stroke-width="1.0" stroke-linecap="round"/><path d="M8 8V17" stroke="currentColor" stroke-width="1.0" stroke-linecap="round"/><circle cx="5.5" cy="5.5" r="0.8" fill="currentColor"/></svg>',
+  files:     '<svg viewBox="0 0 20 20" fill="none"><path d="M3 6C3 5.45 3.45 5 4 5H8.5L10 7H16C16.55 7 17 7.45 17 8V15C17 15.55 16.55 16 16 16H4C3.45 16 3 15.55 3 15V6Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" fill="none"/></svg>',
+  wallet:    '<svg viewBox="0 0 20 20" fill="none"><rect x="3" y="5" width="14" height="11" rx="1.5" stroke="currentColor" stroke-width="1.3" fill="none"/><line x1="3" y1="9" x2="17" y2="9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><rect x="12" y="11" width="4" height="2.5" rx="0.5" stroke="currentColor" stroke-width="1.0" fill="none"/><circle cx="13.5" cy="12.2" r="0.5" fill="currentColor"/></svg>',
+  wick:      '<svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.3"/><path d="M10 3C10 3 13 6 13 10C13 14 10 17 10 17" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M10 3C10 3 7 6 7 10C7 14 10 17 10 17" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><line x1="3" y1="10" x2="17" y2="10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>',
+  search:    '<svg viewBox="0 0 20 20" fill="none"><circle cx="8.5" cy="8.5" r="4.5" stroke="currentColor" stroke-width="1.3" fill="none"/><line x1="12" y1="12" x2="16.5" y2="16.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
+  products:  '<svg viewBox="0 0 20 20" fill="none"><path d="M3 5H17L15.5 14C15.3 14.6 14.8 15 14.2 15H5.8C5.2 15 4.7 14.6 4.5 14L3 5Z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 3H4.5L6 9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="8" cy="17.5" r="1" stroke="currentColor" stroke-width="1.3"/><circle cx="13" cy="17.5" r="1" stroke="currentColor" stroke-width="1.3"/></svg>',
+  journal:   '<svg viewBox="0 0 20 20" fill="none"><rect x="4" y="2" width="12" height="16" rx="1.5" stroke="currentColor" stroke-width="1.3"/><line x1="7" y1="6" x2="13" y2="6" stroke="currentColor" stroke-width="1.0" stroke-linecap="round"/><line x1="7" y1="9" x2="13" y2="9" stroke="currentColor" stroke-width="1.0" stroke-linecap="round"/><line x1="7" y1="12" x2="10" y2="12" stroke="currentColor" stroke-width="1.0" stroke-linecap="round"/><line x1="4" y1="2" x2="4" y2="18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
+  history:   '<svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="11" r="6.5" stroke="currentColor" stroke-width="1.3"/><path d="M10 7V11L13 13" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><line x1="8" y1="2.5" x2="12" y2="2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>',
+  templates: '<svg viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="14" height="14" rx="1.5" stroke="currentColor" stroke-width="1.3"/><line x1="3" y1="8" x2="17" y2="8" stroke="currentColor" stroke-width="1.0" stroke-linecap="round"/><line x1="9" y1="8" x2="9" y2="17" stroke="currentColor" stroke-width="1.0" stroke-linecap="round"/></svg>',
+  // ─── DOC TYPE ICONS ──────────────────────────────────────────
+  letter:    '<svg viewBox="0 0 20 20" fill="none"><rect x="3" y="4" width="14" height="12" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M3 6L10 11L17 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  email:     '<svg viewBox="0 0 20 20" fill="none"><rect x="2" y="4" width="16" height="12" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M2 6L10 11L18 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="15" cy="6" r="3" fill="currentColor" stroke="none"/></svg>',
+  note:      '<svg viewBox="0 0 20 20" fill="none"><path d="M4 2H12L16 6V18H4V2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 2V6H16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><line x1="7" y1="10" x2="13" y2="10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="7" y1="13" x2="11" y2="13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
+  memo:      '<svg viewBox="0 0 20 20" fill="none"><rect x="3" y="2" width="14" height="16" rx="1.5" stroke="currentColor" stroke-width="1.5"/><line x1="6" y1="6" x2="14" y2="6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="6" y1="9" x2="14" y2="9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="6" y1="12" x2="10" y2="12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12 12L14 14L12 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  book:      '<svg viewBox="0 0 20 20" fill="none"><path d="M3 3C3 3 5 2 10 2C15 2 17 3 17 3V17C17 17 15 16 10 16C5 16 3 17 3 17V3Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><line x1="10" y1="2" x2="10" y2="16" stroke="currentColor" stroke-width="1.5"/></svg>',
+  recipe:    '<svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="12" r="5" stroke="currentColor" stroke-width="1.5"/><path d="M7 10C7 10 8 9 10 9C12 9 13 10 13 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="10" y1="2" x2="10" y2="7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="7" y1="3" x2="7" y2="6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="13" y1="3" x2="13" y2="6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
+  report:    '<svg viewBox="0 0 20 20" fill="none"><rect x="3" y="2" width="14" height="16" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="6" y="10" width="2" height="5" stroke="currentColor" stroke-width="1.5"/><rect x="9" y="7" width="2" height="8" stroke="currentColor" stroke-width="1.5"/><rect x="12" y="9" width="2" height="6" stroke="currentColor" stroke-width="1.5"/></svg>',
+  contract:  '<svg viewBox="0 0 20 20" fill="none"><path d="M4 2H12L16 6V18H4V2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 2V6H16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 14C8 13 9 14 10 13C11 12 12 13 13 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
+  invoice:   '<svg viewBox="0 0 20 20" fill="none"><rect x="3" y="2" width="14" height="16" rx="1.5" stroke="currentColor" stroke-width="1.5"/><line x1="6" y1="6" x2="10" y2="6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="6" y1="9" x2="14" y2="9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="6" y1="12" x2="14" y2="12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="10" y1="15" x2="14" y2="15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
+  protocol:  '<svg viewBox="0 0 20 20" fill="none"><rect x="4" y="2" width="12" height="16" rx="1.5" stroke="currentColor" stroke-width="1.5"/><circle cx="7" cy="6" r="1" fill="currentColor"/><line x1="9" y1="6" x2="13" y2="6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="7" cy="10" r="1" fill="currentColor"/><line x1="9" y1="10" x2="13" y2="10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="7" cy="14" r="1" fill="currentColor"/><line x1="9" y1="14" x2="13" y2="14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
+  analysis:  '<svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="8" r="5" stroke="currentColor" stroke-width="1.5"/><line x1="10" y1="13" x2="10" y2="18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="7" y1="17" x2="13" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="8" y1="8" x2="12" y2="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="10" y1="6" x2="10" y2="10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
+  slides:    '<svg viewBox="0 0 20 20" fill="none"><rect x="2" y="4" width="16" height="10" rx="1.5" stroke="currentColor" stroke-width="1.5"/><line x1="10" y1="14" x2="10" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="6" y1="17" x2="14" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="6" cy="9" r="1.5" stroke="currentColor" stroke-width="1.5"/><line x1="9" y1="8" x2="14" y2="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="9" y1="11" x2="12" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
+  broadcast: '<svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M5 5C3.5 6.5 3 8 3 10C3 12 3.5 13.5 5 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M15 5C16.5 6.5 17 8 17 10C17 12 16.5 13.5 15 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M7 7C6 8 5.5 9 5.5 10C5.5 11 6 12 7 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M13 7C14 8 14.5 9 14.5 10C14.5 11 14 12 13 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
+  certificate:'<svg viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="14" height="11" rx="1.5" stroke="currentColor" stroke-width="1.5"/><line x1="6" y1="6" x2="14" y2="6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="6" y1="9" x2="11" y2="9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="10" cy="15" r="2" stroke="currentColor" stroke-width="1.5"/><path d="M8.5 16.5L8 19L10 18L12 19L11.5 16.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  creative:  '<svg viewBox="0 0 20 20" fill="none"><path d="M3 17L7 13L10 16L14 10L17 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="6" r="2" stroke="currentColor" stroke-width="1.5"/><rect x="2" y="2" width="16" height="16" rx="1.5" stroke="currentColor" stroke-width="1.5"/></svg>',
+  globe:     '<svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M10 3C10 3 13 6 13 10C13 14 10 17 10 17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M10 3C10 3 7 6 7 10C7 14 10 17 10 17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="3" y1="10" x2="17" y2="10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
+  // ─── AGENT ICONS ─────────────────────────────────────────────
+  legal:     '<svg viewBox="0 0 20 20" fill="none"><line x1="10" y1="3" x2="10" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="6" y1="3" x2="14" y2="3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5 8L3 12H7L5 8Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 8L13 12H17L15 8Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><line x1="7" y1="17" x2="13" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
+  comply:    '<svg viewBox="0 0 20 20" fill="none"><path d="M10 2L3 5V10C3 13.9 6.1 17.5 10 18.5C13.9 17.5 17 13.9 17 10V5L10 2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="7,10 9,12 13,8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  notary:    '<svg viewBox="0 0 20 20" fill="none"><rect x="4" y="13" width="12" height="3" rx="0.5" stroke="currentColor" stroke-width="1.5"/><path d="M7 13V9C7 7.3 8.3 6 10 6C11.7 6 13 7.3 13 9V13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="10" cy="4" r="2" stroke="currentColor" stroke-width="1.5"/></svg>',
+  audit:     '<svg viewBox="0 0 20 20" fill="none"><circle cx="8.5" cy="8.5" r="5" stroke="currentColor" stroke-width="1.5"/><line x1="13" y1="13" x2="17" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M6 8.5L8 10.5L11 6.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  acct:      '<svg viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="14" height="14" rx="1.5" stroke="currentColor" stroke-width="1.5"/><line x1="3" y1="8" x2="17" y2="8" stroke="currentColor" stroke-width="1.5"/><line x1="10" y1="8" x2="10" y2="17" stroke="currentColor" stroke-width="1.5"/><line x1="5" y1="11" x2="8" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="12" y1="11" x2="15" y2="11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="5" y1="14" x2="8" y2="14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="12" y1="14" x2="15" y2="14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
+  comm:      '<svg viewBox="0 0 20 20" fill="none"><path d="M14 3L17 6L7 16L3 17L4 13L14 3Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><line x1="12" y1="5" x2="15" y2="8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
+  journ:     '<svg viewBox="0 0 20 20" fill="none"><path d="M3 17L6 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M6 14L15 5C15.5 4.5 16.5 4.5 17 5C17.5 5.5 17.5 6.5 17 7L8 16L4 17L6 14Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  arch:      '<svg viewBox="0 0 20 20" fill="none"><path d="M3 17H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5 17V10L10 6L15 10V17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 17V13H12V17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  // ─── UTILITY ICONS ───────────────────────────────────────────
+  settings:  '<svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M10 2V4M10 16V18M2 10H4M16 10H18M4.2 4.2L5.6 5.6M14.4 14.4L15.8 15.8M15.8 4.2L14.4 5.6M5.6 14.4L4.2 15.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
+  user:      '<svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3.5" stroke="currentColor" stroke-width="1.5"/><path d="M3 18C3 14.7 6.1 12 10 12C13.9 12 17 14.7 17 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
+  check:     '<svg viewBox="0 0 20 20" fill="none"><polyline points="4,10 8,14 16,6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+  lock:      '<svg viewBox="0 0 20 20" fill="none"><rect x="4" y="9" width="12" height="8" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M7 9V6C7 4.3 8.3 3 10 3C11.7 3 13 4.3 13 6V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="10" cy="13" r="1" fill="currentColor"/></svg>',
+};
+
+const DRAGON_GLYPH = '<svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" width="20" height="20" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14 C4 10 6 6 10 5 C14 4 16 7 15 10 C14 13 11 14 9 13"/><path d="M9 13 C7 14 5 16 6 17 C7 18 9 17 10 16 C11 15 11 17 13 17"/><path d="M12 7 C14 5 17 5 17 7 C17 9 15 9 13 9"/><circle cx="11.5" cy="6" r="0.8" fill="currentColor" stroke="none"/><path d="M10 5 L9.5 3"/></svg>';
+
+function getWindiIcon(key) {
+  if(key === 'dragon') return DRAGON_GLYPH;
+  return WINDI_ICONS[key] || WINDI_ICONS['docs'];
+}
+
 const SIDEBAR = [
-  {id:"grove",icon:"🌳",klass:"main"},{id:"chat",icon:"💬",klass:"main"},{id:"insights",icon:"🧠",klass:"main"},{id:"docs",icon:"📄",klass:"main"},{id:"desk",icon:"🎨",klass:"main"},
-  {id:"files",icon:"📁",klass:"main"},{id:"wallet",icon:"👛",klass:"main"},{id:"wick",icon:"🌐",klass:"main"},
-  {id:"search",icon:"🔍",klass:"main"},{id:"products",icon:"🛒",klass:"extra"},
-  {id:"journal",icon:"📰",klass:"extra"},{id:"history",icon:"🕐",klass:"extra"},
-  {id:"templates",icon:"📋",klass:"extra"},
+  {id:"grove",icon:"grove",klass:"main"},{id:"chat",icon:"chat",klass:"main"},{id:"insights",icon:"insights",klass:"main"},{id:"docs",icon:"docs",klass:"main"},{id:"desk",icon:"desk",klass:"main"},
+  {id:"files",icon:"files",klass:"main"},{id:"wallet",icon:"wallet",klass:"main"},{id:"wick",icon:"wick",klass:"main"},
+  {id:"search",icon:"search",klass:"main"},{id:"products",icon:"products",klass:"extra"},
+  {id:"journal",icon:"journal",klass:"extra"},{id:"history",icon:"history",klass:"extra"},
+  {id:"templates",icon:"templates",klass:"extra"},
 ];
 
 // ═══════════════════════════════════════════════════════════════════════════════════
@@ -3225,8 +3377,14 @@ function App(){
     // When dragon suggests a document, could auto-select type
     unsubs.push(EB.on(EB.EVENTS.DRAGON_SUGGESTION,(e)=>{
       console.log('[EventBus:UI] Dragon suggestion:',e.summary);
-      if(e.document?.type&&!docType){
-        // Could auto-set docType here
+      if(e.document){
+        const doc=e.document;
+        if(doc.content){
+          setContentHistory(prev=>[...prev,docContentRef.current]);
+          setDocContent(doc.content);
+        }
+        if(doc.title&&!docTitle){setDocTitle(doc.title);}
+        if(doc.type&&!docType){setDocType(doc.type);}
       }
     }));
 
@@ -3972,7 +4130,7 @@ function App(){
   const selectType=useCallback(key=>{
     setDocType(key);setSidebarTab("chat");
     const name=t.types[key]||key;const info=DOC_TYPES[key];
-    setMsgs(prev=>[...prev,{role:"system",text:`${info.icon} ${name}`},{role:"bot",text:t.chat.typeSelected(name)+"\n\n"+t.chat.askTitle}]);
+    setMsgs(prev=>[...prev,{role:"system",text:`[${name}]`},{role:"bot",text:t.chat.typeSelected(name)+"\n\n"+t.chat.askTitle}]);
     setAwaitingTitle(true); // FIX (E): now we explicitly wait for title
   },[t]);
 
@@ -4013,7 +4171,6 @@ function App(){
       let resp="",upd=false;
 
       // ─── A.4: Dragon Response (MED/HIGH tier) ───────────────────────
-      // ═══ DRAGON→DESKTOP BRIDGE: Extract document block from Architect ═══
       let dragonDocument=null;
       if(dragonResponse&&(dragonResponse.success&&dragonResponse.response||dragonResponse.message)){
         resp=dragonResponse.response||dragonResponse.message;
@@ -4220,7 +4377,7 @@ function App(){
             const dna=getDNA(detected);
             if(dna){
               // DNA type: use guided prompt
-              resp=DOC_TYPES[detected].icon+" "+name+"\n\n"+({en:"Great choice! Let's build your "+name+".",de:"Gute Wahl! Lass uns dein "+name+" erstellen.",pt:"Ótima escolha! Vamos criar seu "+name+"."}[lang]);
+              resp="["+name+"]\n\n"+({en:"Great choice! Let's build your "+name+".",de:"Gute Wahl! Lass uns dein "+name+" erstellen.",pt:"Ótima escolha! Vamos criar seu "+name+"."}[lang]);
               resp+="\n\n"+t.chat.askTitle;
             }else{
               resp=t.chat.typeSelected(name)+"\n\n"+t.chat.askTitle;
@@ -4596,15 +4753,15 @@ function App(){
   // ═══ ONBOARDING ═══
   // Pioneer Onboarding Steps
   const ONBOARD_STEPS = [
-    {icon:"🐉",title:{de:"Willkommen bei WINDI",en:"Welcome to WINDI",pt:"Bem-vindo ao WINDI"},
+    {icon:"dragon",title:{de:"Willkommen bei WINDI",en:"Welcome to WINDI",pt:"Bem-vindo ao WINDI"},
      desc:{de:"Dein Begleiter für souveräne Dokumente. KI verarbeitet. Mensch entscheidet. WINDI garantiert.",en:"Your companion for sovereign documents. AI processes. Human decides. WINDI guarantees.",pt:"O seu companheiro para documentos soberanos. IA processa. Humano decide. WINDI garante."}},
-    {icon:"🌱",title:{de:"Der Hain — Dein privater Raum",en:"The Grove — Your Private Space",pt:"O Bosque — Seu Espaço Privado"},
+    {icon:"grove",title:{de:"Der Hain — Dein privater Raum",en:"The Grove — Your Private Space",pt:"O Bosque — Seu Espaço Privado"},
      desc:{de:"Beginne mit Entwürfen. Denke nach, bevor du veröffentlichst. Alles bleibt privat bis du es teilst.",en:"Start with drafts. Think before you publish. Everything stays private until you share it.",pt:"Comece com rascunhos. Pense antes de publicar. Tudo permanece privado até você compartilhar."}},
-    {icon:"📄",title:{de:"14 Dokumenttypen",en:"14 Document Types",pt:"14 Tipos de Documentos"},
+    {icon:"docs",title:{de:"14 Dokumenttypen",en:"14 Document Types",pt:"14 Tipos de Documentos"},
      desc:{de:"Briefe, Verträge, Berichte, Rechnungen... Jeder Typ hat DNA — Struktur die zu dir passt.",en:"Letters, contracts, reports, invoices... Each type has DNA — structure that fits you.",pt:"Cartas, contratos, relatórios, faturas... Cada tipo tem DNA — estrutura que se adapta a você."}},
-    {icon:"🛡️",title:{de:"Versiegeln & Verifizieren",en:"Seal & Verify",pt:"Selar & Verificar"},
+    {icon:"comply",title:{de:"Versiegeln & Verifizieren",en:"Seal & Verify",pt:"Selar & Verificar"},
      desc:{de:"Jedes Dokument wird kryptografisch versiegelt. QR-Code für öffentliche Prüfung. Unveränderlich.",en:"Every document is cryptographically sealed. QR code for public verification. Immutable.",pt:"Cada documento é selado criptograficamente. QR code para verificação pública. Imutável."}},
-    {icon:"🪞",title:{de:"Dignity ID — Deine Identität",en:"Dignity ID — Your Identity",pt:"Dignity ID — Sua Identidade"},
+    {icon:"user",title:{de:"Dignity ID — Deine Identität",en:"Dignity ID — Your Identity",pt:"Dignity ID — Sua Identidade"},
      desc:{de:"Optional aber empfohlen. Deine Signatur auf Dokumenten. Vertrauenswert der wächst.",en:"Optional but recommended. Your signature on documents. Trust score that grows.",pt:"Opcional mas recomendado. Sua assinatura em documentos. Pontuação de confiança que cresce."}}
   ];
 
@@ -4616,7 +4773,7 @@ function App(){
         {ONBOARD_STEPS.map((_,i)=><div key={i} onClick={()=>setOnboardStep(i)} style={{width:8,height:8,borderRadius:"50%",background:i===onboardStep?th.gold:th.border,cursor:"pointer",transition:"all 0.3s"}}/>)}
       </div>
       {/* Step content */}
-      <div style={{width:90,height:90,borderRadius:"50%",margin:"0 auto 20px",background:`${th.gold}12`,border:`2px solid ${th.gold}33`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:44,boxShadow:`0 0 50px ${th.gold}15`,animation:"pulse 2s infinite"}}>{step.icon}</div>
+      <div style={{width:90,height:90,borderRadius:"50%",margin:"0 auto 20px",background:`${th.gold}12`,border:`2px solid ${th.gold}33`,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:`0 0 50px ${th.gold}15`,animation:"pulse 2s infinite"}}><span className="w-icon" style={{width:44,height:44,color:th.gold}} dangerouslySetInnerHTML={{__html: getWindiIcon(step.icon)}} /></div>
       <h1 style={{fontSize:20,fontWeight:800,margin:"0 0 12px",textAlign:"center",color:th.text}}>{step.title[lang]}</h1>
       <p style={{fontSize:13,color:th.dim,maxWidth:320,lineHeight:1.6,textAlign:"center",margin:"0 0 24px"}}>{step.desc[lang]}</p>
       {/* Language selector on first step */}
@@ -4631,7 +4788,7 @@ function App(){
         {onboardStep>0&&<button onClick={()=>setOnboardStep(s=>s-1)} style={{padding:"12px 24px",borderRadius:12,cursor:"pointer",background:th.card,border:`1px solid ${th.border}`,color:th.text,fontSize:13,fontWeight:600}}>← {lang==="de"?"Zurück":lang==="pt"?"Voltar":"Back"}</button>}
         {onboardStep<ONBOARD_STEPS.length-1?
           <button onClick={()=>setOnboardStep(s=>s+1)} style={{padding:"12px 28px",borderRadius:12,cursor:"pointer",background:th.gold,border:"none",color:"#FFF",fontSize:13,fontWeight:700,boxShadow:`0 4px 20px ${th.gold}44`}}>{lang==="de"?"Weiter":lang==="pt"?"Próximo":"Next"} →</button>
-          :<button onClick={startApp} style={{padding:"14px 32px",borderRadius:14,cursor:"pointer",background:th.gold,border:"none",color:"#FFF",fontSize:14,fontWeight:700,boxShadow:`0 4px 20px ${th.gold}44`,display:"flex",alignItems:"center",gap:8}}>🐉 {lang==="de"?"Los geht's!":lang==="pt"?"Vamos lá!":"Let's go!"}</button>}
+          :<button onClick={startApp} style={{padding:"14px 32px",borderRadius:14,cursor:"pointer",background:th.gold,border:"none",color:"#FFF",fontSize:14,fontWeight:700,boxShadow:`0 4px 20px ${th.gold}44`,display:"flex",alignItems:"center",gap:8}}><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="none"><ellipse cx="10" cy="11" rx="4.5" ry="4" transform="rotate(-15 10 11)" stroke="currentColor" strokeWidth="1.3"/><circle cx="7" cy="7.5" r="2.8" stroke="currentColor" strokeWidth="1.3"/><circle cx="6.2" cy="6.8" r="0.7" fill="currentColor"/><path d="M7 10 C5 8.5 3 8 2 9 C1.5 9.8 2.5 11 4 10.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/><path d="M13 9.5 C15 8 17 8 17.5 9.5 C17.8 10.5 16.5 11 15 10.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/></svg> {lang==="de"?"Los geht's!":lang==="pt"?"Vamos lá!":"Let's go!"}</button>}
       </div>
       {/* Skip */}
       <button onClick={startApp} style={{marginTop:20,background:"none",border:"none",color:th.dim,fontSize:11,cursor:"pointer"}}>{lang==="de"?"Überspringen":lang==="pt"?"Pular":"Skip"}</button>
@@ -4648,7 +4805,7 @@ function App(){
   ];
 
   return(
-    <div style={{...base,display:"flex",height:"100vh",overflow:"hidden"}}
+    <div data-theme={themeName==="NOIR"?"noir":"klar"} style={{...base,display:"flex",height:"100vh",overflow:"hidden"}}
       onPaste={e=>{for(const item of(e.clipboardData?.items||[])){if(item.type.startsWith("image/")){e.preventDefault();addImage(item.getAsFile());return;}}}}>
 
       {/* ═══ SIDEBAR ═══ */}
@@ -4656,7 +4813,7 @@ function App(){
         borderRight:`1px solid ${th.border}44`,display:"flex",flexDirection:"column",
         transition:"width 0.3s ease",overflow:"hidden",zIndex:50,
         position:isMobile?"absolute":"relative",height:"100%"}}>
-        <div style={{padding:"12px 0",textAlign:"center",borderBottom:`1px solid ${th.border}22`}}><span style={{fontSize:20}}>🐉</span></div>
+        <div style={{padding:"12px 0",textAlign:"center",borderBottom:`1px solid ${th.border}22`}}><span className="windi-dragon-logo" style={{width:28,height:28,borderRadius:"50%",border:`1.5px solid ${th.gold}`,display:"inline-flex"}} dangerouslySetInnerHTML={{__html: DRAGON_GLYPH}} /></div>
         <div style={{flex:1,padding:"8px 0",display:"flex",flexDirection:"column",gap:2}}>
           {SIDEBAR.map(item=>(
             <button key={item.id} onClick={()=>{
@@ -4674,7 +4831,7 @@ function App(){
                 cursor:"pointer",border:"none",background:sidebarTab===item.id?th.sidebarActive:th.sidebarBg,
                 color:sidebarTab===item.id?th.gold:th.dim,fontSize:16,
                 borderLeft:sidebarTab===item.id?`3px solid ${th.gold}`:"3px solid transparent",transition:"all 0.2s"}}>
-              <span>{item.icon}</span>
+              <span className={`w-icon ${sidebarTab===item.id?"w-icon-active":""}`} dangerouslySetInnerHTML={{__html: getWindiIcon(item.icon)}} />
               {(isMobile&&sidebarOpen)&&<span style={{fontSize:12,fontWeight:600}}>{t.sidebar[item.id]}</span>}
             </button>))}
         </div>
@@ -4733,7 +4890,7 @@ function App(){
               {/* Header */}
               <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:20,padding:arenaFullscreen?"20px":"0"}}>
                 <div style={{display:"flex",alignItems:"center",gap:12}}>
-                  <span style={{fontSize:32}}>🌳</span>
+                  <span style={{width:32,height:32,color:th.gold}} dangerouslySetInnerHTML={{__html:getWindiIcon("grove")}} />
                   <div>
                     <h2 style={{margin:0,fontSize:18,fontWeight:800,color:th.gold}}>{t.arena?.title||"Grove Arena"}</h2>
                     <p style={{margin:"4px 0 0",fontSize:11,color:th.dim}}>{t.arena?.subtitle||"Multi-Agent Deliberation"}</p>
@@ -4801,7 +4958,7 @@ function App(){
                             transition:"all 0.2s"
                           }}
                         >
-                          <span style={{fontSize:16}}>{agent.icon}</span>
+                          <span className="w-icon" style={{width:18,height:18,color:isSelected?th.gold:th.dim}} dangerouslySetInnerHTML={{__html: getWindiIcon(agent.icon)}} />
                           <span>{agentName}</span>
                           <span style={{fontSize:9,color:th.dim}}>{agent.credits}cr €{(agent.credits*0.01).toFixed(2)}</span>
                           {agent.preselect&&isSelected&&<span style={{fontSize:8,background:th.gold,color:"#FFF",padding:"1px 4px",borderRadius:4}}>★</span>}
@@ -4844,7 +5001,7 @@ function App(){
               {/* ═══ RUNNING STATE ═══ */}
               {arenaStatus==="running"&&(
                 <div style={{textAlign:"center",padding:40}}>
-                  <div style={{fontSize:48,marginBottom:20,animation:"pulse 2s infinite"}}>🌳</div>
+                  <div style={{width:48,height:48,margin:"0 auto 20px",color:th.gold,animation:"pulse 2s infinite"}} dangerouslySetInnerHTML={{__html:getWindiIcon("grove")}} />
                   <h3 style={{color:th.gold,marginBottom:20}}>{t.arena?.debating||"Deliberation in progress..."}</h3>
                   <div style={{display:"flex",flexWrap:"wrap",justifyContent:"center",gap:12}}>
                     {arenaAgents.map(agentId=>{
@@ -4935,7 +5092,7 @@ function App(){
                     <div style={{fontSize:11}}>
                       {arenaReport.honorarium.breakdown?.map((item,i)=>(
                         <div key={i} style={{display:"flex",justifyContent:"space-between",padding:"6px 0",borderBottom:`1px solid ${th.border}22`}}>
-                          <span>{item.icon||"•"} {item.agent_name||item.name}</span>
+                          <span style={{display:"flex",alignItems:"center",gap:6}}><span className="w-icon" style={{width:14,height:14}} dangerouslySetInnerHTML={{__html: getWindiIcon(item.icon)||"•"}} />{item.agent_name||item.name}</span>
                           <span style={{color:th.gold}}>{item.credits_final||item.credits}cr · €{(item.eur_value||0).toFixed(4)}</span>
                         </div>
                       ))}
@@ -4998,9 +5155,9 @@ function App(){
                   renderStructuredPreview(docType,docFields,th,lang)
                 :(<>
                   {/* Fallback: simple title + content preview */}
-                  {docTitle?<h1 style={{fontSize:20,fontWeight:800,margin:"0 0 12px",lineHeight:1.3}}>{docTitle}</h1>
+                  {docTitle!==undefined?<input value={docTitle} onChange={e=>setDocTitle(e.target.value)} style={{fontSize:20,fontWeight:800,margin:"0 0 12px",lineHeight:1.3,width:"100%",background:"transparent",border:"none",outline:"none",color:"inherit",fontFamily:"inherit",padding:0}}/>
                   :<div style={{fontSize:13,color:th.dim+"66",fontStyle:"italic",marginBottom:12}}>{t.doc.titlePH}</div>}
-                  {docContent?<div style={{fontSize:14,lineHeight:1.8,whiteSpace:"pre-wrap"}}>{docContent}</div>
+                  {docContent!==undefined?<textarea value={docContent} onChange={e=>setDocContent(e.target.value)} style={{width:"100%",minHeight:320,fontSize:14,lineHeight:1.8,whiteSpace:"pre-wrap",resize:"none",background:"transparent",border:"none",outline:"none",color:"inherit",fontFamily:"inherit",padding:0,overflow:"auto"}}/>
                   :<div style={{fontSize:12,color:th.dim+"44",fontStyle:"italic"}}>{t.doc.bodyPH}</div>}
                 </>)}
                 {docImages.length>0&&<div style={{marginTop:12,display:"flex",flexWrap:"wrap",gap:6}}>
@@ -5083,7 +5240,7 @@ function App(){
             {/* Chat Panel — A.4: Constitutional Dragon Integration */}
             <div style={{flex:isMobile?"1 1 100%":"1 1 50%",display:"flex",flexDirection:"column",background:th.chatBg}}>
               <div style={{padding:"8px 10px",borderBottom:`1px solid ${th.border}22`,display:"flex",alignItems:"center",gap:6}}>
-                <div style={{width:26,height:26,borderRadius:"50%",background:`${th.gold}15`,border:`1.5px solid ${th.gold}33`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13}}>🐉</div>
+                <div className="windi-dragon-logo" style={{width:26,height:26,borderRadius:"50%",border:`1.5px solid var(--dragon-color)`,display:"flex",alignItems:"center",justifyContent:"center"}}><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 20 20" fill="none"><ellipse cx="10" cy="11" rx="4.5" ry="4" transform="rotate(-15 10 11)" stroke="currentColor" strokeWidth="1.3"/><circle cx="7" cy="7.5" r="2.8" stroke="currentColor" strokeWidth="1.3"/><path d="M4.5 8.2 C3.5 8 3.2 9 4 9.5" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round"/><circle cx="6.2" cy="6.8" r="0.7" fill="currentColor"/><path d="M7.5 4.8 C7 3.5 8 2.5 8.5 2" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/><path d="M7 10 C5 8.5 3 8 2 9 C1.5 9.8 2.5 11 4 10.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/><path d="M13 9.5 C15 8 17 8 17.5 9.5 C17.8 10.5 16.5 11 15 10.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/><path d="M14 13 C16 14 17 15.5 16 16.5 C15 17.5 13.5 16.5 13.5 15" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round"/></svg></div>
                 <div style={{flex:1}}>
                   <div style={{fontSize:12,fontWeight:700}}>WINDI</div>
                   <div style={{fontSize:8,color:dragonConnected?th.success:th.dim}}>
@@ -5146,7 +5303,7 @@ function App(){
                   const sl=SHELF_LABELS[lang]||SHELF_LABELS.en;
                   return React.createElement('div',{style:{padding:16,maxWidth:600,margin:'0 auto'}},
                     React.createElement('div',{style:{textAlign:'center',marginBottom:20}},
-                      React.createElement('div',{style:{fontSize:36,marginBottom:8}},'🐉'),
+                      React.createElement('div',{className:'windi-dragon-glyph',style:{marginBottom:8}},React.createElement('svg',{xmlns:'http://www.w3.org/2000/svg',width:36,height:36,viewBox:'0 0 20 20',fill:'none'},React.createElement('ellipse',{cx:10,cy:11,rx:4.5,ry:4,transform:'rotate(-15 10 11)',stroke:'currentColor',strokeWidth:1.3}),React.createElement('circle',{cx:7,cy:7.5,r:2.8,stroke:'currentColor',strokeWidth:1.3}),React.createElement('path',{d:'M4.5 8.2 C3.5 8 3.2 9 4 9.5',stroke:'currentColor',strokeWidth:1.1,strokeLinecap:'round'}),React.createElement('circle',{cx:6.2,cy:6.8,r:0.7,fill:'currentColor'}),React.createElement('path',{d:'M7.5 4.8 C7 3.5 8 2.5 8.5 2',stroke:'currentColor',strokeWidth:1,strokeLinecap:'round'}),React.createElement('path',{d:'M7 10 C5 8.5 3 8 2 9 C1.5 9.8 2.5 11 4 10.5',stroke:'currentColor',strokeWidth:1,strokeLinecap:'round'}),React.createElement('path',{d:'M13 9.5 C15 8 17 8 17.5 9.5 C17.8 10.5 16.5 11 15 10.5',stroke:'currentColor',strokeWidth:1,strokeLinecap:'round'}),React.createElement('path',{d:'M14 13 C16 14 17 15.5 16 16.5 C15 17.5 13.5 16.5 13.5 15',stroke:'currentColor',strokeWidth:1.1,strokeLinecap:'round'}))),
                       React.createElement('h2',{style:{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:18,fontWeight:700,color:th.text,marginBottom:6,margin:0}},sl.title),
                       React.createElement('p',{style:{fontSize:12,color:th.dim,margin:0,fontFamily:"'Bricolage Grotesque',sans-serif"}},sl.sub)
                     ),
@@ -5185,32 +5342,10 @@ function App(){
                   // A.4: Show source indicator for Dragon responses
                   const sourceIcon=m.source==="council"?"👁️":m.source==="guardian"?"🛡️":"";
                   return<div key={i} style={{display:"flex",justifyContent:isU?"flex-end":"flex-start",marginBottom:6}}>
-                    {!isU&&<div style={{width:22,height:22,borderRadius:"50%",marginRight:5,flexShrink:0,background:`${th.gold}15`,border:`1px solid ${th.gold}33`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,marginTop:2}}>🐉</div>}
+                    {!isU&&<div className="windi-dragon-glyph" style={{width:22,height:22,borderRadius:"50%",marginRight:5,flexShrink:0,border:`1px solid var(--dragon-color)`,display:"flex",alignItems:"center",justifyContent:"center",marginTop:2}}><svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 20 20" fill="none"><ellipse cx="10" cy="11" rx="4.5" ry="4" transform="rotate(-15 10 11)" stroke="currentColor" strokeWidth="1.3"/><circle cx="7" cy="7.5" r="2.8" stroke="currentColor" strokeWidth="1.3"/><circle cx="6.2" cy="6.8" r="0.7" fill="currentColor"/><path d="M7 10 C5 8.5 3 8 2 9 C1.5 9.8 2.5 11 4 10.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/><path d="M13 9.5 C15 8 17 8 17.5 9.5 C17.8 10.5 16.5 11 15 10.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/></svg></div>}
                     <div style={{maxWidth:"82%"}}>
                       <div style={{padding:"7px 11px",borderRadius:12,background:isU?th.chatUser:th.chatBot,border:`1px solid ${isU?th.border:th.gold+"22"}`,fontSize:12.5,lineHeight:1.6,whiteSpace:"pre-wrap",borderTopLeftRadius:isU?12:3,borderTopRightRadius:isU?3:12}}>{m.text}</div>
                       {!isU&&sourceIcon&&<div style={{fontSize:8,color:th.dim,marginTop:2,marginLeft:4}}>{sourceIcon} {m.source}</div>}
-                      {/* ═══ DRAGON→DESKTOP BRIDGE: "Open in Editor" button ═══ */}
-                      {!isU&&m.document&&<button onClick={()=>{
-                        const desktopUrl=window.location.hostname==='localhost'?'http://localhost:8100':'https://windi-domain.com/desktop';
-                        fetch(desktopUrl+'/api/documents/create-from-dragon',{
-                          method:'POST',headers:{'Content-Type':'application/json'},
-                          body:JSON.stringify(m.document)
-                        }).then(r=>r.json()).then(d=>{
-                          if(d.success||d.id){
-                            window.open(desktopUrl+'/?doc='+encodeURIComponent(d.id||'draft'),'_blank');
-                          }else{
-                            // Fallback: open Desktop with document in localStorage
-                            localStorage.setItem('windi_dragon_draft',JSON.stringify(m.document));
-                            window.open(desktopUrl+'/?from=dragon','_blank');
-                          }
-                        }).catch(()=>{
-                          localStorage.setItem('windi_dragon_draft',JSON.stringify(m.document));
-                          window.open(desktopUrl+'/?from=dragon','_blank');
-                        });
-                      }} style={{marginTop:6,padding:"5px 12px",borderRadius:8,background:th.gold,border:"none",color:"#fff",fontSize:10,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",gap:4}}>
-                        <span>📝</span>
-                        <span>{lang==="de"?"Im Editor öffnen":lang==="pt"?"Abrir no Editor":"Open in Editor"}</span>
-                      </button>}
                     </div>
                   </div>;
                 })}
@@ -5316,7 +5451,7 @@ function App(){
                   return<button key={key} onClick={()=>{if(ok){if(info.externalUrl){window.open(info.externalUrl,'_blank');}else{selectType(key);}}}} style={{padding:"10px 6px",borderRadius:10,cursor:ok?"pointer":"default",
                     background:th.card,border:`1px solid ${th.border}`,textAlign:"center",opacity:ok?1:0.4,
                     display:"flex",flexDirection:"column",alignItems:"center",gap:3,transition:"all 0.2s"}}>
-                    <span style={{fontSize:20}}>{info.icon}</span>
+                    <span className="w-icon" style={{width:22,height:22,color:th.dim}} dangerouslySetInnerHTML={{__html: getWindiIcon(info.icon)}} />
                     <span style={{fontSize:10,fontWeight:600,color:th.text}}>{t.types[key]}</span>
                     {info.breath&&<span style={{fontSize:8,color:th.dim,fontStyle:"italic",textAlign:"center",lineHeight:1.2,maxWidth:"80px"}}>{info.breath[lang]||info.breath.en}</span>}
                   </button>;})}
@@ -5409,7 +5544,7 @@ function App(){
                   {t.did.rememberDevice}
                 </label>
               </>:<div style={{textAlign:"center",padding:"40px 20px"}}>
-                <div style={{fontSize:48,marginBottom:16}}>🛡️</div>
+                <div style={{width:48,height:48,margin:"0 auto 16px",color:th.gold}} dangerouslySetInnerHTML={{__html:getWindiIcon("comply")}} />
                 <h2 style={{fontSize:18,fontWeight:700,marginBottom:8}}>{t.did.walletTitle}</h2>
                 <p style={{fontSize:12,color:th.dim,marginBottom:20,maxWidth:280,lineHeight:1.5}}>{t.did.walletSub}</p>
                 <button onClick={()=>setShowDID(true)} style={{padding:"12px 28px",borderRadius:12,background:th.gold,border:"none",color:"#FFF",fontSize:14,fontWeight:700,cursor:"pointer"}}>{t.did.createDID}</button>
@@ -5510,7 +5645,7 @@ function App(){
                   {/* Empty state */}
                   {deskLayers.length===0&&(
                     <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",color:th.dim,pointerEvents:"none"}}>
-                      <div style={{fontSize:48,marginBottom:16,opacity:0.3}}>🎨</div>
+                      <div style={{width:48,height:48,margin:"0 auto 16px",opacity:0.3}} dangerouslySetInnerHTML={{__html:getWindiIcon("desk")}} />
                       <div style={{fontSize:14,fontWeight:600}}>{lang==="de"?"Ebenen hinzufügen":lang==="pt"?"Adiciona camadas":"Add layers to compose"}</div>
                       <div style={{fontSize:11,marginTop:6,opacity:0.5}}>{lang==="de"?"Text · Bilder · Videos · Formen":lang==="pt"?"Texto · Imagens · Vídeos · Formas":"Text · Images · Videos · Shapes"}</div>
                     </div>
@@ -5591,7 +5726,7 @@ function App(){
                     </div>
                   </div>;
                 })()}
-                <div style={{padding:"6px 8px",borderTop:"1px solid "+th.border,fontSize:8,color:th.dim,fontFamily:"'JetBrains Mono',monospace",display:"flex",justifyContent:"space-between"}}><span>A4 · 794×1123</span><span>🐉 WINDI</span></div>
+                <div style={{padding:"6px 8px",borderTop:"1px solid "+th.border,fontSize:8,color:th.dim,fontFamily:"'JetBrains Mono',monospace",display:"flex",justifyContent:"space-between"}}><span>A4 · 794×1123</span><span style={{display:"inline-flex",alignItems:"center",gap:4}}><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 20 20" fill="none" style={{color:"var(--dragon-color)"}}><ellipse cx="10" cy="11" rx="4.5" ry="4" transform="rotate(-15 10 11)" stroke="currentColor" strokeWidth="1.3"/><circle cx="7" cy="7.5" r="2.8" stroke="currentColor" strokeWidth="1.3"/><circle cx="6.2" cy="6.8" r="0.7" fill="currentColor"/></svg> WINDI</span></div>
               </aside>
 
               <input ref={deskFileRef} type="file" accept="image/*" style={{display:"none"}} onChange={deskHandleImageUpload}/>
@@ -5862,10 +5997,10 @@ function App(){
           )}
 
           {/* ═══ OTHER TABS (Fallback) ═══ */}
-          {!["chat","docs","wallet","desk","journal","files","search","templates"].includes(sidebarTab)&&(
+          {!["chat","docs","wallet","desk","journal","files","search","templates","grove"].includes(sidebarTab)&&(
             <div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
               <div style={{textAlign:"center"}}>
-                <div style={{fontSize:40,marginBottom:12}}>{SIDEBAR.find(s=>s.id===sidebarTab)?.icon}</div>
+                <div style={{width:40,height:40,margin:"0 auto 12px",color:th.gold}} dangerouslySetInnerHTML={{__html:getWindiIcon(SIDEBAR.find(s=>s.id===sidebarTab)?.icon)}} />
                 <div style={{fontSize:16,fontWeight:700}}>{t.sidebar[sidebarTab]}</div>
                 <div style={{fontSize:12,color:th.dim,marginTop:6}}>{t.doc.comingSoon}</div>
               </div></div>)}
@@ -5875,10 +6010,10 @@ function App(){
       {/* ═══ DID MODAL — FIX (C): consent checkbox ═══ */}
       {showDID&&<div style={{position:"fixed",inset:0,background:"#000A",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:16}} onClick={()=>{setShowDID(false);setDidCreating(false);}}>
         <div onClick={e=>e.stopPropagation()} style={{background:th.card,borderRadius:18,padding:"24px 20px",maxWidth:400,width:"100%",border:`1px solid ${th.gold}33`,maxHeight:"90vh",overflowY:"auto"}}>
-          {didCreating?<div style={{textAlign:"center",padding:"36px 0"}}><div style={{fontSize:44,marginBottom:14}}>🔐</div><div style={{fontSize:13,color:th.gold,fontWeight:600}}>{t.did.creating}</div></div>
+          {didCreating?<div style={{textAlign:"center",padding:"36px 0"}}><div style={{width:44,height:44,margin:"0 auto 14px",color:th.gold}} dangerouslySetInnerHTML={{__html:getWindiIcon("lock")}} /><div style={{fontSize:13,color:th.gold,fontWeight:600}}>{t.did.creating}</div></div>
           :<>
             <div style={{textAlign:"center",marginBottom:20}}>
-              <div style={{fontSize:36,marginBottom:8}}>🛡️</div>
+              <div style={{width:36,height:36,margin:"0 auto 8px",color:th.gold}} dangerouslySetInnerHTML={{__html:getWindiIcon("comply")}} />
               <h2 style={{fontSize:16,fontWeight:800,margin:"0 0 4px"}}>{t.did.walletTitle}</h2>
               <p style={{fontSize:11,color:th.dim,margin:0}}>{t.did.walletSub}</p></div>
             <div style={{display:"flex",gap:8,marginBottom:14}}>
@@ -5954,7 +6089,7 @@ function App(){
 
           {finalizeStep===2&&<>
             <div style={{textAlign:"center",padding:"20px 0"}}>
-              <div style={{fontSize:48,marginBottom:12}}>🛡️</div>
+              <div style={{width:48,height:48,margin:"0 auto 12px",color:th.gold}} dangerouslySetInnerHTML={{__html:getWindiIcon("comply")}} />
               <p style={{fontSize:13,color:th.text,lineHeight:1.5,marginBottom:16}}>
                 {lang==="de"?"Dein Dokument wird kryptographisch versiegelt. Dieser Vorgang ist unwiderruflich.":
                  lang==="pt"?"O teu documento será selado criptograficamente. Esta acção é irreversível.":
@@ -6092,16 +6227,16 @@ function App(){
             <div style={{fontSize:12,fontWeight:700,marginBottom:8,color:th.gold}}>{t.distribute.channels}</div>
             <div style={{display:"flex",flexDirection:"column",gap:8}}>
               {[
-                {key:"email",icon:"📧",label:t.distribute.email},
-                {key:"whatsapp",icon:"💬",label:t.distribute.whatsapp},
-                {key:"sms",icon:"📱",label:t.distribute.sms},
-                {key:"linkedin",icon:"💼",label:t.distribute.linkedin},
-                {key:"twitter",icon:"𝕏",label:t.distribute.twitter},
+                {key:"email",icon:"email",label:t.distribute.email},
+                {key:"whatsapp",icon:"chat",label:t.distribute.whatsapp},
+                {key:"sms",icon:"broadcast",label:t.distribute.sms},
+                {key:"linkedin",icon:"user",label:t.distribute.linkedin},
+                {key:"twitter",icon:"globe",label:t.distribute.twitter},
               ].map(ch=>(
                 <div key={ch.key} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 12px",borderRadius:10,
                   background:distributeChannels[ch.key]?.enabled?`${th.gold}12`:th.hover,
                   border:`1px solid ${distributeChannels[ch.key]?.enabled?th.gold+"44":th.border}`}}>
-                  <span style={{fontSize:16}}>{ch.icon}</span>
+                  <span className="w-icon" style={{width:18,height:18,color:distributeChannels[ch.key]?.enabled?th.gold:th.dim}} dangerouslySetInnerHTML={{__html: getWindiIcon(ch.icon)}} />
                   <span style={{fontSize:12,fontWeight:600,flex:1}}>{ch.label}</span>
                   {distributeChannels[ch.key]?.configured?(
                     <button onClick={()=>setDistributeChannels(p=>({...p,[ch.key]:{...p[ch.key],enabled:!p[ch.key].enabled}}))}
@@ -6236,10 +6371,10 @@ function App(){
             </label>
             <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
               {[
-                {type:"text",icon:"💬",label:lang==="de"?"Text":lang==="pt"?"Texto":"Text"},
-                {type:"image",icon:"🖼️",label:lang==="de"?"Bild":lang==="pt"?"Imagem":"Image"},
-                {type:"video",icon:"🎬",label:lang==="de"?"Video":lang==="pt"?"Vídeo":"Video"},
-                {type:"document",icon:"📄",label:lang==="de"?"Dokument":lang==="pt"?"Documento":"Document"},
+                {type:"text",icon:"chat",label:lang==="de"?"Text":lang==="pt"?"Texto":"Text"},
+                {type:"image",icon:"creative",label:lang==="de"?"Bild":lang==="pt"?"Imagem":"Image"},
+                {type:"video",icon:"slides",label:lang==="de"?"Video":lang==="pt"?"Vídeo":"Video"},
+                {type:"document",icon:"docs",label:lang==="de"?"Dokument":lang==="pt"?"Documento":"Document"},
               ].map(item=>(
                 <button key={item.type} className="wa-type-btn" data-type={item.type}
                   onClick={()=>{
@@ -6261,9 +6396,9 @@ function App(){
                     border:`1px solid ${item.type==='text'?th.gold:th.border}`,
                     borderRadius:20,padding:"5px 14px",fontSize:12,
                     color:item.type==='text'?'#FFF':th.dim,
-                    cursor:"pointer",fontFamily:"'Bricolage Grotesque',sans-serif"
+                    cursor:"pointer",fontFamily:"'Bricolage Grotesque',sans-serif",display:"flex",alignItems:"center",gap:6
                   }}>
-                  {item.icon} {item.label}
+                  <span className="w-icon" style={{width:14,height:14}} dangerouslySetInnerHTML={{__html: getWindiIcon(item.icon)}} />{item.label}
                 </button>
               ))}
             </div>
@@ -6664,7 +6799,7 @@ function App(){
             </section>
             {/* Three Dragons (HIGH only) */}
             {windiTier==="HIGH"&&<section style={{marginBottom:20}}>
-              <h3 style={{fontSize:12,fontWeight:700,color:th.text,marginBottom:10,display:"flex",alignItems:"center",gap:6}}><span>🐉</span>{lang==="de"?"Drei Drachen":lang==="pt"?"Três Dragões":"Three Dragons"}</h3>
+              <h3 style={{fontSize:12,fontWeight:700,color:th.text,marginBottom:10,display:"flex",alignItems:"center",gap:6}}><span className="windi-dragon-glyph"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 20 20" fill="none"><ellipse cx="10" cy="11" rx="4.5" ry="4" transform="rotate(-15 10 11)" stroke="currentColor" strokeWidth="1.3"/><circle cx="7" cy="7.5" r="2.8" stroke="currentColor" strokeWidth="1.3"/><circle cx="6.2" cy="6.8" r="0.7" fill="currentColor"/><path d="M7 10 C5 8.5 3 8 2 9 C1.5 9.8 2.5 11 4 10.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/><path d="M13 9.5 C15 8 17 8 17.5 9.5 C17.8 10.5 16.5 11 15 10.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/></svg></span>{lang==="de"?"Drei Drachen":lang==="pt"?"Três Dragões":"Three Dragons"}</h3>
               <div style={{display:"flex",flexDirection:"column",gap:6}}>
                 <div style={{display:"flex",alignItems:"center",gap:8,padding:"8px 12px",borderRadius:8,background:th.success+"15",border:"1px solid "+th.success+"22"}}><span>🛡️</span><span style={{fontSize:11,color:th.text}}>Guardian — {lang==="de"?"Schutz aktiv":lang==="pt"?"Protecção activa":"Protection active"}</span></div>
                 <div style={{display:"flex",alignItems:"center",gap:8,padding:"8px 12px",borderRadius:8,background:th.gold+"15",border:"1px solid "+th.gold+"22"}}><span>🏗️</span><span style={{fontSize:11,color:th.text}}>Architect — {lang==="de"?"Struktur bereit":lang==="pt"?"Estrutura pronta":"Structure ready"}</span></div>
@@ -6704,6 +6839,5 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<App />);
 </script>
 <script src="modules/P8_WhatsAppSuite.js"></script>
-<script src="/app/static/windi-drivein.js"></script>
 </body>
 </html>

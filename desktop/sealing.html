@@ -22,6 +22,7 @@
     };
   }
 </script>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Crect width='20' height='20' rx='4' fill='%231A1208'/%3E%3Cellipse cx='10' cy='11' rx='4.5' ry='4' transform='rotate(-15 10 11)' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='7' cy='7.5' r='2.8' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='6.2' cy='6.8' r='0.7' fill='%238B6914'/%3E%3Cpath d='M7.5 4.8 C7 3.5 8 2.5 8.5 2' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M7 10 C5 8.5 3 8 2 9 C1.5 9.8 2.5 11 4 10.5' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M13 9.5 C15 8 17 8 17.5 9.5 C17.8 10.5 16.5 11 15 10.5' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M14 13 C16 14 17 15.5 16 16.5 C15 17.5 13.5 16.5 13.5 15' stroke='%238B6914' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E">
 </head>
 <body>
 <div id="root"></div>
@@ -261,11 +262,11 @@ function WINDISealingRitual() {
   const gold = "#C9A84C";
 
   const SEALING_STEPS = [
-    { label: "Signatur wird verifiziert…", icon: "✍", tech: "Paperless Signature → Ed25519 binding" },
-    { label: "Governance wird angewendet…", icon: "🛡", tech: `Level: ${CRYPTO.governanceLevel} · SGE: ${CRYPTO.sgeScore}` },
+    { label: "Signatur wird verifiziert…", icon: <svg width="11" height="11" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L15 5L6 14L2 15L3 11Z"/><path d="M11 3L14 6"/></svg>, tech: "Paperless Signature → Ed25519 binding" },
+    { label: "Governance wird angewendet…", icon: <svg width="11" height="11" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10 2L3 5V10C3 14.4 6 18 10 19C14 18 17 14.4 17 10V5L10 2Z"/></svg>, tech: `Level: ${CRYPTO.governanceLevel} · SGE: ${CRYPTO.sgeScore}` },
     { label: "Dokument wird gescannt…", icon: "◎", tech: "SGE Semantic Analysis · 6 Layers" },
     { label: "Integrität wird berechnet…", icon: "⧫", tech: `Hash: ${CRYPTO.integrityHash}` },
-    { label: "Virtue Receipt wird erstellt…", icon: "📜", tech: `Receipt: ${CRYPTO.receiptId}` },
+    { label: "Virtue Receipt wird erstellt…", icon: <svg width="11" height="11" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 2H15V18L10 15L5 18V2Z"/></svg>, tech: `Receipt: ${CRYPTO.receiptId}` },
     { label: "Merkle Tree wird aktualisiert…", icon: "⬡", tech: `Root: ${CRYPTO.merkleRoot}` },
     { label: "Dokument wird versiegelt…", icon: "◆", tech: "Immutable · Auditable · Sovereign" },
   ];
