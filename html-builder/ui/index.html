@@ -696,7 +696,7 @@ body {
 // Kempten, Bavaria — 10.03.2026
 // ══════════════════════════════════════════════════════════════
 
-const LEDGER_URL  = '/api/ledger/';
+const LEDGER_URL  = '/api/ledger/api/receipts';
 const VAULT_URL   = '/vault';
 const VERIFY_BASE = 'https://windi-domain.com/verify-public/?id=';
 const AUTOSAVE_KEY = 'windi_htmlbuilder_v31';
@@ -1314,7 +1314,8 @@ function App() {
     try {
       const content = fullHTML; const hash = await sha256(content); const now = new Date();
       const receiptId = `WINDI-HTMLB-${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}-${Math.random().toString(36).slice(2,8).toUpperCase()}`;
-      const payload = { id: receiptId, actor: 'html-builder-v31', app: 'windi-html-builder', doc_name: docMeta.title || 'HTML Document', doc_type: 'doc', governance_level: docMeta.governance || 'MEDIUM', content_hash: hash, item_count: items.length, char_count: content.length, timestamp: now.toISOString() };
+      const govLevel = docMeta.governance || 'MEDIUM'; const sgeScore = govLevel === 'HIGH' || govLevel === 'CRIT' ? 0.85 : govLevel === 'LOW' ? 0.3 : 0.5;
+      const payload = { id: receiptId, actor: 'html-builder-v31', app: 'windi-html-builder', doc_name: docMeta.title || 'HTML Document', doc_type: 'doc', governance_level: govLevel, sge_score: sgeScore, content_hash: hash, item_count: items.length, char_count: content.length, timestamp: now.toISOString() };
       const resp = await fetch(LEDGER_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
       if (!resp.ok) throw new Error(`Ledger: HTTP ${resp.status}`);
       const data = await resp.json(); const rid = data.receipt_id || receiptId;
