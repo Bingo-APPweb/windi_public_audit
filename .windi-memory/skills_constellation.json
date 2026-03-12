@@ -166,6 +166,39 @@
         "exit_codes": {"0": "safe to deploy", "1": "failures detected"}
       },
       "philosophy": "Real prevention through executable code, not documentation."
+    },
+
+    "ferreiro_health_monitor": {
+      "id": "SKILL-012",
+      "name": "O Ferreiro (W-FERR-001)",
+      "description": "Health Monitor & Self-Healing Agent — sistema imunológico da infraestrutura WINDI",
+      "commits": ["e07fbe0"],
+      "files": [
+        "agent-palette/engine/ferreiro/loader.js",
+        "agent-palette/engine/ferreiro/ferreiro.js",
+        "agent-palette/engine/ferreiro/probes/probe_services.js",
+        "agent-palette/engine/ferreiro/healers/heal_*.js",
+        "agent-palette/engine/ferreiro/reporter/*.js"
+      ],
+      "solution": {
+        "probes": ["probe_services.js", "probe_manifests.js", "probe_code.js"],
+        "healers": ["heal_zombi.js", "heal_alzheimer.js", "heal_urls.js", "heal_loop.js", "heal_manifest.js"],
+        "reporters": ["report.js", "ledger_seal.js", "dashboard.js"],
+        "api": {
+          "probeAll": "Ferreiro.probeAll() → { score, issues[] }",
+          "heal": "Ferreiro.heal(issueId) → I9-bounded healing",
+          "report": "Ferreiro.report() → structured diagnostic",
+          "seal": "Ferreiro.seal(report) → Virtue Receipt in Ledger"
+        }
+      },
+      "autonomy_levels": {
+        "level_1": "Cura Imediata — AI acts, no approval (zombies, manifests)",
+        "level_2": "Cura com Registo — AI acts + Ledger seal (context, URLs, loops)",
+        "level_3": "Proposta ao Human — diagnose only, wait approval (ports, nginx)",
+        "level_4": "Alerta Crítico — alert Human Dragon, no autonomous action (ledger down)"
+      },
+      "i9_rule": "Level 1-2: AI acts. Level 3-4: Human decides. Boundary is IRREMEDIÁVEL.",
+      "philosophy": "AI cura o conhecido. Human decide o desconhecido."
     }
   },
 
@@ -176,7 +209,8 @@
       "ledger": {"port": 8101, "purpose": "Forensic receipts"},
       "export": {"port": 8103, "purpose": "PDF/DOCX/PPTX generation"},
       "verify_public": {"port": 8114, "purpose": "Public verification with SSR"},
-      "communique": {"port": 8105, "purpose": "Multi-channel distribution"}
+      "communique": {"port": 8105, "purpose": "Multi-channel distribution"},
+      "ferreiro": {"port": "frontend", "file": "agent-palette/engine/ferreiro/", "purpose": "W-FERR-001 Health Monitor & Self-Healing", "id": "W-FERR-001"}
     },
     "frontend": {
       "main": "agent-palette/ui/index.html",

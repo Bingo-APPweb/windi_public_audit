@@ -421,6 +421,12 @@ KNOWLEDGE_BASE = {
         "en": "**Three Dragons**: Guardian (compliance, risk), Architect (creation, structure), Witness (validation, audit). Together they form the Council for HIGH-tier decisions.",
         "pt": "**Three Dragons**: Guardian (compliance, risco), Architect (criação, estrutura), Witness (validação, auditoria). Juntos formam o Council para decisões de tier HIGH.",
     },
+    "ferreiro": {
+        "keywords": ["ferreiro", "blacksmith", "health", "probes", "healing", "w-ferr-001", "infrastructure"],
+        "de": "**O Ferreiro (W-FERR-001)** ist das Immunsystem der WINDI-Infrastruktur. Er überwacht die Gesundheit aller Services, diagnostiziert Probleme und heilt autonom was möglich ist — immer unter Beachtung von I9. Level 1-2: AI handelt. Level 3-4: Mensch entscheidet. API: Ferreiro.probeAll(), Ferreiro.heal(id).",
+        "en": "**O Ferreiro (W-FERR-001)** is the WINDI infrastructure's immune system. It monitors health of all services, diagnoses issues, and heals autonomously what it can — always respecting I9 boundaries. Level 1-2: AI acts. Level 3-4: Human decides. API: Ferreiro.probeAll(), Ferreiro.heal(id).",
+        "pt": "**O Ferreiro (W-FERR-001)** é o sistema imunológico da infraestrutura WINDI. Monitoriza a saúde de todos os serviços, diagnostica problemas e cura autonomamente o que pode — sempre respeitando limites I9. Nível 1-2: AI age. Nível 3-4: Humano decide. API: Ferreiro.probeAll(), Ferreiro.heal(id).",
+    },
 }
 
 # Conversational responses for different situations
