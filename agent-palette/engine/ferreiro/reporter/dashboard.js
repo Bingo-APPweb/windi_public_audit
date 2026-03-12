@@ -10,8 +10,8 @@
   const STYLES = `
     .ferreiro-dash {
       position: fixed;
-      bottom: 80px;
-      right: 20px;
+      bottom: 130px;
+      left: 68px;
       width: 320px;
       background: #1e293b;
       border-radius: 12px;
@@ -150,10 +150,10 @@
 
     .ferreiro-dash-toggle {
       position: fixed;
-      bottom: 20px;
-      right: 20px;
-      width: 48px;
-      height: 48px;
+      bottom: 80px;
+      left: 68px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
       background: #1e293b;
       border: 2px solid #334155;
