@@ -1,0 +1,46 @@
+{
+  "id": "memo",
+  "version": "1.0.0",
+  "tier": "FREE",
+  "category": "personal",
+  "icon": "memo",
+  "names": {
+    "de": "Memo",
+    "en": "Memo",
+    "pt": "Memorando"
+  },
+  "breath": {
+    "de": "Informieren & abstimmen",
+    "en": "Inform & align",
+    "pt": "Informar & alinhar"
+  },
+  "prompts": {
+    "de": "Ich möchte ein Memo erstellen",
+    "en": "I want to create a memo",
+    "pt": "Quero criar um memorando"
+  },
+  "schema": {
+    "to": { "type": "string", "required": true },
+    "from": { "type": "string", "required": true },
+    "date": { "type": "date", "required": false, "default": "today" },
+    "subject": { "type": "string", "required": true },
+    "body": { "type": "text", "required": true },
+    "priority": { "type": "enum", "values": ["normal", "urgent", "critical"], "required": false },
+    "action": { "type": "string", "required": false }
+  },
+  "flow": [
+    { "field": "to", "prompt": { "de": "An wen?", "en": "To whom?", "pt": "Para quem?" } },
+    { "field": "subject", "prompt": { "de": "Betreff?", "en": "Subject?", "pt": "Assunto?" }, "teach": { "de": "Ein guter Betreff hat Aktion + Kontext.", "en": "A good subject has action + context.", "pt": "Um bom assunto tem ação + contexto." } },
+    { "field": "body", "prompt": { "de": "Nachricht?", "en": "Message?", "pt": "Mensagem?" } }
+  ],
+  "sealPolicy": {
+    "required": false,
+    "defaultSeal": true,
+    "governanceLevel": "light"
+  },
+  "tone": {
+    "description": "Internal, direct, professional",
+    "structure": "TO → SUBJECT → KEY MESSAGE → ACTION REQUIRED",
+    "rules": ["Get to the point fast", "Action-oriented", "No fluff"]
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "id": "note",
+  "version": "1.0.0",
+  "tier": "FREE",
+  "category": "personal",
+  "icon": "note",
+  "names": {
+    "de": "Notiz",
+    "en": "Note",
+    "pt": "Nota"
+  },
+  "breath": {
+    "de": "Moment festhalten",
+    "en": "Capture the moment",
+    "pt": "Capturar o momento"
+  },
+  "prompts": {
+    "de": "Ich möchte eine Notiz machen",
+    "en": "I want to make a note",
+    "pt": "Quero fazer uma nota"
+  },
+  "schema": {
+    "title": { "type": "string", "required": false },
+    "content": { "type": "text", "required": true },
+    "tags": { "type": "array", "required": false }
+  },
+  "flow": [
+    { "field": "content", "prompt": { "de": "Was möchten Sie notieren?", "en": "What would you like to note?", "pt": "O que você gostaria de anotar?" } }
+  ],
+  "sealPolicy": {
+    "required": false,
+    "defaultSeal": false,
+    "governanceLevel": "minimal"
+  },
+  "tone": {
+    "description": "Quick, informal, personal",
+    "structure": "Free-form content",
+    "rules": ["No strict format", "Capture thoughts quickly"]
+  }
+}

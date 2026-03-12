@@ -1,0 +1,46 @@
+{
+  "id": "certificate",
+  "version": "1.0.0",
+  "tier": "HIGH",
+  "category": "governance",
+  "icon": "certificate",
+  "names": {
+    "de": "Bescheinigung",
+    "en": "Certificate",
+    "pt": "Certificado"
+  },
+  "breath": {
+    "de": "Dauerhafter Nachweis",
+    "en": "Permanent record",
+    "pt": "Registro permanente"
+  },
+  "prompts": {
+    "de": "Ich möchte eine Bescheinigung erstellen",
+    "en": "I want to create a certificate",
+    "pt": "Quero criar um certificado"
+  },
+  "schema": {
+    "title": { "type": "string", "required": true },
+    "recipient": { "type": "string", "required": true },
+    "issuer": { "type": "string", "required": true },
+    "date": { "type": "date", "required": true, "default": "today" },
+    "description": { "type": "text", "required": true },
+    "validity": { "type": "string", "required": false },
+    "serialNumber": { "type": "string", "required": false, "auto": true }
+  },
+  "flow": [
+    { "field": "title", "prompt": { "de": "Art der Bescheinigung?", "en": "Type of certificate?", "pt": "Tipo de certificado?" } },
+    { "field": "recipient", "prompt": { "de": "Für wen?", "en": "For whom?", "pt": "Para quem?" } },
+    { "field": "description", "prompt": { "de": "Wofür?", "en": "For what?", "pt": "Para quê?" } }
+  ],
+  "sealPolicy": {
+    "required": true,
+    "defaultSeal": true,
+    "governanceLevel": "governance"
+  },
+  "tone": {
+    "description": "Formal, authoritative, permanent",
+    "structure": "Title → Recipient → Achievement → Issuer → Date",
+    "rules": ["Formal language", "Clear achievement", "Authority signature"]
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "id": "presentation",
+  "version": "1.0.0",
+  "tier": "MED",
+  "category": "business",
+  "icon": "slides",
+  "names": {
+    "de": "Präsentation",
+    "en": "Presentation",
+    "pt": "Apresentação"
+  },
+  "breath": {
+    "de": "Geschichte formt sich",
+    "en": "Story takes shape",
+    "pt": "História toma forma"
+  },
+  "prompts": {
+    "de": "Ich möchte eine Präsentation erstellen",
+    "en": "I want to create a presentation",
+    "pt": "Quero criar uma apresentação"
+  },
+  "schema": {
+    "title": { "type": "string", "required": true },
+    "author": { "type": "string", "required": false },
+    "slides": { "type": "array", "required": true },
+    "audience": { "type": "string", "required": false },
+    "duration": { "type": "string", "required": false }
+  },
+  "flow": [
+    { "field": "title", "prompt": { "de": "Titel der Präsentation?", "en": "Presentation title?", "pt": "Título da apresentação?" } },
+    { "field": "audience", "prompt": { "de": "Zielgruppe?", "en": "Target audience?", "pt": "Público-alvo?" } },
+    { "field": "slides", "prompt": { "de": "Hauptpunkte?", "en": "Key points?", "pt": "Pontos principais?" } }
+  ],
+  "sealPolicy": {
+    "required": false,
+    "defaultSeal": true,
+    "governanceLevel": "light"
+  },
+  "tone": {
+    "description": "Visual, narrative, engaging",
+    "structure": "Title → Key points → Supporting content → Call to action",
+    "rules": ["One idea per slide", "Visual over text", "Tell a story"]
+  }
+}

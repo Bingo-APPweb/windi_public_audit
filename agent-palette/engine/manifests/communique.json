@@ -1,0 +1,46 @@
+{
+  "id": "communique",
+  "version": "1.0.0",
+  "tier": "HIGH",
+  "category": "governance",
+  "icon": "broadcast",
+  "names": {
+    "de": "Communiqué",
+    "en": "Communiqué",
+    "pt": "Comunicado"
+  },
+  "breath": {
+    "de": "Blühen · Bezeugen",
+    "en": "Bloom · Witness",
+    "pt": "Florescer · Testemunhar"
+  },
+  "prompts": {
+    "de": "Ich möchte ein Communiqué erstellen",
+    "en": "I want to create a communiqué",
+    "pt": "Quero criar um comunicado"
+  },
+  "schema": {
+    "title": { "type": "string", "required": true },
+    "date": { "type": "date", "required": true, "default": "today" },
+    "issuer": { "type": "string", "required": true },
+    "audience": { "type": "string", "required": false },
+    "body": { "type": "text", "required": true },
+    "channels": { "type": "array", "required": false },
+    "attachments": { "type": "array", "required": false }
+  },
+  "flow": [
+    { "field": "title", "prompt": { "de": "Titel des Communiqués?", "en": "Communiqué title?", "pt": "Título do comunicado?" } },
+    { "field": "issuer", "prompt": { "de": "Herausgeber?", "en": "Issuer?", "pt": "Emissor?" } },
+    { "field": "body", "prompt": { "de": "Inhalt?", "en": "Content?", "pt": "Conteúdo?" } }
+  ],
+  "sealPolicy": {
+    "required": true,
+    "defaultSeal": true,
+    "governanceLevel": "governance"
+  },
+  "tone": {
+    "description": "Official, authoritative, clear",
+    "structure": "Header → Statement → Details → Call to action",
+    "rules": ["Clear authority", "Precise language", "Official tone"]
+  }
+}

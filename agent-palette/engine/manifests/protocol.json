@@ -1,0 +1,46 @@
+{
+  "id": "protocol",
+  "version": "1.0.0",
+  "tier": "MED",
+  "category": "business",
+  "icon": "protocol",
+  "names": {
+    "de": "Protokoll",
+    "en": "Minutes",
+    "pt": "Ata"
+  },
+  "breath": {
+    "de": "Verlauf gesiegelt",
+    "en": "Proceedings sealed",
+    "pt": "Procedimentos selados"
+  },
+  "prompts": {
+    "de": "Ich möchte ein Protokoll erstellen",
+    "en": "I want to create minutes",
+    "pt": "Quero criar uma ata"
+  },
+  "schema": {
+    "title": { "type": "string", "required": true },
+    "date": { "type": "date", "required": true },
+    "time": { "type": "string", "required": false },
+    "participants": { "type": "array", "required": true },
+    "topics": { "type": "array", "required": true },
+    "decisions": { "type": "text", "required": false },
+    "actions": { "type": "array", "required": false }
+  },
+  "flow": [
+    { "field": "title", "prompt": { "de": "Titel der Sitzung?", "en": "Meeting title?", "pt": "Título da reunião?" } },
+    { "field": "participants", "prompt": { "de": "Teilnehmer?", "en": "Participants?", "pt": "Participantes?" } },
+    { "field": "topics", "prompt": { "de": "Besprochene Themen?", "en": "Topics discussed?", "pt": "Tópicos discutidos?" } }
+  ],
+  "sealPolicy": {
+    "required": true,
+    "defaultSeal": true,
+    "governanceLevel": "standard"
+  },
+  "tone": {
+    "description": "Factual, chronological, objective",
+    "structure": "TIME → PARTICIPANTS → TOPICS → DECISIONS → ACTIONS",
+    "rules": ["No opinions, only facts", "Record decisions clearly", "Assign actions"]
+  }
+}
