@@ -7467,7 +7467,7 @@ function App(){
             {/* Document info — works from both Doc view and Arena */}
             <div style={{padding:"10px 12px",borderRadius:10,background:th.hover,border:`1px solid ${th.border}`,marginBottom:12}}>
               <div style={{fontSize:13,fontWeight:700,marginBottom:2}}>{docTitle||arenaTopic||"Document"}</div>
-              <div style={{fontSize:10,color:th.dim,fontFamily:"monospace"}}>🔐 {(receipt?.combined_hash||arenaSealResult?.hash_sha256||"—")?.slice(0,24)}...</div>
+              <div style={{fontSize:10,color:th.dim,fontFamily:"monospace"}}>🔐 {(receipt?.combined_hash||receipt?.ch||receipt?.bh||arenaSealResult?.hash_sha256||"—")?.slice(0,24)}...</div>
               <div style={{fontSize:10,color:th.success,marginTop:4}}>🛡️ {receipt?.id||arenaSealResult?.receipt_id||"—"}</div>
             </div>
 
@@ -7520,7 +7520,7 @@ function App(){
                       headers: {'Content-Type': 'application/json'},
                       body: JSON.stringify({
                         artifact_id: receipt?.doc_id || receipt?.id || arenaSealResult?.receipt_id,
-                        hash: receipt?.combined_hash || arenaSealResult?.hash_sha256,
+                        hash: receipt?.combined_hash || receipt?.ch || receipt?.bh || arenaSealResult?.hash_sha256,
                         title: docTitle || arenaTopic,
                         visibility: wickVisibility,
                         confirm: true,
