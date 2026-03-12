@@ -181,19 +181,27 @@
         "agent-palette/engine/ferreiro/reporter/*.js"
       ],
       "solution": {
-        "probes": ["probe_services.js", "probe_manifests.js", "probe_code.js"],
+        "probes": ["probe_services.js", "probe_manifests.js", "probe_code.js", "probe_seals.js"],
         "healers": ["heal_zombi.js", "heal_alzheimer.js", "heal_urls.js", "heal_loop.js", "heal_manifest.js"],
         "reporters": ["report.js", "ledger_seal.js", "dashboard.js"],
         "api": {
-          "probeAll": "Ferreiro.probeAll() → { score, issues[] }",
+          "probeAll": "Ferreiro.probeAll() → { score, services, manifests, code, seals, issues[] }",
           "heal": "Ferreiro.heal(issueId) → I9-bounded healing",
+          "healOrphanSeals": "FerreiroProbSeals.healAllOrphans() → re-sync local seals to Ledger",
           "report": "Ferreiro.report() → structured diagnostic",
           "seal": "Ferreiro.seal(report) → Virtue Receipt in Ledger"
         }
       },
+      "seal_monitoring": {
+        "probe": "probe_seals.js",
+        "detects": "Orphan seals (local VR-* not in Ledger)",
+        "heals": "Re-sync via /api/anchor/anchor → Ledger",
+        "dashboard": "Shows Sync Rate % and Orphan Count",
+        "errors": ["ORPHAN_SEALS (Level 2)", "LEDGER_UNREACHABLE (Level 4)"]
+      },
       "autonomy_levels": {
         "level_1": "Cura Imediata — AI acts, no approval (zombies, manifests)",
-        "level_2": "Cura com Registo — AI acts + Ledger seal (context, URLs, loops)",
+        "level_2": "Cura com Registo — AI acts + Ledger seal (context, URLs, loops, orphan seals)",
         "level_3": "Proposta ao Human — diagnose only, wait approval (ports, nginx)",
         "level_4": "Alerta Crítico — alert Human Dragon, no autonomous action (ledger down)"
       },
