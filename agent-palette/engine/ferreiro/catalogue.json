@@ -168,6 +168,40 @@
       },
       "seal": false,
       "severity": "critical"
+    },
+    {
+      "id": "ORPHAN_SEALS",
+      "name": "Seals Órfãos",
+      "level": 2,
+      "autonomous": true,
+      "description": "Documentos selados localmente que não chegaram ao Forensic Ledger",
+      "diagnosis": {
+        "method": "compare localStorage vs Ledger",
+        "pattern": "VR-* exists locally but not in /api/receipts/<id>"
+      },
+      "cure": {
+        "action": "Re-sync via /api/anchor/anchor",
+        "verify": "Ledger confirma receipt"
+      },
+      "seal": true,
+      "severity": "medium"
+    },
+    {
+      "id": "LEDGER_UNREACHABLE",
+      "name": "Ledger Inacessível para Seals",
+      "level": 4,
+      "autonomous": false,
+      "description": "Não foi possível verificar seals porque o Ledger não responde",
+      "diagnosis": {
+        "method": "fetch /health",
+        "pattern": "timeout | ECONNREFUSED"
+      },
+      "cure": {
+        "action": "ALERTA CRÍTICO - verificar serviço Ledger",
+        "escalate": "Human Dragon imediato"
+      },
+      "seal": false,
+      "severity": "critical"
     }
   ],
   "services": [

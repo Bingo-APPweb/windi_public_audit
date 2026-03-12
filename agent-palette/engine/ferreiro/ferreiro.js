@@ -85,6 +85,7 @@
       services: null,
       manifests: null,
       code: null,
+      seals: null,
       issues: [],
       score: 0
     };
@@ -119,6 +120,15 @@
       );
     }
 
+    // Seals probe (orphan detection)
+    if (window.FerreiroProbSeals) {
+      probePromises.push(
+        window.FerreiroProbSeals.probeSeals()
+          .then(r => { results.seals = r; })
+          .catch(e => { results.seals = { error: e.message }; })
+      );
+    }
+
     await Promise.all(probePromises);
 
     // Collect all issues
@@ -131,12 +141,16 @@
     if (results.code && results.code.results) {
       results.issues.push(...results.code.results.filter(r => r.status === 'ISSUE'));
     }
+    if (results.seals && results.seals.issues) {
+      results.issues.push(...results.seals.issues);
+    }
 
     // Calculate overall score
     const scores = [];
     if (results.services && results.services.score) scores.push(results.services.score);
     if (results.manifests && results.manifests.score) scores.push(results.manifests.score);
     if (results.code && results.code.score) scores.push(results.code.score);
+    if (results.seals && results.seals.score !== undefined) scores.push(results.seals.score);
 
     results.score = scores.length > 0
       ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length)
