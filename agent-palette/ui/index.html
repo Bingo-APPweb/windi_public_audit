@@ -6081,8 +6081,8 @@ function App(){
               )}
               <div style={{flex:1,overflowY:"auto",padding:"10px 8px"}}>
                 {/* ═══ DOCUMENT SHELF — "Prateleira de Documentos" ═══ */}
-                {/* Shows when chat is empty, offers 12 document types as clickable cards */}
-                {msgs.length===0&&(()=>{
+                {/* Shows when chat has only greeting (<=1 msg), offers 16 document types as clickable cards */}
+                {msgs.length<=1&&(()=>{
                   const SHELF_LABELS={
                     de:{title:'Was möchten Sie erstellen?',sub:'Wählen Sie einen Dokumenttyp — der Dragon begleitet Sie.'},
                     en:{title:'What would you like to create?',sub:'Choose a document type — the Dragon will guide you.'},
