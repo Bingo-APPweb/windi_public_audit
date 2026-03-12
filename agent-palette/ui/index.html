@@ -5216,12 +5216,13 @@ function App(){
     else {
       const ch = await CryptoProvider.hash(docContent);
       const bh = await CryptoProvider.hash(`${docTitle}|${docContent}|${docImages.length}|${wallet?.id||'anon'}`);
+      const receiptId = CryptoProvider.receiptId(); // Generate once, use everywhere
       const r = {
-        id: CryptoProvider.receiptId(),
+        id: receiptId,
         serial: `WINDI-2026-${String(Math.floor(Math.random()*999999)).padStart(6,"0")}`,
         ts: new Date().toISOString(),
         ch, bh, sge: 0.92,
-        url: `${CONFIG.VERIFY_BASE_URL}/${CryptoProvider.receiptId()}`,
+        url: `${CONFIG.VERIFY_BASE_URL}/${receiptId}`,
         doc_type: docType?.toUpperCase() || "NOTE",
       };
       setReceipt(r);
