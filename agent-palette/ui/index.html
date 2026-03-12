@@ -3667,7 +3667,13 @@ function App(){
   const windiTier=windiCtx?windiCtx.tier:'FREE';
   const windiConfig=window.WINDI?window.WINDI.getTierConfig(windiTier):null;
 
-  const[lang,setLang]=useState("de");
+  // Auto-detect browser language (PT/EN/DE), default to DE if unknown
+  const[lang,setLang]=useState(()=>{
+    const bl=(navigator.language||'').toLowerCase();
+    if(bl.startsWith('pt'))return 'pt';
+    if(bl.startsWith('en'))return 'en';
+    return 'de';
+  });
   // FIX 4: Onboarding persistence — only show once per device
   const[view,setView]=useState(()=>localStorage.getItem("windi_onboarded")==="1"?"main":"onboard");
   const[onboardStep,setOnboardStep]=useState(0);
