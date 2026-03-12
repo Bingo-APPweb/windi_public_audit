@@ -43,7 +43,7 @@ function getLocalReceipts() {
 async function checkLedgerReceipt(receiptId) {
   const url = isLocal
     ? `http://127.0.0.1:8101/api/receipts/${receiptId}`
-    : `/ledger/api/receipts/${receiptId}`;
+    : `/api/ledger/api/receipts/${receiptId}`;
 
   try {
     const controller = new AbortController();
@@ -80,7 +80,7 @@ async function checkLedgerReceipt(receiptId) {
 async function getLedgerStats() {
   const url = isLocal
     ? 'http://127.0.0.1:8101/health'
-    : '/ledger/health';
+    : '/api/ledger/health';
 
   try {
     const controller = new AbortController();
