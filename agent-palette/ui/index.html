@@ -6071,6 +6071,11 @@ function App(){
                 {/* A.4: Tier indicator */}
                 <div style={{fontSize:8,padding:"2px 6px",borderRadius:4,background:windiTier==="HIGH"?th.gold+"22":windiTier==="MED"?th.success+"22":th.dim+"22",
                   color:windiTier==="HIGH"?th.gold:windiTier==="MED"?th.success:th.dim,fontWeight:600}}>{windiTier}</div>
+                {/* New Document button - returns to Document Shelf */}
+                <button onClick={newDoc} title={lang==='de'?'Neues Dokument':lang==='pt'?'Novo Documento':'New Document'}
+                  style={{marginLeft:6,width:24,height:24,borderRadius:6,border:`1px solid ${th.border}`,background:th.card,color:th.gold,fontSize:14,fontWeight:700,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',transition:'all 0.2s'}}
+                  onMouseEnter={e=>{e.currentTarget.style.background=th.gold;e.currentTarget.style.color='#fff';}}
+                  onMouseLeave={e=>{e.currentTarget.style.background=th.card;e.currentTarget.style.color=th.gold;}}>+</button>
               </div>
               {/* ═══ WAVE 2.2: DRAGON MENTOR WHISPER BAR ═══ */}
               {dragonWhisper&&sidebarTab==='docs'&&docType&&(
