@@ -3010,6 +3010,7 @@ class DragonChatHandler(BaseHTTPRequestHandler):
             session_id = self.headers.get("X-Session-ID") or body.get("session_id")
             tier = self.headers.get("X-Tier") or body.get("tier", "FREE")
             message = body.get("message", "").strip()
+            frontend_lang = body.get("language")  # FIX: Respect frontend language
 
             if not session_id:
                 session_id = hashlib.sha256(f"{time.time()}{os.urandom(8).hex()}".encode()).hexdigest()[:32]
@@ -3019,6 +3020,12 @@ class DragonChatHandler(BaseHTTPRequestHandler):
                 return
 
             session = get_session(session_id, tier.upper())
+
+            # FIX 2026-03-12: Use frontend language if provided, skip auto-detection
+            if frontend_lang and frontend_lang in ("de", "en", "pt"):
+                session["lang"] = frontend_lang
+                session["lang_confidence"] = 1.0  # Frontend language = 100% confidence
+
             result = process_chat(message, session)
             result["session_id"] = session_id
 
