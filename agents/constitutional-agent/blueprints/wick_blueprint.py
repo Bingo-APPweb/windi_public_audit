@@ -428,6 +428,26 @@ def publish():
         }
         source_type = "GROVE_ARENA_DIRECT"
 
+    # Fallback 3: Local VR-* receipts (sealed locally via Palette UI)
+    # These are valid sealed documents that exist in the user's browser but not yet in Ledger
+    if not page_data and artifact_id and artifact_id.startswith("VR-") and content_hash:
+        page_data = {
+            "id": artifact_id,
+            "title": title or f"Document {artifact_id}",
+            "doc_type": "doc",
+            "status": "sealed",  # VR- IDs are locally sealed documents
+            "receipt_id": artifact_id,
+            "content_hash": content_hash,
+            "html_hash": content_hash,
+            "ledger_anchor": artifact_id,
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "metadata": {
+                "source": "PALETTE_LOCAL_SEAL",
+                "note": "Document sealed locally in WINDI Palette UI",
+            },
+        }
+        source_type = "PALETTE_LOCAL_SEAL"
+
     if not page_data:
         return jsonify({
             "error": "Document not found",
