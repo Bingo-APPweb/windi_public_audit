@@ -1685,19 +1685,26 @@ def handle_cognition_insights(query_params):
         hesitation = detect_cognitive_hesitation()
         wisdom_candidates = detect_wisdom_candidates()
 
+        # Stage translations (FIX: hardcoded PT in decision_journal.py)
+        STAGE_LABELS = {
+            "de": {"SOVEREIGN": "Souveräne Kognition", "AUTONOMOUS": "Autonomie", "INTELLIGENT": "Edge Intelligence", "LEARNING": "Akkumulation", "BOOTSTRAP": "Bootstrap"},
+            "en": {"SOVEREIGN": "Sovereign Cognition", "AUTONOMOUS": "Autonomy", "INTELLIGENT": "Edge Intelligence", "LEARNING": "Accumulation", "BOOTSTRAP": "Bootstrap"},
+            "pt": {"SOVEREIGN": "Cognição Soberana", "AUTONOMOUS": "Autonomia", "INTELLIGENT": "Edge Intelligence", "LEARNING": "Acumulação", "BOOTSTRAP": "Bootstrap"}
+        }
+
         insights = []
 
         # 1. MOMENTUM SCORE — Overall cognitive evolution
         score = cognitive.get("score", 0)
         grade = cognitive.get("grade", "BOOTSTRAP")
-        stage = cognitive.get("stage", "Bootstrap")
+        stage_label = STAGE_LABELS.get(lang, STAGE_LABELS["en"]).get(grade, grade)
         impact = "transformational" if score >= 75 else "high" if score >= 50 else "medium"
         insights.append({
             "id": "momentum",
             "type": "momentum_score",
             "icon": "🧠",
             "title": t["momentum"],
-            "text": f"**{stage}** ({score}/100)",
+            "text": f"**{stage_label}** ({score}/100)",
             "description": f"{t['momentum_desc']} **{grade}** grade",
             "value": score,
             "max_value": 100,

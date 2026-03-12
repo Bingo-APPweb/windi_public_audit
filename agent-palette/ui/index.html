@@ -6635,7 +6635,7 @@ function App(){
           )}
 
           {/* ═══ OTHER TABS (Fallback) ═══ */}
-          {!["chat","docs","wallet","desk","journal","files","search","templates","grove"].includes(sidebarTab)&&(
+          {!["chat","docs","wallet","desk","journal","files","search","templates","grove","insights"].includes(sidebarTab)&&(
             <div style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
               <div style={{textAlign:"center"}}>
                 <div style={{width:40,height:40,margin:"0 auto 12px",color:th.gold}} dangerouslySetInnerHTML={{__html:getWindiIcon(SIDEBAR.find(s=>s.id===sidebarTab)?.icon)}} />
