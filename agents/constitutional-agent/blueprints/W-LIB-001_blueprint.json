@@ -71,7 +71,8 @@
       "W-WIS-001":   {"name": "Wisdom Manager", "port": 8091, "route": "/wisdom"},
       "W-COM-001":   {"name": "Communique Engine", "port": 8109, "route": "/api"},
       "W-EXP-001":   {"name": "Export Engine", "port": 8102, "route": "/api"},
-      "W-DSK-001":   {"name": "a4Desk Desktop", "port": 8100, "route": "/"}
+      "W-DSK-001":   {"name": "a4Desk Desktop", "port": 8100, "route": "/"},
+      "W-FERR-001":  {"name": "O Ferreiro", "port": "frontend", "route": "/engine/ferreiro/", "role": "Health Monitor & Self-Healing Agent"}
     }
   },
   "context_distribution": {

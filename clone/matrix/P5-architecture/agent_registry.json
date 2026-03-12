@@ -75,12 +75,22 @@
       "status": "PENDING_DEPLOYMENT",
       "parent_mirror": "pulse",
       "capabilities": ["rhythm_analysis", "predictive_signals", "system_health"]
+    },
+    {
+      "agent_id": "W-FERR-001",
+      "name": "O Ferreiro (The Blacksmith)",
+      "class": "INFRASTRUCTURE_HEALTH",
+      "status": "OPERATIONAL",
+      "registered_utc": "2026-03-12T17:00:00Z",
+      "capabilities": ["health_monitoring", "self_healing", "service_probes", "ledger_sealing"],
+      "port": "frontend-only",
+      "principle": "I9: AI cura o conhecido. Human decide o desconhecido."
     }
   ],
 
   "statistics": {
-    "total_registered": 9,
-    "operational": 1,
+    "total_registered": 10,
+    "operational": 2,
     "pending_deployment": 8
   }
 }

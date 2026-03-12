@@ -1,0 +1,122 @@
+{
+  "agent_id": "W-FERR-001",
+  "name": "O Ferreiro (The Blacksmith)",
+  "version": "1.0.0",
+  "role": "Health Monitor & Self-Healing Agent",
+  "description": "Sistema imunologico da infraestrutura WINDI. Monitora saude de todos os servicos e cura o que pode autonomamente — sempre respeitando limites I9. Frontend-only agent que roda no browser.",
+  "created_at": "2026-03-12T00:00:00Z",
+  "constitutional_basis": {
+    "invariants": ["I1", "I4", "I6", "I9", "I11"],
+    "principle": "AI cura o conhecido. Human decide o desconhecido.",
+    "iron_rule": "Level 1-2 = AI acts. Level 3-4 = Human decides. The boundary is IRREMEDIAVEL."
+  },
+  "sandbox_integration": {
+    "host": "frontend-only",
+    "mount_prefix": "/engine/ferreiro/",
+    "stack": "Vanilla JavaScript (12 modules, zero dependencies)",
+    "loader": "/engine/ferreiro/loader.js"
+  },
+  "module_architecture": {
+    "probes": {
+      "description": "Diagnostic Layer",
+      "modules": [
+        {"file": "probe_services.js", "function": "HTTP health checks on all WINDI services", "targets": "9 services (7 active, 2 pending)"},
+        {"file": "probe_manifests.js", "function": "Validates manifest integrity and version consistency", "targets": "Service manifests"},
+        {"file": "probe_code.js", "function": "Frontend code quality and constitutional compliance", "targets": "App codebase"}
+      ]
+    },
+    "healers": {
+      "description": "Self-Healing Layer",
+      "modules": [
+        {"file": "heal_zombi.js", "heals": "Zombie processes, stale connections", "level": 1},
+        {"file": "heal_alzheimer.js", "heals": "Lost session context (Dragon memory bug)", "level": 2},
+        {"file": "heal_urls.js", "heals": "Broken URLs post-migration", "level": 2},
+        {"file": "heal_loop.js", "heals": "Infinite polling loops", "level": 2},
+        {"file": "heal_manifest.js", "heals": "Corrupted or missing manifests", "level": 1}
+      ]
+    },
+    "reporters": {
+      "description": "Documentation Layer",
+      "modules": [
+        {"file": "report.js", "function": "Structured probe reports with timestamps and scores"},
+        {"file": "ledger_seal.js", "function": "Seals probe results as Virtue Receipts in Forensic Ledger"},
+        {"file": "dashboard.js", "function": "Visual dashboard UI for real-time infrastructure health"}
+      ]
+    },
+    "orchestrator": {
+      "file": "ferreiro.js",
+      "function": "Main orchestrator. Loads catalogue, runs probeAll(), coordinates healing, exposes Ferreiro global API."
+    }
+  },
+  "autonomy_levels": {
+    "description": "Four Levels of Autonomy (I9-Compliant)",
+    "levels": [
+      {"level": 1, "label": "Cura Imediata", "actions": "Autonomous fix, no approval needed", "examples": "Kill zombie process, repair manifest"},
+      {"level": 2, "label": "Cura com Registo", "actions": "Autonomous fix + sealed in Ledger", "examples": "Restore Alzheimer context, fix URLs, break loops"},
+      {"level": 3, "label": "Proposta ao Human", "actions": "Diagnoses, proposes fix, waits for approval", "examples": "Dead port, nginx reconfiguration"},
+      {"level": 4, "label": "Alerta Critico", "actions": "Immediate alert to Human Dragon, no autonomous action", "examples": "Ledger down, index corrupted"}
+    ],
+    "i9_rule": "Level 1-2 = AI acts. Level 3-4 = Human decides."
+  },
+  "service_probe_map": {
+    "services": [
+      {"id": "dragon", "port": 8108, "healthPath": "/dragon/health", "critical": true, "status": "ACTIVE"},
+      {"id": "ledger", "port": 8101, "healthPath": "/ledger/health", "critical": true, "status": "ACTIVE"},
+      {"id": "export", "port": 8103, "healthPath": "/export/health", "critical": false, "status": "ACTIVE"},
+      {"id": "vault", "port": 8106, "healthPath": "/vault/health", "critical": false, "status": "ACTIVE"},
+      {"id": "communique", "port": 8105, "healthPath": "/communique/health", "critical": false, "status": "ACTIVE"},
+      {"id": "wallet", "port": 8098, "healthPath": "/sentinel/health", "critical": false, "status": "ACTIVE"},
+      {"id": "bridge", "port": 8097, "healthPath": "/bridge/health", "critical": false, "status": "ACTIVE"},
+      {"id": "pageStore", "port": 8091, "healthPath": "/pagestore/health", "critical": false, "status": "PENDING"},
+      {"id": "pioneer", "port": 8120, "healthPath": "/pioneer/health", "critical": false, "status": "PENDING"}
+    ]
+  },
+  "public_api": {
+    "global_object": "window.Ferreiro",
+    "commands": [
+      {"command": "Ferreiro.probeAll()", "description": "Full diagnostic probe. Returns { score, issues[] }"},
+      {"command": "Ferreiro.heal(issueId)", "description": "Attempt to heal a specific issue (I9-bounded)"},
+      {"command": "Ferreiro.report()", "description": "Generate structured report of last probe"},
+      {"command": "Ferreiro.seal(report)", "description": "Seal report as Virtue Receipt in Ledger"},
+      {"command": "Ferreiro.dashboard()", "description": "Open visual health dashboard"},
+      {"command": "FerreiroProbServices.probeAllServices()", "description": "Probe only services (lower-level)"},
+      {"command": "FerreiroProbServices.getService(id)", "description": "Get service config by ID"}
+    ]
+  },
+  "filesystem_structure": {
+    "root": "/opt/windi/agent-palette/engine/ferreiro/",
+    "files": [
+      "loader.js",
+      "ferreiro.js",
+      "catalogue.json",
+      "probes/probe_services.js",
+      "probes/probe_manifests.js",
+      "probes/probe_code.js",
+      "healers/heal_zombi.js",
+      "healers/heal_alzheimer.js",
+      "healers/heal_urls.js",
+      "healers/heal_loop.js",
+      "healers/heal_manifest.js",
+      "reporter/report.js",
+      "reporter/ledger_seal.js",
+      "reporter/dashboard.js"
+    ]
+  },
+  "nginx_route": {
+    "location": "/engine/",
+    "alias": "/opt/windi/engine/",
+    "note": "Served as static files through engine location block"
+  },
+  "constitutional_alignment": {
+    "I1": "Level 3-4 actions require Human Dragon approval",
+    "I4": "All probes and heals are logged and sealable",
+    "I6": "Ferreiro never expands its own scope",
+    "I9": "Core principle: Level 1-2 auto, Level 3-4 human",
+    "I11": "Reports sealed as Virtue Receipts via ledger_seal.js"
+  },
+  "genesis_receipt": {
+    "id": "WINDI-FERR-GENESIS-20260312",
+    "note": "W-FERR-001 born as the WINDI ecosystem immune system. The Ferreiro monitors, diagnoses, and heals — but never decides what only humans can decide.",
+    "sealed": "2026-03-12T17:00:00Z"
+  }
+}
