@@ -1,0 +1,96 @@
+/* WINDI Institucional — Bricolage Grotesque + JetBrains Mono */
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --windi-gold: #8B6914;
+  --windi-bg: #F5F0E0;
+  --windi-text: #1A1A1A;
+  --windi-text2: #6B6B6B;
+}
+
+body {
+  font-family: 'Bricolage Grotesque', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--windi-text);
+  background: var(--windi-bg);
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 24px;
+}
+
+h1, h2, h3 {
+  font-weight: 700;
+  color: var(--windi-text);
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+h1 { font-size: 2.2em; border-bottom: 3px solid var(--windi-gold); padding-bottom: 0.3em; }
+h2 { font-size: 1.6em; color: var(--windi-gold); }
+h3 { font-size: 1.25em; }
+
+p { margin-bottom: 1em; }
+
+a { color: var(--windi-gold); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+blockquote {
+  border-left: 4px solid var(--windi-gold);
+  margin: 1.5em 0;
+  padding: 0.5em 1em;
+  background: rgba(139, 105, 20, 0.08);
+  font-style: italic;
+}
+
+code, pre {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9em;
+}
+
+code {
+  background: rgba(0,0,0,0.06);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+pre {
+  background: #1E1E1E;
+  color: #D4D4D4;
+  padding: 16px;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5em 0;
+}
+
+th, td {
+  border: 1px solid #C8C0A8;
+  padding: 10px 14px;
+  text-align: left;
+}
+
+th {
+  background: var(--windi-gold);
+  color: white;
+  font-weight: 600;
+}
+
+tr:nth-child(even) { background: rgba(0,0,0,0.03); }
+
+hr {
+  border: none;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--windi-gold), transparent);
+  margin: 2em 0;
+}
+
+img, video {
+  max-width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}

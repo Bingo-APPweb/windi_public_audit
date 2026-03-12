@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>WINDI HTML Builder v3.2</title>
+<title>WINDI HTML Builder v3.3</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
 /* ══════════════════════════════════════════════════
-   WINDI HTML Builder v3.2 — Guardian Edition
+   WINDI HTML Builder v3.3 — Guardian Edition
    Design System: KLAR + NOIR | Bricolage Grotesque
    ══════════════════════════════════════════════════ */
 
@@ -912,7 +912,7 @@ body {
 <div id="root"></div>
 <script>
 // ══════════════════════════════════════════════════════════════
-// WINDI HTML Builder v3.2 — Guardian Edition
+// WINDI HTML Builder v3.3 — Guardian Edition
 // Port: 8117 | Path: /html-builder/
 // Novidades: Undo/Redo · Auto-save · Item Editor · Duplicate · Reorder
 // AI processes. Human decides. WINDI guarantees.
@@ -961,7 +961,7 @@ const I18N = {
     apply: '✓ Anwenden', cancel: 'Abbrechen',
     docMeta: 'Dokumentmetadaten',
     docTitle: 'Titel', lang: 'Sprache', governance: 'Governance',
-    globalCss: 'Globales CSS (optional)',
+    globalCss: 'CSS Global', cssPreset: 'CSS Vorlage', importCss: '📎 CSS importieren', cssInvalid: 'Ungültiges CSS',
     previewTitle: 'Vorschau',
     noContent: '<p style="color:#999;font-style:italic">Noch kein Inhalt.</p>',
     sealTitle: '🔏 Ledger / Governance',
@@ -1042,7 +1042,7 @@ const I18N = {
     apply: '✓ Apply', cancel: 'Cancel',
     docMeta: 'Document Metadata',
     docTitle: 'Title', lang: 'Language', governance: 'Governance',
-    globalCss: 'Global CSS (optional)',
+    globalCss: 'Global CSS', cssPreset: 'CSS Preset', importCss: '📎 Import CSS', cssInvalid: 'Invalid CSS',
     previewTitle: 'Preview',
     noContent: '<p style="color:#999;font-style:italic">No content yet.</p>',
     sealTitle: '🔏 Ledger / Governance',
@@ -1123,7 +1123,7 @@ const I18N = {
     apply: '✓ Aplicar', cancel: 'Cancelar',
     docMeta: 'Metadados do Documento',
     docTitle: 'Título', lang: 'Idioma', governance: 'Governança',
-    globalCss: 'CSS global (opcional)',
+    globalCss: 'CSS Global', cssPreset: 'Preset CSS', importCss: '📎 Importar CSS', cssInvalid: 'CSS inválido',
     previewTitle: 'Preview',
     noContent: '<p style="color:#999;font-style:italic">Nenhum conteúdo ainda.</p>',
     sealTitle: '🔏 Ledger / Governança',
@@ -1243,6 +1243,113 @@ const WINDI_COLORS = [
   { name: 'Verde',      hex: '#27AE60', label: { de: 'Grün', en: 'Green', pt: 'Verde' } },
   { name: 'Azul',       hex: '#2C5F8A', label: { de: 'Blau', en: 'Blue', pt: 'Azul' } },
 ];
+
+// ─── CSS Presets (Embedded) ─────────────────────────────────────
+const CSS_PRESET_CONTENT = {
+  institucional: `/* WINDI Institucional */
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+:root { --windi-gold: #8B6914; --windi-bg: #F5F0E0; --windi-text: #1A1A1A; }
+body { font-family: 'Bricolage Grotesque', sans-serif; font-size: 16px; line-height: 1.7; color: var(--windi-text); background: var(--windi-bg); max-width: 800px; margin: 0 auto; padding: 40px 24px; }
+h1, h2, h3 { font-weight: 700; margin-top: 1.5em; margin-bottom: 0.5em; }
+h1 { font-size: 2.2em; border-bottom: 3px solid var(--windi-gold); padding-bottom: 0.3em; }
+h2 { font-size: 1.6em; color: var(--windi-gold); }
+h3 { font-size: 1.25em; }
+p { margin-bottom: 1em; }
+a { color: var(--windi-gold); }
+blockquote { border-left: 4px solid var(--windi-gold); margin: 1.5em 0; padding: 0.5em 1em; background: rgba(139,105,20,0.08); font-style: italic; }
+code, pre { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; }
+code { background: rgba(0,0,0,0.06); padding: 2px 6px; border-radius: 4px; }
+pre { background: #1E1E1E; color: #D4D4D4; padding: 16px; border-radius: 8px; overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; margin: 1.5em 0; }
+th, td { border: 1px solid #C8C0A8; padding: 10px 14px; text-align: left; }
+th { background: var(--windi-gold); color: white; font-weight: 600; }
+tr:nth-child(even) { background: rgba(0,0,0,0.03); }
+hr { border: none; height: 2px; background: linear-gradient(90deg, transparent, var(--windi-gold), transparent); margin: 2em 0; }
+img, video { max-width: 100%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }`,
+
+  minimal: `/* WINDI Minimal */
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 16px; line-height: 1.8; color: #333; max-width: 720px; margin: 0 auto; padding: 48px 24px; }
+h1, h2, h3 { font-weight: 600; margin-top: 2em; margin-bottom: 0.5em; line-height: 1.3; }
+h1 { font-size: 2em; } h2 { font-size: 1.5em; } h3 { font-size: 1.2em; }
+p { margin-bottom: 1.2em; }
+blockquote { border-left: 3px solid #ccc; margin: 1.5em 0; padding-left: 1em; color: #666; }
+code { font-family: 'SF Mono', Consolas, monospace; font-size: 0.9em; background: #f5f5f5; padding: 2px 5px; border-radius: 3px; }
+pre { background: #f8f8f8; padding: 16px; border-radius: 6px; overflow-x: auto; border: 1px solid #e5e5e5; }
+table { width: 100%; border-collapse: collapse; margin: 1.5em 0; }
+th, td { border-bottom: 1px solid #e5e5e5; padding: 12px; text-align: left; }
+th { font-weight: 600; }
+hr { border: none; height: 1px; background: #e5e5e5; margin: 2.5em 0; }
+img, video { max-width: 100%; }`,
+
+  report: `/* WINDI Report — A4 Print */
+@page { size: A4; margin: 2.5cm 2cm; }
+body { font-family: 'Times New Roman', Georgia, serif; font-size: 12pt; line-height: 1.6; color: #000; max-width: 100%; margin: 0; padding: 0; }
+h1, h2, h3 { font-family: Arial, sans-serif; page-break-after: avoid; margin-top: 1.5em; margin-bottom: 0.5em; }
+h1 { font-size: 18pt; text-align: center; border-bottom: 2px solid #8B6914; padding-bottom: 0.5em; margin-bottom: 1em; }
+h2 { font-size: 14pt; color: #333; border-bottom: 1px solid #ccc; padding-bottom: 0.3em; }
+h3 { font-size: 12pt; font-weight: bold; }
+p { margin-bottom: 0.8em; text-align: justify; orphans: 3; widows: 3; }
+blockquote { margin: 1em 2em; padding-left: 1em; border-left: 3px solid #8B6914; font-style: italic; page-break-inside: avoid; }
+table { width: 100%; border-collapse: collapse; margin: 1em 0; page-break-inside: avoid; }
+th, td { border: 1px solid #333; padding: 8px 10px; text-align: left; }
+th { background: #f0f0f0; font-weight: bold; }
+pre, code { font-family: 'Courier New', monospace; font-size: 10pt; }
+pre { background: #f5f5f5; padding: 12px; border: 1px solid #ddd; page-break-inside: avoid; white-space: pre-wrap; }
+hr { border: none; border-top: 1px solid #333; margin: 2em 0; }
+img, video { max-width: 100%; page-break-inside: avoid; }
+body { counter-reset: section; }
+h2::before { counter-increment: section; content: counter(section) ". "; }`,
+
+  legal: `/* WINDI Legal — Documentos Jurídicos */
+@page { size: A4; margin: 3cm 2.5cm; }
+body { font-family: 'Times New Roman', Georgia, serif; font-size: 12pt; line-height: 2; color: #000; text-align: justify; max-width: 100%; }
+h1, h2, h3 { font-family: Arial, sans-serif; text-transform: uppercase; page-break-after: avoid; }
+h1 { font-size: 14pt; text-align: center; font-weight: bold; margin: 2em 0 1em; letter-spacing: 1px; }
+h2 { font-size: 12pt; font-weight: bold; margin-top: 1.5em; margin-bottom: 0.5em; }
+h3 { font-size: 12pt; font-weight: normal; font-style: italic; }
+p { text-indent: 2em; margin-bottom: 0; orphans: 4; widows: 4; }
+p + p { margin-top: 0; }
+blockquote { margin: 1em 3em; font-size: 11pt; line-height: 1.5; font-style: italic; border-left: none; }
+ol { counter-reset: item; list-style: none; padding-left: 0; }
+ol > li { counter-increment: item; margin-bottom: 0.5em; }
+ol > li::before { content: counter(item, lower-roman) ") "; }
+ul { list-style-type: disc; margin-left: 2em; }
+table { width: 100%; border-collapse: collapse; margin: 1.5em 0; font-size: 11pt; }
+th, td { border: 1px solid #000; padding: 8px 12px; }
+th { background: #f0f0f0; font-weight: bold; text-align: center; }
+hr { border: none; border-top: 1px solid #000; margin: 2em 0; }`
+};
+
+const CSS_PRESETS = [
+  { id: 'custom', label: { de: '— Eigenes CSS —', en: '— Custom CSS —', pt: '— CSS Personalizado —' }, css: null },
+  { id: 'institucional', label: { de: 'WINDI Institutionell', en: 'WINDI Institutional', pt: 'WINDI Institucional' }, css: CSS_PRESET_CONTENT.institucional },
+  { id: 'minimal', label: { de: 'WINDI Minimal', en: 'WINDI Minimal', pt: 'WINDI Minimal' }, css: CSS_PRESET_CONTENT.minimal },
+  { id: 'report', label: { de: 'WINDI Bericht', en: 'WINDI Report', pt: 'WINDI Relatório' }, css: CSS_PRESET_CONTENT.report },
+  { id: 'legal', label: { de: 'WINDI Rechtlich', en: 'WINDI Legal', pt: 'WINDI Jurídico' }, css: CSS_PRESET_CONTENT.legal },
+];
+
+// Simple CSS syntax validation
+function validateCSS(css) {
+  if (!css || !css.trim()) return { valid: true, error: null };
+  try {
+    // Check for balanced braces
+    let braceCount = 0;
+    for (const char of css) {
+      if (char === '{') braceCount++;
+      if (char === '}') braceCount--;
+      if (braceCount < 0) return { valid: false, error: 'Unmatched }' };
+    }
+    if (braceCount !== 0) return { valid: false, error: 'Unmatched {' };
+    // Check for basic structure (selector { property: value })
+    const stripped = css.replace(/\/\*[\s\S]*?\*\//g, '').replace(/@[^{]+\{[^}]*\}/g, '').trim();
+    if (stripped && !stripped.match(/[^{}]+\{[^{}]*\}/)) {
+      return { valid: false, error: 'Invalid CSS structure' };
+    }
+    return { valid: true, error: null };
+  } catch (e) {
+    return { valid: false, error: e.message };
+  }
+}
 
 let _seq = 1;
 const genId = () => `item_${Date.now()}_${_seq++}`;
@@ -1641,6 +1748,10 @@ function App() {
   const [msgTemplates, setMsgTemplates] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState('');
   const [customMessage, setCustomMessage] = useState('');
+  // CSS state
+  const [cssPreset, setCssPreset] = useState('custom');
+  const [cssValid, setCssValid] = useState({ valid: true, error: null });
+  const cssFileInput = useRef(null);
 
   useEffect(() => { document.documentElement.setAttribute('data-theme', theme === 'noir' ? 'noir' : ''); localStorage.setItem('windi_hb_theme', theme); }, [theme]);
   useEffect(() => { localStorage.setItem('windi_hb_lang', uiLang); }, [uiLang]);
@@ -1682,6 +1793,40 @@ function App() {
     else { set([...items, ...newItems]); }
     setSideTab('structure');
     toast('success', t.templateLoaded(newItems.length));
+  }
+
+  // ─── CSS Preset & Import Handlers ───────────────────────────────
+  function loadCssPreset(presetId) {
+    setCssPreset(presetId);
+    const preset = CSS_PRESETS.find(p => p.id === presetId);
+    if (!preset || !preset.css) return;
+    setDocMeta(m => ({ ...m, css: preset.css }));
+    setCssValid({ valid: true, error: null });
+    toast('success', `CSS: ${preset.label[uiLang]}`);
+  }
+
+  function handleCssImport(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const importedCss = ev.target.result;
+      // Concatenate with existing CSS
+      const newCss = docMeta.css ? docMeta.css + '\n\n/* Imported: ' + file.name + ' */\n' + importedCss : importedCss;
+      setDocMeta(m => ({ ...m, css: newCss }));
+      setCssPreset('custom');
+      const validation = validateCSS(newCss);
+      setCssValid(validation);
+      toast('success', `📎 ${file.name}`);
+    };
+    reader.readAsText(file);
+    e.target.value = ''; // Reset for same file
+  }
+
+  function handleCssChange(newCss) {
+    setDocMeta(m => ({ ...m, css: newCss }));
+    setCssPreset('custom');
+    setCssValid(validateCSS(newCss));
   }
 
   const htmlOutput = buildHTML(items, docMeta);
@@ -1886,7 +2031,7 @@ function App() {
   return React.createElement('div', { className:'app' },
     React.createElement('div', { className:'topbar' },
       React.createElement('a', { href:'/app/', className:'btn btn-ghost back-link', title: t.backToPalette, style:{marginRight:8, textDecoration:'none'} }, '← ' + t.palette),
-      React.createElement('div', { className:'topbar-brand' }, React.createElement('div', { className:'logo' }, 'W'), React.createElement('div', { className:'name' }, 'HTML BUILDER'), React.createElement('div', { className:'version' }, 'v3.2')),
+      React.createElement('div', { className:'topbar-brand' }, React.createElement('div', { className:'logo' }, 'W'), React.createElement('div', { className:'name' }, 'HTML BUILDER'), React.createElement('div', { className:'version' }, 'v3.3')),
       React.createElement('div', { className:'divider' }),
       React.createElement('div', { className:'topbar-actions' }, React.createElement('button', { className:'btn btn-ghost', onClick:undo, disabled:!canUndo, title:'Undo (Ctrl+Z)' }, t.undo), React.createElement('button', { className:'btn btn-ghost', onClick:redo, disabled:!canRedo, title:'Redo (Ctrl+Y)' }, t.redo)),
       React.createElement('div', { className:'divider' }),
@@ -1906,7 +2051,7 @@ function App() {
       ),
     ),
     React.createElement('div', { className:'statusbar' },
-      React.createElement('span', null, React.createElement('span', { className:'status-dot' }), ' v3.2'),
+      React.createElement('span', null, React.createElement('span', { className:'status-dot' }), ' v3.3'),
       React.createElement('span', { className:'sep' }, '|'),
       React.createElement('span', null, `${items.length} ${t.items}`),
       React.createElement('span', { className:'sep' }, '|'),
@@ -1956,7 +2101,40 @@ function App() {
               React.createElement('div', { className:'field-group', style:{maxWidth:120} }, React.createElement('label', { className:'field-label' }, t.lang), React.createElement('select', { className:'field-select', value: docMeta.lang, onChange: e => setDocMeta(m => ({ ...m, lang: e.target.value })) }, ['pt-BR','de','en','es','fr'].map(l => React.createElement('option', { key:l, value:l }, l)))),
               React.createElement('div', { className:'field-group', style:{maxWidth:130} }, React.createElement('label', { className:'field-label' }, t.governance), React.createElement('select', { className:'field-select', value: docMeta.governance, onChange: e => setDocMeta(m => ({ ...m, governance: e.target.value })) }, ['LOW','MEDIUM','HIGH'].map(g => React.createElement('option', { key:g, value:g }, g)))),
             ),
-            React.createElement('div', { className:'field-group' }, React.createElement('label', { className:'field-label' }, t.globalCss), React.createElement('textarea', { className:'field-textarea', value: docMeta.css, placeholder: 'body { font-family: Arial; }', style:{ minHeight:60 }, onChange: e => setDocMeta(m => ({ ...m, css: e.target.value })) })),
+            // CSS Global with Presets & Import
+            React.createElement('div', { className:'field-group' },
+              React.createElement('div', { style:{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom:6} },
+                React.createElement('label', { className:'field-label', style:{margin:0} }, t.globalCss),
+                React.createElement('div', { style:{display:'flex', gap:4} },
+                  React.createElement('select', {
+                    className:'field-select',
+                    value: cssPreset,
+                    onChange: e => loadCssPreset(e.target.value),
+                    style:{fontSize:11, padding:'2px 6px', minWidth:120}
+                  }, CSS_PRESETS.map(p => React.createElement('option', { key: p.id, value: p.id }, p.label[uiLang]))),
+                  React.createElement('button', {
+                    className:'btn btn-ghost',
+                    onClick: () => cssFileInput.current?.click(),
+                    style:{fontSize:11, padding:'2px 8px'}
+                  }, t.importCss),
+                  React.createElement('input', {
+                    type:'file',
+                    ref: cssFileInput,
+                    accept:'.css',
+                    style:{display:'none'},
+                    onChange: handleCssImport
+                  })
+                )
+              ),
+              React.createElement('textarea', {
+                className:'field-textarea',
+                value: docMeta.css,
+                placeholder: 'body { font-family: Arial; }',
+                style:{ minHeight:80, borderColor: cssValid.valid ? undefined : 'var(--red)' },
+                onChange: e => handleCssChange(e.target.value)
+              }),
+              !cssValid.valid && React.createElement('div', { style:{fontSize:10, color:'var(--red)', marginTop:4} }, '⚠ ' + t.cssInvalid + ': ' + cssValid.error)
+            ),
           ),
           editingItem && React.createElement(ItemEditor, { key: editingItem.id, item: editingItem, t, uiLang, onChange: data => updateItem(editingItem.id, data), onClose: () => setEditingId(null) }),
           showCode && React.createElement('div', { style:{marginBottom:16} },
