@@ -41,6 +41,44 @@ from wallet_provisioning import (
 )
 from wallet_bridge import on_lead_approved
 
+# ─── API Role Gating ────────────────────────────────────────────────────────
+# Security layer: filter data based on request role
+# Roles: public (default), admin (requires X-WINDI-Admin-Key header)
+
+ADMIN_KEY = os.environ.get("WINDI_ADMIN_KEY", "windi-admin-2026-pioneer")
+
+def get_request_role():
+    """Determine request role from headers."""
+    admin_key = request.headers.get("X-WINDI-Admin-Key", "")
+    if admin_key == ADMIN_KEY:
+        return "admin"
+    return "public"
+
+def filter_stats_by_role(stats: dict, role: str) -> dict:
+    """Filter stats based on role. Public sees minimal data."""
+    if role == "admin":
+        return stats  # Full access
+
+    # Public role: only safe, non-sensitive data
+    return {
+        "total_pioneers": stats.get("total_humans", 0),
+        "seats_remaining": max(0, 100 - stats.get("total_humans", 0)),
+        "ledger_receipts": stats.get("total_ledger_links", 0),
+        "status": "operational"
+    }
+
+def filter_health_by_role(health: dict, role: str) -> dict:
+    """Filter health data based on role."""
+    if role == "admin":
+        return health  # Full access
+
+    # Public role: minimal health info
+    return {
+        "status": health.get("status", "healthy"),
+        "service": "WINDI WALLET",
+        "pioneers": health.get("humans", 0)
+    }
+
 # ─── App ─────────────────────────────────────────────────────────────────────
 
 app = Flask(__name__)
@@ -97,16 +135,21 @@ def endpoint_freeze(context_id):
 
 
 @app.route("/api/wallet/stats", methods=["GET"])
+@app.route("/stats", methods=["GET"])  # nginx proxy fallback
 def endpoint_stats():
-    return jsonify(get_wallet_stats())
+    role = get_request_role()
+    stats = get_wallet_stats()
+    filtered = filter_stats_by_role(stats, role)
+    return jsonify(filtered)
 
 
 @app.route("/api/wallet/health", methods=["GET"])
 @app.route("/health", methods=["GET"])
 def endpoint_health():
+    role = get_request_role()
     try:
         stats = get_wallet_stats()
-        return jsonify({
+        full_health = {
             "status": "healthy",
             "service": "WINDI WALLET v1.0.0",
             "protocol": "Three Dragons v1.1 — I9 Active",
@@ -119,7 +162,8 @@ def endpoint_health():
             "ledger_links": stats["total_ledger_links"],
             "avg_trust": stats["avg_trust_score"],
             "timestamp": datetime.now(timezone.utc).isoformat(),
-        })
+        }
+        return jsonify(filter_health_by_role(full_health, role))
     except Exception as e:
         return jsonify({"status": "degraded", "error": str(e)}), 503
 
@@ -247,7 +291,11 @@ def endpoint_waitlist_join():
 
 @app.route("/api/wallet/waitlist", methods=["GET"])
 def endpoint_waitlist_list():
-    """Get waitlist (admin only in production)."""
+    """Get waitlist (admin only)."""
+    role = get_request_role()
+    if role != "admin":
+        return jsonify({"error": "admin access required"}), 403
+
     waitlist = load_waitlist()
     return jsonify({
         "count": waitlist["count"],
