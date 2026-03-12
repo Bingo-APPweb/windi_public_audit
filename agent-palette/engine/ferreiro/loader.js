@@ -16,6 +16,7 @@
     'probes/probe_services.js',
     'probes/probe_manifests.js',
     'probes/probe_code.js',
+    'probes/probe_seals.js',
 
     // Healers
     'healers/heal_zombi.js',

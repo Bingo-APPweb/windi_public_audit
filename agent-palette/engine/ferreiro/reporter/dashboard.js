@@ -206,6 +206,7 @@
     const services = data?.services || { ok: 0, total: 0 };
     const manifests = data?.manifests || { ok: 0, total: 0 };
     const code = data?.code || { ok: 0, total: 0 };
+    const seals = data?.seals || { syncRate: 100, orphanCount: 0 };
     const issues = data?.issues?.length || 0;
 
     return `
@@ -246,6 +247,22 @@
               ${code.ok}/${code.total}
             </span>
           </div>
+        </div>
+
+        <div class="ferreiro-dash-section">
+          <div class="ferreiro-dash-section-title">Seals</div>
+          <div class="ferreiro-dash-row">
+            <span class="ferreiro-dash-label">Sync Rate</span>
+            <span class="ferreiro-dash-value ${seals.syncRate >= 100 ? 'ok' : seals.syncRate >= 80 ? 'warning' : 'error'}">
+              ${seals.syncRate}%
+            </span>
+          </div>
+          ${seals.orphanCount > 0 ? `
+          <div class="ferreiro-dash-row">
+            <span class="ferreiro-dash-label">Orphans</span>
+            <span class="ferreiro-dash-value warning">${seals.orphanCount}</span>
+          </div>
+          ` : ''}
         </div>
 
         ${issues > 0 ? `
