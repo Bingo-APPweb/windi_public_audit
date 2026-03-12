@@ -1,0 +1,188 @@
+{
+  "version": "1.0.0",
+  "name": "W-FERR-001 Error Catalogue",
+  "description": "Erros conhecidos e suas curas. Fonte única de autoridade para curas autónomas.",
+  "invariant": "I9 — AI cura o conhecido. Human decide o desconhecido.",
+  "errors": [
+    {
+      "id": "ZOMBI",
+      "name": "Processo Zombi",
+      "level": 1,
+      "autonomous": true,
+      "description": "Processo existe mas não responde a health check",
+      "diagnosis": {
+        "method": "pgrep + health_check",
+        "pattern": "PID existe, /health timeout ou erro"
+      },
+      "cure": {
+        "action": "kill -9 PID && nohup restart",
+        "verify": "health check OK após 3s"
+      },
+      "seal": true,
+      "severity": "high"
+    },
+    {
+      "id": "ALZHEIMER",
+      "name": "Dragon Alzheimer",
+      "level": 2,
+      "autonomous": true,
+      "description": "History usa text: em vez de content: (Claude API incompatível)",
+      "diagnosis": {
+        "method": "grep",
+        "pattern": "text:\\s*m\\.text|role.*text:",
+        "files": ["index.html"]
+      },
+      "cure": {
+        "action": "patch text: → content:",
+        "verify": "grep content: confirma patch"
+      },
+      "seal": true,
+      "severity": "medium"
+    },
+    {
+      "id": "VEIA_MORTA",
+      "name": "URL Hardcoded",
+      "level": 2,
+      "autonomous": true,
+      "description": "URL 127.0.0.1 ou localhost hardcoded em vez de relativo",
+      "diagnosis": {
+        "method": "grep",
+        "pattern": "127\\.0\\.0\\.1:[0-9]+|localhost:[0-9]+",
+        "files": ["index.html", "*.js"]
+      },
+      "cure": {
+        "action": "substituir por AgentBridge URL relativa",
+        "mappings": {
+          "127.0.0.1:8091": "pageStore",
+          "127.0.0.1:8101": "ledger",
+          "127.0.0.1:8103": "export",
+          "127.0.0.1:8105": "communique",
+          "127.0.0.1:8106": "vault",
+          "127.0.0.1:8108": "dragon"
+        },
+        "verify": "grep não encontra mais padrão"
+      },
+      "seal": true,
+      "severity": "medium"
+    },
+    {
+      "id": "LOOP_SESSION",
+      "name": "SessionStorage sem Guard",
+      "level": 2,
+      "autonomous": true,
+      "description": "sessionStorage.getItem sem verificar se array está vazio",
+      "diagnosis": {
+        "method": "grep",
+        "pattern": "sessionStorage\\.getItem.*(?!length)",
+        "negative": "length === 0"
+      },
+      "cure": {
+        "action": "injectar guard length === 0",
+        "verify": "grep encontra guard"
+      },
+      "seal": true,
+      "severity": "low"
+    },
+    {
+      "id": "MANIFEST_INVALIDO",
+      "name": "Manifest JSON Corrompido",
+      "level": 1,
+      "autonomous": true,
+      "description": "Ficheiro JSON do manifest não parseia correctamente",
+      "diagnosis": {
+        "method": "JSON.parse",
+        "pattern": "SyntaxError"
+      },
+      "cure": {
+        "action": "restaurar de backup",
+        "backup_path": "/opt/windi/backups/manifests/",
+        "verify": "JSON.parse OK"
+      },
+      "seal": true,
+      "severity": "high"
+    },
+    {
+      "id": "PORTA_MORTA",
+      "name": "Porto do Servidor Morto",
+      "level": 3,
+      "autonomous": false,
+      "description": "Health check de um serviço retorna timeout ou connection refused",
+      "diagnosis": {
+        "method": "fetch /health",
+        "pattern": "timeout | ECONNREFUSED"
+      },
+      "cure": {
+        "action": "PROPOSTA ao Human Dragon",
+        "options": ["restart service", "check systemd", "verify port"]
+      },
+      "seal": false,
+      "severity": "critical"
+    },
+    {
+      "id": "NGINX_ROTA",
+      "name": "Rota Nginx em Falha",
+      "level": 3,
+      "autonomous": false,
+      "description": "Rota nginx retorna 502, 503 ou 504",
+      "diagnosis": {
+        "method": "curl",
+        "pattern": "HTTP 502|503|504"
+      },
+      "cure": {
+        "action": "PROPOSTA ao Human Dragon",
+        "options": ["check upstream", "nginx -t", "systemctl reload nginx"]
+      },
+      "seal": false,
+      "severity": "critical"
+    },
+    {
+      "id": "LEDGER_MORTO",
+      "name": "Forensic Ledger Inacessível",
+      "level": 4,
+      "autonomous": false,
+      "description": "Ledger :8101 não responde - crítico para integridade",
+      "diagnosis": {
+        "method": "fetch /health",
+        "pattern": "timeout | ECONNREFUSED"
+      },
+      "cure": {
+        "action": "ALERTA CRÍTICO - não tocar",
+        "escalate": "Human Dragon imediato"
+      },
+      "seal": false,
+      "severity": "critical"
+    },
+    {
+      "id": "INDEX_CORROMPIDO",
+      "name": "Index.html Hash Mismatch",
+      "level": 4,
+      "autonomous": false,
+      "description": "Hash do index.html não corresponde ao último deploy",
+      "diagnosis": {
+        "method": "sha256sum",
+        "pattern": "hash != expected"
+      },
+      "cure": {
+        "action": "ALERTA CRÍTICO - possível adulteração",
+        "escalate": "Human Dragon imediato"
+      },
+      "seal": false,
+      "severity": "critical"
+    }
+  ],
+  "services": [
+    { "id": "dragon",     "port": 8108, "path": "/api/dragon/health", "critical": true },
+    { "id": "ledger",     "port": 8101, "path": "/health",            "critical": true },
+    { "id": "export",     "port": 8103, "path": "/health",            "critical": false },
+    { "id": "vault",      "port": 8106, "path": "/health",            "critical": false },
+    { "id": "communique", "port": 8105, "path": "/health",            "critical": false },
+    { "id": "wallet",     "port": 8098, "path": "/health",            "critical": false },
+    { "id": "bridge",     "port": 8097, "path": "/health",            "critical": false },
+    { "id": "pageStore",  "port": 8091, "path": "/health",            "critical": false }
+  ],
+  "manifests": [
+    "letter", "email", "memo", "note", "journal", "recipe",
+    "report", "contract", "invoice", "protocol", "analysis",
+    "presentation", "communique", "certificate", "declaration", "creative_virtue"
+  ]
+}
