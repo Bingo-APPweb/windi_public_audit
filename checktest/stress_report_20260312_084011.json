@@ -1,0 +1,21 @@
+{
+  "date": "2026-03-12T08:40:11.917871",
+  "baseline": {
+    "ok": 17,
+    "total": 17
+  },
+  "stress_tests": {
+    "20": {
+      "verdict": "READY",
+      "rate": 100.0
+    },
+    "50": {
+      "verdict": "READY",
+      "rate": 100.0
+    },
+    "100": {
+      "verdict": "READY",
+      "rate": 100.0
+    }
+  }
+}

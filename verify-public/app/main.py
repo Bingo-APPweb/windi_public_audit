@@ -58,6 +58,11 @@ DOCS_DIR = os.path.join(WEB_DIR, "docs")
 if os.path.isdir(DOCS_DIR):
     app.mount("/verify-public/docs", StaticFiles(directory=DOCS_DIR), name="docs")
 
+# VPR static pages (e.g., /verify-public/vpr/anna-weber/)
+VPR_DIR = os.path.join(WEB_DIR, "vpr")
+if os.path.isdir(VPR_DIR):
+    app.mount("/verify-public/vpr", StaticFiles(directory=VPR_DIR, html=True), name="vpr")
+
 # ═══════════════════════════════════════════════════════════════════════════════
 # VPR — Verified Professional Record (v2.0)
 # WINDI-VPR-SPEC-v2.0 · 2026-03-10

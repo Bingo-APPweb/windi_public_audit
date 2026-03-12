@@ -1,7 +1,8 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// WINDI Command Center — SVG Icon Edition v1.0
+// WINDI Command Center — SVG Icon Edition v1.1 (Live Wallet Connection)
+// Added: Real-time Wallet API polling with graceful fallback
 // All emoji icons replaced with monocromatic SVG inline icons
 // Color: currentColor • Size: 20×20 / 14×14 • strokeWidth: 1.3
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -254,6 +255,72 @@ const TIER_CONFIG = {
   HIGH: { label: "HIGH", color: "#92400e", bg: "#fef3c7" },
 };
 
+// ─── WALLET API CONFIG ────────────────────────────────────────────────────────
+const WALLET_API = {
+  baseUrl: window.location.hostname === 'localhost'
+    ? 'http://localhost:8099'
+    : '',  // Use relative paths — nginx proxies /api/wallet/ to :8099
+  pollInterval: 5000,  // 5 seconds
+  timeout: 3000,       // 3 second timeout
+};
+
+// ─── WALLET DATA HOOK ─────────────────────────────────────────────────────────
+function useWalletData() {
+  const [walletData, setWalletData] = useState(null);
+  const [connectionStatus, setConnectionStatus] = useState('connecting'); // 'live', 'offline', 'connecting'
+  const [lastUpdate, setLastUpdate] = useState(null);
+  const [error, setError] = useState(null);
+
+  const fetchWalletData = useCallback(async () => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), WALLET_API.timeout);
+
+    try {
+      const [statsRes, healthRes] = await Promise.all([
+        fetch(`${WALLET_API.baseUrl}/api/wallet/stats`, { signal: controller.signal }),
+        fetch(`${WALLET_API.baseUrl}/api/wallet/health`, { signal: controller.signal }),
+      ]);
+
+      clearTimeout(timeoutId);
+
+      if (!statsRes.ok || !healthRes.ok) {
+        throw new Error(`HTTP ${statsRes.status || healthRes.status}`);
+      }
+
+      const stats = await statsRes.json();
+      const health = await healthRes.json();
+
+      setWalletData({
+        pioneers: stats.total_humans || 0,
+        activeContexts: stats.active_contexts || 0,
+        frozenContexts: stats.frozen_contexts || 0,
+        avgTrust: stats.avg_trust_score || 0,
+        ledgerLinks: stats.total_ledger_links || 0,
+        crypto: health.crypto || 'Ed25519',
+        protocol: health.protocol || 'Three Dragons',
+        version: health.version || '1.0.0',
+        status: health.status || 'unknown',
+      });
+      setConnectionStatus('live');
+      setLastUpdate(new Date());
+      setError(null);
+    } catch (err) {
+      clearTimeout(timeoutId);
+      setConnectionStatus('offline');
+      setError(err.message);
+      // Keep last known data - graceful degradation
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchWalletData(); // Initial fetch
+    const interval = setInterval(fetchWalletData, WALLET_API.pollInterval);
+    return () => clearInterval(interval);
+  }, [fetchWalletData]);
+
+  return { walletData, connectionStatus, lastUpdate, error, refetch: fetchWalletData };
+}
+
 // ─── DATA ─────────────────────────────────────────────────────────────────────
 const mockUser = {
   name: "Jober M. Correa", initials: "JM", email: "jober@jomedia.eu",
@@ -383,8 +450,9 @@ function Divider({ style }) { return <div style={{ height: 1, background: T.bord
 function SidebarDivider() { return <div style={{ height: 1, background: "rgba(255,255,255,0.07)", margin: "6px 0" }} />; }
 
 // ─── VIEWS ────────────────────────────────────────────────────────────────────
-function OverviewView() {
+function OverviewView({ walletData, connectionStatus }) {
   const upCount = SERVICES.filter(s => s.status === "UP").length;
+  const pioneers = walletData?.pioneers ?? 0;
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
       <Card>
@@ -392,7 +460,7 @@ function OverviewView() {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8 }}>
           <MiniStat icon="bolt" value={`${upCount}/${SERVICES.length}`} label="Services UP" delta="100% uptime" accent={T.green} />
           <MiniStat icon="robot" value="7/7" label="Agents LIVE" delta="Agent Core" accent={T.green} />
-          <MiniStat icon="lock" value="40,918+" label="Receipts Sealed" delta="+127 hoje" />
+          <MiniStat icon="wallet" value={`${pioneers}/100`} label="Pioneers" delta={connectionStatus === 'live' ? 'LIVE' : 'cached'} accent={connectionStatus === 'live' ? T.green : T.amber} />
           <MiniStat icon="shield" value="97.2%" label="Gov Score" delta="GOLD" accent={T.gold} />
           <MiniStat icon="check" value="GREEN" label="Law Sentinel" delta="p95=32.7ms" accent={T.green} />
           <MiniStat icon="database" value="93.3%" label="Local Sovereignty" delta={ALIAS.server} />
@@ -538,29 +606,78 @@ function LedgerView() {
   );
 }
 
-function WalletView() {
+function WalletView({ walletData, connectionStatus, lastUpdate }) {
+  // Fallback values when API is offline
+  const pioneers = walletData?.pioneers ?? 0;
+  const activeContexts = walletData?.activeContexts ?? 0;
+  const avgTrust = walletData?.avgTrust ?? 0;
+  const ledgerLinks = walletData?.ledgerLinks ?? 0;
+  const protocol = walletData?.protocol ?? 'Three Dragons';
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      {/* Connection Status Banner */}
+      <div style={{
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+        padding: "8px 12px", borderRadius: 8,
+        background: connectionStatus === 'live' ? T.greenBg : connectionStatus === 'offline' ? T.redBg : T.amberBg,
+        border: `1px solid ${connectionStatus === 'live' ? T.greenBorder : connectionStatus === 'offline' ? T.redBorder : T.amberBorder}`,
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <StatusDot status={connectionStatus === 'live' ? 'UP' : connectionStatus === 'offline' ? 'DOWN' : 'WARN'} />
+          <span style={{ fontSize: 11, fontWeight: 600, color: connectionStatus === 'live' ? T.green : connectionStatus === 'offline' ? T.red : T.amber }}>
+            {connectionStatus === 'live' ? 'WALLET API LIVE' : connectionStatus === 'offline' ? 'WALLET OFFLINE — showing cached data' : 'CONNECTING...'}
+          </span>
+        </div>
+        {lastUpdate && (
+          <span style={{ fontSize: 9, color: T.dim, fontFamily: "'JetBrains Mono',monospace" }}>
+            Last update: {lastUpdate.toLocaleTimeString('pt-BR', { hour12: false })}
+          </span>
+        )}
+      </div>
+
       <Card style={{ borderLeft: `3px solid ${T.gold}` }}>
-        <SectionTitle>Owner Wallet — Pioneer #1</SectionTitle>
+        <SectionTitle sub={protocol}>Wallet Stats — Live from API</SectionTitle>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
-          <MiniStat icon="creditCard" value="847" label="Credits" delta="Pioneer HIGH" accent={T.gold} />
-          <MiniStat icon="bolt" value="12,340" label="Tokens Used" delta="/ 50,000 limit" />
-          <MiniStat icon="calendar" value="2026-04-01" label="Next Billing" delta="€10/mês" />
+          <MiniStat icon="wallet" value={pioneers.toString()} label="Pioneers" delta="registered humans" accent={T.gold} />
+          <MiniStat icon="bolt" value={activeContexts.toString()} label="Active Contexts" delta="DID sessions" />
+          <MiniStat icon="shield" value={`${avgTrust.toFixed(1)}%`} label="Avg Trust Score" delta="across all" accent={avgTrust >= 80 ? T.green : T.amber} />
         </div>
       </Card>
+
       <Card>
-        <SectionTitle>100 Pioneers Program</SectionTitle>
+        <SectionTitle sub={`${pioneers} of 100 seats filled`}>100 Pioneers Program</SectionTitle>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(10,1fr)", gap: 3 }}>
-          {Array.from({ length: 100 }, (_, i) => (
-            <div key={i} style={{ width: "100%", aspectRatio: "1", borderRadius: 4,
-              background: i === 0 ? T.gold : i < 5 ? "#d1fae5" : T.border,
-              border: i === 0 ? `2px solid ${T.gold}` : "none",
-              display: "flex", alignItems: "center", justifyContent: "center" }}>
-              {i === 0 && <span style={{ fontSize: 8, fontWeight: 900, color: "white" }}>1</span>}
-            </div>
-          ))}
+          {Array.from({ length: 100 }, (_, i) => {
+            const isFilled = i < pioneers;
+            const isFirst = i === 0;
+            const isNew = i === pioneers - 1 && pioneers > 1;
+            return (
+              <div key={i} style={{
+                width: "100%", aspectRatio: "1", borderRadius: 4,
+                background: isFirst ? T.gold : isFilled ? "#d1fae5" : T.border,
+                border: isFirst ? `2px solid ${T.gold}` : isNew ? `2px solid ${T.green}` : "none",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                animation: isNew ? "pulse 1s ease-in-out infinite" : "none",
+                transition: "all 0.3s ease",
+              }}>
+                {isFirst && <span style={{ fontSize: 8, fontWeight: 900, color: "white" }}>1</span>}
+                {isFilled && !isFirst && <span style={{ fontSize: 7, fontWeight: 700, color: T.green }}>{i + 1}</span>}
+              </div>
+            );
+          })}
         </div>
+        <style>{`@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }`}</style>
+        {pioneers > 0 && (
+          <div style={{ marginTop: 12, padding: "8px 12px", background: T.greenBg, borderRadius: 8, border: `1px solid ${T.greenBorder}` }}>
+            <div style={{ fontSize: 11, fontWeight: 600, color: T.green }}>
+              {pioneers} Pioneer{pioneers > 1 ? 's' : ''} registered — {100 - pioneers} seats remaining
+            </div>
+            <div style={{ fontSize: 9, color: T.dim, marginTop: 2 }}>
+              {ledgerLinks} ledger links • {activeContexts} active contexts
+            </div>
+          </div>
+        )}
       </Card>
     </div>
   );
@@ -651,18 +768,21 @@ export default function App() {
   const [view, setView] = useState("overview");
   const [time, setTime] = useState(new Date());
 
+  // Live Wallet API connection
+  const { walletData, connectionStatus, lastUpdate, error } = useWalletData();
+
   useEffect(() => {
     const t = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(t);
   }, []);
 
   const viewMap = {
-    overview: <OverviewView />,
+    overview: <OverviewView walletData={walletData} connectionStatus={connectionStatus} />,
     services: <ServicesView />,
     agents: <AgentsView />,
     governance: <GovernanceView />,
     ledger: <LedgerView />,
-    wallet: <WalletView />,
+    wallet: <WalletView walletData={walletData} connectionStatus={connectionStatus} lastUpdate={lastUpdate} />,
     infra: <InfraView />,
     security: <SecurityView />,
   };
