@@ -1,0 +1,50 @@
+{
+  "id": "letter",
+  "version": "1.0.0",
+  "tier": "FREE",
+  "category": "personal",
+  "icon": "letter",
+  "names": {
+    "de": "Brief",
+    "en": "Letter",
+    "pt": "Carta"
+  },
+  "breath": {
+    "de": "Absicht senden",
+    "en": "Send intention",
+    "pt": "Enviar intenção"
+  },
+  "prompts": {
+    "de": "Ich möchte einen Brief schreiben",
+    "en": "I want to write a letter",
+    "pt": "Quero escrever uma carta"
+  },
+  "schema": {
+    "to": { "type": "string", "required": true },
+    "from": { "type": "string", "required": true },
+    "date": { "type": "date", "required": false, "default": "today" },
+    "subject": { "type": "string", "required": false },
+    "greeting": { "type": "string", "required": false },
+    "body": { "type": "text", "required": true },
+    "closing": { "type": "string", "required": false }
+  },
+  "flow": [
+    { "field": "to", "prompt": { "de": "An wen schreiben Sie?", "en": "Who are you writing to?", "pt": "Para quem você está escrevendo?" } },
+    { "field": "subject", "prompt": { "de": "Was ist der Betreff?", "en": "What is the subject?", "pt": "Qual é o assunto?" } },
+    { "field": "body", "prompt": { "de": "Schreiben Sie den Inhalt.", "en": "Write the content.", "pt": "Escreva o conteúdo." } }
+  ],
+  "sealPolicy": {
+    "required": false,
+    "defaultSeal": true,
+    "governanceLevel": "light"
+  },
+  "tone": {
+    "description": "Personal, affectionate, warm",
+    "structure": "greeting + body + closing",
+    "examples": {
+      "de": ["Liebe/r", "Herzliche Grüße", "Alles Liebe"],
+      "en": ["Dear", "With love", "Best wishes"],
+      "pt": ["Querido/a", "Com carinho", "Abraços"]
+    }
+  }
+}

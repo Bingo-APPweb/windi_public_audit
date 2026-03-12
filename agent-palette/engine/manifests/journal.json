@@ -1,0 +1,42 @@
+{
+  "id": "journal",
+  "version": "1.0.0",
+  "tier": "FREE",
+  "category": "personal",
+  "icon": "book",
+  "names": {
+    "de": "Tagebuch",
+    "en": "Journal",
+    "pt": "Diário"
+  },
+  "breath": {
+    "de": "Sich bezeugen",
+    "en": "Witness yourself",
+    "pt": "Testemunhar a si mesmo"
+  },
+  "prompts": {
+    "de": "Ich möchte einen Tagebucheintrag schreiben",
+    "en": "I want to write a journal entry",
+    "pt": "Quero escrever no diário"
+  },
+  "schema": {
+    "date": { "type": "date", "required": true, "default": "today" },
+    "title": { "type": "string", "required": false },
+    "content": { "type": "text", "required": true },
+    "mood": { "type": "enum", "values": ["happy", "sad", "neutral", "anxious", "excited", "grateful"], "required": false },
+    "tags": { "type": "array", "required": false }
+  },
+  "flow": [
+    { "field": "content", "prompt": { "de": "Was ist heute passiert?", "en": "What happened today?", "pt": "O que aconteceu hoje?" } }
+  ],
+  "sealPolicy": {
+    "required": false,
+    "defaultSeal": false,
+    "governanceLevel": "minimal"
+  },
+  "tone": {
+    "description": "Personal, reflective, honest",
+    "structure": "Free-form personal reflection",
+    "rules": ["No judgment", "Honest expression", "Private by default"]
+  }
+}

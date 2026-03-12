@@ -1,0 +1,43 @@
+{
+  "id": "declaration",
+  "version": "1.0.0",
+  "tier": "MED",
+  "category": "business",
+  "icon": "declaration",
+  "names": {
+    "de": "Erklärung",
+    "en": "Declaration",
+    "pt": "Declaração"
+  },
+  "breath": {
+    "de": "Wahrheit bezeugen",
+    "en": "Witness truth",
+    "pt": "Testemunhar verdade"
+  },
+  "prompts": {
+    "de": "Ich möchte eine Erklärung abgeben",
+    "en": "I want to make a declaration",
+    "pt": "Quero fazer uma declaração"
+  },
+  "schema": {
+    "declarant": { "type": "string", "required": true },
+    "date": { "type": "date", "required": true, "default": "today" },
+    "statement": { "type": "text", "required": true },
+    "purpose": { "type": "string", "required": false },
+    "signature": { "type": "string", "required": true }
+  },
+  "flow": [
+    { "field": "declarant", "prompt": { "de": "Wer erklärt?", "en": "Who declares?", "pt": "Quem declara?" } },
+    { "field": "statement", "prompt": { "de": "Was wird erklärt?", "en": "What is declared?", "pt": "O que é declarado?" } }
+  ],
+  "sealPolicy": {
+    "required": true,
+    "defaultSeal": true,
+    "governanceLevel": "standard"
+  },
+  "tone": {
+    "description": "Formal, short, assertive",
+    "structure": "I, [NAME], hereby declare that...",
+    "rules": ["One page maximum", "Clear statement", "Signature required"]
+  }
+}

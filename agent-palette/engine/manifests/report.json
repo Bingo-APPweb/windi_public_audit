@@ -1,0 +1,47 @@
+{
+  "id": "report",
+  "version": "1.0.0",
+  "tier": "MED",
+  "category": "business",
+  "icon": "report",
+  "names": {
+    "de": "Bericht",
+    "en": "Report",
+    "pt": "Relatório"
+  },
+  "breath": {
+    "de": "Belege reifen",
+    "en": "Evidence matures",
+    "pt": "Evidências amadurecem"
+  },
+  "prompts": {
+    "de": "Ich möchte einen Bericht erstellen",
+    "en": "I want to create a report",
+    "pt": "Quero criar um relatório"
+  },
+  "schema": {
+    "title": { "type": "string", "required": true },
+    "author": { "type": "string", "required": true },
+    "date": { "type": "date", "required": false, "default": "today" },
+    "executive_summary": { "type": "text", "required": true },
+    "sections": { "type": "array", "required": true },
+    "findings": { "type": "text", "required": false },
+    "conclusions": { "type": "text", "required": true },
+    "recommendations": { "type": "text", "required": false }
+  },
+  "flow": [
+    { "field": "title", "prompt": { "de": "Titel des Berichts?", "en": "Report title?", "pt": "Título do relatório?" } },
+    { "field": "executive_summary", "prompt": { "de": "Zusammenfassung?", "en": "Executive summary?", "pt": "Resumo executivo?" } },
+    { "field": "conclusions", "prompt": { "de": "Schlussfolgerungen?", "en": "Conclusions?", "pt": "Conclusões?" } }
+  ],
+  "sealPolicy": {
+    "required": true,
+    "defaultSeal": true,
+    "governanceLevel": "standard"
+  },
+  "tone": {
+    "description": "Analytical, structured, evidence-based",
+    "structure": "Executive summary first, then details",
+    "rules": ["Use sections", "Include findings", "Draw conclusions"]
+  }
+}

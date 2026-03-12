@@ -1,0 +1,53 @@
+{
+  "id": "creativeVirtue",
+  "version": "1.0.0",
+  "tier": "HIGH",
+  "category": "governance",
+  "icon": "creative",
+  "names": {
+    "de": "Schöpfungsnachweis",
+    "en": "Proof of Creation",
+    "pt": "Prova da Criação"
+  },
+  "breath": {
+    "de": "Schöpfungsnachweis",
+    "en": "Proof of creation",
+    "pt": "Prova da criação"
+  },
+  "prompts": {
+    "de": "Ich möchte einen Schöpfungsnachweis erstellen",
+    "en": "I want to create a proof of creation",
+    "pt": "Quero criar uma prova de criação"
+  },
+  "schema": {
+    "workTitle": { "type": "string", "required": true },
+    "creator": { "type": "string", "required": true },
+    "date": { "type": "date", "required": true, "default": "today" },
+    "description": { "type": "text", "required": true },
+    "medium": { "type": "string", "required": false },
+    "aiAssisted": { "type": "enum", "values": ["none", "assisted", "collaborative", "generated"], "required": true },
+    "humanContribution": { "type": "text", "required": true },
+    "rights": { "type": "text", "required": false }
+  },
+  "flow": [
+    { "field": "workTitle", "prompt": { "de": "Titel des Werks?", "en": "Title of the work?", "pt": "Título da obra?" } },
+    { "field": "description", "prompt": { "de": "Beschreiben Sie das Werk.", "en": "Describe the work.", "pt": "Descreva a obra." } },
+    { "field": "aiAssisted", "prompt": { "de": "AI-Unterstützung?", "en": "AI assistance level?", "pt": "Nível de assistência de IA?" } },
+    { "field": "humanContribution", "prompt": { "de": "Ihr Beitrag?", "en": "Your contribution?", "pt": "Sua contribuição?" } }
+  ],
+  "sealPolicy": {
+    "required": true,
+    "defaultSeal": true,
+    "governanceLevel": "governance"
+  },
+  "tone": {
+    "description": "Attestation, creative, honest",
+    "structure": "Work → Creator → AI Disclosure → Human Contribution → Rights",
+    "rules": ["Honest AI disclosure", "Clear human contribution", "Rights statement"]
+  },
+  "special": {
+    "aiDisclosure": true,
+    "humanContributionRequired": true,
+    "creativityAttestation": true
+  }
+}

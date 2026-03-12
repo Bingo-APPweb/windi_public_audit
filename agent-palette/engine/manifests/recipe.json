@@ -1,0 +1,46 @@
+{
+  "id": "recipe",
+  "version": "1.0.0",
+  "tier": "FREE",
+  "category": "personal",
+  "icon": "recipe",
+  "names": {
+    "de": "Rezept",
+    "en": "Recipe",
+    "pt": "Receita"
+  },
+  "breath": {
+    "de": "Ritual teilen",
+    "en": "Share a ritual",
+    "pt": "Compartilhar ritual"
+  },
+  "prompts": {
+    "de": "Ich möchte ein Rezept schreiben",
+    "en": "I want to write a recipe",
+    "pt": "Quero escrever uma receita"
+  },
+  "schema": {
+    "title": { "type": "string", "required": true },
+    "servings": { "type": "number", "required": false },
+    "prepTime": { "type": "string", "required": false },
+    "cookTime": { "type": "string", "required": false },
+    "ingredients": { "type": "array", "required": true },
+    "instructions": { "type": "array", "required": true },
+    "notes": { "type": "text", "required": false }
+  },
+  "flow": [
+    { "field": "title", "prompt": { "de": "Name des Gerichts?", "en": "Name of the dish?", "pt": "Nome do prato?" } },
+    { "field": "ingredients", "prompt": { "de": "Zutaten?", "en": "Ingredients?", "pt": "Ingredientes?" } },
+    { "field": "instructions", "prompt": { "de": "Zubereitung?", "en": "Instructions?", "pt": "Modo de preparo?" } }
+  ],
+  "sealPolicy": {
+    "required": false,
+    "defaultSeal": false,
+    "governanceLevel": "minimal"
+  },
+  "tone": {
+    "description": "Clear, practical, inviting",
+    "structure": "Name → Ingredients → Instructions → Tips",
+    "rules": ["Clear measurements", "Step-by-step", "Include tips"]
+  }
+}

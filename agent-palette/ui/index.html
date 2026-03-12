@@ -9,6 +9,12 @@
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<!-- DragonEngine v2.0 — Modular Architecture -->
+<script src="/engine/session/dragon_session.js"></script>
+<script src="/engine/bridge/agent_bridge.js"></script>
+<script src="/engine/core/dragon_engine_core.js"></script>
+<script src="/engine/manifests/index.js"></script>
+<script src="/engine/index.js"></script>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
@@ -278,6 +284,241 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 }
 .ua-gov-item-label { font-size: 10px; font-family: 'JetBrains Mono', monospace; opacity: 0.6; }
 .ua-gov-item-value { font-size: 18px; font-weight: 800; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   USER AREA MOBILE — DragonEngine v2.0
+   Briefing: 12 Mar 2026 · Funciona em 375px (iPhone SE)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Avatar button no topbar mobile */
+.user-btn-mobile {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 2px solid rgba(139,105,20,0.28);
+  background: rgba(139,105,20,0.10);
+  color: #8B6914;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 700;
+  cursor: pointer;
+  display: none; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+.user-btn-mobile:active { transform: scale(0.94); }
+@media (max-width: 768px) {
+  .user-btn-mobile { display: flex; }
+}
+
+/* Overlay escuro */
+.user-overlay-mobile {
+  position: fixed; inset: 0;
+  background: rgba(44,41,36,0.45);
+  z-index: 9998;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.28s;
+}
+.user-overlay-mobile.open { opacity: 1; pointer-events: all; }
+
+/* Panel slide-up */
+.user-panel-mobile {
+  position: fixed; bottom: 0; left: 50%;
+  transform: translateX(-50%) translateY(110%);
+  width: 100%; max-width: 430px;
+  background: #F5F0E0;
+  border-radius: 20px 20px 0 0;
+  border-top: 2px solid rgba(139,105,20,0.28);
+  z-index: 9999;
+  transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1);
+  padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  max-height: 88dvh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.user-panel-mobile.open { transform: translateX(-50%) translateY(0); }
+.upm-handle {
+  width: 36px; height: 4px;
+  border-radius: 2px;
+  background: rgba(44,41,36,0.13);
+  margin: 12px auto 4px;
+}
+
+/* Panel header */
+.upm-header {
+  padding: 12px 20px 16px;
+  border-bottom: 1px solid rgba(44,41,36,0.13);
+}
+.upm-user-row {
+  display: flex; align-items: center;
+  gap: 14px; margin-bottom: 12px;
+}
+.upm-avatar {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  border: 2.5px solid rgba(139,105,20,0.28);
+  background: rgba(139,105,20,0.10);
+  color: #8B6914;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 16px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.upm-user-info { flex: 1; min-width: 0; }
+.upm-user-name {
+  font-size: 15px; font-weight: 700;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.upm-user-did {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; color: #6B6560; margin-top: 2px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.upm-tier-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 20px; border: 1px solid;
+}
+.upm-tier-HIGH { background: rgba(139,105,20,0.10); border-color: rgba(139,105,20,0.28); color: #8B6914; }
+.upm-tier-MED  { background: rgba(26,58,107,0.10); border-color: rgba(26,58,107,0.28); color: #1A3A6B; }
+.upm-tier-FREE { background: rgba(45,106,45,0.10); border-color: rgba(45,106,45,0.28); color: #2D6A2D; }
+
+/* Stats */
+.upm-stats {
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 8px;
+}
+.upm-stat {
+  background: #EDE8D5; border: 1px solid rgba(44,41,36,0.13);
+  border-radius: 8px; padding: 8px; text-align: center;
+}
+.upm-stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px; font-weight: 700;
+}
+.upm-stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px; color: #6B6560;
+  text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px;
+}
+
+/* Wallet card */
+.upm-wallet {
+  margin: 10px 20px 4px;
+  background: rgba(139,105,20,0.10); border: 1px solid rgba(139,105,20,0.28);
+  border-radius: 12px; padding: 14px 16px;
+  display: flex; align-items: center;
+  justify-content: space-between; gap: 10px;
+}
+.upm-wallet-pioneer {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; font-weight: 700;
+  color: #8B6914; letter-spacing: 0.1em;
+  text-transform: uppercase; margin-bottom: 4px;
+}
+.upm-wallet-credits {
+  font-size: 22px; font-weight: 800; line-height: 1;
+}
+.upm-wallet-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px; color: #6B6560;
+  text-transform: uppercase; margin-top: 2px;
+}
+.upm-wallet-right { text-align: right; }
+.upm-billing-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; color: #6B6560;
+}
+.upm-billing-date {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 700;
+}
+.upm-billing-price {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; color: #8B6914; margin-top: 4px;
+}
+
+/* Menu */
+.upm-menu { padding: 4px 0; }
+.upm-section {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px; font-weight: 700;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: #6B6560; padding: 10px 20px 4px;
+}
+.upm-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 12px 20px; cursor: pointer;
+  transition: background 0.15s;
+  min-height: 52px;
+  border: none; background: transparent;
+  width: 100%; text-align: left;
+  color: #2C2924;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+.upm-item:active { background: #EDE8D5; }
+.upm-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.upm-icon-gold    { background: rgba(139,105,20,0.10); color: #8B6914; }
+.upm-icon-blue    { background: rgba(26,58,107,0.10); color: #1A3A6B; }
+.upm-icon-green   { background: rgba(45,106,45,0.10); color: #2D6A2D; }
+.upm-icon-neutral { background: #EDE8D5; border: 1px solid rgba(44,41,36,0.13); color: #6B6560; }
+.upm-icon-red     { background: rgba(139,20,20,0.06); color: #8B1414; }
+.upm-item-body    { flex: 1; }
+.upm-item-title   { font-size: 14px; font-weight: 600; line-height: 1.2; }
+.upm-item-sub     { font-size: 11px; color: #6B6560; margin-top: 1px; font-family: 'JetBrains Mono', monospace; }
+.upm-item-arrow   { display: flex; align-items: center; color: #6B6560; }
+.upm-item.red .upm-item-title { color: #8B1414; }
+.upm-divider      { height: 1px; background: rgba(44,41,36,0.13); margin: 4px 20px; }
+
+/* Language selector */
+.upm-lang-row { display: flex; gap: 6px; padding: 8px 20px; }
+.upm-lang-btn {
+  flex: 1; padding: 9px; border-radius: 8px;
+  border: 1px solid rgba(44,41,36,0.13);
+  background: #EDE8D5;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 700;
+  color: #6B6560; cursor: pointer;
+  text-align: center; min-height: 44px;
+  transition: all 0.15s;
+}
+.upm-lang-btn.active {
+  background: rgba(139,105,20,0.10);
+  border-color: rgba(139,105,20,0.28);
+  color: #8B6914;
+}
+
+/* Bottom nav — mobile only */
+.bottom-nav-mobile {
+  display: none;
+  position: fixed; bottom: 0; left: 0; right: 0;
+  border-top: 1px solid rgba(44,41,36,0.13);
+  background: #F5F0E0;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  z-index: 100;
+}
+@media (max-width: 768px) {
+  .bottom-nav-mobile { display: flex; }
+  body { padding-bottom: 70px; }
+}
+.bnav-tab {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 10px 4px; gap: 3px;
+  cursor: pointer; min-height: 56px;
+  border: none; background: transparent;
+  color: #6B6560; transition: color 0.15s;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+.bnav-tab.active { color: #8B6914; }
+.bnav-tab-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px; font-weight: 700;
+  letter-spacing: 0.05em; text-transform: uppercase;
+}
 </style>
 </head>
 <body>
@@ -1326,9 +1567,10 @@ const buildSealPayloadWithProgress = async (doc, wallet, sealPolicy, onProgress)
 // Wave 2.0: MEMO as golden path → structured fields → institutional document with QR
 // ═══════════════════════════════════════════════════════════════════════════════════
 
-const EXPORT_URL = window.location.hostname === 'localhost'
-  ? 'http://localhost:8103'
-  : 'https://windi-domain.com/export';
+// DragonEngine v2.0: Use AgentBridge for URL resolution
+const EXPORT_URL = (typeof getBridge !== 'undefined' && getBridge())
+  ? getBridge().getUrl('export', '')
+  : (window.location.hostname === 'localhost' ? 'http://localhost:8103' : 'https://windi-domain.com/export');
 
 // Map doc types to JMPG templates
 const DOC_TYPE_TO_TEMPLATE = {
@@ -3322,9 +3564,9 @@ function CognitiveInsightsPanel({ lang = 'en', theme, compact = false }) {
 // MAIN APP
 // ═══════════════
 function App(){
-  // ═══ A.2: VAULT API FETCH ═══
-  // FIX: Use correct Vault endpoints (8106 serves /api/stats and /health directly)
-  const vaultApiUrl=window.location.hostname==='localhost'?'http://localhost:8106':'https://windi-domain.com/vault';
+  // ═══ A.2: VAULT API FETCH (DragonEngine v2.0) ═══
+  // FIX: Use AgentBridge for URL resolution (8106 serves /api/stats and /health directly)
+  const vaultApiUrl=(typeof getBridge !== 'undefined' && getBridge())?getBridge().getVaultUrl(''):window.location.hostname==='localhost'?'http://localhost:8106':'https://windi-domain.com/vault';
   const fetchVaultStats=useCallback(async()=>{
     try{
       setVaultLoading(true);
@@ -3454,6 +3696,13 @@ function App(){
   // ═══ USER AREA STATE ═══
   const[userAreaOpen,setUserAreaOpen]=useState(false);
   const[userAreaData,setUserAreaData]=useState(null);
+
+  // ═══ EXPOSE WALLET TO MOBILE PANEL ═══
+  useEffect(()=>{
+    window.__windiWallet=wallet;
+    // Trigger mobile panel update if open
+    if(wallet&&typeof upmLoadData==='function')try{upmLoadData();}catch(e){}
+  },[wallet]);
 
   // Document
   const[docTitle,setDocTitle]=useState("");
@@ -4158,11 +4407,11 @@ function App(){
     return()=>clearTimeout(timer);
   },[searchQuery,performSearch]);
 
-  // ═══ A.4: DRAGON CHAT API ═══
+  // ═══ A.4: DRAGON CHAT API (DragonEngine v2.0) ═══
   // Constitutional Chat integration with 5 principles
-  // Production uses /palette/api/dragon nginx route → 8108
-  // Local uses direct port 8108
-  const dragonUrl = window.location.hostname === 'localhost' ? 'http://localhost:8108/api/dragon' : 'https://windi-domain.com/app/api/dragon';
+  // Uses DragonEngine AgentBridge for URL resolution (no hardcoded URLs)
+  const _bridge = typeof getBridge !== 'undefined' ? getBridge() : null;
+  const dragonUrl = _bridge ? _bridge.getDragonUrl('') : (window.location.hostname === 'localhost' ? 'http://localhost:8108/api/dragon' : 'https://windi-domain.com/app/api/dragon');
 
   // ═══ DISTRIBUTION: Check channel status when modal opens ═══
   useEffect(()=>{
@@ -4199,11 +4448,11 @@ function App(){
     if(!dragonConnected)return null;
     try{
       // Convert local msgs format to backend format (last 20 exchanges max)
-      // Backend expects: role='human' for user, role='assistant' for bot, and 'text' field
+      // DragonEngine v2.0: Use 'content' field (Claude API compatible), backend has fallback for 'text'
       const apiHistory=history
         .filter(m=>m.role==='user'||m.role==='bot')
         .slice(-40)
-        .map(m=>({role:m.role==='user'?'human':'assistant',text:m.text}));
+        .map(m=>({role:m.role==='user'?'human':'assistant',content:m.text}));
       const res=await fetch(dragonUrl+'/chat',{
         method:'POST',
         headers:{'Content-Type':'application/json','X-Session-ID':dragonSessionId||'','X-Tier':windiTier},
@@ -4870,8 +5119,9 @@ function App(){
       };
       setReceipt(r);
       fetch("/api/anchor/anchor",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({receipt_id:r.id,combined_hash:r.ch||r.bh,doc_type:r.doc_type||docType,entry_data:{title:docTitle,actor:"agent-palette",wallet:wallet?.id}})}).catch(e=>console.warn("[WINDI] Anchor write failed:",e));
-      // ═══ FIX 2026-03-10: Store content in W-PAGE-001 (Gêmeo patch) ═══
-      fetch("http://127.0.0.1:8091/page/generate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({intent:docContent,title:docTitle,doc_type:docType||"note",wallet_id:wallet?.id,receipt_id:r.id,lang:lang,fields:docFields})}).then(res=>res.json()).then(d=>{if(d.page_id)console.log("[WINDI] Page stored:",d.page_id);}).catch(e=>console.warn("[WINDI] Page storage failed:",e));
+      // ═══ FIX 2026-03-10: Store content in W-PAGE-001 (DragonEngine v2.0 - AgentBridge) ═══
+      const _pageStoreUrl=(typeof getBridge!=='undefined'&&getBridge())?getBridge().getUrl('pageStore','/page/generate'):'http://127.0.0.1:8091/page/generate';
+      fetch(_pageStoreUrl,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({intent:docContent,title:docTitle,doc_type:docType||"note",wallet_id:wallet?.id,receipt_id:r.id,lang:lang,fields:docFields})}).then(res=>res.json()).then(d=>{if(d.page_id)console.log("[WINDI] Page stored:",d.page_id);}).catch(e=>console.warn("[WINDI] Page storage failed:",e));
       setDocStatus("finalized");
       setShowFinalizeModal(false);
       setWallet(p=>({...p,trustScore:Math.min(p.trustScore+2,50),receipts:[...p.receipts,{id:r.id,title:docTitle,ts:r.ts,type:docType}]}));
@@ -4919,8 +5169,9 @@ function App(){
       };
       setReceipt(r);
       fetch("/api/anchor/anchor",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({receipt_id:r.id,combined_hash:r.ch||r.bh,doc_type:r.doc_type||docType,entry_data:{title:docTitle,actor:"agent-palette",wallet:wallet?.id}})}).catch(e=>console.warn("[WINDI] Anchor write failed:",e));
-      // ═══ FIX 2026-03-10: Store content in W-PAGE-001 (Gêmeo patch) ═══
-      fetch("http://127.0.0.1:8091/page/generate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({intent:docContent,title:docTitle,doc_type:docType||"note",wallet_id:wallet?.id,receipt_id:r.id,lang:lang})}).then(res=>res.json()).then(d=>{if(d.page_id)console.log("[WINDI] Page stored:",d.page_id);}).catch(e=>console.warn("[WINDI] Page storage failed:",e));
+      // ═══ FIX 2026-03-10: Store content in W-PAGE-001 (DragonEngine v2.0 - AgentBridge) ═══
+      const _pageStoreUrl2=(typeof getBridge!=='undefined'&&getBridge())?getBridge().getUrl('pageStore','/page/generate'):'http://127.0.0.1:8091/page/generate';
+      fetch(_pageStoreUrl2,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({intent:docContent,title:docTitle,doc_type:docType||"note",wallet_id:wallet?.id,receipt_id:r.id,lang:lang})}).then(res=>res.json()).then(d=>{if(d.page_id)console.log("[WINDI] Page stored:",d.page_id);}).catch(e=>console.warn("[WINDI] Page storage failed:",e));
       setDocStatus("finalized");
       setShowFinalizeModal(false);
       setWallet(p=>({...p,trustScore:Math.min(p.trustScore+2,50),receipts:[...p.receipts,{id:r.id,title:docTitle,ts:r.ts,type:docType}]}));
@@ -7238,5 +7489,322 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<App />);
 </script>
 <script src="modules/P8_WhatsAppSuite.js"></script>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════════════
+     USER AREA MOBILE — DragonEngine v2.0
+     Briefing: 12 Mar 2026 · Funciona em 375px (iPhone SE)
+     ═══════════════════════════════════════════════════════════════════════════════════ -->
+
+<!-- USER OVERLAY -->
+<div class="user-overlay-mobile" id="userOverlayMobile" onclick="closeUserPanelMobile()"></div>
+
+<!-- USER PANEL -->
+<div class="user-panel-mobile" id="userPanelMobile">
+  <div class="upm-handle"></div>
+
+  <!-- Header -->
+  <div class="upm-header">
+    <div class="upm-user-row">
+      <div class="upm-avatar" id="upmAvatar">JM</div>
+      <div class="upm-user-info">
+        <div class="upm-user-name" id="upmName">Utilizador</div>
+        <div class="upm-user-did" id="upmDid">WALLET-... · Pioneer</div>
+      </div>
+      <div class="upm-tier-badge upm-tier-FREE" id="upmTier">FREE</div>
+    </div>
+    <div class="upm-stats">
+      <div class="upm-stat">
+        <div class="upm-stat-value" id="upmCredits">0</div>
+        <div class="upm-stat-label">Creditos</div>
+      </div>
+      <div class="upm-stat">
+        <div class="upm-stat-value" id="upmDocs">0</div>
+        <div class="upm-stat-label">Docs</div>
+      </div>
+      <div class="upm-stat">
+        <div class="upm-stat-value" id="upmSeals">0</div>
+        <div class="upm-stat-label">Selados</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wallet Card -->
+  <div class="upm-wallet">
+    <div>
+      <div class="upm-wallet-pioneer" id="upmPioneerLabel">Pioneer</div>
+      <div class="upm-wallet-credits" id="upmWalletCredits">0</div>
+      <div class="upm-wallet-label">creditos disponiveis</div>
+    </div>
+    <div class="upm-wallet-right">
+      <div class="upm-billing-label">Prox. billing</div>
+      <div class="upm-billing-date" id="upmBillingDate">--</div>
+      <div class="upm-billing-price" id="upmBillingPrice">--</div>
+    </div>
+  </div>
+
+  <!-- Menu -->
+  <div class="upm-menu">
+    <div class="upm-section">Conta</div>
+
+    <button class="upm-item" onclick="upmAction('wallet')">
+      <div class="upm-icon upm-icon-gold">
+        <svg width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8L2 7h20z"/><circle cx="12" cy="14" r="2"/>
+        </svg>
+      </div>
+      <div class="upm-item-body">
+        <div class="upm-item-title">Wallet &amp; Creditos</div>
+        <div class="upm-item-sub" id="upmWalletSub">-- creditos</div>
+      </div>
+      <div class="upm-item-arrow">
+        <svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </button>
+
+    <button class="upm-item" onclick="upmAction('did')">
+      <div class="upm-icon upm-icon-blue">
+        <svg width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2L4 6v6c0 5.5 3.5 10.7 8 12 4.5-1.3 8-6.5 8-12V6z"/><polyline points="9 12 11 14 15 10"/>
+        </svg>
+      </div>
+      <div class="upm-item-body">
+        <div class="upm-item-title">Identidade Digital (DID)</div>
+        <div class="upm-item-sub" id="upmDidSub">--</div>
+      </div>
+      <div class="upm-item-arrow">
+        <svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </button>
+
+    <button class="upm-item" onclick="upmAction('docs')">
+      <div class="upm-icon upm-icon-green">
+        <svg width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/>
+        </svg>
+      </div>
+      <div class="upm-item-body">
+        <div class="upm-item-title">Os meus Documentos</div>
+        <div class="upm-item-sub" id="upmDocsSub">-- documentos</div>
+      </div>
+      <div class="upm-item-arrow">
+        <svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </button>
+
+    <div class="upm-divider"></div>
+    <div class="upm-section">Plano</div>
+
+    <button class="upm-item" onclick="upmAction('plan')">
+      <div class="upm-icon upm-icon-gold">
+        <svg width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        </svg>
+      </div>
+      <div class="upm-item-body">
+        <div class="upm-item-title" id="upmPlanTitle">Plano FREE</div>
+        <div class="upm-item-sub">Ver todos os planos</div>
+      </div>
+      <div class="upm-item-arrow">
+        <svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </button>
+
+    <div class="upm-divider"></div>
+    <div class="upm-section">Idioma</div>
+
+    <div class="upm-lang-row">
+      <button class="upm-lang-btn" onclick="upmSetLang('de',this)">DE</button>
+      <button class="upm-lang-btn active" onclick="upmSetLang('pt',this)">PT</button>
+      <button class="upm-lang-btn" onclick="upmSetLang('en',this)">EN</button>
+    </div>
+
+    <div class="upm-divider" style="margin-top:8px"></div>
+    <div class="upm-section">Suporte</div>
+
+    <button class="upm-item" onclick="upmAction('help')">
+      <div class="upm-icon upm-icon-neutral">
+        <svg width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+      </div>
+      <div class="upm-item-body">
+        <div class="upm-item-title">Ajuda &amp; Documentacao</div>
+        <div class="upm-item-sub">/verify-public/docs/</div>
+      </div>
+      <div class="upm-item-arrow">
+        <svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </button>
+
+    <button class="upm-item" onclick="upmAction('settings')">
+      <div class="upm-icon upm-icon-neutral">
+        <svg width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </div>
+      <div class="upm-item-body">
+        <div class="upm-item-title">Definicoes</div>
+        <div class="upm-item-sub">Tema / Notificacoes</div>
+      </div>
+      <div class="upm-item-arrow">
+        <svg width="14" height="14" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </button>
+
+    <div class="upm-divider"></div>
+
+    <button class="upm-item red" onclick="upmAction('logout')">
+      <div class="upm-icon upm-icon-red">
+        <svg width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+      </div>
+      <div class="upm-item-body">
+        <div class="upm-item-title">Terminar sessao</div>
+      </div>
+    </button>
+  </div>
+</div>
+
+<!-- BOTTOM NAV (mobile only) -->
+<div class="bottom-nav-mobile" id="bottomNavMobile">
+  <button class="bnav-tab active" onclick="bnavGoMobile('palette',this)">
+    <svg width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4z"/>
+    </svg>
+    <div class="bnav-tab-label">Palette</div>
+  </button>
+  <button class="bnav-tab" onclick="bnavGoMobile('vault',this)">
+    <svg width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 2L4 6v6c0 5.5 3.5 10.7 8 12 4.5-1.3 8-6.5 8-12V6z"/>
+    </svg>
+    <div class="bnav-tab-label">Vault</div>
+  </button>
+  <button class="bnav-tab" onclick="bnavGoMobile('verify',this)">
+    <svg width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+    <div class="bnav-tab-label">Verify</div>
+  </button>
+  <button class="bnav-tab" onclick="bnavGoMobile('user',this)">
+    <svg width="20" height="20" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+    </svg>
+    <div class="bnav-tab-label">Conta</div>
+  </button>
+</div>
+
+<!-- USER AREA MOBILE JS -->
+<script>
+// ═══ USER AREA MOBILE FUNCTIONS ═══
+
+function openUserPanelMobile() {
+  document.getElementById('userPanelMobile').classList.add('open');
+  document.getElementById('userOverlayMobile').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  upmLoadData();
+}
+
+function closeUserPanelMobile() {
+  document.getElementById('userPanelMobile').classList.remove('open');
+  document.getElementById('userOverlayMobile').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// Swipe down para fechar
+(function() {
+  let startY = 0;
+  const p = document.getElementById('userPanelMobile');
+  if (!p) return;
+  p.addEventListener('touchstart', function(e) { startY = e.touches[0].clientY; }, { passive: true });
+  p.addEventListener('touchend', function(e) { if (e.changedTouches[0].clientY - startY > 60) closeUserPanelMobile(); }, { passive: true });
+})();
+
+function upmSetLang(lang, btn) {
+  document.querySelectorAll('.upm-lang-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  // Integrar com setLanguage do React se existir
+  if (typeof window.setLanguageGlobal === 'function') window.setLanguageGlobal(lang);
+  console.log('[UserAreaMobile] Lang:', lang);
+}
+
+function upmAction(action) {
+  closeUserPanelMobile();
+  var routes = {
+    wallet:   '#wallet',
+    did:      '#did',
+    docs:     '#documents',
+    plan:     '/pioneer/',
+    help:     '/verify-public/docs/',
+    settings: '#settings',
+    logout:   '#logout',
+  };
+  if (routes[action]) {
+    if (routes[action].startsWith('/')) window.location.href = routes[action];
+    else console.log('[UserAreaMobile] Navigate:', routes[action]);
+  }
+}
+
+function bnavGoMobile(tab, btn) {
+  document.querySelectorAll('.bnav-tab').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  if (tab === 'user') {
+    openUserPanelMobile();
+    return;
+  }
+  if (tab === 'vault') window.location.href = '/vault/';
+  if (tab === 'verify') window.location.href = '/verify-public/';
+  console.log('[BottomNav]', tab);
+}
+
+// Carregar dados do utilizador
+function upmLoadData() {
+  try {
+    // Tenta obter dados do React state via window
+    var wallet = window.__windiWallet || null;
+    // Fallback: tentar ler do localStorage
+    if (!wallet) {
+      try {
+        var stored = localStorage.getItem('windi_storage_v4');
+        if (stored) {
+          var parsed = JSON.parse(stored);
+          wallet = parsed.wallet || null;
+        }
+      } catch(e) {}
+    }
+    if (wallet) {
+      var name = wallet.name || wallet.user_name || 'Utilizador';
+      var initials = name.split(' ').map(function(w) { return w[0]; }).join('').substring(0,2).toUpperCase();
+      document.getElementById('upmAvatar').textContent = initials;
+      document.getElementById('upmName').textContent = name;
+      document.getElementById('upmDid').textContent = (wallet.id || '') + ' / Pioneer #' + (wallet.pioneer_number || '?');
+      document.getElementById('upmCredits').textContent = wallet.credits || '0';
+      document.getElementById('upmWalletCredits').textContent = wallet.credits || '0';
+      document.getElementById('upmWalletSub').textContent = (wallet.credits || '0') + ' creditos';
+      document.getElementById('upmDocs').textContent = (wallet.receipts && wallet.receipts.length) || '0';
+      document.getElementById('upmSeals').textContent = wallet.sealed_count || '0';
+      document.getElementById('upmDidSub').textContent = wallet.id || '--';
+      document.getElementById('upmDocsSub').textContent = ((wallet.receipts && wallet.receipts.length) || '0') + ' documentos';
+      var tier = wallet.tier || 'FREE';
+      var tierEl = document.getElementById('upmTier');
+      tierEl.textContent = tier;
+      tierEl.className = 'upm-tier-badge upm-tier-' + tier;
+      document.getElementById('upmPlanTitle').textContent = 'Plano ' + tier;
+      document.getElementById('upmPioneerLabel').textContent = 'Pioneer #' + (wallet.pioneer_number || '?');
+    }
+  } catch(e) {
+    console.warn('[UserAreaMobile] upmLoadData:', e);
+  }
+}
+
+// Expor wallet para o painel mobile quando React carrega
+window.addEventListener('load', function() {
+  setTimeout(function() {
+    // Tentar sincronizar com React state
+    if (window.__windiWallet) upmLoadData();
+  }, 1000);
+});
+</script>
+
 </body>
 </html>

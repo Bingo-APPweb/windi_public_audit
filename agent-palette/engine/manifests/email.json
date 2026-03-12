@@ -1,0 +1,44 @@
+{
+  "id": "email",
+  "version": "1.0.0",
+  "tier": "FREE",
+  "category": "personal",
+  "icon": "email",
+  "names": {
+    "de": "E-Mail",
+    "en": "Email",
+    "pt": "E-mail"
+  },
+  "breath": {
+    "de": "Schnell verbinden",
+    "en": "Quick reach",
+    "pt": "Conexão rápida"
+  },
+  "prompts": {
+    "de": "Ich möchte eine E-Mail schreiben",
+    "en": "I want to write an email",
+    "pt": "Quero escrever um e-mail"
+  },
+  "schema": {
+    "to": { "type": "string", "required": true },
+    "cc": { "type": "string", "required": false },
+    "subject": { "type": "string", "required": true },
+    "body": { "type": "text", "required": true },
+    "signature": { "type": "string", "required": false }
+  },
+  "flow": [
+    { "field": "to", "prompt": { "de": "An wen?", "en": "To whom?", "pt": "Para quem?" } },
+    { "field": "subject", "prompt": { "de": "Betreff?", "en": "Subject?", "pt": "Assunto?" } },
+    { "field": "body", "prompt": { "de": "Nachricht?", "en": "Message?", "pt": "Mensagem?" } }
+  ],
+  "sealPolicy": {
+    "required": false,
+    "defaultSeal": false,
+    "governanceLevel": "minimal"
+  },
+  "tone": {
+    "description": "Concise, multi-channel friendly",
+    "structure": "subject + short paragraphs + signature",
+    "rules": ["Short paragraphs", "Clear subject line", "Professional but not stiff"]
+  }
+}

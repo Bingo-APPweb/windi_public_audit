@@ -1,0 +1,46 @@
+{
+  "id": "invoice",
+  "version": "1.0.0",
+  "tier": "MED",
+  "category": "business",
+  "icon": "invoice",
+  "names": {
+    "de": "Rechnung",
+    "en": "Invoice",
+    "pt": "Fatura"
+  },
+  "breath": {
+    "de": "Wert erklärt",
+    "en": "Value declared",
+    "pt": "Valor declarado"
+  },
+  "prompts": {
+    "de": "Ich möchte eine Rechnung erstellen",
+    "en": "I want to create an invoice",
+    "pt": "Quero criar uma fatura"
+  },
+  "schema": {
+    "invoiceNo": { "type": "string", "required": true },
+    "date": { "type": "date", "required": false, "default": "today" },
+    "billTo": { "type": "text", "required": true },
+    "dueDate": { "type": "date", "required": false },
+    "items": { "type": "table", "required": true },
+    "total": { "type": "currency", "required": true },
+    "notes": { "type": "text", "required": false }
+  },
+  "flow": [
+    { "field": "billTo", "prompt": { "de": "Rechnungsempfänger?", "en": "Bill to?", "pt": "Faturar para?" } },
+    { "field": "items", "prompt": { "de": "Positionen?", "en": "Line items?", "pt": "Itens?" } },
+    { "field": "total", "prompt": { "de": "Gesamtbetrag?", "en": "Total amount?", "pt": "Valor total?" } }
+  ],
+  "sealPolicy": {
+    "required": true,
+    "defaultSeal": true,
+    "governanceLevel": "financial"
+  },
+  "tone": {
+    "description": "Financial, precise, professional",
+    "structure": "Header → Items → Total → Payment terms",
+    "rules": ["Clear line items", "Tax information", "Payment instructions"]
+  }
+}

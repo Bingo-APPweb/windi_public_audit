@@ -1,0 +1,46 @@
+{
+  "id": "analysis",
+  "version": "1.0.0",
+  "tier": "MED",
+  "category": "business",
+  "icon": "analysis",
+  "names": {
+    "de": "Analyse",
+    "en": "Analysis",
+    "pt": "Análise"
+  },
+  "breath": {
+    "de": "Klarheit destilliert",
+    "en": "Clarity distilled",
+    "pt": "Clareza destilada"
+  },
+  "prompts": {
+    "de": "Ich möchte eine Analyse erstellen",
+    "en": "I want to create an analysis",
+    "pt": "Quero criar uma análise"
+  },
+  "schema": {
+    "title": { "type": "string", "required": true },
+    "subject": { "type": "string", "required": true },
+    "methodology": { "type": "text", "required": false },
+    "data": { "type": "text", "required": true },
+    "findings": { "type": "text", "required": true },
+    "insights": { "type": "text", "required": true },
+    "recommendations": { "type": "text", "required": false }
+  },
+  "flow": [
+    { "field": "subject", "prompt": { "de": "Analysegegenstand?", "en": "Subject of analysis?", "pt": "Objeto da análise?" } },
+    { "field": "findings", "prompt": { "de": "Erkenntnisse?", "en": "Findings?", "pt": "Descobertas?" } },
+    { "field": "insights", "prompt": { "de": "Schlussfolgerungen?", "en": "Insights?", "pt": "Insights?" } }
+  ],
+  "sealPolicy": {
+    "required": true,
+    "defaultSeal": true,
+    "governanceLevel": "standard"
+  },
+  "tone": {
+    "description": "Analytical, data-driven, insightful",
+    "structure": "Subject → Methodology → Data → Findings → Insights",
+    "rules": ["Support with data", "Clear methodology", "Actionable insights"]
+  }
+}

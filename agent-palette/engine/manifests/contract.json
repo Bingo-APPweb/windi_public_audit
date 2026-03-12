@@ -1,0 +1,45 @@
+{
+  "id": "contract",
+  "version": "1.0.0",
+  "tier": "MED",
+  "category": "business",
+  "icon": "contract",
+  "names": {
+    "de": "Vertrag",
+    "en": "Contract",
+    "pt": "Contrato"
+  },
+  "breath": {
+    "de": "Bedingungen wurzeln",
+    "en": "Terms take root",
+    "pt": "Termos se enraízam"
+  },
+  "prompts": {
+    "de": "Ich möchte einen Vertrag erstellen",
+    "en": "I want to create a contract",
+    "pt": "Quero criar um contrato"
+  },
+  "schema": {
+    "title": { "type": "string", "required": true },
+    "date": { "type": "date", "required": false, "default": "today" },
+    "parties": { "type": "text", "required": true },
+    "duration": { "type": "string", "required": false },
+    "terms": { "type": "text", "required": true },
+    "signatures": { "type": "text", "required": true }
+  },
+  "flow": [
+    { "field": "title", "prompt": { "de": "Vertragsbezeichnung?", "en": "Contract title?", "pt": "Título do contrato?" } },
+    { "field": "parties", "prompt": { "de": "Vertragsparteien?", "en": "Contract parties?", "pt": "Partes do contrato?" } },
+    { "field": "terms", "prompt": { "de": "Vertragsbedingungen?", "en": "Contract terms?", "pt": "Termos do contrato?" } }
+  ],
+  "sealPolicy": {
+    "required": true,
+    "defaultSeal": true,
+    "governanceLevel": "high"
+  },
+  "tone": {
+    "description": "Legal, precise, formal",
+    "structure": "PARTIES → OBJECT → TERMS → SIGNATURES",
+    "rules": ["Numbered clauses", "Clear definitions", "Legal precision"]
+  }
+}
