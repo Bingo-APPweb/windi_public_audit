@@ -177,12 +177,46 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
   position: fixed;
   bottom: 80px;
   left: 64px;
-  width: 300px;
+  width: 380px;
+  max-height: calc(100vh - 120px);
   border-radius: 14px;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.08);
   overflow: hidden;
   z-index: 1001;
   animation: uaFadeIn 0.15s ease;
+  display: flex;
+  flex-direction: column;
+}
+.ua-tabs {
+  display: flex;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+  background: rgba(0,0,0,0.02);
+  flex-shrink: 0;
+}
+.ua-tab {
+  flex: 1;
+  padding: 10px 8px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 600;
+  color: inherit;
+  opacity: 0.5;
+  transition: all 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.ua-tab:hover { opacity: 0.8; }
+.ua-tab.active { opacity: 1; border-bottom: 2px solid currentColor; }
+.ua-tab-icon { font-size: 16px; }
+.ua-content {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 200px;
+  max-height: 500px;
 }
 @keyframes uaFadeIn {
   from { opacity: 0; transform: translateY(10px); }
@@ -2846,11 +2880,17 @@ function getWindiIcon(key) {
   return WINDI_ICONS[key] || WINDI_ICONS['docs'];
 }
 
+// ═══ SIDEBAR — Ferramentas apenas (Wallet/Docs/Insights movidos para User Area) ═══
 const SIDEBAR = [
-  {id:"grove",icon:"grove",klass:"main"},{id:"chat",icon:"chat",klass:"main"},{id:"insights",icon:"insights",klass:"main"},{id:"docs",icon:"docs",klass:"main"},{id:"desk",icon:"desk",klass:"main"},
-  {id:"files",icon:"files",klass:"main"},{id:"wallet",icon:"wallet",klass:"main"},{id:"wick",icon:"wick",klass:"main"},
-  {id:"search",icon:"search",klass:"main"},{id:"products",icon:"products",klass:"extra"},
-  {id:"journal",icon:"journal",klass:"extra"},{id:"history",icon:"history",klass:"extra"},
+  {id:"grove",icon:"grove",klass:"main"},   // Arena — Multi-Agent Deliberation
+  {id:"chat",icon:"chat",klass:"main"},     // Dragon Chat
+  {id:"desk",icon:"desk",klass:"main"},     // Canvas Livre
+  {id:"wick",icon:"wick",klass:"main"},     // WICK Network
+  {id:"files",icon:"files",klass:"main"},   // File Manager
+  {id:"search",icon:"search",klass:"main"}, // Search
+  {id:"products",icon:"products",klass:"extra"},
+  {id:"journal",icon:"journal",klass:"extra"},
+  {id:"history",icon:"history",klass:"extra"},
   {id:"templates",icon:"templates",klass:"extra"},
 ];
 
@@ -3704,6 +3744,7 @@ function App(){
   // ═══ USER AREA STATE ═══
   const[userAreaOpen,setUserAreaOpen]=useState(false);
   const[userAreaData,setUserAreaData]=useState(null);
+  const[userAreaTab,setUserAreaTab]=useState("profile"); // profile|wallet|docs|insights
 
   // ═══ EXPOSE WALLET TO MOBILE PANEL ═══
   useEffect(()=>{
@@ -5400,83 +5441,191 @@ function App(){
         </div>
       </aside>
 
-      {/* ═══ USER AREA DROPDOWN ═══ */}
+      {/* ═══ USER AREA DROPDOWN — Expanded Panel with Tabs ═══ */}
       {userAreaOpen&&wallet&&<>
         <div style={{position:"fixed",inset:0,zIndex:1000}} onClick={()=>setUserAreaOpen(false)}/>
         <div className="user-area-panel" style={{background:th.card,border:`1px solid ${th.border}`}} onClick={e=>e.stopPropagation()}>
-        <div className="ua-header" style={{background:`linear-gradient(135deg, ${th.text} 0%, ${th.dim} 100%)`}}>
-          <div className="ua-identity-row">
-            <div className="ua-avatar" style={{background:th.gold,color:"#FFF",border:`2px solid ${th.gold}33`}}>{wallet.name?.split(" ").map(n=>n[0]).join("").substring(0,2).toUpperCase()||"??"}</div>
-            <div className="ua-identity">
-              <div className="ua-name" style={{color:"#FFF"}}>{wallet.name||"Anonymous"}</div>
-              <div className="ua-email" style={{color:th.gold}}>{wallet.email||"—"}</div>
+          {/* COMPACT HEADER */}
+          <div style={{padding:"12px 16px",background:`linear-gradient(135deg, ${th.text} 0%, ${th.dim} 100%)`,display:"flex",alignItems:"center",gap:10,flexShrink:0}}>
+            <div style={{width:36,height:36,borderRadius:"50%",background:th.gold,color:"#FFF",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:700}}>{wallet.name?.split(" ").map(n=>n[0]).join("").substring(0,2).toUpperCase()||"??"}</div>
+            <div style={{flex:1,minWidth:0}}>
+              <div style={{color:"#FFF",fontWeight:700,fontSize:13}}>{wallet.name||"Anonymous"}</div>
+              <div style={{color:th.gold,fontSize:9,fontFamily:"'JetBrains Mono',monospace"}}>{wallet.id?.substring(0,24)}...</div>
             </div>
-            <div className="ua-badges">
-              <span className="ua-tier-badge" style={{background:"#fef3c7",color:"#92400e"}}>{wallet.tier||(wallet.id?"STARTER":"FREE")}</span>
-              {wallet.pioneer&&<span className="ua-pioneer-badge" style={{color:th.gold}}>Pioneer #{wallet.pioneer}</span>}
-            </div>
+            <span style={{background:"#fef3c7",color:"#92400e",fontSize:9,fontWeight:800,padding:"2px 8px",borderRadius:10}}>{wallet.tier||"STARTER"}</span>
           </div>
-          {wallet.id&&<div className="ua-did-row" style={{background:"#0003"}}>
-            <span>🪪 <span style={{color:th.gold}}>{wallet.id.substring(0,20)}...</span></span>
-            {(wallet.verified||wallet.did)&&<span style={{color:"#10b981"}}>● verified</span>}
-          </div>}
+
+          {/* TAB NAVIGATION */}
+          <div className="ua-tabs" style={{background:th.hover,borderBottom:`1px solid ${th.border}`}}>
+            {[
+              {id:"profile",icon:"👤",label:{de:"Profil",en:"Profile",pt:"Perfil"}},
+              {id:"wallet",icon:"🏛️",label:{de:"Tresor",en:"Vault",pt:"Cofre"}},
+              {id:"docs",icon:"📄",label:{de:"Docs",en:"Docs",pt:"Docs"}},
+              {id:"insights",icon:"🧠",label:{de:"Einsichten",en:"Insights",pt:"Insights"}}
+            ].map(tab=>(
+              <button key={tab.id} className={`ua-tab ${userAreaTab===tab.id?"active":""}`} onClick={()=>setUserAreaTab(tab.id)} style={{color:userAreaTab===tab.id?th.gold:th.dim,borderColor:userAreaTab===tab.id?th.gold:"transparent"}}>
+                <span className="ua-tab-icon">{tab.icon}</span>
+                <span>{tab.label[lang]||tab.label.en}</span>
+              </button>
+            ))}
+          </div>
+
+          {/* CONTENT AREA */}
+          <div className="ua-content" style={{padding:"12px"}}>
+
+            {/* ═══ PROFILE TAB ═══ */}
+            {userAreaTab==="profile"&&<>
+              {/* GOV SCORE */}
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:12}}>
+                <div style={{padding:"10px",borderRadius:8,background:"#f0fdf4",border:"1px solid #bbf7d0",textAlign:"center"}}>
+                  <div style={{fontSize:18,fontWeight:800,color:"#166534"}}>{wallet.govScore||97.2}%</div>
+                  <div style={{fontSize:9,color:"#166534"}}>GOV SCORE</div>
+                </div>
+                <div style={{padding:"10px",borderRadius:8,background:th.gold+"11",border:`1px solid ${th.gold}33`,textAlign:"center"}}>
+                  <div style={{fontSize:18,fontWeight:800,color:th.gold}}>{wallet.credits||0}</div>
+                  <div style={{fontSize:9,color:th.gold}}>CREDITS</div>
+                </div>
+              </div>
+              {/* ACCOUNT ACTIONS */}
+              <div style={{display:"flex",flexDirection:"column",gap:4}}>
+                <div className="ua-menu-item" onClick={()=>{setUserAreaOpen(false);alert("Settings — Coming soon");}}>
+                  <span className="ua-menu-item-icon">⚙️</span>
+                  <div className="ua-menu-item-content"><div className="ua-menu-item-label" style={{color:th.text}}>{lang==="de"?"Einstellungen":lang==="pt"?"Configurações":"Settings"}</div></div>
+                </div>
+                <div className="ua-menu-item" onClick={()=>{setUserAreaOpen(false);alert("API Keys — Coming soon");}}>
+                  <span className="ua-menu-item-icon">🔑</span>
+                  <div className="ua-menu-item-content"><div className="ua-menu-item-label" style={{color:th.text}}>API Keys</div><div className="ua-menu-item-sublabel">{wallet.keys?.length||0} {lang==="de"?"aktiv":lang==="pt"?"ativos":"active"}</div></div>
+                </div>
+                <div className="ua-menu-item" onClick={()=>{setUserAreaOpen(false);wallet.id?setShowWallet(true):setShowDID(true);}}>
+                  <span className="ua-menu-item-icon">🪪</span>
+                  <div className="ua-menu-item-content"><div className="ua-menu-item-label" style={{color:th.text}}>DID & {lang==="de"?"Identität":lang==="pt"?"Identidade":"Identity"}</div></div>
+                </div>
+                {wallet.role==="admin"&&<div className="ua-menu-item" onClick={()=>window.location.href="/dashboard/"}>
+                  <span className="ua-menu-item-icon">🛡️</span>
+                  <div className="ua-menu-item-content"><div className="ua-menu-item-label" style={{color:"#92400e"}}>Admin Panel</div></div>
+                </div>}
+              </div>
+              {/* LOGOUT */}
+              <div style={{marginTop:12,paddingTop:12,borderTop:`1px solid ${th.border}`}}>
+                <div className="ua-menu-item" onClick={()=>{if(confirm(lang==="de"?"Abmelden?":lang==="pt"?"Sair?":"Log out?")){setWallet(null);setUserAreaOpen(false);}}}>
+                  <span className="ua-menu-item-icon">↪️</span>
+                  <div className="ua-menu-item-content"><div className="ua-menu-item-label" style={{color:"#dc2626"}}>{lang==="de"?"Abmelden":lang==="pt"?"Sair":"Log out"}</div></div>
+                </div>
+              </div>
+            </>}
+
+            {/* ═══ WALLET/VAULT TAB ═══ */}
+            {userAreaTab==="wallet"&&<>
+              {/* FORENSIC VAULT BANNER */}
+              <div className={vaultPulse?"vault-pulse":""} style={{padding:"12px",borderRadius:10,background:th.card,border:`1px solid ${vaultPulse?th.gold:th.border}`,marginBottom:12}}>
+                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8}}>
+                  <div style={{display:"flex",alignItems:"center",gap:6}}>
+                    <span style={{fontSize:16}}>{vaultPulse?"✨":"🏛️"}</span>
+                    <span style={{fontSize:12,fontWeight:700}}>Forensic Vault</span>
+                  </div>
+                  <div style={{display:"flex",alignItems:"center",gap:4}}>
+                    <div style={{width:6,height:6,borderRadius:"50%",background:vaultHealth.status==="healthy"?th.success:th.danger}}/>
+                    <span style={{fontSize:9,color:vaultHealth.status==="healthy"?th.success:th.danger}}>{vaultHealth.status==="healthy"?"Online":"Offline"}</span>
+                  </div>
+                </div>
+                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+                  <div style={{padding:"8px",background:th.hover,borderRadius:6,textAlign:"center"}}>
+                    <div className={vaultPulse?"number-bump":""} style={{fontSize:16,fontWeight:800,color:th.gold}}>{vaultStats.total.toLocaleString()}</div>
+                    <div style={{fontSize:8,color:th.dim}}>Receipts</div>
+                  </div>
+                  <div style={{padding:"8px",background:th.hover,borderRadius:6,textAlign:"center"}}>
+                    <div style={{fontSize:16,fontWeight:800,color:th.text}}>{vaultStats.doc_types}</div>
+                    <div style={{fontSize:8,color:th.dim}}>{lang==="de"?"Typen":lang==="pt"?"Tipos":"Types"}</div>
+                  </div>
+                </div>
+                <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginTop:8,paddingTop:8,borderTop:`1px solid ${th.border}`}}>
+                  <span style={{fontSize:9,color:vaultStats.chain_ok?th.success:th.dim}}>{vaultStats.chain_ok?"🔗 Chain OK":"⚠️ Pending"}</span>
+                  <span style={{fontSize:8,color:th.dimmer}}>v{vaultHealth.version||"1.1.0"}</span>
+                </div>
+              </div>
+              {/* IDENTITY CARD */}
+              <div style={{padding:"12px",borderRadius:10,background:th.hover,marginBottom:12}}>
+                <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
+                  <TrustRadar score={wallet.trustScore||5} theme={th} size={40}/>
+                  <div style={{flex:1}}>
+                    <div style={{fontSize:12,fontWeight:700}}>{wallet.name}</div>
+                    <div style={{fontSize:9,color:th.dim}}>{wallet.type==="pf"?"👤":"🏢"} {wallet.org||wallet.email}</div>
+                  </div>
+                  <div style={{fontSize:9,color:th.success,display:"flex",alignItems:"center",gap:3}}>
+                    <div style={{width:4,height:4,borderRadius:"50%",background:th.success}}/>{lang==="de"?"Verifiziert":lang==="pt"?"Verificado":"Verified"}
+                  </div>
+                </div>
+                <div style={{fontSize:9,color:th.dim,marginBottom:4}}>{lang==="de"?"Fingerabdruck":lang==="pt"?"Impressão digital":"Fingerprint"}</div>
+                <FP fp={wallet.fp} theme={th}/>
+              </div>
+              {/* RECEIPTS LIST */}
+              {wallet.receipts?.length>0&&<>
+                <div style={{fontSize:11,fontWeight:700,marginBottom:8}}>🛡️ {wallet.receipts.length} Receipts</div>
+                <div style={{display:"flex",flexDirection:"column",gap:4,maxHeight:150,overflowY:"auto"}}>
+                  {wallet.receipts.map((r,i)=><div key={i} onClick={()=>{setSelectedReceipt(r);setUserAreaOpen(false);}} style={{padding:"8px 10px",borderRadius:6,background:th.card,border:`1px solid ${th.border}`,cursor:"pointer",transition:"all 0.15s"}} onMouseOver={e=>e.currentTarget.style.borderColor=th.gold} onMouseOut={e=>e.currentTarget.style.borderColor=th.border}>
+                    <div style={{fontSize:10,fontWeight:600,fontFamily:"'JetBrains Mono',monospace",color:th.gold}}>{r.id}</div>
+                    <div style={{fontSize:9,color:th.dim}}>{r.title} · {new Date(r.ts).toLocaleDateString()}</div>
+                  </div>)}
+                </div>
+              </>}
+              {/* GDPR ACTIONS */}
+              <div style={{display:"flex",gap:6,marginTop:12}}>
+                <button onClick={exportIdentity} style={{flex:1,padding:"8px",borderRadius:6,background:th.card,border:`1px solid ${th.gold}33`,color:th.gold,fontSize:10,fontWeight:600,cursor:"pointer"}}>📦 Export</button>
+                <button onClick={wipeIdentity} style={{flex:1,padding:"8px",borderRadius:6,background:th.card,border:`1px solid ${th.danger}33`,color:th.danger,fontSize:10,fontWeight:600,cursor:"pointer"}}>🗑️ {lang==="de"?"Löschen":lang==="pt"?"Excluir":"Delete"}</button>
+              </div>
+            </>}
+
+            {/* ═══ DOCS TAB ═══ */}
+            {userAreaTab==="docs"&&<>
+              {/* STATS */}
+              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
+                <div style={{display:"flex",alignItems:"center",gap:6}}>
+                  <span style={{fontSize:16}}>📜</span>
+                  <span style={{fontSize:12,fontWeight:700}}>{comStats.total} {lang==="de"?"Dokumente":lang==="pt"?"Documentos":"Documents"}</span>
+                </div>
+                <button onClick={fetchCommuniques} disabled={comLoading} style={{padding:"4px 8px",borderRadius:4,background:th.card,border:`1px solid ${th.border}`,fontSize:9,cursor:"pointer",color:th.dim}}>{comLoading?"⏳":"🔄"}</button>
+              </div>
+              {/* FILTER */}
+              <div style={{display:"flex",gap:4,marginBottom:10,flexWrap:"wrap"}}>
+                {[{k:"all",l:lang==="de"?"Alle":lang==="pt"?"Todos":"All"},{k:"published",l:"✓"},{k:"draft",l:"📝"}].map(f=>
+                  <button key={f.k} onClick={()=>setComFilter(f.k)} style={{padding:"4px 8px",borderRadius:6,background:comFilter===f.k?th.gold+"18":th.card,border:`1px solid ${comFilter===f.k?th.gold:th.border}`,color:comFilter===f.k?th.gold:th.dim,fontSize:10,cursor:"pointer"}}>{f.l}</button>
+                )}
+              </div>
+              {/* DOCUMENT LIST */}
+              <div style={{display:"flex",flexDirection:"column",gap:6,maxHeight:280,overflowY:"auto"}}>
+                {filteredCommuniques.slice(0,15).map(c=>{
+                  const st=c.status==="PUBLISHED"?{bg:th.success+"15",fg:th.success}:{bg:th.dim+"15",fg:th.dim};
+                  return<div key={c.id} onClick={()=>{
+                    // Open document - navigate to verify page or show in viewer
+                    if(c.ledger_id){window.open(`/verify/${c.ledger_id}`,'_blank');}
+                    else{setDocTitle(c.title_de||c.title_en||"");setSidebarTab("chat");setUserAreaOpen(false);}
+                  }} style={{padding:"10px",borderRadius:8,background:th.card,border:`1px solid ${th.border}`,cursor:"pointer",transition:"all 0.15s"}} onMouseOver={e=>e.currentTarget.style.borderColor=th.gold} onMouseOut={e=>e.currentTarget.style.borderColor=th.border}>
+                    <div style={{display:"flex",alignItems:"flex-start",gap:8}}>
+                      <span style={{fontSize:14}}>{c.status==="PUBLISHED"?"🛡️":"📝"}</span>
+                      <div style={{flex:1,minWidth:0}}>
+                        <div style={{fontSize:11,fontWeight:600,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{c.title_de||c.title_en||"Untitled"}</div>
+                        <div style={{fontSize:9,color:th.dim}}>{new Date(c.created_at).toLocaleDateString()}</div>
+                      </div>
+                      <span style={{fontSize:8,padding:"2px 6px",borderRadius:4,background:st.bg,color:st.fg}}>{c.status}</span>
+                    </div>
+                  </div>;
+                })}
+                {filteredCommuniques.length===0&&<div style={{textAlign:"center",padding:16,color:th.dim,fontSize:11}}>{lang==="de"?"Keine Dokumente":lang==="pt"?"Nenhum documento":"No documents"}</div>}
+              </div>
+              {/* SAVED DRAFTS */}
+              {savedDocs.length>0&&<>
+                <div style={{fontSize:10,fontWeight:700,margin:"12px 0 6px",color:th.dim}}>💾 {lang==="de"?"Entwürfe":lang==="pt"?"Rascunhos":"Drafts"}</div>
+                {savedDocs.slice(0,5).map(d=><div key={d.id} onClick={()=>{setDocTitle(d.title);setSidebarTab("chat");setUserAreaOpen(false);}} style={{padding:"8px",borderRadius:6,background:th.hover,marginBottom:4,cursor:"pointer",fontSize:10}}>
+                  <span>{d.icon} {d.title}</span>
+                </div>)}
+              </>}
+            </>}
+
+            {/* ═══ INSIGHTS TAB ═══ */}
+            {userAreaTab==="insights"&&<CognitiveInsightsPanel lang={lang} theme={th} compact={true}/>}
+          </div>
         </div>
-        {/* WALLET PREVIEW */}
-        <div className="ua-wallet-preview" style={{background:th.gold+"11",border:`1px solid ${th.gold}22`}}>
-          <div className="ua-wallet-header">
-            <div>
-              <div className="ua-wallet-label">WALLET</div>
-              <div className="ua-wallet-amount" style={{color:th.text}}>{wallet.credits||0} <span className="ua-wallet-unit" style={{color:th.gold}}>credits</span></div>
-            </div>
-            <button style={{fontSize:11,fontWeight:700,color:th.gold,background:th.gold+"22",border:"none",borderRadius:8,padding:"6px 12px",cursor:"pointer"}}>Manage →</button>
-          </div>
-          <div className="ua-credits-bar">
-            <div className="ua-credits-bar-labels" style={{color:th.dim}}>
-              <span>{(wallet.tokensUsed||0).toLocaleString()}</span>
-              <span>{(wallet.tokensLimit||50000).toLocaleString()}</span>
-            </div>
-            <div className="ua-credits-bar-track" style={{background:th.border}}>
-              <div className="ua-credits-bar-fill" style={{width:`${Math.min(((wallet.tokensUsed||0)/(wallet.tokensLimit||50000))*100,100)}%`,background:"#10b981"}}/>
-            </div>
-          </div>
-        </div>
-        {/* GOV SCORE */}
-        <div className="ua-gov-score" style={{background:"#f0fdf4",border:"1px solid #bbf7d0"}}>
-          <div><div className="ua-gov-item-label">GOV SCORE</div><div className="ua-gov-item-value" style={{color:"#166534"}}>{wallet.govScore||97.2}%</div></div>
-          <div><div className="ua-gov-item-label">RECEIPTS</div><div className="ua-gov-item-value" style={{color:"#166534"}}>{(Array.isArray(wallet.receipts)?wallet.receipts.length:(wallet.receipts||0)).toLocaleString()}</div></div>
-        </div>
-        {/* ACCOUNT SECTION */}
-        <div className="ua-section">
-          <div className="ua-section-title" style={{color:th.dim}}>ACCOUNT</div>
-          <div className="ua-menu-item" onClick={()=>{setUserAreaOpen(false);alert("Settings — Coming soon");}}>
-            <span className="ua-menu-item-icon">⚙️</span>
-            <div className="ua-menu-item-content"><div className="ua-menu-item-label" style={{color:th.text}}>Settings</div><div className="ua-menu-item-sublabel">Preferences, language</div></div>
-          </div>
-          <div className="ua-menu-item" onClick={()=>{setUserAreaOpen(false);alert("API Keys — Coming soon");}}>
-            <span className="ua-menu-item-icon">🔑</span>
-            <div className="ua-menu-item-content"><div className="ua-menu-item-label" style={{color:th.text}}>API Keys</div><div className="ua-menu-item-sublabel">{wallet.keys?.length||0} keys active</div></div>
-          </div>
-          <div className="ua-menu-item" onClick={()=>{setUserAreaOpen(false);wallet.id?setShowWallet(true):setShowDID(true);}}>
-            <span className="ua-menu-item-icon">👤</span>
-            <div className="ua-menu-item-content"><div className="ua-menu-item-label" style={{color:th.text}}>Profile & DID</div><div className="ua-menu-item-sublabel">{wallet.id?"Verified ✓":"Setup identity"}</div></div>
-          </div>
-        </div>
-        {/* ADMIN (role-based) */}
-        {wallet.role==="admin"&&<div className="ua-section">
-          <div className="ua-section-title" style={{color:th.dim}}>ADMINISTRATION</div>
-          <div className="ua-menu-item" onClick={()=>window.location.href="/dashboard/"}>
-            <span className="ua-menu-item-icon">🛡️</span>
-            <div className="ua-menu-item-content"><div className="ua-menu-item-label" style={{color:"#92400e"}}>Admin Panel</div><div className="ua-menu-item-sublabel">Governance, ledger</div></div>
-          </div>
-        </div>}
-        {/* LOGOUT */}
-        <div className="ua-section">
-          <div className="ua-menu-item" onClick={()=>{if(confirm("Log out from WINDI?")){setWallet(null);setUserAreaOpen(false);}}}>
-            <span className="ua-menu-item-icon">↪️</span>
-            <div className="ua-menu-item-content"><div className="ua-menu-item-label" style={{color:"#dc2626"}}>Log out</div></div>
-          </div>
-        </div>
-      </div></>}
+      </>}
 
       {/* ═══ MAIN AREA ═══ */}
       <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden",minWidth:0}}>
@@ -6404,7 +6553,11 @@ function App(){
               <div style={{flex:1,overflowY:'auto',padding:'0 20px 20px'}}>
                 <h3 style={{fontSize:12,fontWeight:700,marginBottom:12,color:th.gold}}>{lang==='pt'?'📡 Atividade Recente na Rede':lang==='de'?'📡 Aktuelle Netzaktivität':'📡 Recent Network Activity'}</h3>
                 {(wallet?.receipts||[]).slice(0,10).map((r,i)=>(
-                  <div key={i} style={{padding:'12px 14px',borderRadius:10,background:th.card,border:'1px solid '+th.border,marginBottom:8}}>
+                  <div key={i} onClick={()=>{
+                    // Open document in verify page
+                    if(r.id){window.open(`/verify/${r.id}`,'_blank');}
+                    else{setSelectedReceipt(r);}
+                  }} style={{padding:'12px 14px',borderRadius:10,background:th.card,border:'1px solid '+th.border,marginBottom:8,cursor:'pointer',transition:'all 0.15s'}} onMouseOver={e=>e.currentTarget.style.borderColor=th.gold} onMouseOut={e=>e.currentTarget.style.borderColor=th.border}>
                     <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start'}}>
                       <div>
                         <div style={{fontSize:12,fontWeight:600}}>{r.title||r.type}</div>
@@ -6413,7 +6566,7 @@ function App(){
                       <span style={{fontSize:16}}>🛡️</span>
                     </div>
                     <div style={{display:'flex',gap:8,marginTop:8}}>
-                      <a href={'https://windi-domain.com/verify-public/?id='+encodeURIComponent(r.id)} target='_blank' rel='noopener' style={{fontSize:9,color:th.gold,textDecoration:'none'}}>🔗 {lang==='pt'?'Verificar':lang==='de'?'Verifizieren':'Verify'}</a>
+                      <span style={{fontSize:9,color:th.gold}}>🔗 {lang==='pt'?'Clique para abrir':lang==='de'?'Klicken zum Öffnen':'Click to open'}</span>
                       <span style={{fontSize:9,color:th.dim}}>{r.ts?new Date(r.ts).toLocaleDateString():''}</span>
                     </div>
                   </div>
