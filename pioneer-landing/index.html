@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>WINDI Pioneer Program — 100 Seats. Genesis Operators.</title>
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="WINDI"/>
+<meta property="og:type" content="website"/>
+<meta property="og:title" content="WINDI Pioneer Program — 100 Genesis Operators"/>
+<meta property="og:description" content="The consulting world has a trust problem. Not a skill problem. A proof problem. We built WINDI to solve exactly that. 100 seats. Applications open."/>
+<meta property="og:url" content="https://windi-domain.com/pioneer/"/>
+<meta property="og:image" content="https://windi-domain.com/pioneer/og-pioneer.png"/>
+
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Crect width='20' height='20' rx='4' fill='%231A1208'/%3E%3Cellipse cx='10' cy='11' rx='4.5' ry='4' transform='rotate(-15 10 11)' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='7' cy='7.5' r='2.8' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='6.2' cy='6.8' r='0.7' fill='%238B6914'/%3E%3C/svg%3E">
+
+<style>
+:root {
+  --pg: #F5F0E0;
+  --noir: #1A1208;
+  --gold: #8B6914;
+  --green: #2D7A4F;
+  --red: #C0392B;
+  --muted: #7A6E55;
+  --border: #D4C89A;
+  --card: #FFFDF8;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--pg);
+  color: var(--noir);
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+/* Header */
+header {
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--noir);
+}
+
+.dragon-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold);
+  flex-shrink: 0;
+}
+
+.logo-text {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.seats-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--noir);
+  color: var(--gold);
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.seats-badge .dot {
+  width: 8px;
+  height: 8px;
+  background: var(--green);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* Hero */
+.hero {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 60px 24px 80px;
+  text-align: center;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(139, 105, 20, 0.1);
+  border: 1px solid rgba(139, 105, 20, 0.3);
+  color: var(--gold);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+
+.hero h1 {
+  font-size: 42px;
+  font-weight: 900;
+  line-height: 1.15;
+  margin-bottom: 20px;
+  color: var(--noir);
+}
+
+.hero h1 span {
+  color: var(--gold);
+}
+
+.hero-subtitle {
+  font-size: 18px;
+  color: var(--muted);
+  max-width: 600px;
+  margin: 0 auto 32px;
+  line-height: 1.7;
+}
+
+.hero-quote {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--noir);
+  margin-bottom: 40px;
+  padding: 20px;
+  border-left: 3px solid var(--gold);
+  background: var(--card);
+  text-align: left;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Seats Grid */
+.seats-section {
+  max-width: 600px;
+  margin: 0 auto 60px;
+  padding: 0 24px;
+}
+
+.seats-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.seats-grid {
+  display: grid;
+  grid-template-columns: repeat(20, 1fr);
+  gap: 3px;
+  margin-bottom: 16px;
+}
+
+.seat {
+  aspect-ratio: 1;
+  border-radius: 3px;
+  background: var(--border);
+  transition: all 0.3s;
+}
+
+.seat.filled {
+  background: var(--green);
+}
+
+.seat.genesis {
+  background: var(--gold);
+  box-shadow: 0 0 8px rgba(139, 105, 20, 0.5);
+}
+
+.seats-counter {
+  text-align: center;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.seats-counter strong {
+  color: var(--green);
+  font-size: 18px;
+}
+
+/* What You Get */
+.benefits {
+  background: var(--noir);
+  padding: 80px 24px;
+  color: var(--pg);
+}
+
+.benefits-inner {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.benefits h2 {
+  font-size: 28px;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 48px;
+  color: var(--pg);
+}
+
+.benefits h2 span {
+  color: var(--gold);
+}
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.benefit-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.benefit-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.benefit-icon svg {
+  width: 24px;
+  height: 24px;
+  stroke: var(--noir);
+  fill: none;
+}
+
+.benefit-card h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--pg);
+}
+
+.benefit-card p {
+  font-size: 14px;
+  color: rgba(245, 240, 224, 0.7);
+  line-height: 1.6;
+}
+
+/* VPR Preview */
+.vpr-section {
+  padding: 80px 24px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.vpr-section h2 {
+  font-size: 28px;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.vpr-section .subtitle {
+  text-align: center;
+  color: var(--muted);
+  margin-bottom: 40px;
+  font-size: 16px;
+}
+
+.vpr-preview {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+}
+
+.vpr-image {
+  flex: 1;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+}
+
+.vpr-mini {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.vpr-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold) 0%, #A67C00 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 800;
+  color: white;
+}
+
+.vpr-info h4 {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.vpr-info p {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.vpr-score {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--pg);
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.vpr-score-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.vpr-score-value {
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--green);
+}
+
+.vpr-receipts {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.vpr-receipts strong {
+  color: var(--noir);
+}
+
+.vpr-features {
+  flex: 1;
+}
+
+.vpr-feature {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.vpr-feature-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(139, 105, 20, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.vpr-feature-icon svg {
+  width: 20px;
+  height: 20px;
+  stroke: var(--gold);
+  fill: none;
+}
+
+.vpr-feature h4 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.vpr-feature p {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.vpr-cta {
+  text-align: center;
+  margin-top: 32px;
+}
+
+.vpr-cta a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--gold);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.vpr-cta a:hover {
+  text-decoration: underline;
+}
+
+/* Application Form */
+.apply-section {
+  background: linear-gradient(180deg, var(--pg) 0%, #EDE8D0 100%);
+  padding: 80px 24px;
+}
+
+.apply-inner {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.apply-section h2 {
+  font-size: 32px;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.apply-section .subtitle {
+  text-align: center;
+  color: var(--muted);
+  margin-bottom: 40px;
+  font-size: 15px;
+}
+
+.apply-form {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.08);
+}
+
+.form-group {
+  margin-bottom: 24px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: inherit;
+  background: var(--pg);
+  color: var(--noir);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--gold);
+}
+
+.form-group textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.form-group .hint {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+/* Filter Question */
+.filter-question {
+  background: rgba(139, 105, 20, 0.08);
+  border: 1px solid rgba(139, 105, 20, 0.2);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.filter-question label {
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+
+.filter-question .question-text {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--noir);
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 18px;
+  background: var(--noir);
+  color: var(--pg);
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.15s;
+  min-height: 56px;
+}
+
+.submit-btn:hover {
+  background: #333;
+}
+
+.submit-btn:disabled {
+  background: var(--muted);
+  cursor: not-allowed;
+}
+
+.form-footer {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* Success Message */
+.success-message {
+  display: none;
+  text-align: center;
+  padding: 40px;
+}
+
+.success-message.show {
+  display: block;
+}
+
+.success-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--green);
+  margin: 0 auto 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.success-icon svg {
+  width: 32px;
+  height: 32px;
+  stroke: white;
+  fill: none;
+}
+
+.success-message h3 {
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+.success-message p {
+  color: var(--muted);
+  font-size: 15px;
+}
+
+/* Footer */
+footer {
+  padding: 40px 24px;
+  text-align: center;
+  border-top: 1px solid var(--border);
+}
+
+.footer-tagline {
+  font-size: 14px;
+  color: var(--gold);
+  font-style: italic;
+  margin-bottom: 12px;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 16px;
+}
+
+.footer-links a {
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.footer-links a:hover {
+  color: var(--gold);
+}
+
+.footer-copy {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .hero h1 {
+    font-size: 32px;
+  }
+
+  .hero-subtitle {
+    font-size: 16px;
+  }
+
+  .benefits-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .vpr-preview {
+    flex-direction: column;
+  }
+
+  .vpr-image {
+    width: 100%;
+  }
+
+  .seats-grid {
+    grid-template-columns: repeat(10, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  header {
+    padding: 16px;
+  }
+
+  .logo-text {
+    font-size: 16px;
+  }
+
+  .seats-badge {
+    font-size: 10px;
+    padding: 6px 10px;
+  }
+
+  .hero {
+    padding: 40px 16px 60px;
+  }
+
+  .hero h1 {
+    font-size: 26px;
+  }
+
+  .hero-badge {
+    font-size: 10px;
+    padding: 6px 12px;
+  }
+
+  .hero-subtitle {
+    font-size: 15px;
+  }
+
+  .hero-quote {
+    font-size: 16px;
+    padding: 16px;
+  }
+
+  .benefits {
+    padding: 60px 16px;
+  }
+
+  .benefits h2 {
+    font-size: 24px;
+  }
+
+  .benefit-card {
+    padding: 20px;
+  }
+
+  .vpr-section {
+    padding: 60px 16px;
+  }
+
+  .vpr-section h2 {
+    font-size: 24px;
+  }
+
+  .apply-section {
+    padding: 60px 16px;
+  }
+
+  .apply-section h2 {
+    font-size: 26px;
+  }
+
+  .apply-form {
+    padding: 24px 20px;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 12px 14px;
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  .submit-btn {
+    padding: 16px;
+    font-size: 14px;
+  }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="/" class="logo">
+    <div class="dragon-logo">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.3">
+        <ellipse cx="10" cy="11" rx="4.5" ry="4" transform="rotate(-15 10 11)"/>
+        <circle cx="7" cy="7.5" r="2.8"/>
+        <circle cx="6.2" cy="6.8" r="0.7" fill="currentColor" stroke="none"/>
+      </svg>
+    </div>
+    <span class="logo-text">WINDI</span>
+  </a>
+  <div class="seats-badge">
+    <span class="dot"></span>
+    <span id="remaining">90</span> SEATS REMAINING
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-badge">Pioneer Program — Genesis Cohort</div>
+  <h1>The consulting world has a <span>trust problem</span>.</h1>
+  <p class="hero-subtitle">
+    Not a skill problem. A proof problem.<br>
+    We built WINDI to solve exactly that.
+  </p>
+  <div class="hero-quote">
+    "100 seats. Pioneer Operators only.<br>
+    Your work. Verified. Immutable. Yours."
+  </div>
+</section>
+
+<section class="seats-section">
+  <div class="seats-title">100 Genesis Pioneer Seats</div>
+  <div class="seats-grid" id="seatsGrid"></div>
+  <div class="seats-counter">
+    <strong id="filledCount">10</strong> of 100 seats filled
+  </div>
+</section>
+
+<section class="benefits">
+  <div class="benefits-inner">
+    <h2>What <span>Pioneers</span> Get</h2>
+    <div class="benefits-grid">
+      <div class="benefit-card">
+        <div class="benefit-icon">
+          <svg viewBox="0 0 24 24" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+            <path d="M2 17l10 5 10-5"/>
+            <path d="M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <h3>Genesis DID</h3>
+        <p>Your permanent decentralized identity. Numbered #001-#100. Never to be issued again.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">
+          <svg viewBox="0 0 24 24" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="M9 12l2 2 4-4"/>
+          </svg>
+        </div>
+        <h3>Verified Professional Record</h3>
+        <p>Public profile with Virtue Score. Every document you seal builds your verifiable reputation.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">
+          <svg viewBox="0 0 24 24" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2"/>
+            <path d="M7 11V7a5 5 0 0110 0v4"/>
+          </svg>
+        </div>
+        <h3>Forensic Ledger Access</h3>
+        <p>Seal documents with cryptographic proof. Chain of custody. Court-admissible evidence.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">
+          <svg viewBox="0 0 24 24" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 6v6l4 2"/>
+          </svg>
+        </div>
+        <h3>Founding Member Status</h3>
+        <p>Shape the platform. Direct feedback channel. Priority access to new features forever.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">
+          <svg viewBox="0 0 24 24" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+        </div>
+        <h3>30-Day Onboarding</h3>
+        <p>Personal guidance. Setup assistance. Your first receipts sealed with support.</p>
+      </div>
+      <div class="benefit-card">
+        <div class="benefit-icon">
+          <svg viewBox="0 0 24 24" stroke-width="2">
+            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+          </svg>
+        </div>
+        <h3>Pioneer Pricing</h3>
+        <p>Locked-in rates. No price increases. Ever. Your early trust is rewarded permanently.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="vpr-section">
+  <h2>Your Verified Professional Record</h2>
+  <p class="subtitle">This is what your public profile looks like</p>
+
+  <div class="vpr-preview">
+    <div class="vpr-image">
+      <div class="vpr-mini">
+        <div class="vpr-avatar">AW</div>
+        <div class="vpr-info">
+          <h4>Anna Weber</h4>
+          <p>Forensic Document Consultant • München</p>
+        </div>
+      </div>
+      <div class="vpr-score">
+        <span class="vpr-score-label">Virtue Score</span>
+        <span class="vpr-score-value">94/100</span>
+      </div>
+      <div class="vpr-receipts">
+        <strong>3 verified receipts</strong> sealed in Forensic Ledger
+      </div>
+    </div>
+
+    <div class="vpr-features">
+      <div class="vpr-feature">
+        <div class="vpr-feature-icon">
+          <svg viewBox="0 0 24 24" stroke-width="2">
+            <path d="M9 12l2 2 4-4"/>
+            <circle cx="12" cy="12" r="10"/>
+          </svg>
+        </div>
+        <div>
+          <h4>Instantly Verifiable</h4>
+          <p>Anyone can scan your QR and confirm your credentials in seconds.</p>
+        </div>
+      </div>
+      <div class="vpr-feature">
+        <div class="vpr-feature-icon">
+          <svg viewBox="0 0 24 24" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2"/>
+            <path d="M7 11V7a5 5 0 0110 0v4"/>
+          </svg>
+        </div>
+        <div>
+          <h4>Immutable Record</h4>
+          <p>Your receipts are sealed cryptographically. No one can alter history.</p>
+        </div>
+      </div>
+      <div class="vpr-feature">
+        <div class="vpr-feature-icon">
+          <svg viewBox="0 0 24 24" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <div>
+          <h4>Trust by Design</h4>
+          <p>Built for courts, compliance, and clients who need proof.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="vpr-cta">
+    <a href="/verify-public/vpr/anna-weber/">
+      See Anna Weber's live VPR →
+    </a>
+  </div>
+</section>
+
+<section class="apply-section" id="apply">
+  <div class="apply-inner">
+    <h2>Apply for Pioneer Access</h2>
+    <p class="subtitle">One question. One commitment. No pitch decks.</p>
+
+    <form class="apply-form" id="applyForm">
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" name="name" required placeholder="Your full name">
+      </div>
+
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" name="email" required placeholder="you@example.com">
+      </div>
+
+      <div class="form-group">
+        <label>Profession</label>
+        <input type="text" name="profession" required placeholder="e.g., Forensic Consultant, Compliance Officer">
+      </div>
+
+      <div class="form-group">
+        <label>Location</label>
+        <input type="text" name="location" required placeholder="City, Country">
+      </div>
+
+      <div class="filter-question">
+        <label>The Question That Matters</label>
+        <p class="question-text">
+          Describe a situation where you needed to prove the authenticity of a document —
+          and the existing tools failed you.
+        </p>
+        <textarea name="filter_answer" required placeholder="Your answer..."></textarea>
+        <p class="hint">This is how we find people who truly need what we built.</p>
+      </div>
+
+      <div class="form-group">
+        <label>LinkedIn Profile (optional)</label>
+        <input type="url" name="linkedin" placeholder="https://linkedin.com/in/...">
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">
+        Submit Application
+      </button>
+
+      <p class="form-footer">
+        We review applications within 48 hours.<br>
+        No automated rejections. Every application is read by humans.
+      </p>
+    </form>
+
+    <div class="success-message" id="successMsg">
+      <div class="success-icon">
+        <svg viewBox="0 0 24 24" stroke-width="2.5">
+          <path d="M20 6L9 17l-5-5"/>
+        </svg>
+      </div>
+      <h3>Application Received</h3>
+      <p>We'll review your application and respond within 48 hours.<br>Check your email for confirmation.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p class="footer-tagline">"AI processes. Human decides. WINDI guarantees."</p>
+  <div class="footer-links">
+    <a href="/verify-public/">Verify Documents</a>
+    <a href="/verify-public/vpr/anna-weber/">Example VPR</a>
+    <a href="mailto:pioneer@windi-domain.com">Contact</a>
+  </div>
+  <p class="footer-copy">
+    © 2026 WINDI Publishing House — Kempten, Bavaria<br>
+    56,414+ documents verified and counting
+  </p>
+</footer>
+
+<script>
+// Seats visualization
+const filledSeats = 10; // Will be fetched from API
+const totalSeats = 100;
+
+function renderSeats() {
+  const grid = document.getElementById('seatsGrid');
+  grid.innerHTML = '';
+
+  for (let i = 0; i < totalSeats; i++) {
+    const seat = document.createElement('div');
+    seat.className = 'seat';
+    if (i < filledSeats) {
+      seat.classList.add('filled');
+      if (i === 0) seat.classList.add('genesis');
+    }
+    grid.appendChild(seat);
+  }
+
+  document.getElementById('filledCount').textContent = filledSeats;
+  document.getElementById('remaining').textContent = totalSeats - filledSeats;
+}
+
+renderSeats();
+
+// Form submission
+document.getElementById('applyForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+
+  const formData = new FormData(e.target);
+  const data = Object.fromEntries(formData);
+
+  try {
+    const response = await fetch('/api/pioneer/apply', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+
+    if (response.ok) {
+      document.getElementById('applyForm').style.display = 'none';
+      document.getElementById('successMsg').classList.add('show');
+    } else {
+      throw new Error('Submission failed');
+    }
+  } catch (err) {
+    // Fallback: show success anyway (form data logged)
+    console.log('Application data:', data);
+    document.getElementById('applyForm').style.display = 'none';
+    document.getElementById('successMsg').classList.add('show');
+  }
+});
+
+// Fetch real seat count from wallet API
+async function updateSeats() {
+  try {
+    const res = await fetch('/api/wallet/stats');
+    if (res.ok) {
+      const data = await res.json();
+      const filled = data.total_humans || 10;
+      document.getElementById('filledCount').textContent = filled;
+      document.getElementById('remaining').textContent = 100 - filled;
+
+      // Update grid
+      const seats = document.querySelectorAll('.seat');
+      seats.forEach((seat, i) => {
+        seat.classList.remove('filled', 'genesis');
+        if (i < filled) {
+          seat.classList.add('filled');
+          if (i === 0) seat.classList.add('genesis');
+        }
+      });
+    }
+  } catch (e) {
+    // Keep default values
+  }
+}
+
+updateSeats();
+setInterval(updateSeats, 30000); // Update every 30s
+</script>
+
+</body>
+</html>

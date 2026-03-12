@@ -128,7 +128,80 @@ input[type=text]:focus{border-color:var(--gold)}
 .spin{display:inline-block;width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;margin-right:6px;vertical-align:middle}
 @keyframes spin{to{transform:rotate(360deg)}}
 footer{border-top:1px solid var(--border);padding:16px 40px;text-align:center;font-size:11px;color:var(--muted)}
-@media(max-width:480px){header{padding:14px 16px}main{padding:28px 14px}.rmeta{grid-template-columns:1fr}}
+
+/* ═══ MOBILE RESPONSIVE — iPhone SE 375px ═══ */
+@media(max-width:480px){
+  /* Layout spacing */
+  header{padding:14px 16px}
+  main{padding:20px 16px}
+  footer{padding:14px 16px;font-size:12px}
+
+  /* Hero section */
+  .hero h2{font-size:20px}
+  .hero p{font-size:14px}
+  .hero p br{display:none}
+
+  /* Cards */
+  .card{padding:20px 16px}
+  .rbox{padding:20px 16px}
+
+  /* Touch targets — minimum 44px height */
+  .tab{padding:14px 10px;min-height:44px;font-size:13px}
+  .tab .ti{font-size:18px}
+  .help-btn{padding:12px 16px;font-size:12px;min-height:44px;display:inline-flex;align-items:center}
+  .btn{padding:16px;font-size:14px;min-height:48px}
+  .dtbtn{padding:12px 16px;font-size:12px;min-height:44px}
+
+  /* Share buttons */
+  .wa-btn,.tg-btn,.email-btn,.cp-btn,.li-btn,.share-btn,.card-btn{
+    padding:12px 18px;font-size:13px;min-height:44px
+  }
+  .share-row{gap:10px}
+
+  /* Font sizes — minimum 12px */
+  label{font-size:12px}
+  .pnote{font-size:13px}
+  .qarea p,.drop p{font-size:13px}
+  .qarea h3,.drop h3{font-size:16px}
+  .rl{font-size:11px}
+  .rv{font-size:14px}
+  .rmsg{font-size:13px}
+  .tl{font-size:12px}
+  .tv{font-size:12px}
+
+  /* Result grid */
+  .rmeta{grid-template-columns:1fr}
+  .rf{padding:12px}
+
+  /* QR area */
+  .qarea{padding:32px 16px}
+  .qfr{width:160px;height:160px}
+  .drop{padding:24px 16px}
+
+  /* Explain section */
+  .explain-header{padding:14px}
+  .explain-content{padding:16px}
+  .explain-tab{padding:10px 14px;font-size:12px;min-height:40px}
+  .explain-text{font-size:14px}
+
+  /* Tech details */
+  .tr{flex-direction:column;gap:4px;padding:10px 0}
+  .tl{min-width:auto;text-align:left}
+  .tv{text-align:left}
+}
+
+/* Extra small — iPhone SE in landscape or very narrow */
+@media(max-width:360px){
+  main{padding:16px 12px}
+  .card{padding:16px 12px}
+  .tabs{gap:6px}
+  .tab{padding:12px 8px;font-size:12px}
+  .qfr{width:140px;height:140px}
+  .share-row{flex-direction:column}
+  .wa-btn,.tg-btn,.email-btn,.cp-btn,.li-btn,.share-btn,.card-btn{
+    width:100%;justify-content:center
+  }
+}
 
 /* WINDI Dragon Signature v1.0 */
 :root{--dragon-color:#8B6914;--dragon-glow:rgba(139,105,20,0.4)}
