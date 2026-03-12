@@ -1,0 +1,103 @@
+/* WINDI Report — Para Impressão e PDFs */
+@page {
+  size: A4;
+  margin: 2.5cm 2cm;
+}
+
+body {
+  font-family: 'Times New Roman', Georgia, serif;
+  font-size: 12pt;
+  line-height: 1.6;
+  color: #000;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3 {
+  font-family: Arial, Helvetica, sans-serif;
+  page-break-after: avoid;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+h1 {
+  font-size: 18pt;
+  text-align: center;
+  border-bottom: 2px solid #8B6914;
+  padding-bottom: 0.5em;
+  margin-bottom: 1em;
+}
+
+h2 {
+  font-size: 14pt;
+  color: #333;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 0.3em;
+}
+
+h3 { font-size: 12pt; font-weight: bold; }
+
+p {
+  margin-bottom: 0.8em;
+  text-align: justify;
+  orphans: 3;
+  widows: 3;
+}
+
+blockquote {
+  margin: 1em 2em;
+  padding-left: 1em;
+  border-left: 3px solid #8B6914;
+  font-style: italic;
+  page-break-inside: avoid;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1em 0;
+  page-break-inside: avoid;
+}
+
+th, td {
+  border: 1px solid #333;
+  padding: 8px 10px;
+  text-align: left;
+}
+
+th {
+  background: #f0f0f0;
+  font-weight: bold;
+}
+
+pre, code {
+  font-family: 'Courier New', monospace;
+  font-size: 10pt;
+}
+
+pre {
+  background: #f5f5f5;
+  padding: 12px;
+  border: 1px solid #ddd;
+  page-break-inside: avoid;
+  white-space: pre-wrap;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #333;
+  margin: 2em 0;
+}
+
+img, video {
+  max-width: 100%;
+  page-break-inside: avoid;
+}
+
+/* Numeração automática de seções */
+body { counter-reset: section; }
+h2::before {
+  counter-increment: section;
+  content: counter(section) ". ";
+}
