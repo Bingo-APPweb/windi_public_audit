@@ -782,10 +782,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
       dragon:       'https://windi-domain.com/app/api/dragon/health',  // Dragon Server via 8108
       // NEW (G1)
       bridge:       baseUrl + '/bridge/health',
-      sentinelLaw:  baseUrl + '/sentinel-law/health',
-      schnittstelle:baseUrl + '/schnittstelle/health',
-      cortex:       baseUrl + '/cortex/health',
-      idGenesis:    baseUrl + '/id-genesis/health',
+      // sentinelLaw:  baseUrl + '/sentinel-law/health',     // TODO: reactivar quando nginx route existir
+      // schnittstelle:baseUrl + '/schnittstelle/health',   // TODO: serviço :8095 pendente
+      // cortex:       baseUrl + '/cortex/health',          // TODO: serviço :8889 pendente
+      // idGenesis:    baseUrl + '/id-genesis/health',      // TODO: serviço :8096 pendente
       sentinel:     baseUrl + '/sentinel/health'
     };
 
@@ -797,10 +797,10 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
       dragon:       { name: 'Dragon Server',     endpoint: isLocal ? 'http://localhost:8108/api/dragon' : 'https://windi-domain.com/app/api/dragon', healthUrl: healthEndpoints.dragon, status: 'unknown', version: '' },
       // NEW (G1) - 6 additional services
       bridge:       { name: 'Command Bridge',    endpoint: isLocal ? 'http://localhost:8097' : baseUrl + '/bridge',       healthUrl: healthEndpoints.bridge,       status: 'unknown', version: '' },
-      sentinelLaw:  { name: 'Sentinel LAW',      endpoint: isLocal ? 'http://localhost:8102' : baseUrl + '/sentinel-law', healthUrl: healthEndpoints.sentinelLaw,  status: 'unknown', version: '' },
-      schnittstelle:{ name: 'Schnittstelle',     endpoint: isLocal ? 'http://localhost:8095' : baseUrl + '/schnittstelle',healthUrl: healthEndpoints.schnittstelle,status: 'unknown', version: '' },
-      cortex:       { name: 'Cortex',            endpoint: isLocal ? 'http://localhost:8889' : baseUrl + '/cortex',       healthUrl: healthEndpoints.cortex,       status: 'unknown', version: '' },
-      idGenesis:    { name: 'ID Genesis',        endpoint: isLocal ? 'http://localhost:8096' : baseUrl + '/id-genesis',   healthUrl: healthEndpoints.idGenesis,    status: 'unknown', version: '' },
+      // sentinelLaw:  { name: 'Sentinel LAW',      endpoint: isLocal ? 'http://localhost:8102' : baseUrl + '/sentinel-law', healthUrl: healthEndpoints.sentinelLaw,  status: 'unknown', version: '' },  // TODO: reactivar
+      // schnittstelle:{ name: 'Schnittstelle',     endpoint: isLocal ? 'http://localhost:8095' : baseUrl + '/schnittstelle',healthUrl: healthEndpoints.schnittstelle,status: 'unknown', version: '' },  // TODO: reactivar
+      // cortex:       { name: 'Cortex',            endpoint: isLocal ? 'http://localhost:8889' : baseUrl + '/cortex',       healthUrl: healthEndpoints.cortex,       status: 'unknown', version: '' },  // TODO: reactivar
+      // idGenesis:    { name: 'ID Genesis',        endpoint: isLocal ? 'http://localhost:8096' : baseUrl + '/id-genesis',   healthUrl: healthEndpoints.idGenesis,    status: 'unknown', version: '' },  // TODO: reactivar
       sentinel:     { name: 'Sentinel',          endpoint: isLocal ? 'http://localhost:8098' : baseUrl + '/sentinel',     healthUrl: healthEndpoints.sentinel,     status: 'unknown', version: '' }
     };
 
@@ -4445,7 +4445,7 @@ function App(){
   useEffect(()=>{
     fetch(dragonUrl+'/health').then(r=>r.json()).then(d=>{
       setDragonConnected(d.status==="healthy"||!!d.version);
-      console.log('[WINDI] Dragon Chat v'+d.version+':',d.refactoring||'',d.knowledge_base?.length+' concepts');
+      console.log('[WINDI] Dragon Chat v'+(d.version||'?')+':',(d.knowledge_base?.length ?? 0)+' concepts');
     }).catch(()=>setDragonConnected(false));
   },[dragonUrl]);
 
