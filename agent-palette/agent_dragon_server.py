@@ -4179,6 +4179,69 @@ class DragonHandler(http.server.BaseHTTPRequestHandler):
             log(f"SEAL: {data.get('serial','?')} status={data.get('status','?')}")
             self._json_response(data, code)
 
+        # ═══ ANCHOR ENDPOINT — Register receipt in Forensic Ledger ═══
+        # This endpoint bridges local seals to the real Ledger for verification
+        elif path == "/api/anchor/anchor":
+            import urllib.request
+            import urllib.error
+            try:
+                receipt_id = body.get("receipt_id")
+                combined_hash = body.get("combined_hash")
+                doc_type = body.get("doc_type", "doc")
+                entry_data = body.get("entry_data", {})
+
+                if not receipt_id or not combined_hash:
+                    self._json_response({"ok": False, "error": "receipt_id and combined_hash required"}, 400)
+                    return
+
+                # Prepare Ledger payload
+                ledger_payload = {
+                    "id": receipt_id,
+                    "actor": entry_data.get("actor", "agent-palette"),
+                    "app": "windi-palette",
+                    "doc_name": entry_data.get("title", f"Document {receipt_id}"),
+                    "doc_type": doc_type,
+                    "content_hash": combined_hash,
+                    "governance_level": "MED",
+                    "sge_score": 0.92,
+                    "status": "sealed",
+                }
+
+                # Send to Forensic Ledger
+                ledger_url = "http://127.0.0.1:8101/api/receipts"
+                req = urllib.request.Request(
+                    ledger_url,
+                    data=json.dumps(ledger_payload).encode('utf-8'),
+                    headers={"Content-Type": "application/json"},
+                    method="POST"
+                )
+
+                with urllib.request.urlopen(req, timeout=10) as response:
+                    ledger_response = json.loads(response.read().decode())
+
+                log(f"ANCHOR: {receipt_id} → Ledger OK")
+                self._json_response({
+                    "ok": True,
+                    "receipt_id": receipt_id,
+                    "ledger_registered": True,
+                    "ledger_response": ledger_response
+                }, 200)
+
+            except urllib.error.HTTPError as e:
+                error_body = e.read().decode() if e.fp else str(e)
+                log(f"ANCHOR ERROR: {receipt_id} → {e.code} {error_body[:100]}")
+                self._json_response({
+                    "ok": False,
+                    "error": f"Ledger returned {e.code}",
+                    "details": error_body[:200]
+                }, 500)
+            except Exception as e:
+                log(f"ANCHOR ERROR: {receipt_id} → {str(e)}")
+                self._json_response({
+                    "ok": False,
+                    "error": str(e)
+                }, 500)
+
         elif path == "/api/dragon/health":
             data, code = handle_dragon_health(body)
             self._json_response(data, code)
