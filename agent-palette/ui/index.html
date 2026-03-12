@@ -5496,7 +5496,7 @@ function App(){
                   <span className="ua-menu-item-icon">🔑</span>
                   <div className="ua-menu-item-content"><div className="ua-menu-item-label" style={{color:th.text}}>API Keys</div><div className="ua-menu-item-sublabel">{wallet.keys?.length||0} {lang==="de"?"aktiv":lang==="pt"?"ativos":"active"}</div></div>
                 </div>
-                <div className="ua-menu-item" onClick={()=>{setUserAreaOpen(false);wallet.id?setShowWallet(true):setShowDID(true);}}>
+                <div className="ua-menu-item" onClick={()=>setUserAreaTab("wallet")}>
                   <span className="ua-menu-item-icon">🪪</span>
                   <div className="ua-menu-item-content"><div className="ua-menu-item-label" style={{color:th.text}}>DID & {lang==="de"?"Identität":lang==="pt"?"Identidade":"Identity"}</div></div>
                 </div>
@@ -5687,7 +5687,7 @@ function App(){
 
           </div>
           <div style={{display:"flex",alignItems:"center",gap:6}}>
-            {wallet?<button onClick={()=>setShowWallet(true)} style={{padding:"2px 8px",borderRadius:6,background:th.success+"15",border:`1px solid ${th.success}33`,color:th.success,fontSize:9,fontWeight:600,cursor:"pointer",fontFamily:"'JetBrains Mono',monospace"}}>🛡️T{wallet.trustScore}·{wallet.name.split(" ")[0]}</button>
+            {wallet?<button onClick={()=>{setUserAreaOpen(true);setUserAreaTab("wallet");}} style={{padding:"2px 8px",borderRadius:6,background:th.success+"15",border:`1px solid ${th.success}33`,color:th.success,fontSize:9,fontWeight:600,cursor:"pointer",fontFamily:"'JetBrains Mono',monospace"}}>🛡️T{wallet.trustScore}·{wallet.name.split(" ")[0]}</button>
             :<button onClick={()=>setShowDID(true)} style={{padding:"2px 8px",borderRadius:6,background:th.gold+"15",border:`1px solid ${th.gold}33`,color:th.gold,fontSize:9,fontWeight:600,cursor:"pointer"}}>{t.did.createDID}</button>}
             <button onClick={newDoc} style={{padding:"2px 8px",borderRadius:6,background:th.card,border:`1px solid ${th.border}`,color:th.dim,fontSize:9,cursor:"pointer"}}>+ {t.doc.newDoc}</button>
           </div>
