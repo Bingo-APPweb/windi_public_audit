@@ -271,6 +271,52 @@ else
     log_info "Not a git repository"
 fi
 
+# ── 9. WICK→LEDGER SYNC (W-SPEC-WICK-LEDGER-SYNC-001) ──────────────────────
+section "9. WICK→Ledger Sync (Section 5.2)"
+
+WICK_DB="$WINDI_ROOT/agents/constitutional-agent/data/wick_agent.db"
+LEDGER_DB="$WINDI_ROOT/data/forensic_ledger.sqlite3"
+RESYNC_SCRIPT="$WINDI_ROOT/agents/constitutional-agent/tools/resync_public.py"
+
+if [[ -f "$WICK_DB" ]] && [[ -f "$LEDGER_DB" ]]; then
+    # Count public artifacts in WICK
+    WICK_PUBLIC=$(sqlite3 "$WICK_DB" "SELECT COUNT(*) FROM artifacts WHERE visibility='public'" 2>/dev/null || echo "0")
+
+    # Check each public artifact exists in Ledger
+    MISSING_COUNT=0
+    MISSING_IDS=""
+    while read -r id; do
+        EXISTS=$(sqlite3 "$LEDGER_DB" "SELECT COUNT(*) FROM receipts WHERE id='$id'" 2>/dev/null || echo "0")
+        if [[ "$EXISTS" -eq 0 ]]; then
+            ((MISSING_COUNT++))
+            MISSING_IDS="$MISSING_IDS $id"
+        fi
+    done < <(sqlite3 "$WICK_DB" "SELECT id FROM artifacts WHERE visibility='public'" 2>/dev/null)
+
+    if [[ "$MISSING_COUNT" -eq 0 ]]; then
+        log_pass "WICK→Ledger sync OK ($WICK_PUBLIC public artifacts)"
+    else
+        log_fail "WICK→Ledger gap: $MISSING_COUNT artifacts not in Ledger"
+        log_info "Missing:$MISSING_IDS"
+
+        if $FIX_MODE; then
+            if [[ -f "$RESYNC_SCRIPT" ]]; then
+                echo "    Attempting resync..."
+                python3 "$RESYNC_SCRIPT" > /dev/null 2>&1 && log_info "Resync completed"
+            else
+                log_warn "Resync script not found: $RESYNC_SCRIPT"
+            fi
+        fi
+    fi
+else
+    if [[ ! -f "$WICK_DB" ]]; then
+        log_warn "WICK DB not found: $WICK_DB"
+    fi
+    if [[ ! -f "$LEDGER_DB" ]]; then
+        log_warn "Ledger DB not found: $LEDGER_DB"
+    fi
+fi
+
 # ═══════════════════════════════════════════════════════════════════════════
 # SUMMARY
 # ═══════════════════════════════════════════════════════════════════════════

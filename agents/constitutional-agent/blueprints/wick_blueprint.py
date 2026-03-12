@@ -244,6 +244,42 @@ def health():
 #  W-WICKTHIS: PUBLISH TO EVIDENCE GRAPH
 # ═══════════════════════════════════════════════════════════════
 
+
+import urllib.request as _ureq
+import json as _ujson
+import logging as _ulog
+
+def sync_to_ledger(receipt_id, doc_name, doc_type="doc",
+                   actor_id="windi-wick", content_hash="",
+                   governance_level="HIGH", **kwargs):
+    """Sync WICK artifact to Forensic Ledger. Fails silently."""
+    try:
+        allowed_types = ["doc", "xlsx", "pptx", "jmpg", "communique"]
+        payload = _ujson.dumps({
+            "id": receipt_id,
+            "doc_name": doc_name or receipt_id,
+            "doc_type": doc_type if doc_type in allowed_types else "doc",
+            "actor": actor_id or "windi-wick",
+            "app": "windi-wick",
+            "governance_level": governance_level if governance_level in ["LOW","MEDIUM","HIGH"] else "HIGH",
+            "content_hash": content_hash or "0000000000000000000000000000000000000000000000000000000000000000",
+            "sge_score": 0.95,
+            "metadata": {"source": "wick-publish", "content_hash": content_hash or ""}
+        }).encode("utf-8")
+        req = _ureq.Request(
+            "http://localhost:8101/api/receipts",
+            data=payload,
+            headers={"Content-Type": "application/json"},
+            method="POST"
+        )
+        with _ureq.urlopen(req, timeout=5) as resp:
+            result = _ujson.loads(resp.read())
+            _ulog.info(f"[WICK->LEDGER] OK {receipt_id}")
+            return True
+    except Exception as e:
+        _ulog.warning(f"[WICK->LEDGER] FAIL {receipt_id}: {e}")
+        return False
+
 @wick_bp.route("/publish", methods=["POST"])
 def publish():
     """
@@ -558,6 +594,16 @@ def publish():
     conn.commit()
     conn.close()
 
+    # ── Sync to Forensic Ledger if public ──
+    if visibility == "public":
+        sync_to_ledger(
+            receipt_id=artifact_id,
+            doc_name=page_data.get("title", artifact_id),
+            doc_type=artifact_type,
+            actor_id=author_actor_id,
+            content_hash=page_data.get("content_hash", ""),
+            governance_level=page_data.get("governance_level", "HIGH")
+        )
     # ── Build response ──
     response_data = {
         "status": "published",
