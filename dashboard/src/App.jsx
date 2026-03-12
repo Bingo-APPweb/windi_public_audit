@@ -408,11 +408,11 @@ const DRAGONS = [
 const SECURITY_LAYERS = [
   { id: "SL-1", label: "Nomenclature Shield", desc: "No real infra names in any UI layer", status: "ACTIVE" },
   { id: "SL-2", label: "Gateway Firewall", desc: "Only ports 80/443 exposed externally", status: "ACTIVE" },
-  { id: "SL-3", label: "Source Obfuscation", desc: "React SPA — view-source shows empty shell", status: "PENDING" },
+  { id: "SL-3", label: "Source Obfuscation", desc: "Terser mangle + drop_console — view-source empty", status: "ACTIVE" },
   { id: "SL-4", label: "DID Authentication", desc: "Owner panel requires DID verification", status: "PENDING" },
-  { id: "SL-5", label: "Honeypot Layer", desc: "False paths log + ban suspicious IPs", status: "PENDING" },
-  { id: "SL-6", label: "Response Header Masking", desc: "WINDI Gateway identity, real stack hidden", status: "PENDING" },
-  { id: "SL-7", label: "API Role Gating", desc: "Data filtered by authenticated role", status: "PENDING" },
+  { id: "SL-5", label: "Honeypot Layer", desc: "6 trap categories → /var/log/nginx/honeypot.log", status: "ACTIVE" },
+  { id: "SL-6", label: "Response Header Masking", desc: "server_tokens off + proxy_hide_header", status: "ACTIVE" },
+  { id: "SL-7", label: "API Role Gating", desc: "X-WINDI-Admin-Key header filter", status: "ACTIVE" },
 ];
 
 // ─── PRIMITIVES ───────────────────────────────────────────────────────────────
