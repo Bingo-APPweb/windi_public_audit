@@ -1,0 +1,26 @@
+{
+  "windi_proof": {
+    "version": "1.0",
+    "proof_type": "SOVEREIGN_DOCUMENT_PROOF",
+    "receipt_id": "WINDI-TOUR-SC-MERCADO-20260313-001",
+    "content_hash": "1b59d8113a3268a49e22d583db69776b990c7366af484436c95015b0c8c70796",
+    "timestamp_utc": "2026-03-13T09:59:08Z",
+    "issuer": {
+      "actor": "Secretaria de Turismo de Florianopolis",
+      "app": "windi-tour-pilot",
+      "node": "windi-domain.com"
+    },
+    "anchor_chain": {
+      "parent": "W-PROV-INIT-001",
+      "current": "W-TOUR-SC-MERCADO-001",
+      "depth": 1
+    },
+    "verify_url": "https://windi-domain.com/verify-public/?id=WINDI-TOUR-SC-MERCADO-20260313-001",
+    "qr_payload": "WINDI:WINDI-TOUR-SC-MERCADO-20260313-001|1b59d8113a3268a49e22d583db69776b990c7366af484436c95015b0c8c70796",
+    "governance": {
+      "level": "HIGH",
+      "invariants_applied": ["I9", "I11", "C-PROV-001"],
+      "human_approved": true
+    }
+  }
+}

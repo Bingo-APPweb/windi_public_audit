@@ -1,0 +1,40 @@
+{
+  "doc_type": "communique",
+  "governance_level": "HIGH",
+  "actor": "Secretaria de Turismo de Florianopolis",
+  "app": "windi-tour-pilot",
+  "doc_name": "Mercado Publico de Florianopolis - Verificacao Oficial 2026",
+  "metadata": {
+    "categoria": "destino_verificavel",
+    "municipio": "Florianopolis",
+    "estado": "Santa Catarina",
+    "pais": "Brasil",
+    "coordenadas": {
+      "lat": -27.5969,
+      "lng": -48.5495
+    },
+    "horario_funcionamento": {
+      "segunda_sexta": "09:00-18:00",
+      "sabado": "09:00-13:00",
+      "domingo": "fechado"
+    },
+    "endereco": "Rua Conselheiro Mafra, s/n - Centro",
+    "telefone": "+55 48 3952-4049",
+    "website": "https://mercadopublico.sc.gov.br",
+    "capacidade_visitantes_dia": 3000,
+    "patrimonio_historico": true,
+    "ano_fundacao": 1851,
+    "acessibilidade": true,
+    "estacionamento_proximo": true,
+    "pontos_de_interesse": [
+      "Box 32 - Ostras frescas",
+      "Livraria Tempo Livre",
+      "Restaurante Lindacap"
+    ],
+    "alertas_ativos": [],
+    "ultima_inspecao_prefeitura": "2026-03-01",
+    "nota_higiene": "A",
+    "windi_tour_anchor": "W-TOUR-SC-MERCADO-001",
+    "parent_genesis": "W-PROV-INIT-001"
+  }
+}
