@@ -203,9 +203,8 @@ def update_artifact_stats(ledger_anchor: str, domain: str, country: str):
 # ═══════════════════════════════════════════════════════════════════════════════
 
 @propagation_bp.route('/health', methods=['GET'])
-@require_api_key(scopes=['propagation:read'])
 def health():
-    """Health check endpoint (protected by API key - W-KEYS-001)."""
+    """Health check endpoint (public - no auth required)."""
     try:
         with get_db() as conn:
             c = conn.cursor()
