@@ -6408,6 +6408,25 @@ function App(){
                   ):(
                     <button onClick={startDeskFinalize} disabled={deskLayers.length===0} style={{padding:"4px 10px",borderRadius:6,background:deskLayers.length>0?th.gold:th.dim,border:"none",color:"#FFFDF5",fontSize:10,fontWeight:700,cursor:"pointer",opacity:deskLayers.length>0?1:0.4}}>🛡️</button>
                   )}
+                  {/* .jmpg SOCIAL: Share button after seal — native navigator.share */}
+                  {cartazSealResult&&!cartazSealResult.error&&(
+                    <button onClick={async()=>{
+                      const shareData={
+                        title:cartazSealResult.title||'WINDI Cartaz',
+                        text:`Verificar: ${cartazSealResult.id}\n${lang==='de'?'Versiegelt im Forensic Ledger':lang==='pt'?'Selado no Forensic Ledger':'Sealed in Forensic Ledger'}`,
+                        url:cartazSealResult.verifyUrl
+                      };
+                      if(navigator.share){
+                        try{await navigator.share(shareData);flash('📤 '+(lang==='de'?'Geteilt!':lang==='pt'?'Partilhado!':'Shared!'));}
+                        catch(e){if(e.name!=='AbortError')flash('❌ Share failed');}
+                      }else{
+                        await navigator.clipboard.writeText(cartazSealResult.verifyUrl);
+                        flash('📋 '+(lang==='de'?'Link kopiert!':lang==='pt'?'Link copiado!':'Link copied!'));
+                      }
+                    }} style={{padding:"4px 12px",borderRadius:6,background:th.success,border:"none",color:"#fff",fontSize:10,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",gap:4,animation:"pulse 2s ease-in-out infinite"}}>
+                      📤 {lang==="de"?"Teilen":lang==="pt"?"Partilhar":"Share"}
+                    </button>
+                  )}
                 </div>
 
                 {/* A4 CANVAS */}
