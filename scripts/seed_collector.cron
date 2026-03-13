@@ -1,0 +1,5 @@
+# W-PROV-002 — Seed Collector
+# Runs every 15 minutes to collect verification events from nginx logs
+# Install: sudo crontab -l | cat - /opt/windi/scripts/seed_collector.cron | sudo crontab -
+
+*/15 * * * * /opt/windi/venv/bin/python3 /opt/windi/scripts/seed_collector.py >> /opt/windi/logs/seed_collector.log 2>&1

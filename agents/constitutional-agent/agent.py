@@ -525,11 +525,26 @@ def create_agent_api(agent: WindiAgent):
         print(f"  [VIRTUE] W-VIRTUE-001 not loaded: {e}")
 
     try:
+        from blueprints.virtue_receipt_blueprint import virtue_bp as virtue_receipt_bp
+        app.register_blueprint(virtue_receipt_bp, url_prefix='/virtue')
+        print("  [VIRTUE] Virtue Receipt (One-Tap Endorsement) v1.0.0 loaded on /virtue/api/*")
+    except ImportError as e:
+        print(f"  [VIRTUE] Virtue Receipt not loaded: {e}")
+
+    try:
         from blueprints.library_blueprint import library_bp
         app.register_blueprint(library_bp)
         print("  [Library] W-LIB-001 Bibliotecário v1.0.0 loaded on /library/*")
     except ImportError as e:
         print(f"  [Library] Bibliotecário not loaded: {e}")
+
+    try:
+        from blueprints.propagation_blueprint import propagation_bp, init_propagation_db
+        init_propagation_db()
+        app.register_blueprint(propagation_bp)
+        print("  [PROV] W-PROV-002 Propagation Index v1.0.0 loaded on /propagation/*")
+    except ImportError as e:
+        print(f"  [PROV] W-PROV-002 not loaded: {e}")
 
     @app.route("/agent/health", methods=["GET"])
     def health():
