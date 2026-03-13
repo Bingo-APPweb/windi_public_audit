@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt" data-theme="klar">
+<html lang="pt" id="html-root" data-theme="klar">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -497,14 +497,7 @@ body {
   text-transform: uppercase;
 }
 
-.dragon-model-tag {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--gold);
-  padding: 2px 8px;
-  background: var(--gold-faint);
-  border-radius: 100px;
-}
+/* .dragon-model-tag removed — agents are shown instead */
 
 .chat-messages {
   flex: 1;
@@ -1038,6 +1031,91 @@ body {
 
 .did-copy-btn:active { background: rgba(139,105,20,0.4); }
 
+
+/* ── Language Switcher ────────────────────────────────────────── */
+.lang-switcher {
+  display: flex;
+  gap: 4px;
+  background: var(--bg-2);
+  border-radius: 100px;
+  padding: 3px;
+  border: 1px solid var(--border);
+}
+
+.lang-btn {
+  padding: 5px 12px;
+  border-radius: 100px;
+  border: none;
+  background: transparent;
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--text-3);
+  cursor: pointer;
+  transition: all 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.lang-btn.active {
+  background: var(--gold);
+  color: white;
+}
+
+.lang-btn:active { opacity: 0.8; }
+
+
+/* ── Agent Strip ──────────────────────────────────────────────── */
+.agent-strip {
+  display: flex;
+  gap: 6px;
+  padding: 8px 16px 10px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.agent-strip::-webkit-scrollbar { display: none; }
+
+.agent-chip {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  border-radius: 100px;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  font-family: var(--font);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-3);
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  transition: all 0.15s;
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+}
+
+.agent-chip.active {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: white;
+}
+
+.agent-chip:active { transform: scale(0.95); }
+
+/* Active agent tag (replaces model tag) */
+.agent-active-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--gold);
+  padding: 3px 10px;
+  background: var(--gold-faint);
+  border-radius: 100px;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+
 /* ── SVG Icons ────────────────────────────────────────────────── */
 .icon { display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; }
 .icon svg { display:block; }
@@ -1116,16 +1194,16 @@ body {
 
       <div class="home-hero">
         <div class="home-greeting">
-          Olá, <span id="greeting-name">Human Dragon</span>
+          <span data-i18n="greeting">Olá,</span> <span id="greeting-name">Human Dragon</span>
         </div>
         <div class="home-wallet-strip" style="margin-top:16px">
           <div class="wallet-info">
-            <div class="wallet-label">Wallet ID</div>
+            <div class="wallet-label" data-i18n="walletId">Wallet ID</div>
             <div class="wallet-id" id="wallet-id-display">Pioneer #001</div>
           </div>
           <div class="wallet-tier">
             <div class="wallet-tier-badge"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold-light)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="8,21 12,21 16,21"/><line x1="12" y1="17" x2="12" y2="21"/><path d="M7 4H17V11a5 5 0 01-10 0V4z"/><path d="M7 4H4v3a3 3 0 003 4"/><path d="M17 4h3v3a3 3 0 01-3 4"/></svg></div>
-            <div class="wallet-tier-text">High</div>
+            <div class="wallet-tier-text" data-i18n="tierHigh">High</div>
           </div>
         </div>
       </div>
@@ -1136,27 +1214,27 @@ body {
             <span class="qa-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2C9.5 2 7.2 3.5 6.3 6C4.6 6.8 3 8.5 3 11C3 13.5 4.8 15.2 7 15.5C7.2 17.3 8.5 19.2 11 20C11.5 20.2 12 20.2 12 20.2C12 20.2 12.5 20.2 13 20C15.5 19.2 16.8 17.3 17 15.5C19.2 15.2 21 13.5 21 11C21 8.5 19.4 6.8 17.7 6C16.8 3.5 14.5 2 12 2Z" fill="var(--gold)"/><circle cx="9.5" cy="10.5" r="1.2" fill="white"/><circle cx="14.5" cy="10.5" r="1.2" fill="white"/><path d="M9.5 14C10.2 14.8 11 15.2 12 15.2C13 15.2 13.8 14.8 14.5 14" stroke="white" stroke-width="1.3" stroke-linecap="round"/></svg></span>
             <div class="qa-text">
               <div class="qa-label">Dragon</div>
-              <div class="qa-sub">Chat com IA</div>
+              <div class="qa-sub" data-i18n="qaAiChat">Chat com IA</div>
             </div>
           </button>
           <button class="quick-action-btn" onclick="navigate('verify')">
             <span class="qa-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
             <div class="qa-text">
-              <div class="qa-label">Verificar</div>
-              <div class="qa-sub">QR ou ID</div>
+              <div class="qa-label" data-i18n="navVerify">Verificar</div>
+              <div class="qa-sub" data-i18n="qaQrId">QR ou ID</div>
             </div>
           </button>
           <button class="quick-action-btn" onclick="navigate('vault')">
             <span class="qa-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="4"/><line x1="16.24" y1="7.76" x2="14.12" y2="9.88"/><line x1="7.76" y1="16.24" x2="9.88" y2="14.12"/><line x1="7.76" y1="7.76" x2="9.88" y2="9.88"/><line x1="16.24" y1="16.24" x2="14.12" y2="14.12"/></svg></span>
             <div class="qa-text">
               <div class="qa-label">Vault</div>
-              <div class="qa-sub">Documentos</div>
+              <div class="qa-sub" data-i18n="qaDocs">Documentos</div>
             </div>
           </button>
           <button class="quick-action-btn" onclick="navigate('eu')">
             <span class="qa-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="9" cy="12" r="2.5"/><path d="M14 9h4M14 12h4M14 15h2"/></svg></span>
             <div class="qa-text">
-              <div class="qa-label">Identidade</div>
+              <div class="qa-label" data-i18n="qaIdentity">Identidade</div>
               <div class="qa-sub">DID + Wallet</div>
             </div>
           </button>
@@ -1164,8 +1242,8 @@ body {
       </div>
 
       <div class="section-header">
-        <div class="section-title">Recentes</div>
-        <div class="section-subtitle">Ver todos →</div>
+        <div class="section-title" data-i18n="recent">Recentes</div>
+        <div class="section-subtitle" data-i18n="seeAll">Ver todos →</div>
       </div>
 
       <div class="card" style="margin:0 20px">
@@ -1174,7 +1252,7 @@ body {
             <div class="doc-icon-wrap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
             <div class="doc-info">
               <div class="doc-name">Invariant I11 — Permanência</div>
-              <div class="doc-meta"><span class="doc-sealed"></span> Selado · 5 Mar 2026</div>
+              <div class="doc-meta"><span class="doc-sealed"></span> <span data-i18n="sealed">Selado</span> · 5 Mar 2026</div>
             </div>
             <div class="doc-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9,18 15,12 9,6"/></svg></div>
           </div>
@@ -1206,7 +1284,7 @@ body {
         <div style="padding:14px 16px;display:flex;justify-content:space-between;align-items:center">
           <div>
             <div style="font-size:28px;font-weight:700;color:var(--gold);letter-spacing:-0.03em" id="ledger-count">40,918+</div>
-            <div style="font-size:11px;color:var(--text-3);margin-top:2px;font-weight:500;text-transform:uppercase;letter-spacing:0.04em">Receipts Selados</div>
+            <div style="font-size:11px;color:var(--text-3);margin-top:2px;font-weight:500;text-transform:uppercase;letter-spacing:0.04em" data-i18n="receiptsSealed">Receipts Selados</div>
           </div>
           <div style="text-align:right">
             <div style="font-size:12px;color:var(--text-3)">windi-domain.com</div>
@@ -1223,15 +1301,27 @@ body {
       <div class="dragon-header">
         <div class="dragon-status">
           <div class="dragon-dot" id="dragon-dot"></div>
-          <span class="dragon-status-text" id="dragon-status-text">Dragon Online</span>
+          <span class="dragon-status-text" id="dragon-status-text" data-i18n="dragonOnline">Dragon Online</span>
         </div>
-        <span class="dragon-model-tag" id="dragon-model-tag">claude-sonnet</span>
+        <span class="agent-active-tag" id="agent-active-tag">W-COMM-001</span>
+      </div>
+
+      <!-- Agent Selector Strip -->
+      <div class="agent-strip" id="agent-strip">
+        <button class="agent-chip active" data-agent="W-COMM-001"   data-role="comm"    onclick="selectAgent(this)">✉ Comm</button>
+        <button class="agent-chip"        data-agent="W-LEGAL-001"  data-role="legal"   onclick="selectAgent(this)">⚖ Legal</button>
+        <button class="agent-chip"        data-agent="W-NOTARY-001" data-role="notary"  onclick="selectAgent(this)">🖋 Notary</button>
+        <button class="agent-chip"        data-agent="W-COMPLY-001" data-role="comply"  onclick="selectAgent(this)">✔ Comply</button>
+        <button class="agent-chip"        data-agent="W-JOURN-001"  data-role="journ"   onclick="selectAgent(this)">📰 Journ</button>
+        <button class="agent-chip"        data-agent="W-AUDIT-001"  data-role="audit"   onclick="selectAgent(this)">🔎 Audit</button>
+        <button class="agent-chip"        data-agent="W-ACCT-001"   data-role="acct"    onclick="selectAgent(this)">📊 Acct</button>
+        <button class="agent-chip"        data-agent="W-GROVE-001"  data-role="grove"   onclick="selectAgent(this)">🌿 Grove</button>
       </div>
 
       <div class="chat-messages" id="chat-messages">
         <!-- Mensagem de boas-vindas -->
         <div class="msg msg-dragon">
-          <div class="msg-bubble">
+          <div class="msg-bubble" data-i18n="welcomeMsg">
             Irmão 🐉 Dragon Mobile activo. Como posso ajudar?
           </div>
           <div class="msg-meta">Dragon · agora</div>
@@ -1242,7 +1332,7 @@ body {
         <div class="chat-input-wrap">
           <textarea
             id="dragon-input"
-            placeholder="Escreve aqui..."
+            data-i18n-ph="chatPlaceholder" placeholder="Escreve aqui..."
             rows="1"
             oninput="autoResize(this)"
             onkeydown="handleChatKey(event)"
@@ -1258,43 +1348,43 @@ body {
 
       <div class="verify-hero">
         <div class="verify-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9,12 11,14 15,10"/></svg></div>
-        <div class="verify-title">Verificar Documento</div>
-        <div class="verify-desc">Confirma a autenticidade de qualquer documento WINDI com selagem criptográfica</div>
+        <div class="verify-title" data-i18n="verifyTitle">Verificar Documento</div>
+        <div class="verify-desc" data-i18n="verifyDesc">Confirma a autenticidade de qualquer documento WINDI com selagem criptográfica</div>
       </div>
 
       <div class="verify-methods">
         <button class="verify-method-btn primary" onclick="openQRScanner()">
           <div class="vm-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
           <div class="vm-text">
-            <div class="vm-label">Digitalizar QR</div>
-            <div class="vm-sub">Aponta a câmara para o código QR WINDI</div>
+            <div class="vm-label" data-i18n="scanQR">Digitalizar QR</div>
+            <div class="vm-sub" data-i18n="scanQRSub">Aponta a câmara para o código QR WINDI</div>
           </div>
           <div class="vm-arrow">›</div>
         </button>
         <button class="verify-method-btn" onclick="openFileUpload()">
           <div class="vm-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg></div>
           <div class="vm-text">
-            <div class="vm-label">Enviar Ficheiro</div>
-            <div class="vm-sub">PDF, imagem ou .jmpg com selagem</div>
+            <div class="vm-label" data-i18n="uploadFile">Enviar Ficheiro</div>
+            <div class="vm-sub" data-i18n="uploadFileSub">PDF, imagem ou .jmpg com selagem</div>
           </div>
           <div class="vm-arrow">›</div>
         </button>
       </div>
 
       <div class="verify-id-input-wrap">
-        <div style="font-size:12px;font-weight:600;color:var(--text-3);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:8px">Ou introduz o ID directamente</div>
+        <div style="font-size:12px;font-weight:600;color:var(--text-3);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:8px" data-i18n="orEnterId">Ou introduz o ID directamente</div>
         <input
           type="text"
           class="verify-id-input"
           id="verify-id-input"
-          placeholder="WINDI-2026-XXXX ou Receipt ID"
+          data-i18n-ph="verifyInputPh" placeholder="WINDI-2026-XXXX ou Receipt ID"
           inputmode="text"
           autocomplete="off"
           autocorrect="off"
           spellcheck="false"
         >
         <button class="verify-id-btn" onclick="verifyById()">
-          <span id="verify-btn-text">Verificar</span>
+          <span id="verify-btn-text" data-i18n="verifyBtn">Verificar</span>
         </button>
         <input type="file" id="file-upload-input" accept=".pdf,.png,.jpg,.jpeg,.jmpg" style="display:none" onchange="handleFileUpload(event)">
       </div>
@@ -1313,7 +1403,7 @@ body {
       <div class="vault-stats-strip">
         <div class="stat-card">
           <div class="stat-value" id="vault-total">—</div>
-          <div class="stat-label">Total</div>
+          <div class="stat-label" data-i18n="total">Total</div>
         </div>
         <div class="stat-card">
           <div class="stat-value" id="vault-high">—</div>
@@ -1321,12 +1411,12 @@ body {
         </div>
         <div class="stat-card">
           <div class="stat-value" id="vault-month">—</div>
-          <div class="stat-label">Este mês</div>
+          <div class="stat-label" data-i18n="thisMonth">Este mês</div>
         </div>
       </div>
 
       <div class="filter-row">
-        <button class="filter-chip active" onclick="filterDocs('all', this)">Todos</button>
+        <button class="filter-chip active" data-i18n="filterAll" onclick="filterDocs('all', this)">Todos</button>
         <button class="filter-chip" onclick="filterDocs('communique', this)">Communiqué</button>
         <button class="filter-chip" onclick="filterDocs('jmpg', this)">JMPG</button>
         <button class="filter-chip" onclick="filterDocs('governance', this)">Governance</button>
@@ -1359,7 +1449,7 @@ body {
           <div class="doc-arrow">›</div>
         </div>
         <div class="doc-row" style="justify-content:center;padding:14px;cursor:pointer" onclick="loadMoreDocs()">
-          <span style="font-size:13px;color:var(--gold);font-weight:600">Carregar mais →</span>
+          <span style="font-size:13px;color:var(--gold);font-weight:600" data-i18n="loadMore">Carregar mais →</span>
         </div>
       </div>
 
@@ -1371,37 +1461,41 @@ body {
       <div class="eu-avatar-section">
         <div class="eu-avatar"><svg width="38" height="38" viewBox="0 0 24 24" fill="none"><path d="M12 2C9.5 2 7.2 3.5 6.3 6C4.6 6.8 3 8.5 3 11C3 13.5 4.8 15.2 7 15.5C7.2 17.3 8.5 19.2 11 20C11.5 20.2 12 20.2 12 20.2C12 20.2 12.5 20.2 13 20C15.5 19.2 16.8 17.3 17 15.5C19.2 15.2 21 13.5 21 11C21 8.5 19.4 6.8 17.7 6C16.8 3.5 14.5 2 12 2Z" fill="var(--gold)"/><circle cx="9.5" cy="10.5" r="1.5" fill="white"/><circle cx="14.5" cy="10.5" r="1.5" fill="white"/><path d="M9 14.5C9.8 15.5 11 16 12 16C13 16 14.2 15.5 15 14.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
         <div class="eu-name">Human Dragon</div>
-        <div class="eu-role">Chief Governance Officer</div>
+        <div class="eu-role" data-i18n="euRole">Chief Governance Officer</div>
       </div>
 
       <!-- DID -->
       <div class="did-card">
-        <div class="did-label">Decentralized Identity (DID)</div>
+        <div class="did-label" data-i18n="didLabel">Decentralized Identity (DID)</div>
         <div class="did-value" id="did-value">did:windi:pioneer:001<br>Ed25519 · UUIDv7</div>
-        <button class="did-copy-btn" onclick="copyDID()"><span style="display:inline-flex;align-items:center;gap:6px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copiar DID</span></button>
+        <button class="did-copy-btn" id="did-copy-btn" onclick="copyDID()"><span style="display:inline-flex;align-items:center;gap:6px" data-i18n="copyDid"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copiar DID</span></button>
       </div>
 
       <!-- Settings groups -->
       <div class="settings-section">
         <div class="section-header" style="padding:0 0 10px">
-          <div class="section-title" style="font-size:16px">Preferências</div>
+          <div class="section-title" style="font-size:16px" data-i18n="preferences">Preferências</div>
         </div>
         <div class="settings-group">
           <div class="settings-row" onclick="toggleTheme()">
             <div class="settings-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg></div>
-            <div class="settings-label">Tema NOIR</div>
+            <div class="settings-label" data-i18n="noirTheme">Tema NOIR</div>
             <div id="noir-toggle" class="toggle" onclick="event.stopPropagation(); toggleTheme()">
               <div class="toggle-thumb"></div>
             </div>
           </div>
-          <div class="settings-row">
+          <div class="settings-row" style="cursor:default;padding:10px 16px">
             <div class="settings-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></div>
-            <div class="settings-label">Idioma</div>
-            <div class="settings-value">Português ›</div>
+            <div class="settings-label" data-i18n="language">Idioma</div>
+            <div class="lang-switcher" id="lang-switcher">
+              <button class="lang-btn active" data-lang="pt" onclick="setLang('pt')">PT</button>
+              <button class="lang-btn" data-lang="de" onclick="setLang('de')">DE</button>
+              <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+            </div>
           </div>
           <div class="settings-row">
             <div class="settings-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
-            <div class="settings-label">Notificações</div>
+            <div class="settings-label" data-i18n="notifications">Notificações</div>
             <div class="toggle on">
               <div class="toggle-thumb"></div>
             </div>
@@ -1411,13 +1505,13 @@ body {
 
       <div class="settings-section" style="margin-top:8px">
         <div class="section-header" style="padding:0 0 10px">
-          <div class="section-title" style="font-size:16px">Infraestrutura</div>
+          <div class="section-title" style="font-size:16px" data-i18n="infrastructure">Infraestrutura</div>
         </div>
         <div class="settings-group">
           <div class="settings-row" onclick="pingServer()">
             <div class="settings-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><circle cx="6" cy="6" r="1" fill="currentColor" stroke="none"/><circle cx="6" cy="18" r="1" fill="currentColor" stroke="none"/></svg></div>
-            <div class="settings-label">Strato Server</div>
-            <div class="settings-value" id="server-ping">a verificar...</div>
+            <div class="settings-label" data-i18n="windiServer">WINDI Server</div>
+            <div class="settings-value" id="server-ping" data-i18n="connChecking">a verificar...</div>
           </div>
           <div class="settings-row">
             <div class="settings-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div>
@@ -1436,7 +1530,7 @@ body {
         <div class="settings-group">
           <div class="settings-row" onclick="openDesktop()">
             <div class="settings-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
-            <div class="settings-label">Abrir Desktop</div>
+            <div class="settings-label" data-i18n="openDesktop">Abrir Desktop</div>
             <div class="settings-value">windi-domain.com ›</div>
           </div>
           <div class="settings-row" onclick="openVerifyPublic()">
@@ -1448,7 +1542,7 @@ body {
       </div>
 
       <div class="version-footer">
-        WINDI Mobile v1.0.0 · 🐉 · Kempten, Bayern<br>
+        WINDI Mobile v1.2.0 · 🐉 · Kempten, Bayern<br>
         AI processes. Human decides. WINDI guarantees.
       </div>
 
@@ -1460,7 +1554,7 @@ body {
   <nav id="bottom-nav">
     <button class="nav-item active" id="nav-home" onclick="navigate('home')">
       <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg></div>
-      <span>Início</span>
+      <span data-i18n="navHome">Início</span>
     </button>
     <button class="nav-item" id="nav-dragon" onclick="navigate('dragon')">
       <div class="nav-icon" style="position:relative"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 2C9.5 2 7.2 3.5 6.3 6C4.6 6.8 3 8.5 3 11C3 13.5 4.8 15.2 7 15.5C7.2 17.3 8.5 19.2 11 20C11.5 20.2 12 20.2 12 20.2C12 20.2 12.5 20.2 13 20C15.5 19.2 16.8 17.3 17 15.5C19.2 15.2 21 13.5 21 11C21 8.5 19.4 6.8 17.7 6C16.8 3.5 14.5 2 12 2Z" fill="var(--gold)"/><circle cx="9.5" cy="10.5" r="1.2" fill="white"/><circle cx="14.5" cy="10.5" r="1.2" fill="white"/><path d="M9.5 14C10.2 14.8 11 15.2 12 15.2C13 15.2 13.8 14.8 14.5 14" stroke="white" stroke-width="1.3" stroke-linecap="round"/></svg><div class="nav-badge" id="dragon-badge"></div></div>
@@ -1468,7 +1562,7 @@ body {
     </button>
     <button class="nav-item" id="nav-verify" onclick="navigate('verify')">
       <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
-      <span>Verificar</span>
+      <span data-i18n="navVerify">Verificar</span>
     </button>
     <button class="nav-item" id="nav-vault" onclick="navigate('vault')">
       <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="4"/><line x1="16.24" y1="7.76" x2="14.12" y2="9.88"/><line x1="7.76" y1="16.24" x2="9.88" y2="14.12"/><line x1="7.76" y1="7.76" x2="9.88" y2="9.88"/><line x1="16.24" y1="16.24" x2="14.12" y2="14.12"/></svg></div>
@@ -1476,7 +1570,7 @@ body {
     </button>
     <button class="nav-item" id="nav-eu" onclick="navigate('eu')">
       <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="9" cy="12" r="2.5"/><path d="M14 9h4M14 12h4M14 15h2"/></svg></div>
-      <span>Eu</span>
+      <span data-i18n="navMe">Eu</span>
     </button>
   </nav>
 
@@ -1501,6 +1595,7 @@ const state = {
   did: null,
   chatHistory: [],
   isThinking: false,
+  activeAgent: 'W-COMM-001',
 };
 
 // ── NAVIGATION ─────────────────────────────────────────────────
@@ -1549,6 +1644,41 @@ function toggleTheme() {
   // Update meta theme-color
   document.querySelector('meta[name=theme-color]').content = isNoir ? '#F5F0E0' : '#0E0C08';
   state.theme = newTheme;
+  try { localStorage.setItem('windi_theme', newTheme); } catch(e) {}
+}
+
+
+// ── AGENTS ─────────────────────────────────────────────────────
+const AGENTS = {
+  'W-COMM-001':   { name: 'Communicator',  endpoint: '/grove/arena', role: 'comm'   },
+  'W-LEGAL-001':  { name: 'Legal',         endpoint: '/legal/chat',  role: 'legal'  },
+  'W-NOTARY-001': { name: 'Notary',        endpoint: '/notary/chat', role: 'notary' },
+  'W-COMPLY-001': { name: 'Compliance',    endpoint: '/compliance/chat', role: 'comply' },
+  'W-JOURN-001':  { name: 'Journalist',    endpoint: '/grove/arena', role: 'journ'  },
+  'W-AUDIT-001':  { name: 'Auditor',       endpoint: '/audit/chat',  role: 'audit'  },
+  'W-ACCT-001':   { name: 'Accounting',    endpoint: '/accounting/chat', role: 'acct' },
+  'W-GROVE-001':  { name: 'Grove Arena',   endpoint: '/grove/arena', role: 'grove'  },
+};
+
+function selectAgent(btn) {
+  const agentId = btn.getAttribute('data-agent');
+  if (!AGENTS[agentId]) return;
+
+  state.activeAgent = agentId;
+  state.chatHistory = []; // reset context on agent switch
+
+  // Update UI
+  document.querySelectorAll('.agent-chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('agent-active-tag').textContent = agentId;
+
+  // Clear chat and post agent intro message
+  const msgs = document.getElementById('chat-messages');
+  msgs.innerHTML = '';
+  const agentName = AGENTS[agentId].name;
+  addMessage('dragon', `${agentName} ${t('agentActive')} ${t('howCanIHelp')}`);
+
+  toast(agentId);
 }
 
 // ── CHAT ───────────────────────────────────────────────────────
@@ -1581,7 +1711,9 @@ async function sendMessage() {
   const thinkingId = showThinking();
 
   try {
-    const response = await fetch(CONFIG.DRAGON_API + '/chat', {
+    const agentInfo = AGENTS[state.activeAgent] || AGENTS['W-COMM-001'];
+    const agentEndpoint = CONFIG.DOMAIN + agentInfo.endpoint;
+    const response = await fetch(agentEndpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -1589,6 +1721,8 @@ async function sendMessage() {
         history: state.chatHistory.slice(-10),
         wallet_id: state.walletId || 'pioneer-001',
         source: 'mobile',
+        agent: state.activeAgent,
+        persona: (AGENTS[state.activeAgent] || {}).role || 'comm',
       }),
     });
 
@@ -1596,15 +1730,15 @@ async function sendMessage() {
 
     if (response.ok) {
       const data = await response.json();
-      const reply = data.response || data.message || 'Resposta recebida.';
+      const reply = data.response || data.message || t('responseReceived');
       addMessage('dragon', reply);
       state.chatHistory.push({ role: 'assistant', content: reply });
     } else {
-      addMessage('dragon', `⚠️ Dragon offline (${response.status}). Tenta mais tarde, Irmão.`);
+      addMessage('dragon', `⚠️ ${t('dragonOffline')} (${response.status})`);
     }
   } catch (err) {
     removeThinking(thinkingId);
-    addMessage('dragon', '⚠️ Sem ligação ao Dragon. Verifica a tua rede.');
+    addMessage('dragon', `⚠️ ${t('noConnection')}`);
     console.error('Dragon chat error:', err);
   }
 
@@ -1613,12 +1747,12 @@ async function sendMessage() {
 
 function addMessage(role, text) {
   const msgs = document.getElementById('chat-messages');
-  const now = new Date().toLocaleTimeString('pt', { hour: '2-digit', minute: '2-digit' });
+  const now = new Date().toLocaleTimeString(currentLang === 'de' ? 'de' : currentLang === 'en' ? 'en' : 'pt', { hour: '2-digit', minute: '2-digit' });
   const div = document.createElement('div');
   div.className = `msg msg-${role}`;
   div.innerHTML = `
     <div class="msg-bubble">${escapeHtml(text)}</div>
-    <div class="msg-meta">${role === 'dragon' ? 'Dragon' : 'Você'} · ${now}</div>
+    <div class="msg-meta">${role === 'dragon' ? t('msgDragon') : t('msgYou')} · ${t('now')}</div>
   `;
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
@@ -1641,7 +1775,7 @@ function showThinking() {
       <div class="thinking-dot"></div>
       <div class="thinking-dot"></div>
     </div>
-    <span style="font-size:12px;color:var(--text-3)">Dragon a pensar…</span>
+    <span style="font-size:12px;color:var(--text-3)">${t('dragonThinking')}</span>
   `;
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
@@ -1659,7 +1793,7 @@ function openQRScanner() {
   if ('mediaDevices' in navigator && navigator.mediaDevices.getUserMedia) {
     window.location.href = CONFIG.DOMAIN + '/verify-public/?qr=1';
   } else {
-    toast('Câmara não disponível. Usa o ID manual.');
+    toast(t('cameraNa'));
   }
 }
 
@@ -1670,13 +1804,13 @@ function openFileUpload() {
 function handleFileUpload(event) {
   const file = event.target.files[0];
   if (!file) return;
-  toast(`Ficheiro: ${file.name}`);
+  toast(`${t('uploadFile')}: ${file.name}`);
   // TODO: extract receipt_id from file metadata and verify
 }
 
 async function verifyById() {
   const id = document.getElementById('verify-id-input').value.trim();
-  if (!id) { toast('Introduz um ID ou Receipt'); return; }
+  if (!id) { toast(t('enterIdPlease')); return; }
 
   const btn = document.getElementById('verify-btn-text');
   btn.innerHTML = '<span class="spinner"></span>';
@@ -1694,7 +1828,7 @@ async function verifyById() {
         <div class="verify-result verify-result-valid">
           <div class="verify-result-header">
             <span class="vr-status-icon">✅</span>
-            <span class="vr-status-label vr-status-valid">Documento Autêntico</span>
+            <span class="vr-status-label vr-status-valid">${t('docAuthentic')}</span>
           </div>
           <div class="verify-result-body">
             <div class="vr-field">
@@ -1706,7 +1840,7 @@ async function verifyById() {
               <div class="vr-field-value">${escapeHtml((receipt.hash || '').substring(0,32))}…</div>
             </div>
             <div class="vr-field">
-              <div class="vr-field-label">Data de Selagem</div>
+              <div class="vr-field-label">${t('sealDate')}</div>
               <div class="vr-field-value">${escapeHtml(receipt.created_at || receipt.timestamp || '—')}</div>
             </div>
             <div class="vr-field">
@@ -1720,26 +1854,26 @@ async function verifyById() {
         <div class="verify-result verify-result-invalid">
           <div class="verify-result-header">
             <span class="vr-status-icon">❌</span>
-            <span class="vr-status-label vr-status-invalid">Não encontrado</span>
+            <span class="vr-status-label vr-status-invalid">${t('notFound')}</span>
           </div>
           <div class="verify-result-body">
             <div class="vr-field">
-              <div class="vr-field-label">ID pesquisado</div>
+              <div class="vr-field-label">${t('searchedId')}</div>
               <div class="vr-field-value">${escapeHtml(id)}</div>
             </div>
             <div class="vr-field">
               <div class="vr-field-label">Status</div>
-              <div class="vr-field-value">Não existe no Ledger WINDI</div>
+              <div class="vr-field-value">${t('notInLedger')}</div>
             </div>
           </div>
         </div>`;
     }
   } catch (err) {
-    toast('Erro de ligação ao Ledger');
+    toast(t('noConnection'));
     console.error('Verify error:', err);
   }
 
-  btn.textContent = 'Verificar';
+  btn.textContent = t('verifyBtn');
 }
 
 // ── VAULT ──────────────────────────────────────────────────────
@@ -1747,20 +1881,20 @@ function filterDocs(type, btn) {
   document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
   btn.classList.add('active');
   // TODO: filter vault docs by type
-  toast(`Filtro: ${type === 'all' ? 'Todos' : type}`);
+  toast(`${t('filterToast')}: ${type === 'all' ? t('filterAll') : type}`);
 }
 
 function loadMoreDocs() {
-  toast('A carregar do Ledger...');
+  toast(t('loadingDocs'));
 }
 
 // ── SETTINGS ───────────────────────────────────────────────────
 function copyDID() {
   const did = document.getElementById('did-value').textContent;
   if (navigator.clipboard) {
-    navigator.clipboard.writeText(did.replace(/\n/g, ' ')).then(() => toast('DID copiado ✓'));
+    navigator.clipboard.writeText(did.replace(/\n/g, ' ')).then(() => toast(t('didCopied')));
   } else {
-    toast('Copia manual: ' + did);
+    toast(t('didCopied'));
   }
 }
 
@@ -1805,6 +1939,250 @@ function escapeHtml(str) {
     .replace(/"/g, '&quot;');
 }
 
+
+// ── I18N ───────────────────────────────────────────────────────
+const TRANSLATIONS = {
+  pt: {
+    greeting:       'Olá,',
+    walletId:       'Wallet ID',
+    tierHigh:       'High',
+    qaAiChat:       'Chat com IA',
+    navVerify:      'Verificar',
+    qaQrId:         'QR ou ID',
+    qaDocs:         'Documentos',
+    qaIdentity:     'Identidade',
+    recent:         'Recentes',
+    seeAll:         'Ver todos →',
+    sealed:         'Selado',
+    total:          'Total',
+    thisMonth:      'Este mês',
+    receiptsSealed: 'Receipts Selados',
+    dragonOnline:   'Dragon Online',
+    chatPlaceholder:'Escreve aqui...',
+    dragonThinking: 'Dragon a pensar…',
+    verifyTitle:    'Verificar Documento',
+    verifyDesc:     'Confirma a autenticidade de qualquer documento WINDI com selagem criptográfica',
+    scanQR:         'Digitalizar QR',
+    scanQRSub:      'Aponta a câmara para o código QR WINDI',
+    uploadFile:     'Enviar Ficheiro',
+    uploadFileSub:  'PDF, imagem ou .jmpg com selagem',
+    verifyInputPh:  'WINDI-2026-XXXX ou Receipt ID',
+    verifyBtn:      'Verificar',
+    filterAll:      'Todos',
+    euRole:         'Chief Governance Officer',
+    didLabel:       'Identidade Descentralizada (DID)',
+    preferences:    'Preferências',
+    noirTheme:      'Tema NOIR',
+    language:       'Idioma',
+    notifications:  'Notificações',
+    infrastructure: 'Infraestrutura',
+    windiServer:    'WINDI Server',
+    openDesktop:    'Abrir Desktop',
+    navHome:        'Início',
+    navMe:          'Eu',
+    copyDid:        'Copiar DID',
+    loadMore:       'Carregar mais →',
+    msgDragon:      'Dragon',
+    msgYou:         'Você',
+    now:            'agora',
+    welcomeMsg:     'Irmão 🐉 Dragon Mobile activo. Como posso ajudar?',
+    dragonOffline:  'Dragon offline. Tenta mais tarde, Irmão.',
+    noConnection:   'Sem ligação ao Dragon. Verifica a tua rede.',
+    cameraNa:       'Câmara não disponível. Usa o ID manual.',
+    didCopied:      'DID copiado ✓',
+    filterToast:    'Filtro',
+    loadingDocs:    'A carregar do Ledger...',
+    connChecking:   'a verificar...',
+    agentActive:    'activo.',
+    howCanIHelp:    'Como posso ajudar?',
+    responseReceived: 'Resposta recebida.',
+    enterIdPlease:  'Introduz um ID ou Receipt',
+    docAuthentic:   'Documento Autêntico',
+    sealDate:       'Data de Selagem',
+    notFound:       'Não encontrado',
+    searchedId:     'ID pesquisado',
+    notInLedger:    'Não existe no Ledger WINDI',
+    orEnterId:      'Ou introduz o ID directamente',
+  },
+  de: {
+    greeting:       'Hallo,',
+    walletId:       'Wallet-ID',
+    tierHigh:       'Hoch',
+    qaAiChat:       'Chat mit KI',
+    navVerify:      'Prüfen',
+    qaQrId:         'QR oder ID',
+    qaDocs:         'Dokumente',
+    qaIdentity:     'Identität',
+    recent:         'Zuletzt',
+    seeAll:         'Alle anzeigen →',
+    sealed:         'Versiegelt',
+    total:          'Gesamt',
+    thisMonth:      'Diesen Monat',
+    receiptsSealed: 'Versiegelte Belege',
+    dragonOnline:   'Dragon Online',
+    chatPlaceholder:'Nachricht eingeben…',
+    dragonThinking: 'Dragon denkt nach…',
+    verifyTitle:    'Dokument prüfen',
+    verifyDesc:     'Echtheit von WINDI-Dokumenten mit kryptografischer Versiegelung bestätigen',
+    scanQR:         'QR scannen',
+    scanQRSub:      'Kamera auf WINDI QR-Code richten',
+    uploadFile:     'Datei hochladen',
+    uploadFileSub:  'PDF, Bild oder .jmpg mit Versiegelung',
+    verifyInputPh:  'WINDI-2026-XXXX oder Beleg-ID',
+    verifyBtn:      'Prüfen',
+    filterAll:      'Alle',
+    euRole:         'Chief Governance Officer',
+    didLabel:       'Dezentrale Identität (DID)',
+    preferences:    'Einstellungen',
+    noirTheme:      'NOIR-Design',
+    language:       'Sprache',
+    notifications:  'Benachrichtigungen',
+    infrastructure: 'Infrastruktur',
+    windiServer:    'WINDI Server',
+    openDesktop:    'Desktop öffnen',
+    navHome:        'Start',
+    navMe:          'Ich',
+    copyDid:        'DID kopieren',
+    loadMore:       'Mehr laden →',
+    msgDragon:      'Dragon',
+    msgYou:         'Sie',
+    now:            'jetzt',
+    welcomeMsg:     'Hallo 🐉 Dragon Mobile aktiv. Wie kann ich helfen?',
+    dragonOffline:  'Dragon offline. Bitte später versuchen.',
+    noConnection:   'Keine Verbindung zu Dragon. Netzwerk prüfen.',
+    cameraNa:       'Kamera nicht verfügbar. Bitte ID manuell eingeben.',
+    didCopied:      'DID kopiert ✓',
+    filterToast:    'Filter',
+    loadingDocs:    'Wird vom Ledger geladen...',
+    connChecking:   'wird geprüft...',
+    agentActive:    'aktiv.',
+    howCanIHelp:    'Wie kann ich helfen?',
+    responseReceived: 'Antwort erhalten.',
+    enterIdPlease:  'Bitte ID oder Beleg eingeben',
+    docAuthentic:   'Dokument authentisch',
+    sealDate:       'Versiegelungsdatum',
+    notFound:       'Nicht gefunden',
+    searchedId:     'Gesuchte ID',
+    notInLedger:    'Nicht im WINDI Ledger vorhanden',
+    orEnterId:      'Oder ID direkt eingeben',
+  },
+  en: {
+    greeting:       'Hello,',
+    walletId:       'Wallet ID',
+    tierHigh:       'High',
+    qaAiChat:       'AI Chat',
+    navVerify:      'Verify',
+    qaQrId:         'QR or ID',
+    qaDocs:         'Documents',
+    qaIdentity:     'Identity',
+    recent:         'Recent',
+    seeAll:         'See all →',
+    sealed:         'Sealed',
+    total:          'Total',
+    thisMonth:      'This month',
+    receiptsSealed: 'Sealed Receipts',
+    dragonOnline:   'Dragon Online',
+    chatPlaceholder:'Type a message…',
+    dragonThinking: 'Dragon is thinking…',
+    verifyTitle:    'Verify Document',
+    verifyDesc:     'Confirm the authenticity of any WINDI document with cryptographic sealing',
+    scanQR:         'Scan QR Code',
+    scanQRSub:      'Point camera at a WINDI QR code',
+    uploadFile:     'Upload File',
+    uploadFileSub:  'PDF, image or .jmpg with seal',
+    verifyInputPh:  'WINDI-2026-XXXX or Receipt ID',
+    verifyBtn:      'Verify',
+    filterAll:      'All',
+    euRole:         'Chief Governance Officer',
+    didLabel:       'Decentralized Identity (DID)',
+    preferences:    'Preferences',
+    noirTheme:      'NOIR Theme',
+    language:       'Language',
+    notifications:  'Notifications',
+    infrastructure: 'Infrastructure',
+    windiServer:    'WINDI Server',
+    openDesktop:    'Open Desktop',
+    navHome:        'Home',
+    navMe:          'Me',
+    copyDid:        'Copy DID',
+    loadMore:       'Load more →',
+    msgDragon:      'Dragon',
+    msgYou:         'You',
+    now:            'now',
+    welcomeMsg:     'Hey 🐉 Dragon Mobile active. How can I help?',
+    dragonOffline:  'Dragon offline. Please try again later.',
+    noConnection:   'No connection to Dragon. Check your network.',
+    cameraNa:       'Camera unavailable. Use manual ID input.',
+    didCopied:      'DID copied ✓',
+    filterToast:    'Filter',
+    loadingDocs:    'Loading from Ledger...',
+    connChecking:   'checking...',
+    agentActive:    'active.',
+    howCanIHelp:    'How can I help?',
+    responseReceived: 'Response received.',
+    enterIdPlease:  'Please enter an ID or Receipt',
+    docAuthentic:   'Document Authentic',
+    sealDate:       'Seal Date',
+    notFound:       'Not found',
+    searchedId:     'Searched ID',
+    notInLedger:    'Not in WINDI Ledger',
+    orEnterId:      'Or enter ID directly',
+  }
+};
+
+let currentLang = 'pt';
+
+function t(key) {
+  return (TRANSLATIONS[currentLang] || TRANSLATIONS.pt)[key] || key;
+}
+
+function setLang(lang) {
+  if (!TRANSLATIONS[lang]) return;
+  currentLang = lang;
+
+  // Update <html lang>
+  document.getElementById('html-root').lang = lang;
+
+  // Update all data-i18n elements
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    el.textContent = t(key);
+  });
+
+  // Update placeholders
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+    const key = el.getAttribute('data-i18n-ph');
+    el.placeholder = t(key);
+  });
+
+  // Update lang switcher buttons
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+  });
+
+  // Update dynamic strings in state
+  const labels = { pt: 'Português', de: 'Deutsch', en: 'English' };
+
+  // Save preference
+  try { localStorage.setItem('windi_lang', lang); } catch(e) {}
+
+  toast(`${labels[lang]} ✓`);
+}
+
+function detectLang() {
+  // 1. Saved preference
+  try {
+    const saved = localStorage.getItem('windi_lang');
+    if (saved && TRANSLATIONS[saved]) return saved;
+  } catch(e) {}
+
+  // 2. Browser language
+  const nav = (navigator.language || navigator.userLanguage || 'pt').toLowerCase();
+  if (nav.startsWith('de')) return 'de';
+  if (nav.startsWith('en')) return 'en';
+  return 'pt'; // default
+}
+
 // ── INIT ───────────────────────────────────────────────────────
 function init() {
   // Check URL params for deep linking
@@ -1830,7 +2208,22 @@ function init() {
     }
   } catch(e) {}
 
-  console.log('WINDI Mobile v1.0.0 🐉 — AI processes. Human decides. WINDI guarantees.');
+  // Theme persistence
+  try {
+    const savedTheme = localStorage.getItem('windi_theme');
+    if (savedTheme === 'noir') {
+      document.documentElement.setAttribute('data-theme', 'noir');
+      document.getElementById('noir-toggle').classList.add('on');
+      document.querySelector('meta[name=theme-color]').content = '#0E0C08';
+    }
+  } catch(e) {}
+
+  // Language detection + apply
+  const detectedLang = detectLang();
+  currentLang = detectedLang;
+  setLang(detectedLang);
+
+  console.log('WINDI Mobile v1.2.0 🐉 — AI processes. Human decides. WINDI guarantees.');
 }
 
 document.addEventListener('DOMContentLoaded', init);
