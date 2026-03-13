@@ -46,6 +46,73 @@ def cache_set(key, value):
 def now_iso():
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# W-PROV-002 — Propagation Event Hook
+# Emits propagation events to Propagation Index after successful verification
+# NEVER blocks verification — timeout=0.5, silent failure
+# ═══════════════════════════════════════════════════════════════════════════════
+
+PROPAGATION_API = os.getenv("PROPAGATION_API", "http://localhost:8091/propagation/event")
+
+def extract_domain(url: str) -> str:
+    """Extract domain from URL or referer."""
+    if not url or url == "-":
+        return "direct"
+    try:
+        from urllib.parse import urlparse
+        parsed = urlparse(url)
+        domain = parsed.netloc or parsed.path.split('/')[0]
+        # Remove www. prefix
+        if domain.startswith("www."):
+            domain = domain[4:]
+        return domain or "direct"
+    except:
+        return "direct"
+
+def emit_propagation_event(receipt_id: str, request: Request, verified: bool = True):
+    """
+    Emit propagation event to W-PROV-002 after successful verification.
+    NEVER blocks verification — uses timeout=0.5 and silent try/except.
+    C-PROV-002: Fingerprints are anonymous — no personal data.
+    """
+    if not verified or not receipt_id:
+        return
+
+    try:
+        import requests as req_lib
+
+        # Anonymous fingerprint — NEVER store full IP (C-PROV-002)
+        raw_ip = request.headers.get("X-Forwarded-For", request.headers.get("X-Real-IP", "unknown"))
+        if "," in raw_ip:
+            raw_ip = raw_ip.split(",")[0].strip()
+        client_fp = hashlib.sha256(raw_ip.encode()).hexdigest()[:8]
+
+        # Extract origin domain from Referer
+        referer = request.headers.get("Referer", "direct")
+        origin_domain = extract_domain(referer)
+
+        # Country hint from header (if available via Cloudflare/nginx)
+        country_hint = request.headers.get("CF-IPCountry", request.headers.get("X-Country", ""))
+
+        payload = {
+            "ledger_anchor": receipt_id,
+            "event_type": "VERIFICATION",
+            "source_type": "web",
+            "origin_domain": origin_domain,
+            "country_hint": country_hint,
+            "verify_node": "verify-public-8114",
+            "client_fp": client_fp,
+            "timestamp": int(time.time())
+        }
+
+        req_lib.post(PROPAGATION_API, json=payload, timeout=0.5)
+        log.debug(f"[PROV] Event emitted: {receipt_id} from {origin_domain}")
+
+    except Exception as e:
+        # Silent failure — verification NEVER depends on W-PROV-002
+        log.debug(f"[PROV] Event emission failed (non-blocking): {e}")
+        pass
+
 app = FastAPI(title="WINDI Verify Public Agent", version="1.0.1", docs_url="/verify-public/docs", redoc_url=None)
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["GET","POST"], allow_headers=["*"])
 engine = VerifyEngine(ledger_url=LEDGER_URL, agents_url=AGENTS_URL, timeout=5.0)
@@ -120,31 +187,37 @@ async def ui_root():
     return JSONResponse({"service":"WINDI Verify Public","version":"1.0.1"})
 
 @app.get("/verify-public/document/{document_id}", response_model=VerifyResult)
-async def verify_by_id(document_id: str):
+async def verify_by_id(document_id: str, request: Request):
     c = cache_get(f"doc:{document_id}")
     if c: return {**c, "cached": True}
     r = await engine.verify_document_id(document_id)
     cache_set(f"doc:{document_id}", r)
+    # W-PROV-002: Emit propagation event (non-blocking)
+    emit_propagation_event(document_id, request, r.get("status") == "verified")
     return r
 
 @app.get("/verify-public/hash/{sha256_hash}", response_model=VerifyResult)
-async def verify_by_hash(sha256_hash: str):
+async def verify_by_hash(sha256_hash: str, request: Request):
     c = cache_get(f"hash:{sha256_hash}")
     if c: return {**c, "cached": True}
     r = await engine.verify_hash(sha256_hash)
     cache_set(f"hash:{sha256_hash}", r)
+    # W-PROV-002: Emit propagation event (non-blocking)
+    emit_propagation_event(r.get("document_id") or sha256_hash[:16], request, r.get("status") == "verified")
     return r
 
 @app.get("/verify-public/qr/{qr_data:path}", response_model=VerifyResult)
-async def verify_by_qr(qr_data: str):
+async def verify_by_qr(qr_data: str, request: Request):
     c = cache_get(f"qr:{qr_data}")
     if c: return {**c, "cached": True}
     r = await engine.verify_qr(qr_data)
     cache_set(f"qr:{qr_data}", r)
+    # W-PROV-002: Emit propagation event (non-blocking)
+    emit_propagation_event(r.get("document_id"), request, r.get("status") == "verified")
     return r
 
 @app.post("/verify-public/file", response_model=VerifyResult)
-async def verify_file(file: UploadFile = File(...)):
+async def verify_file(file: UploadFile = File(...), request: Request = None):
     content = await file.read(MAX_FILE_SIZE + 1)
     if len(content) > MAX_FILE_SIZE:
         raise HTTPException(status_code=413, detail="File too large. Max 10MB.")
@@ -165,6 +238,9 @@ async def verify_file(file: UploadFile = File(...)):
             "verify_url": proof.get('verify_url')
         }
         cache_set(f"jmpg:{ledger_anchor}", r)
+        # W-PROV-002: Emit propagation event for .jmpg (non-blocking)
+        if request:
+            emit_propagation_event(ledger_anchor, request, r.get("status") == "verified")
         return r
 
     # ═══ Standard file — verify by SHA-256 hash ═══
@@ -173,6 +249,9 @@ async def verify_file(file: UploadFile = File(...)):
     if c: return {**c, "cached": True}
     r = await engine.verify_hash(sha256)
     cache_set(f"hash:{sha256}", r)
+    # W-PROV-002: Emit propagation event (non-blocking)
+    if request:
+        emit_propagation_event(r.get("document_id") or sha256[:16], request, r.get("status") == "verified")
     return r
 
 @app.get("/verify-public/timeline/{document_id}")
