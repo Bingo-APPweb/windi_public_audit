@@ -3885,7 +3885,7 @@ function App(){
   useEffect(()=>{chatEnd.current?.scrollIntoView({behavior:"smooth"});},[msgs,typing]);
 
   // Responsive
-  const[isMobile,setIsMobile]=useState(false);
+  const[isMobile,setIsMobile]=useState(typeof window!=="undefined"&&window.innerWidth<768);
   const[mobileViewTab,setMobileViewTab]=useState("canvas"); // C1: "dragon" | "canvas" for mobile split view
   useEffect(()=>{const c=()=>setIsMobile(window.innerWidth<768);c();window.addEventListener("resize",c);return()=>window.removeEventListener("resize",c);},[]);
 
@@ -5881,9 +5881,10 @@ function App(){
           )}
 
           {/* ═══ CHAT TAB ═══ */}
-          {sidebarTab==="chat"&&(<>
+          {sidebarTab==="chat"&&(
+            <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
             {/* C1: Mobile View Tab Switcher — Dragon/Canvas pill toggle */}
-            {isMobile&&<div style={{display:"flex",gap:4,padding:"8px 12px",background:th.card,borderBottom:`1px solid ${th.border}22`}}>
+            {isMobile&&<div style={{display:"flex",gap:4,padding:"8px 12px",background:th.card,borderBottom:`1px solid ${th.border}22`,flexShrink:0}}>
               <button onClick={()=>setMobileViewTab("dragon")} style={{flex:1,padding:"8px 12px",borderRadius:8,border:"none",background:mobileViewTab==="dragon"?th.gold:th.hover,color:mobileViewTab==="dragon"?"#fff":th.text,fontSize:12,fontWeight:600,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:6,transition:"all 0.2s"}}>
                 <span>🐉</span> Dragon
               </button>
@@ -5891,8 +5892,10 @@ function App(){
                 <span>📄</span> {docType==="cartaz"?"Canvas":"Doc"}
               </button>
             </div>}
-            {/* Doc Preview — DNA-aware structured preview */}
-            <div style={{flex:"1 1 50%",display:isMobile?(mobileViewTab==="canvas"?"flex":"none"):"flex",flexDirection:"column",borderRight:`1px solid ${th.border}22`,overflow:"hidden"}}>
+            {/* Panels wrapper — row on desktop, stacked on mobile (only one visible) */}
+            <div style={{flex:1,display:"flex",flexDirection:isMobile?"column":"row",overflow:"hidden"}}>
+            {/* Doc Preview — DNA-aware structured preview (C1-fix: 100% width on mobile) */}
+            <div style={{flex:isMobile?"1 1 100%":"1 1 50%",display:isMobile?(mobileViewTab==="canvas"?"flex":"none"):"flex",flexDirection:"column",borderRight:isMobile?"none":`1px solid ${th.border}22`,overflow:"hidden"}}>
               <div style={{flex:1,overflowY:"auto",padding:"14px 16px"}}>
                 {/* Structured preview for DNA types */}
                 {docType&&hasDNA(docType)&&Object.keys(docFields).length>1?
@@ -6177,7 +6180,7 @@ function App(){
                   style={{width:34,height:34,borderRadius:8,background:chatIn.trim()?th.gold:th.border,border:"none",color:"#FFF",fontSize:14,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>→</button>
               </div>
             </div>
-          </>)}
+          </div></div>)}
 
           {/* ═══ INSIGHTS TAB — COGNITIVE INTERFACE LAYER ═══ */}
           {sidebarTab==="insights"&&(
