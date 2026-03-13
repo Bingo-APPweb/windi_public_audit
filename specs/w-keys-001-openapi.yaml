@@ -1,0 +1,827 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# W-KEYS-001 — WINDI API Keys System
+# OpenAPI 3.1.0 Specification
+# WINDI Publishing House · Kempten, Bavaria · 2026-03-13
+# ═══════════════════════════════════════════════════════════════════════════════
+
+openapi: 3.1.0
+info:
+  title: W-KEYS-001 — WINDI API Keys
+  version: 1.1.0
+  description: |
+    First API Keys system for WINDI, enabling external partners to authenticate
+    against WINDI services with cryptographically secure keys, scope-based permissions,
+    and I9-compliant human approval.
+
+    ## Key Format
+    - Production: `wnd_live_{32_hex_chars}` (128 bits entropy)
+    - Sandbox: `wnd_test_{32_hex_chars}` (128 bits entropy)
+
+    ## Security
+    - SHA-256 hash-only storage (plaintext never persisted)
+    - Timing-safe comparison via HMAC
+    - Key shown ONCE at approval (client must save)
+
+    ## Constitutional Alignment
+    - **I9**: Key activation requires human approval
+    - **I5**: All operations logged in audit table
+    - **I6**: Hash-chained audit trail
+    - **I10**: Key lifecycle sealed in Forensic Ledger
+
+  contact:
+    name: WINDI Publishing House
+    url: https://windi-domain.com
+  license:
+    name: WINDI Sovereign License
+    url: https://windi-domain.com/license
+
+servers:
+  - url: https://windi-domain.com
+    description: Production Gateway
+  - url: http://localhost:8091
+    description: Local Development (Key Manager direct)
+
+tags:
+  - name: Key Management
+    description: Create, approve, rotate, and revoke API keys
+  - name: Usage & Monitoring
+    description: Track key usage and rate limits
+  - name: System
+    description: Health checks and tier information
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Security Schemes
+# ═══════════════════════════════════════════════════════════════════════════════
+
+components:
+  securitySchemes:
+    WindiApiKey:
+      type: apiKey
+      in: header
+      name: X-WINDI-API-Key
+      description: |
+        WINDI API Key for authenticated requests.
+        Format: `wnd_live_{32_hex}` or `wnd_test_{32_hex}`
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Schemas
+  # ─────────────────────────────────────────────────────────────────────────────
+
+  schemas:
+    Tier:
+      type: string
+      enum: [SEED, NODAL, SOVEREIGN, ORACLE]
+      description: |
+        API key tier determining rate limits and capabilities.
+        - **SEED**: 10 RPM, 100 RPD — Testing, onboarding
+        - **NODAL**: 60 RPM, 1000 RPD — Small partners
+        - **SOVEREIGN**: 300 RPM, 10000 RPD — Municipalities, newsrooms
+        - **ORACLE**: Unlimited — Internal WINDI only
+
+    TierDetails:
+      type: object
+      properties:
+        rpm:
+          type: integer
+          description: Requests per minute (0 = unlimited)
+          example: 60
+        rpd:
+          type: integer
+          description: Requests per day (0 = unlimited)
+          example: 1000
+        description:
+          type: string
+          example: "Parceiros pequenos"
+        unlimited:
+          type: boolean
+          example: false
+        verify_badge:
+          type: string
+          enum: [BRONZE, SILVER, GOLD, PLATINUM]
+          example: SILVER
+
+    KeyStatus:
+      type: string
+      enum: [pending_approval, active, revoked, expired, rotating]
+      description: |
+        Key lifecycle status.
+        Flow: `pending_approval` → `active` → `revoked`/`expired`
+        Special: `rotating` = old key valid for 24h grace period
+
+    Scope:
+      type: string
+      enum:
+        - ledger:read
+        - ledger:write
+        - verify:read
+        - propagation:read
+        - propagation:write
+        - communique:read
+        - communique:write
+        - all
+      description: Permission scope for the API key
+
+    Environment:
+      type: string
+      enum: [live, test]
+      description: Key environment (live = production, test = sandbox)
+
+    KeyRequest:
+      type: object
+      required:
+        - wallet_id
+        - name
+        - scopes
+      properties:
+        wallet_id:
+          type: string
+          description: Billing identity (wallet address)
+          example: "wal_pioneer_abc123"
+        owner_did:
+          type: string
+          description: Cryptographic identity (optional, for signing)
+          example: "did:windi:pioneer:abc123"
+        name:
+          type: string
+          description: Human-readable key name
+          example: "Production API Key"
+          maxLength: 100
+        scopes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Scope'
+          description: Requested permission scopes
+          example: ["propagation:read", "propagation:write"]
+        tier:
+          $ref: '#/components/schemas/Tier'
+          default: SEED
+        environment:
+          $ref: '#/components/schemas/Environment'
+          default: live
+        expires_in_days:
+          type: integer
+          description: Key validity in days
+          default: 365
+          minimum: 1
+          maximum: 730
+        metadata:
+          type: object
+          description: Additional metadata
+          additionalProperties: true
+
+    KeyRequestResponse:
+      type: object
+      properties:
+        key_id:
+          type: string
+          example: "wk_7fd18a69e2319f9fb64c98e7"
+        status:
+          $ref: '#/components/schemas/KeyStatus'
+        message:
+          type: string
+          example: "Key request submitted. Awaiting human approval (I9)."
+        next_step:
+          type: string
+          example: "POST /api-keys/wk_7fd18a69e2319f9fb64c98e7/approve with approved_by"
+        wallet_id:
+          type: string
+        owner_did:
+          type: string
+        name:
+          type: string
+        scopes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Scope'
+        tier:
+          $ref: '#/components/schemas/Tier'
+        tier_limits:
+          type: object
+          properties:
+            rpm:
+              type: integer
+            rpd:
+              type: integer
+            description:
+              type: string
+        environment:
+          $ref: '#/components/schemas/Environment'
+        expires_at:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
+
+    KeyApprovalRequest:
+      type: object
+      required:
+        - approved_by
+      properties:
+        approved_by:
+          type: string
+          description: Human approver identity (I9 compliance)
+          example: "Human Dragon"
+
+    KeyApprovalResponse:
+      type: object
+      properties:
+        key_id:
+          type: string
+        api_key:
+          type: string
+          description: |
+            **CRITICAL**: Full API key shown ONCE. Client must save immediately.
+            WINDI never stores or reveals this again.
+          example: "wnd_live_ad6d4f4a0c939db60b7aacbf7eae43d2"
+        warning:
+          type: string
+          example: "SAVE THIS API KEY NOW! It will never be shown again."
+        status:
+          type: string
+          enum: [active]
+        approved_at:
+          type: string
+          format: date-time
+        approved_by:
+          type: string
+        wallet_id:
+          type: string
+        owner_did:
+          type: string
+        name:
+          type: string
+        scopes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Scope'
+        tier:
+          $ref: '#/components/schemas/Tier'
+        tier_limits:
+          type: object
+          properties:
+            rpm:
+              type: integer
+            rpd:
+              type: integer
+            verify_badge:
+              type: string
+        environment:
+          $ref: '#/components/schemas/Environment'
+        expires_at:
+          type: string
+          format: date-time
+        ledger_receipt:
+          type: string
+          description: Forensic Ledger receipt ID (I10)
+          example: "VR-APIKEY-1710334298"
+        usage:
+          type: object
+          properties:
+            header:
+              type: string
+              example: "X-WINDI-API-Key"
+            example:
+              type: string
+
+    KeyRotateRequest:
+      type: object
+      required:
+        - rotated_by
+      properties:
+        rotated_by:
+          type: string
+          description: Human performing rotation (I9 compliance)
+          example: "Human Dragon"
+
+    KeyRotateResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [rotated]
+        old_key_id:
+          type: string
+        old_key_status:
+          type: string
+          enum: [rotating]
+        old_key_valid_until:
+          type: string
+          format: date-time
+          description: Old key valid for 24h grace period
+        new_key_id:
+          type: string
+        new_api_key:
+          type: string
+          description: New API key (shown ONCE)
+        warning:
+          type: string
+          example: "SAVE THE NEW API KEY NOW! It will never be shown again. Old key valid for 24h."
+        rotated_at:
+          type: string
+          format: date-time
+        rotated_by:
+          type: string
+        wallet_id:
+          type: string
+        name:
+          type: string
+        tier:
+          $ref: '#/components/schemas/Tier'
+        tier_limits:
+          type: object
+        ledger_receipt:
+          type: string
+
+    KeyRevokeRequest:
+      type: object
+      required:
+        - revoked_by
+      properties:
+        revoked_by:
+          type: string
+          example: "Human Dragon"
+        reason:
+          type: string
+          example: "Key compromised"
+
+    KeyListResponse:
+      type: object
+      properties:
+        keys:
+          type: array
+          items:
+            type: object
+            properties:
+              key_id:
+                type: string
+              name:
+                type: string
+              status:
+                $ref: '#/components/schemas/KeyStatus'
+              tier:
+                $ref: '#/components/schemas/Tier'
+              scopes:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Scope'
+              wallet_id:
+                type: string
+              owner_did:
+                type: string
+              environment:
+                $ref: '#/components/schemas/Environment'
+              created_at:
+                type: string
+                format: date-time
+              approved_at:
+                type: string
+                format: date-time
+              expires_at:
+                type: string
+                format: date-time
+              ledger_receipt:
+                type: string
+        count:
+          type: integer
+        filters:
+          type: object
+          properties:
+            wallet_id:
+              type: string
+            owner_did:
+              type: string
+            status:
+              type: string
+            tier:
+              type: string
+
+    KeyUsageResponse:
+      type: object
+      properties:
+        key_id:
+          type: string
+        name:
+          type: string
+        status:
+          $ref: '#/components/schemas/KeyStatus'
+        tier:
+          $ref: '#/components/schemas/Tier'
+        wallet_id:
+          type: string
+        owner_did:
+          type: string
+        limits:
+          type: object
+          properties:
+            rpm:
+              type: integer
+            rpd:
+              type: integer
+        current_usage:
+          type: object
+          properties:
+            rpm:
+              type: integer
+              description: Current requests this minute
+            rpm_remaining:
+              type: integer
+            rpd:
+              type: integer
+              description: Current requests today
+            rpd_remaining:
+              type: integer
+        summary:
+          type: object
+          properties:
+            total_requests:
+              type: integer
+            unique_endpoints:
+              type: integer
+            avg_response_time:
+              type: number
+        by_endpoint:
+          type: array
+          items:
+            type: object
+            properties:
+              endpoint:
+                type: string
+              method:
+                type: string
+              count:
+                type: integer
+              avg_response_time:
+                type: number
+        by_status_code:
+          type: object
+          additionalProperties:
+            type: integer
+        period:
+          type: string
+          example: "7d"
+
+    TiersResponse:
+      type: object
+      properties:
+        tiers:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/TierDetails'
+        default_tier:
+          type: string
+          example: "SEED"
+
+    HealthResponse:
+      type: object
+      properties:
+        agent:
+          type: string
+          example: "W-KEYS-001"
+        version:
+          type: string
+          example: "1.1.0"
+        status:
+          type: string
+          enum: [GREEN, YELLOW, RED]
+        timestamp:
+          type: string
+          format: date-time
+        total_keys:
+          type: integer
+        active_keys:
+          type: integer
+        pending_approval:
+          type: integer
+        by_tier:
+          type: object
+          additionalProperties:
+            type: integer
+        tiers:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              rpm:
+                type: integer
+              rpd:
+                type: integer
+        constitutional:
+          type: object
+          properties:
+            I5:
+              type: string
+            I6:
+              type: string
+            I9:
+              type: string
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Paths
+# ═══════════════════════════════════════════════════════════════════════════════
+
+paths:
+  /api-keys/health:
+    get:
+      tags: [System]
+      summary: Health check
+      description: Returns Key Manager status and statistics
+      operationId: getHealth
+      responses:
+        '200':
+          description: Service healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+  /api-keys/tiers:
+    get:
+      tags: [System]
+      summary: List available tiers
+      description: Returns all tier definitions with rate limits
+      operationId: getTiers
+      responses:
+        '200':
+          description: Tier listing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TiersResponse'
+              example:
+                tiers:
+                  SEED:
+                    rpm: 10
+                    rpd: 100
+                    description: "Testes, onboarding"
+                    unlimited: false
+                    verify_badge: "BRONZE"
+                  NODAL:
+                    rpm: 60
+                    rpd: 1000
+                    description: "Parceiros pequenos"
+                    unlimited: false
+                    verify_badge: "SILVER"
+                  SOVEREIGN:
+                    rpm: 300
+                    rpd: 10000
+                    description: "Municípios, redações"
+                    unlimited: false
+                    verify_badge: "GOLD"
+                  ORACLE:
+                    rpm: 0
+                    rpd: 0
+                    description: "Interno WINDI"
+                    unlimited: true
+                    verify_badge: "PLATINUM"
+                default_tier: "SEED"
+
+  /api-keys/request:
+    post:
+      tags: [Key Management]
+      summary: Request new API key
+      description: |
+        Creates a key request with status `pending_approval`.
+        **I9 Protocol**: Key not issued until human approval.
+      operationId: requestKey
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KeyRequest'
+            example:
+              wallet_id: "wal_pioneer_abc123"
+              owner_did: "did:windi:pioneer:abc123"
+              name: "Production API Key"
+              scopes: ["propagation:read", "propagation:write"]
+              tier: "NODAL"
+              environment: "live"
+      responses:
+        '201':
+          description: Key request created (pending approval)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KeyRequestResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /api-keys/{key_id}/approve:
+    post:
+      tags: [Key Management]
+      summary: Approve key request (I9)
+      description: |
+        Human approval required to activate a key.
+        **WARNING**: The full API key is returned ONCE. Client must save immediately.
+        WINDI never stores or reveals the plaintext key again.
+      operationId: approveKey
+      parameters:
+        - name: key_id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "wk_7fd18a69e2319f9fb64c98e7"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KeyApprovalRequest'
+      responses:
+        '200':
+          description: Key approved and activated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KeyApprovalResponse'
+        '400':
+          description: Key not pending approval
+        '404':
+          description: Key not found
+
+  /api-keys/{key_id}/rotate:
+    post:
+      tags: [Key Management]
+      summary: Rotate API key
+      description: |
+        Creates a new key and marks the old one for expiration.
+        Old key remains valid for 24-hour grace period.
+      operationId: rotateKey
+      parameters:
+        - name: key_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KeyRotateRequest'
+      responses:
+        '200':
+          description: Key rotated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KeyRotateResponse'
+        '400':
+          description: Key not active
+        '404':
+          description: Key not found
+
+  /api-keys/{key_id}/revoke:
+    post:
+      tags: [Key Management]
+      summary: Revoke API key
+      description: Immediately invalidates the key
+      operationId: revokeKey
+      parameters:
+        - name: key_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KeyRevokeRequest'
+      responses:
+        '200':
+          description: Key revoked
+        '400':
+          description: Key already revoked
+        '404':
+          description: Key not found
+
+  /api-keys/list:
+    get:
+      tags: [Key Management]
+      summary: List API keys
+      description: Returns keys filtered by owner/status/tier
+      operationId: listKeys
+      parameters:
+        - name: wallet_id
+          in: query
+          schema:
+            type: string
+          description: Filter by wallet ID
+        - name: owner_did
+          in: query
+          schema:
+            type: string
+          description: Filter by owner DID
+        - name: status
+          in: query
+          schema:
+            $ref: '#/components/schemas/KeyStatus'
+          description: Filter by status
+        - name: tier
+          in: query
+          schema:
+            $ref: '#/components/schemas/Tier'
+          description: Filter by tier
+      responses:
+        '200':
+          description: Key listing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KeyListResponse'
+
+  /api-keys/{key_id}/usage:
+    get:
+      tags: [Usage & Monitoring]
+      summary: Get key usage statistics
+      description: Returns usage stats, rate limit status, and endpoint breakdown
+      operationId: getKeyUsage
+      parameters:
+        - name: key_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Usage statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KeyUsageResponse'
+        '404':
+          description: Key not found
+
+  /api-keys/validate:
+    get:
+      tags: [System]
+      summary: Validate API key (internal)
+      description: |
+        Internal endpoint for nginx auth_request subrequests.
+        Validates X-WINDI-API-Key header and returns tier info.
+      operationId: validateKey
+      security:
+        - WindiApiKey: []
+      responses:
+        '200':
+          description: Key valid
+          headers:
+            X-WINDI-Key-ID:
+              schema:
+                type: string
+              description: Validated key ID
+            X-WINDI-Tier:
+              schema:
+                type: string
+              description: Key tier (SEED/NODAL/SOVEREIGN/ORACLE)
+            X-WINDI-Owner:
+              schema:
+                type: string
+              description: Key owner DID
+            X-WINDI-Scopes:
+              schema:
+                type: string
+              description: Comma-separated scopes
+        '401':
+          description: Key missing or invalid
+        '403':
+          description: Key revoked or expired
+        '429':
+          description: Rate limit exceeded
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Rate Limits (informational)
+# ═══════════════════════════════════════════════════════════════════════════════
+x-windi-rate-limits:
+  description: |
+    Rate limits are enforced at two layers:
+    1. **nginx gateway**: Per-minute limits based on tier zone
+    2. **Key Manager**: Per-minute + per-day limits with hourly tracking
+
+    | Tier      | RPM (nginx) | RPM (Key Manager) | RPD |
+    |-----------|-------------|-------------------|-----|
+    | SEED      | 10/min      | 10/min            | 100 |
+    | NODAL     | 60/min      | 60/min            | 1000 |
+    | SOVEREIGN | 300/min     | 300/min           | 10000 |
+    | ORACLE    | 10000/min   | Unlimited         | Unlimited |
+
+    **Note**: Key management endpoints (`/api-keys/*`) are always limited to
+    10 req/min regardless of tier (I9 protocol).

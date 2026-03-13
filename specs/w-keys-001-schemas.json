@@ -1,0 +1,321 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://windi-domain.com/schemas/w-keys-001",
+  "title": "W-KEYS-001 Schemas",
+  "description": "JSON Schema definitions for WINDI API Keys System v1.1.0",
+  "version": "1.1.0",
+  "definitions": {
+    "Tier": {
+      "type": "string",
+      "enum": ["SEED", "NODAL", "SOVEREIGN", "ORACLE"],
+      "description": "API key tier"
+    },
+    "TierConfig": {
+      "type": "object",
+      "properties": {
+        "SEED": {
+          "type": "object",
+          "properties": {
+            "rpm": { "const": 10 },
+            "rpd": { "const": 100 },
+            "description": { "const": "Testes, onboarding" },
+            "trust_boost": { "const": 0.0 },
+            "verify_badge": { "const": "BRONZE" }
+          }
+        },
+        "NODAL": {
+          "type": "object",
+          "properties": {
+            "rpm": { "const": 60 },
+            "rpd": { "const": 1000 },
+            "description": { "const": "Parceiros pequenos" },
+            "trust_boost": { "const": 0.08 },
+            "verify_badge": { "const": "SILVER" }
+          }
+        },
+        "SOVEREIGN": {
+          "type": "object",
+          "properties": {
+            "rpm": { "const": 300 },
+            "rpd": { "const": 10000 },
+            "description": { "const": "Municípios, redações" },
+            "trust_boost": { "const": 0.15 },
+            "verify_badge": { "const": "GOLD" }
+          }
+        },
+        "ORACLE": {
+          "type": "object",
+          "properties": {
+            "rpm": { "const": 0, "description": "0 = unlimited" },
+            "rpd": { "const": 0, "description": "0 = unlimited" },
+            "description": { "const": "Interno WINDI" },
+            "trust_boost": { "const": 0.20 },
+            "verify_badge": { "const": "PLATINUM" }
+          }
+        }
+      }
+    },
+    "KeyStatus": {
+      "type": "string",
+      "enum": ["pending_approval", "active", "revoked", "expired", "rotating"]
+    },
+    "Scope": {
+      "type": "string",
+      "enum": [
+        "ledger:read",
+        "ledger:write",
+        "verify:read",
+        "propagation:read",
+        "propagation:write",
+        "communique:read",
+        "communique:write",
+        "all"
+      ]
+    },
+    "Environment": {
+      "type": "string",
+      "enum": ["live", "test"]
+    },
+    "KeyFormat": {
+      "type": "string",
+      "pattern": "^wnd_(live|test)_[a-f0-9]{32}$",
+      "description": "WINDI API key format: wnd_live_{32_hex} or wnd_test_{32_hex}"
+    },
+    "KeyId": {
+      "type": "string",
+      "pattern": "^wk_[a-f0-9]{24}$",
+      "description": "Key identifier format: wk_{24_hex}"
+    },
+    "WalletId": {
+      "type": "string",
+      "pattern": "^wal_[a-zA-Z0-9_]+$",
+      "description": "Wallet identifier for billing"
+    },
+    "OwnerDid": {
+      "type": "string",
+      "pattern": "^did:windi:[a-zA-Z0-9:_-]+$",
+      "description": "WINDI DID for cryptographic identity"
+    },
+    "IsoTimestamp": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$"
+    },
+    "KeyRequest": {
+      "type": "object",
+      "required": ["wallet_id", "name", "scopes"],
+      "properties": {
+        "wallet_id": {
+          "$ref": "#/definitions/WalletId"
+        },
+        "owner_did": {
+          "$ref": "#/definitions/OwnerDid"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "scopes": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Scope" },
+          "minItems": 1
+        },
+        "tier": {
+          "$ref": "#/definitions/Tier",
+          "default": "SEED"
+        },
+        "environment": {
+          "$ref": "#/definitions/Environment",
+          "default": "live"
+        },
+        "expires_in_days": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 730,
+          "default": 365
+        },
+        "metadata": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "KeyRequestResponse": {
+      "type": "object",
+      "required": ["key_id", "status", "message", "wallet_id", "name", "scopes", "tier", "environment", "created_at"],
+      "properties": {
+        "key_id": { "$ref": "#/definitions/KeyId" },
+        "status": { "const": "pending_approval" },
+        "message": { "type": "string" },
+        "next_step": { "type": "string" },
+        "wallet_id": { "$ref": "#/definitions/WalletId" },
+        "owner_did": { "$ref": "#/definitions/OwnerDid" },
+        "name": { "type": "string" },
+        "scopes": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Scope" }
+        },
+        "tier": { "$ref": "#/definitions/Tier" },
+        "tier_limits": {
+          "type": "object",
+          "properties": {
+            "rpm": { "type": "integer" },
+            "rpd": { "type": "integer" },
+            "description": { "type": "string" }
+          }
+        },
+        "environment": { "$ref": "#/definitions/Environment" },
+        "expires_at": { "$ref": "#/definitions/IsoTimestamp" },
+        "created_at": { "$ref": "#/definitions/IsoTimestamp" }
+      }
+    },
+    "KeyApprovalRequest": {
+      "type": "object",
+      "required": ["approved_by"],
+      "properties": {
+        "approved_by": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Human approver identity (I9)"
+        }
+      },
+      "additionalProperties": false
+    },
+    "KeyApprovalResponse": {
+      "type": "object",
+      "required": ["key_id", "api_key", "status", "approved_at", "approved_by", "warning"],
+      "properties": {
+        "key_id": { "$ref": "#/definitions/KeyId" },
+        "api_key": { "$ref": "#/definitions/KeyFormat" },
+        "warning": {
+          "type": "string",
+          "const": "SAVE THIS API KEY NOW! It will never be shown again."
+        },
+        "status": { "const": "active" },
+        "approved_at": { "$ref": "#/definitions/IsoTimestamp" },
+        "approved_by": { "type": "string" },
+        "wallet_id": { "$ref": "#/definitions/WalletId" },
+        "owner_did": { "$ref": "#/definitions/OwnerDid" },
+        "name": { "type": "string" },
+        "scopes": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/Scope" }
+        },
+        "tier": { "$ref": "#/definitions/Tier" },
+        "tier_limits": {
+          "type": "object",
+          "properties": {
+            "rpm": { "type": "integer" },
+            "rpd": { "type": "integer" },
+            "verify_badge": { "type": "string" }
+          }
+        },
+        "environment": { "$ref": "#/definitions/Environment" },
+        "expires_at": { "$ref": "#/definitions/IsoTimestamp" },
+        "ledger_receipt": { "type": ["string", "null"] },
+        "usage": {
+          "type": "object",
+          "properties": {
+            "header": { "const": "X-WINDI-API-Key" },
+            "example": { "type": "string" }
+          }
+        }
+      }
+    },
+    "KeyRotateRequest": {
+      "type": "object",
+      "required": ["rotated_by"],
+      "properties": {
+        "rotated_by": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Human performing rotation (I9)"
+        }
+      },
+      "additionalProperties": false
+    },
+    "KeyRotateResponse": {
+      "type": "object",
+      "required": ["status", "old_key_id", "new_key_id", "new_api_key", "warning"],
+      "properties": {
+        "status": { "const": "rotated" },
+        "old_key_id": { "$ref": "#/definitions/KeyId" },
+        "old_key_status": { "const": "rotating" },
+        "old_key_valid_until": { "$ref": "#/definitions/IsoTimestamp" },
+        "new_key_id": { "$ref": "#/definitions/KeyId" },
+        "new_api_key": { "$ref": "#/definitions/KeyFormat" },
+        "warning": { "type": "string" },
+        "rotated_at": { "$ref": "#/definitions/IsoTimestamp" },
+        "rotated_by": { "type": "string" },
+        "wallet_id": { "$ref": "#/definitions/WalletId" },
+        "name": { "type": "string" },
+        "tier": { "$ref": "#/definitions/Tier" },
+        "tier_limits": { "type": "object" },
+        "ledger_receipt": { "type": ["string", "null"] }
+      }
+    },
+    "KeyRevokeRequest": {
+      "type": "object",
+      "required": ["revoked_by"],
+      "properties": {
+        "revoked_by": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "HealthResponse": {
+      "type": "object",
+      "required": ["agent", "version", "status", "timestamp"],
+      "properties": {
+        "agent": { "const": "W-KEYS-001" },
+        "version": { "type": "string" },
+        "status": {
+          "type": "string",
+          "enum": ["GREEN", "YELLOW", "RED"]
+        },
+        "timestamp": { "$ref": "#/definitions/IsoTimestamp" },
+        "total_keys": { "type": "integer", "minimum": 0 },
+        "active_keys": { "type": "integer", "minimum": 0 },
+        "pending_approval": { "type": "integer", "minimum": 0 },
+        "by_tier": {
+          "type": "object",
+          "additionalProperties": { "type": "integer" }
+        },
+        "tiers": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "rpm": { "type": "integer" },
+              "rpd": { "type": "integer" }
+            }
+          }
+        },
+        "constitutional": {
+          "type": "object",
+          "properties": {
+            "I5": { "type": "string" },
+            "I6": { "type": "string" },
+            "I9": { "type": "string" }
+          }
+        }
+      }
+    },
+    "Error": {
+      "type": "object",
+      "required": ["error"],
+      "properties": {
+        "error": { "type": "string" },
+        "message": { "type": "string" },
+        "details": { "type": "object" }
+      }
+    }
+  }
+}

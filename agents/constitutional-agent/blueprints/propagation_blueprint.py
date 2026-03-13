@@ -29,6 +29,18 @@ from datetime import datetime, timezone
 from typing import Optional
 import urllib.request
 
+# API Key authentication (W-KEYS-001)
+try:
+    from blueprints.api_keys_blueprint import require_api_key
+    API_KEYS_AVAILABLE = True
+except ImportError:
+    API_KEYS_AVAILABLE = False
+    def require_api_key(scopes=None):
+        """Fallback decorator when API keys not available."""
+        def decorator(f):
+            return f
+        return decorator
+
 # ═══════════════════════════════════════════════════════════════════════════════
 # Blueprint Setup
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -191,8 +203,9 @@ def update_artifact_stats(ledger_anchor: str, domain: str, country: str):
 # ═══════════════════════════════════════════════════════════════════════════════
 
 @propagation_bp.route('/health', methods=['GET'])
+@require_api_key(scopes=['propagation:read'])
 def health():
-    """Health check endpoint."""
+    """Health check endpoint (protected by API key - W-KEYS-001)."""
     try:
         with get_db() as conn:
             c = conn.cursor()
