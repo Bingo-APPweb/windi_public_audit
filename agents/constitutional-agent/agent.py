@@ -546,6 +546,38 @@ def create_agent_api(agent: WindiAgent):
     except ImportError as e:
         print(f"  [PROV] W-PROV-002 not loaded: {e}")
 
+    try:
+        from blueprints.api_keys_blueprint import api_keys_bp, init_api_keys_db
+        init_api_keys_db()
+        app.register_blueprint(api_keys_bp)
+        print("  [KEYS] W-KEYS-001 API Keys v1.0.0 loaded on /api-keys/*")
+    except ImportError as e:
+        print(f"  [KEYS] W-KEYS-001 not loaded: {e}")
+
+    try:
+        from blueprints.forensic_blueprint import forensic_bp, init_forensic_db
+        init_forensic_db()
+        app.register_blueprint(forensic_bp)
+        print("  [FORENSIC] W-FORENSIC-001 Forensic Inspector v1.0.0 loaded on /forensic/*")
+    except ImportError as e:
+        print(f"  [FORENSIC] W-FORENSIC-001 not loaded: {e}")
+
+    try:
+        from blueprints.reputation_blueprint import reputation_bp, init_reputation_db
+        init_reputation_db()
+        app.register_blueprint(reputation_bp)
+        print("  [REPUTATION] W-PROV-003 Reputation Engine v1.0.0 loaded on /reputation/*")
+    except ImportError as e:
+        print(f"  [REPUTATION] W-PROV-003 not loaded: {e}")
+
+    try:
+        from blueprints.federation_blueprint import federation_bp, init_federation_db
+        init_federation_db()
+        app.register_blueprint(federation_bp)
+        print("  [FEDERATION] W-PROV-004 Federation Protocol v1.0.0 loaded on /federation/*")
+    except ImportError as e:
+        print(f"  [FEDERATION] W-PROV-004 not loaded: {e}")
+
     @app.route("/agent/health", methods=["GET"])
     def health():
         return jsonify({

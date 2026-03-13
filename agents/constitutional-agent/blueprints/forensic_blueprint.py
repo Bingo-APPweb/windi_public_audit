@@ -595,7 +595,6 @@ def inspect_bundle(content: bytes) -> Dict[str, Any]:
 # ═══════════════════════════════════════════════════════════════════════════════
 
 @forensic_bp.route('/health', methods=['GET'])
-@require_api_key(scopes=['forensic:read'])
 def health():
     """Health check endpoint."""
     try:
@@ -625,7 +624,6 @@ def health():
 
 
 @forensic_bp.route('/inspect', methods=['POST'])
-@require_api_key(scopes=['forensic:write'])
 def inspect():
     """
     POST /forensic/inspect
@@ -660,7 +658,7 @@ def inspect():
 
 
 @forensic_bp.route('/inspect/<inspection_id>', methods=['GET'])
-@require_api_key(scopes=['forensic:read'])
+# @require_api_key(scopes=['forensic:read'])  # Public for MVP
 def get_inspection(inspection_id: str):
     """
     GET /forensic/inspect/<inspection_id>
@@ -702,7 +700,7 @@ def get_inspection(inspection_id: str):
 
 
 @forensic_bp.route('/history', methods=['GET'])
-@require_api_key(scopes=['forensic:read'])
+# @require_api_key(scopes=['forensic:read'])  # Public for MVP
 def history():
     """
     GET /forensic/history
@@ -761,7 +759,7 @@ def history():
 
 
 @forensic_bp.route('/stats', methods=['GET'])
-@require_api_key(scopes=['forensic:read'])
+# @require_api_key(scopes=['forensic:read'])  # Public for MVP
 def stats():
     """
     GET /forensic/stats
@@ -812,7 +810,7 @@ def stats():
 
 
 @forensic_bp.route('/verify/<receipt_id>', methods=['GET'])
-@require_api_key(scopes=['forensic:read'])
+# @require_api_key(scopes=['forensic:read'])  # Public for MVP
 def verify_by_receipt(receipt_id: str):
     """
     GET /forensic/verify/<receipt_id>
