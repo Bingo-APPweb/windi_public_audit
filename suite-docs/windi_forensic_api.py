@@ -262,7 +262,7 @@ class ForensicLedgerHandler(BaseHTTPRequestHandler):
                     return
 
                 # Validate types
-                if r["doc_type"] not in ("doc", "xlsx", "pptx", "jmpg", "communique", "compliance_passport"):
+                if r["doc_type"] not in ("doc", "xlsx", "pptx", "jmpg", "communique", "compliance_passport", "cartaz", "canvas"):
                     self._json(400, {
                         "ok": False,
                         "error": f"invalid doc_type: {r['doc_type']}",
@@ -414,6 +414,62 @@ class ForensicLedgerHandler(BaseHTTPRequestHandler):
             except Exception as e:
                 self._json(500, {"ok": False, "error": str(e)})
 
+        # ── /api/ledger/seal (C5.1: Cartaz Forensic Seal) ──
+        elif path == "/api/ledger/seal":
+            try:
+                data = self._read_body()
+
+                # Accept flexible payload from agent-palette-cartaz
+                receipt = {
+                    "id": data.get("id"),
+                    "actor": data.get("actor", "anonymous"),
+                    "device_id": data.get("device_id"),
+                    "app": data.get("app", "agent-palette"),
+                    "doc_name": data.get("doc_name", "Untitled"),
+                    "doc_type": data.get("doc_type", "cartaz"),
+                    "local_filename": data.get("local_filename"),
+                    "content_hash": data.get("content_hash", ""),
+                    "bytes": data.get("bytes", 0),
+                    "governance_level": data.get("governance_level", "MEDIUM"),
+                    "sge_score": float(data.get("sge_score", 0.95)),
+                    "isp_context": data.get("isp_context", ""),
+                    "template_id": data.get("template_id"),
+                    "tags": data.get("tags", []),
+                    "flags": data.get("flags", []),
+                    "created_at": data.get("created_at", int(time.time())),
+                    "status": data.get("status", "sealed"),
+                    "metadata": data.get("metadata", {}),
+                }
+
+                # Validate minimum required
+                if not receipt["id"]:
+                    self._json(400, {"ok": False, "error": "id required"})
+                    return
+                if not receipt["content_hash"]:
+                    self._json(400, {"ok": False, "error": "content_hash required"})
+                    return
+
+                upsert_receipt(receipt)
+
+                print(f"[FORENSIC] ◆ Cartaz Seal: {receipt['id']} | {receipt['doc_name']} | SGE {receipt['sge_score']}")
+                self._json(201, {
+                    "ok": True,
+                    "sealed": True,
+                    "receipt_id": receipt["id"],
+                    "content_hash": receipt["content_hash"],
+                    "doc_type": receipt["doc_type"],
+                    "governance_level": receipt["governance_level"],
+                    "sge_score": receipt["sge_score"],
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "privacy": "content_not_stored",
+                    "message": f"Cartaz '{receipt['id']}' sealed in Forensic Ledger",
+                })
+
+            except json.JSONDecodeError:
+                self._json(400, {"ok": False, "error": "invalid_json"})
+            except Exception as e:
+                self._json(500, {"ok": False, "error": str(e)})
+
         else:
             self._json(404, {"ok": False, "error": "not_found", "path": path})
 
@@ -447,6 +503,7 @@ if __name__ == "__main__":
     print(f"    GET  /api/warroom/summary     — War Room aggregation")
     print(f"    GET  /api/suite/docs          — Suite v2.1 compat")
     print(f"    POST /api/suite/docs          — Suite v2.1 compat")
+    print(f"    POST /api/ledger/seal         — C5.1 Cartaz Forensic Seal")
     print(f"")
     print(f"  ◆ AI processes. Human decides. WINDI guarantees.")
     print(f"")

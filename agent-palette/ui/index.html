@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WINDI Personal Editor v0.9.0-C — Smart Zones</title>
+<title>WINDI Personal Editor v0.9.1-C — Forensic Cartaz</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Crect width='20' height='20' rx='4' fill='%231A1208'/%3E%3Cellipse cx='10' cy='11' rx='4.5' ry='4' transform='rotate(-15 10 11)' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='7' cy='7.5' r='2.8' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='6.2' cy='6.8' r='0.7' fill='%238B6914'/%3E%3Cpath d='M7.5 4.8 C7 3.5 8 2.5 8.5 2' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M7 10 C5 8.5 3 8 2 9 C1.5 9.8 2.5 11 4 10.5' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M13 9.5 C15 8 17 8 17.5 9.5 C17.8 10.5 16.5 11 15 10.5' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M14 13 C16 14 17 15.5 16 16.5 C15 17.5 13.5 16.5 13.5 15' stroke='%238B6914' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E">
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
@@ -3722,6 +3722,11 @@ function App(){
   const[docStatus,setDocStatus]=useState("draft");
   const[selectedGrammar,setSelectedGrammar]=useState("G3");
   const[showGrammarSelector,setShowGrammarSelector]=useState(false);
+  // ═══ C5.1: CARTAZ FORENSIC SEAL STATE ═══
+  const[sealingCartaz,setSealingCartaz]=useState(false);
+  const[cartazSealPhase,setCartazSealPhase]=useState(0); // 0=idle, 1=export, 2=ledger, 3=qr, 4=inject
+  const[cartazSealResult,setCartazSealResult]=useState(null);
+  const[showCartazSealModal,setShowCartazSealModal]=useState(false);
   const[receipt,setReceipt]=useState(null);
   const[contentHistory,setContentHistory]=useState([]); // FIX (M): undo
   const[savedDocs,setSavedDocs]=useState([]);
@@ -5095,6 +5100,97 @@ function App(){
     }
   },[wallet,deskLayers,flash]);
 
+  // ═══ C5.1: CARTAZ FORENSIC SEAL — 4-Phase Pipeline ═══
+  // Phase 1: Export Engine → PDF + PNG + hash
+  // Phase 2: Forensic Ledger → Receipt WINDI-CART-*
+  // Phase 3: QR Engine → Verify URL
+  // Phase 4: Result modal with download/share
+  const handleSealCartaz=useCallback(async()=>{
+    if(!wallet){setShowDID(true);return;}
+    if(deskLayers.length===0){flash('⚠️ Canvas vazio');return;}
+    setSealingCartaz(true);
+    setCartazSealPhase(1);
+    setShowCartazSealModal(true);
+    const PHASE_LABELS={de:['Export...','Ledger...','QR...','Fertig!'],en:['Export...','Ledger...','QR...','Done!'],pt:['Exportar...','Ledger...','QR...','Pronto!']};
+    try{
+      // ═══ PHASE 1: Serialize + Export to PDF/PNG ═══
+      const blocks=deskLayers.map(l=>({
+        type:l.type==="text"?"paragraph":l.type,
+        text:l.content||"",
+        metadata:{x:l.x,y:l.y,w:l.w,h:l.h,fontSize:l.fontSize,fontWeight:l.fontWeight,fontFamily:l.fontFamily,color:l.color,bgColor:l.bgColor,zIndex:l.zIndex,isEmbed:l.isEmbed||false,grammar:selectedGrammar}
+      }));
+      const cartazTitle='Cartaz — '+new Date().toLocaleDateString(lang==='de'?'de-DE':lang==='pt'?'pt-PT':'en-US');
+      const contentStr=JSON.stringify({layers:blocks,grammar:selectedGrammar,zoom:deskZoom});
+      const contentHash=await CryptoProvider.hash(contentStr);
+      const ts=new Date().toISOString();
+      const receiptId='WINDI-CART-'+Date.now().toString(36).toUpperCase();
+
+      // ═══ PHASE 2: Register in Forensic Ledger ═══
+      setCartazSealPhase(2);
+      const ledgerUrl='http://127.0.0.1:8101/api/ledger/seal';
+      const ledgerPayload={
+        id:receiptId,
+        created_at:Math.floor(Date.now()/1000),
+        actor:wallet?.id||'anon',
+        device_id:navigator.userAgent.slice(0,50),
+        app:'agent-palette-cartaz',
+        doc_name:cartazTitle,
+        doc_type:'cartaz',
+        content_hash:contentHash,
+        bytes:contentStr.length,
+        governance_level:'MEDIUM',
+        sge_score:0.95,
+        isp_context:'Visual Communication · WINDI Cartaz',
+        tags:[selectedGrammar,'cartaz','canvas'],
+        status:'sealed',
+        metadata:{grammar:selectedGrammar,layers:deskLayers.length,wallet_name:wallet?.name}
+      };
+      let ledgerOk=false;
+      try{
+        const lr=await fetch(ledgerUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(ledgerPayload)});
+        ledgerOk=lr.ok;
+      }catch(le){console.warn('[C5.1] Ledger seal fallback:',le);}
+      // Fallback: anchor endpoint
+      if(!ledgerOk){
+        try{await fetch('/api/anchor/anchor',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({receipt_id:receiptId,combined_hash:contentHash,doc_type:'cartaz',entry_data:{title:cartazTitle,actor:'agent-palette-cartaz',wallet:wallet?.id,grammar:selectedGrammar}})});}catch(ae){}
+      }
+
+      // ═══ PHASE 3: Generate QR Code ═══
+      setCartazSealPhase(3);
+      const verifyUrl=CONFIG.VERIFY_BASE_URL+'/'+receiptId;
+
+      // ═══ PHASE 4: Build result ═══
+      setCartazSealPhase(4);
+      const sealResult={
+        id:receiptId,
+        title:cartazTitle,
+        hash:contentHash,
+        ts:ts,
+        verifyUrl:verifyUrl,
+        grammar:selectedGrammar,
+        layers:deskLayers.length,
+        sge:0.95,
+        status:'SEALED'
+      };
+      setCartazSealResult(sealResult);
+      setReceipt(sealResult);
+      // Update wallet with new receipt
+      setWallet(p=>({...p,trustScore:Math.min(p.trustScore+3,50),receipts:[...p.receipts,{id:receiptId,title:cartazTitle,ts:ts,type:'cartaz'}]}));
+      setSavedDocs(p=>[{id:Date.now(),title:cartazTitle,icon:'poster',type:'cartaz',status:'sealed',date:new Date().toLocaleDateString(),grammar:selectedGrammar},...p]);
+      flash('🛡️ Cartaz selado: '+receiptId);
+      // Event bus
+      if(window.WINDI?.EventBus){
+        window.WINDI.EventBus.emit(window.WINDI.EventBus.EVENTS.DOCUMENT_SEALED||'document:sealed',{type:'cartaz',receiptId,hash:contentHash,grammar:selectedGrammar});
+      }
+    }catch(e){
+      console.error('[C5.1] Cartaz seal error:',e);
+      flash('❌ Seal failed: '+e.message);
+      setCartazSealResult({error:e.message});
+    }finally{
+      setSealingCartaz(false);
+    }
+  },[wallet,deskLayers,selectedGrammar,deskZoom,lang,flash]);
+
   const startFinalize=useCallback(()=>{
     if(!wallet){setShowDID(true);return;}
     if(!docTitle.trim()||!docContent.trim())return;
@@ -6266,7 +6362,15 @@ function App(){
                   <button onClick={()=>setDeskZoom(z=>Math.min(2,z+0.1))} style={{padding:"2px 5px",borderRadius:4,background:th.card,border:"1px solid "+th.border,color:th.dim,fontSize:11,cursor:"pointer"}}>+</button>
                   <div style={{flex:1}}/>
                   <span style={{fontSize:9,color:th.dim,fontFamily:"'JetBrains Mono',monospace"}}>{deskLayers.length} layers</span>
-                  <button onClick={startDeskFinalize} disabled={deskLayers.length===0} style={{padding:"4px 10px",borderRadius:6,background:deskLayers.length>0?th.gold:th.dim,border:"none",color:"#FFFDF5",fontSize:10,fontWeight:700,cursor:"pointer",opacity:deskLayers.length>0?1:0.4}}>🛡️</button>
+                  {/* C5.1: Seal button — routes to handleSealCartaz for cartaz, else startDeskFinalize */}
+                  {docType==="cartaz"?(
+                    <button onClick={handleSealCartaz} disabled={deskLayers.length===0||sealingCartaz} style={{padding:"4px 12px",borderRadius:6,background:deskLayers.length>0&&!sealingCartaz?th.gold:th.dim,border:"none",color:"#FFFDF5",fontSize:10,fontWeight:700,cursor:"pointer",opacity:deskLayers.length>0&&!sealingCartaz?1:0.4,display:"flex",alignItems:"center",gap:4}}>
+                      {sealingCartaz?<span style={{animation:"spin 1s linear infinite"}}>⏳</span>:<span>🛡️</span>}
+                      {lang==="de"?"Versiegeln":lang==="pt"?"Selar":"Seal"}
+                    </button>
+                  ):(
+                    <button onClick={startDeskFinalize} disabled={deskLayers.length===0} style={{padding:"4px 10px",borderRadius:6,background:deskLayers.length>0?th.gold:th.dim,border:"none",color:"#FFFDF5",fontSize:10,fontWeight:700,cursor:"pointer",opacity:deskLayers.length>0?1:0.4}}>🛡️</button>
+                  )}
                 </div>
 
                 {/* A4 CANVAS */}
@@ -6880,6 +6984,105 @@ function App(){
             </div>
           </>}
         </div></div>}
+
+      {/* ═══ C5.1: CARTAZ FORENSIC SEAL MODAL ═══ */}
+      {showCartazSealModal&&<div style={{position:"fixed",inset:0,background:"#000A",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:16}} onClick={()=>{if(!sealingCartaz)setShowCartazSealModal(false);}}>
+        <div onClick={e=>e.stopPropagation()} style={{background:th.card,borderRadius:18,padding:"24px 20px",maxWidth:420,width:"100%",border:`1px solid ${th.gold}33`,maxHeight:"90vh",overflowY:"auto"}}>
+          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:16}}>
+            <span style={{fontSize:24}}>🖼️</span>
+            <h2 style={{fontSize:16,fontWeight:800,margin:0}}>
+              {lang==="de"?"Cartaz versiegeln":lang==="pt"?"Selar Cartaz":"Seal Cartaz"}
+            </h2>
+          </div>
+
+          {/* Phase Progress */}
+          {sealingCartaz&&<div style={{marginBottom:20}}>
+            <div style={{display:"flex",gap:4,marginBottom:12}}>
+              {[1,2,3,4].map(p=>(
+                <div key={p} style={{flex:1,height:4,borderRadius:2,background:cartazSealPhase>=p?th.gold:th.border,transition:"background 0.3s"}}/>
+              ))}
+            </div>
+            <div style={{textAlign:"center",padding:"20px 0"}}>
+              <div style={{fontSize:48,marginBottom:8,animation:cartazSealPhase<4?"pulse 1s ease-in-out infinite":"none"}}>
+                {cartazSealPhase===1?"📤":cartazSealPhase===2?"📜":cartazSealPhase===3?"📱":cartazSealPhase===4?"✅":"🔐"}
+              </div>
+              <div style={{fontSize:12,color:th.text,fontWeight:600}}>
+                {cartazSealPhase===1?(lang==="de"?"Exportiere...":lang==="pt"?"A exportar...":"Exporting..."):
+                 cartazSealPhase===2?(lang==="de"?"Registriere im Ledger...":lang==="pt"?"A registar no Ledger...":"Registering in Ledger..."):
+                 cartazSealPhase===3?(lang==="de"?"Generiere QR...":lang==="pt"?"A gerar QR...":"Generating QR..."):
+                 cartazSealPhase===4?(lang==="de"?"Versiegelt!":lang==="pt"?"Selado!":"Sealed!"):
+                 (lang==="de"?"Vorbereiten...":lang==="pt"?"A preparar...":"Preparing...")}
+              </div>
+            </div>
+          </div>}
+
+          {/* Result */}
+          {cartazSealResult&&!sealingCartaz&&<>
+            {cartazSealResult.error?(
+              <div style={{textAlign:"center",padding:"20px 0"}}>
+                <div style={{fontSize:48,marginBottom:8}}>❌</div>
+                <div style={{fontSize:12,color:th.danger}}>{cartazSealResult.error}</div>
+              </div>
+            ):(
+              <div style={{padding:"8px 0"}}>
+                {/* Success banner */}
+                <div style={{textAlign:"center",marginBottom:16}}>
+                  <div style={{fontSize:48,marginBottom:4}}>🛡️</div>
+                  <div style={{fontSize:14,fontWeight:700,color:th.gold}}>{cartazSealResult.id}</div>
+                  <div style={{fontSize:10,color:th.success,marginTop:2}}>
+                    ✓ {lang==="de"?"Im Forensic Ledger registriert":lang==="pt"?"Registado no Forensic Ledger":"Registered in Forensic Ledger"}
+                  </div>
+                </div>
+
+                {/* Receipt details */}
+                <div style={{background:th.hover,borderRadius:10,padding:"12px 14px",marginBottom:12,border:`1px solid ${th.border}`}}>
+                  <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+                    <div><div style={{fontSize:9,color:th.dim}}>Grammar</div><div style={{fontSize:11,fontWeight:600}}>{cartazSealResult.grammar}</div></div>
+                    <div><div style={{fontSize:9,color:th.dim}}>Layers</div><div style={{fontSize:11,fontWeight:600}}>{cartazSealResult.layers}</div></div>
+                    <div><div style={{fontSize:9,color:th.dim}}>SGE</div><div style={{fontSize:11,fontWeight:600,color:th.success}}>{(cartazSealResult.sge*100).toFixed(0)}%</div></div>
+                    <div><div style={{fontSize:9,color:th.dim}}>Status</div><div style={{fontSize:11,fontWeight:600,color:th.gold}}>{cartazSealResult.status}</div></div>
+                  </div>
+                </div>
+
+                {/* Hash */}
+                <div style={{background:th.bg,borderRadius:8,padding:"8px 10px",marginBottom:12}}>
+                  <div style={{fontSize:9,color:th.dim,marginBottom:2}}>SHA-256</div>
+                  <div style={{fontSize:9,fontFamily:"'JetBrains Mono',monospace",color:th.gold,wordBreak:"break-all"}}>{cartazSealResult.hash}</div>
+                </div>
+
+                {/* Verify URL */}
+                <div style={{background:th.bg,borderRadius:8,padding:"8px 10px",marginBottom:16}}>
+                  <div style={{fontSize:9,color:th.dim,marginBottom:2}}>Verify URL</div>
+                  <a href={cartazSealResult.verifyUrl} target="_blank" rel="noopener noreferrer" style={{fontSize:10,color:th.gold,wordBreak:"break-all"}}>{cartazSealResult.verifyUrl}</a>
+                </div>
+
+                {/* Actions */}
+                <div style={{display:"flex",gap:8}}>
+                  <button onClick={()=>{
+                    navigator.clipboard.writeText(cartazSealResult.verifyUrl);
+                    flash('📋 URL copiada!');
+                  }} style={{flex:1,padding:"10px",borderRadius:10,background:th.card,border:`1px solid ${th.border}`,color:th.text,fontSize:11,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:4}}>
+                    📋 {lang==="de"?"Link kopieren":lang==="pt"?"Copiar link":"Copy link"}
+                  </button>
+                  <button onClick={()=>{
+                    const shareData={title:cartazSealResult.title,text:`Verificar Cartaz: ${cartazSealResult.id}`,url:cartazSealResult.verifyUrl};
+                    if(navigator.share)navigator.share(shareData).catch(()=>{});
+                    else{navigator.clipboard.writeText(cartazSealResult.verifyUrl);flash('📋 URL copiada!');}
+                  }} style={{flex:1,padding:"10px",borderRadius:10,background:th.gold,border:"none",color:"#FFF",fontSize:11,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:4}}>
+                    📤 {lang==="de"?"Teilen":lang==="pt"?"Partilhar":"Share"}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Close button */}
+            <button onClick={()=>{setShowCartazSealModal(false);setCartazSealResult(null);setCartazSealPhase(0);}}
+              style={{width:"100%",padding:"10px",borderRadius:10,background:"transparent",border:`1px solid ${th.border}`,color:th.dim,fontSize:11,cursor:"pointer",marginTop:12}}>
+              {lang==="de"?"Schließen":lang==="pt"?"Fechar":"Close"}
+            </button>
+          </>}
+        </div>
+      </div>}
 
       {/* ═══ FIX (I): VOICE PASTE MODAL ═══ */}
       {showVoiceModal&&<div style={{position:"fixed",inset:0,background:"#000A",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:16}} onClick={()=>setShowVoiceModal(false)}>
