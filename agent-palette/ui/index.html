@@ -26,6 +26,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 /* Seal Progression Animation */
 @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.8; } }
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+/* C2: Mobile bottom sheet slide-up */
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 /* Vault Biofeedback Animation — Phase 1B */
 @keyframes vaultPulse {
   0% { box-shadow: 0 0 0 0 rgba(139, 105, 20, 0.4); transform: scale(1); }
@@ -6002,17 +6004,42 @@ function App(){
                 </div>
               )}
               <div style={{flex:1,overflowY:"auto",padding:"10px 8px"}}>
-                {/* ═══ SMART ZONES SELECTOR — C5 Cartaz Grammars G1-G4 ═══ */}
+                {/* ═══ SMART ZONES SELECTOR — C5 Cartaz Grammars G1-G4 (C2: Mobile bottom sheet) ═══ */}
                 {showGrammarSelector&&(()=>{
                   const GRAMMAR_LABELS={de:{title:'Wähle die visuelle Grammatik',sub:'Dragon füllt aus. Du entscheidest.'},en:{title:'Choose the visual grammar',sub:'Dragon fills in. You decide.'},pt:{title:'Escolhe a gramática visual',sub:'Dragon preenche. Tu decides.'}};
                   const GRAMMARS=[
-                    {id:'G1',name:{de:'Trias',en:'Triad',pt:'Tríade'},desc:{de:'3 gleiche Nachrichten',en:'3 equal messages',pt:'3 mensagens iguais'}},
-                    {id:'G2',name:{de:'Kontrast',en:'Contrast',pt:'Contraste'},desc:{de:'Bild ↔ Text 50/50',en:'Image ↔ Text 50/50',pt:'Imagem ↔ Texto 50/50'}},
-                    {id:'G3',name:{de:'Pyramide',en:'Pyramid',pt:'Pirâmide'},desc:{de:'Hero → Körper → CTA',en:'Hero → Body → CTA',pt:'Hero → Corpo → CTA'},recommended:true},
-                    {id:'G4',name:{de:'Spannung',en:'Tension',pt:'Tensão'},desc:{de:'Problem ↔ Lösung',en:'Problem ↔ Solution',pt:'Problema ↔ Solução'}}
+                    {id:'G1',name:{de:'Trias',en:'Triad',pt:'Tríade'},desc:{de:'3 gleiche Nachrichten',en:'3 equal messages',pt:'3 mensagens iguais'},icon:'◐◐◐'},
+                    {id:'G2',name:{de:'Kontrast',en:'Contrast',pt:'Contraste'},desc:{de:'Bild ↔ Text 50/50',en:'Image ↔ Text 50/50',pt:'Imagem ↔ Texto 50/50'},icon:'◧'},
+                    {id:'G3',name:{de:'Pyramide',en:'Pyramid',pt:'Pirâmide'},desc:{de:'Hero → Körper → CTA',en:'Hero → Body → CTA',pt:'Hero → Corpo → CTA'},recommended:true,icon:'△'},
+                    {id:'G4',name:{de:'Spannung',en:'Tension',pt:'Tensão'},desc:{de:'Problem ↔ Lösung',en:'Problem ↔ Solution',pt:'Problema ↔ Solução'},icon:'⚡'}
                   ];
                   const gl=GRAMMAR_LABELS[lang]||GRAMMAR_LABELS.en;
                   const selectAndSend=(g)=>{setSelectedGrammar(g);setShowGrammarSelector(false);const msg=`Quero criar um cartaz com gramática ${g}`;setChatIn(msg);setTimeout(()=>send(msg),150);};
+                  // C2: Mobile renders as bottom sheet, desktop as inline
+                  if(isMobile){
+                    return React.createElement('div',{onClick:e=>{if(e.target===e.currentTarget)setShowGrammarSelector(false);},style:{position:'fixed',inset:0,background:'rgba(0,0,0,0.6)',zIndex:1000,display:'flex',alignItems:'flex-end',justifyContent:'center'}},
+                      React.createElement('div',{style:{width:'100%',maxHeight:'60vh',background:th.card,borderRadius:'16px 16px 0 0',padding:'16px 16px 24px',overflowY:'auto',animation:'slideUp 0.25s ease-out'}},
+                        React.createElement('div',{style:{width:40,height:4,background:th.border,borderRadius:2,margin:'0 auto 16px'}}),
+                        React.createElement('div',{style:{textAlign:'center',marginBottom:16}},
+                          React.createElement('h2',{style:{fontFamily:"'Bricolage Grotesque',sans-serif",fontSize:16,fontWeight:700,color:th.text,margin:0}},gl.title),
+                          React.createElement('p',{style:{fontSize:11,color:th.dim,margin:'4px 0 0'}},gl.sub)
+                        ),
+                        React.createElement('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}},
+                          ...GRAMMARS.map(g=>React.createElement('button',{
+                            key:g.id,
+                            onClick:()=>selectAndSend(g.id),
+                            style:{padding:16,borderRadius:12,border:`2px solid ${g.recommended?th.gold:th.border}`,background:g.recommended?th.gold+'12':th.hover,cursor:'pointer',textAlign:'center',minHeight:80,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:4,touchAction:'manipulation'}
+                          },
+                            React.createElement('div',{style:{fontSize:24}},g.icon),
+                            React.createElement('div',{style:{fontSize:12,fontWeight:700,color:th.text}},g.id),
+                            React.createElement('div',{style:{fontSize:10,color:th.dim}},g.name[lang]||g.name.en),
+                            g.recommended&&React.createElement('span',{style:{background:th.gold,color:'#fff',fontSize:8,padding:'2px 6px',borderRadius:4,fontWeight:600,marginTop:2}},'⭐')
+                          ))
+                        )
+                      )
+                    );
+                  }
+                  // Desktop: inline card
                   return React.createElement('div',{style:{padding:16,maxWidth:500,margin:'0 auto'}},
                     React.createElement('div',{style:{textAlign:'center',marginBottom:16}},
                       React.createElement('div',{style:{width:48,height:48,margin:'0 auto 12px',color:th.gold},dangerouslySetInnerHTML:{__html:getWindiIcon('poster')}}),
