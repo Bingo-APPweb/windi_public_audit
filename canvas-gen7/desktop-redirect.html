@@ -1,0 +1,20 @@
+<!-- ============================================================
+     DESKTOP REDIRECT — Canvas Gen 7 Fase 1
+     Injetar como PRIMEIRO script no <head> de:
+     /opt/windi/desktop/frontend/index.html
+     ============================================================ -->
+
+<script>
+// Desktop-only guard — Gen 7 Fase 1
+// Sem dependências, executa imediatamente
+(function() {
+  var ua = navigator.userAgent;
+  var isMobile = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua)
+              || window.innerWidth < 768
+              || ('ontouchstart' in window && window.innerWidth < 1024);
+
+  if (isMobile) {
+    window.location.replace('https://windi-domain.com/app/?from=desktop');
+  }
+})();
+</script>
