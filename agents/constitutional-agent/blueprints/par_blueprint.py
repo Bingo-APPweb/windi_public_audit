@@ -231,7 +231,8 @@ def verify_forensic_hash(remote_id: str, expected_hash: str) -> dict:
 
         if data.get('receipts') and len(data['receipts']) > 0:
             receipt = data['receipts'][0]
-            ledger_hash = receipt.get('forensic_hash') or receipt.get('hash')
+            # Ledger may store hash as: forensic_hash, hash, or content_hash
+            ledger_hash = receipt.get('forensic_hash') or receipt.get('hash') or receipt.get('content_hash')
 
             if ledger_hash and hmac.compare_digest(ledger_hash, expected_hash):
                 return {
