@@ -1,0 +1,586 @@
+<!-- ============================================================
+     WINDI Canvas Gen 7 — One-Tap Endorsement
+     Injetar ANTES do </body> em /opt/windi/agent-palette/ui/index.html
+     Requer: windi-touch.js carregado + DID session activa
+     ============================================================ -->
+
+<!-- G3 Bottom Sheet: Endosso de Virtude -->
+<div id="windi-endorse-sheet" class="windi-gs hidden" aria-modal="true" role="dialog" aria-label="Endosso de Virtude">
+  <div class="windi-gs-backdrop" id="gs-backdrop"></div>
+  <div class="windi-gs-container" id="gs-container">
+    <div class="windi-gs-handle"></div>
+
+    <!-- Estado: verificando -->
+    <div class="windi-gs-content" id="gs-state-verifying">
+      <div class="gs-verifying-row">
+        <span class="gs-pulse-dot"></span>
+        <small>Verificação Stealth em curso…</small>
+      </div>
+    </div>
+
+    <!-- Estado: pronto para endossar -->
+    <div class="windi-gs-content hidden" id="gs-state-ready">
+      <header class="gs-header">
+        <div class="gs-header-left">
+          <span class="gs-verified-badge">✓ .jmpg</span>
+          <h2 class="gs-title">Endosso de Virtude</h2>
+        </div>
+        <button class="gs-close-btn" id="gs-close-btn" aria-label="Fechar">✕</button>
+      </header>
+
+      <p class="gs-subtitle">O teu DID assina a autenticidade deste documento na Ledger.</p>
+
+      <div class="gs-actions" id="gs-actions">
+        <button class="gs-btn gs-btn-skill" data-action="VALIDATE_SKILL">
+          <span class="gs-btn-icon">🛡️</span>
+          <div class="gs-btn-label">
+            <strong>Validar Skill</strong>
+            <span>Confirma competência técnica</span>
+          </div>
+        </button>
+        <button class="gs-btn gs-btn-exp" data-action="ATTEST_EXP">
+          <span class="gs-btn-icon">🤝</span>
+          <div class="gs-btn-label">
+            <strong>Atestar Experiência</strong>
+            <span>Confirma convivência ou projecto</span>
+          </div>
+        </button>
+        <button class="gs-btn gs-btn-rec" data-action="RECOMMEND">
+          <span class="gs-btn-icon">⭐</span>
+          <div class="gs-btn-label">
+            <strong>Recomendar</strong>
+            <span>Endossa para a rede</span>
+          </div>
+        </button>
+      </div>
+
+      <footer class="gs-footer">
+        <span class="gs-pulse-dot small"></span>
+        <small>Verificado: <span id="gs-hash-display">---</span></small>
+        <small class="gs-count" id="gs-endorse-count"></small>
+      </footer>
+    </div>
+
+    <!-- Estado: sucesso -->
+    <div class="windi-gs-content hidden" id="gs-state-success">
+      <div class="gs-success-body">
+        <div class="gs-success-icon">🌿</div>
+        <h2>Endosso Registado</h2>
+        <p id="gs-success-action-label"></p>
+        <small id="gs-success-receipt"></small>
+      </div>
+    </div>
+
+    <!-- Estado: erro -->
+    <div class="windi-gs-content hidden" id="gs-state-error">
+      <div class="gs-error-body">
+        <div class="gs-error-icon">⚠️</div>
+        <p id="gs-error-msg">Erro ao registar endosso.</p>
+        <button class="gs-btn-retry" id="gs-retry-btn">Tentar novamente</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+/* ── WINDI Bottom Sheet G3 — One-Tap Endorsement ────────────── */
+
+.windi-gs {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  opacity: 0;
+}
+.windi-gs.visible {
+  opacity: 1;
+  pointer-events: all;
+}
+.windi-gs.hidden {
+  display: none;
+}
+
+.windi-gs-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(3px);
+  cursor: pointer;
+}
+
+.windi-gs-container {
+  position: relative;
+  background: var(--gs-bg, #0f0f1a);
+  border-radius: 20px 20px 0 0;
+  border-top: 1px solid rgba(0, 255, 150, 0.15);
+  padding: 12px 20px 0;
+  padding-bottom: max(20px, env(safe-area-inset-bottom));
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.5);
+}
+.windi-gs.visible .windi-gs-container {
+  transform: translateY(0);
+}
+
+.windi-gs-handle {
+  width: 40px;
+  height: 4px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 2px;
+  margin: 0 auto 16px;
+}
+
+.windi-gs-content {
+  padding-bottom: 8px;
+}
+.windi-gs-content.hidden { display: none; }
+
+/* ── Header ─────────────────────────────────────────────────── */
+.gs-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.gs-header-left { display: flex; flex-direction: column; gap: 4px; }
+
+.gs-verified-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: #00ff96;
+  background: rgba(0, 255, 150, 0.1);
+  border: 1px solid rgba(0, 255, 150, 0.25);
+  border-radius: 20px;
+  padding: 2px 8px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  width: fit-content;
+}
+
+.gs-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #f0ece0;
+  margin: 0;
+  font-family: 'Bricolage Grotesque', sans-serif;
+}
+
+.gs-close-btn {
+  background: rgba(255,255,255,0.06);
+  border: none;
+  color: rgba(255,255,255,0.4);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+.gs-close-btn:hover, .gs-close-btn:active {
+  background: rgba(255,255,255,0.12);
+}
+
+.gs-subtitle {
+  font-size: 13px;
+  color: rgba(240,236,224,0.5);
+  margin: 0 0 16px;
+}
+
+/* ── Action Buttons ──────────────────────────────────────────── */
+.gs-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.gs-btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 14px 16px;
+  min-height: 64px; /* ≥44px — touch target */
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.gs-btn:active {
+  transform: scale(0.97);
+  border-color: #00ff96;
+  background: rgba(0, 255, 150, 0.08);
+  box-shadow: 0 0 20px rgba(0, 255, 150, 0.15);
+}
+
+.gs-btn.loading {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.gs-btn-icon {
+  font-size: 22px;
+  width: 32px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.gs-btn-label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.gs-btn-label strong {
+  font-size: 14px;
+  color: #f0ece0;
+  font-weight: 600;
+}
+.gs-btn-label span {
+  font-size: 12px;
+  color: rgba(240,236,224,0.45);
+}
+
+/* ── Footer ─────────────────────────────────────────────────── */
+.gs-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 0 4px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.gs-footer small {
+  font-size: 11px;
+  color: rgba(240,236,224,0.35);
+  font-family: 'JetBrains Mono', monospace;
+}
+.gs-count {
+  margin-left: auto;
+  color: rgba(0, 255, 150, 0.6) !important;
+}
+
+/* ── Pulse dot ───────────────────────────────────────────────── */
+.gs-pulse-dot {
+  width: 8px;
+  height: 8px;
+  background: #00ff96;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 0 rgba(0, 255, 150, 0.6);
+  animation: gs-pulse 2s ease-out infinite;
+}
+.gs-pulse-dot.small { width: 6px; height: 6px; }
+
+@keyframes gs-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(0, 255, 150, 0.6); }
+  60%  { box-shadow: 0 0 0 6px rgba(0, 255, 150, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 255, 150, 0); }
+}
+
+/* ── Verifying state ─────────────────────────────────────────── */
+.gs-verifying-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 0;
+}
+.gs-verifying-row small {
+  font-size: 12px;
+  color: rgba(240,236,224,0.4);
+}
+
+/* ── Success state ───────────────────────────────────────────── */
+.gs-success-body, .gs-error-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 20px 0;
+  text-align: center;
+}
+.gs-success-icon { font-size: 40px; }
+.gs-success-body h2 {
+  font-size: 18px;
+  color: #00ff96;
+  margin: 0;
+}
+.gs-success-body p {
+  font-size: 13px;
+  color: rgba(240,236,224,0.7);
+  margin: 0;
+}
+.gs-success-body small {
+  font-size: 10px;
+  color: rgba(240,236,224,0.3);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.gs-error-icon { font-size: 36px; }
+.gs-error-body p {
+  font-size: 13px;
+  color: rgba(255,120,120,0.8);
+}
+.gs-btn-retry {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #f0ece0;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  min-height: 44px;
+}
+</style>
+
+<script>
+// ── EndorsementEngine v2.0 — DID Sovereign ────────────────────
+const EndorsementEngine = {
+  _currentTargetId: null,
+  _currentTargetHash: null,
+
+  // Inicia stealth verify e abre bottom sheet
+  async openFor(targetId) {
+    this._currentTargetId = targetId;
+    WindiEndorseUI.open();
+    WindiEndorseUI.setState('verifying');
+
+    try {
+      // Stealth verify silencioso
+      const res = await fetch(
+        `/verify-public/api/verify/${encodeURIComponent(targetId)}`,
+        { signal: AbortSignal.timeout(6000) }
+      );
+      const data = await res.json().catch(() => ({}));
+
+      const verified = data.valid || data.verified
+        || (data.receipt && data.receipt.id);
+
+      if (!verified) {
+        WindiEndorseUI.setState('error', 'Documento não verificado na Ledger.');
+        return;
+      }
+
+      const hash = data.hash
+        || data.receipt?.hash
+        || data.fingerprint
+        || '—';
+
+      this._currentTargetHash = hash;
+
+      // Mostrar hash truncado + contagem de endossos existentes
+      document.getElementById('gs-hash-display').textContent =
+        hash.substring(0, 12) + '…';
+
+      // Buscar contagem de endossos
+      this._loadCount(targetId);
+
+      WindiEndorseUI.setState('ready');
+
+    } catch (err) {
+      console.warn('[EndorsementEngine] verify timeout:', err);
+      // Mesmo com timeout, permitir endosso (ledger verificará)
+      document.getElementById('gs-hash-display').textContent = 'pendente…';
+      WindiEndorseUI.setState('ready');
+    }
+  },
+
+  async _loadCount(targetId) {
+    try {
+      const res = await fetch(
+        `/virtue/api/virtue-receipt/${encodeURIComponent(targetId)}`
+      );
+      const data = await res.json();
+      const count = data.total || 0;
+      if (count > 0) {
+        document.getElementById('gs-endorse-count').textContent =
+          `${count} endosso${count !== 1 ? 's' : ''}`;
+      }
+    } catch(_) {}
+  },
+
+  // Executa o endosso após tap humano
+  async castVirtue(action) {
+    if (!this._currentTargetId) return;
+
+    // Desabilitar botões durante request
+    WindiEndorseUI.setActionsLoading(true);
+
+    const payload = {
+      target_receipt_id: this._currentTargetId,
+      action: action,
+      timestamp: Date.now(),
+      client_metadata: {
+        agent: 'WINDI-Mobile-Gen7',
+        v: '1.0',
+        ua: navigator.userAgent.substring(0, 80)
+      }
+    };
+
+    try {
+      const res = await fetch('/virtue/api/virtue-receipt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        signal: AbortSignal.timeout(10000)
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        const msg = data.error || 'Falha no endosso.';
+        WindiEndorseUI.setState('error', msg);
+        return;
+      }
+
+      // Sucesso
+      const actionLabels = {
+        VALIDATE_SKILL: 'Skill validado e registado na Ledger.',
+        ATTEST_EXP:     'Experiência atestada e registada na Ledger.',
+        RECOMMEND:      'Recomendação registada na Ledger.'
+      };
+
+      document.getElementById('gs-success-action-label').textContent =
+        actionLabels[action] || 'Endosso registado.';
+      document.getElementById('gs-success-receipt').textContent =
+        `Receipt: VR-${data.virtue_receipt_id || '—'}`;
+
+      WindiEndorseUI.setState('success');
+
+      // Auto-fechar após 2.5s
+      setTimeout(() => WindiEndorseUI.close(), 2500);
+
+    } catch (err) {
+      console.error('[EndorsementEngine] castVirtue error:', err);
+      WindiEndorseUI.setState('error', 'Sem resposta do servidor. Tenta novamente.');
+    } finally {
+      WindiEndorseUI.setActionsLoading(false);
+    }
+  }
+};
+
+// ── UI Controller ─────────────────────────────────────────────
+const WindiEndorseUI = {
+
+  open() {
+    const sheet = document.getElementById('windi-endorse-sheet');
+    sheet.classList.remove('hidden');
+    // Força reflow para animação
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => sheet.classList.add('visible'));
+    });
+    document.body.style.overflow = 'hidden';
+  },
+
+  close() {
+    const sheet = document.getElementById('windi-endorse-sheet');
+    sheet.classList.remove('visible');
+    document.body.style.overflow = '';
+    setTimeout(() => {
+      sheet.classList.add('hidden');
+      this.setState('verifying'); // reset para próxima abertura
+    }, 300);
+  },
+
+  setState(state, msg = '') {
+    const states = ['verifying', 'ready', 'success', 'error'];
+    states.forEach(s => {
+      const el = document.getElementById(`gs-state-${s}`);
+      if (el) el.classList.toggle('hidden', s !== state);
+    });
+    if (state === 'error' && msg) {
+      const el = document.getElementById('gs-error-msg');
+      if (el) el.textContent = msg;
+    }
+  },
+
+  setActionsLoading(loading) {
+    document.querySelectorAll('.gs-btn').forEach(btn => {
+      btn.classList.toggle('loading', loading);
+    });
+  }
+};
+
+// ── Stealth Trigger — detecta .jmpg aberto no Canvas ─────────
+const WindiStealthTrigger = {
+  init() {
+    // Hook 1: evento custom do Canvas quando carrega documento
+    document.addEventListener('canvas:document:loaded', (e) => {
+      const doc = e.detail;
+      if (doc && doc.type === 'jmpg' && doc.id) {
+        EndorsementEngine.openFor(doc.id);
+      }
+    });
+
+    // Hook 2: URL params (ex: /app/?verify=RECEIPT-ID)
+    const params = new URLSearchParams(window.location.search);
+    const verifyId = params.get('verify') || params.get('endorse');
+    if (verifyId) {
+      setTimeout(() => EndorsementEngine.openFor(verifyId), 800);
+    }
+
+    // Hook 3: QR scan result (custom event do Verify Public)
+    document.addEventListener('windi:qr:scanned', (e) => {
+      if (e.detail?.receipt_id) {
+        EndorsementEngine.openFor(e.detail.receipt_id);
+      }
+    });
+
+    console.log('[WindiStealthTrigger] activo');
+  }
+};
+
+// ── Event Listeners ──────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+
+  // Fechar sheet
+  document.getElementById('gs-backdrop')?.addEventListener('click', () => WindiEndorseUI.close());
+  document.getElementById('gs-close-btn')?.addEventListener('click', () => WindiEndorseUI.close());
+  document.getElementById('gs-retry-btn')?.addEventListener('click', () => {
+    if (EndorsementEngine._currentTargetId) {
+      EndorsementEngine.openFor(EndorsementEngine._currentTargetId);
+    }
+  });
+
+  // Botões de acção
+  document.querySelectorAll('.gs-btn[data-action]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const action = btn.dataset.action;
+      EndorsementEngine.castVirtue(action);
+    });
+
+    // Swipe up como trigger alternativo (Fase 2)
+    if (window.WindiTouch) {
+      WindiTouch.onLongPress(btn, () => {
+        btn.classList.add('gs-btn--longpress');
+        setTimeout(() => btn.classList.remove('gs-btn--longpress'), 400);
+      });
+    }
+  });
+
+  // Inicializar stealth trigger
+  WindiStealthTrigger.init();
+});
+
+// Expor globalmente para integração com Canvas Gen 7
+window.EndorsementEngine = EndorsementEngine;
+window.WindiEndorseUI    = WindiEndorseUI;
+</script>

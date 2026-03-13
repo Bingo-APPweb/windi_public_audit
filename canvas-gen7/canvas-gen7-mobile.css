@@ -1,0 +1,212 @@
+/* ============================================================
+   canvas-gen7-mobile.css — Canvas Gen 7 Fase 1
+   Path destino: incluir em /opt/windi/agent-palette/ui/index.html
+   (dentro de <style> ou como <link>)
+   ============================================================ */
+
+/* ── Breakpoints WINDI canónicos ─────────────────────────── */
+
+/* === MOBILE (< 768px) — Layout Gen 7 === */
+@media (max-width: 767px) {
+
+  /* G1 — Canvas Core: full viewport */
+  #canvas-area,
+  .canvas-container,
+  [data-zone="G1"] {
+    width: 100vw !important;
+    height: calc(100vh - 64px) !important; /* reserva bottom bar */
+    overflow: hidden;
+    touch-action: none; /* pointer events take over */
+    position: relative;
+  }
+
+  /* G2 — Toolbar → Bottom Bar (zona do polegar) */
+  #toolbar,
+  .toolbar,
+  .palette-toolbar,
+  [data-zone="G2"] {
+    position: fixed !important;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: auto !important;
+    height: 64px;
+    min-height: 64px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 8px;
+    padding-bottom: env(safe-area-inset-bottom, 0px); /* iOS notch */
+    background: var(--bg-toolbar, #1a1a2e);
+    border-top: 1px solid rgba(255,255,255,0.1);
+    z-index: 1000;
+    box-shadow: 0 -2px 12px rgba(0,0,0,0.3);
+  }
+
+  /* Esconder sidebars no mobile — G3/G4 vão para bottom sheets (Fase 2) */
+  #sidebar,
+  .sidebar,
+  .layer-panel,
+  [data-zone="G3"],
+  [data-zone="G4"] {
+    display: none !important;
+  }
+
+  /* Touch targets ≥ 44px para todos os botões em G2 */
+  [data-zone="G2"] button,
+  [data-zone="G2"] [role="button"],
+  [data-zone="G2"] .icon-btn,
+  [data-zone="G2"] .tool-btn,
+  #toolbar button,
+  #toolbar [role="button"],
+  .toolbar button,
+  .toolbar .icon-btn {
+    min-width: 44px !important;
+    min-height: 44px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    cursor: pointer;
+    border-radius: 8px;
+  }
+
+  /* Remove hover states no touch */
+  .windi-touch button:hover,
+  .windi-touch .icon-btn:hover {
+    background: inherit;
+  }
+
+  /* Text labels escondidos no mobile — só icons */
+  .toolbar-label,
+  .btn-label {
+    display: none;
+  }
+
+  /* Header / topbar compacto */
+  #app-header,
+  .app-header,
+  .palette-header {
+    height: 48px;
+    padding: 0 12px;
+    font-size: 14px;
+  }
+
+  /* Remove sidebar toggle — sem sentido no mobile */
+  .sidebar-toggle {
+    display: none !important;
+  }
+
+  /* Fullscreen canvas sem margens */
+  body, html {
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Dragon badge / GovPanel — compactar */
+  .gov-panel,
+  #gov-panel {
+    display: none !important;
+  }
+
+  .gov-badge {
+    position: fixed;
+    top: 8px;
+    right: 8px;
+    font-size: 10px;
+    padding: 2px 6px;
+    z-index: 999;
+  }
+}
+
+/* === TABLET (768px – 1199px) === */
+@media (min-width: 768px) and (max-width: 1199px) {
+
+  /* Toolbar lateral colapsável */
+  #toolbar,
+  .toolbar,
+  [data-zone="G2"] {
+    width: 56px;
+    flex-direction: column;
+    overflow: hidden;
+    transition: width 0.2s ease;
+  }
+
+  #toolbar:hover,
+  .toolbar:hover,
+  [data-zone="G2"]:hover {
+    width: 180px;
+  }
+
+  /* Touch targets ≥ 44px também no tablet */
+  [data-zone="G2"] button,
+  #toolbar button,
+  .toolbar button {
+    min-width: 44px;
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+
+  /* Canvas adaptado */
+  #canvas-area,
+  [data-zone="G1"] {
+    margin-left: 56px;
+    touch-action: none;
+  }
+}
+
+/* === DESKTOP (≥ 1200px) — comportamento original preservado === */
+@media (min-width: 1200px) {
+  /* nada — deixa o Gen 6 original intacto */
+}
+
+/* ── Pinch-to-zoom visual feedback ──────────────────────── */
+.canvas-zooming {
+  cursor: zoom-in;
+}
+
+/* ── Touch-active state (feedback visual imediato) ────────── */
+.windi-touch button:active,
+.windi-touch [role="button"]:active {
+  opacity: 0.7;
+  transform: scale(0.95);
+  transition: transform 0.08s ease, opacity 0.08s ease;
+}
+
+/* ── Mensagem contextual "from=desktop" ──────────────────── */
+.from-desktop-notice {
+  display: none;
+  position: fixed;
+  top: 52px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(30, 30, 50, 0.95);
+  color: #c8b5ff;
+  font-size: 12px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(200, 181, 255, 0.3);
+  z-index: 1100;
+  white-space: nowrap;
+  backdrop-filter: blur(8px);
+}
+
+.from-desktop-notice.visible {
+  display: block;
+  animation: fadeInDown 0.3s ease forwards;
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateX(-50%) translateY(-8px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* ── Scroll prevention no canvas touch ──────────────────── */
+[data-zone="G1"],
+#canvas-area,
+.canvas-container {
+  user-select: none;
+  -webkit-user-select: none;
+}
