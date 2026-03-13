@@ -1,6 +1,9 @@
 import hashlib
 import json
 import logging
+import tarfile
+import io
+import gzip
 from datetime import datetime, timezone
 from typing import Optional
 import httpx
@@ -8,25 +11,75 @@ import httpx
 log = logging.getLogger("windi.verify.engine")
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# JMPG Proof Extractor — Compatible with IrmaEncoder APP1 format
+# JMPG Proof Extractor — Compatible with tar.gz bundle AND JPEG APP1 formats
 # ═══════════════════════════════════════════════════════════════════════════════
 
 WINDI_SIGNATURE = "WINDI-SOVEREIGN-PROOF"
 
 def extract_jmpg_proof(content: bytes) -> Optional[dict]:
     """
-    Extract WINDI proof from .jmpg file (APP1 segment after SOI).
-    Compatible with IrmaEncoder.injectProof() format.
+    Extract WINDI proof from .jmpg file.
 
-    Returns proof dict if valid WINDI .jmpg, None otherwise.
+    Supports two formats:
+    1. tar.gz bundle (P1-P5 blocks) — primary format
+    2. JPEG with APP1 segment — legacy/embedded format
+
+    Returns proof dict with ledger_anchor, issuer_did, timestamp, etc.
     """
     if len(content) < 10:
         return None
 
-    # Check JPEG magic bytes (SOI)
-    if content[0] != 0xFF or content[1] != 0xD8:
-        return None
+    # ═══ Format 1: tar.gz bundle (primary .jmpg format) ═══
+    # Check gzip magic bytes (1f 8b)
+    if content[0] == 0x1f and content[1] == 0x8b:
+        try:
+            return _extract_from_tarball(content)
+        except Exception as e:
+            log.debug(f"[JMPG] tar.gz extraction failed: {e}")
 
+    # ═══ Format 2: JPEG with APP1 (legacy IrmaEncoder format) ═══
+    if content[0] == 0xFF and content[1] == 0xD8:
+        try:
+            return _extract_from_jpeg_app1(content)
+        except Exception as e:
+            log.debug(f"[JMPG] JPEG APP1 extraction failed: {e}")
+
+    return None
+
+
+def _extract_from_tarball(content: bytes) -> Optional[dict]:
+    """Extract proof from tar.gz bundle containing P1-P5 blocks."""
+    with tarfile.open(fileobj=io.BytesIO(content), mode='r:gz') as tar:
+        # Look for P2_proof.json
+        for member in tar.getmembers():
+            if member.name == 'P2_proof.json' or member.name.endswith('/P2_proof.json'):
+                f = tar.extractfile(member)
+                if f:
+                    p2_data = json.loads(f.read().decode('utf-8'))
+                    proof = p2_data.get('windi_proof', p2_data)
+
+                    if not proof.get('receipt_id'):
+                        return None
+
+                    log.info(f"[JMPG] Extracted proof from tar.gz bundle: {proof.get('receipt_id')}")
+
+                    return {
+                        "ledger_anchor": proof.get('receipt_id'),
+                        "issuer_did": proof.get('issuer', {}).get('did'),
+                        "issuer_actor": proof.get('issuer', {}).get('actor'),
+                        "timestamp": proof.get('timestamp_utc'),
+                        "content_hash": proof.get('content_hash'),
+                        "verify_url": proof.get('verify_url'),
+                        "qr_payload": proof.get('qr_payload'),
+                        "governance_level": proof.get('governance', {}).get('level'),
+                        "anchor_chain": proof.get('anchor_chain'),
+                        "windi_proof": proof  # Full proof for reference
+                    }
+    return None
+
+
+def _extract_from_jpeg_app1(content: bytes) -> Optional[dict]:
+    """Extract proof from JPEG APP1 segment (legacy format)."""
     # Check for APP1 marker right after SOI
     if content[2] != 0xFF or content[3] != 0xE1:
         return None
@@ -41,16 +94,13 @@ def extract_jmpg_proof(content: bytes) -> Optional[dict]:
     if data_end > len(content):
         return None
 
-    try:
-        proof_string = content[data_start:data_end].decode('utf-8')
-        proof = json.loads(proof_string)
+    proof_string = content[data_start:data_end].decode('utf-8')
+    proof = json.loads(proof_string)
 
-        # Validate WINDI signature
-        if proof.get('windi_proof') == WINDI_SIGNATURE:
-            log.info(f"[JMPG] Valid proof extracted: anchor={proof.get('ledger_anchor')}")
-            return proof
-    except (json.JSONDecodeError, UnicodeDecodeError) as e:
-        log.debug(f"[JMPG] Not a WINDI .jmpg: {e}")
+    # Validate WINDI signature
+    if proof.get('windi_proof') == WINDI_SIGNATURE:
+        log.info(f"[JMPG] Valid JPEG APP1 proof: anchor={proof.get('ledger_anchor')}")
+        return proof
 
     return None
 

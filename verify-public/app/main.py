@@ -157,9 +157,12 @@ def ledger_conn():
 
 class JmpgProof(BaseModel):
     issuer_did: Optional[str] = None
-    timestamp: Optional[int] = None
+    issuer_actor: Optional[str] = None
+    timestamp: Optional[str] = None  # ISO 8601 format
     capabilities: list = []
     verify_url: Optional[str] = None
+    governance_level: Optional[str] = None
+    content_hash: Optional[str] = None
 
 class VerifyResult(BaseModel):
     status: str
@@ -230,12 +233,15 @@ async def verify_file(file: UploadFile = File(...), request: Request = None):
         c = cache_get(f"jmpg:{ledger_anchor}")
         if c: return {**c, "cached": True}
         r = await engine.verify_document_id(ledger_anchor)
-        # Enrich response with proof metadata
+        # Enrich response with proof metadata from .jmpg bundle
         r["jmpg_proof"] = {
             "issuer_did": proof.get('issuer_did'),
+            "issuer_actor": proof.get('issuer_actor'),
             "timestamp": proof.get('timestamp'),
             "capabilities": proof.get('capabilities', []),
-            "verify_url": proof.get('verify_url')
+            "verify_url": proof.get('verify_url'),
+            "governance_level": proof.get('governance_level'),
+            "content_hash": proof.get('content_hash')
         }
         cache_set(f"jmpg:{ledger_anchor}", r)
         # W-PROV-002: Emit propagation event for .jmpg (non-blocking)
