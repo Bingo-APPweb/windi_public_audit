@@ -8165,11 +8165,32 @@ window.addEventListener('load', function() {
     document.body.appendChild(notice);
     setTimeout(()=>{notice.classList.add('visible');setTimeout(()=>notice.classList.remove('visible'),4000);},800);
   }
+  // C5: Virtual keyboard handler — adjust canvas when keyboard opens
+  function initVirtualKeyboardHandler(){
+    if(!window.visualViewport)return;
+    const canvasEl=document.querySelector('[data-zone="G1"]');
+    if(!canvasEl)return;
+    let lastKeyboardHeight=0;
+    window.visualViewport.addEventListener('resize',()=>{
+      const keyboardHeight=window.innerHeight-window.visualViewport.height;
+      if(keyboardHeight>50&&keyboardHeight!==lastKeyboardHeight){
+        canvasEl.style.marginBottom=keyboardHeight+'px';
+        canvasEl.style.transition='margin-bottom 0.15s ease-out';
+        lastKeyboardHeight=keyboardHeight;
+        console.log('[Gen7] Keyboard open:',keyboardHeight+'px');
+      }else if(keyboardHeight<50&&lastKeyboardHeight>0){
+        canvasEl.style.marginBottom='0';
+        lastKeyboardHeight=0;
+        console.log('[Gen7] Keyboard closed');
+      }
+    });
+    console.log('[Gen7] Virtual keyboard handler active');
+  }
   function initGen7Mobile(){
     const isMobile=window.innerWidth<768||('ontouchstart' in window)||(navigator.maxTouchPoints>0);
     if(!isMobile){console.log('[Gen7] Desktop — skipped');return;}
     console.log('[Gen7] Mobile — Fase 1 init');
-    setTimeout(()=>{initPinchZoom();enforceMinTapTargets();handleFromDesktop();console.log('[Gen7] Fase 1 activa');},300);
+    setTimeout(()=>{initPinchZoom();enforceMinTapTargets();handleFromDesktop();initVirtualKeyboardHandler();console.log('[Gen7] Fase 1 activa');},300);
     let resizeTimer;
     window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(enforceMinTapTargets,200);});
   }
