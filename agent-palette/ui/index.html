@@ -5848,7 +5848,7 @@ function App(){
                   {contentHistory.length>0&&<button onClick={undoLast} style={{padding:"6px 10px",borderRadius:8,background:th.card,border:`1px solid ${th.border}`,color:th.warning,fontSize:10,cursor:"pointer"}}>↩️{t.doc.undo}</button>}
                   <input ref={fileRef} type="file" accept="image/*" style={{display:"none"}} onChange={e=>{if(e.target.files?.[0])addImage(e.target.files[0]);e.target.value="";}}/>
                   <div style={{flex:1}}/>
-                  <button onClick={startFinalize} disabled={!docTitle.trim()||!docContent.trim()} style={{padding:"6px 16px",borderRadius:8,background:(docTitle.trim()&&docContent.trim())?th.gold:th.dim,border:"none",color:"#FFF",fontSize:11,fontWeight:700,cursor:"pointer",opacity:(!docTitle.trim()||!docContent.trim())?0.4:1}}>🛡️{t.doc.finalize}</button>
+                  <button data-action="propagate" onClick={startFinalize} disabled={!docTitle.trim()||!docContent.trim()} style={{padding:"6px 16px",borderRadius:8,background:(docTitle.trim()&&docContent.trim())?th.gold:th.dim,border:"none",color:"#FFF",fontSize:11,fontWeight:700,cursor:"pointer",opacity:(!docTitle.trim()||!docContent.trim())?0.4:1}}>🛡️{t.doc.finalize}</button>
                 </>}
                 {docStatus==="finalized"&&<>
                   <div style={{display:"flex",alignItems:"center",gap:6,color:th.success,fontSize:11}}>🛡️ {t.doc.finalized}</div>
@@ -8069,6 +8069,9 @@ document.addEventListener('DOMContentLoaded',()=>{
 window.EndorsementEngine=EndorsementEngine;
 window.WindiEndorseUI=WindiEndorseUI;
 </script>
+
+<!-- W-SAFETY-FLASH-ALERT — Sister Witness sentinel for .jmpg safety_level -->
+<script src="safety-flash-alert.js"></script>
 
 </body>
 </html>
