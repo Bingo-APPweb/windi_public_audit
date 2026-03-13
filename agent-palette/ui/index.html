@@ -6363,8 +6363,8 @@ function App(){
                 onClick={e=>{if(e.target===e.currentTarget)setDeskSelected(null);}}
                 onDrop={deskHandleDrop} onDragOver={e=>e.preventDefault()}>
 
-                {/* TOOLBAR */}
-                <div data-zone="G2" style={{display:"flex",gap:4,padding:"6px 10px",background:th.card+"EE",borderRadius:10,border:"1px solid "+th.border,boxShadow:"0 2px 12px rgba(0,0,0,0.08)",marginBottom:12,flexWrap:"wrap",alignItems:"center",backdropFilter:"blur(8px)",position:"relative"}}>
+                {/* TOOLBAR (C4: horizontal scroll on mobile) */}
+                <div data-zone="G2" style={{display:"flex",gap:4,padding:"6px 10px",background:th.card+"EE",borderRadius:10,border:"1px solid "+th.border,boxShadow:"0 2px 12px rgba(0,0,0,0.08)",marginBottom:12,flexWrap:isMobile?"nowrap":"wrap",alignItems:"center",backdropFilter:"blur(8px)",position:"relative",overflowX:isMobile?"auto":"visible",WebkitOverflowScrolling:"touch",scrollSnapType:isMobile?"x mandatory":"none",scrollbarWidth:"none",msOverflowStyle:"none"}}>
                   {/* Layer Type Buttons */}
                   {Object.entries(LAYER_TYPES).map(([key,cfg])=>(
                     <button key={key} onClick={()=>deskAddLayer(key)} style={{display:"flex",alignItems:"center",gap:3,padding:"4px 8px",borderRadius:6,background:th.card,border:"1px solid "+th.border,color:th.text,fontSize:10,fontWeight:600,cursor:"pointer"}}>{cfg.icon}</button>
@@ -8098,8 +8098,9 @@ window.addEventListener('load', function() {
 /* Canvas Gen 7 Mobile — Fase 1 */
 @media (max-width: 767px) {
   [data-zone="G1"]{width:100vw!important;height:calc(100vh - 64px)!important;overflow:hidden;touch-action:none;position:relative;}
-  [data-zone="G2"]{position:fixed!important;bottom:0;left:0;right:0;top:auto!important;height:64px;min-height:64px;display:flex;flex-direction:row;align-items:center;justify-content:space-around;padding:0 8px;padding-bottom:env(safe-area-inset-bottom,0px);background:var(--bg-toolbar,#1a1a2e);border-top:1px solid rgba(255,255,255,0.1);z-index:1000;box-shadow:0 -2px 12px rgba(0,0,0,0.3);}
-  [data-zone="G2"] button{min-width:44px!important;min-height:44px!important;display:flex;align-items:center;justify-content:center;touch-action:manipulation;-webkit-tap-highlight-color:transparent;border-radius:8px;}
+  [data-zone="G2"]{position:fixed!important;bottom:0;left:0;right:0;top:auto!important;height:64px;min-height:64px;display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:8px;padding:0 12px;padding-bottom:env(safe-area-inset-bottom,0px);background:var(--bg-toolbar,#1a1a2e);border-top:1px solid rgba(255,255,255,0.1);z-index:1000;box-shadow:0 -2px 12px rgba(0,0,0,0.3);overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;scrollbar-width:none;-ms-overflow-style:none;}
+  [data-zone="G2"]::-webkit-scrollbar{display:none;}
+  [data-zone="G2"] button{min-width:44px!important;min-height:44px!important;flex-shrink:0;display:flex;align-items:center;justify-content:center;touch-action:manipulation;-webkit-tap-highlight-color:transparent;border-radius:8px;scroll-snap-align:start;}
   .windi-touch button:hover{background:inherit;}
   body,html{overscroll-behavior:none;-webkit-overflow-scrolling:touch;}
 }
