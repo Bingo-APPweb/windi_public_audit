@@ -1068,16 +1068,27 @@ body {
 /* ── Agent Strip ──────────────────────────────────────────────── */
 .agent-strip {
   display: flex;
-  gap: 5px;
-  padding: 7px 16px 9px;
+  gap: 6px;
+  padding: 8px 16px 10px;
+  padding-right: 40px; /* Extra space for last chip */
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
-  /* Fade right edge to hint scroll */
-  -webkit-mask-image: linear-gradient(to right, black 80%, transparent 100%);
-  mask-image: linear-gradient(to right, black 80%, transparent 100%);
+  position: relative;
+}
+
+/* Scroll fade indicator - right edge only */
+.agent-strip::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 40px;
+  background: linear-gradient(to right, transparent, var(--bg));
+  pointer-events: none;
 }
 
 .agent-strip::-webkit-scrollbar { display: none; }
@@ -1546,7 +1557,7 @@ body {
       </div>
 
       <div class="version-footer">
-        WINDI Mobile v1.0.0 · 🐉 · Kempten, Bayern<br>
+        WINDI Mobile v1.2.0 · 🐉 · Kempten, Bayern<br>
         AI processes. Human decides. WINDI guarantees.
       </div>
 
@@ -1989,7 +2000,7 @@ const TRANSLATIONS = {
     msgDragon:      'Dragon',
     msgYou:         'Você',
     now:            'agora',
-    welcomeMsg:     '" + t('welcomeMsg') + "',
+    welcomeMsg:     'Irmão 🐉 Dragon Mobile activo. Como posso ajudar?',
     dragonOffline:  'Dragon offline. Tenta mais tarde, Irmão.',
     noConnection:   'Sem ligação ao Dragon. Verifica a tua rede.',
     cameraNa:       'Câmara não disponível. Usa o ID manual.',
@@ -2188,7 +2199,7 @@ function init() {
   currentLang = detectedLang;
   setLang(detectedLang);
 
-  console.log('WINDI Mobile v1.0.0 🐉 — AI processes. Human decides. WINDI guarantees.');
+  console.log('WINDI Mobile v1.2.0 🐉 — AI processes. Human decides. WINDI guarantees.');
 }
 
 document.addEventListener('DOMContentLoaded', init);
