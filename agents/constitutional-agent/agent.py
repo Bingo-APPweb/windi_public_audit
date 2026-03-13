@@ -555,6 +555,14 @@ def create_agent_api(agent: WindiAgent):
         print(f"  [KEYS] W-KEYS-001 not loaded: {e}")
 
     try:
+        from blueprints.par_blueprint import par_bp, init_par_db
+        init_par_db()
+        app.register_blueprint(par_bp)
+        print("  [PAR] W-STD-PAR-001 Remote Activation v1.0.0 loaded on /par/*")
+    except ImportError as e:
+        print(f"  [PAR] W-STD-PAR-001 not loaded: {e}")
+
+    try:
         from blueprints.forensic_blueprint import forensic_bp, init_forensic_db
         init_forensic_db()
         app.register_blueprint(forensic_bp)
