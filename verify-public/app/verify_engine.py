@@ -1,10 +1,59 @@
 import hashlib
+import json
 import logging
 from datetime import datetime, timezone
 from typing import Optional
 import httpx
 
 log = logging.getLogger("windi.verify.engine")
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# JMPG Proof Extractor — Compatible with IrmaEncoder APP1 format
+# ═══════════════════════════════════════════════════════════════════════════════
+
+WINDI_SIGNATURE = "WINDI-SOVEREIGN-PROOF"
+
+def extract_jmpg_proof(content: bytes) -> Optional[dict]:
+    """
+    Extract WINDI proof from .jmpg file (APP1 segment after SOI).
+    Compatible with IrmaEncoder.injectProof() format.
+
+    Returns proof dict if valid WINDI .jmpg, None otherwise.
+    """
+    if len(content) < 10:
+        return None
+
+    # Check JPEG magic bytes (SOI)
+    if content[0] != 0xFF or content[1] != 0xD8:
+        return None
+
+    # Check for APP1 marker right after SOI
+    if content[2] != 0xFF or content[3] != 0xE1:
+        return None
+
+    # Read APP1 segment length (big-endian)
+    length = (content[4] << 8) | content[5]
+
+    # Extract data (length includes the 2 length bytes)
+    data_start = 6
+    data_end = 6 + length - 2
+
+    if data_end > len(content):
+        return None
+
+    try:
+        proof_string = content[data_start:data_end].decode('utf-8')
+        proof = json.loads(proof_string)
+
+        # Validate WINDI signature
+        if proof.get('windi_proof') == WINDI_SIGNATURE:
+            log.info(f"[JMPG] Valid proof extracted: anchor={proof.get('ledger_anchor')}")
+            return proof
+    except (json.JSONDecodeError, UnicodeDecodeError) as e:
+        log.debug(f"[JMPG] Not a WINDI .jmpg: {e}")
+
+    return None
+
 
 def now_iso():
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")

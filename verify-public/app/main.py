@@ -18,7 +18,7 @@ from fastapi import Request
 from fastapi.templating import Jinja2Templates
 
 sys.path.insert(0, os.path.dirname(__file__))
-from verify_engine import VerifyEngine
+from verify_engine import VerifyEngine, extract_jmpg_proof
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [VERIFY] %(levelname)s %(message)s", handlers=[logging.StreamHandler(), logging.FileHandler("/opt/windi/logs/verify-public.log")])
 log = logging.getLogger("windi.verify")
@@ -88,6 +88,12 @@ def ledger_conn():
     c.row_factory = sqlite3.Row
     return c
 
+class JmpgProof(BaseModel):
+    issuer_did: Optional[str] = None
+    timestamp: Optional[int] = None
+    capabilities: list = []
+    verify_url: Optional[str] = None
+
 class VerifyResult(BaseModel):
     status: str
     document_id: Optional[str] = None
@@ -99,6 +105,7 @@ class VerifyResult(BaseModel):
     checked_at: str
     message: str
     cached: bool = False
+    jmpg_proof: Optional[JmpgProof] = None  # .jmpg sovereign proof metadata
 
 @app.get("/health")
 @app.get("/verify-public/health")
@@ -141,6 +148,26 @@ async def verify_file(file: UploadFile = File(...)):
     content = await file.read(MAX_FILE_SIZE + 1)
     if len(content) > MAX_FILE_SIZE:
         raise HTTPException(status_code=413, detail="File too large. Max 10MB.")
+
+    # ═══ JMPG Detection — Extract embedded proof ═══
+    proof = extract_jmpg_proof(content)
+    if proof and proof.get('ledger_anchor'):
+        ledger_anchor = proof['ledger_anchor']
+        log.info(f"[VERIFY] .jmpg detected — verifying anchor: {ledger_anchor}")
+        c = cache_get(f"jmpg:{ledger_anchor}")
+        if c: return {**c, "cached": True}
+        r = await engine.verify_document_id(ledger_anchor)
+        # Enrich response with proof metadata
+        r["jmpg_proof"] = {
+            "issuer_did": proof.get('issuer_did'),
+            "timestamp": proof.get('timestamp'),
+            "capabilities": proof.get('capabilities', []),
+            "verify_url": proof.get('verify_url')
+        }
+        cache_set(f"jmpg:{ledger_anchor}", r)
+        return r
+
+    # ═══ Standard file — verify by SHA-256 hash ═══
     sha256 = hashlib.sha256(content).hexdigest()
     c = cache_get(f"hash:{sha256}")
     if c: return {**c, "cached": True}
