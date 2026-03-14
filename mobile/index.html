@@ -30,8 +30,6 @@
   --bottom-pad:  env(safe-area-inset-bottom, 0px);
   --font:        'Bricolage Grotesque', system-ui, sans-serif;
   --mono:        'JetBrains Mono', monospace;
-
-  /* KLAR (light) */
   --bg:          var(--perg);
   --bg-2:        var(--perg-2);
   --surface:     #FFFFFF;
@@ -40,7 +38,6 @@
   --text-3:      var(--ink-3);
   --nav-bg:      rgba(245,240,224,0.95);
 }
-
 [data-theme="noir"] {
   --bg:          #0E0C08;
   --bg-2:        #1A1610;
@@ -52,11 +49,8 @@
   --nav-bg:      rgba(14,12,8,0.96);
   --shadow:      0 2px 12px rgba(0,0,0,0.4);
 }
-
-/* ── Reset ───────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; overflow: hidden; }
-
 body {
   font-family: var(--font);
   background: var(--bg);
@@ -65,8 +59,6 @@ body {
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior: none;
 }
-
-/* ── App Shell ────────────────────────────────────────────────── */
 #app {
   display: flex;
   flex-direction: column;
@@ -74,8 +66,6 @@ body {
   height: 100dvh;
   padding-top: var(--status-h);
 }
-
-/* ── Top Bar ──────────────────────────────────────────────────── */
 #topbar {
   display: flex;
   align-items: center;
@@ -83,994 +73,172 @@ body {
   padding: 14px 20px 10px;
   flex-shrink: 0;
 }
-
-.topbar-logo {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.logo-dragon {
-  font-size: 22px;
-  line-height: 1;
-}
-
-.logo-text {
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  color: var(--gold);
-  text-transform: uppercase;
-}
-
-.topbar-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
+.topbar-logo { display: flex; align-items: center; gap: 8px; }
+.logo-dragon { font-size: 22px; line-height: 1; }
+.logo-text { font-size: 15px; font-weight: 700; letter-spacing: 0.08em; color: var(--gold); text-transform: uppercase; }
+.topbar-actions { display: flex; align-items: center; gap: 10px; }
 .icon-btn {
-  width: 40px;
-  height: 40px;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  color: var(--text-3);
-  font-size: 18px;
-  transition: background 0.15s, color 0.15s;
-  -webkit-tap-highlight-color: transparent;
+  width: 40px; height: 40px; border: none; background: transparent; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; border-radius: 10px;
+  color: var(--text-3); font-size: 18px; transition: background 0.15s, color 0.15s;
 }
-
 .icon-btn:active { background: var(--bg-2); color: var(--gold); }
-
-/* ── Screen Container ─────────────────────────────────────────── */
-#screens {
-  flex: 1;
-  overflow: hidden;
-  position: relative;
-}
-
+#screens { flex: 1; overflow: hidden; position: relative; }
 .screen {
-  position: absolute;
-  inset: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
-  padding: 0 0 16px;
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(12px);
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden;
+  -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
+  padding: 0 0 16px; opacity: 0; pointer-events: none;
+  transform: translateY(12px); transition: opacity 0.2s ease, transform 0.2s ease;
 }
-
-.screen.active {
-  opacity: 1;
-  pointer-events: all;
-  transform: translateY(0);
-}
-
-/* ── Bottom Navigation ────────────────────────────────────────── */
+.screen.active { opacity: 1; pointer-events: all; transform: translateY(0); }
 #bottom-nav {
-  height: calc(var(--nav-h) + var(--bottom-pad));
-  padding-bottom: var(--bottom-pad);
-  background: var(--nav-bg);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-top: 1px solid var(--border);
-  display: flex;
-  align-items: stretch;
-  flex-shrink: 0;
+  height: calc(var(--nav-h) + var(--bottom-pad)); padding-bottom: var(--bottom-pad);
+  background: var(--nav-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid var(--border); display: flex; align-items: stretch; flex-shrink: 0;
 }
-
 .nav-item {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  padding: 10px 4px 0;
-  color: var(--text-3);
-  font-family: var(--font);
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  transition: color 0.15s;
-  -webkit-tap-highlight-color: transparent;
-  position: relative;
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 4px; border: none; background: transparent; cursor: pointer; padding: 10px 4px 0;
+  color: var(--text-3); font-family: var(--font); font-size: 10px; font-weight: 500;
+  letter-spacing: 0.04em; text-transform: uppercase; transition: color 0.15s; position: relative;
 }
-
 .nav-item.active { color: var(--gold); }
-
-.nav-icon {
-  font-size: 22px;
-  line-height: 1;
-  position: relative;
-}
-
-.nav-badge {
-  position: absolute;
-  top: -4px;
-  right: -6px;
-  width: 8px;
-  height: 8px;
-  background: var(--gold);
-  border-radius: 50%;
-  display: none;
-}
-
+.nav-icon { font-size: 22px; line-height: 1; position: relative; }
+.nav-badge { position: absolute; top: -4px; right: -6px; width: 8px; height: 8px; background: var(--gold); border-radius: 50%; display: none; }
 .nav-badge.visible { display: block; }
-
-.nav-item.active .nav-icon::after {
-  content: '';
-  position: absolute;
-  bottom: -6px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 4px;
-  height: 4px;
-  background: var(--gold);
-  border-radius: 50%;
-}
-
-/* ── Shared Components ────────────────────────────────────────── */
-.section-header {
-  padding: 20px 20px 12px;
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-}
-
-.section-title {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--text);
-  letter-spacing: -0.02em;
-}
-
-.section-subtitle {
-  font-size: 12px;
-  color: var(--text-3);
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-  box-shadow: var(--shadow);
-}
-
-.card-pressable {
-  cursor: pointer;
-  transition: transform 0.12s, box-shadow 0.12s;
-  -webkit-tap-highlight-color: transparent;
-  active-fill: transparent;
-}
-
-.card-pressable:active {
-  transform: scale(0.985);
-  box-shadow: var(--shadow);
-}
-
-.pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 3px 10px;
-  border-radius: 100px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
+.section-header { padding: 20px 20px 12px; display: flex; align-items: baseline; justify-content: space-between; }
+.section-title { font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: -0.02em; }
+.section-subtitle { font-size: 12px; color: var(--text-3); font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+.pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
 .pill-gold { background: var(--gold-faint); color: var(--gold); }
 .pill-green { background: #E8F5E0; color: #2D7A1F; }
-.pill-red { background: #FDEEEE; color: #B52B2B; }
-
-/* ── INÍCIO Screen ────────────────────────────────────────────── */
-#screen-home { }
-
-.home-hero {
-  padding: 8px 20px 20px;
-}
-
-.home-greeting {
-  font-size: 26px;
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1.2;
-}
-
+.home-hero { padding: 8px 20px 20px; }
+.home-greeting { font-size: 26px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.2; }
 .home-greeting span { color: var(--gold); }
-
-.home-wallet-strip {
-  margin-top: 16px;
-  background: linear-gradient(135deg, var(--ink-2) 0%, var(--ink) 100%);
-  border-radius: var(--radius);
-  padding: 16px 18px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  box-shadow: var(--shadow-lg);
-}
-
-[data-theme="noir"] .home-wallet-strip {
-  background: linear-gradient(135deg, #2A2418 0%, #1A1610 100%);
-  border: 1px solid var(--border);
-}
-
-.wallet-info { }
-
-.wallet-label {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--gold-light);
-  margin-bottom: 4px;
-}
-
-.wallet-id {
-  font-family: var(--mono);
-  font-size: 13px;
-  color: #F0E8D0;
-  letter-spacing: 0.02em;
-}
-
-.wallet-tier {
-  text-align: right;
-}
-
-.wallet-tier-badge {
-  font-size: 22px;
-  line-height: 1;
-}
-
-.wallet-tier-text {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--gold-light);
-  margin-top: 2px;
-}
-
-/* Quick Actions */
-.quick-actions {
-  padding: 0 20px 8px;
-}
-
-.quick-actions-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.quick-action-btn {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 14px 14px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  transition: transform 0.12s, background 0.12s;
-  -webkit-tap-highlight-color: transparent;
-  font-family: var(--font);
-}
-
+.home-wallet-strip { margin-top: 16px; background: linear-gradient(135deg, var(--ink-2) 0%, var(--ink) 100%); border-radius: var(--radius); padding: 16px 18px; display: flex; align-items: center; justify-content: space-between; box-shadow: var(--shadow-lg); }
+[data-theme="noir"] .home-wallet-strip { background: linear-gradient(135deg, #2A2418 0%, #1A1610 100%); border: 1px solid var(--border); }
+.wallet-label { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold-light); margin-bottom: 4px; }
+.wallet-id { font-family: var(--mono); font-size: 13px; color: #F0E8D0; letter-spacing: 0.02em; }
+.wallet-tier-text { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold-light); margin-top: 2px; }
+.quick-actions { padding: 0 20px 8px; }
+.quick-actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.quick-action-btn { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: transform 0.12s, background 0.12s; font-family: var(--font); }
 .quick-action-btn:active { transform: scale(0.96); background: var(--bg-2); }
-
 .qa-icon { font-size: 22px; line-height: 1; }
-
-.qa-text {
-  display: flex;
-  flex-direction: column;
-}
-
-.qa-label {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text);
-  line-height: 1.2;
-}
-
-.qa-sub {
-  font-size: 10px;
-  color: var(--text-3);
-  font-weight: 400;
-  margin-top: 1px;
-}
-
-/* Recent Docs */
-.doc-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  cursor: pointer;
-  transition: background 0.12s;
-  -webkit-tap-highlight-color: transparent;
-}
-
+.qa-text { display: flex; flex-direction: column; }
+.qa-label { font-size: 13px; font-weight: 600; color: var(--text); line-height: 1.2; }
+.qa-sub { font-size: 10px; color: var(--text-3); font-weight: 400; margin-top: 1px; }
+.doc-row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; cursor: pointer; transition: background 0.12s; }
 .doc-row:active { background: var(--bg-2); }
 .doc-row + .doc-row { border-top: 1px solid var(--border); }
-
-.doc-icon-wrap {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  background: var(--gold-faint);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  flex-shrink: 0;
-}
-
+.doc-icon-wrap { width: 40px; height: 40px; border-radius: 10px; background: var(--gold-faint); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
 .doc-info { flex: 1; min-width: 0; }
-
-.doc-name {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.doc-meta {
-  font-size: 11px;
-  color: var(--text-3);
-  margin-top: 2px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.doc-sealed {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #2D7A1F;
-  display: inline-block;
-}
-
-.doc-arrow { color: var(--text-3); font-size: 14px; }
-
-/* ── DRAGON Screen ────────────────────────────────────────────── */
-#screen-dragon {
-  display: flex;
-  flex-direction: column;
-  padding: 0;
-}
-
-.dragon-header {
-  padding: 12px 20px 10px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-shrink: 0;
-}
-
-.dragon-status {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.dragon-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #2D7A1F;
-  box-shadow: 0 0 6px rgba(45,122,31,0.6);
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-
-.dragon-status-text {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-3);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-/* .dragon-model-tag removed — agents are shown instead */
-
-.chat-messages {
-  flex: 1;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
-  padding: 16px 16px 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.msg {
-  max-width: 85%;
-  animation: msgIn 0.2s ease;
-}
-
-@keyframes msgIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
+.doc-name { font-size: 14px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.doc-meta { font-size: 11px; color: var(--text-3); margin-top: 2px; display: flex; align-items: center; gap: 6px; }
+.doc-sealed { width: 6px; height: 6px; border-radius: 50%; background: #2D7A1F; display: inline-block; }
+.dragon-header { padding: 12px 20px 10px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+.dragon-status { display: flex; align-items: center; gap: 8px; }
+.dragon-dot { width: 8px; height: 8px; border-radius: 50%; background: #2D7A1F; box-shadow: 0 0 6px rgba(45,122,31,0.6); animation: pulse 2s infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+.dragon-status-text { font-size: 12px; font-weight: 600; color: var(--text-3); letter-spacing: 0.04em; text-transform: uppercase; }
+.chat-messages { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; padding: 16px 16px 8px; display: flex; flex-direction: column; gap: 12px; }
+.msg { max-width: 85%; animation: msgIn 0.2s ease; }
+@keyframes msgIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 .msg-user { align-self: flex-end; }
 .msg-dragon { align-self: flex-start; }
-
-.msg-bubble {
-  padding: 10px 14px;
-  border-radius: 16px;
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-.msg-user .msg-bubble {
-  background: var(--gold);
-  color: #FFF8E8;
-  border-bottom-right-radius: 4px;
-}
-
-.msg-dragon .msg-bubble {
-  background: var(--surface);
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-bottom-left-radius: 4px;
-}
-
-.msg-meta {
-  font-size: 10px;
-  color: var(--text-3);
-  margin-top: 4px;
-  padding: 0 4px;
-}
-
+.msg-bubble { padding: 10px 14px; border-radius: 16px; font-size: 14px; line-height: 1.5; }
+.msg-user .msg-bubble { background: var(--gold); color: #FFF8E8; border-bottom-right-radius: 4px; }
+.msg-dragon .msg-bubble { background: var(--surface); color: var(--text); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+.msg-meta { font-size: 10px; color: var(--text-3); margin-top: 4px; padding: 0 4px; }
 .msg-user .msg-meta { text-align: right; }
-
-.msg-thinking {
-  align-self: flex-start;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 10px 14px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  border-bottom-left-radius: 4px;
-}
-
-.thinking-dots {
-  display: flex;
-  gap: 4px;
-}
-
-.thinking-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--gold);
-  animation: bounce 1.2s infinite;
-}
-
+.msg-thinking { align-self: flex-start; display: flex; align-items: center; gap: 6px; padding: 10px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; border-bottom-left-radius: 4px; }
+.thinking-dots { display: flex; gap: 4px; }
+.thinking-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); animation: bounce 1.2s infinite; }
 .thinking-dot:nth-child(2) { animation-delay: 0.2s; }
 .thinking-dot:nth-child(3) { animation-delay: 0.4s; }
-
-@keyframes bounce {
-  0%, 60%, 100% { transform: translateY(0); }
-  30% { transform: translateY(-6px); }
-}
-
-.chat-input-area {
-  flex-shrink: 0;
-  padding: 10px 16px 12px;
-  border-top: 1px solid var(--border);
-  background: var(--nav-bg);
-  backdrop-filter: blur(12px);
-  display: flex;
-  align-items: flex-end;
-  gap: 8px;
-}
-
-.chat-input-wrap {
-  flex: 1;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  display: flex;
-  align-items: flex-end;
-  padding: 8px 12px;
-  gap: 8px;
-  transition: border-color 0.15s;
-}
-
+@keyframes bounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-6px); } }
+.chat-input-area { flex-shrink: 0; padding: 10px 16px 12px; border-top: 1px solid var(--border); background: var(--nav-bg); backdrop-filter: blur(12px); display: flex; align-items: flex-end; gap: 8px; }
+.chat-input-wrap { flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; display: flex; align-items: flex-end; padding: 8px 12px; gap: 8px; transition: border-color 0.15s; }
 .chat-input-wrap:focus-within { border-color: var(--gold); }
-
-#dragon-input {
-  flex: 1;
-  background: transparent;
-  border: none;
-  outline: none;
-  font-family: var(--font);
-  font-size: 15px;
-  color: var(--text);
-  resize: none;
-  min-height: 24px;
-  max-height: 100px;
-  line-height: 1.4;
-}
-
+#dragon-input { flex: 1; background: transparent; border: none; outline: none; font-family: var(--font); font-size: 15px; color: var(--text); resize: none; min-height: 24px; max-height: 100px; line-height: 1.4; }
 #dragon-input::placeholder { color: var(--text-3); }
-
-.chat-send-btn {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: var(--gold);
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 16px;
-  flex-shrink: 0;
-  transition: transform 0.12s, opacity 0.12s;
-  -webkit-tap-highlight-color: transparent;
-}
-
+.chat-send-btn { width: 36px; height: 36px; border-radius: 50%; background: var(--gold); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; flex-shrink: 0; transition: transform 0.12s, opacity 0.12s; }
 .chat-send-btn:active { transform: scale(0.9); }
 .chat-send-btn:disabled { opacity: 0.4; }
-
-/* ── VERIFICAR Screen ─────────────────────────────────────────── */
-.verify-hero {
-  padding: 20px 20px 0;
-  text-align: center;
-}
-
+.verify-hero { padding: 20px 20px 0; text-align: center; }
 .verify-icon { font-size: 48px; line-height: 1; margin-bottom: 8px; }
-
-.verify-title {
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  margin-bottom: 4px;
-}
-
-.verify-desc {
-  font-size: 13px;
-  color: var(--text-3);
-  line-height: 1.5;
-}
-
-.verify-methods {
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.verify-method-btn {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 16px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  cursor: pointer;
-  font-family: var(--font);
-  color: var(--text);
-  text-align: left;
-  transition: transform 0.12s, background 0.12s;
-  -webkit-tap-highlight-color: transparent;
-}
-
+.verify-title { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 4px; }
+.verify-desc { font-size: 13px; color: var(--text-3); line-height: 1.5; }
+.verify-methods { padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+.verify-method-btn { display: flex; align-items: center; gap: 14px; padding: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); cursor: pointer; font-family: var(--font); color: var(--text); text-align: left; transition: transform 0.12s, background 0.12s; }
 .verify-method-btn:active { transform: scale(0.98); background: var(--bg-2); }
 .verify-method-btn.primary { border-color: var(--gold); background: var(--gold-faint); }
-
 .vm-icon { font-size: 28px; line-height: 1; flex-shrink: 0; }
-
 .vm-text { flex: 1; }
 .vm-label { font-size: 15px; font-weight: 600; }
 .vm-sub { font-size: 12px; color: var(--text-3); margin-top: 2px; }
 .vm-arrow { font-size: 16px; color: var(--text-3); }
-
-.verify-id-input-wrap {
-  padding: 0 20px 20px;
-}
-
-.verify-id-input {
-  width: 100%;
-  padding: 14px 16px;
-  background: var(--surface);
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius);
-  font-family: var(--mono);
-  font-size: 13px;
-  color: var(--text);
-  outline: none;
-  transition: border-color 0.15s;
-}
-
+.verify-id-input-wrap { padding: 0 20px 20px; }
+.verify-id-input { width: 100%; padding: 14px 16px; background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); font-family: var(--mono); font-size: 13px; color: var(--text); outline: none; transition: border-color 0.15s; }
 .verify-id-input:focus { border-color: var(--gold); }
 .verify-id-input::placeholder { color: var(--text-3); font-family: var(--font); font-size: 13px; }
-
-.verify-id-btn {
-  width: 100%;
-  margin-top: 10px;
-  padding: 14px;
-  background: var(--gold);
-  color: white;
-  border: none;
-  border-radius: var(--radius);
-  font-family: var(--font);
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: opacity 0.15s, transform 0.12s;
-  -webkit-tap-highlight-color: transparent;
-}
-
+.verify-id-btn { width: 100%; margin-top: 10px; padding: 14px; background: var(--gold); color: white; border: none; border-radius: var(--radius); font-family: var(--font); font-size: 15px; font-weight: 600; cursor: pointer; transition: opacity 0.15s, transform 0.12s; }
 .verify-id-btn:active { transform: scale(0.98); opacity: 0.9; }
-
-/* Verify Result */
-.verify-result {
-  margin: 0 20px 16px;
-  border-radius: var(--radius);
-  overflow: hidden;
-  animation: msgIn 0.25s ease;
-}
-
-.verify-result-valid {
-  background: #EFF8EC;
-  border: 1.5px solid #4CAF50;
-}
-
-.verify-result-invalid {
-  background: #FDEEEE;
-  border: 1.5px solid #E53935;
-}
-
-[data-theme="noir"] .verify-result-valid  { background: #0E200D; }
+.verify-result { margin: 0 20px 16px; border-radius: var(--radius); overflow: hidden; animation: msgIn 0.25s ease; }
+.verify-result-valid { background: #EFF8EC; border: 1.5px solid #4CAF50; }
+.verify-result-invalid { background: #FDEEEE; border: 1.5px solid #E53935; }
+[data-theme="noir"] .verify-result-valid { background: #0E200D; }
 [data-theme="noir"] .verify-result-invalid { background: #200D0D; }
-
-.verify-result-header {
-  padding: 14px 16px 10px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
+.verify-result-header { padding: 14px 16px 10px; display: flex; align-items: center; gap: 10px; }
 .vr-status-icon { font-size: 24px; }
 .vr-status-label { font-size: 16px; font-weight: 700; }
 .vr-status-valid { color: #2D7A1F; }
 .vr-status-invalid { color: #B52B2B; }
-
-.verify-result-body {
-  padding: 0 16px 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.vr-field {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
-
-.vr-field-label {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-3);
-}
-
-.vr-field-value {
-  font-size: 13px;
-  color: var(--text);
-  font-family: var(--mono);
-  word-break: break-all;
-}
-
-/* ── VAULT Screen ─────────────────────────────────────────────── */
-.vault-stats-strip {
-  padding: 8px 20px 16px;
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 8px;
-}
-
-.stat-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 10px 12px;
-  text-align: center;
-}
-
-.stat-value {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--gold);
-  letter-spacing: -0.02em;
-}
-
-.stat-label {
-  font-size: 10px;
-  color: var(--text-3);
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  margin-top: 2px;
-}
-
-.filter-row {
-  padding: 0 20px 12px;
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
-
+.verify-result-body { padding: 0 16px 14px; display: flex; flex-direction: column; gap: 6px; }
+.vr-field { display: flex; flex-direction: column; gap: 1px; }
+.vr-field-label { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-3); }
+.vr-field-value { font-size: 13px; color: var(--text); font-family: var(--mono); word-break: break-all; }
+.vault-stats-strip { padding: 8px 20px 16px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; text-align: center; }
+.stat-value { font-size: 20px; font-weight: 700; color: var(--gold); letter-spacing: -0.02em; }
+.stat-label { font-size: 10px; color: var(--text-3); font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; margin-top: 2px; }
+.filter-row { padding: 0 20px 12px; display: flex; gap: 8px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
 .filter-row::-webkit-scrollbar { display: none; }
-
-.filter-chip {
-  flex-shrink: 0;
-  padding: 7px 14px;
-  border-radius: 100px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  font-family: var(--font);
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-3);
-  cursor: pointer;
-  letter-spacing: 0.03em;
-  transition: all 0.15s;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.filter-chip.active {
-  background: var(--gold);
-  border-color: var(--gold);
-  color: white;
-}
-
-/* ── EU Screen ────────────────────────────────────────────────── */
-.eu-avatar-section {
-  padding: 20px 20px 16px;
-  text-align: center;
-}
-
-.eu-avatar {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 100%);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 36px;
-  margin-bottom: 12px;
-  box-shadow: 0 4px 20px rgba(139,105,20,0.3);
-}
-
-.eu-name {
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-}
-
-.eu-role {
-  font-size: 12px;
-  color: var(--gold);
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  margin-top: 2px;
-}
-
-.settings-section {
-  padding: 0 20px 8px;
-}
-
-.settings-group {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-
-.settings-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  cursor: pointer;
-  transition: background 0.12s;
-  -webkit-tap-highlight-color: transparent;
-}
-
+.filter-chip { flex-shrink: 0; padding: 7px 14px; border-radius: 100px; border: 1px solid var(--border); background: var(--surface); font-family: var(--font); font-size: 12px; font-weight: 600; color: var(--text-3); cursor: pointer; letter-spacing: 0.03em; transition: all 0.15s; }
+.filter-chip.active { background: var(--gold); border-color: var(--gold); color: white; }
+.eu-avatar-section { padding: 20px 20px 16px; text-align: center; }
+.eu-avatar { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 100%); display: inline-flex; align-items: center; justify-content: center; font-size: 36px; margin-bottom: 12px; box-shadow: 0 4px 20px rgba(139,105,20,0.3); }
+.eu-name { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
+.eu-role { font-size: 12px; color: var(--gold); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; margin-top: 2px; }
+.settings-section { padding: 0 20px 8px; }
+.settings-group { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.settings-row { display: flex; align-items: center; gap: 12px; padding: 14px 16px; cursor: pointer; transition: background 0.12s; }
 .settings-row:active { background: var(--bg-2); }
 .settings-row + .settings-row { border-top: 1px solid var(--border); }
-
-.settings-icon {
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
-  background: var(--gold-faint);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  flex-shrink: 0;
-}
-
-.settings-label {
-  flex: 1;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text);
-}
-
-.settings-value {
-  font-size: 12px;
-  color: var(--text-3);
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.toggle {
-  width: 44px;
-  height: 26px;
-  background: var(--bg-2);
-  border: 1.5px solid var(--border);
-  border-radius: 100px;
-  position: relative;
-  cursor: pointer;
-  transition: background 0.2s, border-color 0.2s;
-  flex-shrink: 0;
-}
-
-.toggle.on {
-  background: var(--gold);
-  border-color: var(--gold);
-}
-
-.toggle-thumb {
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 18px;
-  height: 18px;
-  background: white;
-  border-radius: 50%;
-  transition: transform 0.2s;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
-}
-
+.settings-icon { width: 34px; height: 34px; border-radius: 8px; background: var(--gold-faint); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.settings-label { flex: 1; font-size: 14px; font-weight: 500; color: var(--text); }
+.settings-value { font-size: 12px; color: var(--text-3); display: flex; align-items: center; gap: 4px; }
+.toggle { width: 44px; height: 26px; background: var(--bg-2); border: 1.5px solid var(--border); border-radius: 100px; position: relative; cursor: pointer; transition: background 0.2s, border-color 0.2s; flex-shrink: 0; }
+.toggle.on { background: var(--gold); border-color: var(--gold); }
+.toggle-thumb { position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; background: white; border-radius: 50%; transition: transform 0.2s; box-shadow: 0 1px 4px rgba(0,0,0,0.2); }
 .toggle.on .toggle-thumb { transform: translateX(18px); }
-
-/* ── DID Section ──────────────────────────────────────────────── */
-.did-card {
-  margin: 0 20px 16px;
-  background: linear-gradient(135deg, var(--ink-2) 0%, var(--ink) 100%);
-  border-radius: var(--radius);
-  padding: 16px;
-  box-shadow: var(--shadow-lg);
-}
-
-[data-theme="noir"] .did-card {
-  background: linear-gradient(135deg, #2A2418 0%, #1A1610 100%);
-  border: 1px solid var(--border);
-}
-
-.did-label {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--gold-light);
-  margin-bottom: 6px;
-}
-
-.did-value {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: #C4B896;
-  line-height: 1.6;
-  word-break: break-all;
-}
-
-.did-copy-btn {
-  margin-top: 10px;
-  width: 100%;
-  padding: 10px;
-  background: rgba(139,105,20,0.25);
-  border: 1px solid rgba(139,105,20,0.4);
-  border-radius: var(--radius-sm);
-  font-family: var(--font);
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--gold-light);
-  cursor: pointer;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  transition: background 0.15s;
-  -webkit-tap-highlight-color: transparent;
-}
-
+.did-card { margin: 0 20px 16px; background: linear-gradient(135deg, var(--ink-2) 0%, var(--ink) 100%); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow-lg); }
+[data-theme="noir"] .did-card { background: linear-gradient(135deg, #2A2418 0%, #1A1610 100%); border: 1px solid var(--border); }
+.did-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold-light); margin-bottom: 6px; }
+.did-value { font-family: var(--mono); font-size: 11px; color: #C4B896; line-height: 1.6; word-break: break-all; }
+.did-copy-btn { margin-top: 10px; width: 100%; padding: 10px; background: rgba(139,105,20,0.25); border: 1px solid rgba(139,105,20,0.4); border-radius: var(--radius-sm); font-family: var(--font); font-size: 12px; font-weight: 600; color: var(--gold-light); cursor: pointer; letter-spacing: 0.04em; text-transform: uppercase; transition: background 0.15s; }
 .did-copy-btn:active { background: rgba(139,105,20,0.4); }
-
-
-/* ── Language Switcher ────────────────────────────────────────── */
-.lang-switcher {
-  display: flex;
-  gap: 4px;
-  background: var(--bg-2);
-  border-radius: 100px;
-  padding: 3px;
-  border: 1px solid var(--border);
-}
-
-.lang-btn {
-  padding: 5px 12px;
-  border-radius: 100px;
-  border: none;
-  background: transparent;
-  font-family: var(--font);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  color: var(--text-3);
-  cursor: pointer;
-  transition: all 0.15s;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.lang-btn.active {
-  background: var(--gold);
-  color: white;
-}
-
+.lang-switcher { display: flex; gap: 4px; background: var(--bg-2); border-radius: 100px; padding: 3px; border: 1px solid var(--border); }
+.lang-btn { padding: 5px 12px; border-radius: 100px; border: none; background: transparent; font-family: var(--font); font-size: 12px; font-weight: 700; letter-spacing: 0.06em; color: var(--text-3); cursor: pointer; transition: all 0.15s; }
+.lang-btn.active { background: var(--gold); color: white; }
 .lang-btn:active { opacity: 0.8; }
-
-
-/* ── Agent Strip ──────────────────────────────────────────────── */
+/* ── Agent Strip ── */
 .agent-strip {
   display: flex;
   gap: 6px;
   padding: 8px 16px 10px;
-  padding-right: 40px; /* Extra space for last chip */
+  padding-right: 40px;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
@@ -1078,8 +246,6 @@ body {
   flex-shrink: 0;
   position: relative;
 }
-
-/* Scroll fade indicator - right edge only */
 .agent-strip::after {
   content: '';
   position: absolute;
@@ -1090,1119 +256,195 @@ body {
   background: linear-gradient(to right, transparent, var(--bg));
   pointer-events: none;
 }
-
 .agent-strip::-webkit-scrollbar { display: none; }
-
-.agent-chip {
-  flex-shrink: 0;
-  padding: 5px 10px;
-  border-radius: 100px;
-  border: 1.5px solid var(--border);
-  background: var(--surface);
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--text-3);
-  cursor: pointer;
-  letter-spacing: 0.06em;
-  transition: all 0.15s;
-  -webkit-tap-highlight-color: transparent;
-  white-space: nowrap;
-  min-height: 30px;
-}
-
-.agent-chip.active {
-  background: var(--gold);
-  border-color: var(--gold);
-  color: white;
-}
-
+.agent-chip { flex-shrink: 0; padding: 5px 10px; border-radius: 100px; border: 1.5px solid var(--border); background: var(--surface); font-family: var(--mono); font-size: 10px; font-weight: 700; color: var(--text-3); cursor: pointer; letter-spacing: 0.06em; transition: all 0.15s; white-space: nowrap; min-height: 30px; }
+.agent-chip.active { background: var(--gold); border-color: var(--gold); color: white; }
 .agent-chip:active { transform: scale(0.95); }
-
-/* Active agent tag (replaces model tag) */
-.agent-active-tag {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--gold);
-  padding: 3px 10px;
-  background: var(--gold-faint);
-  border-radius: 100px;
-  letter-spacing: 0.04em;
-  font-weight: 600;
-}
-
-/* ── SVG Icons ────────────────────────────────────────────────── */
+.agent-active-tag { font-family: var(--mono); font-size: 10px; color: var(--gold); padding: 3px 10px; background: var(--gold-faint); border-radius: 100px; letter-spacing: 0.04em; font-weight: 600; }
+/* ── Onboarding ── */
+.onb-step { width: 8px; height: 8px; border-radius: 50%; background: var(--border); transition: all 0.3s; }
+.onb-step.active { width: 24px; border-radius: 4px; background: var(--gold); }
+.onb-tier-btn { width: 100%; padding: 14px; background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); cursor: pointer; font-family: var(--font); transition: border-color 0.15s, background 0.15s; }
+.onb-tier-btn.selected { border-color: var(--gold); background: var(--gold-faint); }
+.onb-tier-check { width: 20px; height: 20px; border: 2px solid var(--border); border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+.onb-tier-check.checked { background: var(--gold); border-color: var(--gold); }
+.onb-tier-check.checked::after { content: ''; width: 6px; height: 10px; border: 2px solid white; border-top: none; border-left: none; transform: rotate(45deg) translateY(-1px); display: block; }
+.onb-next-btn { width: 100%; margin-top: 20px; padding: 15px; background: var(--gold); color: white; border: none; border-radius: var(--radius); font-family: var(--font); font-size: 15px; font-weight: 700; cursor: pointer; transition: opacity 0.15s, transform 0.12s; letter-spacing: 0.02em; }
+.onb-next-btn:disabled { opacity: 0.35; pointer-events: none; }
+.onb-next-btn:active { transform: scale(0.98); }
+.onb-input { width: 100%; padding: 13px 14px; background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-family: var(--font); font-size: 15px; color: var(--text); outline: none; transition: border-color 0.15s; }
+.onb-input:focus { border-color: var(--gold); }
+.onb-input::placeholder { color: var(--text-3); }
+.onb-type-btn { flex: 1; padding: 10px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); font-family: var(--font); font-size: 13px; font-weight: 600; color: var(--text-3); cursor: pointer; transition: all 0.15s; }
+.onb-type-btn.active { background: var(--gold); border-color: var(--gold); color: white; }
 .icon { display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; }
 .icon svg { display:block; }
-
-/* ── Version footer ───────────────────────────────────────────── */
-.version-footer {
-  text-align: center;
-  padding: 12px 20px 4px;
-  font-size: 11px;
-  color: var(--text-3);
-  font-family: var(--mono);
-}
-
-/* ── Toast ────────────────────────────────────────────────────── */
-#toast {
-  position: fixed;
-  bottom: calc(var(--nav-h) + var(--bottom-pad) + 16px);
-  left: 50%;
-  transform: translateX(-50%) translateY(20px);
-  background: var(--ink);
-  color: var(--perg);
-  font-size: 13px;
-  font-weight: 500;
-  padding: 10px 20px;
-  border-radius: 100px;
-  box-shadow: var(--shadow-lg);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s, transform 0.2s;
-  white-space: nowrap;
-  z-index: 1000;
-}
-
+.version-footer { text-align: center; padding: 12px 20px 4px; font-size: 11px; color: var(--text-3); font-family: var(--mono); }
+#toast { position: fixed; bottom: calc(var(--nav-h) + var(--bottom-pad) + 16px); left: 50%; transform: translateX(-50%) translateY(20px); background: var(--ink); color: var(--perg); font-size: 13px; font-weight: 500; padding: 10px 20px; border-radius: 100px; box-shadow: var(--shadow-lg); opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; white-space: nowrap; z-index: 1000; }
 [data-theme="noir"] #toast { background: #F0E8D0; color: var(--ink); }
-
-#toast.show {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
-
-/* ── Spinner ──────────────────────────────────────────────────── */
-.spinner {
-  width: 18px;
-  height: 18px;
-  border: 2px solid rgba(255,255,255,0.3);
-  border-top-color: white;
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-  display: inline-block;
-}
-
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; display: inline-block; }
 @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
-
 <div id="app">
-
-  <!-- ── TOP BAR ─────────────────────────────────────────── -->
   <div id="topbar">
     <div class="topbar-logo">
       <span class="logo-dragon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 2C9.5 2 7.2 3.5 6.3 6C4.6 6.8 3 8.5 3 11C3 13.5 4.8 15.2 7 15.5C7.2 17.3 8.5 19.2 11 20C11.5 20.2 12 20.2 12 20.2C12 20.2 12.5 20.2 13 20C15.5 19.2 16.8 17.3 17 15.5C19.2 15.2 21 13.5 21 11C21 8.5 19.4 6.8 17.7 6C16.8 3.5 14.5 2 12 2Z" fill="var(--gold)"/><circle cx="9.5" cy="10.5" r="1.2" fill="white"/><circle cx="14.5" cy="10.5" r="1.2" fill="white"/><path d="M9.5 14C10.2 14.8 11 15.2 12 15.2C13 15.2 13.8 14.8 14.5 14" stroke="white" stroke-width="1.3" stroke-linecap="round"/></svg></span>
       <span class="logo-text">WINDI</span>
     </div>
     <div class="topbar-actions">
-      <button class="icon-btn" id="theme-toggle" title="Alternar tema" onclick="toggleTheme()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg></button>
-      <button class="icon-btn" title="Notificações"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></button>
+      <button class="icon-btn" id="theme-toggle" onclick="toggleTheme()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg></button>
+      <button class="icon-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></button>
     </div>
   </div>
-
-  <!-- ── SCREENS ─────────────────────────────────────────── -->
   <div id="screens">
-
-    <!-- INÍCIO -->
-    <div class="screen active" id="screen-home">
-
+    <div class="screen" id="screen-home">
       <div class="home-hero">
-        <div class="home-greeting">
-          <span data-i18n="greeting">Olá,</span> <span id="greeting-name">Human Dragon</span>
-        </div>
-        <div class="home-wallet-strip" style="margin-top:16px">
-          <div class="wallet-info">
-            <div class="wallet-label" data-i18n="walletId">Wallet ID</div>
-            <div class="wallet-id" id="wallet-id-display">Pioneer #001</div>
-          </div>
-          <div class="wallet-tier">
-            <div class="wallet-tier-badge"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold-light)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="8,21 12,21 16,21"/><line x1="12" y1="17" x2="12" y2="21"/><path d="M7 4H17V11a5 5 0 01-10 0V4z"/><path d="M7 4H4v3a3 3 0 003 4"/><path d="M17 4h3v3a3 3 0 01-3 4"/></svg></div>
-            <div class="wallet-tier-text" data-i18n="tierHigh">High</div>
-          </div>
+        <div class="home-greeting"><span data-i18n="greeting">Ola,</span> <span id="greeting-name">—</span></div>
+        <div class="home-wallet-strip">
+          <div><div class="wallet-label" data-i18n="walletId">Wallet ID</div><div class="wallet-id" id="wallet-id-display">—</div></div>
+          <div style="text-align:right"><div style="font-size:22px"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold-light)" stroke-width="2"><polyline points="8,21 12,21 16,21"/><line x1="12" y1="17" x2="12" y2="21"/><path d="M7 4H17V11a5 5 0 01-10 0V4z"/><path d="M7 4H4v3a3 3 0 003 4"/><path d="M17 4h3v3a3 3 0 01-3 4"/></svg></div><div class="wallet-tier-text" id="wallet-tier-display">—</div></div>
         </div>
       </div>
-
-      <div class="quick-actions">
-        <div class="quick-actions-grid">
-          <button class="quick-action-btn" onclick="navigate('dragon')">
-            <span class="qa-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2C9.5 2 7.2 3.5 6.3 6C4.6 6.8 3 8.5 3 11C3 13.5 4.8 15.2 7 15.5C7.2 17.3 8.5 19.2 11 20C11.5 20.2 12 20.2 12 20.2C12 20.2 12.5 20.2 13 20C15.5 19.2 16.8 17.3 17 15.5C19.2 15.2 21 13.5 21 11C21 8.5 19.4 6.8 17.7 6C16.8 3.5 14.5 2 12 2Z" fill="var(--gold)"/><circle cx="9.5" cy="10.5" r="1.2" fill="white"/><circle cx="14.5" cy="10.5" r="1.2" fill="white"/><path d="M9.5 14C10.2 14.8 11 15.2 12 15.2C13 15.2 13.8 14.8 14.5 14" stroke="white" stroke-width="1.3" stroke-linecap="round"/></svg></span>
-            <div class="qa-text">
-              <div class="qa-label">Dragon</div>
-              <div class="qa-sub" data-i18n="qaAiChat">Chat com IA</div>
-            </div>
-          </button>
-          <button class="quick-action-btn" onclick="navigate('verify')">
-            <span class="qa-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
-            <div class="qa-text">
-              <div class="qa-label" data-i18n="navVerify">Verificar</div>
-              <div class="qa-sub" data-i18n="qaQrId">QR ou ID</div>
-            </div>
-          </button>
-          <button class="quick-action-btn" onclick="navigate('vault')">
-            <span class="qa-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="4"/><line x1="16.24" y1="7.76" x2="14.12" y2="9.88"/><line x1="7.76" y1="16.24" x2="9.88" y2="14.12"/><line x1="7.76" y1="7.76" x2="9.88" y2="9.88"/><line x1="16.24" y1="16.24" x2="14.12" y2="14.12"/></svg></span>
-            <div class="qa-text">
-              <div class="qa-label">Vault</div>
-              <div class="qa-sub" data-i18n="qaDocs">Documentos</div>
-            </div>
-          </button>
-          <button class="quick-action-btn" onclick="navigate('eu')">
-            <span class="qa-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="9" cy="12" r="2.5"/><path d="M14 9h4M14 12h4M14 15h2"/></svg></span>
-            <div class="qa-text">
-              <div class="qa-label" data-i18n="qaIdentity">Identidade</div>
-              <div class="qa-sub">DID + Wallet</div>
-            </div>
-          </button>
-        </div>
-      </div>
-
-      <div class="section-header">
-        <div class="section-title" data-i18n="recent">Recentes</div>
-        <div class="section-subtitle" data-i18n="seeAll">Ver todos →</div>
-      </div>
-
-      <div class="card" style="margin:0 20px">
-        <div id="recent-docs">
-          <div class="doc-row">
-            <div class="doc-icon-wrap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
-            <div class="doc-info">
-              <div class="doc-name">Invariant I11 — Permanência</div>
-              <div class="doc-meta"><span class="doc-sealed"></span> <span data-i18n="sealed">Selado</span> · 5 Mar 2026</div>
-            </div>
-            <div class="doc-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9,18 15,12 9,6"/></svg></div>
-          </div>
-          <div class="doc-row">
-            <div class="doc-icon-wrap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13,2 13,9 20,9"/></svg></div>
-            <div class="doc-info">
-              <div class="doc-name">Master Spec v1.0</div>
-              <div class="doc-meta"><span class="doc-sealed"></span> Selado · 5 Mar 2026</div>
-            </div>
-            <div class="doc-arrow">›</div>
-          </div>
-          <div class="doc-row">
-            <div class="doc-icon-wrap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18l3-2 3 2 3-2 3 2 3-2 3 2V3"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg></div>
-            <div class="doc-info">
-              <div class="doc-name">Genesis Record</div>
-              <div class="doc-meta"><span class="doc-sealed"></span> Selado · 5 Mar 2026</div>
-            </div>
-            <div class="doc-arrow">›</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Ledger Live Stats -->
-      <div class="section-header" style="margin-top:8px">
-        <div class="section-title">Ledger</div>
-        <div id="ledger-status-pill" class="pill pill-green" style="font-size:10px">● LIVE</div>
-      </div>
-      <div class="card" style="margin:0 20px">
-        <div style="padding:14px 16px;display:flex;justify-content:space-between;align-items:center">
-          <div>
-            <div style="font-size:28px;font-weight:700;color:var(--gold);letter-spacing:-0.03em" id="ledger-count">40,918+</div>
-            <div style="font-size:11px;color:var(--text-3);margin-top:2px;font-weight:500;text-transform:uppercase;letter-spacing:0.04em">Receipts Selados</div>
-          </div>
-          <div style="text-align:right">
-            <div style="font-size:12px;color:var(--text-3)">windi-domain.com</div>
-            <div style="font-size:11px;color:var(--gold);font-family:var(--mono);margin-top:2px">:8101</div>
-          </div>
-        </div>
-      </div>
-
-    </div><!-- /screen-home -->
-
-    <!-- DRAGON CHAT -->
-    <div class="screen" id="screen-dragon" style="display:flex;flex-direction:column;overflow:hidden">
-
-      <div class="dragon-header">
-        <div class="dragon-status">
-          <div class="dragon-dot" id="dragon-dot"></div>
-          <span class="dragon-status-text" id="dragon-status-text" data-i18n="dragonOnline">Dragon Online</span>
-        </div>
-        <span class="agent-active-tag" id="agent-active-tag">W-COMM-001</span>
-      </div>
-
-      <!-- Agent Selector Strip -->
-      <div class="agent-strip" id="agent-strip">
-        <button class="agent-chip active" data-agent="W-COMM-001"   data-role="comm"    onclick="selectAgent(this)">COMM</button>
-        <button class="agent-chip"        data-agent="W-LEGAL-001"  data-role="legal"   onclick="selectAgent(this)">LEGAL</button>
-        <button class="agent-chip"        data-agent="W-NOTARY-001" data-role="notary"  onclick="selectAgent(this)">NOTARY</button>
-        <button class="agent-chip"        data-agent="W-COMPLY-001" data-role="comply"  onclick="selectAgent(this)">COMPLY</button>
-        <button class="agent-chip"        data-agent="W-JOURN-001"  data-role="journ"   onclick="selectAgent(this)">JOURN</button>
-        <button class="agent-chip"        data-agent="W-AUDIT-001"  data-role="audit"   onclick="selectAgent(this)">AUDIT</button>
-        <button class="agent-chip"        data-agent="W-ACCT-001"   data-role="acct"    onclick="selectAgent(this)">ACCT</button>
-        <button class="agent-chip"        data-agent="W-GROVE-001"  data-role="grove"   onclick="selectAgent(this)">GROVE</button>
-      </div>
-
-      <div class="chat-messages" id="chat-messages">
-        <!-- Mensagem de boas-vindas -->
-        <div class="msg msg-dragon">
-          <div class="msg-bubble" data-i18n="welcomeMsg">
-            Irmão 🐉 Dragon Mobile activo. Como posso ajudar?
-          </div>
-          <div class="msg-meta">Dragon · agora</div>
-        </div>
-      </div>
-
-      <div class="chat-input-area">
-        <div class="chat-input-wrap">
-          <textarea
-            id="dragon-input"
-            data-i18n-ph="chatPlaceholder" placeholder="Escreve aqui..."
-            rows="1"
-            oninput="autoResize(this)"
-            onkeydown="handleChatKey(event)"
-          ></textarea>
-        </div>
-        <button class="chat-send-btn" id="chat-send" onclick="sendMessage()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5,12 12,5 19,12"/></svg></button>
-      </div>
-
-    </div><!-- /screen-dragon -->
-
-    <!-- VERIFICAR -->
-    <div class="screen" id="screen-verify">
-
-      <div class="verify-hero">
-        <div class="verify-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9,12 11,14 15,10"/></svg></div>
-        <div class="verify-title" data-i18n="verifyTitle">Verificar Documento</div>
-        <div class="verify-desc" data-i18n="verifyDesc">Confirma a autenticidade de qualquer documento WINDI com selagem criptográfica</div>
-      </div>
-
-      <div class="verify-methods">
-        <button class="verify-method-btn primary" onclick="openQRScanner()">
-          <div class="vm-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
-          <div class="vm-text">
-            <div class="vm-label" data-i18n="scanQR">Digitalizar QR</div>
-            <div class="vm-sub" data-i18n="scanQRSub">Aponta a câmara para o código QR WINDI</div>
-          </div>
-          <div class="vm-arrow">›</div>
-        </button>
-        <button class="verify-method-btn" onclick="openFileUpload()">
-          <div class="vm-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg></div>
-          <div class="vm-text">
-            <div class="vm-label" data-i18n="uploadFile">Enviar Ficheiro</div>
-            <div class="vm-sub" data-i18n="uploadFileSub">PDF, imagem ou .jmpg com selagem</div>
-          </div>
-          <div class="vm-arrow">›</div>
-        </button>
-      </div>
-
-      <div class="verify-id-input-wrap">
-        <div style="font-size:12px;font-weight:600;color:var(--text-3);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:8px">Ou introduz o ID directamente</div>
-        <input
-          type="text"
-          class="verify-id-input"
-          id="verify-id-input"
-          data-i18n-ph="verifyInputPh" placeholder="WINDI-2026-XXXX ou Receipt ID"
-          inputmode="text"
-          autocomplete="off"
-          autocorrect="off"
-          spellcheck="false"
-        >
-        <button class="verify-id-btn" onclick="verifyById()">
-          <span id="verify-btn-text" data-i18n="verifyBtn">Verificar</span>
-        </button>
-        <input type="file" id="file-upload-input" accept=".pdf,.png,.jpg,.jpeg,.jmpg" style="display:none" onchange="handleFileUpload(event)">
-      </div>
-
-      <div id="verify-result-container"></div>
-
-    </div><!-- /screen-verify -->
-
-    <!-- VAULT -->
-    <div class="screen" id="screen-vault">
-
-      <div class="section-header">
-        <div class="section-title">Vault</div>
-      </div>
-
-      <div class="vault-stats-strip">
-        <div class="stat-card">
-          <div class="stat-value" id="vault-total">—</div>
-          <div class="stat-label" data-i18n="total">Total</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value" id="vault-high">—</div>
-          <div class="stat-label">HIGH</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value" id="vault-month">—</div>
-          <div class="stat-label" data-i18n="thisMonth">Este mês</div>
-        </div>
-      </div>
-
-      <div class="filter-row">
-        <button class="filter-chip active" data-i18n="filterAll" onclick="filterDocs('all', this)">Todos</button>
-        <button class="filter-chip" onclick="filterDocs('communique', this)">Communiqué</button>
-        <button class="filter-chip" onclick="filterDocs('jmpg', this)">JMPG</button>
-        <button class="filter-chip" onclick="filterDocs('governance', this)">Governance</button>
-        <button class="filter-chip" onclick="filterDocs('legal', this)">Legal</button>
-      </div>
-
-      <div class="card" style="margin:0 20px" id="vault-docs">
-        <div class="doc-row">
-          <div class="doc-icon-wrap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18l3-2 3 2 3-2 3 2 3-2 3 2V3"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg></div>
-          <div class="doc-info">
-            <div class="doc-name">WINDI-VERIFY-GENESIS-20260305</div>
-            <div class="doc-meta"><span class="doc-sealed"></span> HIGH · 5 Mar 2026</div>
-          </div>
-          <div class="doc-arrow">›</div>
-        </div>
-        <div class="doc-row">
-          <div class="doc-icon-wrap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13,2 13,9 20,9"/></svg></div>
-          <div class="doc-info">
-            <div class="doc-name">WINDI-I11-CONSTITUTIONAL</div>
-            <div class="doc-meta"><span class="doc-sealed"></span> HIGH · 5 Mar 2026</div>
-          </div>
-          <div class="doc-arrow">›</div>
-        </div>
-        <div class="doc-row">
-          <div class="doc-icon-wrap"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18l3-2 3 2 3-2 3 2 3-2 3 2V3"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg></div>
-          <div class="doc-info">
-            <div class="doc-name">COM-20260304-0002.jmpg</div>
-            <div class="doc-meta"><span class="doc-sealed"></span> communiqué · 4 Mar 2026</div>
-          </div>
-          <div class="doc-arrow">›</div>
-        </div>
-        <div class="doc-row" style="justify-content:center;padding:14px;cursor:pointer" onclick="loadMoreDocs()">
-          <span style="font-size:13px;color:var(--gold);font-weight:600" data-i18n="loadMore">Carregar mais →</span>
-        </div>
-      </div>
-
-    </div><!-- /screen-vault -->
-
-    <!-- EU -->
-    <div class="screen" id="screen-eu">
-
-      <div class="eu-avatar-section">
-        <div class="eu-avatar"><svg width="38" height="38" viewBox="0 0 24 24" fill="none"><path d="M12 2C9.5 2 7.2 3.5 6.3 6C4.6 6.8 3 8.5 3 11C3 13.5 4.8 15.2 7 15.5C7.2 17.3 8.5 19.2 11 20C11.5 20.2 12 20.2 12 20.2C12 20.2 12.5 20.2 13 20C15.5 19.2 16.8 17.3 17 15.5C19.2 15.2 21 13.5 21 11C21 8.5 19.4 6.8 17.7 6C16.8 3.5 14.5 2 12 2Z" fill="var(--gold)"/><circle cx="9.5" cy="10.5" r="1.5" fill="white"/><circle cx="14.5" cy="10.5" r="1.5" fill="white"/><path d="M9 14.5C9.8 15.5 11 16 12 16C13 16 14.2 15.5 15 14.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
-        <div class="eu-name">Human Dragon</div>
-        <div class="eu-role" data-i18n="euRole">Chief Governance Officer</div>
-      </div>
-
-      <!-- DID -->
-      <div class="did-card">
-        <div class="did-label" data-i18n="didLabel">Decentralized Identity (DID)</div>
-        <div class="did-value" id="did-value">did:windi:pioneer:001<br>Ed25519 · UUIDv7</div>
-        <button class="did-copy-btn" id="did-copy-btn" onclick="copyDID()"><span style="display:inline-flex;align-items:center;gap:6px" data-i18n="copyDid"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Copiar DID</span></button>
-      </div>
-
-      <!-- Settings groups -->
-      <div class="settings-section">
-        <div class="section-header" style="padding:0 0 10px">
-          <div class="section-title" style="font-size:16px" data-i18n="preferences">Preferências</div>
-        </div>
-        <div class="settings-group">
-          <div class="settings-row" onclick="toggleTheme()">
-            <div class="settings-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg></div>
-            <div class="settings-label" data-i18n="noirTheme">Tema NOIR</div>
-            <div id="noir-toggle" class="toggle" onclick="event.stopPropagation(); toggleTheme()">
-              <div class="toggle-thumb"></div>
-            </div>
-          </div>
-          <div class="settings-row" style="cursor:default;padding:10px 16px">
-            <div class="settings-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></div>
-            <div class="settings-label" data-i18n="language">Idioma</div>
-            <div class="lang-switcher" id="lang-switcher">
-              <button class="lang-btn active" data-lang="pt" onclick="setLang('pt')">PT</button>
-              <button class="lang-btn" data-lang="de" onclick="setLang('de')">DE</button>
-              <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
-            </div>
-          </div>
-          <div class="settings-row">
-            <div class="settings-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg></div>
-            <div class="settings-label" data-i18n="notifications">Notificações</div>
-            <div class="toggle on">
-              <div class="toggle-thumb"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="settings-section" style="margin-top:8px">
-        <div class="section-header" style="padding:0 0 10px">
-          <div class="section-title" style="font-size:16px" data-i18n="infrastructure">Infraestrutura</div>
-        </div>
-        <div class="settings-group">
-          <div class="settings-row" onclick="pingServer()">
-            <div class="settings-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><circle cx="6" cy="6" r="1" fill="currentColor" stroke="none"/><circle cx="6" cy="18" r="1" fill="currentColor" stroke="none"/></svg></div>
-            <div class="settings-label" data-i18n="stratoServer">WINDI Server</div>
-            <div class="settings-value" id="server-ping">a verificar...</div>
-          </div>
-          <div class="settings-row">
-            <div class="settings-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div>
-            <div class="settings-label">Ledger</div>
-            <div class="settings-value" id="ledger-ping">:8101</div>
-          </div>
-          <div class="settings-row">
-            <div class="settings-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13,2 3,14 12,14 11,22 21,10 12,10 13,2"/></svg></div>
-            <div class="settings-label">Dragon API</div>
-            <div class="settings-value">:8108</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="settings-section" style="margin-top:8px">
-        <div class="settings-group">
-          <div class="settings-row" onclick="openDesktop()">
-            <div class="settings-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
-            <div class="settings-label" data-i18n="openDesktop">Abrir Desktop</div>
-            <div class="settings-value">windi-domain.com ›</div>
-          </div>
-          <div class="settings-row" onclick="openVerifyPublic()">
-            <div class="settings-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-            <div class="settings-label">Verify Public</div>
-            <div class="settings-value">/verify-public/ ›</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="version-footer">
-        WINDI Mobile v1.2.0 · 🐉 · Kempten, Bayern<br>
-        AI processes. Human decides. WINDI guarantees.
-      </div>
-
-    </div><!-- /screen-eu -->
-
-  </div><!-- /screens -->
-
-  <!-- ── BOTTOM NAV ──────────────────────────────────────── -->
-  <nav id="bottom-nav">
-    <button class="nav-item active" id="nav-home" onclick="navigate('home')">
-      <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg></div>
-      <span data-i18n="navHome">Início</span>
-    </button>
-    <button class="nav-item" id="nav-dragon" onclick="navigate('dragon')">
-      <div class="nav-icon" style="position:relative"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 2C9.5 2 7.2 3.5 6.3 6C4.6 6.8 3 8.5 3 11C3 13.5 4.8 15.2 7 15.5C7.2 17.3 8.5 19.2 11 20C11.5 20.2 12 20.2 12 20.2C12 20.2 12.5 20.2 13 20C15.5 19.2 16.8 17.3 17 15.5C19.2 15.2 21 13.5 21 11C21 8.5 19.4 6.8 17.7 6C16.8 3.5 14.5 2 12 2Z" fill="var(--gold)"/><circle cx="9.5" cy="10.5" r="1.2" fill="white"/><circle cx="14.5" cy="10.5" r="1.2" fill="white"/><path d="M9.5 14C10.2 14.8 11 15.2 12 15.2C13 15.2 13.8 14.8 14.5 14" stroke="white" stroke-width="1.3" stroke-linecap="round"/></svg><div class="nav-badge" id="dragon-badge"></div></div>
-      <span>Dragon</span>
-    </button>
-    <button class="nav-item" id="nav-verify" onclick="navigate('verify')">
-      <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
-      <span data-i18n="navVerify">Verificar</span>
-    </button>
-    <button class="nav-item" id="nav-vault" onclick="navigate('vault')">
-      <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="4"/><line x1="16.24" y1="7.76" x2="14.12" y2="9.88"/><line x1="7.76" y1="16.24" x2="9.88" y2="14.12"/><line x1="7.76" y1="7.76" x2="9.88" y2="9.88"/><line x1="16.24" y1="16.24" x2="14.12" y2="14.12"/></svg></div>
-      <span>Vault</span>
-    </button>
-    <button class="nav-item" id="nav-eu" onclick="navigate('eu')">
-      <div class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="9" cy="12" r="2.5"/><path d="M14 9h4M14 12h4M14 15h2"/></svg></div>
-      <span data-i18n="navMe">Eu</span>
-    </button>
-  </nav>
-
-</div><!-- /app -->
-
-<div id="toast"></div>
-
-<script>
-// ── CONFIG ─────────────────────────────────────────────────────
-const CONFIG = {
-  DOMAIN:      'https://windi-domain.com',
-  DRAGON_API:  'https://windi-domain.com/api/dragon',   // :8108 via nginx
-  LEDGER_API:  'https://windi-domain.com/api/ledger',   // :8101 via nginx
-  VERIFY_API:  'https://windi-domain.com/verify-public', // :8114 via nginx
-};
-
-// ── STATE ──────────────────────────────────────────────────────
-const state = {
-  screen: 'home',
-  theme: 'klar',
-  walletId: null,
-  did: null,
-  chatHistory: [],
-  isThinking: false,
-};
-
-// ── NAVIGATION ─────────────────────────────────────────────────
-function navigate(screen) {
-  // Hide current
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-
-  // Show target
-  const el = document.getElementById('screen-' + screen);
-  if (el) {
-    el.classList.add('active');
-    if (screen === 'dragon') {
-      // scroll chat to bottom
-      setTimeout(() => {
-        const msgs = document.getElementById('chat-messages');
-        if (msgs) msgs.scrollTop = msgs.scrollHeight;
-      }, 50);
-    }
-  }
-
-  const nav = document.getElementById('nav-' + screen);
-  if (nav) nav.classList.add('active');
-
-  state.screen = screen;
-
-  // Clear badge on dragon
-  if (screen === 'dragon') {
-    document.getElementById('dragon-badge').classList.remove('visible');
-  }
-}
-
-// ── THEME ──────────────────────────────────────────────────────
-function toggleTheme() {
-  const isNoir = document.documentElement.getAttribute('data-theme') === 'noir';
-  const newTheme = isNoir ? 'klar' : 'noir';
-  document.documentElement.setAttribute('data-theme', newTheme);
-  // Swap SVG icons inside theme-toggle button
-  const btn = document.getElementById('theme-toggle');
-  const moonSvg = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>`;
-  const sunSvg  = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
-  btn.innerHTML = isNoir ? moonSvg : sunSvg;
-  // Update toggle in Eu screen
-  const toggle = document.getElementById('noir-toggle');
-  if (toggle) toggle.classList.toggle('on', !isNoir);
-  // Update meta theme-color
-  document.querySelector('meta[name=theme-color]').content = isNoir ? '#F5F0E0' : '#0E0C08';
-  state.theme = newTheme;
-}
-
-
-// ── AGENTS ─────────────────────────────────────────────────────
-const AGENTS = {
-  'W-COMM-001':   { name: 'Communicator',  endpoint: '/grove/arena', role: 'comm'   },
-  'W-LEGAL-001':  { name: 'Legal',         endpoint: '/legal/chat',  role: 'legal'  },
-  'W-NOTARY-001': { name: 'Notary',        endpoint: '/notary/chat', role: 'notary' },
-  'W-COMPLY-001': { name: 'Compliance',    endpoint: '/compliance/chat', role: 'comply' },
-  'W-JOURN-001':  { name: 'Journalist',    endpoint: '/grove/arena', role: 'journ'  },
-  'W-AUDIT-001':  { name: 'Auditor',       endpoint: '/audit/chat',  role: 'audit'  },
-  'W-ACCT-001':   { name: 'Accounting',    endpoint: '/accounting/chat', role: 'acct' },
-  'W-GROVE-001':  { name: 'Grove Arena',   endpoint: '/grove/arena', role: 'grove'  },
-};
-
-state.activeAgent = 'W-COMM-001';
-
-function selectAgent(btn) {
-  const agentId = btn.getAttribute('data-agent');
-  if (!AGENTS[agentId]) return;
-
-  state.activeAgent = agentId;
-  state.chatHistory = []; // reset context on agent switch
-
-  // Update UI
-  document.querySelectorAll('.agent-chip').forEach(c => c.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('agent-active-tag').textContent = agentId;
-
-  // Clear chat and post agent intro message
-  const msgs = document.getElementById('chat-messages');
-  msgs.innerHTML = '';
-  const agentName = AGENTS[agentId].name;
-  addMessage('dragon', `${agentName} ativo. ${t('welcomeMsg')}`);
-
-  toast(agentId);
-}
-
-// ── CHAT ───────────────────────────────────────────────────────
-function autoResize(el) {
-  el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 100) + 'px';
-}
-
-function handleChatKey(e) {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault();
-    sendMessage();
-  }
-}
-
-async function sendMessage() {
-  const input = document.getElementById('dragon-input');
-  const text = input.value.trim();
-  if (!text || state.isThinking) return;
-
-  input.value = '';
-  input.style.height = 'auto';
-  state.isThinking = true;
-
-  // Add user message
-  addMessage('user', text);
-  state.chatHistory.push({ role: 'user', content: text });
-
-  // Show thinking indicator
-  const thinkingId = showThinking();
-
-  try {
-    const agentInfo = AGENTS[state.activeAgent] || AGENTS['W-COMM-001'];
-    const agentEndpoint = CONFIG.DOMAIN + agentInfo.endpoint;
-    const response = await fetch(agentEndpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        message: text,
-        history: state.chatHistory.slice(-10),
-        wallet_id: state.walletId || 'pioneer-001',
-        source: 'mobile',
-        agent: state.activeAgent,
-        persona: (AGENTS[state.activeAgent] || {}).role || 'comm',
-      }),
-    });
-
-    removeThinking(thinkingId);
-
-    if (response.ok) {
-      const data = await response.json();
-      const reply = data.response || data.message || 'Resposta recebida.';
-      addMessage('dragon', reply);
-      state.chatHistory.push({ role: 'assistant', content: reply });
-    } else {
-      addMessage('dragon', `⚠️ ${t('dragonOffline')} (${response.status})`);
-    }
-  } catch (err) {
-    removeThinking(thinkingId);
-    addMessage('dragon', `⚠️ ${t('noConnection')}`);
-    console.error('Dragon chat error:', err);
-  }
-
-  state.isThinking = false;
-}
-
-function addMessage(role, text) {
-  const msgs = document.getElementById('chat-messages');
-  const now = new Date().toLocaleTimeString('pt', { hour: '2-digit', minute: '2-digit' });
-  const div = document.createElement('div');
-  div.className = `msg msg-${role}`;
-  div.innerHTML = `
-    <div class="msg-bubble">${escapeHtml(text)}</div>
-    <div class="msg-meta">${role === 'dragon' ? t('msgDragon') : t('msgYou')} · ${t('now')}</div>
-  `;
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
-
-  // Badge if not on dragon screen
-  if (role === 'dragon' && state.screen !== 'dragon') {
-    document.getElementById('dragon-badge').classList.add('visible');
-  }
-}
-
-function showThinking() {
-  const msgs = document.getElementById('chat-messages');
-  const id = 'thinking-' + Date.now();
-  const div = document.createElement('div');
-  div.id = id;
-  div.className = 'msg-thinking';
-  div.innerHTML = `
-    <div class="thinking-dots">
-      <div class="thinking-dot"></div>
-      <div class="thinking-dot"></div>
-      <div class="thinking-dot"></div>
+      <div class="quick-actions"><div class="quick-actions-grid">
+        <button class="quick-action-btn" onclick="navigate('dragon')"><span class="qa-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2C9.5 2 7.2 3.5 6.3 6C4.6 6.8 3 8.5 3 11C3 13.5 4.8 15.2 7 15.5C7.2 17.3 8.5 19.2 11 20C11.5 20.2 12 20.2 12 20.2C12 20.2 12.5 20.2 13 20C15.5 19.2 16.8 17.3 17 15.5C19.2 15.2 21 13.5 21 11C21 8.5 19.4 6.8 17.7 6C16.8 3.5 14.5 2 12 2Z" fill="var(--gold)"/><circle cx="9.5" cy="10.5" r="1.2" fill="white"/><circle cx="14.5" cy="10.5" r="1.2" fill="white"/><path d="M9.5 14C10.2 14.8 11 15.2 12 15.2C13 15.2 13.8 14.8 14.5 14" stroke="white" stroke-width="1.3" stroke-linecap="round"/></svg></span><div class="qa-text"><div class="qa-label">Dragon</div><div class="qa-sub" data-i18n="qaAiChat">Chat com IA</div></div></button>
+        <button class="quick-action-btn" onclick="navigate('verify')"><span class="qa-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span><div class="qa-text"><div class="qa-label" data-i18n="navVerify">Verificar</div><div class="qa-sub" data-i18n="qaQrId">QR ou ID</div></div></button>
+        <button class="quick-action-btn" onclick="navigate('vault')"><span class="qa-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="4"/></svg></span><div class="qa-text"><div class="qa-label">Vault</div><div class="qa-sub" data-i18n="qaDocs">Documentos</div></div></button>
+        <button class="quick-action-btn" onclick="navigate('eu')"><span class="qa-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="9" cy="12" r="2.5"/><path d="M14 9h4M14 12h4M14 15h2"/></svg></span><div class="qa-text"><div class="qa-label" data-i18n="qaIdentity">Identidade</div><div class="qa-sub">DID + Wallet</div></div></button>
+      </div></div>
+      <div class="section-header"><div class="section-title" data-i18n="recent">Recentes</div><div class="section-subtitle" data-i18n="seeAll">Ver todos</div></div>
+      <div class="card" style="margin:0 20px"><div id="recent-docs"><div style="padding:28px 16px;text-align:center;color:var(--text-3)"><div style="font-size:32px;margin-bottom:10px">📭</div><div style="font-size:14px;font-weight:600" data-i18n="noDocsYet">Ainda sem documentos</div><div style="font-size:12px;margin-top:4px" data-i18n="noDocsSub">Os teus documentos selados aparecem aqui</div></div></div></div>
+      <div class="section-header" style="margin-top:8px"><div class="section-title">Ledger</div><div id="ledger-status-pill" class="pill pill-green" style="font-size:10px">● LIVE</div></div>
+      <div class="card" style="margin:0 20px"><div style="padding:14px 16px;display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:28px;font-weight:700;color:var(--gold)" id="ledger-count">—</div><div style="font-size:11px;color:var(--text-3);margin-top:2px;font-weight:500;text-transform:uppercase">Receipts Selados</div></div><div style="text-align:right"><div style="font-size:12px;color:var(--text-3)">windi-domain.com</div><div style="font-size:11px;color:var(--gold);font-family:var(--mono);margin-top:2px">:8101</div></div></div></div>
     </div>
-    <span style="font-size:12px;color:var(--text-3)" data-i18n="dragonThinking">Dragon a pensar…</span>
-  `;
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
-  return id;
-}
-
-function removeThinking(id) {
-  const el = document.getElementById(id);
-  if (el) el.remove();
-}
-
-// ── VERIFY ─────────────────────────────────────────────────────
-function openQRScanner() {
-  // Redirect to verify-public with camera intent, or open native camera
-  if ('mediaDevices' in navigator && navigator.mediaDevices.getUserMedia) {
-    window.location.href = CONFIG.DOMAIN + '/verify-public/?qr=1';
-  } else {
-    toast(t('cameraNa'));
-  }
-}
-
-function openFileUpload() {
-  document.getElementById('file-upload-input').click();
-}
-
-function handleFileUpload(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  toast(`${t('uploadFile')}: ${file.name}`);
-  // TODO: extract receipt_id from file metadata and verify
-}
-
-async function verifyById() {
-  const id = document.getElementById('verify-id-input').value.trim();
-  if (!id) { toast('Introduz um ID ou Receipt'); return; }
-
-  const btn = document.getElementById('verify-btn-text');
-  btn.innerHTML = '<span class="spinner"></span>';
-
-  try {
-    const url = `${CONFIG.DOMAIN}/verify-public/?id=${encodeURIComponent(id)}`;
-    // Use ledger API directly
-    const res = await fetch(`${CONFIG.LEDGER_API}/api/verify/${encodeURIComponent(id)}`);
-    const container = document.getElementById('verify-result-container');
-
-    if (res.ok) {
-      const data = await res.json();
-      const receipt = data.receipt || data;
-      container.innerHTML = `
-        <div class="verify-result verify-result-valid">
-          <div class="verify-result-header">
-            <span class="vr-status-icon">✅</span>
-            <span class="vr-status-label vr-status-valid">Documento Autêntico</span>
+    <div class="screen" id="screen-dragon" style="display:flex;flex-direction:column;overflow:hidden">
+      <div class="dragon-header"><div class="dragon-status"><div class="dragon-dot" id="dragon-dot"></div><span class="dragon-status-text" id="dragon-status-text" data-i18n="dragonOnline">Dragon Online</span></div><span class="agent-active-tag" id="agent-active-tag">W-COMM-001</span></div>
+      <div class="agent-strip" id="agent-strip">
+        <button class="agent-chip active" data-agent="W-COMM-001" onclick="selectAgent(this)">COMM</button>
+        <button class="agent-chip" data-agent="W-LEGAL-001" onclick="selectAgent(this)">LEGAL</button>
+        <button class="agent-chip" data-agent="W-NOTARY-001" onclick="selectAgent(this)">NOTARY</button>
+        <button class="agent-chip" data-agent="W-COMPLY-001" onclick="selectAgent(this)">COMPLY</button>
+        <button class="agent-chip" data-agent="W-JOURN-001" onclick="selectAgent(this)">JOURN</button>
+        <button class="agent-chip" data-agent="W-AUDIT-001" onclick="selectAgent(this)">AUDIT</button>
+        <button class="agent-chip" data-agent="W-ACCT-001" onclick="selectAgent(this)">ACCT</button>
+        <button class="agent-chip" data-agent="W-GROVE-001" onclick="selectAgent(this)">GROVE</button>
+      </div>
+      <div class="chat-messages" id="chat-messages"><div class="msg msg-dragon"><div class="msg-bubble" data-i18n="welcomeMsg">Irmao Dragon Mobile activo. Como posso ajudar?</div><div class="msg-meta">Dragon · agora</div></div></div>
+      <div class="chat-input-area"><div class="chat-input-wrap"><textarea id="dragon-input" data-i18n-ph="chatPlaceholder" placeholder="Escreve aqui..." rows="1" oninput="autoResize(this)" onkeydown="handleChatKey(event)"></textarea></div><button class="chat-send-btn" id="chat-send" onclick="sendMessage()"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5,12 12,5 19,12"/></svg></button></div>
+    </div>
+    <div class="screen" id="screen-verify">
+      <div class="verify-hero"><div class="verify-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9,12 11,14 15,10"/></svg></div><div class="verify-title" data-i18n="verifyTitle">Verificar Documento</div><div class="verify-desc" data-i18n="verifyDesc">Confirma a autenticidade de qualquer documento WINDI</div></div>
+      <div class="verify-methods"><button class="verify-method-btn primary" onclick="openQRScanner()"><div class="vm-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg></div><div class="vm-text"><div class="vm-label" data-i18n="scanQR">Digitalizar QR</div><div class="vm-sub" data-i18n="scanQRSub">Aponta a camara para o codigo QR WINDI</div></div><div class="vm-arrow">›</div></button><button class="verify-method-btn" onclick="openFileUpload()"><div class="vm-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg></div><div class="vm-text"><div class="vm-label" data-i18n="uploadFile">Enviar Ficheiro</div><div class="vm-sub" data-i18n="uploadFileSub">PDF, imagem ou .jmpg com selagem</div></div><div class="vm-arrow">›</div></button></div>
+      <div class="verify-id-input-wrap"><div style="font-size:12px;font-weight:600;color:var(--text-3);margin-bottom:8px">Ou introduz o ID directamente</div><input type="text" class="verify-id-input" id="verify-id-input" data-i18n-ph="verifyInputPh" placeholder="WINDI-2026-XXXX ou Receipt ID"><button class="verify-id-btn" onclick="verifyById()"><span id="verify-btn-text" data-i18n="verifyBtn">Verificar</span></button><input type="file" id="file-upload-input" accept=".pdf,.png,.jpg,.jpeg,.jmpg" style="display:none" onchange="handleFileUpload(event)"></div>
+      <div id="verify-result-container"></div>
+    </div>
+    <div class="screen" id="screen-vault">
+      <div class="section-header"><div class="section-title">Vault</div></div>
+      <div class="vault-stats-strip"><div class="stat-card"><div class="stat-value" id="vault-total">0</div><div class="stat-label" data-i18n="total">Total</div></div><div class="stat-card"><div class="stat-value" id="vault-high">0</div><div class="stat-label">HIGH</div></div><div class="stat-card"><div class="stat-value" id="vault-month">0</div><div class="stat-label" data-i18n="thisMonth">Este mes</div></div></div>
+      <div class="filter-row"><button class="filter-chip active" data-i18n="filterAll" onclick="filterDocs('all', this)">Todos</button><button class="filter-chip" onclick="filterDocs('communique', this)">Communique</button><button class="filter-chip" onclick="filterDocs('jmpg', this)">JMPG</button><button class="filter-chip" onclick="filterDocs('governance', this)">Governance</button><button class="filter-chip" onclick="filterDocs('legal', this)">Legal</button></div>
+      <div class="card" style="margin:0 20px" id="vault-docs"><div style="padding:28px 16px;text-align:center;color:var(--text-3)"><div style="font-size:32px;margin-bottom:10px">🗄️</div><div style="font-size:14px;font-weight:600" data-i18n="noDocsYet">Vault vazio</div><div style="font-size:12px;margin-top:4px" data-i18n="noDocsSub">Os teus documentos selados aparecem aqui</div></div></div>
+    </div>
+    <div class="screen" id="screen-eu">
+      <div class="eu-avatar-section"><div class="eu-avatar"><svg width="38" height="38" viewBox="0 0 24 24" fill="none"><path d="M12 2C9.5 2 7.2 3.5 6.3 6C4.6 6.8 3 8.5 3 11C3 13.5 4.8 15.2 7 15.5C7.2 17.3 8.5 19.2 11 20C11.5 20.2 12 20.2 12 20.2C12 20.2 12.5 20.2 13 20C15.5 19.2 16.8 17.3 17 15.5C19.2 15.2 21 13.5 21 11C21 8.5 19.4 6.8 17.7 6C16.8 3.5 14.5 2 12 2Z" fill="var(--gold)"/><circle cx="9.5" cy="10.5" r="1.5" fill="white"/><circle cx="14.5" cy="10.5" r="1.5" fill="white"/><path d="M9 14.5C9.8 15.5 11 16 12 16C13 16 14.2 15.5 15 14.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="eu-name" id="eu-name-display">—</div><div class="eu-role" id="eu-role-display" data-i18n="euRole">Chief Governance Officer</div></div>
+      <div class="did-card"><div class="did-label" data-i18n="didLabel">Decentralized Identity (DID)</div><div class="did-value" id="did-value"><span style="color:var(--text-3)">—</span></div><button class="did-copy-btn" id="did-copy-btn" onclick="copyDID()"><span data-i18n="copyDid">Copiar DID</span></button></div>
+      <div class="settings-section"><div class="section-header" style="padding:0 0 10px"><div class="section-title" style="font-size:16px" data-i18n="preferences">Preferencias</div></div><div class="settings-group"><div class="settings-row" onclick="toggleTheme()"><div class="settings-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg></div><div class="settings-label" data-i18n="noirTheme">Tema NOIR</div><div id="noir-toggle" class="toggle"><div class="toggle-thumb"></div></div></div><div class="settings-row" style="cursor:default;padding:10px 16px"><div class="settings-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg></div><div class="settings-label" data-i18n="language">Idioma</div><div class="lang-switcher" id="lang-switcher"><button class="lang-btn active" data-lang="pt" onclick="setLang('pt')">PT</button><button class="lang-btn" data-lang="de" onclick="setLang('de')">DE</button><button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button></div></div></div></div>
+      <div class="settings-section" style="margin-top:8px"><div class="section-header" style="padding:0 0 10px"><div class="section-title" style="font-size:16px" data-i18n="infrastructure">Infraestrutura</div></div><div class="settings-group"><div class="settings-row" onclick="pingServer()"><div class="settings-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/></svg></div><div class="settings-label" data-i18n="stratoServer">WINDI Server</div><div class="settings-value" id="server-ping">a verificar...</div></div><div class="settings-row"><div class="settings-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div><div class="settings-label">Ledger</div><div class="settings-value">:8101</div></div><div class="settings-row" onclick="openDesktop()"><div class="settings-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div><div class="settings-label" data-i18n="openDesktop">Abrir Desktop</div><div class="settings-value">›</div></div></div></div>
+      <div class="settings-section" style="margin-top:8px"><div class="settings-group"><div class="settings-row" onclick="resetUser()" style="color:var(--text-3)"><div class="settings-icon" style="background:#FDEEEE"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B52B2B" stroke-width="2"><path d="M3 6h18M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg></div><div class="settings-label" style="color:#B52B2B" data-i18n="resetAccount">Redefinir conta</div><div class="settings-value" style="color:#B52B2B">›</div></div></div></div>
+      <div class="version-footer">WINDI Mobile v1.2.0 · 🐉 · Kempten, Bayern<br>AI processes. Human decides. WINDI guarantees.</div>
+    </div>
+    <div class="screen active" id="screen-onboarding" style="display:flex;flex-direction:column;justify-content:space-between;padding:0">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 28px;text-align:center">
+        <div style="width:80px;height:80px;background:linear-gradient(135deg,var(--gold-light),var(--gold));border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 32px rgba(139,105,20,0.35);margin-bottom:24px"><svg width="42" height="42" viewBox="0 0 24 24" fill="none"><path d="M12 2C9.5 2 7.2 3.5 6.3 6C4.6 6.8 3 8.5 3 11C3 13.5 4.8 15.2 7 15.5C7.2 17.3 8.5 19.2 11 20C11.5 20.2 12 20.2 12 20.2C12 20.2 12.5 20.2 13 20C15.5 19.2 16.8 17.3 17 15.5C19.2 15.2 21 13.5 21 11C21 8.5 19.4 6.8 17.7 6C16.8 3.5 14.5 2 12 2Z" fill="white"/><circle cx="9.5" cy="10.5" r="1.4" fill="var(--gold)"/><circle cx="14.5" cy="10.5" r="1.4" fill="var(--gold)"/><path d="M9.5 14C10.2 14.8 11 15.2 12 15.2C13 15.2 13.8 14.8 14.5 14" stroke="var(--gold)" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+        <div style="font-size:28px;font-weight:700;margin-bottom:6px">WINDI</div>
+        <div style="font-size:13px;color:var(--gold);font-weight:600;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:20px" data-i18n="onbTagline">Publishing House</div>
+        <div style="font-size:14px;color:var(--text-3);line-height:1.6;max-width:280px" data-i18n="onbDesc">Governanca documental soberana. A tua identidade digital comeca aqui.</div>
+        <div style="display:flex;gap:6px;margin-top:28px" id="onb-steps"><div class="onb-step active" id="step-dot-1"></div><div class="onb-step" id="step-dot-2"></div><div class="onb-step" id="step-dot-3"></div></div>
+      </div>
+      <div id="onb-panel" style="padding:24px 24px 32px">
+        <div id="onb-step-1">
+          <div style="font-size:18px;font-weight:700;margin-bottom:4px" data-i18n="onbStep1Title">Como queres comecar?</div>
+          <div style="font-size:13px;color:var(--text-3);margin-bottom:18px" data-i18n="onbStep1Sub">Podes sempre fazer upgrade depois</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <button class="onb-tier-btn" onclick="selectTier('FREE')" id="tier-FREE"><div style="display:flex;align-items:center;gap:12px"><div style="width:40px;height:40px;border-radius:10px;background:var(--bg-2);display:flex;align-items:center;justify-content:center;font-size:20px">🆓</div><div style="flex:1;text-align:left"><div style="font-size:14px;font-weight:700" data-i18n="tierFreeLabel">Explorador</div><div style="font-size:11px;color:var(--text-3)" data-i18n="tierFreeSub">Gratuito · DID basico · 6 tipos de doc</div></div><div class="onb-tier-check" id="check-FREE"></div></div></button>
+            <button class="onb-tier-btn" onclick="selectTier('MED')" id="tier-MED"><div style="display:flex;align-items:center;gap:12px"><div style="width:40px;height:40px;border-radius:10px;background:var(--bg-2);display:flex;align-items:center;justify-content:center;font-size:20px">⚡</div><div style="flex:1;text-align:left"><div style="font-size:14px;font-weight:700" data-i18n="tierMedLabel">Profissional</div><div style="font-size:11px;color:var(--text-3)" data-i18n="tierMedSub">Medium · DID verificado · 12 tipos</div></div><div class="onb-tier-check" id="check-MED"></div></div></button>
+            <button class="onb-tier-btn" onclick="selectTier('HIGH')" id="tier-HIGH"><div style="display:flex;align-items:center;gap:12px"><div style="width:40px;height:40px;border-radius:10px;background:var(--gold-faint);display:flex;align-items:center;justify-content:center;font-size:20px">🏆</div><div style="flex:1;text-align:left"><div style="font-size:14px;font-weight:700;color:var(--gold)" data-i18n="tierHighLabel">Institucional</div><div style="font-size:11px;color:var(--text-3)" data-i18n="tierHighSub">High · DID soberano · Todos os tipos · Agentes</div></div><div class="onb-tier-check" id="check-HIGH"></div></div></button>
           </div>
-          <div class="verify-result-body">
-            <div class="vr-field">
-              <div class="vr-field-label">Receipt ID</div>
-              <div class="vr-field-value">${escapeHtml(receipt.id || id)}</div>
-            </div>
-            <div class="vr-field">
-              <div class="vr-field-label">Hash SHA-256</div>
-              <div class="vr-field-value">${escapeHtml((receipt.hash || '').substring(0,32))}…</div>
-            </div>
-            <div class="vr-field">
-              <div class="vr-field-label">Data de Selagem</div>
-              <div class="vr-field-value">${escapeHtml(receipt.created_at || receipt.timestamp || '—')}</div>
-            </div>
-            <div class="vr-field">
-              <div class="vr-field-label">Governance</div>
-              <div class="vr-field-value">${escapeHtml(receipt.governance_level || '—')}</div>
-            </div>
+          <button class="onb-next-btn" onclick="onbNext(2)" id="onb-btn-1" disabled data-i18n="onbContinue">Continuar →</button>
+        </div>
+        <div id="onb-step-2" style="display:none">
+          <div style="font-size:18px;font-weight:700;margin-bottom:4px" data-i18n="onbStep2Title">A tua identidade</div>
+          <div style="font-size:13px;color:var(--text-3);margin-bottom:18px" data-i18n="onbStep2Sub">Estes dados ficam no teu dispositivo e no WINDI Ledger</div>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div><div style="font-size:11px;font-weight:600;color:var(--text-3);margin-bottom:6px" data-i18n="onbNameLabel">Nome / Codename</div><input type="text" id="onb-name" class="onb-input" data-i18n-ph="onbNamePh" placeholder="Ex: Human Dragon" maxlength="60"></div>
+            <div><div style="font-size:11px;font-weight:600;color:var(--text-3);margin-bottom:6px" data-i18n="onbTypeLabel">Tipo de entidade</div><div style="display:flex;gap:8px"><button class="onb-type-btn active" id="type-PF" onclick="selectType('PF')" data-i18n="typePF">Pessoa Fisica</button><button class="onb-type-btn" id="type-PJ" onclick="selectType('PJ')" data-i18n="typePJ">Pessoa Juridica</button></div></div>
+            <div><div style="font-size:11px;font-weight:600;color:var(--text-3);margin-bottom:6px" data-i18n="onbRoleLabel">Funcao / Cargo (opcional)</div><input type="text" id="onb-role" class="onb-input" data-i18n-ph="onbRolePh" placeholder="Ex: CEO, Founder, Advogado..." maxlength="60"></div>
           </div>
-        </div>`;
-    } else {
-      container.innerHTML = `
-        <div class="verify-result verify-result-invalid">
-          <div class="verify-result-header">
-            <span class="vr-status-icon">❌</span>
-            <span class="vr-status-label vr-status-invalid">Não encontrado</span>
-          </div>
-          <div class="verify-result-body">
-            <div class="vr-field">
-              <div class="vr-field-label">ID pesquisado</div>
-              <div class="vr-field-value">${escapeHtml(id)}</div>
-            </div>
-            <div class="vr-field">
-              <div class="vr-field-label">Status</div>
-              <div class="vr-field-value">Não existe no Ledger WINDI</div>
-            </div>
-          </div>
-        </div>`;
-    }
-  } catch (err) {
-    toast(t('noConnection'));
-    console.error('Verify error:', err);
-  }
-
-  btn.textContent = 'Verificar';
-}
-
-// ── VAULT ──────────────────────────────────────────────────────
-function filterDocs(type, btn) {
-  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-  btn.classList.add('active');
-  // TODO: filter vault docs by type
-  toast(`${t('filterToast')}: ${type === 'all' ? t('filterAll') : type}`);
-}
-
-function loadMoreDocs() {
-  toast(t('loadingDocs'));
-}
-
-// ── SETTINGS ───────────────────────────────────────────────────
-function copyDID() {
-  const did = document.getElementById('did-value').textContent;
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(did.replace(/\n/g, ' ')).then(() => toast(t('didCopied')));
-  } else {
-    toast(t('didCopied'));
-  }
-}
-
-function openDesktop() {
-  window.open(CONFIG.DOMAIN + '/app/', '_blank');
-}
-
-function openVerifyPublic() {
-  window.open(CONFIG.DOMAIN + '/verify-public/', '_blank');
-}
-
-async function pingServer() {
-  const el = document.getElementById('server-ping');
-  el.textContent = '…';
-  try {
-    const t0 = Date.now();
-    const res = await fetch(CONFIG.DOMAIN + '/api/health', { mode: 'no-cors' });
-    const ms = Date.now() - t0;
-    el.textContent = `${ms}ms 🟢`;
-  } catch {
-    el.textContent = 'offline 🔴';
-  }
-}
-
-// ── TOAST ──────────────────────────────────────────────────────
-let toastTimer;
-function toast(msg, duration = 2500) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('show'), duration);
-}
-
-// ── UTILS ──────────────────────────────────────────────────────
-function escapeHtml(str) {
-  if (!str) return '';
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
-
-
-// ── I18N ───────────────────────────────────────────────────────
-const TRANSLATIONS = {
-  pt: {
-    greeting:       'Olá,',
-    walletId:       'Wallet ID',
-    tierHigh:       'High',
-    qaAiChat:       'Chat com IA',
-    navVerify:      'Verificar',
-    qaQrId:         'QR ou ID',
-    qaDocs:         'Documentos',
-    qaIdentity:     'Identidade',
-    recent:         'Recentes',
-    seeAll:         'Ver todos →',
-    sealed:         'Selado',
-    total:          'Total',
-    thisMonth:      'Este mês',
-    receiptsSealed: 'Receipts Selados',
-    dragonOnline:   'Dragon Online',
-    chatPlaceholder:'Escreve aqui...',
-    dragonThinking: 'Dragon a pensar…',
-    verifyTitle:    'Verificar Documento',
-    verifyDesc:     'Confirma a autenticidade de qualquer documento WINDI com selagem criptográfica',
-    scanQR:         'Digitalizar QR',
-    scanQRSub:      'Aponta a câmara para o código QR WINDI',
-    uploadFile:     'Enviar Ficheiro',
-    uploadFileSub:  'PDF, imagem ou .jmpg com selagem',
-    verifyInputPh:  'WINDI-2026-XXXX ou Receipt ID',
-    verifyBtn:      'Verificar',
-    filterAll:      'Todos',
-    euRole:         'Chief Governance Officer',
-    didLabel:       'Identidade Descentralizada (DID)',
-    preferences:    'Preferências',
-    noirTheme:      'Tema NOIR',
-    language:       'Idioma',
-    notifications:  'Notificações',
-    infrastructure: 'Infraestrutura',
-    stratoServer:   'WINDI Server',
-    openDesktop:    'Abrir Desktop',
-    navHome:        'Início',
-    navMe:          'Eu',
-    copyDid:        'Copiar DID',
-    loadMore:       'Carregar mais →',
-    msgDragon:      'Dragon',
-    msgYou:         'Você',
-    now:            'agora',
-    welcomeMsg:     'Irmão 🐉 Dragon Mobile activo. Como posso ajudar?',
-    dragonOffline:  'Dragon offline. Tenta mais tarde, Irmão.',
-    noConnection:   'Sem ligação ao Dragon. Verifica a tua rede.',
-    cameraNa:       'Câmara não disponível. Usa o ID manual.',
-    didCopied:      'DID copiado ✓',
-    filterToast:    'Filtro',
-    loadingDocs:    'A carregar do Ledger...',
-    connChecking:   'a verificar...',
-  },
-  de: {
-    greeting:       'Hallo,',
-    walletId:       'Wallet-ID',
-    tierHigh:       'Hoch',
-    qaAiChat:       'Chat mit KI',
-    navVerify:      'Prüfen',
-    qaQrId:         'QR oder ID',
-    qaDocs:         'Dokumente',
-    qaIdentity:     'Identität',
-    recent:         'Zuletzt',
-    seeAll:         'Alle anzeigen →',
-    sealed:         'Versiegelt',
-    total:          'Gesamt',
-    thisMonth:      'Diesen Monat',
-    receiptsSealed: 'Versiegelte Belege',
-    dragonOnline:   'Dragon Online',
-    chatPlaceholder:'Nachricht eingeben…',
-    dragonThinking: 'Dragon denkt nach…',
-    verifyTitle:    'Dokument prüfen',
-    verifyDesc:     'Echtheit von WINDI-Dokumenten mit kryptografischer Versiegelung bestätigen',
-    scanQR:         'QR scannen',
-    scanQRSub:      'Kamera auf WINDI QR-Code richten',
-    uploadFile:     'Datei hochladen',
-    uploadFileSub:  'PDF, Bild oder .jmpg mit Versiegelung',
-    verifyInputPh:  'WINDI-2026-XXXX oder Beleg-ID',
-    verifyBtn:      'Prüfen',
-    filterAll:      'Alle',
-    euRole:         'Chief Governance Officer',
-    didLabel:       'Dezentrale Identität (DID)',
-    preferences:    'Einstellungen',
-    noirTheme:      'NOIR-Design',
-    language:       'Sprache',
-    notifications:  'Benachrichtigungen',
-    infrastructure: 'Infrastruktur',
-    stratoServer:   'WINDI Server',
-    openDesktop:    'Desktop öffnen',
-    navHome:        'Start',
-    navMe:          'Ich',
-    copyDid:        'DID kopieren',
-    loadMore:       'Mehr laden →',
-    msgDragon:      'Dragon',
-    msgYou:         'Sie',
-    now:            'jetzt',
-    welcomeMsg:     'Hallo 🐉 Dragon Mobile aktiv. Wie kann ich helfen?',
-    dragonOffline:  'Dragon offline. Bitte später versuchen.',
-    noConnection:   'Keine Verbindung zu Dragon. Netzwerk prüfen.',
-    cameraNa:       'Kamera nicht verfügbar. Bitte ID manuell eingeben.',
-    didCopied:      'DID kopiert ✓',
-    filterToast:    'Filter',
-    loadingDocs:    'Wird vom Ledger geladen...',
-    connChecking:   'wird geprüft...',
-  },
-  en: {
-    greeting:       'Hello,',
-    walletId:       'Wallet ID',
-    tierHigh:       'High',
-    qaAiChat:       'AI Chat',
-    navVerify:      'Verify',
-    qaQrId:         'QR or ID',
-    qaDocs:         'Documents',
-    qaIdentity:     'Identity',
-    recent:         'Recent',
-    seeAll:         'See all →',
-    sealed:         'Sealed',
-    total:          'Total',
-    thisMonth:      'This month',
-    receiptsSealed: 'Sealed Receipts',
-    dragonOnline:   'Dragon Online',
-    chatPlaceholder:'Type a message…',
-    dragonThinking: 'Dragon is thinking…',
-    verifyTitle:    'Verify Document',
-    verifyDesc:     'Confirm the authenticity of any WINDI document with cryptographic sealing',
-    scanQR:         'Scan QR Code',
-    scanQRSub:      'Point camera at a WINDI QR code',
-    uploadFile:     'Upload File',
-    uploadFileSub:  'PDF, image or .jmpg with seal',
-    verifyInputPh:  'WINDI-2026-XXXX or Receipt ID',
-    verifyBtn:      'Verify',
-    filterAll:      'All',
-    euRole:         'Chief Governance Officer',
-    didLabel:       'Decentralized Identity (DID)',
-    preferences:    'Preferences',
-    noirTheme:      'NOIR Theme',
-    language:       'Language',
-    notifications:  'Notifications',
-    infrastructure: 'Infrastructure',
-    stratoServer:   'WINDI Server',
-    openDesktop:    'Open Desktop',
-    navHome:        'Home',
-    navMe:          'Me',
-    copyDid:        'Copy DID',
-    loadMore:       'Load more →',
-    msgDragon:      'Dragon',
-    msgYou:         'You',
-    now:            'now',
-    welcomeMsg:     'Hey 🐉 Dragon Mobile active. How can I help?',
-    dragonOffline:  'Dragon offline. Please try again later.',
-    noConnection:   'No connection to Dragon. Check your network.',
-    cameraNa:       'Camera unavailable. Use manual ID input.',
-    didCopied:      'DID copied ✓',
-    filterToast:    'Filter',
-    loadingDocs:    'Loading from Ledger...',
-    connChecking:   'checking...',
-  }
-};
-
-let currentLang = 'pt';
-
-function t(key) {
-  return (TRANSLATIONS[currentLang] || TRANSLATIONS.pt)[key] || key;
-}
-
-function setLang(lang) {
-  if (!TRANSLATIONS[lang]) return;
-  currentLang = lang;
-
-  // Update <html lang>
-  document.getElementById('html-root').lang = lang;
-
-  // Update all data-i18n elements
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.getAttribute('data-i18n');
-    el.textContent = t(key);
-  });
-
-  // Update placeholders
-  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
-    const key = el.getAttribute('data-i18n-ph');
-    el.placeholder = t(key);
-  });
-
-  // Update dynamic strings in state
-  // Update lang switcher buttons
-  document.querySelectorAll('.lang-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
-  });
-
-  // Update settings value display
-  const labels = { pt: 'Português', de: 'Deutsch', en: 'English' };
-
-  // Save preference
-  try { localStorage.setItem('windi_lang', lang); } catch(e) {}
-
-  toast(`${labels[lang]} ✓`);
-}
-
-function detectLang() {
-  // 1. Saved preference
-  try {
-    const saved = localStorage.getItem('windi_lang');
-    if (saved && TRANSLATIONS[saved]) return saved;
-  } catch(e) {}
-
-  // 2. Browser language
-  const nav = (navigator.language || navigator.userLanguage || 'pt').toLowerCase();
-  if (nav.startsWith('de')) return 'de';
-  if (nav.startsWith('en')) return 'en';
-  return 'pt'; // default
-}
-
-// ── INIT ───────────────────────────────────────────────────────
-function init() {
-  // Check URL params for deep linking
-  const params = new URLSearchParams(window.location.search);
-  if (params.get('screen')) navigate(params.get('screen'));
-  if (params.get('verify')) {
-    navigate('verify');
-    document.getElementById('verify-id-input').value = params.get('verify');
-  }
-  if (params.get('from') === 'desktop') {
-    toast('Canvas Desktop → Mobile Control Center 🐉');
-  }
-
-  // Ping server after 1s
-  setTimeout(pingServer, 1000);
-
-  // Load wallet from localStorage (best effort)
-  try {
-    const w = localStorage.getItem('windi_wallet_id');
-    if (w) {
-      state.walletId = w;
-      document.getElementById('wallet-id-display').textContent = w;
-    }
-  } catch(e) {}
-
-  // Language detection + apply
-  const detectedLang = detectLang();
-  currentLang = detectedLang;
-  setLang(detectedLang);
-
-  console.log('WINDI Mobile v1.2.0 🐉 — AI processes. Human decides. WINDI guarantees.');
-}
-
-document.addEventListener('DOMContentLoaded', init);
+          <button class="onb-next-btn" onclick="onbNext(3)" data-i18n="onbContinue">Continuar →</button>
+        </div>
+        <div id="onb-step-3" style="display:none">
+          <div style="font-size:18px;font-weight:700;margin-bottom:4px" data-i18n="onbStep3Title">Gerar a tua identidade</div>
+          <div style="font-size:13px;color:var(--text-3);margin-bottom:18px" data-i18n="onbStep3Sub">DID Ed25519 · Selado no WINDI Ledger · Irreversivel</div>
+          <div style="background:linear-gradient(135deg,var(--ink-2),var(--ink));border-radius:var(--radius);padding:16px;margin-bottom:16px"><div style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:var(--gold-light);text-transform:uppercase;margin-bottom:8px">WINDI DID Preview</div><div style="font-family:var(--mono);font-size:11px;color:#C4B896;line-height:1.6" id="did-preview">did:windi:—:—</div><div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap" id="onb-preview-pills"><span class="pill pill-gold" id="prev-tier">—</span><span class="pill" style="background:rgba(139,105,20,0.2);color:var(--gold-light);font-size:10px" id="prev-type">—</span></div></div>
+          <div style="display:flex;align-items:flex-start;gap:10px;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:16px" onclick="toggleConsent()"><div id="consent-box" style="width:20px;height:20px;border:2px solid var(--border);border-radius:4px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all 0.15s"></div><div style="font-size:12px;color:var(--text-3);line-height:1.5" data-i18n="onbConsent">Compreendo que o meu DID sera selado de forma permanente no WINDI Ledger. GDPR: apenas hash, sem dados biometricos armazenados.</div></div>
+          <button class="onb-next-btn" onclick="generateDID()" id="onb-btn-3" disabled data-i18n="onbGenerate">Gerar DID e Entrar →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <nav id="bottom-nav">
+    <button class="nav-item active" id="nav-home" onclick="navigate('home')"><div class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg></div><span data-i18n="navHome">Inicio</span></button>
+    <button class="nav-item" id="nav-dragon" onclick="navigate('dragon')"><div class="nav-icon" style="position:relative"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 2C9.5 2 7.2 3.5 6.3 6C4.6 6.8 3 8.5 3 11C3 13.5 4.8 15.2 7 15.5C7.2 17.3 8.5 19.2 11 20C11.5 20.2 12 20.2 12 20.2C12 20.2 12.5 20.2 13 20C15.5 19.2 16.8 17.3 17 15.5C19.2 15.2 21 13.5 21 11C21 8.5 19.4 6.8 17.7 6C16.8 3.5 14.5 2 12 2Z" fill="var(--gold)"/><circle cx="9.5" cy="10.5" r="1.2" fill="white"/><circle cx="14.5" cy="10.5" r="1.2" fill="white"/><path d="M9.5 14C10.2 14.8 11 15.2 12 15.2C13 15.2 13.8 14.8 14.5 14" stroke="white" stroke-width="1.3" stroke-linecap="round"/></svg><div class="nav-badge" id="dragon-badge"></div></div><span>Dragon</span></button>
+    <button class="nav-item" id="nav-verify" onclick="navigate('verify')"><div class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div><span data-i18n="navVerify">Verificar</span></button>
+    <button class="nav-item" id="nav-vault" onclick="navigate('vault')"><div class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="4"/></svg></div><span>Vault</span></button>
+    <button class="nav-item" id="nav-eu" onclick="navigate('eu')"><div class="nav-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="9" cy="12" r="2.5"/><path d="M14 9h4M14 12h4M14 15h2"/></svg></div><span data-i18n="navMe">Eu</span></button>
+  </nav>
+</div>
+<div id="toast"></div>
+<script>
+const CONFIG={DOMAIN:'https://windi-domain.com',DRAGON_API:'https://windi-domain.com/api/dragon',LEDGER_API:'https://windi-domain.com/api/ledger',VERIFY_API:'https://windi-domain.com/verify-public'};
+const state={screen:'home',theme:'klar',walletId:null,did:null,chatHistory:[],isThinking:false,activeAgent:'W-COMM-001'};
+const AGENTS={'W-COMM-001':{name:'Communicator',endpoint:'/grove/arena'},'W-LEGAL-001':{name:'Legal',endpoint:'/legal/chat'},'W-NOTARY-001':{name:'Notary',endpoint:'/notary/chat'},'W-COMPLY-001':{name:'Compliance',endpoint:'/compliance/chat'},'W-JOURN-001':{name:'Journalist',endpoint:'/grove/arena'},'W-AUDIT-001':{name:'Auditor',endpoint:'/audit/chat'},'W-ACCT-001':{name:'Accounting',endpoint:'/accounting/chat'},'W-GROVE-001':{name:'Grove Arena',endpoint:'/grove/arena'}};
+const TRANSLATIONS={pt:{greeting:'Ola,',walletId:'Wallet ID',tierHigh:'High',qaAiChat:'Chat com IA',navVerify:'Verificar',qaQrId:'QR ou ID',qaDocs:'Documentos',qaIdentity:'Identidade',recent:'Recentes',seeAll:'Ver todos',sealed:'Selado',total:'Total',thisMonth:'Este mes',dragonOnline:'Dragon Online',chatPlaceholder:'Escreve aqui...',dragonThinking:'Dragon a pensar...',verifyTitle:'Verificar Documento',verifyDesc:'Confirma a autenticidade de qualquer documento WINDI',scanQR:'Digitalizar QR',scanQRSub:'Aponta a camara para o codigo QR WINDI',uploadFile:'Enviar Ficheiro',uploadFileSub:'PDF, imagem ou .jmpg com selagem',verifyInputPh:'WINDI-2026-XXXX ou Receipt ID',verifyBtn:'Verificar',filterAll:'Todos',euRole:'Chief Governance Officer',didLabel:'Identidade Descentralizada (DID)',preferences:'Preferencias',noirTheme:'Tema NOIR',language:'Idioma',infrastructure:'Infraestrutura',stratoServer:'WINDI Server',openDesktop:'Abrir Desktop',navHome:'Inicio',navMe:'Eu',copyDid:'Copiar DID',msgDragon:'Dragon',msgYou:'Voce',now:'agora',welcomeMsg:'Irmao 🐉 Dragon Mobile activo. Como posso ajudar?',dragonOffline:'Dragon offline. Tenta mais tarde, Irmao.',noConnection:'Sem ligacao ao Dragon. Verifica a tua rede.',cameraNa:'Camara nao disponivel. Usa o ID manual.',didCopied:'DID copiado',filterToast:'Filtro',noDocsYet:'Ainda sem documentos',noDocsSub:'Os teus documentos selados aparecem aqui',resetAccount:'Redefinir conta',confirmReset:'Tens a certeza? Esta accao apaga os teus dados locais.',onbTagline:'Publishing House',onbDesc:'Governanca documental soberana. A tua identidade digital comeca aqui.',onbStep1Title:'Como queres comecar?',onbStep1Sub:'Podes sempre fazer upgrade depois',onbStep2Title:'A tua identidade',onbStep2Sub:'Estes dados ficam no teu dispositivo e no WINDI Ledger',onbStep3Title:'Gerar a tua identidade',onbStep3Sub:'DID Ed25519 · Selado no WINDI Ledger · Irreversivel',onbNameLabel:'Nome / Codename',onbNamePh:'Ex: Human Dragon',onbTypeLabel:'Tipo de entidade',onbRoleLabel:'Funcao / Cargo (opcional)',onbRolePh:'Ex: CEO, Founder, Advogado...',onbContinue:'Continuar',onbGenerate:'Gerar DID e Entrar',onbConsent:'Compreendo que o meu DID sera selado permanentemente no WINDI Ledger. GDPR: apenas hash, sem dados biometricos.',onbNameRequired:'Introduz o teu nome para continuar',tierFreeLabel:'Explorador',tierFreeSub:'Gratuito · DID basico · 6 tipos de doc',tierMedLabel:'Profissional',tierMedSub:'Medium · DID verificado · 12 tipos',tierHighLabel:'Institucional',tierHighSub:'High · DID soberano · Todos os tipos · Agentes',typePF:'Pessoa Fisica',typePJ:'Pessoa Juridica'},de:{greeting:'Hallo,',walletId:'Wallet-ID',tierHigh:'Hoch',qaAiChat:'Chat mit KI',navVerify:'Prufen',qaQrId:'QR oder ID',qaDocs:'Dokumente',qaIdentity:'Identitat',recent:'Zuletzt',seeAll:'Alle anzeigen',sealed:'Versiegelt',total:'Gesamt',thisMonth:'Diesen Monat',dragonOnline:'Dragon Online',chatPlaceholder:'Nachricht eingeben...',dragonThinking:'Dragon denkt nach...',verifyTitle:'Dokument prufen',verifyDesc:'Echtheit von WINDI-Dokumenten mit kryptografischer Versiegelung bestatigen',scanQR:'QR scannen',scanQRSub:'Kamera auf WINDI QR-Code richten',uploadFile:'Datei hochladen',uploadFileSub:'PDF, Bild oder .jmpg mit Versiegelung',verifyInputPh:'WINDI-2026-XXXX oder Beleg-ID',verifyBtn:'Prufen',filterAll:'Alle',euRole:'Chief Governance Officer',didLabel:'Dezentrale Identitat (DID)',preferences:'Einstellungen',noirTheme:'NOIR-Design',language:'Sprache',infrastructure:'Infrastruktur',stratoServer:'WINDI Server',openDesktop:'Desktop offnen',navHome:'Start',navMe:'Ich',copyDid:'DID kopieren',msgDragon:'Dragon',msgYou:'Sie',now:'jetzt',welcomeMsg:'Hallo 🐉 Dragon Mobile aktiv. Wie kann ich helfen?',dragonOffline:'Dragon offline. Bitte spater versuchen.',noConnection:'Keine Verbindung zu Dragon. Netzwerk prufen.',cameraNa:'Kamera nicht verfugbar. Bitte ID manuell eingeben.',didCopied:'DID kopiert',filterToast:'Filter',noDocsYet:'Noch keine Dokumente',noDocsSub:'Deine versiegelten Dokumente erscheinen hier',resetAccount:'Konto zurucksetzen',confirmReset:'Bist du sicher? Diese Aktion loscht deine lokalen Daten.',onbTagline:'Publishing House',onbDesc:'Souverane Dokumenten-Governance. Deine digitale Identitat beginnt hier.',onbStep1Title:'Wie mochtest du beginnen?',onbStep1Sub:'Du kannst jederzeit upgraden',onbStep2Title:'Deine Identitat',onbStep2Sub:'Diese Daten bleiben auf deinem Gerat und im WINDI Ledger',onbStep3Title:'Identitat generieren',onbStep3Sub:'DID Ed25519 · Im WINDI Ledger versiegelt · Unwiderruflich',onbNameLabel:'Name / Codename',onbNamePh:'z.B. Human Dragon',onbTypeLabel:'Entitatstyp',onbRoleLabel:'Funktion / Rolle (optional)',onbRolePh:'z.B. CEO, Grunder, Anwalt...',onbContinue:'Weiter',onbGenerate:'DID generieren und eintreten',onbConsent:'Ich verstehe, dass meine DID dauerhaft im WINDI Ledger versiegelt wird. DSGVO-konform: nur Hash, keine biometrischen Daten.',onbNameRequired:'Bitte gib deinen Namen ein',tierFreeLabel:'Entdecker',tierFreeSub:'Kostenlos · Basis-DID · 6 Dokumenttypen',tierMedLabel:'Profi',tierMedSub:'Medium · Verifizierte DID · 12 Dokumenttypen',tierHighLabel:'Institutionell',tierHighSub:'High · Souverane DID · Alle Typen · Agenten',typePF:'Privatperson',typePJ:'Unternehmen'},en:{greeting:'Hello,',walletId:'Wallet ID',tierHigh:'High',qaAiChat:'AI Chat',navVerify:'Verify',qaQrId:'QR or ID',qaDocs:'Documents',qaIdentity:'Identity',recent:'Recent',seeAll:'See all',sealed:'Sealed',total:'Total',thisMonth:'This month',dragonOnline:'Dragon Online',chatPlaceholder:'Type a message...',dragonThinking:'Dragon is thinking...',verifyTitle:'Verify Document',verifyDesc:'Confirm the authenticity of any WINDI document',scanQR:'Scan QR Code',scanQRSub:'Point camera at a WINDI QR code',uploadFile:'Upload File',uploadFileSub:'PDF, image or .jmpg with seal',verifyInputPh:'WINDI-2026-XXXX or Receipt ID',verifyBtn:'Verify',filterAll:'All',euRole:'Chief Governance Officer',didLabel:'Decentralized Identity (DID)',preferences:'Preferences',noirTheme:'NOIR Theme',language:'Language',infrastructure:'Infrastructure',stratoServer:'WINDI Server',openDesktop:'Open Desktop',navHome:'Home',navMe:'Me',copyDid:'Copy DID',msgDragon:'Dragon',msgYou:'You',now:'now',welcomeMsg:'Hey 🐉 Dragon Mobile active. How can I help?',dragonOffline:'Dragon offline. Please try again later.',noConnection:'No connection to Dragon. Check your network.',cameraNa:'Camera unavailable. Use manual ID input.',didCopied:'DID copied',filterToast:'Filter',noDocsYet:'No documents yet',noDocsSub:'Your sealed documents will appear here',resetAccount:'Reset account',confirmReset:'Are you sure? This will delete your local data.',onbTagline:'Publishing House',onbDesc:'Sovereign document governance. Your digital identity starts here.',onbStep1Title:'How do you want to start?',onbStep1Sub:'You can always upgrade later',onbStep2Title:'Your identity',onbStep2Sub:'This data stays on your device and in the WINDI Ledger',onbStep3Title:'Generate your identity',onbStep3Sub:'DID Ed25519 · Sealed in the WINDI Ledger · Irreversible',onbNameLabel:'Name / Codename',onbNamePh:'e.g. Human Dragon',onbTypeLabel:'Entity type',onbRoleLabel:'Role / Title (optional)',onbRolePh:'e.g. CEO, Founder, Lawyer...',onbContinue:'Continue',onbGenerate:'Generate DID and Enter',onbConsent:'I understand my DID will be permanently sealed in the WINDI Ledger. GDPR: hash only, no biometric data stored.',onbNameRequired:'Please enter your name to continue',tierFreeLabel:'Explorer',tierFreeSub:'Free · Basic DID · 6 document types',tierMedLabel:'Professional',tierMedSub:'Medium · Verified DID · 12 document types',tierHighLabel:'Institutional',tierHighSub:'High · Sovereign DID · All types · Agents',typePF:'Individual',typePJ:'Organization'}};
+let currentLang='pt';
+function t(key){return(TRANSLATIONS[currentLang]||TRANSLATIONS.pt)[key]||key;}
+function setLang(lang){if(!TRANSLATIONS[lang])return;currentLang=lang;document.getElementById('html-root').lang=lang;document.querySelectorAll('[data-i18n]').forEach(el=>{el.textContent=t(el.getAttribute('data-i18n'));});document.querySelectorAll('[data-i18n-ph]').forEach(el=>{el.placeholder=t(el.getAttribute('data-i18n-ph'));});document.querySelectorAll('.lang-btn').forEach(btn=>{btn.classList.toggle('active',btn.getAttribute('data-lang')===lang);});try{localStorage.setItem('windi_lang',lang);}catch(e){}toast({pt:'Portugues',de:'Deutsch',en:'English'}[lang]+' ✓');}
+function detectLang(){try{const saved=localStorage.getItem('windi_lang');if(saved&&TRANSLATIONS[saved])return saved;}catch(e){}const nav=(navigator.language||'pt').toLowerCase();if(nav.startsWith('de'))return'de';if(nav.startsWith('en'))return'en';return'pt';}
+function navigate(screen){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));const el=document.getElementById('screen-'+screen);if(el){el.classList.add('active');if(screen==='dragon')setTimeout(()=>{const msgs=document.getElementById('chat-messages');if(msgs)msgs.scrollTop=msgs.scrollHeight;},50);}const nav=document.getElementById('nav-'+screen);if(nav)nav.classList.add('active');state.screen=screen;if(screen==='dragon')document.getElementById('dragon-badge').classList.remove('visible');}
+function toggleTheme(){const isNoir=document.documentElement.getAttribute('data-theme')==='noir';document.documentElement.setAttribute('data-theme',isNoir?'klar':'noir');document.getElementById('noir-toggle')?.classList.toggle('on',!isNoir);document.querySelector('meta[name=theme-color]').content=isNoir?'#F5F0E0':'#0E0C08';state.theme=isNoir?'klar':'noir';}
+function selectAgent(btn){const agentId=btn.getAttribute('data-agent');if(!AGENTS[agentId])return;state.activeAgent=agentId;state.chatHistory=[];document.querySelectorAll('.agent-chip').forEach(c=>c.classList.remove('active'));btn.classList.add('active');document.getElementById('agent-active-tag').textContent=agentId;const msgs=document.getElementById('chat-messages');msgs.innerHTML='';addMessage('dragon',AGENTS[agentId].name+' ativo. '+t('welcomeMsg'));toast(agentId);}
+function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,100)+'px';}
+function handleChatKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}}
+async function sendMessage(){const input=document.getElementById('dragon-input');const text=input.value.trim();if(!text||state.isThinking)return;input.value='';input.style.height='auto';state.isThinking=true;addMessage('user',text);state.chatHistory.push({role:'user',content:text});const thinkingId=showThinking();try{const agentInfo=AGENTS[state.activeAgent]||AGENTS['W-COMM-001'];const response=await fetch(CONFIG.DOMAIN+agentInfo.endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text,history:state.chatHistory.slice(-10),wallet_id:state.walletId||'anon',source:'mobile',agent:state.activeAgent})});removeThinking(thinkingId);if(response.ok){const data=await response.json();const reply=data.response||data.message||'Resposta recebida.';addMessage('dragon',reply);state.chatHistory.push({role:'assistant',content:reply});}else{addMessage('dragon','⚠️ '+t('dragonOffline')+' ('+response.status+')');}}catch(err){removeThinking(thinkingId);addMessage('dragon','⚠️ '+t('noConnection'));}state.isThinking=false;}
+function addMessage(role,text){const msgs=document.getElementById('chat-messages');const div=document.createElement('div');div.className='msg msg-'+role;div.innerHTML='<div class="msg-bubble">'+escapeHtml(text)+'</div><div class="msg-meta">'+(role==='dragon'?t('msgDragon'):t('msgYou'))+' · '+t('now')+'</div>';msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;if(role==='dragon'&&state.screen!=='dragon')document.getElementById('dragon-badge').classList.add('visible');}
+function showThinking(){const msgs=document.getElementById('chat-messages');const id='thinking-'+Date.now();const div=document.createElement('div');div.id=id;div.className='msg-thinking';div.innerHTML='<div class="thinking-dots"><div class="thinking-dot"></div><div class="thinking-dot"></div><div class="thinking-dot"></div></div><span style="font-size:12px;color:var(--text-3)">'+t('dragonThinking')+'</span>';msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;return id;}
+function removeThinking(id){const el=document.getElementById(id);if(el)el.remove();}
+function openQRScanner(){if('mediaDevices'in navigator)window.location.href=CONFIG.DOMAIN+'/verify-public/?qr=1';else toast(t('cameraNa'));}
+function openFileUpload(){document.getElementById('file-upload-input').click();}
+function handleFileUpload(event){const file=event.target.files[0];if(!file)return;toast(t('uploadFile')+': '+file.name);}
+async function verifyById(){const id=document.getElementById('verify-id-input').value.trim();if(!id){toast('Introduz um ID ou Receipt');return;}const btn=document.getElementById('verify-btn-text');btn.innerHTML='<span class="spinner"></span>';try{const res=await fetch(CONFIG.LEDGER_API+'/api/verify/'+encodeURIComponent(id));const container=document.getElementById('verify-result-container');if(res.ok){const data=await res.json();const receipt=data.receipt||data;container.innerHTML='<div class="verify-result verify-result-valid"><div class="verify-result-header"><span class="vr-status-icon">✅</span><span class="vr-status-label vr-status-valid">Documento Autentico</span></div><div class="verify-result-body"><div class="vr-field"><div class="vr-field-label">Receipt ID</div><div class="vr-field-value">'+escapeHtml(receipt.id||id)+'</div></div><div class="vr-field"><div class="vr-field-label">Hash</div><div class="vr-field-value">'+escapeHtml((receipt.hash||'').substring(0,32))+'...</div></div></div></div>';}else{container.innerHTML='<div class="verify-result verify-result-invalid"><div class="verify-result-header"><span class="vr-status-icon">❌</span><span class="vr-status-label vr-status-invalid">Nao encontrado</span></div><div class="verify-result-body"><div class="vr-field"><div class="vr-field-label">ID pesquisado</div><div class="vr-field-value">'+escapeHtml(id)+'</div></div></div></div>';}}catch(err){toast(t('noConnection'));}btn.textContent=t('verifyBtn');}
+function filterDocs(type,btn){document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));btn.classList.add('active');toast(t('filterToast')+': '+(type==='all'?t('filterAll'):type));}
+function copyDID(){const did=document.getElementById('did-value').textContent;if(navigator.clipboard)navigator.clipboard.writeText(did.replace(/\n/g,' ')).then(()=>toast(t('didCopied')));else toast(t('didCopied'));}
+function openDesktop(){window.open(CONFIG.DOMAIN+'/app/','_blank');}
+async function pingServer(){const el=document.getElementById('server-ping');el.textContent='...';try{const t0=Date.now();await fetch(CONFIG.DOMAIN+'/api/health',{mode:'no-cors'});el.textContent=(Date.now()-t0)+'ms 🟢';}catch{el.textContent='offline 🔴';}}
+let toastTimer;function toast(msg,duration=2500){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),duration);}
+function escapeHtml(str){if(!str)return'';return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+const USER={name:null,role:null,tier:null,type:'PF',walletId:null,did:null,isNew:true};
+function loadUser(){try{const saved=localStorage.getItem('windi_user');if(saved){Object.assign(USER,JSON.parse(saved),{isNew:false});return true;}}catch(e){}return false;}
+function saveUser(){try{localStorage.setItem('windi_user',JSON.stringify(USER));}catch(e){}}
+function applyUserToUI(){const nameEl=document.getElementById('greeting-name');if(nameEl)nameEl.textContent=USER.name||'—';const walletEl=document.getElementById('wallet-id-display');if(walletEl)walletEl.textContent=USER.walletId||'—';const tierEl=document.getElementById('wallet-tier-display');if(tierEl)tierEl.textContent=USER.tier||'—';const euName=document.getElementById('eu-name-display');if(euName)euName.textContent=USER.name||'—';const euRole=document.getElementById('eu-role-display');if(euRole&&USER.role)euRole.textContent=USER.role;const didEl=document.getElementById('did-value');if(didEl)didEl.innerHTML=USER.did?USER.did+'<br>Ed25519 · UUIDv7':'<span style="color:var(--text-3)">—</span>';}
+let onbTier=null,onbType='PF',consentGiven=false;
+function selectTier(tier){onbTier=tier;['FREE','MED','HIGH'].forEach(t=>{document.getElementById('tier-'+t)?.classList.remove('selected');document.getElementById('check-'+t)?.classList.remove('checked');});document.getElementById('tier-'+tier)?.classList.add('selected');document.getElementById('check-'+tier)?.classList.add('checked');document.getElementById('onb-btn-1').disabled=false;updateDIDPreview();}
+function selectType(type){onbType=type;document.getElementById('type-PF')?.classList.toggle('active',type==='PF');document.getElementById('type-PJ')?.classList.toggle('active',type==='PJ');updateDIDPreview();}
+function toggleConsent(){consentGiven=!consentGiven;const box=document.getElementById('consent-box');if(box){box.style.background=consentGiven?'var(--gold)':'';box.style.borderColor=consentGiven?'var(--gold)':'';box.innerHTML=consentGiven?'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20,6 9,17 4,12"/></svg>':'';}document.getElementById('onb-btn-3').disabled=!consentGiven;}
+function updateDIDPreview(){const name=(document.getElementById('onb-name')?.value||'').trim().toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'')||'anon';const tierLc=(onbTier||'free').toLowerCase();const typeLc=(onbType||'pf').toLowerCase();const preview=document.getElementById('did-preview');if(preview)preview.textContent='did:windi:'+typeLc+':'+tierLc+':'+name;document.getElementById('prev-tier').textContent=onbTier||'—';document.getElementById('prev-type').textContent=onbType||'—';}
+function onbNext(step){if(step===3){const name=document.getElementById('onb-name')?.value.trim();if(!name){toast(t('onbNameRequired'));return;}updateDIDPreview();}[1,2,3].forEach(i=>{const el=document.getElementById('onb-step-'+i);if(el)el.style.display='none';const dot=document.getElementById('step-dot-'+i);if(dot)dot.classList.remove('active');});const target=document.getElementById('onb-step-'+step);if(target)target.style.display='';const dot=document.getElementById('step-dot-'+step);if(dot)dot.classList.add('active');}
+async function generateDID(){const btn=document.getElementById('onb-btn-3');btn.disabled=true;btn.innerHTML='<span class="spinner"></span>';const name=document.getElementById('onb-name')?.value.trim()||'User';const role=document.getElementById('onb-role')?.value.trim()||'';const walletId='W-'+Date.now().toString(36).toUpperCase()+'-'+Math.random().toString(36).slice(2,6).toUpperCase();const namePart=name.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'');const did='did:windi:'+onbType.toLowerCase()+':'+onbTier.toLowerCase()+':'+namePart;try{await fetch(CONFIG.DOMAIN+'/api/did/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,role,tier:onbTier,type:onbType,wallet_id:walletId,did})});}catch(e){}USER.name=name;USER.role=role;USER.tier=onbTier;USER.type=onbType;USER.walletId=walletId;USER.did=did;USER.isNew=true;saveUser();applyUserToUI();enterApp();}
+function enterApp(){document.getElementById('screen-onboarding').classList.remove('active');document.getElementById('bottom-nav').style.display='flex';navigate('home');toast('🐉 '+(USER.name||'Welcome')+' — WINDI');}
+function resetUser(){if(!confirm(t('confirmReset')))return;try{localStorage.removeItem('windi_user');}catch(e){}location.reload();}
+function init(){const hasUser=loadUser();if(hasUser){document.getElementById('screen-onboarding').classList.remove('active');document.getElementById('bottom-nav').style.display='flex';applyUserToUI();state.walletId=USER.walletId;const params=new URLSearchParams(window.location.search);if(params.get('screen'))navigate(params.get('screen'));else navigate('home');if(params.get('verify')){navigate('verify');document.getElementById('verify-id-input').value=params.get('verify');}}else{document.getElementById('bottom-nav').style.display='none';document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-onboarding').classList.add('active');}setTimeout(pingServer,1000);const detectedLang=detectLang();currentLang=detectedLang;setLang(detectedLang);console.log('WINDI Mobile v1.2.0 🐉 — AI processes. Human decides. WINDI guarantees.');}
+document.addEventListener('DOMContentLoaded',init);
 </script>
 </body>
 </html>
