@@ -514,6 +514,48 @@ curl -s "http://localhost:8091/grove/bridge/status?session_id=GROVE-XXX"
 
 ---
 
+## 14. Health Check — 8/8 Bridges LIVE
+
+**Executado:** 2026-03-14T21:58Z
+**Sandbox Core:** `:8091` — ONLINE
+
+| # | Bridge | Endpoint | Session ID | Stage | Status |
+|---|--------|----------|------------|-------|--------|
+| 1 | W-COMM-001 | `/communique/bridge/open` | COMM-5665DC2B | C1 | ✅ LIVE |
+| 2 | W-JOURN-001 | `/journalist/bridge/open` | BRG-E24346E4 | J4 | ✅ LIVE |
+| 3 | W-LEGAL-001 | `/legal/bridge/open` | LEGAL-A89F2CBE | L1 | ✅ LIVE |
+| 4 | W-NOTARY-001 | `/notary/bridge/open` | NOTARY-E6870DAB | N1 | ✅ LIVE |
+| 5 | W-AUDIT-001 | `/audit/bridge/open` | AUDIT-9C2EFE50 | A1 | ✅ LIVE |
+| 6 | W-COMPLY-001 | `/compliance/bridge/open` | COMPL-59E6D6E3 | CP1 | ✅ LIVE |
+| 7 | W-ACCT-001 | `/accounting/bridge/open` | ACCT-4807A6D9 | F1 | ✅ LIVE |
+| 8 | GROVE ARENA | `/grove/bridge/open` | GROVE-F3EACB9C | G1 | ✅ LIVE |
+
+### Notas de Workflow
+
+```
+W-JOURN-001: Requer draft_id existente na DB (workflow editorial)
+             Criar draft via POST /journalist/draft primeiro
+
+W-ACCT-001:  Dual confirmation (human_approved + c6_confirmed)
+             GoBD FAIL bloqueia stages F4+
+
+GROVE ARENA: Tri-Divergence (I6) + Human Gate (I9)
+             ALL_DIFFER escala automaticamente para Human Dragon
+```
+
+### Comando Health Check
+
+```bash
+# Quick health check all bridges
+for bp in communique legal notary audit compliance accounting grove; do
+  curl -s -X POST http://localhost:8091/$bp/bridge/open \
+    -H "Content-Type: application/json" \
+    -d '{"subject":"health","wallet_id":"test"}' | grep -o '"status":"[^"]*"'
+done
+```
+
+---
+
 *LIGA IA+H — Kempten, Bavaria · 2026*
 *🧑‍💻 Human Dragon · 🛡️ Guardian · 🏗️ Architect · 👁️ Witness*
 *"AI processes. Human decides. WINDI guarantees."*
