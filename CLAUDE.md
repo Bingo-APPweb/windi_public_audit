@@ -375,24 +375,25 @@ grep -n "location /app/" /etc/nginx/sites-enabled/windi-domain.com | head -3
 
 ## 📋 ESTADO ACTUAL (actualizar a cada commit)
 
-- **Última sessão:** 14 Mar 2026
-- **Último commit:** 0c9a787 — CLAUDE.md MEMÓRIA DE SESSÃO
+- **Última sessão:** 14 Mar 2026 (sessão 2)
+- **Último commit:** ac4da75 — botão ← Voltar
 - /app/ → upstream windi_dragon → :8108 → agent-palette/ui/index.html ✅
 - insights: klass:"hidden" + filter no SIDEBAR.map ✅ (commit b7773c1)
-- HUB Panel: /agents/status → 7 agentes ✅ (commit 1ba098f)
+- HUB Panel: /agents/status → 7 agentes ✅ LIVE (commit 1ba098f)
+- Botão ← Voltar: chat → docs ✅ (commit ac4da75)
+- Ledger backup: 56,448 receipts ✅ (ledger_20260314_2135/)
 - nginx: /agents/status proxy → :8091 ✅
 - Dragon Icons: 4 SVGs + 8 PNGs ✅ (commit de30715)
-- CLAUDE.md: PASSO 0 + Memória de Sessão ✅ (commit 0c9a787)
 - Serviços: 8091✅ 8101✅ 8106✅ 8108✅ 8114✅
 
 ---
 
 ## ⏳ PENDENTE (próximas sessões)
 
-- [ ] Dragon Alzheimer FIX 1-4 (index.html: text: → content:, valid_history)
-- [ ] Botão "← Voltar" na secção Ferramentas/docs (/app/)
-- [ ] Testar HUB Panel no browser (https://windi-domain.com/app/)
-- [ ] Ledger backup (40,918+ receipts)
+- [ ] Dragon Alzheimer FIX 1-4 (verificar sintomas específicos)
+- [x] ~~Botão "← Voltar" na secção Ferramentas/docs~~ ✅ ac4da75
+- [x] ~~Testar HUB Panel no browser~~ ✅ LIVE
+- [x] ~~Ledger backup~~ ✅ 56,448 receipts → /opt/windi/backups/ledger_20260314_2135/
 - [ ] Master Spec v1.0 → Ledger seal
 - [ ] W-JOURN-001 → Editor bridge (J1-J6 pipeline)
 
