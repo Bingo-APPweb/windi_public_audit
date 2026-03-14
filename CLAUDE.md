@@ -375,8 +375,8 @@ grep -n "location /app/" /etc/nginx/sites-enabled/windi-domain.com | head -3
 
 ## 📋 ESTADO ACTUAL (actualizar a cada commit)
 
-- **Última sessão:** 14 Mar 2026 (sessão 5)
-- **Último commit:** 40488fe — docs(one-touch): 8/8 bridges complete
+- **Última sessão:** 14 Mar 2026 (sessão 6)
+- **Último commit:** e171d3c — One Touch Bridge UI v1.1 route
 - /app/ → upstream windi_dragon → :8108 → agent-palette/ui/index.html ✅
 - insights: klass:"hidden" + filter no SIDEBAR.map ✅ (commit b7773c1)
 - HUB Panel: /agents/status → 7 agentes ✅ LIVE (commit 1ba098f)
@@ -409,15 +409,74 @@ grep -n "location /app/" /etc/nginx/sites-enabled/windi-domain.com | head -3
 ## ⏳ PENDENTE (próximas sessões)
 
 - [ ] Dragon Alzheimer FIX 1-4 (verificar sintomas específicos)
-- [x] ~~Botão "← Voltar" na secção Ferramentas/docs~~ ✅ ac4da75
-- [x] ~~Testar HUB Panel no browser~~ ✅ LIVE
-- [x] ~~Ledger backup~~ ✅ 56,448 receipts → /opt/windi/backups/ledger_20260314_2135/
 - [ ] Master Spec v1.0 → Ledger seal
 - [x] ~~One Touch Pipeline v1.0.0~~ ✅ 8/8 Bridges LIVE
-  - W-JOURN-001, W-COMM-001, W-LEGAL-001, W-NOTARY-001
-  - W-AUDIT-001, W-COMPLIANCE-001, W-ACCOUNTING-001, W-PAGE-001
-- [ ] Palette UI integration (bridge_ui.js)
+- [x] ~~One Touch Bridge UI v1.1~~ ✅ mobile-first LIVE
+- [ ] **Dashboard Update** (ver secção abaixo)
 - [ ] Export Engine ISP templates for doc_types
+
+---
+
+## 🎛️ PENDENTE: Dashboard windi-domain.com/dashboard/
+
+> **PRÉ-REQUISITO:** Bridge One Touch v1.1 ✅ COMPLETO
+
+### Problemas actuais (auditado 14 Mar 2026)
+
+| Bloco | Estado | Detalhe |
+|---|---|---|
+| Agentes | ❌ DESACTUALIZADO | Mostra constelação antiga — sem 8 agentes |
+| One Touch Bridge | ❌ FALTA | Bridge não existe no dashboard |
+| Bridge Status Panel | ❌ FALTA | J/C/L/N bridges sem visibilidade |
+| Ledger Counter | ❌ DESACTUALIZADO | Número de receipts não é em tempo real |
+| Mobile UX | ❌ FALTA | Sem bottom bar, touch targets insuficientes |
+| Verify Public | ✅ OK | :8114 funcional · I11 activo |
+
+### Blocos a adicionar — por prioridade
+
+**P1 · CRÍTICO**
+- 8 Agentes Live Status (fetch `:8091/health`)
+- One Touch Bridge Widget (HTML nativo — NÃO iframe)
+
+**P2 · ALTO**
+- Ledger Live Counter (fetch `:8101` auto-refresh 30s)
+- Bridge Status Panel (J1-J6 · C1-C6 · L1-L6 · N1-N6 + I9 gate)
+
+**P3 · MÉDIO**
+- Mobile Bottom Bar (5 itens: Dashboard · Bridge · Agentes · Ledger · 🌐)
+- Touch targets ≥44px + `safe-area-inset-bottom`
+- Invariants Live Panel (I1→I11 + Autonomy Score)
+
+### Plano de execução — 3 fases
+
+| Fase | Scope |
+|---|---|
+| 1 | Stats + Agentes Live (4 stat cards + grid 8 agentes) |
+| 2 | Bridge Embed + Ledger Live (panel nativo + auto-refresh) |
+| 3 | Mobile + i18n (bottom bar + touch + PT/DE/EN) |
+
+### Referências técnicas
+
+| Serviço | Port | Path |
+|---|---|---|
+| Sandbox Core | :8091 | `/health`, `/grove/arena` |
+| Forensic Ledger | :8101 | `/api/stats`, `/api/receipts/{id}` |
+| One Touch Bridge | static | `/verify-public/one-touch-bridge.html` |
+| Dashboard | :8100 | `windi-domain.com/dashboard/` |
+
+### Cola na nova sessão
+
+```
+Missão: actualizar windi-domain.com/dashboard/
+PRÉ-REQUISITO: Bridge One Touch v1.1 ✅
+
+Adicionar:
+→ 8 agentes live status (fetch :8091/health)
+→ One Touch Bridge widget (HTML nativo)
+→ Ledger counter live :8101 (auto-refresh 30s)
+→ Mobile: bottom bar 5 itens + touch ≥44px + PT/DE/EN
+Manter: KLAR #F5F0E0 + Bricolage + JetBrains + Gold #8B6914
+```
 
 ---
 
