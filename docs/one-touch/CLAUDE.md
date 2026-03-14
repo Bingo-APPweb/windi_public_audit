@@ -556,6 +556,77 @@ done
 
 ---
 
+## 15. UI Integration Test — 14 Março 2026
+
+**Executado:** 2026-03-14T22:03Z
+
+### Stack Verificada
+
+| Componente | URL | Status |
+|------------|-----|--------|
+| One Touch UI | `https://windi-domain.com/app/` | ✅ 200 OK |
+| Dragon Hub | `:8108/health` | ✅ Healthy v1.3.0 |
+| Dragon Chat | `/api/dragon/chat` | ✅ 93.3% sovereign |
+| Sandbox Core | `:8091` | ✅ 8/8 bridges |
+| Verify Public | `/verify-public/` | ✅ Online |
+
+### Dragon Hub Status
+
+```json
+{
+  "status": "healthy",
+  "version": "1.3.0",
+  "dragons": ["guardian", "architect", "witness"],
+  "model": "claude-sonnet-4-20250514",
+  "api_key_configured": true,
+  "sge_available": true
+}
+```
+
+### Fluxo Completo Testado — COMM Bridge
+
+```
+Session:  COMM-1812733D
+Wallet:   human-dragon
+
+C1 → Sessão criada (2026-03-14T22:03:01Z)
+C4 → Conteúdo guardado
+     Hash: 7675279c3db1d8c1e6119a102c4fd83f597d4b4a8b7780c3a4956811e1ac7755
+C5 → I9 Gate: BLOQUEOU sem human_approved ✅
+C6 → Selado com human_approved=true ✅
+
+Receipt:  WINDI-COMM-COMM-1812733D-20260314220321
+QR:       WINDI:WINDI-COMM-COMM-1812733D-20260314220321|7675279c3db1d8c1
+Verify:   https://windi-domain.com/verify-public/?id=WINDI-COMM-COMM-1812733D-20260314220321
+```
+
+### Dragon Chat — Teste HIGH Tier
+
+```
+Input:  "Cria um communiqué institucional: Anúncio de parceria
+         estratégica com empresa XYZ para expansão europeia"
+Tier:   HIGH
+Dragon: Architect 🏗️
+
+Output: Communiqué trilíngue (PT/DE/EN) gerado via LLM
+        - Título: Parceria Estratégica para Expansão Europeia
+        - Estrutura: Anúncio formal + contexto + próximos passos
+        - Sovereignty: 93.3% local (I10 compliant)
+```
+
+### UI Tech Stack
+
+```
+Framework:    React 18.2.0 + Babel 7.23.9
+Engine:       DragonEngine v2.0 (Modular Architecture)
+QR:           qrcodejs 1.0.0
+Monitor:      W-FERR-001 (O Ferreiro Health Monitor)
+Theme:        NOIR (#080808 bg, #8B6914 gold)
+Version:      WINDI Personal Editor v0.9.1-C — Forensic Cartaz
+```
+
+---
+
 *LIGA IA+H — Kempten, Bavaria · 2026*
 *🧑‍💻 Human Dragon · 🛡️ Guardian · 🏗️ Architect · 👁️ Witness*
 *"AI processes. Human decides. WINDI guarantees."*
