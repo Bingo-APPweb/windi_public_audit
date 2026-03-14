@@ -627,6 +627,81 @@ Version:      WINDI Personal Editor v0.9.1-C — Forensic Cartaz
 
 ---
 
+## 16. Forensic Ledger Integration — 14 Março 2026
+
+**Executado:** 2026-03-14T22:12Z
+
+### Ledger Status
+
+| Métrica | Valor |
+|---------|-------|
+| Status | ✅ Healthy |
+| Versão | v1.0.0 |
+| Receipts | 56,449+ |
+| DB | `/opt/windi/data/forensic_ledger.sqlite3` |
+| Protocol | Three Dragons v1.1 — I9 Active |
+| Privacy | content_not_stored |
+| Port | `:8101` |
+
+### Bug Fix — Bridge→Ledger Payload
+
+**Problema:** Bridges enviavam `"content"` mas Ledger requer `"content_hash"` + `"sge_score"`.
+
+**Solução:** Corrigido payload em 7 bridges:
+- `comm_bridge_blueprint.py`
+- `grove_bridge_blueprint.py`
+- `audit_bridge_blueprint.py`
+- `acct_bridge_blueprint.py`
+- `comply_bridge_blueprint.py`
+- `legal_bridge_blueprint.py`
+- `notary_bridge_blueprint.py`
+
+**Antes (ERRO):**
+```python
+"content": f"SHA-256:{hash} | ..."
+```
+
+**Depois (CORRECTO):**
+```python
+"content_hash": f"sha256:{hash}",
+"sge_score": 0.0
+```
+
+### Receipts Verificados no Ledger
+
+```
+COMM Bridge:
+  Session:  COMM-F5C02716
+  Receipt:  WINDI-COMM-COMM-F5C02716-20260314221201
+  Hash:     sha256:b5f4f4281c30d6421a119bd239a2b3ab9211fcb37dacd32617fdfd82a7ff4add
+  Status:   SEALED ✅
+
+GROVE Bridge:
+  Session:  GROVE-0144D862
+  Receipt:  WINDI-GROVE-GROVE-0144D862-20260314221224
+  Hash:     sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a
+  Status:   SEALED ✅
+```
+
+### Endpoints Ledger API
+
+```
+GET  /health                    → Status do serviço
+GET  /api/receipts              → Lista receipts (filtros: actor, status, type, gov)
+GET  /api/receipts/<id>         → Receipt específico
+POST /api/receipts              → Criar receipt (requer: id, actor, app, doc_name,
+                                   doc_type, governance_level, content_hash, sge_score)
+POST /api/receipts/reconcile    → Reconciliação de hash
+```
+
+### Nota sobre PENDING_RETRY
+
+Os receipts anteriores (COMM-1812733D, GROVE-5CDCF033) retornaram `PENDING_RETRY`
+porque o Sandbox Core foi reiniciado durante os testes e o payload estava incorrecto.
+Após a correcção, todos os bridges selam correctamente no Ledger.
+
+---
+
 *LIGA IA+H — Kempten, Bavaria · 2026*
 *🧑‍💻 Human Dragon · 🛡️ Guardian · 🏗️ Architect · 👁️ Witness*
 *"AI processes. Human decides. WINDI guarantees."*
