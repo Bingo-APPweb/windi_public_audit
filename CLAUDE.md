@@ -397,6 +397,11 @@ grep -n "location /app/" /etc/nginx/sites-enabled/windi-domain.com | head -3
   - Special: render endpoint + visual approval before publish
   - Doc types: certidao, diploma, ato_oficial, declaracao_institucional, atestado, alvara
 - **Verificação curl 8/8 bridges:** ✅ Todos respondendo (sessão 5)
+- **One Touch Bridge UI v1.1** ✅ /verify-public/one-touch-bridge.html
+  - Mobile-first: bottom bar, sticky publish, touch targets ≥44px
+  - 3 breakpoints: <768px mobile | 768-1199px tablet | ≥1200px desktop
+  - Trilingual: PT→DE→EN cycle, autocomplete inputs
+  - Doc types: Certidão, Pioneer Card, Forensic Receipt
 - Serviços: 8091✅ 8101✅ 8106✅ 8108✅ 8114✅
 
 ---
