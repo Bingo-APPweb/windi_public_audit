@@ -139,9 +139,10 @@ def seal_ledger(session_id: str, title: str, content_hash: str,
         "actor":            wallet_id,
         "app":              "legal-bridge",
         "doc_name":         title,
-        "doc_type":         contract_type,
-        "governance_level": "CRITICAL",
-        "content":          f"SHA-256:{content_hash} | Contrato selado via Legal Bridge L6"
+        "doc_type":         "doc",
+        "governance_level": "HIGH",
+        "content_hash":     f"sha256:{content_hash}",
+        "sge_score":        0.0
     }).encode()
 
     try:

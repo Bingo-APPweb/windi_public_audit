@@ -114,7 +114,8 @@ def seal_ledger(session_id: str, title: str, content_hash: str,
         "doc_name":         title,
         "doc_type":         "communique",
         "governance_level": "HIGH",
-        "content":          f"SHA-256:{content_hash} | Communiqué Canvas selado via Bridge C6"
+        "content_hash":     f"sha256:{content_hash}",
+        "sge_score":        0.0
     }).encode()
 
     try:
