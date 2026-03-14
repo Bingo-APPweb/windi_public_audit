@@ -702,6 +702,93 @@ Após a correcção, todos os bridges selam correctamente no Ledger.
 
 ---
 
+## 17. One Touch Bridge UI — v1.1
+
+**Deployed:** 2026-03-14T22:15Z
+**URL:** `https://windi-domain.com/app/one-touch-bridge.html`
+**Path:** `/opt/windi/agent-palette/ui/one-touch-bridge.html`
+
+### Tipos de Documento
+
+| Tipo | Descrição | Preview |
+|------|-----------|---------|
+| Certidão | Certificado institucional com cantos decorativos | Mini-cert com hash |
+| Pioneer Card | Cartão digital (NOIR) + institucional (KLAR) | Dual card gallery |
+| Forensic Receipt | Terminal view do Ledger seal | Mini-terminal animado |
+
+### Stack Técnica
+
+```
+Framework:     Vanilla JS + CSS (zero dependencies)
+Fonts:         Bricolage Grotesque (sans) + JetBrains Mono (mono)
+Breakpoints:   ≥1200px Desktop | 768-1199px Tablet | <768px Mobile
+Touch targets: ≥44px (Apple HIG + Material Design)
+Languages:     PT / DE / EN (auto-switch)
+```
+
+### Mobile-First Features
+
+```
+• Bottom navigation bar (64px) com 4 tabs
+• Sticky publish button acima do bottom bar
+• Form inputs 16px (previne zoom iOS)
+• Swipe-friendly tab navigation
+• Safe area support (notch devices)
+```
+
+### Trilingual i18n
+
+```javascript
+var T = {
+  pt: { certType:'Certidão de Reconhecimento', ... },
+  de: { certType:'Anerkennungsurkunde', ... },
+  en: { certType:'Certificate of Recognition', ... }
+};
+```
+
+### API Integration (Page Bridge)
+
+```
+Workflow completo:
+1. POST /page/bridge/open     → criar sessão
+2. POST /page/bridge/save     → guardar campos
+3. POST /page/bridge/render   → gerar preview PDF
+4. POST /page/bridge/publish  → selar no Ledger
+
+Fallback:
+Se API falha, UI gera receipt local para demo.
+```
+
+### Design System WINDI
+
+```css
+:root {
+  --gold: #8B6914;
+  --gold-light: #c9a84c;
+  --gold-pale: #F5F0E0;
+  --dark: #1a0f00;
+  --green-text: #4caf6e;
+  --bg: #F5F0E0;
+}
+```
+
+### Componentes UI
+
+| Componente | Classe | Descrição |
+|------------|--------|-----------|
+| Top Bar | `.topbar` | Logo + I9/I11 badge |
+| Lang Pills | `.lang-pill` | PT/DE/EN switcher |
+| Doc Tabs | `.doc-tab` | Certidão/Card/Receipt |
+| Form Card | `.form-card` | Inputs + publish button |
+| Preview Card | `.preview-card` | Live preview área |
+| Mini Cert | `.mini-cert` | Certificado preview |
+| Pioneer Card | `.pioneer-card` | Card NOIR (digital) |
+| Immortal Card | `.immortal-card` | Card KLAR (institucional) |
+| Mini Terminal | `.mini-term` | Forensic receipt view |
+| Bottom Bar | `.mobile-bottombar` | Mobile navigation |
+
+---
+
 *LIGA IA+H — Kempten, Bavaria · 2026*
 *🧑‍💻 Human Dragon · 🛡️ Guardian · 🏗️ Architect · 👁️ Witness*
 *"AI processes. Human decides. WINDI guarantees."*
