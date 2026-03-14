@@ -526,6 +526,23 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 </style>
 </head>
 <body>
+<!-- WINDI Splash Screen — Mobile Loading -->
+<div id="windi-splash" class="windi-splash">
+  <img src="dragon-three-seal.svg" width="120" height="120" alt="WINDI" class="splash-seal">
+  <p class="splash-text">WINDI Publishing House</p>
+</div>
+<style>
+.windi-splash{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#F5F0E0;z-index:9999;transition:opacity 0.4s ease;}
+[data-theme="noir"] .windi-splash,.noir-theme .windi-splash{background:#16150f;}
+.splash-seal{animation:splash-pulse 1.2s ease-in-out infinite;}
+.splash-text{margin-top:16px;font-size:14px;color:#8B6914;letter-spacing:0.08em;font-family:'Bricolage Grotesque',sans-serif;}
+@keyframes splash-pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.8;transform:scale(0.97);}}
+.windi-splash.hidden{opacity:0;pointer-events:none;}
+</style>
+<script>
+window.addEventListener('load',()=>{setTimeout(()=>{const s=document.getElementById('windi-splash');if(s){s.classList.add('hidden');setTimeout(()=>s.remove(),400);}},800);});
+</script>
+
 <div id="root"></div>
 
 <script>
@@ -7760,9 +7777,9 @@ function App(){
             {windiTier==="HIGH"&&<section style={{marginBottom:20}}>
               <h3 style={{fontSize:12,fontWeight:700,color:th.text,marginBottom:10,display:"flex",alignItems:"center",gap:6}}><span className="windi-dragon-glyph"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 20 20" fill="none"><ellipse cx="10" cy="11" rx="4.5" ry="4" transform="rotate(-15 10 11)" stroke="currentColor" strokeWidth="1.3"/><circle cx="7" cy="7.5" r="2.8" stroke="currentColor" strokeWidth="1.3"/><circle cx="6.2" cy="6.8" r="0.7" fill="currentColor"/><path d="M7 10 C5 8.5 3 8 2 9 C1.5 9.8 2.5 11 4 10.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/><path d="M13 9.5 C15 8 17 8 17.5 9.5 C17.8 10.5 16.5 11 15 10.5" stroke="currentColor" strokeWidth="1" strokeLinecap="round"/></svg></span>{lang==="de"?"Drei Drachen":lang==="pt"?"Três Dragões":"Three Dragons"}</h3>
               <div style={{display:"flex",flexDirection:"column",gap:6}}>
-                <div style={{display:"flex",alignItems:"center",gap:8,padding:"8px 12px",borderRadius:8,background:th.success+"15",border:"1px solid "+th.success+"22"}}><span>🛡️</span><span style={{fontSize:11,color:th.text}}>Guardian — {lang==="de"?"Schutz aktiv":lang==="pt"?"Protecção activa":"Protection active"}</span></div>
-                <div style={{display:"flex",alignItems:"center",gap:8,padding:"8px 12px",borderRadius:8,background:th.gold+"15",border:"1px solid "+th.gold+"22"}}><span>🏗️</span><span style={{fontSize:11,color:th.text}}>Architect — {lang==="de"?"Struktur bereit":lang==="pt"?"Estrutura pronta":"Structure ready"}</span></div>
-                <div style={{display:"flex",alignItems:"center",gap:8,padding:"8px 12px",borderRadius:8,background:th.dim+"15",border:"1px solid "+th.dim+"22"}}><span>👁️</span><span style={{fontSize:11,color:th.text}}>Witness — {lang==="de"?"Beobachtend":lang==="pt"?"A observar":"Observing"}</span></div>
+                <div style={{display:"flex",alignItems:"center",gap:8,padding:"8px 12px",borderRadius:8,background:"#185FA515",border:"1px solid #185FA522"}}><img src="dragon-guardian.svg" width="20" height="20" alt="Guardian" style={{flexShrink:0}}/><span style={{fontSize:11,color:th.text}}>Guardian — {lang==="de"?"Schutz aktiv":lang==="pt"?"Protecção activa":"Protection active"}</span></div>
+                <div style={{display:"flex",alignItems:"center",gap:8,padding:"8px 12px",borderRadius:8,background:"#BA751715",border:"1px solid #BA751722"}}><img src="dragon-architect.svg" width="20" height="20" alt="Architect" style={{flexShrink:0}}/><span style={{fontSize:11,color:th.text}}>Architect — {lang==="de"?"Struktur bereit":lang==="pt"?"Estrutura pronta":"Structure ready"}</span></div>
+                <div style={{display:"flex",alignItems:"center",gap:8,padding:"8px 12px",borderRadius:8,background:"#0F6E5615",border:"1px solid #0F6E5622"}}><img src="dragon-witness.svg" width="20" height="20" alt="Witness" style={{flexShrink:0}}/><span style={{fontSize:11,color:th.text}}>Witness — {lang==="de"?"Beobachtend":lang==="pt"?"A observar":"Observing"}</span></div>
               </div>
             </section>}
             {/* Invariants (HIGH only) */}
@@ -8397,6 +8414,36 @@ window.WindiEndorseUI=WindiEndorseUI;
 
 <!-- W-TOUCH-001 — Gen 7 Mobile Touch Handler -->
 <script src="/static/windi-touch.js"></script>
+
+<!-- WINDI Bottom Bar — Mobile Dragon Role Indicator (B1) -->
+<div class="windi-bottom-bar" id="windiBottomBar">
+  <button class="bottom-action dragon-slot" id="dragonRoleBtn" onclick="toggleDragonPanel&&toggleDragonPanel()">
+    <img id="dragonRoleIcon" src="dragon-witness.svg" width="28" height="28" alt="Dragon Role">
+  </button>
+  <button class="bottom-action primary-action" onclick="document.querySelector('.chat-input')?.focus()">+</button>
+  <button class="bottom-action hub-slot" onclick="openHubPanel&&openHubPanel()">
+    <img src="dragon-three-seal.svg" width="28" height="28" alt="WINDI Hub">
+  </button>
+</div>
+<style>
+@media(max-width:767px){
+  .windi-bottom-bar{position:fixed;bottom:0;left:0;right:0;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:var(--bg-primary,#F5F0E0);border-top:1px solid rgba(139,105,20,0.2);z-index:1000;padding-bottom:env(safe-area-inset-bottom);}
+  [data-theme="noir"] .windi-bottom-bar,.noir-theme .windi-bottom-bar{background:#16150f;border-top-color:rgba(239,159,39,0.3);}
+  .bottom-action{display:flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;border-radius:10px;border:none;background:transparent;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+  .bottom-action:active{opacity:0.7;transform:scale(0.95);}
+  .bottom-action.primary-action{background:#8B6914;color:white;font-size:24px;font-weight:300;width:52px;height:52px;border-radius:14px;}
+  #root{padding-bottom:80px;}
+}
+@media(min-width:768px){.windi-bottom-bar{display:none;}}
+</style>
+<script>
+// Dragon Role Switcher — updates icon based on active Dragon
+window.updateDragonRole=function(role){
+  const map={guardian:'dragon-guardian.svg',architect:'dragon-architect.svg',witness:'dragon-witness.svg'};
+  const icon=document.getElementById('dragonRoleIcon');
+  if(icon&&map[role])icon.src=map[role];
+};
+</script>
 
 </body>
 </html>

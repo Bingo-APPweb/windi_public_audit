@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="WINDI Three Dragons Seal">
+  <title>WINDI Three Dragons Seal — Guardian · Architect · Witness</title>
+  <defs>
+    <path id="arc-top" d="M 18,100 A 82,82 0 0,1 182,100"/>
+    <path id="arc-bot" d="M 182,100 A 82,82 0 0,1 18,100"/>
+  </defs>
+
+  <!-- Outer ring -->
+  <circle cx="100" cy="100" r="92" fill="none" stroke="#8B6914" stroke-width="2.5"/>
+  <!-- Inner ring -->
+  <circle cx="100" cy="100" r="85" fill="none" stroke="#8B6914" stroke-width="0.7" opacity="0.35"/>
+
+  <!-- Tick marks (12 positions, 4 major) -->
+  <g stroke="#8B6914" stroke-width="1.8" opacity="0.5">
+    <line x1="100" y1="8"  x2="100" y2="17" transform="rotate(0   100 100)"/>
+    <line x1="100" y1="8"  x2="100" y2="13" transform="rotate(30  100 100)"/>
+    <line x1="100" y1="8"  x2="100" y2="13" transform="rotate(60  100 100)"/>
+    <line x1="100" y1="8"  x2="100" y2="17" transform="rotate(90  100 100)"/>
+    <line x1="100" y1="8"  x2="100" y2="13" transform="rotate(120 100 100)"/>
+    <line x1="100" y1="8"  x2="100" y2="13" transform="rotate(150 100 100)"/>
+    <line x1="100" y1="8"  x2="100" y2="17" transform="rotate(180 100 100)"/>
+    <line x1="100" y1="8"  x2="100" y2="13" transform="rotate(210 100 100)"/>
+    <line x1="100" y1="8"  x2="100" y2="13" transform="rotate(240 100 100)"/>
+    <line x1="100" y1="8"  x2="100" y2="17" transform="rotate(270 100 100)"/>
+    <line x1="100" y1="8"  x2="100" y2="13" transform="rotate(300 100 100)"/>
+    <line x1="100" y1="8"  x2="100" y2="13" transform="rotate(330 100 100)"/>
+  </g>
+
+  <!-- Arc text top -->
+  <text font-size="9.5" fill="#8B6914" letter-spacing="2.5" text-anchor="middle"
+        font-family="sans-serif" font-weight="500">
+    <textPath href="#arc-top" startOffset="50%">GUARDIAN · ARCHITECT · WITNESS</textPath>
+  </text>
+  <!-- Arc text bottom -->
+  <text font-size="8" fill="#8B6914" letter-spacing="1.8" text-anchor="middle"
+        font-family="sans-serif" opacity="0.65">
+    <textPath href="#arc-bot" startOffset="50%">WINDI PUBLISHING HOUSE · EST. 2025</textPath>
+  </text>
+
+  <!-- Inner field -->
+  <circle cx="100" cy="100" r="66" fill="#F5F0E0" stroke="#8B6914" stroke-width="1"/>
+
+  <!-- Triskelion dividers -->
+  <line x1="100" y1="100" x2="100" y2="34"  stroke="#8B6914" stroke-width="0.5" opacity="0.25"/>
+  <line x1="100" y1="100" x2="157" y2="134" stroke="#8B6914" stroke-width="0.5" opacity="0.25"/>
+  <line x1="100" y1="100" x2="43"  y2="134" stroke="#8B6914" stroke-width="0.5" opacity="0.25"/>
+
+  <!-- Guardian shield (top sector) -->
+  <g transform="translate(83,40) scale(0.34)">
+    <path d="M50 6 L90 21 L90 58 C90 80 70 92 50 96 C30 92 10 80 10 58 L10 21 Z"
+          fill="#E6F1FB" stroke="#185FA5" stroke-width="5" stroke-linejoin="round"/>
+    <path d="M32 54 L50 40 L68 54"
+          fill="none" stroke="#185FA5" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M32 66 L50 52 L68 66"
+          fill="none" stroke="#185FA5" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" opacity="0.4"/>
+  </g>
+
+  <!-- Architect compass (bottom-left sector) -->
+  <g transform="translate(43,112) scale(0.34)">
+    <circle cx="50" cy="26" r="9" fill="#BA7517"/>
+    <line x1="45" y1="34" x2="24" y2="82" stroke="#BA7517" stroke-width="8" stroke-linecap="round"/>
+    <line x1="55" y1="34" x2="76" y2="82" stroke="#BA7517" stroke-width="8" stroke-linecap="round"/>
+    <path d="M27 73 A28 12 0 0 0 73 73" fill="none" stroke="#BA7517" stroke-width="5" stroke-linecap="round"/>
+    <line x1="33" y1="54" x2="67" y2="54" stroke="#BA7517" stroke-width="4" stroke-linecap="round" opacity="0.5"/>
+  </g>
+
+  <!-- Witness eye (bottom-right sector) -->
+  <g transform="translate(119,112) scale(0.34)">
+    <path d="M8 50 Q50 6 92 50 Q50 94 8 50 Z"
+          fill="#E1F5EE" stroke="#0F6E56" stroke-width="5" stroke-linejoin="round"/>
+    <circle cx="50" cy="50" r="20" fill="none" stroke="#0F6E56" stroke-width="4"/>
+    <circle cx="50" cy="50" r="8"  fill="#0F6E56"/>
+    <circle cx="55" cy="45" r="3.5" fill="#E1F5EE"/>
+  </g>
+
+  <!-- Center W -->
+  <text x="100" y="108" text-anchor="middle" font-size="20" font-weight="700"
+        fill="#8B6914" font-family="sans-serif">W</text>
+</svg>
