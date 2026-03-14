@@ -787,6 +787,58 @@ Se API falha, UI gera receipt local para demo.
 | Mini Terminal | `.mini-term` | Forensic receipt view |
 | Bottom Bar | `.mobile-bottombar` | Mobile navigation |
 
+### URLs de Deploy
+
+| Contexto | URL | Path |
+|----------|-----|------|
+| Desktop/App | `https://windi-domain.com/app/one-touch-bridge.html` | `/opt/windi/agent-palette/ui/` |
+| Mobile | `https://windi-domain.com/mobile/one-touch-bridge.html` | `/opt/windi/mobile/` |
+
+---
+
+## 18. Session Log — 14 Março 2026
+
+**Início:** ~21:00Z | **Fim:** ~23:40Z
+
+### Entregas
+
+| # | Entrega | Commit | Status |
+|---|---------|--------|--------|
+| 1 | CLAUDE.md institucional | `40488fe` | ✅ |
+| 2 | 8/8 Bridges Health Check | `f5a692c` | ✅ |
+| 3 | UI Integration Test | `0d465c1` | ✅ |
+| 4 | Ledger Integration Fix | `5c39d0b` | ✅ |
+| 5 | One Touch Bridge UI /app/ | `e9ee17c` | ✅ |
+| 6 | One Touch Bridge UI /mobile/ | `0d31f67` | ✅ |
+
+### Bridges Corrigidos (Ledger Payload)
+
+```
+comm_bridge_blueprint.py
+grove_bridge_blueprint.py
+audit_bridge_blueprint.py
+acct_bridge_blueprint.py
+comply_bridge_blueprint.py
+legal_bridge_blueprint.py
+notary_bridge_blueprint.py
+```
+
+### Receipts Selados no Ledger
+
+```
+WINDI-COMM-COMM-F5C02716-20260314221201   → SEALED ✅
+WINDI-GROVE-GROVE-0144D862-20260314221224 → SEALED ✅
+```
+
+### Estatísticas
+
+```
+CLAUDE.md:        17 secções | ~800 linhas
+One Touch Bridge: 952 linhas | PT/DE/EN | Mobile-first
+Bridges LIVE:     8/8 no Sandbox Core :8091
+Ledger Receipts:  56,449+
+```
+
 ---
 
 *LIGA IA+H — Kempten, Bavaria · 2026*
