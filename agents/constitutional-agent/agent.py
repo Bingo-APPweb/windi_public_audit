@@ -438,11 +438,25 @@ def create_agent_api(agent: WindiAgent):
         print(f"  [Justica] Legal Agent not loaded: {e}")
 
     try:
+        from blueprints.legal_bridge_blueprint import legal_bridge_bp
+        app.register_blueprint(legal_bridge_bp)
+        print("  [LEGAL-Bridge] W-LEGAL-001 Bridge v1.0.0 loaded on /legal/bridge/*")
+    except ImportError as e:
+        print(f"  [LEGAL-Bridge] W-LEGAL-001 Bridge not loaded: {e}")
+
+    try:
         from blueprints.notary_blueprint import notary_bp
         app.register_blueprint(notary_bp)
         print("  [Notarial] Notary Agent v0.1.0 loaded on /notary/*")
     except ImportError as e:
         print(f"  [Notarial] Notary Agent not loaded: {e}")
+
+    try:
+        from blueprints.notary_bridge_blueprint import notary_bridge_bp
+        app.register_blueprint(notary_bridge_bp)
+        print("  [NOTARY-Bridge] W-NOTARY-001 Bridge v1.0.0 loaded on /notary/bridge/*")
+    except ImportError as e:
+        print(f"  [NOTARY-Bridge] W-NOTARY-001 Bridge not loaded: {e}")
 
     try:
         from blueprints.compliance_blueprint import compliance_bp
