@@ -2868,7 +2868,7 @@ function getWindiIcon(key) {
 }
 
 const SIDEBAR = [
-  {id:"grove",icon:"grove",klass:"main"},{id:"chat",icon:"chat",klass:"main"},{id:"insights",icon:"insights",klass:"main"},{id:"docs",icon:"docs",klass:"main"},{id:"desk",icon:"desk",klass:"main"},
+  {id:"grove",icon:"grove",klass:"main"},{id:"chat",icon:"chat",klass:"main"},{id:"insights",icon:"insights",klass:"hidden"},{id:"docs",icon:"docs",klass:"main"},{id:"desk",icon:"desk",klass:"main"},
   {id:"files",icon:"files",klass:"main"},{id:"wallet",icon:"wallet",klass:"main"},{id:"wick",icon:"wick",klass:"main"},
   {id:"search",icon:"search",klass:"main"},{id:"products",icon:"products",klass:"extra"},
   {id:"journal",icon:"journal",klass:"extra"},{id:"history",icon:"history",klass:"extra"},
@@ -5482,7 +5482,7 @@ function App(){
         position:isMobile?"absolute":"relative",height:"100%"}}>
         <div style={{padding:"12px 0",textAlign:"center",borderBottom:`1px solid ${th.border}22`}}><span className="windi-dragon-logo" style={{width:28,height:28,borderRadius:"50%",border:`1.5px solid ${th.gold}`,display:"inline-flex"}} dangerouslySetInnerHTML={{__html: DRAGON_GLYPH}} /></div>
         <div style={{flex:1,padding:"8px 0",display:"flex",flexDirection:"column",gap:2}}>
-          {SIDEBAR.map(item=>(
+          {SIDEBAR.filter(item=>item.klass!=="hidden").map(item=>(
             <button key={item.id} onClick={()=>{
               setSidebarTab(item.id);
               if(isMobile)setSidebarOpen(false);
