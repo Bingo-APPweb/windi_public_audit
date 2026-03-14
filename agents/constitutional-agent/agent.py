@@ -466,6 +466,13 @@ def create_agent_api(agent: WindiAgent):
         print(f"  [Compliance] Compliance Agent not loaded: {e}")
 
     try:
+        from blueprints.compliance_bridge_blueprint import compliance_bridge_bp
+        app.register_blueprint(compliance_bridge_bp)
+        print("  [COMPL-Bridge] W-COMPLIANCE-001 Bridge v1.0.0 loaded on /compliance/bridge/*")
+    except ImportError as e:
+        print(f"  [COMPL-Bridge] W-COMPLIANCE-001 Bridge not loaded: {e}")
+
+    try:
         from blueprints.communique_blueprint import communique_bp
         app.register_blueprint(communique_bp)
         print("  [Communique] Communique Engine v2.0.0 loaded on /communique/*")
@@ -494,6 +501,13 @@ def create_agent_api(agent: WindiAgent):
         print(f"  [Auditor] Audit Agent not loaded: {e}")
 
     try:
+        from blueprints.audit_bridge_blueprint import audit_bridge_bp
+        app.register_blueprint(audit_bridge_bp)
+        print("  [AUDIT-Bridge] W-AUDIT-001 Bridge v1.0.0 loaded on /audit/bridge/*")
+    except ImportError as e:
+        print(f"  [AUDIT-Bridge] W-AUDIT-001 Bridge not loaded: {e}")
+
+    try:
         from blueprints.accounting_blueprint import accounting_bp
         app.register_blueprint(accounting_bp)
         print("  [Contabilidade] Accounting Agent v0.1.0 loaded on /accounting/*")
@@ -501,11 +515,25 @@ def create_agent_api(agent: WindiAgent):
         print(f"  [Contabilidade] Accounting Agent not loaded: {e}")
 
     try:
+        from blueprints.accounting_bridge_blueprint import accounting_bridge_bp
+        app.register_blueprint(accounting_bridge_bp)
+        print("  [ACCT-Bridge] W-ACCOUNTING-001 Bridge v1.0.0 loaded on /accounting/bridge/*")
+    except ImportError as e:
+        print(f"  [ACCT-Bridge] W-ACCOUNTING-001 Bridge not loaded: {e}")
+
+    try:
         from blueprints.page_blueprint import page_bp
         app.register_blueprint(page_bp)
         print("  [Page] Sovereign Page Generator v0.1.0 loaded on /page/*")
     except ImportError as e:
         print(f"  [Page] Page Agent not loaded: {e}")
+
+    try:
+        from blueprints.page_bridge_blueprint import page_bridge_bp
+        app.register_blueprint(page_bridge_bp)
+        print("  [PAGE-Bridge] W-PAGE-001 Bridge v1.0.0 loaded on /page/bridge/*")
+    except ImportError as e:
+        print(f"  [PAGE-Bridge] W-PAGE-001 Bridge not loaded: {e}")
 
     try:
         from blueprints.wick_blueprint import wick_bp
@@ -520,6 +548,13 @@ def create_agent_api(agent: WindiAgent):
         print("  [Grove] Grove Orchestrator v1.0.0 loaded on /grove/*")
     except ImportError as e:
         print(f"  [Grove] Grove Orchestrator not loaded: {e}")
+
+    try:
+        from blueprints.grove_bridge_blueprint import grove_bridge_bp
+        app.register_blueprint(grove_bridge_bp)
+        print("  [Grove Bridge] Grove Tri-Divergence Bridge v1.0.0 loaded on /grove/bridge/*")
+    except ImportError as e:
+        print(f"  [Grove Bridge] Grove Bridge not loaded: {e}")
 
     try:
         from blueprints.vpr_manage_blueprint import vpr_manage_bp, init_vpr_manage_db
