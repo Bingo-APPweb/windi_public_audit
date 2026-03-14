@@ -375,8 +375,8 @@ grep -n "location /app/" /etc/nginx/sites-enabled/windi-domain.com | head -3
 
 ## 📋 ESTADO ACTUAL (actualizar a cada commit)
 
-- **Última sessão:** 14 Mar 2026 (sessão 6)
-- **Último commit:** e171d3c — One Touch Bridge UI v1.1 route
+- **Última sessão:** 14 Mar 2026 (sessão 7)
+- **Último commit:** c4b45e4 — One Touch Bridge v2.0 (8 agentes · 39 tipos)
 - /app/ → upstream windi_dragon → :8108 → agent-palette/ui/index.html ✅
 - insights: klass:"hidden" + filter no SIDEBAR.map ✅ (commit b7773c1)
 - HUB Panel: /agents/status → 7 agentes ✅ LIVE (commit 1ba098f)
@@ -399,9 +399,13 @@ grep -n "location /app/" /etc/nginx/sites-enabled/windi-domain.com | head -3
 - **Verificação curl 8/8 bridges:** ✅ Todos respondendo (sessão 5)
 - **One Touch Bridge UI v1.1** ✅ /verify-public/one-touch-bridge.html
   - Mobile-first: bottom bar, sticky publish, touch targets ≥44px
-  - 3 breakpoints: <768px mobile | 768-1199px tablet | ≥1200px desktop
-  - Trilingual: PT→DE→EN cycle, autocomplete inputs
   - Doc types: Certidão, Pioneer Card, Forensic Receipt
+- **One Touch Bridge v2.0** ✅ /page-bridge/ (PENDENTE: nginx route)
+  - 8 agentes: JOURN·COMM·LEGAL·NOTARY·COMPLY·ACCT·AUDIT·PAGE
+  - 39 doc types com formulários específicos
+  - I9 Gate checkbox em todos · I11 Ledger seal
+  - KLAR/NOIR toggle · PT/DE/EN trilingual
+  - Mobile: touch ≥44px, bottom bar, responsive grid
 - Serviços: 8091✅ 8101✅ 8106✅ 8108✅ 8114✅
 
 ---
@@ -412,6 +416,8 @@ grep -n "location /app/" /etc/nginx/sites-enabled/windi-domain.com | head -3
 - [ ] Master Spec v1.0 → Ledger seal
 - [x] ~~One Touch Pipeline v1.0.0~~ ✅ 8/8 Bridges LIVE
 - [x] ~~One Touch Bridge UI v1.1~~ ✅ mobile-first LIVE
+- [x] ~~One Touch Bridge v2.0~~ ✅ 8 agentes · 39 tipos
+- [ ] nginx route /page-bridge/ (requer sudo)
 - [ ] **Dashboard Update** (ver secção abaixo)
 - [ ] Export Engine ISP templates for doc_types
 
