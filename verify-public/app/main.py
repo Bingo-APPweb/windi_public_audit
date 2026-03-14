@@ -479,6 +479,18 @@ async def wick_artifact_view(artifact_id: str):
     return HTMLResponse(content=html, status_code=200)
 
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# ONE TOUCH BRIDGE v1.1 — Mobile-First UI
+# ═══════════════════════════════════════════════════════════════════════════════
+@app.get("/verify-public/one-touch-bridge.html")
+async def one_touch_bridge():
+    """One Touch Bridge v1.1 — mobile-first UI for W-PAGE-001."""
+    bridge_file = "/opt/windi/verify-public/one-touch-bridge.html"
+    if os.path.exists(bridge_file):
+        return FileResponse(bridge_file, media_type="text/html")
+    return HTMLResponse("<h1>One Touch Bridge not found</h1>", status_code=404)
+
+
 @app.get("/verify-public/{doc_id}")
 async def verify_direct_url(doc_id: str):
     """URL limpa: /verify-public/VR-BABEL-0001 — serve UI com OG tags dinâmicas."""
