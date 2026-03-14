@@ -340,3 +340,88 @@ AI processes. Human decides. WINDI guarantees.
 ---
 
 *Skills Constellation sealed: 2026-03-08 by Liga IA+H*
+
+---
+
+## 🐉 PASSO 0 — EXECUTAR SEMPRE AO INICIAR SESSÃO
+
+```bash
+git -C /opt/windi log --oneline -5
+git -C /opt/windi status
+ss -tlnp | grep -E "8091|8101|8106|8108|8114"
+grep -n "location /app/" /etc/nginx/sites-enabled/windi-domain.com | head -3
+```
+
+**NUNCA editar um ficheiro antes de confirmar qual o nginx serve.**
+
+---
+
+## 📁 FICHEIROS CANÓNICOS (nginx decide — nunca adivinhar)
+
+| URL | Port | Ficheiro real |
+|-----|------|---------------|
+| /app/ | :8108 | /opt/windi/agent-palette/ui/index.html |
+| /agents/status | :8091 | /opt/windi/agents/constitutional-agent/agent.py |
+| /verify-public/ | :8114 | SEALED — não tocar |
+| /ledger/ | :8101 | SEALED — não tocar |
+
+---
+
+## 🚫 PORTAS SEALED — NUNCA TOCAR SEM APROVAÇÃO HUMAN DRAGON
+
+8101 (Ledger) · 8102 (Sentinel LAW) · 8106 (Vault) · 8114 (Verify)
+
+---
+
+## 📋 ESTADO ACTUAL (actualizar a cada commit)
+
+- Último commit: b7773c1 — insights hidden from sidebar
+- /app/ → upstream windi_dragon → :8108 → agent-palette/ui/index.html ✅
+- insights: klass:"hidden" ✅ (sidebar limpo)
+- HUB Panel: /agents/status → 7 agentes ✅ (commit 1ba098f)
+- Dragon Icons: commit de30715 ✅
+- Serviços: 8091✅ 8101✅ 8106✅ 8108✅ 8114✅
+
+---
+
+## ⏳ PENDENTE (próximas sessões)
+
+- Dragon Alzheimer FIX 1-4 (index.html: text: → content:, valid_history)
+- Botão "← Voltar" na secção Ferramentas/docs (/app/)
+- Ledger backup (40,918+ receipts)
+- /agents/status endpoint — rate-limit nginx para Agent Corps
+- Master Spec v1.0 → Ledger seal
+
+---
+
+## 🔧 PADRÃO DE REINÍCIO (Sandbox Core :8091)
+
+```bash
+# SEMPRE nohup — nunca systemd para o :8091
+kill $(pgrep -f "constitutional-agent/agent.py") 2>/dev/null
+sleep 3
+cd /opt/windi/agents/constitutional-agent
+nohup python3 agent.py > /opt/windi/logs/constitutional-agent.log 2>&1 &
+sleep 3
+ss -tlnp | grep 8091
+```
+
+---
+
+## 📝 FORMATO DE COMMIT ESTRUTURADO
+
+```
+git commit -m "tipo: descrição curta — DD Mmm YYYY
+
+STATE:
+- /app/ → :8108 → agent-palette/ui/index.html
+- :8091 /agents/status → ✅ 7 agentes
+- <o que ficou verde nesta sessão>
+
+PENDING:
+- <o que ficou por fazer>"
+```
+
+---
+
+*Session Memory Protocol sealed: 2026-03-14 by Human Dragon + Guardian*
