@@ -586,6 +586,14 @@ def create_agent_api(agent: WindiAgent):
     except ImportError as e:
         print(f"  [FEDERATION] W-PROV-004 not loaded: {e}")
 
+    
+    try:
+        from blueprints.hub_blueprint import hub_blueprint
+        app.register_blueprint(hub_blueprint)
+        print("  [HUB] Dragon Hub Constellation v1.0 loaded on /agents/*")
+    except ImportError as e:
+        print(f"  [HUB] Dragon Hub not loaded: {e}")
+
     @app.route("/agent/health", methods=["GET"])
     def health():
         return jsonify({
