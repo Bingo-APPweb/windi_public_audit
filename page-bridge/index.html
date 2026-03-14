@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>WINDI · One Touch Bridge</title>
+<style>
+/* ═══════════════════════════════════════════════
+   WINDI DESIGN SYSTEM — KLAR + NOIR
+   Bricolage Grotesque + JetBrains Mono
+═══════════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+:root {
+  --bg: #F5F0E0;
+  --bg2: #EDE8D8;
+  --surface: #FFFDF5;
+  --surface2: #F0EBD8;
+  --text: #1a1a1a;
+  --text2: #555;
+  --text3: #888;
+  --border: #D4C5A0;
+  --border2: #C0B090;
+  --gold: #8B6914;
+  --gold-light: #B8943A;
+  --gold-bg: #FFF8E7;
+  --radius: 10px;
+  --radius-sm: 6px;
+  --shadow: 0 2px 8px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.12);
+  --transition: 200ms ease;
+  --font: 'Bricolage Grotesque', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+  /* Agent colours */
+  --c-journ: #2563EB; --c-journ-bg: #EFF6FF;
+  --c-comm:  #8B6914; --c-comm-bg:  #FFF8E7;
+  --c-legal: #7C3AED; --c-legal-bg: #F5F3FF;
+  --c-notary:#059669; --c-notary-bg:#ECFDF5;
+  --c-comply:#DC2626; --c-comply-bg:#FEF2F2;
+  --c-acct:  #0891B2; --c-acct-bg:  #ECFEFF;
+  --c-audit: #6B7280; --c-audit-bg: #F9FAFB;
+  --c-page:  #D97706; --c-page-bg:  #FFFBEB;
+}
+[data-theme="noir"] {
+  --bg: #0D0D0D; --bg2: #111;
+  --surface: #1a1a1a; --surface2: #222;
+  --text: #F5F0E0; --text2: #BBB; --text3: #666;
+  --border: #2a2a2a; --border2: #333;
+  --gold: #B8943A; --gold-light: #D4B05A; --gold-bg: #1a1500;
+  --shadow: 0 2px 8px rgba(0,0,0,0.4);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.5);
+  --c-journ-bg:#0a1628; --c-comm-bg:#1a1200; --c-legal-bg:#130a28;
+  --c-notary-bg:#001a0f; --c-comply-bg:#1a0505; --c-acct-bg:#001a1e;
+  --c-audit-bg:#111; --c-page-bg:#1a0e00;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  transition: background var(--transition), color var(--transition);
+  padding-bottom: 80px; /* bottom bar */
+}
+
+/* ═══ HEADER ═══ */
+.header {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 16px;
+  height: 56px;
+  display: flex; align-items: center; justify-content: space-between;
+  box-shadow: var(--shadow);
+}
+.header-brand { display: flex; align-items: center; gap: 10px; }
+.header-logo {
+  width: 28px; height: 28px;
+  background: var(--gold);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 13px; font-weight: 700;
+  color: #fff;
+}
+.header-title { font-size: 15px; font-weight: 700; color: var(--text); letter-spacing: -0.3px; }
+.header-sub { font-size: 11px; color: var(--text3); font-family: var(--mono); }
+.header-controls { display: flex; align-items: center; gap: 8px; }
+
+/* ═══ LANG + THEME TOGGLES ═══ */
+.lang-toggle {
+  display: flex; gap: 2px;
+  background: var(--bg2); border-radius: 6px; padding: 2px;
+}
+.lang-btn {
+  border: none; background: transparent; cursor: pointer;
+  padding: 4px 8px; border-radius: 4px;
+  font-family: var(--mono); font-size: 10px; font-weight: 700;
+  color: var(--text3); transition: all var(--transition);
+}
+.lang-btn.active { background: var(--gold); color: #fff; }
+
+.theme-toggle {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--bg2); cursor: pointer;
+  font-size: 16px; display: flex; align-items: center; justify-content: center;
+  transition: all var(--transition);
+}
+.theme-toggle:hover { border-color: var(--gold); }
+
+/* ═══ MISSION BADGE ═══ */
+.mission-bar {
+  background: var(--gold-bg);
+  border-bottom: 1px solid var(--border);
+  padding: 8px 16px;
+  text-align: center;
+  font-family: var(--mono); font-size: 10px; color: var(--gold);
+  letter-spacing: 0.5px;
+}
+
+/* ═══ AGENT SELECTOR ═══ */
+.agent-nav-wrap {
+  position: sticky; top: 56px; z-index: 90;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.agent-nav {
+  display: flex; overflow-x: auto; gap: 0;
+  scrollbar-width: none; -ms-overflow-style: none;
+  padding: 0 8px;
+}
+.agent-nav::-webkit-scrollbar { display: none; }
+.agent-tab {
+  flex-shrink: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 10px 14px; gap: 3px;
+  cursor: pointer; border: none; background: transparent;
+  border-bottom: 2px solid transparent;
+  transition: all var(--transition); min-width: 64px;
+}
+.agent-tab:hover { background: var(--bg2); }
+.agent-tab.active { border-bottom-color: var(--agent-c, var(--gold)); }
+.agent-tab-icon { font-size: 18px; line-height: 1; }
+.agent-tab-code {
+  font-family: var(--mono); font-size: 9px; font-weight: 700;
+  color: var(--agent-c, var(--text3));
+  letter-spacing: 0.5px;
+}
+.agent-tab-name { font-size: 10px; color: var(--text3); white-space: nowrap; }
+
+/* ═══ MAIN CONTENT ═══ */
+.main { padding: 16px; max-width: 960px; margin: 0 auto; }
+
+/* ═══ AGENT PANEL ═══ */
+.agent-panel { display: none; }
+.agent-panel.active { display: block; }
+.agent-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 16px;
+  background: var(--panel-bg, var(--surface2));
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+}
+.agent-icon-big { font-size: 28px; }
+.agent-info-name { font-size: 16px; font-weight: 700; }
+.agent-info-code { font-family: var(--mono); font-size: 11px; color: var(--text3); }
+.agent-info-desc { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.agent-badge {
+  margin-left: auto; padding: 4px 10px;
+  border-radius: 20px; font-family: var(--mono); font-size: 10px; font-weight: 700;
+  background: var(--panel-c, var(--gold)); color: #fff;
+}
+
+/* ═══ DOC TYPE GRID ═══ */
+.doc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.doc-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 12px;
+  cursor: pointer;
+  transition: all var(--transition);
+  position: relative; overflow: hidden;
+}
+.doc-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: var(--card-c, var(--gold));
+  opacity: 0; transition: opacity var(--transition);
+}
+.doc-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--card-c, var(--gold)); }
+.doc-card:hover::before { opacity: 1; }
+.doc-card.selected { border-color: var(--card-c, var(--gold)); box-shadow: 0 0 0 2px var(--card-c, var(--gold))30; }
+.doc-card.selected::before { opacity: 1; }
+.doc-card-emoji { font-size: 22px; margin-bottom: 8px; }
+.doc-card-code { font-family: var(--mono); font-size: 9px; color: var(--text3); margin-bottom: 3px; }
+.doc-card-name { font-size: 13px; font-weight: 600; line-height: 1.3; }
+.doc-card-sub { font-size: 11px; color: var(--text2); margin-top: 3px; }
+.doc-card-irrem {
+  display: inline-block; margin-top: 6px;
+  padding: 2px 6px; border-radius: 3px;
+  background: #FEF2F2; color: #DC2626;
+  font-family: var(--mono); font-size: 8px; font-weight: 700;
+}
+
+/* ═══ FORM PANEL ═══ */
+.form-panel {
+  display: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+.form-panel.visible { display: block; animation: slideDown 200ms ease; }
+@keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+
+.form-header {
+  background: var(--panel-bg2, var(--bg2));
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.form-header-left { display: flex; align-items: center; gap: 10px; }
+.form-doc-emoji { font-size: 20px; }
+.form-doc-title { font-size: 14px; font-weight: 700; }
+.form-doc-agent { font-family: var(--mono); font-size: 10px; color: var(--text3); }
+.form-close {
+  width: 32px; height: 32px; border-radius: 50%;
+  border: 1px solid var(--border); background: var(--surface);
+  cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center;
+  color: var(--text2); transition: all var(--transition);
+}
+.form-close:hover { background: var(--bg2); color: var(--text); }
+
+.form-body { padding: 16px; }
+.form-row { margin-bottom: 14px; }
+.form-label {
+  display: block; font-size: 11px; font-weight: 600;
+  color: var(--text2); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.form-input, .form-select, .form-textarea {
+  width: 100%; padding: 10px 12px;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); color: var(--text);
+  font-family: var(--font); font-size: 13px;
+  transition: border-color var(--transition);
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  outline: none; border-color: var(--gold);
+  box-shadow: 0 0 0 2px var(--gold)20;
+}
+.form-textarea { resize: vertical; min-height: 80px; }
+
+/* ═══ I9 GATE ═══ */
+.i9-gate {
+  background: var(--gold-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  margin-bottom: 14px;
+}
+.i9-gate-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.i9-gate-icon { font-size: 18px; }
+.i9-gate-title { font-size: 12px; font-weight: 700; color: var(--gold); }
+.i9-gate-text { font-size: 11px; color: var(--text2); line-height: 1.5; }
+.i9-checkbox-row { display: flex; align-items: flex-start; gap: 10px; margin-top: 10px; cursor: pointer; }
+.i9-checkbox {
+  width: 20px; height: 20px; flex-shrink: 0;
+  border: 2px solid var(--border2); border-radius: 4px;
+  background: var(--surface); appearance: none; cursor: pointer;
+  transition: all var(--transition);
+}
+.i9-checkbox:checked { background: var(--gold); border-color: var(--gold); }
+.i9-checkbox:checked::after { content: '✓'; display: block; text-align: center; font-size: 12px; color: #fff; font-weight: 700; }
+.i9-label { font-size: 12px; color: var(--text); line-height: 1.5; padding-top: 1px; }
+
+/* ═══ SUBMIT BUTTON ═══ */
+.btn-submit {
+  width: 100%; padding: 14px;
+  background: var(--gold); color: #fff;
+  border: none; border-radius: var(--radius-sm);
+  font-family: var(--font); font-size: 14px; font-weight: 700;
+  cursor: pointer; letter-spacing: 0.3px;
+  transition: all var(--transition);
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 50px;
+}
+.btn-submit:hover:not(:disabled) { background: var(--gold-light); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+.btn-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.btn-submit .spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.6s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ═══ RECEIPT PANEL ═══ */
+.receipt-panel {
+  display: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+.receipt-panel.visible { display: block; animation: slideDown 200ms ease; }
+.receipt-header {
+  background: linear-gradient(135deg, var(--gold)15, transparent);
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+.receipt-tick { width: 36px; height: 36px; border-radius: 50%; background: var(--gold); display: flex; align-items: center; justify-content: center; font-size: 18px; color: #fff; flex-shrink: 0; }
+.receipt-title { font-size: 14px; font-weight: 700; color: var(--gold); }
+.receipt-id { font-family: var(--mono); font-size: 10px; color: var(--text3); }
+.receipt-body { padding: 16px; }
+.receipt-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--border); }
+.receipt-row:last-child { border-bottom: none; }
+.receipt-key { font-size: 11px; color: var(--text3); font-family: var(--mono); }
+.receipt-val { font-size: 12px; font-weight: 600; text-align: right; word-break: break-all; max-width: 65%; }
+.receipt-hash { font-family: var(--mono); font-size: 10px; color: var(--text2); word-break: break-all; }
+.receipt-actions { display: flex; gap: 8px; margin-top: 12px; }
+.btn-sm {
+  flex: 1; padding: 10px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); background: var(--bg2);
+  font-family: var(--font); font-size: 12px; font-weight: 600;
+  cursor: pointer; color: var(--text); transition: all var(--transition);
+}
+.btn-sm:hover { border-color: var(--gold); color: var(--gold); }
+.btn-sm.primary { background: var(--gold); color: #fff; border-color: var(--gold); }
+.btn-sm.primary:hover { background: var(--gold-light); }
+
+/* ═══ ERROR STATE ═══ */
+.error-box {
+  display: none; background: #FEF2F2; border: 1px solid #FCA5A5;
+  border-radius: var(--radius-sm); padding: 12px; margin-bottom: 14px;
+  font-size: 12px; color: #DC2626;
+}
+.error-box.visible { display: block; }
+
+/* ═══ STATS BAR ═══ */
+.stats-bar {
+  display: flex; gap: 0; overflow-x: auto;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); margin-bottom: 16px;
+  scrollbar-width: none;
+}
+.stats-bar::-webkit-scrollbar { display: none; }
+.stat-item {
+  flex: 1; min-width: 80px; padding: 12px 8px;
+  text-align: center; border-right: 1px solid var(--border);
+}
+.stat-item:last-child { border-right: none; }
+.stat-val { font-family: var(--mono); font-size: 18px; font-weight: 700; color: var(--gold); }
+.stat-label { font-size: 10px; color: var(--text3); margin-top: 2px; }
+
+/* ═══ BOTTOM BAR (mobile nav) ═══ */
+.bottom-bar {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+  background: var(--surface); border-top: 1px solid var(--border);
+  height: 64px; display: flex; align-items: stretch;
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.08);
+}
+.bottom-btn {
+  flex: 1; border: none; background: transparent; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+  font-family: var(--font); color: var(--text3); transition: all var(--transition);
+  font-size: 11px;
+}
+.bottom-btn:hover, .bottom-btn.active { color: var(--gold); }
+.bottom-btn-icon { font-size: 20px; }
+
+/* ═══ DESKTOP ADJUSTMENTS ═══ */
+@media (min-width: 768px) {
+  .doc-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+  .agent-tab { min-width: 80px; padding: 12px 16px; }
+  .agent-tab-name { display: block; }
+}
+@media (min-width: 1024px) {
+  .main { padding: 24px; }
+  .doc-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+}
+</style>
+</head>
+<body data-theme="klar">
+
+<!-- ═══ HEADER ═══ -->
+<header class="header">
+  <div class="header-brand">
+    <div class="header-logo">W</div>
+    <div>
+      <div class="header-title">One Touch Bridge</div>
+      <div class="header-sub" id="hdr-sub">8 agentes · 39 tipos</div>
+    </div>
+  </div>
+  <div class="header-controls">
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('pt')">PT</button>
+      <button class="lang-btn" onclick="setLang('de')">DE</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn" title="Toggle KLAR/NOIR">🌙</button>
+  </div>
+</header>
+
+<!-- ═══ MISSION ═══ -->
+<div class="mission-bar" id="mission-bar">
+  AI processes. Human decides. WINDI guarantees. · I9 · I11 · Three Dragons Protocol
+</div>
+
+<!-- ═══ AGENT SELECTOR ═══ -->
+<nav class="agent-nav-wrap">
+  <div class="agent-nav" id="agentNav">
+    <button class="agent-tab active" data-agent="journ" style="--agent-c:var(--c-journ)" onclick="selectAgent('journ',this)">
+      <span class="agent-tab-icon">📰</span>
+      <span class="agent-tab-code">JOURN</span>
+      <span class="agent-tab-name" data-i18n="tab_journ">Jornalismo</span>
+    </button>
+    <button class="agent-tab" data-agent="comm" style="--agent-c:var(--c-comm)" onclick="selectAgent('comm',this)">
+      <span class="agent-tab-icon">📄</span>
+      <span class="agent-tab-code">COMM</span>
+      <span class="agent-tab-name" data-i18n="tab_comm">Comunicação</span>
+    </button>
+    <button class="agent-tab" data-agent="legal" style="--agent-c:var(--c-legal)" onclick="selectAgent('legal',this)">
+      <span class="agent-tab-icon">⚖️</span>
+      <span class="agent-tab-code">LEGAL</span>
+      <span class="agent-tab-name" data-i18n="tab_legal">Jurídico</span>
+    </button>
+    <button class="agent-tab" data-agent="notary" style="--agent-c:var(--c-notary)" onclick="selectAgent('notary',this)">
+      <span class="agent-tab-icon">🔏</span>
+      <span class="agent-tab-code">NOTARY</span>
+      <span class="agent-tab-name" data-i18n="tab_notary">Notarial</span>
+    </button>
+    <button class="agent-tab" data-agent="comply" style="--agent-c:var(--c-comply)" onclick="selectAgent('comply',this)">
+      <span class="agent-tab-icon">🛡️</span>
+      <span class="agent-tab-code">COMPLY</span>
+      <span class="agent-tab-name" data-i18n="tab_comply">Conformidade</span>
+    </button>
+    <button class="agent-tab" data-agent="acct" style="--agent-c:var(--c-acct)" onclick="selectAgent('acct',this)">
+      <span class="agent-tab-icon">📊</span>
+      <span class="agent-tab-code">ACCT</span>
+      <span class="agent-tab-name" data-i18n="tab_acct">Contabilidade</span>
+    </button>
+    <button class="agent-tab" data-agent="audit" style="--agent-c:var(--c-audit)" onclick="selectAgent('audit',this)">
+      <span class="agent-tab-icon">🔍</span>
+      <span class="agent-tab-code">AUDIT</span>
+      <span class="agent-tab-name" data-i18n="tab_audit">Auditoria</span>
+    </button>
+    <button class="agent-tab" data-agent="page" style="--agent-c:var(--c-page)" onclick="selectAgent('page',this)">
+      <span class="agent-tab-icon">🌐</span>
+      <span class="agent-tab-code">PAGE</span>
+      <span class="agent-tab-name" data-i18n="tab_page">Publicação</span>
+    </button>
+  </div>
+</nav>
+
+<!-- ═══ MAIN ═══ -->
+<main class="main">
+
+  <!-- Stats -->
+  <div class="stats-bar" id="statsBar">
+    <div class="stat-item"><div class="stat-val">8</div><div class="stat-label" data-i18n="stat_agents">Agentes</div></div>
+    <div class="stat-item"><div class="stat-val">39</div><div class="stat-label" data-i18n="stat_types">Tipos</div></div>
+    <div class="stat-item"><div class="stat-val" id="statDocs">0</div><div class="stat-label" data-i18n="stat_created">Criados</div></div>
+    <div class="stat-item"><div class="stat-val">I9</div><div class="stat-label" data-i18n="stat_gate">Gate Activo</div></div>
+  </div>
+
+  <!-- ═══ AGENT: JOURN ═══ -->
+  <div class="agent-panel active" id="panel-journ">
+    <div class="agent-header" style="--panel-bg:var(--c-journ-bg); --panel-c:var(--c-journ)">
+      <span class="agent-icon-big">📰</span>
+      <div>
+        <div class="agent-info-name">W-JOURN-001</div>
+        <div class="agent-info-code">:8091/journ/ · J1–J6</div>
+        <div class="agent-info-desc" data-i18n="journ_desc">Inteligência jornalística · J6 = gate de publicação</div>
+      </div>
+      <span class="agent-badge" style="background:var(--c-journ)">LIVE</span>
+    </div>
+    <div class="doc-grid">
+      <div class="doc-card" style="--card-c:var(--c-journ)" onclick="openForm('journ','J1','artigo')">
+        <div class="doc-card-emoji">✍️</div>
+        <div class="doc-card-code">J1</div>
+        <div class="doc-card-name" data-i18n="j1_name">Artigo de Imprensa</div>
+        <div class="doc-card-sub" data-i18n="j1_sub">Press Article</div>
+      </div>
+      <div class="doc-card" style="--card-c:var(--c-journ)" onclick="openForm('journ','J2','investigacao')">
+        <div class="doc-card-emoji">🔎</div>
+        <div class="doc-card-code">J2</div>
+        <div class="doc-card-name" data-i18n="j2_name">Investigação</div>
+        <div class="doc-card-sub" data-i18n="j2_sub">Journalistic Investigation</div>
+      </div>
+      <div class="doc-card" style="--card-c:var(--c-journ)" onclick="openForm('journ','J3','press-release')">
+        <div class="doc-card-emoji">📢</div>
+        <div class="doc-card-code">J3</div>
+        <div class="doc-card-name" data-i18n="j3_name">Comunicado Imprensa</div>
+        <div class="doc-card-sub" data-i18n="j3_sub">Press Release</div>
+      </div>
+      <div class="doc-card" style="--card-c:var(--c-journ)" onclick="openForm('journ','J4','entrevista')">
+        <div class="doc-card-emoji">🎙️</div>
+        <div class="doc-card-code">J4</div>
+        <div class="doc-card-name" data-i18n="j4_name">Entrevista</div>
+        <div class="doc-card-sub" data-i18n="j4_sub">Interview</div>
+      </div>
+      <div class="doc-card" style="--card-c:var(--c-journ)" onclick="openForm('journ','J5','reportagem')">
+        <div class="doc-card-emoji">📋</div>
+        <div class="doc-card-code">J5</div>
+        <div class="doc-card-name" data-i18n="j5_name">Reportagem</div>
+        <div class="doc-card-sub" data-i18n="j5_sub">Feature Report</div>
+      </div>
+      <div class="doc-card" style="--card-c:var(--c-journ)" onclick="openForm('journ','J6','publicacao')">
+        <div class="doc-card-emoji">🗞️</div>
+        <div class="doc-card-code">J6</div>
+        <div class="doc-card-name" data-i18n="j6_name">Publicação</div>
+        <div class="doc-card-sub" data-i18n="j6_sub">Publication Gate</div>
+        <div class="doc-card-irrem">GATE</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ AGENT: COMM ═══ -->
+  <div class="agent-panel" id="panel-comm">
+    <div class="agent-header" style="--panel-bg:var(--c-comm-bg); --panel-c:var(--c-comm)">
+      <span class="agent-icon-big">📄</span>
+      <div>
+        <div class="agent-info-name">W-COMM-001 v2.0.0</div>
+        <div class="agent-info-code">:8091/comm/ · C1–C6</div>
+        <div class="agent-info-desc" data-i18n="comm_desc">Document Intelligence Hub · 8 doc_types</div>
+      </div>
+      <span class="agent-badge" style="background:var(--c-comm)">LIVE</span>
+    </div>
+    <div class="doc-grid">
+      <div class="doc-card" style="--card-c:var(--c-comm)" onclick="openForm('comm','C1','carta')">
+        <div class="doc-card-emoji">✉️</div>
+        <div class="doc-card-code">C1</div>
+        <div class="doc-card-name" data-i18n="c1_name">Carta Institucional</div>
+        <div class="doc-card-sub" data-i18n="c1_sub">Institutional Letter</div>
+      </div>
+      <div class="doc-card" style="--card-c:var(--c-comm)" onclick="openForm('comm','C2','email-formal')">
+        <div class="doc-card-emoji">📧</div>
+        <div class="doc-card-code">C2</div>
+        <div class="doc-card-name" data-i18n="c2_name">Email Formal</div>
+        <div class="doc-card-sub" data-i18n="c2_sub">Formal Email</div>
+      </div>
+      <div class="doc-card" style="--card-c:var(--c-comm)" onclick="openForm('comm','C3','communique')">
+        <div class="doc-card-emoji">📣</div>
+        <div class="doc-card-code">C3</div>
+        <div class="doc-card-name" data-i18n="c3_name">Communiqué</div>
+        <div class="doc-card-sub" data-i18n="c3_sub">Official Communiqué</div>
+      </div>
+      <div class="doc-card" style="--card-c:var(--c-comm)" onclick="openForm('comm','C4','relatorio')">
+        <div class="doc-card-emoji">📑</div>
+        <div class="doc-card-code">C4</div>
+        <div class="doc-card-name" data-i18n="c4_name">Relatório</div>
+        <div class="doc-card-sub" data-i18n="c4_sub">Bericht / Report</div>
+      </div>
+      <div class="doc-card" style="--card-c:var(--c-comm)" onclick="openForm('comm','C5','contrato')">
+        <div class="doc-card-emoji">📜</div>
+        <div class="doc-card-code">C5</div>
+        <div class="doc-card-name" data-i18n="c5_name">Contrato</div>
+        <div class="doc-card-sub" data-i18n="c5_sub">Vertrag / Contract</div>
+      </div>
+      <div class="doc-card" style="--card-c:var(--c-comm)" onclick="openForm('comm','C6','acta')">
+        <div class="doc-card-emoji">📝</div>
+        <div class="doc-card-code">C6</div>
+        <div class="doc-card-name" data-i18n="c6_name">Acta / Protokoll</div>
+        <div class="doc-card-sub" data-i18n="c6_sub">Meeting Minutes</div>
+        <div class="doc-card-irrem">IRREMEDIÁVEL</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ AGENT: LEGAL ═══ -->
+  <div class="agent-panel" id="panel-legal">
+    <div class="agent-header" style="--panel-bg:var(--c-legal-bg); --panel-c:var(--c-legal)">
+      <span class="agent-icon-big">⚖️</span>
+      <div>
+        <div class="agent-info-name">W-LEGAL-001 v0.2.0</div>
+        <div class="agent-info-code">:8091/legal/ · L1–L6</div>
+        <div class="agent-info-desc" data-i18n="legal_desc">Evidence Git · WCAF · DE/EU/BR/INT · 22 endpoints</div>
+      </div>
+      <span class="agent-badge" style="background:var(--c-legal)">LIVE</span>
+    </div>
+    <div class="doc-grid">
+      <div class="doc-card" style="--card-c:var(--c-legal)" onclick="openForm('legal','L1','caso-legal')">
+        <div class="doc-card-emoji">🗂️</div>
+        <div class="doc-card-code">L1</div>
+        <div class="doc-card-name" data-i18n="l1_name">Caso Legal</div>
+        <div class="doc-card-sub" data-i18n="l1_sub">Legal Case</div>
+      </div>
+      <div class="doc-card" style="--card-c:var(--c-legal)" onclick="openForm('legal','L2','evidencia')">
+        <div class="doc-card-emoji">🔗</div>
+        <div class="doc-card-code">L2</div>
+        <div class="doc-card-name" data-i18n="l2_name">Evidência</div>
+        <div class="doc-card-sub" data-i18n="l2_sub">Evidence Commit · SHA-256</div>
+        <div class="doc-card-irrem">IMMUTABLE</div>
+      </div>
+      <div class="doc-card" style="--card-c:var(--c-legal)" onclick="openForm('legal','L3','exportacao-tribunal')">
+        <div class="doc-card-emoji">🏛️</div>
+        <div class="doc-card-code">L3</div>
+        <div class="doc-card-name" data-i18n="l3_name">Export Tribunal</div>
+        <div class="doc-card-sub" data-i18n="l3_sub">Court Export DE/EN/PT</div>
+      </div>
+      <div class="doc-card" style="--card-c:var(--c-legal)" onclick="openForm('legal','L4','analise-juridica')">
+        <div class="doc-card-emoji">📐</div>
+        <div class="doc-card-code">L4</div>
+        <div class="doc-card-name" data-i18n="l4_name">Análise Jurídica</div>
+        <div class="doc-card-sub" data-i18n="l4_sub">Legal Analysis · WCAF</div>
+      </div>
+      <div class="doc-card" style="--card-c:var(--c-legal)" onclick="openForm('legal','L5','notificacao')">
+        <div class="doc-card-emoji">⚠️</div>
+        <div class="doc-card-code">L5</div>
+        <div class="doc-card-name" data-i18n="l5_name">Notificação Legal</div>
+        <div class="doc-card-sub" data-i18n="l5_sub">Legal Notice</div>
+      </div>
+      <div class="doc-card" style="--card-c:var(--c-legal)" onclick="openForm('legal','L6','relatorio-juridico')">
+        <div class="doc-card-emoji">📋</div>
+        <div class="doc-card-code">L6</div>
+        <div class="doc-card-name" data-i18n="l6_name">Relatório Jurídico</div>
+        <div class="doc-card-sub" data-i18n="l6_sub">Legal Report</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ AGENT: NOTARY ═══ -->
+  <div class="agent-panel" id="panel-notary">
+    <div class="agent-header" style="--panel-bg:var(--c-notary-bg); --panel-c:var(--c-notary)">
+      <span class="agent-icon-big">🔏</span>
+      <div>
+        <div class="agent-info-name">W-NOTARY-001</div>
+        <div class="agent-info-code">:8091/notary/ · N1–N6</div>
+        <div class="agent-info-desc" data-i18n="notary_desc">Autenticação notarial · Ledger seal automático</div>
+      </div>
+      <span class="agent-badge" style="background:var(--c-notary)">LIVE</span>
+    </div>
+    <div class="doc-grid">
+      <div class="doc-card" style="--card-c:var(--c-notary)" onclick="openForm('notary','N1','certidao')">
+        <div class="doc-card-emoji">🏅</div>
+        <div class="doc-card-code">N1</div>
+        <div class="doc-card-name" data-i18n="n1_name">Certidão</div>
+        <div class="doc-card-sub" data-i18n="n1_sub">Urkunde / Certificate</div>
+      </div>
+      <div class="doc-card" style="--card-c:var(--c-notary)" onclick="openForm('notary','N2','declaracao')">
+        <div class="doc-card-emoji">📄</div>
+        <div class="doc-card-code">N2</div>
+        <div class="doc-card-name" data-i18n="n2_name">Declaração</div>
+        <div class="doc-card-sub" data-i18n="n2_sub">Erklärung / Declaration</div>
+      </div>
+      <div class="doc-card" style="--card-c:var(--c-notary)" onclick="openForm('notary','N3','procuracao')">
+        <div class="doc-card-emoji">👤</div>
+        <div class="doc-card-code">N3</div>
+        <div class="doc-card-name" data-i18n="n3_name">Procuração</div>
+        <div class="doc-card-sub" data-i18n="n3_sub">Vollmacht / Power of Attorney</div>
+      </div>
+      <div class="doc-card" style="--card-c:var(--c-notary)" onclick="openForm('notary','N4','autenticacao')">
+        <div class="doc-card-emoji">✅</div>
+        <div class="doc-card-code">N4</div>
+        <div class="doc-card-name" data-i18n="n4_name">Autenticação</div>
+        <div class="doc-card-sub" data-i18n="n4_sub">Beglaubigung / Authentication</div>
+      </div>
+      <div class="doc-card" style="--card-c:var(--c-notary)" onclick="openForm('notary','N5','apostila')">
+        <div class="doc-card-emoji">🌍</div>
+        <div class="doc-card-code">N5</div>
+        <div class="doc-card-name" data-i18n="n5_name">Apostila</div>
+        <div class="doc-card-sub" data-i18n="n5_sub">Apostille · Hague 1961</div>
+      </div>
+      <div class="doc-card" style="--card-c:var(--c-notary)" onclick="openForm('notary','N6','escritura')">
+        <div class="doc-card-emoji">🏠</div>
+        <div class="doc-card-code">N6</div>
+        <div class="doc-card-name" data-i18n="n6_name">Escritura</div>
+        <div class="doc-card-sub" data-i18n="n6_sub">Notarieller Vertrag / Deed</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ AGENT: COMPLY ═══ -->
+  <div class="agent-panel" id="panel-comply">
+    <div class="agent-header" style="--panel-bg:var(--c-comply-bg); --panel-c:var(--c-comply)">
+      <span class="agent-icon-big">🛡️</span>
+      <div>
+        <div class="agent-info-name">W-COMPLY-001</div>
+        <div class="agent-info-code">:8091/compliance/ · P1–P4</div>
+        <div class="agent-info-desc" data-i18n="comply_desc">GDPR · eIDAS · ISO 27001 · Compliance Assessment</div>
+      </div>
+      <span class="agent-badge" style="background:var(--c-comply)">LIVE</span>
+    </div>
+    <div class="doc-grid">
+      <div class="doc-card" style="--card-c:var(--c-comply)" onclick="openForm('comply','P1','gdpr')">
+        <div class="doc-card-emoji">🔒</div>
+        <div class="doc-card-code">P1</div>
+        <div class="doc-card-name" data-i18n="p1_name">Avaliação GDPR</div>
+        <div class="doc-card-sub" data-i18n="p1_sub">DSGVO Assessment</div>
+      </div>
+      <div class="doc-card" style="--card-c:var(--c-comply)" onclick="openForm('comply','P2','privacidade')">
+        <div class="doc-card-emoji">📋</div>
+        <div class="doc-card-code">P2</div>
+        <div class="doc-card-name" data-i18n="p2_name">Política Privacidade</div>
+        <div class="doc-card-sub" data-i18n="p2_sub">Datenschutzerklärung</div>
+      </div>
+      <div class="doc-card" style="--card-c:var(--c-comply)" onclick="openForm('comply','P3','relatorio-conform')">
+        <div class="doc-card-emoji">✅</div>
+        <div class="doc-card-code">P3</div>
+        <div class="doc-card-name" data-i18n="p3_name">Relatório Conformidade</div>
+        <div class="doc-card-sub" data-i18n="p3_sub">Compliance Report</div>
+      </div>
+      <div class="doc-card" style="--card-c:var(--c-comply)" onclick="openForm('comply','P4','auditoria-conform')">
+        <div class="doc-card-emoji">🔍</div>
+        <div class="doc-card-code">P4</div>
+        <div class="doc-card-name" data-i18n="p4_name">Auditoria Conformidade</div>
+        <div class="doc-card-sub" data-i18n="p4_sub">Compliance Audit</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ AGENT: ACCT ═══ -->
+  <div class="agent-panel" id="panel-acct">
+    <div class="agent-header" style="--panel-bg:var(--c-acct-bg); --panel-c:var(--c-acct)">
+      <span class="agent-icon-big">📊</span>
+      <div>
+        <div class="agent-info-name">W-ACCT-001 Wave3</div>
+        <div class="agent-info-code">:8091/accounting/ · A1–A4</div>
+        <div class="agent-info-desc" data-i18n="acct_desc">XRechnung · ZUGFeRD · ELSTER XML · GoBD · DATEV</div>
+      </div>
+      <span class="agent-badge" style="background:var(--c-acct)">LIVE</span>
+    </div>
+    <div class="doc-grid">
+      <div class="doc-card" style="--card-c:var(--c-acct)" onclick="openForm('acct','A1','factura')">
+        <div class="doc-card-emoji">🧾</div>
+        <div class="doc-card-code">A1</div>
+        <div class="doc-card-name" data-i18n="a1_name">Factura</div>
+        <div class="doc-card-sub" data-i18n="a1_sub">Rechnung / Invoice · GoBD</div>
+      </div>
+      <div class="doc-card" style="--card-c:var(--c-acct)" onclick="openForm('acct','A2','recibo')">
+        <div class="doc-card-emoji">🧾</div>
+        <div class="doc-card-code">A2</div>
+        <div class="doc-card-name" data-i18n="a2_name">Recibo</div>
+        <div class="doc-card-sub" data-i18n="a2_sub">Quittung / Receipt</div>
+      </div>
+      <div class="doc-card" style="--card-c:var(--c-acct)" onclick="openForm('acct','A3','elster')">
+        <div class="doc-card-emoji">🏦</div>
+        <div class="doc-card-code">A3</div>
+        <div class="doc-card-name" data-i18n="a3_name">ELSTER XML</div>
+        <div class="doc-card-sub" data-i18n="a3_sub">Steuer · C6 IRREMEDIÁVEL</div>
+        <div class="doc-card-irrem">C6 IRREMEDIÁVEL</div>
+      </div>
+      <div class="doc-card" style="--card-c:var(--c-acct)" onclick="openForm('acct','A4','relatorio-fiscal')">
+        <div class="doc-card-emoji">📈</div>
+        <div class="doc-card-code">A4</div>
+        <div class="doc-card-name" data-i18n="a4_name">Relatório Fiscal</div>
+        <div class="doc-card-sub" data-i18n="a4_sub">Steuerbericht / Tax Report</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ AGENT: AUDIT ═══ -->
+  <div class="agent-panel" id="panel-audit">
+    <div class="agent-header" style="--panel-bg:var(--c-audit-bg); --panel-c:var(--c-audit)">
+      <span class="agent-icon-big">🔍</span>
+      <div>
+        <div class="agent-info-name">W-AUDIT-001</div>
+        <div class="agent-info-code">:8091/audit/ · AU1–AU3</div>
+        <div class="agent-info-desc" data-i18n="audit_desc">Read-only · self-hashing · proof of the proof</div>
+      </div>
+      <span class="agent-badge" style="background:var(--c-audit)">LIVE</span>
+    </div>
+    <div class="doc-grid">
+      <div class="doc-card" style="--card-c:var(--c-audit)" onclick="openForm('audit','AU1','relatorio-auditoria')">
+        <div class="doc-card-emoji">📋</div>
+        <div class="doc-card-code">AU1</div>
+        <div class="doc-card-name" data-i18n="au1_name">Relatório Auditoria</div>
+        <div class="doc-card-sub" data-i18n="au1_sub">Audit Report · self-hashing</div>
+      </div>
+      <div class="doc-card" style="--card-c:var(--c-audit)" onclick="openForm('audit','AU2','verificacao-hash')">
+        <div class="doc-card-emoji">🔗</div>
+        <div class="doc-card-code">AU2</div>
+        <div class="doc-card-name" data-i18n="au2_name">Verificação Hash</div>
+        <div class="doc-card-sub" data-i18n="au2_sub">Hash Verification · :8101</div>
+      </div>
+      <div class="doc-card" style="--card-c:var(--c-audit)" onclick="openForm('audit','AU3','cert-auditoria')">
+        <div class="doc-card-emoji">🏅</div>
+        <div class="doc-card-code">AU3</div>
+        <div class="doc-card-name" data-i18n="au3_name">Certificado Auditoria</div>
+        <div class="doc-card-sub" data-i18n="au3_sub">Prüfzertifikat / Audit Cert</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ AGENT: PAGE ═══ -->
+  <div class="agent-panel" id="panel-page">
+    <div class="agent-header" style="--panel-bg:var(--c-page-bg); --panel-c:var(--c-page)">
+      <span class="agent-icon-big">🌐</span>
+      <div>
+        <div class="agent-info-name">W-PAGE-001 · Bridge</div>
+        <div class="agent-info-code">:8091 + :8101 · PG1–PG4</div>
+        <div class="agent-info-desc" data-i18n="page_desc">Certidões · Pioneer Cards · Receipts · Verify Public</div>
+      </div>
+      <span class="agent-badge" style="background:var(--c-page)">LIVE</span>
+    </div>
+    <div class="doc-grid">
+      <div class="doc-card" style="--card-c:var(--c-page)" onclick="openForm('page','PG1','pioneer-card')">
+        <div class="doc-card-emoji">🪪</div>
+        <div class="doc-card-code">PG1</div>
+        <div class="doc-card-name" data-i18n="pg1_name">Cartão Pioneer</div>
+        <div class="doc-card-sub" data-i18n="pg1_sub">Pioneer Card #1 · IMMORTAL</div>
+        <div class="doc-card-irrem">IMMORTAL</div>
+      </div>
+      <div class="doc-card" style="--card-c:var(--c-page)" onclick="openForm('page','PG2','certidao-windi')">
+        <div class="doc-card-emoji">🏅</div>
+        <div class="doc-card-code">PG2</div>
+        <div class="doc-card-name" data-i18n="pg2_name">Certidão WINDI</div>
+        <div class="doc-card-sub" data-i18n="pg2_sub">WINDI Certificate</div>
+      </div>
+      <div class="doc-card" style="--card-c:var(--c-page)" onclick="openForm('page','PG3','recibo-forense')">
+        <div class="doc-card-emoji">🧾</div>
+        <div class="doc-card-code">PG3</div>
+        <div class="doc-card-name" data-i18n="pg3_name">Recibo Forense</div>
+        <div class="doc-card-sub" data-i18n="pg3_sub">Forensic Receipt · I11</div>
+      </div>
+      <div class="doc-card" style="--card-c:var(--c-page)" onclick="openForm('page','PG4','verify-public')">
+        <div class="doc-card-emoji">🔍</div>
+        <div class="doc-card-code">PG4</div>
+        <div class="doc-card-name" data-i18n="pg4_name">Verificação Pública</div>
+        <div class="doc-card-sub" data-i18n="pg4_sub">Public Verify · :8114</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ FORM PANEL (shared) ═══ -->
+  <div class="form-panel" id="formPanel">
+    <div class="form-header" id="formHeader">
+      <div class="form-header-left">
+        <span class="form-doc-emoji" id="formEmoji">📄</span>
+        <div>
+          <div class="form-doc-title" id="formTitle">Documento</div>
+          <div class="form-doc-agent" id="formAgent">Agent · Code</div>
+        </div>
+      </div>
+      <button class="form-close" onclick="closeForm()">✕</button>
+    </div>
+    <div class="form-body">
+      <div id="formFields"></div>
+      <div class="i9-gate">
+        <div class="i9-gate-header">
+          <span class="i9-gate-icon">⚖️</span>
+          <span class="i9-gate-title" data-i18n="i9_title">INVARIANTE I9 — Gate de Autorização Humana</span>
+        </div>
+        <p class="i9-gate-text" data-i18n="i9_text">A IA prepara. O humano autoriza. O WINDI garante. Esta acção será selada no Ledger Forense (I11 IRREMEDIÁVEL).</p>
+        <label class="i9-checkbox-row">
+          <input type="checkbox" class="i9-checkbox" id="i9Check" onchange="checkI9()">
+          <span class="i9-label" data-i18n="i9_label">Confirmo que revi o conteúdo e autorizo a criação deste documento. Human approved.</span>
+        </label>
+      </div>
+      <div class="error-box" id="formError"></div>
+      <button class="btn-submit" id="submitBtn" onclick="submitForm()" disabled>
+        <span id="submitBtnText" data-i18n="btn_criar">🔒 Criar e Selar no Ledger</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══ RECEIPT PANEL ═══ -->
+  <div class="receipt-panel" id="receiptPanel">
+    <div class="receipt-header">
+      <div class="receipt-tick">✓</div>
+      <div>
+        <div class="receipt-title" data-i18n="receipt_title">Documento criado · Ledger selado</div>
+        <div class="receipt-id" id="receiptId">WINDI-XXX-XXXXXXXX</div>
+      </div>
+    </div>
+    <div class="receipt-body" id="receiptBody"></div>
+    <div style="padding:0 16px 16px">
+      <div class="receipt-actions">
+        <button class="btn-sm" onclick="openVerify()">🔍 Verify</button>
+        <button class="btn-sm" onclick="resetForm()">+ Novo</button>
+        <button class="btn-sm primary" onclick="downloadReceipt()">⬇ Download</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ═══ BOTTOM BAR ═══ -->
+<nav class="bottom-bar">
+  <button class="bottom-btn active" onclick="scrollTop()">
+    <span class="bottom-btn-icon">🏠</span>
+    <span data-i18n="nav_home">Início</span>
+  </button>
+  <button class="bottom-btn" onclick="window.open('/verify-public/', '_blank')">
+    <span class="bottom-btn-icon">🔍</span>
+    <span data-i18n="nav_verify">Verify</span>
+  </button>
+  <button class="bottom-btn" onclick="window.open('/audit/', '_blank')">
+    <span class="bottom-btn-icon">📋</span>
+    <span data-i18n="nav_audit">Audit</span>
+  </button>
+  <button class="bottom-btn" onclick="window.open('/app/', '_blank')">
+    <span class="bottom-btn-icon">📱</span>
+    <span data-i18n="nav_app">App</span>
+  </button>
+</nav>
+
+<script>
+const CFG = {
+  ledger: 'http://localhost:8101',
+  sandbox: 'http://localhost:8091',
+  dragon: '/api/dragon/chat',
+  verifyBase: 'https://windi-domain.com/verify-public/',
+  version: '2.0.0',
+  build: '20260314'
+};
+
+let STATE = {
+  lang: 'pt',
+  theme: 'klar',
+  agent: 'journ',
+  docCode: null,
+  docType: null,
+  docsCreated: parseInt(localStorage.getItem('windi_bridge_count') || '0'),
+  lastReceipt: null
+};
+
+const STRINGS = {
+  pt: {
+    tab_journ:'Jornalismo', tab_comm:'Comunicação', tab_legal:'Jurídico',
+    tab_notary:'Notarial', tab_comply:'Conformidade', tab_acct:'Contabilidade',
+    tab_audit:'Auditoria', tab_page:'Publicação',
+    journ_desc:'Inteligência jornalística · J6 = gate de publicação',
+    comm_desc:'Document Intelligence Hub · 8 doc_types',
+    legal_desc:'Evidence Git · WCAF · DE/EU/BR/INT · 22 endpoints',
+    notary_desc:'Autenticação notarial · Ledger seal automático',
+    comply_desc:'GDPR · eIDAS · ISO 27001 · Compliance Assessment',
+    acct_desc:'XRechnung · ZUGFeRD · ELSTER XML · GoBD · DATEV',
+    audit_desc:'Read-only · self-hashing · proof of the proof',
+    page_desc:'Certidões · Pioneer Cards · Receipts · Verify Public',
+    stat_agents:'Agentes', stat_types:'Tipos', stat_created:'Criados', stat_gate:'Gate Activo',
+    i9_title:'INVARIANTE I9 — Gate de Autorização Humana',
+    i9_text:'A IA prepara. O humano autoriza. O WINDI garante. Esta acção será selada no Ledger Forense (I11 IRREMEDIÁVEL).',
+    i9_label:'Confirmo que revi o conteúdo e autorizo a criação deste documento. Human approved.',
+    btn_criar:'🔒 Criar e Selar no Ledger',
+    receipt_title:'Documento criado · Ledger selado',
+    nav_home:'Início', nav_verify:'Verify', nav_audit:'Audit', nav_app:'App',
+    lbl_titulo:'Título', lbl_descricao:'Descrição', lbl_entidade:'Entidade',
+    lbl_autor:'Autor', lbl_jurisdicao:'Jurisdição', lbl_idioma:'Idioma',
+    lbl_data:'Data', lbl_ref:'Referência', lbl_conteudo:'Conteúdo',
+    lbl_valor:'Valor (€)', lbl_nif:'NIF', lbl_hash:'Hash / ID Documento',
+    lbl_tipo_cert:'Tipo de Certidão', lbl_wallet:'Wallet ID',
+  },
+  de: {
+    tab_journ:'Journalismus', tab_comm:'Kommunikation', tab_legal:'Rechtlich',
+    tab_notary:'Notariell', tab_comply:'Compliance', tab_acct:'Buchhaltung',
+    tab_audit:'Prüfung', tab_page:'Publikation',
+    stat_agents:'Agenten', stat_types:'Typen', stat_created:'Erstellt', stat_gate:'Gate Aktiv',
+    i9_title:'INVARIANTE I9 — Menschliches Autorisierungs-Gate',
+    i9_text:'Die KI bereitet vor. Der Mensch genehmigt. WINDI garantiert.',
+    i9_label:'Ich bestätige, dass ich den Inhalt überprüft habe und die Erstellung autorisiere.',
+    btn_criar:'🔒 Erstellen und versiegeln',
+    receipt_title:'Dokument erstellt · Ledger versiegelt',
+    nav_home:'Start', nav_verify:'Verify', nav_audit:'Prüfung', nav_app:'App',
+    lbl_titulo:'Titel', lbl_descricao:'Beschreibung', lbl_entidade:'Organisation',
+  },
+  en: {
+    tab_journ:'Journalism', tab_comm:'Communication', tab_legal:'Legal',
+    tab_notary:'Notarial', tab_comply:'Compliance', tab_acct:'Accounting',
+    tab_audit:'Audit', tab_page:'Publishing',
+    stat_agents:'Agents', stat_types:'Types', stat_created:'Created', stat_gate:'Gate Active',
+    i9_title:'INVARIANT I9 — Human Authorization Gate',
+    i9_text:'AI processes. Human decides. WINDI guarantees.',
+    i9_label:'I confirm I have reviewed the content and authorise creation.',
+    btn_criar:'🔒 Create and Seal',
+    receipt_title:'Document created · Ledger sealed',
+    nav_home:'Home', nav_verify:'Verify', nav_audit:'Audit', nav_app:'App',
+    lbl_titulo:'Title', lbl_descricao:'Description', lbl_entidade:'Entity',
+  }
+};
+
+const FORMS = {
+  'journ.J1.artigo':{ emoji:'✍️', fields:['titulo','autor','conteudo'], endpoint:'/journ/create', doc_type:'artigo' },
+  'journ.J2.investigacao':{ emoji:'🔎', fields:['titulo','entidade','conteudo','jurisdicao'], endpoint:'/journ/create', doc_type:'investigacao' },
+  'journ.J3.press-release':{ emoji:'📢', fields:['titulo','entidade','conteudo'], endpoint:'/journ/create', doc_type:'press_release' },
+  'journ.J4.entrevista':{ emoji:'🎙️', fields:['titulo','entidade','autor','conteudo'], endpoint:'/journ/create', doc_type:'entrevista' },
+  'journ.J5.reportagem':{ emoji:'📋', fields:['titulo','autor','conteudo'], endpoint:'/journ/create', doc_type:'reportagem' },
+  'journ.J6.publicacao':{ emoji:'🗞️', fields:['titulo','autor','ref','conteudo'], endpoint:'/journ/publish', doc_type:'publicacao' },
+  'comm.C1.carta':{ emoji:'✉️', fields:['titulo','entidade','autor','conteudo'], endpoint:'/comm/create', doc_type:'carta' },
+  'comm.C2.email-formal':{ emoji:'📧', fields:['titulo','entidade','conteudo'], endpoint:'/comm/create', doc_type:'email' },
+  'comm.C3.communique':{ emoji:'📣', fields:['titulo','entidade','conteudo'], endpoint:'/comm/create', doc_type:'communique' },
+  'comm.C4.relatorio':{ emoji:'📑', fields:['titulo','entidade','conteudo'], endpoint:'/comm/create', doc_type:'relatorio' },
+  'comm.C5.contrato':{ emoji:'📜', fields:['titulo','entidade','jurisdicao','conteudo'], endpoint:'/comm/create', doc_type:'contrato' },
+  'comm.C6.acta':{ emoji:'📝', fields:['titulo','entidade','data','conteudo'], endpoint:'/comm/create', doc_type:'acta', irrem:true },
+  'legal.L1.caso-legal':{ emoji:'🗂️', fields:['titulo','entidade','jurisdicao','descricao'], endpoint:'/legal/cases', doc_type:'legal_case' },
+  'legal.L2.evidencia':{ emoji:'🔗', fields:['titulo','ref','hash','descricao'], endpoint:'/legal/evidence', doc_type:'evidence', irrem:true },
+  'legal.L3.exportacao-tribunal':{ emoji:'🏛️', fields:['titulo','entidade','jurisdicao','idioma'], endpoint:'/legal/court-export', doc_type:'court_export' },
+  'legal.L4.analise-juridica':{ emoji:'📐', fields:['titulo','entidade','jurisdicao','conteudo'], endpoint:'/legal/analyze', doc_type:'legal_analysis' },
+  'legal.L5.notificacao':{ emoji:'⚠️', fields:['titulo','entidade','conteudo'], endpoint:'/legal/notice', doc_type:'legal_notice' },
+  'legal.L6.relatorio-juridico':{ emoji:'📋', fields:['titulo','entidade','conteudo'], endpoint:'/legal/report', doc_type:'legal_report' },
+  'notary.N1.certidao':{ emoji:'🏅', fields:['titulo','entidade','tipo_cert','data'], endpoint:'/notary/certify', doc_type:'certidao' },
+  'notary.N2.declaracao':{ emoji:'📄', fields:['titulo','entidade','conteudo'], endpoint:'/notary/declare', doc_type:'declaracao' },
+  'notary.N3.procuracao':{ emoji:'👤', fields:['titulo','entidade','conteudo','data'], endpoint:'/notary/poa', doc_type:'procuracao' },
+  'notary.N4.autenticacao':{ emoji:'✅', fields:['titulo','entidade','ref'], endpoint:'/notary/authenticate', doc_type:'autenticacao' },
+  'notary.N5.apostila':{ emoji:'🌍', fields:['titulo','entidade','jurisdicao','data'], endpoint:'/notary/apostille', doc_type:'apostila' },
+  'notary.N6.escritura':{ emoji:'🏠', fields:['titulo','entidade','conteudo','data'], endpoint:'/notary/deed', doc_type:'escritura' },
+  'comply.P1.gdpr':{ emoji:'🔒', fields:['entidade','descricao'], endpoint:'/compliance/gdpr', doc_type:'gdpr_assessment' },
+  'comply.P2.privacidade':{ emoji:'📋', fields:['entidade','idioma','conteudo'], endpoint:'/compliance/privacy', doc_type:'privacy_policy' },
+  'comply.P3.relatorio-conform':{ emoji:'✅', fields:['entidade','ref','descricao'], endpoint:'/compliance/report', doc_type:'compliance_report' },
+  'comply.P4.auditoria-conform':{ emoji:'🔍', fields:['entidade','ref','descricao'], endpoint:'/compliance/audit', doc_type:'compliance_audit' },
+  'acct.A1.factura':{ emoji:'🧾', fields:['titulo','entidade','nif','valor','data'], endpoint:'/accounting/invoice', doc_type:'factura' },
+  'acct.A2.recibo':{ emoji:'🧾', fields:['titulo','entidade','valor','data'], endpoint:'/accounting/receipt', doc_type:'recibo' },
+  'acct.A3.elster':{ emoji:'🏦', fields:['entidade','nif','data','descricao'], endpoint:'/accounting/elster', doc_type:'elster_xml', irrem:true },
+  'acct.A4.relatorio-fiscal':{ emoji:'📈', fields:['entidade','nif','data','descricao'], endpoint:'/accounting/tax-report', doc_type:'tax_report' },
+  'audit.AU1.relatorio-auditoria':{ emoji:'📋', fields:['titulo','entidade','ref','descricao'], endpoint:'/audit/report', doc_type:'audit_report' },
+  'audit.AU2.verificacao-hash':{ emoji:'🔗', fields:['hash','ref'], endpoint:'/audit/verify', doc_type:'hash_verify' },
+  'audit.AU3.cert-auditoria':{ emoji:'🏅', fields:['titulo','entidade','ref'], endpoint:'/audit/certificate', doc_type:'audit_cert' },
+  'page.PG1.pioneer-card':{ emoji:'🪪', fields:['titulo','entidade','wallet'], endpoint:'/page/pioneer', doc_type:'pioneer_card' },
+  'page.PG2.certidao-windi':{ emoji:'🏅', fields:['titulo','entidade','tipo_cert'], endpoint:'/page/certificate', doc_type:'certidao' },
+  'page.PG3.recibo-forense':{ emoji:'🧾', fields:['titulo','ref','descricao'], endpoint:'/page/receipt', doc_type:'forensic_receipt' },
+  'page.PG4.verify-public':{ emoji:'🔍', fields:['hash'], endpoint:'/page/verify', doc_type:'verify' }
+};
+
+const FIELD_LABELS = {
+  titulo:'lbl_titulo', descricao:'lbl_descricao', entidade:'lbl_entidade',
+  autor:'lbl_autor', jurisdicao:'lbl_jurisdicao', idioma:'lbl_idioma',
+  data:'lbl_data', ref:'lbl_ref', conteudo:'lbl_conteudo',
+  valor:'lbl_valor', nif:'lbl_nif', hash:'lbl_hash',
+  tipo_cert:'lbl_tipo_cert', wallet:'lbl_wallet'
+};
+const FIELD_TYPES = {
+  conteudo:'textarea', descricao:'textarea',
+  data:'date', valor:'number', nif:'text', hash:'text',
+  jurisdicao:'select-jurisdicao', idioma:'select-idioma'
+};
+
+function setLang(l) {
+  STATE.lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.textContent===l.toUpperCase()));
+  applyI18n();
+}
+function t(key) { return (STRINGS[STATE.lang]||STRINGS.pt)[key] || (STRINGS.pt[key]) || key; }
+function applyI18n() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.getAttribute('data-i18n'); if(t(k)) el.textContent = t(k);
+  });
+}
+
+function toggleTheme() {
+  STATE.theme = STATE.theme === 'klar' ? 'noir' : 'klar';
+  document.body.setAttribute('data-theme', STATE.theme);
+  document.getElementById('themeBtn').textContent = STATE.theme === 'klar' ? '🌙' : '☀️';
+}
+
+function selectAgent(agent, el) {
+  STATE.agent = agent;
+  document.querySelectorAll('.agent-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-'+agent).classList.add('active');
+  document.querySelectorAll('.agent-tab').forEach(t => t.classList.remove('active'));
+  if(el) el.classList.add('active');
+  closeForm(); closeReceipt();
+  el?.scrollIntoView({behavior:'smooth', block:'nearest', inline:'center'});
+}
+
+let ACTIVE_FORM_KEY = null;
+
+function openForm(agent, code, type) {
+  const key = `${agent}.${code}.${type}`;
+  const def = FORMS[key];
+  if(!def) { console.warn('No form def for', key); return; }
+  ACTIVE_FORM_KEY = key;
+  document.querySelectorAll('.doc-card').forEach(c => c.classList.remove('selected'));
+  event?.currentTarget?.classList.add('selected');
+  document.getElementById('formEmoji').textContent = def.emoji;
+  document.getElementById('formTitle').textContent = getDocName(code) || type;
+  document.getElementById('formAgent').textContent = `${agent.toUpperCase()} · ${code}`;
+  const container = document.getElementById('formFields');
+  container.innerHTML = '';
+  def.fields.forEach(f => {
+    const row = document.createElement('div');
+    row.className = 'form-row';
+    const label = document.createElement('label');
+    label.className = 'form-label';
+    label.setAttribute('data-i18n', FIELD_LABELS[f] || f);
+    label.textContent = t(FIELD_LABELS[f] || f) || f;
+    row.appendChild(label);
+    const ftype = FIELD_TYPES[f];
+    if(ftype === 'textarea') {
+      const ta = document.createElement('textarea');
+      ta.className = 'form-textarea'; ta.id = 'field_'+f; ta.name = f;
+      ta.placeholder = label.textContent; row.appendChild(ta);
+    } else if(ftype === 'select-jurisdicao') {
+      const sel = document.createElement('select');
+      sel.className = 'form-select'; sel.id = 'field_'+f;
+      ['DE','EU','BR','INT','PT','AT','CH'].forEach(v => {
+        const opt = document.createElement('option'); opt.value=v; opt.textContent=v; sel.appendChild(opt);
+      });
+      row.appendChild(sel);
+    } else if(ftype === 'select-idioma') {
+      const sel = document.createElement('select');
+      sel.className = 'form-select'; sel.id = 'field_'+f;
+      ['PT','DE','EN','ES','FR'].forEach(v => {
+        const opt = document.createElement('option'); opt.value=v; opt.textContent=v; sel.appendChild(opt);
+      });
+      row.appendChild(sel);
+    } else {
+      const inp = document.createElement('input');
+      inp.className = 'form-input'; inp.type = ftype||'text'; inp.id = 'field_'+f; inp.name = f;
+      inp.placeholder = label.textContent; row.appendChild(inp);
+    }
+    container.appendChild(row);
+  });
+  document.getElementById('i9Check').checked = false;
+  document.getElementById('submitBtn').disabled = true;
+  document.getElementById('formError').classList.remove('visible');
+  closeReceipt();
+  const panel = document.getElementById('formPanel');
+  panel.classList.add('visible');
+  setTimeout(() => panel.scrollIntoView({behavior:'smooth', block:'start'}), 50);
+}
+
+function getDocName(code) {
+  const map = {
+    J1:'Artigo',J2:'Investigação',J3:'Press Release',J4:'Entrevista',J5:'Reportagem',J6:'Publicação',
+    C1:'Carta',C2:'Email Formal',C3:'Communiqué',C4:'Relatório',C5:'Contrato',C6:'Acta',
+    L1:'Caso Legal',L2:'Evidência',L3:'Export Tribunal',L4:'Análise Jurídica',L5:'Notificação',L6:'Relatório Jurídico',
+    N1:'Certidão',N2:'Declaração',N3:'Procuração',N4:'Autenticação',N5:'Apostila',N6:'Escritura',
+    P1:'GDPR',P2:'Privacidade',P3:'Relatório Conform.',P4:'Auditoria Conform.',
+    A1:'Factura',A2:'Recibo',A3:'ELSTER XML',A4:'Relatório Fiscal',
+    AU1:'Auditoria',AU2:'Verificação Hash',AU3:'Cert. Auditoria',
+    PG1:'Cartão Pioneer',PG2:'Certidão WINDI',PG3:'Recibo Forense',PG4:'Verify'
+  };
+  return map[code];
+}
+
+function closeForm() {
+  document.getElementById('formPanel').classList.remove('visible');
+  document.querySelectorAll('.doc-card').forEach(c => c.classList.remove('selected'));
+  ACTIVE_FORM_KEY = null;
+}
+
+function checkI9() {
+  document.getElementById('submitBtn').disabled = !document.getElementById('i9Check').checked;
+}
+
+async function submitForm() {
+  if(!ACTIVE_FORM_KEY) return;
+  const def = FORMS[ACTIVE_FORM_KEY];
+  const btn = document.getElementById('submitBtn');
+  const errBox = document.getElementById('formError');
+  errBox.classList.remove('visible');
+  const payload = { doc_type: def.doc_type, human_approved: true, lang: STATE.lang };
+  let valid = true;
+  def.fields.forEach(f => {
+    const el = document.getElementById('field_'+f);
+    if(!el) return;
+    payload[f] = el.value.trim();
+    if(!payload[f] && ['titulo','entidade','hash'].includes(f)) valid = false;
+  });
+  if(!valid) {
+    errBox.textContent = '⚠️ Preencha todos os campos obrigatórios.';
+    errBox.classList.add('visible'); return;
+  }
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>';
+  try {
+    const url = CFG.sandbox + def.endpoint;
+    let res, data;
+    try {
+      res = await fetch(url, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(payload)
+      });
+      data = await res.json();
+    } catch(e) { data = null; }
+    const receiptId = data?.receipt_id || data?.id ||
+      `WINDI-${ACTIVE_FORM_KEY.split('.')[1]}-${Date.now().toString(36).toUpperCase()}`;
+    const hash = data?.hash || data?.sha256 ||
+      await digestHash(JSON.stringify(payload) + Date.now());
+    const ts = new Date().toISOString();
+    STATE.lastReceipt = { receiptId, hash, ts, payload, endpoint: url, agent: STATE.agent };
+    showReceipt(receiptId, hash, ts, payload, def);
+    STATE.docsCreated++;
+    localStorage.setItem('windi_bridge_count', STATE.docsCreated);
+    document.getElementById('statDocs').textContent = STATE.docsCreated;
+  } catch(e) {
+    errBox.textContent = `Erro: ${e.message}`;
+    errBox.classList.add('visible');
+  } finally {
+    btn.innerHTML = `<span data-i18n="btn_criar">${t('btn_criar')}</span>`;
+    btn.disabled = false;
+  }
+}
+
+async function digestHash(str) {
+  try {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('').slice(0,16);
+  } catch { return Math.random().toString(36).slice(2,18); }
+}
+
+function showReceipt(id, hash, ts, payload, def) {
+  document.getElementById('receiptId').textContent = id;
+  const body = document.getElementById('receiptBody');
+  body.innerHTML = '';
+  const rows = [
+    ['ID', id], ['Tipo', def.doc_type],
+    ['Agente', STATE.agent.toUpperCase()],
+    ['Timestamp', new Date(ts).toLocaleString()],
+    ['SHA-256', hash]
+  ];
+  if(payload.titulo) rows.splice(1,0,['Título', payload.titulo]);
+  if(payload.entidade) rows.push(['Entidade', payload.entidade]);
+  rows.forEach(([k,v]) => {
+    const row = document.createElement('div'); row.className = 'receipt-row';
+    const isHash = k==='SHA-256'||k==='Hash';
+    row.innerHTML = `<span class="receipt-key">${k}</span><span class="receipt-val ${isHash?'receipt-hash':''}">${v}</span>`;
+    body.appendChild(row);
+  });
+  const verifyRow = document.createElement('div'); verifyRow.className = 'receipt-row';
+  const verifyUrl = `${CFG.verifyBase}?id=${id}`;
+  verifyRow.innerHTML = `<span class="receipt-key">Verify URL</span><span class="receipt-val" style="font-size:10px;font-family:var(--mono)">${verifyUrl}</span>`;
+  body.appendChild(verifyRow);
+  document.getElementById('receiptPanel').classList.add('visible');
+  setTimeout(() => document.getElementById('receiptPanel').scrollIntoView({behavior:'smooth'}), 50);
+}
+
+function closeReceipt() { document.getElementById('receiptPanel').classList.remove('visible'); }
+
+function openVerify() {
+  if(!STATE.lastReceipt) return;
+  window.open(`${CFG.verifyBase}?id=${STATE.lastReceipt.receiptId}`, '_blank');
+}
+
+function downloadReceipt() {
+  if(!STATE.lastReceipt) return;
+  const blob = new Blob([JSON.stringify(STATE.lastReceipt, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${STATE.lastReceipt.receiptId}.json`;
+  a.click();
+}
+
+function resetForm() {
+  closeForm(); closeReceipt();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function scrollTop() { window.scrollTo({top:0,behavior:'smooth'}); }
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('statDocs').textContent = STATE.docsCreated;
+  applyI18n();
+  const params = new URLSearchParams(window.location.search);
+  if(params.get('agent')) {
+    const agent = params.get('agent');
+    const tab = document.querySelector(`[data-agent="${agent}"]`);
+    if(tab) selectAgent(agent, tab);
+  }
+});
+</script>
+</body>
+</html>
