@@ -5900,6 +5900,8 @@ function App(){
           {/* ═══ CHAT TAB ═══ */}
           {sidebarTab==="chat"&&(
             <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
+            {/* ← VOLTAR — Back to docs tile grid */}
+            {docType&&<button onClick={()=>{setDocType(null);setSidebarTab("docs");}} style={{margin:"8px 12px",padding:"6px 12px",borderRadius:8,background:th.card,border:`1px solid ${th.border}`,color:th.dim,fontSize:11,cursor:"pointer",display:"flex",alignItems:"center",gap:4}}>← {lang==="de"?"Zurück":lang==="pt"?"Voltar":"Back"}</button>}
             {/* C1: Mobile View Tab Switcher — Dragon/Canvas pill toggle */}
             {isMobile&&<div style={{display:"flex",gap:4,padding:"8px 12px",background:th.card,borderBottom:`1px solid ${th.border}22`,flexShrink:0}}>
               <button onClick={()=>setMobileViewTab("dragon")} style={{flex:1,padding:"8px 12px",borderRadius:8,border:"none",background:mobileViewTab==="dragon"?th.gold:th.hover,color:mobileViewTab==="dragon"?"#fff":th.text,fontSize:12,fontWeight:600,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:6,transition:"all 0.2s"}}>
