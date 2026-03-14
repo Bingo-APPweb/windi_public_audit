@@ -459,6 +459,13 @@ def create_agent_api(agent: WindiAgent):
         print(f"  [Communique] Communique Engine not loaded: {e}")
 
     try:
+        from blueprints.comm_bridge_blueprint import comm_bridge_bp
+        app.register_blueprint(comm_bridge_bp)
+        print("  [COMM-Bridge] W-COMM-001 Bridge v1.0.0 loaded on /communique/bridge/*")
+    except ImportError as e:
+        print(f"  [COMM-Bridge] W-COMM-001 Bridge not loaded: {e}")
+
+    try:
         from blueprints.journalist_blueprint import journalist_bp
         app.register_blueprint(journalist_bp)
         print("  [Jornalista] Journalist Agent v0.1.0 loaded on /journalist/*")

@@ -376,7 +376,7 @@ grep -n "location /app/" /etc/nginx/sites-enabled/windi-domain.com | head -3
 ## 📋 ESTADO ACTUAL (actualizar a cada commit)
 
 - **Última sessão:** 14 Mar 2026 (sessão 3)
-- **Último commit:** (pending) — W-JOURN-001 Editor Bridge
+- **Último commit:** (pending) — W-COMM-001 Communiqué Bridge v1.0.0
 - /app/ → upstream windi_dragon → :8108 → agent-palette/ui/index.html ✅
 - insights: klass:"hidden" + filter no SIDEBAR.map ✅ (commit b7773c1)
 - HUB Panel: /agents/status → 7 agentes ✅ LIVE (commit 1ba098f)
@@ -390,6 +390,13 @@ grep -n "location /app/" /etc/nginx/sites-enabled/windi-domain.com | head -3
   - POST /journalist/bridge/publish → J6 gate + Ledger seal
   - GET /journalist/bridge/status/<id> → session state
   - Tables: drafts, journ_bridge_sessions
+- **W-COMM-001 Communiqué Bridge v1.0.0** ✅ LIVE
+  - POST /communique/bridge/open → session Canvas (C1)
+  - POST /communique/bridge/save → auto-save content_blocks
+  - POST /communique/bridge/publish → I9 gate + C6 + Ledger + QR
+  - GET /communique/bridge/status → estado + invariants
+  - Tables: comm_sessions, comm_revisions
+  - Stage map: C1→C2→C3→C4→C5(gate)→C6(sealed)
 - Serviços: 8091✅ 8101✅ 8106✅ 8108✅ 8114✅
 
 ---
@@ -402,6 +409,9 @@ grep -n "location /app/" /etc/nginx/sites-enabled/windi-domain.com | head -3
 - [x] ~~Ledger backup~~ ✅ 56,448 receipts → /opt/windi/backups/ledger_20260314_2135/
 - [ ] Master Spec v1.0 → Ledger seal
 - [x] ~~W-JOURN-001 → Editor bridge (J1-J6 pipeline)~~ ✅ Bridge v1.0.0 LIVE
+- [x] ~~W-COMM-001 → Communiqué bridge (C1-C6 pipeline)~~ ✅ Bridge v1.0.0 LIVE
+- [ ] W-LEGAL-001 Bridge (contratos + J6 + Ledger)
+- [ ] W-NOTARY-001 Bridge (certidões + QR)
 - [ ] Palette UI integration (journ_bridge_ui.js)
 
 ---
