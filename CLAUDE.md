@@ -362,6 +362,7 @@ grep -n "location /app/" /etc/nginx/sites-enabled/windi-domain.com | head -3
 |-----|------|---------------|
 | /app/ | :8108 | /opt/windi/agent-palette/ui/index.html |
 | /agents/status | :8091 | /opt/windi/agents/constitutional-agent/agent.py |
+| /page-bridge/ | static | /opt/windi/page-bridge/index.html |
 | /verify-public/ | :8114 | SEALED — não tocar |
 | /ledger/ | :8101 | SEALED — não tocar |
 
@@ -375,8 +376,9 @@ grep -n "location /app/" /etc/nginx/sites-enabled/windi-domain.com | head -3
 
 ## 📋 ESTADO ACTUAL (actualizar a cada commit)
 
-- **Última sessão:** 14 Mar 2026 (sessão 7)
+- **Última sessão:** 14 Mar 2026 (sessão 8)
 - **Último commit:** c4b45e4 — One Touch Bridge v2.0 (8 agentes · 39 tipos)
+- **nginx route:** /page-bridge/ ✅ LIVE (14 Mar 2026 23:54)
 - /app/ → upstream windi_dragon → :8108 → agent-palette/ui/index.html ✅
 - insights: klass:"hidden" + filter no SIDEBAR.map ✅ (commit b7773c1)
 - HUB Panel: /agents/status → 7 agentes ✅ LIVE (commit 1ba098f)
@@ -400,12 +402,14 @@ grep -n "location /app/" /etc/nginx/sites-enabled/windi-domain.com | head -3
 - **One Touch Bridge UI v1.1** ✅ /verify-public/one-touch-bridge.html
   - Mobile-first: bottom bar, sticky publish, touch targets ≥44px
   - Doc types: Certidão, Pioneer Card, Forensic Receipt
-- **One Touch Bridge v2.0** ✅ /page-bridge/ (PENDENTE: nginx route)
+- **One Touch Bridge v2.0** ✅ /page-bridge/ **LIVE**
+  - nginx route: `location ^~ /page-bridge/` → `/opt/windi/page-bridge/`
   - 8 agentes: JOURN·COMM·LEGAL·NOTARY·COMPLY·ACCT·AUDIT·PAGE
   - 39 doc types com formulários específicos
   - I9 Gate checkbox em todos · I11 Ledger seal
   - KLAR/NOIR toggle · PT/DE/EN trilingual
   - Mobile: touch ≥44px, bottom bar, responsive grid
+  - Headers: X-WINDI-Module: OneTouchBridge-v2.0, CORS *, Cache 1h
 - Serviços: 8091✅ 8101✅ 8106✅ 8108✅ 8114✅
 
 ---
@@ -417,7 +421,7 @@ grep -n "location /app/" /etc/nginx/sites-enabled/windi-domain.com | head -3
 - [x] ~~One Touch Pipeline v1.0.0~~ ✅ 8/8 Bridges LIVE
 - [x] ~~One Touch Bridge UI v1.1~~ ✅ mobile-first LIVE
 - [x] ~~One Touch Bridge v2.0~~ ✅ 8 agentes · 39 tipos
-- [ ] nginx route /page-bridge/ (requer sudo)
+- [x] ~~nginx route /page-bridge/~~ ✅ LIVE (Desktop + Mobile)
 - [ ] **Dashboard Update** (ver secção abaixo)
 - [ ] Export Engine ISP templates for doc_types
 
@@ -467,8 +471,9 @@ grep -n "location /app/" /etc/nginx/sites-enabled/windi-domain.com | head -3
 |---|---|---|
 | Sandbox Core | :8091 | `/health`, `/grove/arena` |
 | Forensic Ledger | :8101 | `/api/stats`, `/api/receipts/{id}` |
-| One Touch Bridge | static | `/verify-public/one-touch-bridge.html` |
-| Dashboard | :8100 | `windi-domain.com/dashboard/` |
+| One Touch Bridge v1.1 | static | `/verify-public/one-touch-bridge.html` |
+| One Touch Bridge v2.0 | static | `/page-bridge/` ✅ LIVE |
+| Dashboard | :8118 | `windi-domain.com/dashboard/` |
 
 ### Cola na nova sessão
 
