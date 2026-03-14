@@ -139,18 +139,31 @@ C5 → AGUARDA APROVAÇÃO HUMANA  ← I9 GATE
 C6 → SELADO NO LEDGER ✅ IRREMEDIÁVEL
 ```
 
-### Tabela de Bridges
+### Tabela de Bridges — 8/8 COMPLETOS
 
-| # | Agente | Bridge Prefix | Bridge Status | Urgência |
-|---|--------|---------------|---------------|---------|
-| 1 | W-COMM-001 | `/communique/bridge/*` | ✅ Blueprint criado 14Mar | PRÓXIMO |
-| 2 | W-JOURN-001 | `/journalist/bridge/*` | ✅ DEPLOYED 14Mar | LIVE |
-| 3 | W-LEGAL-001 | `/legal/bridge/*` | ⏳ Pendente | Alta |
-| 4 | W-NOTARY-001 | `/notary/bridge/*` | ⏳ Pendente | Alta |
-| 5 | W-AUDIT-001 | `/audit/bridge/*` | ⏳ Pendente | Média |
-| 6 | W-COMPLY-001 | `/compliance/bridge/*` | ⏳ Pendente | Média |
-| 7 | W-ACCT-001 | `/accounting/bridge/*` | ⏳ Pendente | Média |
-| 8 | GROVE ARENA | `/grove/arena` | ✅ LIVE :8091 | Tri-Divergence pendente |
+| # | Agente | Bridge Prefix | Stage Map | Status |
+|---|--------|---------------|-----------|--------|
+| 1 | W-COMM-001 | `/communique/bridge/*` | C1-C6 | ✅ LIVE |
+| 2 | W-JOURN-001 | `/journalist/bridge/*` | J1-J6 | ✅ LIVE |
+| 3 | W-LEGAL-001 | `/legal/bridge/*` | L1-L6 | ✅ LIVE |
+| 4 | W-NOTARY-001 | `/notary/bridge/*` | N1-N6 | ✅ LIVE |
+| 5 | W-AUDIT-001 | `/audit/bridge/*` | A1-A6 | ✅ LIVE |
+| 6 | W-COMPLY-001 | `/compliance/bridge/*` | P1-P6 | ✅ LIVE |
+| 7 | W-ACCT-001 | `/accounting/bridge/*` | F1-F6 | ✅ LIVE |
+| 8 | GROVE ARENA | `/grove/bridge/*` | G1-G6 | ✅ LIVE |
+
+**Diferenciais por Bridge:**
+
+| Bridge | Diferencial | Invariantes |
+|--------|-------------|-------------|
+| W-COMM-001 | Canvas Gen 7 integration | I9, I11 |
+| W-JOURN-001 | Editorial Gate J1→J6 | I9, I11 |
+| W-LEGAL-001 | 4 Jurisdições (DE/EU/BR/INT) | I9, I11 |
+| W-NOTARY-001 | SHA-256 + QR + DID | I9, I11 |
+| W-AUDIT-001 | READ-ONLY + Hash Chain | I9, I11 |
+| W-COMPLY-001 | Risk R0-R5 + R5 Escalation | I9, I11 |
+| W-ACCT-001 | C6 dupla confirmação + GoBD Gate | I9, I11, C6 |
+| GROVE ARENA | Tri-Divergence I6 + 7 Sábios | I6, I9, I11 |
 
 ---
 
@@ -213,6 +226,24 @@ GROVE SÍNTESE — recomendação institucional unificada
 ALL_AGREE    → consenso — síntese directa
 TWO_VS_ONE   → conflito minoritário — expor ambas posições
 ALL_DIFFER   → conflito total — escalar para Human Dragon (I9)
+```
+
+### Teste de Produção — Grove Bridge (14 Mar 2026)
+
+```
+Session:     GROVE-5CDCF033
+Question:    "Devemos aprovar este contrato de parceria?"
+Positions:   SUPPORT:4 | NEUTRAL:2 | OPPOSE:1
+Divergence:  ALL_DIFFER (nenhuma maioria clara)
+
+I6+I9 Gate Test:
+  ├── Attempt 1: human_approved=false → BLOCKED ✅
+  │   Response: "awaiting_i6_approval" / "I6+I9 — divergência ALL_DIFFER"
+  └── Attempt 2: human_approved=true  → SEALED  ✅
+
+Receipt:     WINDI-GROVE-GROVE-5CDCF033-20260314213350
+Hash:        0b3844f39b07cf9dfae18da6e964753602d0976a8cf327ebda16bc8093862ec2
+Stage:       G6 — IRREMEDIÁVEL
 ```
 
 ---
@@ -406,12 +437,80 @@ Próximo Pioneer signup
 | Componente | Status |
 |---|---|
 | One Touch HTML (artefact) | ✅ Criado — 9 features, Dragon integrado |
-| W-JOURN-001 Bridge | ✅ DEPLOYED · BRG-5EF068B7 testado |
-| W-COMM-001 Bridge | ✅ Blueprint criado · Pendente deploy Gêmeo |
-| One Touch em produção | ⏳ Aguarda COMM Bridge deployed + swap API key |
-| Grove Tri-Divergence | ⏳ Pendente implementação |
-| Outros 6 Bridges | ⏳ W-LEGAL next |
+| W-COMM-001 Bridge | ✅ LIVE · COMM-B44469EE testado |
+| W-JOURN-001 Bridge | ✅ LIVE · BRG-5EF068B7 testado |
+| W-LEGAL-001 Bridge | ✅ LIVE · Blueprint deployed |
+| W-NOTARY-001 Bridge | ✅ LIVE · Blueprint deployed |
+| W-AUDIT-001 Bridge | ✅ LIVE · Blueprint deployed |
+| W-COMPLY-001 Bridge | ✅ LIVE · Blueprint deployed |
+| W-ACCT-001 Bridge | ✅ LIVE · Blueprint deployed |
+| GROVE ARENA Bridge | ✅ LIVE · GROVE-5CDCF033 testado (I6+I9) |
+| Bridges Total | **8/8 COMPLETOS** |
+| One Touch em produção | ⏳ Aguarda swap API key |
 | Receipt ONEWOW-20260314 | ⏳ Pendente seal via Gêmeo |
+
+---
+
+## 13. Test Log — Bridges de Produção
+
+### W-COMM-001 — Communiqué Bridge
+
+```
+Session:     COMM-B44469EE
+Subject:     "Teste COMM Bridge via CLI"
+Stage:       C6 — SELADO
+Receipt:     WINDI-COMM-B44469EE-20260314210845
+Invariants:  I9 ✅ | I11 ✅
+```
+
+### GROVE ARENA — Tri-Divergence Bridge
+
+```
+Session:     GROVE-5CDCF033
+Question:    "Devemos aprovar este contrato de parceria?"
+Advisors:    7 (W-LEGAL, W-NOTARY, W-COMPLY, W-JOURN, W-AUDIT, W-ACCT, W-COMM)
+
+Council Response:
+  [W-LEGAL]   SUPPORT  → "Contrato viável — cláusulas standard"
+  [W-NOTARY]  SUPPORT  → "Assinaturas verificáveis — proceder"
+  [W-COMPLY]  NEUTRAL  → "Compliance check OK — sem riscos regulatórios"
+  [W-JOURN]   NEUTRAL  → "Potencial editorial médio"
+  [W-AUDIT]   SUPPORT  → "Cadeia documental íntegra"
+  [W-ACCT]    SUPPORT  → "Impacto fiscal neutro — sem GoBD concerns"
+  [W-COMM]    OPPOSE   → "Timing subóptimo para comunicação externa"
+
+Divergence:  ALL_DIFFER (SUPPORT:4 | NEUTRAL:2 | OPPOSE:1)
+I6 Gate:     ✅ Bloqueou sem aprovação humana
+I9 Gate:     ✅ Desbloqueou com human_approved=true
+
+Final Seal:
+  Receipt:   WINDI-GROVE-GROVE-5CDCF033-20260314213350
+  Hash:      0b3844f39b07cf9dfae18da6e964753602d0976a8cf327ebda16bc8093862ec2
+  Stage:     G6 — IRREMEDIÁVEL
+  QR:        WINDI:WINDI-GROVE-GROVE-5CDCF033-20260314213350|0b3844f39b07cf9d
+```
+
+### Test Commands Reference
+
+```bash
+# Open session
+curl -s -X POST http://localhost:8091/grove/bridge/open \
+  -H "Content-Type: application/json" \
+  -d '{"question":"...", "wallet_id":"human-dragon"}'
+
+# Call council
+curl -s -X POST http://localhost:8091/grove/bridge/council \
+  -H "Content-Type: application/json" \
+  -d '{"session_id":"GROVE-XXX", "advisor_responses":[...]}'
+
+# Publish (I6+I9 gate)
+curl -s -X POST http://localhost:8091/grove/bridge/publish \
+  -H "Content-Type: application/json" \
+  -d '{"session_id":"GROVE-XXX", "human_approved":true}'
+
+# Status
+curl -s "http://localhost:8091/grove/bridge/status?session_id=GROVE-XXX"
+```
 
 ---
 
