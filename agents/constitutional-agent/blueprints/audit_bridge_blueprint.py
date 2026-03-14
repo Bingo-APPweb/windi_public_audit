@@ -105,7 +105,8 @@ def seal_ledger(session_id, subject, report_hash, verdict, wallet_id="human-drag
         "doc_name": subject,
         "doc_type": "doc",
         "governance_level": "HIGH",
-        "content": f"SHA-256:{report_hash} | Audit Report verdict={verdict} selado via Bridge A6"
+        "content_hash": f"sha256:{report_hash}",
+        "sge_score": 0.0
     }).encode()
     try:
         req = urllib.request.Request(

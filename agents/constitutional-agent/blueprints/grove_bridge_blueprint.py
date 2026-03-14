@@ -164,8 +164,8 @@ def seal_ledger(session_id, question, content_hash, divergence_status, wallet_id
         "doc_name": f"Grove Synthesis: {question[:80]}",
         "doc_type": "doc",
         "governance_level": "HIGH",
-        "content": (f"SHA-256:{content_hash} | Grove Arena síntese | "
-                    f"Tri-Divergence: {divergence_status} | G6 IRREMEDIÁVEL")
+        "content_hash": f"sha256:{content_hash}",
+        "sge_score": 0.0
     }).encode()
     try:
         req = urllib.request.Request(

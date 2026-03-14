@@ -107,8 +107,8 @@ def seal_ledger(session_id, subject, content_hash, doc_type, wallet_id="human-dr
         "doc_name": subject,
         "doc_type": "doc",
         "governance_level": "HIGH",
-        "content": (f"SHA-256:{content_hash} | {doc_type.upper()} selado via Bridge F6 | "
-                    "C6 IRREMEDIÁVEL — IA preparou, Humano aprovou")
+        "content_hash": f"sha256:{content_hash}",
+        "sge_score": 0.0
     }).encode()
     try:
         req = urllib.request.Request(
