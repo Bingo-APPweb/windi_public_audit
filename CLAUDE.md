@@ -375,28 +375,27 @@ grep -n "location /app/" /etc/nginx/sites-enabled/windi-domain.com | head -3
 
 ## 📋 ESTADO ACTUAL (actualizar a cada commit)
 
-- **Última sessão:** 14 Mar 2026 (sessão 3)
-- **Último commit:** 055b788 — W-COMM-001 Communiqué Bridge v1.0.0
+- **Última sessão:** 14 Mar 2026 (sessão 4)
+- **Último commit:** One Touch Pipeline v1.0.0 — 8/8 Agent Bridges LIVE
 - /app/ → upstream windi_dragon → :8108 → agent-palette/ui/index.html ✅
 - insights: klass:"hidden" + filter no SIDEBAR.map ✅ (commit b7773c1)
 - HUB Panel: /agents/status → 7 agentes ✅ LIVE (commit 1ba098f)
-- Botão ← Voltar: chat → docs ✅ (commit ac4da75)
 - Ledger backup: 56,448 receipts ✅ (ledger_20260314_2135/)
 - nginx: /agents/status proxy → :8091 ✅
 - Dragon Icons: 4 SVGs + 8 PNGs ✅ (commit de30715)
-- **W-JOURN-001 Editor Bridge v1.0.0** ✅ LIVE
-  - POST /journalist/bridge/open → session + editor_url
-  - POST /journalist/bridge/save → draft update
-  - POST /journalist/bridge/publish → J6 gate + Ledger seal
-  - GET /journalist/bridge/status/<id> → session state
-  - Tables: drafts, journ_bridge_sessions
-- **W-COMM-001 Communiqué Bridge v1.0.0** ✅ LIVE
-  - POST /communique/bridge/open → session Canvas (C1)
-  - POST /communique/bridge/save → auto-save content_blocks
-  - POST /communique/bridge/publish → I9 gate + C6 + Ledger + QR
-  - GET /communique/bridge/status → estado + invariants
-  - Tables: comm_sessions, comm_revisions
-  - Stage map: C1→C2→C3→C4→C5(gate)→C6(sealed)
+- **One Touch Pipeline v1.0.0** ✅ — 8/8 Agent Bridges LIVE
+  - Pattern: open → save → publish → status (I9 gate + I11 IRREMEDIÁVEL)
+  - All bridges: human_approved=true required for Ledger seal
+- **W-JOURN-001 Editor Bridge** ✅ /journalist/bridge/* (J1-J6)
+- **W-COMM-001 Communiqué Bridge** ✅ /communique/bridge/* (C1-C6)
+- **W-LEGAL-001 Legal Bridge** ✅ /legal/bridge/* (L1-L6)
+- **W-NOTARY-001 Notary Bridge** ✅ /notary/bridge/* (N1-N6)
+- **W-AUDIT-001 Audit Bridge** ✅ /audit/bridge/* (A1-A6) — READ-ONLY principle
+- **W-COMPLIANCE-001 Compliance Bridge** ✅ /compliance/bridge/* (CP1-CP6)
+- **W-ACCOUNTING-001 Accounting Bridge** ✅ /accounting/bridge/* (F1-F6) — C6 invariant
+- **W-PAGE-001 Page Bridge** ✅ /page/bridge/* (W1-W6) — RENDER_LOCK
+  - Special: render endpoint + visual approval before publish
+  - Doc types: certidao, diploma, ato_oficial, declaracao_institucional, atestado, alvara
 - Serviços: 8091✅ 8101✅ 8106✅ 8108✅ 8114✅
 
 ---
@@ -408,11 +407,11 @@ grep -n "location /app/" /etc/nginx/sites-enabled/windi-domain.com | head -3
 - [x] ~~Testar HUB Panel no browser~~ ✅ LIVE
 - [x] ~~Ledger backup~~ ✅ 56,448 receipts → /opt/windi/backups/ledger_20260314_2135/
 - [ ] Master Spec v1.0 → Ledger seal
-- [x] ~~W-JOURN-001 → Editor bridge (J1-J6 pipeline)~~ ✅ Bridge v1.0.0 LIVE
-- [x] ~~W-COMM-001 → Communiqué bridge (C1-C6 pipeline)~~ ✅ Bridge v1.0.0 LIVE
-- [ ] W-LEGAL-001 Bridge (contratos + J6 + Ledger)
-- [ ] W-NOTARY-001 Bridge (certidões + QR)
-- [ ] Palette UI integration (journ_bridge_ui.js)
+- [x] ~~One Touch Pipeline v1.0.0~~ ✅ 8/8 Bridges LIVE
+  - W-JOURN-001, W-COMM-001, W-LEGAL-001, W-NOTARY-001
+  - W-AUDIT-001, W-COMPLIANCE-001, W-ACCOUNTING-001, W-PAGE-001
+- [ ] Palette UI integration (bridge_ui.js)
+- [ ] Export Engine ISP templates for doc_types
 
 ---
 
