@@ -375,8 +375,8 @@ grep -n "location /app/" /etc/nginx/sites-enabled/windi-domain.com | head -3
 
 ## 📋 ESTADO ACTUAL (actualizar a cada commit)
 
-- **Última sessão:** 14 Mar 2026 (sessão 4)
-- **Último commit:** One Touch Pipeline v1.0.0 — 8/8 Agent Bridges LIVE
+- **Última sessão:** 14 Mar 2026 (sessão 5)
+- **Último commit:** 40488fe — docs(one-touch): 8/8 bridges complete
 - /app/ → upstream windi_dragon → :8108 → agent-palette/ui/index.html ✅
 - insights: klass:"hidden" + filter no SIDEBAR.map ✅ (commit b7773c1)
 - HUB Panel: /agents/status → 7 agentes ✅ LIVE (commit 1ba098f)
@@ -396,6 +396,7 @@ grep -n "location /app/" /etc/nginx/sites-enabled/windi-domain.com | head -3
 - **W-PAGE-001 Page Bridge** ✅ /page/bridge/* (W1-W6) — RENDER_LOCK
   - Special: render endpoint + visual approval before publish
   - Doc types: certidao, diploma, ato_oficial, declaracao_institucional, atestado, alvara
+- **Verificação curl 8/8 bridges:** ✅ Todos respondendo (sessão 5)
 - Serviços: 8091✅ 8101✅ 8106✅ 8108✅ 8114✅
 
 ---
