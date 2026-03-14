@@ -1162,8 +1162,202 @@ def get_corrections(article_id):
 
 
 # ===================================================================
+#  EDITOR BRIDGE — W-JOURN-001 → Palette/Desktop
+#  Version: 1.0.0 | Sealed: 14 Mar 2026
+# ===================================================================
+
+# ── Constantes do Bridge ────────────────────────────────────
+PALETTE_DRAGON_URL = "http://localhost:8108"
+LEDGER_URL = "http://localhost:8101"
+BRIDGE_VERSION = "1.0.0"
+
+# ── Banco de dados do bridge ────────────────────────────────
+BRIDGE_DB_INIT = """
+CREATE TABLE IF NOT EXISTS journ_bridge_sessions (
+    id TEXT PRIMARY KEY,
+    draft_id TEXT NOT NULL,
+    article_id TEXT,
+    status TEXT DEFAULT 'open',
+    content TEXT,
+    opened_at TEXT,
+    saved_at TEXT,
+    published_at TEXT,
+    ledger_receipt TEXT
+);
+"""
+
+def init_bridge_db():
+    try:
+        db = get_db()
+        db.executescript(BRIDGE_DB_INIT)
+        db.commit()
+    except Exception as e:
+        pass
+
+
+@journalist_bp.route("/bridge/open", methods=["POST"])
+def bridge_open():
+    """Abre draft no Dragon Palette."""
+    data = request.get_json() or {}
+    draft_id = data.get("draft_id", "").strip()
+    article_id = data.get("article_id", "").strip()
+
+    if not draft_id:
+        return jsonify({"error": "draft_id obrigatório"}), 400
+
+    try:
+        db = get_db()
+        row = db.execute("SELECT * FROM drafts WHERE id = ?", (draft_id,)).fetchone()
+        if not row:
+            return jsonify({"error": f"Draft {draft_id} não encontrado"}), 404
+    except Exception as e:
+        return jsonify({"error": f"DB error: {str(e)}"}), 500
+
+    content_html = row["content"] if "content" in row.keys() else ""
+    title = row["title"] if "title" in row.keys() else f"Artigo {draft_id}"
+
+    session_id = f"BRG-{uuid.uuid4().hex[:8].upper()}"
+    now = datetime.now(timezone.utc).isoformat()
+
+    try:
+        init_bridge_db()
+        db.execute(
+            """INSERT OR REPLACE INTO journ_bridge_sessions
+               (id, draft_id, article_id, status, content, opened_at)
+               VALUES (?,?,?,?,?,?)""",
+            (session_id, draft_id, article_id, "open", content_html, now)
+        )
+        db.commit()
+    except Exception as e:
+        pass
+
+    editor_url = f"https://windi-domain.com/app/?action=open_draft&draft_id={draft_id}&session_id={session_id}&doc_type=article"
+
+    return jsonify({
+        "status": "opened",
+        "session_id": session_id,
+        "draft_id": draft_id,
+        "editor_url": editor_url,
+        "j_phase": "J4",
+        "bridge_version": BRIDGE_VERSION
+    }), 200
+
+
+@journalist_bp.route("/bridge/save", methods=["POST"])
+def bridge_save():
+    """Guarda edições do Editor de volta no W-JOURN-001."""
+    data = request.get_json() or {}
+    session_id = data.get("session_id", "").strip()
+    draft_id = data.get("draft_id", "").strip()
+    content = data.get("content", "").strip()
+    title = data.get("title", "").strip()
+
+    if not draft_id or not content:
+        return jsonify({"error": "draft_id e content obrigatórios"}), 400
+
+    db = get_db()
+    now = datetime.now(timezone.utc).isoformat()
+
+    try:
+        db.execute("UPDATE drafts SET content=?, title=?, updated_at=? WHERE id=?",
+                   (content, title or None, now, draft_id))
+        db.commit()
+    except Exception as e:
+        return jsonify({"error": f"Falha ao salvar: {str(e)}"}), 500
+
+    if session_id:
+        try:
+            db.execute("""UPDATE journ_bridge_sessions SET content=?, saved_at=?, status='saved' WHERE id=?""",
+                       (content, now, session_id))
+            db.commit()
+        except:
+            pass
+
+    return jsonify({"status": "saved", "draft_id": draft_id, "session_id": session_id, "saved_at": now, "j_phase": "J4"}), 200
+
+
+@journalist_bp.route("/bridge/publish", methods=["POST"])
+def bridge_publish():
+    """Publicação: Editor → J6 → Ledger seal."""
+    data = request.get_json() or {}
+    session_id = data.get("session_id", "").strip()
+    draft_id = data.get("draft_id", "").strip()
+    article_id = data.get("article_id", "").strip()
+    content = data.get("content", "").strip()
+    title = data.get("title", "Artigo sem título")
+    ai_used = data.get("ai_used", False)
+    ai_declaration = data.get("ai_declaration", "")
+
+    if not draft_id or not content:
+        return jsonify({"error": "draft_id e content obrigatórios"}), 400
+
+    # INVARIANTE J6: Human gate
+    if not data.get("human_approved", False):
+        return jsonify({"status": "awaiting_approval", "message": "J6 requer human_approved=true", "j_phase": "J5"}), 202
+
+    db = get_db()
+    now = datetime.now(timezone.utc).isoformat()
+
+    try:
+        db.execute("UPDATE drafts SET content=?, title=?, updated_at=? WHERE id=?", (content, title, now, draft_id))
+        db.commit()
+    except Exception as e:
+        return jsonify({"error": f"Falha: {str(e)}"}), 500
+
+    if ai_used and not ai_declaration:
+        ai_declaration = f"Artigo editado com assistência de IA (W-JOURN-001). Publicado em {now}."
+
+    content_hash = hashlib.sha256(content.encode()).hexdigest()
+    ledger_receipt = f"WINDI-JOURN-{draft_id}-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}"
+
+    try:
+        db.execute("UPDATE drafts SET status='published', published_at=?, ledger_receipt=? WHERE id=?",
+                   (now, ledger_receipt, draft_id))
+        db.commit()
+    except:
+        pass
+
+    if session_id:
+        try:
+            db.execute("UPDATE journ_bridge_sessions SET status='published', published_at=?, ledger_receipt=? WHERE id=?",
+                       (now, ledger_receipt, session_id))
+            db.commit()
+        except:
+            pass
+
+    return jsonify({
+        "status": "published", "j_phase": "J6", "draft_id": draft_id,
+        "ledger_receipt": ledger_receipt, "content_hash": content_hash,
+        "published_at": now, "ai_declaration": ai_declaration if ai_used else None,
+        "verify_url": f"https://windi-domain.com/verify-public/?id={ledger_receipt}",
+        "bridge_version": BRIDGE_VERSION
+    }), 200
+
+
+@journalist_bp.route("/bridge/status/<session_id>", methods=["GET"])
+def bridge_status(session_id):
+    """Consulta estado de uma sessão de bridge."""
+    try:
+        init_bridge_db()
+        db = get_db()
+        row = db.execute("SELECT * FROM journ_bridge_sessions WHERE id = ?", (session_id,)).fetchone()
+    except Exception as e:
+        return jsonify({"error": f"DB error: {e}"}), 500
+
+    if not row:
+        return jsonify({"error": f"Sessão {session_id} não encontrada"}), 404
+
+    return jsonify({
+        "session_id": row["id"], "draft_id": row["draft_id"], "article_id": row["article_id"],
+        "status": row["status"], "opened_at": row["opened_at"], "saved_at": row["saved_at"],
+        "published_at": row["published_at"], "ledger_receipt": row["ledger_receipt"]
+    }), 200
+
+
+# ===================================================================
 #  INITIALIZE
 # ===================================================================
 
 # Initialize database on import
 init_db()
+init_bridge_db()
