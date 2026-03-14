@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="200" height="200" role="img" aria-label="WINDI Guardian">
+  <title>Guardian</title>
+  <!-- Outer shield -->
+  <path d="M50 6 L90 21 L90 58 C90 80 70 92 50 96 C30 92 10 80 10 58 L10 21 Z"
+        fill="#E6F1FB" stroke="#185FA5" stroke-width="2.5" stroke-linejoin="round"/>
+  <!-- Inner shield line -->
+  <path d="M50 15 L83 28 L83 56 C83 74 65 85 50 89 C35 85 17 74 17 56 L17 28 Z"
+        fill="none" stroke="#185FA5" stroke-width="1" stroke-linejoin="round" opacity="0.45"/>
+  <!-- Upper chevron -->
+  <path d="M32 54 L50 40 L68 54"
+        fill="none" stroke="#185FA5" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Lower chevron (ghost) -->
+  <path d="M32 66 L50 52 L68 66"
+        fill="none" stroke="#185FA5" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity="0.4"/>
+</svg>

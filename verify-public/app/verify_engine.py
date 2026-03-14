@@ -16,6 +16,34 @@ log = logging.getLogger("windi.verify.engine")
 
 WINDI_SIGNATURE = "WINDI-SOVEREIGN-PROOF"
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# Dragon Icon Mapping — Three Dragons Protocol (14 Mar 2026)
+# Maps governance_level and actor roles to canonical Dragon Icons
+# ═══════════════════════════════════════════════════════════════════════════════
+
+DRAGON_ICON_MAP = {
+    # Por governance_level
+    'HIGH':   'dragon-three-seal.svg',   # Selo máximo — Three Dragons
+    'MEDIUM': 'dragon-guardian.svg',     # Proteção média — Guardian
+    'LOW':    'dragon-witness.svg',      # Observação — Witness
+
+    # Por actor/role (se disponível)
+    'guardian':  'dragon-guardian.svg',
+    'architect': 'dragon-architect.svg',
+    'witness':   'dragon-witness.svg',
+}
+
+def get_dragon_icon(governance_level: str, actor: str = None) -> str:
+    """
+    Returns the appropriate Dragon icon filename based on governance level or actor role.
+
+    Priority: actor role > governance_level
+    Default: dragon-witness.svg (observation mode)
+    """
+    if actor and actor.lower() in DRAGON_ICON_MAP:
+        return DRAGON_ICON_MAP[actor.lower()]
+    return DRAGON_ICON_MAP.get(governance_level, 'dragon-witness.svg')
+
 def extract_jmpg_proof(content: bytes) -> Optional[dict]:
     """
     Extract WINDI proof from .jmpg file.
