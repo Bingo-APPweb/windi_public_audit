@@ -569,6 +569,104 @@ body {
     }
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE (<768px) — GEN7 Responsive · Fase 1 · 15 Mar 2026
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+    /* Command bar → Bottom bar */
+    .command-bar {
+        position: fixed;
+        bottom: 0;
+        top: auto;
+        left: 0;
+        right: 0;
+        height: 72px;
+        padding: 12px 16px;
+        padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+        border-bottom: none;
+        border-top: var(--border-gold);
+        z-index: 100;
+    }
+
+    /* Hide non-essential in mobile */
+    .command-center,
+    .api-keys-indicator,
+    .version-tag { display: none; }
+
+    /* Logo smaller */
+    .windi-logo { font-size: 1.25rem; }
+
+    /* Body padding for bottom bar */
+    body {
+        padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+    }
+
+    /* Smart zones full width stack */
+    .smart-zones {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+        gap: 8px;
+        padding: 8px;
+        padding-bottom: 16px;
+    }
+
+    /* Mobile zone order: Editor first */
+    .zone-d1 { order: 2; }
+    .zone-d2 { order: 1; min-height: 300px; }
+    .zone-d3 { order: 3; }
+
+    /* Touch targets minimum 44px */
+    .agent-card {
+        min-height: 44px;
+        padding: 12px 16px;
+    }
+
+    .onetouch-btn {
+        min-width: 48px;
+        min-height: 48px;
+        padding: 12px;
+    }
+
+    .onetouch-input input {
+        padding: 14px 16px;
+        font-size: 16px; /* Prevents iOS zoom */
+    }
+
+    .theme-toggle {
+        width: 44px;
+        height: 44px;
+    }
+
+    .lang-selector button {
+        padding: 6px 10px;
+        font-size: 0.75rem;
+    }
+
+    /* Footer hide in mobile */
+    .app-footer {
+        display: none;
+    }
+
+    /* Zone headers compact */
+    .zone-header {
+        padding: 12px;
+    }
+
+    .zone-header h2 {
+        font-size: 0.8125rem;
+    }
+
+    /* Agent grid scroll horizontal option */
+    .agent-grid {
+        gap: 6px;
+    }
+
+    /* Governance panel compact */
+    .gov-item {
+        padding: 8px 0;
+    }
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar {
     width: 6px;
