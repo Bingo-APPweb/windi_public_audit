@@ -1,0 +1,30 @@
+[Unit]
+Description=WINDI Desktop GEN 7 — Smart Zones Gateway
+Documentation=https://windi-domain.com/desktop/
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=windi
+Group=windi
+WorkingDirectory=/opt/windi/desktop-gen7/backend
+ExecStart=/usr/bin/python3 -m uvicorn gen7_gateway:app --host 0.0.0.0 --port 8119
+Restart=always
+RestartSec=5
+Environment=PORT=8119
+Environment=DRAGON_URL=http://localhost:8108
+Environment=LEDGER_URL=http://localhost:8101
+Environment=SANDBOX_URL=http://localhost:8091
+Environment=STATIC_DIR=/opt/windi/desktop-gen7/frontend
+Environment=LOG_DIR=/opt/windi/logs
+StandardOutput=append:/opt/windi/logs/gen7-gateway.log
+StandardError=append:/opt/windi/logs/gen7-gateway.log
+
+# Security hardening
+NoNewPrivileges=yes
+ProtectSystem=strict
+ReadWritePaths=/opt/windi/data /opt/windi/logs
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI — System Status</title>
+<style>
+  :root {
+    --bg:       #F5F0E0;
+    --surface:  #EFEAD6;
+    --border:   #D4C9A8;
+    --text:     #1A1A1A;
+    --muted:    #6B6350;
+    --gold:     #8B6914;
+    --green:    #2D6A2D;
+    --red:      #8B2020;
+    --font:     'Bricolage Grotesque', system-ui, sans-serif;
+    --mono:     'JetBrains Mono', monospace;
+  }
+  [data-theme="noir"] {
+    --bg:      #0F0F0F;
+    --surface: #1A1A1A;
+    --border:  #2A2A2A;
+    --text:    #E8E0CC;
+    --muted:   #888070;
+    --gold:    #C9A84C;
+    --green:   #4CAF50;
+    --red:     #CF4444;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2rem;
+  }
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .logo { font-size: 1.1rem; font-weight: 700; letter-spacing: 0.15em; color: var(--gold); }
+  .logo span { font-weight: 300; color: var(--muted); }
+  .header-right { text-align: right; }
+  .last-update { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); }
+  .theme-btn {
+    background: none; border: 1px solid var(--border);
+    color: var(--muted); padding: 0.25rem 0.6rem;
+    border-radius: 4px; cursor: pointer; font-size: 0.75rem;
+    margin-top: 0.4rem;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+  }
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+  .card-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .badge {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 3px;
+    font-weight: 600;
+  }
+  .badge-ok  { background: var(--green); color: #fff; }
+  .badge-err { background: var(--red);   color: #fff; }
+  .badge-warn { background: var(--gold); color: #fff; }
+  .metric { margin-bottom: 0.6rem; }
+  .metric-label { font-size: 0.72rem; color: var(--muted); margin-bottom: 0.15rem; }
+  .metric-value {
+    font-family: var(--mono);
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .metric-value.big { font-size: 1.8rem; color: var(--gold); }
+  .zones {
+    display: flex; gap: 0.5rem; flex-wrap: wrap;
+    margin-top: 0.5rem;
+  }
+  .zone {
+    font-family: var(--mono); font-size: 0.7rem;
+    padding: 0.2rem 0.5rem; border-radius: 3px;
+    background: var(--green); color: #fff;
+  }
+  .principle {
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--muted);
+    font-style: italic;
+    padding: 1.5rem;
+    border-top: 1px solid var(--border);
+    margin-top: 1rem;
+  }
+  .pulse { animation: pulse 2s infinite; }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.4; }
+  }
+  .dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+  }
+  .dot-ok  { background: var(--green); }
+  .dot-err { background: var(--red); }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <div class="logo">WINDI <span>Publishing House</span></div>
+    <div style="font-size:0.72rem;color:var(--muted);margin-top:0.3rem;">
+      System Status · GEN 7 Production
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="last-update" id="lastUpdate">Connecting...</div>
+    <button class="theme-btn" onclick="toggleTheme()">◐ Theme</button>
+  </div>
+</header>
+
+<div class="grid" id="grid">
+  <div class="card" style="grid-column:1/-1;text-align:center;color:var(--muted);">
+    <span class="pulse">⬤</span> Loading institutional data...
+  </div>
+</div>
+
+<div class="principle" id="principle">
+  "AI processes. Human decides. WINDI guarantees."
+</div>
+
+<script>
+const API_BASE = window.location.pathname.replace(/\/status\.html$/, '').replace(/\/$/, '');
+const API = `${API_BASE}/api/status`;
+let theme = localStorage.getItem('windi-theme') || 'klar';
+
+function toggleTheme() {
+  theme = theme === 'klar' ? 'noir' : 'klar';
+  localStorage.setItem('windi-theme', theme);
+  document.documentElement.setAttribute('data-theme', theme === 'noir' ? 'noir' : '');
+}
+if (theme === 'noir') document.documentElement.setAttribute('data-theme', 'noir');
+
+function badge(ok) {
+  return ok
+    ? '<span class="badge badge-ok">OPERATIONAL</span>'
+    : '<span class="badge badge-err">DEGRADED</span>';
+}
+
+function dot(ok) {
+  return `<span class="dot ${ok ? 'dot-ok' : 'dot-err'}"></span>`;
+}
+
+function render(d) {
+  const ts = new Date(d.timestamp * 1000).toLocaleTimeString('pt-PT');
+  document.getElementById('lastUpdate').textContent = `Last update: ${ts}`;
+
+  const zones = Object.entries(d.gen7.smart_zones)
+    .map(([k, v]) => `<span class="zone">${k} ${v ? '✓' : '✗'}</span>`).join('');
+
+  document.getElementById('grid').innerHTML = `
+    <!-- GEN 7 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">GEN 7 Gateway</div>
+        ${badge(true)}
+      </div>
+      <div class="metric">
+        <div class="metric-label">Version</div>
+        <div class="metric-value">v${d.gen7.version}</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Uptime</div>
+        <div class="metric-value">${d.gen7.uptime}</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Smart Zones</div>
+        <div class="zones">${zones}</div>
+      </div>
+    </div>
+
+    <!-- DRAGON -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Dragon Server</div>
+        ${badge(d.dragon.ok)}
+      </div>
+      <div class="metric">
+        <div class="metric-label">Status</div>
+        <div class="metric-value">${dot(d.dragon.ok)}${d.dragon.ok ? 'Online' : 'Offline'}</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Version</div>
+        <div class="metric-value">${d.dragon.version}</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Response</div>
+        <div class="metric-value">${d.dragon.ms > 0 ? d.dragon.ms + 'ms' : '—'}</div>
+      </div>
+    </div>
+
+    <!-- LEDGER -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Forensic Ledger</div>
+        ${badge(d.ledger.ok)}
+      </div>
+      <div class="metric">
+        <div class="metric-label">Receipts Sealed</div>
+        <div class="metric-value big">${d.ledger.receipts !== null ? d.ledger.receipts.toLocaleString() : '—'}</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Response</div>
+        <div class="metric-value">${d.ledger.ms > 0 ? d.ledger.ms + 'ms' : '—'}</div>
+      </div>
+    </div>
+
+    <!-- SANDBOX -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Agent Corps</div>
+        ${badge(d.sandbox.ok)}
+      </div>
+      <div class="metric">
+        <div class="metric-label">Active Agents</div>
+        <div class="metric-value big">${d.sandbox.agents}</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Response</div>
+        <div class="metric-value">${d.sandbox.ms > 0 ? d.sandbox.ms + 'ms' : '—'}</div>
+      </div>
+    </div>
+  `;
+}
+
+async function poll() {
+  try {
+    const r = await fetch(API);
+    if (!r.ok) throw new Error(r.status);
+    render(await r.json());
+  } catch(e) {
+    document.getElementById('lastUpdate').textContent = `⚠ Polling error: ${e.message}`;
+  }
+}
+
+poll();
+setInterval(poll, 30000); // 30s refresh
+</script>
+</body>
+</html>
