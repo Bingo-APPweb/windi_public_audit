@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.7.2
+**Version:** 1.7.3
 **Sealed:** 2026-03-15
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -665,6 +665,63 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | **Tri-Divergence Engine v1.3.0** | **13:35** |
 | `:8100` legacy DISABLED | 22:09 |
 | nginx `/` + `/app/` → 301 `/desktop/` | 22:22 |
+| **Mobile GEN7 UA detection** | **21:07** |
+| `mobile_index.html` criado | 21:10 |
+| nginx `/mobile/` → :8119 proxy | 21:14 |
+
+---
+
+## Mobile GEN7 — Arquitectura Unificada · 15 Mar 2026
+
+**Status:** LIVE
+**Princípio:** Um serviço, dois templates, UA detection automático.
+
+### Arquitectura
+
+```
+windi-domain.com/          → 301 → /desktop/
+windi-domain.com/app/      → 301 → /desktop/
+windi-domain.com/desktop/  → :8119 GEN7 (UA detection)
+windi-domain.com/mobile/   → :8119 GEN7 (UA detection)
+                                    ↓
+                           Desktop UA → index.html (Smart Zones)
+                           Mobile UA  → mobile_index.html (5 screens + PWA)
+```
+
+### Backend UA Detection
+
+```python
+# gen7_gateway.py — linha 409
+user_agent = request.headers.get('User-Agent', '')
+is_mobile = any(x in user_agent for x in ['Mobile', 'Android', 'iPhone', 'iPad', 'iPod'])
+template = 'mobile_index.html' if is_mobile else 'index.html'
+```
+
+### Ficheiros
+
+```
+/opt/windi/desktop-gen7/frontend/
+├── index.html           (127 linhas) — Desktop Smart Zones
+├── mobile_index.html    (450 linhas) — Mobile 5 screens + PWA
+├── status.html          — Institutional Dashboard
+└── static/
+    ├── app.js
+    ├── styles.css       (732 linhas, inclui @media 768px)
+    └── icons/
+```
+
+### Features Mobile GEN7
+
+| Feature | Status |
+|---------|--------|
+| 5 screens (Home, Dragon, Verify, Vault, Eu) | ✅ |
+| PWA manifest | ✅ |
+| Onboarding flow | ✅ |
+| Dragon Chat API | ✅ |
+| KLAR/NOIR toggle | ✅ |
+| i18n PT/DE/EN | ✅ |
+| Badge GEN 7 | ✅ |
+| safe-area-inset (iPhone) | ✅ |
 
 ---
 
