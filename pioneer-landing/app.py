@@ -115,6 +115,16 @@ async def manifesto_page():
     return HTMLResponse(content="<h1>Manifesto Coming Soon</h1>", status_code=200)
 
 
+@app.get("/pioneer/florianopolis/", response_class=HTMLResponse)
+@app.get("/pioneer/florianopolis", response_class=HTMLResponse)
+async def florianopolis_page():
+    """Serve the Florianópolis demo certificate — trilingual."""
+    html_path = APP_DIR / "florianopolis" / "index.html"
+    if html_path.exists():
+        return HTMLResponse(content=html_path.read_text(), status_code=200)
+    return HTMLResponse(content="<h1>Certificate Coming Soon</h1>", status_code=200)
+
+
 @app.post("/api/pioneer/apply")
 async def submit_application(application: PioneerApplication):
     """Submit a Pioneer Program application."""

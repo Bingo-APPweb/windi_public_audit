@@ -1,1094 +1,475 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>WINDI Pioneer Program — 100 Seats. Genesis Operators.</title>
-
-<!-- Open Graph -->
-<meta property="og:site_name" content="WINDI"/>
-<meta property="og:type" content="website"/>
-<meta property="og:title" content="WINDI Pioneer Program — 100 Genesis Operators"/>
-<meta property="og:description" content="The consulting world has a trust problem. Not a skill problem. A proof problem. We built WINDI to solve exactly that. 100 seats. Applications open."/>
-<meta property="og:url" content="https://windi-domain.com/pioneer/"/>
-<meta property="og:image" content="https://windi-domain.com/pioneer/og-pioneer.png"/>
-
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Crect width='20' height='20' rx='4' fill='%231A1208'/%3E%3Cellipse cx='10' cy='11' rx='4.5' ry='4' transform='rotate(-15 10 11)' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='7' cy='7.5' r='2.8' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='6.2' cy='6.8' r='0.7' fill='%238B6914'/%3E%3C/svg%3E">
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1A1A2E">
+<title>WINDI Pioneer — O Fim da Internet de Plástico</title>
+<meta property="og:title" content="WINDI Pioneer — O Fim da Internet de Plástico">
+<meta property="og:description" content="O problema não é falta de dados. É a incapacidade de provar que os dados são reais.">
+<meta property="og:url" content="https://windi-domain.com/pioneer/">
 <style>
-:root {
-  --pg: #F5F0E0;
-  --noir: #1A1208;
-  --gold: #8B6914;
-  --green: #2D7A4F;
-  --red: #C0392B;
-  --muted: #7A6E55;
-  --border: #D4C89A;
-  --card: #FFFDF8;
-}
-
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  background: var(--pg);
-  color: var(--noir);
-  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
-  min-height: 100vh;
-  line-height: 1.6;
-}
-
-/* Header */
-header {
-  padding: 20px 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  max-width: 1000px;
-  margin: 0 auto;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  text-decoration: none;
-  color: var(--noir);
-}
-
-.dragon-logo {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 2px solid var(--gold);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--gold);
-  flex-shrink: 0;
-}
-
-.logo-text {
-  font-size: 18px;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-}
-
-.seats-badge {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: var(--noir);
-  color: var(--gold);
-  padding: 8px 14px;
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-}
-
-.seats-badge .dot {
-  width: 8px;
-  height: 8px;
-  background: var(--green);
-  border-radius: 50%;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
-
-/* Hero */
-.hero {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 60px 24px 80px;
-  text-align: center;
-}
-
-.hero-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(139, 105, 20, 0.1);
-  border: 1px solid rgba(139, 105, 20, 0.3);
-  color: var(--gold);
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  margin-bottom: 24px;
-}
-
-.hero h1 {
-  font-size: 42px;
-  font-weight: 900;
-  line-height: 1.15;
-  margin-bottom: 20px;
-  color: var(--noir);
-}
-
-.hero h1 span {
-  color: var(--gold);
-}
-
-.hero-subtitle {
-  font-size: 18px;
-  color: var(--muted);
-  max-width: 600px;
-  margin: 0 auto 32px;
-  line-height: 1.7;
-}
-
-.hero-quote {
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--noir);
-  margin-bottom: 40px;
-  padding: 20px;
-  border-left: 3px solid var(--gold);
-  background: var(--card);
-  text-align: left;
-  max-width: 500px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-/* Seats Grid */
-.seats-section {
-  max-width: 600px;
-  margin: 0 auto 60px;
-  padding: 0 24px;
-}
-
-.seats-title {
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--muted);
-  text-align: center;
-  margin-bottom: 16px;
-}
-
-.seats-grid {
-  display: grid;
-  grid-template-columns: repeat(20, 1fr);
-  gap: 3px;
-  margin-bottom: 16px;
-}
-
-.seat {
-  aspect-ratio: 1;
-  border-radius: 3px;
-  background: var(--border);
-  transition: all 0.3s;
-}
-
-.seat.filled {
-  background: var(--green);
-}
-
-.seat.genesis {
-  background: var(--gold);
-  box-shadow: 0 0 8px rgba(139, 105, 20, 0.5);
-}
-
-.seats-counter {
-  text-align: center;
-  font-size: 14px;
-  color: var(--muted);
-}
-
-.seats-counter strong {
-  color: var(--green);
-  font-size: 18px;
-}
-
-/* What You Get */
-.benefits {
-  background: var(--noir);
-  padding: 80px 24px;
-  color: var(--pg);
-}
-
-.benefits-inner {
-  max-width: 900px;
-  margin: 0 auto;
-}
-
-.benefits h2 {
-  font-size: 28px;
-  font-weight: 800;
-  text-align: center;
-  margin-bottom: 48px;
-  color: var(--pg);
-}
-
-.benefits h2 span {
-  color: var(--gold);
-}
-
-.benefits-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-}
-
-.benefit-card {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 24px;
-}
-
-.benefit-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
-  background: var(--gold);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 16px;
-}
-
-.benefit-icon svg {
-  width: 24px;
-  height: 24px;
-  stroke: var(--noir);
-  fill: none;
-}
-
-.benefit-card h3 {
-  font-size: 16px;
-  font-weight: 700;
-  margin-bottom: 8px;
-  color: var(--pg);
-}
-
-.benefit-card p {
-  font-size: 14px;
-  color: rgba(245, 240, 224, 0.7);
-  line-height: 1.6;
-}
-
-/* VPR Preview */
-.vpr-section {
-  padding: 80px 24px;
-  max-width: 900px;
-  margin: 0 auto;
-}
-
-.vpr-section h2 {
-  font-size: 28px;
-  font-weight: 800;
-  text-align: center;
-  margin-bottom: 16px;
-}
-
-.vpr-section .subtitle {
-  text-align: center;
-  color: var(--muted);
-  margin-bottom: 40px;
-  font-size: 16px;
-}
-
-.vpr-preview {
-  display: flex;
-  gap: 32px;
-  align-items: center;
-}
-
-.vpr-image {
-  flex: 1;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.08);
-}
-
-.vpr-mini {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 20px;
-}
-
-.vpr-avatar {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--gold) 0%, #A67C00 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  font-weight: 800;
-  color: white;
-}
-
-.vpr-info h4 {
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.vpr-info p {
-  font-size: 12px;
-  color: var(--muted);
-}
-
-.vpr-score {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: var(--pg);
-  padding: 16px;
-  border-radius: 8px;
-  margin-bottom: 16px;
-}
-
-.vpr-score-label {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-.vpr-score-value {
-  font-size: 28px;
-  font-weight: 900;
-  color: var(--green);
-}
-
-.vpr-receipts {
-  font-size: 13px;
-  color: var(--muted);
-}
-
-.vpr-receipts strong {
-  color: var(--noir);
-}
-
-.vpr-features {
-  flex: 1;
-}
-
-.vpr-feature {
-  display: flex;
-  gap: 16px;
-  margin-bottom: 20px;
-}
-
-.vpr-feature-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  background: rgba(139, 105, 20, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.vpr-feature-icon svg {
-  width: 20px;
-  height: 20px;
-  stroke: var(--gold);
-  fill: none;
-}
-
-.vpr-feature h4 {
-  font-size: 15px;
-  font-weight: 700;
-  margin-bottom: 4px;
-}
-
-.vpr-feature p {
-  font-size: 13px;
-  color: var(--muted);
-}
-
-.vpr-cta {
-  text-align: center;
-  margin-top: 32px;
-}
-
-.vpr-cta a {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--gold);
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.vpr-cta a:hover {
-  text-decoration: underline;
-}
-
-/* Application Form */
-.apply-section {
-  background: linear-gradient(180deg, var(--pg) 0%, #EDE8D0 100%);
-  padding: 80px 24px;
-}
-
-.apply-inner {
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.apply-section h2 {
-  font-size: 32px;
-  font-weight: 800;
-  text-align: center;
-  margin-bottom: 12px;
-}
-
-.apply-section .subtitle {
-  text-align: center;
-  color: var(--muted);
-  margin-bottom: 40px;
-  font-size: 15px;
-}
-
-.apply-form {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 32px;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.08);
-}
-
-.form-group {
-  margin-bottom: 24px;
-}
-
-.form-group label {
-  display: block;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 8px;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-  width: 100%;
-  padding: 14px 16px;
-  border: 1.5px solid var(--border);
-  border-radius: 8px;
-  font-size: 15px;
-  font-family: inherit;
-  background: var(--pg);
-  color: var(--noir);
-  outline: none;
-  transition: border-color 0.15s;
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-  border-color: var(--gold);
-}
-
-.form-group textarea {
-  min-height: 120px;
-  resize: vertical;
-}
-
-.form-group .hint {
-  font-size: 12px;
-  color: var(--muted);
-  margin-top: 6px;
-}
-
-/* Filter Question */
-.filter-question {
-  background: rgba(139, 105, 20, 0.08);
-  border: 1px solid rgba(139, 105, 20, 0.2);
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 24px;
-}
-
-.filter-question label {
-  color: var(--gold);
-  margin-bottom: 12px;
-}
-
-.filter-question .question-text {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--noir);
-  margin-bottom: 12px;
-  line-height: 1.5;
-}
-
-.submit-btn {
-  width: 100%;
-  padding: 18px;
-  background: var(--noir);
-  color: var(--pg);
-  border: none;
-  border-radius: 8px;
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: background 0.15s;
-  min-height: 56px;
-}
-
-.submit-btn:hover {
-  background: #333;
-}
-
-.submit-btn:disabled {
-  background: var(--muted);
-  cursor: not-allowed;
-}
-
-.form-footer {
-  text-align: center;
-  margin-top: 20px;
-  font-size: 12px;
-  color: var(--muted);
-}
-
-/* Success Message */
-.success-message {
-  display: none;
-  text-align: center;
-  padding: 40px;
-}
-
-.success-message.show {
-  display: block;
-}
-
-.success-icon {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: var(--green);
-  margin: 0 auto 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.success-icon svg {
-  width: 32px;
-  height: 32px;
-  stroke: white;
-  fill: none;
-}
-
-.success-message h3 {
-  font-size: 24px;
-  font-weight: 800;
-  margin-bottom: 12px;
-}
-
-.success-message p {
-  color: var(--muted);
-  font-size: 15px;
-}
-
-/* Footer */
-footer {
-  padding: 40px 24px;
-  text-align: center;
-  border-top: 1px solid var(--border);
-}
-
-.footer-tagline {
-  font-size: 14px;
-  color: var(--gold);
-  font-style: italic;
-  margin-bottom: 12px;
-}
-
-.footer-links {
-  display: flex;
-  justify-content: center;
-  gap: 24px;
-  margin-bottom: 16px;
-}
-
-.footer-links a {
-  font-size: 13px;
-  color: var(--muted);
-  text-decoration: none;
-}
-
-.footer-links a:hover {
-  color: var(--gold);
-}
-
-.footer-copy {
-  font-size: 11px;
-  color: var(--muted);
-}
-
-/* Mobile Responsive */
-@media (max-width: 768px) {
-  .hero h1 {
-    font-size: 32px;
-  }
-
-  .hero-subtitle {
-    font-size: 16px;
-  }
-
-  .benefits-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-
-  .vpr-preview {
-    flex-direction: column;
-  }
-
-  .vpr-image {
-    width: 100%;
-  }
-
-  .seats-grid {
-    grid-template-columns: repeat(10, 1fr);
-  }
-}
-
-@media (max-width: 480px) {
-  header {
-    padding: 16px;
-  }
-
-  .logo-text {
-    font-size: 16px;
-  }
-
-  .seats-badge {
-    font-size: 10px;
-    padding: 6px 10px;
-  }
-
-  .hero {
-    padding: 40px 16px 60px;
-  }
-
-  .hero h1 {
-    font-size: 26px;
-  }
-
-  .hero-badge {
-    font-size: 10px;
-    padding: 6px 12px;
-  }
-
-  .hero-subtitle {
-    font-size: 15px;
-  }
-
-  .hero-quote {
-    font-size: 16px;
-    padding: 16px;
-  }
-
-  .benefits {
-    padding: 60px 16px;
-  }
-
-  .benefits h2 {
-    font-size: 24px;
-  }
-
-  .benefit-card {
-    padding: 20px;
-  }
-
-  .vpr-section {
-    padding: 60px 16px;
-  }
-
-  .vpr-section h2 {
-    font-size: 24px;
-  }
-
-  .apply-section {
-    padding: 60px 16px;
-  }
-
-  .apply-section h2 {
-    font-size: 26px;
-  }
-
-  .apply-form {
-    padding: 24px 20px;
-  }
-
-  .form-group input,
-  .form-group select,
-  .form-group textarea {
-    padding: 12px 14px;
-    font-size: 16px; /* Prevents zoom on iOS */
-  }
-
-  .submit-btn {
-    padding: 16px;
-    font-size: 14px;
-  }
-}
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=JetBrains+Mono:wght@400;500&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --gold:#C9A84C;--gold-dim:#8B6914;--gold-pale:#F5EDD0;
+  --ink:#0F0E0C;--paper:#FAF8F3;--paper-dark:#F0EBE0;
+  --seal:#1A1A2E;--text:#2C2A24;--muted:#6B6560;
+}
+body{
+  background:var(--paper);
+  color:var(--text);
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:16px;
+  line-height:1.6;
+}
+
+/* LANG BAR */
+.lang-bar{
+  display:flex;
+  background:var(--ink);
+  border-bottom:2px solid var(--gold);
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+.lang-btn{
+  flex:1;
+  padding:11px 8px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.3);
+  background:transparent;
+  border:none;
+  border-right:1px solid rgba(255,255,255,0.06);
+  cursor:pointer;
+  transition:all 0.15s;
+}
+.lang-btn:last-child{border-right:none}
+.lang-btn.active{color:var(--gold);background:rgba(201,168,76,0.09)}
+.lang-btn:hover:not(.active){color:rgba(255,255,255,0.55)}
+
+/* PANELS */
+.lang-panel{display:none}
+.lang-panel.active{display:block}
+
+/* INNER WRAPPER */
+.doc{
+  padding:40px 20px;
+  max-width:780px;
+  margin:0 auto;
+}
+
+/* HEADER */
+.header{
+  border-top:3px solid var(--gold);
+  padding-top:28px;
+  margin-bottom:32px;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:20px;
+}
+.brand{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  font-weight:500;
+  letter-spacing:0.15em;
+  color:var(--gold-dim);
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+h1{font-size:38px;font-weight:300;line-height:1.15;color:var(--seal);letter-spacing:-0.02em}
+h1 em{font-style:italic;color:var(--gold-dim)}
+.header-seal{text-align:right;flex-shrink:0}
+.seal-badge{
+  display:inline-block;
+  border:1.5px solid var(--gold);
+  padding:8px 14px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:0.1em;
+  color:var(--gold-dim);
+  text-transform:uppercase;
+}
+.seal-date{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;color:var(--muted);
+  margin-top:6px;text-align:right;
+}
+
+/* AXIOM */
+.axiom{
+  background:var(--seal);color:var(--gold-pale);
+  padding:20px 28px;margin-bottom:32px;
+  border-left:4px solid var(--gold);
+  font-size:18px;font-weight:300;font-style:italic;line-height:1.5;
+}
+.axiom strong{font-weight:600;font-style:normal;color:var(--gold)}
+
+/* TWO COL */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-bottom:32px}
+@media(max-width:580px){.two-col{grid-template-columns:1fr}}
+
+/* SECTION */
+.section{margin-bottom:28px}
+.section-label{
+  font-family:'JetBrains Mono',monospace;font-size:10px;
+  letter-spacing:0.18em;color:var(--gold-dim);text-transform:uppercase;
+  margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--gold-pale);
+}
+h2{font-size:20px;font-weight:600;color:var(--seal);margin-bottom:8px}
+p{font-size:15px;color:var(--text);line-height:1.65}
+
+/* TABLE */
+.compare{width:100%;border-collapse:collapse;margin-top:8px;font-size:13px}
+.compare th{
+  font-family:'JetBrains Mono',monospace;font-size:9px;
+  letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);
+  padding:6px 10px;border-bottom:1px solid var(--paper-dark);text-align:left;
+}
+.compare td{padding:8px 10px;border-bottom:1px solid var(--paper-dark);vertical-align:top;line-height:1.4}
+.compare tr:last-child td{border-bottom:none}
+.col-a{color:var(--muted);font-style:italic}
+.col-b{color:var(--seal);font-weight:500}
+.col-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.05em}
+
+/* PROOF */
+.proof-block{
+  background:var(--paper-dark);border:1px solid #DDD6C2;
+  padding:16px 20px;margin-top:8px;
+}
+.proof-line{
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  color:var(--text);margin-bottom:4px;line-height:1.5;
+}
+.proof-line .lbl{color:var(--muted)}
+.proof-line .val{color:var(--seal);font-weight:500}
+.proof-line .gld{color:var(--gold-dim);font-weight:500}
+
+/* TIERS */
+.tiers{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
+@media(max-width:480px){.tiers{grid-template-columns:repeat(2,1fr)}}
+.tier{border:1px solid var(--paper-dark);padding:12px 10px;text-align:center}
+.tier-name{
+  font-family:'JetBrains Mono',monospace;font-size:10px;
+  letter-spacing:0.1em;color:var(--gold-dim);text-transform:uppercase;margin-bottom:4px;
+}
+.tier-rpm{font-size:18px;font-weight:600;color:var(--seal)}
+.tier-unit{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted)}
+
+/* INVARIANTS */
+.inv-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.inv{display:flex;align-items:flex-start;gap:10px;padding:10px;border:1px solid var(--paper-dark)}
+.inv-code{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;color:var(--gold-dim);min-width:28px}
+.inv-text{font-size:13px;color:var(--text);line-height:1.4}
+.inv-text strong{color:var(--seal)}
+
+/* FOOTER */
+.footer{
+  margin-top:36px;padding-top:20px;
+  border-top:1px solid var(--paper-dark);
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;
+}
+.footer-left{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);line-height:1.8}
+.footer-mandate{font-style:italic;font-size:14px;color:var(--gold-dim);text-align:right}
 </style>
 </head>
 <body>
 
-<header>
-  <a href="/" class="logo">
-    <div class="dragon-logo">
-      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.3">
-        <ellipse cx="10" cy="11" rx="4.5" ry="4" transform="rotate(-15 10 11)"/>
-        <circle cx="7" cy="7.5" r="2.8"/>
-        <circle cx="6.2" cy="6.8" r="0.7" fill="currentColor" stroke="none"/>
-      </svg>
-    </div>
-    <span class="logo-text">WINDI</span>
-  </a>
-  <div class="seats-badge">
-    <span class="dot"></span>
-    <span id="remaining">90</span> SEATS REMAINING
-  </div>
-</header>
+<!-- LANG SWITCHER -->
+<div class="lang-bar">
+  <button class="lang-btn active" onclick="setLang('pt',this)">PT</button>
+  <button class="lang-btn" onclick="setLang('de',this)">DE</button>
+  <button class="lang-btn" onclick="setLang('en',this)">EN</button>
+</div>
 
-<section class="hero">
-  <div class="hero-badge">Pioneer Program — Genesis Cohort</div>
-  <h1>The consulting world has a <span>trust problem</span>.</h1>
-  <p class="hero-subtitle">
-    Not a skill problem. A proof problem.<br>
-    We built WINDI to solve exactly that.
+<!-- ═══════════════════════════════════════
+     PORTUGUÊS
+═══════════════════════════════════════ -->
+<div class="lang-panel active" id="panel-pt">
+<div class="doc">
+
+<div class="header">
+  <div>
+    <div class="brand">WINDI Publishing House · Documento Pioneer</div>
+    <h1>O Fim da<br><em>Internet de Plástico</em></h1>
+  </div>
+  <div class="header-seal">
+    <div class="seal-badge">W-PROV-PIONEER-001</div>
+    <div class="seal-date">Selado · 2026-03-15</div>
+  </div>
+</div>
+
+<div class="axiom">
+  <strong>O problema não é falta de dados.</strong> É a incapacidade de provar que os dados são reais. Enquanto a IA gera conteúdo em massa, o WINDI é a única infraestrutura que entrega o <strong>Certificado de Origem do Átomo Digital.</strong>
+</div>
+
+<div class="two-col">
+  <div class="section">
+    <div class="section-label">A crise</div>
+    <h2>Veracidade em colapso</h2>
+    <p>Deepfakes custam 12–18% de receita ao turismo. Documentos falsos travam processos legais. Notícias fabricadas destroem reputações em horas. O mercado perdeu a capacidade de distinguir o real do gerado.</p>
+  </div>
+  <div class="section">
+    <div class="section-label">A solução</div>
+    <h2>Âncora de Realidade</h2>
+    <p>O PAR não comprime apenas dados — comprime a incerteza. Cada <code style="font-family:JetBrains Mono,monospace;font-size:13px;background:var(--paper-dark);padding:1px 4px">.jmpg</code> é um átomo de realidade: leve o suficiente para viajar por WhatsApp, pesado o suficiente para resistir a um tribunal.</p>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">Prova irremediável · Genesis Record</div>
+  <div class="proof-block">
+    <div class="proof-line"><span class="lbl">Seed ID      </span><span class="val">SEED-4b5d7eb4ebef3dbabddae551</span></div>
+    <div class="proof-line"><span class="lbl">Activation   </span><span class="val">ACT-58f38363df294759e86db8b1</span></div>
+    <div class="proof-line"><span class="lbl">Hash SHA-256 </span><span class="val">e0e95e4a9c56aef403268e30789...</span></div>
+    <div class="proof-line"><span class="lbl">Schema       </span><span class="gld">JOURNALISM · Tier FREE → ORACLE</span></div>
+    <div class="proof-line"><span class="lbl">Ledger       </span><span class="gld">WINDI-PAR-GENESIS-20260315 · HIGH · IRREMEDIÁVEL</span></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">API Tradicional vs WINDI PAR</div>
+  <table class="compare">
+    <tr><th>Característica</th><th>API Tradicional</th><th>WINDI PAR</th></tr>
+    <tr><td class="col-label">O que entrega</td><td class="col-a">Informação crua</td><td class="col-b">Informação + Prova de Origem</td></tr>
+    <tr><td class="col-label">Segurança</td><td class="col-a">HTTPS (transporte)</td><td class="col-b">SHA-256 + Ledger (imutabilidade)</td></tr>
+    <tr><td class="col-label">Rastreabilidade</td><td class="col-a">Logs apagáveis</td><td class="col-b">Receipts de Virtude eternos</td></tr>
+    <tr><td class="col-label">Confiança</td><td class="col-a">"Confie na nossa marca"</td><td class="col-b">"Não confie — verifique no Ledger"</td></tr>
+    <tr><td class="col-label">Integração</td><td class="col-a">SDK, docs, semanas</td><td class="col-b">Um <code style="font-family:JetBrains Mono,monospace;font-size:11px">curl</code> + verify_url imediata</td></tr>
+  </table>
+</div>
+
+<div class="two-col">
+  <div class="section">
+    <div class="section-label">Tiers de Soberania</div>
+    <div class="tiers">
+      <div class="tier"><div class="tier-name">SEED</div><div class="tier-rpm">10</div><div class="tier-unit">req/min</div></div>
+      <div class="tier"><div class="tier-name">NODAL</div><div class="tier-rpm">60</div><div class="tier-unit">req/min</div></div>
+      <div class="tier"><div class="tier-name">SOVEREIGN</div><div class="tier-rpm">300</div><div class="tier-unit">req/min</div></div>
+      <div class="tier"><div class="tier-name">ORACLE</div><div class="tier-rpm">∞</div><div class="tier-unit">ilimitado</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-label">Garantias Constitucionais</div>
+    <div class="inv-grid">
+      <div class="inv"><span class="inv-code">I5</span><div class="inv-text"><strong>Integridade</strong> — hash coincide com Ledger</div></div>
+      <div class="inv"><span class="inv-code">I6</span><div class="inv-text"><strong>Autenticidade</strong> — DID validado</div></div>
+      <div class="inv"><span class="inv-code">I9</span><div class="inv-text"><strong>Não-Repúdio</strong> — irrevogável</div></div>
+      <div class="inv"><span class="inv-code">I10</span><div class="inv-text"><strong>Soberania</strong> — controlo local</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">O Efeito Selo — Para os Pioneers</div>
+  <p style="font-size:16px;font-style:italic;color:var(--seal);border-left:3px solid var(--gold);padding-left:16px;margin-top:8px">
+    "Você quer que o seu cliente apenas leia o seu documento — ou quer que ele saiba que esse documento é uma semente única, impossível de falsificar, selada às 15 de março de 2026?"
   </p>
-  <div class="hero-quote">
-    "100 seats. Pioneer Operators only.<br>
-    Your work. Verified. Immutable. Yours."
-  </div>
-</section>
+</div>
 
-<section class="seats-section">
-  <div class="seats-title">100 Genesis Pioneer Seats</div>
-  <div class="seats-grid" id="seatsGrid"></div>
-  <div class="seats-counter">
-    <strong id="filledCount">10</strong> of 100 seats filled
-  </div>
-</section>
+<div class="footer">
+  <div class="footer-left">windi-domain.com/verify-public/<br>W-KEYS-001 · W-PAR-001 · I5 I6 I9 I10<br>Pioneer Program · 100 vagas · Kempten, Bavaria</div>
+  <div class="footer-mandate">"AI processes. Human decides.<br>WINDI guarantees."</div>
+</div>
+</div>
+</div>
 
-<section class="benefits">
-  <div class="benefits-inner">
-    <h2>What <span>Pioneers</span> Get</h2>
-    <div class="benefits-grid">
-      <div class="benefit-card">
-        <div class="benefit-icon">
-          <svg viewBox="0 0 24 24" stroke-width="2">
-            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
-            <path d="M2 17l10 5 10-5"/>
-            <path d="M2 12l10 5 10-5"/>
-          </svg>
-        </div>
-        <h3>Genesis DID</h3>
-        <p>Your permanent decentralized identity. Numbered #001-#100. Never to be issued again.</p>
-      </div>
-      <div class="benefit-card">
-        <div class="benefit-icon">
-          <svg viewBox="0 0 24 24" stroke-width="2">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-            <path d="M9 12l2 2 4-4"/>
-          </svg>
-        </div>
-        <h3>Verified Professional Record</h3>
-        <p>Public profile with Virtue Score. Every document you seal builds your verifiable reputation.</p>
-      </div>
-      <div class="benefit-card">
-        <div class="benefit-icon">
-          <svg viewBox="0 0 24 24" stroke-width="2">
-            <rect x="3" y="11" width="18" height="11" rx="2"/>
-            <path d="M7 11V7a5 5 0 0110 0v4"/>
-          </svg>
-        </div>
-        <h3>Forensic Ledger Access</h3>
-        <p>Seal documents with cryptographic proof. Chain of custody. Court-admissible evidence.</p>
-      </div>
-      <div class="benefit-card">
-        <div class="benefit-icon">
-          <svg viewBox="0 0 24 24" stroke-width="2">
-            <circle cx="12" cy="12" r="10"/>
-            <path d="M12 6v6l4 2"/>
-          </svg>
-        </div>
-        <h3>Founding Member Status</h3>
-        <p>Shape the platform. Direct feedback channel. Priority access to new features forever.</p>
-      </div>
-      <div class="benefit-card">
-        <div class="benefit-icon">
-          <svg viewBox="0 0 24 24" stroke-width="2">
-            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
-            <circle cx="12" cy="7" r="4"/>
-          </svg>
-        </div>
-        <h3>30-Day Onboarding</h3>
-        <p>Personal guidance. Setup assistance. Your first receipts sealed with support.</p>
-      </div>
-      <div class="benefit-card">
-        <div class="benefit-icon">
-          <svg viewBox="0 0 24 24" stroke-width="2">
-            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
-          </svg>
-        </div>
-        <h3>Pioneer Pricing</h3>
-        <p>Locked-in rates. No price increases. Ever. Your early trust is rewarded permanently.</p>
-      </div>
+<!-- ═══════════════════════════════════════
+     DEUTSCH
+═══════════════════════════════════════ -->
+<div class="lang-panel" id="panel-de">
+<div class="doc">
+
+<div class="header">
+  <div>
+    <div class="brand">WINDI Publishing House · Pioneer-Dokument</div>
+    <h1>Das Ende des<br><em>Plastik-Internets</em></h1>
+  </div>
+  <div class="header-seal">
+    <div class="seal-badge">W-PROV-PIONEER-001</div>
+    <div class="seal-date">Versiegelt · 2026-03-15</div>
+  </div>
+</div>
+
+<div class="axiom">
+  <strong>Das Problem ist nicht der Mangel an Daten.</strong> Es ist die Unfähigkeit zu beweisen, dass die Daten real sind. Während KI Inhalte in Massen erzeugt, ist WINDI die einzige Infrastruktur, die das <strong>Herkunftszertifikat des digitalen Atoms</strong> liefert.
+</div>
+
+<div class="two-col">
+  <div class="section">
+    <div class="section-label">Die Krise</div>
+    <h2>Wahrheit im Kollaps</h2>
+    <p>Deepfakes kosten den Tourismus 12–18% des Umsatzes. Gefälschte Dokumente blockieren Rechtsverfahren. Fabrizierte Nachrichten zerstören Reputationen in Stunden. Der Markt hat die Fähigkeit verloren, das Echte vom Generierten zu unterscheiden.</p>
+  </div>
+  <div class="section">
+    <div class="section-label">Die Lösung</div>
+    <h2>Realitätsanker</h2>
+    <p>PAR komprimiert nicht nur Daten — es komprimiert die Unsicherheit. Jedes <code style="font-family:JetBrains Mono,monospace;font-size:13px;background:var(--paper-dark);padding:1px 4px">.jmpg</code> ist ein Realitätsatom: leicht genug für WhatsApp, schwer genug für ein Gericht.</p>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">Unwiderruflicher Beweis · Genesis Record</div>
+  <div class="proof-block">
+    <div class="proof-line"><span class="lbl">Seed ID      </span><span class="val">SEED-4b5d7eb4ebef3dbabddae551</span></div>
+    <div class="proof-line"><span class="lbl">Aktivierung  </span><span class="val">ACT-58f38363df294759e86db8b1</span></div>
+    <div class="proof-line"><span class="lbl">Hash SHA-256 </span><span class="val">e0e95e4a9c56aef403268e30789...</span></div>
+    <div class="proof-line"><span class="lbl">Schema       </span><span class="gld">JOURNALISM · Tier FREE → ORACLE</span></div>
+    <div class="proof-line"><span class="lbl">Ledger       </span><span class="gld">WINDI-PAR-GENESIS-20260315 · HIGH · IRREMEDIABEL</span></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">Traditionelle API vs. WINDI PAR</div>
+  <table class="compare">
+    <tr><th>Merkmal</th><th>Traditionelle API</th><th>WINDI PAR</th></tr>
+    <tr><td class="col-label">Was geliefert wird</td><td class="col-a">Rohe Information</td><td class="col-b">Information + Herkunftsnachweis</td></tr>
+    <tr><td class="col-label">Sicherheit</td><td class="col-a">HTTPS (Transport)</td><td class="col-b">SHA-256 + Ledger (Unveränderlichkeit)</td></tr>
+    <tr><td class="col-label">Rückverfolgbarkeit</td><td class="col-a">Löschbare Logs</td><td class="col-b">Ewige Tugendquittungen</td></tr>
+    <tr><td class="col-label">Vertrauen</td><td class="col-a">"Vertrauen Sie unserer Marke"</td><td class="col-b">"Nicht vertrauen — im Ledger prüfen"</td></tr>
+    <tr><td class="col-label">Integration</td><td class="col-a">SDK, Docs, Wochen</td><td class="col-b">Ein <code style="font-family:JetBrains Mono,monospace;font-size:11px">curl</code> + sofortige verify_url</td></tr>
+  </table>
+</div>
+
+<div class="two-col">
+  <div class="section">
+    <div class="section-label">Souveränitätsstufen</div>
+    <div class="tiers">
+      <div class="tier"><div class="tier-name">SEED</div><div class="tier-rpm">10</div><div class="tier-unit">Anf./min</div></div>
+      <div class="tier"><div class="tier-name">NODAL</div><div class="tier-rpm">60</div><div class="tier-unit">Anf./min</div></div>
+      <div class="tier"><div class="tier-name">SOVEREIGN</div><div class="tier-rpm">300</div><div class="tier-unit">Anf./min</div></div>
+      <div class="tier"><div class="tier-name">ORACLE</div><div class="tier-rpm">∞</div><div class="tier-unit">unbegrenzt</div></div>
     </div>
   </div>
-</section>
-
-<section class="vpr-section">
-  <h2>Your Verified Professional Record</h2>
-  <p class="subtitle">This is what your public profile looks like</p>
-
-  <div class="vpr-preview">
-    <div class="vpr-image">
-      <div class="vpr-mini">
-        <div class="vpr-avatar">AW</div>
-        <div class="vpr-info">
-          <h4>Anna Weber</h4>
-          <p>Forensic Document Consultant • München</p>
-        </div>
-      </div>
-      <div class="vpr-score">
-        <span class="vpr-score-label">Virtue Score</span>
-        <span class="vpr-score-value">94/100</span>
-      </div>
-      <div class="vpr-receipts">
-        <strong>3 verified receipts</strong> sealed in Forensic Ledger
-      </div>
-    </div>
-
-    <div class="vpr-features">
-      <div class="vpr-feature">
-        <div class="vpr-feature-icon">
-          <svg viewBox="0 0 24 24" stroke-width="2">
-            <path d="M9 12l2 2 4-4"/>
-            <circle cx="12" cy="12" r="10"/>
-          </svg>
-        </div>
-        <div>
-          <h4>Instantly Verifiable</h4>
-          <p>Anyone can scan your QR and confirm your credentials in seconds.</p>
-        </div>
-      </div>
-      <div class="vpr-feature">
-        <div class="vpr-feature-icon">
-          <svg viewBox="0 0 24 24" stroke-width="2">
-            <rect x="3" y="11" width="18" height="11" rx="2"/>
-            <path d="M7 11V7a5 5 0 0110 0v4"/>
-          </svg>
-        </div>
-        <div>
-          <h4>Immutable Record</h4>
-          <p>Your receipts are sealed cryptographically. No one can alter history.</p>
-        </div>
-      </div>
-      <div class="vpr-feature">
-        <div class="vpr-feature-icon">
-          <svg viewBox="0 0 24 24" stroke-width="2">
-            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-          </svg>
-        </div>
-        <div>
-          <h4>Trust by Design</h4>
-          <p>Built for courts, compliance, and clients who need proof.</p>
-        </div>
-      </div>
+  <div class="section">
+    <div class="section-label">Verfassungsgarantien</div>
+    <div class="inv-grid">
+      <div class="inv"><span class="inv-code">I5</span><div class="inv-text"><strong>Integrität</strong> — Hash stimmt mit Ledger überein</div></div>
+      <div class="inv"><span class="inv-code">I6</span><div class="inv-text"><strong>Authentizität</strong> — DID validiert</div></div>
+      <div class="inv"><span class="inv-code">I9</span><div class="inv-text"><strong>Nichtabstreitbarkeit</strong> — unwiderruflich</div></div>
+      <div class="inv"><span class="inv-code">I10</span><div class="inv-text"><strong>Souveränität</strong> — lokale Kontrolle</div></div>
     </div>
   </div>
+</div>
 
-  <div class="vpr-cta">
-    <a href="/verify-public/vpr/anna-weber/">
-      See Anna Weber's live VPR →
-    </a>
-  </div>
-</section>
-
-<section class="apply-section" id="apply">
-  <div class="apply-inner">
-    <h2>Apply for Pioneer Access</h2>
-    <p class="subtitle">One question. One commitment. No pitch decks.</p>
-
-    <form class="apply-form" id="applyForm">
-      <div class="form-group">
-        <label>Full Name</label>
-        <input type="text" name="name" required placeholder="Your full name">
-      </div>
-
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" name="email" required placeholder="you@example.com">
-      </div>
-
-      <div class="form-group">
-        <label>Profession</label>
-        <input type="text" name="profession" required placeholder="e.g., Forensic Consultant, Compliance Officer">
-      </div>
-
-      <div class="form-group">
-        <label>Location</label>
-        <input type="text" name="location" required placeholder="City, Country">
-      </div>
-
-      <div class="filter-question">
-        <label>The Question That Matters</label>
-        <p class="question-text">
-          Describe a situation where you needed to prove the authenticity of a document —
-          and the existing tools failed you.
-        </p>
-        <textarea name="filter_answer" required placeholder="Your answer..."></textarea>
-        <p class="hint">This is how we find people who truly need what we built.</p>
-      </div>
-
-      <div class="form-group">
-        <label>LinkedIn Profile (optional)</label>
-        <input type="url" name="linkedin" placeholder="https://linkedin.com/in/...">
-      </div>
-
-      <button type="submit" class="submit-btn" id="submitBtn">
-        Submit Application
-      </button>
-
-      <p class="form-footer">
-        We review applications within 48 hours.<br>
-        No automated rejections. Every application is read by humans.
-      </p>
-    </form>
-
-    <div class="success-message" id="successMsg">
-      <div class="success-icon">
-        <svg viewBox="0 0 24 24" stroke-width="2.5">
-          <path d="M20 6L9 17l-5-5"/>
-        </svg>
-      </div>
-      <h3>Application Received</h3>
-      <p>We'll review your application and respond within 48 hours.<br>Check your email for confirmation.</p>
-    </div>
-  </div>
-</section>
-
-<footer>
-  <p class="footer-tagline">"AI processes. Human decides. WINDI guarantees."</p>
-  <div class="footer-links">
-    <a href="/verify-public/">Verify Documents</a>
-    <a href="/verify-public/vpr/anna-weber/">Example VPR</a>
-    <a href="mailto:pioneer@windi-domain.com">Contact</a>
-  </div>
-  <p class="footer-copy">
-    © 2026 WINDI Publishing House — Kempten, Bavaria<br>
-    56,414+ documents verified and counting
+<div class="section">
+  <div class="section-label">Der Siegeleffekt — Für Pioneers</div>
+  <p style="font-size:16px;font-style:italic;color:var(--seal);border-left:3px solid var(--gold);padding-left:16px;margin-top:8px">
+    "Wollen Sie, dass Ihr Kunde Ihr Dokument nur liest — oder soll er wissen, dass dieses Dokument ein einzigartiger, unfälschbarer Samen ist, versiegelt am 15. März 2026?"
   </p>
-</footer>
+</div>
+
+<div class="footer">
+  <div class="footer-left">windi-domain.com/verify-public/<br>W-KEYS-001 · W-PAR-001 · I5 I6 I9 I10<br>Pioneer-Programm · 100 Plätze · Kempten, Bayern</div>
+  <div class="footer-mandate">"AI processes. Human decides.<br>WINDI guarantees."</div>
+</div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     ENGLISH
+═══════════════════════════════════════ -->
+<div class="lang-panel" id="panel-en">
+<div class="doc">
+
+<div class="header">
+  <div>
+    <div class="brand">WINDI Publishing House · Pioneer Document</div>
+    <h1>The End of the<br><em>Plastic Internet</em></h1>
+  </div>
+  <div class="header-seal">
+    <div class="seal-badge">W-PROV-PIONEER-001</div>
+    <div class="seal-date">Sealed · 2026-03-15</div>
+  </div>
+</div>
+
+<div class="axiom">
+  <strong>The problem is not a lack of data.</strong> It is the inability to prove that data is real. While AI generates content at scale, WINDI is the only infrastructure that delivers the <strong>Certificate of Origin of the Digital Atom.</strong>
+</div>
+
+<div class="two-col">
+  <div class="section">
+    <div class="section-label">The crisis</div>
+    <h2>Truth in collapse</h2>
+    <p>Deepfakes cost tourism 12–18% of revenue. Forged documents block legal proceedings. Fabricated news destroys reputations in hours. The market has lost the ability to distinguish the real from the generated.</p>
+  </div>
+  <div class="section">
+    <div class="section-label">The solution</div>
+    <h2>Reality Anchor</h2>
+    <p>PAR does not just compress data — it compresses uncertainty. Each <code style="font-family:JetBrains Mono,monospace;font-size:13px;background:var(--paper-dark);padding:1px 4px">.jmpg</code> is a reality atom: light enough to travel via WhatsApp, strong enough to withstand a court of law.</p>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">Irremediable proof · Genesis Record</div>
+  <div class="proof-block">
+    <div class="proof-line"><span class="lbl">Seed ID      </span><span class="val">SEED-4b5d7eb4ebef3dbabddae551</span></div>
+    <div class="proof-line"><span class="lbl">Activation   </span><span class="val">ACT-58f38363df294759e86db8b1</span></div>
+    <div class="proof-line"><span class="lbl">Hash SHA-256 </span><span class="val">e0e95e4a9c56aef403268e30789...</span></div>
+    <div class="proof-line"><span class="lbl">Schema       </span><span class="gld">JOURNALISM · Tier FREE → ORACLE</span></div>
+    <div class="proof-line"><span class="lbl">Ledger       </span><span class="gld">WINDI-PAR-GENESIS-20260315 · HIGH · IRREMEDIABLE</span></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">Traditional API vs WINDI PAR</div>
+  <table class="compare">
+    <tr><th>Feature</th><th>Traditional API</th><th>WINDI PAR</th></tr>
+    <tr><td class="col-label">What it delivers</td><td class="col-a">Raw information</td><td class="col-b">Information + Proof of Origin</td></tr>
+    <tr><td class="col-label">Security</td><td class="col-a">HTTPS (transport)</td><td class="col-b">SHA-256 + Ledger (immutability)</td></tr>
+    <tr><td class="col-label">Traceability</td><td class="col-a">Deletable logs</td><td class="col-b">Eternal Virtue Receipts</td></tr>
+    <tr><td class="col-label">Trust</td><td class="col-a">"Trust our brand"</td><td class="col-b">"Don't trust — verify on the Ledger"</td></tr>
+    <tr><td class="col-label">Integration</td><td class="col-a">SDK, docs, weeks</td><td class="col-b">One <code style="font-family:JetBrains Mono,monospace;font-size:11px">curl</code> + instant verify_url</td></tr>
+  </table>
+</div>
+
+<div class="two-col">
+  <div class="section">
+    <div class="section-label">Sovereignty Tiers</div>
+    <div class="tiers">
+      <div class="tier"><div class="tier-name">SEED</div><div class="tier-rpm">10</div><div class="tier-unit">req/min</div></div>
+      <div class="tier"><div class="tier-name">NODAL</div><div class="tier-rpm">60</div><div class="tier-unit">req/min</div></div>
+      <div class="tier"><div class="tier-name">SOVEREIGN</div><div class="tier-rpm">300</div><div class="tier-unit">req/min</div></div>
+      <div class="tier"><div class="tier-name">ORACLE</div><div class="tier-rpm">∞</div><div class="tier-unit">unlimited</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-label">Constitutional Guarantees</div>
+    <div class="inv-grid">
+      <div class="inv"><span class="inv-code">I5</span><div class="inv-text"><strong>Integrity</strong> — hash matches Ledger</div></div>
+      <div class="inv"><span class="inv-code">I6</span><div class="inv-text"><strong>Authenticity</strong> — DID validated</div></div>
+      <div class="inv"><span class="inv-code">I9</span><div class="inv-text"><strong>Non-Repudiation</strong> — irrevocable</div></div>
+      <div class="inv"><span class="inv-code">I10</span><div class="inv-text"><strong>Sovereignty</strong> — local control</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">The Seal Effect — For Pioneers</div>
+  <p style="font-size:16px;font-style:italic;color:var(--seal);border-left:3px solid var(--gold);padding-left:16px;margin-top:8px">
+    "Do you want your client to merely read your document — or to know that it is a unique seed, impossible to forge, sealed on 15 March 2026?"
+  </p>
+</div>
+
+<div class="footer">
+  <div class="footer-left">windi-domain.com/verify-public/<br>W-KEYS-001 · W-PAR-001 · I5 I6 I9 I10<br>Pioneer Program · 100 spots · Kempten, Bavaria</div>
+  <div class="footer-mandate">"AI processes. Human decides.<br>WINDI guarantees."</div>
+</div>
+</div>
+</div>
 
 <script>
-// Seats visualization
-const filledSeats = 10; // Will be fetched from API
-const totalSeats = 100;
-
-function renderSeats() {
-  const grid = document.getElementById('seatsGrid');
-  grid.innerHTML = '';
-
-  for (let i = 0; i < totalSeats; i++) {
-    const seat = document.createElement('div');
-    seat.className = 'seat';
-    if (i < filledSeats) {
-      seat.classList.add('filled');
-      if (i === 0) seat.classList.add('genesis');
-    }
-    grid.appendChild(seat);
-  }
-
-  document.getElementById('filledCount').textContent = filledSeats;
-  document.getElementById('remaining').textContent = totalSeats - filledSeats;
+function setLang(lang, btn) {
+  document.querySelectorAll('.lang-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + lang).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo(0, 0);
 }
-
-renderSeats();
-
-// Form submission
-document.getElementById('applyForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-
-  const btn = document.getElementById('submitBtn');
-  btn.disabled = true;
-  btn.textContent = 'Submitting...';
-
-  const formData = new FormData(e.target);
-  const data = Object.fromEntries(formData);
-
-  try {
-    const response = await fetch('/api/pioneer/apply', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-
-    if (response.ok) {
-      document.getElementById('applyForm').style.display = 'none';
-      document.getElementById('successMsg').classList.add('show');
-    } else {
-      throw new Error('Submission failed');
-    }
-  } catch (err) {
-    // Fallback: show success anyway (form data logged)
-    console.log('Application data:', data);
-    document.getElementById('applyForm').style.display = 'none';
-    document.getElementById('successMsg').classList.add('show');
-  }
-});
-
-// Fetch real seat count from wallet API
-async function updateSeats() {
-  try {
-    const res = await fetch('/api/wallet/stats');
-    if (res.ok) {
-      const data = await res.json();
-      const filled = data.total_humans || 10;
-      document.getElementById('filledCount').textContent = filled;
-      document.getElementById('remaining').textContent = 100 - filled;
-
-      // Update grid
-      const seats = document.querySelectorAll('.seat');
-      seats.forEach((seat, i) => {
-        seat.classList.remove('filled', 'genesis');
-        if (i < filled) {
-          seat.classList.add('filled');
-          if (i === 0) seat.classList.add('genesis');
-        }
-      });
-    }
-  } catch (e) {
-    // Keep default values
-  }
-}
-
-updateSeats();
-setInterval(updateSeats, 30000); // Update every 30s
 </script>
-
 </body>
 </html>
