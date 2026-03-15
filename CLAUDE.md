@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.7.0
+**Version:** 1.7.2
 **Sealed:** 2026-03-15
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -84,9 +84,11 @@ Output para utilizador
 ### 4.1 Stack de Produção
 
 ```
-Utilizador (mobile)
+Utilizador (mobile/desktop)
       ↓
-windi-domain.com/app/   (One Touch UI)
+windi-domain.com/       → 301 → /desktop/
+windi-domain.com/app/   → 301 → /desktop/
+windi-domain.com/desktop/   (GEN 7 :8119)
       ↓
 POST /api/dragon/chat   (Dragon Hub :8108)
       ↓
@@ -478,7 +480,7 @@ Invariants:   I5 I6 I9 I10
 **Build completo:** 2026-03-15
 **Staging URL:** `https://windi-domain.com/desktop-gen7/` → 301 redirect
 **Port produção:** :8119 (swap executado 15 Mar 2026)
-**Port legacy:** :8100 (RETIRED)
+**Port legacy:** :8100 (RETIRED + DISABLED — `windi-desktop.service` stopped 15 Mar 22:09)
 
 ### Smart Zones
 
@@ -628,7 +630,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | Porto | Serviço | Estado |
 |---|---|---|
 | :8091 | Sandbox Core (Agent Corps) | 🟢 LIVE |
-| :8100 | Desktop v2.0.0 (legacy) | 🔴 RETIRED |
+| :8100 | Desktop v2.0.0 (legacy) | 🔴 RETIRED + DISABLED (15 Mar 22:09) |
 | :8101 | Forensic Ledger | 🟢 SEALED |
 | :8108 | Dragon Hub v1.3.0 | 🟢 LIVE |
 | :8119 | Desktop GEN 7 (PRODUÇÃO) | 🟢 **LIVE** |
@@ -661,6 +663,8 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | `/api/status` endpoint | 11:53 |
 | `status.html` dashboard | 11:55 |
 | **Tri-Divergence Engine v1.3.0** | **13:35** |
+| `:8100` legacy DISABLED | 22:09 |
+| nginx `/` + `/app/` → 301 `/desktop/` | 22:22 |
 
 ---
 
