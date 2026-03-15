@@ -1,0 +1,428 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --gold:#C9A84C;--gold-dim:#8B6914;--gold-pale:#F5EDD0;
+  --ocean:#0A3D5C;--ocean-light:#1A6B8A;--ocean-pale:#E8F4F8;
+  --ink:#0F0E0C;--paper:#FAF9F6;--paper-dark:#EEE8D8;
+  --green:#1A6B3A;--text:#2C2A24;--muted:#6B6560;
+}
+body{
+  background:var(--paper);
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:15px;
+  line-height:1.6;
+  color:var(--text);
+  max-width:700px;
+  margin:0 auto;
+}
+
+/* LANG SWITCHER */
+.lang-bar{
+  display:flex;
+  gap:0;
+  border-bottom:2px solid var(--gold);
+  background:var(--ink);
+}
+.lang-btn{
+  flex:1;
+  padding:10px 8px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.35);
+  background:transparent;
+  border:none;
+  cursor:pointer;
+  transition:all 0.18s;
+  border-right:1px solid rgba(255,255,255,0.06);
+}
+.lang-btn:last-child{border-right:none}
+.lang-btn.active{
+  color:var(--gold);
+  background:rgba(201,168,76,0.1);
+}
+.lang-btn:hover:not(.active){color:rgba(255,255,255,0.6)}
+
+/* CONTENT PANEL */
+.lang-panel{display:none}
+.lang-panel.active{display:block}
+
+/* OCEAN HEADER */
+.cert-header{
+  background:var(--ocean);
+  padding:28px 28px 36px;
+  position:relative;
+  overflow:hidden;
+}
+.cert-header::after{
+  content:'';
+  position:absolute;
+  bottom:-1px;left:0;right:0;
+  height:32px;
+  background:var(--paper);
+  border-radius:60% 60% 0 0 / 100% 100% 0 0;
+}
+.cert-location{
+  font-family:'JetBrains Mono',monospace;
+  font-size:9px;
+  letter-spacing:0.22em;
+  color:rgba(255,255,255,0.4);
+  text-transform:uppercase;
+  margin-bottom:10px;
+}
+.cert-title{
+  font-size:26px;
+  font-weight:300;
+  color:#fff;
+  line-height:1.2;
+  margin-bottom:6px;
+}
+.cert-title em{font-style:italic;color:var(--gold)}
+.cert-sub{
+  font-size:11px;
+  color:rgba(255,255,255,0.45);
+  font-family:'JetBrains Mono',monospace;
+}
+.cert-badge{
+  position:absolute;
+  top:20px;right:22px;
+  border:1px solid rgba(201,168,76,0.5);
+  padding:5px 10px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:8px;
+  letter-spacing:0.1em;
+  color:var(--gold);
+  text-transform:uppercase;
+}
+
+.cert-body{padding:20px 24px}
+
+/* VERIFIED */
+.verified-strip{
+  background:var(--ocean-pale);
+  border-left:4px solid var(--green);
+  padding:12px 18px;
+  margin-bottom:18px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.verified-text{font-size:13px;color:var(--ocean);font-weight:600}
+.verified-sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);margin-top:2px}
+
+/* SCENARIO */
+.scenario-box{
+  background:var(--ocean-pale);
+  border:1px solid #C5DDE8;
+  padding:16px 18px;
+  margin-bottom:18px;
+}
+.scenario-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:8px;
+  letter-spacing:0.18em;
+  color:var(--ocean-light);
+  text-transform:uppercase;
+  margin-bottom:6px;
+}
+.scenario-title{font-size:16px;font-weight:600;color:var(--ocean);margin-bottom:5px}
+.scenario-desc{font-size:13px;color:var(--text);line-height:1.55}
+
+/* FLOW */
+.flow-step{
+  display:flex;
+  gap:14px;
+  padding:10px 0;
+  border-bottom:1px solid var(--paper-dark);
+}
+.flow-step:last-child{border-bottom:none}
+.flow-num{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  font-weight:500;
+  color:var(--gold-dim);
+  min-width:22px;
+  padding-top:2px;
+}
+.flow-action{font-size:13px;font-weight:600;color:var(--ocean);margin-bottom:1px}
+.flow-detail{font-size:12px;color:var(--muted);line-height:1.4}
+.flow-code{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  background:var(--paper-dark);
+  padding:2px 5px;
+  color:var(--ocean);
+  margin-top:3px;
+  display:inline-block;
+}
+
+/* GENESIS */
+.genesis{background:var(--ink);padding:14px 16px;margin-bottom:18px}
+.genesis-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:8px;
+  letter-spacing:0.18em;
+  color:var(--gold-dim);
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+.g-line{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  color:rgba(245,237,208,0.65);
+  margin-bottom:2px;
+  line-height:1.5;
+}
+.g-line .lbl{color:rgba(245,237,208,0.3)}
+.g-line .val{color:var(--gold-pale)}
+.g-line .ok{color:#5CB85C;font-weight:500}
+
+/* IMPACT */
+.impact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:18px}
+.impact-card{border:1px solid var(--paper-dark);padding:10px 8px;text-align:center}
+.impact-num{font-size:20px;font-weight:600;color:var(--ocean);display:block;line-height:1.1}
+.impact-label{font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-top:3px;display:block}
+
+/* QR */
+.qr-section{
+  display:flex;gap:16px;align-items:center;
+  padding:14px 16px;
+  border:1.5px solid var(--gold);
+  margin-bottom:18px;
+}
+.qr-box{width:70px;height:70px;background:var(--paper-dark);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:28px}
+.qr-title{font-size:13px;font-weight:600;color:var(--ocean);margin-bottom:3px}
+.qr-url{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--gold-dim);word-break:break-all;margin-bottom:4px}
+.qr-desc{font-size:11px;color:var(--muted);line-height:1.4}
+
+/* QUOTE */
+.cert-quote{
+  border-left:3px solid var(--gold);
+  padding:10px 14px;
+  font-style:italic;
+  font-size:14px;
+  color:var(--ocean);
+  margin-bottom:6px;
+  line-height:1.5;
+}
+
+/* FOOTER */
+.cert-footer{
+  background:var(--ocean);
+  padding:16px 24px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.footer-mono{font-family:'JetBrains Mono',monospace;font-size:8px;color:rgba(255,255,255,0.35);line-height:1.9}
+.footer-mandate{font-style:italic;font-size:12px;color:var(--gold);text-align:right;line-height:1.5}
+
+.demo-tag{
+  display:inline-block;
+  background:var(--gold-dim);color:var(--gold-pale);
+  font-family:'JetBrains Mono',monospace;font-size:8px;
+  letter-spacing:0.12em;padding:2px 7px;
+  text-transform:uppercase;margin-bottom:14px;
+}
+</style>
+
+<!-- LANG BAR -->
+<div class="lang-bar">
+  <button class="lang-btn active" onclick="setLang('pt')">🇧🇷 PT</button>
+  <button class="lang-btn" onclick="setLang('de')">🇩🇪 DE</button>
+  <button class="lang-btn" onclick="setLang('en')">🇬🇧 EN</button>
+</div>
+
+<!-- ══════════ PORTUGUÊS ══════════ -->
+<div class="lang-panel active" id="panel-pt">
+<div class="cert-header">
+  <div class="cert-badge">DEMONSTRAÇÃO</div>
+  <div class="cert-location">Florianópolis · Santa Catarina · Brasil</div>
+  <div class="cert-title">O seu próximo passeio<br>tem um <em>selo irrefutável.</em></div>
+  <div class="cert-sub">WINDI PAR · Prova de Conceito · Sector Turismo</div>
+</div>
+<div class="cert-body">
+  <div class="verified-strip">
+    <div style="font-size:20px;flex-shrink:0">🛡️</div>
+    <div>
+      <div class="verified-text">Genesis Record — VERIFICADO</div>
+      <div class="verified-sub">WINDI-PAR-GENESIS-20260315 · Ledger IRREMEDIÁVEL · I5 I6 I9 I10</div>
+    </div>
+  </div>
+  <div class="demo-tag">Cenário de demonstração</div>
+  <div class="scenario-box">
+    <div class="scenario-label">O problema que resolvemos</div>
+    <div class="scenario-title">Passeio de escuna — Florianópolis</div>
+    <div class="scenario-desc">O turista vê uma foto de mar azul no Instagram. Chega. O mar está agitado. Cancela. Você perde 15% da receita por informação não verificável.<br><br><strong>Com o WINDI:</strong> cada foto de condição enviada no dia tem um selo forense. O turista vê "VERIFICADO às 07:32 de hoje" — e embarca.</div>
+  </div>
+  <div style="margin-bottom:14px">
+    <div class="flow-step"><div class="flow-num">01</div><div><div class="flow-action">Operador fotografa as condições do mar</div><div class="flow-detail">Foto tirada no deck às 07h30 — condições reais do dia</div></div></div>
+    <div class="flow-step"><div class="flow-num">02</div><div><div class="flow-action">WINDI atomiza e sela em 3 segundos</div><div class="flow-detail">SHA-256 + Forensic Ledger + Schema TOURISM</div><div class="flow-code">POST /par/atomize · X-WINDI-API-Key</div></div></div>
+    <div class="flow-step"><div class="flow-num">03</div><div><div class="flow-action">Turista recebe link verificável via WhatsApp</div><div class="flow-detail">Abre no telemóvel — vê data, hora, hash. Sem conta. Sem app.</div><div class="flow-code">windi-domain.com/verify-public/?id=SEED-...</div></div></div>
+    <div class="flow-step"><div class="flow-num">04</div><div><div class="flow-action">Turista embarca — confiante</div><div class="flow-detail">Zero cancelamento por desinformação. Receita protegida.</div></div></div>
+  </div>
+  <div class="genesis-label">Prova técnica real — Genesis Record</div>
+  <div class="genesis">
+    <div class="g-line"><span class="lbl">Seed ID    </span><span class="val">SEED-4b5d7eb4ebef3dbabddae551</span></div>
+    <div class="g-line"><span class="lbl">Activation </span><span class="val">ACT-58f38363df294759e86db8b1</span></div>
+    <div class="g-line"><span class="lbl">Hash       </span><span class="val">sha256:e0e95e4a9c56aef403268e30...</span></div>
+    <div class="g-line"><span class="lbl">Selado     </span><span class="val">2026-03-15 · HIGH · IRREMEDIÁVEL</span></div>
+    <div class="g-line"><span class="lbl">Invariants </span><span class="ok">I5 ✓  I6 ✓  I9 ✓  I10 ✓</span></div>
+  </div>
+  <div class="impact-grid">
+    <div class="impact-card"><span class="impact-num">3s</span><span class="impact-label">para selar</span></div>
+    <div class="impact-card"><span class="impact-num">150KB</span><span class="impact-label">por semente</span></div>
+    <div class="impact-card"><span class="impact-num">∞</span><span class="impact-label">verificações</span></div>
+    <div class="impact-card"><span class="impact-num">0</span><span class="impact-label">app necessária</span></div>
+    <div class="impact-card"><span class="impact-num">5+</span><span class="impact-label">países</span></div>
+    <div class="impact-card"><span class="impact-num">1</span><span class="impact-label">curl basta</span></div>
+  </div>
+  <div class="qr-section">
+    <div class="qr-box">🔗</div>
+    <div>
+      <div class="qr-title">Verifique o Genesis Record agora</div>
+      <div class="qr-url">windi-domain.com/verify-public/?id=WINDI-PAR-GENESIS-20260315</div>
+      <div class="qr-desc">Qualquer pessoa, qualquer dispositivo, sem conta.<br>Este é o "Efeito Selo" que o seu cliente vai sentir.</div>
+    </div>
+  </div>
+  <div class="cert-quote">"A foto do mar que o seu cliente vê hoje não é do Instagram de 2023. É de hoje, às 07h32, e tem um hash que nenhuma IA pode falsificar."</div>
+</div>
+<div class="cert-footer">
+  <div class="footer-mono">WINDI Publishing House · Kempten, Bavaria<br>W-PAR-001 · W-KEYS-001 · Pioneer Program<br>windi-domain.com/pioneer/</div>
+  <div class="footer-mandate">"AI processes.<br>Human decides.<br>WINDI guarantees."</div>
+</div>
+</div>
+
+<!-- ══════════ DEUTSCH ══════════ -->
+<div class="lang-panel" id="panel-de">
+<div class="cert-header">
+  <div class="cert-badge">DEMONSTRATION</div>
+  <div class="cert-location">Florianópolis · Santa Catarina · Brasilien</div>
+  <div class="cert-title">Ihre nächste Tour<br>hat ein <em>unwiderlegbares Siegel.</em></div>
+  <div class="cert-sub">WINDI PAR · Proof of Concept · Tourismus-Sektor</div>
+</div>
+<div class="cert-body">
+  <div class="verified-strip">
+    <div style="font-size:20px;flex-shrink:0">🛡️</div>
+    <div>
+      <div class="verified-text">Genesis Record — VERIFIZIERT</div>
+      <div class="verified-sub">WINDI-PAR-GENESIS-20260315 · Ledger IRREMEDIABEL · I5 I6 I9 I10</div>
+    </div>
+  </div>
+  <div class="demo-tag">Demonstrationsszenario</div>
+  <div class="scenario-box">
+    <div class="scenario-label">Das Problem, das wir lösen</div>
+    <div class="scenario-title">Bootsausflug — Florianópolis</div>
+    <div class="scenario-desc">Der Tourist sieht ein Foto von blauem Meer auf Instagram. Er kommt an. Das Meer ist aufgewühlt. Er storniert. Sie verlieren 15% des Umsatzes durch nicht verifizierbare Informationen.<br><br><strong>Mit WINDI:</strong> Jedes Foto der aktuellen Bedingungen trägt ein forensisches Siegel. Der Tourist sieht "VERIFIZIERT um 07:32 Uhr heute" — und steigt ein.</div>
+  </div>
+  <div style="margin-bottom:14px">
+    <div class="flow-step"><div class="flow-num">01</div><div><div class="flow-action">Betreiber fotografiert die Meeresbedingungen</div><div class="flow-detail">Foto an Deck um 07:30 — reale Bedingungen des Tages</div></div></div>
+    <div class="flow-step"><div class="flow-num">02</div><div><div class="flow-action">WINDI atomisiert und versiegelt in 3 Sekunden</div><div class="flow-detail">SHA-256 + Forensic Ledger + Schema TOURISM</div><div class="flow-code">POST /par/atomize · X-WINDI-API-Key</div></div></div>
+    <div class="flow-step"><div class="flow-num">03</div><div><div class="flow-action">Tourist erhält verifizierbaren Link via WhatsApp</div><div class="flow-detail">Öffnet auf dem Handy — sieht Datum, Uhrzeit, Hash. Kein Konto. Keine App.</div><div class="flow-code">windi-domain.com/verify-public/?id=SEED-...</div></div></div>
+    <div class="flow-step"><div class="flow-num">04</div><div><div class="flow-action">Tourist steigt ein — sicher und vertrauensvoll</div><div class="flow-detail">Keine Stornierungen durch Fehlinformationen. Umsatz geschützt.</div></div></div>
+  </div>
+  <div class="genesis-label">Technischer Beweis — Genesis Record</div>
+  <div class="genesis">
+    <div class="g-line"><span class="lbl">Seed ID    </span><span class="val">SEED-4b5d7eb4ebef3dbabddae551</span></div>
+    <div class="g-line"><span class="lbl">Activation </span><span class="val">ACT-58f38363df294759e86db8b1</span></div>
+    <div class="g-line"><span class="lbl">Hash       </span><span class="val">sha256:e0e95e4a9c56aef403268e30...</span></div>
+    <div class="g-line"><span class="lbl">Versiegelt </span><span class="val">2026-03-15 · HIGH · IRREMEDIABEL</span></div>
+    <div class="g-line"><span class="lbl">Invarianten</span><span class="ok">I5 ✓  I6 ✓  I9 ✓  I10 ✓</span></div>
+  </div>
+  <div class="impact-grid">
+    <div class="impact-card"><span class="impact-num">3s</span><span class="impact-label">zum Versiegeln</span></div>
+    <div class="impact-card"><span class="impact-num">150KB</span><span class="impact-label">pro Seed</span></div>
+    <div class="impact-card"><span class="impact-num">∞</span><span class="impact-label">Prüfungen</span></div>
+    <div class="impact-card"><span class="impact-num">0</span><span class="impact-label">App nötig</span></div>
+    <div class="impact-card"><span class="impact-num">5+</span><span class="impact-label">Länder</span></div>
+    <div class="impact-card"><span class="impact-num">1</span><span class="impact-label">curl reicht</span></div>
+  </div>
+  <div class="qr-section">
+    <div class="qr-box">🔗</div>
+    <div>
+      <div class="qr-title">Jetzt den Genesis Record prüfen</div>
+      <div class="qr-url">windi-domain.com/verify-public/?id=WINDI-PAR-GENESIS-20260315</div>
+      <div class="qr-desc">Jede Person, jedes Gerät, kein Konto.<br>Das ist der "Siegeleffekt", den Ihr Kunde spüren wird.</div>
+    </div>
+  </div>
+  <div class="cert-quote">"Das Foto des Meeres, das Ihr Kunde heute sieht, stammt nicht vom Instagram aus 2023. Es ist von heute, 07:32 Uhr, mit einem Hash, den keine KI fälschen kann."</div>
+</div>
+<div class="cert-footer">
+  <div class="footer-mono">WINDI Publishing House · Kempten, Bayern<br>W-PAR-001 · W-KEYS-001 · Pioneer-Programm<br>windi-domain.com/pioneer/</div>
+  <div class="footer-mandate">"AI processes.<br>Human decides.<br>WINDI guarantees."</div>
+</div>
+</div>
+
+<!-- ══════════ ENGLISH ══════════ -->
+<div class="lang-panel" id="panel-en">
+<div class="cert-header">
+  <div class="cert-badge">DEMONSTRATION</div>
+  <div class="cert-location">Florianópolis · Santa Catarina · Brazil</div>
+  <div class="cert-title">Your next tour has<br>an <em>irrefutable seal.</em></div>
+  <div class="cert-sub">WINDI PAR · Proof of Concept · Tourism Sector</div>
+</div>
+<div class="cert-body">
+  <div class="verified-strip">
+    <div style="font-size:20px;flex-shrink:0">🛡️</div>
+    <div>
+      <div class="verified-text">Genesis Record — VERIFIED</div>
+      <div class="verified-sub">WINDI-PAR-GENESIS-20260315 · Ledger IRREMEDIABLE · I5 I6 I9 I10</div>
+    </div>
+  </div>
+  <div class="demo-tag">Demonstration scenario</div>
+  <div class="scenario-box">
+    <div class="scenario-label">The problem we solve</div>
+    <div class="scenario-title">Boat tour — Florianópolis</div>
+    <div class="scenario-desc">The tourist sees a blue-sea photo on Instagram. Arrives. The sea is rough. Cancels. You lose 15% of revenue due to unverifiable information.<br><br><strong>With WINDI:</strong> every conditions photo sent that day carries a forensic seal. The tourist sees "VERIFIED today at 07:32" — and boards.</div>
+  </div>
+  <div style="margin-bottom:14px">
+    <div class="flow-step"><div class="flow-num">01</div><div><div class="flow-action">Operator photographs current sea conditions</div><div class="flow-detail">Photo taken on deck at 07:30 — real conditions of the day</div></div></div>
+    <div class="flow-step"><div class="flow-num">02</div><div><div class="flow-action">WINDI atomizes and seals in 3 seconds</div><div class="flow-detail">SHA-256 + Forensic Ledger + Schema TOURISM</div><div class="flow-code">POST /par/atomize · X-WINDI-API-Key</div></div></div>
+    <div class="flow-step"><div class="flow-num">03</div><div><div class="flow-action">Tourist receives verifiable link via WhatsApp</div><div class="flow-detail">Opens on mobile — sees date, time, hash. No account. No app.</div><div class="flow-code">windi-domain.com/verify-public/?id=SEED-...</div></div></div>
+    <div class="flow-step"><div class="flow-num">04</div><div><div class="flow-action">Tourist boards — confident</div><div class="flow-detail">Zero cancellations from misinformation. Revenue protected.</div></div></div>
+  </div>
+  <div class="genesis-label">Real technical proof — Genesis Record</div>
+  <div class="genesis">
+    <div class="g-line"><span class="lbl">Seed ID    </span><span class="val">SEED-4b5d7eb4ebef3dbabddae551</span></div>
+    <div class="g-line"><span class="lbl">Activation </span><span class="val">ACT-58f38363df294759e86db8b1</span></div>
+    <div class="g-line"><span class="lbl">Hash       </span><span class="val">sha256:e0e95e4a9c56aef403268e30...</span></div>
+    <div class="g-line"><span class="lbl">Sealed     </span><span class="val">2026-03-15 · HIGH · IRREMEDIABLE</span></div>
+    <div class="g-line"><span class="lbl">Invariants </span><span class="ok">I5 ✓  I6 ✓  I9 ✓  I10 ✓</span></div>
+  </div>
+  <div class="impact-grid">
+    <div class="impact-card"><span class="impact-num">3s</span><span class="impact-label">to seal</span></div>
+    <div class="impact-card"><span class="impact-num">150KB</span><span class="impact-label">per seed</span></div>
+    <div class="impact-card"><span class="impact-num">∞</span><span class="impact-label">verifications</span></div>
+    <div class="impact-card"><span class="impact-num">0</span><span class="impact-label">app needed</span></div>
+    <div class="impact-card"><span class="impact-num">5+</span><span class="impact-label">countries</span></div>
+    <div class="impact-card"><span class="impact-num">1</span><span class="impact-label">curl is enough</span></div>
+  </div>
+  <div class="qr-section">
+    <div class="qr-box">🔗</div>
+    <div>
+      <div class="qr-title">Verify the Genesis Record now</div>
+      <div class="qr-url">windi-domain.com/verify-public/?id=WINDI-PAR-GENESIS-20260315</div>
+      <div class="qr-desc">Anyone, any device, no account.<br>This is the "Seal Effect" your client will feel.</div>
+    </div>
+  </div>
+  <div class="cert-quote">"The sea photo your client sees today is not from Instagram in 2023. It's from today, 07:32, with a hash no AI can forge."</div>
+</div>
+<div class="cert-footer">
+  <div class="footer-mono">WINDI Publishing House · Kempten, Bavaria<br>W-PAR-001 · W-KEYS-001 · Pioneer Program<br>windi-domain.com/pioneer/</div>
+  <div class="footer-mandate">"AI processes.<br>Human decides.<br>WINDI guarantees."</div>
+</div>
+</div>
+
+<script>
+function setLang(lang) {
+  document.querySelectorAll('.lang-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + lang).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>

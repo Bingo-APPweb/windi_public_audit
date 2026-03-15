@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1A1A2E">
+<title>WINDI Pioneer — O Fim da Internet de Plástico</title>
+<meta property="og:title" content="WINDI Pioneer — O Fim da Internet de Plástico">
+<meta property="og:description" content="O problema não é falta de dados. É a incapacidade de provar que os dados são reais.">
+<meta property="og:url" content="https://windi-domain.com/pioneer/">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=JetBrains+Mono:wght@400;500&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --gold:#C9A84C;--gold-dim:#8B6914;--gold-pale:#F5EDD0;
+  --ink:#0F0E0C;--paper:#FAF8F3;--paper-dark:#F0EBE0;
+  --seal:#1A1A2E;--text:#2C2A24;--muted:#6B6560;
+}
+body{
+  background:var(--paper);
+  color:var(--text);
+  font-family:'Cormorant Garamond',Georgia,serif;
+  font-size:16px;
+  line-height:1.6;
+}
+
+/* LANG BAR */
+.lang-bar{
+  display:flex;
+  background:var(--ink);
+  border-bottom:2px solid var(--gold);
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+.lang-btn{
+  flex:1;
+  padding:11px 8px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.3);
+  background:transparent;
+  border:none;
+  border-right:1px solid rgba(255,255,255,0.06);
+  cursor:pointer;
+  transition:all 0.15s;
+}
+.lang-btn:last-child{border-right:none}
+.lang-btn.active{color:var(--gold);background:rgba(201,168,76,0.09)}
+.lang-btn:hover:not(.active){color:rgba(255,255,255,0.55)}
+
+/* PANELS */
+.lang-panel{display:none}
+.lang-panel.active{display:block}
+
+/* INNER WRAPPER */
+.doc{
+  padding:40px 20px;
+  max-width:780px;
+  margin:0 auto;
+}
+
+/* HEADER */
+.header{
+  border-top:3px solid var(--gold);
+  padding-top:28px;
+  margin-bottom:32px;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:20px;
+}
+.brand{
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;
+  font-weight:500;
+  letter-spacing:0.15em;
+  color:var(--gold-dim);
+  text-transform:uppercase;
+  margin-bottom:8px;
+}
+h1{font-size:38px;font-weight:300;line-height:1.15;color:var(--seal);letter-spacing:-0.02em}
+h1 em{font-style:italic;color:var(--gold-dim)}
+.header-seal{text-align:right;flex-shrink:0}
+.seal-badge{
+  display:inline-block;
+  border:1.5px solid var(--gold);
+  padding:8px 14px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;
+  letter-spacing:0.1em;
+  color:var(--gold-dim);
+  text-transform:uppercase;
+}
+.seal-date{
+  font-family:'JetBrains Mono',monospace;
+  font-size:10px;color:var(--muted);
+  margin-top:6px;text-align:right;
+}
+
+/* AXIOM */
+.axiom{
+  background:var(--seal);color:var(--gold-pale);
+  padding:20px 28px;margin-bottom:32px;
+  border-left:4px solid var(--gold);
+  font-size:18px;font-weight:300;font-style:italic;line-height:1.5;
+}
+.axiom strong{font-weight:600;font-style:normal;color:var(--gold)}
+
+/* TWO COL */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-bottom:32px}
+@media(max-width:580px){.two-col{grid-template-columns:1fr}}
+
+/* SECTION */
+.section{margin-bottom:28px}
+.section-label{
+  font-family:'JetBrains Mono',monospace;font-size:10px;
+  letter-spacing:0.18em;color:var(--gold-dim);text-transform:uppercase;
+  margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--gold-pale);
+}
+h2{font-size:20px;font-weight:600;color:var(--seal);margin-bottom:8px}
+p{font-size:15px;color:var(--text);line-height:1.65}
+
+/* TABLE */
+.compare{width:100%;border-collapse:collapse;margin-top:8px;font-size:13px}
+.compare th{
+  font-family:'JetBrains Mono',monospace;font-size:9px;
+  letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);
+  padding:6px 10px;border-bottom:1px solid var(--paper-dark);text-align:left;
+}
+.compare td{padding:8px 10px;border-bottom:1px solid var(--paper-dark);vertical-align:top;line-height:1.4}
+.compare tr:last-child td{border-bottom:none}
+.col-a{color:var(--muted);font-style:italic}
+.col-b{color:var(--seal);font-weight:500}
+.col-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:0.05em}
+
+/* PROOF */
+.proof-block{
+  background:var(--paper-dark);border:1px solid #DDD6C2;
+  padding:16px 20px;margin-top:8px;
+}
+.proof-line{
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  color:var(--text);margin-bottom:4px;line-height:1.5;
+}
+.proof-line .lbl{color:var(--muted)}
+.proof-line .val{color:var(--seal);font-weight:500}
+.proof-line .gld{color:var(--gold-dim);font-weight:500}
+
+/* TIERS */
+.tiers{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px}
+@media(max-width:480px){.tiers{grid-template-columns:repeat(2,1fr)}}
+.tier{border:1px solid var(--paper-dark);padding:12px 10px;text-align:center}
+.tier-name{
+  font-family:'JetBrains Mono',monospace;font-size:10px;
+  letter-spacing:0.1em;color:var(--gold-dim);text-transform:uppercase;margin-bottom:4px;
+}
+.tier-rpm{font-size:18px;font-weight:600;color:var(--seal)}
+.tier-unit{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted)}
+
+/* INVARIANTS */
+.inv-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.inv{display:flex;align-items:flex-start;gap:10px;padding:10px;border:1px solid var(--paper-dark)}
+.inv-code{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;color:var(--gold-dim);min-width:28px}
+.inv-text{font-size:13px;color:var(--text);line-height:1.4}
+.inv-text strong{color:var(--seal)}
+
+/* FOOTER */
+.footer{
+  margin-top:36px;padding-top:20px;
+  border-top:1px solid var(--paper-dark);
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;
+}
+.footer-left{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);line-height:1.8}
+.footer-mandate{font-style:italic;font-size:14px;color:var(--gold-dim);text-align:right}
+</style>
+</head>
+<body>
+
+<!-- LANG SWITCHER -->
+<div class="lang-bar">
+  <button class="lang-btn active" onclick="setLang('pt',this)">PT</button>
+  <button class="lang-btn" onclick="setLang('de',this)">DE</button>
+  <button class="lang-btn" onclick="setLang('en',this)">EN</button>
+</div>
+
+<!-- ═══════════════════════════════════════
+     PORTUGUÊS
+═══════════════════════════════════════ -->
+<div class="lang-panel active" id="panel-pt">
+<div class="doc">
+
+<div class="header">
+  <div>
+    <div class="brand">WINDI Publishing House · Documento Pioneer</div>
+    <h1>O Fim da<br><em>Internet de Plástico</em></h1>
+  </div>
+  <div class="header-seal">
+    <div class="seal-badge">W-PROV-PIONEER-001</div>
+    <div class="seal-date">Selado · 2026-03-15</div>
+  </div>
+</div>
+
+<div class="axiom">
+  <strong>O problema não é falta de dados.</strong> É a incapacidade de provar que os dados são reais. Enquanto a IA gera conteúdo em massa, o WINDI é a única infraestrutura que entrega o <strong>Certificado de Origem do Átomo Digital.</strong>
+</div>
+
+<div class="two-col">
+  <div class="section">
+    <div class="section-label">A crise</div>
+    <h2>Veracidade em colapso</h2>
+    <p>Deepfakes custam 12–18% de receita ao turismo. Documentos falsos travam processos legais. Notícias fabricadas destroem reputações em horas. O mercado perdeu a capacidade de distinguir o real do gerado.</p>
+  </div>
+  <div class="section">
+    <div class="section-label">A solução</div>
+    <h2>Âncora de Realidade</h2>
+    <p>O PAR não comprime apenas dados — comprime a incerteza. Cada <code style="font-family:JetBrains Mono,monospace;font-size:13px;background:var(--paper-dark);padding:1px 4px">.jmpg</code> é um átomo de realidade: leve o suficiente para viajar por WhatsApp, pesado o suficiente para resistir a um tribunal.</p>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">Prova irremediável · Genesis Record</div>
+  <div class="proof-block">
+    <div class="proof-line"><span class="lbl">Seed ID      </span><span class="val">SEED-4b5d7eb4ebef3dbabddae551</span></div>
+    <div class="proof-line"><span class="lbl">Activation   </span><span class="val">ACT-58f38363df294759e86db8b1</span></div>
+    <div class="proof-line"><span class="lbl">Hash SHA-256 </span><span class="val">e0e95e4a9c56aef403268e30789...</span></div>
+    <div class="proof-line"><span class="lbl">Schema       </span><span class="gld">JOURNALISM · Tier FREE → ORACLE</span></div>
+    <div class="proof-line"><span class="lbl">Ledger       </span><span class="gld">WINDI-PAR-GENESIS-20260315 · HIGH · IRREMEDIÁVEL</span></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">API Tradicional vs WINDI PAR</div>
+  <table class="compare">
+    <tr><th>Característica</th><th>API Tradicional</th><th>WINDI PAR</th></tr>
+    <tr><td class="col-label">O que entrega</td><td class="col-a">Informação crua</td><td class="col-b">Informação + Prova de Origem</td></tr>
+    <tr><td class="col-label">Segurança</td><td class="col-a">HTTPS (transporte)</td><td class="col-b">SHA-256 + Ledger (imutabilidade)</td></tr>
+    <tr><td class="col-label">Rastreabilidade</td><td class="col-a">Logs apagáveis</td><td class="col-b">Receipts de Virtude eternos</td></tr>
+    <tr><td class="col-label">Confiança</td><td class="col-a">"Confie na nossa marca"</td><td class="col-b">"Não confie — verifique no Ledger"</td></tr>
+    <tr><td class="col-label">Integração</td><td class="col-a">SDK, docs, semanas</td><td class="col-b">Um <code style="font-family:JetBrains Mono,monospace;font-size:11px">curl</code> + verify_url imediata</td></tr>
+  </table>
+</div>
+
+<div class="two-col">
+  <div class="section">
+    <div class="section-label">Tiers de Soberania</div>
+    <div class="tiers">
+      <div class="tier"><div class="tier-name">SEED</div><div class="tier-rpm">10</div><div class="tier-unit">req/min</div></div>
+      <div class="tier"><div class="tier-name">NODAL</div><div class="tier-rpm">60</div><div class="tier-unit">req/min</div></div>
+      <div class="tier"><div class="tier-name">SOVEREIGN</div><div class="tier-rpm">300</div><div class="tier-unit">req/min</div></div>
+      <div class="tier"><div class="tier-name">ORACLE</div><div class="tier-rpm">∞</div><div class="tier-unit">ilimitado</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-label">Garantias Constitucionais</div>
+    <div class="inv-grid">
+      <div class="inv"><span class="inv-code">I5</span><div class="inv-text"><strong>Integridade</strong> — hash coincide com Ledger</div></div>
+      <div class="inv"><span class="inv-code">I6</span><div class="inv-text"><strong>Autenticidade</strong> — DID validado</div></div>
+      <div class="inv"><span class="inv-code">I9</span><div class="inv-text"><strong>Não-Repúdio</strong> — irrevogável</div></div>
+      <div class="inv"><span class="inv-code">I10</span><div class="inv-text"><strong>Soberania</strong> — controlo local</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">O Efeito Selo — Para os Pioneers</div>
+  <p style="font-size:16px;font-style:italic;color:var(--seal);border-left:3px solid var(--gold);padding-left:16px;margin-top:8px">
+    "Você quer que o seu cliente apenas leia o seu documento — ou quer que ele saiba que esse documento é uma semente única, impossível de falsificar, selada às 15 de março de 2026?"
+  </p>
+</div>
+
+<div class="footer">
+  <div class="footer-left">windi-domain.com/verify-public/<br>W-KEYS-001 · W-PAR-001 · I5 I6 I9 I10<br>Pioneer Program · 100 vagas · Kempten, Bavaria</div>
+  <div class="footer-mandate">"AI processes. Human decides.<br>WINDI guarantees."</div>
+</div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     DEUTSCH
+═══════════════════════════════════════ -->
+<div class="lang-panel" id="panel-de">
+<div class="doc">
+
+<div class="header">
+  <div>
+    <div class="brand">WINDI Publishing House · Pioneer-Dokument</div>
+    <h1>Das Ende des<br><em>Plastik-Internets</em></h1>
+  </div>
+  <div class="header-seal">
+    <div class="seal-badge">W-PROV-PIONEER-001</div>
+    <div class="seal-date">Versiegelt · 2026-03-15</div>
+  </div>
+</div>
+
+<div class="axiom">
+  <strong>Das Problem ist nicht der Mangel an Daten.</strong> Es ist die Unfähigkeit zu beweisen, dass die Daten real sind. Während KI Inhalte in Massen erzeugt, ist WINDI die einzige Infrastruktur, die das <strong>Herkunftszertifikat des digitalen Atoms</strong> liefert.
+</div>
+
+<div class="two-col">
+  <div class="section">
+    <div class="section-label">Die Krise</div>
+    <h2>Wahrheit im Kollaps</h2>
+    <p>Deepfakes kosten den Tourismus 12–18% des Umsatzes. Gefälschte Dokumente blockieren Rechtsverfahren. Fabrizierte Nachrichten zerstören Reputationen in Stunden. Der Markt hat die Fähigkeit verloren, das Echte vom Generierten zu unterscheiden.</p>
+  </div>
+  <div class="section">
+    <div class="section-label">Die Lösung</div>
+    <h2>Realitätsanker</h2>
+    <p>PAR komprimiert nicht nur Daten — es komprimiert die Unsicherheit. Jedes <code style="font-family:JetBrains Mono,monospace;font-size:13px;background:var(--paper-dark);padding:1px 4px">.jmpg</code> ist ein Realitätsatom: leicht genug für WhatsApp, schwer genug für ein Gericht.</p>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">Unwiderruflicher Beweis · Genesis Record</div>
+  <div class="proof-block">
+    <div class="proof-line"><span class="lbl">Seed ID      </span><span class="val">SEED-4b5d7eb4ebef3dbabddae551</span></div>
+    <div class="proof-line"><span class="lbl">Aktivierung  </span><span class="val">ACT-58f38363df294759e86db8b1</span></div>
+    <div class="proof-line"><span class="lbl">Hash SHA-256 </span><span class="val">e0e95e4a9c56aef403268e30789...</span></div>
+    <div class="proof-line"><span class="lbl">Schema       </span><span class="gld">JOURNALISM · Tier FREE → ORACLE</span></div>
+    <div class="proof-line"><span class="lbl">Ledger       </span><span class="gld">WINDI-PAR-GENESIS-20260315 · HIGH · IRREMEDIABEL</span></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">Traditionelle API vs. WINDI PAR</div>
+  <table class="compare">
+    <tr><th>Merkmal</th><th>Traditionelle API</th><th>WINDI PAR</th></tr>
+    <tr><td class="col-label">Was geliefert wird</td><td class="col-a">Rohe Information</td><td class="col-b">Information + Herkunftsnachweis</td></tr>
+    <tr><td class="col-label">Sicherheit</td><td class="col-a">HTTPS (Transport)</td><td class="col-b">SHA-256 + Ledger (Unveränderlichkeit)</td></tr>
+    <tr><td class="col-label">Rückverfolgbarkeit</td><td class="col-a">Löschbare Logs</td><td class="col-b">Ewige Tugendquittungen</td></tr>
+    <tr><td class="col-label">Vertrauen</td><td class="col-a">"Vertrauen Sie unserer Marke"</td><td class="col-b">"Nicht vertrauen — im Ledger prüfen"</td></tr>
+    <tr><td class="col-label">Integration</td><td class="col-a">SDK, Docs, Wochen</td><td class="col-b">Ein <code style="font-family:JetBrains Mono,monospace;font-size:11px">curl</code> + sofortige verify_url</td></tr>
+  </table>
+</div>
+
+<div class="two-col">
+  <div class="section">
+    <div class="section-label">Souveränitätsstufen</div>
+    <div class="tiers">
+      <div class="tier"><div class="tier-name">SEED</div><div class="tier-rpm">10</div><div class="tier-unit">Anf./min</div></div>
+      <div class="tier"><div class="tier-name">NODAL</div><div class="tier-rpm">60</div><div class="tier-unit">Anf./min</div></div>
+      <div class="tier"><div class="tier-name">SOVEREIGN</div><div class="tier-rpm">300</div><div class="tier-unit">Anf./min</div></div>
+      <div class="tier"><div class="tier-name">ORACLE</div><div class="tier-rpm">∞</div><div class="tier-unit">unbegrenzt</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-label">Verfassungsgarantien</div>
+    <div class="inv-grid">
+      <div class="inv"><span class="inv-code">I5</span><div class="inv-text"><strong>Integrität</strong> — Hash stimmt mit Ledger überein</div></div>
+      <div class="inv"><span class="inv-code">I6</span><div class="inv-text"><strong>Authentizität</strong> — DID validiert</div></div>
+      <div class="inv"><span class="inv-code">I9</span><div class="inv-text"><strong>Nichtabstreitbarkeit</strong> — unwiderruflich</div></div>
+      <div class="inv"><span class="inv-code">I10</span><div class="inv-text"><strong>Souveränität</strong> — lokale Kontrolle</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">Der Siegeleffekt — Für Pioneers</div>
+  <p style="font-size:16px;font-style:italic;color:var(--seal);border-left:3px solid var(--gold);padding-left:16px;margin-top:8px">
+    "Wollen Sie, dass Ihr Kunde Ihr Dokument nur liest — oder soll er wissen, dass dieses Dokument ein einzigartiger, unfälschbarer Samen ist, versiegelt am 15. März 2026?"
+  </p>
+</div>
+
+<div class="footer">
+  <div class="footer-left">windi-domain.com/verify-public/<br>W-KEYS-001 · W-PAR-001 · I5 I6 I9 I10<br>Pioneer-Programm · 100 Plätze · Kempten, Bayern</div>
+  <div class="footer-mandate">"AI processes. Human decides.<br>WINDI guarantees."</div>
+</div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     ENGLISH
+═══════════════════════════════════════ -->
+<div class="lang-panel" id="panel-en">
+<div class="doc">
+
+<div class="header">
+  <div>
+    <div class="brand">WINDI Publishing House · Pioneer Document</div>
+    <h1>The End of the<br><em>Plastic Internet</em></h1>
+  </div>
+  <div class="header-seal">
+    <div class="seal-badge">W-PROV-PIONEER-001</div>
+    <div class="seal-date">Sealed · 2026-03-15</div>
+  </div>
+</div>
+
+<div class="axiom">
+  <strong>The problem is not a lack of data.</strong> It is the inability to prove that data is real. While AI generates content at scale, WINDI is the only infrastructure that delivers the <strong>Certificate of Origin of the Digital Atom.</strong>
+</div>
+
+<div class="two-col">
+  <div class="section">
+    <div class="section-label">The crisis</div>
+    <h2>Truth in collapse</h2>
+    <p>Deepfakes cost tourism 12–18% of revenue. Forged documents block legal proceedings. Fabricated news destroys reputations in hours. The market has lost the ability to distinguish the real from the generated.</p>
+  </div>
+  <div class="section">
+    <div class="section-label">The solution</div>
+    <h2>Reality Anchor</h2>
+    <p>PAR does not just compress data — it compresses uncertainty. Each <code style="font-family:JetBrains Mono,monospace;font-size:13px;background:var(--paper-dark);padding:1px 4px">.jmpg</code> is a reality atom: light enough to travel via WhatsApp, strong enough to withstand a court of law.</p>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">Irremediable proof · Genesis Record</div>
+  <div class="proof-block">
+    <div class="proof-line"><span class="lbl">Seed ID      </span><span class="val">SEED-4b5d7eb4ebef3dbabddae551</span></div>
+    <div class="proof-line"><span class="lbl">Activation   </span><span class="val">ACT-58f38363df294759e86db8b1</span></div>
+    <div class="proof-line"><span class="lbl">Hash SHA-256 </span><span class="val">e0e95e4a9c56aef403268e30789...</span></div>
+    <div class="proof-line"><span class="lbl">Schema       </span><span class="gld">JOURNALISM · Tier FREE → ORACLE</span></div>
+    <div class="proof-line"><span class="lbl">Ledger       </span><span class="gld">WINDI-PAR-GENESIS-20260315 · HIGH · IRREMEDIABLE</span></div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">Traditional API vs WINDI PAR</div>
+  <table class="compare">
+    <tr><th>Feature</th><th>Traditional API</th><th>WINDI PAR</th></tr>
+    <tr><td class="col-label">What it delivers</td><td class="col-a">Raw information</td><td class="col-b">Information + Proof of Origin</td></tr>
+    <tr><td class="col-label">Security</td><td class="col-a">HTTPS (transport)</td><td class="col-b">SHA-256 + Ledger (immutability)</td></tr>
+    <tr><td class="col-label">Traceability</td><td class="col-a">Deletable logs</td><td class="col-b">Eternal Virtue Receipts</td></tr>
+    <tr><td class="col-label">Trust</td><td class="col-a">"Trust our brand"</td><td class="col-b">"Don't trust — verify on the Ledger"</td></tr>
+    <tr><td class="col-label">Integration</td><td class="col-a">SDK, docs, weeks</td><td class="col-b">One <code style="font-family:JetBrains Mono,monospace;font-size:11px">curl</code> + instant verify_url</td></tr>
+  </table>
+</div>
+
+<div class="two-col">
+  <div class="section">
+    <div class="section-label">Sovereignty Tiers</div>
+    <div class="tiers">
+      <div class="tier"><div class="tier-name">SEED</div><div class="tier-rpm">10</div><div class="tier-unit">req/min</div></div>
+      <div class="tier"><div class="tier-name">NODAL</div><div class="tier-rpm">60</div><div class="tier-unit">req/min</div></div>
+      <div class="tier"><div class="tier-name">SOVEREIGN</div><div class="tier-rpm">300</div><div class="tier-unit">req/min</div></div>
+      <div class="tier"><div class="tier-name">ORACLE</div><div class="tier-rpm">∞</div><div class="tier-unit">unlimited</div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-label">Constitutional Guarantees</div>
+    <div class="inv-grid">
+      <div class="inv"><span class="inv-code">I5</span><div class="inv-text"><strong>Integrity</strong> — hash matches Ledger</div></div>
+      <div class="inv"><span class="inv-code">I6</span><div class="inv-text"><strong>Authenticity</strong> — DID validated</div></div>
+      <div class="inv"><span class="inv-code">I9</span><div class="inv-text"><strong>Non-Repudiation</strong> — irrevocable</div></div>
+      <div class="inv"><span class="inv-code">I10</span><div class="inv-text"><strong>Sovereignty</strong> — local control</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">The Seal Effect — For Pioneers</div>
+  <p style="font-size:16px;font-style:italic;color:var(--seal);border-left:3px solid var(--gold);padding-left:16px;margin-top:8px">
+    "Do you want your client to merely read your document — or to know that it is a unique seed, impossible to forge, sealed on 15 March 2026?"
+  </p>
+</div>
+
+<div class="footer">
+  <div class="footer-left">windi-domain.com/verify-public/<br>W-KEYS-001 · W-PAR-001 · I5 I6 I9 I10<br>Pioneer Program · 100 spots · Kempten, Bavaria</div>
+  <div class="footer-mandate">"AI processes. Human decides.<br>WINDI guarantees."</div>
+</div>
+</div>
+</div>
+
+<script>
+function setLang(lang, btn) {
+  document.querySelectorAll('.lang-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + lang).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>
