@@ -105,6 +105,16 @@ async def landing_page():
     return HTMLResponse(content="<h1>Coming Soon</h1>", status_code=200)
 
 
+@app.get("/pioneer/manifesto/", response_class=HTMLResponse)
+@app.get("/pioneer/manifesto", response_class=HTMLResponse)
+async def manifesto_page():
+    """Serve the Pioneer Manifesto — O Fim da Internet de Plástico."""
+    html_path = APP_DIR / "manifesto.html"
+    if html_path.exists():
+        return HTMLResponse(content=html_path.read_text(), status_code=200)
+    return HTMLResponse(content="<h1>Manifesto Coming Soon</h1>", status_code=200)
+
+
 @app.post("/api/pioneer/apply")
 async def submit_application(application: PioneerApplication):
     """Submit a Pioneer Program application."""
