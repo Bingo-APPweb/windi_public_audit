@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WINDI Desktop GEN 7 — Smart Zones</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+<body>
+    <!-- Command Bar -->
+    <header class="command-bar">
+        <div class="command-left">
+            <div class="windi-logo">WINDI</div>
+            <span class="version-tag">GEN 7</span>
+        </div>
+        <div class="command-center">
+            <div class="dragon-pulse" id="dragonPulse">
+                <span class="pulse-dot"></span>
+                <span class="pulse-label">Dragon</span>
+            </div>
+        </div>
+        <div class="command-right">
+            <div id="langSelector" class="lang-selector">
+                <button onclick="setLang('de')" data-lang="de">DE</button>
+                <button onclick="setLang('en')" data-lang="en">EN</button>
+                <button onclick="setLang('pt')" data-lang="pt">PT</button>
+            </div>
+            <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()" title="Toggle KLAR/NOIR">
+                <span id="themeIcon">☀</span>
+            </button>
+            <div class="api-keys-indicator" id="apiKeysIndicator">
+                <span class="key-icon">🔑</span>
+                <span class="key-status" data-i18n="keys">Keys</span>
+            </div>
+            <div class="user-avatar">🧑‍💻</div>
+        </div>
+    </header>
+
+    <!-- Smart Zones Container -->
+    <main class="smart-zones">
+        <!-- D1: Agent Corps -->
+        <section class="zone zone-d1" id="zoneD1">
+            <div class="zone-header">
+                <h2 data-i18n="d1_title">D1 — Agent Corps</h2>
+                <span class="zone-badge" data-i18n="constellation">Constellation</span>
+            </div>
+            <div class="zone-content">
+                <div class="agent-grid" id="agentGrid">
+                    <!-- Agents loaded dynamically -->
+                    <div class="agent-card loading">
+                        <div class="agent-icon">🔄</div>
+                        <div class="agent-name">Loading...</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- D2: Sovereign Editor -->
+        <section class="zone zone-d2" id="zoneD2">
+            <div class="zone-header">
+                <h2 data-i18n="d2_title">D2 — Sovereign Editor</h2>
+                <span class="zone-badge" data-i18n="canvas">Canvas</span>
+            </div>
+            <div class="zone-content">
+                <div class="editor-placeholder">
+                    <div class="onetouch-input">
+                        <input type="text"
+                               id="oneTouchInput"
+                               placeholder="What do you want to create?"
+                               autocomplete="off">
+                        <button class="onetouch-btn" id="oneTouchBtn">
+                            <span>→</span>
+                        </button>
+                    </div>
+                    <p class="editor-hint" id="oneTouchHint" data-i18n="hint_auto">One Touch — Type your intent, Dragon processes</p>
+                </div>
+                <div class="canvas-area" id="canvasArea" style="display:none;">
+                    <!-- Canvas content appears here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- D3: Governance Glass -->
+        <section class="zone zone-d3" id="zoneD3">
+            <div class="zone-header">
+                <h2 data-i18n="d3_title">D3 — Governance Glass</h2>
+                <span class="zone-badge" data-i18n="forensics">Forensics</span>
+            </div>
+            <div class="zone-content">
+                <div class="governance-panel">
+                    <div class="gov-item">
+                        <span class="gov-label" data-i18n="stage">Stage</span>
+                        <span class="gov-value" id="govStage">—</span>
+                    </div>
+                    <div class="gov-item">
+                        <span class="gov-label" data-i18n="session">Session</span>
+                        <span class="gov-value mono" id="govSession">—</span>
+                    </div>
+                    <div class="gov-item">
+                        <span class="gov-label" data-i18n="hash">Hash</span>
+                        <span class="gov-value mono" id="govHash">—</span>
+                    </div>
+                    <div class="gov-item">
+                        <span class="gov-label" data-i18n="i9gate">I9 Gate</span>
+                        <span class="gov-value" id="govI9" data-i18n="awaiting">Awaiting</span>
+                    </div>
+                </div>
+                <div class="seal-actions" id="sealActions" style="display:none;">
+                    <button class="btn-seal" id="btnApprove">Approve (I9)</button>
+                    <button class="btn-secondary" id="btnReject">Reject</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <span class="principle">"AI processes. Human decides. WINDI guarantees."</span>
+        <span class="footer-version">Liga IA+H · Kempten, Bavaria · 2026</span>
+    </footer>
+
+    <script src="static/app.js"></script>
+</body>
+</html>
