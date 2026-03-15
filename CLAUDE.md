@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.4.1
+**Version:** 1.6.0
 **Sealed:** 2026-03-15
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -417,6 +417,40 @@ LinkedIn com prova forense
 "Você já viu o que acontece quando pedes ao Dragon para analisar um contrato?"
         ↓
 Próximo Pioneer signup
+```
+
+---
+
+## 10.1 Pioneer Program — LIVE (2026-03-15)
+
+### URLs Públicos
+
+| URL | Status |
+|-----|--------|
+| `windi-domain.com/pioneer/` | ✅ HTTP 200 — One-Pager trilíngue PT/DE/EN |
+| `windi-domain.com/pioneer/florianopolis/` | ✅ HTTP 200 — Certificado Demo trilíngue |
+| `windi-domain.com/pioneer/manifesto/` | ✅ HTTP 200 — Manifesto |
+
+### Infraestrutura
+
+```
+Serviço:    FastAPI :8120
+Path:       /opt/windi/pioneer-landing/
+Ficheiros:  index.html + florianopolis/index.html + manifesto.html
+nginx:      Zero alteração (proxy já existia)
+Commit:     665cc50
+```
+
+### W-PAR-001 Genesis Record
+
+```
+Seed ID:      SEED-4b5d7eb4ebef3dbabddae551
+Activation:   ACT-58f38363df294759e86db8b1
+Hash:         sha256:e0e95e4a9c56aef403268e30789...
+Schema:       JOURNALISM · Tier FREE → ORACLE
+Ledger:       WINDI-PAR-GENESIS-20260315 · HIGH · IRREMEDIÁVEL
+Stats:        Seeds:3 · Activations:3
+Invariants:   I5 I6 I9 I10
 ```
 
 ---
