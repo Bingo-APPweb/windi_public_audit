@@ -407,11 +407,21 @@ async def agents_status():
 
 # === Static Files ===
 @app.get("/")
-async def root():
-    """Serve main index.html"""
-    index_path = STATIC_DIR / "index.html"
-    if index_path.exists():
-        return FileResponse(index_path)
+async def root(request: Request):
+    """Serve index.html (desktop) or mobile_index.html (mobile) based on UA"""
+    user_agent = request.headers.get('User-Agent', '')
+    is_mobile = any(x in user_agent for x in ['Mobile', 'Android', 'iPhone', 'iPad', 'iPod'])
+
+    # Select template based on device
+    template = 'mobile_index.html' if is_mobile else 'index.html'
+    template_path = STATIC_DIR / template
+
+    # Fallback to index.html if mobile template doesn't exist yet
+    if is_mobile and not template_path.exists():
+        template_path = STATIC_DIR / "index.html"
+
+    if template_path.exists():
+        return FileResponse(template_path)
     return {"message": "WINDI Desktop GEN 7", "status": "frontend pending"}
 
 
