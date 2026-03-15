@@ -622,6 +622,9 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | /api/status endpoint | ✅ Institutional Status agregador |
 | ONEWOW Receipt | ✅ WINDI-VIRTUE-ONEWOW-20260314 SELADO |
 | API Soberania | ✅ Verificado — zero anthropic no frontend |
+| W-ACCT-001 Bridge | ✅ /accounting/bridge/open — próprio |
+| W-AUDIT-001 Bridge | ✅ /audit/bridge/open — próprio |
+| **W-PAR-001 GENESIS** | ✅ **PRIMEIRO ATOMIZE REAL** — Seeds:3 Activations:3 |
 
 ### Mapa de Portas
 
@@ -661,6 +664,27 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | `/api/status` endpoint | 11:53 |
 | `status.html` dashboard | 11:55 |
 | **Tri-Divergence Engine v1.3.0** | **13:35** |
+| Mobile redirect v1.1.0 | 14:00 |
+| W-ACCT-001 bridge próprio | 14:05 |
+| W-AUDIT-001 bridge próprio | 14:06 |
+| **W-PAR-001 GENESIS SEALED** | **14:32** |
+
+### W-PAR-001 — Primeiro Atomize Real
+
+```
+Vault Entry:     WINDI-PAR-VAULT-20260315       ✅ SELADO
+Genesis Record:  WINDI-PAR-GENESIS-20260315     ✅ SELADO
+
+Seed ID:         SEED-4b5d7eb4ebef3dbabddae551
+Activation ID:   ACT-58f38363df294759e86db8b1
+Stream Token:    TTHf45Jb6i5_rNZkU_CZ83_xBd_ejjCt-3TA5JDyAms
+Forensic Hash:   sha256:e0e95e4a9c56aef403268e3078914b4772c7dfbf...
+
+Stats: Seeds:3 · Activations:3 · Vault:2
+Invariants: I5 I6 I9 I10 — validados em produção
+
+"O campo estava fértil. A semente foi plantada. O teletransporte é real."
+```
 
 ---
 
