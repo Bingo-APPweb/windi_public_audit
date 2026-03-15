@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://windi-domain.com/specs/market-schema-journalism.json",
+  "title": "WINDI Journalism Market Schema",
+  "description": "Schema for journalism and editorial content attestation",
+  "type": "object",
+  "properties": {
+    "sector": {
+      "const": "JOURNALISM",
+      "description": "Market sector identifier"
+    },
+    "document_type": {
+      "type": "string",
+      "enum": ["article", "editorial", "investigative_report", "press_release", "interview_transcript", "photo_essay"],
+      "description": "Type of journalistic content"
+    },
+    "publication": {
+      "type": "object",
+      "properties": {
+        "outlet_name": { "type": "string" },
+        "outlet_did": { "type": "string", "pattern": "^did:windi:" },
+        "editorial_tier": { "type": "string", "enum": ["LOCAL", "REGIONAL", "NATIONAL", "INTERNATIONAL"] }
+      },
+      "required": ["outlet_name"]
+    },
+    "attestation": {
+      "type": "object",
+      "properties": {
+        "author_did": { "type": "string", "pattern": "^did:windi:" },
+        "editor_approved": { "type": "boolean" },
+        "seal_date": { "type": "string", "format": "date-time" },
+        "content_hash": { "type": "string", "pattern": "^sha256:" },
+        "word_count": { "type": "integer", "minimum": 1 }
+      },
+      "required": ["seal_date", "content_hash", "editor_approved"]
+    },
+    "governance": {
+      "type": "object",
+      "properties": {
+        "i9_human_approved": { "type": "boolean", "const": true },
+        "grove_consensus": { "type": "string", "enum": ["ALL_AGREE", "TWO_VS_ONE", "ALL_DIFFER"] },
+        "stage": { "type": "string", "pattern": "^J[1-6]$" }
+      },
+      "required": ["i9_human_approved"]
+    }
+  },
+  "required": ["sector", "document_type", "attestation", "governance"]
+}

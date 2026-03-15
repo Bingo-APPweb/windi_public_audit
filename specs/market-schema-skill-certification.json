@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://windi-domain.com/specs/market-schema-skill-certification.json",
+  "title": "WINDI Skill Certification Market Schema",
+  "description": "Schema for professional skill and competency certification",
+  "type": "object",
+  "properties": {
+    "sector": {
+      "const": "SKILL_CERTIFICATION",
+      "description": "Market sector identifier"
+    },
+    "certification_type": {
+      "type": "string",
+      "enum": ["professional_license", "competency_certificate", "training_completion", "skill_assessment", "language_proficiency", "safety_certification"],
+      "description": "Type of skill certification"
+    },
+    "subject": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "did": { "type": "string", "pattern": "^did:windi:" },
+        "wallet_id": { "type": "string", "pattern": "^wal_" }
+      },
+      "required": ["name"]
+    },
+    "certification": {
+      "type": "object",
+      "properties": {
+        "skill_name": { "type": "string" },
+        "skill_level": { "type": "string", "enum": ["BEGINNER", "INTERMEDIATE", "ADVANCED", "EXPERT", "MASTER"] },
+        "issuing_authority": { "type": "string" },
+        "issuer_did": { "type": "string", "pattern": "^did:windi:" },
+        "issue_date": { "type": "string", "format": "date" },
+        "expiry_date": { "type": "string", "format": "date" },
+        "credential_id": { "type": "string" }
+      },
+      "required": ["skill_name", "skill_level", "issuing_authority", "issue_date"]
+    },
+    "attestation": {
+      "type": "object",
+      "properties": {
+        "seal_date": { "type": "string", "format": "date-time" },
+        "content_hash": { "type": "string", "pattern": "^sha256:" },
+        "tier": { "type": "string", "enum": ["SEED", "NODAL", "SOVEREIGN", "ORACLE"] },
+        "verification_url": { "type": "string", "format": "uri" }
+      },
+      "required": ["seal_date", "content_hash", "tier"]
+    },
+    "compliance": {
+      "type": "object",
+      "properties": {
+        "gdpr_compliant": { "type": "boolean" },
+        "eidas_level": { "type": "string", "enum": ["LOW", "SUBSTANTIAL", "HIGH"] },
+        "portable": { "type": "boolean", "description": "Can be used across EU jurisdictions" }
+      }
+    }
+  },
+  "required": ["sector", "certification_type", "subject", "certification", "attestation"]
+}
