@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://windi-domain.com/specs/market-schema-tourism.json",
+  "title": "WINDI Tourism Market Schema",
+  "description": "Schema for tourism sector document attestation",
+  "type": "object",
+  "properties": {
+    "sector": {
+      "const": "TOURISM",
+      "description": "Market sector identifier"
+    },
+    "document_type": {
+      "type": "string",
+      "enum": ["promotional_photo", "hotel_certificate", "tour_guide_license", "travel_agency_permit", "hospitality_rating"],
+      "description": "Type of tourism document"
+    },
+    "jurisdiction": {
+      "type": "string",
+      "description": "Geographic jurisdiction (e.g., Florianópolis, Bavaria)"
+    },
+    "attestation": {
+      "type": "object",
+      "properties": {
+        "issuer_did": { "type": "string", "pattern": "^did:windi:" },
+        "seal_date": { "type": "string", "format": "date-time" },
+        "content_hash": { "type": "string", "pattern": "^sha256:" },
+        "tier": { "type": "string", "enum": ["SEED", "NODAL", "SOVEREIGN", "ORACLE"] }
+      },
+      "required": ["issuer_did", "seal_date", "content_hash", "tier"]
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "establishment_name": { "type": "string" },
+        "location": { "type": "string" },
+        "rating_stars": { "type": "integer", "minimum": 1, "maximum": 5 },
+        "valid_until": { "type": "string", "format": "date" }
+      }
+    }
+  },
+  "required": ["sector", "document_type", "attestation"]
+}

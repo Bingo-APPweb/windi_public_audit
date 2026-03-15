@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI API Documentation</title>
+<link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css">
+<style>
+  body { margin: 0; background: #0F0F0F; }
+  .swagger-ui .topbar { background: #1A1A1A; padding: 10px 0; }
+  .swagger-ui .topbar .download-url-wrapper { display: none; }
+  .swagger-ui .info .title { color: #C9A84C; }
+  .swagger-ui .info .description { color: #E8E0CC; }
+  .swagger-ui .opblock.opblock-get { border-color: #2D6A2D; background: rgba(45,106,45,0.1); }
+  .swagger-ui .opblock.opblock-post { border-color: #C9A84C; background: rgba(201,168,76,0.1); }
+  .swagger-ui .scheme-container { background: #1A1A1A; }
+  .swagger-ui select { background: #2A2A2A; color: #E8E0CC; }
+  .windi-header {
+    background: linear-gradient(135deg, #1A1A1A 0%, #0F0F0F 100%);
+    padding: 20px;
+    text-align: center;
+    border-bottom: 2px solid #C9A84C;
+  }
+  .windi-logo { font-size: 24px; font-weight: 700; color: #C9A84C; letter-spacing: 0.15em; }
+  .windi-subtitle { font-size: 12px; color: #888; margin-top: 5px; }
+</style>
+</head>
+<body>
+<div class="windi-header">
+  <div class="windi-logo">WINDI</div>
+  <div class="windi-subtitle">API Documentation · W-KEYS-001</div>
+</div>
+<div id="swagger-ui"></div>
+<script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+<script>
+  window.onload = function() {
+    SwaggerUIBundle({
+      url: "/specs/w-keys-001-openapi.yaml",
+      dom_id: '#swagger-ui',
+      presets: [SwaggerUIBundle.presets.apis, SwaggerUIBundle.SwaggerUIStandalonePreset],
+      layout: "BaseLayout",
+      deepLinking: true,
+      defaultModelsExpandDepth: 1,
+      displayRequestDuration: true
+    });
+  }
+</script>
+</body>
+</html>

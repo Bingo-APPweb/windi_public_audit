@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://windi-domain.com/specs/market-schemas-index.json",
+  "title": "WINDI Market Schemas Index",
+  "description": "Index of all available market-specific schemas for WINDI API Keys",
+  "version": "1.0.0",
+  "sealed": "2026-03-15",
+  "schemas": {
+    "tourism": {
+      "name": "Tourism",
+      "description": "Hotels, travel agencies, tour guides, hospitality",
+      "file": "market-schema-tourism.json",
+      "url": "https://windi-domain.com/specs/market-schema-tourism.json",
+      "recommended_tier": "NODAL"
+    },
+    "journalism": {
+      "name": "Journalism",
+      "description": "News outlets, editorial content, press releases",
+      "file": "market-schema-journalism.json",
+      "url": "https://windi-domain.com/specs/market-schema-journalism.json",
+      "recommended_tier": "SOVEREIGN"
+    },
+    "skill_certification": {
+      "name": "Skill Certification",
+      "description": "Professional licenses, competency certificates, training",
+      "file": "market-schema-skill-certification.json",
+      "url": "https://windi-domain.com/specs/market-schema-skill-certification.json",
+      "recommended_tier": "NODAL"
+    }
+  },
+  "note": "Additional market schemas will be added as Pioneer partnerships expand."
+}
