@@ -1,13 +1,14 @@
 """
 W-GROVE-001 — Grove Orchestrator
 Domain extension do constitutional-agent (:8091)
-Version: 1.2.0
+Version: 1.3.0
 
 Iron Rule: Este arquivo é registado em blueprints/ e importado
 pelo constitutional-agent/agent.py — NÃO cria porta própria.
 
 Converted from FastAPI to Flask Blueprint for constitutional-agent integration.
 
+v1.3.0: Tri-Divergence Engine — I6 Constitutional Compliance (CLAUDE.md Section 7)
 v1.2.0: Parecer de Consultoria — PDF + HTML verification page
 v1.1.0: Honorarium Engine — Micro-consultancy pricing integration
 v1.0.3: Arena Bypass — chatType "arena" bypassa Dragon Hub para texto puro
@@ -466,6 +467,193 @@ Propõe arquitectura. Máximo 3 parágrafos."""
     },
 }
 
+# ══════════════════════════════════════════════════════════════════════════════
+# TRI-DIVERGENCE ENGINE — I6 Constitutional Compliance (v1.0.0)
+# ══════════════════════════════════════════════════════════════════════════════
+#
+# Implements CLAUDE.md Section 7: Grove Arena — Tri-Divergence (I6)
+# Status: ALL_AGREE | TWO_VS_ONE | ALL_DIFFER
+#
+# ══════════════════════════════════════════════════════════════════════════════
+
+def extract_position(agent_response: str, topic: str) -> dict:
+    """
+    Extrai posição do agente: SUPPORT | OPPOSE | NEUTRAL | CONDITIONAL
+    Usa Dragon para análise semântica.
+    """
+    try:
+        prompt = f"""Analisa a seguinte resposta de um agente sobre o tópico:
+
+TÓPICO: {topic}
+
+RESPOSTA DO AGENTE:
+{agent_response[:1500]}
+
+Classifica a POSIÇÃO do agente em relação ao tópico. Responde APENAS com um JSON:
+{{
+    "position": "SUPPORT" | "OPPOSE" | "NEUTRAL" | "CONDITIONAL",
+    "confidence": 0.0-1.0,
+    "key_argument": "resumo de 1 frase do argumento principal",
+    "conditions": "se CONDITIONAL, quais condições"
+}}
+
+REGRAS:
+- SUPPORT = a favor da proposta/ideia principal
+- OPPOSE = contra a proposta/ideia principal
+- NEUTRAL = não toma posição clara ou apresenta apenas factos
+- CONDITIONAL = a favor SE certas condições forem cumpridas"""
+
+        resp = requests.post(
+            f"{DRAGON_URL}/api/dragon/chat",
+            json={
+                "message": prompt,
+                "tier": "GOVERNANCE",
+                "chatType": "arena",
+                "maxTokens": 200
+            },
+            timeout=15
+        )
+
+        if resp.status_code == 200:
+            raw = resp.json().get("message", "{}")
+            # Extrair JSON da resposta
+            import re as regex
+            json_match = regex.search(r'\{[^{}]*\}', raw, regex.DOTALL)
+            if json_match:
+                return json.loads(json_match.group())
+
+        return {"position": "NEUTRAL", "confidence": 0.5, "key_argument": "Análise indisponível"}
+
+    except Exception as e:
+        return {"position": "NEUTRAL", "confidence": 0.0, "key_argument": f"Erro: {str(e)[:50]}"}
+
+
+def calculate_divergence_status(positions: list) -> dict:
+    """
+    Calcula status de divergência conforme I6.
+
+    Returns:
+        {
+            "status": "ALL_AGREE" | "TWO_VS_ONE" | "ALL_DIFFER",
+            "majority_position": "SUPPORT" | "OPPOSE" | ...,
+            "minority_agents": [...],
+            "requires_escalation": bool
+        }
+    """
+    if not positions:
+        return {"status": "ALL_AGREE", "majority_position": "NEUTRAL", "minority_agents": [], "requires_escalation": False}
+
+    # Contar posições (CONDITIONAL conta como SUPPORT parcial)
+    pos_counts = {"SUPPORT": 0, "OPPOSE": 0, "NEUTRAL": 0, "CONDITIONAL": 0}
+    agent_positions = {}
+
+    for p in positions:
+        pos = p.get("position", "NEUTRAL")
+        agent = p.get("agent", "unknown")
+        pos_counts[pos] = pos_counts.get(pos, 0) + 1
+        agent_positions[agent] = pos
+
+    total = len(positions)
+
+    # Determinar status
+    # ALL_AGREE: todos na mesma posição (ou SUPPORT + CONDITIONAL)
+    support_like = pos_counts.get("SUPPORT", 0) + pos_counts.get("CONDITIONAL", 0)
+    oppose_count = pos_counts.get("OPPOSE", 0)
+    neutral_count = pos_counts.get("NEUTRAL", 0)
+
+    if support_like == total or oppose_count == total:
+        majority = "SUPPORT" if support_like == total else "OPPOSE"
+        return {
+            "status": "ALL_AGREE",
+            "majority_position": majority,
+            "minority_agents": [],
+            "requires_escalation": False,
+            "breakdown": pos_counts
+        }
+
+    # ALL_DIFFER: cada agente com posição diferente (alta fragmentação)
+    unique_positions = len([c for c in pos_counts.values() if c > 0])
+    if unique_positions >= 3 and max(pos_counts.values()) <= total / 2:
+        return {
+            "status": "ALL_DIFFER",
+            "majority_position": "FRAGMENTED",
+            "minority_agents": list(agent_positions.keys()),
+            "requires_escalation": True,  # I9: escalar para Human Dragon
+            "breakdown": pos_counts
+        }
+
+    # TWO_VS_ONE: maioria clara mas com minoria
+    majority_pos = max(pos_counts, key=pos_counts.get)
+    minority_agents = [a for a, p in agent_positions.items() if p != majority_pos]
+
+    return {
+        "status": "TWO_VS_ONE",
+        "majority_position": majority_pos,
+        "minority_agents": minority_agents,
+        "requires_escalation": False,
+        "breakdown": pos_counts
+    }
+
+
+def generate_grove_synthesis(topic: str, responses: list, divergence: dict) -> str:
+    """
+    Gera GROVE SÍNTESE — recomendação institucional unificada.
+    Só válida com human_approved=true (I9).
+    """
+    try:
+        # Preparar resumo das posições
+        positions_summary = "\n".join([
+            f"[{r.get('agent')}] {r.get('position', {}).get('position', 'N/A')}: {r.get('position', {}).get('key_argument', 'N/A')}"
+            for r in responses
+        ])
+
+        prompt = f"""Tu és o GROVE ARENA — Conselho de Sábios da WINDI.
+
+TÓPICO: {topic}
+
+POSIÇÕES DOS AGENTES:
+{positions_summary}
+
+STATUS DE DIVERGÊNCIA: {divergence.get('status')}
+POSIÇÃO MAIORITÁRIA: {divergence.get('majority_position')}
+AGENTES MINORITÁRIOS: {', '.join(divergence.get('minority_agents', [])) or 'Nenhum'}
+
+Gera a GROVE SÍNTESE — recomendação institucional unificada.
+
+FORMATO OBRIGATÓRIO:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+GROVE SÍNTESE
+
+[Recomendação clara em 2-3 frases]
+
+FUNDAMENTO: [Princípio constitucional que suporta]
+RISCO SE IGNORADO: [Consequência de não seguir]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+{"⚠️ ATENÇÃO: STATUS ALL_DIFFER — Esta síntese requer OBRIGATORIAMENTE aprovação do Human Dragon (I9)." if divergence.get('requires_escalation') else ""}
+
+Termina SEMPRE com: → Decisão final: Human Dragon."""
+
+        resp = requests.post(
+            f"{DRAGON_URL}/api/dragon/chat",
+            json={
+                "message": prompt,
+                "tier": "GOVERNANCE",
+                "chatType": "arena",
+                "maxTokens": 400
+            },
+            timeout=20
+        )
+
+        if resp.status_code == 200:
+            return resp.json().get("message", "Síntese indisponível")
+
+        return "Síntese indisponível — Dragon offline"
+
+    except Exception as e:
+        return f"Erro na síntese: {str(e)[:100]}"
+
+
 @grove_bp.route("/arena", methods=["POST"])
 def arena_debate():
     """
@@ -473,18 +661,26 @@ def arena_debate():
     Cada agente selecionado responde com sua perspectiva via Dragon,
     INFORMADO pelo conhecimento constitucional do W-LIB-001.
 
+    v1.3.0: Tri-Divergence Engine — I6 Constitutional Compliance
+
     Input: {
         "topic": "A ideia a debater",
         "agents": ["W-LEGAL-001", "W-COMPLY-001"],
         "session_id": "GS-...",  # opcional
-        "round": 1  # rodada do debate
+        "round": 1,  # rodada do debate
+        "tri_divergence": true  # ← NOVO: ativa análise I6
     }
 
     Output: {
-        "responses": [
-            {"agent": "W-LEGAL-001", "name": "Justiça", "emoji": "⚖️", "message": "..."},
-            ...
-        ]
+        "responses": [...],
+        "tri_divergence": {  # ← NOVO: se tri_divergence=true
+            "divergence_status": "ALL_AGREE" | "TWO_VS_ONE" | "ALL_DIFFER",
+            "majority_position": "SUPPORT" | "OPPOSE" | ...,
+            "minority_agents": [...],
+            "requires_escalation": bool,  # true se ALL_DIFFER → escalar para Human Dragon
+            "grove_synthesis": "Recomendação unificada...",
+            "human_approved": false  # I9: só válido quando true
+        }
     }
     """
     data = request.get_json() or {}
@@ -495,6 +691,7 @@ def arena_debate():
     debate_round = data.get("round", 1)
     store_nodes = data.get("store_nodes", True)  # Gravar no grafo?
     devil_advocate = data.get("devil_advocate", False)  # Ativar Devil's Advocate no Architect?
+    tri_divergence = data.get("tri_divergence", False)  # I6: Ativar análise Tri-Divergence
 
     if not topic:
         return jsonify({"error": "topic is required"}), 400
@@ -687,14 +884,58 @@ Máximo 3 parágrafos, linguagem do tópico."""
             except Exception:
                 pass  # Não falha se gravar der erro
 
-    return jsonify({
+    # ══════════════════════════════════════════════════════════════════════════
+    # TRI-DIVERGENCE ANALYSIS — I6 Constitutional Compliance
+    # ══════════════════════════════════════════════════════════════════════════
+    divergence_result = None
+    grove_synthesis = None
+
+    if tri_divergence and len(responses) >= 2:
+        print(f"[Arena] Tri-Divergence analysis starting for {len(responses)} agents...")
+
+        # 1. Extrair posição de cada agente
+        positions = []
+        for r in responses:
+            pos = extract_position(r.get("message", ""), topic)
+            pos["agent"] = r.get("agent")
+            pos["name"] = r.get("name")
+            pos["emoji"] = r.get("emoji")
+            positions.append(pos)
+            r["position"] = pos  # Adicionar ao response
+
+        # 2. Calcular status de divergência
+        divergence_result = calculate_divergence_status(positions)
+        print(f"[Arena] Divergence status: {divergence_result.get('status')}")
+
+        # 3. Gerar síntese
+        grove_synthesis = generate_grove_synthesis(topic, responses, divergence_result)
+
+    # Construir resposta
+    result = {
         "status": "arena_complete",
         "round": debate_round,
         "topic": topic[:100],
         "responses": responses,
         "agents_responded": len(responses),
         "principle": "AI processes. Human decides. WINDI guarantees."
-    })
+    }
+
+    # Adicionar Tri-Divergence se calculado
+    if divergence_result:
+        result["tri_divergence"] = {
+            "enabled": True,
+            "invariant": "I6",
+            "divergence_status": divergence_result.get("status"),
+            "majority_position": divergence_result.get("majority_position"),
+            "minority_agents": divergence_result.get("minority_agents", []),
+            "requires_escalation": divergence_result.get("requires_escalation", False),
+            "breakdown": divergence_result.get("breakdown", {}),
+            "grove_synthesis": grove_synthesis,
+            "human_approved": False,  # I9: sempre começa False
+            "note": "Síntese só válida com human_approved=true (I9)"
+        }
+
+    return jsonify(result)
 
 
 @grove_bp.route("/ideas", methods=["GET"])
