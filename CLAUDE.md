@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.7.3
+**Version:** 1.7.4
 **Sealed:** 2026-03-15
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -624,6 +624,9 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | /api/status endpoint | ✅ Institutional Status agregador |
 | ONEWOW Receipt | ✅ WINDI-VIRTUE-ONEWOW-20260314 SELADO |
 | API Soberania | ✅ Verificado — zero anthropic no frontend |
+| VPR System | ✅ /verify-public/vpr/jober/ LIVE |
+| Three Dragons Seal | ✅ NOIR edition deployed |
+| nginx VPR static | ✅ location blocks configurados |
 
 ### Mapa de Portas
 
@@ -668,6 +671,9 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | **Mobile GEN7 UA detection** | **21:07** |
 | `mobile_index.html` criado | 21:10 |
 | nginx `/mobile/` → :8119 proxy | 21:14 |
+| **VPR /jober/ LIVE** | **23:45** |
+| nginx VPR static location | 23:50 |
+| **Three Dragons Seal NOIR** | **23:55** |
 
 ---
 
@@ -783,6 +789,125 @@ Rotação com 24h grace period.
 ### Break-even
 
 1 cliente NODAL (€49/mês) > custo infra (€4/mês). ✅ Sustentável desde o dia 1.
+
+---
+
+## 14. VPR System — Verified Professional Records · 15 Mar 2026
+
+**Status:** LIVE
+**URL Pública:** `https://windi-domain.com/verify-public/vpr/jober/`
+
+### O que é VPR
+
+VPR (Verified Professional Record) é o sistema de páginas públicas verificáveis para profissionais da rede WINDI. Cada página VPR mostra:
+- Identidade verificada do profissional
+- Receipts reais do Forensic Ledger (nunca placeholders)
+- Three Dragons Seal institucional
+- Links para verificação pública de cada receipt
+
+### Infraestrutura
+
+```
+Path:           /opt/windi/verify-public/vpr/
+Primeiro VPR:   /jober/index.html (Pioneer #001)
+Static Assets:  /opt/windi/verify-public/static/
+nginx:          location /verify-public/vpr/ + /verify-public/static/
+```
+
+### nginx VPR Configuration
+
+```nginx
+# VPR Static Pages (Verified Professional Records)
+location /verify-public/vpr/ {
+    alias /opt/windi/verify-public/vpr/;
+    index index.html;
+    try_files $uri $uri/ =404;
+    add_header Cache-Control "public, max-age=3600";
+    add_header X-WINDI-Service "vpr-static" always;
+}
+
+# Static assets (seals, icons)
+location /verify-public/static/ {
+    alias /opt/windi/verify-public/static/;
+    add_header Cache-Control "public, max-age=86400";
+    add_header X-WINDI-Service "verify-static" always;
+}
+```
+
+### VPR Jober — Receipts Reais
+
+| Receipt ID | Tipo | Verify URL |
+|------------|------|------------|
+| WINDI-VIRTUE-ONEWOW-20260314 | Milestone | /verify-public/?id=... |
+| WINDI-PAR-GENESIS-20260315 | Genesis | /verify-public/?id=... |
+| WINDI-PIONEER-MANIFESTO-20260315 | Manifesto | /verify-public/?id=... |
+
+### Regra Constitucional — Integridade do Ledger
+
+```
+⚠️ REGRA I11 ESTENDIDA — NUNCA VIOLAR
+
+O Ledger manifesta eventos REAIS, nunca placeholders.
+
+❌ PROIBIDO: Criar receipts artificiais "para demo"
+❌ PROIBIDO: Inventar hashes ou receipt_ids
+❌ PROIBIDO: Selar documentos que não existem
+
+✅ CORRECTO: Aguardar evento real antes de criar receipt
+✅ CORRECTO: Usar apenas receipts já existentes no Ledger
+✅ CORRECTO: Se não há receipt, não mostrar na página
+
+"O Ledger é evidência forense de eventos reais.
+Se o Gêmeo inventa um receipt... isso é falsificação."
+— Human Dragon, 15 Mar 2026
+```
+
+---
+
+## 15. Three Dragons Seal — NOIR Edition · 15 Mar 2026
+
+**Status:** DEPLOYED
+**URL:** `https://windi-domain.com/verify-public/static/dragon-three-seal.svg`
+**Versão:** NOIR (fundo escuro, cores vibrantes)
+
+### Design NOIR
+
+```
+Background:     #1A1208 (NOIR profundo)
+Outer Ring:     #C9A84C (Dragon Gold)
+Arc Text:       "GUARDIAN · ARCHITECT · WITNESS"
+Arc Bottom:     "WINDI PUBLISHING HOUSE · EST. 2025"
+Center W:       #C9A84C
+```
+
+### Iconografia dos Três Dragões
+
+| Dragão | Cor | Símbolo | Significado |
+|--------|-----|---------|-------------|
+| Guardian | #85B7EB (Azul claro) | Escudo + chevron | Proteção & Ética |
+| Architect | #EF9F27 (Amber) | Compasso | Estrutura & Construção |
+| Witness | #5DCAA5 (Teal) | Olho | Observação & Validação |
+
+### Ficheiro
+
+```
+Path: /opt/windi/verify-public/static/dragon-three-seal.svg
+Size: 120×120px (em uso na verify-public)
+Viewbox: 0 0 200 200
+```
+
+### Uso
+
+```html
+<img src="/verify-public/static/dragon-three-seal.svg"
+     alt="WINDI Three Dragons Seal"
+     style="width: 120px; height: 120px;">
+```
+
+O selo aparece em:
+- Páginas VPR (Verified Professional Records)
+- Verify Public (prova de receipts)
+- Documentos selados (watermark)
 
 ---
 
