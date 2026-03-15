@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.6.0
+**Version:** 1.7.0
 **Sealed:** 2026-03-15
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -622,9 +622,6 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | /api/status endpoint | ✅ Institutional Status agregador |
 | ONEWOW Receipt | ✅ WINDI-VIRTUE-ONEWOW-20260314 SELADO |
 | API Soberania | ✅ Verificado — zero anthropic no frontend |
-| W-ACCT-001 Bridge | ✅ /accounting/bridge/open — próprio |
-| W-AUDIT-001 Bridge | ✅ /audit/bridge/open — próprio |
-| **W-PAR-001 GENESIS** | ✅ **PRIMEIRO ATOMIZE REAL** — Seeds:3 Activations:3 |
 
 ### Mapa de Portas
 
@@ -664,27 +661,67 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | `/api/status` endpoint | 11:53 |
 | `status.html` dashboard | 11:55 |
 | **Tri-Divergence Engine v1.3.0** | **13:35** |
-| Mobile redirect v1.1.0 | 14:00 |
-| W-ACCT-001 bridge próprio | 14:05 |
-| W-AUDIT-001 bridge próprio | 14:06 |
-| **W-PAR-001 GENESIS SEALED** | **14:32** |
 
-### W-PAR-001 — Primeiro Atomize Real
+---
+
+## W-KEYS-001 — API Key System · SEALED · 15 Mar 2026
+
+**Status:** IRREMEDIÁVEL
+**"AI processes. Human decides. WINDI guarantees."**
+
+### O que foi deployado
+
+| Bloco | O quê | Estado |
+|-------|-------|--------|
+| Bloco 1 | Key Manager — `:8091` | ✅ LIVE (9/9 testes) |
+| Bloco 2 | nginx Gateway — 4 tiers + rate limits | ✅ LIVE |
+| Bloco 3 | OpenAPI W-STD-API-001 v1.1 + 3 schemas | ✅ LIVE |
+
+### Tiers em produção
+
+| Tier | Rate/min | Quota/hora | Preço |
+|------|----------|-----------|-------|
+| SEED | 10 | 100 | €0 |
+| NODAL | 60 | 1.000 | €49–€149/mês |
+| SOVEREIGN | 300 | 10.000 | €999+/mês |
+| ORACLE | ∞ | ∞ | €0.10/prova |
+
+### URLs em produção
 
 ```
-Vault Entry:     WINDI-PAR-VAULT-20260315       ✅ SELADO
-Genesis Record:  WINDI-PAR-GENESIS-20260315     ✅ SELADO
-
-Seed ID:         SEED-4b5d7eb4ebef3dbabddae551
-Activation ID:   ACT-58f38363df294759e86db8b1
-Stream Token:    TTHf45Jb6i5_rNZkU_CZ83_xBd_ejjCt-3TA5JDyAms
-Forensic Hash:   sha256:e0e95e4a9c56aef403268e3078914b4772c7dfbf...
-
-Stats: Seeds:3 · Activations:3 · Vault:2
-Invariants: I5 I6 I9 I10 — validados em produção
-
-"O campo estava fértil. A semente foi plantada. O teletransporte é real."
+https://windi-domain.com/api-docs/                          — Swagger UI (tema NOIR)
+https://windi-domain.com/api-keys/tiers                     — Tier listing
+https://windi-domain.com/api-keys/health                    — Key Manager health
+https://windi-domain.com/specs/market-schema-tourism.json
+https://windi-domain.com/specs/market-schema-journalism.json
+https://windi-domain.com/specs/market-schema-skill-certification.json
 ```
+
+### Ficheiros no servidor
+
+```
+/opt/windi/api-docs/index.html                        — Swagger UI
+/opt/windi/specs/market-schema-tourism.json           — Schema Tourism
+/opt/windi/specs/market-schema-journalism.json        — Schema Journalism
+/opt/windi/specs/market-schema-skill-certification.json — Schema Skill Certification
+/opt/windi/specs/market-schemas-index.json            — Index
+```
+
+### Formato de key
+
+```
+wnd_live_...   → produção
+wnd_test_...   → sandbox
+```
+
+Identidade dupla: `wallet_id` + `owner_did`
+Rotação com 24h grace period.
+`/api-keys/*` → sempre 5 req/min, independente do tier (I9).
+`/verify-public/` → sempre FREE, sem key, sem quota (C-PROV-001).
+
+### Break-even
+
+1 cliente NODAL (€49/mês) > custo infra (€4/mês). ✅ Sustentável desde o dia 1.
 
 ---
 
