@@ -75,6 +75,115 @@ REGRAS:
 - Idioma: detectar automaticamente pelo intent (PT/DE/EN)
 - NUNCA perguntar. NUNCA menus. PRODUZ HTML AGORA."""
 
+WEB_SYSTEM_PROMPT = """És W-COMM-001, especialista em web design institucional WINDI.
+REGRA ABSOLUTA: Output = HTML completo num único ficheiro. NUNCA frameworks externos.
+
+Gera IMEDIATAMENTE uma página web com estrutura:
+<html><head><style>/* CSS inline responsivo */</style></head>
+<body>
+  <section class="windi-hero">/* Hero com título + CTA */</section>
+  <section class="windi-about">/* Sobre */</section>
+  <section class="windi-services">/* Serviços/Features 3 colunas */</section>
+  <section class="windi-cta">/* Call to action */</section>
+  <footer class="windi-footer">/* Footer WINDI */</footer>
+<script>/* JS inline mínimo */</script>
+</body></html>
+
+REGRAS:
+- Paleta KLAR (#F5F0E0 bg, #2C2924 texto, #8B6914 gold) ou NOIR (#0E0E14 bg)
+- Mobile-first, responsivo, sem dependências externas
+- Conteúdo real baseado no intent — NUNCA placeholders
+- Idioma detectado automaticamente (PT/DE/EN)
+- NUNCA perguntar. PRODUZ HTML COMPLETO AGORA."""
+
+ART_SYSTEM_PROMPT = """És W-COMM-001, especialista em design gráfico institucional WINDI.
+REGRA ABSOLUTA: Output = SVG completo e autocontido. NUNCA imagens externas.
+
+Gera IMEDIATAMENTE um SVG artístico com:
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <defs>/* gradients, fonts, filters */</defs>
+  <!-- Fundo, elementos visuais, tipografia, branding -->
+  <!-- Composição profissional: hierarquia visual clara -->
+</svg>
+
+REGRAS:
+- Paleta WINDI: #8B6914 (gold), #0a0a0a (escuro), #F5F0E0 (claro)
+- Tipografia via SVG text com font-family institucional
+- Composição equilibrada: título dominante + subtítulo + elementos visuais
+- Branding WINDI no rodapé (discreto)
+- Conteúdo real baseado no intent — NUNCA placeholders
+- Idioma detectado automaticamente (PT/DE/EN)
+- NUNCA perguntar. PRODUZ SVG AGORA."""
+
+DATA_SYSTEM_PROMPT = """És W-COMM-001, especialista em visualização de dados WINDI.
+REGRA ABSOLUTA: Output = HTML completo com charts via Chart.js CDN.
+
+Gera IMEDIATAMENTE um dashboard com:
+<html><head>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>/* CSS dashboard inline */</style>
+</head>
+<body class="windi-dashboard">
+  <header>/* Título + métricas principais */</header>
+  <main>/* Grid de charts: bar, line, doughnut conforme dados */</main>
+  <footer>/* Fonte + timestamp */</footer>
+<script>/* Chart.js configs com dados reais do intent */</script>
+</body></html>
+
+REGRAS:
+- Cores WINDI nos charts: #8B6914, #2C2924, #6B6560, #DDD6C2
+- Dados inventados mas plausíveis baseados no intent
+- Mínimo 2 charts, máximo 4
+- Layout responsivo tipo corretora de valores
+- Idioma detectado automaticamente (PT/DE/EN)
+- NUNCA perguntar. PRODUZ HTML AGORA."""
+
+CODE_SYSTEM_PROMPT = """És W-COMM-001, especialista em documentação técnica WINDI.
+REGRA ABSOLUTA: Output = HTML com código syntax-highlighted via highlight.js CDN.
+
+Gera IMEDIATAMENTE documentação técnica com:
+<html><head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <style>/* CSS docs inline */</style>
+</head>
+<body class="windi-docs">
+  <nav>/* Índice lateral */</nav>
+  <main>
+    <h1>/* Título */</h1>
+    <section>/* Descrição + exemplos de código */</section>
+    <pre><code class="language-python">/* Código real */</code></pre>
+  </main>
+<script>hljs.highlightAll();</script>
+</body></html>
+
+REGRAS:
+- Código real e funcional baseado no intent
+- Comentários em PT/DE/EN conforme idioma detectado
+- Estrutura: Overview → Instalação → Uso → Exemplos → API Reference
+- NUNCA perguntar. PRODUZ HTML AGORA."""
+
+MEDIA_SYSTEM_PROMPT = """És W-COMM-001, especialista em comunicação digital WINDI.
+REGRA ABSOLUTA: Output = HTML completo pronto para envio/publicação.
+
+Gera IMEDIATAMENTE conteúdo media com estrutura:
+<html><head><style>/* CSS email/social inline, máx 600px width */</style></head>
+<body class="windi-media">
+  <header class="media-header">/* Logo WINDI + data */</header>
+  <section class="media-hero">/* Título principal + imagem placeholder SVG */</section>
+  <section class="media-body">/* Conteúdo principal em blocos */</section>
+  <section class="media-cta">/* Call to action com botão */</section>
+  <footer class="media-footer">/* Unsubscribe + contacto */</footer>
+</body></html>
+
+REGRAS:
+- Layout 600px max-width (compatível email + social)
+- Inline CSS para compatibilidade máxima
+- Conteúdo real baseado no intent
+- Tom adequado: newsletter=informativo, press kit=formal, social=conciso
+- Idioma detectado automaticamente (PT/DE/EN)
+- NUNCA perguntar. PRODUZ HTML AGORA."""
+
 # === Configuration ===
 PORT = int(os.getenv("PORT", "8119"))
 DRAGON_URL = os.getenv("DRAGON_URL", "http://localhost:8108")
@@ -390,34 +499,73 @@ async def onetouch_execute(req: OneTouchRequest):
                 session_id = data.get("session_id", f"OT-{intent_hash}")
 
                 # Phase 4: Call Dragon to generate draft (HTML Canvas mode)
-                # ── Intent detection: slides vs document ──────────────────
+                # ── Intent detection: 7 motores ───────────────────────────
                 _intent_lower = req.intent.lower()
                 _is_slides = any(kw in _intent_lower for kw in [
                     "präsentation", "presentation", "slides", "slide deck",
                     "apresentação", "apresentacao", "slide", "pitchdeck", "pitch deck"
                 ])
+                _is_web = any(kw in _intent_lower for kw in [
+                    "website", "página web", "pagina web", "landing page",
+                    "site", "webpage", "microsite", "portfólio web", "portfolio web"
+                ])
+                _is_art = any(kw in _intent_lower for kw in [
+                    "poster", "flyer", "capa", "cartaz", "banner",
+                    "identidade visual", "arte", "design gráfico", "design grafico",
+                    "ilustração", "ilustracao", "svg"
+                ])
+                _is_data = any(kw in _intent_lower for kw in [
+                    "dashboard", "infográfico", "infografico", "gráfico", "grafico",
+                    "chart", "relatório visual", "relatorio visual", "dados visuais",
+                    "visualização", "visualizacao"
+                ])
+                _is_code = any(kw in _intent_lower for kw in [
+                    "script", "código", "codigo", "api", "função", "funcao",
+                    "documentação técnica", "documentacao tecnica", "programar",
+                    "endpoint", "biblioteca", "library"
+                ])
+                _is_media = any(kw in _intent_lower for kw in [
+                    "newsletter", "press kit", "social", "instagram", "linkedin",
+                    "post", "email marketing", "campanha", "comunicado de imprensa"
+                ])
 
-                if _is_slides and _ANTHROPIC_KEY:
-                    # Cirurgia B: Claude directo com SLIDES_SYSTEM_PROMPT
+                # Seleccionar system prompt pelo motor detectado
+                _active_motor = None
+                _active_prompt = None
+                if _is_slides:
+                    _active_motor, _active_prompt = "SLIDES", SLIDES_SYSTEM_PROMPT
+                elif _is_web:
+                    _active_motor, _active_prompt = "WEB", WEB_SYSTEM_PROMPT
+                elif _is_art:
+                    _active_motor, _active_prompt = "ART", ART_SYSTEM_PROMPT
+                elif _is_data:
+                    _active_motor, _active_prompt = "DATA", DATA_SYSTEM_PROMPT
+                elif _is_code:
+                    _active_motor, _active_prompt = "CODE", CODE_SYSTEM_PROMPT
+                elif _is_media:
+                    _active_motor, _active_prompt = "MEDIA", MEDIA_SYSTEM_PROMPT
+
+                if _active_motor and _ANTHROPIC_KEY:
+                    # Motor detectado: Claude directo com system prompt específico
                     import anthropic as _anthropic
                     import asyncio as _asyncio
-                    def _call_slides():
+                    def _call_motor():
                         _c = _anthropic.Anthropic(api_key=_ANTHROPIC_KEY)
                         _r = _c.messages.create(
                             model="claude-sonnet-4-20250514",
-                            max_tokens=3000,
-                            system=SLIDES_SYSTEM_PROMPT,
+                            max_tokens=4000,
+                            system=_active_prompt,
                             messages=[{"role": "user", "content": req.intent}]
                         )
                         return _r.content[0].text
-                    draft_message = await _asyncio.to_thread(_call_slides)
+                    draft_message = await _asyncio.to_thread(_call_motor)
 
                     # ── Ledger logging para osmose (training) ──────────────
                     try:
                         _ledger_payload = {
-                            "id": f"WINDI-SLIDES-{session_id}",
+                            "id": f"WINDI-{_active_motor}-{session_id}",
                             "actor": "gen7-gateway",
-                            "app": "canvas-presentation",
+                            "app": f"canvas-{_active_motor.lower()}",
                             "doc_name": req.intent[:80],
                             "doc_type": "doc",  # Ledger requires valid type
                             "governance_level": "HIGH",
@@ -428,7 +576,7 @@ async def onetouch_execute(req: OneTouchRequest):
                                 "model": "claude-sonnet-4-20250514",
                                 "tokens_estimate": 4000,
                                 "training_eligible": True,
-                                "canvas_type": "slides",
+                                "canvas_type": _active_motor.lower(),
                             }
                         }
                         # Await with short timeout (don't block Canvas long)
