@@ -875,7 +875,7 @@ body {
 }
 
 .slide {
-    min-height: 400px;
+    min-height: 100vh;
     padding: 60px 80px;
     display: flex;
     flex-direction: column;
