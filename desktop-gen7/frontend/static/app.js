@@ -61,6 +61,45 @@ const I18N = {
     }
 };
 
+// === Agent Name Translations ===
+const AGENT_NAMES = {
+    de: {
+        'W-COMM-001': 'Mitteilung',
+        'W-LEGAL-001': 'Justiz',
+        'W-NOTARY-001': 'Notariat',
+        'W-JOURN-001': 'Journalist',
+        'W-AUDIT-001': 'Prüfer',
+        'W-COMPLY-001': 'Compliance',
+        'W-ACCT-001': 'Buchhalter',
+        'GROVE-ARENA': 'Grove Arena'
+    },
+    en: {
+        'W-COMM-001': 'Communiqué',
+        'W-LEGAL-001': 'Legal',
+        'W-NOTARY-001': 'Notary',
+        'W-JOURN-001': 'Journalist',
+        'W-AUDIT-001': 'Auditor',
+        'W-COMPLY-001': 'Compliance',
+        'W-ACCT-001': 'Accountant',
+        'GROVE-ARENA': 'Grove Arena'
+    },
+    pt: {
+        'W-COMM-001': 'Comunicado',
+        'W-LEGAL-001': 'Jurídico',
+        'W-NOTARY-001': 'Notarial',
+        'W-JOURN-001': 'Jornalista',
+        'W-AUDIT-001': 'Auditor',
+        'W-COMPLY-001': 'Conformidade',
+        'W-ACCT-001': 'Contabilista',
+        'GROVE-ARENA': 'Arena Grove'
+    }
+};
+
+// Get translated agent name
+function getAgentName(agentId) {
+    return AGENT_NAMES[currentLang]?.[agentId] || AGENT_NAMES['en']?.[agentId] || agentId;
+}
+
 let currentLang = localStorage.getItem('windi-lang') || 'en';
 
 function setLang(lang) {
@@ -71,6 +110,10 @@ function setLang(lang) {
     document.querySelectorAll('#langSelector button').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.lang === lang);
     });
+    // Reload agent names with new language
+    if (typeof loadAgentCorps === 'function') {
+        loadAgentCorps();
+    }
 }
 
 function t(key, vars = {}) {
@@ -218,7 +261,7 @@ async function loadAgentCorps() {
 
             card.innerHTML = `
                 <div class="agent-icon"></div>
-                <div class="agent-name">${info.name || agentId}</div>
+                <div class="agent-name">${getAgentName(agentId)}</div>
                 <div class="agent-status ${statusClass}"></div>
             `;
 
@@ -246,13 +289,14 @@ function selectAgent(agentId) {
         document.querySelectorAll('.agent-card').forEach(card => {
             card.classList.remove('active');
         });
-        updateHint('Auto-routing enabled — Dragon will detect intent');
+        updateHint(t('hint_auto'));
     } else {
         currentAgent = agentId;
         document.querySelectorAll('.agent-card').forEach(card => {
             card.classList.toggle('active', card.dataset.agentId === agentId);
         });
-        updateHint(`Agent: ${agentId} — click again to enable auto-routing`);
+        const agentName = getAgentName(agentId);
+        updateHint(`${agentName} — ${t('hint_auto').split('—')[0].trim()}`);
     }
 }
 
@@ -422,8 +466,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Initial hint
-    updateHint('Auto-routing enabled — Dragon will detect intent');
+    // Initial hint (uses translation)
+    updateHint(t('hint_auto'));
 });
 
 console.log('[GEN7] WINDI Desktop GEN 7 initialized');
