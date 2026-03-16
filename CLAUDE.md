@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.7.4
-**Sealed:** 2026-03-15
+**Version:** 1.7.5
+**Sealed:** 2026-03-16
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -602,7 +602,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 
 ---
 
-## 13. Estado Actual — 15 Março 2026
+## 13. Estado Actual — 16 Março 2026
 
 ### Completado
 
@@ -627,6 +627,8 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | VPR System | ✅ /verify-public/vpr/jober/ LIVE |
 | Three Dragons Seal | ✅ NOIR edition deployed |
 | nginx VPR static | ✅ location blocks configurados |
+| Arquitectura Unificada | ✅ UA detection removido — Smart Zones para todos |
+| i18n Agent Names | ✅ DE/EN/PT — getAgentName() em app.js |
 
 ### Mapa de Portas
 
@@ -647,8 +649,10 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | ~~/desktop-gen7/ redirect cleanup~~ | — | ✅ 301 DONE 15 Mar |
 | ~~Status Panel institucional~~ | — | ✅ `/api/status` + `status.html` |
 | Rate-limit nginx Agent Corps | Média | Pendente |
-| Mobile Fase 1: windi-touch.js | Média | Pendente |
+| ~~Mobile Fase 1: windi-touch.js~~ | — | ✅ Substituído por Arquitectura Unificada 16 Mar |
 | ~~Grove Tri-Divergence implementação~~ | — | ✅ v1.3.0 DEPLOYED 15 Mar |
+| ~~UA detection bifurcação~~ | — | ✅ REMOVIDO — Smart Zones para todos 16 Mar |
+| ~~i18n Agent Names~~ | — | ✅ DE/EN/PT implementado 16 Mar |
 
 ### Completado Hoje (15 Mar 2026)
 
@@ -675,59 +679,91 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | nginx VPR static location | 23:50 |
 | **Three Dragons Seal NOIR** | **23:55** |
 
+### Completado Hoje (16 Mar 2026)
+
+| Milestone | Hora |
+|---|---|
+| UA detection removido | 07:05 |
+| **Arquitectura Unificada** | **07:05** |
+| i18n Agent Names (DE/EN/PT) | 07:12 |
+| AGENT_NAMES object implementado | 07:12 |
+| getAgentName() function | 07:12 |
+| loadAgentCorps() i18n | 07:12 |
+| Hints traduzidas | 07:12 |
+| **CLAUDE.md v1.7.5** | **07:15** |
+
 ---
 
-## Mobile GEN7 — Arquitectura Unificada · 15 Mar 2026
+## GEN 7 — Arquitectura Unificada · 16 Mar 2026
 
 **Status:** LIVE
-**Princípio:** Um serviço, dois templates, UA detection automático.
+**Princípio:** Uma experiência, todos os dispositivos. Smart Zones com Canvas para mobile e desktop.
 
 ### Arquitectura
 
 ```
 windi-domain.com/          → 301 → /desktop/
 windi-domain.com/app/      → 301 → /desktop/
-windi-domain.com/desktop/  → :8119 GEN7 (UA detection)
-windi-domain.com/mobile/   → :8119 GEN7 (UA detection)
+windi-domain.com/desktop/  → :8119 GEN7
+windi-domain.com/mobile/   → :8119 GEN7
                                     ↓
-                           Desktop UA → index.html (Smart Zones)
-                           Mobile UA  → mobile_index.html (5 screens + PWA)
+                           TODOS → index.html (Smart Zones + Canvas)
 ```
 
-### Backend UA Detection
+**Decisão arquitectural (16 Mar 2026):** UA detection removido. A versão "5 screens" foi descontinuada
+porque não suporta Canvas — a funcionalidade central do GEN 7. Agora todos os dispositivos
+recebem Smart Zones (D1/D2/D3), que é responsivo e suporta geração de documentos via Canvas.
+
+### Backend
 
 ```python
-# gen7_gateway.py — linha 409
-user_agent = request.headers.get('User-Agent', '')
-is_mobile = any(x in user_agent for x in ['Mobile', 'Android', 'iPhone', 'iPad', 'iPod'])
-template = 'mobile_index.html' if is_mobile else 'index.html'
+# gen7_gateway.py — serve index.html para TODOS
+@app.get("/")
+async def root(request: Request):
+    """Serve index.html — unified experience for all devices (GEN 7 Canvas)"""
+    template_path = STATIC_DIR / "index.html"
+    if template_path.exists():
+        return FileResponse(template_path)
 ```
 
 ### Ficheiros
 
 ```
 /opt/windi/desktop-gen7/frontend/
-├── index.html           (127 linhas) — Desktop Smart Zones
-├── mobile_index.html    (450 linhas) — Mobile 5 screens + PWA
+├── index.html           (127 linhas) — Smart Zones (TODOS os dispositivos)
+├── mobile_index.html    (LEGACY — não usado)
 ├── status.html          — Institutional Dashboard
 └── static/
-    ├── app.js
-    ├── styles.css       (732 linhas, inclui @media 768px)
-    └── icons/
+    ├── app.js           (i18n completo + agent names)
+    ├── styles.css       (732 linhas, responsivo @media 768px)
+    └── icons/           (8 SVG institucionais)
 ```
 
-### Features Mobile GEN7
+### i18n — Nomes dos Agentes
+
+| Agent | DE | EN | PT |
+|-------|----|----|-----|
+| W-COMM-001 | Mitteilung | Communiqué | Comunicado |
+| W-LEGAL-001 | Justiz | Legal | Jurídico |
+| W-NOTARY-001 | Notariat | Notary | Notarial |
+| W-JOURN-001 | Journalist | Journalist | Jornalista |
+| W-AUDIT-001 | Prüfer | Auditor | Auditor |
+| W-COMPLY-001 | Compliance | Compliance | Conformidade |
+| W-ACCT-001 | Buchhalter | Accountant | Contabilista |
+| GROVE-ARENA | Grove Arena | Grove Arena | Arena Grove |
+
+### Features GEN 7 Unificado
 
 | Feature | Status |
 |---------|--------|
-| 5 screens (Home, Dragon, Verify, Vault, Eu) | ✅ |
-| PWA manifest | ✅ |
-| Onboarding flow | ✅ |
-| Dragon Chat API | ✅ |
+| Smart Zones D1/D2/D3 | ✅ |
+| Canvas document generation | ✅ |
+| Auto-routing Dragon | ✅ |
 | KLAR/NOIR toggle | ✅ |
-| i18n PT/DE/EN | ✅ |
+| i18n PT/DE/EN (UI + Agent names) | ✅ |
 | Badge GEN 7 | ✅ |
-| safe-area-inset (iPhone) | ✅ |
+| Responsivo (mobile + desktop) | ✅ |
+| I9 Gate visual | ✅ |
 
 ---
 
