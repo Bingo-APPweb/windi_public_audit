@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.8.0
+**Version:** 1.8.1
 **Sealed:** 2026-03-16
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -763,6 +763,66 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | loadAgentCorps() i18n | 07:12 |
 | Hints traduzidas | 07:12 |
 | **CLAUDE.md v1.7.5** | **07:15** |
+| **CLAUDE.md v1.8.0 — Gêmeo Invariants G1-G6** | **14:20** |
+| Slides Canvas — Intent detection | 14:35 |
+| Claude Sonnet 4 directo (bypass Dragon Hub) | 14:40 |
+| Model upgrade dragon_apis.py | 14:42 |
+| Indentation fix (try inside else) | 14:45 |
+| **SLIDES FUNCIONAM** | **14:47** |
+| Slides full viewport (100vh) | 14:55 |
+| Keyword fix "apresentacao" sem acento | 15:10 |
+| **CLAUDE.md v1.8.1** | **15:15** |
+
+---
+
+## Slides Canvas — 16 Mar 2026
+
+**Status:** LIVE
+**Princípio:** Intent → Claude Sonnet 4 directo → HTML de slides → Canvas renderiza
+
+### Arquitectura
+
+```
+Intent do utilizador
+        ↓
+_is_slides detection (keywords: präsentation, presentation, slides, apresentação, apresentacao...)
+        ↓
+    ┌───────────────────┐
+    │  SE _is_slides    │ → Claude Sonnet 4 directo + SLIDES_SYSTEM_PROMPT
+    │  SENÃO            │ → Dragon Hub (documentos)
+    └───────────────────┘
+        ↓
+HTML <div class="windi-slides">
+        ↓
+Canvas renderiza (CSS: slide-cover, slide-content, slide-final)
+```
+
+### Keywords de Detecção
+
+```python
+_is_slides = any(kw in _intent_lower for kw in [
+    "präsentation", "presentation", "slides", "slide deck",
+    "apresentação", "apresentacao", "slide", "pitchdeck", "pitch deck"
+])
+```
+
+### CSS Slides (styles.css)
+
+| Classe | Função |
+|--------|--------|
+| `.windi-slides` | Container flex column |
+| `.slide` | min-height: 100vh (full viewport) |
+| `.slide-cover` | Fundo escuro (#0a0a0a), título gold |
+| `.slide-content` | Fundo KLAR (#F5F0E0), texto escuro |
+| `.slide-final` | Fundo escuro, CTA centrado |
+
+### Linha Mestra
+
+```
+ETAPA 1 ✅ HOJE    — 4000T externos → JSON/HTML de slides perfeito
+ETAPA 2 ⏳ SEMANAS — 50+ apresentações no Ledger → comprimir prompt
+ETAPA 3 ⏳ FUTURO  — Dragon interno 1500T (osmose completa)
+```
 
 ---
 
