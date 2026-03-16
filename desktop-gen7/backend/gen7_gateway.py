@@ -369,6 +369,10 @@ NUNCA uses markdown. NUNCA uses ```html. Responde APENAS com HTML puro."""
                     if dragon_r.status_code == 200:
                         dragon_data = dragon_r.json()
                         draft_message = dragon_data.get("message", "Rascunho em preparação...")
+                        # Sanitize: remove any JSON blocks that Dragon may append
+                        import re
+                        draft_message = re.sub(r'```json[\s\S]*?```', '', draft_message).strip()
+                        draft_message = re.sub(r'\{"document":\s*\{[\s\S]*$', '', draft_message).strip()
                     else:
                         draft_message = f"Sessão {session_id} criada. Dragon indisponível."
                 except Exception:
