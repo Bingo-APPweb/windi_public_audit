@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.8.3
+**Version:** 1.8.4
 **Sealed:** 2026-03-16
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -779,103 +779,143 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | Batch slides: Ledger, Skills, Compliance | 16:30 |
 | **🏆 50 SLIDES NO LEDGER — ETAPA 2 COMPLETA** | **16:45** |
 | **CLAUDE.md v1.8.3** | **16:50** |
+| 7 Motores patch — WEB, ART, DATA, CODE, MEDIA | 15:44 |
+| **🏆 7 MOTORES LIVE — FÁBRICA UNIVERSAL** | **15:50** |
+| **CLAUDE.md v1.8.4** | **15:55** |
 
 ---
 
-## Slides Canvas — 16 Mar 2026
+## 7 Motores — Fábrica Universal · 16 Mar 2026
 
-**Status:** LIVE — 50 apresentações no Ledger ✅
-**Princípio:** Intent → Claude Sonnet 4 directo → HTML de slides → Canvas renderiza → Ledger osmose
+**Status:** LIVE — 7 motores activos
+**Princípio:** Intent → Detecção automática → Motor especializado → Canvas → Ledger
 
 ### Arquitectura
 
 ```
 Intent do utilizador
         ↓
-_is_slides detection (keywords: präsentation, presentation, slides, apresentação, apresentacao...)
+Detecção em cascata (keywords por motor)
         ↓
-    ┌───────────────────┐
-    │  SE _is_slides    │ → Claude Sonnet 4 directo + SLIDES_SYSTEM_PROMPT
-    │  SENÃO            │ → Dragon Hub (documentos)
-    └───────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│  Motor detectado?                                               │
+│  ├── SLIDES  → Claude + SLIDES_SYSTEM_PROMPT                   │
+│  ├── WEB     → Claude + WEB_SYSTEM_PROMPT                      │
+│  ├── ART     → Claude + ART_SYSTEM_PROMPT                      │
+│  ├── DATA    → Claude + DATA_SYSTEM_PROMPT                     │
+│  ├── CODE    → Claude + CODE_SYSTEM_PROMPT                     │
+│  ├── MEDIA   → Claude + MEDIA_SYSTEM_PROMPT                    │
+│  └── (none)  → Dragon Hub (DOC default)                        │
+└─────────────────────────────────────────────────────────────────┘
         ↓
-HTML <div class="windi-slides">
+Output especializado (HTML/SVG/Dashboard)
         ↓
-Canvas renderiza (CSS: slide-cover, slide-content, slide-final)
+Canvas renderiza + Ledger osmose
 ```
 
-### Keywords de Detecção
+### Tabela de Motores
+
+| Motor | Output | Keywords | Status |
+|-------|--------|----------|--------|
+| DOC | HTML semântico | (default fallback) | ✅ LIVE |
+| SLIDES | windi-slides HTML | präsentation, presentation, slides, apresentação, pitchdeck | ✅ LIVE |
+| WEB | HTML/CSS/JS completo | website, landing page, site, webpage, microsite, portfólio | ✅ LIVE |
+| ART | SVG artístico | poster, flyer, capa, cartaz, banner, arte, design gráfico, svg | ✅ LIVE |
+| DATA | Dashboard + Chart.js | dashboard, infográfico, gráfico, chart, relatório visual | ✅ LIVE |
+| CODE | Docs + highlight.js | script, código, api, função, documentação técnica, endpoint | ✅ LIVE |
+| MEDIA | Newsletter 600px | newsletter, press kit, social, instagram, linkedin, email marketing | ✅ LIVE |
+
+### Keywords de Detecção (gen7_gateway.py)
 
 ```python
 _is_slides = any(kw in _intent_lower for kw in [
     "präsentation", "presentation", "slides", "slide deck",
     "apresentação", "apresentacao", "slide", "pitchdeck", "pitch deck"
 ])
+_is_web = any(kw in _intent_lower for kw in [
+    "website", "página web", "pagina web", "landing page",
+    "site", "webpage", "microsite", "portfólio web", "portfolio web"
+])
+_is_art = any(kw in _intent_lower for kw in [
+    "poster", "flyer", "capa", "cartaz", "banner",
+    "identidade visual", "arte", "design gráfico", "design grafico",
+    "ilustração", "ilustracao", "svg"
+])
+_is_data = any(kw in _intent_lower for kw in [
+    "dashboard", "infográfico", "infografico", "gráfico", "grafico",
+    "chart", "relatório visual", "relatorio visual", "dados visuais"
+])
+_is_code = any(kw in _intent_lower for kw in [
+    "script", "código", "codigo", "api", "função", "funcao",
+    "documentação técnica", "documentacao tecnica", "endpoint", "library"
+])
+_is_media = any(kw in _intent_lower for kw in [
+    "newsletter", "press kit", "social", "instagram", "linkedin",
+    "post", "email marketing", "campanha", "comunicado de imprensa"
+])
 ```
 
-### CSS Slides (styles.css)
+### Routing em Cascata
 
-| Classe | Função |
-|--------|--------|
-| `.windi-slides` | Container flex column |
-| `.slide` | min-height: 100vh (full viewport) |
-| `.slide-cover` | Fundo escuro (#0a0a0a), título gold |
-| `.slide-content` | Fundo KLAR (#F5F0E0), texto escuro |
-| `.slide-final` | Fundo escuro, CTA centrado |
+```python
+_active_motor = None
+_active_prompt = None
+if _is_slides:
+    _active_motor, _active_prompt = "SLIDES", SLIDES_SYSTEM_PROMPT
+elif _is_web:
+    _active_motor, _active_prompt = "WEB", WEB_SYSTEM_PROMPT
+elif _is_art:
+    _active_motor, _active_prompt = "ART", ART_SYSTEM_PROMPT
+elif _is_data:
+    _active_motor, _active_prompt = "DATA", DATA_SYSTEM_PROMPT
+elif _is_code:
+    _active_motor, _active_prompt = "CODE", CODE_SYSTEM_PROMPT
+elif _is_media:
+    _active_motor, _active_prompt = "MEDIA", MEDIA_SYSTEM_PROMPT
 
-### Linha Mestra
+if _active_motor and _ANTHROPIC_KEY:
+    # Claude directo com system prompt específico
+```
+
+### Ledger Logging Dinâmico
+
+```python
+_ledger_payload = {
+    "id": f"WINDI-{_active_motor}-{session_id}",
+    "actor": "gen7-gateway",
+    "app": f"canvas-{_active_motor.lower()}",
+    "metadata": {
+        "training_eligible": True,
+        "canvas_type": _active_motor.lower(),
+        "model": "claude-sonnet-4-20250514",
+    }
+}
+```
+
+### Posicionamento de Mercado
 
 ```
-ETAPA 1 ✅ 16 Mar — 4000T externos → JSON/HTML de slides perfeito
-ETAPA 2 ✅ 16 Mar — 50 apresentações no Ledger (volume atingido!)
-ETAPA 3 ⏳ FUTURO — Comprimir prompt → Dragon interno 1500T
+CANVA        = Beleza sem prova
+DOCUSIGN     = Prova sem beleza
+CHATGPT      = Inteligência sem governança
+
+WINDI        = Beleza + Prova + Inteligência + Governança
 ```
 
-**Estatísticas Ledger (16 Mar 2026):**
-```
-Total slides:     50
-Idiomas:          🇵🇹 ~17 | 🇩🇪 ~17 | 🇬🇧 ~16
-Temas:            Institucional, Turismo, API Keys, JMPG, Skills, Compliance
-training_eligible: true (todos)
-```
+**WINDI é a única plataforma que:**
+- Gera **qualquer tipo de documento** com One Touch
+- Aplica **SHA-256 + QR + Ledger** automaticamente
+- Funciona em **Desktop + Mobile**
+- Usa **7 motores especializados** com Claude directo
+- Mantém **soberania de dados** (chave nunca no frontend)
 
 ### Protocolo "Génio da Lâmpada" — Osmose Activa
-
-**Status:** LIVE (16 Mar 2026)
 
 ```
 Claude Sonnet 4000T  →   Ledger colecta + filtra  →  Dragon 1500T
 "Génio externo"          "Osmose activa"              "Génio interno"
-€0.003/chamada           ~50 apresentações            €0/chamada
+€0.003/chamada           ~50+ documentos              €0/chamada
 ```
-
-**Ledger Logging (gen7_gateway.py):**
-```python
-_ledger_payload = {
-    "id": f"WINDI-SLIDES-{session_id}",
-    "actor": "gen7-gateway",
-    "app": "canvas-presentation",
-    "doc_type": "doc",
-    "sge_score": 1.0,
-    "metadata": {
-        "training_eligible": True,
-        "canvas_type": "slides",
-        "model": "claude-sonnet-4-20250514",
-    }
-}
-await client.post(f"{LEDGER_URL}/api/receipts", json=_ledger_payload)
-```
-
-**Critérios de Qualidade N1-N5:**
-| Critério | Validação |
-|----------|-----------|
-| N1 | Estrutura correcta? (cover + content + final) |
-| N2 | Idioma detectado certo? |
-| N3 | Conteúdo real? (sem placeholders) |
-| N4 | Human aprovou? |
-| N5 | Maturidade >0.7? |
-
-**Volume mínimo para Etapa 2:** ~40-50 apresentações aprovadas
 
 ---
 
