@@ -342,12 +342,23 @@ async def onetouch_execute(req: OneTouchRequest):
                 data = r.json()
                 session_id = data.get("session_id", f"OT-{intent_hash}")
 
-                # Phase 4: Call Dragon to generate draft
+                # Phase 4: Call Dragon to generate draft (HTML Canvas mode)
+                canvas_instruction = f"""[CANVAS HTML MODE] {req.intent}
+
+Gera documento em HTML semântico. Estrutura obrigatória:
+<article class="windi-doc">
+  <header class="doc-header"><h1 class="doc-title">[TÍTULO]</h1><p class="doc-meta">[DATA, DESTINATÁRIO]</p></header>
+  <section class="doc-body">[CONTEÚDO COM <p>, <h2>, <ul>]</section>
+  <footer class="doc-footer">[ASSINATURA]</footer>
+</article>
+
+NUNCA uses markdown. NUNCA uses ```html. Responde APENAS com HTML puro."""
+
                 try:
                     dragon_r = await client.post(
                         f"{DRAGON_URL}/api/dragon/chat",
                         json={
-                            "message": req.intent,
+                            "message": canvas_instruction,
                             "tier": "HIGH",
                             "session_id": session_id,
                             "doc_type": agent,

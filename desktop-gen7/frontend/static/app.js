@@ -361,21 +361,18 @@ function showCanvas(session, originalIntent) {
     if (placeholderEl) placeholderEl.style.display = 'none';
     canvasEl.style.display = 'block';
 
-    // Show routing info
-    const routingInfo = currentAgent
-        ? `Manual: ${currentAgent}`
-        : `Auto-routed: ${session.agent}`;
-
+    // Header compacto + HTML directo do Dragon
     canvasEl.innerHTML = `
-        <div class="canvas-session">
-            <div class="canvas-header">
-                <span class="canvas-badge">${session.agent}</span>
-                <span class="canvas-routing">${routingInfo}</span>
-            </div>
-            <h3 class="canvas-title">Session: ${session.session_id}</h3>
-            <p class="canvas-intent">"${originalIntent}"</p>
-            <p class="canvas-message">${session.message}</p>
-            <p class="canvas-next">→ ${session.next_step}</p>
+        <div class="canvas-toolbar">
+            <span class="canvas-badge">${session.agent}</span>
+            <span class="canvas-session-id">${session.session_id}</span>
+            <span class="canvas-stage">${session.stage}</span>
+        </div>
+        <div class="canvas-document">
+            ${session.message}
+        </div>
+        <div class="canvas-actions">
+            <span class="canvas-next">→ ${session.next_step}</span>
         </div>
     `;
 }
