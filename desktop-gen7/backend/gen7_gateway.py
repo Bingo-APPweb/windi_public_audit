@@ -343,16 +343,42 @@ async def onetouch_execute(req: OneTouchRequest):
                 session_id = data.get("session_id", f"OT-{intent_hash}")
 
                 # Phase 4: Call Dragon to generate draft (HTML Canvas mode)
-                canvas_instruction = f"""[CANVAS HTML MODE] {req.intent}
+                canvas_instruction = f"""[CANVAS HTML MODE — GERA IMEDIATAMENTE]
 
-Gera documento em HTML semântico. Estrutura obrigatória:
+INTENT DO UTILIZADOR: {req.intent}
+
+REGRA ABSOLUTA: Gera o documento AGORA. NÃO faças perguntas. NÃO mostres menus. PRODUZ HTML.
+
+Se for DOCUMENTO (carta, memo, comunicado, relatório):
 <article class="windi-doc">
-  <header class="doc-header"><h1 class="doc-title">[TÍTULO]</h1><p class="doc-meta">[DATA, DESTINATÁRIO]</p></header>
-  <section class="doc-body">[CONTEÚDO COM <p>, <h2>, <ul>]</section>
+  <header class="doc-header"><h1 class="doc-title">[TÍTULO]</h1><p class="doc-meta">[DATA]</p></header>
+  <section class="doc-body">[CONTEÚDO]</section>
   <footer class="doc-footer">[ASSINATURA]</footer>
 </article>
 
-NUNCA uses markdown. NUNCA uses ```html. Responde APENAS com HTML puro."""
+Se for APRESENTAÇÃO (slides, presentation, Präsentation):
+<div class="windi-slides">
+  <div class="slide slide-cover">
+    <p class="slide-ep">EP.1 — [TEMA]</p>
+    <h1>[TÍTULO PRINCIPAL EM ITÁLICO]</h1>
+    <p class="slide-sub">[SUBTÍTULO PROVOCADOR]</p>
+    <footer class="slide-brand">WINDI <span>Publishing House</span></footer>
+  </div>
+  <div class="slide slide-content">
+    <h2>[TÍTULO SLIDE 2]</h2>
+    <ul><li>[PONTO 1]</li><li>[PONTO 2]</li><li>[PONTO 3]</li></ul>
+  </div>
+  <div class="slide slide-content">
+    <h2>[TÍTULO SLIDE 3]</h2>
+    <p>[PARÁGRAFO EXPLICATIVO]</p>
+  </div>
+  <div class="slide slide-final">
+    <p>WINDI</p>
+    <p class="slide-sub">Publishing House · Kempten, Bavaria</p>
+  </div>
+</div>
+
+NUNCA markdown. NUNCA menus. NUNCA perguntas. PRODUZ HTML AGORA."""
 
                 try:
                     dragon_r = await client.post(
@@ -363,16 +389,26 @@ NUNCA uses markdown. NUNCA uses ```html. Responde APENAS com HTML puro."""
                             "session_id": session_id,
                             "doc_type": agent,
                             "history": [],
+                            "intentMode": "document",  # Force ARCHITECT
+                            "chatType": "document",    # Force document mode
                         },
                         timeout=30.0,
                     )
                     if dragon_r.status_code == 200:
                         dragon_data = dragon_r.json()
                         draft_message = dragon_data.get("message", "Rascunho em preparação...")
-                        # Sanitize: remove any JSON blocks that Dragon may append
+                        # Sanitize: remove any code blocks and JSON that Dragon may append
                         import re
-                        draft_message = re.sub(r'```json[\s\S]*?```', '', draft_message).strip()
-                        draft_message = re.sub(r'\{"document":\s*\{[\s\S]*$', '', draft_message).strip()
+                        # Remove ```json ... ``` blocks
+                        draft_message = re.sub(r'```json[\s\S]*?```', '', draft_message)
+                        # Remove ```html ... ``` wrappers (keep content)
+                        draft_message = re.sub(r'```html\s*', '', draft_message)
+                        draft_message = re.sub(r'```\s*$', '', draft_message)
+                        # Remove trailing JSON objects
+                        draft_message = re.sub(r'\n*\{"document":\s*\{[\s\S]*$', '', draft_message)
+                        draft_message = re.sub(r'\n*\{"title":\s*"[\s\S]*$', '', draft_message)
+                        # Clean up
+                        draft_message = draft_message.strip()
                     else:
                         draft_message = f"Sessão {session_id} criada. Dragon indisponível."
                 except Exception:
