@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.8.6
+**Version:** 1.8.7
 **Sealed:** 2026-03-16
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -799,13 +799,20 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | P3: Ledger seal 201 fix | 20:22 |
 | **🌐 WEB ENGINE P1+P2+P3 LIVE** | **20:25** |
 | **CLAUDE.md v1.8.6** | **20:30** |
+| P4A: nginx /sites/ + systemd patch | 21:29 |
+| P4B: OG tags (og:title, og:image) | 21:25 |
+| P4C: Short URL /s/{id} redirect | 21:29 |
+| P4D: 📡 Publicar + 📲 WhatsApp buttons | 21:25 |
+| POST /api/publish/web endpoint | 21:25 |
+| **🚀 P4 WINDI HOSTING LIVE** | **21:30** |
+| **CLAUDE.md v1.8.7** | **21:35** |
 
 ---
 
 ## WINDI Web Engine · 16 Mar 2026
 
-**Status:** LIVE — Pipeline Web completo
-**Princípio:** Canvas → Export → Ledger → Download standalone
+**Status:** LIVE — Pipeline Web + Hosting completo
+**Princípio:** Canvas → Export → Publish → Share → Verify
 
 ### Nomenclatura
 
@@ -865,6 +872,67 @@ Response:
 | P1 | `.canvas-document { overflow-y: auto; max-height: 70vh; }` |
 | P2 | `NUNCA usar mailto: ou tel:` nos prompts WEB/MEDIA |
 | P3 | `exportWebStandalone()` + `/api/export/web` + Ledger 201 |
+
+### P4 — WINDI Hosting + WhatsApp
+
+```
+Canvas gera micro_page
+        ↓
+💾 Gravar → HTML standalone + Ledger seal
+        ↓
+📡 Publicar → windi-domain.com/sites/{id}/
+        ↓
+📲 WhatsApp → wa.me/?text=...short_url...
+        ↓
+🔍 Verificar → verify-public/?id=...
+```
+
+**Endpoint Publish:**
+
+```
+POST /api/publish/web
+Request:
+{
+    "session_id": "...",
+    "html_content": "<h1>...</h1>",
+    "title": "Título para OG",
+    "description": "Descrição para OG",
+    "sub_type": "micro_page"
+}
+
+Response:
+{
+    "ok": true,
+    "receipt_id": "WINDI-WEB-{session_id}",
+    "hosted_url": "https://windi-domain.com/sites/{receipt_id}/",
+    "short_url": "https://windi-domain.com/s/{receipt_id}",
+    "whatsapp_url": "https://wa.me/?text=...",
+    "ledger_sealed": true,
+    "deployed_at": "2026-03-16T..."
+}
+```
+
+**nginx:**
+
+```nginx
+location /sites/ {
+    alias /opt/windi/microsites/;
+    index index.html;
+}
+
+location ~ ^/s/(.+)$ {
+    return 301 https://windi-domain.com/sites/$1/;
+}
+```
+
+**OG Tags (WhatsApp preview):**
+
+```html
+<meta property="og:title" content="{title}">
+<meta property="og:description" content="{description}">
+<meta property="og:url" content="https://windi-domain.com/sites/{id}/">
+<meta property="og:image" content=".../dragon-three-seal.svg">
+```
 
 ---
 
