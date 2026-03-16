@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.8.5
+**Version:** 1.8.6
 **Sealed:** 2026-03-16
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -792,6 +792,79 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | /api/onetouch/dispatch LIVE | 15:54 |
 | **📧 DISPATCH PIPELINE LIVE** | **15:55** |
 | **CLAUDE.md v1.8.5** | **16:00** |
+| P1: Canvas scroll (overflow-y: auto) | 20:05 |
+| P2: mailto ban (WEB + MEDIA prompts) | 20:08 |
+| P3: exportWebStandalone() + 💾 button | 20:15 |
+| P3: POST /api/export/web endpoint | 20:18 |
+| P3: Ledger seal 201 fix | 20:22 |
+| **🌐 WEB ENGINE P1+P2+P3 LIVE** | **20:25** |
+| **CLAUDE.md v1.8.6** | **20:30** |
+
+---
+
+## WINDI Web Engine · 16 Mar 2026
+
+**Status:** LIVE — Pipeline Web completo
+**Princípio:** Canvas → Export → Ledger → Download standalone
+
+### Nomenclatura
+
+```
+doc_type: "web"
+
+sub_types:
+  micro_page   → 1 página, promoção relâmpago
+  landing      → 1 página + CTA + form
+  mini_site    → 2-5 páginas com navegação
+  doc_web      → documento institucional em HTML
+```
+
+### Pipeline
+
+```
+Canvas renderiza HTML
+        ↓
+[💾 Gravar HTML] → POST /api/export/web
+        ↓
+Backend injeta:
+  - Google Fonts CDN (Bricolage Grotesque)
+  - CSS inline com tokens WINDI
+  - Footer com verify_url + receipt_id
+        ↓
+Ledger seal → receipt
+        ↓
+Download {session_id}.html (standalone)
+```
+
+### Endpoint
+
+```
+POST /api/export/web
+Request:
+{
+    "session_id": "...",
+    "html_content": "<h1>...</h1>",
+    "sub_type": "micro_page"
+}
+
+Response:
+{
+    "ok": true,
+    "receipt_id": "WINDI-WEB-{session_id}",
+    "content_hash": "sha256:...",
+    "html": "<!DOCTYPE html>...",
+    "ledger_sealed": true,
+    "verify_url": "https://windi-domain.com/verify-public/?id=..."
+}
+```
+
+### Fixes Implementados
+
+| Fix | Descrição |
+|-----|-----------|
+| P1 | `.canvas-document { overflow-y: auto; max-height: 70vh; }` |
+| P2 | `NUNCA usar mailto: ou tel:` nos prompts WEB/MEDIA |
+| P3 | `exportWebStandalone()` + `/api/export/web` + Ledger 201 |
 
 ---
 
