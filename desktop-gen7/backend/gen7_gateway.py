@@ -36,6 +36,14 @@ try:
 except Exception:
     _ANTHROPIC_KEY = os.getenv("ANTHROPIC_API_KEY", "")
 
+# ── EMAIL: Import sender directo ──────────────────────────────────
+_sys.path.insert(0, "/opt/windi/agent-palette")
+try:
+    from email_sender import send_document_email
+    EMAIL_AVAILABLE = True
+except ImportError:
+    EMAIL_AVAILABLE = False
+
 SLIDES_SYSTEM_PROMPT = """És W-COMM-001, agente de comunicação institucional WINDI.
 REGRA ABSOLUTA: Responde APENAS com HTML válido. NUNCA texto corrido. NUNCA markdown. NUNCA JSON.
 
@@ -750,6 +758,304 @@ async def seal_canvas_output(req: SealRequest):
             raise HTTPException(504, "Ledger timeout")
         except Exception as e:
             raise HTTPException(500, str(e))
+
+
+# === One Touch Seal (GAP 2 — Complete Pipeline) ===
+JMPG_URL = os.getenv("JMPG_URL", "http://localhost:8103")
+COMMUNIQUE_URL = os.getenv("COMMUNIQUE_URL", "http://localhost:8105")
+WALLET_URL = os.getenv("WALLET_URL", "http://localhost:8098")
+
+
+class OneTouchSealRequest(BaseModel):
+    session_id: str
+    wallet_id: str
+    title: str
+    content_html: str  # HTML output from Canvas
+    motor: Optional[str] = "DOC"  # SLIDES, WEB, ART, DATA, CODE, MEDIA, DOC
+    human_approved: bool = False  # I9 GATE — must be True to seal
+    destinations: Optional[Dict[str, Any]] = None  # {"email": true, "whatsapp": true, "linkedin": true}
+    metadata: Optional[Dict[str, Any]] = None
+
+
+class VirtueReceipt(BaseModel):
+    receipt_id: str
+    session_id: str
+    content_hash: str
+    bundle_hash: Optional[str] = None
+    verify_url: str
+    qr_payload: str
+    stage: str
+    sealed_at: str
+    destinations_sent: Dict[str, bool]
+    jmpg_available: bool
+
+
+@app.post("/api/onetouch/seal", response_model=VirtueReceipt)
+async def onetouch_seal(req: OneTouchSealRequest):
+    """
+    One Touch Seal — Complete C5→C6 Pipeline
+
+    1. Validates I9 gate (human_approved must be True)
+    2. Calculates SHA-256 of content
+    3. Calls JMPG Export to create package
+    4. Registers in Forensic Ledger
+    5. Generates QR code payload
+    6. Sends to wallet destinations (email, whatsapp, linkedin)
+    7. Returns Virtue Receipt
+
+    INVARIANT I9: human_approved=true REQUIRED
+    INVARIANT I11: After seal = IRREMEDIÁVEL
+    """
+    # ── I9 GATE: Human approval required ──
+    if not req.human_approved:
+        raise HTTPException(
+            status_code=403,
+            detail={
+                "error": "I9 GATE VIOLATION",
+                "message": "human_approved must be true to seal document",
+                "invariant": "I9 — Proibição de Escalação de Autonomia",
+                "action": "Set human_approved=true after user confirms seal"
+            }
+        )
+
+    # ── Calculate content hash ──
+    content_hash = hashlib.sha256(req.content_html.encode()).hexdigest()
+    timestamp = datetime.now(timezone.utc)
+    receipt_id = f"WINDI-{req.motor}-{req.session_id}-{timestamp.strftime('%Y%m%d%H%M%S')}"
+
+    async with httpx.AsyncClient(timeout=30.0) as client:
+        # ── Step 1: Create JMPG package ──
+        jmpg_created = False
+        bundle_hash = None
+
+        try:
+            # Convert HTML to content blocks for JMPG
+            content_blocks = [
+                {"type": "heading", "level": 1, "text": req.title},
+                {"type": "paragraph", "text": req.content_html}  # Raw HTML as paragraph
+            ]
+
+            jmpg_payload = {
+                "title": req.title,
+                "author": req.wallet_id,
+                "template": "generic",
+                "content_blocks": content_blocks,
+                "metadata": {
+                    "doc_type": req.motor.lower(),
+                    "impact_level": "HIGH",
+                    "language": "auto",
+                    "session_id": req.session_id,
+                    "motor": req.motor,
+                    **(req.metadata or {})
+                },
+                "return_format": "json"  # Get base64 + metadata
+            }
+
+            jmpg_r = await client.post(
+                f"{JMPG_URL}/api/export/jmpg",
+                json=jmpg_payload,
+                timeout=15.0
+            )
+
+            if jmpg_r.status_code == 200:
+                jmpg_data = jmpg_r.json()
+                bundle_hash = jmpg_data.get("package_hash", jmpg_data.get("manifest", {}).get("package_hash"))
+                jmpg_created = True
+        except Exception as e:
+            # JMPG is optional, continue with Ledger seal
+            print(f"[SEAL] JMPG warning: {e}")
+
+        # ── Step 2: Register in Forensic Ledger ──
+        ledger_payload = {
+            "id": receipt_id,
+            "actor": req.wallet_id,
+            "app": f"onetouch-{req.motor.lower()}",
+            "doc_name": req.title,
+            "doc_type": "doc",
+            "governance_level": "HIGH",
+            "content_hash": content_hash,
+            "sge_score": 1.0,
+            "metadata": {
+                "session_id": req.session_id,
+                "motor": req.motor,
+                "human_approved": True,
+                "jmpg_created": jmpg_created,
+                "bundle_hash": bundle_hash,
+                **(req.metadata or {})
+            }
+        }
+
+        try:
+            ledger_r = await client.post(
+                f"{LEDGER_URL}/api/receipts",
+                json=ledger_payload
+            )
+            ledger_data = ledger_r.json()
+            if not ledger_data.get("ok", False) and ledger_r.status_code not in (200, 201):
+                raise HTTPException(500, f"Ledger seal failed: {ledger_r.text}")
+        except httpx.TimeoutException:
+            raise HTTPException(504, "Ledger timeout — document NOT sealed")
+
+        # ── Step 3: Generate QR payload and verify URL ──
+        qr_payload = f"WINDI:{receipt_id}|{content_hash[:16]}"
+        verify_url = f"https://windi-domain.com/verify-public/?id={receipt_id}"
+
+        # ── Step 4: Send to destinations ──
+        destinations_sent = {"email": False, "whatsapp": False, "linkedin": False}
+        destinations = req.destinations or {}
+
+        # Get wallet context for destination addresses
+        wallet_context = {}
+        try:
+            wallet_r = await client.get(
+                f"{WALLET_URL}/api/wallet/context/{req.wallet_id}",
+                timeout=5.0
+            )
+            if wallet_r.status_code == 200:
+                wallet_context = wallet_r.json()
+        except Exception:
+            pass  # Wallet lookup optional
+
+        # Email delivery
+        if destinations.get("email"):
+            try:
+                email_address = wallet_context.get("email") or destinations.get("email_address")
+                if email_address and isinstance(email_address, str):
+                    email_payload = {
+                        "to": email_address,
+                        "subject": f"[WINDI] {req.title}",
+                        "receipt_id": receipt_id,
+                        "verify_url": verify_url,
+                        "content_preview": req.content_html[:500],
+                        "qr_payload": qr_payload
+                    }
+                    email_r = await client.post(
+                        f"{COMMUNIQUE_URL}/api/send/email",
+                        json=email_payload,
+                        timeout=10.0
+                    )
+                    destinations_sent["email"] = email_r.status_code == 200
+            except Exception as e:
+                print(f"[SEAL] Email send warning: {e}")
+
+        # WhatsApp delivery (future)
+        if destinations.get("whatsapp"):
+            # TODO: Integrate with Evolution API / Twilio
+            destinations_sent["whatsapp"] = False
+
+        # LinkedIn delivery (future)
+        if destinations.get("linkedin"):
+            # TODO: Integrate with LinkedIn API
+            destinations_sent["linkedin"] = False
+
+        # ── Step 5: Return Virtue Receipt ──
+        return VirtueReceipt(
+            receipt_id=receipt_id,
+            session_id=req.session_id,
+            content_hash=content_hash,
+            bundle_hash=bundle_hash,
+            verify_url=verify_url,
+            qr_payload=qr_payload,
+            stage="C6",
+            sealed_at=timestamp.isoformat(),
+            destinations_sent=destinations_sent,
+            jmpg_available=jmpg_created
+        )
+
+
+# === One Touch Dispatch (Post-Seal Delivery) ===
+class DestinationsModel(BaseModel):
+    email: bool = False
+    email_address: Optional[str] = None
+    whatsapp: bool = False
+    whatsapp_phone: Optional[str] = None
+    linkedin: bool = False
+
+
+class DispatchRequest(BaseModel):
+    receipt_id: str
+    content_hash: str
+    wallet_id: str
+    title: Optional[str] = "WINDI Document"
+    verify_url: Optional[str] = None
+    destinations: Optional[DestinationsModel] = None
+
+
+class DispatchResponse(BaseModel):
+    receipt_id: str
+    dispatched: Dict[str, bool]
+    errors: Dict[str, str]
+
+
+@app.post("/api/onetouch/dispatch", response_model=DispatchResponse)
+async def onetouch_dispatch(req: DispatchRequest):
+    """
+    Dispatch already-sealed document to destinations.
+
+    Does NOT re-seal. Ledger was already called by /app/.
+    Only handles delivery: email, whatsapp, linkedin.
+    """
+    dispatched = {"email": False, "whatsapp": False, "linkedin": False}
+    errors = {}
+
+    verify_url = req.verify_url or f"https://windi-domain.com/verify-public/?id={req.receipt_id}"
+
+    async with httpx.AsyncClient(timeout=15.0) as client:
+        # Email dispatch (import directo — sem HTTP)
+        if req.destinations and req.destinations.email:
+            try:
+                # Get email: explicit > wallet lookup
+                wallet_email = req.destinations.email_address
+                if not wallet_email:
+                    try:
+                        wr = await client.get(f"{WALLET_URL}/api/wallet/context/{req.wallet_id}", timeout=3.0)
+                        if wr.status_code == 200:
+                            wallet_email = wr.json().get("email")
+                    except:
+                        pass
+
+                if wallet_email and EMAIL_AVAILABLE:
+                    # Chamada directa ao módulo email_sender
+                    result = send_document_email(
+                        to_address=wallet_email,
+                        doc_title=req.title,
+                        doc_content=f"Receipt: {req.receipt_id}\nVerify: {verify_url}",
+                        receipt_id=req.receipt_id,
+                        lang="en"
+                    )
+                    dispatched["email"] = result.get("success", False)
+                    if not dispatched["email"]:
+                        errors["email"] = result.get("error", "Send failed")
+                elif not EMAIL_AVAILABLE:
+                    errors["email"] = "Email sender not available"
+                else:
+                    errors["email"] = "No wallet email found"
+            except Exception as e:
+                errors["email"] = str(e)
+
+        # WhatsApp dispatch (via :8111)
+        if req.destinations and req.destinations.whatsapp:
+            try:
+                wa_r = await client.post(
+                    "http://localhost:8111/whatsapp/send",
+                    json={
+                        "message": f"📄 {req.title}\n🔗 {verify_url}\n🔐 {req.receipt_id}"
+                    },
+                    timeout=10.0
+                )
+                dispatched["whatsapp"] = wa_r.status_code == 200
+            except Exception as e:
+                errors["whatsapp"] = str(e)
+
+        # LinkedIn dispatch (future)
+        if req.destinations and req.destinations.linkedin:
+            errors["linkedin"] = "LinkedIn API not yet integrated"
+
+    return DispatchResponse(
+        receipt_id=req.receipt_id,
+        dispatched=dispatched,
+        errors=errors
+    )
 
 
 # === Static Files ===
