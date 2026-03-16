@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.8.4
+**Version:** 1.8.5
 **Sealed:** 2026-03-16
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -622,6 +622,8 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | `/api/dragon/status` | GET | Dragon Pulse proxy |
 | `/api/agents/status` | GET | Agent Corps constellation |
 | `/api/onetouch/execute` | POST | One Touch pipeline |
+| `/api/onetouch/seal` | POST | C5→C6 seal completo (hash + Ledger + JMPG) |
+| `/api/onetouch/dispatch` | POST | Envio pós-seal (email/whatsapp/linkedin) |
 | `/api/keys/validate` | POST | API key format validation |
 | `/api/status` | GET | **Institutional Status Panel** (agregador) |
 | `/status.html` | GET | **Status Dashboard** (live polling 30s) |
@@ -701,6 +703,9 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | nginx VPR static | ✅ location blocks configurados |
 | Arquitectura Unificada | ✅ UA detection removido — Smart Zones para todos |
 | i18n Agent Names | ✅ DE/EN/PT — getAgentName() em app.js |
+| 7 Motores | ✅ DOC/SLIDES/WEB/ART/DATA/CODE/MEDIA |
+| Dispatch Pipeline | ✅ /api/onetouch/seal + /api/onetouch/dispatch |
+| Email Sender | ✅ Import directo (email_sender.py) |
 
 ### Mapa de Portas
 
@@ -782,6 +787,11 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | 7 Motores patch — WEB, ART, DATA, CODE, MEDIA | 15:44 |
 | **🏆 7 MOTORES LIVE — FÁBRICA UNIVERSAL** | **15:50** |
 | **CLAUDE.md v1.8.4** | **15:55** |
+| email_sender import directo (dispatch) | 15:54 |
+| DestinationsModel (Pydantic) | 15:54 |
+| /api/onetouch/dispatch LIVE | 15:54 |
+| **📧 DISPATCH PIPELINE LIVE** | **15:55** |
+| **CLAUDE.md v1.8.5** | **16:00** |
 
 ---
 
@@ -915,6 +925,105 @@ WINDI        = Beleza + Prova + Inteligência + Governança
 Claude Sonnet 4000T  →   Ledger colecta + filtra  →  Dragon 1500T
 "Génio externo"          "Osmose activa"              "Génio interno"
 €0.003/chamada           ~50+ documentos              €0/chamada
+```
+
+---
+
+## Dispatch Pipeline — Seal + Envio · 16 Mar 2026
+
+**Status:** LIVE
+**Princípio:** Separação de responsabilidades — Seal (I11) e Dispatch são independentes
+
+### Arquitectura
+
+```
+/app/ (Agent Palette)
+        ↓
+Seal via Ledger :8101 ← C5→C6 (IRREMEDIÁVEL)
+        ↓
+/api/onetouch/dispatch :8119
+        ↓
+┌─────────────────────────────────────────┐
+│  Canais de Dispatch:                     │
+│  ├── email     → email_sender.py         │
+│  ├── whatsapp  → :8111 /whatsapp/send   │
+│  └── linkedin  → (pendente)              │
+└─────────────────────────────────────────┘
+```
+
+### Endpoints
+
+| Endpoint | Método | Função |
+|----------|--------|--------|
+| `/api/onetouch/seal` | POST | C5→C6 pipeline completo (hash + Ledger + JMPG) |
+| `/api/onetouch/dispatch` | POST | Envio pós-seal (email/whatsapp/linkedin) |
+
+### DestinationsModel (Pydantic)
+
+```python
+class DestinationsModel(BaseModel):
+    email: bool = False
+    email_address: Optional[str] = None
+    whatsapp: bool = False
+    whatsapp_phone: Optional[str] = None
+    linkedin: bool = False
+
+class DispatchRequest(BaseModel):
+    receipt_id: str
+    content_hash: str
+    wallet_id: str
+    title: Optional[str] = "WINDI Document"
+    verify_url: Optional[str] = None
+    destinations: Optional[DestinationsModel] = None
+```
+
+### Email Sender — Import Directo
+
+```python
+# gen7_gateway.py linha 39-45
+_sys.path.insert(0, "/opt/windi/agent-palette")
+try:
+    from email_sender import send_document_email
+    EMAIL_AVAILABLE = True
+except ImportError:
+    EMAIL_AVAILABLE = False
+```
+
+**Nota:** Import directo por agora. Quando o Communiqué crescer, passa a endpoint HTTP.
+
+### Resposta do Dispatch
+
+```json
+{
+    "receipt_id": "WINDI-DOC-...",
+    "dispatched": {
+        "email": true,
+        "whatsapp": false,
+        "linkedin": false
+    },
+    "errors": {}
+}
+```
+
+### Conexão com /app/
+
+O modal de distribuição em `/opt/windi/agent-palette/ui/index.html` (linha 7285)
+usa o dispatch endpoint:
+
+```javascript
+const dispatchUrl = 'https://windi-domain.com/desktop/api/onetouch/dispatch';
+const res = await fetch(dispatchUrl, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+        receipt_id: receipt?.id,
+        content_hash: receipt?.ch,
+        wallet_id: wallet?.id,
+        title: docTitle,
+        verify_url: receipt?.verifyUrl,
+        destinations: { email: true, whatsapp: false, linkedin: false }
+    }),
+});
 ```
 
 ---
