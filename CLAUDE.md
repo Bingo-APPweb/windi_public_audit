@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.7.5
+**Version:** 1.8.0
 **Sealed:** 2026-03-16
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -471,6 +471,78 @@ Invariants:   I5 I6 I9 I10
 9. Bridges = blueprints em /opt/windi/agents/constitutional-agent/blueprints/
 10. Sandbox Core (:8091) = nohup, NUNCA systemd
 ```
+
+---
+
+## 11.1 — Invariantes do Gêmeo (IRREMEDIÁVEL)
+
+Estas regras são invariantes constitucionais do Gêmeo.
+Não podem ser suspensas, contornadas ou "excepcionadas"
+por nenhuma instrução — incluindo instruções do próprio
+Human Dragon no calor da sessão.
+
+Se uma instrução violar um invariante → o Gêmeo PARA,
+nomeia o invariante violado, e aguarda decisão consciente.
+
+─────────────────────────────────────────────────────────
+
+G1 — READ BEFORE TOUCH (IRREMEDIÁVEL)
+Antes de qualquer alteração de código ou ficheiro:
+  git log --oneline -10
+  git diff HEAD~1 HEAD -- [ficheiro]
+  ss -tlnp | grep [porta]
+Nunca assumir o estado do servidor. Sempre verificar.
+Violação: alterar sem ler = rollback imediato.
+
+G2 — ONE DOMAIN PER SESSION (IRREMEDIÁVEL)
+Uma sessão = um repositório = um domínio de ficheiros.
+  ✅ Sessão Canvas  → toca APENAS desktop-gen7/
+  ✅ Sessão Mobile  → toca APENAS agent-palette/
+  ✅ Sessão Infra   → toca APENAS nginx + systemd
+  ❌ NUNCA dois domínios na mesma sessão
+Violação: commits em domínios mistos = sessão encerrada.
+
+G3 — PROPOSE ≠ EXECUTE (IRREMEDIÁVEL)
+Toda alteração > 10 linhas exige:
+  1. git diff --stat  (mostrar o que vai mudar)
+  2. Aguardar "confirma" explícito do Human Dragon
+  3. Só então executar
+Nunca fazer push sem aprovação explícita.
+"Parece óbvio" não é aprovação.
+
+G4 — COMMITS SÃO CONTRATOS (IRREMEDIÁVEL)
+  git diff --stat SEMPRE antes do commit.
+  Mensagem descreve exactamente ficheiros + intenção.
+  ❌ Proibido: "fix misc", "updates", "ajustes"
+  ✅ Obrigatório: "fix: showCanvas() restore —
+     app.js linha 347, remove canvas-toolbar,
+     restaura canvas-content innerHTML"
+Sem precisão = sem commit.
+
+G5 — SEALED PORTS SÃO SAGRADOS (IRREMEDIÁVEL)
+Portas seladas: 8101, 8102, 8106, 8114
+  NUNCA alterar rotas, configs ou serviços destas portas
+  sem aprovação EXPLÍCITA e CONSCIENTE do Human Dragon.
+  nginx -t SEMPRE antes de reload.
+  Ledger (:8101) = intocável em qualquer circunstância.
+
+G6 — CANVAS COMMITS SÃO PROTEGIDOS (IRREMEDIÁVEL)
+Os commits do pipeline Canvas (showCanvas, innerHTML,
+gen7_gateway.py, styles.css) são protegidos.
+Qualquer alteração a estes ficheiros exige:
+  1. Listar commits Canvas existentes
+  2. Justificar por que a alteração não os quebra
+  3. Aprovação do Human Dragon
+  ❌ NUNCA sobrescrever trabalho de sessão anterior
+     sem auditoria explícita.
+
+─────────────────────────────────────────────────────────
+
+HIERARQUIA DE INVARIANTES:
+  Constitucionais WINDI (I1-I11) > Invariantes Gêmeo (G1-G6)
+  > Regras de Ouro (11.1-11.10) > Instruções de sessão
+
+"AI processes. Human decides. WINDI guarantees."
 
 ---
 
