@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.8.2
+**Version:** 1.8.3
 **Sealed:** 2026-03-16
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -775,12 +775,16 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | Ledger logging — payload fix (sge_score, doc_type) | 15:45 |
 | **OSMOSE ACTIVA — Ledger training_eligible** | **15:50** |
 | **CLAUDE.md v1.8.2** | **16:00** |
+| Batch slides: Turismo, API Keys, JMPG | 16:15 |
+| Batch slides: Ledger, Skills, Compliance | 16:30 |
+| **🏆 50 SLIDES NO LEDGER — ETAPA 2 COMPLETA** | **16:45** |
+| **CLAUDE.md v1.8.3** | **16:50** |
 
 ---
 
 ## Slides Canvas — 16 Mar 2026
 
-**Status:** LIVE
+**Status:** LIVE — 50 apresentações no Ledger ✅
 **Princípio:** Intent → Claude Sonnet 4 directo → HTML de slides → Canvas renderiza → Ledger osmose
 
 ### Arquitectura
@@ -822,9 +826,17 @@ _is_slides = any(kw in _intent_lower for kw in [
 ### Linha Mestra
 
 ```
-ETAPA 1 ✅ HOJE    — 4000T externos → JSON/HTML de slides perfeito
-ETAPA 2 ⏳ SEMANAS — 50+ apresentações no Ledger → comprimir prompt
-ETAPA 3 ⏳ FUTURO  — Dragon interno 1500T (osmose completa)
+ETAPA 1 ✅ 16 Mar — 4000T externos → JSON/HTML de slides perfeito
+ETAPA 2 ✅ 16 Mar — 50 apresentações no Ledger (volume atingido!)
+ETAPA 3 ⏳ FUTURO — Comprimir prompt → Dragon interno 1500T
+```
+
+**Estatísticas Ledger (16 Mar 2026):**
+```
+Total slides:     50
+Idiomas:          🇵🇹 ~17 | 🇩🇪 ~17 | 🇬🇧 ~16
+Temas:            Institucional, Turismo, API Keys, JMPG, Skills, Compliance
+training_eligible: true (todos)
 ```
 
 ### Protocolo "Génio da Lâmpada" — Osmose Activa
