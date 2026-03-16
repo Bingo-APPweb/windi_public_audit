@@ -863,3 +863,103 @@ body {
     border-color: var(--border-subtle);
     color: var(--text-muted);
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   WINDI SLIDES — Presentation Mode
+   ═══════════════════════════════════════════════════════════════════ */
+
+.windi-slides {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.slide {
+    min-height: 400px;
+    padding: 60px 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    page-break-after: always;
+    border-bottom: 1px solid #222;
+}
+
+.slide-cover {
+    background: #0a0a0a;
+    color: #fff;
+}
+
+.slide-cover h1 {
+    font-size: 2.2rem;
+    font-style: italic;
+    border-bottom: 3px solid #8B6914;
+    padding-bottom: 16px;
+    margin: 20px 0;
+}
+
+.slide-ep {
+    color: #8B6914;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.slide-sub {
+    color: #8B6914;
+    font-size: 1rem;
+}
+
+.slide-brand {
+    margin-top: auto;
+    text-align: right;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #8B6914;
+}
+
+.slide-brand span {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: #888;
+}
+
+.slide-content {
+    background: #F5F0E0;
+    color: #1a1a1a;
+}
+
+.slide-content h2 {
+    font-size: 1.4rem;
+    color: #333;
+    border-left: 4px solid #8B6914;
+    padding-left: 16px;
+    margin-bottom: 24px;
+}
+
+.slide-content ul {
+    list-style: none;
+    padding: 0;
+}
+
+.slide-content li {
+    padding: 8px 0 8px 24px;
+    position: relative;
+    font-size: 1.1rem;
+}
+
+.slide-content li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: #8B6914;
+}
+
+.slide-final {
+    background: #0a0a0a;
+    color: #8B6914;
+    text-align: center;
+    font-size: 1.6rem;
+    font-weight: 700;
+}
