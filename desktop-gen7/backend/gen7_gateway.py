@@ -394,7 +394,7 @@ async def onetouch_execute(req: OneTouchRequest):
                 _intent_lower = req.intent.lower()
                 _is_slides = any(kw in _intent_lower for kw in [
                     "präsentation", "presentation", "slides", "slide deck",
-                    "apresentação", "slide", "pitchdeck", "pitch deck"
+                    "apresentação", "apresentacao", "slide", "pitchdeck", "pitch deck"
                 ])
 
                 if _is_slides and _ANTHROPIC_KEY:
