@@ -701,6 +701,57 @@ async def agents_status():
     }
 
 
+# === Canvas Seal ===
+class SealRequest(BaseModel):
+    session_id: str
+    content_hash: str
+    doc_type: Optional[str] = "canvas-output"
+
+
+@app.post("/api/seal")
+async def seal_canvas_output(req: SealRequest):
+    """
+    Seal Canvas output to Forensic Ledger.
+    Called by frontend Download/Seal buttons.
+    """
+    receipt_id = f"WINDI-CANVAS-{req.session_id}"
+
+    async with httpx.AsyncClient(timeout=5.0) as client:
+        try:
+            ledger_payload = {
+                "id": receipt_id,
+                "actor": "gen7-canvas",
+                "app": "desktop-gen7",
+                "doc_name": f"Canvas Output {req.session_id}",
+                "doc_type": "doc",
+                "governance_level": "HIGH",
+                "content_hash": req.content_hash,
+                "sge_score": 1.0,
+                "metadata": {
+                    "session_id": req.session_id,
+                    "canvas_type": req.doc_type,
+                    "sealed_by": "human",
+                }
+            }
+            r = await client.post(
+                f"{LEDGER_URL}/api/receipts",
+                json=ledger_payload
+            )
+            if r.status_code == 200:
+                return {
+                    "ok": True,
+                    "receipt_id": receipt_id,
+                    "content_hash": req.content_hash[:16] + "...",
+                    "message": "Selado no Forensic Ledger"
+                }
+            else:
+                raise HTTPException(r.status_code, f"Ledger error: {r.text}")
+        except httpx.TimeoutException:
+            raise HTTPException(504, "Ledger timeout")
+        except Exception as e:
+            raise HTTPException(500, str(e))
+
+
 # === Static Files ===
 @app.get("/")
 async def root(request: Request):
