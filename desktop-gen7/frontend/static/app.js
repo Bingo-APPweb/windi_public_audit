@@ -353,20 +353,95 @@ async function executeOneTouch(intent) {
     }
 }
 
+// === Canvas Actions ===
+let _currentCanvasContent = '';
+let _currentSession = null;
+
+function downloadCanvasOutput() {
+    if (!_currentCanvasContent) return;
+    const isSvg = _currentCanvasContent.includes('<svg');
+    const ext = isSvg ? 'svg' : 'html';
+    const mime = isSvg ? 'image/svg+xml' : 'text/html';
+    const blob = new Blob([_currentCanvasContent], {type: mime});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `windi-${_currentSession?.session_id || Date.now()}.${ext}`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+}
+
+async function copyCanvasToClipboard() {
+    if (!_currentCanvasContent) return;
+    try {
+        await navigator.clipboard.writeText(_currentCanvasContent);
+        const btn = event.target;
+        const original = btn.textContent;
+        btn.textContent = '✓';
+        setTimeout(() => btn.textContent = original, 1500);
+    } catch (e) {
+        alert('Erro ao copiar: ' + e.message);
+    }
+}
+
+async function sealCanvasToLedger() {
+    if (!_currentSession) return;
+    const btn = document.getElementById('btnSealLedger');
+    if (btn) { btn.disabled = true; btn.textContent = '⏳'; }
+    try {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(_currentCanvasContent);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const contentHash = hashArray.map(b => b.toString(16).padStart(2,'0')).join('');
+
+        const res = await fetch(`${API_BASE}/api/seal`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                session_id: _currentSession.session_id,
+                content_hash: contentHash,
+                doc_type: 'canvas-output'
+            })
+        });
+        const result = await res.json();
+        if (res.ok) {
+            if (btn) btn.textContent = '✓';
+            alert(`Selado no Ledger!\nReceipt: ${result.receipt_id || _currentSession.session_id}`);
+        } else {
+            if (btn) btn.textContent = '✗';
+            alert('Erro ao selar: ' + (result.detail || result.error));
+        }
+    } catch (e) {
+        if (btn) btn.textContent = '✗';
+        alert('Erro: ' + e.message);
+    } finally {
+        setTimeout(() => { if (btn) { btn.disabled = false; btn.textContent = '🔏'; } }, 2000);
+    }
+}
+
 function showCanvas(session, originalIntent) {
     const canvasEl = document.getElementById('canvasArea');
     const placeholderEl = document.querySelector('.editor-placeholder');
+
+    // Store for actions
+    _currentCanvasContent = session.message;
+    _currentSession = session;
 
     // Hide input placeholder, show canvas with draft
     if (placeholderEl) placeholderEl.style.display = 'none';
     canvasEl.style.display = 'block';
 
-    // Header compacto + HTML directo do Dragon
+    // Header compacto + HTML directo do Dragon + Action buttons
     canvasEl.innerHTML = `
         <div class="canvas-toolbar">
             <span class="canvas-badge">${session.agent}</span>
             <span class="canvas-session-id">${session.session_id}</span>
             <span class="canvas-stage">${session.stage}</span>
+            <div class="canvas-toolbar-actions">
+                <button onclick="downloadCanvasOutput()" title="Download">⬇</button>
+                <button onclick="copyCanvasToClipboard()" title="Copiar">📋</button>
+                <button id="btnSealLedger" onclick="sealCanvasToLedger()" title="Selar no Ledger">🔏</button>
+            </div>
         </div>
         <div class="canvas-document">
             ${session.message}

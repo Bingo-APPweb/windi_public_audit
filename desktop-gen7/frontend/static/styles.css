@@ -760,11 +760,48 @@ body {
     font-weight: 600;
 }
 
+.canvas-toolbar-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+}
+
+.canvas-toolbar-actions button {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.canvas-toolbar-actions button:hover {
+    background: var(--gold-dim);
+    border-color: var(--gold-primary);
+}
+
+.canvas-toolbar-actions button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 .canvas-document {
     padding: 40px 48px;
     background: #FEFCF5;
     min-height: 400px;
     font-family: 'Bricolage Grotesque', sans-serif;
+    overflow: hidden;
+}
+
+/* SVG Art containment — prevent viewport-based sizing */
+.canvas-document svg {
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100%;
+    max-height: 80vh;
+    display: block;
+    margin: 0 auto;
 }
 
 [data-theme="noir"] .canvas-document {
