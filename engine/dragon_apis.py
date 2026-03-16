@@ -145,7 +145,7 @@ class ClaudeAPI(DragonAPI):
     def __init__(self):
         super().__init__("Claude", "Guardian")
         self.api_key = ANTHROPIC_API_KEY
-        self.model = "claude-3-haiku-20240307"
+        self.model = "claude-sonnet-4-20250514"
         self.available = bool(self.api_key)
 
     def query(self, prompt: str) -> Dict:

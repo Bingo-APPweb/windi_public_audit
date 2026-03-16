@@ -28,6 +28,53 @@ from fastapi.responses import JSONResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
+# ── SLIDES: Import chave centralizada ──────────────────────────────
+import sys as _sys
+_sys.path.insert(0, "/opt/windi/engine")
+try:
+    from dragon_apis import ANTHROPIC_API_KEY as _ANTHROPIC_KEY
+except Exception:
+    _ANTHROPIC_KEY = os.getenv("ANTHROPIC_API_KEY", "")
+
+SLIDES_SYSTEM_PROMPT = """És W-COMM-001, agente de comunicação institucional WINDI.
+REGRA ABSOLUTA: Responde APENAS com HTML válido. NUNCA texto corrido. NUNCA markdown. NUNCA JSON.
+
+Gera IMEDIATAMENTE uma apresentação com este formato exacto:
+
+<div class="windi-slides">
+  <div class="slide slide-cover">
+    <p class="slide-ep">EP.1 — [TEMA EXTRAÍDO DO INTENT]</p>
+    <h1>[TÍTULO PRINCIPAL]</h1>
+    <p class="slide-sub">[SUBTÍTULO PROVOCADOR]</p>
+    <footer class="slide-brand">WINDI <span>Publishing House</span></footer>
+  </div>
+  <div class="slide slide-content">
+    <h2>[TÍTULO SLIDE 2]</h2>
+    <ul><li>[PONTO 1 CONCRETO]</li><li>[PONTO 2 CONCRETO]</li><li>[PONTO 3 CONCRETO]</li></ul>
+  </div>
+  <div class="slide slide-content">
+    <h2>[TÍTULO SLIDE 3]</h2>
+    <p>[PARÁGRAFO EXPLICATIVO — máx 40 palavras]</p>
+  </div>
+  <div class="slide slide-content">
+    <h2>[TÍTULO SLIDE 4]</h2>
+    <ul><li>[PONTO A]</li><li>[PONTO B]</li></ul>
+  </div>
+  <div class="slide slide-final">
+    <h2>[CALL TO ACTION]</h2>
+    <p>WINDI</p>
+    <p class="slide-sub">Publishing House · Kempten, Bavaria</p>
+  </div>
+</div>
+
+REGRAS:
+- Mínimo 5 slides, máximo 10
+- Slide 1: sempre slide-cover
+- Último slide: sempre slide-final
+- Conteúdo real baseado no intent — NUNCA placeholders genéricos
+- Idioma: detectar automaticamente pelo intent (PT/DE/EN)
+- NUNCA perguntar. NUNCA menus. PRODUZ HTML AGORA."""
+
 # === Configuration ===
 PORT = int(os.getenv("PORT", "8119"))
 DRAGON_URL = os.getenv("DRAGON_URL", "http://localhost:8108")
@@ -343,76 +390,75 @@ async def onetouch_execute(req: OneTouchRequest):
                 session_id = data.get("session_id", f"OT-{intent_hash}")
 
                 # Phase 4: Call Dragon to generate draft (HTML Canvas mode)
-                canvas_instruction = f"""[CANVAS HTML MODE — GERA IMEDIATAMENTE]
+                # ── Intent detection: slides vs document ──────────────────
+                _intent_lower = req.intent.lower()
+                _is_slides = any(kw in _intent_lower for kw in [
+                    "präsentation", "presentation", "slides", "slide deck",
+                    "apresentação", "slide", "pitchdeck", "pitch deck"
+                ])
+
+                if _is_slides and _ANTHROPIC_KEY:
+                    # Cirurgia B: Claude directo com SLIDES_SYSTEM_PROMPT
+                    import anthropic as _anthropic
+                    import asyncio as _asyncio
+                    def _call_slides():
+                        _c = _anthropic.Anthropic(api_key=_ANTHROPIC_KEY)
+                        _r = _c.messages.create(
+                            model="claude-sonnet-4-20250514",
+                            max_tokens=3000,
+                            system=SLIDES_SYSTEM_PROMPT,
+                            messages=[{"role": "user", "content": req.intent}]
+                        )
+                        return _r.content[0].text
+                    draft_message = await _asyncio.to_thread(_call_slides)
+                else:
+                    canvas_instruction = f"""[CANVAS HTML MODE — GERA IMEDIATAMENTE]
 
 INTENT DO UTILIZADOR: {req.intent}
 
-REGRA ABSOLUTA: Gera o documento AGORA. NÃO faças perguntas. NÃO mostres menus. PRODUZ HTML.
+REGRA ABSOLUTA: Gera o DOCUMENTO AGORA. NÃO faças perguntas. NÃO mostres menus. PRODUZ HTML.
 
-Se for DOCUMENTO (carta, memo, comunicado, relatório):
 <article class="windi-doc">
   <header class="doc-header"><h1 class="doc-title">[TÍTULO]</h1><p class="doc-meta">[DATA]</p></header>
   <section class="doc-body">[CONTEÚDO]</section>
   <footer class="doc-footer">[ASSINATURA]</footer>
 </article>
 
-Se for APRESENTAÇÃO (slides, presentation, Präsentation):
-<div class="windi-slides">
-  <div class="slide slide-cover">
-    <p class="slide-ep">EP.1 — [TEMA]</p>
-    <h1>[TÍTULO PRINCIPAL EM ITÁLICO]</h1>
-    <p class="slide-sub">[SUBTÍTULO PROVOCADOR]</p>
-    <footer class="slide-brand">WINDI <span>Publishing House</span></footer>
-  </div>
-  <div class="slide slide-content">
-    <h2>[TÍTULO SLIDE 2]</h2>
-    <ul><li>[PONTO 1]</li><li>[PONTO 2]</li><li>[PONTO 3]</li></ul>
-  </div>
-  <div class="slide slide-content">
-    <h2>[TÍTULO SLIDE 3]</h2>
-    <p>[PARÁGRAFO EXPLICATIVO]</p>
-  </div>
-  <div class="slide slide-final">
-    <p>WINDI</p>
-    <p class="slide-sub">Publishing House · Kempten, Bavaria</p>
-  </div>
-</div>
-
 NUNCA markdown. NUNCA menus. NUNCA perguntas. PRODUZ HTML AGORA."""
 
-                try:
-                    dragon_r = await client.post(
-                        f"{DRAGON_URL}/api/dragon/chat",
-                        json={
-                            "message": canvas_instruction,
-                            "tier": "HIGH",
-                            "session_id": session_id,
-                            "doc_type": agent,
-                            "history": [],
-                            "intentMode": "document",  # Force ARCHITECT
-                            "chatType": "document",    # Force document mode
-                        },
-                        timeout=30.0,
-                    )
-                    if dragon_r.status_code == 200:
-                        dragon_data = dragon_r.json()
-                        draft_message = dragon_data.get("message", "Rascunho em preparação...")
-                        # Sanitize: remove any code blocks and JSON that Dragon may append
-                        import re
-                        # Remove ```json ... ``` blocks
-                        draft_message = re.sub(r'```json[\s\S]*?```', '', draft_message)
-                        # Remove ```html ... ``` wrappers (keep content)
-                        draft_message = re.sub(r'```html\s*', '', draft_message)
-                        draft_message = re.sub(r'```\s*$', '', draft_message)
-                        # Remove trailing JSON objects
-                        draft_message = re.sub(r'\n*\{"document":\s*\{[\s\S]*$', '', draft_message)
-                        draft_message = re.sub(r'\n*\{"title":\s*"[\s\S]*$', '', draft_message)
-                        # Clean up
-                        draft_message = draft_message.strip()
-                    else:
-                        draft_message = f"Sessão {session_id} criada. Dragon indisponível."
-                except Exception:
-                    draft_message = f"Sessão {session_id} criada. Aguarda input manual."
+                    try:
+                        dragon_r = await client.post(
+                            f"{DRAGON_URL}/api/dragon/chat",
+                            json={
+                                "message": canvas_instruction,
+                                "tier": "HIGH",
+                                "session_id": session_id,
+                                "doc_type": agent,
+                                "history": [],
+                                "intentMode": "document",  # Force ARCHITECT
+                                "chatType": "document",    # Force document mode
+                            },
+                            timeout=30.0,
+                        )
+                        if dragon_r.status_code == 200:
+                            dragon_data = dragon_r.json()
+                            draft_message = dragon_data.get("message", "Rascunho em preparação...")
+                            # Sanitize: remove any code blocks and JSON that Dragon may append
+                            import re
+                            # Remove ```json ... ``` blocks
+                            draft_message = re.sub(r'```json[\s\S]*?```', '', draft_message)
+                            # Remove ```html ... ``` wrappers (keep content)
+                            draft_message = re.sub(r'```html\s*', '', draft_message)
+                            draft_message = re.sub(r'```\s*$', '', draft_message)
+                            # Remove trailing JSON objects
+                            draft_message = re.sub(r'\n*\{"document":\s*\{[\s\S]*$', '', draft_message)
+                            draft_message = re.sub(r'\n*\{"title":\s*"[\s\S]*$', '', draft_message)
+                            # Clean up
+                            draft_message = draft_message.strip()
+                        else:
+                            draft_message = f"Sessão {session_id} criada. Dragon indisponível."
+                    except Exception:
+                        draft_message = f"Sessão {session_id} criada. Aguarda input manual."
 
                 return OneTouchResponse(
                     session_id=session_id,
