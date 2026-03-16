@@ -355,8 +355,10 @@ async function executeOneTouch(intent) {
 
 function showCanvas(session, originalIntent) {
     const canvasEl = document.getElementById('canvasArea');
+    const placeholderEl = document.querySelector('.editor-placeholder');
 
-    // FIX 2: Keep input visible, show result below
+    // Hide input placeholder, show canvas with draft
+    if (placeholderEl) placeholderEl.style.display = 'none';
     canvasEl.style.display = 'block';
 
     // Show routing info
