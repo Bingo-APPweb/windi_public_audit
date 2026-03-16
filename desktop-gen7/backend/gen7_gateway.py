@@ -411,6 +411,34 @@ async def onetouch_execute(req: OneTouchRequest):
                         )
                         return _r.content[0].text
                     draft_message = await _asyncio.to_thread(_call_slides)
+
+                    # ── Ledger logging para osmose (training) ──────────────
+                    try:
+                        _ledger_payload = {
+                            "id": f"WINDI-SLIDES-{session_id}",
+                            "actor": "gen7-gateway",
+                            "app": "canvas-presentation",
+                            "doc_name": req.intent[:80],
+                            "doc_type": "doc",  # Ledger requires valid type
+                            "governance_level": "HIGH",
+                            "content_hash": hashlib.sha256(draft_message.encode()).hexdigest(),
+                            "sge_score": 1.0,  # Required by Ledger
+                            "metadata": {
+                                "intent": req.intent,
+                                "model": "claude-sonnet-4-20250514",
+                                "tokens_estimate": 4000,
+                                "training_eligible": True,
+                                "canvas_type": "slides",
+                            }
+                        }
+                        # Await with short timeout (don't block Canvas long)
+                        await client.post(
+                            f"{LEDGER_URL}/api/receipts",
+                            json=_ledger_payload,
+                            timeout=2.0
+                        )
+                    except Exception:
+                        pass  # Ledger logging is optional, never block Canvas
                 else:
                     canvas_instruction = f"""[CANVAS HTML MODE — GERA IMEDIATAMENTE]
 
