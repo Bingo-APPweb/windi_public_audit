@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.8.1
+**Version:** 1.8.2
 **Sealed:** 2026-03-16
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -772,13 +772,16 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | Slides full viewport (100vh) | 14:55 |
 | Keyword fix "apresentacao" sem acento | 15:10 |
 | **CLAUDE.md v1.8.1** | **15:15** |
+| Ledger logging — payload fix (sge_score, doc_type) | 15:45 |
+| **OSMOSE ACTIVA — Ledger training_eligible** | **15:50** |
+| **CLAUDE.md v1.8.2** | **16:00** |
 
 ---
 
 ## Slides Canvas — 16 Mar 2026
 
 **Status:** LIVE
-**Princípio:** Intent → Claude Sonnet 4 directo → HTML de slides → Canvas renderiza
+**Princípio:** Intent → Claude Sonnet 4 directo → HTML de slides → Canvas renderiza → Ledger osmose
 
 ### Arquitectura
 
@@ -823,6 +826,44 @@ ETAPA 1 ✅ HOJE    — 4000T externos → JSON/HTML de slides perfeito
 ETAPA 2 ⏳ SEMANAS — 50+ apresentações no Ledger → comprimir prompt
 ETAPA 3 ⏳ FUTURO  — Dragon interno 1500T (osmose completa)
 ```
+
+### Protocolo "Génio da Lâmpada" — Osmose Activa
+
+**Status:** LIVE (16 Mar 2026)
+
+```
+Claude Sonnet 4000T  →   Ledger colecta + filtra  →  Dragon 1500T
+"Génio externo"          "Osmose activa"              "Génio interno"
+€0.003/chamada           ~50 apresentações            €0/chamada
+```
+
+**Ledger Logging (gen7_gateway.py):**
+```python
+_ledger_payload = {
+    "id": f"WINDI-SLIDES-{session_id}",
+    "actor": "gen7-gateway",
+    "app": "canvas-presentation",
+    "doc_type": "doc",
+    "sge_score": 1.0,
+    "metadata": {
+        "training_eligible": True,
+        "canvas_type": "slides",
+        "model": "claude-sonnet-4-20250514",
+    }
+}
+await client.post(f"{LEDGER_URL}/api/receipts", json=_ledger_payload)
+```
+
+**Critérios de Qualidade N1-N5:**
+| Critério | Validação |
+|----------|-----------|
+| N1 | Estrutura correcta? (cover + content + final) |
+| N2 | Idioma detectado certo? |
+| N3 | Conteúdo real? (sem placeholders) |
+| N4 | Human aprovou? |
+| N5 | Maturidade >0.7? |
+
+**Volume mínimo para Etapa 2:** ~40-50 apresentações aprovadas
 
 ---
 
