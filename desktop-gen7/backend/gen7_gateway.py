@@ -340,12 +340,35 @@ async def onetouch_execute(req: OneTouchRequest):
 
             if r.status_code in (200, 201):
                 data = r.json()
+                session_id = data.get("session_id", f"OT-{intent_hash}")
+
+                # Phase 4: Call Dragon to generate draft
+                try:
+                    dragon_r = await client.post(
+                        f"{DRAGON_URL}/api/dragon/chat",
+                        json={
+                            "message": req.intent,
+                            "tier": "HIGH",
+                            "session_id": session_id,
+                            "doc_type": agent,
+                            "history": [],
+                        },
+                        timeout=30.0,
+                    )
+                    if dragon_r.status_code == 200:
+                        dragon_data = dragon_r.json()
+                        draft_message = dragon_data.get("message", "Rascunho em preparação...")
+                    else:
+                        draft_message = f"Sessão {session_id} criada. Dragon indisponível."
+                except Exception:
+                    draft_message = f"Sessão {session_id} criada. Aguarda input manual."
+
                 return OneTouchResponse(
-                    session_id=data.get("session_id", f"OT-{intent_hash}"),
-                    stage=data.get("stage", "C1"),
+                    session_id=session_id,
+                    stage=data.get("stage", "C2"),  # C2 = draft generated
                     agent=agent,
-                    message=data.get("message", f"Sessão criada via {agent}"),
-                    next_step=f"Aguarda conteúdo em D2 (Sovereign Editor)",
+                    message=draft_message,
+                    next_step="Rascunho pronto. Edita em D2 e clica Finalizar.",
                 )
             else:
                 raise HTTPException(r.status_code, f"Bridge error: {r.text}")
@@ -408,18 +431,8 @@ async def agents_status():
 # === Static Files ===
 @app.get("/")
 async def root(request: Request):
-    """Serve index.html (desktop) or mobile_index.html (mobile) based on UA"""
-    user_agent = request.headers.get('User-Agent', '')
-    is_mobile = any(x in user_agent for x in ['Mobile', 'Android', 'iPhone', 'iPad', 'iPod'])
-
-    # Select template based on device
-    template = 'mobile_index.html' if is_mobile else 'index.html'
-    template_path = STATIC_DIR / template
-
-    # Fallback to index.html if mobile template doesn't exist yet
-    if is_mobile and not template_path.exists():
-        template_path = STATIC_DIR / "index.html"
-
+    """Serve index.html — unified experience for all devices (GEN 7 Canvas)"""
+    template_path = STATIC_DIR / "index.html"
     if template_path.exists():
         return FileResponse(template_path)
     return {"message": "WINDI Desktop GEN 7", "status": "frontend pending"}
