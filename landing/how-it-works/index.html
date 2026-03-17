@@ -6,6 +6,40 @@
 <title>Como Funciona — WINDI Publishing House</title>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
 <style>
+  /* NOIR theme (default) */
+  [data-theme="noir"] {
+    --bg:       #0A0A10;
+    --card:     #12121C;
+    --card2:    #16161F;
+    --border:   #22223A;
+    --gold:     #C9A84C;
+    --gold2:    #E8C56A;
+    --dim:      #5A5A7A;
+    --text:     #E2E2EA;
+    --soft:     #9090AA;
+    --success:  #3DBE7A;
+    --info:     #4A9EE8;
+    --purple:   #8B6FD4;
+    --orange:   #E8834A;
+  }
+
+  /* KLAR theme (light) */
+  [data-theme="klar"] {
+    --bg:       #FAFAF8;
+    --card:     #FFFFFF;
+    --card2:    #F5F5F2;
+    --border:   #E0DED8;
+    --gold:     #8B7424;
+    --gold2:    #A68B2A;
+    --dim:      #8A8880;
+    --text:     #1A1A1A;
+    --soft:     #6A6A60;
+    --success:  #2A9E5A;
+    --info:     #2A7EC8;
+    --purple:   #6B4FB4;
+    --orange:   #C8632A;
+  }
+
   :root {
     --bg:       #0A0A10;
     --card:     #12121C;
@@ -73,6 +107,12 @@
     transition: all 0.2s; font-weight: 500;
   }
   .back-link:hover { color: var(--gold); border-color: var(--gold); background: rgba(201,168,76,0.08); }
+  .theme-btn {
+    padding: 4px 12px; border-radius: 6px; border: 1px solid var(--border);
+    background: none; color: var(--dim); font-size: 14px;
+    cursor: pointer; transition: all 0.2s; margin-left: 8px;
+  }
+  .theme-btn:hover { color: var(--gold); border-color: var(--gold); background: rgba(201,168,76,0.08); }
 
   /* ── HERO ── */
   .hero {
@@ -459,7 +499,7 @@
   .reveal-delay-3 { transition-delay: 0.3s; }
 </style>
 </head>
-<body>
+<body data-theme="noir">
 
 <!-- ── LANG BAR ── -->
 <nav class="lang-bar">
@@ -472,6 +512,7 @@
     <button class="lang-btn" onclick="setLang('de')">DE</button>
     <button class="lang-btn" onclick="setLang('en')">EN</button>
     <button class="lang-btn" onclick="setLang('pt')">PT</button>
+    <button class="theme-btn" onclick="toggleTheme()" id="themeToggle" title="NOIR/KLAR">☀</button>
   </div>
 </nav>
 
@@ -1038,6 +1079,22 @@ function setLang(lang) {
   document.documentElement.lang = lang;
 }
 
+// Theme toggle (NOIR/KLAR) - shared with /desktop/
+function toggleTheme() {
+  const body = document.body;
+  const isNoir = body.dataset.theme !== 'klar';
+  body.dataset.theme = isNoir ? 'klar' : 'noir';
+  document.getElementById('themeToggle').textContent = isNoir ? '☽' : '☀';
+  localStorage.setItem('windi-theme', body.dataset.theme);
+}
+
+function initTheme() {
+  const savedTheme = localStorage.getItem('windi-theme') || 'noir';
+  document.body.dataset.theme = savedTheme;
+  const btn = document.getElementById('themeToggle');
+  if (btn) btn.textContent = savedTheme === 'klar' ? '☽' : '☀';
+}
+
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(e => {
     if (e.isIntersecting) { e.target.classList.add('visible'); }
@@ -1046,8 +1103,9 @@ const observer = new IntersectionObserver((entries) => {
 
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-// Initialize with saved language
+// Initialize with saved language and theme
 setLang(currentLang);
+initTheme();
 </script>
 </body>
 </html>
