@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.3
+**Version:** 1.9.4
 **Sealed:** 2026-03-17
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -371,11 +371,11 @@ Constitucionais WINDI (I1-I11) > Invariantes Gêmeo (G1-G6)
 
 ---
 
-## 11.2 — I18N INVARIANT (Lei Constitucional Frontend)
+## 11.2 — FRONTEND INVARIANTS (Lei Constitucional UI)
 
-**TODA criação de UI/página/componente WINDI é OBRIGATORIAMENTE trilíngue: PT · DE · EN**
+**TODA criação de UI/página/componente WINDI deve cumprir DUAS leis:**
 
-### Ordem Canónica
+### A) I18N — Trilíngue Obrigatório
 
 ```
 Toggle sempre: DE | EN | PT (esta ordem, sempre)
@@ -384,14 +384,41 @@ Strings:       objecto I18N = { de:{}, en:{}, pt:{} }
 setLang():     aplica + persiste + marca botão .active
 ```
 
+### B) THEME — NOIR/KLAR Obrigatório
+
+```
+Temas:         NOIR (dark) = default | KLAR (light)
+localStorage:  'windi-theme' → 'noir' | 'klar'
+Toggle icon:   ☀ (está noir) | ☽ (está klar)
+CSS vars:      [data-theme="noir"] e [data-theme="klar"]
+initTheme():   ler localStorage + aplicar no body.dataset.theme
+```
+
+### Cores Canónicas
+
+```
+NOIR (dark):
+  --bg:      #0A0A10
+  --gold:    #C9A84C
+  --text:    #E8E6E1
+  --border:  #1A1A24
+
+KLAR (light):
+  --bg:      #FAFAF8
+  --gold:    #8B7424
+  --text:    #1A1A1A
+  --border:  #E0DED8
+```
+
 ### Anti-patterns PROIBIDOS
 
 ```
-❌ Criar página só em PT (ou qualquer língua única)
+❌ Página só em PT (ou qualquer língua única)
+❌ Página só em NOIR (sem toggle KLAR)
 ❌ Hardcode de texto visível fora do objecto I18N
-❌ Ordem diferente no toggle (ex: PT|EN|DE)
-❌ Esquecer de chamar setLang(currentLang) no init
-❌ Usar chave localStorage diferente de 'windi-lang'
+❌ Hardcode de cores fora das CSS vars
+❌ Ordem diferente no toggle idioma (ex: PT|EN|DE)
+❌ Usar chave localStorage diferente de 'windi-lang' / 'windi-theme'
 ```
 
 ### Checklist Antes de Entregar
@@ -401,6 +428,8 @@ setLang():     aplica + persiste + marca botão .active
 [ ] CTAs traduzidos?
 [ ] Footer/labels traduzidos?
 [ ] Toggle DE|EN|PT presente e funcional?
+[ ] Toggle ☀/☽ NOIR/KLAR presente e funcional?
+[ ] CSS vars para ambos os temas?
 [ ] localStorage sync com outras páginas?
 [ ] Botão voltar trilíngue?
 ```
@@ -505,7 +534,8 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | Nav Link | Botão "How it Works" na header GEN 7 |
 | i18n Sync | localStorage `windi-lang` partilhado entre páginas |
 | Back Button | "← Voltar/Zurück/Back" trilíngue |
-| **§11.2 I18N INVARIANT** | Lei constitucional frontend — trilíngue obrigatório |
+| **§11.2 FRONTEND INVARIANTS** | Lei constitucional: i18n + NOIR/KLAR obrigatórios |
+| Theme Toggle | ☀/☽ NOIR/KLAR na `/how-it-works/` |
 
 ### Backlog Activo
 
