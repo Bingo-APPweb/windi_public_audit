@@ -29,6 +29,9 @@
 | CSS vars [data-theme="noir"] + [data-theme="klar"] | 11:30 |
 | localStorage `windi-theme` sync | 11:30 |
 | **CLAUDE.md v1.9.4** | 11:35 |
+| `/keys/` back button trilíngue | 11:50 |
+| `/keys/` theme toggle NOIR/KLAR | 11:50 |
+| `/keys/` localStorage fix: windi_lang → windi-lang | 11:50 |
 
 ---
 
