@@ -24,8 +24,11 @@
 | Nav link na header GEN 7 `/desktop/` | 11:05 |
 | i18n sync: localStorage `windi-lang` | 11:10 |
 | Back button trilíngue (← Voltar/Zurück/Back) | 11:15 |
-| **§11.2 I18N INVARIANT** — Lei constitucional frontend | 11:20 |
-| **CLAUDE.md v1.9.3** | 11:20 |
+| **§11.2 FRONTEND INVARIANTS** — i18n + NOIR/KLAR | 11:20 |
+| Theme toggle ☀/☽ na `/how-it-works/` | 11:30 |
+| CSS vars [data-theme="noir"] + [data-theme="klar"] | 11:30 |
+| localStorage `windi-theme` sync | 11:30 |
+| **CLAUDE.md v1.9.4** | 11:35 |
 
 ---
 
