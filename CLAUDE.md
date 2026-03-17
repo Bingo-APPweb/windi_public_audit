@@ -460,6 +460,9 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | CHANGELOG.md | Novo ficheiro — histórico de milestones |
 | ARCHITECTURE.md | Novo ficheiro — código técnico |
 | i18n Fix | `detect_language()` respeita EN (linha 1335) |
+| Canvas ← Novo | Botão na toolbar G2 — volta ao home (DE/PT/EN) |
+| URL Fix | `/app/api/dragon` → `/api/dragon` |
+| History Fix | `human→user`, `text→content` |
 
 ### Backlog Activo
 

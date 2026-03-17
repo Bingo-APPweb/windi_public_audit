@@ -13,6 +13,9 @@
 | **i18n Fix** — detect_language() respeita EN | 08:15 |
 | Dragon restart + validação PT/DE/EN | 08:15 |
 | **CLAUDE.md v1.9.1** | 08:20 |
+| **Canvas ← Novo** — botão toolbar G2 | 08:30 |
+| URL Fix: /app/api/dragon → /api/dragon | 08:30 |
+| History Fix: human→user, text→content | 08:30 |
 
 ---
 
