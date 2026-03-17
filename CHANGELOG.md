@@ -171,3 +171,41 @@
 ---
 
 *Histórico completo de milestones — ver CLAUDE.md para estado actual*
+
+
+## [FASE 2] — 17 Mar 2026 — Wallet Pipeline GEN7
+
+### G1 — OneTouch Wallet Attribution (ea0243e)
+- app.js linha 374: wallet_id: window.__windiWalletId || 'desktop-gen7-session'
+- Dragon recebe identidade soberana em cada intent
+
+### G2 — Ledger Seal Attribution (ea0243e)
+- app.js linha 453: wallet_id + human_fingerprint no payload de seal
+- Receipts agora atribuídos à identidade do utilizador
+
+### G3 — D1→D2 Tool Routing (17ef04c)
+- TOOL_ROUTES: Journalist → /jornal/ | Prüfer → /verify-public/viewer/v2.2/
+- loadToolInD2() + exitToolMode() — iframe em D2
+- Tools section em D1 com botões dedicados
+
+### G4 — Trust Score Increments (b16b446)
+- wallet_provisioning.py linha 892: record_trust_event()
+- wallet_service.py linha 205: POST /api/wallet/trust/event
+- app.js linhas 462-478: call após seal → D3 mostra T{level}·{score}
+- Teste: trust 50.0 → 51.0 (T2) verificado ao vivo
+
+### Pipeline Completa
+Login Wallet → OneTouch (G1) → Seal (G2) → Trust++ (G4) → D3 T2·51
+                    ↓
+              Tools D1→D2 (G3)
+
+### Lição da Sessão — heredoc vs python3 r-string
+- Problema: Bad substitution com Math.floor em heredoc
+- Solução: python3 r-string ignora ${} e operadores — padrão WINDI
+- Documentado: /opt/windi/SKILL-heredoc-fix.md
+
+### Arquitectura CLAUDE.md
+- Overflow 45.2KB → 25.2KB resolvido
+- CLAUDE-HISTORY.md criado (append-only)
+- Overflow Policy selada: CLAUDE.md = presente+futuro / HISTORY = passado
+
