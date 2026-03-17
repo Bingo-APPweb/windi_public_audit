@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.0
+**Version:** 1.9.1
 **Sealed:** 2026-03-17
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -450,6 +450,16 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | API Key System | ✅ W-KEYS-001 SEALED |
 | Dispatch Pipeline | ✅ email + whatsapp |
 | Web Hosting | ✅ /sites/ + /s/ short URLs |
+| i18n Dragon | ✅ PT/DE/EN auto-detect |
+
+### Completado Hoje (17 Mar 2026)
+
+| Fix | Descrição |
+|-----|-----------|
+| CLAUDE.md v1.9.0 | Refactor 45k→15k chars (-65%) |
+| CHANGELOG.md | Novo ficheiro — histórico de milestones |
+| ARCHITECTURE.md | Novo ficheiro — código técnico |
+| i18n Fix | `detect_language()` respeita EN (linha 1335) |
 
 ### Backlog Activo
 

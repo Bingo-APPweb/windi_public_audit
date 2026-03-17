@@ -3,6 +3,19 @@
 
 ---
 
+## 17 Março 2026
+
+| Milestone | Hora |
+|---|---|
+| **CLAUDE.md v1.9.0** — Refactor 45k→15k chars | 08:00 |
+| CHANGELOG.md criado | 08:00 |
+| ARCHITECTURE.md criado | 08:00 |
+| **i18n Fix** — detect_language() respeita EN | 08:15 |
+| Dragon restart + validação PT/DE/EN | 08:15 |
+| **CLAUDE.md v1.9.1** | 08:20 |
+
+---
+
 ## 16 Março 2026
 
 | Milestone | Hora |
