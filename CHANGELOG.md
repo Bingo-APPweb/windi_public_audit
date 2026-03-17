@@ -21,6 +21,11 @@
 | **CLAUDE.md v1.9.2** | 10:55 |
 | Nav link adicionado à landing principal | 11:00 |
 | i18n: EN/DE/PT para "How it Works" | 11:00 |
+| Nav link na header GEN 7 `/desktop/` | 11:05 |
+| i18n sync: localStorage `windi-lang` | 11:10 |
+| Back button trilíngue (← Voltar/Zurück/Back) | 11:15 |
+| **§11.2 I18N INVARIANT** — Lei constitucional frontend | 11:20 |
+| **CLAUDE.md v1.9.3** | 11:20 |
 
 ---
 
