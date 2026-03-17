@@ -749,7 +749,7 @@ function openWalletModal() {
 }
 
 function closeWalletModal(e) {
-    if (e && e.target \!== document.getElementById("walletModal")) return;
+    if (e && e.target !== document.getElementById("walletModal")) return;
     document.getElementById("walletModal").classList.remove("open");
 }
 
@@ -789,7 +789,7 @@ function renderWalletLoaded(wallet) {
         wallet.governance_level || wallet.tier || "L1";
 
     const trust = wallet.trust?.score ?? wallet.trust_score ?? wallet.trustScore ?? null;
-    const trustLevel = (trust \!== null) ? ("T" + (Math.floor(trust/20)+1) + " · " + trust) : "--";
+    const trustLevel = (trust !== null) ? ("T" + (Math.floor(trust/20)+1) + " · " + trust) : "--";
     document.getElementById("wm-trust").textContent = trustLevel;
 
     document.getElementById("wm-pioneer").textContent =
@@ -814,7 +814,7 @@ async function walletLogin() {
     const status   = document.getElementById("wm-login-status");
     const walletId = input?.value?.trim();
 
-    if (\!walletId) {
+    if (!walletId) {
         status.textContent = "Introduz o teu Wallet ID";
         status.className   = "wm-sign-status err";
         return;
@@ -852,7 +852,7 @@ function walletLogout() {
 
 (function initWalletModal() {
     const saved = WM.get();
-    if (\!saved) return;
+    if (!saved) return;
     window.__windiWallet   = saved;
     window.__windiWalletId = saved.wallet_id || saved.id;
     const btn = document.getElementById("walletBtn");
