@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.7
+**Version:** 1.9.8
 **Sealed:** 2026-03-17
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -541,6 +541,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | :8108 | Dragon Hub v1.3.0 | 🟢 LIVE |
 | :8119 | Desktop GEN 7 | 🟢 **PRODUÇÃO** |
 | :8120 | Pioneer Landing | 🟢 LIVE |
+| :8121 | Dispatch Gateway | 🟢 **.jmpg Hydration Engine** · I5+I6+I9 |
 
 ### Sistemas LIVE
 
@@ -573,6 +574,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | Theme Toggle | ☀/☽ NOIR/KLAR na `/how-it-works/` |
 | **/keys/ Fix** | Back button + NOIR/KLAR + localStorage sync |
 | **§17 .JMPG** | Documentação completa do formato soberano |
+| **Dispatch Gateway** | :8121 LIVE — .jmpg Hydration Engine · I5+I6+I9 |
 
 ### Backlog Activo
 
@@ -778,6 +780,95 @@ Blockchain  = Prova pública (sem privacidade)
 
 "A prova viaja com o documento."
 ```
+
+---
+
+## 18. Dispatch Gateway — .jmpg Hydration Engine
+
+**Version:** 1.0.0
+**Port:** :8121
+**Deployed:** 17 Mar 2026
+**Invariants:** I5 + I6 + I9
+
+### Função
+
+O Dispatch Gateway é o motor de hidratação progressiva para ficheiros .JMPG.
+Entrega assets em camadas P1→P4 baseado na qualidade da rede do utilizador.
+
+```
+Viewer solicita seed_id
+        ↓
+Gateway verifica I5+I6 contra Ledger (:8101)
+        ↓
+Detecta network_quality (2g/3g/4g/5g/wifi)
+        ↓
+Constrói manifest P1→P4
+        ↓
+Viewer hidrata progressivamente
+```
+
+### Network Tier Mapping
+
+| Network | P-Layers | Tier |
+|---------|----------|------|
+| 2G | P1 only | CORE |
+| 3G | P1+P2 | STANDARD |
+| 4G | P1+P2+P3 | RICH |
+| 5G/WiFi | P1+P2+P3+P4 | VAULT |
+
+### P-Layer Structure
+
+| Layer | Conteúdo | Size | Mandatory |
+|-------|----------|------|-----------|
+| **P1** | core.json (metadados + texto) | ~45KB | ✅ |
+| **P2** | thumb.webp (preview visual) | ~180KB | ✅ |
+| **P3** | media.mp4 (vídeo/rich media) | ~12MB | ❌ |
+| **P4** | raw.zip (arquivo original) | ~850MB | ❌ |
+
+### Evaporation Policy
+
+| Network | Policy | Significado |
+|---------|--------|-------------|
+| 5G/WiFi | `session_end` | Assets pesados evaporam ao fechar documento |
+| 4G/3G | `immediate` | P3/P4 evaporam quando viewport sai |
+| 2G | `none` | Só P1 entregue — nada para evaporar |
+
+### Endpoints
+
+| Endpoint | Método | Função |
+|----------|--------|--------|
+| `/dispatch/health` | GET | Status do serviço |
+| `/dispatch/activate` | POST | Activação principal |
+| `/dispatch/verify/{seed_id}` | GET | Quick I5+I6 check |
+| `/dispatch/tiers` | GET | Network mapping table |
+
+### Invariant Enforcement
+
+```
+I5 — Hash match obrigatório contra Ledger
+     Se falhar → 403 I5_INTEGRITY_VIOLATION
+
+I6 — Provenance WINDI obrigatória
+     Se falhar → Warning header (ainda permite leitura)
+
+I9 — Gateway nunca activa sem pedido humano
+     AI processes. Human decides.
+```
+
+### Ficheiros
+
+```
+/opt/windi/dispatch/
+├── dispatch_gateway.py    (FastAPI gateway)
+├── dispatch_stress.py     (Stress test suite)
+├── deploy_dispatch.sh     (7-phase deploy)
+└── .env                   (PORT, LEDGER_URL, VAULT_URL)
+```
+
+### Princípio
+
+> "P1 primeiro. Sempre. O texto + prova chegam instantaneamente.
+> O resto hidrata progressivamente enquanto o leitor consome."
 
 ---
 

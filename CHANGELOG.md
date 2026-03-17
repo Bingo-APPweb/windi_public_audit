@@ -35,6 +35,14 @@
 | **§17 .JMPG Format** — Documentação completa | 12:15 |
 | Aplicações: Multimedia, Communiqué, Legal, Saúde, Educação | 12:15 |
 | **CLAUDE.md v1.9.7** | 12:15 |
+| **Dispatch Gateway v1.0.0** — :8121 LIVE | 18:20 |
+| .jmpg Hydration Engine deployed | 18:20 |
+| I5+I6 Ledger verification | 18:20 |
+| P1→P4 progressive delivery | 18:20 |
+| Network tier mapping (2G→CORE, 5G→VAULT) | 18:20 |
+| Evaporation policy implemented | 18:20 |
+| **§18 Dispatch Gateway** — Documentação CLAUDE.md | 18:25 |
+| **CLAUDE.md v1.9.8** | 18:25 |
 
 ---
 
