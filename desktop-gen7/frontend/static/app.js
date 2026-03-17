@@ -19,23 +19,8 @@ function loadToolInD2(toolName) {
     const route = TOOL_ROUTES[toolName];
     if (!route) return;
 
-    const d2Content = document.querySelector('#zoneD2 .zone-content');
-    if (!d2Content) return;
-
-    // Save original D2 content
-    if (!_toolModeActive) {
-        _d2OriginalContent = d2Content.innerHTML;
-    }
-    _toolModeActive = true;
-
-    // Load tool in iframe
-    d2Content.innerHTML = `
-        <div class="tool-header">
-            <span>${toolName.toUpperCase()}</span>
-            <button onclick="exitToolMode()" title="Close tool">✕ Close</button>
-        </div>
-        <iframe src="${route}" class="tool-iframe"></iframe>
-    `;
+    // Open in new tab (drag events don't work in iframes)
+    window.open(route, '_blank');
 }
 
 function exitToolMode() {
