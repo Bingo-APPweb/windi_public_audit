@@ -458,6 +458,30 @@ async function sealCanvasToLedger() {
         if (res.ok) {
             if (btn) btn.textContent = '✓';
             alert(`Selado no Ledger!\nReceipt: ${result.id || result.receipt_id || _currentSession.session_id}`);
+
+            // G4 — Trust increment após seal bem sucedido
+            if (window.__windiWalletId) {
+                fetch('/api/wallet/trust/event', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        wallet_id: window.__windiWalletId,
+                        event_type: 'receipt_created',
+                        signal: 1,
+                        receipt_id: result.id || result.receipt_id || _currentSession.session_id
+                    })
+                })
+                .then(r => r.json())
+                .then(t => {
+                    // Atualiza D3 com novo trust
+                    const i9El = document.getElementById('govI9');
+                    if (i9El && t.trust_score !== undefined) {
+                        i9El.textContent = `T${t.trust_level} · ${t.trust_score}`;
+                    }
+                    console.log('[TRUST] Updated:', t);
+                })
+                .catch(err => console.log('[TRUST] Update failed (non-blocking):', err));
+            }
         } else {
             if (btn) btn.textContent = '✗';
             alert('Erro ao selar: ' + (result.detail || result.error));

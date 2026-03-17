@@ -37,7 +37,8 @@ from flask import Flask, request, jsonify
 from wallet_provisioning import (
     init_db, provision_wallet, get_wallet_by_email,
     get_wallet_by_id, freeze_context, get_wallet_stats,
-    register_clone_wallet, verify_clone_wallet, get_clone_status
+    register_clone_wallet, verify_clone_wallet, get_clone_status,
+    record_trust_event
 )
 from wallet_bridge import on_lead_approved
 
@@ -197,6 +198,40 @@ def endpoint_clone_verify(agent_id):
 def endpoint_clone_status():
     """Get status of all commissioned clones."""
     return jsonify(get_clone_status())
+
+
+# ─── Trust Events Endpoint (G4 FASE 2) ───────────────────────────────────────
+
+@app.route("/api/wallet/trust/event", methods=["POST"])
+def endpoint_trust_event():
+    """
+    Record a trust event and update trust score.
+    Called after successful Ledger seal.
+
+    Request:
+        {
+            wallet_id: str,
+            event_type: str (e.g., 'receipt_created'),
+            signal: int (+1 for positive events),
+            receipt_id: Optional[str]
+        }
+
+    Response:
+        {
+            ok: true,
+            event_id: str,
+            trust_score: int (0-100),
+            trust_level: int (1-5)
+        }
+    """
+    data = request.get_json(force=True)
+    try:
+        result = record_trust_event(data)
+        return jsonify(result), 200
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 # ─── Bridge Endpoints ────────────────────────────────────────────────────────
