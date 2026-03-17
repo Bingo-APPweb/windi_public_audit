@@ -43,6 +43,27 @@
 | Evaporation policy implemented | 18:20 |
 | **§18 Dispatch Gateway** — Documentação CLAUDE.md | 18:25 |
 | **CLAUDE.md v1.9.8** | 18:25 |
+| **Dispatch Gateway v1.0.2** — connection pooling + TTL cache | 21:00 |
+| p95 latency fix: 2175ms → 76ms | 21:00 |
+| nginx `/dispatch/` HTTPS routing | 21:00 |
+| **JMPG Viewer v2.2** — `/verify-public/viewer/v2.2/` LIVE | 21:00 |
+| Antessala (Vestíbulo Soberano) — 4-phase verification | 21:00 |
+| Real-time seal badge (Verified/Offline/Falha) | 21:00 |
+| Dual schema support (v1.0 + legacy) | 21:00 |
+| **Jornal Composer v4** — `/jornal/` LIVE | 21:00 |
+| Agent Invocation Panel — 5 dispatch channels | 21:00 |
+| Real multimedia fields (image/video/audio) | 21:00 |
+| POST `/dispatch/api/dispatch` integration | 21:00 |
+| nginx sites-enabled sync fix | 21:00 |
+| **Wallet Gate FASE 1** — DID Wallet Modal no GEN7 | 22:30 |
+| Botão 🪪 Wallet no header `/desktop/` | 22:30 |
+| Modal 2 estados: Login / Loaded | 22:30 |
+| GET `/api/wallet/me?wallet_id=` integrado | 22:30 |
+| sessionStorage + window.__windiWallet | 22:30 |
+| window.__windiWalletId para Ledger (FASE 2) | 22:30 |
+| Auto-restore sessão ao reload | 22:30 |
+| nginx `/api/wallet/` proxy_pass fix | 22:30 |
+| **CLAUDE.md v1.9.9** — §19 JMPG Viewer + §20 Jornal Composer | 22:15 |
 
 ---
 
