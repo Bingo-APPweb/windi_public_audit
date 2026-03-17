@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.5
+**Version:** 1.9.6
 **Sealed:** 2026-03-17
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -51,6 +51,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | I9 | Proibição de Escalação de Autonomia | `human_approved=true` obrigatório antes de qualquer seal. **IRREMEDIÁVEL.** |
 | I10 | Soberania LLM | Fallback gracioso se LLM externo indisponível. |
 | I11 | Permanência de Evidência Criptográfica | Ledger receipt após C6 = imutável para sempre. **IRREMEDIÁVEL.** |
+| I12 | Language Sovereign Principle | Conversa=Universal, Documento=Soberano. Babel Tower=IRREMEDIÁVEL. |
 | C6 | Invariante Fiscal | IA prepara. Humano aprova. ELSTER envia. Nunca autónomo. |
 
 ### 3.2 Layer 7 — Communication Semantics
@@ -78,6 +79,40 @@ Input do utilizador
         ↓
 Output para utilizador
 ```
+
+### 3.4 Language Sovereign Principle (I12)
+
+```
+CONVERSA  →  Universal Language
+             Responde SEMPRE na língua em que o utilizador escreve.
+             "Olá" → PT · "Hallo" → DE · "Hello" → EN
+
+DOCUMENTO →  Língua Soberana
+             Gera SEMPRE na língua do toggle/wallet do utilizador.
+             Nunca misturar línguas dentro de um documento.
+             Ao iniciar rascunho: "Documento em [DE/EN/PT]"
+
+BABEL TOWER = anti-pattern WINDI (IRREMEDIÁVEL)
+             Um documento = uma língua.
+             Misturar PT/DE/EN no mesmo doc é violação constitucional.
+```
+
+**UX — Hint Visual (obrigatório):**
+```
+┌─────────────────────────────────────────────────────┐
+│ Barra de acções do documento                        │
+│                                                     │
+│  [📎 Img] [🎬 Video] [🎙️ Voz]    📄 DE ▼  [🛡️ Finalizar] │
+│                                  ↑                  │
+│                        Clicável → abre toggle       │
+└─────────────────────────────────────────────────────┘
+
+Dragon também informa:
+  "Documento parece pronto! Clica Finalizar. 🛡️
+   📄 Documento em **DE**"
+```
+
+**Sealed:** 2026-03-17 · Dragon Alzheimer Fix → Language Sovereign Principle
 
 ---
 
