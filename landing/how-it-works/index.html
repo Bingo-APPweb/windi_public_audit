@@ -464,7 +464,7 @@
   <div class="lang-btns">
     <button class="lang-btn" onclick="setLang('de')">DE</button>
     <button class="lang-btn" onclick="setLang('en')">EN</button>
-    <button class="lang-btn active" onclick="setLang('pt')">PT</button>
+    <button class="lang-btn" onclick="setLang('pt')">PT</button>
   </div>
 </nav>
 
@@ -1012,9 +1012,11 @@ const I18N = {
   }
 };
 
-let currentLang = 'pt';
+// Read language from localStorage (shared with /desktop/)
+let currentLang = localStorage.getItem('windi-lang') || 'en';
 
 function setLang(lang) {
+  localStorage.setItem('windi-lang', lang);
   currentLang = lang;
   document.querySelectorAll('.lang-btn').forEach(b => {
     b.classList.toggle('active', b.textContent.toLowerCase() === lang);
@@ -1033,6 +1035,9 @@ const observer = new IntersectionObserver((entries) => {
 }, { threshold: 0.12 });
 
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Initialize with saved language
+setLang(currentLang);
 </script>
 </body>
 </html>
