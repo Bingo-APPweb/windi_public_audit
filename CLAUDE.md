@@ -464,6 +464,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | URL Fix | `/app/api/dragon` → `/api/dragon` |
 | History Fix | `human→user`, `text→content` |
 | **How it Works** | Landing page trilíngue PT/DE/EN — `/how-it-works/` LIVE |
+| Nav Link | Botão "How it Works" na navbar principal |
 
 ### Backlog Activo
 
