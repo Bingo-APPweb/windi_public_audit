@@ -896,20 +896,18 @@ def record_trust_event(data: dict) -> dict:
     Args:
         data: {
             wallet_id: str,
-            event_type: str (e.g., 'receipt_created', 'document_sealed'),
+            event_type: str (e.g., 'receipt_created'),
             signal: int (+1, -1, etc.),
-            receipt_id: Optional[str],
-            metadata: Optional[dict]
+            receipt_id: Optional[str]
         }
 
     Returns:
         Updated trust_score info
     """
     wallet_id = data.get("wallet_id")
-    event_type = data.get("event_type", "unknown")
-    signal = data.get("signal", 1)
+    signal_type = data.get("event_type", "unknown")
+    weight = float(data.get("signal", 1))
     receipt_id = data.get("receipt_id")
-    metadata = data.get("metadata", {})
 
     if not wallet_id:
         raise ValueError("wallet_id required")
@@ -931,13 +929,16 @@ def record_trust_event(data: dict) -> dict:
         event_id = make_uuid7()
         now = datetime.now(timezone.utc).isoformat()
 
-        # Insert trust event (append-only)
+        # Build source_ref JSON
+        source_ref = json.dumps({"receipt_id": receipt_id}) if receipt_id else "{}"
+
+        # Insert trust event (append-only) — matches actual schema
         conn.execute(
             """INSERT INTO trust_events
-               (trust_event_id, context_id, event_type, signal, receipt_id, metadata, created_at)
+               (trust_event_id, context_id, created_at, signal_type, weight, description, source_ref)
                VALUES (?, ?, ?, ?, ?, ?, ?)""",
-            (event_id, context_id, event_type, signal, receipt_id,
-             json.dumps(metadata) if metadata else None, now)
+            (event_id, context_id, now, signal_type, weight,
+             f"Trust signal from {signal_type}", source_ref)
         )
 
         # Update trust_score
@@ -954,7 +955,7 @@ def record_trust_event(data: dict) -> dict:
                    END,
                    updated_at = ?
                WHERE context_id = ?""",
-            (signal, signal, signal, signal, signal, now, context_id)
+            (weight, weight, weight, weight, weight, now, context_id)
         )
 
         conn.commit()
