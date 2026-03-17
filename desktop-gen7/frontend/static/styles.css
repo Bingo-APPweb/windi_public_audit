@@ -1015,3 +1015,246 @@ body {
     font-size: 1.6rem;
     font-weight: 700;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   DID WALLET MODAL — WINDI GEN7 — FASE 1
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Wallet Button in Header */
+.wallet-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.wallet-btn:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+}
+.wallet-btn.has-did {
+    border-color: var(--gold);
+    background: rgba(139, 105, 20, 0.1);
+    color: var(--gold);
+}
+.wallet-icon { font-size: 1rem; }
+.wallet-label { font-weight: 500; }
+
+/* Modal Overlay */
+.wallet-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+.wallet-modal-overlay.open {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Modal Box */
+.wallet-modal {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    width: 90%;
+    max-width: 400px;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
+    transform: translateY(20px);
+    transition: transform 0.25s ease;
+}
+.wallet-modal-overlay.open .wallet-modal {
+    transform: translateY(0);
+}
+
+/* Modal Header */
+.wm-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+}
+.wm-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1rem;
+}
+.wm-icon { font-size: 1.25rem; }
+.wm-seal {
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: #2E7D32;
+    background: rgba(46, 125, 50, 0.1);
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+.wm-close {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: 4px 8px;
+    transition: color 0.2s;
+}
+.wm-close:hover { color: var(--text-primary); }
+
+/* Sections */
+.wm-section {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+}
+.wm-section:last-child { border-bottom: none; }
+.wm-label {
+    font-size: 0.625rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+}
+
+/* DID Display */
+.wm-did {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--gold);
+    word-break: break-all;
+}
+.wm-did-sub {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    margin-top: 4px;
+}
+
+/* Stats Row */
+.wm-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+}
+.wm-stat { text-align: center; }
+.wm-stat-label {
+    font-size: 0.5625rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    margin-bottom: 4px;
+}
+.wm-stat-value {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+/* Login Input Row */
+.wm-sign-row {
+    display: flex;
+    gap: 8px;
+}
+.wm-input {
+    flex: 1;
+    padding: 10px 12px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+}
+.wm-input:focus {
+    outline: none;
+    border-color: var(--gold);
+}
+.wm-input::placeholder {
+    color: var(--text-muted);
+}
+.wm-btn-gold {
+    padding: 10px 16px;
+    background: var(--gold);
+    border: none;
+    border-radius: 8px;
+    color: #0A0A0F;
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 0.8125rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.wm-btn-gold:hover {
+    background: #A07D18;
+}
+
+/* Status Messages */
+.wm-sign-status {
+    font-size: 0.75rem;
+    margin-top: 8px;
+    color: var(--text-secondary);
+}
+.wm-sign-status.err {
+    color: #C62828;
+}
+
+/* Links */
+.wm-link {
+    font-size: 0.75rem;
+    color: var(--gold);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+.wm-link:hover {
+    color: #A07D18;
+}
+
+/* Info Text */
+.wm-info-text {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin: 0 0 12px 0;
+    line-height: 1.5;
+}
+
+/* Receipts Loading */
+.wm-receipts-loading {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-style: italic;
+}
+
+/* Footer */
+.wm-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border);
+    border-radius: 0 0 16px 16px;
+}
+.wm-principle {
+    font-size: 0.625rem;
+    color: var(--text-muted);
+    font-style: italic;
+}
