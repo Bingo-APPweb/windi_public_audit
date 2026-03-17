@@ -3,8 +3,8 @@
  * "AI processes. Human decides. WINDI guarantees."
  */
 
-// Detect base path for subfolder deployment
-const API_BASE = window.location.pathname.replace(/\/$/, '');
+// API calls go to root /api/ (nginx proxies to backend)
+const API_BASE = '';
 
 // === i18n Translations ===
 const I18N = {
@@ -23,7 +23,8 @@ const I18N = {
         keys: "Schlüssel",
         constellation: "KONSTELLATION",
         canvas: "LEINWAND",
-        forensics: "FORENSIK"
+        forensics: "FORENSIK",
+        navHow: "So funktioniert es"
     },
     en: {
         placeholder: "What do you want to create?",
@@ -40,7 +41,8 @@ const I18N = {
         keys: "Keys",
         constellation: "CONSTELLATION",
         canvas: "CANVAS",
-        forensics: "FORENSICS"
+        forensics: "FORENSICS",
+        navHow: "How it Works"
     },
     pt: {
         placeholder: "O que deseja criar?",
@@ -57,7 +59,8 @@ const I18N = {
         keys: "Chaves",
         constellation: "CONSTELAÇÃO",
         canvas: "CANVAS",
-        forensics: "FORENSE"
+        forensics: "FORENSE",
+        navHow: "Como Funciona"
     }
 };
 
@@ -180,7 +183,7 @@ async function loadSvgIcon(iconName) {
         return svgCache[iconName];
     }
     try {
-        const res = await fetch(`${API_BASE}/static/icons/${iconName}.svg`);
+        const res = await fetch(`static/icons/${iconName}.svg`);
         if (res.ok) {
             const svg = await res.text();
             svgCache[iconName] = svg;
@@ -331,10 +334,13 @@ async function executeOneTouch(intent) {
         });
 
         const data = await res.json();
+        console.log('[WINDI Debug] API Response:', data);
+        console.log('[WINDI Debug] res.ok:', res.ok, 'message length:', data.message?.length);
 
         if (res.ok) {
             currentSession = data;
             updateGovernanceGlass(data);
+            console.log('[WINDI Debug] Calling showCanvas with session_id:', data.session_id);
             showCanvas(data, intent);
 
             // FIX 2: Clear input but keep it visible for next intent
@@ -406,7 +412,7 @@ async function sealCanvasToLedger() {
         const result = await res.json();
         if (res.ok) {
             if (btn) btn.textContent = '✓';
-            alert(`Selado no Ledger!\nReceipt: ${result.receipt_id || _currentSession.session_id}`);
+            alert(`Selado no Ledger!\nReceipt: ${result.id || result.receipt_id || _currentSession.session_id}`);
         } else {
             if (btn) btn.textContent = '✗';
             alert('Erro ao selar: ' + (result.detail || result.error));
@@ -419,9 +425,104 @@ async function sealCanvasToLedger() {
     }
 }
 
+async function exportWebStandalone() {
+    if (!_currentSession || !_currentCanvasContent) return;
+    const btn = document.getElementById('btnExportWeb');
+    if (btn) { btn.disabled = true; btn.textContent = '⏳'; }
+    try {
+        const res = await fetch(`${API_BASE}/api/export/web`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                session_id: _currentSession.session_id,
+                html_content: _currentCanvasContent,
+                sub_type: 'micro_page'
+            })
+        });
+        const result = await res.json();
+        if (res.ok) {
+            // Download the standalone HTML
+            const blob = new Blob([result.html], {type: 'text/html;charset=utf-8'});
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `${_currentSession.session_id}.html`;
+            a.click();
+            URL.revokeObjectURL(a.href);
+            if (btn) btn.textContent = '✓';
+            alert(`Gravado + Selado!\nReceipt: ${result.receipt_id}\nHash: ${result.content_hash.slice(0,16)}...`);
+        } else {
+            if (btn) btn.textContent = '✗';
+            alert('Erro: ' + (result.detail || result.error));
+        }
+    } catch (e) {
+        if (btn) btn.textContent = '✗';
+        alert('Erro: ' + e.message);
+    } finally {
+        setTimeout(() => { if (btn) { btn.disabled = false; btn.textContent = '💾'; } }, 2000);
+    }
+}
+
+// P4A+P4D: Publish to WINDI Hosting + WhatsApp share
+let _lastPublishResult = null;
+
+async function publishToWINDI() {
+    if (!_currentSession || !_currentCanvasContent) return;
+    const btn = document.getElementById('btnPublish');
+    if (btn) { btn.disabled = true; btn.textContent = '⏳'; }
+    try {
+        // Extract title from content (first h1 or h2)
+        const titleMatch = _currentCanvasContent.match(/<h[12][^>]*>([^<]+)<\/h[12]>/i);
+        const title = titleMatch ? titleMatch[1].trim() : 'WINDI Document';
+
+        // Extract description (first paragraph)
+        const descMatch = _currentCanvasContent.match(/<p[^>]*>([^<]{20,150})/i);
+        const description = descMatch ? descMatch[1].trim() + '...' : 'Verified content by WINDI Publishing House';
+
+        const res = await fetch(`${API_BASE}/api/publish/web`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                session_id: _currentSession.session_id,
+                html_content: _currentCanvasContent,
+                title: title,
+                description: description,
+                sub_type: 'micro_page'
+            })
+        });
+        const result = await res.json();
+        if (res.ok) {
+            _lastPublishResult = result;
+            if (btn) btn.textContent = '✓';
+            // Show WhatsApp button
+            const waBtn = document.getElementById('btnWhatsApp');
+            if (waBtn) waBtn.style.display = 'inline-block';
+            alert(`Publicado!\n\nURL: ${result.short_url}\nReceipt: ${result.receipt_id}`);
+        } else {
+            if (btn) btn.textContent = '✗';
+            alert('Erro: ' + (result.detail || result.error));
+        }
+    } catch (e) {
+        if (btn) btn.textContent = '✗';
+        alert('Erro: ' + e.message);
+    } finally {
+        setTimeout(() => { if (btn) { btn.disabled = false; btn.textContent = '📡'; } }, 2000);
+    }
+}
+
+function shareOnWhatsApp() {
+    if (!_lastPublishResult) {
+        alert('Publica primeiro com 📡');
+        return;
+    }
+    window.open(_lastPublishResult.whatsapp_url, '_blank');
+}
+
 function showCanvas(session, originalIntent) {
+    console.log('[WINDI Debug] showCanvas called');
     const canvasEl = document.getElementById('canvasArea');
     const placeholderEl = document.querySelector('.editor-placeholder');
+    console.log('[WINDI Debug] canvasEl:', canvasEl ? 'found' : 'NOT FOUND');
+    console.log('[WINDI Debug] session.message preview:', session.message?.substring(0, 100));
 
     // Store for actions
     _currentCanvasContent = session.message;
@@ -430,6 +531,7 @@ function showCanvas(session, originalIntent) {
     // Hide input placeholder, show canvas with draft
     if (placeholderEl) placeholderEl.style.display = 'none';
     canvasEl.style.display = 'block';
+    console.log('[WINDI Debug] Canvas display set to block');
 
     // Header compacto + HTML directo do Dragon + Action buttons
     canvasEl.innerHTML = `
@@ -440,16 +542,20 @@ function showCanvas(session, originalIntent) {
             <div class="canvas-toolbar-actions">
                 <button onclick="downloadCanvasOutput()" title="Download">⬇</button>
                 <button onclick="copyCanvasToClipboard()" title="Copiar">📋</button>
+                <button id="btnExportWeb" onclick="exportWebStandalone()" title="Gravar HTML">💾</button>
+                <button id="btnPublish" onclick="publishToWINDI()" title="Publicar no WINDI">📡</button>
+                <button id="btnWhatsApp" onclick="shareOnWhatsApp()" title="WhatsApp" style="display:none">📲</button>
                 <button id="btnSealLedger" onclick="sealCanvasToLedger()" title="Selar no Ledger">🔏</button>
             </div>
         </div>
         <div class="canvas-document">
-            ${session.message}
+            ${session.message || '<div style="color:red;padding:20px;">⚠️ DEBUG: session.message está vazio. Keys recebidas: ' + Object.keys(session).join(', ') + '</div>'}
         </div>
         <div class="canvas-actions">
             <span class="canvas-next">→ ${session.next_step}</span>
         </div>
     `;
+    console.log('[WINDI Debug] Canvas innerHTML set, document length:', document.querySelector('.canvas-document')?.innerHTML?.length);
 }
 
 // === Governance Glass (D3) ===
