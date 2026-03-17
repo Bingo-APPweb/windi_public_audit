@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="klar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>WINDI Jornal Composer · Gen 7</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════
+   WINDI JORNAL COMPOSER — GEN 7 SMART ZONES
+   G1=Canvas | G2=Block Palette | G3=Inspector | G4=Topbar
+   ═══════════════════════════════════════════════ */
+:root{
+  --bg:#F5F0E0;--bg2:#EDE8D4;--bgc:#FDFAF0;--bgs:#F0EBD8;
+  --t1:#1A1A1A;--t2:#4A4535;--t3:#8A826E;--tm:#A09882;
+  --gold:#B8963E;--gold2:#D4B85A;--gdim:rgba(184,150,62,.15);
+  --green:#2E7D32;--red:#C62828;--blue:#1565C0;
+  --brd:#D4CDB8;--brdl:#E5DFD0;
+  --pal:#FFFFFF;--ins:#FFFFFF;
+  --sh:0 2px 12px rgba(26,26,26,.08);
+  --shh:0 4px 24px rgba(26,26,26,.15);
+  --fb:'Bricolage Grotesque',sans-serif;
+  --fm:'JetBrains Mono',monospace;
+  --accent:#7C3AED;
+  /* Touch targets */
+  --tap:44px;
+  /* Smart Zone widths */
+  --g2w:220px; /* Block Palette */
+  --g3w:300px; /* Inspector */
+}
+[data-theme="noir"]{
+  --bg:#0D0D0D;--bg2:#141414;--bgc:#1A1A1A;--bgs:#111;
+  --t1:#E8E4D8;--t2:#C4BFA8;--t3:#7A7466;--tm:#6A645A;
+  --gold:#D4B85A;--gold2:#E8CC6E;--gdim:rgba(212,184,90,.12);
+  --green:#4CAF50;--red:#EF5350;--blue:#42A5F5;
+  --brd:#2A2822;--brdl:#222018;
+  --pal:#161614;--ins:#161614;
+  --sh:0 2px 12px rgba(0,0,0,.3);
+  --shh:0 4px 24px rgba(0,0,0,.5);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--t1);font-family:var(--fb);-webkit-font-smoothing:antialiased}
+
+/* ── G4: TOPBAR ─────────────────────────────── */
+#g4{
+  height:48px;background:var(--pal);border-bottom:1px solid var(--brd);
+  display:flex;align-items:center;gap:0;padding:0 12px;
+  position:fixed;top:0;left:0;right:0;z-index:100;box-shadow:var(--sh);
+}
+.g4-brand{font-family:var(--fm);font-size:11px;font-weight:500;color:var(--gold);
+  letter-spacing:2px;text-transform:uppercase;padding:0 12px 0 0;
+  border-right:1px solid var(--brd);margin-right:12px;white-space:nowrap}
+.g4-edition{font-family:var(--fm);font-size:10px;color:var(--t3);
+  display:flex;align-items:center;gap:8px}
+.g4-sep{color:var(--brd)}
+.g4-right{margin-left:auto;display:flex;align-items:center;gap:6px}
+.tb{background:transparent;border:1px solid var(--brd);color:var(--t3);
+  font-family:var(--fm);font-size:10px;padding:0 10px;height:30px;
+  cursor:pointer;transition:all .15s;border-radius:3px;white-space:nowrap;
+  display:flex;align-items:center;gap:5px;min-width:var(--tap)}
+.tb:hover{background:var(--gdim);border-color:var(--gold);color:var(--gold)}
+.tb.on{background:var(--gdim);border-color:var(--gold);color:var(--gold)}
+.tb.accent{background:var(--accent);border-color:var(--accent);color:#fff}
+.tb.accent:hover{filter:brightness(1.1)}
+.tb.green{background:var(--green);border-color:var(--green);color:#fff}
+.tb.green:hover{filter:brightness(1.1)}
+.tb-ico{font-size:14px}
+
+/* ── MAIN LAYOUT (3 zones) ──────────────────── */
+#layout{
+  position:fixed;top:48px;left:0;right:0;bottom:0;
+  display:grid;grid-template-columns:var(--g2w) 1fr var(--g3w);
+}
+
+/* ── G2: BLOCK PALETTE ──────────────────────── */
+#g2{
+  background:var(--pal);border-right:1px solid var(--brd);
+  overflow-y:auto;display:flex;flex-direction:column;
+}
+.g2-section{padding:12px 12px 0}
+.g2-title{font-family:var(--fm);font-size:9px;letter-spacing:2px;
+  text-transform:uppercase;color:var(--t3);padding:8px 0 6px;
+  border-bottom:1px solid var(--brdl);margin-bottom:8px}
+.bblock{
+  border:1px solid var(--brd);border-radius:6px;padding:10px 12px;
+  margin-bottom:6px;cursor:grab;transition:all .15s;background:var(--bgc);
+  display:flex;align-items:center;gap:10px;min-height:var(--tap);
+  user-select:none;
+}
+.bblock:hover{border-color:var(--gold);background:var(--gdim);box-shadow:var(--sh)}
+.bblock:active{cursor:grabbing;transform:scale(.97)}
+.bb-ico{font-size:18px;width:24px;text-align:center;flex-shrink:0}
+.bb-info{}
+.bb-name{font-size:12px;font-weight:600;color:var(--t1);margin-bottom:2px}
+.bb-desc{font-family:var(--fm);font-size:9px;color:var(--t3)}
+
+/* Edition meta in palette */
+.ed-field{margin-bottom:10px}
+.ed-label{font-family:var(--fm);font-size:9px;color:var(--t3);
+  letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;display:block}
+.ed-input{width:100%;background:var(--bgc);border:1px solid var(--brd);
+  color:var(--t1);font-family:var(--fm);font-size:11px;
+  padding:7px 10px;border-radius:4px;transition:border-color .15s}
+.ed-input:focus{outline:none;border-color:var(--gold)}
+
+/* ── G1: CANVAS ─────────────────────────────── */
+#g1{background:var(--bg2);overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:12px;position:relative}
+.canvas-empty{
+  flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:16px;color:var(--t3);font-family:var(--fm);font-size:12px;
+  letter-spacing:1px;text-align:center;min-height:300px;
+}
+.canvas-empty-ico{font-size:48px;opacity:.3}
+.canvas-empty-hint{opacity:.6;font-size:10px;line-height:1.7}
+
+/* Block cards in canvas */
+.cblock{
+  background:var(--bgc);border:2px solid var(--brdl);border-radius:8px;
+  cursor:pointer;transition:all .15s;position:relative;
+  box-shadow:var(--sh);
+}
+.cblock:hover{border-color:var(--gold);box-shadow:var(--shh)}
+.cblock.selected{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,58,237,.15)}
+.cblock.dragging{opacity:.4;border-style:dashed}
+.cblock.drag-over{border-color:var(--accent);border-style:dashed;background:rgba(124,58,237,.05)}
+
+.cb-handle{
+  position:absolute;left:0;top:0;bottom:0;width:32px;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--t3);cursor:grab;border-right:1px solid var(--brdl);
+  font-size:14px;transition:background .15s;border-radius:6px 0 0 6px;
+}
+.cb-handle:hover{background:var(--gdim);color:var(--gold)}
+.cb-handle:active{cursor:grabbing}
+
+.cb-inner{padding:14px 14px 14px 46px;display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center}
+.cb-type{font-family:var(--fm);font-size:9px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--t3);margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.cb-ico{font-size:24px}
+.cb-content{}
+.cb-title{font-size:14px;font-weight:600;color:var(--t1);line-height:1.3;margin-bottom:4px}
+.cb-exc{font-size:12px;color:var(--t3);line-height:1.4;display:-webkit-box;
+  -webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.cb-meta{font-family:var(--fm);font-size:9px;color:var(--tm);display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
+.cb-seal{background:var(--gdim);color:var(--gold);padding:2px 7px;border-radius:2px;font-size:8px;letter-spacing:.5px}
+.cb-actions{display:flex;flex-direction:column;gap:4px;flex-shrink:0}
+.cba{width:28px;height:28px;background:transparent;border:1px solid var(--brdl);
+  border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:12px;color:var(--t3);transition:all .15s}
+.cba:hover{background:var(--gdim);border-color:var(--gold);color:var(--gold)}
+.cba.del:hover{background:#FEE2E2;border-color:var(--red);color:var(--red)}
+
+/* cat dots */
+.cdot{width:6px;height:6px;border-radius:50%;display:inline-block;flex-shrink:0}
+.cl{background:#4CAF50}.cu{background:#1565C0}.cg{background:#B8963E}.ca{background:#C62828}.cr{background:#7B1FA2}
+
+/* ── G3: INSPECTOR ──────────────────────────── */
+#g3{
+  background:var(--ins);border-left:1px solid var(--brd);
+  overflow-y:auto;display:flex;flex-direction:column;
+}
+.g3-header{
+  padding:12px 14px;border-bottom:1px solid var(--brd);
+  font-family:var(--fm);font-size:10px;color:var(--t3);
+  letter-spacing:2px;text-transform:uppercase;
+  display:flex;align-items:center;gap:8px;
+  background:var(--bgs);flex-shrink:0;
+}
+.g3-ico{font-size:16px}
+.g3-empty{flex:1;display:flex;align-items:center;justify-content:center;
+  font-family:var(--fm);font-size:11px;color:var(--t3);text-align:center;
+  padding:24px;line-height:1.7;opacity:.7}
+
+/* Inspector fields */
+.ins-sec{padding:12px 14px;border-bottom:1px solid var(--brdl)}
+.ins-sec-title{font-family:var(--fm);font-size:9px;letter-spacing:2px;
+  text-transform:uppercase;color:var(--t3);margin-bottom:10px}
+.ins-row{margin-bottom:10px}
+.ins-label{font-family:var(--fm);font-size:9px;color:var(--t3);
+  letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px;
+  display:flex;align-items:center;gap:6px;justify-content:space-between}
+.ins-input,.ins-textarea,.ins-select{
+  width:100%;background:var(--bgc);border:1px solid var(--brd);
+  color:var(--t1);font-family:var(--fb);font-size:12px;
+  padding:7px 10px;border-radius:4px;transition:border-color .15s;resize:none;
+}
+.ins-input:focus,.ins-textarea:focus,.ins-select:focus{outline:none;border-color:var(--gold)}
+.ins-textarea{min-height:70px;line-height:1.5}
+.ins-select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238A826E'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+
+/* Language tabs for trilingual */
+.lang-tabs{display:flex;gap:4px;margin-bottom:8px}
+.ltab{font-family:var(--fm);font-size:9px;padding:3px 10px;border:1px solid var(--brd);
+  cursor:pointer;border-radius:3px;color:var(--t3);transition:all .15s;letter-spacing:1px;
+  min-height:var(--tap);display:flex;align-items:center}
+.ltab:hover,.ltab.on{background:var(--gdim);border-color:var(--gold);color:var(--gold)}
+.ltab.on{font-weight:600}
+
+/* AI Button */
+.ai-btn{
+  width:100%;padding:10px;border-radius:6px;
+  background:linear-gradient(135deg,var(--accent),#9333EA);
+  border:none;color:#fff;font-family:var(--fm);font-size:10px;
+  letter-spacing:1px;text-transform:uppercase;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  min-height:var(--tap);transition:filter .15s;
+}
+.ai-btn:hover{filter:brightness(1.1)}
+.ai-btn:disabled{opacity:.5;cursor:wait}
+.ai-loading{display:inline-block;width:10px;height:10px;border:2px solid rgba(255,255,255,.3);
+  border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Hash badge */
+.hash-badge{font-family:var(--fm);font-size:8px;color:var(--gold2);
+  background:var(--gdim);padding:3px 8px;border-radius:2px;margin-top:4px;
+  letter-spacing:.5px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* Toast */
+#toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:#1A1A1A;color:#E8E4D8;font-family:var(--fm);font-size:11px;
+  padding:10px 20px;border-radius:6px;opacity:0;transition:all .3s;
+  pointer-events:none;z-index:999;letter-spacing:.5px;white-space:nowrap;
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+[data-theme="noir"] #toast{background:var(--gold);color:#1A1A1A}
+
+/* AI overlay */
+#ai-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;
+  display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);
+}
+#ai-overlay.show{display:flex}
+.ai-dialog{
+  background:var(--pal);border-radius:12px;padding:24px;width:440px;max-width:95vw;
+  box-shadow:0 20px 60px rgba(0,0,0,.3);border:1px solid var(--brd);
+}
+.ai-dialog h2{font-size:16px;font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.ai-dialog p{font-family:var(--fm);font-size:10px;color:var(--t3);margin-bottom:16px;line-height:1.6}
+.ai-prompt{width:100%;min-height:80px;background:var(--bgc);border:1px solid var(--brd);
+  color:var(--t1);font-family:var(--fb);font-size:13px;padding:10px;
+  border-radius:6px;resize:none;margin-bottom:12px;line-height:1.5}
+.ai-prompt:focus{outline:none;border-color:var(--accent)}
+.ai-dialog-btns{display:flex;gap:8px;justify-content:flex-end}
+.ai-cancel{padding:8px 16px;background:transparent;border:1px solid var(--brd);
+  color:var(--t3);font-family:var(--fm);font-size:10px;border-radius:4px;cursor:pointer;
+  min-height:var(--tap);transition:all .15s}
+.ai-cancel:hover{border-color:var(--t1);color:var(--t1)}
+.ai-go{padding:8px 20px;background:var(--accent);border:none;color:#fff;
+  font-family:var(--fm);font-size:10px;border-radius:4px;cursor:pointer;
+  min-height:var(--tap);display:flex;align-items:center;gap:8px;transition:filter .15s}
+.ai-go:hover{filter:brightness(1.1)}
+.ai-go:disabled{opacity:.5;cursor:wait}
+
+/* Export overlay */
+#export-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;
+  display:none;align-items:center;justify-content:center;
+}
+#export-overlay.show{display:flex}
+.export-dialog{
+  background:var(--pal);border-radius:12px;padding:0;width:680px;max-width:95vw;
+  max-height:80vh;box-shadow:0 20px 60px rgba(0,0,0,.3);border:1px solid var(--brd);
+  display:flex;flex-direction:column;
+}
+.export-hd{padding:20px 24px;border-bottom:1px solid var(--brd);display:flex;align-items:center;justify-content:space-between}
+.export-hd h2{font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px}
+.export-body{flex:1;overflow:auto;padding:0}
+.export-code{font-family:var(--fm);font-size:10px;padding:20px 24px;
+  color:var(--t2);line-height:1.7;white-space:pre-wrap;word-break:break-all;
+  background:var(--bgc);margin:0}
+.export-ft{padding:16px 24px;border-top:1px solid var(--brd);
+  display:flex;gap:8px;justify-content:flex-end}
+
+/* Preview modal */
+#preview-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;
+  display:none;flex-direction:column;
+}
+#preview-overlay.show{display:flex}
+.preview-bar{height:48px;background:#1A1A1A;display:flex;align-items:center;
+  padding:0 16px;gap:12px;flex-shrink:0}
+.preview-bar span{font-family:var(--fm);font-size:11px;color:#E8E4D8}
+#preview-frame{flex:1;border:none;background:#fff}
+
+/* MOBILE (Gen 7 — <768px) */
+@media(max-width:767px){
+  #layout{grid-template-columns:1fr;grid-template-rows:1fr}
+  #g2,#g3{display:none}
+  #g2.mobile-show,#g3.mobile-show{
+    display:flex;position:fixed;z-index:150;
+    top:48px;bottom:64px;width:85vw;max-width:320px;
+  }
+  #g2.mobile-show{left:0;border-right:1px solid var(--brd);border-bottom:none}
+  #g3.mobile-show{right:0;border-left:1px solid var(--brd);border-bottom:none}
+  /* Mobile bottom bar */
+  #g2-bottom-bar{
+    position:fixed;bottom:0;left:0;right:0;height:64px;
+    background:var(--pal);border-top:1px solid var(--brd);
+    display:flex;align-items:center;justify-content:space-around;
+    z-index:100;padding:0 8px;
+  }
+  .bbb{width:48px;height:48px;border-radius:50%;border:1px solid var(--brd);
+    background:transparent;display:flex;align-items:center;justify-content:center;
+    font-size:20px;cursor:pointer;transition:all .2s;color:var(--t3)}
+  .bbb:hover,.bbb.on{background:var(--gdim);border-color:var(--gold)}
+  .g4-edition{display:none}
+}
+@media(min-width:768px){
+  #g2-bottom-bar{display:none}
+}
+
+/* Tablet (768-1199px) */
+@media(min-width:768px)and(max-width:1199px){
+  :root{--g2w:180px;--g3w:260px}
+}
+</style>
+</head>
+<body>
+
+<!-- ── G4: TOPBAR ── -->
+<header id="g4">
+  <div class="g4-brand">🐉 Jornal Composer</div>
+  <div class="g4-edition">
+    <span id="g4-count">0 blocos</span>
+    <span class="g4-sep">·</span>
+    <span id="g4-date"></span>
+    <span class="g4-sep">·</span>
+    <span>Gen 7</span>
+  </div>
+  <div class="g4-right">
+    <button class="tb" onclick="setLang('de')" id="tb-de" title="Deutsch"><span class="tb-ico">🇩🇪</span> DE</button>
+    <button class="tb" onclick="setLang('en')" id="tb-en" title="English"><span class="tb-ico">🇬🇧</span> EN</button>
+    <button class="tb" onclick="setLang('pt')" id="tb-pt" title="Português"><span class="tb-ico">🇧🇷</span> PT</button>
+    <span style="width:1px;height:20px;background:var(--brd);margin:0 2px"></span>
+    <button class="tb" onclick="toggleTheme()" id="tb-theme">☀ Klar</button>
+    <span style="width:1px;height:20px;background:var(--brd);margin:0 2px"></span>
+    <button class="tb" onclick="showPreview()">👁 Preview</button>
+    <button class="tb green" onclick="exportEdition()">⬇ Export HTML</button>
+    <span style="width:1px;height:20px;background:var(--brd);margin:0 2px"></span>
+    <button class="tb dispatch" onclick="showDispatchPanel()" title="Despachar — 5 canais de distribuição">🚀 Despachar</button>
+  </div>
+</header>
+
+<!-- ── DISPATCH PANEL (Blocos A/B/C) ── -->
+<div id="dispatchPanel" class="dispatch-panel">
+  <div class="dp-header">
+    <span class="dp-title">🚀 Despacho — Canal de Distribuição Soberana</span>
+    <span id="dp-pkg" style="font-size:10px;color:rgba(240,236,228,0.4);font-family:monospace"></span>
+    <button class="dp-close" onclick="hideDispatchPanel()">✕</button>
+  </div>
+  <div class="dp-grid">
+    <button class="dp-btn" onclick="dpWhatsApp()" title="Bloco A — Link público via WhatsApp">
+      <span class="dbi">💬</span><span>WhatsApp</span><span class="dp-tier p1">P1</span>
+    </button>
+    <button class="dp-btn" onclick="dpPublicLink()" title="Bloco A — URL de verificação copiada">
+      <span class="dbi">🔗</span><span>Link Público</span><span class="dp-tier p2">P2</span>
+    </button>
+    <button class="dp-btn" onclick="dpArchive()" title="Bloco B — Export permanente / Archive">
+      <span class="dbi">🗄</span><span>Archive</span><span class="dp-tier p3">P3</span>
+    </button>
+    <button class="dp-btn" onclick="dpFeedAPI()" title="Bloco C — Gateway :8121 Feed API">
+      <span class="dbi">📡</span><span>Feed API</span><span class="dp-tier p4">P4</span>
+    </button>
+    <button class="dp-btn" onclick="dpInstitutional()" title="Bloco C — Canal Institucional Soberano">
+      <span class="dbi">🏛</span><span>Institucional</span><span class="dp-tier p4">P4</span>
+    </button>
+  </div>
+  <div class="dp-toast" id="dpToast">Selecionar canal para despachar esta edição.</div>
+</div>
+
+<!-- ── MAIN LAYOUT ── -->
+<div id="layout">
+
+  <!-- ── G2: BLOCK PALETTE ── -->
+  <aside id="g2">
+    <!-- Edition Meta -->
+    <div class="g2-section">
+      <div class="g2-title">📰 Edição</div>
+      <div class="ed-field">
+        <label class="ed-label">Título / Nummer</label>
+        <input class="ed-input" id="ed-title" value="Zeitung der Zukunft" oninput="updateEdition()">
+      </div>
+      <div class="ed-field">
+        <label class="ed-label">Nr. / Ausgabe</label>
+        <input class="ed-input" id="ed-num" value="Nr. 4" oninput="updateEdition()">
+      </div>
+      <div class="ed-field">
+        <label class="ed-label">Subtítulo</label>
+        <input class="ed-input" id="ed-sub" value="Jedes Wort verifiziert · Jede Quelle versiegelt" oninput="updateEdition()">
+      </div>
+    </div>
+
+    <!-- Block Library -->
+    <div class="g2-section" style="flex:1">
+      <div class="g2-title">🧱 Blocos — Arrastar para Canvas</div>
+
+      <div class="bblock" draggable="true" data-type="hero" title="Artigo principal com player forense">
+        <span class="bb-ico">🦸</span>
+        <div class="bb-info">
+          <div class="bb-name">Capa</div>
+          <div class="bb-desc">Hero + player forense</div>
+        </div>
+      </div>
+
+      <div class="bblock" draggable="true" data-type="sidebar" title="Artigo secundário na coluna lateral">
+        <span class="bb-ico">📰</span>
+        <div class="bb-info">
+          <div class="bb-name">Sidebar</div>
+          <div class="bb-desc">Artigo secundário</div>
+        </div>
+      </div>
+
+      <div class="bblock" draggable="true" data-type="video" title="Artigo com vídeo embarcado">
+        <span class="bb-ico">🎬</span>
+        <div class="bb-info">
+          <div class="bb-name">Vídeo</div>
+          <div class="bb-desc">Vídeo + barra forense</div>
+        </div>
+      </div>
+
+      <div class="bblock" draggable="true" data-type="evidence" title="Evidence gallery strip">
+        <span class="bb-ico">📎</span>
+        <div class="bb-info">
+          <div class="bb-name">Evidências</div>
+          <div class="bb-desc">Gallery Bild/OCR/Audio…</div>
+        </div>
+      </div>
+
+      <div class="bblock" draggable="true" data-type="image" title="Artigo com imagem destacada">
+        <span class="bb-ico">🖼️</span>
+        <div class="bb-info">
+          <div class="bb-name">Destaque</div>
+          <div class="bb-desc">Image-led feature</div>
+        </div>
+      </div>
+
+      <div class="bblock" draggable="true" data-type="audio" title="Briefing de áudio">
+        <span class="bb-ico">🎙️</span>
+        <div class="bb-info">
+          <div class="bb-name">Áudio</div>
+          <div class="bb-desc">Briefing + waveform</div>
+        </div>
+      </div>
+
+      <div class="bblock" draggable="true" data-type="ocr" title="OCR document scan preview">
+        <span class="bb-ico">📑</span>
+        <div class="bb-info">
+          <div class="bb-name">OCR / Scan</div>
+          <div class="bb-desc">Document preview</div>
+        </div>
+      </div>
+
+      <div class="bblock" draggable="true" data-type="grid" title="Artigo de texto standard">
+        <span class="bb-ico">📋</span>
+        <div class="bb-info">
+          <div class="bb-name">Artigo</div>
+          <div class="bb-desc">Grid text standard</div>
+        </div>
+      </div>
+
+      <div class="bblock" draggable="true" data-type="trust" title="Trust ribbon forense">
+        <span class="bb-ico">🔏</span>
+        <div class="bb-info">
+          <div class="bb-name">Trust Ribbon</div>
+          <div class="bb-desc">Ledger · Sentinel · Sov</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="g2-section" style="padding-bottom:16px">
+      <div class="g2-title">📊 Estatísticas</div>
+      <div style="font-family:var(--fm);font-size:9px;color:var(--t3);line-height:2">
+        <div>Blocos: <span id="stat-blocks" style="color:var(--gold);font-weight:600">0</span></div>
+        <div>Receipts: <span id="stat-receipts" style="color:var(--green);font-weight:600">40.918+</span></div>
+        <div>Sentinel: <span id="stat-sentinel" style="color:var(--green);font-weight:600">GREEN</span></div>
+        <div>I9+I11: <span style="color:var(--gold);font-weight:600">ACTIVE</span></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── G1: CANVAS ── -->
+  <main id="g1" ondragover="canvasDragOver(event)" ondrop="canvasDrop(event)">
+    <div class="canvas-empty" id="canvas-empty">
+      <div class="canvas-empty-ico">📰</div>
+      <div style="font-size:14px;font-weight:600;color:var(--t2)">Canvas vazio</div>
+      <div class="canvas-empty-hint">
+        Arrasta blocos da paleta esquerda<br>
+        ou clica num bloco para adicionar<br>
+        ── duplo-clique → editar ──
+      </div>
+    </div>
+  </main>
+
+  <!-- ── G3: INSPECTOR ── -->
+  <aside id="g3">
+    <div class="g3-header">
+      <span class="g3-ico" id="g3-ico">🔍</span>
+      <span id="g3-title">Inspector</span>
+    </div>
+    <div class="g3-empty" id="g3-empty">
+      Seleciona um bloco<br>no canvas para editar
+    </div>
+    <div id="g3-fields" style="display:none"></div>
+  </aside>
+</div>
+
+<!-- Mobile bottom bar -->
+<div id="g2-bottom-bar">
+  <button class="bbb" onclick="toggleMobilePanel('g2')" id="bbb-palette" title="Blocos">🧱</button>
+  <button class="bbb" onclick="addBlockMobile()" title="Adicionar">➕</button>
+  <button class="bbb" onclick="showPreview()" title="Preview">👁</button>
+  <button class="bbb" onclick="toggleMobilePanel('g3')" id="bbb-inspector" title="Inspector">⚙️</button>
+  <button class="bbb" onclick="exportEdition()" title="Export">⬇</button>
+</div>
+
+<!-- AI Dialog -->
+<div id="ai-overlay">
+  <div class="ai-dialog">
+    <h2>✨ <span>IA — Gerar Conteúdo</span></h2>
+    <p>Descreve o evento/milestone WINDI em poucas palavras.<br>O Guardian gera título + excerto em DE / EN / PT.</p>
+    <textarea class="ai-prompt" id="ai-prompt" placeholder="Ex: Canvas Gen 7 mobile control center live, Smart Zones, windi-touch.js, breakpoints 1200/768px, zero downtime deployment…"></textarea>
+    <div style="margin-bottom:12px">
+      <label style="font-family:var(--fm);font-size:9px;color:var(--t3);letter-spacing:1px;text-transform:uppercase;display:block;margin-bottom:6px">Categoria</label>
+      <select class="ins-select" id="ai-cat" style="width:100%">
+        <option value="LAUNCH">LAUNCH — Lançamento</option>
+        <option value="UPDATE">UPDATE — Atualização</option>
+        <option value="GOVERNANCE">GOVERNANCE — Governança</option>
+        <option value="ALERT">ALERT — Aviso</option>
+        <option value="REPORT">REPORT — Relatório</option>
+      </select>
+    </div>
+    <div class="ai-dialog-btns">
+      <button class="ai-cancel" onclick="closeAI()">Cancelar</button>
+      <button class="ai-go" id="ai-go-btn" onclick="runAI()">
+        <span id="ai-go-ico">✨</span> Gerar Conteúdo
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ── AGENT INVOCATION PANEL ── -->
+<div id="agent-overlay">
+  <div class="agent-dialog">
+
+    <div class="ag-header">
+      <span style="font-size:18px">🛡</span>
+      <div>
+        <div class="ag-header-title">Invocar Agente WINDI</div>
+        <div class="ag-header-sub">AI processes. Human decides. WINDI guarantees.</div>
+      </div>
+      <button class="ag-close" onclick="closeAgentPanel()">✕</button>
+    </div>
+
+    <!-- Agent Selector -->
+    <div class="ag-agents">
+      <button class="ag-agent-btn active" id="ag-btn-journ"
+        onclick="selectAgent('W-JOURN-001')">
+        <span class="ag-agent-ico">📰</span>
+        <span class="ag-agent-code">W-JOURN-001</span>
+        <span class="ag-agent-name">Jornalista</span>
+      </button>
+      <button class="ag-agent-btn" id="ag-btn-legal"
+        onclick="selectAgent('W-LEGAL-001')">
+        <span class="ag-agent-ico">⚖️</span>
+        <span class="ag-agent-code">W-LEGAL-001</span>
+        <span class="ag-agent-name">Jurídico</span>
+      </button>
+      <button class="ag-agent-btn" id="ag-btn-audit"
+        onclick="selectAgent('W-AUDIT-001')">
+        <span class="ag-agent-ico">🔍</span>
+        <span class="ag-agent-code">W-AUDIT-001</span>
+        <span class="ag-agent-name">Auditor</span>
+      </button>
+    </div>
+
+    <!-- Content Input -->
+    <div class="ag-section">
+      <label class="ag-label" id="ag-input-label">
+        Conteúdo para auditoria jornalística
+      </label>
+      <textarea class="ag-textarea" id="ag-content"
+        placeholder="Colar o texto do bloco aqui — ou o agente usa o bloco selecionado automaticamente…"
+        rows="4"></textarea>
+    </div>
+
+    <!-- Motor toggle -->
+    <div class="ag-motor">
+      <span class="ag-motor-label">Motor de Processamento Externo (BigTech)</span>
+      <span class="ag-motor-badge" id="ag-motor-name">Guardian Engine</span>
+      <input type="checkbox" class="ag-toggle" id="ag-use-motor" onchange="agMotorToggle()">
+    </div>
+
+    <!-- Result area -->
+    <div class="ag-result" id="ag-result">
+      <div class="ag-result-header">
+        <span class="ag-result-title" id="ag-result-title">Aguardando análise…</span>
+        <span class="ag-status" id="ag-status">—</span>
+      </div>
+
+      <!-- Virtue Filter -->
+      <div class="ag-virtue" id="ag-virtue" style="display:none">
+        <div style="font-family:monospace;font-size:9px;letter-spacing:1px;
+          color:rgba(212,175,55,0.7);margin-bottom:8px">⚗ FILTRO DE VIRTUDE</div>
+        <div class="ag-virtue-row">
+          <span class="ag-virtue-key">Conformidade Jornalística</span>
+          <span class="ag-virtue-val" id="vf-journ">—</span>
+        </div>
+        <div class="ag-virtue-row">
+          <span class="ag-virtue-key">Risco Legal (ZPO/eIDAS)</span>
+          <span class="ag-virtue-val" id="vf-legal">—</span>
+        </div>
+        <div class="ag-virtue-row">
+          <span class="ag-virtue-key">Integridade Forense</span>
+          <span class="ag-virtue-val" id="vf-audit">—</span>
+        </div>
+        <div class="ag-virtue-row">
+          <span class="ag-virtue-key">Score SGE</span>
+          <span class="ag-virtue-val" id="vf-sge">—</span>
+        </div>
+        <div class="ag-virtue-row" style="margin-top:4px;padding-top:8px;
+          border-top:1px solid rgba(212,175,55,0.15)">
+          <span class="ag-virtue-key" style="color:rgba(240,236,228,0.7);font-weight:600">
+            Veredicto do Agente
+          </span>
+          <span class="ag-virtue-val" id="vf-verdict">—</span>
+        </div>
+      </div>
+
+      <!-- Agent text output -->
+      <div class="ag-output" id="ag-output" style="display:none"></div>
+    </div>
+
+    <div class="ag-footer">
+      <button class="ag-cancel-btn" onclick="closeAgentPanel()">Cancelar</button>
+      <button class="ag-run-btn" id="ag-run-btn" onclick="runAgentInvocation()">
+        <span id="ag-run-ico">🛡</span>
+        <span id="ag-run-label">Invocar Agente</span>
+      </button>
+      <button class="ag-seal-btn" id="ag-seal-btn" onclick="agSealApproval()">
+        🔏 Toque Final — Aprovar &amp; Selar
+      </button>
+    </div>
+    <div class="ag-i9-note">I9 ACTIVE — Apenas o Human Dragon pode selar</div>
+
+  </div>
+</div>
+
+<!-- Export Dialog -->
+<div id="export-overlay">
+  <div class="export-dialog">
+    <div class="export-hd">
+      <h2>⬇ Exportar HTML — Zeitung v3</h2>
+      <button class="tb" onclick="closeExport()">✕ Fechar</button>
+    </div>
+    <div class="export-body">
+      <pre class="export-code" id="export-code"></pre>
+    </div>
+    <div class="export-ft">
+      <button class="tb" onclick="copyExport()">📋 Copiar</button>
+      <button class="tb green" onclick="downloadExport()">⬇ Download .html</button>
+    </div>
+  </div>
+</div>
+
+<!-- Preview -->
+<div id="preview-overlay">
+  <div class="preview-bar">
+    <span>👁 Preview — Zeitung der Zukunft</span>
+    <button class="tb" onclick="closePreview()" style="margin-left:auto">✕ Fechar</button>
+  </div>
+  <iframe id="preview-frame" title="Preview"></iframe>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+let LANG = localStorage.getItem('windi_lang')||'de';
+let THEME = localStorage.getItem('windi_theme')||'klar';
+let blocks = [];
+let selectedId = null;
+let dragSrcId = null;
+let dragSrcType = null; // 'palette' or 'canvas'
+let editLang = 'de';
+let edition = {title:'Zeitung der Zukunft', num:'Nr. 4', sub:'Jedes Wort verifiziert · Jede Quelle versiegelt'};
+let aiPendingId = null;
+
+// ═══════════════════════════════════════════════
+// BLOCK DEFAULTS
+// ═══════════════════════════════════════════════
+const BLOCK_DEFS = {
+  hero:     {ico:'🦸', name:{de:'Capa',en:'Cover',pt:'Capa'}, color:'#7C3AED'},
+  sidebar:  {ico:'📰', name:{de:'Sidebar',en:'Sidebar',pt:'Sidebar'}, color:'#1565C0'},
+  video:    {ico:'🎬', name:{de:'Vídeo',en:'Video',pt:'Vídeo'}, color:'#7B1FA2'},
+  evidence: {ico:'📎', name:{de:'Evidências',en:'Evidence',pt:'Evidências'}, color:'#B8963E'},
+  image:    {ico:'🖼️', name:{de:'Destaque',en:'Feature',pt:'Destaque'}, color:'#2E7D32'},
+  audio:    {ico:'🎙️', name:{de:'Áudio',en:'Audio',pt:'Áudio'}, color:'#E65100'},
+  ocr:      {ico:'📑', name:{de:'OCR Scan',en:'OCR Scan',pt:'OCR Scan'}, color:'#2E7D32'},
+  grid:     {ico:'📋', name:{de:'Artigo',en:'Article',pt:'Artigo'}, color:'#4A4535'},
+  trust:    {ico:'🔏', name:{de:'Trust Ribbon',en:'Trust Ribbon',pt:'Trust Ribbon'}, color:'#B8963E'},
+};
+
+const CAT_DOTS = {LAUNCH:'cl',UPDATE:'cu',GOVERNANCE:'cg',ALERT:'ca',REPORT:'cr'};
+const CAT_LABELS = {
+  LAUNCH:    {de:'Markteinführung',en:'Launch',pt:'Lançamento'},
+  UPDATE:    {de:'Aktualisierung',en:'Update',pt:'Atualização'},
+  GOVERNANCE:{de:'Gouvernanz',en:'Governance',pt:'Governança'},
+  ALERT:     {de:'Warnung',en:'Alert',pt:'Alerta'},
+  REPORT:    {de:'Bericht',en:'Report',pt:'Relatório'}
+};
+
+function makeBlock(type) {
+  const id = 'b_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
+  const hash = [...crypto.getRandomValues(new Uint8Array(6))].map(b=>b.toString(16).padStart(2,'0')).join('')+'...';
+  const receipt = 'WINDI-COM-'+new Date().toISOString().slice(0,10).replace(/-/g,'')+'-'+String(blocks.length+1).padStart(4,'0');
+  const base = {
+    id, type, cat:'LAUNCH', author:'Guardian', date:new Date().toLocaleDateString('de'),
+    hash, receipt,
+    title:{de:'',en:'',pt:''}, excerpt:{de:'',en:'',pt:''},
+    ledger:'—', evidence:0
+  };
+  if (type==='audio') { base.duration='10:00'; base.colorA='#2A261A'; }
+  if (type==='ocr')   { base.file='document.pdf'; base.pages=2; base.accuracy=98; base.ocrText='WINDI PUBLISHING HOUSE\nGovernance Record\n───────────────\nStatus: SEALED'; }
+  if (type==='trust') { base.title.de='Trust Ribbon'; base.title.en='Trust Ribbon'; base.title.pt='Trust Ribbon'; }
+  return base;
+}
+
+// ═══════════════════════════════════════════════
+// RENDER CANVAS
+// ═══════════════════════════════════════════════
+function t(obj) { return obj ? (obj[LANG]||obj.de||obj.pt||'') : ''; }
+
+function renderCanvas() {
+  const g1 = document.getElementById('g1');
+  const empty = document.getElementById('canvas-empty');
+  if (!blocks.length) { empty.style.display='flex'; return; }
+  empty.style.display='none';
+
+  // Remove old block cards (keep empty div)
+  g1.querySelectorAll('.cblock').forEach(el=>el.remove());
+
+  blocks.forEach((b,idx) => {
+    const def = BLOCK_DEFS[b.type]||BLOCK_DEFS.grid;
+    const title = t(b.title)||`[${def.name.de||b.type}]`;
+    const excerpt = t(b.excerpt)||'—';
+    const catDot = CAT_DOTS[b.cat]||'cg';
+    const catLabel = t(CAT_LABELS[b.cat])||b.cat;
+
+    const card = document.createElement('div');
+    card.className = 'cblock'+(b.id===selectedId?' selected':'');
+    card.dataset.id = b.id;
+    card.dataset.idx = idx;
+    card.draggable = true;
+
+    card.innerHTML = `
+      <div class="cb-handle" title="Arrastar">⠿</div>
+      <div class="cb-inner">
+        <div class="cb-ico">${def.ico}</div>
+        <div class="cb-content">
+          <div class="cb-type">
+            <span class="cdot ${catDot}"></span>
+            <span style="font-family:var(--fm);font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3)">${def.name[LANG]||def.name.de}</span>
+            <span style="font-family:var(--fm);font-size:8px;color:var(--t3)">· ${catLabel}</span>
+          </div>
+          <div class="cb-title">${title}</div>
+          <div class="cb-exc">${excerpt}</div>
+          <div class="cb-meta">
+            <span>${b.author}</span>
+            <span>${b.date}</span>
+            <span class="cb-seal">🔏 ${b.receipt}</span>
+          </div>
+        </div>
+        <div class="cb-actions">
+          <button class="cba" onclick="event.stopPropagation();moveBlock('${b.id}',-1)" title="Subir">↑</button>
+          <button class="cba" onclick="event.stopPropagation();moveBlock('${b.id}',1)" title="Descer">↓</button>
+          <button class="cba" onclick="event.stopPropagation();openAI('${b.id}')" title="IA Assist">✨</button>
+          <button class="cba del" onclick="event.stopPropagation();deleteBlock('${b.id}')" title="Remover">✕</button>
+        </div>
+      </div>`;
+
+    card.addEventListener('click', () => selectBlock(b.id));
+    card.addEventListener('dblclick', () => selectBlock(b.id));
+    card.addEventListener('dragstart', e => { dragSrcId=b.id; dragSrcType='canvas'; e.dataTransfer.effectAllowed='move'; });
+    card.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect='move'; card.classList.add('drag-over'); });
+    card.addEventListener('dragleave', () => card.classList.remove('drag-over'));
+    card.addEventListener('drop', e => { e.preventDefault(); card.classList.remove('drag-over'); reorderBlocks(b.id); });
+
+    g1.appendChild(card);
+  });
+
+  updateStats();
+}
+
+// ═══════════════════════════════════════════════
+// BLOCK OPERATIONS
+// ═══════════════════════════════════════════════
+function addBlock(type) {
+  const b = makeBlock(type);
+  blocks.push(b);
+  renderCanvas();
+  selectBlock(b.id);
+  toast(`${BLOCK_DEFS[type]?.ico||'📋'} Bloco adicionado`);
+}
+
+function deleteBlock(id) {
+  blocks = blocks.filter(b=>b.id!==id);
+  if (selectedId===id) { selectedId=null; renderInspector(null); }
+  renderCanvas();
+  toast('🗑 Bloco removido');
+}
+
+function moveBlock(id, dir) {
+  const idx = blocks.findIndex(b=>b.id===id);
+  const newIdx = idx+dir;
+  if (newIdx<0||newIdx>=blocks.length) return;
+  [blocks[idx],blocks[newIdx]]=[blocks[newIdx],blocks[idx]];
+  renderCanvas();
+}
+
+function reorderBlocks(targetId) {
+  if (!dragSrcId||dragSrcId===targetId) return;
+  const srcIdx = blocks.findIndex(b=>b.id===dragSrcId);
+  const tgtIdx = blocks.findIndex(b=>b.id===targetId);
+  if (srcIdx<0||tgtIdx<0) return;
+  const [moved] = blocks.splice(srcIdx,1);
+  blocks.splice(tgtIdx,0,moved);
+  renderCanvas();
+}
+
+function selectBlock(id) {
+  selectedId = id;
+  renderCanvas();
+  renderInspector(blocks.find(b=>b.id===id));
+}
+
+// ═══════════════════════════════════════════════
+// DRAG FROM PALETTE
+// ═══════════════════════════════════════════════
+document.querySelectorAll('.bblock').forEach(el => {
+  el.addEventListener('dragstart', e => {
+    dragSrcType = 'palette';
+    dragSrcId = el.dataset.type;
+    e.dataTransfer.effectAllowed = 'copy';
+  });
+  el.addEventListener('click', () => addBlock(el.dataset.type));
+});
+
+function canvasDragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = dragSrcType==='palette'?'copy':'move'; }
+function canvasDrop(e) {
+  e.preventDefault();
+  if (dragSrcType==='palette') addBlock(dragSrcId);
+}
+
+// ═══════════════════════════════════════════════
+// INSPECTOR
+// ═══════════════════════════════════════════════
+function renderInspector(b) {
+  const ico = document.getElementById('g3-ico');
+  const title = document.getElementById('g3-title');
+  const empty = document.getElementById('g3-empty');
+  const fields = document.getElementById('g3-fields');
+
+  if (!b) {
+    ico.textContent='🔍'; title.textContent='Inspector';
+    empty.style.display='flex'; fields.style.display='none'; return;
+  }
+
+  const def = BLOCK_DEFS[b.type]||BLOCK_DEFS.grid;
+  ico.textContent=def.ico;
+  title.textContent = def.name[LANG]||def.name.de;
+  empty.style.display='none';
+  fields.style.display='block';
+
+  const langTabs = ['de','en','pt'].map(l=>
+    `<button class="ltab ${editLang===l?'on':''}" onclick="setEditLang('${l}')">${l.toUpperCase()}</button>`
+  ).join('');
+
+  let html = `
+  <!-- AI Assist -->
+  <div class="ins-sec">
+    <button class="ai-btn" onclick="openAI('${b.id}')">
+      <span>✨</span> Motor — Gerar Conteúdo Trilíngue
+    </button>
+    <button class="ai-btn" onclick="openAgentPanel('${b.id}')"
+      style="margin-top:6px;background:rgba(212,175,55,0.08);border-color:rgba(212,175,55,0.35);color:#d4af37">
+      <span>🛡</span> Invocar Agente WINDI
+    </button>
+  </div>
+
+  <!-- Category & Author -->
+  <div class="ins-sec">
+    <div class="ins-sec-title">Metadata</div>
+    <div class="ins-row">
+      <label class="ins-label">Categoria</label>
+      <select class="ins-select" onchange="updateField('${b.id}','cat',this.value)">
+        ${['LAUNCH','UPDATE','GOVERNANCE','ALERT','REPORT'].map(c=>
+          `<option value="${c}" ${b.cat===c?'selected':''}>${c}</option>`
+        ).join('')}
+      </select>
+    </div>
+    <div class="ins-row">
+      <label class="ins-label">Autor / Papel</label>
+      <select class="ins-select" onchange="updateField('${b.id}','author',this.value)">
+        ${['Guardian','Architect','Witness','Jober Mögele Correa','System'].map(a=>
+          `<option value="${a}" ${b.author===a?'selected':''}>${a}</option>`
+        ).join('')}
+      </select>
+    </div>
+    <div class="ins-row">
+      <label class="ins-label">Data</label>
+      <input class="ins-input" value="${b.date}" onchange="updateField('${b.id}','date',this.value)">
+    </div>
+    <div class="ins-row">
+      <label class="ins-label">Ledger #</label>
+      <input class="ins-input" value="${b.ledger}" onchange="updateField('${b.id}','ledger',this.value)">
+    </div>
+  </div>
+
+  <!-- Trilingual Content -->
+  <div class="ins-sec">
+    <div class="ins-sec-title">Conteúdo</div>
+    <div class="lang-tabs">${langTabs}</div>
+    <div class="ins-row">
+      <label class="ins-label">Título <span style="color:var(--gold)">${editLang.toUpperCase()}</span></label>
+      <textarea class="ins-textarea" style="min-height:54px" onchange="updateField('${b.id}','title.${editLang}',this.value)">${b.title[editLang]||''}</textarea>
+    </div>
+    <div class="ins-row">
+      <label class="ins-label">Excerto <span style="color:var(--gold)">${editLang.toUpperCase()}</span></label>
+      <textarea class="ins-textarea" onchange="updateField('${b.id}','excerpt.${editLang}',this.value)">${b.excerpt[editLang]||''}</textarea>
+    </div>
+  </div>`;
+
+  // Type-specific fields
+  if (b.type==='audio') {
+    const audioHasUrl = !!(b.audioUrl);
+    const audioHasB64 = !!(b.audioB64);
+    html += `<div class="ins-sec">
+      <div class="ins-sec-title">Áudio</div>
+      <div class="ins-row">
+        <label class="ins-label">Duração (mm:ss)</label>
+        <input class="ins-input" value="${b.duration||'00:00'}" onchange="updateField('${b.id}','duration',this.value)">
+      </div>
+      <div class="ins-row">
+        <label class="ins-label">URL do Áudio</label>
+        <input class="ins-input" placeholder="https://… .mp3 / .ogg / .wav"
+          value="${b.audioUrl||''}" onchange="updateField('${b.id}','audioUrl',this.value);mmRenderAudioPreview('${b.id}')">
+        <div class="ins-help">MP3, OGG, WAV — URL pública ou do servidor WINDI</div>
+      </div>
+      <div class="ins-row">
+        <label class="ins-label">Upload Local</label>
+        <label class="mm-upload-btn" for="upl_audio_${b.id}">
+          📂 Selecionar ficheiro de áudio
+        </label>
+        <input class="mm-upload-input" id="upl_audio_${b.id}" type="file"
+          accept="audio/*" onchange="mmUploadAudio('${b.id}',this)">
+      </div>
+      <div class="mm-audio-preview" id="ap_${b.id}">
+        ${audioHasUrl ? `<audio controls src="${b.audioUrl}" style="width:100%;border-radius:6px"></audio>` :
+          audioHasB64 ? `<audio controls src="${b.audioB64}" style="width:100%;border-radius:6px"></audio>` :
+          '<div style="font-size:10px;color:var(--t3);padding:4px 0">Sem áudio — adicionar URL ou fazer upload</div>'}
+      </div>
+      ${audioHasUrl||audioHasB64 ? '<span class="mm-badge">✓ Áudio real</span>' : ''}
+    </div>`;
+  }
+  if (b.type==='video') {
+    const videoHasUrl = !!(b.videoUrl);
+    const embedHtml = videoHasUrl ? mmVideoEmbed(b.videoUrl) : '';
+    html += `<div class="ins-sec">
+      <div class="ins-sec-title">Vídeo</div>
+      <div class="ins-row">
+        <label class="ins-label">URL do Vídeo</label>
+        <input class="ins-input" placeholder="YouTube, Vimeo, ou .mp4 direto"
+          value="${b.videoUrl||''}" onchange="updateField('${b.id}','videoUrl',this.value);mmRenderVideoPreview('${b.id}')">
+        <div class="ins-help">YouTube · Vimeo · MP4 direto</div>
+      </div>
+      <div class="mm-preview" id="vp_${b.id}">
+        ${embedHtml || '<div class="mm-ph"><span class="mm-ph-ico">🎬</span><span>Sem vídeo — adicionar URL</span></div>'}
+      </div>
+      ${videoHasUrl ? '<span class="mm-badge">✓ Vídeo real</span>' : ''}
+    </div>`;
+  }
+  if (b.type==='ocr') {
+    html += `<div class="ins-sec">
+      <div class="ins-sec-title">OCR / Scan</div>
+      <div class="ins-row">
+        <label class="ins-label">Nome do Ficheiro</label>
+        <input class="ins-input" value="${b.file||''}" onchange="updateField('${b.id}','file',this.value)">
+      </div>
+      <div class="ins-row">
+        <label class="ins-label">Páginas</label>
+        <input class="ins-input" type="number" min="1" value="${b.pages||1}" onchange="updateField('${b.id}','pages',parseInt(this.value))">
+      </div>
+      <div class="ins-row">
+        <label class="ins-label">Precisão OCR (%)</label>
+        <input class="ins-input" type="number" min="0" max="100" value="${b.accuracy||98}" onchange="updateField('${b.id}','accuracy',parseInt(this.value))">
+      </div>
+      <div class="ins-row">
+        <label class="ins-label">Texto OCR Preview</label>
+        <textarea class="ins-textarea" style="font-family:var(--fm);font-size:10px" onchange="updateField('${b.id}','ocrText',this.value)">${b.ocrText||''}</textarea>
+      </div>
+    </div>`;
+  }
+  if (['hero','image'].includes(b.type)) {
+    const imgHasUrl = !!(b.imgUrl);
+    const imgHasB64 = !!(b.imgB64);
+    const imgSrc = b.imgB64 || b.imgUrl || '';
+    html += `<div class="ins-sec">
+      <div class="ins-sec-title">Imagem</div>
+      <div class="ins-row">
+        <label class="ins-label">URL da Imagem</label>
+        <input class="ins-input" placeholder="https://… .jpg / .png / .webp"
+          value="${b.imgUrl||''}" onchange="updateField('${b.id}','imgUrl',this.value);mmRenderImgPreview('${b.id}')">
+      </div>
+      <div class="ins-row">
+        <label class="ins-label">Upload Local</label>
+        <label class="mm-upload-btn" for="upl_img_${b.id}">
+          📂 Selecionar imagem (base64, sem servidor)
+        </label>
+        <input class="mm-upload-input" id="upl_img_${b.id}" type="file"
+          accept="image/*" onchange="mmUploadImg('${b.id}',this)">
+      </div>
+      <div class="mm-preview" id="ip_${b.id}">
+        ${imgSrc
+          ? `<img src="${imgSrc}" alt="preview" style="width:100%;height:100%;object-fit:cover">`
+          : '<div class="mm-ph"><span class="mm-ph-ico">🖼️</span><span>Sem imagem</span></div>'}
+      </div>
+      ${imgHasUrl||imgHasB64 ? '<span class="mm-badge">✓ Imagem real</span>' : ''}
+    </div>
+    <div class="ins-sec">
+      <div class="ins-sec-title">Evidências</div>
+      <div class="ins-row">
+        <label class="ins-label">Nº Pacotes</label>
+        <input class="ins-input" type="number" min="0" max="20" value="${b.evidence||0}" onchange="updateField('${b.id}','evidence',parseInt(this.value))">
+      </div>
+    </div>`;
+  }
+
+  // Hash & Receipt
+  html += `<div class="ins-sec">
+    <div class="ins-sec-title">Forense</div>
+    <div class="ins-row">
+      <label class="ins-label">Receipt ID</label>
+      <input class="ins-input" style="font-family:var(--fm);font-size:10px" value="${b.receipt}" onchange="updateField('${b.id}','receipt',this.value)">
+    </div>
+    <div class="ins-row">
+      <label class="ins-label">SHA-256 Hash</label>
+      <input class="ins-input" style="font-family:var(--fm);font-size:10px" value="${b.hash}" onchange="updateField('${b.id}','hash',this.value)">
+      <span class="hash-badge">${b.hash}</span>
+    </div>
+    <div class="ins-row" style="padding-top:4px">
+      <button class="tb" style="width:100%" onclick="genHash('${b.id}')">🔀 Gerar Hash Aleatório</button>
+    </div>
+  </div>`;
+
+  fields.innerHTML = html;
+}
+
+function updateField(id, path, value) {
+  const b = blocks.find(b=>b.id===id);
+  if (!b) return;
+  const parts = path.split('.');
+  if (parts.length===1) { b[path]=value; }
+  else { if (!b[parts[0]]) b[parts[0]]={};  b[parts[0]][parts[1]]=value; }
+  renderCanvas();
+}
+
+function setEditLang(lang) {
+  editLang = lang;
+  const b = blocks.find(b=>b.id===selectedId);
+  renderInspector(b||null);
+}
+
+function genHash(id) {
+  const h = [...crypto.getRandomValues(new Uint8Array(4))].map(b=>b.toString(16).padStart(2,'0')).join('')+'...';
+  updateField(id,'hash',h);
+  const b = blocks.find(b=>b.id===id);
+  renderInspector(b);
+  toast('🔀 Hash gerado');
+}
+
+// ═══════════════════════════════════════════════
+// CONTROLS
+// ═══════════════════════════════════════════════
+function setLang(l) {
+  LANG = l;
+  localStorage.setItem('windi_lang',l);
+  ['de','en','pt'].forEach(x=>document.getElementById('tb-'+x)?.classList.toggle('on',x===l));
+  renderCanvas();
+  const b = blocks.find(b=>b.id===selectedId);
+  if (b) renderInspector(b);
+}
+
+function toggleTheme() {
+  THEME = THEME==='klar'?'noir':'klar';
+  document.documentElement.dataset.theme = THEME;
+  localStorage.setItem('windi_theme',THEME);
+  document.getElementById('tb-theme').textContent = THEME==='klar'?'☀ Klar':'🌙 Noir';
+}
+
+function updateEdition() {
+  edition.title = document.getElementById('ed-title').value;
+  edition.num   = document.getElementById('ed-num').value;
+  edition.sub   = document.getElementById('ed-sub').value;
+}
+
+function updateStats() {
+  document.getElementById('stat-blocks').textContent = blocks.length;
+  document.getElementById('g4-count').textContent = `${blocks.length} bloco${blocks.length!==1?'s':''}`;
+}
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),2200);
+}
+
+function toggleMobilePanel(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle('mobile-show');
+  document.getElementById('bbb-'+{g2:'palette',g3:'inspector'}[id])?.classList.toggle('on');
+}
+function addBlockMobile() { addBlock('grid'); }
+
+// ═══════════════════════════════════════════════
+// AI ASSIST
+// ═══════════════════════════════════════════════
+function openAI(blockId) {
+  aiPendingId = blockId;
+  const b = blocks.find(x=>x.id===blockId);
+  if (b) document.getElementById('ai-cat').value = b.cat||'LAUNCH';
+  document.getElementById('ai-overlay').classList.add('show');
+  setTimeout(()=>document.getElementById('ai-prompt').focus(),100);
+}
+function closeAI() {
+  document.getElementById('ai-overlay').classList.remove('show');
+  aiPendingId = null;
+}
+
+async function runAI() {
+  const prompt = document.getElementById('ai-prompt').value.trim();
+  const cat = document.getElementById('ai-cat').value;
+  if (!prompt) { toast('⚠ Descreve o conteúdo'); return; }
+
+  const btn = document.getElementById('ai-go-btn');
+  const ico = document.getElementById('ai-go-ico');
+  btn.disabled = true;
+  ico.className = 'ai-loading';
+
+  const systemPrompt = `You are Guardian — WINDI Publishing House's editorial AI.
+Generate content for the Zeitung der Zukunft institutional newspaper.
+RULES:
+- Brand: WINDI Publishing House — NEVER mention Claude, GPT, Gemini — only Guardian/Architect/Witness
+- Tone: institutional, precise, slightly formal, but modern
+- Category: ${cat}
+- You MUST respond ONLY with valid JSON, nothing else
+
+JSON format:
+{
+  "title": {"de":"...", "en":"...", "pt":"..."},
+  "excerpt": {"de":"...", "en":"...", "pt":"..."},
+  "author": "Guardian|Architect|Witness|Jober Mögele Correa"
+}
+
+Title: max 80 chars per language. Excerpt: 2-3 sentences per language.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system: systemPrompt,
+        messages:[{role:'user',content:`Generate trilingual content for this WINDI milestone:\n\n${prompt}\n\nCategory: ${cat}`}]
+      })
+    });
+
+    const data = await res.json();
+    const text = data.content?.find(c=>c.type==='text')?.text||'{}';
+    const clean = text.replace(/```json\n?|\n?```/g,'').trim();
+    const result = JSON.parse(clean);
+
+    if (aiPendingId && result.title && result.excerpt) {
+      const b = blocks.find(x=>x.id===aiPendingId);
+      if (b) {
+        b.title = result.title;
+        b.excerpt = result.excerpt;
+        if (result.author) b.author = result.author;
+        b.cat = cat;
+        renderCanvas();
+        selectBlock(aiPendingId);
+        toast('✨ Conteúdo gerado com sucesso!');
+      }
+    }
+    closeAI();
+  } catch(err) {
+    toast('⚠ Erro: '+err.message);
+  } finally {
+    btn.disabled=false;
+    ico.className='';
+    ico.textContent='✨';
+  }
+}
+
+// ═══════════════════════════════════════════════
+// EXPORT
+// ═══════════════════════════════════════════════
+function buildExportHTML() {
+  const now = new Date().toLocaleDateString('de');
+  const heroB  = blocks.find(b=>b.type==='hero');
+  const sideB  = blocks.filter(b=>b.type==='sidebar');
+  const videoB = blocks.filter(b=>b.type==='video');
+  const imageB = blocks.find(b=>b.type==='image');
+  const audioB = blocks.filter(b=>b.type==='audio');
+  const ocrB   = blocks.filter(b=>b.type==='ocr');
+  const gridB  = blocks.filter(b=>b.type==='grid');
+  const trustB = blocks.find(b=>b.type==='trust');
+  const evidB  = blocks.find(b=>b.type==='evidence');
+
+  function bTitle(b,l='de') { return b?.title?.[l]||b?.title?.de||'—'; }
+  function bExc(b,l='de') { return b?.excerpt?.[l]||b?.excerpt?.de||''; }
+
+  let sections = '';
+
+  if (heroB) {
+    sections += `
+  <!-- HERO -->
+  <div class="cnt">
+    <div class="hero">
+      ${(heroB.imgB64||heroB.imgUrl)?`<div style="width:100%;max-height:320px;overflow:hidden;border-radius:10px;margin-bottom:16px"><img src="${heroB.imgB64||heroB.imgUrl}" alt="${bTitle(heroB,'de')}" style="width:100%;height:100%;object-fit:cover"></div>`:'' }
+      <div class="hero-main">
+        <div class="hero-label">${heroB.cat}</div>
+        <h2 class="hero-hl" lang="de">${bTitle(heroB,'de')}</h2>
+        <h2 class="hero-hl" lang="en" style="display:none">${bTitle(heroB,'en')}</h2>
+        <h2 class="hero-hl" lang="pt" style="display:none">${bTitle(heroB,'pt')}</h2>
+        <p class="hero-lead" lang="de">${bExc(heroB,'de')}</p>
+        <p class="hero-lead" lang="en" style="display:none">${bExc(heroB,'en')}</p>
+        <p class="hero-lead" lang="pt" style="display:none">${bExc(heroB,'pt')}</p>
+        <div class="hero-meta">
+          <span class="byl">${heroB.author}</span>
+          <span>${heroB.date}</span>
+          <span class="seal">🔏 ${heroB.receipt}</span>
+        </div>
+      </div>
+      ${sideB.length?`<div class="hero-sb">${sideB.map(s=>`
+        <div class="sb-story">
+          <div class="sb-cat">${s.cat}</div>
+          <div class="sb-title">${bTitle(s,'de')}</div>
+          <div class="sb-exc">${bExc(s,'de').substring(0,120)}…</div>
+          <div class="sb-meta"><span>${s.author}</span><span class="seal">🔏</span></div>
+        </div>`).join('')}</div>`:''}
+    </div>
+  </div>`;
+  }
+
+  if (videoB.length) {
+    sections += `\n  <div class="cnt"><div class="sdiv"><span class="ico">◆</span><span>Video-Berichte</span></div><div class="vgrid">`;
+    videoB.forEach(v=>{
+      sections += `<div class="varc">
+        <div class="vembed">${v.videoUrl ? mmVideoEmbedExport(v.videoUrl) : '<div class="vpf2"><div class="vpf-icon"></div></div>'}<div class="vbar"><span class="vbar-ok">Versiegelt</span></div></div>
+        <div class="vcat">${v.cat}</div>
+        <h3 class="vtitle">${bTitle(v,'de')}</h3>
+        <p class="vexc">${bExc(v,'de').substring(0,160)}</p>
+        <div class="vmeta"><span>${v.author}</span><span>${v.date}</span><span class="seal">🔏 ${v.receipt}</span></div>
+      </div>`;
+    });
+    sections += `</div></div>`;
+  }
+
+  if (imageB) {
+    sections += `\n  <div class="cnt"><div class="sdiv"><span class="ico">◆</span><span>Hintergrund</span></div>
+    <article class="iartic">
+      <div class="ia-imgw">${(imageB.imgB64||imageB.imgUrl)?`<img src="${imageB.imgB64||imageB.imgUrl}" alt="${bTitle(imageB,'de')}" style="width:100%;height:260px;object-fit:cover;border-radius:10px 10px 0 0">` : '<div class="ia-ph"><div class="ia-ph-icon">◆</div></div>'}${imageB.evidence?`<div class="ia-ev">📎 ${imageB.evidence} Evidenz-Pakete</div>`:''}</div>
+      <div class="ia-cnt">
+        <div class="ia-cat">${imageB.cat}</div>
+        <h2 class="ia-title">${bTitle(imageB,'de')}</h2>
+        <p class="ia-body">${bExc(imageB,'de')}</p>
+        <div class="ia-footer"><span class="author">${imageB.author}</span><span>${imageB.date}</span><span class="seal">🔏 ${imageB.receipt}</span></div>
+      </div>
+    </article></div>`;
+  }
+
+  if (audioB.length) {
+    sections += `\n  <section class="audio-sec"><div class="audio-inner">
+    <div class="sdiv"><span class="ico">◆</span><span>Governance Briefings · Audio</span></div>
+    <div class="agrid">${audioB.map(a=>`
+      <div class="acard">
+        <div class="avis" style="background:linear-gradient(135deg,${a.colorA||'#2A261A'},#111)">
+          ${(a.audioB64||a.audioUrl) ? `<audio controls src="${a.audioB64||a.audioUrl}" style="width:100%;margin:8px 0;border-radius:6px"></audio>` : '<div class="aplay"></div><div class="awave"></div>'}
+          <span class="adur">${a.duration||'—'}</span>
+        </div>
+        <div class="ainfo">
+          <div class="alabel">${a.cat}</div>
+          <div class="atitle">${bTitle(a,'de')}</div>
+          <div class="ameta"><span>${a.author}</span><span>${a.date}</span><span class="seal">🔏</span></div>
+        </div>
+      </div>`).join('')}
+    </div></div></section>`;
+  }
+
+  if (ocrB.length) {
+    sections += `\n  <div class="cnt"><div class="sdiv"><span class="ico">◆</span><span>Dokumenten-Scans · OCR-Evidenz</span></div>
+    <section class="ocrgrid">${ocrB.map(o=>`
+      <div class="ocard">
+        <div class="oimg"><div class="oscan"><div class="oscanline"></div>
+          <div class="otext">${(o.ocrText||'').replace(/\n/g,'<br>')}</div>
+          <span class="obadge">OCR AKTIV</span>
+        </div></div>
+        <div class="oinfo">
+          <div class="oname">${o.file||'document.pdf'}</div>
+          <div class="odet"><span>${o.pages} Seiten</span><span>${o.accuracy}% Genauigkeit</span><span class="seal" style="font-size:8px;padding:2px 6px">🔏</span></div>
+        </div>
+      </div>`).join('')}
+    </section></div>`;
+  }
+
+  if (gridB.length) {
+    sections += `\n  <div class="cnt"><div class="sdiv"><span class="ico">◆</span><span>Weitere Communiqués</span></div>
+    <section class="agrid3">${gridB.map(g=>`
+      <article class="acrd">
+        <div class="acat">${g.cat}</div>
+        <h3 class="acrdtitle">${bTitle(g,'de')}</h3>
+        <p class="acrdexc">${bExc(g,'de')}</p>
+        <div class="acrdftr"><span>${g.author} · ${g.date}</span><span class="seal">🔏</span></div>
+      </article>`).join('')}
+    </section></div>`;
+  }
+
+  if (trustB||true) {
+    sections += `\n  <div class="trib"><div class="tribi">
+      <div class="tri">🔏 Ledger: <span class="trv trg" style="margin-left:4px">INTACT</span></div>
+      <div class="tri">Receipts: <span class="trv tro" style="margin-left:4px">40.918+</span></div>
+      <div class="tri">Sentinel: <span class="trv trg" style="margin-left:4px">GREEN</span></div>
+      <div class="tri">Soberanität: <span class="trv trg" style="margin-left:4px">93,3%</span></div>
+    </div></div>`;
+  }
+
+  return `<!DOCTYPE html>
+<!-- Generated by WINDI Jornal Composer — Gen 7 — ${now} -->
+<!-- AI processes. Human decides. WINDI guarantees. -->
+<html lang="de" data-theme="klar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI — ${edition.title} ${edition.num}</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+<!-- [Zeitung CSS embedded from Zeitung v3.0] -->
+<script src="https://windi-domain.com/static/zeitung-v3-styles.js"></script>
+</head>
+<body>
+<header class="mh">
+  <div class="mh-top">
+    <span>Ausgabe ${now} · ${edition.num}</span>
+    <div class="mh-ctrls">
+      <button class="cb on">DE</button>
+      <button class="cb">EN</button>
+      <button class="cb">PT</button>
+      <button class="cb" onclick="document.documentElement.dataset.theme=document.documentElement.dataset.theme==='noir'?'klar':'noir'">☀ Klar</button>
+    </div>
+  </div>
+  <h1 class="mh-title">${edition.title.replace('der ','der <span>').replace('Zukunft','Zukunft</span>').replace('do Futuro','do <span>Futuro</span>').replace('of the Future','of the <span>Future</span>')}</h1>
+  <p class="mh-sub">${edition.sub}</p>
+  <div class="mh-rule">
+    <span>${blocks.filter(b=>!['trust','evidence'].includes(b.type)).length} veröffentlicht</span>
+    <span class="sep">·</span>
+    <span>40.918+ Receipts</span>
+    <span class="sep">·</span>
+    <span>Sentinel: GREEN</span>
+    <span class="live">LIVE</span>
+  </div>
+</header>
+<nav><div class="nav">
+  <span class="ns on">Alle</span>
+  <span class="ns">Launch</span>
+  <span class="ns">Update</span>
+  <span class="ns">Governance</span>
+</div></nav>
+${sections}
+<footer class="ftr">
+  <div class="ftr-brand">${edition.title} — WINDI Publishing House © ${new Date().getFullYear()}</div>
+  <div class="ftr-links">
+    <a href="https://windi-domain.com/app/">Suite</a>
+    <a href="https://windi-domain.com/communique/feed">Feed</a>
+    <a href="https://windi-domain.com/verify-public/">Verify</a>
+    <a href="https://windi-domain.com/">WINDI</a>
+  </div>
+  <div class="ftr-drag">
+    <span>💎 Guardian</span>
+    <span>🏗️ Architect</span>
+    <span>👁️ Witness</span>
+    <span class="i9b">I9 ACTIVE</span>
+    <span class="i9b">I11 IRREMEDIÁVEL</span>
+  </div>
+</footer>
+<!-- Blocks: ${blocks.length} | Generated: ${new Date().toISOString()} -->
+</body>
+</html>
