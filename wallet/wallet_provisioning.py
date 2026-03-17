@@ -886,6 +886,109 @@ def get_wallet_stats() -> dict:
 
 
 # ============================================================================
+# TRUST EVENTS: Record trust signals and update score
+# ============================================================================
+
+def record_trust_event(data: dict) -> dict:
+    """
+    Record a trust event and update the trust_score.
+
+    Args:
+        data: {
+            wallet_id: str,
+            event_type: str (e.g., 'receipt_created', 'document_sealed'),
+            signal: int (+1, -1, etc.),
+            receipt_id: Optional[str],
+            metadata: Optional[dict]
+        }
+
+    Returns:
+        Updated trust_score info
+    """
+    import uuid
+    from datetime import datetime, timezone
+
+    wallet_id = data.get("wallet_id")
+    event_type = data.get("event_type", "unknown")
+    signal = data.get("signal", 1)
+    receipt_id = data.get("receipt_id")
+    metadata = data.get("metadata", {})
+
+    if not wallet_id:
+        raise ValueError("wallet_id required")
+
+    conn = get_db()
+    try:
+        # Find context_id for this wallet
+        ctx = conn.execute(
+            "SELECT context_id FROM wallet_context WHERE wallet_id = ?",
+            (wallet_id,)
+        ).fetchone()
+
+        if not ctx:
+            raise ValueError(f"wallet not found: {wallet_id}")
+
+        context_id = ctx["context_id"]
+
+        # Generate event ID (UUIDv7 if available, else UUID4)
+        if HAS_UUID7:
+            event_id = str(uuid7())
+        else:
+            event_id = str(uuid.uuid4())
+
+        now = datetime.now(timezone.utc).isoformat()
+
+        # Insert trust event (append-only)
+        conn.execute(
+            """INSERT INTO trust_events
+               (trust_event_id, context_id, event_type, signal, receipt_id, metadata, created_at)
+               VALUES (?, ?, ?, ?, ?, ?, ?)""",
+            (event_id, context_id, event_type, signal, receipt_id,
+             json.dumps(metadata) if metadata else None, now)
+        )
+
+        # Update trust_score
+        conn.execute(
+            """UPDATE trust_score
+               SET score = MIN(100, MAX(0, score + ?)),
+                   signals = signals + 1,
+                   level = CASE
+                       WHEN MIN(100, MAX(0, score + ?)) >= 95 THEN 5
+                       WHEN MIN(100, MAX(0, score + ?)) >= 80 THEN 4
+                       WHEN MIN(100, MAX(0, score + ?)) >= 65 THEN 3
+                       WHEN MIN(100, MAX(0, score + ?)) >= 50 THEN 2
+                       ELSE 1
+                   END,
+                   updated_at = ?
+               WHERE context_id = ?""",
+            (signal, signal, signal, signal, signal, now, context_id)
+        )
+
+        conn.commit()
+
+        # Fetch updated score
+        updated = conn.execute(
+            "SELECT score, level, signals FROM trust_score WHERE context_id = ?",
+            (context_id,)
+        ).fetchone()
+
+        return {
+            "ok": True,
+            "event_id": event_id,
+            "wallet_id": wallet_id,
+            "trust_score": updated["score"] if updated else 50,
+            "trust_level": updated["level"] if updated else 1,
+            "trust_signals": updated["signals"] if updated else 0
+        }
+
+    except Exception as e:
+        conn.rollback()
+        raise e
+    finally:
+        conn.close()
+
+
+# ============================================================================
 # CLONE WALLET: Registration & Verification (Phase 2 Bridge)
 # ============================================================================
 
