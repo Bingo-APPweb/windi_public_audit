@@ -328,7 +328,7 @@ async function executeOneTouch(intent) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 intent: intent,
-                wallet_id: 'desktop-gen7-session',
+                wallet_id: window.__windiWalletId || 'desktop-gen7-session',
                 agent: currentAgent,  // null = auto-routing by backend
             }),
         });
@@ -406,7 +406,9 @@ async function sealCanvasToLedger() {
             body: JSON.stringify({
                 session_id: _currentSession.session_id,
                 content_hash: contentHash,
-                doc_type: 'canvas-output'
+                doc_type: 'canvas-output',
+                wallet_id: window.__windiWalletId || null,
+                human_fingerprint: window.__windiWallet?.fingerprint || null
             })
         });
         const result = await res.json();
