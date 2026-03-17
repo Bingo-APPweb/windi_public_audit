@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.4
+**Version:** 1.9.5
 **Sealed:** 2026-03-17
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -536,6 +536,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | Back Button | "← Voltar/Zurück/Back" trilíngue |
 | **§11.2 FRONTEND INVARIANTS** | Lei constitucional: i18n + NOIR/KLAR obrigatórios |
 | Theme Toggle | ☀/☽ NOIR/KLAR na `/how-it-works/` |
+| **/keys/ Fix** | Back button + NOIR/KLAR + localStorage sync |
 
 ### Backlog Activo
 
@@ -567,6 +568,74 @@ O Ledger manifesta eventos REAIS, nunca placeholders.
 Se o Gêmeo inventa um receipt... isso é falsificação."
 — Human Dragon, 15 Mar 2026
 ```
+
+---
+
+## 15. W-KEYS P5 — Pricing Page · 17 Mar 2026
+
+**Status:** ✅ LIVE
+**URL:** `windi-domain.com/keys/`
+**Path:** `/opt/windi/keys-pricing/index.html`
+
+### Features
+
+| Feature | Descrição |
+|---------|-----------|
+| i18n | PT/DE/EN com auto-detect + sync `windi_lang` |
+| 4 Tiers | SEED €0 · NODAL €49 · SOVEREIGN €999+ · ORACLE interno |
+| CTAs | `/api-keys/request?tier=X` |
+| I9 Gate | Documentado no rodapé |
+
+### Infraestrutura
+
+```
+nginx:  location ^~ /keys/ → alias /opt/windi/keys-pricing/
+Botão:  🔑 Chaves no header GEN7 → onclick="/keys/"
+```
+
+### i18n Strings
+
+| Key | PT | EN | DE |
+|-----|----|----|-----|
+| title | Leve o WINDI... | Bring WINDI... | WINDI für Ihre... |
+| popular | Mais escolhido | Most popular | Meistgewählt |
+| ctaNodal | Activar Nodal → | Activate Nodal → | Nodal aktivieren → |
+
+---
+
+## 16. NAMING — Interface Pública vs Interno · 17 Mar 2026
+
+### Regra
+
+| Contexto | Usar | Não usar |
+|----------|------|----------|
+| Interface pública | "WINDI", "Hey WINDI" | "Dragon", "Hey Dragon" |
+| Documentação interna | "Three Dragons" | — |
+| Código/API | `dragon_*` (legacy OK) | — |
+
+### Razão
+
+"Dragon" é palavra inglesa → confunde o `detect_language()` → resposta na língua errada.
+
+### Implementação
+
+```python
+# sovereign_router.py — NEUTRAL_MARKERS
+NEUTRAL_MARKERS = {"windi", "dragon", "guardian", "architect", "witness", "ledger", "vault"}
+
+# detect_language() remove estes antes de contar scores
+# Resultado: "Hallo WINDI" → detecta DE correctamente
+```
+
+### Three Dragons (conceito interno)
+
+```
+🛡️ Guardian  — Protege, valida, I9 gate
+🏗️ Architect — Constrói documentos
+👁️ Witness   — Observa, sela no Ledger
+```
+
+> Rebranding completo Dragon→WINDI: sessão futura dedicada.
 
 ---
 
