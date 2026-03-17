@@ -348,6 +348,88 @@ body {
 .agent-status.down { background: var(--status-red); }
 .agent-status.degraded { background: var(--status-yellow); }
 
+/* Tools Section (D1) */
+.tools-section {
+    margin-top: var(--space-md);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--border-color);
+}
+
+.tools-label {
+    font-size: 0.6875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: var(--space-sm);
+}
+
+.tools-grid {
+    display: flex;
+    gap: var(--space-sm);
+}
+
+.tool-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-xs) var(--space-sm);
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.tool-btn:hover {
+    background: var(--gold-primary);
+    color: var(--bg-primary);
+    border-color: var(--gold-primary);
+}
+
+.tool-icon {
+    font-size: 0.875rem;
+}
+
+.tool-name {
+    font-weight: 500;
+}
+
+/* Tool Mode in D2 */
+.tool-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-sm) var(--space-md);
+    background: var(--bg-tertiary);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.tool-header span {
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.tool-header button {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: var(--space-xs);
+}
+
+.tool-header button:hover {
+    color: var(--status-red);
+}
+
+.tool-iframe {
+    width: 100%;
+    height: calc(100% - 48px);
+    border: none;
+    background: var(--bg-secondary);
+}
+
 /* D2: Sovereign Editor */
 .zone-d2 {
     border-color: var(--agent-journ);
