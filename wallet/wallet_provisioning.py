@@ -905,9 +905,6 @@ def record_trust_event(data: dict) -> dict:
     Returns:
         Updated trust_score info
     """
-    import uuid
-    from datetime import datetime, timezone
-
     wallet_id = data.get("wallet_id")
     event_type = data.get("event_type", "unknown")
     signal = data.get("signal", 1)
@@ -930,12 +927,8 @@ def record_trust_event(data: dict) -> dict:
 
         context_id = ctx["context_id"]
 
-        # Generate event ID (UUIDv7 if available, else UUID4)
-        if HAS_UUID7:
-            event_id = str(uuid7())
-        else:
-            event_id = str(uuid.uuid4())
-
+        # Generate event ID
+        event_id = make_uuid7()
         now = datetime.now(timezone.utc).isoformat()
 
         # Insert trust event (append-only)
