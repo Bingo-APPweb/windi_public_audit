@@ -652,3 +652,148 @@ document.addEventListener('DOMContentLoaded', () => {
 
 console.log('[GEN7] WINDI Desktop GEN 7 initialized');
 console.log('[GEN7] "AI processes. Human decides. WINDI guarantees."');
+
+
+// ═══════════════════════════════════════════
+// DID WALLET MODAL — WINDI GEN7 — FASE 1
+// ═══════════════════════════════════════════
+
+const WM = {
+    SESSION_KEY: "windi_desktop_wallet",
+    get() {
+        try { return JSON.parse(sessionStorage.getItem(this.SESSION_KEY)); }
+        catch(e) { return null; }
+    },
+    set(data) {
+        sessionStorage.setItem(this.SESSION_KEY, JSON.stringify(data));
+        window.__windiWallet = data;
+    },
+    clear() {
+        sessionStorage.removeItem(this.SESSION_KEY);
+        window.__windiWallet = null;
+    }
+};
+
+function openWalletModal() {
+    document.getElementById("walletModal").classList.add("open");
+    WM.get() ? renderWalletLoaded(WM.get()) : renderWalletLogin();
+}
+
+function closeWalletModal(e) {
+    if (e && e.target \!== document.getElementById("walletModal")) return;
+    document.getElementById("walletModal").classList.remove("open");
+}
+
+document.addEventListener("keydown", e => {
+    if (e.key === "Escape")
+        document.getElementById("walletModal")?.classList.remove("open");
+});
+
+function renderWalletLogin() {
+    document.getElementById("wm-state-login").style.display  = "";
+    document.getElementById("wm-state-loaded").style.display = "none";
+    document.getElementById("wm-seal-badge").style.display   = "none";
+    document.getElementById("wm-login-status").textContent   = "";
+    const btn = document.getElementById("walletBtn");
+    if (btn) {
+        btn.classList.remove("has-did");
+        document.getElementById("walletBtnLabel").textContent = "Wallet";
+    }
+}
+
+function renderWalletLoaded(wallet) {
+    document.getElementById("wm-state-login").style.display  = "none";
+    document.getElementById("wm-state-loaded").style.display = "";
+    document.getElementById("wm-seal-badge").style.display   = "";
+
+    document.getElementById("wm-did-value").textContent =
+        wallet.wallet_id || wallet.id || "--";
+
+    const sub = [
+        wallet.display_name || wallet.name,
+        wallet.context_type || wallet.kind || wallet.type,
+        wallet.role
+    ].filter(Boolean).join(" · ");
+    document.getElementById("wm-did-sub").textContent = sub;
+
+    document.getElementById("wm-tier").textContent =
+        wallet.governance_level || wallet.tier || "L1";
+
+    const trust = wallet.trust?.score ?? wallet.trust_score ?? wallet.trustScore ?? null;
+    const trustLevel = (trust \!== null) ? ("T" + (Math.floor(trust/20)+1) + " · " + trust) : "--";
+    document.getElementById("wm-trust").textContent = trustLevel;
+
+    document.getElementById("wm-pioneer").textContent =
+        wallet.pioneer_number ? ("#" + wallet.pioneer_number) : "--";
+
+    document.getElementById("wm-fingerprint").textContent =
+        wallet.fingerprint
+            ? wallet.fingerprint.substring(0, 48) + "..."
+            : "--";
+
+    const btn = document.getElementById("walletBtn");
+    const wid = wallet.wallet_id || wallet.id || "";
+    if (btn) {
+        btn.classList.add("has-did");
+        document.getElementById("walletBtnLabel").textContent =
+            wid.length > 12 ? wid.substring(0, 16) + "..." : wid;
+    }
+}
+
+async function walletLogin() {
+    const input    = document.getElementById("wm-login-input");
+    const status   = document.getElementById("wm-login-status");
+    const walletId = input?.value?.trim();
+
+    if (\!walletId) {
+        status.textContent = "Introduz o teu Wallet ID";
+        status.className   = "wm-sign-status err";
+        return;
+    }
+
+    status.textContent = "A verificar identidade...";
+    status.className   = "wm-sign-status";
+
+    try {
+        const res  = await fetch("/api/wallet/me?wallet_id=" + encodeURIComponent(walletId));
+        const data = await res.json();
+
+        if (res.ok && (data.wallet_id || data.human_id)) {
+            WM.set(data);
+            window.__windiWalletId = data.wallet_id || walletId;
+            renderWalletLoaded(data);
+            console.log("[WALLET] Login successful:", data.wallet_id || walletId);
+        } else {
+            status.textContent = data.detail || data.error || "Wallet nao encontrada";
+            status.className   = "wm-sign-status err";
+        }
+    } catch(e) {
+        console.error("[WALLET] Login error:", e);
+        status.textContent = "Wallet Service inacessivel (:8099)";
+        status.className   = "wm-sign-status err";
+    }
+}
+
+function walletLogout() {
+    WM.clear();
+    window.__windiWalletId = null;
+    renderWalletLogin();
+    console.log("[WALLET] Logged out");
+}
+
+(function initWalletModal() {
+    const saved = WM.get();
+    if (\!saved) return;
+    window.__windiWallet   = saved;
+    window.__windiWalletId = saved.wallet_id || saved.id;
+    const btn = document.getElementById("walletBtn");
+    const wid = saved.wallet_id || saved.id || "";
+    if (btn) {
+        btn.classList.add("has-did");
+        document.getElementById("walletBtnLabel").textContent =
+            wid.length > 12 ? wid.substring(0, 16) + "..." : wid;
+    }
+    console.log("[WALLET] Session restored:", wid);
+})();
+
+console.log("[GEN7] DID Wallet Modal initialized — FASE 1");

@@ -36,6 +36,10 @@
                 <span class="key-icon">🔑</span>
                 <span class="key-status" data-i18n="keys">Keys</span>
             </div>
+            <button id="walletBtn" class="wallet-btn" onclick="openWalletModal()" title="DID Wallet">
+                <span class="wallet-icon">🪪</span>
+                <span class="wallet-label" id="walletBtnLabel">Wallet</span>
+            </button>
             <div class="user-avatar">🧑‍💻</div>
         </div>
     </header>
@@ -122,6 +126,93 @@
         <span class="principle">"AI processes. Human decides. WINDI guarantees."</span>
         <span class="footer-version">Liga IA+H · Kempten, Bavaria · 2026</span>
     </footer>
+
+    <!-- DID Wallet Modal -->
+    <div id="walletModal" class="wallet-modal-overlay" onclick="closeWalletModal(event)">
+      <div class="wallet-modal" onclick="event.stopPropagation()">
+
+        <!-- Header -->
+        <div class="wm-header">
+          <div class="wm-title">
+            <span class="wm-icon">🪪</span>
+            <span>DID Wallet</span>
+            <span class="wm-seal" id="wm-seal-badge" style="display:none">✓ Soberano</span>
+          </div>
+          <button class="wm-close" onclick="closeWalletModal()">✕</button>
+        </div>
+
+        <!-- ESTADO A: Login (sem wallet) -->
+        <div id="wm-state-login" class="wm-section">
+          <div class="wm-label">IDENTIFICAÇÃO</div>
+          <p class="wm-info-text">
+            Introduz o teu Wallet ID para aceder à tua identidade soberana.
+          </p>
+          <div class="wm-sign-row">
+            <input type="text" id="wm-login-input"
+                   class="wm-input"
+                   placeholder="WALLET-20260317-0001">
+            <button class="wm-btn-gold" onclick="walletLogin()">Entrar</button>
+          </div>
+          <div class="wm-sign-status" id="wm-login-status"></div>
+          <div style="margin-top:12px">
+            <a href="/wallet/" target="_blank" class="wm-link">
+              → Ainda não tens Wallet? Criar aqui
+            </a>
+          </div>
+        </div>
+
+        <!-- ESTADO B: Wallet carregada -->
+        <div id="wm-state-loaded" style="display:none">
+
+          <!-- DID Identity -->
+          <div class="wm-section">
+            <div class="wm-label">DIGNITY ID</div>
+            <div class="wm-did" id="wm-did-value">—</div>
+            <div class="wm-did-sub" id="wm-did-sub"></div>
+          </div>
+
+          <!-- Stats -->
+          <div class="wm-stats">
+            <div class="wm-stat">
+              <div class="wm-stat-label">TIER</div>
+              <div class="wm-stat-value" id="wm-tier">—</div>
+            </div>
+            <div class="wm-stat">
+              <div class="wm-stat-label">TRUST</div>
+              <div class="wm-stat-value" id="wm-trust">—</div>
+            </div>
+            <div class="wm-stat">
+              <div class="wm-stat-label">PIONEER</div>
+              <div class="wm-stat-value" id="wm-pioneer">—</div>
+            </div>
+          </div>
+
+          <!-- Fingerprint -->
+          <div class="wm-section">
+            <div class="wm-label">FINGERPRINT</div>
+            <div class="wm-did" id="wm-fingerprint" style="font-size:0.6875rem">—</div>
+          </div>
+
+          <!-- Receipts — FASE 2 placeholder -->
+          <div class="wm-section">
+            <div class="wm-label">RECEIPTS <span style="color:#5A4510;font-size:0.55rem">→ FASE 2</span></div>
+            <div class="wm-receipts-loading" id="wm-receipts-msg">
+              Associação Ledger↔Wallet disponível na FASE 2
+            </div>
+          </div>
+
+          <!-- Logout -->
+          <div class="wm-footer">
+            <button class="wm-link" onclick="walletLogout()"
+                    style="background:none;border:none;cursor:pointer;">
+              ← Sair da Wallet
+            </button>
+            <span class="wm-principle">AI processes. Human decides.</span>
+          </div>
+
+        </div>
+      </div>
+    </div>
 
     <script src="static/app.js"></script>
 </body>
