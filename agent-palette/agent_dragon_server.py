@@ -1332,7 +1332,7 @@ def handle_dragon_chat(body):
         # DocType hints for Portuguese documents
         PT_DOC_TYPES = {"fatura", "carta", "oficio", "certidao", "procuracao", "declaracao"}
 
-        if detected_lang != "en":
+        if detected_lang in ("pt", "de", "en"):
             # User message has clear language markers
             language = detected_lang
         elif doc_type and doc_type.lower() in DE_DOC_TYPES:
@@ -4757,7 +4757,7 @@ BRAIN_INJECTION_SCRIPT = r"""
 
   window.__dragonSessionHistory ??= [];  // Persistent session memory
   // Recupera memória do sessionStorage se existir
-  if (sessionStorage.getItem('dragon_history')) {
+  if (sessionStorage.getItem('dragon_history') && window.__dragonSessionHistory.length === 0) {
     window.__dragonSessionHistory = JSON.parse(sessionStorage.getItem('dragon_history'));
   }
 
@@ -4769,7 +4769,7 @@ BRAIN_INJECTION_SCRIPT = r"""
     if (classification.mode === 'chat') {
       // ── ASYNC: Call Dragon API for chat ──
       // Persistent session memory (survives re-renders)
-      window.__dragonSessionHistory.push({ role: 'user', text: userInput });
+      window.__dragonSessionHistory.push({ role: 'user', content: userInput });
       sessionStorage.setItem('dragon_history', JSON.stringify(window.__dragonSessionHistory));
 
       const dragon = await dragonChat(userInput, {
@@ -4781,7 +4781,7 @@ BRAIN_INJECTION_SCRIPT = r"""
       });
 
       if (dragon && dragon.message) {
-        window.__dragonSessionHistory.push({ role: 'assistant', text: dragon.message });
+        window.__dragonSessionHistory.push({ role: 'assistant', content: dragon.message });
         sessionStorage.setItem('dragon_history', JSON.stringify(window.__dragonSessionHistory));
         const emoji = DRAGON_EMOJIS[dragon.dragon] || '🐉';
         const name = DRAGON_NAMES[dragon.dragon] || 'Agent';
