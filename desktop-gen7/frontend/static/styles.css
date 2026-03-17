@@ -99,6 +99,20 @@ body {
     font-weight: 600;
 }
 
+.nav-link {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    padding: 4px 12px;
+    border-radius: var(--radius-sm);
+    transition: all 0.2s ease;
+}
+
+.nav-link:hover {
+    color: var(--gold-light);
+    background: var(--gold-dim);
+}
+
 .command-center {
     display: flex;
     align-items: center;
@@ -790,8 +804,9 @@ body {
     padding: 40px 48px;
     background: #FEFCF5;
     min-height: 400px;
+    max-height: 70vh;
+    overflow-y: auto;
     font-family: 'Bricolage Grotesque', sans-serif;
-    overflow: hidden;
 }
 
 /* SVG Art containment — prevent viewport-based sizing */
