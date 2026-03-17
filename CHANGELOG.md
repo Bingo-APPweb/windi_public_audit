@@ -16,6 +16,9 @@
 | **Canvas ← Novo** — botão toolbar G2 | 08:30 |
 | URL Fix: /app/api/dragon → /api/dragon | 08:30 |
 | History Fix: human→user, text→content | 08:30 |
+| **How it Works Landing** — /how-it-works/ LIVE | 10:55 |
+| nginx patch + reload | 10:55 |
+| **CLAUDE.md v1.9.2** | 10:55 |
 
 ---
 
