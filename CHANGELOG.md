@@ -64,6 +64,11 @@
 | Auto-restore sessão ao reload | 22:30 |
 | nginx `/api/wallet/` proxy_pass fix | 22:30 |
 | **CLAUDE.md v1.9.9** — §19 JMPG Viewer + §20 Jornal Composer | 22:15 |
+| **CLAUDE.md v1.9.10** — §21 Wallet Gate FASE 1 | 22:30 |
+| **Overflow Fix** — 45.2k → 25.2k chars | 22:50 |
+| CLAUDE-HISTORY.md criado | 22:50 |
+| §17-§20 migrados para HISTORY (append-only) | 22:50 |
+| **CLAUDE.md v1.9.11** — Overflow Policy header | 22:55 |
 
 ---
 
