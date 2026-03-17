@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.6
+**Version:** 1.9.7
 **Sealed:** 2026-03-17
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -572,6 +572,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | **§11.2 FRONTEND INVARIANTS** | Lei constitucional: i18n + NOIR/KLAR obrigatórios |
 | Theme Toggle | ☀/☽ NOIR/KLAR na `/how-it-works/` |
 | **/keys/ Fix** | Back button + NOIR/KLAR + localStorage sync |
+| **§17 .JMPG** | Documentação completa do formato soberano |
 
 ### Backlog Activo
 
@@ -671,6 +672,112 @@ NEUTRAL_MARKERS = {"windi", "dragon", "guardian", "architect", "witness", "ledge
 ```
 
 > Rebranding completo Dragon→WINDI: sessão futura dedicada.
+
+---
+
+## 17. Formato .JMPG — Sovereign File Format
+
+**JMPG** (JOBER Mögele Publishing Governance) é o formato de ficheiro soberano da WINDI.
+Não é apenas um contentor — é uma **prova criptográfica ambulante**.
+
+### Estrutura Interna
+
+| Camada | Conteúdo | Função |
+|--------|----------|--------|
+| **L1** | Payload original | PDF, HTML, imagem, vídeo, áudio |
+| **L2** | Metadados governance | actor, timestamp, app, invariants |
+| **L3** | SHA-256 hash | Integridade matemática |
+| **L4** | Receipt ID | Ligação ao Forensic Ledger |
+| **L5** | QR Payload | Verificação offline |
+| **L6** | Assinatura Ed25519 | Prova de origem (DID) |
+
+### Vantagens
+
+| Característica | Benefício |
+|----------------|-----------|
+| Auto-verificável | Qualquer pessoa verifica sem contactar emissor |
+| Imutável | Alteração = hash inválido = fraude detectada |
+| Offline-capable | QR permite verificação sem internet |
+| Jurisdição-agnóstico | Válido em DE/EU/BR/INT |
+| Timestamped | Prova de existência num momento específico |
+
+### Aplicações por Área
+
+#### MULTIMEDIA
+| Tipo | Problema Resolvido |
+|------|-------------------|
+| Fotografia | Prova de autoria, anti-deepfake |
+| Vídeo | Certificação de footage original |
+| Áudio | Podcasts/entrevistas anti-edição |
+| 3D/CAD | Designs industriais protegidos |
+
+#### COMMUNIQUÉ
+| Tipo | Problema Resolvido |
+|------|-------------------|
+| Press Releases | Versão oficial imutável |
+| Comunicados Internos | Prova de distribuição |
+| Contratos | Versão única de verdade |
+| Políticas RH | Aceitação documentada |
+| Relatórios Financeiros | Números certificados |
+
+#### JURÍDICO
+| Tipo | Aplicação |
+|------|-----------|
+| Contratos | Versão única de verdade |
+| Procurações | Validade temporal verificável |
+| Evidências | Chain of custody inviolável |
+| Notificações | Prova de envio e conteúdo |
+
+#### FINANCEIRO
+| Tipo | Aplicação |
+|------|-----------|
+| Facturas | GoBD/XRechnung compliant |
+| Recibos | Prova fiscal imutável |
+| Auditorias | Trail completo |
+
+#### SAÚDE
+| Tipo | Aplicação |
+|------|-----------|
+| Receitas médicas | Anti-falsificação |
+| Consentimentos | Prova de informed consent |
+| Certificados vacinação | Verificação instantânea |
+
+#### EDUCAÇÃO
+| Tipo | Aplicação |
+|------|-----------|
+| Diplomas | Anti-fraude académica |
+| Certificados | Verificação por empregadores |
+| Portfolios | Autoria verificável |
+
+### Comparação com Alternativas
+
+| Feature | PDF | Blockchain | **.JMPG** |
+|---------|-----|------------|-----------|
+| Auto-verificável | ❌ | ✅ | ✅ |
+| Offline verification | ❌ | ❌ | ✅ |
+| Custo/documento | €0 | €0.50-50 | €0 |
+| Velocidade | Instant | 1-60min | Instant |
+| Privacidade | ✅ | ❌ | ✅ |
+| Compliance EU | Parcial | ❓ | ✅ |
+
+### Endpoints WINDI
+
+```
+POST /api/onetouch/seal    → Gera .JMPG
+GET  /verify-public/?id=   → Verifica receipt
+POST /api/export/jmpg      → Download .JMPG
+```
+
+### Posicionamento
+
+```
+DocuSign    = Assinatura (quem assinou)
+Blockchain  = Prova pública (sem privacidade)
+.JMPG       = Integridade + Privacidade + Verificação
+              + Governance + Offline + Zero-cost
+
+"A prova viaja com o documento."
+```
 
 ---
 

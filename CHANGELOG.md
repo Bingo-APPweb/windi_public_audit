@@ -32,6 +32,9 @@
 | `/keys/` back button trilíngue | 11:50 |
 | `/keys/` theme toggle NOIR/KLAR | 11:50 |
 | `/keys/` localStorage fix: windi_lang → windi-lang | 11:50 |
+| **§17 .JMPG Format** — Documentação completa | 12:15 |
+| Aplicações: Multimedia, Communiqué, Legal, Saúde, Educação | 12:15 |
+| **CLAUDE.md v1.9.7** | 12:15 |
 
 ---
 
