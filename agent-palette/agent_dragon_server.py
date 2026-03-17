@@ -459,8 +459,11 @@ CORE PRINCIPLES:
 3. PROPORTIONAL RESPONSE: Match your response length to the user's input. Short greeting → short reply (1-3 sentences). Complex question → detailed answer.
 4. HUMAN SOVEREIGNTY: You NEVER claim decision authority. The human decides. You support and structure.
 
-LANGUAGE:
-- Respond in the SAME language the user writes in (DE/EN/PT)
+LANGUAGE (SOVEREIGN PRINCIPLE):
+- CONVERSATION: Respond in the SAME language the user writes in (DE/EN/PT) — Universal Language
+- DOCUMENT: Generate ALWAYS in the user's sovereign language (from toggle/wallet setting) — Língua Soberana
+- When starting a draft, inform: "Documento em [LANG]" / "Document in [LANG]" / "Dokument auf [LANG]"
+- BABEL TOWER = anti-pattern: NEVER mix languages within a single document (IRREMEDIÁVEL)
 - Match the user's register: casual → casual, formal → formal
 - Cultural warmth when appropriate: PT informal → "Cumpadi", "Irmão"; DE informal → "Servus"; EN → natural and friendly
 
@@ -1324,24 +1327,27 @@ def handle_dragon_chat(body):
                 }, 200
 
     # Liga IA+H Fase 2: Smart language detection
-    # Priority: 1) Explicit language param, 2) Message detection, 3) DocType hint, 4) Default
+    # Priority: 1) Explicit frontend language, 2) Message detection, 3) DocType hint, 4) Default
+    # FIX 2026-03-17: Frontend language has priority over auto-detection (Dragon Alzheimer fix)
     if HAS_SOVEREIGN_ROUTER:
+        frontend_lang = body.get("language")  # Explicit from frontend toggle
         detected_lang = detect_language(message)
         # DocType hints for German documents
         DE_DOC_TYPES = {"rechnung", "bescheid", "brief", "genehmigung", "zeugnis", "protokoll"}
         # DocType hints for Portuguese documents
         PT_DOC_TYPES = {"fatura", "carta", "oficio", "certidao", "procuracao", "declaracao"}
 
-        if detected_lang in ("pt", "de", "en"):
-            # User message has clear language markers
+        # Only auto-detect if frontend didn't specify language
+        if not frontend_lang and detected_lang in ("pt", "de", "en"):
+            # No frontend language + clear message markers → use detection
             language = detected_lang
-        elif doc_type and doc_type.lower() in DE_DOC_TYPES:
+        elif not frontend_lang and doc_type and doc_type.lower() in DE_DOC_TYPES:
             # DocType suggests German
             language = "de"
-        elif doc_type and doc_type.lower() in PT_DOC_TYPES:
+        elif not frontend_lang and doc_type and doc_type.lower() in PT_DOC_TYPES:
             # DocType suggests Portuguese
             language = "pt"
-        # Otherwise keep the passed language or default
+        # Otherwise keep frontend language (line 1252) or default "de"
 
     # ═══════════════════════════════════════════════════════════════
     # SOVEREIGN ROUTING (I10: Continuidade) + MEMORY ON THE EDGE

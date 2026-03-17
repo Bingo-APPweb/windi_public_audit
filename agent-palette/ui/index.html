@@ -3689,6 +3689,18 @@ function App(){
   const windiConfig=window.WINDI?window.WINDI.getTierConfig(windiTier):null;
 
   const[lang,setLang]=useState("de");
+  // FIX Dragon Alzheimer: Expose setLang globally for UserAreaMobile
+  // Also sync toggle visual when lang changes
+  useEffect(()=>{
+    window.setLanguageGlobal=setLang;
+    // Sync HTML toggle visual with React state
+    const syncToggle=()=>{
+      document.querySelectorAll('.upm-lang-btn').forEach(btn=>{
+        btn.classList.toggle('active',btn.textContent.toLowerCase()===lang.toLowerCase());
+      });
+    };
+    syncToggle();
+  },[setLang,lang]);
   // FIX 4: Onboarding persistence — only show once per device
   const[view,setView]=useState(()=>localStorage.getItem("windi_onboarded")==="1"?"main":"onboard");
   const[onboardStep,setOnboardStep]=useState(0);
@@ -4809,7 +4821,7 @@ function App(){
                 setFlowActive(false);
                 setDocFields(p=>({...p,_flowComplete:true}));
                 resp="✅ "+({en:"Document ready for review.",de:"Dokument bereit zur Überprüfung.",pt:"Documento pronto para revisão."}[lang]||"Document ready.");
-                if(wallet)resp+="\n\n"+(wallet?t.chat.readyFinalize:t.chat.needDID);
+                if(wallet){resp+="\n\n"+t.chat.readyFinalize+`\n📄 ${({de:'Dokument auf',en:'Document in',pt:'Documento em'}[lang]||'Document in')} **${lang.toUpperCase()}**`;}
               }
             }
             // Handle select fields with chips
@@ -4835,7 +4847,7 @@ function App(){
                   setFlowActive(false);
                   setDocFields(p=>({...p,_flowComplete:true}));
                   resp+="\n\n✅ "+({en:"Document ready for review.",de:"Dokument bereit.",pt:"Documento pronto."}[lang]);
-                  if(wallet)resp+="\n\n"+t.chat.readyFinalize;
+                  if(wallet){resp+="\n\n"+t.chat.readyFinalize+`\n📄 ${({de:'Dokument auf',en:'Document in',pt:'Documento em'}[lang]||'Document in')} **${lang.toUpperCase()}**`;}
                 }
               }else{
                 resp=({en:"Please select one of the options:",de:"Bitte wählen Sie eine Option:",pt:"Selecione uma opção:"}[lang])+"\n"+fieldDef.options.map(o=>`[${o}]`).join("  ");
@@ -4878,7 +4890,7 @@ function App(){
                 setFlowActive(false);
                 setDocFields(p=>({...p,_flowComplete:true}));
                 resp+="\n\n✅ "+({en:"Document ready for review.",de:"Dokument bereit.",pt:"Documento pronto."}[lang]);
-                if(wallet)resp+="\n\n"+t.chat.readyFinalize;
+                if(wallet){resp+="\n\n"+t.chat.readyFinalize+`\n📄 ${({de:'Dokument auf',en:'Document in',pt:'Documento em'}[lang]||'Document in')} **${lang.toUpperCase()}**`;}
               }
             }
           }else{
@@ -4976,7 +4988,7 @@ function App(){
           const fw=t.chat.askMore[Math.min(tc-1,t.chat.askMore.length-1)];
           let bonus="";if(tc%4===0&&tc<=12)bonus="\n\n"+t.chat.cognitive[Math.min(Math.floor(tc/4)-1,t.chat.cognitive.length-1)];
           const wc=(docContentRef.current+" "+f).trim().split(/\s+/).filter(Boolean).length;
-          resp=fw+bonus+(wc>80&&tc>3&&docTitle?"\n\n"+(wallet?t.chat.readyFinalize:t.chat.needDID):"");
+          resp=fw+bonus+(wc>80&&tc>3&&docTitle?"\n\n"+(wallet?t.chat.readyFinalize+`\n📄 ${({de:'Dokument auf',en:'Document in',pt:'Documento em'}[lang]||'Document in')} **${lang.toUpperCase()}**`:t.chat.needDID):"");
         }
         else{resp=t.chat.askMore[0];}
       }
@@ -5982,6 +5994,7 @@ function App(){
                   {contentHistory.length>0&&<button onClick={undoLast} style={{padding:"6px 10px",borderRadius:8,background:th.card,border:`1px solid ${th.border}`,color:th.warning,fontSize:10,cursor:"pointer"}}>↩️{t.doc.undo}</button>}
                   <input ref={fileRef} type="file" accept="image/*" style={{display:"none"}} onChange={e=>{if(e.target.files?.[0])addImage(e.target.files[0]);e.target.value="";}}/>
                   <div style={{flex:1}}/>
+                  <span onClick={()=>typeof openUserPanelMobile==='function'&&openUserPanelMobile()} style={{padding:"4px 10px",borderRadius:6,background:th.card,border:`1px solid ${th.border}`,color:th.dim,fontSize:10,cursor:"pointer",display:"flex",alignItems:"center",gap:4}} title={lang==='de'?'Dokumentsprache ändern':lang==='pt'?'Alterar idioma do documento':'Change document language'}>📄 {lang.toUpperCase()} <span style={{fontSize:8,opacity:0.6}}>▼</span></span>
                   <button data-action="propagate" onClick={startFinalize} disabled={!docTitle.trim()||!docContent.trim()} style={{padding:"6px 16px",borderRadius:8,background:(docTitle.trim()&&docContent.trim())?th.gold:th.dim,border:"none",color:"#FFF",fontSize:11,fontWeight:700,cursor:"pointer",opacity:(!docTitle.trim()||!docContent.trim())?0.4:1}}>🛡️{t.doc.finalize}</button>
                 </>}
                 {docStatus==="finalized"&&<>
@@ -7959,8 +7972,8 @@ root.render(<App />);
     <div class="upm-section">Idioma</div>
 
     <div class="upm-lang-row">
-      <button class="upm-lang-btn" onclick="upmSetLang('de',this)">DE</button>
-      <button class="upm-lang-btn active" onclick="upmSetLang('pt',this)">PT</button>
+      <button class="upm-lang-btn active" onclick="upmSetLang('de',this)">DE</button>
+      <button class="upm-lang-btn" onclick="upmSetLang('pt',this)">PT</button>
       <button class="upm-lang-btn" onclick="upmSetLang('en',this)">EN</button>
     </div>
 

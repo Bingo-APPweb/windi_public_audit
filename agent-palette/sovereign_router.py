@@ -539,9 +539,17 @@ DE_MARKERS = frozenset([
 ])
 
 
+# FIX 2026-03-17: Neutral markers — system names that should not affect language detection
+NEUTRAL_MARKERS = {"windi", "dragon", "guardian", "architect", "witness", "ledger", "vault"}
+
 def detect_language(text: str) -> str:
-    """Single trilingual detector (FIX D)."""
-    words = set(text.lower().split())
+    """Single trilingual detector (FIX D + Neutral Markers)."""
+    # Remove neutral system names before detection (they're English-looking but not language indicators)
+    text_clean = text.lower()
+    for marker in NEUTRAL_MARKERS:
+        text_clean = text_clean.replace(marker, "")
+
+    words = set(text_clean.split())
     pt_score = len(words & PT_MARKERS)
     de_score = len(words & DE_MARKERS)
 
