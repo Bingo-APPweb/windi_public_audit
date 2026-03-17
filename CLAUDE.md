@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.8
+**Version:** 1.9.10
 **Sealed:** 2026-03-17
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -785,10 +785,11 @@ Blockchain  = Prova pública (sem privacidade)
 
 ## 18. Dispatch Gateway — .jmpg Hydration Engine
 
-**Version:** 1.0.0
+**Version:** 1.0.2
 **Port:** :8121
-**Deployed:** 17 Mar 2026
+**Deployed:** 17 Mar 2026 (v1.0.0) · Updated 17 Mar 2026 21:00 (v1.0.2)
 **Invariants:** I5 + I6 + I9
+**Performance:** p95=76ms · Throughput ~150 req/s
 
 ### Função
 
@@ -869,6 +870,204 @@ I9 — Gateway nunca activa sem pedido humano
 
 > "P1 primeiro. Sempre. O texto + prova chegam instantaneamente.
 > O resto hidrata progressivamente enquanto o leitor consome."
+
+---
+
+## 19. JMPG Viewer v2.2 — Antessala Soberana
+
+**Version:** 2.2
+**URL:** `https://windi-domain.com/verify-public/viewer/v2.2/`
+**Deployed:** 17 Mar 2026 21:00
+**Size:** 42KB
+
+### Função
+
+O JMPG Viewer é o visualizador verificável para ficheiros .JMPG.
+A versão 2.2 introduz a **Antessala Soberana** — verificação forense antes de mostrar conteúdo.
+
+### Antessala — 4 Fases
+
+```
+Fase 0 → Leitura do pacote ZIP
+        ↓
+Fase 1 → SHA-256 local (canonicalized JSON)
+        ↓
+Fase 2 → Consulta ao Ledger Forense via GET /api/verify/{receipt_id}
+        ↓
+Fase 3 → Avaliação I5 — se falhar, documento EVAPORA antes de ser lido
+```
+
+### Selo em Tempo Real
+
+| Badge | Significado |
+|-------|-------------|
+| 🟢 Verified | I5 pass — documento íntegro |
+| 🟡 Offline | Ledger inacessível — abre em modo offline |
+| 🔴 Falha | I5 fail — documento corrompido ou adulterado |
+
+### Features
+
+- **Schema dual:** suporta formato v1.0 + legacy
+- **Dispatch Tray:** 5 canais de partilha no rodapé
+- **Offline-aware:** não bloqueia leitor se Ledger indisponível
+
+### Ficheiros
+
+```
+/opt/windi/verify-public/viewer/v2.2/
+└── index.html    (42KB — standalone viewer)
+```
+
+---
+
+## 20. Jornal Composer v4 — Smart Zones
+
+**Version:** 4.0
+**URL:** `https://windi-domain.com/jornal/`
+**Deployed:** 17 Mar 2026 21:00
+**Size:** 64KB
+
+### Função
+
+O Jornal Composer é o editor de publicações jornalísticas da WINDI.
+A versão 4 introduz o **Agent Invocation Panel** com 5 canais de dispatch.
+
+### Smart Zones Layout
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ G4 — TOPBAR — Edição, Preview, Export, 🚀 Despachar        │
+├─────────────────────────────────────────────────────────────┤
+│ G1 — Canvas    │ G2 — Block Palette │ G3 — Inspector       │
+│ (Documento)    │ (Blocos + Drag)     │ (Propriedades)       │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Agent Invocation Panel — 5 Canais
+
+| Canal | Bloco | Função |
+|-------|-------|--------|
+| 💬 WhatsApp P1 | A | Link de verificação via wa.me |
+| 🔗 Link Público P2 | A | URL para clipboard |
+| 🗄 Archive P3 | B | Export HTML download imediato |
+| 📡 Feed API P4 | C | POST `/dispatch/api/dispatch` |
+| 🏛 Institucional P4 | C | Abre Workspace WINDI |
+
+### Campos Multimédia Reais
+
+| Tipo | Campo | Limite |
+|------|-------|--------|
+| **Imagem** | URL + upload local | 5MB (base64) |
+| **Vídeo** | YouTube/Vimeo/MP4 (auto-detect) | URL embed |
+| **Áudio** | URL + upload local | 20MB (auto-duration) |
+
+### Blocos Disponíveis
+
+- `hero` — Imagem de capa (16:9)
+- `headline` — Título principal
+- `body` — Texto rico
+- `image` — Imagem com caption
+- `video` — Embed YouTube/Vimeo/MP4
+- `audio` — Player nativo com waveform
+- `ocr` — Texto digitalizado de scan
+- `quote` — Citação destacada
+- `kicker` — Lead/subtítulo
+
+### Ficheiros
+
+```
+/opt/windi/jornal/
+└── jornal-composer.html    (64KB — standalone composer)
+```
+
+---
+
+## 21. Wallet Gate — DID Identity Modal (FASE 1)
+
+**Version:** 1.0
+**URL:** `https://windi-domain.com/desktop/` (botão 🪪 no header)
+**Deployed:** 17 Mar 2026 22:30
+**Status:** FASE 1 LIVE · FASE 2 pendente
+
+### Função
+
+O Wallet Gate é o sistema de autenticação por identidade soberana no GEN7.
+Permite que utilizadores com WALLET DID acedam às suas credenciais directamente no Desktop.
+
+### Arquitectura
+
+```
+Botão 🪪 Wallet (header)
+        ↓
+Modal abre → verifica sessionStorage
+        ↓
+┌─────────────────────────────────────────────────────────────┐
+│  Estado A (sem wallet)          Estado B (com wallet)       │
+│  ├── Input: WALLET-YYYYMMDD-N   ├── DID: WALLET-...         │
+│  ├── Botão "Entrar"             ├── TIER: L1                │
+│  └── Link "Criar Wallet"        ├── TRUST: T1 · 50          │
+│                                 ├── FINGERPRINT: sha256...  │
+│                                 └── Logout                  │
+└─────────────────────────────────────────────────────────────┘
+        ↓
+Login → GET /api/wallet/me?wallet_id=
+        ↓
+sessionStorage.setItem('windi_desktop_wallet', JSON)
+        ↓
+window.__windiWallet   = data     ← Exposto para módulos
+window.__windiWalletId = wallet_id ← Pronto para Ledger
+```
+
+### Endpoints Utilizados
+
+| Endpoint | Método | Função |
+|----------|--------|--------|
+| `/api/wallet/me?wallet_id=` | GET | Obter wallet por ID |
+| `/api/wallet/health` | GET | Health check |
+| `/api/wallet/stats` | GET | Estatísticas públicas |
+
+### Storage
+
+```javascript
+// SessionStorage key
+const WM = { SESSION_KEY: 'windi_desktop_wallet' };
+
+// Window globals (para integração)
+window.__windiWallet    // Objeto wallet completo
+window.__windiWalletId  // String WALLET-YYYYMMDD-NNNN
+```
+
+### Ficheiros Modificados
+
+```
+/opt/windi/desktop-gen7/frontend/
+├── index.html           (+80 linhas — botão + modal HTML)
+├── static/styles.css    (+180 linhas — CSS modal)
+└── static/app.js        (+130 linhas — WM object + funções)
+```
+
+### FASE 2 — Pendente
+
+| Gap | Descrição | Prioridade |
+|-----|-----------|------------|
+| **G1** | OneTouch inclui `wallet_id` no payload | ALTA |
+| **G2** | Ledger seal associa receipt ao `wallet_id` | ALTA |
+| **G4** | Trust score incrementa com receipts | MÉDIA |
+
+### Integração G1 (1 linha)
+
+```javascript
+// Em executeOneTouch():
+body: { ..., wallet_id: window.__windiWalletId }
+```
+
+### Integração G2 (Ledger)
+
+```javascript
+// Em sealCanvasToLedger():
+payload.wallet_id = window.__windiWalletId;
+payload.human_fingerprint = window.__windiWallet?.fingerprint;
+```
 
 ---
 
