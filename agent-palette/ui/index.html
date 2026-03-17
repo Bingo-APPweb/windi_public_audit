@@ -4449,7 +4449,7 @@ function App(){
   // Constitutional Chat integration with 5 principles
   // Uses DragonEngine AgentBridge for URL resolution (no hardcoded URLs)
   const _bridge = typeof getBridge !== 'undefined' ? getBridge() : null;
-  const dragonUrl = _bridge ? _bridge.getDragonUrl('') : (window.location.hostname === 'localhost' ? 'http://localhost:8108/api/dragon' : 'https://windi-domain.com/app/api/dragon');
+  const dragonUrl = _bridge ? _bridge.getDragonUrl('') : (window.location.hostname === 'localhost' ? 'http://localhost:8108/api/dragon' : 'https://windi-domain.com/api/dragon');
 
   // ═══ DISTRIBUTION: Check channel status when modal opens ═══
   useEffect(()=>{
@@ -4490,7 +4490,7 @@ function App(){
       const apiHistory=history
         .filter(m=>m.role==='user'||m.role==='bot')
         .slice(-40)
-        .map(m=>({role:m.role==='user'?'human':'assistant',content:m.text}));
+        .map(m=>({role:m.role==='user'?'user':'assistant',content:m.content}));
       const res=await fetch(dragonUrl+'/chat',{
         method:'POST',
         headers:{'Content-Type':'application/json','X-Session-ID':dragonSessionId||'','X-Tier':windiTier},
@@ -6387,6 +6387,15 @@ function App(){
 
                 {/* TOOLBAR (C4: horizontal scroll on mobile) */}
                 <div data-zone="G2" style={{display:"flex",gap:4,padding:"6px 10px",background:th.card+"EE",borderRadius:10,border:"1px solid "+th.border,boxShadow:"0 2px 12px rgba(0,0,0,0.08)",marginBottom:12,flexWrap:isMobile?"nowrap":"wrap",alignItems:"center",backdropFilter:"blur(8px)",position:"relative",overflowX:isMobile?"auto":"visible",WebkitOverflowScrolling:"touch",scrollSnapType:isMobile?"x mandatory":"none",scrollbarWidth:"none",msOverflowStyle:"none"}}>
+                  {/* ← BACK TO PALETTE — Human Dragon 17Mar2026 */}
+                  <button
+                    onClick={newDoc}
+                    title={lang==="de"?"Neues Dokument":lang==="pt"?"Novo Documento":"New Document"}
+                    style={{display:"flex",alignItems:"center",gap:4,padding:"4px 10px",borderRadius:6,background:"none",border:"1px solid "+th.border,color:th.dim,fontSize:11,fontFamily:"'Bricolage Grotesque',sans-serif",cursor:"pointer",minHeight:36,flexShrink:0,whiteSpace:"nowrap"}}
+                    onMouseOver={e=>{e.currentTarget.style.color=th.gold;e.currentTarget.style.borderColor=th.gold;}}
+                    onMouseOut={e=>{e.currentTarget.style.color=th.dim;e.currentTarget.style.borderColor=th.border;}}
+                  >← {lang==="de"?"Neu":lang==="pt"?"Novo":"New"}</button>
+                  <div style={{width:1,height:20,background:th.border}}/>
                   {/* Layer Type Buttons */}
                   {Object.entries(LAYER_TYPES).map(([key,cfg])=>(
                     <button key={key} onClick={()=>deskAddLayer(key)} style={{display:"flex",alignItems:"center",gap:3,padding:"4px 8px",borderRadius:6,background:th.card,border:"1px solid "+th.border,color:th.text,fontSize:10,fontWeight:600,cursor:"pointer"}}>{cfg.icon}</button>
@@ -7281,16 +7290,25 @@ function App(){
                 const inp=document.getElementById("newRecipient");if(inp&&inp.value&&inp.value.trim()){const ch=inp.value.includes("@")?"email":inp.value.startsWith("+")?"whatsapp":"sms";distributeRecipients.push({channel:ch,value:inp.value.trim()});inp.value="";}
                 setDistributeSending(true);
                 try {
-                  // Call Dragon Chat distribute API
-                  const res = await fetch(dragonUrl+'/distribute', {
+                  // Use GEN 7 dispatch endpoint (works with Communiqué Engine + WhatsApp)
+                  const dispatchUrl = window.location.hostname === 'localhost'
+                    ? 'http://localhost:8119/api/onetouch/dispatch'
+                    : 'https://windi-domain.com/desktop/api/onetouch/dispatch';
+                  const destinations = {
+                    email: distributeChannels.email?.enabled || distributeRecipients.some(r=>r.channel==='email'),
+                    whatsapp: distributeChannels.whatsapp?.enabled || distributeRecipients.some(r=>r.channel==='whatsapp'),
+                    linkedin: distributeChannels.linkedin?.enabled || false
+                  };
+                  const res = await fetch(dispatchUrl, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({
-                      recipients: distributeRecipients,
-                      doc_title: docTitle,
-                      doc_content: docContent,
                       receipt_id: receipt?.id || '',
-                      lang: lang,
+                      content_hash: receipt?.ch || receipt?.bh || '',
+                      wallet_id: wallet?.id || 'anon',
+                      title: docTitle,
+                      verify_url: receipt?.verifyUrl || `https://windi-domain.com/verify-public/?id=${receipt?.id}`,
+                      destinations: destinations
                     }),
                   });
                   const data = await res.json();
