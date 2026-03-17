@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="noir">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>WINDI • JMPG Viewer v2.2</title>
+  <meta name="description" content="JMPG Smart Viewer — Verified Sovereign Communication"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    /* ══════════════════════════════════════════════════════════════
+       WINDI DESIGN SYSTEM — Noir + Klar  |  JMPG Viewer v2.2
+       Fonts: Bricolage Grotesque · Outfit · JetBrains Mono
+    ══════════════════════════════════════════════════════════════ */
+    :root {
+      --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
+      --font-body:    'Outfit', system-ui, sans-serif;
+      --font-mono:    'JetBrains Mono', monospace;
+      --gold:         #d4af37;
+      --gold-dim:     rgba(212,175,55,0.28);
+      --gold-glow:    rgba(212,175,55,0.10);
+      --green-ok:     #22c55e;
+      --green-dim:    rgba(34,197,94,0.15);
+      --red-fail:     #ef4444;
+      --red-dim:      rgba(239,68,68,0.15);
+      --orange-warn:  #f59e0b;
+      --radius:       14px;
+      --radius-sm:    8px;
+      --trans:        0.3s cubic-bezier(0.4,0,0.2,1);
+    }
+    [data-theme="noir"] {
+      --bg-deep:    #08080e;
+      --bg-surface: #0f0f18;
+      --bg-card:    #16162a;
+      --bg-paper:   #1c1c35;
+      --text-primary:   #f0ece4;
+      --text-secondary: rgba(240,236,228,0.60);
+      --text-muted:     rgba(240,236,228,0.35);
+      --border:         rgba(212,175,55,0.12);
+      --border-strong:  rgba(212,175,55,0.28);
+      --paper-bg:       #ffffff;
+      --paper-text:     #111118;
+      --paper-muted:    #6b7280;
+      --paper-border:   rgba(0,0,0,0.07);
+      --trust-bg:       rgba(212,175,55,0.04);
+      --drop-bg:        rgba(212,175,55,0.03);
+    }
+    [data-theme="klar"] {
+      --bg-deep:    #f4f2ee;
+      --bg-surface: #eae7e0;
+      --bg-card:    #ddd9d0;
+      --bg-paper:   #ffffff;
+      --text-primary:   #111118;
+      --text-secondary: rgba(17,17,24,0.62);
+      --text-muted:     rgba(17,17,24,0.35);
+      --border:         rgba(0,0,0,0.08);
+      --border-strong:  rgba(0,0,0,0.18);
+      --paper-bg:       #ffffff;
+      --paper-text:     #111118;
+      --paper-muted:    #6b7280;
+      --paper-border:   rgba(0,0,0,0.08);
+      --trust-bg:       rgba(212,175,55,0.07);
+      --drop-bg:        rgba(0,0,0,0.025);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); background: var(--bg-deep);
+           color: var(--text-primary); min-height: 100vh;
+           line-height: 1.55; -webkit-font-smoothing: antialiased; }
+
+    /* ── HEADER ── */
+    .header {
+      position: sticky; top: 0; z-index: 100;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      padding: 11px 20px;
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    }
+    .logo { display: flex; align-items: center; gap: 8px;
+      font-family: var(--font-display); font-weight: 700; font-size: 14px;
+      color: var(--gold); letter-spacing: -0.02em; }
+    .logo-icon { width: 26px; height: 26px; border: 2px solid var(--gold);
+      border-radius: 6px; display: grid; place-items: center; font-size: 13px;
+      background: var(--gold-glow); }
+    .badge { font-family: var(--font-mono); font-size: 10px; font-weight: 500;
+      padding: 2px 8px; border: 1px solid var(--gold-dim);
+      color: var(--gold); border-radius: 999px; letter-spacing: 0.05em; }
+    .header-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+    .btn-sm { background: transparent; border: 1px solid var(--border-strong);
+      color: var(--text-secondary); font-family: var(--font-body); font-size: 12px;
+      padding: 5px 10px; border-radius: var(--radius-sm); cursor: pointer;
+      transition: var(--trans); }
+    .btn-sm:hover { background: var(--border); color: var(--text-primary); }
+
+    /* ── MAIN ── */
+    .main { max-width: 820px; margin: 0 auto; padding: 20px 16px 60px; }
+
+    /* ── DROP ZONE ── */
+    .drop-zone {
+      border: 2px dashed var(--border-strong);
+      border-radius: var(--radius);
+      background: var(--drop-bg);
+      padding: 48px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--trans);
+    }
+    .drop-zone:hover, .drop-zone.dragover {
+      border-color: var(--gold);
+      background: var(--gold-glow);
+    }
+    .drop-icon { font-size: 36px; margin-bottom: 12px; }
+    .drop-title { font-family: var(--font-display); font-size: 18px; font-weight: 700;
+      color: var(--text-primary); margin-bottom: 6px; }
+    .drop-sub { font-size: 13px; color: var(--text-muted); }
+    .drop-hint { margin-top: 20px; }
+    #fileInput { display: none; }
+
+    /* ── ANTESSALA (Vestibule / Pre-render) ── */
+    .antessala {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--bg-card);
+      padding: 36px 28px;
+      text-align: center;
+      animation: fadeIn 0.4s ease;
+    }
+    .antessala-icon { font-size: 44px; margin-bottom: 16px;
+      animation: pulse 1.8s ease-in-out infinite; }
+    .antessala-title { font-family: var(--font-display); font-size: 20px;
+      font-weight: 700; margin-bottom: 8px; color: var(--text-primary); }
+    .antessala-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+
+    /* Phases */
+    .phase-list { list-style: none; text-align: left; max-width: 380px;
+      margin: 0 auto 24px; display: flex; flex-direction: column; gap: 10px; }
+    .phase-item { display: flex; align-items: center; gap: 10px;
+      font-size: 13px; color: var(--text-muted); transition: var(--trans); }
+    .phase-item.active { color: var(--text-primary); }
+    .phase-item.done { color: var(--green-ok); }
+    .phase-item.fail { color: var(--red-fail); }
+    .phase-icon { width: 20px; text-align: center; flex-shrink: 0; }
+    .phase-spinner { width: 14px; height: 14px; border: 2px solid var(--gold-dim);
+      border-top-color: var(--gold); border-radius: 50%; display: inline-block;
+      animation: spin 0.7s linear infinite; }
+
+    /* Seal badge */
+    .seal-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 20px; border-radius: 999px; font-weight: 600;
+      font-size: 14px; border: 2px solid; margin-top: 8px;
+      animation: scaleIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .seal-badge.green { color: var(--green-ok); border-color: var(--green-ok);
+      background: var(--green-dim); }
+    .seal-badge.red { color: var(--red-fail); border-color: var(--red-fail);
+      background: var(--red-dim); }
+    .seal-badge.orange { color: var(--orange-warn); border-color: var(--orange-warn);
+      background: rgba(245,158,11,0.12); }
+
+    /* Evaporate animation (I5 fail) */
+    .evaporate {
+      animation: evaporate 1.4s ease-in forwards;
+    }
+    @keyframes evaporate {
+      0%  { opacity: 1; filter: blur(0px) saturate(1); transform: scale(1); }
+      60% { opacity: 0.4; filter: blur(6px) saturate(0.2); transform: scale(0.98); }
+      100%{ opacity: 0; filter: blur(20px) saturate(0); transform: scale(0.94); }
+    }
+
+    /* Reveal animation */
+    .reveal { animation: reveal 0.6s ease forwards; }
+    @keyframes reveal {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── COMMUNIQUE / PAPER ── */
+    .communique { animation: fadeIn 0.5s ease; }
+    .meta-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px;
+      align-items: center; }
+    .meta-tag { font-family: var(--font-mono); font-size: 11px;
+      padding: 3px 8px; border: 1px solid var(--border-strong);
+      border-radius: 999px; color: var(--text-secondary); }
+    .meta-tag.kind { color: var(--gold); border-color: var(--gold-dim);
+      background: var(--gold-glow); }
+    .seal-live {
+      margin-left: auto; display: flex; align-items: center; gap: 6px;
+      font-size: 12px; font-weight: 600; font-family: var(--font-mono);
+      padding: 3px 10px; border-radius: 999px; border: 1px solid;
+    }
+    .seal-live.green { color: var(--green-ok); border-color: var(--green-ok);
+      background: var(--green-dim); }
+    .seal-live.orange { color: var(--orange-warn); border-color: var(--orange-warn);
+      background: rgba(245,158,11,0.10); }
+    .seal-live.red { color: var(--red-fail); border-color: var(--red-fail);
+      background: var(--red-dim); }
+    .seal-live-dot { width: 7px; height: 7px; border-radius: 50%;
+      background: currentColor; animation: blink 2s ease-in-out infinite; }
+
+    .paper {
+      background: var(--paper-bg); color: var(--paper-text);
+      border-radius: var(--radius); padding: 32px 36px;
+      box-shadow: 0 16px 48px rgba(0,0,0,0.28);
+    }
+    .doc-title { font-family: var(--font-display); font-size: 28px; font-weight: 800;
+      line-height: 1.2; margin-bottom: 16px; color: var(--paper-text); }
+    .doc-text  { font-size: 16px; line-height: 1.6; margin-bottom: 14px; color: var(--paper-text); }
+    .doc-quote {
+      border-left: 3px solid var(--gold);
+      padding: 12px 16px; margin: 18px 0;
+      background: rgba(212,175,55,0.05); border-radius: 0 8px 8px 0;
+      font-style: italic; font-size: 15px; color: var(--paper-muted);
+    }
+    .doc-divider { border: none; border-top: 1px dashed rgba(0,0,0,0.15);
+      margin: 20px 0; }
+    .doc-heading { font-family: var(--font-display); font-size: 20px; font-weight: 700;
+      margin: 20px 0 10px; color: var(--paper-text); }
+    .doc-heading.h2 { font-size: 17px; }
+    .doc-heading.h3 { font-size: 14px; font-weight: 600; }
+    figure { margin: 16px 0; }
+    figure img { max-width: 100%; border-radius: 10px;
+      border: 1px solid var(--paper-border); }
+    figcaption { font-size: 12px; color: var(--paper-muted); margin-top: 6px; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin: 16px 0; }
+    .action-btn { background: var(--bg-card); color: var(--text-primary);
+      border: 1px solid var(--border-strong); padding: 8px 14px; border-radius: 8px;
+      cursor: pointer; font-family: var(--font-body); font-size: 13px;
+      text-decoration: none; transition: var(--trans); }
+    .action-btn:hover { filter: brightness(1.1); }
+
+    /* Trust block */
+    .trust-block {
+      margin-top: 24px; padding: 16px 20px;
+      background: var(--trust-bg); border: 1px solid var(--paper-border);
+      border-radius: var(--radius-sm);
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    }
+    .trust-row { font-size: 12px; color: var(--paper-muted); }
+    .trust-label { font-weight: 600; margin-bottom: 2px; }
+    .trust-val { font-family: var(--font-mono); font-size: 10px;
+      word-break: break-all; color: var(--paper-text); }
+    .trust-val.green { color: var(--green-ok); }
+    .trust-val.red   { color: var(--red-fail); }
+    .trust-val.orange { color: var(--orange-warn); }
+
+    /* ── DISPATCH TRAY ── */
+    .dispatch-tray {
+      margin-top: 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      animation: fadeIn 0.4s ease;
+    }
+    .dispatch-header {
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border);
+      font-family: var(--font-display); font-size: 13px; font-weight: 600;
+      color: var(--text-secondary);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .dispatch-grid {
+      display: grid; grid-template-columns: repeat(5, 1fr);
+      gap: 0;
+    }
+    @media (max-width: 600px) {
+      .dispatch-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    .dispatch-btn {
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      padding: 16px 8px; background: transparent;
+      border: none; border-right: 1px solid var(--border);
+      color: var(--text-muted); cursor: pointer;
+      font-family: var(--font-body); font-size: 11px;
+      transition: var(--trans); text-align: center;
+    }
+    .dispatch-btn:last-child { border-right: none; }
+    .dispatch-btn:hover { background: var(--border); color: var(--text-primary); }
+    .dispatch-btn .db-icon { font-size: 20px; }
+    .dispatch-btn .db-tier {
+      font-family: var(--font-mono); font-size: 9px;
+      padding: 1px 5px; border-radius: 999px; border: 1px solid;
+      opacity: 0.7;
+    }
+    .db-tier.p1 { color: var(--text-muted); border-color: var(--border-strong); }
+    .db-tier.p2 { color: var(--orange-warn); border-color: rgba(245,158,11,0.4); }
+    .db-tier.p3 { color: var(--gold); border-color: var(--gold-dim); }
+    .db-tier.p4 { color: var(--green-ok); border-color: rgba(34,197,94,0.4); }
+    .dispatch-toast {
+      padding: 10px 20px; font-size: 12px; color: var(--text-muted);
+      border-top: 1px solid var(--border); font-family: var(--font-mono);
+      min-height: 36px; transition: var(--trans);
+    }
+
+    /* ── VIRAL FOOTER ── */
+    .viral-footer {
+      margin-top: 20px; padding: 16px 20px;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius);
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+      font-size: 13px; color: var(--text-muted);
+    }
+    .viral-footer strong { color: var(--gold); font-family: var(--font-display); }
+    .viral-footer a { color: var(--gold); text-decoration: none; }
+
+    /* ── ERROR ── */
+    .err-card {
+      border: 1px solid rgba(239,68,68,0.35);
+      background: rgba(239,68,68,0.06);
+      border-radius: var(--radius); padding: 24px;
+      animation: fadeIn 0.3s ease;
+    }
+    .err-title { font-family: var(--font-display); font-size: 16px; font-weight: 700;
+      color: var(--red-fail); margin-bottom: 8px; }
+    .err-msg { font-size: 13px; color: var(--text-muted); font-family: var(--font-mono); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes spin     { to { transform: rotate(360deg); } }
+    @keyframes pulse    { 0%,100%{opacity:1} 50%{opacity:0.55} }
+    @keyframes blink    { 0%,100%{opacity:1} 50%{opacity:0.35} }
+    @keyframes fadeIn   { from{opacity:0} to{opacity:1} }
+    @keyframes scaleIn  { from{opacity:0;transform:scale(0.8)} to{opacity:1;transform:scale(1)} }
+  </style>
+</head>
+<body>
+
+  <!-- ── HEADER ── -->
+  <header class="header">
+    <div class="logo">
+      <div class="logo-icon">🐉</div>
+      WINDI
+    </div>
+    <span class="badge">JMPG v2.2</span>
+    <span class="badge" style="border-color:rgba(34,197,94,0.4);color:var(--green-ok)">Smart Viewer</span>
+
+    <div class="header-right">
+      <button class="btn-sm" id="themeToggle">☀ Klar</button>
+      <label class="btn-sm" for="fileInput" style="cursor:pointer">📂 Abrir .jmpg</label>
+      <input type="file" id="fileInput" accept=".jmpg,.zip"/>
+    </div>
+  </header>
+
+  <!-- ── MAIN ── -->
+  <main class="main" id="main">
+
+    <!-- Drop Zone (initial state) -->
+    <div class="drop-zone" id="dropZone">
+      <div class="drop-icon">📦</div>
+      <div class="drop-title">JMPG Smart Viewer v2.2</div>
+      <div class="drop-sub">Arrastar um ficheiro <strong>.jmpg</strong> para verificar &amp; ler</div>
+      <div class="drop-hint" style="margin-top:18px">
+        <span class="badge">Antessala</span>&nbsp;
+        <span class="badge" style="border-color:rgba(34,197,94,0.4);color:var(--green-ok)">Selo Verde</span>&nbsp;
+        <span class="badge" style="border-color:rgba(245,158,11,0.4);color:var(--orange-warn)">Ledger Live</span>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  <script>
+  (function() {
+    'use strict';
+
+    /* ════════════════════════════════════════════════════════════
+       WINDI JMPG Viewer v2.2 — Adaptador de Hidratação
+       AI processes. Human decides. WINDI guarantees.
+    ════════════════════════════════════════════════════════════ */
+
+    const LEDGER_BASE    = 'https://windi-domain.com';
+    const VERIFY_API     = `${LEDGER_BASE}/api/verify`;        // GET /{id}
+    const VERIFY_PUBLIC  = `${LEDGER_BASE}/verify-public/?id=`; // public page
+    const DISPATCH_BASE  = `${LEDGER_BASE}/dispatch`;           // :8121 via nginx
+
+    // ── Helpers ──────────────────────────────────────────────
+    const $ = id => document.getElementById(id);
+    function el(tag, cls, inner) {
+      const n = document.createElement(tag);
+      if (cls) n.className = cls;
+      if (typeof inner === 'string') n.textContent = inner;
+      else if (Array.isArray(inner)) inner.forEach(c => {
+        if (!c) return;
+        n.appendChild(typeof c === 'string' ? document.createTextNode(c) : c);
+      });
+      return n;
+    }
+    function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+    // ── Theme ─────────────────────────────────────────────────
+    $('themeToggle').addEventListener('click', () => {
+      const html = document.documentElement;
+      const next = html.dataset.theme === 'noir' ? 'klar' : 'noir';
+      html.dataset.theme = next;
+      $('themeToggle').textContent = next === 'noir' ? '☀ Klar' : '🌙 Noir';
+    });
+
+    // ── File Handling ─────────────────────────────────────────
+    $('fileInput').addEventListener('change', e => {
+      const f = e.target.files?.[0];
+      if (f) dispatch(f);
+    });
+    const dz = $('dropZone');
+    if (dz) {
+      dz.addEventListener('click', () => $('fileInput').click());
+      dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
+      dz.addEventListener('dragleave', () => dz.classList.remove('dragover'));
+      dz.addEventListener('drop', e => {
+        e.preventDefault(); dz.classList.remove('dragover');
+        const f = e.dataTransfer.files?.[0];
+        if (f) dispatch(f);
+      });
+    }
+
+    // ── SHA-256 ───────────────────────────────────────────────
+    async function sha256hex(data) {
+      const buf = await crypto.subtle.digest('SHA-256',
+        typeof data === 'string' ? new TextEncoder().encode(data) : data);
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+    }
+    function jsonCanonical(obj) {
+      if (obj === null || typeof obj !== 'object') return JSON.stringify(obj);
+      if (Array.isArray(obj)) return '[' + obj.map(jsonCanonical).join(',') + ']';
+      return '{' + Object.keys(obj).sort().map(k => JSON.stringify(k) + ':' + jsonCanonical(obj[k])).join(',') + '}';
+    }
+
+    // ── Schema normalizer ─────────────────────────────────────
+    // Handles both legacy (jmpg_version) and new (format:JMPG-1.0) manifests
+    function normalizeManifest(raw) {
+      const m = { ...raw, _normalized: true };
+      // receipt_id — from governance.receipt_id OR governance.ledger_ref.ledger_entry_id OR package_id
+      m._receipt_id =
+        raw.governance?.receipt_id ||
+        raw.governance?.ledger_ref?.ledger_entry_id ||
+        raw.package_id || null;
+      // content_hash — from governance.content_hash_sha256 OR content_hash OR integrity.manifest_hash
+      m._content_hash =
+        raw.governance?.content_hash_sha256 ||
+        raw.content_hash ||
+        raw.integrity?.manifest_hash || null;
+      // sge_score
+      m._sge = raw.governance?.sge_score ?? raw.governance?.sge?.score ?? null;
+      // risk
+      m._risk = raw.governance?.risk_level ?? null;
+      // author name
+      m._author = typeof raw.author === 'string' ? raw.author : (raw.author?.display_name || raw.author?.wallet_id || '—');
+      return m;
+    }
+
+    // ── Ledger Check ──────────────────────────────────────────
+    async function checkLedger(receiptId) {
+      if (!receiptId) return { status: 'no_id', verified: false };
+      try {
+        const r = await fetch(`${VERIFY_API}/${encodeURIComponent(receiptId)}`, {
+          method: 'GET', mode: 'cors',
+          headers: { 'Accept': 'application/json' }
+        });
+        if (!r.ok) return { status: 'http_' + r.status, verified: false };
+        const data = await r.json();
+        // API returns { status:'verified', receipt: {...} } or { valid: true }
+        const ok = data.status === 'verified' || data.valid === true || data.verified === true;
+        return { status: ok ? 'verified' : 'not_found', verified: ok, raw: data };
+      } catch(e) {
+        return { status: 'network_error', verified: false, error: e.message };
+      }
+    }
+
+    // ── ANTESSALA ─────────────────────────────────────────────
+    function buildAntessala() {
+      const div = el('div', 'antessala');
+      div.innerHTML = `
+        <div class="antessala-icon">🔍</div>
+        <div class="antessala-title">Verificando Soberania</div>
+        <div class="antessala-sub">Aguarde — o documento está a ser inspecionado antes de ser lido</div>
+        <ul class="phase-list" id="phaseList">
+          <li class="phase-item" id="ph0"><span class="phase-icon">⏳</span>Lendo estrutura do pacote .jmpg</li>
+          <li class="phase-item" id="ph1"><span class="phase-icon">⏳</span>Verificando integridade local (SHA-256)</li>
+          <li class="phase-item" id="ph2"><span class="phase-icon">⏳</span>Consultando Ledger Forense</li>
+          <li class="phase-item" id="ph3"><span class="phase-icon">⏳</span>Avaliando Invariante I5</li>
+        </ul>
+        <div id="antessala-seal"></div>
+      `;
+      return div;
+    }
+
+    function setPhase(idx, state, label) {
+      const ph = $(`ph${idx}`);
+      if (!ph) return;
+      ph.className = 'phase-item ' + state;
+      const icon = ph.querySelector('.phase-icon');
+      if (state === 'active') icon.innerHTML = '<span class="phase-spinner"></span>';
+      else if (state === 'done')  icon.textContent = '✓';
+      else if (state === 'fail')  icon.textContent = '✗';
+      if (label) ph.childNodes[1].textContent = label;
+    }
+
+    function showSeal(container, type, text) {
+      const s = el('div', `seal-badge ${type}`, text);
+      container.appendChild(s);
+    }
+
+    // ── MAIN DISPATCH ─────────────────────────────────────────
+    async function dispatch(file) {
+      const main = $('main');
+
+      // Show antessala
+      const ante = buildAntessala();
+      main.innerHTML = '';
+      main.appendChild(ante);
+
+      try {
+        // ── Phase 0: unpack ──
+        setPhase(0, 'active');
+        await sleep(200);
+        const buf  = await file.arrayBuffer();
+        const zip  = await JSZip.loadAsync(buf);
+        const mf   = zip.file('manifest.json');
+        if (!mf) throw new Error('manifest.json não encontrado — pacote inválido');
+        const manifest = normalizeManifest(JSON.parse(await mf.async('string')));
+        const contentPath = manifest.entrypoints?.content || 'content.json';
+        const cf = zip.file(contentPath);
+        if (!cf) throw new Error(`${contentPath} não encontrado`);
+        const content = JSON.parse(await cf.async('string'));
+        let receipt = null;
+        const rf = zip.file('receipt.json');
+        if (rf) receipt = JSON.parse(await rf.async('string'));
+        const assets = {};
+        if (manifest.assets) {
+          for (const a of manifest.assets) {
+            const f = zip.file(a.path);
+            if (f) assets[a.path] = await f.async('uint8array');
+          }
+        }
+        setPhase(0, 'done', 'Pacote lido — ' + (manifest.title || manifest.package_id || file.name));
+
+        // ── Phase 1: local hash ──
+        setPhase(1, 'active');
+        await sleep(300);
+        let localHashOk = false;
+        let computedHash = '—';
+        const expectedHash = manifest._content_hash;
+        if (expectedHash) {
+          computedHash = await sha256hex(jsonCanonical(content));
+          localHashOk = computedHash === expectedHash;
+          setPhase(1, localHashOk ? 'done' : 'fail',
+            localHashOk
+              ? 'SHA-256 ✓ — Integridade local confirmada'
+              : 'SHA-256 ✗ — Hash não confere (possível adulteração)');
+        } else {
+          setPhase(1, 'done', 'Hash não declarado — verificação parcial');
+          localHashOk = true; // allow proceed, ledger will decide
+        }
+        await sleep(200);
+
+        // ── Phase 2: ledger ──
+        setPhase(2, 'active');
+        await sleep(400);
+        const ledgerResult = await checkLedger(manifest._receipt_id);
+        let ledgerStatusText = '';
+        if (ledgerResult.verified) {
+          setPhase(2, 'done', '🟢 Ledger Forense — Registo confirmado');
+          ledgerStatusText = 'verified';
+        } else if (ledgerResult.status === 'no_id') {
+          setPhase(2, 'done', 'Ledger — sem receipt_id declarado (parcial)');
+          ledgerStatusText = 'no_id';
+        } else if (ledgerResult.status === 'network_error') {
+          setPhase(2, 'done', '🟡 Ledger — rede indisponível (modo offline)');
+          ledgerStatusText = 'offline';
+        } else {
+          setPhase(2, 'fail', '🔴 Ledger — registo não encontrado');
+          ledgerStatusText = 'not_found';
+        }
+        await sleep(200);
+
+        // ── Phase 3: I5 — Permanência de Evidência ──
+        setPhase(3, 'active');
+        await sleep(350);
+
+        // I5 logic: PASS if local hash ok (or not declared) AND ledger ok OR offline
+        const i5Pass = localHashOk && (ledgerResult.verified || ledgerResult.status === 'no_id' || ledgerResult.status === 'offline');
+        const sealContainer = $('antessala-seal');
+
+        if (i5Pass && ledgerResult.verified) {
+          setPhase(3, 'done', 'I5 — Permanência de Evidência: VÁLIDA');
+          showSeal(sealContainer, 'green', '🟢 Selo Verde — Documento Íntegro');
+          await sleep(900);
+          // Render document
+          main.innerHTML = '';
+          main.appendChild(buildCommunique(manifest, content, assets, receipt, {
+            localHashOk, ledgerResult, computedHash, expectedHash, ledgerStatusText, i5Pass
+          }));
+
+        } else if (i5Pass && ledgerResult.status === 'offline') {
+          setPhase(3, 'done', 'I5 — Offline: verificação parcial (Ledger inacessível)');
+          showSeal(sealContainer, 'orange', '🟡 Modo Offline — Hash Local OK');
+          await sleep(900);
+          main.innerHTML = '';
+          main.appendChild(buildCommunique(manifest, content, assets, receipt, {
+            localHashOk, ledgerResult, computedHash, expectedHash, ledgerStatusText, i5Pass
+          }));
+
+        } else if (i5Pass && ledgerResult.status === 'no_id') {
+          setPhase(3, 'done', 'I5 — Parcial: sem referência de Ledger');
+          showSeal(sealContainer, 'orange', '🟡 Hash OK — Ledger não referenciado');
+          await sleep(900);
+          main.innerHTML = '';
+          main.appendChild(buildCommunique(manifest, content, assets, receipt, {
+            localHashOk, ledgerResult, computedHash, expectedHash, ledgerStatusText, i5Pass
+          }));
+
+        } else {
+          // I5 FALHOU — documento evapora
+          setPhase(3, 'fail', 'I5 VIOLADA — Documento comprometido');
+          showSeal(sealContainer, 'red', '🔴 FALHA DE INTEGRIDADE — I5 Ativada');
+          await sleep(1200);
+          // Evaporate the antessala
+          ante.classList.add('evaporate');
+          await sleep(1500);
+          main.innerHTML = '';
+          const errDiv = el('div', 'err-card');
+          errDiv.appendChild(el('div', 'err-title', '🔴 Invariante I5 — Permanência de Evidência: VIOLADA'));
+          errDiv.appendChild(el('div', 'err-msg',
+            `O documento foi adulterado ou o registo no Ledger não foi encontrado.\n` +
+            `Hash computado:  ${computedHash}\n` +
+            `Hash esperado:   ${expectedHash || '—'}\n` +
+            `Ledger status:   ${ledgerResult.status}\n` +
+            `Receipt ID:      ${manifest._receipt_id || '—'}`
+          ));
+          errDiv.style.whiteSpace = 'pre-wrap';
+          main.appendChild(errDiv);
+        }
+
+      } catch(err) {
+        console.error('[JMPG Viewer v2.2]', err);
+        main.innerHTML = '';
+        const errDiv = el('div', 'err-card');
+        errDiv.appendChild(el('div', 'err-title', '⚠ Erro ao abrir .jmpg'));
+        errDiv.appendChild(el('div', 'err-msg', err.message));
+        main.appendChild(errDiv);
+      }
+    }
+
+    // ── BUILD COMMUNIQUE ──────────────────────────────────────
+    function buildCommunique(manifest, content, assets, receipt, verif) {
+      const wrap = el('div', 'communique reveal');
+
+      // ── Meta bar ──
+      const meta = el('div', 'meta-bar');
+      const kind = manifest.kind || manifest.metadata?.doc_type || manifest.template || 'COMMUNIQUE';
+      meta.appendChild(el('span', 'meta-tag kind', kind.toUpperCase()));
+      const lang = manifest.language || manifest.metadata?.language;
+      if (lang) meta.appendChild(el('span', 'meta-tag', lang.toUpperCase()));
+      const pkgId = manifest.package_id || manifest._receipt_id;
+      if (pkgId) meta.appendChild(el('span', 'meta-tag', pkgId));
+      if (manifest._author && manifest._author !== '—')
+        meta.appendChild(el('span', 'meta-tag', '👤 ' + manifest._author));
+
+      // Live seal badge (top right)
+      const sealLive = el('div', `seal-live ${verif.i5Pass ? (verif.ledgerResult.verified ? 'green' : 'orange') : 'red'}`);
+      sealLive.appendChild(el('span', 'seal-live-dot'));
+      sealLive.appendChild(document.createTextNode(
+        verif.ledgerResult.verified ? '🟢 Ledger Verified' :
+        verif.ledgerResult.status === 'offline' ? '🟡 Offline' :
+        verif.ledgerResult.status === 'no_id' ? '🟡 Sem Ledger' : '🔴 Falha'
+      ));
+      meta.appendChild(sealLive);
+      wrap.appendChild(meta);
+
+      // ── Paper ──
+      const paper = el('div', 'paper');
+      const blocks = content.blocks || [];
+      let actDiv = null;
+
+      for (const b of blocks) {
+        const t = b.type;
+
+        // === NEW SCHEMA blocks ===
+        if (t === 'TitleBlock') {
+          paper.appendChild(el('h1', 'doc-title', b.text || manifest.title || ''));
+        }
+        else if (t === 'TextBlock') {
+          paper.appendChild(el('p', 'doc-text', b.text || ''));
+        }
+        else if (t === 'ImageBlock') {
+          const data = assets[b.src];
+          if (data) {
+            const mime = b.src?.endsWith('.png') ? 'image/png' : 'image/jpeg';
+            const blob = new Blob([data], { type: mime });
+            const url  = URL.createObjectURL(blob);
+            const fig  = document.createElement('figure');
+            const img  = document.createElement('img');
+            img.src = url; img.alt = b.caption || '';
+            fig.appendChild(img);
+            if (b.caption) { const fc = el('figcaption', '', b.caption); fig.appendChild(fc); }
+            paper.appendChild(fig);
+          }
+        }
+        else if (t === 'ActionBlock') {
+          if (!actDiv) { actDiv = el('div', 'actions'); paper.appendChild(actDiv); }
+          const act = b.action || {};
+          if (act.type === 'link' && act.url) {
+            const a = el('a', 'action-btn', b.label || 'Abrir');
+            a.href = act.url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+            actDiv.appendChild(a);
+          } else {
+            actDiv.appendChild(el('button', 'action-btn', b.label || 'Ação'));
+          }
+        }
+        else if (t === 'TrustBlock') {
+          paper.appendChild(buildTrustBlock(manifest, verif, receipt));
+        }
+
+        // === OLD SCHEMA blocks ===
+        else if (t === 'heading') {
+          const lvl = b.level || 1;
+          const h = document.createElement('h' + Math.min(lvl, 3));
+          h.className = 'doc-heading' + (lvl > 1 ? ' h' + lvl : '');
+          h.textContent = b.text || '';
+          paper.appendChild(h);
+        }
+        else if (t === 'paragraph') {
+          paper.appendChild(el('p', 'doc-text', b.text || ''));
+        }
+        else if (t === 'quote') {
+          paper.appendChild(el('blockquote', 'doc-quote', b.text || ''));
+        }
+        else if (t === 'divider') {
+          paper.appendChild(el('hr', 'doc-divider'));
+        }
+      }
+
+      // Auto-append trust if no TrustBlock in content
+      if (!blocks.some(b => b.type === 'TrustBlock')) {
+        paper.appendChild(buildTrustBlock(manifest, verif, receipt));
+      }
+
+      wrap.appendChild(paper);
+
+      // ── Dispatch Tray ──
+      wrap.appendChild(buildDispatchTray(manifest, verif));
+
+      // ── Viral footer ──
+      const vf = el('div', 'viral-footer');
+      const verifyUrl = manifest._receipt_id
+        ? `${VERIFY_PUBLIC}${encodeURIComponent(manifest._receipt_id)}`
+        : VERIFY_PUBLIC;
+      vf.innerHTML = `
+        <strong>WINDI</strong>
+        <span>Este documento é soberano — verificável, rastreável, permanente.</span>
+        <a href="${verifyUrl}" target="_blank" rel="noopener">🔍 Verificar no Ledger Público</a>
+        <a href="https://windi-domain.com" target="_blank" rel="noopener" style="margin-left:auto">windi-domain.com</a>
+      `;
+      wrap.appendChild(vf);
+
+      return wrap;
+    }
+
+    // ── TRUST BLOCK ────────────────────────────────────────────
+    function buildTrustBlock(manifest, verif, receipt) {
+      const div = el('div', 'trust-block');
+
+      function row(label, value, cls='') {
+        const r = el('div', 'trust-row');
+        r.appendChild(el('div', 'trust-label', label));
+        const v = el('div', `trust-val ${cls}`, value || '—');
+        r.appendChild(v);
+        return r;
+      }
+
+      const hashDisplay = verif.expectedHash
+        ? verif.computedHash.slice(0,16) + '…'
+        : '(não declarado)';
+      const hashCls = !verif.expectedHash ? '' : (verif.localHashOk ? 'green' : 'red');
+      const ledgerCls = verif.ledgerResult.verified ? 'green' :
+                        verif.ledgerResult.status === 'offline' ? 'orange' : 'red';
+      const ledgerLabel = verif.ledgerResult.verified ? '🟢 Verified' :
+                          verif.ledgerResult.status === 'offline' ? '🟡 Offline' :
+                          verif.ledgerResult.status === 'no_id'   ? '🟡 Sem ID' : '🔴 Não encontrado';
+      const sgeScore = manifest._sge !== null ? (manifest._sge * 100).toFixed(0) + '%' : '—';
+      const risk = manifest._risk || manifest.governance?.risk_level || '—';
+
+      div.appendChild(row('SHA-256 Local', hashDisplay, hashCls));
+      div.appendChild(row('Ledger Forense', ledgerLabel + (manifest._receipt_id ? ' · ' + manifest._receipt_id.slice(0,18) + '…' : ''), ledgerCls));
+      div.appendChild(row('SGE Score', sgeScore));
+      div.appendChild(row('Risk Level', risk));
+      div.appendChild(row('Autor', manifest._author || '—'));
+      div.appendChild(row('Criado em', manifest.created_at ? new Date(manifest.created_at).toLocaleString('de') : '—'));
+
+      return div;
+    }
+
+    // ── DISPATCH TRAY ─────────────────────────────────────────
+    /*
+      Blocos A / B / C — 5 canais de distribuição:
+        P1 MICRO     → WhatsApp (link público, sem metadados)
+        P2 LINK      → Link Público (URL verify)
+        P3 ARCHIVE   → Archive.org / Download permanente
+        P4 STANDARD  → Feed API (despacho via Gateway :8121)
+        P5 FEED      → Despacho Institucional (highest sovereignty)
+    */
+    function buildDispatchTray(manifest, verif) {
+      const tray = el('div', 'dispatch-tray');
+
+      const header = el('div', 'dispatch-header');
+      header.innerHTML = '🚀 Despacho — Escolher Canal de Distribuição';
+      tray.appendChild(header);
+
+      const grid = el('div', 'dispatch-grid');
+
+      const channels = [
+        { icon: '💬', label: 'WhatsApp',      tier: 'P1', cls: 'p1',
+          desc: 'Link público via WhatsApp',
+          action: () => dispatchWhatsApp(manifest) },
+        { icon: '🔗', label: 'Link Público',   tier: 'P2', cls: 'p2',
+          desc: 'URL de verificação pública',
+          action: () => dispatchPublicLink(manifest) },
+        { icon: '🗄', label: 'Archive',         tier: 'P3', cls: 'p3',
+          desc: 'Download permanente do pacote',
+          action: () => dispatchArchive(manifest, verif) },
+        { icon: '📡', label: 'Feed API',        tier: 'P4', cls: 'p4',
+          desc: 'Despacho via Gateway :8121',
+          action: () => dispatchFeedAPI(manifest) },
+        { icon: '🏛', label: 'Institucional',   tier: 'P4', cls: 'p4',
+          desc: 'Canal soberano completo',
+          action: () => dispatchInstitutional(manifest) },
+      ];
+
+      channels.forEach(ch => {
+        const btn = el('button', 'dispatch-btn');
+        btn.innerHTML = `
+          <span class="db-icon">${ch.icon}</span>
+          <span>${ch.label}</span>
+          <span class="db-tier ${ch.cls}">${ch.tier}</span>
+        `;
+        btn.title = ch.desc;
+        btn.addEventListener('click', () => ch.action());
+        grid.appendChild(btn);
+      });
+
+      tray.appendChild(grid);
+
+      const toast = el('div', 'dispatch-toast');
+      toast.id = 'dispatchToast';
+      toast.textContent = 'Selecionar canal para despachar este documento.';
+      tray.appendChild(toast);
+
+      return tray;
+    }
+
+    function dispatchToast(msg) {
+      const t = $('dispatchToast');
+      if (t) {
+        t.textContent = msg;
+        t.style.color = 'var(--green-ok)';
+        setTimeout(() => {
+          t.style.color = '';
+          t.textContent = 'Canal de despacho ativo.';
+        }, 4000);
+      }
+    }
+
+    // Bloco A — WhatsApp P1 (MICRO)
+    function dispatchWhatsApp(manifest) {
+      const id = manifest._receipt_id;
+      if (!id) { dispatchToast('⚠ Sem receipt_id — não é possível gerar link.'); return; }
+      const url = `${VERIFY_PUBLIC}${encodeURIComponent(id)}`;
+      const msg = encodeURIComponent(`📄 ${manifest.title || 'Documento WINDI'}\n🔗 ${url}\nAI processes. Human decides. WINDI guarantees.`);
+      window.open(`https://wa.me/?text=${msg}`, '_blank');
+      dispatchToast('💬 P1 WhatsApp — link de verificação enviado.');
+    }
+
+    // Bloco B — Link Público P2
+    function dispatchPublicLink(manifest) {
+      const id = manifest._receipt_id;
+      if (!id) { dispatchToast('⚠ Sem receipt_id.'); return; }
+      const url = `${VERIFY_PUBLIC}${encodeURIComponent(id)}`;
+      navigator.clipboard?.writeText(url).then(() => {
+        dispatchToast('🔗 P2 Link Público — URL copiada para clipboard: ' + url);
+      }).catch(() => {
+        window.prompt('Copiar URL de verificação:', url);
+        dispatchToast('🔗 P2 Link Público — URL pronta.');
+      });
+    }
+
+    // Bloco B — Archive P3
+    function dispatchArchive(manifest, verif) {
+      const id = manifest._receipt_id || manifest.package_id || 'jmpg';
+      // In full deployment this would call /dispatch/archive
+      // For now: open ledger verify URL in new tab
+      const url = `${VERIFY_PUBLIC}${encodeURIComponent(id)}`;
+      window.open(url, '_blank');
+      dispatchToast(`🗄 P3 Archive — registo público aberto (${id.slice(0,20)}…)`);
+    }
+
+    // Bloco C — Feed API P4 via Gateway :8121
+    async function dispatchFeedAPI(manifest) {
+      const id = manifest._receipt_id;
+      if (!id) { dispatchToast('⚠ Sem receipt_id — Gateway requer ID.'); return; }
+      dispatchToast('📡 P4 Feed API — enviando ao Gateway…');
+      try {
+        const r = await fetch(`${DISPATCH_BASE}/api/dispatch`, {
+          method: 'POST', mode: 'cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            receipt_id: id,
+            channel: 'feed',
+            tier: 'P4',
+            title: manifest.title || '',
+            author: manifest._author || '',
+            created_at: manifest.created_at || ''
+          })
+        });
+        if (r.ok) {
+          const d = await r.json();
+          dispatchToast(`📡 P4 Gateway — despachado! dispatch_id: ${d.dispatch_id || '—'}`);
+        } else {
+          dispatchToast(`⚠ Gateway respondeu HTTP ${r.status} — verifique :8121.`);
+        }
+      } catch(e) {
+        dispatchToast(`🟡 Gateway inacessível (modo offline) — armazenar localmente.`);
+      }
+    }
+
+    // Bloco C — Institucional P4+
+    function dispatchInstitutional(manifest) {
+      const id = manifest._receipt_id;
+      const url = `${LEDGER_BASE}/app/#despacho?id=${encodeURIComponent(id || '')}`;
+      window.open(url, '_blank');
+      dispatchToast('🏛 P4 Institucional — Workspace WINDI aberto.');
+    }
+
+  })();
+  </script>
+</body>
+</html>
