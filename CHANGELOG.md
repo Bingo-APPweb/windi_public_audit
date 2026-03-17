@@ -19,6 +19,8 @@
 | **How it Works Landing** — /how-it-works/ LIVE | 10:55 |
 | nginx patch + reload | 10:55 |
 | **CLAUDE.md v1.9.2** | 10:55 |
+| Nav link adicionado à landing principal | 11:00 |
+| i18n: EN/DE/PT para "How it Works" | 11:00 |
 
 ---
 
