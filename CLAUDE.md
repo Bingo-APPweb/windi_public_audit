@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.2
+**Version:** 1.9.3
 **Sealed:** 2026-03-17
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -366,8 +366,46 @@ Qualquer alteração exige:
 
 ```
 Constitucionais WINDI (I1-I11) > Invariantes Gêmeo (G1-G6)
-> Regras de Ouro (11.1-11.10) > Instruções de sessão
+> Regras de Ouro (11.1-11.10) > Invariantes Frontend (11.2) > Instruções de sessão
 ```
+
+---
+
+## 11.2 — I18N INVARIANT (Lei Constitucional Frontend)
+
+**TODA criação de UI/página/componente WINDI é OBRIGATORIAMENTE trilíngue: PT · DE · EN**
+
+### Ordem Canónica
+
+```
+Toggle sempre: DE | EN | PT (esta ordem, sempre)
+Auto-detect:   localStorage('windi-lang') → browser → fallback 'en'
+Strings:       objecto I18N = { de:{}, en:{}, pt:{} }
+setLang():     aplica + persiste + marca botão .active
+```
+
+### Anti-patterns PROIBIDOS
+
+```
+❌ Criar página só em PT (ou qualquer língua única)
+❌ Hardcode de texto visível fora do objecto I18N
+❌ Ordem diferente no toggle (ex: PT|EN|DE)
+❌ Esquecer de chamar setLang(currentLang) no init
+❌ Usar chave localStorage diferente de 'windi-lang'
+```
+
+### Checklist Antes de Entregar
+
+```
+[ ] Título traduzido nas 3 línguas?
+[ ] CTAs traduzidos?
+[ ] Footer/labels traduzidos?
+[ ] Toggle DE|EN|PT presente e funcional?
+[ ] localStorage sync com outras páginas?
+[ ] Botão voltar trilíngue?
+```
+
+**Violação = retrabalho imediato. Sem excepções.**
 
 ---
 
@@ -464,7 +502,10 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | URL Fix | `/app/api/dragon` → `/api/dragon` |
 | History Fix | `human→user`, `text→content` |
 | **How it Works** | Landing page trilíngue PT/DE/EN — `/how-it-works/` LIVE |
-| Nav Link | Botão "How it Works" na navbar principal |
+| Nav Link | Botão "How it Works" na header GEN 7 |
+| i18n Sync | localStorage `windi-lang` partilhado entre páginas |
+| Back Button | "← Voltar/Zurück/Back" trilíngue |
+| **§11.2 I18N INVARIANT** | Lei constitucional frontend — trilíngue obrigatório |
 
 ### Backlog Activo
 
