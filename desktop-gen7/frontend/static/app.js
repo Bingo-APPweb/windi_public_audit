@@ -9,7 +9,8 @@ const API_BASE = '';
 // === Tool Routes (D1→D2) ===
 const TOOL_ROUTES = {
     'journalist': '/jornal/',
-    'prufer': '/verify-public/viewer/v2.2/'
+    'prufer': '/verify-public/viewer/v2.2/',
+    'verify': '/verify-public/web/'
 };
 
 let _toolModeActive = false;
