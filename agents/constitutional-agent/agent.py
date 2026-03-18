@@ -650,6 +650,13 @@ def create_agent_api(agent: WindiAgent):
     except ImportError as e:
         print(f"  [HUB] Dragon Hub not loaded: {e}")
 
+    try:
+        from blueprints.w_verify_001_blueprint import router as verify_bp
+        app.register_blueprint(verify_bp)
+        print("  [VERIFY] W-VERIFY-001 v1.0 loaded on /verify-agent/*")
+    except ImportError as e:
+        print(f"  [VERIFY] W-VERIFY-001 not loaded: {e}")
+
     @app.route("/agent/health", methods=["GET"])
     def health():
         return jsonify({

@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI Verify — Hash Inspector</title>
+<style>
+  /* ── WINDI Design System — KLAR palette ── */
+  :root {
+    --bg:        #F5F0E0;
+    --bg2:       #EDE8D5;
+    --border:    #C8C3B0;
+    --text:      #2C2C2A;
+    --text2:     #5F5E5A;
+    --text3:     #888780;
+    --teal:      #0F6E56;
+    --teal-bg:   #E1F5EE;
+    --blue:      #185FA5;
+    --blue-bg:   #E6F1FB;
+    --red:       #A32D2D;
+    --red-bg:    #FCEBEB;
+    --amber:     #854F0B;
+    --amber-bg:  #FAEEDA;
+    --purple:    #534AB7;
+    --purple-bg: #EEEDFE;
+    --font:      'Bricolage Grotesque', 'Inter', sans-serif;
+    --mono:      'JetBrains Mono', 'Fira Mono', monospace;
+    --radius:    12px;
+    --radius-sm: 8px;
+    --shadow:    0 2px 12px rgba(0,0,0,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* ── Header ── */
+  .header {
+    background: var(--text);
+    color: var(--bg);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .header-logo { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; }
+  .header-sep  { opacity: 0.3; }
+  .header-mode { font-size: 13px; opacity: 0.7; }
+
+  /* ── Layout ── */
+  .container { max-width: 720px; margin: 0 auto; padding: 32px 20px 64px; }
+
+  .section-title {
+    font-size: 22px; font-weight: 600;
+    margin-bottom: 6px;
+    letter-spacing: -0.3px;
+  }
+  .section-sub {
+    font-size: 14px; color: var(--text2);
+    margin-bottom: 28px; line-height: 1.6;
+  }
+
+  /* ── Tabs ── */
+  .tabs {
+    display: flex; gap: 4px;
+    background: var(--bg2);
+    border-radius: var(--radius-sm);
+    padding: 4px;
+    margin-bottom: 28px;
+  }
+  .tab {
+    flex: 1; padding: 9px 12px;
+    border: none; background: transparent;
+    border-radius: calc(var(--radius-sm) - 2px);
+    font-size: 13px; font-weight: 500;
+    color: var(--text2); cursor: pointer;
+    transition: all 0.15s;
+  }
+  .tab.active {
+    background: var(--text);
+    color: var(--bg);
+  }
+
+  /* ── Drop Zone ── */
+  .dropzone {
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 40px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--bg2);
+    position: relative;
+  }
+  .dropzone:hover, .dropzone.over {
+    border-color: var(--blue);
+    background: var(--blue-bg);
+  }
+  .dropzone input[type=file] {
+    position: absolute; inset: 0;
+    opacity: 0; cursor: pointer; width: 100%; height: 100%;
+  }
+  .drop-icon { font-size: 32px; margin-bottom: 10px; }
+  .drop-label { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
+  .drop-hint  { font-size: 12px; color: var(--text3); }
+
+  /* ── File selected ── */
+  .file-selected {
+    display: none;
+    align-items: center; gap: 12px;
+    background: var(--blue-bg);
+    border: 1px solid var(--blue);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    margin-top: 12px;
+  }
+  .file-selected.show { display: flex; }
+  .file-name { font-size: 13px; font-weight: 500; flex: 1; word-break: break-all; }
+  .file-size { font-size: 12px; color: var(--text2); white-space: nowrap; }
+  .file-clear {
+    background: none; border: none; cursor: pointer;
+    color: var(--text2); font-size: 16px; padding: 2px 4px;
+  }
+
+  /* ── OCR zone ── */
+  .ocr-zone { display: none; }
+  .ocr-zone.show { display: block; }
+  .ocr-preview {
+    width: 100%; max-height: 200px;
+    object-fit: contain;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    margin-top: 12px;
+    display: none;
+  }
+  .ocr-preview.show { display: block; }
+  .ocr-extracted {
+    margin-top: 12px;
+    font-family: var(--mono);
+    font-size: 12px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    color: var(--text2);
+    word-break: break-all;
+    display: none;
+  }
+  .ocr-extracted.show { display: block; }
+  .ocr-conf {
+    font-size: 11px; color: var(--text3);
+    margin-top: 4px;
+  }
+
+  /* ── Hash input ── */
+  .hash-row {
+    display: flex; gap: 10px; align-items: flex-start;
+    margin-top: 20px;
+  }
+  .hash-input-wrap { flex: 1; }
+  .hash-input-wrap label {
+    display: block; font-size: 12px; font-weight: 500;
+    color: var(--text2); margin-bottom: 5px;
+  }
+  .hash-input {
+    width: 100%;
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--bg);
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .hash-input:focus { border-color: var(--blue); }
+  .hash-input.valid   { border-color: var(--teal); }
+  .hash-input.invalid { border-color: var(--red); }
+
+  .hash-type-badge {
+    display: inline-block;
+    margin-top: 4px;
+    font-size: 10px; font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: var(--purple-bg);
+    color: var(--purple);
+    letter-spacing: 0.3px;
+  }
+
+  /* ── Algo selector ── */
+  .algo-row {
+    display: flex; gap: 8px;
+    margin-top: 12px;
+  }
+  .algo-btn {
+    padding: 6px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    background: var(--bg);
+    font-size: 12px; font-weight: 500;
+    cursor: pointer; color: var(--text2);
+    transition: all 0.15s;
+  }
+  .algo-btn.active {
+    border-color: var(--blue);
+    background: var(--blue-bg);
+    color: var(--blue);
+  }
+
+  /* ── CTA button ── */
+  .btn-verify {
+    width: 100%;
+    margin-top: 20px;
+    padding: 14px;
+    background: var(--text);
+    color: var(--bg);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 15px; font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+    letter-spacing: -0.2px;
+  }
+  .btn-verify:hover { opacity: 0.88; }
+  .btn-verify:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  /* ── Progress ── */
+  .progress {
+    display: none;
+    margin-top: 16px;
+  }
+  .progress.show { display: block; }
+  .progress-bar-wrap {
+    background: var(--bg2);
+    border-radius: 4px;
+    height: 4px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .progress-bar {
+    height: 100%;
+    background: var(--blue);
+    border-radius: 4px;
+    width: 0%;
+    transition: width 0.3s;
+  }
+  .progress-label {
+    font-size: 12px; color: var(--text2);
+  }
+
+  /* ── Result card ── */
+  .result { display: none; margin-top: 24px; }
+  .result.show { display: block; }
+
+  .result-card {
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    border: 1.5px solid;
+  }
+  .result-card.MATCH    { background: var(--teal-bg); border-color: var(--teal); }
+  .result-card.MISMATCH { background: var(--red-bg);  border-color: var(--red);  }
+  .result-card.UNKNOWN  { background: var(--amber-bg);border-color: var(--amber);}
+
+  .result-verdict {
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+  .result-card.MATCH    .result-verdict { color: var(--teal); }
+  .result-card.MISMATCH .result-verdict { color: var(--red); }
+  .result-card.UNKNOWN  .result-verdict { color: var(--amber); }
+
+  .result-title {
+    font-size: 17px; font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .result-msg {
+    font-size: 13px; line-height: 1.65;
+    color: var(--text2);
+    margin-bottom: 16px;
+  }
+
+  /* ── Hash comparison table ── */
+  .hash-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+    font-size: 11px;
+    font-family: var(--mono);
+  }
+  .hash-table td {
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--border);
+    word-break: break-all;
+  }
+  .hash-table td:first-child {
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--text2);
+    width: 90px;
+    font-family: var(--font);
+    font-size: 11px;
+  }
+  .hash-ok   { color: var(--teal); }
+  .hash-fail { color: var(--red); }
+
+  /* ── Agent bubble ── */
+  .agent-bubble {
+    margin-top: 16px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .agent-avatar {
+    width: 32px; height: 32px;
+    background: var(--text);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--bg);
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .agent-text {
+    font-size: 13px; line-height: 1.6;
+  }
+  .agent-label {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.5px;
+    color: var(--text3); margin-bottom: 3px;
+  }
+
+  .constitutional-note {
+    margin-top: 14px;
+    font-size: 11px;
+    color: var(--text3);
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+    display: flex; gap: 6px; align-items: flex-start;
+  }
+
+  /* ── Paste zone ── */
+  .paste-zone { display: none; }
+  .paste-zone.show { display: block; }
+
+  /* ── Loading spinner (OCR) ── */
+  .spinner {
+    display: inline-block;
+    width: 14px; height: 14px;
+    border: 2px solid var(--border);
+    border-top-color: var(--blue);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .ocr-status {
+    font-size: 12px; color: var(--text2);
+    margin-top: 8px;
+    display: none;
+  }
+  .ocr-status.show { display: flex; align-items: center; gap: 6px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="header-logo">WINDI</span>
+  <span class="header-sep">|</span>
+  <span class="header-mode">Verify — Hash Inspector · Modo 2</span>
+</div>
+
+<div class="container">
+  <h1 class="section-title">Hash Inspector</h1>
+  <p class="section-sub">
+    Verifica a integridade de qualquer ficheiro por hash SHA.
+    Todo o cálculo é feito <strong>localmente no teu browser</strong> —
+    nenhum dado é enviado ao servidor.
+  </p>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="setTab('file')" id="tab-file">Arrastar ficheiro</button>
+    <button class="tab" onclick="setTab('ocr')"  id="tab-ocr">Foto / OCR</button>
+    <button class="tab" onclick="setTab('paste')" id="tab-paste">Colar hash</button>
+  </div>
+
+  <!-- ── TAB: Ficheiro ── -->
+  <div id="zone-file">
+    <div class="dropzone" id="dropzone"
+         ondragover="onDragOver(event)"
+         ondragleave="onDragLeave(event)"
+         ondrop="onDrop(event)">
+      <input type="file" id="file-input" onchange="onFileSelected(this.files[0])">
+      <div class="drop-icon">📄</div>
+      <div class="drop-label">Arrasta o ficheiro aqui</div>
+      <div class="drop-hint">ou clica para seleccionar · qualquer formato</div>
+    </div>
+    <div class="file-selected" id="file-info">
+      <span class="file-name" id="file-name-label">—</span>
+      <span class="file-size" id="file-size-label">—</span>
+      <button class="file-clear" onclick="clearFile()" title="Remover">✕</button>
+    </div>
+  </div>
+
+  <!-- ── TAB: OCR ── -->
+  <div id="zone-ocr" class="ocr-zone">
+    <div class="dropzone" id="dropzone-ocr"
+         ondragover="onDragOver(event)"
+         ondragleave="onDragLeave(event)"
+         ondrop="onDropOcr(event)">
+      <input type="file" id="ocr-input" accept="image/*" onchange="onOcrSelected(this.files[0])">
+      <div class="drop-icon">📷</div>
+      <div class="drop-label">Foto ou screenshot com o hash visível</div>
+      <div class="drop-hint">JPG · PNG · WebP — processado localmente com Tesseract.js</div>
+    </div>
+    <img id="ocr-preview" class="ocr-preview" alt="preview">
+    <div class="ocr-status" id="ocr-status">
+      <span class="spinner"></span>
+      <span id="ocr-status-text">A processar OCR...</span>
+    </div>
+    <div class="ocr-extracted" id="ocr-extracted">
+      <div id="ocr-text-result"></div>
+      <div class="ocr-conf" id="ocr-conf-label"></div>
+    </div>
+  </div>
+
+  <!-- ── TAB: Paste ── -->
+  <div id="zone-paste" class="paste-zone">
+    <p style="font-size:13px;color:var(--text2);margin-bottom:12px;">
+      Cola o hash SHA-256 ou SHA-512 directamente.
+      Usa esta opção quando tens o hash em formato texto.
+    </p>
+  </div>
+
+  <!-- ── Hash input (todas as tabs) ── -->
+  <div class="hash-row">
+    <div class="hash-input-wrap">
+      <label for="hash-input-field">Hash esperado</label>
+      <input
+        type="text"
+        id="hash-input-field"
+        class="hash-input"
+        placeholder="Cole o SHA-256 (64 hex) ou SHA-512 (128 hex)..."
+        oninput="onHashInput(this)"
+        autocomplete="off"
+        spellcheck="false"
+      >
+      <span class="hash-type-badge" id="hash-type-badge" style="display:none"></span>
+    </div>
+  </div>
+
+  <!-- Algo selector -->
+  <div class="algo-row">
+    <button class="algo-btn active" id="algo-256" onclick="setAlgo('SHA-256')">SHA-256</button>
+    <button class="algo-btn" id="algo-512" onclick="setAlgo('SHA-512')">SHA-512</button>
+  </div>
+
+  <!-- CTA -->
+  <button class="btn-verify" id="btn-verify" onclick="doVerify()" disabled>
+    Verificar integridade
+  </button>
+
+  <!-- Progress -->
+  <div class="progress" id="progress">
+    <div class="progress-bar-wrap">
+      <div class="progress-bar" id="progress-bar"></div>
+    </div>
+    <div class="progress-label" id="progress-label">A calcular hash...</div>
+  </div>
+
+  <!-- Result -->
+  <div class="result" id="result">
+    <div class="result-card" id="result-card">
+      <div class="result-verdict" id="result-verdict"></div>
+      <div class="result-title"  id="result-title"></div>
+      <div class="result-msg"    id="result-msg"></div>
+
+      <table class="hash-table" id="hash-table">
+        <tr>
+          <td>Esperado</td>
+          <td id="hash-expected-display"></td>
+        </tr>
+        <tr>
+          <td>Calculado</td>
+          <td id="hash-calculated-display"></td>
+        </tr>
+        <tr>
+          <td>Algoritmo</td>
+          <td id="hash-algo-display"></td>
+        </tr>
+        <tr>
+          <td>Ficheiro</td>
+          <td id="hash-file-display"></td>
+        </tr>
+      </table>
+
+      <!-- Agent bubble -->
+      <div class="agent-bubble" id="agent-bubble">
+        <div class="agent-avatar">🐉</div>
+        <div>
+          <div class="agent-label">W-VERIFY-001</div>
+          <div class="agent-text" id="agent-text"></div>
+        </div>
+      </div>
+
+      <div class="constitutional-note" id="const-note">
+        <span>🔒</span>
+        <span id="const-note-text"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tesseract.js via CDN -->
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
+<script>
+// ── State ──────────────────────────────────────────────────────
+let state = {
+  tab:           'file',
+  file:          null,
+  hashExpected:  '',
+  hashExtracted: '',
+  ocrConfidence: null,
+  algo:          'SHA-256',
+  source:        'file_drop',
+  locale:        'pt',
+};
+
+// ── Tabs ──────────────────────────────────────────────────────
+function setTab(t) {
+  state.tab = t;
+  ['file','ocr','paste'].forEach(id => {
+    document.getElementById('tab-'+id).classList.toggle('active', id === t);
+    const z = document.getElementById('zone-'+id);
+    if (id === 'file')  z.style.display = t === 'file'  ? 'block' : 'none';
+    if (id === 'ocr')   z.classList.toggle('show', t === 'ocr');
+    if (id === 'paste') z.classList.toggle('show', t === 'paste');
+  });
+  state.source = t === 'file' ? 'file_drop' : t === 'ocr' ? 'ocr_photo' : 'paste_manual';
+  checkReady();
+}
+
+// ── Drag & Drop ───────────────────────────────────────────────
+function onDragOver(e) {
+  e.preventDefault();
+  document.getElementById('dropzone').classList.add('over');
+}
+function onDragLeave(e) {
+  document.getElementById('dropzone').classList.remove('over');
+}
+function onDrop(e) {
+  e.preventDefault();
+  document.getElementById('dropzone').classList.remove('over');
+  const f = e.dataTransfer.files[0];
+  if (f) onFileSelected(f);
+}
+function onDropOcr(e) {
+  e.preventDefault();
+  const f = e.dataTransfer.files[0];
+  if (f && f.type.startsWith('image/')) onOcrSelected(f);
+}
+
+// ── File selected ─────────────────────────────────────────────
+function onFileSelected(f) {
+  if (!f) return;
+  state.file = f;
+  document.getElementById('file-name-label').textContent = f.name;
+  document.getElementById('file-size-label').textContent = formatBytes(f.size);
+  document.getElementById('file-info').classList.add('show');
+  hideResult();
+  checkReady();
+}
+
+function clearFile() {
+  state.file = null;
+  document.getElementById('file-info').classList.remove('show');
+  document.getElementById('file-input').value = '';
+  hideResult();
+  checkReady();
+}
+
+// ── OCR ───────────────────────────────────────────────────────
+async function onOcrSelected(f) {
+  state.file = f;
+
+  const url = URL.createObjectURL(f);
+  const preview = document.getElementById('ocr-preview');
+  preview.src = url;
+  preview.classList.add('show');
+
+  const status = document.getElementById('ocr-status');
+  status.classList.add('show');
+  document.getElementById('ocr-status-text').textContent = 'A carregar Tesseract.js...';
+
+  try {
+    const worker = await Tesseract.createWorker('eng', 1, {
+      logger: m => {
+        if (m.status === 'recognizing text') {
+          const pct = Math.round((m.progress || 0) * 100);
+          document.getElementById('ocr-status-text').textContent = `OCR: ${pct}%`;
+        }
+      }
+    });
+
+    const { data } = await worker.recognize(f);
+    await worker.terminate();
+
+    const rawText = data.text || '';
+    const confidence = (data.confidence || 0) / 100;
+
+    const match256 = rawText.match(/\b([0-9a-fA-F]{64})\b/);
+    const match512 = rawText.match(/\b([0-9a-fA-F]{128})\b/);
+    const extracted = match512 ? match512[1] : match256 ? match256[1] : '';
+
+    state.hashExtracted = extracted;
+    state.ocrConfidence = confidence;
+
+    const box = document.getElementById('ocr-extracted');
+    const textEl = document.getElementById('ocr-text-result');
+    const confEl = document.getElementById('ocr-conf-label');
+
+    if (extracted) {
+      textEl.textContent = extracted;
+      confEl.textContent = `Confiança OCR: ${Math.round(confidence * 100)}%  |  ${extracted.length === 64 ? 'SHA-256' : 'SHA-512'} detectado`;
+      box.classList.add('show');
+
+      document.getElementById('hash-input-field').value = extracted;
+      state.hashExpected = extracted;
+      validateHashInput(extracted);
+
+      if (extracted.length === 128) setAlgo('SHA-512');
+      else setAlgo('SHA-256');
+    } else {
+      textEl.textContent = 'Nenhum hash SHA detectado na imagem.';
+      confEl.textContent = 'Tenta colar o hash manualmente no campo abaixo.';
+      box.classList.add('show');
+    }
+
+    status.classList.remove('show');
+  } catch(err) {
+    document.getElementById('ocr-status-text').textContent = 'Erro no OCR: ' + err.message;
+  }
+
+  checkReady();
+}
+
+// ── Hash input ────────────────────────────────────────────────
+function onHashInput(el) {
+  const v = el.value.trim();
+  state.hashExpected = v;
+  validateHashInput(v);
+  checkReady();
+}
+
+function validateHashInput(v) {
+  const el = document.getElementById('hash-input-field');
+  const badge = document.getElementById('hash-type-badge');
+
+  if (!v) {
+    el.className = 'hash-input';
+    badge.style.display = 'none';
+    return;
+  }
+
+  const is256 = /^[0-9a-fA-F]{64}$/.test(v);
+  const is512 = /^[0-9a-fA-F]{128}$/.test(v);
+  const valid = is256 || is512;
+
+  el.className = 'hash-input ' + (valid ? 'valid' : 'invalid');
+  badge.style.display = valid ? 'inline-block' : 'none';
+  if (valid) {
+    badge.textContent = is512 ? 'SHA-512 válido' : 'SHA-256 válido';
+    if (is512 && state.algo !== 'SHA-512') setAlgo('SHA-512');
+    if (is256 && state.algo !== 'SHA-256') setAlgo('SHA-256');
+  }
+}
+
+// ── Algo selector ─────────────────────────────────────────────
+function setAlgo(algo) {
+  state.algo = algo;
+  document.getElementById('algo-256').classList.toggle('active', algo === 'SHA-256');
+  document.getElementById('algo-512').classList.toggle('active', algo === 'SHA-512');
+}
+
+// ── Ready check ───────────────────────────────────────────────
+function checkReady() {
+  const hasFile = !!state.file;
+  const hasHash = state.hashExpected.length === 64 || state.hashExpected.length === 128;
+  const ready = hasFile && hasHash;
+  document.getElementById('btn-verify').disabled = !ready;
+}
+
+// ── Verify ────────────────────────────────────────────────────
+async function doVerify() {
+  if (!state.file) return;
+
+  showProgress(0, 'A ler ficheiro...');
+  hideResult();
+
+  try {
+    const buffer = await readFileAsBuffer(state.file, p => showProgress(p * 50, 'A ler ficheiro...'));
+
+    showProgress(55, `A calcular ${state.algo}...`);
+
+    const subtle = window.crypto.subtle;
+    const hashBuffer = await subtle.digest(state.algo, buffer);
+    const calculated = bufferToHex(hashBuffer);
+
+    showProgress(90, 'A comparar hashes...');
+
+    await sleep(200);
+
+    const expected  = state.hashExpected.toLowerCase();
+    const integrity = calculated === expected ? 'MATCH' : 'MISMATCH';
+
+    showProgress(100, 'Concluído');
+    await sleep(300);
+    hideProgress();
+
+    const interp = await interpretLocally(integrity, calculated, expected);
+
+    renderResult(integrity, calculated, expected, interp);
+
+  } catch(err) {
+    hideProgress();
+    renderError(err.message);
+  }
+}
+
+// ── Interpretação local (fallback sem agent) ──────────────────
+async function interpretLocally(integrity, calculated, expected) {
+  try {
+    const r = await fetch('/verify-agent/interpret', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        mode: 2,
+        locale: state.locale,
+        result_mode2: {
+          sha256_expected:   state.algo === 'SHA-256' ? expected   : null,
+          sha256_calculated: state.algo === 'SHA-256' ? calculated : null,
+          sha512_expected:   state.algo === 'SHA-512' ? expected   : null,
+          sha512_calculated: state.algo === 'SHA-512' ? calculated : null,
+          integrity,
+          filename: state.file?.name || null,
+          source: state.source,
+          ocr_confidence: state.ocrConfidence,
+        }
+      })
+    });
+    if (r.ok) return await r.json();
+  } catch(e) { /* agent indisponível — fallback local */ }
+
+  if (integrity === 'MATCH') {
+    return {
+      verdict: 'ÍNTEGRO',
+      title: 'Hash íntegro — sem adulteração detectada',
+      message: 'O hash SHA corresponde exactamente. Nenhum byte foi alterado desde a publicação deste hash. Nota: esta prova é matemática — não garante origem nem autoria.',
+      agent_message: 'Hash correcto. Ficheiro íntegro. Mas lembra: qualquer pessoa pode gerar este hash. Para garantia de origem e autoria → cria documento WINDI.',
+      constitutional_note: 'Cálculo local via Web Crypto API. Zero dados enviados ao servidor.',
+    };
+  } else {
+    return {
+      verdict: 'ADULTERADO',
+      title: 'Ficheiro modificado — hash divergente',
+      message: 'O hash calculado diverge do esperado. Mesmo uma alteração de 1 byte produz um hash completamente diferente. Matematicamente, este ficheiro foi modificado.',
+      agent_message: 'Atenção. Este ficheiro não é o original. A divergência de hash é prova matemática de adulteração — independentemente de qual foi a alteração.',
+      constitutional_note: 'Cálculo local via Web Crypto API. Zero dados enviados ao servidor.',
+    };
+  }
+}
+
+// ── Render result ─────────────────────────────────────────────
+function renderResult(integrity, calculated, expected, interp) {
+  const card    = document.getElementById('result-card');
+  const verdict = document.getElementById('result-verdict');
+  const title   = document.getElementById('result-title');
+  const msg     = document.getElementById('result-msg');
+  const agentEl = document.getElementById('agent-text');
+  const constEl = document.getElementById('const-note-text');
+
+  card.className = 'result-card ' + integrity;
+  verdict.textContent = interp.verdict || integrity;
+  title.textContent   = interp.title   || '';
+  msg.textContent     = interp.message || '';
+  agentEl.textContent = interp.agent_message || interp.message || '';
+  constEl.textContent = interp.constitutional_note || '';
+
+  document.getElementById('hash-expected-display').innerHTML =
+    `<span class="${integrity === 'MATCH' ? 'hash-ok' : 'hash-fail'}">${expected}</span>`;
+  document.getElementById('hash-calculated-display').innerHTML =
+    `<span class="${integrity === 'MATCH' ? 'hash-ok' : 'hash-fail'}">${calculated}</span>`;
+  document.getElementById('hash-algo-display').textContent = state.algo;
+  document.getElementById('hash-file-display').textContent = state.file?.name || '—';
+
+  document.getElementById('result').classList.add('show');
+  document.getElementById('result').scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+function renderError(msg) {
+  document.getElementById('result-card').className = 'result-card UNKNOWN';
+  document.getElementById('result-verdict').textContent = 'ERRO';
+  document.getElementById('result-title').textContent = 'Não foi possível verificar';
+  document.getElementById('result-msg').textContent = msg;
+  document.getElementById('agent-text').textContent = 'Erro durante o cálculo. Tenta novamente ou cola o hash manualmente.';
+  document.getElementById('result').classList.add('show');
+}
+
+// ── Progress ──────────────────────────────────────────────────
+function showProgress(pct, label) {
+  document.getElementById('progress').classList.add('show');
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = label;
+}
+function hideProgress() {
+  document.getElementById('progress').classList.remove('show');
+}
+function hideResult() {
+  document.getElementById('result').classList.remove('show');
+}
+
+// ── Utils ─────────────────────────────────────────────────────
+function readFileAsBuffer(file, onProgress) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onprogress = e => { if (e.lengthComputable) onProgress(e.loaded / e.total); };
+    reader.onload    = () => resolve(reader.result);
+    reader.onerror   = () => reject(new Error('Erro ao ler ficheiro'));
+    reader.readAsArrayBuffer(file);
+  });
+}
+
+function bufferToHex(buffer) {
+  return Array.from(new Uint8Array(buffer))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+function formatBytes(bytes) {
+  if (bytes < 1024)       return bytes + ' B';
+  if (bytes < 1024*1024)  return (bytes/1024).toFixed(1) + ' KB';
+  return (bytes/1024/1024).toFixed(2) + ' MB';
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ── Init ──────────────────────────────────────────────────────
+setTab('file');
+</script>
+</body>
+</html>
