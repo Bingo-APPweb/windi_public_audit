@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.12
+**Version:** 1.9.13
 **Sealed:** 2026-03-18
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -566,6 +566,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | Fix | Descrição |
 |-----|-----------|
 | **§22 Sovereignty Metrics** | I13 Token Independence — 93.3% local, meta ultrapassada 149% |
+| **§23 Qualidade Soberana** | WB-KNOW-SOVEREIGNTY-Q-20260318 SEALED · Espelho HTML + Princípio |
 
 ### Completado (17 Mar 2026)
 
@@ -832,6 +833,42 @@ Progresso = (BASELINE - ACTUAL) / (BASELINE - META) × 100
           = (4000 - 268) / (4000 - 1500) × 100
           = 149.3%
 ```
+
+---
+
+## 23. Princípio: Qualidade Soberana · 18 Mar 2026
+
+**WB-KNOW-SOVEREIGNTY-Q-20260318 · SEALED · HIGH**
+**Hash:** `sha256:66d542fcc2118f8e174f32d0c9caea336205dc3f73ee735122149fe9716e2d3b`
+
+O WINDI não economiza tokens para gastar menos — economiza para investir onde a qualidade exige.
+
+### Métricas Seladas
+
+| Métrica | Valor |
+|---------|-------|
+| Soberania local | 93.3% (42/45 funções) |
+| Tokens externos actuais | ~268tk |
+| Meta estabelecida | 1500tk |
+| Progresso | 149.3% ✓ META ULTRAPASSADA |
+
+### Regras Constitucionais
+
+- FREE = escudo absoluto, zero LLM externo
+- Token externo = investimento justificado por qualidade superior
+- Fallback I10: SEMANTIC→LOCAL sempre disponível
+- Wisdom Blocks crescem → tokens externos diminuem ao longo do tempo
+
+### Frase
+
+> "O externo sustenta. O interno orienta. A qualidade decide."
+
+### Artefactos
+
+| Tipo | Path |
+|------|------|
+| HTML | `/opt/windi/docs/espelho-qualidade-soberana.html` |
+| SKILL | Sistema Claude Code |
 
 ---
 
