@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WINDI Verify — QR Decoder Universal</title>
+<meta name="theme-color" content="#2C2C2A">
+<link rel="manifest" href="/verify-public/web/manifest.json">
+<link rel="apple-touch-icon" href="/verify-public/web/icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="WINDI Verify">
+<meta name="mobile-web-app-capable" content="yes">
 <style>
   :root {
     --bg:        #F5F0E0;
@@ -926,6 +933,36 @@ function resetScan() {
 // ── Init ──────────────────────────────────────────────────────
 setLang(S.lang);
 setTab('camera');
+</script>
+
+<!-- PWA Install Banner -->
+<div id="pwa-banner" style="display:none; position:fixed; bottom:0; left:0; right:0; z-index:9999; background:#2C2C2A; color:#F5F0E0; padding:16px 20px; align-items:center; gap:14px; box-shadow: 0 -4px 20px rgba(0,0,0,0.2); font-family: 'Bricolage Grotesque', 'Inter', sans-serif;">
+  <div style="width:42px; height:42px; border-radius:10px; background:#0F6E56; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:20px;">🐉</div>
+  <div style="flex:1; min-width:0;">
+    <div style="font-size:14px; font-weight:600; margin-bottom:2px;" id="pwa-title">Instalar WINDI Verify</div>
+    <div style="font-size:12px; opacity:0.6; line-height:1.4;" id="pwa-sub">Acesso rápido · funciona offline</div>
+  </div>
+  <button id="pwa-install-btn" style="padding:9px 16px; background:#0F6E56; color:#fff; border:none; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap; font-family:inherit;">Instalar</button>
+  <button onclick="dismissBanner()" style="background:transparent; border:none; color:rgba(255,255,255,0.4); font-size:20px; cursor:pointer; padding:4px; line-height:1;">×</button>
+</div>
+<script>
+(function() {
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/verify-public/web/sw.js', { scope: '/verify-public/' }).catch(err => console.warn('SW:', err));
+    });
+  }
+  const lang = navigator.language.startsWith('de') ? 'de' : navigator.language.startsWith('pt') ? 'pt' : 'en';
+  const BL = { pt: { title: 'Instalar WINDI Verify', sub: 'Acesso rápido · funciona offline', btn: 'Instalar' }, de: { title: 'WINDI Verify installieren', sub: 'Schnellzugriff · offline verfügbar', btn: 'Installieren' }, en: { title: 'Install WINDI Verify', sub: 'Quick access · works offline', btn: 'Install' } }[lang] || { title: 'Install WINDI Verify', sub: 'Quick access · works offline', btn: 'Install' };
+  let deferredPrompt = null;
+  const banner = document.getElementById('pwa-banner');
+  function showBanner() { if (!banner || localStorage.getItem('windi-pwa-dismissed')) return; document.getElementById('pwa-title').textContent = BL.title; document.getElementById('pwa-sub').textContent = BL.sub; const btn = document.getElementById('pwa-install-btn'); if (btn) btn.textContent = BL.btn; banner.style.display = 'flex'; }
+  window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredPrompt = e; setTimeout(showBanner, 3000); });
+  const installBtn = document.getElementById('pwa-install-btn');
+  if (installBtn) installBtn.addEventListener('click', async () => { if (!deferredPrompt) return; deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt = null; banner.style.display = 'none'; });
+  window.dismissBanner = function() { if (banner) banner.style.display = 'none'; localStorage.setItem('windi-pwa-dismissed', '1'); };
+  window.addEventListener('appinstalled', () => { if (banner) banner.style.display = 'none'; });
+})();
 </script>
 </body>
 </html>
