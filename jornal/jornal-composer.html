@@ -1281,19 +1281,21 @@ JSON format:
 Title: max 80 chars per language. Excerpt: 2-3 sentences per language.`;
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    // FIX P1: Redirigido para Dragon Hub (não chama Anthropic directo)
+    const res = await fetch('/api/dragon/chat', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:1000,
-        system: systemPrompt,
-        messages:[{role:'user',content:`Generate trilingual content for this WINDI milestone:\n\n${prompt}\n\nCategory: ${cat}`}]
+        message: `${systemPrompt}\n\nGenerate trilingual content for this WINDI milestone:\n\n${prompt}\n\nCategory: ${cat}`,
+        intent: 'communique',
+        session_id: 'jornal-composer-' + Date.now(),
+        meta: { tier: 'HIGH', doc_type: 'article' }
       })
     });
 
     const data = await res.json();
-    const text = data.content?.find(c=>c.type==='text')?.text||'{}';
+    // Dragon Hub retorna {message: "..."} ou {response: "..."}
+    const text = data.message || data.response || '{}';
     const clean = text.replace(/```json\n?|\n?```/g,'').trim();
     const result = JSON.parse(clean);
 
@@ -1514,6 +1516,26 @@ ${sections}
 </html>`;
 }
 
+// FIX P2: Função exportEdition() que faltava
+function exportEdition() {
+  if (!blocks.length) {
+    toast('⚠ Nenhum bloco para exportar');
+    return;
+  }
+
+  const html = buildExportHTML();
+  const blob = new Blob([html], {type: 'text/html; charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `WINDI-Jornal-${new Date().toISOString().slice(0,10)}.html`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast('✅ Export concluído!');
+}
+
 // ═══════════════════════════════════════════════
 // W-CIA-001: HEALTH PULSE
 // ═══════════════════════════════════════════════
@@ -1719,11 +1741,11 @@ const MGR = {
   startTime: Date.now(),
 
   init() {
-    // Primeira análise após 2 minutos de idle
-    this.idleTimer = setTimeout(() => this.analyse(), 120000);
-    // Análises periódicas a cada 45 segundos
-    this.checkInterval = setInterval(() => this.analyse(), 45000);
-    console.log('🏗️ W-MGR-001 ONLINE · Gerente do Composer activo');
+    // TEST MODE: 10 segundos (produção: 120000ms = 2 min)
+    this.idleTimer = setTimeout(() => this.analyse(), 10000);
+    // Análises periódicas a cada 15 segundos (produção: 45000ms)
+    this.checkInterval = setInterval(() => this.analyse(), 15000);
+    console.log('🏗️ W-MGR-001 ONLINE · TEST MODE 10s');
   },
 
   analyse() {
@@ -1757,8 +1779,8 @@ const MGR = {
       addTrust: {de: '+ Trust Ribbon', en: '+ Trust Ribbon', pt: '+ Trust Ribbon'}
     };
 
-    // ─── Situação 1: Canvas vazio após 2 minutos ───
-    if (blocks.length === 0 && elapsed > 120) {
+    // ─── Situação 1: Canvas vazio (TEST: 10s, PROD: 120s) ───
+    if (blocks.length === 0 && elapsed > 10) {
       suggestions.push({
         type: 'EMPTY_CANVAS',
         msg: MGR_MSG.empty[LANG] || MGR_MSG.empty.de,
