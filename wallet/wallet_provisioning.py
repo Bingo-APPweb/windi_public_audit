@@ -588,6 +588,18 @@ def provision_wallet(data: dict) -> dict:
             wallet_id, human_id, kind, lead_id
         )
 
+        # ─── G3 — Lead Admin Hook (fire-and-forget) ────────────────────────
+        import requests as _req
+        try:
+            _req.post(
+                "http://127.0.0.1:8096/api/leads/register",
+                json={"wallet_id": wallet_id, "email": email,
+                      "tier": "PIONEER", "source": "wallet_provision"},
+                timeout=2
+            )
+        except Exception:
+            pass  # Hook não bloqueia provision — fire-and-forget
+
         return {
             "status": "ok",
             "human_id": human_id,
