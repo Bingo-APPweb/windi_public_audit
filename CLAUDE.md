@@ -991,3 +991,143 @@ ecossistema documento   humano
 *LIGA IA+H — Kempten, Bavaria · 2026*
 *🧑‍💻 Human Dragon · 🛡️ Guardian · 🏗️ Architect · 👁️ Witness*
 *"AI processes. Human decides. WINDI guarantees."*
+
+---
+
+## 23. WINDI Verify v2 — Estado completo (18 Mar 2026)
+
+### Arquitectura Multi-Reader (3 modos)
+
+| Modo | Serviço | Garantia | Ledger |
+|------|---------|----------|--------|
+| 1 — WINDI Verify | `/verify-public/` `:8114` | WINDI GARANTE — I11 | Sim |
+| 2 — Hash Inspector | `/verify-public/web/hash-inspector.html` | Prova matemática local | Não |
+| 3 — QR Decoder | `/verify-public/web/qr-decoder.html` | WINDI interpreta | Não |
+
+**Filosofia constitucional:** LER → ENTENDER → GARANTIR
+**Fronteira irremediável:** Modo 1 garante. Modo 2 prova. Modo 3 interpreta. NUNCA misturar.
+
+---
+
+### W-VERIFY-001 — Agent Interpretador
+
+- **Porto:** `:8091` (extensão do Sandbox Core — constellation pattern)
+- **Prefixo:** `/verify-agent/`
+- **Endpoints:**
+  - `GET  /verify-agent/health`
+  - `POST /verify-agent/interpret` — núcleo trilíngue PT/DE/EN
+  - `POST /verify-agent/detect-qr-type` — router determinístico, zero IA
+  - `GET  /verify-agent/patterns` — 8 padrões QR conhecidos
+- **Blueprint:** `/opt/windi/agents/constitutional-agent/blueprints/w_verify_001_blueprint.py`
+- **I9 enforced by design:** nunca calcula, nunca escreve no Ledger, nunca decide
+
+---
+
+### Modo 2 — Hash Inspector
+
+- **Ficheiro:** `/opt/windi/verify-public/web/hash-inspector.html`
+- **Motor:** `crypto.subtle.digest()` — 100% browser, zero rede
+- **OCR:** `Tesseract.js` via CDN `cdn.jsdelivr.net` — extrai hash de foto
+- **Suporta:** SHA-256 (64 hex) + SHA-512 (128 hex)
+- **3 tabs:** Arrastar ficheiro / Foto+OCR / Colar hash manual
+- **Fallback local:** funciona sem W-VERIFY-001 disponível
+
+---
+
+### Modo 3 — QR Decoder Universal
+
+- **Ficheiro:** `/opt/windi/verify-public/web/qr-decoder.html`
+- **Motor:** `jsQR` via CDN `cdn.jsdelivr.net`
+- **I18N:** PT/DE/EN completo — seletor no header, auto-detect `navigator.language`
+- **Commit I18N:** `bb0856d` — 28 strings × 3 idiomas, §11.2 compliant
+- **8 padrões QR:**
+  - `windi_doc` — QR WINDI → redireciona para Modo 1
+  - `nfe_br` — Nota Fiscal Eletrônica (chave 44 dígitos)
+  - `pix_br` — PIX (EMV-QR BACEN)
+  - `gov_de_elster` — Documento fiscal alemão
+  - `eu_covid` — EU Digital COVID Certificate (HC1)
+  - `url_generic` — URL qualquer
+  - `vcard` — Cartão de contacto
+  - `wifi` — Configuração Wi-Fi
+- **Router:** determinístico, regex pura — auditável, zero IA
+- **Fricção intencional:** bloco âmbar para documentos não-WINDI
+
+---
+
+### Landing Unificada
+
+- **URL:** `https://windi-domain.com/verify-public/web/`
+- **Ficheiro:** `/opt/windi/verify-public/web/index.html`
+- **Commit:** `7d4b6f9`
+- **Estrutura:**
+  ```
+  Hero — 3 linhas + confidence pills (HIGH/MEDIUM/LOW)
+  3 Cards — teal / blue / amber
+  Philosophy Strip — "Quando as pessoas começam a verificar..."
+  Constitution Table — faz / NÃO faz / Ledger
+  ```
+- **I18N:** PT/DE/EN, auto-detect, seletor no header
+
+---
+
+### PWA — Progressive Web App
+
+- **Commit:** `040f704`
+- **Status:** LIVE — instalável sem App Store
+- **Ficheiros em** `/opt/windi/verify-public/web/`:
+  ```
+  manifest.json          — identidade PWA
+  sw.js                  — Service Worker cache-first
+  offline.html           — fallback trilíngue
+  icons/
+    icon-72.png   (2.5 KB)
+    icon-96.png   (3.4 KB)
+    icon-128.png  (4.7 KB)
+    icon-192.png  (6.9 KB)
+    icon-512.png  (19.8 KB)
+    icon-maskable-192.png (4.6 KB)
+    icon-maskable-512.png (12.3 KB)
+  ```
+- **Instalação:**
+  - Android: banner automático após 3s (BeforeInstallPrompt)
+  - iOS: instrução manual "Partilhar → Adicionar ao ecrã"
+  - Desktop: ícone na barra de endereço Chrome/Edge
+- **Offline:** Modo 2 (Hash) + Modo 3 (QR decode) funcionam sem rede
+- **SW scope:** `/verify-public/` — não interfere com Ledger `:8101`
+- **Estratégia cache:**
+  - Assets estáticos → cache-first + revalidação silenciosa
+  - APIs WINDI → network-first com fallback
+  - CDNs externos → sempre network (jsQR, Tesseract)
+
+---
+
+### Roadmap Verify
+
+| Fase | Estado | Descrição |
+|------|--------|-----------|
+| Modo 1 | ✅ SEALED | Ledger `:8114`, I11, 56.567+ receipts |
+| Modo 2 | ✅ LIVE | Hash Inspector, OCR, crypto.subtle |
+| Modo 3 | ✅ LIVE | QR Decoder, 8 padrões, I18N |
+| W-VERIFY-001 | ✅ LIVE | Agent interpretador, `:8091` |
+| Landing | ✅ LIVE | Unificada, trilíngue |
+| PWA | ✅ LIVE | Instalável Android/iOS/Desktop |
+| Capacitor | ⏳ FUTURO | App Store + Play Store — quando tração |
+
+---
+
+### URLs de produção
+
+```
+Landing:   https://windi-domain.com/verify-public/web/
+Modo 1:    https://windi-domain.com/verify-public/
+Modo 2:    https://windi-domain.com/verify-public/web/hash-inspector.html
+Modo 3:    https://windi-domain.com/verify-public/web/qr-decoder.html
+Agent:     http://localhost:8091/verify-agent/health
+Manifest:  https://windi-domain.com/verify-public/web/manifest.json
+SW:        https://windi-domain.com/verify-public/web/sw.js
+```
+
+---
+
+*Sessão 18 Mar 2026 — WINDI Verify v2 completo*
+*"É possível ler SHA por foto?" → PWA instalável em 8 horas*
