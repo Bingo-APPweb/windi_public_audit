@@ -889,7 +889,7 @@ function renderResult(raw, p, interp) {
     `<a href="${c.url}" target="_blank" rel="noopener" class="btn-cta ${c.cls}">${c.label} →</a>`
   ).join('');
   if (!isWindi) {
-    ctaHtml += `<a href="https://windi-domain.com/app/" target="_blank" class="btn-cta secondary">${t('cta_create')}</a>`;
+    ctaHtml += `<a href="https://windi-domain.com/desktop/" target="_blank" class="btn-cta secondary">${t('cta_create')}</a>`;
     ctaHtml += `<div class="cta-microcopy">${t('cta_microcopy')}</div>`;
   }
   ctaArea.innerHTML = ctaHtml;
