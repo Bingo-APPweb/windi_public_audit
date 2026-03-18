@@ -621,6 +621,33 @@ if USE_FASTAPI:
             "timestamp": result["created_at"],
         }
 
+    # ── G3 Hook: Register Wallet (from wallet_provisioning) ──
+    @app.post("/api/leads/register")
+    async def register_wallet(request: Request):
+        """Called by wallet_provisioning.py G3 hook (fire-and-forget)."""
+        try:
+            body = await request.json()
+        except Exception:
+            return {"status": "error", "detail": "Invalid JSON"}
+
+        wallet_id = body.get("wallet_id", "")
+        email = body.get("email", "")
+        tier = body.get("tier", "PIONEER")
+        source = body.get("source", "wallet_provision")
+
+        if not wallet_id:
+            return {"status": "error", "detail": "wallet_id required"}
+
+        # Log to forensic ledger (no PII)
+        ledger.append(
+            event="WALLET_REGISTERED",
+            entity_id=wallet_id,
+            payload={"tier": tier, "source": source},
+        )
+
+        log.info(f"G3 Hook: wallet registered {wallet_id} (tier={tier})")
+        return {"status": "registered", "wallet_id": wallet_id}
+
     # ── Admin: List Leads ──
     @app.get("/admin/leads", response_class=HTMLResponse)
     async def admin_leads(request: Request, user: str = Depends(verify_admin)):
