@@ -336,3 +336,83 @@ A versão 4 introduz o **Agent Invocation Panel** com 5 canais de dispatch.
 
 ---
 *Migrado de CLAUDE.md 17 Mar 2026 22:50*
+
+---
+
+## § SESSÃO 18 Mar 2026
+**Commits:** 9ab7548 · 72dac22
+**CLAUDE.md:** v1.9.12 → v1.9.13
+
+### Missão Principal
+Documentar e selar as métricas de soberania do WINDI — quanto o sistema "aprendeu" a reduzir dependência de LLM externo.
+
+### Investigação Realizada
+- Auditado `sovereign_router.py` em `/opt/windi/agent-palette/`
+- Extraídas métricas do audit ref: AUDIT-SOVEREIGNTY-20260224
+- Calculado progresso de redução de tokens externos
+
+### Métricas Descobertas
+
+| Métrica | Valor |
+|---------|-------|
+| Total funções | 45 |
+| Funções locais | 42 (93.3%) |
+| Funções semânticas | 3 (6.7%) — requerem LLM externo |
+| Baseline tokens | 4000 tk/sessão |
+| Meta tokens | 1500 tk/sessão |
+| Actual tokens | ~268 tk/sessão |
+| **Progresso** | **149.3%** ✓ META ULTRAPASSADA |
+
+### As 3 Funções Semânticas (ainda requerem LLM externo)
+
+| Intent | Fallback Local | Handler |
+|--------|----------------|---------|
+| `CHAT_INTERPRETIVE` | `HELP` | llm_semantic |
+| `SEMANTIC_ANALYSIS` | `CHECK_RISK` | llm_semantic |
+| `TEXT_GENERATION` | `HELP` | llm_semantic |
+
+### Deployado
+
+| Item | Descrição |
+|------|-----------|
+| §22 Sovereignty Metrics | Documentação I13 Token Independence em CLAUDE.md |
+| §23 Qualidade Soberana | Princípio constitucional + Wisdom Block selado |
+| Espelho HTML | `/opt/windi/docs/espelho-qualidade-soberana.html` |
+| Wisdom Block | WB-KNOW-SOVEREIGNTY-Q-20260318 · HIGH · Ledger :8101 |
+| SKILL.md | Instalado no sistema Claude Code |
+
+### Wisdom Block Selado
+
+```
+ID:          WB-KNOW-SOVEREIGNTY-Q-20260318
+Actor:       human_dragon
+App:         windi-wisdom
+Doc:         Espelho de Qualidade Soberana v1.0
+Governance:  HIGH
+Hash:        sha256:66d542fcc2118f8e174f32d0c9caea336205dc3f73ee735122149fe9716e2d3b
+Invariants:  I1, I9, I10, I11
+Princípio:   "Economy enables Quality"
+Frase:       "O externo sustenta. O interno orienta. A qualidade decide."
+```
+
+### Lições Aprendidas
+
+1. **Ledger API** requer `content_hash` e `sge_score` (numérico, não string "R1")
+2. **Git rebase** com ficheiros untracked conflituantes → remover local antes de pull
+3. **Dois CLAUDE.md** existem: `/home/windi/` (repo git) e `/opt/windi/` (deploy) — usar o do repo
+4. **Fórmula de soberania:**
+   ```
+   Tokens Externos = BASELINE × (1 - SOVEREIGNTY_RATIO)
+   Progresso = (BASELINE - ACTUAL) / (BASELINE - META) × 100
+   ```
+
+### Impacto do Wisdom Block
+
+O WB-KNOW-SOVEREIGNTY-Q-20260318 transforma "economizar tokens" de uma restrição numa **estratégia de qualidade**:
+- FREE = escudo absoluto, zero LLM externo
+- Token externo = investimento justificado por qualidade superior
+- Fallback I10: SEMANTIC→LOCAL sempre disponível
+- Wisdom Blocks crescem → tokens externos diminuem ao longo do tempo
+
+---
+*Registado por Gêmeo · 18 Mar 2026 · OM SHANTI 🐉*
