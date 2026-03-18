@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.14
+**Version:** 1.9.15
 **Sealed:** 2026-03-18
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -568,6 +568,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | **§22 Sovereignty Metrics** | I13 Token Independence — 93.3% local, meta ultrapassada 149% |
 | **§23 Qualidade Soberana** | WB-KNOW-SOVEREIGNTY-Q-20260318 SEALED · Espelho HTML + Princípio |
 | **§24 W-CIA-001** | Detetive Constitucional BIRTH SEALED · Health Pulse no Composer · 5 nginx patches |
+| **§25 W-MGR-001** | Gerente do Composer · 4 situações detectadas · I9 enforced · i18n DE/EN/PT |
 
 ### Completado (17 Mar 2026)
 

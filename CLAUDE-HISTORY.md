@@ -415,4 +415,59 @@ O WB-KNOW-SOVEREIGNTY-Q-20260318 transforma "economizar tokens" de uma restriç�
 - Wisdom Blocks crescem → tokens externos diminuem ao longo do tempo
 
 ---
+
+### W-MGR-001 — Gerente do Composer
+
+**Deployed:** 18 Mar 2026
+**Ficheiro:** `/opt/windi/jornal/jornal-composer.html`
+**Linhas adicionadas:** +222 (CSS + HTML + JS)
+
+#### Arquitectura
+
+```
+jornal-composer.html
+└── W-MGR-001 (injectado como script)
+    ├── OBSERVER   → monitoriza estado dos blocos
+    ├── ANALYSER   → detecta padrões / gaps
+    ├── ROUTER     → decide sugestão por prioridade
+    └── NOTIFIER   → sugere via HUD não-intrusivo
+```
+
+#### 4 Situações Detectadas
+
+| Situação | Trigger | Acção Sugerida |
+|----------|---------|----------------|
+| Canvas vazio | `blocks.length === 0` após 2min | + Capa |
+| Sem Evidence | Artigo sem bloco evidence | + Evidências |
+| Sem Capa | 2+ blocos sem hero | + Capa |
+| Sem Trust | 4+ blocos sem trust | + Trust Ribbon |
+
+#### Componentes Implementados
+
+| Componente | Descrição |
+|------------|-----------|
+| CSS `.mgr-*` | 26 linhas, usa design system WINDI |
+| Botão topbar | `● MGR` junto ao CIA |
+| HUD flutuante | Bottom-right, auto-dismiss 30s |
+| i18n | DE/EN/PT completo |
+| Integração CIA | `MGR.logToCIA()` silent POST |
+
+#### Princípio Constitucional
+
+> "O Gerente observa o que o Humano não consegue ver.
+>  Propõe o que o Humano pode não saber.
+>  Decide apenas quem tem o Toque Final." (I9)
+
+#### Checklist Validado
+
+- [x] Canvas vazio 2min → sugestão aparece
+- [x] Sugestão auto-dismiss após 30s
+- [x] Botão ✓ Sim executa acção
+- [x] Botão Dispensar fecha sem acção
+- [x] Máximo 1 sugestão simultânea
+- [x] `● MGR` visível no topbar
+- [x] I9 respeitado — nunca executa sem confirmação
+- [x] Log enviado ao CIA endpoint
+
+---
 *Registado por Gêmeo · 18 Mar 2026 · OM SHANTI 🐉*
