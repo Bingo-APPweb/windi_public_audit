@@ -1,597 +1,659 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 <head>
-<meta charset="UTF-8"/>
-<!-- Open Graph — WINDI Verify Public -->
-<meta property="og:site_name" content="WINDI Verify"/>
-<meta property="og:type" content="website"/>
-<meta property="og:title" content="WINDI — Verified Document"/>
-<meta property="og:description" content="This document was authenticated and sealed by the WINDI Forensic Ledger. Integrity confirmed."/>
-<meta property="og:url" content="https://windi-domain.com/verify-public/"/>
-<meta property="og:image" content="https://windi-domain.com/verify-public/og-preview.png"/>
-<meta property="og:image:width" content="1200"/>
-<meta property="og:image:height" content="630"/>
-<!-- WhatsApp / Telegram prefer og:image -->
-<meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="WINDI — Verified Document"/>
-<meta name="twitter:description" content="Integrity confirmed by WINDI Forensic Ledger."/>
-<meta name="twitter:image" content="https://windi-domain.com/verify-public/og-preview.png"/>
-<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Crect width='20' height='20' rx='4' fill='%231A1208'/%3E%3Cellipse cx='10' cy='11' rx='4.5' ry='4' transform='rotate(-15 10 11)' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='7' cy='7.5' r='2.8' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='6.2' cy='6.8' r='0.7' fill='%238B6914'/%3E%3Cpath d='M7.5 4.8 C7 3.5 8 2.5 8.5 2' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M7 10 C5 8.5 3 8 2 9 C1.5 9.8 2.5 11 4 10.5' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M13 9.5 C15 8 17 8 17.5 9.5 C17.8 10.5 16.5 11 15 10.5' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M14 13 C16 14 17 15.5 16 16.5 C15 17.5 13.5 16.5 13.5 15' stroke='%238B6914' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E">
-<title>WINDI VERIFY</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI Verify</title>
+<meta name="description" content="Verifica qualquer documento. Lê qualquer QR. Prova qualquer hash.">
+<meta property="og:title" content="WINDI Verify">
+<meta property="og:description" content="Scan any QR. Verify any hash. Understand any document.">
+<meta property="og:image" content="https://windi-domain.com/verify-public/web/og-verify.png">
+<meta name="theme-color" content="#2C2C2A">
 <style>
-:root{--pg:#F5F0E0;--noir:#1A1A1A;--gold:#8B6914;--green:#2D7A4F;--red:#C0392B;--amber:#D4850A;--border:#D4C89A;--muted:#7A6E55}
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--pg);color:var(--noir);font-family:"Segoe UI",system-ui,sans-serif;min-height:100vh;display:flex;flex-direction:column}
-header{border-bottom:2px solid var(--gold);padding:18px 40px;display:flex;align-items:center;justify-content:space-between}
-.brand{display:flex;align-items:center;gap:12px}
-.brand h1{font-size:17px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
-.brand span{font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;display:block;margin-top:2px}
-.pbadge{font-size:11px;color:var(--green);font-weight:600;display:flex;align-items:center;gap:6px}
-.pbadge::before{content:"";width:7px;height:7px;background:var(--green);border-radius:50%;display:inline-block;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.help-btn{font-size:11px;color:var(--muted);text-decoration:none;padding:6px 12px;border:1px solid var(--border);border-radius:4px;transition:all .15s;margin-left:12px}
-.help-btn:hover{border-color:var(--gold);color:var(--noir)}
-main{flex:1;max-width:580px;margin:0 auto;padding:48px 24px;width:100%}
-.hero{text-align:center;margin-bottom:32px}
-.hero h2{font-size:24px;font-weight:700;margin-bottom:10px}
-.hero p{color:var(--muted);font-size:13px;line-height:1.7;margin-bottom:14px}
-.pnote{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--green);background:rgba(45,122,79,.08);padding:6px 14px;border-radius:20px;border:1px solid rgba(45,122,79,.2)}
-.card{background:#fff;border:1px solid var(--border);border-radius:8px;padding:28px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
-.tabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:24px}
-.tab{padding:10px 8px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);border-radius:6px;color:var(--muted);background:none;font-family:inherit;transition:all .15s;text-align:center;display:flex;flex-direction:column;align-items:center;gap:4px}
-.tab .ti{font-size:20px}
-.tab.active{color:var(--noir);border-color:var(--gold);background:rgba(139,105,20,.04)}
-.panel{display:none}.panel.active{display:block}
-.qarea{border:2px dashed var(--border);border-radius:6px;padding:40px 24px;text-align:center;cursor:pointer;transition:all .15s;background:var(--pg)}
-.qarea:hover{border-color:var(--gold);background:rgba(139,105,20,.03)}
-.qarea .qi{font-size:40px;margin-bottom:10px}
-.qarea h3{font-size:15px;font-weight:600;margin-bottom:6px}
-.qarea p{font-size:12px;color:var(--muted)}
-#qvw{display:none;border-radius:6px;overflow:hidden;background:#000;position:relative;aspect-ratio:4/3}
-#qv{width:100%;height:100%;object-fit:cover}
-.qov{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
-.qfr{width:180px;height:180px;border:3px solid var(--gold);border-radius:8px;box-shadow:0 0 0 9999px rgba(0,0,0,.4)}
-#qstop{display:none;margin-top:10px;background:none;border:1px solid var(--border);border-radius:4px;padding:6px 14px;font-size:12px;cursor:pointer;font-family:inherit;color:var(--muted)}
-.drop{border:2px dashed var(--border);border-radius:6px;padding:32px;text-align:center;cursor:pointer;transition:all .15s}
-.drop:hover,.drop.over{border-color:var(--gold);background:rgba(139,105,20,.03)}
-.drop .di{font-size:32px;margin-bottom:8px}
-.drop h3{font-size:14px;font-weight:600;margin-bottom:4px}
-.drop p{font-size:12px;color:var(--muted)}
-#fn{display:none;font-size:12px;color:var(--muted);margin-top:8px;padding:6px 10px;background:rgba(0,0,0,.04);border-radius:4px}
-label{display:block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
-input[type=text]{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:6px;font-size:14px;font-family:monospace;background:var(--pg);color:var(--noir);outline:none;transition:border-color .15s}
-input[type=text]:focus{border-color:var(--gold)}
-.btn{width:100%;padding:14px;background:var(--noir);color:var(--pg);border:none;border-radius:6px;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;margin-top:16px;transition:background .15s;font-family:inherit}
-.btn:hover{background:#333}.btn:disabled{background:#bbb;cursor:default}
-#result{margin-top:24px;display:none}
-.rbox{border-radius:8px;padding:28px;text-align:center;border:2px solid}
-.rbox.verified{border-color:var(--green);background:rgba(45,122,79,.06)}
-.rbox.not_found,.rbox.error{border-color:var(--red);background:rgba(192,57,43,.05)}
-.rbox.tampered{border-color:var(--amber);background:rgba(212,133,10,.05)}
-.rstamp{font-size:52px;margin-bottom:12px;line-height:1}
-.rverdict{font-size:22px;font-weight:700;margin-bottom:16px}
-.rverdict.verified{color:var(--green)}.rverdict.not_found,.rverdict.error{color:var(--red)}.rverdict.tampered{color:var(--amber)}
-.rmeta{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;text-align:left}
-.rf{background:rgba(255,255,255,.7);border-radius:6px;padding:10px 12px}
-.rl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
-.rv{font-size:13px;font-weight:600;color:var(--noir)}
-.rv.ok{color:var(--green)}.rv.no{color:var(--red)}
-.rmsg{font-size:12px;color:var(--muted);margin-bottom:18px;line-height:1.6}
-.dtbtn{background:none;border:1px solid var(--border);border-radius:4px;padding:7px 14px;font-size:11px;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .15s}
-.dtbtn:hover{border-color:var(--gold);color:var(--noir)}
-.share-row{display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap}
-.wa-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:#25D366;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;text-decoration:none;font-family:inherit;transition:opacity .15s;letter-spacing:.03em}
-.wa-btn:hover{opacity:.88}
-.wa-btn svg{width:16px;height:16px;fill:#fff;flex-shrink:0}
-.tg-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:#229ED9;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;text-decoration:none;font-family:inherit;transition:opacity .15s;letter-spacing:.03em}
-.tg-btn:hover{opacity:.88}
-.email-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:#fff;border:1.5px solid var(--border);border-radius:6px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .15s}
-.email-btn:hover{border-color:var(--gold);color:var(--noir)}
-.card-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:linear-gradient(135deg,#F5F0E0 0%,#E8DFC8 100%);border:1.5px solid var(--gold);border-radius:6px;font-size:12px;font-weight:600;color:var(--gold);cursor:pointer;font-family:inherit;transition:all .15s}
-.card-btn:hover{background:var(--gold);color:#fff}
-.cp-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:none;border:1.5px solid var(--border);border-radius:6px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .15s}
-.li-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:#0A66C2;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;text-decoration:none;font-family:inherit;transition:opacity .15s;letter-spacing:.03em}
-.li-btn:hover{opacity:.88}
-.share-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;background:var(--gold);border:none;border-radius:6px;font-size:12px;font-weight:700;color:#fff;cursor:pointer;font-family:inherit;transition:all .15s}
-.share-btn:hover{opacity:.9}
-.windi-cta{display:block;text-align:center;margin-top:14px;font-size:12px;color:var(--muted);text-decoration:none;transition:color .15s}
-.windi-cta:hover{color:var(--gold)}
-.explain-section{margin-top:20px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
-.explain-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--pg);cursor:pointer;transition:background .15s}
-.explain-header:hover{background:#EDE8D0}
-.explain-title{font-size:13px;font-weight:600;color:var(--noir);display:flex;align-items:center;gap:8px}
-.explain-arrow{font-size:12px;color:var(--muted);transition:transform .2s}
-.explain-arrow.open{transform:rotate(180deg)}
-.explain-content{display:none;padding:20px;background:#fff;border-top:1px solid var(--border)}
-.explain-content.open{display:block}
-.explain-tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
-.explain-tab{padding:6px 14px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;transition:all .15s}
-.explain-tab.active{background:var(--gold);border-color:var(--gold);color:#fff}
-.explain-text{font-size:13px;line-height:1.7;color:var(--noir)}
-.explain-text h4{font-size:14px;font-weight:700;margin:16px 0 8px;color:var(--noir)}
-.explain-text h4:first-child{margin-top:0}
-.explain-text ul{margin:8px 0;padding-left:20px}
-.explain-text li{margin:4px 0}
-.explain-text .highlight{background:var(--gold);color:#fff;padding:12px 16px;border-radius:6px;margin:16px 0;font-weight:600;text-align:center}
-.explain-text .tagline{margin-top:20px;padding-top:16px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);text-align:center;font-style:italic}
-.cp-btn:hover{border-color:var(--gold);color:var(--noir)}
-.cp-btn.copied{border-color:var(--green);color:var(--green)}
-.dtbtn:hover{border-color:var(--gold);color:var(--noir)}
-.tech{display:none;margin-top:16px;border-top:1px solid var(--border);padding-top:16px;text-align:left}
-.tech.open{display:block}
-.tr{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(0,0,0,.05);gap:12px}
-.tl{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);min-width:90px}
-.tv{font-family:monospace;font-size:11px;color:var(--noir);word-break:break-all;text-align:right}
-.tok{color:var(--green)}.tno{color:var(--red)}.tuk{color:var(--muted)}
-.loading{text-align:center;padding:28px;color:var(--muted)}
-.spin{display:inline-block;width:18px;height:18px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;margin-right:6px;vertical-align:middle}
-@keyframes spin{to{transform:rotate(360deg)}}
-footer{border-top:1px solid var(--border);padding:16px 40px;text-align:center;font-size:11px;color:var(--muted)}
-
-/* ═══ MOBILE RESPONSIVE — iPhone SE 375px ═══ */
-@media(max-width:480px){
-  /* Layout spacing */
-  header{padding:14px 16px}
-  main{padding:20px 16px}
-  footer{padding:14px 16px;font-size:12px}
-
-  /* Hero section */
-  .hero h2{font-size:20px}
-  .hero p{font-size:14px}
-  .hero p br{display:none}
-
-  /* Cards */
-  .card{padding:20px 16px}
-  .rbox{padding:20px 16px}
-
-  /* Touch targets — minimum 44px height */
-  .tab{padding:14px 10px;min-height:44px;font-size:13px}
-  .tab .ti{font-size:18px}
-  .help-btn{padding:12px 16px;font-size:12px;min-height:44px;display:inline-flex;align-items:center}
-  .btn{padding:16px;font-size:14px;min-height:48px}
-  .dtbtn{padding:12px 16px;font-size:12px;min-height:44px}
-
-  /* Share buttons */
-  .wa-btn,.tg-btn,.email-btn,.cp-btn,.li-btn,.share-btn,.card-btn{
-    padding:12px 18px;font-size:13px;min-height:44px
+  :root {
+    --bg:        #F5F0E0;
+    --bg2:       #EDE8D5;
+    --border:    #C8C3B0;
+    --text:      #2C2C2A;
+    --text2:     #5F5E5A;
+    --text3:     #888780;
+    --teal:      #0F6E56;
+    --teal-bg:   #E1F5EE;
+    --teal-mid:  #5DCAA5;
+    --blue:      #185FA5;
+    --blue-bg:   #E6F1FB;
+    --amber:     #854F0B;
+    --amber-bg:  #FAEEDA;
+    --amber-mid: #FAC775;
+    --purple:    #534AB7;
+    --purple-bg: #EEEDFE;
+    --font:      'Bricolage Grotesque', 'Inter', sans-serif;
+    --mono:      'JetBrains Mono', 'Fira Mono', monospace;
+    --radius:    16px;
+    --radius-sm: 10px;
   }
-  .share-row{gap:10px}
 
-  /* Font sizes — minimum 12px */
-  label{font-size:12px}
-  .pnote{font-size:13px}
-  .qarea p,.drop p{font-size:13px}
-  .qarea h3,.drop h3{font-size:16px}
-  .rl{font-size:11px}
-  .rv{font-size:14px}
-  .rmsg{font-size:13px}
-  .tl{font-size:12px}
-  .tv{font-size:12px}
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  /* Result grid */
-  .rmeta{grid-template-columns:1fr}
-  .rf{padding:12px}
-
-  /* QR area */
-  .qarea{padding:32px 16px}
-  .qfr{width:160px;height:160px}
-  .drop{padding:24px 16px}
-
-  /* Explain section */
-  .explain-header{padding:14px}
-  .explain-content{padding:16px}
-  .explain-tab{padding:10px 14px;font-size:12px;min-height:40px}
-  .explain-text{font-size:14px}
-
-  /* Tech details */
-  .tr{flex-direction:column;gap:4px;padding:10px 0}
-  .tl{min-width:auto;text-align:left}
-  .tv{text-align:left}
-}
-
-/* Extra small — iPhone SE in landscape or very narrow */
-@media(max-width:360px){
-  main{padding:16px 12px}
-  .card{padding:16px 12px}
-  .tabs{gap:6px}
-  .tab{padding:12px 8px;font-size:12px}
-  .qfr{width:140px;height:140px}
-  .share-row{flex-direction:column}
-  .wa-btn,.tg-btn,.email-btn,.cp-btn,.li-btn,.share-btn,.card-btn{
-    width:100%;justify-content:center
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
   }
-}
 
-/* WINDI Dragon Signature v1.0 */
-:root{--dragon-color:#8B6914;--dragon-glow:rgba(139,105,20,0.4)}
-.windi-dragon-logo{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;border:1.5px solid var(--dragon-color);color:var(--dragon-color);filter:drop-shadow(0 0 4px var(--dragon-glow));transition:filter 0.3s ease;flex-shrink:0}
-.windi-dragon-logo:hover{filter:drop-shadow(0 0 10px var(--dragon-glow))}
-.windi-dragon-signature{color:var(--dragon-color);animation:dragon-breathe 2.8s ease-in-out infinite}
-@keyframes dragon-breathe{0%,100%{filter:drop-shadow(0 0 6px var(--dragon-glow))}50%{filter:drop-shadow(0 0 14px var(--dragon-glow))}}
+  /* ── Header ── */
+  .header {
+    background: var(--text);
+    color: var(--bg);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .logo {
+    font-size: 20px; font-weight: 700;
+    letter-spacing: -0.5px;
+    text-decoration: none; color: inherit;
+  }
+  .logo-sub {
+    font-size: 13px; opacity: 0.5;
+    font-weight: 400; letter-spacing: 0;
+  }
+  .header-space { flex: 1; }
+
+  .lang-switcher {
+    display: flex; gap: 2px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 6px; padding: 2px;
+  }
+  .lang-btn {
+    padding: 4px 10px; border: none;
+    background: transparent;
+    color: rgba(255,255,255,0.55);
+    font-size: 11px; font-weight: 600;
+    border-radius: 4px; cursor: pointer;
+    font-family: var(--font); letter-spacing: 0.3px;
+    transition: all 0.15s;
+  }
+  .lang-btn.active { background: rgba(255,255,255,0.2); color: #fff; }
+
+  /* ── Hero ── */
+  .hero {
+    text-align: center;
+    padding: 60px 24px 48px;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--teal-bg);
+    border: 1px solid var(--teal-mid);
+    border-radius: 20px;
+    padding: 5px 14px;
+    font-size: 12px; font-weight: 600;
+    color: var(--teal); margin-bottom: 20px;
+    letter-spacing: 0.3px;
+  }
+  .hero-title {
+    font-size: clamp(28px, 6vw, 44px);
+    font-weight: 700;
+    letter-spacing: -1px;
+    line-height: 1.15;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+  .hero-title span { color: var(--teal); }
+  .hero-sub {
+    font-size: 16px; color: var(--text2);
+    line-height: 1.7; margin-bottom: 32px;
+    max-width: 480px; margin-left: auto; margin-right: auto;
+  }
+
+  /* ── Confidence levels visual ── */
+  .confidence-row {
+    display: flex; gap: 8px;
+    justify-content: center;
+    margin-bottom: 48px;
+    flex-wrap: wrap;
+  }
+  .conf-pill {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px; font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+  .conf-pill.high   { background: var(--teal-bg);   color: var(--teal);   border: 1px solid var(--teal-mid); }
+  .conf-pill.medium { background: var(--blue-bg);   color: var(--blue);   border: 1px solid #85B7EB; }
+  .conf-pill.low    { background: var(--amber-bg);  color: var(--amber);  border: 1px solid var(--amber-mid); }
+  .conf-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .high   .conf-dot { background: var(--teal); }
+  .medium .conf-dot { background: var(--blue); }
+  .low    .conf-dot { background: var(--amber); }
+
+  /* ── Mode cards ── */
+  .modes {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 20px 80px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+  .mode-card {
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    display: flex; flex-direction: column;
+    transition: border-color 0.2s, transform 0.15s;
+    cursor: pointer;
+  }
+  .mode-card:hover {
+    transform: translateY(-2px);
+  }
+  .mode-card.mode-1:hover { border-color: var(--teal); }
+  .mode-card.mode-2:hover { border-color: var(--blue); }
+  .mode-card.mode-3:hover { border-color: var(--amber); }
+
+  .mode-header {
+    padding: 24px 24px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .mode-card.mode-1 .mode-header { background: var(--teal-bg); }
+  .mode-card.mode-2 .mode-header { background: var(--blue-bg); }
+  .mode-card.mode-3 .mode-header { background: var(--amber-bg); }
+
+  .mode-num {
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase;
+    opacity: 0.55; margin-bottom: 6px;
+  }
+  .mode-name {
+    font-size: 20px; font-weight: 700;
+    letter-spacing: -0.3px; margin-bottom: 6px;
+  }
+  .mode-card.mode-1 .mode-name { color: var(--teal); }
+  .mode-card.mode-2 .mode-name { color: var(--blue); }
+  .mode-card.mode-3 .mode-name { color: var(--amber); }
+
+  .mode-tagline {
+    font-size: 13px; color: var(--text2);
+    line-height: 1.5;
+  }
+
+  .mode-body { padding: 20px 24px; flex: 1; }
+
+  .mode-features {
+    list-style: none;
+    display: flex; flex-direction: column; gap: 10px;
+    margin-bottom: 20px;
+  }
+  .mode-features li {
+    display: flex; gap: 10px; align-items: flex-start;
+    font-size: 13px; line-height: 1.5;
+    color: var(--text2);
+  }
+  .feat-icon {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; flex-shrink: 0; margin-top: 1px;
+    font-weight: 700;
+  }
+  .mode-1 .feat-icon { background: var(--teal-bg);  color: var(--teal);  }
+  .mode-2 .feat-icon { background: var(--blue-bg);  color: var(--blue);  }
+  .mode-3 .feat-icon { background: var(--amber-bg); color: var(--amber); }
+
+  .mode-guarantee {
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 12px; font-weight: 600;
+    letter-spacing: 0.2px;
+    margin-bottom: 20px;
+  }
+  .mode-1 .mode-guarantee { background: var(--teal-bg); color: var(--teal); }
+  .mode-2 .mode-guarantee { background: var(--blue-bg); color: var(--blue); }
+  .mode-3 .mode-guarantee { background: var(--amber-bg); color: var(--amber); }
+
+  .mode-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border);
+    background: var(--bg2);
+  }
+  .btn-mode {
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%;
+    padding: 12px 16px;
+    border: none; border-radius: var(--radius-sm);
+    font-size: 14px; font-weight: 600;
+    cursor: pointer; font-family: var(--font);
+    text-decoration: none;
+    transition: opacity 0.15s;
+  }
+  .btn-mode:hover { opacity: 0.88; }
+  .mode-1 .btn-mode { background: var(--teal); color: #fff; }
+  .mode-2 .btn-mode { background: var(--blue); color: #fff; }
+  .mode-3 .btn-mode { background: var(--amber); color: #fff; }
+  .btn-arrow { font-size: 16px; }
+
+  /* ── Philosophy strip ── */
+  .philosophy {
+    background: var(--text);
+    color: var(--bg);
+    padding: 48px 24px;
+    text-align: center;
+  }
+  .philosophy-inner { max-width: 600px; margin: 0 auto; }
+  .philosophy-quote {
+    font-size: clamp(16px, 3vw, 22px);
+    font-weight: 600; line-height: 1.5;
+    margin-bottom: 12px;
+    letter-spacing: -0.3px;
+  }
+  .philosophy-quote em { color: var(--teal-mid); font-style: normal; }
+  .philosophy-sub {
+    font-size: 13px; opacity: 0.5; line-height: 1.6;
+  }
+
+  /* ── Constitution table ── */
+  .constitution {
+    max-width: 640px; margin: 0 auto;
+    padding: 48px 20px;
+  }
+  .section-label {
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase;
+    color: var(--text3); margin-bottom: 16px;
+  }
+  .const-table {
+    width: 100%; border-collapse: collapse;
+    font-size: 13px;
+  }
+  .const-table th {
+    text-align: left; padding: 8px 12px;
+    background: var(--bg2);
+    font-size: 11px; font-weight: 600;
+    color: var(--text3); letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+  .const-table th:first-child { border-radius: 6px 0 0 6px; }
+  .const-table th:last-child  { border-radius: 0 6px 6px 0; }
+  .const-table td {
+    padding: 12px; border-bottom: 1px solid var(--bg2);
+    vertical-align: top; line-height: 1.5;
+    color: var(--text2);
+  }
+  .const-table td:first-child { font-weight: 600; color: var(--text); }
+  .yes { color: var(--teal); font-weight: 700; }
+  .no  { color: var(--text3); }
+
+  /* ── Footer ── */
+  .footer {
+    border-top: 1px solid var(--border);
+    padding: 24px;
+    text-align: center;
+    font-size: 12px; color: var(--text3);
+    line-height: 1.8;
+  }
+  .footer a { color: var(--text2); text-decoration: none; }
+  .footer a:hover { color: var(--text); }
+
+  /* ── Mobile ── */
+  @media(max-width: 600px) {
+    .hero { padding: 40px 20px 36px; }
+    .modes { grid-template-columns: 1fr; }
+    .confidence-row { gap: 6px; }
+  }
 </style>
 </head>
 <body>
-<header>
-  <div class="brand"><div class="windi-dragon-logo"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="10" cy="11" rx="4.5" ry="4" transform="rotate(-15 10 11)"/><circle cx="7" cy="7.5" r="2.8"/><path d="M4.5 8.2 C3.5 8 3.2 9 4 9.5" stroke-width="1.1"/><circle cx="6.2" cy="6.8" r="0.7" fill="currentColor" stroke="none"/><path d="M7.5 4.8 C7 3.5 8 2.5 8.5 2" stroke-width="1"/><path d="M7 10 C5 8.5 3 8 2 9 C1.5 9.8 2.5 11 4 10.5" stroke-width="1"/><path d="M13 9.5 C15 8 17 8 17.5 9.5 C17.8 10.5 16.5 11 15 10.5" stroke-width="1"/><path d="M14 13 C16 14 17 15.5 16 16.5 C15 17.5 13.5 16.5 13.5 15" stroke-width="1.1"/></svg></div><div><h1>WINDI VERIFY</h1><span>Document Authentication</span></div></div>
-  <div class="pbadge">Public Service</div>
-  <a href="/verify-public/docs/WINDI_VERIFY_HowToUse_v1.0.pdf" class="help-btn" target="_blank">? How to Use</a>
+
+<!-- Header -->
+<header class="header">
+  <a href="https://windi-domain.com" class="logo">
+    WINDI <span class="logo-sub">Verify</span>
+  </a>
+  <div class="header-space"></div>
+  <div class="lang-switcher">
+    <button class="lang-btn" onclick="setLang('pt')" id="lb-pt">PT</button>
+    <button class="lang-btn" onclick="setLang('de')" id="lb-de">DE</button>
+    <button class="lang-btn" onclick="setLang('en')" id="lb-en">EN</button>
+  </div>
 </header>
-<main>
-  <div class="hero">
-    <h2>Verify the authenticity of a document</h2>
-    <p>Scan the QR code on the document, upload the file,<br>or enter the document ID below.</p>
-    <div class="pnote">✓ Free &nbsp;·&nbsp; No login required &nbsp;·&nbsp; No data stored</div>
-  </div>
-  <div class="card">
-    <div class="tabs">
-      <button class="tab active" onclick="sw('qr')"><span class="ti"><svg style="width:20px;height:20px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="14" height="14" rx="2"/><circle cx="10" cy="10" r="3"/><path d="M14 6V6.01"/></svg></span>Scan QR</button>
-      <button class="tab" onclick="sw('file')"><span class="ti"><svg style="width:20px;height:20px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2H12L16 6V18H4V2Z"/><path d="M12 2V6H16"/><line x1="7" y1="10" x2="13" y2="10"/><line x1="7" y1="13" x2="13" y2="13"/></svg></span>Upload PDF</button>
-      <button class="tab" onclick="sw('id')"><span class="ti"><svg style="width:20px;height:20px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="14" height="12" rx="1.5"/><line x1="7" y1="8" x2="7" y2="8.01"/><line x1="10" y1="8" x2="10" y2="8.01"/><line x1="13" y1="8" x2="13" y2="8.01"/><line x1="7" y1="12" x2="13" y2="12"/></svg></span>Enter ID</button>
-    </div>
-    <div class="panel active" id="panel-qr">
-      <div class="qarea" id="qa" onclick="startQR()">
-        <div class="qi"><svg style="width:40px;height:40px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="14" height="14" rx="2"/><circle cx="10" cy="10" r="3"/><path d="M14 6V6.01"/></svg></div>
-        <h3>Scan QR Code</h3>
-        <p>Tap to open camera and scan the QR code on the document</p>
-      </div>
-      <div id="qvw"><video id="qv" autoplay playsinline muted></video><div class="qov"><div class="qfr"></div></div></div>
-      <button id="qstop" onclick="stopQR()">✕ Stop Camera</button>
-    </div>
-    <div class="panel" id="panel-file">
-      <div class="drop" id="drop" onclick="document.getElementById('inf').click()" ondragover="dov(event,1)" ondragleave="dov(event,0)" ondrop="ddp(event)">
-        <div class="di"><svg style="width:32px;height:32px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2H12L16 6V18H4V2Z"/><path d="M12 2V6H16"/><line x1="7" y1="10" x2="13" y2="10"/><line x1="7" y1="13" x2="13" y2="13"/></svg></div><h3>Upload document</h3><p>Click or drag a PDF — hashed locally, never stored</p>
-      </div>
-      <input type="file" id="inf" accept=".pdf" style="display:none" onchange="sf(event)"/>
-      <div id="fn"></div>
-      <button class="btn" onclick="go('file')">▶ Verify Document</button>
-    </div>
-    <div class="panel" id="panel-id">
-      <label>Document ID or Receipt Number</label>
-      <input type="text" id="iid" placeholder="e.g. VR-BABEL-0001 or WINDI-2026-0001" onkeydown="if(event.key==='Enter')go('id')"/>
-      <button class="btn" onclick="go('id')">▶ Verify</button>
-    </div>
-  </div>
-  <div id="result"></div>
-</main>
-<footer>WINDI Publishing House &nbsp;·&nbsp; AI processes. Human decides. WINDI guarantees.</footer>
-<script>
-let file=null,stream=null,scanning=false;
 
-// Auto-verify: /verify-public/VR-BABEL-0001 ou ?id=VR-BABEL-0001
-(function autoVerify(){
-  const path = window.location.pathname;
-  const parts = path.split('/').filter(Boolean);
-  const lastPart = parts[parts.length-1];
-  const params = new URLSearchParams(window.location.search);
-  const qid = params.get('id');
-  const docId = (lastPart && lastPart !== 'verify-public') ? decodeURIComponent(lastPart) : qid;
-  if(docId){
-    sw('id');
-    document.getElementById('iid').value = docId;
-    setTimeout(()=>go('id'), 400);
-  }
-})();
-function sw(t){stopQR();document.querySelectorAll('.tab').forEach((e,i)=>e.classList.toggle('active',['qr','file','id'][i]===t));document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.getElementById('panel-'+t).classList.add('active');document.getElementById('result').style.display='none'}
-function dov(e,on){e.preventDefault();document.getElementById('drop').classList.toggle('over',on)}
-function ddp(e){e.preventDefault();document.getElementById('drop').classList.remove('over');const f=e.dataTransfer.files[0];if(f)sf2(f)}
-function sf(e){sf2(e.target.files[0])}
-function sf2(f){file=f;const d=document.getElementById('fn');d.style.display='block';d.textContent='📎 '+f.name+' ('+(f.size/1024).toFixed(1)+' KB)'}
-async function startQR(){
-  try{
-    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
-    const v=document.getElementById('qv');v.srcObject=stream;
-    document.getElementById('qa').style.display='none';
-    document.getElementById('qvw').style.display='block';
-    document.getElementById('qstop').style.display='inline-block';
-    scanning=true;scanFrame(v);
-  }catch(e){alert('Camera not available. Please use Upload or Enter ID.');}
-}
-function stopQR(){scanning=false;if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}document.getElementById('qa').style.display='block';document.getElementById('qvw').style.display='none';document.getElementById('qstop').style.display='none'}
-function scanFrame(v){
-  if(!scanning)return;
-  if(v.readyState===v.HAVE_ENOUGH_DATA&&'BarcodeDetector' in window){
-    const c=document.createElement('canvas');c.width=v.videoWidth;c.height=v.videoHeight;c.getContext('2d').drawImage(v,0,0);
-    new BarcodeDetector({formats:['qr_code']}).detect(c).then(codes=>{if(codes.length>0){stopQR();handleQR(codes[0].rawValue)}}).catch(()=>{});
-  }
-  if(scanning)requestAnimationFrame(()=>scanFrame(v));
-}
-function handleQR(data){show();fetch('/verify-public/qr/'+encodeURIComponent(data)).then(r=>r.json()).then(render).catch(cerr)}
-async function go(mode){
-  show();
-  try{
-    let data;
-    if(mode==='id'){const v=document.getElementById('iid').value.trim();if(!v){alert('Please enter a Document ID.');hide();return}data=await(await fetch('/verify-public/document/'+encodeURIComponent(v))).json();}
-    else{if(!file){alert('Please select a PDF file.');hide();return}const fd=new FormData();fd.append('file',file);data=await(await fetch('/verify-public/file',{method:'POST',body:fd})).json();}
-    render(data);
-  }catch(e){cerr();}
-}
-function show(){const r=document.getElementById('result');r.style.display='block';r.innerHTML='<div class="loading"><span class="spin"></span>Verifying…</div>'}
-function hide(){document.getElementById('result').style.display='none'}
-function cerr(){document.getElementById('result').innerHTML='<div class="rbox error"><div class="rstamp">❌</div><div class="rverdict error">Connection Error</div><div class="rmsg">Could not reach the verification service. Please try again.</div></div>'}
-function tv(v){if(v===true||v==='valid')return'<span class="tok">✔ Valid</span>';if(v===false||v==='invalid')return'<span class="tno">✘ Invalid</span>';return'<span class="tuk">— Unknown</span>'}
-function render(d){
-  const s=d.status||'error';
-  const stamps={verified:'<img src="/verify-public/static/dragon-three-seal.svg" width="80" height="80" alt="WINDI Verified" style="margin-bottom:8px">',not_found:'<img src="/verify-public/static/dragon-witness.svg" width="80" height="80" alt="Not Found" style="opacity:0.4;filter:grayscale(1);margin-bottom:8px">',tampered:'⚠️',error:'<img src="/verify-public/static/dragon-witness.svg" width="80" height="80" alt="Error" style="opacity:0.3;filter:grayscale(1);margin-bottom:8px">'};
-  const verdicts={verified:'AUTHENTIC DOCUMENT',not_found:'DOCUMENT NOT FOUND',tampered:'INTEGRITY WARNING',error:'VERIFICATION ERROR'};
-  const msgs={verified:'This document is authentic. Its content has not been altered since it was issued.',not_found:'This document was not found in the WINDI system. It may not have been issued through WINDI.',tampered:'This document may have been altered after it was issued. Do not trust its contents.',error:'The verification could not be completed. Please try again.'};
-  const id=d.document_id?'<div class="rf"><div class="rl">Document ID</div><div class="rv">'+d.document_id+'</div></div>':'';
-  const issuedOnText=d.timestamp?new Date(d.timestamp).toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}):'';
-  const dt=d.timestamp?'<div class="rf"><div class="rl">Issued on</div><div class="rv">'+issuedOnText+'</div></div>':'';
-  const ig='<div class="rf"><div class="rl">Integrity</div><div class="rv '+(d.integrity==='valid'?'ok':'tuk')+'">'+(d.integrity==='valid'?'✔ Confirmed':'— Unknown')+'</div></div>';
-  const ca='<div class="rf"><div class="rl">Checked at</div><div class="rv">'+new Date(d.checked_at).toLocaleTimeString()+'</div></div>';
-  const tech=d.hash?'<div class="tech" id="tp"><div class="tr"><span class="tl">SHA-256</span><span class="tv">'+d.hash+'</span></div><div class="tr"><span class="tl">Integrity</span><span class="tv">'+tv(d.integrity)+'</span></div><div class="tr"><span class="tl">Signature</span><span class="tv">'+tv(d.signature)+'</span></div><div class="tr"><span class="tl">Ledger</span><span class="tv">'+(d.ledger_anchor?'<span class="tok">✔ Anchored</span>':'<span class="tno">✘ Not found</span>')+'</span></div><div class="tr"><span class="tl">Timestamp</span><span class="tv">'+d.checked_at+'</span></div></div>':'';
-  const dtbtn=d.hash?'<button class="dtbtn" onclick="tgd()">Show technical details</button>':'';
-  const docId=d.document_id||'';
-  const verifyUrl='https://windi-domain.com/verify-public/?id='+encodeURIComponent(docId);
-  const docTitle=d.doc_name||d.document_id||'Document';
-  const waText=encodeURIComponent('✅ Documento verificado pelo WINDI:\n'+docTitle+'\n\nVerifica aqui: '+verifyUrl);
-  const waHref='https://wa.me/?text='+waText;
-  const shareRow=s==='verified'?`
-    <div class="share-row" data-receipt-id="${docId}">
-      <button class="share-btn" onclick="windiShareVerification('${docId}','${docTitle}')">
-        <svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3V13"/><path d="M6 7L10 3L14 7"/><path d="M4 13V16H16V13"/></svg>Share
-      </button>
-      <a class="wa-btn" href="${waHref}" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.374 0 0 5.373 0 12c0 2.116.554 4.129 1.521 5.877L.057 23.882a.5.5 0 00.609.61l6.098-1.451A11.934 11.934 0 0012 24c6.626 0 12-5.373 12-12S18.626 0 12 0z"/></svg>
-        WhatsApp
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-badge" id="hero-badge"></div>
+  <h1 class="hero-title" id="hero-title"></h1>
+  <p class="hero-sub" id="hero-sub"></p>
+
+  <div class="confidence-row">
+    <div class="conf-pill high">
+      <div class="conf-dot"></div>
+      <span id="conf-high-label"></span>
+    </div>
+    <div class="conf-pill medium">
+      <div class="conf-dot"></div>
+      <span id="conf-medium-label"></span>
+    </div>
+    <div class="conf-pill low">
+      <div class="conf-dot"></div>
+      <span id="conf-low-label"></span>
+    </div>
+  </div>
+</section>
+
+<!-- Mode cards -->
+<section class="modes">
+
+  <!-- Mode 1 -->
+  <div class="mode-card mode-1">
+    <div class="mode-header">
+      <div class="mode-num" data-i18n="m1_num"></div>
+      <div class="mode-name" data-i18n="m1_name"></div>
+      <div class="mode-tagline" data-i18n="m1_tagline"></div>
+    </div>
+    <div class="mode-body">
+      <ul class="mode-features" id="m1-features"></ul>
+      <div class="mode-guarantee" data-i18n="m1_guarantee"></div>
+    </div>
+    <div class="mode-footer">
+      <a class="btn-mode" href="https://windi-domain.com/verify-public/" id="m1-btn">
+        <span data-i18n="m1_cta"></span>
+        <span class="btn-arrow">→</span>
       </a>
-      <button class="tg-btn" onclick="windiTelegramShare('${docId}')">
-        <svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 10L18 3L14 17L10 12L14 8"/><path d="M10 12V17"/></svg>Telegram
-      </button>
-      <button class="email-btn" onclick="windiEmailShare('${docId}')">
-        <svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="16" height="12" rx="1.5"/><path d="M2 6L10 11L18 6"/></svg>Email
-      </button>
-      <button class="li-btn" onclick="windiLinkedInShare('${docId}')">
-        <svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="14" height="14" rx="2"/><path d="M7 8V13"/><path d="M7 8V8.01"/><path d="M10 13V10C10 9 11 8 12 8C13 8 13 9 13 10V13"/></svg>LinkedIn
-      </button>
-      <button class="cp-btn" id="cpbtn" onclick="cpLink('${verifyUrl}')">
-        <svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 12C8 12 6 10 6 8C6 6 8 4 10 4L14 4C16 4 18 6 18 8C18 10 16 12 14 12"/><path d="M12 8C12 8 14 10 14 12C14 14 12 16 10 16L6 16C4 16 2 14 2 12C2 10 4 8 6 8"/></svg>Copy
-      </button>
-      <button class="card-btn" onclick="showShareCard('${docId}','${issuedOnText}')">
-        <svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="16" height="14" rx="1.5"/><circle cx="7" cy="9" r="2"/><path d="M18 17L13 12L9 16L6 13L2 17"/></svg>Card
-      </button>
     </div>
-    <a href="https://windi-domain.com/app/?tab=grove&source=verify" target="_blank" rel="noopener" class="windi-cta" style="display:block;margin-top:16px;padding:12px 20px;background:linear-gradient(135deg,#2D7A4F 0%,#1B4332 100%);color:#fff;border-radius:8px;font-weight:700;text-decoration:none;text-align:center"><svg style="width:16px;height:16px;vertical-align:middle;margin-right:6px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 18V10"/><path d="M10 10C8 10 6 8 6 6C6 4 8 2 10 2C12 2 14 4 14 6C14 8 12 10 10 10Z"/><path d="M6 14C4 14 3 15 3 16"/><path d="M14 14C16 14 17 15 17 16"/></svg>Faça a sua própria análise verificável →</a>
-    <a href="https://windi-domain.com" target="_blank" rel="noopener" class="windi-cta" style="margin-top:8px"><svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 18V12"/><path d="M10 12C7 12 5 10 5 7C5 4 7 2 10 2C13 2 15 4 15 7C15 10 13 12 10 12Z"/><path d="M7 7C7 6 8 5 10 5"/></svg>What is WINDI?</a>
-    <div class="explain-section">
-      <button class="explain-header" onclick="toggleExplain()">
-        <span><svg style="width:16px;height:16px;vertical-align:middle;margin-right:6px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2C7 2 5 4 5 7C5 9 6 10 7 11C7.5 11.5 8 12 8 13V14H12V13C12 12 12.5 11.5 13 11C14 10 15 9 15 7C15 4 13 2 10 2Z"/><line x1="8" y1="17" x2="12" y2="17"/><line x1="9" y1="14" x2="9" y2="17"/><line x1="11" y1="14" x2="11" y2="17"/></svg>What does this mean?</span>
-        <span class="explain-arrow" id="explainArrow">▼</span>
-      </button>
-      <div class="explain-content" id="explainContent" style="display:none">
-        <div class="explain-tabs">
-          <button class="explain-tab active" onclick="switchLang('en')">EN</button>
-          <button class="explain-tab" onclick="switchLang('de')">DE</button>
-          <button class="explain-tab" onclick="switchLang('pt')">PT</button>
-        </div>
-        <div class="explain-text" id="explainEN">
-          <strong>What you are holding:</strong><br><br>
-          This document was <strong>forensically sealed by WINDI</strong> — a cryptographic notarization system.<br><br>
-          <strong>What this means:</strong><br>
-          • The document has NOT been modified since it was sealed<br>
-          • The seal date is permanently recorded<br>
-          • Anyone can verify this — no special software needed<br><br>
-          <em>You don't have to believe the person who sent the document.<br>You can verify it yourself.</em>
-        </div>
-        <div class="explain-text" id="explainDE" style="display:none">
-          <strong>Was Sie in den Händen halten:</strong><br><br>
-          Dieses Dokument wurde <strong>forensisch von WINDI versiegelt</strong> — ein kryptografisches Notarisierungssystem.<br><br>
-          <strong>Was das bedeutet:</strong><br>
-          • Das Dokument wurde NICHT verändert seit der Versiegelung<br>
-          • Das Versiegelungsdatum ist dauerhaft aufgezeichnet<br>
-          • Jeder kann dies überprüfen — keine spezielle Software erforderlich<br><br>
-          <em>Sie müssen der Person, die das Dokument gesendet hat, nicht glauben.<br>Sie können es selbst überprüfen.</em>
-        </div>
-        <div class="explain-text" id="explainPT" style="display:none">
-          <strong>O que você tem em mãos:</strong><br><br>
-          Este documento foi <strong>selado forensicamente pelo WINDI</strong> — um sistema de notarização criptográfica.<br><br>
-          <strong>O que isso significa:</strong><br>
-          • O documento NÃO foi modificado desde que foi selado<br>
-          • A data do selo está permanentemente registrada<br>
-          • Qualquer pessoa pode verificar isso — sem necessidade de software especial<br><br>
-          <em>Você não precisa acreditar na pessoa que enviou o documento.<br>Você pode verificar por conta própria.</em>
-        </div>
-      </div>
-    </div>`:''
-  ;
-  document.getElementById('result').innerHTML='<div class="rbox '+s+'"><div class="rstamp">'+stamps[s]+'</div><div class="rverdict '+s+'">'+verdicts[s]+'</div><div class="rmeta">'+id+dt+ig+ca+'</div><div class="rmsg">'+msgs[s]+'</div>'+dtbtn+tech+shareRow+'</div>';
+  </div>
 
-  if(s==='verified'&&docId){document.title='WINDI — Verificado: '+docId;const ogTitle=document.querySelector('meta[property="og:title"]');const ogDesc=document.querySelector('meta[property="og:description"]');const ogUrl=document.querySelector('meta[property="og:url"]');if(ogTitle)ogTitle.setAttribute('content','WINDI — Documento Verificado: '+docId);if(ogDesc)ogDesc.setAttribute('content','Documento '+docId+' autenticado pelo WINDI Forensic Ledger. Integridade confirmada.');if(ogUrl)ogUrl.setAttribute('content',verifyUrl);}
-}
-function tgd(){const p=document.getElementById('tp'),b=document.querySelector('.dtbtn');if(p.classList.toggle('open')){b.textContent='Hide technical details'}else{b.textContent='Show technical details'}}
-function cpLink(url){navigator.clipboard.writeText(url).then(()=>{const b=document.getElementById('cpbtn');if(b){b.textContent='✅ Copiado!';b.classList.add('copied');setTimeout(()=>{b.textContent='🔗 Copy';b.classList.remove('copied')},2000)}}).catch(()=>{const t=document.createElement('textarea');t.value=url;document.body.appendChild(t);t.select();document.execCommand('copy');document.body.removeChild(t)})}
+  <!-- Mode 2 -->
+  <div class="mode-card mode-2">
+    <div class="mode-header">
+      <div class="mode-num" data-i18n="m2_num"></div>
+      <div class="mode-name" data-i18n="m2_name"></div>
+      <div class="mode-tagline" data-i18n="m2_tagline"></div>
+    </div>
+    <div class="mode-body">
+      <ul class="mode-features" id="m2-features"></ul>
+      <div class="mode-guarantee" data-i18n="m2_guarantee"></div>
+    </div>
+    <div class="mode-footer">
+      <a class="btn-mode" href="https://windi-domain.com/verify-public/web/hash-inspector.html" id="m2-btn">
+        <span data-i18n="m2_cta"></span>
+        <span class="btn-arrow">→</span>
+      </a>
+    </div>
+  </div>
 
-// Trilingual Explanation Toggle (Garden Protocol)
-function toggleExplain(){
-  const content=document.getElementById('explainContent');
-  const arrow=document.getElementById('explainArrow');
-  if(content.style.display==='none'){
-    content.style.display='block';
-    arrow.textContent='▲';
-  }else{
-    content.style.display='none';
-    arrow.textContent='▼';
-  }
-}
-function switchLang(lang){
-  const langs=['en','de','pt'];
-  langs.forEach(l=>{
-    const el=document.getElementById('explain'+l.toUpperCase());
-    if(el)el.style.display=l===lang?'block':'none';
-  });
-  document.querySelectorAll('.explain-tab').forEach(tab=>{
-    tab.classList.remove('active');
-    if(tab.textContent.toLowerCase()===lang)tab.classList.add('active');
-  });
-}
+  <!-- Mode 3 -->
+  <div class="mode-card mode-3">
+    <div class="mode-header">
+      <div class="mode-num" data-i18n="m3_num"></div>
+      <div class="mode-name" data-i18n="m3_name"></div>
+      <div class="mode-tagline" data-i18n="m3_tagline"></div>
+    </div>
+    <div class="mode-body">
+      <ul class="mode-features" id="m3-features"></ul>
+      <div class="mode-guarantee" data-i18n="m3_guarantee"></div>
+    </div>
+    <div class="mode-footer">
+      <a class="btn-mode" href="https://windi-domain.com/verify-public/web/qr-decoder.html" id="m3-btn">
+        <span data-i18n="m3_cta"></span>
+        <span class="btn-arrow">→</span>
+      </a>
+    </div>
+  </div>
 
-// WINDI Share Card Generator — Canvas API (Garden Protocol)
-function generateShareCard(receiptId, issuedOn) {
-  const canvas = document.createElement('canvas');
-  canvas.width = 1080;
-  canvas.height = 1080;
-  const ctx = canvas.getContext('2d');
+</section>
 
-  // Background pergaminho
-  ctx.fillStyle = '#F5F0E0';
-  ctx.fillRect(0, 0, 1080, 1080);
+<!-- Philosophy strip -->
+<section class="philosophy">
+  <div class="philosophy-inner">
+    <p class="philosophy-quote" id="phil-quote"></p>
+    <p class="philosophy-sub" id="phil-sub"></p>
+  </div>
+</section>
 
-  // Borda gold
-  ctx.strokeStyle = '#8B6914';
-  ctx.lineWidth = 8;
-  ctx.strokeRect(40, 40, 1000, 1000);
+<!-- Constitution table -->
+<section class="constitution">
+  <div class="section-label" data-i18n="const_label"></div>
+  <table class="const-table">
+    <thead>
+      <tr>
+        <th data-i18n="th_mode"></th>
+        <th data-i18n="th_does"></th>
+        <th data-i18n="th_doesnt"></th>
+        <th data-i18n="th_ledger"></th>
+      </tr>
+    </thead>
+    <tbody id="const-tbody"></tbody>
+  </table>
+</section>
 
-  // Inner border
-  ctx.strokeStyle = '#D4C89A';
-  ctx.lineWidth = 2;
-  ctx.strokeRect(60, 60, 960, 960);
+<!-- Footer -->
+<footer class="footer">
+  <div id="footer-text"></div>
+  <div style="margin-top:6px">
+    <a href="https://windi-domain.com">windi-domain.com</a>
+    &nbsp;·&nbsp;
+    <a href="https://windi-domain.com/verify-public/docs/" data-i18n-href="docs_url" data-i18n="footer_docs"></a>
+    &nbsp;·&nbsp;
+    <a href="https://windi-domain.com/app/" data-i18n="footer_create"></a>
+  </div>
+</footer>
 
-  // Dragon icon area
-  ctx.font = '80px serif';
-  ctx.textAlign = 'center';
-  ctx.fillText('🐉', 540, 200);
+<script>
+// ── I18N ──────────────────────────────────────────────────────
+const I18N = {
+  pt: {
+    hero_badge:      'Verificação constitucional · 3 modos · PT / DE / EN',
+    hero_title:      'Verifica qualquer documento.\nEntende qualquer QR.\nProva qualquer hash.',
+    hero_sub:        'O WINDI lê, interpreta e garante — com fronteiras constitucionais claras entre o que analisa e o que garante.',
+    conf_high:       'HIGH — WINDI garante',
+    conf_medium:     'MEDIUM — prova matemática',
+    conf_low:        'LOW — decodifica e guia',
+    // Mode 1
+    m1_num:          'Modo 1',
+    m1_name:         'WINDI Verify',
+    m1_tagline:      'Verificação com garantia total via Ledger constitucional.',
+    m1_feats:        ['QR WINDI — scan ou upload','56.567+ receipts selados','Assinatura Ed25519 verificada','Timestamp de selagem imutável','Nível de governança LOW / MEDIUM / HIGH'],
+    m1_guarantee:    '🟢 WINDI GARANTE — I11 activo',
+    m1_cta:          'Verificar documento WINDI',
+    // Mode 2
+    m2_num:          'Modo 2',
+    m2_name:         'Hash Inspector',
+    m2_tagline:      'Prova matemática de integridade. Zero dados enviados ao servidor.',
+    m2_feats:        ['Arrasta qualquer ficheiro','Foto / OCR do hash (Tesseract.js)','Colar hash SHA-256 ou SHA-512','100% local — Web Crypto API','Detecção automática de adulteração'],
+    m2_guarantee:    '🔵 PROVA MATEMÁTICA — sem garantia de origem',
+    m2_cta:          'Abrir Hash Inspector',
+    // Mode 3
+    m3_num:          'Modo 3',
+    m3_name:         'QR Decoder',
+    m3_tagline:      'Lê qualquer QR do mundo. Identifica, decodifica e orienta.',
+    m3_feats:        ['Câmera ao vivo + upload de imagem','8 padrões: NFe BR, PIX, ELSTER DE, EU COVID…','Router determinístico — zero IA','Guia para o sistema oficial','Nunca valida em lugar do original'],
+    m3_guarantee:    '🟠 WINDI INTERPRETA — o sistema oficial garante',
+    m3_cta:          'Abrir QR Decoder',
+    // Philosophy
+    phil_quote:      '"Quando as pessoas começam a verificar… o mundo começa a exigir prova."',
+    phil_sub:        'O WINDI não substitui os sistemas de confiança existentes. Ensina a diferença entre "parece verdadeiro" e "é verificavelmente verdadeiro".',
+    // Constitution table
+    const_label:     'Constituição do Verify',
+    th_mode:         'Modo',
+    th_does:         'O que faz',
+    th_doesnt:       'O que NÃO faz',
+    th_ledger:       'Receipt no Ledger',
+    rows: [
+      ['Modo 1 — WINDI', 'Garante autenticidade via Ledger', 'Nunca adivinha, nunca interpola', 'Sim ✓'],
+      ['Modo 2 — Hash', 'Prova integridade matemática', 'Não garante origem ou autoria', 'Não'],
+      ['Modo 3 — QR', 'Decodifica e orienta', 'Nunca valida em lugar do original', 'Não'],
+    ],
+    // Footer
+    footer_text:     'AI processes. Human decides. WINDI guarantees.',
+    footer_docs:     'Documentação',
+    footer_create:   'Criar documento WINDI',
+  },
+  de: {
+    hero_badge:      'Konstitutionelle Verifikation · 3 Modi · PT / DE / EN',
+    hero_title:      'Verifiziere jedes Dokument.\nVerstehe jeden QR-Code.\nBeweise jeden Hash.',
+    hero_sub:        'WINDI liest, interpretiert und garantiert — mit klaren konstitutionellen Grenzen zwischen Analyse und Garantie.',
+    conf_high:       'HIGH — WINDI garantiert',
+    conf_medium:     'MEDIUM — mathematischer Beweis',
+    conf_low:        'LOW — dekodiert und leitet an',
+    m1_num:          'Modus 1',
+    m1_name:         'WINDI Verify',
+    m1_tagline:      'Vollständige Garantie über das konstitutionelle Ledger.',
+    m1_feats:        ['WINDI QR — Scan oder Upload','56.567+ versiegelte Belege','Ed25519-Signatur verifiziert','Unveränderlicher Versiegelungs-Timestamp','Governance-Level LOW / MEDIUM / HIGH'],
+    m1_guarantee:    '🟢 WINDI GARANTIERT — I11 aktiv',
+    m1_cta:          'WINDI-Dokument prüfen',
+    m2_num:          'Modus 2',
+    m2_name:         'Hash-Inspektor',
+    m2_tagline:      'Mathematischer Integritätsbeweis. Keine Daten an Server gesendet.',
+    m2_feats:        ['Beliebige Datei per Drag & Drop','Foto / OCR des Hashes (Tesseract.js)','SHA-256 oder SHA-512 einfügen','100% lokal — Web Crypto API','Automatische Manipulationserkennung'],
+    m2_guarantee:    '🔵 MATHEMATISCHER BEWEIS — keine Herkunftsgarantie',
+    m2_cta:          'Hash-Inspektor öffnen',
+    m3_num:          'Modus 3',
+    m3_name:         'QR-Decoder',
+    m3_tagline:      'Liest jeden QR-Code der Welt. Identifiziert, dekodiert, leitet an.',
+    m3_feats:        ['Live-Kamera + Bild-Upload','8 Muster: NFe BR, PIX, ELSTER DE, EU COVID…','Deterministisches Routing — keine KI','Weiterleitung zum offiziellen System','Validiert nie anstelle des Originals'],
+    m3_guarantee:    '🟠 WINDI INTERPRETIERT — das offizielle System garantiert',
+    m3_cta:          'QR-Decoder öffnen',
+    phil_quote:      '"Wenn Menschen beginnen zu verifizieren… beginnt die Welt, Beweise zu fordern."',
+    phil_sub:        'WINDI ersetzt keine bestehenden Vertrauenssysteme. Es lehrt den Unterschied zwischen "scheint wahr" und "ist nachweislich wahr".',
+    const_label:     'Verify-Verfassung',
+    th_mode:         'Modus',
+    th_does:         'Was es tut',
+    th_doesnt:       'Was es NICHT tut',
+    th_ledger:       'Beleg im Ledger',
+    rows: [
+      ['Modus 1 — WINDI', 'Garantiert Echtheit via Ledger', 'Rät nie, interpoliert nie', 'Ja ✓'],
+      ['Modus 2 — Hash', 'Beweist mathematische Integrität', 'Garantiert nicht Herkunft', 'Nein'],
+      ['Modus 3 — QR', 'Dekodiert und leitet an', 'Validiert nie anstelle des Originals', 'Nein'],
+    ],
+    footer_text:     'AI processes. Human decides. WINDI guarantees.',
+    footer_docs:     'Dokumentation',
+    footer_create:   'WINDI-Dokument erstellen',
+  },
+  en: {
+    hero_badge:      'Constitutional verification · 3 modes · PT / DE / EN',
+    hero_title:      'Verify any document.\nUnderstand any QR.\nProve any hash.',
+    hero_sub:        'WINDI reads, interprets and guarantees — with clear constitutional boundaries between what it analyses and what it guarantees.',
+    conf_high:       'HIGH — WINDI guarantees',
+    conf_medium:     'MEDIUM — mathematical proof',
+    conf_low:        'LOW — decodes and guides',
+    m1_num:          'Mode 1',
+    m1_name:         'WINDI Verify',
+    m1_tagline:      'Full guarantee via the constitutional Ledger.',
+    m1_feats:        ['WINDI QR — scan or upload','56,567+ sealed receipts','Ed25519 signature verified','Immutable sealing timestamp','Governance level LOW / MEDIUM / HIGH'],
+    m1_guarantee:    '🟢 WINDI GUARANTEES — I11 active',
+    m1_cta:          'Verify WINDI document',
+    m2_num:          'Mode 2',
+    m2_name:         'Hash Inspector',
+    m2_tagline:      'Mathematical proof of integrity. Zero data sent to server.',
+    m2_feats:        ['Drag any file','Photo / OCR of hash (Tesseract.js)','Paste SHA-256 or SHA-512','100% local — Web Crypto API','Automatic tampering detection'],
+    m2_guarantee:    '🔵 MATHEMATICAL PROOF — no origin guarantee',
+    m2_cta:          'Open Hash Inspector',
+    m3_num:          'Mode 3',
+    m3_name:         'QR Decoder',
+    m3_tagline:      'Reads any QR code in the world. Identifies, decodes and guides.',
+    m3_feats:        ['Live camera + image upload','8 patterns: NFe BR, PIX, ELSTER DE, EU COVID…','Deterministic routing — zero AI','Guides to the official system','Never validates in place of the original'],
+    m3_guarantee:    '🟠 WINDI INTERPRETS — the official system guarantees',
+    m3_cta:          'Open QR Decoder',
+    phil_quote:      '"When people start verifying… the world starts demanding proof."',
+    phil_sub:        'WINDI does not replace existing trust systems. It teaches the difference between "seems true" and "is verifiably true".',
+    const_label:     'Verify constitution',
+    th_mode:         'Mode',
+    th_does:         'What it does',
+    th_doesnt:       'What it does NOT',
+    th_ledger:       'Receipt in Ledger',
+    rows: [
+      ['Mode 1 — WINDI', 'Guarantees authenticity via Ledger', 'Never guesses, never interpolates', 'Yes ✓'],
+      ['Mode 2 — Hash', 'Proves mathematical integrity', 'Does not guarantee origin or authorship', 'No'],
+      ['Mode 3 — QR', 'Decodes and guides', 'Never validates in place of the original', 'No'],
+    ],
+    footer_text:     'AI processes. Human decides. WINDI guarantees.',
+    footer_docs:     'Documentation',
+    footer_create:   'Create WINDI document',
+  },
+};
 
-  // Checkmark icon
-  ctx.font = 'bold 100px serif';
-  ctx.fillText('✅', 540, 340);
+// ── State ─────────────────────────────────────────────────────
+const S = {
+  lang: navigator.language.startsWith('de') ? 'de' :
+        navigator.language.startsWith('pt') ? 'pt' : 'en',
+};
 
-  // AUTHENTIC DOCUMENT
-  ctx.fillStyle = '#2D5A27';
-  ctx.font = 'bold 64px serif';
-  ctx.fillText('AUTHENTIC', 540, 460);
-  ctx.fillText('DOCUMENT', 540, 540);
+function t(key) { return (I18N[S.lang] || I18N.en)[key] || key; }
 
-  // Divider line
-  ctx.strokeStyle = '#8B6914';
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(240, 590);
-  ctx.lineTo(840, 590);
-  ctx.stroke();
+// ── Apply I18N ────────────────────────────────────────────────
+function applyI18N() {
+  const L = I18N[S.lang] || I18N.en;
 
-  // Receipt ID
-  ctx.fillStyle = '#333';
-  ctx.font = '32px monospace';
-  ctx.fillText(receiptId, 540, 660);
-
-  // Data
-  ctx.font = '28px serif';
-  ctx.fillStyle = '#666';
-  ctx.fillText(issuedOn || new Date().toLocaleDateString('en-GB', {day: 'numeric', month: 'long', year: 'numeric'}), 540, 720);
-
-  // Integrity confirmed
-  ctx.fillStyle = '#2D7A4F';
-  ctx.font = 'bold 24px serif';
-  ctx.fillText('✔ Integrity Confirmed', 540, 790);
-
-  // WINDI branding
-  ctx.fillStyle = '#8B6914';
-  ctx.font = 'bold 36px serif';
-  ctx.fillText('WINDI Publishing House', 540, 880);
-
-  ctx.fillStyle = '#7A6E55';
-  ctx.font = '22px serif';
-  ctx.fillText('windi-domain.com/verify-public', 540, 930);
-
-  ctx.font = 'italic 18px serif';
-  ctx.fillText('AI processes. Human decides. WINDI guarantees.', 540, 980);
-
-  return canvas.toDataURL('image/png');
-}
-
-function showShareCard(receiptId, issuedOnText) {
-  const cardDataUrl = generateShareCard(receiptId, issuedOnText);
-
-  // Check if card section already exists
-  let cardSection = document.getElementById('windi-card-section');
-  if (cardSection) {
-    cardSection.remove();
-  }
-
-  // Create card section
-  cardSection = document.createElement('div');
-  cardSection.id = 'windi-card-section';
-  cardSection.style.cssText = 'margin-top:16px;padding:16px;background:#fff;border:1px solid var(--border);border-radius:8px;text-align:center;';
-
-  // Image
-  const img = document.createElement('img');
-  img.src = cardDataUrl;
-  img.style.cssText = 'width:100%;max-width:320px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.1);';
-  img.alt = 'WINDI Verification Card';
-
-  // Download button
-  const dlBtn = document.createElement('a');
-  dlBtn.href = cardDataUrl;
-  dlBtn.download = 'WINDI-verified-' + receiptId + '.png';
-  dlBtn.innerHTML = '<svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3V13"/><path d="M6 10L10 14L14 10"/><path d="M4 17H16"/></svg>Save Card Image';
-  dlBtn.style.cssText = 'display:block;margin-top:12px;padding:10px 18px;background:var(--gold);color:#fff;border-radius:6px;text-decoration:none;font-size:13px;font-weight:600;';
-
-  // Hint
-  const hint = document.createElement('div');
-  hint.textContent = 'Share on WhatsApp Status, Instagram, or save for later';
-  hint.style.cssText = 'margin-top:8px;font-size:11px;color:var(--muted);';
-
-  cardSection.appendChild(img);
-  cardSection.appendChild(dlBtn);
-  cardSection.appendChild(hint);
-
-  // Insert after share-row
-  const shareRow = document.querySelector('.share-row');
-  if (shareRow) {
-    shareRow.parentNode.insertBefore(cardSection, shareRow.nextSibling);
-  }
-}
-
-// WINDI Email Share — native mailto: (Garden Protocol)
-function windiEmailShare(receiptId) {
-  const verifyUrl = 'https://windi-domain.com/verify-public/?id=' + encodeURIComponent(receiptId);
-  const subject = encodeURIComponent('Document Verified — ' + receiptId);
-  const body = encodeURIComponent(
-    'Hello,\n\nThis document has been cryptographically verified by WINDI Forensic Ledger.\n\n' +
-    'Receipt ID: ' + receiptId + '\n' +
-    'Integrity: ✅ Confirmed\n\n' +
-    'Verify here:\n' + verifyUrl + '\n\n' +
-    '---\nWINDI Publishing House\nAI processes. Human decides. WINDI guarantees.\nwindi-domain.com'
+  // Lang buttons
+  ['pt','de','en'].forEach(l =>
+    document.getElementById('lb-'+l).classList.toggle('active', l === S.lang)
   );
-  window.location.href = 'mailto:?subject=' + subject + '&body=' + body;
+  document.documentElement.lang = S.lang;
+
+  // Hero
+  document.getElementById('hero-badge').textContent = L.hero_badge;
+  document.getElementById('hero-title').innerHTML =
+    L.hero_title.replace(/\n/g, '<br>');
+  document.getElementById('hero-sub').textContent = L.hero_sub;
+  document.getElementById('conf-high-label').textContent   = L.conf_high;
+  document.getElementById('conf-medium-label').textContent = L.conf_medium;
+  document.getElementById('conf-low-label').textContent    = L.conf_low;
+
+  // Static data-i18n elements
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (L[key] !== undefined) el.textContent = L[key];
+  });
+
+  // Mode features
+  ['m1','m2','m3'].forEach(m => {
+    const ul = document.getElementById(m+'-features');
+    const cls = m === 'm1' ? 'mode-1' : m === 'm2' ? 'mode-2' : 'mode-3';
+    ul.innerHTML = L[m+'_feats'].map(f =>
+      `<li>
+        <span class="feat-icon ${cls}">✓</span>
+        <span>${f}</span>
+      </li>`
+    ).join('');
+  });
+
+  // Philosophy
+  document.getElementById('phil-quote').innerHTML =
+    L.phil_quote.replace(/"([^"]+)"/g, '<em>"$1"</em>');
+  document.getElementById('phil-sub').textContent = L.phil_sub;
+
+  // Constitution table
+  const tbody = document.getElementById('const-tbody');
+  tbody.innerHTML = L.rows.map(row =>
+    `<tr>
+      <td>${row[0]}</td>
+      <td>${row[1]}</td>
+      <td class="no">${row[2]}</td>
+      <td class="${row[3].startsWith('S') || row[3].startsWith('J') || row[3].startsWith('Y') ? 'yes' : 'no'}">${row[3]}</td>
+    </tr>`
+  ).join('');
+
+  // Footer
+  document.getElementById('footer-text').textContent = L.footer_text;
 }
 
-// WINDI Telegram Share — zero API, zero approval (Garden Protocol)
-function windiTelegramShare(receiptId) {
-  const verifyUrl = 'https://windi-domain.com/verify-public/?id=' + encodeURIComponent(receiptId);
-  const text = encodeURIComponent(
-    '✅ Document verified by WINDI Forensic Ledger\n\nReceipt: ' + receiptId + '\n\nVerify here: ' + verifyUrl
-  );
-  window.open('https://t.me/share/url?url=' + encodeURIComponent(verifyUrl) + '&text=' + text, '_blank');
+function setLang(lang) {
+  S.lang = lang;
+  applyI18N();
 }
 
-// WINDI LinkedIn Share — professional network distribution (Garden Protocol)
-function windiLinkedInShare(receiptId) {
-  const verifyUrl = 'https://windi-domain.com/verify-public/?id=' + encodeURIComponent(receiptId);
-  window.open('https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(verifyUrl), '_blank', 'width=600,height=600');
-}
-
-// WINDI Web Share API — seed distribution (patch do Gêmeo)
-function windiShareVerification(receiptId, docTitle) {
-  const verifyUrl = 'https://windi-domain.com/verify-public/?id=' + encodeURIComponent(receiptId);
-  const shareData = {
-    title: '✅ Document verified by WINDI',
-    text: 'This document has been cryptographically verified by WINDI Forensic Ledger.\n\nReceipt: ' + receiptId + '\n\nVerify here:',
-    url: verifyUrl
-  };
-  // Web Share API — mobile: WhatsApp, Telegram, etc.
-  if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
-    navigator.share(shareData)
-      .then(function() { console.log('[WINDI] Shared successfully'); })
-      .catch(function(err) {
-        if (err.name !== 'AbortError') cpLink(verifyUrl);
-      });
-  } else {
-    // Desktop fallback → copy link
-    cpLink(verifyUrl);
-  }
-}
+// ── Init ──────────────────────────────────────────────────────
+applyI18N();
 </script>
 </body>
 </html>
