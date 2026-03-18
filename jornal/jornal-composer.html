@@ -1741,11 +1741,11 @@ const MGR = {
   startTime: Date.now(),
 
   init() {
-    // TEST MODE: 10 segundos (produção: 120000ms = 2 min)
-    this.idleTimer = setTimeout(() => this.analyse(), 10000);
-    // Análises periódicas a cada 15 segundos (produção: 45000ms)
-    this.checkInterval = setInterval(() => this.analyse(), 15000);
-    console.log('🏗️ W-MGR-001 ONLINE · TEST MODE 10s');
+    // Primeira análise após 2 minutos de idle
+    this.idleTimer = setTimeout(() => this.analyse(), 120000);
+    // Análises periódicas a cada 45 segundos
+    this.checkInterval = setInterval(() => this.analyse(), 45000);
+    console.log('🏗️ W-MGR-001 ONLINE · Gerente do Composer activo');
   },
 
   analyse() {
@@ -1779,8 +1779,8 @@ const MGR = {
       addTrust: {de: '+ Trust Ribbon', en: '+ Trust Ribbon', pt: '+ Trust Ribbon'}
     };
 
-    // ─── Situação 1: Canvas vazio (TEST: 10s, PROD: 120s) ───
-    if (blocks.length === 0 && elapsed > 10) {
+    // ─── Situação 1: Canvas vazio após 2 minutos ───
+    if (blocks.length === 0 && elapsed > 120) {
       suggestions.push({
         type: 'EMPTY_CANVAS',
         msg: MGR_MSG.empty[LANG] || MGR_MSG.empty.de,
