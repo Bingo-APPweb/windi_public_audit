@@ -19,8 +19,11 @@ TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
 
 # ── Admin ──
 ADMIN_EMAIL = os.environ.get("WINDI_ADMIN_EMAIL", "jobernc@gmail.com")
-ADMIN_USER = os.environ.get("WINDI_ADMIN_USER", "dragon")
-ADMIN_PASS = os.environ.get("WINDI_ADMIN_PASS", "windi-genesis-2026")
+ADMIN_USER = os.environ.get("WINDI_ADMIN_USER")
+ADMIN_PASS = os.environ.get("WINDI_ADMIN_PASS")
+if not ADMIN_USER or not ADMIN_PASS:
+    raise RuntimeError("WINDI_ADMIN_USER/PASS não definidas — verificar .env")
+
 
 # ── SMTP (pilot: localhost sendmail or external) ──
 SMTP_HOST = os.environ.get("WINDI_SMTP_HOST", "localhost")
