@@ -570,6 +570,8 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | **§24 W-CIA-001** | Detetive Constitucional BIRTH SEALED · Health Pulse no Composer · 5 nginx patches |
 | **§25 W-MGR-001** | Gerente do Composer LIVE · HUD âmbar · i18n automático |
 | **§26 W-SCH-001** | Instrutor do Composer LIVE · 6 dicas contextuais · Toggle ON/OFF |
+| **G3 Tools + Verify** | 🛡️ Verify adicionado à Tools section · `/verify-public/web/` |
+| **Root Redirect** | `windi-domain.com/` → 301 → `/desktop/` · GEN 7 porta única |
 
 ### Completado (17 Mar 2026)
 
