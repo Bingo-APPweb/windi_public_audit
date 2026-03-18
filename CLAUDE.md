@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.13
+**Version:** 1.9.14
 **Sealed:** 2026-03-18
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -567,6 +567,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 |-----|-----------|
 | **§22 Sovereignty Metrics** | I13 Token Independence — 93.3% local, meta ultrapassada 149% |
 | **§23 Qualidade Soberana** | WB-KNOW-SOVEREIGNTY-Q-20260318 SEALED · Espelho HTML + Princípio |
+| **§24 W-CIA-001** | Detetive Constitucional BIRTH SEALED · Health Pulse no Composer · 5 nginx patches |
 
 ### Completado (17 Mar 2026)
 
@@ -869,6 +870,57 @@ O WINDI não economiza tokens para gastar menos — economiza para investir onde
 |------|------|
 | HTML | `/opt/windi/docs/espelho-qualidade-soberana.html` |
 | SKILL | Sistema Claude Code |
+
+---
+
+## 24. W-CIA-001 — Detetive Constitucional · 18 Mar 2026
+
+**WINDI-CIA-001-BIRTH-20260318 · SEALED · HIGH**
+**Verify:** `https://windi-domain.com/verify-public/document/WINDI-CIA-001-BIRTH-20260318`
+
+O W-CIA-001 é o agente de diagnóstico e monitorização do ecossistema WINDI.
+Nasceu de uma conversa matinal sobre Replit Agent 4 e tornou-se infraestrutura constitucional em 97 minutos.
+
+### Capacidades
+
+| Capacidade | Descrição |
+|------------|-----------|
+| Health Pulse | Diagnóstico de 4 serviços em paralelo (Dragon, Ledger, Export, Dispatch) |
+| Indicador Visual | Dot pulsante no topbar do Composer (🟢/🟡/🔴) |
+| Polling Autónomo | Verificação a cada 30 segundos |
+| Painel Clicável | Detalhes de cada serviço com status LIVE/WARN/DOWN |
+
+### Arquitectura
+
+```
+W-CIA-001
+├── DIAGNÓSTICO  ← Fase actual (bug tracking + health monitoring)
+├── SHIELD       ← Fase futura (anti-intrusion + rate-limit)
+└── FORENSE      ← Maturidade (receipt por tentativa de ataque)
+```
+
+### Princípio
+
+> "Observa. Regista. Propõe. Aguarda o Toque Soberano."
+
+### Ficheiros
+
+| Tipo | Path |
+|------|------|
+| Health Pulse | `/opt/windi/jornal/jornal-composer.html` (linhas 69-94, 359-372, 1448-1505) |
+| Patch Dragon | `/home/windi/patch-nginx-dragon-health.sh` |
+| Patch Dispatch | `/home/windi/patch-nginx-dispatch-health.sh` |
+| Patch Verify | `/home/windi/patch-nginx-verify-api.sh` |
+
+### Gaps Resolvidos na Sessão de Nascimento
+
+| Gap | Descrição | Status |
+|-----|-----------|--------|
+| G4 | Ledger seal pipeline | ✅ 56562 receipts |
+| G3 | Export Engine :8103 | ✅ SOVEREIGN M3 |
+| G1 | Dragon /health via nginx | ✅ LIVE |
+| G5 | Dispatch /health via nginx | ✅ LIVE |
+| G6 | Verify API via nginx | ✅ LIVE |
 
 ---
 
