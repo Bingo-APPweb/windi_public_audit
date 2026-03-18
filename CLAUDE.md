@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.15
+**Version:** 1.9.16
 **Sealed:** 2026-03-18
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -568,7 +568,8 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | **§22 Sovereignty Metrics** | I13 Token Independence — 93.3% local, meta ultrapassada 149% |
 | **§23 Qualidade Soberana** | WB-KNOW-SOVEREIGNTY-Q-20260318 SEALED · Espelho HTML + Princípio |
 | **§24 W-CIA-001** | Detetive Constitucional BIRTH SEALED · Health Pulse no Composer · 5 nginx patches |
-| **§25 W-MGR-001** | Gerente do Composer · 4 situações detectadas · I9 enforced · i18n DE/EN/PT |
+| **§25 W-MGR-001** | Gerente do Composer LIVE · HUD âmbar · i18n automático |
+| **§26 W-SCH-001** | Instrutor do Composer LIVE · 6 dicas contextuais · Toggle ON/OFF |
 
 ### Completado (17 Mar 2026)
 
@@ -922,6 +923,68 @@ W-CIA-001
 | G1 | Dragon /health via nginx | ✅ LIVE |
 | G5 | Dispatch /health via nginx | ✅ LIVE |
 | G6 | Verify API via nginx | ✅ LIVE |
+
+---
+
+## 25. W-MGR-001 — Gerente do Composer · 18 Mar 2026
+
+**Status:** LIVE no Jornal Composer
+**Princípio:** "O Gerente observa. Propõe. Nunca decide sem o Humano." (I9)
+
+O W-MGR-001 observa o **documento** e sugere melhorias contextuais.
+
+### Comportamento
+
+| Trigger | Sugestão |
+|---------|----------|
+| Canvas vazio | "Começar com Cover-Block?" |
+| Poucos blocos | "Adicionar mais conteúdo?" |
+| Gaps detectados | Sugestões específicas |
+
+### Características
+
+- HUD âmbar no canto inferior direito
+- i18n automático (DE/EN/PT)
+- Botões: Aceitar / Dispensar
+- Polling a cada 45s + idle 120s
+
+---
+
+## 26. W-SCH-001 — Instrutor do Composer · 18 Mar 2026
+
+**Status:** LIVE no Jornal Composer
+**Princípio:** "Ensina quando o Humano parou."
+
+O W-SCH-001 observa o **Humano** e ensina quando detecta idle.
+
+### 6 Dicas Contextuais
+
+| Contexto | Dica |
+|----------|------|
+| Canvas vazio | 📰 "Começa pela Capa" |
+| Bloco Evidências | 🛡️ "OCR directo disponível" |
+| Bloco Capa | 🎯 "Título com impacto" |
+| Inspector aberto | ✨ "AI Generate disponível" |
+| 3+ blocos | 🚀 "Pronto para Despachar" |
+| Fallback | 🌐 "3 línguas por bloco" |
+
+### Características
+
+- Toast centrado no fundo do ecrã
+- Trigger: 60s idle
+- Auto-dismiss: 10s
+- Toggle ON/OFF no topbar
+- localStorage: `windi_sch_enabled`
+- Nunca repete dicas na mesma sessão
+
+### Topbar do Composer
+
+```
+[🟢 CIA]  [● MGR]  [🟢 SCH]
+     ↑         ↑         ↑
+  Saúde    Gerente   Instrutor
+ecossistema documento   humano
+```
 
 ---
 
