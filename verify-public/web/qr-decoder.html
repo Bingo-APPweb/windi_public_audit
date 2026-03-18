@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WINDI Verify — QR Decoder Universal</title>
 <style>
-  /* ── WINDI Design System — KLAR palette ── */
   :root {
     --bg:        #F5F0E0;
     --bg2:       #EDE8D5;
@@ -25,448 +24,243 @@
     --amber-mid: #FAC775;
     --purple:    #534AB7;
     --purple-bg: #EEEDFE;
-    --coral:     #993C1D;
-    --coral-bg:  #FAECE7;
-    --gray2:     #B4B2A9;
     --font:      'Bricolage Grotesque', 'Inter', sans-serif;
     --mono:      'JetBrains Mono', 'Fira Mono', monospace;
     --radius:    12px;
     --radius-sm: 8px;
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: var(--font);
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-  }
+  body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; }
 
   /* ── Header ── */
   .header {
-    background: var(--text);
-    color: var(--bg);
-    padding: 14px 24px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
+    background: var(--text); color: var(--bg);
+    padding: 12px 20px;
+    display: flex; align-items: center; gap: 12px;
   }
   .header-logo { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; }
   .header-sep  { opacity: 0.3; }
-  .header-mode { font-size: 13px; opacity: 0.7; }
+  .header-mode { font-size: 13px; opacity: 0.7; flex: 1; }
 
-  .container {
-    max-width: 720px;
-    margin: 0 auto;
-    padding: 32px 20px 80px;
+  /* Language switcher */
+  .lang-switcher {
+    display: flex; gap: 2px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 6px; padding: 2px;
+  }
+  .lang-btn {
+    padding: 4px 9px;
+    border: none; background: transparent;
+    color: rgba(255,255,255,0.6);
+    font-size: 11px; font-weight: 600;
+    border-radius: 4px; cursor: pointer;
+    font-family: var(--font);
+    letter-spacing: 0.3px;
+    transition: all 0.15s;
+  }
+  .lang-btn.active {
+    background: rgba(255,255,255,0.2);
+    color: #fff;
   }
 
-  .section-title {
-    font-size: 22px; font-weight: 600;
-    margin-bottom: 6px; letter-spacing: -0.3px;
-  }
-  .section-sub {
-    font-size: 14px; color: var(--text2);
-    margin-bottom: 28px; line-height: 1.65;
-  }
+  .container { max-width: 720px; margin: 0 auto; padding: 32px 20px 80px; }
 
-  /* ── Input tabs ── */
+  .section-title { font-size: 22px; font-weight: 600; margin-bottom: 6px; letter-spacing: -0.3px; }
+  .section-sub   { font-size: 14px; color: var(--text2); margin-bottom: 28px; line-height: 1.65; }
+
+  /* ── Tabs ── */
   .tabs {
     display: flex; gap: 4px;
     background: var(--bg2);
-    border-radius: var(--radius-sm);
-    padding: 4px;
+    border-radius: var(--radius-sm); padding: 4px;
     margin-bottom: 24px;
   }
   .tab {
-    flex: 1; padding: 9px 12px;
+    flex: 1; padding: 9px 10px;
     border: none; background: transparent;
     border-radius: calc(var(--radius-sm) - 2px);
     font-size: 13px; font-weight: 500;
     color: var(--text2); cursor: pointer;
-    transition: all 0.15s;
-    font-family: var(--font);
+    transition: all 0.15s; font-family: var(--font);
   }
-  .tab.active {
-    background: var(--text);
-    color: var(--bg);
-  }
+  .tab.active { background: var(--text); color: var(--bg); }
 
-  /* ── Camera zone ── */
+  /* ── Camera ── */
   .camera-zone { display: none; }
   .camera-zone.show { display: block; }
-
   .camera-wrap {
-    position: relative;
-    background: #111;
-    border-radius: var(--radius);
-    overflow: hidden;
-    aspect-ratio: 4/3;
-    max-height: 360px;
+    position: relative; background: #111;
+    border-radius: var(--radius); overflow: hidden;
+    aspect-ratio: 4/3; max-height: 340px;
   }
-  #camera-video {
-    width: 100%; height: 100%;
-    object-fit: cover;
-    display: block;
-  }
+  #camera-video { width: 100%; height: 100%; object-fit: cover; display: block; }
   #camera-canvas { display: none; }
-
   .scan-overlay {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
     pointer-events: none;
   }
   .scan-frame {
-    width: 200px; height: 200px;
-    border: 2px solid rgba(255,255,255,0.7);
-    border-radius: 12px;
-    position: relative;
+    width: 190px; height: 190px;
+    border: 2px solid rgba(255,255,255,0.6);
+    border-radius: 12px; position: relative;
   }
   .scan-frame::before {
-    content: '';
-    position: absolute;
-    top: -2px; left: -2px; right: -2px;
-    height: 4px;
-    background: var(--teal-mid);
-    border-radius: 2px;
-    animation: scan-line 2s ease-in-out infinite;
+    content: ''; position: absolute;
+    top: -2px; left: 10px; right: 10px; height: 3px;
+    background: var(--teal-mid); border-radius: 2px;
+    animation: scan 2s ease-in-out infinite;
   }
-  @keyframes scan-line {
-    0%, 100% { top: -2px; }
-    50% { top: calc(100% - 2px); }
-  }
-
-  .scan-corner {
-    position: absolute;
-    width: 20px; height: 20px;
-    border-color: var(--teal-mid);
-    border-style: solid;
-  }
-  .scan-corner.tl { top: -2px; left: -2px; border-width: 3px 0 0 3px; border-radius: 4px 0 0 0; }
-  .scan-corner.tr { top: -2px; right: -2px; border-width: 3px 3px 0 0; border-radius: 0 4px 0 0; }
-  .scan-corner.bl { bottom: -2px; left: -2px; border-width: 0 0 3px 3px; border-radius: 0 0 0 4px; }
-  .scan-corner.br { bottom: -2px; right: -2px; border-width: 0 3px 3px 0; border-radius: 0 0 4px 0; }
-
-  .camera-status {
-    text-align: center;
-    font-size: 12px;
-    color: var(--text2);
-    margin-top: 10px;
-    min-height: 20px;
-  }
-  .camera-status.scanning { color: var(--teal); }
-  .camera-status.error    { color: var(--red);  }
-
+  @keyframes scan { 0%,100%{top:-2px} 50%{top:calc(100% - 1px)} }
+  .sc { position: absolute; width: 18px; height: 18px; border-color: var(--teal-mid); border-style: solid; }
+  .sc.tl{top:-2px;left:-2px;border-width:3px 0 0 3px;border-radius:4px 0 0 0}
+  .sc.tr{top:-2px;right:-2px;border-width:3px 3px 0 0;border-radius:0 4px 0 0}
+  .sc.bl{bottom:-2px;left:-2px;border-width:0 0 3px 3px;border-radius:0 0 0 4px}
+  .sc.br{bottom:-2px;right:-2px;border-width:0 3px 3px 0;border-radius:0 0 4px 0}
+  .camera-status { text-align:center;font-size:12px;color:var(--text2);margin-top:10px;min-height:20px; }
+  .camera-status.scanning { color:var(--teal); }
+  .camera-status.error    { color:var(--red);  }
   .btn-camera {
-    width: 100%;
-    margin-top: 12px;
-    padding: 12px;
-    background: var(--text);
-    color: var(--bg);
-    border: none;
-    border-radius: var(--radius-sm);
-    font-size: 14px; font-weight: 500;
-    cursor: pointer; font-family: var(--font);
-    transition: opacity 0.15s;
+    width:100%;margin-top:12px;padding:12px;
+    background:var(--text);color:var(--bg);border:none;
+    border-radius:var(--radius-sm);font-size:14px;font-weight:500;
+    cursor:pointer;font-family:var(--font);transition:opacity 0.15s;
   }
-  .btn-camera:hover { opacity: 0.85; }
-  .btn-camera.active {
-    background: var(--red);
-  }
+  .btn-camera:hover { opacity:0.85; }
+  .btn-camera.active { background:var(--red); }
 
-  /* ── Upload zone ── */
-  .upload-zone { display: none; }
-  .upload-zone.show { display: block; }
-
+  /* ── Upload ── */
+  .upload-zone { display:none; }
+  .upload-zone.show { display:block; }
   .dropzone {
-    border: 2px dashed var(--border);
-    border-radius: var(--radius);
-    padding: 40px 24px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    background: var(--bg2);
-    position: relative;
+    border:2px dashed var(--border);border-radius:var(--radius);
+    padding:40px 24px;text-align:center;cursor:pointer;
+    transition:all 0.2s;background:var(--bg2);position:relative;
   }
-  .dropzone:hover, .dropzone.over {
-    border-color: var(--amber);
-    background: var(--amber-bg);
-  }
-  .dropzone input[type=file] {
-    position: absolute; inset: 0;
-    opacity: 0; cursor: pointer;
-    width: 100%; height: 100%;
-  }
-  .drop-icon  { font-size: 32px; margin-bottom: 10px; }
-  .drop-label { font-size: 15px; font-weight: 500; margin-bottom: 4px; }
-  .drop-hint  { font-size: 12px; color: var(--text3); }
+  .dropzone:hover,.dropzone.over { border-color:var(--amber);background:var(--amber-bg); }
+  .dropzone input[type=file] { position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%; }
+  .drop-icon  { font-size:32px;margin-bottom:10px; }
+  .drop-label { font-size:15px;font-weight:500;margin-bottom:4px; }
+  .drop-hint  { font-size:12px;color:var(--text3); }
 
-  /* ── Paste zone ── */
-  .paste-zone { display: none; }
-  .paste-zone.show { display: block; }
-
+  /* ── Paste ── */
+  .paste-zone { display:none; }
+  .paste-zone.show { display:block; }
+  .paste-hint { font-size:13px;color:var(--text2);margin-bottom:10px; }
   .paste-area {
-    width: 100%;
-    min-height: 100px;
-    padding: 14px;
-    font-family: var(--mono);
-    font-size: 12px;
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius-sm);
-    background: var(--bg);
-    color: var(--text);
-    resize: vertical;
-    outline: none;
-    transition: border-color 0.15s;
-    line-height: 1.6;
+    width:100%;min-height:100px;padding:14px;
+    font-family:var(--mono);font-size:12px;
+    border:1.5px solid var(--border);border-radius:var(--radius-sm);
+    background:var(--bg);color:var(--text);
+    resize:vertical;outline:none;transition:border-color 0.15s;line-height:1.6;
   }
-  .paste-area:focus { border-color: var(--amber); }
-
+  .paste-area:focus { border-color:var(--amber); }
   .btn-paste-decode {
-    width: 100%;
-    margin-top: 10px;
-    padding: 12px;
-    background: var(--text);
-    color: var(--bg);
-    border: none;
-    border-radius: var(--radius-sm);
-    font-size: 14px; font-weight: 500;
-    cursor: pointer; font-family: var(--font);
-    transition: opacity 0.15s;
+    width:100%;margin-top:10px;padding:12px;
+    background:var(--text);color:var(--bg);border:none;
+    border-radius:var(--radius-sm);font-size:14px;font-weight:500;
+    cursor:pointer;font-family:var(--font);transition:opacity 0.15s;
   }
-  .btn-paste-decode:hover { opacity: 0.85; }
-  .btn-paste-decode:disabled { opacity: 0.35; cursor: not-allowed; }
+  .btn-paste-decode:hover{opacity:0.85;}
+  .btn-paste-decode:disabled{opacity:0.35;cursor:not-allowed;}
 
   /* ── Result ── */
-  .result { display: none; margin-top: 28px; }
-  .result.show { display: block; }
+  .result { display:none;margin-top:28px; }
+  .result.show { display:block; }
 
-  /* Confidence badge */
-  .confidence-row {
-    display: flex; align-items: center; gap: 10px;
-    margin-bottom: 16px;
-  }
+  .confidence-row { display:flex;align-items:center;gap:10px;margin-bottom:16px; }
   .confidence-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-size: 11px; font-weight: 700;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
+    display:inline-flex;align-items:center;gap:6px;
+    padding:5px 12px;border-radius:20px;
+    font-size:11px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;
   }
-  .confidence-badge.HIGH   { background: var(--teal-bg);   color: var(--teal);   }
-  .confidence-badge.MEDIUM { background: var(--blue-bg);   color: var(--blue);   }
-  .confidence-badge.LOW    { background: var(--amber-bg);  color: var(--amber);  }
+  .confidence-badge.HIGH   { background:var(--teal-bg);  color:var(--teal);  }
+  .confidence-badge.MEDIUM { background:var(--blue-bg);  color:var(--blue);  }
+  .confidence-badge.LOW    { background:var(--amber-bg); color:var(--amber); }
+  .conf-dot { width:7px;height:7px;border-radius:50%;flex-shrink:0; }
+  .HIGH   .conf-dot { background:var(--teal); }
+  .MEDIUM .conf-dot { background:var(--blue); }
+  .LOW    .conf-dot { background:var(--amber); }
 
-  .confidence-dot {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-  .HIGH   .confidence-dot { background: var(--teal); }
-  .MEDIUM .confidence-dot { background: var(--blue); }
-  .LOW    .confidence-dot { background: var(--amber); }
+  .result-card { border-radius:var(--radius);border:1.5px solid;overflow:hidden; }
+  .result-card.WINDI_QR { border-color:var(--teal); }
+  .result-card.KNOWN    { border-color:var(--amber); }
+  .result-card.UNKNOWN  { border-color:var(--border); }
 
-  /* Result card */
-  .result-card {
-    border-radius: var(--radius);
-    border: 1.5px solid;
-    overflow: hidden;
-  }
-  .result-card.WINDI_QR  { border-color: var(--teal);   }
-  .result-card.KNOWN     { border-color: var(--amber);  }
-  .result-card.UNKNOWN   { border-color: var(--border); }
-
-  .result-header {
-    padding: 16px 20px 14px;
-  }
-  .result-card.WINDI_QR  .result-header { background: var(--teal-bg);  }
-  .result-card.KNOWN     .result-header { background: var(--amber-bg); }
-  .result-card.UNKNOWN   .result-header { background: var(--bg2);      }
+  .result-header { padding:16px 20px 14px; }
+  .result-card.WINDI_QR .result-header { background:var(--teal-bg); }
+  .result-card.KNOWN    .result-header { background:var(--amber-bg); }
+  .result-card.UNKNOWN  .result-header { background:var(--bg2); }
 
   .result-type-label {
-    font-size: 10px; font-weight: 700;
-    letter-spacing: 1px; text-transform: uppercase;
-    margin-bottom: 4px;
-    opacity: 0.6;
+    font-size:10px;font-weight:700;letter-spacing:1px;
+    text-transform:uppercase;margin-bottom:4px;opacity:0.6;
   }
-  .result-title {
-    font-size: 17px; font-weight: 600;
-    margin-bottom: 6px;
-  }
-  .result-msg {
-    font-size: 13px; color: var(--text2);
-    line-height: 1.65;
-  }
+  .result-title { font-size:17px;font-weight:600;margin-bottom:6px; }
+  .result-msg   { font-size:13px;color:var(--text2);line-height:1.65; }
 
-  /* Decoded fields */
-  .decoded-fields {
-    padding: 14px 20px;
-    border-top: 1px solid var(--border);
-    background: var(--bg);
-  }
+  .decoded-fields { padding:14px 20px;border-top:1px solid var(--border);background:var(--bg); }
   .fields-label {
-    font-size: 11px; font-weight: 600;
-    letter-spacing: 0.5px; text-transform: uppercase;
-    color: var(--text3); margin-bottom: 10px;
+    font-size:11px;font-weight:600;letter-spacing:0.5px;
+    text-transform:uppercase;color:var(--text3);margin-bottom:10px;
   }
-  .field-row {
-    display: flex; gap: 12px;
-    padding: 6px 0;
-    border-bottom: 1px solid var(--bg2);
-    font-size: 12px;
-  }
-  .field-row:last-child { border-bottom: none; }
-  .field-key {
-    font-weight: 500; color: var(--text2);
-    min-width: 120px; flex-shrink: 0;
-  }
-  .field-val {
-    font-family: var(--mono);
-    word-break: break-all;
-    color: var(--text);
-  }
+  .field-row { display:flex;gap:12px;padding:6px 0;border-bottom:1px solid var(--bg2);font-size:12px; }
+  .field-row:last-child { border-bottom:none; }
+  .field-key { font-weight:500;color:var(--text2);min-width:130px;flex-shrink:0; }
+  .field-val { font-family:var(--mono);word-break:break-all;color:var(--text); }
 
-  /* Raw payload */
-  .raw-payload {
-    padding: 12px 20px;
-    border-top: 1px solid var(--border);
-    background: var(--bg2);
-  }
-  .raw-label {
-    font-size: 11px; font-weight: 600;
-    letter-spacing: 0.5px; text-transform: uppercase;
-    color: var(--text3); margin-bottom: 6px;
-  }
-  .raw-text {
-    font-family: var(--mono);
-    font-size: 11px; color: var(--text2);
-    word-break: break-all;
-    line-height: 1.6;
-    max-height: 80px;
-    overflow-y: auto;
-  }
+  .raw-payload { padding:12px 20px;border-top:1px solid var(--border);background:var(--bg2); }
+  .raw-label { font-size:11px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;color:var(--text3);margin-bottom:6px; }
+  .raw-text  { font-family:var(--mono);font-size:11px;color:var(--text2);word-break:break-all;line-height:1.6;max-height:80px;overflow-y:auto; }
 
-  /* Agent bubble */
-  .agent-bubble {
-    padding: 14px 20px;
-    border-top: 1px solid var(--border);
-    background: var(--bg);
-    display: flex; gap: 12px;
-    align-items: flex-start;
-  }
-  .agent-avatar {
-    width: 32px; height: 32px;
-    background: var(--text);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    color: var(--bg); font-size: 14px;
-    flex-shrink: 0;
-  }
-  .agent-body { flex: 1; }
-  .agent-label {
-    font-size: 10px; font-weight: 600;
-    letter-spacing: 0.5px; color: var(--text3);
-    margin-bottom: 3px;
-  }
-  .agent-text {
-    font-size: 13px; line-height: 1.6;
-    color: var(--text);
-  }
+  .agent-bubble { padding:14px 20px;border-top:1px solid var(--border);background:var(--bg);display:flex;gap:12px;align-items:flex-start; }
+  .agent-avatar { width:32px;height:32px;background:var(--text);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--bg);font-size:14px;flex-shrink:0; }
+  .agent-label  { font-size:10px;font-weight:600;letter-spacing:0.5px;color:var(--text3);margin-bottom:3px; }
+  .agent-text   { font-size:13px;line-height:1.6;color:var(--text); }
 
-  /* CTA */
-  .cta-area {
-    padding: 14px 20px;
-    border-top: 1px solid var(--border);
-    display: flex; gap: 10px; flex-wrap: wrap;
-  }
+  .cta-area { padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:10px;flex-wrap:wrap;align-items:center; }
   .btn-cta {
-    padding: 10px 18px;
-    border-radius: var(--radius-sm);
-    font-size: 13px; font-weight: 500;
-    cursor: pointer; text-decoration: none;
-    display: inline-flex; align-items: center; gap: 6px;
-    font-family: var(--font);
-    border: 1.5px solid;
-    transition: all 0.15s;
+    padding:10px 18px;border-radius:var(--radius-sm);
+    font-size:13px;font-weight:500;cursor:pointer;
+    text-decoration:none;display:inline-flex;align-items:center;gap:6px;
+    font-family:var(--font);border:1.5px solid;transition:all 0.15s;
   }
-  .btn-cta.primary {
-    background: var(--text); color: var(--bg);
-    border-color: var(--text);
-  }
-  .btn-cta.primary:hover { opacity: 0.85; }
-  .btn-cta.secondary {
-    background: transparent; color: var(--text);
-    border-color: var(--border);
-  }
-  .btn-cta.secondary:hover { border-color: var(--text); }
+  .btn-cta.primary   { background:var(--text);color:var(--bg);border-color:var(--text); }
+  .btn-cta.primary:hover { opacity:0.85; }
+  .btn-cta.secondary { background:transparent;color:var(--text);border-color:var(--border); }
+  .btn-cta.secondary:hover { border-color:var(--text); }
+  .cta-microcopy { font-size:11px;color:var(--text3);width:100%;margin-top:2px; }
 
-  .cta-microcopy {
-    width: 100%;
-    font-size: 11px; color: var(--text3);
-    margin-top: 2px;
-  }
-
-  /* Constitutional note */
   .constitutional-note {
-    padding: 10px 20px;
-    border-top: 1px solid var(--border);
-    background: var(--bg2);
-    font-size: 11px; color: var(--text3);
-    display: flex; gap: 6px; align-items: flex-start;
-    line-height: 1.5;
+    padding:10px 20px;border-top:1px solid var(--border);background:var(--bg2);
+    font-size:11px;color:var(--text3);display:flex;gap:6px;align-items:flex-start;line-height:1.5;
   }
 
-  /* ── Incompleteness signal ── */
+  /* Fricção intencional */
   .incompleteness {
-    margin-top: 16px;
-    padding: 14px 16px;
-    background: var(--amber-bg);
-    border: 1px solid var(--amber-mid);
-    border-radius: var(--radius-sm);
-    font-size: 13px; line-height: 1.65;
-    color: var(--text);
-    display: none;
+    margin-top:16px;padding:14px 16px;
+    background:var(--amber-bg);border:1px solid var(--amber-mid);
+    border-radius:var(--radius-sm);
+    font-size:13px;line-height:1.65;color:var(--text);
+    display:none;
   }
-  .incompleteness.show { display: block; }
-  .incompleteness strong { color: var(--amber); }
+  .incompleteness.show { display:block; }
+  .incompleteness strong { color:var(--amber); }
 
-  /* ── Scan again ── */
   .btn-again {
-    width: 100%; margin-top: 16px;
-    padding: 11px;
-    background: transparent;
-    color: var(--text2);
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius-sm);
-    font-size: 13px; font-weight: 500;
-    cursor: pointer; font-family: var(--font);
-    transition: all 0.15s;
+    width:100%;margin-top:16px;padding:11px;
+    background:transparent;color:var(--text2);
+    border:1.5px solid var(--border);border-radius:var(--radius-sm);
+    font-size:13px;font-weight:500;cursor:pointer;
+    font-family:var(--font);transition:all 0.15s;display:none;
   }
-  .btn-again:hover { border-color: var(--text); color: var(--text); }
-  .btn-again { display: none; }
-  .btn-again.show { display: block; }
+  .btn-again:hover { border-color:var(--text);color:var(--text); }
+  .btn-again.show { display:block; }
 
-  /* ── Spinner ── */
-  .spinner {
-    display: inline-block;
-    width: 14px; height: 14px;
-    border: 2px solid var(--border);
-    border-top-color: var(--amber);
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-    vertical-align: middle;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* ── Mobile tweaks ── */
-  @media (max-width: 480px) {
-    .container { padding: 20px 14px 60px; }
-    .scan-frame { width: 160px; height: 160px; }
+  @media(max-width:480px){
+    .container{padding:20px 14px 60px;}
+    .scan-frame{width:155px;height:155px;}
+    .header-mode{display:none;}
   }
 </style>
 </head>
@@ -475,303 +269,453 @@
 <div class="header">
   <span class="header-logo">WINDI</span>
   <span class="header-sep">|</span>
-  <span class="header-mode">Verify — QR Decoder Universal · Modo 3</span>
+  <span class="header-mode" id="h-mode">Verify — QR Decoder Universal · Modo 3</span>
+  <div class="lang-switcher">
+    <button class="lang-btn" onclick="setLang('pt')" id="lb-pt">PT</button>
+    <button class="lang-btn" onclick="setLang('de')" id="lb-de">DE</button>
+    <button class="lang-btn" onclick="setLang('en')" id="lb-en">EN</button>
+  </div>
 </div>
 
 <div class="container">
-  <h1 class="section-title">QR Decoder Universal</h1>
-  <p class="section-sub">
-    Escaneia ou carrega qualquer QR do mundo.
-    O WINDI identifica, decodifica e orienta —
-    <strong>nunca valida em lugar do sistema oficial.</strong>
-  </p>
+  <h1 class="section-title" id="t-title">QR Decoder Universal</h1>
+  <p class="section-sub" id="t-sub"></p>
 
-  <!-- Tabs -->
   <div class="tabs">
-    <button class="tab active" onclick="setTab('camera')" id="tab-camera">Câmera</button>
-    <button class="tab" onclick="setTab('upload')" id="tab-upload">Imagem</button>
-    <button class="tab" onclick="setTab('paste')"  id="tab-paste">Colar texto</button>
+    <button class="tab active" onclick="setTab('camera')" id="tab-camera" data-i18n="tab_camera">Câmera</button>
+    <button class="tab" onclick="setTab('upload')" id="tab-upload" data-i18n="tab_upload">Imagem</button>
+    <button class="tab" onclick="setTab('paste')"  id="tab-paste"  data-i18n="tab_paste">Colar texto</button>
   </div>
 
-  <!-- ── TAB: Câmera ── -->
+  <!-- Camera -->
   <div id="zone-camera" class="camera-zone show">
     <div class="camera-wrap">
       <video id="camera-video" playsinline autoplay muted></video>
       <canvas id="camera-canvas"></canvas>
       <div class="scan-overlay" id="scan-overlay" style="display:none">
         <div class="scan-frame">
-          <div class="scan-corner tl"></div>
-          <div class="scan-corner tr"></div>
-          <div class="scan-corner bl"></div>
-          <div class="scan-corner br"></div>
+          <div class="sc tl"></div><div class="sc tr"></div>
+          <div class="sc bl"></div><div class="sc br"></div>
         </div>
       </div>
     </div>
-    <div class="camera-status" id="camera-status">Câmera inactiva</div>
-    <button class="btn-camera" id="btn-camera" onclick="toggleCamera()">
-      Activar câmera
-    </button>
+    <div class="camera-status" id="camera-status" data-i18n="cam_inactive"></div>
+    <button class="btn-camera" id="btn-camera" onclick="toggleCamera()" data-i18n="cam_activate"></button>
   </div>
 
-  <!-- ── TAB: Upload ── -->
+  <!-- Upload -->
   <div id="zone-upload" class="upload-zone">
-    <div class="dropzone"
-         ondragover="onDragOver(event)"
-         ondragleave="onDragLeave(event)"
-         ondrop="onDropImg(event)">
+    <div class="dropzone" ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDropImg(event)">
       <input type="file" accept="image/*" onchange="onImgSelected(this.files[0])">
       <div class="drop-icon">🖼️</div>
-      <div class="drop-label">Arrasta a imagem com o QR</div>
-      <div class="drop-hint">JPG · PNG · WebP · GIF</div>
+      <div class="drop-label" data-i18n="drop_label"></div>
+      <div class="drop-hint"  data-i18n="drop_hint"></div>
     </div>
   </div>
 
-  <!-- ── TAB: Paste ── -->
+  <!-- Paste -->
   <div id="zone-paste" class="paste-zone">
-    <p style="font-size:13px;color:var(--text2);margin-bottom:10px;">
-      Cola o conteúdo do QR directamente — URL, chave de acesso, ou qualquer texto.
-    </p>
-    <textarea
-      class="paste-area"
-      id="paste-area"
-      placeholder="Cole aqui o conteúdo do QR..."
-      oninput="checkPasteReady()"
-    ></textarea>
-    <button class="btn-paste-decode" id="btn-paste-decode"
-            onclick="decodePaste()" disabled>
-      Decodificar
-    </button>
+    <p class="paste-hint" data-i18n="paste_hint"></p>
+    <textarea class="paste-area" id="paste-area" oninput="checkPasteReady()" data-i18n-placeholder="paste_placeholder"></textarea>
+    <button class="btn-paste-decode" id="btn-paste-decode" onclick="decodePaste()" disabled data-i18n="paste_btn"></button>
   </div>
 
-  <!-- ── Incompleteness signal (modo 2 ou 3 sem WINDI) ── -->
+  <!-- Incompleteness signal -->
   <div class="incompleteness" id="incompleteness">
-    <strong>Este documento não tem garantia de origem.</strong>
-    O WINDI decodificou o QR e identificou o tipo — mas isso não prova
-    que o documento é autêntico ou não foi alterado.
-    Para garantia real → cria um documento WINDI.
+    <span id="incompl-text"></span>
   </div>
 
-  <!-- ── Result ── -->
+  <!-- Result -->
   <div class="result" id="result">
-
     <div class="confidence-row">
       <div class="confidence-badge" id="conf-badge">
-        <div class="confidence-dot"></div>
-        <span id="conf-label">—</span>
+        <div class="conf-dot"></div>
+        <span id="conf-label"></span>
       </div>
       <span style="font-size:12px;color:var(--text3)" id="conf-desc"></span>
     </div>
 
     <div class="result-card" id="result-card">
       <div class="result-header">
-        <div class="result-type-label" id="result-type-label"></div>
+        <div class="result-type-label" id="result-type-label" data-i18n="detected_type"></div>
         <div class="result-title" id="result-title"></div>
         <div class="result-msg"   id="result-msg"></div>
       </div>
 
-      <!-- Decoded fields -->
       <div class="decoded-fields" id="decoded-fields" style="display:none">
-        <div class="fields-label">Campos decodificados</div>
+        <div class="fields-label" data-i18n="decoded_fields"></div>
         <div id="fields-list"></div>
       </div>
 
-      <!-- Raw payload -->
       <div class="raw-payload">
-        <div class="raw-label">Payload bruto</div>
+        <div class="raw-label" data-i18n="raw_payload"></div>
         <div class="raw-text" id="raw-text"></div>
       </div>
 
-      <!-- Agent bubble -->
       <div class="agent-bubble">
         <div class="agent-avatar">🐉</div>
-        <div class="agent-body">
+        <div>
           <div class="agent-label">W-VERIFY-001</div>
           <div class="agent-text" id="agent-text"></div>
         </div>
       </div>
 
-      <!-- CTA -->
       <div class="cta-area" id="cta-area"></div>
 
-      <!-- Constitutional note -->
       <div class="constitutional-note">
         <span>⚖️</span>
-        <span id="const-note">WINDI interpreta. O sistema oficial garante. Fronteira constitucional respeitada.</span>
+        <span data-i18n="const_note"></span>
       </div>
     </div>
   </div>
 
-  <button class="btn-again" id="btn-again" onclick="resetScan()">
-    Escanear outro QR
-  </button>
+  <button class="btn-again" id="btn-again" onclick="resetScan()" data-i18n="scan_again"></button>
 </div>
 
-<!-- jsQR via CDN -->
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
-
 <script>
-// ── State ──────────────────────────────────────────────────────
-const S = {
-  tab:        'camera',
-  scanning:   false,
-  stream:     null,
-  rafId:      null,
-  locale:     navigator.language.startsWith('de') ? 'de' :
-              navigator.language.startsWith('pt') ? 'pt' : 'en',
+// ── I18N — TODA UI trilíngue ──────────────────────────────────
+const I18N = {
+  pt: {
+    mode_label:       'Verify — QR Decoder Universal · Modo 3',
+    page_title:       'QR Decoder Universal',
+    page_sub:         'Escaneia ou carrega qualquer QR do mundo. O WINDI identifica, decodifica e orienta — <strong>nunca valida em lugar do sistema oficial.</strong>',
+    tab_camera:       'Câmera',
+    tab_upload:       'Imagem',
+    tab_paste:        'Colar texto',
+    cam_inactive:     'Câmera inactiva',
+    cam_activate:     'Activar câmera',
+    cam_stop:         'Parar câmera',
+    cam_starting:     'A iniciar câmera…',
+    cam_requesting:   'A pedir acesso à câmera…',
+    cam_scanning:     'A escanear… aponta para o QR',
+    cam_no_access:    'Sem acesso à câmera — usa "Imagem" ou "Colar texto"',
+    drop_label:       'Arrasta a imagem com o QR',
+    drop_hint:        'JPG · PNG · WebP · GIF',
+    paste_hint:       'Cola o conteúdo do QR directamente — URL, chave de acesso, ou qualquer texto.',
+    paste_placeholder:'Cole aqui o conteúdo do QR…',
+    paste_btn:        'Decodificar',
+    detected_type:    'Tipo detectado',
+    decoded_fields:   'Campos decodificados',
+    raw_payload:      'Payload bruto',
+    const_note:       'WINDI interpreta. O sistema oficial garante. Fronteira constitucional respeitada.',
+    scan_again:       'Escanear outro QR',
+    incompl:          '<strong>Este documento não tem garantia de origem.</strong> O WINDI decodificou o QR e identificou o tipo — mas isso não prova autenticidade. Para garantia real → cria um documento WINDI.',
+    conf_high:        '🟢 HIGH — WINDI Ledger',
+    conf_medium:      '🔵 MEDIUM — padrão reconhecido',
+    conf_low:         '🟠 LOW — tipo não identificado',
+    conf_desc_high:   'Documento WINDI — garantia total via Ledger',
+    conf_desc_medium: 'Padrão reconhecido — verificação no sistema oficial',
+    conf_desc_low:    'Decodificado — sem sistema oficial mapeado',
+    cta_official:     'Verificar no sistema oficial',
+    cta_create:       'Criar documento WINDI',
+    cta_microcopy:    'Para garantia de origem e autoria',
+    err_no_qr:        'Nenhum QR detectado na imagem. Tenta uma imagem mais nítida ou com melhor contraste.',
+    err_agent:        'Tenta uma imagem mais nítida, ou cola o texto do QR directamente.',
+    err_title:        'Não foi possível decodificar',
+  },
+  de: {
+    mode_label:       'Verify — Universeller QR-Decoder · Modus 3',
+    page_title:       'Universeller QR-Decoder',
+    page_sub:         'Scanne oder lade jeden QR-Code der Welt. WINDI identifiziert, dekodiert und leitet an — <strong>validiert nie anstelle des offiziellen Systems.</strong>',
+    tab_camera:       'Kamera',
+    tab_upload:       'Bild',
+    tab_paste:        'Text einfügen',
+    cam_inactive:     'Kamera inaktiv',
+    cam_activate:     'Kamera aktivieren',
+    cam_stop:         'Kamera stoppen',
+    cam_starting:     'Kamera wird gestartet…',
+    cam_requesting:   'Kamerazugriff wird angefordert…',
+    cam_scanning:     'Scannen… QR-Code anhalten',
+    cam_no_access:    'Kein Kamerazugriff — nutze "Bild" oder "Text einfügen"',
+    drop_label:       'Bild mit QR-Code hierher ziehen',
+    drop_hint:        'JPG · PNG · WebP · GIF',
+    paste_hint:       'QR-Inhalt direkt einfügen — URL, Zugriffsschlüssel oder beliebigen Text.',
+    paste_placeholder:'QR-Inhalt hier einfügen…',
+    paste_btn:        'Dekodieren',
+    detected_type:    'Erkannter Typ',
+    decoded_fields:   'Dekodierte Felder',
+    raw_payload:      'Rohdaten',
+    const_note:       'WINDI interpretiert. Das offizielle System garantiert. Konstitutionelle Grenze respektiert.',
+    scan_again:       'Weiteren QR scannen',
+    incompl:          '<strong>Dieses Dokument hat keine Herkunftsgarantie.</strong> WINDI hat den QR dekodiert und den Typ identifiziert — das beweist keine Echtheit. Für echte Garantie → WINDI-Dokument erstellen.',
+    conf_high:        '🟢 HIGH — WINDI Ledger',
+    conf_medium:      '🔵 MEDIUM — Muster erkannt',
+    conf_low:         '🟠 LOW — Typ nicht identifiziert',
+    conf_desc_high:   'WINDI-Dokument — volle Garantie via Ledger',
+    conf_desc_medium: 'Muster erkannt — Prüfung im offiziellen System',
+    conf_desc_low:    'Dekodiert — kein offizielles System zugeordnet',
+    cta_official:     'Im offiziellen System prüfen',
+    cta_create:       'WINDI-Dokument erstellen',
+    cta_microcopy:    'Für Herkunfts- und Urheberschaftsgarantie',
+    err_no_qr:        'Kein QR-Code im Bild erkannt. Schärferes Bild oder besseren Kontrast verwenden.',
+    err_agent:        'Schärferes Bild verwenden oder QR-Text direkt einfügen.',
+    err_title:        'Dekodierung nicht möglich',
+  },
+  en: {
+    mode_label:       'Verify — Universal QR Decoder · Mode 3',
+    page_title:       'Universal QR Decoder',
+    page_sub:         'Scan or upload any QR code in the world. WINDI identifies, decodes and guides — <strong>never validates in place of the official system.</strong>',
+    tab_camera:       'Camera',
+    tab_upload:       'Image',
+    tab_paste:        'Paste text',
+    cam_inactive:     'Camera inactive',
+    cam_activate:     'Activate camera',
+    cam_stop:         'Stop camera',
+    cam_starting:     'Starting camera…',
+    cam_requesting:   'Requesting camera access…',
+    cam_scanning:     'Scanning… point at the QR code',
+    cam_no_access:    'No camera access — use "Image" or "Paste text"',
+    drop_label:       'Drag the image with the QR code here',
+    drop_hint:        'JPG · PNG · WebP · GIF',
+    paste_hint:       'Paste the QR content directly — URL, access key, or any text.',
+    paste_placeholder:'Paste QR content here…',
+    paste_btn:        'Decode',
+    detected_type:    'Detected type',
+    decoded_fields:   'Decoded fields',
+    raw_payload:      'Raw payload',
+    const_note:       'WINDI interprets. The official system guarantees. Constitutional boundary respected.',
+    scan_again:       'Scan another QR',
+    incompl:          '<strong>This document has no guarantee of origin.</strong> WINDI decoded the QR and identified the type — but this does not prove authenticity. For real guarantee → create a WINDI document.',
+    conf_high:        '🟢 HIGH — WINDI Ledger',
+    conf_medium:      '🔵 MEDIUM — pattern recognised',
+    conf_low:         '🟠 LOW — type not identified',
+    conf_desc_high:   'WINDI document — full guarantee via Ledger',
+    conf_desc_medium: 'Pattern recognised — verify in official system',
+    conf_desc_low:    'Decoded — no official system mapped',
+    cta_official:     'Verify in official system',
+    cta_create:       'Create WINDI document',
+    cta_microcopy:    'For origin and authorship guarantee',
+    err_no_qr:        'No QR detected in image. Try a sharper image or better contrast.',
+    err_agent:        'Try a sharper image, or paste the QR text directly.',
+    err_title:        'Could not decode',
+  },
 };
 
-// ── QR Pattern table (client-side mirror do backend) ──────────
-// Router determinístico — regex pura, zero IA
+// ── QR Patterns ───────────────────────────────────────────────
 const PATTERNS = [
   {
-    id: 'windi_doc',
-    name: 'Documento WINDI',
+    id: 'windi_doc', confidence: 'HIGH',
     regex: /^WINDI:/i,
-    confidence: 'HIGH',
-    official_url: 'https://windi-domain.com/verify-public/',
+    name: { pt:'Documento WINDI', de:'WINDI-Dokument', en:'WINDI Document' },
     fields: (raw) => {
-      const parts = raw.replace(/^WINDI:/i,'').split('|');
-      return { 'Receipt ID': parts[0] || '—', 'Hash': parts[1] || '—' };
+      const p = raw.replace(/^WINDI:/i,'').split('|');
+      return { 'Receipt ID': p[0]||'—', 'Hash': p[1]||'—' };
     },
-    agent_pt: 'Este QR é de um documento WINDI! Redirecciono para verificação com garantia total via Ledger.',
-    agent_de: 'Dieser QR-Code gehört zu einem WINDI-Dokument! Weiterleitung zur vollständigen Verifikation.',
-    agent_en: 'This is a WINDI QR code! Redirecting to full-guarantee Ledger verification.',
-    cta_primary: { label: 'Verificar no WINDI Ledger', url: (raw) => `https://windi-domain.com/verify-public/?payload=${encodeURIComponent(raw)}` },
+    agent: {
+      pt: 'Este QR é de um documento WINDI! Redirecciono para verificação com garantia total via Ledger.',
+      de: 'Dieser QR-Code gehört zu einem WINDI-Dokument! Weiterleitung zur vollständigen Ledger-Verifikation.',
+      en: 'This is a WINDI QR code! Redirecting to full-guarantee Ledger verification.',
+    },
+    cta: (raw, t) => [{
+      label: { pt:'Verificar no WINDI Ledger', de:'Im WINDI Ledger prüfen', en:'Verify in WINDI Ledger' }[t],
+      url: `https://windi-domain.com/verify-public/?payload=${encodeURIComponent(raw)}`,
+      cls: 'primary',
+    }],
   },
   {
-    id: 'nfe_br',
-    name: 'Nota Fiscal Eletrônica (BR)',
+    id: 'nfe_br', confidence: 'MEDIUM',
     regex: /nfe\.fazenda\.gov\.br|nfe\.sefaz\.|chave=[0-9]{44}|\b[0-9]{44}\b/,
-    confidence: 'MEDIUM',
-    official_url: 'https://www.nfe.fazenda.gov.br/portal/consultaRecaptcha.aspx',
+    name: { pt:'Nota Fiscal Eletrônica (BR)', de:'Elektronische Rechnung Brasilien (NFe)', en:'Brazilian Electronic Invoice (NFe)' },
     fields: (raw) => {
-      const chave = (raw.match(/\b([0-9]{44})\b/) || [])[1];
-      const cnpj  = (raw.match(/cnpj=([0-9]{14})/i) || [])[1];
+      const chave = (raw.match(/\b([0-9]{44})\b/)||[])[1];
       return {
-        'Chave de acesso': chave || '—',
-        'CNPJ emitente':   cnpj  || 'ver URL',
-        'Sistema oficial': 'SEFAZ / Fazenda Nacional',
+        [{ pt:'Chave de acesso', de:'Zugriffsschlüssel', en:'Access key' }[S.lang]]: chave||'—',
+        [{ pt:'Sistema oficial', de:'Offizielles System', en:'Official system' }[S.lang]]: 'SEFAZ / Fazenda Nacional',
       };
     },
-    agent_pt: 'QR de Nota Fiscal Eletrônica brasileira. O WINDI extraiu a chave de acesso — a validade fiscal é confirmada pela SEFAZ, não pelo WINDI.',
-    agent_de: 'Brasilianische elektronische Rechnung (NFe). WINDI hat den Zugriffsschlüssel extrahiert — steuerliche Gültigkeit bestätigt die SEFAZ.',
-    agent_en: 'Brazilian Electronic Invoice (NFe). WINDI extracted the access key — tax validity is confirmed by SEFAZ, not WINDI.',
-    cta_primary: { label: 'Verificar na SEFAZ', url: () => 'https://www.nfe.fazenda.gov.br/portal/consultaRecaptcha.aspx' },
+    agent: {
+      pt: 'QR de Nota Fiscal Eletrônica brasileira. O WINDI extraiu a chave de acesso — a validade fiscal é confirmada pela SEFAZ, não pelo WINDI.',
+      de: 'Brasilianische elektronische Rechnung (NFe). WINDI extrahierte den Zugriffsschlüssel — steuerliche Gültigkeit bestätigt die SEFAZ.',
+      en: 'Brazilian Electronic Invoice (NFe). WINDI extracted the access key — tax validity is confirmed by SEFAZ, not WINDI.',
+    },
+    cta: (raw, t) => [{
+      label: { pt:'Verificar na SEFAZ', de:'Bei SEFAZ prüfen', en:'Verify at SEFAZ' }[t],
+      url: 'https://www.nfe.fazenda.gov.br/portal/consultaRecaptcha.aspx',
+      cls: 'primary',
+    }],
   },
   {
-    id: 'pix_br',
-    name: 'PIX (BR)',
-    regex: /^000201|chave.*pix|pixkey/i,
-    confidence: 'MEDIUM',
-    official_url: null,
+    id: 'pix_br', confidence: 'MEDIUM',
+    regex: /^000201|pixkey/i,
+    name: { pt:'PIX (BR)', de:'PIX-Zahlung (BR)', en:'PIX Payment (BR)' },
     fields: (raw) => {
-      const chave = (raw.match(/([a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}|\+[0-9]{10,15}|\b[0-9]{11}\b|\b[0-9]{14}\b)/) || [])[1];
-      const nome  = (raw.match(/\x59(.{2,30}?)\x60/) || [])[1];
+      const chave = (raw.match(/([a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}|\+[0-9]{10,15})/)||[])[1];
       return {
-        'Chave PIX': chave || 'ver payload',
-        'Beneficiário': nome || '—',
-        'Padrão': 'EMV-QR',
+        [{ pt:'Chave PIX', de:'PIX-Schlüssel', en:'PIX key' }[S.lang]]: chave||{ pt:'ver payload', de:'Payload ansehen', en:'see payload' }[S.lang],
+        'Padrão / Standard / Format': 'EMV-QR (BACEN)',
       };
     },
-    agent_pt: 'QR de pagamento PIX. O WINDI identificou a estrutura EMV-QR padrão Banco Central. Confirma os dados antes de pagar — o WINDI não valida o recebedor.',
-    agent_de: 'PIX-Zahlung (Brasilien). WINDI identifizierte die EMV-QR-Struktur. Daten vor Zahlung prüfen.',
-    agent_en: 'PIX payment QR (Brazil). WINDI identified the EMV-QR structure. Verify details before paying — WINDI does not validate the recipient.',
-    cta_primary: null,
+    agent: {
+      pt: 'QR de pagamento PIX. O WINDI identificou a estrutura EMV-QR padrão Banco Central. Confirma os dados antes de pagar — o WINDI não valida o recebedor.',
+      de: 'PIX-Zahlung (Brasilien). WINDI identifizierte die EMV-QR-Struktur. Daten vor Zahlung prüfen — WINDI validiert den Empfänger nicht.',
+      en: 'PIX payment QR (Brazil). WINDI identified the EMV-QR structure. Verify details before paying — WINDI does not validate the recipient.',
+    },
+    cta: () => [],
   },
   {
-    id: 'gov_de_elster',
-    name: 'Dokument Finanzverwaltung (DE)',
+    id: 'gov_de_elster', confidence: 'MEDIUM',
     regex: /ELSTER|Steuernummer|StNr|Finanzamt/i,
-    confidence: 'MEDIUM',
-    official_url: 'https://www.elster.de',
-    fields: (raw) => ({ 'Tipo': 'Documento fiscal alemão', 'Sistema': 'ELSTER / Finanzverwaltung' }),
-    agent_pt: 'QR de documento fiscal alemão (ELSTER). Verificação oficial via portal Finanzverwaltung.',
-    agent_de: 'QR-Code eines deutschen Steuerdokuments (ELSTER). Offizielle Prüfung über das Elster-Portal.',
-    agent_en: 'German tax document QR (ELSTER). Official verification via Finanzverwaltung portal.',
-    cta_primary: { label: 'Verificar no ELSTER', url: () => 'https://www.elster.de' },
+    name: { pt:'Documento Fiscal Alemão (ELSTER)', de:'Deutsches Steuerdokument (ELSTER)', en:'German Tax Document (ELSTER)' },
+    fields: () => ({
+      [{ pt:'Tipo', de:'Typ', en:'Type' }[S.lang]]: { pt:'Documento fiscal alemão', de:'Deutsches Steuerdokument', en:'German tax document' }[S.lang],
+      'Sistema / System': 'ELSTER / Finanzverwaltung',
+    }),
+    agent: {
+      pt: 'QR de documento fiscal alemão (ELSTER). Verificação oficial via portal Finanzverwaltung.',
+      de: 'QR-Code eines deutschen Steuerdokuments (ELSTER). Offizielle Prüfung über das Elster-Portal.',
+      en: 'German tax document QR (ELSTER). Official verification via Finanzverwaltung portal.',
+    },
+    cta: (raw, t) => [{
+      label: { pt:'Verificar no ELSTER', de:'Bei ELSTER prüfen', en:'Verify at ELSTER' }[t],
+      url: 'https://www.elster.de',
+      cls: 'primary',
+    }],
   },
   {
-    id: 'eu_covid',
-    name: 'EU Digital COVID Certificate',
+    id: 'eu_covid', confidence: 'MEDIUM',
     regex: /^HC1:/,
-    confidence: 'MEDIUM',
-    official_url: 'https://ec.europa.eu/info/live-work-travel-eu/coronavirus-response/safe-covid-19-vaccines-europeans/eu-digital-covid-certificate_en',
-    fields: (raw) => ({ 'Padrão': 'EU DCC (HC1)', 'Formato': 'CBOR / COSE', 'Conteúdo': 'Certificado codificado' }),
-    agent_pt: 'Certificado Digital COVID da EU. Padrão HC1 detectado — verificação oficial via aplicação governamental do país emissor.',
-    agent_de: 'EU Digitaler COVID-Zertifikat (HC1). Offizielle Prüfung über die nationale Verifikations-App.',
-    agent_en: 'EU Digital COVID Certificate (HC1). Official verification via the national government verification app.',
-    cta_primary: { label: 'Info EU DCC', url: () => 'https://ec.europa.eu/info/live-work-travel-eu/coronavirus-response/safe-covid-19-vaccines-europeans/eu-digital-covid-certificate_en' },
+    name: { pt:'Certificado Digital COVID (EU)', de:'EU Digitales COVID-Zertifikat', en:'EU Digital COVID Certificate' },
+    fields: () => ({
+      [{ pt:'Padrão', de:'Standard', en:'Standard' }[S.lang]]: 'EU DCC (HC1)',
+      [{ pt:'Formato', de:'Format', en:'Format' }[S.lang]]: 'CBOR / COSE',
+    }),
+    agent: {
+      pt: 'Certificado Digital COVID da EU (HC1). Verificação oficial via aplicação governamental do país emissor.',
+      de: 'EU Digitales COVID-Zertifikat (HC1). Offizielle Prüfung über die nationale Verifikations-App.',
+      en: 'EU Digital COVID Certificate (HC1). Official verification via the national government verification app.',
+    },
+    cta: (raw, t) => [{
+      label: { pt:'Info EU DCC', de:'EU DCC Info', en:'EU DCC Info' }[t],
+      url: 'https://ec.europa.eu/info/live-work-travel-eu/coronavirus-response/safe-covid-19-vaccines-europeans/eu-digital-covid-certificate_en',
+      cls: 'primary',
+    }],
   },
   {
-    id: 'url_generic',
-    name: 'URL',
+    id: 'url_generic', confidence: 'LOW',
     regex: /^https?:\/\//i,
-    confidence: 'LOW',
-    official_url: null,
+    name: { pt:'URL', de:'URL', en:'URL' },
     fields: (raw) => {
       try {
         const u = new URL(raw);
-        return { 'Domínio': u.hostname, 'Protocolo': u.protocol.replace(':',''), 'Path': u.pathname || '/' };
+        return {
+          [{ pt:'Domínio', de:'Domain', en:'Domain' }[S.lang]]: u.hostname,
+          [{ pt:'Protocolo', de:'Protokoll', en:'Protocol' }[S.lang]]: u.protocol.replace(':',''),
+          'Path': u.pathname||'/',
+        };
       } catch { return { 'URL': raw }; }
     },
-    agent_pt: 'QR com URL genérica. O WINDI decodificou o endereço — verifica o domínio antes de aceder. WINDI não valida o conteúdo do site.',
-    agent_de: 'QR mit generischer URL. WINDI hat die Adresse dekodiert — Domäne vor dem Öffnen prüfen.',
-    agent_en: 'QR with generic URL. WINDI decoded the address — verify the domain before accessing. WINDI does not validate the site content.',
-    cta_primary: null,
+    agent: {
+      pt: 'QR com URL genérica. O WINDI decodificou o endereço — verifica o domínio antes de aceder. WINDI não valida o conteúdo do site.',
+      de: 'QR mit generischer URL. WINDI hat die Adresse dekodiert — Domäne vor dem Öffnen prüfen. WINDI validiert den Seiteninhalt nicht.',
+      en: 'QR with generic URL. WINDI decoded the address — verify the domain before accessing. WINDI does not validate the site content.',
+    },
+    cta: () => [],
   },
   {
-    id: 'vcard',
-    name: 'Cartão de contacto (vCard)',
+    id: 'vcard', confidence: 'LOW',
     regex: /^BEGIN:VCARD/i,
-    confidence: 'LOW',
-    official_url: null,
+    name: { pt:'Cartão de contacto (vCard)', de:'Visitenkarte (vCard)', en:'Contact card (vCard)' },
     fields: (raw) => {
-      const name  = (raw.match(/FN:(.*)/i) || [])[1] || '—';
-      const email = (raw.match(/EMAIL:(.*)/i) || [])[1] || '—';
-      const tel   = (raw.match(/TEL:(.*)/i) || [])[1] || '—';
-      return { 'Nome': name.trim(), 'Email': email.trim(), 'Telefone': tel.trim() };
+      const name  = (raw.match(/FN:(.*)/i)||[])[1]||'—';
+      const email = (raw.match(/EMAIL:(.*)/i)||[])[1]||'—';
+      const tel   = (raw.match(/TEL:(.*)/i)||[])[1]||'—';
+      return {
+        [{ pt:'Nome', de:'Name', en:'Name' }[S.lang]]: name.trim(),
+        'Email': email.trim(),
+        [{ pt:'Telefone', de:'Telefon', en:'Phone' }[S.lang]]: tel.trim(),
+      };
     },
-    agent_pt: 'QR de cartão de contacto (vCard). O WINDI extraiu os campos — não há garantia de que os dados sejam autênticos.',
-    agent_de: 'Visitenkarten-QR (vCard). WINDI hat die Felder extrahiert — keine Garantie für die Echtheit der Daten.',
-    agent_en: 'Contact card QR (vCard). WINDI extracted the fields — no guarantee the data is authentic.',
-    cta_primary: null,
+    agent: {
+      pt: 'QR de cartão de contacto (vCard). O WINDI extraiu os campos — não há garantia de que os dados sejam autênticos.',
+      de: 'Visitenkarten-QR (vCard). WINDI hat die Felder extrahiert — keine Garantie für die Echtheit der Daten.',
+      en: 'Contact card QR (vCard). WINDI extracted the fields — no guarantee the data is authentic.',
+    },
+    cta: () => [],
   },
   {
-    id: 'wifi',
-    name: 'Rede Wi-Fi',
+    id: 'wifi', confidence: 'LOW',
     regex: /^WIFI:/i,
-    confidence: 'LOW',
-    official_url: null,
+    name: { pt:'Rede Wi-Fi', de:'WLAN-Netzwerk', en:'Wi-Fi Network' },
     fields: (raw) => {
-      const ssid = (raw.match(/S:([^;]+)/i) || [])[1] || '—';
-      const sec  = (raw.match(/T:([^;]+)/i) || [])[1] || '—';
-      return { 'Rede (SSID)': ssid, 'Segurança': sec };
+      const ssid = (raw.match(/S:([^;]+)/i)||[])[1]||'—';
+      const sec  = (raw.match(/T:([^;]+)/i)||[])[1]||'—';
+      return {
+        [{ pt:'Rede (SSID)', de:'Netzwerk (SSID)', en:'Network (SSID)' }[S.lang]]: ssid,
+        [{ pt:'Segurança', de:'Sicherheit', en:'Security' }[S.lang]]: sec,
+      };
     },
-    agent_pt: 'QR de configuração Wi-Fi. O WINDI identificou SSID e tipo de segurança — nunca partilhes esta informação com desconhecidos.',
-    agent_de: 'Wi-Fi-Konfigurations-QR. WINDI identifizierte SSID und Sicherheitstyp — nie mit Fremden teilen.',
-    agent_en: 'Wi-Fi configuration QR. WINDI identified SSID and security type — never share this with strangers.',
-    cta_primary: null,
+    agent: {
+      pt: 'QR de configuração Wi-Fi. WINDI identificou SSID e tipo de segurança — nunca partilhes esta informação com desconhecidos.',
+      de: 'WLAN-Konfigurations-QR. WINDI identifizierte SSID und Sicherheitstyp — nie mit Fremden teilen.',
+      en: 'Wi-Fi configuration QR. WINDI identified SSID and security type — never share this with strangers.',
+    },
+    cta: () => [],
   },
 ];
 
-const UNKNOWN_PATTERN = {
-  id: 'unknown', name: 'Tipo desconhecido', confidence: 'LOW',
-  agent_pt: 'QR decodificado mas tipo não reconhecido na base de padrões WINDI. O conteúdo está visível abaixo — não é possível indicar sistema oficial de verificação.',
-  agent_de: 'QR dekodiert, Typ nicht in der WINDI-Musterbasis erkannt. Inhalt unten sichtbar.',
-  agent_en: 'QR decoded but type not recognised in WINDI pattern base. Content is visible below.',
+const UNKNOWN = {
+  id:'unknown', confidence:'LOW',
+  name:{ pt:'Tipo desconhecido', de:'Typ unbekannt', en:'Unknown type' },
+  fields: () => ({}),
+  agent:{
+    pt:'QR decodificado mas tipo não reconhecido na base de padrões WINDI. Conteúdo visível abaixo — não é possível indicar sistema oficial.',
+    de:'QR dekodiert, Typ in der WINDI-Musterbasis nicht erkannt. Inhalt unten sichtbar — kein offizielles System zugeordnet.',
+    en:'QR decoded but type not recognised in WINDI pattern base. Content visible below — no official system can be suggested.',
+  },
+  cta: () => [],
 };
 
-// ── Tab switching ─────────────────────────────────────────────
-function setTab(t) {
-  S.tab = t;
-  ['camera','upload','paste'].forEach(id => {
-    document.getElementById('tab-'+id).classList.toggle('active', id === t);
-  });
-  document.getElementById('zone-camera').classList.toggle('show', t === 'camera');
-  document.getElementById('zone-upload').style.display = t === 'upload' ? 'block' : 'none';
-  document.getElementById('zone-paste').style.display  = t === 'paste'  ? 'block' : 'none';
+// ── State ─────────────────────────────────────────────────────
+const S = {
+  lang:     navigator.language.startsWith('de') ? 'de' :
+            navigator.language.startsWith('pt') ? 'pt' : 'en',
+  tab:      'camera',
+  scanning: false,
+  stream:   null,
+  rafId:    null,
+};
 
-  if (t !== 'camera' && S.scanning) stopCamera();
+// ── Language ──────────────────────────────────────────────────
+function t(key) { return (I18N[S.lang]||I18N.en)[key] || key; }
+
+function setLang(lang) {
+  S.lang = lang;
+  ['pt','de','en'].forEach(l => document.getElementById('lb-'+l).classList.toggle('active', l === lang));
+  document.documentElement.lang = lang;
+  applyI18N();
+}
+
+function applyI18N() {
+  // Static elements with data-i18n
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.textContent = t(el.dataset.i18n);
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    el.placeholder = t(el.dataset.i18nPlaceholder);
+  });
+  // Dynamic elements
+  document.getElementById('h-mode').textContent    = t('mode_label');
+  document.getElementById('t-title').textContent   = t('page_title');
+  document.getElementById('t-sub').innerHTML       = t('page_sub');
+  document.getElementById('incompl-text').innerHTML= t('incompl');
+  // Camera status & button (if not scanning)
+  if (!S.scanning) {
+    document.getElementById('camera-status').textContent = t('cam_inactive');
+    document.getElementById('btn-camera').textContent    = t('cam_activate');
+  }
+}
+
+// ── Tabs ──────────────────────────────────────────────────────
+function setTab(tab) {
+  S.tab = tab;
+  ['camera','upload','paste'].forEach(id => {
+    document.getElementById('tab-'+id).classList.toggle('active', id === tab);
+  });
+  document.getElementById('zone-camera').classList.toggle('show', tab === 'camera');
+  document.getElementById('zone-upload').style.display = tab === 'upload' ? 'block' : 'none';
+  document.getElementById('zone-paste').style.display  = tab === 'paste'  ? 'block' : 'none';
+  if (tab !== 'camera' && S.scanning) stopCamera();
 }
 
 // ── Camera ────────────────────────────────────────────────────
@@ -783,32 +727,27 @@ async function toggleCamera() {
 async function startCamera() {
   const btn = document.getElementById('btn-camera');
   const status = document.getElementById('camera-status');
-  btn.textContent = 'A iniciar câmera...';
+  btn.textContent = t('cam_starting');
   btn.disabled = true;
-  status.textContent = 'A pedir acesso à câmera...';
+  status.textContent = t('cam_requesting');
   status.className = 'camera-status';
-
   try {
-    S.stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: 'environment', width: { ideal: 1280 } }
-    });
+    S.stream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:'environment', width:{ideal:1280} } });
     const video = document.getElementById('camera-video');
     video.srcObject = S.stream;
     await video.play();
-
     S.scanning = true;
     document.getElementById('scan-overlay').style.display = 'flex';
-    btn.textContent = 'Parar câmera';
+    btn.textContent = t('cam_stop');
     btn.className = 'btn-camera active';
     btn.disabled = false;
-    status.textContent = 'A escanear... aponta para o QR';
+    status.textContent = t('cam_scanning');
     status.className = 'camera-status scanning';
-
     scanLoop();
-  } catch(err) {
-    status.textContent = 'Sem acesso à câmera — usa "Imagem" ou "Colar texto"';
+  } catch(e) {
+    status.textContent = t('cam_no_access');
     status.className = 'camera-status error';
-    btn.textContent = 'Activar câmera';
+    btn.textContent = t('cam_activate');
     btn.disabled = false;
   }
 }
@@ -818,59 +757,46 @@ function stopCamera() {
   if (S.rafId) cancelAnimationFrame(S.rafId);
   if (S.stream) { S.stream.getTracks().forEach(t => t.stop()); S.stream = null; }
   document.getElementById('scan-overlay').style.display = 'none';
-  document.getElementById('btn-camera').textContent = 'Activar câmera';
-  document.getElementById('btn-camera').className = 'btn-camera';
-  document.getElementById('camera-status').textContent = 'Câmera inactiva';
-  document.getElementById('camera-status').className = 'camera-status';
+  document.getElementById('btn-camera').textContent  = t('cam_activate');
+  document.getElementById('btn-camera').className    = 'btn-camera';
+  document.getElementById('camera-status').textContent = t('cam_inactive');
+  document.getElementById('camera-status').className   = 'camera-status';
 }
 
 function scanLoop() {
   if (!S.scanning) return;
-  const video  = document.getElementById('camera-video');
+  const video = document.getElementById('camera-video');
   const canvas = document.getElementById('camera-canvas');
-
   if (video.readyState === video.HAVE_ENOUGH_DATA) {
-    canvas.width  = video.videoWidth;
-    canvas.height = video.videoHeight;
+    canvas.width = video.videoWidth; canvas.height = video.videoHeight;
     const ctx = canvas.getContext('2d');
     ctx.drawImage(video, 0, 0);
     const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const code = jsQR(img.data, img.width, img.height, { inversionAttempts: 'dontInvert' });
-
-    if (code && code.data) {
-      stopCamera();
-      processPayload(code.data);
-      return;
-    }
+    const code = jsQR(img.data, img.width, img.height, { inversionAttempts:'dontInvert' });
+    if (code && code.data) { stopCamera(); processPayload(code.data); return; }
   }
   S.rafId = requestAnimationFrame(scanLoop);
 }
 
-// ── Image upload ──────────────────────────────────────────────
-function onDragOver(e) { e.preventDefault(); e.currentTarget.classList.add('over'); }
+// ── Upload ────────────────────────────────────────────────────
+function onDragOver(e)  { e.preventDefault(); e.currentTarget.classList.add('over'); }
 function onDragLeave(e) { e.currentTarget.classList.remove('over'); }
 function onDropImg(e) {
-  e.preventDefault();
-  e.currentTarget.classList.remove('over');
+  e.preventDefault(); e.currentTarget.classList.remove('over');
   const f = e.dataTransfer.files[0];
   if (f) onImgSelected(f);
 }
-
 async function onImgSelected(f) {
   if (!f || !f.type.startsWith('image/')) return;
-  const bitmap = await createImageBitmap(f);
-  const canvas = document.getElementById('camera-canvas');
-  canvas.width = bitmap.width; canvas.height = bitmap.height;
-  const ctx = canvas.getContext('2d');
-  ctx.drawImage(bitmap, 0, 0);
-  const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  const code = jsQR(img.data, img.width, img.height, { inversionAttempts: 'attemptBoth' });
-
-  if (code && code.data) {
-    processPayload(code.data);
-  } else {
-    showError('Nenhum QR detectado na imagem. Tenta uma imagem mais nítida ou com melhor contraste.');
-  }
+  const bm = await createImageBitmap(f);
+  const cv = document.getElementById('camera-canvas');
+  cv.width = bm.width; cv.height = bm.height;
+  const ctx = cv.getContext('2d');
+  ctx.drawImage(bm, 0, 0);
+  const img = ctx.getImageData(0, 0, cv.width, cv.height);
+  const code = jsQR(img.data, img.width, img.height, { inversionAttempts:'attemptBoth' });
+  if (code && code.data) processPayload(code.data);
+  else showError(t('err_no_qr'));
 }
 
 // ── Paste ─────────────────────────────────────────────────────
@@ -878,87 +804,64 @@ function checkPasteReady() {
   const v = document.getElementById('paste-area').value.trim();
   document.getElementById('btn-paste-decode').disabled = v.length < 3;
 }
-
 function decodePaste() {
   const v = document.getElementById('paste-area').value.trim();
   if (v) processPayload(v);
 }
 
-// ── Core: process QR payload ──────────────────────────────────
+// ── Core ──────────────────────────────────────────────────────
+function detectPattern(raw) {
+  for (const p of PATTERNS) { if (p.regex.test(raw)) return p; }
+  return UNKNOWN;
+}
+
 async function processPayload(raw) {
   hideResult();
-  const pattern = detectPattern(raw);
+  const p = detectPattern(raw);
 
   // Tenta W-VERIFY-001 backend
-  let interp = null;
+  let backendInterp = null;
   try {
     const r = await fetch('/verify-agent/interpret', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
+      method:'POST', headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
-        mode: 3,
-        locale: S.locale,
+        mode: 3, locale: S.lang,
         result_mode3: {
-          raw_payload:       raw,
-          detected_type:     pattern.id,
-          detected_fields:   pattern.fields ? pattern.fields(raw) : {},
-          official_verify_url: pattern.official_url || null,
-          schema_recognized: pattern.id !== 'unknown',
+          raw_payload: raw, detected_type: p.id,
+          detected_fields: p.fields ? p.fields(raw) : {},
+          official_verify_url: null,
+          schema_recognized: p.id !== 'unknown',
         }
       })
     });
-    if (r.ok) interp = await r.json();
+    if (r.ok) backendInterp = await r.json();
   } catch(e) { /* fallback local */ }
 
-  renderResult(raw, pattern, interp);
+  renderResult(raw, p, backendInterp);
 }
 
-// ── Pattern detection (determinístico, zero IA) ───────────────
-function detectPattern(raw) {
-  for (const p of PATTERNS) {
-    if (p.regex.test(raw)) return p;
-  }
-  return UNKNOWN_PATTERN;
-}
-
-// ── Render ────────────────────────────────────────────────────
-function renderResult(raw, pattern, interp) {
-  const conf = pattern.confidence || 'LOW';
-  const agentKey = 'agent_' + S.locale;
-  const agentMsg = (interp && interp.message) || pattern[agentKey] || pattern.agent_en || '';
-  const isWindi  = pattern.id === 'windi_doc';
-  const isKnown  = pattern.id !== 'unknown';
+function renderResult(raw, p, interp) {
+  const conf     = p.confidence || 'LOW';
+  const isWindi  = p.id === 'windi_doc';
+  const isKnown  = p.id !== 'unknown';
+  const agentMsg = (interp && interp.message) || p.agent[S.lang] || p.agent.en;
 
   // Confidence badge
   const badge = document.getElementById('conf-badge');
   badge.className = 'confidence-badge ' + conf;
-  document.getElementById('conf-label').textContent =
-    conf === 'HIGH' ? '🟢 HIGH — WINDI' :
-    conf === 'MEDIUM' ? '🔵 MEDIUM — padrão reconhecido' :
-    '🟠 LOW — tipo não identificado';
-
-  const confDesc = {
-    HIGH:   'Documento WINDI — garantia total via Ledger',
-    MEDIUM: 'Padrão reconhecido — verificação no sistema oficial',
-    LOW:    'Decodificado — sem sistema oficial mapeado',
-  };
-  document.getElementById('conf-desc').textContent = confDesc[conf] || '';
+  document.getElementById('conf-label').textContent = t('conf_' + conf.toLowerCase());
+  document.getElementById('conf-desc').textContent  = t('conf_desc_' + conf.toLowerCase());
 
   // Card
-  const card = document.getElementById('result-card');
-  card.className = 'result-card ' + (isWindi ? 'WINDI_QR' : isKnown ? 'KNOWN' : 'UNKNOWN');
+  document.getElementById('result-card').className = 'result-card ' + (isWindi ? 'WINDI_QR' : isKnown ? 'KNOWN' : 'UNKNOWN');
+  document.getElementById('result-type-label').textContent = t('detected_type');
+  document.getElementById('result-title').textContent = (interp && interp.title) || p.name[S.lang] || p.name.en;
+  document.getElementById('result-msg').textContent   = '';
 
-  document.getElementById('result-type-label').textContent = 'Tipo detectado';
-  document.getElementById('result-title').textContent =
-    (interp && interp.title) || pattern.name || 'QR decodificado';
-  document.getElementById('result-msg').textContent =
-    (interp && interp.message) || '';
-
-  // Decoded fields
-  const fields = pattern.fields ? pattern.fields(raw) : null;
-  if (fields && Object.keys(fields).length > 0) {
-    const list = document.getElementById('fields-list');
-    list.innerHTML = Object.entries(fields).map(([k,v]) =>
+  // Fields
+  const fields = p.fields ? p.fields(raw) : {};
+  if (Object.keys(fields).length > 0) {
+    document.getElementById('fields-list').innerHTML = Object.entries(fields).map(([k,v]) =>
       `<div class="field-row"><div class="field-key">${k}</div><div class="field-val">${v}</div></div>`
     ).join('');
     document.getElementById('decoded-fields').style.display = 'block';
@@ -966,7 +869,7 @@ function renderResult(raw, pattern, interp) {
     document.getElementById('decoded-fields').style.display = 'none';
   }
 
-  // Raw payload
+  // Raw
   document.getElementById('raw-text').textContent = raw;
 
   // Agent
@@ -974,46 +877,36 @@ function renderResult(raw, pattern, interp) {
 
   // CTA
   const ctaArea = document.getElementById('cta-area');
-  ctaArea.innerHTML = '';
-  if (pattern.cta_primary) {
-    const url = typeof pattern.cta_primary.url === 'function'
-      ? pattern.cta_primary.url(raw) : pattern.cta_primary.url;
-    ctaArea.innerHTML += `
-      <a href="${url}" target="_blank" rel="noopener" class="btn-cta primary">
-        ${pattern.cta_primary.label} →
-      </a>`;
-  }
+  const ctas = p.cta ? p.cta(raw, S.lang) : [];
+  let ctaHtml = ctas.map(c =>
+    `<a href="${c.url}" target="_blank" rel="noopener" class="btn-cta ${c.cls}">${c.label} →</a>`
+  ).join('');
   if (!isWindi) {
-    ctaArea.innerHTML += `
-      <a href="https://windi-domain.com/app/" target="_blank" class="btn-cta secondary">
-        Criar documento WINDI
-      </a>
-      <div class="cta-microcopy">Para garantia de origem e autoria</div>`;
+    ctaHtml += `<a href="https://windi-domain.com/app/" target="_blank" class="btn-cta secondary">${t('cta_create')}</a>`;
+    ctaHtml += `<div class="cta-microcopy">${t('cta_microcopy')}</div>`;
   }
+  ctaArea.innerHTML = ctaHtml;
 
-  // Incompleteness signal — fricção intencional para não-WINDI
-  const incomp = document.getElementById('incompleteness');
-  if (!isWindi) {
-    incomp.classList.add('show');
-  } else {
-    incomp.classList.remove('show');
-  }
+  // Fricção intencional — apenas não-WINDI
+  document.getElementById('incompleteness').classList.toggle('show', !isWindi);
 
   document.getElementById('result').classList.add('show');
   document.getElementById('btn-again').classList.add('show');
-  document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  document.getElementById('result').scrollIntoView({ behavior:'smooth', block:'nearest' });
 }
 
 function showError(msg) {
-  document.getElementById('conf-label').textContent = 'Erro';
+  document.getElementById('conf-badge').className = 'confidence-badge LOW';
+  document.getElementById('conf-label').textContent = t('conf_low');
+  document.getElementById('conf-desc').textContent  = '';
+  document.getElementById('result-card').className  = 'result-card UNKNOWN';
   document.getElementById('result-type-label').textContent = '';
-  document.getElementById('result-title').textContent = 'Não foi possível decodificar';
-  document.getElementById('result-msg').textContent = msg;
-  document.getElementById('agent-text').textContent = 'Tenta uma imagem mais nítida, ou cola o texto do QR directamente na tab "Colar texto".';
+  document.getElementById('result-title').textContent = t('err_title');
+  document.getElementById('result-msg').textContent   = msg;
   document.getElementById('decoded-fields').style.display = 'none';
   document.getElementById('raw-text').textContent = '—';
+  document.getElementById('agent-text').textContent = t('err_agent');
   document.getElementById('cta-area').innerHTML = '';
-  document.getElementById('result-card').className = 'result-card UNKNOWN';
   document.getElementById('result').classList.add('show');
   document.getElementById('btn-again').classList.add('show');
 }
@@ -1028,12 +921,10 @@ function resetScan() {
   hideResult();
   document.getElementById('paste-area').value = '';
   document.getElementById('btn-paste-decode').disabled = true;
-  if (S.tab === 'camera') {
-    document.getElementById('camera-status').textContent = 'Pronto para escanear';
-  }
 }
 
 // ── Init ──────────────────────────────────────────────────────
+setLang(S.lang);
 setTab('camera');
 </script>
 </body>
