@@ -67,6 +67,81 @@ body{background:var(--bg);color:var(--t1);font-family:var(--fb);-webkit-font-smo
 .tb.green:hover{filter:brightness(1.1)}
 .tb-ico{font-size:14px}
 
+/* ── W-CIA-001: HEALTH PULSE ─────────────── */
+.health-pulse{display:flex;align-items:center;gap:6px;padding:0 8px;margin-right:4px}
+.hp-dot{width:8px;height:8px;border-radius:50%;background:var(--green);
+  animation:pulse 2s ease-in-out infinite}
+.hp-dot.warn{background:#FFA726;animation:pulse-warn 1s ease-in-out infinite}
+.hp-dot.error{background:var(--red);animation:pulse-error .5s ease-in-out infinite}
+.hp-label{font-family:var(--fm);font-size:9px;color:var(--t3);cursor:pointer}
+.hp-label:hover{color:var(--gold)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes pulse-warn{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes pulse-error{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.2)}}
+.hp-panel{position:fixed;top:52px;right:12px;background:var(--pal);border:1px solid var(--brd);
+  border-radius:8px;padding:12px;min-width:240px;box-shadow:var(--shh);z-index:200;display:none}
+.hp-panel.show{display:block}
+.hp-title{font-family:var(--fm);font-size:10px;color:var(--gold);letter-spacing:1px;
+  text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.hp-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;
+  border-bottom:1px solid var(--brdl);font-family:var(--fm);font-size:11px}
+.hp-row:last-child{border-bottom:none}
+.hp-svc{color:var(--t2)}
+.hp-st{padding:2px 8px;border-radius:4px;font-size:9px;font-weight:500}
+.hp-st.ok{background:rgba(46,125,50,.15);color:var(--green)}
+.hp-st.warn{background:rgba(255,167,38,.15);color:#F57C00}
+.hp-st.err{background:rgba(198,40,40,.15);color:var(--red)}
+
+/* ── W-SCH-001: SCHOOLING TRIGGER ─────────────── */
+.sch-toast{
+  position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--pal);border:1px solid var(--gold);border-radius:12px;
+  padding:14px 20px;max-width:380px;box-shadow:var(--shh);z-index:250;
+  opacity:0;transition:all .4s cubic-bezier(.19,1,.22,1);pointer-events:none;
+  display:flex;align-items:flex-start;gap:12px;
+}
+.sch-toast.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto}
+.sch-ico{font-size:24px;flex-shrink:0}
+.sch-body{flex:1}
+.sch-title{font-family:var(--fm);font-size:10px;color:var(--gold);letter-spacing:1px;
+  text-transform:uppercase;margin-bottom:4px}
+.sch-text{font-size:12px;color:var(--t1);line-height:1.5}
+.sch-dismiss{position:absolute;top:8px;right:10px;background:none;border:none;
+  color:var(--t3);cursor:pointer;font-size:14px;opacity:.5}
+.sch-dismiss:hover{opacity:1}
+
+/* ── W-MGR-001: GERENTE DO COMPOSER ─────────── */
+.mgr-pulse{display:flex;align-items:center;gap:4px;padding:0 6px;cursor:pointer}
+.mgr-dot{width:6px;height:6px;border-radius:50%;background:var(--t3);opacity:.5;transition:all .3s}
+.mgr-dot.active{background:#FFA726;opacity:1;animation:pulse-warn 1.5s ease-in-out infinite}
+.mgr-label{font-family:var(--fm);font-size:9px;color:var(--t3);transition:color .2s}
+.mgr-label:hover{color:var(--gold)}
+.mgr-label.active{color:#FFA726}
+.sch-pulse{display:flex;align-items:center;gap:4px;padding:0 6px;cursor:pointer}
+.sch-toggle{width:6px;height:6px;border-radius:50%;background:var(--green);opacity:1;transition:all .3s}
+.sch-toggle.off{background:var(--t3);opacity:.4}
+.sch-label{font-family:var(--fm);font-size:9px;color:var(--t3);transition:color .2s}
+.sch-label:hover{color:var(--gold)}
+.sch-label.on{color:var(--green)}
+.mgr-hud{position:fixed;bottom:24px;right:24px;background:var(--pal);
+  border:1px solid rgba(139,105,20,0.4);border-radius:10px;padding:16px 18px;
+  max-width:320px;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.12);
+  font-family:var(--ff);display:none}
+.mgr-hud.show{display:block;animation:mgr-in .2s ease-out}
+@keyframes mgr-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.mgr-hud-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.mgr-hud-title{font-size:11px;font-weight:500;color:var(--gold);letter-spacing:1px}
+.mgr-hud-close{cursor:pointer;font-size:14px;opacity:.5;transition:opacity .2s}
+.mgr-hud-close:hover{opacity:1}
+.mgr-hud-msg{font-size:12px;line-height:1.6;margin-bottom:14px;color:var(--t1)}
+.mgr-hud-actions{display:flex;gap:8px;flex-wrap:wrap}
+.mgr-btn-yes{font-size:10px;padding:6px 14px;border-radius:6px;background:var(--gold);
+  color:#fff;border:none;cursor:pointer;font-family:var(--fm);transition:filter .15s}
+.mgr-btn-yes:hover{filter:brightness(1.1)}
+.mgr-btn-no{font-size:10px;padding:6px 14px;border-radius:6px;background:transparent;
+  border:1px solid var(--brd);cursor:pointer;font-family:var(--fm);color:var(--t2)}
+.mgr-btn-no:hover{border-color:var(--gold);color:var(--gold)}
+
 /* ── MAIN LAYOUT (3 zones) ──────────────────── */
 #layout{
   position:fixed;top:48px;left:0;right:0;bottom:0;
@@ -331,6 +406,19 @@ body{background:var(--bg);color:var(--t1);font-family:var(--fb);-webkit-font-smo
     <span>Gen 7</span>
   </div>
   <div class="g4-right">
+    <div class="health-pulse" onclick="toggleHealthPanel()">
+      <span class="hp-dot" id="hp-dot"></span>
+      <span class="hp-label" id="hp-label">CIA</span>
+    </div>
+    <div class="mgr-pulse" onclick="MGR.togglePanel()" title="W-MGR-001 Gerente">
+      <span class="mgr-dot" id="mgr-dot"></span>
+      <span class="mgr-label" id="mgr-label">MGR</span>
+    </div>
+    <div class="sch-pulse" onclick="SCH.toggle()" title="W-SCH-001 Instrutor — ON/OFF">
+      <span class="sch-toggle" id="sch-toggle"></span>
+      <span class="sch-label" id="sch-label">SCH</span>
+    </div>
+    <span style="width:1px;height:20px;background:var(--brd);margin:0 4px"></span>
     <button class="tb" onclick="setLang('de')" id="tb-de" title="Deutsch"><span class="tb-ico">🇩🇪</span> DE</button>
     <button class="tb" onclick="setLang('en')" id="tb-en" title="English"><span class="tb-ico">🇬🇧</span> EN</button>
     <button class="tb" onclick="setLang('pt')" id="tb-pt" title="Português"><span class="tb-ico">🇧🇷</span> PT</button>
@@ -343,6 +431,29 @@ body{background:var(--bg);color:var(--t1);font-family:var(--fb);-webkit-font-smo
     <button class="tb dispatch" onclick="showDispatchPanel()" title="Despachar — 5 canais de distribuição">🚀 Despachar</button>
   </div>
 </header>
+
+<!-- ── W-CIA-001: HEALTH PANEL ── -->
+<div id="healthPanel" class="hp-panel">
+  <div class="hp-title">🕵️ W-CIA-001 · Health Pulse</div>
+  <div class="hp-row"><span class="hp-svc">🐉 Dragon Hub</span><span class="hp-st" id="hp-dragon">...</span></div>
+  <div class="hp-row"><span class="hp-svc">📜 Ledger</span><span class="hp-st" id="hp-ledger">...</span></div>
+  <div class="hp-row"><span class="hp-svc">📤 Export</span><span class="hp-st" id="hp-export">...</span></div>
+  <div class="hp-row"><span class="hp-svc">🚀 Dispatch</span><span class="hp-st" id="hp-dispatch">...</span></div>
+  <div class="hp-row" style="margin-top:8px;border-top:1px solid var(--brd);padding-top:10px">
+    <span class="hp-svc" style="font-size:9px;color:var(--t3)">Last check</span>
+    <span id="hp-time" style="font-size:9px;color:var(--t3)">--:--</span>
+  </div>
+</div>
+
+<!-- ── W-SCH-001: SCHOOLING TOAST ── -->
+<div id="schToast" class="sch-toast">
+  <span class="sch-ico" id="sch-ico">💡</span>
+  <div class="sch-body">
+    <div class="sch-title">W-SCH-001 · Dica</div>
+    <div class="sch-text" id="sch-text"></div>
+  </div>
+  <button class="sch-dismiss" onclick="SCH.dismiss()">✕</button>
+</div>
 
 <!-- ── DISPATCH PANEL (Blocos A/B/C) ── -->
 <div id="dispatchPanel" class="dispatch-panel">
@@ -1402,6 +1513,394 @@ ${sections}
 </body>
 </html>`;
 }
+
+// ═══════════════════════════════════════════════
+// W-CIA-001: HEALTH PULSE
+// ═══════════════════════════════════════════════
+const HP = {
+  services: {
+    dragon:   { url: '/dragon/health', el: 'hp-dragon' },
+    ledger:   { url: '/api/ledger/health', el: 'hp-ledger' },
+    export:   { url: '/api/export/health', el: 'hp-export' },
+    dispatch: { url: '/api/dispatch/health', el: 'hp-dispatch' }
+  },
+  status: { ok: 0, warn: 0, err: 0 },
+  interval: null
+};
+
+async function checkHealth() {
+  HP.status = { ok: 0, warn: 0, err: 0 };
+
+  for (const [key, svc] of Object.entries(HP.services)) {
+    try {
+      const res = await fetch(svc.url, { signal: AbortSignal.timeout(5000) });
+      const el = document.getElementById(svc.el);
+      if (res.ok) {
+        el.textContent = 'LIVE';
+        el.className = 'hp-st ok';
+        HP.status.ok++;
+      } else {
+        el.textContent = res.status;
+        el.className = 'hp-st warn';
+        HP.status.warn++;
+      }
+    } catch (e) {
+      const el = document.getElementById(svc.el);
+      el.textContent = 'DOWN';
+      el.className = 'hp-st err';
+      HP.status.err++;
+    }
+  }
+
+  // Update main indicator
+  const dot = document.getElementById('hp-dot');
+  const label = document.getElementById('hp-label');
+  if (HP.status.err > 0) {
+    dot.className = 'hp-dot error';
+    label.textContent = `CIA ⚠ ${HP.status.err}`;
+  } else if (HP.status.warn > 0) {
+    dot.className = 'hp-dot warn';
+    label.textContent = 'CIA ⚡';
+  } else {
+    dot.className = 'hp-dot';
+    label.textContent = 'CIA';
+  }
+
+  document.getElementById('hp-time').textContent = new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'});
+}
+
+function toggleHealthPanel() {
+  document.getElementById('healthPanel').classList.toggle('show');
+}
+
+// Start Health Pulse on load
+checkHealth();
+HP.interval = setInterval(checkHealth, 30000);
+
+// ═══════════════════════════════════════════════════════════════
+// W-SCH-001: SCHOOLING TRIGGER
+// "Ensina quando o Humano parou."
+// ═══════════════════════════════════════════════════════════════
+const SCH = {
+  idleTimer: null,
+  idleThreshold: 60000,
+  lastActivity: Date.now(),
+  shown: new Set(),
+  enabled: true,
+
+  tips: {
+    emptyCanvas: {
+      ico: '📰',
+      text: 'O Jornal WINDI tem 9 tipos de blocos. O mais poderoso começa pela <b>Capa</b> — ela ancora tudo o que vem depois.'
+    },
+    evidenceBlock: {
+      ico: '🛡️',
+      text: 'Este bloco suporta <b>OCR directo</b> — arrastas o PDF e o W-LEGAL-001 extrai as provas automaticamente.'
+    },
+    inspectorIdle: {
+      ico: '✨',
+      text: 'O Inspector tem ligação directa ao Dragon. Carrega em <b>✨ AI Generate</b> para o Guardian te sugerir texto.'
+    },
+    heroBlock: {
+      ico: '🎯',
+      text: 'A Capa define o tom do jornal. O <b>título</b> deve ter impacto — o Guardian pode ajudar com sugestões.'
+    },
+    dispatchReady: {
+      ico: '🚀',
+      text: 'Com 3+ blocos, podes <b>Despachar</b>. O canal WhatsApp gera link público instantâneo.'
+    },
+    multilingual: {
+      ico: '🌐',
+      text: 'Cada bloco suporta <b>3 línguas</b>. Usa as tabs DE|EN|PT no Inspector para traduzir.'
+    }
+  },
+
+  init() {
+    // Load state from localStorage
+    this.enabled = localStorage.getItem('windi_sch_enabled') !== 'false';
+    this.updateUI();
+
+    ['mousemove','keydown','click','scroll','touchstart'].forEach(evt => {
+      document.addEventListener(evt, () => this.resetIdle(), { passive: true });
+    });
+    if (this.enabled) this.startIdle();
+  },
+
+  toggle() {
+    this.enabled = !this.enabled;
+    localStorage.setItem('windi_sch_enabled', this.enabled);
+    this.updateUI();
+
+    if (this.enabled) {
+      this.startIdle();
+    } else {
+      clearTimeout(this.idleTimer);
+      this.hide();
+    }
+  },
+
+  updateUI() {
+    const dot = document.getElementById('sch-toggle');
+    const label = document.getElementById('sch-label');
+    if (this.enabled) {
+      dot.classList.remove('off');
+      label.classList.add('on');
+    } else {
+      dot.classList.add('off');
+      label.classList.remove('on');
+    }
+  },
+
+  resetIdle() {
+    if (!this.enabled) return;
+    this.lastActivity = Date.now();
+    clearTimeout(this.idleTimer);
+    this.hide();
+    this.startIdle();
+  },
+
+  startIdle() {
+    if (!this.enabled) return;
+    this.idleTimer = setTimeout(() => this.checkContext(), this.idleThreshold);
+  },
+
+  checkContext() {
+    const ctx = this.detectContext();
+    if (ctx && !this.shown.has(ctx)) {
+      this.show(ctx);
+    } else {
+      this.startIdle();
+    }
+  },
+
+  detectContext() {
+    if (blocks.length === 0) return 'emptyCanvas';
+    if (selectedId) {
+      const b = blocks.find(x => x.id === selectedId);
+      if (b) {
+        if (b.type === 'evidence') return 'evidenceBlock';
+        if (b.type === 'hero') return 'heroBlock';
+      }
+      return 'inspectorIdle';
+    }
+    if (blocks.length >= 3) return 'dispatchReady';
+    return 'multilingual';
+  },
+
+  show(tipKey) {
+    const tip = this.tips[tipKey];
+    if (!tip) return;
+    this.shown.add(tipKey);
+    document.getElementById('sch-ico').textContent = tip.ico;
+    document.getElementById('sch-text').innerHTML = tip.text;
+    document.getElementById('schToast').classList.add('show');
+    setTimeout(() => this.hide(), 10000);
+  },
+
+  hide() {
+    document.getElementById('schToast').classList.remove('show');
+  },
+
+  dismiss() {
+    this.hide();
+    this.startIdle();
+  }
+};
+
+// ═══════════════════════════════════════════════════════════════
+// W-MGR-001: GERENTE DO COMPOSER
+// "O Gerente observa. Propõe. Nunca decide sem o Humano." (I9)
+// ═══════════════════════════════════════════════════════════════
+const MGR = {
+  checkInterval: null,
+  idleTimer: null,
+  lastSuggestion: null,
+  panelVisible: false,
+  startTime: Date.now(),
+
+  init() {
+    // Primeira análise após 2 minutos de idle
+    this.idleTimer = setTimeout(() => this.analyse(), 120000);
+    // Análises periódicas a cada 45 segundos
+    this.checkInterval = setInterval(() => this.analyse(), 45000);
+    console.log('🏗️ W-MGR-001 ONLINE · Gerente do Composer activo');
+  },
+
+  analyse() {
+    const suggestions = [];
+    const elapsed = (Date.now() - this.startTime) / 1000;
+
+    // Mensagens trilíngues do Gerente
+    const MGR_MSG = {
+      empty: {
+        de: 'Canvas leer. Mit einem Cover-Block beginnen?',
+        en: 'Canvas empty. Start with a Cover block?',
+        pt: 'Canvas vazio. Começar com um bloco Capa?'
+      },
+      evidence: {
+        de: 'Artikel ohne forensische Evidenz. Evidenz-Block hinzufügen?',
+        en: 'Article without forensic evidence. Add Evidence block?',
+        pt: 'Artigo sem evidência forense. Adicionar bloco Evidências?'
+      },
+      hero: {
+        de: 'Ausgabe ohne Cover. Cover-Block hinzufügen?',
+        en: 'Edition without cover. Add Cover block?',
+        pt: 'Edição sem capa. Adicionar bloco Capa?'
+      },
+      trust: {
+        de: 'Mehrere Blöcke vorhanden. Trust Ribbon für Siegel hinzufügen?',
+        en: 'Multiple blocks present. Add Trust Ribbon for seal?',
+        pt: 'Vários blocos presentes. Adicionar Trust Ribbon para selo?'
+      },
+      addCover: {de: '+ Cover', en: '+ Cover', pt: '+ Capa'},
+      addEvidence: {de: '+ Evidenz', en: '+ Evidence', pt: '+ Evidências'},
+      addTrust: {de: '+ Trust Ribbon', en: '+ Trust Ribbon', pt: '+ Trust Ribbon'}
+    };
+
+    // ─── Situação 1: Canvas vazio após 2 minutos ───
+    if (blocks.length === 0 && elapsed > 120) {
+      suggestions.push({
+        type: 'EMPTY_CANVAS',
+        msg: MGR_MSG.empty[LANG] || MGR_MSG.empty.de,
+        action: () => { addBlock('hero'); this.hidePanel(); },
+        actionLabel: MGR_MSG.addCover[LANG] || MGR_MSG.addCover.de
+      });
+    }
+
+    // ─── Situação 2: Artigo sem Evidence Block ───
+    const hasArticle = blocks.some(b => b.type === 'grid' || b.type === 'sidebar');
+    const hasEvidence = blocks.some(b => b.type === 'evidence');
+    if (hasArticle && !hasEvidence && blocks.length >= 2) {
+      suggestions.push({
+        type: 'MISSING_EVIDENCE',
+        msg: MGR_MSG.evidence[LANG] || MGR_MSG.evidence.de,
+        action: () => { addBlock('evidence'); this.hidePanel(); },
+        actionLabel: MGR_MSG.addEvidence[LANG] || MGR_MSG.addEvidence.de
+      });
+    }
+
+    // ─── Situação 3: Conteúdo sem Capa (hero) ───
+    const hasHero = blocks.some(b => b.type === 'hero');
+    if (blocks.length >= 2 && !hasHero) {
+      suggestions.push({
+        type: 'MISSING_HERO',
+        msg: MGR_MSG.hero[LANG] || MGR_MSG.hero.de,
+        action: () => { addBlock('hero'); this.hidePanel(); },
+        actionLabel: MGR_MSG.addCover[LANG] || MGR_MSG.addCover.de
+      });
+    }
+
+    // ─── Situação 4: Muitos blocos sem Trust Ribbon ───
+    const hasTrust = blocks.some(b => b.type === 'trust');
+    if (blocks.length >= 4 && !hasTrust) {
+      suggestions.push({
+        type: 'MISSING_TRUST',
+        msg: MGR_MSG.trust[LANG] || MGR_MSG.trust.de,
+        action: () => { addBlock('trust'); this.hidePanel(); },
+        actionLabel: MGR_MSG.addTrust[LANG] || MGR_MSG.addTrust.de
+      });
+    }
+
+    // Mostrar apenas a primeira sugestão (prioridade)
+    if (suggestions.length > 0 && suggestions[0].type !== this.lastSuggestion) {
+      this.lastSuggestion = suggestions[0].type;
+      this.showSuggestion(suggestions[0]);
+      this.setIndicator(true);
+      this.logToCIA(suggestions[0].type);
+    } else if (suggestions.length === 0) {
+      this.lastSuggestion = null;
+      this.setIndicator(false);
+    }
+  },
+
+  showSuggestion(s) {
+    // Remover HUD anterior
+    document.getElementById('mgr-hud')?.remove();
+
+    const hud = document.createElement('div');
+    hud.id = 'mgr-hud';
+    hud.className = 'mgr-hud show';
+    hud.innerHTML = `
+      <div class="mgr-hud-header">
+        <span class="mgr-hud-title">🏗️ GERENTE</span>
+        <span class="mgr-hud-close" onclick="MGR.hidePanel()">×</span>
+      </div>
+      <div class="mgr-hud-msg">${s.msg}</div>
+      <div class="mgr-hud-actions">
+        <button class="mgr-btn-yes" id="mgr-action-btn">${s.actionLabel || '✓ Sim'}</button>
+        <button class="mgr-btn-no" onclick="MGR.dismiss()">Dispensar</button>
+      </div>`;
+
+    document.body.appendChild(hud);
+
+    // Bind action
+    document.getElementById('mgr-action-btn').onclick = s.action;
+
+    // Auto-dismiss após 30s
+    this.autoDismissTimer = setTimeout(() => this.hidePanel(), 30000);
+  },
+
+  hidePanel() {
+    const hud = document.getElementById('mgr-hud');
+    if (hud) hud.remove();
+    this.panelVisible = false;
+    clearTimeout(this.autoDismissTimer);
+  },
+
+  dismiss() {
+    this.hidePanel();
+    this.lastSuggestion = null; // Permite nova sugestão
+    this.setIndicator(false);
+  },
+
+  togglePanel() {
+    const hud = document.getElementById('mgr-hud');
+    if (hud) {
+      this.hidePanel();
+    } else if (this.lastSuggestion) {
+      this.analyse(); // Re-trigger para mostrar sugestão
+    }
+  },
+
+  setIndicator(active) {
+    const dot = document.getElementById('mgr-dot');
+    const label = document.getElementById('mgr-label');
+    if (active) {
+      dot.classList.add('active');
+      label.classList.add('active');
+    } else {
+      dot.classList.remove('active');
+      label.classList.remove('active');
+    }
+  },
+
+  logToCIA(eventType) {
+    // Integração silenciosa com W-CIA-001
+    fetch('/api/agents/log', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        agent: 'W-MGR-001',
+        event: eventType,
+        ts: new Date().toISOString(),
+        blocks_count: blocks.length
+      })
+    }).catch(() => {}); // Silent fail — não bloqueia UI
+  },
+
+  stop() {
+    clearInterval(this.checkInterval);
+    clearTimeout(this.idleTimer);
+    console.log('🏗️ W-MGR-001 OFFLINE');
+  }
+};
+
+// Iniciar SCH + MGR após DOM pronto
+document.addEventListener('DOMContentLoaded', () => {
+  SCH.init();
+  MGR.init();
+});
+// ═══════════════════════════════════════════════════════════════
 </script>
 </body>
 </html>
