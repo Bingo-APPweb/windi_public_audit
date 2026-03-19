@@ -405,16 +405,19 @@ function downloadCanvasOutput() {
     URL.revokeObjectURL(a.href);
 }
 
-async function copyCanvasToClipboard() {
+async function copyCanvasToClipboard(e) {
     if (!_currentCanvasContent) return;
     try {
         await navigator.clipboard.writeText(_currentCanvasContent);
-        const btn = event.target;
-        const original = btn.textContent;
-        btn.textContent = '✓';
-        setTimeout(() => btn.textContent = original, 1500);
-    } catch (e) {
-        alert('Erro ao copiar: ' + e.message);
+        // Fix: use event parameter or fallback to querySelector
+        const btn = e?.target || document.querySelector('.canvas-toolbar button[title="Copiar"]');
+        if (btn) {
+            const original = btn.textContent;
+            btn.textContent = '✓';
+            setTimeout(() => btn.textContent = original, 1500);
+        }
+    } catch (err) {
+        alert('Erro ao copiar: ' + err.message);
     }
 }
 
@@ -596,7 +599,7 @@ function showCanvas(session, originalIntent) {
             <span class="canvas-stage">${session.stage}</span>
             <div class="canvas-toolbar-actions">
                 <button onclick="downloadCanvasOutput()" title="Download">⬇</button>
-                <button onclick="copyCanvasToClipboard()" title="Copiar">📋</button>
+                <button onclick="copyCanvasToClipboard(event)" title="Copiar">📋</button>
                 <button id="btnExportWeb" onclick="exportWebStandalone()" title="Gravar HTML">💾</button>
                 <button id="btnPublish" onclick="publishToWINDI()" title="Publicar no WINDI">📡</button>
                 <button id="btnWhatsApp" onclick="shareOnWhatsApp()" title="WhatsApp" style="display:none">📲</button>
@@ -852,3 +855,281 @@ function walletLogout() {
 })();
 
 console.log("[GEN7] DID Wallet Modal initialized — FASE 1");
+
+// ═══════════════════════════════════════════════════════════
+// W-CIA-001 — Ecosystem Health Diagnostics
+// "Observa. Regista. Propõe. Aguarda o Toque Soberano."
+// ═══════════════════════════════════════════════════════════
+
+const CIA = {
+    // Services to monitor
+    SERVICES: [
+        { name: 'Dragon', endpoint: '/api/dragon/status', expectJson: true, critical: true },
+        { name: 'OneTouch', endpoint: '/api/onetouch/execute', method: 'POST', body: '{"intent":"health","wallet_id":"cia"}', expectJson: true, critical: true },
+        { name: 'Agents', endpoint: '/api/agents/status', expectJson: true, critical: true },
+        { name: 'Ledger', endpoint: '/api/ledger/health', expectJson: true, critical: true },
+        { name: 'Export', endpoint: '/api/export/health', expectJson: true, critical: false },
+        { name: 'Dispatch', endpoint: '/api/dispatch/health', expectJson: true, critical: false },
+        { name: 'Wallet', endpoint: '/api/wallet/health', expectJson: true, critical: false },
+    ],
+
+    // Routes to verify (should NOT return 301)
+    ROUTES: [
+        { name: 'How it Works', path: '/how-it-works/' },
+        { name: 'Keys Pricing', path: '/keys/' },
+        { name: 'Verify Public', path: '/verify-public/web/' },
+        { name: 'Jornal Composer', path: '/jornal/' },
+    ],
+
+    state: {
+        services: [],
+        alerts: [],
+        lastCheck: null,
+        overallStatus: 'unknown'
+    },
+
+    // Check if response is JSON
+    isJsonResponse(text) {
+        try {
+            JSON.parse(text);
+            return true;
+        } catch (e) {
+            return false;
+        }
+    },
+
+    // Check if response is HTML
+    isHtmlResponse(text) {
+        return text.trim().startsWith('<!DOCTYPE') || text.trim().startsWith('<html');
+    },
+
+    // Run full diagnostics
+    async runDiagnostics() {
+        this.state.services = [];
+        this.state.alerts = [];
+        this.state.lastCheck = new Date().toISOString();
+
+        // Check services
+        for (const svc of this.SERVICES) {
+            const result = await this.checkService(svc);
+            this.state.services.push(result);
+        }
+
+        // Check routes (should return 200, not 301)
+        for (const route of this.ROUTES) {
+            const result = await this.checkRoute(route);
+            if (result.status !== 'ok') {
+                this.state.alerts.push(result);
+            }
+        }
+
+        // Calculate overall status
+        const critical = this.state.services.filter(s => s.critical);
+        const criticalDown = critical.filter(s => s.status === 'down').length;
+        const anyWarn = this.state.services.some(s => s.status === 'warn');
+        const anyAlert = this.state.alerts.length > 0;
+
+        if (criticalDown > 0) {
+            this.state.overallStatus = 'down';
+        } else if (anyWarn || anyAlert) {
+            this.state.overallStatus = 'warn';
+        } else {
+            this.state.overallStatus = 'ok';
+        }
+
+        this.updateIndicator();
+        return this.state;
+    },
+
+    // Check a single service
+    async checkService(svc) {
+        const result = {
+            name: svc.name,
+            endpoint: svc.endpoint,
+            critical: svc.critical,
+            status: 'unknown',
+            detail: '',
+            latency: 0
+        };
+
+        const start = performance.now();
+        try {
+            const options = { method: svc.method || 'GET' };
+            if (svc.method === 'POST' && svc.body) {
+                options.headers = { 'Content-Type': 'application/json' };
+                options.body = svc.body;
+            }
+
+            const res = await fetch(svc.endpoint, options);
+            result.latency = Math.round(performance.now() - start);
+
+            const text = await res.text();
+
+            // Check for HTML response when expecting JSON (BUG DETECTION!)
+            if (svc.expectJson && this.isHtmlResponse(text)) {
+                result.status = 'down';
+                result.detail = 'HTML instead of JSON — route missing?';
+                this.state.alerts.push({
+                    type: 'json_mismatch',
+                    name: svc.name,
+                    endpoint: svc.endpoint,
+                    message: `${svc.name} returns HTML instead of JSON`,
+                    fix: `Check nginx route for ${svc.endpoint}`
+                });
+            } else if (res.status === 301 || res.status === 302) {
+                result.status = 'warn';
+                result.detail = `Redirect ${res.status} — route may be missing`;
+            } else if (res.ok) {
+                result.status = 'ok';
+                result.detail = `${result.latency}ms`;
+            } else {
+                result.status = 'warn';
+                result.detail = `HTTP ${res.status}`;
+            }
+        } catch (e) {
+            result.status = 'down';
+            result.detail = e.message;
+            result.latency = Math.round(performance.now() - start);
+        }
+
+        return result;
+    },
+
+    // Check a route (should return 200, not redirect)
+    async checkRoute(route) {
+        const result = {
+            type: 'route',
+            name: route.name,
+            path: route.path,
+            status: 'ok',
+            message: ''
+        };
+
+        try {
+            const res = await fetch(route.path, { redirect: 'manual' });
+            
+            if (res.type === 'opaqueredirect' || res.status === 301 || res.status === 302) {
+                result.status = 'warn';
+                result.message = `${route.name} redirects (route missing in nginx)`;
+                result.fix = `Add location ${route.path} to nginx`;
+            } else if (!res.ok) {
+                result.status = 'warn';
+                result.message = `${route.name} returns HTTP ${res.status}`;
+            }
+        } catch (e) {
+            // Redirect detected as network error with redirect: manual
+            result.status = 'warn';
+            result.message = `${route.name} check failed: ${e.message}`;
+        }
+
+        return result;
+    },
+
+    // Update header indicator
+    updateIndicator() {
+        const dot = document.getElementById('ciaDot');
+        const label = document.getElementById('ciaLabel');
+        
+        if (!dot || !label) return;
+
+        dot.className = 'cia-dot';
+        if (this.state.overallStatus === 'ok') {
+            dot.classList.add('ok');
+            label.textContent = 'CIA ✓';
+        } else if (this.state.overallStatus === 'warn') {
+            dot.classList.add('warn');
+            label.textContent = 'CIA ⚠';
+        } else {
+            dot.classList.add('down');
+            label.textContent = 'CIA ✗';
+        }
+    },
+
+    // Render panel content
+    renderPanel() {
+        const content = document.getElementById('ciaPanelContent');
+        const timestamp = document.getElementById('ciaTimestamp');
+        if (!content) return;
+
+        // Services section
+        let html = '<div class="cia-services">';
+        for (const svc of this.state.services) {
+            const statusClass = svc.status === 'ok' ? '' : svc.status;
+            html += `
+                <div class="cia-service ${statusClass}">
+                    <div>
+                        <div class="cia-service-name">${svc.name}</div>
+                        <div class="cia-service-detail">${svc.endpoint}</div>
+                    </div>
+                    <div class="cia-service-status">${svc.detail || svc.status.toUpperCase()}</div>
+                </div>
+            `;
+        }
+        html += '</div>';
+
+        // Alerts section
+        if (this.state.alerts.length > 0) {
+            html += '<div class="cia-alerts">';
+            html += '<div style="font-size:11px;color:var(--gold-light);margin-bottom:8px;font-weight:600;">⚠️ Alerts Detected</div>';
+            for (const alert of this.state.alerts) {
+                html += `
+                    <div class="cia-alert">
+                        <span class="cia-alert-icon">🔴</span>
+                        <div>
+                            <div class="cia-alert-text">${alert.message}</div>
+                            ${alert.fix ? `<div class="cia-alert-fix">→ ${alert.fix}</div>` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+            html += '</div>';
+        }
+
+        content.innerHTML = html;
+
+        if (timestamp) {
+            timestamp.textContent = this.state.lastCheck 
+                ? new Date(this.state.lastCheck).toLocaleTimeString()
+                : '—';
+        }
+    }
+};
+
+// Toggle CIA panel
+function toggleCiaPanel() {
+    const panel = document.getElementById('ciaPanel');
+    if (!panel) return;
+
+    const isVisible = panel.style.display !== 'none';
+    if (isVisible) {
+        panel.style.display = 'none';
+    } else {
+        panel.style.display = 'block';
+        CIA.renderPanel();
+    }
+}
+
+// Run diagnostics and update panel
+async function runCiaDiagnostics() {
+    const content = document.getElementById('ciaPanelContent');
+    if (content) content.innerHTML = '<div class="cia-loading">Running diagnostics...</div>';
+    
+    await CIA.runDiagnostics();
+    CIA.renderPanel();
+}
+
+// Initialize CIA on page load
+document.addEventListener('DOMContentLoaded', () => {
+    // Initial check after 2 seconds (let other things load first)
+    setTimeout(() => {
+        CIA.runDiagnostics();
+    }, 2000);
+
+    // Periodic check every 60 seconds
+    setInterval(() => {
+        CIA.runDiagnostics();
+    }, 60000);
+});
+
+console.log('[CIA] W-CIA-001 Health Pulse initialized');
+console.log('[CIA] "Observa. Regista. Propõe. Aguarda o Toque Soberano."');

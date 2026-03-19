@@ -1340,3 +1340,202 @@ body {
     color: var(--text-muted);
     font-style: italic;
 }
+
+/* ═══════════════════════════════════════════════════════════
+   W-CIA-001 — Health Pulse Indicator
+   "Observa. Regista. Propõe. Aguarda o Toque Soberano."
+   ═══════════════════════════════════════════════════════════ */
+
+/* CIA Pulse Indicator (header) */
+.cia-pulse {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-tertiary);
+    border: 1px solid var(--gold-dim);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-left: 12px;
+}
+.cia-pulse:hover {
+    background: var(--gold-dim);
+    border-color: var(--gold-light);
+}
+
+.cia-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--status-green);
+    animation: cia-pulse-anim 2s infinite;
+}
+.cia-dot.warn { background: #D4A017; }
+.cia-dot.down { background: #C74B4B; animation: none; }
+
+@keyframes cia-pulse-anim {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(0.9); }
+}
+
+.cia-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--gold-light);
+    letter-spacing: 1px;
+}
+
+/* CIA Panel (dropdown) */
+.cia-panel {
+    position: fixed;
+    top: 56px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 420px;
+    max-width: 95vw;
+    background: var(--bg-card);
+    border: 1px solid var(--gold-dim);
+    border-radius: var(--radius-md);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.cia-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: var(--bg-tertiary);
+    border-bottom: 1px solid var(--gold-dim);
+}
+.cia-panel-title {
+    font-family: var(--font-display);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gold-light);
+}
+.cia-panel-close {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px;
+}
+.cia-panel-close:hover { color: var(--text-primary); }
+
+.cia-panel-content {
+    padding: 16px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.cia-loading {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 12px;
+    padding: 20px;
+}
+
+/* Service rows */
+.cia-service {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-sm);
+    margin-bottom: 8px;
+    border-left: 3px solid var(--status-green);
+}
+.cia-service.warn { border-left-color: #D4A017; }
+.cia-service.down { border-left-color: #C74B4B; }
+
+.cia-service-name {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+.cia-service-status {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    background: rgba(45,90,45,0.3);
+    color: #5DBE7A;
+}
+.cia-service.warn .cia-service-status {
+    background: rgba(212,160,23,0.3);
+    color: #D4A017;
+}
+.cia-service.down .cia-service-status {
+    background: rgba(199,75,75,0.3);
+    color: #C74B4B;
+}
+
+.cia-service-detail {
+    font-size: 9px;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+/* Alerts section */
+.cia-alerts {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--gold-dim);
+}
+.cia-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px;
+    background: rgba(199,75,75,0.1);
+    border: 1px solid rgba(199,75,75,0.3);
+    border-radius: var(--radius-sm);
+    margin-bottom: 8px;
+}
+.cia-alert-icon { font-size: 14px; }
+.cia-alert-text {
+    font-size: 11px;
+    color: var(--text-primary);
+    line-height: 1.4;
+}
+.cia-alert-fix {
+    font-size: 10px;
+    color: var(--gold-light);
+    margin-top: 4px;
+    font-family: var(--font-mono);
+}
+
+/* Panel footer */
+.cia-panel-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: var(--bg-tertiary);
+    border-top: 1px solid var(--gold-dim);
+}
+.cia-timestamp {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--text-muted);
+}
+.cia-refresh-btn {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    padding: 4px 10px;
+    background: var(--gold-dim);
+    color: var(--gold-light);
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+}
+.cia-refresh-btn:hover {
+    background: var(--gold-primary);
+}
