@@ -455,6 +455,66 @@ p{font-size:15px;color:var(--text);line-height:1.65}
   </p>
 </div>
 
+<!-- PIONEER APPLICATION FORM -->
+<div class="section" id="apply-section" style="background:var(--seal);color:#fff;padding:40px 24px;margin-top:40px;border-radius:8px">
+  <div class="section-label" style="color:var(--gold)">Aplicar ao Pioneer Program</div>
+  <h2 style="color:#fff;margin-bottom:20px">Cria a tua Wallet Soberana</h2>
+
+  <form id="pioneer-form" style="max-width:400px">
+    <div style="margin-bottom:16px">
+      <label style="display:block;font-size:12px;letter-spacing:0.1em;color:var(--gold);margin-bottom:6px;text-transform:uppercase">Nome / Codename *</label>
+      <input type="text" id="apply-name" required placeholder="Ex: Human Dragon"
+        style="width:100%;padding:12px;font-size:16px;border:1px solid var(--gold-dim);border-radius:4px;background:#1a1a24;color:#fff;font-family:inherit">
+    </div>
+
+    <div style="margin-bottom:16px">
+      <label style="display:block;font-size:12px;letter-spacing:0.1em;color:var(--gold);margin-bottom:6px;text-transform:uppercase">Email *</label>
+      <input type="email" id="apply-email" required placeholder="teu@email.com"
+        style="width:100%;padding:12px;font-size:16px;border:1px solid var(--gold-dim);border-radius:4px;background:#1a1a24;color:#fff;font-family:inherit">
+    </div>
+
+    <div style="margin-bottom:16px">
+      <label style="display:block;font-size:12px;letter-spacing:0.1em;color:var(--gold);margin-bottom:6px;text-transform:uppercase">Tipo de Entidade</label>
+      <select id="apply-type" style="width:100%;padding:12px;font-size:16px;border:1px solid var(--gold-dim);border-radius:4px;background:#1a1a24;color:#fff;font-family:inherit">
+        <option value="PF">Pessoa Física (Individual)</option>
+        <option value="PJ">Pessoa Jurídica (Organization)</option>
+      </select>
+    </div>
+
+    <div style="margin-bottom:16px">
+      <label style="display:block;font-size:12px;letter-spacing:0.1em;color:var(--gold);margin-bottom:6px;text-transform:uppercase">Profissão *</label>
+      <input type="text" id="apply-profession" required placeholder="Ex: Advogado, Jornalista, Empresário..."
+        style="width:100%;padding:12px;font-size:16px;border:1px solid var(--gold-dim);border-radius:4px;background:#1a1a24;color:#fff;font-family:inherit">
+    </div>
+
+    <div style="margin-bottom:16px">
+      <label style="display:block;font-size:12px;letter-spacing:0.1em;color:var(--gold);margin-bottom:6px;text-transform:uppercase">Localização *</label>
+      <input type="text" id="apply-location" required placeholder="Ex: Kempten, Bavaria, Deutschland"
+        style="width:100%;padding:12px;font-size:16px;border:1px solid var(--gold-dim);border-radius:4px;background:#1a1a24;color:#fff;font-family:inherit">
+    </div>
+
+    <div style="margin-bottom:20px">
+      <label style="display:block;font-size:12px;letter-spacing:0.1em;color:var(--gold);margin-bottom:6px;text-transform:uppercase">Por que queres uma Wallet WINDI? *</label>
+      <textarea id="apply-filter" required placeholder="Ex: Preciso de documentos verificáveis para o meu escritório de advocacia..."
+        style="width:100%;padding:12px;font-size:16px;border:1px solid var(--gold-dim);border-radius:4px;background:#1a1a24;color:#fff;font-family:inherit;min-height:80px;resize:vertical"></textarea>
+    </div>
+
+    <button type="submit" id="apply-btn" style="width:100%;padding:14px 24px;font-size:16px;font-weight:600;letter-spacing:0.05em;background:var(--gold);color:var(--ink);border:none;border-radius:4px;cursor:pointer;font-family:inherit">
+      🛡️ Aplicar ao Pioneer Program
+    </button>
+
+    <p style="font-size:12px;color:var(--muted);margin-top:12px;text-align:center">
+      Após aprovação humana (I9), receberás o teu WALLET-ID por email.
+    </p>
+  </form>
+
+  <div id="apply-success" style="display:none;text-align:center;padding:30px">
+    <div style="font-size:48px;margin-bottom:16px">✅</div>
+    <h3 style="color:var(--gold);margin-bottom:12px">Aplicação Recebida!</h3>
+    <p style="color:#ccc">O Human Dragon irá rever a tua aplicação.<br>Receberás o teu WALLET-ID por email após aprovação.</p>
+  </div>
+</div>
+
 <div class="footer">
   <div class="footer-left">windi-domain.com/verify-public/<br>W-KEYS-001 · W-PAR-001 · I5 I6 I9 I10<br>Pioneer Program · 100 spots · Kempten, Bavaria</div>
   <div class="footer-mandate">"AI processes. Human decides.<br>WINDI guarantees."</div>
@@ -470,6 +530,42 @@ function setLang(lang, btn) {
   btn.classList.add('active');
   window.scrollTo(0, 0);
 }
+
+// Pioneer Application Form
+document.getElementById('pioneer-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const btn = document.getElementById('apply-btn');
+  btn.disabled = true;
+  btn.textContent = '⏳ A enviar...';
+
+  try {
+    const res = await fetch('/api/pioneer/apply', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: document.getElementById('apply-name').value.trim(),
+        email: document.getElementById('apply-email').value.trim(),
+        profession: document.getElementById('apply-profession').value.trim(),
+        location: document.getElementById('apply-location').value.trim(),
+        filter_answer: document.getElementById('apply-filter').value.trim()
+      })
+    });
+
+    if (res.ok) {
+      document.getElementById('pioneer-form').style.display = 'none';
+      document.getElementById('apply-success').style.display = 'block';
+    } else {
+      const data = await res.json();
+      alert('Erro: ' + (data.error || data.detail || 'Tenta novamente'));
+      btn.disabled = false;
+      btn.textContent = '🛡️ Aplicar ao Pioneer Program';
+    }
+  } catch (err) {
+    alert('Erro de rede. Verifica a tua ligação.');
+    btn.disabled = false;
+    btn.textContent = '🛡️ Aplicar ao Pioneer Program';
+  }
+});
 </script>
 </body>
 </html>
