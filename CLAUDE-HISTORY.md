@@ -915,3 +915,77 @@ MUNDO (verify-public mostra identidade soberana)
 *Sessão Histórica documentada por Gêmeo · 19 Mar 2026 · OM SHANTI 🐉*
 *"AI processes. Human decides. WINDI guarantees."*
 *"ALMA → DID → CÉREBRO → LEDGER → MUNDO"*
+
+---
+
+## § SESSÃO 19 Mar 2026 (Noite) — Addendum §35
+
+### §35 — Nervous System Verified
+
+**Problema:** Sandbox Core :8091 não tinha `/health` canónico — smoke tests mostravam 404.
+
+**Solução:**
+```python
+# blueprints/hub_blueprint.py
+@hub_blueprint.route('/health', methods=['GET'])
+def health():
+    return jsonify({
+        "status": "healthy",
+        "service": "sandbox-core",
+        "agents": len(AGENT_REGISTRY),
+        "port": 8091,
+        "principle": "AI processes. Human decides. WINDI guarantees."
+    }), 200
+```
+
+**Smoke Test Final — 8/9 VERDE:**
+```
+:8091 Sandbox Core    → ✅ healthy (7 agents)
+:8096 ID Genesis      → ✅ RUNNING
+:8101 Forensic Ledger → ✅ healthy
+:8105 Communiqué      → ✅ operational
+:8108 Dragon Hub      → ✅ healthy v1.3.0
+:8114 Verify Public   → ✅ operational
+:8119 GEN7 Desktop    → ✅ operational v7.0.0
+:8121 Dispatch        → ✅ GREEN
+:8100 Desktop v2      → 🔴 RETIRED
+```
+
+**Seal IRREMEDIÁVEL:**
+```
+Receipt: WINDI-NERVOUS-SYSTEM-VERIFIED-20260319
+Actor: Human Dragon
+Governance: HIGH
+SGE Score: 100.0
+Método: curl /health por porto
+```
+
+**Commits §35:**
+```
+779c407 feat(sandbox-core): /health endpoint
+75e0572 docs(CLAUDE.md): v1.9.27 — §35 Nervous System
+```
+
+---
+
+### Resumo Sessão Completa 19 Mar 2026
+
+| § | Milestone | Status |
+|---|-----------|--------|
+| §32 | DID Seed Declaration | ✅ IRREMEDIÁVEL |
+| §33 | Berçário Portão Nascimento | ✅ LIVE |
+| §34 | Identity Thread actor=wallet_id | ✅ LIVE |
+| §35 | Nervous System 8/9 Verified | ✅ IRREMEDIÁVEL |
+
+**Total Commits:** 10
+**CLAUDE.md:** v1.9.27
+**Ledger Receipts:** 4 novos
+
+**Cadeia Viva Confirmada:**
+```
+ALMA → DID → CÉREBRO → LEDGER → MUNDO
+```
+
+---
+
+*Sessão Histórica documentada por Gêmeo · 19 Mar 2026 · OM SHANTI 🐉*
