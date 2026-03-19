@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.20
+**Version:** 1.9.21
 **Sealed:** 2026-03-19
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -566,6 +566,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | Lead Admin | ✅ :8096 · systemd · env secured · G3 hook |
 | W-CIA-001 | ✅ Health Pulse no GEN7 Desktop · 7 endpoints monitorizados |
 | W-GATE-001 | ✅ API Schema Contracts · 15 endpoints · erro HUMANO trilíngue |
+| W-NGINX-001 | ✅ Nginx Auto-Register · 302 rotas Flask · 64 locations · pre-commit hook |
 
 ### Completado Hoje (19 Mar 2026)
 
@@ -585,6 +586,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | **§27 W-GATE-001** | API Schema Contracts LIVE · 15 endpoints protegidos · Elimina Loop 2 |
 | **§28 CIA Pre-Flight** | Validação frontend ANTES de API call · 4 funções · Toast trilíngue · Elimina Loop 3 |
 | **§29 W-KEYS-002** | Technical Explainer Page — educa ANTES de mostrar preço · 52 strings i18n |
+| **§30 W-NGINX-001** | Nginx Auto-Register LIVE · Detecta rotas Flask sem nginx · pre-commit hook · Elimina Loop 1 |
 
 ### Completado (18 Mar 2026)
 
@@ -1177,6 +1179,61 @@ const CIA = {
 ### Backup
 
 Versão anterior (só pricing) preservada: `index-pricing-only-backup.html`
+
+---
+
+## 30. W-NGINX-001 — Nginx Auto-Register · 19 Mar 2026
+
+**Status:** LIVE
+**Path:** `/opt/windi/contracts/nginx_audit.py`
+
+### Função
+
+Sistema de Contenção #3 que elimina **Loop 1**: "Criei endpoint mas esqueci nginx".
+
+### Capacidades
+
+| Comando | Função |
+|---------|--------|
+| `python3 nginx_audit.py` | Relatório completo |
+| `python3 nginx_audit.py --generate` | Gera snippets nginx para rotas faltantes |
+| `python3 nginx_audit.py --save` | Guarda relatório JSON |
+
+### Métricas Actuais
+
+```
+Flask Routes:     302
+Nginx Locations:   64
+Missing:            0 (cobertura total)
+Exit Code:          0 = PASS, 1 = FAIL
+```
+
+### Pre-Commit Hook
+
+```bash
+# Instalar
+ln -sf /opt/windi/contracts/nginx_hook.sh /opt/windi/.git/hooks/pre-commit
+
+# Ou executar manualmente
+/opt/windi/contracts/nginx_hook.sh
+```
+
+### Directórios Scanned
+
+- `/opt/windi/agents/constitutional-agent`
+- `/opt/windi/desktop-gen7`
+- `/opt/windi/ledger`
+- `/opt/windi/dispatch`
+- `/opt/windi/wallet`
+- `/opt/windi/agent-palette`
+- `/opt/windi/export-engine`
+- `/opt/windi/verify-public`
+- `/opt/windi/communique-engine`
+- `/opt/windi/pioneer`
+
+### Princípio
+
+> "Nenhuma rota Flask vive sozinha. Nginx conhece todas."
 
 ---
 
