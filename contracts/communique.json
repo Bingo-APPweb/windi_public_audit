@@ -1,0 +1,87 @@
+{
+  "$schema": "https://windi-domain.com/contracts/v1",
+  "version": "1.0.0",
+  "description": "WINDI Communique Bridge Contracts — W-COMM-001",
+  "created": "2026-03-19",
+
+  "endpoints": {
+    "/communique/bridge/open": {
+      "method": "POST",
+      "description": "Cria nova sessão de communiqué",
+      "required": ["title"],
+      "optional": ["wallet_id", "initial_blocks", "language"],
+      "fields": {
+        "title": {
+          "type": "string",
+          "min_length": 1,
+          "max_length": 255,
+          "error_pt": "Título é obrigatório para criar communiqué",
+          "error_de": "Titel ist erforderlich für Communiqué",
+          "error_en": "Title is required for communiqué"
+        },
+        "wallet_id": {
+          "type": "string",
+          "default": "anonymous"
+        },
+        "initial_blocks": {
+          "type": "array",
+          "default": []
+        },
+        "language": {
+          "type": "string",
+          "enum": ["de", "en", "pt"],
+          "default": "de"
+        }
+      }
+    },
+
+    "/communique/bridge/save": {
+      "method": "POST",
+      "description": "Auto-save de communiqué (C3)",
+      "required": ["session_id", "content_blocks"],
+      "optional": ["stage"],
+      "fields": {
+        "session_id": {
+          "type": "string",
+          "error_pt": "session_id é obrigatório para guardar",
+          "error_de": "session_id ist erforderlich zum Speichern",
+          "error_en": "session_id is required for saving"
+        },
+        "content_blocks": {
+          "type": "array",
+          "error_pt": "content_blocks é obrigatório",
+          "error_de": "content_blocks ist erforderlich",
+          "error_en": "content_blocks is required"
+        },
+        "stage": {
+          "type": "string",
+          "enum": ["C1", "C2", "C3", "C4", "C5"],
+          "default": "C3"
+        }
+      }
+    },
+
+    "/communique/bridge/publish": {
+      "method": "POST",
+      "description": "Publica communiqué no Ledger (I9 + I11)",
+      "required": ["session_id"],
+      "optional": ["human_approved"],
+      "i9_gate": true,
+      "fields": {
+        "session_id": {
+          "type": "string",
+          "error_pt": "session_id é obrigatório para publicar",
+          "error_de": "session_id ist erforderlich zum Veröffentlichen",
+          "error_en": "session_id is required for publishing"
+        },
+        "human_approved": {
+          "type": "boolean",
+          "default": false,
+          "i9_warning_pt": "Communiqué será selado no Ledger. IRREMEDIÁVEL.",
+          "i9_warning_de": "Communiqué wird im Ledger versiegelt. UNWIDERRUFLICH.",
+          "i9_warning_en": "Communiqué will be sealed in Ledger. IRREMEDIABLE."
+        }
+      }
+    }
+  }
+}

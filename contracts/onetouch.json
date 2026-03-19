@@ -1,0 +1,72 @@
+{
+  "$schema": "https://windi-domain.com/contracts/v1",
+  "version": "1.0.0",
+  "description": "WINDI OneTouch Contracts — Pipeline Execution",
+  "created": "2026-03-19",
+
+  "endpoints": {
+    "/api/onetouch/execute": {
+      "method": "POST",
+      "description": "Executa intent do utilizador via Dragon",
+      "required": ["intent"],
+      "optional": ["wallet_id", "agent", "language", "context"],
+      "fields": {
+        "intent": {
+          "type": "string",
+          "min_length": 1,
+          "max_length": 2000,
+          "error_pt": "intent é obrigatório — o que queres criar?",
+          "error_de": "intent ist erforderlich — was möchtest du erstellen?",
+          "error_en": "intent is required — what do you want to create?"
+        },
+        "wallet_id": {
+          "type": "string",
+          "pattern": "^(WALLET-\\d{8}-\\d{4}|anonymous|cia)$",
+          "default": "anonymous"
+        },
+        "agent": {
+          "type": "string",
+          "enum": ["auto", "W-COMM-001", "W-LEGAL-001", "W-NOTARY-001", "W-JOURN-001", "W-AUDIT-001", "W-COMPLY-001", "W-ACCT-001"],
+          "default": "auto"
+        },
+        "language": {
+          "type": "string",
+          "enum": ["de", "en", "pt"],
+          "default": "de"
+        },
+        "context": {
+          "type": "object",
+          "default": {}
+        }
+      }
+    },
+
+    "/api/onetouch/seal": {
+      "method": "POST",
+      "description": "Sela documento no Ledger (I9 + I11)",
+      "required": ["draft_id"],
+      "optional": ["wallet_id", "human_approved"],
+      "i9_gate": true,
+      "fields": {
+        "draft_id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9-]+$",
+          "error_pt": "draft_id é obrigatório para selar",
+          "error_de": "draft_id ist erforderlich zum Versiegeln",
+          "error_en": "draft_id is required for sealing"
+        },
+        "wallet_id": {
+          "type": "string",
+          "default": "anonymous"
+        },
+        "human_approved": {
+          "type": "boolean",
+          "default": false,
+          "i9_warning_pt": "Selo Ledger é IRREMEDIÁVEL (I11)",
+          "i9_warning_de": "Ledger-Siegel ist UNWIDERRUFLICH (I11)",
+          "i9_warning_en": "Ledger seal is IRREMEDIABLE (I11)"
+        }
+      }
+    }
+  }
+}
