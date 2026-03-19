@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.18
+**Version:** 1.9.19
 **Sealed:** 2026-03-19
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -583,6 +583,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | **Keys button CSS** | `.api-keys-indicator` clicável com z-index correcto |
 | **nginx /keys/** | Rota adicionada → alias `/opt/windi/keys-pricing/` |
 | **§27 W-GATE-001** | API Schema Contracts LIVE · 15 endpoints protegidos · Elimina Loop 2 |
+| **§28 CIA Pre-Flight** | Validação frontend ANTES de API call · 4 funções · Toast trilíngue · Elimina Loop 3 |
 
 ### Completado (18 Mar 2026)
 
@@ -1081,6 +1082,62 @@ def validate_api_contracts():
 Nenhum endpoint novo sobe sem contrato.
 contracts/*.json é obrigatório antes do nginx reload.
 W-CIA-001 valida. W-GATE-001 bloqueia. Humano decide.
+```
+
+---
+
+## 28. CIA Pre-Flight Check — Sistema de Contenção #2 · 19 Mar 2026
+
+**Status:** LIVE no GEN7 Desktop
+**Princípio:** "Validar ANTES de chamar → erro nunca chega."
+
+Sistema de Contenção #2 — Elimina Loop 3 (erro silencioso no frontend).
+
+### Problema Resolvido
+
+```
+ANTES: Clicar "Selar" sem documento → API call → 500 → "unexpected token"
+AGORA: Clicar "Selar" sem documento → Pre-Flight → Toast amigável → Sem API call
+```
+
+### Arquitectura
+
+```javascript
+// CIA.CONTRACTS — regras por endpoint
+const CIA = {
+    CONTRACTS: {
+        '/api/onetouch/execute': { required: ['intent'], ... },
+        '/api/seal': { required: ['draft_id'], ... },
+        '/api/export/web': { required: ['draft_id'], ... },
+        '/api/publish/web': { required: ['draft_id'], ... },
+    },
+
+    preflight(endpoint, payload, lang) { ... },
+    showPreflightError(error, field) { ... }
+};
+```
+
+### Funções Protegidas (4)
+
+| Função | Validação |
+|--------|-----------|
+| `executeOneTouch()` | `intent` não vazio |
+| `sealCanvasToLedger()` | `session_id` existe |
+| `exportWebStandalone()` | `session_id` + `content` |
+| `publishToWINDI()` | `session_id` + `content` |
+
+### Toast Trilíngue
+
+| Lang | Exemplo |
+|------|---------|
+| PT | `Nenhum documento para selar` |
+| DE | `Kein Dokument zum Versiegeln` |
+| EN | `No document to seal` |
+
+### CSS
+
+```css
+.cia-preflight-toast { /* Toast centrado, animado, NOIR/KLAR */ }
 ```
 
 ---
