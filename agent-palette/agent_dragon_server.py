@@ -2652,11 +2652,16 @@ def handle_seal_document(body: dict) -> tuple:
             "id": serial,
             "content_hash": content_hash,
             "doc_type": ledger_doc_type,
-            "actor": "guardian",
+            "actor": body.get("wallet_id") or body.get("did") or "guardian",
             "app": "palette",
             "doc_name": doc_title,
             "governance_level": body.get("governance_level", "MEDIUM"),
             "sge_score": 0.0,
+            "metadata": {
+                "wallet_id": body.get("wallet_id"),
+                "did": body.get("did"),
+                "dna": "ALMA→DID→CÉREBRO→LEDGER→MUNDO",
+            },
         }
 
         ledger_req = urllib.request.Request(
