@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.17
+**Version:** 1.9.18
 **Sealed:** 2026-03-19
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -565,6 +565,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | Wallet System | ✅ 4/4 gaps · 11 pioneers · Trust E2E |
 | Lead Admin | ✅ :8096 · systemd · env secured · G3 hook |
 | W-CIA-001 | ✅ Health Pulse no GEN7 Desktop · 7 endpoints monitorizados |
+| W-GATE-001 | ✅ API Schema Contracts · 15 endpoints · erro HUMANO trilíngue |
 
 ### Completado Hoje (19 Mar 2026)
 
@@ -581,6 +582,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | **CIA indicator layout** | Separador `\|` + ícone 🛡️ + dot posicionado |
 | **Keys button CSS** | `.api-keys-indicator` clicável com z-index correcto |
 | **nginx /keys/** | Rota adicionada → alias `/opt/windi/keys-pricing/` |
+| **§27 W-GATE-001** | API Schema Contracts LIVE · 15 endpoints protegidos · Elimina Loop 2 |
 
 ### Completado (18 Mar 2026)
 
@@ -1009,6 +1011,76 @@ O W-SCH-001 observa o **Humano** e ensina quando detecta idle.
      ↑         ↑         ↑
   Saúde    Gerente   Instrutor
 ecossistema documento   humano
+```
+
+---
+
+## 27. W-GATE-001 — API Schema Contracts · 19 Mar 2026
+
+**Status:** LIVE no Constitutional Agent (:8091)
+**Princípio:** "Nenhum endpoint novo sobe sem contrato."
+
+Sistema de Contenção #1 — Elimina Loop 2 (campos faltando → erro críptico).
+
+### Problema Resolvido
+
+```
+ANTES: POST /bridge/save com {} → "Unexpected token '<', <!DOCTYPE..."
+AGORA: POST /bridge/save com {} → {"error": "session_id é obrigatório", "field": "session_id"}
+```
+
+### Arquitectura
+
+```
+/opt/windi/contracts/
+├── bridge.json        # Contratos genéricos bridge
+├── communique.json    # W-COMM-001 endpoints
+├── dragon.json        # Dragon Hub + export + publish
+├── journalist.json    # W-JOURN-001 endpoints
+├── onetouch.json      # OneTouch pipeline
+└── validate_payload.py # Validador Python (middleware Flask)
+```
+
+### Middleware Flask
+
+```python
+# agent.py — injectado em @app.before_request
+@app.before_request
+def validate_api_contracts():
+    error_response = validate_request(request)
+    if error_response:
+        return jsonify(error_response[0]), error_response[1]
+```
+
+### Endpoints Protegidos (15)
+
+| Endpoint | Required Fields |
+|----------|-----------------|
+| `/bridge/open` | `title` |
+| `/bridge/save` | `session_id`, `content_blocks` |
+| `/bridge/publish` | `session_id` |
+| `/communique/bridge/*` | (mesmos) |
+| `/journalist/bridge/*` | `title`, `session_id`, `blocks` |
+| `/api/onetouch/execute` | `intent` |
+| `/api/onetouch/seal` | `draft_id` |
+| `/api/dragon/chat` | `message` |
+| `/api/export/web` | `draft_id` |
+| `/api/publish/web` | `draft_id` |
+
+### Erros Trilíngues
+
+| Lang | Exemplo |
+|------|---------|
+| PT | `session_id é obrigatório para guardar` |
+| DE | `session_id ist erforderlich zum Speichern` |
+| EN | `session_id is required for saving` |
+
+### Regra Constitucional
+
+```
+Nenhum endpoint novo sobe sem contrato.
+contracts/*.json é obrigatório antes do nginx reload.
+W-CIA-001 valida. W-GATE-001 bloqueia. Humano decide.
 ```
 
 ---
