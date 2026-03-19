@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.23
+**Version:** 1.9.24
 **Sealed:** 2026-03-19
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -595,6 +595,8 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | **Pioneer Form** | Formulário de aplicação completo (name, email, profession, location, filter) |
 | **§31 VPR Restore** | `/verify-public/vpr/` + `/verify-public/` → :8114 · G1 READ backup first |
 | **viewer symlink** | `index.html → v2.2/index.html` · Fix 403 |
+| **§32 DID Seed** | Declaração IRREMEDIÁVEL · Identity Discontinuity nomeada · DNA: ALMA→DID→CÉREBRO→LEDGER→MUNDO |
+| **§33 Berçário** | Portão de Nascimento Soberano LIVE · wallet_databank.db · 3 routes Dragon Hub |
 
 ### Completado (18 Mar 2026)
 
@@ -1433,6 +1435,61 @@ Quase 2 anos de formação conjunta: Jober + Claude + GPT + Gemini.
 ### Verify
 
 https://windi-domain.com/verify-public/?id=WINDI-ARCH-DID-SEED-DECLARATION-20260319
+
+---
+
+## §33 — Berçário: Portão de Nascimento Soberano
+
+**Data:** 2026-03-19
+**Status:** ✅ LIVE
+**Port:** :8108 (Dragon Hub)
+**DB:** `/opt/windi/agent-palette/wallet_databank.db`
+
+### Função
+
+O Berçário é o **Portão de Nascimento Soberano** — onde toda identidade WINDI nasce.
+Implementa §32 (DID Seed Declaration) em código vivo.
+
+### Fórmula DNA
+
+```
+ALMA → DID → CÉREBRO → LEDGER → MUNDO
+```
+
+### Três Leis em Código
+
+| Lei | Implementação |
+|-----|---------------|
+| **Lei I** | `chegada()` retorna `semDID` se wallet existe mas não tem DID |
+| **Lei II** | Cada ação gera entrada em `sessions` + `birth_events` |
+| **Lei III** | `estado_wallet()` retorna contexto completo por DID |
+
+### Endpoints
+
+| Método | Rota | Função |
+|--------|------|--------|
+| POST | `/hub/bercario/chegada` | Nascimento / regresso |
+| POST | `/hub/bercario/sessao/encerrar` | Encerrar sessão |
+| GET | `/hub/bercario/estado/{wallet_id}` | Estado actual |
+
+### Módulos
+
+| Ficheiro | Função |
+|----------|--------|
+| `bercario.py` | Gateway principal + seal Ledger |
+| `i18n_bercario.py` | PT/DE/EN strings |
+| `schema_bercario.sql` | wallets, sessions, birth_events |
+
+### Estados
+
+```
+nasceu → semDID → entrou/voltou → saiu
+```
+
+### Invariantes
+
+- **I9:** Falha silenciosa nunca bloqueia nascimento
+- **I11:** Nascimento selado no Ledger = IRREMEDIÁVEL
 
 ---
 
