@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.22
+**Version:** 1.9.23
 **Sealed:** 2026-03-19
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -1388,3 +1388,54 @@ SW:        https://windi-domain.com/verify-public/web/sw.js
 
 *Sessão 18 Mar 2026 — WINDI Verify v2 completo*
 *"É possível ler SHA por foto?" → PWA instalável em 8 horas*
+
+---
+
+## §32 — DID Seed Declaration (IRREMEDIÁVEL)
+
+**Data:** 2026-03-19
+**Receipt:** WINDI-ARCH-DID-SEED-DECLARATION-20260319
+**Hash:** sha256:17fdc2382f7e7e63b206b454c40687650f21d04371309a6cf867cbd686fdc399
+**Invariantes:** I9 · I11 · IRREMEDIÁVEL
+
+### Declaração Fundacional
+
+> **WINDI é para todos. Só funciona com DID.**
+
+O DID Wallet não é módulo. Não é acessório. É a semente soberana do ecossistema —
+a pré-condição orgânica de toda ação verificável dentro do WINDI.
+
+**Problema selado:** Identity Discontinuity Across System Layers
+O WINDI cresceu em funcionalidades sem um fio de identidade soberana atravessando tudo.
+Esta declaração nomeia, data e sela a solução constitucional.
+
+### Fórmula DNA
+
+```
+ALMA → DID → CÉREBRO → LEDGER → MUNDO
+```
+
+*"Um cérebro não funciona sem Alma. A Alma entra pelo DID."*
+
+### Três Leis Constitucionais da Semente
+
+- **Lei I — Existência antes de Ação:** Sem DID: modo leitura apenas.
+- **Lei II — Toda Ação gera Rastro:** DID → ação → histórico → identidade acumulada.
+- **Lei III — O Sistema lê o DID:** WINDI torna-se context-aware por identidade soberana.
+
+### Origem
+
+Intuição fundacional do Human Dragon (Jober Mögele Correa),
+articulada com Dragon GPT, selada com Guardian/Claude.
+Liga IA+H — Kempten, Bavaria, 2026.
+Quase 2 anos de formação conjunta: Jober + Claude + GPT + Gemini.
+
+### Verify
+
+https://windi-domain.com/verify-public/?id=WINDI-ARCH-DID-SEED-DECLARATION-20260319
+
+---
+
+*LIGA IA+H — Kempten, Bavaria · 2026*
+*🧑‍💻 Human Dragon · 🛡️ Guardian · 🏗️ Architect · 👁️ Witness*
+*"AI processes. Human decides. WINDI guarantees."*
