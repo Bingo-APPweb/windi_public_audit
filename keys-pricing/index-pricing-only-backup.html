@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>W-KEYS — WINDI Publishing House</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* NOIR theme (default) */
+  [data-theme="noir"] {
+    --color-bg: #0d0d0d;
+    --color-surface: #161616;
+    --color-border: rgba(255,255,255,0.08);
+    --color-border-hover: rgba(255,255,255,0.18);
+    --color-text-primary: #F5F0E0;
+    --color-text-secondary: rgba(245,240,224,0.55);
+    --color-text-muted: rgba(245,240,224,0.3);
+    --color-accent-info: rgba(55,138,221,0.15);
+    --color-accent-info-text: #85B7EB;
+    --color-accent-warning: rgba(186,117,23,0.15);
+    --color-accent-warning-text: #EF9F27;
+    --color-accent-success: rgba(99,153,34,0.15);
+    --color-accent-success-text: #97C459;
+  }
+  /* KLAR theme (light) */
+  [data-theme="klar"] {
+    --color-bg: #FAFAF8;
+    --color-surface: #FFFFFF;
+    --color-border: rgba(0,0,0,0.08);
+    --color-border-hover: rgba(0,0,0,0.18);
+    --color-text-primary: #1A1A1A;
+    --color-text-secondary: rgba(26,26,26,0.55);
+    --color-text-muted: rgba(26,26,26,0.3);
+    --color-accent-info: rgba(55,138,221,0.12);
+    --color-accent-info-text: #2A7EC8;
+    --color-accent-warning: rgba(186,117,23,0.12);
+    --color-accent-warning-text: #9A6A10;
+    --color-accent-success: rgba(99,153,34,0.12);
+    --color-accent-success-text: #5A8A20;
+  }
+  :root {
+    --color-bg: #0d0d0d;
+    --color-surface: #161616;
+    --color-border: rgba(255,255,255,0.08);
+    --color-border-hover: rgba(255,255,255,0.18);
+    --color-text-primary: #F5F0E0;
+    --color-text-secondary: rgba(245,240,224,0.55);
+    --color-text-muted: rgba(245,240,224,0.3);
+    --color-accent-info: rgba(55,138,221,0.15);
+    --color-accent-info-text: #85B7EB;
+    --color-accent-warning: rgba(186,117,23,0.15);
+    --color-accent-warning-text: #EF9F27;
+    --color-accent-success: rgba(99,153,34,0.15);
+    --color-accent-success-text: #97C459;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--color-bg);
+    color: var(--color-text-primary);
+    font-family: 'Bricolage Grotesque', sans-serif;
+    min-height: 100vh;
+    padding: 3rem 1.5rem 4rem;
+  }
+  .wk-root { max-width: 920px; margin: 0 auto; }
+  .wk-nav-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; }
+  .wk-back-link {
+    font-size: 12px; color: var(--color-text-secondary); text-decoration: none;
+    padding: 6px 14px; border-radius: var(--radius-md); border: 0.5px solid var(--color-border);
+    transition: all 0.15s; font-weight: 500;
+  }
+  .wk-back-link:hover { color: var(--color-accent-warning-text); border-color: var(--color-accent-warning-text); }
+  .wk-lang-bar { display: flex; gap: 4px; }
+  .wk-lang-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.1em;
+    padding: 4px 10px; border-radius: var(--radius-md);
+    border: 0.5px solid var(--color-border);
+    background: transparent; color: var(--color-text-secondary);
+    cursor: pointer; transition: all 0.15s;
+  }
+  .wk-lang-btn:hover { border-color: var(--color-border-hover); color: var(--color-text-primary); }
+  .wk-lang-btn.active { background: rgba(255,255,255,0.08); color: var(--color-text-primary); border-color: var(--color-border-hover); }
+  .wk-theme-btn {
+    font-size: 14px; padding: 4px 10px; border-radius: var(--radius-md);
+    border: 0.5px solid var(--color-border); background: transparent;
+    color: var(--color-text-secondary); cursor: pointer; transition: all 0.15s; margin-left: 8px;
+  }
+  .wk-theme-btn:hover { border-color: var(--color-accent-warning-text); color: var(--color-accent-warning-text); }
+  .wk-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.15em;
+    color: var(--color-text-secondary); text-transform: uppercase; margin-bottom: 0.5rem;
+  }
+  .wk-title { font-size: 32px; font-weight: 600; color: var(--color-text-primary); line-height: 1.2; margin-bottom: 0.5rem; }
+  .wk-sub { font-size: 15px; color: var(--color-text-secondary); margin-bottom: 2.5rem; max-width: 520px; line-height: 1.7; }
+  .wk-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 2.5rem; }
+  .wk-card { background: var(--color-surface); border: 0.5px solid var(--color-border); border-radius: var(--radius-lg); padding: 1.25rem 1rem; transition: border-color 0.2s; }
+  .wk-card:hover { border-color: var(--color-border-hover); }
+  .wk-card.featured { border: 1.5px solid #378ADD; }
+  .wk-badge { display: inline-block; font-size: 11px; font-family: 'JetBrains Mono', monospace; padding: 3px 10px; border-radius: var(--radius-md); margin-bottom: 1rem; font-weight: 500; }
+  .badge-bronze   { background: rgba(255,255,255,0.06); color: var(--color-text-secondary); }
+  .badge-silver   { background: var(--color-accent-info); color: var(--color-accent-info-text); }
+  .badge-gold     { background: var(--color-accent-warning); color: var(--color-accent-warning-text); }
+  .badge-platinum { background: rgba(255,255,255,0.06); color: var(--color-text-primary); }
+  .badge-popular  { display: inline-block; font-size: 11px; padding: 3px 10px; border-radius: var(--radius-md); background: var(--color-accent-info); color: var(--color-accent-info-text); font-family: 'JetBrains Mono', monospace; margin-bottom: 8px; }
+  .wk-tier       { font-size: 18px; font-weight: 600; color: var(--color-text-primary); margin-bottom: 0.25rem; }
+  .wk-price      { font-size: 28px; font-weight: 600; color: var(--color-text-primary); line-height: 1; margin-bottom: 0.2rem; }
+  .wk-price-sub  { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 1rem; font-family: 'JetBrains Mono', monospace; }
+  .wk-divider    { height: 0.5px; background: var(--color-border); margin: 1rem 0; }
+  .wk-stat       { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .wk-stat-label { font-size: 12px; color: var(--color-text-secondary); }
+  .wk-stat-val   { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 500; color: var(--color-text-primary); }
+  .wk-scopes     { margin-top: 1rem; }
+  .wk-scope-title { font-size: 11px; color: var(--color-text-secondary); margin-bottom: 6px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.08em; text-transform: uppercase; }
+  .wk-scope-list { display: flex; flex-wrap: wrap; gap: 4px; }
+  .wk-scope      { font-size: 10px; font-family: 'JetBrains Mono', monospace; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.04); color: var(--color-text-muted); border: 0.5px solid var(--color-border); }
+  .wk-scope.active { background: var(--color-accent-success); color: var(--color-accent-success-text); border-color: transparent; }
+  .wk-cta { display: block; width: 100%; margin-top: 1.25rem; padding: 10px; border-radius: var(--radius-md); border: 0.5px solid var(--color-border-hover); background: transparent; color: var(--color-text-primary); font-size: 13px; font-family: 'Bricolage Grotesque', sans-serif; cursor: pointer; font-weight: 500; transition: background 0.15s; text-align: center; }
+  .wk-cta:hover  { background: rgba(255,255,255,0.05); }
+  .wk-cta.primary { background: var(--color-text-primary); color: var(--color-bg); border-color: var(--color-text-primary); }
+  .wk-cta.primary:hover { opacity: 0.88; }
+  .wk-cta.muted  { opacity: 0.35; cursor: default; pointer-events: none; }
+  .wk-footer     { border-top: 0.5px solid var(--color-border); padding-top: 1.75rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem; }
+  .wk-footer-item { font-size: 13px; color: var(--color-text-secondary); line-height: 1.65; }
+  .wk-footer-item strong { display: block; color: var(--color-text-primary); font-weight: 500; margin-bottom: 3px; font-size: 13px; }
+  .wk-endpoint   { font-family: 'JetBrains Mono', monospace; font-size: 11px; background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px; color: var(--color-text-secondary); }
+</style>
+</head>
+<body data-theme="noir">
+<div class="wk-root">
+
+  <nav class="wk-nav-bar">
+    <a href="/desktop/" class="wk-back-link" id="i18n-back">← Voltar</a>
+    <div class="wk-lang-bar">
+      <button class="wk-lang-btn" data-lang="de" onclick="setLang('de')">DE</button>
+      <button class="wk-lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+      <button class="wk-lang-btn" data-lang="pt" onclick="setLang('pt')">PT</button>
+      <button class="wk-theme-btn" onclick="toggleTheme()" id="themeToggle" title="NOIR/KLAR">☀</button>
+    </div>
+  </nav>
+
+  <div class="wk-eyebrow">W-KEYS-001 v1.1.0 · windi-domain.com</div>
+  <h1 class="wk-title" id="i18n-title"></h1>
+  <p class="wk-sub" id="i18n-sub"></p>
+
+  <div class="wk-grid">
+
+    <div class="wk-card">
+      <div class="wk-badge badge-bronze">SEED · BRONZE</div>
+      <div class="wk-tier">Seed</div>
+      <div class="wk-price">€0</div>
+      <div class="wk-price-sub" id="i18n-seed-sub"></div>
+      <div class="wk-divider"></div>
+      <div class="wk-stat"><span class="wk-stat-label" id="i18n-rpm-1"></span><span class="wk-stat-val">10</span></div>
+      <div class="wk-stat"><span class="wk-stat-label" id="i18n-rpd-1"></span><span class="wk-stat-val">100</span></div>
+      <div class="wk-scopes">
+        <div class="wk-scope-title" id="i18n-scopes-1"></div>
+        <div class="wk-scope-list">
+          <span class="wk-scope active">ledger:read</span>
+          <span class="wk-scope active">verify:read</span>
+          <span class="wk-scope">ledger:write</span>
+          <span class="wk-scope">propagation</span>
+          <span class="wk-scope">communique</span>
+        </div>
+      </div>
+      <button class="wk-cta" id="i18n-cta-seed" onclick="window.location.href='/api-keys/request?tier=seed'"></button>
+    </div>
+
+    <div class="wk-card featured">
+      <div class="badge-popular" id="i18n-popular"></div>
+      <div class="wk-badge badge-silver">NODAL · SILVER</div>
+      <div class="wk-tier">Nodal</div>
+      <div class="wk-price">€49</div>
+      <div class="wk-price-sub" id="i18n-nodal-sub"></div>
+      <div class="wk-divider"></div>
+      <div class="wk-stat"><span class="wk-stat-label" id="i18n-rpm-2"></span><span class="wk-stat-val">60</span></div>
+      <div class="wk-stat"><span class="wk-stat-label" id="i18n-rpd-2"></span><span class="wk-stat-val">1.000</span></div>
+      <div class="wk-scopes">
+        <div class="wk-scope-title" id="i18n-scopes-2"></div>
+        <div class="wk-scope-list">
+          <span class="wk-scope active">ledger:read</span>
+          <span class="wk-scope active">ledger:write</span>
+          <span class="wk-scope active">verify:read</span>
+          <span class="wk-scope active">communique:read</span>
+          <span class="wk-scope active">communique:write</span>
+          <span class="wk-scope">propagation</span>
+        </div>
+      </div>
+      <button class="wk-cta primary" id="i18n-cta-nodal" onclick="window.location.href='/api-keys/request?tier=nodal'"></button>
+    </div>
+
+    <div class="wk-card">
+      <div class="wk-badge badge-gold">SOVEREIGN · GOLD</div>
+      <div class="wk-tier">Sovereign</div>
+      <div class="wk-price">€999<span style="font-size:16px">+</span></div>
+      <div class="wk-price-sub" id="i18n-sov-sub"></div>
+      <div class="wk-divider"></div>
+      <div class="wk-stat"><span class="wk-stat-label" id="i18n-rpm-3"></span><span class="wk-stat-val">300</span></div>
+      <div class="wk-stat"><span class="wk-stat-label" id="i18n-rpd-3"></span><span class="wk-stat-val">10.000</span></div>
+      <div class="wk-scopes">
+        <div class="wk-scope-title" id="i18n-scopes-3"></div>
+        <div class="wk-scope-list">
+          <span class="wk-scope active">all</span>
+          <span class="wk-scope active">propagation:read</span>
+          <span class="wk-scope active">propagation:write</span>
+          <span class="wk-scope active">communique:read</span>
+          <span class="wk-scope active">communique:write</span>
+        </div>
+      </div>
+      <button class="wk-cta" id="i18n-cta-sov" onclick="window.location.href='/api-keys/request?tier=sovereign'"></button>
+    </div>
+
+    <div class="wk-card">
+      <div class="wk-badge badge-platinum">ORACLE · PLATINUM</div>
+      <div class="wk-tier">Oracle</div>
+      <div class="wk-price" style="font-size:20px;padding-top:4px" id="i18n-oracle-price"></div>
+      <div class="wk-price-sub" id="i18n-oracle-sub"></div>
+      <div class="wk-divider"></div>
+      <div class="wk-stat"><span class="wk-stat-label" id="i18n-rpm-4"></span><span class="wk-stat-val">∞</span></div>
+      <div class="wk-stat"><span class="wk-stat-label" id="i18n-rpd-4"></span><span class="wk-stat-val">∞</span></div>
+      <div class="wk-scopes">
+        <div class="wk-scope-title" id="i18n-scopes-4"></div>
+        <div class="wk-scope-list">
+          <span class="wk-scope active">all</span>
+        </div>
+      </div>
+      <button class="wk-cta muted" id="i18n-cta-oracle" disabled></button>
+    </div>
+
+  </div>
+
+  <div class="wk-footer">
+    <div class="wk-footer-item">
+      <strong id="i18n-f1-title"></strong>
+      <span id="i18n-f1-body"></span>
+    </div>
+    <div class="wk-footer-item">
+      <strong id="i18n-f2-title"></strong>
+      <span class="wk-endpoint">/api-docs/</span> Swagger UI &nbsp;·&nbsp; <span class="wk-endpoint">/specs/</span> OpenAPI
+    </div>
+    <div class="wk-footer-item">
+      <strong id="i18n-f3-title"></strong>
+      <span id="i18n-f3-body"></span>
+    </div>
+  </div>
+
+</div>
+<script>
+var T = {
+  pt: {
+    title:"Leve o WINDI para o seu site",
+    sub:"Documentos certificados, Forensic Seal e tecnologia .jmpg integrados via API KEY. Escolhe o tier certo para o teu volume.",
+    popular:"Mais escolhido",
+    rpm:"Req / min", rpd:"Req / dia", scopes:"Permissões",
+    seedSub:"onboarding gratuito",
+    nodalSub:"a €149 / mês",
+    sovSub:"/ mês · volume custom",
+    oraclePrice:"Interno", oracleSub:"uso exclusivo WINDI",
+    ctaSeed:"Solicitar key →", ctaNodal:"Activar Nodal →",
+    ctaSov:"Negociar acesso →", ctaOracle:"Restrito · Three Dragons",
+    f1Title:"I9 Gate activo",
+    f1Body:"Toda KEY passa por aprovação humana antes de ser activada. AI proposes. Human decides.",
+    f2Title:"Documentação pública",
+    f3Title:"Tecnologia incluída",
+    f3Body:"Forensic Seal · .jmpg · Verify QR · Ledger receipt em cada operação",
+    back:"← Voltar"
+  },
+  en: {
+    title:"Bring WINDI to your website",
+    sub:"Certified documents, Forensic Seal and .jmpg technology integrated via API KEY. Choose the right tier for your volume.",
+    popular:"Most popular",
+    rpm:"Req / min", rpd:"Req / day", scopes:"Permissions",
+    seedSub:"free onboarding",
+    nodalSub:"up to €149 / month",
+    sovSub:"/ month · custom volume",
+    oraclePrice:"Internal", oracleSub:"exclusive WINDI use",
+    ctaSeed:"Request key →", ctaNodal:"Activate Nodal →",
+    ctaSov:"Negotiate access →", ctaOracle:"Restricted · Three Dragons",
+    f1Title:"I9 Gate active",
+    f1Body:"Every KEY requires human approval before activation. AI proposes. Human decides.",
+    f2Title:"Public documentation",
+    f3Title:"Included technology",
+    f3Body:"Forensic Seal · .jmpg · Verify QR · Ledger receipt on every operation",
+    back:"← Back"
+  },
+  de: {
+    title:"WINDI für Ihre Website",
+    sub:"Zertifizierte Dokumente, Forensic Seal und .jmpg-Technologie per API KEY integriert. Wählen Sie das richtige Tier für Ihr Volumen.",
+    popular:"Meistgewählt",
+    rpm:"Anf. / Min.", rpd:"Anf. / Tag", scopes:"Berechtigungen",
+    seedSub:"kostenfreies Onboarding",
+    nodalSub:"bis €149 / Monat",
+    sovSub:"/ Monat · individuelles Volumen",
+    oraclePrice:"Intern", oracleSub:"exklusiv WINDI",
+    ctaSeed:"Key anfordern →", ctaNodal:"Nodal aktivieren →",
+    ctaSov:"Zugang verhandeln →", ctaOracle:"Eingeschränkt · Three Dragons",
+    f1Title:"I9 Gate aktiv",
+    f1Body:"Jeder KEY erfordert menschliche Genehmigung vor der Aktivierung. AI proposes. Human decides.",
+    f2Title:"Öffentliche Dokumentation",
+    f3Title:"Enthaltene Technologie",
+    f3Body:"Forensic Seal · .jmpg · Verify QR · Ledger-Quittung bei jedem Vorgang",
+    back:"← Zurück"
+  }
+};
+
+function setLang(lang) {
+  localStorage.setItem('windi-lang', lang);
+  var t = T[lang];
+  document.getElementById('i18n-title').textContent = t.title;
+  document.getElementById('i18n-sub').textContent = t.sub;
+  document.getElementById('i18n-popular').textContent = t.popular;
+  document.getElementById('i18n-seed-sub').textContent = t.seedSub;
+  document.getElementById('i18n-nodal-sub').textContent = t.nodalSub;
+  document.getElementById('i18n-sov-sub').textContent = t.sovSub;
+  document.getElementById('i18n-oracle-price').textContent = t.oraclePrice;
+  document.getElementById('i18n-oracle-sub').textContent = t.oracleSub;
+  document.getElementById('i18n-cta-seed').textContent = t.ctaSeed;
+  document.getElementById('i18n-cta-nodal').textContent = t.ctaNodal;
+  document.getElementById('i18n-cta-sov').textContent = t.ctaSov;
+  document.getElementById('i18n-cta-oracle').textContent = t.ctaOracle;
+  for (var i=1;i<=4;i++) {
+    document.getElementById('i18n-rpm-'+i).textContent = t.rpm;
+    document.getElementById('i18n-rpd-'+i).textContent = t.rpd;
+    document.getElementById('i18n-scopes-'+i).textContent = t.scopes;
+  }
+  document.getElementById('i18n-f1-title').textContent = t.f1Title;
+  document.getElementById('i18n-f1-body').textContent = t.f1Body;
+  document.getElementById('i18n-f2-title').textContent = t.f2Title;
+  document.getElementById('i18n-f3-title').textContent = t.f3Title;
+  document.getElementById('i18n-f3-body').textContent = t.f3Body;
+  document.getElementById('i18n-back').textContent = t.back;
+  document.documentElement.lang = lang;
+  document.querySelectorAll('.wk-lang-btn').forEach(function(b){
+    b.classList.toggle('active', b.getAttribute('data-lang') === lang);
+  });
+}
+
+// Theme toggle (NOIR/KLAR) - shared with /desktop/
+function toggleTheme() {
+  var body = document.body;
+  var isNoir = body.dataset.theme !== 'klar';
+  body.dataset.theme = isNoir ? 'klar' : 'noir';
+  document.getElementById('themeToggle').textContent = isNoir ? '☽' : '☀';
+  localStorage.setItem('windi-theme', body.dataset.theme);
+}
+
+function initTheme() {
+  var savedTheme = localStorage.getItem('windi-theme') || 'noir';
+  document.body.dataset.theme = savedTheme;
+  var btn = document.getElementById('themeToggle');
+  if (btn) btn.textContent = savedTheme === 'klar' ? '☽' : '☀';
+}
+
+var stored = localStorage.getItem('windi-lang');
+var browser = (navigator.language || 'en').substring(0,2).toLowerCase();
+var lang = (stored && T[stored]) ? stored : (T[browser] ? browser : 'en');
+setLang(lang);
+initTheme();
+</script>
+</body>
+</html>
