@@ -1585,3 +1585,54 @@ body {
     font-weight: 600;
     color: var(--gold-light);
 }
+
+/* ═══════════════════════════════════════════════════════════
+   W-CIA-001 PRE-FLIGHT TOAST — Sistema de Contenção #2
+   ═══════════════════════════════════════════════════════════ */
+
+.cia-preflight-toast {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 24px;
+    background: linear-gradient(135deg, #3a2a0a 0%, #2a1a00 100%);
+    border: 1px solid var(--gold-primary);
+    border-radius: var(--radius-md);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 20px rgba(139, 105, 20, 0.2);
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.cia-preflight-toast.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
+.cia-preflight-icon {
+    font-size: 20px;
+}
+
+.cia-preflight-msg {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gold-light);
+}
+
+/* KLAR theme override */
+[data-theme="klar"] .cia-preflight-toast {
+    background: linear-gradient(135deg, #FFF8E7 0%, #F5EED6 100%);
+    border-color: var(--gold-primary);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme="klar"] .cia-preflight-msg {
+    color: #5A4510;
+}
