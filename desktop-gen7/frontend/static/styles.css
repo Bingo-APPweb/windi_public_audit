@@ -1558,3 +1558,30 @@ body {
 .cia-pulse {
     margin-left: 0;  /* separator handles spacing */
 }
+
+/* ── API Keys Indicator ── */
+.api-keys-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-tertiary);
+    border: 1px solid var(--gold-dim);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+.api-keys-indicator:hover {
+    background: var(--gold-dim);
+    border-color: var(--gold-light);
+}
+.key-icon {
+    font-size: 14px;
+}
+.key-status {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gold-light);
+}
