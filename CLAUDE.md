@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.25
+**Version:** 1.9.26
 **Sealed:** 2026-03-19
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -597,6 +597,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | **viewer symlink** | `index.html → v2.2/index.html` · Fix 403 |
 | **§32 DID Seed** | Declaração IRREMEDIÁVEL · Identity Discontinuity nomeada · DNA: ALMA→DID→CÉREBRO→LEDGER→MUNDO |
 | **§33 Berçário** | Portão de Nascimento Soberano LIVE · wallet_databank.db · 3 routes Dragon Hub |
+| **§34 Identity Thread** | `actor=wallet_id` no Ledger · metadata.dna · Cadeia viva |
 | **§34 Data Policy** | Canonical Data Policy v1.0 SEALED · PT/DE/EN · GDPR Art.5(1)(c) by design · "Utilizador = Autor" |
 
 ### Completado (18 Mar 2026)
@@ -1533,6 +1534,47 @@ nasceu → semDID → entrou/voltou → saiu
 
 - **I9:** Falha silenciosa nunca bloqueia nascimento
 - **I11:** Nascimento selado no Ledger = IRREMEDIÁVEL
+
+---
+
+## §34 — Identity Thread LIVE (19 Mar 2026)
+
+**PATCH:** `handle_seal_document()` — actor soberano no Ledger
+
+### Mudança cirúrgica
+
+```python
+# ANTES (linha 2655):
+"actor": "guardian"  # hardcoded, anónimo
+
+# DEPOIS:
+"actor": body.get("wallet_id") or body.get("did") or "guardian"
+```
+
+### Metadata adicionada
+
+```python
+"metadata": {
+    "wallet_id": body.get("wallet_id"),
+    "did": body.get("did"),
+    "dna": "ALMA→DID→CÉREBRO→LEDGER→MUNDO",
+}
+```
+
+### Cadeia viva
+
+```
+ALMA (Berçário) → DID (wallet_id) → CÉREBRO (Dragon Hub) → LEDGER (actor=wallet_id) → MUNDO (verify-public)
+```
+
+### Estado
+
+| Componente | Status |
+|------------|--------|
+| Dragon Hub | PID 949673 · v1.3.0 · healthy |
+| Berçário | ✅ semDID em DE/PT/EN |
+| Ledger | ✅ metadata.dna presente |
+| Ficheiro | `agent_dragon_server.py` linha 2655 |
 
 ---
 
