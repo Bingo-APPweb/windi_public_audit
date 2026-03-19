@@ -1029,19 +1029,22 @@ const CIA = {
     updateIndicator() {
         const dot = document.getElementById('ciaDot');
         const label = document.getElementById('ciaLabel');
-        
+
         if (!dot || !label) return;
 
+        // Label stays "CIA", dot shows status via color
+        label.textContent = 'CIA';
         dot.className = 'cia-dot';
+
         if (this.state.overallStatus === 'ok') {
             dot.classList.add('ok');
-            label.textContent = 'CIA ✓';
+            dot.title = 'All services healthy';
         } else if (this.state.overallStatus === 'warn') {
             dot.classList.add('warn');
-            label.textContent = 'CIA ⚠';
+            dot.title = 'Some services degraded';
         } else {
             dot.classList.add('down');
-            label.textContent = 'CIA ✗';
+            dot.title = 'Critical services down';
         }
     },
 
