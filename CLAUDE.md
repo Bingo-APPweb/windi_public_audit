@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.19
+**Version:** 1.9.20
 **Sealed:** 2026-03-19
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -584,6 +584,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | **nginx /keys/** | Rota adicionada → alias `/opt/windi/keys-pricing/` |
 | **§27 W-GATE-001** | API Schema Contracts LIVE · 15 endpoints protegidos · Elimina Loop 2 |
 | **§28 CIA Pre-Flight** | Validação frontend ANTES de API call · 4 funções · Toast trilíngue · Elimina Loop 3 |
+| **§29 W-KEYS-002** | Technical Explainer Page — educa ANTES de mostrar preço · 52 strings i18n |
 
 ### Completado (18 Mar 2026)
 
@@ -1139,6 +1140,43 @@ const CIA = {
 ```css
 .cia-preflight-toast { /* Toast centrado, animado, NOIR/KLAR */ }
 ```
+
+---
+
+## 29. W-KEYS-002 — Technical Explainer Page · 19 Mar 2026
+
+**Status:** LIVE
+**URL:** `windi-domain.com/keys/`
+**Path:** `/opt/windi/keys-pricing/index.html`
+
+### Princípio
+
+> "O preço é o final do convencimento. Primeiro, explica o valor."
+
+### Estrutura da Página
+
+| Secção | Conteúdo |
+|--------|----------|
+| **Hero** | "A Key that certifies, not just authenticates" |
+| **Conceito** | 3 pilares: Constitutional Governance · Forensic Seal · Ledger Receipt |
+| **Arquitectura** | Pipeline visual de 6 etapas (User → Key → Dragon → Process → Seal → Receipt) |
+| **Pricing** | 4 tiers NO FINAL (SEED €0 · NODAL €49 · SOVEREIGN €999 · ORACLE) |
+
+### i18n
+
+- 52 strings trilíngues via `data-i18n` attribute
+- Auto-detect: `localStorage('windi-lang')` → browser → fallback 'en'
+- Sync com outras páginas WINDI
+
+### Theme
+
+- NOIR/KLAR toggle funcional
+- CSS vars para ambos os temas
+- localStorage sync: `windi-theme`
+
+### Backup
+
+Versão anterior (só pricing) preservada: `index-pricing-only-backup.html`
 
 ---
 
