@@ -22,6 +22,11 @@
                 <span class="pulse-dot"></span>
                 <span class="pulse-label">Dragon</span>
             </div>
+            <!-- W-CIA-001 Health Pulse -->
+            <div class="cia-pulse" id="ciaPulse" onclick="toggleCiaPanel()" title="W-CIA-001 Ecosystem Health">
+                <span class="cia-dot" id="ciaDot"></span>
+                <span class="cia-label" id="ciaLabel">CIA</span>
+            </div>
         </div>
         <div class="command-right">
             <div id="langSelector" class="lang-selector">
@@ -138,6 +143,21 @@
             </div>
         </section>
     </main>
+
+    <!-- W-CIA-001 Health Panel -->
+    <div id="ciaPanel" class="cia-panel" style="display:none;">
+        <div class="cia-panel-header">
+            <span class="cia-panel-title">🔍 W-CIA-001 — Ecosystem Health</span>
+            <button class="cia-panel-close" onclick="toggleCiaPanel()">✕</button>
+        </div>
+        <div class="cia-panel-content" id="ciaPanelContent">
+            <div class="cia-loading">Checking services...</div>
+        </div>
+        <div class="cia-panel-footer">
+            <span class="cia-timestamp" id="ciaTimestamp">—</span>
+            <button class="cia-refresh-btn" onclick="runCiaDiagnostics()">🔄 Refresh</button>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="app-footer">
