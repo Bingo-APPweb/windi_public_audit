@@ -341,10 +341,21 @@ function updateHint(text) {
 
 // === One Touch (D2) ===
 async function executeOneTouch(intent) {
-    if (!intent.trim()) return;
-
     const inputEl = document.getElementById('oneTouchInput');
     const btnEl = document.getElementById('oneTouchBtn');
+    const lang = localStorage.getItem('windi-lang') || 'en';
+
+    // W-CIA-001 Pre-Flight Check
+    const payload = {
+        intent: intent?.trim() || '',
+        wallet_id: window.__windiWalletId || 'desktop-gen7-session',
+        agent: currentAgent,
+    };
+    const check = CIA.preflight('/api/onetouch/execute', payload, lang);
+    if (!check.valid) {
+        CIA.showPreflightError(check.error, check.field);
+        return;
+    }
 
     // Disable input during request
     inputEl.disabled = true;
@@ -422,8 +433,17 @@ async function copyCanvasToClipboard(e) {
 }
 
 async function sealCanvasToLedger() {
-    if (!_currentSession) return;
+    const lang = localStorage.getItem('windi-lang') || 'en';
     const btn = document.getElementById('btnSealLedger');
+
+    // W-CIA-001 Pre-Flight Check
+    const payload = { draft_id: _currentSession?.session_id };
+    const check = CIA.preflight('/api/seal', payload, lang);
+    if (!check.valid) {
+        CIA.showPreflightError(check.error, check.field);
+        return;
+    }
+
     if (btn) { btn.disabled = true; btn.textContent = '⏳'; }
     try {
         const encoder = new TextEncoder();
@@ -484,8 +504,25 @@ async function sealCanvasToLedger() {
 }
 
 async function exportWebStandalone() {
-    if (!_currentSession || !_currentCanvasContent) return;
+    const lang = localStorage.getItem('windi-lang') || 'en';
     const btn = document.getElementById('btnExportWeb');
+
+    // W-CIA-001 Pre-Flight Check
+    const payload = { draft_id: _currentSession?.session_id };
+    const check = CIA.preflight('/api/export/web', payload, lang);
+    if (!check.valid) {
+        CIA.showPreflightError(check.error, check.field);
+        return;
+    }
+
+    if (!_currentCanvasContent) {
+        CIA.showPreflightError(
+            lang === 'pt' ? 'Canvas está vazio' : lang === 'de' ? 'Canvas ist leer' : 'Canvas is empty',
+            'content'
+        );
+        return;
+    }
+
     if (btn) { btn.disabled = true; btn.textContent = '⏳'; }
     try {
         const res = await fetch(`${API_BASE}/api/export/web`, {
@@ -524,8 +561,25 @@ async function exportWebStandalone() {
 let _lastPublishResult = null;
 
 async function publishToWINDI() {
-    if (!_currentSession || !_currentCanvasContent) return;
+    const lang = localStorage.getItem('windi-lang') || 'en';
     const btn = document.getElementById('btnPublish');
+
+    // W-CIA-001 Pre-Flight Check
+    const payload = { draft_id: _currentSession?.session_id };
+    const check = CIA.preflight('/api/publish/web', payload, lang);
+    if (!check.valid) {
+        CIA.showPreflightError(check.error, check.field);
+        return;
+    }
+
+    if (!_currentCanvasContent) {
+        CIA.showPreflightError(
+            lang === 'pt' ? 'Canvas está vazio' : lang === 'de' ? 'Canvas ist leer' : 'Canvas is empty',
+            'content'
+        );
+        return;
+    }
+
     if (btn) { btn.disabled = true; btn.textContent = '⏳'; }
     try {
         // Extract title from content (first h1 or h2)
@@ -1091,9 +1145,149 @@ const CIA = {
         content.innerHTML = html;
 
         if (timestamp) {
-            timestamp.textContent = this.state.lastCheck 
+            timestamp.textContent = this.state.lastCheck
                 ? new Date(this.state.lastCheck).toLocaleTimeString()
                 : '—';
+        }
+    },
+
+    // ═══════════════════════════════════════════════════════════
+    // W-CIA-001 PRE-FLIGHT CHECK — Sistema de Contenção #2
+    // Valida payload ANTES de chamar backend → erro nunca chega
+    // ═══════════════════════════════════════════════════════════
+
+    CONTRACTS: {
+        '/api/onetouch/execute': {
+            required: ['intent'],
+            fields: {
+                intent: {
+                    type: 'string',
+                    minLength: 1,
+                    error: { pt: 'Diga o que deseja criar', de: 'Was möchten Sie erstellen?', en: 'Tell me what you want to create' }
+                }
+            }
+        },
+        '/api/onetouch/seal': {
+            required: ['draft_id'],
+            fields: {
+                draft_id: {
+                    type: 'string',
+                    error: { pt: 'Nenhum documento para selar', de: 'Kein Dokument zum Versiegeln', en: 'No document to seal' }
+                }
+            }
+        },
+        '/api/seal': {
+            required: ['draft_id'],
+            fields: {
+                draft_id: {
+                    type: 'string',
+                    error: { pt: 'Nenhum documento para selar', de: 'Kein Dokument zum Versiegeln', en: 'No document to seal' }
+                }
+            }
+        },
+        '/api/export/web': {
+            required: ['draft_id'],
+            fields: {
+                draft_id: {
+                    type: 'string',
+                    error: { pt: 'Nenhum documento para exportar', de: 'Kein Dokument zum Exportieren', en: 'No document to export' }
+                }
+            }
+        },
+        '/api/publish/web': {
+            required: ['draft_id'],
+            fields: {
+                draft_id: {
+                    type: 'string',
+                    error: { pt: 'Nenhum documento para publicar', de: 'Kein Dokument zum Veröffentlichen', en: 'No document to publish' }
+                }
+            }
+        },
+        '/api/dragon/chat': {
+            required: ['message'],
+            fields: {
+                message: {
+                    type: 'string',
+                    minLength: 1,
+                    error: { pt: 'Mensagem não pode estar vazia', de: 'Nachricht darf nicht leer sein', en: 'Message cannot be empty' }
+                }
+            }
+        }
+    },
+
+    /**
+     * Pre-flight validation — runs BEFORE any API call
+     * @param {string} endpoint - API endpoint path
+     * @param {object} payload - Request payload
+     * @param {string} lang - Language for error messages (de|en|pt)
+     * @returns {{ valid: boolean, error?: string, field?: string }}
+     */
+    preflight(endpoint, payload, lang = 'en') {
+        const contract = this.CONTRACTS[endpoint];
+        if (!contract) {
+            // No contract = passthrough (no validation)
+            return { valid: true };
+        }
+
+        const required = contract.required || [];
+        const fields = contract.fields || {};
+
+        // Check required fields
+        for (const fieldName of required) {
+            const value = payload[fieldName];
+            const fieldSchema = fields[fieldName] || {};
+
+            // Missing or empty
+            if (value === undefined || value === null || value === '') {
+                const errorMsg = fieldSchema.error?.[lang] || fieldSchema.error?.en || `${fieldName} is required`;
+                return { valid: false, error: errorMsg, field: fieldName };
+            }
+
+            // Type check for strings
+            if (fieldSchema.type === 'string') {
+                if (typeof value !== 'string') {
+                    return { valid: false, error: `${fieldName} must be text`, field: fieldName };
+                }
+                if (fieldSchema.minLength && value.length < fieldSchema.minLength) {
+                    const errorMsg = fieldSchema.error?.[lang] || fieldSchema.error?.en || `${fieldName} is too short`;
+                    return { valid: false, error: errorMsg, field: fieldName };
+                }
+            }
+        }
+
+        return { valid: true };
+    },
+
+    /**
+     * Show pre-flight error to user (toast style)
+     * @param {string} error - Error message
+     * @param {string} field - Field that failed
+     */
+    showPreflightError(error, field) {
+        // Create toast if doesn't exist
+        let toast = document.getElementById('cia-preflight-toast');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'cia-preflight-toast';
+            toast.className = 'cia-preflight-toast';
+            document.body.appendChild(toast);
+        }
+
+        toast.innerHTML = `
+            <span class="cia-preflight-icon">⚠️</span>
+            <span class="cia-preflight-msg">${error}</span>
+        `;
+        toast.classList.add('show');
+
+        // Auto-hide after 4 seconds
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 4000);
+
+        // Focus the problematic field if it exists
+        if (field === 'intent') {
+            const input = document.getElementById('oneTouchInput');
+            if (input) input.focus();
         }
     }
 };
