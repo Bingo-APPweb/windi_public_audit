@@ -1539,3 +1539,22 @@ body {
 .cia-refresh-btn:hover {
     background: var(--gold-primary);
 }
+
+/* ── Header Separator ── */
+.header-separator {
+    color: var(--gold-dim);
+    font-size: 14px;
+    margin: 0 12px;
+    opacity: 0.5;
+}
+
+/* ── CIA Icon ── */
+.cia-icon {
+    font-size: 12px;
+    margin-right: 4px;
+}
+
+/* ── CIA Pulse adjustments ── */
+.cia-pulse {
+    margin-left: 0;  /* separator handles spacing */
+}
