@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.21
+**Version:** 1.9.22
 **Sealed:** 2026-03-19
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -587,6 +587,14 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | **§28 CIA Pre-Flight** | Validação frontend ANTES de API call · 4 funções · Toast trilíngue · Elimina Loop 3 |
 | **§29 W-KEYS-002** | Technical Explainer Page — educa ANTES de mostrar preço · 52 strings i18n |
 | **§30 W-NGINX-001** | Nginx Auto-Register LIVE · Detecta rotas Flask sem nginx · pre-commit hook · Elimina Loop 1 |
+| **dragon/chat tier** | Fix parâmetro tier nested em `meta{}` → movido para root level |
+| **W-JOURN-001 MODE A** | Bridge `/bridge/open` aceita criação SEM draft_id (novo fluxo) |
+| **nginx /pioneer/** | Rota adicionada → alias `/opt/windi/pioneer/` |
+| **nginx /api/pioneer/** | Rota adicionada → proxy :8096 (Lead Admin) |
+| **Mobile → Pioneer** | `generateDID()` redireciona para `/pioneer/` (Fix A) |
+| **Pioneer Form** | Formulário de aplicação completo (name, email, profession, location, filter) |
+| **§31 VPR Restore** | `/verify-public/vpr/` + `/verify-public/` → :8114 · G1 READ backup first |
+| **viewer symlink** | `index.html → v2.2/index.html` · Fix 403 |
 
 ### Completado (18 Mar 2026)
 
