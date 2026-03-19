@@ -1,0 +1,98 @@
+{
+  "$schema": "https://windi-domain.com/contracts/v1",
+  "version": "1.0.0",
+  "description": "WINDI Dragon Hub Contracts — Chat & Generation",
+  "created": "2026-03-19",
+
+  "endpoints": {
+    "/api/dragon/chat": {
+      "method": "POST",
+      "description": "Chat com Dragon (routing por tier)",
+      "required": ["message"],
+      "optional": ["wallet_id", "history", "agent", "language"],
+      "fields": {
+        "message": {
+          "type": "string",
+          "min_length": 1,
+          "max_length": 4000,
+          "error_pt": "message é obrigatório",
+          "error_de": "message ist erforderlich",
+          "error_en": "message is required"
+        },
+        "wallet_id": {
+          "type": "string",
+          "default": "anonymous"
+        },
+        "history": {
+          "type": "array",
+          "default": [],
+          "max_items": 50
+        },
+        "agent": {
+          "type": "string",
+          "default": "auto"
+        },
+        "language": {
+          "type": "string",
+          "enum": ["de", "en", "pt", "auto"],
+          "default": "auto"
+        }
+      }
+    },
+
+    "/api/dragon/status": {
+      "method": "GET",
+      "description": "Health check do Dragon Hub",
+      "required": [],
+      "optional": []
+    },
+
+    "/api/export/web": {
+      "method": "POST",
+      "description": "Exporta documento como HTML standalone",
+      "required": ["draft_id"],
+      "optional": ["format", "include_qr"],
+      "fields": {
+        "draft_id": {
+          "type": "string",
+          "error_pt": "draft_id é obrigatório para exportar",
+          "error_de": "draft_id ist erforderlich zum Exportieren",
+          "error_en": "draft_id is required for export"
+        },
+        "format": {
+          "type": "string",
+          "enum": ["html", "pdf", "jmpg"],
+          "default": "html"
+        },
+        "include_qr": {
+          "type": "boolean",
+          "default": true
+        }
+      }
+    },
+
+    "/api/publish/web": {
+      "method": "POST",
+      "description": "Publica documento em /sites/",
+      "required": ["draft_id"],
+      "optional": ["slug", "wallet_id"],
+      "fields": {
+        "draft_id": {
+          "type": "string",
+          "error_pt": "draft_id é obrigatório para publicar",
+          "error_de": "draft_id ist erforderlich zum Veröffentlichen",
+          "error_en": "draft_id is required for publishing"
+        },
+        "slug": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$",
+          "max_length": 50
+        },
+        "wallet_id": {
+          "type": "string",
+          "default": "anonymous"
+        }
+      }
+    }
+  }
+}

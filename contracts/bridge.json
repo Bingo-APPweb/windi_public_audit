@@ -1,0 +1,99 @@
+{
+  "$schema": "https://windi-domain.com/contracts/v1",
+  "version": "1.0.0",
+  "description": "WINDI Bridge Contracts — API Schema Validation",
+  "created": "2026-03-19",
+  "author": "Liga IA+H",
+
+  "endpoints": {
+    "/bridge/open": {
+      "method": "POST",
+      "description": "Cria nova sessão de documento",
+      "required": ["title"],
+      "optional": ["wallet_id", "initial_blocks", "doc_type", "language"],
+      "fields": {
+        "title": {
+          "type": "string",
+          "min_length": 1,
+          "max_length": 255,
+          "error_pt": "Título é obrigatório",
+          "error_de": "Titel ist erforderlich",
+          "error_en": "Title is required"
+        },
+        "wallet_id": {
+          "type": "string",
+          "pattern": "^(WALLET-\\d{8}-\\d{4}|anonymous|human-dragon)$",
+          "default": "anonymous",
+          "error_pt": "wallet_id deve ser WALLET-YYYYMMDD-NNNN ou 'anonymous'",
+          "error_de": "wallet_id muss WALLET-YYYYMMDD-NNNN oder 'anonymous' sein",
+          "error_en": "wallet_id must be WALLET-YYYYMMDD-NNNN or 'anonymous'"
+        },
+        "initial_blocks": {
+          "type": "array",
+          "default": []
+        },
+        "doc_type": {
+          "type": "string",
+          "enum": ["communique", "legal", "notary", "audit", "compliance", "accounting"],
+          "default": "communique"
+        },
+        "language": {
+          "type": "string",
+          "enum": ["de", "en", "pt"],
+          "default": "de"
+        }
+      }
+    },
+
+    "/bridge/save": {
+      "method": "POST",
+      "description": "Auto-save de conteúdo (C3)",
+      "required": ["session_id", "content_blocks"],
+      "optional": ["stage"],
+      "fields": {
+        "session_id": {
+          "type": "string",
+          "pattern": "^[A-Z0-9-]+$",
+          "error_pt": "session_id é obrigatório",
+          "error_de": "session_id ist erforderlich",
+          "error_en": "session_id is required"
+        },
+        "content_blocks": {
+          "type": "array",
+          "error_pt": "content_blocks é obrigatório (pode ser array vazio)",
+          "error_de": "content_blocks ist erforderlich (kann leeres Array sein)",
+          "error_en": "content_blocks is required (can be empty array)"
+        },
+        "stage": {
+          "type": "string",
+          "enum": ["C1", "C2", "C3", "C4", "C5"],
+          "default": "C3"
+        }
+      }
+    },
+
+    "/bridge/publish": {
+      "method": "POST",
+      "description": "Publica documento (requer I9 gate)",
+      "required": ["session_id"],
+      "optional": ["human_approved"],
+      "i9_gate": true,
+      "fields": {
+        "session_id": {
+          "type": "string",
+          "pattern": "^[A-Z0-9-]+$",
+          "error_pt": "session_id é obrigatório para publicar",
+          "error_de": "session_id ist erforderlich zum Veröffentlichen",
+          "error_en": "session_id is required for publishing"
+        },
+        "human_approved": {
+          "type": "boolean",
+          "default": false,
+          "i9_warning_pt": "Documento será selado no Ledger. Esta acção é IRREMEDIÁVEL.",
+          "i9_warning_de": "Dokument wird im Ledger versiegelt. Diese Aktion ist UNWIDERRUFLICH.",
+          "i9_warning_en": "Document will be sealed in Ledger. This action is IRREMEDIABLE."
+        }
+      }
+    }
+  }
+}

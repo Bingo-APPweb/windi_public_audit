@@ -429,6 +429,29 @@ def create_agent_api(agent: WindiAgent):
 
     app = Flask(__name__)
 
+    # ═══ CONTRACT VALIDATION MIDDLEWARE (Sistema de Contenção #1) ═══
+    # Elimina Loop 2: campos faltando → erro HUMANO, não "unexpected token"
+    try:
+        import sys
+        sys.path.insert(0, '/opt/windi/contracts')
+        from validate_payload import validate_request, get_validator
+
+        @app.before_request
+        def validate_api_contracts():
+            """
+            Middleware: Valida payloads contra contratos JSON.
+            Retorna erro 400 com mensagem HUMANA se inválido.
+            """
+            error_response = validate_request(request)
+            if error_response:
+                return jsonify(error_response[0]), error_response[1]
+
+        validator = get_validator()
+        endpoints = list(validator._endpoint_map.keys())
+        print(f"  [W-GATE] Contract Validator loaded — {len(endpoints)} endpoints protected")
+    except Exception as e:
+        print(f"  [W-GATE] Contract Validator not loaded: {e}")
+
     # ═══ DOMAIN EXTENSIONS ═══
     try:
         from blueprints.legal_blueprint import legal_bp

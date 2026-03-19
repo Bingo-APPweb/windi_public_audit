@@ -1,0 +1,92 @@
+{
+  "$schema": "https://windi-domain.com/contracts/v1",
+  "version": "1.0.0",
+  "description": "WINDI Journalist Bridge Contracts — W-JOURN-001",
+  "created": "2026-03-19",
+
+  "endpoints": {
+    "/journalist/bridge/open": {
+      "method": "POST",
+      "description": "Cria nova edição do Jornal",
+      "required": ["title"],
+      "optional": ["wallet_id", "edition_type", "language"],
+      "fields": {
+        "title": {
+          "type": "string",
+          "min_length": 1,
+          "max_length": 255,
+          "error_pt": "Título é obrigatório para criar edição",
+          "error_de": "Titel ist erforderlich für Edition",
+          "error_en": "Title is required for edition"
+        },
+        "wallet_id": {
+          "type": "string",
+          "default": "anonymous"
+        },
+        "edition_type": {
+          "type": "string",
+          "enum": ["standard", "special", "breaking"],
+          "default": "standard"
+        },
+        "language": {
+          "type": "string",
+          "enum": ["de", "en", "pt"],
+          "default": "de"
+        }
+      }
+    },
+
+    "/journalist/bridge/save": {
+      "method": "POST",
+      "description": "Auto-save de edição (J3)",
+      "required": ["session_id", "blocks"],
+      "optional": ["stage"],
+      "fields": {
+        "session_id": {
+          "type": "string",
+          "error_pt": "session_id é obrigatório para guardar",
+          "error_de": "session_id ist erforderlich zum Speichern",
+          "error_en": "session_id is required for saving"
+        },
+        "blocks": {
+          "type": "array",
+          "error_pt": "blocks é obrigatório (array de blocos)",
+          "error_de": "blocks ist erforderlich (Array von Blöcken)",
+          "error_en": "blocks is required (array of blocks)"
+        },
+        "stage": {
+          "type": "string",
+          "enum": ["J1", "J2", "J3", "J4", "J5"],
+          "default": "J3"
+        }
+      }
+    },
+
+    "/journalist/bridge/publish": {
+      "method": "POST",
+      "description": "Publica edição no Ledger (I9 + I11)",
+      "required": ["session_id"],
+      "optional": ["human_approved", "dispatch_config"],
+      "i9_gate": true,
+      "fields": {
+        "session_id": {
+          "type": "string",
+          "error_pt": "session_id é obrigatório para publicar",
+          "error_de": "session_id ist erforderlich zum Veröffentlichen",
+          "error_en": "session_id is required for publishing"
+        },
+        "human_approved": {
+          "type": "boolean",
+          "default": false,
+          "i9_warning_pt": "Edição será selada no Ledger. IRREMEDIÁVEL.",
+          "i9_warning_de": "Edition wird im Ledger versiegelt. UNWIDERRUFLICH.",
+          "i9_warning_en": "Edition will be sealed in Ledger. IRREMEDIABLE."
+        },
+        "dispatch_config": {
+          "type": "object",
+          "default": {}
+        }
+      }
+    }
+  }
+}
