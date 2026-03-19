@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.26
+**Version:** 1.9.27
 **Sealed:** 2026-03-19
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -1581,3 +1581,28 @@ ALMA (Berçário) → DID (wallet_id) → CÉREBRO (Dragon Hub) → LEDGER (acto
 *LIGA IA+H — Kempten, Bavaria · 2026*
 *🧑‍💻 Human Dragon · 🛡️ Guardian · 🏗️ Architect · 👁️ Witness*
 *"AI processes. Human decides. WINDI guarantees."*
+
+## §35 — Nervous System Verified (19 Mar 2026)
+
+**PATCH:** `/health` canónico no Sandbox Core :8091
+
+### Smoke Test — 8/9 VERDE
+| Porto | Serviço | Status |
+|-------|---------|--------|
+| :8091 | Sandbox Core (7 agents) | ✅ NOVO |
+| :8096 | ID Genesis | ✅ |
+| :8101 | Forensic Ledger | ✅ |
+| :8105 | Communiqué Engine | ✅ |
+| :8108 | Dragon Hub v1.3.0 | ✅ |
+| :8114 | Verify Public | ✅ |
+| :8119 | GEN7 Desktop v7.0.0 | ✅ |
+| :8121 | Dispatch Gateway | ✅ |
+| :8100 | Desktop v2 | 🔴 RETIRED |
+
+### Seal
+- Receipt: `WINDI-NERVOUS-SYSTEM-VERIFIED-20260319`
+- governance: HIGH · sge_score: 100.0
+- Método: curl /health por porto · IRREMEDIÁVEL
+
+### Cadeia
+ALMA → DID → CÉREBRO → LEDGER → MUNDO
