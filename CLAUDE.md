@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.24
+**Version:** 1.9.25
 **Sealed:** 2026-03-19
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -597,6 +597,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | **viewer symlink** | `index.html → v2.2/index.html` · Fix 403 |
 | **§32 DID Seed** | Declaração IRREMEDIÁVEL · Identity Discontinuity nomeada · DNA: ALMA→DID→CÉREBRO→LEDGER→MUNDO |
 | **§33 Berçário** | Portão de Nascimento Soberano LIVE · wallet_databank.db · 3 routes Dragon Hub |
+| **§34 Data Policy** | Canonical Data Policy v1.0 SEALED · PT/DE/EN · GDPR Art.5(1)(c) by design · "Utilizador = Autor" |
 
 ### Completado (18 Mar 2026)
 
@@ -1244,6 +1245,48 @@ ln -sf /opt/windi/contracts/nginx_hook.sh /opt/windi/.git/hooks/pre-commit
 ### Princípio
 
 > "Nenhuma rota Flask vive sozinha. Nginx conhece todas."
+
+---
+
+## 34. Canonical Data Policy v1.0 · 19 Mar 2026
+
+**Status:** SEALED · IRREMEDIÁVEL
+**Receipt:** `WINDI-POLICY-DATA-CANONICAL-V1.0`
+**Hash:** `sha256:ca8c7e94b379da273612185883b5b1aa503e0df19d3b8338f436434afd26abf3`
+**Path:** `/opt/windi/docs/WINDI-POLICY-DATA-CANONICAL-V1.0.md`
+
+### Frase Fundacional
+
+| Lang | Statement |
+|------|-----------|
+| **PT** | Sabemos quem és para garantir o que produces. Não precisamos de mais. |
+| **DE** | Wir wissen, wer du bist, um das zu garantieren, was du produzierst. |
+| **EN** | We know who you are to guarantee what you produce. We don't need more than that. |
+
+### 3 Níveis
+
+| Nível | Audiência | Mensagem Central |
+|-------|-----------|------------------|
+| 1 | Utilizador | "Porque o resto é teu." |
+| 2 | Parceiro | "Utilizador é autor, não produto." |
+| 3 | Institucional | "GDPR Art. 5(1)(c) by design — não por obrigação." |
+
+### Arquitectura de Suporte
+
+```
+Nome + Email → Identificação do Autor
+DID          → Prova Soberana (local, Ed25519)
+Ledger       → Registo de Acções (não dados pessoais)
+Wallet       → Portão de Nascimento Soberano (dados mínimos)
+```
+
+### O que NUNCA recolhemos
+
+localização · comportamento · histórico de navegação · dados biométricos · preferências comerciais · redes sociais · dados de terceiros
+
+### Princípio
+
+> "Utilizador = Autor. Não produto. Não dado."
 
 ---
 
