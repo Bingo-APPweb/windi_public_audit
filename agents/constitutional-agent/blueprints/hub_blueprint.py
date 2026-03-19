@@ -13,6 +13,16 @@ AGENT_REGISTRY = [
     {"id": "W-ACCT-001",   "version": "v1.0.0", "domain": "accounting",    "endpoints": None,"pipeline": None,                             "wave": "Wave3","invariant": "C6"},
 ]
 
+@hub_blueprint.route('/health', methods=['GET'])
+def health():
+    return jsonify({
+        "status": "healthy",
+        "service": "sandbox-core",
+        "agents": len(AGENT_REGISTRY),
+        "port": 8091,
+        "principle": "AI processes. Human decides. WINDI guarantees."
+    }), 200
+
 @hub_blueprint.route('/agents/status', methods=['GET'])
 def agents_status():
     ts = datetime.now(timezone.utc).isoformat()
