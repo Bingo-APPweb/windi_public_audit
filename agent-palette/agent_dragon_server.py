@@ -3887,6 +3887,16 @@ class DragonHandler(http.server.BaseHTTPRequestHandler):
             }, 200)
             return
 
+        # ── BERÇÁRIO ──────────────────────────────────────────
+        if path.startswith("/hub/bercario/estado/"):
+            from bercario import estado_wallet
+            from i18n_bercario import resolve_lang
+            wallet_id = path.split("/")[-1]
+            lang = resolve_lang(self._query_param("lang"))
+            data, code = estado_wallet(wallet_id, lang), 200
+            self._json_response(data, code)
+            return
+
         # Download endpoint (Sprint 1)
         if path.startswith("/api/dragon/download/"):
             file_id = path.split("/")[-1]
@@ -4276,6 +4286,24 @@ class DragonHandler(http.server.BaseHTTPRequestHandler):
             log(f"CONFIRM: action_id={data.get('action_id','?')} confirmed={data.get('confirmed', False)}")
             self._json_response(data, code)
 
+        # ── BERÇÁRIO ──────────────────────────────────────────
+        elif path == "/hub/bercario/chegada":
+            from bercario import chegada
+            from i18n_bercario import extract_lang
+            lang = extract_lang(dict(self.headers), {})
+            wallet_id = body.get("wallet_id")
+            did       = body.get("did")
+            lang      = body.get("lang", lang)
+            data, code = chegada(wallet_id, did, lang), 200
+            self._json_response(data, code)
+
+        elif path == "/hub/bercario/sessao/encerrar":
+            from bercario import encerrar_sessao
+            session_id = body.get("session_id", "")
+            lang       = body.get("lang", "pt")
+            data, code = encerrar_sessao(session_id, lang), 200
+            self._json_response(data, code)
+
         # Sprint 2B: Communiqué proxy
         elif path == "/api/dragon/communique/create":
             data, code = handle_communique_create(body)
@@ -4417,6 +4445,13 @@ class DragonHandler(http.server.BaseHTTPRequestHandler):
         self._cors_headers()
         self.end_headers()
         self.wfile.write(body)
+
+    def _query_param(self, key: str) -> str | None:
+        """Extract query parameter from URL."""
+        from urllib.parse import urlparse, parse_qs
+        qs = parse_qs(urlparse(self.path).query)
+        vals = qs.get(key, [])
+        return vals[0] if vals else None
 
     def _file_response(self, content: bytes, filename: str, content_type: str):
         """Send file download response."""
