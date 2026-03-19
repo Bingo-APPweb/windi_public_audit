@@ -1289,7 +1289,8 @@ Title: max 80 chars per language. Excerpt: 2-3 sentences per language.`;
         message: `${systemPrompt}\n\nGenerate trilingual content for this WINDI milestone:\n\n${prompt}\n\nCategory: ${cat}`,
         intent: 'communique',
         session_id: 'jornal-composer-' + Date.now(),
-        meta: { tier: 'HIGH', doc_type: 'article' }
+        tier: 'HIGH',
+        doc_type: 'article'
       })
     });
 

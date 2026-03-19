@@ -1197,14 +1197,44 @@ def init_bridge_db():
 
 @journalist_bp.route("/bridge/open", methods=["POST"])
 def bridge_open():
-    """Abre draft no Dragon Palette."""
+    """Abre draft existente OU cria nova sessão (FIX 2026-03-19)."""
     data = request.get_json() or {}
     draft_id = data.get("draft_id", "").strip()
     article_id = data.get("article_id", "").strip()
+    title = data.get("title", "").strip()
+    wallet_id = data.get("wallet_id", "anonymous")
 
+    session_id = f"BRG-{uuid.uuid4().hex[:8].upper()}"
+    now = datetime.now(timezone.utc).isoformat()
+
+    # MODE A: Criar nova sessão (sem draft_id) — chamado pelo GEN7 gateway
     if not draft_id:
-        return jsonify({"error": "draft_id obrigatório"}), 400
+        if not title:
+            title = "Novo Artigo"
+        try:
+            init_bridge_db()
+            db = get_db()
+            db.execute(
+                """INSERT INTO journ_bridge_sessions
+                   (id, draft_id, article_id, status, content, opened_at)
+                   VALUES (?,?,?,?,?,?)""",
+                (session_id, "", article_id, "new", "", now)
+            )
+            db.commit()
+        except Exception as e:
+            pass
 
+        return jsonify({
+            "status": "created",
+            "session_id": session_id,
+            "title": title,
+            "wallet_id": wallet_id,
+            "j_phase": "J1",
+            "bridge_version": BRIDGE_VERSION,
+            "message": "Nova sessão criada. Pronto para edição."
+        }), 201
+
+    # MODE B: Abrir draft existente (com draft_id) — comportamento original
     try:
         db = get_db()
         row = db.execute("SELECT * FROM drafts WHERE id = ?", (draft_id,)).fetchone()
@@ -1215,9 +1245,6 @@ def bridge_open():
 
     content_html = row["content"] if "content" in row.keys() else ""
     title = row["title"] if "title" in row.keys() else f"Artigo {draft_id}"
-
-    session_id = f"BRG-{uuid.uuid4().hex[:8].upper()}"
-    now = datetime.now(timezone.utc).isoformat()
 
     try:
         init_bridge_db()

@@ -674,7 +674,8 @@ def publish(com_id):
             "author": actor,
         }
         r = requests.post(f"{LEDGER_URL}/ingest", json=ledger_payload, timeout=5)
-        if r.status_code == 200:
+        # FIX 2026-03-17: Accept 201 Created as success (REST standard)
+        if r.status_code in (200, 201):
             ledger_data = r.json()
             ledger_id = ledger_data.get("ledger_id") or ledger_data.get("verification_id")
             receipt_id = ledger_data.get("receipt_id") or ledger_data.get("id")
