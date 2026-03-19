@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.16
-**Sealed:** 2026-03-18
+**Version:** 1.9.17
+**Sealed:** 2026-03-19
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -535,7 +535,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 
 ---
 
-## 13. Estado Actual — 17 Março 2026
+## 13. Estado Actual — 19 Março 2026
 
 ### Mapa de Portas
 
@@ -546,6 +546,8 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | :8101 | Forensic Ledger | 🟢 SEALED |
 | :8108 | Dragon Hub v1.3.0 | 🟢 LIVE |
 | :8119 | Desktop GEN 7 | 🟢 **PRODUÇÃO** |
+| :8096 | Lead Admin (ID Genesis) | 🟢 LIVE · systemd · env secured |
+| :8099 | Wallet Service | 🟢 LIVE · Trust E2E · 11 pioneers |
 | :8120 | Pioneer Landing | 🟢 LIVE |
 | :8121 | Dispatch Gateway | 🟢 **.jmpg Hydration Engine** · I5+I6+I9 |
 
@@ -553,15 +555,34 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 
 | Sistema | Status |
 |---------|--------|
-| GEN 7 Desktop | ✅ Smart Zones + 7 Motores |
+| GEN 7 Desktop | ✅ Smart Zones + 7 Motores + W-CIA-001 |
 | Pioneer Program | ✅ /pioneer/ trilíngue |
 | VPR System | ✅ /verify-public/vpr/jober/ |
 | API Key System | ✅ W-KEYS-001 SEALED |
 | Dispatch Pipeline | ✅ email + whatsapp |
 | Web Hosting | ✅ /sites/ + /s/ short URLs |
 | i18n Dragon | ✅ PT/DE/EN auto-detect |
+| Wallet System | ✅ 4/4 gaps · 11 pioneers · Trust E2E |
+| Lead Admin | ✅ :8096 · systemd · env secured · G3 hook |
+| W-CIA-001 | ✅ Health Pulse no GEN7 Desktop · 7 endpoints monitorizados |
 
-### Completado Hoje (18 Mar 2026)
+### Completado Hoje (19 Mar 2026)
+
+| Fix | Descrição |
+|-----|-----------|
+| **W-CIA-001 GEN7** | Health Pulse indicator no Desktop header · Panel com diagnóstico de 7 serviços |
+| **nginx /api/onetouch/** | Rota adicionada → proxy :8119 (estava a retornar HTML 301) |
+| **nginx /how-it-works/** | Rota adicionada → alias landing page trilíngue |
+| **CTA How it Works** | `/app/` → `/desktop/` no botão "Começar" |
+| **nginx /api/seal** | Rota adicionada → proxy :8119 |
+| **nginx /api/export/web** | Rota adicionada → proxy :8119 |
+| **nginx /api/publish/web** | Rota adicionada → proxy :8119 |
+| **copyCanvasToClipboard** | Fix `event.target` undefined — adicionado parâmetro `e` |
+| **CIA indicator layout** | Separador `\|` + ícone 🛡️ + dot posicionado |
+| **Keys button CSS** | `.api-keys-indicator` clicável com z-index correcto |
+| **nginx /keys/** | Rota adicionada → alias `/opt/windi/keys-pricing/` |
+
+### Completado (18 Mar 2026)
 
 | Fix | Descrição |
 |-----|-----------|
@@ -570,6 +591,8 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | **§24 W-CIA-001** | Detetive Constitucional BIRTH SEALED · Health Pulse no Composer · 5 nginx patches |
 | **§25 W-MGR-001** | Gerente do Composer LIVE · HUD âmbar · i18n automático |
 | **§26 W-SCH-001** | Instrutor do Composer LIVE · 6 dicas contextuais · Toggle ON/OFF |
+| **WALLET 4/4** | G1 nginx ✅ · G2 env var ✅ · G3 Lead hook ✅ · G4 Trust E2E ✅ |
+| **Lead Admin systemd** | nohup → systemd · boot resilient · 39 serviços total |
 | **G3 Tools + Verify** | 🛡️ Verify adicionado à Tools section · `/verify-public/web/` |
 | **Root Redirect** | `windi-domain.com/` → 301 → `/desktop/` · GEN 7 porta única |
 
