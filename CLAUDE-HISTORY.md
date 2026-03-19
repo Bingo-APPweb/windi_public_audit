@@ -726,3 +726,192 @@ curl -s -X POST http://127.0.0.1:8108/api/dragon/chat \
 
 *Sessão Histórica documentada por Gêmeo · 18 Mar 2026 · OM SHANTI 🐉*
 *"AI processes. Human decides. WINDI guarantees."*
+
+---
+
+## § SESSÃO 19 Mar 2026 (Tarde)
+**Commits:** ea50fe5 · f16e11f · e534896 · 617daa5 · c3bf2e2
+**CLAUDE.md:** v1.9.26
+
+### Resumo Executivo
+
+**Problema Nomeado:** Identity Discontinuity Across System Layers
+**Solução Implementada:** §32 + §33 + §34 = Cadeia viva ALMA→DID→CÉREBRO→LEDGER→MUNDO
+
+---
+
+### 1. §32 — DID Seed Declaration (IRREMEDIÁVEL)
+
+```
+Receipt: WINDI-ARCH-DID-SEED-DECLARATION-20260319
+Hash: sha256:17fdc2382f7e7e63b206b454c40687650f21d04371309a6cf867cbd686fdc399
+```
+
+**Declaração Fundacional:**
+> "WINDI é para todos. Só funciona com DID."
+
+**Três Leis Constitucionais:**
+- Lei I: Existência antes de Ação — sem DID = modo leitura
+- Lei II: Toda Ação gera Rastro — DID → histórico → identidade acumulada
+- Lei III: O Sistema lê o DID — WINDI context-aware por identidade soberana
+
+**Fórmula DNA:**
+```
+ALMA → DID → CÉREBRO → LEDGER → MUNDO
+```
+
+---
+
+### 2. §33 — Berçário: Portão de Nascimento Soberano
+
+**Status:** ✅ LIVE
+**Port:** :8108 (Dragon Hub)
+**DB:** `/opt/windi/agent-palette/wallet_databank.db`
+
+**Ficheiros deployados:**
+| Ficheiro | Função |
+|----------|--------|
+| `bercario.py` | Gateway principal + seal Ledger |
+| `i18n_bercario.py` | PT/DE/EN strings (trilíngue) |
+| `schema_bercario.sql` | wallets, sessions, birth_events |
+
+**Endpoints Dragon Hub:**
+| Método | Rota | Função |
+|--------|------|--------|
+| POST | `/hub/bercario/chegada` | Nascimento / regresso |
+| POST | `/hub/bercario/sessao/encerrar` | Encerrar sessão |
+| GET | `/hub/bercario/estado/{wallet_id}` | Estado actual |
+
+**Estados implementados:**
+```
+nasceu → semDID → entrou/voltou → saiu
+```
+
+**Invariantes:**
+- I9: Falha silenciosa nunca bloqueia nascimento
+- I11: Nascimento selado no Ledger = IRREMEDIÁVEL
+
+**Smoke Tests passados:**
+```bash
+# PT nasceu
+curl -X POST http://localhost:8108/hub/bercario/chegada \
+  -d '{"wallet_id": null, "lang": "pt"}'
+# → estado: "nasceu", wallet_id: "W-47FFE4B0C1D7"
+
+# DE semDID (Lei I)
+curl -X POST http://localhost:8108/hub/bercario/chegada \
+  -d '{"wallet_id": "W-47FFE4B0C1D7", "lang": "de"}'
+# → estado: "semDID" (wallet existe mas sem DID)
+```
+
+---
+
+### 3. §34 — Identity Thread LIVE
+
+**Problema identificado:**
+```
+/api/dragon/chat e /api/dragon/seal usavam:
+"actor": "guardian"  # hardcoded, anónimo
+```
+
+**Cirurgia aplicada (linha 2655):**
+```python
+# ANTES:
+"actor": "guardian"
+
+# DEPOIS:
+"actor": body.get("wallet_id") or body.get("did") or "guardian"
+```
+
+**Metadata adicionada:**
+```python
+"metadata": {
+    "wallet_id": body.get("wallet_id"),
+    "did": body.get("did"),
+    "dna": "ALMA→DID→CÉREBRO→LEDGER→MUNDO",
+}
+```
+
+**Smoke Test Final:**
+```bash
+curl -X POST http://localhost:8108/api/dragon/seal \
+  -d '{"wallet_id": "PIONEER-001-TEST", "file_path": "/tmp/test.txt"}'
+
+# Resultado no Ledger:
+{
+  "id": "WINDI-2026-0077",
+  "actor": "PIONEER-001-TEST",     # ✅ NÃO "guardian"!
+  "metadata": {
+    "wallet_id": "PIONEER-001-TEST",
+    "dna": "ALMA→DID→CÉREBRO→LEDGER→MUNDO"
+  }
+}
+```
+
+---
+
+### 4. Cadeia Viva Confirmada
+
+```
+ALMA (Berçário nascimento)
+  ↓
+DID (wallet_id no body do request)
+  ↓
+CÉREBRO (Dragon Hub processa)
+  ↓
+LEDGER (actor = wallet_id, metadata.dna presente)
+  ↓
+MUNDO (verify-public mostra identidade soberana)
+```
+
+---
+
+### 5. Commits da Sessão
+
+| Hash | Mensagem |
+|------|----------|
+| `ea50fe5` | feat(Berçário): Portão de Nascimento Soberano LIVE |
+| `f16e11f` | docs(CLAUDE.md): v1.9.24 — §33 Berçário |
+| `917d932` | Canonical Data Policy v1.0 — IRREMEDIÁVEL |
+| `e534896` | feat(ledger): identity thread live — actor=wallet_id §34 |
+| `c3bf2e2` | docs(CLAUDE.md): v1.9.26 — §34 Identity Thread LIVE |
+
+---
+
+### 6. Estado Final
+
+| Sistema | Estado |
+|---------|--------|
+| §32 DID Seed | ✅ IRREMEDIÁVEL no Ledger |
+| §33 Berçário | ✅ LIVE · 3 routes · trilíngue |
+| §34 Identity Thread | ✅ actor=wallet_id · metadata.dna |
+| Dragon Hub | PID 949673 · v1.3.0 · healthy |
+| Ledger | ✅ 56,000+ receipts |
+| CLAUDE.md | v1.9.26 |
+
+---
+
+### 7. Lições Aprendidas
+
+1. **Identity Discontinuity** — o problema tinha nome mas não tinha código até hoje
+2. **Lei I demonstrada** — Berçário retorna `semDID` se wallet existe mas sem DID
+3. **Patch cirúrgico** — uma linha + metadata fecha o gap de identidade
+4. **Fallback sempre presente** — `wallet_id or did or "guardian"` mantém compatibilidade
+5. **G1 READ BEFORE TOUCH** — sempre verificar antes de modificar
+
+---
+
+### 8. Gaps Resolvidos da FASE 2 (17 Mar)
+
+| Gap | Descrição | Status |
+|-----|-----------|--------|
+| G1 | OneTouch wallet_id injection | ✅ body.get("wallet_id") |
+| G2 | Ledger seal attribution | ✅ actor=wallet_id |
+| G3 | Berçário foundation | ✅ LIVE com 3 endpoints |
+| G4 | Trust score increments | ⏳ Próxima fase |
+
+---
+
+*Sessão Histórica documentada por Gêmeo · 19 Mar 2026 · OM SHANTI 🐉*
+*"AI processes. Human decides. WINDI guarantees."*
+*"ALMA → DID → CÉREBRO → LEDGER → MUNDO"*
