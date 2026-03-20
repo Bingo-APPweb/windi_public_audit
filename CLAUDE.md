@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.27
-**Sealed:** 2026-03-19
+**Version:** 1.9.28
+**Sealed:** 2026-03-20
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -568,72 +568,15 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | W-GATE-001 | ✅ API Schema Contracts · 15 endpoints · erro HUMANO trilíngue |
 | W-NGINX-001 | ✅ Nginx Auto-Register · 302 rotas Flask · 64 locations · pre-commit hook |
 
-### Completado Hoje (19 Mar 2026)
+### Histórico Recente
 
-| Fix | Descrição |
-|-----|-----------|
-| **W-CIA-001 GEN7** | Health Pulse indicator no Desktop header · Panel com diagnóstico de 7 serviços |
-| **nginx /api/onetouch/** | Rota adicionada → proxy :8119 (estava a retornar HTML 301) |
-| **nginx /how-it-works/** | Rota adicionada → alias landing page trilíngue |
-| **CTA How it Works** | `/app/` → `/desktop/` no botão "Começar" |
-| **nginx /api/seal** | Rota adicionada → proxy :8119 |
-| **nginx /api/export/web** | Rota adicionada → proxy :8119 |
-| **nginx /api/publish/web** | Rota adicionada → proxy :8119 |
-| **copyCanvasToClipboard** | Fix `event.target` undefined — adicionado parâmetro `e` |
-| **CIA indicator layout** | Separador `\|` + ícone 🛡️ + dot posicionado |
-| **Keys button CSS** | `.api-keys-indicator` clicável com z-index correcto |
-| **nginx /keys/** | Rota adicionada → alias `/opt/windi/keys-pricing/` |
-| **§27 W-GATE-001** | API Schema Contracts LIVE · 15 endpoints protegidos · Elimina Loop 2 |
-| **§28 CIA Pre-Flight** | Validação frontend ANTES de API call · 4 funções · Toast trilíngue · Elimina Loop 3 |
-| **§29 W-KEYS-002** | Technical Explainer Page — educa ANTES de mostrar preço · 52 strings i18n |
-| **§30 W-NGINX-001** | Nginx Auto-Register LIVE · Detecta rotas Flask sem nginx · pre-commit hook · Elimina Loop 1 |
-| **dragon/chat tier** | Fix parâmetro tier nested em `meta{}` → movido para root level |
-| **W-JOURN-001 MODE A** | Bridge `/bridge/open` aceita criação SEM draft_id (novo fluxo) |
-| **nginx /pioneer/** | Rota adicionada → alias `/opt/windi/pioneer/` |
-| **nginx /api/pioneer/** | Rota adicionada → proxy :8096 (Lead Admin) |
-| **Mobile → Pioneer** | `generateDID()` redireciona para `/pioneer/` (Fix A) |
-| **Pioneer Form** | Formulário de aplicação completo (name, email, profession, location, filter) |
-| **§31 VPR Restore** | `/verify-public/vpr/` + `/verify-public/` → :8114 · G1 READ backup first |
-| **viewer symlink** | `index.html → v2.2/index.html` · Fix 403 |
-| **§32 DID Seed** | Declaração IRREMEDIÁVEL · Identity Discontinuity nomeada · DNA: ALMA→DID→CÉREBRO→LEDGER→MUNDO |
-| **§33 Berçário** | Portão de Nascimento Soberano LIVE · wallet_databank.db · 3 routes Dragon Hub |
-| **§34 Identity Thread** | `actor=wallet_id` no Ledger · metadata.dna · Cadeia viva |
-| **§34 Data Policy** | Canonical Data Policy v1.0 SEALED · PT/DE/EN · GDPR Art.5(1)(c) by design · "Utilizador = Autor" |
+> **Ver detalhes completos em:** `CLAUDE-HISTORY.md`
 
-### Completado (18 Mar 2026)
-
-| Fix | Descrição |
-|-----|-----------|
-| **§22 Sovereignty Metrics** | I13 Token Independence — 93.3% local, meta ultrapassada 149% |
-| **§23 Qualidade Soberana** | WB-KNOW-SOVEREIGNTY-Q-20260318 SEALED · Espelho HTML + Princípio |
-| **§24 W-CIA-001** | Detetive Constitucional BIRTH SEALED · Health Pulse no Composer · 5 nginx patches |
-| **§25 W-MGR-001** | Gerente do Composer LIVE · HUD âmbar · i18n automático |
-| **§26 W-SCH-001** | Instrutor do Composer LIVE · 6 dicas contextuais · Toggle ON/OFF |
-| **WALLET 4/4** | G1 nginx ✅ · G2 env var ✅ · G3 Lead hook ✅ · G4 Trust E2E ✅ |
-| **Lead Admin systemd** | nohup → systemd · boot resilient · 39 serviços total |
-| **G3 Tools + Verify** | 🛡️ Verify adicionado à Tools section · `/verify-public/web/` |
-| **Root Redirect** | `windi-domain.com/` → 301 → `/desktop/` · GEN 7 porta única |
-
-### Completado (17 Mar 2026)
-
-| Fix | Descrição |
-|-----|-----------|
-| CLAUDE.md v1.9.0 | Refactor 45k→15k chars (-65%) |
-| CHANGELOG.md | Novo ficheiro — histórico de milestones |
-| ARCHITECTURE.md | Novo ficheiro — código técnico |
-| i18n Fix | `detect_language()` respeita EN (linha 1335) |
-| Canvas ← Novo | Botão na toolbar G2 — volta ao home (DE/PT/EN) |
-| URL Fix | `/app/api/dragon` → `/api/dragon` |
-| History Fix | `human→user`, `text→content` |
-| **How it Works** | Landing page trilíngue PT/DE/EN — `/how-it-works/` LIVE |
-| Nav Link | Botão "How it Works" na header GEN 7 |
-| i18n Sync | localStorage `windi-lang` partilhado entre páginas |
-| Back Button | "← Voltar/Zurück/Back" trilíngue |
-| **§11.2 FRONTEND INVARIANTS** | Lei constitucional: i18n + NOIR/KLAR obrigatórios |
-| Theme Toggle | ☀/☽ NOIR/KLAR na `/how-it-works/` |
-| **/keys/ Fix** | Back button + NOIR/KLAR + localStorage sync |
-| **§17 .JMPG** | Documentação completa do formato soberano |
-| **Dispatch Gateway** | :8121 LIVE — .jmpg Hydration Engine · I5+I6+I9 |
+| Data | Milestones |
+|------|------------|
+| 19 Mar | §32-§35 DID Seed + Berçário + Identity Thread + Nervous System |
+| 18 Mar | §22-§26 Sovereignty Metrics + Composer Agents (CIA/MGR/SCH) |
+| 17 Mar | §17 .JMPG + Dispatch Gateway + Frontend Invariants |
 
 ### Backlog Activo
 
@@ -737,872 +680,117 @@ NEUTRAL_MARKERS = {"windi", "dragon", "guardian", "architect", "witness", "ledge
 ---
 
 
-## 21. Wallet Gate — DID Identity Modal (FASE 1)
+## 21. Wallet Gate — DID Identity Modal
 
-**Version:** 1.0
-**URL:** `https://windi-domain.com/desktop/` (botão 🪪 no header)
-**Deployed:** 17 Mar 2026 22:30
 **Status:** FASE 1 LIVE · FASE 2 pendente
+**URL:** `windi-domain.com/desktop/` (botão 🪪)
 
-### Função
+Sistema de autenticação por identidade soberana no GEN7.
 
-O Wallet Gate é o sistema de autenticação por identidade soberana no GEN7.
-Permite que utilizadores com WALLET DID acedam às suas credenciais directamente no Desktop.
+**Storage:** `sessionStorage('windi_desktop_wallet')` + `window.__windiWalletId`
+**Endpoints:** `/api/wallet/me`, `/api/wallet/health`, `/api/wallet/stats`
 
-### Arquitectura
-
-```
-Botão 🪪 Wallet (header)
-        ↓
-Modal abre → verifica sessionStorage
-        ↓
-┌─────────────────────────────────────────────────────────────┐
-│  Estado A (sem wallet)          Estado B (com wallet)       │
-│  ├── Input: WALLET-YYYYMMDD-N   ├── DID: WALLET-...         │
-│  ├── Botão "Entrar"             ├── TIER: L1                │
-│  └── Link "Criar Wallet"        ├── TRUST: T1 · 50          │
-│                                 ├── FINGERPRINT: sha256...  │
-│                                 └── Logout                  │
-└─────────────────────────────────────────────────────────────┘
-        ↓
-Login → GET /api/wallet/me?wallet_id=
-        ↓
-sessionStorage.setItem('windi_desktop_wallet', JSON)
-        ↓
-window.__windiWallet   = data     ← Exposto para módulos
-window.__windiWalletId = wallet_id ← Pronto para Ledger
-```
-
-### Endpoints Utilizados
-
-| Endpoint | Método | Função |
-|----------|--------|--------|
-| `/api/wallet/me?wallet_id=` | GET | Obter wallet por ID |
-| `/api/wallet/health` | GET | Health check |
-| `/api/wallet/stats` | GET | Estatísticas públicas |
-
-### Storage
-
-```javascript
-// SessionStorage key
-const WM = { SESSION_KEY: 'windi_desktop_wallet' };
-
-// Window globals (para integração)
-window.__windiWallet    // Objeto wallet completo
-window.__windiWalletId  // String WALLET-YYYYMMDD-NNNN
-```
-
-### Ficheiros Modificados
-
-```
-/opt/windi/desktop-gen7/frontend/
-├── index.html           (+80 linhas — botão + modal HTML)
-├── static/styles.css    (+180 linhas — CSS modal)
-└── static/app.js        (+130 linhas — WM object + funções)
-```
-
-### FASE 2 — Pendente
-
-| Gap | Descrição | Prioridade |
-|-----|-----------|------------|
-| **G1** | OneTouch inclui `wallet_id` no payload | ALTA |
-| **G2** | Ledger seal associa receipt ao `wallet_id` | ALTA |
-| **G4** | Trust score incrementa com receipts | MÉDIA |
-
-### Integração G1 (1 linha)
-
-```javascript
-// Em executeOneTouch():
-body: { ..., wallet_id: window.__windiWalletId }
-```
-
-### Integração G2 (Ledger)
-
-```javascript
-// Em sealCanvasToLedger():
-payload.wallet_id = window.__windiWalletId;
-payload.human_fingerprint = window.__windiWallet?.fingerprint;
-```
+**FASE 2 pendente:** G1 wallet_id injection · G2 Ledger attribution · G4 Trust score
 
 ---
 
-## 22. Sovereignty Metrics — I13 Token Independence · 18 Mar 2026
+## 22-30. Sistemas de Contenção — Resumo
 
-**Audit Ref:** AUDIT-SOVEREIGNTY-20260224
-**Source:** `/opt/windi/agent-palette/sovereign_router.py`
-**Princípio:** "Integridade é universal. Interpretação é premium."
+> **Detalhes completos:** `CLAUDE-HISTORY.md` § MIGRAÇÃO 20 Mar 2026
 
-### Métricas Actuais
-
-```
-Total Funções:        45
-Funções Locais:       42  (Mistral local / sem LLM externo)
-Funções Semânticas:    3  (requerem Anthropic API)
-
-RATIO:                93.3% soberano / 6.7% externo
-```
-
-### Progresso — Redução de Keys Externas
-
-```
-BASELINE (Jan 2026):   4000 tokens externos/sessão
-META:                  1500 tokens externos/sessão
-ACTUAL (Mar 2026):     ~268 tokens externos/sessão
-
-PROGRESSO:             149.3% ✅ META ULTRAPASSADA
-```
-
-### As 3 Funções Semânticas
-
-| Intent | Fallback Local | Handler |
-|--------|----------------|---------|
-| `CHAT_INTERPRETIVE` | `HELP` | llm_semantic |
-| `SEMANTIC_ANALYSIS` | `CHECK_RISK` | llm_semantic |
-| `TEXT_GENERATION` | `HELP` | llm_semantic |
-
-### I10 Continuity — Fallback Gracioso
-
-```
-Se LLM externo falha → sistema NÃO quebra
-                     → transiciona para alternativa local
-                     → utilizador continua a trabalhar
-```
-
-### Fórmula de Cálculo
-
-```
-Tokens Externos = BASELINE × (1 - SOVEREIGNTY_RATIO)
-                = 4000 × 0.067
-                = ~268 tokens
-
-Progresso = (BASELINE - ACTUAL) / (BASELINE - META) × 100
-          = (4000 - 268) / (4000 - 1500) × 100
-          = 149.3%
-```
+| § | Sistema | Função | Status |
+|---|---------|--------|--------|
+| 22 | Sovereignty Metrics | 93.3% local · 149.3% progresso | ✅ SEALED |
+| 23 | Qualidade Soberana | WB-KNOW-SOVEREIGNTY-Q-20260318 | ✅ SEALED |
+| 24 | W-CIA-001 | Detetive Constitucional · Health Pulse | ✅ LIVE |
+| 25 | W-MGR-001 | Gerente do Composer | ✅ LIVE |
+| 26 | W-SCH-001 | Instrutor do Composer | ✅ LIVE |
+| 27 | W-GATE-001 | API Schema Contracts · 15 endpoints | ✅ LIVE |
+| 28 | CIA Pre-Flight | Validação frontend · 4 funções | ✅ LIVE |
+| 29 | W-KEYS-002 | Technical Explainer `/keys/` | ✅ LIVE |
+| 30 | W-NGINX-001 | Nginx Auto-Register · 302 routes | ✅ LIVE |
 
 ---
 
-## 23. Princípio: Qualidade Soberana · 18 Mar 2026
+## 31. WINDI Verify v2
 
-**WB-KNOW-SOVEREIGNTY-Q-20260318 · SEALED · HIGH**
-**Hash:** `sha256:66d542fcc2118f8e174f32d0c9caea336205dc3f73ee735122149fe9716e2d3b`
+> **Detalhes completos:** `CLAUDE-HISTORY.md`
 
-O WINDI não economiza tokens para gastar menos — economiza para investir onde a qualidade exige.
+| Modo | URL | Função |
+|------|-----|--------|
+| 1 | `/verify-public/` | Ledger verification (I11) |
+| 2 | `/verify-public/web/hash-inspector.html` | Prova matemática local |
+| 3 | `/verify-public/web/qr-decoder.html` | QR decoder universal |
 
-### Métricas Seladas
-
-| Métrica | Valor |
-|---------|-------|
-| Soberania local | 93.3% (42/45 funções) |
-| Tokens externos actuais | ~268tk |
-| Meta estabelecida | 1500tk |
-| Progresso | 149.3% ✓ META ULTRAPASSADA |
-
-### Regras Constitucionais
-
-- FREE = escudo absoluto, zero LLM externo
-- Token externo = investimento justificado por qualidade superior
-- Fallback I10: SEMANTIC→LOCAL sempre disponível
-- Wisdom Blocks crescem → tokens externos diminuem ao longo do tempo
-
-### Frase
-
-> "O externo sustenta. O interno orienta. A qualidade decide."
-
-### Artefactos
-
-| Tipo | Path |
-|------|------|
-| HTML | `/opt/windi/docs/espelho-qualidade-soberana.html` |
-| SKILL | Sistema Claude Code |
+**PWA:** Instalável · Offline-capable · 8 padrões QR
+**Agent:** W-VERIFY-001 em :8091
 
 ---
 
-## 24. W-CIA-001 — Detetive Constitucional · 18 Mar 2026
+## 32-35. DID Seed + Identity Thread — Resumo
 
-**WINDI-CIA-001-BIRTH-20260318 · SEALED · HIGH**
-**Verify:** `https://windi-domain.com/verify-public/document/WINDI-CIA-001-BIRTH-20260318`
+> **Detalhes completos:** `CLAUDE-HISTORY.md` § SESSÃO 19 Mar 2026
 
-O W-CIA-001 é o agente de diagnóstico e monitorização do ecossistema WINDI.
-Nasceu de uma conversa matinal sobre Replit Agent 4 e tornou-se infraestrutura constitucional em 97 minutos.
+### §32 — DID Seed Declaration (IRREMEDIÁVEL)
 
-### Capacidades
+**Receipt:** `WINDI-ARCH-DID-SEED-DECLARATION-20260319`
 
-| Capacidade | Descrição |
-|------------|-----------|
-| Health Pulse | Diagnóstico de 4 serviços em paralelo (Dragon, Ledger, Export, Dispatch) |
-| Indicador Visual | Dot pulsante no topbar do Composer (🟢/🟡/🔴) |
-| Polling Autónomo | Verificação a cada 30 segundos |
-| Painel Clicável | Detalhes de cada serviço com status LIVE/WARN/DOWN |
+> "WINDI é para todos. Só funciona com DID."
 
-### Arquitectura
+**Fórmula DNA:** `ALMA → DID → CÉREBRO → LEDGER → MUNDO`
 
-```
-W-CIA-001
-├── DIAGNÓSTICO  ← Fase actual (bug tracking + health monitoring)
-├── SHIELD       ← Fase futura (anti-intrusion + rate-limit)
-└── FORENSE      ← Maturidade (receipt por tentativa de ataque)
-```
-
-### Princípio
-
-> "Observa. Regista. Propõe. Aguarda o Toque Soberano."
-
-### Ficheiros
-
-| Tipo | Path |
-|------|------|
-| Health Pulse | `/opt/windi/jornal/jornal-composer.html` (linhas 69-94, 359-372, 1448-1505) |
-| Patch Dragon | `/home/windi/patch-nginx-dragon-health.sh` |
-| Patch Dispatch | `/home/windi/patch-nginx-dispatch-health.sh` |
-| Patch Verify | `/home/windi/patch-nginx-verify-api.sh` |
-
-### Gaps Resolvidos na Sessão de Nascimento
-
-| Gap | Descrição | Status |
-|-----|-----------|--------|
-| G4 | Ledger seal pipeline | ✅ 56562 receipts |
-| G3 | Export Engine :8103 | ✅ SOVEREIGN M3 |
-| G1 | Dragon /health via nginx | ✅ LIVE |
-| G5 | Dispatch /health via nginx | ✅ LIVE |
-| G6 | Verify API via nginx | ✅ LIVE |
+**Três Leis:**
+- Lei I: Existência antes de Ação
+- Lei II: Toda Ação gera Rastro
+- Lei III: O Sistema lê o DID
 
 ---
 
-## 25. W-MGR-001 — Gerente do Composer · 18 Mar 2026
+### §33 — Berçário (Portão de Nascimento)
 
-**Status:** LIVE no Jornal Composer
-**Princípio:** "O Gerente observa. Propõe. Nunca decide sem o Humano." (I9)
+**Status:** ✅ LIVE · Port :8108
 
-O W-MGR-001 observa o **documento** e sugere melhorias contextuais.
-
-### Comportamento
-
-| Trigger | Sugestão |
-|---------|----------|
-| Canvas vazio | "Começar com Cover-Block?" |
-| Poucos blocos | "Adicionar mais conteúdo?" |
-| Gaps detectados | Sugestões específicas |
-
-### Características
-
-- HUD âmbar no canto inferior direito
-- i18n automático (DE/EN/PT)
-- Botões: Aceitar / Dispensar
-- Polling a cada 45s + idle 120s
+| Endpoint | Função |
+|----------|--------|
+| `POST /hub/bercario/chegada` | Nascimento / regresso |
+| `POST /hub/bercario/sessao/encerrar` | Encerrar sessão |
+| `GET /hub/bercario/estado/{wallet_id}` | Estado actual |
 
 ---
 
-## 26. W-SCH-001 — Instrutor do Composer · 18 Mar 2026
+### §34 — Identity Thread
 
-**Status:** LIVE no Jornal Composer
-**Princípio:** "Ensina quando o Humano parou."
-
-O W-SCH-001 observa o **Humano** e ensina quando detecta idle.
-
-### 6 Dicas Contextuais
-
-| Contexto | Dica |
-|----------|------|
-| Canvas vazio | 📰 "Começa pela Capa" |
-| Bloco Evidências | 🛡️ "OCR directo disponível" |
-| Bloco Capa | 🎯 "Título com impacto" |
-| Inspector aberto | ✨ "AI Generate disponível" |
-| 3+ blocos | 🚀 "Pronto para Despachar" |
-| Fallback | 🌐 "3 línguas por bloco" |
-
-### Características
-
-- Toast centrado no fundo do ecrã
-- Trigger: 60s idle
-- Auto-dismiss: 10s
-- Toggle ON/OFF no topbar
-- localStorage: `windi_sch_enabled`
-- Nunca repete dicas na mesma sessão
-
-### Topbar do Composer
-
-```
-[🟢 CIA]  [● MGR]  [🟢 SCH]
-     ↑         ↑         ↑
-  Saúde    Gerente   Instrutor
-ecossistema documento   humano
-```
+**PATCH:** `actor = wallet_id` no Ledger (linha 2655)
+**Metadata:** `dna: "ALMA→DID→CÉREBRO→LEDGER→MUNDO"`
 
 ---
 
-## 27. W-GATE-001 — API Schema Contracts · 19 Mar 2026
+### §35 — Nervous System Verified
 
-**Status:** LIVE no Constitutional Agent (:8091)
-**Princípio:** "Nenhum endpoint novo sobe sem contrato."
+**Receipt:** `WINDI-NERVOUS-SYSTEM-VERIFIED-20260319`
 
-Sistema de Contenção #1 — Elimina Loop 2 (campos faltando → erro críptico).
-
-### Problema Resolvido
-
-```
-ANTES: POST /bridge/save com {} → "Unexpected token '<', <!DOCTYPE..."
-AGORA: POST /bridge/save com {} → {"error": "session_id é obrigatório", "field": "session_id"}
-```
-
-### Arquitectura
-
-```
-/opt/windi/contracts/
-├── bridge.json        # Contratos genéricos bridge
-├── communique.json    # W-COMM-001 endpoints
-├── dragon.json        # Dragon Hub + export + publish
-├── journalist.json    # W-JOURN-001 endpoints
-├── onetouch.json      # OneTouch pipeline
-└── validate_payload.py # Validador Python (middleware Flask)
-```
-
-### Middleware Flask
-
-```python
-# agent.py — injectado em @app.before_request
-@app.before_request
-def validate_api_contracts():
-    error_response = validate_request(request)
-    if error_response:
-        return jsonify(error_response[0]), error_response[1]
-```
-
-### Endpoints Protegidos (15)
-
-| Endpoint | Required Fields |
-|----------|-----------------|
-| `/bridge/open` | `title` |
-| `/bridge/save` | `session_id`, `content_blocks` |
-| `/bridge/publish` | `session_id` |
-| `/communique/bridge/*` | (mesmos) |
-| `/journalist/bridge/*` | `title`, `session_id`, `blocks` |
-| `/api/onetouch/execute` | `intent` |
-| `/api/onetouch/seal` | `draft_id` |
-| `/api/dragon/chat` | `message` |
-| `/api/export/web` | `draft_id` |
-| `/api/publish/web` | `draft_id` |
-
-### Erros Trilíngues
-
-| Lang | Exemplo |
-|------|---------|
-| PT | `session_id é obrigatório para guardar` |
-| DE | `session_id ist erforderlich zum Speichern` |
-| EN | `session_id is required for saving` |
-
-### Regra Constitucional
-
-```
-Nenhum endpoint novo sobe sem contrato.
-contracts/*.json é obrigatório antes do nginx reload.
-W-CIA-001 valida. W-GATE-001 bloqueia. Humano decide.
-```
+8/9 portas VERDE: :8091, :8096, :8101, :8105, :8108, :8114, :8119, :8121
+:8100 RETIRED
 
 ---
 
-## 28. CIA Pre-Flight Check — Sistema de Contenção #2 · 19 Mar 2026
+## 36. Canonical Data Policy v1.0 (IRREMEDIÁVEL)
 
-**Status:** LIVE no GEN7 Desktop
-**Princípio:** "Validar ANTES de chamar → erro nunca chega."
-
-Sistema de Contenção #2 — Elimina Loop 3 (erro silencioso no frontend).
-
-### Problema Resolvido
-
-```
-ANTES: Clicar "Selar" sem documento → API call → 500 → "unexpected token"
-AGORA: Clicar "Selar" sem documento → Pre-Flight → Toast amigável → Sem API call
-```
-
-### Arquitectura
-
-```javascript
-// CIA.CONTRACTS — regras por endpoint
-const CIA = {
-    CONTRACTS: {
-        '/api/onetouch/execute': { required: ['intent'], ... },
-        '/api/seal': { required: ['draft_id'], ... },
-        '/api/export/web': { required: ['draft_id'], ... },
-        '/api/publish/web': { required: ['draft_id'], ... },
-    },
-
-    preflight(endpoint, payload, lang) { ... },
-    showPreflightError(error, field) { ... }
-};
-```
-
-### Funções Protegidas (4)
-
-| Função | Validação |
-|--------|-----------|
-| `executeOneTouch()` | `intent` não vazio |
-| `sealCanvasToLedger()` | `session_id` existe |
-| `exportWebStandalone()` | `session_id` + `content` |
-| `publishToWINDI()` | `session_id` + `content` |
-
-### Toast Trilíngue
-
-| Lang | Exemplo |
-|------|---------|
-| PT | `Nenhum documento para selar` |
-| DE | `Kein Dokument zum Versiegeln` |
-| EN | `No document to seal` |
-
-### CSS
-
-```css
-.cia-preflight-toast { /* Toast centrado, animado, NOIR/KLAR */ }
-```
-
----
-
-## 29. W-KEYS-002 — Technical Explainer Page · 19 Mar 2026
-
-**Status:** LIVE
-**URL:** `windi-domain.com/keys/`
-**Path:** `/opt/windi/keys-pricing/index.html`
-
-### Princípio
-
-> "O preço é o final do convencimento. Primeiro, explica o valor."
-
-### Estrutura da Página
-
-| Secção | Conteúdo |
-|--------|----------|
-| **Hero** | "A Key that certifies, not just authenticates" |
-| **Conceito** | 3 pilares: Constitutional Governance · Forensic Seal · Ledger Receipt |
-| **Arquitectura** | Pipeline visual de 6 etapas (User → Key → Dragon → Process → Seal → Receipt) |
-| **Pricing** | 4 tiers NO FINAL (SEED €0 · NODAL €49 · SOVEREIGN €999 · ORACLE) |
-
-### i18n
-
-- 52 strings trilíngues via `data-i18n` attribute
-- Auto-detect: `localStorage('windi-lang')` → browser → fallback 'en'
-- Sync com outras páginas WINDI
-
-### Theme
-
-- NOIR/KLAR toggle funcional
-- CSS vars para ambos os temas
-- localStorage sync: `windi-theme`
-
-### Backup
-
-Versão anterior (só pricing) preservada: `index-pricing-only-backup.html`
-
----
-
-## 30. W-NGINX-001 — Nginx Auto-Register · 19 Mar 2026
-
-**Status:** LIVE
-**Path:** `/opt/windi/contracts/nginx_audit.py`
-
-### Função
-
-Sistema de Contenção #3 que elimina **Loop 1**: "Criei endpoint mas esqueci nginx".
-
-### Capacidades
-
-| Comando | Função |
-|---------|--------|
-| `python3 nginx_audit.py` | Relatório completo |
-| `python3 nginx_audit.py --generate` | Gera snippets nginx para rotas faltantes |
-| `python3 nginx_audit.py --save` | Guarda relatório JSON |
-
-### Métricas Actuais
-
-```
-Flask Routes:     302
-Nginx Locations:   64
-Missing:            0 (cobertura total)
-Exit Code:          0 = PASS, 1 = FAIL
-```
-
-### Pre-Commit Hook
-
-```bash
-# Instalar
-ln -sf /opt/windi/contracts/nginx_hook.sh /opt/windi/.git/hooks/pre-commit
-
-# Ou executar manualmente
-/opt/windi/contracts/nginx_hook.sh
-```
-
-### Directórios Scanned
-
-- `/opt/windi/agents/constitutional-agent`
-- `/opt/windi/desktop-gen7`
-- `/opt/windi/ledger`
-- `/opt/windi/dispatch`
-- `/opt/windi/wallet`
-- `/opt/windi/agent-palette`
-- `/opt/windi/export-engine`
-- `/opt/windi/verify-public`
-- `/opt/windi/communique-engine`
-- `/opt/windi/pioneer`
-
-### Princípio
-
-> "Nenhuma rota Flask vive sozinha. Nginx conhece todas."
-
----
-
-## 34. Canonical Data Policy v1.0 · 19 Mar 2026
-
-**Status:** SEALED · IRREMEDIÁVEL
 **Receipt:** `WINDI-POLICY-DATA-CANONICAL-V1.0`
 **Hash:** `sha256:ca8c7e94b379da273612185883b5b1aa503e0df19d3b8338f436434afd26abf3`
-**Path:** `/opt/windi/docs/WINDI-POLICY-DATA-CANONICAL-V1.0.md`
-
-### Frase Fundacional
-
-| Lang | Statement |
-|------|-----------|
-| **PT** | Sabemos quem és para garantir o que produces. Não precisamos de mais. |
-| **DE** | Wir wissen, wer du bist, um das zu garantieren, was du produzierst. |
-| **EN** | We know who you are to guarantee what you produce. We don't need more than that. |
-
-### 3 Níveis
-
-| Nível | Audiência | Mensagem Central |
-|-------|-----------|------------------|
-| 1 | Utilizador | "Porque o resto é teu." |
-| 2 | Parceiro | "Utilizador é autor, não produto." |
-| 3 | Institucional | "GDPR Art. 5(1)(c) by design — não por obrigação." |
-
-### Arquitectura de Suporte
-
-```
-Nome + Email → Identificação do Autor
-DID          → Prova Soberana (local, Ed25519)
-Ledger       → Registo de Acções (não dados pessoais)
-Wallet       → Portão de Nascimento Soberano (dados mínimos)
-```
-
-### O que NUNCA recolhemos
-
-localização · comportamento · histórico de navegação · dados biométricos · preferências comerciais · redes sociais · dados de terceiros
-
-### Princípio
 
 > "Utilizador = Autor. Não produto. Não dado."
 
----
-
-*LIGA IA+H — Kempten, Bavaria · 2026*
-*🧑‍💻 Human Dragon · 🛡️ Guardian · 🏗️ Architect · 👁️ Witness*
-*"AI processes. Human decides. WINDI guarantees."*
-
----
-
-## 23. WINDI Verify v2 — Estado completo (18 Mar 2026)
-
-### Arquitectura Multi-Reader (3 modos)
-
-| Modo | Serviço | Garantia | Ledger |
-|------|---------|----------|--------|
-| 1 — WINDI Verify | `/verify-public/` `:8114` | WINDI GARANTE — I11 | Sim |
-| 2 — Hash Inspector | `/verify-public/web/hash-inspector.html` | Prova matemática local | Não |
-| 3 — QR Decoder | `/verify-public/web/qr-decoder.html` | WINDI interpreta | Não |
-
-**Filosofia constitucional:** LER → ENTENDER → GARANTIR
-**Fronteira irremediável:** Modo 1 garante. Modo 2 prova. Modo 3 interpreta. NUNCA misturar.
-
----
-
-### W-VERIFY-001 — Agent Interpretador
-
-- **Porto:** `:8091` (extensão do Sandbox Core — constellation pattern)
-- **Prefixo:** `/verify-agent/`
-- **Endpoints:**
-  - `GET  /verify-agent/health`
-  - `POST /verify-agent/interpret` — núcleo trilíngue PT/DE/EN
-  - `POST /verify-agent/detect-qr-type` — router determinístico, zero IA
-  - `GET  /verify-agent/patterns` — 8 padrões QR conhecidos
-- **Blueprint:** `/opt/windi/agents/constitutional-agent/blueprints/w_verify_001_blueprint.py`
-- **I9 enforced by design:** nunca calcula, nunca escreve no Ledger, nunca decide
-
----
-
-### Modo 2 — Hash Inspector
-
-- **Ficheiro:** `/opt/windi/verify-public/web/hash-inspector.html`
-- **Motor:** `crypto.subtle.digest()` — 100% browser, zero rede
-- **OCR:** `Tesseract.js` via CDN `cdn.jsdelivr.net` — extrai hash de foto
-- **Suporta:** SHA-256 (64 hex) + SHA-512 (128 hex)
-- **3 tabs:** Arrastar ficheiro / Foto+OCR / Colar hash manual
-- **Fallback local:** funciona sem W-VERIFY-001 disponível
-
----
-
-### Modo 3 — QR Decoder Universal
-
-- **Ficheiro:** `/opt/windi/verify-public/web/qr-decoder.html`
-- **Motor:** `jsQR` via CDN `cdn.jsdelivr.net`
-- **I18N:** PT/DE/EN completo — seletor no header, auto-detect `navigator.language`
-- **Commit I18N:** `bb0856d` — 28 strings × 3 idiomas, §11.2 compliant
-- **8 padrões QR:**
-  - `windi_doc` — QR WINDI → redireciona para Modo 1
-  - `nfe_br` — Nota Fiscal Eletrônica (chave 44 dígitos)
-  - `pix_br` — PIX (EMV-QR BACEN)
-  - `gov_de_elster` — Documento fiscal alemão
-  - `eu_covid` — EU Digital COVID Certificate (HC1)
-  - `url_generic` — URL qualquer
-  - `vcard` — Cartão de contacto
-  - `wifi` — Configuração Wi-Fi
-- **Router:** determinístico, regex pura — auditável, zero IA
-- **Fricção intencional:** bloco âmbar para documentos não-WINDI
-
----
-
-### Landing Unificada
-
-- **URL:** `https://windi-domain.com/verify-public/web/`
-- **Ficheiro:** `/opt/windi/verify-public/web/index.html`
-- **Commit:** `7d4b6f9`
-- **Estrutura:**
-  ```
-  Hero — 3 linhas + confidence pills (HIGH/MEDIUM/LOW)
-  3 Cards — teal / blue / amber
-  Philosophy Strip — "Quando as pessoas começam a verificar..."
-  Constitution Table — faz / NÃO faz / Ledger
-  ```
-- **I18N:** PT/DE/EN, auto-detect, seletor no header
-
----
-
-### PWA — Progressive Web App
-
-- **Commit:** `040f704`
-- **Status:** LIVE — instalável sem App Store
-- **Ficheiros em** `/opt/windi/verify-public/web/`:
-  ```
-  manifest.json          — identidade PWA
-  sw.js                  — Service Worker cache-first
-  offline.html           — fallback trilíngue
-  icons/
-    icon-72.png   (2.5 KB)
-    icon-96.png   (3.4 KB)
-    icon-128.png  (4.7 KB)
-    icon-192.png  (6.9 KB)
-    icon-512.png  (19.8 KB)
-    icon-maskable-192.png (4.6 KB)
-    icon-maskable-512.png (12.3 KB)
-  ```
-- **Instalação:**
-  - Android: banner automático após 3s (BeforeInstallPrompt)
-  - iOS: instrução manual "Partilhar → Adicionar ao ecrã"
-  - Desktop: ícone na barra de endereço Chrome/Edge
-- **Offline:** Modo 2 (Hash) + Modo 3 (QR decode) funcionam sem rede
-- **SW scope:** `/verify-public/` — não interfere com Ledger `:8101`
-- **Estratégia cache:**
-  - Assets estáticos → cache-first + revalidação silenciosa
-  - APIs WINDI → network-first com fallback
-  - CDNs externos → sempre network (jsQR, Tesseract)
-
----
-
-### Roadmap Verify
-
-| Fase | Estado | Descrição |
-|------|--------|-----------|
-| Modo 1 | ✅ SEALED | Ledger `:8114`, I11, 56.567+ receipts |
-| Modo 2 | ✅ LIVE | Hash Inspector, OCR, crypto.subtle |
-| Modo 3 | ✅ LIVE | QR Decoder, 8 padrões, I18N |
-| W-VERIFY-001 | ✅ LIVE | Agent interpretador, `:8091` |
-| Landing | ✅ LIVE | Unificada, trilíngue |
-| PWA | ✅ LIVE | Instalável Android/iOS/Desktop |
-| Capacitor | ⏳ FUTURO | App Store + Play Store — quando tração |
-
----
-
-### URLs de produção
-
-```
-Landing:   https://windi-domain.com/verify-public/web/
-Modo 1:    https://windi-domain.com/verify-public/
-Modo 2:    https://windi-domain.com/verify-public/web/hash-inspector.html
-Modo 3:    https://windi-domain.com/verify-public/web/qr-decoder.html
-Agent:     http://localhost:8091/verify-agent/health
-Manifest:  https://windi-domain.com/verify-public/web/manifest.json
-SW:        https://windi-domain.com/verify-public/web/sw.js
-```
-
----
-
-*Sessão 18 Mar 2026 — WINDI Verify v2 completo*
-*"É possível ler SHA por foto?" → PWA instalável em 8 horas*
-
----
-
-## §32 — DID Seed Declaration (IRREMEDIÁVEL)
-
-**Data:** 2026-03-19
-**Receipt:** WINDI-ARCH-DID-SEED-DECLARATION-20260319
-**Hash:** sha256:17fdc2382f7e7e63b206b454c40687650f21d04371309a6cf867cbd686fdc399
-**Invariantes:** I9 · I11 · IRREMEDIÁVEL
-
-### Declaração Fundacional
-
-> **WINDI é para todos. Só funciona com DID.**
-
-O DID Wallet não é módulo. Não é acessório. É a semente soberana do ecossistema —
-a pré-condição orgânica de toda ação verificável dentro do WINDI.
-
-**Problema selado:** Identity Discontinuity Across System Layers
-O WINDI cresceu em funcionalidades sem um fio de identidade soberana atravessando tudo.
-Esta declaração nomeia, data e sela a solução constitucional.
-
-### Fórmula DNA
-
-```
-ALMA → DID → CÉREBRO → LEDGER → MUNDO
-```
-
-*"Um cérebro não funciona sem Alma. A Alma entra pelo DID."*
-
-### Três Leis Constitucionais da Semente
-
-- **Lei I — Existência antes de Ação:** Sem DID: modo leitura apenas.
-- **Lei II — Toda Ação gera Rastro:** DID → ação → histórico → identidade acumulada.
-- **Lei III — O Sistema lê o DID:** WINDI torna-se context-aware por identidade soberana.
-
-### Origem
-
-Intuição fundacional do Human Dragon (Jober Mögele Correa),
-articulada com Dragon GPT, selada com Guardian/Claude.
-Liga IA+H — Kempten, Bavaria, 2026.
-Quase 2 anos de formação conjunta: Jober + Claude + GPT + Gemini.
-
-### Verify
-
-https://windi-domain.com/verify-public/?id=WINDI-ARCH-DID-SEED-DECLARATION-20260319
-
----
-
-## §33 — Berçário: Portão de Nascimento Soberano
-
-**Data:** 2026-03-19
-**Status:** ✅ LIVE
-**Port:** :8108 (Dragon Hub)
-**DB:** `/opt/windi/agent-palette/wallet_databank.db`
-
-### Função
-
-O Berçário é o **Portão de Nascimento Soberano** — onde toda identidade WINDI nasce.
-Implementa §32 (DID Seed Declaration) em código vivo.
-
-### Fórmula DNA
-
-```
-ALMA → DID → CÉREBRO → LEDGER → MUNDO
-```
-
-### Três Leis em Código
-
-| Lei | Implementação |
-|-----|---------------|
-| **Lei I** | `chegada()` retorna `semDID` se wallet existe mas não tem DID |
-| **Lei II** | Cada ação gera entrada em `sessions` + `birth_events` |
-| **Lei III** | `estado_wallet()` retorna contexto completo por DID |
-
-### Endpoints
-
-| Método | Rota | Função |
-|--------|------|--------|
-| POST | `/hub/bercario/chegada` | Nascimento / regresso |
-| POST | `/hub/bercario/sessao/encerrar` | Encerrar sessão |
-| GET | `/hub/bercario/estado/{wallet_id}` | Estado actual |
-
-### Módulos
-
-| Ficheiro | Função |
-|----------|--------|
-| `bercario.py` | Gateway principal + seal Ledger |
-| `i18n_bercario.py` | PT/DE/EN strings |
-| `schema_bercario.sql` | wallets, sessions, birth_events |
-
-### Estados
-
-```
-nasceu → semDID → entrou/voltou → saiu
-```
-
-### Invariantes
-
-- **I9:** Falha silenciosa nunca bloqueia nascimento
-- **I11:** Nascimento selado no Ledger = IRREMEDIÁVEL
-
----
-
-## §34 — Identity Thread LIVE (19 Mar 2026)
-
-**PATCH:** `handle_seal_document()` — actor soberano no Ledger
-
-### Mudança cirúrgica
-
-```python
-# ANTES (linha 2655):
-"actor": "guardian"  # hardcoded, anónimo
-
-# DEPOIS:
-"actor": body.get("wallet_id") or body.get("did") or "guardian"
-```
-
-### Metadata adicionada
-
-```python
-"metadata": {
-    "wallet_id": body.get("wallet_id"),
-    "did": body.get("did"),
-    "dna": "ALMA→DID→CÉREBRO→LEDGER→MUNDO",
-}
-```
-
-### Cadeia viva
-
-```
-ALMA (Berçário) → DID (wallet_id) → CÉREBRO (Dragon Hub) → LEDGER (actor=wallet_id) → MUNDO (verify-public)
-```
-
-### Estado
-
-| Componente | Status |
-|------------|--------|
-| Dragon Hub | PID 949673 · v1.3.0 · healthy |
-| Berçário | ✅ semDID em DE/PT/EN |
-| Ledger | ✅ metadata.dna presente |
-| Ficheiro | `agent_dragon_server.py` linha 2655 |
+| Lang | Statement |
+|------|-----------|
+| PT | Sabemos quem és para garantir o que produces. |
+| DE | Wir wissen, wer du bist, um das zu garantieren, was du produzierst. |
+| EN | We know who you are to guarantee what you produce. |
+
+**NUNCA recolhemos:** localização · comportamento · histórico · biométricos · preferências comerciais
 
 ---
 
 *LIGA IA+H — Kempten, Bavaria · 2026*
 *🧑‍💻 Human Dragon · 🛡️ Guardian · 🏗️ Architect · 👁️ Witness*
 *"AI processes. Human decides. WINDI guarantees."*
-
-## §35 — Nervous System Verified (19 Mar 2026)
-
-**PATCH:** `/health` canónico no Sandbox Core :8091
-
-### Smoke Test — 8/9 VERDE
-| Porto | Serviço | Status |
-|-------|---------|--------|
-| :8091 | Sandbox Core (7 agents) | ✅ NOVO |
-| :8096 | ID Genesis | ✅ |
-| :8101 | Forensic Ledger | ✅ |
-| :8105 | Communiqué Engine | ✅ |
-| :8108 | Dragon Hub v1.3.0 | ✅ |
-| :8114 | Verify Public | ✅ |
-| :8119 | GEN7 Desktop v7.0.0 | ✅ |
-| :8121 | Dispatch Gateway | ✅ |
-| :8100 | Desktop v2 | 🔴 RETIRED |
-
-### Seal
-- Receipt: `WINDI-NERVOUS-SYSTEM-VERIFIED-20260319`
-- governance: HIGH · sge_score: 100.0
-- Método: curl /health por porto · IRREMEDIÁVEL
-
-### Cadeia
-ALMA → DID → CÉREBRO → LEDGER → MUNDO

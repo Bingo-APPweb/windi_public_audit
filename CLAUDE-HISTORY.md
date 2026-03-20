@@ -989,3 +989,187 @@ ALMA → DID → CÉREBRO → LEDGER → MUNDO
 ---
 
 *Sessão Histórica documentada por Gêmeo · 19 Mar 2026 · OM SHANTI 🐉*
+
+---
+
+## § MIGRAÇÃO 20 Mar 2026 — Overflow Fix
+
+**Motivo:** CLAUDE.md em 51KB (limite 32KB)
+**Acção:** Migrar conteúdo detalhado para HISTORY
+
+---
+
+### Completado 19 Mar 2026 (Tabela Detalhada)
+
+| Fix | Descrição |
+|-----|-----------|
+| **W-CIA-001 GEN7** | Health Pulse indicator no Desktop header · Panel com diagnóstico de 7 serviços |
+| **nginx /api/onetouch/** | Rota adicionada → proxy :8119 |
+| **nginx /how-it-works/** | Rota adicionada → alias landing page trilíngue |
+| **CTA How it Works** | `/app/` → `/desktop/` no botão "Começar" |
+| **nginx /api/seal** | Rota adicionada → proxy :8119 |
+| **nginx /api/export/web** | Rota adicionada → proxy :8119 |
+| **nginx /api/publish/web** | Rota adicionada → proxy :8119 |
+| **copyCanvasToClipboard** | Fix `event.target` undefined |
+| **CIA indicator layout** | Separador + ícone + dot posicionado |
+| **Keys button CSS** | `.api-keys-indicator` clicável |
+| **nginx /keys/** | Rota adicionada → alias `/opt/windi/keys-pricing/` |
+| **§27 W-GATE-001** | API Schema Contracts LIVE · 15 endpoints |
+| **§28 CIA Pre-Flight** | Validação frontend ANTES de API call |
+| **§29 W-KEYS-002** | Technical Explainer Page · 52 strings i18n |
+| **§30 W-NGINX-001** | Nginx Auto-Register LIVE · pre-commit hook |
+| **dragon/chat tier** | Fix parâmetro tier nested |
+| **W-JOURN-001 MODE A** | Bridge aceita criação SEM draft_id |
+| **nginx /pioneer/** | Rota adicionada |
+| **nginx /api/pioneer/** | Rota adicionada → proxy :8096 |
+| **Mobile → Pioneer** | `generateDID()` redireciona |
+| **Pioneer Form** | Formulário completo |
+| **§31 VPR Restore** | `/verify-public/` → :8114 |
+| **viewer symlink** | Fix 403 |
+| **§32 DID Seed** | Declaração IRREMEDIÁVEL |
+| **§33 Berçário** | Portão Nascimento Soberano LIVE |
+| **§34 Identity Thread** | `actor=wallet_id` no Ledger |
+| **§34 Data Policy** | Canonical Data Policy v1.0 SEALED |
+
+---
+
+### Completado 18 Mar 2026 (Tabela Detalhada)
+
+| Fix | Descrição |
+|-----|-----------|
+| **§22 Sovereignty Metrics** | I13 Token Independence — 93.3% local |
+| **§23 Qualidade Soberana** | WB-KNOW-SOVEREIGNTY-Q-20260318 SEALED |
+| **§24 W-CIA-001** | Detetive Constitucional BIRTH SEALED |
+| **§25 W-MGR-001** | Gerente do Composer LIVE |
+| **§26 W-SCH-001** | Instrutor do Composer LIVE |
+| **WALLET 4/4** | G1-G4 completos |
+| **Lead Admin systemd** | nohup → systemd |
+| **G3 Tools + Verify** | Verify na Tools section |
+| **Root Redirect** | `/` → 301 → `/desktop/` |
+
+---
+
+### Completado 17 Mar 2026 (Tabela Detalhada)
+
+| Fix | Descrição |
+|-----|-----------|
+| CLAUDE.md v1.9.0 | Refactor 45k→15k chars |
+| CHANGELOG.md | Novo ficheiro |
+| ARCHITECTURE.md | Novo ficheiro |
+| i18n Fix | `detect_language()` respeita EN |
+| Canvas ← Novo | Botão na toolbar G2 |
+| URL Fix | `/app/api/dragon` → `/api/dragon` |
+| History Fix | `human→user`, `text→content` |
+| **How it Works** | Landing page trilíngue |
+| Nav Link | "How it Works" na header |
+| i18n Sync | localStorage partilhado |
+| Back Button | Trilíngue |
+| **§11.2 FRONTEND INVARIANTS** | Lei constitucional UI |
+| Theme Toggle | NOIR/KLAR |
+| **/keys/ Fix** | localStorage sync |
+| **§17 .JMPG** | Formato soberano documentado |
+| **Dispatch Gateway** | :8121 LIVE |
+
+---
+
+### §22 Sovereignty Metrics — Detalhes
+
+**Audit Ref:** AUDIT-SOVEREIGNTY-20260224
+**Source:** `/opt/windi/agent-palette/sovereign_router.py`
+
+```
+Total Funções:        45
+Funções Locais:       42  (93.3%)
+Funções Semânticas:    3  (6.7%)
+
+BASELINE: 4000 tk → ACTUAL: ~268 tk → PROGRESSO: 149.3%
+```
+
+As 3 funções semânticas: `CHAT_INTERPRETIVE`, `SEMANTIC_ANALYSIS`, `TEXT_GENERATION`
+
+---
+
+### §23 Princípio: Qualidade Soberana
+
+**WB-KNOW-SOVEREIGNTY-Q-20260318 · SEALED · HIGH**
+**Hash:** `sha256:66d542fcc2118f8e174f32d0c9caea336205dc3f73ee735122149fe9716e2d3b`
+
+> "O externo sustenta. O interno orienta. A qualidade decide."
+
+---
+
+### §24 W-CIA-001 — Detetive Constitucional
+
+**WINDI-CIA-001-BIRTH-20260318 · SEALED · HIGH**
+
+Capacidades: Health Pulse (4 serviços) · Indicador Visual · Polling 30s · Painel Clicável
+
+Arquitectura: DIAGNÓSTICO → SHIELD → FORENSE
+
+---
+
+### §25-§26 Composer Agents
+
+**W-MGR-001 — Gerente:** Observa documento, sugere melhorias, HUD âmbar, i18n
+**W-SCH-001 — Instrutor:** Observa humano, ensina idle 60s, 6 dicas contextuais
+
+---
+
+### §27 W-GATE-001 — API Schema Contracts
+
+**Princípio:** "Nenhum endpoint novo sobe sem contrato."
+
+Path: `/opt/windi/contracts/` — 15 endpoints protegidos, erros trilíngues
+
+---
+
+### §28 CIA Pre-Flight Check
+
+**Princípio:** "Validar ANTES de chamar → erro nunca chega."
+
+4 funções protegidas: `executeOneTouch()`, `sealCanvasToLedger()`, `exportWebStandalone()`, `publishToWINDI()`
+
+---
+
+### §29 W-KEYS-002 — Technical Explainer
+
+**URL:** `windi-domain.com/keys/`
+**Princípio:** "O preço é o final do convencimento."
+
+52 strings i18n, 4 tiers pricing
+
+---
+
+### §30 W-NGINX-001 — Nginx Auto-Register
+
+**Path:** `/opt/windi/contracts/nginx_audit.py`
+**Princípio:** "Nenhuma rota Flask vive sozinha."
+
+302 Flask routes, 64 nginx locations, 0 missing
+
+---
+
+### §34 Canonical Data Policy v1.0
+
+**Receipt:** `WINDI-POLICY-DATA-CANONICAL-V1.0`
+**Hash:** `sha256:ca8c7e94b379da273612185883b5b1aa503e0df19d3b8338f436434afd26abf3`
+
+> "Utilizador = Autor. Não produto. Não dado."
+
+---
+
+### WINDI Verify v2 — Arquitectura Completa
+
+| Modo | Serviço | Garantia |
+|------|---------|----------|
+| 1 | `/verify-public/` :8114 | WINDI GARANTE (Ledger) |
+| 2 | Hash Inspector | Prova matemática local |
+| 3 | QR Decoder | WINDI interpreta |
+
+**W-VERIFY-001:** Porto :8091, `/verify-agent/*`
+**PWA:** Instalável Android/iOS/Desktop, offline-capable
+
+---
+
+*Migração executada por Gêmeo · 20 Mar 2026*
+*CLAUDE.md: 51KB → ~28KB (dentro do limite 32KB)*
