@@ -33,58 +33,70 @@ import urllib.error
 # ═══════════════════════════════════════════════════════════════════════════════
 
 WSG_MONITORED_SERVICES: Dict[str, Dict[str, Any]] = {
-    "governance_api": {
-        "url": "http://localhost:8080/api/status",
-        "process": "windi_governance_api.py",
-        "restart_cmd": "cd /opt/windi/engine && nohup python3 windi_governance_api.py > /tmp/gov_api.log 2>&1 &",
-        "critical": True,
-        "timeout": 10,
-        "max_failures": 3,
-    },
-    "babel_editor": {
-        "url": "http://localhost:8085/",
-        "process": "a4desk_tiptap_babel.py",
-        "restart_cmd": "cd /opt/windi/a4desk-editor && source /etc/windi/secrets.env && nohup python3 a4desk_tiptap_babel.py > /tmp/a4desk.log 2>&1 &",
-        "critical": True,
-        "timeout": 10,
-        "max_failures": 3,
-    },
-    "day_by_day": {
-        "url": "http://localhost:8090/api/health",
-        "process": "day_by_day_dispatcher.py",
-        "restart_cmd": "cd /opt/windi/engine && nohup python3 day_by_day_dispatcher.py > /tmp/dispatcher.log 2>&1 &",
-        "critical": True,
-        "timeout": 10,
-        "max_failures": 3,
-    },
-    "forensic_api": {
-        "url": "http://localhost:8093/health",
-        "process": "forensic_api.py",
-        "restart_cmd": "cd /opt/windi/engine && nohup python3 forensic_api.py > /tmp/forensic_api.log 2>&1 &",
-        "critical": False,
-        "timeout": 10,
-        "max_failures": 3,
-    },
-    "tabeliao_digital": {
+    # ═══════════════════════════════════════════════════════════════════════════════
+    # WINDI NERVOUS SYSTEM — Updated 21 Mar 2026
+    # Ports aligned with CLAUDE.md §13 Mapa de Portas
+    # ═══════════════════════════════════════════════════════════════════════════════
+    "sandbox_core": {
         "url": "http://localhost:8091/health",
-        "process": "forensic_validate_handwritten.py",
-        "restart_cmd": "cd /opt/windi/engine && nohup python3 forensic_validate_handwritten.py > /tmp/tabeliao.log 2>&1 &",
+        "process": "sandbox_core.py",
+        "restart_cmd": None,  # Manual — nohup per CLAUDE.md Rule 10
+        "critical": True,
+        "timeout": 10,
+        "max_failures": 3,
+    },
+    "dragon_hub": {
+        "url": "http://localhost:8108/health",
+        "process": "dragon_hub.py",
+        "restart_cmd": None,  # Manual — API key protected
+        "critical": True,
+        "timeout": 10,
+        "max_failures": 3,
+    },
+    "desktop_gen7": {
+        "url": "http://localhost:8119/health",
+        "process": "gen7_server.py",
+        "restart_cmd": None,  # Manual — systemd
+        "critical": True,
+        "timeout": 10,
+        "max_failures": 3,
+    },
+    "forensic_ledger": {
+        "url": "http://localhost:8101/health",
+        "process": "forensic_ledger.py",
+        "restart_cmd": None,  # SEALED PORT — NEVER auto-restart
+        "critical": True,
+        "timeout": 10,
+        "max_failures": 3,
+    },
+    "verify_public": {
+        "url": "http://localhost:8114/health",
+        "process": "verify_public.py",
+        "restart_cmd": None,  # SEALED PORT
         "critical": False,
         "timeout": 10,
         "max_failures": 3,
     },
-    "sanctuary_api": {
-        "url": "http://localhost:8092/health",
-        "process": "sanctuary",
-        "restart_cmd": None,  # Manual — Skills API
-        "critical": False,
-        "timeout": 10,
-        "max_failures": 3,
-    },
-    "cortex": {
-        "url": "http://localhost:8889/health",
-        "process": "cortex",
+    "dispatch_gateway": {
+        "url": "http://localhost:8121/health",
+        "process": "dispatch_gateway.py",
         "restart_cmd": None,  # Manual
+        "critical": False,
+        "timeout": 10,
+        "max_failures": 3,
+    },
+    "wallet_service": {
+        "url": "http://localhost:8099/health",
+        "process": "wallet_service.py",
+        "restart_cmd": None,  # Manual
+        "critical": False,
+        "timeout": 10,
+        "max_failures": 3,
+    },
+    "lead_admin": {
+        "url": "http://localhost:8096/health",
+        "process": "lead_admin.py",
+        "restart_cmd": None,  # systemd — env secured
         "critical": False,
         "timeout": 10,
         "max_failures": 3,
