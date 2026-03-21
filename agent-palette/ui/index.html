@@ -3832,7 +3832,8 @@ const CanvasPanelUI = () => {
     if (!prompt.trim()) return;
     setLoading(true); setError(null); setResult(null);
     try {
-      const res = await fetch("http://localhost:8091/canvas/generate", {
+      const apiBase = window.location.hostname === 'localhost' ? 'http://localhost:8091' : 'https://windi-domain.com';
+      const res = await fetch(apiBase + "/canvas/generate", {
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify({
