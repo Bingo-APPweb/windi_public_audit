@@ -1,0 +1,22 @@
+{
+  "period_days": 7,
+  "total_external": 11,
+  "estimated_local": 6,
+  "total_renders": 17,
+  "sovereignty_rate": 35.3,
+  "total_tokens": 28584,
+  "total_cost_usd": 0.001158,
+  "hypothetical_cost_usd": 0.03573,
+  "savings_usd": 0.034572,
+  "savings_eur": 0.031806,
+  "model_distribution": {
+    "gemini-2.5-flash": 11
+  },
+  "type_distribution": {
+    "flowchart": 4,
+    "architecture": 6,
+    "timeline": 1
+  },
+  "avg_tokens_per_render": 2598.5,
+  "avg_cost_per_render": 0.000105
+}

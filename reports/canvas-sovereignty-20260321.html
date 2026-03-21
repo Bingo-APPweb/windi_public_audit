@@ -1,0 +1,80 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: 'Bricolage Grotesque', sans-serif; background: #0A0A10; color: #E8E6E1; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .header { background: linear-gradient(135deg, #1a1a2e, #0A0A10); padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .header h1 { color: #C9A84C; margin: 0; font-size: 24px; }
+        .metric { background: #12121A; padding: 15px; border-radius: 8px; margin-bottom: 10px; border-left: 3px solid #C9A84C; }
+        .metric-value { font-size: 28px; color: #C9A84C; font-weight: 700; }
+        .metric-label { font-size: 12px; color: #888; text-transform: uppercase; }
+        .savings { background: #1a3a1a; border-left-color: #4CAF50; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .footer { font-size: 11px; color: #666; margin-top: 20px; text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 8px; text-align: left; border-bottom: 1px solid #1A1A24; }
+        th { color: #C9A84C; font-size: 11px; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🐉 Canvas Sovereignty Report</h1>
+            <p style="margin: 5px 0 0 0; color: #888;">Semana de 21 Mar 2026</p>
+        </div>
+
+        <div class="grid">
+            <div class="metric">
+                <div class="metric-value">35.3%</div>
+                <div class="metric-label">Sovereignty Rate</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">17</div>
+                <div class="metric-label">Total Renders</div>
+            </div>
+        </div>
+
+        <div class="metric savings">
+            <div class="metric-value">€0.0318</div>
+            <div class="metric-label">Poupança vs Gemini Pro (100%)</div>
+        </div>
+
+        <div class="grid">
+            <div class="metric">
+                <div class="metric-value">28,584</div>
+                <div class="metric-label">Tokens Consumidos</div>
+            </div>
+            <div class="metric">
+                <div class="metric-value">$0.0012</div>
+                <div class="metric-label">Custo Real (USD)</div>
+            </div>
+        </div>
+
+        <div class="metric">
+            <div class="metric-label" style="margin-bottom: 10px;">Distribuição por Modelo</div>
+            <table>
+                <tr><th>Modelo</th><th>Renders</th></tr>
+                <tr><td>gemini-2.5-flash</td><td>11</td></tr>
+                <tr><td><em>local_template (est.)</em></td><td>6</td></tr>
+            </table>
+        </div>
+
+        <div class="metric">
+            <div class="metric-label" style="margin-bottom: 10px;">Distribuição por Tipo</div>
+            <table>
+                <tr><th>Tipo</th><th>Renders</th></tr>
+                <tr><td>flowchart</td><td>4</td></tr><tr><td>architecture</td><td>6</td></tr><tr><td>timeline</td><td>1</td></tr>
+            </table>
+        </div>
+
+        <div class="footer">
+            <p>W-CANVAS-001 · Sovereignty Gate v1.0</p>
+            <p>"Economy enables Quality — O externo sustenta. O interno orienta."</p>
+            <p>WINDI Publishing House · Kempten, Bavaria · 2026</p>
+        </div>
+    </div>
+</body>
+</html>
