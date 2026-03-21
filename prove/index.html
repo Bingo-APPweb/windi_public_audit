@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="noir">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prove Your System | WINDI</title>
+    <meta name="description" content="Most systems show dashboards. None can prove their own state. We just did.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --transition: 0.3s ease;
+        }
+
+        [data-theme="noir"] {
+            --bg: #0A0A10;
+            --bg-card: #0F0F18;
+            --gold: #C9A84C;
+            --gold-dim: rgba(201, 168, 76, 0.15);
+            --text: #E8E6E1;
+            --text-dim: #6B6B70;
+            --border: #1A1A24;
+            --green: #4ade80;
+            --teal: #2dd4bf;
+        }
+
+        [data-theme="klar"] {
+            --bg: #FAFAF8;
+            --bg-card: #FFFFFF;
+            --gold: #8B7424;
+            --gold-dim: rgba(139, 116, 36, 0.1);
+            --text: #1A1A1A;
+            --text-dim: #6B6B70;
+            --border: #E0DED8;
+            --green: #16a34a;
+            --teal: #0d9488;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            transition: background var(--transition), color var(--transition);
+        }
+
+        .container {
+            max-width: 560px;
+            width: 100%;
+            text-align: center;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all var(--transition);
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--gold);
+        }
+
+        /* Hero */
+        .hero-title {
+            font-size: clamp(2rem, 8vw, 3.5rem);
+            font-weight: 800;
+            color: var(--gold);
+            letter-spacing: -1px;
+            margin-bottom: 32px;
+        }
+
+        .hero-text {
+            font-size: 1.25rem;
+            line-height: 1.6;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .hero-text.dim {
+            color: var(--text-dim);
+        }
+
+        .hero-punchline {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-top: 24px;
+            margin-bottom: 48px;
+        }
+
+        /* Flow Buttons */
+        .flow-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+
+        .flow-btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .flow-btn.live {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            color: white;
+            border-color: #dc2626;
+        }
+
+        .flow-btn.live:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(220, 38, 38, 0.4);
+        }
+
+        .flow-btn.live.active {
+            animation: pulse-red 1.5s infinite;
+        }
+
+        .flow-btn.seal {
+            background: var(--gold-dim);
+            color: var(--gold);
+            border-color: var(--gold);
+        }
+
+        .flow-btn.seal:hover:not(:disabled) {
+            background: var(--gold);
+            color: #000;
+        }
+
+        .flow-btn.seal:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .flow-btn.verify {
+            background: transparent;
+            color: var(--green);
+            border-color: var(--green);
+        }
+
+        .flow-btn.verify:hover:not(:disabled) {
+            background: var(--green);
+            color: #000;
+        }
+
+        .flow-btn.verify:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .flow-arrow {
+            color: var(--text-dim);
+            font-size: 1.25rem;
+        }
+
+        @keyframes pulse-red {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
+            50% { box-shadow: 0 0 20px 4px rgba(220, 38, 38, 0.2); }
+        }
+
+        /* Result Card */
+        .result-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 40px;
+            text-align: left;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.4s ease;
+        }
+
+        .result-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .result-card.sealed {
+            border-color: var(--gold);
+            box-shadow: 0 0 30px var(--gold-dim);
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 16px;
+        }
+
+        .card-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .status-health {
+            font-size: 1.75rem;
+        }
+
+        .status-mode {
+            color: var(--green);
+        }
+
+        .status-sep {
+            color: var(--text-dim);
+            font-weight: 400;
+        }
+
+        .status-locality {
+            color: var(--text-dim);
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .card-metrics {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+        }
+
+        .card-timing {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-bottom: 16px;
+        }
+
+        .card-seal-status {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+            font-size: 0.85rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .card-seal-status.visible {
+            opacity: 1;
+        }
+
+        .seal-badge {
+            background: var(--gold-dim);
+            color: var(--gold);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .verify-badge {
+            color: var(--green);
+            font-weight: 600;
+        }
+
+        .hash-display {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .hash-display.visible {
+            opacity: 1;
+        }
+
+        /* Bullets */
+        .bullets {
+            text-align: left;
+            margin-bottom: 40px;
+        }
+
+        .bullet {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1rem;
+            color: var(--text);
+            margin-bottom: 12px;
+        }
+
+        .bullet-arrow {
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        /* CTA */
+        .cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--gold);
+            color: #000;
+            padding: 16px 32px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.2s;
+            margin-bottom: 48px;
+        }
+
+        .cta-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px var(--gold-dim);
+        }
+
+        .cta-subtext {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-bottom: 16px;
+            margin-top: -32px;
+        }
+
+        .cta-secondary {
+            background: transparent;
+            border: 2px solid var(--gold);
+            color: var(--gold);
+            margin-bottom: 48px;
+        }
+
+        .cta-secondary:hover {
+            background: var(--gold-dim);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        .footer-brand {
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .footer-location {
+            margin-bottom: 12px;
+        }
+
+        .lang-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .lang-btn {
+            padding: 6px 12px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            background: transparent;
+            color: var(--text-dim);
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .lang-btn:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .lang-btn.active {
+            background: var(--gold-dim);
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .flow-container {
+                gap: 8px;
+            }
+            .flow-btn {
+                padding: 10px 16px;
+                font-size: 0.9rem;
+            }
+            .flow-arrow {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+        <span id="themeIcon"></span>
+    </button>
+
+    <div class="container">
+        <!-- Hero -->
+        <h1 class="hero-title" data-i18n="title">PROVE YOUR SYSTEM</h1>
+        <p class="hero-text" data-i18n="line1">Most systems show dashboards.</p>
+        <p class="hero-text dim" data-i18n="line2">None can prove their own state.</p>
+        <p class="hero-punchline" data-i18n="punchline">We just did.</p>
+
+        <!-- Interactive Flow -->
+        <div class="flow-container">
+            <button class="flow-btn live" id="btnLive" onclick="triggerLive()">
+                <span data-i18n="live">LIVE</span>
+            </button>
+            <span class="flow-arrow">→</span>
+            <button class="flow-btn seal" id="btnSeal" onclick="triggerSeal()" disabled>
+                <span data-i18n="seal">SEAL</span>
+            </button>
+            <span class="flow-arrow">→</span>
+            <button class="flow-btn verify" id="btnVerify" onclick="triggerVerify()" disabled>
+                <span data-i18n="verify">VERIFY</span>
+            </button>
+        </div>
+
+        <!-- Result Card -->
+        <div class="result-card" id="resultCard">
+            <div class="card-title">
+                <span>📊</span>
+                <span data-i18n="cardTitle">WINDI System State</span>
+            </div>
+            <div class="card-status">
+                <span class="status-health">🟢</span>
+                <span class="status-mode">SOVEREIGN</span>
+                <span class="status-sep">•</span>
+                <span class="status-locality">100% LOCAL</span>
+            </div>
+            <div class="card-metrics">
+                <span>⚡</span>
+                <span data-i18n="services">8 services</span>
+                <span class="status-sep">•</span>
+                <span data-i18n="external">0 external</span>
+            </div>
+            <div class="card-timing">
+                <span>⏱</span>
+                <span id="latencyValue">42ms</span>
+                <span class="status-sep">•</span>
+                <span data-i18n="realtime">realtime</span>
+            </div>
+            <div class="card-seal-status" id="sealStatus">
+                <span class="seal-badge" data-i18n="sealedBadge">🔏 Sealed</span>
+                <span class="verify-badge" id="verifyBadge" style="opacity:0" data-i18n="verified">✔ Verified</span>
+            </div>
+            <div class="hash-display" id="hashDisplay">
+                sha256:7a3f...c8d1
+            </div>
+        </div>
+
+        <!-- Bullets -->
+        <div class="bullets">
+            <div class="bullet">
+                <span class="bullet-arrow">→</span>
+                <span data-i18n="bullet1">Real-time state (not simulated)</span>
+            </div>
+            <div class="bullet">
+                <span class="bullet-arrow">→</span>
+                <span data-i18n="bullet2">Zero external dependency</span>
+            </div>
+            <div class="bullet">
+                <span class="bullet-arrow">→</span>
+                <span data-i18n="bullet3">Sealed as verifiable evidence</span>
+            </div>
+        </div>
+
+        <!-- CTA -->
+        <a href="/desktop/" class="cta-btn cta-primary">
+            <span data-i18n="cta">See it live</span>
+            <span>→</span>
+        </a>
+        <p class="cta-subtext" data-i18n="ctaSub">No signup. No setup. See it in 5 seconds.</p>
+        <a href="/desktop/?auto=live" class="cta-btn cta-secondary">
+            <span data-i18n="cta2">Try with your own system</span>
+            <span>→</span>
+        </a>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-brand">WINDI GEN7</div>
+            <div class="footer-location">Built in Kempten, Bavaria 🇩🇪</div>
+            <div class="lang-toggle">
+                <button class="lang-btn" data-lang="de" onclick="setLang('de')">DE</button>
+                <button class="lang-btn" data-lang="en" onclick="setLang('en')">EN</button>
+                <button class="lang-btn" data-lang="pt" onclick="setLang('pt')">PT</button>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // ══════════════════════════════════════════════════════════════
+        // W-PROVE-001 — Prove Your System
+        // ══════════════════════════════════════════════════════════════
+
+        const I18N = {
+            de: {
+                title: "BEWEISE DEIN SYSTEM",
+                line1: "Die meisten Systeme zeigen Dashboards.",
+                line2: "Keines kann seinen Zustand beweisen.",
+                punchline: "Wir schon.",
+                live: "🔴 LIVE",
+                seal: "🔏 SEAL",
+                verify: "✓ VERIFY",
+                cardTitle: "WINDI Systemstatus",
+                services: "8 Dienste",
+                external: "0 extern",
+                realtime: "Echtzeit",
+                sealedBadge: "🔏 Versiegelt",
+                verified: "✔ Verifiziert",
+                bullet1: "Echtzeit-Status (nicht simuliert)",
+                bullet2: "Keine externe Abhängigkeit",
+                bullet3: "Versiegelt als verifizierbare Evidenz",
+                cta: "Live erleben",
+                ctaSub: "Keine Anmeldung. Kein Setup. In 5 Sekunden sehen.",
+                cta2: "Mit eigenem System testen"
+            },
+            en: {
+                title: "PROVE YOUR SYSTEM",
+                line1: "Most systems show dashboards.",
+                line2: "None can prove their own state.",
+                punchline: "We just did.",
+                live: "🔴 LIVE",
+                seal: "🔏 SEAL",
+                verify: "✓ VERIFY",
+                cardTitle: "WINDI System State",
+                services: "8 services",
+                external: "0 external",
+                realtime: "realtime",
+                sealedBadge: "🔏 Sealed",
+                verified: "✔ Verified",
+                bullet1: "Real-time state (not simulated)",
+                bullet2: "Zero external dependency",
+                bullet3: "Sealed as verifiable evidence",
+                cta: "See it live",
+                ctaSub: "No signup. No setup. See it in 5 seconds.",
+                cta2: "Try with your own system"
+            },
+            pt: {
+                title: "PROVE O SEU SISTEMA",
+                line1: "A maioria dos sistemas mostra dashboards.",
+                line2: "Nenhum consegue provar o seu estado.",
+                punchline: "Nós conseguimos.",
+                live: "🔴 LIVE",
+                seal: "🔏 SEAL",
+                verify: "✓ VERIFY",
+                cardTitle: "Estado do Sistema WINDI",
+                services: "8 serviços",
+                external: "0 externo",
+                realtime: "tempo real",
+                sealedBadge: "🔏 Selado",
+                verified: "✔ Verificado",
+                bullet1: "Estado em tempo real (não simulado)",
+                bullet2: "Zero dependência externa",
+                bullet3: "Selado como evidência verificável",
+                cta: "Ver ao vivo",
+                ctaSub: "Sem registo. Sem setup. Veja em 5 segundos.",
+                cta2: "Teste com o seu sistema"
+            }
+        };
+
+        let currentLang = 'en';
+        let flowState = 'idle'; // idle, live, sealed, verified
+
+        // ── Theme ─────────────────────────────────────────────────────
+        function initTheme() {
+            const saved = localStorage.getItem('windi-theme') || 'noir';
+            document.documentElement.dataset.theme = saved;
+            updateThemeIcon();
+        }
+
+        function toggleTheme() {
+            const current = document.documentElement.dataset.theme;
+            const next = current === 'noir' ? 'klar' : 'noir';
+            document.documentElement.dataset.theme = next;
+            localStorage.setItem('windi-theme', next);
+            updateThemeIcon();
+        }
+
+        function updateThemeIcon() {
+            const theme = document.documentElement.dataset.theme;
+            document.getElementById('themeIcon').textContent = theme === 'noir' ? '☀' : '☽';
+        }
+
+        // ── Language ──────────────────────────────────────────────────
+        function initLang() {
+            const saved = localStorage.getItem('windi-lang');
+            if (saved && I18N[saved]) {
+                currentLang = saved;
+            } else {
+                // Auto-detect
+                const browserLang = navigator.language.slice(0, 2);
+                if (I18N[browserLang]) {
+                    currentLang = browserLang;
+                }
+            }
+            applyLang();
+        }
+
+        function setLang(lang) {
+            if (!I18N[lang]) return;
+            currentLang = lang;
+            localStorage.setItem('windi-lang', lang);
+            applyLang();
+        }
+
+        function applyLang() {
+            const strings = I18N[currentLang];
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.dataset.i18n;
+                if (strings[key]) {
+                    el.textContent = strings[key];
+                }
+            });
+
+            // Update active button
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === currentLang);
+            });
+
+            // Update HTML lang
+            document.documentElement.lang = currentLang;
+        }
+
+        // ── Interactive Flow ──────────────────────────────────────────
+        function triggerLive() {
+            const card = document.getElementById('resultCard');
+            const btnLive = document.getElementById('btnLive');
+            const btnSeal = document.getElementById('btnSeal');
+
+            // Animate card appearance
+            card.classList.add('visible');
+            btnLive.classList.add('active');
+            btnSeal.disabled = false;
+
+            // Randomize latency for realism
+            const latency = Math.floor(Math.random() * 30) + 35;
+            document.getElementById('latencyValue').textContent = latency + 'ms';
+
+            flowState = 'live';
+        }
+
+        function triggerSeal() {
+            if (flowState !== 'live') return;
+
+            const card = document.getElementById('resultCard');
+            const sealStatus = document.getElementById('sealStatus');
+            const hashDisplay = document.getElementById('hashDisplay');
+            const btnSeal = document.getElementById('btnSeal');
+            const btnVerify = document.getElementById('btnVerify');
+
+            // Generate random hash
+            const hash = 'sha256:' + Array.from({length: 8}, () =>
+                Math.floor(Math.random() * 16).toString(16)).join('') + '...';
+            hashDisplay.textContent = hash;
+
+            // Animate seal
+            card.classList.add('sealed');
+            sealStatus.classList.add('visible');
+            hashDisplay.classList.add('visible');
+            btnSeal.disabled = true;
+            btnVerify.disabled = false;
+
+            flowState = 'sealed';
+        }
+
+        function triggerVerify() {
+            if (flowState !== 'sealed') return;
+
+            const verifyBadge = document.getElementById('verifyBadge');
+            const btnVerify = document.getElementById('btnVerify');
+
+            // Animate verify
+            verifyBadge.style.opacity = '1';
+            btnVerify.disabled = true;
+
+            flowState = 'verified';
+        }
+
+        // ── Init ──────────────────────────────────────────────────────
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            initLang();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+{
+  "version": "1.0",
+  "name": "W-CANVAS-001-LAB",
+  "description": "Interactive Canvas Execution Environment",
+  "engines": ["A", "B"],
+  "default_engine": "A",
+  "recipes_path": "/opt/windi/canvas-lab/recipes",
+  "api_endpoint": "/canvas/generate",
+  "features": {
+    "quick_actions": true,
+    "live_examples": true,
+    "step_guide": true,
+    "sovereignty_display": true
+  },
+  "ui": {
+    "default_theme": "dark_gold",
+    "show_execution_time": true,
+    "show_tokens": true
+  },
+  "invariants": [
+    "I1 — Nenhum conteúdo estático substitui execução",
+    "I2 — Recipes são a única fonte de verdade",
+    "I3 — UI nunca contém lógica de geração",
+    "I4 — Canvas sempre executável",
+    "I5 — Gate decide, não a UI"
+  ],
+  "created": "2026-03-21",
+  "author": "Liga IA+H"
+}

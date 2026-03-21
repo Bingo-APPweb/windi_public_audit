@@ -1,0 +1,17 @@
+{
+  "id": "arch_three_dragons",
+  "type": "architecture",
+  "engine": "A",
+  "title": "Three Dragons Protocol",
+  "description": "Constitutional routing through Guardian, Architect, Witness",
+  "prompt": "Architecture diagram showing Three Dragons Protocol: Input flows to Guardian (validates I1-I9), then to Architect (builds response/document), then to Witness (seals evidence + generates receipt). Show as three connected layers with clear data flow arrows. Guardian is shield emoji, Architect is construction emoji, Witness is eye emoji.",
+  "tags": ["windi", "governance", "constitutional"],
+  "complexity": "medium",
+  "theme": "sovereign",
+  "tier": "MED",
+  "i18n": {
+    "de": "Drei Drachen Protokoll: konstitutionelle Routing-Architektur",
+    "pt": "Protocolo dos Três Dragões: roteamento constitucional",
+    "en": "Three Dragons Protocol: constitutional routing architecture"
+  }
+}

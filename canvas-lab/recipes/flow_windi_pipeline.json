@@ -1,0 +1,17 @@
+{
+  "id": "flow_windi_pipeline",
+  "type": "flowchart",
+  "engine": "A",
+  "title": "WINDI Pipeline",
+  "description": "Core document flow from intent to Ledger seal",
+  "prompt": "Flowchart showing WINDI document pipeline: User Intent → Dragon Processing → Agent Bridge → Document Draft → Human Approval (I9 Gate) → Forensic Ledger Seal (I11). Use rounded boxes for start/end, diamonds for decisions.",
+  "tags": ["windi", "core", "governance"],
+  "complexity": "low",
+  "theme": "dark_gold",
+  "tier": "FREE",
+  "i18n": {
+    "de": "WINDI Pipeline: Dokumentenfluss vom Intent bis zum Ledger",
+    "pt": "Pipeline WINDI: fluxo do documento desde a intenção até ao Ledger",
+    "en": "WINDI Pipeline: document flow from intent to Ledger"
+  }
+}

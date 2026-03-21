@@ -24,6 +24,12 @@ function loadToolInD2(toolName) {
         return;
     }
 
+    // Lab is embedded in D2
+    if (toolName === 'lab') {
+        showLabTool();
+        return;
+    }
+
     const route = TOOL_ROUTES[toolName];
     if (!route) return;
 
@@ -903,6 +909,114 @@ function handleOnboard() {
     }, 500);
 }
 
+// W-GTM-002: Auto-trigger LAB with LIVE mode
+function handleAutoLive() {
+    const params = new URLSearchParams(window.location.search);
+    const autoMode = params.get('auto');
+    if (autoMode !== 'live') return;
+
+    // Clean URL without reload
+    window.history.replaceState({}, '', window.location.pathname);
+
+    console.log('[GEN7] Auto-LIVE mode triggered');
+
+    // Auto-open LAB after 1.5 seconds
+    setTimeout(() => {
+        showLabTool();
+
+        // Show guide overlay for first-time users
+        if (!sessionStorage.getItem('windi_lab_guided')) {
+            showLabGuide();
+        }
+
+        // Auto-trigger LIVE after LAB is ready
+        setTimeout(() => {
+            if (LAB && LAB.runLiveRecipe) {
+                LAB.runLiveRecipe('dash_sovereignty_live');
+            }
+        }, 500);
+    }, 1500);
+}
+
+// W-GTM-002: Show one-time guide overlay
+function showLabGuide() {
+    // Create overlay
+    const overlay = document.createElement('div');
+    overlay.id = 'labGuideOverlay';
+    overlay.innerHTML = `
+        <div class="lab-guide-content">
+            <p class="lab-guide-text">This is your system state.</p>
+            <p class="lab-guide-text dim">Click "Seal" to make it evidence.</p>
+            <button class="lab-guide-dismiss" onclick="dismissLabGuide()">Got it</button>
+        </div>
+    `;
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        animation: fadeIn 0.3s ease;
+    `;
+
+    const style = document.createElement('style');
+    style.textContent = `
+        .lab-guide-content {
+            background: var(--bg-secondary, #0F0F18);
+            border: 1px solid var(--gold-primary, #C9A84C);
+            border-radius: 12px;
+            padding: 32px 48px;
+            text-align: center;
+            max-width: 400px;
+        }
+        .lab-guide-text {
+            font-size: 1.25rem;
+            color: var(--text-primary, #E8E6E1);
+            margin-bottom: 8px;
+        }
+        .lab-guide-text.dim {
+            color: var(--text-secondary, #A0A0A0);
+            font-size: 1rem;
+            margin-bottom: 24px;
+        }
+        .lab-guide-dismiss {
+            background: var(--gold-primary, #C9A84C);
+            color: #000;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .lab-guide-dismiss:hover {
+            transform: scale(1.05);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    `;
+
+    document.head.appendChild(style);
+    document.body.appendChild(overlay);
+}
+
+function dismissLabGuide() {
+    const overlay = document.getElementById('labGuideOverlay');
+    if (overlay) {
+        overlay.style.opacity = '0';
+        setTimeout(() => overlay.remove(), 300);
+    }
+    sessionStorage.setItem('windi_lab_guided', 'true');
+}
+
 // === Event Listeners ===
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize theme and language from localStorage
@@ -911,6 +1025,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // C6: Onboard flow — open DID modal when ?onboard= parameter present
     handleOnboard();
+
+    // W-GTM-002: Auto-trigger LAB when ?auto=live parameter present
+    handleAutoLive();
 
     // Initial load
     checkDragonPulse();
@@ -1102,6 +1219,626 @@ function walletLogout() {
 })();
 
 console.log("[GEN7] DID Wallet Modal initialized — FASE 1");
+
+// ═══════════════════════════════════════════════════════════
+// W-CANVAS-001-LAB — Interactive Canvas Execution Environment
+// "Tutorial não é texto. É runtime de aprendizagem + execução."
+// ═══════════════════════════════════════════════════════════
+
+const LAB = {
+    recipes: {},
+    currentStep: 1,
+    isLoading: false,
+    liveMode: false,
+    liveInterval: null,
+
+    // Recipe definitions (loaded from /canvas/lab/recipes)
+    RECIPE_LIST: [
+        'flow_windi_pipeline',
+        'arch_three_dragons',
+        'timeline_windi_evolution',
+        'dash_sovereignty_metrics',
+        'dash_ecosystem_health',
+        'dash_sovereignty_live'
+    ],
+
+    // Load all recipes from Canvas API
+    async loadRecipes() {
+        try {
+            const res = await fetch('/canvas/lab/recipes');
+            if (res.ok) {
+                const data = await res.json();
+                for (const recipe of data.recipes || []) {
+                    this.recipes[recipe.id] = recipe;
+                }
+                console.log('[LAB] Recipes loaded:', Object.keys(this.recipes).length);
+            } else {
+                console.warn('[LAB] Failed to load recipes:', res.status);
+            }
+        } catch (e) {
+            console.warn('[LAB] Failed to load recipes:', e);
+        }
+    },
+
+    // Render examples list
+    renderExamples() {
+        const container = document.getElementById('labExamples');
+        if (!container) return;
+
+        let html = '';
+        for (const [id, recipe] of Object.entries(this.recipes)) {
+            const lang = localStorage.getItem('windi-lang') || 'en';
+            const desc = recipe.i18n?.[lang] || recipe.description;
+            html += `
+                <div class="lab-example">
+                    <div class="lab-example-info">
+                        <div class="lab-example-title">${recipe.title}</div>
+                        <div class="lab-example-desc">${desc}</div>
+                    </div>
+                    <div class="lab-example-actions">
+                        <button class="lab-example-btn" onclick="LAB.runRecipe('${id}')">▶ Run</button>
+                        <button class="lab-example-btn" onclick="LAB.copyPrompt('${id}')">📋</button>
+                    </div>
+                </div>
+            `;
+        }
+        container.innerHTML = html;
+    },
+
+    // Run a recipe
+    async runRecipe(recipeId) {
+        const recipe = this.recipes[recipeId];
+        if (!recipe) {
+            console.error('[LAB] Recipe not found:', recipeId);
+            return;
+        }
+
+        this.isLoading = true;
+        this.setStep(2);
+        this.updateHint('Generating visualization...');
+
+        // Mark active button
+        document.querySelectorAll('.lab-action-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.dataset.recipe === recipeId) {
+                btn.classList.add('active', 'loading');
+            }
+        });
+
+        const startTime = performance.now();
+
+        try {
+            const walletId = window.__windiWalletId || null;
+
+            const res = await fetch('/canvas/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    prompt: recipe.prompt,
+                    canvas_type: recipe.type,
+                    theme: recipe.theme || 'dark_gold',
+                    tier: recipe.tier || 'MED',
+                    wallet_id: walletId
+                })
+            });
+
+            const data = await res.json();
+            const execTime = Math.round(performance.now() - startTime);
+
+            if (data.success) {
+                this.setStep(3);
+                this.renderOutput(data, execTime);
+                this.setStep(4);
+                this.updateHint('Canvas generated successfully');
+            } else {
+                this.updateHint('Error: ' + (data.error || 'Generation failed'));
+            }
+        } catch (e) {
+            console.error('[LAB] Execution error:', e);
+            this.updateHint('Error: ' + e.message);
+        } finally {
+            this.isLoading = false;
+            document.querySelectorAll('.lab-action-btn').forEach(btn => {
+                btn.classList.remove('loading');
+            });
+        }
+    },
+
+    // Render canvas output
+    renderOutput(data, execTime, isLive = false) {
+        const outputDiv = document.getElementById('labOutput');
+        const engineSpan = document.getElementById('labOutputEngine');
+        const timeSpan = document.getElementById('labOutputTime');
+        const sovSpan = document.getElementById('labOutputSovereignty');
+        const canvasDiv = document.getElementById('labOutputCanvas');
+        const sealBtn = document.getElementById('labSealBtn');
+        const verifyBtn = document.getElementById('labVerifyBtn');
+        const resultCard = document.getElementById('labResultCard');
+
+        outputDiv.style.display = 'flex';
+
+        // Engine badge
+        engineSpan.textContent = isLive ? '🔴 LIVE' : `Engine ${data.engine || 'A'}`;
+
+        // Execution time
+        timeSpan.textContent = `${execTime}ms`;
+
+        // Sovereignty indicator
+        const isLocal = data.sovereignty?.was_local || data.sovereignty?.model === 'local_template';
+        sovSpan.textContent = isLocal ? '🟢 LOCAL' : '🟡 CLOUD';
+        sovSpan.className = 'lab-output-sovereignty' + (isLocal ? '' : ' cloud');
+
+        // Show/hide Proof Actions based on mode
+        if (sealBtn) {
+            sealBtn.style.display = isLive ? 'inline-flex' : 'none';
+        }
+        if (verifyBtn) {
+            verifyBtn.style.display = 'none'; // Only show after sealing
+        }
+        if (resultCard && !isLive) {
+            resultCard.style.display = 'none'; // Hide Result Card for non-live
+        }
+
+        // Render canvas
+        if (data.engine === 'B' && data.render_type === 'html' && data.html) {
+            // Dashboard HTML
+            canvasDiv.innerHTML = `<iframe srcdoc="${data.html.replace(/"/g, '&quot;')}" sandbox="allow-scripts"></iframe>`;
+        } else if (data.content && window.mermaid) {
+            // Mermaid SVG
+            canvasDiv.innerHTML = `<div class="mermaid">${data.content}</div>`;
+            mermaid.init(undefined, canvasDiv.querySelector('.mermaid'));
+        } else if (data.svg) {
+            canvasDiv.innerHTML = data.svg;
+        } else {
+            canvasDiv.innerHTML = `<pre style="font-size:12px;color:var(--text-secondary);">${data.content || 'No output'}</pre>`;
+        }
+    },
+
+    // Copy prompt to clipboard
+    async copyPrompt(recipeId) {
+        const recipe = this.recipes[recipeId];
+        if (!recipe) return;
+
+        try {
+            await navigator.clipboard.writeText(recipe.prompt);
+            this.updateHint('Prompt copied to clipboard');
+        } catch (e) {
+            console.error('[LAB] Copy failed:', e);
+        }
+    },
+
+    // Update step indicator
+    // Step hints for Live Feedback
+    stepHints: {
+        1: 'Select a recipe or type custom prompt',
+        2: 'Fetching system state...',
+        3: 'Rendering visualization...',
+        4: '🟢 Ready — Seal to Ledger or Copy'
+    },
+
+    setStep(step, customHint = null) {
+        this.currentStep = step;
+        document.querySelectorAll('.lab-step-dot').forEach((dot, i) => {
+            dot.classList.remove('active', 'completed');
+            if (i + 1 < step) {
+                dot.classList.add('completed');
+            } else if (i + 1 === step) {
+                dot.classList.add('active');
+            }
+        });
+        // Auto-update hint unless custom hint provided
+        if (!customHint && this.stepHints[step]) {
+            this.updateHint(this.stepHints[step]);
+        }
+    },
+
+    // Update hint text
+    updateHint(text) {
+        const hint = document.getElementById('labStepHint');
+        if (hint) hint.textContent = text;
+    },
+
+    // Run LIVE recipe with real OBS data
+    async runLiveRecipe(recipeId) {
+        const recipe = this.recipes[recipeId];
+        if (!recipe || !recipe.live) {
+            console.warn('[LAB] Not a live recipe:', recipeId);
+            return this.runRecipe(recipeId);
+        }
+
+        this.liveMode = true;
+        this.isLoading = true;
+        this.currentRecipe = recipe;
+        this.setStep(2);
+        this.updateHint('Fetching real-time system state...');
+
+        const startTime = performance.now();
+
+        try {
+            // Fetch live OBS state
+            const obsRes = await fetch('/obs/state');
+            const obsData = await obsRes.json();
+
+            // Render Result Card if UI flag enabled
+            const uiFlags = recipe.ui || {};
+            if (uiFlags.show_result_card !== false) {
+                this.renderResultCard(obsData, uiFlags);
+            }
+
+            // Build dashboard prompt from live data
+            const prompt = this.buildLivePrompt(recipe, obsData);
+
+            // Generate dashboard with live data
+            const res = await fetch('/canvas/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    prompt: prompt,
+                    canvas_type: 'dashboard',
+                    theme: recipe.theme || 'dark_gold',
+                    tier: 'HIGH',
+                    wallet_id: window.__windiWalletId || null
+                })
+            });
+
+            const data = await res.json();
+            const execTime = Math.round(performance.now() - startTime);
+
+            if (data.success) {
+                this.setStep(3);
+                this.renderOutput(data, execTime, true);
+                this.setStep(4);
+                this.updateHint('🟢 LIVE — Real-time system state');
+            } else {
+                this.updateHint('Error: ' + (data.error || 'Generation failed'));
+            }
+        } catch (e) {
+            console.error('[LAB] Live execution error:', e);
+            this.updateHint('Error: ' + e.message);
+        } finally {
+            this.isLoading = false;
+        }
+    },
+
+    // Build prompt from live OBS data
+    buildLivePrompt(recipe, obsData) {
+        const wsg = obsData.wsg || {};
+        const cia = obsData.cia || {};
+        const derived = obsData.derived || {};
+
+        return `Dashboard showing WINDI System State (LIVE DATA):
+4 KPIs:
+- Services Online: ${wsg.services_up}/${wsg.services_total} (${derived.health_status === 'green' ? 'green' : 'yellow'})
+- Avg Latency: ${wsg.latency_ms}ms (teal)
+- Sovereignty Score: ${(derived.sovereignty_score * 100).toFixed(1)}% (gold)
+- Mode: ${derived.operational_mode} (${derived.operational_mode === 'SOVEREIGN' ? 'green' : 'yellow'})
+
+Status grid showing services:
+${wsg.services.map(s => `- ${s.name}: ${s.status} (${s.latency_ms || '-'}ms)`).join('\n')}
+
+Doughnut chart showing Local vs External calls:
+- Local: ${cia.local_vs_external?.local || 0}
+- External: ${cia.local_vs_external?.external || 0}
+
+Footer: Generated at ${obsData.timestamp} | Tokens saved: ${cia.tokens_saved || 0}`;
+    },
+
+    // Seal current state to Ledger
+    async sealSnapshot() {
+        this.updateHint('Sealing state to Forensic Ledger...');
+
+        try {
+            const res = await fetch('/obs/seal', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    wallet_id: window.__windiWalletId || 'system'
+                })
+            });
+
+            const data = await res.json();
+
+            if (data.success) {
+                this.lastSealReceipt = data;
+                this.updateHint(`✅ Sealed: ${data.receipt_id}`);
+                document.getElementById('labVerifyBtn').style.display = 'inline-flex';
+                // W-GTM-002: Show share panel instead of alert
+                this.showSharePanel(data);
+            } else {
+                this.updateHint('Seal failed: ' + (data.error || 'Unknown error'));
+            }
+        } catch (e) {
+            console.error('[LAB] Seal error:', e);
+            this.updateHint('Seal error: ' + e.message);
+        }
+    },
+
+    // Verify sealed snapshot
+    verifySnapshot() {
+        if (!this.lastSealReceipt) {
+            alert('No seal receipt available. Seal first.');
+            return;
+        }
+        const url = this.lastSealReceipt.verify_url || `/verify-public/?id=${this.lastSealReceipt.receipt_id}`;
+        window.open(url, '_blank');
+    },
+
+    // Copy state hash to clipboard
+    async copySnapshot() {
+        const hash = this.lastOBSData?.meta?.state_hash ||
+                     (this.lastSealReceipt?.state_hash) ||
+                     JSON.stringify(this.lastOBSData || {});
+
+        try {
+            await navigator.clipboard.writeText(hash);
+            this.updateHint('📋 Copied to clipboard');
+        } catch (e) {
+            this.updateHint('Copy failed');
+        }
+    },
+
+    // W-GTM-002: Show share panel after successful seal
+    showSharePanel(sealData) {
+        const verifyUrl = sealData.verify_url || `https://windi-domain.com/verify-public/?id=${sealData.receipt_id}`;
+
+        // Create share panel overlay
+        const panel = document.createElement('div');
+        panel.id = 'labSharePanel';
+        panel.innerHTML = `
+            <div class="share-panel-content">
+                <div class="share-panel-header">
+                    <span class="share-check">✔</span>
+                    <span>Snapshot sealed</span>
+                </div>
+                <div class="share-panel-hash">${sealData.state_hash.slice(0, 24)}...</div>
+                <p class="share-panel-label">Share this proof:</p>
+                <div class="share-panel-actions">
+                    <button class="share-btn" onclick="LAB.copyVerifyLink()">
+                        📋 Copy Link
+                    </button>
+                    <button class="share-btn share-btn-primary" onclick="LAB.openVerifyPage()">
+                        🔍 Open Verify
+                    </button>
+                </div>
+                <button class="share-panel-close" onclick="LAB.closeSharePanel()">Done</button>
+            </div>
+        `;
+        panel.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            animation: fadeIn 0.3s ease;
+        `;
+
+        // Add styles if not already present
+        if (!document.getElementById('sharePanelStyles')) {
+            const style = document.createElement('style');
+            style.id = 'sharePanelStyles';
+            style.textContent = `
+                .share-panel-content {
+                    background: var(--bg-secondary, #0F0F18);
+                    border: 2px solid var(--gold-primary, #C9A84C);
+                    border-radius: 12px;
+                    padding: 32px;
+                    text-align: center;
+                    max-width: 400px;
+                    box-shadow: 0 0 40px rgba(201, 168, 76, 0.2);
+                }
+                .share-panel-header {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 8px;
+                    font-size: 1.25rem;
+                    font-weight: 700;
+                    color: var(--green, #4ade80);
+                    margin-bottom: 12px;
+                }
+                .share-check {
+                    font-size: 1.5rem;
+                }
+                .share-panel-hash {
+                    font-family: 'JetBrains Mono', monospace;
+                    font-size: 0.75rem;
+                    color: var(--text-secondary, #A0A0A0);
+                    background: rgba(255,255,255,0.05);
+                    padding: 8px 12px;
+                    border-radius: 4px;
+                    margin-bottom: 20px;
+                }
+                .share-panel-label {
+                    font-size: 0.9rem;
+                    color: var(--text-secondary, #A0A0A0);
+                    margin-bottom: 12px;
+                }
+                .share-panel-actions {
+                    display: flex;
+                    gap: 12px;
+                    justify-content: center;
+                    margin-bottom: 20px;
+                }
+                .share-btn {
+                    padding: 12px 20px;
+                    border: 1px solid var(--border-subtle, #333);
+                    border-radius: 8px;
+                    background: transparent;
+                    color: var(--text-primary, #E8E6E1);
+                    font-size: 0.9rem;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                }
+                .share-btn:hover {
+                    border-color: var(--gold-primary, #C9A84C);
+                    background: rgba(201, 168, 76, 0.1);
+                }
+                .share-btn-primary {
+                    background: var(--gold-primary, #C9A84C);
+                    color: #000;
+                    border-color: var(--gold-primary, #C9A84C);
+                }
+                .share-btn-primary:hover {
+                    transform: scale(1.05);
+                }
+                .share-panel-close {
+                    background: transparent;
+                    border: none;
+                    color: var(--text-secondary, #A0A0A0);
+                    font-size: 0.85rem;
+                    cursor: pointer;
+                    padding: 8px 16px;
+                }
+                .share-panel-close:hover {
+                    color: var(--text-primary, #E8E6E1);
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        document.body.appendChild(panel);
+    },
+
+    closeSharePanel() {
+        const panel = document.getElementById('labSharePanel');
+        if (panel) {
+            panel.style.opacity = '0';
+            setTimeout(() => panel.remove(), 300);
+        }
+    },
+
+    copyVerifyLink() {
+        const url = this.lastSealReceipt?.verify_url ||
+                    `https://windi-domain.com/verify-public/?id=${this.lastSealReceipt?.receipt_id}`;
+        navigator.clipboard.writeText(url).then(() => {
+            this.updateHint('📋 Link copied!');
+        });
+    },
+
+    openVerifyPage() {
+        this.closeSharePanel();
+        this.verifySnapshot();
+    },
+
+    // Render Result Card from OBS data with UI flags
+    renderResultCard(obsData, uiFlags = {}) {
+        const card = document.getElementById('labResultCard');
+        if (!card) return;
+
+        const wsg = obsData.wsg || {};
+        const cia = obsData.cia || {};
+        const derived = obsData.derived || {};
+        const meta = obsData.meta || {};
+
+        // Store for copy/verify
+        this.lastOBSData = obsData;
+        this.currentUIFlags = uiFlags;
+
+        // Health indicator
+        const healthEmoji = wsg.health === 'green' ? '🟢' : (wsg.health === 'yellow' ? '🟡' : '🔴');
+        document.getElementById('resultCardHealth').textContent = healthEmoji;
+
+        // Mode
+        const modeEl = document.getElementById('resultCardMode');
+        modeEl.textContent = derived.operational_mode || 'SOVEREIGN';
+        modeEl.className = 'result-card-mode' +
+            (derived.operational_mode === 'HYBRID' ? ' hybrid' : '') +
+            (derived.operational_mode === 'EXTERNAL' ? ' external' : '');
+
+        // Locality percentage
+        const localPct = Math.round((derived.sovereignty_score || 1) * 100);
+        document.getElementById('resultCardLocality').textContent = `${localPct}% ${meta.sovereignty || 'LOCAL'}`;
+
+        // Services
+        document.getElementById('resultCardServices').textContent =
+            `${wsg.services_up || 0} services online`;
+        document.getElementById('resultCardDeps').textContent =
+            `${meta.external_dependencies || 0} external deps`;
+
+        // Timing
+        document.getElementById('resultCardLatency').textContent =
+            `${Math.round(wsg.latency_ms || meta.execution_time_ms || 0)}ms`;
+        document.getElementById('resultCardFreshness').textContent =
+            meta.from_cache ? 'cached' : (meta.data_freshness || 'realtime');
+
+        // Show/hide proof action buttons based on UI flags
+        const proofActions = uiFlags.proof_actions || ['seal', 'verify', 'copy'];
+        const sealBtn = document.getElementById('labSealBtn');
+        const copyBtn = document.getElementById('labCopyBtn');
+
+        if (sealBtn) {
+            sealBtn.style.display = proofActions.includes('seal') ? 'inline-flex' : 'none';
+        }
+        if (copyBtn) {
+            copyBtn.style.display = proofActions.includes('copy') ? 'inline-flex' : 'none';
+        }
+
+        // Show card
+        card.style.display = 'block';
+    },
+
+    // Initialize
+    init() {
+        // Setup quick action buttons
+        document.querySelectorAll('.lab-action-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const recipeId = btn.dataset.recipe;
+                if (recipeId) {
+                    const recipe = this.recipes[recipeId];
+                    if (recipe && recipe.live) {
+                        this.runLiveRecipe(recipeId);
+                    } else {
+                        this.runRecipe(recipeId);
+                    }
+                }
+            });
+        });
+
+        // Load recipes
+        this.loadRecipes().then(() => {
+            this.renderExamples();
+        });
+
+        console.log('[LAB] W-CANVAS-001-LAB initialized');
+    }
+};
+
+// Show LAB tool
+function showLabTool() {
+    const editorPlaceholder = document.querySelector('#zoneD2 .editor-placeholder');
+    const canvasPanel = document.getElementById('canvasToolPanel');
+    const canvasArea = document.getElementById('canvasArea');
+    const labPanel = document.getElementById('labPanel');
+
+    if (editorPlaceholder) editorPlaceholder.style.display = 'none';
+    if (canvasArea) canvasArea.style.display = 'none';
+    if (canvasPanel) canvasPanel.style.display = 'none';
+    if (labPanel) labPanel.style.display = 'flex';
+
+    LAB.init();
+}
+
+// Close LAB tool
+function closeLabTool() {
+    const editorPlaceholder = document.querySelector('#zoneD2 .editor-placeholder');
+    const labPanel = document.getElementById('labPanel');
+    const labOutput = document.getElementById('labOutput');
+
+    if (labPanel) labPanel.style.display = 'none';
+    if (labOutput) labOutput.style.display = 'none';
+    if (editorPlaceholder) editorPlaceholder.style.display = 'block';
+
+    LAB.setStep(1);
+    LAB.updateHint('Select a recipe or type custom prompt');
+}
+
+console.log('[LAB] W-CANVAS-001-LAB module loaded');
 
 // ═══════════════════════════════════════════════════════════
 // W-CIA-001 — Ecosystem Health Diagnostics

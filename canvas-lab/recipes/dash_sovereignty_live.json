@@ -1,0 +1,43 @@
+{
+  "id": "dash_sovereignty_live",
+  "type": "dashboard",
+  "engine": "B",
+  "title": "Sovereignty LIVE",
+  "description": "Real-time system state from WSG + CIA",
+  "source": "/obs/state",
+  "live": true,
+  "mapping": {
+    "kpis": [
+      { "label": "Services Up", "path": "wsg.services_up", "color": "green" },
+      { "label": "Latency", "path": "wsg.latency_ms", "unit": "ms", "color": "teal" },
+      { "label": "Sovereignty", "path": "derived.sovereignty_score", "format": "percent", "color": "gold" },
+      { "label": "Health", "path": "derived.health_status", "color": "auto" }
+    ],
+    "chart": {
+      "type": "doughnut",
+      "title": "Local vs External",
+      "data_path": "cia.local_vs_external"
+    },
+    "status_items": {
+      "path": "wsg.services",
+      "name_field": "name",
+      "status_field": "status"
+    }
+  },
+  "tags": ["windi", "live", "sovereignty", "monitoring"],
+  "complexity": "high",
+  "theme": "dark_gold",
+  "tier": "HIGH",
+  "ui": {
+    "show_result_card": true,
+    "proof_actions": ["seal", "verify", "copy"],
+    "auto_refresh": false,
+    "feedback_level": "verbose"
+  },
+  "seal_enabled": true,
+  "i18n": {
+    "de": "Souveränität LIVE: Echtzeit-Systemstatus",
+    "pt": "Soberania LIVE: estado do sistema em tempo real",
+    "en": "Sovereignty LIVE: real-time system state"
+  }
+}

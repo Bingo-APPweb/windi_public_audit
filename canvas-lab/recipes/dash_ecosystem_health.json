@@ -1,0 +1,17 @@
+{
+  "id": "dash_ecosystem_health",
+  "type": "dashboard",
+  "engine": "B",
+  "title": "Ecosystem Health",
+  "description": "W-CIA-001 style health monitoring dashboard",
+  "prompt": "Dashboard showing WINDI Ecosystem Health. 4 KPIs: Services Online 8/9 (green), Avg Latency 45ms (teal), Uptime 99.98% (gold), Alerts 0 (green). Status grid showing: Dragon Hub (online), Forensic Ledger (online), Sandbox Core (online), Desktop GEN7 (online), Wallet Service (online), Dispatch Gateway (online), Lead Admin (online), Canvas Engine (online), Legacy Desktop (retired/grey). Line chart showing response times over 24 hours.",
+  "tags": ["windi", "health", "monitoring", "cia"],
+  "complexity": "high",
+  "theme": "dark_gold",
+  "tier": "HIGH",
+  "i18n": {
+    "de": "Ökosystem-Gesundheit: Service-Monitoring-Dashboard",
+    "pt": "Saúde do Ecossistema: dashboard de monitorização de serviços",
+    "en": "Ecosystem Health: service monitoring dashboard"
+  }
+}
