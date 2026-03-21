@@ -17,6 +17,32 @@
 - Acções: ↓ SVG · ↓ .wcav · ⎘ ID · ⬡ Selar (futuro)
 - i18n DE/EN/PT completo
 
+### Canvas Sovereignty Metrics — LIVE
+**Commit:** 9c4c34e
+**Log:** `/opt/windi/logs/canvas-sovereignty.log`
+
+Token tracking implementado para Gemini API:
+```
+[CANVAS-SOVEREIGNTY] model=gemini-2.5-flash type=flowchart
+  prompt_tokens=188 output_tokens=701 total=4176 cost_usd=$0.000224
+```
+
+| Geração | Tipo | Tokens | Custo |
+|---------|------|--------|-------|
+| #1 | flowchart | 889 | $0.000224 |
+| #2 | architecture | 1373 | $0.000371 |
+
+**Comparativo de Soberania:**
+- Grove Arena (Anthropic Claude): ~$0.17/debate
+- Canvas (Gemini Flash): ~$0.0003/geração
+- **Canvas é ~500x mais barato**
+
+**Pricing Gemini Flash:**
+- Input: $0.075 / 1M tokens
+- Output: $0.30 / 1M tokens
+
+**Futuro:** Tier-based routing (FREE=local, MED=Flash, HIGH=Pro)
+
 ### Taxonomia Tools vs Agenten-Korps — SEALED
 - **Tools** (transversal): Redaktion · Inspektor · Verify · Canvas
 - **Agenten-Korps** (domínio): Journalist · Prüfer · Mitteilung · Justiz · Notariat · Compliance · Buchhalter
