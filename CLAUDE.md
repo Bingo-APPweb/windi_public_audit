@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.31
+**Version:** 1.9.32
 **Sealed:** 2026-03-21
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -570,6 +570,10 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | W-GATE-001 | ✅ API Schema Contracts · 15 endpoints · erro HUMANO trilíngue |
 | W-NGINX-001 | ✅ Nginx Auto-Register · 306 rotas Flask · 67 locations · pre-commit hook |
 | W-CANVAS-001 | ✅ Canvas Architect · Gemini 2.5 Flash · SVG/Mermaid · :8091/canvas/* |
+| W-CANVAS-OBS-001 | ✅ Sovereign Observability · WSG+CIA state · /obs/* |
+| W-CANVAS-LAB-001 | ✅ Interactive Execution Environment · /canvas/lab/* |
+| W-COMM-001 | ✅ **Canonical Publishing Engine** · EN/DE/PT · /comm/* · Verifiable |
+| W-PROVE-001 | ✅ GTM Landing · /prove/ · Trilíngue · Conversion Layer |
 | **Triangle of Power** | ✅ 3 Sovereign Dashboards · Legal + Notary + Audit · Chart.js |
 
 ### Histórico Recente
@@ -578,6 +582,8 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 
 | Data | Milestones |
 |------|------------|
+| 21 Mar | §40 **W-COMM-001 LIVE** · Canonical Publishing Engine · EN/DE/PT · 7fb0c92 |
+| 21 Mar | §40 W-CANVAS-OBS-001 + W-PROVE-001 + GTM Stack · Meta-Integrity |
 | 21 Mar | §39 **Triangle of Power** · 3 Sovereign Dashboards · Legal+Notary+Audit · 0f02566 |
 | 21 Mar | §38 W-WSG-001 v0.3.0 **LIVE** · Sistema Nervoso · CIA 8/8 green · 5a76cb2 |
 | 21 Mar | §37 W-CANVAS-001 **LIVE** · Gemini API · Mermaid D2 · 4 temas · a108b61 |
@@ -998,3 +1004,112 @@ location /notary-dashboard/ { alias /opt/windi/notary-dashboard/; }
 location /audit-dashboard/  { alias /opt/windi/audit-dashboard/; }
 location /api/audit/        { proxy_pass http://127.0.0.1:8091/audit/; }
 ```
+
+---
+
+## §40 W-COMM-001 — Canonical Publishing Engine ✅ (2026-03-21)
+
+**Deploy:** 21 Mar 2026 · Commit: `7fb0c92`
+
+### Princípio
+
+> "Don't trust the message — verify it."
+
+Comunicações institucionais deixam de ser texto e passam a ser **artefatos verificáveis**.
+
+### Arquitectura
+
+```
+D2 / COMM Builder
+       ↓
+POST /comm/generate
+       ↓
+CommPayload (canonical JSON)
+       ↓
+hash SHA-256 determinístico
+       ↓
+(opcional) seal no Ledger
+       ↓
+render per channel (linkedin/x/web)
+       ↓
+verificação pública
+```
+
+### Endpoints
+
+| Endpoint | Função |
+|----------|--------|
+| `POST /comm/generate` | Cria payload canónico |
+| `POST /comm/generate-multilang` | Gera EN + DE + PT numa chamada |
+| `GET /comm/{id}` | Lê payload completo |
+| `GET /comm/{id}/verify` | Verificação pública |
+| `GET /comm/{id}/render?channel=` | Output para canal específico |
+| `POST /comm/{id}/seal` | Sela no Ledger |
+
+### Invariantes COMM
+
+```
+C1 — Toda comunicação tem ID único (COMM-YYYYMMDD-XXXX)
+C2 — Toda comunicação tem hash determinístico
+C3 — Seal é opcional mas suportado nativamente
+C4 — Renders por canal derivam do mesmo payload
+C5 — Verify é público e independente do canal
+C6 — API não faz cold outreach automático
+```
+
+### CommPayload Schema
+
+```json
+{
+  "id": "COMM-20260321-0001",
+  "type": "announcement",
+  "language": "EN",
+  "title": "...",
+  "summary": "...",
+  "body": "...",
+  "channels": ["linkedin", "x", "web"],
+  "links": { "primary": "https://..." },
+  "origin": {
+    "publisher": "WINDI Publishing House",
+    "location": "Kempten, Bavaria",
+    "system": "WINDI GEN7"
+  },
+  "integrity": {
+    "hash": "sha256:...",
+    "sealed": false,
+    "ledger_receipt_id": null
+  }
+}
+```
+
+### Primeiras Comunicações Verificáveis
+
+| ID | Title | Lang | Verify |
+|----|-------|------|--------|
+| COMM-20260321-0002-EN | Prove Your System | EN | ✅ |
+| COMM-20260321-0002-DE | Beweise dein System | DE | ✅ |
+| COMM-20260321-0002-PT | Prove o seu Sistema | PT | ✅ |
+| COMM-20260321-0006 | W-COMM-001 is fully live | EN | ✅ |
+
+### GTM Stack
+
+| Componente | URL | Função |
+|------------|-----|--------|
+| /prove/ | Landing GTM | Trilíngue · Conversion Layer |
+| /desktop/?auto=live | Demo auto-trigger | LAB + LIVE + Guide |
+| /obs/state | Observability API | WSG + CIA realtime |
+| /comm/generate-multilang | Publishing Engine | EN + DE + PT |
+
+### Diferencial
+
+O mercado produz posts.
+
+O WINDI produz:
+
+> **Comunicações institucionais com integridade verificável.**
+
+---
+
+*LIGA IA+H — Kempten, Bavaria · 2026*
+*🧑‍💻 Human Dragon · 🛡️ Guardian · 🏗️ Architect · 👁️ Witness*
+*"AI processes. Human decides. WINDI guarantees."*
