@@ -42,6 +42,7 @@ class CanvasModel(str, Enum):
     LOCAL            = "local_template"       # 0 tokens — FREE
     GEMINI_FLASH     = "gemini-2.5-flash"     # rápido, barato — MED
     GEMINI_PRO       = "gemini-2.5-pro"       # qualidade máxima — HIGH
+    ENGINE_B_HTML    = "engine_b_dashboard"   # HTML dashboard — MED/HIGH (v1.3.0)
 
 # Orçamento máximo de tokens por tier (input + output estimado)
 TOKEN_BUDGET = {
@@ -55,6 +56,7 @@ COST_PER_TOKEN = {
     CanvasModel.LOCAL:        0.0,
     CanvasModel.GEMINI_FLASH: 0.000000075,   # $0.075 / 1M tokens
     CanvasModel.GEMINI_PRO:   0.00000125,    # $1.25  / 1M tokens
+    CanvasModel.ENGINE_B_HTML: 0.000000075,  # Same as Flash (JSON output) — v1.3.0
 }
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -526,6 +528,36 @@ def build_canvas_system_prompt(diagram_type: DiagramType, theme: str, model: Can
 Geras diagramas Mermaid {diagram_type.value} em resposta a pedidos institucionais.
 Tema visual: {theme.upper()}.
 {MERMAID_RULES}"""
+
+    # ═══════════════════════════════════════════════════════════════════════
+    # SOVEREIGN PROTOCOL — WB-SOVEREIGN-CANVAS-20260321
+    # "KLAR é o que o sistema desenhou. SOVEREIGN é o que o Humano assinou."
+    # ═══════════════════════════════════════════════════════════════════════
+    if theme.lower() == "sovereign":
+        return base + """
+
+═══════════════════════════════════════════════════════════════════════
+SOVEREIGN PROTOCOL ACTIVE — WB-SOVEREIGN-CANVAS-20260321
+
+Este diagrama é uma PEÇA DE GOVERNANÇA institucional assinada digitalmente.
+"KLAR é o que o sistema desenhou. SOVEREIGN é o que o Humano assinou."
+═══════════════════════════════════════════════════════════════════════
+
+REGRAS OBRIGATÓRIAS SOVEREIGN:
+1. Máximo 10 nós de conteúdo — estrutura austera e simétrica
+2. Cada nó deve ter peso e significado institucional
+3. Hierarquia visual inquestionável (top → bottom)
+4. Tons de autoridade: fundos escuros, acentos dourados
+5. SEM decorações — simplicidade institucional
+6. Reserva mental: este diagrama será selado no Forensic Ledger
+
+CONTEXTO CONSTITUCIONAL:
+- Invariante I9: Human approves before seal
+- Este diagrama só se torna SOVEREIGN após aprovação humana
+- Até lá, é um rascunho KLAR com pretensões
+
+ENTREGA: Diagrama institucional. Austero. Inquestionável. Board-ready.
+"""
 
     # MED: prompt compacto — profissional, dia-a-dia
     if model == CanvasModel.GEMINI_FLASH:

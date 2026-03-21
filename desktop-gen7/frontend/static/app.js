@@ -132,7 +132,16 @@ function showCanvasResult(data) {
     idSpan.textContent = data.canvas_id;
     resultDiv.style.display = 'block';
 
-    // Render Mermaid
+    // ── ENGINE B: HTML Dashboard → iframe ─────────────────────────
+    if (data.engine === 'B' && data.render_type === 'html' && data.html) {
+        console.log('[Canvas] Engine B detected — rendering HTML iframe');
+        previewDiv.innerHTML = `<iframe id="canvas-iframe" srcdoc="${data.html.replace(/"/g, '&quot;')}"
+            style="width:100%;height:500px;border:none;border-radius:8px;background:#0F0B05;"
+            sandbox="allow-scripts"></iframe>`;
+        return;
+    }
+
+    // ── ENGINE A: Mermaid Render ──────────────────────────────────
     if (data.content && window.mermaid) {
         previewDiv.innerHTML = `<div class="mermaid">${data.content}</div>`;
         mermaid.init(undefined, previewDiv.querySelector('.mermaid'));
@@ -1100,7 +1109,7 @@ console.log("[GEN7] DID Wallet Modal initialized — FASE 1");
 // ═══════════════════════════════════════════════════════════
 
 const CIA = {
-    // Services to monitor
+    // Services to monitor — W-CIA-001 + WSG Integration (21 Mar 2026)
     SERVICES: [
         { name: 'Dragon', endpoint: '/api/dragon/status', expectJson: true, critical: true },
         { name: 'OneTouch', endpoint: '/api/onetouch/execute', method: 'POST', body: '{"intent":"health","wallet_id":"cia"}', expectJson: true, critical: true },
@@ -1109,6 +1118,7 @@ const CIA = {
         { name: 'Export', endpoint: '/api/export/health', expectJson: true, critical: false },
         { name: 'Dispatch', endpoint: '/api/dispatch/health', expectJson: true, critical: false },
         { name: 'Wallet', endpoint: '/api/wallet/health', expectJson: true, critical: false },
+        { name: 'WSG', endpoint: '/api/wsg/status', expectJson: true, critical: false, description: 'Surface Guard — Frontend Security' },
     ],
 
     // Routes to verify (should NOT return 301)
