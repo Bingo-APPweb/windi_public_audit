@@ -702,6 +702,22 @@ def create_agent_api(agent: WindiAgent):
     except ImportError as e:
         print(f"  [COMM] W-COMM-001 not loaded: {e}")
 
+    # W-DETECT-MEDIA-001: AI Media Detection (Fake Detection)
+    try:
+        from blueprints.detect_media_blueprint import detect_media_bp
+        app.register_blueprint(detect_media_bp)
+        print("  [DETECT] W-DETECT-MEDIA-001 v1.0 loaded on /detect-media/*")
+    except ImportError as e:
+        print(f"  [DETECT] W-DETECT-MEDIA-001 not loaded: {e}")
+
+    # W-VERIFY-MODUS4: Reality Check — Epistemological Classification
+    try:
+        from blueprints.reality_check_blueprint import reality_check_bp
+        app.register_blueprint(reality_check_bp)
+        print("  [RC4] W-VERIFY-MODUS4 v1.0 loaded on /reality-check/*")
+    except ImportError as e:
+        print(f"  [RC4] W-VERIFY-MODUS4 not loaded: {e}")
+
     @app.route("/agent/health", methods=["GET"])
     def health():
         return jsonify({
