@@ -52,8 +52,8 @@ except ImportError:
 # ═══════════════════════════════════════════════════════════════════════════════
 
 WSG_CONFIG = {
-    "version": "0.2.0",
-    "codename": "Infrastructure Healer",
+    "version": "0.3.0",
+    "codename": "CIA Integration",
 
     # Module schedules
     "health_interval_seconds": 60,
@@ -62,16 +62,17 @@ WSG_CONFIG = {
     "i18n_audit_day": 0,       # Monday (0 = Monday, 6 = Sunday)
     "i18n_audit_hour": 5,      # 05:00 weekly
 
-    # Pages to monitor
+    # Pages to monitor (WINDI One Tree Domain)
     "pages_to_scan": [
-        "https://master.windia4desk.tech/",
-        "https://master.windia4desk.tech/protocol.html",
-        "https://admin.windia4desk.tech/",
-        "https://clone.windia4desk.tech/",
+        "https://windi-domain.com/desktop/",
+        "https://windi-domain.com/keys/",
+        "https://windi-domain.com/pioneer/",
+        "https://windi-domain.com/verify-public/",
+        "https://windi-domain.com/how-it-works/",
     ],
 
-    # API settings
-    "api_port": 8094,
+    # API settings — Port 8113 (8094 = Forensic Validation, 8095 = TSIL)
+    "api_port": 8113,
     "api_host": "0.0.0.0",
 
     # Reports
@@ -513,7 +514,7 @@ Examples:
     parser.add_argument("--health-check", action="store_true", help="Run single health check")
     parser.add_argument("--full-audit", action="store_true", help="Run all audits now")
     parser.add_argument("--status", action="store_true", help="Show current status")
-    parser.add_argument("--port", type=int, default=8094, help="API port (default: 8094)")
+    parser.add_argument("--port", type=int, default=None, help="API port (default: from WSG_CONFIG)")
     parser.add_argument("--verbose", "-v", action="store_true", help="Verbose output")
 
     args = parser.parse_args()
@@ -521,7 +522,8 @@ Examples:
     log_level = logging.DEBUG if args.verbose else logging.INFO
 
     config = WSG_CONFIG.copy()
-    config["api_port"] = args.port
+    if args.port is not None:
+        config["api_port"] = args.port
 
     hub = WSGHub(config=config, log_level=log_level)
 
