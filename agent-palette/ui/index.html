@@ -4132,13 +4132,18 @@ function App(){
   // FIX 4: Onboarding persistence — only show once per device
   const[view,setView]=useState(()=>localStorage.getItem("windi_onboarded")==="1"?"main":"onboard");
   const[onboardStep,setOnboardStep]=useState(0);
-  const[sidebarTab,setSidebarTab]=useState(()=>{
-    // Handle #hash routing (e.g., /app/#canvas)
+  const[sidebarTab,setSidebarTab]=useState("grove");
+  const[sidebarOpen,setSidebarOpen]=useState(false);
+
+  // Handle #hash routing (e.g., /app/#canvas)
+  useEffect(()=>{
     const hash = window.location.hash.replace('#','');
     const validTabs = ['grove','chat','docs','desk','files','wallet','wick','canvas','search','products','journal','history','templates'];
-    return validTabs.includes(hash) ? hash : 'grove';
-  });
-  const[sidebarOpen,setSidebarOpen]=useState(false);
+    if(validTabs.includes(hash)){
+      setSidebarTab(hash);
+      console.log('[WINDI] Hash routing →', hash);
+    }
+  },[]);
   const[typeFilter,setTypeFilter]=useState("all");
 
   // Templates (WhatsApp Template Messages)
