@@ -83,6 +83,8 @@ async function generateCanvas() {
     generateBtn.textContent = 'Gerando...';
 
     try {
+        const walletId = window.__windiWalletId || null;
+
         const res = await fetch('/canvas/generate', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -90,7 +92,9 @@ async function generateCanvas() {
                 prompt: prompt,
                 canvas_type: canvasType,
                 theme: _selectedCanvasTheme,
-                format: 'mermaid'
+                format: 'mermaid',
+                wallet_id: walletId,
+                actor: walletId
             })
         });
 
@@ -98,7 +102,15 @@ async function generateCanvas() {
 
         if (data.success && data.canvas_id) {
             _currentCanvasData = data;
+            _currentCanvasData.wallet_id = walletId;
             showCanvasResult(data);
+
+            // Update D3 Governance Glass with Canvas session
+            updateGovernanceGlass({
+                stage: 'Canvas',
+                session_id: walletId || data.canvas_id,
+                content_hash: data.content_hash
+            });
         } else {
             alert('Erro ao gerar canvas: ' + (data.error || 'Unknown error'));
         }
