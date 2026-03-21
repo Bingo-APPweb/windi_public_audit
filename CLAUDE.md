@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.30
+**Version:** 1.9.31
 **Sealed:** 2026-03-21
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -187,7 +187,7 @@ C6 → SELADO NO LEDGER ✅ IRREMEDIÁVEL
 | 2 | W-JOURN-001 | `/journalist/bridge/*` | ✅ LIVE |
 | 3 | W-LEGAL-001 | `/legal/bridge/*` | ✅ LIVE |
 | 4 | W-NOTARY-001 | `/notary/bridge/*` | ✅ LIVE |
-| 5 | W-AUDIT-001 | `/audit/bridge/*` | ⏳ Pendente |
+| 5 | W-AUDIT-001 | `/audit/bridge/*` | ✅ LIVE |
 | 6 | W-COMPLY-001 | `/compliance/bridge/*` | ⏳ Pendente |
 | 7 | W-ACCT-001 | `/accounting/bridge/*` | ⏳ Pendente |
 | 8 | GROVE ARENA | `/grove/arena` | ✅ LIVE v1.3.0 |
@@ -570,6 +570,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | W-GATE-001 | ✅ API Schema Contracts · 15 endpoints · erro HUMANO trilíngue |
 | W-NGINX-001 | ✅ Nginx Auto-Register · 306 rotas Flask · 67 locations · pre-commit hook |
 | W-CANVAS-001 | ✅ Canvas Architect · Gemini 2.5 Flash · SVG/Mermaid · :8091/canvas/* |
+| **Triangle of Power** | ✅ 3 Sovereign Dashboards · Legal + Notary + Audit · Chart.js |
 
 ### Histórico Recente
 
@@ -577,6 +578,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 
 | Data | Milestones |
 |------|------------|
+| 21 Mar | §39 **Triangle of Power** · 3 Sovereign Dashboards · Legal+Notary+Audit · 0f02566 |
 | 21 Mar | §38 W-WSG-001 v0.3.0 **LIVE** · Sistema Nervoso · CIA 8/8 green · 5a76cb2 |
 | 21 Mar | §37 W-CANVAS-001 **LIVE** · Gemini API · Mermaid D2 · 4 temas · a108b61 |
 | 19 Mar | §32-§35 DID Seed + Berçário + Identity Thread + Nervous System |
@@ -589,7 +591,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 |---|---|
 | Rate-limit nginx Agent Corps | Média |
 | W-ACCT-001 bridge dedicado | Baixa |
-| W-AUDIT-001 bridge dedicado | Baixa |
+| W-COMPLY-001 dashboard | Baixa |
 
 > **Histórico completo:** ver `CHANGELOG.md`
 
@@ -928,3 +930,71 @@ HIGH  → "Apresento ao board" ⭐   │ Elite institucional
 - [ ] SOVEREIGN Protocol: DID obrigatório + hash no SVG + rodapé forense
 - [ ] Sovereignty Rate 55% → 80% (mais templates)
 - [ ] Automação sovereignty_report semanal
+
+---
+
+## §39 Triangle of Power — Sovereign Dashboards ✅ (2026-03-21)
+
+**Deploy:** 21 Mar 2026 · Commits: `a0d6600`, `0f02566`
+
+### O Triângulo
+
+```
+                    ⚖️ W-LEGAL-001
+                   /legal-dashboard/
+                        ▲
+                       /|\
+                      / | \
+                     /  |  \
+                    /   |   \
+   🔏 W-NOTARY-001 ────●──── 🔍 W-AUDIT-001
+   /notary-dashboard/       /audit-dashboard/
+
+              56,585 Receipts
+              6/6 Agents GREEN
+              A1-A6 COMPLIANT
+```
+
+### Dashboards
+
+| Dashboard | URL | Componentes | Linhas |
+|-----------|-----|-------------|--------|
+| ⚖️ W-LEGAL-001 | `/legal-dashboard/` | Evidence Timeline · Confidence Radar · WCAF Grid | 770 |
+| 🔏 W-NOTARY-001 | `/notary-dashboard/` | Digital Wax Seal · Act Types Donut · Seals Timeline | 600 |
+| 🔍 W-AUDIT-001 | `/audit-dashboard/` | Invariants Radar A1-A6 · Constellation Grid · Integrity Donut | 1,340 |
+
+**Total:** 2,710 linhas · 3 dashboards · Sistema Nervoso WINDI
+
+### Features Comuns
+
+```
+✅ NOIR/KLAR Theme Toggle (☀/☽)
+✅ i18n DE|EN|PT (localStorage sync)
+✅ Chart.js visualizations
+✅ Glassmorphism design
+✅ Auto-refresh data (30s)
+✅ Responsive (mobile/tablet/desktop)
+```
+
+### Endpoints Consumidos
+
+| Dashboard | Endpoints |
+|-----------|-----------|
+| Legal | `/api/legal/health`, `/api/legal/cases`, `/api/ledger/health` |
+| Notary | `/api/notary/health`, `/api/notary/stats`, `/api/ledger/health` |
+| Audit | `/api/audit/health`, `/api/audit/status`, `/api/audit/constellation` |
+
+### Filosofia
+
+> "O Sistema Nervoso WINDI agora tem olhos em três dimensões: Justiça, Notariado e Auditoria."
+
+> "O Auditor não cria. Ele verifica que o que foi criado é o que foi prometido."
+
+### Nginx Routes
+
+```nginx
+location /legal-dashboard/  { alias /opt/windi/legal-dashboard/; }
+location /notary-dashboard/ { alias /opt/windi/notary-dashboard/; }
+location /audit-dashboard/  { alias /opt/windi/audit-dashboard/; }
+location /api/audit/        { proxy_pass http://127.0.0.1:8091/audit/; }
+```
