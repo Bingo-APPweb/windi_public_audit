@@ -575,7 +575,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 
 | Data | Milestones |
 |------|------------|
-| 21 Mar | W-CANVAS-001 LIVE · Gemini 2.5 Flash · Canvas Gen 7 Mobile injection |
+| 21 Mar | W-CANVAS-001 GÉNESE · Onboard Bridge · Pioneer Form v1.0 · Taxonomia Tools/Korps |
 | 19 Mar | §32-§35 DID Seed + Berçário + Identity Thread + Nervous System |
 | 18 Mar | §22-§26 Sovereignty Metrics + Composer Agents (CIA/MGR/SCH) |
 | 17 Mar | §17 .JMPG + Dispatch Gateway + Frontend Invariants |
