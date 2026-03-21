@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.28
-**Sealed:** 2026-03-20
+**Version:** 1.9.29
+**Sealed:** 2026-03-21
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -794,56 +794,70 @@ Sistema de autenticação por identidade soberana no GEN7.
 
 ---
 
-## 37. W-CANVAS-001 — Visual Generation Engine ✅
+## 37. W-CANVAS-001 v1.3.0 — Dual Engine Edition
 
-**Status:** LIVE · **Port:** :8091 · **Commit:** `a108b61`
+**Deploy:** 21 Mar 2026 · Commit: `1cd35e5` · Branch: `main`
 
-| Campo | Valor |
-|-------|-------|
-| canvas_id (teste) | `ABAFCB03E7004940` |
-| Engine | Gemini API |
-| HTTP | 200 ✅ |
-| Render | Mermaid.js D1→D2 |
-
-### Tipos Suportados
-
-| Tipo | Descrição |
-|------|-----------|
-| Flowchart | Fluxos de processo |
-| Architecture | Diagramas de sistema |
-| Diagram | Geral |
-| Timeline | Cronogramas |
-
-### Temas
-
-| Tema | Descrição |
-|------|-----------|
-| KLAR | Light mode, cores claras |
-| NOIR | Dark mode, WINDI default |
-| Dark Gold | Gold accents em fundo escuro |
-| Sovereign | Tema institucional |
-
-### Endpoints
-
-| Endpoint | Função |
-|----------|--------|
-| `GET /canvas/status` | Health check |
-| `POST /canvas/generate` | Gerar diagrama |
-
-### Output
-
-- **SVG download** — botão 📥
-- **Copy ID** — botão 📋 para clipboard
-- **Mermaid render** — visualização inline na D2 zone
-
-### Teste Humano Aprovado
+### Arquitectura
 
 ```
-Prompt: "uma promocao de pizza a 13,30 Euros"
-Resultado: Diagrama limpo, cores KLAR perfeitas ✅
+W-CANVAS-001 (:8091/canvas/generate)
+│
+├── ENGINE A — Mermaid Renderer
+│   ├── Tipos: flowchart, sequence, architecture, timeline, mindmap
+│   ├── sanitize_mermaid() — remove acentos/? fora de aspas
+│   ├── classDef e directivas %%{...}%% preservadas
+│   └── Modelos: LOCAL (0 tokens) | GEMINI_FLASH | GEMINI_PRO
+│
+└── ENGINE B — HTML Dashboard Renderer (NOVO)
+    ├── Activado quando: canvas_type == "dashboard"
+    ├── Output: HTML puro (~3.5KB) via <iframe srcdoc="...">
+    ├── JSON schema: kpis + table + chart_data + status_items
+    ├── Temas: klar | noir | dark_gold | sovereign
+    ├── Fallback funcional sem GEMINI_API_KEY
+    └── Chart.js 4.4.1 para gráficos de barras/linhas/donut
 ```
 
-**NGINX Audit:** 306 routes · 66 locations · PASS ✅
+### Sovereignty Gate
+
+| Tier | Engine A | Engine B |
+|------|----------|----------|
+| FREE | local_template (0 tokens) | fallback HTML (0 tokens) |
+| MED  | gemini-2.5-flash | gemini-2.5-flash → JSON |
+| HIGH | gemini-2.5-pro | gemini-2.5-pro → JSON rico |
+
+### Ficheiros Modificados
+
+```
+blueprints/canvas_blueprint.py       — sanitizer + Engine B branch
+blueprints/canvas_sovereignty_gate.py — CanvasModel.ENGINE_B_HTML
+desktop-gen7/frontend/index.html     — seletor "📊 Dashboard"
+desktop-gen7/frontend/static/app.js  — iframe srcdoc renderer
+```
+
+### Smoke Test
+
+```bash
+# Engine A (Mermaid)
+curl -s -X POST http://localhost:8091/canvas/generate \
+  -H "Content-Type: application/json" \
+  -d '{"prompt":"flowchart aprovacao ferias","canvas_type":"flowchart","theme":"dark_gold"}'
+
+# Engine B (Dashboard)
+curl -s -X POST http://localhost:8091/canvas/generate \
+  -H "Content-Type: application/json" \
+  -d '{"prompt":"dashboard governance windi","canvas_type":"dashboard","theme":"dark_gold"}'
+```
+
+### Para Activar Engine B com LLM
+
+```bash
+# Adicionar ao .env do sandbox
+echo "GEMINI_API_KEY=your-key-here" >> /opt/windi/agents/constitutional-agent/.env
+# Reiniciar (nohup — NÃO systemd)
+kill $(pgrep -f "agent.py") && sleep 2
+nohup python3 agent.py > /opt/windi/logs/canvas.log 2>&1 &
+```
 
 ---
 
