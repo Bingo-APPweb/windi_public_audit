@@ -18,11 +18,140 @@ let _toolModeActive = false;
 let _d2OriginalContent = null;
 
 function loadToolInD2(toolName) {
+    // Canvas is embedded in D2
+    if (toolName === 'canvas') {
+        showCanvasTool();
+        return;
+    }
+
     const route = TOOL_ROUTES[toolName];
     if (!route) return;
 
     // Open in new tab (drag events don't work in iframes)
     window.open(route, '_blank');
+}
+
+// === Canvas Tool (W-CANVAS-001) ===
+let _selectedCanvasTheme = 'klar';
+let _currentCanvasData = null;
+
+function showCanvasTool() {
+    const editorPlaceholder = document.querySelector('#zoneD2 .editor-placeholder');
+    const canvasPanel = document.getElementById('canvasToolPanel');
+    const canvasArea = document.getElementById('canvasArea');
+
+    if (editorPlaceholder) editorPlaceholder.style.display = 'none';
+    if (canvasArea) canvasArea.style.display = 'none';
+    if (canvasPanel) canvasPanel.style.display = 'block';
+
+    // Setup theme button listeners
+    document.querySelectorAll('.canvas-themes .theme-btn').forEach(btn => {
+        btn.onclick = () => {
+            document.querySelectorAll('.canvas-themes .theme-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            _selectedCanvasTheme = btn.dataset.theme;
+        };
+    });
+}
+
+function closeCanvasTool() {
+    const editorPlaceholder = document.querySelector('#zoneD2 .editor-placeholder');
+    const canvasPanel = document.getElementById('canvasToolPanel');
+    const canvasResult = document.getElementById('canvasResult');
+
+    if (canvasPanel) canvasPanel.style.display = 'none';
+    if (canvasResult) canvasResult.style.display = 'none';
+    if (editorPlaceholder) editorPlaceholder.style.display = 'block';
+
+    // Clear inputs
+    document.getElementById('canvasPrompt').value = '';
+    document.getElementById('canvasPreview').innerHTML = '';
+    _currentCanvasData = null;
+}
+
+async function generateCanvas() {
+    const prompt = document.getElementById('canvasPrompt').value.trim();
+    const canvasType = document.getElementById('canvasType').value;
+    const generateBtn = document.querySelector('.canvas-generate-btn');
+
+    if (!prompt) {
+        alert('Por favor, descreve o que queres visualizar.');
+        return;
+    }
+
+    generateBtn.disabled = true;
+    generateBtn.textContent = 'Gerando...';
+
+    try {
+        const res = await fetch('/canvas/generate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                prompt: prompt,
+                canvas_type: canvasType,
+                theme: _selectedCanvasTheme,
+                format: 'mermaid'
+            })
+        });
+
+        const data = await res.json();
+
+        if (data.success && data.canvas_id) {
+            _currentCanvasData = data;
+            showCanvasResult(data);
+        } else {
+            alert('Erro ao gerar canvas: ' + (data.error || 'Unknown error'));
+        }
+    } catch (err) {
+        console.error('[Canvas] Error:', err);
+        alert('Erro de conexão ao gerar canvas.');
+    } finally {
+        generateBtn.disabled = false;
+        generateBtn.textContent = 'Gerar visualização';
+    }
+}
+
+function showCanvasResult(data) {
+    const resultDiv = document.getElementById('canvasResult');
+    const previewDiv = document.getElementById('canvasPreview');
+    const idSpan = document.getElementById('canvasResultId');
+
+    idSpan.textContent = data.canvas_id;
+    resultDiv.style.display = 'block';
+
+    // Render Mermaid
+    if (data.content && window.mermaid) {
+        previewDiv.innerHTML = `<div class="mermaid">${data.content}</div>`;
+        mermaid.init(undefined, previewDiv.querySelector('.mermaid'));
+    } else if (data.svg) {
+        previewDiv.innerHTML = data.svg;
+    } else {
+        previewDiv.innerHTML = `<pre style="font-size:12px;overflow:auto;">${data.content || 'No content'}</pre>`;
+    }
+}
+
+function downloadCanvasSVG() {
+    const svgEl = document.querySelector('#canvasPreview svg');
+    if (!svgEl) {
+        alert('Gera primeiro um canvas.');
+        return;
+    }
+
+    const svgData = new XMLSerializer().serializeToString(svgEl);
+    const blob = new Blob([svgData], { type: 'image/svg+xml' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `canvas-${_currentCanvasData?.canvas_id || 'output'}.svg`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+function copyCanvasId() {
+    if (_currentCanvasData?.canvas_id) {
+        navigator.clipboard.writeText(_currentCanvasData.canvas_id);
+        alert('ID copiado: ' + _currentCanvasData.canvas_id);
+    }
 }
 
 function exitToolMode() {
@@ -54,7 +183,11 @@ const I18N = {
         constellation: "KONSTELLATION",
         canvas: "LEINWAND",
         forensics: "FORENSIK",
-        navHow: "So funktioniert es"
+        navHow: "So funktioniert es",
+        canvas_placeholder: "Beschreibe, was du visualisieren möchtest...",
+        canvas_type: "Typ",
+        canvas_theme: "Thema",
+        canvas_generate: "Visualisierung generieren"
     },
     en: {
         placeholder: "What do you want to create?",
@@ -72,7 +205,11 @@ const I18N = {
         constellation: "CONSTELLATION",
         canvas: "CANVAS",
         forensics: "FORENSICS",
-        navHow: "How it Works"
+        navHow: "How it Works",
+        canvas_placeholder: "Describe what you want to visualize...",
+        canvas_type: "Type",
+        canvas_theme: "Theme",
+        canvas_generate: "Generate visualization"
     },
     pt: {
         placeholder: "O que deseja criar?",
@@ -90,7 +227,11 @@ const I18N = {
         constellation: "CONSTELAÇÃO",
         canvas: "CANVAS",
         forensics: "FORENSE",
-        navHow: "Como Funciona"
+        navHow: "Como Funciona",
+        canvas_placeholder: "Descreve o que queres visualizar...",
+        canvas_type: "Tipo",
+        canvas_theme: "Tema",
+        canvas_generate: "Gerar visualização"
     }
 };
 

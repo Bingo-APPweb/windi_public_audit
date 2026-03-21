@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="static/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:false, theme:'dark'});</script>
 </head>
 <body>
     <!-- Command Bar -->
@@ -113,6 +115,48 @@
                 </div>
                 <div class="canvas-area" id="canvasArea" style="display:none;">
                     <!-- Canvas content appears here -->
+                </div>
+
+                <!-- Canvas Tool Panel (W-CANVAS-001) -->
+                <div class="canvas-tool-panel" id="canvasToolPanel" style="display:none;">
+                    <div class="canvas-tool-header">
+                        <span class="canvas-tool-badge">🎨 W-CANVAS-001</span>
+                        <button class="canvas-tool-close" onclick="closeCanvasTool()">✕</button>
+                    </div>
+                    <div class="canvas-tool-body">
+                        <textarea id="canvasPrompt" class="canvas-prompt" placeholder="Descreve o que queres visualizar..." data-i18n-placeholder="canvas_placeholder"></textarea>
+                        <div class="canvas-options">
+                            <div class="canvas-option-group">
+                                <label data-i18n="canvas_type">Tipo</label>
+                                <select id="canvasType">
+                                    <option value="flowchart">Flowchart</option>
+                                    <option value="architecture">Arquitectura</option>
+                                    <option value="diagram">Diagrama</option>
+                                    <option value="timeline">Timeline</option>
+                                </select>
+                            </div>
+                            <div class="canvas-option-group">
+                                <label data-i18n="canvas_theme">Tema</label>
+                                <div class="canvas-themes">
+                                    <button class="theme-btn active" data-theme="klar">KLAR</button>
+                                    <button class="theme-btn" data-theme="noir">NOIR</button>
+                                    <button class="theme-btn" data-theme="dark_gold">Dark Gold</button>
+                                    <button class="theme-btn" data-theme="sovereign">Sovereign</button>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="canvas-generate-btn" onclick="generateCanvas()" data-i18n="canvas_generate">Gerar visualização</button>
+                    </div>
+                    <div class="canvas-result" id="canvasResult" style="display:none;">
+                        <div class="canvas-result-header">
+                            <span class="canvas-id" id="canvasResultId"></span>
+                            <div class="canvas-actions">
+                                <button onclick="downloadCanvasSVG()" title="Download SVG">📥 SVG</button>
+                                <button onclick="copyCanvasId()" title="Copy ID">📋 ID</button>
+                            </div>
+                        </div>
+                        <div class="canvas-preview" id="canvasPreview"></div>
+                    </div>
                 </div>
             </div>
         </section>
