@@ -741,6 +741,10 @@ def get_wallet_by_id(wallet_id: str) -> Optional[dict]:
                     "brand_dna": json.loads(org_row["brand_dna"] or "{}"),
                 }
 
+        # Parse meta for pioneer_number
+        meta = json.loads(ctx["meta"] or "{}") if ctx["meta"] else {}
+        pioneer_number = meta.get("pioneer_number")
+
         return {
             "human_id": human["human_id"],
             "display_name": human["display_name"],
@@ -750,6 +754,7 @@ def get_wallet_by_id(wallet_id: str) -> Optional[dict]:
             "role": ctx["role"],
             "state": ctx["state"],
             "governance_level": ctx["governance_level"],
+            "pioneer_number": pioneer_number,
             "trust": {
                 "score": trust["score"] if trust else 50.0,
                 "level": trust["level"] if trust else "T1",
