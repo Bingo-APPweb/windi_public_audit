@@ -40,8 +40,8 @@ class DiagramType(str, Enum):
 
 class CanvasModel(str, Enum):
     LOCAL            = "local_template"       # 0 tokens — FREE
-    GEMINI_FLASH     = "gemini-1.5-flash"     # rápido, barato — MED
-    GEMINI_PRO       = "gemini-1.5-pro"       # qualidade máxima — HIGH
+    GEMINI_FLASH     = "gemini-2.5-flash"     # rápido, barato — MED
+    GEMINI_PRO       = "gemini-2.5-pro"       # qualidade máxima — HIGH
 
 # Orçamento máximo de tokens por tier (input + output estimado)
 TOKEN_BUDGET = {

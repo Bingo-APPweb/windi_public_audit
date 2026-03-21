@@ -1,8 +1,12 @@
 """
-W-CANVAS-001 — Canvas Architect Agent v1.1.0
+W-CANVAS-001 — Canvas Architect Agent v1.2.0
 WINDI Publishing House | Kempten, Bavaria
 
-Generates SVG visualizations via Gemini API with forensic sealing.
+Generates SVG/Mermaid visualizations via Gemini API with forensic sealing.
+Integrates Canvas Sovereignty Gate v1.0 for tiered token management.
+
+Invariantes: I1 · I9 · I10 · I11
+Wisdom Block: WB-KNOW-SOVEREIGNTY-Q-20260318
 """
 
 import os
@@ -18,6 +22,17 @@ from datetime import datetime, timezone
 from typing import Optional, Union
 from flask import Blueprint, request, jsonify
 
+# ── Import Sovereignty Gate ──────────────────────────────────────────
+from .canvas_sovereignty_gate import (
+    sovereignty_gate,
+    log_canvas_usage,
+    build_canvas_system_prompt,
+    DiagramType,
+    CanvasModel,
+    CanvasTier,
+    GateDecision,
+)
+
 logger = logging.getLogger("W-CANVAS-001")
 
 # ── Config ──────────────────────────────────────────────────────
@@ -25,7 +40,7 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 GEMINI_MODEL   = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 LEDGER_BASE    = os.getenv("LEDGER_URL", "http://127.0.0.1:8101")
 QR_ENGINE_BASE = os.getenv("QR_ENGINE_URL", "http://127.0.0.1:8103")
-CANVAS_VERSION = "1.1.0"
+CANVAS_VERSION = "1.2.0"
 AGENT_ID       = "W-CANVAS-001"
 
 canvas_bp = Blueprint("canvas", __name__, url_prefix="/canvas")
@@ -147,27 +162,48 @@ Font family: {font_family}
 Style: Clean, modern, professional. No gradients unless specifically requested."""
 
 
-def call_gemini_sync(prompt: str, canvas_type: str, style: dict, fmt: str) -> str:
-    """Synchronous Gemini API call."""
+def call_gemini_sync(prompt: str, canvas_type: str, style: dict, fmt: str, decision: GateDecision = None) -> str:
+    """Synchronous Gemini API call with Sovereignty Gate integration."""
     if not GEMINI_API_KEY:
         raise ValueError("GEMINI_API_KEY not configured")
 
-    key = "_mermaid" if fmt == "mermaid" else canvas_type
-    system_text = SYSTEM_PROMPTS.get(key, SYSTEM_PROMPTS["diagram"])
-    style_directive = resolve_style_directive(style)
-    full_system = f"{system_text}\n\n{style_directive}"
+    # ═══════════════════════════════════════════════════════════════
+    # USE SOVEREIGNTY GATE SYSTEM PROMPT IF PROVIDED
+    # ═══════════════════════════════════════════════════════════════
+    if decision and decision.model != CanvasModel.LOCAL:
+        # Map canvas_type to DiagramType for system prompt
+        dtype_map = {
+            "flowchart": DiagramType.FLOWCHART,
+            "mindmap": DiagramType.MINDMAP,
+            "timeline": DiagramType.TIMELINE,
+            "sequence": DiagramType.SEQUENCE,
+            "gantt": DiagramType.GANTT,
+        }
+        dtype = dtype_map.get(canvas_type, DiagramType.FLOWCHART)
+        theme = style.get("theme", "institutional")
+        full_system = build_canvas_system_prompt(dtype, theme, decision.model)
+        max_tokens = decision.max_tokens * 2  # Allow headroom for output
+        model_name = decision.model.value
+    else:
+        # Legacy path (backwards compatibility)
+        key = "_mermaid" if fmt == "mermaid" else canvas_type
+        system_text = SYSTEM_PROMPTS.get(key, SYSTEM_PROMPTS["diagram"])
+        style_directive = resolve_style_directive(style)
+        full_system = f"{system_text}\n\n{style_directive}"
+        max_tokens = 8192
+        model_name = GEMINI_MODEL
 
     payload = {
         "system_instruction": {"parts": [{"text": full_system}]},
         "contents": [{"role": "user", "parts": [{"text": prompt}]}],
         "generationConfig": {
             "temperature": 0.2,
-            "maxOutputTokens": 8192,
+            "maxOutputTokens": max_tokens,
             "topP": 0.85
         },
     }
 
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/{GEMINI_MODEL}:generateContent?key={GEMINI_API_KEY}"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={GEMINI_API_KEY}"
 
     import requests
     resp = requests.post(url, json=payload, timeout=90)
@@ -242,7 +278,7 @@ def create_wcav_package(canvas_id: str, svg_content: str, metadata: dict) -> str
 
 @canvas_bp.route("/status", methods=["GET"])
 def canvas_status():
-    """Health check and capability report."""
+    """Health check and capability report with Sovereignty Gate."""
     gemini_ok = bool(GEMINI_API_KEY)
 
     return jsonify({
@@ -255,12 +291,19 @@ def canvas_status():
         "canvas_types": ["diagram", "flowchart", "chart", "infographic", "architecture", "timeline"],
         "formats": ["svg", "mermaid"],
         "timestamp": datetime.now(timezone.utc).isoformat(),
+        # ── Sovereignty Gate v1.0 ─────────────────────────────────────
+        "sovereignty_gate": {
+            "version": "1.0.0",
+            "tiers": ["FREE", "MED", "HIGH"],
+            "local_templates": ["windi_pipeline", "agentes_windi", "did_flow", "constellation", "document_seal", "windi_evolution"],
+            "principle": "Economy enables Quality — O externo sustenta. O interno orienta.",
+        }
     })
 
 
 @canvas_bp.route("/generate", methods=["POST"])
 def generate_canvas():
-    """Generate visualization from prompt."""
+    """Generate visualization from prompt with Sovereignty Gate tiering."""
     try:
         data = request.get_json() or {}
 
@@ -273,6 +316,7 @@ def generate_canvas():
         wallet_id = data.get("wallet_id")
         seal_to_ledger = data.get("seal_to_ledger", True)
         pack_wcav = data.get("pack_wcav", True)
+        tier = data.get("tier", "MED")  # Default MED for authenticated users
 
         # Parse style
         style_input = data.get("style", "institutional")
@@ -287,8 +331,42 @@ def generate_canvas():
         canvas_id = str(uuid.uuid4()).replace("-", "")[:16].upper()
         generated_at = datetime.now(timezone.utc).isoformat()
 
-        # Call Gemini
-        content = call_gemini_sync(prompt, canvas_type, style, fmt)
+        # ═══════════════════════════════════════════════════════════════
+        # SOVEREIGNTY GATE INTEGRATION — v1.2.0
+        # ═══════════════════════════════════════════════════════════════
+
+        # Map canvas_type to DiagramType
+        diagram_type_map = {
+            "flowchart": DiagramType.FLOWCHART,
+            "mindmap": DiagramType.MINDMAP,
+            "timeline": DiagramType.TIMELINE,
+            "sequence": DiagramType.SEQUENCE,
+            "gantt": DiagramType.GANTT,
+            "diagram": DiagramType.FLOWCHART,      # fallback
+            "architecture": DiagramType.FLOWCHART,  # fallback
+            "chart": DiagramType.FLOWCHART,         # fallback
+            "infographic": DiagramType.FLOWCHART,   # fallback
+        }
+        diagram_type = diagram_type_map.get(canvas_type, DiagramType.FLOWCHART)
+
+        # ── Gate Decision ─────────────────────────────────────────────
+        decision = sovereignty_gate(prompt, diagram_type, tier, wallet_id)
+
+        logger.info(
+            f"[SOVEREIGNTY-GATE] canvas_id={canvas_id} tier={tier} "
+            f"model={decision.model.value} budget={decision.max_tokens}tk "
+            f"cost_est=${decision.cost_est:.6f}"
+        )
+
+        # ── LOCAL PATH: Template-based (zero external tokens) ────────
+        if decision.model == CanvasModel.LOCAL:
+            content = decision.local_template
+            log_canvas_usage(canvas_id, wallet_id, diagram_type, decision, tokens_actual=0)
+        else:
+            # ── EXTERNAL PATH: Gemini API call ─────────────────────────
+            # Use optimized system prompt from sovereignty gate
+            content = call_gemini_sync(prompt, canvas_type, style, fmt, decision)
+
         content_hash = hashlib.sha256(content.encode()).hexdigest()
 
         response = {
@@ -307,7 +385,17 @@ def generate_canvas():
             "qr_data": None,
             "wcav_b64": None,
             "wcav_filename": None,
-            "message": "Canvas generated successfully."
+            "message": "Canvas generated successfully.",
+            # ── Sovereignty Gate Metadata ─────────────────────────────
+            "sovereignty": {
+                "model": decision.model.value,
+                "tier": decision.tier.value,
+                "tokens_budget": decision.max_tokens,
+                "cost_est_usd": decision.cost_est,
+                "complexity": decision.complexity,
+                "was_local": decision.model == CanvasModel.LOCAL,
+                "gate_justification": decision.justification,
+            }
         }
 
         # Package as .wcav if requested
