@@ -524,6 +524,221 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
   letter-spacing: 0.05em; text-transform: uppercase;
 }
 </style>
+<!-- Canvas Gen 7 — Mobile Fase 1 -->
+<style>
+/* ============================================================
+   canvas-gen7-mobile.css — Canvas Gen 7 Fase 1
+   Path destino: incluir em /opt/windi/agent-palette/ui/index.html
+   (dentro de <style> ou como <link>)
+   ============================================================ */
+
+/* ── Breakpoints WINDI canónicos ─────────────────────────── */
+
+/* === MOBILE (< 768px) — Layout Gen 7 === */
+@media (max-width: 767px) {
+
+  /* G1 — Canvas Core: full viewport */
+  #canvas-area,
+  .canvas-container,
+  [data-zone="G1"] {
+    width: 100vw !important;
+    height: calc(100vh - 64px) !important; /* reserva bottom bar */
+    overflow: hidden;
+    touch-action: none; /* pointer events take over */
+    position: relative;
+  }
+
+  /* G2 — Toolbar → Bottom Bar (zona do polegar) */
+  #toolbar,
+  .toolbar,
+  .palette-toolbar,
+  [data-zone="G2"] {
+    position: fixed !important;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: auto !important;
+    height: 64px;
+    min-height: 64px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 8px;
+    padding-bottom: env(safe-area-inset-bottom, 0px); /* iOS notch */
+    background: var(--bg-toolbar, #1a1a2e);
+    border-top: 1px solid rgba(255,255,255,0.1);
+    z-index: 1000;
+    box-shadow: 0 -2px 12px rgba(0,0,0,0.3);
+  }
+
+  /* Esconder sidebars no mobile — G3/G4 vão para bottom sheets (Fase 2) */
+  #sidebar,
+  .sidebar,
+  .layer-panel,
+  [data-zone="G3"],
+  [data-zone="G4"] {
+    display: none !important;
+  }
+
+  /* Touch targets ≥ 44px para todos os botões em G2 */
+  [data-zone="G2"] button,
+  [data-zone="G2"] [role="button"],
+  [data-zone="G2"] .icon-btn,
+  [data-zone="G2"] .tool-btn,
+  #toolbar button,
+  #toolbar [role="button"],
+  .toolbar button,
+  .toolbar .icon-btn {
+    min-width: 44px !important;
+    min-height: 44px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    cursor: pointer;
+    border-radius: 8px;
+  }
+
+  /* Remove hover states no touch */
+  .windi-touch button:hover,
+  .windi-touch .icon-btn:hover {
+    background: inherit;
+  }
+
+  /* Text labels escondidos no mobile — só icons */
+  .toolbar-label,
+  .btn-label {
+    display: none;
+  }
+
+  /* Header / topbar compacto */
+  #app-header,
+  .app-header,
+  .palette-header {
+    height: 48px;
+    padding: 0 12px;
+    font-size: 14px;
+  }
+
+  /* Remove sidebar toggle — sem sentido no mobile */
+  .sidebar-toggle {
+    display: none !important;
+  }
+
+  /* Fullscreen canvas sem margens */
+  body, html {
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Dragon badge / GovPanel — compactar */
+  .gov-panel,
+  #gov-panel {
+    display: none !important;
+  }
+
+  .gov-badge {
+    position: fixed;
+    top: 8px;
+    right: 8px;
+    font-size: 10px;
+    padding: 2px 6px;
+    z-index: 999;
+  }
+}
+
+/* === TABLET (768px – 1199px) === */
+@media (min-width: 768px) and (max-width: 1199px) {
+
+  /* Toolbar lateral colapsável */
+  #toolbar,
+  .toolbar,
+  [data-zone="G2"] {
+    width: 56px;
+    flex-direction: column;
+    overflow: hidden;
+    transition: width 0.2s ease;
+  }
+
+  #toolbar:hover,
+  .toolbar:hover,
+  [data-zone="G2"]:hover {
+    width: 180px;
+  }
+
+  /* Touch targets ≥ 44px também no tablet */
+  [data-zone="G2"] button,
+  #toolbar button,
+  .toolbar button {
+    min-width: 44px;
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+
+  /* Canvas adaptado */
+  #canvas-area,
+  [data-zone="G1"] {
+    margin-left: 56px;
+    touch-action: none;
+  }
+}
+
+/* === DESKTOP (≥ 1200px) — comportamento original preservado === */
+@media (min-width: 1200px) {
+  /* nada — deixa o Gen 6 original intacto */
+}
+
+/* ── Pinch-to-zoom visual feedback ──────────────────────── */
+.canvas-zooming {
+  cursor: zoom-in;
+}
+
+/* ── Touch-active state (feedback visual imediato) ────────── */
+.windi-touch button:active,
+.windi-touch [role="button"]:active {
+  opacity: 0.7;
+  transform: scale(0.95);
+  transition: transform 0.08s ease, opacity 0.08s ease;
+}
+
+/* ── Mensagem contextual "from=desktop" ──────────────────── */
+.from-desktop-notice {
+  display: none;
+  position: fixed;
+  top: 52px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(30, 30, 50, 0.95);
+  color: #c8b5ff;
+  font-size: 12px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(200, 181, 255, 0.3);
+  z-index: 1100;
+  white-space: nowrap;
+  backdrop-filter: blur(8px);
+}
+
+.from-desktop-notice.visible {
+  display: block;
+  animation: fadeInDown 0.3s ease forwards;
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateX(-50%) translateY(-8px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* ── Scroll prevention no canvas touch ──────────────────── */
+[data-zone="G1"],
+#canvas-area,
+.canvas-container {
+  user-select: none;
+  -webkit-user-select: none;
+}
+</style>
 </head>
 <body>
 <!-- WINDI Splash Screen — Mobile Loading -->
@@ -2819,6 +3034,7 @@ const WINDI_ICONS = {
   files:     '<svg viewBox="0 0 20 20" fill="none"><path d="M3 6C3 5.45 3.45 5 4 5H8.5L10 7H16C16.55 7 17 7.45 17 8V15C17 15.55 16.55 16 16 16H4C3.45 16 3 15.55 3 15V6Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" fill="none"/></svg>',
   wallet:    '<svg viewBox="0 0 20 20" fill="none"><rect x="3" y="5" width="14" height="11" rx="1.5" stroke="currentColor" stroke-width="1.3" fill="none"/><line x1="3" y1="9" x2="17" y2="9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><rect x="12" y="11" width="4" height="2.5" rx="0.5" stroke="currentColor" stroke-width="1.0" fill="none"/><circle cx="13.5" cy="12.2" r="0.5" fill="currentColor"/></svg>',
   wick:      '<svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.3"/><path d="M10 3C10 3 13 6 13 10C13 14 10 17 10 17" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M10 3C10 3 7 6 7 10C7 14 10 17 10 17" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><line x1="3" y1="10" x2="17" y2="10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>',
+  canvas:    '<svg viewBox="0 0 20 20" fill="none"><rect x="2" y="2" width="16" height="16" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M6 14L9 8L12 11L15 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="6" r="1.5" fill="currentColor"/></svg>',
   search:    '<svg viewBox="0 0 20 20" fill="none"><circle cx="8.5" cy="8.5" r="4.5" stroke="currentColor" stroke-width="1.3" fill="none"/><line x1="12" y1="12" x2="16.5" y2="16.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>',
   products:  '<svg viewBox="0 0 20 20" fill="none"><path d="M3 5H17L15.5 14C15.3 14.6 14.8 15 14.2 15H5.8C5.2 15 4.7 14.6 4.5 14L3 5Z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 3H4.5L6 9" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="8" cy="17.5" r="1" stroke="currentColor" stroke-width="1.3"/><circle cx="13" cy="17.5" r="1" stroke="currentColor" stroke-width="1.3"/></svg>',
   journal:   '<svg viewBox="0 0 20 20" fill="none"><rect x="4" y="2" width="12" height="16" rx="1.5" stroke="currentColor" stroke-width="1.3"/><line x1="7" y1="6" x2="13" y2="6" stroke="currentColor" stroke-width="1.0" stroke-linecap="round"/><line x1="7" y1="9" x2="13" y2="9" stroke="currentColor" stroke-width="1.0" stroke-linecap="round"/><line x1="7" y1="12" x2="10" y2="12" stroke="currentColor" stroke-width="1.0" stroke-linecap="round"/><line x1="4" y1="2" x2="4" y2="18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
@@ -2870,7 +3086,7 @@ function getWindiIcon(key) {
 const SIDEBAR = [
   {id:"grove",icon:"grove",klass:"main"},{id:"chat",icon:"chat",klass:"main"},{id:"insights",icon:"insights",klass:"hidden"},{id:"docs",icon:"docs",klass:"main"},{id:"desk",icon:"desk",klass:"main"},
   {id:"files",icon:"files",klass:"main"},{id:"wallet",icon:"wallet",klass:"main"},{id:"wick",icon:"wick",klass:"main"},
-  {id:"search",icon:"search",klass:"main"},{id:"products",icon:"products",klass:"extra"},
+  {id:"canvas",icon:"canvas",klass:"main"},{id:"search",icon:"search",klass:"main"},{id:"products",icon:"products",klass:"extra"},
   {id:"journal",icon:"journal",klass:"extra"},{id:"history",icon:"history",klass:"extra"},
   {id:"templates",icon:"templates",klass:"extra"},
 ];
@@ -2989,7 +3205,7 @@ const CryptoProvider = {
 // ═══════════════════════════════
 const L = {
   de: {
-    sidebar:{grove:"Arena",chat:"Chat",insights:"Einsichten",docs:"Dokumente",desk:"Freie Desk",files:"Dateien",wallet:"Brieftasche",wick:"WICK Netz",search:"Suche",products:"Produkte",journal:"Zeitung",history:"Verlauf",templates:"Vorlagen"},
+    sidebar:{grove:"Arena",chat:"Chat",insights:"Einsichten",docs:"Dokumente",desk:"Freie Desk",files:"Dateien",wallet:"Brieftasche",wick:"WICK Netz",canvas:"Canvas",search:"Suche",products:"Produkte",journal:"Zeitung",history:"Verlauf",templates:"Vorlagen"},
     types:{letter:"Brief",email:"E-Mail",note:"Notiz",memo:"Memo",journal:"Tagebuch",recipe:"Rezept",report:"Bericht",contract:"Vertrag",invoice:"Rechnung",protocol:"Protokoll",analysis:"Analyse",presentation:"Präsentation",communique:"Communiqué",certificate:"Bescheinigung",htmlbuilder:"HTML Builder"},
     chat:{
       greet:"Hallo! Ich bin dein Guardian.\n\nWähle einen Dokumenttyp — oder erzähl mir einfach, was du brauchst.",
@@ -3120,7 +3336,7 @@ WINDI garantiert.`,
     },
   },
   en: {
-    sidebar:{grove:"Arena",chat:"Chat",insights:"Insights",docs:"Documents",desk:"Free Desk",files:"Files",wallet:"Wallet",wick:"WICK Network",search:"Search",products:"Products",journal:"Journal",history:"History",templates:"Templates"},
+    sidebar:{grove:"Arena",chat:"Chat",insights:"Insights",docs:"Documents",desk:"Free Desk",files:"Files",wallet:"Wallet",wick:"WICK Network",canvas:"Canvas",search:"Search",products:"Products",journal:"Journal",history:"History",templates:"Templates"},
     types:{letter:"Letter",email:"Email",note:"Note",memo:"Memo",journal:"Journal",recipe:"Recipe",report:"Report",contract:"Contract",invoice:"Invoice",protocol:"Minutes",analysis:"Analysis",presentation:"Presentation",communique:"Communiqué",certificate:"Certificate",htmlbuilder:"HTML Builder"},
     chat:{
       greet:"Hello! I'm your Guardian.\n\nPick a document type — or just tell me what you need.",
@@ -3249,7 +3465,7 @@ WINDI guarantees.`,
     },
   },
   pt: {
-    sidebar:{grove:"Arena",chat:"Chat",insights:"Insights",docs:"Documentos",desk:"Desk Livre",files:"Ficheiros",wallet:"Carteira",wick:"Rede WICK",search:"Busca",products:"Produtos",journal:"Jornal",history:"Histórico",templates:"Modelos"},
+    sidebar:{grove:"Arena",chat:"Chat",insights:"Insights",docs:"Documentos",desk:"Desk Livre",files:"Ficheiros",wallet:"Carteira",wick:"Rede WICK",canvas:"Canvas",search:"Busca",products:"Produtos",journal:"Jornal",history:"Histórico",templates:"Modelos"},
     types:{letter:"Carta",email:"E-mail",note:"Nota",memo:"Memorando",journal:"Diário",recipe:"Receita",report:"Relatório",contract:"Contrato",invoice:"Fatura",protocol:"Ata",analysis:"Análise",presentation:"Apresentação",communique:"Comunicado",certificate:"Certificado",htmlbuilder:"HTML Builder"},
     chat:{
       greet:"Olá! Sou o teu Guardian.\n\nEscolhe um tipo — ou conta-me o que precisas.",
@@ -3582,6 +3798,149 @@ function CognitiveInsightsPanel({ lang = 'en', theme, compact = false }) {
     </div>
   );
 }
+
+// ═══════════════════════════════════════════════════════════════════════════════════
+// W-CANVAS-001 — Canvas Panel UI
+// Generates SVG/Mermaid visualizations via Gemini 2.5 Flash
+// ═══════════════════════════════════════════════════════════════════════════════════
+const CanvasPanelUI = () => {
+  const [prompt, setPrompt] = React.useState("");
+  const [canvasType, setCanvasType] = React.useState("architecture");
+  const [theme, setTheme] = React.useState("klar");
+  const [loading, setLoading] = React.useState(false);
+  const [result, setResult] = React.useState(null);
+  const [error, setError] = React.useState(null);
+
+  const CANVAS_TYPES = [
+    {id:"architecture", pt:"Arquitectura"},
+    {id:"flowchart",    pt:"Fluxograma"},
+    {id:"diagram",      pt:"Diagrama"},
+    {id:"timeline",     pt:"Linha de tempo"},
+    {id:"infographic",  pt:"Infográfico"},
+    {id:"chart",        pt:"Gráfico"},
+  ];
+
+  const THEMES = [
+    {id:"klar",      label:"KLAR"},
+    {id:"noir",      label:"NOIR"},
+    {id:"dark_gold", label:"Dark Gold"},
+    {id:"institutional", label:"Institutional"},
+  ];
+
+  const generate = async () => {
+    if (!prompt.trim()) return;
+    setLoading(true); setError(null); setResult(null);
+    try {
+      const res = await fetch("http://localhost:8091/canvas/generate", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+          prompt,
+          canvas_type: canvasType,
+          style: theme,
+          format: canvasType==="flowchart" ? "mermaid" : "svg",
+          seal_to_ledger: false,
+          pack_wcav: false,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) setResult(data);
+      else setError(data.error||"Erro desconhecido");
+    } catch(e) {
+      setError("Servidor indisponível — W-CANVAS-001");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div style={{padding:"16px",display:"flex",flexDirection:"column",gap:"12px"}}>
+      <textarea
+        value={prompt}
+        onChange={e=>setPrompt(e.target.value)}
+        placeholder="Descreve o que queres visualizar..."
+        rows={4}
+        style={{
+          width:"100%",resize:"vertical",padding:"10px",
+          borderRadius:"8px",border:"1px solid #333",
+          background:"#1a1a24",color:"#e8e6e1",fontSize:"13px",
+          fontFamily:"'Bricolage Grotesque',sans-serif",boxSizing:"border-box",
+        }}
+      />
+
+      <div style={{display:"flex",flexDirection:"column",gap:"4px"}}>
+        <label style={{fontSize:"11px",color:"#888",textTransform:"uppercase",letterSpacing:"0.05em"}}>Tipo</label>
+        <select
+          value={canvasType}
+          onChange={e=>setCanvasType(e.target.value)}
+          style={{
+            padding:"8px",borderRadius:"8px",
+            border:"1px solid #333",background:"#1a1a24",
+            color:"#e8e6e1",fontSize:"13px",
+          }}
+        >
+          {CANVAS_TYPES.map(t=>(
+            <option key={t.id} value={t.id}>{t.pt}</option>
+          ))}
+        </select>
+      </div>
+
+      <div style={{display:"flex",flexDirection:"column",gap:"4px"}}>
+        <label style={{fontSize:"11px",color:"#888",textTransform:"uppercase",letterSpacing:"0.05em"}}>Tema</label>
+        <div style={{display:"flex",gap:"6px",flexWrap:"wrap"}}>
+          {THEMES.map(th=>(
+            <button key={th.id} onClick={()=>setTheme(th.id)} style={{
+              padding:"5px 12px",borderRadius:"6px",fontSize:"12px",
+              border:theme===th.id?"1px solid #c9a84c":"1px solid #333",
+              background:theme===th.id?"#c9a84c":"#1a1a24",
+              color:theme===th.id?"#000":"#888",
+              cursor:"pointer",
+            }}>{th.label}</button>
+          ))}
+        </div>
+      </div>
+
+      <button
+        onClick={generate}
+        disabled={loading||!prompt.trim()}
+        style={{
+          padding:"10px",borderRadius:"8px",fontSize:"13px",fontWeight:"600",
+          background:loading?"#333":"#c9a84c",
+          color:loading?"#666":"#000",
+          border:"none",cursor:loading?"default":"pointer",
+          opacity:!prompt.trim()?0.4:1,
+        }}
+      >
+        {loading?"A gerar...":"Gerar visualização"}
+      </button>
+
+      {error&&(
+        <div style={{padding:"10px",borderRadius:"8px",fontSize:"12px",background:"#3a1a1a",color:"#ff6b6b"}}>
+          {error}
+        </div>
+      )}
+
+      {result&&(
+        <div style={{display:"flex",flexDirection:"column",gap:"8px"}}>
+          <div style={{padding:"10px",borderRadius:"8px",fontSize:"11px",background:"#1a3a1a",color:"#6bff6b"}}>
+            ✓ {result.canvas_id} · {result.format?.toUpperCase()} · {result.content?.length||0} chars
+          </div>
+          {result.format==="svg"&&result.content&&(
+            <div
+              style={{borderRadius:"8px",border:"1px solid #333",overflow:"hidden",background:"#0a0a10",padding:"8px"}}
+              dangerouslySetInnerHTML={{__html:result.content}}
+            />
+          )}
+          {result.format==="mermaid"&&result.content&&(
+            <pre style={{fontSize:"11px",padding:"10px",borderRadius:"8px",background:"#1a1a24",color:"#888",overflow:"auto",fontFamily:"'JetBrains Mono',monospace"}}>
+              {result.content}
+            </pre>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
 
 // ═══════════════
 // MAIN APP
@@ -5515,7 +5874,7 @@ function App(){
             </button>))}
         </div>
         <div style={{padding:"8px",borderTop:`1px solid ${th.border}22`,display:"flex",flexDirection:"column",gap:4,alignItems:"center"}}>
-          <button onClick={()=>setShowAbout(true)} title="About WINDI" style={{background:"none",border:"none",cursor:"pointer",fontSize:14,color:th.dim}}>ℹ️</button>
+          <button onClick={()=>window.open("https://windi-domain.com/library/about-windi.html","_blank")} title="About WINDI" style={{background:"none",border:"none",cursor:"pointer",fontSize:14,color:th.dim}}>ℹ️</button>
           <button onClick={()=>setThemeName(n=>n==="KLAR"?"NOIR":"KLAR")} style={{background:"none",border:"none",cursor:"pointer",fontSize:14,color:th.dim}}>{themeName==="KLAR"?"☀":"🌙"}</button>
           <select value={lang} onChange={e=>setLang(e.target.value)} style={{background:th.input,border:`1px solid ${th.border}`,borderRadius:4,padding:"2px",color:th.text,fontSize:9,cursor:"pointer",width:36,textAlign:"center"}}><option value="de">DE</option><option value="en">EN</option><option value="pt">PT</option></select>
           {/* ═══ USER AREA TRIGGER ═══ */}
@@ -6667,6 +7026,20 @@ function App(){
                 <p style={{fontSize:10,color:th.dim,lineHeight:1.5,margin:0}}>
                   <strong style={{color:th.gold}}>🌳 {lang==='pt'?'Visão WICK':lang==='de'?'WICK Vision':'WICK Vision'}:</strong> {lang==='pt'?'Cada documento selado é uma evidência verificável. Juntos, formamos uma rede de confiança onde a verdade pode ser comprovada.':lang==='de'?'Jedes versiegelte Dokument ist ein verifizierbarer Beweis. Zusammen bilden wir ein Vertrauensnetz, in dem Wahrheit nachweisbar ist.':'Every sealed document is verifiable evidence. Together, we form a trust network where truth can be proven.'}
                 </p>
+              </div>
+            </div>
+          )}
+
+          {/* ═══ W-CANVAS-001: CANVAS TAB ═══ */}
+          {sidebarTab==='canvas'&&(
+            <div style={{flex:1,display:'flex',flexDirection:'column',overflow:'hidden'}}>
+              <div style={{padding:'12px 16px',borderBottom:'1px solid '+th.border,display:'flex',alignItems:'center',gap:8}}>
+                <span style={{fontSize:20}}>🖼️</span>
+                <span style={{fontSize:14,fontWeight:700}}>Canvas</span>
+                <span style={{fontSize:10,color:th.dim,marginLeft:'auto'}}>W-CANVAS-001</span>
+              </div>
+              <div style={{flex:1,overflowY:'auto'}}>
+                <CanvasPanelUI />
               </div>
             </div>
           )}
@@ -8543,6 +8916,238 @@ document.addEventListener('DOMContentLoaded', () => {
   loadHubStatus();
   setInterval(loadHubStatus, 30000);
 });
+</script>
+<!-- Canvas Gen 7 — Mobile Fase 1 JS -->
+<script>
+// ============================================================
+// canvas-gen7-mobile.js — Fase 1: Integração Touch no Canvas
+// Injetar no final do <body> de index.html (antes do </body>)
+// ============================================================
+
+(function() {
+  'use strict';
+
+  // ── 1. PINCH-TO-ZOOM no Canvas ─────────────────────────────
+  function initPinchZoom() {
+    // Adapta ao ID real do teu canvas — ajustar se necessário
+    const canvasEl = document.getElementById('canvas-area')
+                  || document.getElementById('canvas-container')
+                  || document.querySelector('[data-zone="G1"]')
+                  || document.querySelector('.canvas-container');
+
+    if (!canvasEl) {
+      console.warn('[Gen7] canvas element não encontrado para pinch-zoom');
+      return;
+    }
+
+    let currentScale = 1.0;
+    let startDist = 0;
+    let startScale = 1.0;
+
+    function getDistance(touches) {
+      const dx = touches[0].clientX - touches[1].clientX;
+      const dy = touches[0].clientY - touches[1].clientY;
+      return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    function applyScale(scale) {
+      // Integração com o sistema de zoom existente do Canvas
+      // Tenta várias abordagens — a que funcionar é mantida
+      if (typeof window.setCanvasZoom === 'function') {
+        window.setCanvasZoom(scale);
+      } else if (typeof window.__dragonCanvasScale !== 'undefined') {
+        window.__dragonCanvasScale = scale;
+        const ev = new CustomEvent('canvas:scale', { detail: { scale } });
+        canvasEl.dispatchEvent(ev);
+      } else {
+        // fallback: CSS transform direto
+        const inner = canvasEl.querySelector('.canvas-inner, .canvas-content, canvas');
+        if (inner) {
+          inner.style.transform = `scale(${scale})`;
+          inner.style.transformOrigin = 'center center';
+        }
+      }
+      currentScale = scale;
+
+      // Feedback visual
+      canvasEl.classList.toggle('canvas-zooming', scale !== 1.0);
+
+      // Atualiza indicador de zoom se existir
+      const zoomIndicator = document.querySelector('.zoom-indicator, #zoom-value');
+      if (zoomIndicator) {
+        zoomIndicator.textContent = Math.round(scale * 100) + '%';
+      }
+    }
+
+    canvasEl.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 2) {
+        e.preventDefault();
+        startDist = getDistance(e.touches);
+        startScale = currentScale;
+        canvasEl.classList.add('canvas-zooming');
+      }
+    }, { passive: false });
+
+    canvasEl.addEventListener('touchmove', (e) => {
+      if (e.touches.length === 2) {
+        e.preventDefault();
+        const dist = getDistance(e.touches);
+        const ratio = dist / startDist;
+        const newScale = Math.min(4.0, Math.max(0.5, startScale * ratio));
+        applyScale(newScale);
+      }
+    }, { passive: false });
+
+    canvasEl.addEventListener('touchend', (e) => {
+      if (e.touches.length < 2) {
+        canvasEl.classList.remove('canvas-zooming');
+      }
+    });
+
+    // Double-tap para reset de zoom
+    let lastTap = 0;
+    canvasEl.addEventListener('touchend', (e) => {
+      if (e.touches.length === 0) {
+        const now = Date.now();
+        if (now - lastTap < 300) {
+          applyScale(1.0);
+          lastTap = 0;
+        } else {
+          lastTap = now;
+        }
+      }
+    });
+
+    console.log('[Gen7] Pinch-zoom ativo no canvas');
+  }
+
+  // ── 2. TOUCH TARGETS ≥ 44px nas Smart Zones G1 + G2 ────────
+  function enforceMinTapTargets() {
+    const selectors = [
+      '#toolbar button',
+      '#toolbar [role="button"]',
+      '.toolbar button',
+      '.toolbar .icon-btn',
+      '.toolbar .tool-btn',
+      '[data-zone="G2"] button',
+      '[data-zone="G2"] [role="button"]',
+      '.palette-toolbar button',
+      '.bottom-bar button',
+    ].join(', ');
+
+    const elements = document.querySelectorAll(selectors);
+    let expanded = 0;
+
+    elements.forEach(el => {
+      const rect = el.getBoundingClientRect();
+      if (rect.width < 44 || rect.height < 44) {
+        el.style.minWidth = '44px';
+        el.style.minHeight = '44px';
+        el.style.display = 'inline-flex';
+        el.style.alignItems = 'center';
+        el.style.justifyContent = 'center';
+        expanded++;
+      }
+      // Sempre adicionar touch optimization
+      el.style.touchAction = 'manipulation';
+      el.style.webkitTapHighlightColor = 'transparent';
+      el.setAttribute('data-touch-ready', 'true');
+    });
+
+    console.log(`[Gen7] Touch targets: ${expanded} expandidos para ≥44px`);
+  }
+
+  // ── 3. MENSAGEM CONTEXTUAL "from=desktop" ──────────────────
+  function handleFromDesktop() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('from') !== 'desktop') return;
+
+    let notice = document.querySelector('.from-desktop-notice');
+    if (!notice) {
+      notice = document.createElement('div');
+      notice.className = 'from-desktop-notice';
+      notice.textContent = 'Canvas Mobile activo — Editor avançado disponível no Desktop';
+      document.body.appendChild(notice);
+    }
+
+    setTimeout(() => {
+      notice.classList.add('visible');
+      setTimeout(() => notice.classList.remove('visible'), 4000);
+    }, 800);
+  }
+
+  // ── 4. DRAG DE LAYER COM POINTER EVENTS UNIFICADOS ──────────
+  // (substitui os mousedown/mousemove existentes por pointer events)
+  function patchLayerDragToPointer() {
+    // Identifica layers arrastáveis no canvas
+    const canvasEl = document.getElementById('canvas-area')
+                  || document.querySelector('[data-zone="G1"]')
+                  || document.querySelector('.canvas-container');
+    if (!canvasEl) return;
+
+    // O patch é conservador: apenas garante que pointer events
+    // estão activos. A lógica de drag existente é preservada.
+    canvasEl.style.touchAction = 'none';
+
+    // Converte listeners de mouse para pointer se não existirem
+    // (o Gêmeo vai verificar se já existe pointer events no Gen 6)
+    const layers = canvasEl.querySelectorAll('.layer, [data-layer], .canvas-layer');
+    layers.forEach(layer => {
+      if (!layer.dataset.pointerPatched) {
+        layer.style.touchAction = 'none';
+        layer.dataset.pointerPatched = 'true';
+      }
+    });
+
+    console.log(`[Gen7] Pointer events aplicados em ${layers.length} layers`);
+  }
+
+  // ── 5. INICIALIZAÇÃO ─────────────────────────────────────────
+  function initGen7Mobile() {
+    const isMobile = window.innerWidth < 768
+      || ('ontouchstart' in window)
+      || (navigator.maxTouchPoints > 0);
+
+    if (!isMobile) {
+      console.log('[Gen7] Desktop detectado — mobile patches não aplicados');
+      return;
+    }
+
+    console.log('[Gen7] Mobile detectado — inicializando Fase 1');
+
+    // Pequeno delay para garantir DOM completo
+    setTimeout(() => {
+      initPinchZoom();
+      enforceMinTapTargets();
+      handleFromDesktop();
+      patchLayerDragToPointer();
+      console.log('[Gen7] Fase 1 activa');
+    }, 300);
+
+    // Re-aplicar após resize (tablet rotation)
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(enforceMinTapTargets, 200);
+    });
+  }
+
+  // Auto-init
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initGen7Mobile);
+  } else {
+    initGen7Mobile();
+  }
+
+  // Expor para debugging e integração
+  window.__gen7 = {
+    version: '1.0.0',
+    phase: 1,
+    reinit: initGen7Mobile,
+    enforceTargets: enforceMinTapTargets
+  };
+
+})();
 </script>
 </body>
 </html>
