@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.29
+**Version:** 1.9.30
 **Sealed:** 2026-03-21
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -545,6 +545,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | :8100 | Desktop v2.0.0 (legacy) | 🔴 RETIRED |
 | :8101 | Forensic Ledger | 🟢 SEALED |
 | :8108 | Dragon Hub v1.3.0 | 🟢 LIVE |
+| :8113 | WSG Hub v0.3.0 | 🟢 **LIVE** · Sistema Nervoso · 8 services |
 | :8119 | Desktop GEN 7 | 🟢 **PRODUÇÃO** |
 | :8096 | Lead Admin (ID Genesis) | 🟢 LIVE · systemd · env secured |
 | :8099 | Wallet Service | 🟢 LIVE · Trust E2E · 11 pioneers |
@@ -564,10 +565,10 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | i18n Dragon | ✅ PT/DE/EN auto-detect |
 | Wallet System | ✅ 4/4 gaps · 11 pioneers · Trust E2E |
 | Lead Admin | ✅ :8096 · systemd · env secured · G3 hook |
-| W-CIA-001 | ✅ Health Pulse no GEN7 Desktop · 7 endpoints monitorizados |
+| W-CIA-001 | ✅ Health Pulse no GEN7 Desktop · **8 endpoints** monitorizados |
+| W-WSG-001 | ✅ Surface Guard v0.3.0 · :8113 · Sistema Nervoso · 8 services health |
 | W-GATE-001 | ✅ API Schema Contracts · 15 endpoints · erro HUMANO trilíngue |
-| W-NGINX-001 | ✅ Nginx Auto-Register · 306 rotas Flask · 66 locations · pre-commit hook |
-| W-CANVAS-001 | ✅ Visual Generation · Gemini API · Mermaid D2 · 4 temas · SVG export |
+| W-NGINX-001 | ✅ Nginx Auto-Register · 306 rotas Flask · 67 locations · pre-commit hook |
 | W-CANVAS-001 | ✅ Canvas Architect · Gemini 2.5 Flash · SVG/Mermaid · :8091/canvas/* |
 
 ### Histórico Recente
@@ -576,6 +577,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 
 | Data | Milestones |
 |------|------------|
+| 21 Mar | §38 W-WSG-001 v0.3.0 **LIVE** · Sistema Nervoso · CIA 8/8 green · 5a76cb2 |
 | 21 Mar | §37 W-CANVAS-001 **LIVE** · Gemini API · Mermaid D2 · 4 temas · a108b61 |
 | 19 Mar | §32-§35 DID Seed + Berçário + Identity Thread + Nervous System |
 | 18 Mar | §22-§26 Sovereignty Metrics + Composer Agents (CIA/MGR/SCH) |
