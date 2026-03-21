@@ -6,6 +6,52 @@
 #        CLAUDE-HISTORY.md = passado selado (ilimitado)
 # ---
 
+## § SESSÃO 21 Mar 2026
+**Commits:** b507ed4 · eba800b · bd2d2a1 · 337222a
+**Receipt:** WINDI-UX-ONBOARD-BRIDGE-20260321
+
+### W-CANVAS-001 — GÉNESE COMPLETA
+- Backend `/canvas/generate` + `/canvas/status` LIVE :8091
+- Gemini 2.5 Flash operacional (SVG ≈25s, Mermaid ≈4.5s)
+- `CanvasPanelUI` integrado na Sidebar do GEN7
+- Acções: ↓ SVG · ↓ .wcav · ⎘ ID · ⬡ Selar (futuro)
+- i18n DE/EN/PT completo
+
+### Taxonomia Tools vs Agenten-Korps — SEALED
+- **Tools** (transversal): Redaktion · Inspektor · Verify · Canvas
+- **Agenten-Korps** (domínio): Journalist · Prüfer · Mitteilung · Justiz · Notariat · Compliance · Buchhalter
+- Critério: "serve a constelação ↔ serve o utilizador directamente"
+- Artefacto: tools_vs_korps_taxonomy.svg
+
+### Onboard Bridge — SEALED
+- Landing CTAs → `/desktop/?onboard=tier` → modal DID auto
+- `handleOnboard()` em `desktop-gen7/frontend/static/app.js`
+- `sessionStorage.windi_onboard_tier` para fluxo pós-DID
+- nginx `/personal/` route adicionada
+
+### Pioneer Form — copy v1.0 SEALED
+- Título: "Aplicar ao Pioneer Program"
+- Subtítulo: "Junta-te ao WINDI"
+- CTA: "Candidatar ao Pioneer Program"
+- I9 explícito: Human Dragon + 48h
+- Botão directo: "Criar Wallet agora →"
+
+### GEN7 Footer — About + Library
+- About WINDI → `/library/about-windi.html` (nova tab)
+- Library → `/library/` (nova tab)
+- Opacity 0.6, sem emojis, color:inherit para temas
+
+### Lição Crítica — Ficheiros GEN7
+```
+/app/     → :8108 → agent-palette/ui/index.html
+/desktop/ → :8119 → desktop-gen7/frontend/index.html
+
+SÃO DOIS FICHEIROS DIFERENTES.
+Editar agent-palette NÃO afecta /desktop/.
+```
+
+---
+
 ## § SESSÃO 17 Mar 2026
 **Commits:** a3accb5 · f1603d7 · a30360e
 **CLAUDE.md:** v1.9.10
