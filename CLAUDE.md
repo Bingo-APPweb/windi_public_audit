@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.32
+**Version:** 1.9.33
 **Sealed:** 2026-03-21
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -574,6 +574,8 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | W-CANVAS-LAB-001 | ✅ Interactive Execution Environment · /canvas/lab/* |
 | W-COMM-001 | ✅ **Canonical Publishing Engine** · EN/DE/PT · /comm/* · Verifiable |
 | W-PROVE-001 | ✅ GTM Landing · /prove/ · Trilíngue · Conversion Layer |
+| W-DETECT-MEDIA-001 | ✅ **Modus 4 MVP** · /detect-media/ · Vídeo/Imagem/Texto · Heurísticas |
+| W-VERIFY-MODUS4 | ✅ Reality Check · /reality-check/ · Claude epistemológico · SOVEREIGN |
 | **Triangle of Power** | ✅ 3 Sovereign Dashboards · Legal + Notary + Audit · Chart.js |
 
 ### Histórico Recente
@@ -582,6 +584,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 
 | Data | Milestones |
 |------|------------|
+| 21 Mar | §41 **W-VERIFY-MODUS4** · Reality Check · W-DETECT-MEDIA-001 · Classificação Epistemológica · da7260e |
 | 21 Mar | §40 **W-COMM-001 LIVE** · Canonical Publishing Engine · EN/DE/PT · 7fb0c92 |
 | 21 Mar | §40 W-CANVAS-OBS-001 + W-PROVE-001 + GTM Stack · Meta-Integrity |
 | 21 Mar | §39 **Triangle of Power** · 3 Sovereign Dashboards · Legal+Notary+Audit · 0f02566 |
@@ -1107,6 +1110,67 @@ O mercado produz posts.
 O WINDI produz:
 
 > **Comunicações institucionais com integridade verificável.**
+
+---
+
+## §41 W-VERIFY-MODUS4 — Reality Check (2026-03-21)
+
+**Tag:** `W-VERIFY-4-ACTIVATION`
+**Commit:** `da7260e`
+
+### Arquitectura Modus 4
+
+WINDI Verify expande de 3 para 4 modos:
+
+```
+Modo 1 — Guarantee Layer        🟢 Ledger verification (I11)
+Modo 2 — Mathematical Proof     🔵 SHA-256 local
+Modo 3 — Interpretation Layer   🟠 QR universal decoder
+Modo 4 — Epistemic Classification 🟣 Reality Check
+```
+
+### Dois Sistemas Complementares
+
+| Sistema | Engine | Endpoint | Status |
+|---------|--------|----------|--------|
+| W-DETECT-MEDIA-001 | Heurísticas MVP | /detect-media/ | 🟢 HEALTHY |
+| W-VERIFY-MODUS4 | Claude epistemológico | /reality-check/ | 🟢 SOVEREIGN |
+
+### Escala de Verificabilidade (Canónica)
+
+```
+🟢 VERIFIED      → hash + assinatura + Ledger = força MÁXIMA
+🟡 UNVERIFIABLE  → sem âncora conhecida = força NEUTRA
+🔴 INCONSISTENT  → sinais de manipulação = força INDICATIVA
+```
+
+### Axioma Constitucional
+
+> "WINDI não declara 'fake'. Classifica verificabilidade."
+
+**Invariantes activos:**
+- I1: Intent obrigatório (`intent=true`)
+- I9: Nunca auto-escala
+- I11: Nunca sela análise (análise ≠ garantia)
+- I12: Trilíngue DE|EN|PT
+
+### URLs LIVE
+
+| URL | Função |
+|-----|--------|
+| /verify-public/web/media-detector.html | UI Modus 4 (trilíngue) |
+| /detect-media/health | Health heurístico |
+| /detect-media/analyze | Análise vídeo/imagem/texto |
+| /reality-check/health | Health epistemológico |
+| /reality-check/analyze | Classificação Claude |
+
+### LLM Opcional
+
+```
+status: "sovereign"  →  LLM expande, não depende
+```
+
+O sistema opera sem API key externa. Quando configurada, expande capacidade epistemológica.
 
 ---
 
