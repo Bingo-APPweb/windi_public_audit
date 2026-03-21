@@ -535,7 +535,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 
 ---
 
-## 13. Estado Actual — 19 Março 2026
+## 13. Estado Actual — 21 Março 2026
 
 ### Mapa de Portas
 
@@ -567,6 +567,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | W-CIA-001 | ✅ Health Pulse no GEN7 Desktop · 7 endpoints monitorizados |
 | W-GATE-001 | ✅ API Schema Contracts · 15 endpoints · erro HUMANO trilíngue |
 | W-NGINX-001 | ✅ Nginx Auto-Register · 302 rotas Flask · 64 locations · pre-commit hook |
+| W-CANVAS-001 | ✅ Canvas Architect · Gemini 2.5 Flash · SVG/Mermaid · :8091/canvas/* |
 
 ### Histórico Recente
 
@@ -574,6 +575,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 
 | Data | Milestones |
 |------|------------|
+| 21 Mar | W-CANVAS-001 LIVE · Gemini 2.5 Flash · Canvas Gen 7 Mobile injection |
 | 19 Mar | §32-§35 DID Seed + Berçário + Identity Thread + Nervous System |
 | 18 Mar | §22-§26 Sovereignty Metrics + Composer Agents (CIA/MGR/SCH) |
 | 17 Mar | §17 .JMPG + Dispatch Gateway + Frontend Invariants |
