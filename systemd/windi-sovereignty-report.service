@@ -1,0 +1,15 @@
+[Unit]
+Description=WINDI Canvas Sovereignty Report Generator
+Documentation=https://github.com/Bingo-APPweb/windi_public_audit
+After=network.target
+
+[Service]
+Type=oneshot
+User=windi
+WorkingDirectory=/opt/windi
+ExecStart=/usr/bin/python3 /opt/windi/scripts/canvas_sovereignty_report.py
+StandardOutput=append:/opt/windi/logs/sovereignty-report.log
+StandardError=append:/opt/windi/logs/sovereignty-report.log
+
+[Install]
+WantedBy=multi-user.target
