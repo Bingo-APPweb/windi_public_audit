@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="noir">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WINDI Verify — Media Detector</title>
+    <meta name="description" content="Detect AI-generated content: videos, images, and text. Free, instant, constitutional.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Favicon -->
+    <link rel="icon" href="/verify-public/web/icons/dragon-seal.svg" type="image/svg+xml">
+
+    <style>
+        /* ═══════════════════════════════════════════════════════════
+           WINDI DESIGN SYSTEM — NOIR/KLAR
+           ═══════════════════════════════════════════════════════════ */
+
+        :root {
+            --font-heading: 'Bricolage Grotesque', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        [data-theme="noir"] {
+            --bg: #0A0A10;
+            --bg-card: #12121A;
+            --gold: #C9A84C;
+            --gold-dim: #8B7424;
+            --text: #E8E6E1;
+            --text-dim: #8A8A8A;
+            --border: #1A1A24;
+            --success: #4CAF50;
+            --warning: #FFC107;
+            --danger: #F44336;
+            --info: #2196F3;
+        }
+
+        [data-theme="klar"] {
+            --bg: #FAFAF8;
+            --bg-card: #FFFFFF;
+            --gold: #8B7424;
+            --gold-dim: #C9A84C;
+            --text: #1A1A1A;
+            --text-dim: #666666;
+            --border: #E0DED8;
+            --success: #2E7D32;
+            --warning: #F57C00;
+            --danger: #C62828;
+            --info: #1565C0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-heading);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* ═══ HEADER ═══ */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--text);
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+        }
+
+        .logo-text {
+            font-weight: 800;
+            font-size: 1.25rem;
+        }
+
+        .logo-badge {
+            background: var(--gold);
+            color: var(--bg);
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .controls {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .lang-toggle, .theme-toggle {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .lang-btn, .theme-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            padding: 0.4rem 0.6rem;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: var(--font-heading);
+        }
+
+        .lang-btn:first-child { border-radius: 4px 0 0 4px; }
+        .lang-btn:last-child { border-radius: 0 4px 4px 0; }
+        .theme-btn { border-radius: 4px; font-size: 1rem; padding: 0.3rem 0.5rem; }
+
+        .lang-btn.active, .lang-btn:hover {
+            background: var(--gold);
+            color: var(--bg);
+            border-color: var(--gold);
+        }
+
+        .theme-btn:hover {
+            background: var(--border);
+        }
+
+        /* ═══ MAIN ═══ */
+        .main {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.75rem;
+            color: var(--gold);
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: var(--text-dim);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* ═══ DETECTOR CARD ═══ */
+        .detector-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1rem;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: var(--font-heading);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background: var(--gold);
+            color: var(--bg);
+            border-color: var(--gold);
+        }
+
+        .tab-btn:hover:not(.active) {
+            border-color: var(--gold-dim);
+            color: var(--text);
+        }
+
+        .tab-icon {
+            font-size: 1.2rem;
+        }
+
+        /* ═══ INPUT ZONES ═══ */
+        .input-zone {
+            display: none;
+        }
+
+        .input-zone.active {
+            display: block;
+        }
+
+        .drop-zone {
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            padding: 3rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .drop-zone:hover, .drop-zone.dragover {
+            border-color: var(--gold);
+            background: rgba(201, 168, 76, 0.05);
+        }
+
+        .drop-zone-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .drop-zone-text {
+            color: var(--text-dim);
+            margin-bottom: 0.5rem;
+        }
+
+        .drop-zone-hint {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            opacity: 0.7;
+        }
+
+        .text-input {
+            width: 100%;
+            min-height: 150px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            color: var(--text);
+            font-family: var(--font-mono);
+            font-size: 0.9rem;
+            resize: vertical;
+        }
+
+        .text-input:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        .text-input::placeholder {
+            color: var(--text-dim);
+        }
+
+        /* ═══ ANALYZE BUTTON ═══ */
+        .analyze-btn {
+            width: 100%;
+            background: var(--gold);
+            color: var(--bg);
+            border: none;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: var(--font-heading);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1.5rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .analyze-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(201, 168, 76, 0.3);
+        }
+
+        .analyze-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .analyze-btn.loading {
+            pointer-events: none;
+        }
+
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid transparent;
+            border-top-color: currentColor;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ═══ RESULT ═══ */
+        .result {
+            display: none;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .result.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result.suspicious {
+            border-color: var(--danger);
+            background: rgba(244, 67, 54, 0.1);
+        }
+
+        .result.unverifiable {
+            border-color: var(--warning);
+            background: rgba(255, 193, 7, 0.1);
+        }
+
+        .result.inconclusive {
+            border-color: var(--info);
+            background: rgba(33, 150, 243, 0.1);
+        }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .result-icon {
+            font-size: 1.5rem;
+        }
+
+        .result-status {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .result.suspicious .result-status { color: var(--danger); }
+        .result.unverifiable .result-status { color: var(--warning); }
+        .result.inconclusive .result-status { color: var(--info); }
+
+        .result-confidence {
+            margin-left: auto;
+            background: var(--bg);
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .result-explanation {
+            margin-bottom: 1rem;
+            line-height: 1.7;
+        }
+
+        .result-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0.75rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .meta-item {
+            font-size: 0.85rem;
+        }
+
+        .meta-label {
+            color: var(--text-dim);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .meta-value {
+            font-family: var(--font-mono);
+            word-break: break-all;
+        }
+
+        .result-disclaimer {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background: var(--bg);
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+
+        /* ═══ FOOTER ═══ */
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+        }
+
+        .footer a {
+            color: var(--gold);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .constitutional-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            margin-top: 1rem;
+            font-size: 0.8rem;
+        }
+
+        /* ═══ MOBILE ═══ */
+        @media (max-width: 600px) {
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            .tabs {
+                flex-wrap: wrap;
+            }
+
+            .tab-btn {
+                flex: 1;
+                justify-content: center;
+                min-width: 100px;
+            }
+
+            .result-meta {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <a href="/verify-public/" class="logo">
+            <svg class="logo-icon" viewBox="0 0 100 100" fill="none">
+                <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="3"/>
+                <path d="M50 20 L75 45 L50 80 L25 45 Z" fill="currentColor" opacity="0.3"/>
+                <path d="M50 30 L65 45 L50 70 L35 45 Z" fill="currentColor"/>
+            </svg>
+            <span class="logo-text">WINDI Verify</span>
+            <span class="logo-badge">Mode 4</span>
+        </a>
+
+        <div class="controls">
+            <div class="lang-toggle">
+                <button class="lang-btn" data-lang="de">DE</button>
+                <button class="lang-btn active" data-lang="en">EN</button>
+                <button class="lang-btn" data-lang="pt">PT</button>
+            </div>
+            <div class="theme-toggle">
+                <button class="theme-btn" id="themeToggle" title="Toggle theme"></button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN -->
+    <main class="main">
+        <div class="hero">
+            <h1 data-i18n="title">Media Authenticity Detector</h1>
+            <p data-i18n="subtitle">Analyze videos, images, and text for AI-generated markers. Free. Instant. No data stored.</p>
+        </div>
+
+        <div class="detector-card">
+            <!-- TABS -->
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="video">
+                    <span class="tab-icon">🎬</span>
+                    <span data-i18n="tabVideo">Video</span>
+                </button>
+                <button class="tab-btn" data-tab="image">
+                    <span class="tab-icon">📷</span>
+                    <span data-i18n="tabImage">Image</span>
+                </button>
+                <button class="tab-btn" data-tab="text">
+                    <span class="tab-icon">📝</span>
+                    <span data-i18n="tabText">Text</span>
+                </button>
+            </div>
+
+            <!-- VIDEO INPUT -->
+            <div class="input-zone active" id="zone-video">
+                <div class="drop-zone" id="dropVideo">
+                    <div class="drop-zone-icon">🎬</div>
+                    <div class="drop-zone-text" data-i18n="dropVideo">Drop video here or click to upload</div>
+                    <div class="drop-zone-hint" data-i18n="dropHintVideo">MP4, WebM, MOV • Max 50MB</div>
+                    <input type="file" id="inputVideo" accept="video/*" hidden>
+                </div>
+            </div>
+
+            <!-- IMAGE INPUT -->
+            <div class="input-zone" id="zone-image">
+                <div class="drop-zone" id="dropImage">
+                    <div class="drop-zone-icon">📷</div>
+                    <div class="drop-zone-text" data-i18n="dropImage">Drop image here or click to upload</div>
+                    <div class="drop-zone-hint" data-i18n="dropHintImage">JPG, PNG, WebP • Max 10MB</div>
+                    <input type="file" id="inputImage" accept="image/*" hidden>
+                </div>
+            </div>
+
+            <!-- TEXT INPUT -->
+            <div class="input-zone" id="zone-text">
+                <textarea class="text-input" id="inputText" data-i18n-placeholder="textPlaceholder" placeholder="Paste text to analyze for AI generation markers..."></textarea>
+            </div>
+
+            <!-- ANALYZE BUTTON -->
+            <button class="analyze-btn" id="analyzeBtn" disabled>
+                <span data-i18n="analyze">Analyze</span>
+            </button>
+
+            <!-- RESULT -->
+            <div class="result" id="result">
+                <div class="result-header">
+                    <span class="result-icon" id="resultIcon"></span>
+                    <span class="result-status" id="resultStatus"></span>
+                    <span class="result-confidence" id="resultConfidence"></span>
+                </div>
+                <div class="result-explanation" id="resultExplanation"></div>
+                <div class="result-meta" id="resultMeta"></div>
+                <div class="result-disclaimer" id="resultDisclaimer"></div>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="footer">
+            <p data-i18n="footer">WINDI does not store your data. Analysis runs locally where possible.</p>
+            <div class="constitutional-badge">
+                <span>🛡️</span>
+                <span data-i18n="constitutional">Constitutional: I1 · I9 · I11 · I12</span>
+            </div>
+            <p style="margin-top: 1rem;">
+                <a href="/verify-public/">← Back to Verify</a>
+            </p>
+        </footer>
+    </main>
+
+    <script>
+        // ═══════════════════════════════════════════════════════════
+        // I18N — Trilingual Support (DE | EN | PT)
+        // ═══════════════════════════════════════════════════════════
+
+        const I18N = {
+            de: {
+                title: "Medien-Authentizitäts-Detektor",
+                subtitle: "Analysieren Sie Videos, Bilder und Texte auf KI-generierte Merkmale. Kostenlos. Sofort. Keine Datenspeicherung.",
+                tabVideo: "Video",
+                tabImage: "Bild",
+                tabText: "Text",
+                dropVideo: "Video hier ablegen oder klicken zum Hochladen",
+                dropHintVideo: "MP4, WebM, MOV • Max 50MB",
+                dropImage: "Bild hier ablegen oder klicken zum Hochladen",
+                dropHintImage: "JPG, PNG, WebP • Max 10MB",
+                textPlaceholder: "Text einfügen, um ihn auf KI-Generierungsmerkmale zu analysieren...",
+                analyze: "Analysieren",
+                analyzing: "Analysiere...",
+                footer: "WINDI speichert Ihre Daten nicht. Die Analyse läuft lokal, wenn möglich.",
+                constitutional: "Konstitutionell: I1 · I9 · I11 · I12",
+                confidence: { low: "Niedrig", medium: "Mittel", high: "Hoch" },
+                status: {
+                    suspicious: "Verdächtig",
+                    unverifiable: "Nicht verifizierbar",
+                    inconclusive: "Nicht schlüssig"
+                },
+                meta: {
+                    hash: "Hash",
+                    score: "Punktzahl",
+                    type: "Medientyp",
+                    time: "Analysezeit"
+                }
+            },
+            en: {
+                title: "Media Authenticity Detector",
+                subtitle: "Analyze videos, images, and text for AI-generated markers. Free. Instant. No data stored.",
+                tabVideo: "Video",
+                tabImage: "Image",
+                tabText: "Text",
+                dropVideo: "Drop video here or click to upload",
+                dropHintVideo: "MP4, WebM, MOV • Max 50MB",
+                dropImage: "Drop image here or click to upload",
+                dropHintImage: "JPG, PNG, WebP • Max 10MB",
+                textPlaceholder: "Paste text to analyze for AI generation markers...",
+                analyze: "Analyze",
+                analyzing: "Analyzing...",
+                footer: "WINDI does not store your data. Analysis runs locally where possible.",
+                constitutional: "Constitutional: I1 · I9 · I11 · I12",
+                confidence: { low: "Low", medium: "Medium", high: "High" },
+                status: {
+                    suspicious: "Suspicious",
+                    unverifiable: "Unverifiable",
+                    inconclusive: "Inconclusive"
+                },
+                meta: {
+                    hash: "Hash",
+                    score: "Score",
+                    type: "Media Type",
+                    time: "Analysis Time"
+                }
+            },
+            pt: {
+                title: "Detector de Autenticidade de Média",
+                subtitle: "Analisa vídeos, imagens e texto para marcadores de geração por IA. Grátis. Instantâneo. Sem armazenamento.",
+                tabVideo: "Vídeo",
+                tabImage: "Imagem",
+                tabText: "Texto",
+                dropVideo: "Arrasta o vídeo aqui ou clica para carregar",
+                dropHintVideo: "MP4, WebM, MOV • Máx 50MB",
+                dropImage: "Arrasta a imagem aqui ou clica para carregar",
+                dropHintImage: "JPG, PNG, WebP • Máx 10MB",
+                textPlaceholder: "Cola o texto para analisar marcadores de geração por IA...",
+                analyze: "Analisar",
+                analyzing: "A analisar...",
+                footer: "O WINDI não armazena os teus dados. A análise corre localmente quando possível.",
+                constitutional: "Constitucional: I1 · I9 · I11 · I12",
+                confidence: { low: "Baixa", medium: "Média", high: "Alta" },
+                status: {
+                    suspicious: "Suspeito",
+                    unverifiable: "Não verificável",
+                    inconclusive: "Inconclusivo"
+                },
+                meta: {
+                    hash: "Hash",
+                    score: "Pontuação",
+                    type: "Tipo de Média",
+                    time: "Tempo de Análise"
+                }
+            }
+        };
+
+        let currentLang = localStorage.getItem('windi-lang') || 'en';
+        let currentTheme = localStorage.getItem('windi-theme') || 'noir';
+        let currentTab = 'video';
+        let selectedFile = null;
+
+        // ═══ INIT ═══
+        function init() {
+            setLang(currentLang);
+            setTheme(currentTheme);
+            setupTabs();
+            setupDropZones();
+            setupTextInput();
+            setupAnalyzeButton();
+        }
+
+        // ═══ LANGUAGE ═══
+        function setLang(lang) {
+            currentLang = lang;
+            localStorage.setItem('windi-lang', lang);
+
+            // Update buttons
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+
+            // Update texts
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.dataset.i18n;
+                if (I18N[lang][key]) {
+                    el.textContent = I18N[lang][key];
+                }
+            });
+
+            // Update placeholders
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.dataset.i18nPlaceholder;
+                if (I18N[lang][key]) {
+                    el.placeholder = I18N[lang][key];
+                }
+            });
+        }
+
+        // ═══ THEME ═══
+        function setTheme(theme) {
+            currentTheme = theme;
+            localStorage.setItem('windi-theme', theme);
+            document.documentElement.dataset.theme = theme;
+            document.getElementById('themeToggle').textContent = theme === 'noir' ? '☀' : '☽';
+        }
+
+        // ═══ TABS ═══
+        function setupTabs() {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const tab = btn.dataset.tab;
+                    currentTab = tab;
+                    selectedFile = null;
+
+                    // Update tabs
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    // Update zones
+                    document.querySelectorAll('.input-zone').forEach(z => z.classList.remove('active'));
+                    document.getElementById(`zone-${tab}`).classList.add('active');
+
+                    // Reset
+                    updateAnalyzeButton();
+                    hideResult();
+                });
+            });
+        }
+
+        // ═══ DROP ZONES ═══
+        function setupDropZones() {
+            ['Video', 'Image'].forEach(type => {
+                const drop = document.getElementById(`drop${type}`);
+                const input = document.getElementById(`input${type}`);
+
+                drop.addEventListener('click', () => input.click());
+
+                drop.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    drop.classList.add('dragover');
+                });
+
+                drop.addEventListener('dragleave', () => {
+                    drop.classList.remove('dragover');
+                });
+
+                drop.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    drop.classList.remove('dragover');
+                    const file = e.dataTransfer.files[0];
+                    if (file) handleFile(file, type.toLowerCase());
+                });
+
+                input.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) handleFile(file, type.toLowerCase());
+                });
+            });
+        }
+
+        function handleFile(file, type) {
+            selectedFile = file;
+            const drop = document.getElementById(`drop${type.charAt(0).toUpperCase() + type.slice(1)}`);
+            drop.querySelector('.drop-zone-text').textContent = `✓ ${file.name}`;
+            updateAnalyzeButton();
+        }
+
+        // ═══ TEXT INPUT ═══
+        function setupTextInput() {
+            const textarea = document.getElementById('inputText');
+            textarea.addEventListener('input', updateAnalyzeButton);
+        }
+
+        // ═══ ANALYZE BUTTON ═══
+        function setupAnalyzeButton() {
+            const btn = document.getElementById('analyzeBtn');
+            btn.addEventListener('click', analyze);
+        }
+
+        function updateAnalyzeButton() {
+            const btn = document.getElementById('analyzeBtn');
+            let hasInput = false;
+
+            if (currentTab === 'text') {
+                hasInput = document.getElementById('inputText').value.trim().length > 10;
+            } else {
+                hasInput = selectedFile !== null;
+            }
+
+            btn.disabled = !hasInput;
+        }
+
+        // ═══ ANALYZE ═══
+        async function analyze() {
+            const btn = document.getElementById('analyzeBtn');
+            const btnText = btn.querySelector('[data-i18n]');
+
+            // Loading state
+            btn.classList.add('loading');
+            btn.innerHTML = `<span class="spinner"></span> <span>${I18N[currentLang].analyzing}</span>`;
+            btn.disabled = true;
+
+            try {
+                let response;
+
+                if (currentTab === 'text') {
+                    const text = document.getElementById('inputText').value;
+                    response = await fetch('/detect-media/analyze', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ text, intent: true })
+                    });
+                } else {
+                    const formData = new FormData();
+                    formData.append('file', selectedFile);
+                    formData.append('intent', 'true');
+
+                    response = await fetch('/detect-media/analyze', {
+                        method: 'POST',
+                        body: formData
+                    });
+                }
+
+                const data = await response.json();
+                showResult(data);
+
+            } catch (error) {
+                console.error('Analysis error:', error);
+                showResult({
+                    status: 'error',
+                    confidence: 'none',
+                    explanation: {
+                        EN: 'Connection error. Please try again.',
+                        DE: 'Verbindungsfehler. Bitte erneut versuchen.',
+                        PT: 'Erro de conexão. Tenta novamente.'
+                    }
+                });
+            }
+
+            // Reset button
+            btn.classList.remove('loading');
+            btn.innerHTML = `<span data-i18n="analyze">${I18N[currentLang].analyze}</span>`;
+            updateAnalyzeButton();
+        }
+
+        // ═══ RESULT ═══
+        function showResult(data) {
+            const result = document.getElementById('result');
+            const icon = document.getElementById('resultIcon');
+            const status = document.getElementById('resultStatus');
+            const confidence = document.getElementById('resultConfidence');
+            const explanation = document.getElementById('resultExplanation');
+            const meta = document.getElementById('resultMeta');
+            const disclaimer = document.getElementById('resultDisclaimer');
+
+            // Set class
+            result.className = 'result show ' + data.status;
+
+            // Icon
+            const icons = {
+                suspicious: '⚠️',
+                unverifiable: '❓',
+                inconclusive: '🔍',
+                error: '❌'
+            };
+            icon.textContent = icons[data.status] || '❓';
+
+            // Status
+            const statusText = I18N[currentLang].status[data.status] || data.status;
+            status.textContent = statusText;
+
+            // Confidence
+            const confText = I18N[currentLang].confidence[data.confidence] || data.confidence;
+            confidence.textContent = confText;
+
+            // Explanation
+            const explText = data.explanation?.[currentLang.toUpperCase()] || data.explanation?.EN || '';
+            explanation.textContent = explText;
+
+            // Meta
+            if (data.metadata) {
+                const m = I18N[currentLang].meta;
+                meta.innerHTML = `
+                    <div class="meta-item">
+                        <div class="meta-label">${m.type}</div>
+                        <div class="meta-value">${data.media_type || '-'}</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">${m.score}</div>
+                        <div class="meta-value">${(data.analysis?.score * 100).toFixed(1)}%</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">${m.time}</div>
+                        <div class="meta-value">${data.metadata.execution_time_ms}ms</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">${m.hash}</div>
+                        <div class="meta-value">${data.metadata.hash?.slice(0, 16)}...</div>
+                    </div>
+                `;
+            }
+
+            // Disclaimer
+            const discText = data.disclaimer?.[currentLang.toUpperCase()] || data.disclaimer?.EN || '';
+            disclaimer.textContent = '⚖️ ' + discText;
+        }
+
+        function hideResult() {
+            document.getElementById('result').classList.remove('show');
+        }
+
+        // ═══ EVENT LISTENERS ═══
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', () => setLang(btn.dataset.lang));
+        });
+
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            setTheme(currentTheme === 'noir' ? 'klar' : 'noir');
+        });
+
+        // ═══ START ═══
+        init();
+    </script>
+</body>
+</html>
