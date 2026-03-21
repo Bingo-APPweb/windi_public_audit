@@ -853,39 +853,62 @@ Resultado: Diagrama limpo, cores KLAR perfeitas ✅
 
 ---
 
-## §38 Canvas Sovereignty Gate v1.0 — LIVE (2026-03-21)
+## §38 W-CANVAS-001 — Sovereignty Gate v1.0 ✅ (2026-03-21)
 
-### Receipts Selados
-- `WINDI-CANVAS-001-LIVE-20260321` · commit a108b61
-- `WINDI-CANVAS-GATE-V1.0-20260321` · hash 94b27040... · sge_score=95
-- `WB-SOVEREIGN-CANVAS-20260321` · hash b54cc4b2... · sge_score=98
+Implementação do motor de decisão constitucional para controle de tokens e integridade visual.
 
-### Arquitectura
+### Governança e Soberania
+
+| Campo | Valor |
+|-------|-------|
+| Wisdom Block | `WB-SOVEREIGN-CANVAS-20260321` |
+| Hash | `b54cc4b2adeba908da6dd161be25cf8fcb3b5d9f3491c2543163fbdea85be6fa` |
+| SGE Score | 98 (Confiança Forense Elevada) |
+| Gate Receipt | `WINDI-CANVAS-GATE-V1.0-20260321` · hash `94b27040...` |
+
+**Princípio:** "SOVEREIGN não é tema. É protocolo visual de autoria."
+**Invariante I9:** Ativação restrita a DIDs verificados; vinculação obrigatória de Hash/Sitzung no SVG.
+
+### Engine de Decisão (Gate v1.0)
+
 ```
-FREE  → local_template     → $0.000000  (soberania absoluta)
-MED   → gemini-2.5-flash   → ~$0.00005  (semântica justificada)
-HIGH  → gemini-2.5-pro     → ~$0.0025   (board-ready quality)
+┌─────────┬───────────────────┬────────────┬────────────────────────────┐
+│  TIER   │  MODEL            │  TOKENS    │  PROPÓSITO                 │
+├─────────┼───────────────────┼────────────┼────────────────────────────┤
+│  FREE   │  local_template   │  0         │  Soberania 100%            │
+│  MED    │  gemini-2.5-flash │  ~600      │  Velocidade + custo-benefício │
+│  HIGH   │  gemini-2.5-pro   │  ~2000     │  Board-Ready Excellence    │
+└─────────┴───────────────────┴────────────┴────────────────────────────┘
 ```
 
-### 12 Templates Locais
-flowchart: windi_pipeline · agentes_windi · did_flow · bercario_flow · canvas_seal · did_creation
-mindmap:   constellation
-sequence:  document_seal · payment_flow · verify_flow
-timeline:  windi_evolution · roadmap_q2_2026
+**Smart Downgrade:** Redireciona pedidos HIGH com complexidade < 60 para Flash, otimizando o tesouro.
 
-### Métricas
-- Sovereignty Rate: ~55% local (meta: 80%)
-- Smart Downgrade: HIGH→Flash quando complexity < 60
-- Canvas é 500x mais barato que Grove Arena ($0.0003 vs $0.17)
-- Log: /opt/windi/logs/canvas-sovereignty.log
+### Biblioteca de Templates Locais (12 activos)
 
-### Princípio Selado (WB-SOVEREIGN-CANVAS-20260321)
-"SOVEREIGN não é tema. É protocolo visual de autoria.
-KLAR é o que o sistema desenhou. SOVEREIGN é o que o Humano assinou."
+| Tipo | Templates |
+|------|-----------|
+| Flowchart | `windi_pipeline` · `agentes_windi` · `did_flow` · `bercario_flow` · `canvas_seal` · `did_creation` |
+| Mindmap | `constellation` |
+| Sequence | `document_seal` · `payment_flow` · `verify_flow` |
+| Timeline | `windi_evolution` · `roadmap_q2_2026` |
+
+### Métricas de Produção
+
+- **Sovereignty Rate:** ~55% local (meta: 80%)
+- **Economia vs Grove Arena:** 500x mais barato ($0.0003 vs $0.17/render)
+- **Log:** `/opt/windi/logs/canvas-sovereignty.log`
+- **Commit:** `6ec6692` (pushed to main)
 
 ### Estratégia de Produto
-FREE → "Vês como funciona" | MED → "Uso no dia-a-dia" | HIGH → "Apresento ao board" ⭐
+
+```
+FREE  → "Vês como funciona"      │ Demonstração
+MED   → "Uso no dia-a-dia"       │ Profissional
+HIGH  → "Apresento ao board" ⭐   │ Elite institucional
+```
 
 ### Pendente
-- SOVEREIGN Protocol: DID obrigatório + hash no SVG + rodapé forense
-- Sovereignty Rate 55% → 80% (mais templates)
+
+- [ ] SOVEREIGN Protocol: DID obrigatório + hash no SVG + rodapé forense
+- [ ] Sovereignty Rate 55% → 80% (mais templates)
+- [ ] Automação sovereignty_report semanal
