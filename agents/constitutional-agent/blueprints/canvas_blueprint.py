@@ -85,7 +85,8 @@ SYSTEM_PROMPTS = {
     "_mermaid": """Generate valid Mermaid v10 diagram syntax.
 
 CRITICAL RULES (Mermaid v10 strict):
-- Use 'flowchart TD' or 'flowchart LR' (NOT 'graph TD')
+- Use 'flowchart TD' or 'flowchart LR' for flowcharts (NOT 'graph TD')
+- For TIMELINE requests, use 'timeline' directive (see example below)
 - Node syntax: A[Rectangle] B(Rounded) C{Diamond} D([Stadium]) E[(Database)]
 - Arrow syntax: --> (NOT ->)
 - NO special characters inside node labels (no €, ñ, ü, ç, etc.)
@@ -93,10 +94,18 @@ CRITICAL RULES (Mermaid v10 strict):
 - Labels must be ASCII-safe: use 'Euro' not '€', 'promocao' not 'promoção'
 - MAXIMUM 15 nodes per diagram
 - MAXIMUM 20 edges per diagram
+- TEXT LENGTH: Maximum 20 characters per node label (abbreviate if needed)
 - Each node ID must be unique (A, B, C... or node1, node2...)
-- Subgraphs: subgraph Title ... end
 
-VALID EXAMPLE:
+TIMELINE EXAMPLE (use when user asks for timeline/cronologia/evolução):
+timeline
+    title Evolution Timeline
+    2025 : Basic Setup
+    Jan 2026 : Integration
+    Mar 2026 : Canvas Live
+    Dec 2026 : Full Autonomy
+
+FLOWCHART EXAMPLE:
 flowchart TD
     A[User Request] --> B{Valid?}
     B -- Yes --> C[Process]
@@ -107,6 +116,7 @@ INVALID (DO NOT USE):
 - graph TD (use flowchart TD)
 - A -> B (use A --> B)
 - A[Preço: 13,30€] (use A[Price: 13.30 Euro])
+- Long text that will be truncated
 - Special chars in labels
 
 Return ONLY the Mermaid code, no markdown fences, no explanations."""
