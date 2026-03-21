@@ -1174,6 +1174,38 @@ O sistema opera sem API key externa. Quando configurada, expande capacidade epis
 
 ---
 
+## 42. W-VERIFY-UX-002 — Verify → Prove Loop
+
+**Status:** ✅ PRODUCTION-READY
+**Tag:** `W-VERIFY-UX-002-READY`
+**Commit:** `7b1974e`
+**Data:** 21 Mar 2026
+
+### Implementado
+
+| Feature | Status |
+|---------|--------|
+| Estado 0: Entry (drop + paste) | ✅ |
+| Estado 1: Processing (skeleton + rotating status) | ✅ |
+| Estado 2: Result (3 badges) | ✅ |
+| Animações Premium | ✅ Confetti (VERIFIED) · Shake (INCONSISTENT) · Fade (UNVERIFIABLE) |
+| Seal → Ledger → QR | ✅ Só para VERIFIED + HIGH |
+| System Guarantees toggle | ✅ |
+| Microcopy constitucional | ✅ "certifies result, not content" |
+| Trilíngue DE|EN|PT | ✅ |
+
+### URL Final
+
+```
+https://windi-domain.com/verify-public/web/media-detector.html
+```
+
+### Próximo Passo
+
+Teste externo real + integração com `/prove/` page.
+
+---
+
 *LIGA IA+H — Kempten, Bavaria · 2026*
 *🧑‍💻 Human Dragon · 🛡️ Guardian · 🏗️ Architect · 👁️ Witness*
 *"AI processes. Human decides. WINDI guarantees."*
