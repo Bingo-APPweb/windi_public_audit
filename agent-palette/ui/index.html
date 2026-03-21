@@ -3922,20 +3922,88 @@ const CanvasPanelUI = () => {
 
       {result&&(
         <div style={{display:"flex",flexDirection:"column",gap:"8px"}}>
-          <div style={{padding:"10px",borderRadius:"8px",fontSize:"11px",background:"#1a3a1a",color:"#6bff6b"}}>
+
+          {/* Badge sucesso */}
+          <div style={{padding:"10px",borderRadius:"8px",fontSize:"11px",background:"var(--color-background-success)",color:"var(--color-text-success)",fontFamily:"var(--font-mono)"}}>
             ✓ {result.canvas_id} · {result.format?.toUpperCase()} · {result.content?.length||0} chars
           </div>
+
+          {/* Linha de acções */}
+          <div style={{display:"flex",gap:"8px",flexWrap:"wrap"}}>
+
+            {/* Download SVG/Mermaid */}
+            <button onClick={()=>{
+              const blob=new Blob([result.content],{type:"text/plain"});
+              const a=document.createElement("a");
+              a.href=URL.createObjectURL(blob);
+              a.download=`${result.canvas_id}.${result.format==="svg"?"svg":"mmd"}`;
+              a.click();
+            }} style={{
+              padding:"6px 12px",borderRadius:"6px",fontSize:"12px",
+              border:"1px solid var(--color-border-secondary)",
+              background:"var(--color-background-secondary)",
+              color:"var(--color-text-primary)",cursor:"pointer",
+            }}>
+              ↓ {result.format?.toUpperCase()}
+            </button>
+
+            {/* Download .wcav */}
+            {result.wcav_b64&&(
+              <button onClick={()=>{
+                const bin=atob(result.wcav_b64);
+                const arr=new Uint8Array(bin.length).map((_,i)=>bin.charCodeAt(i));
+                const blob=new Blob([arr],{type:"application/octet-stream"});
+                const a=document.createElement("a");
+                a.href=URL.createObjectURL(blob);
+                a.download=result.wcav_filename||`${result.canvas_id}.wcav`;
+                a.click();
+              }} style={{
+                padding:"6px 12px",borderRadius:"6px",fontSize:"12px",
+                border:"1px solid var(--color-border-secondary)",
+                background:"var(--color-background-secondary)",
+                color:"var(--color-text-primary)",cursor:"pointer",
+              }}>
+                ↓ .wcav
+              </button>
+            )}
+
+            {/* Copiar canvas_id */}
+            <button onClick={()=>navigator.clipboard.writeText(result.canvas_id)} style={{
+              padding:"6px 12px",borderRadius:"6px",fontSize:"12px",
+              border:"1px solid var(--color-border-secondary)",
+              background:"var(--color-background-secondary)",
+              color:"var(--color-text-secondary)",cursor:"pointer",
+            }}>
+              ⎘ ID
+            </button>
+
+            {/* Selar no Ledger — futuro */}
+            <button disabled style={{
+              padding:"6px 12px",borderRadius:"6px",fontSize:"12px",
+              border:"1px solid var(--color-border-tertiary)",
+              background:"transparent",
+              color:"var(--color-text-tertiary)",cursor:"default",opacity:0.5,
+            }}>
+              ⬡ Selar
+            </button>
+
+          </div>
+
+          {/* Preview SVG inline */}
           {result.format==="svg"&&result.content&&(
             <div
-              style={{borderRadius:"8px",border:"1px solid #333",overflow:"hidden",background:"#0a0a10",padding:"8px"}}
+              style={{borderRadius:"8px",border:"1px solid var(--color-border-tertiary)",overflow:"hidden",background:"var(--color-background-secondary)",padding:"8px"}}
               dangerouslySetInnerHTML={{__html:result.content}}
             />
           )}
+
+          {/* Mermaid: código */}
           {result.format==="mermaid"&&result.content&&(
-            <pre style={{fontSize:"11px",padding:"10px",borderRadius:"8px",background:"#1a1a24",color:"#888",overflow:"auto",fontFamily:"'JetBrains Mono',monospace"}}>
+            <pre style={{fontSize:"11px",padding:"10px",borderRadius:"8px",background:"var(--color-background-secondary)",color:"var(--color-text-secondary)",overflow:"auto",fontFamily:"var(--font-mono)"}}>
               {result.content}
             </pre>
           )}
+
         </div>
       )}
     </div>
@@ -4268,6 +4336,13 @@ function App(){
 
   // Anon timer — reopens DID modal every 30s after expiry
   useEffect(()=>{if(wallet||view!=="main")return;const iv=setInterval(()=>{setAnonSec(s=>{const next=s-1;if(next===0||(next<0&&next%30===0)){setShowDID(true);}return next;});},1000);return()=>clearInterval(iv);},[wallet,view]);
+
+  // C6: Onboard event listener — open DID modal from external trigger
+  useEffect(()=>{
+    const handler=(e)=>{console.log('[Gen7] windi:open-did event received',e.detail);setShowDID(true);};
+    window.addEventListener('windi:open-did',handler);
+    return()=>window.removeEventListener('windi:open-did',handler);
+  },[]);
 
   // Scroll chat
   useEffect(()=>{chatEnd.current?.scrollIntoView({behavior:"smooth"});},[msgs,typing]);
@@ -8208,8 +8283,31 @@ function App(){
         <style>{"@keyframes govSlide{from{transform:translateX(100%)}to{transform:translateX(0)}}"}</style>
       </div>}
 
+      {/* FOOTER GEN7 */}
+      <div style={{
+        padding:"12px 16px",
+        borderTop:"1px solid var(--color-border-tertiary)",
+        display:"flex", justifyContent:"space-between", alignItems:"center",
+        fontSize:"11px", color:"var(--color-text-tertiary)",
+        position:"fixed", bottom:0, left:0, right:0,
+        background:"var(--color-background-primary)",
+        zIndex:100
+      }}>
+        <span>© 2026 WINDI Publishing House</span>
+        <div style={{display:"flex", gap:"16px"}}>
+          <button onClick={()=>window.open("https://windi-domain.com/library/","_blank")}
+            style={{background:"none",border:"none",cursor:"pointer",fontSize:"11px",color:"var(--color-text-tertiary)",padding:0}}>
+            Library
+          </button>
+          <button onClick={()=>window.open("https://windi-domain.com/library/about-windi.html","_blank")}
+            style={{background:"none",border:"none",cursor:"pointer",fontSize:"11px",color:"var(--color-text-tertiary)",padding:0}}>
+            About WINDI
+          </button>
+        </div>
+      </div>
+
       {/* Toast */}
-      <div style={{position:"fixed",bottom:16,left:"50%",transform:`translateX(-50%) translateY(${toast.v?0:16}px)`,background:th.card,color:th.text,padding:"8px 18px",borderRadius:10,border:`1px solid ${th.gold}44`,boxShadow:"0 6px 20px #0003",opacity:toast.v?1:0,transition:"all 0.4s cubic-bezier(0.34,1.56,0.64,1)",fontSize:12,zIndex:9999,pointerEvents:"none"}}>{toast.m}</div>
+      <div style={{position:"fixed",bottom:40,left:"50%",transform:`translateX(-50%) translateY(${toast.v?0:16}px)`,background:th.card,color:th.text,padding:"8px 18px",borderRadius:10,border:`1px solid ${th.gold}44`,boxShadow:"0 6px 20px #0003",opacity:toast.v?1:0,transition:"all 0.4s cubic-bezier(0.34,1.56,0.64,1)",fontSize:12,zIndex:9999,pointerEvents:"none"}}>{toast.m}</div>
     </div>);
 }
 
@@ -8591,6 +8689,24 @@ window.addEventListener('load', function() {
     document.body.appendChild(notice);
     setTimeout(()=>{notice.classList.add('visible');setTimeout(()=>notice.classList.remove('visible'),4000);},800);
   }
+  // C6: Onboard flow — open DID modal when ?onboard= parameter present
+  function handleOnboard(){
+    const params=new URLSearchParams(window.location.search);
+    const tier=params.get('onboard');
+    if(!tier)return;
+    sessionStorage.setItem('windi_onboard_tier',tier);
+    window.history.replaceState({},'',window.location.pathname);
+    console.log('[Gen7] Onboard tier:',tier);
+    // Aguardar React montar antes de abrir modal
+    setTimeout(()=>{
+      if(typeof setShowDID==='function'){
+        setShowDID(true);
+      } else {
+        // Fallback: dispara evento custom para React captar
+        window.dispatchEvent(new CustomEvent('windi:open-did',{detail:{tier}}));
+      }
+    },800);
+  }
   // C5: Virtual keyboard handler — adjust canvas when keyboard opens
   function initVirtualKeyboardHandler(){
     if(!window.visualViewport)return;
@@ -8616,7 +8732,7 @@ window.addEventListener('load', function() {
     const isMobile=window.innerWidth<768||('ontouchstart' in window)||(navigator.maxTouchPoints>0);
     if(!isMobile){console.log('[Gen7] Desktop — skipped');return;}
     console.log('[Gen7] Mobile — Fase 1 init');
-    setTimeout(()=>{initPinchZoom();enforceMinTapTargets();handleFromDesktop();initVirtualKeyboardHandler();console.log('[Gen7] Fase 1 activa');},300);
+    setTimeout(()=>{initPinchZoom();enforceMinTapTargets();handleFromDesktop();handleOnboard();initVirtualKeyboardHandler();console.log('[Gen7] Fase 1 activa');},300);
     let resizeTimer;
     window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(enforceMinTapTargets,200);});
   }
