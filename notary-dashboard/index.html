@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="noir">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>W-NOTARY-001 "Notarial" — Cera Digital</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            /* Sovereign Notarial Palette */
+            --bg-primary: #0A0A10;
+            --bg-secondary: #12121A;
+            --bg-glass: rgba(18, 18, 26, 0.75);
+            --gold: #C9A84C;
+            --gold-dim: #8B7424;
+            --gold-glow: #FFD700;
+            --crimson: #8B1A1A;
+            --crimson-glow: #DC143C;
+            --purple: #4A1A6B;
+            --purple-glow: #9B59B6;
+            --teal: #0F6E56;
+            --teal-glow: #14D9A5;
+            --parchment: #F5E6C8;
+            --ink: #1A1A1A;
+            --text-primary: #E8E6E1;
+            --text-secondary: #888780;
+            --border: #2A2A34;
+            --seal-red: #8B0000;
+            --seal-gold: #DAA520;
+        }
+
+        [data-theme="klar"] {
+            --bg-primary: #FAF8F5;
+            --bg-secondary: #F0EDE8;
+            --bg-glass: rgba(240, 237, 232, 0.9);
+            --text-primary: #1A1A1A;
+            --text-secondary: #5F5E5A;
+            --border: #D3D1C7;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 24px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--gold);
+            font-family: 'Times New Roman', serif;
+        }
+
+        .header .subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--bg-glass);
+            border: 1px solid var(--gold);
+            border-radius: 24px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--gold-glow);
+            box-shadow: 0 0 10px var(--gold-glow);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .card {
+            background: var(--bg-glass);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            backdrop-filter: blur(12px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        /* Digital Wax Seal */
+        .seal-card {
+            grid-column: span 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-color: var(--crimson);
+        }
+
+        .wax-seal {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            margin: 20px 0;
+        }
+
+        .wax-seal svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 4px 20px rgba(139, 0, 0, 0.4));
+        }
+
+        .seal-outer {
+            fill: var(--seal-red);
+            filter: url(#waxTexture);
+        }
+
+        .seal-inner {
+            fill: var(--seal-gold);
+        }
+
+        .seal-text {
+            font-family: 'Times New Roman', serif;
+            font-size: 8px;
+            fill: var(--seal-gold);
+            text-anchor: middle;
+        }
+
+        .seal-hash {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--teal-glow);
+            text-align: center;
+            margin-top: 12px;
+            background: rgba(15, 110, 86, 0.2);
+            padding: 6px 12px;
+            border-radius: 6px;
+        }
+
+        .seal-status {
+            font-size: 12px;
+            color: var(--gold);
+            margin-top: 8px;
+            font-weight: 600;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .stat-item {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--gold);
+            font-family: 'Times New Roman', serif;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+
+        /* Ledger Counter */
+        .ledger-counter {
+            grid-column: span 1;
+            text-align: center;
+            border-color: var(--teal);
+        }
+
+        .ledger-number {
+            font-size: 56px;
+            font-weight: 800;
+            color: var(--teal-glow);
+            font-family: 'JetBrains Mono', monospace;
+            text-shadow: 0 0 30px rgba(20, 217, 165, 0.3);
+            animation: countUp 2s ease-out;
+        }
+
+        @keyframes countUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .ledger-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+        }
+
+        .ledger-sublabel {
+            font-size: 11px;
+            color: var(--teal);
+            margin-top: 4px;
+        }
+
+        /* Timeline */
+        .timeline-card {
+            grid-column: span 2;
+            border-color: var(--purple);
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 12px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--gold), var(--crimson));
+        }
+
+        .timeline-item {
+            position: relative;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .timeline-item:last-child { border-bottom: none; }
+
+        .timeline-item::before {
+            content: '🔏';
+            position: absolute;
+            left: -34px;
+            top: 18px;
+            font-size: 16px;
+        }
+
+        .timeline-id {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--gold);
+            margin-bottom: 4px;
+        }
+
+        .timeline-title {
+            font-size: 14px;
+            color: var(--text-primary);
+            font-family: 'Times New Roman', serif;
+            margin-bottom: 4px;
+        }
+
+        .timeline-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .timeline-hash {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--teal-glow);
+        }
+
+        /* Act Types Chart */
+        .chart-card {
+            grid-column: span 1;
+            border-color: var(--gold);
+        }
+
+        .chart-container {
+            height: 200px;
+        }
+
+        /* Integrations */
+        .integrations-card {
+            grid-column: span 3;
+            border-color: var(--gold-dim);
+        }
+
+        .integrations-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 32px;
+            padding: 24px;
+        }
+
+        .integration-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .integration-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--gold);
+            box-shadow: 0 0 20px rgba(201, 168, 76, 0.2);
+        }
+
+        .integration-icon.central {
+            width: 96px;
+            height: 96px;
+            font-size: 40px;
+            border-color: var(--crimson);
+            box-shadow: 0 0 30px rgba(139, 0, 0, 0.3);
+        }
+
+        .integration-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .integration-port {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--gold);
+        }
+
+        .integration-connector {
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--gold-dim), var(--gold), var(--gold-dim));
+            position: relative;
+        }
+
+        .integration-connector::after {
+            content: '→';
+            position: absolute;
+            right: -8px;
+            top: -8px;
+            color: var(--gold);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 32px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .footer-sig {
+            font-family: 'Times New Roman', serif;
+            font-style: italic;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            background: var(--bg-glass);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()">☀</button>
+
+    <header class="header">
+        <div>
+            <h1>🔏 W-NOTARY-001 "Notarial"</h1>
+            <p class="subtitle">Cera Digital — Sovereign Notarial Services</p>
+        </div>
+        <div class="status-badge">
+            <span class="status-dot"></span>
+            <span>v0.1.0 LIVE</span>
+        </div>
+    </header>
+
+    <div class="dashboard-grid">
+        <!-- Digital Wax Seal -->
+        <div class="card seal-card">
+            <div class="card-header">
+                <span class="card-title">Selo Digital</span>
+            </div>
+            <div class="wax-seal">
+                <svg viewBox="0 0 200 200">
+                    <defs>
+                        <filter id="waxTexture">
+                            <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="3"/>
+                            <feDisplacementMap in="SourceGraphic" scale="5"/>
+                        </filter>
+                        <radialGradient id="sealGradient" cx="30%" cy="30%">
+                            <stop offset="0%" stop-color="#B22222"/>
+                            <stop offset="100%" stop-color="#8B0000"/>
+                        </radialGradient>
+                    </defs>
+                    <!-- Outer wax -->
+                    <circle cx="100" cy="100" r="90" fill="url(#sealGradient)" class="seal-outer"/>
+                    <!-- Inner ring -->
+                    <circle cx="100" cy="100" r="70" fill="none" stroke="#DAA520" stroke-width="3"/>
+                    <!-- Center emblem -->
+                    <circle cx="100" cy="100" r="50" fill="#1A1A1A"/>
+                    <text x="100" y="90" class="seal-text" style="font-size:24px; fill:#DAA520;">⚖️</text>
+                    <text x="100" y="115" class="seal-text" style="font-size:10px; fill:#DAA520;">WINDI</text>
+                    <text x="100" y="130" class="seal-text" style="font-size:8px; fill:#888;">NOTARIAL</text>
+                    <!-- Ribbon effect -->
+                    <path d="M30 160 Q50 180 70 160 L130 160 Q150 180 170 160" fill="none" stroke="#DAA520" stroke-width="2"/>
+                </svg>
+            </div>
+            <div class="seal-hash" id="currentHash">sha256:94b27040...</div>
+            <div class="seal-status">✓ SELADO NO LEDGER</div>
+        </div>
+
+        <!-- Ledger Counter -->
+        <div class="card ledger-counter">
+            <div class="card-header">
+                <span class="card-title">Forensic Ledger</span>
+                <span>📜</span>
+            </div>
+            <div class="ledger-number" id="receiptCount">56,585</div>
+            <div class="ledger-label">Receipts Imutáveis</div>
+            <div class="ledger-sublabel">I11 — Permanência de Evidência Criptográfica</div>
+        </div>
+
+        <!-- Stats -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Estatísticas</span>
+                <span>📊</span>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value">5</div>
+                    <div class="stat-label">Atos Totais</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">4</div>
+                    <div class="stat-label">Certificações</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">1</div>
+                    <div class="stat-label">No Ledger</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">6</div>
+                    <div class="stat-label">Tipos de Ato</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Seals Timeline -->
+        <div class="card timeline-card">
+            <div class="card-header">
+                <span class="card-title">Últimos Selos</span>
+                <span>🕐</span>
+            </div>
+            <div class="timeline" id="sealsTimeline">
+                <div class="timeline-item">
+                    <div class="timeline-id">WB-SOVEREIGN-CANVAS-20260321</div>
+                    <div class="timeline-title">SOVEREIGN Protocol Definition</div>
+                    <div class="timeline-meta">
+                        <span>👤 human-dragon</span>
+                        <span class="timeline-hash">23e1b995...</span>
+                        <span>🏛️ HIGH</span>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-id">WINDI-CANVAS-GATE-V1.0-20260321</div>
+                    <div class="timeline-title">Canvas Sovereignty Gate v1.0</div>
+                    <div class="timeline-meta">
+                        <span>👤 W-CANVAS-001</span>
+                        <span class="timeline-hash">94b27040...</span>
+                        <span>🏛️ HIGH</span>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-id">WINDI-NERVOUS-SYSTEM-20260319</div>
+                    <div class="timeline-title">Nervous System Verified</div>
+                    <div class="timeline-meta">
+                        <span>👤 W-CIA-001</span>
+                        <span class="timeline-hash">8f3c2a1b...</span>
+                        <span>🏛️ HIGH</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Act Types Chart -->
+        <div class="card chart-card">
+            <div class="card-header">
+                <span class="card-title">Tipos de Ato</span>
+                <span>📋</span>
+            </div>
+            <div class="chart-container">
+                <canvas id="actTypesChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Integrations -->
+        <div class="card integrations-card">
+            <div class="card-header">
+                <span class="card-title">Sovereign Integrations</span>
+                <span>🔗</span>
+            </div>
+            <div class="integrations-visual">
+                <div class="integration-node">
+                    <div class="integration-icon">📜</div>
+                    <span class="integration-label">Ledger</span>
+                    <span class="integration-port">:8101</span>
+                </div>
+                <div class="integration-connector"></div>
+                <div class="integration-node">
+                    <div class="integration-icon central">🔏</div>
+                    <span class="integration-label">W-NOTARY-001</span>
+                    <span class="integration-port">:8091</span>
+                </div>
+                <div class="integration-connector"></div>
+                <div class="integration-node">
+                    <div class="integration-icon">🔒</div>
+                    <span class="integration-label">Vault</span>
+                    <span class="integration-port">:8106</span>
+                </div>
+                <div class="integration-connector"></div>
+                <div class="integration-node">
+                    <div class="integration-icon">📄</div>
+                    <span class="integration-label">Export</span>
+                    <span class="integration-port">:8103</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-sig">
+            🐉 W-NOTARY-001 "Notarial" — Cera Digital v0.1.0
+        </div>
+        <div>
+            "AI processes. Human decides. WINDI guarantees."
+        </div>
+    </footer>
+
+    <script>
+        // Theme
+        function toggleTheme() {
+            const html = document.documentElement;
+            const btn = document.querySelector('.theme-toggle');
+            if (html.dataset.theme === 'noir') {
+                html.dataset.theme = 'klar';
+                btn.textContent = '☽';
+                localStorage.setItem('windi-theme', 'klar');
+            } else {
+                html.dataset.theme = 'noir';
+                btn.textContent = '☀';
+                localStorage.setItem('windi-theme', 'noir');
+            }
+        }
+
+        const savedTheme = localStorage.getItem('windi-theme') || 'noir';
+        document.documentElement.dataset.theme = savedTheme;
+        document.querySelector('.theme-toggle').textContent = savedTheme === 'noir' ? '☀' : '☽';
+
+        // Act Types Donut Chart
+        const ctx = document.getElementById('actTypesChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Certification', 'Recognition', 'Timestamp', 'Apostille', 'Witnessing', 'Authentication'],
+                datasets: [{
+                    data: [4, 0, 0, 0, 0, 0],
+                    backgroundColor: [
+                        '#C9A84C',
+                        '#8B0000',
+                        '#0F6E56',
+                        '#534AB7',
+                        '#993C1D',
+                        '#185FA5'
+                    ],
+                    borderColor: '#12121A',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: '#888780',
+                            font: { size: 10 },
+                            boxWidth: 12
+                        }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+
+        // Animate receipt counter
+        function animateCounter(element, target) {
+            let current = 0;
+            const increment = target / 50;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                element.textContent = Math.floor(current).toLocaleString();
+            }, 30);
+        }
+
+        // Load real data
+        async function loadData() {
+            try {
+                const ledgerRes = await fetch('/api/ledger/health');
+                const ledgerData = await ledgerRes.json();
+                if (ledgerData.receipts) {
+                    animateCounter(document.getElementById('receiptCount'), ledgerData.receipts);
+                }
+            } catch (e) {
+                console.log('Using cached data');
+                animateCounter(document.getElementById('receiptCount'), 56585);
+            }
+        }
+
+        loadData();
+    </script>
+</body>
+</html>

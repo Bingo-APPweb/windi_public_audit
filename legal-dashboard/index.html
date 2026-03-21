@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="noir">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>W-LEGAL-001 "Justiça" — Sovereign Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            /* Sovereign Palette */
+            --bg-primary: #0A0A10;
+            --bg-secondary: #12121A;
+            --bg-glass: rgba(18, 18, 26, 0.7);
+            --gold: #C9A84C;
+            --gold-dim: #8B7424;
+            --teal: #0F6E56;
+            --teal-glow: #14D9A5;
+            --coral: #993C1D;
+            --coral-glow: #FF6B3D;
+            --purple: #534AB7;
+            --purple-glow: #8B7FFF;
+            --text-primary: #E8E6E1;
+            --text-secondary: #888780;
+            --border: #2A2A34;
+            --success: #22C55E;
+            --warning: #EAB308;
+            --danger: #EF4444;
+        }
+
+        [data-theme="klar"] {
+            --bg-primary: #FAFAF8;
+            --bg-secondary: #F0F0EC;
+            --bg-glass: rgba(240, 240, 236, 0.85);
+            --text-primary: #1A1A1A;
+            --text-secondary: #5F5E5A;
+            --border: #D3D1C7;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 24px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--gold);
+        }
+
+        .header .subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--bg-glass);
+            border: 1px solid var(--teal);
+            border-radius: 24px;
+            backdrop-filter: blur(10px);
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--teal-glow);
+            box-shadow: 0 0 10px var(--teal-glow);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Grid Layout */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .card {
+            background: var(--bg-glass);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            backdrop-filter: blur(12px);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: var(--gold-dim);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .card-icon {
+            font-size: 20px;
+        }
+
+        /* Evidence Timeline - Immutable Chronos */
+        .evidence-card { border-color: var(--purple); }
+        .evidence-card .card-icon { color: var(--purple-glow); }
+
+        .timeline {
+            position: relative;
+            padding-left: 24px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--purple-glow), var(--purple));
+        }
+
+        .timeline-item {
+            position: relative;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .timeline-item:last-child { border-bottom: none; }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -20px;
+            top: 16px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--purple-glow);
+            box-shadow: 0 0 8px var(--purple-glow);
+        }
+
+        .timeline-hash {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--teal-glow);
+            background: rgba(15, 110, 86, 0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-bottom: 4px;
+            display: inline-block;
+        }
+
+        .timeline-title {
+            font-size: 13px;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .timeline-time {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        /* Confidence Radar */
+        .confidence-card { border-color: var(--gold); }
+        .confidence-card .card-icon { color: var(--gold); }
+
+        .radar-container {
+            position: relative;
+            height: 200px;
+        }
+
+        /* WCAF Compliance */
+        .wcaf-card { border-color: var(--teal); }
+        .wcaf-card .card-icon { color: var(--teal-glow); }
+
+        .jurisdiction-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .jurisdiction-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .jurisdiction-flag {
+            font-size: 24px;
+        }
+
+        .jurisdiction-info {
+            flex: 1;
+        }
+
+        .jurisdiction-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .jurisdiction-code {
+            font-size: 10px;
+            color: var(--text-secondary);
+        }
+
+        .jurisdiction-status {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+        }
+
+        /* Cases Table */
+        .cases-section {
+            grid-column: span 3;
+        }
+
+        .cases-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .cases-table th {
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .cases-table td {
+            padding: 16px;
+            font-size: 13px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .case-id {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--gold);
+        }
+
+        .case-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .case-status.open {
+            background: rgba(234, 179, 8, 0.15);
+            color: var(--warning);
+        }
+
+        .case-status.closed {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--success);
+        }
+
+        /* ForensicBridge Section */
+        .bridge-section {
+            grid-column: span 3;
+            border-color: var(--teal);
+        }
+
+        .bridge-visual {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            padding: 32px;
+        }
+
+        .bridge-node {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bridge-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            border: 2px solid var(--teal);
+            background: var(--bg-secondary);
+        }
+
+        .bridge-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .bridge-port {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--teal-glow);
+        }
+
+        .bridge-connector {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--teal-glow);
+        }
+
+        .bridge-line {
+            width: 80px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--teal), var(--teal-glow), var(--teal));
+            animation: flow 2s linear infinite;
+        }
+
+        @keyframes flow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 32px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .footer-signature {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-hash {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--gold-dim);
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            background: var(--bg-glass);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 16px;
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()">☀</button>
+
+    <header class="header">
+        <div>
+            <h1>⚖️ W-LEGAL-001 "Justiça"</h1>
+            <p class="subtitle">Sovereign Legal Agent — WINDI Constitutional Framework</p>
+        </div>
+        <div class="status-badge">
+            <span class="status-dot"></span>
+            <span>v0.2.0 LIVE</span>
+        </div>
+    </header>
+
+    <div class="dashboard-grid">
+        <!-- Evidence Git - Immutable Chronos -->
+        <div class="card evidence-card">
+            <div class="card-header">
+                <span class="card-title">Evidence Git</span>
+                <span class="card-icon">🔐</span>
+            </div>
+            <div class="timeline" id="evidenceTimeline">
+                <div class="timeline-item">
+                    <div class="timeline-hash">sha256:68a07d20...</div>
+                    <div class="timeline-title">Field Report — Nebelhorn</div>
+                    <div class="timeline-time">10 Mar 2026 · 11:17</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-hash">sha256:7f3b2c1a...</div>
+                    <div class="timeline-title">Contract Integrity Check</div>
+                    <div class="timeline-time">08 Mar 2026 · 14:32</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-hash">sha256:a9c4e8f2...</div>
+                    <div class="timeline-title">Deploy Verification</div>
+                    <div class="timeline-time">04 Mar 2026 · 09:45</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Confidence Radar -->
+        <div class="card confidence-card">
+            <div class="card-header">
+                <span class="card-title">Confidence Radar</span>
+                <span class="card-icon">📊</span>
+            </div>
+            <div class="radar-container">
+                <canvas id="confidenceRadar"></canvas>
+            </div>
+        </div>
+
+        <!-- WCAF Compliance -->
+        <div class="card wcaf-card">
+            <div class="card-header">
+                <span class="card-title">WCAF Jurisdictions</span>
+                <span class="card-icon">🌍</span>
+            </div>
+            <div class="jurisdiction-grid">
+                <div class="jurisdiction-item">
+                    <span class="jurisdiction-flag">🇩🇪</span>
+                    <div class="jurisdiction-info">
+                        <div class="jurisdiction-name">Germany</div>
+                        <div class="jurisdiction-code">ZPO · BGB</div>
+                    </div>
+                    <span class="jurisdiction-status"></span>
+                </div>
+                <div class="jurisdiction-item">
+                    <span class="jurisdiction-flag">🇪🇺</span>
+                    <div class="jurisdiction-info">
+                        <div class="jurisdiction-name">European Union</div>
+                        <div class="jurisdiction-code">eIDAS · GDPR</div>
+                    </div>
+                    <span class="jurisdiction-status"></span>
+                </div>
+                <div class="jurisdiction-item">
+                    <span class="jurisdiction-flag">🇧🇷</span>
+                    <div class="jurisdiction-info">
+                        <div class="jurisdiction-name">Brazil</div>
+                        <div class="jurisdiction-code">Marco Civil · LGPD</div>
+                    </div>
+                    <span class="jurisdiction-status"></span>
+                </div>
+                <div class="jurisdiction-item">
+                    <span class="jurisdiction-flag">🌐</span>
+                    <div class="jurisdiction-info">
+                        <div class="jurisdiction-name">International</div>
+                        <div class="jurisdiction-code">UNCITRAL</div>
+                    </div>
+                    <span class="jurisdiction-status"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cases Table -->
+        <div class="card cases-section">
+            <div class="card-header">
+                <span class="card-title">Active Cases</span>
+                <span class="card-icon">📋</span>
+            </div>
+            <table class="cases-table">
+                <thead>
+                    <tr>
+                        <th>Case ID</th>
+                        <th>Title</th>
+                        <th>Jurisdiction</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="casesTableBody">
+                    <!-- Populated by JS -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ForensicBridge -->
+        <div class="card bridge-section">
+            <div class="card-header">
+                <span class="card-title">ForensicBridge</span>
+                <span class="card-icon">🔗</span>
+            </div>
+            <div class="bridge-visual">
+                <div class="bridge-node">
+                    <div class="bridge-icon">📜</div>
+                    <span class="bridge-label">Ledger</span>
+                    <span class="bridge-port">:8101</span>
+                </div>
+                <div class="bridge-connector">
+                    <span>←</span>
+                    <div class="bridge-line"></div>
+                    <span>→</span>
+                </div>
+                <div class="bridge-node">
+                    <div class="bridge-icon">⚖️</div>
+                    <span class="bridge-label">W-LEGAL-001</span>
+                    <span class="bridge-port">:8091</span>
+                </div>
+                <div class="bridge-connector">
+                    <span>←</span>
+                    <div class="bridge-line"></div>
+                    <span>→</span>
+                </div>
+                <div class="bridge-node">
+                    <div class="bridge-icon">🔒</div>
+                    <span class="bridge-label">Vault</span>
+                    <span class="bridge-port">:8106</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-signature">
+            <span>🐉 WINDI Constitutional Agent</span>
+            <span class="footer-hash">W-LEGAL-001 v0.2.0</span>
+        </div>
+        <div>
+            <span>"AI processes. Human decides. WINDI guarantees."</span>
+        </div>
+    </footer>
+
+    <script>
+        // Theme Toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const btn = document.querySelector('.theme-toggle');
+            if (html.dataset.theme === 'noir') {
+                html.dataset.theme = 'klar';
+                btn.textContent = '☽';
+                localStorage.setItem('windi-theme', 'klar');
+            } else {
+                html.dataset.theme = 'noir';
+                btn.textContent = '☀';
+                localStorage.setItem('windi-theme', 'noir');
+            }
+        }
+
+        // Init theme
+        const savedTheme = localStorage.getItem('windi-theme') || 'noir';
+        document.documentElement.dataset.theme = savedTheme;
+        document.querySelector('.theme-toggle').textContent = savedTheme === 'noir' ? '☀' : '☽';
+
+        // Confidence Radar Chart
+        const ctx = document.getElementById('confidenceRadar').getContext('2d');
+        new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: ['Source Reliability', 'Chain Integrity', 'Corroboration', 'Timeliness', 'Completeness'],
+                datasets: [{
+                    label: 'Confidence Score',
+                    data: [0.85, 0.95, 0.72, 0.88, 0.91],
+                    backgroundColor: 'rgba(201, 168, 76, 0.2)',
+                    borderColor: '#C9A84C',
+                    borderWidth: 2,
+                    pointBackgroundColor: '#C9A84C',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#C9A84C'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 1,
+                        ticks: {
+                            stepSize: 0.25,
+                            color: '#888780'
+                        },
+                        grid: {
+                            color: '#2A2A34'
+                        },
+                        angleLines: {
+                            color: '#2A2A34'
+                        },
+                        pointLabels: {
+                            color: '#E8E6E1',
+                            font: { size: 10 }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+
+        // Load Cases
+        async function loadCases() {
+            try {
+                const res = await fetch('/api/legal/cases');
+                const data = await res.json();
+                const tbody = document.getElementById('casesTableBody');
+
+                const flagMap = { 'DE': '🇩🇪', 'EU': '🇪🇺', 'BR': '🇧🇷', 'INT': '🌐', 'de': '🇩🇪' };
+
+                tbody.innerHTML = data.cases.slice(0, 5).map(c => `
+                    <tr>
+                        <td><span class="case-id">${c.id}</span></td>
+                        <td>${c.title.substring(0, 50)}...</td>
+                        <td>${flagMap[c.jurisdiction.toUpperCase()] || '🌐'} ${c.jurisdiction.toUpperCase()}</td>
+                        <td>${c.case_type}</td>
+                        <td><span class="case-status ${c.status}">${c.status}</span></td>
+                    </tr>
+                `).join('');
+            } catch (e) {
+                console.log('Loading sample data...');
+                // Sample data fallback
+                document.getElementById('casesTableBody').innerHTML = `
+                    <tr>
+                        <td><span class="case-id">CASE-20260310-3627</span></td>
+                        <td>Grove Arena — Nebelhorn Conditions</td>
+                        <td>🇩🇪 DE</td>
+                        <td>compliance</td>
+                        <td><span class="case-status open">open</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="case-id">CASE-20260309-2995</span></td>
+                        <td>Digital Sovereignty for SMEs</td>
+                        <td>🇩🇪 DE</td>
+                        <td>compliance</td>
+                        <td><span class="case-status open">open</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="case-id">CASE-20260308-F36C</span></td>
+                        <td>WINDI GmbH — ABC Consulting</td>
+                        <td>🇩🇪 DE</td>
+                        <td>compliance</td>
+                        <td><span class="case-status open">open</span></td>
+                    </tr>
+                `;
+            }
+        }
+
+        loadCases();
+    </script>
+</body>
+</html>
