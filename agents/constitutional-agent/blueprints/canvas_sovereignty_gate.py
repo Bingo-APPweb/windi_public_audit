@@ -130,6 +130,15 @@ LOCAL_TEMPLATES = {
     Jan 2026 : Integration
     Mar 2026 : Canvas Live
     Dec 2026 : Full Autonomy""",
+
+        "roadmap_q2_2026": """timeline
+    title WINDI Roadmap Q2 2026
+    Abril : Canvas v1.2 Live
+    Abril : Wallet Trust E2E
+    Maio : Payment Gateway
+    Maio : eIDAS Certificacao
+    Junho : Pioneer 100
+    Junho : Mobile App Beta""",
     },
 
     DiagramType.SEQUENCE: {
@@ -146,6 +155,107 @@ LOCAL_TEMPLATES = {
     LG-->>D: receipt_id + hash
     D->>U: QR + Download
     Note over LG: IRREMEDIAVEL""",
+
+        "payment_flow": """sequenceDiagram
+    actor C as Cliente
+    participant W as Wallet
+    participant P as Payment Gateway
+    participant B as Banco
+    C->>W: Inicia pagamento
+    W->>P: POST /payment
+    P->>B: SEPA Transfer
+    B-->>P: Confirmacao
+    P-->>W: Receipt + Hash
+    W->>C: QR Comprovativo
+    Note over B,P: IRREMEDIAVEL""",
+
+        "verify_flow": """sequenceDiagram
+    actor V as Verificador
+    participant QR as QR Scanner
+    participant API as Verify API
+    participant LG as Ledger
+    V->>QR: Scan QR Code
+    QR->>API: GET /verify/{id}
+    API->>LG: Query receipt
+    LG-->>API: Hash + Metadata
+    API-->>V: Documento Autentico
+    Note over LG: Prova Forense""",
+    },
+
+    DiagramType.FLOWCHART: {
+        "windi_pipeline": """flowchart TD
+    A([Utilizador]) --> B[Cria Documento]
+    B --> C{Dragon\nProcessa}
+    C -->|Aprovado| D[Ledger\nSela]
+    C -->|Revisar| B
+    D --> E[QR\nForense]
+    E --> F([Download\nReceipt])
+    style A fill:#8B6914,color:#fff
+    style D fill:#2D5016,color:#fff
+    style F fill:#8B6914,color:#fff""",
+
+        "agentes_windi": """flowchart TD
+    CA([Constitutional\nAgent]) --> L[W-LEGAL-001]
+    CA --> N[W-NOTARY-001]
+    CA --> C[W-COMPLY-001]
+    CA --> J[W-JOURN-001]
+    CA --> AU[W-AUDIT-001]
+    CA --> AC[W-ACCT-001]
+    CA --> CM[W-COMM-001]
+    L & N & C & J & AU & AC & CM --> LG[(Ledger\n:8101)]
+    style CA fill:#1a1a2e,color:#fff
+    style LG fill:#8B6914,color:#fff""",
+
+        "did_flow": """flowchart TD
+    A([Anon 5min]) --> B{Wallet\nBanner}
+    B -->|Criar DID| C[Ed25519\nGerado]
+    B -->|Mais tarde| D[Modo\nLeitura]
+    C --> E[UUIDv7\nPioneer]
+    E --> F[Ledger\nAuto-Seal]
+    F --> G([Identidade\nSoberana])
+    style A fill:#666,color:#fff
+    style G fill:#8B6914,color:#fff
+    style D fill:#cc0000,color:#fff""",
+
+        "bercario_flow": """flowchart TD
+    A([Visitante]) --> B{Primeira\nVisita?}
+    B -->|Sim| C[Bercario\nChegada]
+    B -->|Nao| D[Bercario\nRegresso]
+    C --> E[Sessao\nCriada]
+    D --> E
+    E --> F{Criar\nDID?}
+    F -->|Sim| G[Wallet\nGerada]
+    F -->|5min| H[Timeout\nAnon]
+    G --> I([Pioneer\nActivo])
+    style A fill:#666,color:#fff
+    style I fill:#8B6914,color:#fff
+    style H fill:#cc0000,color:#fff""",
+
+        "canvas_seal": """flowchart TD
+    A[Prompt] --> B{Sovereignty\nGate}
+    B -->|FREE| C[Template\nLocal]
+    B -->|MED| D[Gemini\nFlash]
+    B -->|HIGH| E[Gemini\nPro]
+    C & D & E --> F[Mermaid\nGerado]
+    F --> G{Human\nApproval}
+    G -->|I9| H[Ledger\nSeal]
+    H --> I([Canvas\nSoberano])
+    style C fill:#2D5016,color:#fff
+    style H fill:#8B6914,color:#fff
+    style I fill:#8B6914,color:#fff""",
+
+        "did_creation": """flowchart TD
+    A([Iniciar]) --> B[Gerar\nEd25519]
+    B --> C[Derivar\nDID]
+    C --> D[UUIDv7\nWallet]
+    D --> E{Pioneer\nNumber?}
+    E -->|Disponivel| F[Atribuir\nNumero]
+    E -->|Esgotado| G[Lista\nEspera]
+    F --> H[Seal\nLedger]
+    H --> I([DID\nActivo])
+    style B fill:#5a1a6b,color:#fff
+    style H fill:#8B6914,color:#fff
+    style I fill:#8B6914,color:#fff""",
     },
 }
 
@@ -155,12 +265,22 @@ LOCAL_TEMPLATES = {
 
 PATTERN_MAP = [
     # (keywords, diagram_type, template_key)
+    # ── FLOWCHART templates ─────────────────────────────────────────
     (["windi", "pipeline", "fluxo", "documento", "ledger", "dragon"], DiagramType.FLOWCHART, "windi_pipeline"),
     (["agente", "constelacao", "constellation", "legal", "notary", "audit"], DiagramType.FLOWCHART, "agentes_windi"),
     (["did", "wallet", "identidade", "pioneer", "sovereign"], DiagramType.FLOWCHART, "did_flow"),
+    (["bercario", "chegada", "regresso", "visitante", "primeira visita"], DiagramType.FLOWCHART, "bercario_flow"),
+    (["canvas", "seal", "sovereignty", "gate", "template"], DiagramType.FLOWCHART, "canvas_seal"),
+    (["did", "criar", "creation", "ed25519", "gerar"], DiagramType.FLOWCHART, "did_creation"),
+    # ── MINDMAP templates ───────────────────────────────────────────
     (["mindmap", "mapa mental", "constelacao windi", "windi overview"], DiagramType.MINDMAP, "constellation"),
+    # ── SEQUENCE templates ──────────────────────────────────────────
     (["sequencia", "sequence", "seal", "documento selado", "document seal"], DiagramType.SEQUENCE, "document_seal"),
+    (["pagamento", "payment", "sepa", "transferencia", "banco"], DiagramType.SEQUENCE, "payment_flow"),
+    (["verificar", "verify", "qr", "scanner", "autenticar"], DiagramType.SEQUENCE, "verify_flow"),
+    # ── TIMELINE templates ──────────────────────────────────────────
     (["timeline", "evolucao", "evolution", "cronologia", "linha do tempo"], DiagramType.TIMELINE, "windi_evolution"),
+    (["roadmap", "q2", "2026", "abril", "maio", "junho"], DiagramType.TIMELINE, "roadmap_q2_2026"),
 ]
 
 def match_local_template(prompt: str, diagram_type: DiagramType) -> Optional[str]:
@@ -407,19 +527,35 @@ Geras diagramas Mermaid {diagram_type.value} em resposta a pedidos institucionai
 Tema visual: {theme.upper()}.
 {MERMAID_RULES}"""
 
-    # MED: prompt compacto
+    # MED: prompt compacto — profissional, dia-a-dia
     if model == CanvasModel.GEMINI_FLASH:
         return base + "\nSe conciso. Maximo 10 nos. Prioriza clareza sobre completude."
 
-    # HIGH: contexto institucional completo
+    # HIGH: Excellence prompt — board-ready quality
     if model == CanvasModel.GEMINI_PRO:
-        return base + f"""
-Contexto institucional WINDI:
+        return base + """
+
+═══════════════════════════════════════════════════════════════════════
+HIGH TIER — EXCELLENCE PROTOCOL
+Este diagrama e para um cliente HIGH tier.
+Nao geres o minimo funcional. Gera o maximo impressionante.
+═══════════════════════════════════════════════════════════════════════
+
+REGRAS DE EXCELENCIA:
+1. Usa subgraphs para agrupar conceitos relacionados
+2. Labels descritivos — nao "A → B" mas "Proposta → Aprovacao Juridica"
+3. Hierarquia visual clara (top → bottom ou left → right intencional)
+4. Maximo 15 nos — cada um com peso e significado
+5. Cores via classDef quando o tema permite
+6. O cliente deve conseguir apresentar este diagrama numa reuniao de board
+
+CONTEXTO INSTITUCIONAL WINDI:
 - Sistema de governanca documental soberano
 - Agentes: W-LEGAL, W-NOTARY, W-COMPLY, W-JOURN, W-AUDIT, W-ACCT, W-COMM
 - Ledger forense com 56k+ receipts SHA-256
 - Principio: "AI processes. Human decides. WINDI guarantees."
-- Gera diagrama rico, informativo, com maximo 12 nos bem organizados.
+
+ENTREGA: Diagrama que impressiona. Qualidade institucional. Board-ready.
 """
 
     return base  # LOCAL — não vai ao Gemini
