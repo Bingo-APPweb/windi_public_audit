@@ -715,11 +715,36 @@ function updateGovernanceGlass(session) {
     }
 }
 
+// === C6: Onboard Handler ===
+function handleOnboard() {
+    const params = new URLSearchParams(window.location.search);
+    const tier = params.get('onboard');
+    if (!tier) return;
+
+    // Store tier for post-DID flow
+    sessionStorage.setItem('windi_onboard_tier', tier);
+
+    // Clean URL without reload
+    window.history.replaceState({}, '', window.location.pathname);
+
+    console.log('[GEN7] Onboard tier:', tier);
+
+    // Open wallet modal after short delay
+    setTimeout(() => {
+        if (typeof openWalletModal === 'function') {
+            openWalletModal();
+        }
+    }, 500);
+}
+
 // === Event Listeners ===
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize theme and language from localStorage
     initTheme();
     initLang();
+
+    // C6: Onboard flow — open DID modal when ?onboard= parameter present
+    handleOnboard();
 
     // Initial load
     checkDragonPulse();

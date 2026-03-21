@@ -5927,7 +5927,7 @@ function App(){
         transition:"width 0.3s ease",overflow:"hidden",zIndex:50,
         position:isMobile?"absolute":"relative",height:"100%"}}>
         <div style={{padding:"12px 0",textAlign:"center",borderBottom:`1px solid ${th.border}22`}}><span className="windi-dragon-logo" style={{width:28,height:28,borderRadius:"50%",border:`1.5px solid ${th.gold}`,display:"inline-flex"}} dangerouslySetInnerHTML={{__html: DRAGON_GLYPH}} /></div>
-        <div style={{flex:1,padding:"8px 0",display:"flex",flexDirection:"column",gap:2}}>
+        <div style={{flex:1,padding:"8px 0",display:"flex",flexDirection:"column",gap:2,overflowY:"auto"}}>
           {SIDEBAR.filter(item=>item.klass!=="hidden").map(item=>(
             <button key={item.id} onClick={()=>{
               setSidebarTab(item.id);

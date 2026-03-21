@@ -454,11 +454,14 @@ p{font-size:15px;color:var(--text);line-height:1.65}
     "Do you want your client to merely read your document — or to know that it is a unique seed, impossible to forge, sealed on 15 March 2026?"
   </p>
 </div>
+</div>
+</div>
+<!-- Close panel-en and doc wrapper -->
 
-<!-- PIONEER APPLICATION FORM -->
+<!-- PIONEER APPLICATION FORM (visible in all languages) -->
 <div class="section" id="apply-section" style="background:var(--seal);color:#fff;padding:40px 24px;margin-top:40px;border-radius:8px">
   <div class="section-label" style="color:var(--gold)">Aplicar ao Pioneer Program</div>
-  <h2 style="color:#fff;margin-bottom:20px">Cria a tua Wallet Soberana</h2>
+  <h2 style="color:#fff;margin-bottom:20px">Junta-te ao WINDI</h2>
 
   <form id="pioneer-form" style="max-width:400px">
     <div style="margin-bottom:16px">
@@ -494,18 +497,25 @@ p{font-size:15px;color:var(--text);line-height:1.65}
     </div>
 
     <div style="margin-bottom:20px">
-      <label style="display:block;font-size:12px;letter-spacing:0.1em;color:var(--gold);margin-bottom:6px;text-transform:uppercase">Por que queres uma Wallet WINDI? *</label>
+      <label style="display:block;font-size:12px;letter-spacing:0.1em;color:var(--gold);margin-bottom:6px;text-transform:uppercase">Por que queres fazer parte do WINDI? *</label>
       <textarea id="apply-filter" required placeholder="Ex: Preciso de documentos verificáveis para o meu escritório de advocacia..."
         style="width:100%;padding:12px;font-size:16px;border:1px solid var(--gold-dim);border-radius:4px;background:#1a1a24;color:#fff;font-family:inherit;min-height:80px;resize:vertical"></textarea>
     </div>
 
     <button type="submit" id="apply-btn" style="width:100%;padding:14px 24px;font-size:16px;font-weight:600;letter-spacing:0.05em;background:var(--gold);color:var(--ink);border:none;border-radius:4px;cursor:pointer;font-family:inherit">
-      🛡️ Aplicar ao Pioneer Program
+      🛡️ Candidatar ao Pioneer Program
     </button>
 
     <p style="font-size:12px;color:var(--muted);margin-top:12px;text-align:center">
-      Após aprovação humana (I9), receberás o teu WALLET-ID por email.
+      Cada candidatura é revista pelo Human Dragon (I9). Se aprovado, recebes o teu WALLET-ID por email em até 48h.
     </p>
+
+    <div style="margin-top:24px;padding-top:24px;border-top:1px solid var(--gold-dim);text-align:center">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:12px">Ou entra directamente:</p>
+      <a href="/desktop/?onboard=pioneer" style="display:inline-block;padding:12px 28px;font-size:15px;font-weight:600;letter-spacing:0.05em;background:transparent;color:var(--gold);border:2px solid var(--gold);border-radius:4px;text-decoration:none;transition:all 0.2s">
+        🪪 Criar Wallet agora →
+      </a>
+    </div>
   </form>
 
   <div id="apply-success" style="display:none;text-align:center;padding:30px">
@@ -518,8 +528,6 @@ p{font-size:15px;color:var(--text);line-height:1.65}
 <div class="footer">
   <div class="footer-left">windi-domain.com/verify-public/<br>W-KEYS-001 · W-PAR-001 · I5 I6 I9 I10<br>Pioneer Program · 100 spots · Kempten, Bavaria</div>
   <div class="footer-mandate">"AI processes. Human decides.<br>WINDI guarantees."</div>
-</div>
-</div>
 </div>
 
 <script>
@@ -558,12 +566,12 @@ document.getElementById('pioneer-form').addEventListener('submit', async functio
       const data = await res.json();
       alert('Erro: ' + (data.error || data.detail || 'Tenta novamente'));
       btn.disabled = false;
-      btn.textContent = '🛡️ Aplicar ao Pioneer Program';
+      btn.textContent = '🛡️ Candidatar ao Pioneer Program';
     }
   } catch (err) {
     alert('Erro de rede. Verifica a tua ligação.');
     btn.disabled = false;
-    btn.textContent = '🛡️ Aplicar ao Pioneer Program';
+    btn.textContent = '🛡️ Candidatar ao Pioneer Program';
   }
 });
 </script>
