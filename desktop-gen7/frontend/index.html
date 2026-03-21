@@ -89,6 +89,10 @@
                             <span class="tool-icon">🛡️</span>
                             <span class="tool-name">Verify</span>
                         </button>
+                        <button class="tool-btn" onclick="loadToolInD2('lab')" title="Canvas Lab — Interactive Execution">
+                            <span class="tool-icon">📋</span>
+                            <span class="tool-name">Lab</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -157,6 +161,114 @@
                             </div>
                         </div>
                         <div class="canvas-preview" id="canvasPreview"></div>
+                    </div>
+                </div>
+
+                <!-- W-CANVAS-001-LAB: Interactive Canvas Execution Environment -->
+                <div class="lab-panel" id="labPanel" style="display:none;">
+                    <div class="lab-header">
+                        <div class="lab-title">
+                            <span class="lab-badge">📋 CANVAS LAB</span>
+                            <span class="lab-version">v1.0</span>
+                        </div>
+                        <button class="lab-close" onclick="closeLabTool()">✕</button>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="lab-section">
+                        <div class="lab-section-title">Quick Actions</div>
+                        <div class="lab-quick-actions" id="labQuickActions">
+                            <button class="lab-action-btn" data-recipe="flow_windi_pipeline">
+                                <span class="lab-action-icon">🧭</span>
+                                <span class="lab-action-label">Flow</span>
+                            </button>
+                            <button class="lab-action-btn" data-recipe="arch_three_dragons">
+                                <span class="lab-action-icon">🧱</span>
+                                <span class="lab-action-label">Arch</span>
+                            </button>
+                            <button class="lab-action-btn" data-recipe="timeline_windi_evolution">
+                                <span class="lab-action-icon">🕒</span>
+                                <span class="lab-action-label">Timeline</span>
+                            </button>
+                            <button class="lab-action-btn" data-recipe="dash_sovereignty_metrics">
+                                <span class="lab-action-icon">📊</span>
+                                <span class="lab-action-label">Dash</span>
+                            </button>
+                            <button class="lab-action-btn lab-live-btn" data-recipe="dash_sovereignty_live">
+                                <span class="lab-action-icon">🔴</span>
+                                <span class="lab-action-label">LIVE</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Live Examples -->
+                    <div class="lab-section">
+                        <div class="lab-section-title">Live Examples</div>
+                        <div class="lab-examples" id="labExamples">
+                            <!-- Loaded dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Step Guide -->
+                    <div class="lab-section lab-steps">
+                        <div class="lab-step-indicators" id="labStepIndicators">
+                            <span class="lab-step-dot active" data-step="1"></span>
+                            <span class="lab-step-dot" data-step="2"></span>
+                            <span class="lab-step-dot" data-step="3"></span>
+                            <span class="lab-step-dot" data-step="4"></span>
+                        </div>
+                        <div class="lab-step-hint" id="labStepHint">Select a recipe or type custom prompt</div>
+                    </div>
+
+                    <!-- Canvas Output -->
+                    <div class="lab-output" id="labOutput" style="display:none;">
+                        <!-- Result Card (OBS Summary) -->
+                        <div class="lab-result-card" id="labResultCard" style="display:none;">
+                            <div class="result-card-title">
+                                <span class="result-card-icon">📊</span>
+                                <span id="resultCardTitle">WINDI System State</span>
+                            </div>
+                            <div class="result-card-status">
+                                <span class="result-card-health" id="resultCardHealth">🟢</span>
+                                <span class="result-card-mode" id="resultCardMode">SOVEREIGN</span>
+                                <span class="result-card-sep">•</span>
+                                <span class="result-card-locality" id="resultCardLocality">100% LOCAL</span>
+                            </div>
+                            <div class="result-card-metrics">
+                                <span class="result-card-services">
+                                    <span class="metric-icon">⚡</span>
+                                    <span id="resultCardServices">8 serviços online</span>
+                                    <span class="result-card-sep">•</span>
+                                    <span id="resultCardDeps">0 dependências externas</span>
+                                </span>
+                            </div>
+                            <div class="result-card-timing">
+                                <span class="metric-icon">⏱</span>
+                                <span id="resultCardLatency">42ms</span>
+                                <span class="result-card-sep">•</span>
+                                <span id="resultCardFreshness">realtime</span>
+                            </div>
+                        </div>
+
+                        <div class="lab-output-header">
+                            <span class="lab-output-engine" id="labOutputEngine">—</span>
+                            <span class="lab-output-time" id="labOutputTime">—</span>
+                            <span class="lab-output-sovereignty" id="labOutputSovereignty">—</span>
+                            <div class="lab-output-actions">
+                                <button class="lab-seal-btn" id="labSealBtn" onclick="LAB.sealSnapshot()" title="Seal to Ledger" style="display:none;">
+                                    🔏 Seal
+                                </button>
+                                <button class="lab-verify-btn" id="labVerifyBtn" onclick="LAB.verifySnapshot()" title="Verify State" style="display:none;">
+                                    🔍 Verify
+                                </button>
+                                <button class="lab-copy-btn" id="labCopyBtn" onclick="LAB.copySnapshot()" title="Copy Hash">
+                                    📋 Copy
+                                </button>
+                            </div>
+                        </div>
+                        <div class="lab-output-canvas" id="labOutputCanvas">
+                            <!-- Rendered canvas -->
+                        </div>
                     </div>
                 </div>
             </div>

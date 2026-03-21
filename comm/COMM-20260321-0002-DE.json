@@ -1,0 +1,43 @@
+{
+  "id": "COMM-20260321-0002-DE",
+  "version": "1.0",
+  "type": "announcement",
+  "status": "draft",
+  "language": "DE",
+  "title": "Beweise dein System",
+  "summary": "Die meisten Systeme zeigen Dashboards. Keines kann seinen Zustand beweisen. Wir schon.",
+  "body": "Die meisten Systeme zeigen Dashboards.\n\nEinige protokollieren Ereignisse.\n\nAber kein System kann seinen eigenen Zustand beweisen.\n\nWir schon.\n\n→ Echtzeit-Zustand (nicht simuliert)\n→ Keine externe Abhängigkeit (100% souverän)\n→ Snapshot als überprüfbare Evidenz versiegelt\n\nKlicken → beobachten → versiegeln → verifizieren\n\nDas ist kein Monitoring.\nDas ist Beweis.",
+  "audience": [],
+  "channels": [
+    "linkedin",
+    "x",
+    "web"
+  ],
+  "links": {
+    "primary": "https://windi-domain.com/prove/",
+    "secondary": "https://windi-domain.com/desktop/"
+  },
+  "origin": {
+    "publisher": "WINDI Publishing House",
+    "location": "Kempten, Bayern",
+    "system": "WINDI GEN7"
+  },
+  "metadata": {
+    "created_at": "2026-03-21T20:27:05.512229+00:00",
+    "created_by": "human_dragon",
+    "locale": "de",
+    "tags": [
+      "Systems",
+      "Engineering",
+      "Observability",
+      "Trust",
+      "Technology"
+    ]
+  },
+  "integrity": {
+    "hash": "e967508dc5141af6dc38a4870c5db8a6d3593c055b9ece81afcc43fecf36432e",
+    "signature": null,
+    "sealed": false,
+    "ledger_receipt_id": null
+  }
+}

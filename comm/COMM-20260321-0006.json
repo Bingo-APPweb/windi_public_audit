@@ -1,0 +1,39 @@
+{
+  "id": "COMM-20260321-0006",
+  "version": "1.0",
+  "type": "announcement",
+  "status": "draft",
+  "language": "EN",
+  "title": "W-COMM-001 is fully live",
+  "summary": "For the first time, institutional communication can be written once, published in EN/DE/PT, and cryptographically verifiable by anyone.",
+  "body": "Today we reached a meaningful milestone.\n\nW-COMM-001 is fully live.\n\nFor the first time, institutional communication can be:\n- Written once\n- Published in EN / DE / PT\n- Cryptographically verifiable by anyone\n\nEach communication is no longer just a message.\nIt becomes a verifiable artifact.",
+  "audience": [],
+  "channels": [
+    "linkedin",
+    "web"
+  ],
+  "links": {
+    "primary": "https://windi-domain.com/prove/"
+  },
+  "origin": {
+    "publisher": "WINDI Publishing House",
+    "location": "Kempten, Bavaria",
+    "system": "WINDI GEN7"
+  },
+  "metadata": {
+    "created_at": "2026-03-21T20:35:01.591890+00:00",
+    "created_by": "human_dragon",
+    "locale": "en",
+    "tags": [
+      "WINDI",
+      "VerifiableCommunication",
+      "DigitalTrust"
+    ]
+  },
+  "integrity": {
+    "hash": "9fceb5d5ef52943c8a2c03f685f20ddfd94fc10af2759c009b60fed9be114cdb",
+    "signature": null,
+    "sealed": false,
+    "ledger_receipt_id": null
+  }
+}

@@ -851,5 +851,53 @@ def list_canvas_types():
             {"id": "chart", "name": "Chart", "description": "Data visualizations (bar, line, pie)"},
             {"id": "infographic", "name": "Infographic", "description": "Visual information design"},
             {"id": "timeline", "name": "Timeline", "description": "Chronological visualizations"},
+            {"id": "dashboard", "name": "Dashboard", "description": "KPI dashboards (Engine B)"},
         ]
     })
+
+
+# ═══════════════════════════════════════════════════════════════
+# W-CANVAS-001-LAB — Interactive Canvas Execution Environment
+# ═══════════════════════════════════════════════════════════════
+
+LAB_PATH = "/opt/windi/canvas-lab"
+
+
+@canvas_bp.route("/lab/config", methods=["GET"])
+def get_lab_config():
+    """Get Canvas Lab configuration."""
+    config_path = os.path.join(LAB_PATH, "lab.config.json")
+    try:
+        with open(config_path, "r") as f:
+            return jsonify(json.load(f))
+    except FileNotFoundError:
+        return jsonify({"error": "Lab config not found"}), 404
+
+
+@canvas_bp.route("/lab/recipes", methods=["GET"])
+def list_recipes():
+    """List all available recipes."""
+    recipes_path = os.path.join(LAB_PATH, "recipes")
+    recipes = []
+    try:
+        for fname in os.listdir(recipes_path):
+            if fname.endswith(".json"):
+                fpath = os.path.join(recipes_path, fname)
+                with open(fpath, "r") as f:
+                    recipe = json.load(f)
+                    recipes.append(recipe)
+        return jsonify({"recipes": recipes, "count": len(recipes)})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@canvas_bp.route("/lab/recipes/<recipe_id>", methods=["GET"])
+def get_recipe(recipe_id):
+    """Get a specific recipe by ID."""
+    recipes_path = os.path.join(LAB_PATH, "recipes")
+    fpath = os.path.join(recipes_path, f"{recipe_id}.json")
+    try:
+        with open(fpath, "r") as f:
+            return jsonify(json.load(f))
+    except FileNotFoundError:
+        return jsonify({"error": f"Recipe '{recipe_id}' not found"}), 404

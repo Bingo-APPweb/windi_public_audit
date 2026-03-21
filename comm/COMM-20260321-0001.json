@@ -1,0 +1,43 @@
+{
+  "id": "COMM-20260321-0001",
+  "version": "1.0",
+  "type": "announcement",
+  "status": "draft",
+  "language": "EN",
+  "title": "Prove Your System",
+  "summary": "Most systems show dashboards. None can prove their own state. We just did.",
+  "body": "Most systems show dashboards.\n\nSome systems log events.\n\nBut none can prove their own state.\n\nWe just did.\n\n→ Real-time system state (not simulated)\n→ Zero external dependency (100% sovereign)\n→ Snapshot sealed as verifiable evidence\n\nClick → observe → seal → verify\n\nThis is not monitoring.\nThis is proof.",
+  "audience": [],
+  "channels": [
+    "linkedin",
+    "x",
+    "web"
+  ],
+  "links": {
+    "primary": "https://windi-domain.com/prove/",
+    "secondary": "https://windi-domain.com/desktop/"
+  },
+  "origin": {
+    "publisher": "WINDI Publishing House",
+    "location": "Kempten, Bavaria",
+    "system": "WINDI GEN7"
+  },
+  "metadata": {
+    "created_at": "2026-03-21T20:17:03.065532+00:00",
+    "created_by": "human_dragon",
+    "locale": "en",
+    "tags": [
+      "Systems",
+      "Engineering",
+      "AI",
+      "Observability",
+      "Trust"
+    ]
+  },
+  "integrity": {
+    "hash": "804281c7f638b4e4d908429da6ac1e319fa456c5fc9fbc36d385eb0ecd160693",
+    "signature": null,
+    "sealed": false,
+    "ledger_receipt_id": null
+  }
+}

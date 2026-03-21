@@ -1,0 +1,17 @@
+{
+  "id": "dash_sovereignty_metrics",
+  "type": "dashboard",
+  "engine": "B",
+  "title": "Sovereignty Metrics",
+  "description": "Real-time sovereignty and governance indicators",
+  "prompt": "Dashboard with 4 KPIs: Sovereignty Rate 93.3% (gold, trend up +0.3%), Local Calls 149 (teal), External Calls 11 (blue), Cost Savings 99.2% (green). Table showing last 5 API calls with columns: Timestamp, Endpoint, Engine, Local/Cloud. Bar chart showing calls per day for last 7 days. Status items for Dragon Hub, Ledger, Gate (all online).",
+  "tags": ["windi", "governance", "metrics", "sovereignty"],
+  "complexity": "high",
+  "theme": "dark_gold",
+  "tier": "HIGH",
+  "i18n": {
+    "de": "Souveränitätsmetriken: Echtzeit-Governance-Indikatoren",
+    "pt": "Métricas de Soberania: indicadores de governança em tempo real",
+    "en": "Sovereignty Metrics: real-time governance indicators"
+  }
+}

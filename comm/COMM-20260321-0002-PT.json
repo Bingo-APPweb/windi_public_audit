@@ -1,0 +1,43 @@
+{
+  "id": "COMM-20260321-0002-PT",
+  "version": "1.0",
+  "type": "announcement",
+  "status": "draft",
+  "language": "PT",
+  "title": "Prove o seu Sistema",
+  "summary": "A maioria dos sistemas mostra dashboards. Nenhum consegue provar o seu estado. Nós conseguimos.",
+  "body": "A maioria dos sistemas mostra dashboards.\n\nAlguns registam eventos.\n\nMas nenhum consegue provar o seu próprio estado.\n\nNós conseguimos.\n\n→ Estado em tempo real (não simulado)\n→ Zero dependência externa (100% soberano)\n→ Snapshot selado como evidência verificável\n\nClique → observe → sele → verifique\n\nIsto não é monitorização.\nIsto é prova.",
+  "audience": [],
+  "channels": [
+    "linkedin",
+    "x",
+    "web"
+  ],
+  "links": {
+    "primary": "https://windi-domain.com/prove/",
+    "secondary": "https://windi-domain.com/desktop/"
+  },
+  "origin": {
+    "publisher": "WINDI Publishing House",
+    "location": "Kempten, Baviera",
+    "system": "WINDI GEN7"
+  },
+  "metadata": {
+    "created_at": "2026-03-21T20:27:05.512881+00:00",
+    "created_by": "human_dragon",
+    "locale": "pt",
+    "tags": [
+      "Systems",
+      "Engineering",
+      "Observability",
+      "Trust",
+      "Technology"
+    ]
+  },
+  "integrity": {
+    "hash": "857d7570a864f45246e4ee20739ac5ec3cfd6a4221ef95c1a11fe4802692a693",
+    "signature": null,
+    "sealed": false,
+    "ledger_receipt_id": null
+  }
+}

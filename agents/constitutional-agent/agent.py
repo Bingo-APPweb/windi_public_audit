@@ -683,9 +683,24 @@ def create_agent_api(agent: WindiAgent):
     try:
         from blueprints.canvas_blueprint import canvas_bp
         app.register_blueprint(canvas_bp)
-        print("  [CANVAS] W-CANVAS-001 v1.1 loaded on /canvas/*")
+        print("  [CANVAS] W-CANVAS-001 v1.3 loaded on /canvas/*")
     except ImportError as e:
         print(f"  [CANVAS] W-CANVAS-001 not loaded: {e}")
+
+    try:
+        from blueprints.obs_blueprint import obs_bp
+        app.register_blueprint(obs_bp)
+        print("  [OBS] W-CANVAS-OBS-001 v1.0 loaded on /obs/*")
+    except ImportError as e:
+        print(f"  [OBS] W-CANVAS-OBS-001 not loaded: {e}")
+
+    # W-COMM-001: Canonical Publishing Engine
+    try:
+        from blueprints.comm_blueprint import comm_bp
+        app.register_blueprint(comm_bp)
+        print("  [COMM] W-COMM-001 v1.0 loaded on /comm/*")
+    except ImportError as e:
+        print(f"  [COMM] W-COMM-001 not loaded: {e}")
 
     @app.route("/agent/health", methods=["GET"])
     def health():

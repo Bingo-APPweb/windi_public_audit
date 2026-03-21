@@ -1,0 +1,17 @@
+{
+  "id": "timeline_windi_evolution",
+  "type": "timeline",
+  "engine": "A",
+  "title": "WINDI Evolution",
+  "description": "Key milestones in WINDI development",
+  "prompt": "Timeline diagram showing WINDI evolution: Mar 1 2026 One Tree Domain, Mar 14 Marketing Epiphany, Mar 15 Pioneer Program, Mar 17 GEN7 Desktop, Mar 19 DID Seed Declaration, Mar 21 Canvas Dual Engine. Use clean horizontal timeline with dates above and milestones below.",
+  "tags": ["windi", "history", "milestones"],
+  "complexity": "low",
+  "theme": "noir",
+  "tier": "FREE",
+  "i18n": {
+    "de": "WINDI Entwicklung: wichtige Meilensteine",
+    "pt": "Evolução WINDI: marcos importantes",
+    "en": "WINDI Evolution: key milestones"
+  }
+}
