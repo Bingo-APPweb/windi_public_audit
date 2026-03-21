@@ -1,0 +1,13 @@
+[Unit]
+Description=WINDI Canvas Sovereignty Report - Weekly Timer
+Documentation=https://github.com/Bingo-APPweb/windi_public_audit
+
+[Timer]
+# Run every Monday at 9:00 CET
+OnCalendar=Mon *-*-* 09:00:00
+# Also run 5 minutes after boot if we missed scheduled time
+OnBootSec=5min
+Persistent=true
+
+[Install]
+WantedBy=timers.target
