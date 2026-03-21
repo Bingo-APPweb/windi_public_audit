@@ -680,6 +680,13 @@ def create_agent_api(agent: WindiAgent):
     except ImportError as e:
         print(f"  [VERIFY] W-VERIFY-001 not loaded: {e}")
 
+    try:
+        from blueprints.canvas_blueprint import canvas_bp
+        app.register_blueprint(canvas_bp)
+        print("  [CANVAS] W-CANVAS-001 v1.1 loaded on /canvas/*")
+    except ImportError as e:
+        print(f"  [CANVAS] W-CANVAS-001 not loaded: {e}")
+
     @app.route("/agent/health", methods=["GET"])
     def health():
         return jsonify({
