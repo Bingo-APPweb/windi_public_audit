@@ -82,10 +82,34 @@ SYSTEM_PROMPTS = {
 - SVG must have viewBox="0 0 1000 400"
 - Return ONLY the SVG code, no markdown fences.""",
 
-    "_mermaid": """Generate valid Mermaid diagram syntax.
-- Return ONLY the Mermaid code
-- No markdown fences
-- Ensure syntax is valid for Mermaid.js"""
+    "_mermaid": """Generate valid Mermaid v10 diagram syntax.
+
+CRITICAL RULES (Mermaid v10 strict):
+- Use 'flowchart TD' or 'flowchart LR' (NOT 'graph TD')
+- Node syntax: A[Rectangle] B(Rounded) C{Diamond} D([Stadium]) E[(Database)]
+- Arrow syntax: --> (NOT ->)
+- NO special characters inside node labels (no €, ñ, ü, ç, etc.)
+- NO accented characters inside node text
+- Labels must be ASCII-safe: use 'Euro' not '€', 'promocao' not 'promoção'
+- MAXIMUM 15 nodes per diagram
+- MAXIMUM 20 edges per diagram
+- Each node ID must be unique (A, B, C... or node1, node2...)
+- Subgraphs: subgraph Title ... end
+
+VALID EXAMPLE:
+flowchart TD
+    A[User Request] --> B{Valid?}
+    B -- Yes --> C[Process]
+    B -- No --> D[Error]
+    C --> E[Output]
+
+INVALID (DO NOT USE):
+- graph TD (use flowchart TD)
+- A -> B (use A --> B)
+- A[Preço: 13,30€] (use A[Price: 13.30 Euro])
+- Special chars in labels
+
+Return ONLY the Mermaid code, no markdown fences, no explanations."""
 }
 
 def resolve_style_directive(style: dict) -> str:
@@ -142,8 +166,30 @@ def call_gemini_sync(prompt: str, canvas_type: str, style: dict, fmt: str) -> st
         logger.error(f"Gemini API error: {resp.status_code} - {resp.text[:200]}")
         raise ValueError(f"Visualization engine error: {resp.status_code}")
 
+    resp_json = resp.json()
+
+    # === CANVAS SOVEREIGNTY METRICS ===
     try:
-        content = resp.json()["candidates"][0]["content"]["parts"][0]["text"]
+        usage = resp_json.get("usageMetadata", {})
+        prompt_tokens = usage.get("promptTokenCount", 0)
+        output_tokens = usage.get("candidatesTokenCount", 0)
+        total_tokens = usage.get("totalTokenCount", prompt_tokens + output_tokens)
+        # Gemini Flash pricing: $0.075/1M input, $0.30/1M output
+        cost_usd = (prompt_tokens * 0.000000075) + (output_tokens * 0.0000003)
+        sovereignty_log = (f"[CANVAS-SOVEREIGNTY] model={GEMINI_MODEL} type={canvas_type} "
+                          f"prompt_tokens={prompt_tokens} output_tokens={output_tokens} "
+                          f"total={total_tokens} cost_usd=${cost_usd:.6f}")
+        logger.info(sovereignty_log)
+        print(sovereignty_log, flush=True)
+        # Write to dedicated metrics log
+        with open("/opt/windi/logs/canvas-sovereignty.log", "a") as f:
+            from datetime import datetime
+            f.write(f"{datetime.now().isoformat()} {sovereignty_log}\n")
+    except Exception as e:
+        logger.warning(f"[CANVAS-SOVEREIGNTY] Token metrics unavailable: {e}")
+
+    try:
+        content = resp_json["candidates"][0]["content"]["parts"][0]["text"]
     except (KeyError, IndexError) as e:
         logger.error(f"Gemini response parse error: {e}")
         raise ValueError("Visualization engine: unexpected response format.")
