@@ -106,6 +106,7 @@ async function generateCanvas() {
             showCanvasResult(data);
 
             // Update D3 Governance Glass with Canvas session
+            console.log('[Canvas] Updating D3 with:', { stage: 'Canvas', session_id: walletId || data.canvas_id, content_hash: data.content_hash });
             updateGovernanceGlass({
                 stage: 'Canvas',
                 session_id: walletId || data.canvas_id,
@@ -836,11 +837,13 @@ function updateGovernanceGlass(session) {
     if (stageEl) stageEl.textContent = session.stage || '—';
     if (sessionEl) sessionEl.textContent = session.session_id || '—';
 
-    // Generate preview hash from session_id
+    // Generate preview hash from content_hash or session_id
     if (hashEl) {
-        const previewHash = session.session_id
-            ? `sha256:${session.session_id.toLowerCase()}...`
-            : '—';
+        const previewHash = session.content_hash
+            ? `sha256:${session.content_hash.substring(0, 16)}...`
+            : session.session_id
+                ? `sha256:${session.session_id.toLowerCase().substring(0, 16)}...`
+                : '—';
         hashEl.textContent = previewHash;
     }
 
