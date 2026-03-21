@@ -938,18 +938,20 @@ console.log('[GEN7] "AI processes. Human decides. WINDI guarantees."');
 // ═══════════════════════════════════════════
 
 const WM = {
-    SESSION_KEY: "windi_desktop_wallet",
+    STORAGE_KEY: "windi_desktop_wallet",
     get() {
-        try { return JSON.parse(sessionStorage.getItem(this.SESSION_KEY)); }
+        try { return JSON.parse(localStorage.getItem(this.STORAGE_KEY)); }
         catch(e) { return null; }
     },
     set(data) {
-        sessionStorage.setItem(this.SESSION_KEY, JSON.stringify(data));
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(data));
         window.__windiWallet = data;
+        window.__windiWalletId = data.wallet_id || data.id;
     },
     clear() {
-        sessionStorage.removeItem(this.SESSION_KEY);
+        localStorage.removeItem(this.STORAGE_KEY);
         window.__windiWallet = null;
+        window.__windiWalletId = null;
     }
 };
 
