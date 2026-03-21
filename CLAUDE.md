@@ -566,7 +566,8 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | Lead Admin | ✅ :8096 · systemd · env secured · G3 hook |
 | W-CIA-001 | ✅ Health Pulse no GEN7 Desktop · 7 endpoints monitorizados |
 | W-GATE-001 | ✅ API Schema Contracts · 15 endpoints · erro HUMANO trilíngue |
-| W-NGINX-001 | ✅ Nginx Auto-Register · 302 rotas Flask · 64 locations · pre-commit hook |
+| W-NGINX-001 | ✅ Nginx Auto-Register · 306 rotas Flask · 66 locations · pre-commit hook |
+| W-CANVAS-001 | ✅ Visual Generation · Gemini API · Mermaid D2 · 4 temas · SVG export |
 | W-CANVAS-001 | ✅ Canvas Architect · Gemini 2.5 Flash · SVG/Mermaid · :8091/canvas/* |
 
 ### Histórico Recente
@@ -575,7 +576,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 
 | Data | Milestones |
 |------|------------|
-| 21 Mar | W-CANVAS-001 GÉNESE · Onboard Bridge · Pioneer Form v1.0 · Taxonomia Tools/Korps |
+| 21 Mar | §37 W-CANVAS-001 **LIVE** · Gemini API · Mermaid D2 · 4 temas · a108b61 |
 | 19 Mar | §32-§35 DID Seed + Berçário + Identity Thread + Nervous System |
 | 18 Mar | §22-§26 Sovereignty Metrics + Composer Agents (CIA/MGR/SCH) |
 | 17 Mar | §17 .JMPG + Dispatch Gateway + Frontend Invariants |
@@ -790,6 +791,59 @@ Sistema de autenticação por identidade soberana no GEN7.
 | EN | We know who you are to guarantee what you produce. |
 
 **NUNCA recolhemos:** localização · comportamento · histórico · biométricos · preferências comerciais
+
+---
+
+## 37. W-CANVAS-001 — Visual Generation Engine ✅
+
+**Status:** LIVE · **Port:** :8091 · **Commit:** `a108b61`
+
+| Campo | Valor |
+|-------|-------|
+| canvas_id (teste) | `ABAFCB03E7004940` |
+| Engine | Gemini API |
+| HTTP | 200 ✅ |
+| Render | Mermaid.js D1→D2 |
+
+### Tipos Suportados
+
+| Tipo | Descrição |
+|------|-----------|
+| Flowchart | Fluxos de processo |
+| Architecture | Diagramas de sistema |
+| Diagram | Geral |
+| Timeline | Cronogramas |
+
+### Temas
+
+| Tema | Descrição |
+|------|-----------|
+| KLAR | Light mode, cores claras |
+| NOIR | Dark mode, WINDI default |
+| Dark Gold | Gold accents em fundo escuro |
+| Sovereign | Tema institucional |
+
+### Endpoints
+
+| Endpoint | Função |
+|----------|--------|
+| `GET /canvas/status` | Health check |
+| `POST /canvas/generate` | Gerar diagrama |
+
+### Output
+
+- **SVG download** — botão 📥
+- **Copy ID** — botão 📋 para clipboard
+- **Mermaid render** — visualização inline na D2 zone
+
+### Teste Humano Aprovado
+
+```
+Prompt: "uma promocao de pizza a 13,30 Euros"
+Resultado: Diagrama limpo, cores KLAR perfeitas ✅
+```
+
+**NGINX Audit:** 306 routes · 66 locations · PASS ✅
 
 ---
 
