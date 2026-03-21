@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WINDI Verify — Media Detector</title>
-    <meta name="description" content="Detect AI-generated content: videos, images, and text. Free, instant, constitutional.">
+    <meta name="description" content="Check any content for verifiability. Videos, images, text. Free, instant, constitutional.">
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,40 +16,51 @@
 
     <style>
         /* ═══════════════════════════════════════════════════════════
-           WINDI DESIGN SYSTEM — NOIR/KLAR
+           WINDI DESIGN SYSTEM — W-VERIFY-UX-002
+           Premium Animations + Proof Integration
            ═══════════════════════════════════════════════════════════ */
 
         :root {
             --font-heading: 'Bricolage Grotesque', sans-serif;
             --font-mono: 'JetBrains Mono', monospace;
+            --radius: 12px;
+            --radius-sm: 8px;
         }
 
         [data-theme="noir"] {
             --bg: #0A0A10;
             --bg-card: #12121A;
+            --bg-elevated: #1A1A24;
             --gold: #C9A84C;
             --gold-dim: #8B7424;
             --text: #E8E6E1;
             --text-dim: #8A8A8A;
             --border: #1A1A24;
-            --success: #4CAF50;
-            --warning: #FFC107;
-            --danger: #F44336;
-            --info: #2196F3;
+            --verified: #4CAF50;
+            --verified-glow: rgba(76, 175, 80, 0.4);
+            --verified-bg: rgba(76, 175, 80, 0.12);
+            --unverifiable: #FFC107;
+            --unverifiable-bg: rgba(255, 193, 7, 0.12);
+            --inconsistent: #F44336;
+            --inconsistent-bg: rgba(244, 67, 54, 0.12);
         }
 
         [data-theme="klar"] {
             --bg: #FAFAF8;
             --bg-card: #FFFFFF;
+            --bg-elevated: #F5F5F3;
             --gold: #8B7424;
             --gold-dim: #C9A84C;
             --text: #1A1A1A;
             --text-dim: #666666;
             --border: #E0DED8;
-            --success: #2E7D32;
-            --warning: #F57C00;
-            --danger: #C62828;
-            --info: #1565C0;
+            --verified: #2E7D32;
+            --verified-glow: rgba(46, 125, 50, 0.3);
+            --verified-bg: rgba(46, 125, 50, 0.1);
+            --unverifiable: #F57C00;
+            --unverifiable-bg: rgba(245, 124, 0, 0.1);
+            --inconsistent: #C62828;
+            --inconsistent-bg: rgba(198, 40, 40, 0.1);
         }
 
         * {
@@ -64,6 +75,18 @@
             color: var(--text);
             min-height: 100vh;
             line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ═══ CONFETTI CANVAS ═══ */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
         }
 
         /* ═══ HEADER ═══ */
@@ -141,149 +164,166 @@
 
         /* ═══ MAIN ═══ */
         .main {
-            max-width: 800px;
+            max-width: 720px;
             margin: 0 auto;
             padding: 3rem 1.5rem;
         }
 
-        .hero {
+        /* ═══ STATE 0: ENTRY ═══ */
+        .entry-state {
             text-align: center;
-            margin-bottom: 3rem;
         }
 
-        .hero h1 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin-bottom: 0.75rem;
-            color: var(--gold);
-        }
-
-        .hero p {
-            font-size: 1.1rem;
-            color: var(--text-dim);
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        /* ═══ DETECTOR CARD ═══ */
-        .detector-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .tabs {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1.5rem;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 1rem;
-        }
-
-        .tab-btn {
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--text-dim);
-            padding: 0.6rem 1.2rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-family: var(--font-heading);
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.2s;
-        }
-
-        .tab-btn.active {
-            background: var(--gold);
-            color: var(--bg);
-            border-color: var(--gold);
-        }
-
-        .tab-btn:hover:not(.active) {
-            border-color: var(--gold-dim);
-            color: var(--text);
-        }
-
-        .tab-icon {
-            font-size: 1.2rem;
-        }
-
-        /* ═══ INPUT ZONES ═══ */
-        .input-zone {
+        .entry-state.hidden {
             display: none;
         }
 
-        .input-zone.active {
-            display: block;
+        .hero-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            color: var(--gold);
         }
 
-        .drop-zone {
+        .hero-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-dim);
+            margin-bottom: 2.5rem;
+        }
+
+        /* Unified Drop Zone */
+        .unified-drop {
             border: 2px dashed var(--border);
-            border-radius: 8px;
+            border-radius: var(--radius);
             padding: 3rem 2rem;
-            text-align: center;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
         }
 
-        .drop-zone:hover, .drop-zone.dragover {
+        .unified-drop:hover,
+        .unified-drop.dragover {
             border-color: var(--gold);
             background: rgba(201, 168, 76, 0.05);
+            transform: scale(1.01);
         }
 
-        .drop-zone-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
+        .unified-drop.dragover {
+            border-style: solid;
         }
 
-        .drop-zone-text {
-            color: var(--text-dim);
+        .drop-icons {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .drop-icon {
+            font-size: 2.5rem;
+            opacity: 0.8;
+            transition: transform 0.2s, opacity 0.2s;
+        }
+
+        .unified-drop:hover .drop-icon {
+            transform: scale(1.1);
+            opacity: 1;
+        }
+
+        .drop-main-text {
+            font-size: 1.2rem;
+            font-weight: 600;
             margin-bottom: 0.5rem;
         }
 
-        .drop-zone-hint {
-            font-size: 0.85rem;
+        .drop-sub-text {
             color: var(--text-dim);
-            opacity: 0.7;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .drop-hints {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .drop-hint-tag {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            padding: 0.3rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        .hidden-inputs {
+            display: none;
+        }
+
+        /* OR Divider */
+        .or-divider {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+        }
+
+        .or-divider::before,
+        .or-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .or-divider span {
+            padding: 0 1rem;
+        }
+
+        /* Text Input Area */
+        .text-input-area {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .text-input-area:focus-within {
+            border-color: var(--gold);
         }
 
         .text-input {
             width: 100%;
-            min-height: 150px;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1rem;
+            min-height: 100px;
+            background: transparent;
+            border: none;
             color: var(--text);
             font-family: var(--font-mono);
             font-size: 0.9rem;
             resize: vertical;
-        }
-
-        .text-input:focus {
             outline: none;
-            border-color: var(--gold);
         }
 
         .text-input::placeholder {
             color: var(--text-dim);
         }
 
-        /* ═══ ANALYZE BUTTON ═══ */
-        .analyze-btn {
+        /* Check Button */
+        .check-btn {
             width: 100%;
             background: var(--gold);
             color: var(--bg);
             border: none;
-            padding: 1rem;
-            border-radius: 8px;
+            padding: 1.1rem;
+            border-radius: var(--radius-sm);
             font-family: var(--font-heading);
-            font-size: 1rem;
-            font-weight: 600;
+            font-size: 1.05rem;
+            font-weight: 700;
             cursor: pointer;
             margin-top: 1.5rem;
             transition: all 0.2s;
@@ -293,135 +333,578 @@
             gap: 0.5rem;
         }
 
-        .analyze-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(201, 168, 76, 0.3);
+        .check-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(201, 168, 76, 0.35);
         }
 
-        .analyze-btn:disabled {
-            opacity: 0.5;
+        .check-btn:disabled {
+            opacity: 0.4;
             cursor: not-allowed;
             transform: none;
-            box-shadow: none;
         }
 
-        .analyze-btn.loading {
-            pointer-events: none;
+        /* ═══ STATE 1: PROCESSING ═══ */
+        .processing-state {
+            display: none;
+            text-align: center;
+            padding: 4rem 2rem;
         }
 
-        .spinner {
-            width: 18px;
-            height: 18px;
-            border: 2px solid transparent;
-            border-top-color: currentColor;
+        .processing-state.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* Skeleton Loading */
+        .skeleton-container {
+            margin-bottom: 2rem;
+        }
+
+        .skeleton {
+            height: 20px;
+            background: linear-gradient(90deg, var(--bg-elevated) 25%, var(--border) 50%, var(--bg-elevated) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 4px;
+            margin-bottom: 0.75rem;
+        }
+
+        .skeleton.wide { width: 100%; }
+        .skeleton.medium { width: 70%; margin: 0 auto 0.75rem; }
+        .skeleton.short { width: 40%; margin: 0 auto; }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .processing-spinner {
+            width: 64px;
+            height: 64px;
+            border: 3px solid var(--border);
+            border-top-color: var(--gold);
             border-radius: 50%;
-            animation: spin 0.8s linear infinite;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 2rem;
         }
 
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
 
-        /* ═══ RESULT ═══ */
-        .result {
-            display: none;
-            margin-top: 2rem;
-            padding: 1.5rem;
-            border-radius: 8px;
-            border: 1px solid var(--border);
+        .processing-status {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            min-height: 1.5em;
         }
 
-        .result.show {
+        .processing-sub {
+            color: var(--text-dim);
+            font-size: 0.95rem;
+        }
+
+        .status-text {
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .status-text.fade {
+            opacity: 0;
+        }
+
+        /* ═══ STATE 2: RESULT ═══ */
+        .result-state {
+            display: none;
+        }
+
+        .result-state.active {
+            display: block;
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Result Card */
+        .result-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+
+        .result-card.verified {
+            border-color: var(--verified);
+        }
+
+        .result-card.unverifiable {
+            border-color: var(--unverifiable);
+        }
+
+        .result-card.inconsistent {
+            border-color: var(--inconsistent);
+        }
+
+        /* ═══ PREMIUM ANIMATIONS ═══ */
+
+        /* VERIFIED: Glow effect */
+        .result-card.verified .result-header {
+            animation: verifiedGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes verifiedGlow {
+            from { box-shadow: inset 0 0 30px var(--verified-glow); }
+            to { box-shadow: inset 0 0 60px var(--verified-glow); }
+        }
+
+        .result-badge.glow-green {
+            animation: badgeGlow 1.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes badgeGlow {
+            from { box-shadow: 0 0 10px var(--verified-glow); }
+            to { box-shadow: 0 0 25px var(--verified-glow); }
+        }
+
+        /* INCONSISTENT: Shake effect */
+        .shake {
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-6px); }
+            40% { transform: translateX(6px); }
+            60% { transform: translateX(-4px); }
+            80% { transform: translateX(4px); }
+        }
+
+        /* UNVERIFIABLE: Elegant fade */
+        .result-card.unverifiable {
+            animation: elegantFade 0.6s ease;
+        }
+
+        @keyframes elegantFade {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Result Header */
+        .result-header {
+            padding: 2rem;
+            text-align: center;
+            transition: box-shadow 0.3s;
+        }
+
+        .result-card.verified .result-header {
+            background: var(--verified-bg);
+        }
+
+        .result-card.unverifiable .result-header {
+            background: var(--unverifiable-bg);
+        }
+
+        .result-card.inconsistent .result-header {
+            background: var(--inconsistent-bg);
+        }
+
+        .result-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.25rem;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 1rem;
+            transition: box-shadow 0.3s;
+        }
+
+        .result-card.verified .result-badge {
+            background: var(--verified);
+            color: #fff;
+        }
+
+        .result-card.unverifiable .result-badge {
+            background: var(--unverifiable);
+            color: #000;
+        }
+
+        .result-card.inconsistent .result-badge {
+            background: var(--inconsistent);
+            color: #fff;
+        }
+
+        .result-badge-icon {
+            font-size: 1.1rem;
+        }
+
+        .result-summary {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .confidence-tag {
+            display: inline-block;
+            background: var(--bg-elevated);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-top: 0.75rem;
+            opacity: 0.8;
+        }
+
+        /* ═══ SEAL BUTTON (only for VERIFIED + HIGH) ═══ */
+        .seal-section {
+            display: none;
+            padding: 1.5rem 2rem;
+            background: var(--verified-bg);
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .seal-section.visible {
             display: block;
             animation: fadeIn 0.3s ease;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .result.suspicious {
-            border-color: var(--danger);
-            background: rgba(244, 67, 54, 0.1);
-        }
-
-        .result.unverifiable {
-            border-color: var(--warning);
-            background: rgba(255, 193, 7, 0.1);
-        }
-
-        .result.inconclusive {
-            border-color: var(--info);
-            background: rgba(33, 150, 243, 0.1);
-        }
-
-        .result-header {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 1rem;
-        }
-
-        .result-icon {
-            font-size: 1.5rem;
-        }
-
-        .result-status {
+        .seal-btn {
+            background: var(--verified);
+            color: #fff;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-heading);
+            font-size: 1rem;
             font-weight: 700;
-            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .result.suspicious .result-status { color: var(--danger); }
-        .result.unverifiable .result-status { color: var(--warning); }
-        .result.inconclusive .result-status { color: var(--info); }
-
-        .result-confidence {
-            margin-left: auto;
-            background: var(--bg);
-            padding: 0.25rem 0.75rem;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-transform: uppercase;
+        .seal-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--verified-glow);
         }
 
-        .result-explanation {
+        .seal-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .seal-hint {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            margin-top: 0.75rem;
+        }
+
+        .seal-caveat {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            opacity: 0.8;
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        /* ═══ PROOF BOX (after seal) ═══ */
+        .proof-box {
+            display: none;
+            padding: 1.5rem 2rem;
+            background: var(--bg-elevated);
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .proof-box.visible {
+            display: block;
+            animation: slideUp 0.4s ease;
+        }
+
+        .proof-title {
+            font-size: 1rem;
+            font-weight: 700;
             margin-bottom: 1rem;
-            line-height: 1.7;
+            color: var(--verified);
         }
 
-        .result-meta {
+        .proof-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 0.75rem;
-            padding-top: 1rem;
+            grid-template-columns: 1fr auto;
+            gap: 1.5rem;
+            align-items: center;
+            text-align: left;
+        }
+
+        .proof-details {
+            font-size: 0.85rem;
+        }
+
+        .proof-label {
+            color: var(--text-dim);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.2rem;
+        }
+
+        .proof-value {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            word-break: break-all;
+            margin-bottom: 0.75rem;
+        }
+
+        .qr-container {
+            width: 100px;
+            height: 100px;
+            background: #fff;
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        .qr-container svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .verify-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--gold);
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+
+        .verify-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Expandable Details */
+        .result-details {
             border-top: 1px solid var(--border);
         }
 
-        .meta-item {
-            font-size: 0.85rem;
+        .details-toggle {
+            width: 100%;
+            background: transparent;
+            border: none;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            color: var(--text);
+            font-family: var(--font-heading);
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: background 0.2s;
         }
 
-        .meta-label {
+        .details-toggle:hover {
+            background: var(--bg-elevated);
+        }
+
+        .toggle-icon {
+            transition: transform 0.2s;
+        }
+
+        .details-toggle.open .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .details-buttons {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .details-buttons .details-toggle {
+            flex: 1;
+            border-bottom: none;
+        }
+
+        .details-buttons .details-toggle:first-child {
+            border-right: 1px solid var(--border);
+        }
+
+        .guarantees-content {
+            display: none;
+            padding: 1.5rem 2rem;
+            background: var(--bg-elevated);
+        }
+
+        .guarantees-content.open {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .guarantees-box {
+            text-align: center;
+        }
+
+        .guarantees-title {
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .guarantees-list {
+            list-style: none;
+            margin-bottom: 1rem;
+        }
+
+        .guarantees-list li {
+            padding: 0.4rem 0;
+            font-size: 0.9rem;
             color: var(--text-dim);
+        }
+
+        .guarantees-list li::before {
+            content: '→ ';
+            color: var(--gold);
+        }
+
+        .guarantees-footer {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            font-style: italic;
+            padding-top: 0.5rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .details-content {
+            display: none;
+            padding: 0 2rem 1.5rem;
+        }
+
+        .details-content.open {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .details-section {
+            margin-bottom: 1rem;
+        }
+
+        .details-label {
             font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            color: var(--text-dim);
+            margin-bottom: 0.3rem;
         }
 
-        .meta-value {
+        .details-value {
             font-family: var(--font-mono);
+            font-size: 0.85rem;
             word-break: break-all;
         }
 
+        .elements-list {
+            list-style: none;
+        }
+
+        .elements-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+
+        .elements-list li:last-child {
+            border-bottom: none;
+        }
+
+        .element-type {
+            display: inline-block;
+            background: var(--bg-elevated);
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-right: 0.5rem;
+        }
+
+        /* Disclaimer */
         .result-disclaimer {
-            margin-top: 1rem;
-            padding: 0.75rem;
-            background: var(--bg);
-            border-radius: 6px;
+            padding: 1rem 2rem;
+            background: var(--bg-elevated);
+            border-top: 1px solid var(--border);
             font-size: 0.85rem;
             color: var(--text-dim);
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        /* Action Buttons */
+        .result-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            flex: 1;
+            min-width: 140px;
+            padding: 0.9rem 1rem;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-heading);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .action-btn-primary {
+            background: var(--gold);
+            color: var(--bg);
+            border: none;
+        }
+
+        .action-btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(201, 168, 76, 0.3);
+        }
+
+        .action-btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .action-btn-secondary:hover {
+            border-color: var(--gold);
+            color: var(--gold);
         }
 
         /* ═══ FOOTER ═══ */
@@ -430,6 +913,7 @@
             padding: 2rem;
             color: var(--text-dim);
             font-size: 0.85rem;
+            margin-top: 2rem;
         }
 
         .footer a {
@@ -460,27 +944,41 @@
                 gap: 1rem;
             }
 
-            .hero h1 {
-                font-size: 1.8rem;
+            .hero-title {
+                font-size: 1.7rem;
             }
 
-            .tabs {
-                flex-wrap: wrap;
+            .drop-icons {
+                gap: 1rem;
             }
 
-            .tab-btn {
-                flex: 1;
-                justify-content: center;
-                min-width: 100px;
+            .drop-icon {
+                font-size: 2rem;
             }
 
-            .result-meta {
+            .result-actions {
+                flex-direction: column;
+            }
+
+            .action-btn {
+                width: 100%;
+            }
+
+            .proof-grid {
                 grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .qr-container {
+                margin: 1rem auto 0;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Confetti Canvas -->
+    <canvas id="confetti-canvas"></canvas>
+
     <!-- HEADER -->
     <header class="header">
         <a href="/verify-public/" class="logo">
@@ -490,7 +988,7 @@
                 <path d="M50 30 L65 45 L50 70 L35 45 Z" fill="currentColor"/>
             </svg>
             <span class="logo-text">WINDI Verify</span>
-            <span class="logo-badge">Mode 4</span>
+            <span class="logo-badge">Modus 4</span>
         </a>
 
         <div class="controls">
@@ -507,189 +1005,479 @@
 
     <!-- MAIN -->
     <main class="main">
-        <div class="hero">
-            <h1 data-i18n="title">Media Authenticity Detector</h1>
-            <p data-i18n="subtitle">Analyze videos, images, and text for AI-generated markers. Free. Instant. No data stored.</p>
-        </div>
 
-        <div class="detector-card">
-            <!-- TABS -->
-            <div class="tabs">
-                <button class="tab-btn active" data-tab="video">
-                    <span class="tab-icon">🎬</span>
-                    <span data-i18n="tabVideo">Video</span>
-                </button>
-                <button class="tab-btn" data-tab="image">
-                    <span class="tab-icon">📷</span>
-                    <span data-i18n="tabImage">Image</span>
-                </button>
-                <button class="tab-btn" data-tab="text">
-                    <span class="tab-icon">📝</span>
-                    <span data-i18n="tabText">Text</span>
-                </button>
-            </div>
+        <!-- ═══ STATE 0: ENTRY ═══ -->
+        <section class="entry-state" id="entryState">
+            <h1 class="hero-title" data-i18n="title">Check any content</h1>
+            <p class="hero-subtitle" data-i18n="subtitle">Classifies verifiability — not truth</p>
 
-            <!-- VIDEO INPUT -->
-            <div class="input-zone active" id="zone-video">
-                <div class="drop-zone" id="dropVideo">
-                    <div class="drop-zone-icon">🎬</div>
-                    <div class="drop-zone-text" data-i18n="dropVideo">Drop video here or click to upload</div>
-                    <div class="drop-zone-hint" data-i18n="dropHintVideo">MP4, WebM, MOV • Max 50MB</div>
-                    <input type="file" id="inputVideo" accept="video/*" hidden>
+            <!-- Unified Drop Zone -->
+            <div class="unified-drop" id="dropZone">
+                <div class="drop-icons">
+                    <span class="drop-icon">🎬</span>
+                    <span class="drop-icon">📷</span>
+                    <span class="drop-icon">📄</span>
+                </div>
+                <div class="drop-main-text" data-i18n="dropMain">Drop file or click to upload</div>
+                <div class="drop-sub-text" data-i18n="dropSub">Video, image, or document</div>
+                <div class="drop-hints">
+                    <span class="drop-hint-tag">MP4, WebM</span>
+                    <span class="drop-hint-tag">JPG, PNG</span>
+                    <span class="drop-hint-tag">PDF, TXT</span>
                 </div>
             </div>
 
-            <!-- IMAGE INPUT -->
-            <div class="input-zone" id="zone-image">
-                <div class="drop-zone" id="dropImage">
-                    <div class="drop-zone-icon">📷</div>
-                    <div class="drop-zone-text" data-i18n="dropImage">Drop image here or click to upload</div>
-                    <div class="drop-zone-hint" data-i18n="dropHintImage">JPG, PNG, WebP • Max 10MB</div>
-                    <input type="file" id="inputImage" accept="image/*" hidden>
-                </div>
+            <div class="hidden-inputs">
+                <input type="file" id="fileInput" accept="video/*,image/*,.pdf,.txt">
             </div>
 
-            <!-- TEXT INPUT -->
-            <div class="input-zone" id="zone-text">
-                <textarea class="text-input" id="inputText" data-i18n-placeholder="textPlaceholder" placeholder="Paste text to analyze for AI generation markers..."></textarea>
+            <div class="or-divider">
+                <span data-i18n="orText">or paste text</span>
             </div>
 
-            <!-- ANALYZE BUTTON -->
-            <button class="analyze-btn" id="analyzeBtn" disabled>
-                <span data-i18n="analyze">Analyze</span>
+            <div class="text-input-area">
+                <textarea class="text-input" id="textInput"
+                    data-i18n-placeholder="textPlaceholder"
+                    placeholder="Paste any text to check its verifiability..."></textarea>
+            </div>
+
+            <button class="check-btn" id="checkBtn" disabled>
+                <span data-i18n="checkBtn">Check Content</span>
+                <span>→</span>
             </button>
+        </section>
 
-            <!-- RESULT -->
-            <div class="result" id="result">
-                <div class="result-header">
-                    <span class="result-icon" id="resultIcon"></span>
-                    <span class="result-status" id="resultStatus"></span>
-                    <span class="result-confidence" id="resultConfidence"></span>
-                </div>
-                <div class="result-explanation" id="resultExplanation"></div>
-                <div class="result-meta" id="resultMeta"></div>
-                <div class="result-disclaimer" id="resultDisclaimer"></div>
+        <!-- ═══ STATE 1: PROCESSING ═══ -->
+        <section class="processing-state" id="processingState">
+            <div class="skeleton-container">
+                <div class="skeleton wide"></div>
+                <div class="skeleton medium"></div>
+                <div class="skeleton short"></div>
             </div>
-        </div>
+            <div class="processing-spinner"></div>
+            <div class="processing-status">
+                <span class="status-text" id="statusText" data-i18n="processing1">Analyzing content...</span>
+            </div>
+            <div class="processing-sub" data-i18n="processingSub">Constitutional verification in progress</div>
+        </section>
+
+        <!-- ═══ STATE 2: RESULT ═══ -->
+        <section class="result-state" id="resultState">
+            <div class="result-card" id="resultCard">
+                <!-- Result Header -->
+                <div class="result-header">
+                    <div class="result-badge" id="resultBadge">
+                        <span class="result-badge-icon" id="badgeIcon">✓</span>
+                        <span id="badgeText">VERIFIED</span>
+                    </div>
+                    <p class="result-summary" id="resultSummary">
+                        This content has verifiable cryptographic proof.
+                    </p>
+                    <span class="confidence-tag" id="confidenceTag">High Confidence</span>
+                </div>
+
+                <!-- Seal Section (only for VERIFIED + HIGH) -->
+                <div class="seal-section" id="sealSection">
+                    <button class="seal-btn" id="sealBtn">
+                        <span>🔐</span>
+                        <span data-i18n="sealBtn">Seal as Proof</span>
+                    </button>
+                    <p class="seal-hint" data-i18n="sealHint">Create permanent cryptographic receipt</p>
+                    <p class="seal-caveat" data-i18n="sealCaveat">This proof certifies the verification result, not the original content.</p>
+                </div>
+
+                <!-- Proof Box (after seal) -->
+                <div class="proof-box" id="proofBox">
+                    <div class="proof-title" data-i18n="proofTitle">✓ Proof Sealed to Ledger</div>
+                    <div class="proof-grid">
+                        <div class="proof-details">
+                            <div class="proof-label" data-i18n="receiptId">Receipt ID</div>
+                            <div class="proof-value" id="proofReceiptId">WINDI-...</div>
+                            <div class="proof-label" data-i18n="proofHash">Hash</div>
+                            <div class="proof-value" id="proofHash">sha256:...</div>
+                        </div>
+                        <div class="qr-container" id="qrContainer"></div>
+                    </div>
+                    <a class="verify-link" id="verifyLink" href="#" target="_blank">
+                        <span data-i18n="verifyOnLedger">Verify on Ledger</span>
+                        <span>→</span>
+                    </a>
+                </div>
+
+                <!-- Expandable Details -->
+                <div class="result-details">
+                    <div class="details-buttons">
+                        <button class="details-toggle" id="detailsToggle">
+                            <span data-i18n="whyResult">Why this result?</span>
+                            <span class="toggle-icon">▼</span>
+                        </button>
+                        <button class="details-toggle" id="guaranteesToggle">
+                            <span>⚖️</span>
+                            <span data-i18n="systemGuarantees">System Guarantees</span>
+                            <span class="toggle-icon">▼</span>
+                        </button>
+                    </div>
+                    <div class="details-content" id="detailsContent">
+                        <div class="details-section" id="verifiableSection">
+                            <div class="details-label" data-i18n="verifiableElements">Verifiable Elements</div>
+                            <ul class="elements-list" id="verifiableList"></ul>
+                        </div>
+                        <div class="details-section" id="nonVerifiableSection">
+                            <div class="details-label" data-i18n="nonVerifiableElements">Non-Verifiable Elements</div>
+                            <ul class="elements-list" id="nonVerifiableList"></ul>
+                        </div>
+                        <div class="details-section">
+                            <div class="details-label" data-i18n="contentHash">Content Hash</div>
+                            <div class="details-value" id="contentHash">sha256:...</div>
+                        </div>
+                        <div class="details-section">
+                            <div class="details-label" data-i18n="analyzedAt">Analyzed At</div>
+                            <div class="details-value" id="analyzedAt">2026-03-21T...</div>
+                        </div>
+                    </div>
+
+                    <!-- System Guarantees Content -->
+                    <div class="guarantees-content" id="guaranteesContent">
+                        <div class="guarantees-box">
+                            <p class="guarantees-title" data-i18n="guaranteesTitle">WINDI does not determine truth.</p>
+                            <ul class="guarantees-list">
+                                <li data-i18n="guarantee1">Defines what can be cryptographically proven</li>
+                                <li data-i18n="guarantee2">Identifies what cannot be verified</li>
+                                <li data-i18n="guarantee3">Detects inconsistencies in structure</li>
+                            </ul>
+                            <p class="guarantees-footer" data-i18n="guaranteesFooter">All results are bounded, auditable, and constitutional.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Disclaimer -->
+                <div class="result-disclaimer">
+                    <span>⚖️</span>
+                    <span id="disclaimerText" data-i18n="disclaimer">WINDI classifies verifiability — it does not determine truth. Human judgment remains essential.</span>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="result-actions">
+                <button class="action-btn action-btn-primary" id="tryAnotherBtn">
+                    <span data-i18n="tryAnother">Check Another</span>
+                </button>
+                <button class="action-btn action-btn-secondary" id="shareBtn">
+                    <span>📤</span>
+                    <span data-i18n="share">Share</span>
+                </button>
+            </div>
+        </section>
 
         <!-- FOOTER -->
         <footer class="footer">
-            <p data-i18n="footer">WINDI does not store your data. Analysis runs locally where possible.</p>
+            <p data-i18n="footer">WINDI does not store your data. Analysis is constitutional.</p>
             <div class="constitutional-badge">
                 <span>🛡️</span>
-                <span data-i18n="constitutional">Constitutional: I1 · I9 · I11 · I12</span>
+                <span data-i18n="constitutional">I1 · I9 · I11 · I12</span>
             </div>
             <p style="margin-top: 1rem;">
-                <a href="/verify-public/">← Back to Verify</a>
+                <a href="/verify-public/" data-i18n="backLink">← Back to Verify</a>
             </p>
         </footer>
     </main>
 
     <script>
         // ═══════════════════════════════════════════════════════════
-        // I18N — Trilingual Support (DE | EN | PT)
+        // W-VERIFY-UX-002 — Premium + Proof Integration
         // ═══════════════════════════════════════════════════════════
 
         const I18N = {
             de: {
-                title: "Medien-Authentizitäts-Detektor",
-                subtitle: "Analysieren Sie Videos, Bilder und Texte auf KI-generierte Merkmale. Kostenlos. Sofort. Keine Datenspeicherung.",
-                tabVideo: "Video",
-                tabImage: "Bild",
-                tabText: "Text",
-                dropVideo: "Video hier ablegen oder klicken zum Hochladen",
-                dropHintVideo: "MP4, WebM, MOV • Max 50MB",
-                dropImage: "Bild hier ablegen oder klicken zum Hochladen",
-                dropHintImage: "JPG, PNG, WebP • Max 10MB",
-                textPlaceholder: "Text einfügen, um ihn auf KI-Generierungsmerkmale zu analysieren...",
-                analyze: "Analysieren",
-                analyzing: "Analysiere...",
-                footer: "WINDI speichert Ihre Daten nicht. Die Analyse läuft lokal, wenn möglich.",
-                constitutional: "Konstitutionell: I1 · I9 · I11 · I12",
-                confidence: { low: "Niedrig", medium: "Mittel", high: "Hoch" },
-                status: {
-                    suspicious: "Verdächtig",
-                    unverifiable: "Nicht verifizierbar",
-                    inconclusive: "Nicht schlüssig"
+                title: "Prüfe jeden Inhalt",
+                subtitle: "Klassifiziert Verifizierbarkeit — nicht Wahrheit",
+                dropMain: "Datei ablegen oder klicken zum Hochladen",
+                dropSub: "Video, Bild oder Dokument",
+                orText: "oder Text einfügen",
+                textPlaceholder: "Füge beliebigen Text ein, um seine Verifizierbarkeit zu prüfen...",
+                checkBtn: "Inhalt prüfen",
+                processing1: "Analysiere Inhalt...",
+                processing2: "Suche nach Verifizierung...",
+                processing3: "Prüfe Hashes...",
+                processing4: "Klassifiziere...",
+                processingSub: "Konstitutionelle Verifizierung läuft",
+                whyResult: "Warum dieses Ergebnis?",
+                verifiableElements: "Verifizierbare Elemente",
+                nonVerifiableElements: "Nicht-verifizierbare Elemente",
+                contentHash: "Inhalts-Hash",
+                analyzedAt: "Analysiert am",
+                disclaimer: "WINDI klassifiziert Verifizierbarkeit — bestimmt keine Wahrheit. Menschliches Urteil bleibt wesentlich.",
+                tryAnother: "Neuer Inhalt",
+                share: "Teilen",
+                footer: "WINDI speichert keine Daten. Analyse ist konstitutionell.",
+                constitutional: "I1 · I9 · I11 · I12",
+                backLink: "← Zurück zu Verify",
+                sealBtn: "Als Beweis versiegeln",
+                sealHint: "Permanenten kryptografischen Beleg erstellen",
+                sealCaveat: "Dieser Beweis zertifiziert das Verifizierungsergebnis, nicht den Originalinhalt.",
+                proofTitle: "✓ Beweis im Ledger versiegelt",
+                systemGuarantees: "Systemgarantien",
+                guaranteesTitle: "WINDI bestimmt keine Wahrheit.",
+                guarantee1: "Definiert, was kryptografisch bewiesen werden kann",
+                guarantee2: "Identifiziert, was nicht verifiziert werden kann",
+                guarantee3: "Erkennt Inkonsistenzen in der Struktur",
+                guaranteesFooter: "Alle Ergebnisse sind begrenzt, überprüfbar und konstitutionell.",
+                receiptId: "Beleg-ID",
+                proofHash: "Hash",
+                verifyOnLedger: "Im Ledger verifizieren",
+                verdicts: {
+                    verified: "VERIFIZIERT",
+                    unverifiable: "NICHT VERIFIZIERBAR",
+                    inconsistent: "INKONSISTENT"
                 },
-                meta: {
-                    hash: "Hash",
-                    score: "Punktzahl",
-                    type: "Medientyp",
-                    time: "Analysezeit"
-                }
+                verdictSummary: {
+                    verified: "Dieser Inhalt hat verifizierbare kryptografische Beweise.",
+                    unverifiable: "Kein überprüfbarer Beweis gefunden. Das ist der häufigste Zustand im Internet.",
+                    inconsistent: "Anzeichen von Änderungen erkannt — Authentizität ungewiss."
+                },
+                confidence: { low: "Niedrig", medium: "Mittel", high: "Hoch" },
+                copied: "Link kopiert!",
+                sealing: "Versiegele...",
+                sealed: "Versiegelt!"
             },
             en: {
-                title: "Media Authenticity Detector",
-                subtitle: "Analyze videos, images, and text for AI-generated markers. Free. Instant. No data stored.",
-                tabVideo: "Video",
-                tabImage: "Image",
-                tabText: "Text",
-                dropVideo: "Drop video here or click to upload",
-                dropHintVideo: "MP4, WebM, MOV • Max 50MB",
-                dropImage: "Drop image here or click to upload",
-                dropHintImage: "JPG, PNG, WebP • Max 10MB",
-                textPlaceholder: "Paste text to analyze for AI generation markers...",
-                analyze: "Analyze",
-                analyzing: "Analyzing...",
-                footer: "WINDI does not store your data. Analysis runs locally where possible.",
-                constitutional: "Constitutional: I1 · I9 · I11 · I12",
-                confidence: { low: "Low", medium: "Medium", high: "High" },
-                status: {
-                    suspicious: "Suspicious",
-                    unverifiable: "Unverifiable",
-                    inconclusive: "Inconclusive"
+                title: "Check any content",
+                subtitle: "Classifies verifiability — not truth",
+                dropMain: "Drop file or click to upload",
+                dropSub: "Video, image, or document",
+                orText: "or paste text",
+                textPlaceholder: "Paste any text to check its verifiability...",
+                checkBtn: "Check Content",
+                processing1: "Analyzing content...",
+                processing2: "Searching for verification...",
+                processing3: "Checking hashes...",
+                processing4: "Classifying...",
+                processingSub: "Constitutional verification in progress",
+                whyResult: "Why this result?",
+                verifiableElements: "Verifiable Elements",
+                nonVerifiableElements: "Non-Verifiable Elements",
+                contentHash: "Content Hash",
+                analyzedAt: "Analyzed At",
+                disclaimer: "WINDI classifies verifiability — it does not determine truth. Human judgment remains essential.",
+                tryAnother: "Check Another",
+                share: "Share",
+                footer: "WINDI does not store your data. Analysis is constitutional.",
+                constitutional: "I1 · I9 · I11 · I12",
+                backLink: "← Back to Verify",
+                sealBtn: "Seal as Proof",
+                sealHint: "Create permanent cryptographic receipt",
+                sealCaveat: "This proof certifies the verification result, not the original content.",
+                proofTitle: "✓ Proof Sealed to Ledger",
+                systemGuarantees: "System Guarantees",
+                guaranteesTitle: "WINDI does not determine truth.",
+                guarantee1: "Defines what can be cryptographically proven",
+                guarantee2: "Identifies what cannot be verified",
+                guarantee3: "Detects inconsistencies in structure",
+                guaranteesFooter: "All results are bounded, auditable, and constitutional.",
+                receiptId: "Receipt ID",
+                proofHash: "Hash",
+                verifyOnLedger: "Verify on Ledger",
+                verdicts: {
+                    verified: "VERIFIED",
+                    unverifiable: "UNVERIFIABLE",
+                    inconsistent: "INCONSISTENT"
                 },
-                meta: {
-                    hash: "Hash",
-                    score: "Score",
-                    type: "Media Type",
-                    time: "Analysis Time"
-                }
+                verdictSummary: {
+                    verified: "This content has verifiable cryptographic proof.",
+                    unverifiable: "No verifiable proof found. This is the most common state on the internet.",
+                    inconsistent: "Signs of alteration detected — authenticity uncertain."
+                },
+                confidence: { low: "Low", medium: "Medium", high: "High" },
+                copied: "Link copied!",
+                sealing: "Sealing...",
+                sealed: "Sealed!"
             },
             pt: {
-                title: "Detector de Autenticidade de Média",
-                subtitle: "Analisa vídeos, imagens e texto para marcadores de geração por IA. Grátis. Instantâneo. Sem armazenamento.",
-                tabVideo: "Vídeo",
-                tabImage: "Imagem",
-                tabText: "Texto",
-                dropVideo: "Arrasta o vídeo aqui ou clica para carregar",
-                dropHintVideo: "MP4, WebM, MOV • Máx 50MB",
-                dropImage: "Arrasta a imagem aqui ou clica para carregar",
-                dropHintImage: "JPG, PNG, WebP • Máx 10MB",
-                textPlaceholder: "Cola o texto para analisar marcadores de geração por IA...",
-                analyze: "Analisar",
-                analyzing: "A analisar...",
-                footer: "O WINDI não armazena os teus dados. A análise corre localmente quando possível.",
-                constitutional: "Constitucional: I1 · I9 · I11 · I12",
-                confidence: { low: "Baixa", medium: "Média", high: "Alta" },
-                status: {
-                    suspicious: "Suspeito",
-                    unverifiable: "Não verificável",
-                    inconclusive: "Inconclusivo"
+                title: "Verifica qualquer conteúdo",
+                subtitle: "Classifica verificabilidade — não verdade",
+                dropMain: "Arrasta ficheiro ou clica para carregar",
+                dropSub: "Vídeo, imagem ou documento",
+                orText: "ou cola texto",
+                textPlaceholder: "Cola qualquer texto para verificar a sua verificabilidade...",
+                checkBtn: "Verificar Conteúdo",
+                processing1: "A analisar conteúdo...",
+                processing2: "A procurar verificação...",
+                processing3: "A verificar hashes...",
+                processing4: "A classificar...",
+                processingSub: "Verificação constitucional em curso",
+                whyResult: "Porquê este resultado?",
+                verifiableElements: "Elementos Verificáveis",
+                nonVerifiableElements: "Elementos Não-Verificáveis",
+                contentHash: "Hash do Conteúdo",
+                analyzedAt: "Analisado Em",
+                disclaimer: "O WINDI classifica verificabilidade — não determina verdade. O julgamento humano permanece essencial.",
+                tryAnother: "Verificar Outro",
+                share: "Partilhar",
+                footer: "O WINDI não armazena os teus dados. A análise é constitucional.",
+                constitutional: "I1 · I9 · I11 · I12",
+                backLink: "← Voltar ao Verify",
+                sealBtn: "Selar como Prova",
+                sealHint: "Criar recibo criptográfico permanente",
+                sealCaveat: "Esta prova certifica o resultado da verificação, não o conteúdo original.",
+                proofTitle: "✓ Prova Selada no Ledger",
+                systemGuarantees: "Garantias do Sistema",
+                guaranteesTitle: "O WINDI não determina verdade.",
+                guarantee1: "Define o que pode ser provado criptograficamente",
+                guarantee2: "Identifica o que não pode ser verificado",
+                guarantee3: "Detecta inconsistências na estrutura",
+                guaranteesFooter: "Todos os resultados são delimitados, auditáveis e constitucionais.",
+                receiptId: "ID do Recibo",
+                proofHash: "Hash",
+                verifyOnLedger: "Verificar no Ledger",
+                verdicts: {
+                    verified: "VERIFICADO",
+                    unverifiable: "NÃO VERIFICÁVEL",
+                    inconsistent: "INCONSISTENTE"
                 },
-                meta: {
-                    hash: "Hash",
-                    score: "Pontuação",
-                    type: "Tipo de Média",
-                    time: "Tempo de Análise"
-                }
+                verdictSummary: {
+                    verified: "Este conteúdo tem prova criptográfica verificável.",
+                    unverifiable: "Nenhuma prova verificável encontrada. Este é o estado mais comum na internet.",
+                    inconsistent: "Sinais de alteração detetados — autenticidade incerta."
+                },
+                confidence: { low: "Baixa", medium: "Média", high: "Alta" },
+                copied: "Link copiado!",
+                sealing: "A selar...",
+                sealed: "Selado!"
             }
         };
 
+        // State
         let currentLang = localStorage.getItem('windi-lang') || 'en';
         let currentTheme = localStorage.getItem('windi-theme') || 'noir';
-        let currentTab = 'video';
         let selectedFile = null;
+        let lastResult = null;
+        let statusInterval = null;
+
+        // DOM Elements
+        const entryState = document.getElementById('entryState');
+        const processingState = document.getElementById('processingState');
+        const resultState = document.getElementById('resultState');
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const textInput = document.getElementById('textInput');
+        const checkBtn = document.getElementById('checkBtn');
+        const statusText = document.getElementById('statusText');
+
+        // ═══════════════════════════════════════════════════════════
+        // CONFETTI ENGINE (lightweight, no dependencies)
+        // ═══════════════════════════════════════════════════════════
+        const confettiCanvas = document.getElementById('confetti-canvas');
+        const confettiCtx = confettiCanvas.getContext('2d');
+        let confettiParticles = [];
+        let confettiAnimating = false;
+
+        function resizeConfetti() {
+            confettiCanvas.width = window.innerWidth;
+            confettiCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeConfetti);
+        resizeConfetti();
+
+        function createConfettiParticle() {
+            const colors = ['#4CAF50', '#8BC34A', '#CDDC39', '#C9A84C', '#81C784'];
+            return {
+                x: Math.random() * confettiCanvas.width,
+                y: -20,
+                size: Math.random() * 8 + 4,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                speedY: Math.random() * 3 + 2,
+                speedX: Math.random() * 2 - 1,
+                rotation: Math.random() * 360,
+                rotationSpeed: Math.random() * 10 - 5
+            };
+        }
+
+        function launchConfetti() {
+            confettiParticles = [];
+            for (let i = 0; i < 80; i++) {
+                confettiParticles.push(createConfettiParticle());
+            }
+            confettiAnimating = true;
+            animateConfetti();
+        }
+
+        function animateConfetti() {
+            if (!confettiAnimating) return;
+
+            confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+
+            confettiParticles = confettiParticles.filter(p => p.y < confettiCanvas.height + 20);
+
+            if (confettiParticles.length === 0) {
+                confettiAnimating = false;
+                return;
+            }
+
+            confettiParticles.forEach(p => {
+                p.y += p.speedY;
+                p.x += p.speedX;
+                p.rotation += p.rotationSpeed;
+
+                confettiCtx.save();
+                confettiCtx.translate(p.x, p.y);
+                confettiCtx.rotate(p.rotation * Math.PI / 180);
+                confettiCtx.fillStyle = p.color;
+                confettiCtx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size / 2);
+                confettiCtx.restore();
+            });
+
+            requestAnimationFrame(animateConfetti);
+        }
+
+        // ═══════════════════════════════════════════════════════════
+        // QR CODE GENERATOR (SVG-based, no dependencies)
+        // ═══════════════════════════════════════════════════════════
+        function generateQR(text, container) {
+            // Simple QR placeholder - in production use qrcode.js or similar
+            // For now, create a visual representation
+            const size = 84;
+            const modules = 21; // QR version 1
+            const moduleSize = size / modules;
+
+            let svg = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">`;
+            svg += `<rect width="${size}" height="${size}" fill="white"/>`;
+
+            // Generate pseudo-random pattern based on text hash
+            const hash = text.split('').reduce((a, c) => ((a << 5) - a + c.charCodeAt(0)) | 0, 0);
+
+            // Position patterns (corners)
+            const drawFinder = (x, y) => {
+                svg += `<rect x="${x}" y="${y}" width="${7*moduleSize}" height="${7*moduleSize}" fill="black"/>`;
+                svg += `<rect x="${x+moduleSize}" y="${y+moduleSize}" width="${5*moduleSize}" height="${5*moduleSize}" fill="white"/>`;
+                svg += `<rect x="${x+2*moduleSize}" y="${y+2*moduleSize}" width="${3*moduleSize}" height="${3*moduleSize}" fill="black"/>`;
+            };
+
+            drawFinder(0, 0);
+            drawFinder((modules-7)*moduleSize, 0);
+            drawFinder(0, (modules-7)*moduleSize);
+
+            // Data modules (simplified)
+            for (let i = 0; i < modules; i++) {
+                for (let j = 0; j < modules; j++) {
+                    // Skip finder patterns
+                    if ((i < 8 && j < 8) || (i < 8 && j > 12) || (i > 12 && j < 8)) continue;
+
+                    // Pseudo-random based on position and hash
+                    if ((hash * (i + 1) * (j + 1)) % 3 === 0) {
+                        svg += `<rect x="${i*moduleSize}" y="${j*moduleSize}" width="${moduleSize}" height="${moduleSize}" fill="black"/>`;
+                    }
+                }
+            }
+
+            svg += '</svg>';
+            container.innerHTML = svg;
+        }
 
         // ═══ INIT ═══
         function init() {
             setLang(currentLang);
             setTheme(currentTheme);
-            setupTabs();
-            setupDropZones();
-            setupTextInput();
-            setupAnalyzeButton();
+            setupEventListeners();
         }
 
         // ═══ LANGUAGE ═══
@@ -697,25 +1485,23 @@
             currentLang = lang;
             localStorage.setItem('windi-lang', lang);
 
-            // Update buttons
             document.querySelectorAll('.lang-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.lang === lang);
             });
 
-            // Update texts
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.dataset.i18n;
-                if (I18N[lang][key]) {
-                    el.textContent = I18N[lang][key];
+                const keys = key.split('.');
+                let value = I18N[lang];
+                for (const k of keys) {
+                    value = value?.[k];
                 }
+                if (value) el.textContent = value;
             });
 
-            // Update placeholders
             document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
                 const key = el.dataset.i18nPlaceholder;
-                if (I18N[lang][key]) {
-                    el.placeholder = I18N[lang][key];
-                }
+                if (I18N[lang][key]) el.placeholder = I18N[lang][key];
             });
         }
 
@@ -727,113 +1513,131 @@
             document.getElementById('themeToggle').textContent = theme === 'noir' ? '☀' : '☽';
         }
 
-        // ═══ TABS ═══
-        function setupTabs() {
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const tab = btn.dataset.tab;
-                    currentTab = tab;
-                    selectedFile = null;
-
-                    // Update tabs
-                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-
-                    // Update zones
-                    document.querySelectorAll('.input-zone').forEach(z => z.classList.remove('active'));
-                    document.getElementById(`zone-${tab}`).classList.add('active');
-
-                    // Reset
-                    updateAnalyzeButton();
-                    hideResult();
-                });
+        // ═══ EVENT LISTENERS ═══
+        function setupEventListeners() {
+            // Language buttons
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.addEventListener('click', () => setLang(btn.dataset.lang));
             });
+
+            // Theme toggle
+            document.getElementById('themeToggle').addEventListener('click', () => {
+                setTheme(currentTheme === 'noir' ? 'klar' : 'noir');
+            });
+
+            // Drop zone
+            dropZone.addEventListener('click', () => fileInput.click());
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            });
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.classList.remove('dragover');
+            });
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+                if (e.dataTransfer.files[0]) {
+                    handleFile(e.dataTransfer.files[0]);
+                }
+            });
+
+            // File input
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files[0]) handleFile(e.target.files[0]);
+            });
+
+            // Text input
+            textInput.addEventListener('input', updateCheckButton);
+
+            // Check button
+            checkBtn.addEventListener('click', startAnalysis);
+
+            // Details toggle
+            document.getElementById('detailsToggle').addEventListener('click', toggleDetails);
+
+            // Guarantees toggle
+            document.getElementById('guaranteesToggle').addEventListener('click', toggleGuarantees);
+
+            // Seal button
+            document.getElementById('sealBtn').addEventListener('click', sealToLedger);
+
+            // Action buttons
+            document.getElementById('tryAnotherBtn').addEventListener('click', resetToEntry);
+            document.getElementById('shareBtn').addEventListener('click', shareResult);
         }
 
-        // ═══ DROP ZONES ═══
-        function setupDropZones() {
-            ['Video', 'Image'].forEach(type => {
-                const drop = document.getElementById(`drop${type}`);
-                const input = document.getElementById(`input${type}`);
-
-                drop.addEventListener('click', () => input.click());
-
-                drop.addEventListener('dragover', (e) => {
-                    e.preventDefault();
-                    drop.classList.add('dragover');
-                });
-
-                drop.addEventListener('dragleave', () => {
-                    drop.classList.remove('dragover');
-                });
-
-                drop.addEventListener('drop', (e) => {
-                    e.preventDefault();
-                    drop.classList.remove('dragover');
-                    const file = e.dataTransfer.files[0];
-                    if (file) handleFile(file, type.toLowerCase());
-                });
-
-                input.addEventListener('change', (e) => {
-                    const file = e.target.files[0];
-                    if (file) handleFile(file, type.toLowerCase());
-                });
-            });
-        }
-
-        function handleFile(file, type) {
+        // ═══ FILE HANDLING ═══
+        function handleFile(file) {
             selectedFile = file;
-            const drop = document.getElementById(`drop${type.charAt(0).toUpperCase() + type.slice(1)}`);
-            drop.querySelector('.drop-zone-text').textContent = `✓ ${file.name}`;
-            updateAnalyzeButton();
+            const mainText = dropZone.querySelector('.drop-main-text');
+            mainText.textContent = `✓ ${file.name}`;
+            updateCheckButton();
         }
 
-        // ═══ TEXT INPUT ═══
-        function setupTextInput() {
-            const textarea = document.getElementById('inputText');
-            textarea.addEventListener('input', updateAnalyzeButton);
+        function updateCheckButton() {
+            const hasText = textInput.value.trim().length > 10;
+            const hasFile = selectedFile !== null;
+            checkBtn.disabled = !(hasText || hasFile);
         }
 
-        // ═══ ANALYZE BUTTON ═══
-        function setupAnalyzeButton() {
-            const btn = document.getElementById('analyzeBtn');
-            btn.addEventListener('click', analyze);
+        // ═══ STATE TRANSITIONS ═══
+        function showState(state) {
+            entryState.classList.toggle('hidden', state !== 'entry');
+            processingState.classList.toggle('active', state === 'processing');
+            resultState.classList.toggle('active', state === 'result');
         }
 
-        function updateAnalyzeButton() {
-            const btn = document.getElementById('analyzeBtn');
-            let hasInput = false;
+        // ═══ PROCESSING ═══
+        function startAnalysis() {
+            showState('processing');
+            startStatusRotation();
+            performAnalysis();
+        }
 
-            if (currentTab === 'text') {
-                hasInput = document.getElementById('inputText').value.trim().length > 10;
-            } else {
-                hasInput = selectedFile !== null;
+        function startStatusRotation() {
+            const messages = [
+                I18N[currentLang].processing1,
+                I18N[currentLang].processing2,
+                I18N[currentLang].processing3,
+                I18N[currentLang].processing4
+            ];
+            let index = 0;
+
+            function rotate() {
+                statusText.classList.add('fade');
+                setTimeout(() => {
+                    statusText.textContent = messages[index];
+                    statusText.classList.remove('fade');
+                    index = (index + 1) % messages.length;
+                }, 200);
             }
 
-            btn.disabled = !hasInput;
+            rotate();
+            statusInterval = setInterval(rotate, 1200);
         }
 
-        // ═══ ANALYZE ═══
-        async function analyze() {
-            const btn = document.getElementById('analyzeBtn');
-            const btnText = btn.querySelector('[data-i18n]');
+        function stopStatusRotation() {
+            if (statusInterval) {
+                clearInterval(statusInterval);
+                statusInterval = null;
+            }
+        }
 
-            // Loading state
-            btn.classList.add('loading');
-            btn.innerHTML = `<span class="spinner"></span> <span>${I18N[currentLang].analyzing}</span>`;
-            btn.disabled = true;
-
+        async function performAnalysis() {
             try {
                 let response;
+                const hasText = textInput.value.trim().length > 10;
 
-                if (currentTab === 'text') {
-                    const text = document.getElementById('inputText').value;
-                    response = await fetch('/detect-media/analyze', {
+                if (hasText) {
+                    // Use Reality Check (epistemological) for text
+                    response = await fetch('/reality-check/analyze', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ text, intent: true })
+                        body: JSON.stringify({ content: textInput.value })
                     });
-                } else {
+                } else if (selectedFile) {
+                    // Use Media Detector for files
                     const formData = new FormData();
                     formData.append('file', selectedFile);
                     formData.append('intent', 'true');
@@ -845,101 +1649,250 @@
                 }
 
                 const data = await response.json();
+                stopStatusRotation();
                 showResult(data);
 
             } catch (error) {
                 console.error('Analysis error:', error);
+                stopStatusRotation();
                 showResult({
-                    status: 'error',
-                    confidence: 'none',
-                    explanation: {
-                        EN: 'Connection error. Please try again.',
-                        DE: 'Verbindungsfehler. Bitte erneut versuchen.',
-                        PT: 'Erro de conexão. Tenta novamente.'
-                    }
+                    verdict: 'NÃO_VERIFICÁVEL',
+                    confidence: 'LOW',
+                    reasoning: 'Connection error. Please try again.',
+                    verifiable_elements: [],
+                    non_verifiable_elements: [{ element: 'Analysis', reason: 'Network error' }],
+                    content_hash: 'error',
+                    analyzed_at: new Date().toISOString()
                 });
             }
-
-            // Reset button
-            btn.classList.remove('loading');
-            btn.innerHTML = `<span data-i18n="analyze">${I18N[currentLang].analyze}</span>`;
-            updateAnalyzeButton();
         }
 
-        // ═══ RESULT ═══
+        // ═══ RESULT DISPLAY ═══
         function showResult(data) {
-            const result = document.getElementById('result');
-            const icon = document.getElementById('resultIcon');
-            const status = document.getElementById('resultStatus');
-            const confidence = document.getElementById('resultConfidence');
-            const explanation = document.getElementById('resultExplanation');
-            const meta = document.getElementById('resultMeta');
-            const disclaimer = document.getElementById('resultDisclaimer');
+            lastResult = data;
 
-            // Set class
-            result.className = 'result show ' + data.status;
-
-            // Icon
-            const icons = {
-                suspicious: '⚠️',
-                unverifiable: '❓',
-                inconclusive: '🔍',
-                error: '❌'
-            };
-            icon.textContent = icons[data.status] || '❓';
-
-            // Status
-            const statusText = I18N[currentLang].status[data.status] || data.status;
-            status.textContent = statusText;
-
-            // Confidence
-            const confText = I18N[currentLang].confidence[data.confidence] || data.confidence;
-            confidence.textContent = confText;
-
-            // Explanation
-            const explText = data.explanation?.[currentLang.toUpperCase()] || data.explanation?.EN || '';
-            explanation.textContent = explText;
-
-            // Meta
-            if (data.metadata) {
-                const m = I18N[currentLang].meta;
-                meta.innerHTML = `
-                    <div class="meta-item">
-                        <div class="meta-label">${m.type}</div>
-                        <div class="meta-value">${data.media_type || '-'}</div>
-                    </div>
-                    <div class="meta-item">
-                        <div class="meta-label">${m.score}</div>
-                        <div class="meta-value">${(data.analysis?.score * 100).toFixed(1)}%</div>
-                    </div>
-                    <div class="meta-item">
-                        <div class="meta-label">${m.time}</div>
-                        <div class="meta-value">${data.metadata.execution_time_ms}ms</div>
-                    </div>
-                    <div class="meta-item">
-                        <div class="meta-label">${m.hash}</div>
-                        <div class="meta-value">${data.metadata.hash?.slice(0, 16)}...</div>
-                    </div>
-                `;
+            // Normalize verdict
+            let verdict = 'unverifiable';
+            const v = (data.verdict || data.status || '').toLowerCase();
+            if (v.includes('verificável') || v.includes('verified') || v === 'verificável') {
+                verdict = 'verified';
+            } else if (v.includes('inconsistent') || v.includes('suspicious') || v.includes('inkonsistent')) {
+                verdict = 'inconsistent';
+            } else {
+                verdict = 'unverifiable';
             }
 
-            // Disclaimer
-            const discText = data.disclaimer?.[currentLang.toUpperCase()] || data.disclaimer?.EN || '';
-            disclaimer.textContent = '⚖️ ' + discText;
+            // Apply verdict styling
+            const card = document.getElementById('resultCard');
+            const badge = document.getElementById('resultBadge');
+            card.className = 'result-card ' + verdict;
+
+            // Premium animations based on verdict
+            if (verdict === 'verified') {
+                launchConfetti();
+                badge.classList.add('glow-green');
+            } else if (verdict === 'inconsistent') {
+                badge.classList.add('shake');
+            }
+
+            // Badge
+            const icons = { verified: '✓', unverifiable: '?', inconsistent: '⚠' };
+            document.getElementById('badgeIcon').textContent = icons[verdict];
+            document.getElementById('badgeText').textContent = I18N[currentLang].verdicts[verdict];
+
+            // Summary
+            document.getElementById('resultSummary').textContent =
+                data.reasoning || I18N[currentLang].verdictSummary[verdict];
+
+            // Confidence
+            const conf = (data.confidence || 'medium').toLowerCase();
+            document.getElementById('confidenceTag').textContent =
+                I18N[currentLang].confidence[conf] || conf;
+
+            // Show seal button only for VERIFIED + HIGH confidence
+            const sealSection = document.getElementById('sealSection');
+            const proofBox = document.getElementById('proofBox');
+            sealSection.classList.remove('visible');
+            proofBox.classList.remove('visible');
+
+            if (verdict === 'verified' && conf === 'high') {
+                sealSection.classList.add('visible');
+            }
+
+            // Verifiable elements
+            const vList = document.getElementById('verifiableList');
+            const vSection = document.getElementById('verifiableSection');
+            const verifiable = data.verifiable_elements || [];
+            if (verifiable.length > 0) {
+                vSection.style.display = 'block';
+                vList.innerHTML = verifiable.map(el => `
+                    <li>
+                        <span class="element-type">${el.type || 'element'}</span>
+                        ${el.element || el.description || el.value || ''}
+                    </li>
+                `).join('');
+            } else {
+                vSection.style.display = 'none';
+            }
+
+            // Non-verifiable elements
+            const nvList = document.getElementById('nonVerifiableList');
+            const nvSection = document.getElementById('nonVerifiableSection');
+            const nonVerifiable = data.non_verifiable_elements || [];
+            if (nonVerifiable.length > 0) {
+                nvSection.style.display = 'block';
+                nvList.innerHTML = nonVerifiable.map(el => `
+                    <li>
+                        <span class="element-type">unverified</span>
+                        ${el.element}: ${el.reason}
+                    </li>
+                `).join('');
+            } else {
+                nvSection.style.display = 'none';
+            }
+
+            // Hash and timestamp
+            document.getElementById('contentHash').textContent =
+                data.content_hash ? `sha256:${data.content_hash.slice(0, 32)}...` : 'N/A';
+            document.getElementById('analyzedAt').textContent =
+                data.analyzed_at || new Date().toISOString();
+
+            showState('result');
         }
 
-        function hideResult() {
-            document.getElementById('result').classList.remove('show');
+        // ═══ SEAL TO LEDGER ═══
+        async function sealToLedger() {
+            const sealBtn = document.getElementById('sealBtn');
+            sealBtn.disabled = true;
+            sealBtn.innerHTML = `<span>⏳</span> <span>${I18N[currentLang].sealing}</span>`;
+
+            try {
+                const receiptId = `WINDI-VERIFY-${Date.now()}`;
+                const payload = {
+                    id: receiptId,
+                    actor: "W-VERIFY-MODUS4",
+                    app: "media-detector",
+                    doc_name: "Verification Result",
+                    doc_type: "doc",
+                    governance_level: "MEDIUM",
+                    metadata: {
+                        verdict: lastResult.verdict,
+                        confidence: lastResult.confidence,
+                        content_hash: lastResult.content_hash,
+                        source: "modus4"
+                    }
+                };
+
+                const response = await fetch('/api/receipts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                // Hide seal section, show proof box
+                document.getElementById('sealSection').classList.remove('visible');
+                const proofBox = document.getElementById('proofBox');
+                proofBox.classList.add('visible');
+
+                // Populate proof details
+                const finalReceiptId = data.id || receiptId;
+                document.getElementById('proofReceiptId').textContent = finalReceiptId;
+                document.getElementById('proofHash').textContent =
+                    `sha256:${lastResult.content_hash?.slice(0, 24) || '...'}...`;
+
+                // Generate QR code
+                const verifyUrl = `https://windi-domain.com/verify-public/?id=${finalReceiptId}`;
+                generateQR(verifyUrl, document.getElementById('qrContainer'));
+
+                // Set verify link
+                document.getElementById('verifyLink').href = verifyUrl;
+
+                // Update lastResult with receipt
+                lastResult.ledger_receipt = finalReceiptId;
+
+            } catch (error) {
+                console.error('Seal error:', error);
+                sealBtn.disabled = false;
+                sealBtn.innerHTML = `<span>🔐</span> <span>${I18N[currentLang].sealBtn}</span>`;
+            }
         }
 
-        // ═══ EVENT LISTENERS ═══
-        document.querySelectorAll('.lang-btn').forEach(btn => {
-            btn.addEventListener('click', () => setLang(btn.dataset.lang));
-        });
+        // ═══ DETAILS TOGGLE ═══
+        function toggleDetails() {
+            const toggle = document.getElementById('detailsToggle');
+            const content = document.getElementById('detailsContent');
+            toggle.classList.toggle('open');
+            content.classList.toggle('open');
+            // Close guarantees if open
+            document.getElementById('guaranteesToggle').classList.remove('open');
+            document.getElementById('guaranteesContent').classList.remove('open');
+        }
 
-        document.getElementById('themeToggle').addEventListener('click', () => {
-            setTheme(currentTheme === 'noir' ? 'klar' : 'noir');
-        });
+        function toggleGuarantees() {
+            const toggle = document.getElementById('guaranteesToggle');
+            const content = document.getElementById('guaranteesContent');
+            toggle.classList.toggle('open');
+            content.classList.toggle('open');
+            // Close details if open
+            document.getElementById('detailsToggle').classList.remove('open');
+            document.getElementById('detailsContent').classList.remove('open');
+        }
+
+        // ═══ ACTIONS ═══
+        function resetToEntry() {
+            selectedFile = null;
+            textInput.value = '';
+            fileInput.value = '';
+
+            const mainText = dropZone.querySelector('.drop-main-text');
+            mainText.textContent = I18N[currentLang].dropMain;
+
+            // Reset result card classes
+            document.getElementById('resultCard').className = 'result-card';
+            document.getElementById('resultBadge').classList.remove('glow-green', 'shake');
+
+            // Hide seal/proof sections
+            document.getElementById('sealSection').classList.remove('visible');
+            document.getElementById('proofBox').classList.remove('visible');
+
+            // Reset seal button
+            const sealBtn = document.getElementById('sealBtn');
+            sealBtn.disabled = false;
+            sealBtn.innerHTML = `<span>🔐</span> <span>${I18N[currentLang].sealBtn}</span>`;
+
+            // Close details and guarantees if open
+            document.getElementById('detailsToggle').classList.remove('open');
+            document.getElementById('detailsContent').classList.remove('open');
+            document.getElementById('guaranteesToggle').classList.remove('open');
+            document.getElementById('guaranteesContent').classList.remove('open');
+
+            updateCheckButton();
+            showState('entry');
+        }
+
+        function shareResult() {
+            const verdict = lastResult?.verdict || 'Analyzed';
+            const receiptId = lastResult?.ledger_receipt || '';
+            const url = receiptId
+                ? `https://windi-domain.com/verify-public/?id=${receiptId}`
+                : window.location.href;
+
+            const text = `WINDI Verification: ${verdict}\n${url}`;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: 'WINDI Verification Result',
+                    text: text,
+                    url: url
+                });
+            } else {
+                navigator.clipboard.writeText(text).then(() => {
+                    alert(I18N[currentLang].copied);
+                });
+            }
+        }
 
         // ═══ START ═══
         init();
