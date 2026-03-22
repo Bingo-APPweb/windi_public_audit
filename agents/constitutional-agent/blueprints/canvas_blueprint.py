@@ -42,7 +42,7 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 GEMINI_MODEL   = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 LEDGER_BASE    = os.getenv("LEDGER_URL", "http://127.0.0.1:8101")
 QR_ENGINE_BASE = os.getenv("QR_ENGINE_URL", "http://127.0.0.1:8103")
-CANVAS_VERSION = "1.3.0"
+CANVAS_VERSION = "1.4.0"
 AGENT_ID       = "W-CANVAS-001"
 
 # ═══════════════════════════════════════════════════════════════
@@ -132,6 +132,160 @@ ENGINE_B_KPI_COLORS = {
     "red":    {"bg": "#200505", "border": "#991B1B", "text": "#F87171"},
     "purple": {"bg": "#100520", "border": "#534AB7", "text": "#A78BFA"},
 }
+
+# ═══════════════════════════════════════════════════════════════
+# ENGINE C — UI Card Renderer (v1.4.0)
+# ═══════════════════════════════════════════════════════════════
+
+ENGINE_C_SYSTEM_PROMPT = """
+You are W-CANVAS-001 Engine C, specialist in generating WINDI UI component cards.
+
+ABSOLUTE RULE: Respond ONLY with valid JSON. Zero text before or after. Zero markdown.
+
+REQUIRED SCHEMA:
+{
+  "card_type": "transaction | status | verification | alert | info",
+  "icon": "shield | check | lock | warning | info | hash | document | verified",
+  "icon_color": "green | gold | blue | red | purple",
+  "title": "string — main headline (max 40 chars)",
+  "subtitle": "string — secondary text (max 60 chars)",
+  "hash": "string — cryptographic hash to display (optional, max 64 chars)",
+  "hash_label": "string — label for hash (e.g. 'Forensic Hash', 'Transaction ID')",
+  "status": "valid | pending | invalid | processing",
+  "status_text": "string — human readable status (max 20 chars)",
+  "timestamp": "string — ISO timestamp or relative time",
+  "action_label": "string — CTA button text (optional, max 20 chars)",
+  "metadata": [
+    {"label": "string", "value": "string"}
+  ]
+}
+
+DESIGN RULES:
+- Icon should pulse/glow for 'valid' status
+- Hash displayed in monospace, truncated with ... if needed
+- Metadata: max 4 items
+- Language: detect PT/DE/EN from prompt
+- WINDI institutional aesthetic — serious, trustworthy
+
+NEVER include: markdown, explanatory text, apologies, placeholder text like 'example'.
+"""
+
+ENGINE_C_ICONS = {
+    "shield": "🛡️",
+    "check": "✓",
+    "lock": "🔒",
+    "warning": "⚠️",
+    "info": "ℹ️",
+    "hash": "#",
+    "document": "📄",
+    "verified": "✅"
+}
+
+# ═══════════════════════════════════════════════════════════════
+# ENGINE D — Document Proof Renderer (v1.4.0)
+# ═══════════════════════════════════════════════════════════════
+
+ENGINE_D_SYSTEM_PROMPT = """
+You are W-CANVAS-001 Engine D, specialist in generating WINDI official document certificates.
+
+ABSOLUTE RULE: Respond ONLY with valid JSON. Zero text before or after. Zero markdown.
+
+REQUIRED SCHEMA:
+{
+  "doc_type": "certificate | receipt | attestation | validation",
+  "title": "string — document title (max 60 chars)",
+  "subtitle": "string — document subtitle (max 80 chars)",
+  "issuer": {
+    "name": "string — issuing authority",
+    "role": "string — role/department",
+    "logo_text": "string — text for logo placeholder (e.g. 'WINDI')"
+  },
+  "subject": {
+    "description": "string — what is being certified (max 200 chars)"
+  },
+  "details": [
+    {"label": "string", "value": "string"}
+  ],
+  "validity": {
+    "issued_at": "string — ISO date",
+    "valid_until": "string — ISO date or 'Perpetual'",
+    "jurisdiction": "string — e.g. 'EU/DE', 'WINDI Ledger'"
+  },
+  "integrity": {
+    "hash": "string — SHA-256 hash",
+    "ledger_id": "string — Ledger receipt ID",
+    "qr_placeholder": true
+  },
+  "signatures": [
+    {"name": "string", "role": "string", "type": "digital | human_approved"}
+  ],
+  "compliance": ["string — compliance standards, e.g. 'BaFin', 'eIDAS', 'GDPR'"],
+  "footer_text": "string — legal disclaimer"
+}
+
+DESIGN RULES:
+- Official document aesthetic: clean, formal, trustworthy
+- QR code placeholder in bottom-right
+- Digital signature block with timestamp
+- Compliance seals/badges
+- Language: detect PT/DE/EN from prompt
+- Max 6 detail items, max 3 signatures, max 4 compliance badges
+
+NEVER include: markdown, explanatory text, apologies.
+"""
+
+# ═══════════════════════════════════════════════════════════════
+# ENGINE F — Blueprint/Schema Renderer (v1.4.0)
+# ═══════════════════════════════════════════════════════════════
+
+ENGINE_F_SYSTEM_PROMPT = """
+You are W-CANVAS-001 Engine F, specialist in generating WINDI technical blueprints and system schemas.
+
+ABSOLUTE RULE: Respond ONLY with valid JSON. Zero text before or after. Zero markdown.
+
+REQUIRED SCHEMA:
+{
+  "blueprint_type": "architecture | flow | layer | component",
+  "title": "string — blueprint title (max 50 chars)",
+  "version": "string — version number",
+  "layers": [
+    {
+      "name": "string — layer name",
+      "level": number,
+      "components": [
+        {
+          "id": "string — unique ID",
+          "name": "string — component name",
+          "type": "service | database | api | gateway | user | external",
+          "status": "active | standby | deprecated",
+          "port": "string — port number (optional)",
+          "connections_to": ["string — IDs of connected components"]
+        }
+      ]
+    }
+  ],
+  "legend": [
+    {"symbol": "string", "meaning": "string"}
+  ],
+  "notes": ["string — technical notes"],
+  "metadata": {
+    "author": "string",
+    "last_updated": "string — ISO date",
+    "classification": "internal | public | confidential"
+  }
+}
+
+DESIGN RULES:
+- CAD/engineering blueprint aesthetic
+- Grid background with subtle lines
+- Components as boxes with clear labels
+- Connections as lines with arrows
+- Layer separation with horizontal bands
+- Monospace font for technical details
+- Max 4 layers, max 6 components per layer
+
+NEVER include: markdown, explanatory text, apologies.
+"""
 
 canvas_bp = Blueprint("canvas", __name__, url_prefix="/canvas")
 
@@ -536,6 +690,362 @@ body{{background:{t['bg']};font-family:system-ui,sans-serif;padding:16px;color:{
     return html
 
 
+def engine_c_json_to_html(data: dict, theme_name: str = "dark_gold") -> str:
+    """
+    ENGINE C — Convert JSON to UI Card HTML.
+    For transaction cards, verification badges, status displays.
+    """
+    t = ENGINE_B_THEMES.get(theme_name, ENGINE_B_THEMES["dark_gold"])
+
+    card_type = data.get("card_type", "status")
+    icon_key = data.get("icon", "shield")
+    icon = ENGINE_C_ICONS.get(icon_key, "🛡️")
+    icon_color = data.get("icon_color", "gold")
+    title = data.get("title", "WINDI Card")
+    subtitle = data.get("subtitle", "")
+    hash_val = data.get("hash", "")
+    hash_label = data.get("hash_label", "Hash")
+    status = data.get("status", "valid")
+    status_text = data.get("status_text", "Valid")
+    timestamp = data.get("timestamp", datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"))
+    action_label = data.get("action_label", "")
+    metadata = data.get("metadata", [])[:4]
+
+    # Status colors
+    status_colors = {
+        "valid": {"bg": "#0F4A2A", "text": "#4ADE80", "glow": "#22C55E"},
+        "pending": {"bg": "#3A3000", "text": "#FACC15", "glow": "#EAB308"},
+        "invalid": {"bg": "#3A0A0A", "text": "#F87171", "glow": "#EF4444"},
+        "processing": {"bg": "#0D1A30", "text": "#60A5FA", "glow": "#3B82F6"},
+    }
+    sc = status_colors.get(status, status_colors["valid"])
+
+    # Icon colors
+    icon_colors = {
+        "green": "#4ADE80", "gold": "#D4A017", "blue": "#60A5FA",
+        "red": "#F87171", "purple": "#A78BFA"
+    }
+    ic = icon_colors.get(icon_color, "#D4A017")
+
+    # Metadata HTML
+    meta_html = ""
+    for m in metadata:
+        meta_html += f'<div class="meta-row"><span class="meta-label">{m.get("label", "")}</span><span class="meta-value">{m.get("value", "")}</span></div>'
+
+    # Action button
+    action_html = f'<button class="action-btn">{action_label}</button>' if action_label else ""
+
+    # Hash display (truncated)
+    hash_display = hash_val[:20] + "..." + hash_val[-8:] if len(hash_val) > 32 else hash_val
+    hash_html = f'''<div class="hash-section">
+        <div class="hash-label">{hash_label}</div>
+        <div class="hash-value">{hash_display}</div>
+    </div>''' if hash_val else ""
+
+    pulse_class = "pulse" if status == "valid" else ""
+
+    html = f'''<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>{title}</title>
+<style>
+*,*::before,*::after{{box-sizing:border-box;margin:0;padding:0}}
+body{{background:{t['bg']};font-family:system-ui,sans-serif;padding:20px;display:flex;justify-content:center;align-items:center;min-height:100vh}}
+.card{{background:{t['card_bg']};border:1px solid {t['border']};border-radius:16px;padding:24px;max-width:380px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,0.3)}}
+.card-header{{display:flex;align-items:center;gap:16px;margin-bottom:20px}}
+.icon-circle{{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;background:{t['accent_light']};border:2px solid {ic};color:{ic}}}
+.icon-circle.pulse{{animation:pulse 2s infinite}}
+@keyframes pulse{{0%,100%{{box-shadow:0 0 0 0 {ic}40}}50%{{box-shadow:0 0 0 12px {ic}00}}}}
+.card-title{{font-size:18px;font-weight:600;color:{t['text_primary']}}}
+.card-subtitle{{font-size:12px;color:{t['text_secondary']};margin-top:4px}}
+.status-badge{{display:inline-flex;align-items:center;gap:6px;background:{sc['bg']};color:{sc['text']};padding:6px 12px;border-radius:20px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:16px}}
+.status-dot{{width:8px;height:8px;border-radius:50%;background:{sc['glow']};box-shadow:0 0 8px {sc['glow']}}}
+.hash-section{{background:{t['bg']};border:1px solid {t['border']};border-radius:8px;padding:12px;margin-bottom:16px}}
+.hash-label{{font-size:10px;text-transform:uppercase;letter-spacing:0.5px;color:{t['text_secondary']};margin-bottom:4px}}
+.hash-value{{font-family:'JetBrains Mono',monospace;font-size:13px;color:{t['accent']};word-break:break-all}}
+.meta-section{{margin-bottom:16px}}
+.meta-row{{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid {t['border']}30}}
+.meta-row:last-child{{border-bottom:none}}
+.meta-label{{font-size:11px;color:{t['text_secondary']}}}
+.meta-value{{font-size:11px;color:{t['text_primary']};font-weight:500}}
+.timestamp{{font-size:10px;color:{t['text_secondary']};text-align:center;font-family:monospace}}
+.action-btn{{width:100%;padding:12px;background:{t['accent']};color:{t['bg']};border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;margin-top:12px;transition:opacity 0.2s}}
+.action-btn:hover{{opacity:0.9}}
+</style></head>
+<body>
+<div class="card">
+    <div class="card-header">
+        <div class="icon-circle {pulse_class}">{icon}</div>
+        <div>
+            <div class="card-title">{title}</div>
+            <div class="card-subtitle">{subtitle}</div>
+        </div>
+    </div>
+    <div class="status-badge"><span class="status-dot"></span>{status_text}</div>
+    {hash_html}
+    <div class="meta-section">{meta_html}</div>
+    <div class="timestamp">{timestamp}</div>
+    {action_html}
+</div>
+</body></html>'''
+    return html
+
+
+def engine_d_json_to_html(data: dict, theme_name: str = "klar") -> str:
+    """
+    ENGINE D — Convert JSON to Document Proof HTML.
+    For certificates, attestations, official receipts.
+    """
+    t = ENGINE_B_THEMES.get(theme_name, ENGINE_B_THEMES["klar"])
+
+    doc_type = data.get("doc_type", "certificate")
+    title = data.get("title", "Official Certificate")
+    subtitle = data.get("subtitle", "")
+    issuer = data.get("issuer", {})
+    subject = data.get("subject", {})
+    details = data.get("details", [])[:6]
+    validity = data.get("validity", {})
+    integrity = data.get("integrity", {})
+    signatures = data.get("signatures", [])[:3]
+    compliance = data.get("compliance", [])[:4]
+    footer_text = data.get("footer_text", "This document is digitally signed and verifiable via WINDI Forensic Ledger.")
+
+    ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+
+    # Details table
+    details_html = ""
+    for d in details:
+        details_html += f'<tr><td class="detail-label">{d.get("label", "")}</td><td class="detail-value">{d.get("value", "")}</td></tr>'
+
+    # Signatures
+    sig_html = ""
+    for s in signatures:
+        sig_type_icon = "🔏" if s.get("type") == "digital" else "✍️"
+        sig_html += f'''<div class="signature-block">
+            <div class="sig-line"></div>
+            <div class="sig-name">{s.get("name", "")}</div>
+            <div class="sig-role">{sig_type_icon} {s.get("role", "")}</div>
+        </div>'''
+
+    # Compliance badges
+    comp_html = ""
+    for c in compliance:
+        comp_html += f'<span class="compliance-badge">{c}</span>'
+
+    # Hash display
+    hash_val = integrity.get("hash", "")
+    hash_display = hash_val[:16] + "..." + hash_val[-8:] if len(hash_val) > 28 else hash_val
+
+    html = f'''<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>{title}</title>
+<style>
+@page{{size:A4;margin:2cm}}
+*,*::before,*::after{{box-sizing:border-box;margin:0;padding:0}}
+body{{background:{t['bg']};font-family:'Georgia',serif;padding:40px;color:{t['text_primary']};font-size:12px;max-width:800px;margin:0 auto}}
+.doc-container{{background:#FFFFFF;border:2px solid {t['accent']};padding:48px;position:relative;box-shadow:0 4px 24px rgba(0,0,0,0.1)}}
+.doc-header{{text-align:center;border-bottom:3px double {t['accent']};padding-bottom:24px;margin-bottom:32px}}
+.logo-text{{font-size:28px;font-weight:700;color:{t['accent']};letter-spacing:3px;margin-bottom:8px}}
+.doc-type{{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:{t['text_secondary']};margin-bottom:16px}}
+.doc-title{{font-size:22px;font-weight:700;color:{t['text_primary']};margin-bottom:8px}}
+.doc-subtitle{{font-size:13px;color:{t['text_secondary']};font-style:italic}}
+.issuer-block{{text-align:center;margin-bottom:24px;padding:16px;background:{t['bg']};border-radius:4px}}
+.issuer-name{{font-size:14px;font-weight:600}}
+.issuer-role{{font-size:11px;color:{t['text_secondary']}}}
+.subject-block{{background:{t['bg']};padding:20px;border-left:4px solid {t['accent']};margin-bottom:24px}}
+.subject-desc{{font-size:13px;line-height:1.6}}
+.details-table{{width:100%;border-collapse:collapse;margin-bottom:24px}}
+.detail-label{{padding:10px 16px;background:{t['bg']};font-weight:600;width:40%;border:1px solid {t['border']}}}
+.detail-value{{padding:10px 16px;border:1px solid {t['border']}}}
+.validity-row{{display:flex;justify-content:space-between;margin-bottom:24px;font-size:11px}}
+.validity-item span{{display:block}}
+.validity-item strong{{color:{t['accent']}}}
+.integrity-block{{background:#F8F8F5;border:1px solid {t['border']};padding:16px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:center}}
+.hash-info{{flex:1}}
+.hash-label{{font-size:9px;text-transform:uppercase;color:{t['text_secondary']};margin-bottom:4px}}
+.hash-value{{font-family:'Courier New',monospace;font-size:11px;color:{t['accent']}}}
+.ledger-id{{font-size:10px;color:{t['text_secondary']};margin-top:4px}}
+.qr-placeholder{{width:80px;height:80px;border:2px dashed {t['border']};display:flex;align-items:center;justify-content:center;color:{t['text_secondary']};font-size:9px}}
+.signatures-row{{display:flex;justify-content:space-around;margin-bottom:24px;padding-top:24px;border-top:1px solid {t['border']}}}
+.signature-block{{text-align:center;min-width:150px}}
+.sig-line{{width:120px;border-bottom:1px solid {t['text_primary']};margin:0 auto 8px}}
+.sig-name{{font-size:12px;font-weight:600}}
+.sig-role{{font-size:10px;color:{t['text_secondary']}}}
+.compliance-row{{display:flex;gap:8px;justify-content:center;margin-bottom:24px}}
+.compliance-badge{{font-size:9px;padding:4px 10px;background:{t['accent']};color:#FFFFFF;border-radius:12px;text-transform:uppercase;letter-spacing:0.5px}}
+.footer{{text-align:center;font-size:9px;color:{t['text_secondary']};border-top:1px solid {t['border']};padding-top:16px;font-style:italic}}
+.watermark{{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-45deg);font-size:72px;color:{t['accent']}10;pointer-events:none;z-index:0}}
+</style></head>
+<body>
+<div class="doc-container">
+    <div class="watermark">WINDI</div>
+    <div class="doc-header">
+        <div class="logo-text">{issuer.get("logo_text", "WINDI")}</div>
+        <div class="doc-type">{doc_type.upper()}</div>
+        <div class="doc-title">{title}</div>
+        <div class="doc-subtitle">{subtitle}</div>
+    </div>
+    <div class="issuer-block">
+        <div class="issuer-name">{issuer.get("name", "WINDI Publishing House")}</div>
+        <div class="issuer-role">{issuer.get("role", "Forensic Engine Authority")}</div>
+    </div>
+    <div class="subject-block">
+        <div class="subject-desc">{subject.get("description", "")}</div>
+    </div>
+    <table class="details-table">{details_html}</table>
+    <div class="validity-row">
+        <div class="validity-item"><span>Issued</span><strong>{validity.get("issued_at", ts)}</strong></div>
+        <div class="validity-item"><span>Valid Until</span><strong>{validity.get("valid_until", "Perpetual")}</strong></div>
+        <div class="validity-item"><span>Jurisdiction</span><strong>{validity.get("jurisdiction", "WINDI Ledger")}</strong></div>
+    </div>
+    <div class="integrity-block">
+        <div class="hash-info">
+            <div class="hash-label">Forensic Hash (SHA-256)</div>
+            <div class="hash-value">{hash_display}</div>
+            <div class="ledger-id">Ledger ID: {integrity.get("ledger_id", "Pending Seal")}</div>
+        </div>
+        <div class="qr-placeholder">QR Code</div>
+    </div>
+    <div class="signatures-row">{sig_html}</div>
+    <div class="compliance-row">{comp_html}</div>
+    <div class="footer">{footer_text}<br>Generated: {ts}</div>
+</div>
+</body></html>'''
+    return html
+
+
+def engine_f_json_to_html(data: dict, theme_name: str = "noir") -> str:
+    """
+    ENGINE F — Convert JSON to Blueprint/Schema HTML.
+    For technical architecture diagrams, system schemas.
+    """
+    t = ENGINE_B_THEMES.get(theme_name, ENGINE_B_THEMES["noir"])
+
+    blueprint_type = data.get("blueprint_type", "architecture")
+    title = data.get("title", "System Blueprint")
+    version = data.get("version", "1.0")
+    layers = data.get("layers", [])[:4]
+    legend = data.get("legend", [])
+    notes = data.get("notes", [])[:3]
+    metadata = data.get("metadata", {})
+
+    ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+
+    # Component type colors
+    comp_colors = {
+        "service": {"bg": "#1A2F4A", "border": "#3B82F6", "text": "#60A5FA"},
+        "database": {"bg": "#1A3A2A", "border": "#22C55E", "text": "#4ADE80"},
+        "api": {"bg": "#2A1F3A", "border": "#A855F7", "text": "#C084FC"},
+        "gateway": {"bg": "#3A2A1A", "border": "#F59E0B", "text": "#FBBF24"},
+        "user": {"bg": "#1A1A2A", "border": "#6366F1", "text": "#818CF8"},
+        "external": {"bg": "#2A1A1A", "border": "#EF4444", "text": "#F87171"},
+    }
+
+    # Status indicators
+    status_icons = {"active": "●", "standby": "◐", "deprecated": "○"}
+
+    # Build layers HTML
+    layers_html = ""
+    component_positions = {}
+    y_offset = 80
+
+    for layer in layers:
+        layer_name = layer.get("name", "Layer")
+        components = layer.get("components", [])[:6]
+
+        layers_html += f'<div class="layer" style="top:{y_offset}px"><div class="layer-label">{layer_name}</div>'
+
+        x_offset = 120
+        for comp in components:
+            comp_id = comp.get("id", "")
+            comp_name = comp.get("name", "Component")
+            comp_type = comp.get("type", "service")
+            comp_status = comp.get("status", "active")
+            comp_port = comp.get("port", "")
+
+            cc = comp_colors.get(comp_type, comp_colors["service"])
+            status_icon = status_icons.get(comp_status, "●")
+
+            component_positions[comp_id] = (x_offset + 60, y_offset + 30)
+
+            port_html = f'<div class="comp-port">:{comp_port}</div>' if comp_port else ""
+
+            layers_html += f'''<div class="component" style="left:{x_offset}px;background:{cc['bg']};border-color:{cc['border']}">
+                <div class="comp-status" style="color:{cc['text']}">{status_icon}</div>
+                <div class="comp-name">{comp_name}</div>
+                <div class="comp-type" style="color:{cc['text']}">{comp_type}</div>
+                {port_html}
+            </div>'''
+            x_offset += 140
+
+        layers_html += '</div>'
+        y_offset += 100
+
+    # Legend
+    legend_html = ""
+    for item in legend[:6]:
+        legend_html += f'<div class="legend-item"><span class="legend-symbol">{item.get("symbol", "●")}</span><span>{item.get("meaning", "")}</span></div>'
+
+    # Notes
+    notes_html = ""
+    for note in notes:
+        notes_html += f'<div class="note">• {note}</div>'
+
+    # Classification badge
+    classification = metadata.get("classification", "internal").upper()
+
+    html = f'''<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>{title}</title>
+<style>
+*,*::before,*::after{{box-sizing:border-box;margin:0;padding:0}}
+body{{background:{t['bg']};font-family:'JetBrains Mono',monospace;padding:20px;color:{t['text_primary']};font-size:11px}}
+.blueprint{{background:{t['card_bg']};border:1px solid {t['border']};position:relative;min-height:500px;background-image:linear-gradient({t['border']}20 1px,transparent 1px),linear-gradient(90deg,{t['border']}20 1px,transparent 1px);background-size:20px 20px}}
+.header{{background:{t['bg']};border-bottom:1px solid {t['border']};padding:12px 16px;display:flex;justify-content:space-between;align-items:center}}
+.title-block{{}}
+.title{{font-size:14px;font-weight:600;color:{t['accent']}}}
+.subtitle{{font-size:10px;color:{t['text_secondary']}}}
+.meta-block{{text-align:right}}
+.version{{font-size:10px;color:{t['accent']}}}
+.classification{{font-size:8px;padding:2px 8px;background:{t['accent']};color:{t['bg']};border-radius:2px;margin-top:4px;display:inline-block}}
+.canvas{{position:relative;padding:20px;min-height:400px}}
+.layer{{position:absolute;left:0;right:0;height:90px;border-bottom:1px dashed {t['border']}50}}
+.layer-label{{position:absolute;left:8px;top:4px;font-size:9px;color:{t['text_secondary']};text-transform:uppercase;letter-spacing:1px;writing-mode:vertical-lr;transform:rotate(180deg)}}
+.component{{position:absolute;width:120px;padding:10px;border:1px solid;border-radius:4px;text-align:center}}
+.comp-status{{font-size:8px;position:absolute;top:4px;right:6px}}
+.comp-name{{font-size:11px;font-weight:600;margin-bottom:4px}}
+.comp-type{{font-size:8px;text-transform:uppercase}}
+.comp-port{{font-size:9px;color:{t['text_secondary']};margin-top:4px}}
+.footer{{background:{t['bg']};border-top:1px solid {t['border']};padding:12px 16px;display:flex;justify-content:space-between}}
+.legend{{display:flex;gap:16px}}
+.legend-item{{display:flex;align-items:center;gap:4px;font-size:9px;color:{t['text_secondary']}}}
+.legend-symbol{{color:{t['accent']}}}
+.notes{{max-width:300px}}
+.note{{font-size:9px;color:{t['text_secondary']};margin-bottom:4px}}
+.timestamp{{font-size:8px;color:{t['text_secondary']};position:absolute;bottom:8px;right:16px}}
+</style></head>
+<body>
+<div class="blueprint">
+    <div class="header">
+        <div class="title-block">
+            <div class="title">{title}</div>
+            <div class="subtitle">{blueprint_type.upper()} DIAGRAM</div>
+        </div>
+        <div class="meta-block">
+            <div class="version">v{version}</div>
+            <div class="classification">{classification}</div>
+        </div>
+    </div>
+    <div class="canvas">{layers_html}</div>
+    <div class="footer">
+        <div class="legend">{legend_html}</div>
+        <div class="notes">{notes_html}</div>
+    </div>
+    <div class="timestamp">{metadata.get("author", "W-CANVAS-001")} · {ts}</div>
+</div>
+</body></html>'''
+    return html
+
+
 def create_wcav_package(canvas_id: str, svg_content: str, metadata: dict) -> str:
     """Create .wcav package (ZIP with SVG + manifest) and return base64."""
     buffer = io.BytesIO()
@@ -574,7 +1084,7 @@ def canvas_status():
         "visualization": "ready" if gemini_ok else "not_configured",
         "model": GEMINI_MODEL if gemini_ok else "not_configured",
         "themes": list(THEME_PALETTES.keys()),
-        "canvas_types": ["diagram", "flowchart", "chart", "infographic", "architecture", "timeline", "dashboard"],
+        "canvas_types": ["diagram", "flowchart", "chart", "infographic", "architecture", "timeline", "dashboard", "ui-card", "doc-proof", "blueprint"],
         "formats": ["svg", "mermaid", "html"],
         "engines": {"A": "Mermaid/SVG", "B": "HTML Dashboard"},
         "timestamp": datetime.now(timezone.utc).isoformat(),
@@ -702,6 +1212,200 @@ def generate_canvas():
                 "version": CANVAS_VERSION,
                 "sealed": False,
                 "message": "Dashboard generated via Engine B."
+            })
+
+        # ═══════════════════════════════════════════════════════════════
+        # ENGINE C — UI Card Renderer (v1.4.0)
+        # ═══════════════════════════════════════════════════════════════
+        if canvas_type == "ui-card":
+            logger.info(f"[ENGINE-C] UI Card request canvas_id={canvas_id}")
+
+            import requests as req
+            payload = {
+                "system_instruction": {"parts": [{"text": ENGINE_C_SYSTEM_PROMPT}]},
+                "contents": [{"role": "user", "parts": [{"text": prompt}]}],
+                "generationConfig": {"temperature": 0.3, "maxOutputTokens": 2048, "topP": 0.85}
+            }
+            model = "gemini-2.5-flash" if tier in ("FREE", "MED") else "gemini-2.5-pro"
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_API_KEY}"
+
+            try:
+                resp = req.post(url, json=payload, timeout=60)
+                resp.raise_for_status()
+                resp_json = resp.json()
+                raw_json = resp_json["candidates"][0]["content"]["parts"][0]["text"]
+
+                raw_json = raw_json.strip()
+                if raw_json.startswith("```"):
+                    raw_json = raw_json.split("\n", 1)[1] if "\n" in raw_json else raw_json[3:]
+                if raw_json.endswith("```"):
+                    raw_json = raw_json[:-3]
+
+                card_data = json.loads(raw_json.strip())
+            except Exception as e:
+                logger.error(f"[ENGINE-C] LLM error: {e}")
+                card_data = {
+                    "card_type": "verification",
+                    "icon": "shield",
+                    "icon_color": "gold",
+                    "title": "WINDI Verification",
+                    "subtitle": "Fallback — LLM unavailable",
+                    "status": "pending",
+                    "status_text": "Processing",
+                    "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
+                    "metadata": []
+                }
+
+            html_content = engine_c_json_to_html(card_data, theme_name)
+            content_hash = hashlib.sha256(html_content.encode()).hexdigest()
+
+            return jsonify({
+                "success": True,
+                "canvas_id": canvas_id,
+                "canvas_type": "ui-card",
+                "format": "html",
+                "engine": "C",
+                "render_type": "html",
+                "html": html_content,
+                "content": html_content,
+                "content_hash": content_hash,
+                "generated_at": generated_at,
+                "agent": AGENT_ID,
+                "version": CANVAS_VERSION,
+                "sealed": False,
+                "message": "UI Card generated via Engine C."
+            })
+
+        # ═══════════════════════════════════════════════════════════════
+        # ENGINE D — Document Proof Renderer (v1.4.0)
+        # ═══════════════════════════════════════════════════════════════
+        if canvas_type == "doc-proof":
+            logger.info(f"[ENGINE-D] Doc Proof request canvas_id={canvas_id}")
+
+            import requests as req
+            payload = {
+                "system_instruction": {"parts": [{"text": ENGINE_D_SYSTEM_PROMPT}]},
+                "contents": [{"role": "user", "parts": [{"text": prompt}]}],
+                "generationConfig": {"temperature": 0.2, "maxOutputTokens": 3072, "topP": 0.85}
+            }
+            model = "gemini-2.5-flash" if tier in ("FREE", "MED") else "gemini-2.5-pro"
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_API_KEY}"
+
+            try:
+                resp = req.post(url, json=payload, timeout=60)
+                resp.raise_for_status()
+                resp_json = resp.json()
+                raw_json = resp_json["candidates"][0]["content"]["parts"][0]["text"]
+
+                raw_json = raw_json.strip()
+                if raw_json.startswith("```"):
+                    raw_json = raw_json.split("\n", 1)[1] if "\n" in raw_json else raw_json[3:]
+                if raw_json.endswith("```"):
+                    raw_json = raw_json[:-3]
+
+                doc_data = json.loads(raw_json.strip())
+            except Exception as e:
+                logger.error(f"[ENGINE-D] LLM error: {e}")
+                doc_data = {
+                    "doc_type": "certificate",
+                    "title": "WINDI Certificate",
+                    "subtitle": "Fallback — LLM unavailable",
+                    "issuer": {"name": "WINDI Publishing House", "role": "Forensic Engine", "logo_text": "WINDI"},
+                    "subject": {"description": "This certificate is pending generation."},
+                    "details": [],
+                    "validity": {"issued_at": datetime.now(timezone.utc).strftime("%Y-%m-%d"), "valid_until": "Perpetual", "jurisdiction": "WINDI Ledger"},
+                    "integrity": {"hash": "", "ledger_id": "Pending"},
+                    "signatures": [],
+                    "compliance": [],
+                    "footer_text": "Document verification pending."
+                }
+
+            html_content = engine_d_json_to_html(doc_data, theme_name)
+            content_hash = hashlib.sha256(html_content.encode()).hexdigest()
+
+            return jsonify({
+                "success": True,
+                "canvas_id": canvas_id,
+                "canvas_type": "doc-proof",
+                "format": "html",
+                "engine": "D",
+                "render_type": "html",
+                "html": html_content,
+                "content": html_content,
+                "content_hash": content_hash,
+                "generated_at": generated_at,
+                "agent": AGENT_ID,
+                "version": CANVAS_VERSION,
+                "sealed": False,
+                "message": "Document Proof generated via Engine D."
+            })
+
+        # ═══════════════════════════════════════════════════════════════
+        # ENGINE F — Blueprint/Schema Renderer (v1.4.0)
+        # ═══════════════════════════════════════════════════════════════
+        if canvas_type == "blueprint":
+            logger.info(f"[ENGINE-F] Blueprint request canvas_id={canvas_id}")
+
+            import requests as req
+            payload = {
+                "system_instruction": {"parts": [{"text": ENGINE_F_SYSTEM_PROMPT}]},
+                "contents": [{"role": "user", "parts": [{"text": prompt}]}],
+                "generationConfig": {"temperature": 0.2, "maxOutputTokens": 3072, "topP": 0.85}
+            }
+            model = "gemini-2.5-flash" if tier in ("FREE", "MED") else "gemini-2.5-pro"
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_API_KEY}"
+
+            try:
+                resp = req.post(url, json=payload, timeout=60)
+                resp.raise_for_status()
+                resp_json = resp.json()
+                raw_json = resp_json["candidates"][0]["content"]["parts"][0]["text"]
+
+                raw_json = raw_json.strip()
+                if raw_json.startswith("```"):
+                    raw_json = raw_json.split("\n", 1)[1] if "\n" in raw_json else raw_json[3:]
+                if raw_json.endswith("```"):
+                    raw_json = raw_json[:-3]
+
+                blueprint_data = json.loads(raw_json.strip())
+            except Exception as e:
+                logger.error(f"[ENGINE-F] LLM error: {e}")
+                blueprint_data = {
+                    "blueprint_type": "architecture",
+                    "title": "WINDI Architecture",
+                    "version": "1.0",
+                    "layers": [
+                        {
+                            "name": "Services",
+                            "level": 1,
+                            "components": [
+                                {"id": "canvas", "name": "W-CANVAS-001", "type": "service", "status": "active", "port": "8091", "connections_to": []}
+                            ]
+                        }
+                    ],
+                    "legend": [{"symbol": "●", "meaning": "Active"}, {"symbol": "○", "meaning": "Standby"}],
+                    "notes": ["Fallback blueprint — LLM unavailable"],
+                    "metadata": {"author": "W-CANVAS-001", "classification": "internal"}
+                }
+
+            html_content = engine_f_json_to_html(blueprint_data, theme_name)
+            content_hash = hashlib.sha256(html_content.encode()).hexdigest()
+
+            return jsonify({
+                "success": True,
+                "canvas_id": canvas_id,
+                "canvas_type": "blueprint",
+                "format": "html",
+                "engine": "F",
+                "render_type": "html",
+                "html": html_content,
+                "content": html_content,
+                "content_hash": content_hash,
+                "generated_at": generated_at,
+                "agent": AGENT_ID,
+                "version": CANVAS_VERSION,
+                "sealed": False,
+                "message": "Blueprint generated via Engine F."
             })
 
         # ═══════════════════════════════════════════════════════════════
@@ -845,13 +1549,16 @@ def list_canvas_types():
     """List available canvas types."""
     return jsonify({
         "types": [
-            {"id": "flowchart", "name": "Flowchart", "description": "Process flows and decision trees"},
-            {"id": "diagram", "name": "Diagram", "description": "Technical diagrams and schematics"},
-            {"id": "architecture", "name": "Architecture", "description": "System architecture diagrams"},
-            {"id": "chart", "name": "Chart", "description": "Data visualizations (bar, line, pie)"},
-            {"id": "infographic", "name": "Infographic", "description": "Visual information design"},
-            {"id": "timeline", "name": "Timeline", "description": "Chronological visualizations"},
-            {"id": "dashboard", "name": "Dashboard", "description": "KPI dashboards (Engine B)"},
+            {"id": "flowchart", "name": "Flowchart", "description": "Process flows and decision trees", "engine": "A"},
+            {"id": "diagram", "name": "Diagram", "description": "Technical diagrams and schematics", "engine": "A"},
+            {"id": "architecture", "name": "Architecture", "description": "System architecture diagrams", "engine": "A"},
+            {"id": "chart", "name": "Chart", "description": "Data visualizations (bar, line, pie)", "engine": "A"},
+            {"id": "infographic", "name": "Infographic", "description": "Visual information design", "engine": "A"},
+            {"id": "timeline", "name": "Timeline", "description": "Chronological visualizations", "engine": "A"},
+            {"id": "dashboard", "name": "Dashboard", "description": "KPI dashboards with charts", "engine": "B"},
+            {"id": "ui-card", "name": "UI Card", "description": "Transaction cards, verification badges, status displays", "engine": "C"},
+            {"id": "doc-proof", "name": "Document Proof", "description": "Official certificates, attestations, receipts", "engine": "D"},
+            {"id": "blueprint", "name": "Blueprint", "description": "Technical architecture schemas, CAD-style diagrams", "engine": "F"},
         ]
     })
 
