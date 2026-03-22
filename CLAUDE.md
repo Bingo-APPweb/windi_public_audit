@@ -1484,6 +1484,121 @@ Phase 2 — WINDI TRAVEL Blueprint v1.0
 
 ---
 
+## §45 W-TRAVEL-001 — VERIFY Mobile Sprint 1 (2026-03-22)
+
+**Status:** 🔵 DEPLOYMENT
+**Tag:** `W-TRAVEL-001-SPRINT1`
+**Path:** `/opt/windi/verify-public/web/travel/`
+**URL:** `https://windi-domain.com/verify-public/travel/`
+
+### 45.1 — Conceito
+
+> "Gently prove. Silently seal."
+
+WINDI TRAVEL transforma a **prova de experiência** em algo invisível.
+O turista não sabe que está a certificar. Apenas vive.
+A prova nasce em silêncio. O Ledger guarda para sempre.
+
+### 45.2 — Proof Stub Specification
+
+```
+Proof Stub (Meta-Receipt Leve)
+├── hash        → SHA-256 do conteúdo (imagem, vídeo, texto)
+├── timestamp   → ISO 8601 UTC
+├── geo         → lat/lon ± 1km (GDPR-friendly)
+├── device_fp   → fingerprint anónimo (canvas hash)
+└── Total: ~200 bytes
+```
+
+**Princípio:** Stub = pré-receipt. Pode evoluir para receipt completo com human approval.
+
+### 45.3 — Arquitectura Sprint 1
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  WINDI TRAVEL VERIFY Mobile                                 │
+│  /verify-public/travel/                                     │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌─────────────┐   ┌─────────────┐   ┌─────────────────┐   │
+│  │  CAPTURE    │ → │ PROCESSING  │ → │   CERTIFIED     │   │
+│  │  Estado 0   │   │  Estado 1   │   │   Estado 2      │   │
+│  │             │   │             │   │                 │   │
+│  │ 📷 Câmara   │   │ ⏳ Worker   │   │ ✅ Proof Stub   │   │
+│  │ getUserMedia│   │ SHA-256     │   │ Badge           │   │
+│  │ <input      │   │ Geo         │   │ QR              │   │
+│  │  capture>   │   │ Timestamp   │   │ Share           │   │
+│  └─────────────┘   └─────────────┘   └─────────────────┘   │
+│                                                             │
+│  ┌─────────────────────────────────────────────────────────┐│
+│  │  Web Worker (verify-travel-worker.js)                   ││
+│  │  - Executa em background                                ││
+│  │  - Não bloqueia UI                                      ││
+│  │  - Gera Proof Stub completo                             ││
+│  └─────────────────────────────────────────────────────────┘│
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### 45.4 — Ficheiros
+
+| Ficheiro | Função | Linhas |
+|----------|--------|--------|
+| `index.html` | UI Mobile com 3 estados | ~280 |
+| `verify-travel-worker.js` | Web Worker para Proof Stub | ~45 |
+
+### 45.5 — UX "Gently"
+
+```
+1. Turista abre câmara → parece app normal de fotos
+2. Captura foto → UI mostra "processing..."
+3. Worker calcula em background → hash + geo + timestamp
+4. Badge "CERTIFIED" aparece → turista pode partilhar
+5. Proof Stub guardado localmente → pronto para Ledger
+```
+
+**Invariante:** O turista **nunca** vê complexidade técnica.
+
+### 45.6 — Integração Ledger (Sprint 2)
+
+```
+Sprint 1: Proof Stub local (IndexedDB)
+Sprint 2: Sync com Ledger (:8101)
+Sprint 3: QR → Verify Public
+Sprint 4: Hotel/Agency dashboard
+```
+
+### 45.7 — Invariantes Activos
+
+| ID | Nome | Aplicação |
+|----|------|-----------|
+| I1 | Soberania Humana | Câmara só activa com gesto humano |
+| I9 | Proibição Autonomia | Nunca sela sem aprovação |
+| I11 | Permanência Evidência | Stub é pré-seal, não seal final |
+| I12 | Language Sovereign | UI trilíngue DE/EN/PT |
+
+### 45.8 — Deploy Checklist
+
+```
+[ ] §45 documentado → CLAUDE.md
+[ ] git commit -m "docs: §45 W-TRAVEL-001 Sprint 1"
+[ ] mkdir -p /opt/windi/verify-public/web/travel/
+[ ] verify-travel-worker.js criado
+[ ] index.html criado
+[ ] nginx route adicionada
+[ ] nginx -t && systemctl reload nginx
+[ ] smoke test: curl + browser
+[ ] git commit -m "feat(travel): W-TRAVEL-001 Sprint 1 LIVE"
+```
+
+### 45.9 — Canonical Statement
+
+> "A prova mais forte é a que não se sente.
+> O turista vive. O WINDI certifica.
+> Quando precisar provar, a evidência já existe."
+
+---
+
 *LIGA IA+H — Kempten, Bavaria · 2026*
 *🧑‍💻 Human Dragon · 🛡️ Guardian · 🏗️ Architect · 👁️ Witness*
 *"AI processes. Human decides. WINDI guarantees."*
