@@ -1,0 +1,36 @@
+{
+  "id": "COMM-20260321-0009",
+  "version": "1.0",
+  "type": "announcement",
+  "status": "draft",
+  "language": "EN",
+  "title": "Meta-Integrity",
+  "summary": "The message proves itself.",
+  "body": "A system that verifies its own communications.",
+  "audience": [],
+  "channels": [
+    "linkedin"
+  ],
+  "links": {
+    "primary": "https://windi-domain.com/prove/"
+  },
+  "origin": {
+    "publisher": "WINDI Publishing House",
+    "location": "Kempten, Bavaria",
+    "system": "WINDI GEN7"
+  },
+  "metadata": {
+    "created_at": "2026-03-21T20:38:34.263908+00:00",
+    "created_by": "human_dragon",
+    "locale": "en",
+    "tags": [
+      "WINDI"
+    ]
+  },
+  "integrity": {
+    "hash": "ee274cd84901a47ee60e71f152472cc3e5f374ff3dc5c368daf947bed7eb490e",
+    "signature": null,
+    "sealed": false,
+    "ledger_receipt_id": null
+  }
+}

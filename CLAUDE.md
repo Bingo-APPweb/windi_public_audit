@@ -1323,6 +1323,167 @@ The system explicitly does NOT:
 
 ---
 
+## §44 — Canonical Decision: Dual-Portal Architecture (PROTOCOL + TRAVEL)
+
+**Status:** CANONICAL | STRATEGIC
+**Scope:** WINDI Market Architecture
+**Classification:** EXTENSIONAL ARCHITECTURE (no core rewrite required)
+**Sealed:** 2026-03-22
+**Decision Authority:** Human Dragon + Council of Dragons
+
+### 44.1 — Strategic Compression
+
+The Council evaluated multi-portal expansion (5-6 portals) and resolved to compress into **two dominant axes**:
+
+| Portal | Function | Market | Characteristic |
+|--------|----------|--------|----------------|
+| **WINDI PROTOCOL** | Authority, regulation, institutional trust | BaFin, banks, notaries, auditors | Low volume, high value, high rigor |
+| **WINDI TRAVEL** | Distribution, education, narrative, adoption | Humans, tourism, experiences, content | High volume, lower ticket, high exposure |
+
+### 44.2 — Portal Definitions
+
+#### 🏛️ PORTAL 01 — WINDI PROTOCOL (Institutional Vertical)
+
+```
+Role: ANCHOR OF SYSTEM LEGITIMACY
+
+Market:      BaFin · Banks · Notaries · Auditors
+Governance:  HIGH
+Volume:      Low
+Value:       High
+Documents:   Complex, approval-gated
+```
+
+#### 🌍 PORTAL 02 — WINDI TRAVEL — Human Adoption Layer
+
+```
+Role: ENGINE OF EXPANSION AND CONSCIOUSNESS
+
+Market:      Real humans · Tourism · Experiences · Content
+Governance:  LOW / MEDIUM
+Volume:      High
+Value:       Lower ticket
+Documents:   Light certificates, rapid emission
+```
+
+### 44.3 — Core Insight
+
+> "Train humans for anti-fake reality... without teaching."
+
+The mechanism:
+
+```
+Tourist → receives certificate → scans QR → sees proof in ledger
+→ understands "this is verifiable"
+→ begins to distrust the rest
+→ changes digital behavior
+```
+
+**This is invisible digital literacy.**
+
+Experience defeats discourse. TRAVEL is the natural gateway.
+
+### 44.4 — Technical Architecture
+
+```
+                    ┌─────────────────────┐
+                    │   WINDI CORE        │
+                    │  ─────────────────  │
+                    │  • Ledger :8101     │
+                    │  • Verify :8114     │
+                    │  • Engine :8119     │
+                    │  • Invariants I1-12 │
+                    └─────────┬───────────┘
+                              │
+              ┌───────────────┴───────────────┐
+              │                               │
+     ┌────────▼────────┐             ┌────────▼────────┐
+     │ WINDI PROTOCOL  │             │  WINDI TRAVEL   │
+     │ ──────────────  │             │  ─────────────  │
+     │ Institutional   │             │ Human Adoption  │
+     │ Vertical        │             │ Layer           │
+     │ Gov: HIGH       │             │ Gov: LOW/MED    │
+     │ Low Volume      │             │ High Volume     │
+     └─────────────────┘             └─────────────────┘
+```
+
+### 44.5 — Technical Compatibility
+
+| Component | PROTOCOL Role | TRAVEL Role |
+|-----------|---------------|-------------|
+| Ledger :8101 | Institutional seal | Proof of experience |
+| Verify :8114 | Formal audit | QR → "I saw, it's real" |
+| QR Canonical | Legal document | Travel certificate |
+| W-COMM-001 | Institutional comms | Tourist certificate |
+| i18n DE/EN/PT | EU compliance | Multilingual tourism |
+| GEN7 Engine | Complex documents | Simple certificates |
+
+### 44.6 — Implementation Requirements
+
+| Item | Effort | Priority |
+|------|--------|----------|
+| Experience certificate templates | Medium | P1 |
+| WINDI TRAVEL landing | Medium | P1 |
+| Simplified flow (1-click emit) | High | P1 |
+| Partner API (hotels/agencies) | High | P2 |
+| Rate limiting for high volume | Low | P2 |
+| Partner dashboard | Medium | P3 |
+
+### 44.7 — Risk Matrix
+
+| Risk | Mitigation |
+|------|------------|
+| Volume: TRAVEL = 1000x more requests | FREE tier with Ledger light (hash without content) |
+| UX: Tourists are not technical | Scan QR → result in 1 second, no technical explanation |
+| Fraud: Fake partner certificates | Partner onboarding with verified DID |
+| Latency: Verify must be instant | Aggressive cache + CDN for assets |
+
+### 44.8 — Technical Verdict
+
+**The architecture supports both portals without rewriting the core.**
+
+What TRAVEL needs is:
+- **Simplification** (not new complexity)
+- **Templates** (not new engines)
+- **Partner onboarding** (not new infrastructure)
+
+This is **extension**, not **reconstruction**.
+
+### 44.9 — Canonical Statement
+
+> "One portal creates trust.
+> The other creates humanity.
+> Together, they create adoption."
+
+### 44.10 — Execution Sequence
+
+```
+Phase 1 — Complete Institutional Pack (current)
+├── Landing ✅
+├── Certificate ✅
+└── Architecture v1.1 ⏳
+
+Phase 2 — WINDI TRAVEL Blueprint v1.0
+├── User experience (QR → verify)
+├── Certificate types (experience, booking, review)
+├── Hotel/agency integration
+└── Narrative (implicit anti-fake)
+```
+
+### 44.11 — Council Validation
+
+| Dragon | Verdict |
+|--------|---------|
+| 🏗️ Architect | ✅ Technical and institutional adjustments correct |
+| 🛡️ Guardian | ✅ Legal care noted (manifesto vs onboarding) |
+| 🐉 Human Dragon | ✅ Correct at highest strategic level |
+| 🤖 Gêmeo | ✅ Architecture consistent, core preserved, expansion controlled |
+
+**Decision Status:** SEALED
+**Next Step:** WINDI TRAVEL Blueprint v1.0
+
+---
+
 *LIGA IA+H — Kempten, Bavaria · 2026*
 *🧑‍💻 Human Dragon · 🛡️ Guardian · 🏗️ Architect · 👁️ Witness*
 *"AI processes. Human decides. WINDI guarantees."*

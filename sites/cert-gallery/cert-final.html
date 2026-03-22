@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Integrity Certificate</title>
+<style>
+@page{size:A4;margin:2cm}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#F5F0E0;font-family:'Georgia',serif;padding:40px;color:#1A1A1A;font-size:12px;max-width:800px;margin:0 auto}
+.doc-container{background:#FFFFFF;border:2px solid #8B6914;padding:48px;position:relative;box-shadow:0 4px 24px rgba(0,0,0,0.1)}
+.doc-header{text-align:center;border-bottom:3px double #8B6914;padding-bottom:24px;margin-bottom:32px}
+.logo-text{font-size:28px;font-weight:700;color:#8B6914;letter-spacing:3px;margin-bottom:8px}
+.doc-type{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#6B6B6B;margin-bottom:16px}
+.doc-title{font-size:22px;font-weight:700;color:#1A1A1A;margin-bottom:8px}
+.doc-subtitle{font-size:13px;color:#6B6B6B;font-style:italic}
+.status-badge{display:inline-block;background:#DCFCE7;color:#166534;padding:6px 16px;border-radius:99px;font-weight:600;font-size:12px;margin-top:16px;letter-spacing:0.5px}
+.status-badge::before{content:'● ';color:#22C55E}
+.issuer-block{text-align:center;margin-bottom:24px;padding:16px;background:#F5F0E0;border-radius:4px}
+.issuer-name{font-size:14px;font-weight:600}
+.issuer-role{font-size:11px;color:#6B6B6B}
+.subject-block{background:#F5F0E0;padding:20px;border-left:4px solid #8B6914;margin-bottom:24px}
+.subject-desc{font-size:13px;line-height:1.6}
+.details-table{width:100%;border-collapse:collapse;margin-bottom:24px}
+.detail-label{padding:10px 16px;background:#F5F0E0;font-weight:600;width:40%;border:1px solid #D4C9A8}
+.detail-value{padding:10px 16px;border:1px solid #D4C9A8}
+.validity-row{display:flex;justify-content:space-between;margin-bottom:24px;font-size:11px}
+.validity-item span{display:block}
+.validity-item strong{color:#8B6914}
+.integrity-block{background:#F8F8F5;border:1px solid #D4C9A8;padding:16px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:center}
+.hash-info{flex:1}
+.hash-label{font-size:9px;text-transform:uppercase;color:#6B6B6B;margin-bottom:4px}
+.hash-value{font-family:'Courier New',monospace;font-size:11px;color:#8B6914}
+.ledger-id{font-size:10px;color:#6B6B6B;margin-top:4px}
+.qr-placeholder{width:80px;height:80px;border:2px dashed #D4C9A8;display:flex;align-items:center;justify-content:center;color:#6B6B6B;font-size:9px}
+.signatures-row{display:flex;justify-content:space-around;margin-bottom:24px;padding-top:24px;border-top:1px solid #D4C9A8}
+.signature-block{text-align:center;min-width:150px}
+.sig-line{width:120px;border-bottom:1px solid #1A1A1A;margin:0 auto 8px}
+.sig-name{font-size:12px;font-weight:600}
+.sig-role{font-size:10px;color:#6B6B6B}
+.compliance-row{display:flex;gap:8px;justify-content:center;margin-bottom:24px}
+.compliance-badge{font-size:9px;padding:4px 10px;background:#8B6914;color:#FFFFFF;border-radius:12px;text-transform:uppercase;letter-spacing:0.5px}
+.footer{text-align:center;font-size:9px;color:#6B6B6B;border-top:1px solid #D4C9A8;padding-top:16px;line-height:1.6;max-width:600px;margin:0 auto}
+.watermark{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-45deg);font-size:72px;color:#8B691410;pointer-events:none;z-index:0}
+</style></head>
+<body>
+<div class="doc-container">
+    <div class="watermark">WINDI</div>
+    <div class="doc-header">
+        <div class="logo-text">WINDI</div>
+        <div class="doc-type">CERTIFICATE</div>
+        <div class="doc-title">Integrity Certificate</div>
+        <div class="doc-subtitle">Ensuring Trust and Transparency in Financial Operations</div>
+        <div class="status-badge">VERIFIED & IMMUTABLE</div>
+    </div>
+    <div class="issuer-block">
+        <div class="issuer-name">[ Entity Name ]</div>
+        <div class="issuer-role">[ Department ]</div>
+    </div>
+    <div class="subject-block">
+        <div class="subject-desc">This certificate attests to the robust integrity measures implemented across all financial services and operational processes of [ Entity Name ].</div>
+    </div>
+    <table class="details-table"><tr><td class="detail-label">Certificate ID</td><td class="detail-value">WFI-INT-2023-10-27-001</td></tr><tr><td class="detail-label">Entity</td><td class="detail-value">[ Entity Name ]</td></tr><tr><td class="detail-label">Scope</td><td class="detail-value">All financial services and operational processes</td></tr><tr><td class="detail-label">Integrity Framework</td><td class="detail-value">WINDI Internal Integrity Framework v1.0</td></tr><tr><td class="detail-label">Audit Date</td><td class="detail-value">2023-10-25</td></tr><tr><td class="detail-label">Audit Body</td><td class="detail-value">Internal Audit Committee</td></tr></table>
+    <div class="validity-row">
+        <div class="validity-item"><span>Issued</span><strong>2023-10-27</strong></div>
+        <div class="validity-item"><span>Valid Until</span><strong>2024-10-26</strong></div>
+        <div class="validity-item"><span>Jurisdiction</span><strong>EU/DE</strong></div>
+    </div>
+    <div class="integrity-block">
+        <div class="hash-info">
+            <div class="hash-label">Forensic Hash (SHA-256)</div>
+            <div class="hash-value">e3b0c44298fc1c14...7852b855</div>
+            <div class="ledger-id">Ledger ID: WND-LGR-INT-00123456789</div>
+        </div>
+        <div class="qr-placeholder">QR Code</div>
+    </div>
+    <div class="signatures-row"><div class="signature-block">
+            <div class="sig-line"></div>
+            <div class="sig-name">[ Signatory 1 ]</div>
+            <div class="sig-role">🔏 [ Title ]</div>
+        </div><div class="signature-block">
+            <div class="sig-line"></div>
+            <div class="sig-name">[ Signatory 2 ]</div>
+            <div class="sig-role">🔏 [ Title ]</div>
+        </div></div>
+    <div class="compliance-row"><span class="compliance-badge">BaFin</span><span class="compliance-badge">GDPR</span><span class="compliance-badge">MiFID II</span><span class="compliance-badge">AML-D5</span></div>
+    <div class="footer">This document is a cryptographic proof of integrity generated by the WINDI Sovereign Protocol (Kempten, Bavaria, DE). Any modification to the underlying data will invalidate this certificate. Verified in accordance with BaFin MaRisk requirements and eIDAS Regulation (EU) 910/2014.<br>Generated: 2026-03-22 15:51 UTC</div>
+</div>
+</body></html>

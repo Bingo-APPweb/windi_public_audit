@@ -1,0 +1,39 @@
+{
+  "id": "COMM-20260321-0008",
+  "version": "1.0",
+  "type": "announcement",
+  "status": "draft",
+  "language": "EN",
+  "title": "Meta-Integrity: A System That Verifies Itself",
+  "summary": "The message proves itself. The system validates its own communication. Integrity is demonstrated, not claimed.",
+  "body": "Today we published our first official verifiable communication.\n\nW-COMM-001 is fully live.\n\nThis communication is cryptographically verifiable by the very system it describes.\n\nThat means:\n\n- The message proves itself\n- The system validates its own communication\n- Integrity is demonstrated, not claimed\n\nThis is meta-integrity.\n\nA system that does not ask for trust but allows anyone to verify the truth independently.",
+  "audience": [],
+  "channels": [
+    "linkedin",
+    "web"
+  ],
+  "links": {
+    "primary": "https://windi-domain.com/prove/"
+  },
+  "origin": {
+    "publisher": "WINDI Publishing House",
+    "location": "Kempten, Bavaria",
+    "system": "WINDI GEN7"
+  },
+  "metadata": {
+    "created_at": "2026-03-21T20:38:25.535232+00:00",
+    "created_by": "human_dragon",
+    "locale": "en",
+    "tags": [
+      "WINDI",
+      "DigitalTrust",
+      "MetaIntegrity"
+    ]
+  },
+  "integrity": {
+    "hash": "192d65abdeb356db7f7248add90d7e44b1bb18e7a96890fa01304b6cd318e07d",
+    "signature": null,
+    "sealed": false,
+    "ledger_receipt_id": null
+  }
+}

@@ -1,10 +1,10 @@
 {
-  "timestamp": "2026-03-21T10:07:44.688624",
+  "timestamp": "2026-03-22T16:58:24.712872",
   "summary": {
-    "flask_routes": 306,
-    "nginx_locations": 65,
+    "flask_routes": 328,
+    "nginx_locations": 75,
     "missing": 0,
-    "orphan": 37,
+    "orphan": 41,
     "status": "PASS"
   },
   "missing": [],
@@ -12,187 +12,207 @@
     {
       "path": "/agents/status",
       "proxy_pass": "http://127.0.0.1:8091/agents/status",
-      "line": 127
+      "line": 165
+    },
+    {
+      "path": "/canvas/",
+      "proxy_pass": "http://127.0.0.1:8091/canvas/",
+      "line": 174
+    },
+    {
+      "path": "/obs/",
+      "proxy_pass": "http://127.0.0.1:8091/obs/",
+      "line": 183
+    },
+    {
+      "path": "/comm/",
+      "proxy_pass": "http://127.0.0.1:8091/comm/",
+      "line": 192
+    },
+    {
+      "path": "/detect-media/",
+      "proxy_pass": "http://127.0.0.1:8091/detect-media/",
+      "line": 201
+    },
+    {
+      "path": "/reality-check/",
+      "proxy_pass": "http://127.0.0.1:8091/reality-check/",
+      "line": 211
     },
     {
       "path": "/api/dispatch/health",
       "proxy_pass": "http://127.0.0.1:8121/health",
-      "line": 140
+      "line": 225
     },
     {
       "path": "/dispatch/",
       "proxy_pass": "http://127.0.0.1:8121/",
-      "line": 148
+      "line": 233
     },
     {
       "path": "/verify-public/",
       "proxy_pass": "http://127.0.0.1:8114/",
-      "line": 179
+      "line": 264
     },
     {
       "path": "/verify-public/",
       "proxy_pass": "http://127.0.0.1:8114/verify-public/",
-      "line": 188
+      "line": 273
     },
     {
       "path": "/verify-public/document/",
       "proxy_pass": "http://127.0.0.1:8114/verify-public/document/",
-      "line": 196
+      "line": 281
     },
     {
       "path": "/verify-public/hash/",
       "proxy_pass": "http://127.0.0.1:8114/verify-public/hash/",
-      "line": 203
+      "line": 288
     },
     {
       "path": "/org/",
       "proxy_pass": "http://windi_landing",
-      "line": 257
+      "line": 351
     },
     {
       "path": "/personal/",
       "proxy_pass": "http://windi_landing",
-      "line": 261
+      "line": 355
     },
     {
       "path": "/desk/",
       "proxy_pass": "http://windi_hub/",
-      "line": 284
+      "line": 379
     },
     {
       "path": "/desktop/",
       "proxy_pass": "http://windi_desktop/",
-      "line": 290
+      "line": 385
     },
     {
       "path": "/governance",
       "proxy_pass": "http://windi_governance",
-      "line": 302
+      "line": 397
     },
     {
       "path": "/war-room/",
       "proxy_pass": "http://windi_warroom/war-room/",
-      "line": 308
+      "line": 403
     },
     {
       "path": "/clone/",
       "proxy_pass": "http://windi_clone/",
-      "line": 322
+      "line": 417
     },
     {
       "path": "/communique/",
       "proxy_pass": "http://windi_communique/",
-      "line": 357
+      "line": 452
     },
     {
       "path": "/dragon/health",
       "proxy_pass": "http://127.0.0.1:8108/health",
-      "line": 389
+      "line": 484
     },
     {
       "path": "/api/dragon/status",
       "proxy_pass": "http://127.0.0.1:8119/api/dragon/status",
-      "line": 398
+      "line": 493
     },
     {
       "path": "/api/agents/status",
       "proxy_pass": "http://127.0.0.1:8119/api/agents/status",
-      "line": 403
+      "line": 498
     },
     {
       "path": "/api/onetouch/",
       "proxy_pass": "http://127.0.0.1:8119/api/onetouch/",
-      "line": 410
-    },
-    {
-      "path": "/api/seal",
-      "proxy_pass": "http://127.0.0.1:8119/api/seal",
-      "line": 418
+      "line": 505
     },
     {
       "path": "/api/export/web",
       "proxy_pass": "http://127.0.0.1:8119/api/export/web",
-      "line": 425
+      "line": 520
     },
     {
       "path": "/api/publish/web",
       "proxy_pass": "http://127.0.0.1:8119/api/publish/web",
-      "line": 432
+      "line": 527
     },
     {
       "path": "/api/ledger/health",
       "proxy_pass": "http://127.0.0.1:8101/health",
-      "line": 440
+      "line": 535
     },
     {
       "path": "/api/dragon/",
       "proxy_pass": "http://windi_dragon/api/dragon/",
-      "line": 446
+      "line": 541
     },
     {
       "path": "/api/ledger/",
       "proxy_pass": "http://windi_ledger/",
-      "line": 452
+      "line": 547
     },
     {
       "path": "/api/export/",
       "proxy_pass": "http://windi_export/",
-      "line": 458
+      "line": 553
     },
     {
       "path": "/api/communique/",
       "proxy_pass": "http://windi_communique/",
-      "line": 466
+      "line": 561
     },
     {
       "path": "/api/sentinel/",
       "proxy_pass": "http://windi_sentinelaw/",
-      "line": 472
+      "line": 567
     },
     {
       "path": "/api/sentinel-core/",
       "proxy_pass": "http://windi_sentinel/",
-      "line": 478
+      "line": 573
     },
     {
       "path": "/api/hub/",
       "proxy_pass": "http://windi_hub/api/hub/",
-      "line": 484
+      "line": 579
     },
     {
       "path": "/api/gov/",
       "proxy_pass": "http://windi_hub/api/gov/",
-      "line": 490
+      "line": 585
     },
     {
       "path": "/api/viewer/",
       "proxy_pass": "http://windi_viewer/",
-      "line": 496
+      "line": 591
     },
     {
       "path": "/api/cortex/",
       "proxy_pass": "http://windi_cortex/",
-      "line": 502
+      "line": 597
     },
     {
       "path": "/api/genesis/",
       "proxy_pass": "http://windi_genesis/",
-      "line": 514
+      "line": 609
     },
     {
       "path": "/api/forensic/",
       "proxy_pass": "http://windi_forensicapi/",
-      "line": 520
+      "line": 615
     },
     {
       "path": "/api/pioneer/",
       "proxy_pass": "http://127.0.0.1:8120/api/pioneer/",
-      "line": 540
+      "line": 635
     },
     {
       "path": "/static/",
       "proxy_pass": "http://windi_hub/static/",
-      "line": 555
+      "line": 650
     }
   ]
 }
