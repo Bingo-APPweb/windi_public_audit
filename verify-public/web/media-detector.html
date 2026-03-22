@@ -575,6 +575,66 @@
             opacity: 0.8;
         }
 
+        /* ═══ NATURE OF RESULT BADGE ═══ */
+        .nature-badge {
+            padding: 1.25rem 2rem;
+            background: var(--bg-elevated);
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .nature-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-dim);
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nature-options {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 0.75rem;
+        }
+
+        .nature-option {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+
+        .nature-option.active {
+            opacity: 1;
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        .nature-check {
+            font-size: 0.75rem;
+        }
+
+        .nature-icon {
+            font-size: 0.9rem;
+        }
+
+        .nature-caveat {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            opacity: 0.8;
+            font-style: italic;
+            padding-top: 0.5rem;
+            border-top: 1px dashed var(--border);
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
         /* ═══ SEAL BUTTON (only for VERIFIED + HIGH) ═══ */
         .seal-section {
             display: none;
@@ -1076,6 +1136,31 @@
                     <span class="confidence-tag" id="confidenceTag">High Confidence</span>
                 </div>
 
+                <!-- Nature of Result Badge (Constitutional Classification) -->
+                <div class="nature-badge" id="natureBadge">
+                    <div class="nature-title" data-i18n="natureTitle">⚖️ Nature of Result</div>
+                    <div class="nature-options">
+                        <div class="nature-option" id="natureGuarantee">
+                            <span class="nature-check">○</span>
+                            <span class="nature-icon">🔒</span>
+                            <span class="nature-label" data-i18n="natureGuarantee">Guarantee</span>
+                        </div>
+                        <div class="nature-option" id="natureProof">
+                            <span class="nature-check">○</span>
+                            <span class="nature-icon">📐</span>
+                            <span class="nature-label" data-i18n="natureProof">Mathematical Proof</span>
+                        </div>
+                        <div class="nature-option active" id="natureInterpretation">
+                            <span class="nature-check">●</span>
+                            <span class="nature-icon">🧠</span>
+                            <span class="nature-label" data-i18n="natureInterpretation">Interpretation</span>
+                        </div>
+                    </div>
+                    <div class="nature-caveat" id="natureCaveat" data-i18n="natureCaveat">
+                        Interpretation = probability, not proof. No cryptographic guarantee.
+                    </div>
+                </div>
+
                 <!-- Seal Section (only for VERIFIED + HIGH) -->
                 <div class="seal-section" id="sealSection">
                     <button class="seal-btn" id="sealBtn">
@@ -1227,7 +1312,7 @@
                 verifyOnLedger: "Im Ledger verifizieren",
                 verdicts: {
                     verified: "VERIFIZIERT",
-                    unverifiable: "NICHT VERIFIZIERBAR",
+                    unverifiable: "NICHT VERIFIZIERT",
                     inconsistent: "INKONSISTENT"
                 },
                 verdictSummary: {
@@ -1235,6 +1320,13 @@
                     unverifiable: "Kein überprüfbarer Beweis gefunden. Das ist der häufigste Zustand im Internet.",
                     inconsistent: "Anzeichen von Änderungen erkannt — Authentizität ungewiss."
                 },
+                natureTitle: "⚖️ Art des Ergebnisses",
+                natureGuarantee: "Garantie",
+                natureProof: "Mathematischer Nachweis",
+                natureInterpretation: "Interpretation",
+                natureCaveat: "Interpretation = Wahrscheinlichkeit, kein Beweis. Keine kryptografische Garantie.",
+                guaranteeCaveat: "Kryptografischer Beweis im WINDI Forensic Ledger verankert (I11).",
+                proofCaveat: "Strukturelle Validierung erkannt. Hohe Konfidenz, nicht kryptografisch.",
                 confidence: { low: "Niedrig", medium: "Mittel", high: "Hoch" },
                 copied: "Link kopiert!",
                 sealing: "Versiegele...",
@@ -1279,14 +1371,21 @@
                 verifyOnLedger: "Verify on Ledger",
                 verdicts: {
                     verified: "VERIFIED",
-                    unverifiable: "UNVERIFIABLE",
-                    inconsistent: "INCONSISTENT"
+                    unverifiable: "UNVERIFIED",
+                    inconsistent: "SUSPICIOUS"
                 },
                 verdictSummary: {
                     verified: "This content has verifiable cryptographic proof.",
                     unverifiable: "No verifiable proof found. This is the most common state on the internet.",
-                    inconsistent: "Signs of alteration detected — authenticity uncertain."
+                    inconsistent: "Heuristic indicators of artificial generation detected."
                 },
+                natureTitle: "⚖️ Nature of Result",
+                natureGuarantee: "Guarantee",
+                natureProof: "Mathematical Proof",
+                natureInterpretation: "Interpretation",
+                natureCaveat: "Interpretation = probability, not proof. No cryptographic guarantee.",
+                guaranteeCaveat: "Cryptographic proof anchored in WINDI Forensic Ledger (I11).",
+                proofCaveat: "Structural validation detected. High confidence, not cryptographic.",
                 confidence: { low: "Low", medium: "Medium", high: "High" },
                 copied: "Link copied!",
                 sealing: "Sealing...",
@@ -1331,14 +1430,21 @@
                 verifyOnLedger: "Verificar no Ledger",
                 verdicts: {
                     verified: "VERIFICADO",
-                    unverifiable: "NÃO VERIFICÁVEL",
-                    inconsistent: "INCONSISTENTE"
+                    unverifiable: "NÃO VERIFICADO",
+                    inconsistent: "SUSPEITO"
                 },
                 verdictSummary: {
                     verified: "Este conteúdo tem prova criptográfica verificável.",
                     unverifiable: "Nenhuma prova verificável encontrada. Este é o estado mais comum na internet.",
-                    inconsistent: "Sinais de alteração detetados — autenticidade incerta."
+                    inconsistent: "Indicadores heurísticos de geração artificial detectados."
                 },
+                natureTitle: "⚖️ Natureza do Resultado",
+                natureGuarantee: "Garantia",
+                natureProof: "Prova Matemática",
+                natureInterpretation: "Interpretação",
+                natureCaveat: "Interpretação = probabilidade, não prova. Sem garantia criptográfica.",
+                guaranteeCaveat: "Prova criptográfica ancorada no WINDI Forensic Ledger (I11).",
+                proofCaveat: "Validação estrutural detectada. Alta confiança, não criptográfica.",
                 confidence: { low: "Baixa", medium: "Média", high: "Alta" },
                 copied: "Link copiado!",
                 sealing: "A selar...",
@@ -1713,6 +1819,9 @@
             document.getElementById('confidenceTag').textContent =
                 I18N[currentLang].confidence[conf] || conf;
 
+            // Update Nature of Result badge
+            updateNatureBadge(verdict, data);
+
             // Show seal button only for VERIFIED + HIGH confidence
             const sealSection = document.getElementById('sealSection');
             const proofBox = document.getElementById('proofBox');
@@ -1820,6 +1929,51 @@
                 console.error('Seal error:', error);
                 sealBtn.disabled = false;
                 sealBtn.innerHTML = `<span>🔐</span> <span>${I18N[currentLang].sealBtn}</span>`;
+            }
+        }
+
+        // ═══ NATURE BADGE UPDATE ═══
+        function updateNatureBadge(verdict, data) {
+            const guarantee = document.getElementById('natureGuarantee');
+            const proof = document.getElementById('natureProof');
+            const interpretation = document.getElementById('natureInterpretation');
+            const caveat = document.getElementById('natureCaveat');
+
+            // Reset all
+            guarantee.classList.remove('active');
+            proof.classList.remove('active');
+            interpretation.classList.remove('active');
+
+            // Reset checks
+            guarantee.querySelector('.nature-check').textContent = '○';
+            proof.querySelector('.nature-check').textContent = '○';
+            interpretation.querySelector('.nature-check').textContent = '○';
+
+            // Determine nature based on verification method
+            const hasLedgerReceipt = data.ledger_receipt || data.verification_method === 'ledger';
+            const hasStructuralProof = data.verification_method === 'structural' ||
+                                       (data.verifiable_elements && data.verifiable_elements.length > 0);
+
+            if (verdict === 'verified' && hasLedgerReceipt) {
+                // Guarantee: Ledger-verified hash
+                guarantee.classList.add('active');
+                guarantee.querySelector('.nature-check').textContent = '●';
+                caveat.setAttribute('data-i18n', 'guaranteeCaveat');
+                caveat.textContent = I18N[currentLang].guaranteeCaveat ||
+                    'Cryptographic proof anchored in WINDI Forensic Ledger (I11).';
+            } else if (verdict === 'verified' && hasStructuralProof) {
+                // Mathematical Proof: Structural validation
+                proof.classList.add('active');
+                proof.querySelector('.nature-check').textContent = '●';
+                caveat.setAttribute('data-i18n', 'proofCaveat');
+                caveat.textContent = I18N[currentLang].proofCaveat ||
+                    'Structural validation detected. High confidence, not cryptographic.';
+            } else {
+                // Interpretation: AI Detection / Heuristics
+                interpretation.classList.add('active');
+                interpretation.querySelector('.nature-check').textContent = '●';
+                caveat.setAttribute('data-i18n', 'natureCaveat');
+                caveat.textContent = I18N[currentLang].natureCaveat;
             }
         }
 
