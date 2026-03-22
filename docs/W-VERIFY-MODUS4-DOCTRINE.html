@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>W-VERIFY-MODUS4 — AI Detection as Interpretation Layer</title>
+    <style>
+        :root {
+            --bg: #FAFAF8;
+            --text: #1A1A1A;
+            --gold: #8B7424;
+            --border: #E0DED8;
+            --section-bg: #F5F5F3;
+        }
+
+        @media print {
+            body { font-size: 11pt; }
+            .page-break { page-break-before: always; }
+            .no-print { display: none; }
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-weight: 600;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            border-bottom: 3px solid var(--gold);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        h2 {
+            font-size: 1.3rem;
+            color: var(--gold);
+            margin: 2.5rem 0 1rem;
+            border-left: 4px solid var(--gold);
+            padding-left: 1rem;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            margin: 1.5rem 0 0.75rem;
+        }
+
+        p { margin-bottom: 1rem; }
+
+        .header-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .doctrine-badge {
+            background: var(--gold);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        .principle-box {
+            background: var(--section-bg);
+            border-left: 4px solid var(--gold);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            font-style: italic;
+        }
+
+        .principle-box strong {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-style: normal;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.95rem;
+        }
+
+        th, td {
+            border: 1px solid var(--border);
+            padding: 0.75rem 1rem;
+            text-align: left;
+        }
+
+        th {
+            background: var(--section-bg);
+            font-weight: 600;
+        }
+
+        .level-1 { background: rgba(76, 175, 80, 0.1); }
+        .level-2 { background: rgba(33, 150, 243, 0.1); }
+        .level-4 { background: rgba(255, 193, 7, 0.1); }
+
+        .limitation-list {
+            list-style: none;
+            margin: 1rem 0;
+        }
+
+        .limitation-list li {
+            padding: 0.5rem 0 0.5rem 2rem;
+            position: relative;
+        }
+
+        .limitation-list li::before {
+            content: '⚠';
+            position: absolute;
+            left: 0;
+        }
+
+        .function-list {
+            list-style: none;
+            margin: 1rem 0;
+        }
+
+        .function-list li {
+            padding: 0.5rem 0 0.5rem 2rem;
+            position: relative;
+        }
+
+        .function-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--gold);
+        }
+
+        blockquote {
+            border-left: 3px solid var(--gold);
+            padding-left: 1.5rem;
+            margin: 1.5rem 0;
+            font-style: italic;
+            color: #555;
+        }
+
+        .signature-block {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .signature-item {
+            text-align: center;
+        }
+
+        .signature-line {
+            width: 200px;
+            border-bottom: 1px solid var(--text);
+            margin-bottom: 0.5rem;
+            height: 40px;
+        }
+
+        .signature-name {
+            font-weight: 600;
+        }
+
+        .signature-role {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .lang-section {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .lang-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .footer {
+            margin-top: 3rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.85rem;
+            color: #666;
+            text-align: center;
+        }
+
+        .hash-value {
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            background: var(--section-bg);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+
+<h1>W-VERIFY-MODUS4<br><small style="font-weight: 400; font-size: 0.6em;">AI Detection as Interpretation Layer</small></h1>
+
+<div class="header-meta">
+    <span><strong>Document:</strong> WINDI-DOCTRINE-MODUS4-20260322</span>
+    <span><strong>Version:</strong> 1.0</span>
+    <span><strong>Status:</strong> <span class="doctrine-badge">ACTIVE</span></span>
+    <span><strong>Author:</strong> WINDI Publishing House</span>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<h2>1. Fundamental Principle</h2>
+
+<div class="principle-box">
+    <strong>Core Axiom</strong>
+    AI Detection within WINDI is classified as <strong>INTERPRETATION</strong>, not VERIFICATION.<br><br>
+    WINDI does not claim truth from AI detection. It classifies uncertainty.
+</div>
+
+<p>This doctrine establishes the epistemological boundaries of AI-generated content detection within the WINDI constitutional framework. The system operates under the principle that heuristic analysis can indicate probability but cannot establish cryptographic proof.</p>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<h2>2. Hierarchy of Truth</h2>
+
+<p>WINDI implements a stratified verification system with three distinct levels of confidence:</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Level</th>
+            <th>Name</th>
+            <th>Nature</th>
+            <th>Source</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="level-1">
+            <td><strong>1</strong></td>
+            <td>Guarantee</td>
+            <td>Cryptographic</td>
+            <td>WINDI Forensic Ledger (I11)</td>
+        </tr>
+        <tr class="level-2">
+            <td><strong>2</strong></td>
+            <td>Mathematical Proof</td>
+            <td>Structural</td>
+            <td>Hash validation, QR extraction</td>
+        </tr>
+        <tr class="level-4">
+            <td><strong>4</strong></td>
+            <td>Interpretation</td>
+            <td>Heuristic</td>
+            <td>AI pattern detection</td>
+        </tr>
+    </tbody>
+</table>
+
+<p><strong>Note:</strong> Level 3 is reserved for future expansion (e.g., witness attestation).</p>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<h2>3. Declared Limitations</h2>
+
+<p>The AI Detection layer (Modus 4) explicitly acknowledges the following limitations:</p>
+
+<ul class="limitation-list">
+    <li><strong>Does not prove origin</strong> — Cannot cryptographically establish authorship</li>
+    <li><strong>Does not guarantee authenticity</strong> — Heuristics indicate probability, not certainty</li>
+    <li><strong>Does not replace human judgment</strong> — Final decisions remain with humans (I9)</li>
+    <li><strong>Does not seal analysis results</strong> — Analysis ≠ Guarantee (I11 protection)</li>
+</ul>
+
+<p>These limitations are features, not bugs. They prevent overreach and maintain constitutional alignment.</p>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<h2>4. Actual Function</h2>
+
+<p>The AI Detection layer serves the following constitutional purposes:</p>
+
+<ul class="function-list">
+    <li><strong>Pattern Identification</strong> — Detects statistical markers of artificial generation</li>
+    <li><strong>Risk Signaling</strong> — Flags content for human review when indicators are present</li>
+    <li><strong>Decision Support</strong> — Provides structured information for human judgment</li>
+    <li><strong>Trilingual Coverage</strong> — Operates across EN, DE, PT linguistic domains</li>
+</ul>
+
+<blockquote>
+    "I don't guess the truth. I make it clear when it cannot be proven."<br>
+    — W-DETECT-MEDIA-001 Constitutional Principle
+</blockquote>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<h2>5. Institutional Implications</h2>
+
+<h3>5.1 For Regulators</h3>
+<p>WINDI's approach to AI detection complies with emerging EU AI Act requirements by explicitly classifying its limitations. The system does not claim autonomous decision-making authority and maintains human oversight at all classification levels.</p>
+
+<h3>5.2 For Financial Institutions</h3>
+<p>The separation of Guarantee (Level 1) from Interpretation (Level 4) allows institutions to implement tiered document verification policies. Cryptographically sealed documents receive different treatment from heuristically analyzed content.</p>
+
+<h3>5.3 For Academic Use</h3>
+<p>The transparent methodology and declared limitations enable research collaboration and peer review of detection accuracy without overclaiming capabilities.</p>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<h2>6. Constitutional Alignment</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Invariant</th>
+            <th>Application in Modus 4</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>I1</strong> — Human Sovereignty</td>
+            <td>Requires <code>intent=true</code> for analysis initiation</td>
+        </tr>
+        <tr>
+            <td><strong>I9</strong> — Autonomy Prohibition</td>
+            <td>Never auto-escalates or makes autonomous decisions</td>
+        </tr>
+        <tr>
+            <td><strong>I11</strong> — Evidence Permanence</td>
+            <td>Analysis results are NOT sealed (analysis ≠ guarantee)</td>
+        </tr>
+        <tr>
+            <td><strong>I12</strong> — Language Sovereignty</td>
+            <td>Trilingual operation (DE/EN/PT) with proper detection</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<h2 class="page-break">7. Trilingual Summary</h2>
+
+<div class="lang-section">
+    <div class="lang-header">🇬🇧 English</div>
+    <p><strong>Principle:</strong> AI Detection within WINDI is classified as INTERPRETATION, not VERIFICATION.</p>
+    <p><strong>Implication:</strong> WINDI does not claim truth from AI detection. It classifies uncertainty.</p>
+    <p><strong>User Guidance:</strong> Interpretation = probability, not proof. No cryptographic guarantee is provided for AI detection results.</p>
+</div>
+
+<div class="lang-section">
+    <div class="lang-header">🇩🇪 Deutsch</div>
+    <p><strong>Prinzip:</strong> KI-Erkennung innerhalb von WINDI wird als INTERPRETATION klassifiziert, nicht als VERIFIZIERUNG.</p>
+    <p><strong>Implikation:</strong> WINDI beansprucht keine Wahrheit aus KI-Erkennung. Es klassifiziert Unsicherheit.</p>
+    <p><strong>Benutzerhinweis:</strong> Interpretation = Wahrscheinlichkeit, kein Beweis. Keine kryptografische Garantie wird für KI-Erkennungsergebnisse bereitgestellt.</p>
+</div>
+
+<div class="lang-section">
+    <div class="lang-header">🇵🇹 Português</div>
+    <p><strong>Princípio:</strong> A Detecção de IA dentro do WINDI é classificada como INTERPRETAÇÃO, não como VERIFICAÇÃO.</p>
+    <p><strong>Implicação:</strong> O WINDI não reivindica verdade a partir da detecção de IA. Classifica incerteza.</p>
+    <p><strong>Orientação ao Utilizador:</strong> Interpretação = probabilidade, não prova. Nenhuma garantia criptográfica é fornecida para resultados de detecção de IA.</p>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<h2>8. Document Integrity</h2>
+
+<p><strong>Receipt ID:</strong> <span class="hash-value">WINDI-DOCTRINE-MODUS4-20260322</span></p>
+<p><strong>Canonical Hash:</strong> To be sealed upon approval</p>
+<p><strong>Constitutional Status:</strong> Active Doctrine</p>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="signature-block">
+    <div class="signature-item">
+        <div class="signature-line"></div>
+        <div class="signature-name">Human Dragon</div>
+        <div class="signature-role">CGO — WINDI Publishing House</div>
+    </div>
+    <div class="signature-item">
+        <div class="signature-line"></div>
+        <div class="signature-name">Guardian</div>
+        <div class="signature-role">Constitutional Validator</div>
+    </div>
+    <div class="signature-item">
+        <div class="signature-line"></div>
+        <div class="signature-name">Witness</div>
+        <div class="signature-role">Ledger Attestation</div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="footer">
+    <p>WINDI Publishing House — Kempten, Bavaria, Deutschland</p>
+    <p>Liga IA+H: Human Dragon · Guardian · Architect · Witness</p>
+    <p><em>"AI processes. Human decides. WINDI guarantees."</em></p>
+</div>
+
+</body>
+</html>
