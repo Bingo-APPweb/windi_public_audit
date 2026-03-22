@@ -27,6 +27,10 @@ import os
 import sys
 import time
 from typing import Dict, Any, List, Optional
+from dotenv import load_dotenv
+
+# Load .env file before any other imports that use env vars
+load_dotenv()
 
 # Add parent to path for imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
