@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.34
-**Sealed:** 2026-03-21
+**Version:** 1.9.35
+**Sealed:** 2026-03-22
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -1486,10 +1486,12 @@ Phase 2 — WINDI TRAVEL Blueprint v1.0
 
 ## §45 W-TRAVEL-001 — VERIFY Mobile Sprint 1 (2026-03-22)
 
-**Status:** 🔵 DEPLOYMENT
+**Status:** 🟢 LIVE
 **Tag:** `W-TRAVEL-001-SPRINT1`
+**Receipt:** `WINDI-TRAVEL-001-GENESIS-20260322`
 **Path:** `/opt/windi/verify-public/web/travel/`
-**URL:** `https://windi-domain.com/verify-public/travel/`
+**URL:** `https://windi-domain.com/verify-public/web/travel/`
+**Commits:** `1c8d199`, `8c6de02`
 
 ### 45.1 — Conceito
 
@@ -1580,22 +1582,61 @@ Sprint 4: Hotel/Agency dashboard
 ### 45.8 — Deploy Checklist
 
 ```
-[ ] §45 documentado → CLAUDE.md
-[ ] git commit -m "docs: §45 W-TRAVEL-001 Sprint 1"
-[ ] mkdir -p /opt/windi/verify-public/web/travel/
-[ ] verify-travel-worker.js criado
-[ ] index.html criado
-[ ] nginx route adicionada
-[ ] nginx -t && systemctl reload nginx
-[ ] smoke test: curl + browser
-[ ] git commit -m "feat(travel): W-TRAVEL-001 Sprint 1 LIVE"
+[✓] §45 documentado → CLAUDE.md
+[✓] git commit -m "docs: §45 W-TRAVEL-001 Sprint 1"
+[✓] mkdir -p /opt/windi/verify-public/web/travel/
+[✓] verify-travel-worker.js criado
+[✓] index.html criado
+[✓] nginx route (já coberta por /verify-public/web/)
+[✓] smoke test: HTTP 200
+[✓] git commit -m "feat(travel): W-TRAVEL-001 Sprint 1 LIVE"
+[✓] Human validation: Pioneer #1 em dispositivo real
+[✓] Ledger seal: WINDI-TRAVEL-001-GENESIS-20260322
 ```
 
-### 45.9 — Canonical Statement
+### 45.9 — Human Validation Event (2026-03-22 20:47 UTC)
+
+**A prova maior:** coexistência de três coisas no mesmo instante.
+
+| Evidência | Status |
+|-----------|--------|
+| Momento humano real | ✅ Foto capturada |
+| Prova criptográfica | ✅ Hash gerado antes de pedir geo |
+| Consentimento explícito | ✅ Diálogo de localização separado |
+
+```
+Primeiro proof humano:
+  Hash      : sha256:2aef2707d86a7c64368ac9038...
+  Timestamp : 2026-03-22T20:47:10.045Z
+  Location  : Kempten, Bavaria (±1km)
+  Device    : Mobile — Pioneer #1
+  Language  : DE
+  Badge     : ✓ BEWEIS ERSTELLT
+```
+
+**O que ficou validado:**
+
+- Captura mobile real: **sim**
+- Geração de hash on-device: **sim**
+- UI certificada visível: **sim**
+- Consentimento separado da prova base: **sim**
+- Fluxo "gently": **sim**
+- Idioma local (DE): **sim**
+- Confetti atrás do diálogo: **sim** (assinatura filosófica)
+
+**Princípio arquitectural provado:**
+
+> "Primeiro prova o momento, depois oferece contexto."
+
+O sistema conseguiu **provar sem invadir**.
+
+### 45.10 — Canonical Statement
 
 > "A prova mais forte é a que não se sente.
 > O turista vive. O WINDI certifica.
 > Quando precisar provar, a evidência já existe."
+
+> "O sistema soube se comportar diante do humano."
 
 ---
 
