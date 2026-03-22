@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="noir">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>WINDI TRAVEL | Prove Your Experience</title>
+    <meta name="description" content="Silently certify your travel experiences with cryptographic proof.">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐉</text></svg>">
+    <style>
+        :root {
+            --gold: #C9A84C;
+            --gold-dim: #8B7424;
+        }
+        [data-theme="noir"] {
+            --bg: #0A0A10;
+            --bg-card: #12121A;
+            --text: #E8E6E1;
+            --text-dim: #888;
+            --border: #1A1A24;
+            --success: #4CAF50;
+            --warning: #FFC107;
+        }
+        [data-theme="klar"] {
+            --bg: #FAFAF8;
+            --bg-card: #FFFFFF;
+            --text: #1A1A1A;
+            --text-dim: #666;
+            --border: #E0DED8;
+            --success: #2E7D32;
+            --warning: #F57C00;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+        .logo { font-size: 1.2rem; font-weight: 700; color: var(--gold); }
+        .controls { display: flex; gap: 8px; }
+        .controls button {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .controls button.active { border-color: var(--gold); color: var(--gold); }
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .state { display: none; width: 100%; max-width: 400px; text-align: center; }
+        .state.active { display: flex; flex-direction: column; align-items: center; gap: 24px; }
+
+        /* State 0: Capture */
+        #state-capture h1 { font-size: 1.8rem; line-height: 1.3; }
+        #state-capture p { color: var(--text-dim); font-size: 1rem; }
+        .capture-zone {
+            width: 100%;
+            aspect-ratio: 1;
+            max-width: 320px;
+            border: 2px dashed var(--border);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+        .capture-zone:hover { border-color: var(--gold); }
+        .capture-zone .icon { font-size: 4rem; }
+        .capture-zone span { color: var(--text-dim); }
+        #camera-input { display: none; }
+        .preview-img {
+            max-width: 100%;
+            max-height: 320px;
+            border-radius: 12px;
+            display: none;
+        }
+
+        /* State 1: Processing */
+        #state-processing h2 { font-size: 1.4rem; }
+        .spinner {
+            width: 80px;
+            height: 80px;
+            border: 4px solid var(--border);
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .status-text {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            min-height: 60px;
+        }
+
+        /* State 2: Certified */
+        #state-certified h2 { font-size: 1.6rem; color: var(--success); }
+        .badge {
+            background: linear-gradient(135deg, var(--gold), var(--gold-dim));
+            color: #000;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .proof-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            width: 100%;
+            text-align: left;
+        }
+        .proof-card .label { color: var(--text-dim); font-size: 0.75rem; margin-bottom: 4px; }
+        .proof-card .value { font-family: monospace; font-size: 0.85rem; word-break: break-all; }
+        .proof-card .row { margin-bottom: 12px; }
+        .proof-card .row:last-child { margin-bottom: 0; }
+        .actions { display: flex; gap: 12px; width: 100%; }
+        .btn {
+            flex: 1;
+            padding: 14px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+        }
+        .btn-primary { background: var(--gold); color: #000; }
+        .btn-secondary { background: var(--bg-card); color: var(--text); border: 1px solid var(--border); }
+
+        footer {
+            text-align: center;
+            padding: 16px;
+            color: var(--text-dim);
+            font-size: 0.75rem;
+            border-top: 1px solid var(--border);
+        }
+        footer a { color: var(--gold); text-decoration: none; }
+
+        /* Confetti animation */
+        .confetti { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1000; }
+        .confetti-piece {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--gold);
+            animation: confetti-fall 3s ease-out forwards;
+        }
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">WINDI TRAVEL</div>
+        <div class="controls">
+            <button onclick="setLang('de')" id="btn-de">DE</button>
+            <button onclick="setLang('en')" id="btn-en" class="active">EN</button>
+            <button onclick="setLang('pt')" id="btn-pt">PT</button>
+            <button onclick="toggleTheme()" id="btn-theme" title="Toggle theme">☀</button>
+        </div>
+    </header>
+
+    <main>
+        <!-- State 0: Capture -->
+        <div id="state-capture" class="state active">
+            <h1 id="t-title">Capture Your Moment</h1>
+            <p id="t-subtitle">One tap. Silently certified.</p>
+            <img id="preview" class="preview-img" alt="Preview">
+            <div class="capture-zone" onclick="document.getElementById('camera-input').click()">
+                <div class="icon">📷</div>
+                <span id="t-tap">Tap to capture</span>
+            </div>
+            <input type="file" id="camera-input" accept="image/*" capture="environment">
+        </div>
+
+        <!-- State 1: Processing -->
+        <div id="state-processing" class="state">
+            <h2 id="t-processing">Processing...</h2>
+            <div class="spinner"></div>
+            <div class="status-text" id="status-text">Generating cryptographic proof...</div>
+        </div>
+
+        <!-- State 2: Certified -->
+        <div id="state-certified" class="state">
+            <h2 id="t-certified">Certified!</h2>
+            <div class="badge">✓ <span id="t-badge">PROOF GENERATED</span></div>
+            <img id="certified-preview" class="preview-img" style="display:block" alt="Certified">
+            <div class="proof-card">
+                <div class="row">
+                    <div class="label" id="t-hash-label">Hash (SHA-256)</div>
+                    <div class="value" id="proof-hash">-</div>
+                </div>
+                <div class="row">
+                    <div class="label" id="t-time-label">Timestamp</div>
+                    <div class="value" id="proof-time">-</div>
+                </div>
+                <div class="row">
+                    <div class="label" id="t-geo-label">Location</div>
+                    <div class="value" id="proof-geo">-</div>
+                </div>
+            </div>
+            <div class="actions">
+                <button class="btn btn-secondary" onclick="reset()" id="t-new">New Capture</button>
+                <button class="btn btn-primary" onclick="shareProof()" id="t-share">Share</button>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <span id="t-footer">Powered by</span> <a href="https://windi-domain.com" target="_blank">WINDI</a> ·
+        <span id="t-tagline">AI processes. Human decides. WINDI guarantees.</span>
+    </footer>
+
+    <script>
+        // i18n
+        const I18N = {
+            de: {
+                title: 'Halte deinen Moment fest',
+                subtitle: 'Ein Tap. Leise zertifiziert.',
+                tap: 'Tippen zum Aufnehmen',
+                processing: 'Verarbeitung...',
+                status1: 'Kryptografischen Beweis erstellen...',
+                status2: 'Position erfassen...',
+                status3: 'Zeitstempel setzen...',
+                status4: 'Proof Stub generieren...',
+                certified: 'Zertifiziert!',
+                badge: 'BEWEIS ERSTELLT',
+                hashLabel: 'Hash (SHA-256)',
+                timeLabel: 'Zeitstempel',
+                geoLabel: 'Standort',
+                newCapture: 'Neue Aufnahme',
+                share: 'Teilen',
+                footer: 'Powered by',
+                tagline: 'KI verarbeitet. Mensch entscheidet. WINDI garantiert.'
+            },
+            en: {
+                title: 'Capture Your Moment',
+                subtitle: 'One tap. Silently certified.',
+                tap: 'Tap to capture',
+                processing: 'Processing...',
+                status1: 'Generating cryptographic proof...',
+                status2: 'Capturing location...',
+                status3: 'Setting timestamp...',
+                status4: 'Creating proof stub...',
+                certified: 'Certified!',
+                badge: 'PROOF GENERATED',
+                hashLabel: 'Hash (SHA-256)',
+                timeLabel: 'Timestamp',
+                geoLabel: 'Location',
+                newCapture: 'New Capture',
+                share: 'Share',
+                footer: 'Powered by',
+                tagline: 'AI processes. Human decides. WINDI guarantees.'
+            },
+            pt: {
+                title: 'Captura o Teu Momento',
+                subtitle: 'Um toque. Silenciosamente certificado.',
+                tap: 'Toca para capturar',
+                processing: 'A processar...',
+                status1: 'A gerar prova criptográfica...',
+                status2: 'A capturar localização...',
+                status3: 'A definir timestamp...',
+                status4: 'A criar proof stub...',
+                certified: 'Certificado!',
+                badge: 'PROVA GERADA',
+                hashLabel: 'Hash (SHA-256)',
+                timeLabel: 'Timestamp',
+                geoLabel: 'Localização',
+                newCapture: 'Nova Captura',
+                share: 'Partilhar',
+                footer: 'Powered by',
+                tagline: 'IA processa. Humano decide. WINDI garante.'
+            }
+        };
+
+        let currentLang = localStorage.getItem('windi-lang') || 'en';
+        let currentProof = null;
+        let worker = null;
+
+        function setLang(lang) {
+            currentLang = lang;
+            localStorage.setItem('windi-lang', lang);
+            document.querySelectorAll('.controls button[id^="btn-"]').forEach(b => b.classList.remove('active'));
+            document.getElementById(`btn-${lang}`).classList.add('active');
+            applyTranslations();
+        }
+
+        function applyTranslations() {
+            const t = I18N[currentLang];
+            document.getElementById('t-title').textContent = t.title;
+            document.getElementById('t-subtitle').textContent = t.subtitle;
+            document.getElementById('t-tap').textContent = t.tap;
+            document.getElementById('t-processing').textContent = t.processing;
+            document.getElementById('t-certified').textContent = t.certified;
+            document.getElementById('t-badge').textContent = t.badge;
+            document.getElementById('t-hash-label').textContent = t.hashLabel;
+            document.getElementById('t-time-label').textContent = t.timeLabel;
+            document.getElementById('t-geo-label').textContent = t.geoLabel;
+            document.getElementById('t-new').textContent = t.newCapture;
+            document.getElementById('t-share').textContent = t.share;
+            document.getElementById('t-footer').textContent = t.footer;
+            document.getElementById('t-tagline').textContent = t.tagline;
+        }
+
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme');
+            const next = current === 'noir' ? 'klar' : 'noir';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('windi-theme', next);
+            document.getElementById('btn-theme').textContent = next === 'noir' ? '☀' : '☽';
+        }
+
+        function initTheme() {
+            const saved = localStorage.getItem('windi-theme') || 'noir';
+            document.documentElement.setAttribute('data-theme', saved);
+            document.getElementById('btn-theme').textContent = saved === 'noir' ? '☀' : '☽';
+        }
+
+        function showState(stateId) {
+            document.querySelectorAll('.state').forEach(s => s.classList.remove('active'));
+            document.getElementById(`state-${stateId}`).classList.add('active');
+        }
+
+        async function getGeoPosition() {
+            return new Promise((resolve) => {
+                if (!navigator.geolocation) {
+                    resolve({ lat: null, lon: null });
+                    return;
+                }
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                        // GDPR-friendly: round to ~1km precision
+                        resolve({
+                            lat: Math.round(pos.coords.latitude * 100) / 100,
+                            lon: Math.round(pos.coords.longitude * 100) / 100
+                        });
+                    },
+                    () => resolve({ lat: null, lon: null }),
+                    { timeout: 5000, maximumAge: 60000 }
+                );
+            });
+        }
+
+        async function processImage(file) {
+            const t = I18N[currentLang];
+            showState('processing');
+
+            // Show preview
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                document.getElementById('preview').src = e.target.result;
+                document.getElementById('preview').style.display = 'block';
+                document.getElementById('certified-preview').src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+
+            // Status updates
+            const statusEl = document.getElementById('status-text');
+            const statuses = [t.status1, t.status2, t.status3, t.status4];
+            let statusIdx = 0;
+            const statusInterval = setInterval(() => {
+                statusIdx = (statusIdx + 1) % statuses.length;
+                statusEl.textContent = statuses[statusIdx];
+            }, 800);
+
+            // Get geo in parallel
+            const geoPromise = getGeoPosition();
+
+            // Read image as ArrayBuffer
+            const imageBuffer = await file.arrayBuffer();
+
+            // Initialize worker
+            if (!worker) {
+                worker = new Worker('verify-travel-worker.js');
+            }
+
+            // Get geo
+            const geo = await geoPromise;
+
+            // Process in worker
+            worker.postMessage({ imageData: imageBuffer, geo });
+            worker.onmessage = (e) => {
+                clearInterval(statusInterval);
+                if (e.data.success) {
+                    currentProof = e.data.proofStub;
+                    showCertified();
+                } else {
+                    alert('Error: ' + e.data.error);
+                    reset();
+                }
+            };
+        }
+
+        function showCertified() {
+            showState('certified');
+            // Display proof data
+            document.getElementById('proof-hash').textContent = currentProof.hash.substring(0, 32) + '...';
+            document.getElementById('proof-time').textContent = currentProof.timestamp;
+            document.getElementById('proof-geo').textContent =
+                currentProof.geo.lat ? `${currentProof.geo.lat}, ${currentProof.geo.lon} (±1km)` : 'Not available';
+
+            // Celebration confetti
+            createConfetti();
+
+            // Store locally
+            storeProof(currentProof);
+        }
+
+        function createConfetti() {
+            const container = document.createElement('div');
+            container.className = 'confetti';
+            document.body.appendChild(container);
+
+            for (let i = 0; i < 30; i++) {
+                const piece = document.createElement('div');
+                piece.className = 'confetti-piece';
+                piece.style.left = Math.random() * 100 + '%';
+                piece.style.animationDelay = Math.random() * 0.5 + 's';
+                piece.style.background = ['#C9A84C', '#8B7424', '#4CAF50', '#FFC107'][Math.floor(Math.random() * 4)];
+                container.appendChild(piece);
+            }
+
+            setTimeout(() => container.remove(), 3500);
+        }
+
+        function storeProof(proof) {
+            const proofs = JSON.parse(localStorage.getItem('windi-travel-proofs') || '[]');
+            proofs.push(proof);
+            localStorage.setItem('windi-travel-proofs', JSON.stringify(proofs));
+        }
+
+        function reset() {
+            currentProof = null;
+            document.getElementById('preview').style.display = 'none';
+            document.getElementById('camera-input').value = '';
+            document.querySelector('.capture-zone').style.display = 'flex';
+            showState('capture');
+        }
+
+        async function shareProof() {
+            if (!currentProof) return;
+
+            const shareText = `WINDI TRAVEL Proof\nHash: ${currentProof.hash.substring(0, 32)}...\nTime: ${currentProof.timestamp}\n\nVerify: https://windi-domain.com/verify-public/`;
+
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: 'WINDI TRAVEL Proof',
+                        text: shareText,
+                        url: 'https://windi-domain.com/verify-public/travel/'
+                    });
+                } catch (e) {
+                    // User cancelled or error
+                    console.log('Share cancelled');
+                }
+            } else {
+                // Fallback: copy to clipboard
+                await navigator.clipboard.writeText(shareText);
+                alert('Proof copied to clipboard!');
+            }
+        }
+
+        // Event listeners
+        document.getElementById('camera-input').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                document.querySelector('.capture-zone').style.display = 'none';
+                processImage(file);
+            }
+        });
+
+        // Init
+        initTheme();
+        setLang(currentLang);
+    </script>
+</body>
+</html>
