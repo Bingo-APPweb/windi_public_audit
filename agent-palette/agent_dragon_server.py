@@ -1387,7 +1387,7 @@ def handle_dragon_chat(body):
                     uncertainty_detected=(_confidence < 0.8)
                 )
 
-            return _handle_sovereign_local(intent, message, language, tier), 200
+            return _handle_sovereign_local(intent, message, language, tier, history=history), 200
 
         # Premium tier with semantic intent -> try LLM, fallback to local
         # Check budget first (VIP founders bypass budget limits)
@@ -3086,12 +3086,32 @@ def handle_communique_publish(comm_id: str) -> tuple:
 # SOVEREIGN HANDLERS (I10: Continuidade)
 # ═══════════════════════════════════════════════════════════════════════
 
-def _handle_sovereign_local(intent, message, lang, tier):
+def _handle_sovereign_local(intent, message, lang, tier, history=None):
     """
     Handle request using local sovereign functions.
     NEVER returns an error. ALWAYS returns useful output.
     Ratio: 42/45 = 93.3% sovereign
     """
+    # ALZHEIMER FIX: construir contexto a partir do histórico
+    history = history or []
+    context_summary = ""
+    if history:
+        recent = history[-4:]  # últimos 2 turnos
+        ctx_parts = []
+        for m in recent:
+            role = m.get("role", "")
+            text = str(m.get("content", ""))[:200]
+            if role and text:
+                ctx_parts.append(f"{role}: {text}")
+        if ctx_parts:
+            context_summary = (
+                "HISTÓRICO RECENTE:\n" +
+                "\n".join(ctx_parts) +
+                "\n\nMENSAGEM ACTUAL: "
+            )
+    message = context_summary + message
+    # FIM ALZHEIMER FIX
+
     if not HAS_SOVEREIGN_ROUTER:
         return {"error": "Sovereign router not available"}, 500
 
