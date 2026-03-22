@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WINDI VERIFY — Modus 4 | Regulatory Brief</title>
+    <style>
+        :root {
+            --bg: #FAFAF8;
+            --text: #1A1A1A;
+            --gold: #8B7424;
+            --border: #E0DED8;
+            --section-bg: #F5F5F3;
+        }
+
+        @page {
+            size: A4;
+            margin: 2cm;
+        }
+
+        @media print {
+            body { font-size: 10pt; }
+            .page-break { page-break-before: always; }
+            .no-print { display: none; }
+            .header-bar { display: none; }
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header-bar {
+            background: var(--gold);
+            color: white;
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            text-align: center;
+            margin: -2rem -2rem 2rem -2rem;
+        }
+
+        .document-header {
+            text-align: center;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid var(--gold);
+            margin-bottom: 2rem;
+        }
+
+        .document-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .document-subtitle {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .document-meta {
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        .classification-badge {
+            display: inline-block;
+            background: var(--section-bg);
+            border: 1px solid var(--border);
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 1rem;
+        }
+
+        h2 {
+            font-size: 1.2rem;
+            color: var(--gold);
+            margin: 2rem 0 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        h3 {
+            font-size: 1rem;
+            margin: 1.5rem 0 0.75rem;
+        }
+
+        p { margin-bottom: 1rem; }
+
+        .executive-box {
+            background: var(--section-bg);
+            border-left: 4px solid var(--gold);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .executive-box ul {
+            margin: 0.5rem 0 0 1.5rem;
+        }
+
+        .executive-box li {
+            margin-bottom: 0.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            border: 1px solid var(--border);
+            padding: 0.6rem 0.8rem;
+            text-align: left;
+        }
+
+        th {
+            background: var(--section-bg);
+            font-weight: 600;
+        }
+
+        .level-1 { background: rgba(76, 175, 80, 0.08); }
+        .level-2 { background: rgba(33, 150, 243, 0.08); }
+        .level-4 { background: rgba(255, 193, 7, 0.08); }
+
+        blockquote {
+            border-left: 3px solid var(--gold);
+            padding-left: 1rem;
+            margin: 1.5rem 0;
+            font-style: italic;
+            color: #555;
+        }
+
+        .limitation-list {
+            background: #FFF8E1;
+            border: 1px solid #FFE082;
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .limitation-list h4 {
+            color: #F57C00;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .limitation-list ul {
+            margin: 0;
+            padding-left: 1.25rem;
+        }
+
+        .limitation-list li {
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .regulatory-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .regulatory-item {
+            background: var(--section-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .regulatory-item h4 {
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .regulatory-item ul {
+            font-size: 0.8rem;
+            margin: 0;
+            padding-left: 1rem;
+            color: #666;
+        }
+
+        .regulatory-item li {
+            margin-bottom: 0.25rem;
+        }
+
+        .principle-box {
+            background: linear-gradient(135deg, var(--section-bg), #fff);
+            border: 2px solid var(--gold);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .principle-box p {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .principle-box p:first-child {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            font-weight: 400;
+        }
+
+        .footer {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        .signature-block {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            padding-top: 1rem;
+        }
+
+        .signature-item {
+            text-align: center;
+            width: 200px;
+        }
+
+        .signature-line {
+            border-bottom: 1px solid var(--text);
+            height: 40px;
+            margin-bottom: 0.5rem;
+        }
+
+        .signature-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .signature-role {
+            font-size: 0.8rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header-bar no-print">
+    WINDI Publishing House — Regulatory Documentation
+</div>
+
+<div class="document-header">
+    <div class="document-title">WINDI VERIFY — Modus 4</div>
+    <div class="document-subtitle">AI Detection as an Interpretative Layer<br>within a Structured Verification Framework</div>
+    <div class="document-meta">
+        Regulatory Brief — BaFin / BSI Context<br>
+        Document ID: WINDI-REG-MODUS4-20260322<br>
+        Version: 1.0
+    </div>
+    <div class="classification-badge">Institutional Use</div>
+</div>
+
+<h2>1. Executive Summary</h2>
+
+<div class="executive-box">
+    <p>WINDI VERIFY introduces a structured approach to media and document assessment, distinguishing between:</p>
+    <ul>
+        <li><strong>Cryptographic guarantee</strong> (Ledger-based verification)</li>
+        <li><strong>Mathematical or structural validation</strong></li>
+        <li><strong>Heuristic interpretation</strong> (AI detection)</li>
+    </ul>
+    <p style="margin-top: 1rem; margin-bottom: 0;">AI detection is explicitly classified as an <strong>interpretative process</strong>, not as a source of truth.</p>
+</div>
+
+<p>This distinction is designed to align with regulatory expectations regarding transparency, auditability, and limitation of automated claims.</p>
+
+<h2>2. Conceptual Framework</h2>
+
+<p>The system operates on a hierarchy of epistemic confidence:</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Level</th>
+            <th>Classification</th>
+            <th>Nature</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="level-1">
+            <td><strong>1</strong></td>
+            <td>Guarantee</td>
+            <td>Cryptographic (hash + ledger)</td>
+        </tr>
+        <tr class="level-2">
+            <td><strong>2</strong></td>
+            <td>Mathematical Proof</td>
+            <td>Structural validation</td>
+        </tr>
+        <tr class="level-4">
+            <td><strong>4</strong></td>
+            <td>Interpretation</td>
+            <td>Heuristic analysis (AI detection)</td>
+        </tr>
+    </tbody>
+</table>
+
+<p>Only Level 1 provides <strong>verifiable truth claims</strong>. Levels 2 and 4 provide <strong>supporting information</strong>, not final assertions.</p>
+
+<h2>3. AI Detection (Modus 4)</h2>
+
+<p>AI detection is implemented as a heuristic pattern recognition process. It evaluates:</p>
+
+<ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
+    <li>linguistic structures</li>
+    <li>repetition patterns</li>
+    <li>use of generic connectors</li>
+    <li>stylistic consistency indicators</li>
+</ul>
+
+<p>The output is expressed as: <strong>none / low / medium / high suspicion</strong></p>
+
+<p>This classification reflects <strong>probabilistic indicators</strong>, not factual determination.</p>
+
+<h2>4. Explainability Layer</h2>
+
+<p>To ensure transparency and auditability, each result includes:</p>
+
+<ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
+    <li><strong>Detected signals</strong>, categorized as:
+        <ul>
+            <li>neutral (e.g. formal academic style)</li>
+            <li>risk-associated (e.g. repeated generic connectors)</li>
+            <li>positive (e.g. high lexical diversity)</li>
+        </ul>
+    </li>
+    <li><strong>Natural language explanation</strong></li>
+    <li><strong>Interpretation note</strong> clarifying limitations</li>
+</ul>
+
+<p>This enables human reviewers to understand the reasoning, assess contextual relevance, and avoid blind reliance on automated output.</p>
+
+<h2>5. Explicit Limitations</h2>
+
+<div class="limitation-list">
+    <h4>⚠️ The system explicitly does NOT:</h4>
+    <ul>
+        <li>assert authorship (human vs AI)</li>
+        <li>provide legal proof of origin</li>
+        <li>replace cryptographic verification mechanisms</li>
+        <li>guarantee correctness of heuristic classification</li>
+    </ul>
+</div>
+
+<blockquote>
+    AI detection results must be treated as <strong>decision-support signals</strong>, not evidence.
+</blockquote>
+
+<h2>6. Regulatory Alignment</h2>
+
+<p>The approach is designed to align with:</p>
+
+<div class="regulatory-grid">
+    <div class="regulatory-item">
+        <h4>🇪🇺 EU AI Act</h4>
+        <ul>
+            <li>transparency of AI systems</li>
+            <li>explainability of outputs</li>
+            <li>avoidance of misleading claims</li>
+        </ul>
+    </div>
+    <div class="regulatory-item">
+        <h4>🇩🇪 BSI Principles</h4>
+        <ul>
+            <li>traceability of system behavior</li>
+            <li>verifiability of processes</li>
+            <li>separation of mechanisms</li>
+        </ul>
+    </div>
+    <div class="regulatory-item">
+        <h4>🇩🇪 BaFin Expectations</h4>
+        <ul>
+            <li>risk-aware design</li>
+            <li>no over-reliance on automation</li>
+            <li>human-in-the-loop support</li>
+        </ul>
+    </div>
+</div>
+
+<h2>7. Institutional Implications</h2>
+
+<p>The system supports:</p>
+
+<ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
+    <li>compliance-oriented document verification workflows</li>
+    <li>media risk assessment without overclaiming certainty</li>
+    <li>integration into regulated environments (banking, audit, legal)</li>
+</ul>
+
+<p>It introduces a key distinction:</p>
+
+<blockquote>
+    Not all outputs of an AI system are equal in evidentiary value.
+</blockquote>
+
+<h2>8. Core Principle</h2>
+
+<div class="principle-box">
+    <p>Core Axiom</p>
+    <p>AI detection is not truth.<br>It is structured uncertainty.</p>
+</div>
+
+<h2>9. Conclusion</h2>
+
+<p>WINDI VERIFY does not attempt to determine absolute truth through AI detection.</p>
+
+<p>Instead, it provides a <strong>layered verification framework</strong> in which:</p>
+
+<ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
+    <li>truth is cryptographically anchored</li>
+    <li>structure is mathematically validated</li>
+    <li>uncertainty is transparently classified</li>
+</ul>
+
+<p>This approach enables responsible use of AI in regulated environments.</p>
+
+<div class="footer">
+    <p><strong>WINDI Publishing House</strong></p>
+    <p>Kempten, Bavaria, Deutschland — 2026</p>
+    <p style="margin-top: 1rem; font-style: italic;">"AI processes. Human decides. WINDI guarantees."</p>
+</div>
+
+</body>
+</html>
