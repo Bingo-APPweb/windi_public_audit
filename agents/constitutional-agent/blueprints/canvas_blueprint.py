@@ -848,6 +848,8 @@ body{{background:{t['bg']};font-family:'Georgia',serif;padding:40px;color:{t['te
 .doc-type{{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:{t['text_secondary']};margin-bottom:16px}}
 .doc-title{{font-size:22px;font-weight:700;color:{t['text_primary']};margin-bottom:8px}}
 .doc-subtitle{{font-size:13px;color:{t['text_secondary']};font-style:italic}}
+.status-badge{{display:inline-block;background:#DCFCE7;color:#166534;padding:6px 16px;border-radius:99px;font-weight:600;font-size:12px;margin-top:16px;letter-spacing:0.5px}}
+.status-badge::before{{content:'● ';color:#22C55E}}
 .issuer-block{{text-align:center;margin-bottom:24px;padding:16px;background:{t['bg']};border-radius:4px}}
 .issuer-name{{font-size:14px;font-weight:600}}
 .issuer-role{{font-size:11px;color:{t['text_secondary']}}}
@@ -883,6 +885,7 @@ body{{background:{t['bg']};font-family:'Georgia',serif;padding:40px;color:{t['te
         <div class="doc-type">{doc_type.upper()}</div>
         <div class="doc-title">{title}</div>
         <div class="doc-subtitle">{subtitle}</div>
+        <div class="status-badge">VERIFIED & IMMUTABLE</div>
     </div>
     <div class="issuer-block">
         <div class="issuer-name">{issuer.get("name", "WINDI Publishing House")}</div>
