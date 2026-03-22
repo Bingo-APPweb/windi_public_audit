@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.33
+**Version:** 1.9.34
 **Sealed:** 2026-03-21
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -1203,6 +1203,123 @@ https://windi-domain.com/verify-public/web/media-detector.html
 ### Próximo Passo
 
 Teste externo real + integração com `/prove/` page.
+
+---
+
+## §43 — W-VERIFY-MODUS4: AI Detection as Interpretation Layer
+
+**Status:** CANONICAL | ACTIVE
+**Scope:** WINDI VERIFY — Media Detector / Verification Layer
+**Commit Reference:** 7c90af8, 926db7d, 8825376, a5db727, 18c9bba
+**Sealed:** 2026-03-22
+
+### 43.1 — Constitutional Position
+
+AI detection within WINDI Verify occupies **Layer 4 (Interpretation)** in the Hierarchy of Truth.
+
+```
+HIERARCHY OF TRUTH
+
+Level 1 — Guarantee       🟢 Cryptographic (hash + Ledger)     → VERIFIED
+Level 2 — Mathematical    🔵 Structural validation             → PROOF
+Level 4 — Interpretation  🟠 Heuristic pattern recognition     → INTERPRETATION
+
+Only Level 1 produces verifiable truth claims.
+Levels 2 and 4 produce supporting information, never final assertions.
+```
+
+### 43.2 — Terminology (Canonical)
+
+| Badge | Internal | Description |
+|-------|----------|-------------|
+| 🟢 VERIFIED | `verified` | Hash + signature + Ledger = maximum force |
+| 🟡 UNVERIFIED | `unverified` | No known anchor = neutral force |
+| 🔴 SUSPICIOUS | `suspicious` | Manipulation signals = indicative force |
+
+**Axiom:** WINDI does not declare "fake". It classifies verifiability.
+
+### 43.3 — AI Suspicion Scale
+
+```
+ai_suspicion: none    → 0 markers     → likely human
+ai_suspicion: low     → 1-3 markers   → inconclusive
+ai_suspicion: medium  → 4-6 markers   → moderate suspicion
+ai_suspicion: high    → 7+ markers    → high suspicion
+```
+
+Markers include: repetitive starts, generic connectors, lack of contractions, AI-typical phrases.
+
+### 43.4 — Explainability Layer
+
+Every result includes:
+
+| Component | Purpose |
+|-----------|---------|
+| Detected signals | Categorized as neutral / risk / positive |
+| Natural language summary | Human-readable explanation |
+| Interpretation note | Explicit limitation statement |
+
+**Design principle:** "Explain without accusing."
+
+### 43.5 — Signal Classification
+
+| Type | Color | Example |
+|------|-------|---------|
+| Neutral | Gold | "Formal academic style detected" |
+| Risk | Red | "Formulaic connector: 'in conclusion'" |
+| Positive | Green | "High lexical diversity (>85%)" |
+
+### 43.6 — Constitutional Invariants (Active)
+
+| Invariant | Enforcement |
+|-----------|-------------|
+| I1 | `intent=true` required for all analysis |
+| I9 | System never auto-escalates to Ledger seal |
+| I11 | Interpretation results are NEVER sealed (analysis ≠ guarantee) |
+| I12 | Trilingual DE/EN/PT throughout |
+
+### 43.7 — Nature of Result Badge (UX)
+
+```
+┌─────────────────────────────────────────────┐
+│ ⚖️ Nature of Result                         │
+│                                             │
+│   ○ 🔒 Guarantee                            │
+│   ○ 📐 Mathematical Proof                   │
+│   ● 🧠 Interpretation  ← always active      │
+│                                             │
+│   ⚠️ Interpretation = probability, not proof │
+└─────────────────────────────────────────────┘
+```
+
+### 43.8 — Explicit Limitations
+
+The system explicitly does NOT:
+
+- Assert authorship (human vs AI)
+- Provide legal proof of origin
+- Replace cryptographic verification mechanisms
+- Guarantee correctness of heuristic classification
+
+### 43.9 — Regulatory Alignment
+
+| Framework | Alignment |
+|-----------|-----------|
+| EU AI Act | Transparency of AI systems, explainability of outputs |
+| BSI | Traceability, verifiability, separation of mechanisms |
+| BaFin | Risk-aware design, no over-reliance on automation |
+
+### 43.10 — Canonical Statement
+
+> AI detection is not truth.
+> It is structured uncertainty.
+
+### 43.11 — Institutional Documentation
+
+| Document | Purpose | Location |
+|----------|---------|----------|
+| W-VERIFY-MODUS4-DOCTRINE.html | VC / Academia | /opt/windi/docs/ |
+| W-VERIFY-MODUS4-REGULATORY-BRIEF.html | BaFin / BSI | /opt/windi/docs/ |
 
 ---
 
