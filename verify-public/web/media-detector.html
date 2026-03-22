@@ -575,6 +575,109 @@
             opacity: 0.8;
         }
 
+        /* ═══ EXPLAINABILITY LAYER ═══ */
+        .explainability-card {
+            display: none;
+            padding: 1.25rem 2rem;
+            background: var(--bg-elevated);
+            border-top: 1px solid var(--border);
+        }
+
+        .explainability-card.visible {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .explainability-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .explainability-icon {
+            font-size: 1.1rem;
+        }
+
+        .explainability-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .explainability-summary {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--text);
+            opacity: 0.92;
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            background: var(--bg-card);
+            border-radius: var(--radius-sm);
+            border-left: 3px solid var(--gold);
+        }
+
+        .explainability-section {
+            margin-top: 1rem;
+        }
+
+        .explainability-section-title {
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .signals-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .signals-list li {
+            padding: 0.6rem 0.75rem;
+            margin-bottom: 0.5rem;
+            border-radius: var(--radius-sm);
+            background: var(--bg-card);
+            border-left: 3px solid var(--border);
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .signal-neutral {
+            border-left-color: var(--gold) !important;
+        }
+
+        .signal-risk {
+            border-left-color: var(--inconsistent) !important;
+        }
+
+        .signal-positive {
+            border-left-color: var(--verified) !important;
+        }
+
+        .signal-label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .signal-description {
+            color: var(--text-dim);
+            font-size: 0.8rem;
+        }
+
+        .interpretation-note {
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: var(--text-dim);
+            font-style: italic;
+            padding: 0.5rem 0.75rem;
+            background: var(--bg-card);
+            border-radius: var(--radius-sm);
+        }
+
         /* ═══ NATURE OF RESULT BADGE ═══ */
         .nature-badge {
             padding: 1.25rem 2rem;
@@ -1161,6 +1264,23 @@
                     </div>
                 </div>
 
+                <!-- Explainability Layer (Why this result) -->
+                <div class="explainability-card" id="explainabilityCard">
+                    <div class="explainability-header">
+                        <span class="explainability-icon">🔎</span>
+                        <span class="explainability-title" data-i18n="explainabilityTitle">Why this result</span>
+                    </div>
+                    <div class="explainability-summary" id="explainabilitySummary"></div>
+                    <div class="explainability-section">
+                        <div class="explainability-section-title" data-i18n="signalsDetected">Detected signals</div>
+                        <ul class="signals-list" id="signalsList"></ul>
+                    </div>
+                    <div class="explainability-section">
+                        <div class="explainability-section-title" data-i18n="interpretationNote">Interpretation note</div>
+                        <div class="interpretation-note" id="interpretationNote"></div>
+                    </div>
+                </div>
+
                 <!-- Seal Section (only for VERIFIED + HIGH) -->
                 <div class="seal-section" id="sealSection">
                     <button class="seal-btn" id="sealBtn">
@@ -1327,6 +1447,9 @@
                 natureCaveat: "Interpretation = Wahrscheinlichkeit, kein Beweis. Keine kryptografische Garantie.",
                 guaranteeCaveat: "Kryptografischer Beweis im WINDI Forensic Ledger verankert (I11).",
                 proofCaveat: "Strukturelle Validierung erkannt. Hohe Konfidenz, nicht kryptografisch.",
+                explainabilityTitle: "Warum dieses Ergebnis",
+                signalsDetected: "Erkannte Signale",
+                interpretationNote: "Interpretationshinweis",
                 confidence: { low: "Niedrig", medium: "Mittel", high: "Hoch" },
                 copied: "Link kopiert!",
                 sealing: "Versiegele...",
@@ -1386,6 +1509,9 @@
                 natureCaveat: "Interpretation = probability, not proof. No cryptographic guarantee.",
                 guaranteeCaveat: "Cryptographic proof anchored in WINDI Forensic Ledger (I11).",
                 proofCaveat: "Structural validation detected. High confidence, not cryptographic.",
+                explainabilityTitle: "Why this result",
+                signalsDetected: "Detected signals",
+                interpretationNote: "Interpretation note",
                 confidence: { low: "Low", medium: "Medium", high: "High" },
                 copied: "Link copied!",
                 sealing: "Sealing...",
@@ -1445,6 +1571,9 @@
                 natureCaveat: "Interpretação = probabilidade, não prova. Sem garantia criptográfica.",
                 guaranteeCaveat: "Prova criptográfica ancorada no WINDI Forensic Ledger (I11).",
                 proofCaveat: "Validação estrutural detectada. Alta confiança, não criptográfica.",
+                explainabilityTitle: "Por que este resultado",
+                signalsDetected: "Sinais detectados",
+                interpretationNote: "Nota interpretativa",
                 confidence: { low: "Baixa", medium: "Média", high: "Alta" },
                 copied: "Link copiado!",
                 sealing: "A selar...",
@@ -1822,6 +1951,9 @@
             // Update Nature of Result badge
             updateNatureBadge(verdict, data);
 
+            // Render Explainability Layer
+            renderExplainability(data, currentLang);
+
             // Show seal button only for VERIFIED + HIGH confidence
             const sealSection = document.getElementById('sealSection');
             const proofBox = document.getElementById('proofBox');
@@ -1977,6 +2109,195 @@
             }
         }
 
+        // ═══ EXPLAINABILITY LAYER ═══
+        const SIGNAL_DICTIONARY = {
+            repetitive_starts: {
+                className: "signal-neutral",
+                en: { label: "Repeated sentence openings", description: "Several sentences begin in a similar way. This can occur in formal academic or institutional writing and does not, by itself, indicate AI generation." },
+                pt: { label: "Inícios repetidos de frases", description: "Várias frases começam de forma semelhante. Isto pode ocorrer em escrita académica ou institucional e, por si só, não indica geração por IA." },
+                de: { label: "Wiederholte Satzanfänge", description: "Mehrere Sätze beginnen auf ähnliche Weise. Das kann in akademischen oder institutionellen Texten vorkommen und weist für sich genommen nicht auf KI-Erzeugung hin." }
+            },
+            no_contractions: {
+                className: "signal-neutral",
+                en: { label: "No contractions", description: "A formal writing style was detected. This is common in academic, legal, and official documents." },
+                pt: { label: "Sem contrações", description: "Foi detectado um estilo de escrita formal. Isto é comum em textos académicos, jurídicos e oficiais." },
+                de: { label: "Keine Kontraktionen", description: "Es wurde ein formaler Schreibstil erkannt. Das ist typisch für akademische, juristische und amtliche Texte." }
+            },
+            uniform_length: {
+                className: "signal-neutral",
+                en: { label: "Uniform sentence length", description: "Sentences have similar length. This can indicate structured writing but also appears in formal documents." },
+                pt: { label: "Comprimento uniforme de frases", description: "As frases têm comprimento semelhante. Isto pode indicar escrita estruturada mas também aparece em documentos formais." },
+                de: { label: "Gleichmäßige Satzlänge", description: "Die Sätze haben ähnliche Länge. Das kann auf strukturiertes Schreiben hinweisen, erscheint aber auch in formalen Dokumenten." }
+            },
+            "ai_phrase:in conclusion": {
+                className: "signal-risk",
+                en: { label: "Formulaic connector", description: 'The phrase "in conclusion" appears as part of summarising markers often found in generated text.' },
+                pt: { label: "Conector formulaico", description: 'A expressão "in conclusion" aparece como marcador resumitivo comum em texto gerado.' },
+                de: { label: "Formelhafter Konnektor", description: 'Die Formulierung "in conclusion" erscheint als zusammenfassender Marker, der häufig in generiertem Text vorkommt.' }
+            },
+            "ai_phrase:furthermore": {
+                className: "signal-risk",
+                en: { label: "Stacked transition marker", description: '"Furthermore" detected with other transitions. Repeated stacking increases heuristic suspicion.' },
+                pt: { label: "Marcador de transição acumulado", description: '"Furthermore" detectado junto com outras transições. O acúmulo repetido eleva a suspeita heurística.' },
+                de: { label: "Gehäufter Übergangsmarker", description: '"Furthermore" wurde zusammen mit anderen Übergangsphrasen erkannt. Eine Häufung erhöht die heuristische Einstufung.' }
+            },
+            "ai_phrase:moreover": {
+                className: "signal-risk",
+                en: { label: "Stacked transition marker", description: '"Moreover" appears as part of a repeated rhetorical pattern often associated with generated prose.' },
+                pt: { label: "Marcador de transição acumulado", description: '"Moreover" aparece como parte de um padrão retórico repetitivo frequentemente associado a prosa gerada.' },
+                de: { label: "Gehäufter Übergangsmarker", description: '"Moreover" erscheint als Teil eines wiederholten rhetorischen Musters, das mit generierter Sprache verbunden ist.' }
+            },
+            "ai_phrase:it is important to": {
+                className: "signal-risk",
+                en: { label: "Generic framing phrase", description: 'A generic framing phrase detected. Repeated use contributes to heuristic suspicion.' },
+                pt: { label: "Expressão genérica de enquadramento", description: 'Expressão genérica de enquadramento detectada. O uso repetido contribui para suspeita heurística.' },
+                de: { label: "Generische Einleitungsformel", description: 'Generische Einleitungsformel erkannt. Wiederholte Nutzung trägt zur heuristischen Einstufung bei.' }
+            },
+            "ai_phrase:let me explain": {
+                className: "signal-risk",
+                en: { label: "Conversational framing marker", description: 'Common in assistant-style generated responses. Increases suspicion when combined with other markers.' },
+                pt: { label: "Marcador conversacional", description: 'Comum em respostas geradas em estilo assistente. Eleva a suspeita quando combinado com outros marcadores.' },
+                de: { label: "Konversationeller Marker", description: 'Typisch für assistentenartige generierte Antworten. Erhöht die Einstufung in Kombination mit anderen Markern.' }
+            }
+        };
+
+        function renderExplainability(data, lang) {
+            const card = document.getElementById('explainabilityCard');
+            const summary = document.getElementById('explainabilitySummary');
+            const signalsList = document.getElementById('signalsList');
+            const note = document.getElementById('interpretationNote');
+
+            if (!card) return;
+
+            const markers = data.analysis?.markers || {};
+            const aiSuspicion = markers.ai_suspicion || 'none';
+            const patterns = markers.ai_patterns_found || [];
+            const diversity = markers.lexical_diversity || 0;
+
+            // Hide if no signals and none suspicion
+            if (aiSuspicion === 'none' && patterns.length === 0) {
+                card.classList.remove('visible');
+                return;
+            }
+
+            card.classList.add('visible');
+
+            // Build summary
+            summary.textContent = buildExplainabilitySummary(aiSuspicion, lang);
+
+            // Build signals list
+            const signals = mapSignals(patterns, diversity, lang);
+            signalsList.innerHTML = signals.map(s => `
+                <li class="${s.className}">
+                    <span class="signal-label">${escapeHtml(s.label)}</span>
+                    <span class="signal-description">${escapeHtml(s.description)}</span>
+                </li>
+            `).join('');
+
+            // Build interpretation note
+            note.textContent = buildInterpretationNote(aiSuspicion, lang);
+        }
+
+        function mapSignals(patterns, diversity, lang) {
+            const signals = [];
+
+            for (const pattern of patterns) {
+                const entry = SIGNAL_DICTIONARY[pattern];
+                if (entry) {
+                    signals.push({
+                        className: entry.className,
+                        label: entry[lang]?.label || entry.en.label,
+                        description: entry[lang]?.description || entry.en.description
+                    });
+                } else {
+                    // Fallback for unknown patterns
+                    const cleanPattern = pattern.replace('ai_phrase:', '').replace(/_/g, ' ');
+                    signals.push({
+                        className: 'signal-neutral',
+                        label: lang === 'pt' ? 'Padrão detectado' : (lang === 'de' ? 'Erkanntes Muster' : 'Detected pattern'),
+                        description: `"${cleanPattern}"`
+                    });
+                }
+            }
+
+            // Add lexical diversity if high (positive signal)
+            if (diversity >= 0.80) {
+                const pct = (diversity * 100).toFixed(0);
+                signals.push({
+                    className: 'signal-positive',
+                    label: lang === 'pt' ? 'Diversidade lexical' : (lang === 'de' ? 'Lexikalische Vielfalt' : 'Lexical diversity'),
+                    description: lang === 'pt' ? `Diversidade elevada (${pct}%) — compatível com escrita humana variada.` :
+                                 (lang === 'de' ? `Hohe Vielfalt (${pct}%) — vereinbar mit variabler menschlicher Schreibweise.` :
+                                 `High diversity (${pct}%) — consistent with varied human writing.`)
+                });
+            }
+
+            return signals;
+        }
+
+        function buildExplainabilitySummary(aiSuspicion, lang) {
+            const summaries = {
+                en: {
+                    none: "No relevant heuristic signals of artificial generation were detected.",
+                    insufficient_data: "Text too short for reliable analysis. No conclusion can be drawn.",
+                    low: "A few weak signals were detected, consistent with formal human writing as well. The result remains low and does not justify a conclusion of AI generation.",
+                    medium: "Some heuristic signals were detected. The result is intermediate — human review is recommended.",
+                    high: "Several heuristic signals consistent with artificial text generation were detected. This indicates elevated suspicion, but it is not proof of AI authorship."
+                },
+                pt: {
+                    none: "Não foram detectados sinais heurísticos relevantes de geração artificial.",
+                    insufficient_data: "Texto muito curto para análise confiável. Nenhuma conclusão pode ser tirada.",
+                    low: "Foram detectados alguns sinais fracos, compatíveis com escrita formal humana. O resultado permanece baixo e não justifica conclusão de geração por IA.",
+                    medium: "Alguns sinais heurísticos foram detectados. O resultado é intermédio — recomenda-se revisão humana.",
+                    high: "Foram detectados vários sinais heurísticos consistentes com texto artificial. O resultado indica suspeita elevada, mas não constitui prova de geração por IA."
+                },
+                de: {
+                    none: "Es wurden keine relevanten heuristischen Signale künstlicher Erzeugung erkannt.",
+                    insufficient_data: "Text zu kurz für zuverlässige Analyse. Keine Schlussfolgerung möglich.",
+                    low: "Es wurden einige schwache Signale erkannt, die auch mit formaler menschlicher Schreibweise vereinbar sind. Das Ergebnis bleibt niedrig.",
+                    medium: "Einige heuristische Signale wurden erkannt. Das Ergebnis ist intermediär — menschliche Prüfung wird empfohlen.",
+                    high: "Es wurden mehrere heuristische Signale erkannt, die mit künstlich erzeugtem Text vereinbar sind. Das Ergebnis zeigt erhöhte Auffälligkeit, ist aber kein Beweis für KI-Erzeugung."
+                }
+            };
+            return summaries[lang]?.[aiSuspicion] || summaries.en[aiSuspicion] || summaries.en.none;
+        }
+
+        function buildInterpretationNote(aiSuspicion, lang) {
+            const notes = {
+                en: {
+                    none: "Heuristic interpretation only. Absence of signals is not proof of human authorship.",
+                    insufficient_data: "Insufficient data for analysis. Provide more text for reliable results.",
+                    low: "Weak signals may reflect academic, legal, or institutional writing style.",
+                    medium: "Intermediate result: additional human review is recommended.",
+                    high: "Elevated suspicion: human review and, where possible, cryptographic verification are recommended."
+                },
+                pt: {
+                    none: "Interpretação heurística apenas. Ausência de sinais não equivale a prova de autoria humana.",
+                    insufficient_data: "Dados insuficientes para análise. Forneça mais texto para resultados confiáveis.",
+                    low: "Sinais fracos podem refletir estilo académico, jurídico ou institucional.",
+                    medium: "Resultado intermédio: recomenda-se revisão humana adicional.",
+                    high: "Suspeita elevada: recomenda-se revisão humana e, quando possível, verificação criptográfica."
+                },
+                de: {
+                    none: "Nur heuristische Interpretation. Das Fehlen von Signalen ist kein Beweis menschlicher Autorschaft.",
+                    insufficient_data: "Unzureichende Daten für Analyse. Mehr Text für zuverlässige Ergebnisse erforderlich.",
+                    low: "Schwache Signale können auf akademischen, juristischen oder institutionellen Stil zurückgehen.",
+                    medium: "Mittlere Einstufung: zusätzliche menschliche Prüfung wird empfohlen.",
+                    high: "Erhöhte Auffälligkeit: menschliche Prüfung und, wenn möglich, kryptografische Verifikation empfohlen."
+                }
+            };
+            return notes[lang]?.[aiSuspicion] || notes.en[aiSuspicion] || notes.en.none;
+        }
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
         // ═══ DETAILS TOGGLE ═══
         function toggleDetails() {
             const toggle = document.getElementById('detailsToggle');
@@ -2011,9 +2332,10 @@
             document.getElementById('resultCard').className = 'result-card';
             document.getElementById('resultBadge').classList.remove('glow-green', 'shake');
 
-            // Hide seal/proof sections
+            // Hide seal/proof/explainability sections
             document.getElementById('sealSection').classList.remove('visible');
             document.getElementById('proofBox').classList.remove('visible');
+            document.getElementById('explainabilityCard').classList.remove('visible');
 
             // Reset seal button
             const sealBtn = document.getElementById('sealBtn');
