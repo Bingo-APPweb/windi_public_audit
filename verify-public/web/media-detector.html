@@ -1674,12 +1674,16 @@
             // Normalize verdict
             let verdict = 'unverifiable';
             const v = (data.verdict || data.status || '').toLowerCase();
-            if (v.includes('verificável') || v.includes('verified') || v === 'verificável') {
-                verdict = 'verified';
+
+            // Order matters: check negative cases first
+            if (v.includes('não') || v.includes('nicht') || v.includes('non') || v.includes('unverif')) {
+                verdict = 'unverifiable';
             } else if (v.includes('inconsistent') || v.includes('suspicious') || v.includes('inkonsistent')) {
                 verdict = 'inconsistent';
-            } else {
-                verdict = 'unverifiable';
+            } else if (v.includes('parcial') || v.includes('partial') || v.includes('teilweise')) {
+                verdict = 'unverifiable'; // Partial = yellow, same as unverifiable
+            } else if (v.includes('verificável') || v.includes('verified') || v.includes('verifiziert')) {
+                verdict = 'verified';
             }
 
             // Apply verdict styling

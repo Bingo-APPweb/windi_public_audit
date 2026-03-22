@@ -66,24 +66,128 @@ Respond ONLY with valid JSON (no markdown, no backticks):
 }"""
 
 
-def _call_claude(content_text: str) -> dict:
-    """Call Claude API for epistemological classification."""
-    if not ANTHROPIC_KEY:
-        raise RuntimeError("ANTHROPIC_API_KEY not configured")
+def _sovereign_heuristic(content_text: str) -> dict:
+    """
+    Sovereign fallback: heuristic classification when LLM unavailable.
+    Looks for verifiable elements without external API.
+    """
+    text = content_text.lower()
+    verifiable = []
+    non_verifiable = []
 
-    import anthropic
-    client = anthropic.Anthropic(api_key=ANTHROPIC_KEY)
-    msg = client.messages.create(
-        model="claude-sonnet-4-20250514",
-        max_tokens=1000,
-        system=SYSTEM_PROMPT,
-        messages=[{"role": "user", "content": f"Analyze this content for verifiability:\n\n{content_text[:4000]}"}]
-    )
-    raw = msg.content[0].text.strip()
-    # Strip any accidental markdown fences
-    raw = re.sub(r'^```json\s*', '', raw)
-    raw = re.sub(r'\s*```$', '', raw)
-    return json.loads(raw)
+    # Check for WINDI receipts
+    windi_match = re.search(r'windi-[a-z0-9-]+', text, re.IGNORECASE)
+    if windi_match:
+        verifiable.append({
+            "element": "WINDI Receipt ID detected",
+            "type": "receipt",
+            "value": windi_match.group(0).upper()
+        })
+
+    # Check for SHA-256/512 hashes
+    hash_match = re.search(r'(sha256:|sha512:)?[a-f0-9]{64}', text)
+    if hash_match:
+        verifiable.append({
+            "element": "SHA hash detected",
+            "type": "hash",
+            "value": hash_match.group(0)[:32] + "..."
+        })
+
+    # Check for URLs (potential sources)
+    url_match = re.search(r'https?://[^\s<>"]+', text)
+    if url_match:
+        non_verifiable.append({
+            "element": "URL reference",
+            "reason": "URL presence does not guarantee authenticity"
+        })
+
+    # Check for dates/timestamps
+    date_match = re.search(r'\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2})?', text)
+    if date_match:
+        non_verifiable.append({
+            "element": "Timestamp/date",
+            "reason": "Timestamps can be fabricated without cryptographic proof"
+        })
+
+    # Determine verdict
+    if len(verifiable) > 0 and len(non_verifiable) == 0:
+        verdict = "VERIFICÁVEL"
+        confidence = "MEDIUM"
+    elif len(verifiable) > 0:
+        verdict = "PARCIALMENTE_VERIFICÁVEL"
+        confidence = "LOW"
+    else:
+        verdict = "NÃO_VERIFICÁVEL"
+        confidence = "LOW"
+
+    # If no elements detected, add generic
+    if not verifiable and not non_verifiable:
+        non_verifiable.append({
+            "element": "Content",
+            "reason": "No cryptographic anchors or official references detected"
+        })
+
+    # Detect language
+    pt_markers = ["não", "verificável", "prova", "conteúdo", "documento"]
+    de_markers = ["nicht", "inhalt", "dokument", "beweis", "überprüfbar"]
+    lang = "en"
+    if any(m in text for m in pt_markers):
+        lang = "pt"
+    elif any(m in text for m in de_markers):
+        lang = "de"
+
+    constitutional_notes = {
+        "pt": "WINDI avalia — não garante",
+        "de": "WINDI bewertet — keine Garantie",
+        "en": "WINDI assesses — no guarantee"
+    }
+
+    reasoning_templates = {
+        "pt": "Análise heurística local. Sem LLM externo.",
+        "de": "Lokale heuristische Analyse. Kein externer LLM.",
+        "en": "Local heuristic analysis. No external LLM."
+    }
+
+    return {
+        "verdict": verdict,
+        "confidence": confidence,
+        "content_type": "text",
+        "verifiable_elements": verifiable,
+        "non_verifiable_elements": non_verifiable,
+        "windi_receipt_detected": bool(windi_match),
+        "windi_receipt_id": windi_match.group(0).upper() if windi_match else None,
+        "reasoning": reasoning_templates[lang],
+        "constitutional_note": constitutional_notes[lang],
+        "language_detected": lang,
+        "engine": "sovereign-heuristic-v1"
+    }
+
+
+def _call_claude(content_text: str) -> dict:
+    """Call Claude API for epistemological classification, with sovereign fallback."""
+    if not ANTHROPIC_KEY:
+        log.info("No API key — using sovereign heuristic fallback")
+        return _sovereign_heuristic(content_text)
+
+    try:
+        import anthropic
+        client = anthropic.Anthropic(api_key=ANTHROPIC_KEY)
+        msg = client.messages.create(
+            model="claude-sonnet-4-20250514",
+            max_tokens=1000,
+            system=SYSTEM_PROMPT,
+            messages=[{"role": "user", "content": f"Analyze this content for verifiability:\n\n{content_text[:4000]}"}]
+        )
+        raw = msg.content[0].text.strip()
+        # Strip any accidental markdown fences
+        raw = re.sub(r'^```json\s*', '', raw)
+        raw = re.sub(r'\s*```$', '', raw)
+        result = json.loads(raw)
+        result["engine"] = "claude-sonnet-4"
+        return result
+    except Exception as e:
+        log.warning(f"Claude API error, falling back to sovereign: {e}")
+        return _sovereign_heuristic(content_text)
 
 
 def _seal_to_ledger(content_hash: str, verdict: str, confidence: str) -> str | None:
