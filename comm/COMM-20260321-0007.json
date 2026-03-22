@@ -1,0 +1,44 @@
+{
+  "id": "COMM-20260321-0007",
+  "version": "1.0",
+  "type": "announcement",
+  "status": "draft",
+  "language": "EN",
+  "title": "Meta-Integrity: A System That Verifies Itself",
+  "summary": "Today we published our first official verifiable communication. The message proves itself. The system validates its own communication.",
+  "body": "Today we published our first official verifiable communication.\n\nW-COMM-001 is fully live.\n\nBut here is the real breakthrough:\n\nThis communication is not just published.\nIt is cryptographically verifiable — by the very system it describes.\n\nThat means:\n\n→ The message proves itself\n→ The system validates its own communication\n→ Integrity is no longer claimed — it is demonstrated\n\nThis is what we call meta-integrity:\n\nA system that does not ask for trust —\nbut allows anyone to verify the truth independently.\n\nWe are entering a world where:\n\n– Content can be generated infinitely\n– Authenticity becomes the scarce resource\n\nWINDI introduces a simple principle:\n\n\"Don't trust the message — verify it.\"\n\nThis is not a feature.\n\nIt is a new standard for institutional communication.",
+  "audience": [],
+  "channels": [
+    "linkedin",
+    "web"
+  ],
+  "links": {
+    "primary": "https://windi-domain.com/prove/",
+    "verify": "https://windi-domain.com/comm/COMM-20260321-0006/verify"
+  },
+  "origin": {
+    "publisher": "WINDI Publishing House",
+    "location": "Kempten, Bavaria",
+    "system": "WINDI GEN7"
+  },
+  "metadata": {
+    "created_at": "2026-03-21T20:38:18.339768+00:00",
+    "created_by": "human_dragon",
+    "locale": "en",
+    "tags": [
+      "WINDI",
+      "DigitalTrust",
+      "VerifiableCommunication",
+      "AI",
+      "Governance",
+      "Innovation",
+      "CyberSecurity"
+    ]
+  },
+  "integrity": {
+    "hash": "be1d6feb0424589c8e854569320ffab84030d459d3a183f61e9e891767caa543",
+    "signature": null,
+    "sealed": false,
+    "ledger_receipt_id": null
+  }
+}

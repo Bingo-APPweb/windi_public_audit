@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WINDI Engine D — Certificate Gallery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #07090D;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            padding: 60px 40px;
+            color: #E8E6E1;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        .header h1 {
+            font-size: 32px;
+            color: #C9A84C;
+            letter-spacing: 4px;
+            margin-bottom: 12px;
+        }
+        .header p {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 32px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        .card {
+            background: #0F1118;
+            border: 1px solid #1A1A24;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(201, 168, 76, 0.15);
+        }
+        .card.featured {
+            border-color: #C9A84C;
+            box-shadow: 0 0 0 1px #C9A84C20;
+        }
+        .card-preview {
+            height: 200px;
+            background: #F5F0E0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .card-preview iframe {
+            width: 200%;
+            height: 200%;
+            transform: scale(0.5);
+            transform-origin: top left;
+            border: none;
+            pointer-events: none;
+        }
+        .card-info {
+            padding: 20px;
+        }
+        .card-info h3 {
+            font-size: 16px;
+            color: #E8E6E1;
+            margin-bottom: 6px;
+        }
+        .card-info p {
+            font-size: 12px;
+            color: #64748b;
+            line-height: 1.5;
+            margin-bottom: 14px;
+        }
+        .card-meta {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .badge {
+            font-size: 9px;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .badge-gold { background: #C9A84C20; color: #C9A84C; }
+        .badge-blue { background: #002D6220; color: #60A5FA; }
+        .badge-green { background: #16653420; color: #4ADE80; }
+        .badge-red { background: #B41E1E20; color: #F87171; }
+        .badge-purple { background: #7C3AED20; color: #A78BFA; }
+        .btn {
+            display: inline-block;
+            background: #C9A84C;
+            color: #07090D;
+            padding: 10px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+            transition: background 0.2s;
+        }
+        .btn:hover {
+            background: #E8C55C;
+        }
+        .version-tag {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #07090D;
+            color: #C9A84C;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+        .version-tag.muster {
+            background: #B41E1E;
+            color: white;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 80px;
+            padding-top: 40px;
+            border-top: 1px solid #1A1A24;
+            color: #64748b;
+            font-size: 12px;
+        }
+        .footer strong {
+            color: #C9A84C;
+        }
+        .legend {
+            max-width: 800px;
+            margin: 0 auto 40px;
+            padding: 20px;
+            background: #0F1118;
+            border: 1px solid #1A1A24;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .legend h4 {
+            color: #C9A84C;
+            font-size: 12px;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+        }
+        .legend p {
+            color: #94a3b8;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>ENGINE D</h1>
+        <p>Certificate Design Evolution — WINDI Sovereign Protocol</p>
+    </div>
+
+    <div class="legend">
+        <h4>MUSTER / SAMPLE / EXEMPLO</h4>
+        <p>
+            Certificados com a tarja <strong style="color:#F87171">MUSTER</strong> são especímenes de demonstração.
+            Quando o certificado real é emitido pelo Ledger com hash verdadeiro, a tarja é removida
+            e o documento torna-se válido. Até lá, nenhum auditor confunde.
+        </p>
+    </div>
+
+    <div class="gallery">
+        <!-- V5 MUSTER - Featured -->
+        <div class="card featured">
+            <div class="card-preview">
+                <span class="version-tag muster">MUSTER</span>
+                <iframe src="cert-v5.html"></iframe>
+            </div>
+            <div class="card-info">
+                <h3>Sovereign Protocol Certificate</h3>
+                <p>Design final com tarja MUSTER trilíngue. Ornamentos, assinaturas SVG, compliance badges. Pronto para produção.</p>
+                <div class="card-meta">
+                    <span class="badge badge-red">MUSTER</span>
+                    <span class="badge badge-gold">Bricolage</span>
+                    <span class="badge badge-purple">Ornaments</span>
+                    <span class="badge badge-green">Trilingual</span>
+                </div>
+                <a href="cert-v5.html" class="btn" target="_blank">View Full Size</a>
+            </div>
+        </div>
+
+        <!-- V2 -->
+        <div class="card">
+            <div class="card-preview">
+                <span class="version-tag">V2</span>
+                <iframe src="cert-v2.html"></iframe>
+            </div>
+            <div class="card-info">
+                <h3>Integrity Validation Certificate</h3>
+                <p>Base design with BaFin/BAIT compliance. Classic document structure with watermark.</p>
+                <div class="card-meta">
+                    <span class="badge badge-gold">Georgia Serif</span>
+                    <span class="badge badge-blue">Gold Border</span>
+                </div>
+                <a href="cert-v2.html" class="btn" target="_blank">View Full Size</a>
+            </div>
+        </div>
+
+        <!-- V3 -->
+        <div class="card">
+            <div class="card-preview">
+                <span class="version-tag">V3</span>
+                <iframe src="cert-v3.html"></iframe>
+            </div>
+            <div class="card-info">
+                <h3>Integrity Certificate</h3>
+                <p>Enhanced with status badge "VERIFIED & IMMUTABLE". Three signatories with digital seal icons.</p>
+                <div class="card-meta">
+                    <span class="badge badge-green">Status Badge</span>
+                    <span class="badge badge-blue">3 Signatures</span>
+                </div>
+                <a href="cert-v3.html" class="btn" target="_blank">View Full Size</a>
+            </div>
+        </div>
+
+        <!-- V4 -->
+        <div class="card">
+            <div class="card-preview">
+                <span class="version-tag">V4</span>
+                <iframe src="cert-v4.html"></iframe>
+            </div>
+            <div class="card-info">
+                <h3>Sovereign Provenance Protocol</h3>
+                <p>Modern banking aesthetic. Navy blue header, Inter font, grid layout. QR verification anchor.</p>
+                <div class="card-meta">
+                    <span class="badge badge-blue">Modern Banking</span>
+                    <span class="badge badge-gold">Inter Font</span>
+                </div>
+                <a href="cert-v4.html" class="btn" target="_blank">View Full Size</a>
+            </div>
+        </div>
+
+        <!-- Final (Canonical) -->
+        <div class="card">
+            <div class="card-preview">
+                <span class="version-tag">CANONICAL</span>
+                <iframe src="cert-final.html"></iframe>
+            </div>
+            <div class="card-info">
+                <h3>Production Certificate</h3>
+                <p>LLM-generated with hardcoded German jurisdiction footer. BaFin MaRisk + eIDAS text locked.</p>
+                <div class="card-meta">
+                    <span class="badge badge-green">Hardcoded Footer</span>
+                    <span class="badge badge-gold">Kempten, DE</span>
+                </div>
+                <a href="cert-final.html" class="btn" target="_blank">View Full Size</a>
+            </div>
+        </div>
+
+        <!-- MATRIX — Production Template -->
+        <div class="card featured" style="border-color: #7C3AED;">
+            <div class="card-preview" style="background: #1a1625;">
+                <span class="version-tag" style="background: #7C3AED;">MATRIX</span>
+                <iframe src="cert-matrix.html"></iframe>
+            </div>
+            <div class="card-info">
+                <h3>Production Template (Jinja2)</h3>
+                <p>Template base com placeholders {{ }} para injecção dinâmica. Sem dados fictícios. Pronto para Engine D API.</p>
+                <div class="card-meta">
+                    <span class="badge badge-purple">Jinja2</span>
+                    <span class="badge badge-gold">Placeholders</span>
+                    <span class="badge badge-green">API Ready</span>
+                </div>
+                <a href="cert-matrix.html" class="btn" target="_blank">View Template</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p><strong>WINDI Engine D</strong> — Document Proof Generator v1.4.0</p>
+        <p style="margin-top: 8px;">Kempten, Bavaria, Deutschland · 2026</p>
+        <p style="margin-top: 16px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #64748b;">
+            "AI processes. Human decides. WINDI guarantees."
+        </p>
+    </div>
+</body>
+</html>

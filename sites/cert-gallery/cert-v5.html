@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI — Integrity Certificate WFI-INT-2026 [MUSTER]</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --gold: #8B6914; --gold-light: #C9A84C; --gold-pale: rgba(139,105,20,0.08);
+  --gold-border: rgba(139,105,20,0.35);
+  --parchment: #FDFAF3; --parchment-2: #F5F0E0; --parchment-3: #EDE8D5;
+  --ink: #1A1208; --ink-2: #2C2210; --ink-muted: rgba(26,18,8,0.55);
+  --ink-dim: rgba(26,18,8,0.32);
+  --high: #1A6B3A; --high-pale: rgba(26,107,58,0.08);
+  --font: 'Bricolage Grotesque', sans-serif; --mono: 'JetBrains Mono', monospace;
+}
+
+body {
+  background: #D4CABB;
+  min-height: 100vh; display: flex; align-items: flex-start; justify-content: center;
+  padding: 3rem 1rem;
+  font-family: var(--font);
+}
+
+/* OUTER FRAME */
+.frame {
+  width: 860px; max-width: 100%;
+  background: var(--parchment);
+  border: 2px solid var(--gold);
+  box-shadow: 0 0 0 6px rgba(139,105,20,0.08), 0 0 0 7px rgba(139,105,20,0.12), 4px 8px 32px rgba(0,0,0,0.25);
+  position: relative; overflow: hidden;
+}
+
+/* WATERMARK */
+.watermark {
+  position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.watermark-text {
+  font-size: 140px; font-weight: 800; letter-spacing: 0.05em;
+  color: rgba(139,105,20,0.045);
+  transform: rotate(-35deg); white-space: nowrap; user-select: none;
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%) rotate(-35deg);
+}
+
+/* CORNER ORNAMENTS */
+.corner { position: absolute; width: 40px; height: 40px; }
+.corner svg { width: 100%; height: 100%; }
+.corner-tl { top: 10px; left: 10px; }
+.corner-tr { top: 10px; right: 10px; transform: scaleX(-1); }
+.corner-bl { bottom: 10px; left: 10px; transform: scaleY(-1); }
+.corner-br { bottom: 10px; right: 10px; transform: scale(-1,-1); }
+
+/* CONTENT */
+.content { position: relative; z-index: 1; padding: 3rem 3.5rem; }
+
+/* HEADER */
+.cert-header { text-align: center; margin-bottom: 2rem; }
+.logo-row { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 1.25rem; }
+.logo-mark {
+  width: 44px; height: 44px; border: 1.5px solid var(--gold); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+.logo-mark svg { width: 22px; height: 22px; }
+.logo-text { font-size: 22px; font-weight: 800; letter-spacing: 0.18em; color: var(--gold); }
+.cert-type-line {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--ink-dim); margin-bottom: 0.5rem;
+}
+.cert-title { font-size: 28px; font-weight: 700; letter-spacing: -0.01em; color: var(--ink); margin-bottom: 0.4rem; }
+.cert-subtitle { font-size: 12px; color: var(--ink-muted); letter-spacing: 0.04em; }
+
+/* STATUS BADGE */
+.status-badge {
+  display: inline-flex; align-items: center; gap: 8px; margin-top: 1.25rem;
+  border: 1px solid rgba(26,107,58,0.3); background: var(--high-pale);
+  border-radius: 3px; padding: 7px 18px;
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--high); font-weight: 500;
+}
+.status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--high); }
+
+/* HEADER DIVIDER */
+.h-divider {
+  height: 0.5px; background: linear-gradient(90deg, transparent, var(--gold), var(--gold-light), var(--gold), transparent);
+  margin: 1.75rem 0;
+}
+.h-divider-thin { height: 0.5px; background: var(--gold-border); margin: 1.25rem 0; }
+
+/* ISSUER BLOCK */
+.issuer-block {
+  background: var(--gold-pale); border: 0.5px solid var(--gold-border);
+  border-radius: 3px; padding: 0.9rem 1.25rem; text-align: center; margin-bottom: 1.5rem;
+}
+.issuer-name { font-size: 15px; font-weight: 600; color: var(--ink); letter-spacing: 0.01em; }
+.issuer-dept { font-size: 11.5px; color: var(--ink-muted); margin-top: 2px; }
+
+/* ATTESTATION */
+.attestation {
+  font-size: 13.5px; color: var(--ink-muted); line-height: 1.75;
+  padding-left: 1rem; border-left: 2px solid var(--gold-border);
+  margin-bottom: 1.75rem; font-style: italic;
+}
+
+/* DATA TABLE */
+.data-table { width: 100%; border-collapse: collapse; margin-bottom: 1.75rem; }
+.data-table tr { border-bottom: 0.5px solid var(--parchment-3); }
+.data-table tr:last-child { border-bottom: none; }
+.data-table td { padding: 9px 12px; font-size: 12.5px; vertical-align: top; }
+.data-table td:first-child {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--ink-dim); white-space: nowrap; width: 160px; padding-top: 10px;
+  background: rgba(139,105,20,0.03);
+}
+.data-table td:last-child { color: var(--ink); font-weight: 500; }
+
+/* DATE ROW */
+.date-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin-bottom: 1.75rem; background: var(--gold-border); border: 0.5px solid var(--gold-border); border-radius: 3px; overflow: hidden; }
+.date-cell { background: var(--parchment); padding: 0.75rem 1rem; text-align: center; }
+.date-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 4px; }
+.date-val { font-size: 14px; font-weight: 600; color: var(--ink); letter-spacing: 0.02em; }
+
+/* HASH BLOCK */
+.hash-block {
+  display: grid; grid-template-columns: 1fr 100px; gap: 0;
+  border: 0.5px solid var(--gold-border); border-radius: 3px; overflow: hidden;
+  margin-bottom: 1.75rem;
+}
+.hash-left { padding: 0.9rem 1.1rem; background: rgba(139,105,20,0.03); }
+.hash-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 6px; }
+.hash-val { font-family: var(--mono); font-size: 12px; color: var(--gold); letter-spacing: 0.04em; word-break: break-all; line-height: 1.5; }
+.hash-ledger { font-family: var(--mono); font-size: 10px; color: var(--ink-muted); margin-top: 4px; }
+.hash-right {
+  background: var(--gold-pale); border-left: 0.5px solid var(--gold-border);
+  display: flex; align-items: center; justify-content: center; padding: 0.75rem;
+}
+.qr-placeholder {
+  width: 72px; height: 72px;
+  background: var(--parchment-2);
+  border: 0.5px solid var(--gold-border); border-radius: 2px;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+/* Fake QR pattern */
+.qr-placeholder::before {
+  content: '';
+  position: absolute; inset: 4px;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(139,105,20,0.6) 0px, rgba(139,105,20,0.6) 3px, transparent 3px, transparent 7px),
+    repeating-linear-gradient(90deg, rgba(139,105,20,0.6) 0px, rgba(139,105,20,0.6) 3px, transparent 3px, transparent 7px);
+  mask-image: radial-gradient(circle at 50% 50%, black 40%, transparent 75%);
+}
+.qr-corner { position: absolute; width: 16px; height: 16px; border: 2px solid rgba(139,105,20,0.8); }
+.qr-corner.tl { top: 4px; left: 4px; border-right: none; border-bottom: none; }
+.qr-corner.tr { top: 4px; right: 4px; border-left: none; border-bottom: none; }
+.qr-corner.bl { bottom: 4px; left: 4px; border-right: none; border-top: none; }
+
+/* SIGNATURES */
+.sig-row { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 1.75rem; }
+.sig-block { text-align: center; }
+.sig-line { height: 0.5px; background: var(--ink-dim); margin-bottom: 6px; }
+.sig-icon { font-size: 11px; margin-right: 4px; }
+.sig-name { font-size: 13.5px; font-weight: 600; color: var(--ink); }
+.sig-title { font-size: 10.5px; color: var(--ink-muted); margin-top: 2px; font-family: var(--mono); letter-spacing: 0.04em; }
+
+/* COMPLIANCE BADGES */
+.compliance-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 1.75rem; flex-wrap: wrap; }
+.comp-badge {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em;
+  padding: 5px 14px; border: 0.5px solid var(--gold-border);
+  background: var(--gold-pale); color: var(--gold);
+  border-radius: 2px; font-weight: 500;
+}
+
+/* FOOTER */
+.cert-footer {
+  background: rgba(139,105,20,0.05); border: 0.5px solid var(--gold-border);
+  border-radius: 3px; padding: 1rem 1.25rem; font-size: 11px; color: var(--ink-muted);
+  line-height: 1.7; text-align: center; margin-bottom: 1rem;
+}
+.cert-footer strong { color: var(--ink); font-weight: 600; }
+
+.footer-badges {
+  display: flex; align-items: center; justify-content: center; gap: 16px;
+  padding: 0.75rem 0 0;
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--high);
+  border-top: 0.5px solid var(--gold-border); margin-top: 0.75rem;
+}
+.fb-item { display: flex; align-items: center; gap: 5px; }
+.fb-check { color: var(--high); }
+
+/* GENERATED LINE */
+.generated { text-align: center; font-family: var(--mono); font-size: 10px; color: var(--ink-dim); letter-spacing: 0.08em; margin-top: 1rem; }
+
+/* ENGINE TAG */
+.engine-tag {
+  position: absolute; bottom: 0; right: 0;
+  font-family: var(--mono); font-size: 8px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: rgba(139,105,20,0.3); padding: 4px 10px;
+  background: rgba(139,105,20,0.04); border-top: 0.5px solid var(--gold-border); border-left: 0.5px solid var(--gold-border);
+  border-radius: 4px 0 0 0;
+}
+
+@media print {
+  body { background: white; padding: 0; }
+  .frame { box-shadow: none; border: 2px solid var(--gold); max-width: 100%; width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<div class="frame">
+
+  <!-- WATERMARK -->
+  <div class="watermark">
+    <div class="watermark-text">WINDI</div>
+  </div>
+
+  <!-- CORNER ORNAMENTS -->
+  <div class="corner corner-tl">
+    <svg viewBox="0 0 40 40" fill="none">
+      <path d="M2 38 L2 2 L38 2" stroke="#8B6914" stroke-width="1.5" opacity="0.5"/>
+      <path d="M2 2 L10 2 M2 2 L2 10" stroke="#8B6914" stroke-width="3" stroke-linecap="square"/>
+      <circle cx="6" cy="6" r="2" fill="#8B6914" opacity="0.4"/>
+    </svg>
+  </div>
+  <div class="corner corner-tr">
+    <svg viewBox="0 0 40 40" fill="none">
+      <path d="M2 38 L2 2 L38 2" stroke="#8B6914" stroke-width="1.5" opacity="0.5"/>
+      <path d="M2 2 L10 2 M2 2 L2 10" stroke="#8B6914" stroke-width="3" stroke-linecap="square"/>
+      <circle cx="6" cy="6" r="2" fill="#8B6914" opacity="0.4"/>
+    </svg>
+  </div>
+  <div class="corner corner-bl">
+    <svg viewBox="0 0 40 40" fill="none">
+      <path d="M2 38 L2 2 L38 2" stroke="#8B6914" stroke-width="1.5" opacity="0.5"/>
+      <path d="M2 2 L10 2 M2 2 L2 10" stroke="#8B6914" stroke-width="3" stroke-linecap="square"/>
+      <circle cx="6" cy="6" r="2" fill="#8B6914" opacity="0.4"/>
+    </svg>
+  </div>
+  <div class="corner corner-br">
+    <svg viewBox="0 0 40 40" fill="none">
+      <path d="M2 38 L2 2 L38 2" stroke="#8B6914" stroke-width="1.5" opacity="0.5"/>
+      <path d="M2 2 L10 2 M2 2 L2 10" stroke="#8B6914" stroke-width="3" stroke-linecap="square"/>
+      <circle cx="6" cy="6" r="2" fill="#8B6914" opacity="0.4"/>
+    </svg>
+  </div>
+
+  <div class="content">
+
+    <!-- HEADER -->
+    <div class="cert-header">
+      <div class="logo-row">
+        <div class="logo-mark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#8B6914" stroke-width="1.5">
+            <path d="M12 2L3 7v5c0 5.25 3.75 10.15 9 11.35C17.25 22.15 21 17.25 21 12V7L12 2z"/>
+            <path d="M9 12l2 2 4-4" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="logo-text">WINDI</div>
+      </div>
+      <div class="cert-type-line">Sovereign Protocol · Engine D · doc-proof</div>
+      <div class="cert-title">Integrity Certificate</div>
+      <div class="cert-subtitle">Ensuring Trust and Transparency in Financial Operations</div>
+      <div style="display:flex;justify-content:center">
+        <div class="status-badge">
+          <div class="status-dot"></div>
+          Verified &amp; Immutable
+        </div>
+      </div>
+    </div>
+
+    <div class="h-divider"></div>
+
+    <!-- ISSUING ENTITY — Client data (NOT WINDI) -->
+    <div class="issuer-block">
+      <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-dim);margin-bottom:6px;">Issuing Entity</div>
+      <div class="issuer-name">[ Entity Name ]</div>
+      <div class="issuer-dept">[ Department ] · [ Location ]</div>
+    </div>
+
+    <!-- ATTESTATION — Client-centric (WINDI seals, client issues) -->
+    <div class="attestation">
+      This certificate attests that the issuing entity has submitted the present document
+      for cryptographic sealing under the WINDI Sovereign Protocol. The integrity of this
+      record is guaranteed by the WINDI Constitutional Framework and anchored immutably
+      in the Forensic Ledger.
+    </div>
+
+    <!-- SEALED BY — WINDI as protocol (HARDCODED) -->
+    <div style="text-align:center;margin-bottom:1.5rem;font-family:var(--mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);">
+      🔏 Sealed by: WINDI Sovereign Protocol
+    </div>
+
+    <!-- DATA TABLE -->
+    <table class="data-table">
+      <tr><td>Certificate ID</td><td>[ Certificate ID ]</td></tr>
+      <tr><td>Entity</td><td>[ Entity Name ]</td></tr>
+      <tr><td>Scope</td><td>[ Certification Scope ]</td></tr>
+      <tr><td>Framework</td><td>WINDI Sovereign Protocol · Constitutional Framework v1.0</td></tr>
+      <tr><td>Audit Date</td><td>[ YYYY-MM-DD ]</td></tr>
+      <tr><td>Audit Body</td><td>[ Audit Body ]</td></tr>
+      <tr><td>Invariant</td><td>I11 · Permanência de Evidência Criptográfica · IRREMEDIÁVEL</td></tr>
+      <tr><td>Truth Class</td><td>HIGH — Constitutional Guarantee</td></tr>
+    </table>
+
+    <!-- DATE ROW -->
+    <div class="date-row">
+      <div class="date-cell">
+        <div class="date-label">Issued</div>
+        <div class="date-val">[ YYYY-MM-DD ]</div>
+      </div>
+      <div class="date-cell">
+        <div class="date-label">Valid Until</div>
+        <div class="date-val">[ YYYY-MM-DD ]</div>
+      </div>
+      <div class="date-cell">
+        <div class="date-label">Jurisdiction</div>
+        <div class="date-val">[ Jurisdiction ]</div>
+      </div>
+    </div>
+
+    <!-- HASH BLOCK -->
+    <div class="hash-block">
+      <div class="hash-left">
+        <div class="hash-label">Forensic Hash (SHA-256)</div>
+        <div class="hash-val">[ SHA-256 hash pending seal ]</div>
+        <div class="hash-ledger">Ledger ID: [ Pending ] · :8101</div>
+        <div class="hash-ledger" style="margin-top:2px">Verify: windi-domain.com/verify-public/?id=[ cert_id ]</div>
+      </div>
+      <div class="hash-right">
+        <div class="qr-placeholder" style="font-family:var(--mono);font-size:8px;color:var(--ink-dim);">
+          QR<br>PENDING
+        </div>
+      </div>
+    </div>
+
+    <div class="h-divider-thin"></div>
+
+    <!-- SIGNATURES -->
+    <div class="sig-row">
+      <div class="sig-block">
+        <div style="height:32px;display:flex;align-items:flex-end;justify-content:center;margin-bottom:6px">
+          <!-- Signature placeholder -->
+        </div>
+        <div class="sig-line"></div>
+        <div class="sig-name"><span class="sig-icon">🔏</span>[ Signatory 1 Name ]</div>
+        <div class="sig-title">[ Title ]</div>
+      </div>
+      <div class="sig-block">
+        <div style="height:32px;display:flex;align-items:flex-end;justify-content:center;margin-bottom:6px">
+          <!-- Signature placeholder -->
+        </div>
+        <div class="sig-line"></div>
+        <div class="sig-name"><span class="sig-icon">🔏</span>[ Signatory 2 Name ]</div>
+        <div class="sig-title">[ Title ]</div>
+      </div>
+    </div>
+
+    <!-- COMPLIANCE BADGES -->
+    <div class="compliance-row">
+      <div class="comp-badge">BaFin MaRisk</div>
+      <div class="comp-badge">GDPR · Art. 5(1)(c)</div>
+      <div class="comp-badge">MiFID II</div>
+      <div class="comp-badge">AML-D5</div>
+      <div class="comp-badge">eIDAS (EU) 910/2014</div>
+    </div>
+
+    <div class="h-divider-thin"></div>
+
+    <!-- FOOTER -->
+    <div class="cert-footer">
+      This document is a cryptographic proof of integrity generated by the
+      <strong>WINDI Sovereign Protocol</strong> (Kempten, Bavaria, DE).
+      Any modification to the underlying data will invalidate this certificate.
+      Structured in alignment with <strong>BaFin MaRisk</strong> principles
+      and <strong>eIDAS Regulation (EU) 910/2014</strong>.
+      <div class="footer-badges">
+        <div class="fb-item"><span class="fb-check">✓</span> BaFin MaRisk</div>
+        <div class="fb-item"><span class="fb-check">✓</span> eIDAS (EU) 910/2014</div>
+        <div class="fb-item"><span class="fb-check">✓</span> Kempten, Bavaria, DE</div>
+        <div class="fb-item"><span class="fb-check">✓</span> IRREMEDIÁVEL · I11</div>
+      </div>
+    </div>
+
+    <div class="generated">Generated: 2026-03-22 17:30 UTC · Engine D · WINDI Sovereign Protocol v2.0</div>
+
+  </div><!-- /content -->
+
+  <div class="engine-tag">Engine D · doc-proof · MUSTER</div>
+
+  <!-- MUSTER TARJA — Trilingual Specimen Watermark -->
+  <div style="
+    position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 10;
+    display: flex; align-items: center; justify-content: center;
+  ">
+    <div style="
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%) rotate(-35deg);
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+    ">
+      <div style="
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 72px; font-weight: 700; letter-spacing: 0.18em;
+        color: rgba(180, 30, 30, 0.13);
+        white-space: nowrap; user-select: none;
+        text-transform: uppercase;
+        border: 6px solid rgba(180, 30, 30, 0.11);
+        padding: 10px 28px;
+        border-radius: 4px;
+        line-height: 1;
+      ">MUSTER</div>
+      <div style="
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 18px; font-weight: 500; letter-spacing: 0.24em;
+        color: rgba(180, 30, 30, 0.11);
+        white-space: nowrap; user-select: none;
+        text-transform: uppercase;
+      ">SAMPLE · EXEMPLO · NOT VALID</div>
+    </div>
+  </div>
+
+</div><!-- /frame -->
+
+</body>
+</html>
