@@ -840,3 +840,54 @@ Sistema de autenticação por identidade soberana no GEN7.
 *LIGA IA+H — Kempten, Bavaria · 2026*
 *🧑‍💻 Human Dragon · 🛡️ Guardian · 🏗️ Architect · 👁️ Witness*
 *"AI processes. Human decides. WINDI guarantees."*
+
+---
+
+## §45 WINDI FIELD — Blueprint v1.0 (SELADO 2026-03-23)
+
+**Receipt:** `WINDI-FIELD-BLUEPRINT-V1.0-20260323`
+**Hash:** `sha256:c39ecae2f01daf3dc87b7ee97b28df130ffa3a997d1da176fe489ca4b8e09f7a`
+**Commit:** `003a841` · **File:** `/opt/windi/docs/WINDI-FIELD-BLUEPRINT-V1.md`
+
+### Trilogia Soberana
+
+| Modo | Prova | Válido para |
+|------|-------|-------------|
+| TRAVEL | "Tenho este ficheiro" | Memórias, viagens |
+| **FIELD** | "Eu estava aqui, neste momento" | Polícia, Perito, Inspector |
+| EVIDENCE | FIELD + Cadeia de Custódia | Tribunal |
+
+### 3 Gates Forenses (IRREMEDIÁVEL)
+
+```
+G1 — DID OBRIGATÓRIO     → sem identidade, câmara não abre
+G2 — GPS LOCKED (±100m)  → sem coordenadas, câmara não abre  
+G3 — CÂMARA NATIVA       → galeria bloqueada por hardware
+```
+
+### Regra de Ouro
+
+> "Se a captura e o seal não aconteceram no mesmo gesto — não é prova forense."
+
+### Stack Técnico
+
+- `field-capture.html` — UI forense (sem upload)
+- `field_server.py` — timestamp servidor autoritativo
+- nginx `/field/` — rota directa
+- DID gate `:8096` — identidade obrigatória
+
+### Roadmap
+
+| Fase | Duração | Entregas |
+|------|---------|----------|
+| F1 | 1-2 dias | Core: UI + servidor + nginx |
+| F2 | 3-5 dias | DID gate + PDF + i18n |
+| F3 | 2-3 semanas | EVIDENCE: custódia + tribunal |
+
+**Casos de uso:** Polícia, perito forense, inspector de fábrica, auditor, jornalista
+
+---
+
+*LIGA IA+H — Kempten, Bavaria · 2026*
+*🧑‍💻 Human Dragon · 🛡️ Guardian · 🏗️ Architect · 👁️ Witness*
+*"AI processes. Human decides. WINDI guarantees."*
