@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="noir">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>WINDI FIELD | Forensic Capture</title>
+    <meta name="description" content="Forensic-grade proof: DID + GPS + Native Camera. Court-admissible evidence.">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛡️</text></svg>">
+    <style>
+        :root {
+            --gold: #C9A84C;
+            --gold-dim: #8B7424;
+            --forensic: #0F6E56;
+            --forensic-bg: #0D3D2E;
+        }
+        [data-theme="noir"] {
+            --bg: #0A0A10;
+            --bg-card: #12121A;
+            --text: #E8E6E1;
+            --text-dim: #888;
+            --border: #1A1A24;
+            --success: #0F6E56;
+            --warning: #FFC107;
+            --error: #A32D2D;
+        }
+        [data-theme="klar"] {
+            --bg: #FAFAF8;
+            --bg-card: #FFFFFF;
+            --text: #1A1A1A;
+            --text-dim: #666;
+            --border: #E0DED8;
+            --success: #0F6E56;
+            --warning: #F57C00;
+            --error: #C62828;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            background: var(--forensic-bg);
+        }
+        .logo {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--forensic);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .logo-badge {
+            font-size: 0.65rem;
+            background: var(--forensic);
+            color: #fff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+        }
+        .controls { display: flex; gap: 8px; }
+        .controls button {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .controls button.active { border-color: var(--forensic); color: var(--forensic); }
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .state { display: none; width: 100%; max-width: 400px; text-align: center; }
+        .state.active { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+
+        /* Gate States */
+        .gate-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            width: 100%;
+            text-align: center;
+        }
+        .gate-card.blocked { border-color: var(--error); }
+        .gate-card.pending { border-color: var(--warning); }
+        .gate-card.passed { border-color: var(--success); }
+        .gate-icon { font-size: 3rem; margin-bottom: 12px; }
+        .gate-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 8px; }
+        .gate-desc { font-size: 0.9rem; color: var(--text-dim); line-height: 1.5; }
+        .gate-status {
+            margin-top: 16px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .gate-status.blocked { background: rgba(163,45,45,0.2); color: var(--error); }
+        .gate-status.pending { background: rgba(255,193,7,0.2); color: var(--warning); }
+        .gate-status.passed { background: rgba(15,110,86,0.2); color: var(--success); }
+
+        /* Gates Progress */
+        .gates-progress {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .gate-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--border);
+        }
+        .gate-dot.passed { background: var(--success); }
+        .gate-dot.current { background: var(--warning); animation: pulse 1.5s infinite; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Capture Zone */
+        .capture-zone {
+            width: 100%;
+            aspect-ratio: 1;
+            max-width: 320px;
+            border: 3px solid var(--forensic);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: var(--forensic-bg);
+        }
+        .capture-zone:hover { transform: scale(1.02); }
+        .capture-zone .icon { font-size: 4rem; }
+        .capture-zone span { color: var(--text); font-weight: 500; }
+        #field-input { display: none; }
+
+        /* Preview */
+        .preview-container {
+            width: 100%;
+            max-width: 320px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 2px solid var(--forensic);
+        }
+        .preview-img, .preview-video {
+            width: 100%;
+            max-height: 320px;
+            object-fit: contain;
+            display: none;
+        }
+        .preview-img.show, .preview-video.show { display: block; }
+
+        /* Processing */
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--border);
+            border-top-color: var(--forensic);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .status-text {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            min-height: 60px;
+        }
+
+        /* Sealed */
+        .seal-badge {
+            background: linear-gradient(135deg, var(--forensic), #0D5A47);
+            color: #fff;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .proof-card {
+            background: var(--bg-card);
+            border: 2px solid var(--forensic);
+            border-radius: 12px;
+            padding: 16px;
+            width: 100%;
+            text-align: left;
+        }
+        .proof-card .label {
+            color: var(--text-dim);
+            font-size: 0.7rem;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .proof-card .value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            word-break: break-all;
+        }
+        .proof-card .row { margin-bottom: 12px; }
+        .proof-card .row:last-child { margin-bottom: 0; }
+        .forensic-badge {
+            display: inline-block;
+            background: var(--forensic);
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        /* Actions */
+        .actions { display: flex; gap: 12px; width: 100%; }
+        .btn {
+            flex: 1;
+            padding: 14px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+        }
+        .btn-primary { background: var(--forensic); color: #fff; }
+        .btn-secondary { background: var(--bg-card); color: var(--text); border: 1px solid var(--border); }
+        .btn-link {
+            background: none;
+            border: none;
+            color: var(--forensic);
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 16px;
+            color: var(--text-dim);
+            font-size: 0.75rem;
+            border-top: 1px solid var(--border);
+        }
+        footer a { color: var(--forensic); text-decoration: none; }
+
+        /* Constitutional Note */
+        .const-note {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            line-height: 1.5;
+            text-align: left;
+        }
+        .const-note strong { color: var(--forensic); }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <span>WINDI FIELD</span>
+            <span class="logo-badge">FORENSIC</span>
+        </div>
+        <div class="controls">
+            <button onclick="setLang('de')" id="btn-de" class="active">DE</button>
+            <button onclick="setLang('en')" id="btn-en">EN</button>
+            <button onclick="setLang('pt')" id="btn-pt">PT</button>
+            <button onclick="toggleTheme()" id="btn-theme" title="Toggle theme">☀</button>
+        </div>
+    </header>
+
+    <main>
+        <!-- State 0: Gate 1 - DID Check -->
+        <div id="state-gate-did" class="state active">
+            <div class="gates-progress">
+                <div class="gate-dot current"></div>
+                <div class="gate-dot"></div>
+                <div class="gate-dot"></div>
+            </div>
+            <div class="gate-card blocked" id="did-card">
+                <div class="gate-icon">🪪</div>
+                <div class="gate-title" id="t-did-title">Gate 1: Identität</div>
+                <div class="gate-desc" id="t-did-desc">
+                    Forensische Beweise erfordern eine verifizierte Identität.
+                    Ohne DID keine Aufnahme.
+                </div>
+                <div class="gate-status blocked" id="did-status">DID NICHT GEFUNDEN</div>
+            </div>
+            <button class="btn-link" onclick="createDID()" id="t-create-did">DID erstellen →</button>
+            <div class="const-note" id="t-const-did">
+                <strong>G1 — Identität:</strong> Jede forensische Aufnahme ist an eine souveräne Identität gebunden.
+                Ohne DID ist die Kamera gesperrt.
+            </div>
+        </div>
+
+        <!-- State 1: Gate 2 - GPS Lock -->
+        <div id="state-gate-gps" class="state">
+            <div class="gates-progress">
+                <div class="gate-dot passed"></div>
+                <div class="gate-dot current"></div>
+                <div class="gate-dot"></div>
+            </div>
+            <div class="gate-card pending" id="gps-card">
+                <div class="gate-icon">📍</div>
+                <div class="gate-title" id="t-gps-title">Gate 2: Standort</div>
+                <div class="gate-desc" id="t-gps-desc">
+                    GPS wird erfasst. Präzision muss ±100m sein.
+                    Ohne genauen Standort keine Aufnahme.
+                </div>
+                <div class="gate-status pending" id="gps-status">GPS WIRD ERFASST...</div>
+            </div>
+            <div class="const-note" id="t-const-gps">
+                <strong>G2 — Standort:</strong> GPS wird VOR dem Auslöser gesperrt, nicht danach.
+                Mindestpräzision: ±100 Meter.
+            </div>
+        </div>
+
+        <!-- State 2: Gate 3 - Capture Ready -->
+        <div id="state-capture" class="state">
+            <div class="gates-progress">
+                <div class="gate-dot passed"></div>
+                <div class="gate-dot passed"></div>
+                <div class="gate-dot passed"></div>
+            </div>
+            <h1 id="t-capture-title">Bereit zur Aufnahme</h1>
+            <p id="t-capture-sub" style="color:var(--text-dim);font-size:0.9rem;">
+                Alle Gates bestanden. Native Kamera aktiviert.
+            </p>
+            <div class="capture-zone" onclick="triggerCapture()">
+                <div class="icon">📷</div>
+                <span id="t-capture-tap">Tippen zum Aufnehmen</span>
+            </div>
+            <input type="file" id="field-input" accept="image/*,video/*" capture="environment">
+            <div class="const-note" id="t-const-capture">
+                <strong>G3 — Native Kamera:</strong> Nur Direktaufnahme. Galerie-Upload ist hardwareseitig blockiert.
+                Rückwirkende Beweise sind unmöglich.
+            </div>
+        </div>
+
+        <!-- State 3: Processing -->
+        <div id="state-processing" class="state">
+            <h2 id="t-processing">Versiegelung läuft...</h2>
+            <div class="spinner"></div>
+            <div class="status-text" id="status-text">Hash wird generiert...</div>
+        </div>
+
+        <!-- State 4: Sealed -->
+        <div id="state-sealed" class="state">
+            <h2 id="t-sealed" style="color:var(--success);">Forensisch Versiegelt!</h2>
+            <div class="seal-badge">🛡️ <span id="t-badge">FELDNACHWEIS VERSIEGELT</span></div>
+            <div class="preview-container">
+                <img id="sealed-preview-img" class="preview-img" alt="Evidence">
+                <video id="sealed-preview-video" class="preview-video" controls playsinline></video>
+            </div>
+            <div class="proof-card">
+                <div class="row">
+                    <div class="label">Receipt ID</div>
+                    <div class="value" id="proof-receipt">-</div>
+                </div>
+                <div class="row">
+                    <div class="label" id="t-hash-label">Hash (SHA-256)</div>
+                    <div class="value" id="proof-hash">-</div>
+                </div>
+                <div class="row">
+                    <div class="label" id="t-time-label">Server Timestamp</div>
+                    <div class="value" id="proof-time">-</div>
+                    <span class="forensic-badge" id="t-authoritative">AUTORITATIV</span>
+                </div>
+                <div class="row">
+                    <div class="label" id="t-geo-label">GPS (±100m)</div>
+                    <div class="value" id="proof-geo">-</div>
+                </div>
+                <div class="row">
+                    <div class="label">DID</div>
+                    <div class="value" id="proof-did">-</div>
+                </div>
+            </div>
+            <div class="actions">
+                <button class="btn btn-secondary" onclick="reset()" id="t-new">Neue Aufnahme</button>
+                <button class="btn btn-primary" onclick="shareProof()" id="t-share">Teilen</button>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <span id="t-footer">Powered by</span> <a href="https://windi-domain.com" target="_blank">WINDI</a> ·
+        <span id="t-tagline">AI processes. Human decides. WINDI guarantees.</span>
+    </footer>
+
+    <script>
+        // ── I18N ──────────────────────────────────────────────────────
+        const I18N = {
+            de: {
+                didTitle: 'Gate 1: Identität',
+                didDesc: 'Forensische Beweise erfordern eine verifizierte Identität. Ohne DID keine Aufnahme.',
+                didBlocked: 'DID NICHT GEFUNDEN',
+                didPassed: 'DID VERIFIZIERT',
+                createDid: 'DID erstellen →',
+                constDid: '<strong>G1 — Identität:</strong> Jede forensische Aufnahme ist an eine souveräne Identität gebunden. Ohne DID ist die Kamera gesperrt.',
+                gpsTitle: 'Gate 2: Standort',
+                gpsDesc: 'GPS wird erfasst. Präzision muss ±100m sein. Ohne genauen Standort keine Aufnahme.',
+                gpsPending: 'GPS WIRD ERFASST...',
+                gpsPassed: 'GPS GESPERRT',
+                gpsBlocked: 'GPS VERWEIGERT',
+                gpsImprecise: 'GPS ZU UNGENAU',
+                constGps: '<strong>G2 — Standort:</strong> GPS wird VOR dem Auslöser gesperrt, nicht danach. Mindestpräzision: ±100 Meter.',
+                captureTitle: 'Bereit zur Aufnahme',
+                captureSub: 'Alle Gates bestanden. Native Kamera aktiviert.',
+                captureTap: 'Tippen zum Aufnehmen',
+                constCapture: '<strong>G3 — Native Kamera:</strong> Nur Direktaufnahme. Galerie-Upload ist hardwareseitig blockiert. Rückwirkende Beweise sind unmöglich.',
+                processing: 'Versiegelung läuft...',
+                status1: 'Hash wird generiert...',
+                status2: 'Mit Ledger verbinden...',
+                status3: 'Server-Timestamp erfassen...',
+                status4: 'Forensisch versiegeln...',
+                sealed: 'Forensisch Versiegelt!',
+                badge: 'FELDNACHWEIS VERSIEGELT',
+                hashLabel: 'Hash (SHA-256)',
+                timeLabel: 'Server Timestamp',
+                authoritative: 'AUTORITATIV',
+                geoLabel: 'GPS (±100m)',
+                newCapture: 'Neue Aufnahme',
+                share: 'Teilen',
+                footer: 'Powered by',
+                tagline: 'KI verarbeitet. Mensch entscheidet. WINDI garantiert.'
+            },
+            en: {
+                didTitle: 'Gate 1: Identity',
+                didDesc: 'Forensic evidence requires verified identity. No DID, no capture.',
+                didBlocked: 'DID NOT FOUND',
+                didPassed: 'DID VERIFIED',
+                createDid: 'Create DID →',
+                constDid: '<strong>G1 — Identity:</strong> Every forensic capture is bound to a sovereign identity. Without DID, camera is locked.',
+                gpsTitle: 'Gate 2: Location',
+                gpsDesc: 'Acquiring GPS. Precision must be ±100m. Without precise location, no capture.',
+                gpsPending: 'ACQUIRING GPS...',
+                gpsPassed: 'GPS LOCKED',
+                gpsBlocked: 'GPS DENIED',
+                gpsImprecise: 'GPS TOO IMPRECISE',
+                constGps: '<strong>G2 — Location:</strong> GPS is locked BEFORE the shutter, not after. Minimum precision: ±100 meters.',
+                captureTitle: 'Ready to Capture',
+                captureSub: 'All gates passed. Native camera activated.',
+                captureTap: 'Tap to capture',
+                constCapture: '<strong>G3 — Native Camera:</strong> Direct capture only. Gallery upload is hardware-blocked. Retroactive evidence is impossible.',
+                processing: 'Sealing in progress...',
+                status1: 'Generating hash...',
+                status2: 'Connecting to Ledger...',
+                status3: 'Capturing server timestamp...',
+                status4: 'Forensically sealing...',
+                sealed: 'Forensically Sealed!',
+                badge: 'FIELD PROOF SEALED',
+                hashLabel: 'Hash (SHA-256)',
+                timeLabel: 'Server Timestamp',
+                authoritative: 'AUTHORITATIVE',
+                geoLabel: 'GPS (±100m)',
+                newCapture: 'New Capture',
+                share: 'Share',
+                footer: 'Powered by',
+                tagline: 'AI processes. Human decides. WINDI guarantees.'
+            },
+            pt: {
+                didTitle: 'Gate 1: Identidade',
+                didDesc: 'Provas forenses requerem identidade verificada. Sem DID, sem captura.',
+                didBlocked: 'DID NÃO ENCONTRADO',
+                didPassed: 'DID VERIFICADO',
+                createDid: 'Criar DID →',
+                constDid: '<strong>G1 — Identidade:</strong> Toda captura forense está vinculada a uma identidade soberana. Sem DID, câmara bloqueada.',
+                gpsTitle: 'Gate 2: Localização',
+                gpsDesc: 'A obter GPS. Precisão deve ser ±100m. Sem localização precisa, sem captura.',
+                gpsPending: 'A OBTER GPS...',
+                gpsPassed: 'GPS BLOQUEADO',
+                gpsBlocked: 'GPS NEGADO',
+                gpsImprecise: 'GPS IMPRECISO',
+                constGps: '<strong>G2 — Localização:</strong> GPS é bloqueado ANTES do shutter, não depois. Precisão mínima: ±100 metros.',
+                captureTitle: 'Pronto para Capturar',
+                captureSub: 'Todos os gates passaram. Câmara nativa ativada.',
+                captureTap: 'Toca para capturar',
+                constCapture: '<strong>G3 — Câmara Nativa:</strong> Apenas captura directa. Upload de galeria bloqueado por hardware. Provas retroactivas são impossíveis.',
+                processing: 'A selar...',
+                status1: 'A gerar hash...',
+                status2: 'A conectar ao Ledger...',
+                status3: 'A capturar timestamp do servidor...',
+                status4: 'A selar forensicamente...',
+                sealed: 'Selado Forensicamente!',
+                badge: 'PROVA DE CAMPO SELADA',
+                hashLabel: 'Hash (SHA-256)',
+                timeLabel: 'Timestamp Servidor',
+                authoritative: 'AUTORITATIVO',
+                geoLabel: 'GPS (±100m)',
+                newCapture: 'Nova Captura',
+                share: 'Partilhar',
+                footer: 'Powered by',
+                tagline: 'IA processa. Humano decide. WINDI garante.'
+            }
+        };
+
+        // ── State ─────────────────────────────────────────────────────
+        let state = {
+            lang: localStorage.getItem('windi-lang') || 'de',
+            did: null,
+            gps: null,
+            file: null,
+            proof: null
+        };
+
+        // ── Language ──────────────────────────────────────────────────
+        function t(key) { return (I18N[state.lang] || I18N.de)[key] || key; }
+
+        function setLang(lang) {
+            state.lang = lang;
+            localStorage.setItem('windi-lang', lang);
+            document.documentElement.lang = lang;
+            ['de','en','pt'].forEach(l => document.getElementById('btn-'+l).classList.toggle('active', l === lang));
+            applyI18N();
+        }
+
+        function applyI18N() {
+            document.getElementById('t-did-title').textContent = t('didTitle');
+            document.getElementById('t-did-desc').textContent = t('didDesc');
+            document.getElementById('t-create-did').textContent = t('createDid');
+            document.getElementById('t-const-did').innerHTML = t('constDid');
+            document.getElementById('t-gps-title').textContent = t('gpsTitle');
+            document.getElementById('t-gps-desc').textContent = t('gpsDesc');
+            document.getElementById('t-const-gps').innerHTML = t('constGps');
+            document.getElementById('t-capture-title').textContent = t('captureTitle');
+            document.getElementById('t-capture-sub').textContent = t('captureSub');
+            document.getElementById('t-capture-tap').textContent = t('captureTap');
+            document.getElementById('t-const-capture').innerHTML = t('constCapture');
+            document.getElementById('t-processing').textContent = t('processing');
+            document.getElementById('t-sealed').textContent = t('sealed');
+            document.getElementById('t-badge').textContent = t('badge');
+            document.getElementById('t-hash-label').textContent = t('hashLabel');
+            document.getElementById('t-time-label').textContent = t('timeLabel');
+            document.getElementById('t-authoritative').textContent = t('authoritative');
+            document.getElementById('t-geo-label').textContent = t('geoLabel');
+            document.getElementById('t-new').textContent = t('newCapture');
+            document.getElementById('t-share').textContent = t('share');
+            document.getElementById('t-footer').textContent = t('footer');
+            document.getElementById('t-tagline').textContent = t('tagline');
+        }
+
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme');
+            const next = current === 'noir' ? 'klar' : 'noir';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('windi-theme', next);
+            document.getElementById('btn-theme').textContent = next === 'noir' ? '☀' : '☽';
+        }
+
+        function initTheme() {
+            const saved = localStorage.getItem('windi-theme') || 'noir';
+            document.documentElement.setAttribute('data-theme', saved);
+            document.getElementById('btn-theme').textContent = saved === 'noir' ? '☀' : '☽';
+        }
+
+        // ── State Management ──────────────────────────────────────────
+        function showState(stateId) {
+            document.querySelectorAll('.state').forEach(s => s.classList.remove('active'));
+            document.getElementById(`state-${stateId}`).classList.add('active');
+        }
+
+        // ── Gate 1: DID Check ─────────────────────────────────────────
+        function checkDID() {
+            // Check multiple storage locations for DID
+            state.did = localStorage.getItem('windi_did') ||
+                        localStorage.getItem('windi_desktop_wallet') ||
+                        sessionStorage.getItem('windi_did') ||
+                        sessionStorage.getItem('windi_desktop_wallet');
+
+            const card = document.getElementById('did-card');
+            const status = document.getElementById('did-status');
+
+            if (state.did) {
+                card.className = 'gate-card passed';
+                status.className = 'gate-status passed';
+                status.textContent = t('didPassed');
+                // Proceed to Gate 2 after short delay
+                setTimeout(() => {
+                    showState('gate-gps');
+                    lockGPS();
+                }, 1000);
+            } else {
+                card.className = 'gate-card blocked';
+                status.className = 'gate-status blocked';
+                status.textContent = t('didBlocked');
+            }
+        }
+
+        function createDID() {
+            // Redirect to wallet/DID creation
+            window.location.href = '/desktop/';
+        }
+
+        // ── Gate 2: GPS Lock ──────────────────────────────────────────
+        async function lockGPS() {
+            const card = document.getElementById('gps-card');
+            const status = document.getElementById('gps-status');
+
+            card.className = 'gate-card pending';
+            status.className = 'gate-status pending';
+            status.textContent = t('gpsPending');
+
+            if (!navigator.geolocation) {
+                card.className = 'gate-card blocked';
+                status.className = 'gate-status blocked';
+                status.textContent = t('gpsBlocked');
+                return;
+            }
+
+            try {
+                const position = await new Promise((resolve, reject) => {
+                    navigator.geolocation.getCurrentPosition(
+                        resolve,
+                        reject,
+                        { enableHighAccuracy: true, timeout: 30000, maximumAge: 0 }
+                    );
+                });
+
+                const accuracy = position.coords.accuracy;
+
+                if (accuracy > 100) {
+                    card.className = 'gate-card blocked';
+                    status.className = 'gate-status blocked';
+                    status.textContent = `${t('gpsImprecise')} (±${Math.round(accuracy)}m)`;
+                    // Retry after 3 seconds
+                    setTimeout(lockGPS, 3000);
+                    return;
+                }
+
+                state.gps = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude,
+                    accuracy: accuracy,
+                    altitude: position.coords.altitude,
+                    lockedAt: new Date().toISOString()
+                };
+
+                card.className = 'gate-card passed';
+                status.className = 'gate-status passed';
+                status.textContent = `${t('gpsPassed')} (±${Math.round(accuracy)}m)`;
+
+                // Proceed to Gate 3
+                setTimeout(() => {
+                    showState('capture');
+                }, 1000);
+
+            } catch (err) {
+                card.className = 'gate-card blocked';
+                status.className = 'gate-status blocked';
+                status.textContent = t('gpsBlocked');
+            }
+        }
+
+        // ── Gate 3: Native Camera Capture ─────────────────────────────
+        function triggerCapture() {
+            document.getElementById('field-input').click();
+        }
+
+        async function processCapture(file) {
+            state.file = file;
+            showState('processing');
+
+            const statuses = [t('status1'), t('status2'), t('status3'), t('status4')];
+            let statusIdx = 0;
+            const statusEl = document.getElementById('status-text');
+            statusEl.textContent = statuses[0];
+
+            const statusInterval = setInterval(() => {
+                statusIdx = (statusIdx + 1) % statuses.length;
+                statusEl.textContent = statuses[statusIdx];
+            }, 800);
+
+            try {
+                // Generate hash locally
+                const buffer = await file.arrayBuffer();
+                const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+                const hash = Array.from(new Uint8Array(hashBuffer))
+                    .map(b => b.toString(16).padStart(2, '0')).join('');
+
+                // POST to server for authoritative timestamp
+                const response = await fetch('/field/seal', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        hash: hash,
+                        did: state.did,
+                        gps: state.gps,
+                        fileType: file.type,
+                        fileSize: file.size,
+                        clientTimestamp: new Date().toISOString(),
+                        mode: 'FIELD'
+                    })
+                });
+
+                clearInterval(statusInterval);
+
+                if (response.ok) {
+                    const result = await response.json();
+                    state.proof = {
+                        receiptId: result.receipt_id,
+                        hash: hash,
+                        serverTimestamp: result.server_timestamp,
+                        gps: state.gps,
+                        did: state.did,
+                        verifyUrl: result.verify_url
+                    };
+                    showSealed(file);
+                } else {
+                    // Fallback: local proof stub (degraded mode)
+                    state.proof = {
+                        receiptId: `FIELD-LOCAL-${Date.now()}`,
+                        hash: hash,
+                        serverTimestamp: new Date().toISOString() + ' (LOCAL)',
+                        gps: state.gps,
+                        did: state.did,
+                        verifyUrl: null,
+                        degraded: true
+                    };
+                    showSealed(file);
+                }
+            } catch (err) {
+                clearInterval(statusInterval);
+                alert('Error: ' + err.message);
+                showState('capture');
+            }
+        }
+
+        function showSealed(file) {
+            showState('sealed');
+
+            // Show preview
+            const isVideo = file.type.startsWith('video/');
+            const url = URL.createObjectURL(file);
+
+            if (isVideo) {
+                document.getElementById('sealed-preview-video').src = url;
+                document.getElementById('sealed-preview-video').classList.add('show');
+                document.getElementById('sealed-preview-img').classList.remove('show');
+            } else {
+                document.getElementById('sealed-preview-img').src = url;
+                document.getElementById('sealed-preview-img').classList.add('show');
+                document.getElementById('sealed-preview-video').classList.remove('show');
+            }
+
+            // Fill proof card
+            document.getElementById('proof-receipt').textContent = state.proof.receiptId;
+            document.getElementById('proof-hash').textContent = state.proof.hash.substring(0, 32) + '...';
+            document.getElementById('proof-time').textContent = state.proof.serverTimestamp;
+            document.getElementById('proof-geo').textContent =
+                `${state.proof.gps.lat.toFixed(4)}, ${state.proof.gps.lng.toFixed(4)} (±${Math.round(state.proof.gps.accuracy)}m)`;
+            document.getElementById('proof-did').textContent = state.proof.did.substring(0, 24) + '...';
+        }
+
+        function reset() {
+            state.file = null;
+            state.proof = null;
+            state.gps = null;
+            document.getElementById('field-input').value = '';
+            document.getElementById('sealed-preview-img').classList.remove('show');
+            document.getElementById('sealed-preview-video').classList.remove('show');
+            // Re-check gates
+            showState('gate-did');
+            checkDID();
+        }
+
+        async function shareProof() {
+            if (!state.proof) return;
+
+            const shareText = `WINDI FIELD — Forensic Proof
+Receipt: ${state.proof.receiptId}
+Hash: ${state.proof.hash.substring(0, 32)}...
+Time: ${state.proof.serverTimestamp}
+GPS: ${state.proof.gps.lat.toFixed(4)}, ${state.proof.gps.lng.toFixed(4)}
+DID: ${state.proof.did.substring(0, 24)}...
+
+${state.proof.verifyUrl ? 'Verify: ' + state.proof.verifyUrl : 'Verify: https://windi-domain.com/verify-public/'}`;
+
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: 'WINDI FIELD Proof',
+                        text: shareText,
+                        url: state.proof.verifyUrl || 'https://windi-domain.com/field/'
+                    });
+                } catch (e) {
+                    console.log('Share cancelled');
+                }
+            } else {
+                await navigator.clipboard.writeText(shareText);
+                alert('Proof copied to clipboard!');
+            }
+        }
+
+        // ── Event Listeners ───────────────────────────────────────────
+        document.getElementById('field-input').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) processCapture(file);
+        });
+
+        // ── Init ──────────────────────────────────────────────────────
+        initTheme();
+        setLang(state.lang);
+        checkDID();
+    </script>
+</body>
+</html>

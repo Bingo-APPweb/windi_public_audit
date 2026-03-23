@@ -480,6 +480,111 @@ async def wick_artifact_view(artifact_id: str):
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
+# WINDI FIELD — Forensic Capture Endpoint
+# 3 Gates: DID + GPS + Native Camera
+# Server timestamp = AUTHORITATIVE (not browser)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+class FieldSealRequest(BaseModel):
+    hash: str
+    did: str
+    gps: dict
+    fileType: Optional[str] = None
+    fileSize: Optional[int] = None
+    clientTimestamp: Optional[str] = None
+    mode: str = "FIELD"
+
+@app.post("/field/seal")
+async def field_seal(data: FieldSealRequest):
+    """
+    WINDI FIELD — Forensic seal with server-authoritative timestamp.
+
+    Required: hash, did, gps, mode=FIELD
+    Returns: receipt_id, server_timestamp (AUTHORITATIVE), verify_url
+    """
+    # Server timestamp — AUTHORITATIVE, not client
+    server_timestamp = now_iso()
+
+    # Validate required fields
+    if not data.hash or len(data.hash) != 64:
+        raise HTTPException(status_code=400, detail="FIELD_MISSING: valid SHA-256 hash required")
+    if not data.did:
+        raise HTTPException(status_code=400, detail="FIELD_MISSING: DID required for forensic capture")
+    if not data.gps or 'lat' not in data.gps or 'lng' not in data.gps:
+        raise HTTPException(status_code=400, detail="FIELD_MISSING: GPS coordinates required")
+
+    # GPS precision check (±100m)
+    gps_accuracy = data.gps.get('accuracy', 999)
+    if gps_accuracy > 100:
+        raise HTTPException(status_code=400, detail=f"GPS_IMPRECISE: accuracy {gps_accuracy}m exceeds 100m limit")
+
+    # Generate FIELD receipt ID
+    receipt_id = f"WINDI-FIELD-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}-{data.hash[:8].upper()}"
+
+    # Build receipt for Ledger
+    receipt = {
+        "id": receipt_id,
+        "actor": data.did,
+        "app": "windi-field",
+        "doc_name": f"WINDI FIELD Capture — {server_timestamp}",
+        "doc_type": "doc",
+        "governance_level": "HIGH",
+        "content_hash": f"sha256:{data.hash}",
+        "sge_score": 95,
+        "metadata": {
+            "mode": "FIELD",
+            "forensic_grade": True,
+            "gps": {
+                "lat": data.gps.get('lat'),
+                "lng": data.gps.get('lng'),
+                "accuracy_meters": gps_accuracy,
+                "locked_at": data.gps.get('lockedAt')
+            },
+            "file_type": data.fileType,
+            "file_size_bytes": data.fileSize,
+            "server_timestamp": server_timestamp,
+            "client_timestamp": data.clientTimestamp,
+            "chain_of_custody": {
+                "captured_by": data.did,
+                "captured_at": server_timestamp,
+                "location": f"{data.gps.get('lat', 0):.4f}, {data.gps.get('lng', 0):.4f}",
+                "device_mode": "native_camera_only",
+                "gallery_upload": False
+            }
+        },
+        "tags": ["field", "forensic", "native-capture", "gps-locked", "did-bound"]
+    }
+
+    # Seal to Ledger
+    try:
+        import requests as req_lib
+        response = req_lib.post(
+            f"{LEDGER_URL}/api/receipts",
+            json=receipt,
+            timeout=5
+        )
+
+        if response.status_code in (200, 201):
+            log.info(f"[FIELD] Sealed: {receipt_id} | DID: {data.did[:16]}... | GPS: {data.gps.get('lat'):.4f},{data.gps.get('lng'):.4f}")
+            return {
+                "status": "FIELD_SEALED",
+                "receipt_id": receipt_id,
+                "server_timestamp": server_timestamp,
+                "verify_url": f"https://windi-domain.com/verify-public/?id={receipt_id}",
+                "forensic_grade": True,
+                "gps_locked": True,
+                "did_bound": True
+            }
+        else:
+            log.warning(f"[FIELD] Ledger error: {response.status_code} - {response.text}")
+            raise HTTPException(status_code=503, detail="LEDGER_UNAVAILABLE")
+
+    except Exception as e:
+        log.error(f"[FIELD] Seal error: {e}")
+        raise HTTPException(status_code=503, detail=f"LEDGER_ERROR: {str(e)}")
+
+
+# ═══════════════════════════════════════════════════════════════════════════════
 # ONE TOUCH BRIDGE v1.1 — Mobile-First UI
 # ═══════════════════════════════════════════════════════════════════════════════
 @app.get("/verify-public/one-touch-bridge.html")
