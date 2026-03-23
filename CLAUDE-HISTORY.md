@@ -1916,4 +1916,70 @@ Phase 2 — WINDI TRAVEL Blueprint v1.0
 ---
 
 *Migração §37-§44 executada por Gêmeo · 23 Mar 2026*
-*CLAUDE.md: 49KB → ~29KB (dentro do limite 32KB)*
+
+---
+
+## §45 W-TRAVEL-001 — VERIFY Mobile Sprint 1 (2026-03-22)
+
+**Status:** 🟢 LIVE
+**Tag:** `W-TRAVEL-001-SPRINT1`
+**Receipt:** `WINDI-TRAVEL-001-GENESIS-20260322`
+**Path:** `/opt/windi/verify-public/web/travel/`
+**URL:** `https://windi-domain.com/verify-public/web/travel/`
+**Commits:** `1c8d199`, `8c6de02`
+
+### Conceito
+
+> "Gently prove. Silently seal."
+
+WINDI TRAVEL transforma a **prova de experiência** em algo invisível.
+O turista não sabe que está a certificar. Apenas vive.
+
+### Proof Stub Specification
+
+```
+Proof Stub (Meta-Receipt Leve)
+├── hash        → SHA-256 do conteúdo
+├── timestamp   → ISO 8601 UTC
+├── geo         → lat/lon ± 1km (GDPR-friendly)
+├── device_fp   → fingerprint anónimo
+└── Total: ~200 bytes
+```
+
+### Arquitectura Sprint 1
+
+```
+CAPTURE → PROCESSING → CERTIFIED
+Estado 0   Estado 1     Estado 2
+📷 Câmara  ⏳ Worker    ✅ Badge + QR
+```
+
+**Web Worker:** `verify-travel-worker.js` — executa SHA-256 + geo em background
+
+### Ficheiros
+
+| Ficheiro | Função | Linhas |
+|----------|--------|--------|
+| `index.html` | UI Mobile 3 estados | ~280 |
+| `verify-travel-worker.js` | Web Worker Proof Stub | ~45 |
+
+### Human Validation Event (2026-03-22 20:47 UTC)
+
+```
+Primeiro proof humano:
+  Hash      : sha256:2aef2707d86a7c64368ac9038...
+  Timestamp : 2026-03-22T20:47:10.045Z
+  Location  : Kempten, Bavaria (±1km)
+  Device    : Mobile — Pioneer #1
+  Badge     : ✓ BEWEIS ERSTELLT
+```
+
+### Canonical Statement
+
+> "A prova mais forte é a que não se sente."
+> "O sistema soube se comportar diante do humano."
+
+---
+
+*Migração §45 + Overflow Fix #3 · 23 Mar 2026*
+*CLAUDE.md: 40KB → ~28KB (dentro do limite 32KB)*
