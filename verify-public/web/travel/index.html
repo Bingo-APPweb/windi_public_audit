@@ -197,7 +197,7 @@
                 <div class="icon">📷</div>
                 <span id="t-tap">Tap to capture</span>
             </div>
-            <input type="file" id="camera-input" accept="image/*" capture="environment">
+            <input type="file" id="camera-input" accept="image/*,video/*" capture="environment">
         </div>
 
         <!-- State 1: Processing -->
@@ -372,12 +372,45 @@
             const t = I18N[currentLang];
             showState('processing');
 
-            // Show preview
+            // Show preview — supports image AND video
             const reader = new FileReader();
+            const isVideo = file.type.startsWith('video/');
             reader.onload = (e) => {
-                document.getElementById('preview').src = e.target.result;
-                document.getElementById('preview').style.display = 'block';
-                document.getElementById('certified-preview').src = e.target.result;
+                const previewEl = document.getElementById('preview');
+                const certifiedEl = document.getElementById('certified-preview');
+
+                if (isVideo) {
+                    // Replace img with video element
+                    const videoEl = document.createElement('video');
+                    videoEl.id = 'preview';
+                    videoEl.className = 'preview-img';
+                    videoEl.src = e.target.result;
+                    videoEl.controls = true;
+                    videoEl.setAttribute('playsinline', '');
+                    videoEl.style.display = 'block';
+                    videoEl.style.maxWidth = '100%';
+                    videoEl.style.maxHeight = '320px';
+                    videoEl.style.borderRadius = '12px';
+                    previewEl.parentNode.replaceChild(videoEl, previewEl);
+
+                    // Same for certified preview
+                    const certVideoEl = document.createElement('video');
+                    certVideoEl.id = 'certified-preview';
+                    certVideoEl.className = 'preview-img';
+                    certVideoEl.src = e.target.result;
+                    certVideoEl.controls = true;
+                    certVideoEl.setAttribute('playsinline', '');
+                    certVideoEl.style.display = 'block';
+                    certVideoEl.style.maxWidth = '100%';
+                    certVideoEl.style.maxHeight = '320px';
+                    certVideoEl.style.borderRadius = '12px';
+                    certifiedEl.parentNode.replaceChild(certVideoEl, certifiedEl);
+                } else {
+                    // Original image flow
+                    previewEl.src = e.target.result;
+                    previewEl.style.display = 'block';
+                    certifiedEl.src = e.target.result;
+                }
             };
             reader.readAsDataURL(file);
 
@@ -458,9 +491,32 @@
 
         function reset() {
             currentProof = null;
-            document.getElementById('preview').style.display = 'none';
             document.getElementById('camera-input').value = '';
             document.querySelector('.capture-zone').style.display = 'flex';
+
+            // Restore img elements if they were replaced by video
+            const previewEl = document.getElementById('preview');
+            if (previewEl.tagName === 'VIDEO') {
+                const imgEl = document.createElement('img');
+                imgEl.id = 'preview';
+                imgEl.className = 'preview-img';
+                imgEl.alt = 'Preview';
+                imgEl.style.display = 'none';
+                previewEl.parentNode.replaceChild(imgEl, previewEl);
+            } else {
+                previewEl.style.display = 'none';
+            }
+
+            const certifiedEl = document.getElementById('certified-preview');
+            if (certifiedEl.tagName === 'VIDEO') {
+                const imgEl = document.createElement('img');
+                imgEl.id = 'certified-preview';
+                imgEl.className = 'preview-img';
+                imgEl.alt = 'Certified';
+                imgEl.style.display = 'block';
+                certifiedEl.parentNode.replaceChild(imgEl, certifiedEl);
+            }
+
             showState('capture');
         }
 
