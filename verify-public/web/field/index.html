@@ -275,6 +275,83 @@
             text-align: left;
         }
         .const-note strong { color: var(--forensic); }
+
+        /* Camera Interface */
+        .camera-container {
+            width: 100%;
+            max-width: 320px;
+            aspect-ratio: 4/3;
+            border: 3px solid var(--forensic);
+            border-radius: 16px;
+            overflow: hidden;
+            background: #000;
+            position: relative;
+        }
+        #camera-preview {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .capture-buttons {
+            display: flex;
+            gap: 16px;
+            margin-top: 16px;
+        }
+        .capture-btn {
+            flex: 1;
+            padding: 16px 24px;
+            border-radius: 12px;
+            border: 2px solid var(--forensic);
+            background: var(--bg-card);
+            color: var(--text);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .capture-btn:active {
+            transform: scale(0.95);
+            background: var(--forensic);
+            color: #fff;
+        }
+        .capture-btn .btn-icon { font-size: 1.5rem; }
+        .video-btn.recording {
+            background: #A32D2D;
+            border-color: #A32D2D;
+            color: #fff;
+            animation: pulse-rec 1s infinite;
+        }
+        @keyframes pulse-rec {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .recording-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+            padding: 8px 16px;
+            background: rgba(163,45,45,0.2);
+            border-radius: 20px;
+            color: #A32D2D;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .rec-dot {
+            width: 12px;
+            height: 12px;
+            background: #A32D2D;
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
     </style>
 </head>
 <body>
@@ -348,11 +425,31 @@
             <p id="t-capture-sub" style="color:var(--text-dim);font-size:0.9rem;">
                 Alle Gates bestanden. Native Kamera aktiviert.
             </p>
-            <div class="capture-zone" onclick="triggerCapture()">
-                <div class="icon">📷</div>
-                <span id="t-capture-tap">Tippen zum Aufnehmen</span>
+
+            <!-- Live Camera Preview -->
+            <div class="camera-container" id="camera-container">
+                <video id="camera-preview" autoplay playsinline muted></video>
+                <canvas id="photo-canvas" style="display:none;"></canvas>
             </div>
-            <input type="file" id="field-input" accept="image/*,video/*" capture="environment">
+
+            <!-- Capture Buttons -->
+            <div class="capture-buttons">
+                <button class="capture-btn photo-btn" onclick="takePhoto()" id="btn-photo">
+                    <span class="btn-icon">📷</span>
+                    <span id="t-take-photo">Foto</span>
+                </button>
+                <button class="capture-btn video-btn" onclick="toggleVideo()" id="btn-video">
+                    <span class="btn-icon" id="video-icon">🎬</span>
+                    <span id="t-take-video">Video</span>
+                </button>
+            </div>
+
+            <!-- Recording indicator -->
+            <div class="recording-indicator" id="recording-indicator" style="display:none;">
+                <span class="rec-dot"></span>
+                <span id="rec-time">00:00</span>
+            </div>
+
             <div class="const-note" id="t-const-capture">
                 <strong>G3 — Native Kamera:</strong> Nur Direktaufnahme. Galerie-Upload ist hardwareseitig blockiert.
                 Rückwirkende Beweise sind unmöglich.
@@ -429,6 +526,9 @@
                 captureTitle: 'Bereit zur Aufnahme',
                 captureSub: 'Alle Gates bestanden. Native Kamera aktiviert.',
                 captureTap: 'Tippen zum Aufnehmen',
+                takePhoto: 'Foto',
+                takeVideo: 'Video',
+                cameraError: 'Kamerazugriff verweigert. Bitte Kameraberechtigung erlauben.',
                 constCapture: '<strong>G3 — Native Kamera:</strong> Nur Direktaufnahme. Galerie-Upload ist hardwareseitig blockiert. Rückwirkende Beweise sind unmöglich.',
                 processing: 'Versiegelung läuft...',
                 status1: 'Hash wird generiert...',
@@ -463,6 +563,9 @@
                 captureTitle: 'Ready to Capture',
                 captureSub: 'All gates passed. Native camera activated.',
                 captureTap: 'Tap to capture',
+                takePhoto: 'Photo',
+                takeVideo: 'Video',
+                cameraError: 'Camera access denied. Please allow camera permissions.',
                 constCapture: '<strong>G3 — Native Camera:</strong> Direct capture only. Gallery upload is hardware-blocked. Retroactive evidence is impossible.',
                 processing: 'Sealing in progress...',
                 status1: 'Generating hash...',
@@ -497,6 +600,9 @@
                 captureTitle: 'Pronto para Capturar',
                 captureSub: 'Todos os gates passaram. Câmara nativa ativada.',
                 captureTap: 'Toca para capturar',
+                takePhoto: 'Foto',
+                takeVideo: 'Vídeo',
+                cameraError: 'Acesso à câmara negado. Por favor permite acesso à câmara.',
                 constCapture: '<strong>G3 — Câmara Nativa:</strong> Apenas captura directa. Upload de galeria bloqueado por hardware. Provas retroactivas são impossíveis.',
                 processing: 'A selar...',
                 status1: 'A gerar hash...',
@@ -546,7 +652,8 @@
             document.getElementById('t-const-gps').innerHTML = t('constGps');
             document.getElementById('t-capture-title').textContent = t('captureTitle');
             document.getElementById('t-capture-sub').textContent = t('captureSub');
-            document.getElementById('t-capture-tap').textContent = t('captureTap');
+            document.getElementById('t-take-photo').textContent = t('takePhoto');
+            document.getElementById('t-take-video').textContent = t('takeVideo');
             document.getElementById('t-const-capture').innerHTML = t('constCapture');
             document.getElementById('t-processing').textContent = t('processing');
             document.getElementById('t-sealed').textContent = t('sealed');
@@ -579,6 +686,11 @@
         function showState(stateId) {
             document.querySelectorAll('.state').forEach(s => s.classList.remove('active'));
             document.getElementById(`state-${stateId}`).classList.add('active');
+
+            // Start camera when entering capture state
+            if (stateId === 'capture') {
+                setTimeout(startCamera, 100);
+            }
         }
 
         // ── Gate 1: DID Check ─────────────────────────────────────────
@@ -730,9 +842,128 @@
             }
         }
 
-        // ── Gate 3: Native Camera Capture ─────────────────────────────
-        function triggerCapture() {
-            document.getElementById('field-input').click();
+        // ── Gate 3: Native Camera Capture (MediaDevices API) ─────────────
+        let cameraStream = null;
+        let mediaRecorder = null;
+        let recordedChunks = [];
+        let recordingTimer = null;
+        let recordingSeconds = 0;
+
+        async function startCamera() {
+            try {
+                // Request camera access - ONLY camera, no gallery
+                cameraStream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: 'environment',  // Back camera
+                        width: { ideal: 1920 },
+                        height: { ideal: 1080 }
+                    },
+                    audio: true  // For video recording
+                });
+
+                const preview = document.getElementById('camera-preview');
+                preview.srcObject = cameraStream;
+                await preview.play();
+
+            } catch (err) {
+                console.error('Camera error:', err);
+                alert(t('cameraError') || 'Camera access denied. Please allow camera permissions.');
+            }
+        }
+
+        function stopCamera() {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+                cameraStream = null;
+            }
+        }
+
+        async function takePhoto() {
+            if (!cameraStream) return;
+
+            const video = document.getElementById('camera-preview');
+            const canvas = document.getElementById('photo-canvas');
+            const ctx = canvas.getContext('2d');
+
+            // Set canvas size to video size
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+
+            // Draw current video frame to canvas
+            ctx.drawImage(video, 0, 0);
+
+            // Convert to blob
+            canvas.toBlob(async (blob) => {
+                if (blob) {
+                    const file = new File([blob], `field-photo-${Date.now()}.jpg`, { type: 'image/jpeg' });
+                    stopCamera();
+                    processCapture(file);
+                }
+            }, 'image/jpeg', 0.9);
+        }
+
+        function toggleVideo() {
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                // Stop recording
+                mediaRecorder.stop();
+                document.getElementById('btn-video').classList.remove('recording');
+                document.getElementById('video-icon').textContent = '🎬';
+                document.getElementById('recording-indicator').style.display = 'none';
+                clearInterval(recordingTimer);
+            } else {
+                // Start recording
+                startVideoRecording();
+            }
+        }
+
+        function startVideoRecording() {
+            if (!cameraStream) return;
+
+            recordedChunks = [];
+            recordingSeconds = 0;
+
+            const options = { mimeType: 'video/webm;codecs=vp9,opus' };
+            if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+                options.mimeType = 'video/webm';
+            }
+            if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+                options.mimeType = 'video/mp4';
+            }
+
+            try {
+                mediaRecorder = new MediaRecorder(cameraStream, options);
+            } catch (e) {
+                mediaRecorder = new MediaRecorder(cameraStream);
+            }
+
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0) {
+                    recordedChunks.push(event.data);
+                }
+            };
+
+            mediaRecorder.onstop = async () => {
+                const blob = new Blob(recordedChunks, { type: mediaRecorder.mimeType });
+                const ext = mediaRecorder.mimeType.includes('mp4') ? 'mp4' : 'webm';
+                const file = new File([blob], `field-video-${Date.now()}.${ext}`, { type: mediaRecorder.mimeType });
+                stopCamera();
+                processCapture(file);
+            };
+
+            mediaRecorder.start(1000);  // Collect data every second
+
+            // Update UI
+            document.getElementById('btn-video').classList.add('recording');
+            document.getElementById('video-icon').textContent = '⏹';
+            document.getElementById('recording-indicator').style.display = 'flex';
+
+            // Timer
+            recordingTimer = setInterval(() => {
+                recordingSeconds++;
+                const mins = Math.floor(recordingSeconds / 60).toString().padStart(2, '0');
+                const secs = (recordingSeconds % 60).toString().padStart(2, '0');
+                document.getElementById('rec-time').textContent = `${mins}:${secs}`;
+            }, 1000);
         }
 
         async function processCapture(file) {
@@ -831,12 +1062,21 @@
         }
 
         function reset() {
+            // Stop camera if running
+            stopCamera();
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                mediaRecorder.stop();
+            }
+            clearInterval(recordingTimer);
+
             state.file = null;
             state.proof = null;
             state.gps = null;
-            document.getElementById('field-input').value = '';
             document.getElementById('sealed-preview-img').classList.remove('show');
             document.getElementById('sealed-preview-video').classList.remove('show');
+            document.getElementById('recording-indicator').style.display = 'none';
+            document.getElementById('btn-video').classList.remove('recording');
+            document.getElementById('video-icon').textContent = '🎬';
             // Re-check gates
             showState('gate-did');
             checkDID();
@@ -869,12 +1109,6 @@ ${state.proof.verifyUrl ? 'Verify: ' + state.proof.verifyUrl : 'Verify: https://
                 alert('Proof copied to clipboard!');
             }
         }
-
-        // ── Event Listeners ───────────────────────────────────────────
-        document.getElementById('field-input').addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) processCapture(file);
-        });
 
         // ── Init ──────────────────────────────────────────────────────
         initTheme();
