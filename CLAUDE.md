@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.36
-**Sealed:** 2026-03-23 · **FIELD GENESIS**
+**Version:** 1.9.37
+**Sealed:** 2026-03-23 · **FVE Protocol Spec v1.0**
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -579,6 +579,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | **Triangle of Power** | ✅ 3 Sovereign Dashboards · Legal + Notary + Audit · Chart.js |
 | **WINDI FIELD** | ✅ **GENESIS** · Forensic Capture · 3 Gates · MediaDevices API · /field/ |
 | **WINDI TRAVEL** | ✅ Casual Proof · File + Hash · Video Support · /travel/ |
+| **FVE Protocol Spec** | ✅ v1.0 · Trilíngue · DOCX + HTML · /verify-public/web/docs/ |
 
 ### Histórico Recente
 
@@ -586,6 +587,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 
 | Data | Milestones |
 |------|------------|
+| 23 Mar | §46 **FVE Protocol Spec v1.0** · Trilingual Publication · /verify-public/web/docs/ · 501d669 |
 | 23 Mar | §45 **WINDI FIELD GENESIS** · Phase 1 LIVE · First Forensic Seal · MediaDevices API · db7c0e0 |
 | 23 Mar | §45 WINDI FIELD Blueprint · 3 Gates Forenses · Trilogia Soberana · Native Camera Only |
 | 21 Mar | §41 **W-VERIFY-MODUS4** · Reality Check · W-DETECT-MEDIA-001 · Classificação Epistemológica · da7260e |
@@ -920,6 +922,61 @@ cameraStream = await navigator.mediaDevices.getUserMedia({
 | F3 | ⏳ Pendente | EVIDENCE: W-CUSTODY-001 + W-COURT-001 |
 
 **Casos de uso:** Polícia, perito forense, inspector de fábrica, auditor, jornalista
+
+---
+
+## §46 FVE Protocol Spec v1.0 — Trilingual Publication (2026-03-23)
+
+**Status:** ✅ PUBLISHED
+**Commit:** `501d669`
+**Document ID:** `WINDI-FVE-SPEC-V1.0`
+
+### URLs Públicos
+
+| Formato | URL | Size |
+|---------|-----|------|
+| **HTML** (trilíngue) | `/verify-public/web/docs/FVE-Protocol-Spec-v1.0.html` | 49KB |
+| **DOCX** (download) | `/verify-public/web/docs/FVE-Protocol-Spec-v1.0.docx` | 14KB |
+
+### Definição Formal
+
+> **Field-Verified Evidence (FVE):** Um artefato digital cuja origem, integridade e contexto são verificáveis independentemente da plataforma que o gerou.
+
+### 4 Estágios do Pipeline
+
+```
+CAPTURE → HASH → SEAL → VERIFY
+```
+
+| Estágio | Especificação |
+|---------|---------------|
+| **1 — CAPTURE** | MediaDevices API (hardware nativo). Galeria bloqueada por design. |
+| **2 — HASH** | SHA-256 no momento da captura. Não após upload. |
+| **3 — SEAL** | POST para Forensic Ledger. receipt_id gerado. Imutável. |
+| **4 — VERIFY** | Endpoint público. Sem autenticação necessária. |
+
+### 5 Invariantes FVE
+
+| Invariante | Definição |
+|------------|-----------|
+| I1 — Imutabilidade | Hash não pode ser alterado sem invalidar a prova |
+| I2 — Independência de Plataforma | Verificação não depende da WINDI estar online |
+| I3 — Reprodutibilidade | Terceiros podem recalcular o hash independentemente |
+| I4 — Transparência | Todos os elementos são publicamente acessíveis |
+| I5 — Não-Confiança no Emissor | O sistema fornece verificação, não pede confiança |
+
+### Axioma Constitucional
+
+> "O sistema não é uma fonte de verdade. O sistema é um mecanismo de verificabilidade."
+
+### Priority Claim
+
+| Claim | Detail |
+|-------|--------|
+| First implementation | WINDI FIELD Phase 1 — 2026-03-23 |
+| Genesis receipt | `WINDI-FIELD-20260323195248-D562ED84` |
+| First actor | Human Dragon (DID: WALLET-20260215-0001) |
+| Location | Kempten, Bavaria, DE (47.6430, 10.2927) |
 
 ---
 
