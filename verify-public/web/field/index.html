@@ -618,7 +618,18 @@
                 }
             }
 
-            // 4. Window global (set by GEN7 on login)
+            // 4. Mobile windi_user (stores walletId and did)
+            if (!did) {
+                try {
+                    const mobileUser = localStorage.getItem('windi_user');
+                    if (mobileUser) {
+                        const parsed = JSON.parse(mobileUser);
+                        did = parsed.did || parsed.walletId;
+                    }
+                } catch (e) {}
+            }
+
+            // 5. Window global (set by GEN7 on login)
             if (!did && window.__windiWalletId) {
                 did = window.__windiWalletId;
             }
