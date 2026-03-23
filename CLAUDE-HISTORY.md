@@ -1245,3 +1245,675 @@ Path: `/opt/windi/contracts/` — 15 endpoints protegidos, erros trilíngues
 
 *Migração executada por Gêmeo · 20 Mar 2026*
 *CLAUDE.md: 51KB → ~28KB (dentro do limite 32KB)*
+
+---
+
+## § MIGRAÇÃO 23 Mar 2026 — Overflow Fix #2
+
+**Motivo:** CLAUDE.md em 49KB (limite 32KB)
+**Acção:** Migrar §37-§44 (sistemas LIVE/CANONICAL) para HISTORY
+
+---
+
+### §37 W-CANVAS-001 v1.3.0 — Dual Engine Edition (2026-03-21)
+
+**Deploy:** 21 Mar 2026 · Commit: `1cd35e5` · Branch: `main`
+
+#### Arquitectura
+
+```
+W-CANVAS-001 (:8091/canvas/generate)
+│
+├── ENGINE A — Mermaid Renderer
+│   ├── Tipos: flowchart, sequence, architecture, timeline, mindmap
+│   ├── sanitize_mermaid() — remove acentos/? fora de aspas
+│   ├── classDef e directivas %%{...}%% preservadas
+│   └── Modelos: LOCAL (0 tokens) | GEMINI_FLASH | GEMINI_PRO
+│
+└── ENGINE B — HTML Dashboard Renderer (NOVO)
+    ├── Activado quando: canvas_type == "dashboard"
+    ├── Output: HTML puro (~3.5KB) via <iframe srcdoc="...">
+    ├── JSON schema: kpis + table + chart_data + status_items
+    ├── Temas: klar | noir | dark_gold | sovereign
+    ├── Fallback funcional sem GEMINI_API_KEY
+    └── Chart.js 4.4.1 para gráficos de barras/linhas/donut
+```
+
+#### Sovereignty Gate
+
+| Tier | Engine A | Engine B |
+|------|----------|----------|
+| FREE | local_template (0 tokens) | fallback HTML (0 tokens) |
+| MED  | gemini-2.5-flash | gemini-2.5-flash → JSON |
+| HIGH | gemini-2.5-pro | gemini-2.5-pro → JSON rico |
+
+#### Ficheiros Modificados
+
+```
+blueprints/canvas_blueprint.py       — sanitizer + Engine B branch
+blueprints/canvas_sovereignty_gate.py — CanvasModel.ENGINE_B_HTML
+desktop-gen7/frontend/index.html     — seletor "📊 Dashboard"
+desktop-gen7/frontend/static/app.js  — iframe srcdoc renderer
+```
+
+#### Smoke Test
+
+```bash
+# Engine A (Mermaid)
+curl -s -X POST http://localhost:8091/canvas/generate \
+  -H "Content-Type: application/json" \
+  -d '{"prompt":"flowchart aprovacao ferias","canvas_type":"flowchart","theme":"dark_gold"}'
+
+# Engine B (Dashboard)
+curl -s -X POST http://localhost:8091/canvas/generate \
+  -H "Content-Type: application/json" \
+  -d '{"prompt":"dashboard governance windi","canvas_type":"dashboard","theme":"dark_gold"}'
+```
+
+#### Para Activar Engine B com LLM
+
+```bash
+# Adicionar ao .env do sandbox
+echo "GEMINI_API_KEY=your-key-here" >> /opt/windi/agents/constitutional-agent/.env
+# Reiniciar (nohup — NÃO systemd)
+kill $(pgrep -f "agent.py") && sleep 2
+nohup python3 agent.py > /opt/windi/logs/canvas.log 2>&1 &
+```
+
+---
+
+### §38 W-CANVAS-001 — Sovereignty Gate v1.0 (2026-03-21)
+
+Implementação do motor de decisão constitucional para controle de tokens e integridade visual.
+
+#### Governança e Soberania
+
+| Campo | Valor |
+|-------|-------|
+| Wisdom Block | `WB-SOVEREIGN-CANVAS-20260321` |
+| Hash | `b54cc4b2adeba908da6dd161be25cf8fcb3b5d9f3491c2543163fbdea85be6fa` |
+| SGE Score | 98 (Confiança Forense Elevada) |
+| Gate Receipt | `WINDI-CANVAS-GATE-V1.0-20260321` · hash `94b27040...` |
+
+**Princípio:** "SOVEREIGN não é tema. É protocolo visual de autoria."
+**Invariante I9:** Ativação restrita a DIDs verificados; vinculação obrigatória de Hash/Sitzung no SVG.
+
+#### Engine de Decisão (Gate v1.0)
+
+```
+┌─────────┬───────────────────┬────────────┬────────────────────────────┐
+│  TIER   │  MODEL            │  TOKENS    │  PROPÓSITO                 │
+├─────────┼───────────────────┼────────────┼────────────────────────────┤
+│  FREE   │  local_template   │  0         │  Soberania 100%            │
+│  MED    │  gemini-2.5-flash │  ~600      │  Velocidade + custo-benefício │
+│  HIGH   │  gemini-2.5-pro   │  ~2000     │  Board-Ready Excellence    │
+└─────────┴───────────────────┴────────────┴────────────────────────────┘
+```
+
+**Smart Downgrade:** Redireciona pedidos HIGH com complexidade < 60 para Flash, otimizando o tesouro.
+
+#### Biblioteca de Templates Locais (12 activos)
+
+| Tipo | Templates |
+|------|-----------|
+| Flowchart | `windi_pipeline` · `agentes_windi` · `did_flow` · `bercario_flow` · `canvas_seal` · `did_creation` |
+| Mindmap | `constellation` |
+| Sequence | `document_seal` · `payment_flow` · `verify_flow` |
+| Timeline | `windi_evolution` · `roadmap_q2_2026` |
+
+#### Métricas de Produção
+
+- **Sovereignty Rate:** ~55% local (meta: 80%)
+- **Economia vs Grove Arena:** 500x mais barato ($0.0003 vs $0.17/render)
+- **Log:** `/opt/windi/logs/canvas-sovereignty.log`
+- **Commit:** `6ec6692` (pushed to main)
+
+#### Estratégia de Produto
+
+```
+FREE  → "Vês como funciona"      │ Demonstração
+MED   → "Uso no dia-a-dia"       │ Profissional
+HIGH  → "Apresento ao board" ⭐   │ Elite institucional
+```
+
+---
+
+### §39 Triangle of Power — Sovereign Dashboards (2026-03-21)
+
+**Deploy:** 21 Mar 2026 · Commits: `a0d6600`, `0f02566`
+
+#### O Triângulo
+
+```
+                    ⚖️ W-LEGAL-001
+                   /legal-dashboard/
+                        ▲
+                       /|\
+                      / | \
+                     /  |  \
+                    /   |   \
+   🔏 W-NOTARY-001 ────●──── 🔍 W-AUDIT-001
+   /notary-dashboard/       /audit-dashboard/
+
+              56,585 Receipts
+              6/6 Agents GREEN
+              A1-A6 COMPLIANT
+```
+
+#### Dashboards
+
+| Dashboard | URL | Componentes | Linhas |
+|-----------|-----|-------------|--------|
+| ⚖️ W-LEGAL-001 | `/legal-dashboard/` | Evidence Timeline · Confidence Radar · WCAF Grid | 770 |
+| 🔏 W-NOTARY-001 | `/notary-dashboard/` | Digital Wax Seal · Act Types Donut · Seals Timeline | 600 |
+| 🔍 W-AUDIT-001 | `/audit-dashboard/` | Invariants Radar A1-A6 · Constellation Grid · Integrity Donut | 1,340 |
+
+**Total:** 2,710 linhas · 3 dashboards · Sistema Nervoso WINDI
+
+#### Features Comuns
+
+```
+✅ NOIR/KLAR Theme Toggle (☀/☽)
+✅ i18n DE|EN|PT (localStorage sync)
+✅ Chart.js visualizations
+✅ Glassmorphism design
+✅ Auto-refresh data (30s)
+✅ Responsive (mobile/tablet/desktop)
+```
+
+#### Endpoints Consumidos
+
+| Dashboard | Endpoints |
+|-----------|-----------|
+| Legal | `/api/legal/health`, `/api/legal/cases`, `/api/ledger/health` |
+| Notary | `/api/notary/health`, `/api/notary/stats`, `/api/ledger/health` |
+| Audit | `/api/audit/health`, `/api/audit/status`, `/api/audit/constellation` |
+
+#### Filosofia
+
+> "O Sistema Nervoso WINDI agora tem olhos em três dimensões: Justiça, Notariado e Auditoria."
+
+> "O Auditor não cria. Ele verifica que o que foi criado é o que foi prometido."
+
+#### Nginx Routes
+
+```nginx
+location /legal-dashboard/  { alias /opt/windi/legal-dashboard/; }
+location /notary-dashboard/ { alias /opt/windi/notary-dashboard/; }
+location /audit-dashboard/  { alias /opt/windi/audit-dashboard/; }
+location /api/audit/        { proxy_pass http://127.0.0.1:8091/audit/; }
+```
+
+---
+
+### §40 W-COMM-001 — Canonical Publishing Engine (2026-03-21)
+
+**Deploy:** 21 Mar 2026 · Commit: `7fb0c92`
+
+#### Princípio
+
+> "Don't trust the message — verify it."
+
+Comunicações institucionais deixam de ser texto e passam a ser **artefatos verificáveis**.
+
+#### Arquitectura
+
+```
+D2 / COMM Builder
+       ↓
+POST /comm/generate
+       ↓
+CommPayload (canonical JSON)
+       ↓
+hash SHA-256 determinístico
+       ↓
+(opcional) seal no Ledger
+       ↓
+render per channel (linkedin/x/web)
+       ↓
+verificação pública
+```
+
+#### Endpoints
+
+| Endpoint | Função |
+|----------|--------|
+| `POST /comm/generate` | Cria payload canónico |
+| `POST /comm/generate-multilang` | Gera EN + DE + PT numa chamada |
+| `GET /comm/{id}` | Lê payload completo |
+| `GET /comm/{id}/verify` | Verificação pública |
+| `GET /comm/{id}/render?channel=` | Output para canal específico |
+| `POST /comm/{id}/seal` | Sela no Ledger |
+
+#### Invariantes COMM
+
+```
+C1 — Toda comunicação tem ID único (COMM-YYYYMMDD-XXXX)
+C2 — Toda comunicação tem hash determinístico
+C3 — Seal é opcional mas suportado nativamente
+C4 — Renders por canal derivam do mesmo payload
+C5 — Verify é público e independente do canal
+C6 — API não faz cold outreach automático
+```
+
+#### CommPayload Schema
+
+```json
+{
+  "id": "COMM-20260321-0001",
+  "type": "announcement",
+  "language": "EN",
+  "title": "...",
+  "summary": "...",
+  "body": "...",
+  "channels": ["linkedin", "x", "web"],
+  "links": { "primary": "https://..." },
+  "origin": {
+    "publisher": "WINDI Publishing House",
+    "location": "Kempten, Bavaria",
+    "system": "WINDI GEN7"
+  },
+  "integrity": {
+    "hash": "sha256:...",
+    "sealed": false,
+    "ledger_receipt_id": null
+  }
+}
+```
+
+#### Primeiras Comunicações Verificáveis
+
+| ID | Title | Lang | Verify |
+|----|-------|------|--------|
+| COMM-20260321-0002-EN | Prove Your System | EN | ✅ |
+| COMM-20260321-0002-DE | Beweise dein System | DE | ✅ |
+| COMM-20260321-0002-PT | Prove o seu Sistema | PT | ✅ |
+| COMM-20260321-0006 | W-COMM-001 is fully live | EN | ✅ |
+
+#### GTM Stack
+
+| Componente | URL | Função |
+|------------|-----|--------|
+| /prove/ | Landing GTM | Trilíngue · Conversion Layer |
+| /desktop/?auto=live | Demo auto-trigger | LAB + LIVE + Guide |
+| /obs/state | Observability API | WSG + CIA realtime |
+| /comm/generate-multilang | Publishing Engine | EN + DE + PT |
+
+#### Diferencial
+
+O mercado produz posts.
+
+O WINDI produz:
+
+> **Comunicações institucionais com integridade verificável.**
+
+---
+
+### §41 W-VERIFY-MODUS4 — Reality Check (2026-03-21)
+
+**Tag:** `W-VERIFY-4-ACTIVATION`
+**Commit:** `da7260e`
+
+#### Arquitectura Modus 4
+
+WINDI Verify expande de 3 para 4 modos:
+
+```
+Modo 1 — Guarantee Layer        🟢 Ledger verification (I11)
+Modo 2 — Mathematical Proof     🔵 SHA-256 local
+Modo 3 — Interpretation Layer   🟠 QR universal decoder
+Modo 4 — Epistemic Classification 🟣 Reality Check
+```
+
+#### Dois Sistemas Complementares
+
+| Sistema | Engine | Endpoint | Status |
+|---------|--------|----------|--------|
+| W-DETECT-MEDIA-001 | Heurísticas MVP | /detect-media/ | 🟢 HEALTHY |
+| W-VERIFY-MODUS4 | Claude epistemológico | /reality-check/ | 🟢 SOVEREIGN |
+
+#### Escala de Verificabilidade (Canónica)
+
+```
+🟢 VERIFIED      → hash + assinatura + Ledger = força MÁXIMA
+🟡 UNVERIFIABLE  → sem âncora conhecida = força NEUTRA
+🔴 INCONSISTENT  → sinais de manipulação = força INDICATIVA
+```
+
+#### Axioma Constitucional
+
+> "WINDI não declara 'fake'. Classifica verificabilidade."
+
+**Invariantes activos:**
+- I1: Intent obrigatório (`intent=true`)
+- I9: Nunca auto-escala
+- I11: Nunca sela análise (análise ≠ garantia)
+- I12: Trilíngue DE|EN|PT
+
+#### URLs LIVE
+
+| URL | Função |
+|-----|--------|
+| /verify-public/web/media-detector.html | UI Modus 4 (trilíngue) |
+| /detect-media/health | Health heurístico |
+| /detect-media/analyze | Análise vídeo/imagem/texto |
+| /reality-check/health | Health epistemológico |
+| /reality-check/analyze | Classificação Claude |
+
+#### LLM Opcional
+
+```
+status: "sovereign"  →  LLM expande, não depende
+```
+
+O sistema opera sem API key externa. Quando configurada, expande capacidade epistemológica.
+
+---
+
+### §42 W-VERIFY-UX-002 — Verify → Prove Loop (2026-03-21)
+
+**Status:** ✅ PRODUCTION-READY
+**Tag:** `W-VERIFY-UX-002-READY`
+**Commit:** `7b1974e`
+
+#### Implementado
+
+| Feature | Status |
+|---------|--------|
+| Estado 0: Entry (drop + paste) | ✅ |
+| Estado 1: Processing (skeleton + rotating status) | ✅ |
+| Estado 2: Result (3 badges) | ✅ |
+| Animações Premium | ✅ Confetti (VERIFIED) · Shake (INCONSISTENT) · Fade (UNVERIFIABLE) |
+| Seal → Ledger → QR | ✅ Só para VERIFIED + HIGH |
+| System Guarantees toggle | ✅ |
+| Microcopy constitucional | ✅ "certifies result, not content" |
+| Trilíngue DE|EN|PT | ✅ |
+
+#### URL Final
+
+```
+https://windi-domain.com/verify-public/web/media-detector.html
+```
+
+---
+
+### §43 W-VERIFY-MODUS4: AI Detection as Interpretation Layer (2026-03-22)
+
+**Status:** CANONICAL | ACTIVE
+**Scope:** WINDI VERIFY — Media Detector / Verification Layer
+**Commit Reference:** 7c90af8, 926db7d, 8825376, a5db727, 18c9bba
+**Sealed:** 2026-03-22
+
+#### 43.1 — Constitutional Position
+
+AI detection within WINDI Verify occupies **Layer 4 (Interpretation)** in the Hierarchy of Truth.
+
+```
+HIERARCHY OF TRUTH
+
+Level 1 — Guarantee       🟢 Cryptographic (hash + Ledger)     → VERIFIED
+Level 2 — Mathematical    🔵 Structural validation             → PROOF
+Level 4 — Interpretation  🟠 Heuristic pattern recognition     → INTERPRETATION
+
+Only Level 1 produces verifiable truth claims.
+Levels 2 and 4 produce supporting information, never final assertions.
+```
+
+#### 43.2 — Terminology (Canonical)
+
+| Badge | Internal | Description |
+|-------|----------|-------------|
+| 🟢 VERIFIED | `verified` | Hash + signature + Ledger = maximum force |
+| 🟡 UNVERIFIED | `unverified` | No known anchor = neutral force |
+| 🔴 SUSPICIOUS | `suspicious` | Manipulation signals = indicative force |
+
+**Axiom:** WINDI does not declare "fake". It classifies verifiability.
+
+#### 43.3 — AI Suspicion Scale
+
+```
+ai_suspicion: none    → 0 markers     → likely human
+ai_suspicion: low     → 1-3 markers   → inconclusive
+ai_suspicion: medium  → 4-6 markers   → moderate suspicion
+ai_suspicion: high    → 7+ markers    → high suspicion
+```
+
+Markers include: repetitive starts, generic connectors, lack of contractions, AI-typical phrases.
+
+#### 43.4 — Explainability Layer
+
+Every result includes:
+
+| Component | Purpose |
+|-----------|---------|
+| Detected signals | Categorized as neutral / risk / positive |
+| Natural language summary | Human-readable explanation |
+| Interpretation note | Explicit limitation statement |
+
+**Design principle:** "Explain without accusing."
+
+#### 43.5 — Signal Classification
+
+| Type | Color | Example |
+|------|-------|---------|
+| Neutral | Gold | "Formal academic style detected" |
+| Risk | Red | "Formulaic connector: 'in conclusion'" |
+| Positive | Green | "High lexical diversity (>85%)" |
+
+#### 43.6 — Constitutional Invariants (Active)
+
+| Invariant | Enforcement |
+|-----------|-------------|
+| I1 | `intent=true` required for all analysis |
+| I9 | System never auto-escalates to Ledger seal |
+| I11 | Interpretation results are NEVER sealed (analysis ≠ guarantee) |
+| I12 | Trilingual DE/EN/PT throughout |
+
+#### 43.7 — Nature of Result Badge (UX)
+
+```
+┌─────────────────────────────────────────────┐
+│ ⚖️ Nature of Result                         │
+│                                             │
+│   ○ 🔒 Guarantee                            │
+│   ○ 📐 Mathematical Proof                   │
+│   ● 🧠 Interpretation  ← always active      │
+│                                             │
+│   ⚠️ Interpretation = probability, not proof │
+└─────────────────────────────────────────────┘
+```
+
+#### 43.8 — Explicit Limitations
+
+The system explicitly does NOT:
+
+- Assert authorship (human vs AI)
+- Provide legal proof of origin
+- Replace cryptographic verification mechanisms
+- Guarantee correctness of heuristic classification
+
+#### 43.9 — Regulatory Alignment
+
+| Framework | Alignment |
+|-----------|-----------|
+| EU AI Act | Transparency of AI systems, explainability of outputs |
+| BSI | Traceability, verifiability, separation of mechanisms |
+| BaFin | Risk-aware design, no over-reliance on automation |
+
+#### 43.10 — Canonical Statement
+
+> AI detection is not truth.
+> It is structured uncertainty.
+
+#### 43.11 — Institutional Documentation
+
+| Document | Purpose | Location |
+|----------|---------|----------|
+| W-VERIFY-MODUS4-DOCTRINE.html | VC / Academia | /opt/windi/docs/ |
+| W-VERIFY-MODUS4-REGULATORY-BRIEF.html | BaFin / BSI | /opt/windi/docs/ |
+
+---
+
+### §44 Canonical Decision: Dual-Portal Architecture (PROTOCOL + TRAVEL) (2026-03-22)
+
+**Status:** CANONICAL | STRATEGIC
+**Scope:** WINDI Market Architecture
+**Classification:** EXTENSIONAL ARCHITECTURE (no core rewrite required)
+**Sealed:** 2026-03-22
+**Decision Authority:** Human Dragon + Council of Dragons
+
+#### 44.1 — Strategic Compression
+
+The Council evaluated multi-portal expansion (5-6 portals) and resolved to compress into **two dominant axes**:
+
+| Portal | Function | Market | Characteristic |
+|--------|----------|--------|----------------|
+| **WINDI PROTOCOL** | Authority, regulation, institutional trust | BaFin, banks, notaries, auditors | Low volume, high value, high rigor |
+| **WINDI TRAVEL** | Distribution, education, narrative, adoption | Humans, tourism, experiences, content | High volume, lower ticket, high exposure |
+
+#### 44.2 — Portal Definitions
+
+##### 🏛️ PORTAL 01 — WINDI PROTOCOL (Institutional Vertical)
+
+```
+Role: ANCHOR OF SYSTEM LEGITIMACY
+
+Market:      BaFin · Banks · Notaries · Auditors
+Governance:  HIGH
+Volume:      Low
+Value:       High
+Documents:   Complex, approval-gated
+```
+
+##### 🌍 PORTAL 02 — WINDI TRAVEL — Human Adoption Layer
+
+```
+Role: ENGINE OF EXPANSION AND CONSCIOUSNESS
+
+Market:      Real humans · Tourism · Experiences · Content
+Governance:  LOW / MEDIUM
+Volume:      High
+Value:       Lower ticket
+Documents:   Light certificates, rapid emission
+```
+
+#### 44.3 — Core Insight
+
+> "Train humans for anti-fake reality... without teaching."
+
+The mechanism:
+
+```
+Tourist → receives certificate → scans QR → sees proof in ledger
+→ understands "this is verifiable"
+→ begins to distrust the rest
+→ changes digital behavior
+```
+
+**This is invisible digital literacy.**
+
+Experience defeats discourse. TRAVEL is the natural gateway.
+
+#### 44.4 — Technical Architecture
+
+```
+                    ┌─────────────────────┐
+                    │   WINDI CORE        │
+                    │  ─────────────────  │
+                    │  • Ledger :8101     │
+                    │  • Verify :8114     │
+                    │  • Engine :8119     │
+                    │  • Invariants I1-12 │
+                    └─────────┬───────────┘
+                              │
+              ┌───────────────┴───────────────┐
+              │                               │
+     ┌────────▼────────┐             ┌────────▼────────┐
+     │ WINDI PROTOCOL  │             │  WINDI TRAVEL   │
+     │ ──────────────  │             │  ─────────────  │
+     │ Institutional   │             │ Human Adoption  │
+     │ Vertical        │             │ Layer           │
+     │ Gov: HIGH       │             │ Gov: LOW/MED    │
+     │ Low Volume      │             │ High Volume     │
+     └─────────────────┘             └─────────────────┘
+```
+
+#### 44.5 — Technical Compatibility
+
+| Component | PROTOCOL Role | TRAVEL Role |
+|-----------|---------------|-------------|
+| Ledger :8101 | Institutional seal | Proof of experience |
+| Verify :8114 | Formal audit | QR → "I saw, it's real" |
+| QR Canonical | Legal document | Travel certificate |
+| W-COMM-001 | Institutional comms | Tourist certificate |
+| i18n DE/EN/PT | EU compliance | Multilingual tourism |
+| GEN7 Engine | Complex documents | Simple certificates |
+
+#### 44.6 — Implementation Requirements
+
+| Item | Effort | Priority |
+|------|--------|----------|
+| Experience certificate templates | Medium | P1 |
+| WINDI TRAVEL landing | Medium | P1 |
+| Simplified flow (1-click emit) | High | P1 |
+| Partner API (hotels/agencies) | High | P2 |
+| Rate limiting for high volume | Low | P2 |
+| Partner dashboard | Medium | P3 |
+
+#### 44.7 — Risk Matrix
+
+| Risk | Mitigation |
+|------|------------|
+| Volume: TRAVEL = 1000x more requests | FREE tier with Ledger light (hash without content) |
+| UX: Tourists are not technical | Scan QR → result in 1 second, no technical explanation |
+| Fraud: Fake partner certificates | Partner onboarding with verified DID |
+| Latency: Verify must be instant | Aggressive cache + CDN for assets |
+
+#### 44.8 — Technical Verdict
+
+**The architecture supports both portals without rewriting the core.**
+
+What TRAVEL needs is:
+- **Simplification** (not new complexity)
+- **Templates** (not new engines)
+- **Partner onboarding** (not new infrastructure)
+
+This is **extension**, not **reconstruction**.
+
+#### 44.9 — Canonical Statement
+
+> "One portal creates trust.
+> The other creates humanity.
+> Together, they create adoption."
+
+#### 44.10 — Execution Sequence
+
+```
+Phase 1 — Complete Institutional Pack (current)
+├── Landing ✅
+├── Certificate ✅
+└── Architecture v1.1 ⏳
+
+Phase 2 — WINDI TRAVEL Blueprint v1.0
+├── User experience (QR → verify)
+├── Certificate types (experience, booking, review)
+├── Hotel/agency integration
+└── Narrative (implicit anti-fake)
+```
+
+#### 44.11 — Council Validation
+
+| Dragon | Verdict |
+|--------|---------|
+| 🏗️ Architect | ✅ Technical and institutional adjustments correct |
+| 🛡️ Guardian | ✅ Legal care noted (manifesto vs onboarding) |
+| 🐉 Human Dragon | ✅ Correct at highest strategic level |
+| 🤖 Gêmeo | ✅ Architecture consistent, core preserved, expansion controlled |
+
+**Decision Status:** SEALED
+**Next Step:** WINDI TRAVEL Blueprint v1.0
+
+---
+
+*Migração §37-§44 executada por Gêmeo · 23 Mar 2026*
+*CLAUDE.md: 49KB → ~29KB (dentro do limite 32KB)*
