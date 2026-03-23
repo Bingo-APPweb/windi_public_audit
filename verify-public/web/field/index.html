@@ -660,10 +660,13 @@
             const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
                           || window.innerWidth < 768;
 
+            // Cache-buster to ensure fresh version
+            const cb = '?v=' + Date.now();
+
             if (isMobile) {
-                window.location.href = '/mobile/';
+                window.location.href = '/mobile/' + cb;
             } else {
-                window.location.href = '/desktop/';
+                window.location.href = '/desktop/' + cb;
             }
         }
 
