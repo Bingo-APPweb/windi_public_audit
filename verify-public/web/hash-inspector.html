@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="de" data-theme="klar">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -58,7 +58,21 @@
   }
   .header-logo { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; }
   .header-sep  { opacity: 0.3; }
-  .header-mode { font-size: 13px; opacity: 0.7; }
+  .header-mode { font-size: 13px; opacity: 0.7; flex: 1; }
+  .lang-switcher { display: flex; gap: 4px; }
+  .lang-btn {
+    padding: 4px 10px;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 4px;
+    background: transparent;
+    color: rgba(255,255,255,0.5);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .lang-btn:hover { border-color: rgba(255,255,255,0.4); color: rgba(255,255,255,0.7); }
+  .lang-btn.active { border-color: var(--bg); color: var(--bg); background: rgba(255,255,255,0.1); }
 
   /* ── Layout ── */
   .container { max-width: 720px; margin: 0 auto; padding: 32px 20px 64px; }
@@ -387,22 +401,27 @@
 <div class="header">
   <span class="header-logo">WINDI</span>
   <span class="header-sep">|</span>
-  <span class="header-mode">Verify — Hash Inspector · Modo 2</span>
+  <span class="header-mode" id="header-mode">Verify — Hash Inspector · Modus 2</span>
+  <div class="lang-switcher">
+    <button class="lang-btn active" onclick="setLang('de')" id="lb-de">DE</button>
+    <button class="lang-btn" onclick="setLang('en')" id="lb-en">EN</button>
+    <button class="lang-btn" onclick="setLang('pt')" id="lb-pt">PT</button>
+  </div>
 </div>
 
 <div class="container">
-  <h1 class="section-title">Hash Inspector</h1>
-  <p class="section-sub">
-    Verifica a integridade de qualquer ficheiro por hash SHA.
-    Todo o cálculo é feito <strong>localmente no teu browser</strong> —
-    nenhum dado é enviado ao servidor.
+  <h1 class="section-title" id="section-title">Hash Inspector</h1>
+  <p class="section-sub" id="section-sub">
+    Prüfe die Integrität jeder Datei per SHA-Hash.
+    Alle Berechnungen erfolgen <strong>lokal in deinem Browser</strong> —
+    keine Daten werden an den Server gesendet.
   </p>
 
   <!-- Tabs -->
   <div class="tabs">
-    <button class="tab active" onclick="setTab('file')" id="tab-file">Arrastar ficheiro</button>
+    <button class="tab active" onclick="setTab('file')" id="tab-file">Datei ziehen</button>
     <button class="tab" onclick="setTab('ocr')"  id="tab-ocr">Foto / OCR</button>
-    <button class="tab" onclick="setTab('paste')" id="tab-paste">Colar hash</button>
+    <button class="tab" onclick="setTab('paste')" id="tab-paste">Hash einfügen</button>
   </div>
 
   <!-- ── TAB: Ficheiro ── -->
@@ -413,13 +432,13 @@
          ondrop="onDrop(event)">
       <input type="file" id="file-input" onchange="onFileSelected(this.files[0])">
       <div class="drop-icon">📄</div>
-      <div class="drop-label">Arrasta o ficheiro aqui</div>
-      <div class="drop-hint">ou clica para seleccionar · qualquer formato</div>
+      <div class="drop-label" id="drop-label">Datei hier ablegen</div>
+      <div class="drop-hint" id="drop-hint">oder klicken zum Auswählen · beliebiges Format</div>
     </div>
     <div class="file-selected" id="file-info">
       <span class="file-name" id="file-name-label">—</span>
       <span class="file-size" id="file-size-label">—</span>
-      <button class="file-clear" onclick="clearFile()" title="Remover">✕</button>
+      <button class="file-clear" onclick="clearFile()" id="btn-clear" title="Entfernen">✕</button>
     </div>
   </div>
 
@@ -431,13 +450,13 @@
          ondrop="onDropOcr(event)">
       <input type="file" id="ocr-input" accept="image/*" onchange="onOcrSelected(this.files[0])">
       <div class="drop-icon">📷</div>
-      <div class="drop-label">Foto ou screenshot com o hash visível</div>
-      <div class="drop-hint">JPG · PNG · WebP — processado localmente com Tesseract.js</div>
+      <div class="drop-label" id="drop-label-ocr">Foto oder Screenshot mit sichtbarem Hash</div>
+      <div class="drop-hint" id="drop-hint-ocr">JPG · PNG · WebP — lokal verarbeitet mit Tesseract.js</div>
     </div>
     <img id="ocr-preview" class="ocr-preview" alt="preview">
     <div class="ocr-status" id="ocr-status">
       <span class="spinner"></span>
-      <span id="ocr-status-text">A processar OCR...</span>
+      <span id="ocr-status-text">OCR wird verarbeitet...</span>
     </div>
     <div class="ocr-extracted" id="ocr-extracted">
       <div id="ocr-text-result"></div>
@@ -447,21 +466,21 @@
 
   <!-- ── TAB: Paste ── -->
   <div id="zone-paste" class="paste-zone">
-    <p style="font-size:13px;color:var(--text2);margin-bottom:12px;">
-      Cola o hash SHA-256 ou SHA-512 directamente.
-      Usa esta opção quando tens o hash em formato texto.
+    <p style="font-size:13px;color:var(--text2);margin-bottom:12px;" id="paste-hint">
+      SHA-256 oder SHA-512 Hash direkt einfügen.
+      Verwende diese Option, wenn du den Hash als Text hast.
     </p>
   </div>
 
   <!-- ── Hash input (todas as tabs) ── -->
   <div class="hash-row">
     <div class="hash-input-wrap">
-      <label for="hash-input-field">Hash esperado</label>
+      <label for="hash-input-field" id="hash-label">Erwarteter Hash</label>
       <input
         type="text"
         id="hash-input-field"
         class="hash-input"
-        placeholder="Cole o SHA-256 (64 hex) ou SHA-512 (128 hex)..."
+        placeholder="SHA-256 (64 hex) oder SHA-512 (128 hex) einfügen..."
         oninput="onHashInput(this)"
         autocomplete="off"
         spellcheck="false"
@@ -478,7 +497,7 @@
 
   <!-- CTA -->
   <button class="btn-verify" id="btn-verify" onclick="doVerify()" disabled>
-    Verificar integridade
+    Integrität prüfen
   </button>
 
   <!-- Progress -->
@@ -498,19 +517,19 @@
 
       <table class="hash-table" id="hash-table">
         <tr>
-          <td>Esperado</td>
+          <td id="tbl-expected">Erwartet</td>
           <td id="hash-expected-display"></td>
         </tr>
         <tr>
-          <td>Calculado</td>
+          <td id="tbl-calculated">Berechnet</td>
           <td id="hash-calculated-display"></td>
         </tr>
         <tr>
-          <td>Algoritmo</td>
+          <td id="tbl-algorithm">Algorithmus</td>
           <td id="hash-algo-display"></td>
         </tr>
         <tr>
-          <td>Ficheiro</td>
+          <td id="tbl-file">Datei</td>
           <td id="hash-file-display"></td>
         </tr>
       </table>
@@ -536,6 +555,148 @@
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
 <script>
+// ── I18N ──────────────────────────────────────────────────────
+const I18N = {
+  de: {
+    headerMode: 'Verify — Hash Inspector · Modus 2',
+    sectionTitle: 'Hash Inspector',
+    sectionSub: 'Prüfe die Integrität jeder Datei per SHA-Hash. Alle Berechnungen erfolgen <strong>lokal in deinem Browser</strong> — keine Daten werden an den Server gesendet.',
+    tabFile: 'Datei ziehen',
+    tabOcr: 'Foto / OCR',
+    tabPaste: 'Hash einfügen',
+    dropLabel: 'Datei hier ablegen',
+    dropHint: 'oder klicken zum Auswählen · beliebiges Format',
+    dropLabelOcr: 'Foto oder Screenshot mit sichtbarem Hash',
+    dropHintOcr: 'JPG · PNG · WebP — lokal verarbeitet mit Tesseract.js',
+    pasteHint: 'SHA-256 oder SHA-512 Hash direkt einfügen. Verwende diese Option, wenn du den Hash als Text hast.',
+    hashLabel: 'Erwarteter Hash',
+    hashPlaceholder: 'SHA-256 (64 hex) oder SHA-512 (128 hex) einfügen...',
+    btnVerify: 'Integrität prüfen',
+    btnClear: 'Entfernen',
+    tblExpected: 'Erwartet',
+    tblCalculated: 'Berechnet',
+    tblAlgorithm: 'Algorithmus',
+    tblFile: 'Datei',
+    ocrProcessing: 'OCR wird verarbeitet...',
+    ocrLoading: 'Tesseract.js wird geladen...',
+    ocrConfidence: 'OCR-Konfidenz',
+    ocrDetected: 'erkannt',
+    ocrNoHash: 'Kein SHA-Hash im Bild erkannt.',
+    ocrTryManual: 'Versuche den Hash manuell einzufügen.',
+    ocrError: 'OCR-Fehler',
+    hashValid: 'gültig',
+    progressReading: 'Datei wird gelesen...',
+    progressCalculating: 'wird berechnet...',
+    progressComparing: 'Hashes werden verglichen...',
+    progressDone: 'Abgeschlossen',
+    errorReading: 'Fehler beim Lesen der Datei',
+    verdictMatch: 'INTAKT',
+    verdictMismatch: 'MANIPULIERT',
+    verdictError: 'FEHLER',
+    titleMatch: 'Hash intakt — keine Manipulation erkannt',
+    titleMismatch: 'Datei verändert — Hash weicht ab',
+    titleError: 'Verifizierung nicht möglich',
+    msgMatch: 'Der SHA-Hash stimmt exakt überein. Kein Byte wurde seit der Veröffentlichung dieses Hashes verändert. Hinweis: Dies ist ein mathematischer Beweis — er garantiert weder Herkunft noch Urheberschaft.',
+    msgMismatch: 'Der berechnete Hash weicht vom erwarteten ab. Selbst eine Änderung von 1 Byte erzeugt einen völlig anderen Hash. Mathematisch ist diese Datei verändert worden.',
+    agentMatch: 'Hash korrekt. Datei intakt. Aber beachte: Jeder kann diesen Hash generieren. Für Herkunfts- und Urheberschaftsgarantie → erstelle ein WINDI-Dokument.',
+    agentMismatch: 'Achtung. Diese Datei ist nicht das Original. Die Hash-Abweichung ist ein mathematischer Beweis für Manipulation — unabhängig von der Art der Änderung.',
+    agentError: 'Fehler bei der Berechnung. Versuche es erneut oder füge den Hash manuell ein.',
+    constNote: 'Lokale Berechnung via Web Crypto API. Keine Daten an den Server gesendet.',
+  },
+  en: {
+    headerMode: 'Verify — Hash Inspector · Mode 2',
+    sectionTitle: 'Hash Inspector',
+    sectionSub: 'Verify the integrity of any file by SHA hash. All calculations are done <strong>locally in your browser</strong> — no data is sent to the server.',
+    tabFile: 'Drag file',
+    tabOcr: 'Photo / OCR',
+    tabPaste: 'Paste hash',
+    dropLabel: 'Drop file here',
+    dropHint: 'or click to select · any format',
+    dropLabelOcr: 'Photo or screenshot with visible hash',
+    dropHintOcr: 'JPG · PNG · WebP — processed locally with Tesseract.js',
+    pasteHint: 'Paste SHA-256 or SHA-512 hash directly. Use this option when you have the hash as text.',
+    hashLabel: 'Expected hash',
+    hashPlaceholder: 'Paste SHA-256 (64 hex) or SHA-512 (128 hex)...',
+    btnVerify: 'Verify integrity',
+    btnClear: 'Remove',
+    tblExpected: 'Expected',
+    tblCalculated: 'Calculated',
+    tblAlgorithm: 'Algorithm',
+    tblFile: 'File',
+    ocrProcessing: 'Processing OCR...',
+    ocrLoading: 'Loading Tesseract.js...',
+    ocrConfidence: 'OCR confidence',
+    ocrDetected: 'detected',
+    ocrNoHash: 'No SHA hash detected in image.',
+    ocrTryManual: 'Try pasting the hash manually below.',
+    ocrError: 'OCR error',
+    hashValid: 'valid',
+    progressReading: 'Reading file...',
+    progressCalculating: 'calculating...',
+    progressComparing: 'Comparing hashes...',
+    progressDone: 'Done',
+    errorReading: 'Error reading file',
+    verdictMatch: 'INTACT',
+    verdictMismatch: 'TAMPERED',
+    verdictError: 'ERROR',
+    titleMatch: 'Hash intact — no tampering detected',
+    titleMismatch: 'File modified — hash diverges',
+    titleError: 'Could not verify',
+    msgMatch: 'The SHA hash matches exactly. Not a single byte has been altered since this hash was published. Note: this is mathematical proof — it does not guarantee origin or authorship.',
+    msgMismatch: 'The calculated hash differs from the expected. Even a 1-byte change produces a completely different hash. Mathematically, this file has been modified.',
+    agentMatch: 'Hash correct. File intact. But remember: anyone can generate this hash. For origin and authorship guarantee → create a WINDI document.',
+    agentMismatch: 'Warning. This file is not the original. The hash divergence is mathematical proof of tampering — regardless of what was changed.',
+    agentError: 'Error during calculation. Try again or paste the hash manually.',
+    constNote: 'Local calculation via Web Crypto API. Zero data sent to server.',
+  },
+  pt: {
+    headerMode: 'Verify — Hash Inspector · Modo 2',
+    sectionTitle: 'Hash Inspector',
+    sectionSub: 'Verifica a integridade de qualquer ficheiro por hash SHA. Todo o cálculo é feito <strong>localmente no teu browser</strong> — nenhum dado é enviado ao servidor.',
+    tabFile: 'Arrastar ficheiro',
+    tabOcr: 'Foto / OCR',
+    tabPaste: 'Colar hash',
+    dropLabel: 'Arrasta o ficheiro aqui',
+    dropHint: 'ou clica para seleccionar · qualquer formato',
+    dropLabelOcr: 'Foto ou screenshot com o hash visível',
+    dropHintOcr: 'JPG · PNG · WebP — processado localmente com Tesseract.js',
+    pasteHint: 'Cola o hash SHA-256 ou SHA-512 directamente. Usa esta opção quando tens o hash em formato texto.',
+    hashLabel: 'Hash esperado',
+    hashPlaceholder: 'Cole o SHA-256 (64 hex) ou SHA-512 (128 hex)...',
+    btnVerify: 'Verificar integridade',
+    btnClear: 'Remover',
+    tblExpected: 'Esperado',
+    tblCalculated: 'Calculado',
+    tblAlgorithm: 'Algoritmo',
+    tblFile: 'Ficheiro',
+    ocrProcessing: 'A processar OCR...',
+    ocrLoading: 'A carregar Tesseract.js...',
+    ocrConfidence: 'Confiança OCR',
+    ocrDetected: 'detectado',
+    ocrNoHash: 'Nenhum hash SHA detectado na imagem.',
+    ocrTryManual: 'Tenta colar o hash manualmente no campo abaixo.',
+    ocrError: 'Erro no OCR',
+    hashValid: 'válido',
+    progressReading: 'A ler ficheiro...',
+    progressCalculating: 'a calcular...',
+    progressComparing: 'A comparar hashes...',
+    progressDone: 'Concluído',
+    errorReading: 'Erro ao ler ficheiro',
+    verdictMatch: 'ÍNTEGRO',
+    verdictMismatch: 'ADULTERADO',
+    verdictError: 'ERRO',
+    titleMatch: 'Hash íntegro — sem adulteração detectada',
+    titleMismatch: 'Ficheiro modificado — hash divergente',
+    titleError: 'Não foi possível verificar',
+    msgMatch: 'O hash SHA corresponde exactamente. Nenhum byte foi alterado desde a publicação deste hash. Nota: esta prova é matemática — não garante origem nem autoria.',
+    msgMismatch: 'O hash calculado diverge do esperado. Mesmo uma alteração de 1 byte produz um hash completamente diferente. Matematicamente, este ficheiro foi modificado.',
+    agentMatch: 'Hash correcto. Ficheiro íntegro. Mas lembra: qualquer pessoa pode gerar este hash. Para garantia de origem e autoria → cria documento WINDI.',
+    agentMismatch: 'Atenção. Este ficheiro não é o original. A divergência de hash é prova matemática de adulteração — independentemente de qual foi a alteração.',
+    agentError: 'Erro durante o cálculo. Tenta novamente ou cola o hash manualmente.',
+    constNote: 'Cálculo local via Web Crypto API. Zero dados enviados ao servidor.',
+  }
+};
+
 // ── State ──────────────────────────────────────────────────────
 let state = {
   tab:           'file',
@@ -545,8 +706,42 @@ let state = {
   ocrConfidence: null,
   algo:          'SHA-256',
   source:        'file_drop',
-  locale:        'pt',
+  lang:          localStorage.getItem('windi-lang') || 'de',
 };
+
+// ── i18n helpers ───────────────────────────────────────────────
+function t(key) { return (I18N[state.lang] || I18N.de)[key] || key; }
+
+function setLang(lang) {
+  state.lang = lang;
+  localStorage.setItem('windi-lang', lang);
+  document.documentElement.lang = lang;
+  ['de','en','pt'].forEach(l => document.getElementById('lb-'+l).classList.toggle('active', l === lang));
+  applyI18N();
+}
+
+function applyI18N() {
+  const L = I18N[state.lang] || I18N.de;
+  document.getElementById('header-mode').textContent = L.headerMode;
+  document.getElementById('section-title').textContent = L.sectionTitle;
+  document.getElementById('section-sub').innerHTML = L.sectionSub;
+  document.getElementById('tab-file').textContent = L.tabFile;
+  document.getElementById('tab-ocr').textContent = L.tabOcr;
+  document.getElementById('tab-paste').textContent = L.tabPaste;
+  document.getElementById('drop-label').textContent = L.dropLabel;
+  document.getElementById('drop-hint').textContent = L.dropHint;
+  document.getElementById('drop-label-ocr').textContent = L.dropLabelOcr;
+  document.getElementById('drop-hint-ocr').textContent = L.dropHintOcr;
+  document.getElementById('paste-hint').textContent = L.pasteHint;
+  document.getElementById('hash-label').textContent = L.hashLabel;
+  document.getElementById('hash-input-field').placeholder = L.hashPlaceholder;
+  document.getElementById('btn-verify').textContent = L.btnVerify;
+  document.getElementById('btn-clear').title = L.btnClear;
+  document.getElementById('tbl-expected').textContent = L.tblExpected;
+  document.getElementById('tbl-calculated').textContent = L.tblCalculated;
+  document.getElementById('tbl-algorithm').textContent = L.tblAlgorithm;
+  document.getElementById('tbl-file').textContent = L.tblFile;
+}
 
 // ── Tabs ──────────────────────────────────────────────────────
 function setTab(t) {
@@ -612,7 +807,7 @@ async function onOcrSelected(f) {
 
   const status = document.getElementById('ocr-status');
   status.classList.add('show');
-  document.getElementById('ocr-status-text').textContent = 'A carregar Tesseract.js...';
+  document.getElementById('ocr-status-text').textContent = t('ocrLoading');
 
   try {
     const worker = await Tesseract.createWorker('eng', 1, {
@@ -643,7 +838,7 @@ async function onOcrSelected(f) {
 
     if (extracted) {
       textEl.textContent = extracted;
-      confEl.textContent = `Confiança OCR: ${Math.round(confidence * 100)}%  |  ${extracted.length === 64 ? 'SHA-256' : 'SHA-512'} detectado`;
+      confEl.textContent = `${t('ocrConfidence')}: ${Math.round(confidence * 100)}%  |  ${extracted.length === 64 ? 'SHA-256' : 'SHA-512'} ${t('ocrDetected')}`;
       box.classList.add('show');
 
       document.getElementById('hash-input-field').value = extracted;
@@ -653,14 +848,14 @@ async function onOcrSelected(f) {
       if (extracted.length === 128) setAlgo('SHA-512');
       else setAlgo('SHA-256');
     } else {
-      textEl.textContent = 'Nenhum hash SHA detectado na imagem.';
-      confEl.textContent = 'Tenta colar o hash manualmente no campo abaixo.';
+      textEl.textContent = t('ocrNoHash');
+      confEl.textContent = t('ocrTryManual');
       box.classList.add('show');
     }
 
     status.classList.remove('show');
   } catch(err) {
-    document.getElementById('ocr-status-text').textContent = 'Erro no OCR: ' + err.message;
+    document.getElementById('ocr-status-text').textContent = t('ocrError') + ': ' + err.message;
   }
 
   checkReady();
@@ -691,7 +886,7 @@ function validateHashInput(v) {
   el.className = 'hash-input ' + (valid ? 'valid' : 'invalid');
   badge.style.display = valid ? 'inline-block' : 'none';
   if (valid) {
-    badge.textContent = is512 ? 'SHA-512 válido' : 'SHA-256 válido';
+    badge.textContent = is512 ? 'SHA-512 ' + t('hashValid') : 'SHA-256 ' + t('hashValid');
     if (is512 && state.algo !== 'SHA-512') setAlgo('SHA-512');
     if (is256 && state.algo !== 'SHA-256') setAlgo('SHA-256');
   }
@@ -716,26 +911,26 @@ function checkReady() {
 async function doVerify() {
   if (!state.file) return;
 
-  showProgress(0, 'A ler ficheiro...');
+  showProgress(0, t('progressReading'));
   hideResult();
 
   try {
-    const buffer = await readFileAsBuffer(state.file, p => showProgress(p * 50, 'A ler ficheiro...'));
+    const buffer = await readFileAsBuffer(state.file, p => showProgress(p * 50, t('progressReading')));
 
-    showProgress(55, `A calcular ${state.algo}...`);
+    showProgress(55, `${state.algo} ${t('progressCalculating')}`);
 
     const subtle = window.crypto.subtle;
     const hashBuffer = await subtle.digest(state.algo, buffer);
     const calculated = bufferToHex(hashBuffer);
 
-    showProgress(90, 'A comparar hashes...');
+    showProgress(90, t('progressComparing'));
 
     await sleep(200);
 
     const expected  = state.hashExpected.toLowerCase();
     const integrity = calculated === expected ? 'MATCH' : 'MISMATCH';
 
-    showProgress(100, 'Concluído');
+    showProgress(100, t('progressDone'));
     await sleep(300);
     hideProgress();
 
@@ -757,7 +952,7 @@ async function interpretLocally(integrity, calculated, expected) {
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({
         mode: 2,
-        locale: state.locale,
+        locale: state.lang,
         result_mode2: {
           sha256_expected:   state.algo === 'SHA-256' ? expected   : null,
           sha256_calculated: state.algo === 'SHA-256' ? calculated : null,
@@ -775,19 +970,19 @@ async function interpretLocally(integrity, calculated, expected) {
 
   if (integrity === 'MATCH') {
     return {
-      verdict: 'ÍNTEGRO',
-      title: 'Hash íntegro — sem adulteração detectada',
-      message: 'O hash SHA corresponde exactamente. Nenhum byte foi alterado desde a publicação deste hash. Nota: esta prova é matemática — não garante origem nem autoria.',
-      agent_message: 'Hash correcto. Ficheiro íntegro. Mas lembra: qualquer pessoa pode gerar este hash. Para garantia de origem e autoria → cria documento WINDI.',
-      constitutional_note: 'Cálculo local via Web Crypto API. Zero dados enviados ao servidor.',
+      verdict: t('verdictMatch'),
+      title: t('titleMatch'),
+      message: t('msgMatch'),
+      agent_message: t('agentMatch'),
+      constitutional_note: t('constNote'),
     };
   } else {
     return {
-      verdict: 'ADULTERADO',
-      title: 'Ficheiro modificado — hash divergente',
-      message: 'O hash calculado diverge do esperado. Mesmo uma alteração de 1 byte produz um hash completamente diferente. Matematicamente, este ficheiro foi modificado.',
-      agent_message: 'Atenção. Este ficheiro não é o original. A divergência de hash é prova matemática de adulteração — independentemente de qual foi a alteração.',
-      constitutional_note: 'Cálculo local via Web Crypto API. Zero dados enviados ao servidor.',
+      verdict: t('verdictMismatch'),
+      title: t('titleMismatch'),
+      message: t('msgMismatch'),
+      agent_message: t('agentMismatch'),
+      constitutional_note: t('constNote'),
     };
   }
 }
@@ -821,10 +1016,10 @@ function renderResult(integrity, calculated, expected, interp) {
 
 function renderError(msg) {
   document.getElementById('result-card').className = 'result-card UNKNOWN';
-  document.getElementById('result-verdict').textContent = 'ERRO';
-  document.getElementById('result-title').textContent = 'Não foi possível verificar';
+  document.getElementById('result-verdict').textContent = t('verdictError');
+  document.getElementById('result-title').textContent = t('titleError');
   document.getElementById('result-msg').textContent = msg;
-  document.getElementById('agent-text').textContent = 'Erro durante o cálculo. Tenta novamente ou cola o hash manualmente.';
+  document.getElementById('agent-text').textContent = t('agentError');
   document.getElementById('result').classList.add('show');
 }
 
@@ -847,7 +1042,7 @@ function readFileAsBuffer(file, onProgress) {
     const reader = new FileReader();
     reader.onprogress = e => { if (e.lengthComputable) onProgress(e.loaded / e.total); };
     reader.onload    = () => resolve(reader.result);
-    reader.onerror   = () => reject(new Error('Erro ao ler ficheiro'));
+    reader.onerror   = () => reject(new Error(t('errorReading')));
     reader.readAsArrayBuffer(file);
   });
 }
@@ -867,6 +1062,7 @@ function formatBytes(bytes) {
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
 // ── Init ──────────────────────────────────────────────────────
+setLang(state.lang);
 setTab('file');
 </script>
 
