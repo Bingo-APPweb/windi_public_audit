@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.35
-**Sealed:** 2026-03-23
+**Version:** 1.9.36
+**Sealed:** 2026-03-23 · **FIELD GENESIS**
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -535,7 +535,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 
 ---
 
-## 13. Estado Actual — 21 Março 2026
+## 13. Estado Actual — 23 Março 2026
 
 ### Mapa de Portas
 
@@ -577,6 +577,8 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | W-DETECT-MEDIA-001 | ✅ **Modus 4 MVP** · /detect-media/ · Vídeo/Imagem/Texto · Heurísticas |
 | W-VERIFY-MODUS4 | ✅ Reality Check · /reality-check/ · Claude epistemológico · SOVEREIGN |
 | **Triangle of Power** | ✅ 3 Sovereign Dashboards · Legal + Notary + Audit · Chart.js |
+| **WINDI FIELD** | ✅ **GENESIS** · Forensic Capture · 3 Gates · MediaDevices API · /field/ |
+| **WINDI TRAVEL** | ✅ Casual Proof · File + Hash · Video Support · /travel/ |
 
 ### Histórico Recente
 
@@ -584,6 +586,8 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 
 | Data | Milestones |
 |------|------------|
+| 23 Mar | §45 **WINDI FIELD GENESIS** · Phase 1 LIVE · First Forensic Seal · MediaDevices API · db7c0e0 |
+| 23 Mar | §45 WINDI FIELD Blueprint · 3 Gates Forenses · Trilogia Soberana · Native Camera Only |
 | 21 Mar | §41 **W-VERIFY-MODUS4** · Reality Check · W-DETECT-MEDIA-001 · Classificação Epistemológica · da7260e |
 | 21 Mar | §40 **W-COMM-001 LIVE** · Canonical Publishing Engine · EN/DE/PT · 7fb0c92 |
 | 21 Mar | §40 W-CANVAS-OBS-001 + W-PROVE-001 + GTM Stack · Meta-Integrity |
@@ -843,46 +847,77 @@ Sistema de autenticação por identidade soberana no GEN7.
 
 ---
 
-## §45 WINDI FIELD — Blueprint v1.0 (SELADO 2026-03-23)
+## §45 WINDI FIELD — Phase 1 LIVE (GENESIS 2026-03-23)
 
-**Receipt:** `WINDI-FIELD-BLUEPRINT-V1.0-20260323`
-**Hash:** `sha256:c39ecae2f01daf3dc87b7ee97b28df130ffa3a997d1da176fe489ca4b8e09f7a`
-**Commit:** `003a841` · **File:** `/opt/windi/docs/WINDI-FIELD-BLUEPRINT-V1.md`
+**Status:** ✅ **PHASE 1 COMPLETE** · **GENESIS SEALED**
+**Blueprint:** `WINDI-FIELD-BLUEPRINT-V1.0-20260323`
+**URL:** `https://windi-domain.com/field/`
+
+### 🏛️ GENESIS RECEIPT — Primeiro Selo Forense da História WINDI
+
+```
+╔═══════════════════════════════════════════════════════════════╗
+║  RECEIPT:    WINDI-FIELD-20260323195248-D562ED84              ║
+║  HASH:       d562ed84d934e7616fac445e0225a95b48b5a4de9bdd... ║
+║  TIMESTAMP:  2026-03-23T19:52:48.308321Z (AUTORITATIVO)       ║
+║  GPS:        47.6430, 10.2927 — Kempten, Bavaria (±97m)       ║
+║  ACTOR:      WALLET-20260215-0001 (Human Dragon)              ║
+║  FILE:       video/webm · 5.07 MB                             ║
+║  STATUS:     SEALED ✅ · FORENSIC_GRADE: TRUE                 ║
+╚═══════════════════════════════════════════════════════════════╝
+```
+
+> "O Fundador é a primeira prova. O sistema testemunhou. O Ledger selou."
 
 ### Trilogia Soberana
 
-| Modo | Prova | Válido para |
-|------|-------|-------------|
-| TRAVEL | "Tenho este ficheiro" | Memórias, viagens |
-| **FIELD** | "Eu estava aqui, neste momento" | Polícia, Perito, Inspector |
-| EVIDENCE | FIELD + Cadeia de Custódia | Tribunal |
+| Modo | Prova | Estado |
+|------|-------|--------|
+| 🟢 TRAVEL | "Tenho este ficheiro" | LIVE |
+| 🟢 **FIELD** | "Eu estava aqui, neste momento" | **GENESIS 23 Mar 2026** |
+| ⏳ EVIDENCE | FIELD + Cadeia de Custódia | Phase 2 |
 
 ### 3 Gates Forenses (IRREMEDIÁVEL)
 
 ```
 G1 — DID OBRIGATÓRIO     → sem identidade, câmara não abre
-G2 — GPS LOCKED (±100m)  → sem coordenadas, câmara não abre  
-G3 — CÂMARA NATIVA       → galeria bloqueada por hardware
+G2 — GPS LOCKED (±100m)  → sem coordenadas, câmara não abre
+G3 — CÂMARA NATIVA       → MediaDevices API (galeria impossível)
 ```
 
 ### Regra de Ouro
 
 > "Se a captura e o seal não aconteceram no mesmo gesto — não é prova forense."
 
-### Stack Técnico
+### Stack Técnico (Phase 1 LIVE)
 
-- `field-capture.html` — UI forense (sem upload)
-- `field_server.py` — timestamp servidor autoritativo
-- nginx `/field/` — rota directa
-- DID gate `:8096` — identidade obrigatória
+| Componente | Path | Status |
+|------------|------|--------|
+| UI Forense | `/opt/windi/verify-public/web/field/index.html` | ✅ LIVE |
+| API Seal | `/opt/windi/verify-public/app/main.py` → `/field/seal` | ✅ LIVE |
+| Nginx | `/field/` → alias + `/field/seal` → proxy :8114 | ✅ LIVE |
+| Câmara | `navigator.mediaDevices.getUserMedia()` | ✅ Nativa |
+
+### Implementação Crítica — Câmara Nativa
+
+```javascript
+// FIELD usa MediaDevices API — NÃO <input type="file">
+// Android ignorava capture="environment" e mostrava galeria
+// Esta implementação torna acesso à galeria IMPOSSÍVEL
+
+cameraStream = await navigator.mediaDevices.getUserMedia({
+    video: { facingMode: 'environment', width: { ideal: 1920 } },
+    audio: true
+});
+```
 
 ### Roadmap
 
-| Fase | Duração | Entregas |
-|------|---------|----------|
-| F1 | 1-2 dias | Core: UI + servidor + nginx |
-| F2 | 3-5 dias | DID gate + PDF + i18n |
-| F3 | 2-3 semanas | EVIDENCE: custódia + tribunal |
+| Fase | Estado | Entregas |
+|------|--------|----------|
+| F1 | ✅ **COMPLETE** | Core: UI + servidor + nginx + GENESIS |
+| F2 | ⏳ Pendente | DID gate refinement + PDF export + QR |
+| F3 | ⏳ Pendente | EVIDENCE: W-CUSTODY-001 + W-COURT-001 |
 
 **Casos de uso:** Polícia, perito forense, inspector de fábrica, auditor, jornalista
 
