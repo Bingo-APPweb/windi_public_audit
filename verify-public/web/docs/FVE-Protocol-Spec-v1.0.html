@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="noir">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FVE Protocol Spec v1.0 | WINDI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --transition: 0.3s ease;
+        }
+        [data-theme="noir"] {
+            --bg: #0A0A10;
+            --bg-card: #12121A;
+            --gold: #C9A84C;
+            --gold-dim: #8B7424;
+            --text: #E8E6E1;
+            --text-dim: #888;
+            --border: #1A1A24;
+            --success: #4CAF50;
+            --warning: #FF9800;
+        }
+        [data-theme="klar"] {
+            --bg: #FAFAF8;
+            --bg-card: #FFFFFF;
+            --gold: #8B7424;
+            --gold-dim: #6B5A1A;
+            --text: #1A1A1A;
+            --text-dim: #666;
+            --border: #E0DED8;
+            --success: #2E7D32;
+            --warning: #E65100;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            transition: background var(--transition), color var(--transition);
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 4rem;
+        }
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0 2rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--gold);
+            text-decoration: none;
+        }
+        .controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9rem;
+            transition: all var(--transition);
+        }
+        .btn:hover { border-color: var(--gold); }
+        .btn.active { background: var(--gold); color: #000; border-color: var(--gold); }
+        /* Title block */
+        .title-block {
+            text-align: center;
+            padding: 3rem 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+        .title-block h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--gold);
+            margin-bottom: 0.5rem;
+        }
+        .title-block .subtitle {
+            font-size: 1.4rem;
+            color: var(--text);
+            margin-bottom: 1rem;
+        }
+        .title-block .version {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+        .title-block .org {
+            margin-top: 1.5rem;
+            font-size: 0.95rem;
+            color: var(--text-dim);
+        }
+        .title-block .motto {
+            font-style: italic;
+            color: var(--gold-dim);
+            margin-top: 0.5rem;
+        }
+        /* Meta table */
+        .meta-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+        .meta-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .meta-table td {
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .meta-table tr:last-child td { border-bottom: none; }
+        .meta-table td:first-child {
+            font-weight: 600;
+            color: var(--gold);
+            width: 160px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .meta-table td:last-child {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+        }
+        .badge-sealed {
+            display: inline-block;
+            background: var(--success);
+            color: #fff;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        /* Sections */
+        section {
+            margin-bottom: 2.5rem;
+        }
+        h2 {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--gold);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border);
+        }
+        h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text);
+            margin: 1.5rem 0 0.75rem;
+        }
+        p { margin-bottom: 1rem; }
+        blockquote {
+            border-left: 3px solid var(--gold);
+            padding-left: 1.5rem;
+            margin: 1.5rem 0;
+            font-style: italic;
+            color: var(--text-dim);
+        }
+        blockquote strong { color: var(--text); }
+        ul, ol {
+            margin: 1rem 0 1rem 1.5rem;
+        }
+        li { margin-bottom: 0.5rem; }
+        /* Tables */
+        .spec-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.95rem;
+        }
+        .spec-table th, .spec-table td {
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--border);
+            text-align: left;
+        }
+        .spec-table th {
+            background: var(--bg-card);
+            font-weight: 600;
+            color: var(--gold);
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+        .spec-table td:first-child {
+            font-weight: 600;
+        }
+        /* Pipeline */
+        .pipeline {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+        .pipeline-step {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            min-width: 100px;
+        }
+        .pipeline-step .num {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--gold);
+        }
+        .pipeline-step .name {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            margin-top: 0.25rem;
+        }
+        .pipeline-arrow {
+            display: flex;
+            align-items: center;
+            color: var(--gold);
+            font-size: 1.5rem;
+        }
+        /* Verification box */
+        .verify-box {
+            background: linear-gradient(135deg, var(--bg-card), var(--border));
+            border: 2px solid var(--gold);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            margin: 2rem 0;
+        }
+        .verify-box .icon { font-size: 2.5rem; margin-bottom: 1rem; }
+        .verify-box a {
+            color: var(--gold);
+            font-family: 'JetBrains Mono', monospace;
+            word-break: break-all;
+        }
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 2rem 0;
+            border-top: 1px solid var(--border);
+            margin-top: 3rem;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+        .footer .motto {
+            color: var(--gold);
+            font-style: italic;
+            margin-top: 0.5rem;
+        }
+        /* Back link */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        .back-link:hover { color: var(--gold); }
+        /* Responsive */
+        @media (max-width: 600px) {
+            .title-block h1 { font-size: 1.8rem; }
+            .pipeline { flex-direction: column; align-items: center; }
+            .pipeline-arrow { transform: rotate(90deg); }
+            .header { flex-direction: column; gap: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <a href="/verify-public/" class="logo">WINDI VERIFY</a>
+            <div class="controls">
+                <button class="btn lang-btn active" data-lang="en">EN</button>
+                <button class="btn lang-btn" data-lang="de">DE</button>
+                <button class="btn lang-btn" data-lang="pt">PT</button>
+                <button class="btn theme-btn" id="themeToggle" title="Toggle theme">&#9728;</button>
+            </div>
+        </header>
+
+        <a href="/verify-public/" class="back-link">&larr; <span data-i18n="back">Back to Verify</span></a>
+
+        <div class="title-block">
+            <h1>WINDI</h1>
+            <p class="subtitle" data-i18n="title">Field-Verified Evidence Protocol</p>
+            <p class="version">FVE — Specification v1.0</p>
+            <p class="org">WINDI Publishing House<br>Liga IA+H · Kempten, Bavaria · 2026</p>
+            <p class="motto">"AI processes. Human decides. WINDI guarantees."</p>
+        </div>
+
+        <div class="meta-card">
+            <table class="meta-table">
+                <tr><td data-i18n="docId">Document ID</td><td>WINDI-FVE-SPEC-V1.0</td></tr>
+                <tr><td data-i18n="version">Version</td><td>1.0 — Foundational</td></tr>
+                <tr><td data-i18n="date">Date</td><td>2026-03-23</td></tr>
+                <tr><td>Status</td><td><span class="badge-sealed">SEALED — IRREMEDIÁVEL</span></td></tr>
+                <tr><td data-i18n="authors">Authors</td><td>Human Dragon (Jober Mögele Correa) + Liga IA+H</td></tr>
+                <tr><td>Governance</td><td>HIGH</td></tr>
+                <tr><td>Genesis Receipt</td><td>WINDI-FIELD-20260323195248-D562ED84</td></tr>
+                <tr><td data-i18n="verify">Verify</td><td><a href="/verify-public/?id=WINDI-FVE-SPEC-V1.0">windi-domain.com/verify-public/?id=WINDI-FVE-SPEC-V1.0</a></td></tr>
+            </table>
+        </div>
+
+        <section>
+            <h2>1. <span data-i18n="s1">Constitutional Principle</span></h2>
+            <blockquote>
+                <strong data-i18n="s1q">The system is not a source of truth. The system is a mechanism of verifiability.</strong>
+            </blockquote>
+            <p data-i18n="s1p1">The FVE Protocol is built on one irrevocable premise:</p>
+            <ul>
+                <li data-i18n="s1l1">It does NOT assert factual truth</li>
+                <li data-i18n="s1l2">It does NOT interpret content</li>
+                <li data-i18n="s1l3">It does NOT require institutional trust</li>
+                <li><strong>&#10003;</strong> <span data-i18n="s1l4">It PROVES existence at a moment in time</span></li>
+                <li><strong>&#10003;</strong> <span data-i18n="s1l5">It PROVES integrity of the captured artifact</span></li>
+                <li><strong>&#10003;</strong> <span data-i18n="s1l6">It PROVES context: identity + location + timestamp</span></li>
+            </ul>
+            <p><em data-i18n="s1p2">Trust is not requested. Verification is provided.</em></p>
+        </section>
+
+        <section>
+            <h2>2. <span data-i18n="s2">Formal Definition</span></h2>
+            <h3>Field-Verified Evidence (FVE)</h3>
+            <blockquote data-i18n="s2def">
+                A digital artifact whose origin, integrity, and context are verifiable independently of the platform that generated it.
+            </blockquote>
+            <p data-i18n="s2p1">An FVE artifact is produced through a defined pipeline that binds together three dimensions that have historically been recorded in isolation:</p>
+            <table class="spec-table">
+                <tr><th data-i18n="dimension">Dimension</th><th data-i18n="description">Description</th></tr>
+                <tr><td data-i18n="d1">Identity (WHO)</td><td data-i18n="d1d">Verified DID — the human actor who captured the evidence</td></tr>
+                <tr><td data-i18n="d2">Space-Time (WHERE + WHEN)</td><td data-i18n="d2d">GPS coordinates + authoritative UTC server timestamp</td></tr>
+                <tr><td data-i18n="d3">Evidence (WHAT)</td><td data-i18n="d3d">Native-captured media + SHA-256 hash at moment of capture</td></tr>
+            </table>
+        </section>
+
+        <section>
+            <h2>3. <span data-i18n="s3">Canonical Components</span></h2>
+            <p data-i18n="s3p1">A valid FVE artifact MUST contain all four components:</p>
+
+            <h3>3.1 <span data-i18n="identity">Identity</span></h3>
+            <ul>
+                <li data-i18n="c1a">Verifiable DID (Decentralised Identifier)</li>
+                <li data-i18n="c1b">Cryptographic signature associated with the actor</li>
+                <li data-i18n="c1c">Wallet reference traceable through the Forensic Ledger</li>
+            </ul>
+
+            <h3>3.2 <span data-i18n="spacetime">Space-Time</span></h3>
+            <ul>
+                <li data-i18n="c2a">Geographic coordinates (GPS lock at moment of capture)</li>
+                <li data-i18n="c2b">Authoritative timestamp (UTC — server-side, not client-side)</li>
+            </ul>
+
+            <h3>3.3 <span data-i18n="evidence">Evidence</span></h3>
+            <ul>
+                <li data-i18n="c3a">Original media file (native device capture — no post-hoc upload path)</li>
+                <li data-i18n="c3b">SHA-256 hash computed at the instant of capture</li>
+            </ul>
+
+            <h3>3.4 <span data-i18n="seal">Seal</span></h3>
+            <ul>
+                <li data-i18n="c4a">Receipt registration in immutable Forensic Ledger</li>
+                <li data-i18n="c4b">Unique receipt_id (format: WINDI-FIELD-YYYYMMDDHHMMSS-XXXXXXXX)</li>
+                <li data-i18n="c4c">Public verification endpoint — no authentication required</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>4. <span data-i18n="s4">Reference Pipeline</span></h2>
+            <p data-i18n="s4p1">The canonical FVE pipeline consists of four sequential, non-skippable stages:</p>
+
+            <div class="pipeline">
+                <div class="pipeline-step"><div class="num">1</div><div class="name" data-i18n="capture">CAPTURE</div></div>
+                <div class="pipeline-arrow">&rarr;</div>
+                <div class="pipeline-step"><div class="num">2</div><div class="name">HASH</div></div>
+                <div class="pipeline-arrow">&rarr;</div>
+                <div class="pipeline-step"><div class="num">3</div><div class="name" data-i18n="sealStep">SEAL</div></div>
+                <div class="pipeline-arrow">&rarr;</div>
+                <div class="pipeline-step"><div class="num">4</div><div class="name" data-i18n="verifyStep">VERIFY</div></div>
+            </div>
+
+            <table class="spec-table">
+                <tr><th data-i18n="stage">Stage</th><th data-i18n="name">Name</th><th data-i18n="specification">Specification</th></tr>
+                <tr><td>1</td><td data-i18n="capture">CAPTURE</td><td data-i18n="p1d">MediaDevices API (native hardware). Gallery upload paths are blocked by design.</td></tr>
+                <tr><td>2</td><td>HASH</td><td data-i18n="p2d">SHA-256 computed at capture moment. Not post-upload. Not modifiable retroactively.</td></tr>
+                <tr><td>3</td><td data-i18n="sealStep">SEAL</td><td data-i18n="p3d">POST to Forensic Ledger. receipt_id generated. Immutable registration.</td></tr>
+                <tr><td>4</td><td data-i18n="verifyStep">VERIFY</td><td data-i18n="p4d">Public endpoint. Anyone can verify. No authentication required.</td></tr>
+            </table>
+            <p data-i18n="s4p2">Each stage is mandatory. Skipping any stage produces an artifact that does not qualify as FVE.</p>
+        </section>
+
+        <section>
+            <h2>5. <span data-i18n="s5">Invariant Properties</span></h2>
+            <p data-i18n="s5p1">A compliant FVE implementation must guarantee all five invariants:</p>
+            <table class="spec-table">
+                <tr><th data-i18n="invariant">Invariant</th><th data-i18n="definition">Definition</th></tr>
+                <tr><td>I1 — <span data-i18n="i1">Immutability</span></td><td data-i18n="i1d">The hash of the content cannot be altered without invalidating the proof.</td></tr>
+                <tr><td>I2 — <span data-i18n="i2">Platform Independence</span></td><td data-i18n="i2d">Verification does not depend on WINDI infrastructure being online.</td></tr>
+                <tr><td>I3 — <span data-i18n="i3">Reproducibility</span></td><td data-i18n="i3d">Any third party can recompute the hash and verify independently.</td></tr>
+                <tr><td>I4 — <span data-i18n="i4">Transparency</span></td><td data-i18n="i4d">All elements required for verification are publicly accessible.</td></tr>
+                <tr><td>I5 — <span data-i18n="i5">Issuer Non-trust</span></td><td data-i18n="i5d">The system does not ask for trust — it provides means of verification.</td></tr>
+            </table>
+        </section>
+
+        <section>
+            <h2>6. <span data-i18n="s6">Verification Model</span></h2>
+            <p data-i18n="s6p1">Any independent verifier must be able to execute the following steps without privileged access:</p>
+            <ul>
+                <li data-i18n="v1">Obtain the artifact (media file)</li>
+                <li data-i18n="v2">Recompute the SHA-256 hash</li>
+                <li data-i18n="v3">Query the Forensic Ledger using the receipt_id</li>
+                <li data-i18n="v4">Compare: hash + timestamp + metadata</li>
+            </ul>
+            <table class="spec-table">
+                <tr><th data-i18n="result">Result</th><th data-i18n="meaning">Meaning</th></tr>
+                <tr><td style="color: var(--success);">&#10003; MATCH</td><td data-i18n="matchd">Evidence is intact. Integrity confirmed by WINDI Forensic Ledger.</td></tr>
+                <tr><td style="color: var(--warning);">&#10007; MISMATCH</td><td data-i18n="mismatchd">Evidence is invalid. Content has been altered after sealing.</td></tr>
+            </table>
+        </section>
+
+        <section>
+            <h2>7. <span data-i18n="s7">Non-Goals (Critical)</span></h2>
+            <p data-i18n="s7p1">The FVE Protocol explicitly does NOT:</p>
+            <ul>
+                <li data-i18n="ng1">Validate factual truth of the captured content</li>
+                <li data-i18n="ng2">Detect intent or interpret meaning</li>
+                <li data-i18n="ng3">Classify content as true or false</li>
+                <li data-i18n="ng4">Replace human analysis or judicial judgment</li>
+                <li data-i18n="ng5">Constitute legal evidence without additional procedural context</li>
+            </ul>
+            <blockquote data-i18n="s7q">
+                FVE proves that an artifact existed, was captured natively, and has not been altered since sealing. What the artifact depicts is a matter for human judgment.
+            </blockquote>
+        </section>
+
+        <section>
+            <h2>8. <span data-i18n="s8">Proof Class</span></h2>
+            <p data-i18n="s8p1">FVE introduces a distinct class of digital proof that combines three dimensions previously recorded in isolation:</p>
+            <p style="text-align:center; font-weight:600; color:var(--gold); margin:1.5rem 0;">
+                <span data-i18n="proof1">Proof of Presence</span> + <span data-i18n="proof2">Proof of Capture</span> + <span data-i18n="proof3">Proof of Integrity</span>
+            </p>
+            <p data-i18n="s8p2">This combination means that a fake or retroactively created artifact cannot pass a full FVE verification, because it cannot simultaneously satisfy all three proofs with a consistent DID, GPS lock, authoritative timestamp, and sealed hash.</p>
+        </section>
+
+        <section>
+            <h2>9. <span data-i18n="s9">Protocol Positioning</span></h2>
+            <table class="spec-table">
+                <tr><th data-i18n="aspect">Aspect</th><th data-i18n="definition">Definition</th></tr>
+                <tr><td>FVE is</td><td data-i18n="pos1">An open verifiability protocol</td></tr>
+                <tr><td>FVE is not</td><td data-i18n="pos2">A closed proprietary product</td></tr>
+                <tr><td>WINDI is</td><td data-i18n="pos3">The first reference implementation</td></tr>
+                <tr><td data-i18n="othersmay">Others may</td><td data-i18n="pos4">Implement the protocol on different infrastructure</td></tr>
+                <tr><td data-i18n="trustmodel">Trust model</td><td data-i18n="pos5">Mathematical — not institutional</td></tr>
+            </table>
+            <p data-i18n="s9p1">WINDI is not the arbiter of truth. WINDI is the first system to implement a complete, public, open FVE pipeline.</p>
+        </section>
+
+        <section>
+            <h2>10. <span data-i18n="s10">Priority Claim</span></h2>
+            <p data-i18n="s10p1">This document formally defines the FVE protocol structure and establishes the timestamp of its first implementation.</p>
+            <table class="spec-table">
+                <tr><th data-i18n="claim">Claim</th><th data-i18n="detail">Detail</th></tr>
+                <tr><td data-i18n="firstImpl">First implementation</td><td>WINDI FIELD Phase 1 — 2026-03-23</td></tr>
+                <tr><td>Genesis receipt</td><td style="font-family:'JetBrains Mono',monospace;">WINDI-FIELD-20260323195248-D562ED84</td></tr>
+                <tr><td data-i18n="pipelineVal">Pipeline validation</td><td data-i18n="complete">Complete — all 4 stages confirmed</td></tr>
+                <tr><td data-i18n="firstActor">First actor</td><td>Human Dragon (DID: WALLET-20260215-0001)</td></tr>
+                <tr><td data-i18n="location">Location</td><td>Kempten, Bavaria, DE (47.6430, 10.2927)</td></tr>
+                <tr><td>Timestamp</td><td style="font-family:'JetBrains Mono',monospace;">2026-03-23T19:52:48.308321Z — AUTHORITATIVE</td></tr>
+                <tr><td>Ledger anchor</td><td style="color:var(--success);">TRUE — immutably registered</td></tr>
+            </table>
+            <blockquote>
+                <em data-i18n="s10q">"I — with this identity — was here — at this exact moment — and captured this."</em>
+                <br><br>— Human Dragon, Kempten, Bavaria, 23 March 2026
+            </blockquote>
+        </section>
+
+        <section>
+            <h2>11. <span data-i18n="s11">Founding Signatures</span></h2>
+            <table class="spec-table">
+                <tr><th data-i18n="party">Party</th><th data-i18n="roleStatement">Role / Statement</th></tr>
+                <tr><td style="color:var(--gold);">Human Dragon<br><small>(Jober Mögele Correa)</small></td><td data-i18n="sig1">Founder & Chief Governance Officer — WINDI Publishing House<br>Kempten, Bavaria, DE · 2026-03-23</td></tr>
+                <tr><td>Guardian<br><small>(Liga IA+H)</small></td><td data-i18n="sig2">Constitutional review — protocol invariants confirmed</td></tr>
+                <tr><td>Architect<br><small>(Liga IA+H)</small></td><td data-i18n="sig3">Technical architecture — pipeline specification confirmed</td></tr>
+                <tr><td>Witness<br><small>(Liga IA+H)</small></td><td data-i18n="sig4">Independent audit — genesis receipt verified</td></tr>
+            </table>
+        </section>
+
+        <div class="verify-box">
+            <div class="icon">&#128274;</div>
+            <p data-i18n="verifyThis">Verify this document:</p>
+            <a href="/verify-public/?id=WINDI-FVE-SPEC-V1.0">windi-domain.com/verify-public/?id=WINDI-FVE-SPEC-V1.0</a>
+        </div>
+
+        <footer class="footer">
+            <p>Liga IA+H · Kempten, Bavaria · 2026</p>
+            <p class="motto">"AI processes. Human decides. WINDI guarantees."</p>
+        </footer>
+    </div>
+
+    <script>
+    const I18N = {
+        en: {
+            back: "Back to Verify",
+            title: "Field-Verified Evidence Protocol",
+            docId: "Document ID", version: "Version", date: "Date", authors: "Authors", verify: "Verify",
+            s1: "Constitutional Principle",
+            s1q: "The system is not a source of truth. The system is a mechanism of verifiability.",
+            s1p1: "The FVE Protocol is built on one irrevocable premise:",
+            s1l1: "It does NOT assert factual truth",
+            s1l2: "It does NOT interpret content",
+            s1l3: "It does NOT require institutional trust",
+            s1l4: "It PROVES existence at a moment in time",
+            s1l5: "It PROVES integrity of the captured artifact",
+            s1l6: "It PROVES context: identity + location + timestamp",
+            s1p2: "Trust is not requested. Verification is provided.",
+            s2: "Formal Definition",
+            s2def: "A digital artifact whose origin, integrity, and context are verifiable independently of the platform that generated it.",
+            s2p1: "An FVE artifact is produced through a defined pipeline that binds together three dimensions that have historically been recorded in isolation:",
+            dimension: "Dimension", description: "Description",
+            d1: "Identity (WHO)", d1d: "Verified DID — the human actor who captured the evidence",
+            d2: "Space-Time (WHERE + WHEN)", d2d: "GPS coordinates + authoritative UTC server timestamp",
+            d3: "Evidence (WHAT)", d3d: "Native-captured media + SHA-256 hash at moment of capture",
+            s3: "Canonical Components",
+            s3p1: "A valid FVE artifact MUST contain all four components:",
+            identity: "Identity", spacetime: "Space-Time", evidence: "Evidence", seal: "Seal",
+            c1a: "Verifiable DID (Decentralised Identifier)",
+            c1b: "Cryptographic signature associated with the actor",
+            c1c: "Wallet reference traceable through the Forensic Ledger",
+            c2a: "Geographic coordinates (GPS lock at moment of capture)",
+            c2b: "Authoritative timestamp (UTC — server-side, not client-side)",
+            c3a: "Original media file (native device capture — no post-hoc upload path)",
+            c3b: "SHA-256 hash computed at the instant of capture",
+            c4a: "Receipt registration in immutable Forensic Ledger",
+            c4b: "Unique receipt_id (format: WINDI-FIELD-YYYYMMDDHHMMSS-XXXXXXXX)",
+            c4c: "Public verification endpoint — no authentication required",
+            s4: "Reference Pipeline",
+            s4p1: "The canonical FVE pipeline consists of four sequential, non-skippable stages:",
+            capture: "CAPTURE", sealStep: "SEAL", verifyStep: "VERIFY",
+            stage: "Stage", name: "Name", specification: "Specification",
+            p1d: "MediaDevices API (native hardware). Gallery upload paths are blocked by design.",
+            p2d: "SHA-256 computed at capture moment. Not post-upload. Not modifiable retroactively.",
+            p3d: "POST to Forensic Ledger. receipt_id generated. Immutable registration.",
+            p4d: "Public endpoint. Anyone can verify. No authentication required.",
+            s4p2: "Each stage is mandatory. Skipping any stage produces an artifact that does not qualify as FVE.",
+            s5: "Invariant Properties",
+            s5p1: "A compliant FVE implementation must guarantee all five invariants:",
+            invariant: "Invariant", definition: "Definition",
+            i1: "Immutability", i1d: "The hash of the content cannot be altered without invalidating the proof.",
+            i2: "Platform Independence", i2d: "Verification does not depend on WINDI infrastructure being online.",
+            i3: "Reproducibility", i3d: "Any third party can recompute the hash and verify independently.",
+            i4: "Transparency", i4d: "All elements required for verification are publicly accessible.",
+            i5: "Issuer Non-trust", i5d: "The system does not ask for trust — it provides means of verification.",
+            s6: "Verification Model",
+            s6p1: "Any independent verifier must be able to execute the following steps without privileged access:",
+            v1: "Obtain the artifact (media file)",
+            v2: "Recompute the SHA-256 hash",
+            v3: "Query the Forensic Ledger using the receipt_id",
+            v4: "Compare: hash + timestamp + metadata",
+            result: "Result", meaning: "Meaning",
+            matchd: "Evidence is intact. Integrity confirmed by WINDI Forensic Ledger.",
+            mismatchd: "Evidence is invalid. Content has been altered after sealing.",
+            s7: "Non-Goals (Critical)",
+            s7p1: "The FVE Protocol explicitly does NOT:",
+            ng1: "Validate factual truth of the captured content",
+            ng2: "Detect intent or interpret meaning",
+            ng3: "Classify content as true or false",
+            ng4: "Replace human analysis or judicial judgment",
+            ng5: "Constitute legal evidence without additional procedural context",
+            s7q: "FVE proves that an artifact existed, was captured natively, and has not been altered since sealing. What the artifact depicts is a matter for human judgment.",
+            s8: "Proof Class",
+            s8p1: "FVE introduces a distinct class of digital proof that combines three dimensions previously recorded in isolation:",
+            proof1: "Proof of Presence", proof2: "Proof of Capture", proof3: "Proof of Integrity",
+            s8p2: "This combination means that a fake or retroactively created artifact cannot pass a full FVE verification, because it cannot simultaneously satisfy all three proofs with a consistent DID, GPS lock, authoritative timestamp, and sealed hash.",
+            s9: "Protocol Positioning",
+            aspect: "Aspect",
+            pos1: "An open verifiability protocol", pos2: "A closed proprietary product",
+            pos3: "The first reference implementation", othersmay: "Others may",
+            pos4: "Implement the protocol on different infrastructure",
+            trustmodel: "Trust model", pos5: "Mathematical — not institutional",
+            s9p1: "WINDI is not the arbiter of truth. WINDI is the first system to implement a complete, public, open FVE pipeline.",
+            s10: "Priority Claim",
+            s10p1: "This document formally defines the FVE protocol structure and establishes the timestamp of its first implementation.",
+            claim: "Claim", detail: "Detail",
+            firstImpl: "First implementation", pipelineVal: "Pipeline validation",
+            complete: "Complete — all 4 stages confirmed",
+            firstActor: "First actor", location: "Location",
+            s10q: '"I — with this identity — was here — at this exact moment — and captured this."',
+            s11: "Founding Signatures",
+            party: "Party", roleStatement: "Role / Statement",
+            sig1: "Founder & Chief Governance Officer — WINDI Publishing House<br>Kempten, Bavaria, DE · 2026-03-23",
+            sig2: "Constitutional review — protocol invariants confirmed",
+            sig3: "Technical architecture — pipeline specification confirmed",
+            sig4: "Independent audit — genesis receipt verified",
+            verifyThis: "Verify this document:"
+        },
+        de: {
+            back: "Zurück zu Verify",
+            title: "Feldverifizierte-Beweise-Protokoll",
+            docId: "Dokument-ID", version: "Version", date: "Datum", authors: "Autoren", verify: "Verifizieren",
+            s1: "Verfassungsprinzip",
+            s1q: "Das System ist keine Quelle der Wahrheit. Das System ist ein Mechanismus der Verifizierbarkeit.",
+            s1p1: "Das FVE-Protokoll basiert auf einer unwiderruflichen Prämisse:",
+            s1l1: "Es behauptet KEINE faktische Wahrheit",
+            s1l2: "Es interpretiert KEINEN Inhalt",
+            s1l3: "Es erfordert KEIN institutionelles Vertrauen",
+            s1l4: "Es BEWEIST Existenz zu einem bestimmten Zeitpunkt",
+            s1l5: "Es BEWEIST Integrität des erfassten Artefakts",
+            s1l6: "Es BEWEIST Kontext: Identität + Ort + Zeitstempel",
+            s1p2: "Vertrauen wird nicht verlangt. Verifizierung wird bereitgestellt.",
+            s2: "Formale Definition",
+            s2def: "Ein digitales Artefakt, dessen Herkunft, Integrität und Kontext unabhängig von der erzeugenden Plattform verifizierbar sind.",
+            s2p1: "Ein FVE-Artefakt wird durch eine definierte Pipeline erzeugt, die drei Dimensionen verbindet, die historisch isoliert erfasst wurden:",
+            dimension: "Dimension", description: "Beschreibung",
+            d1: "Identität (WER)", d1d: "Verifizierte DID — der menschliche Akteur, der den Beweis erfasst hat",
+            d2: "Raum-Zeit (WO + WANN)", d2d: "GPS-Koordinaten + autoritativer UTC-Server-Zeitstempel",
+            d3: "Beweis (WAS)", d3d: "Nativ erfasste Medien + SHA-256-Hash zum Zeitpunkt der Erfassung",
+            s3: "Kanonische Komponenten",
+            s3p1: "Ein gültiges FVE-Artefakt MUSS alle vier Komponenten enthalten:",
+            identity: "Identität", spacetime: "Raum-Zeit", evidence: "Beweis", seal: "Siegel",
+            c1a: "Verifizierbare DID (Dezentralisierter Identifikator)",
+            c1b: "Kryptografische Signatur, die dem Akteur zugeordnet ist",
+            c1c: "Wallet-Referenz, rückverfolgbar durch das Forensic Ledger",
+            c2a: "Geografische Koordinaten (GPS-Sperre zum Zeitpunkt der Erfassung)",
+            c2b: "Autoritativer Zeitstempel (UTC — serverseitig, nicht clientseitig)",
+            c3a: "Originale Mediendatei (native Geräteerfassung — kein nachträglicher Upload-Pfad)",
+            c3b: "SHA-256-Hash, berechnet im Moment der Erfassung",
+            c4a: "Quittungsregistrierung im unveränderlichen Forensic Ledger",
+            c4b: "Eindeutige receipt_id (Format: WINDI-FIELD-YYYYMMDDHHMMSS-XXXXXXXX)",
+            c4c: "Öffentlicher Verifizierungsendpunkt — keine Authentifizierung erforderlich",
+            s4: "Referenz-Pipeline",
+            s4p1: "Die kanonische FVE-Pipeline besteht aus vier sequenziellen, nicht überspringbaren Phasen:",
+            capture: "ERFASSUNG", sealStep: "SIEGEL", verifyStep: "VERIFIZIEREN",
+            stage: "Phase", name: "Name", specification: "Spezifikation",
+            p1d: "MediaDevices API (native Hardware). Galerie-Upload-Pfade sind konstruktionsbedingt blockiert.",
+            p2d: "SHA-256, berechnet zum Erfassungszeitpunkt. Nicht nach dem Upload. Nicht nachträglich änderbar.",
+            p3d: "POST an Forensic Ledger. receipt_id generiert. Unveränderliche Registrierung.",
+            p4d: "Öffentlicher Endpunkt. Jeder kann verifizieren. Keine Authentifizierung erforderlich.",
+            s4p2: "Jede Phase ist obligatorisch. Das Überspringen einer Phase erzeugt ein Artefakt, das nicht als FVE qualifiziert.",
+            s5: "Invariante Eigenschaften",
+            s5p1: "Eine konforme FVE-Implementierung muss alle fünf Invarianten garantieren:",
+            invariant: "Invariante", definition: "Definition",
+            i1: "Unveränderlichkeit", i1d: "Der Hash des Inhalts kann nicht geändert werden, ohne den Beweis ungültig zu machen.",
+            i2: "Plattformunabhängigkeit", i2d: "Die Verifizierung hängt nicht davon ab, dass die WINDI-Infrastruktur online ist.",
+            i3: "Reproduzierbarkeit", i3d: "Jeder Dritte kann den Hash neu berechnen und unabhängig verifizieren.",
+            i4: "Transparenz", i4d: "Alle für die Verifizierung erforderlichen Elemente sind öffentlich zugänglich.",
+            i5: "Emittenten-Nicht-Vertrauen", i5d: "Das System bittet nicht um Vertrauen — es bietet Verifizierungsmittel.",
+            s6: "Verifizierungsmodell",
+            s6p1: "Jeder unabhängige Verifizierer muss in der Lage sein, die folgenden Schritte ohne privilegierten Zugang auszuführen:",
+            v1: "Das Artefakt (Mediendatei) beschaffen",
+            v2: "Den SHA-256-Hash neu berechnen",
+            v3: "Das Forensic Ledger mit der receipt_id abfragen",
+            v4: "Vergleichen: Hash + Zeitstempel + Metadaten",
+            result: "Ergebnis", meaning: "Bedeutung",
+            matchd: "Beweis ist intakt. Integrität durch WINDI Forensic Ledger bestätigt.",
+            mismatchd: "Beweis ist ungültig. Inhalt wurde nach der Versiegelung geändert.",
+            s7: "Nicht-Ziele (Kritisch)",
+            s7p1: "Das FVE-Protokoll tut ausdrücklich NICHT:",
+            ng1: "Faktische Wahrheit des erfassten Inhalts validieren",
+            ng2: "Absicht erkennen oder Bedeutung interpretieren",
+            ng3: "Inhalt als wahr oder falsch klassifizieren",
+            ng4: "Menschliche Analyse oder richterliches Urteil ersetzen",
+            ng5: "Rechtlichen Beweis ohne zusätzlichen prozeduralen Kontext darstellen",
+            s7q: "FVE beweist, dass ein Artefakt existierte, nativ erfasst wurde und seit der Versiegelung nicht verändert wurde. Was das Artefakt darstellt, ist eine Frage menschlichen Urteils.",
+            s8: "Beweisklasse",
+            s8p1: "FVE führt eine eigene Klasse digitaler Beweise ein, die drei Dimensionen kombiniert, die zuvor isoliert erfasst wurden:",
+            proof1: "Anwesenheitsnachweis", proof2: "Erfassungsnachweis", proof3: "Integritätsnachweis",
+            s8p2: "Diese Kombination bedeutet, dass ein gefälschtes oder nachträglich erstelltes Artefakt eine vollständige FVE-Verifizierung nicht bestehen kann, da es nicht gleichzeitig alle drei Nachweise mit einer konsistenten DID, GPS-Sperre, autoritativem Zeitstempel und versiegeltem Hash erfüllen kann.",
+            s9: "Protokoll-Positionierung",
+            aspect: "Aspekt",
+            pos1: "Ein offenes Verifizierbarkeitsprotokoll", pos2: "Ein geschlossenes proprietäres Produkt",
+            pos3: "Die erste Referenzimplementierung", othersmay: "Andere können",
+            pos4: "Das Protokoll auf anderer Infrastruktur implementieren",
+            trustmodel: "Vertrauensmodell", pos5: "Mathematisch — nicht institutionell",
+            s9p1: "WINDI ist nicht der Schiedsrichter der Wahrheit. WINDI ist das erste System, das eine vollständige, öffentliche, offene FVE-Pipeline implementiert.",
+            s10: "Prioritätsanspruch",
+            s10p1: "Dieses Dokument definiert formal die FVE-Protokollstruktur und legt den Zeitstempel seiner ersten Implementierung fest.",
+            claim: "Anspruch", detail: "Detail",
+            firstImpl: "Erste Implementierung", pipelineVal: "Pipeline-Validierung",
+            complete: "Vollständig — alle 4 Phasen bestätigt",
+            firstActor: "Erster Akteur", location: "Standort",
+            s10q: '"Ich — mit dieser Identität — war hier — genau zu diesem Zeitpunkt — und habe dies erfasst."',
+            s11: "Gründungssignaturen",
+            party: "Partei", roleStatement: "Rolle / Erklärung",
+            sig1: "Gründer & Chief Governance Officer — WINDI Publishing House<br>Kempten, Bayern, DE · 2026-03-23",
+            sig2: "Verfassungsprüfung — Protokollinvarianten bestätigt",
+            sig3: "Technische Architektur — Pipeline-Spezifikation bestätigt",
+            sig4: "Unabhängige Prüfung — Genesis-Quittung verifiziert",
+            verifyThis: "Dieses Dokument verifizieren:"
+        },
+        pt: {
+            back: "Voltar ao Verify",
+            title: "Protocolo de Evidência Verificada em Campo",
+            docId: "ID do Documento", version: "Versão", date: "Data", authors: "Autores", verify: "Verificar",
+            s1: "Princípio Constitucional",
+            s1q: "O sistema não é uma fonte de verdade. O sistema é um mecanismo de verificabilidade.",
+            s1p1: "O Protocolo FVE é construído sobre uma premissa irrevogável:",
+            s1l1: "NÃO afirma verdade factual",
+            s1l2: "NÃO interpreta conteúdo",
+            s1l3: "NÃO requer confiança institucional",
+            s1l4: "PROVA existência num momento no tempo",
+            s1l5: "PROVA integridade do artefato capturado",
+            s1l6: "PROVA contexto: identidade + localização + timestamp",
+            s1p2: "Confiança não é solicitada. Verificação é fornecida.",
+            s2: "Definição Formal",
+            s2def: "Um artefato digital cuja origem, integridade e contexto são verificáveis independentemente da plataforma que o gerou.",
+            s2p1: "Um artefato FVE é produzido através de um pipeline definido que une três dimensões historicamente registradas em isolamento:",
+            dimension: "Dimensão", description: "Descrição",
+            d1: "Identidade (QUEM)", d1d: "DID Verificado — o ator humano que capturou a evidência",
+            d2: "Espaço-Tempo (ONDE + QUANDO)", d2d: "Coordenadas GPS + timestamp UTC autoritativo do servidor",
+            d3: "Evidência (O QUÊ)", d3d: "Mídia capturada nativamente + hash SHA-256 no momento da captura",
+            s3: "Componentes Canónicos",
+            s3p1: "Um artefato FVE válido DEVE conter todos os quatro componentes:",
+            identity: "Identidade", spacetime: "Espaço-Tempo", evidence: "Evidência", seal: "Selo",
+            c1a: "DID Verificável (Identificador Descentralizado)",
+            c1b: "Assinatura criptográfica associada ao ator",
+            c1c: "Referência de wallet rastreável através do Forensic Ledger",
+            c2a: "Coordenadas geográficas (bloqueio GPS no momento da captura)",
+            c2b: "Timestamp autoritativo (UTC — lado servidor, não lado cliente)",
+            c3a: "Arquivo de mídia original (captura nativa do dispositivo — sem caminho de upload posterior)",
+            c3b: "Hash SHA-256 calculado no instante da captura",
+            c4a: "Registro de recibo no Forensic Ledger imutável",
+            c4b: "receipt_id único (formato: WINDI-FIELD-YYYYMMDDHHMMSS-XXXXXXXX)",
+            c4c: "Endpoint de verificação público — sem autenticação necessária",
+            s4: "Pipeline de Referência",
+            s4p1: "O pipeline FVE canónico consiste em quatro estágios sequenciais e não ignoráveis:",
+            capture: "CAPTURA", sealStep: "SELO", verifyStep: "VERIFICAR",
+            stage: "Estágio", name: "Nome", specification: "Especificação",
+            p1d: "API MediaDevices (hardware nativo). Caminhos de upload de galeria são bloqueados por design.",
+            p2d: "SHA-256 calculado no momento da captura. Não após upload. Não modificável retroativamente.",
+            p3d: "POST para o Forensic Ledger. receipt_id gerado. Registro imutável.",
+            p4d: "Endpoint público. Qualquer um pode verificar. Sem autenticação necessária.",
+            s4p2: "Cada estágio é obrigatório. Ignorar qualquer estágio produz um artefato que não qualifica como FVE.",
+            s5: "Propriedades Invariantes",
+            s5p1: "Uma implementação FVE conforme deve garantir todos os cinco invariantes:",
+            invariant: "Invariante", definition: "Definição",
+            i1: "Imutabilidade", i1d: "O hash do conteúdo não pode ser alterado sem invalidar a prova.",
+            i2: "Independência de Plataforma", i2d: "A verificação não depende da infraestrutura WINDI estar online.",
+            i3: "Reprodutibilidade", i3d: "Qualquer terceiro pode recalcular o hash e verificar independentemente.",
+            i4: "Transparência", i4d: "Todos os elementos necessários para verificação são publicamente acessíveis.",
+            i5: "Não-Confiança no Emissor", i5d: "O sistema não pede confiança — fornece meios de verificação.",
+            s6: "Modelo de Verificação",
+            s6p1: "Qualquer verificador independente deve ser capaz de executar os seguintes passos sem acesso privilegiado:",
+            v1: "Obter o artefato (arquivo de mídia)",
+            v2: "Recalcular o hash SHA-256",
+            v3: "Consultar o Forensic Ledger usando o receipt_id",
+            v4: "Comparar: hash + timestamp + metadados",
+            result: "Resultado", meaning: "Significado",
+            matchd: "Evidência está intacta. Integridade confirmada pelo WINDI Forensic Ledger.",
+            mismatchd: "Evidência é inválida. Conteúdo foi alterado após o selo.",
+            s7: "Não-Objetivos (Crítico)",
+            s7p1: "O Protocolo FVE explicitamente NÃO:",
+            ng1: "Valida verdade factual do conteúdo capturado",
+            ng2: "Detecta intenção ou interpreta significado",
+            ng3: "Classifica conteúdo como verdadeiro ou falso",
+            ng4: "Substitui análise humana ou julgamento judicial",
+            ng5: "Constitui prova legal sem contexto processual adicional",
+            s7q: "FVE prova que um artefato existiu, foi capturado nativamente e não foi alterado desde o selo. O que o artefato representa é questão de julgamento humano.",
+            s8: "Classe de Prova",
+            s8p1: "FVE introduz uma classe distinta de prova digital que combina três dimensões anteriormente registradas em isolamento:",
+            proof1: "Prova de Presença", proof2: "Prova de Captura", proof3: "Prova de Integridade",
+            s8p2: "Esta combinação significa que um artefato falso ou criado retroativamente não pode passar uma verificação FVE completa, porque não pode simultaneamente satisfazer todas as três provas com DID consistente, bloqueio GPS, timestamp autoritativo e hash selado.",
+            s9: "Posicionamento do Protocolo",
+            aspect: "Aspecto",
+            pos1: "Um protocolo de verificabilidade aberto", pos2: "Um produto proprietário fechado",
+            pos3: "A primeira implementação de referência", othersmay: "Outros podem",
+            pos4: "Implementar o protocolo em diferente infraestrutura",
+            trustmodel: "Modelo de confiança", pos5: "Matemático — não institucional",
+            s9p1: "WINDI não é o árbitro da verdade. WINDI é o primeiro sistema a implementar um pipeline FVE completo, público e aberto.",
+            s10: "Reivindicação de Prioridade",
+            s10p1: "Este documento define formalmente a estrutura do protocolo FVE e estabelece o timestamp de sua primeira implementação.",
+            claim: "Reivindicação", detail: "Detalhe",
+            firstImpl: "Primeira implementação", pipelineVal: "Validação do pipeline",
+            complete: "Completo — todos os 4 estágios confirmados",
+            firstActor: "Primeiro ator", location: "Localização",
+            s10q: '"Eu — com esta identidade — estava aqui — neste exato momento — e capturei isto."',
+            s11: "Assinaturas Fundadoras",
+            party: "Parte", roleStatement: "Papel / Declaração",
+            sig1: "Fundador & Chief Governance Officer — WINDI Publishing House<br>Kempten, Baviera, DE · 2026-03-23",
+            sig2: "Revisão constitucional — invariantes do protocolo confirmados",
+            sig3: "Arquitetura técnica — especificação do pipeline confirmada",
+            sig4: "Auditoria independente — recibo genesis verificado",
+            verifyThis: "Verificar este documento:"
+        }
+    };
+
+    function setLang(lang) {
+        localStorage.setItem('windi-lang', lang);
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.dataset.i18n;
+            if (I18N[lang] && I18N[lang][key]) {
+                el.innerHTML = I18N[lang][key];
+            }
+        });
+        document.querySelectorAll('.lang-btn').forEach(b => {
+            b.classList.toggle('active', b.dataset.lang === lang);
+        });
+    }
+
+    function initTheme() {
+        const saved = localStorage.getItem('windi-theme') || 'noir';
+        document.documentElement.dataset.theme = saved;
+        document.getElementById('themeToggle').textContent = saved === 'noir' ? '\u2600' : '\u263D';
+    }
+
+    function toggleTheme() {
+        const current = document.documentElement.dataset.theme;
+        const next = current === 'noir' ? 'klar' : 'noir';
+        document.documentElement.dataset.theme = next;
+        localStorage.setItem('windi-theme', next);
+        document.getElementById('themeToggle').textContent = next === 'noir' ? '\u2600' : '\u263D';
+    }
+
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.addEventListener('click', () => setLang(btn.dataset.lang));
+    });
+    document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
+    // Init
+    initTheme();
+    const savedLang = localStorage.getItem('windi-lang') || 'en';
+    setLang(savedLang);
+    </script>
+</body>
+</html>
