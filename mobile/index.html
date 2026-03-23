@@ -354,7 +354,7 @@ body {
       <div class="settings-section" style="margin-top:8px"><div class="settings-group"><div class="settings-row" onclick="resetUser()" style="color:var(--text-3)"><div class="settings-icon" style="background:#FDEEEE"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B52B2B" stroke-width="2"><path d="M3 6h18M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg></div><div class="settings-label" style="color:#B52B2B" data-i18n="resetAccount">Redefinir conta</div><div class="settings-value" style="color:#B52B2B">›</div></div></div></div>
       <div class="version-footer">WINDI Mobile v1.2.0 · 🐉 · Kempten, Bayern<br>AI processes. Human decides. WINDI guarantees.</div>
     </div>
-    <div class="screen active" id="screen-onboarding" style="display:flex;flex-direction:column;justify-content:space-between;padding:0">
+    <div class="screen active" id="screen-onboarding" style="display:flex;flex-direction:column;justify-content:flex-start;padding:0;overflow-y:auto">
       <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 28px;text-align:center">
         <div style="width:80px;height:80px;background:linear-gradient(135deg,var(--gold-light),var(--gold));border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 32px rgba(139,105,20,0.35);margin-bottom:24px"><svg width="42" height="42" viewBox="0 0 24 24" fill="none"><path d="M12 2C9.5 2 7.2 3.5 6.3 6C4.6 6.8 3 8.5 3 11C3 13.5 4.8 15.2 7 15.5C7.2 17.3 8.5 19.2 11 20C11.5 20.2 12 20.2 12 20.2C12 20.2 12.5 20.2 13 20C15.5 19.2 16.8 17.3 17 15.5C19.2 15.2 21 13.5 21 11C21 8.5 19.4 6.8 17.7 6C16.8 3.5 14.5 2 12 2Z" fill="white"/><circle cx="9.5" cy="10.5" r="1.4" fill="var(--gold)"/><circle cx="14.5" cy="10.5" r="1.4" fill="var(--gold)"/><path d="M9.5 14C10.2 14.8 11 15.2 12 15.2C13 15.2 13.8 14.8 14.5 14" stroke="var(--gold)" stroke-width="1.4" stroke-linecap="round"/></svg></div>
         <div style="font-size:28px;font-weight:700;margin-bottom:6px">WINDI</div>
@@ -391,6 +391,7 @@ body {
           <button class="onb-next-btn" onclick="generateDID()" id="onb-btn-3" style="opacity:1;pointer-events:auto">Aplicar no Pioneer Program →</button>
         </div>
       </div>
+      <div style="height:100px;flex-shrink:0"></div>
     </div>
   </div>
   <nav id="bottom-nav">
