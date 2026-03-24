@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI LAW — Rechtssichere Dokumente</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root {
+  --bg:    #07090D;
+  --bg-2:  #0C0F16;
+  --bg-3:  #111620;
+  --gold:  #C9A84C;
+  --gold-d:rgba(201,168,76,0.30);
+  --gold-p:rgba(201,168,76,0.07);
+  --parch: #F5F0E0;
+  --muted: rgba(245,240,224,0.52);
+  --dim:   rgba(245,240,224,0.24);
+  --faint: rgba(245,240,224,0.07);
+  --high:  #2EC27E;
+  --font:  'Bricolage Grotesque', sans-serif;
+  --mono:  'JetBrains Mono', monospace;
+}
+
+[data-theme="klar"] {
+  --bg:    #F5F0E0;
+  --bg-2:  #EDE8D6;
+  --bg-3:  #E4DFCC;
+  --gold:  #8B6914;
+  --gold-d:rgba(139,105,20,0.30);
+  --gold-p:rgba(139,105,20,0.07);
+  --parch: #1a1710;
+  --muted: rgba(26,23,16,0.52);
+  --dim:   rgba(26,23,16,0.30);
+  --faint: rgba(26,23,16,0.06);
+  --high:  #1A7A50;
+}
+
+html { scroll-behavior:smooth; }
+body { background:var(--bg); color:var(--parch); font-family:var(--font); overflow-x:hidden; transition:background 0.3s,color 0.3s; }
+
+/* NAV */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 4rem; height:58px;
+  background:rgba(7,9,13,0.92); backdrop-filter:blur(16px);
+  border-bottom:0.5px solid rgba(201,168,76,0.10);
+  transition:background 0.3s;
+}
+
+[data-theme="klar"] nav {
+  background:rgba(245,240,224,0.94);
+  border-bottom-color:rgba(139,105,20,0.15);
+}
+
+.nav-logo { font-size:15px; font-weight:700; letter-spacing:0.12em; color:var(--gold); text-decoration:none; }
+.nav-logo span { color:var(--muted); font-weight:300; font-size:11px; margin-left:3px; }
+
+.nav-center {
+  display:flex; align-items:center; gap:2rem;
+}
+.nav-link {
+  font-size:11px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase;
+  color:var(--dim); text-decoration:none; transition:color 0.2s;
+}
+.nav-link:hover { color:var(--parch); }
+
+.nav-right { display:flex; align-items:center; gap:0.75rem; }
+
+.lang-pill { display:flex; border:0.5px solid rgba(245,240,224,0.10); border-radius:3px; overflow:hidden; }
+[data-theme="klar"] .lang-pill { border-color:rgba(26,23,16,0.12); }
+.lp-btn {
+  font-family:var(--mono); font-size:9px; letter-spacing:0.1em;
+  padding:5px 9px; background:none; border:none;
+  border-right:0.5px solid rgba(245,240,224,0.08);
+  color:var(--dim); cursor:pointer; transition:all 0.15s;
+}
+[data-theme="klar"] .lp-btn { border-right-color:rgba(26,23,16,0.08); }
+.lp-btn:last-child{border-right:none}
+.lp-btn.active { background:rgba(201,168,76,0.12); color:var(--gold); }
+[data-theme="klar"] .lp-btn.active { background:rgba(139,105,20,0.10); }
+
+.theme-btn {
+  font-family:var(--mono); font-size:9px; letter-spacing:0.1em;
+  padding:5px 11px; border:0.5px solid rgba(245,240,224,0.10);
+  background:transparent; color:var(--dim); cursor:pointer;
+  border-radius:3px; transition:all 0.2s;
+}
+[data-theme="klar"] .theme-btn { border-color:rgba(26,23,16,0.12); }
+.theme-btn:hover { color:var(--gold); border-color:var(--gold-d); }
+
+.nav-cta {
+  font-family:var(--font); font-size:10px; font-weight:700; letter-spacing:0.1em;
+  text-transform:uppercase; color:var(--bg); background:var(--gold);
+  border:none; border-radius:3px; padding:9px 20px; cursor:pointer;
+  transition:all 0.2s;
+}
+.nav-cta:hover { opacity:0.88; transform:translateY(-1px); }
+
+/* HERO */
+.hero {
+  min-height:100vh; display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  padding:120px 2rem 80px; position:relative; overflow:hidden;
+  text-align:center;
+}
+
+.hero-grid {
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(201,168,76,0.028) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,0.028) 1px, transparent 1px);
+  background-size:60px 60px;
+  mask-image:radial-gradient(ellipse 80% 60% at 50% 40%, black 20%, transparent 72%);
+  pointer-events:none;
+}
+[data-theme="klar"] .hero-grid {
+  background-image:
+    linear-gradient(rgba(139,105,20,0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(139,105,20,0.07) 1px, transparent 1px);
+}
+
+.hero-glow {
+  position:absolute; width:600px; height:600px; border-radius:50%;
+  background:radial-gradient(circle, rgba(201,168,76,0.045) 0%, transparent 68%);
+  top:50%; left:50%; transform:translate(-50%,-55%);
+  pointer-events:none; animation:glow 6s ease-in-out infinite;
+}
+@keyframes glow{0%,100%{opacity:.7;transform:translate(-50%,-55%) scale(1)}50%{opacity:1;transform:translate(-50%,-55%) scale(1.08)}}
+
+.hero-badge {
+  display:inline-flex; align-items:center; gap:8px;
+  font-family:var(--mono); font-size:10px; letter-spacing:0.14em; text-transform:uppercase;
+  color:var(--gold); border:0.5px solid var(--gold-d);
+  padding:6px 16px; border-radius:2px; margin-bottom:2.5rem;
+  animation:rise 0.6s ease both;
+}
+.badge-dot { width:5px; height:5px; border-radius:50%; background:var(--gold); animation:blink 2s infinite; }
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+.hero-title {
+  font-size:clamp(38px,5.5vw,72px); font-weight:800; line-height:1.07;
+  letter-spacing:-0.03em; max-width:900px; margin:0 auto 1.5rem;
+  animation:rise 0.6s 0.08s ease both;
+}
+.hero-title .gold { color:var(--gold); }
+.hero-title .ghost { color:var(--muted); font-weight:300; display:block; font-size:0.62em; margin-top:0.3em; letter-spacing:-0.01em; }
+
+.hero-sub {
+  font-size:15px; color:var(--muted); line-height:1.75; max-width:540px;
+  margin:0 auto 2.5rem; animation:rise 0.6s 0.14s ease both;
+}
+
+.hero-cta-row {
+  display:flex; align-items:center; gap:1rem; justify-content:center;
+  animation:rise 0.6s 0.20s ease both; flex-wrap:wrap;
+}
+
+.btn-primary {
+  font-family:var(--font); font-size:12px; font-weight:700; letter-spacing:0.1em;
+  text-transform:uppercase; color:var(--bg); background:var(--gold);
+  border:none; border-radius:3px; padding:16px 40px; cursor:pointer;
+  transition:all 0.2s; text-decoration:none; display:inline-block;
+}
+.btn-primary:hover { opacity:0.88; transform:translateY(-2px); }
+
+.btn-secondary {
+  font-family:var(--mono); font-size:11px; letter-spacing:0.08em;
+  color:var(--dim); border:0.5px solid rgba(245,240,224,0.14);
+  background:transparent; border-radius:3px; padding:15px 28px;
+  cursor:pointer; transition:all 0.2s; text-decoration:none; display:inline-block;
+}
+[data-theme="klar"] .btn-secondary { border-color:rgba(26,23,16,0.16); }
+.btn-secondary:hover { color:var(--parch); border-color:rgba(245,240,224,0.28); }
+
+.hero-proof {
+  display:flex; align-items:center; gap:1.5rem; justify-content:center;
+  margin-top:2.5rem; flex-wrap:wrap;
+  animation:rise 0.6s 0.26s ease both;
+}
+.hp-item {
+  display:flex; align-items:center; gap:6px;
+  font-family:var(--mono); font-size:9.5px; letter-spacing:0.08em; color:var(--dim);
+}
+.hp-dot { width:5px; height:5px; border-radius:50%; background:var(--high); flex-shrink:0; }
+.hp-sep { width:1px; height:14px; background:rgba(245,240,224,0.10); }
+[data-theme="klar"] .hp-sep { background:rgba(26,23,16,0.10); }
+
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* DIVIDER */
+.divider {
+  display:flex; align-items:center; gap:1.5rem;
+  padding:0 5rem; max-width:1100px; margin:0 auto;
+}
+.div-line { flex:1; height:0.5px; background:rgba(245,240,224,0.06); }
+[data-theme="klar"] .div-line { background:rgba(26,23,16,0.08); }
+.div-label { font-family:var(--mono); font-size:9px; letter-spacing:0.16em; text-transform:uppercase; color:var(--dim); white-space:nowrap; }
+
+/* PAIN SECTION */
+.pain-section { padding:80px 5rem; }
+.section-wrap { max-width:1100px; margin:0 auto; }
+.eyebrow { font-family:var(--mono); font-size:10px; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold); margin-bottom:1rem; }
+.section-h { font-size:clamp(26px,3.2vw,42px); font-weight:600; line-height:1.18; color:var(--parch); margin-bottom:1rem; }
+.section-h .ghost { color:var(--muted); font-weight:300; }
+
+.pain-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; margin-top:3rem; background:rgba(245,240,224,0.05); border-radius:5px; overflow:hidden; }
+[data-theme="klar"] .pain-grid { background:rgba(26,23,16,0.08); }
+
+.pain-card {
+  background:var(--bg-2); padding:2rem 1.75rem;
+  transition:background 0.25s;
+}
+.pain-card:hover { background:var(--bg-3); }
+
+.pain-n { font-family:var(--mono); font-size:9px; letter-spacing:0.14em; color:var(--dim); margin-bottom:1.25rem; }
+
+.pain-q {
+  font-size:16px; font-weight:600; color:var(--parch); line-height:1.4;
+  margin-bottom:0.75rem; letter-spacing:-0.01em;
+}
+
+.pain-a {
+  font-size:13px; color:var(--muted); line-height:1.7;
+}
+
+.pain-answer {
+  margin-top:1rem; padding-top:1rem;
+  border-top:0.5px solid rgba(201,168,76,0.10);
+  font-family:var(--mono); font-size:10px; letter-spacing:0.06em;
+  color:var(--gold); display:flex; align-items:center; gap:6px;
+}
+[data-theme="klar"] .pain-answer { border-top-color:rgba(139,105,20,0.12); }
+.pa-arrow { font-size:12px; }
+
+/* TRUTH SECTION */
+.truth-section { padding:80px 5rem; }
+
+.truth-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5px; margin-top:3rem; }
+
+.truth-card {
+  background:var(--bg-2); padding:2rem 1.75rem;
+  position:relative; border-radius:0;
+  transition:background 0.25s;
+}
+.truth-card:first-child { border-radius:5px 0 0 5px; }
+.truth-card:last-child { border-radius:0 5px 5px 0; }
+.truth-card::after {
+  content:''; position:absolute; bottom:0; left:1.75rem; right:1.75rem;
+  height:2px; transform:scaleX(0); transform-origin:left; transition:transform 0.35s;
+}
+.truth-card.tc-high::after { background:var(--high); }
+.truth-card.tc-med::after { background:var(--gold); }
+.truth-card.tc-low::after { background:#5B8DD4; }
+.truth-card:hover::after { transform:scaleX(1); }
+.truth-card:hover { background:var(--bg-3); }
+
+.tc-level {
+  font-family:var(--mono); font-size:9px; letter-spacing:0.14em; text-transform:uppercase;
+  padding:3px 10px; border-radius:2px; border:0.5px solid; display:inline-flex;
+  align-items:center; gap:6px; margin-bottom:1.25rem;
+}
+.tc-dot { width:5px; height:5px; border-radius:50%; background:currentColor; }
+.tc-high { color:#2EC27E; border-color:rgba(46,194,126,0.3); background:rgba(46,194,126,0.07); }
+.tc-med  { color:var(--gold); border-color:var(--gold-d); background:var(--gold-p); }
+.tc-low  { color:#5B8DD4; border-color:rgba(91,141,212,0.3); background:rgba(91,141,212,0.07); }
+
+.tc-name { font-size:18px; font-weight:600; color:var(--parch); margin-bottom:0.6rem; letter-spacing:-0.01em; }
+.tc-sub { font-family:var(--mono); font-size:10px; letter-spacing:0.06em; color:var(--dim); margin-bottom:0.75rem; }
+.tc-desc { font-size:13px; color:var(--muted); line-height:1.7; }
+
+.tc-example {
+  margin-top:1rem; padding:0.75rem; background:rgba(255,255,255,0.025);
+  border:0.5px solid rgba(245,240,224,0.06); border-radius:3px;
+  font-family:var(--mono); font-size:10px; color:var(--dim); line-height:1.6;
+  font-style:italic;
+}
+[data-theme="klar"] .tc-example { background:rgba(0,0,0,0.03); border-color:rgba(26,23,16,0.07); }
+
+/* TRUST SECTION */
+.trust-section { padding:80px 5rem; }
+
+.trust-card {
+  background:var(--bg-2); border:0.5px solid rgba(201,168,76,0.10);
+  border-radius:5px; overflow:hidden;
+}
+.trust-topline { height:1px; background:linear-gradient(90deg,transparent,var(--gold),rgba(201,168,76,0.3),transparent); }
+.trust-inner { display:grid; grid-template-columns:1.2fr 1fr; gap:5rem; padding:3.5rem 4rem; align-items:center; }
+
+.trust-quote {
+  font-size:clamp(20px,2.4vw,30px); font-weight:600; line-height:1.4;
+  color:var(--parch); letter-spacing:-0.015em;
+}
+.trust-quote .gold { color:var(--gold); }
+
+.trust-sub { font-size:13.5px; color:var(--muted); line-height:1.7; margin-top:1.25rem; }
+
+.trust-seals { display:flex; flex-direction:column; gap:0.75rem; }
+
+.seal-item {
+  display:flex; align-items:flex-start; gap:12px;
+  padding:1rem; background:rgba(255,255,255,0.025);
+  border:0.5px solid rgba(245,240,224,0.06); border-radius:3px;
+}
+[data-theme="klar"] .seal-item { background:rgba(0,0,0,0.03); border-color:rgba(26,23,16,0.07); }
+
+.seal-icon {
+  width:30px; height:30px; flex-shrink:0;
+  border:0.5px solid var(--gold-d); border-radius:2px;
+  display:flex; align-items:center; justify-content:center;
+  color:var(--gold); font-size:12px;
+}
+.seal-text-wrap {}
+.seal-name { font-family:var(--mono); font-size:10px; letter-spacing:0.08em; color:var(--gold); margin-bottom:3px; }
+.seal-desc { font-size:12px; color:var(--muted); line-height:1.5; }
+
+/* CTA */
+.cta-section { padding:80px 5rem 100px; text-align:center; position:relative; }
+.cta-glow { position:absolute; top:0; left:50%; transform:translateX(-50%); width:500px; height:400px; background:radial-gradient(circle,rgba(201,168,76,0.04) 0%,transparent 70%); pointer-events:none; }
+.cta-h { font-size:clamp(32px,4vw,54px); font-weight:700; letter-spacing:-0.025em; margin-bottom:1rem; }
+.cta-h .gold { color:var(--gold); }
+.cta-sub { font-size:14px; color:var(--muted); margin-bottom:2.5rem; max-width:480px; margin-left:auto; margin-right:auto; }
+.cta-tagline { margin-top:1.5rem; font-family:var(--mono); font-size:9.5px; letter-spacing:0.12em; text-transform:uppercase; color:var(--dim); }
+
+/* FOOTER */
+footer {
+  border-top:0.5px solid rgba(245,240,224,0.06);
+  padding:1.75rem 5rem;
+  display:flex; align-items:center; justify-content:space-between;
+}
+[data-theme="klar"] footer { border-top-color:rgba(26,23,16,0.08); }
+.foot-left { font-size:11.5px; color:var(--dim); }
+.foot-inv { font-family:var(--mono); font-size:9px; color:rgba(201,168,76,0.35); letter-spacing:0.08em; margin-top:4px; }
+.foot-right { font-family:var(--mono); font-size:9px; color:var(--dim); text-align:right; }
+.foot-sov { color:rgba(201,168,76,0.5); margin-bottom:3px; }
+
+@media(max-width:900px){
+  nav{padding:0 1.5rem;} .nav-center{display:none;}
+  .pain-section,.truth-section,.trust-section,.cta-section{padding-left:1.5rem;padding-right:1.5rem;}
+  .pain-grid,.truth-grid{grid-template-columns:1fr;}
+  .trust-inner{grid-template-columns:1fr;gap:2rem;padding:2rem 1.5rem;}
+  footer{flex-direction:column;gap:1rem;text-align:center;padding:1.5rem;}
+  .pain-card:first-child,.pain-card:last-child,.truth-card:first-child,.truth-card:last-child{border-radius:4px;}
+  .hero{padding:100px 1.5rem 60px;}
+  .divider{padding:0 1.5rem;}
+}
+</style>
+</head>
+<body id="body-root">
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">WINDI<span>LAW</span></a>
+  <div class="nav-center">
+    <a class="nav-link" href="#pain" id="nl-problem">Das Problem</a>
+    <a class="nav-link" href="#truth" id="nl-truth">Wahrheitsebenen</a>
+    <a class="nav-link" href="#trust" id="nl-trust">Vertrauen</a>
+  </div>
+  <div class="nav-right">
+    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">NOIR</button>
+    <div class="lang-pill">
+      <button class="lp-btn active" onclick="setLang('de')">DE</button>
+      <button class="lp-btn" onclick="setLang('pt')">PT</button>
+      <button class="lp-btn" onclick="setLang('en')">EN</button>
+    </div>
+    <button class="nav-cta" id="nav-cta" onclick="openWorkspace()">Workspace öffnen</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+
+  <div class="hero-badge">
+    <div class="badge-dot"></div>
+    <span id="hero-badge-text">Kryptografische Beweisführung · Kempten, Bavaria</span>
+  </div>
+
+  <h1 class="hero-title" id="hero-title">
+    Rechtssichere Dokumente.<br>
+    <span class="gold" id="hero-gold">Nachweisbar. Verifizierbar.</span>
+    <span class="ghost" id="hero-ghost">Vor Gericht belastbar.</span>
+  </h1>
+
+  <p class="hero-sub" id="hero-sub">
+    WINDI erstellt und versiegelt Dokumente mit kryptografischem SHA-256-Nachweis — überprüfbar durch jede Partei, jederzeit, ohne Abhängigkeit von Dritten.
+  </p>
+
+  <div class="hero-cta-row">
+    <button class="btn-primary" id="btn-workspace" onclick="openWorkspace()">Workspace öffnen</button>
+    <a class="btn-secondary" href="#pain" id="btn-learn">Wie es funktioniert</a>
+  </div>
+
+  <div class="hero-proof">
+    <div class="hp-item"><div class="hp-dot"></div><span id="hp1">Forensic Ledger · 40.918+ Receipts</span></div>
+    <div class="hp-sep"></div>
+    <div class="hp-item"><div class="hp-dot"></div><span id="hp2">93.3% lokale Souveränität</span></div>
+    <div class="hp-sep"></div>
+    <div class="hp-item"><div class="hp-dot"></div><span id="hp3">ZPO · eIDAS · UNCITRAL</span></div>
+    <div class="hp-sep"></div>
+    <div class="hp-item"><div class="hp-dot"></div><span id="hp4">DSGVO · GoBD · MiCA</span></div>
+  </div>
+</section>
+
+<!-- DIVIDER 1 -->
+<div class="divider"><div class="div-line"></div><div class="div-label" id="div1">Das Problem</div><div class="div-line"></div></div>
+
+<!-- PAIN SECTION -->
+<section class="pain-section" id="pain">
+  <div class="section-wrap">
+    <div class="eyebrow" id="pain-eyebrow">Warum WINDI LAW</div>
+    <h2 class="section-h" id="pain-h">Was kostet ein nicht<br><span class="ghost" id="pain-ghost">nachweisbares Dokument?</span></h2>
+
+    <div class="pain-grid">
+
+      <div class="pain-card">
+        <div class="pain-n">01</div>
+        <div class="pain-q" id="pq1">"Wann wurde dieser Vertrag unterzeichnet?"</div>
+        <div class="pain-a" id="pa1">Ohne kryptografischen Zeitstempel ist jedes Datum anfechtbar. Der Gegner zweifelt — das Gericht zweifelt.</div>
+        <div class="pain-answer"><span class="pa-arrow">→</span><span id="ps1">WINDI versiegelt das Dokument mit SHA-256 + Timestamp im Forensic Ledger. Unveränderlich.</span></div>
+      </div>
+
+      <div class="pain-card">
+        <div class="pain-n">02</div>
+        <div class="pain-q" id="pq2">"Können Sie die Echtheit dieses Dokuments beweisen?"</div>
+        <div class="pain-a" id="pa2">PDFs sind manipulierbar. E-Mails sind fälschbar. Die fehlende Beweiskette kostet Mandate — und Vertrauen.</div>
+        <div class="pain-answer"><span class="pa-arrow">→</span><span id="ps2">Jedes WINDI-Dokument hat einen öffentlich verifizierbaren Hash. Jede Partei kann prüfen. Kein Vertrauen in Dritte nötig.</span></div>
+      </div>
+
+      <div class="pain-card">
+        <div class="pain-n">03</div>
+        <div class="pain-q" id="pq3">"Ist Ihre KI-Nutzung DSGVO- und EU AI Act-konform?"</div>
+        <div class="pain-a" id="pa3">Regulatoren fragen. Mandanten fragen. Ohne dokumentierte Überwachung der KI-Entscheidungen drohen Haftungsrisiken.</div>
+        <div class="pain-answer"><span class="pa-arrow">→</span><span id="ps3">WINDI protokolliert jede KI-Aktion. Der Mensch entscheidet. Die KI bereitet vor. Jede Entscheidung ist auditierbar.</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- DIVIDER 2 -->
+<div class="divider"><div class="div-line"></div><div class="div-label" id="div2">Wahrheitsebenen</div><div class="div-line"></div></div>
+
+<!-- TRUTH SECTION -->
+<section class="truth-section" id="truth">
+  <div class="section-wrap">
+    <div class="eyebrow" id="truth-eyebrow">Epistemologie operacional</div>
+    <h2 class="section-h" id="truth-h">Nicht jede Aussage hat<br><span class="ghost" id="truth-ghost">dasselbe Gewicht.</span></h2>
+
+    <div class="truth-grid">
+
+      <div class="truth-card tc-high">
+        <div class="tc-level tc-high"><div class="tc-dot"></div><span id="tl-high">HIGH · Gerichtsfähig</span></div>
+        <div class="tc-name" id="tn-high">Kryptografische Garantie</div>
+        <div class="tc-sub" id="ts-high">SHA-256 · Forensic Ledger · Unveränderlich</div>
+        <div class="tc-desc" id="td-high">Das Dokument existiert. Es wurde nicht verändert. Der Zeitstempel ist beweisbar. Diese Aussage kann vor jedem Gericht der Welt vertreten werden.</div>
+        <div class="tc-example" id="te-high">"Dieser Vertrag wurde am 24.03.2026 um 13:09 Uhr versiegelt. Hash: 69d717… — öffentlich verifizierbar."</div>
+      </div>
+
+      <div class="truth-card tc-med">
+        <div class="tc-level tc-med"><div class="tc-dot"></div><span id="tl-med">MED · Prozessual</span></div>
+        <div class="tc-name" id="tn-med">Strukturelle Analyse</div>
+        <div class="tc-sub" id="ts-med">ZPO · eIDAS · Prozessstrategie</div>
+        <div class="tc-desc" id="td-med">Das System analysiert Struktur, Klauseln und Risikoelemente basierend auf Rechtsnormen. Bewertung ist fundiert, aber vom Anwalt zu validieren.</div>
+        <div class="tc-example" id="te-med">"Klausel §4 zeigt erhöhtes Haftungsrisiko nach ZPO §273. Empfehlung: Neuformulierung — Ihre Entscheidung."</div>
+      </div>
+
+      <div class="truth-card tc-low">
+        <div class="tc-level tc-low"><div class="tc-dot"></div><span id="tl-low">LOW · Analyse</span></div>
+        <div class="tc-name" id="tn-low">KI-Interpretation</div>
+        <div class="tc-sub" id="ts-low">Semantik · Kontext · Mustererkennung</div>
+        <div class="tc-desc" id="td-low">Intelligente Interpretation ohne direkte Rechtsgrundlage. Nützlich für Recherche und Vorbereitung. Immer als Ausgangspunkt, nie als Schlussfolgerung.</div>
+        <div class="tc-example" id="te-low">"Der Vertragston deutet auf asymmetrische Verhandlungsposition hin — zur Überprüfung durch den Anwalt."</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- DIVIDER 3 -->
+<div class="divider"><div class="div-line"></div><div class="div-label" id="div3">Vertrauen</div><div class="div-line"></div></div>
+
+<!-- TRUST SECTION -->
+<section class="trust-section" id="trust">
+  <div class="section-wrap">
+    <div class="trust-card">
+      <div class="trust-topline"></div>
+      <div class="trust-inner">
+        <div>
+          <div class="trust-quote" id="tq-main">
+            "<span class="gold" id="tq-gold">KI bereitet vor.</span><br>
+            Der Anwalt entscheidet.<br>
+            WINDI garantiert."
+          </div>
+          <div class="trust-sub" id="tq-sub">
+            WINDI LAW ist keine autonome KI. Es ist ein präzises Werkzeug, das Ihnen die Beweisführung überlässt und Ihre Souveränität als Rechtsexperte stärkt — nicht ersetzt.
+          </div>
+        </div>
+        <div class="trust-seals">
+          <div class="seal-item">
+            <div class="seal-icon">⚖</div>
+            <div class="seal-text-wrap">
+              <div class="seal-name" id="seal1-name">ZPO · eIDAS · UNCITRAL</div>
+              <div class="seal-desc" id="seal1-desc">Vollständige Jurisdiktionsabdeckung: Deutschland, EU, Brasilien und internationales Schiedsrecht.</div>
+            </div>
+          </div>
+          <div class="seal-item">
+            <div class="seal-icon">🔐</div>
+            <div class="seal-text-wrap">
+              <div class="seal-name" id="seal2-name">93.3% Lokale Souveränität</div>
+              <div class="seal-desc" id="seal2-desc">Daten bleiben auf Ihrem Server in Deutschland. Kein US-Cloud-Anbieter. Kein Datenschutzrisiko.</div>
+            </div>
+          </div>
+          <div class="seal-item">
+            <div class="seal-icon">📋</div>
+            <div class="seal-text-wrap">
+              <div class="seal-name" id="seal3-name">DSGVO · EU AI Act · GoBD</div>
+              <div class="seal-desc" id="seal3-desc">Jede KI-Entscheidung ist protokolliert, auditierbar und entspricht dem EU AI Act Art. 14 (menschliche Aufsicht).</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-glow"></div>
+  <h2 class="cta-h" id="cta-h">Bereit für <span class="gold" id="cta-gold">beweissichere</span><br id="cta-br">Dokumente?</h2>
+  <p class="cta-sub" id="cta-sub">Öffnen Sie den Workspace und verarbeiten Sie Ihr erstes Dokument mit kryptografischer Garantie.</p>
+  <button class="btn-primary" id="cta-btn" onclick="openWorkspace()">Workspace öffnen</button>
+  <div class="cta-tagline" id="cta-tagline">AI processes · Human decides · WINDI guarantees</div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-left">
+    <div>WINDI LAW · Liga IA+H · Kempten, Bavaria · 2026</div>
+    <div class="foot-inv">I9 · I11 · I13 · G3 · C6</div>
+  </div>
+  <div class="foot-right">
+    <div class="foot-sov" id="ft-sov">93.3% Lokale Souveränität</div>
+    <div id="ft-server">Strato VPS · windi@87.106.29.233</div>
+  </div>
+</footer>
+
+<script>
+var lang = 'de';
+var theme = 'noir';
+
+var T = {
+  de: {
+    navCta:'Workspace öffnen', navProblem:'Das Problem', navTruth:'Wahrheitsebenen', navTrust:'Vertrauen',
+    themeLbl:'NOIR',
+    heroBadge:'Kryptografische Beweisführung · Kempten, Bavaria',
+    heroTitle:'Rechtssichere Dokumente.',
+    heroGold:'Nachweisbar. Verifizierbar.',
+    heroGhost:'Vor Gericht belastbar.',
+    heroSub:'WINDI erstellt und versiegelt Dokumente mit kryptografischem SHA-256-Nachweis — überprüfbar durch jede Partei, jederzeit, ohne Abhängigkeit von Dritten.',
+    btnWorkspace:'Workspace öffnen', btnLearn:'Wie es funktioniert',
+    hp1:'Forensic Ledger · 40.918+ Receipts', hp2:'93.3% lokale Souveränität', hp3:'ZPO · eIDAS · UNCITRAL', hp4:'DSGVO · GoBD · MiCA',
+    div1:'Das Problem', div2:'Wahrheitsebenen', div3:'Vertrauen',
+    painEyebrow:'Warum WINDI LAW', painH:'Was kostet ein nicht', painGhost:'nachweisbares Dokument?',
+    pq1:'"Wann wurde dieser Vertrag unterzeichnet?"', pa1:'Ohne kryptografischen Zeitstempel ist jedes Datum anfechtbar. Der Gegner zweifelt — das Gericht zweifelt.', ps1:'WINDI versiegelt das Dokument mit SHA-256 + Timestamp im Forensic Ledger. Unveränderlich.',
+    pq2:'"Können Sie die Echtheit dieses Dokuments beweisen?"', pa2:'PDFs sind manipulierbar. E-Mails sind fälschbar. Die fehlende Beweiskette kostet Mandate — und Vertrauen.', ps2:'Jedes WINDI-Dokument hat einen öffentlich verifizierbaren Hash. Jede Partei kann prüfen. Kein Vertrauen in Dritte nötig.',
+    pq3:'"Ist Ihre KI-Nutzung DSGVO- und EU AI Act-konform?"', pa3:'Regulatoren fragen. Mandanten fragen. Ohne dokumentierte Überwachung der KI-Entscheidungen drohen Haftungsrisiken.', ps3:'WINDI protokolliert jede KI-Aktion. Der Mensch entscheidet. Die KI bereitet vor. Jede Entscheidung ist auditierbar.',
+    truthEyebrow:'Epistemologie operacional', truthH:'Nicht jede Aussage hat', truthGhost:'dasselbe Gewicht.',
+    tlHigh:'HIGH · Gerichtsfähig', tnHigh:'Kryptografische Garantie', tsHigh:'SHA-256 · Forensic Ledger · Unveränderlich', tdHigh:'Das Dokument existiert. Es wurde nicht verändert. Der Zeitstempel ist beweisbar. Diese Aussage kann vor jedem Gericht der Welt vertreten werden.', teHigh:'"Dieser Vertrag wurde am 24.03.2026 um 13:09 Uhr versiegelt. Hash: 69d717… — öffentlich verifizierbar."',
+    tlMed:'MED · Prozessual', tnMed:'Strukturelle Analyse', tsMed:'ZPO · eIDAS · Prozessstrategie', tdMed:'Das System analysiert Struktur, Klauseln und Risikoelemente basierend auf Rechtsnormen. Bewertung ist fundiert, aber vom Anwalt zu validieren.', teMed:'"Klausel §4 zeigt erhöhtes Haftungsrisiko nach ZPO §273. Empfehlung: Neuformulierung — Ihre Entscheidung."',
+    tlLow:'LOW · Analyse', tnLow:'KI-Interpretation', tsLow:'Semantik · Kontext · Mustererkennung', tdLow:'Intelligente Interpretation ohne direkte Rechtsgrundlage. Nützlich für Recherche und Vorbereitung. Immer als Ausgangspunkt, nie als Schlussfolgerung.', teLow:'"Der Vertragston deutet auf asymmetrische Verhandlungsposition hin — zur Überprüfung durch den Anwalt."',
+    tqMain:'<span class="gold" id="tq-gold">KI bereitet vor.</span><br>Der Anwalt entscheidet.<br>WINDI garantiert.', tqSub:'WINDI LAW ist keine autonome KI. Es ist ein präzises Werkzeug, das Ihnen die Beweisführung überlässt und Ihre Souveränität als Rechtsexperte stärkt — nicht ersetzt.',
+    seal1Name:'ZPO · eIDAS · UNCITRAL', seal1Desc:'Vollständige Jurisdiktionsabdeckung: Deutschland, EU, Brasilien und internationales Schiedsrecht.',
+    seal2Name:'93.3% Lokale Souveränität', seal2Desc:'Daten bleiben auf Ihrem Server in Deutschland. Kein US-Cloud-Anbieter. Kein Datenschutzrisiko.',
+    seal3Name:'DSGVO · EU AI Act · GoBD', seal3Desc:'Jede KI-Entscheidung ist protokolliert, auditierbar und entspricht dem EU AI Act Art. 14.',
+    ctaH:'Bereit für', ctaGold:'beweissichere', ctaSub:'Öffnen Sie den Workspace und verarbeiten Sie Ihr erstes Dokument mit kryptografischer Garantie.', ctaBtn:'Workspace öffnen', ctaTagline:'AI processes · Human decides · WINDI guarantees',
+    ftSov:'93.3% Lokale Souveränität', ftServer:'Strato VPS · windi@87.106.29.233'
+  },
+  pt: {
+    navCta:'Abrir Workspace', navProblem:'O Problema', navTruth:'Níveis de Verdade', navTrust:'Confiança',
+    themeLbl:'NOIR',
+    heroBadge:'Prova Criptográfica · Kempten, Bavaria',
+    heroTitle:'Documentos Juridicamente Seguros.',
+    heroGold:'Verificáveis. Imutáveis.',
+    heroGhost:'Válidos em tribunal.',
+    heroSub:'WINDI cria e sela documentos com prova criptográfica SHA-256 — verificável por qualquer parte, a qualquer momento, sem dependência de terceiros.',
+    btnWorkspace:'Abrir Workspace', btnLearn:'Como funciona',
+    hp1:'Forensic Ledger · 40.918+ Recibos', hp2:'93.3% soberania local', hp3:'ZPO · eIDAS · UNCITRAL', hp4:'RGPD · GoBD · MiCA',
+    div1:'O Problema', div2:'Níveis de Verdade', div3:'Confiança',
+    painEyebrow:'Porquê WINDI LAW', painH:'Quanto custa um documento', painGhost:'sem prova verificável?',
+    pq1:'"Quando foi assinado este contrato?"', pa1:'Sem timestamp criptográfico, qualquer data é contestável. A parte contrária duvida — o tribunal duvida.', ps1:'WINDI sela o documento com SHA-256 + timestamp no Forensic Ledger. Imutável.',
+    pq2:'"Pode provar a autenticidade deste documento?"', pa2:'PDFs são manipuláveis. Emails são falsificáveis. A falta de cadeia de prova custa mandatos — e confiança.', ps2:'Cada documento WINDI tem um hash publicamente verificável. Qualquer parte pode confirmar. Sem dependência de terceiros.',
+    pq3:'"O uso de IA está conforme RGPD e EU AI Act?"', pa3:'Reguladores perguntam. Clientes perguntam. Sem supervisão documentada das decisões de IA, há risco de responsabilidade.', ps3:'WINDI regista cada acção de IA. O humano decide. A IA prepara. Cada decisão é auditável.',
+    truthEyebrow:'Epistemologia operacional', truthH:'Nem toda afirmação tem', truthGhost:'o mesmo peso.',
+    tlHigh:'HIGH · Válido em Tribunal', tnHigh:'Garantia Criptográfica', tsHigh:'SHA-256 · Forensic Ledger · Imutável', tdHigh:'O documento existe. Não foi alterado. O timestamp é provável. Esta afirmação pode ser defendida em qualquer tribunal do mundo.', teHigh:'"Este contrato foi selado a 24.03.2026 às 13:09. Hash: 69d717… — verificável publicamente."',
+    tlMed:'MED · Processual', tnMed:'Análise Estrutural', tsMed:'ZPO · eIDAS · Estratégia Processual', tdMed:'O sistema analisa estrutura, cláusulas e elementos de risco com base em normas jurídicas. Avaliação fundamentada, mas a validar pelo advogado.', teMed:'"A cláusula §4 apresenta risco de responsabilidade elevado segundo ZPO §273. Recomendação: reformulação — a sua decisão."',
+    tlLow:'LOW · Análise', tnLow:'Interpretação IA', tsLow:'Semântica · Contexto · Reconhecimento de Padrões', tdLow:'Interpretação inteligente sem base jurídica directa. Útil para investigação e preparação. Sempre como ponto de partida, nunca como conclusão.', teLow:'"O tom contratual sugere posição de negociação assimétrica — para revisão pelo advogado."',
+    tqMain:'<span class="gold" id="tq-gold">IA prepara.</span><br>O advogado decide.<br>WINDI garante.', tqSub:'WINDI LAW não é uma IA autónoma. É uma ferramenta precisa que lhe deixa a prova e fortalece a sua soberania como especialista jurídico — não a substitui.',
+    seal1Name:'ZPO · eIDAS · UNCITRAL', seal1Desc:'Cobertura jurisdicional completa: Alemanha, UE, Brasil e arbitragem internacional.',
+    seal2Name:'93.3% Soberania Local', seal2Desc:'Os dados ficam no seu servidor na Alemanha. Sem fornecedores cloud americanos. Sem risco de privacidade.',
+    seal3Name:'RGPD · EU AI Act · GoBD', seal3Desc:'Cada decisão de IA é registada, auditável e conforme EU AI Act Art. 14 (supervisão humana).',
+    ctaH:'Pronto para documentos', ctaGold:'com prova verificável?', ctaSub:'Abra o Workspace e processe o seu primeiro documento com garantia criptográfica.', ctaBtn:'Abrir Workspace', ctaTagline:'AI processes · Human decides · WINDI guarantees',
+    ftSov:'93.3% Soberania Local', ftServer:'Strato VPS · windi@87.106.29.233'
+  },
+  en: {
+    navCta:'Open Workspace', navProblem:'The Problem', navTruth:'Truth Levels', navTrust:'Trust',
+    themeLbl:'NOIR',
+    heroBadge:'Cryptographic Evidence · Kempten, Bavaria',
+    heroTitle:'Legally Binding Documents.',
+    heroGold:'Provable. Verifiable.',
+    heroGhost:'Defensible in court.',
+    heroSub:'WINDI creates and seals documents with cryptographic SHA-256 proof — verifiable by any party, at any time, without dependency on third parties.',
+    btnWorkspace:'Open Workspace', btnLearn:'How it works',
+    hp1:'Forensic Ledger · 40,918+ Receipts', hp2:'93.3% local sovereignty', hp3:'ZPO · eIDAS · UNCITRAL', hp4:'GDPR · GoBD · MiCA',
+    div1:'The Problem', div2:'Truth Levels', div3:'Trust',
+    painEyebrow:'Why WINDI LAW', painH:'What does an unverifiable', painGhost:'document really cost?',
+    pq1:'"When was this contract signed?"', pa1:'Without a cryptographic timestamp, any date is contestable. The opposing party doubts — the court doubts.', ps1:'WINDI seals the document with SHA-256 + timestamp in the Forensic Ledger. Immutable.',
+    pq2:'"Can you prove the authenticity of this document?"', pa2:'PDFs are manipulable. Emails are forgeable. A missing chain of evidence costs mandates — and trust.', ps2:'Every WINDI document has a publicly verifiable hash. Any party can verify. No trust in third parties required.',
+    pq3:'"Is your AI usage GDPR and EU AI Act compliant?"', pa3:'Regulators ask. Clients ask. Without documented oversight of AI decisions, liability risks arise.', ps3:'WINDI logs every AI action. The human decides. The AI prepares. Every decision is auditable.',
+    truthEyebrow:'Operational epistemology', truthH:'Not every statement carries', truthGhost:'the same weight.',
+    tlHigh:'HIGH · Court-Admissible', tnHigh:'Cryptographic Guarantee', tsHigh:'SHA-256 · Forensic Ledger · Immutable', tdHigh:'The document exists. It has not been altered. The timestamp is provable. This statement can be defended before any court in the world.', teHigh:'"This contract was sealed on 24.03.2026 at 13:09. Hash: 69d717… — publicly verifiable."',
+    tlMed:'MED · Procedural', tnMed:'Structural Analysis', tsMed:'ZPO · eIDAS · Procedural Strategy', tdMed:'The system analyses structure, clauses and risk elements based on legal standards. Assessment is well-founded but must be validated by the lawyer.', teMed:'"Clause §4 shows elevated liability risk under ZPO §273. Recommendation: reformulation — your decision."',
+    tlLow:'LOW · Analysis', tnLow:'AI Interpretation', tsLow:'Semantics · Context · Pattern Recognition', tdLow:'Intelligent interpretation without direct legal basis. Useful for research and preparation. Always as a starting point, never as a conclusion.', teLow:'"The contractual tone suggests an asymmetric negotiating position — for review by the lawyer."',
+    tqMain:'<span class="gold" id="tq-gold">AI prepares.</span><br>The lawyer decides.<br>WINDI guarantees.', tqSub:'WINDI LAW is not an autonomous AI. It is a precise tool that leaves the evidentiary decisions to you and strengthens your sovereignty as a legal expert — it does not replace you.',
+    seal1Name:'ZPO · eIDAS · UNCITRAL', seal1Desc:'Complete jurisdictional coverage: Germany, EU, Brazil and international arbitration.',
+    seal2Name:'93.3% Local Sovereignty', seal2Desc:'Data stays on your server in Germany. No US cloud providers. No privacy risk.',
+    seal3Name:'GDPR · EU AI Act · GoBD', seal3Desc:'Every AI decision is logged, auditable and compliant with EU AI Act Art. 14 (human oversight).',
+    ctaH:'Ready for', ctaGold:'court-admissible documents?', ctaSub:'Open the Workspace and process your first document with cryptographic guarantee.', ctaBtn:'Open Workspace', ctaTagline:'AI processes · Human decides · WINDI guarantees',
+    ftSov:'93.3% Local Sovereignty', ftServer:'Strato VPS · windi@87.106.29.233'
+  }
+};
+
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lp-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelector('.lp-btn[onclick="setLang(\''+l+'\')"]').classList.add('active');
+  var t = T[l];
+  document.getElementById('nav-cta').textContent = t.navCta;
+  document.getElementById('nl-problem').textContent = t.navProblem;
+  document.getElementById('nl-truth').textContent = t.navTruth;
+  document.getElementById('nl-trust').textContent = t.navTrust;
+  document.getElementById('hero-badge-text').textContent = t.heroBadge;
+  document.getElementById('hero-title').childNodes[0].textContent = t.heroTitle + ' ';
+  document.getElementById('hero-gold').textContent = t.heroGold;
+  document.getElementById('hero-ghost').textContent = t.heroGhost;
+  document.getElementById('hero-sub').textContent = t.heroSub;
+  document.getElementById('btn-workspace').textContent = t.btnWorkspace;
+  document.getElementById('btn-learn').textContent = t.btnLearn;
+  document.getElementById('hp1').textContent = t.hp1;
+  document.getElementById('hp2').textContent = t.hp2;
+  document.getElementById('hp3').textContent = t.hp3;
+  document.getElementById('hp4').textContent = t.hp4;
+  document.getElementById('div1').textContent = t.div1;
+  document.getElementById('div2').textContent = t.div2;
+  document.getElementById('div3').textContent = t.div3;
+  document.getElementById('pain-eyebrow').textContent = t.painEyebrow;
+  document.getElementById('pain-h').childNodes[0].textContent = t.painH + ' ';
+  document.getElementById('pain-ghost').textContent = t.painGhost;
+  document.getElementById('pq1').textContent = t.pq1; document.getElementById('pa1').textContent = t.pa1; document.getElementById('ps1').textContent = t.ps1;
+  document.getElementById('pq2').textContent = t.pq2; document.getElementById('pa2').textContent = t.pa2; document.getElementById('ps2').textContent = t.ps2;
+  document.getElementById('pq3').textContent = t.pq3; document.getElementById('pa3').textContent = t.pa3; document.getElementById('ps3').textContent = t.ps3;
+  document.getElementById('truth-eyebrow').textContent = t.truthEyebrow;
+  document.getElementById('truth-h').childNodes[0].textContent = t.truthH + ' ';
+  document.getElementById('truth-ghost').textContent = t.truthGhost;
+  document.getElementById('tl-high').textContent = t.tlHigh; document.getElementById('tn-high').textContent = t.tnHigh; document.getElementById('ts-high').textContent = t.tsHigh; document.getElementById('td-high').textContent = t.tdHigh; document.getElementById('te-high').textContent = t.teHigh;
+  document.getElementById('tl-med').textContent = t.tlMed; document.getElementById('tn-med').textContent = t.tnMed; document.getElementById('ts-med').textContent = t.tsMed; document.getElementById('td-med').textContent = t.tdMed; document.getElementById('te-med').textContent = t.teMed;
+  document.getElementById('tl-low').textContent = t.tlLow; document.getElementById('tn-low').textContent = t.tnLow; document.getElementById('ts-low').textContent = t.tsLow; document.getElementById('td-low').textContent = t.tdLow; document.getElementById('te-low').textContent = t.teLow;
+  document.getElementById('tq-main').innerHTML = t.tqMain;
+  document.getElementById('tq-sub').textContent = t.tqSub;
+  document.getElementById('seal1-name').textContent = t.seal1Name; document.getElementById('seal1-desc').textContent = t.seal1Desc;
+  document.getElementById('seal2-name').textContent = t.seal2Name; document.getElementById('seal2-desc').textContent = t.seal2Desc;
+  document.getElementById('seal3-name').textContent = t.seal3Name; document.getElementById('seal3-desc').textContent = t.seal3Desc;
+  document.getElementById('cta-h').childNodes[0].textContent = t.ctaH + ' ';
+  document.getElementById('cta-gold').textContent = t.ctaGold;
+  document.getElementById('cta-sub').textContent = t.ctaSub;
+  document.getElementById('cta-btn').textContent = t.ctaBtn;
+  document.getElementById('cta-tagline').textContent = t.ctaTagline;
+  document.getElementById('ft-sov').textContent = t.ftSov;
+  document.getElementById('ft-server').textContent = t.ftServer;
+}
+
+function toggleTheme() {
+  var btn = document.getElementById('theme-btn');
+  if(theme === 'noir') {
+    document.getElementById('body-root').setAttribute('data-theme','klar');
+    theme = 'klar'; btn.textContent = 'KLAR';
+  } else {
+    document.getElementById('body-root').removeAttribute('data-theme');
+    theme = 'noir'; btn.textContent = 'NOIR';
+  }
+}
+
+function openWorkspace() {
+  alert('Workspace öffnen → windi-law-workspace-v3.html\n\n(Im Produktionsserver: windi-domain.com/law/workspace/)');
+}
+</script>
+</body>
+</html>

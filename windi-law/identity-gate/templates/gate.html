@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="noir">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WINDI LAW — Identity Gate</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --font-display: 'Bricolage Grotesque', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        [data-theme="noir"] {
+            --bg: #0A0A10;
+            --bg-secondary: #12121A;
+            --gold: #C9A84C;
+            --gold-dim: rgba(201, 168, 76, 0.3);
+            --text: #E8E6E1;
+            --text-secondary: #A0A0A0;
+            --text-tertiary: #666;
+            --border: #1A1A24;
+            --border-focus: #C9A84C;
+            --success: #2EC27E;
+            --error: #E74C3C;
+        }
+
+        [data-theme="klar"] {
+            --bg: #FAFAF8;
+            --bg-secondary: #F0F0EC;
+            --gold: #8B7424;
+            --gold-dim: rgba(139, 116, 36, 0.2);
+            --text: #1A1A1A;
+            --text-secondary: #555;
+            --text-tertiary: #888;
+            --border: #E0DED8;
+            --border-focus: #8B7424;
+            --success: #1D8A56;
+            --error: #C0392B;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font-display);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════ */
+        /* HEADER */
+        /* ═══════════════════════════════════════════════════════════════ */
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--gold);
+            letter-spacing: 0.05em;
+        }
+
+        .controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .lang-btn, .theme-btn {
+            padding: 0.4rem 0.8rem;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-secondary);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 4px;
+        }
+
+        .lang-btn:hover, .theme-btn:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .lang-btn.active {
+            background: var(--gold-dim);
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        /* ═══════════════════════════════════════════════════════════════ */
+        /* WIZARD */
+        /* ═══════════════════════════════════════════════════════════════ */
+
+        .wizard {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .step {
+            display: none;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .step.active { display: block; }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: var(--gold-dim);
+            color: var(--gold);
+            font-family: var(--font-mono);
+            font-weight: 700;
+            font-size: 0.875rem;
+        }
+
+        .step-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .step-desc {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════ */
+        /* FORM ELEMENTS */
+        /* ═══════════════════════════════════════════════════════════════ */
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.75rem;
+            font-family: var(--font-mono);
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-family: var(--font-display);
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--border-focus);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .radio-option {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+        }
+
+        .radio-option:hover { border-color: var(--gold-dim); }
+
+        .radio-option.selected {
+            background: var(--gold-dim);
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .radio-option input { display: none; }
+
+        /* ═══════════════════════════════════════════════════════════════ */
+        /* DID DISPLAY */
+        /* ═══════════════════════════════════════════════════════════════ */
+
+        .did-display {
+            background: var(--bg);
+            border: 1px solid var(--gold-dim);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .did-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .did-row:last-child { border-bottom: none; }
+
+        .did-label {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+        }
+
+        .did-value {
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            color: var(--gold);
+            word-break: break-all;
+        }
+
+        .sovereign-message {
+            background: linear-gradient(135deg, var(--gold-dim), transparent);
+            border: 1px solid var(--gold);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .sovereign-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .sovereign-text {
+            font-size: 0.875rem;
+            color: var(--gold);
+            line-height: 1.6;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════ */
+        /* CONSENT CHECKBOXES */
+        /* ═══════════════════════════════════════════════════════════════ */
+
+        .consent-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .consent-item:last-child { border-bottom: none; }
+
+        .consent-checkbox {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--gold);
+            cursor: pointer;
+        }
+
+        .consent-text {
+            font-size: 0.875rem;
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        .consent-note {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            font-style: italic;
+            margin-top: 1rem;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════ */
+        /* BUTTONS */
+        /* ═══════════════════════════════════════════════════════════════ */
+
+        .btn-row {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--text);
+            color: var(--text);
+        }
+
+        .btn-primary {
+            background: var(--gold);
+            border: none;
+            color: #0A0A10;
+        }
+
+        .btn-primary:hover { opacity: 0.9; }
+
+        .btn-primary:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════ */
+        /* PROGRESS */
+        /* ═══════════════════════════════════════════════════════════════ */
+
+        .progress-bar {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .progress-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--border);
+            transition: all 0.3s;
+        }
+
+        .progress-dot.active { background: var(--gold); }
+        .progress-dot.complete { background: var(--success); }
+
+        /* ═══════════════════════════════════════════════════════════════ */
+        /* SUCCESS STATE */
+        /* ═══════════════════════════════════════════════════════════════ */
+
+        .success-card {
+            text-align: center;
+            padding: 3rem 2rem;
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .success-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--success);
+            margin-bottom: 0.5rem;
+        }
+
+        .success-did {
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            color: var(--gold);
+            background: var(--bg);
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            word-break: break-all;
+        }
+
+        .success-btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: var(--gold);
+            color: #0A0A10;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+
+        /* ═══════════════════════════════════════════════════════════════ */
+        /* LOADING */
+        /* ═══════════════════════════════════════════════════════════════ */
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .loading.active { display: block; }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ═══════════════════════════════════════════════════════════════ */
+        /* FOOTER */
+        /* ═══════════════════════════════════════════════════════════════ */
+
+        .footer {
+            margin-top: auto;
+            padding-top: 2rem;
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            font-family: var(--font-mono);
+        }
+
+        .footer a { color: var(--gold); text-decoration: none; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">WINDI LAW</div>
+        <div class="controls">
+            <button class="lang-btn active" data-lang="de">DE</button>
+            <button class="lang-btn" data-lang="en">EN</button>
+            <button class="lang-btn" data-lang="pt">PT</button>
+            <button class="theme-btn" onclick="toggleTheme()">&#9728;</button>
+        </div>
+    </header>
+
+    <!-- Progress -->
+    <div class="progress-bar">
+        <div class="progress-dot active" data-step="1"></div>
+        <div class="progress-dot" data-step="2"></div>
+        <div class="progress-dot" data-step="3"></div>
+        <div class="progress-dot" data-step="4"></div>
+        <div class="progress-dot" data-step="5"></div>
+    </div>
+
+    <!-- Wizard -->
+    <div class="wizard">
+        <!-- STEP 1: Company -->
+        <div class="step active" data-step="1">
+            <div class="step-header">
+                <div class="step-number">1</div>
+                <h2 class="step-title" data-i18n="step1_title">Unternehmen</h2>
+            </div>
+            <p class="step-desc" data-i18n="step1_desc">
+                Rechtliche Informationen Ihres Unternehmens oder Ihrer Kanzlei.
+            </p>
+
+            <div class="form-group">
+                <label class="form-label" data-i18n="legal_name">Rechtlicher Name</label>
+                <input type="text" class="form-input" id="legal_name" placeholder="Mustermann & Partner Rechtsanwalte" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" data-i18n="country">Land</label>
+                <select class="form-select" id="country">
+                    <option value="DE">Deutschland</option>
+                    <option value="AT">Osterreich</option>
+                    <option value="CH">Schweiz</option>
+                    <option value="PT">Portugal</option>
+                    <option value="BR">Brasil</option>
+                    <option value="INT">International</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" data-i18n="vat_number">USt-IdNr. / NIF</label>
+                <input type="text" class="form-input" id="vat_number" placeholder="DE123456789">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" data-i18n="company_type">Typ</label>
+                <div class="radio-group" id="company_type">
+                    <label class="radio-option selected">
+                        <input type="radio" name="type" value="law_firm" checked>
+                        <span data-i18n="type_law_firm">Kanzlei</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="type" value="corporation">
+                        <span data-i18n="type_corporation">Unternehmen</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="type" value="individual">
+                        <span data-i18n="type_individual">Einzelperson</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn btn-primary" onclick="nextStep(2)" data-i18n="next">Weiter</button>
+            </div>
+        </div>
+
+        <!-- STEP 2: Admin -->
+        <div class="step" data-step="2">
+            <div class="step-header">
+                <div class="step-number">2</div>
+                <h2 class="step-title" data-i18n="step2_title">Verantwortlicher</h2>
+            </div>
+            <p class="step-desc" data-i18n="step2_desc">
+                Die Person, die rechtlich fur dieses Konto verantwortlich ist.
+            </p>
+
+            <div class="form-group">
+                <label class="form-label" data-i18n="full_name">Vollstandiger Name</label>
+                <input type="text" class="form-input" id="admin_name" placeholder="Max Mustermann" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-input" id="admin_email" placeholder="max@kanzlei.de" required>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" data-i18n="role">Rolle</label>
+                <input type="text" class="form-input" value="Rechtlich Verantwortlicher" disabled>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn btn-secondary" onclick="prevStep(1)" data-i18n="back">Zuruck</button>
+                <button class="btn btn-primary" onclick="nextStep(3)" data-i18n="next">Weiter</button>
+            </div>
+        </div>
+
+        <!-- STEP 3: Wallet + DID (Generated) -->
+        <div class="step" data-step="3">
+            <div class="step-header">
+                <div class="step-number">3</div>
+                <h2 class="step-title" data-i18n="step3_title">Souverane Identitat</h2>
+            </div>
+            <p class="step-desc" data-i18n="step3_desc">
+                Ihre kryptographische Identitat wird jetzt generiert.
+            </p>
+
+            <div class="loading" id="generating">
+                <div class="spinner"></div>
+                <p data-i18n="generating">Generiere Identitat...</p>
+            </div>
+
+            <div class="did-display" id="did_display" style="display:none;">
+                <div class="did-row">
+                    <span class="did-label">DID</span>
+                    <span class="did-value" id="did_value">-</span>
+                </div>
+                <div class="did-row">
+                    <span class="did-label">Fingerprint</span>
+                    <span class="did-value" id="fingerprint_value">-</span>
+                </div>
+                <div class="did-row">
+                    <span class="did-label">Public Key</span>
+                    <span class="did-value" id="pubkey_value" style="font-size:0.7rem;">-</span>
+                </div>
+            </div>
+
+            <div class="sovereign-message" id="sovereign_msg" style="display:none;">
+                <div class="sovereign-icon">&#128274;</div>
+                <p class="sovereign-text" data-i18n="sovereign_msg">
+                    Ihre souverane Identitat wurde generiert. Niemand sonst hat Zugang.
+                </p>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn btn-secondary" onclick="prevStep(2)" data-i18n="back">Zuruck</button>
+                <button class="btn btn-primary" id="btn_step3" onclick="nextStep(4)" disabled data-i18n="next">Weiter</button>
+            </div>
+        </div>
+
+        <!-- STEP 4: API Keys -->
+        <div class="step" data-step="4">
+            <div class="step-header">
+                <div class="step-number">4</div>
+                <h2 class="step-title" data-i18n="step4_title">API Schlussel</h2>
+            </div>
+            <p class="step-desc" data-i18n="step4_desc">
+                Ihre Zugangsschlussel fur die WINDI-Infrastruktur.
+            </p>
+
+            <div class="did-display">
+                <div class="did-row">
+                    <span class="did-label">API Key</span>
+                    <span class="did-value" id="api_key_value">wl_***</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" data-i18n="scope">Berechtigungen</label>
+                <div style="display:flex;flex-direction:column;gap:0.5rem;">
+                    <label style="display:flex;align-items:center;gap:0.5rem;">
+                        <input type="checkbox" checked disabled style="accent-color:var(--gold);">
+                        <span style="color:var(--text);">verify</span>
+                        <span style="color:var(--text-tertiary);font-size:0.75rem;">— Ledger abfragen</span>
+                    </label>
+                    <label style="display:flex;align-items:center;gap:0.5rem;">
+                        <input type="checkbox" checked disabled style="accent-color:var(--gold);">
+                        <span style="color:var(--text);">seal</span>
+                        <span style="color:var(--text-tertiary);font-size:0.75rem;">— Dokumente versiegeln</span>
+                    </label>
+                    <label style="display:flex;align-items:center;gap:0.5rem;">
+                        <input type="checkbox" disabled style="accent-color:var(--gold);">
+                        <span style="color:var(--text-tertiary);">agents</span>
+                        <span style="color:var(--text-tertiary);font-size:0.75rem;">— Erfordert Upgrade</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="btn-row">
+                <button class="btn btn-secondary" onclick="prevStep(3)" data-i18n="back">Zuruck</button>
+                <button class="btn btn-primary" onclick="nextStep(5)" data-i18n="next">Weiter</button>
+            </div>
+        </div>
+
+        <!-- STEP 5: Consents -->
+        <div class="step" data-step="5">
+            <div class="step-header">
+                <div class="step-number">5</div>
+                <h2 class="step-title" data-i18n="step5_title">Einwilligung</h2>
+            </div>
+            <p class="step-desc" data-i18n="step5_desc">
+                EU AI Act Art.14 - Transparenzpflichten.
+            </p>
+
+            <div class="consent-item">
+                <input type="checkbox" class="consent-checkbox" id="consent_ledger">
+                <span class="consent-text" data-i18n="consent_ledger">
+                    Ich akzeptiere, dass alle Aktionen im Forensic Ledger registriert werden (I11).
+                </span>
+            </div>
+
+            <div class="consent-item">
+                <input type="checkbox" class="consent-checkbox" id="consent_ai">
+                <span class="consent-text" data-i18n="consent_ai">
+                    Ich verstehe, dass das System nicht fur mich entscheidet (I9 + G3).
+                </span>
+            </div>
+
+            <div class="consent-item">
+                <input type="checkbox" class="consent-checkbox" id="consent_legal">
+                <span class="consent-text" data-i18n="consent_legal">
+                    Ich bestatige, dass ich rechtlich verantwortlich fur dieses Konto bin.
+                </span>
+            </div>
+
+            <p class="consent-note" data-i18n="consent_note">
+                Diese Einwilligung wird im Forensic Ledger versiegelt.
+            </p>
+
+            <div class="btn-row">
+                <button class="btn btn-secondary" onclick="prevStep(4)" data-i18n="back">Zuruck</button>
+                <button class="btn btn-primary" id="btn_complete" onclick="completeRegistration()" disabled data-i18n="complete">
+                    Identitat erstellen
+                </button>
+            </div>
+        </div>
+
+        <!-- SUCCESS -->
+        <div class="step" data-step="success">
+            <div class="success-card">
+                <div class="success-icon">&#10004;</div>
+                <h2 class="success-title" data-i18n="success_title">Identitat erstellt</h2>
+                <p class="success-did" id="success_did">did:windi:...</p>
+                <p style="color:var(--text-secondary);margin-bottom:1rem;" data-i18n="success_msg">
+                    Ihre Identitat wurde im Forensic Ledger versiegelt.
+                </p>
+                <a href="/law/workspace/" class="success-btn" data-i18n="enter_workspace">Workspace betreten</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>WINDI LAW &mdash; Sovereign Document Infrastructure</p>
+        <p style="margin-top:0.5rem;">
+            <a href="/law/landing/">Landing</a> &middot;
+            <a href="/verify-public/">Verify</a> &middot;
+            Invariants: I9 &middot; I11 &middot; I13 &middot; G3
+        </p>
+    </footer>
+
+    <script>
+        // ═══════════════════════════════════════════════════════════════
+        // I18N
+        // ═══════════════════════════════════════════════════════════════
+
+        const I18N = {
+            de: {
+                step1_title: "Unternehmen",
+                step1_desc: "Rechtliche Informationen Ihres Unternehmens oder Ihrer Kanzlei.",
+                step2_title: "Verantwortlicher",
+                step2_desc: "Die Person, die rechtlich fur dieses Konto verantwortlich ist.",
+                step3_title: "Souverane Identitat",
+                step3_desc: "Ihre kryptographische Identitat wird jetzt generiert.",
+                step4_title: "API Schlussel",
+                step4_desc: "Ihre Zugangsschlussel fur die WINDI-Infrastruktur.",
+                step5_title: "Einwilligung",
+                step5_desc: "EU AI Act Art.14 - Transparenzpflichten.",
+                legal_name: "Rechtlicher Name",
+                country: "Land",
+                vat_number: "USt-IdNr. / NIF",
+                company_type: "Typ",
+                type_law_firm: "Kanzlei",
+                type_corporation: "Unternehmen",
+                type_individual: "Einzelperson",
+                full_name: "Vollstandiger Name",
+                role: "Rolle",
+                generating: "Generiere Identitat...",
+                sovereign_msg: "Ihre souverane Identitat wurde generiert. Niemand sonst hat Zugang.",
+                scope: "Berechtigungen",
+                consent_ledger: "Ich akzeptiere, dass alle Aktionen im Forensic Ledger registriert werden (I11).",
+                consent_ai: "Ich verstehe, dass das System nicht fur mich entscheidet (I9 + G3).",
+                consent_legal: "Ich bestatige, dass ich rechtlich verantwortlich fur dieses Konto bin.",
+                consent_note: "Diese Einwilligung wird im Forensic Ledger versiegelt.",
+                next: "Weiter",
+                back: "Zuruck",
+                complete: "Identitat erstellen",
+                success_title: "Identitat erstellt",
+                success_msg: "Ihre Identitat wurde im Forensic Ledger versiegelt.",
+                enter_workspace: "Workspace betreten"
+            },
+            en: {
+                step1_title: "Company",
+                step1_desc: "Legal information about your company or law firm.",
+                step2_title: "Responsible Person",
+                step2_desc: "The person legally responsible for this account.",
+                step3_title: "Sovereign Identity",
+                step3_desc: "Your cryptographic identity is being generated.",
+                step4_title: "API Keys",
+                step4_desc: "Your access keys for the WINDI infrastructure.",
+                step5_title: "Consent",
+                step5_desc: "EU AI Act Art.14 - Transparency requirements.",
+                legal_name: "Legal Name",
+                country: "Country",
+                vat_number: "VAT / Tax ID",
+                company_type: "Type",
+                type_law_firm: "Law Firm",
+                type_corporation: "Corporation",
+                type_individual: "Individual",
+                full_name: "Full Name",
+                role: "Role",
+                generating: "Generating identity...",
+                sovereign_msg: "Your sovereign identity has been generated. No one else has access.",
+                scope: "Permissions",
+                consent_ledger: "I accept that all actions are registered in the Forensic Ledger (I11).",
+                consent_ai: "I understand that the system does not decide for me (I9 + G3).",
+                consent_legal: "I confirm that I am legally responsible for this account.",
+                consent_note: "This consent will be sealed in the Forensic Ledger.",
+                next: "Next",
+                back: "Back",
+                complete: "Create Identity",
+                success_title: "Identity Created",
+                success_msg: "Your identity has been sealed in the Forensic Ledger.",
+                enter_workspace: "Enter Workspace"
+            },
+            pt: {
+                step1_title: "Empresa",
+                step1_desc: "Informacoes legais da sua empresa ou escritorio.",
+                step2_title: "Responsavel",
+                step2_desc: "A pessoa legalmente responsavel por esta conta.",
+                step3_title: "Identidade Soberana",
+                step3_desc: "A sua identidade criptografica esta a ser gerada.",
+                step4_title: "Chaves API",
+                step4_desc: "As suas chaves de acesso para a infraestrutura WINDI.",
+                step5_title: "Consentimento",
+                step5_desc: "EU AI Act Art.14 - Requisitos de transparencia.",
+                legal_name: "Nome Legal",
+                country: "Pais",
+                vat_number: "NIF / CNPJ",
+                company_type: "Tipo",
+                type_law_firm: "Escritorio Juridico",
+                type_corporation: "Empresa",
+                type_individual: "Individual",
+                full_name: "Nome Completo",
+                role: "Papel",
+                generating: "Gerando identidade...",
+                sovereign_msg: "A sua identidade soberana foi gerada. Ninguem mais tem acesso.",
+                scope: "Permissoes",
+                consent_ledger: "Aceito que todas as acoes sejam registadas no Forensic Ledger (I11).",
+                consent_ai: "Compreendo que o sistema nao decide por mim (I9 + G3).",
+                consent_legal: "Confirmo que sou o responsavel legal por esta conta.",
+                consent_note: "Este consentimento sera selado no Forensic Ledger.",
+                next: "Continuar",
+                back: "Voltar",
+                complete: "Criar Identidade",
+                success_title: "Identidade Criada",
+                success_msg: "A sua identidade foi selada no Forensic Ledger.",
+                enter_workspace: "Entrar no Workspace"
+            }
+        };
+
+        let currentLang = localStorage.getItem('windi-lang') || 'de';
+        let currentStep = 1;
+        let registrationData = {};
+
+        function setLang(lang) {
+            currentLang = lang;
+            localStorage.setItem('windi-lang', lang);
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.dataset.i18n;
+                if (I18N[lang] && I18N[lang][key]) {
+                    el.textContent = I18N[lang][key];
+                }
+            });
+        }
+
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', () => setLang(btn.dataset.lang));
+        });
+
+        // ═══════════════════════════════════════════════════════════════
+        // THEME
+        // ═══════════════════════════════════════════════════════════════
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.dataset.theme || 'noir';
+            const next = current === 'noir' ? 'klar' : 'noir';
+            html.dataset.theme = next;
+            localStorage.setItem('windi-theme', next);
+            document.querySelector('.theme-btn').innerHTML = next === 'noir' ? '&#9728;' : '&#9790;';
+        }
+
+        function initTheme() {
+            const saved = localStorage.getItem('windi-theme') || 'noir';
+            document.documentElement.dataset.theme = saved;
+            document.querySelector('.theme-btn').innerHTML = saved === 'noir' ? '&#9728;' : '&#9790;';
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // WIZARD NAVIGATION
+        // ═══════════════════════════════════════════════════════════════
+
+        function showStep(step) {
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.querySelector(`.step[data-step="${step}"]`).classList.add('active');
+
+            document.querySelectorAll('.progress-dot').forEach(dot => {
+                const dotStep = parseInt(dot.dataset.step);
+                dot.classList.remove('active', 'complete');
+                if (dotStep < step) dot.classList.add('complete');
+                if (dotStep === step) dot.classList.add('active');
+            });
+
+            currentStep = step;
+
+            // Step 3: Generate identity
+            if (step === 3 && !registrationData.did) {
+                generateIdentity();
+            }
+        }
+
+        function nextStep(step) {
+            if (!validateCurrentStep()) return;
+            showStep(step);
+        }
+
+        function prevStep(step) {
+            showStep(step);
+        }
+
+        function validateCurrentStep() {
+            if (currentStep === 1) {
+                const name = document.getElementById('legal_name').value.trim();
+                if (!name) {
+                    alert(I18N[currentLang].legal_name + ' required');
+                    return false;
+                }
+                registrationData.legal_name = name;
+                registrationData.country = document.getElementById('country').value;
+                registrationData.vat_number = document.getElementById('vat_number').value;
+                registrationData.type = document.querySelector('input[name="type"]:checked').value;
+            }
+            if (currentStep === 2) {
+                const name = document.getElementById('admin_name').value.trim();
+                const email = document.getElementById('admin_email').value.trim();
+                if (!name || !email) {
+                    alert('Name and email required');
+                    return false;
+                }
+                registrationData.admin_name = name;
+                registrationData.admin_email = email;
+            }
+            return true;
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // IDENTITY GENERATION
+        // ═══════════════════════════════════════════════════════════════
+
+        async function generateIdentity() {
+            document.getElementById('generating').classList.add('active');
+            document.getElementById('did_display').style.display = 'none';
+            document.getElementById('sovereign_msg').style.display = 'none';
+            document.getElementById('btn_step3').disabled = true;
+
+            try {
+                const response = await fetch('/law/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(registrationData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    registrationData.did = data.did;
+                    registrationData.fingerprint = data.fingerprint;
+                    registrationData.public_key = data.public_key;
+                    registrationData.api_key = data.api_key;
+                    registrationData.admin_id = data.admin_id;
+
+                    document.getElementById('did_value').textContent = data.did;
+                    document.getElementById('fingerprint_value').textContent = data.fingerprint;
+                    document.getElementById('pubkey_value').textContent = data.public_key;
+                    document.getElementById('api_key_value').textContent = data.api_key;
+
+                    document.getElementById('generating').classList.remove('active');
+                    document.getElementById('did_display').style.display = 'block';
+                    document.getElementById('sovereign_msg').style.display = 'block';
+                    document.getElementById('btn_step3').disabled = false;
+                } else {
+                    throw new Error(data.detail || 'Registration failed');
+                }
+            } catch (error) {
+                document.getElementById('generating').classList.remove('active');
+                alert('Error: ' + error.message);
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // CONSENTS
+        // ═══════════════════════════════════════════════════════════════
+
+        function checkConsents() {
+            const c1 = document.getElementById('consent_ledger').checked;
+            const c2 = document.getElementById('consent_ai').checked;
+            const c3 = document.getElementById('consent_legal').checked;
+            document.getElementById('btn_complete').disabled = !(c1 && c2 && c3);
+        }
+
+        document.getElementById('consent_ledger').addEventListener('change', checkConsents);
+        document.getElementById('consent_ai').addEventListener('change', checkConsents);
+        document.getElementById('consent_legal').addEventListener('change', checkConsents);
+
+        // ═══════════════════════════════════════════════════════════════
+        // COMPLETE REGISTRATION
+        // ═══════════════════════════════════════════════════════════════
+
+        async function completeRegistration() {
+            try {
+                // Sign consents
+                await fetch('/law/consent/sign', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        admin_id: registrationData.admin_id,
+                        consent_ledger: true,
+                        consent_ai: true,
+                        eu_ai_act_art14: true
+                    })
+                });
+
+                // Store DID in session
+                sessionStorage.setItem('windi_law_did', registrationData.did);
+                sessionStorage.setItem('windi_law_fingerprint', registrationData.fingerprint);
+
+                // Show success
+                document.getElementById('success_did').textContent = registrationData.did;
+                showStep('success');
+
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // RADIO BUTTONS
+        // ═══════════════════════════════════════════════════════════════
+
+        document.querySelectorAll('.radio-option').forEach(option => {
+            option.addEventListener('click', () => {
+                document.querySelectorAll('.radio-option').forEach(o => o.classList.remove('selected'));
+                option.classList.add('selected');
+                option.querySelector('input').checked = true;
+            });
+        });
+
+        // ═══════════════════════════════════════════════════════════════
+        // INIT
+        // ═══════════════════════════════════════════════════════════════
+
+        initTheme();
+        setLang(currentLang);
+    </script>
+</body>
+</html>
