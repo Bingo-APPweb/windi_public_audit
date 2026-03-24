@@ -270,7 +270,6 @@ async def health():
         "service": f"WINDI-LAW Identity Gate {VERSION}",
         "status": "healthy",
         "port": 8122,
-        "db": DB_PATH,
         "companies": companies,
         "admins": admins,
         "invariants": ["I9", "I11", "I13", "G3"],
@@ -356,7 +355,32 @@ async def register(data: CompanyRegister, request: Request):
 
     except sqlite3.IntegrityError as e:
         conn.close()
-        raise HTTPException(status_code=400, detail=f"Registration failed: {str(e)}")
+        err = str(e).lower()
+
+        # P0 FIX: Esconder detalhes internos — I13: dar acção ao utilizador
+        if "unique" in err and "email" in err:
+            raise HTTPException(status_code=409, detail={
+                "error": "Email já registado no sistema",
+                "code": "DUPLICATE_EMAIL",
+                "action": "Aceda ao seu dashboard ou use outro email",
+                "gate": "/law/gate"
+            })
+        elif "unique" in err and ("vat" in err or "company" in err):
+            raise HTTPException(status_code=409, detail={
+                "error": "Entidade já registada no sistema",
+                "code": "DUPLICATE_ENTITY",
+                "action": "Contacte o administrador da conta existente",
+                "gate": "/law/gate"
+            })
+        else:
+            # Nunca expor o erro real — log interno apenas
+            import logging
+            logging.error(f"[WINDI-LAW] Register IntegrityError: {e}")
+            raise HTTPException(status_code=500, detail={
+                "error": "Erro no registo",
+                "code": "REGISTRATION_FAILED",
+                "action": "Tente novamente ou contacte o suporte"
+            })
 
 
 @app.post("/wallet/create")
@@ -443,7 +467,14 @@ async def identity_get(did: str):
     conn.close()
 
     if not row:
-        raise HTTPException(status_code=404, detail="Identity not found")
+        # P1 FIX: I13 - dar acção ao utilizador
+        raise HTTPException(status_code=404, detail={
+            "error": "Identidade não encontrada",
+            "code": "NOT_FOUND",
+            "did": did,
+            "action": "Registe a sua entidade em /law/gate",
+            "gate": "/law/gate"
+        })
 
     return {
         "admin_id": row[0],
@@ -552,6 +583,95 @@ async def consent_sign(data: ConsentSign, request: Request):
 async def gate_ui(request: Request):
     """Render Identity Gate UI."""
     return templates.TemplateResponse("gate.html", {"request": request})
+
+
+# ═══════════════════════════════════════════════════════════════
+# WORKSPACE — FAIL-CLOSED (P0 CRITICAL)
+# ═══════════════════════════════════════════════════════════════
+
+from fastapi.responses import RedirectResponse
+
+@app.get("/workspace/")
+@app.get("/workspace")
+async def workspace_gate(request: Request):
+    """
+    Workspace só abre com DID VERIFIED.
+    P0 FIX: FAIL-CLOSED — sem DID válido, redirige para /gate
+    """
+    did = request.headers.get("X-WINDI-DID", "").strip()
+
+    # Também verificar query param e cookie como fallback
+    if not did:
+        did = request.query_params.get("did", "").strip()
+    if not did:
+        did = request.cookies.get("windi_did", "").strip()
+
+    if not did:
+        return RedirectResponse(url="/law/gate", status_code=302)
+
+    # Verificar DID no DB
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("SELECT state FROM admins WHERE did = ?", (did,))
+    admin = cursor.fetchone()
+    conn.close()
+
+    if not admin:
+        return RedirectResponse(url="/law/gate", status_code=302)
+
+    admin_state = admin[0]
+
+    if admin_state != STATE_VERIFIED:
+        # Mostrar wall de verificação pendente
+        return HTMLResponse(content=f"""
+        <!DOCTYPE html>
+        <html lang="de">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>WINDI LAW — Identität in Prüfung</title>
+            <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+        </head>
+        <body style="background:#07090D;color:#F5F0E0;
+          font-family:'JetBrains Mono',monospace;
+          display:flex;align-items:center;justify-content:center;
+          min-height:100vh;text-align:center;margin:0;">
+          <div>
+            <div style="font-size:48px;margin-bottom:1.5rem">🔐</div>
+            <div style="font-size:18px;font-weight:500;
+              color:#C9A84C;margin-bottom:0.75rem">
+              Identidade em Verificação
+            </div>
+            <div style="font-size:13px;color:rgba(245,240,224,0.6);
+              margin-bottom:2rem;max-width:420px;line-height:1.6">
+              O Human Dragon irá validar a sua conta.<br>
+              Estado actual: <strong style="color:#C9A84C">{admin_state}</strong>
+            </div>
+            <a href="/law/gate" style="font-size:12px;
+              color:rgba(201,168,76,0.8);text-decoration:none;
+              border:1px solid rgba(201,168,76,0.3);
+              padding:10px 20px;border-radius:4px;
+              transition:all 0.2s ease;">
+              ← Voltar ao Gate
+            </a>
+          </div>
+        </body>
+        </html>
+        """, status_code=403)
+
+    # DID VERIFIED — servir workspace
+    try:
+        with open("/opt/windi/windi-law/workspace/index.html", "r", encoding="utf-8") as f:
+            return HTMLResponse(content=f.read())
+    except FileNotFoundError:
+        return HTMLResponse(content="""
+        <html><body style="background:#07090D;color:#F5F0E0;
+          font-family:monospace;text-align:center;padding:4rem;">
+          <h1 style="color:#C9A84C">Workspace em Construção</h1>
+          <p>O workspace está a ser preparado.</p>
+          <a href="/law/dashboard/{did}" style="color:#C9A84C">Ver Dashboard →</a>
+        </body></html>
+        """.format(did=did), status_code=200)
 
 
 # ═══════════════════════════════════════════════════════════════
