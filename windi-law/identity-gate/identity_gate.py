@@ -730,13 +730,16 @@ async def dashboard(did: str, request: Request):
 
 @app.get("/dashboard/{did}/json")
 async def dashboard_json(did: str):
-    """Get dashboard data as JSON (for API access)."""
+    """
+    P2 FIX: Export Identity Card portátil com genesis_receipt + verify_url garantidos.
+    Formato: windi_identity_card v1.0
+    """
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
     cursor.execute("""
         SELECT a.id, a.full_name, a.email, a.did, a.fingerprint, a.state, a.created_at,
-               c.legal_name, c.country, c.type, c.ledger_receipt
+               c.legal_name, c.country, c.type, c.ledger_receipt, c.vat_number
         FROM admins a
         JOIN companies c ON a.company_id = c.id
         WHERE a.did = ?
@@ -745,31 +748,52 @@ async def dashboard_json(did: str):
 
     if not admin:
         conn.close()
-        raise HTTPException(status_code=404, detail="Identity not found")
+        raise HTTPException(status_code=404, detail={
+            "error": "Identity not found",
+            "code": "NOT_FOUND",
+            "action": "Register at /law/gate"
+        })
 
+    # Count API keys
     cursor.execute("""
-        SELECT api_key, scope FROM api_keys WHERE admin_id = ? AND active = 1
+        SELECT COUNT(*) FROM api_keys WHERE admin_id = ? AND active = 1
     """, (admin[0],))
-    keys = cursor.fetchall()
+    keys_count = cursor.fetchone()[0]
     conn.close()
 
+    # P2 FIX: Gerar genesis_receipt_id a partir do DID
+    # Padrão: WINDI-LAW-GENESIS-{did_uuid[:8].upper()}
+    did_uuid = did.split(":")[-1] if ":" in did else did
+    did_short = did_uuid.replace("-", "")[:8].upper()
+    genesis_receipt_id = f"WINDI-LAW-GENESIS-{did_short}"
+
+    # Usar receipt do DB se existir, senão usar o gerado
+    actual_receipt = admin[10] if admin[10] else genesis_receipt_id
+
+    # verify_url canónica — sempre presente
+    verify_url = f"https://windi-domain.com/verify-public/?id={actual_receipt}"
+
+    # Identity Card portátil — formato exportável v1.0
     return {
-        "did": admin[3],
-        "fingerprint": admin[4],
-        "state": admin[5],
-        "entity": {
-            "name": admin[7],
+        "windi_identity_card": {
+            "version": "1.0",
+            "did": admin[3],
+            "entity": admin[7],
+            "admin": admin[1],
+            "email": admin[2],
             "country": admin[8],
-            "type": admin[9]
-        },
-        "admin": {
-            "name": admin[1],
-            "email": admin[2]
-        },
-        "created_at": admin[6],
-        "genesis_receipt": admin[10],
-        "verify_url": f"https://windi-domain.com/verify-public/?id={admin[10]}" if admin[10] else None,
-        "keys_count": len(keys)
+            "type": admin[9],
+            "vat_number": admin[11],
+            "status": admin[5],
+            "fingerprint": admin[4],
+            "created_at": admin[6],
+            "genesis_receipt": actual_receipt,
+            "verify_url": verify_url,
+            "keys_count": keys_count,
+            "invariants": ["I9", "I11", "I13", "G3"],
+            "constitutional_phrase": "Verification is not requested. It is granted.",
+            "issued_by": "WINDI-LAW · Liga IA+H · Kempten, Bavaria"
+        }
     }
 
 
