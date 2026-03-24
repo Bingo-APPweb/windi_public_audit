@@ -730,6 +730,14 @@ def create_agent_api(agent: WindiAgent):
     except ImportError as e:
         print(f"  [INTENT] W-INTENT-001 not loaded: {e}")
 
+    # W-COUNSEL-001: Sovereign Counsel — Coaching Layer + Sovereign Training
+    try:
+        from blueprints.counsel_blueprint import counsel
+        app.register_blueprint(counsel)
+        print("  [COUNSEL] W-COUNSEL-001 v1.0 loaded on /grove/counsel/*")
+    except ImportError as e:
+        print(f"  [COUNSEL] W-COUNSEL-001 not loaded: {e}")
+
     @app.route("/agent/health", methods=["GET"])
     def health():
         return jsonify({
