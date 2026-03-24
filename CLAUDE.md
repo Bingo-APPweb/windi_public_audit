@@ -1221,3 +1221,61 @@ Interface → Usage → Identity
 *LIGA IA+H — Kempten, Bavaria · 2026*
 *🧑‍💻 Human Dragon · 🛡️ Guardian · 🏗️ Architect · 👁️ Witness*
 *"AI processes. Human decides. WINDI guarantees."*
+
+## WINDI-LAW v1.1.0 — 24 Mar 2026 ✅ SEALED
+
+**Service:** `/law/` → `:8122` | **Commits:** 7 pushed
+
+### Estado
+| Componente | Status |
+|---|---|
+| Identity Gate `:8122` | ✅ LIVE |
+| Dashboard | ✅ Max Mustermann + Anna Schmidt VERIFIED |
+| Admin Panel | ✅ Human Dragon soberano (`X-Admin-Secret`) |
+| Policies trilíngues PT/DE/EN | ✅ SEALED no Ledger |
+| P0+P1+P2 security fixes | ✅ 5/5 validados (fail-closed) |
+| Prompt Area v1 | ✅ Lab LIVE |
+
+### Commits
+```
+4b193a5  feat(law): WINDI-LAW v1.1.0 + Prompt Area v1 LIVE
+89579da  fix(windi-law): P2 genesis_receipt + verify_url
+440d160  fix(windi-law): P0+P1 security fixes — fail-closed
+e7a80c4  docs(memory): §49 WINDI-LAW complete — Trilingual
+d9b698c  docs(windi-law): convert policies to trilingual
+0b841aa  docs(windi-law): Verification Policies v1.0
+8566e65  feat(windi-law): Dashboard + Admin Panel
+```
+
+### Ledger Receipts
+```
+WINDI-LAW-IDENTITY-GATE-ARCH-20260324
+WINDI-LAW-GENESIS-9E2B02B4-20260324171414
+WINDI-LAW-VERIFY-F0CB5B7F-20260324192729
+WINDI-LAW-VERIFY-C7EC1E68-20260324192738
+WINDI-LAW-POLICIES-TRILINGUAL-V1.0-20260324
+```
+
+### URLs Live
+```
+Gate:        https://windi-domain.com/law/gate
+Dashboard:   https://windi-domain.com/law/dashboard/{did}
+Admin:       https://windi-domain.com/law/admin/panel
+Prompt Area: https://windi-domain.com/law/prompt-area/
+Workspace:   https://windi-domain.com/law/workspace/  (fail-closed)
+```
+
+### Modelo de estados
+```
+UNBORN → PROVISIONAL → VERIFIED
+```
+> "Verification is not requested. It is granted."
+
+### Architectural constants
+- **Port:** 8122 | **Path:** `/opt/windi/windi-law/`
+- **Service type:** nohup (não systemd)
+- **DB:** `windi_law_identity.db` (SQLite)
+- **Auth:** `X-Admin-Secret` header para `/law/admin/*`
+- **Workspace:** fail-closed (sem DID verificado → acesso negado)
+
+---
