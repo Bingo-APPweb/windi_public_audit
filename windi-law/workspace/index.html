@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WINDI LAW — Institutional Workspace</title>
+<title>WINDI LAW — Institutional Workspace v3.1</title>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -439,6 +439,95 @@ body { background:var(--bg); color:var(--parch); font-family:var(--font); displa
 ::-webkit-scrollbar { width:4px; }
 ::-webkit-scrollbar-track { background:transparent; }
 ::-webkit-scrollbar-thumb { background:rgba(245,240,224,0.08); border-radius:2px; }
+
+/* ── v3.1 FUSION: Components from Prompt Area v1 ── */
+
+/* DID Badge in topbar */
+.tl-did {
+  font-family:var(--mono); font-size:9px; letter-spacing:0.06em;
+  color:var(--dim); padding:3px 8px;
+  border:0.5px solid var(--border); border-radius:2px;
+}
+.tl-status {
+  font-family:var(--mono); font-size:8px; letter-spacing:0.1em;
+  padding:2px 7px; border-radius:2px;
+  color:var(--high); border:0.5px solid rgba(46,194,126,0.3);
+  background:var(--high-p); text-transform:uppercase;
+}
+
+/* Truth selector - SEPARATE row above command bar */
+.truth-row {
+  display:flex; align-items:center; gap:6px;
+  margin-bottom:0.6rem;
+}
+.truth-label {
+  font-family:var(--mono); font-size:8px; letter-spacing:0.1em;
+  text-transform:uppercase; color:var(--dim); margin-right:4px;
+}
+.truth-btn {
+  font-family:var(--mono); font-size:9px; letter-spacing:0.08em;
+  text-transform:uppercase; padding:4px 12px;
+  border:0.5px solid; border-radius:2px;
+  background:transparent; cursor:pointer; transition:all 0.15s;
+}
+.truth-btn.h { color:rgba(46,194,126,0.5); border-color:rgba(46,194,126,0.2); }
+.truth-btn.h.active { color:var(--high); border-color:rgba(46,194,126,0.5); background:var(--high-p); }
+.truth-btn.m { color:rgba(201,168,76,0.5); border-color:rgba(201,168,76,0.2); }
+.truth-btn.m.active { color:var(--med); border-color:rgba(201,168,76,0.5); background:var(--med-p); }
+.truth-btn.l { color:rgba(91,141,212,0.5); border-color:rgba(91,141,212,0.2); }
+.truth-btn.l.active { color:var(--low); border-color:rgba(91,141,212,0.5); background:var(--low-p); }
+.truth-desc {
+  font-family:var(--mono); font-size:8.5px; color:var(--dim);
+  margin-left:auto; letter-spacing:0.04em;
+  transition:color 0.2s;
+}
+
+/* Inspector - COLLAPSIBLE */
+.inspector.collapsed { width:0; padding:0; border-left:none; overflow:hidden; }
+.insp-toggle {
+  position:absolute; right:0; top:50%;
+  transform:translateY(-50%);
+  width:20px; height:40px;
+  background:var(--bg-3); border:0.5px solid var(--border-2);
+  border-right:none; border-radius:4px 0 0 4px;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; color:var(--dim); font-size:10px;
+  transition:all 0.15s; z-index:10;
+}
+.insp-toggle:hover { color:var(--gold); background:var(--gold-p); }
+.content-area { position:relative; }
+
+/* G3 Approval Button - HUMAN GATE */
+.g3-approval-zone {
+  display:flex; align-items:center; gap:8px;
+  padding:8px 12px; border-top:0.5px solid var(--border);
+  background:rgba(46,194,126,0.03);
+}
+.g3-btn {
+  font-family:var(--font); font-size:11px; font-weight:600;
+  letter-spacing:0.08em; text-transform:uppercase;
+  color:#0A0A10; background:var(--high);
+  border:none; border-radius:3px; padding:8px 18px;
+  cursor:pointer; flex-shrink:0; transition:all 0.2s;
+  display:flex; align-items:center; gap:6px;
+}
+.g3-btn:hover { background:#3dd996; transform:scale(1.02); }
+.g3-btn:disabled { background:var(--dim); cursor:not-allowed; transform:none; }
+.g3-label {
+  font-family:var(--mono); font-size:9px; letter-spacing:0.06em;
+  color:var(--muted); flex:1;
+}
+.g3-inv {
+  font-family:var(--mono); font-size:8px; letter-spacing:0.1em;
+  color:rgba(46,194,126,0.6); padding:2px 6px;
+  border:0.5px solid rgba(46,194,126,0.2); border-radius:2px;
+}
+
+/* Preset label */
+.preset-label {
+  font-family:var(--mono); font-size:8px; letter-spacing:0.1em;
+  text-transform:uppercase; color:var(--dim); margin-right:4px;
+}
 </style>
 </head>
 <body>
@@ -447,7 +536,8 @@ body { background:var(--bg); color:var(--parch); font-family:var(--font); displa
 <div class="topbar">
   <div class="topbar-left">
     <div class="tl-logo">WINDI<span>LAW</span></div>
-    <div class="tl-badge">β</div>
+    <div class="tl-did" id="tl-did">did:windi:···</div>
+    <div class="tl-status" id="tl-status">—</div>
   </div>
   <div class="topbar-center">
     <div class="breadcrumb">
@@ -552,17 +642,21 @@ body { background:var(--bg); color:var(--parch); font-family:var(--font); displa
 
     <!-- COMMAND BAR -->
     <div class="command-zone">
+      <!-- v3.1: Truth selector SEPARADO (from v1) -->
+      <div class="truth-row">
+        <span class="truth-label" id="tr-label">Wahrheitsebene</span>
+        <button class="truth-btn h active" onclick="setTruthV31('HIGH','h')" id="tb-h">Gerichtsfähig</button>
+        <button class="truth-btn m" onclick="setTruthV31('MED','m')" id="tb-m">Prozessual</button>
+        <button class="truth-btn l" onclick="setTruthV31('LOW','l')" id="tb-l">Analyse</button>
+        <span class="truth-desc" id="truth-desc">SHA-256 · Forensic Ledger · Unveränderlich</span>
+      </div>
       <div class="cmd-frame">
         <div class="cmd-agent-tag" id="cmd-agent-tag">W-LEGAL-001</div>
         <input type="text" id="law-cmd" placeholder="Beschreiben Sie Ihr rechtliches Anliegen…" onkeydown="handleCmd(event)">
-        <div class="cmd-truth-select">
-          <button class="cts-btn h active" onclick="setTruth('HIGH')">Gerichtsfähig</button>
-          <button class="cts-btn m" onclick="setTruth('MED')">Prozessual</button>
-          <button class="cts-btn l" onclick="setTruth('LOW')">Analyse</button>
-        </div>
         <button class="cmd-exec" onclick="execCmd()" id="exec-btn">Ausführen</button>
       </div>
       <div class="cmd-presets" id="cmd-presets">
+        <span class="preset-label" id="pr-label">Schnell</span>
         <span class="preset-chip" onclick="fillCmd(this.textContent)">NDA erstellen · ZPO §273</span>
         <span class="preset-chip" onclick="fillCmd(this.textContent)">Beweiskette · SHA-256</span>
         <span class="preset-chip" onclick="fillCmd(this.textContent)">Tribunalpaket · DE/EN/PT</span>
@@ -573,7 +667,7 @@ body { background:var(--bg); color:var(--parch); font-family:var(--font); displa
     </div>
 
     <!-- CONTENT -->
-    <div class="content-area">
+    <div class="content-area" style="position:relative;">
 
       <!-- DOC PANEL -->
       <div class="doc-panel" id="doc-panel">
@@ -592,14 +686,23 @@ body { background:var(--bg); color:var(--parch); font-family:var(--font); displa
             <div class="rc-row"><span class="rc-k" id="rc-k2">Domäne: </span><span class="rc-v" id="rc-v2">—</span></div>
             <div class="rc-row"><span class="rc-k" id="rc-k3">Zuständig: </span><span class="rc-v" id="rc-v3">—</span></div>
             <div class="rc-row"><span class="rc-k" id="rc-k4">Status: </span><span class="rc-v" id="rc-v4">—</span></div>
+            <div class="rc-row"><span class="rc-k" id="rc-k5">Nächster Schritt: </span><span class="rc-v" id="rc-v5">—</span></div>
             <div class="rc-row" style="grid-column:1/-1"><span class="rc-k">SHA-256: </span><span class="rc-hash" id="rc-hash">—</span></div>
           </div>
           <div class="rc-foot">
             <div class="rc-sealed">
               <div class="ls-dot"></div>
-              <span id="rc-sealed-text">Im Ledger versiegelt · I11</span>
+              <span id="rc-sealed-text">Entwurf · Warte auf Genehmigung</span>
             </div>
             <div class="rc-verify-link"><span id="rc-verify-pre">Verify: </span><a href="https://windi-domain.com/verify-public/" id="rc-link">windi-domain.com/verify-public/</a></div>
+          </div>
+          <!-- v3.1: G3 APPROVAL ZONE - Human Gate (MISSING from both v1 and v3!) -->
+          <div class="g3-approval-zone" id="g3-zone">
+            <span class="g3-label" id="g3-label">KI vorbereitet. Mensch entscheidet.</span>
+            <span class="g3-inv">G3 · I9</span>
+            <button class="g3-btn" id="g3-btn" onclick="approveG3()">
+              🛡️ <span id="g3-btn-text">Genehmigen</span>
+            </button>
           </div>
         </div>
 
@@ -682,8 +785,11 @@ body { background:var(--bg); color:var(--parch); font-family:var(--font); displa
 
       </div>
 
-      <!-- INSPECTOR -->
-      <div class="inspector">
+      <!-- v3.1: Inspector toggle button -->
+      <button class="insp-toggle" id="insp-toggle" onclick="toggleInspector()" title="Inspector">‹</button>
+
+      <!-- INSPECTOR (collapsible) -->
+      <div class="inspector collapsed" id="inspector">
 
         <div class="insp-section">
           <div class="insp-title">
@@ -786,6 +892,29 @@ body { background:var(--bg); color:var(--parch); font-family:var(--font); displa
 
 <script>
 var currentTheme = 'noir';
+var inspOpen = false;
+var pendingApproval = true;
+var currentHash = '';
+var walletDid = '';
+
+// v3.1: Load wallet from sessionStorage (injected by /law/gate)
+function initWallet() {
+  var stored = sessionStorage.getItem('windi_law_wallet');
+  if (stored) {
+    try {
+      var w = JSON.parse(stored);
+      walletDid = w.did || '';
+      var didShort = walletDid.length > 20 ? walletDid.substring(0,20)+'···' : walletDid;
+      document.getElementById('tl-did').textContent = didShort || 'did:windi:···';
+      document.getElementById('tl-status').textContent = w.state === 'VERIFIED' ? LANG[lang].tlStatusVerified : LANG[lang].tlStatusPending;
+      document.getElementById('tl-status').style.color = w.state === 'VERIFIED' ? 'var(--high)' : 'var(--med)';
+      document.getElementById('tl-status').style.borderColor = w.state === 'VERIFIED' ? 'rgba(46,194,126,0.3)' : 'rgba(201,168,76,0.3)';
+      document.getElementById('tl-status').style.background = w.state === 'VERIFIED' ? 'var(--high-p)' : 'var(--med-p)';
+      // Store globally for agent context injection
+      window.__windiLawWallet = w;
+    } catch(e) { console.error('[WINDI-LAW] Wallet parse error:', e); }
+  }
+}
 
 function toggleTheme() {
   var btn = document.getElementById('theme-toggle');
@@ -817,8 +946,8 @@ var LANG = {
     lsText:'Ledger · 8101 · aktiv',
     d1:'NDA · Müller GmbH', d2:'Audit · Q1-2026', d3:'Rechnung · 2026-0041', d4:'DSGVO-Analyse',
     daVerify:'Verify', daExport:'Export', daSeal:'Seal', daReview:'Review', daElster:'ELSTER XML', daGobd:'GoBD',
-    rcK1:'Aktion: ', rcK2:'Domäne: ', rcK3:'Zuständig: ', rcK4:'Status: ',
-    rcSealedText:'Im Ledger versiegelt · I11', rcVerifyPre:'Verify: ',
+    rcK1:'Aktion: ', rcK2:'Domäne: ', rcK3:'Zuständig: ', rcK4:'Status: ', rcK5:'Nächster Schritt: ',
+    rcSealedText:'Entwurf · Warte auf Genehmigung', rcSealedDone:'Im Ledger versiegelt · I11', rcVerifyPre:'Verify: ',
     dtLegal:'Legal', dtComply:'Compliance', dtAcct:'Buchhaltung',
     doc2Name:'BaFin Audit · Q1-2026 · MiCA Konformität',
     doc3Name:'XRechnung · 2026-0041 · GoBD konform',
@@ -835,7 +964,14 @@ var LANG = {
     abSeal:'Seal · I11', abVerify:'Verify', abExport:'Export DE', abChain:'Beweiskette',
     inspInvTitle:'Invarianten',
     invC6:'KI vorbereitet. Mensch genehmigt.',
-    stbLive:'● aktiv', stbLedger:'Ledger · :8101', stbAgents:'7 Agenten · online', stbReceipts:'40.918+ Receipts'
+    stbLive:'● aktiv', stbLedger:'Ledger · :8101', stbAgents:'7 Agenten · online', stbReceipts:'40.918+ Receipts',
+    // v3.1 fusion strings
+    trLabel:'Wahrheitsebene', tbH:'Gerichtsfähig', tbM:'Prozessual', tbL:'Analyse',
+    tdH:'SHA-256 · Forensic Ledger · Unveränderlich', tdM:'ZPO · eIDAS · Prozessstrategie', tdL:'Semantische · KI-Interpretation',
+    prLabel:'Schnell',
+    g3Label:'KI vorbereitet. Mensch entscheidet.', g3Btn:'Genehmigen', g3BtnDone:'Genehmigt ✓',
+    v5Ready:'Genehmigung erforderlich → Klicken Sie auf 🛡️', v5Done:'Versiegelt im Ledger',
+    tlStatus:'—', tlStatusVerified:'VERIFIED', tlStatusPending:'PENDING'
   },
   pt: {
     sbLAgents:'Constelação de Agentes', sbLDocs:'Documentos Recentes', sbLVerify:'Verificação',
@@ -849,8 +985,8 @@ var LANG = {
     lsText:'Ledger · 8101 · activo',
     d1:'NDA · Müller GmbH', d2:'Auditoria · Q1-2026', d3:'Fatura · 2026-0041', d4:'Análise RGPD',
     daVerify:'Verificar', daExport:'Exportar', daSeal:'Selar', daReview:'Rever', daElster:'ELSTER XML', daGobd:'GoBD',
-    rcK1:'Acção: ', rcK2:'Domínio: ', rcK3:'Responsável: ', rcK4:'Estado: ',
-    rcSealedText:'Selado no Ledger · I11', rcVerifyPre:'Verify: ',
+    rcK1:'Acção: ', rcK2:'Domínio: ', rcK3:'Responsável: ', rcK4:'Estado: ', rcK5:'Próximo passo: ',
+    rcSealedText:'Rascunho · Aguarda aprovação', rcSealedDone:'Selado no Ledger · I11', rcVerifyPre:'Verify: ',
     dtLegal:'Jurídico', dtComply:'Compliance', dtAcct:'Contábil',
     doc2Name:'Auditoria BaFin · Q1-2026 · Conformidade MiCA',
     doc3Name:'XRechnung · 2026-0041 · GoBD conforme',
@@ -867,7 +1003,14 @@ var LANG = {
     abSeal:'Selar · I11', abVerify:'Verificar', abExport:'Exportar PT', abChain:'Cadeia de Provas',
     inspInvTitle:'Invariantes',
     invC6:'IA prepara. Humano aprova.',
-    stbLive:'● activo', stbLedger:'Ledger · :8101', stbAgents:'7 Agentes · online', stbReceipts:'40.918+ Recibos'
+    stbLive:'● activo', stbLedger:'Ledger · :8101', stbAgents:'7 Agentes · online', stbReceipts:'40.918+ Recibos',
+    // v3.1 fusion strings
+    trLabel:'Nível de Verdade', tbH:'Válido em Tribunal', tbM:'Processual', tbL:'Análise',
+    tdH:'SHA-256 · Forensic Ledger · Imutável', tdM:'ZPO · eIDAS · Estratégia Processual', tdL:'Semântica · Interpretação IA',
+    prLabel:'Rápido',
+    g3Label:'IA prepara. Humano decide.', g3Btn:'Aprovar', g3BtnDone:'Aprovado ✓',
+    v5Ready:'Aprovação necessária → Clique em 🛡️', v5Done:'Selado no Ledger',
+    tlStatus:'—', tlStatusVerified:'VERIFICADO', tlStatusPending:'PENDENTE'
   },
   en: {
     sbLAgents:'Agent Constellation', sbLDocs:'Recent Documents', sbLVerify:'Verification',
@@ -881,8 +1024,8 @@ var LANG = {
     lsText:'Ledger · 8101 · active',
     d1:'NDA · Müller GmbH', d2:'Audit · Q1-2026', d3:'Invoice · 2026-0041', d4:'GDPR Analysis',
     daVerify:'Verify', daExport:'Export', daSeal:'Seal', daReview:'Review', daElster:'ELSTER XML', daGobd:'GoBD',
-    rcK1:'Action: ', rcK2:'Domain: ', rcK3:'Agent: ', rcK4:'Status: ',
-    rcSealedText:'Sealed in Ledger · I11', rcVerifyPre:'Verify: ',
+    rcK1:'Action: ', rcK2:'Domain: ', rcK3:'Agent: ', rcK4:'Status: ', rcK5:'Next step: ',
+    rcSealedText:'Draft · Awaiting approval', rcSealedDone:'Sealed in Ledger · I11', rcVerifyPre:'Verify: ',
     dtLegal:'Legal', dtComply:'Compliance', dtAcct:'Accounting',
     doc2Name:'BaFin Audit · Q1-2026 · MiCA Compliance',
     doc3Name:'XRechnung · 2026-0041 · GoBD compliant',
@@ -899,7 +1042,14 @@ var LANG = {
     abSeal:'Seal · I11', abVerify:'Verify', abExport:'Export EN', abChain:'Evidence Chain',
     inspInvTitle:'Invariants',
     invC6:'AI prepares. Human approves.',
-    stbLive:'● active', stbLedger:'Ledger · :8101', stbAgents:'7 Agents · online', stbReceipts:'40,918+ Receipts'
+    stbLive:'● active', stbLedger:'Ledger · :8101', stbAgents:'7 Agents · online', stbReceipts:'40,918+ Receipts',
+    // v3.1 fusion strings
+    trLabel:'Truth Level', tbH:'Court-Admissible', tbM:'Procedural', tbL:'Analysis',
+    tdH:'SHA-256 · Forensic Ledger · Immutable', tdM:'ZPO · eIDAS · Procedural Strategy', tdL:'Semantic · AI Interpretation',
+    prLabel:'Quick',
+    g3Label:'AI prepares. Human decides.', g3Btn:'Approve', g3BtnDone:'Approved ✓',
+    v5Ready:'Approval required → Click 🛡️', v5Done:'Sealed in Ledger',
+    tlStatus:'—', tlStatusVerified:'VERIFIED', tlStatusPending:'PENDING'
   }
 };
 
@@ -936,7 +1086,8 @@ function setLang(l) {
   document.getElementById('rc-k2').textContent = t.rcK2;
   document.getElementById('rc-k3').textContent = t.rcK3;
   document.getElementById('rc-k4').textContent = t.rcK4;
-  document.getElementById('rc-sealed-text').textContent = t.rcSealedText;
+  document.getElementById('rc-k5').textContent = t.rcK5;
+  document.getElementById('rc-sealed-text').textContent = pendingApproval ? t.rcSealedText : t.rcSealedDone;
   document.getElementById('rc-verify-pre').textContent = t.rcVerifyPre;
   document.getElementById('dt-legal').textContent = t.dtLegal;
   document.getElementById('dt-comply').textContent = t.dtComply;
@@ -968,15 +1119,84 @@ function setLang(l) {
   document.getElementById('stb-ledger').textContent = t.stbLedger;
   document.getElementById('stb-agents').textContent = t.stbAgents;
   document.getElementById('stb-receipts').textContent = t.stbReceipts;
+  // v3.1 fusion elements
+  document.getElementById('tr-label').textContent = t.trLabel;
+  document.getElementById('tb-h').textContent = t.tbH;
+  document.getElementById('tb-m').textContent = t.tbM;
+  document.getElementById('tb-l').textContent = t.tbL;
+  document.getElementById('pr-label').textContent = t.prLabel;
+  document.getElementById('g3-label').textContent = t.g3Label;
+  document.getElementById('g3-btn-text').textContent = pendingApproval ? t.g3Btn : t.g3BtnDone;
+  updateTruthDesc();
   var chips = document.querySelectorAll('.preset-chip');
   t.presets.forEach(function(p,i){ if(chips[i]) chips[i].textContent = p; });
 }
 
 function setTruth(level) {
   currentTruth = level;
-  document.querySelectorAll('.cts-btn').forEach(function(b){ b.classList.remove('active'); });
-  var map = {HIGH:'h',MED:'m',LOW:'l'};
-  document.querySelector('.cts-btn.'+map[level]).classList.add('active');
+  // v3.1: Remove old cts-btn logic, use truth-btn instead
+  setTruthV31(level, {HIGH:'h',MED:'m',LOW:'l'}[level]);
+}
+
+// v3.1: New truth selector with description update
+function setTruthV31(level, cls) {
+  currentTruth = level;
+  ['h','m','l'].forEach(function(c){
+    document.getElementById('tb-'+c).classList.remove('active');
+  });
+  document.getElementById('tb-'+cls).classList.add('active');
+  updateTruthDesc();
+}
+
+function updateTruthDesc() {
+  var t = LANG[lang];
+  var map = {HIGH:t.tdH, MED:t.tdM, LOW:t.tdL};
+  document.getElementById('truth-desc').textContent = map[currentTruth];
+}
+
+// v3.1: Collapsible inspector
+function toggleInspector() {
+  inspOpen = !inspOpen;
+  var insp = document.getElementById('inspector');
+  var btn = document.getElementById('insp-toggle');
+  if (inspOpen) {
+    insp.classList.remove('collapsed');
+    btn.textContent = '›';
+  } else {
+    insp.classList.add('collapsed');
+    btn.textContent = '‹';
+  }
+}
+
+// v3.1: G3 Human Approval - CRITICAL FOR CONSTITUTIONAL COMPLIANCE
+function approveG3() {
+  if (!pendingApproval) return;
+
+  var t = LANG[lang];
+  pendingApproval = false;
+
+  // Update UI to show approval
+  document.getElementById('g3-btn-text').textContent = t.g3BtnDone;
+  document.getElementById('g3-btn').disabled = true;
+  document.getElementById('g3-btn').style.background = 'var(--dim)';
+
+  // Update sealed status
+  document.getElementById('rc-sealed-text').textContent = t.rcSealedDone;
+  document.getElementById('rc-v5').textContent = t.v5Done;
+
+  // TODO: In production, this would call /api/law/seal with wallet context
+  // POST /api/law/seal { did: walletDid, hash: currentHash, human_approved: true }
+  console.log('[WINDI-LAW G3] Human approval granted:', {
+    did: walletDid,
+    hash: currentHash,
+    human_approved: true,
+    timestamp: new Date().toISOString()
+  });
+
+  // Visual feedback
+  var zone = document.getElementById('g3-zone');
+  zone.style.background = 'rgba(46,194,126,0.08)';
+  zone.style.borderTopColor = 'rgba(46,194,126,0.3)';
 }
 
 function switchAgent(agent) {
@@ -1001,23 +1221,39 @@ function handleCmd(e) {
 function execCmd() {
   var cmd = document.getElementById('law-cmd').value.trim();
   if(!cmd) return;
+
+  // Reset G3 state for new command
+  pendingApproval = true;
+  var t = LANG[lang];
+
   var now = new Date();
   var ts = now.toISOString().replace('T',' ').substring(0,19) + ' UTC';
-  var hash = Array.from({length:8},function(){ return Math.floor(Math.random()*16).toString(16); }).join('') + '…';
+  currentHash = 'sha256:' + Array.from({length:16},function(){ return Math.floor(Math.random()*16).toString(16); }).join('');
   var agentMap = {legal:'W-LEGAL-001',notary:'W-NOTARY-001',acct:'W-ACCT-001',comply:'W-COMPLY-001'};
   var agent = agentMap[currentAgent];
-  var t = LANG[lang];
+
   document.getElementById('rc-agent').textContent = agent + ' · Systementscheidung';
   document.getElementById('rc-ts').textContent = ts;
   document.getElementById('rc-v1').textContent = cmd.substring(0,40) + (cmd.length>40?'…':'');
   document.getElementById('rc-v2').textContent = currentAgent.charAt(0).toUpperCase()+currentAgent.slice(1);
   document.getElementById('rc-v3').textContent = agent;
-  document.getElementById('rc-v4').textContent = currentTruth === 'HIGH' ? (lang==='de'?'Bereit zur Versiegelung':lang==='pt'?'Pronto para selar':'Ready to seal') : (lang==='de'?'Entwurf':'Rascunho/Draft');
-  document.getElementById('rc-hash').textContent = 'sha256:' + hash;
-  document.getElementById('iv-hash').textContent = hash + '4e9b7f2a…';
+  document.getElementById('rc-v4').textContent = currentTruth === 'HIGH' ? (lang==='de'?'Bereit zur Versiegelung':lang==='pt'?'Pronto para selar':'Ready to seal') : (lang==='de'?'Entwurf':'Draft');
+  document.getElementById('rc-v5').textContent = t.v5Ready;
+  document.getElementById('rc-hash').textContent = currentHash.substring(0,24) + '…';
+  document.getElementById('iv-hash').textContent = currentHash.substring(7,23) + '…';
+
   var badge = document.getElementById('rc-badge');
   badge.textContent = currentTruth;
   badge.className = 'rc-truth-badge ' + (currentTruth==='HIGH'?'high':currentTruth==='MED'?'med':'low');
+
+  // Reset G3 button state
+  document.getElementById('rc-sealed-text').textContent = t.rcSealedText;
+  document.getElementById('g3-btn-text').textContent = t.g3Btn;
+  document.getElementById('g3-btn').disabled = false;
+  document.getElementById('g3-btn').style.background = 'var(--high)';
+  document.getElementById('g3-zone').style.background = 'rgba(46,194,126,0.03)';
+  document.getElementById('g3-zone').style.borderTopColor = 'var(--border)';
+
   document.getElementById('result-card').style.display = 'block';
   document.getElementById('law-cmd').value = '';
 }
@@ -1027,7 +1263,10 @@ function selectDoc(el, docId) {
   el.classList.add('active');
 }
 
+// v3.1: Initialize
 setLang('de');
+initWallet();
+updateTruthDesc();
 </script>
 </body>
 </html>

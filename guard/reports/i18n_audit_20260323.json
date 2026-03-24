@@ -1,0 +1,84 @@
+{
+  "report_id": "WSG-I18N-20260323-050000",
+  "audit_date": "2026-03-23T04:00:00.652539+00:00",
+  "pages_audited": 5,
+  "total_elements": 0,
+  "complete_count": 0,
+  "incomplete_count": 0,
+  "overall_coverage": {
+    "de": 100.0,
+    "en": 100.0,
+    "pt": 100.0
+  },
+  "pages": [
+    {
+      "page_url": "https://windi-domain.com/desktop/",
+      "pattern_detected": "unknown",
+      "total_elements": 0,
+      "complete_elements": 0,
+      "incomplete_elements": 0,
+      "missing_translations": [],
+      "coverage": {
+        "de": 100.0,
+        "en": 100.0,
+        "pt": 100.0
+      }
+    },
+    {
+      "page_url": "https://windi-domain.com/keys/",
+      "pattern_detected": "unknown",
+      "total_elements": 0,
+      "complete_elements": 0,
+      "incomplete_elements": 0,
+      "missing_translations": [],
+      "coverage": {
+        "de": 100.0,
+        "en": 100.0,
+        "pt": 100.0
+      }
+    },
+    {
+      "page_url": "https://windi-domain.com/pioneer/",
+      "pattern_detected": "unknown",
+      "total_elements": 0,
+      "complete_elements": 0,
+      "incomplete_elements": 0,
+      "missing_translations": [],
+      "coverage": {
+        "de": 100.0,
+        "en": 100.0,
+        "pt": 100.0
+      }
+    },
+    {
+      "page_url": "https://windi-domain.com/verify-public/",
+      "pattern_detected": "unknown",
+      "total_elements": 0,
+      "complete_elements": 0,
+      "incomplete_elements": 0,
+      "missing_translations": [],
+      "coverage": {
+        "de": 100.0,
+        "en": 100.0,
+        "pt": 100.0
+      }
+    },
+    {
+      "page_url": "https://windi-domain.com/how-it-works/",
+      "pattern_detected": "unknown",
+      "total_elements": 0,
+      "complete_elements": 0,
+      "incomplete_elements": 0,
+      "missing_translations": [],
+      "coverage": {
+        "de": 100.0,
+        "en": 100.0,
+        "pt": 100.0
+      }
+    }
+  ],
+  "migration_suggestions": [
+    "UNKNOWN: 5 page(s) have no detectable i18n pattern. Review for hardcoded strings."
+  ],
+  "hash": "sha256:9b180b21db97350a"
+}
