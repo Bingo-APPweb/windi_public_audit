@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.39
-**Sealed:** 2026-03-24 · RFC-001 v1.1 + W-COUNSEL-001 LIVE
+**Version:** 1.9.40
+**Sealed:** 2026-03-24 · WINDI-LAW Identity Gate LIVE
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -881,9 +881,9 @@ Sistema de autenticação por identidade soberana no GEN7.
 
 ---
 
-## §37-45. Sistemas Recentes — Resumo
+## §37-49. Sistemas Recentes — Resumo
 
-> **Detalhes completos:** `CLAUDE-HISTORY.md` § MIGRAÇÃO 23 Mar 2026
+> **Detalhes completos:** `CLAUDE-HISTORY.md` § MIGRAÇÃO 24 Mar 2026
 
 | § | Sistema | Função | Status |
 |---|---------|--------|--------|
@@ -896,6 +896,10 @@ Sistema de autenticação por identidade soberana no GEN7.
 | 43 | AI Detection Doctrine | Interpretation Layer · Regulatory alignment | ✅ CANONICAL |
 | 44 | Dual-Portal Architecture | PROTOCOL + TRAVEL strategy | ✅ CANONICAL |
 | 45 | W-TRAVEL-001 | VERIFY Mobile · Proof Stub · "Gently prove" | ✅ LIVE |
+| 46 | FVE Protocol v1.0 | Field-Verified Evidence · Trilingual Spec | ✅ PUBLISHED |
+| 47 | W-INTENT-001 | Precision Routing · Intent Classification | ✅ LIVE |
+| 48 | W-COUNSEL-001 | Sovereign Training · Coaching Layer | ✅ LIVE |
+| 49 | **WINDI-LAW** | Identity Gate · Fail-Closed · :8122 | ✅ **CANONICAL** |
 
 ### Referência Rápida
 
@@ -903,11 +907,13 @@ Sistema de autenticação por identidade soberana no GEN7.
 **COMM:** `/comm/generate` · Artefatos verificáveis · Trilíngue
 **Verify:** `/verify-public/web/media-detector.html` · 4 modos
 **Travel:** `/verify-public/web/travel/` · Mobile Proof Stub
+**WINDI-LAW:** `/law/gate` · Identity Gate · `/law/workspace/`
 **Dashboards:** `/legal-dashboard/` · `/notary-dashboard/` · `/audit-dashboard/`
 
 **Axioma §43:** "WINDI não declara 'fake'. Classifica verificabilidade."
 **Axioma §44:** "One portal creates trust. The other creates humanity."
 **Axioma §45:** "A prova mais forte é a que não se sente."
+**Axioma §49:** "Sem DID, não existe sujeito operacional."
 
 ---
 
@@ -1045,6 +1051,153 @@ CAPTURE → HASH → SEAL → VERIFY
 | Genesis receipt | `WINDI-FIELD-20260323195248-D562ED84` |
 | First actor | Human Dragon (DID: WALLET-20260215-0001) |
 | Location | Kempten, Bavaria, DE (47.6430, 10.2927) |
+
+---
+
+## §49 — WINDI-LAW Identity Gate (Constitutional Entry Point)
+
+**Status:** ✅ CANONICAL · IMMUTABLE · ACTIVE
+**Receipt:** `WINDI-LAW-IDENTITY-GATE-ARCH-20260324`
+**Genesis:** `WINDI-LAW-GENESIS-9E2B02B4-20260324171414`
+**Port:** :8122
+
+### Definition
+
+The **Identity Gate** is the mandatory constitutional entry point of WINDI-LAW.
+It establishes the existence of a legally attributable subject before any operation can occur.
+
+It is not authentication. It is **institutional birth**.
+
+### Constitutional Principle
+
+> "Without DID, there is no operational subject.
+> Without an operational subject, there is no attributable receipt."
+
+### Core Rule (IRREMEDIÁVEL)
+
+The Workspace MUST NEVER open unless all conditions are satisfied:
+
+```
+✓ company registered
+✓ admin assigned
+✓ wallet generated
+✓ DID issued
+✓ keyset created
+✓ consent recorded
+✓ identity status = VERIFIED
+```
+
+Failing any condition → access denied (fail-closed) → redirect to Identity Gate.
+
+### Identity State Model
+
+| State | Description |
+|-------|-------------|
+| UNBORN | No identity exists |
+| PROVISIONAL | Identity created, not yet verified |
+| VERIFIED | Full operational capacity |
+| SUSPENDED | Read-only, no operations |
+| REVOKED | Permanently disabled |
+
+**Rules:**
+- All identities are born as PROVISIONAL
+- Only VERIFIED identities may perform HIGH operations
+- State transitions are explicit, logged, and irreversible
+
+### Risk Control Layer
+
+| State | Allowed | Forbidden |
+|-------|---------|-----------|
+| PROVISIONAL | LOW/MED ops, verification, read | HIGH seal, receipt issuance |
+| VERIFIED | Full operational capacity | — |
+| SUSPENDED | Read-only | All operations |
+| REVOKED | — | Everything |
+
+### Security Model
+
+```
+Mode: FAIL-CLOSED (default)
+No fallback to partial access
+No silent bypass
+No "demo mode" without identity
+```
+
+### Identity Components
+
+The Gate produces a complete identity bundle:
+
+| Component | Description |
+|-----------|-------------|
+| Company | Legal entity |
+| Admin | Responsible human |
+| Wallet | Ed25519 keypair |
+| DID | `did:windi:{uuid}` |
+| Keyset | Scoped API access |
+| State | Risk tier assignment |
+
+### Ledger Integration
+
+Every step generates an auditable event:
+
+1. COMPANY_REGISTERED
+2. ADMIN_REGISTERED
+3. WALLET_CREATED
+4. DID_ISSUED
+5. CONSENT_RECORDED
+6. KEYSET_ISSUED
+7. IDENTITY_VERIFIED
+8. WORKSPACE_ACCESS_GRANTED
+
+A **Genesis Receipt** is issued proving identity creation.
+
+### Invariants Applied
+
+| Invariant | Function |
+|-----------|----------|
+| I9 | No autonomous escalation |
+| I11 | Cryptographic permanence |
+| I13 | Convergence constraint |
+| G3 | AI proposes, human decides |
+
+### Dual Immutability
+
+This architecture is sealed across two layers:
+
+- **Ledger:** cryptographic proof
+- **Git:** historical implementation trace
+
+Together they establish:
+- proof of execution
+- proof of design
+- proof of intent
+
+### Architectural Flow
+
+```
+Identity → Authority → Operation → Proof
+```
+
+NOT:
+
+```
+Interface → Usage → Identity
+```
+
+### URLs LIVE
+
+| URL | Function |
+|-----|----------|
+| `/law/gate` | Identity Gate UI |
+| `/law/register` | Registration endpoint |
+| `/law/identity/{did}` | DID lookup |
+| `/law/identity/verify` | Workspace access check |
+| `/law/landing/` | Landing page |
+| `/law/workspace/` | Workspace (requires DID) |
+
+### Final Statement
+
+> The Identity Gate is not a feature.
+> It is the condition under which the system is allowed to exist.
 
 ---
 
