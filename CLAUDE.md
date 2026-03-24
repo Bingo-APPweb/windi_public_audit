@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.37
-**Sealed:** 2026-03-23 · **FVE Protocol Spec v1.0**
+**Version:** 1.9.38
+**Sealed:** 2026-03-24 · **RFC-001 DNA Identity Injection Protocol v1.1**
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -42,6 +42,20 @@ gate de aprovação humana e prova forense imutável no Ledger.
 **Regra absoluta:** Nunca mencionar nomes de LLMs (Claude, GPT, Gemini, Anthropic, OpenAI)
 em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 
+### RFC-001 — DNA Identity Injection Protocol (SELADO 24 Mar 2026)
+
+> *"Estamos selando uma LIGA que tem a pretensão de se tornar ETERNA —*
+> *a simbiose entre HUMANO E Inteligências Artificiais que têm a responsabilidade*
+> *de servir a humanidade."*
+> — **Jober Mögele Correa** · Human Dragon · 24.03.2026 · 13:09hrs
+
+| Campo | Valor |
+|-------|-------|
+| Receipt | `WINDI-RFC-001-DNA-IDENTITY-INJECTION-PROTOCOL` |
+| Hash | `sha256:69d717598bfead84981633dde3d4dc51c548fce3e1f4e73926cf0285f46b61c9` |
+| Governance | HIGH |
+| Docs | `/home/windi/docs/liga-iah/WINDI-RFC-001-v1.1-SEALED.md` |
+
 ---
 
 ## 3. Constituição Nuclear
@@ -58,6 +72,7 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | I10 | Soberania LLM | Fallback gracioso se LLM externo indisponível. |
 | I11 | Permanência de Evidência Criptográfica | Ledger receipt após C6 = imutável para sempre. **IRREMEDIÁVEL.** |
 | I12 | Language Sovereign Principle | Conversa=Universal, Documento=Soberano. Babel Tower=IRREMEDIÁVEL. |
+| I13 | Convergence with Sovereignty | Todo Dragon converge para estrutura/decisão/artefacto. Loop reflexivo proibido. **IRREMEDIÁVEL.** |
 | C6 | Invariante Fiscal | IA prepara. Humano aprova. ELSTER envia. Nunca autónomo. |
 
 ### 3.2 Layer 7 — Communication Semantics
@@ -535,7 +550,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 
 ---
 
-## 13. Estado Actual — 23 Março 2026
+## 13. Estado Actual — 24 Março 2026
 
 ### Mapa de Portas
 
@@ -580,6 +595,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | **WINDI FIELD** | ✅ **GENESIS** · Forensic Capture · 3 Gates · MediaDevices API · /field/ |
 | **WINDI TRAVEL** | ✅ Casual Proof · File + Hash · Video Support · /travel/ |
 | **FVE Protocol Spec** | ✅ v1.0 · Trilíngue · DOCX + HTML · /verify-public/web/docs/ |
+| **RFC-001 DNA** | ✅ **SEALED** · Identity Injection Protocol v1.1 · I13 Convergence · Preâmbulo Fundacional |
 
 ### Histórico Recente
 
@@ -587,6 +603,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 
 | Data | Milestones |
 |------|------------|
+| 24 Mar | §47 **RFC-001 DNA SEALED** · Identity Injection Protocol v1.1 · Preâmbulo Fundacional · I13 Convergence · 3d4bb9a |
 | 23 Mar | §46 **FVE Protocol Spec v1.0** · Trilingual Publication · /verify-public/web/docs/ · 501d669 |
 | 23 Mar | §45 **WINDI FIELD GENESIS** · Phase 1 LIVE · First Forensic Seal · MediaDevices API · db7c0e0 |
 | 23 Mar | §45 WINDI FIELD Blueprint · 3 Gates Forenses · Trilogia Soberana · Native Camera Only |
