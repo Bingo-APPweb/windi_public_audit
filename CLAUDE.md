@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.38
-**Sealed:** 2026-03-24 · **RFC-001 DNA Identity Injection Protocol v1.1**
+**Version:** 1.9.39
+**Sealed:** 2026-03-24 · RFC-001 v1.1 + W-COUNSEL-001 LIVE
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -55,6 +55,54 @@ em contextos públicos. Usar apenas: Guardian, Architect, Witness.
 | Hash | `sha256:69d717598bfead84981633dde3d4dc51c548fce3e1f4e73926cf0285f46b61c9` |
 | Governance | HIGH |
 | Docs | `/home/windi/docs/liga-iah/WINDI-RFC-001-v1.1-SEALED.md` |
+
+### W-COUNSEL-001 — Sovereign Counsel Layer (LIVE 24 Mar 2026)
+
+| Campo | Valor |
+|-------|-------|
+| Status | LIVE · Port :8091 |
+| Receipt | `WINDI-COUNSEL-001-DEPLOY-20260324162911` |
+| Commit | `e0c9fd9` |
+
+**Role:** Camada intermediária entre intenção e execução.
+
+**Transforma:**
+- intenção do utilizador → acção estruturada
+- output bruto → raciocínio melhorado
+- interacção → aprendizagem soberana
+
+**Modelo Operacional (3 Layers):**
+```
+1. EXECUTE  → Chama agente de domínio (W-LEGAL, W-NOTARY, etc.)
+2. AUGMENT  → Explica raciocínio, riscos, estrutura
+3. TRAIN    → Melhora capacidade do utilizador (pensamento soberano)
+```
+
+**Constraints:** I9 (sem auto-seal) · G3 (confirmação obrigatória) · I13 (máx 1 pergunta)
+
+**Endpoints:**
+- `POST /grove/counsel` — Main counsel + 3 layers
+- `POST /grove/counsel/confirm-seal` — G3-enforced seal gate
+- `GET /grove/counsel/health` — Health check
+
+### WINDI Precision Pattern (Fluxo de Execução)
+
+```
+USER INPUT
+    ↓
+W-INTENT-001 (intent analysis + domain routing)
+    ↓
+W-COUNSEL-001 (execution + augmentation + training)
+    ↓
+W-[DOMAIN]-001 (legal, notary, accounting, etc.)
+    ↓
+Ledger Seal (upon human confirmation)
+    ↓
+Verify Public (distribution of trust)
+```
+
+**Regra:** Todas as interacções de domínio DEVEM passar por W-COUNSEL-001.
+Chamadas directas aos agentes de domínio são deprecated.
 
 ---
 
@@ -596,6 +644,8 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | **WINDI TRAVEL** | ✅ Casual Proof · File + Hash · Video Support · /travel/ |
 | **FVE Protocol Spec** | ✅ v1.0 · Trilíngue · DOCX + HTML · /verify-public/web/docs/ |
 | **RFC-001 DNA** | ✅ **SEALED** · Identity Injection Protocol v1.1 · I13 Convergence · Preâmbulo Fundacional |
+| **W-INTENT-001** | ✅ Intent Analyzer · Precision Routing · 7 domínios · /grove/intent-analyze |
+| **W-COUNSEL-001** | ✅ **Sovereign Counsel Layer** · 3 Layers Training · I9+I11+I13+G3 · /grove/counsel/* |
 
 ### Histórico Recente
 
@@ -603,6 +653,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 
 | Data | Milestones |
 |------|------------|
+| 24 Mar | §48 **W-COUNSEL-001 LIVE** · Sovereign Counsel Layer · 3 Layers Training · WINDI Precision Pattern Complete · e0c9fd9 |
 | 24 Mar | §47 **RFC-001 DNA SEALED** · Identity Injection Protocol v1.1 · Preâmbulo Fundacional · I13 Convergence · 3d4bb9a |
 | 23 Mar | §46 **FVE Protocol Spec v1.0** · Trilingual Publication · /verify-public/web/docs/ · 501d669 |
 | 23 Mar | §45 **WINDI FIELD GENESIS** · Phase 1 LIVE · First Forensic Seal · MediaDevices API · db7c0e0 |
