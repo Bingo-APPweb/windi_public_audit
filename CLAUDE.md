@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.40
-**Sealed:** 2026-03-24 · WINDI-LAW Identity Gate LIVE
+**Version:** 1.9.41
+**Sealed:** 2026-03-24 · WINDI-LAW Complete (Identity Gate + Trilingual Policies)
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -899,7 +899,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 | 46 | FVE Protocol v1.0 | Field-Verified Evidence · Trilingual Spec | ✅ PUBLISHED |
 | 47 | W-INTENT-001 | Precision Routing · Intent Classification | ✅ LIVE |
 | 48 | W-COUNSEL-001 | Sovereign Training · Coaching Layer | ✅ LIVE |
-| 49 | **WINDI-LAW** | Identity Gate · Fail-Closed · :8122 | ✅ **CANONICAL** |
+| 49 | **WINDI-LAW** | Identity Gate · Trilingual Policies · :8122 | ✅ **COMPLETE** |
 
 ### Referência Rápida
 
@@ -907,7 +907,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 **COMM:** `/comm/generate` · Artefatos verificáveis · Trilíngue
 **Verify:** `/verify-public/web/media-detector.html` · 4 modos
 **Travel:** `/verify-public/web/travel/` · Mobile Proof Stub
-**WINDI-LAW:** `/law/gate` · Identity Gate · `/law/workspace/`
+**WINDI-LAW:** `/law/gate` · Identity Gate · Policies DE|EN|PT · 2 VERIFIED users
 **Dashboards:** `/legal-dashboard/` · `/notary-dashboard/` · `/audit-dashboard/`
 
 **Axioma §43:** "WINDI não declara 'fake'. Classifica verificabilidade."
@@ -1149,6 +1149,23 @@ Every step generates an auditable event:
 8. WORKSPACE_ACCESS_GRANTED
 
 A **Genesis Receipt** is issued proving identity creation.
+
+### Trilingual Policy Framework (SEALED 24 Mar 2026)
+
+| Document | Languages | Purpose |
+|----------|-----------|---------|
+| `verification-criteria.md` | DE \| EN \| PT | 5 criteria for PROVISIONAL → VERIFIED |
+| `risk-matrix.md` | DE \| EN \| PT | Risk levels by entity type |
+| `refusal-process.md` | DE \| EN \| PT | REFUSED/SUSPENDED/REVOKED flows |
+| `audit-log.json` | Universal (EN keys) | Append-only verification log |
+
+**Policy Receipt:**
+```
+ID:   WINDI-LAW-POLICIES-TRILINGUAL-V1.0-20260324
+Hash: sha256:5bb75fe520675048fc08abb89322156b8903aca92336901795dbca29fa301a51
+```
+
+**Compliance:** I11 (Cryptographic Permanence) + I12 (Language Sovereign Principle)
 
 ### Invariants Applied
 
