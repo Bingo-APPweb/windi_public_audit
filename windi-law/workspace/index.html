@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI LAW — Institutional Workspace</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* ── NOIR (default) ── */
+:root {
+  --bg:      #07090D;
+  --bg-2:    #0C0F16;
+  --bg-3:    #111620;
+  --bg-4:    #161C2A;
+  --gold:    #C9A84C;
+  --gold-d:  rgba(201,168,76,0.35);
+  --gold-p:  rgba(201,168,76,0.08);
+  --gold-s:  rgba(201,168,76,0.14);
+  --parch:   #F5F0E0;
+  --muted:   rgba(245,240,224,0.50);
+  --dim:     rgba(245,240,224,0.22);
+  --faint:   rgba(245,240,224,0.08);
+  --border:  rgba(245,240,224,0.07);
+  --border-2:rgba(245,240,224,0.12);
+  --high:    #2EC27E;
+  --high-p:  rgba(46,194,126,0.10);
+  --med:     #C9A84C;
+  --med-p:   rgba(201,168,76,0.10);
+  --low:     #5B8DD4;
+  --low-p:   rgba(91,141,212,0.10);
+  --font:    'Bricolage Grotesque', sans-serif;
+  --mono:    'JetBrains Mono', monospace;
+  --sidebar: 220px;
+  --topbar:  52px;
+}
+
+/* ── KLAR (light) ── */
+[data-theme="klar"] {
+  --bg:      #F5F0E0;
+  --bg-2:    #EDE8D6;
+  --bg-3:    #E5E0CC;
+  --bg-4:    #DEDAD0;
+  --gold:    #8B6914;
+  --gold-d:  rgba(139,105,20,0.35);
+  --gold-p:  rgba(139,105,20,0.07);
+  --gold-s:  rgba(139,105,20,0.14);
+  --parch:   #1a1710;
+  --muted:   rgba(26,23,16,0.55);
+  --dim:     rgba(26,23,16,0.35);
+  --faint:   rgba(26,23,16,0.06);
+  --border:  rgba(26,23,16,0.09);
+  --border-2:rgba(26,23,16,0.16);
+  --high:    #1A7A50;
+  --high-p:  rgba(26,122,80,0.10);
+  --med:     #8B6914;
+  --med-p:   rgba(139,105,20,0.10);
+  --low:     #2E5FAA;
+  --low-p:   rgba(46,95,170,0.10);
+}
+
+html,body { height:100%; overflow:hidden; }
+body { background:var(--bg); color:var(--parch); font-family:var(--font); display:flex; flex-direction:column; transition:background 0.25s, color 0.25s; }
+
+/* ── TOPBAR ── */
+.topbar {
+  height:var(--topbar); flex-shrink:0;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 1.5rem 0 0;
+  background:var(--bg); border-bottom:0.5px solid var(--border);
+  z-index:50;
+}
+
+.topbar-left {
+  width:var(--sidebar); padding:0 1.25rem;
+  display:flex; align-items:center; gap:10px;
+  border-right:0.5px solid var(--border);
+  height:100%;
+}
+
+.tl-logo { font-size:14px; font-weight:700; letter-spacing:0.12em; color:var(--gold); }
+.tl-logo span { color:var(--muted); font-weight:300; font-size:11px; margin-left:2px; letter-spacing:0.06em; }
+.tl-badge {
+  font-family:var(--mono); font-size:8px; letter-spacing:0.1em; text-transform:uppercase;
+  padding:2px 7px; border:0.5px solid rgba(201,168,76,0.3); color:rgba(201,168,76,0.7);
+  border-radius:2px; margin-left:auto;
+}
+
+.topbar-center { flex:1; padding:0 1.5rem; display:flex; align-items:center; gap:1rem; }
+
+.breadcrumb {
+  font-family:var(--mono); font-size:10px; letter-spacing:0.08em;
+  color:var(--dim); display:flex; align-items:center; gap:6px;
+}
+.breadcrumb .active { color:var(--parch); }
+.bc-sep { color:rgba(245,240,224,0.15); }
+
+.topbar-right { display:flex; align-items:center; gap:0.75rem; }
+
+.lang-pill {
+  display:flex; gap:0;
+  border:0.5px solid var(--border-2); border-radius:3px; overflow:hidden;
+}
+.lp-btn {
+  font-family:var(--mono); font-size:9px; letter-spacing:0.1em;
+  padding:5px 10px; background:none; border:none; color:var(--dim);
+  cursor:pointer; transition:all 0.15s; border-right:0.5px solid rgba(245,240,224,0.08);
+}
+.lp-btn:last-child{border-right:none}
+.lp-btn.active { background:rgba(201,168,76,0.12); color:var(--gold); }
+
+.ledger-status {
+  display:flex; align-items:center; gap:5px;
+  font-family:var(--mono); font-size:9px; letter-spacing:0.08em; color:var(--dim);
+  padding:5px 12px; border:0.5px solid var(--faint);border-color:var(--border); border-radius:3px;
+}
+.ls-dot { width:5px; height:5px; border-radius:50%; background:var(--high); animation:blink 2s ease infinite; }
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+
+.user-avatar {
+  width:28px; height:28px; border-radius:50%;
+  border:0.5px solid var(--gold-d);
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--mono); font-size:9px; font-weight:500;
+  color:var(--gold); background:rgba(201,168,76,0.07);
+  cursor:pointer;
+}
+
+/* ── LAYOUT ── */
+.workspace { display:flex; flex:1; overflow:hidden; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width:var(--sidebar); flex-shrink:0;
+  background:var(--bg-2); border-right:0.5px solid var(--border);
+  display:flex; flex-direction:column; overflow-y:auto; overflow-x:hidden;
+}
+
+.sb-section { padding:1rem 0; border-bottom:0.5px solid var(--border); }
+.sb-section:last-child { border-bottom:none; }
+
+.sb-label {
+  font-family:var(--mono); font-size:8.5px; letter-spacing:0.14em; text-transform:uppercase;
+  color:rgba(245,240,224,0.20); padding:0 1rem 0.5rem; display:block;
+}
+
+.sb-item {
+  display:flex; align-items:center; gap:9px;
+  padding:7px 1rem; cursor:pointer;
+  font-size:12px; color:var(--muted); font-weight:400;
+  transition:all 0.15s; position:relative;
+  border-left:2px solid transparent;
+  text-decoration:none;
+}
+
+.sb-item:hover { color:var(--parch); background:rgba(255,255,255,0.02); }
+
+.sb-item.active {
+  color:var(--parch); background:rgba(201,168,76,0.06);
+  border-left-color:var(--gold);
+}
+
+.sb-icon { width:14px; text-align:center; flex-shrink:0; opacity:0.7; font-size:11px; }
+.sb-item.active .sb-icon { opacity:1; }
+
+.sb-badge {
+  margin-left:auto; font-family:var(--mono); font-size:8px;
+  padding:1px 5px; border-radius:2px;
+  background:rgba(46,194,126,0.12); color:var(--high); border:0.5px solid rgba(46,194,126,0.2);
+}
+
+.sb-item .sb-truth {
+  margin-left:auto; width:6px; height:6px; border-radius:50%;
+}
+
+.sb-footer {
+  margin-top:auto; padding:1rem;
+  border-top:0.5px solid var(--border);
+}
+
+.sb-sovereignty {
+  font-family:var(--mono); font-size:8.5px; letter-spacing:0.06em; color:var(--dim);
+  display:flex; flex-direction:column; gap:4px;
+}
+
+.sov-bar-wrap { display:flex; align-items:center; gap:6px; }
+.sov-bar-track { flex:1; height:2px; background:rgba(255,255,255,0.07); border-radius:1px; }
+.sov-bar-fill { height:100%; border-radius:1px; background:var(--gold); width:93.3%; }
+.sov-pct { color:var(--gold); font-size:9px; }
+
+/* ── MAIN ── */
+.main { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+
+/* ── COMMAND BAR ── */
+.command-zone {
+  padding:1rem 1.5rem 0.75rem;
+  border-bottom:0.5px solid var(--border);
+  background:var(--bg-2);
+}
+
+.cmd-frame {
+  display:flex; align-items:center;
+  background:var(--bg-3); border:0.5px solid rgba(201,168,76,0.22); border-radius:4px;
+  padding:3px 3px 3px 14px; transition:border-color 0.25s;
+}
+.cmd-frame:focus-within { border-color:rgba(201,168,76,0.55); }
+
+.cmd-agent-tag {
+  font-family:var(--mono); font-size:9px; letter-spacing:0.08em;
+  color:rgba(100,160,240,0.8); white-space:nowrap; margin-right:8px;
+  padding:3px 8px; background:rgba(46,111,212,0.08);
+  border:0.5px solid rgba(46,111,212,0.18); border-radius:2px;
+  flex-shrink:0;
+}
+
+#law-cmd {
+  flex:1; background:none; border:none; outline:none;
+  font-family:var(--mono); font-size:12px; color:var(--parch);
+  padding:10px 0; caret-color:var(--gold);
+}
+#law-cmd::placeholder { color:var(--dim); }
+
+.cmd-truth-select {
+  display:flex; gap:0; margin-right:6px; flex-shrink:0;
+  border:0.5px solid var(--faint);border-color:var(--border); border-radius:3px; overflow:hidden;
+}
+
+.cts-btn {
+  font-family:var(--mono); font-size:8px; letter-spacing:0.08em; text-transform:uppercase;
+  padding:5px 9px; border:none; background:transparent; cursor:pointer; transition:all 0.15s;
+  border-right:0.5px solid rgba(245,240,224,0.06);
+}
+.cts-btn:last-child{border-right:none}
+.cts-btn.h { color:rgba(46,194,126,0.6); }
+.cts-btn.h.active { background:rgba(46,194,126,0.10); color:var(--high); }
+.cts-btn.m { color:rgba(201,168,76,0.6); }
+.cts-btn.m.active { background:rgba(201,168,76,0.10); color:var(--med); }
+.cts-btn.l { color:rgba(91,141,212,0.6); }
+.cts-btn.l.active { background:rgba(91,141,212,0.10); color:var(--low); }
+
+.cmd-exec {
+  font-family:var(--font); font-size:10px; font-weight:700; letter-spacing:0.1em;
+  text-transform:uppercase; color:var(--bg); background:var(--gold);
+  border:none; border-radius:3px; padding:10px 18px; cursor:pointer;
+  flex-shrink:0; transition:background 0.2s;
+}
+.cmd-exec:hover { background:#dfc05e; }
+
+.cmd-presets { display:flex; gap:6px; margin-top:8px; flex-wrap:wrap; }
+.preset-chip {
+  font-family:var(--mono); font-size:9px; letter-spacing:0.05em;
+  color:var(--dim); border:0.5px solid var(--faint);border-color:var(--border);
+  background:rgba(255,255,255,0.02); border-radius:2px;
+  padding:4px 10px; cursor:pointer; transition:all 0.18s;
+}
+.preset-chip:hover { color:var(--gold); border-color:var(--gold-d); background:var(--gold-p); }
+
+/* ── CONTENT AREA ── */
+.content-area { flex:1; display:flex; overflow:hidden; }
+
+/* ── DOCUMENT PANEL ── */
+.doc-panel {
+  flex:1; overflow-y:auto; padding:1.25rem 1.5rem;
+  display:flex; flex-direction:column; gap:1rem;
+}
+
+/* RESULT CARD */
+.result-card {
+  background:var(--bg-3); border:0.5px solid rgba(46,111,212,0.20);
+  border-radius:4px; overflow:hidden; animation:fadeup 0.3s ease;
+}
+@keyframes fadeup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.rc-head {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:7px 12px; background:rgba(46,111,212,0.05);
+  border-bottom:0.5px solid rgba(46,111,212,0.12);
+  font-family:var(--mono); font-size:9px;
+}
+.rc-agent-id { color:rgba(100,160,240,0.85); display:flex; align-items:center; gap:6px; }
+.rc-live { width:4px; height:4px; border-radius:50%; background:var(--high); animation:blink 1.2s infinite; }
+.rc-ts { color:var(--dim); }
+.rc-truth-badge {
+  font-size:8px; letter-spacing:0.1em; text-transform:uppercase;
+  padding:2px 8px; border-radius:2px; border:0.5px solid;
+}
+.rc-truth-badge.high { color:var(--high); border-color:rgba(46,194,126,0.3); background:var(--high-p); }
+.rc-truth-badge.med  { color:var(--med);  border-color:rgba(201,168,76,0.3); background:var(--med-p); }
+
+.rc-body { padding:12px 14px; display:grid; grid-template-columns:1fr 1fr; gap:4px 20px; }
+.rc-row { font-family:var(--mono); font-size:10.5px; line-height:1.9; }
+.rc-k { color:rgba(100,160,240,0.65); }
+.rc-v { color:var(--parch); }
+.rc-hash { color:rgba(201,168,76,0.45); font-size:9px; }
+
+.rc-foot {
+  padding:7px 12px; border-top:0.5px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+  font-family:var(--mono); font-size:8.5px; letter-spacing:0.08em; text-transform:uppercase;
+}
+.rc-sealed { display:flex; align-items:center; gap:5px; color:var(--high); }
+.rc-verify-link { color:var(--dim); }
+.rc-verify-link a { color:rgba(201,168,76,0.6); text-decoration:none; }
+.rc-verify-link a:hover { color:var(--gold); }
+
+/* DOCUMENT ITEM */
+.doc-item {
+  background:var(--bg-2); border:0.5px solid var(--border);
+  border-radius:4px; overflow:hidden; cursor:pointer;
+  transition:border-color 0.2s;
+}
+.doc-item:hover { border-color:rgba(245,240,224,0.12); }
+.doc-item.active { border-color:rgba(201,168,76,0.22); }
+
+.di-head {
+  display:flex; align-items:center; gap:10px;
+  padding:9px 12px; border-bottom:0.5px solid var(--border);
+}
+.di-type {
+  font-family:var(--mono); font-size:8px; letter-spacing:0.1em; text-transform:uppercase;
+  padding:2px 7px; border-radius:2px; border:0.5px solid;
+}
+.di-type.legal { color:rgba(100,160,240,0.8); border-color:rgba(100,160,240,0.2); background:rgba(46,111,212,0.06); }
+.di-type.notary { color:rgba(201,168,76,0.8); border-color:rgba(201,168,76,0.2); background:rgba(201,168,76,0.06); }
+.di-type.acct { color:rgba(46,194,126,0.8); border-color:rgba(46,194,126,0.2); background:rgba(46,194,126,0.06); }
+.di-type.comply { color:rgba(180,130,240,0.8); border-color:rgba(180,130,240,0.2); background:rgba(180,130,240,0.06); }
+
+.di-name { font-size:12.5px; font-weight:500; color:var(--parch); flex:1; }
+.di-date { font-family:var(--mono); font-size:9px; color:var(--dim); margin-left:auto; }
+.di-sealed { width:6px; height:6px; border-radius:50%; background:var(--high); flex-shrink:0; }
+.di-pending { width:6px; height:6px; border-radius:50%; background:var(--med); flex-shrink:0; }
+
+.di-body { padding:8px 12px; display:flex; align-items:center; gap:12px; }
+.di-meta { font-family:var(--mono); font-size:9px; color:var(--dim); display:flex; gap:12px; flex:1; }
+.di-hash { color:rgba(201,168,76,0.4); }
+.di-action {
+  font-family:var(--mono); font-size:8px; letter-spacing:0.08em;
+  padding:4px 10px; border:0.5px solid var(--border-2);
+  border-radius:2px; color:var(--dim); cursor:pointer; background:none;
+  transition:all 0.15s; text-transform:uppercase;
+}
+.di-action:hover { color:var(--gold); border-color:var(--gold-d); background:var(--gold-p); }
+.di-action.seal-btn { border-color:rgba(46,194,126,0.2); color:rgba(46,194,126,0.6); }
+.di-action.seal-btn:hover { color:var(--high); border-color:rgba(46,194,126,0.4); background:var(--high-p); }
+
+/* EMPTY STATE */
+.empty-state {
+  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:1rem; text-align:center; padding:3rem;
+  border:0.5px dashed rgba(245,240,224,0.07); border-radius:6px;
+}
+.empty-icon {
+  width:44px; height:44px; border:0.5px solid rgba(201,168,76,0.18);
+  border-radius:4px; display:flex; align-items:center; justify-content:center;
+  color:rgba(201,168,76,0.3); font-size:18px;
+}
+.empty-label { font-family:var(--mono); font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--dim); }
+.empty-sub { font-size:12px; color:rgba(245,240,224,0.18); max-width:280px; line-height:1.6; }
+
+/* ── INSPECTOR ── */
+.inspector {
+  width:280px; flex-shrink:0;
+  border-left:0.5px solid var(--border);
+  background:var(--bg-2);
+  display:flex; flex-direction:column; overflow-y:auto;
+}
+
+.insp-section { padding:0.875rem 1rem; border-bottom:0.5px solid var(--border); }
+.insp-title {
+  font-family:var(--mono); font-size:8.5px; letter-spacing:0.12em; text-transform:uppercase;
+  color:rgba(245,240,224,0.22); margin-bottom:0.75rem; display:flex; align-items:center; justify-content:space-between;
+}
+.insp-title-action { color:rgba(201,168,76,0.4); cursor:pointer; font-size:8px; }
+.insp-title-action:hover { color:var(--gold); }
+
+.insp-row { display:flex; flex-direction:column; gap:2px; margin-bottom:0.6rem; }
+.insp-label { font-family:var(--mono); font-size:8.5px; color:var(--dim); letter-spacing:0.06em; }
+.insp-value { font-size:12px; color:var(--parch); font-weight:400; }
+.insp-value.mono { font-family:var(--mono); font-size:9.5px; color:var(--muted); word-break:break-all; }
+.insp-value.gold { color:var(--gold); }
+.insp-value.high { color:var(--high); }
+
+.truth-meter {
+  display:flex; flex-direction:column; gap:6px;
+  padding:0.75rem; background:rgba(255,255,255,0.02);
+  border:0.5px solid rgba(245,240,224,0.05); border-radius:3px;
+}
+.tm-row { display:flex; align-items:center; gap:8px; }
+.tm-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+.tm-label { font-family:var(--mono); font-size:9px; color:var(--muted); flex:1; }
+.tm-bar-track { flex:1; height:2px; background:rgba(255,255,255,0.07); border-radius:1px; }
+.tm-bar-fill { height:100%; border-radius:1px; }
+.tm-pct { font-family:var(--mono); font-size:8.5px; color:var(--dim); width:28px; text-align:right; }
+
+.action-grid { display:grid; grid-template-columns:1fr 1fr; gap:5px; }
+.action-btn {
+  font-family:var(--mono); font-size:8.5px; letter-spacing:0.07em; text-transform:uppercase;
+  padding:7px 8px; border:0.5px solid var(--border-2);
+  background:rgba(255,255,255,0.02); border-radius:2px;
+  color:var(--dim); cursor:pointer; transition:all 0.15s;
+  text-align:center;
+}
+.action-btn:hover { color:var(--parch); border-color:rgba(245,240,224,0.22); background:rgba(255,255,255,0.04); }
+.action-btn.primary { border-color:rgba(201,168,76,0.25); color:rgba(201,168,76,0.7); }
+.action-btn.primary:hover { color:var(--gold); border-color:var(--gold-d); background:var(--gold-p); }
+
+.jurisdiction-grid { display:flex; flex-wrap:wrap; gap:4px; }
+.juris-tag {
+  font-family:var(--mono); font-size:8px; letter-spacing:0.06em; text-transform:uppercase;
+  padding:3px 8px; border:0.5px solid var(--faint);border-color:var(--border);
+  border-radius:2px; color:var(--dim);
+}
+.juris-tag.active { color:rgba(201,168,76,0.8); border-color:rgba(201,168,76,0.25); background:var(--gold-p); }
+
+/* INVARIANTS */
+.invariant-list { display:flex; flex-direction:column; gap:4px; }
+.inv-item {
+  display:flex; align-items:center; gap:7px;
+  font-family:var(--mono); font-size:9px; color:var(--dim);
+  padding:4px 0; border-bottom:0.5px solid rgba(245,240,224,0.03);
+}
+.inv-id { color:rgba(201,168,76,0.6); width:24px; flex-shrink:0; }
+.inv-status { width:5px; height:5px; border-radius:50%; background:var(--high); flex-shrink:0; margin-left:auto; }
+
+/* STATUSBAR */
+.statusbar {
+  height:22px; flex-shrink:0;
+  background:var(--bg); border-top:0.5px solid var(--border);
+  display:flex; align-items:center; padding:0 1rem; gap:1.5rem;
+  font-family:var(--mono); font-size:8px; letter-spacing:0.08em; color:var(--dim);
+}
+.sb-seg { display:flex; align-items:center; gap:4px; }
+.sb-sep { width:1px; height:10px; background:rgba(245,240,224,0.08); }
+.sb-live { color:var(--high); }
+.sb-gold { color:rgba(201,168,76,0.5); }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width:4px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:rgba(245,240,224,0.08); border-radius:2px; }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="tl-logo">WINDI<span>LAW</span></div>
+    <div class="tl-badge">β</div>
+  </div>
+  <div class="topbar-center">
+    <div class="breadcrumb">
+      <span class="active" id="bc-agent">W-LEGAL-001</span>
+      <span class="bc-sep">/</span>
+      <span id="bc-doc">Contratos · Evidências</span>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <button id="theme-toggle" onclick="toggleTheme()" style="font-family:var(--mono);font-size:9px;letter-spacing:0.1em;padding:5px 12px;border:0.5px solid var(--border-2);background:transparent;color:var(--dim);cursor:pointer;border-radius:3px;transition:all 0.2s;" onmouseover="this.style.color='var(--gold)';this.style.borderColor='var(--gold-d)'" onmouseout="this.style.color='var(--dim)';this.style.borderColor='var(--border-2)'">NOIR</button>
+    <div class="lang-pill">
+      <button class="lp-btn active" onclick="setLang('de')">DE</button>
+      <button class="lp-btn" onclick="setLang('pt')">PT</button>
+      <button class="lp-btn" onclick="setLang('en')">EN</button>
+    </div>
+    <div class="ledger-status">
+      <div class="ls-dot"></div>
+      <span id="ls-text">Ledger · 8101 · aktiv</span>
+    </div>
+    <div class="user-avatar">JM</div>
+  </div>
+</div>
+
+<!-- WORKSPACE -->
+<div class="workspace">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+
+    <div class="sb-section">
+      <span class="sb-label" id="sb-l-agents">Agentenkonstellation</span>
+      <a class="sb-item active" onclick="switchAgent('legal')" href="#">
+        <span class="sb-icon">⚖</span>
+        <span id="sb-legal">Juristisch</span>
+        <span class="sb-badge">22</span>
+      </a>
+      <a class="sb-item" onclick="switchAgent('notary')" href="#">
+        <span class="sb-icon">🔏</span>
+        <span id="sb-notary">Notariat</span>
+      </a>
+      <a class="sb-item" onclick="switchAgent('acct')" href="#">
+        <span class="sb-icon">🧾</span>
+        <span id="sb-acct">Buchhaltung</span>
+      </a>
+      <a class="sb-item" onclick="switchAgent('comply')" href="#">
+        <span class="sb-icon">🛡</span>
+        <span id="sb-comply">Compliance</span>
+      </a>
+    </div>
+
+    <div class="sb-section">
+      <span class="sb-label" id="sb-l-docs">Aktuelle Dokumente</span>
+      <a class="sb-item" onclick="loadDoc('nda')" href="#">
+        <span class="sb-icon">◈</span>
+        <span id="d1">NDA · Müller GmbH</span>
+        <div class="sb-truth" style="background:var(--high)"></div>
+      </a>
+      <a class="sb-item" onclick="loadDoc('audit')" href="#">
+        <span class="sb-icon">◈</span>
+        <span id="d2">Audit · Q1-2026</span>
+        <div class="sb-truth" style="background:var(--med)"></div>
+      </a>
+      <a class="sb-item" onclick="loadDoc('invoice')" href="#">
+        <span class="sb-icon">◈</span>
+        <span id="d3">Rechnung · 2026-0041</span>
+        <div class="sb-truth" style="background:var(--high)"></div>
+      </a>
+      <a class="sb-item" onclick="loadDoc('gdpr')" href="#">
+        <span class="sb-icon">◈</span>
+        <span id="d4">DSGVO-Analyse</span>
+        <div class="sb-truth" style="background:var(--low)"></div>
+      </a>
+    </div>
+
+    <div class="sb-section">
+      <span class="sb-label" id="sb-l-verify">Verifikation</span>
+      <a class="sb-item" href="#">
+        <span class="sb-icon">◎</span>
+        <span id="sb-verify-link">Verify Public</span>
+      </a>
+      <a class="sb-item" href="#">
+        <span class="sb-icon">◎</span>
+        <span id="sb-ledger-link">Forensic Ledger</span>
+      </a>
+    </div>
+
+    <div class="sb-footer">
+      <div class="sb-sovereignty">
+        <span id="sb-sov-label">Lokale Souveränität</span>
+        <div class="sov-bar-wrap">
+          <div class="sov-bar-track"><div class="sov-bar-fill"></div></div>
+          <span class="sov-pct">93.3%</span>
+        </div>
+        <span style="font-size:8px;margin-top:2px;color:rgba(245,240,224,0.15)">Strato VPS · Kempten DE</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- COMMAND BAR -->
+    <div class="command-zone">
+      <div class="cmd-frame">
+        <div class="cmd-agent-tag" id="cmd-agent-tag">W-LEGAL-001</div>
+        <input type="text" id="law-cmd" placeholder="Beschreiben Sie Ihr rechtliches Anliegen…" onkeydown="handleCmd(event)">
+        <div class="cmd-truth-select">
+          <button class="cts-btn h active" onclick="setTruth('HIGH')">Gerichtsfähig</button>
+          <button class="cts-btn m" onclick="setTruth('MED')">Prozessual</button>
+          <button class="cts-btn l" onclick="setTruth('LOW')">Analyse</button>
+        </div>
+        <button class="cmd-exec" onclick="execCmd()" id="exec-btn">Ausführen</button>
+      </div>
+      <div class="cmd-presets" id="cmd-presets">
+        <span class="preset-chip" onclick="fillCmd(this.textContent)">NDA erstellen · ZPO §273</span>
+        <span class="preset-chip" onclick="fillCmd(this.textContent)">Beweiskette · SHA-256</span>
+        <span class="preset-chip" onclick="fillCmd(this.textContent)">Tribunalpaket · DE/EN/PT</span>
+        <span class="preset-chip" onclick="fillCmd(this.textContent)">BaFin Compliance · MiCA</span>
+        <span class="preset-chip" onclick="fillCmd(this.textContent)">eIDAS Signatur</span>
+        <span class="preset-chip" onclick="fillCmd(this.textContent)">ELSTER XML · C6</span>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content-area">
+
+      <!-- DOC PANEL -->
+      <div class="doc-panel" id="doc-panel">
+
+        <!-- RESULT (hidden initially) -->
+        <div class="result-card" id="result-card" style="display:none">
+          <div class="rc-head">
+            <div class="rc-agent-id"><div class="rc-live"></div><span id="rc-agent">W-LEGAL-001 · Intent Analyzer</span></div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="rc-truth-badge high" id="rc-badge">HIGH</span>
+              <span class="rc-ts" id="rc-ts"></span>
+            </div>
+          </div>
+          <div class="rc-body">
+            <div class="rc-row"><span class="rc-k" id="rc-k1">Aktion: </span><span class="rc-v" id="rc-v1">—</span></div>
+            <div class="rc-row"><span class="rc-k" id="rc-k2">Domäne: </span><span class="rc-v" id="rc-v2">—</span></div>
+            <div class="rc-row"><span class="rc-k" id="rc-k3">Zuständig: </span><span class="rc-v" id="rc-v3">—</span></div>
+            <div class="rc-row"><span class="rc-k" id="rc-k4">Status: </span><span class="rc-v" id="rc-v4">—</span></div>
+            <div class="rc-row" style="grid-column:1/-1"><span class="rc-k">SHA-256: </span><span class="rc-hash" id="rc-hash">—</span></div>
+          </div>
+          <div class="rc-foot">
+            <div class="rc-sealed">
+              <div class="ls-dot"></div>
+              <span id="rc-sealed-text">Im Ledger versiegelt · I11</span>
+            </div>
+            <div class="rc-verify-link"><span id="rc-verify-pre">Verify: </span><a href="https://windi-domain.com/verify-public/" id="rc-link">windi-domain.com/verify-public/</a></div>
+          </div>
+        </div>
+
+        <!-- DOCUMENT LIST -->
+        <div id="doc-list">
+
+          <div class="doc-item active" onclick="selectDoc(this,'nda')">
+            <div class="di-head">
+              <span class="di-type legal" id="dt-legal">Legal</span>
+              <span class="di-name">Geheimhaltungsvertrag · Müller GmbH vs. Tech AG</span>
+              <span class="di-date">2026-03-24</span>
+              <div class="di-sealed" title="Versiegelt"></div>
+            </div>
+            <div class="di-body">
+              <div class="di-meta">
+                <span id="dm-zpo">ZPO · §273</span>
+                <span class="di-hash">a3f8c12d…</span>
+                <span>HIGH</span>
+              </div>
+              <button class="di-action" id="da-verify">Verify</button>
+              <button class="di-action" id="da-export">Export</button>
+            </div>
+          </div>
+
+          <div class="doc-item" onclick="selectDoc(this,'audit')">
+            <div class="di-head">
+              <span class="di-type comply" id="dt-comply">Compliance</span>
+              <span class="di-name" id="doc2-name">BaFin Audit · Q1-2026 · MiCA Konformität</span>
+              <span class="di-date">2026-03-20</span>
+              <div class="di-pending" title="Ausstehend"></div>
+            </div>
+            <div class="di-body">
+              <div class="di-meta">
+                <span>EU AI Act · Art.14</span>
+                <span class="di-hash">b9e1f44a…</span>
+                <span>MED</span>
+              </div>
+              <button class="di-action seal-btn" id="da-seal">Seal</button>
+              <button class="di-action" id="da-review">Review</button>
+            </div>
+          </div>
+
+          <div class="doc-item" onclick="selectDoc(this,'invoice')">
+            <div class="di-head">
+              <span class="di-type acct" id="dt-acct">Buchhaltung</span>
+              <span class="di-name" id="doc3-name">XRechnung · 2026-0041 · GoBD konform</span>
+              <span class="di-date">2026-03-18</span>
+              <div class="di-sealed" title="Versiegelt"></div>
+            </div>
+            <div class="di-body">
+              <div class="di-meta">
+                <span>DATEV · ELSTER</span>
+                <span class="di-hash">7c2a9f01…</span>
+                <span>HIGH · C6</span>
+              </div>
+              <button class="di-action" id="da-elster">ELSTER XML</button>
+              <button class="di-action" id="da-gobd">GoBD</button>
+            </div>
+          </div>
+
+          <div class="doc-item" onclick="selectDoc(this,'gdpr')">
+            <div class="di-head">
+              <span class="di-type legal">Legal</span>
+              <span class="di-name" id="doc4-name">DSGVO Datenschutz-Folgenabschätzung</span>
+              <span class="di-date">2026-03-15</span>
+              <div class="di-pending" title="Ausstehend"></div>
+            </div>
+            <div class="di-body">
+              <div class="di-meta">
+                <span>DSGVO Art.35</span>
+                <span class="di-hash">e4d71bc8…</span>
+                <span>LOW</span>
+              </div>
+              <button class="di-action seal-btn">Seal</button>
+              <button class="di-action">Analyse</button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- INSPECTOR -->
+      <div class="inspector">
+
+        <div class="insp-section">
+          <div class="insp-title">
+            <span id="insp-doc-title">Dokument</span>
+            <span class="insp-title-action" id="insp-action-link">→ Verify</span>
+          </div>
+          <div class="insp-row">
+            <span class="insp-label" id="il-type">Typ</span>
+            <span class="insp-value" id="iv-type">Geheimhaltungsvertrag</span>
+          </div>
+          <div class="insp-row">
+            <span class="insp-label" id="il-agent">Agent</span>
+            <span class="insp-value gold" id="iv-agent">W-LEGAL-001</span>
+          </div>
+          <div class="insp-row">
+            <span class="insp-label" id="il-status">Status</span>
+            <span class="insp-value high" id="iv-status">Versiegelt · I11</span>
+          </div>
+          <div class="insp-row">
+            <span class="insp-label">SHA-256</span>
+            <span class="insp-value mono" id="iv-hash">a3f8c12d4e9b7f2a…</span>
+          </div>
+        </div>
+
+        <div class="insp-section">
+          <div class="insp-title"><span id="insp-truth-title">Wahrheitsebenen</span></div>
+          <div class="truth-meter">
+            <div class="tm-row">
+              <div class="tm-dot" style="background:var(--high)"></div>
+              <span class="tm-label" id="tm-high">Kryptografisch · HIGH</span>
+              <div class="tm-bar-track"><div class="tm-bar-fill" style="width:100%;background:var(--high)"></div></div>
+              <span class="tm-pct">100%</span>
+            </div>
+            <div class="tm-row">
+              <div class="tm-dot" style="background:var(--med)"></div>
+              <span class="tm-label" id="tm-med">Prozessual · MED</span>
+              <div class="tm-bar-track"><div class="tm-bar-fill" style="width:78%;background:var(--med)"></div></div>
+              <span class="tm-pct">78%</span>
+            </div>
+            <div class="tm-row">
+              <div class="tm-dot" style="background:var(--low)"></div>
+              <span class="tm-label" id="tm-low">KI-Analyse · LOW</span>
+              <div class="tm-bar-track"><div class="tm-bar-fill" style="width:44%;background:var(--low)"></div></div>
+              <span class="tm-pct">44%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="insp-section">
+          <div class="insp-title"><span id="insp-jur-title">Jurisdiktionen</span></div>
+          <div class="jurisdiction-grid">
+            <span class="juris-tag active">DE · ZPO</span>
+            <span class="juris-tag active">EU · eIDAS</span>
+            <span class="juris-tag">BR · MCI</span>
+            <span class="juris-tag active">INT · UNCITRAL</span>
+          </div>
+        </div>
+
+        <div class="insp-section">
+          <div class="insp-title"><span id="insp-act-title">Aktionen</span></div>
+          <div class="action-grid">
+            <button class="action-btn primary" id="ab-seal">Seal · I11</button>
+            <button class="action-btn" id="ab-verify">Verify</button>
+            <button class="action-btn" id="ab-export">Export DE</button>
+            <button class="action-btn" id="ab-chain">Beweiskette</button>
+          </div>
+        </div>
+
+        <div class="insp-section">
+          <div class="insp-title"><span id="insp-inv-title">Invarianten</span></div>
+          <div class="invariant-list">
+            <div class="inv-item"><span class="inv-id">I9</span><span>Keine autonome Eskalation</span><div class="inv-status"></div></div>
+            <div class="inv-item"><span class="inv-id">I11</span><span>Kryptografische Permanenz</span><div class="inv-status"></div></div>
+            <div class="inv-item"><span class="inv-id">I13</span><span>Konvergenz · 1 Frage/Turn</span><div class="inv-status"></div></div>
+            <div class="inv-item"><span class="inv-id">G3</span><span>Vorschlagen ≠ Ausführen</span><div class="inv-status"></div></div>
+            <div class="inv-item"><span class="inv-id">C6</span><span id="inv-c6">KI vorbereitet. Mensch genehmigt.</span><div class="inv-status"></div></div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- STATUSBAR -->
+<div class="statusbar">
+  <div class="sb-seg"><span class="sb-live" id="stb-live">● aktiv</span></div>
+  <div class="sb-sep"></div>
+  <div class="sb-seg"><span id="stb-ledger">Ledger · :8101</span></div>
+  <div class="sb-sep"></div>
+  <div class="sb-seg"><span id="stb-agents">7 Agenten · online</span></div>
+  <div class="sb-sep"></div>
+  <div class="sb-seg"><span class="sb-gold" id="stb-receipts">40.918+ Receipts</span></div>
+  <div class="sb-sep"></div>
+  <div class="sb-seg" style="margin-left:auto"><span>AI processes. Human decides. WINDI guarantees.</span></div>
+</div>
+
+<script>
+var currentTheme = 'noir';
+
+function toggleTheme() {
+  var btn = document.getElementById('theme-toggle');
+  if(currentTheme === 'noir') {
+    document.documentElement.setAttribute('data-theme','klar');
+    currentTheme = 'klar';
+    btn.textContent = 'KLAR';
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+    currentTheme = 'noir';
+    btn.textContent = 'NOIR';
+  }
+}
+
+var lang = 'de';
+var currentTruth = 'HIGH';
+var currentAgent = 'legal';
+
+var LANG = {
+  de: {
+    sbLAgents:'Agentenkonstellation', sbLDocs:'Aktuelle Dokumente', sbLVerify:'Verifikation',
+    sbLegal:'Juristisch', sbNotary:'Notariat', sbAcct:'Buchhaltung', sbComply:'Compliance',
+    sbVerifyLink:'Verify Public', sbLedgerLink:'Forensic Ledger',
+    sbSovLabel:'Lokale Souveränität',
+    cmdPlaceholder:'Beschreiben Sie Ihr rechtliches Anliegen…',
+    execBtn:'Ausführen',
+    presets:['NDA erstellen · ZPO §273','Beweiskette · SHA-256','Tribunalpaket · DE/EN/PT','BaFin Compliance · MiCA','eIDAS Signatur','ELSTER XML · C6'],
+    bcDoc:'Verträge · Beweise',
+    lsText:'Ledger · 8101 · aktiv',
+    d1:'NDA · Müller GmbH', d2:'Audit · Q1-2026', d3:'Rechnung · 2026-0041', d4:'DSGVO-Analyse',
+    daVerify:'Verify', daExport:'Export', daSeal:'Seal', daReview:'Review', daElster:'ELSTER XML', daGobd:'GoBD',
+    rcK1:'Aktion: ', rcK2:'Domäne: ', rcK3:'Zuständig: ', rcK4:'Status: ',
+    rcSealedText:'Im Ledger versiegelt · I11', rcVerifyPre:'Verify: ',
+    dtLegal:'Legal', dtComply:'Compliance', dtAcct:'Buchhaltung',
+    doc2Name:'BaFin Audit · Q1-2026 · MiCA Konformität',
+    doc3Name:'XRechnung · 2026-0041 · GoBD konform',
+    doc4Name:'DSGVO Datenschutz-Folgenabschätzung',
+    dmZpo:'ZPO · §273',
+    inspDocTitle:'Dokument', inspActionLink:'→ Verify',
+    ilType:'Typ', ivType:'Geheimhaltungsvertrag',
+    ilAgent:'Agent', ilStatus:'Status',
+    ivStatus:'Versiegelt · I11',
+    inspTruthTitle:'Wahrheitsebenen',
+    tmHigh:'Kryptografisch · HIGH', tmMed:'Prozessual · MED', tmLow:'KI-Analyse · LOW',
+    inspJurTitle:'Jurisdiktionen',
+    inspActTitle:'Aktionen',
+    abSeal:'Seal · I11', abVerify:'Verify', abExport:'Export DE', abChain:'Beweiskette',
+    inspInvTitle:'Invarianten',
+    invC6:'KI vorbereitet. Mensch genehmigt.',
+    stbLive:'● aktiv', stbLedger:'Ledger · :8101', stbAgents:'7 Agenten · online', stbReceipts:'40.918+ Receipts'
+  },
+  pt: {
+    sbLAgents:'Constelação de Agentes', sbLDocs:'Documentos Recentes', sbLVerify:'Verificação',
+    sbLegal:'Jurídico', sbNotary:'Notarial', sbAcct:'Contábil', sbComply:'Compliance',
+    sbVerifyLink:'Verify Público', sbLedgerLink:'Forensic Ledger',
+    sbSovLabel:'Soberania Local',
+    cmdPlaceholder:'Introduza comando — criar contrato, analisar evidências, exportar relatório…',
+    execBtn:'Executar',
+    presets:['Criar NDA · ZPO §273','Cadeia de Evidências · SHA-256','Pacote Tribunal · DE/EN/PT','Compliance BaFin · MiCA','Assinatura eIDAS','ELSTER XML · C6'],
+    bcDoc:'Contratos · Evidências',
+    lsText:'Ledger · 8101 · activo',
+    d1:'NDA · Müller GmbH', d2:'Auditoria · Q1-2026', d3:'Fatura · 2026-0041', d4:'Análise RGPD',
+    daVerify:'Verificar', daExport:'Exportar', daSeal:'Selar', daReview:'Rever', daElster:'ELSTER XML', daGobd:'GoBD',
+    rcK1:'Acção: ', rcK2:'Domínio: ', rcK3:'Responsável: ', rcK4:'Estado: ',
+    rcSealedText:'Selado no Ledger · I11', rcVerifyPre:'Verify: ',
+    dtLegal:'Jurídico', dtComply:'Compliance', dtAcct:'Contábil',
+    doc2Name:'Auditoria BaFin · Q1-2026 · Conformidade MiCA',
+    doc3Name:'XRechnung · 2026-0041 · GoBD conforme',
+    doc4Name:'Análise de Impacto RGPD',
+    dmZpo:'ZPO · §273',
+    inspDocTitle:'Documento', inspActionLink:'→ Verificar',
+    ilType:'Tipo', ivType:'Contrato de Confidencialidade',
+    ilAgent:'Agente', ilStatus:'Estado',
+    ivStatus:'Selado · I11',
+    inspTruthTitle:'Níveis de Verdade',
+    tmHigh:'Criptográfico · HIGH', tmMed:'Processual · MED', tmLow:'Análise IA · LOW',
+    inspJurTitle:'Jurisdições',
+    inspActTitle:'Acções',
+    abSeal:'Selar · I11', abVerify:'Verificar', abExport:'Exportar PT', abChain:'Cadeia de Provas',
+    inspInvTitle:'Invariantes',
+    invC6:'IA prepara. Humano aprova.',
+    stbLive:'● activo', stbLedger:'Ledger · :8101', stbAgents:'7 Agentes · online', stbReceipts:'40.918+ Recibos'
+  },
+  en: {
+    sbLAgents:'Agent Constellation', sbLDocs:'Recent Documents', sbLVerify:'Verification',
+    sbLegal:'Legal', sbNotary:'Notary', sbAcct:'Accounting', sbComply:'Compliance',
+    sbVerifyLink:'Verify Public', sbLedgerLink:'Forensic Ledger',
+    sbSovLabel:'Local Sovereignty',
+    cmdPlaceholder:'Enter command — create contract, analyse evidence, export report…',
+    execBtn:'Execute',
+    presets:['Create NDA · ZPO §273','Evidence Chain · SHA-256','Court Package · DE/EN/PT','BaFin Compliance · MiCA','eIDAS Signature','ELSTER XML · C6'],
+    bcDoc:'Contracts · Evidence',
+    lsText:'Ledger · 8101 · active',
+    d1:'NDA · Müller GmbH', d2:'Audit · Q1-2026', d3:'Invoice · 2026-0041', d4:'GDPR Analysis',
+    daVerify:'Verify', daExport:'Export', daSeal:'Seal', daReview:'Review', daElster:'ELSTER XML', daGobd:'GoBD',
+    rcK1:'Action: ', rcK2:'Domain: ', rcK3:'Agent: ', rcK4:'Status: ',
+    rcSealedText:'Sealed in Ledger · I11', rcVerifyPre:'Verify: ',
+    dtLegal:'Legal', dtComply:'Compliance', dtAcct:'Accounting',
+    doc2Name:'BaFin Audit · Q1-2026 · MiCA Compliance',
+    doc3Name:'XRechnung · 2026-0041 · GoBD compliant',
+    doc4Name:'GDPR Data Protection Impact Assessment',
+    dmZpo:'ZPO · §273',
+    inspDocTitle:'Document', inspActionLink:'→ Verify',
+    ilType:'Type', ivType:'Non-Disclosure Agreement',
+    ilAgent:'Agent', ilStatus:'Status',
+    ivStatus:'Sealed · I11',
+    inspTruthTitle:'Truth Levels',
+    tmHigh:'Cryptographic · HIGH', tmMed:'Procedural · MED', tmLow:'AI Analysis · LOW',
+    inspJurTitle:'Jurisdictions',
+    inspActTitle:'Actions',
+    abSeal:'Seal · I11', abVerify:'Verify', abExport:'Export EN', abChain:'Evidence Chain',
+    inspInvTitle:'Invariants',
+    invC6:'AI prepares. Human approves.',
+    stbLive:'● active', stbLedger:'Ledger · :8101', stbAgents:'7 Agents · online', stbReceipts:'40,918+ Receipts'
+  }
+};
+
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lp-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelector('.lp-btn[onclick="setLang(\''+l+'\')"]').classList.add('active');
+  var t = LANG[l];
+  document.getElementById('sb-l-agents').textContent = t.sbLAgents;
+  document.getElementById('sb-l-docs').textContent = t.sbLDocs;
+  document.getElementById('sb-l-verify').textContent = t.sbLVerify;
+  document.getElementById('sb-legal').textContent = t.sbLegal;
+  document.getElementById('sb-notary').textContent = t.sbNotary;
+  document.getElementById('sb-acct').textContent = t.sbAcct;
+  document.getElementById('sb-comply').textContent = t.sbComply;
+  document.getElementById('sb-verify-link').textContent = t.sbVerifyLink;
+  document.getElementById('sb-ledger-link').textContent = t.sbLedgerLink;
+  document.getElementById('sb-sov-label').textContent = t.sbSovLabel;
+  document.getElementById('law-cmd').placeholder = t.cmdPlaceholder;
+  document.getElementById('exec-btn').textContent = t.execBtn;
+  document.getElementById('bc-doc').textContent = t.bcDoc;
+  document.getElementById('ls-text').textContent = t.lsText;
+  document.getElementById('d1').textContent = t.d1;
+  document.getElementById('d2').textContent = t.d2;
+  document.getElementById('d3').textContent = t.d3;
+  document.getElementById('d4').textContent = t.d4;
+  document.getElementById('da-verify').textContent = t.daVerify;
+  document.getElementById('da-export').textContent = t.daExport;
+  document.getElementById('da-seal').textContent = t.daSeal;
+  document.getElementById('da-review').textContent = t.daReview;
+  document.getElementById('da-elster').textContent = t.daElster;
+  document.getElementById('da-gobd').textContent = t.daGobd;
+  document.getElementById('rc-k1').textContent = t.rcK1;
+  document.getElementById('rc-k2').textContent = t.rcK2;
+  document.getElementById('rc-k3').textContent = t.rcK3;
+  document.getElementById('rc-k4').textContent = t.rcK4;
+  document.getElementById('rc-sealed-text').textContent = t.rcSealedText;
+  document.getElementById('rc-verify-pre').textContent = t.rcVerifyPre;
+  document.getElementById('dt-legal').textContent = t.dtLegal;
+  document.getElementById('dt-comply').textContent = t.dtComply;
+  document.getElementById('dt-acct').textContent = t.dtAcct;
+  document.getElementById('doc2-name').textContent = t.doc2Name;
+  document.getElementById('doc3-name').textContent = t.doc3Name;
+  document.getElementById('doc4-name').textContent = t.doc4Name;
+  document.getElementById('dm-zpo').textContent = t.dmZpo;
+  document.getElementById('insp-doc-title').textContent = t.inspDocTitle;
+  document.getElementById('insp-action-link').textContent = t.inspActionLink;
+  document.getElementById('il-type').textContent = t.ilType;
+  document.getElementById('iv-type').textContent = t.ivType;
+  document.getElementById('il-agent').textContent = t.ilAgent;
+  document.getElementById('il-status').textContent = t.ilStatus;
+  document.getElementById('iv-status').textContent = t.ivStatus;
+  document.getElementById('insp-truth-title').textContent = t.inspTruthTitle;
+  document.getElementById('tm-high').textContent = t.tmHigh;
+  document.getElementById('tm-med').textContent = t.tmMed;
+  document.getElementById('tm-low').textContent = t.tmLow;
+  document.getElementById('insp-jur-title').textContent = t.inspJurTitle;
+  document.getElementById('insp-act-title').textContent = t.inspActTitle;
+  document.getElementById('ab-seal').textContent = t.abSeal;
+  document.getElementById('ab-verify').textContent = t.abVerify;
+  document.getElementById('ab-export').textContent = t.abExport;
+  document.getElementById('ab-chain').textContent = t.abChain;
+  document.getElementById('insp-inv-title').textContent = t.inspInvTitle;
+  document.getElementById('inv-c6').textContent = t.invC6;
+  document.getElementById('stb-live').textContent = t.stbLive;
+  document.getElementById('stb-ledger').textContent = t.stbLedger;
+  document.getElementById('stb-agents').textContent = t.stbAgents;
+  document.getElementById('stb-receipts').textContent = t.stbReceipts;
+  var chips = document.querySelectorAll('.preset-chip');
+  t.presets.forEach(function(p,i){ if(chips[i]) chips[i].textContent = p; });
+}
+
+function setTruth(level) {
+  currentTruth = level;
+  document.querySelectorAll('.cts-btn').forEach(function(b){ b.classList.remove('active'); });
+  var map = {HIGH:'h',MED:'m',LOW:'l'};
+  document.querySelector('.cts-btn.'+map[level]).classList.add('active');
+}
+
+function switchAgent(agent) {
+  currentAgent = agent;
+  document.querySelectorAll('.sb-item').forEach(function(i){ i.classList.remove('active'); });
+  event.currentTarget.classList.add('active');
+  var agentMap = {legal:'W-LEGAL-001',notary:'W-NOTARY-001',acct:'W-ACCT-001',comply:'W-COMPLY-001'};
+  var id = agentMap[agent] || 'W-LEGAL-001';
+  document.getElementById('cmd-agent-tag').textContent = id;
+  document.getElementById('bc-agent').textContent = id;
+}
+
+function fillCmd(text) {
+  document.getElementById('law-cmd').value = text;
+  document.getElementById('law-cmd').focus();
+}
+
+function handleCmd(e) {
+  if(e.key === 'Enter') execCmd();
+}
+
+function execCmd() {
+  var cmd = document.getElementById('law-cmd').value.trim();
+  if(!cmd) return;
+  var now = new Date();
+  var ts = now.toISOString().replace('T',' ').substring(0,19) + ' UTC';
+  var hash = Array.from({length:8},function(){ return Math.floor(Math.random()*16).toString(16); }).join('') + '…';
+  var agentMap = {legal:'W-LEGAL-001',notary:'W-NOTARY-001',acct:'W-ACCT-001',comply:'W-COMPLY-001'};
+  var agent = agentMap[currentAgent];
+  var t = LANG[lang];
+  document.getElementById('rc-agent').textContent = agent + ' · Systementscheidung';
+  document.getElementById('rc-ts').textContent = ts;
+  document.getElementById('rc-v1').textContent = cmd.substring(0,40) + (cmd.length>40?'…':'');
+  document.getElementById('rc-v2').textContent = currentAgent.charAt(0).toUpperCase()+currentAgent.slice(1);
+  document.getElementById('rc-v3').textContent = agent;
+  document.getElementById('rc-v4').textContent = currentTruth === 'HIGH' ? (lang==='de'?'Bereit zur Versiegelung':lang==='pt'?'Pronto para selar':'Ready to seal') : (lang==='de'?'Entwurf':'Rascunho/Draft');
+  document.getElementById('rc-hash').textContent = 'sha256:' + hash;
+  document.getElementById('iv-hash').textContent = hash + '4e9b7f2a…';
+  var badge = document.getElementById('rc-badge');
+  badge.textContent = currentTruth;
+  badge.className = 'rc-truth-badge ' + (currentTruth==='HIGH'?'high':currentTruth==='MED'?'med':'low');
+  document.getElementById('result-card').style.display = 'block';
+  document.getElementById('law-cmd').value = '';
+}
+
+function selectDoc(el, docId) {
+  document.querySelectorAll('.doc-item').forEach(function(d){ d.classList.remove('active'); });
+  el.classList.add('active');
+}
+
+setLang('de');
+</script>
+</body>
+</html>
