@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="noir">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WINDI LAW — Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --font-display: 'Bricolage Grotesque', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        [data-theme="noir"] {
+            --bg: #0A0A10;
+            --bg-secondary: #12121A;
+            --bg-tertiary: #1A1A24;
+            --gold: #C9A84C;
+            --gold-dim: rgba(201, 168, 76, 0.3);
+            --text: #E8E6E1;
+            --text-secondary: #A0A0A0;
+            --text-tertiary: #666;
+            --border: #1A1A24;
+            --border-focus: #C9A84C;
+            --success: #2EC27E;
+            --warning: #E5A50A;
+            --error: #E74C3C;
+        }
+
+        [data-theme="klar"] {
+            --bg: #FAFAF8;
+            --bg-secondary: #F0F0EC;
+            --bg-tertiary: #E8E8E4;
+            --gold: #8B7424;
+            --gold-dim: rgba(139, 116, 36, 0.2);
+            --text: #1A1A1A;
+            --text-secondary: #555;
+            --text-tertiary: #888;
+            --border: #E0DED8;
+            --border-focus: #8B7424;
+            --success: #1D8A56;
+            --warning: #B8960A;
+            --error: #C0392B;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--font-display);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--gold);
+            letter-spacing: 0.05em;
+        }
+
+        .controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .lang-btn, .theme-btn {
+            padding: 0.4rem 0.8rem;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-secondary);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 4px;
+        }
+
+        .lang-btn:hover, .theme-btn:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .lang-btn.active {
+            background: var(--gold-dim);
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .card-icon {
+            font-size: 1.25rem;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .status-provisional {
+            background: rgba(229, 165, 10, 0.15);
+            color: var(--warning);
+            border: 1px solid var(--warning);
+        }
+
+        .status-verified {
+            background: rgba(46, 194, 126, 0.15);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+
+        /* Identity Card */
+        .identity-card {
+            background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-secondary));
+            border: 1px solid var(--gold-dim);
+        }
+
+        .did-display {
+            background: var(--bg);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .did-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .did-row:last-child { border-bottom: none; }
+
+        .did-label {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .did-value {
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            color: var(--gold);
+            word-break: break-all;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .did-value:hover { opacity: 0.8; }
+
+        .did-value.copied {
+            color: var(--success);
+        }
+
+        /* Company Info */
+        .company-info {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .info-item {
+            text-align: center;
+            padding: 0.75rem;
+            background: var(--bg);
+            border-radius: 8px;
+        }
+
+        .info-label {
+            font-size: 0.7rem;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+        }
+
+        .info-value {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        /* Keys */
+        .key-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: var(--bg);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .key-value {
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            color: var(--text);
+        }
+
+        .key-reveal {
+            padding: 0.25rem 0.5rem;
+            background: var(--gold-dim);
+            border: none;
+            border-radius: 4px;
+            color: var(--gold);
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+
+        .scope-tag {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            background: var(--gold-dim);
+            border-radius: 4px;
+            font-size: 0.7rem;
+            color: var(--gold);
+            margin-right: 0.25rem;
+        }
+
+        /* Receipts */
+        .receipt-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: var(--bg);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .receipt-id {
+            font-family: var(--font-mono);
+            font-size: 0.8rem;
+            color: var(--gold);
+        }
+
+        .receipt-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.75rem;
+        }
+
+        .receipt-link:hover { color: var(--gold); }
+
+        /* Provisional Message */
+        .provisional-msg {
+            background: rgba(229, 165, 10, 0.1);
+            border: 1px solid var(--warning);
+            border-radius: 8px;
+            padding: 1.25rem;
+            text-align: center;
+        }
+
+        .provisional-msg h3 {
+            color: var(--warning);
+            margin-bottom: 0.5rem;
+        }
+
+        .provisional-msg p {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        /* Export Buttons */
+        .export-row {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .export-btn {
+            flex: 1;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--text-secondary);
+            font-family: var(--font-display);
+            font-size: 0.875rem;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .export-btn:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        /* QR Code */
+        .qr-container {
+            text-align: center;
+            padding: 1rem;
+            background: #fff;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .qr-container canvas {
+            max-width: 150px;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            font-family: var(--font-mono);
+        }
+
+        .footer a { color: var(--gold); text-decoration: none; }
+
+        /* Mobile */
+        @media (max-width: 600px) {
+            .company-info { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">WINDI LAW</div>
+            <div class="controls">
+                <button class="lang-btn active" data-lang="de">DE</button>
+                <button class="lang-btn" data-lang="en">EN</button>
+                <button class="lang-btn" data-lang="pt">PT</button>
+                <button class="theme-btn" onclick="toggleTheme()">&#9728;</button>
+            </div>
+        </header>
+
+        <!-- Identity Card -->
+        <div class="card identity-card">
+            <div class="card-header">
+                <span class="card-title" data-i18n="identity_card">Identitätskarte</span>
+                <span class="status-badge {% if state == 'VERIFIED' %}status-verified{% else %}status-provisional{% endif %}">
+                    {% if state == 'VERIFIED' %}&#10004; VERIFIED{% else %}&#9203; PROVISIONAL{% endif %}
+                </span>
+            </div>
+
+            <div class="did-display">
+                <div class="did-row">
+                    <span class="did-label">DID</span>
+                    <span class="did-value" onclick="copyToClipboard('{{ did }}', this)">{{ did }}</span>
+                </div>
+                <div class="did-row">
+                    <span class="did-label">Fingerprint</span>
+                    <span class="did-value" onclick="copyToClipboard('{{ fingerprint }}', this)">{{ fingerprint }}</span>
+                </div>
+                <div class="did-row">
+                    <span class="did-label" data-i18n="registered">Registriert</span>
+                    <span class="did-value">{{ created_at[:10] }}</span>
+                </div>
+            </div>
+
+            <div class="company-info">
+                <div class="info-item">
+                    <div class="info-label" data-i18n="company">Unternehmen</div>
+                    <div class="info-value">{{ company_name }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label" data-i18n="country">Land</div>
+                    <div class="info-value">{{ country }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label" data-i18n="type">Typ</div>
+                    <div class="info-value">{{ company_type }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Provisional Message -->
+        {% if state == 'PROVISIONAL' %}
+        <div class="provisional-msg">
+            <h3 data-i18n="pending_title">&#9203; Identität in Überprüfung</h3>
+            <p data-i18n="pending_msg">Der Human Dragon wird Ihr Konto validieren. Sie werden benachrichtigt, wenn Sie zu VERIFIED befördert werden.</p>
+            <p style="margin-top:0.5rem;font-size:0.75rem;color:var(--text-tertiary);font-style:italic;">
+                "Verification is not requested. It is granted."
+            </p>
+        </div>
+        {% endif %}
+
+        <!-- API Keys -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title" data-i18n="api_keys">API Schlüssel</span>
+                <span class="card-icon">&#128273;</span>
+            </div>
+
+            {% for key in api_keys %}
+            <div class="key-row">
+                <div>
+                    <span class="key-value" id="key-{{ loop.index }}">{{ key[0][:8] }}···{{ key[0][-4:] }}</span>
+                    <button class="key-reveal" onclick="revealKey('key-{{ loop.index }}', '{{ key[0] }}')">Reveal</button>
+                </div>
+                <div>
+                    {% for scope in key[2].replace('[','').replace(']','').replace('"','').split(',') %}
+                    <span class="scope-tag">{{ scope.strip() }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+
+            {% if not api_keys %}
+            <p style="color:var(--text-tertiary);font-size:0.875rem;" data-i18n="no_keys">Keine Schlüssel vorhanden.</p>
+            {% endif %}
+        </div>
+
+        <!-- Ledger Receipts -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title" data-i18n="ledger_receipts">Ledger Receipts</span>
+                <span class="card-icon">&#128220;</span>
+            </div>
+
+            {% if genesis_receipt %}
+            <div class="receipt-item">
+                <span class="receipt-id">{{ genesis_receipt }}</span>
+                <a href="https://windi-domain.com/verify-public/?id={{ genesis_receipt }}" target="_blank" class="receipt-link">Verify &#8594;</a>
+            </div>
+            {% else %}
+            <p style="color:var(--text-tertiary);font-size:0.875rem;" data-i18n="no_receipts">Keine Receipts vorhanden.</p>
+            {% endif %}
+        </div>
+
+        <!-- Export -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title" data-i18n="export">Export</span>
+                <span class="card-icon">&#128230;</span>
+            </div>
+
+            <div class="export-row">
+                <button class="export-btn" onclick="exportJSON()">
+                    &#128196; JSON
+                </button>
+                <button class="export-btn" onclick="showQR()">
+                    &#128194; QR Code
+                </button>
+            </div>
+
+            <div class="qr-container" id="qr-container" style="display:none;">
+                <canvas id="qr-canvas"></canvas>
+                <p style="margin-top:0.5rem;font-size:0.7rem;color:#666;">Scan to verify</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>WINDI LAW {{ version }} &mdash; Identity Gate</p>
+            <p style="margin-top:0.5rem;">
+                <a href="/law/landing/">Landing</a> &middot;
+                <a href="/law/workspace/">Workspace</a> &middot;
+                <a href="/verify-public/">Verify</a>
+            </p>
+            <p style="margin-top:0.5rem;">Invariants: I9 &middot; I11 &middot; I13 &middot; G3</p>
+        </footer>
+    </div>
+
+    <script>
+        // ═══════════════════════════════════════════════════════════════
+        // I18N
+        // ═══════════════════════════════════════════════════════════════
+        const I18N = {
+            de: {
+                identity_card: "Identitätskarte",
+                registered: "Registriert",
+                company: "Unternehmen",
+                country: "Land",
+                type: "Typ",
+                pending_title: "Identität in Überprüfung",
+                pending_msg: "Der Human Dragon wird Ihr Konto validieren. Sie werden benachrichtigt, wenn Sie zu VERIFIED befördert werden.",
+                api_keys: "API Schlüssel",
+                no_keys: "Keine Schlüssel vorhanden.",
+                ledger_receipts: "Ledger Receipts",
+                no_receipts: "Keine Receipts vorhanden.",
+                export: "Export"
+            },
+            en: {
+                identity_card: "Identity Card",
+                registered: "Registered",
+                company: "Company",
+                country: "Country",
+                type: "Type",
+                pending_title: "Identity under review",
+                pending_msg: "The Human Dragon will validate your account. You will be notified when promoted to VERIFIED.",
+                api_keys: "API Keys",
+                no_keys: "No keys available.",
+                ledger_receipts: "Ledger Receipts",
+                no_receipts: "No receipts available.",
+                export: "Export"
+            },
+            pt: {
+                identity_card: "Cartão de Identidade",
+                registered: "Registado",
+                company: "Empresa",
+                country: "País",
+                type: "Tipo",
+                pending_title: "Identidade em verificação",
+                pending_msg: "O Human Dragon irá validar a sua conta. Será notificado quando promovido a VERIFIED.",
+                api_keys: "Chaves API",
+                no_keys: "Nenhuma chave disponível.",
+                ledger_receipts: "Receipts do Ledger",
+                no_receipts: "Nenhum receipt disponível.",
+                export: "Exportar"
+            }
+        };
+
+        let currentLang = localStorage.getItem('windi-lang') || 'de';
+
+        function setLang(lang) {
+            currentLang = lang;
+            localStorage.setItem('windi-lang', lang);
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.dataset.i18n;
+                if (I18N[lang] && I18N[lang][key]) {
+                    el.textContent = I18N[lang][key];
+                }
+            });
+        }
+
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', () => setLang(btn.dataset.lang));
+        });
+
+        // ═══════════════════════════════════════════════════════════════
+        // THEME
+        // ═══════════════════════════════════════════════════════════════
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.dataset.theme || 'noir';
+            const next = current === 'noir' ? 'klar' : 'noir';
+            html.dataset.theme = next;
+            localStorage.setItem('windi-theme', next);
+            document.querySelector('.theme-btn').innerHTML = next === 'noir' ? '&#9728;' : '&#9790;';
+        }
+
+        function initTheme() {
+            const saved = localStorage.getItem('windi-theme') || 'noir';
+            document.documentElement.dataset.theme = saved;
+            document.querySelector('.theme-btn').innerHTML = saved === 'noir' ? '&#9728;' : '&#9790;';
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // UTILITIES
+        // ═══════════════════════════════════════════════════════════════
+        function copyToClipboard(text, element) {
+            navigator.clipboard.writeText(text).then(() => {
+                element.classList.add('copied');
+                setTimeout(() => element.classList.remove('copied'), 1500);
+            });
+        }
+
+        function revealKey(elementId, fullKey) {
+            const el = document.getElementById(elementId);
+            if (el.dataset.revealed === 'true') {
+                el.textContent = fullKey.substring(0, 8) + '···' + fullKey.slice(-4);
+                el.dataset.revealed = 'false';
+            } else {
+                el.textContent = fullKey;
+                el.dataset.revealed = 'true';
+            }
+        }
+
+        function exportJSON() {
+            const data = {
+                did: "{{ did }}",
+                fingerprint: "{{ fingerprint }}",
+                state: "{{ state }}",
+                entity: {
+                    name: "{{ company_name }}",
+                    country: "{{ country }}",
+                    type: "{{ company_type }}"
+                },
+                admin: {
+                    name: "{{ full_name }}",
+                    email: "{{ email }}"
+                },
+                created_at: "{{ created_at }}",
+                genesis_receipt: "{{ genesis_receipt }}",
+                verify_url: "https://windi-domain.com/verify-public/?id={{ genesis_receipt }}"
+            };
+
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'windi-law-identity-{{ did[10:18] }}.json';
+            a.click();
+        }
+
+        function showQR() {
+            const container = document.getElementById('qr-container');
+            if (container.style.display === 'none') {
+                container.style.display = 'block';
+                // Simple QR placeholder - in production use a QR library
+                const canvas = document.getElementById('qr-canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = 150;
+                canvas.height = 150;
+                ctx.fillStyle = '#fff';
+                ctx.fillRect(0, 0, 150, 150);
+                ctx.fillStyle = '#000';
+                ctx.font = '10px monospace';
+                ctx.fillText('QR: {{ did[:30] }}...', 10, 75);
+            } else {
+                container.style.display = 'none';
+            }
+        }
+
+        // Init
+        initTheme();
+        setLang(currentLang);
+    </script>
+</body>
+</html>

@@ -32,7 +32,10 @@ from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
 DB_PATH = "/opt/windi/windi-law/identity-gate/windi_law_identity.db"
 LEDGER_URL = "http://127.0.0.1:8101/api/receipts"
-VERSION = "v1.0.0"
+VERSION = "v1.1.0"
+
+# Admin secret for verification (from environment)
+ADMIN_SECRET = os.environ.get("WINDI_ADMIN_SECRET", "windi-law-admin-2026")
 
 # Identity states
 STATE_UNBORN = "UNBORN"
@@ -549,6 +552,229 @@ async def consent_sign(data: ConsentSign, request: Request):
 async def gate_ui(request: Request):
     """Render Identity Gate UI."""
     return templates.TemplateResponse("gate.html", {"request": request})
+
+
+# ═══════════════════════════════════════════════════════════════
+# DASHBOARD ENDPOINTS
+# ═══════════════════════════════════════════════════════════════
+
+@app.get("/dashboard/{did}", response_class=HTMLResponse)
+async def dashboard(did: str, request: Request):
+    """Render Dashboard for authenticated admin."""
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    # Get admin data
+    cursor.execute("""
+        SELECT a.id, a.full_name, a.email, a.did, a.fingerprint, a.state, a.created_at,
+               c.legal_name, c.country, c.type, c.ledger_receipt
+        FROM admins a
+        JOIN companies c ON a.company_id = c.id
+        WHERE a.did = ?
+    """, (did,))
+    admin = cursor.fetchone()
+
+    if not admin:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Identity not found")
+
+    # Get API keys
+    cursor.execute("""
+        SELECT api_key, dev_key, scope, is_dev FROM api_keys WHERE admin_id = ? AND active = 1
+    """, (admin[0],))
+    keys = cursor.fetchall()
+
+    # Get receipts from Ledger (we'll fetch them separately)
+    conn.close()
+
+    # Prepare context for template
+    context = {
+        "request": request,
+        "admin_id": admin[0],
+        "full_name": admin[1],
+        "email": admin[2],
+        "did": admin[3],
+        "fingerprint": admin[4],
+        "state": admin[5],
+        "created_at": admin[6],
+        "company_name": admin[7],
+        "country": admin[8],
+        "company_type": admin[9],
+        "genesis_receipt": admin[10],
+        "api_keys": keys,
+        "version": VERSION
+    }
+
+    return templates.TemplateResponse("dashboard.html", context)
+
+
+@app.get("/dashboard/{did}/json")
+async def dashboard_json(did: str):
+    """Get dashboard data as JSON (for API access)."""
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT a.id, a.full_name, a.email, a.did, a.fingerprint, a.state, a.created_at,
+               c.legal_name, c.country, c.type, c.ledger_receipt
+        FROM admins a
+        JOIN companies c ON a.company_id = c.id
+        WHERE a.did = ?
+    """, (did,))
+    admin = cursor.fetchone()
+
+    if not admin:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Identity not found")
+
+    cursor.execute("""
+        SELECT api_key, scope FROM api_keys WHERE admin_id = ? AND active = 1
+    """, (admin[0],))
+    keys = cursor.fetchall()
+    conn.close()
+
+    return {
+        "did": admin[3],
+        "fingerprint": admin[4],
+        "state": admin[5],
+        "entity": {
+            "name": admin[7],
+            "country": admin[8],
+            "type": admin[9]
+        },
+        "admin": {
+            "name": admin[1],
+            "email": admin[2]
+        },
+        "created_at": admin[6],
+        "genesis_receipt": admin[10],
+        "verify_url": f"https://windi-domain.com/verify-public/?id={admin[10]}" if admin[10] else None,
+        "keys_count": len(keys)
+    }
+
+
+# ═══════════════════════════════════════════════════════════════
+# ADMIN PANEL (Human Dragon Only)
+# ═══════════════════════════════════════════════════════════════
+
+@app.get("/admin/panel")
+async def admin_panel(x_admin_secret: Optional[str] = Header(None)):
+    """List all admins (Human Dragon only)."""
+    if x_admin_secret != ADMIN_SECRET:
+        raise HTTPException(status_code=401, detail="Unauthorized: Invalid admin secret")
+
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT a.full_name, a.email, a.did, a.state, a.created_at,
+               c.legal_name, c.country
+        FROM admins a
+        JOIN companies c ON a.company_id = c.id
+        ORDER BY a.created_at DESC
+    """)
+    admins = cursor.fetchall()
+    conn.close()
+
+    return {
+        "total": len(admins),
+        "admins": [
+            {
+                "full_name": a[0],
+                "email": a[1],
+                "did": a[2],
+                "state": a[3],
+                "created_at": a[4],
+                "company": a[5],
+                "country": a[6]
+            }
+            for a in admins
+        ]
+    }
+
+
+@app.post("/admin/verify/{did}")
+async def admin_verify(did: str, x_admin_secret: Optional[str] = Header(None)):
+    """Promote admin to VERIFIED status (Human Dragon only)."""
+    if x_admin_secret != ADMIN_SECRET:
+        raise HTTPException(status_code=401, detail="Unauthorized: Invalid admin secret")
+
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    # Get admin
+    cursor.execute("""
+        SELECT a.id, a.full_name, a.email, a.state, c.id as company_id
+        FROM admins a
+        JOIN companies c ON a.company_id = c.id
+        WHERE a.did = ?
+    """, (did,))
+    admin = cursor.fetchone()
+
+    if not admin:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Admin not found")
+
+    if admin[3] == STATE_VERIFIED:
+        conn.close()
+        return {"success": False, "message": "Admin already verified", "state": STATE_VERIFIED}
+
+    # Update state
+    now = datetime.now(timezone.utc).isoformat()
+    cursor.execute("""
+        UPDATE admins SET state = ? WHERE did = ?
+    """, (STATE_VERIFIED, did))
+
+    # Also update company state
+    cursor.execute("""
+        UPDATE companies SET state = ? WHERE id = ?
+    """, (STATE_VERIFIED, admin[4]))
+
+    conn.commit()
+    conn.close()
+
+    # Seal verification in Ledger
+    receipt_id = f"WINDI-LAW-VERIFY-{did[10:18].upper()}-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}"
+    content_hash = f"sha256:{hashlib.sha256(f'{did}|VERIFIED|{now}'.encode()).hexdigest()}"
+
+    ledger_payload = {
+        "id": receipt_id,
+        "actor": "Human Dragon",
+        "app": "windi-law-admin",
+        "doc_name": f"Identity Verification — {admin[1]}",
+        "doc_type": "doc",
+        "governance_level": "HIGH",
+        "content_hash": content_hash,
+        "sge_score": 1.0,
+        "metadata": {
+            "did": did,
+            "admin_email": admin[2],
+            "previous_state": admin[3],
+            "new_state": STATE_VERIFIED,
+            "verified_at": now,
+            "verified_by": "Human Dragon",
+            "invariants": ["I9", "I11"],
+            "phrase": "Verification is not requested. It is granted."
+        }
+    }
+
+    try:
+        async with httpx.AsyncClient() as client:
+            r = await client.post(LEDGER_URL, json=ledger_payload, timeout=10.0)
+            ledger_result = r.json()
+    except Exception as e:
+        ledger_result = {"error": str(e), "receipt_id": receipt_id}
+
+    return {
+        "success": True,
+        "did": did,
+        "admin_name": admin[1],
+        "previous_state": admin[3],
+        "new_state": STATE_VERIFIED,
+        "verified_at": now,
+        "ledger_receipt": ledger_result,
+        "message": "Identity verified by Human Dragon"
+    }
 
 
 # ═══════════════════════════════════════════════════════════════
