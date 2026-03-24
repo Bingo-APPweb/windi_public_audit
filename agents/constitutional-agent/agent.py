@@ -722,6 +722,14 @@ def create_agent_api(agent: WindiAgent):
     except ImportError as e:
         print(f"  [RC4] W-VERIFY-MODUS4 not loaded: {e}")
 
+    # W-INTENT-001: Intent Analyzer — Precision Routing
+    try:
+        from blueprints.intent_analyzer_blueprint import intent_analyzer
+        app.register_blueprint(intent_analyzer)
+        print("  [INTENT] W-INTENT-001 v1.0 loaded on /grove/intent-analyze")
+    except ImportError as e:
+        print(f"  [INTENT] W-INTENT-001 not loaded: {e}")
+
     @app.route("/agent/health", methods=["GET"])
     def health():
         return jsonify({
