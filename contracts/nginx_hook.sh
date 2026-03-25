@@ -12,8 +12,6 @@
 #
 # ═══════════════════════════════════════════════════════════════
 
-set -e
-
 CONTRACTS_DIR="/opt/windi/contracts"
 AUDIT_SCRIPT="$CONTRACTS_DIR/nginx_audit.py"
 
@@ -52,3 +50,28 @@ else
     echo ""
     exit 1
 fi
+
+# ═══════════════════════════════════════════════════════════════
+# WINDI-LAW Feature Lock Check
+# ═══════════════════════════════════════════════════════════════
+FEATURE_LOCK_SCRIPT="/opt/windi/windi-law/tests/feature-lock-check.sh"
+
+if [ -f "$FEATURE_LOCK_SCRIPT" ]; then
+    echo ""
+    "$FEATURE_LOCK_SCRIPT"
+    FEATURE_RESULT=$?
+
+    if [ $FEATURE_RESULT -ne 0 ]; then
+        echo ""
+        echo "╔═══════════════════════════════════════════════════════════╗"
+        echo "║  ⚠️  COMMIT BLOCKED — Feature Lock violation               ║"
+        echo "╚═══════════════════════════════════════════════════════════╝"
+        echo ""
+        echo "Check /opt/windi/windi-law/FEATURE_LOCK.md"
+        echo "Restore missing features from git history."
+        echo ""
+        exit 1
+    fi
+fi
+
+exit 0
