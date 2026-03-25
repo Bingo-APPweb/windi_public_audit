@@ -1068,9 +1068,9 @@
                 // Also set cookie for future visits
                 document.cookie = 'windi_did=' + encodeURIComponent(registrationData.did) + '; path=/; max-age=31536000; SameSite=Lax';
 
-                // Show email verification notice
+                // Show email verification notice (always show since email is sent on registration)
                 var emailNotice = document.getElementById('email-notice');
-                if (emailNotice && result.email_verification_sent) {
+                if (emailNotice) {
                     emailNotice.style.display = 'block';
                 }
 
