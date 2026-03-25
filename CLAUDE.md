@@ -1637,3 +1637,72 @@ All links now resolve to HTTPS 200:
 *LIGA IA+H — Kempten, Bavaria · 2026*
 *🧑‍💻 Human Dragon · 🛡️ Guardian · 🏗️ Architect · 👁️ Witness*
 *"AI processes. Human decides. WINDI guarantees."*
+
+---
+
+## §56 — Email Verification Async (Option B) — 25 Mar 2026
+
+**Status:** ✅ LIVE (logs only) · SMTP pendente
+**Commit:** `f600d27`
+**Version:** v1.2.0
+
+### Fluxo Implementado
+
+```
+Registo → VERIFIED imediato → Workspace acessível
+            ↓
+        📧 Email logado (consola)
+            ↓
+        Token válido 48h → /law/verify-email/{token}
+            ↓
+        email_verified = 1 → HIGH ops enabled
+```
+
+### Endpoints
+
+| Endpoint | Função |
+|----------|--------|
+| `GET /law/verify-email/{token}` | Página verificação (trilíngue) |
+| `POST /law/resend-verification` | Reenviar email |
+
+### DB Schema
+
+```sql
+admins:
+  + email_verified      INTEGER (0/1)
+  + email_token         TEXT
+  + email_token_expires TEXT
+```
+
+### Pendente
+
+- [ ] SMTP real (Dispatch Gateway ou directo)
+- [ ] Cron job: downgrade para EMAIL_PENDING após 48h
+
+---
+
+## BACKLOG — Próximas Sessões
+
+### P0 — Crítico
+- [ ] **SMTP Integration** — Envio real de emails de verificação
+- [ ] **Node.js 24** — Atualizar GitHub Actions workflow
+
+### P1 — Importante  
+- [ ] **Rate limiting** — nginx Agent Corps
+- [ ] **Cron 48h** — Downgrade email não verificado → EMAIL_PENDING
+- [ ] **HIGH ops gate** — Bloquear operações HIGH se email_verified=0
+
+### P2 — Melhorias
+- [ ] **W-ACCT-001** — Bridge dedicado
+- [ ] **W-COMPLY-001** — Dashboard
+- [ ] **Resend UI** — Botão "Reenviar email" no workspace
+
+### Infra
+- [ ] **windilaw.de** — Sincronizar com windi-domain.com/law/
+- [ ] **Backup DB** — Automatizar backup windi_law_identity.db
+
+---
+
+*Sessão encerrada: 25 Mar 2026 · 22:46 UTC*
+*Próxima sessão: SMTP + Backlog review*
+
