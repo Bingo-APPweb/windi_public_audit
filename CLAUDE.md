@@ -653,6 +653,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 
 | Data | Milestones |
 |------|------------|
+| 25 Mar | §51 **Forensic Workspace v3.1** · ab-seal + ab-verify + ab-chain + CIA badges + QR SVG · 5/5 PASS · deb0ac0 |
 | 24 Mar | §50 **Constitutional Test v1.0.0** · CI/CD Compliance · 7/7 PASS · 4 Domains · Ledger Sealed · 3bf4454 |
 | 24 Mar | §49 **WINDI-LAW COMPLETE** · Identity Gate · Trilingual Policies · 2 VERIFIED users · e7a80c4 |
 | 24 Mar | §48 **W-COUNSEL-001 LIVE** · Sovereign Counsel Layer · 3 Layers Training · WINDI Precision Pattern Complete · e0c9fd9 |
@@ -883,7 +884,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 
 ---
 
-## §37-50. Sistemas Recentes — Resumo
+## §37-51. Sistemas Recentes — Resumo
 
 > **Detalhes completos:** `CLAUDE-HISTORY.md` § MIGRAÇÃO 24 Mar 2026
 
@@ -903,6 +904,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 | 48 | W-COUNSEL-001 | Sovereign Training · Coaching Layer | ✅ LIVE |
 | 49 | **WINDI-LAW** | Identity Gate · Trilingual Policies · :8122 | ✅ **COMPLETE** |
 | 50 | **Constitutional Test** | CI/CD Compliance · 7 tests · 4 domains | ✅ **SEALED** |
+| 51 | **Forensic Workspace v3.1** | ab-seal + ab-verify + ab-chain + CIA + QR | ✅ **LIVE** |
 
 ### Referência Rápida
 
@@ -911,6 +913,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 **Verify:** `/verify-public/web/media-detector.html` · 4 modos
 **Travel:** `/verify-public/web/travel/` · Mobile Proof Stub
 **WINDI-LAW:** `/law/gate` · Identity Gate · Policies DE|EN|PT · 2 VERIFIED users
+**Workspace:** `/law/prompt-area/` · Forensic Seal Pipeline · Modal I9 · QR SVG
 **Test Suite:** `/opt/windi/tests/agent_constitutional_test.py` · CI/CD ready
 **Dashboards:** `/legal-dashboard/` · `/notary-dashboard/` · `/audit-dashboard/`
 
@@ -919,6 +922,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 **Axioma §45:** "A prova mais forte é a que não se sente."
 **Axioma §49:** "Sem DID, não existe sujeito operacional."
 **Axioma §50:** "Um agente WINDI sabe onde não pode responder."
+**Axioma §51:** "O modal existe antes do handler. A confirmação humana é o primeiro elemento no código."
 
 ---
 
@@ -1307,6 +1311,95 @@ Together they form the **Constitutional Infrastructure**:
 
 **Zero external dependencies** — stdlib Python only.
 Runs on any Python 3.11+ environment.
+
+---
+
+## §51 — Forensic Workspace v3.1 (Constitutional Seal Pipeline)
+
+**Status:** ✅ LIVE · 5/5 ACCEPTANCE TEST PASS
+**Commits:** `359d7a7` (C1+C2 fix) · `deb0ac0` (full feature)
+**Path:** `/opt/windi/windi-law/workspace/index.html`
+**URL:** `windi-domain.com/law/prompt-area/`
+
+### Purpose
+
+Complete constitutional seal pipeline from document creation to forensic verification.
+Implements the full cycle: Draft → Modal I9 → Seal → Verify → Chain → QR.
+
+### 5 Components Delivered
+
+| Component | Function | Invariants |
+|-----------|----------|------------|
+| **ab-seal** | Modal I9 + POST /api/receipts | I9, I11, G3 |
+| **ab-verify** | GET /api/receipts/{id} + inline result | I11 |
+| **ab-chain** | GET /api/receipts?actor={DID} + timeline | I11 |
+| **Wallet Gate** | Header + Sidebar link when !sessionStorage | I9 |
+| **CIA badges** | Visual state I9/I11/I13/G3/C6 | All |
+| **QR SVG** | Generate + Show + Download after seal | I11 |
+
+### Modal I9 — Constitutional Gate
+
+The modal enforces `human_approved=true` before any seal operation.
+
+```
+[ab-seal click]
+    ↓
+openSealModal() — verifica hash existe
+    ↓
+Modal I9 aparece — "Esta acção é irreversível"
+    ↓
+[modal-confirm click] — human_approved=true
+    ↓
+POST /api/receipts → Ledger :8101
+    ↓
+CIA badges update → QR appears → UI sealed state
+```
+
+### Wallet Gate Fix
+
+When `sessionStorage.getItem('windi_law_wallet') === null`:
+
+| Location | Behavior |
+|----------|----------|
+| **Header** | DID badge becomes "Create wallet →" link to /law/gate |
+| **Sidebar** | IDENTITÄT shows ⚠ + connect button visible |
+
+### CIA — Constitutional Invariant Architecture
+
+Visual badges in Inspector show real-time invariant state:
+
+| Badge | Meaning when GREEN |
+|-------|-------------------|
+| I9 | Human approval enforced |
+| I11 | Cryptographic permanence active |
+| I13 | Convergence constraint respected |
+| G3 | Propose ≠ Execute maintained |
+| C6 | AI prepares, Human approves |
+
+### Acceptance Test (5/5 PASS)
+
+```
+✅ 1. Write text → Seal → Modal I9 appears → confirm
+✅ 2. Receipt generated with hash
+✅ 3. Verify → ✅ Authentic + verify-public link
+✅ 4. Beweiskette → timeline visible
+✅ 5. QR SVG appears in result area
+```
+
+### i18n Coverage
+
+All new elements trilingual: DE | EN | PT
+
+| Key | DE | EN | PT |
+|-----|----|----|-----|
+| modalTitle | Versiegelung bestätigen | Confirm Seal | Confirmar Selagem |
+| verifyAuth | ✅ Authentisch | ✅ Authentic | ✅ Autêntico |
+| chainTitle | Beweiskette | Evidence Chain | Cadeia de Provas |
+| createWallet | Wallet erstellen → | Create wallet → | Criar wallet → |
+
+### Axiom
+
+> "O modal existe antes do handler. A confirmação humana é o primeiro elemento no código, não o último."
 
 ---
 
