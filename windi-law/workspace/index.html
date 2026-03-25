@@ -36,7 +36,7 @@
   --topbar:  52px;
 }
 
-/* ── KLAR (light) ── */
+/* ── KLAR (light) — High Contrast Fix (Audit 25 Mar 2026) ── */
 [data-theme="klar"] {
   --bg:      #F5F0E0;
   --bg-2:    #EDE8D6;
@@ -44,20 +44,26 @@
   --bg-4:    #DEDAD0;
   --gold:    #8B6914;
   --gold-d:  rgba(139,105,20,0.35);
-  --gold-p:  rgba(139,105,20,0.07);
+  --gold-p:  rgba(139,105,20,0.10);
   --gold-s:  rgba(139,105,20,0.14);
-  --parch:   #1a1710;
-  --muted:   rgba(26,23,16,0.55);
-  --dim:     rgba(26,23,16,0.35);
-  --faint:   rgba(26,23,16,0.06);
-  --border:  rgba(26,23,16,0.09);
-  --border-2:rgba(26,23,16,0.16);
+  /* C3 FIX: Text contrast — WCAG AA compliant */
+  --parch:   #2A2010;           /* Primary text */
+  --muted:   #5A4A2A;           /* Secondary text */
+  --dim:     #7A6850;           /* Tertiary/labels */
+  --faint:   rgba(90,74,42,0.12);
+  --border:  rgba(90,74,42,0.15);
+  --border-2:rgba(90,74,42,0.22);
+  /* H1 FIX: Chips visible */
+  --chip-bg: #EDE8D0;
+  --chip-border: #8B6914;
+  --chip-text: #5A4A2A;
+  /* Truth levels — darker for KLAR */
   --high:    #1A7A50;
-  --high-p:  rgba(26,122,80,0.10);
+  --high-p:  rgba(26,122,80,0.12);
   --med:     #8B6914;
-  --med-p:   rgba(139,105,20,0.10);
+  --med-p:   rgba(139,105,20,0.12);
   --low:     #2E5FAA;
-  --low-p:   rgba(46,95,170,0.10);
+  --low-p:   rgba(46,95,170,0.12);
 }
 
 html,body { height:100%; overflow:hidden; }
@@ -447,7 +453,30 @@ body { background:var(--bg); color:var(--parch); font-family:var(--font); displa
   font-family:var(--mono); font-size:9px; letter-spacing:0.06em;
   color:var(--dim); padding:3px 8px;
   border:0.5px solid var(--border); border-radius:2px;
+  cursor:pointer; position:relative; transition:all 0.15s;
 }
+.tl-did:hover { color:var(--gold); border-color:var(--gold-d); }
+/* M2 FIX: DID tooltip + copy */
+.tl-did::after {
+  content:attr(data-full-did);
+  position:absolute; top:calc(100% + 6px); left:50%;
+  transform:translateX(-50%); white-space:nowrap;
+  background:var(--bg-3); border:0.5px solid var(--border-2);
+  padding:6px 10px; border-radius:3px; font-size:10px;
+  color:var(--parch); opacity:0; pointer-events:none;
+  transition:opacity 0.15s; z-index:100;
+  box-shadow:0 4px 12px rgba(0,0,0,0.15);
+}
+.tl-did:hover::after { opacity:1; }
+.tl-did-copied {
+  background:var(--high-p) !important;
+  border-color:var(--high) !important;
+  color:var(--high) !important;
+}
+.tl-did .copy-icon {
+  margin-left:4px; font-size:10px; opacity:0.5;
+}
+.tl-did:hover .copy-icon { opacity:1; }
 .tl-status {
   font-family:var(--mono); font-size:8px; letter-spacing:0.1em;
   padding:2px 7px; border-radius:2px;
@@ -528,6 +557,65 @@ body { background:var(--bg); color:var(--parch); font-family:var(--font); displa
   font-family:var(--mono); font-size:8px; letter-spacing:0.1em;
   text-transform:uppercase; color:var(--dim); margin-right:4px;
 }
+
+/* ══ C1+C2 FIX: Identity Cards (SCHLÜSSEL + WALLET) ══ */
+.sb-identity { padding-bottom:0.75rem; }
+.sb-identity-card {
+  margin:0 0.75rem 0.5rem; padding:0.6rem 0.75rem;
+  background:var(--bg-3); border:0.5px solid var(--border-2);
+  border-radius:4px; transition:border-color 0.15s;
+}
+.sb-identity-card:hover { border-color:var(--gold-d); }
+.sb-ic-header {
+  display:flex; align-items:center; gap:6px;
+  margin-bottom:0.5rem; padding-bottom:0.4rem;
+  border-bottom:0.5px solid var(--border);
+}
+.sb-ic-icon { font-size:12px; }
+.sb-ic-title {
+  font-family:var(--mono); font-size:9px; font-weight:500;
+  letter-spacing:0.1em; text-transform:uppercase; color:var(--gold);
+}
+.sb-ic-row {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:3px 0; font-family:var(--mono); font-size:9px;
+}
+.sb-ic-label { color:var(--dim); letter-spacing:0.04em; }
+.sb-ic-value { color:var(--parch); }
+.sb-ic-highlight { color:var(--gold); font-weight:500; }
+.sb-ic-hash {
+  font-size:8px; color:var(--muted); max-width:80px;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.sb-ic-hash-row { cursor:pointer; transition:all 0.15s; }
+.sb-ic-hash-row:hover { background:var(--gold-p); margin:0 -0.5rem; padding:3px 0.5rem; border-radius:2px; }
+.sb-ic-copy { font-size:10px; opacity:0.4; transition:opacity 0.15s; }
+.sb-ic-hash-row:hover .sb-ic-copy { opacity:1; }
+
+/* ══ KLAR Theme Overrides — High Contrast (Audit 25 Mar 2026) ══ */
+/* H1 FIX: Chips visible in KLAR */
+[data-theme="klar"] .preset-chip {
+  color: var(--chip-text);
+  border-color: var(--chip-border);
+  background: var(--chip-bg);
+}
+[data-theme="klar"] .preset-chip:hover {
+  color: var(--gold);
+  background: rgba(139,105,20,0.15);
+}
+/* H2 FIX: Truth buttons visible in KLAR */
+[data-theme="klar"] .truth-btn { color: var(--dim); border-color: rgba(90,74,42,0.25); }
+[data-theme="klar"] .truth-btn.h { color: #3D6B4A; border-color: rgba(26,122,80,0.35); }
+[data-theme="klar"] .truth-btn.m { color: #7A5A14; border-color: rgba(139,105,20,0.35); }
+[data-theme="klar"] .truth-btn.l { color: #3A5A8A; border-color: rgba(46,95,170,0.35); }
+/* H3 FIX: Inspector/sidebar labels readable */
+[data-theme="klar"] .insp-label { color: var(--muted); }
+[data-theme="klar"] .insp-title { color: var(--muted); }
+[data-theme="klar"] .sb-label { color: var(--dim); }
+/* M1 FIX: Statusbar visible */
+[data-theme="klar"] .statusbar { background: var(--bg-2); color: var(--muted); }
+[data-theme="klar"] .statusbar .sb-gold { color: var(--gold); }
+[data-theme="klar"] .sb-sep { background: rgba(90,74,42,0.20); }
 </style>
 </head>
 <body>
@@ -536,7 +624,7 @@ body { background:var(--bg); color:var(--parch); font-family:var(--font); displa
 <div class="topbar">
   <div class="topbar-left">
     <div class="tl-logo">WINDI<span>LAW</span></div>
-    <div class="tl-did" id="tl-did">did:windi:···</div>
+    <div class="tl-did" id="tl-did" data-full-did="did:windi:···" onclick="copyDid()" title="Click to copy">did:windi:···<span class="copy-icon">📋</span></div>
     <div class="tl-status" id="tl-status">—</div>
   </div>
   <div class="topbar-center">
@@ -622,6 +710,52 @@ body { background:var(--bg); color:var(--parch); font-family:var(--font); displa
         <span class="sb-icon">◎</span>
         <span id="sb-ledger-link">Forensic Ledger</span>
       </a>
+    </div>
+
+    <!-- C1+C2 FIX: IDENTITÄT section with SCHLÜSSEL + WALLET -->
+    <div class="sb-section sb-identity">
+      <span class="sb-label" id="sb-l-identity">Identität</span>
+
+      <!-- SCHLÜSSEL -->
+      <div class="sb-identity-card" id="sb-schluessel">
+        <div class="sb-ic-header">
+          <span class="sb-ic-icon">🔑</span>
+          <span class="sb-ic-title" id="sb-schluessel-title">Schlüssel</span>
+        </div>
+        <div class="sb-ic-row">
+          <span class="sb-ic-label" id="sb-key-type-label">Typ</span>
+          <span class="sb-ic-value" id="sb-key-type">Ed25519</span>
+        </div>
+        <div class="sb-ic-row">
+          <span class="sb-ic-label" id="sb-key-created-label">Erstellt</span>
+          <span class="sb-ic-value" id="sb-key-created">—</span>
+        </div>
+        <div class="sb-ic-row sb-ic-hash-row" onclick="copyFingerprint()" title="Click to copy">
+          <span class="sb-ic-label">SHA-256</span>
+          <span class="sb-ic-value sb-ic-hash" id="sb-key-hash">—</span>
+          <span class="sb-ic-copy">📋</span>
+        </div>
+      </div>
+
+      <!-- WALLET -->
+      <div class="sb-identity-card" id="sb-wallet">
+        <div class="sb-ic-header">
+          <span class="sb-ic-icon">👛</span>
+          <span class="sb-ic-title" id="sb-wallet-title">Wallet</span>
+        </div>
+        <div class="sb-ic-row">
+          <span class="sb-ic-label" id="sb-pioneer-label">Pioneer</span>
+          <span class="sb-ic-value sb-ic-highlight" id="sb-pioneer-num">#—</span>
+        </div>
+        <div class="sb-ic-row">
+          <span class="sb-ic-label">Tier</span>
+          <span class="sb-ic-value" id="sb-tier">NODAL</span>
+        </div>
+        <div class="sb-ic-row">
+          <span class="sb-ic-label" id="sb-credits-label">Kredite</span>
+          <span class="sb-ic-value" id="sb-credits">—</span>
+        </div>
+      </div>
     </div>
 
     <div class="sb-footer">
@@ -897,6 +1031,36 @@ var pendingApproval = true;
 var currentHash = '';
 var walletDid = '';
 
+// C1 FIX: Copy fingerprint to clipboard
+function copyFingerprint() {
+  var hashEl = document.getElementById('sb-key-hash');
+  var fullHash = hashEl.getAttribute('data-full-hash') || hashEl.textContent;
+  navigator.clipboard.writeText(fullHash).then(function() {
+    var original = hashEl.textContent;
+    hashEl.textContent = '✓';
+    hashEl.style.color = 'var(--high)';
+    setTimeout(function() {
+      hashEl.textContent = original;
+      hashEl.style.color = '';
+    }, 1500);
+  });
+}
+
+// M2 FIX: Copy DID to clipboard
+function copyDid() {
+  var didEl = document.getElementById('tl-did');
+  var fullDid = didEl.getAttribute('data-full-did') || walletDid || 'did:windi:···';
+  navigator.clipboard.writeText(fullDid).then(function() {
+    didEl.classList.add('tl-did-copied');
+    var original = didEl.innerHTML;
+    didEl.innerHTML = '✓ Copied!';
+    setTimeout(function() {
+      didEl.classList.remove('tl-did-copied');
+      didEl.innerHTML = original;
+    }, 1500);
+  });
+}
+
 // v3.1: Load wallet from sessionStorage (injected by /law/gate)
 function initWallet() {
   var stored = sessionStorage.getItem('windi_law_wallet');
@@ -905,13 +1069,34 @@ function initWallet() {
       var w = JSON.parse(stored);
       walletDid = w.did || '';
       var didShort = walletDid.length > 20 ? walletDid.substring(0,20)+'···' : walletDid;
-      document.getElementById('tl-did').textContent = didShort || 'did:windi:···';
+      var didEl = document.getElementById('tl-did');
+      didEl.setAttribute('data-full-did', walletDid);
+      didEl.innerHTML = (didShort || 'did:windi:···') + '<span class="copy-icon">📋</span>';
       document.getElementById('tl-status').textContent = w.state === 'VERIFIED' ? LANG[lang].tlStatusVerified : LANG[lang].tlStatusPending;
       document.getElementById('tl-status').style.color = w.state === 'VERIFIED' ? 'var(--high)' : 'var(--med)';
       document.getElementById('tl-status').style.borderColor = w.state === 'VERIFIED' ? 'rgba(46,194,126,0.3)' : 'rgba(201,168,76,0.3)';
       document.getElementById('tl-status').style.background = w.state === 'VERIFIED' ? 'var(--high-p)' : 'var(--med-p)';
       // Store globally for agent context injection
       window.__windiLawWallet = w;
+
+      // C1+C2 FIX: Populate SCHLÜSSEL + WALLET panels
+      if (w.fingerprint) {
+        var hashEl = document.getElementById('sb-key-hash');
+        hashEl.textContent = w.fingerprint.substring(0,12) + '···';
+        hashEl.setAttribute('data-full-hash', w.fingerprint);
+      }
+      if (w.created_at) {
+        document.getElementById('sb-key-created').textContent = w.created_at.substring(0,10);
+      }
+      if (w.pioneer_number) {
+        document.getElementById('sb-pioneer-num').textContent = '#' + w.pioneer_number;
+      }
+      if (w.tier) {
+        document.getElementById('sb-tier').textContent = w.tier.toUpperCase();
+      }
+      if (w.credits !== undefined) {
+        document.getElementById('sb-credits').textContent = w.credits.toLocaleString();
+      }
     } catch(e) { console.error('[WINDI-LAW] Wallet parse error:', e); }
   }
 }
@@ -936,6 +1121,8 @@ var currentAgent = 'legal';
 var LANG = {
   de: {
     sbLAgents:'Agentenkonstellation', sbLDocs:'Aktuelle Dokumente', sbLVerify:'Verifikation',
+    sbLIdentity:'Identität', sbSchluesselTitle:'Schlüssel', sbWalletTitle:'Wallet',
+    sbKeyTypeLabel:'Typ', sbKeyCreatedLabel:'Erstellt', sbPioneerLabel:'Pioneer', sbCreditsLabel:'Kredite',
     sbLegal:'Juristisch', sbNotary:'Notariat', sbAcct:'Buchhaltung', sbComply:'Compliance',
     sbVerifyLink:'Verify Public', sbLedgerLink:'Forensic Ledger',
     sbSovLabel:'Lokale Souveränität',
@@ -975,6 +1162,8 @@ var LANG = {
   },
   pt: {
     sbLAgents:'Constelação de Agentes', sbLDocs:'Documentos Recentes', sbLVerify:'Verificação',
+    sbLIdentity:'Identidade', sbSchluesselTitle:'Chave', sbWalletTitle:'Carteira',
+    sbKeyTypeLabel:'Tipo', sbKeyCreatedLabel:'Criada', sbPioneerLabel:'Pioneer', sbCreditsLabel:'Créditos',
     sbLegal:'Jurídico', sbNotary:'Notarial', sbAcct:'Contábil', sbComply:'Compliance',
     sbVerifyLink:'Verify Público', sbLedgerLink:'Forensic Ledger',
     sbSovLabel:'Soberania Local',
@@ -1014,6 +1203,8 @@ var LANG = {
   },
   en: {
     sbLAgents:'Agent Constellation', sbLDocs:'Recent Documents', sbLVerify:'Verification',
+    sbLIdentity:'Identity', sbSchluesselTitle:'Key', sbWalletTitle:'Wallet',
+    sbKeyTypeLabel:'Type', sbKeyCreatedLabel:'Created', sbPioneerLabel:'Pioneer', sbCreditsLabel:'Credits',
     sbLegal:'Legal', sbNotary:'Notary', sbAcct:'Accounting', sbComply:'Compliance',
     sbVerifyLink:'Verify Public', sbLedgerLink:'Forensic Ledger',
     sbSovLabel:'Local Sovereignty',
@@ -1061,6 +1252,14 @@ function setLang(l) {
   document.getElementById('sb-l-agents').textContent = t.sbLAgents;
   document.getElementById('sb-l-docs').textContent = t.sbLDocs;
   document.getElementById('sb-l-verify').textContent = t.sbLVerify;
+  // C1+C2 FIX: Identity section translations
+  document.getElementById('sb-l-identity').textContent = t.sbLIdentity;
+  document.getElementById('sb-schluessel-title').textContent = t.sbSchluesselTitle;
+  document.getElementById('sb-wallet-title').textContent = t.sbWalletTitle;
+  document.getElementById('sb-key-type-label').textContent = t.sbKeyTypeLabel;
+  document.getElementById('sb-key-created-label').textContent = t.sbKeyCreatedLabel;
+  document.getElementById('sb-pioneer-label').textContent = t.sbPioneerLabel;
+  document.getElementById('sb-credits-label').textContent = t.sbCreditsLabel;
   document.getElementById('sb-legal').textContent = t.sbLegal;
   document.getElementById('sb-notary').textContent = t.sbNotary;
   document.getElementById('sb-acct').textContent = t.sbAcct;

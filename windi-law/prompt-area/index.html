@@ -33,21 +33,32 @@
 }
 
 [data-theme="klar"] {
+  /* ══ KLAR Theme — High Contrast Fix (Audit 25 Mar 2026) ══ */
   --bg:    #F5F0E0;
   --bg-2:  #EDE8D6;
-  --bg-3:  #E4DFCC;
+  --bg-3:  #E5E0CC;
   --bg-4:  #DEDAD0;
   --gold:  #8B6914;
-  --gold-d:rgba(139,105,20,0.30);
-  --gold-p:rgba(139,105,20,0.07);
-  --parch: #1a1710;
-  --muted: rgba(26,23,16,0.52);
-  --dim:   rgba(26,23,16,0.30);
-  --faint: rgba(26,23,16,0.06);
-  --border:rgba(26,23,16,0.08);
-  --border-2:rgba(26,23,16,0.16);
+  --gold-d:rgba(139,105,20,0.35);
+  --gold-p:rgba(139,105,20,0.10);
+  /* C3 FIX: Text contrast — was invisible, now WCAG AA compliant */
+  --parch: #2A2010;           /* Primary text — was #1a1710 (too dark on readability) */
+  --muted: #5A4A2A;           /* Secondary text — was rgba(26,23,16,0.52) = invisible */
+  --dim:   #7A6850;           /* Tertiary/labels — was rgba() = ghost */
+  --faint: rgba(90,74,42,0.12);
+  --border:rgba(90,74,42,0.15);
+  --border-2:rgba(90,74,42,0.22);
+  /* H1 FIX: Chips — visible borders and text */
+  --chip-bg: #EDE8D0;
+  --chip-border: #8B6914;
+  --chip-text: #5A4A2A;
+  /* Truth levels — slightly darker for KLAR */
   --high:  #1A7A50;
-  --high-p:rgba(26,122,80,0.10);
+  --high-p:rgba(26,122,80,0.12);
+  --med:   #8B6914;
+  --med-p: rgba(139,105,20,0.12);
+  --low:   #2E5FAA;
+  --low-p: rgba(46,95,170,0.12);
 }
 
 html,body { height:100%; overflow:hidden; }
@@ -72,7 +83,24 @@ body {
   font-family:var(--mono); font-size:9px; letter-spacing:0.06em;
   color:var(--dim); padding:3px 8px;
   border:0.5px solid var(--border); border-radius:2px;
+  cursor:pointer; position:relative; transition:all 0.15s;
 }
+.tl-did:hover { color:var(--gold); border-color:var(--gold-d); }
+/* M2 FIX: DID tooltip + copy */
+.tl-did::after {
+  content:attr(data-full-did);
+  position:absolute; top:calc(100% + 6px); left:50%;
+  transform:translateX(-50%); white-space:nowrap;
+  background:var(--bg-3); border:0.5px solid var(--border-2);
+  padding:6px 10px; border-radius:3px; font-size:10px;
+  color:var(--parch); opacity:0; pointer-events:none;
+  transition:opacity 0.15s; z-index:100;
+  box-shadow:0 4px 12px rgba(0,0,0,0.15);
+}
+.tl-did:hover::after { opacity:1; }
+.tl-did-copied { background:var(--high-p) !important; border-color:var(--high) !important; color:var(--high) !important; }
+.tl-did .copy-icon { margin-left:4px; font-size:10px; opacity:0.5; }
+.tl-did:hover .copy-icon { opacity:1; }
 .tl-status {
   font-family:var(--mono); font-size:8px; letter-spacing:0.1em;
   padding:2px 7px; border-radius:2px;
@@ -213,6 +241,31 @@ body {
   padding:3px 9px; cursor:pointer; transition:all 0.18s;
 }
 .preset:hover { color:var(--gold); border-color:var(--gold-d); background:var(--gold-p); }
+/* H1 FIX: KLAR theme — chips visible */
+[data-theme="klar"] .preset {
+  color: var(--chip-text);
+  border-color: var(--chip-border);
+  background: var(--chip-bg);
+}
+[data-theme="klar"] .preset:hover {
+  color: var(--gold);
+  background: rgba(139,105,20,0.15);
+}
+/* H2 FIX: KLAR theme — inactive truth buttons visible */
+[data-theme="klar"] .truth-btn { color: var(--dim); border-color: rgba(90,74,42,0.25); }
+[data-theme="klar"] .truth-btn.h { color: #3D6B4A; border-color: rgba(26,122,80,0.35); }
+[data-theme="klar"] .truth-btn.m { color: #7A5A14; border-color: rgba(139,105,20,0.35); }
+[data-theme="klar"] .truth-btn.l { color: #3A5A8A; border-color: rgba(46,95,170,0.35); }
+/* H3 FIX: KLAR theme — inspector labels readable */
+[data-theme="klar"] .insp-lbl { color: var(--muted); }
+[data-theme="klar"] .insp-sec-title { color: var(--muted); }
+[data-theme="klar"] .sb-label { color: var(--dim); }
+[data-theme="klar"] .zone-label { color: var(--gold); }
+[data-theme="klar"] .zone-output-label { color: var(--dim); }
+/* M1 FIX: KLAR theme — statusbar visible */
+[data-theme="klar"] .statusbar { background: var(--bg-2); color: var(--muted); }
+[data-theme="klar"] .statusbar .sb-gold { color: var(--gold); }
+[data-theme="klar"] .sb-sep { background: rgba(90,74,42,0.20); }
 
 /* ══ ZONE B — OUTPUT (flex, scrollable) ══ */
 .zone-output {
@@ -366,7 +419,7 @@ body {
 <div class="topbar">
   <div class="tl">
     <div class="tl-logo">WINDI<span>LAW</span></div>
-    <div class="tl-did" id="tl-did">did:windi:f0cb5b7f···</div>
+    <div class="tl-did" id="tl-did" data-full-did="did:windi:f0cb5b7f-xxxx-xxxx-xxxx-xxxxxxxxxxxx" onclick="copyDid()" title="Click to copy">did:windi:f0cb5b7f···<span class="copy-icon">📋</span></div>
     <div class="tl-status">VERIFIED</div>
   </div>
   <div class="tr">
@@ -600,6 +653,21 @@ body {
 var lang = 'de';
 var theme = 'noir';
 var inspOpen = false;
+
+// M2 FIX: Copy DID to clipboard
+function copyDid() {
+  var didEl = document.getElementById('tl-did');
+  var fullDid = didEl.getAttribute('data-full-did') || 'did:windi:···';
+  navigator.clipboard.writeText(fullDid).then(function() {
+    didEl.classList.add('tl-did-copied');
+    var original = didEl.innerHTML;
+    didEl.innerHTML = '✓ Copied!';
+    setTimeout(function() {
+      didEl.classList.remove('tl-did-copied');
+      didEl.innerHTML = original;
+    }, 1500);
+  });
+}
 var currentTruth = 'HIGH';
 var currentAgent = 'legal';
 
