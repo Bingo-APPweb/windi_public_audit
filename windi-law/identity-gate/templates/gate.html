@@ -955,6 +955,20 @@
 
                 const data = await response.json();
 
+                // Handle HTTP errors (409 = duplicate, etc.)
+                if (!response.ok) {
+                    var errorMsg = 'Registration failed';
+                    if (data.detail) {
+                        if (typeof data.detail === 'object') {
+                            errorMsg = data.detail.error || data.detail.message || JSON.stringify(data.detail);
+                            if (data.detail.action) errorMsg += '\n\n' + data.detail.action;
+                        } else {
+                            errorMsg = data.detail;
+                        }
+                    }
+                    throw new Error(errorMsg);
+                }
+
                 if (data.success) {
                     registrationData.did = data.did;
                     registrationData.fingerprint = data.fingerprint;
