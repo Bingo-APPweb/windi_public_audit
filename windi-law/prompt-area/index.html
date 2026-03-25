@@ -245,6 +245,58 @@ body { background:var(--bg); color:var(--parch); font-family:var(--font); displa
 .cts-btn.l { color:rgba(91,141,212,0.6); }
 .cts-btn.l.active { background:rgba(91,141,212,0.10); color:var(--low); }
 
+/* ══ MEDIA BAR — Attachment Buttons (25 Mar 2026) ══ */
+.cmd-media-bar {
+  display:flex; align-items:center; gap:2px;
+  margin-right:8px; flex-shrink:0;
+}
+.cmd-media-btn {
+  width:28px; height:28px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:13px; cursor:pointer;
+  background:transparent; border:0.5px solid var(--border-2);
+  border-radius:2px; transition:all 0.15s;
+  color:var(--dim);
+}
+.cmd-media-btn:hover {
+  border-color:var(--gold-d); color:var(--gold);
+  background:rgba(201,168,76,0.06);
+}
+.cmd-media-btn.has-file {
+  border-color:var(--high); color:var(--high);
+  background:rgba(46,194,126,0.08);
+}
+.cmd-media-input { display:none; }
+
+/* Attachment Preview Row */
+.attachment-preview {
+  display:none;
+  flex-wrap:wrap; gap:6px;
+  margin-top:0.5rem; padding:8px 10px;
+  background:var(--bg-3); border:0.5px solid var(--border-2);
+  border-radius:3px;
+}
+.attachment-preview.visible { display:flex; }
+.attachment-item {
+  display:flex; align-items:center; gap:6px;
+  font-family:var(--mono); font-size:9px;
+  padding:4px 8px; background:rgba(201,168,76,0.06);
+  border:0.5px solid rgba(201,168,76,0.2); border-radius:2px;
+}
+.att-icon { font-size:11px; }
+.att-name { color:var(--parch); max-width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.att-size { color:var(--dim); }
+.att-hash { color:rgba(201,168,76,0.5); }
+.att-remove { color:var(--dim); cursor:pointer; margin-left:4px; }
+.att-remove:hover { color:#C45C5C; }
+
+/* KLAR theme — Media Bar */
+[data-theme="klar"] .cmd-media-btn { border-color:#D0CEC8; color:#7A6850; }
+[data-theme="klar"] .cmd-media-btn:hover { border-color:#8B7424; color:#8B7424; background:rgba(139,116,36,0.06); }
+[data-theme="klar"] .cmd-media-btn.has-file { border-color:#2A8040; color:#2A8040; background:rgba(42,128,64,0.08); }
+[data-theme="klar"] .attachment-preview { background:#F0EDE5; border-color:#D0CEC8; }
+[data-theme="klar"] .attachment-item { background:rgba(139,116,36,0.06); border-color:#C9A84C; }
+
 .cmd-exec {
   font-family:var(--font); font-size:10px; font-weight:700; letter-spacing:0.1em;
   text-transform:uppercase; color:var(--bg); background:var(--gold);
@@ -1005,9 +1057,23 @@ body { background:var(--bg); color:var(--parch); font-family:var(--font); displa
       </div>
       <div class="cmd-frame">
         <div class="cmd-agent-tag" id="cmd-agent-tag">W-LEGAL-001</div>
+        <!-- Media Bar — Attachment Buttons -->
+        <div class="cmd-media-bar">
+          <button class="cmd-media-btn" id="mb-any" onclick="document.getElementById('mf-any').click()" title="Anhang">📎</button>
+          <button class="cmd-media-btn" id="mb-img" onclick="document.getElementById('mf-img').click()" title="Bild">🖼</button>
+          <button class="cmd-media-btn" id="mb-doc" onclick="document.getElementById('mf-doc').click()" title="Dokument">📄</button>
+          <button class="cmd-media-btn" id="mb-vid" onclick="document.getElementById('mf-vid').click()" title="Video">🎥</button>
+        </div>
+        <!-- Hidden file inputs -->
+        <input type="file" id="mf-any" class="cmd-media-input" accept="*/*" onchange="handleMedia(this,'any')">
+        <input type="file" id="mf-img" class="cmd-media-input" accept="image/*" onchange="handleMedia(this,'img')">
+        <input type="file" id="mf-doc" class="cmd-media-input" accept=".pdf,.docx,.xlsx,.txt" onchange="handleMedia(this,'doc')">
+        <input type="file" id="mf-vid" class="cmd-media-input" accept="video/*" onchange="handleMedia(this,'vid')">
         <input type="text" id="law-cmd" placeholder="Beschreiben Sie Ihr rechtliches Anliegen…" onkeydown="handleCmd(event)">
         <button class="cmd-exec" onclick="execCmd()" id="exec-btn">Ausführen</button>
       </div>
+      <!-- Attachment Preview Row -->
+      <div class="attachment-preview" id="att-preview"></div>
       <div class="cmd-presets" id="cmd-presets">
         <span class="preset-label" id="pr-label">Schnell</span>
         <span class="preset-chip" onclick="fillCmd(this.textContent)">NDA erstellen · ZPO §273</span>
@@ -1284,6 +1350,100 @@ var inspOpen = false;
 var pendingApproval = true;
 var currentHash = '';
 var walletDid = '';
+
+/* ══ MEDIA BAR — File Handling + SHA-256 ══ */
+var attachedFiles = {}; // { id: { file, hash, type } }
+var FILE_LIMITS = {
+  any: 25 * 1024 * 1024,   // 25MB
+  img: 10 * 1024 * 1024,   // 10MB
+  doc: 25 * 1024 * 1024,   // 25MB
+  vid: 100 * 1024 * 1024   // 100MB
+};
+var LIMIT_LABELS = {any:'25MB', img:'10MB', doc:'25MB', vid:'100MB'};
+var TYPE_ICONS = {any:'📎', img:'🖼', doc:'📄', vid:'🎥'};
+
+async function hashFile(file) {
+  var buf = await file.arrayBuffer();
+  var hash = await crypto.subtle.digest('SHA-256', buf);
+  return Array.from(new Uint8Array(hash))
+    .map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+}
+
+function formatBytes(bytes) {
+  if(bytes < 1024) return bytes + ' B';
+  if(bytes < 1048576) return (bytes/1024).toFixed(1) + ' KB';
+  return (bytes/1048576).toFixed(2) + ' MB';
+}
+
+async function handleMedia(input, type) {
+  var file = input.files[0];
+  if(!file) return;
+
+  // Check file size
+  if(file.size > FILE_LIMITS[type]) {
+    var msg = lang === 'de' ? 'Datei zu groß' : lang === 'pt' ? 'Ficheiro demasiado grande' : 'File too large';
+    alert(msg + ': ' + formatBytes(file.size) + ' > ' + LIMIT_LABELS[type]);
+    input.value = '';
+    return;
+  }
+
+  // Compute SHA-256
+  var hash = await hashFile(file);
+  var id = type + '-' + Date.now();
+  attachedFiles[id] = { file: file, hash: hash, type: type, name: file.name, size: file.size };
+
+  // Mark button as having file
+  document.getElementById('mb-' + type).classList.add('has-file');
+
+  // Render preview
+  renderAttachments();
+  input.value = '';
+}
+
+function renderAttachments() {
+  var preview = document.getElementById('att-preview');
+  var keys = Object.keys(attachedFiles);
+
+  if(keys.length === 0) {
+    preview.classList.remove('visible');
+    preview.innerHTML = '';
+    return;
+  }
+
+  preview.classList.add('visible');
+  var html = '';
+  keys.forEach(function(id) {
+    var f = attachedFiles[id];
+    var shortHash = f.hash.substring(0, 12) + '…';
+    html += '<div class="attachment-item" data-id="' + id + '">' +
+      '<span class="att-icon">' + TYPE_ICONS[f.type] + '</span>' +
+      '<span class="att-name" title="' + f.name + '">' + f.name + '</span>' +
+      '<span class="att-size">(' + formatBytes(f.size) + ')</span>' +
+      '<span class="att-hash">[sha256:' + shortHash + ']</span>' +
+      '<span class="att-remove" onclick="removeAttachment(\'' + id + '\')">✕</span>' +
+      '</div>';
+  });
+  preview.innerHTML = html;
+}
+
+function removeAttachment(id) {
+  var type = attachedFiles[id].type;
+  delete attachedFiles[id];
+
+  // Check if any file of this type remains
+  var hasType = Object.keys(attachedFiles).some(function(k){ return attachedFiles[k].type === type; });
+  if(!hasType) {
+    document.getElementById('mb-' + type).classList.remove('has-file');
+  }
+
+  renderAttachments();
+}
+
+function getAttachedFilesForSubmit() {
+  return Object.values(attachedFiles).map(function(f){
+    return { file: f.file, hash: f.hash, name: f.name };
+  });
+}
 
 // C1 FIX: Copy fingerprint to clipboard
 function copyFingerprint() {
