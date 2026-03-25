@@ -706,6 +706,12 @@
                 <p style="color:var(--text-secondary);margin-bottom:1rem;" data-i18n="success_msg">
                     Ihre Identitat wurde im Forensic Ledger versiegelt.
                 </p>
+                <div id="email-notice" style="background:var(--bg);border:1px solid var(--gold);border-radius:8px;padding:1rem;margin-bottom:1.5rem;display:none;">
+                    <p style="color:var(--gold);font-size:0.9rem;margin-bottom:0.5rem;">&#9993; <span data-i18n="email_sent_title">Bestatigungsmail gesendet</span></p>
+                    <p style="color:var(--text-secondary);font-size:0.8rem;" data-i18n="email_sent_desc">
+                        Bitte bestatigen Sie Ihre E-Mail fur vollen Zugang zu HIGH-Operationen. Sie haben bereits Zugang zum Workspace.
+                    </p>
+                </div>
                 <a href="/workspace/" class="success-btn" id="workspace-link" data-i18n="enter_workspace">Workspace betreten</a>
             </div>
         </div>
@@ -766,7 +772,9 @@
                 complete: "Identitat erstellen",
                 success_title: "Identitat erstellt",
                 success_msg: "Ihre Identitat wurde im Forensic Ledger versiegelt.",
-                enter_workspace: "Workspace betreten"
+                enter_workspace: "Workspace betreten",
+                email_sent_title: "Bestatigungsmail gesendet",
+                email_sent_desc: "Bitte bestatigen Sie Ihre E-Mail fur vollen Zugang zu HIGH-Operationen. Sie haben bereits Zugang zum Workspace."
             },
             en: {
                 step1_title: "Company",
@@ -800,7 +808,9 @@
                 complete: "Create Identity",
                 success_title: "Identity Created",
                 success_msg: "Your identity has been sealed in the Forensic Ledger.",
-                enter_workspace: "Enter Workspace"
+                enter_workspace: "Enter Workspace",
+                email_sent_title: "Verification email sent",
+                email_sent_desc: "Please verify your email for full access to HIGH operations. You already have access to the workspace."
             },
             pt: {
                 step1_title: "Empresa",
@@ -834,7 +844,9 @@
                 complete: "Criar Identidade",
                 success_title: "Identidade Criada",
                 success_msg: "A sua identidade foi selada no Forensic Ledger.",
-                enter_workspace: "Entrar no Workspace"
+                enter_workspace: "Entrar no Workspace",
+                email_sent_title: "Email de verificacao enviado",
+                email_sent_desc: "Por favor verifique seu email para acesso completo as operacoes HIGH. Voce ja tem acesso ao workspace."
             }
         };
 
@@ -1055,6 +1067,12 @@
 
                 // Also set cookie for future visits
                 document.cookie = 'windi_did=' + encodeURIComponent(registrationData.did) + '; path=/; max-age=31536000; SameSite=Lax';
+
+                // Show email verification notice
+                var emailNotice = document.getElementById('email-notice');
+                if (emailNotice && result.email_verification_sent) {
+                    emailNotice.style.display = 'block';
+                }
 
                 showStep('success');
 
