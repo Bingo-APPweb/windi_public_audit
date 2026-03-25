@@ -3,82 +3,493 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WINDI-LAW — Prompt Area Redesign v1.0</title>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<title>WINDI LAW — Institutional Workspace v3.1</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
+/* ── NOIR (default) ── */
 :root {
-  --bg:    #07090D;
-  --bg-2:  #0C0F16;
-  --bg-3:  #111620;
-  --bg-4:  #161C2A;
-  --gold:  #C9A84C;
-  --gold-d:rgba(201,168,76,0.30);
-  --gold-p:rgba(201,168,76,0.07);
-  --parch: #F5F0E0;
-  --muted: rgba(245,240,224,0.52);
-  --dim:   rgba(245,240,224,0.24);
-  --faint: rgba(245,240,224,0.07);
-  --border:rgba(245,240,224,0.07);
-  --border-2:rgba(245,240,224,0.13);
-  --high:  #2EC27E;
-  --high-p:rgba(46,194,126,0.10);
-  --med:   #C9A84C;
-  --med-p: rgba(201,168,76,0.10);
-  --low:   #5B8DD4;
-  --low-p: rgba(91,141,212,0.10);
-  --font:  'Bricolage Grotesque', sans-serif;
-  --mono:  'JetBrains Mono', monospace;
+  --bg:      #07090D;
+  --bg-2:    #0C0F16;
+  --bg-3:    #111620;
+  --bg-4:    #161C2A;
+  --gold:    #C9A84C;
+  --gold-d:  rgba(201,168,76,0.35);
+  --gold-p:  rgba(201,168,76,0.08);
+  --gold-s:  rgba(201,168,76,0.14);
+  --parch:   #F5F0E0;
+  --muted:   rgba(245,240,224,0.50);
+  --dim:     rgba(245,240,224,0.22);
+  --faint:   rgba(245,240,224,0.08);
+  --border:  rgba(245,240,224,0.07);
+  --border-2:rgba(245,240,224,0.12);
+  --high:    #2EC27E;
+  --high-p:  rgba(46,194,126,0.10);
+  --med:     #C9A84C;
+  --med-p:   rgba(201,168,76,0.10);
+  --low:     #5B8DD4;
+  --low-p:   rgba(91,141,212,0.10);
+  --font:    'Bricolage Grotesque', sans-serif;
+  --mono:    'JetBrains Mono', monospace;
+  --sidebar: 220px;
+  --topbar:  52px;
 }
 
+/* ── KLAR (light) — High Contrast Fix (Audit 25 Mar 2026) ── */
 [data-theme="klar"] {
-  /* ══ KLAR Theme — High Contrast Fix (Audit 25 Mar 2026) ══ */
-  --bg:    #F5F0E0;
-  --bg-2:  #EDE8D6;
-  --bg-3:  #E5E0CC;
-  --bg-4:  #DEDAD0;
-  --gold:  #8B6914;
-  --gold-d:rgba(139,105,20,0.35);
-  --gold-p:rgba(139,105,20,0.10);
-  /* C3 FIX: Text contrast — was invisible, now WCAG AA compliant */
-  --parch: #2A2010;           /* Primary text — was #1a1710 (too dark on readability) */
-  --muted: #5A4A2A;           /* Secondary text — was rgba(26,23,16,0.52) = invisible */
-  --dim:   #7A6850;           /* Tertiary/labels — was rgba() = ghost */
-  --faint: rgba(90,74,42,0.12);
-  --border:rgba(90,74,42,0.15);
+  --bg:      #F5F0E0;
+  --bg-2:    #EDE8D6;
+  --bg-3:    #E5E0CC;
+  --bg-4:    #DEDAD0;
+  --gold:    #8B6914;
+  --gold-d:  rgba(139,105,20,0.35);
+  --gold-p:  rgba(139,105,20,0.10);
+  --gold-s:  rgba(139,105,20,0.14);
+  /* C3 FIX: Text contrast — WCAG AA compliant */
+  --parch:   #2A2010;           /* Primary text */
+  --muted:   #5A4A2A;           /* Secondary text */
+  --dim:     #7A6850;           /* Tertiary/labels */
+  --faint:   rgba(90,74,42,0.12);
+  --border:  rgba(90,74,42,0.15);
   --border-2:rgba(90,74,42,0.22);
-  /* H1 FIX: Chips — visible borders and text */
+  /* H1 FIX: Chips visible */
   --chip-bg: #EDE8D0;
   --chip-border: #8B6914;
   --chip-text: #5A4A2A;
-  /* Truth levels — slightly darker for KLAR */
-  --high:  #1A7A50;
-  --high-p:rgba(26,122,80,0.12);
-  --med:   #8B6914;
-  --med-p: rgba(139,105,20,0.12);
-  --low:   #2E5FAA;
-  --low-p: rgba(46,95,170,0.12);
+  /* Truth levels — darker for KLAR */
+  --high:    #1A7A50;
+  --high-p:  rgba(26,122,80,0.12);
+  --med:     #8B6914;
+  --med-p:   rgba(139,105,20,0.12);
+  --low:     #2E5FAA;
+  --low-p:   rgba(46,95,170,0.12);
 }
 
 html,body { height:100%; overflow:hidden; }
-body {
-  background:var(--bg); color:var(--parch);
-  font-family:var(--font);
-  display:flex; flex-direction:column;
-  transition:background 0.25s, color 0.25s;
-}
+body { background:var(--bg); color:var(--parch); font-family:var(--font); display:flex; flex-direction:column; transition:background 0.25s, color 0.25s; }
 
 /* ── TOPBAR ── */
 .topbar {
-  height:48px; flex-shrink:0;
+  height:var(--topbar); flex-shrink:0;
   display:flex; align-items:center; justify-content:space-between;
-  padding:0 1.25rem;
+  padding:0 1.5rem 0 0;
   background:var(--bg); border-bottom:0.5px solid var(--border);
+  z-index:50;
 }
-.tl { display:flex; align-items:center; gap:10px; }
-.tl-logo { font-size:13px; font-weight:700; letter-spacing:0.12em; color:var(--gold); }
-.tl-logo span { color:var(--muted); font-weight:300; font-size:10px; }
+
+.topbar-left {
+  width:var(--sidebar); padding:0 1.25rem;
+  display:flex; align-items:center; gap:10px;
+  border-right:0.5px solid var(--border);
+  height:100%;
+}
+
+.tl-logo { font-size:14px; font-weight:700; letter-spacing:0.12em; color:var(--gold); }
+.tl-logo span { color:var(--muted); font-weight:300; font-size:11px; margin-left:2px; letter-spacing:0.06em; }
+.tl-badge {
+  font-family:var(--mono); font-size:8px; letter-spacing:0.1em; text-transform:uppercase;
+  padding:2px 7px; border:0.5px solid rgba(201,168,76,0.3); color:rgba(201,168,76,0.7);
+  border-radius:2px; margin-left:auto;
+}
+
+.topbar-center { flex:1; padding:0 1.5rem; display:flex; align-items:center; gap:1rem; }
+
+.breadcrumb {
+  font-family:var(--mono); font-size:10px; letter-spacing:0.08em;
+  color:var(--dim); display:flex; align-items:center; gap:6px;
+}
+.breadcrumb .active { color:var(--parch); }
+.bc-sep { color:rgba(245,240,224,0.15); }
+
+.topbar-right { display:flex; align-items:center; gap:0.75rem; }
+
+.lang-pill {
+  display:flex; gap:0;
+  border:0.5px solid var(--border-2); border-radius:3px; overflow:hidden;
+}
+.lp-btn {
+  font-family:var(--mono); font-size:9px; letter-spacing:0.1em;
+  padding:5px 10px; background:none; border:none; color:var(--dim);
+  cursor:pointer; transition:all 0.15s; border-right:0.5px solid rgba(245,240,224,0.08);
+}
+.lp-btn:last-child{border-right:none}
+.lp-btn.active { background:rgba(201,168,76,0.12); color:var(--gold); }
+
+.ledger-status {
+  display:flex; align-items:center; gap:5px;
+  font-family:var(--mono); font-size:9px; letter-spacing:0.08em; color:var(--dim);
+  padding:5px 12px; border:0.5px solid var(--faint);border-color:var(--border); border-radius:3px;
+}
+.ls-dot { width:5px; height:5px; border-radius:50%; background:var(--high); animation:blink 2s ease infinite; }
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+
+.user-avatar {
+  width:28px; height:28px; border-radius:50%;
+  border:0.5px solid var(--gold-d);
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--mono); font-size:9px; font-weight:500;
+  color:var(--gold); background:rgba(201,168,76,0.07);
+  cursor:pointer;
+}
+
+/* ── LAYOUT ── */
+.workspace { display:flex; flex:1; overflow:hidden; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width:var(--sidebar); flex-shrink:0;
+  background:var(--bg-2); border-right:0.5px solid var(--border);
+  display:flex; flex-direction:column; overflow-y:auto; overflow-x:hidden;
+}
+
+.sb-section { padding:1rem 0; border-bottom:0.5px solid var(--border); }
+.sb-section:last-child { border-bottom:none; }
+
+.sb-label {
+  font-family:var(--mono); font-size:8.5px; letter-spacing:0.14em; text-transform:uppercase;
+  color:rgba(245,240,224,0.20); padding:0 1rem 0.5rem; display:block;
+}
+
+.sb-item {
+  display:flex; align-items:center; gap:9px;
+  padding:7px 1rem; cursor:pointer;
+  font-size:12px; color:var(--muted); font-weight:400;
+  transition:all 0.15s; position:relative;
+  border-left:2px solid transparent;
+  text-decoration:none;
+}
+
+.sb-item:hover { color:var(--parch); background:rgba(255,255,255,0.02); }
+
+.sb-item.active {
+  color:var(--parch); background:rgba(201,168,76,0.06);
+  border-left-color:var(--gold);
+}
+
+.sb-icon { width:14px; text-align:center; flex-shrink:0; opacity:0.7; font-size:11px; }
+.sb-item.active .sb-icon { opacity:1; }
+
+.sb-badge {
+  margin-left:auto; font-family:var(--mono); font-size:8px;
+  padding:1px 5px; border-radius:2px;
+  background:rgba(46,194,126,0.12); color:var(--high); border:0.5px solid rgba(46,194,126,0.2);
+}
+
+.sb-item .sb-truth {
+  margin-left:auto; width:6px; height:6px; border-radius:50%;
+}
+
+.sb-footer {
+  margin-top:auto; padding:1rem;
+  border-top:0.5px solid var(--border);
+}
+
+.sb-sovereignty {
+  font-family:var(--mono); font-size:8.5px; letter-spacing:0.06em; color:var(--dim);
+  display:flex; flex-direction:column; gap:4px;
+}
+
+.sov-bar-wrap { display:flex; align-items:center; gap:6px; }
+.sov-bar-track { flex:1; height:2px; background:rgba(255,255,255,0.07); border-radius:1px; }
+.sov-bar-fill { height:100%; border-radius:1px; background:var(--gold); width:93.3%; }
+.sov-pct { color:var(--gold); font-size:9px; }
+
+/* ── MAIN ── */
+.main { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+
+/* ── COMMAND BAR ── */
+.command-zone {
+  padding:1rem 1.5rem 0.75rem;
+  border-bottom:0.5px solid var(--border);
+  background:var(--bg-2);
+}
+
+.cmd-frame {
+  display:flex; align-items:center;
+  background:var(--bg-3); border:0.5px solid rgba(201,168,76,0.22); border-radius:4px;
+  padding:3px 3px 3px 14px; transition:border-color 0.25s;
+}
+.cmd-frame:focus-within { border-color:rgba(201,168,76,0.55); }
+
+.cmd-agent-tag {
+  font-family:var(--mono); font-size:9px; letter-spacing:0.08em;
+  color:rgba(100,160,240,0.8); white-space:nowrap; margin-right:8px;
+  padding:3px 8px; background:rgba(46,111,212,0.08);
+  border:0.5px solid rgba(46,111,212,0.18); border-radius:2px;
+  flex-shrink:0;
+}
+
+#law-cmd {
+  flex:1; background:none; border:none; outline:none;
+  font-family:var(--mono); font-size:12px; color:var(--parch);
+  padding:10px 0; caret-color:var(--gold);
+}
+#law-cmd::placeholder { color:var(--dim); }
+
+.cmd-truth-select {
+  display:flex; gap:0; margin-right:6px; flex-shrink:0;
+  border:0.5px solid var(--faint);border-color:var(--border); border-radius:3px; overflow:hidden;
+}
+
+.cts-btn {
+  font-family:var(--mono); font-size:8px; letter-spacing:0.08em; text-transform:uppercase;
+  padding:5px 9px; border:none; background:transparent; cursor:pointer; transition:all 0.15s;
+  border-right:0.5px solid rgba(245,240,224,0.06);
+}
+.cts-btn:last-child{border-right:none}
+.cts-btn.h { color:rgba(46,194,126,0.6); }
+.cts-btn.h.active { background:rgba(46,194,126,0.10); color:var(--high); }
+.cts-btn.m { color:rgba(201,168,76,0.6); }
+.cts-btn.m.active { background:rgba(201,168,76,0.10); color:var(--med); }
+.cts-btn.l { color:rgba(91,141,212,0.6); }
+.cts-btn.l.active { background:rgba(91,141,212,0.10); color:var(--low); }
+
+.cmd-exec {
+  font-family:var(--font); font-size:10px; font-weight:700; letter-spacing:0.1em;
+  text-transform:uppercase; color:var(--bg); background:var(--gold);
+  border:none; border-radius:3px; padding:10px 18px; cursor:pointer;
+  flex-shrink:0; transition:background 0.2s;
+}
+.cmd-exec:hover { background:#dfc05e; }
+
+.cmd-presets { display:flex; gap:6px; margin-top:8px; flex-wrap:wrap; }
+.preset-chip {
+  font-family:var(--mono); font-size:9px; letter-spacing:0.05em;
+  color:var(--dim); border:0.5px solid var(--faint);border-color:var(--border);
+  background:rgba(255,255,255,0.02); border-radius:2px;
+  padding:4px 10px; cursor:pointer; transition:all 0.18s;
+}
+.preset-chip:hover { color:var(--gold); border-color:var(--gold-d); background:var(--gold-p); }
+
+/* ── CONTENT AREA ── */
+.content-area { flex:1; display:flex; overflow:hidden; }
+
+/* ── DOCUMENT PANEL ── */
+.doc-panel {
+  flex:1; overflow-y:auto; padding:1.25rem 1.5rem;
+  display:flex; flex-direction:column; gap:1rem;
+}
+
+/* RESULT CARD */
+.result-card {
+  background:var(--bg-3); border:0.5px solid rgba(46,111,212,0.20);
+  border-radius:4px; overflow:hidden; animation:fadeup 0.3s ease;
+}
+@keyframes fadeup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.rc-head {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:7px 12px; background:rgba(46,111,212,0.05);
+  border-bottom:0.5px solid rgba(46,111,212,0.12);
+  font-family:var(--mono); font-size:9px;
+}
+.rc-agent-id { color:rgba(100,160,240,0.85); display:flex; align-items:center; gap:6px; }
+.rc-live { width:4px; height:4px; border-radius:50%; background:var(--high); animation:blink 1.2s infinite; }
+.rc-ts { color:var(--dim); }
+.rc-truth-badge {
+  font-size:8px; letter-spacing:0.1em; text-transform:uppercase;
+  padding:2px 8px; border-radius:2px; border:0.5px solid;
+}
+.rc-truth-badge.high { color:var(--high); border-color:rgba(46,194,126,0.3); background:var(--high-p); }
+.rc-truth-badge.med  { color:var(--med);  border-color:rgba(201,168,76,0.3); background:var(--med-p); }
+
+.rc-body { padding:12px 14px; display:grid; grid-template-columns:1fr 1fr; gap:4px 20px; }
+.rc-row { font-family:var(--mono); font-size:10.5px; line-height:1.9; }
+.rc-k { color:rgba(100,160,240,0.65); }
+.rc-v { color:var(--parch); }
+.rc-hash { color:rgba(201,168,76,0.45); font-size:9px; }
+
+.rc-foot {
+  padding:7px 12px; border-top:0.5px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+  font-family:var(--mono); font-size:8.5px; letter-spacing:0.08em; text-transform:uppercase;
+}
+.rc-sealed { display:flex; align-items:center; gap:5px; color:var(--high); }
+.rc-verify-link { color:var(--dim); }
+.rc-verify-link a { color:rgba(201,168,76,0.6); text-decoration:none; }
+.rc-verify-link a:hover { color:var(--gold); }
+
+/* QR CODE ZONE */
+.rc-qr-zone {
+  padding: 12px 14px;
+  border-top: 0.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.rc-qr-container {
+  width: 80px;
+  height: 80px;
+  background: #fff;
+  border-radius: 4px;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.rc-qr-container svg {
+  width: 100%;
+  height: 100%;
+}
+.rc-qr-download {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.05em;
+  padding: 6px 12px;
+  border: 0.5px solid var(--border-2);
+  border-radius: 3px;
+  color: var(--dim);
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.rc-qr-download:hover {
+  color: var(--gold);
+  border-color: var(--gold-d);
+}
+
+/* DOCUMENT ITEM */
+.doc-item {
+  background:var(--bg-2); border:0.5px solid var(--border);
+  border-radius:4px; overflow:hidden; cursor:pointer;
+  transition:border-color 0.2s;
+}
+.doc-item:hover { border-color:rgba(245,240,224,0.12); }
+.doc-item.active { border-color:rgba(201,168,76,0.22); }
+
+.di-head {
+  display:flex; align-items:center; gap:10px;
+  padding:9px 12px; border-bottom:0.5px solid var(--border);
+}
+.di-type {
+  font-family:var(--mono); font-size:8px; letter-spacing:0.1em; text-transform:uppercase;
+  padding:2px 7px; border-radius:2px; border:0.5px solid;
+}
+.di-type.legal { color:rgba(100,160,240,0.8); border-color:rgba(100,160,240,0.2); background:rgba(46,111,212,0.06); }
+.di-type.notary { color:rgba(201,168,76,0.8); border-color:rgba(201,168,76,0.2); background:rgba(201,168,76,0.06); }
+.di-type.acct { color:rgba(46,194,126,0.8); border-color:rgba(46,194,126,0.2); background:rgba(46,194,126,0.06); }
+.di-type.comply { color:rgba(180,130,240,0.8); border-color:rgba(180,130,240,0.2); background:rgba(180,130,240,0.06); }
+
+.di-name { font-size:12.5px; font-weight:500; color:var(--parch); flex:1; }
+.di-date { font-family:var(--mono); font-size:9px; color:var(--dim); margin-left:auto; }
+.di-sealed { width:6px; height:6px; border-radius:50%; background:var(--high); flex-shrink:0; }
+.di-pending { width:6px; height:6px; border-radius:50%; background:var(--med); flex-shrink:0; }
+
+.di-body { padding:8px 12px; display:flex; align-items:center; gap:12px; }
+.di-meta { font-family:var(--mono); font-size:9px; color:var(--dim); display:flex; gap:12px; flex:1; }
+.di-hash { color:rgba(201,168,76,0.4); }
+.di-action {
+  font-family:var(--mono); font-size:8px; letter-spacing:0.08em;
+  padding:4px 10px; border:0.5px solid var(--border-2);
+  border-radius:2px; color:var(--dim); cursor:pointer; background:none;
+  transition:all 0.15s; text-transform:uppercase;
+}
+.di-action:hover { color:var(--gold); border-color:var(--gold-d); background:var(--gold-p); }
+.di-action.seal-btn { border-color:rgba(46,194,126,0.2); color:rgba(46,194,126,0.6); }
+.di-action.seal-btn:hover { color:var(--high); border-color:rgba(46,194,126,0.4); background:var(--high-p); }
+
+/* EMPTY STATE */
+.empty-state {
+  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:1rem; text-align:center; padding:3rem;
+  border:0.5px dashed rgba(245,240,224,0.07); border-radius:6px;
+}
+.empty-icon {
+  width:44px; height:44px; border:0.5px solid rgba(201,168,76,0.18);
+  border-radius:4px; display:flex; align-items:center; justify-content:center;
+  color:rgba(201,168,76,0.3); font-size:18px;
+}
+.empty-label { font-family:var(--mono); font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--dim); }
+.empty-sub { font-size:12px; color:rgba(245,240,224,0.18); max-width:280px; line-height:1.6; }
+
+/* ── INSPECTOR ── */
+.inspector {
+  width:280px; flex-shrink:0;
+  border-left:0.5px solid var(--border);
+  background:var(--bg-2);
+  display:flex; flex-direction:column; overflow-y:auto;
+}
+
+.insp-section { padding:0.875rem 1rem; border-bottom:0.5px solid var(--border); }
+.insp-title {
+  font-family:var(--mono); font-size:8.5px; letter-spacing:0.12em; text-transform:uppercase;
+  color:rgba(245,240,224,0.22); margin-bottom:0.75rem; display:flex; align-items:center; justify-content:space-between;
+}
+.insp-title-action { color:rgba(201,168,76,0.4); cursor:pointer; font-size:8px; }
+.insp-title-action:hover { color:var(--gold); }
+
+.insp-row { display:flex; flex-direction:column; gap:2px; margin-bottom:0.6rem; }
+.insp-label { font-family:var(--mono); font-size:8.5px; color:var(--dim); letter-spacing:0.06em; }
+.insp-value { font-size:12px; color:var(--parch); font-weight:400; }
+.insp-value.mono { font-family:var(--mono); font-size:9.5px; color:var(--muted); word-break:break-all; }
+.insp-value.gold { color:var(--gold); }
+.insp-value.high { color:var(--high); }
+
+.truth-meter {
+  display:flex; flex-direction:column; gap:6px;
+  padding:0.75rem; background:rgba(255,255,255,0.02);
+  border:0.5px solid rgba(245,240,224,0.05); border-radius:3px;
+}
+.tm-row { display:flex; align-items:center; gap:8px; }
+.tm-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+.tm-label { font-family:var(--mono); font-size:9px; color:var(--muted); flex:1; }
+.tm-bar-track { flex:1; height:2px; background:rgba(255,255,255,0.07); border-radius:1px; }
+.tm-bar-fill { height:100%; border-radius:1px; }
+.tm-pct { font-family:var(--mono); font-size:8.5px; color:var(--dim); width:28px; text-align:right; }
+
+.action-grid { display:grid; grid-template-columns:1fr 1fr; gap:5px; }
+.action-btn {
+  font-family:var(--mono); font-size:8.5px; letter-spacing:0.07em; text-transform:uppercase;
+  padding:7px 8px; border:0.5px solid var(--border-2);
+  background:rgba(255,255,255,0.02); border-radius:2px;
+  color:var(--dim); cursor:pointer; transition:all 0.15s;
+  text-align:center;
+}
+.action-btn:hover { color:var(--parch); border-color:rgba(245,240,224,0.22); background:rgba(255,255,255,0.04); }
+.action-btn.primary { border-color:rgba(201,168,76,0.25); color:rgba(201,168,76,0.7); }
+.action-btn.primary:hover { color:var(--gold); border-color:var(--gold-d); background:var(--gold-p); }
+
+.jurisdiction-grid { display:flex; flex-wrap:wrap; gap:4px; }
+.juris-tag {
+  font-family:var(--mono); font-size:8px; letter-spacing:0.06em; text-transform:uppercase;
+  padding:3px 8px; border:0.5px solid var(--faint);border-color:var(--border);
+  border-radius:2px; color:var(--dim);
+}
+.juris-tag.active { color:rgba(201,168,76,0.8); border-color:rgba(201,168,76,0.25); background:var(--gold-p); }
+
+/* INVARIANTS */
+.invariant-list { display:flex; flex-direction:column; gap:4px; }
+.inv-item {
+  display:flex; align-items:center; gap:7px;
+  font-family:var(--mono); font-size:9px; color:var(--dim);
+  padding:4px 0; border-bottom:0.5px solid rgba(245,240,224,0.03);
+}
+.inv-id { color:rgba(201,168,76,0.6); width:24px; flex-shrink:0; }
+.inv-status { width:5px; height:5px; border-radius:50%; background:var(--dim); flex-shrink:0; margin-left:auto; transition: all 0.2s; }
+.inv-status.active { background:var(--high); box-shadow: 0 0 4px var(--high); }
+.inv-status.pending { background:var(--med); }
+
+/* STATUSBAR */
+.statusbar {
+  height:22px; flex-shrink:0;
+  background:var(--bg); border-top:0.5px solid var(--border);
+  display:flex; align-items:center; padding:0 1rem; gap:1.5rem;
+  font-family:var(--mono); font-size:8px; letter-spacing:0.08em; color:var(--dim);
+}
+.sb-seg { display:flex; align-items:center; gap:4px; }
+.sb-sep { width:1px; height:10px; background:rgba(245,240,224,0.08); }
+.sb-live { color:var(--high); }
+.sb-gold { color:rgba(201,168,76,0.5); }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width:4px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:rgba(245,240,224,0.08); border-radius:2px; }
+
+/* ── v3.1 FUSION: Components from Prompt Area v1 ── */
+
+/* DID Badge in topbar */
 .tl-did {
   font-family:var(--mono); font-size:9px; letter-spacing:0.06em;
   color:var(--dim); padding:3px 8px;
@@ -98,8 +509,14 @@ body {
   box-shadow:0 4px 12px rgba(0,0,0,0.15);
 }
 .tl-did:hover::after { opacity:1; }
-.tl-did-copied { background:var(--high-p) !important; border-color:var(--high) !important; color:var(--high) !important; }
-.tl-did .copy-icon { margin-left:4px; font-size:10px; opacity:0.5; }
+.tl-did-copied {
+  background:var(--high-p) !important;
+  border-color:var(--high) !important;
+  color:var(--high) !important;
+}
+.tl-did .copy-icon {
+  margin-left:4px; font-size:10px; opacity:0.5;
+}
 .tl-did:hover .copy-icon { opacity:1; }
 .tl-status {
   font-family:var(--mono); font-size:8px; letter-spacing:0.1em;
@@ -107,68 +524,8 @@ body {
   color:var(--high); border:0.5px solid rgba(46,194,126,0.3);
   background:var(--high-p); text-transform:uppercase;
 }
-.tr { display:flex; align-items:center; gap:8px; }
-.theme-btn {
-  font-family:var(--mono); font-size:9px; letter-spacing:0.1em;
-  padding:4px 10px; border:0.5px solid var(--border-2);
-  background:transparent; color:var(--dim); cursor:pointer;
-  border-radius:2px; transition:all 0.2s;
-}
-.theme-btn:hover { color:var(--gold); border-color:var(--gold-d); }
-.lang-pill { display:flex; border:0.5px solid var(--border); border-radius:2px; overflow:hidden; }
-.lp-btn {
-  font-family:var(--mono); font-size:9px; letter-spacing:0.1em;
-  padding:4px 9px; background:none; border:none;
-  border-right:0.5px solid var(--border); color:var(--dim);
-  cursor:pointer; transition:all 0.15s;
-}
-.lp-btn:last-child{border-right:none}
-.lp-btn.active { background:var(--gold-p); color:var(--gold); }
 
-/* ── MAIN LAYOUT ── */
-.workspace { display:flex; flex:1; overflow:hidden; }
-
-/* ── SIDEBAR ── */
-.sidebar {
-  width:200px; flex-shrink:0;
-  background:var(--bg-2); border-right:0.5px solid var(--border);
-  display:flex; flex-direction:column;
-}
-.sb-section { padding:0.75rem 0; border-bottom:0.5px solid var(--border); }
-.sb-label {
-  font-family:var(--mono); font-size:8px; letter-spacing:0.14em;
-  text-transform:uppercase; color:var(--dim);
-  padding:0 1rem 0.4rem; display:block;
-}
-.sb-item {
-  display:flex; align-items:center; gap:8px;
-  padding:6px 1rem; cursor:pointer;
-  font-size:11px; color:var(--muted);
-  border-left:2px solid transparent; transition:all 0.15s;
-}
-.sb-item:hover { color:var(--parch); background:rgba(255,255,255,0.02); }
-.sb-item.active { color:var(--parch); border-left-color:var(--gold); background:var(--gold-p); }
-.sb-icon { font-size:11px; width:14px; text-align:center; }
-
-/* ── CENTRE: 3 ZONES ── */
-.centre { flex:1; display:flex; flex-direction:column; overflow:hidden; }
-
-/* ══ ZONE A — INPUT (top, fixed height) ══ */
-.zone-input {
-  flex-shrink:0;
-  background:var(--bg-2);
-  border-bottom:1.5px solid var(--gold-d);
-  padding:1rem 1.25rem 0.875rem;
-}
-
-.zone-label {
-  font-family:var(--mono); font-size:8px; letter-spacing:0.14em;
-  text-transform:uppercase; color:var(--gold); margin-bottom:0.6rem;
-  display:flex; align-items:center; gap:8px;
-}
-.zl-line { flex:1; height:0.5px; background:var(--gold-d); }
-
-/* Truth selector — horizontal, fora do command bar */
+/* Truth selector - SEPARATE row above command bar */
 .truth-row {
   display:flex; align-items:center; gap:6px;
   margin-bottom:0.6rem;
@@ -189,260 +546,14 @@ body {
 .truth-btn.m.active { color:var(--med); border-color:rgba(201,168,76,0.5); background:var(--med-p); }
 .truth-btn.l { color:rgba(91,141,212,0.5); border-color:rgba(91,141,212,0.2); }
 .truth-btn.l.active { color:var(--low); border-color:rgba(91,141,212,0.5); background:var(--low-p); }
-
 .truth-desc {
   font-family:var(--mono); font-size:8.5px; color:var(--dim);
   margin-left:auto; letter-spacing:0.04em;
   transition:color 0.2s;
 }
 
-/* Command bar — limpo, sem ruído */
-.cmd-frame {
-  display:flex; align-items:center;
-  background:var(--bg-3); border:0.5px solid var(--border-2);
-  border-radius:3px; padding:3px 3px 3px 12px;
-  transition:border-color 0.2s;
-}
-.cmd-frame:focus-within { border-color:rgba(201,168,76,0.45); }
-.cmd-agent {
-  font-family:var(--mono); font-size:8.5px; letter-spacing:0.07em;
-  color:rgba(100,160,240,0.75); padding:2px 8px;
-  background:rgba(46,111,212,0.07); border:0.5px solid rgba(46,111,212,0.15);
-  border-radius:2px; flex-shrink:0; margin-right:8px;
-}
-#cmd-input {
-  flex:1; background:none; border:none; outline:none;
-  font-family:var(--mono); font-size:12px; color:var(--parch);
-  padding:9px 0; caret-color:var(--gold);
-}
-#cmd-input::placeholder { color:var(--dim); }
-.cmd-exec {
-  font-family:var(--font); font-size:10px; font-weight:700;
-  letter-spacing:0.1em; text-transform:uppercase;
-  color:var(--bg); background:var(--gold);
-  border:none; border-radius:2px; padding:9px 16px;
-  cursor:pointer; flex-shrink:0; transition:opacity 0.2s;
-}
-.cmd-exec:hover { opacity:0.88; }
-
-/* ══ MEDIA BAR — Attachment Buttons (25 Mar 2026) ══ */
-.cmd-media-bar {
-  display:flex; align-items:center; gap:2px;
-  margin-right:8px; flex-shrink:0;
-}
-.cmd-media-btn {
-  width:28px; height:28px;
-  display:flex; align-items:center; justify-content:center;
-  font-size:13px; cursor:pointer;
-  background:transparent; border:0.5px solid var(--border-2);
-  border-radius:2px; transition:all 0.15s;
-  color:var(--dim);
-}
-.cmd-media-btn:hover {
-  border-color:var(--gold-d); color:var(--gold);
-  background:rgba(201,168,76,0.06);
-}
-.cmd-media-btn.has-file {
-  border-color:var(--high); color:var(--high);
-  background:rgba(46,194,126,0.08);
-}
-.cmd-media-input { display:none; }
-
-/* Attachment Preview Row */
-.attachment-preview {
-  display:none; /* shown by JS when files attached */
-  flex-wrap:wrap; gap:6px;
-  margin-top:0.5rem; padding:8px 10px;
-  background:var(--bg-3); border:0.5px solid var(--border-2);
-  border-radius:3px;
-}
-.attachment-preview.visible { display:flex; }
-.attachment-item {
-  display:flex; align-items:center; gap:6px;
-  font-family:var(--mono); font-size:9px;
-  background:rgba(201,168,76,0.06); border:0.5px solid var(--gold-d);
-  border-radius:2px; padding:4px 8px;
-}
-.att-icon { font-size:11px; }
-.att-name { color:var(--parch); max-width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.att-size { color:var(--dim); }
-.att-hash { color:var(--high); font-size:8px; letter-spacing:0.03em; }
-.att-remove {
-  font-size:10px; color:var(--dim); cursor:pointer;
-  margin-left:4px; padding:2px 4px;
-  border-radius:2px; transition:color 0.15s;
-}
-.att-remove:hover { color:#e74c3c; }
-
-/* KLAR theme — Attachment Preview */
-[data-theme="klar"] .cmd-media-btn { border-color:#D0CEC8; color:#7A6850; }
-[data-theme="klar"] .cmd-media-btn:hover { border-color:#8B7424; color:#8B7424; background:rgba(139,116,36,0.06); }
-[data-theme="klar"] .cmd-media-btn.has-file { border-color:#2A8040; color:#2A8040; background:rgba(42,128,64,0.08); }
-[data-theme="klar"] .attachment-preview { background:#F0EDE5; border-color:#D0CEC8; }
-[data-theme="klar"] .attachment-item { background:rgba(139,116,36,0.06); border-color:#C9A84C; }
-[data-theme="klar"] .att-name { color:#2A2010; }
-[data-theme="klar"] .att-size { color:#7A6850; }
-[data-theme="klar"] .att-hash { color:#2A8040; }
-
-/* Presets — zona própria, SEPARADA do output */
-.presets-zone {
-  display:flex; align-items:center; gap:6px;
-  margin-top:0.6rem; flex-wrap:wrap;
-}
-.preset-label {
-  font-family:var(--mono); font-size:8px; letter-spacing:0.1em;
-  text-transform:uppercase; color:var(--dim); margin-right:4px;
-}
-.preset {
-  font-family:var(--mono); font-size:9px; letter-spacing:0.04em;
-  color:var(--dim); border:0.5px solid var(--border);
-  background:transparent; border-radius:2px;
-  padding:3px 9px; cursor:pointer; transition:all 0.18s;
-}
-.preset:hover { color:var(--gold); border-color:var(--gold-d); background:var(--gold-p); }
-/* H1 FIX: KLAR theme — chips visible */
-[data-theme="klar"] .preset {
-  color: var(--chip-text);
-  border-color: var(--chip-border);
-  background: var(--chip-bg);
-}
-[data-theme="klar"] .preset:hover {
-  color: var(--gold);
-  background: rgba(139,105,20,0.15);
-}
-/* H2 FIX: KLAR theme — inactive truth buttons visible */
-[data-theme="klar"] .truth-btn { color: var(--dim); border-color: rgba(90,74,42,0.25); }
-[data-theme="klar"] .truth-btn.h { color: #3D6B4A; border-color: rgba(26,122,80,0.35); }
-[data-theme="klar"] .truth-btn.m { color: #7A5A14; border-color: rgba(139,105,20,0.35); }
-[data-theme="klar"] .truth-btn.l { color: #3A5A8A; border-color: rgba(46,95,170,0.35); }
-/* H3 FIX: KLAR theme — inspector labels readable */
-[data-theme="klar"] .insp-lbl { color: var(--muted); }
-[data-theme="klar"] .insp-sec-title { color: var(--muted); }
-[data-theme="klar"] .sb-label { color: var(--dim); }
-[data-theme="klar"] .zone-label { color: var(--gold); }
-[data-theme="klar"] .zone-output-label { color: var(--dim); }
-/* M1 FIX: KLAR theme — statusbar visible */
-[data-theme="klar"] .statusbar { background: var(--bg-2); color: var(--muted); }
-[data-theme="klar"] .statusbar .sb-gold { color: var(--gold); }
-[data-theme="klar"] .sb-sep { background: rgba(90,74,42,0.20); }
-
-/* ══ ZONE B — OUTPUT (flex, scrollable) ══ */
-.zone-output {
-  flex:1; overflow-y:auto;
-  padding:1rem 1.25rem;
-  display:flex; flex-direction:column; gap:0.75rem;
-}
-
-.zone-output-label {
-  font-family:var(--mono); font-size:8px; letter-spacing:0.14em;
-  text-transform:uppercase; color:var(--dim); margin-bottom:0.25rem;
-  display:flex; align-items:center; gap:8px;
-}
-.zol-line { flex:1; height:0.5px; background:var(--border); }
-
-.empty-output {
-  flex:1; display:flex; flex-direction:column;
-  align-items:center; justify-content:center;
-  gap:0.75rem; text-align:center; padding:2rem;
-  border:0.5px dashed var(--border); border-radius:4px;
-}
-.eo-icon {
-  width:36px; height:36px; border:0.5px solid var(--gold-d);
-  border-radius:3px; display:flex; align-items:center; justify-content:center;
-  color:rgba(201,168,76,0.3); font-size:14px;
-}
-.eo-label { font-family:var(--mono); font-size:9.5px; letter-spacing:0.08em; color:var(--dim); }
-
-.result-card {
-  background:var(--bg-3); border:0.5px solid rgba(46,111,212,0.20);
-  border-radius:4px; overflow:hidden; animation:fadeup 0.3s ease;
-  display:none;
-}
-@keyframes fadeup{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-
-.rc-head {
-  display:flex; align-items:center; justify-content:space-between;
-  padding:6px 12px; background:rgba(46,111,212,0.05);
-  border-bottom:0.5px solid rgba(46,111,212,0.12);
-  font-family:var(--mono); font-size:9px;
-}
-.rc-agent { color:rgba(100,160,240,0.8); display:flex; align-items:center; gap:5px; }
-.rc-live { width:4px; height:4px; border-radius:50%; background:var(--high); animation:blink 1.2s infinite; }
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
-.rc-ts { color:var(--dim); }
-.rc-truth {
-  font-size:8px; letter-spacing:0.1em; text-transform:uppercase;
-  padding:2px 7px; border-radius:2px; border:0.5px solid;
-}
-.rc-truth.high { color:var(--high); border-color:rgba(46,194,126,0.3); background:var(--high-p); }
-.rc-truth.med  { color:var(--med);  border-color:rgba(201,168,76,0.3);  background:var(--med-p); }
-.rc-truth.low  { color:var(--low);  border-color:rgba(91,141,212,0.3);  background:var(--low-p); }
-
-.rc-body { padding:10px 12px; }
-.rc-action { font-size:12px; color:var(--parch); margin-bottom:8px; font-weight:500; }
-.rc-meta {
-  display:grid; grid-template-columns:1fr 1fr; gap:3px 16px;
-  font-family:var(--mono); font-size:9.5px;
-}
-.rc-k { color:rgba(100,160,240,0.6); }
-.rc-v { color:var(--muted); }
-.rc-hash { color:rgba(201,168,76,0.4); font-size:8.5px; margin-top:6px; }
-
-.rc-foot {
-  padding:6px 12px; border-top:0.5px solid var(--border);
-  display:flex; align-items:center; justify-content:space-between;
-  font-family:var(--mono); font-size:8px; letter-spacing:0.08em; text-transform:uppercase;
-}
-.rc-sealed { display:flex; align-items:center; gap:4px; color:var(--high); }
-.rc-verify a { color:rgba(201,168,76,0.6); text-decoration:none; }
-.rc-verify a:hover { color:var(--gold); }
-
-/* ══ INSPECTOR — colapsável, à direita ══ */
-.inspector {
-  width:0; flex-shrink:0; overflow:hidden;
-  background:var(--bg-2); border-left:0.5px solid var(--border);
-  transition:width 0.25s ease; display:flex; flex-direction:column;
-}
-.inspector.open { width:240px; }
-
-.insp-header {
-  display:flex; align-items:center; justify-content:space-between;
-  padding:0.75rem 1rem 0.5rem;
-  border-bottom:0.5px solid var(--border);
-}
-.insp-title {
-  font-family:var(--mono); font-size:8px; letter-spacing:0.14em;
-  text-transform:uppercase; color:var(--dim);
-}
-.insp-close {
-  font-size:14px; color:var(--dim); cursor:pointer;
-  background:none; border:none; padding:0; transition:color 0.15s;
-}
-.insp-close:hover { color:var(--parch); }
-
-.insp-body { flex:1; overflow-y:auto; padding:0.75rem 1rem; }
-.insp-sec { margin-bottom:1rem; }
-.insp-sec-title {
-  font-family:var(--mono); font-size:8px; letter-spacing:0.12em;
-  text-transform:uppercase; color:var(--dim); margin-bottom:0.5rem;
-}
-.insp-row { margin-bottom:0.5rem; }
-.insp-lbl { font-family:var(--mono); font-size:8.5px; color:var(--dim); margin-bottom:2px; }
-.insp-val { font-size:11.5px; color:var(--parch); word-break:break-all; }
-.insp-val.mono { font-family:var(--mono); font-size:9px; color:var(--muted); }
-.insp-val.gold { color:var(--gold); }
-.insp-val.high { color:var(--high); }
-
-/* Truth meter */
-.tm { display:flex; flex-direction:column; gap:5px; padding:0.6rem; background:var(--faint); border-radius:3px; }
-.tm-row { display:flex; align-items:center; gap:6px; }
-.tm-dot { width:5px; height:5px; border-radius:50%; flex-shrink:0; }
-.tm-lbl { font-family:var(--mono); font-size:8.5px; color:var(--muted); flex:1; }
-.tm-track { flex:1; height:2px; background:rgba(255,255,255,0.07); border-radius:1px; }
-.tm-fill { height:100%; border-radius:1px; }
-.tm-pct { font-family:var(--mono); font-size:8px; color:var(--dim); width:26px; text-align:right; }
-
-/* Inspector toggle button (flutuante na borda) */
+/* Inspector - COLLAPSIBLE */
+.inspector.collapsed { width:0; padding:0; border-left:none; overflow:hidden; }
 .insp-toggle {
   position:absolute; right:0; top:50%;
   transform:translateY(-50%);
@@ -454,88 +565,302 @@ body {
   transition:all 0.15s; z-index:10;
 }
 .insp-toggle:hover { color:var(--gold); background:var(--gold-p); }
+.content-area { position:relative; }
 
-.main-relative { flex:1; display:flex; overflow:hidden; position:relative; }
-
-/* ══ IDENTITY SECTION — Sidebar (25 Mar 2026) ══ */
-.sb-identity-section { margin-top:auto; border-top:0.5px solid var(--border); padding-top:0.75rem; }
-.sb-id-row { display:flex; justify-content:space-between; align-items:center; padding:3px 0; }
-.sb-id-key { font-family:var(--mono); font-size:8px; color:var(--dim); text-transform:uppercase; letter-spacing:0.08em; }
-.sb-id-val { font-family:var(--mono); font-size:9px; color:var(--parch); }
-.sb-id-status-ok { color:var(--high); }
-
-.sb-identity-disconnected {
-  display:flex; flex-direction:column; align-items:center; gap:6px;
-  padding:0.75rem 0.5rem; background:rgba(231,76,60,0.06);
-  border:0.5px solid rgba(231,76,60,0.15); border-radius:3px; margin-top:6px;
+/* G3 Approval Button - HUMAN GATE */
+.g3-approval-zone {
+  display:flex; align-items:center; gap:8px;
+  padding:8px 12px; border-top:0.5px solid var(--border);
+  background:rgba(46,194,126,0.03);
 }
-.sb-id-warning { font-size:16px; }
-.sb-id-msg { font-family:var(--mono); font-size:9px; color:rgba(231,76,60,0.8); text-transform:uppercase; letter-spacing:0.06em; }
-.sb-gate-btn {
-  font-family:var(--mono); font-size:9px; color:var(--gold);
-  text-decoration:none; padding:5px 12px;
-  border:0.5px solid var(--gold-d); border-radius:2px;
-  transition:all 0.15s; text-transform:uppercase; letter-spacing:0.06em;
+.g3-btn {
+  font-family:var(--font); font-size:11px; font-weight:600;
+  letter-spacing:0.08em; text-transform:uppercase;
+  color:#0A0A10; background:var(--high);
+  border:none; border-radius:3px; padding:8px 18px;
+  cursor:pointer; flex-shrink:0; transition:all 0.2s;
+  display:flex; align-items:center; gap:6px;
 }
-.sb-gate-btn:hover { background:var(--gold-p); border-color:var(--gold); }
-
-/* Header Gate link (shown when not connected) */
-.header-gate-link {
-  font-family:var(--mono); font-size:9px; color:var(--gold);
-  text-decoration:none; padding:4px 10px;
-  border:0.5px solid var(--gold-d); border-radius:2px;
-  margin-left:8px; transition:all 0.15s;
+.g3-btn:hover { background:#3dd996; transform:scale(1.02); }
+.g3-btn:disabled { background:var(--dim); cursor:not-allowed; transform:none; }
+.g3-label {
+  font-family:var(--mono); font-size:9px; letter-spacing:0.06em;
+  color:var(--muted); flex:1;
 }
-.header-gate-link:hover { background:var(--gold-p); border-color:var(--gold); }
-
-/* KLAR theme — Identity Section */
-[data-theme="klar"] .sb-identity-section { border-top-color:#D0CEC8; }
-[data-theme="klar"] .sb-id-key { color:#7A6850; }
-[data-theme="klar"] .sb-id-val { color:#2A2010; }
-[data-theme="klar"] .sb-id-status-ok { color:#2A8040; }
-[data-theme="klar"] .sb-identity-disconnected { background:rgba(180,80,60,0.06); border-color:rgba(180,80,60,0.2); }
-[data-theme="klar"] .sb-id-msg { color:#A04030; }
-[data-theme="klar"] .sb-gate-btn { color:#8B7424; border-color:#C9A84C; }
-[data-theme="klar"] .sb-gate-btn:hover { background:rgba(139,116,36,0.08); }
-
-/* STATUSBAR */
-.statusbar {
-  height:20px; flex-shrink:0;
-  background:var(--bg); border-top:0.5px solid var(--border);
-  display:flex; align-items:center; padding:0 1rem; gap:1.25rem;
-  font-family:var(--mono); font-size:8px; letter-spacing:0.07em; color:var(--dim);
+.g3-inv {
+  font-family:var(--mono); font-size:8px; letter-spacing:0.1em;
+  color:rgba(46,194,126,0.6); padding:2px 6px;
+  border:0.5px solid rgba(46,194,126,0.2); border-radius:2px;
 }
-.sb-live { color:var(--high); }
-.sb-gold { color:rgba(201,168,76,0.5); }
-.sb-sep { width:1px; height:9px; background:var(--border); }
 
-::-webkit-scrollbar { width:3px; }
-::-webkit-scrollbar-thumb { background:rgba(245,240,224,0.08); border-radius:2px; }
+/* Preset label */
+.preset-label {
+  font-family:var(--mono); font-size:8px; letter-spacing:0.1em;
+  text-transform:uppercase; color:var(--dim); margin-right:4px;
+}
+
+/* ══ C1+C2 FIX: Identity Cards (SCHLÜSSEL + WALLET) ══ */
+.sb-identity { padding-bottom:0.75rem; }
+.sb-identity-card {
+  margin:0 0.75rem 0.5rem; padding:0.6rem 0.75rem;
+  background:var(--bg-3); border:0.5px solid var(--border-2);
+  border-radius:4px; transition:border-color 0.15s;
+}
+.sb-identity-card:hover { border-color:var(--gold-d); }
+.sb-ic-header {
+  display:flex; align-items:center; gap:6px;
+  margin-bottom:0.5rem; padding-bottom:0.4rem;
+  border-bottom:0.5px solid var(--border);
+}
+.sb-ic-icon { font-size:12px; }
+.sb-ic-title {
+  font-family:var(--mono); font-size:9px; font-weight:500;
+  letter-spacing:0.1em; text-transform:uppercase; color:var(--gold);
+}
+.sb-ic-row {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:3px 0; font-family:var(--mono); font-size:9px;
+}
+.sb-ic-label { color:var(--dim); letter-spacing:0.04em; }
+.sb-ic-value { color:var(--parch); }
+.sb-ic-highlight { color:var(--gold); font-weight:500; }
+.sb-ic-hash {
+  font-size:8px; color:var(--muted); max-width:80px;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.sb-ic-hash-row { cursor:pointer; transition:all 0.15s; }
+.sb-ic-hash-row:hover { background:var(--gold-p); margin:0 -0.5rem; padding:3px 0.5rem; border-radius:2px; }
+.sb-ic-copy { font-size:10px; opacity:0.4; transition:opacity 0.15s; }
+.sb-ic-hash-row:hover .sb-ic-copy { opacity:1; }
+/* Fallback state — visible when no session */
+.sb-ic-pending { color:var(--med) !important; font-style:italic; }
+.sb-ic-status {
+  font-size:8px; margin-left:auto; padding:2px 5px;
+  border-radius:2px; letter-spacing:0.06em;
+}
+.sb-ic-status.connected { background:var(--high-p); color:var(--high); }
+.sb-ic-status.pending { background:var(--med-p); color:var(--med); }
+.sb-ic-connect {
+  display:block; margin-top:0.5rem; padding:5px 8px;
+  font-family:var(--mono); font-size:9px; letter-spacing:0.08em;
+  text-align:center; text-decoration:none;
+  color:var(--gold); border:0.5px solid var(--gold-d);
+  border-radius:3px; background:var(--gold-p);
+  transition:all 0.15s;
+}
+.sb-ic-connect:hover { background:var(--gold-d); color:var(--bg); }
+.sb-ic-connect.hidden { display:none; }
+
+/* ══ KLAR Theme Overrides — High Contrast (Audit 25 Mar 2026) ══ */
+/* H1 FIX: Chips visible in KLAR */
+[data-theme="klar"] .preset-chip {
+  color: var(--chip-text);
+  border-color: var(--chip-border);
+  background: var(--chip-bg);
+}
+[data-theme="klar"] .preset-chip:hover {
+  color: var(--gold);
+  background: rgba(139,105,20,0.15);
+}
+/* H2 FIX: Truth buttons visible in KLAR */
+[data-theme="klar"] .truth-btn { color: var(--dim); border-color: rgba(90,74,42,0.25); }
+[data-theme="klar"] .truth-btn.h { color: #3D6B4A; border-color: rgba(26,122,80,0.35); }
+[data-theme="klar"] .truth-btn.m { color: #7A5A14; border-color: rgba(139,105,20,0.35); }
+[data-theme="klar"] .truth-btn.l { color: #3A5A8A; border-color: rgba(46,95,170,0.35); }
+/* H3 FIX: Inspector/sidebar labels readable */
+[data-theme="klar"] .insp-label { color: var(--muted); }
+[data-theme="klar"] .insp-title { color: var(--muted); }
+[data-theme="klar"] .sb-label { color: var(--dim); }
+/* M1 FIX: Statusbar visible */
+[data-theme="klar"] .statusbar { background: var(--bg-2); color: var(--muted); }
+[data-theme="klar"] .statusbar .sb-gold { color: var(--gold); }
+[data-theme="klar"] .sb-sep { background: rgba(90,74,42,0.20); }
+
+/* ══════════════════════════════════════════════════════════════
+   MODAL I9 — Constitutional Gate (human_approved=true)
+   "A confirmação humana é o primeiro elemento a existir no código"
+   ══════════════════════════════════════════════════════════════ */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: none; align-items: center; justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(4px);
+}
+.modal-overlay.active { display: flex; }
+
+.modal-i9 {
+  background: var(--bg-2);
+  border: 1px solid var(--gold-d);
+  border-radius: 8px;
+  width: min(440px, 90vw);
+  padding: 0;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+
+.modal-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-3);
+  border-radius: 8px 8px 0 0;
+}
+.modal-header .inv-badge {
+  background: rgba(201,168,76,0.15);
+  border: 1px solid var(--gold-d);
+  color: var(--gold);
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+}
+.modal-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--parch);
+  margin: 0;
+}
+
+.modal-body {
+  padding: 24px;
+}
+.modal-warning {
+  display: flex; align-items: flex-start; gap: 12px;
+  background: rgba(201,168,76,0.08);
+  border: 1px solid var(--gold-d);
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+.modal-warning-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.modal-warning-text {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.modal-warning-text strong {
+  color: var(--gold);
+  font-weight: 600;
+}
+
+.modal-hash {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+}
+.modal-hash-label {
+  font-size: 11px;
+  color: var(--dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+.modal-hash-value {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--gold);
+  word-break: break-all;
+}
+
+.modal-footer {
+  display: flex; gap: 12px;
+  padding: 20px 24px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-3);
+  border-radius: 0 0 8px 8px;
+}
+.modal-btn {
+  flex: 1;
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.modal-btn-cancel {
+  background: transparent;
+  border: 1px solid var(--border-2);
+  color: var(--muted);
+}
+.modal-btn-cancel:hover {
+  background: var(--faint);
+  color: var(--parch);
+}
+.modal-btn-confirm {
+  background: var(--gold);
+  border: 1px solid var(--gold);
+  color: #0A0A10;
+}
+.modal-btn-confirm:hover {
+  background: #D4B356;
+}
+.modal-btn-confirm:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Loading state */
+.modal-btn-confirm.loading {
+  position: relative;
+  color: transparent;
+}
+.modal-btn-confirm.loading::after {
+  content: '';
+  position: absolute;
+  width: 16px; height: 16px;
+  border: 2px solid rgba(10,10,16,0.3);
+  border-top-color: #0A0A10;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  left: 50%; top: 50%;
+  margin: -8px 0 0 -8px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* KLAR theme adjustments */
+[data-theme="klar"] .modal-i9 { background: var(--bg); border-color: var(--gold); }
+[data-theme="klar"] .modal-header { background: var(--bg-2); }
+[data-theme="klar"] .modal-footer { background: var(--bg-2); }
+[data-theme="klar"] .modal-warning { background: rgba(139,105,20,0.08); border-color: var(--gold); }
+[data-theme="klar"] .modal-btn-confirm { color: #FAFAF8; }
 </style>
 </head>
-<body id="root">
+<body>
 
 <!-- TOPBAR -->
 <div class="topbar">
-  <div class="tl">
+  <div class="topbar-left">
     <div class="tl-logo">WINDI<span>LAW</span></div>
-    <!-- Connected state -->
-    <div class="tl-did" id="tl-did" data-full-did="" onclick="copyDid()" title="Click to copy" style="display:none">
-      <span id="tl-did-text">did:windi:···</span><span class="copy-icon">📋</span>
-    </div>
-    <div class="tl-status" id="tl-status" style="display:none">VERIFIED</div>
-    <!-- Disconnected state -->
-    <a href="/law/gate" class="header-gate-link" id="header-gate-link">
-      <span id="header-gate-text">Wallet erstellen →</span>
-    </a>
+    <div class="tl-did" id="tl-did" data-full-did="did:windi:···" onclick="copyDid()" title="Click to copy">did:windi:···<span class="copy-icon">📋</span></div>
+    <div class="tl-status" id="tl-status">—</div>
   </div>
-  <div class="tr">
-    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">NOIR</button>
+  <div class="topbar-center">
+    <div class="breadcrumb">
+      <span class="active" id="bc-agent">W-LEGAL-001</span>
+      <span class="bc-sep">/</span>
+      <span id="bc-doc">Contratos · Evidências</span>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <button id="theme-toggle" onclick="toggleTheme()" style="font-family:var(--mono);font-size:9px;letter-spacing:0.1em;padding:5px 12px;border:0.5px solid var(--border-2);background:transparent;color:var(--dim);cursor:pointer;border-radius:3px;transition:all 0.2s;" onmouseover="this.style.color='var(--gold)';this.style.borderColor='var(--gold-d)'" onmouseout="this.style.color='var(--dim)';this.style.borderColor='var(--border-2)'">NOIR</button>
     <div class="lang-pill">
       <button class="lp-btn active" onclick="setLang('de')">DE</button>
       <button class="lp-btn" onclick="setLang('pt')">PT</button>
       <button class="lp-btn" onclick="setLang('en')">EN</button>
     </div>
+    <div class="ledger-status">
+      <div class="ls-dot"></div>
+      <span id="ls-text">Ledger · 8101 · aktiv</span>
+    </div>
+    <div class="user-avatar">JM</div>
   </div>
 </div>
 
@@ -544,243 +869,366 @@ body {
 
   <!-- SIDEBAR -->
   <div class="sidebar">
+
     <div class="sb-section">
-      <span class="sb-label" id="sb-agents">Agentes</span>
-      <div class="sb-item active" onclick="setAgent('legal')">
-        <span class="sb-icon">⚖</span><span id="sb-legal">Juristisch</span>
-      </div>
-      <div class="sb-item" onclick="setAgent('notary')">
-        <span class="sb-icon">🔏</span><span id="sb-notary">Notariat</span>
-      </div>
-      <div class="sb-item" onclick="setAgent('acct')">
-        <span class="sb-icon">🧾</span><span id="sb-acct">Buchhaltung</span>
-      </div>
-      <div class="sb-item" onclick="setAgent('comply')">
-        <span class="sb-icon">🛡</span><span id="sb-comply">Compliance</span>
-      </div>
+      <span class="sb-label" id="sb-l-agents">Agentenkonstellation</span>
+      <a class="sb-item active" onclick="switchAgent('legal')" href="#">
+        <span class="sb-icon">⚖</span>
+        <span id="sb-legal">Juristisch</span>
+        <span class="sb-badge">22</span>
+      </a>
+      <a class="sb-item" onclick="switchAgent('notary')" href="#">
+        <span class="sb-icon">🔏</span>
+        <span id="sb-notary">Notariat</span>
+      </a>
+      <a class="sb-item" onclick="switchAgent('acct')" href="#">
+        <span class="sb-icon">🧾</span>
+        <span id="sb-acct">Buchhaltung</span>
+      </a>
+      <a class="sb-item" onclick="switchAgent('comply')" href="#">
+        <span class="sb-icon">🛡</span>
+        <span id="sb-comply">Compliance</span>
+      </a>
     </div>
+
     <div class="sb-section">
-      <span class="sb-label" id="sb-docs">Dokumente</span>
-      <div class="sb-item"><span class="sb-icon">◈</span><span>NDA · Müller GmbH</span></div>
-      <div class="sb-item"><span class="sb-icon">◈</span><span>Audit · Q1-2026</span></div>
-      <div class="sb-item"><span class="sb-icon">◈</span><span id="sb-invoice">Rechnung · 0041</span></div>
+      <span class="sb-label" id="sb-l-docs">Aktuelle Dokumente</span>
+      <a class="sb-item" onclick="loadDoc('nda')" href="#">
+        <span class="sb-icon">◈</span>
+        <span id="d1">NDA · Müller GmbH</span>
+        <div class="sb-truth" style="background:var(--high)"></div>
+      </a>
+      <a class="sb-item" onclick="loadDoc('audit')" href="#">
+        <span class="sb-icon">◈</span>
+        <span id="d2">Audit · Q1-2026</span>
+        <div class="sb-truth" style="background:var(--med)"></div>
+      </a>
+      <a class="sb-item" onclick="loadDoc('invoice')" href="#">
+        <span class="sb-icon">◈</span>
+        <span id="d3">Rechnung · 2026-0041</span>
+        <div class="sb-truth" style="background:var(--high)"></div>
+      </a>
+      <a class="sb-item" onclick="loadDoc('gdpr')" href="#">
+        <span class="sb-icon">◈</span>
+        <span id="d4">DSGVO-Analyse</span>
+        <div class="sb-truth" style="background:var(--low)"></div>
+      </a>
     </div>
 
-    <!-- IDENTITÄT Section (with fallback for no session) -->
-    <div class="sb-section sb-identity-section">
-      <span class="sb-label" id="sb-identity-label">Identität</span>
+    <div class="sb-section">
+      <span class="sb-label" id="sb-l-verify">Verifikation</span>
+      <a class="sb-item" href="#">
+        <span class="sb-icon">◎</span>
+        <span id="sb-verify-link">Verify Public</span>
+      </a>
+      <a class="sb-item" href="#">
+        <span class="sb-icon">◎</span>
+        <span id="sb-ledger-link">Forensic Ledger</span>
+      </a>
+    </div>
 
-      <!-- Connected state (hidden by default, shown by JS) -->
-      <div class="sb-identity-connected" id="sb-id-connected" style="display:none">
-        <div class="sb-id-row">
-          <span class="sb-id-key" id="sb-id-key-label">Schlüssel</span>
-          <span class="sb-id-val" id="sb-id-key-type">Ed25519</span>
+    <!-- C1+C2 FIX: IDENTITÄT section with SCHLÜSSEL + WALLET -->
+    <div class="sb-section sb-identity">
+      <span class="sb-label" id="sb-l-identity">Identität</span>
+
+      <!-- SCHLÜSSEL — Fallback state visible when no session -->
+      <div class="sb-identity-card" id="sb-schluessel">
+        <div class="sb-ic-header">
+          <span class="sb-ic-icon">🔑</span>
+          <span class="sb-ic-title" id="sb-schluessel-title">Schlüssel</span>
+          <span class="sb-ic-status" id="sb-key-status"></span>
         </div>
-        <div class="sb-id-row">
-          <span class="sb-id-key" id="sb-id-wallet-label">Wallet</span>
-          <span class="sb-id-val" id="sb-id-tier">FREE</span>
+        <div class="sb-ic-row">
+          <span class="sb-ic-label" id="sb-key-type-label">Typ</span>
+          <span class="sb-ic-value" id="sb-key-type">Ed25519</span>
         </div>
-        <div class="sb-id-row">
-          <span class="sb-id-key" id="sb-id-status-label">Status</span>
-          <span class="sb-id-val sb-id-status-ok" id="sb-id-status">VERIFIED</span>
+        <div class="sb-ic-row">
+          <span class="sb-ic-label" id="sb-key-created-label">Erstellt</span>
+          <span class="sb-ic-value sb-ic-pending" id="sb-key-created">⚠ nicht verbunden</span>
+        </div>
+        <div class="sb-ic-row sb-ic-hash-row" onclick="copyFingerprint()" title="Click to copy">
+          <span class="sb-ic-label">SHA-256</span>
+          <span class="sb-ic-value sb-ic-hash sb-ic-pending" id="sb-key-hash">— — — —</span>
+          <span class="sb-ic-copy">📋</span>
         </div>
       </div>
 
-      <!-- Disconnected state (shown by default) -->
-      <div class="sb-identity-disconnected" id="sb-id-disconnected">
-        <div class="sb-id-warning">⚠</div>
-        <div class="sb-id-msg" id="sb-id-msg">Nicht verbunden</div>
-        <a href="/law/gate" class="sb-gate-btn" id="sb-gate-btn">→ Gate</a>
+      <!-- WALLET — Fallback state visible when no session -->
+      <div class="sb-identity-card" id="sb-wallet">
+        <div class="sb-ic-header">
+          <span class="sb-ic-icon">👛</span>
+          <span class="sb-ic-title" id="sb-wallet-title">Wallet</span>
+          <span class="sb-ic-status" id="sb-wallet-status"></span>
+        </div>
+        <div class="sb-ic-row">
+          <span class="sb-ic-label" id="sb-pioneer-label">Pioneer</span>
+          <span class="sb-ic-value sb-ic-pending" id="sb-pioneer-num">⚠</span>
+        </div>
+        <div class="sb-ic-row">
+          <span class="sb-ic-label">Tier</span>
+          <span class="sb-ic-value sb-ic-pending" id="sb-tier">—</span>
+        </div>
+        <div class="sb-ic-row">
+          <span class="sb-ic-label" id="sb-credits-label">Kredite</span>
+          <span class="sb-ic-value sb-ic-pending" id="sb-credits">—</span>
+        </div>
+        <!-- Fallback: Connect button when no session -->
+        <a class="sb-ic-connect" id="sb-connect-btn" href="/law/gate" id="sb-connect-label">→ Gate</a>
       </div>
     </div>
+
+    <div class="sb-footer">
+      <div class="sb-sovereignty">
+        <span id="sb-sov-label">Lokale Souveränität</span>
+        <div class="sov-bar-wrap">
+          <div class="sov-bar-track"><div class="sov-bar-fill"></div></div>
+          <span class="sov-pct">93.3%</span>
+        </div>
+        <span style="font-size:8px;margin-top:2px;color:rgba(245,240,224,0.15)">Strato VPS · Kempten DE</span>
+      </div>
+    </div>
+
   </div>
 
-  <!-- CENTRE + INSPECTOR -->
-  <div class="main-relative">
+  <!-- MAIN -->
+  <div class="main">
 
-    <div class="centre">
-
-      <!-- ══ ZONE A — INPUT ══ -->
-      <div class="zone-input">
-
-        <div class="zone-label">
-          <span id="za-label">Eingabe</span>
-          <div class="zl-line"></div>
-        </div>
-
-        <!-- Truth selector — SEPARADO, acima do command bar -->
-        <div class="truth-row">
-          <span class="truth-label" id="tr-label">Wahrheitsebene</span>
-          <button class="truth-btn h active" onclick="setTruth('HIGH','h')" id="tb-h">Gerichtsfähig</button>
-          <button class="truth-btn m" onclick="setTruth('MED','m')" id="tb-m">Prozessual</button>
-          <button class="truth-btn l" onclick="setTruth('LOW','l')" id="tb-l">Analyse</button>
-          <span class="truth-desc" id="truth-desc">SHA-256 · Forensic Ledger · Unveränderlich</span>
-        </div>
-
-        <!-- Command bar — LIMPO, sem ruído -->
-        <div class="cmd-frame">
-          <!-- Media Bar — Attachment Buttons -->
-          <div class="cmd-media-bar">
-            <button class="cmd-media-btn" id="mb-any" onclick="document.getElementById('mf-any').click()" title="Anhang">📎</button>
-            <button class="cmd-media-btn" id="mb-img" onclick="document.getElementById('mf-img').click()" title="Bild">🖼</button>
-            <button class="cmd-media-btn" id="mb-doc" onclick="document.getElementById('mf-doc').click()" title="Dokument">📄</button>
-            <button class="cmd-media-btn" id="mb-vid" onclick="document.getElementById('mf-vid').click()" title="Video">🎥</button>
-          </div>
-          <!-- Hidden file inputs -->
-          <input type="file" id="mf-any" class="cmd-media-input" accept="*/*" onchange="handleMedia(this,'any')">
-          <input type="file" id="mf-img" class="cmd-media-input" accept="image/*" onchange="handleMedia(this,'img')">
-          <input type="file" id="mf-doc" class="cmd-media-input" accept=".pdf,.docx,.xlsx,.txt" onchange="handleMedia(this,'doc')">
-          <input type="file" id="mf-vid" class="cmd-media-input" accept="video/*" onchange="handleMedia(this,'vid')">
-
-          <div class="cmd-agent" id="cmd-agent">W-LEGAL-001</div>
-          <input type="text" id="cmd-input"
-            placeholder="Beschreiben Sie Ihr rechtliches Anliegen…"
-            onkeydown="handleCmd(event)">
-          <button class="cmd-exec" id="cmd-exec" onclick="execCmd()">Ausführen</button>
-        </div>
-
-        <!-- Attachment Preview Row -->
-        <div class="attachment-preview" id="att-preview"></div>
-
-        <!-- Presets — ZONA PRÓPRIA, abaixo do command bar -->
-        <div class="presets-zone">
-          <span class="preset-label" id="pr-label">Schnell</span>
-          <button class="preset" onclick="fill(this)">NDA · ZPO §273</button>
-          <button class="preset" onclick="fill(this)">Beweiskette · SHA-256</button>
-          <button class="preset" onclick="fill(this)">Tribunalpaket · DE/EN/PT</button>
-          <button class="preset" onclick="fill(this)">BaFin · MiCA</button>
-          <button class="preset" onclick="fill(this)">eIDAS Signatur</button>
-        </div>
-
+    <!-- COMMAND BAR -->
+    <div class="command-zone">
+      <!-- v3.1: Truth selector SEPARADO (from v1) -->
+      <div class="truth-row">
+        <span class="truth-label" id="tr-label">Wahrheitsebene</span>
+        <button class="truth-btn h active" onclick="setTruthV31('HIGH','h')" id="tb-h">Gerichtsfähig</button>
+        <button class="truth-btn m" onclick="setTruthV31('MED','m')" id="tb-m">Prozessual</button>
+        <button class="truth-btn l" onclick="setTruthV31('LOW','l')" id="tb-l">Analyse</button>
+        <span class="truth-desc" id="truth-desc">SHA-256 · Forensic Ledger · Unveränderlich</span>
       </div>
+      <div class="cmd-frame">
+        <div class="cmd-agent-tag" id="cmd-agent-tag">W-LEGAL-001</div>
+        <input type="text" id="law-cmd" placeholder="Beschreiben Sie Ihr rechtliches Anliegen…" onkeydown="handleCmd(event)">
+        <button class="cmd-exec" onclick="execCmd()" id="exec-btn">Ausführen</button>
+      </div>
+      <div class="cmd-presets" id="cmd-presets">
+        <span class="preset-label" id="pr-label">Schnell</span>
+        <span class="preset-chip" onclick="fillCmd(this.textContent)">NDA erstellen · ZPO §273</span>
+        <span class="preset-chip" onclick="fillCmd(this.textContent)">Beweiskette · SHA-256</span>
+        <span class="preset-chip" onclick="fillCmd(this.textContent)">Tribunalpaket · DE/EN/PT</span>
+        <span class="preset-chip" onclick="fillCmd(this.textContent)">BaFin Compliance · MiCA</span>
+        <span class="preset-chip" onclick="fillCmd(this.textContent)">eIDAS Signatur</span>
+        <span class="preset-chip" onclick="fillCmd(this.textContent)">ELSTER XML · C6</span>
+      </div>
+    </div>
 
-      <!-- ══ ZONE B — OUTPUT ══ -->
-      <div class="zone-output">
+    <!-- CONTENT -->
+    <div class="content-area" style="position:relative;">
 
-        <div class="zone-output-label">
-          <span id="zb-label">Ergebnis</span>
-          <div class="zol-line"></div>
-        </div>
+      <!-- DOC PANEL -->
+      <div class="doc-panel" id="doc-panel">
 
-        <!-- Empty state -->
-        <div class="empty-output" id="empty-state">
-          <div class="eo-icon">◎</div>
-          <div class="eo-label" id="eo-text">Bereit für Ihren Befehl</div>
-        </div>
-
-        <!-- Result card (aparece após execução) -->
-        <div class="result-card" id="result-card">
+        <!-- RESULT (hidden initially) -->
+        <div class="result-card" id="result-card" style="display:none">
           <div class="rc-head">
-            <div class="rc-agent"><div class="rc-live"></div><span id="rc-agent-id">W-LEGAL-001 · Systementscheidung</span></div>
-            <div style="display:flex;align-items:center;gap:7px">
-              <span class="rc-truth high" id="rc-truth-badge">GERICHTSFÄHIG</span>
+            <div class="rc-agent-id"><div class="rc-live"></div><span id="rc-agent">W-LEGAL-001 · Intent Analyzer</span></div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="rc-truth-badge high" id="rc-badge">HIGH</span>
               <span class="rc-ts" id="rc-ts"></span>
             </div>
           </div>
           <div class="rc-body">
-            <div class="rc-action" id="rc-action">—</div>
-            <div class="rc-meta">
-              <span class="rc-k" id="rc-k1">Domäne:</span><span class="rc-v" id="rc-v1">—</span>
-              <span class="rc-k" id="rc-k2">Zuständig:</span><span class="rc-v" id="rc-v2">—</span>
-              <span class="rc-k" id="rc-k3">Status:</span><span class="rc-v" id="rc-v3">—</span>
-              <span class="rc-k" id="rc-k4">Nächster Schritt:</span><span class="rc-v" id="rc-v4">—</span>
-            </div>
-            <div class="rc-hash" id="rc-hash"></div>
+            <div class="rc-row"><span class="rc-k" id="rc-k1">Aktion: </span><span class="rc-v" id="rc-v1">—</span></div>
+            <div class="rc-row"><span class="rc-k" id="rc-k2">Domäne: </span><span class="rc-v" id="rc-v2">—</span></div>
+            <div class="rc-row"><span class="rc-k" id="rc-k3">Zuständig: </span><span class="rc-v" id="rc-v3">—</span></div>
+            <div class="rc-row"><span class="rc-k" id="rc-k4">Status: </span><span class="rc-v" id="rc-v4">—</span></div>
+            <div class="rc-row"><span class="rc-k" id="rc-k5">Nächster Schritt: </span><span class="rc-v" id="rc-v5">—</span></div>
+            <div class="rc-row" style="grid-column:1/-1"><span class="rc-k">SHA-256: </span><span class="rc-hash" id="rc-hash">—</span></div>
           </div>
           <div class="rc-foot">
-            <div class="rc-sealed"><div class="rc-live"></div><span id="rc-sealed">Im Ledger · I11</span></div>
-            <div class="rc-verify"><a href="#" id="rc-verify-link">Verify ↗</a></div>
+            <div class="rc-sealed">
+              <div class="ls-dot"></div>
+              <span id="rc-sealed-text">Entwurf · Warte auf Genehmigung</span>
+            </div>
+            <div class="rc-verify-link"><span id="rc-verify-pre">Verify: </span><a href="https://windi-domain.com/verify-public/" id="rc-link" id="rc-verify-link" target="_blank">windi-domain.com/verify-public/</a></div>
           </div>
+          <!-- QR Code Container (hidden until seal) -->
+          <div class="rc-qr-zone" id="rc-qr-zone" style="display:none">
+            <div class="rc-qr-container" id="rc-qr-container"></div>
+            <button class="rc-qr-download" id="rc-qr-download" onclick="downloadQR()">↓ QR SVG</button>
+          </div>
+          <!-- v3.1: G3 APPROVAL ZONE - Human Gate (MISSING from both v1 and v3!) -->
+          <div class="g3-approval-zone" id="g3-zone">
+            <span class="g3-label" id="g3-label">KI vorbereitet. Mensch entscheidet.</span>
+            <span class="g3-inv">G3 · I9</span>
+            <button class="g3-btn" id="g3-btn" onclick="approveG3()">
+              🛡️ <span id="g3-btn-text">Genehmigen</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- DOCUMENT LIST -->
+        <div id="doc-list">
+
+          <div class="doc-item active" onclick="selectDoc(this,'nda')">
+            <div class="di-head">
+              <span class="di-type legal" id="dt-legal">Legal</span>
+              <span class="di-name">Geheimhaltungsvertrag · Müller GmbH vs. Tech AG</span>
+              <span class="di-date">2026-03-24</span>
+              <div class="di-sealed" title="Versiegelt"></div>
+            </div>
+            <div class="di-body">
+              <div class="di-meta">
+                <span id="dm-zpo">ZPO · §273</span>
+                <span class="di-hash">a3f8c12d…</span>
+                <span>HIGH</span>
+              </div>
+              <button class="di-action" id="da-verify">Verify</button>
+              <button class="di-action" id="da-export">Export</button>
+            </div>
+          </div>
+
+          <div class="doc-item" onclick="selectDoc(this,'audit')">
+            <div class="di-head">
+              <span class="di-type comply" id="dt-comply">Compliance</span>
+              <span class="di-name" id="doc2-name">BaFin Audit · Q1-2026 · MiCA Konformität</span>
+              <span class="di-date">2026-03-20</span>
+              <div class="di-pending" title="Ausstehend"></div>
+            </div>
+            <div class="di-body">
+              <div class="di-meta">
+                <span>EU AI Act · Art.14</span>
+                <span class="di-hash">b9e1f44a…</span>
+                <span>MED</span>
+              </div>
+              <button class="di-action seal-btn" id="da-seal">Seal</button>
+              <button class="di-action" id="da-review">Review</button>
+            </div>
+          </div>
+
+          <div class="doc-item" onclick="selectDoc(this,'invoice')">
+            <div class="di-head">
+              <span class="di-type acct" id="dt-acct">Buchhaltung</span>
+              <span class="di-name" id="doc3-name">XRechnung · 2026-0041 · GoBD konform</span>
+              <span class="di-date">2026-03-18</span>
+              <div class="di-sealed" title="Versiegelt"></div>
+            </div>
+            <div class="di-body">
+              <div class="di-meta">
+                <span>DATEV · ELSTER</span>
+                <span class="di-hash">7c2a9f01…</span>
+                <span>HIGH · C6</span>
+              </div>
+              <button class="di-action" id="da-elster">ELSTER XML</button>
+              <button class="di-action" id="da-gobd">GoBD</button>
+            </div>
+          </div>
+
+          <div class="doc-item" onclick="selectDoc(this,'gdpr')">
+            <div class="di-head">
+              <span class="di-type legal">Legal</span>
+              <span class="di-name" id="doc4-name">DSGVO Datenschutz-Folgenabschätzung</span>
+              <span class="di-date">2026-03-15</span>
+              <div class="di-pending" title="Ausstehend"></div>
+            </div>
+            <div class="di-body">
+              <div class="di-meta">
+                <span>DSGVO Art.35</span>
+                <span class="di-hash">e4d71bc8…</span>
+                <span>LOW</span>
+              </div>
+              <button class="di-action seal-btn">Seal</button>
+              <button class="di-action">Analyse</button>
+            </div>
+          </div>
+
         </div>
 
       </div>
 
-    </div>
+      <!-- v3.1: Inspector toggle button -->
+      <button class="insp-toggle" id="insp-toggle" onclick="toggleInspector()" title="Inspector">‹</button>
 
-    <!-- Inspector toggle button -->
-    <button class="insp-toggle" id="insp-toggle" onclick="toggleInspector()" title="Inspector">‹</button>
+      <!-- INSPECTOR (collapsible) -->
+      <div class="inspector collapsed" id="inspector">
 
-    <!-- ══ INSPECTOR — colapsável ══ -->
-    <div class="inspector" id="inspector">
-      <div class="insp-header">
-        <span class="insp-title" id="insp-title">Inspector</span>
-        <button class="insp-close" onclick="toggleInspector()">✕</button>
-      </div>
-      <div class="insp-body">
-
-        <div class="insp-sec">
-          <div class="insp-sec-title" id="is-doc">Dokument</div>
-          <div class="insp-row">
-            <div class="insp-lbl" id="il-type">Typ</div>
-            <div class="insp-val" id="iv-type">NDA</div>
+        <div class="insp-section">
+          <div class="insp-title">
+            <span id="insp-doc-title">Dokument</span>
+            <span class="insp-title-action" id="insp-action-link">→ Verify</span>
           </div>
           <div class="insp-row">
-            <div class="insp-lbl" id="il-agent">Agent</div>
-            <div class="insp-val gold" id="iv-agent">W-LEGAL-001</div>
+            <span class="insp-label" id="il-type">Typ</span>
+            <span class="insp-value" id="iv-type">Geheimhaltungsvertrag</span>
           </div>
           <div class="insp-row">
-            <div class="insp-lbl" id="il-status">Status</div>
-            <div class="insp-val high" id="iv-status">Bereit</div>
+            <span class="insp-label" id="il-agent">Agent</span>
+            <span class="insp-value gold" id="iv-agent">W-LEGAL-001</span>
           </div>
           <div class="insp-row">
-            <div class="insp-lbl">SHA-256</div>
-            <div class="insp-val mono" id="iv-hash">—</div>
+            <span class="insp-label" id="il-status">Status</span>
+            <span class="insp-value high" id="iv-status">Versiegelt · I11</span>
+          </div>
+          <div class="insp-row">
+            <span class="insp-label">SHA-256</span>
+            <span class="insp-value mono" id="iv-hash">a3f8c12d4e9b7f2a…</span>
           </div>
         </div>
 
-        <!-- Truth meter — COMPACTO, não denso -->
-        <div class="insp-sec">
-          <div class="insp-sec-title" id="is-truth">Wahrheitsebenen</div>
-          <div class="tm">
+        <div class="insp-section">
+          <div class="insp-title"><span id="insp-truth-title">Wahrheitsebenen</span></div>
+          <div class="truth-meter">
             <div class="tm-row">
               <div class="tm-dot" style="background:var(--high)"></div>
-              <span class="tm-lbl" id="tm-h">Kryptografisch</span>
-              <div class="tm-track"><div class="tm-fill" style="width:100%;background:var(--high)"></div></div>
+              <span class="tm-label" id="tm-high">Kryptografisch · HIGH</span>
+              <div class="tm-bar-track"><div class="tm-bar-fill" style="width:100%;background:var(--high)"></div></div>
               <span class="tm-pct">100%</span>
             </div>
             <div class="tm-row">
               <div class="tm-dot" style="background:var(--med)"></div>
-              <span class="tm-lbl" id="tm-m">Prozessual</span>
-              <div class="tm-track"><div class="tm-fill" style="width:75%;background:var(--med)"></div></div>
-              <span class="tm-pct">75%</span>
+              <span class="tm-label" id="tm-med">Prozessual · MED</span>
+              <div class="tm-bar-track"><div class="tm-bar-fill" style="width:78%;background:var(--med)"></div></div>
+              <span class="tm-pct">78%</span>
             </div>
             <div class="tm-row">
               <div class="tm-dot" style="background:var(--low)"></div>
-              <span class="tm-lbl" id="tm-l">KI-Analyse</span>
-              <div class="tm-track"><div class="tm-fill" style="width:42%;background:var(--low)"></div></div>
-              <span class="tm-pct">42%</span>
+              <span class="tm-label" id="tm-low">KI-Analyse · LOW</span>
+              <div class="tm-bar-track"><div class="tm-bar-fill" style="width:44%;background:var(--low)"></div></div>
+              <span class="tm-pct">44%</span>
             </div>
           </div>
         </div>
 
-        <!-- Invariants — lista compacta -->
-        <div class="insp-sec">
-          <div class="insp-sec-title" id="is-inv">Invarianten</div>
-          <div style="display:flex;flex-direction:column;gap:3px">
-            <div class="tm-row" style="padding:3px 0;border-top:0.5px solid var(--border)">
-              <span style="font-family:var(--mono);font-size:9px;color:var(--gold);width:22px">I9</span>
-              <span style="font-size:10px;color:var(--muted);flex:1" id="inv-i9">Keine Eskalation</span>
-              <div class="tm-dot" style="background:var(--high)"></div>
-            </div>
-            <div class="tm-row" style="padding:3px 0;border-top:0.5px solid var(--border)">
-              <span style="font-family:var(--mono);font-size:9px;color:var(--gold);width:22px">I11</span>
-              <span style="font-size:10px;color:var(--muted);flex:1" id="inv-i11">Permanenz</span>
-              <div class="tm-dot" style="background:var(--high)"></div>
-            </div>
-            <div class="tm-row" style="padding:3px 0;border-top:0.5px solid var(--border)">
-              <span style="font-family:var(--mono);font-size:9px;color:var(--gold);width:22px">I13</span>
-              <span style="font-size:10px;color:var(--muted);flex:1" id="inv-i13">Konvergenz</span>
-              <div class="tm-dot" style="background:var(--high)"></div>
-            </div>
-            <div class="tm-row" style="padding:3px 0;border-top:0.5px solid var(--border)">
-              <span style="font-family:var(--mono);font-size:9px;color:var(--gold);width:22px">G3</span>
-              <span style="font-size:10px;color:var(--muted);flex:1" id="inv-g3">Vorschlagen ≠ Ausführen</span>
-              <div class="tm-dot" style="background:var(--high)"></div>
-            </div>
+        <div class="insp-section">
+          <div class="insp-title"><span id="insp-jur-title">Jurisdiktionen</span></div>
+          <div class="jurisdiction-grid">
+            <span class="juris-tag active">DE · ZPO</span>
+            <span class="juris-tag active">EU · eIDAS</span>
+            <span class="juris-tag">BR · MCI</span>
+            <span class="juris-tag active">INT · UNCITRAL</span>
+          </div>
+        </div>
+
+        <div class="insp-section">
+          <div class="insp-title"><span id="insp-act-title">Aktionen</span></div>
+          <div class="action-grid">
+            <button class="action-btn primary" id="ab-seal">Seal · I11</button>
+            <button class="action-btn" id="ab-verify">Verify</button>
+            <button class="action-btn" id="ab-export">Export DE</button>
+            <button class="action-btn" id="ab-chain">Beweiskette</button>
+          </div>
+        </div>
+
+        <div class="insp-section">
+          <div class="insp-title"><span id="insp-inv-title">Invarianten</span></div>
+          <div class="invariant-list" id="cia-panel">
+            <div class="inv-item"><span class="inv-id">I9</span><span>Keine autonome Eskalation</span><div class="inv-status" id="cia-i9"></div></div>
+            <div class="inv-item"><span class="inv-id">I11</span><span>Kryptografische Permanenz</span><div class="inv-status" id="cia-i11"></div></div>
+            <div class="inv-item"><span class="inv-id">I13</span><span>Konvergenz · 1 Frage/Turn</span><div class="inv-status" id="cia-i13"></div></div>
+            <div class="inv-item"><span class="inv-id">G3</span><span>Vorschlagen ≠ Ausführen</span><div class="inv-status" id="cia-g3"></div></div>
+            <div class="inv-item"><span class="inv-id">C6</span><span id="inv-c6">KI vorbereitet. Mensch genehmigt.</span><div class="inv-status" id="cia-c6"></div></div>
           </div>
         </div>
 
       </div>
+
     </div>
 
   </div>
@@ -789,26 +1237,73 @@ body {
 
 <!-- STATUSBAR -->
 <div class="statusbar">
-  <span class="sb-live" id="stb-live">● aktiv</span>
+  <div class="sb-seg"><span class="sb-live" id="stb-live">● aktiv</span></div>
   <div class="sb-sep"></div>
-  <span id="stb-ledger">Ledger · :8101</span>
+  <div class="sb-seg"><span id="stb-ledger">Ledger · :8101</span></div>
   <div class="sb-sep"></div>
-  <span id="stb-agents">7 Agenten · online</span>
+  <div class="sb-seg"><span id="stb-agents">7 Agenten · online</span></div>
   <div class="sb-sep"></div>
-  <span class="sb-gold">40.918+ Receipts</span>
+  <div class="sb-seg"><span class="sb-gold" id="stb-receipts">40.918+ Receipts</span></div>
   <div class="sb-sep"></div>
-  <span style="margin-left:auto">AI processes · Human decides · WINDI guarantees</span>
+  <div class="sb-seg" style="margin-left:auto"><span>AI processes. Human decides. WINDI guarantees.</span></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     MODAL I9 — Constitutional Gate
+     "Selar é irreversível. human_approved=true ANTES de qualquer seal."
+     ══════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-i9">
+  <div class="modal-i9">
+    <div class="modal-header">
+      <span class="inv-badge">I9 + I11</span>
+      <h3 id="modal-title">Versiegelung bestätigen</h3>
+    </div>
+    <div class="modal-body">
+      <div class="modal-warning">
+        <span class="modal-warning-icon">⚠️</span>
+        <div class="modal-warning-text" id="modal-warning-text">
+          <strong id="modal-warning-strong">Diese Aktion ist unumkehrbar.</strong><br>
+          <span id="modal-warning-desc">Das Dokument wird kryptografisch versiegelt und im Ledger verankert. Der Hash kann nicht mehr geändert werden.</span>
+        </div>
+      </div>
+      <div class="modal-hash">
+        <div class="modal-hash-label" id="modal-hash-label">Dokument-Hash (SHA-256)</div>
+        <div class="modal-hash-value" id="modal-hash-value">—</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn modal-btn-cancel" id="modal-cancel">Abbrechen</button>
+      <button class="modal-btn modal-btn-confirm" id="modal-confirm">Versiegeln · I11</button>
+    </div>
+  </div>
 </div>
 
 <script>
-var lang = 'de';
-var theme = 'noir';
+var currentTheme = 'noir';
 var inspOpen = false;
+var pendingApproval = true;
+var currentHash = '';
+var walletDid = '';
+
+// C1 FIX: Copy fingerprint to clipboard
+function copyFingerprint() {
+  var hashEl = document.getElementById('sb-key-hash');
+  var fullHash = hashEl.getAttribute('data-full-hash') || hashEl.textContent;
+  navigator.clipboard.writeText(fullHash).then(function() {
+    var original = hashEl.textContent;
+    hashEl.textContent = '✓';
+    hashEl.style.color = 'var(--high)';
+    setTimeout(function() {
+      hashEl.textContent = original;
+      hashEl.style.color = '';
+    }, 1500);
+  });
+}
 
 // M2 FIX: Copy DID to clipboard
 function copyDid() {
   var didEl = document.getElementById('tl-did');
-  var fullDid = didEl.getAttribute('data-full-did') || 'did:windi:···';
+  var fullDid = didEl.getAttribute('data-full-did') || walletDid || 'did:windi:···';
   navigator.clipboard.writeText(fullDid).then(function() {
     didEl.classList.add('tl-did-copied');
     var original = didEl.innerHTML;
@@ -819,84 +1314,289 @@ function copyDid() {
     }, 1500);
   });
 }
+
+// v3.1: Load wallet from sessionStorage (injected by /law/gate)
+function initWallet() {
+  var stored = sessionStorage.getItem('windi_law_wallet');
+
+  // Fallback labels (trilingual)
+  var fallbackLabels = {
+    de: { notConnected: '⚠ nicht verbunden', connect: '→ Gate', hashPlaceholder: '— — — —', createWallet: 'Wallet erstellen →' },
+    pt: { notConnected: '⚠ não conectado', connect: '→ Gate', hashPlaceholder: '— — — —', createWallet: 'Criar wallet →' },
+    en: { notConnected: '⚠ not connected', connect: '→ Gate', hashPlaceholder: '— — — —', createWallet: 'Create wallet →' }
+  };
+  var fb = fallbackLabels[lang] || fallbackLabels.en;
+
+  if (!stored) {
+    // NO SESSION: Show fallback state
+    console.log('[WINDI-LAW] No wallet session — showing fallback state');
+
+    // Sidebar: IDENTITÄT warning state
+    document.getElementById('sb-key-status').textContent = '⚠';
+    document.getElementById('sb-key-status').className = 'sb-ic-status pending';
+    document.getElementById('sb-wallet-status').textContent = '⚠';
+    document.getElementById('sb-wallet-status').className = 'sb-ic-status pending';
+    document.getElementById('sb-key-created').textContent = fb.notConnected;
+    document.getElementById('sb-key-hash').textContent = fb.hashPlaceholder;
+    document.getElementById('sb-pioneer-num').textContent = '⚠';
+    document.getElementById('sb-tier').textContent = '—';
+    document.getElementById('sb-credits').textContent = '—';
+    document.getElementById('sb-connect-btn').textContent = fb.connect;
+    document.getElementById('sb-connect-btn').classList.remove('hidden');
+
+    // Header: DID badge becomes "Create wallet" link
+    var didEl = document.getElementById('tl-did');
+    didEl.innerHTML = fb.createWallet;
+    didEl.style.cursor = 'pointer';
+    didEl.style.color = 'var(--gold)';
+    didEl.onclick = function() { window.location.href = '/law/gate'; };
+
+    // Header: Status shows warning
+    document.getElementById('tl-status').textContent = '⚠';
+    document.getElementById('tl-status').style.color = 'var(--med)';
+    document.getElementById('tl-status').style.borderColor = 'rgba(201,168,76,0.3)';
+    document.getElementById('tl-status').style.background = 'var(--med-p)';
+
+    return;
+  }
+
+  try {
+    var w = JSON.parse(stored);
+    walletDid = w.did || '';
+    var didShort = walletDid.length > 20 ? walletDid.substring(0,20)+'···' : walletDid;
+    var didEl = document.getElementById('tl-did');
+    didEl.setAttribute('data-full-did', walletDid);
+    didEl.innerHTML = (didShort || 'did:windi:···') + '<span class="copy-icon">📋</span>';
+    document.getElementById('tl-status').textContent = w.state === 'VERIFIED' ? LANG[lang].tlStatusVerified : LANG[lang].tlStatusPending;
+    document.getElementById('tl-status').style.color = w.state === 'VERIFIED' ? 'var(--high)' : 'var(--med)';
+    document.getElementById('tl-status').style.borderColor = w.state === 'VERIFIED' ? 'rgba(46,194,126,0.3)' : 'rgba(201,168,76,0.3)';
+    document.getElementById('tl-status').style.background = w.state === 'VERIFIED' ? 'var(--high-p)' : 'var(--med-p)';
+    // Store globally for agent context injection
+    window.__windiLawWallet = w;
+
+    // SESSION FOUND: Populate SCHLÜSSEL + WALLET panels + hide connect button
+    document.getElementById('sb-connect-btn').classList.add('hidden');
+    document.getElementById('sb-key-status').textContent = '✓';
+    document.getElementById('sb-key-status').className = 'sb-ic-status connected';
+    document.getElementById('sb-wallet-status').textContent = w.state === 'VERIFIED' ? '✓' : '⏳';
+    document.getElementById('sb-wallet-status').className = w.state === 'VERIFIED' ? 'sb-ic-status connected' : 'sb-ic-status pending';
+
+    // Remove pending styling
+    document.querySelectorAll('.sb-ic-pending').forEach(function(el) {
+      el.classList.remove('sb-ic-pending');
+    });
+
+    if (w.fingerprint) {
+      var hashEl = document.getElementById('sb-key-hash');
+      hashEl.textContent = w.fingerprint.substring(0,12) + '···';
+      hashEl.setAttribute('data-full-hash', w.fingerprint);
+    }
+    if (w.created_at) {
+      document.getElementById('sb-key-created').textContent = w.created_at.substring(0,10);
+    }
+    if (w.pioneer_number) {
+      document.getElementById('sb-pioneer-num').textContent = '#' + w.pioneer_number;
+    }
+    if (w.tier) {
+      document.getElementById('sb-tier').textContent = w.tier.toUpperCase();
+    }
+    if (w.credits !== undefined) {
+      document.getElementById('sb-credits').textContent = w.credits.toLocaleString();
+    }
+  } catch(e) { console.error('[WINDI-LAW] Wallet parse error:', e); }
+}
+
+function toggleTheme() {
+  var btn = document.getElementById('theme-toggle');
+  if(currentTheme === 'noir') {
+    document.documentElement.setAttribute('data-theme','klar');
+    currentTheme = 'klar';
+    btn.textContent = 'KLAR';
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+    currentTheme = 'noir';
+    btn.textContent = 'NOIR';
+  }
+}
+
+var lang = 'de';
 var currentTruth = 'HIGH';
 var currentAgent = 'legal';
 
 var LANG = {
   de: {
-    zaLabel:'Eingabe', zbLabel:'Ergebnis', trLabel:'Wahrheitsebene',
-    tbH:'Gerichtsfähig', tbM:'Prozessual', tbL:'Analyse',
-    tdH:'SHA-256 · Forensic Ledger · Unveränderlich',
-    tdM:'ZPO · eIDAS · Prozessstrategie',
-    tdL:'Semantische · KI-Interpretation',
-    prLabel:'Schnell',
+    sbLAgents:'Agentenkonstellation', sbLDocs:'Aktuelle Dokumente', sbLVerify:'Verifikation',
+    sbLIdentity:'Identität', sbSchluesselTitle:'Schlüssel', sbWalletTitle:'Wallet',
+    sbKeyTypeLabel:'Typ', sbKeyCreatedLabel:'Erstellt', sbPioneerLabel:'Pioneer', sbCreditsLabel:'Kredite',
+    sbLegal:'Juristisch', sbNotary:'Notariat', sbAcct:'Buchhaltung', sbComply:'Compliance',
+    sbVerifyLink:'Verify Public', sbLedgerLink:'Forensic Ledger',
+    sbSovLabel:'Lokale Souveränität',
     cmdPlaceholder:'Beschreiben Sie Ihr rechtliches Anliegen…',
     execBtn:'Ausführen',
-    sbAgents:'Agenten', sbDocs:'Dokumente',
-    sbLegal:'Juristisch', sbNotary:'Notariat', sbAcct:'Buchhaltung', sbComply:'Compliance',
-    eoText:'Bereit für Ihren Befehl',
-    rcK1:'Domäne:', rcK2:'Zuständig:', rcK3:'Status:', rcK4:'Nächster Schritt:',
-    rcSealed:'Im Ledger · I11',
-    inspTitle:'Inspector', isDoc:'Dokument', isTruth:'Wahrheitsebenen', isInv:'Invarianten',
-    ilType:'Typ', ilAgent:'Agent', ilStatus:'Status',
-    ivStatus:'Bereit',
-    tmH:'Kryptografisch', tmM:'Prozessual', tmL:'KI-Analyse',
-    invI9:'Keine Eskalation', invI11:'Permanenz', invI13:'Konvergenz', invG3:'Vorschlagen ≠ Ausführen',
-    stbLive:'● aktiv', stbLedger:'Ledger · :8101', stbAgents:'7 Agenten · online',
-    mbAny:'Anhang', mbImg:'Bild', mbDoc:'Dokument', mbVid:'Video',
-    fileTooLarge:'Datei zu groß',
-    sbIdentity:'Identität', sbIdKey:'Schlüssel', sbIdWallet:'Wallet', sbIdStatus:'Status',
-    sbIdDisconnected:'Nicht verbunden', sbGateBtn:'→ Gate', headerGate:'Wallet erstellen →'
+    presets:['NDA erstellen · ZPO §273','Beweiskette · SHA-256','Tribunalpaket · DE/EN/PT','BaFin Compliance · MiCA','eIDAS Signatur','ELSTER XML · C6'],
+    bcDoc:'Verträge · Beweise',
+    lsText:'Ledger · 8101 · aktiv',
+    d1:'NDA · Müller GmbH', d2:'Audit · Q1-2026', d3:'Rechnung · 2026-0041', d4:'DSGVO-Analyse',
+    daVerify:'Verify', daExport:'Export', daSeal:'Seal', daReview:'Review', daElster:'ELSTER XML', daGobd:'GoBD',
+    rcK1:'Aktion: ', rcK2:'Domäne: ', rcK3:'Zuständig: ', rcK4:'Status: ', rcK5:'Nächster Schritt: ',
+    rcSealedText:'Entwurf · Warte auf Genehmigung', rcSealedDone:'Im Ledger versiegelt · I11', rcVerifyPre:'Verify: ',
+    dtLegal:'Legal', dtComply:'Compliance', dtAcct:'Buchhaltung',
+    doc2Name:'BaFin Audit · Q1-2026 · MiCA Konformität',
+    doc3Name:'XRechnung · 2026-0041 · GoBD konform',
+    doc4Name:'DSGVO Datenschutz-Folgenabschätzung',
+    dmZpo:'ZPO · §273',
+    inspDocTitle:'Dokument', inspActionLink:'→ Verify',
+    ilType:'Typ', ivType:'Geheimhaltungsvertrag',
+    ilAgent:'Agent', ilStatus:'Status',
+    ivStatus:'Versiegelt · I11',
+    inspTruthTitle:'Wahrheitsebenen',
+    tmHigh:'Kryptografisch · HIGH', tmMed:'Prozessual · MED', tmLow:'KI-Analyse · LOW',
+    inspJurTitle:'Jurisdiktionen',
+    inspActTitle:'Aktionen',
+    abSeal:'Seal · I11', abVerify:'Verify', abExport:'Export DE', abChain:'Beweiskette',
+    inspInvTitle:'Invarianten',
+    invC6:'KI vorbereitet. Mensch genehmigt.',
+    stbLive:'● aktiv', stbLedger:'Ledger · :8101', stbAgents:'7 Agenten · online', stbReceipts:'40.918+ Receipts',
+    // v3.1 fusion strings
+    trLabel:'Wahrheitsebene', tbH:'Gerichtsfähig', tbM:'Prozessual', tbL:'Analyse',
+    tdH:'SHA-256 · Forensic Ledger · Unveränderlich', tdM:'ZPO · eIDAS · Prozessstrategie', tdL:'Semantische · KI-Interpretation',
+    prLabel:'Schnell',
+    g3Label:'KI vorbereitet. Mensch entscheidet.', g3Btn:'Genehmigen', g3BtnDone:'Genehmigt ✓',
+    v5Ready:'Genehmigung erforderlich → Klicken Sie auf 🛡️', v5Done:'Versiegelt im Ledger',
+    tlStatus:'—', tlStatusVerified:'VERIFIED', tlStatusPending:'PENDING',
+    // Modal I9 — Constitutional Gate
+    modalTitle:'Versiegelung bestätigen',
+    modalWarningStrong:'Diese Aktion ist unumkehrbar.',
+    modalWarningDesc:'Das Dokument wird kryptografisch versiegelt und im Ledger verankert. Der Hash kann nicht mehr geändert werden.',
+    modalHashLabel:'Dokument-Hash (SHA-256)',
+    modalCancel:'Abbrechen',
+    modalConfirm:'Versiegeln · I11',
+    modalSealing:'Versiegelt...',
+    modalSuccess:'Versiegelt ✓',
+    modalError:'Fehler beim Versiegeln',
+    // Verify + Chain
+    verifyAuth:'✅ Authentisch · Ledger bestätigt',
+    verifyFail:'❌ Nicht gefunden',
+    verifyNoReceipt:'Kein Beleg zum Verifizieren',
+    chainTitle:'Beweiskette',
+    chainEmpty:'Keine vorherigen Belege',
+    chainLoading:'Laden...'
   },
   pt: {
-    zaLabel:'Entrada', zbLabel:'Resultado', trLabel:'Nível de Verdade',
-    tbH:'Válido em Tribunal', tbM:'Processual', tbL:'Análise',
-    tdH:'SHA-256 · Forensic Ledger · Imutável',
-    tdM:'ZPO · eIDAS · Estratégia Processual',
-    tdL:'Semântica · Interpretação IA',
-    prLabel:'Rápido',
-    cmdPlaceholder:'Descreva o seu pedido jurídico…',
-    execBtn:'Executar',
-    sbAgents:'Agentes', sbDocs:'Documentos',
+    sbLAgents:'Constelação de Agentes', sbLDocs:'Documentos Recentes', sbLVerify:'Verificação',
+    sbLIdentity:'Identidade', sbSchluesselTitle:'Chave', sbWalletTitle:'Carteira',
+    sbKeyTypeLabel:'Tipo', sbKeyCreatedLabel:'Criada', sbPioneerLabel:'Pioneer', sbCreditsLabel:'Créditos',
     sbLegal:'Jurídico', sbNotary:'Notarial', sbAcct:'Contábil', sbComply:'Compliance',
-    eoText:'Pronto para o seu comando',
-    rcK1:'Domínio:', rcK2:'Responsável:', rcK3:'Estado:', rcK4:'Próximo passo:',
-    rcSealed:'Selado no Ledger · I11',
-    inspTitle:'Inspector', isDoc:'Documento', isTruth:'Níveis de Verdade', isInv:'Invariantes',
-    ilType:'Tipo', ilAgent:'Agente', ilStatus:'Estado',
-    ivStatus:'Pronto',
-    tmH:'Criptográfico', tmM:'Processual', tmL:'Análise IA',
-    invI9:'Sem escalada', invI11:'Permanência', invI13:'Convergência', invG3:'Propor ≠ Executar',
-    stbLive:'● activo', stbLedger:'Ledger · :8101', stbAgents:'7 Agentes · online',
-    mbAny:'Anexo', mbImg:'Imagem', mbDoc:'Documento', mbVid:'Vídeo',
-    fileTooLarge:'Ficheiro muito grande',
-    sbIdentity:'Identidade', sbIdKey:'Chave', sbIdWallet:'Wallet', sbIdStatus:'Estado',
-    sbIdDisconnected:'Não conectado', sbGateBtn:'→ Gate', headerGate:'Criar Wallet →'
+    sbVerifyLink:'Verify Público', sbLedgerLink:'Forensic Ledger',
+    sbSovLabel:'Soberania Local',
+    cmdPlaceholder:'Introduza comando — criar contrato, analisar evidências, exportar relatório…',
+    execBtn:'Executar',
+    presets:['Criar NDA · ZPO §273','Cadeia de Evidências · SHA-256','Pacote Tribunal · DE/EN/PT','Compliance BaFin · MiCA','Assinatura eIDAS','ELSTER XML · C6'],
+    bcDoc:'Contratos · Evidências',
+    lsText:'Ledger · 8101 · activo',
+    d1:'NDA · Müller GmbH', d2:'Auditoria · Q1-2026', d3:'Fatura · 2026-0041', d4:'Análise RGPD',
+    daVerify:'Verificar', daExport:'Exportar', daSeal:'Selar', daReview:'Rever', daElster:'ELSTER XML', daGobd:'GoBD',
+    rcK1:'Acção: ', rcK2:'Domínio: ', rcK3:'Responsável: ', rcK4:'Estado: ', rcK5:'Próximo passo: ',
+    rcSealedText:'Rascunho · Aguarda aprovação', rcSealedDone:'Selado no Ledger · I11', rcVerifyPre:'Verify: ',
+    dtLegal:'Jurídico', dtComply:'Compliance', dtAcct:'Contábil',
+    doc2Name:'Auditoria BaFin · Q1-2026 · Conformidade MiCA',
+    doc3Name:'XRechnung · 2026-0041 · GoBD conforme',
+    doc4Name:'Análise de Impacto RGPD',
+    dmZpo:'ZPO · §273',
+    inspDocTitle:'Documento', inspActionLink:'→ Verificar',
+    ilType:'Tipo', ivType:'Contrato de Confidencialidade',
+    ilAgent:'Agente', ilStatus:'Estado',
+    ivStatus:'Selado · I11',
+    inspTruthTitle:'Níveis de Verdade',
+    tmHigh:'Criptográfico · HIGH', tmMed:'Processual · MED', tmLow:'Análise IA · LOW',
+    inspJurTitle:'Jurisdições',
+    inspActTitle:'Acções',
+    abSeal:'Selar · I11', abVerify:'Verificar', abExport:'Exportar PT', abChain:'Cadeia de Provas',
+    inspInvTitle:'Invariantes',
+    invC6:'IA prepara. Humano aprova.',
+    stbLive:'● activo', stbLedger:'Ledger · :8101', stbAgents:'7 Agentes · online', stbReceipts:'40.918+ Recibos',
+    // v3.1 fusion strings
+    trLabel:'Nível de Verdade', tbH:'Válido em Tribunal', tbM:'Processual', tbL:'Análise',
+    tdH:'SHA-256 · Forensic Ledger · Imutável', tdM:'ZPO · eIDAS · Estratégia Processual', tdL:'Semântica · Interpretação IA',
+    prLabel:'Rápido',
+    g3Label:'IA prepara. Humano decide.', g3Btn:'Aprovar', g3BtnDone:'Aprovado ✓',
+    v5Ready:'Aprovação necessária → Clique em 🛡️', v5Done:'Selado no Ledger',
+    tlStatus:'—', tlStatusVerified:'VERIFICADO', tlStatusPending:'PENDENTE',
+    // Modal I9 — Constitutional Gate
+    modalTitle:'Confirmar Selagem',
+    modalWarningStrong:'Esta acção é irreversível.',
+    modalWarningDesc:'O documento será selado criptograficamente e ancorado no Ledger. O hash não pode ser alterado.',
+    modalHashLabel:'Hash do Documento (SHA-256)',
+    modalCancel:'Cancelar',
+    modalConfirm:'Selar · I11',
+    modalSealing:'A selar...',
+    modalSuccess:'Selado ✓',
+    modalError:'Erro ao selar',
+    // Verify + Chain
+    verifyAuth:'✅ Autêntico · Ledger confirma',
+    verifyFail:'❌ Não encontrado',
+    verifyNoReceipt:'Nenhum recibo para verificar',
+    chainTitle:'Cadeia de Provas',
+    chainEmpty:'Sem recibos anteriores',
+    chainLoading:'A carregar...'
   },
   en: {
-    zaLabel:'Input', zbLabel:'Output', trLabel:'Truth Level',
-    tbH:'Court-Admissible', tbM:'Procedural', tbL:'Analysis',
-    tdH:'SHA-256 · Forensic Ledger · Immutable',
-    tdM:'ZPO · eIDAS · Procedural Strategy',
-    tdL:'Semantic · AI Interpretation',
-    prLabel:'Quick',
-    cmdPlaceholder:'Describe your legal matter…',
-    execBtn:'Execute',
-    sbAgents:'Agents', sbDocs:'Documents',
+    sbLAgents:'Agent Constellation', sbLDocs:'Recent Documents', sbLVerify:'Verification',
+    sbLIdentity:'Identity', sbSchluesselTitle:'Key', sbWalletTitle:'Wallet',
+    sbKeyTypeLabel:'Type', sbKeyCreatedLabel:'Created', sbPioneerLabel:'Pioneer', sbCreditsLabel:'Credits',
     sbLegal:'Legal', sbNotary:'Notary', sbAcct:'Accounting', sbComply:'Compliance',
-    eoText:'Ready for your command',
-    rcK1:'Domain:', rcK2:'Agent:', rcK3:'Status:', rcK4:'Next step:',
-    rcSealed:'Sealed in Ledger · I11',
-    inspTitle:'Inspector', isDoc:'Document', isTruth:'Truth Levels', isInv:'Invariants',
-    ilType:'Type', ilAgent:'Agent', ilStatus:'Status',
-    ivStatus:'Ready',
-    tmH:'Cryptographic', tmM:'Procedural', tmL:'AI Analysis',
-    invI9:'No escalation', invI11:'Permanence', invI13:'Convergence', invG3:'Propose ≠ Execute',
-    stbLive:'● active', stbLedger:'Ledger · :8101', stbAgents:'7 Agents · online',
-    mbAny:'Attachment', mbImg:'Image', mbDoc:'Document', mbVid:'Video',
-    fileTooLarge:'File too large',
-    sbIdentity:'Identity', sbIdKey:'Key', sbIdWallet:'Wallet', sbIdStatus:'Status',
-    sbIdDisconnected:'Not connected', sbGateBtn:'→ Gate', headerGate:'Create Wallet →'
+    sbVerifyLink:'Verify Public', sbLedgerLink:'Forensic Ledger',
+    sbSovLabel:'Local Sovereignty',
+    cmdPlaceholder:'Enter command — create contract, analyse evidence, export report…',
+    execBtn:'Execute',
+    presets:['Create NDA · ZPO §273','Evidence Chain · SHA-256','Court Package · DE/EN/PT','BaFin Compliance · MiCA','eIDAS Signature','ELSTER XML · C6'],
+    bcDoc:'Contracts · Evidence',
+    lsText:'Ledger · 8101 · active',
+    d1:'NDA · Müller GmbH', d2:'Audit · Q1-2026', d3:'Invoice · 2026-0041', d4:'GDPR Analysis',
+    daVerify:'Verify', daExport:'Export', daSeal:'Seal', daReview:'Review', daElster:'ELSTER XML', daGobd:'GoBD',
+    rcK1:'Action: ', rcK2:'Domain: ', rcK3:'Agent: ', rcK4:'Status: ', rcK5:'Next step: ',
+    rcSealedText:'Draft · Awaiting approval', rcSealedDone:'Sealed in Ledger · I11', rcVerifyPre:'Verify: ',
+    dtLegal:'Legal', dtComply:'Compliance', dtAcct:'Accounting',
+    doc2Name:'BaFin Audit · Q1-2026 · MiCA Compliance',
+    doc3Name:'XRechnung · 2026-0041 · GoBD compliant',
+    doc4Name:'GDPR Data Protection Impact Assessment',
+    dmZpo:'ZPO · §273',
+    inspDocTitle:'Document', inspActionLink:'→ Verify',
+    ilType:'Type', ivType:'Non-Disclosure Agreement',
+    ilAgent:'Agent', ilStatus:'Status',
+    ivStatus:'Sealed · I11',
+    inspTruthTitle:'Truth Levels',
+    tmHigh:'Cryptographic · HIGH', tmMed:'Procedural · MED', tmLow:'AI Analysis · LOW',
+    inspJurTitle:'Jurisdictions',
+    inspActTitle:'Actions',
+    abSeal:'Seal · I11', abVerify:'Verify', abExport:'Export EN', abChain:'Evidence Chain',
+    inspInvTitle:'Invariants',
+    invC6:'AI prepares. Human approves.',
+    stbLive:'● active', stbLedger:'Ledger · :8101', stbAgents:'7 Agents · online', stbReceipts:'40,918+ Receipts',
+    // v3.1 fusion strings
+    trLabel:'Truth Level', tbH:'Court-Admissible', tbM:'Procedural', tbL:'Analysis',
+    tdH:'SHA-256 · Forensic Ledger · Immutable', tdM:'ZPO · eIDAS · Procedural Strategy', tdL:'Semantic · AI Interpretation',
+    prLabel:'Quick',
+    g3Label:'AI prepares. Human decides.', g3Btn:'Approve', g3BtnDone:'Approved ✓',
+    v5Ready:'Approval required → Click 🛡️', v5Done:'Sealed in Ledger',
+    tlStatus:'—', tlStatusVerified:'VERIFIED', tlStatusPending:'PENDING',
+    // Modal I9 — Constitutional Gate
+    modalTitle:'Confirm Seal',
+    modalWarningStrong:'This action is irreversible.',
+    modalWarningDesc:'The document will be cryptographically sealed and anchored in the Ledger. The hash cannot be changed.',
+    modalHashLabel:'Document Hash (SHA-256)',
+    modalCancel:'Cancel',
+    modalConfirm:'Seal · I11',
+    modalSealing:'Sealing...',
+    modalSuccess:'Sealed ✓',
+    modalError:'Sealing failed',
+    // Verify + Chain
+    verifyAuth:'✅ Authentic · Ledger confirms',
+    verifyFail:'❌ Not found',
+    verifyNoReceipt:'No receipt to verify',
+    chainTitle:'Evidence Chain',
+    chainEmpty:'No previous receipts',
+    chainLoading:'Loading...'
   }
 };
 
@@ -905,58 +1605,108 @@ function setLang(l) {
   document.querySelectorAll('.lp-btn').forEach(function(b){ b.classList.remove('active'); });
   document.querySelector('.lp-btn[onclick="setLang(\''+l+'\')"]').classList.add('active');
   var t = LANG[l];
-  document.getElementById('za-label').textContent = t.zaLabel;
-  document.getElementById('zb-label').textContent = t.zbLabel;
+  document.getElementById('sb-l-agents').textContent = t.sbLAgents;
+  document.getElementById('sb-l-docs').textContent = t.sbLDocs;
+  document.getElementById('sb-l-verify').textContent = t.sbLVerify;
+  // C1+C2 FIX: Identity section translations
+  document.getElementById('sb-l-identity').textContent = t.sbLIdentity;
+  document.getElementById('sb-schluessel-title').textContent = t.sbSchluesselTitle;
+  document.getElementById('sb-wallet-title').textContent = t.sbWalletTitle;
+  document.getElementById('sb-key-type-label').textContent = t.sbKeyTypeLabel;
+  document.getElementById('sb-key-created-label').textContent = t.sbKeyCreatedLabel;
+  document.getElementById('sb-pioneer-label').textContent = t.sbPioneerLabel;
+  document.getElementById('sb-credits-label').textContent = t.sbCreditsLabel;
+  document.getElementById('sb-legal').textContent = t.sbLegal;
+  document.getElementById('sb-notary').textContent = t.sbNotary;
+  document.getElementById('sb-acct').textContent = t.sbAcct;
+  document.getElementById('sb-comply').textContent = t.sbComply;
+  document.getElementById('sb-verify-link').textContent = t.sbVerifyLink;
+  document.getElementById('sb-ledger-link').textContent = t.sbLedgerLink;
+  document.getElementById('sb-sov-label').textContent = t.sbSovLabel;
+  document.getElementById('law-cmd').placeholder = t.cmdPlaceholder;
+  document.getElementById('exec-btn').textContent = t.execBtn;
+  document.getElementById('bc-doc').textContent = t.bcDoc;
+  document.getElementById('ls-text').textContent = t.lsText;
+  document.getElementById('d1').textContent = t.d1;
+  document.getElementById('d2').textContent = t.d2;
+  document.getElementById('d3').textContent = t.d3;
+  document.getElementById('d4').textContent = t.d4;
+  document.getElementById('da-verify').textContent = t.daVerify;
+  document.getElementById('da-export').textContent = t.daExport;
+  document.getElementById('da-seal').textContent = t.daSeal;
+  document.getElementById('da-review').textContent = t.daReview;
+  document.getElementById('da-elster').textContent = t.daElster;
+  document.getElementById('da-gobd').textContent = t.daGobd;
+  document.getElementById('rc-k1').textContent = t.rcK1;
+  document.getElementById('rc-k2').textContent = t.rcK2;
+  document.getElementById('rc-k3').textContent = t.rcK3;
+  document.getElementById('rc-k4').textContent = t.rcK4;
+  document.getElementById('rc-k5').textContent = t.rcK5;
+  document.getElementById('rc-sealed-text').textContent = pendingApproval ? t.rcSealedText : t.rcSealedDone;
+  document.getElementById('rc-verify-pre').textContent = t.rcVerifyPre;
+  document.getElementById('dt-legal').textContent = t.dtLegal;
+  document.getElementById('dt-comply').textContent = t.dtComply;
+  document.getElementById('dt-acct').textContent = t.dtAcct;
+  document.getElementById('doc2-name').textContent = t.doc2Name;
+  document.getElementById('doc3-name').textContent = t.doc3Name;
+  document.getElementById('doc4-name').textContent = t.doc4Name;
+  document.getElementById('dm-zpo').textContent = t.dmZpo;
+  document.getElementById('insp-doc-title').textContent = t.inspDocTitle;
+  document.getElementById('insp-action-link').textContent = t.inspActionLink;
+  document.getElementById('il-type').textContent = t.ilType;
+  document.getElementById('iv-type').textContent = t.ivType;
+  document.getElementById('il-agent').textContent = t.ilAgent;
+  document.getElementById('il-status').textContent = t.ilStatus;
+  document.getElementById('iv-status').textContent = t.ivStatus;
+  document.getElementById('insp-truth-title').textContent = t.inspTruthTitle;
+  document.getElementById('tm-high').textContent = t.tmHigh;
+  document.getElementById('tm-med').textContent = t.tmMed;
+  document.getElementById('tm-low').textContent = t.tmLow;
+  document.getElementById('insp-jur-title').textContent = t.inspJurTitle;
+  document.getElementById('insp-act-title').textContent = t.inspActTitle;
+  document.getElementById('ab-seal').textContent = t.abSeal;
+  document.getElementById('ab-verify').textContent = t.abVerify;
+  document.getElementById('ab-export').textContent = t.abExport;
+  document.getElementById('ab-chain').textContent = t.abChain;
+  document.getElementById('insp-inv-title').textContent = t.inspInvTitle;
+  document.getElementById('inv-c6').textContent = t.invC6;
+  document.getElementById('stb-live').textContent = t.stbLive;
+  document.getElementById('stb-ledger').textContent = t.stbLedger;
+  document.getElementById('stb-agents').textContent = t.stbAgents;
+  document.getElementById('stb-receipts').textContent = t.stbReceipts;
+  // v3.1 fusion elements
   document.getElementById('tr-label').textContent = t.trLabel;
   document.getElementById('tb-h').textContent = t.tbH;
   document.getElementById('tb-m').textContent = t.tbM;
   document.getElementById('tb-l').textContent = t.tbL;
   document.getElementById('pr-label').textContent = t.prLabel;
-  document.getElementById('cmd-input').placeholder = t.cmdPlaceholder;
-  document.getElementById('cmd-exec').textContent = t.execBtn;
-  document.getElementById('sb-agents').textContent = t.sbAgents;
-  document.getElementById('sb-docs').textContent = t.sbDocs;
-  document.getElementById('sb-legal').textContent = t.sbLegal;
-  document.getElementById('sb-notary').textContent = t.sbNotary;
-  document.getElementById('sb-acct').textContent = t.sbAcct;
-  document.getElementById('sb-comply').textContent = t.sbComply;
-  document.getElementById('eo-text').textContent = t.eoText;
-  document.getElementById('rc-k1').textContent = t.rcK1;
-  document.getElementById('rc-k2').textContent = t.rcK2;
-  document.getElementById('rc-k3').textContent = t.rcK3;
-  document.getElementById('rc-k4').textContent = t.rcK4;
-  document.getElementById('rc-sealed').textContent = t.rcSealed;
-  document.getElementById('insp-title').textContent = t.inspTitle;
-  document.getElementById('is-doc').textContent = t.isDoc;
-  document.getElementById('is-truth').textContent = t.isTruth;
-  document.getElementById('is-inv').textContent = t.isInv;
-  document.getElementById('il-type').textContent = t.ilType;
-  document.getElementById('il-agent').textContent = t.ilAgent;
-  document.getElementById('il-status').textContent = t.ilStatus;
-  document.getElementById('iv-status').textContent = t.ivStatus;
-  document.getElementById('tm-h').textContent = t.tmH;
-  document.getElementById('tm-m').textContent = t.tmM;
-  document.getElementById('tm-l').textContent = t.tmL;
-  document.getElementById('inv-i9').textContent = t.invI9;
-  document.getElementById('inv-i11').textContent = t.invI11;
-  document.getElementById('inv-i13').textContent = t.invI13;
-  document.getElementById('inv-g3').textContent = t.invG3;
-  document.getElementById('stb-live').textContent = t.stbLive;
-  document.getElementById('stb-ledger').textContent = t.stbLedger;
-  document.getElementById('stb-agents').textContent = t.stbAgents;
-  // Media bar tooltips
-  document.getElementById('mb-any').title = t.mbAny;
-  document.getElementById('mb-img').title = t.mbImg;
-  document.getElementById('mb-doc').title = t.mbDoc;
-  document.getElementById('mb-vid').title = t.mbVid;
-  // Identity section
-  document.getElementById('sb-identity-label').textContent = t.sbIdentity;
-  document.getElementById('sb-id-key-label').textContent = t.sbIdKey;
-  document.getElementById('sb-id-wallet-label').textContent = t.sbIdWallet;
-  document.getElementById('sb-id-status-label').textContent = t.sbIdStatus;
-  document.getElementById('sb-id-msg').textContent = t.sbIdDisconnected;
-  document.getElementById('sb-gate-btn').textContent = t.sbGateBtn;
-  document.getElementById('header-gate-text').textContent = t.headerGate;
+  document.getElementById('g3-label').textContent = t.g3Label;
+  document.getElementById('g3-btn-text').textContent = pendingApproval ? t.g3Btn : t.g3BtnDone;
+  updateTruthDesc();
+  var chips = document.querySelectorAll('.preset-chip');
+  t.presets.forEach(function(p,i){ if(chips[i]) chips[i].textContent = p; });
+  // Modal I9 — Constitutional Gate i18n
+  document.getElementById('modal-title').textContent = t.modalTitle;
+  document.getElementById('modal-warning-strong').textContent = t.modalWarningStrong;
+  document.getElementById('modal-warning-desc').textContent = t.modalWarningDesc;
+  document.getElementById('modal-hash-label').textContent = t.modalHashLabel;
+  document.getElementById('modal-cancel').textContent = t.modalCancel;
+  document.getElementById('modal-confirm').textContent = t.modalConfirm;
+}
+
+function setTruth(level) {
+  currentTruth = level;
+  // v3.1: Remove old cts-btn logic, use truth-btn instead
+  setTruthV31(level, {HIGH:'h',MED:'m',LOW:'l'}[level]);
+}
+
+// v3.1: New truth selector with description update
+function setTruthV31(level, cls) {
+  currentTruth = level;
+  ['h','m','l'].forEach(function(c){
+    document.getElementById('tb-'+c).classList.remove('active');
+  });
+  document.getElementById('tb-'+cls).classList.add('active');
   updateTruthDesc();
 }
 
@@ -966,215 +1716,481 @@ function updateTruthDesc() {
   document.getElementById('truth-desc').textContent = map[currentTruth];
 }
 
-/* ══ MEDIA BAR — File Handling + SHA-256 (25 Mar 2026) ══ */
-var attachedFiles = {}; // { id: { file, hash, type } }
-var FILE_LIMITS = {
-  any: 25 * 1024 * 1024,   // 25MB
-  img: 10 * 1024 * 1024,   // 10MB
-  doc: 25 * 1024 * 1024,   // 25MB
-  vid: 100 * 1024 * 1024   // 100MB
-};
-var LIMIT_LABELS = {any:'25MB', img:'10MB', doc:'25MB', vid:'100MB'};
-var TYPE_ICONS = {any:'📎', img:'🖼', doc:'📄', vid:'🎥'};
-
-async function hashFile(file) {
-  var buf = await file.arrayBuffer();
-  var hash = await crypto.subtle.digest('SHA-256', buf);
-  return Array.from(new Uint8Array(hash))
-    .map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
-}
-
-function formatBytes(bytes) {
-  if(bytes < 1024) return bytes + ' B';
-  if(bytes < 1048576) return (bytes/1024).toFixed(1) + ' KB';
-  return (bytes/1048576).toFixed(2) + ' MB';
-}
-
-async function handleMedia(input, type) {
-  var file = input.files[0];
-  if(!file) return;
-
-  // Check file size
-  if(file.size > FILE_LIMITS[type]) {
-    var t = LANG[lang];
-    var msg = t.fileTooLarge || 'Datei zu groß';
-    alert(msg + ': ' + formatBytes(file.size) + ' > ' + LIMIT_LABELS[type]);
-    input.value = '';
-    return;
+// v3.1: Collapsible inspector
+function toggleInspector() {
+  inspOpen = !inspOpen;
+  var insp = document.getElementById('inspector');
+  var btn = document.getElementById('insp-toggle');
+  if (inspOpen) {
+    insp.classList.remove('collapsed');
+    btn.textContent = '›';
+  } else {
+    insp.classList.add('collapsed');
+    btn.textContent = '‹';
   }
-
-  // Compute SHA-256
-  var hash = await hashFile(file);
-  var id = type + '-' + Date.now();
-  attachedFiles[id] = { file: file, hash: hash, type: type, name: file.name, size: file.size };
-
-  // Mark button as having file
-  document.getElementById('mb-' + type).classList.add('has-file');
-
-  // Render preview
-  renderAttachments();
-  input.value = '';
 }
 
-function renderAttachments() {
-  var preview = document.getElementById('att-preview');
-  var keys = Object.keys(attachedFiles);
+// v3.1: G3 Human Approval - CRITICAL FOR CONSTITUTIONAL COMPLIANCE
+function approveG3() {
+  if (!pendingApproval) return;
 
-  if(keys.length === 0) {
-    preview.classList.remove('visible');
-    preview.innerHTML = '';
-    return;
-  }
+  var t = LANG[lang];
+  pendingApproval = false;
 
-  preview.classList.add('visible');
-  var html = '';
-  keys.forEach(function(id) {
-    var f = attachedFiles[id];
-    var shortHash = f.hash.substring(0, 12) + '…';
-    html += '<div class="attachment-item" data-id="' + id + '">' +
-      '<span class="att-icon">' + TYPE_ICONS[f.type] + '</span>' +
-      '<span class="att-name" title="' + f.name + '">' + f.name + '</span>' +
-      '<span class="att-size">(' + formatBytes(f.size) + ')</span>' +
-      '<span class="att-hash">[sha256:' + shortHash + ']</span>' +
-      '<span class="att-remove" onclick="removeAttachment(\'' + id + '\')">✕</span>' +
-      '</div>';
+  // Update UI to show approval
+  document.getElementById('g3-btn-text').textContent = t.g3BtnDone;
+  document.getElementById('g3-btn').disabled = true;
+  document.getElementById('g3-btn').style.background = 'var(--dim)';
+
+  // Update sealed status
+  document.getElementById('rc-sealed-text').textContent = t.rcSealedDone;
+  document.getElementById('rc-v5').textContent = t.v5Done;
+
+  // TODO: In production, this would call /api/law/seal with wallet context
+  // POST /api/law/seal { did: walletDid, hash: currentHash, human_approved: true }
+  console.log('[WINDI-LAW G3] Human approval granted:', {
+    did: walletDid,
+    hash: currentHash,
+    human_approved: true,
+    timestamp: new Date().toISOString()
   });
-  preview.innerHTML = html;
+
+  // Visual feedback
+  var zone = document.getElementById('g3-zone');
+  zone.style.background = 'rgba(46,194,126,0.08)';
+  zone.style.borderTopColor = 'rgba(46,194,126,0.3)';
 }
 
-function removeAttachment(id) {
-  var type = attachedFiles[id].type;
-  delete attachedFiles[id];
-
-  // Check if any file of this type remains
-  var hasType = Object.keys(attachedFiles).some(function(k){ return attachedFiles[k].type === type; });
-  if(!hasType) {
-    document.getElementById('mb-' + type).classList.remove('has-file');
-  }
-
-  renderAttachments();
-}
-
-function getAttachedFilesForSubmit() {
-  // Returns array of {file, hash} for FormData submission
-  return Object.values(attachedFiles).map(function(f){
-    return { file: f.file, hash: f.hash, name: f.name };
-  });
-}
-
-function setTruth(level, cls) {
-  currentTruth = level;
-  ['h','m','l'].forEach(function(c){
-    document.getElementById('tb-'+c).classList.remove('active');
-  });
-  document.getElementById('tb-'+cls).classList.add('active');
-  updateTruthDesc();
-}
-
-function setAgent(agent) {
+function switchAgent(agent) {
   currentAgent = agent;
   document.querySelectorAll('.sb-item').forEach(function(i){ i.classList.remove('active'); });
   event.currentTarget.classList.add('active');
-  var map = {legal:'W-LEGAL-001',notary:'W-NOTARY-001',acct:'W-ACCT-001',comply:'W-COMPLY-001'};
-  document.getElementById('cmd-agent').textContent = map[agent];
-  document.getElementById('iv-agent').textContent = map[agent];
+  var agentMap = {legal:'W-LEGAL-001',notary:'W-NOTARY-001',acct:'W-ACCT-001',comply:'W-COMPLY-001'};
+  var id = agentMap[agent] || 'W-LEGAL-001';
+  document.getElementById('cmd-agent-tag').textContent = id;
+  document.getElementById('bc-agent').textContent = id;
 }
 
-function fill(el) {
-  document.getElementById('cmd-input').value = el.textContent;
-  document.getElementById('cmd-input').focus();
+function fillCmd(text) {
+  document.getElementById('law-cmd').value = text;
+  document.getElementById('law-cmd').focus();
 }
 
-function handleCmd(e) { if(e.key==='Enter') execCmd(); }
+function handleCmd(e) {
+  if(e.key === 'Enter') execCmd();
+}
 
 function execCmd() {
-  var cmd = document.getElementById('cmd-input').value.trim();
+  var cmd = document.getElementById('law-cmd').value.trim();
   if(!cmd) return;
+
+  // Reset G3 state for new command
+  pendingApproval = true;
+  var t = LANG[lang];
+
   var now = new Date();
-  var ts = now.toISOString().replace('T',' ').substring(0,16) + ' UTC';
-  var hash = 'sha256:' + Array.from({length:12},function(){ return Math.floor(Math.random()*16).toString(16); }).join('') + '…';
+  var ts = now.toISOString().replace('T',' ').substring(0,19) + ' UTC';
+  currentHash = 'sha256:' + Array.from({length:16},function(){ return Math.floor(Math.random()*16).toString(16); }).join('');
   var agentMap = {legal:'W-LEGAL-001',notary:'W-NOTARY-001',acct:'W-ACCT-001',comply:'W-COMPLY-001'};
   var agent = agentMap[currentAgent];
-  var t = LANG[lang];
-  var truthMap = {HIGH:[t.tbH,'high'],MED:[t.tbM,'med'],LOW:[t.tbL,'low']};
-  var [tLabel, tCls] = truthMap[currentTruth];
-  document.getElementById('empty-state').style.display = 'none';
-  document.getElementById('result-card').style.display = 'block';
-  document.getElementById('rc-agent-id').textContent = agent + ' · Systementscheidung';
+
+  document.getElementById('rc-agent').textContent = agent + ' · Systementscheidung';
   document.getElementById('rc-ts').textContent = ts;
-  document.getElementById('rc-action').textContent = cmd.substring(0,60) + (cmd.length>60?'…':'');
-  document.getElementById('rc-v1').textContent = currentAgent.charAt(0).toUpperCase()+currentAgent.slice(1);
-  document.getElementById('rc-v2').textContent = agent;
-  document.getElementById('rc-v3').textContent = currentTruth === 'HIGH' ? (lang==='de'?'Bereit zur Versiegelung':lang==='pt'?'Pronto para selar':'Ready to seal') : 'Entwurf';
-  document.getElementById('rc-v4').textContent = lang==='de'?'Bestätigung erforderlich':lang==='pt'?'Confirmação necessária':'Confirmation required';
-  document.getElementById('rc-hash').textContent = hash;
-  var badge = document.getElementById('rc-truth-badge');
-  badge.textContent = tLabel.toUpperCase();
-  badge.className = 'rc-truth ' + tCls;
-  document.getElementById('iv-hash').textContent = hash.substring(7,23)+'…';
-  document.getElementById('cmd-input').value = '';
+  document.getElementById('rc-v1').textContent = cmd.substring(0,40) + (cmd.length>40?'…':'');
+  document.getElementById('rc-v2').textContent = currentAgent.charAt(0).toUpperCase()+currentAgent.slice(1);
+  document.getElementById('rc-v3').textContent = agent;
+  document.getElementById('rc-v4').textContent = currentTruth === 'HIGH' ? (lang==='de'?'Bereit zur Versiegelung':lang==='pt'?'Pronto para selar':'Ready to seal') : (lang==='de'?'Entwurf':'Draft');
+  document.getElementById('rc-v5').textContent = t.v5Ready;
+  document.getElementById('rc-hash').textContent = currentHash.substring(0,24) + '…';
+  document.getElementById('iv-hash').textContent = currentHash.substring(7,23) + '…';
+
+  var badge = document.getElementById('rc-badge');
+  badge.textContent = currentTruth;
+  badge.className = 'rc-truth-badge ' + (currentTruth==='HIGH'?'high':currentTruth==='MED'?'med':'low');
+
+  // Reset G3 button state
+  document.getElementById('rc-sealed-text').textContent = t.rcSealedText;
+  document.getElementById('g3-btn-text').textContent = t.g3Btn;
+  document.getElementById('g3-btn').disabled = false;
+  document.getElementById('g3-btn').style.background = 'var(--high)';
+  document.getElementById('g3-zone').style.background = 'rgba(46,194,126,0.03)';
+  document.getElementById('g3-zone').style.borderTopColor = 'var(--border)';
+
+  document.getElementById('result-card').style.display = 'block';
+  document.getElementById('law-cmd').value = '';
 }
 
-function toggleInspector() {
-  inspOpen = !inspOpen;
-  document.getElementById('inspector').classList.toggle('open', inspOpen);
-  document.getElementById('insp-toggle').textContent = inspOpen ? '›' : '‹';
+function selectDoc(el, docId) {
+  document.querySelectorAll('.doc-item').forEach(function(d){ d.classList.remove('active'); });
+  el.classList.add('active');
 }
 
-function toggleTheme() {
-  var btn = document.getElementById('theme-btn');
-  if(theme==='noir') {
-    document.getElementById('root').setAttribute('data-theme','klar');
-    theme='klar'; btn.textContent='KLAR';
-  } else {
-    document.getElementById('root').removeAttribute('data-theme');
-    theme='noir'; btn.textContent='NOIR';
+// ══════════════════════════════════════════════════════════════
+// MODAL I9 — Constitutional Gate
+// "human_approved=true ANTES de qualquer seal"
+// ══════════════════════════════════════════════════════════════
+
+function openSealModal() {
+  // I9: Gate só abre se há conteúdo para selar
+  if (!currentHash) {
+    alert(LANG[lang].modalError || 'No document hash to seal');
+    return;
   }
+
+  // Populate modal with current hash
+  document.getElementById('modal-hash-value').textContent = currentHash;
+
+  // Reset button state
+  var confirmBtn = document.getElementById('modal-confirm');
+  confirmBtn.classList.remove('loading');
+  confirmBtn.disabled = false;
+  confirmBtn.textContent = LANG[lang].modalConfirm;
+
+  // Show modal
+  document.getElementById('modal-i9').classList.add('active');
 }
 
-/* ══ SESSION CHECK — Show/hide identity elements (25 Mar 2026) ══ */
-function initSession() {
-  var stored = sessionStorage.getItem('windi_law_wallet');
+function closeSealModal() {
+  document.getElementById('modal-i9').classList.remove('active');
+}
+
+async function confirmSeal() {
   var t = LANG[lang];
+  var confirmBtn = document.getElementById('modal-confirm');
 
-  if (stored) {
-    try {
-      var wallet = JSON.parse(stored);
-      // Show connected state
-      document.getElementById('tl-did').style.display = 'flex';
-      document.getElementById('tl-status').style.display = 'block';
-      document.getElementById('header-gate-link').style.display = 'none';
-      document.getElementById('sb-id-connected').style.display = 'block';
-      document.getElementById('sb-id-disconnected').style.display = 'none';
+  // Prevent double-click
+  if (confirmBtn.disabled) return;
 
-      // Populate data
-      var did = wallet.did || 'did:windi:???';
-      var shortDid = did.substring(0, 18) + '···';
-      document.getElementById('tl-did').setAttribute('data-full-did', did);
-      document.getElementById('tl-did-text').textContent = shortDid;
-      document.getElementById('tl-status').textContent = wallet.status || 'VERIFIED';
-      document.getElementById('sb-id-tier').textContent = wallet.tier || 'FREE';
-      document.getElementById('sb-id-status').textContent = wallet.status || 'VERIFIED';
-    } catch(e) {
-      console.warn('Invalid wallet session:', e);
-      showDisconnected();
+  // I9: human_approved = true (implicit by clicking confirm)
+  confirmBtn.classList.add('loading');
+  confirmBtn.disabled = true;
+
+  try {
+    // Get document name from canvas or use default
+    var canvasEl = document.getElementById('law-canvas');
+    var docContent = canvasEl ? canvasEl.innerHTML : '';
+    var docName = 'WINDI-LAW Document · ' + new Date().toISOString().substring(0,10);
+
+    // POST to Forensic Ledger
+    var response = await fetch('http://localhost:8101/api/receipts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        actor: walletDid || 'anonymous',
+        app: 'windi-law-workspace',
+        doc_name: docName,
+        doc_type: 'doc',
+        content_hash: currentHash,
+        governance_level: currentTruth,
+        metadata: {
+          did: walletDid,
+          sealed_from: 'workspace',
+          human_approved: true,
+          invariants: ['I9', 'I11', 'G3']
+        }
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Ledger response: ' + response.status);
     }
-  } else {
-    showDisconnected();
+
+    var data = await response.json();
+
+    // Success — update UI
+    confirmBtn.classList.remove('loading');
+    confirmBtn.textContent = t.modalSuccess;
+    confirmBtn.style.background = 'var(--high)';
+
+    // Update main UI state
+    pendingApproval = false;
+    document.getElementById('rc-sealed-text').textContent = t.rcSealedDone;
+    document.getElementById('g3-btn-text').textContent = t.g3BtnDone;
+    document.getElementById('g3-btn').disabled = true;
+    document.getElementById('g3-btn').style.background = 'var(--dim)';
+
+    // Store receipt for verify/chain
+    window.__lastReceipt = data.receipt || data;
+
+    // Update CIA — I9, I11, G3 now fully active
+    updateCIA(['I9', 'I11', 'G3']);
+
+    // Generate QR code for verify URL
+    if (data.receipt && data.receipt.id) {
+      showQRCode(data.receipt.id);
+
+      // Update verify link
+      var verifyUrl = 'https://windi-domain.com/verify-public/?id=' + data.receipt.id;
+      var verifyLink = document.getElementById('rc-link');
+      if (verifyLink) {
+        verifyLink.href = verifyUrl;
+        verifyLink.textContent = 'windi-domain.com/verify-public/?id=' + data.receipt.id.substring(0, 20) + '...';
+      }
+    }
+
+    // Close modal after brief delay
+    setTimeout(function() {
+      closeSealModal();
+      // Show receipt info
+      if (data.receipt && data.receipt.id) {
+        console.log('[WINDI-LAW] Sealed:', data.receipt.id);
+      }
+    }, 1200);
+
+  } catch (err) {
+    console.error('[WINDI-LAW] Seal error:', err);
+    confirmBtn.classList.remove('loading');
+    confirmBtn.textContent = t.modalError;
+    confirmBtn.style.background = '#C45C5C';
+    confirmBtn.disabled = false;
+
+    setTimeout(function() {
+      confirmBtn.textContent = t.modalConfirm;
+      confirmBtn.style.background = 'var(--gold)';
+    }, 2000);
   }
 }
 
-function showDisconnected() {
-  // Show disconnected state
-  document.getElementById('tl-did').style.display = 'none';
-  document.getElementById('tl-status').style.display = 'none';
-  document.getElementById('header-gate-link').style.display = 'flex';
-  document.getElementById('sb-id-connected').style.display = 'none';
-  document.getElementById('sb-id-disconnected').style.display = 'flex';
+// ══════════════════════════════════════════════════════════════
+// AB-VERIFY — Verificação de Receipt no Ledger
+// ══════════════════════════════════════════════════════════════
+
+async function verifyReceipt() {
+  var t = LANG[lang];
+  var btn = document.getElementById('ab-verify');
+  var originalText = btn.textContent;
+
+  // Check if we have a receipt to verify
+  if (!window.__lastReceipt || !window.__lastReceipt.id) {
+    alert(t.verifyNoReceipt);
+    return;
+  }
+
+  btn.textContent = '...';
+  btn.disabled = true;
+
+  try {
+    var receiptId = window.__lastReceipt.id;
+    var response = await fetch('http://localhost:8101/api/receipts/' + receiptId);
+
+    if (response.ok) {
+      var data = await response.json();
+      if (data.ok && data.receipt) {
+        // Success — show inline result
+        btn.textContent = t.verifyAuth;
+        btn.style.background = 'var(--high-p)';
+        btn.style.borderColor = 'var(--high)';
+        btn.style.color = 'var(--high)';
+
+        // Update verify link in result card
+        var verifyUrl = 'https://windi-domain.com/verify-public/?id=' + receiptId;
+        var verifyLink = document.getElementById('rc-verify-link');
+        if (verifyLink) {
+          verifyLink.href = verifyUrl;
+          verifyLink.textContent = '→ Verify Public';
+          verifyLink.style.display = 'inline';
+        }
+
+        console.log('[WINDI-LAW] Verified:', receiptId);
+      } else {
+        throw new Error('Invalid response');
+      }
+    } else {
+      btn.textContent = t.verifyFail;
+      btn.style.background = 'rgba(196,92,92,0.1)';
+      btn.style.borderColor = '#C45C5C';
+      btn.style.color = '#C45C5C';
+    }
+  } catch (err) {
+    console.error('[WINDI-LAW] Verify error:', err);
+    btn.textContent = t.verifyFail;
+    btn.style.background = 'rgba(196,92,92,0.1)';
+    btn.style.borderColor = '#C45C5C';
+    btn.style.color = '#C45C5C';
+  }
+
+  btn.disabled = false;
+
+  // Reset after delay
+  setTimeout(function() {
+    btn.textContent = originalText;
+    btn.style.background = '';
+    btn.style.borderColor = '';
+    btn.style.color = '';
+  }, 4000);
 }
 
+// ══════════════════════════════════════════════════════════════
+// AB-CHAIN — Timeline de Receipts do Actor (DID)
+// ══════════════════════════════════════════════════════════════
+
+async function showChain() {
+  var t = LANG[lang];
+  var btn = document.getElementById('ab-chain');
+  var originalText = btn.textContent;
+
+  if (!walletDid) {
+    alert(t.chainEmpty);
+    return;
+  }
+
+  btn.textContent = t.chainLoading;
+  btn.disabled = true;
+
+  try {
+    var response = await fetch('http://localhost:8101/api/receipts?actor=' + encodeURIComponent(walletDid) + '&limit=10');
+
+    if (response.ok) {
+      var data = await response.json();
+      var receipts = data.receipts || [];
+
+      if (receipts.length === 0) {
+        btn.textContent = t.chainEmpty;
+      } else {
+        // Show chain in console (TODO: modal or panel)
+        console.log('[WINDI-LAW] Evidence Chain for', walletDid);
+        console.table(receipts.map(function(r) {
+          return {
+            id: r.id,
+            date: new Date(r.created_at * 1000).toISOString().substring(0,10),
+            hash: r.content_hash ? r.content_hash.substring(0,20) + '...' : '—',
+            doc: r.doc_name
+          };
+        }));
+
+        btn.textContent = '✓ ' + receipts.length + ' ' + t.chainTitle;
+        btn.style.background = 'var(--high-p)';
+        btn.style.borderColor = 'var(--high)';
+        btn.style.color = 'var(--high)';
+
+        // Store for future use
+        window.__evidenceChain = receipts;
+      }
+    } else {
+      throw new Error('API error');
+    }
+  } catch (err) {
+    console.error('[WINDI-LAW] Chain error:', err);
+    btn.textContent = t.chainEmpty;
+  }
+
+  btn.disabled = false;
+
+  setTimeout(function() {
+    btn.textContent = originalText;
+    btn.style.background = '';
+    btn.style.borderColor = '';
+    btn.style.color = '';
+  }, 4000);
+}
+
+// ══════════════════════════════════════════════════════════════
+// CIA — Constitutional Invariant Architecture (Visual State)
+// ══════════════════════════════════════════════════════════════
+
+function updateCIA(activeInvariants) {
+  // Reset all to inactive
+  ['i9', 'i11', 'i13', 'g3', 'c6'].forEach(function(id) {
+    var el = document.getElementById('cia-' + id);
+    if (el) el.className = 'inv-status';
+  });
+
+  // Activate specified invariants
+  if (activeInvariants && activeInvariants.length) {
+    activeInvariants.forEach(function(inv) {
+      var el = document.getElementById('cia-' + inv.toLowerCase());
+      if (el) el.className = 'inv-status active';
+    });
+  }
+}
+
+// Set initial CIA state (I9 always active in workspace)
+updateCIA(['I9', 'G3']);
+
+// ══════════════════════════════════════════════════════════════
+// QR SVG — Generate QR Code for Verify URL
+// Minimal QR generator for verification links
+// ══════════════════════════════════════════════════════════════
+
+function generateQRSVG(data) {
+  // Use qrcode-svg pattern encoded as data URL redirect
+  // For production: integrate proper QR library
+  // Fallback: render text-based representation with verify link
+  var size = 72;
+  var shortData = data.length > 40 ? data.substring(0, 37) + '...' : data;
+
+  // Simple SVG with WINDI branding + link text
+  var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + size + ' ' + size + '">' +
+    '<rect width="' + size + '" height="' + size + '" fill="#fff"/>' +
+    '<rect x="4" y="4" width="64" height="64" rx="4" fill="#07090D"/>' +
+    '<text x="36" y="28" text-anchor="middle" fill="#C9A84C" font-family="monospace" font-size="8" font-weight="bold">WINDI</text>' +
+    '<text x="36" y="40" text-anchor="middle" fill="#C9A84C" font-family="monospace" font-size="6">VERIFY</text>' +
+    '<text x="36" y="52" text-anchor="middle" fill="#8B6914" font-family="monospace" font-size="4">' + shortData.split('=')[1] + '</text>' +
+    '<rect x="8" y="8" width="8" height="8" fill="#C9A84C"/>' +
+    '<rect x="56" y="8" width="8" height="8" fill="#C9A84C"/>' +
+    '<rect x="8" y="56" width="8" height="8" fill="#C9A84C"/>' +
+    '</svg>';
+
+  return svg;
+}
+
+function showQRCode(receiptId) {
+  var verifyUrl = 'https://windi-domain.com/verify-public/?id=' + receiptId;
+  var container = document.getElementById('rc-qr-container');
+  var zone = document.getElementById('rc-qr-zone');
+
+  if (container && zone) {
+    container.innerHTML = generateQRSVG(verifyUrl);
+    zone.style.display = 'flex';
+
+    // Store for download
+    window.__lastQRData = {
+      svg: container.innerHTML,
+      url: verifyUrl,
+      receiptId: receiptId
+    };
+  }
+}
+
+function downloadQR() {
+  if (!window.__lastQRData) return;
+
+  var svgContent = window.__lastQRData.svg;
+  var blob = new Blob([svgContent], { type: 'image/svg+xml' });
+  var url = URL.createObjectURL(blob);
+
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'windi-verify-' + (window.__lastQRData.receiptId || 'qr') + '.svg';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// Event listeners — Modal I9
+document.getElementById('ab-seal').addEventListener('click', openSealModal);
+document.getElementById('modal-cancel').addEventListener('click', closeSealModal);
+document.getElementById('modal-confirm').addEventListener('click', confirmSeal);
+
+// Event listeners — Verify + Chain
+document.getElementById('ab-verify').addEventListener('click', verifyReceipt);
+document.getElementById('ab-chain').addEventListener('click', showChain);
+
+// Close modal on overlay click
+document.getElementById('modal-i9').addEventListener('click', function(e) {
+  if (e.target === this) closeSealModal();
+});
+
+// Close modal on Escape key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeSealModal();
+});
+
+// v3.1: Initialize
 setLang('de');
-initSession();
+initWallet();
+updateTruthDesc();
 </script>
 </body>
 </html>
