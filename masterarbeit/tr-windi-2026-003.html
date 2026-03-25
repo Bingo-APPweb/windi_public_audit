@@ -741,6 +741,15 @@ document.querySelectorAll('.sidebar-link').forEach(link => {
     if (lang) setLang(lang);
   } catch(e) {}
 })();
+
+// Mark current nav link
+if(location.pathname.includes('/library/')){
+  document.querySelectorAll('.nav-links a').forEach(function(a){
+    if(a.getAttribute('href')==='/library/' || a.getAttribute('href')==='/library/index.html'){
+      a.classList.add('nav-current');
+    }
+  });
+}
 </script>
 
 </body>
