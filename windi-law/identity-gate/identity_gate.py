@@ -306,14 +306,14 @@ async def register(data: CompanyRegister, request: Request):
         cursor.execute("""
             INSERT INTO companies (id, legal_name, country, vat_number, type, state, created_at)
             VALUES (?, ?, ?, ?, ?, ?, ?)
-        """, (company_id, data.legal_name, data.country, data.vat_number, data.type, STATE_PROVISIONAL, now))
+        """, (company_id, data.legal_name, data.country, data.vat_number, data.type, STATE_VERIFIED, now))
 
-        # Insert admin with DID
+        # Insert admin with DID — Auto-VERIFIED for immediate workspace access
         cursor.execute("""
             INSERT INTO admins (id, company_id, full_name, email, role, did, public_key, fingerprint, state, created_at)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (admin_id, company_id, data.admin_name, data.admin_email, "admin",
-              wallet["did"], wallet["public_key"], wallet["fingerprint"], STATE_PROVISIONAL, now))
+              wallet["did"], wallet["public_key"], wallet["fingerprint"], STATE_VERIFIED, now))
 
         # Insert API key
         cursor.execute("""
@@ -346,7 +346,7 @@ async def register(data: CompanyRegister, request: Request):
             "fingerprint": wallet["fingerprint"],
             "public_key": wallet["public_key"],
             "api_key": api_key,
-            "state": STATE_PROVISIONAL,
+            "state": STATE_VERIFIED,
             "ledger_receipt": ledger_result,
             "message": "Identity created. Workspace access granted.",
             "workspace_url": "/law/workspace/"
