@@ -706,7 +706,7 @@
                 <p style="color:var(--text-secondary);margin-bottom:1rem;" data-i18n="success_msg">
                     Ihre Identitat wurde im Forensic Ledger versiegelt.
                 </p>
-                <a href="/law/workspace/" class="success-btn" data-i18n="enter_workspace">Workspace betreten</a>
+                <a href="/workspace/" class="success-btn" id="workspace-link" data-i18n="enter_workspace">Workspace betreten</a>
             </div>
         </div>
     </div>
@@ -715,13 +715,20 @@
     <footer class="footer">
         <p>WINDI LAW &mdash; Sovereign Document Infrastructure</p>
         <p style="margin-top:0.5rem;">
-            <a href="/law/landing/">Landing</a> &middot;
+            <a href="/">Landing</a> &middot;
             <a href="/verify-public/">Verify</a> &middot;
             Invariants: I9 &middot; I11 &middot; I13 &middot; G3
         </p>
     </footer>
 
     <script>
+        // ═══════════════════════════════════════════════════════════════
+        // BASE PATH DETECTION
+        // windilaw.de uses "/" | windi-domain.com/law uses "/law"
+        // ═══════════════════════════════════════════════════════════════
+
+        const BASE_PATH = window.location.hostname.includes('windilaw.de') ? '' : '/law';
+
         // ═══════════════════════════════════════════════════════════════
         // I18N
         // ═══════════════════════════════════════════════════════════════
@@ -940,7 +947,7 @@
             document.getElementById('btn_step3').disabled = true;
 
             try {
-                const response = await fetch('/law/register', {
+                const response = await fetch(BASE_PATH + '/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(registrationData)
@@ -995,7 +1002,7 @@
         async function completeRegistration() {
             try {
                 // Sign consents
-                await fetch('/law/consent/sign', {
+                await fetch(BASE_PATH + '/consent/sign', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -1029,7 +1036,7 @@
                 // Update workspace link to include DID as query param (server needs it)
                 var workspaceLink = document.querySelector('.success-btn');
                 if (workspaceLink) {
-                    workspaceLink.href = '/law/workspace/?did=' + encodeURIComponent(registrationData.did);
+                    workspaceLink.href = BASE_PATH + '/workspace/?did=' + encodeURIComponent(registrationData.did);
                 }
 
                 // Also set cookie for future visits
@@ -1060,6 +1067,10 @@
 
         initTheme();
         setLang(currentLang);
+
+        // Update workspace link with base path
+        var wsLink = document.getElementById('workspace-link');
+        if (wsLink) wsLink.href = BASE_PATH + '/workspace/';
     </script>
 </body>
 </html>
