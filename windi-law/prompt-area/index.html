@@ -1492,9 +1492,44 @@ function copyDid() {
   });
 }
 
-// v3.1: Load wallet from sessionStorage (injected by /law/gate)
-function initWallet() {
+// v3.2: Load wallet from sessionStorage OR from URL ?did= parameter
+async function initWallet() {
   var stored = sessionStorage.getItem('windi_law_wallet');
+
+  // Check for ?did= in URL (direct link access)
+  var urlParams = new URLSearchParams(window.location.search);
+  var urlDid = urlParams.get('did');
+
+  // If no session but URL has DID, fetch from server
+  if (!stored && urlDid) {
+    console.log('[WINDI-LAW] Loading wallet from URL DID:', urlDid);
+    try {
+      var BASE_PATH = window.location.hostname.includes('windilaw.de') ? '' : '/law';
+      var resp = await fetch(BASE_PATH + '/identity/' + encodeURIComponent(urlDid));
+      if (resp.ok) {
+        var data = await resp.json();
+        // Build wallet object from identity data
+        var walletData = {
+          did: data.did,
+          fingerprint: data.fingerprint,
+          public_key: '',  // Not returned by identity endpoint
+          state: data.state,
+          created_at: data.created_at,
+          pioneer_number: null,
+          tier: 'FREE',
+          credits: 0,
+          company: data.company
+        };
+        sessionStorage.setItem('windi_law_wallet', JSON.stringify(walletData));
+        // Also set cookie for future visits
+        document.cookie = 'windi_did=' + encodeURIComponent(data.did) + '; path=/; max-age=31536000; SameSite=Lax';
+        stored = JSON.stringify(walletData);
+        console.log('[WINDI-LAW] Wallet loaded from server:', data.did);
+      }
+    } catch (e) {
+      console.error('[WINDI-LAW] Failed to load wallet from DID:', e);
+    }
+  }
 
   // Fallback labels (trilingual) — UX micro-copy fix 25 Mar 2026
   var fallbackLabels = {
@@ -2396,11 +2431,13 @@ function updateNavButtons() {
   document.getElementById('nav-forward').disabled = (idx >= NAV_FLOW.length - 1);
 }
 
-// v3.1: Initialize
-setLang('de');
-initWallet();
-updateTruthDesc();
-updateNavButtons();
+// v3.2: Initialize (async to load wallet from URL if needed)
+(async function() {
+  setLang('de');
+  await initWallet();
+  updateTruthDesc();
+  updateNavButtons();
+})();
 </script>
 </body>
 </html>
