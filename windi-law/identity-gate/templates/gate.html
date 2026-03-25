@@ -1079,6 +1079,17 @@
         // INIT
         // ═══════════════════════════════════════════════════════════════
 
+        // Clear previous wallet session when entering the Gate
+        // This ensures each new registration starts fresh
+        function clearPreviousSession() {
+            sessionStorage.removeItem('windi_law_wallet');
+            sessionStorage.removeItem('windi_law_did');
+            sessionStorage.removeItem('windi_law_fingerprint');
+            // Clear cookie too
+            document.cookie = 'windi_did=; path=/; max-age=0';
+        }
+
+        clearPreviousSession();
         initTheme();
         setLang(currentLang);
 
