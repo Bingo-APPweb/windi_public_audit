@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.42
-**Sealed:** 2026-03-24 · Constitutional Test Suite v1.0.0 LIVE
+**Version:** 1.9.43
+**Sealed:** 2026-03-25 · windilaw.de LIVE
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -653,6 +653,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 
 | Data | Milestones |
 |------|------------|
+| 25 Mar | §53 **windilaw.de LIVE** · SSL + Proxy · Clean URL · Ledger Sealed · 6394a42 |
 | 25 Mar | §52 **Feature Lock v1.0** · 3-layer protection · 23 markers · pre-commit hook · df7d6b2 |
 | 25 Mar | §51 **Forensic Workspace v3.1** · ab-seal + ab-verify + ab-chain + CIA badges + QR SVG · 5/5 PASS · deb0ac0 |
 | 24 Mar | §50 **Constitutional Test v1.0.0** · CI/CD Compliance · 7/7 PASS · 4 Domains · Ledger Sealed · 3bf4454 |
@@ -927,6 +928,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 **Axioma §50:** "Um agente WINDI sabe onde não pode responder."
 **Axioma §51:** "O modal existe antes do handler. A confirmação humana é o primeiro elemento no código."
 **Axioma §52:** "What is sealed, stays sealed."
+**Axioma §53:** "O domínio do produto é selado no Ledger do produto."
 
 ---
 
@@ -1463,6 +1465,50 @@ This system ensures it never happens again.
 ### Axiom
 
 > "What is sealed, stays sealed."
+
+---
+
+## §53 — windilaw.de Domain (Production URL)
+
+**Status:** ✅ LIVE
+**Receipt:** `WINDI-LAW-DOMAIN-WINDILAW-DE-20260325`
+**SSL:** Let's Encrypt · Expires 2026-06-23 · Auto-renew ✅
+
+### Domain Stack
+
+| Domain | Function | Backend |
+|--------|----------|---------|
+| **windilaw.de** | Primary · Clean URL | proxy → :8122 |
+| **www.windilaw.de** | Alias | proxy → :8122 |
+| **windilaw.eu** | Redirect | 301 → windi-domain.com |
+
+### URLs LIVE
+
+| URL | Description |
+|-----|-------------|
+| `https://windilaw.de` | Landing / Root |
+| `https://windilaw.de/gate` | Identity Gate |
+| `https://windilaw.de/workspace/` | Sovereign Workspace |
+| `https://windilaw.de/health` | Health Check |
+
+### Why Proxy (not Redirect)
+
+With **redirect**, the URL changes to `windi-domain.com/law/` — user sees the old domain.
+With **proxy**, the user stays at `windilaw.de` — URL never changes. Professional. Clean.
+
+This is what the VC from Berlin sees: **windilaw.de** — green padlock, clean URL, institutional.
+
+### Nginx Config
+
+```
+/etc/nginx/sites-available/windilaw.de
+├── HTTP :80 → HTTPS redirect + ACME challenge
+└── HTTPS :443 → proxy_pass http://127.0.0.1:8122/
+```
+
+### Axiom
+
+> "O domínio do produto é selado no Ledger do produto."
 
 ---
 
