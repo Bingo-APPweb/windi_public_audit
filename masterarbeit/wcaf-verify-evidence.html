@@ -464,6 +464,15 @@ document.addEventListener('DOMContentLoaded', () => {
   document.body.style.background = '#0a0a0c';
   document.body.style.color = '#e8e4dc';
 });
+
+// Mark current nav link
+if(location.pathname.includes('/library/')){
+  document.querySelectorAll('.nav-links a').forEach(function(a){
+    if(a.getAttribute('href')==='/library/' || a.getAttribute('href')==='/library/index.html'){
+      a.classList.add('nav-current');
+    }
+  });
+}
 </script>
 </body>
 </html>

@@ -301,6 +301,15 @@ document.addEventListener('DOMContentLoaded',()=>{
   setTheme(t);setLang(l);
 });
 document.addEventListener('keydown',e=>{if(e.ctrlKey&&e.key==='k'){e.preventDefault();setTheme(document.documentElement.getAttribute('data-theme')==='noir'?'klar':'noir');}});
+
+// Mark current nav link
+if(location.pathname.includes('/library/')){
+  document.querySelectorAll('.nav-links a').forEach(function(a){
+    if(a.getAttribute('href')==='/library/' || a.getAttribute('href')==='/library/index.html'){
+      a.classList.add('nav-current');
+    }
+  });
+}
 </script>
 </body>
 </html>

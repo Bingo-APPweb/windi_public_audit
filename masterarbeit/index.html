@@ -132,6 +132,7 @@ nav {
   transition: color 0.3s;
 }
 .nav-links a:hover { color: var(--gold); }
+.nav-links a.nav-current { color: var(--dim); pointer-events: none; opacity: 0.5; }
 
 .lang-toggle {
   background: var(--noir-card);
@@ -1413,6 +1414,15 @@ document.querySelectorAll('.manifesto-item, .slide-card, .status-card, .dragon-c
   el.style.transition = 'opacity 0.6s ease, transform 0.6s ease, background-color 0.4s ease, color 0.3s ease, border-color 0.3s ease';
   observer.observe(el);
 });
+
+// Mark current nav link
+if(location.pathname.includes('/library/')){
+  document.querySelectorAll('.nav-links a').forEach(function(a){
+    if(a.getAttribute('href')==='/library/' || a.getAttribute('href')==='/library/index.html'){
+      a.classList.add('nav-current');
+    }
+  });
+}
 </script>
 
 </body>
