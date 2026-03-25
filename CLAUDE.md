@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.43
-**Sealed:** 2026-03-25 · windilaw.de LIVE
+**Version:** 1.9.44
+**Sealed:** 2026-03-25 · Landing + Link Audit
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -653,6 +653,8 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 
 | Data | Milestones |
 |------|------------|
+| 25 Mar | §55 **Link Audit** · master.windia4desk.tech → windi-domain.com · 7 files fixed · 4f898b4 |
+| 25 Mar | §54 **Landing Page** · windilaw.de KLAR theme · 4 profile buttons · SVG icons · 3960acb |
 | 25 Mar | §53 **windilaw.de LIVE** · SSL + Proxy · Clean URL · Ledger Sealed · 6394a42 |
 | 25 Mar | §52 **Feature Lock v1.0** · 3-layer protection · 23 markers · pre-commit hook · df7d6b2 |
 | 25 Mar | §51 **Forensic Workspace v3.1** · ab-seal + ab-verify + ab-chain + CIA badges + QR SVG · 5/5 PASS · deb0ac0 |
@@ -886,7 +888,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 
 ---
 
-## §37-52. Sistemas Recentes — Resumo
+## §37-55. Sistemas Recentes — Resumo
 
 > **Detalhes completos:** `CLAUDE-HISTORY.md` § MIGRAÇÃO 24 Mar 2026
 
@@ -908,6 +910,9 @@ Sistema de autenticação por identidade soberana no GEN7.
 | 50 | **Constitutional Test** | CI/CD Compliance · 7 tests · 4 domains | ✅ **SEALED** |
 | 51 | **Forensic Workspace v3.1** | ab-seal + ab-verify + ab-chain + CIA + QR | ✅ **LIVE** |
 | 52 | **Feature Lock v1.0** | 3-layer protection · 23 markers · pre-commit | ✅ **ACTIVE** |
+| 53 | **windilaw.de** | Domain · SSL · Proxy · Clean URL | ✅ **LIVE** |
+| 54 | **Landing Page** | KLAR theme · 4 profile buttons · SVG icons | ✅ **LIVE** |
+| 55 | **Link Audit** | master.windia4desk.tech → windi-domain.com | ✅ **COMPLETE** |
 
 ### Referência Rápida
 
@@ -920,6 +925,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 **Feature Lock:** `/opt/windi/windi-law/FEATURE_LOCK.md` · 12 SEALED features · pre-commit hook
 **Test Suite:** `/opt/windi/tests/agent_constitutional_test.py` · CI/CD ready
 **Dashboards:** `/legal-dashboard/` · `/notary-dashboard/` · `/audit-dashboard/`
+**Landing:** `windilaw.de` · KLAR only · 4 profiles · SVG icons
 
 **Axioma §43:** "WINDI não declara 'fake'. Classifica verificabilidade."
 **Axioma §44:** "One portal creates trust. The other creates humanity."
@@ -929,6 +935,8 @@ Sistema de autenticação por identidade soberana no GEN7.
 **Axioma §51:** "O modal existe antes do handler. A confirmação humana é o primeiro elemento no código."
 **Axioma §52:** "What is sealed, stays sealed."
 **Axioma §53:** "O domínio do produto é selado no Ledger do produto."
+**Axioma §54:** "Cartões de visita não têm modo escuro."
+**Axioma §55:** "Um link morto é uma mentira silenciosa."
 
 ---
 
@@ -1509,6 +1517,120 @@ This is what the VC from Berlin sees: **windilaw.de** — green padlock, clean U
 ### Axiom
 
 > "O domínio do produto é selado no Ledger do produto."
+
+---
+
+## §54 — Landing Page (windilaw.de Facade)
+
+**Status:** ✅ LIVE
+**Commit:** `3960acb`
+**Path:** `/opt/windi/windi-law/landing/index.html`
+**URL:** `https://windilaw.de`
+
+### Purpose
+
+The Landing Page is the **institutional facade** of WINDI-LAW.
+It presents the product professionally before the Identity Gate opens.
+
+This is not a marketing page. It is **institutional presence**.
+
+### Theme Policy (IRREMEDIÁVEL)
+
+| Context | Theme | Toggle |
+|---------|-------|--------|
+| **Landing** | KLAR only | No toggle |
+| **Gate** | KLAR only | No toggle |
+| **Workspace** | Default KLAR | KLAR/NOIR toggle allowed |
+
+**Rationale:** Business cards don't have dark mode. The first impression is light, clean, professional.
+
+### Design System
+
+| Element | Specification |
+|---------|---------------|
+| Font headings | Playfair Display 600 |
+| Font body | JetBrains Mono (technical) + Inter (body) |
+| Colors | KLAR theme: #FAFAF8 bg, #8B7424 gold, #1A1A1A text |
+| Layout | Centered, max-width 960px |
+| Icons | WINDI Icon System v1.0: SVG stroke 1.5px monoline, no fill |
+
+### 4 Profile Buttons
+
+Each button links to `/gate?typ=X` with pre-selected profile:
+
+| Profile | DE | EN | PT |
+|---------|----|----|-----|
+| `kanzlei` | Kanzlei | Law Firm | Escritório |
+| `unternehmen` | Unternehmen | Enterprise | Empresa |
+| `freelancer` | Freiberufler | Freelancer | Freelancer |
+| `pioneer` | Pilot-Nutzer | Pilot User | Pioneiro |
+
+### SVG Icons
+
+Custom SVG icons following WINDI Icon System v1.0:
+
+```
+stroke: currentColor (inherits from container)
+stroke-width: 1.5
+fill: none
+viewBox: 0 0 24 24
+```
+
+| Icon | Usage |
+|------|-------|
+| Scales | Kanzlei (legal) |
+| Building | Unternehmen (enterprise) |
+| User | Freiberufler (freelancer) |
+| Star | Pioneer (early adopter) |
+
+### i18n
+
+Full trilingual coverage: DE | EN | PT
+Auto-detect from browser → localStorage `windi-lang`
+
+### Axiom
+
+> "Cartões de visita não têm modo escuro."
+
+---
+
+## §55 — Link Audit (Masterarbeit Domain Fix)
+
+**Status:** ✅ COMPLETE
+**Commit:** `4f898b4`
+**Files Fixed:** 7
+
+### Problem
+
+The legacy domain `master.windia4desk.tech` was dead (DNS timeout).
+All links in `/opt/windi/masterarbeit/` were broken.
+
+### Solution
+
+Replaced all occurrences with the canonical domain `windi-domain.com`.
+
+### Files Updated
+
+| File | Links Fixed |
+|------|-------------|
+| `availability-implementation.html` | 1 |
+| `isp-evolution.html` | 1 |
+| `press-release-windi-2026.html` | 1 |
+| `print-complete.html` | 1 |
+| `publications.html` | 1 |
+| `tr-windi-2026-005.html` | 1 |
+| `docs/garden-protocol.html` | 1 |
+
+### Verification
+
+All links now resolve to HTTPS 200:
+- `windi-domain.com/pioneer/` ✅
+- `windi-domain.com/verify-public/` ✅
+- `windi-domain.com/desktop/` ✅
+
+### Axiom
+
+> "Um link morto é uma mentira silenciosa."
 
 ---
 
