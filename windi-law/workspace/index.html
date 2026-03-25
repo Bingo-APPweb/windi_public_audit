@@ -1492,16 +1492,16 @@ function copyDid() {
   });
 }
 
-// v3.2: Load wallet from sessionStorage OR from URL ?did= parameter
+// v3.3: URL ?did= ALWAYS takes priority (fresh registration)
 async function initWallet() {
   var stored = sessionStorage.getItem('windi_law_wallet');
 
-  // Check for ?did= in URL (direct link access)
+  // Check for ?did= in URL (direct link access or fresh registration)
   var urlParams = new URLSearchParams(window.location.search);
   var urlDid = urlParams.get('did');
 
-  // If no session but URL has DID, fetch from server
-  if (!stored && urlDid) {
+  // If URL has DID, ALWAYS fetch from server (overrides stale sessionStorage)
+  if (urlDid) {
     console.log('[WINDI-LAW] Loading wallet from URL DID:', urlDid);
     try {
       var BASE_PATH = window.location.hostname.includes('windilaw.de') ? '' : '/law';
