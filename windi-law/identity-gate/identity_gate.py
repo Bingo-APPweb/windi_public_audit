@@ -20,7 +20,7 @@ import uuid
 import secrets
 import hashlib
 import base64
-import httpx
+import requests
 import os
 
 # Ed25519 cryptography
@@ -224,9 +224,8 @@ async def seal_identity_in_ledger(company_id: str, did: str, admin_email: str, e
     }
 
     try:
-        async with httpx.AsyncClient() as client:
-            r = await client.post(LEDGER_URL, json=payload, timeout=10.0)
-            return r.json()
+        r = requests.post(LEDGER_URL, json=payload, timeout=10.0)
+        return r.json()
     except Exception as e:
         return {"error": str(e), "receipt_id": receipt_id}
 
