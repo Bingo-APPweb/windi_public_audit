@@ -11,7 +11,7 @@ PASS=0
 FAIL=0
 
 echo "═══════════════════════════════════════════════════════════"
-echo "  WINDI-LAW Audit Fixes — 8 Testes de Contraste + Componentes"
+echo "  WINDI-LAW Audit Fixes — 10 Testes de Contraste + Componentes"
 echo "═══════════════════════════════════════════════════════════"
 echo ""
 
@@ -95,16 +95,36 @@ else
     FAIL=$((FAIL+1))
 fi
 
+# TESTE FALLBACK: Fallback state visible when no session
+echo -n "[FB] Fallback state visible... "
+if grep -q "sb-ic-pending" "$FILE" && grep -q "sb-connect-btn" "$FILE" && grep -q "nicht verbunden\|não conectado\|not connected" "$FILE"; then
+    echo "✅ PASS"
+    PASS=$((PASS+1))
+else
+    echo "❌ FAIL"
+    FAIL=$((FAIL+1))
+fi
+
+# TESTE STATUS: Status badges in headers
+echo -n "[ST] Status badges... "
+if grep -q "sb-key-status" "$FILE" && grep -q "sb-wallet-status" "$FILE" && grep -q "sb-ic-status.connected\|sb-ic-status.pending" "$FILE"; then
+    echo "✅ PASS"
+    PASS=$((PASS+1))
+else
+    echo "❌ FAIL"
+    FAIL=$((FAIL+1))
+fi
+
 echo ""
 echo "═══════════════════════════════════════════════════════════"
-echo "  RESULTADO: $PASS/8 PASS · $FAIL FAIL"
+echo "  RESULTADO: $PASS/10 PASS · $FAIL FAIL"
 echo "═══════════════════════════════════════════════════════════"
 
 echo ""
 if [ $FAIL -eq 0 ]; then
-    echo "🟢 ALL AUDIT FIXES VERIFIED"
+    echo "🟢 ALL 10 AUDIT FIXES VERIFIED"
     exit 0
 else
-    echo "🔴 $FAIL AUDIT FIXES MISSING"
+    echo "🔴 $FAIL/10 AUDIT FIXES MISSING"
     exit 1
 fi

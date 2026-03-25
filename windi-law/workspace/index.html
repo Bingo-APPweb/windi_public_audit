@@ -591,6 +591,24 @@ body { background:var(--bg); color:var(--parch); font-family:var(--font); displa
 .sb-ic-hash-row:hover { background:var(--gold-p); margin:0 -0.5rem; padding:3px 0.5rem; border-radius:2px; }
 .sb-ic-copy { font-size:10px; opacity:0.4; transition:opacity 0.15s; }
 .sb-ic-hash-row:hover .sb-ic-copy { opacity:1; }
+/* Fallback state — visible when no session */
+.sb-ic-pending { color:var(--med) !important; font-style:italic; }
+.sb-ic-status {
+  font-size:8px; margin-left:auto; padding:2px 5px;
+  border-radius:2px; letter-spacing:0.06em;
+}
+.sb-ic-status.connected { background:var(--high-p); color:var(--high); }
+.sb-ic-status.pending { background:var(--med-p); color:var(--med); }
+.sb-ic-connect {
+  display:block; margin-top:0.5rem; padding:5px 8px;
+  font-family:var(--mono); font-size:9px; letter-spacing:0.08em;
+  text-align:center; text-decoration:none;
+  color:var(--gold); border:0.5px solid var(--gold-d);
+  border-radius:3px; background:var(--gold-p);
+  transition:all 0.15s;
+}
+.sb-ic-connect:hover { background:var(--gold-d); color:var(--bg); }
+.sb-ic-connect.hidden { display:none; }
 
 /* ══ KLAR Theme Overrides — High Contrast (Audit 25 Mar 2026) ══ */
 /* H1 FIX: Chips visible in KLAR */
@@ -716,11 +734,12 @@ body { background:var(--bg); color:var(--parch); font-family:var(--font); displa
     <div class="sb-section sb-identity">
       <span class="sb-label" id="sb-l-identity">Identität</span>
 
-      <!-- SCHLÜSSEL -->
+      <!-- SCHLÜSSEL — Fallback state visible when no session -->
       <div class="sb-identity-card" id="sb-schluessel">
         <div class="sb-ic-header">
           <span class="sb-ic-icon">🔑</span>
           <span class="sb-ic-title" id="sb-schluessel-title">Schlüssel</span>
+          <span class="sb-ic-status" id="sb-key-status"></span>
         </div>
         <div class="sb-ic-row">
           <span class="sb-ic-label" id="sb-key-type-label">Typ</span>
@@ -728,33 +747,36 @@ body { background:var(--bg); color:var(--parch); font-family:var(--font); displa
         </div>
         <div class="sb-ic-row">
           <span class="sb-ic-label" id="sb-key-created-label">Erstellt</span>
-          <span class="sb-ic-value" id="sb-key-created">—</span>
+          <span class="sb-ic-value sb-ic-pending" id="sb-key-created">⚠ nicht verbunden</span>
         </div>
         <div class="sb-ic-row sb-ic-hash-row" onclick="copyFingerprint()" title="Click to copy">
           <span class="sb-ic-label">SHA-256</span>
-          <span class="sb-ic-value sb-ic-hash" id="sb-key-hash">—</span>
+          <span class="sb-ic-value sb-ic-hash sb-ic-pending" id="sb-key-hash">— — — —</span>
           <span class="sb-ic-copy">📋</span>
         </div>
       </div>
 
-      <!-- WALLET -->
+      <!-- WALLET — Fallback state visible when no session -->
       <div class="sb-identity-card" id="sb-wallet">
         <div class="sb-ic-header">
           <span class="sb-ic-icon">👛</span>
           <span class="sb-ic-title" id="sb-wallet-title">Wallet</span>
+          <span class="sb-ic-status" id="sb-wallet-status"></span>
         </div>
         <div class="sb-ic-row">
           <span class="sb-ic-label" id="sb-pioneer-label">Pioneer</span>
-          <span class="sb-ic-value sb-ic-highlight" id="sb-pioneer-num">#—</span>
+          <span class="sb-ic-value sb-ic-pending" id="sb-pioneer-num">⚠</span>
         </div>
         <div class="sb-ic-row">
           <span class="sb-ic-label">Tier</span>
-          <span class="sb-ic-value" id="sb-tier">NODAL</span>
+          <span class="sb-ic-value sb-ic-pending" id="sb-tier">—</span>
         </div>
         <div class="sb-ic-row">
           <span class="sb-ic-label" id="sb-credits-label">Kredite</span>
-          <span class="sb-ic-value" id="sb-credits">—</span>
+          <span class="sb-ic-value sb-ic-pending" id="sb-credits">—</span>
         </div>
+        <!-- Fallback: Connect button when no session -->
+        <a class="sb-ic-connect" id="sb-connect-btn" href="/law/gate" id="sb-connect-label">→ Gate</a>
       </div>
     </div>
 
@@ -1064,41 +1086,76 @@ function copyDid() {
 // v3.1: Load wallet from sessionStorage (injected by /law/gate)
 function initWallet() {
   var stored = sessionStorage.getItem('windi_law_wallet');
-  if (stored) {
-    try {
-      var w = JSON.parse(stored);
-      walletDid = w.did || '';
-      var didShort = walletDid.length > 20 ? walletDid.substring(0,20)+'···' : walletDid;
-      var didEl = document.getElementById('tl-did');
-      didEl.setAttribute('data-full-did', walletDid);
-      didEl.innerHTML = (didShort || 'did:windi:···') + '<span class="copy-icon">📋</span>';
-      document.getElementById('tl-status').textContent = w.state === 'VERIFIED' ? LANG[lang].tlStatusVerified : LANG[lang].tlStatusPending;
-      document.getElementById('tl-status').style.color = w.state === 'VERIFIED' ? 'var(--high)' : 'var(--med)';
-      document.getElementById('tl-status').style.borderColor = w.state === 'VERIFIED' ? 'rgba(46,194,126,0.3)' : 'rgba(201,168,76,0.3)';
-      document.getElementById('tl-status').style.background = w.state === 'VERIFIED' ? 'var(--high-p)' : 'var(--med-p)';
-      // Store globally for agent context injection
-      window.__windiLawWallet = w;
 
-      // C1+C2 FIX: Populate SCHLÜSSEL + WALLET panels
-      if (w.fingerprint) {
-        var hashEl = document.getElementById('sb-key-hash');
-        hashEl.textContent = w.fingerprint.substring(0,12) + '···';
-        hashEl.setAttribute('data-full-hash', w.fingerprint);
-      }
-      if (w.created_at) {
-        document.getElementById('sb-key-created').textContent = w.created_at.substring(0,10);
-      }
-      if (w.pioneer_number) {
-        document.getElementById('sb-pioneer-num').textContent = '#' + w.pioneer_number;
-      }
-      if (w.tier) {
-        document.getElementById('sb-tier').textContent = w.tier.toUpperCase();
-      }
-      if (w.credits !== undefined) {
-        document.getElementById('sb-credits').textContent = w.credits.toLocaleString();
-      }
-    } catch(e) { console.error('[WINDI-LAW] Wallet parse error:', e); }
+  // Fallback labels (trilingual)
+  var fallbackLabels = {
+    de: { notConnected: '⚠ nicht verbunden', connect: '→ Gate', hashPlaceholder: '— — — —' },
+    pt: { notConnected: '⚠ não conectado', connect: '→ Gate', hashPlaceholder: '— — — —' },
+    en: { notConnected: '⚠ not connected', connect: '→ Gate', hashPlaceholder: '— — — —' }
+  };
+  var fb = fallbackLabels[lang] || fallbackLabels.en;
+
+  if (!stored) {
+    // NO SESSION: Show fallback state
+    console.log('[WINDI-LAW] No wallet session — showing fallback state');
+    document.getElementById('sb-key-status').textContent = '⚠';
+    document.getElementById('sb-key-status').className = 'sb-ic-status pending';
+    document.getElementById('sb-wallet-status').textContent = '⚠';
+    document.getElementById('sb-wallet-status').className = 'sb-ic-status pending';
+    document.getElementById('sb-key-created').textContent = fb.notConnected;
+    document.getElementById('sb-key-hash').textContent = fb.hashPlaceholder;
+    document.getElementById('sb-pioneer-num').textContent = '⚠';
+    document.getElementById('sb-tier').textContent = '—';
+    document.getElementById('sb-credits').textContent = '—';
+    document.getElementById('sb-connect-btn').textContent = fb.connect;
+    document.getElementById('sb-connect-btn').classList.remove('hidden');
+    return;
   }
+
+  try {
+    var w = JSON.parse(stored);
+    walletDid = w.did || '';
+    var didShort = walletDid.length > 20 ? walletDid.substring(0,20)+'···' : walletDid;
+    var didEl = document.getElementById('tl-did');
+    didEl.setAttribute('data-full-did', walletDid);
+    didEl.innerHTML = (didShort || 'did:windi:···') + '<span class="copy-icon">📋</span>';
+    document.getElementById('tl-status').textContent = w.state === 'VERIFIED' ? LANG[lang].tlStatusVerified : LANG[lang].tlStatusPending;
+    document.getElementById('tl-status').style.color = w.state === 'VERIFIED' ? 'var(--high)' : 'var(--med)';
+    document.getElementById('tl-status').style.borderColor = w.state === 'VERIFIED' ? 'rgba(46,194,126,0.3)' : 'rgba(201,168,76,0.3)';
+    document.getElementById('tl-status').style.background = w.state === 'VERIFIED' ? 'var(--high-p)' : 'var(--med-p)';
+    // Store globally for agent context injection
+    window.__windiLawWallet = w;
+
+    // SESSION FOUND: Populate SCHLÜSSEL + WALLET panels + hide connect button
+    document.getElementById('sb-connect-btn').classList.add('hidden');
+    document.getElementById('sb-key-status').textContent = '✓';
+    document.getElementById('sb-key-status').className = 'sb-ic-status connected';
+    document.getElementById('sb-wallet-status').textContent = w.state === 'VERIFIED' ? '✓' : '⏳';
+    document.getElementById('sb-wallet-status').className = w.state === 'VERIFIED' ? 'sb-ic-status connected' : 'sb-ic-status pending';
+
+    // Remove pending styling
+    document.querySelectorAll('.sb-ic-pending').forEach(function(el) {
+      el.classList.remove('sb-ic-pending');
+    });
+
+    if (w.fingerprint) {
+      var hashEl = document.getElementById('sb-key-hash');
+      hashEl.textContent = w.fingerprint.substring(0,12) + '···';
+      hashEl.setAttribute('data-full-hash', w.fingerprint);
+    }
+    if (w.created_at) {
+      document.getElementById('sb-key-created').textContent = w.created_at.substring(0,10);
+    }
+    if (w.pioneer_number) {
+      document.getElementById('sb-pioneer-num').textContent = '#' + w.pioneer_number;
+    }
+    if (w.tier) {
+      document.getElementById('sb-tier').textContent = w.tier.toUpperCase();
+    }
+    if (w.credits !== undefined) {
+      document.getElementById('sb-credits').textContent = w.credits.toLocaleString();
+    }
+  } catch(e) { console.error('[WINDI-LAW] Wallet parse error:', e); }
 }
 
 function toggleTheme() {
