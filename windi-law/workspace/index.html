@@ -310,6 +310,45 @@ body { background:var(--bg); color:var(--parch); font-family:var(--font); displa
 .rc-verify-link a { color:rgba(201,168,76,0.6); text-decoration:none; }
 .rc-verify-link a:hover { color:var(--gold); }
 
+/* QR CODE ZONE */
+.rc-qr-zone {
+  padding: 12px 14px;
+  border-top: 0.5px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.rc-qr-container {
+  width: 80px;
+  height: 80px;
+  background: #fff;
+  border-radius: 4px;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.rc-qr-container svg {
+  width: 100%;
+  height: 100%;
+}
+.rc-qr-download {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.05em;
+  padding: 6px 12px;
+  border: 0.5px solid var(--border-2);
+  border-radius: 3px;
+  color: var(--dim);
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.rc-qr-download:hover {
+  color: var(--gold);
+  border-color: var(--gold-d);
+}
+
 /* DOCUMENT ITEM */
 .doc-item {
   background:var(--bg-2); border:0.5px solid var(--border);
@@ -427,7 +466,9 @@ body { background:var(--bg); color:var(--parch); font-family:var(--font); displa
   padding:4px 0; border-bottom:0.5px solid rgba(245,240,224,0.03);
 }
 .inv-id { color:rgba(201,168,76,0.6); width:24px; flex-shrink:0; }
-.inv-status { width:5px; height:5px; border-radius:50%; background:var(--high); flex-shrink:0; margin-left:auto; }
+.inv-status { width:5px; height:5px; border-radius:50%; background:var(--dim); flex-shrink:0; margin-left:auto; transition: all 0.2s; }
+.inv-status.active { background:var(--high); box-shadow: 0 0 4px var(--high); }
+.inv-status.pending { background:var(--med); }
 
 /* STATUSBAR */
 .statusbar {
@@ -634,6 +675,162 @@ body { background:var(--bg); color:var(--parch); font-family:var(--font); displa
 [data-theme="klar"] .statusbar { background: var(--bg-2); color: var(--muted); }
 [data-theme="klar"] .statusbar .sb-gold { color: var(--gold); }
 [data-theme="klar"] .sb-sep { background: rgba(90,74,42,0.20); }
+
+/* ══════════════════════════════════════════════════════════════
+   MODAL I9 — Constitutional Gate (human_approved=true)
+   "A confirmação humana é o primeiro elemento a existir no código"
+   ══════════════════════════════════════════════════════════════ */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: none; align-items: center; justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(4px);
+}
+.modal-overlay.active { display: flex; }
+
+.modal-i9 {
+  background: var(--bg-2);
+  border: 1px solid var(--gold-d);
+  border-radius: 8px;
+  width: min(440px, 90vw);
+  padding: 0;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+
+.modal-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-3);
+  border-radius: 8px 8px 0 0;
+}
+.modal-header .inv-badge {
+  background: rgba(201,168,76,0.15);
+  border: 1px solid var(--gold-d);
+  color: var(--gold);
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+}
+.modal-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--parch);
+  margin: 0;
+}
+
+.modal-body {
+  padding: 24px;
+}
+.modal-warning {
+  display: flex; align-items: flex-start; gap: 12px;
+  background: rgba(201,168,76,0.08);
+  border: 1px solid var(--gold-d);
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+.modal-warning-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.modal-warning-text {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.modal-warning-text strong {
+  color: var(--gold);
+  font-weight: 600;
+}
+
+.modal-hash {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+}
+.modal-hash-label {
+  font-size: 11px;
+  color: var(--dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+.modal-hash-value {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--gold);
+  word-break: break-all;
+}
+
+.modal-footer {
+  display: flex; gap: 12px;
+  padding: 20px 24px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-3);
+  border-radius: 0 0 8px 8px;
+}
+.modal-btn {
+  flex: 1;
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.modal-btn-cancel {
+  background: transparent;
+  border: 1px solid var(--border-2);
+  color: var(--muted);
+}
+.modal-btn-cancel:hover {
+  background: var(--faint);
+  color: var(--parch);
+}
+.modal-btn-confirm {
+  background: var(--gold);
+  border: 1px solid var(--gold);
+  color: #0A0A10;
+}
+.modal-btn-confirm:hover {
+  background: #D4B356;
+}
+.modal-btn-confirm:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Loading state */
+.modal-btn-confirm.loading {
+  position: relative;
+  color: transparent;
+}
+.modal-btn-confirm.loading::after {
+  content: '';
+  position: absolute;
+  width: 16px; height: 16px;
+  border: 2px solid rgba(10,10,16,0.3);
+  border-top-color: #0A0A10;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  left: 50%; top: 50%;
+  margin: -8px 0 0 -8px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* KLAR theme adjustments */
+[data-theme="klar"] .modal-i9 { background: var(--bg); border-color: var(--gold); }
+[data-theme="klar"] .modal-header { background: var(--bg-2); }
+[data-theme="klar"] .modal-footer { background: var(--bg-2); }
+[data-theme="klar"] .modal-warning { background: rgba(139,105,20,0.08); border-color: var(--gold); }
+[data-theme="klar"] .modal-btn-confirm { color: #FAFAF8; }
 </style>
 </head>
 <body>
@@ -850,7 +1047,12 @@ body { background:var(--bg); color:var(--parch); font-family:var(--font); displa
               <div class="ls-dot"></div>
               <span id="rc-sealed-text">Entwurf · Warte auf Genehmigung</span>
             </div>
-            <div class="rc-verify-link"><span id="rc-verify-pre">Verify: </span><a href="https://windi-domain.com/verify-public/" id="rc-link">windi-domain.com/verify-public/</a></div>
+            <div class="rc-verify-link"><span id="rc-verify-pre">Verify: </span><a href="https://windi-domain.com/verify-public/" id="rc-link" id="rc-verify-link" target="_blank">windi-domain.com/verify-public/</a></div>
+          </div>
+          <!-- QR Code Container (hidden until seal) -->
+          <div class="rc-qr-zone" id="rc-qr-zone" style="display:none">
+            <div class="rc-qr-container" id="rc-qr-container"></div>
+            <button class="rc-qr-download" id="rc-qr-download" onclick="downloadQR()">↓ QR SVG</button>
           </div>
           <!-- v3.1: G3 APPROVAL ZONE - Human Gate (MISSING from both v1 and v3!) -->
           <div class="g3-approval-zone" id="g3-zone">
@@ -1016,12 +1218,12 @@ body { background:var(--bg); color:var(--parch); font-family:var(--font); displa
 
         <div class="insp-section">
           <div class="insp-title"><span id="insp-inv-title">Invarianten</span></div>
-          <div class="invariant-list">
-            <div class="inv-item"><span class="inv-id">I9</span><span>Keine autonome Eskalation</span><div class="inv-status"></div></div>
-            <div class="inv-item"><span class="inv-id">I11</span><span>Kryptografische Permanenz</span><div class="inv-status"></div></div>
-            <div class="inv-item"><span class="inv-id">I13</span><span>Konvergenz · 1 Frage/Turn</span><div class="inv-status"></div></div>
-            <div class="inv-item"><span class="inv-id">G3</span><span>Vorschlagen ≠ Ausführen</span><div class="inv-status"></div></div>
-            <div class="inv-item"><span class="inv-id">C6</span><span id="inv-c6">KI vorbereitet. Mensch genehmigt.</span><div class="inv-status"></div></div>
+          <div class="invariant-list" id="cia-panel">
+            <div class="inv-item"><span class="inv-id">I9</span><span>Keine autonome Eskalation</span><div class="inv-status" id="cia-i9"></div></div>
+            <div class="inv-item"><span class="inv-id">I11</span><span>Kryptografische Permanenz</span><div class="inv-status" id="cia-i11"></div></div>
+            <div class="inv-item"><span class="inv-id">I13</span><span>Konvergenz · 1 Frage/Turn</span><div class="inv-status" id="cia-i13"></div></div>
+            <div class="inv-item"><span class="inv-id">G3</span><span>Vorschlagen ≠ Ausführen</span><div class="inv-status" id="cia-g3"></div></div>
+            <div class="inv-item"><span class="inv-id">C6</span><span id="inv-c6">KI vorbereitet. Mensch genehmigt.</span><div class="inv-status" id="cia-c6"></div></div>
           </div>
         </div>
 
@@ -1044,6 +1246,36 @@ body { background:var(--bg); color:var(--parch); font-family:var(--font); displa
   <div class="sb-seg"><span class="sb-gold" id="stb-receipts">40.918+ Receipts</span></div>
   <div class="sb-sep"></div>
   <div class="sb-seg" style="margin-left:auto"><span>AI processes. Human decides. WINDI guarantees.</span></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     MODAL I9 — Constitutional Gate
+     "Selar é irreversível. human_approved=true ANTES de qualquer seal."
+     ══════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-i9">
+  <div class="modal-i9">
+    <div class="modal-header">
+      <span class="inv-badge">I9 + I11</span>
+      <h3 id="modal-title">Versiegelung bestätigen</h3>
+    </div>
+    <div class="modal-body">
+      <div class="modal-warning">
+        <span class="modal-warning-icon">⚠️</span>
+        <div class="modal-warning-text" id="modal-warning-text">
+          <strong id="modal-warning-strong">Diese Aktion ist unumkehrbar.</strong><br>
+          <span id="modal-warning-desc">Das Dokument wird kryptografisch versiegelt und im Ledger verankert. Der Hash kann nicht mehr geändert werden.</span>
+        </div>
+      </div>
+      <div class="modal-hash">
+        <div class="modal-hash-label" id="modal-hash-label">Dokument-Hash (SHA-256)</div>
+        <div class="modal-hash-value" id="modal-hash-value">—</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn modal-btn-cancel" id="modal-cancel">Abbrechen</button>
+      <button class="modal-btn modal-btn-confirm" id="modal-confirm">Versiegeln · I11</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -1089,15 +1321,17 @@ function initWallet() {
 
   // Fallback labels (trilingual)
   var fallbackLabels = {
-    de: { notConnected: '⚠ nicht verbunden', connect: '→ Gate', hashPlaceholder: '— — — —' },
-    pt: { notConnected: '⚠ não conectado', connect: '→ Gate', hashPlaceholder: '— — — —' },
-    en: { notConnected: '⚠ not connected', connect: '→ Gate', hashPlaceholder: '— — — —' }
+    de: { notConnected: '⚠ nicht verbunden', connect: '→ Gate', hashPlaceholder: '— — — —', createWallet: 'Wallet erstellen →' },
+    pt: { notConnected: '⚠ não conectado', connect: '→ Gate', hashPlaceholder: '— — — —', createWallet: 'Criar wallet →' },
+    en: { notConnected: '⚠ not connected', connect: '→ Gate', hashPlaceholder: '— — — —', createWallet: 'Create wallet →' }
   };
   var fb = fallbackLabels[lang] || fallbackLabels.en;
 
   if (!stored) {
     // NO SESSION: Show fallback state
     console.log('[WINDI-LAW] No wallet session — showing fallback state');
+
+    // Sidebar: IDENTITÄT warning state
     document.getElementById('sb-key-status').textContent = '⚠';
     document.getElementById('sb-key-status').className = 'sb-ic-status pending';
     document.getElementById('sb-wallet-status').textContent = '⚠';
@@ -1109,6 +1343,20 @@ function initWallet() {
     document.getElementById('sb-credits').textContent = '—';
     document.getElementById('sb-connect-btn').textContent = fb.connect;
     document.getElementById('sb-connect-btn').classList.remove('hidden');
+
+    // Header: DID badge becomes "Create wallet" link
+    var didEl = document.getElementById('tl-did');
+    didEl.innerHTML = fb.createWallet;
+    didEl.style.cursor = 'pointer';
+    didEl.style.color = 'var(--gold)';
+    didEl.onclick = function() { window.location.href = '/law/gate'; };
+
+    // Header: Status shows warning
+    document.getElementById('tl-status').textContent = '⚠';
+    document.getElementById('tl-status').style.color = 'var(--med)';
+    document.getElementById('tl-status').style.borderColor = 'rgba(201,168,76,0.3)';
+    document.getElementById('tl-status').style.background = 'var(--med-p)';
+
     return;
   }
 
@@ -1215,7 +1463,24 @@ var LANG = {
     prLabel:'Schnell',
     g3Label:'KI vorbereitet. Mensch entscheidet.', g3Btn:'Genehmigen', g3BtnDone:'Genehmigt ✓',
     v5Ready:'Genehmigung erforderlich → Klicken Sie auf 🛡️', v5Done:'Versiegelt im Ledger',
-    tlStatus:'—', tlStatusVerified:'VERIFIED', tlStatusPending:'PENDING'
+    tlStatus:'—', tlStatusVerified:'VERIFIED', tlStatusPending:'PENDING',
+    // Modal I9 — Constitutional Gate
+    modalTitle:'Versiegelung bestätigen',
+    modalWarningStrong:'Diese Aktion ist unumkehrbar.',
+    modalWarningDesc:'Das Dokument wird kryptografisch versiegelt und im Ledger verankert. Der Hash kann nicht mehr geändert werden.',
+    modalHashLabel:'Dokument-Hash (SHA-256)',
+    modalCancel:'Abbrechen',
+    modalConfirm:'Versiegeln · I11',
+    modalSealing:'Versiegelt...',
+    modalSuccess:'Versiegelt ✓',
+    modalError:'Fehler beim Versiegeln',
+    // Verify + Chain
+    verifyAuth:'✅ Authentisch · Ledger bestätigt',
+    verifyFail:'❌ Nicht gefunden',
+    verifyNoReceipt:'Kein Beleg zum Verifizieren',
+    chainTitle:'Beweiskette',
+    chainEmpty:'Keine vorherigen Belege',
+    chainLoading:'Laden...'
   },
   pt: {
     sbLAgents:'Constelação de Agentes', sbLDocs:'Documentos Recentes', sbLVerify:'Verificação',
@@ -1256,7 +1521,24 @@ var LANG = {
     prLabel:'Rápido',
     g3Label:'IA prepara. Humano decide.', g3Btn:'Aprovar', g3BtnDone:'Aprovado ✓',
     v5Ready:'Aprovação necessária → Clique em 🛡️', v5Done:'Selado no Ledger',
-    tlStatus:'—', tlStatusVerified:'VERIFICADO', tlStatusPending:'PENDENTE'
+    tlStatus:'—', tlStatusVerified:'VERIFICADO', tlStatusPending:'PENDENTE',
+    // Modal I9 — Constitutional Gate
+    modalTitle:'Confirmar Selagem',
+    modalWarningStrong:'Esta acção é irreversível.',
+    modalWarningDesc:'O documento será selado criptograficamente e ancorado no Ledger. O hash não pode ser alterado.',
+    modalHashLabel:'Hash do Documento (SHA-256)',
+    modalCancel:'Cancelar',
+    modalConfirm:'Selar · I11',
+    modalSealing:'A selar...',
+    modalSuccess:'Selado ✓',
+    modalError:'Erro ao selar',
+    // Verify + Chain
+    verifyAuth:'✅ Autêntico · Ledger confirma',
+    verifyFail:'❌ Não encontrado',
+    verifyNoReceipt:'Nenhum recibo para verificar',
+    chainTitle:'Cadeia de Provas',
+    chainEmpty:'Sem recibos anteriores',
+    chainLoading:'A carregar...'
   },
   en: {
     sbLAgents:'Agent Constellation', sbLDocs:'Recent Documents', sbLVerify:'Verification',
@@ -1297,7 +1579,24 @@ var LANG = {
     prLabel:'Quick',
     g3Label:'AI prepares. Human decides.', g3Btn:'Approve', g3BtnDone:'Approved ✓',
     v5Ready:'Approval required → Click 🛡️', v5Done:'Sealed in Ledger',
-    tlStatus:'—', tlStatusVerified:'VERIFIED', tlStatusPending:'PENDING'
+    tlStatus:'—', tlStatusVerified:'VERIFIED', tlStatusPending:'PENDING',
+    // Modal I9 — Constitutional Gate
+    modalTitle:'Confirm Seal',
+    modalWarningStrong:'This action is irreversible.',
+    modalWarningDesc:'The document will be cryptographically sealed and anchored in the Ledger. The hash cannot be changed.',
+    modalHashLabel:'Document Hash (SHA-256)',
+    modalCancel:'Cancel',
+    modalConfirm:'Seal · I11',
+    modalSealing:'Sealing...',
+    modalSuccess:'Sealed ✓',
+    modalError:'Sealing failed',
+    // Verify + Chain
+    verifyAuth:'✅ Authentic · Ledger confirms',
+    verifyFail:'❌ Not found',
+    verifyNoReceipt:'No receipt to verify',
+    chainTitle:'Evidence Chain',
+    chainEmpty:'No previous receipts',
+    chainLoading:'Loading...'
   }
 };
 
@@ -1386,6 +1685,13 @@ function setLang(l) {
   updateTruthDesc();
   var chips = document.querySelectorAll('.preset-chip');
   t.presets.forEach(function(p,i){ if(chips[i]) chips[i].textContent = p; });
+  // Modal I9 — Constitutional Gate i18n
+  document.getElementById('modal-title').textContent = t.modalTitle;
+  document.getElementById('modal-warning-strong').textContent = t.modalWarningStrong;
+  document.getElementById('modal-warning-desc').textContent = t.modalWarningDesc;
+  document.getElementById('modal-hash-label').textContent = t.modalHashLabel;
+  document.getElementById('modal-cancel').textContent = t.modalCancel;
+  document.getElementById('modal-confirm').textContent = t.modalConfirm;
 }
 
 function setTruth(level) {
@@ -1518,6 +1824,368 @@ function selectDoc(el, docId) {
   document.querySelectorAll('.doc-item').forEach(function(d){ d.classList.remove('active'); });
   el.classList.add('active');
 }
+
+// ══════════════════════════════════════════════════════════════
+// MODAL I9 — Constitutional Gate
+// "human_approved=true ANTES de qualquer seal"
+// ══════════════════════════════════════════════════════════════
+
+function openSealModal() {
+  // I9: Gate só abre se há conteúdo para selar
+  if (!currentHash) {
+    alert(LANG[lang].modalError || 'No document hash to seal');
+    return;
+  }
+
+  // Populate modal with current hash
+  document.getElementById('modal-hash-value').textContent = currentHash;
+
+  // Reset button state
+  var confirmBtn = document.getElementById('modal-confirm');
+  confirmBtn.classList.remove('loading');
+  confirmBtn.disabled = false;
+  confirmBtn.textContent = LANG[lang].modalConfirm;
+
+  // Show modal
+  document.getElementById('modal-i9').classList.add('active');
+}
+
+function closeSealModal() {
+  document.getElementById('modal-i9').classList.remove('active');
+}
+
+async function confirmSeal() {
+  var t = LANG[lang];
+  var confirmBtn = document.getElementById('modal-confirm');
+
+  // Prevent double-click
+  if (confirmBtn.disabled) return;
+
+  // I9: human_approved = true (implicit by clicking confirm)
+  confirmBtn.classList.add('loading');
+  confirmBtn.disabled = true;
+
+  try {
+    // Get document name from canvas or use default
+    var canvasEl = document.getElementById('law-canvas');
+    var docContent = canvasEl ? canvasEl.innerHTML : '';
+    var docName = 'WINDI-LAW Document · ' + new Date().toISOString().substring(0,10);
+
+    // POST to Forensic Ledger
+    var response = await fetch('http://localhost:8101/api/receipts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        actor: walletDid || 'anonymous',
+        app: 'windi-law-workspace',
+        doc_name: docName,
+        doc_type: 'doc',
+        content_hash: currentHash,
+        governance_level: currentTruth,
+        metadata: {
+          did: walletDid,
+          sealed_from: 'workspace',
+          human_approved: true,
+          invariants: ['I9', 'I11', 'G3']
+        }
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error('Ledger response: ' + response.status);
+    }
+
+    var data = await response.json();
+
+    // Success — update UI
+    confirmBtn.classList.remove('loading');
+    confirmBtn.textContent = t.modalSuccess;
+    confirmBtn.style.background = 'var(--high)';
+
+    // Update main UI state
+    pendingApproval = false;
+    document.getElementById('rc-sealed-text').textContent = t.rcSealedDone;
+    document.getElementById('g3-btn-text').textContent = t.g3BtnDone;
+    document.getElementById('g3-btn').disabled = true;
+    document.getElementById('g3-btn').style.background = 'var(--dim)';
+
+    // Store receipt for verify/chain
+    window.__lastReceipt = data.receipt || data;
+
+    // Update CIA — I9, I11, G3 now fully active
+    updateCIA(['I9', 'I11', 'G3']);
+
+    // Generate QR code for verify URL
+    if (data.receipt && data.receipt.id) {
+      showQRCode(data.receipt.id);
+
+      // Update verify link
+      var verifyUrl = 'https://windi-domain.com/verify-public/?id=' + data.receipt.id;
+      var verifyLink = document.getElementById('rc-link');
+      if (verifyLink) {
+        verifyLink.href = verifyUrl;
+        verifyLink.textContent = 'windi-domain.com/verify-public/?id=' + data.receipt.id.substring(0, 20) + '...';
+      }
+    }
+
+    // Close modal after brief delay
+    setTimeout(function() {
+      closeSealModal();
+      // Show receipt info
+      if (data.receipt && data.receipt.id) {
+        console.log('[WINDI-LAW] Sealed:', data.receipt.id);
+      }
+    }, 1200);
+
+  } catch (err) {
+    console.error('[WINDI-LAW] Seal error:', err);
+    confirmBtn.classList.remove('loading');
+    confirmBtn.textContent = t.modalError;
+    confirmBtn.style.background = '#C45C5C';
+    confirmBtn.disabled = false;
+
+    setTimeout(function() {
+      confirmBtn.textContent = t.modalConfirm;
+      confirmBtn.style.background = 'var(--gold)';
+    }, 2000);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+// AB-VERIFY — Verificação de Receipt no Ledger
+// ══════════════════════════════════════════════════════════════
+
+async function verifyReceipt() {
+  var t = LANG[lang];
+  var btn = document.getElementById('ab-verify');
+  var originalText = btn.textContent;
+
+  // Check if we have a receipt to verify
+  if (!window.__lastReceipt || !window.__lastReceipt.id) {
+    alert(t.verifyNoReceipt);
+    return;
+  }
+
+  btn.textContent = '...';
+  btn.disabled = true;
+
+  try {
+    var receiptId = window.__lastReceipt.id;
+    var response = await fetch('http://localhost:8101/api/receipts/' + receiptId);
+
+    if (response.ok) {
+      var data = await response.json();
+      if (data.ok && data.receipt) {
+        // Success — show inline result
+        btn.textContent = t.verifyAuth;
+        btn.style.background = 'var(--high-p)';
+        btn.style.borderColor = 'var(--high)';
+        btn.style.color = 'var(--high)';
+
+        // Update verify link in result card
+        var verifyUrl = 'https://windi-domain.com/verify-public/?id=' + receiptId;
+        var verifyLink = document.getElementById('rc-verify-link');
+        if (verifyLink) {
+          verifyLink.href = verifyUrl;
+          verifyLink.textContent = '→ Verify Public';
+          verifyLink.style.display = 'inline';
+        }
+
+        console.log('[WINDI-LAW] Verified:', receiptId);
+      } else {
+        throw new Error('Invalid response');
+      }
+    } else {
+      btn.textContent = t.verifyFail;
+      btn.style.background = 'rgba(196,92,92,0.1)';
+      btn.style.borderColor = '#C45C5C';
+      btn.style.color = '#C45C5C';
+    }
+  } catch (err) {
+    console.error('[WINDI-LAW] Verify error:', err);
+    btn.textContent = t.verifyFail;
+    btn.style.background = 'rgba(196,92,92,0.1)';
+    btn.style.borderColor = '#C45C5C';
+    btn.style.color = '#C45C5C';
+  }
+
+  btn.disabled = false;
+
+  // Reset after delay
+  setTimeout(function() {
+    btn.textContent = originalText;
+    btn.style.background = '';
+    btn.style.borderColor = '';
+    btn.style.color = '';
+  }, 4000);
+}
+
+// ══════════════════════════════════════════════════════════════
+// AB-CHAIN — Timeline de Receipts do Actor (DID)
+// ══════════════════════════════════════════════════════════════
+
+async function showChain() {
+  var t = LANG[lang];
+  var btn = document.getElementById('ab-chain');
+  var originalText = btn.textContent;
+
+  if (!walletDid) {
+    alert(t.chainEmpty);
+    return;
+  }
+
+  btn.textContent = t.chainLoading;
+  btn.disabled = true;
+
+  try {
+    var response = await fetch('http://localhost:8101/api/receipts?actor=' + encodeURIComponent(walletDid) + '&limit=10');
+
+    if (response.ok) {
+      var data = await response.json();
+      var receipts = data.receipts || [];
+
+      if (receipts.length === 0) {
+        btn.textContent = t.chainEmpty;
+      } else {
+        // Show chain in console (TODO: modal or panel)
+        console.log('[WINDI-LAW] Evidence Chain for', walletDid);
+        console.table(receipts.map(function(r) {
+          return {
+            id: r.id,
+            date: new Date(r.created_at * 1000).toISOString().substring(0,10),
+            hash: r.content_hash ? r.content_hash.substring(0,20) + '...' : '—',
+            doc: r.doc_name
+          };
+        }));
+
+        btn.textContent = '✓ ' + receipts.length + ' ' + t.chainTitle;
+        btn.style.background = 'var(--high-p)';
+        btn.style.borderColor = 'var(--high)';
+        btn.style.color = 'var(--high)';
+
+        // Store for future use
+        window.__evidenceChain = receipts;
+      }
+    } else {
+      throw new Error('API error');
+    }
+  } catch (err) {
+    console.error('[WINDI-LAW] Chain error:', err);
+    btn.textContent = t.chainEmpty;
+  }
+
+  btn.disabled = false;
+
+  setTimeout(function() {
+    btn.textContent = originalText;
+    btn.style.background = '';
+    btn.style.borderColor = '';
+    btn.style.color = '';
+  }, 4000);
+}
+
+// ══════════════════════════════════════════════════════════════
+// CIA — Constitutional Invariant Architecture (Visual State)
+// ══════════════════════════════════════════════════════════════
+
+function updateCIA(activeInvariants) {
+  // Reset all to inactive
+  ['i9', 'i11', 'i13', 'g3', 'c6'].forEach(function(id) {
+    var el = document.getElementById('cia-' + id);
+    if (el) el.className = 'inv-status';
+  });
+
+  // Activate specified invariants
+  if (activeInvariants && activeInvariants.length) {
+    activeInvariants.forEach(function(inv) {
+      var el = document.getElementById('cia-' + inv.toLowerCase());
+      if (el) el.className = 'inv-status active';
+    });
+  }
+}
+
+// Set initial CIA state (I9 always active in workspace)
+updateCIA(['I9', 'G3']);
+
+// ══════════════════════════════════════════════════════════════
+// QR SVG — Generate QR Code for Verify URL
+// Minimal QR generator for verification links
+// ══════════════════════════════════════════════════════════════
+
+function generateQRSVG(data) {
+  // Use qrcode-svg pattern encoded as data URL redirect
+  // For production: integrate proper QR library
+  // Fallback: render text-based representation with verify link
+  var size = 72;
+  var shortData = data.length > 40 ? data.substring(0, 37) + '...' : data;
+
+  // Simple SVG with WINDI branding + link text
+  var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + size + ' ' + size + '">' +
+    '<rect width="' + size + '" height="' + size + '" fill="#fff"/>' +
+    '<rect x="4" y="4" width="64" height="64" rx="4" fill="#07090D"/>' +
+    '<text x="36" y="28" text-anchor="middle" fill="#C9A84C" font-family="monospace" font-size="8" font-weight="bold">WINDI</text>' +
+    '<text x="36" y="40" text-anchor="middle" fill="#C9A84C" font-family="monospace" font-size="6">VERIFY</text>' +
+    '<text x="36" y="52" text-anchor="middle" fill="#8B6914" font-family="monospace" font-size="4">' + shortData.split('=')[1] + '</text>' +
+    '<rect x="8" y="8" width="8" height="8" fill="#C9A84C"/>' +
+    '<rect x="56" y="8" width="8" height="8" fill="#C9A84C"/>' +
+    '<rect x="8" y="56" width="8" height="8" fill="#C9A84C"/>' +
+    '</svg>';
+
+  return svg;
+}
+
+function showQRCode(receiptId) {
+  var verifyUrl = 'https://windi-domain.com/verify-public/?id=' + receiptId;
+  var container = document.getElementById('rc-qr-container');
+  var zone = document.getElementById('rc-qr-zone');
+
+  if (container && zone) {
+    container.innerHTML = generateQRSVG(verifyUrl);
+    zone.style.display = 'flex';
+
+    // Store for download
+    window.__lastQRData = {
+      svg: container.innerHTML,
+      url: verifyUrl,
+      receiptId: receiptId
+    };
+  }
+}
+
+function downloadQR() {
+  if (!window.__lastQRData) return;
+
+  var svgContent = window.__lastQRData.svg;
+  var blob = new Blob([svgContent], { type: 'image/svg+xml' });
+  var url = URL.createObjectURL(blob);
+
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'windi-verify-' + (window.__lastQRData.receiptId || 'qr') + '.svg';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// Event listeners — Modal I9
+document.getElementById('ab-seal').addEventListener('click', openSealModal);
+document.getElementById('modal-cancel').addEventListener('click', closeSealModal);
+document.getElementById('modal-confirm').addEventListener('click', confirmSeal);
+
+// Event listeners — Verify + Chain
+document.getElementById('ab-verify').addEventListener('click', verifyReceipt);
+document.getElementById('ab-chain').addEventListener('click', showChain);
+
+// Close modal on overlay click
+document.getElementById('modal-i9').addEventListener('click', function(e) {
+  if (e.target === this) closeSealModal();
+});
+
+// Close modal on Escape key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeSealModal();
+});
 
 // v3.1: Initialize
 setLang('de');
