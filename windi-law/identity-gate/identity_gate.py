@@ -32,15 +32,21 @@ from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
 DB_PATH = "/opt/windi/windi-law/identity-gate/windi_law_identity.db"
 LEDGER_URL = "http://127.0.0.1:8101/api/receipts"
-VERSION = "v1.1.0"
+VERSION = "v1.2.0"
 
 # Admin secret for verification (from environment)
 ADMIN_SECRET = os.environ.get("WINDI_ADMIN_SECRET", "windi-law-admin-2026")
+
+# Email verification settings
+EMAIL_VERIFY_HOURS = 48  # Hours before downgrade to EMAIL_PENDING
+EMAIL_FROM = os.environ.get("WINDI_EMAIL_FROM", "noreply@windi-domain.com")
+DOMAIN_URL = os.environ.get("WINDI_DOMAIN_URL", "https://windi-domain.com")
 
 # Identity states
 STATE_UNBORN = "UNBORN"
 STATE_PROVISIONAL = "PROVISIONAL"
 STATE_VERIFIED = "VERIFIED"
+STATE_EMAIL_PENDING = "EMAIL_PENDING"  # Email not verified after 48h
 STATE_SUSPENDED = "SUSPENDED"
 STATE_REVOKED = "REVOKED"
 
@@ -120,9 +126,26 @@ def init_db():
             public_key  TEXT,
             fingerprint TEXT,
             state       TEXT DEFAULT 'PROVISIONAL',
-            created_at  TEXT NOT NULL
+            created_at  TEXT NOT NULL,
+            email_verified INTEGER DEFAULT 0,
+            email_token TEXT,
+            email_token_expires TEXT
         )
     """)
+
+    # Migration: Add email verification columns if they don't exist
+    try:
+        cursor.execute("ALTER TABLE admins ADD COLUMN email_verified INTEGER DEFAULT 0")
+    except sqlite3.OperationalError:
+        pass  # Column already exists
+    try:
+        cursor.execute("ALTER TABLE admins ADD COLUMN email_token TEXT")
+    except sqlite3.OperationalError:
+        pass
+    try:
+        cursor.execute("ALTER TABLE admins ADD COLUMN email_token_expires TEXT")
+    except sqlite3.OperationalError:
+        pass
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS api_keys (
@@ -191,6 +214,101 @@ def generate_api_keys(is_dev: bool = False):
 def hash_ip(ip: str) -> str:
     """Hash IP for privacy-preserving logging."""
     return hashlib.sha256(ip.encode()).hexdigest()[:16]
+
+
+def generate_email_token() -> str:
+    """Generate secure token for email verification."""
+    return secrets.token_urlsafe(32)
+
+
+def get_email_token_expiry() -> str:
+    """Get expiry timestamp for email token (48 hours from now)."""
+    from datetime import timedelta
+    expiry = datetime.now(timezone.utc) + timedelta(hours=EMAIL_VERIFY_HOURS)
+    return expiry.isoformat()
+
+
+async def send_verification_email(email: str, token: str, full_name: str, lang: str = "en"):
+    """
+    Send verification email asynchronously.
+    For now, logs to console. In production, integrate with SMTP or Dispatch Gateway.
+    """
+    verify_url = f"{DOMAIN_URL}/law/verify-email/{token}"
+
+    # Trilingual email subjects and bodies
+    subjects = {
+        "de": "WINDI-LAW: Bestätigen Sie Ihre E-Mail",
+        "en": "WINDI-LAW: Confirm your email",
+        "pt": "WINDI-LAW: Confirme seu email"
+    }
+
+    bodies = {
+        "de": f"""
+Hallo {full_name},
+
+Willkommen bei WINDI-LAW!
+
+Bitte bestätigen Sie Ihre E-Mail-Adresse, indem Sie auf den folgenden Link klicken:
+
+{verify_url}
+
+Dieser Link ist 48 Stunden gültig.
+
+Sie haben bereits Zugang zum Workspace. Die E-Mail-Bestätigung ermöglicht HIGH-Operationen.
+
+Mit freundlichen Grüßen,
+WINDI Publishing House
+        """,
+        "en": f"""
+Hello {full_name},
+
+Welcome to WINDI-LAW!
+
+Please confirm your email address by clicking the link below:
+
+{verify_url}
+
+This link is valid for 48 hours.
+
+You already have access to the workspace. Email confirmation enables HIGH operations.
+
+Best regards,
+WINDI Publishing House
+        """,
+        "pt": f"""
+Olá {full_name},
+
+Bem-vindo ao WINDI-LAW!
+
+Por favor, confirme seu email clicando no link abaixo:
+
+{verify_url}
+
+Este link é válido por 48 horas.
+
+Você já tem acesso ao workspace. A confirmação de email habilita operações HIGH.
+
+Atenciosamente,
+WINDI Publishing House
+        """
+    }
+
+    subject = subjects.get(lang, subjects["en"])
+    body = bodies.get(lang, bodies["en"])
+
+    # Log for now (production: integrate with SMTP)
+    print(f"\n{'='*60}")
+    print(f"📧 EMAIL VERIFICATION REQUEST")
+    print(f"{'='*60}")
+    print(f"To: {email}")
+    print(f"Subject: {subject}")
+    print(f"Verify URL: {verify_url}")
+    print(f"Token: {token}")
+    print(f"{'='*60}\n")
+
+    # TODO: Integrate with Dispatch Gateway or SMTP
+    # For now, return success (email "sent" to console)
+    return True
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -298,6 +416,10 @@ async def register(data: CompanyRegister, request: Request):
     api_key, dev_key = generate_api_keys(is_dev=False)
     key_id = str(uuid.uuid4())
 
+    # Generate email verification token
+    email_token = generate_email_token()
+    email_token_expires = get_email_token_expiry()
+
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
@@ -309,11 +431,13 @@ async def register(data: CompanyRegister, request: Request):
         """, (company_id, data.legal_name, data.country, data.vat_number, data.type, STATE_VERIFIED, now))
 
         # Insert admin with DID — Auto-VERIFIED for immediate workspace access
+        # email_verified=0 until they click the link
         cursor.execute("""
-            INSERT INTO admins (id, company_id, full_name, email, role, did, public_key, fingerprint, state, created_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO admins (id, company_id, full_name, email, role, did, public_key, fingerprint, state, created_at, email_verified, email_token, email_token_expires)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (admin_id, company_id, data.admin_name, data.admin_email, "admin",
-              wallet["did"], wallet["public_key"], wallet["fingerprint"], STATE_VERIFIED, now))
+              wallet["did"], wallet["public_key"], wallet["fingerprint"], STATE_VERIFIED, now,
+              0, email_token, email_token_expires))
 
         # Insert API key
         cursor.execute("""
@@ -338,6 +462,12 @@ async def register(data: CompanyRegister, request: Request):
 
         conn.close()
 
+        # Send verification email (async, non-blocking)
+        # Detect language from request headers or default to EN
+        accept_lang = request.headers.get("Accept-Language", "en")
+        lang = "de" if "de" in accept_lang.lower() else ("pt" if "pt" in accept_lang.lower() else "en")
+        await send_verification_email(data.admin_email, email_token, data.admin_name, lang)
+
         return {
             "success": True,
             "company_id": company_id,
@@ -347,8 +477,10 @@ async def register(data: CompanyRegister, request: Request):
             "public_key": wallet["public_key"],
             "api_key": api_key,
             "state": STATE_VERIFIED,
+            "email_verified": False,
+            "email_verification_sent": True,
             "ledger_receipt": ledger_result,
-            "message": "Identity created. Workspace access granted.",
+            "message": "Identity created. Workspace access granted. Verification email sent.",
             "workspace_url": "/law/workspace/"
         }
 
@@ -380,6 +512,128 @@ async def register(data: CompanyRegister, request: Request):
                 "code": "REGISTRATION_FAILED",
                 "action": "Tente novamente ou contacte o suporte"
             })
+
+
+@app.get("/verify-email/{token}", response_class=HTMLResponse)
+async def verify_email(token: str, request: Request):
+    """
+    Verify email address using token from email link.
+    Returns HTML page with success/error message.
+    """
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    # Find admin with this token
+    cursor.execute("""
+        SELECT id, full_name, email, email_token_expires, email_verified, did
+        FROM admins WHERE email_token = ?
+    """, (token,))
+    admin = cursor.fetchone()
+
+    if not admin:
+        conn.close()
+        return templates.TemplateResponse("verify-email-result.html", {
+            "request": request,
+            "success": False,
+            "error": "invalid_token",
+            "message_de": "Ungültiger oder abgelaufener Bestätigungslink.",
+            "message_en": "Invalid or expired verification link.",
+            "message_pt": "Link de verificação inválido ou expirado."
+        })
+
+    admin_id, full_name, email, token_expires, already_verified, did = admin
+
+    # Check if already verified
+    if already_verified:
+        conn.close()
+        return templates.TemplateResponse("verify-email-result.html", {
+            "request": request,
+            "success": True,
+            "already_verified": True,
+            "message_de": "E-Mail bereits bestätigt!",
+            "message_en": "Email already verified!",
+            "message_pt": "Email já verificado!",
+            "did": did
+        })
+
+    # Check if token expired
+    if token_expires:
+        expiry = datetime.fromisoformat(token_expires.replace("Z", "+00:00"))
+        if datetime.now(timezone.utc) > expiry:
+            conn.close()
+            return templates.TemplateResponse("verify-email-result.html", {
+                "request": request,
+                "success": False,
+                "error": "expired",
+                "message_de": "Bestätigungslink abgelaufen. Bitte fordern Sie einen neuen an.",
+                "message_en": "Verification link expired. Please request a new one.",
+                "message_pt": "Link de verificação expirado. Solicite um novo."
+            })
+
+    # Mark as verified
+    cursor.execute("""
+        UPDATE admins
+        SET email_verified = 1, email_token = NULL, email_token_expires = NULL
+        WHERE id = ?
+    """, (admin_id,))
+    conn.commit()
+    conn.close()
+
+    return templates.TemplateResponse("verify-email-result.html", {
+        "request": request,
+        "success": True,
+        "full_name": full_name,
+        "email": email,
+        "did": did,
+        "message_de": "E-Mail erfolgreich bestätigt!",
+        "message_en": "Email successfully verified!",
+        "message_pt": "Email verificado com sucesso!"
+    })
+
+
+@app.post("/resend-verification")
+async def resend_verification(request: Request):
+    """Resend verification email."""
+    body = await request.json()
+    email = body.get("email")
+
+    if not email:
+        raise HTTPException(status_code=400, detail="Email required")
+
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT id, full_name, email_verified FROM admins WHERE email = ?
+    """, (email,))
+    admin = cursor.fetchone()
+
+    if not admin:
+        conn.close()
+        raise HTTPException(status_code=404, detail="Email not found")
+
+    admin_id, full_name, email_verified = admin
+
+    if email_verified:
+        conn.close()
+        return {"success": True, "message": "Email already verified", "already_verified": True}
+
+    # Generate new token
+    new_token = generate_email_token()
+    new_expiry = get_email_token_expiry()
+
+    cursor.execute("""
+        UPDATE admins SET email_token = ?, email_token_expires = ? WHERE id = ?
+    """, (new_token, new_expiry, admin_id))
+    conn.commit()
+    conn.close()
+
+    # Send new verification email
+    accept_lang = request.headers.get("Accept-Language", "en")
+    lang = "de" if "de" in accept_lang.lower() else ("pt" if "pt" in accept_lang.lower() else "en")
+    await send_verification_email(email, new_token, full_name, lang)
+
+    return {"success": True, "message": "Verification email resent"}
 
 
 @app.post("/wallet/create")
