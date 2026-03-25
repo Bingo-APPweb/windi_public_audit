@@ -996,7 +996,7 @@ body { background:var(--bg); color:var(--parch); font-family:var(--font); displa
         </div>
         <div class="sb-ic-row">
           <span class="sb-ic-label" id="sb-key-created-label">Erstellt</span>
-          <span class="sb-ic-value sb-ic-pending" id="sb-key-created">⚠ nicht verbunden</span>
+          <span class="sb-ic-value sb-ic-pending" id="sb-key-created">Noch keine Wallet</span>
         </div>
         <div class="sb-ic-row sb-ic-hash-row" onclick="copyFingerprint()" title="Click to copy">
           <span class="sb-ic-label">SHA-256</span>
@@ -1025,7 +1025,7 @@ body { background:var(--bg); color:var(--parch); font-family:var(--font); displa
           <span class="sb-ic-value sb-ic-pending" id="sb-credits">—</span>
         </div>
         <!-- Fallback: Connect button when no session -->
-        <a class="sb-ic-connect" id="sb-connect-btn" href="/law/gate" id="sb-connect-label">→ Gate</a>
+        <a class="sb-ic-connect" id="sb-connect-btn" href="/law/gate">Wallet erstellen →</a>
       </div>
     </div>
 
@@ -1479,11 +1479,11 @@ function copyDid() {
 function initWallet() {
   var stored = sessionStorage.getItem('windi_law_wallet');
 
-  // Fallback labels (trilingual)
+  // Fallback labels (trilingual) — UX micro-copy fix 25 Mar 2026
   var fallbackLabels = {
-    de: { notConnected: '⚠ nicht verbunden', connect: '→ Gate', hashPlaceholder: '— — — —', createWallet: 'Wallet erstellen →' },
-    pt: { notConnected: '⚠ não conectado', connect: '→ Gate', hashPlaceholder: '— — — —', createWallet: 'Criar wallet →' },
-    en: { notConnected: '⚠ not connected', connect: '→ Gate', hashPlaceholder: '— — — —', createWallet: 'Create wallet →' }
+    de: { notConnected: 'Noch keine Wallet', connect: 'Wallet erstellen →', hashPlaceholder: '— — — —', createWallet: 'Wallet erstellen →' },
+    pt: { notConnected: 'Ainda sem wallet', connect: 'Criar wallet →', hashPlaceholder: '— — — —', createWallet: 'Criar wallet →' },
+    en: { notConnected: 'No wallet yet', connect: 'Create wallet →', hashPlaceholder: '— — — —', createWallet: 'Create wallet →' }
   };
   var fb = fallbackLabels[lang] || fallbackLabels.en;
 
