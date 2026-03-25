@@ -1,518 +1,492 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>About the WINDI System — Pre-AI Governance Layer</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Crect width='20' height='20' rx='4' fill='%231A1208'/%3E%3Cellipse cx='10' cy='11' rx='4.5' ry='4' transform='rotate(-15 10 11)' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='7' cy='7.5' r='2.8' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='6.2' cy='6.8' r='0.7' fill='%238B6914'/%3E%3Cpath d='M7.5 4.8 C7 3.5 8 2.5 8.5 2' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M7 10 C5 8.5 3 8 2 9 C1.5 9.8 2.5 11 4 10.5' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M13 9.5 C15 8 17 8 17.5 9.5 C17.8 10.5 16.5 11 15 10.5' stroke='%238B6914' stroke-width='1' stroke-linecap='round'/%3E%3Cpath d='M14 13 C16 14 17 15.5 16 16.5 C15 17.5 13.5 16.5 13.5 15' stroke='%238B6914' stroke-width='1.1' stroke-linecap='round'/%3E%3C/svg%3E">
-<meta name="description" content="WINDI is a governance infrastructure that operates between human decision-makers and AI systems">
-<link rel="stylesheet" href="windi-internal.css">
-<style>
-  .audience-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 16px;
-    margin: 24px 0;
-  }
-  .audience-card {
-    padding: 20px;
-    background: var(--surface-1);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-sm);
-  }
-  .audience-card h4 {
-    color: var(--gold);
-    font-family: var(--font-mono);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 8px;
-  }
-  .audience-card p {
-    font-size: 14px;
-    margin-bottom: 0;
-  }
-  .diff-table {
-    width: 100%;
-    margin: 24px 0;
-    font-size: 14px;
-  }
-  .diff-table th {
-    text-align: left;
-  }
-  .diff-table td:first-child {
-    color: var(--text-tertiary);
-  }
-  .diff-table td:last-child {
-    color: var(--text-primary);
-    font-weight: 500;
-  }
-  .status-bar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    padding: 16px 20px;
-    background: var(--surface-1);
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-sm);
-    margin: 24px 0;
-    font-family: var(--font-mono);
-    font-size: 12px;
-  }
-  .status-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: var(--text-secondary);
-  }
-  .status-dot-indicator {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-  }
-  .status-dot-indicator.live { background: var(--signal-safe); }
-  .status-dot-indicator.beta { background: var(--signal-flow); }
-</style>
-</head>
-<body data-theme="dark" data-lang="de">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Über das WINDI System — Pre-AI Governance Layer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; background: #0E0E0C; }
 
-<!-- Header -->
-<header class="site-header">
-  <a href="index.html" class="header-brand">
-    <div class="header-logo">W</div>
-    <div class="header-title-group">
-      <span class="header-title">WINDI</span>
-      <span class="header-subtitle">Governance Intelligence</span>
-    </div>
-  </a>
-  <div class="header-center">
-    <div class="header-status">
-      <span class="status-dot"></span>
-      <span>Operational</span>
-    </div>
-  </div>
-  <div class="header-right">
-    <div class="lang-switcher">
-      <button class="lang-btn active" onclick="setLang('de')">DE</button>
-      <button class="lang-btn" onclick="setLang('en')">EN</button>
-      <button class="lang-btn" onclick="setLang('pt')">PT</button>
-    </div>
-    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
-      <div class="theme-toggle-track"></div>
-      <div class="theme-toggle-thumb" id="themeThumb"></div>
-    </button>
-    <button class="mobile-toggle" onclick="toggleSidebar()" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
-  </div>
-</header>
-
-<!-- Sidebar Navigation -->
-<nav class="sidebar sidebar-left" id="sidebarLeft">
-  <div class="sidebar-section">
-    <div class="sidebar-label">Masterarbeit</div>
-    <a href="index.html" class="sidebar-link">Main Document</a>
-    <a href="cover.html" class="sidebar-link">Cover</a>
-    <a href="about-windi.html" class="sidebar-link sidebar-link-active">About WINDI</a>
-  </div>
-  <div class="sidebar-section">
-    <div class="sidebar-label">Governance</div>
-    <a href="governance-levels.html" class="sidebar-link">Governance Levels</a>
-    <a href="human-oversight.html" class="sidebar-link">Human Oversight</a>
-    <a href="data-handling.html" class="sidebar-link">Data Handling</a>
-  </div>
-  <div class="sidebar-section">
-    <div class="sidebar-label">Architecture</div>
-    <a href="diagrams.html" class="sidebar-link">Diagrams</a>
-    <a href="interface-guide.html" class="sidebar-link">Interface Guide</a>
-    <a href="verification-layer.html" class="sidebar-link">Verification Layer</a>
-    <a href="kapitel12_domain_sovereignty.html" class="sidebar-link">Domain Sovereignty</a>
-    <a href="identity-governance-layer.html" class="sidebar-link">Identity Governance</a>
-  </div>
-  <div class="sidebar-section">
-    <div class="sidebar-label">Technical Reports</div>
-    <a href="tr-windi-2026-003.html" class="sidebar-link">TR-003: Service Layer</a>
-    <a href="tr-windi-2026-004.html" class="sidebar-link">TR-004: Cognitive Service</a>
-    <a href="tr-windi-2026-005.html" class="sidebar-link">TR-005: Cognitive Cycle</a>
-    <a href="isp-evolution.html" class="sidebar-link">TR-006: ISP Registry</a>
-    <a href="tr-007.html" class="sidebar-link">TR-007: Provenance</a>
-    <a href="sge-results.html" class="sidebar-link">SGE Results</a>
-  </div>
-  <div class="sidebar-section">
-    <div class="sidebar-label">Publications</div>
-    <a href="publications.html" class="sidebar-link">Publications</a>
-    <a href="fachartikel-provenienz.html" class="sidebar-link">Fachartikel</a>
-    <a href="windi-publishing-house.html" class="sidebar-link">Manifesto</a>
-    <a href="editorial-policy.html" class="sidebar-link">Editorial Policy</a>
-    <a href="idpf-abstract.html" class="sidebar-link">IDPF Abstract</a>
-  </div>
-  <div class="sidebar-section">
-    <div class="sidebar-label">Media</div>
-    <a href="windi-working-paper-2026.html" class="sidebar-link">Working Paper</a>
-    <a href="press-release-windi-2026.html" class="sidebar-link">Press Release</a>
-    <a href="windi-side-by-side-2026.html" class="sidebar-link">Side-by-Side</a>
-    <a href="wsj-style-governed-windi-2026.html" class="sidebar-link">WSJ Feature</a>
-  </div>
-  <div class="sidebar-section">
-    <div class="sidebar-label">Compliance</div>
-    <a href="document-integrity.html" class="sidebar-link">Doc Integrity</a>
-    <a href="print-watermark-layer.html" class="sidebar-link">Print Layer</a>
-    <a href="regulatory-summary-print-layer.html" class="sidebar-link">Regulatory</a>
-    <a href="availability-implementation.html" class="sidebar-link">Appendix A</a>
-  </div>
-</nav>
-
-<!-- Main Content -->
-<main class="main-content">
-
-  <!-- Page Header -->
-  <div class="page-header">
-    <div class="page-breadcrumb">
-      <a href="index.html">WINDI</a>
-      <span class="breadcrumb-sep">/</span>
-      <span class="breadcrumb-current">
-        <span class="l-de">Uber WINDI</span>
-        <span class="l-en">About WINDI</span>
-        <span class="l-pt">Sobre WINDI</span>
-      </span>
-    </div>
-    <div class="page-meta-bar">
-      <span class="page-tag page-tag-gov">Overview</span>
-      <span class="page-date">2026-02-07</span>
-    </div>
-    <h1 class="page-title">
-      <span class="l-de">Uber das WINDI System</span>
-      <span class="l-en">About the WINDI System</span>
-      <span class="l-pt">Sobre o Sistema WINDI</span>
-    </h1>
-    <p class="page-subtitle">
-      <span class="l-de">Pre-AI Governance Layer fur institutionelle Workflow-Orchestrierung</span>
-      <span class="l-en">Pre-AI Governance Layer for Institutional Workflow Orchestration</span>
-      <span class="l-pt">Camada de Governanca Pre-IA para Orquestracao de Fluxos de Trabalho Institucionais</span>
-    </p>
-    <div class="page-divider"></div>
-  </div>
-
-  <!-- Content -->
-  <div class="content-prose">
-
-    <!-- What It Is -->
-    <section>
-      <p>
-        <span class="lb-de">WINDI ist eine Governance-Infrastruktur, die zwischen menschlichen Entscheidungstragern und KI-Systemen operiert. Sie stellt sicher, dass jede KI-gestutzte Interaktion transparent, nachvollziehbar und mit der institutionellen Richtlinie abgestimmt ist—in Echtzeit, wahrend der Arbeit selbst.</span>
-        <span class="lb-en">WINDI is a governance infrastructure that operates between human decision-makers and AI systems. It ensures that every AI-assisted interaction is transparent, traceable, and aligned with institutional policy—in real time, during the work itself.</span>
-        <span class="lb-pt">WINDI e uma infraestrutura de governanca que opera entre tomadores de decisao humanos e sistemas de IA. Ela garante que cada interacao assistida por IA seja transparente, rastreavel e alinhada com a politica institucional—em tempo real, durante o proprio trabalho.</span>
-      </p>
-
-      <p>
-        <span class="lb-de">Der Name steht fur <em>We Invite New Decision Intelligence.</em> Das System wurde im Rahmen einer europaischen Forschungsinitiative entwickelt, die untersucht, wie kunstliche Intelligenz mit institutioneller Verantwortlichkeit statt nur technischer Leistung in Einklang gebracht werden kann.</span>
-        <span class="lb-en">The name stands for <em>We Invite New Decision Intelligence.</em> The system was developed as part of a European research initiative examining how artificial intelligence can be aligned with institutional accountability rather than merely technical performance.</span>
-        <span class="lb-pt">O nome significa <em>We Invite New Decision Intelligence.</em> O sistema foi desenvolvido como parte de uma iniciativa de pesquisa europeia que examina como a inteligencia artificial pode ser alinhada com a responsabilidade institucional, e nao apenas com o desempenho tecnico.</span>
-      </p>
-
-      <p>
-        <span class="lb-de">WINDI ersetzt weder KI-Modelle noch menschliches Urteilsvermogen. Es besetzt den Raum dazwischen: eine Governance-Schicht, die institutionellen Kontext erkennt, Richtlinien anwendet, ihre Argumentation erklart und den Governance-Zustand jederzeit fur den Menschen sichtbar macht.</span>
-        <span class="lb-en">WINDI does not replace AI models, nor does it replace human judgment. It occupies the space between them: a governance layer that detects institutional context, applies policy, explains its reasoning, and makes the governance state visible to the human at all times.</span>
-        <span class="lb-pt">WINDI nao substitui modelos de IA, nem substitui o julgamento humano. Ele ocupa o espaco entre eles: uma camada de governanca que detecta contexto institucional, aplica politicas, explica seu raciocinio e torna o estado de governanca visivel para o humano em todos os momentos.</span>
-      </p>
-
-      <div class="doc-quote">
-        <p>
-          <span class="l-de">"KI verarbeitet. Der Mensch entscheidet. WINDI garantiert."</span>
-          <span class="l-en">"AI processes. Human decides. WINDI guarantees."</span>
-          <span class="l-pt">"A IA processa. O humano decide. O WINDI garante."</span>
-        </p>
-      </div>
-    </section>
-
-    <!-- Who It Is For -->
-    <section>
-      <h2>
-        <span class="l-de">Fur wen es gedacht ist</span>
-        <span class="l-en">Who It Is For</span>
-        <span class="l-pt">Para quem e destinado</span>
-      </h2>
-
-      <div class="audience-grid">
-        <div class="audience-card">
-          <h4>
-            <span class="l-de">Banken & Finanzen</span>
-            <span class="l-en">Banking & Finance</span>
-            <span class="l-pt">Bancos & Financas</span>
-          </h4>
-          <p>
-            <span class="l-de">Regulierte Kommunikation, Compliance-Dokumentation, KI-gestutzte Beratungsausgaben mit Prufbarkeitsanforderungen.</span>
-            <span class="l-en">Regulated communications, compliance documentation, AI-assisted advisory outputs requiring auditability.</span>
-            <span class="l-pt">Comunicacoes reguladas, documentacao de conformidade, saidas de consultoria assistidas por IA que requerem auditabilidade.</span>
-          </p>
-        </div>
-        <div class="audience-card">
-          <h4>
-            <span class="l-de">Regierung & Offentlicher Sektor</span>
-            <span class="l-en">Government & Public Sector</span>
-            <span class="l-pt">Governo & Setor Publico</span>
-          </h4>
-          <p>
-            <span class="l-de">Institutionelle Korrespondenz, Politikdokumente, burgerorientierte Kommunikation mit Governance-Anforderungen.</span>
-            <span class="l-en">Institutional correspondence, policy documents, citizen-facing communications with governance requirements.</span>
-            <span class="l-pt">Correspondencia institucional, documentos de politica, comunicacoes voltadas ao cidadao com requisitos de governanca.</span>
-          </p>
-        </div>
-        <div class="audience-card">
-          <h4>
-            <span class="l-de">Unternehmen</span>
-            <span class="l-en">Enterprise</span>
-            <span class="l-pt">Empresas</span>
-          </h4>
-          <p>
-            <span class="l-de">Interne Dokumentation, grenzuberschreitende Kommunikation, institutionelles Tone-Management in grossem Massstab.</span>
-            <span class="l-en">Internal documentation, cross-border communications, institutional tone management at scale.</span>
-            <span class="l-pt">Documentacao interna, comunicacoes transfronteiricas, gestao de tom institucional em escala.</span>
-          </p>
-        </div>
-        <div class="audience-card">
-          <h4>
-            <span class="l-de">Forschung & Akademie</span>
-            <span class="l-en">Research & Academia</span>
-            <span class="l-pt">Pesquisa & Academia</span>
-          </h4>
-          <p>
-            <span class="l-de">KI-Governance-Modellierung, Mensch-KI-Interaktionsstudien, EU AI Act Implementierungsforschung.</span>
-            <span class="l-en">AI governance modeling, human-AI interaction studies, EU AI Act implementation research.</span>
-            <span class="l-pt">Modelagem de governanca de IA, estudos de interacao humano-IA, pesquisa de implementacao do EU AI Act.</span>
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- What Makes It Different -->
-    <section>
-      <h2>
-        <span class="l-de">Was es anders macht</span>
-        <span class="l-en">What Makes It Different</span>
-        <span class="l-pt">O que o torna diferente</span>
-      </h2>
-
-      <p>
-        <span class="lb-de">Die meisten KI-Governance-Ansatze operieren entweder vor oder nach dem Moment der Mensch-KI-Interaktion. WINDI operiert <em>wahrend</em> dieses Moments.</span>
-        <span class="lb-en">Most AI governance approaches operate either before or after the moment of human-AI interaction. WINDI operates <em>during</em> that moment.</span>
-        <span class="lb-pt">A maioria das abordagens de governanca de IA opera antes ou depois do momento da interacao humano-IA. O WINDI opera <em>durante</em> esse momento.</span>
-      </p>
-
-      <div class="spec-table-wrapper">
-        <table class="spec-table diff-table">
-          <thead>
-            <tr>
-              <th>
-                <span class="l-de">Bestehende Ansatze</span>
-                <span class="l-en">Existing Approaches</span>
-                <span class="l-pt">Abordagens Existentes</span>
-              </th>
-              <th>WINDI</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                <span class="l-de">Vorschriften definieren, was einzuhalten ist</span>
-                <span class="l-en">Regulations define what to comply with</span>
-                <span class="l-pt">Regulamentacoes definem com o que cumprir</span>
-              </td>
-              <td>
-                <span class="l-de">Governance operiert kontinuierlich wahrend der Nutzung</span>
-                <span class="l-en">Governance operates continuously during use</span>
-                <span class="l-pt">Governanca opera continuamente durante o uso</span>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <span class="l-de">Ethische Prinzipien erklaren Absichten</span>
-                <span class="l-en">Ethical principles declare intentions</span>
-                <span class="l-pt">Principios eticos declaram intencoes</span>
-              </td>
-              <td>
-                <span class="l-de">Politische Entscheidungen sind beobachtbar und nachvollziehbar</span>
-                <span class="l-en">Policy decisions are observable and traceable</span>
-                <span class="l-pt">Decisoes de politica sao observaveis e rastreaveis</span>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <span class="l-de">Audit-Tools bewerten nachtrag</span>
-                <span class="l-en">Audit tools evaluate after the fact</span>
-                <span class="l-pt">Ferramentas de auditoria avaliam apos o fato</span>
-              </td>
-              <td>
-                <span class="l-de">Governance ist im Moment des Schreibens eingebettet</span>
-                <span class="l-en">Governance is embedded in the moment of writing</span>
-                <span class="l-pt">Governanca esta incorporada no momento da escrita</span>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <span class="l-de">Verantwortung ist eine Eigenschaft von Modellen</span>
-                <span class="l-en">Responsibility is a property of models</span>
-                <span class="l-pt">Responsabilidade e uma propriedade de modelos</span>
-              </td>
-              <td>
-                <span class="l-de">Verantwortung ist eine Infrastruktur, die Entscheidungen umgibt</span>
-                <span class="l-en">Responsibility is an infrastructure surrounding decisions</span>
-                <span class="l-pt">Responsabilidade e uma infraestrutura que envolve decisoes</span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- How It Works -->
-    <section>
-      <h2>
-        <span class="l-de">Wie es funktioniert</span>
-        <span class="l-en">How It Works</span>
-        <span class="l-pt">Como funciona</span>
-      </h2>
-
-      <p>
-        <span class="lb-de">WINDI operiert durch einen sechsphasigen kognitiven Governance-Zyklus. Wahrend ein Mensch ein Dokument im A4 Desk BABEL Editor entwirft, fuhrt das System kontinuierlich folgende Schritte durch:</span>
-        <span class="lb-en">WINDI operates through a six-phase cognitive governance cycle. As a human drafts a document in the A4 Desk BABEL editor, the system continuously:</span>
-        <span class="lb-pt">O WINDI opera atraves de um ciclo de governanca cognitiva de seis fases. Enquanto um humano elabora um documento no editor A4 Desk BABEL, o sistema continuamente:</span>
-      </p>
-
-      <p>
-        <span class="lb-de"><strong>Nimmt wahr</strong> institutionelle Referenzen im Text. <strong>Interpretiert</strong> deren Governance-Implikationen durch Policy-Engines. <strong>Entscheidet</strong> das angemessene Governance-Level. <strong>Erklart</strong> seine Argumentation in der Sprache des Benutzers. <strong>Manifestiert</strong> den Governance-Zustand visuell im Editor. <strong>Dokumentiert</strong> den Prozess als nachvollziehbares institutionelles Wissen.</span>
-        <span class="lb-en"><strong>Perceives</strong> institutional references in the text. <strong>Interprets</strong> their governance implications through policy engines. <strong>Decides</strong> the appropriate governance level. <strong>Explains</strong> its reasoning in the user's language. <strong>Manifests</strong> the governance state visually in the editor. <strong>Documents</strong> the process as traceable institutional knowledge.</span>
-        <span class="lb-pt"><strong>Percebe</strong> referencias institucionais no texto. <strong>Interpreta</strong> suas implicacoes de governanca atraves de motores de politica. <strong>Decide</strong> o nivel de governanca apropriado. <strong>Explica</strong> seu raciocinio na linguagem do usuario. <strong>Manifesta</strong> o estado de governanca visualmente no editor. <strong>Documenta</strong> o processo como conhecimento institucional rastreavel.</span>
-      </p>
-
-      <p>
-        <span class="lb-de">Jedes produzierte Dokument tragt einen WINDI-RECEIPT: einen kryptografischen Nachweis des Governance-Prozesses einschliesslich Urheberschaft, Governance-Level, Integritäts-Hash und institutionellem Zeugenkontext.</span>
-        <span class="lb-en">Every document produced carries a WINDI-RECEIPT: a cryptographic record of the governance process including authorship, governance level, integrity hash, and institutional witness context.</span>
-        <span class="lb-pt">Cada documento produzido carrega um WINDI-RECEIPT: um registro criptografico do processo de governanca incluindo autoria, nivel de governanca, hash de integridade e contexto de testemunha institucional.</span>
-      </p>
-    </section>
-
-    <!-- Documentation Links -->
-    <section>
-      <h2>
-        <span class="l-de">Dokumentation</span>
-        <span class="l-en">Documentation</span>
-        <span class="l-pt">Documentacao</span>
-      </h2>
-
-      <h3>
-        <span class="l-de">Forschung</span>
-        <span class="l-en">Research</span>
-        <span class="l-pt">Pesquisa</span>
-      </h3>
-      <ul>
-        <li><a href="windi-working-paper-2026.html">Working Paper: Human-AI Co-Decision Systems</a></li>
-        <li><a href="tr-windi-2026-005.html">TR-005: Six-Phase Cognitive Governance Cycle</a></li>
-        <li><a href="tr-windi-2026-004.html">TR-004: From Library to Cognitive Service</a></li>
-      </ul>
-
-      <h3>
-        <span class="l-de">Offentliche Kommunikation</span>
-        <span class="l-en">Public Communications</span>
-        <span class="l-pt">Comunicacoes Publicas</span>
-      </h3>
-      <ul>
-        <li><a href="press-release-windi-2026.html">Press Release</a></li>
-        <li><a href="wsj-style-governed-windi-2026.html">WSJ-Style Feature</a></li>
-        <li><a href="windi-side-by-side-2026.html">Exhibit A: Side-by-Side Evidence</a></li>
-      </ul>
-
-      <h3>
-        <span class="l-de">Systemreferenz</span>
-        <span class="l-en">System Reference</span>
-        <span class="l-pt">Referencia do Sistema</span>
-      </h3>
-      <ul>
-        <li><a href="index.html">Full Documentation Index</a></li>
-      </ul>
-    </section>
-
-    <!-- Status -->
-    <section>
-      <div class="status-bar">
-        <div class="status-item">
-          <span class="status-dot-indicator live"></span>
-          <span class="l-de">System: Live auf Produktionsinfrastruktur</span>
-          <span class="l-en">System: Live on production infrastructure</span>
-          <span class="l-pt">Sistema: Ativo em infraestrutura de producao</span>
-        </div>
-        <div class="status-item">
-          <span class="status-dot-indicator beta"></span>
-          <span class="l-de">Status: Institutional Beta v1.0</span>
-          <span class="l-en">Status: Institutional Beta v1.0</span>
-          <span class="l-pt">Status: Beta Institucional v1.0</span>
-        </div>
-      </div>
-    </section>
-
-  </div>
-
-  <!-- Page Footer -->
-  <footer class="page-footer">
-    <div class="page-footer-meta">
-      <span>WINDI-ABOUT-07FEB26-NOIR</span>
-      <span>Overview Document</span>
-    </div>
-    <p class="page-footer-quittung">Author: Jober Mogele Correa (WINDI-CEO-001) | Status: INSTITUTIONAL BETA</p>
-    <p class="page-footer-principle">
-      <span class="l-de">"KI verarbeitet. Mensch entscheidet. WINDI garantiert."</span>
-      <span class="l-en">"AI processes. Human decides. WINDI guarantees."</span>
-      <span class="l-pt">"IA processa. Humano decide. WINDI garante."</span>
-    </p>
-  </footer>
-
-</main>
-
-<!-- JavaScript -->
-<script>
-// Theme Toggle
-function toggleTheme() {
-  const body = document.body;
-  const isLight = body.getAttribute('data-theme') === 'light';
-  body.setAttribute('data-theme', isLight ? 'dark' : 'light');
-  try { localStorage.setItem('windi-theme', isLight ? 'dark' : 'light'); } catch(e) {}
-}
-
-// Language Switcher
-function setLang(lang) {
-  document.body.setAttribute('data-lang', lang);
-  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-  document.querySelector(`.lang-btn[onclick="setLang('${lang}')"]`).classList.add('active');
-  try { localStorage.setItem('windi-lang', lang); } catch(e) {}
-}
-
-// Sidebar Toggle (mobile)
-let sidebarOpen = false;
-function toggleSidebar() {
-  sidebarOpen = !sidebarOpen;
-  document.getElementById('sidebarLeft').classList.toggle('open', sidebarOpen);
-}
-
-// Close sidebar on link click (mobile)
-document.querySelectorAll('.sidebar-link').forEach(link => {
-  link.addEventListener('click', () => {
-    if (window.innerWidth <= 960) {
-      sidebarOpen = false;
-      document.getElementById('sidebarLeft').classList.remove('open');
+    .windi-shell {
+      display: flex;
+      font-family: 'Bricolage Grotesque', sans-serif;
+      background: #0E0E0C;
+      color: #E8E2D0;
+      min-height: 100vh;
+      font-size: 14px;
     }
+
+    /* ── SIDEBAR ── */
+    .windi-sidebar {
+      width: 210px;
+      min-width: 210px;
+      background: #131310;
+      border-right: 1px solid rgba(255,255,255,0.06);
+      padding: 20px 0;
+      display: flex;
+      flex-direction: column;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .sidebar-logo {
+      padding: 0 16px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sidebar-logo .w-mark {
+      width: 22px;
+      height: 22px;
+      background: #B8891A;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 600;
+      color: #0E0E0C;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .sidebar-logo span {
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      color: #8A8478;
+      text-transform: uppercase;
+    }
+
+    .sidebar-section-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      color: #5A5650;
+      text-transform: uppercase;
+      padding: 16px 16px 6px;
+    }
+
+    .sidebar-item {
+      display: block;
+      padding: 6px 16px;
+      font-size: 12.5px;
+      color: #7A7568;
+      cursor: pointer;
+      transition: color 0.15s;
+      line-height: 1.4;
+      border-left: 2px solid transparent;
+      text-decoration: none;
+    }
+    .sidebar-item:hover { color: #C8B98A; }
+    .sidebar-item.active {
+      color: #D4A827;
+      background: rgba(180,130,20,0.08);
+      border-left: 2px solid #D4A827;
+      padding-left: 14px;
+    }
+
+    /* ── MAIN WRAP ── */
+    .main-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .windi-topbar {
+      height: 44px;
+      background: #131310;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .topbar-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: #5A7A5A;
+      letter-spacing: 0.1em;
+    }
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #4A8A4A;
+    }
+    .topbar-lang {
+      display: flex;
+      gap: 4px;
+    }
+    .lang-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      padding: 3px 8px;
+      border-radius: 3px;
+      color: #5A5650;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      border: 1px solid transparent;
+      background: none;
+    }
+    .lang-pill.active {
+      background: #1E1C18;
+      color: #D4A827;
+      border-color: rgba(212,168,39,0.25);
+    }
+
+    /* ── CONTENT ── */
+    .content-scroll {
+      flex: 1;
+      padding: 52px 64px;
+    }
+
+    .breadcrumb {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: #4A4840;
+      letter-spacing: 0.1em;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .breadcrumb a { color: #4A4840; text-decoration: none; }
+    .breadcrumb a:hover { color: #D4A827; }
+    .breadcrumb span { color: #6A6458; }
+
+    .doc-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+    .badge-overview {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      padding: 4px 10px;
+      border-radius: 3px;
+      background: rgba(180,130,20,0.15);
+      color: #C8A030;
+      border: 1px solid rgba(180,130,20,0.25);
+      text-transform: uppercase;
+    }
+    .doc-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: #4A4840;
+    }
+
+    .page-title {
+      font-size: 34px;
+      font-weight: 600;
+      color: #F0E8D0;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin-bottom: 10px;
+    }
+    .page-subtitle {
+      font-size: 13px;
+      color: #6A6458;
+      margin-bottom: 44px;
+      font-weight: 300;
+      letter-spacing: 0.02em;
+    }
+
+    .divider {
+      height: 1px;
+      background: rgba(255,255,255,0.06);
+      margin-bottom: 40px;
+    }
+
+    .content-body { max-width: 680px; }
+
+    .body-para {
+      font-size: 13.5px;
+      line-height: 1.9;
+      color: #B8B0A0;
+      margin-bottom: 26px;
+      font-weight: 300;
+    }
+    .body-para em {
+      color: #D4C090;
+      font-style: normal;
+      font-weight: 400;
+    }
+
+    .quote-block {
+      margin: 40px 0;
+      padding: 26px 30px;
+      background: rgba(180,130,20,0.07);
+      border-left: 2px solid #D4A827;
+      border-radius: 0 6px 6px 0;
+      position: relative;
+    }
+    .quote-block::before {
+      content: '"';
+      position: absolute;
+      top: -10px;
+      left: 24px;
+      font-size: 52px;
+      color: rgba(212,168,39,0.18);
+      font-family: Georgia, serif;
+      line-height: 1;
+    }
+    .quote-text {
+      font-size: 15px;
+      color: #D4C090;
+      font-weight: 400;
+      font-style: italic;
+      line-height: 1.65;
+      letter-spacing: 0.01em;
+    }
+
+    .section-heading {
+      font-size: 20px;
+      font-weight: 500;
+      color: #E8E0C8;
+      letter-spacing: -0.01em;
+      margin: 48px 0 22px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .section-heading::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: rgba(255,255,255,0.05);
+      max-width: 80px;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      max-width: 680px;
+    }
+
+    .sector-card {
+      background: #131310;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 8px;
+      padding: 20px 22px;
+      transition: border-color 0.2s;
+    }
+    .sector-card:hover { border-color: rgba(212,168,39,0.22); }
+
+    .card-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.14em;
+      color: #C8A030;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .card-desc {
+      font-size: 12px;
+      color: #706A5E;
+      line-height: 1.75;
+      font-weight: 300;
+    }
+
+    /* ── i18n ── */
+    [data-lang] { display: none; }
+    [data-lang="de"] { display: block; }
+    .body-para[data-lang], .quote-text[data-lang], .page-title[data-lang], .page-subtitle[data-lang] { display: none; }
+    .body-para[data-lang="de"], .quote-text[data-lang="de"], .page-title[data-lang="de"], .page-subtitle[data-lang="de"] { display: block; }
+
+    @media (max-width: 900px) {
+      .windi-sidebar { display: none; }
+      .content-scroll { padding: 32px 24px; }
+      .cards-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="windi-shell">
+
+  <!-- SIDEBAR -->
+  <nav class="windi-sidebar">
+    <div class="sidebar-logo">
+      <div class="w-mark">W</div>
+      <span>Governance Intelligence</span>
+    </div>
+
+    <div class="sidebar-section-label">Masterarbeit</div>
+    <a class="sidebar-item" href="index.html">Main Document</a>
+    <a class="sidebar-item" href="cover.html">Cover</a>
+    <a class="sidebar-item active" href="about-windi.html">About WINDI</a>
+
+    <div class="sidebar-section-label">Governance</div>
+    <a class="sidebar-item" href="governance-levels.html">Governance Levels</a>
+    <a class="sidebar-item" href="human-oversight.html">Human Oversight</a>
+    <a class="sidebar-item" href="data-handling.html">Data Handling</a>
+
+    <div class="sidebar-section-label">Architecture</div>
+    <a class="sidebar-item" href="diagrams.html">Diagrams</a>
+    <a class="sidebar-item" href="interface-guide.html">Interface Guide</a>
+    <a class="sidebar-item" href="verification-layer.html">Verification Layer</a>
+    <a class="sidebar-item" href="domain-sovereignty.html">Domain Sovereignty</a>
+    <a class="sidebar-item" href="identity-governance.html">Identity Governance</a>
+
+    <div class="sidebar-section-label">Technical Reports</div>
+    <a class="sidebar-item" href="tr-003.html">TR-003: Service Layer</a>
+    <a class="sidebar-item" href="tr-004.html">TR-004: Cognitive Service</a>
+    <a class="sidebar-item" href="tr-005.html">TR-005: Cognitive Cycle</a>
+    <a class="sidebar-item" href="tr-006.html">TR-006: ISP Registry</a>
+    <a class="sidebar-item" href="tr-007.html">TR-007: Provenance</a>
+    <a class="sidebar-item" href="sge-results.html">SGE Results</a>
+
+    <div class="sidebar-section-label">Publications</div>
+    <a class="sidebar-item" href="publications.html">Publications</a>
+  </nav>
+
+  <!-- MAIN -->
+  <div class="main-wrap">
+    <header class="windi-topbar">
+      <div class="topbar-status">
+        <div class="status-dot"></div>
+        OPERATIONAL
+      </div>
+      <div class="topbar-lang">
+        <button class="lang-pill active" onclick="setLang('de')">DE</button>
+        <button class="lang-pill" onclick="setLang('en')">EN</button>
+        <button class="lang-pill" onclick="setLang('pt')">PT</button>
+      </div>
+    </header>
+
+    <main class="content-scroll">
+
+      <div class="breadcrumb">
+        <a href="index.html">WINDI</a> <span>›</span> Über WINDI
+      </div>
+
+      <div class="doc-meta">
+        <span class="badge-overview">Overview</span>
+        <span class="doc-date">2026-02-07</span>
+      </div>
+
+      <h1 class="page-title" data-lang="de">Über das WINDI System</h1>
+      <h1 class="page-title" data-lang="en">About the WINDI System</h1>
+      <h1 class="page-title" data-lang="pt">Sobre o Sistema WINDI</h1>
+
+      <p class="page-subtitle" data-lang="de">Pre-AI Governance Layer für institutionelle Workflow-Orchestrierung</p>
+      <p class="page-subtitle" data-lang="en">Pre-AI Governance Layer for Institutional Workflow Orchestration</p>
+      <p class="page-subtitle" data-lang="pt">Camada de Governança Pré-IA para Orquestração de Fluxos Institucionais</p>
+
+      <div class="divider"></div>
+
+      <div class="content-body">
+
+        <p class="body-para" data-lang="de">
+          WINDI ist eine Governance-Infrastruktur, die zwischen menschlichen Entscheidungsträgern und KI-Systemen operiert. Sie stellt sicher, dass jede KI-gestützte Interaktion transparent, nachvollziehbar und mit der institutionellen Richtlinie abgestimmt ist — in Echtzeit, während der Arbeit selbst.
+        </p>
+        <p class="body-para" data-lang="en">
+          WINDI is a governance infrastructure that operates between human decision-makers and AI systems. It ensures that every AI-assisted interaction is transparent, traceable, and aligned with institutional policy — in real-time, during the work itself.
+        </p>
+        <p class="body-para" data-lang="pt">
+          WINDI é uma infraestrutura de governança que opera entre decisores humanos e sistemas de IA. Garante que cada interação assistida por IA seja transparente, rastreável e alinhada com políticas institucionais — em tempo real, durante o próprio trabalho.
+        </p>
+
+        <p class="body-para" data-lang="de">
+          Der Name steht für <em>We Invite New Decision Intelligence.</em> Das System wurde im Rahmen einer europäischen Forschungsinitiative entwickelt, die untersucht, wie künstliche Intelligenz mit institutioneller Verantwortlichkeit statt nur technischer Leistung in Einklang gebracht werden kann.
+        </p>
+        <p class="body-para" data-lang="en">
+          The name stands for <em>We Invite New Decision Intelligence.</em> The system was developed as part of a European research initiative investigating how artificial intelligence can be aligned with institutional accountability, not just technical performance.
+        </p>
+        <p class="body-para" data-lang="pt">
+          O nome significa <em>We Invite New Decision Intelligence.</em> O sistema foi desenvolvido como parte de uma iniciativa de pesquisa europeia que investiga como a inteligência artificial pode ser alinhada com responsabilidade institucional, não apenas desempenho técnico.
+        </p>
+
+        <p class="body-para" data-lang="de">
+          WINDI ersetzt weder KI-Modelle noch menschliches Urteilsvermögen. Es besetzt den Raum dazwischen: eine Governance-Schicht, die institutionellen Kontext erkennt, Richtlinien anwendet, ihre Argumentation erklärt und den Governance-Zustand jederzeit für den Menschen sichtbar macht.
+        </p>
+        <p class="body-para" data-lang="en">
+          WINDI does not replace AI models or human judgment. It occupies the space in between: a governance layer that recognizes institutional context, applies policies, explains its reasoning, and makes governance state visible to humans at all times.
+        </p>
+        <p class="body-para" data-lang="pt">
+          WINDI não substitui modelos de IA nem julgamento humano. Ocupa o espaço entre eles: uma camada de governança que reconhece contexto institucional, aplica políticas, explica seu raciocínio e torna o estado de governança visível para humanos a todo momento.
+        </p>
+
+        <div class="quote-block">
+          <div class="quote-text" data-lang="de">KI verarbeitet. Der Mensch entscheidet. WINDI garantiert.</div>
+          <div class="quote-text" data-lang="en">AI processes. Human decides. WINDI guarantees.</div>
+          <div class="quote-text" data-lang="pt">IA processa. Humano decide. WINDI garante.</div>
+        </div>
+
+        <h2 class="section-heading" data-lang="de">Für wen es gedacht ist</h2>
+        <h2 class="section-heading" data-lang="en">Who it's for</h2>
+        <h2 class="section-heading" data-lang="pt">Para quem é</h2>
+
+        <div class="cards-grid">
+          <div class="sector-card">
+            <div class="card-tag" data-lang="de">Banken & Finanzen</div>
+            <div class="card-tag" data-lang="en">Banking & Finance</div>
+            <div class="card-tag" data-lang="pt">Bancos & Finanças</div>
+            <div class="card-desc" data-lang="de">Regulierte Kommunikation, Compliance-Dokumentation, KI-gestützte Beratungsausgaben mit Prüfbarkeitsanforderungen.</div>
+            <div class="card-desc" data-lang="en">Regulated communication, compliance documentation, AI-assisted advisory outputs with auditability requirements.</div>
+            <div class="card-desc" data-lang="pt">Comunicação regulada, documentação de compliance, outputs de consultoria assistidos por IA com requisitos de auditabilidade.</div>
+          </div>
+          <div class="sector-card">
+            <div class="card-tag" data-lang="de">Regierung & Öffentlicher Sektor</div>
+            <div class="card-tag" data-lang="en">Government & Public Sector</div>
+            <div class="card-tag" data-lang="pt">Governo & Setor Público</div>
+            <div class="card-desc" data-lang="de">Institutionelle Korrespondenz, Politikdokumente, bürgerorientierte Kommunikation mit Governance-Anforderungen.</div>
+            <div class="card-desc" data-lang="en">Institutional correspondence, policy documents, citizen-facing communication with governance requirements.</div>
+            <div class="card-desc" data-lang="pt">Correspondência institucional, documentos de política, comunicação cidadã com requisitos de governança.</div>
+          </div>
+          <div class="sector-card">
+            <div class="card-tag" data-lang="de">Recht & Notariat</div>
+            <div class="card-tag" data-lang="en">Legal & Notarial</div>
+            <div class="card-tag" data-lang="pt">Jurídico & Notarial</div>
+            <div class="card-desc" data-lang="de">Beweissichere Dokumente, forensische Siegelung, jurisdiktionsübergreifende Exportpakete.</div>
+            <div class="card-desc" data-lang="en">Evidence-grade documents, forensic sealing, cross-jurisdictional export packages.</div>
+            <div class="card-desc" data-lang="pt">Documentos com valor probatório, selagem forense, pacotes de exportação multi-jurisdição.</div>
+          </div>
+          <div class="sector-card">
+            <div class="card-tag" data-lang="de">Journalismus & Medien</div>
+            <div class="card-tag" data-lang="en">Journalism & Media</div>
+            <div class="card-tag" data-lang="pt">Jornalismo & Media</div>
+            <div class="card-desc" data-lang="de">Verifizierbare Quellen, Publikationsgates, Evidenz-Chain für investigative Arbeit.</div>
+            <div class="card-desc" data-lang="en">Verifiable sources, publication gates, evidence chain for investigative work.</div>
+            <div class="card-desc" data-lang="pt">Fontes verificáveis, gates de publicação, cadeia de evidências para trabalho investigativo.</div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+</div>
+
+<script>
+function setLang(lang) {
+  document.querySelectorAll('[data-lang]').forEach(el => {
+    el.style.display = el.getAttribute('data-lang') === lang ? 'block' : 'none';
   });
-});
+  document.querySelectorAll('.lang-pill').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent.toLowerCase() === lang);
+  });
+  localStorage.setItem('windi-lang', lang);
+}
 
-// Init saved preferences
-(function init() {
-  try {
-    const theme = localStorage.getItem('windi-theme');
-    const lang = localStorage.getItem('windi-lang');
-    if (theme) document.body.setAttribute('data-theme', theme);
-    if (lang) setLang(lang);
-  } catch(e) {}
-})();
+// Init
+const savedLang = localStorage.getItem('windi-lang');
+const browserLang = navigator.language.slice(0,2);
+setLang(savedLang || (['de','en','pt'].includes(browserLang) ? browserLang : 'de'));
 </script>
-
 </body>
 </html>
