@@ -1006,7 +1006,20 @@
                     })
                 });
 
-                // Store DID in session
+                // Build consolidated wallet object for workspace
+                var walletData = {
+                  did: registrationData.did,
+                  fingerprint: registrationData.fingerprint,
+                  public_key: registrationData.public_key,
+                  state: 'PROVISIONAL',
+                  created_at: new Date().toISOString(),
+                  pioneer_number: null,  // API não fornece ainda — UI mostra "—"
+                  tier: 'FREE',
+                  credits: 0
+                };
+                sessionStorage.setItem('windi_law_wallet', JSON.stringify(walletData));
+
+                // Backwards compatibility
                 sessionStorage.setItem('windi_law_did', registrationData.did);
                 sessionStorage.setItem('windi_law_fingerprint', registrationData.fingerprint);
 
