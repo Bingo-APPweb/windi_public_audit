@@ -104,6 +104,21 @@ body { background:var(--bg); color:var(--parch); font-family:var(--font); displa
 
 .topbar-right { display:flex; align-items:center; gap:0.75rem; }
 
+/* ══ NAV BUTTONS — Back/Forward (25 Mar 2026) ══ */
+.nav-btn {
+  width:28px; height:28px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px; font-weight:300;
+  background:transparent; border:0.5px solid var(--border-2);
+  border-radius:3px; color:var(--dim);
+  cursor:pointer; transition:all 0.15s;
+}
+.nav-btn:hover { border-color:var(--gold-d); color:var(--gold); background:var(--gold-p); }
+.nav-btn:disabled { opacity:0.3; cursor:not-allowed; }
+.nav-btn:disabled:hover { border-color:var(--border-2); color:var(--dim); background:transparent; }
+[data-theme="klar"] .nav-btn { border-color:#D0CEC8; color:#7A6850; }
+[data-theme="klar"] .nav-btn:hover { border-color:#8B7424; color:#8B7424; background:rgba(139,116,36,0.06); }
+
 .lang-pill {
   display:flex; gap:0;
   border:0.5px solid var(--border-2); border-radius:3px; overflow:hidden;
@@ -890,6 +905,7 @@ body { background:var(--bg); color:var(--parch); font-family:var(--font); displa
 <!-- TOPBAR -->
 <div class="topbar">
   <div class="topbar-left">
+    <button class="nav-btn" id="nav-back" onclick="navBack()" title="Zurück">←</button>
     <div class="tl-logo">WINDI<span>LAW</span></div>
     <div class="tl-did" id="tl-did" data-full-did="did:windi:···" onclick="copyDid()" title="Click to copy">did:windi:···<span class="copy-icon">📋</span></div>
     <div class="tl-status" id="tl-status">—</div>
@@ -913,6 +929,7 @@ body { background:var(--bg); color:var(--parch); font-family:var(--font); displa
       <span id="ls-text">Ledger · 8101 · aktiv</span>
     </div>
     <div class="user-avatar">JM</div>
+    <button class="nav-btn" id="nav-forward" onclick="navForward()" title="Weiter">→</button>
   </div>
 </div>
 
@@ -1585,6 +1602,7 @@ var currentAgent = 'legal';
 
 var LANG = {
   de: {
+    navBack:'Zurück', navForward:'Weiter',
     sbLAgents:'Agentenkonstellation', sbLDocs:'Aktuelle Dokumente', sbLVerify:'Verifikation',
     sbLIdentity:'Identität', sbSchluesselTitle:'Schlüssel', sbWalletTitle:'Wallet',
     sbKeyTypeLabel:'Typ', sbKeyCreatedLabel:'Erstellt', sbPioneerLabel:'Pioneer', sbCreditsLabel:'Kredite',
@@ -1643,6 +1661,7 @@ var LANG = {
     chainLoading:'Laden...'
   },
   pt: {
+    navBack:'Voltar', navForward:'Avançar',
     sbLAgents:'Constelação de Agentes', sbLDocs:'Documentos Recentes', sbLVerify:'Verificação',
     sbLIdentity:'Identidade', sbSchluesselTitle:'Chave', sbWalletTitle:'Carteira',
     sbKeyTypeLabel:'Tipo', sbKeyCreatedLabel:'Criada', sbPioneerLabel:'Pioneer', sbCreditsLabel:'Créditos',
@@ -1701,6 +1720,7 @@ var LANG = {
     chainLoading:'A carregar...'
   },
   en: {
+    navBack:'Back', navForward:'Forward',
     sbLAgents:'Agent Constellation', sbLDocs:'Recent Documents', sbLVerify:'Verification',
     sbLIdentity:'Identity', sbSchluesselTitle:'Key', sbWalletTitle:'Wallet',
     sbKeyTypeLabel:'Type', sbKeyCreatedLabel:'Created', sbPioneerLabel:'Pioneer', sbCreditsLabel:'Credits',
@@ -1765,6 +1785,9 @@ function setLang(l) {
   document.querySelectorAll('.lp-btn').forEach(function(b){ b.classList.remove('active'); });
   document.querySelector('.lp-btn[onclick="setLang(\''+l+'\')"]').classList.add('active');
   var t = LANG[l];
+  // Navigation tooltips
+  document.getElementById('nav-back').title = t.navBack;
+  document.getElementById('nav-forward').title = t.navForward;
   document.getElementById('sb-l-agents').textContent = t.sbLAgents;
   document.getElementById('sb-l-docs').textContent = t.sbLDocs;
   document.getElementById('sb-l-verify').textContent = t.sbLVerify;
@@ -2347,10 +2370,37 @@ document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') closeSealModal();
 });
 
+/* ══ NAVIGATION — Back/Forward (25 Mar 2026) ══ */
+var NAV_FLOW = ['/law/landing/', '/law/gate', '/law/prompt-area/', '/law/workspace/'];
+
+function navBack() {
+  var current = window.location.pathname;
+  if (!current.endsWith('/') && current !== '/law/gate') current += '/';
+  var idx = NAV_FLOW.indexOf(current);
+  if (idx > 0) window.location.href = NAV_FLOW[idx - 1];
+  else history.back();
+}
+
+function navForward() {
+  var current = window.location.pathname;
+  if (!current.endsWith('/') && current !== '/law/gate') current += '/';
+  var idx = NAV_FLOW.indexOf(current);
+  if (idx >= 0 && idx < NAV_FLOW.length - 1) window.location.href = NAV_FLOW[idx + 1];
+}
+
+function updateNavButtons() {
+  var current = window.location.pathname;
+  if (!current.endsWith('/') && current !== '/law/gate') current += '/';
+  var idx = NAV_FLOW.indexOf(current);
+  document.getElementById('nav-back').disabled = (idx <= 0);
+  document.getElementById('nav-forward').disabled = (idx >= NAV_FLOW.length - 1);
+}
+
 // v3.1: Initialize
 setLang('de');
 initWallet();
 updateTruthDesc();
+updateNavButtons();
 </script>
 </body>
 </html>
