@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Anna Weber — WINDI Verified Professional Record</title>
+
+<!-- Open Graph -->
+<meta property="og:site_name" content="WINDI Verify"/>
+<meta property="og:type" content="profile"/>
+<meta property="og:title" content="Anna Weber — Legal Compliance Officer · Weber & Partners"/>
+<meta property="og:description" content="Pioneer #002 · NODAL Tier. Virtue Score: 94/100. Verified by WINDI Forensic Ledger."/>
+<meta property="og:url" content="https://windi-domain.com/verify-public/vpr/anna-weber/"/>
+
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none'%3E%3Crect width='20' height='20' rx='4' fill='%231A1208'/%3E%3Cellipse cx='10' cy='11' rx='4.5' ry='4' transform='rotate(-15 10 11)' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='7' cy='7.5' r='2.8' stroke='%238B6914' stroke-width='1.3'/%3E%3Ccircle cx='6.2' cy='6.8' r='0.7' fill='%238B6914'/%3E%3C/svg%3E">
+
+<style>
+:root {
+  --pg: #F5F0E0;
+  --noir: #1A1A1A;
+  --gold: #8B6914;
+  --green: #2D7A4F;
+  --muted: #7A6E55;
+  --border: #D4C89A;
+  --card: #FFFDF8;
+  --dragon: #C9A84C;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--pg);
+  color: var(--noir);
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+header {
+  border-bottom: 2px solid var(--gold);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--card);
+}
+
+.brand { display: flex; align-items: center; gap: 10px; }
+
+.dragon-logo {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 1.5px solid var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--gold); flex-shrink: 0;
+}
+
+.brand-text h1 {
+  font-size: 15px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+}
+
+.brand-text span {
+  font-size: 9px; color: var(--muted);
+  letter-spacing: 0.12em; text-transform: uppercase;
+  display: block;
+}
+
+.pioneer-badge {
+  display: flex; align-items: center; gap: 6px;
+  background: linear-gradient(135deg, #1A1208 0%, #3D2E10 100%);
+  color: var(--dragon);
+  padding: 6px 14px; border-radius: 20px;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+  border: 1px solid var(--dragon);
+  box-shadow: 0 0 16px rgba(201, 168, 76, 0.35);
+}
+
+.pioneer-badge::before {
+  content: "🛡️";
+  font-size: 12px;
+}
+
+main {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}
+
+/* Profile Card */
+.profile-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+}
+
+.profile-header {
+  display: flex; gap: 16px; align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.avatar {
+  width: 76px; height: 76px; border-radius: 50%;
+  background: linear-gradient(135deg, #2D7A4F 0%, #4CAF80 60%, #2D7A4F 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; font-weight: 800; color: #FFFFFF;
+  flex-shrink: 0;
+  border: 3px solid var(--green);
+  box-shadow: 0 0 20px rgba(45,122,79,0.4), 0 2px 12px rgba(0,0,0,0.15);
+  letter-spacing: -1px;
+}
+
+.profile-info { flex: 1; min-width: 0; }
+
+.profile-name {
+  font-size: 22px; font-weight: 800;
+  color: var(--noir); margin-bottom: 4px;
+}
+
+.profile-title {
+  font-size: 13px; color: var(--muted);
+  margin-bottom: 4px; line-height: 1.4;
+}
+
+.profile-org {
+  font-size: 13px; font-weight: 600;
+  color: var(--gold); margin-bottom: 8px;
+}
+
+.profile-location {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 12px; color: var(--muted);
+}
+
+.profile-location svg {
+  width: 13px; height: 13px;
+  stroke: currentColor; fill: none; flex-shrink: 0;
+}
+
+/* Tagline */
+.profile-tagline {
+  background: linear-gradient(135deg, #1A1208 0%, #2D2010 100%);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-top: 16px;
+  border-left: 3px solid var(--green);
+}
+
+.profile-tagline p {
+  font-size: 12px; color: var(--dragon);
+  font-style: italic; letter-spacing: 0.03em;
+  line-height: 1.5;
+}
+
+/* DID */
+.did-section {
+  background: var(--pg);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+}
+
+.did-label {
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 6px;
+}
+
+.did-value {
+  font-family: "Courier New", monospace;
+  font-size: 11px; color: var(--gold);
+  word-break: break-all; line-height: 1.5;
+}
+
+/* Virtue */
+.virtue-section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.virtue-header {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.virtue-title {
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--muted);
+}
+
+.virtue-score {
+  display: flex; align-items: baseline; gap: 3px;
+}
+
+.virtue-number {
+  font-size: 40px; font-weight: 800;
+  color: var(--green); line-height: 1;
+}
+
+.virtue-max {
+  font-size: 16px; color: var(--muted); font-weight: 400;
+}
+
+.virtue-bar {
+  height: 5px; background: var(--border);
+  border-radius: 3px; margin-bottom: 20px; overflow: hidden;
+}
+
+.virtue-fill {
+  height: 100%; width: 94%;
+  background: linear-gradient(90deg, var(--green) 0%, #4CAF80 100%);
+  border-radius: 3px;
+}
+
+.virtue-breakdown {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.virtue-item {
+  background: var(--pg);
+  border-radius: 8px; padding: 12px;
+}
+
+.virtue-item-label {
+  font-size: 10px; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+
+.virtue-item-value {
+  font-size: 20px; font-weight: 800; color: var(--green);
+}
+
+/* Receipts */
+.receipts-section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.section-header {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.section-title {
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--muted);
+}
+
+.receipt-count {
+  background: var(--green);
+  color: white;
+  font-size: 10px; font-weight: 700;
+  padding: 2px 8px; border-radius: 10px;
+}
+
+.receipt-list { display: flex; flex-direction: column; gap: 12px; }
+
+.receipt-item {
+  border: 1px solid var(--border);
+  border-radius: 8px; padding: 14px;
+  background: var(--pg);
+}
+
+.receipt-item.featured {
+  border-color: var(--green);
+  background: linear-gradient(135deg, #FFFDF8 0%, #F0FDF4 100%);
+}
+
+.receipt-header {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; gap: 8px;
+  margin-bottom: 8px;
+}
+
+.receipt-title {
+  font-size: 13px; font-weight: 600;
+  color: var(--noir); flex: 1;
+  line-height: 1.4;
+}
+
+.receipt-badge {
+  font-size: 9px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 2px 8px; border-radius: 4px;
+  white-space: nowrap; flex-shrink: 0;
+}
+
+.receipt-badge.high {
+  background: #1A3A2A; color: #4CAF80;
+}
+
+.receipt-badge.nodal {
+  background: #1A2A3A; color: #60A5FA;
+}
+
+.receipt-meta {
+  display: flex; flex-wrap: wrap; gap: 10px;
+  margin-bottom: 8px;
+}
+
+.receipt-meta-item {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 11px; color: var(--muted);
+}
+
+.receipt-meta-item svg {
+  stroke: currentColor; fill: none; flex-shrink: 0;
+}
+
+.receipt-hash {
+  font-family: "Courier New", monospace;
+  font-size: 10px; color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.receipt-verify {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; color: var(--green);
+  text-decoration: none; font-weight: 600;
+  border: 1px solid var(--border);
+  padding: 4px 10px; border-radius: 4px;
+  background: var(--card);
+  transition: all 0.15s;
+}
+
+.receipt-verify:hover {
+  background: var(--green); color: white;
+  border-color: var(--green);
+}
+
+/* QR Section */
+.qr-section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+}
+
+.qr-title {
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 16px;
+}
+
+.qr-code {
+  display: inline-block;
+  padding: 16px;
+  background: white;
+  border-radius: 8px;
+  border: 2px solid var(--green);
+  margin-bottom: 12px;
+}
+
+.qr-code svg {
+  width: 140px; height: 140px;
+  display: block;
+}
+
+.qr-hint {
+  font-size: 11px; color: var(--muted);
+  margin-bottom: 16px;
+}
+
+.verify-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--green); color: white;
+  padding: 12px 24px; border-radius: 8px;
+  text-decoration: none; font-weight: 700;
+  font-size: 14px; letter-spacing: 0.02em;
+  transition: background 0.15s;
+}
+
+.verify-btn svg {
+  width: 18px; height: 18px;
+  stroke: white; fill: none; stroke-width: 2;
+}
+
+.verify-btn:hover { background: #1D5A3A; }
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 24px 16px;
+  border-top: 1px solid var(--border);
+  margin-top: 8px;
+}
+
+.footer-text {
+  font-size: 11px; color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.footer-tagline {
+  font-size: 11px; color: var(--gold);
+  font-style: italic; font-weight: 600;
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .pioneer-badge { font-size: 9px; padding: 5px 10px; }
+  .profile-name { font-size: 19px; }
+  .virtue-number { font-size: 34px; }
+  .virtue-breakdown { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .receipt-header { flex-direction: column; gap: 6px; }
+  .receipt-title { font-size: 13px; }
+  .qr-code svg { width: 120px; height: 120px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="dragon-logo">
+      <svg viewBox="0 0 24 24" fill="none" width="22" height="22">
+        <circle cx="12" cy="12" r="11" stroke="#8B6914" stroke-width="2"/>
+        <path d="M6 16L9 8L12 14L15 8L18 16" stroke="#8B6914" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+    </div>
+    <div class="brand-text">
+      <h1>WINDI VPR</h1>
+      <span>Verified Professional Record</span>
+    </div>
+  </div>
+  <div class="pioneer-badge">PIONEER #002</div>
+</header>
+
+<main>
+
+  <!-- Profile Card -->
+  <div class="profile-card">
+    <div class="profile-header">
+      <div class="avatar">AW</div>
+      <div class="profile-info">
+        <div class="profile-name">Anna Weber</div>
+        <div class="profile-title">Legal Compliance Officer</div>
+        <div class="profile-org">Weber & Partners Consulting</div>
+        <div class="profile-location">
+          <svg viewBox="0 0 24 24" stroke-width="2">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+          München, Bayern · Deutschland
+        </div>
+      </div>
+    </div>
+
+    <div class="profile-tagline">
+      <p>"Compliance is not a barrier — it's the foundation of trust."</p>
+    </div>
+  </div>
+
+  <!-- DID -->
+  <div class="did-section">
+    <div class="did-label">Decentralized Identity (DID)</div>
+    <div class="did-value">did:windi:aw:2026:002:nodal:de:muenchen:compliance</div>
+  </div>
+
+  <!-- Virtue Score -->
+  <div class="virtue-section">
+    <div class="virtue-header">
+      <div class="virtue-title">Virtue Score</div>
+      <div class="virtue-score">
+        <span class="virtue-number">94</span>
+        <span class="virtue-max">/100</span>
+      </div>
+    </div>
+    <div class="virtue-bar">
+      <div class="virtue-fill"></div>
+    </div>
+    <div class="virtue-breakdown">
+      <div class="virtue-item">
+        <div class="virtue-item-label">Sovereignty</div>
+        <div class="virtue-item-value">96</div>
+      </div>
+      <div class="virtue-item">
+        <div class="virtue-item-label">Integrity</div>
+        <div class="virtue-item-value">95</div>
+      </div>
+      <div class="virtue-item">
+        <div class="virtue-item-label">Transparency</div>
+        <div class="virtue-item-value">93</div>
+      </div>
+      <div class="virtue-item">
+        <div class="virtue-item-label">Consistency</div>
+        <div class="virtue-item-value">92</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Receipts -->
+  <div class="receipts-section">
+    <div class="section-header">
+      <div class="section-title">Verified Receipts</div>
+      <span class="receipt-count">2 sealed</span>
+    </div>
+    <div class="receipt-list">
+
+      <!-- Receipt 1 — GDPR Compliance Audit (featured) -->
+      <div class="receipt-item featured">
+        <div class="receipt-header">
+          <span class="receipt-title">GDPR Compliance Audit — Weber & Partners</span>
+          <span class="receipt-badge high">HIGH</span>
+        </div>
+        <div class="receipt-meta">
+          <span class="receipt-meta-item">
+            <svg width="12" height="12" viewBox="0 0 24 24" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+            2026-03-20
+          </span>
+          <span class="receipt-meta-item">
+            <svg width="12" height="12" viewBox="0 0 24 24" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            Governance: HIGH
+          </span>
+        </div>
+        <div class="receipt-hash">sha256:7b4f2e1a9c83d5f6...</div>
+        <a href="/verify-public/?id=WINDI-GDPR-AUDIT-20260320" class="receipt-verify">
+          Verify this receipt →
+        </a>
+      </div>
+
+      <!-- Receipt 2 — Pioneer Activation -->
+      <div class="receipt-item">
+        <div class="receipt-header">
+          <span class="receipt-title">Pioneer Activation · NODAL Tier</span>
+          <span class="receipt-badge nodal">NODAL</span>
+        </div>
+        <div class="receipt-meta">
+          <span class="receipt-meta-item">
+            <svg width="12" height="12" viewBox="0 0 24 24" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+            2026-03-18
+          </span>
+          <span class="receipt-meta-item">
+            <svg width="12" height="12" viewBox="0 0 24 24" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+            Governance: MEDIUM
+          </span>
+        </div>
+        <div class="receipt-hash">sha256:a3c9d8e2f7b1a4c5...</div>
+        <a href="/verify-public/?id=WINDI-PIONEER-AW-20260318" class="receipt-verify">
+          Verify this receipt →
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- QR & Verify -->
+  <div class="qr-section">
+    <div class="qr-title">Verify This Profile</div>
+    <div class="qr-code">
+      <svg viewBox="0 0 29 29" xmlns="http://www.w3.org/2000/svg"><rect width="29" height="29" fill="white"/><g fill="#2D7A4F"><rect x="0" y="0" width="7" height="7"/><rect x="22" y="0" width="7" height="7"/><rect x="0" y="22" width="7" height="7"/><rect x="2" y="2" width="3" height="3" fill="white"/><rect x="24" y="2" width="3" height="3" fill="white"/><rect x="2" y="24" width="3" height="3" fill="white"/><rect x="8" y="0" width="1" height="1"/><rect x="10" y="0" width="2" height="1"/><rect x="14" y="0" width="1" height="1"/><rect x="17" y="0" width="3" height="1"/><rect x="8" y="2" width="1" height="1"/><rect x="11" y="2" width="2" height="1"/><rect x="15" y="2" width="1" height="1"/><rect x="18" y="2" width="2" height="1"/><rect x="9" y="4" width="2" height="1"/><rect x="13" y="4" width="1" height="1"/><rect x="16" y="4" width="2" height="1"/><rect x="19" y="4" width="1" height="1"/><rect x="8" y="6" width="1" height="1"/><rect x="10" y="6" width="3" height="1"/><rect x="15" y="6" width="2" height="1"/><rect x="19" y="6" width="1" height="1"/><rect x="0" y="8" width="1" height="1"/><rect x="2" y="8" width="2" height="1"/><rect x="6" y="8" width="1" height="1"/><rect x="8" y="8" width="2" height="1"/><rect x="12" y="8" width="1" height="1"/><rect x="15" y="8" width="1" height="1"/><rect x="18" y="8" width="1" height="1"/><rect x="21" y="8" width="2" height="1"/><rect x="25" y="8" width="2" height="1"/><rect x="0" y="10" width="2" height="1"/><rect x="4" y="10" width="1" height="1"/><rect x="7" y="10" width="2" height="1"/><rect x="11" y="10" width="1" height="1"/><rect x="14" y="10" width="2" height="1"/><rect x="18" y="10" width="1" height="1"/><rect x="22" y="10" width="1" height="1"/><rect x="26" y="10" width="2" height="1"/><rect x="1" y="12" width="1" height="1"/><rect x="4" y="12" width="2" height="1"/><rect x="8" y="12" width="1" height="1"/><rect x="11" y="12" width="2" height="1"/><rect x="15" y="12" width="1" height="1"/><rect x="19" y="12" width="2" height="1"/><rect x="23" y="12" width="1" height="1"/><rect x="27" y="12" width="1" height="1"/><rect x="10" y="14" width="1" height="7"/><rect x="12" y="14" width="1" height="1"/><rect x="14" y="14" width="3" height="1"/><rect x="18" y="14" width="2" height="1"/><rect x="8" y="16" width="1" height="1"/><rect x="12" y="16" width="2" height="1"/><rect x="16" y="16" width="1" height="1"/><rect x="19" y="16" width="1" height="1"/><rect x="8" y="18" width="1" height="1"/><rect x="12" y="18" width="1" height="1"/><rect x="15" y="18" width="2" height="1"/><rect x="19" y="18" width="1" height="1"/><rect x="8" y="20" width="1" height="1"/><rect x="12" y="20" width="2" height="1"/><rect x="16" y="20" width="1" height="1"/><rect x="19" y="20" width="1" height="1"/><rect x="22" y="14" width="1" height="1"/><rect x="24" y="14" width="2" height="1"/><rect x="28" y="14" width="1" height="1"/><rect x="22" y="16" width="2" height="1"/><rect x="26" y="16" width="1" height="1"/><rect x="22" y="18" width="1" height="1"/><rect x="25" y="18" width="2" height="1"/><rect x="22" y="20" width="2" height="1"/><rect x="26" y="20" width="2" height="1"/><rect x="8" y="22" width="1" height="1"/><rect x="11" y="22" width="2" height="1"/><rect x="15" y="22" width="1" height="1"/><rect x="18" y="22" width="2" height="1"/><rect x="8" y="24" width="2" height="1"/><rect x="12" y="24" width="1" height="1"/><rect x="16" y="24" width="2" height="1"/><rect x="8" y="26" width="1" height="1"/><rect x="11" y="26" width="2" height="1"/><rect x="15" y="26" width="1" height="1"/><rect x="19" y="26" width="1" height="1"/><rect x="8" y="28" width="2" height="1"/><rect x="13" y="28" width="1" height="1"/><rect x="16" y="28" width="2" height="1"/><rect x="20" y="28" width="1" height="1"/><rect x="22" y="22" width="1" height="1"/><rect x="25" y="22" width="2" height="1"/><rect x="22" y="24" width="2" height="1"/><rect x="26" y="24" width="1" height="1"/><rect x="22" y="26" width="1" height="1"/><rect x="24" y="26" width="3" height="1"/><rect x="22" y="28" width="2" height="1"/><rect x="26" y="28" width="2" height="1"/></g></svg>
+    </div>
+    <p class="qr-hint">Scan with any QR reader to verify authenticity</p>
+    <a href="/verify-public/vpr/anna-weber/" class="verify-btn">
+      <svg viewBox="0 0 24 24" stroke-width="2">
+        <path d="M9 12l2 2 4-4"/>
+        <circle cx="12" cy="12" r="10"/>
+      </svg>
+      Verify This Profile
+    </a>
+  </div>
+
+</main>
+
+<footer>
+  <p class="footer-text">Sealed by WINDI Forensic Ledger — 56,613+ receipts verified</p>
+  <p class="footer-tagline">"AI processes. Human decides. WINDI guarantees."</p>
+</footer>
+
+</body>
+</html>
