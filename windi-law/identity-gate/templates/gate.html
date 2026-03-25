@@ -1011,7 +1011,7 @@
                   did: registrationData.did,
                   fingerprint: registrationData.fingerprint,
                   public_key: registrationData.public_key,
-                  state: 'PROVISIONAL',
+                  state: 'VERIFIED',  // Auto-VERIFIED for immediate workspace access
                   created_at: new Date().toISOString(),
                   pioneer_number: null,  // API não fornece ainda — UI mostra "—"
                   tier: 'FREE',
@@ -1025,6 +1025,16 @@
 
                 // Show success
                 document.getElementById('success_did').textContent = registrationData.did;
+
+                // Update workspace link to include DID as query param (server needs it)
+                var workspaceLink = document.querySelector('.success-btn');
+                if (workspaceLink) {
+                    workspaceLink.href = '/law/workspace/?did=' + encodeURIComponent(registrationData.did);
+                }
+
+                // Also set cookie for future visits
+                document.cookie = 'windi_did=' + encodeURIComponent(registrationData.did) + '; path=/; max-age=31536000; SameSite=Lax';
+
                 showStep('success');
 
             } catch (error) {
