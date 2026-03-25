@@ -653,6 +653,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 
 | Data | Milestones |
 |------|------------|
+| 25 Mar | §52 **Feature Lock v1.0** · 3-layer protection · 23 markers · pre-commit hook · df7d6b2 |
 | 25 Mar | §51 **Forensic Workspace v3.1** · ab-seal + ab-verify + ab-chain + CIA badges + QR SVG · 5/5 PASS · deb0ac0 |
 | 24 Mar | §50 **Constitutional Test v1.0.0** · CI/CD Compliance · 7/7 PASS · 4 Domains · Ledger Sealed · 3bf4454 |
 | 24 Mar | §49 **WINDI-LAW COMPLETE** · Identity Gate · Trilingual Policies · 2 VERIFIED users · e7a80c4 |
@@ -884,7 +885,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 
 ---
 
-## §37-51. Sistemas Recentes — Resumo
+## §37-52. Sistemas Recentes — Resumo
 
 > **Detalhes completos:** `CLAUDE-HISTORY.md` § MIGRAÇÃO 24 Mar 2026
 
@@ -905,6 +906,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 | 49 | **WINDI-LAW** | Identity Gate · Trilingual Policies · :8122 | ✅ **COMPLETE** |
 | 50 | **Constitutional Test** | CI/CD Compliance · 7 tests · 4 domains | ✅ **SEALED** |
 | 51 | **Forensic Workspace v3.1** | ab-seal + ab-verify + ab-chain + CIA + QR | ✅ **LIVE** |
+| 52 | **Feature Lock v1.0** | 3-layer protection · 23 markers · pre-commit | ✅ **ACTIVE** |
 
 ### Referência Rápida
 
@@ -914,6 +916,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 **Travel:** `/verify-public/web/travel/` · Mobile Proof Stub
 **WINDI-LAW:** `/law/gate` · Identity Gate · Policies DE|EN|PT · 2 VERIFIED users
 **Workspace:** `/law/prompt-area/` · Forensic Seal Pipeline · Modal I9 · QR SVG
+**Feature Lock:** `/opt/windi/windi-law/FEATURE_LOCK.md` · 12 SEALED features · pre-commit hook
 **Test Suite:** `/opt/windi/tests/agent_constitutional_test.py` · CI/CD ready
 **Dashboards:** `/legal-dashboard/` · `/notary-dashboard/` · `/audit-dashboard/`
 
@@ -923,6 +926,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 **Axioma §49:** "Sem DID, não existe sujeito operacional."
 **Axioma §50:** "Um agente WINDI sabe onde não pode responder."
 **Axioma §51:** "O modal existe antes do handler. A confirmação humana é o primeiro elemento no código."
+**Axioma §52:** "What is sealed, stays sealed."
 
 ---
 
@@ -1400,6 +1404,65 @@ All new elements trilingual: DE | EN | PT
 ### Axiom
 
 > "O modal existe antes do handler. A confirmação humana é o primeiro elemento no código, não o último."
+
+---
+
+## §52 — Feature Lock v1.0 (Session Memory Protection)
+
+**Status:** ✅ ACTIVE
+**Commit:** `df7d6b2`
+**Path:** `/opt/windi/windi-law/FEATURE_LOCK.md`
+
+### Purpose
+
+Prevents the Gêmeo from accidentally overwriting SEALED features between sessions.
+Each session starts fresh — this system ensures critical code survives.
+
+### 3-Layer Architecture
+
+| Layer | File | Function |
+|-------|------|----------|
+| 1 | `FEATURE_LOCK.md` | Contract — lists 12 SEALED features |
+| 2 | `feature-lock-check.sh` | Verification — 23 marker checks |
+| 3 | `pre-commit hook` | Enforcement — blocks commit if markers missing |
+
+### 12 SEALED Features
+
+| # | Feature | Key Markers |
+|---|---------|-------------|
+| 1 | Media Bar 📎🖼📄🎥 | `cmd-media-bar`, `handleMedia`, `attachedFiles` |
+| 2 | SHA-256 client-side | `hashFile`, `crypto.subtle.digest` |
+| 3 | Identity SCHLÜSSEL | `sb-schluessel`, `copyFingerprint` |
+| 4 | Identity WALLET | `sb-wallet`, `sb-pioneer-num` |
+| 5 | ab-seal + Modal I9 | `openSealModal`, `confirmSeal`, `modal-i9` |
+| 6 | ab-verify | `verifyReceipt`, `__lastReceipt` |
+| 7 | ab-chain | `showChain`, `__evidenceChain` |
+| 8 | CIA badges | `updateCIA`, `cia-i9`, `cia-i11` |
+| 9 | QR SVG | `generateQRSVG`, `showQRCode`, `downloadQR` |
+| 10 | Wallet Gate Link | `createWallet`, `/law/gate` redirect |
+| 11 | i18n DE/PT/EN | `var LANG`, `setLang` |
+| 12 | Theme NOIR/KLAR | `toggleTheme`, `data-theme` |
+
+### Rules for the Gêmeo
+
+```
+1. READ FEATURE_LOCK.md before editing prompt-area/ or workspace/
+2. NEVER delete any function listed in the lock
+3. NEVER overwrite one file with another without checking markers
+4. If copying files, verify ALL markers survive
+5. If a marker is missing, restore from git history BEFORE commit
+```
+
+### Incident That Created This System
+
+On 25 Mar 2026, the Gêmeo copied `workspace/index.html` to `prompt-area/index.html` without checking.
+This overwrote the Media Bar (📎🖼📄🎥) that existed in prompt-area.
+The user noticed. Feature was restored from git.
+This system ensures it never happens again.
+
+### Axiom
+
+> "What is sealed, stays sealed."
 
 ---
 
