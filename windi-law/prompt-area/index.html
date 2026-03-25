@@ -225,6 +225,65 @@ body {
 }
 .cmd-exec:hover { opacity:0.88; }
 
+/* ══ MEDIA BAR — Attachment Buttons (25 Mar 2026) ══ */
+.cmd-media-bar {
+  display:flex; align-items:center; gap:2px;
+  margin-right:8px; flex-shrink:0;
+}
+.cmd-media-btn {
+  width:28px; height:28px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:13px; cursor:pointer;
+  background:transparent; border:0.5px solid var(--border-2);
+  border-radius:2px; transition:all 0.15s;
+  color:var(--dim);
+}
+.cmd-media-btn:hover {
+  border-color:var(--gold-d); color:var(--gold);
+  background:rgba(201,168,76,0.06);
+}
+.cmd-media-btn.has-file {
+  border-color:var(--high); color:var(--high);
+  background:rgba(46,194,126,0.08);
+}
+.cmd-media-input { display:none; }
+
+/* Attachment Preview Row */
+.attachment-preview {
+  display:none; /* shown by JS when files attached */
+  flex-wrap:wrap; gap:6px;
+  margin-top:0.5rem; padding:8px 10px;
+  background:var(--bg-3); border:0.5px solid var(--border-2);
+  border-radius:3px;
+}
+.attachment-preview.visible { display:flex; }
+.attachment-item {
+  display:flex; align-items:center; gap:6px;
+  font-family:var(--mono); font-size:9px;
+  background:rgba(201,168,76,0.06); border:0.5px solid var(--gold-d);
+  border-radius:2px; padding:4px 8px;
+}
+.att-icon { font-size:11px; }
+.att-name { color:var(--parch); max-width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.att-size { color:var(--dim); }
+.att-hash { color:var(--high); font-size:8px; letter-spacing:0.03em; }
+.att-remove {
+  font-size:10px; color:var(--dim); cursor:pointer;
+  margin-left:4px; padding:2px 4px;
+  border-radius:2px; transition:color 0.15s;
+}
+.att-remove:hover { color:#e74c3c; }
+
+/* KLAR theme — Attachment Preview */
+[data-theme="klar"] .cmd-media-btn { border-color:#D0CEC8; color:#7A6850; }
+[data-theme="klar"] .cmd-media-btn:hover { border-color:#8B7424; color:#8B7424; background:rgba(139,116,36,0.06); }
+[data-theme="klar"] .cmd-media-btn.has-file { border-color:#2A8040; color:#2A8040; background:rgba(42,128,64,0.08); }
+[data-theme="klar"] .attachment-preview { background:#F0EDE5; border-color:#D0CEC8; }
+[data-theme="klar"] .attachment-item { background:rgba(139,116,36,0.06); border-color:#C9A84C; }
+[data-theme="klar"] .att-name { color:#2A2010; }
+[data-theme="klar"] .att-size { color:#7A6850; }
+[data-theme="klar"] .att-hash { color:#2A8040; }
+
 /* Presets — zona própria, SEPARADA do output */
 .presets-zone {
   display:flex; align-items:center; gap:6px;
@@ -398,6 +457,47 @@ body {
 
 .main-relative { flex:1; display:flex; overflow:hidden; position:relative; }
 
+/* ══ IDENTITY SECTION — Sidebar (25 Mar 2026) ══ */
+.sb-identity-section { margin-top:auto; border-top:0.5px solid var(--border); padding-top:0.75rem; }
+.sb-id-row { display:flex; justify-content:space-between; align-items:center; padding:3px 0; }
+.sb-id-key { font-family:var(--mono); font-size:8px; color:var(--dim); text-transform:uppercase; letter-spacing:0.08em; }
+.sb-id-val { font-family:var(--mono); font-size:9px; color:var(--parch); }
+.sb-id-status-ok { color:var(--high); }
+
+.sb-identity-disconnected {
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+  padding:0.75rem 0.5rem; background:rgba(231,76,60,0.06);
+  border:0.5px solid rgba(231,76,60,0.15); border-radius:3px; margin-top:6px;
+}
+.sb-id-warning { font-size:16px; }
+.sb-id-msg { font-family:var(--mono); font-size:9px; color:rgba(231,76,60,0.8); text-transform:uppercase; letter-spacing:0.06em; }
+.sb-gate-btn {
+  font-family:var(--mono); font-size:9px; color:var(--gold);
+  text-decoration:none; padding:5px 12px;
+  border:0.5px solid var(--gold-d); border-radius:2px;
+  transition:all 0.15s; text-transform:uppercase; letter-spacing:0.06em;
+}
+.sb-gate-btn:hover { background:var(--gold-p); border-color:var(--gold); }
+
+/* Header Gate link (shown when not connected) */
+.header-gate-link {
+  font-family:var(--mono); font-size:9px; color:var(--gold);
+  text-decoration:none; padding:4px 10px;
+  border:0.5px solid var(--gold-d); border-radius:2px;
+  margin-left:8px; transition:all 0.15s;
+}
+.header-gate-link:hover { background:var(--gold-p); border-color:var(--gold); }
+
+/* KLAR theme — Identity Section */
+[data-theme="klar"] .sb-identity-section { border-top-color:#D0CEC8; }
+[data-theme="klar"] .sb-id-key { color:#7A6850; }
+[data-theme="klar"] .sb-id-val { color:#2A2010; }
+[data-theme="klar"] .sb-id-status-ok { color:#2A8040; }
+[data-theme="klar"] .sb-identity-disconnected { background:rgba(180,80,60,0.06); border-color:rgba(180,80,60,0.2); }
+[data-theme="klar"] .sb-id-msg { color:#A04030; }
+[data-theme="klar"] .sb-gate-btn { color:#8B7424; border-color:#C9A84C; }
+[data-theme="klar"] .sb-gate-btn:hover { background:rgba(139,116,36,0.08); }
+
 /* STATUSBAR */
 .statusbar {
   height:20px; flex-shrink:0;
@@ -419,8 +519,15 @@ body {
 <div class="topbar">
   <div class="tl">
     <div class="tl-logo">WINDI<span>LAW</span></div>
-    <div class="tl-did" id="tl-did" data-full-did="did:windi:f0cb5b7f-xxxx-xxxx-xxxx-xxxxxxxxxxxx" onclick="copyDid()" title="Click to copy">did:windi:f0cb5b7f···<span class="copy-icon">📋</span></div>
-    <div class="tl-status">VERIFIED</div>
+    <!-- Connected state -->
+    <div class="tl-did" id="tl-did" data-full-did="" onclick="copyDid()" title="Click to copy" style="display:none">
+      <span id="tl-did-text">did:windi:···</span><span class="copy-icon">📋</span>
+    </div>
+    <div class="tl-status" id="tl-status" style="display:none">VERIFIED</div>
+    <!-- Disconnected state -->
+    <a href="/law/gate" class="header-gate-link" id="header-gate-link">
+      <span id="header-gate-text">Wallet erstellen →</span>
+    </a>
   </div>
   <div class="tr">
     <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">NOIR</button>
@@ -458,6 +565,34 @@ body {
       <div class="sb-item"><span class="sb-icon">◈</span><span>Audit · Q1-2026</span></div>
       <div class="sb-item"><span class="sb-icon">◈</span><span id="sb-invoice">Rechnung · 0041</span></div>
     </div>
+
+    <!-- IDENTITÄT Section (with fallback for no session) -->
+    <div class="sb-section sb-identity-section">
+      <span class="sb-label" id="sb-identity-label">Identität</span>
+
+      <!-- Connected state (hidden by default, shown by JS) -->
+      <div class="sb-identity-connected" id="sb-id-connected" style="display:none">
+        <div class="sb-id-row">
+          <span class="sb-id-key" id="sb-id-key-label">Schlüssel</span>
+          <span class="sb-id-val" id="sb-id-key-type">Ed25519</span>
+        </div>
+        <div class="sb-id-row">
+          <span class="sb-id-key" id="sb-id-wallet-label">Wallet</span>
+          <span class="sb-id-val" id="sb-id-tier">FREE</span>
+        </div>
+        <div class="sb-id-row">
+          <span class="sb-id-key" id="sb-id-status-label">Status</span>
+          <span class="sb-id-val sb-id-status-ok" id="sb-id-status">VERIFIED</span>
+        </div>
+      </div>
+
+      <!-- Disconnected state (shown by default) -->
+      <div class="sb-identity-disconnected" id="sb-id-disconnected">
+        <div class="sb-id-warning">⚠</div>
+        <div class="sb-id-msg" id="sb-id-msg">Nicht verbunden</div>
+        <a href="/law/gate" class="sb-gate-btn" id="sb-gate-btn">→ Gate</a>
+      </div>
+    </div>
   </div>
 
   <!-- CENTRE + INSPECTOR -->
@@ -484,12 +619,28 @@ body {
 
         <!-- Command bar — LIMPO, sem ruído -->
         <div class="cmd-frame">
+          <!-- Media Bar — Attachment Buttons -->
+          <div class="cmd-media-bar">
+            <button class="cmd-media-btn" id="mb-any" onclick="document.getElementById('mf-any').click()" title="Anhang">📎</button>
+            <button class="cmd-media-btn" id="mb-img" onclick="document.getElementById('mf-img').click()" title="Bild">🖼</button>
+            <button class="cmd-media-btn" id="mb-doc" onclick="document.getElementById('mf-doc').click()" title="Dokument">📄</button>
+            <button class="cmd-media-btn" id="mb-vid" onclick="document.getElementById('mf-vid').click()" title="Video">🎥</button>
+          </div>
+          <!-- Hidden file inputs -->
+          <input type="file" id="mf-any" class="cmd-media-input" accept="*/*" onchange="handleMedia(this,'any')">
+          <input type="file" id="mf-img" class="cmd-media-input" accept="image/*" onchange="handleMedia(this,'img')">
+          <input type="file" id="mf-doc" class="cmd-media-input" accept=".pdf,.docx,.xlsx,.txt" onchange="handleMedia(this,'doc')">
+          <input type="file" id="mf-vid" class="cmd-media-input" accept="video/*" onchange="handleMedia(this,'vid')">
+
           <div class="cmd-agent" id="cmd-agent">W-LEGAL-001</div>
           <input type="text" id="cmd-input"
             placeholder="Beschreiben Sie Ihr rechtliches Anliegen…"
             onkeydown="handleCmd(event)">
           <button class="cmd-exec" id="cmd-exec" onclick="execCmd()">Ausführen</button>
         </div>
+
+        <!-- Attachment Preview Row -->
+        <div class="attachment-preview" id="att-preview"></div>
 
         <!-- Presets — ZONA PRÓPRIA, abaixo do command bar -->
         <div class="presets-zone">
@@ -691,7 +842,11 @@ var LANG = {
     ivStatus:'Bereit',
     tmH:'Kryptografisch', tmM:'Prozessual', tmL:'KI-Analyse',
     invI9:'Keine Eskalation', invI11:'Permanenz', invI13:'Konvergenz', invG3:'Vorschlagen ≠ Ausführen',
-    stbLive:'● aktiv', stbLedger:'Ledger · :8101', stbAgents:'7 Agenten · online'
+    stbLive:'● aktiv', stbLedger:'Ledger · :8101', stbAgents:'7 Agenten · online',
+    mbAny:'Anhang', mbImg:'Bild', mbDoc:'Dokument', mbVid:'Video',
+    fileTooLarge:'Datei zu groß',
+    sbIdentity:'Identität', sbIdKey:'Schlüssel', sbIdWallet:'Wallet', sbIdStatus:'Status',
+    sbIdDisconnected:'Nicht verbunden', sbGateBtn:'→ Gate', headerGate:'Wallet erstellen →'
   },
   pt: {
     zaLabel:'Entrada', zbLabel:'Resultado', trLabel:'Nível de Verdade',
@@ -712,7 +867,11 @@ var LANG = {
     ivStatus:'Pronto',
     tmH:'Criptográfico', tmM:'Processual', tmL:'Análise IA',
     invI9:'Sem escalada', invI11:'Permanência', invI13:'Convergência', invG3:'Propor ≠ Executar',
-    stbLive:'● activo', stbLedger:'Ledger · :8101', stbAgents:'7 Agentes · online'
+    stbLive:'● activo', stbLedger:'Ledger · :8101', stbAgents:'7 Agentes · online',
+    mbAny:'Anexo', mbImg:'Imagem', mbDoc:'Documento', mbVid:'Vídeo',
+    fileTooLarge:'Ficheiro muito grande',
+    sbIdentity:'Identidade', sbIdKey:'Chave', sbIdWallet:'Wallet', sbIdStatus:'Estado',
+    sbIdDisconnected:'Não conectado', sbGateBtn:'→ Gate', headerGate:'Criar Wallet →'
   },
   en: {
     zaLabel:'Input', zbLabel:'Output', trLabel:'Truth Level',
@@ -733,7 +892,11 @@ var LANG = {
     ivStatus:'Ready',
     tmH:'Cryptographic', tmM:'Procedural', tmL:'AI Analysis',
     invI9:'No escalation', invI11:'Permanence', invI13:'Convergence', invG3:'Propose ≠ Execute',
-    stbLive:'● active', stbLedger:'Ledger · :8101', stbAgents:'7 Agents · online'
+    stbLive:'● active', stbLedger:'Ledger · :8101', stbAgents:'7 Agents · online',
+    mbAny:'Attachment', mbImg:'Image', mbDoc:'Document', mbVid:'Video',
+    fileTooLarge:'File too large',
+    sbIdentity:'Identity', sbIdKey:'Key', sbIdWallet:'Wallet', sbIdStatus:'Status',
+    sbIdDisconnected:'Not connected', sbGateBtn:'→ Gate', headerGate:'Create Wallet →'
   }
 };
 
@@ -781,6 +944,19 @@ function setLang(l) {
   document.getElementById('stb-live').textContent = t.stbLive;
   document.getElementById('stb-ledger').textContent = t.stbLedger;
   document.getElementById('stb-agents').textContent = t.stbAgents;
+  // Media bar tooltips
+  document.getElementById('mb-any').title = t.mbAny;
+  document.getElementById('mb-img').title = t.mbImg;
+  document.getElementById('mb-doc').title = t.mbDoc;
+  document.getElementById('mb-vid').title = t.mbVid;
+  // Identity section
+  document.getElementById('sb-identity-label').textContent = t.sbIdentity;
+  document.getElementById('sb-id-key-label').textContent = t.sbIdKey;
+  document.getElementById('sb-id-wallet-label').textContent = t.sbIdWallet;
+  document.getElementById('sb-id-status-label').textContent = t.sbIdStatus;
+  document.getElementById('sb-id-msg').textContent = t.sbIdDisconnected;
+  document.getElementById('sb-gate-btn').textContent = t.sbGateBtn;
+  document.getElementById('header-gate-text').textContent = t.headerGate;
   updateTruthDesc();
 }
 
@@ -788,6 +964,102 @@ function updateTruthDesc() {
   var t = LANG[lang];
   var map = {HIGH:t.tdH, MED:t.tdM, LOW:t.tdL};
   document.getElementById('truth-desc').textContent = map[currentTruth];
+}
+
+/* ══ MEDIA BAR — File Handling + SHA-256 (25 Mar 2026) ══ */
+var attachedFiles = {}; // { id: { file, hash, type } }
+var FILE_LIMITS = {
+  any: 25 * 1024 * 1024,   // 25MB
+  img: 10 * 1024 * 1024,   // 10MB
+  doc: 25 * 1024 * 1024,   // 25MB
+  vid: 100 * 1024 * 1024   // 100MB
+};
+var LIMIT_LABELS = {any:'25MB', img:'10MB', doc:'25MB', vid:'100MB'};
+var TYPE_ICONS = {any:'📎', img:'🖼', doc:'📄', vid:'🎥'};
+
+async function hashFile(file) {
+  var buf = await file.arrayBuffer();
+  var hash = await crypto.subtle.digest('SHA-256', buf);
+  return Array.from(new Uint8Array(hash))
+    .map(function(b){ return b.toString(16).padStart(2,'0'); }).join('');
+}
+
+function formatBytes(bytes) {
+  if(bytes < 1024) return bytes + ' B';
+  if(bytes < 1048576) return (bytes/1024).toFixed(1) + ' KB';
+  return (bytes/1048576).toFixed(2) + ' MB';
+}
+
+async function handleMedia(input, type) {
+  var file = input.files[0];
+  if(!file) return;
+
+  // Check file size
+  if(file.size > FILE_LIMITS[type]) {
+    var t = LANG[lang];
+    var msg = t.fileTooLarge || 'Datei zu groß';
+    alert(msg + ': ' + formatBytes(file.size) + ' > ' + LIMIT_LABELS[type]);
+    input.value = '';
+    return;
+  }
+
+  // Compute SHA-256
+  var hash = await hashFile(file);
+  var id = type + '-' + Date.now();
+  attachedFiles[id] = { file: file, hash: hash, type: type, name: file.name, size: file.size };
+
+  // Mark button as having file
+  document.getElementById('mb-' + type).classList.add('has-file');
+
+  // Render preview
+  renderAttachments();
+  input.value = '';
+}
+
+function renderAttachments() {
+  var preview = document.getElementById('att-preview');
+  var keys = Object.keys(attachedFiles);
+
+  if(keys.length === 0) {
+    preview.classList.remove('visible');
+    preview.innerHTML = '';
+    return;
+  }
+
+  preview.classList.add('visible');
+  var html = '';
+  keys.forEach(function(id) {
+    var f = attachedFiles[id];
+    var shortHash = f.hash.substring(0, 12) + '…';
+    html += '<div class="attachment-item" data-id="' + id + '">' +
+      '<span class="att-icon">' + TYPE_ICONS[f.type] + '</span>' +
+      '<span class="att-name" title="' + f.name + '">' + f.name + '</span>' +
+      '<span class="att-size">(' + formatBytes(f.size) + ')</span>' +
+      '<span class="att-hash">[sha256:' + shortHash + ']</span>' +
+      '<span class="att-remove" onclick="removeAttachment(\'' + id + '\')">✕</span>' +
+      '</div>';
+  });
+  preview.innerHTML = html;
+}
+
+function removeAttachment(id) {
+  var type = attachedFiles[id].type;
+  delete attachedFiles[id];
+
+  // Check if any file of this type remains
+  var hasType = Object.keys(attachedFiles).some(function(k){ return attachedFiles[k].type === type; });
+  if(!hasType) {
+    document.getElementById('mb-' + type).classList.remove('has-file');
+  }
+
+  renderAttachments();
+}
+
+function getAttachedFilesForSubmit() {
+  // Returns array of {file, hash} for FormData submission
+  return Object.values(attachedFiles).map(function(f){
+    return { file: f.file, hash: f.hash, name: f.name };
+  });
 }
 
 function setTruth(level, cls) {
@@ -860,7 +1132,49 @@ function toggleTheme() {
   }
 }
 
+/* ══ SESSION CHECK — Show/hide identity elements (25 Mar 2026) ══ */
+function initSession() {
+  var stored = sessionStorage.getItem('windi_law_wallet');
+  var t = LANG[lang];
+
+  if (stored) {
+    try {
+      var wallet = JSON.parse(stored);
+      // Show connected state
+      document.getElementById('tl-did').style.display = 'flex';
+      document.getElementById('tl-status').style.display = 'block';
+      document.getElementById('header-gate-link').style.display = 'none';
+      document.getElementById('sb-id-connected').style.display = 'block';
+      document.getElementById('sb-id-disconnected').style.display = 'none';
+
+      // Populate data
+      var did = wallet.did || 'did:windi:???';
+      var shortDid = did.substring(0, 18) + '···';
+      document.getElementById('tl-did').setAttribute('data-full-did', did);
+      document.getElementById('tl-did-text').textContent = shortDid;
+      document.getElementById('tl-status').textContent = wallet.status || 'VERIFIED';
+      document.getElementById('sb-id-tier').textContent = wallet.tier || 'FREE';
+      document.getElementById('sb-id-status').textContent = wallet.status || 'VERIFIED';
+    } catch(e) {
+      console.warn('Invalid wallet session:', e);
+      showDisconnected();
+    }
+  } else {
+    showDisconnected();
+  }
+}
+
+function showDisconnected() {
+  // Show disconnected state
+  document.getElementById('tl-did').style.display = 'none';
+  document.getElementById('tl-status').style.display = 'none';
+  document.getElementById('header-gate-link').style.display = 'flex';
+  document.getElementById('sb-id-connected').style.display = 'none';
+  document.getElementById('sb-id-disconnected').style.display = 'flex';
+}
+
 setLang('de');
+initSession();
 </script>
 </body>
 </html>
