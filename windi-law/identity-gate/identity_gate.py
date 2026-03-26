@@ -22,6 +22,17 @@ import hashlib
 import base64
 import requests
 import os
+import smtplib
+import ssl
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
+# Load .env file
+try:
+    from dotenv import load_dotenv
+    load_dotenv("/opt/windi/windi-law/identity-gate/.env")
+except ImportError:
+    pass  # dotenv not installed, rely on system env vars
 
 # Ed25519 cryptography
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
@@ -41,6 +52,12 @@ ADMIN_SECRET = os.environ.get("WINDI_ADMIN_SECRET", "windi-law-admin-2026")
 EMAIL_VERIFY_HOURS = 48  # Hours before downgrade to EMAIL_PENDING
 EMAIL_FROM = os.environ.get("WINDI_EMAIL_FROM", "noreply@windi-domain.com")
 DOMAIN_URL = os.environ.get("WINDI_DOMAIN_URL", "https://windi-domain.com")
+
+# SMTP Configuration (Strato)
+SMTP_HOST = os.environ.get("WINDI_SMTP_HOST", "smtp.strato.de")
+SMTP_PORT = int(os.environ.get("WINDI_SMTP_PORT", "465"))
+SMTP_USER = os.environ.get("WINDI_SMTP_USER", "")
+SMTP_PASS = os.environ.get("WINDI_SMTP_PASS", "")
 
 # Identity states
 STATE_UNBORN = "UNBORN"
@@ -296,19 +313,57 @@ WINDI Publishing House
     subject = subjects.get(lang, subjects["en"])
     body = bodies.get(lang, bodies["en"])
 
-    # Log for now (production: integrate with SMTP)
-    print(f"\n{'='*60}")
-    print(f"📧 EMAIL VERIFICATION REQUEST")
-    print(f"{'='*60}")
-    print(f"To: {email}")
-    print(f"Subject: {subject}")
-    print(f"Verify URL: {verify_url}")
-    print(f"Token: {token}")
-    print(f"{'='*60}\n")
+    # Check SMTP credentials
+    if not SMTP_USER or not SMTP_PASS:
+        print(f"⚠️ SMTP not configured - email logged to console")
+        print(f"📧 To: {email} | Subject: {subject}")
+        print(f"🔗 Verify URL: {verify_url}")
+        return True  # Return success for development
 
-    # TODO: Integrate with Dispatch Gateway or SMTP
-    # For now, return success (email "sent" to console)
-    return True
+    # Send via SMTP (Strato SSL port 465)
+    try:
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = subject
+        msg["From"] = EMAIL_FROM
+        msg["To"] = email
+
+        # Plain text version
+        text_part = MIMEText(body.strip(), "plain", "utf-8")
+        msg.attach(text_part)
+
+        # HTML version (simple formatting)
+        html_body = body.strip().replace("\n", "<br>\n")
+        html_content = f"""
+        <html>
+        <body style="font-family: 'JetBrains Mono', monospace; color: #1A1A1A; max-width: 600px;">
+            <div style="border-bottom: 2px solid #8B7424; padding-bottom: 10px; margin-bottom: 20px;">
+                <strong style="color: #8B7424;">WINDI-LAW</strong>
+            </div>
+            <p>{html_body}</p>
+            <div style="margin-top: 30px; padding-top: 10px; border-top: 1px solid #E0DED8; font-size: 12px; color: #666;">
+                WINDI Publishing House · Kempten, Bavaria
+            </div>
+        </body>
+        </html>
+        """
+        html_part = MIMEText(html_content, "html", "utf-8")
+        msg.attach(html_part)
+
+        # SSL connection to Strato
+        context = ssl.create_default_context()
+        with smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT, context=context) as server:
+            server.login(SMTP_USER, SMTP_PASS)
+            server.sendmail(EMAIL_FROM, email, msg.as_string())
+
+        print(f"✅ Verification email sent to {email}")
+        return True
+
+    except Exception as e:
+        print(f"❌ SMTP Error: {e}")
+        # Log to console as fallback
+        print(f"📧 FALLBACK - To: {email} | Subject: {subject}")
+        print(f"🔗 Verify URL: {verify_url}")
+        return False
 
 
 # ═══════════════════════════════════════════════════════════════
