@@ -415,6 +415,8 @@ app = FastAPI(
 
 # Mount static files and templates
 templates = Jinja2Templates(directory="/opt/windi/windi-law/identity-gate/templates")
+# Disable Jinja2 cache to avoid unhashable type error with dict globals
+templates.env.cache = None
 
 # Initialize database on startup
 @app.on_event("startup")
@@ -587,8 +589,7 @@ async def verify_email(token: str, request: Request):
 
     if not admin:
         conn.close()
-        return templates.TemplateResponse("verify-email-result.html", {
-            "request": request,
+        return templates.TemplateResponse(request, "verify-email-result.html", context={
             "success": False,
             "error": "invalid_token",
             "message_de": "Ungültiger oder abgelaufener Bestätigungslink.",
@@ -601,8 +602,7 @@ async def verify_email(token: str, request: Request):
     # Check if already verified
     if already_verified:
         conn.close()
-        return templates.TemplateResponse("verify-email-result.html", {
-            "request": request,
+        return templates.TemplateResponse(request, "verify-email-result.html", context={
             "success": True,
             "already_verified": True,
             "message_de": "E-Mail bereits bestätigt!",
@@ -616,8 +616,7 @@ async def verify_email(token: str, request: Request):
         expiry = datetime.fromisoformat(token_expires.replace("Z", "+00:00"))
         if datetime.now(timezone.utc) > expiry:
             conn.close()
-            return templates.TemplateResponse("verify-email-result.html", {
-                "request": request,
+            return templates.TemplateResponse(request, "verify-email-result.html", context={
                 "success": False,
                 "error": "expired",
                 "message_de": "Bestätigungslink abgelaufen. Bitte fordern Sie einen neuen an.",
@@ -634,8 +633,7 @@ async def verify_email(token: str, request: Request):
     conn.commit()
     conn.close()
 
-    return templates.TemplateResponse("verify-email-result.html", {
-        "request": request,
+    return templates.TemplateResponse(request, "verify-email-result.html", context={
         "success": True,
         "full_name": full_name,
         "email": email,
@@ -890,7 +888,7 @@ async def consent_sign(data: ConsentSign, request: Request):
 @app.get("/gate", response_class=HTMLResponse)
 async def gate_ui(request: Request):
     """Render Identity Gate UI."""
-    return templates.TemplateResponse("gate.html", {"request": request})
+    return templates.TemplateResponse(request, "gate.html")
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -1017,7 +1015,6 @@ async def dashboard(did: str, request: Request):
 
     # Prepare context for template
     context = {
-        "request": request,
         "admin_id": admin[0],
         "full_name": admin[1],
         "email": admin[2],
@@ -1033,7 +1030,7 @@ async def dashboard(did: str, request: Request):
         "version": VERSION
     }
 
-    return templates.TemplateResponse("dashboard.html", context)
+    return templates.TemplateResponse(request, "dashboard.html", context=context)
 
 
 @app.get("/dashboard/{did}/json")
