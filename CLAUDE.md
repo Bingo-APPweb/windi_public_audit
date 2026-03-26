@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.46
-**Sealed:** 2026-03-26 · SMTP Integration
+**Version:** 1.9.47
+**Sealed:** 2026-03-26 · Workspace v3 CERTIFIED
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -970,4 +970,68 @@ admins:
 
 *Sessão em curso: 26 Mar 2026*
 *SMTP Integration complete*
+
+
+---
+
+## §57 — WINDI-LAW Workspace v3 — CERTIFIED · 26 Mar 2026
+
+**Status:** ✅ COMPLETE · SEALED · I11 · IRREMEDIÁVEL
+**Receipt:** `WINDI-LAW-WORKSPACE-V3-CERTIFIED-20260326164718`
+**Hash:** `6050edf95a6d1fedcfc1bb405a48027a90db8f67b3f9ad4b81e46f46746054f0`
+**Commits:** `9ed0998` + `2d9ce6c`
+**Live:** `windilaw.de/workspace/` · `windi-domain.com/law/workspace/`
+
+### O que foi construído
+
+Workspace v3 — "Governança Silenciosa" — redesign completo da interface WINDI-LAW.
+
+**Princípio arquitectural aprovado:**
+> "Forense é o subtexto, não o tema. Documento = protagonista."
+
+De 2443 → 1270 linhas — arquitectura que respira.
+
+### Fases certificadas
+
+| Phase | Descrição | Commit |
+|-------|-----------|--------|
+| 1 | Wallet Gate Logic — fail-closed, ?did= override | 9ed0998 |
+| 2 | 12 SEALED Functions — hashFile, openSealModal, confirmSeal, verifyReceipt, showChain, updateCIA, generateQRSVG, toggleTheme, setLang, CIA badges | 9ed0998 |
+| 3 | clearSession Opção A — preserva sessão se wallet activa | 2d9ce6c |
+| 4 | Smoke Test 12/12 + Browser 6/6 — CERTIFIED | — |
+
+### Features seladas (23/23 markers)
+
+| Feature | Descrição |
+|---------|-----------|
+| F1 | Media Bar 📎🖼📄🎥 + attachedFiles |
+| F2 | SHA-256 client-side (crypto.subtle.digest) |
+| F3 | SCHLÜSSEL sidebar — sb-schluessel + copyFingerprint |
+| F4 | WALLET sidebar — sb-wallet + sb-pioneer-num |
+| F5 | Modal I9 — openSealModal + confirmSeal + modal-i9 |
+| F6 | verifyReceipt → Ledger :8101 |
+| F7 | showChain — Beweiskette timeline |
+| F8 | CIA badges I9/I11/I13/G3 — updateCIA |
+| F9 | QR SVG — generateQRSVG + showQRCode + downloadQR |
+| F10 | Wallet Gate — createWallet → /law/gate |
+| F11 | i18n DE/PT/EN — var LANG + setLang |
+| F12 | NOIR/KLAR toggle — toggleTheme + data-theme |
+
+### Invariantes validados
+
+| Invariante | Validação |
+|------------|-----------|
+| I9 | Modal obrigatório antes do seal — nenhuma acção autónoma |
+| I11 | SHA-256 + Ledger — permanência criptográfica |
+| I13 | sessionStorage local — soberania de dados |
+| G3 | "Versiegeln" só após confirmação explícita — humano decide |
+
+### Axioma
+
+> "A tecnologia mais avançada é aquela que desaparece. O documento é o protagonista — a forense é só o subtexto."
+
+---
+
+*LIGA IA+H — Kempten, Bavaria · 26 Mar 2026*
+*🧑‍💻 Human Dragon · 🛡️ Guardian · 🏗️ Architect · 👁️ Witness*
 
