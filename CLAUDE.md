@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.45
-**Sealed:** 2026-03-26 · Overflow Fix #4
+**Version:** 1.9.46
+**Sealed:** 2026-03-26 · SMTP Integration
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -896,10 +896,10 @@ Sistema de autenticação por identidade soberana no GEN7.
 
 ---
 
-## §56 — Email Verification Async (Option B) — 25 Mar 2026
+## §56 — Email Verification + SMTP Integration — 26 Mar 2026
 
-**Status:** ✅ LIVE (logs only) · SMTP pendente
-**Commit:** `f600d27`
+**Status:** ✅ LIVE · SMTP INTEGRATED
+**Commits:** `f600d27` (async flow) · `3c3967f` (SMTP)
 **Version:** v1.2.0
 
 ### Fluxo Implementado
@@ -907,12 +907,21 @@ Sistema de autenticação por identidade soberana no GEN7.
 ```
 Registo → VERIFIED imediato → Workspace acessível
             ↓
-        📧 Email logado (consola)
+        📧 Email enviado via SMTP (Strato SSL :465)
             ↓
         Token válido 48h → /law/verify-email/{token}
             ↓
         email_verified = 1 → HIGH ops enabled
 ```
+
+### SMTP Stack
+
+| Component | Value |
+|-----------|-------|
+| Host | smtp.strato.de |
+| Port | 465 (SSL) |
+| From | noreply@a4desk.de |
+| Format | Multipart (HTML + Plain text) |
 
 ### Endpoints
 
@@ -932,7 +941,7 @@ admins:
 
 ### Pendente
 
-- [ ] SMTP real (Dispatch Gateway ou directo)
+- [x] ~~SMTP real (Dispatch Gateway ou directo)~~ ✅ 26 Mar 2026
 - [ ] Cron job: downgrade para EMAIL_PENDING após 48h
 
 ---
@@ -940,10 +949,10 @@ admins:
 ## BACKLOG — Próximas Sessões
 
 ### P0 — Crítico
-- [ ] **SMTP Integration** — Envio real de emails de verificação
+- [x] ~~**SMTP Integration**~~ ✅ 26 Mar 2026
 - [ ] **Node.js 24** — Atualizar GitHub Actions workflow
 
-### P1 — Importante  
+### P1 — Importante
 - [ ] **Rate limiting** — nginx Agent Corps
 - [ ] **Cron 48h** — Downgrade email não verificado → EMAIL_PENDING
 - [ ] **HIGH ops gate** — Bloquear operações HIGH se email_verified=0
@@ -959,6 +968,6 @@ admins:
 
 ---
 
-*Sessão encerrada: 25 Mar 2026 · 22:46 UTC*
-*Próxima sessão: SMTP + Backlog review*
+*Sessão em curso: 26 Mar 2026*
+*SMTP Integration complete*
 
