@@ -140,7 +140,7 @@ class VerifyEngine:
     def __init__(self, ledger_url, agents_url, timeout=5.0):
         self.ledger_url = ledger_url.rstrip("/")
         self.agents_url = agents_url.rstrip("/")
-        self.timeout = httpx.Timeout(timeout)
+        self.timeout = httpx.Timeout(timeout, connect=timeout)
 
     async def verify_qr(self, qr_data):
         checked_at = now_iso()

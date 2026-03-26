@@ -1114,7 +1114,8 @@ async function confirmSeal() {
         doc_name: docTitle,
         doc_type: 'doc',
         governance_level: 'HIGH',
-        hash: hash,
+        content_hash: hash,
+        sge_score: 95.0,
         invariant: 'I11',
         note: 'Sealed via workspace v3 · G3 confirmed'
       })
