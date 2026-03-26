@@ -470,6 +470,45 @@
         </div>
     </header>
 
+    <!-- RETURNING USER CTA — aparece só se sessionStorage tem DID -->
+    <div id="returning-banner" style="display:none;
+        background:linear-gradient(135deg, rgba(139,105,20,0.08) 0%, rgba(139,105,20,0.03) 100%);
+        border-bottom:1px solid rgba(139,105,20,0.15);
+        padding:10px 20px;
+        align-items:center; justify-content:space-between;
+        gap:12px; flex-wrap:wrap;">
+        <div style="font-size:12px; color:var(--text-secondary);">
+            <span id="returning-did" style="font-family:'JetBrains Mono',monospace;font-size:10px;opacity:0.7;"></span>
+            <span data-i18n="returning_user"> — Bereits registriert</span>
+        </div>
+        <a id="returning-workspace-link" href="/workspace/"
+            style="font-size:11px;font-weight:500;padding:6px 16px;
+            border-radius:20px;background:var(--gold);color:white;
+            text-decoration:none;white-space:nowrap;transition:all 0.15s;"
+            onmouseover="this.style.opacity='0.85'"
+            onmouseout="this.style.opacity='1'"
+            data-i18n="enter_workspace">Workspace betreten →</a>
+    </div>
+
+    <script>
+    (function() {
+        try {
+            var w = sessionStorage.getItem('windi_law_wallet');
+            if (!w) return;
+            var wallet = JSON.parse(w);
+            var did = wallet.did || '';
+            if (!did) return;
+            var banner = document.getElementById('returning-banner');
+            var didSpan = document.getElementById('returning-did');
+            var wsLink = document.getElementById('returning-workspace-link');
+            var BASE_PATH = window.location.hostname.includes('windilaw.de') ? '' : '/law';
+            if (didSpan) didSpan.textContent = did.length > 28 ? did.substring(0, 28) + '…' : did;
+            if (wsLink) wsLink.href = BASE_PATH + '/workspace/?did=' + encodeURIComponent(did);
+            if (banner) banner.style.display = 'flex';
+        } catch(e) { console.warn('[WINDI-LAW] Returning banner error:', e); }
+    })();
+    </script>
+
     <!-- Progress -->
     <div class="progress-bar">
         <div class="progress-dot active" data-step="1"></div>
@@ -773,6 +812,7 @@
                 success_title: "Identitat erstellt",
                 success_msg: "Ihre Identitat wurde im Forensic Ledger versiegelt.",
                 enter_workspace: "Workspace betreten",
+                returning_user: " — Bereits registriert",
                 email_sent_title: "Bestatigungsmail gesendet",
                 email_sent_desc: "Bitte bestatigen Sie Ihre E-Mail fur vollen Zugang zu HIGH-Operationen. Sie haben bereits Zugang zum Workspace."
             },
@@ -809,6 +849,7 @@
                 success_title: "Identity Created",
                 success_msg: "Your identity has been sealed in the Forensic Ledger.",
                 enter_workspace: "Enter Workspace",
+                returning_user: " — Already registered",
                 email_sent_title: "Verification email sent",
                 email_sent_desc: "Please verify your email for full access to HIGH operations. You already have access to the workspace."
             },
@@ -845,6 +886,7 @@
                 success_title: "Identidade Criada",
                 success_msg: "A sua identidade foi selada no Forensic Ledger.",
                 enter_workspace: "Entrar no Workspace",
+                returning_user: " — Já registado",
                 email_sent_title: "Email de verificacao enviado",
                 email_sent_desc: "Por favor verifique seu email para acesso completo as operacoes HIGH. Voce ja tem acesso ao workspace."
             }
