@@ -967,9 +967,28 @@ function toggleInsp() {
 }
 
 // ══════════════════════════════════════════════════════════════
+// clearPreviousSession — Opção A (preserve session if wallet exists)
+// SEALED: só limpa se não há wallet activa
+// ══════════════════════════════════════════════════════════════
+function clearPreviousSession() {
+  var wallet = sessionStorage.getItem('windi_law_wallet');
+  if (!wallet) {
+    // Visitante novo ou sessão expirada → limpar estado órfão
+    sessionStorage.clear();
+    console.log('[WINDI-LAW] Session cleared — no wallet found');
+  } else {
+    // Utilizador regressa com wallet → preservar sessão
+    console.log('[WINDI-LAW] Session preserved — wallet active');
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
 // DOMContentLoaded — Initialize
 // ══════════════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', function() {
+  // Phase 3: Clear orphan sessions but preserve wallet
+  clearPreviousSession();
+
   // Init lang from localStorage
   var savedLang = localStorage.getItem('windi-lang');
   if (savedLang && LANG[savedLang]) {
