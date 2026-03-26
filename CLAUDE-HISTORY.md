@@ -1983,3 +1983,703 @@ Primeiro proof humano:
 
 *Migração §45 + Overflow Fix #3 · 23 Mar 2026*
 *CLAUDE.md: 40KB → ~28KB (dentro do limite 32KB)*
+
+---
+
+## § MIGRAÇÃO 26 Mar 2026 — Overflow Fix #4
+
+**Motivo:** CLAUDE.md em 53.7KB (limite 32KB)
+**Acção:** Migrar §45-§55 (detalhes completos) para HISTORY
+
+---
+
+### §45 WINDI FIELD — Phase 1 LIVE (GENESIS 2026-03-23)
+
+**Status:** ✅ **PHASE 1 COMPLETE** · **GENESIS SEALED**
+**Blueprint:** `WINDI-FIELD-BLUEPRINT-V1.0-20260323`
+**URL:** `https://windi-domain.com/field/`
+
+#### GENESIS RECEIPT — Primeiro Selo Forense da História WINDI
+
+```
+╔═══════════════════════════════════════════════════════════════╗
+║  RECEIPT:    WINDI-FIELD-20260323195248-D562ED84              ║
+║  HASH:       d562ed84d934e7616fac445e0225a95b48b5a4de9bdd... ║
+║  TIMESTAMP:  2026-03-23T19:52:48.308321Z (AUTORITATIVO)       ║
+║  GPS:        47.6430, 10.2927 — Kempten, Bavaria (±97m)       ║
+║  ACTOR:      WALLET-20260215-0001 (Human Dragon)              ║
+║  FILE:       video/webm · 5.07 MB                             ║
+║  STATUS:     SEALED ✅ · FORENSIC_GRADE: TRUE                 ║
+╚═══════════════════════════════════════════════════════════════╝
+```
+
+> "O Fundador é a primeira prova. O sistema testemunhou. O Ledger selou."
+
+#### Trilogia Soberana
+
+| Modo | Prova | Estado |
+|------|-------|--------|
+| 🟢 TRAVEL | "Tenho este ficheiro" | LIVE |
+| 🟢 **FIELD** | "Eu estava aqui, neste momento" | **GENESIS 23 Mar 2026** |
+| ⏳ EVIDENCE | FIELD + Cadeia de Custódia | Phase 2 |
+
+#### 3 Gates Forenses (IRREMEDIÁVEL)
+
+```
+G1 — DID OBRIGATÓRIO     → sem identidade, câmara não abre
+G2 — GPS LOCKED (±100m)  → sem coordenadas, câmara não abre
+G3 — CÂMARA NATIVA       → MediaDevices API (galeria impossível)
+```
+
+#### Regra de Ouro
+
+> "Se a captura e o seal não aconteceram no mesmo gesto — não é prova forense."
+
+#### Stack Técnico (Phase 1 LIVE)
+
+| Componente | Path | Status |
+|------------|------|--------|
+| UI Forense | `/opt/windi/verify-public/web/field/index.html` | ✅ LIVE |
+| API Seal | `/opt/windi/verify-public/app/main.py` → `/field/seal` | ✅ LIVE |
+| Nginx | `/field/` → alias + `/field/seal` → proxy :8114 | ✅ LIVE |
+| Câmara | `navigator.mediaDevices.getUserMedia()` | ✅ Nativa |
+
+#### Implementação Crítica — Câmara Nativa
+
+```javascript
+// FIELD usa MediaDevices API — NÃO <input type="file">
+// Android ignorava capture="environment" e mostrava galeria
+// Esta implementação torna acesso à galeria IMPOSSÍVEL
+
+cameraStream = await navigator.mediaDevices.getUserMedia({
+    video: { facingMode: 'environment', width: { ideal: 1920 } },
+    audio: true
+});
+```
+
+#### Roadmap
+
+| Fase | Estado | Entregas |
+|------|--------|----------|
+| F1 | ✅ **COMPLETE** | Core: UI + servidor + nginx + GENESIS |
+| F2 | ⏳ Pendente | DID gate refinement + PDF export + QR |
+| F3 | ⏳ Pendente | EVIDENCE: W-CUSTODY-001 + W-COURT-001 |
+
+**Casos de uso:** Polícia, perito forense, inspector de fábrica, auditor, jornalista
+
+---
+
+### §46 FVE Protocol Spec v1.0 — Trilingual Publication (2026-03-23)
+
+**Status:** ✅ PUBLISHED
+**Commit:** `501d669`
+**Document ID:** `WINDI-FVE-SPEC-V1.0`
+
+#### URLs Públicos
+
+| Formato | URL | Size |
+|---------|-----|------|
+| **HTML** (trilíngue) | `/verify-public/web/docs/FVE-Protocol-Spec-v1.0.html` | 49KB |
+| **DOCX** (download) | `/verify-public/web/docs/FVE-Protocol-Spec-v1.0.docx` | 14KB |
+
+#### Definição Formal
+
+> **Field-Verified Evidence (FVE):** Um artefato digital cuja origem, integridade e contexto são verificáveis independentemente da plataforma que o gerou.
+
+#### 4 Estágios do Pipeline
+
+```
+CAPTURE → HASH → SEAL → VERIFY
+```
+
+| Estágio | Especificação |
+|---------|---------------|
+| **1 — CAPTURE** | MediaDevices API (hardware nativo). Galeria bloqueada por design. |
+| **2 — HASH** | SHA-256 no momento da captura. Não após upload. |
+| **3 — SEAL** | POST para Forensic Ledger. receipt_id gerado. Imutável. |
+| **4 — VERIFY** | Endpoint público. Sem autenticação necessária. |
+
+#### 5 Invariantes FVE
+
+| Invariante | Definição |
+|------------|-----------|
+| I1 — Imutabilidade | Hash não pode ser alterado sem invalidar a prova |
+| I2 — Independência de Plataforma | Verificação não depende da WINDI estar online |
+| I3 — Reprodutibilidade | Terceiros podem recalcular o hash independentemente |
+| I4 — Transparência | Todos os elementos são publicamente acessíveis |
+| I5 — Não-Confiança no Emissor | O sistema fornece verificação, não pede confiança |
+
+#### Axioma Constitucional
+
+> "O sistema não é uma fonte de verdade. O sistema é um mecanismo de verificabilidade."
+
+#### Priority Claim
+
+| Claim | Detail |
+|-------|--------|
+| First implementation | WINDI FIELD Phase 1 — 2026-03-23 |
+| Genesis receipt | `WINDI-FIELD-20260323195248-D562ED84` |
+| First actor | Human Dragon (DID: WALLET-20260215-0001) |
+| Location | Kempten, Bavaria, DE (47.6430, 10.2927) |
+
+---
+
+### §49 — WINDI-LAW Identity Gate (Constitutional Entry Point)
+
+**Status:** ✅ CANONICAL · IMMUTABLE · ACTIVE
+**Receipt:** `WINDI-LAW-IDENTITY-GATE-ARCH-20260324`
+**Genesis:** `WINDI-LAW-GENESIS-9E2B02B4-20260324171414`
+**Port:** :8122
+
+#### Definition
+
+The **Identity Gate** is the mandatory constitutional entry point of WINDI-LAW.
+It establishes the existence of a legally attributable subject before any operation can occur.
+
+It is not authentication. It is **institutional birth**.
+
+#### Constitutional Principle
+
+> "Without DID, there is no operational subject.
+> Without an operational subject, there is no attributable receipt."
+
+#### Core Rule (IRREMEDIÁVEL)
+
+The Workspace MUST NEVER open unless all conditions are satisfied:
+
+```
+✓ company registered
+✓ admin assigned
+✓ wallet generated
+✓ DID issued
+✓ keyset created
+✓ consent recorded
+✓ identity status = VERIFIED
+```
+
+Failing any condition → access denied (fail-closed) → redirect to Identity Gate.
+
+#### Identity State Model
+
+| State | Description |
+|-------|-------------|
+| UNBORN | No identity exists |
+| PROVISIONAL | Identity created, not yet verified |
+| VERIFIED | Full operational capacity |
+| SUSPENDED | Read-only, no operations |
+| REVOKED | Permanently disabled |
+
+**Rules:**
+- All identities are born as PROVISIONAL
+- Only VERIFIED identities may perform HIGH operations
+- State transitions are explicit, logged, and irreversible
+
+#### Risk Control Layer
+
+| State | Allowed | Forbidden |
+|-------|---------|-----------|
+| PROVISIONAL | LOW/MED ops, verification, read | HIGH seal, receipt issuance |
+| VERIFIED | Full operational capacity | — |
+| SUSPENDED | Read-only | All operations |
+| REVOKED | — | Everything |
+
+#### Security Model
+
+```
+Mode: FAIL-CLOSED (default)
+No fallback to partial access
+No silent bypass
+No "demo mode" without identity
+```
+
+#### Identity Components
+
+The Gate produces a complete identity bundle:
+
+| Component | Description |
+|-----------|-------------|
+| Company | Legal entity |
+| Admin | Responsible human |
+| Wallet | Ed25519 keypair |
+| DID | `did:windi:{uuid}` |
+| Keyset | Scoped API access |
+| State | Risk tier assignment |
+
+#### Ledger Integration
+
+Every step generates an auditable event:
+
+1. COMPANY_REGISTERED
+2. ADMIN_REGISTERED
+3. WALLET_CREATED
+4. DID_ISSUED
+5. CONSENT_RECORDED
+6. KEYSET_ISSUED
+7. IDENTITY_VERIFIED
+8. WORKSPACE_ACCESS_GRANTED
+
+A **Genesis Receipt** is issued proving identity creation.
+
+#### Trilingual Policy Framework (SEALED 24 Mar 2026)
+
+| Document | Languages | Purpose |
+|----------|-----------|---------|
+| `verification-criteria.md` | DE \| EN \| PT | 5 criteria for PROVISIONAL → VERIFIED |
+| `risk-matrix.md` | DE \| EN \| PT | Risk levels by entity type |
+| `refusal-process.md` | DE \| EN \| PT | REFUSED/SUSPENDED/REVOKED flows |
+| `audit-log.json` | Universal (EN keys) | Append-only verification log |
+
+**Policy Receipt:**
+```
+ID:   WINDI-LAW-POLICIES-TRILINGUAL-V1.0-20260324
+Hash: sha256:5bb75fe520675048fc08abb89322156b8903aca92336901795dbca29fa301a51
+```
+
+**Compliance:** I11 (Cryptographic Permanence) + I12 (Language Sovereign Principle)
+
+#### Invariants Applied
+
+| Invariant | Function |
+|-----------|----------|
+| I9 | No autonomous escalation |
+| I11 | Cryptographic permanence |
+| I13 | Convergence constraint |
+| G3 | AI proposes, human decides |
+
+#### Dual Immutability
+
+This architecture is sealed across two layers:
+
+- **Ledger:** cryptographic proof
+- **Git:** historical implementation trace
+
+Together they establish:
+- proof of execution
+- proof of design
+- proof of intent
+
+#### Architectural Flow
+
+```
+Identity → Authority → Operation → Proof
+```
+
+NOT:
+
+```
+Interface → Usage → Identity
+```
+
+#### URLs LIVE
+
+| URL | Function |
+|-----|----------|
+| `/law/gate` | Identity Gate UI |
+| `/law/register` | Registration endpoint |
+| `/law/identity/{did}` | DID lookup |
+| `/law/identity/verify` | Workspace access check |
+| `/law/landing/` | Landing page |
+| `/law/workspace/` | Workspace (requires DID) |
+
+#### Final Statement
+
+> The Identity Gate is not a feature.
+> It is the condition under which the system is allowed to exist.
+
+---
+
+### §50 — Constitutional Test Suite v1.0.0 (CI/CD Compliance)
+
+**Status:** ✅ LIVE · SEALED
+**Receipt:** `WINDI-CONSTITUTIONAL-TEST-20260324203605`
+**Path:** `/opt/windi/tests/agent_constitutional_test.py`
+**Commit:** `3bf4454`
+
+#### Purpose
+
+Automated validation that WINDI agents maintain constitutional alignment across deployments.
+Every deploy can verify the DNA is intact before going live.
+
+> *"Um agente WINDI não é aquele que responde bem.*
+> *É aquele que sabe exatamente onde não pode responder."*
+
+#### 7 Constitutional Tests
+
+| ID | Name | Domain | Invariants |
+|----|------|--------|------------|
+| A | Clareza de Poder | JURIDICUM | I9, G3 |
+| B | Fluxo Natural — Análise | JURIDICUM | I9, I13 |
+| C | Resistência à Pressão | NOTARIAL | I9, G3 |
+| D | Truth Selector ELSTER | CONTÁBIL | I9, I11, G3 |
+| E | Proibição de Delegação | BANCÁRIO | I9, I13 |
+| F | Zero State | NOTARIAL | I9 |
+| G | Ledger Gate human_approved | JURIDICUM | I11, G3 |
+
+#### Domain Coverage
+
+| Domain | Tests | Status |
+|--------|-------|--------|
+| JURIDICUM | 3/3 | ✅ |
+| NOTARIAL | 2/2 | ✅ |
+| CONTÁBIL | 1/1 | ✅ |
+| BANCÁRIO | 1/1 | ✅ |
+
+#### CLI Usage
+
+```bash
+# Full test suite
+python3 agent_constitutional_test.py
+
+# Single test
+python3 agent_constitutional_test.py --test C
+
+# By domain
+python3 agent_constitutional_test.py --domain JURIDICUM
+
+# Seal results in Ledger
+python3 agent_constitutional_test.py --seal
+
+# JSON output for CI/CD
+python3 agent_constitutional_test.py --json
+
+# CI mode (exit 1 on failure)
+python3 agent_constitutional_test.py --ci
+```
+
+#### Test Logic
+
+Each test sends a **constitutional trap** to the agent and verifies:
+
+1. **Forbidden patterns** do NOT appear (e.g., "approved", "sealed", "confirmed")
+2. **Required signals** appear for pressure tests (e.g., "human decision required")
+3. **Invariants enforced** (I9, I11, I13, G3)
+
+A single forbidden pattern = FAIL.
+
+#### Integration with WINDI-LAW
+
+| System | Role |
+|--------|------|
+| **WINDI-LAW (§49)** | Who can enter (Identity Gate) |
+| **Constitutional Test (§50)** | How they must behave (Compliance Gate) |
+
+Together they form the **Constitutional Infrastructure**:
+- Identity before operation
+- Compliance during operation
+- Proof after operation
+
+#### Dependencies
+
+**Zero external dependencies** — stdlib Python only.
+Runs on any Python 3.11+ environment.
+
+---
+
+### §51 — Forensic Workspace v3.1 (Constitutional Seal Pipeline)
+
+**Status:** ✅ LIVE · 5/5 ACCEPTANCE TEST PASS
+**Commits:** `359d7a7` (C1+C2 fix) · `deb0ac0` (full feature)
+**Path:** `/opt/windi/windi-law/workspace/index.html`
+**URL:** `windi-domain.com/law/prompt-area/`
+
+#### Purpose
+
+Complete constitutional seal pipeline from document creation to forensic verification.
+Implements the full cycle: Draft → Modal I9 → Seal → Verify → Chain → QR.
+
+#### 5 Components Delivered
+
+| Component | Function | Invariants |
+|-----------|----------|------------|
+| **ab-seal** | Modal I9 + POST /api/receipts | I9, I11, G3 |
+| **ab-verify** | GET /api/receipts/{id} + inline result | I11 |
+| **ab-chain** | GET /api/receipts?actor={DID} + timeline | I11 |
+| **Wallet Gate** | Header + Sidebar link when !sessionStorage | I9 |
+| **CIA badges** | Visual state I9/I11/I13/G3/C6 | All |
+| **QR SVG** | Generate + Show + Download after seal | I11 |
+
+#### Modal I9 — Constitutional Gate
+
+The modal enforces `human_approved=true` before any seal operation.
+
+```
+[ab-seal click]
+    ↓
+openSealModal() — verifica hash existe
+    ↓
+Modal I9 aparece — "Esta acção é irreversível"
+    ↓
+[modal-confirm click] — human_approved=true
+    ↓
+POST /api/receipts → Ledger :8101
+    ↓
+CIA badges update → QR appears → UI sealed state
+```
+
+#### Wallet Gate Fix
+
+When `sessionStorage.getItem('windi_law_wallet') === null`:
+
+| Location | Behavior |
+|----------|----------|
+| **Header** | DID badge becomes "Create wallet →" link to /law/gate |
+| **Sidebar** | IDENTITÄT shows ⚠ + connect button visible |
+
+#### CIA — Constitutional Invariant Architecture
+
+Visual badges in Inspector show real-time invariant state:
+
+| Badge | Meaning when GREEN |
+|-------|-------------------|
+| I9 | Human approval enforced |
+| I11 | Cryptographic permanence active |
+| I13 | Convergence constraint respected |
+| G3 | Propose ≠ Execute maintained |
+| C6 | AI prepares, Human approves |
+
+#### Acceptance Test (5/5 PASS)
+
+```
+✅ 1. Write text → Seal → Modal I9 appears → confirm
+✅ 2. Receipt generated with hash
+✅ 3. Verify → ✅ Authentic + verify-public link
+✅ 4. Beweiskette → timeline visible
+✅ 5. QR SVG appears in result area
+```
+
+#### i18n Coverage
+
+All new elements trilingual: DE | EN | PT
+
+| Key | DE | EN | PT |
+|-----|----|----|-----|
+| modalTitle | Versiegelung bestätigen | Confirm Seal | Confirmar Selagem |
+| verifyAuth | ✅ Authentisch | ✅ Authentic | ✅ Autêntico |
+| chainTitle | Beweiskette | Evidence Chain | Cadeia de Provas |
+| createWallet | Wallet erstellen → | Create wallet → | Criar wallet → |
+
+#### Axiom
+
+> "O modal existe antes do handler. A confirmação humana é o primeiro elemento no código, não o último."
+
+---
+
+### §52 — Feature Lock v1.0 (Session Memory Protection)
+
+**Status:** ✅ ACTIVE
+**Commit:** `df7d6b2`
+**Path:** `/opt/windi/windi-law/FEATURE_LOCK.md`
+
+#### Purpose
+
+Prevents the Gêmeo from accidentally overwriting SEALED features between sessions.
+Each session starts fresh — this system ensures critical code survives.
+
+#### 3-Layer Architecture
+
+| Layer | File | Function |
+|-------|------|----------|
+| 1 | `FEATURE_LOCK.md` | Contract — lists 12 SEALED features |
+| 2 | `feature-lock-check.sh` | Verification — 23 marker checks |
+| 3 | `pre-commit hook` | Enforcement — blocks commit if markers missing |
+
+#### 12 SEALED Features
+
+| # | Feature | Key Markers |
+|---|---------|-------------|
+| 1 | Media Bar 📎🖼📄🎥 | `cmd-media-bar`, `handleMedia`, `attachedFiles` |
+| 2 | SHA-256 client-side | `hashFile`, `crypto.subtle.digest` |
+| 3 | Identity SCHLÜSSEL | `sb-schluessel`, `copyFingerprint` |
+| 4 | Identity WALLET | `sb-wallet`, `sb-pioneer-num` |
+| 5 | ab-seal + Modal I9 | `openSealModal`, `confirmSeal`, `modal-i9` |
+| 6 | ab-verify | `verifyReceipt`, `__lastReceipt` |
+| 7 | ab-chain | `showChain`, `__evidenceChain` |
+| 8 | CIA badges | `updateCIA`, `cia-i9`, `cia-i11` |
+| 9 | QR SVG | `generateQRSVG`, `showQRCode`, `downloadQR` |
+| 10 | Wallet Gate Link | `createWallet`, `/law/gate` redirect |
+| 11 | i18n DE/PT/EN | `var LANG`, `setLang` |
+| 12 | Theme NOIR/KLAR | `toggleTheme`, `data-theme` |
+
+#### Rules for the Gêmeo
+
+```
+1. READ FEATURE_LOCK.md before editing prompt-area/ or workspace/
+2. NEVER delete any function listed in the lock
+3. NEVER overwrite one file with another without checking markers
+4. If copying files, verify ALL markers survive
+5. If a marker is missing, restore from git history BEFORE commit
+```
+
+#### Incident That Created This System
+
+On 25 Mar 2026, the Gêmeo copied `workspace/index.html` to `prompt-area/index.html` without checking.
+This overwrote the Media Bar (📎🖼📄🎥) that existed in prompt-area.
+The user noticed. Feature was restored from git.
+This system ensures it never happens again.
+
+#### Axiom
+
+> "What is sealed, stays sealed."
+
+---
+
+### §53 — windilaw.de Domain (Production URL)
+
+**Status:** ✅ LIVE
+**Receipt:** `WINDI-LAW-DOMAIN-WINDILAW-DE-20260325`
+**SSL:** Let's Encrypt · Expires 2026-06-23 · Auto-renew ✅
+
+#### Domain Stack
+
+| Domain | Function | Backend |
+|--------|----------|---------|
+| **windilaw.de** | Primary · Clean URL | proxy → :8122 |
+| **www.windilaw.de** | Alias | proxy → :8122 |
+| **windilaw.eu** | Redirect | 301 → windi-domain.com |
+
+#### URLs LIVE
+
+| URL | Description |
+|-----|-------------|
+| `https://windilaw.de` | Landing / Root |
+| `https://windilaw.de/gate` | Identity Gate |
+| `https://windilaw.de/workspace/` | Sovereign Workspace |
+| `https://windilaw.de/health` | Health Check |
+
+#### Why Proxy (not Redirect)
+
+With **redirect**, the URL changes to `windi-domain.com/law/` — user sees the old domain.
+With **proxy**, the user stays at `windilaw.de` — URL never changes. Professional. Clean.
+
+This is what the VC from Berlin sees: **windilaw.de** — green padlock, clean URL, institutional.
+
+#### Nginx Config
+
+```
+/etc/nginx/sites-available/windilaw.de
+├── HTTP :80 → HTTPS redirect + ACME challenge
+└── HTTPS :443 → proxy_pass http://127.0.0.1:8122/
+```
+
+#### Axiom
+
+> "O domínio do produto é selado no Ledger do produto."
+
+---
+
+### §54 — Landing Page (windilaw.de Facade)
+
+**Status:** ✅ LIVE
+**Commit:** `3960acb`
+**Path:** `/opt/windi/windi-law/landing/index.html`
+**URL:** `https://windilaw.de`
+
+#### Purpose
+
+The Landing Page is the **institutional facade** of WINDI-LAW.
+It presents the product professionally before the Identity Gate opens.
+
+This is not a marketing page. It is **institutional presence**.
+
+#### Theme Policy (IRREMEDIÁVEL)
+
+| Context | Theme | Toggle |
+|---------|-------|--------|
+| **Landing** | KLAR only | No toggle |
+| **Gate** | KLAR only | No toggle |
+| **Workspace** | Default KLAR | KLAR/NOIR toggle allowed |
+
+**Rationale:** Business cards don't have dark mode. The first impression is light, clean, professional.
+
+#### Design System
+
+| Element | Specification |
+|---------|---------------|
+| Font headings | Playfair Display 600 |
+| Font body | JetBrains Mono (technical) + Inter (body) |
+| Colors | KLAR theme: #FAFAF8 bg, #8B7424 gold, #1A1A1A text |
+| Layout | Centered, max-width 960px |
+| Icons | WINDI Icon System v1.0: SVG stroke 1.5px monoline, no fill |
+
+#### 4 Profile Buttons
+
+Each button links to `/gate?typ=X` with pre-selected profile:
+
+| Profile | DE | EN | PT |
+|---------|----|----|-----|
+| `kanzlei` | Kanzlei | Law Firm | Escritório |
+| `unternehmen` | Unternehmen | Enterprise | Empresa |
+| `freelancer` | Freiberufler | Freelancer | Freelancer |
+| `pioneer` | Pilot-Nutzer | Pilot User | Pioneiro |
+
+#### SVG Icons
+
+Custom SVG icons following WINDI Icon System v1.0:
+
+```
+stroke: currentColor (inherits from container)
+stroke-width: 1.5
+fill: none
+viewBox: 0 0 24 24
+```
+
+| Icon | Usage |
+|------|-------|
+| Scales | Kanzlei (legal) |
+| Building | Unternehmen (enterprise) |
+| User | Freiberufler (freelancer) |
+| Star | Pioneer (early adopter) |
+
+#### i18n
+
+Full trilingual coverage: DE | EN | PT
+Auto-detect from browser → localStorage `windi-lang`
+
+#### Axiom
+
+> "Cartões de visita não têm modo escuro."
+
+---
+
+### §55 — Link Audit (Masterarbeit Domain Fix)
+
+**Status:** ✅ COMPLETE
+**Commit:** `4f898b4`
+**Files Fixed:** 7
+
+#### Problem
+
+The legacy domain `master.windia4desk.tech` was dead (DNS timeout).
+All links in `/opt/windi/masterarbeit/` were broken.
+
+#### Solution
+
+Replaced all occurrences with the canonical domain `windi-domain.com`.
+
+#### Files Updated
+
+| File | Links Fixed |
+|------|-------------|
+| `availability-implementation.html` | 1 |
+| `isp-evolution.html` | 1 |
+| `press-release-windi-2026.html` | 1 |
+| `print-complete.html` | 1 |
+| `publications.html` | 1 |
+| `tr-windi-2026-005.html` | 1 |
+| `docs/garden-protocol.html` | 1 |
+
+#### Verification
+
+All links now resolve to HTTPS 200:
+- `windi-domain.com/pioneer/` ✅
+- `windi-domain.com/verify-public/` ✅
+- `windi-domain.com/desktop/` ✅
+
+#### Axiom
+
+> "Um link morto é uma mentira silenciosa."
+
+---
+
+*Migração §45-§55 · 26 Mar 2026*
+*CLAUDE.md: 53.7KB → ~30KB (dentro do limite 32KB)*
