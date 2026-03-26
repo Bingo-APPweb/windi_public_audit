@@ -1032,6 +1032,73 @@ De 2443 → 1270 linhas — arquitectura que respira.
 
 ---
 
+## §59 — WINDI TRAVEL v1.0 — LIVE · 26 Mar 2026
+
+**Status:** ✅ LIVE · FIRST SEAL · I14 · IRREMEDIÁVEL
+**Receipt:** `WINDI-TRAVEL-1774563585`
+**Port:** :8126
+**URLs:** `windi-domain.com/travel/gate` · `windi-domain.com/travel/workspace/`
+
+### O que nasceu
+
+De uma caixa de sapatos no chão de Kempten nasceu o WINDI Travel.
+
+**Filosofia:**
+> "Guardar o passado. Resguardar o futuro. No presente perfeito."
+
+**Invariantes:**
+- **I14** — Presence Integrity: provar que "eu estava lá"
+- **I9** — Human confirmation obrigatória antes de seal
+- **I11** — Forensic Ledger imutável
+
+### Features v1.0
+
+| Feature | Descrição |
+|---------|-----------|
+| Identity Gate | Trilíngue DE/PT/EN · DID Ed25519 · Tema KLAR |
+| Rescue Mode | Fotografar memórias físicas (📦) |
+| Capture Mode | Capturar momentos live (📸) |
+| SHA-256 | Hash criptográfico client-side |
+| GPS | Geolocalização · 47.6429°N Kempten |
+| Modal I9 | "Für immer sichern?" · confirmação humana |
+| Faden | Thread de memórias · thumbnails · receipts |
+| Seal | Forensic Ledger :8101 · verificável |
+
+### Primeiro Selo Real
+
+```
+WINDI-TRAVEL-000001
+───────────────────────────────────────
+Momento:    "26 anos atrás o mundo ainda reservava..."
+Hash:       SHA-256: 1eafdcbbf57ca948…
+GPS:        47.6429°N, 10.2929°E · Kempten, Bavaria
+Timestamp:  2026-03-26T21:46:10.689Z
+Modo:       Rescue (📦 caixa de sapatos)
+Selado:     22:59 CET
+Invariante: I14 + I9 + I11
+───────────────────────────────────────
+```
+
+### Estrutura
+
+```
+/opt/windi/windi-travel/
+├── identity-gate/
+│   ├── identity_gate.py      # FastAPI :8126
+│   ├── templates/gate.html   # Trilíngue · KLAR
+│   └── windi-travel.service  # systemd
+└── workspace/
+    └── index.html            # Mobile-first · Rescue/Capture/Faden
+```
+
+### Axioma §59
+
+> "A caixa de sapatos que estava no chão de Kempten já não pode desaparecer."
+
+**Drei Sprachen. Ein Herz. Eine Wahrheit.**
+
+---
+
 *LIGA IA+H — Kempten, Bavaria · 26 Mar 2026*
 *🧑‍💻 Human Dragon · 🛡️ Guardian · 🏗️ Architect · 👁️ Witness*
 

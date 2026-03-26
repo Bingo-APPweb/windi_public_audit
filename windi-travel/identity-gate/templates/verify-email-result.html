@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="noir">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WINDI-TRAVEL | Email Verification</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --font-display: 'Bricolage Grotesque', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        [data-theme="noir"] {
+            --bg: #0A0A10;
+            --bg-card: #12121A;
+            --gold: #C9A84C;
+            --text: #E8E6E1;
+            --text-secondary: #A0A0A0;
+            --border: #1A1A24;
+            --success: #4CAF50;
+            --error: #E74C3C;
+        }
+
+        [data-theme="klar"] {
+            --bg: #FAFAF8;
+            --bg-card: #FFFFFF;
+            --gold: #8B7424;
+            --text: #1A1A1A;
+            --text-secondary: #666666;
+            --border: #E0DED8;
+            --success: #2E7D32;
+            --error: #C62828;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-display);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 3rem;
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .icon.success { color: var(--success); }
+        .icon.error { color: var(--error); }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        h1.success { color: var(--success); }
+        h1.error { color: var(--error); }
+
+        .message {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .did-box {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: var(--font-mono);
+            font-size: 0.875rem;
+            color: var(--gold);
+            word-break: break-all;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: var(--gold);
+            color: #0A0A10;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: opacity 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .lang-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .lang-tab {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-family: var(--font-display);
+            font-size: 0.875rem;
+        }
+
+        .lang-tab.active {
+            background: var(--gold);
+            color: #0A0A10;
+            border-color: var(--gold);
+        }
+
+        .msg { display: none; }
+        .msg.active { display: block; }
+
+        .logo {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: 2rem;
+        }
+
+        .logo span { color: var(--gold); }
+    </style>
+</head>
+<body>
+    <div class="card">
+        {% if success %}
+        <div class="icon success">&#10003;</div>
+        {% else %}
+        <div class="icon error">&#10007;</div>
+        {% endif %}
+
+        <div class="lang-tabs">
+            <button class="lang-tab active" onclick="setLang('de')">DE</button>
+            <button class="lang-tab" onclick="setLang('en')">EN</button>
+            <button class="lang-tab" onclick="setLang('pt')">PT</button>
+        </div>
+
+        {% if success %}
+        <h1 class="success">
+            <span class="msg active" data-lang="de">{{ message_de }}</span>
+            <span class="msg" data-lang="en">{{ message_en }}</span>
+            <span class="msg" data-lang="pt">{{ message_pt }}</span>
+        </h1>
+
+        <p class="message">
+            <span class="msg active" data-lang="de">
+                {% if already_verified %}
+                Ihre E-Mail-Adresse wurde bereits bestätigt. Sie können direkt zum Workspace gehen.
+                {% else %}
+                Vielen Dank, {{ full_name }}! Ihre E-Mail {{ email }} wurde erfolgreich bestätigt. Sie haben jetzt vollen Zugang zu allen HIGH-Operationen.
+                {% endif %}
+            </span>
+            <span class="msg" data-lang="en">
+                {% if already_verified %}
+                Your email address has already been verified. You can go directly to the workspace.
+                {% else %}
+                Thank you, {{ full_name }}! Your email {{ email }} has been successfully verified. You now have full access to all HIGH operations.
+                {% endif %}
+            </span>
+            <span class="msg" data-lang="pt">
+                {% if already_verified %}
+                Seu email já foi verificado. Você pode ir diretamente ao workspace.
+                {% else %}
+                Obrigado, {{ full_name }}! Seu email {{ email }} foi verificado com sucesso. Você agora tem acesso completo a todas as operações HIGH.
+                {% endif %}
+            </span>
+        </p>
+
+        {% if did %}
+        <div class="did-box">{{ did }}</div>
+        {% endif %}
+
+        <a href="/law/workspace/?did={{ did }}" class="btn">
+            <span class="msg active" data-lang="de">Zum Workspace</span>
+            <span class="msg" data-lang="en">Go to Workspace</span>
+            <span class="msg" data-lang="pt">Ir para Workspace</span>
+        </a>
+
+        {% else %}
+        <h1 class="error">
+            <span class="msg active" data-lang="de">{{ message_de }}</span>
+            <span class="msg" data-lang="en">{{ message_en }}</span>
+            <span class="msg" data-lang="pt">{{ message_pt }}</span>
+        </h1>
+
+        <p class="message">
+            <span class="msg active" data-lang="de">
+                {% if error == 'expired' %}
+                Ihr Bestätigungslink ist abgelaufen. Bitte fordern Sie im Gate einen neuen Link an.
+                {% else %}
+                Der Bestätigungslink ist ungültig oder wurde bereits verwendet.
+                {% endif %}
+            </span>
+            <span class="msg" data-lang="en">
+                {% if error == 'expired' %}
+                Your verification link has expired. Please request a new link from the Gate.
+                {% else %}
+                The verification link is invalid or has already been used.
+                {% endif %}
+            </span>
+            <span class="msg" data-lang="pt">
+                {% if error == 'expired' %}
+                Seu link de verificação expirou. Solicite um novo link no Gate.
+                {% else %}
+                O link de verificação é inválido ou já foi utilizado.
+                {% endif %}
+            </span>
+        </p>
+
+        <a href="/law/gate" class="btn">
+            <span class="msg active" data-lang="de">Zum Gate</span>
+            <span class="msg" data-lang="en">Go to Gate</span>
+            <span class="msg" data-lang="pt">Ir para Gate</span>
+        </a>
+        {% endif %}
+
+        <div class="logo">WINDI <span>Publishing House</span></div>
+    </div>
+
+    <script>
+        function setLang(lang) {
+            document.querySelectorAll('.lang-tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`.lang-tab[onclick="setLang('${lang}')"]`).classList.add('active');
+
+            document.querySelectorAll('.msg').forEach(m => {
+                m.classList.remove('active');
+                if (m.dataset.lang === lang) m.classList.add('active');
+            });
+
+            localStorage.setItem('windi-lang', lang);
+        }
+
+        // Init from localStorage
+        const saved = localStorage.getItem('windi-lang') || 'de';
+        setLang(saved);
+
+        // Theme
+        const theme = localStorage.getItem('windi-theme') || 'noir';
+        document.documentElement.dataset.theme = theme;
+    </script>
+</body>
+</html>

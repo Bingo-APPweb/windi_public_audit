@@ -1,0 +1,16 @@
+[Unit]
+Description=WINDI Travel Identity Gate v1.0.0
+After=network.target
+
+[Service]
+User=windi
+WorkingDirectory=/opt/windi/windi-travel/identity-gate
+EnvironmentFile=/opt/windi/windi-travel/identity-gate/.env
+ExecStart=/usr/bin/python3 -m uvicorn identity_gate:app --host 127.0.0.1 --port 8126
+Restart=always
+RestartSec=5
+StandardOutput=append:/opt/windi/logs/windi-travel.log
+StandardError=append:/opt/windi/logs/windi-travel-error.log
+
+[Install]
+WantedBy=multi-user.target
