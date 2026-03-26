@@ -1,0 +1,93 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+.root { font-family: var(--font-mono, monospace); padding: 1rem 0; }
+
+.profiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 1.25rem; }
+
+.profile-btn {
+  padding: 10px 8px; border-radius: var(--border-radius-md, 8px);
+  border: 0.5px solid var(--color-border-tertiary);
+  background: var(--color-background-primary);
+  cursor: pointer; transition: all 0.15s; text-align: center;
+}
+.profile-btn:hover { border-color: var(--color-border-secondary); }
+.profile-btn.active { border-color: var(--color-border-primary); background: var(--color-background-secondary); }
+
+.pb-icon { font-size: 16px; margin-bottom: 4px; }
+.pb-name { font-size: 10px; font-weight: 500; color: var(--color-text-primary); letter-spacing: 0.06em; }
+.pb-role { font-size: 9px; color: var(--color-text-tertiary); margin-top: 2px; font-family: var(--font-mono); }
+
+.journey { display: flex; flex-direction: column; gap: 8px; }
+
+.step-row {
+  display: grid; grid-template-columns: 120px 1fr 1fr;
+  gap: 8px; align-items: stretch;
+}
+
+.step-label {
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--color-text-tertiary);
+  display: flex; align-items: center; padding-right: 8px;
+  border-right: 0.5px solid var(--color-border-tertiary);
+}
+
+.step-card {
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-md, 8px);
+  padding: 10px 12px;
+  background: var(--color-background-primary);
+  transition: border-color 0.15s;
+}
+
+.step-card.required { border-color: var(--color-border-secondary); }
+.step-card.optional { border-color: var(--color-border-tertiary); opacity: 0.6; }
+.step-card.blocked  { border-color: var(--color-border-tertiary); opacity: 0.3; }
+
+.sc-head { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+.sc-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.sc-dot.req  { background: var(--color-text-success, #2EC27E); }
+.sc-dot.opt  { background: var(--color-text-warning, #C9A84C); }
+.sc-dot.skip { background: var(--color-text-tertiary); }
+
+.sc-title { font-size: 11px; font-weight: 500; color: var(--color-text-primary); }
+.sc-sub   { font-size: 10px; color: var(--color-text-secondary); line-height: 1.5; font-family: var(--font-mono); }
+
+.sc-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+.sc-tag {
+  font-size: 9px; padding: 2px 7px; border-radius: 4px;
+  border: 0.5px solid var(--color-border-tertiary);
+  color: var(--color-text-tertiary); font-family: var(--font-mono);
+}
+.sc-tag.gold { border-color: rgba(201,168,76,0.4); color: rgba(201,168,76,0.9); }
+.sc-tag.green { border-color: rgba(46,194,126,0.4); color: rgba(46,194,126,0.9); }
+.sc-tag.blue { border-color: rgba(91,141,212,0.4); color: rgba(91,141,212,0.9); }
+.sc-tag.red { border-color: var(--color-border-danger); color: var(--color-text-danger); }
+
+.divider-row {
+  height: 0.5px; background: var(--color-border-tertiary);
+  margin: 4px 0;
+}
+
+.summary-bar {
+  margin-top: 1rem; padding: 0.875rem 1rem;
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-md, 8px);
+  background: var(--color-background-secondary);
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;
+}
+
+.sum-item { display: flex; flex-direction: column; gap: 3px; }
+.sum-label { font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-text-tertiary); font-family: var(--font-mono); }
+.sum-value { font-size: 12px; font-weight: 500; color: var(--color-text-primary); }
+
+.cta-row { display: flex; gap: 8px; margin-top: 0.875rem; }
+.cta-btn {
+  font-size: 10px; padding: 7px 14px; border-radius: var(--border-radius-md, 8px);
+  border: 0.5px solid var(--color-border-secondary);
+  background: transparent; color: var(--color-text-secondary);
+  cursor: pointer; font-family: var(--font-mono); letter-spacing: 0.06em;
+  transition: background 0.15s;
+}
+.cta-btn:hover { background: var(--color-background-secondary); }
+.cta-btn.primary { border-col

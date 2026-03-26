@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="klar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>WINDI Travel — Momente retten</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2 L28 6 L28 14 C28 22 22 28 16 30 C10 28 4 22 4 14 L4 6 Z' fill='%238B7424'/%3E%3Cpath d='M16 4 L26 7.5 L26 14 C26 21 21 26 16 28 C11 26 6 21 6 14 L6 7.5 Z' fill='%23C9A84C'/%3E%3Cpath d='M9 12 L12 20 L16 14 L20 20 L23 12' stroke='%23ffffff' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════════════════════════════
+   WINDI TRAVEL — Mobile-First Workspace v1.0.0
+   "Guardar o passado. Resguardar o futuro. No presente perfeito."
+
+   Filosofia: "Forense sussurra mais aqui do que em qualquer outro produto WINDI."
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  --font: 'Bricolage Grotesque', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+  --r: 12px;
+  --r-lg: 20px;
+  --safe-b: env(safe-area-inset-bottom, 0px);
+}
+
+/* ══ THEME: KLAR (default — viagem = luz) ══ */
+[data-theme="klar"] {
+  --bg: #FAFAF8;
+  --bg-2: #F0F0EC;
+  --bg-3: #E8E6E0;
+  --text: #1A1A1A;
+  --text-2: #555;
+  --text-3: #888;
+  --text-4: #AAA;
+  --gold: #8B7424;
+  --gold-light: #C4A040;
+  --gold-bg: rgba(139,116,36,0.08);
+  --border: rgba(0,0,0,0.08);
+  --border-2: rgba(0,0,0,0.15);
+  --success: #1D8A56;
+  --success-bg: rgba(29,138,86,0.1);
+}
+
+/* ══ THEME: NOIR ══ */
+[data-theme="noir"] {
+  --bg: #0A0A10;
+  --bg-2: #12121A;
+  --bg-3: #1A1A24;
+  --text: #E8E6E1;
+  --text-2: #B0ADA8;
+  --text-3: #6A6860;
+  --text-4: #4A4840;
+  --gold: #C9A84C;
+  --gold-light: #E0C070;
+  --gold-bg: rgba(201,168,76,0.12);
+  --border: rgba(255,255,255,0.08);
+  --border-2: rgba(255,255,255,0.15);
+  --success: #2EC27E;
+  --success-bg: rgba(46,194,126,0.15);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  height: 100%;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+}
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   HEADER — Minimal
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  padding-top: calc(12px + env(safe-area-inset-top, 0px));
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.logo {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+.logo-w { font-size: 15px; font-weight: 600; color: var(--text); }
+.logo-t { font-size: 15px; font-weight: 600; color: var(--gold); }
+
+.header-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.ctrl-btn {
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-3);
+  font-family: var(--mono);
+  font-size: 11px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.15s;
+  min-height: 32px;
+  min-width: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ctrl-btn:hover { border-color: var(--gold); color: var(--gold); }
+.ctrl-btn.active { background: var(--gold-bg); border-color: var(--gold); color: var(--gold); }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   MAIN CONTENT AREA
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.main {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   MODE VIEWS
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.mode-view { display: none; flex-direction: column; gap: 16px; }
+.mode-view.active { display: flex; }
+
+/* ══ RESCUE MODE ══ */
+.rescue-hero {
+  text-align: center;
+  padding: 32px 16px;
+}
+.rescue-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.9;
+}
+.rescue-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.rescue-sub {
+  font-size: 14px;
+  color: var(--text-2);
+  line-height: 1.5;
+  max-width: 280px;
+  margin: 0 auto;
+}
+
+.rescue-zone {
+  background: var(--bg-2);
+  border: 2px dashed var(--border-2);
+  border-radius: var(--r-lg);
+  padding: 40px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+.rescue-zone:hover, .rescue-zone:active {
+  border-color: var(--gold);
+  background: var(--gold-bg);
+}
+.rescue-zone-icon { font-size: 40px; opacity: 0.7; }
+.rescue-zone-text { font-size: 15px; color: var(--text-2); }
+.rescue-zone-cta {
+  font-size: 13px;
+  color: var(--gold);
+  font-weight: 500;
+  margin-top: 8px;
+}
+
+.rescue-recent {
+  margin-top: 16px;
+}
+.rescue-recent-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-4);
+  margin-bottom: 12px;
+}
+.rescue-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.rescue-thumb {
+  aspect-ratio: 1;
+  background: var(--bg-3);
+  border-radius: var(--r);
+  overflow: hidden;
+  position: relative;
+}
+.rescue-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.rescue-thumb .sealed-badge {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  font-size: 10px;
+  background: var(--success-bg);
+  color: var(--success);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: var(--mono);
+}
+
+/* ══ CAPTURE MODE ══ */
+.viewfinder {
+  width: 100%;
+  aspect-ratio: 3/4;
+  max-height: 55vh;
+  background: var(--bg-3);
+  border-radius: var(--r-lg);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.viewfinder.has-preview img,
+.viewfinder.has-preview video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.viewfinder-empty {
+  text-align: center;
+  color: var(--text-3);
+}
+.viewfinder-empty-icon { font-size: 40px; margin-bottom: 12px; opacity: 0.5; }
+.viewfinder-empty-text { font-size: 13px; }
+
+.vf-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 12px;
+}
+.vf-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.vf-geo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0,0,0,0.5);
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-family: var(--mono);
+}
+.geo-dot {
+  width: 6px;
+  height: 6px;
+  background: #2EC27E;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.2); }
+}
+.vf-hash {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: rgba(255,255,255,0.7);
+  background: rgba(0,0,0,0.4);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+.vf-bottom {
+  text-align: center;
+}
+
+.capture-modes {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+.capture-mode-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 20px;
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  cursor: pointer;
+  transition: all 0.15s;
+  min-width: 72px;
+}
+.capture-mode-btn:hover, .capture-mode-btn.active {
+  border-color: var(--gold);
+  background: var(--gold-bg);
+}
+.capture-mode-btn .icon { font-size: 20px; }
+.capture-mode-btn .label { font-size: 10px; color: var(--text-3); }
+
+.capture-btn {
+  width: 100%;
+  padding: 16px;
+  background: var(--gold);
+  color: #fff;
+  border: none;
+  border-radius: var(--r);
+  font-family: var(--font);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 16px;
+  transition: all 0.15s;
+  min-height: 52px;
+}
+.capture-btn:hover { filter: brightness(1.1); }
+.capture-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ══ THREAD MODE ══ */
+.thread-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.thread-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+.thread-count {
+  font-size: 12px;
+  color: var(--text-3);
+  font-family: var(--mono);
+}
+
+.thread-empty {
+  text-align: center;
+  padding: 48px 24px;
+  color: var(--text-3);
+}
+.thread-empty-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.5; }
+
+.thread-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.thread-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  background: var(--bg-2);
+  border-radius: var(--r);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.thread-item:hover { background: var(--gold-bg); }
+.thread-item-thumb {
+  width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--bg-3);
+}
+.thread-item-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.thread-item-info { flex: 1; min-width: 0; }
+.thread-item-label {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.thread-item-meta {
+  font-size: 11px;
+  color: var(--text-3);
+  font-family: var(--mono);
+}
+.thread-item-tags {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+.tag {
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: var(--mono);
+}
+.tag-sealed { background: var(--success-bg); color: var(--success); }
+.tag-rescue { background: var(--gold-bg); color: var(--gold); }
+.tag-live { background: rgba(59,130,246,0.15); color: #3B82F6; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   BOTTOM BAR — Mobile Navigation
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.bottom-bar {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  padding: 8px 0;
+  padding-bottom: calc(8px + var(--safe-b));
+  flex-shrink: 0;
+}
+
+.nav-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-3);
+  transition: all 0.15s;
+  border-radius: var(--r);
+  min-height: 44px;
+  min-width: 44px;
+}
+.nav-btn:hover, .nav-btn.active {
+  color: var(--gold);
+  background: var(--gold-bg);
+}
+.nav-btn .icon { font-size: 22px; }
+.nav-btn .label { font-size: 10px; font-weight: 500; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SEAL MODAL (I9 Gate)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 1000;
+  align-items: flex-end;
+  justify-content: center;
+}
+.modal-overlay.active { display: flex; }
+
+.modal {
+  background: var(--bg);
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+  width: 100%;
+  max-width: 500px;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 24px;
+  padding-bottom: calc(24px + var(--safe-b));
+  animation: slideUp 0.25s ease-out;
+}
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.modal-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+.modal-close {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-2);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  color: var(--text-3);
+}
+
+.modal-preview {
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: var(--bg-3);
+  border-radius: var(--r);
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+.modal-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.modal-label-input {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid var(--border-2);
+  border-radius: var(--r);
+  font-family: var(--font);
+  font-size: 14px;
+  background: var(--bg-2);
+  color: var(--text);
+  margin-bottom: 16px;
+  resize: none;
+}
+.modal-label-input::placeholder { color: var(--text-4); }
+.modal-label-input:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+
+.modal-meta {
+  font-size: 11px;
+  color: var(--text-3);
+  font-family: var(--mono);
+  padding: 12px;
+  background: var(--bg-2);
+  border-radius: var(--r);
+  margin-bottom: 16px;
+}
+.modal-meta-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.modal-meta-row:last-child { margin-bottom: 0; }
+
+.modal-warning {
+  display: flex;
+  gap: 10px;
+  padding: 12px;
+  background: rgba(201,168,76,0.1);
+  border-radius: var(--r);
+  margin-bottom: 16px;
+  font-size: 12px;
+  color: var(--text-2);
+  line-height: 1.4;
+}
+.modal-warning-icon { font-size: 18px; flex-shrink: 0; }
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+}
+.modal-btn {
+  flex: 1;
+  padding: 14px;
+  border-radius: var(--r);
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  min-height: 48px;
+}
+.modal-btn-cancel {
+  background: var(--bg-2);
+  border: 1px solid var(--border-2);
+  color: var(--text-2);
+}
+.modal-btn-seal {
+  background: var(--gold);
+  border: none;
+  color: #fff;
+}
+.modal-btn-seal:hover { filter: brightness(1.1); }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   POST-SEAL STATE
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.postseal {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 32px 24px;
+}
+.postseal.active { display: flex; }
+.postseal-icon { font-size: 56px; margin-bottom: 16px; }
+.postseal-title { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+.postseal-sub { font-size: 13px; color: var(--text-2); margin-bottom: 24px; }
+.postseal-actions { display: flex; gap: 12px; width: 100%; max-width: 300px; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   FORENSIC WHISPER — mais silencioso que o LAW
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.forensic-whisper {
+  font-size: 9px;
+  color: var(--text-4);
+  text-align: center;
+  padding: 8px;
+  font-family: var(--mono);
+  letter-spacing: 0.03em;
+  opacity: 0.7;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CIA BADGES — Constitutional Indicators
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.cia-badges {
+  display: none; /* Hidden by default — only shown on sealed items */
+  gap: 6px;
+  justify-content: center;
+  margin-top: 8px;
+}
+.cia-badges.active { display: flex; }
+.cia-badge {
+  font-size: 8px;
+  padding: 2px 5px;
+  border-radius: 3px;
+  font-family: var(--mono);
+  background: var(--bg-3);
+  color: var(--text-3);
+}
+.cia-badge.on { background: var(--success-bg); color: var(--success); }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ANIMATIONS
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .mode-view.active { animation: fadeUp 0.3s ease-out; }
+
+  @keyframes sealPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(139,116,36,0); }
+    50% { box-shadow: 0 0 0 4px rgba(139,116,36,0.2); }
+  }
+  .tag-sealed { animation: sealPulse 2s infinite; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@media (min-width: 768px) {
+  .main { max-width: 500px; margin: 0 auto; }
+  .modal { border-radius: var(--r-lg); margin-bottom: 24px; }
+  .modal-overlay { align-items: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     HEADER
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<header class="header">
+  <div class="logo">
+    <span class="logo-w">WINDI</span>
+    <span class="logo-t">Travel</span>
+  </div>
+  <div class="header-controls">
+    <button class="ctrl-btn active" data-lang="de" onclick="setLang('de')">DE</button>
+    <button class="ctrl-btn" data-lang="en" onclick="setLang('en')">EN</button>
+    <button class="ctrl-btn" data-lang="pt" onclick="setLang('pt')">PT</button>
+    <button class="ctrl-btn" onclick="toggleTheme()">&#9788;</button>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     MAIN CONTENT
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<main class="main">
+
+  <!-- RESCUE MODE (default) -->
+  <div class="mode-view active" id="mode-rescue">
+    <div class="rescue-hero">
+      <div class="rescue-icon">📦</div>
+      <h1 class="rescue-title" data-i18n="rescue_title">Erinnerung retten</h1>
+      <p class="rescue-sub" data-i18n="rescue_subtitle">Fotografiere einen physischen Moment</p>
+    </div>
+
+    <div class="rescue-zone" onclick="triggerCapture('rescue')">
+      <div class="rescue-zone-icon">📸</div>
+      <p class="rescue-zone-text" data-i18n="rescue_cta">Vor dem Vergessen schützen</p>
+      <p class="rescue-zone-cta" data-i18n="rescue_btn">Diesen Moment retten</p>
+    </div>
+
+    <div class="rescue-recent" id="rescue-recent" style="display:none;">
+      <p class="rescue-recent-title" data-i18n="rescue_recent">Zuletzt gerettet</p>
+      <div class="rescue-grid" id="rescue-grid"></div>
+    </div>
+  </div>
+
+  <!-- CAPTURE MODE -->
+  <div class="mode-view" id="mode-capture">
+    <div class="viewfinder" id="viewfinder">
+      <div class="viewfinder-empty">
+        <div class="viewfinder-empty-icon">📷</div>
+        <p class="viewfinder-empty-text" data-i18n="capture_title">Moment festhalten</p>
+      </div>
+      <div class="vf-overlay" style="display:none;" id="vf-overlay">
+        <div class="vf-top">
+          <div class="vf-geo" id="vf-geo">
+            <span class="geo-dot"></span>
+            <span id="geo-label" data-i18n="capture_geo_active">Standort aktiv</span>
+          </div>
+          <div class="vf-hash" id="vf-hash"></div>
+        </div>
+        <div class="vf-bottom"></div>
+      </div>
+    </div>
+
+    <div class="capture-modes">
+      <button class="capture-mode-btn active" onclick="setCaptureMode('photo')">
+        <span class="icon">📷</span>
+        <span class="label" data-i18n="mode_photo">Foto</span>
+      </button>
+      <button class="capture-mode-btn" onclick="setCaptureMode('video')">
+        <span class="icon">🎬</span>
+        <span class="label" data-i18n="mode_video">Video</span>
+      </button>
+      <button class="capture-mode-btn" onclick="setCaptureMode('note')">
+        <span class="icon">📝</span>
+        <span class="label" data-i18n="mode_note">Notiz</span>
+      </button>
+    </div>
+
+    <button class="capture-btn" onclick="triggerCapture('capture')" data-i18n="capture_btn">Moment aufnehmen</button>
+  </div>
+
+  <!-- THREAD MODE -->
+  <div class="mode-view" id="mode-thread">
+    <div class="thread-header">
+      <h2 class="thread-title" data-i18n="thread_title">Dein Faden</h2>
+      <span class="thread-count" id="thread-count">0</span>
+    </div>
+
+    <div class="thread-empty" id="thread-empty">
+      <div class="thread-empty-icon">🧵</div>
+      <p data-i18n="thread_empty">Noch keine Momente. Beginne mit der Rettung.</p>
+    </div>
+
+    <div class="thread-list" id="thread-list"></div>
+  </div>
+
+  <!-- POST-SEAL STATE -->
+  <div class="postseal" id="postseal">
+    <div class="postseal-icon">✨</div>
+    <h2 class="postseal-title" data-i18n="postseal_title">Moment gehört dir.</h2>
+    <p class="postseal-sub" data-i18n="postseal_sub">Im Faden gespeichert · verifizierbar · unveränderlich</p>
+    <div class="postseal-actions">
+      <button class="modal-btn modal-btn-cancel" onclick="verifyLastReceipt()" data-i18n="postseal_verify">Verifizieren</button>
+      <button class="modal-btn modal-btn-seal" onclick="setMode('thread')" data-i18n="postseal_continue">Faden fortsetzen</button>
+    </div>
+    <div class="cia-badges active">
+      <span class="cia-badge on" id="cia-i14">I14</span>
+      <span class="cia-badge on" id="cia-i11">I11</span>
+      <span class="cia-badge on" id="cia-i9">I9</span>
+    </div>
+  </div>
+
+</main>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     FORENSIC WHISPER
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<div class="forensic-whisper" id="forensic-whisper">
+  <span id="f-geo"></span> · <span data-i18n="forensic_now">jetzt</span> · <span data-i18n="forensic_verifiable">verifizierbar</span>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     BOTTOM BAR
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<nav class="bottom-bar">
+  <button class="nav-btn active" onclick="setMode('rescue')" id="nav-rescue">
+    <span class="icon">📦</span>
+    <span class="label" data-i18n="nav_rescue">Retten</span>
+  </button>
+  <button class="nav-btn" onclick="setMode('capture')" id="nav-capture">
+    <span class="icon">📸</span>
+    <span class="label" data-i18n="nav_capture">Aufnehmen</span>
+  </button>
+  <button class="nav-btn" onclick="setMode('thread')" id="nav-thread">
+    <span class="icon">🧵</span>
+    <span class="label" data-i18n="nav_thread">Dein Faden</span>
+  </button>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     SEAL MODAL (I9 GATE) — modal-i9 SEALED
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-i9">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title" data-i18n="seal_confirm_title">Für immer sichern?</h3>
+      <button class="modal-close" onclick="closeSealModal()">×</button>
+    </div>
+
+    <div class="modal-preview" id="modal-preview"></div>
+
+    <textarea
+      class="modal-label-input"
+      id="moment-label"
+      rows="2"
+      maxlength="140"
+      data-i18n-placeholder="label_placeholder"
+      placeholder="Was bedeutet dieser Moment für dich?"></textarea>
+
+    <div class="modal-meta" id="modal-meta">
+      <div class="modal-meta-row">
+        <span>SHA-256</span>
+        <span id="meta-hash">—</span>
+      </div>
+      <div class="modal-meta-row">
+        <span data-i18n="capture_geo_active">Standort</span>
+        <span id="meta-geo">—</span>
+      </div>
+      <div class="modal-meta-row">
+        <span>Timestamp</span>
+        <span id="meta-ts">—</span>
+      </div>
+    </div>
+
+    <div class="modal-warning">
+      <span class="modal-warning-icon">⚠️</span>
+      <span data-i18n="seal_confirm_body">Dieser Moment wird unveränderlich im Ledger versiegelt.</span>
+    </div>
+
+    <div class="modal-actions">
+      <button class="modal-btn modal-btn-cancel" onclick="closeSealModal()" data-i18n="back">Zurück</button>
+      <button class="modal-btn modal-btn-seal" onclick="confirmSeal()" data-i18n="seal_confirm_btn">Ja, versiegeln</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     JAVASCRIPT — TRAVEL_I18N + Core Functions
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<script>
+// ═══════════════════════════════════════════════════════════════════════════
+// TRAVEL_I18N — Dicionário Trilíngue Completo (40+ keys)
+// ═══════════════════════════════════════════════════════════════════════════
+
+const TRAVEL_I18N = {
+  // ── NAVEGAÇÃO ──
+  nav_rescue:  { de: "Retten",      pt: "Resgatar",    en: "Rescue"   },
+  nav_capture: { de: "Aufnehmen",   pt: "Capturar",    en: "Capture"  },
+  nav_thread:  { de: "Dein Faden",  pt: "O teu fio",   en: "Your thread" },
+
+  // ── RESCUE MODE ──
+  rescue_title: {
+    de: "Erinnerung retten",
+    pt: "Resgatar memória",
+    en: "Rescue memory"
+  },
+  rescue_subtitle: {
+    de: "Fotografiere einen physischen Moment",
+    pt: "Fotografa uma memória física",
+    en: "Photograph a physical memory"
+  },
+  rescue_cta: {
+    de: "Vor dem Vergessen schützen",
+    pt: "Impede que desapareça para sempre",
+    en: "Keep it from disappearing forever"
+  },
+  rescue_btn: {
+    de: "Diesen Moment retten",
+    pt: "Resgatar este momento",
+    en: "Rescue this moment"
+  },
+  rescue_recent: {
+    de: "Zuletzt gerettet",
+    pt: "Recentemente resgatados",
+    en: "Recently rescued"
+  },
+
+  // ── CAPTURE MODE ──
+  capture_title:      { de: "Moment festhalten",  pt: "Capturar momento",  en: "Capture moment"   },
+  capture_btn:        { de: "Moment aufnehmen",   pt: "Capturar momento",  en: "Capture moment"   },
+  capture_geo_active: { de: "Standort aktiv",     pt: "Localização ativa", en: "Location active"  },
+  capture_geo_none:   { de: "Kein Standort",      pt: "Sem localização",   en: "No location"      },
+  capture_hash_ready: { de: "SHA-256 bereit",     pt: "SHA-256 pronto",    en: "SHA-256 ready"    },
+
+  mode_photo:   { de: "Foto",    pt: "Foto",    en: "Photo"   },
+  mode_video:   { de: "Video",   pt: "Vídeo",   en: "Video"   },
+  mode_note:    { de: "Notiz",   pt: "Nota",    en: "Note"    },
+  mode_collage: { de: "Collage", pt: "Compor",  en: "Compose" },
+
+  // ── SEAL ──
+  seal_btn: {
+    de: "Diesen Moment versiegeln",
+    pt: "Selar este momento",
+    en: "Seal this moment"
+  },
+  seal_confirm_title: {
+    de: "Für immer sichern?",
+    pt: "Guardar para sempre?",
+    en: "Keep forever?"
+  },
+  seal_confirm_body: {
+    de: "Dieser Moment wird unveränderlich im Ledger versiegelt.",
+    pt: "Este momento será selado de forma irremediável no Ledger.",
+    en: "This moment will be irremediably sealed in the Ledger."
+  },
+  seal_confirm_btn: {
+    de: "Ja, versiegeln",
+    pt: "Sim, selar",
+    en: "Yes, seal"
+  },
+  seal_success: {
+    de: "Versiegelt. Für immer.",
+    pt: "Selado. Para sempre.",
+    en: "Sealed. Forever."
+  },
+
+  // ── THREAD ──
+  thread_title: {
+    de: "Dein Faden",
+    pt: "O teu fio",
+    en: "Your thread"
+  },
+  thread_empty: {
+    de: "Noch keine Momente. Beginne mit der Rettung.",
+    pt: "Ainda sem momentos. Começa por resgatar.",
+    en: "No moments yet. Start by rescuing."
+  },
+  thread_moments_count: {
+    de: "{n} Momente",
+    pt: "{n} momentos",
+    en: "{n} moments"
+  },
+  thread_sealed_badge: { de: "Versiegelt",  pt: "Selado",   en: "Sealed"   },
+  thread_rescue_tag:   { de: "Gerettet",    pt: "Resgate",  en: "Rescued"  },
+  thread_live_tag:     { de: "Live",        pt: "Ao vivo",  en: "Live"     },
+
+  // ── POST-SEAL STATE ──
+  postseal_title: {
+    de: "Moment gehört dir.",
+    pt: "Momento é teu.",
+    en: "Moment is yours."
+  },
+  postseal_sub: {
+    de: "Im Faden gespeichert · verifizierbar · unveränderlich",
+    pt: "Guardado no fio · verificável · irremediável",
+    en: "Saved in thread · verifiable · irremediable"
+  },
+  postseal_verify:  { de: "Verifizieren",       pt: "Verificar",        en: "Verify"          },
+  postseal_continue:{ de: "Faden fortsetzen",   pt: "Continuar fio",    en: "Continue thread" },
+
+  // ── FORENSIC WHISPER ──
+  forensic_now:        { de: "jetzt",         pt: "agora",        en: "now"         },
+  forensic_verifiable: { de: "verifizierbar", pt: "verificável",  en: "verifiable"  },
+
+  // ── LABEL INPUT ──
+  label_placeholder: {
+    de: "Was bedeutet dieser Moment für dich?",
+    pt: "O que significa este momento para ti?",
+    en: "What does this moment mean to you?"
+  },
+
+  // ── MISC ──
+  back: { de: "Zurück", pt: "Voltar", en: "Back" }
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════════════════
+
+let LANG = localStorage.getItem('windi_travel_lang') || 'de';
+let currentMode = 'rescue';
+let captureMode = 'photo';
+let currentMoment = null;
+let thread = JSON.parse(localStorage.getItem('windi_travel_thread') || '[]');
+let walletId = sessionStorage.getItem('windi_travel_wallet') || null;
+let lastReceipt = null;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// i18n — setLang SEALED
+// ═══════════════════════════════════════════════════════════════════════════
+
+function setLang(lang) {
+  LANG = lang;
+  localStorage.setItem('windi_travel_lang', lang);
+
+  // Update buttons
+  document.querySelectorAll('[data-lang]').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === lang);
+  });
+
+  // Update text content
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (TRAVEL_I18N[key]?.[lang]) {
+      el.textContent = TRAVEL_I18N[key][lang];
+    }
+  });
+
+  // Update placeholders
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.dataset.i18nPlaceholder;
+    if (TRAVEL_I18N[key]?.[lang]) {
+      el.placeholder = TRAVEL_I18N[key][lang];
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// THEME — toggleTheme SEALED
+// ═══════════════════════════════════════════════════════════════════════════
+
+function toggleTheme() {
+  const html = document.documentElement;
+  const current = html.dataset.theme || 'klar';
+  const next = current === 'klar' ? 'noir' : 'klar';
+  html.dataset.theme = next;
+  localStorage.setItem('windi_travel_theme', next);
+}
+
+function initTheme() {
+  const saved = localStorage.getItem('windi_travel_theme');
+  if (saved) {
+    document.documentElement.dataset.theme = saved;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// MODE NAVIGATION
+// ═══════════════════════════════════════════════════════════════════════════
+
+function setMode(mode) {
+  currentMode = mode;
+
+  // Hide all modes
+  document.querySelectorAll('.mode-view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('postseal').classList.remove('active');
+
+  // Show selected
+  document.getElementById(`mode-${mode}`)?.classList.add('active');
+  document.getElementById(`nav-${mode}`)?.classList.add('active');
+
+  // Update thread on switch
+  if (mode === 'thread') {
+    renderThread();
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// CAPTURE — triggerCapture + handleMedia SEALED
+// ═══════════════════════════════════════════════════════════════════════════
+
+function setCaptureMode(mode) {
+  captureMode = mode;
+  document.querySelectorAll('.capture-mode-btn').forEach(b => b.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+}
+
+function triggerCapture(source) {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = captureMode === 'video' ? 'video/*' : 'image/*';
+  input.capture = 'environment';
+  input.onchange = e => handleMedia(e.target.files[0], source);
+  input.click();
+}
+
+async function handleMedia(file, source) {
+  if (!file) return;
+
+  // Show preview
+  const vf = document.getElementById('viewfinder');
+  const overlay = document.getElementById('vf-overlay');
+
+  const reader = new FileReader();
+  reader.onload = e => {
+    vf.innerHTML = file.type.startsWith('video')
+      ? `<video src="${e.target.result}" controls style="width:100%;height:100%;object-fit:cover;"></video>`
+      : `<img src="${e.target.result}" alt="Preview">`;
+    vf.classList.add('has-preview');
+    vf.appendChild(overlay);
+    overlay.style.display = 'flex';
+  };
+  reader.readAsDataURL(file);
+
+  // Calculate hash
+  const hash = await hashFile(file);
+  document.getElementById('vf-hash').textContent = `SHA-256: ${hash.substring(0,12)}…`;
+
+  // Get geo
+  let geo = null;
+  if (navigator.geolocation) {
+    try {
+      const pos = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: true,
+          timeout: 15000,
+          maximumAge: 0
+        });
+      });
+      geo = { lat: pos.coords.latitude.toFixed(4), lon: pos.coords.longitude.toFixed(4) };
+      document.getElementById('geo-label').textContent = `${geo.lat}, ${geo.lon}`;
+    } catch (e) {
+      console.warn('GPS error:', e.code, e.message);
+      document.getElementById('geo-label').textContent = TRAVEL_I18N.capture_geo_none[LANG] + ' (' + (e.message || 'erro') + ')';
+    }
+  } else {
+    document.getElementById('geo-label').textContent = 'GPS não disponível';
+  }
+
+  // Create thumbnail for localStorage (small, ~5KB)
+  const thumbnail = file.type.startsWith('image') ? await createThumbnail(file) : null;
+
+  // Store current moment
+  currentMoment = {
+    file,
+    hash,
+    source,
+    geo,
+    ts: Date.now(),
+    lang: LANG,
+    media_type: file.type.startsWith('video') ? 'video' : 'image',
+    dataUrl: null,
+    thumbnail: thumbnail
+  };
+
+  // Read data URL for preview (full size, only for display)
+  const previewReader = new FileReader();
+  previewReader.onload = e => {
+    currentMoment.dataUrl = e.target.result;
+  };
+  previewReader.readAsDataURL(file);
+
+  // Switch to capture mode and show modal
+  if (currentMode === 'rescue') {
+    setMode('capture');
+  }
+
+  setTimeout(() => openSealModal(), 300);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// THUMBNAIL — createThumbnail (100x100px para localStorage)
+// ═══════════════════════════════════════════════════════════════════════════
+
+function createThumbnail(file, maxSize = 100) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const scale = Math.min(maxSize / img.width, maxSize / img.height);
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL('image/jpeg', 0.7));
+      };
+      img.onerror = () => resolve(null);
+      img.src = e.target.result;
+    };
+    reader.onerror = () => resolve(null);
+    reader.readAsDataURL(file);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// HASH — hashFile SEALED (crypto.subtle)
+// ═══════════════════════════════════════════════════════════════════════════
+
+async function hashFile(file) {
+  const buffer = await file.arrayBuffer();
+  const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SEAL MODAL — openSealModal + confirmSeal SEALED (I9 Gate)
+// ═══════════════════════════════════════════════════════════════════════════
+
+function openSealModal() {
+  if (!currentMoment) return;
+
+  const modal = document.getElementById('modal-i9');
+  const preview = document.getElementById('modal-preview');
+
+  // Set preview
+  if (currentMoment.dataUrl) {
+    preview.innerHTML = currentMoment.media_type === 'video'
+      ? `<video src="${currentMoment.dataUrl}" controls style="width:100%;height:100%;object-fit:cover;"></video>`
+      : `<img src="${currentMoment.dataUrl}" alt="Preview" style="width:100%;height:100%;object-fit:cover;">`;
+  }
+
+  // Set meta
+  document.getElementById('meta-hash').textContent = currentMoment.hash.substring(0, 16) + '…';
+  document.getElementById('meta-geo').textContent = currentMoment.geo
+    ? `${currentMoment.geo.lat}, ${currentMoment.geo.lon}`
+    : TRAVEL_I18N.capture_geo_none[LANG];
+  document.getElementById('meta-ts').textContent = new Date(currentMoment.ts).toISOString();
+
+  modal.classList.add('active');
+}
+
+function closeSealModal() {
+  document.getElementById('modal-i9').classList.remove('active');
+}
+
+async function confirmSeal() {
+  if (!currentMoment) {
+    console.warn('confirmSeal: no moment captured');
+    return;
+  }
+
+  const label = document.getElementById('moment-label').value.trim() || 'Moment';
+
+  // Build moment object (com thumbnail pequeno ~5KB)
+  const moment = {
+    id: `WINDI-TRAVEL-${Date.now()}`,
+    label,
+    hash: currentMoment.hash,
+    geo: currentMoment.geo,
+    ts: currentMoment.ts,
+    lang: currentMoment.lang,
+    source: currentMoment.source,
+    media_type: currentMoment.media_type,
+    thumbnail: currentMoment.thumbnail,
+    sealed: false,
+    receipt: null
+  };
+
+  // Seal to Ledger
+  try {
+    const response = await fetch('/travel/seal', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        label,
+        hash: currentMoment.hash,
+        geo: currentMoment.geo ? `${currentMoment.geo.lat},${currentMoment.geo.lon}` : '',
+        mode: currentMoment.source,
+        lang: currentMoment.lang,
+        media_type: currentMoment.media_type
+      })
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      moment.sealed = true;
+      moment.receipt = result.receipt_id || result.id;
+      lastReceipt = moment.receipt;
+    }
+  } catch (e) {
+    console.warn('Ledger seal failed:', e);
+  }
+
+  // Add to thread
+  thread.unshift(moment);
+  localStorage.setItem('windi_travel_thread', JSON.stringify(thread));
+
+  // Close modal and show postseal
+  closeSealModal();
+  document.querySelectorAll('.mode-view').forEach(v => v.classList.remove('active'));
+  document.getElementById('postseal').classList.add('active');
+
+  // Reset
+  currentMoment = null;
+  document.getElementById('moment-label').value = '';
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// VERIFY — verifyLastReceipt SEALED
+// ═══════════════════════════════════════════════════════════════════════════
+
+function verifyLastReceipt() {
+  if (lastReceipt) {
+    window.open(`https://windi-domain.com/verify-public/?id=${lastReceipt}`, '_blank');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// THREAD — renderThread SEALED
+// ═══════════════════════════════════════════════════════════════════════════
+
+function renderThread() {
+  const list = document.getElementById('thread-list');
+  const empty = document.getElementById('thread-empty');
+  const count = document.getElementById('thread-count');
+
+  count.textContent = thread.length;
+
+  if (thread.length === 0) {
+    empty.style.display = 'block';
+    list.innerHTML = '';
+    return;
+  }
+
+  empty.style.display = 'none';
+  list.innerHTML = thread.map(m => `
+    <div class="thread-item" onclick="viewMoment('${m.id}')">
+      <div class="thread-item-thumb">
+        ${m.thumbnail ? `<img src="${m.thumbnail}" alt="${m.label}">` : ''}
+      </div>
+      <div class="thread-item-info">
+        <div class="thread-item-label">${m.label}</div>
+        <div class="thread-item-meta">${new Date(m.ts).toLocaleDateString(LANG === 'de' ? 'de-DE' : LANG === 'pt' ? 'pt-PT' : 'en-US')}</div>
+        <div class="thread-item-tags">
+          ${m.sealed ? `<span class="tag tag-sealed">${TRAVEL_I18N.thread_sealed_badge[LANG]}</span>` : ''}
+          ${m.source === 'rescue' ? `<span class="tag tag-rescue">${TRAVEL_I18N.thread_rescue_tag[LANG]}</span>` : ''}
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  // Also update rescue recent
+  updateRescueRecent();
+}
+
+function updateRescueRecent() {
+  const recent = thread.filter(m => m.source === 'rescue').slice(0, 6);
+  const container = document.getElementById('rescue-recent');
+  const grid = document.getElementById('rescue-grid');
+
+  if (recent.length === 0) {
+    container.style.display = 'none';
+    return;
+  }
+
+  container.style.display = 'block';
+  grid.innerHTML = recent.map(m => `
+    <div class="rescue-thumb">
+      ${m.thumbnail ? `<img src="${m.thumbnail}" alt="${m.label}">` : ''}
+      ${m.sealed ? `<span class="sealed-badge">✓</span>` : ''}
+    </div>
+  `).join('');
+}
+
+function viewMoment(id) {
+  // TODO: Implement moment detail view
+  console.log('View moment:', id);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// WALLET GATE — clearPreviousSession (Opção A) SEALED
+// ═══════════════════════════════════════════════════════════════════════════
+
+function clearPreviousSession() {
+  const wallet = sessionStorage.getItem('windi_travel_wallet');
+  if (!wallet) {
+    sessionStorage.clear();
+  }
+}
+
+function checkWalletGate() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const didParam = urlParams.get('did');
+
+  if (didParam) {
+    sessionStorage.setItem('windi_travel_wallet', didParam);
+    walletId = didParam;
+  }
+
+  if (!walletId) {
+    // Redirect to gate
+    window.location.href = '/travel/gate';
+    return false;
+  }
+
+  return true;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════════════════
+
+document.addEventListener('DOMContentLoaded', () => {
+  clearPreviousSession();
+
+  // Check wallet gate
+  if (!checkWalletGate()) return;
+
+  // Init theme
+  initTheme();
+
+  // Init language
+  setLang(LANG);
+
+  // Render thread
+  renderThread();
+
+  // Update forensic whisper with geo
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(pos => {
+      document.getElementById('f-geo').textContent =
+        `${pos.coords.latitude.toFixed(2)}°N`;
+    }, () => {});
+  }
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI LAW — Governança Silenciosa</title>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --perg: #F5F0E0;
+  --perg-2: #EDE8D0;
+  --perg-3: #E4DEC4;
+  --ink: #2A2010;
+  --ink-2: #5A4A2A;
+  --ink-3: #8B7A60;
+  --ink-4: #B0A080;
+  --gold: #8B6914;
+  --gold-light: #C4A040;
+  --gold-bg: rgba(139,105,20,0.07);
+  --green: #3B6D11;
+  --green-bg: #EAF3DE;
+  --blue-bg: #E6F1FB;
+  --blue: #185FA5;
+  --amber: #854F0B;
+  --amber-bg: #FAEEDA;
+  --red: #A32D2D;
+  --border: rgba(90,74,42,0.12);
+  --border-2: rgba(90,74,42,0.22);
+  --font: 'Bricolage Grotesque', sans-serif;
+  --font-doc: 'Lora', Georgia, serif;
+  --mono: 'JetBrains Mono', monospace;
+  --r: 8px;
+  --r-lg: 12px;
+}
+
+/* ══ THEME: NOIR (dark) ══ data-theme SEALED */
+[data-theme="noir"] {
+  --perg: #0A0A10;
+  --perg-2: #12121A;
+  --perg-3: #1A1A24;
+  --ink: #E8E6E1;
+  --ink-2: #C0BDB8;
+  --ink-3: #8A8780;
+  --ink-4: #5A5850;
+  --gold: #C9A84C;
+  --gold-light: #E0C070;
+  --gold-bg: rgba(201,168,76,0.12);
+  --green-bg: rgba(59,109,17,0.15);
+  --blue-bg: rgba(24,95,165,0.15);
+  --amber-bg: rgba(133,79,11,0.15);
+  --border: rgba(255,255,255,0.08);
+  --border-2: rgba(255,255,255,0.15);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font); background: var(--perg); color: var(--ink); height: 100vh; overflow: hidden; }
+
+/* ═══ LAYOUT ═══ */
+.app { display: flex; height: 100vh; }
+
+/* ── SIDEBAR LEFT ── */
+.sl {
+  width: 192px; flex-shrink: 0;
+  background: var(--perg-2);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  overflow-y: auto;
+}
+.sl::-webkit-scrollbar { width: 3px; }
+.sl::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 2px; }
+
+.sl-logo {
+  padding: 13px 14px 11px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: baseline; gap: 4px;
+}
+.sl-logo .w { font-size: 14px; font-weight: 600; color: var(--ink); letter-spacing: 0.01em; }
+.sl-logo .law { font-size: 14px; font-weight: 600; color: var(--gold); }
+.sl-logo .did { font-size: 8px; font-family: var(--mono); color: var(--ink-4); margin-left: auto; }
+
+.sl-sec {
+  padding: 10px 13px 3px;
+  font-size: 9px; font-weight: 500; letter-spacing: 0.09em;
+  color: var(--ink-4); text-transform: uppercase;
+}
+.sl-item {
+  display: flex; align-items: center; gap: 7px;
+  padding: 6px 13px; font-size: 12px; color: var(--ink-2);
+  cursor: pointer; transition: background 0.12s;
+  border-left: 2px solid transparent;
+}
+.sl-item:hover { background: rgba(139,105,20,0.05); }
+.sl-item.on { background: var(--gold-bg); border-left-color: var(--gold); color: var(--ink); font-weight: 500; }
+.sl-item .ct { margin-left: auto; font-size: 9px; background: var(--perg-3); padding: 1px 5px; border-radius: 8px; color: var(--ink-3); }
+
+.sl-doc {
+  padding: 4px 13px 4px 20px; font-size: 11px; color: var(--ink-3);
+  cursor: pointer; display: flex; align-items: center; gap: 5px;
+  border-left: 2px solid transparent; transition: all 0.12s;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.sl-doc:hover { color: var(--ink-2); background: rgba(139,105,20,0.03); }
+.sl-doc.on { color: var(--ink-2); border-left-color: var(--gold-light); font-weight: 500; }
+.sl-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+
+/* identity bottom */
+.sl-identity { margin-top: auto; border-top: 1px solid var(--border); }
+.sl-id-block { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+.sl-id-hdr { display: flex; align-items: center; justify-content: space-between; font-size: 9px; font-weight: 500; color: var(--gold); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 5px; }
+.sl-id-hdr .ok { color: var(--green); font-size: 8px; }
+.sl-id-row { display: flex; justify-content: space-between; font-size: 10px; margin-bottom: 2px; }
+.sl-id-row .k { color: var(--ink-4); }
+.sl-id-row .v { color: var(--ink-2); font-size: 9px; font-family: var(--mono); }
+.sl-id-row .v.g { color: var(--gold); font-family: var(--font); font-size: 10px; font-weight: 500; }
+.sl-sov { padding: 7px 12px 9px; }
+.sl-sov-row { display: flex; justify-content: space-between; font-size: 9px; color: var(--ink-4); margin-bottom: 4px; }
+.sl-sov-row span { color: var(--gold); font-weight: 500; }
+.sl-bar { height: 2px; background: var(--border-2); border-radius: 1px; overflow: hidden; }
+.sl-bar-fill { height: 100%; width: 93.3%; background: var(--gold); border-radius: 1px; }
+.sl-connect-btn {
+  display: block; width: 100%; padding: 6px 10px; margin-top: 6px;
+  font-size: 10px; font-weight: 500; font-family: var(--font);
+  background: var(--gold); color: white; border: none;
+  border-radius: 4px; cursor: pointer; text-align: center;
+  transition: background 0.12s;
+}
+.sl-connect-btn:hover { background: #6B4F10; }
+.sl-connect-btn.hidden { display: none; }
+.ok.pending { color: var(--amber); }
+
+/* ── CENTER ── */
+.center { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+
+.topbar {
+  display: flex; align-items: center;
+  border-bottom: 1px solid var(--border);
+  background: var(--perg); padding: 0 16px;
+  flex-shrink: 0; height: 36px; gap: 0;
+}
+.tab { padding: 0 13px; height: 36px; display: flex; align-items: center; font-size: 11px; font-weight: 500; color: var(--ink-4); cursor: pointer; border-bottom: 1.5px solid transparent; transition: all 0.12s; letter-spacing: 0.02em; }
+.tab.on { color: var(--ink); border-bottom-color: var(--gold); }
+.tab:hover { color: var(--ink-2); }
+.topbar-r { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.topbar-live { font-size: 9px; color: var(--green); display: flex; align-items: center; gap: 3px; }
+.topbar-live::before { content:''; width:4px; height:4px; border-radius:50%; background:var(--green); display:inline-block; }
+.topbar-sha { font-size: 9px; font-family: var(--mono); color: var(--ink-4); }
+.lang-pills { display: flex; gap: 2px; }
+.lpill { font-size: 9px; padding: 1px 6px; border-radius: 8px; border: 1px solid var(--border); color: var(--ink-4); cursor: pointer; background: transparent; transition: all 0.12s; }
+.lpill.on { background: var(--perg-2); color: var(--ink-2); border-color: var(--border-2); }
+
+/* main flex */
+.main { flex: 1; display: flex; overflow: hidden; }
+.canvas { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+
+/* ══ ESTADO VAZIO ══ */
+#st-empty {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 24px 40px;
+  animation: fu 0.35s ease;
+}
+/* ══ ANIMATIONS — Phase 5 Polish UX ══ */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes fu { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:none} }
+  @keyframes docEnter { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
+  @keyframes sealPulse { 0%,100%{box-shadow:0 0 0 0 rgba(139,105,20,0)} 50%{box-shadow:0 0 0 4px rgba(139,105,20,0.18)} }
+}
+/* A4: QR hover expand */
+.dc-qr-tooltip { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.dc-qr-tooltip:hover { transform: scale(1.08); box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+/* A5: Inspector transition */
+.inspector { transition: opacity 0.25s ease, transform 0.25s ease; }
+.inspector.collapsed { opacity: 0.6; transform: translateX(4px); }
+
+.greet { font-size: 12px; color: var(--ink-4); margin-bottom: 4px; }
+.wtitle { font-size: 24px; font-weight: 600; color: var(--ink); margin-bottom: 26px; line-height: 1.2; text-align: center; }
+.wtitle em { font-style: normal; color: var(--gold); }
+
+/* prompt box */
+.pbox {
+  width: 100%; max-width: 580px;
+  background: white; border: 1px solid var(--border-2);
+  border-radius: 14px; overflow: hidden;
+  box-shadow: 0 2px 14px rgba(90,74,42,0.06);
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+.pbox:focus-within { border-color: var(--gold); box-shadow: 0 3px 20px rgba(139,105,20,0.10); }
+.pbox textarea {
+  width: 100%; padding: 14px 16px 6px; font-size: 13px;
+  font-family: var(--font); border: none; outline: none;
+  background: transparent; color: var(--ink); resize: none; min-height: 52px;
+}
+.pbox textarea::placeholder { color: var(--ink-4); }
+.pbox-ft {
+  display: flex; align-items: center; gap: 5px;
+  padding: 6px 10px 8px; border-top: 1px solid var(--border);
+}
+.patt { display: flex; flex-direction: column; align-items: center; gap: 1px; cursor: pointer; padding: 4px 5px; border-radius: 5px; transition: background 0.12s; }
+.patt:hover { background: var(--perg-2); }
+.patt .ico { font-size: 14px; }
+.patt .lbl { font-size: 8px; color: var(--ink-4); letter-spacing: 0.04em; }
+.pagent { font-size: 10px; font-weight: 500; padding: 3px 9px; border-radius: 14px; background: var(--gold-bg); color: var(--gold); border: 1px solid rgba(139,105,20,0.18); cursor: pointer; margin-left: 2px; }
+.plang { display: flex; gap: 2px; margin-left: auto; }
+.plbtn { font-size: 9px; padding: 2px 6px; border-radius: 8px; border: 1px solid var(--border); color: var(--ink-4); cursor: pointer; background: transparent; }
+.plbtn.on { background: var(--perg-2); color: var(--ink-2); border-color: var(--border-2); }
+.psend { width: 28px; height: 28px; border-radius: 50%; background: var(--gold); border: none; color: white; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.12s; }
+.psend:hover { background: #6B4F10; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-top: 16px; max-width: 580px; }
+.chip { font-size: 11px; padding: 5px 11px; border-radius: 18px; border: 1px solid var(--border-2); color: var(--ink-2); background: white; cursor: pointer; transition: all 0.12s; }
+.chip:hover { border-color: var(--gold); color: var(--gold); background: var(--gold-bg); }
+
+.sugg { margin-top: 22px; max-width: 580px; width: 100%; }
+.sugg-lbl { font-size: 9px; color: var(--ink-4); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 7px; }
+.sugg-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+.sc { background: white; border: 1px solid var(--border); border-radius: var(--r); padding: 10px 11px; cursor: pointer; transition: all 0.12s; }
+.sc:hover { border-color: rgba(139,105,20,0.3); box-shadow: 0 2px 8px rgba(139,105,20,0.06); }
+.sc-t { font-size: 9px; font-weight: 500; color: var(--gold); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 3px; }
+.sc-n { font-size: 11px; font-weight: 500; color: var(--ink); line-height: 1.35; }
+.sc-s { font-size: 9px; color: var(--ink-4); margin-top: 2px; }
+
+/* ══ ESTADO ACTIVO ══ */
+#st-active { flex: 1; display: none; flex-direction: column; overflow: hidden; }
+
+.doc-hdr {
+  padding: 8px 16px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+}
+.dbadge { font-size: 9px; font-weight: 500; padding: 2px 7px; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.05em; }
+.dbadge.legal { background: var(--green-bg); color: var(--green); }
+.dbadge.comply { background: var(--blue-bg); color: var(--blue); }
+.dbadge.acct { background: var(--amber-bg); color: var(--amber); }
+.dtitle { font-size: 12px; font-weight: 500; color: var(--ink); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dacts { display: flex; gap: 5px; }
+.dact { font-size: 10px; padding: 4px 10px; border-radius: 5px; border: 1px solid var(--border-2); background: white; color: var(--ink-2); cursor: pointer; font-family: var(--font); font-weight: 500; transition: all 0.12s; }
+.dact:hover { border-color: var(--gold-light); color: var(--gold); }
+.dact.seal-btn { background: var(--gold); color: white; border-color: transparent; animation: sealPulse 2s ease-in-out infinite; }
+.dact.seal-btn:hover { background: #6B4F10; animation: none; }
+
+/* scroll */
+.scroll { flex: 1; overflow-y: auto; padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; }
+.scroll::-webkit-scrollbar { width: 3px; }
+.scroll::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 2px; }
+
+/* agent response */
+.amsg { display: flex; gap: 10px; animation: fu 0.3s ease; }
+.aav { width: 24px; height: 24px; border-radius: 50%; background: var(--gold-bg); border: 1px solid rgba(139,105,20,0.18); display: flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0; margin-top: 2px; }
+.abody { flex: 1; min-width: 0; }
+.aname { font-size: 9px; font-weight: 500; color: var(--gold); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 5px; }
+.atext { font-size: 13px; color: var(--ink); line-height: 1.7; }
+.atext p { margin-bottom: 8px; }
+.atext p:last-child { margin-bottom: 0; }
+
+.risk-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; margin: 10px 0; }
+.rcard { background: white; border: 1px solid var(--border); border-radius: var(--r); padding: 9px 11px; }
+.rcard-l { font-size: 9px; color: var(--ink-4); margin-bottom: 3px; }
+.rcard-v { font-size: 11px; font-weight: 500; }
+.rcard-v.h { color: var(--red); }
+.rcard-v.m { color: var(--amber); }
+.rcard-v.l { color: var(--green); }
+
+/* ════════════════════════════════════
+   DOCUMENTO — O PROTAGONISTA
+   Forense é o subtexto, não o tema
+   ════════════════════════════════════ */
+.doc-canvas {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  box-shadow: 0 1px 8px rgba(90,74,42,0.05);
+  animation: docEnter 0.4s ease;
+}
+
+/* cabeçalho do documento — clean, institucional */
+.dc-header {
+  padding: 20px 24px 16px;
+  border-bottom: 0.5px solid var(--border);
+  display: flex; align-items: flex-start; justify-content: space-between;
+}
+.dc-header-left {}
+.dc-org { font-size: 11px; font-weight: 600; color: var(--gold); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 4px; }
+.dc-title { font-size: 17px; font-weight: 600; color: var(--ink); font-family: var(--font-doc); line-height: 1.3; margin-bottom: 6px; }
+.dc-meta { display: flex; gap: 6px; flex-wrap: wrap; }
+.dc-tag { font-size: 9px; padding: 2px 7px; border-radius: 10px; background: var(--perg-2); color: var(--ink-2); border: 1px solid var(--border); }
+
+/* corpo do documento — tipografia editorial */
+.dc-body {
+  padding: 20px 24px;
+  font-family: var(--font-doc);
+  font-size: 12.5px; color: var(--ink-2); line-height: 1.75;
+}
+.dc-body .clause { margin-bottom: 14px; }
+.dc-body .clause-num { font-size: 10px; font-weight: 500; color: var(--ink-3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+.dc-body .clause-text { color: var(--ink); }
+.dc-body .highlight { background: rgba(139,105,20,0.06); border-left: 2px solid var(--gold-light); padding: 8px 12px; border-radius: 0 4px 4px 0; margin: 8px 0; font-size: 12px; color: var(--ink-2); }
+
+/* ════ RODAPÉ FORENSE — SILENCIOSO ════ */
+.dc-forensic-footer {
+  padding: 7px 24px;
+  border-top: 0.5px solid var(--border);
+  background: var(--perg-2);
+  display: flex; align-items: center; gap: 10px;
+}
+
+.dc-seal-mark {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 9px; color: var(--ink-4);
+  font-family: var(--mono);
+}
+.dc-seal-icon { font-size: 10px; opacity: 0.7; }
+.dc-seal-hash { letter-spacing: 0.02em; }
+.dc-seal-inv { color: var(--gold); font-weight: 500; opacity: 0.8; }
+
+.dc-sep { width: 1px; height: 10px; background: var(--border-2); flex-shrink: 0; }
+
+/* QR — minúsculo, no canto */
+.dc-qr-mini {
+  width: 24px; height: 24px; flex-shrink: 0; margin-left: auto;
+  opacity: 0.6; transition: opacity 0.2s;
+  cursor: pointer;
+}
+.dc-qr-mini:hover { opacity: 1; }
+.dc-qr-mini svg { width: 24px; height: 24px; }
+
+.dc-qr-wrap { position: relative; }
+.dc-qr-tooltip {
+  display: none; position: absolute; bottom: 30px; right: 0;
+  background: white; border: 1px solid var(--border-2);
+  border-radius: var(--r); padding: 8px; width: 90px;
+  box-shadow: 0 4px 16px rgba(90,74,42,0.12);
+  z-index: 10;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.dc-qr-tooltip:hover { transform: scale(1.08); box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+.dc-qr-tooltip svg { width: 74px; height: 74px; }
+.dc-qr-tooltip-label { font-size: 8px; color: var(--ink-4); text-align: center; margin-top: 3px; font-family: var(--mono); }
+.dc-qr-wrap:hover .dc-qr-tooltip { display: block; }
+
+.dc-verify-badge {
+  font-size: 8px; padding: 2px 7px; border-radius: 10px;
+  background: var(--green-bg); color: var(--green);
+  border: 1px solid rgba(59,109,17,0.2);
+  font-weight: 500; cursor: default;
+  opacity: 0.75; transition: opacity 0.2s;
+}
+.dc-verify-badge:hover { opacity: 1; }
+
+/* prompt bottom */
+.pb { border-top: 1px solid var(--border); padding: 10px 16px; background: var(--perg); flex-shrink: 0; }
+.pb .pbox { max-width: 100%; box-shadow: none; border-color: var(--border); }
+.pb .pbox:focus-within { border-color: rgba(139,105,20,0.35); box-shadow: none; }
+
+/* ── INSPECTOR RIGHT ── */
+.inspector {
+  width: 210px; flex-shrink: 0;
+  border-left: 1px solid var(--border);
+  background: var(--perg-2);
+  display: flex; flex-direction: column; overflow-y: auto;
+  transition: width 0.22s ease, opacity 0.18s;
+  position: relative;
+}
+.inspector::-webkit-scrollbar { width: 2px; }
+.inspector::-webkit-scrollbar-thumb { background: var(--border-2); }
+.inspector.collapsed { width: 0; opacity: 0; overflow: hidden; }
+
+.insp-toggle {
+  position: absolute; left: -11px; top: 50%;
+  transform: translateY(-50%);
+  width: 20px; height: 32px;
+  background: var(--perg-2); border: 1px solid var(--border-2);
+  border-radius: 0 5px 5px 0;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 9px; color: var(--ink-4);
+  z-index: 10; transition: all 0.12s;
+}
+.insp-toggle:hover { color: var(--gold); }
+
+.insp-sec { padding: 9px 11px 3px; font-size: 9px; font-weight: 500; letter-spacing: 0.09em; color: var(--ink-4); text-transform: uppercase; border-bottom: 1px solid var(--border); }
+.insp-block { padding: 9px 11px; border-bottom: 1px solid var(--border); }
+.insp-lbl { font-size: 9px; color: var(--ink-4); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 2px; }
+.insp-val { font-size: 11px; font-weight: 500; color: var(--ink); }
+.insp-val.gold { color: var(--gold); }
+.insp-val.green { color: var(--green); }
+.insp-mono { font-size: 8px; font-family: var(--mono); color: var(--ink-2); word-break: break-all; line-height: 1.5; }
+
+.s-row { display: flex; align-items: center; gap: 5px; margin-bottom: 4px; }
+.s-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+.s-lbl { font-size: 10px; color: var(--ink-2); flex: 1; }
+.s-pct { font-size: 9px; color: var(--ink-4); min-width: 26px; text-align: right; }
+.s-bar { height: 2px; background: var(--border); border-radius: 1px; margin-bottom: 5px; }
+
+.jtags { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 3px; }
+.jtag { font-size: 9px; padding: 1px 6px; border-radius: 3px; background: var(--perg-3); color: var(--ink-2); border: 1px solid var(--border); }
+.jtag.on { background: var(--gold-bg); color: var(--gold); border-color: rgba(139,105,20,0.2); }
+
+.inv-item { display: flex; align-items: flex-start; gap: 5px; margin-bottom: 4px; font-size: 10px; color: var(--ink-2); line-height: 1.4; }
+.inv-item::before { content:''; width:5px; height:5px; border-radius:50%; background:var(--green); flex-shrink:0; margin-top:3px; }
+
+.act-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: 3px; }
+.abtn { font-size: 10px; padding: 5px 0; border-radius: 4px; border: 1px solid var(--border-2); background: white; color: var(--ink-2); cursor: pointer; font-family: var(--font); text-align: center; transition: all 0.12s; }
+.abtn:hover { border-color: var(--gold-light); color: var(--gold); }
+.abtn.seal { background: var(--gold); color: white; border-color: transparent; grid-column: span 2; animation: sealPulse 2s ease-in-out infinite; }
+.abtn.seal:hover { background: #6B4F10; animation: none; }
+
+/* ── BOTTOM BAR ── */
+.bottombar {
+  background: var(--perg-3); border-top: 1px solid var(--border);
+  padding: 4px 14px; display: flex; align-items: center; gap: 8px;
+  font-size: 9px; color: var(--ink-4); flex-shrink: 0;
+}
+.bottombar .sep { opacity: 0.35; }
+.bottombar .live { color: var(--green); display: flex; align-items: center; gap: 2px; }
+.bottombar .live::before { content:''; width:4px; height:4px; border-radius:50%; background:var(--green); }
+.bottombar .motto { margin-left: auto; font-style: italic; color: var(--ink-3); opacity: 0.65; font-size: 9px; }
+
+/* demo bar */
+.demo-bar {
+  position: fixed; top: 10px; right: 10px; z-index: 200;
+  display: flex; gap: 4px;
+  background: white; border: 1px solid var(--border-2);
+  border-radius: 20px; padding: 4px 7px;
+  box-shadow: 0 2px 12px rgba(90,74,42,0.10);
+}
+.demo-btn { font-size: 10px; font-weight: 500; padding: 4px 12px; border-radius: 14px; border: none; background: transparent; color: var(--ink-4); cursor: pointer; font-family: var(--font); transition: all 0.12s; }
+.demo-btn.on { background: var(--gold); color: white; }
+</style>
+</head>
+<body>
+
+<div class="demo-bar">
+  <button class="demo-btn on" onclick="go('empty')">Estado vazio</button>
+  <button class="demo-btn" onclick="go('active')">Documento activo</button>
+</div>
+
+<div class="app">
+
+  <!-- ══ SIDEBAR LEFT ══ -->
+  <div class="sl">
+    <div class="sl-logo">
+      <span class="w">WINDI</span>
+      <span class="law">LAW</span>
+      <span class="did" id="tl-did" title="Click to copy DID">—</span>
+    </div>
+
+    <div class="sl-sec">Agenten</div>
+    <div class="sl-item on">⚖️ Juristisch <span class="ct">22</span></div>
+    <div class="sl-item">📋 Notariat</div>
+    <div class="sl-item">📊 Buchhaltung</div>
+    <div class="sl-item">✅ Compliance</div>
+
+    <div class="sl-sec" style="margin-top:6px">Dokumente</div>
+    <div class="sl-doc on" onclick="go('active')"><span class="sl-dot" style="background:var(--green)"></span>NDA · Müller GmbH</div>
+    <div class="sl-doc" onclick="go('active')"><span class="sl-dot" style="background:var(--blue)"></span>BaFin Audit Q1</div>
+    <div class="sl-doc" onclick="go('active')"><span class="sl-dot" style="background:var(--amber)"></span>XRechnung 0041</div>
+    <div class="sl-doc" onclick="go('active')"><span class="sl-dot" style="background:var(--green)"></span>DSGVO-Analyse</div>
+
+    <div class="sl-sec" style="margin-top:6px">Verifikation</div>
+    <div class="sl-item" onclick="window.open('https://windi-domain.com/verify-public/web/','_blank')" style="cursor:pointer">🔍 Verify Public</div>
+    <div class="sl-item" onclick="showChain()" style="cursor:pointer">📒 Forensic Ledger</div>
+
+    <div class="sl-identity">
+      <div class="sl-id-block" id="sb-schluessel">
+        <div class="sl-id-hdr">🔑 <span data-i18n="sbSchluesselTitle">Schlüssel</span> <span class="ok" id="sb-key-status">✓</span></div>
+        <div class="sl-id-row"><span class="k" data-i18n="sbKeyTypeLabel">Typ</span><span class="v">Ed25519</span></div>
+        <div class="sl-id-row"><span class="k" data-i18n="sbKeyCreatedLabel">Erstellt</span><span class="v" id="sb-key-created">—</span></div>
+        <div class="sl-id-row"><span class="k">SHA-256</span><span class="v" id="sb-key-hash" title="Click to copy">— — — —</span></div>
+      </div>
+      <div class="sl-id-block" id="sb-wallet">
+        <div class="sl-id-hdr">🪪 <span data-i18n="sbWalletTitle">Wallet</span> <span class="ok" id="sb-wallet-status">✓</span></div>
+        <div class="sl-id-row"><span class="k" data-i18n="sbPioneerLabel">Pioneer</span><span class="v g" id="sb-pioneer-num">—</span></div>
+        <div class="sl-id-row"><span class="k">Tier</span><span class="v g" id="sb-tier">—</span></div>
+        <div class="sl-id-row"><span class="k" data-i18n="sbCreditsLabel">Kredite</span><span class="v" id="sb-credits">—</span></div>
+        <button class="sl-connect-btn hidden" id="sb-connect-btn" onclick="window.location.href='/law/gate'">Wallet erstellen →</button>
+      </div>
+      <div class="sl-sov">
+        <div class="sl-sov-row" data-i18n="sbSovLabel">Lokale Souveränität <span>93.3%</span></div>
+        <div class="sl-bar"><div class="sl-bar-fill"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ CENTER ══ -->
+  <div class="center">
+    <div class="topbar">
+      <div class="tab on">Gerichtsfähig</div>
+      <div class="tab">Prozessual</div>
+      <div class="tab">Analyse</div>
+      <div class="topbar-r">
+        <span class="topbar-sha">SHA-256 · Forensic Ledger · Unveränderlich</span>
+        <span class="topbar-live">aktiv</span>
+        <div class="lang-pills">
+          <button class="lpill on">DE</button>
+          <button class="lpill">PT</button>
+          <button class="lpill">EN</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="canvas">
+
+        <!-- ══ VAZIO ══ -->
+        <div id="st-empty" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 36px">
+          <div class="greet">Guten Morgen, Dr. Schmidt</div>
+          <div class="wtitle">Was möchten Sie<br>heute <em>prüfen?</em></div>
+
+          <div class="pbox">
+            <textarea placeholder="Beschreiben Sie Ihr rechtliches Anliegen… Dokument hochladen, Vertrag analysieren, Beweiskette erstellen"></textarea>
+            <div class="pbox-ft" id="cmd-media-bar">
+              <div class="patt" title="Dokument"><span class="ico">📄</span><span class="lbl">DOC</span></div>
+              <div class="patt" title="Bild"><span class="ico">🖼</span><span class="lbl">IMG</span></div>
+              <div class="patt" title="Video"><span class="ico">🎥</span><span class="lbl">VID</span></div>
+              <div class="pagent">W-LEGAL-001</div>
+              <div class="plang">
+                <button class="plbtn on">DE</button>
+                <button class="plbtn">PT</button>
+                <button class="plbtn">EN</button>
+              </div>
+              <button class="psend" onclick="go('active')">→</button>
+            </div>
+          </div>
+
+          <div class="chips">
+            <span class="chip" onclick="go('active')">📄 NDA · ZPO §273</span>
+            <span class="chip" onclick="go('active')">🔗 Beweiskette · SHA-256</span>
+            <span class="chip" onclick="go('active')">⚖️ Tribunalpaket · DE/EN/PT</span>
+            <span class="chip" onclick="go('active')">🏦 BaFin · MiCA</span>
+            <span class="chip" onclick="go('active')">✍️ eIDAS Signatur</span>
+            <span class="chip" onclick="go('active')">📊 ELSTER XML · C6</span>
+          </div>
+
+          <div class="sugg">
+            <div class="sugg-lbl">Häufige Anfragen</div>
+            <div class="sugg-grid">
+              <div class="sc" onclick="go('active')">
+                <div class="sc-t">Legal</div>
+                <div class="sc-n">NDA auf Risiken prüfen</div>
+                <div class="sc-s">ZPO · GDPR · eIDAS</div>
+              </div>
+              <div class="sc" onclick="go('active')">
+                <div class="sc-t">Forensisch</div>
+                <div class="sc-n">Beweiskette erstellen</div>
+                <div class="sc-s">SHA-256 · Ledger · QR</div>
+              </div>
+              <div class="sc" onclick="go('active')">
+                <div class="sc-t">Buchhaltung</div>
+                <div class="sc-n">XRechnung GoBD prüfen</div>
+                <div class="sc-s">DATEV · ELSTER · C6</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ══ ACTIVO ══ -->
+        <div id="st-active" style="flex:1;display:none;flex-direction:column;overflow:hidden">
+
+          <div class="doc-hdr">
+            <span class="dbadge legal">Legal</span>
+            <span class="dtitle">Geheimhaltungsvertrag · Müller GmbH vs. Tech AG</span>
+            <div class="dacts">
+              <button class="dact" onclick="verifyReceipt()">Verify</button>
+              <button class="dact">Export</button>
+              <button class="dact seal-btn" onclick="openSealModal()">⬡ Seal · I11</button>
+            </div>
+          </div>
+
+          <div class="scroll">
+
+            <!-- resposta do agente -->
+            <div class="amsg">
+              <div class="aav">⚖️</div>
+              <div class="abody">
+                <div class="aname">W-LEGAL-001 · Strukturanalyse</div>
+                <div class="atext">
+                  <p>Analyse abgeschlossen. Drei Risikobereiche identifiziert — die finale Bewertung liegt beim zuständigen Menschen.</p>
+                </div>
+                <div class="risk-row">
+                  <div class="rcard"><div class="rcard-l">§4 — Laufzeit</div><div class="rcard-v h">Hoch · ZPO §273</div></div>
+                  <div class="rcard"><div class="rcard-l">§7 — Vertragsstrafe</div><div class="rcard-v m">Mittel · €50k</div></div>
+                  <div class="rcard"><div class="rcard-l">§9 — Gerichtsstand</div><div class="rcard-v l">Niedrig · München</div></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- O DOCUMENTO — PROTAGONISTA -->
+            <div class="doc-canvas">
+              <div class="dc-header">
+                <div class="dc-header-left">
+                  <div class="dc-org">Kanzlei Schmidt & Partner</div>
+                  <div class="dc-title">Geheimhaltungsvertrag<br>Müller GmbH vs. Tech AG</div>
+                  <div class="dc-meta">
+                    <span class="dc-tag">⚖️ W-LEGAL-001</span>
+                    <span class="dc-tag">ZPO · §273</span>
+                    <span class="dc-tag">HIGH</span>
+                    <span class="dc-tag">24. März 2026</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="dc-body">
+                <div class="clause">
+                  <div class="clause-num">§ 1 — Gegenstand</div>
+                  <div class="clause-text">Die Parteien vereinbaren, alle im Rahmen dieser Zusammenarbeit ausgetauschten Informationen vertraulich zu behandeln.</div>
+                </div>
+                <div class="clause">
+                  <div class="clause-num">§ 4 — Laufzeit</div>
+                  <div class="clause-text">Diese Vereinbarung gilt für einen Zeitraum von <strong>fünf Jahren</strong> ab Unterzeichnung.</div>
+                  <div class="highlight">⚠ Analyse: Laufzeit von 5 Jahren ist im Vergleich zum Marktstandard (2–3 Jahre) erhöht.</div>
+                </div>
+                <div class="clause">
+                  <div class="clause-num">§ 7 — Vertragsstrafe</div>
+                  <div class="clause-text">Bei Verstoß ist eine Vertragsstrafe von <strong>€ 50.000</strong> fällig.</div>
+                </div>
+              </div>
+
+              <!-- RODAPÉ FORENSE SILENCIOSO -->
+              <div class="dc-forensic-footer">
+                <div class="dc-seal-mark">
+                  <span class="dc-seal-icon">🔐</span>
+                  <span class="dc-seal-hash">SHA-256: a3f8c12d4e9b7f2a…</span>
+                </div>
+                <div class="dc-sep"></div>
+                <div class="dc-seal-mark">
+                  <span class="dc-seal-inv">I11</span>
+                  <span style="color:var(--ink-4)">· Forensic Ledger</span>
+                </div>
+                <div class="dc-sep"></div>
+                <span class="dc-verify-badge">✓ Verificável</span>
+                <div class="dc-sep"></div>
+                <div style="display:flex;gap:3px;">
+                  <span id="cia-i9" style="font-size:8px;padding:1px 5px;border-radius:3px;background:var(--perg-3);color:var(--ink-4);opacity:0.6;transition:all 0.2s;">I9</span>
+                  <span id="cia-i11" style="font-size:8px;padding:1px 5px;border-radius:3px;background:var(--perg-3);color:var(--ink-4);opacity:0.6;transition:all 0.2s;">I11</span>
+                  <span id="cia-i13" style="font-size:8px;padding:1px 5px;border-radius:3px;background:var(--perg-3);color:var(--ink-4);opacity:0.6;transition:all 0.2s;">I13</span>
+                  <span id="cia-g3" style="font-size:8px;padding:1px 5px;border-radius:3px;background:var(--perg-3);color:var(--ink-4);opacity:0.6;transition:all 0.2s;">G3</span>
+                </div>
+                <div class="dc-qr-wrap">
+                  <div class="dc-qr-mini" title="Verificar autenticidade">
+                    <svg viewBox="0 0 24 24"><rect x="1" y="1" width="9" height="9" fill="none" stroke="#8B6914" stroke-width="0.8"/><rect x="3" y="3" width="5" height="5" fill="#8B6914"/><rect x="14" y="1" width="9" height="9" fill="none" stroke="#8B6914" stroke-width="0.8"/><rect x="16" y="3" width="5" height="5" fill="#8B6914"/><rect x="1" y="14" width="9" height="9" fill="none" stroke="#8B6914" stroke-width="0.8"/><rect x="3" y="16" width="5" height="5" fill="#8B6914"/></svg>
+                  </div>
+                  <div class="dc-qr-tooltip">
+                    <svg viewBox="0 0 74 74"><rect width="74" height="74" fill="white"/><rect x="3" y="3" width="22" height="22" fill="none" stroke="#8B6914" stroke-width="1.5"/><rect x="9" y="9" width="10" height="10" fill="#8B6914"/><rect x="49" y="3" width="22" height="22" fill="none" stroke="#8B6914" stroke-width="1.5"/><rect x="55" y="9" width="10" height="10" fill="#8B6914"/><rect x="3" y="49" width="22" height="22" fill="none" stroke="#8B6914" stroke-width="1.5"/><rect x="9" y="55" width="10" height="10" fill="#8B6914"/></svg>
+                    <div class="dc-qr-tooltip-label">windi-domain.com/verify</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- prompt bottom -->
+          <div class="pb">
+            <div class="pbox">
+              <textarea placeholder="Folgeanalyse, weitere Fragen…" style="min-height:36px"></textarea>
+              <div class="pbox-ft">
+                <div class="patt"><span class="ico">📄</span><span class="lbl">DOC</span></div>
+                <div class="patt"><span class="ico">🖼</span><span class="lbl">IMG</span></div>
+                <div class="patt"><span class="ico">🎥</span><span class="lbl">VID</span></div>
+                <div class="pagent">W-LEGAL-001</div>
+                <div class="plang">
+                  <button class="plbtn on">DE</button>
+                  <button class="plbtn">PT</button>
+                  <button class="plbtn">EN</button>
+                </div>
+                <button class="psend">→</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ══ INSPECTOR RIGHT ══ -->
+      <div class="inspector collapsed" id="inspector">
+        <div class="insp-toggle" onclick="toggleInsp()" id="itoggle">›</div>
+
+        <div class="insp-sec">Dokument</div>
+        <div class="insp-block">
+          <div class="insp-lbl">Typ</div>
+          <div class="insp-val">Geheimhaltungsvertrag</div>
+        </div>
+        <div class="insp-block">
+          <div class="insp-lbl">Agent</div>
+          <div class="insp-val gold">W-LEGAL-001</div>
+        </div>
+        <div class="insp-block">
+          <div class="insp-lbl">Status</div>
+          <div class="insp-val green">Versiegelt · I11</div>
+        </div>
+        <div class="insp-block">
+          <div class="insp-lbl">SHA-256</div>
+          <div class="insp-mono">a3f8c12d4e9b7f2a1c6d8e3f…</div>
+        </div>
+
+        <div class="insp-sec">Wahrheitssensoren</div>
+        <div class="insp-block">
+          <div class="s-row"><span class="s-dot" style="background:var(--green)"></span><span class="s-lbl">Kryptografisch · HIGH</span><span class="s-pct">100%</span></div>
+          <div class="s-bar"><div style="height:100%;width:100%;background:var(--green);border-radius:1px"></div></div>
+          <div class="s-row"><span class="s-dot" style="background:var(--amber)"></span><span class="s-lbl">Prozessual · MED</span><span class="s-pct">78%</span></div>
+          <div class="s-bar"><div style="height:100%;width:78%;background:var(--amber);border-radius:1px"></div></div>
+        </div>
+
+        <div class="insp-sec">Jurisdiktionen</div>
+        <div class="insp-block">
+          <div class="jtags">
+            <span class="jtag on">DE · ZPO</span>
+            <span class="jtag on">EU · eIDAS</span>
+            <span class="jtag">BR · MCI</span>
+          </div>
+        </div>
+
+        <div class="insp-sec">Aktionen</div>
+        <div class="insp-block">
+          <div class="act-grid">
+            <button class="abtn seal" onclick="openSealModal()">⬡ Seal · I11</button>
+            <button class="abtn" onclick="verifyReceipt()">Verify</button>
+            <button class="abtn">Export</button>
+            <button class="abtn" onclick="showChain()">Beweiskette</button>
+          </div>
+        </div>
+
+        <div class="insp-sec">Invarianten</div>
+        <div class="insp-block">
+          <div class="inv-item">I9 · Keine autonome Eskalation</div>
+          <div class="inv-item">I11 · Kryptografische Permanenz</div>
+          <div class="inv-item">G3 · Mensch entscheidet</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottombar">
+      <span class="live">aktiv</span>
+      <span class="sep">·</span>
+      <span>Ledger · 8101</span>
+      <span class="sep">·</span>
+      <span>7 Agenten · online</span>
+      <span class="sep">·</span>
+      <span>56.621+ Receipts</span>
+      <span class="motto">AI processes. Human decides. WINDI guarantees.</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══ MODAL I9 — SEAL CONFIRMATION ══ -->
+<!-- modal-i9 SEALED marker -->
+<div id="modal-seal" style="display:none;position:fixed;inset:0;background:rgba(42,32,16,0.55);z-index:500;align-items:center;justify-content:center;">
+  <div style="background:var(--perg);border:1px solid var(--border-2);border-radius:var(--r-lg);padding:24px 28px;max-width:360px;width:90%;box-shadow:0 8px 32px rgba(42,32,16,0.25);">
+    <div style="font-size:11px;font-weight:600;color:var(--gold);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:10px;">⬡ Invariante I11 — Versiegelung</div>
+    <div style="font-size:13px;color:var(--ink);line-height:1.6;margin-bottom:16px;">Diese Aktion ist <strong>UNWIDERRUFLICH</strong>. Das Dokument wird im Forensic Ledger mit permanentem SHA-256 Hash versiegelt.</div>
+    <div style="font-size:10px;color:var(--ink-3);font-family:var(--mono);margin-bottom:18px;">I9 · Keine autonome Aktion · Mensch bestätigt</div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button onclick="closeSealModal()" style="font-size:11px;padding:6px 14px;border-radius:5px;border:1px solid var(--border-2);background:transparent;color:var(--ink-3);cursor:pointer;font-family:var(--font);">Abbrechen</button>
+      <button onclick="confirmSeal()" style="font-size:11px;padding:6px 14px;border-radius:5px;border:none;background:var(--gold);color:white;cursor:pointer;font-family:var(--font);font-weight:500;">⬡ Versiegeln · I11</button>
+    </div>
+  </div>
+</div>
+
+<!-- Media preview area -->
+<div id="media-preview" style="display:none;position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--perg);border:1px solid var(--border-2);border-radius:var(--r);padding:6px 12px;box-shadow:0 2px 12px rgba(42,32,16,0.12);z-index:100;"></div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// WINDI-TRAVEL v3.0 — Governança Silenciosa
+// PHASE 1: Wallet Gate Logic (F10 SEALED)
+// ══════════════════════════════════════════════════════════════
+
+var lang = 'de';
+var walletDid = '';
+var inspOpen = false;
+
+// ══════════════════════════════════════════════════════════════
+// i18n LANG object (F11 SEALED - setLang)
+// ══════════════════════════════════════════════════════════════
+var LANG = {
+  de: {
+    sbSchluesselTitle: 'Schlüssel', sbWalletTitle: 'Wallet',
+    sbKeyTypeLabel: 'Typ', sbKeyCreatedLabel: 'Erstellt',
+    sbPioneerLabel: 'Pioneer', sbCreditsLabel: 'Kredite',
+    sbSovLabel: 'Lokale Souveränität',
+    notConnected: 'Noch keine Wallet', connect: 'Wallet erstellen →',
+    hashPlaceholder: '— — — —', createWallet: 'Wallet erstellen →',
+    tlStatusVerified: 'VERIFIED', tlStatusPending: 'PENDING'
+  },
+  pt: {
+    sbSchluesselTitle: 'Chave', sbWalletTitle: 'Carteira',
+    sbKeyTypeLabel: 'Tipo', sbKeyCreatedLabel: 'Criada',
+    sbPioneerLabel: 'Pioneer', sbCreditsLabel: 'Créditos',
+    sbSovLabel: 'Soberania Local',
+    notConnected: 'Ainda sem wallet', connect: 'Criar wallet →',
+    hashPlaceholder: '— — — —', createWallet: 'Criar wallet →',
+    tlStatusVerified: 'VERIFICADO', tlStatusPending: 'PENDENTE'
+  },
+  en: {
+    sbSchluesselTitle: 'Key', sbWalletTitle: 'Wallet',
+    sbKeyTypeLabel: 'Type', sbKeyCreatedLabel: 'Created',
+    sbPioneerLabel: 'Pioneer', sbCreditsLabel: 'Credits',
+    sbSovLabel: 'Local Sovereignty',
+    notConnected: 'No wallet yet', connect: 'Create wallet →',
+    hashPlaceholder: '— — — —', createWallet: 'Create wallet →',
+    tlStatusVerified: 'VERIFIED', tlStatusPending: 'PENDING'
+  }
+};
+
+// ══════════════════════════════════════════════════════════════
+// setLang — Apply i18n to elements with data-i18n (F11 SEALED)
+// ══════════════════════════════════════════════════════════════
+function setLang(l) {
+  lang = l;
+  var strings = LANG[l] || LANG.en;
+  document.querySelectorAll('[data-i18n]').forEach(function(el) {
+    var key = el.getAttribute('data-i18n');
+    if (strings[key]) el.textContent = strings[key];
+  });
+  // Update lang pills
+  document.querySelectorAll('.lpill, .plbtn').forEach(function(btn) {
+    btn.classList.toggle('on', btn.textContent === l.toUpperCase());
+  });
+  localStorage.setItem('windi-lang', l);
+}
+
+// ══════════════════════════════════════════════════════════════
+// initWallet — Wallet Gate Logic (F10 SEALED)
+// URL ?did= ALWAYS takes priority (fresh registration)
+// ══════════════════════════════════════════════════════════════
+async function initWallet() {
+  var stored = sessionStorage.getItem('windi_travel_wallet');
+  var fb = LANG[lang] || LANG.en;
+
+  // Check for ?did= in URL (direct link access or fresh registration)
+  var urlParams = new URLSearchParams(window.location.search);
+  var urlDid = urlParams.get('did');
+
+  // If URL has DID, ALWAYS fetch from server (overrides stale sessionStorage)
+  if (urlDid) {
+    console.log('[WINDI-TRAVEL] Loading wallet from URL DID:', urlDid);
+    try {
+      var BASE_PATH = window.location.hostname.includes('winditravel.de') ? '' : '/law';
+      var resp = await fetch(BASE_PATH + '/identity/' + encodeURIComponent(urlDid));
+      if (resp.ok) {
+        var data = await resp.json();
+        var walletData = {
+          did: data.did,
+          fingerprint: data.fingerprint,
+          public_key: '',
+          state: data.state,
+          created_at: data.created_at,
+          pioneer_number: null,
+          tier: 'FREE',
+          credits: 0,
+          company: data.company
+        };
+        sessionStorage.setItem('windi_travel_wallet', JSON.stringify(walletData));
+        document.cookie = 'windi_did=' + encodeURIComponent(data.did) + '; path=/; max-age=31536000; SameSite=Lax';
+        stored = JSON.stringify(walletData);
+        console.log('[WINDI-TRAVEL] Wallet loaded from server:', data.did);
+      }
+    } catch (e) {
+      console.error('[WINDI-TRAVEL] Failed to load wallet from DID:', e);
+    }
+  }
+
+  if (!stored) {
+    // NO SESSION: Show fallback state — blocked workspace
+    console.log('[WINDI-TRAVEL] No wallet session — workspace blocked');
+
+    // Sidebar: IDENTITÄT warning state
+    document.getElementById('sb-key-status').textContent = '⚠';
+    document.getElementById('sb-key-status').className = 'ok pending';
+    document.getElementById('sb-wallet-status').textContent = '⚠';
+    document.getElementById('sb-wallet-status').className = 'ok pending';
+    document.getElementById('sb-key-created').textContent = fb.notConnected;
+    document.getElementById('sb-key-hash').textContent = fb.hashPlaceholder;
+    document.getElementById('sb-pioneer-num').textContent = '⚠';
+    document.getElementById('sb-tier').textContent = '—';
+    document.getElementById('sb-credits').textContent = '—';
+    document.getElementById('sb-connect-btn').textContent = fb.connect;
+    document.getElementById('sb-connect-btn').classList.remove('hidden');
+
+    // Header: DID badge becomes "Create wallet" link
+    var didEl = document.getElementById('tl-did');
+    didEl.textContent = fb.createWallet;
+    didEl.style.cursor = 'pointer';
+    didEl.style.color = 'var(--gold)';
+    didEl.onclick = function() { window.location.href = '/law/gate'; };
+
+    return;
+  }
+
+  try {
+    var w = JSON.parse(stored);
+    walletDid = w.did || '';
+    var didShort = walletDid.length > 16 ? walletDid.substring(0,16)+'…' : walletDid;
+    var didEl = document.getElementById('tl-did');
+    didEl.setAttribute('data-full-did', walletDid);
+    didEl.textContent = didShort || 'did:windi:…';
+    didEl.style.cursor = 'pointer';
+    didEl.onclick = function() { copyFingerprint(walletDid); };
+
+    // Store globally for agent context injection
+    window.__windiLawWallet = w;
+
+    // SESSION FOUND: Populate SCHLÜSSEL + WALLET panels + hide connect button
+    document.getElementById('sb-connect-btn').classList.add('hidden');
+    document.getElementById('sb-key-status').textContent = '✓';
+    document.getElementById('sb-key-status').className = 'ok';
+    document.getElementById('sb-wallet-status').textContent = w.state === 'VERIFIED' ? '✓' : '⏳';
+    document.getElementById('sb-wallet-status').className = w.state === 'VERIFIED' ? 'ok' : 'ok pending';
+
+    if (w.fingerprint) {
+      var hashEl = document.getElementById('sb-key-hash');
+      hashEl.textContent = w.fingerprint.substring(0,12) + '…';
+      hashEl.setAttribute('data-full-hash', w.fingerprint);
+      hashEl.style.cursor = 'pointer';
+      hashEl.onclick = function() { copyFingerprint(w.fingerprint); };
+    }
+    if (w.created_at) {
+      document.getElementById('sb-key-created').textContent = w.created_at.substring(0,10);
+    }
+    if (w.pioneer_number) {
+      document.getElementById('sb-pioneer-num').textContent = '#' + w.pioneer_number;
+    } else {
+      document.getElementById('sb-pioneer-num').textContent = 'A';
+    }
+    if (w.tier) {
+      document.getElementById('sb-tier').textContent = w.tier.toUpperCase();
+    }
+    if (w.credits !== undefined) {
+      document.getElementById('sb-credits').textContent = w.credits.toLocaleString();
+    }
+
+    console.log('[WINDI-TRAVEL] Wallet loaded:', walletDid, 'State:', w.state);
+  } catch(e) {
+    console.error('[WINDI-TRAVEL] Wallet parse error:', e);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+// copyFingerprint — Copy to clipboard (F3 SEALED)
+// ══════════════════════════════════════════════════════════════
+function copyFingerprint(text) {
+  navigator.clipboard.writeText(text).then(function() {
+    console.log('[WINDI-TRAVEL] Copied:', text.substring(0,20) + '…');
+  });
+}
+
+// ══════════════════════════════════════════════════════════════
+// go() — State switching (empty ↔ active)
+// ══════════════════════════════════════════════════════════════
+function go(s) {
+  var empty = document.getElementById('st-empty');
+  var active = document.getElementById('st-active');
+  var insp = document.getElementById('inspector');
+  document.querySelectorAll('.demo-btn').forEach(function(b,i) {
+    b.classList.toggle('on', (s==='empty'&&i===0)||(s==='active'&&i===1));
+  });
+  if (s === 'empty') {
+    empty.style.display = 'flex';
+    active.style.display = 'none';
+    insp.classList.add('collapsed');
+    inspOpen = false;
+    document.getElementById('itoggle').textContent = '›';
+  } else {
+    empty.style.display = 'none';
+    active.style.display = 'flex';
+    // inspector abre automaticamente com o documento
+    insp.classList.remove('collapsed');
+    inspOpen = true;
+    document.getElementById('itoggle').textContent = '‹';
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+// toggleInsp — Inspector toggle (F4 collapsible)
+// ══════════════════════════════════════════════════════════════
+function toggleInsp() {
+  var insp = document.getElementById('inspector');
+  inspOpen = !inspOpen;
+  insp.classList.toggle('collapsed', !inspOpen);
+  document.getElementById('itoggle').textContent = inspOpen ? '‹' : '›';
+}
+
+// ══════════════════════════════════════════════════════════════
+// clearPreviousSession — Opção A (preserve session if wallet exists)
+// SEALED: só limpa se não há wallet activa
+// ══════════════════════════════════════════════════════════════
+function clearPreviousSession() {
+  var wallet = sessionStorage.getItem('windi_travel_wallet');
+  if (!wallet) {
+    // Visitante novo ou sessão expirada → limpar estado órfão
+    sessionStorage.clear();
+    console.log('[WINDI-TRAVEL] Session cleared — no wallet found');
+  } else {
+    // Utilizador regressa com wallet → preservar sessão
+    console.log('[WINDI-TRAVEL] Session preserved — wallet active');
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+// DOMContentLoaded — Initialize
+// ══════════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', function() {
+  // Phase 3: Clear orphan sessions but preserve wallet
+  clearPreviousSession();
+
+  // Init lang from localStorage
+  var savedLang = localStorage.getItem('windi-lang');
+  if (savedLang && LANG[savedLang]) {
+    lang = savedLang;
+    setLang(lang);
+  }
+
+  // Init wallet gate
+  initWallet();
+
+  // Sidebar document clicks
+  document.querySelectorAll('.sl-doc').forEach(function(d) {
+    d.addEventListener('click', function() {
+      document.querySelectorAll('.sl-doc').forEach(function(x) { x.classList.remove('on'); });
+      d.classList.add('on');
+      go('active');
+    });
+  });
+
+  // Lang pills click handlers
+  document.querySelectorAll('.lpill, .plbtn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var l = btn.textContent.toLowerCase();
+      if (LANG[l]) setLang(l);
+    });
+  });
+
+  // Wire media attach buttons
+  document.querySelectorAll('.patt').forEach(function(btn) {
+    var lbl = btn.querySelector('.lbl');
+    if (lbl) {
+      var type = lbl.textContent.toLowerCase();
+      btn.onclick = function() { handleMedia(type); };
+    }
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════
+// F1 — Media Bar (cmd-media-bar) SEALED
+// ═══════════════════════════════════════════════════════════════
+var attachedFiles = [];  // SEALED marker
+
+// ═══════════════════════════════════════════════════════════════
+// F2 — SHA-256 hashFile (crypto.subtle) SEALED
+// ═══════════════════════════════════════════════════════════════
+var currentFileHash = null;
+var currentFileName = null;
+
+async function hashFile(file) {
+  var buf = await file.arrayBuffer();
+  var digest = await crypto.subtle.digest('SHA-256', buf);
+  return Array.from(new Uint8Array(digest))
+    .map(function(b) { return b.toString(16).padStart(2,'0'); }).join('');
+}
+
+function handleMedia(type) {
+  var input = document.createElement('input');
+  input.type = 'file';
+  if (type === 'img') input.accept = 'image/*';
+  if (type === 'vid') input.accept = 'video/*';
+  if (type === 'doc') input.accept = '.pdf,.docx,.txt';
+  input.onchange = async function(e) {
+    var file = e.target.files[0];
+    if (!file) return;
+    var hash = await hashFile(file);
+    var preview = document.getElementById('media-preview');
+    if (preview) {
+      preview.innerHTML = '<span style="font-size:9px;font-family:var(--mono);color:var(--ink-3)">' +
+        file.name + ' · SHA-256: ' + hash.substring(0,16) + '…</span>';
+      preview.style.display = 'flex';
+    }
+    currentFileHash = hash;
+    currentFileName = file.name;
+    console.log('[WINDI-TRAVEL] File hashed:', file.name, hash.substring(0,16) + '…');
+  };
+  input.click();
+}
+
+// ═══════════════════════════════════════════════════════════════
+// F5 — openSealModal + confirmSeal (I9 Gate) SEALED
+// ═══════════════════════════════════════════════════════════════
+function openSealModal() {
+  var modal = document.getElementById('modal-seal');
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeSealModal() {
+  var modal = document.getElementById('modal-seal');
+  if (modal) modal.style.display = 'none';
+}
+
+async function confirmSeal() {
+  closeSealModal();
+  var wallet = JSON.parse(sessionStorage.getItem('windi_travel_wallet') || '{}');
+  var did = wallet.did || 'anon';
+  var docTitle = document.querySelector('.dtitle');
+  docTitle = docTitle ? docTitle.textContent : 'documento';
+  var hash = currentFileHash || Array.from(crypto.getRandomValues(new Uint8Array(16)))
+    .map(function(b) { return b.toString(16).padStart(2,'0'); }).join('');
+
+  try {
+    var res = await fetch('https://windi-domain.com/api/receipts/', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        id: 'WINDI-TRAVEL-' + Date.now(),
+        actor: did,
+        app: 'windi-travel-workspace',
+        doc_name: docTitle,
+        doc_type: 'doc',
+        governance_level: 'HIGH',
+        content_hash: hash,
+        sge_score: 95.0,
+        invariant: 'I11',
+        note: 'Sealed via workspace v3 · G3 confirmed'
+      })
+    });
+    var data = await res.json();
+    window.__lastReceipt = data;
+    updateCIA(true);
+    var footer = document.querySelector('.dc-seal-hash');
+    if (footer) footer.textContent = 'SHA-256: ' + hash.substring(0,16) + '…';
+    var badge = document.querySelector('.dc-verify-badge');
+    if (badge) { badge.textContent = '✓ Versiegelt · I11'; badge.style.opacity = '1'; }
+    console.log('[WINDI-TRAVEL] Sealed:', data);
+  } catch(e) {
+    console.warn('[WINDI-TRAVEL] Ledger offline — hash local preservado:', hash);
+    updateCIA(true); // Still update CIA locally
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// F6 — verifyReceipt SEALED
+// ═══════════════════════════════════════════════════════════════
+async function verifyReceipt(receiptId) {
+  var id = receiptId || (window.__lastReceipt ? window.__lastReceipt.id : null);
+  if (!id) {
+    id = prompt('Receipt ID:');
+  }
+  if (!id) return;
+  try {
+    var res = await fetch('https://windi-domain.com/api/verify/' + encodeURIComponent(id));
+    var data = await res.json();
+    if (data.valid) {
+      alert('✓ Verificado · Ledger confirma integridade');
+    } else {
+      alert('✗ Não encontrado no Ledger');
+    }
+  } catch(e) {
+    alert('Ledger inacessível — verificação offline pendente');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// F7 — showChain (Beweiskette) SEALED
+// ═══════════════════════════════════════════════════════════════
+var __evidenceChain = [];
+
+async function showChain() {
+  var wallet = JSON.parse(sessionStorage.getItem('windi_travel_wallet') || '{}');
+  var did = wallet.did || 'anon';
+
+  var receipts = [];
+  try {
+    var res = await fetch('https://windi-domain.com/api/receipts/?actor=' + encodeURIComponent(did));
+    var data = await res.json();
+    receipts = data.receipts || [];
+    __evidenceChain = receipts;
+  } catch(e) {
+    console.warn('[WINDI-TRAVEL] Ledger offline');
+  }
+
+  // Painel inline — NÃO alert()
+  var existing = document.getElementById('chain-panel');
+  if (existing) existing.remove();
+
+  var panel = document.createElement('div');
+  panel.id = 'chain-panel';
+  panel.style.cssText = 'position:fixed;bottom:60px;left:50%;transform:translateX(-50%);background:var(--perg);border:1px solid var(--border-2);border-radius:var(--r-lg);padding:16px 20px;min-width:320px;max-width:480px;z-index:300;box-shadow:0 4px 24px rgba(90,74,42,0.12);animation:fu 0.25s cubic-bezier(0.22,1,0.36,1);';
+
+  var title = '<div style="font-size:9px;font-weight:500;color:var(--gold);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;">🔗 Beweiskette · ' + did.substring(0,20) + '…<span onclick="document.getElementById(\'chain-panel\').remove()" style="cursor:pointer;color:var(--ink-4);font-size:12px;padding:0 4px;">✕</span></div>';
+
+  var body = '';
+  if (!receipts.length) {
+    body = '<div style="font-size:12px;color:var(--ink-3);text-align:center;padding:12px 0;">Keine versiegelten Dokumente für diese Identität.</div>';
+  } else {
+    receipts.slice(0,5).forEach(function(r) {
+      body += '<div style="display:flex;gap:8px;padding:6px 0;border-bottom:0.5px solid var(--border);align-items:flex-start;"><span style="font-size:10px;color:var(--green);">⬡</span><div><div style="font-size:11px;font-weight:500;color:var(--ink);">' + (r.doc_name || r.id || 'Dokument') + '</div><div style="font-size:9px;font-family:var(--mono);color:var(--ink-4);">' + (r.id || '').substring(0,32) + '…</div></div></div>';
+    });
+  }
+
+  panel.innerHTML = title + body;
+  document.body.appendChild(panel);
+
+  // Auto-fechar em 8 segundos
+  setTimeout(function() { var p = document.getElementById('chain-panel'); if(p) p.remove(); }, 8000);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// F8 — updateCIA badges SEALED
+// ═══════════════════════════════════════════════════════════════
+function updateCIA(sealed) {
+  var badges = ['cia-i9','cia-i11','cia-i13','cia-g3'];
+  badges.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el && sealed) {
+      el.style.opacity = '1';
+      el.style.background = 'var(--green-bg)';
+      el.style.color = 'var(--green)';
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// F9 — generateQRSVG SEALED
+// ═══════════════════════════════════════════════════════════════
+function generateQRSVG(receiptId) {
+  var url = 'https://windi-domain.com/verify-public/?id=' + encodeURIComponent(receiptId);
+  return '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" title="' + url + '">' +
+    '<rect x="1" y="1" width="9" height="9" fill="none" stroke="#8B6914" stroke-width="0.8"/>' +
+    '<rect x="3" y="3" width="5" height="5" fill="#8B6914"/>' +
+    '<rect x="14" y="1" width="9" height="9" fill="none" stroke="#8B6914" stroke-width="0.8"/>' +
+    '<rect x="16" y="3" width="5" height="5" fill="#8B6914"/>' +
+    '<rect x="1" y="14" width="9" height="9" fill="none" stroke="#8B6914" stroke-width="0.8"/>' +
+    '<rect x="3" y="16" width="5" height="5" fill="#8B6914"/>' +
+    '<rect x="14" y="14" width="2" height="2" fill="#2A2010"/>' +
+    '<rect x="17" y="17" width="2" height="2" fill="#2A2010"/>' +
+    '<rect x="20" y="20" width="2" height="2" fill="#2A2010"/>' +
+    '</svg>';
+}
+
+function showQRCode(receiptId) {
+  var id = receiptId || (window.__lastReceipt ? window.__lastReceipt.id : null);
+  if (!id) return;
+  var qr = document.querySelector('.dc-qr-mini');
+  if (qr) {
+    qr.innerHTML = generateQRSVG(id);
+    qr.style.opacity = '1';
+  }
+}
+
+function downloadQR(receiptId) {
+  var id = receiptId || (window.__lastReceipt ? window.__lastReceipt.id : null);
+  if (!id) return;
+  var svg = generateQRSVG(id);
+  var blob = new Blob([svg], {type: 'image/svg+xml'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'windi-qr-' + id + '.svg';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// F12 — toggleTheme NOIR/KLAR SEALED
+// ═══════════════════════════════════════════════════════════════
+var currentTheme = 'klar';
+
+function toggleTheme() {
+  var html = document.documentElement;
+  if (currentTheme === 'klar') {
+    html.setAttribute('data-theme', 'noir');
+    currentTheme = 'noir';
+  } else {
+    html.removeAttribute('data-theme');
+    currentTheme = 'klar';
+  }
+  localStorage.setItem('windi-theme', currentTheme);
+}
+
+// Init theme from localStorage
+(function() {
+  var saved = localStorage.getItem('windi-theme');
+  if (saved === 'noir') {
+    document.documentElement.setAttribute('data-theme', 'noir');
+    currentTheme = 'noir';
+  }
+})();
+</script>
+</body>
+</html>
