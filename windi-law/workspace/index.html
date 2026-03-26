@@ -1163,28 +1163,42 @@ var __evidenceChain = [];
 
 async function showChain() {
   var wallet = JSON.parse(sessionStorage.getItem('windi_law_wallet') || '{}');
-  var did = wallet.did;
-  if (!did) {
-    alert('Keine Wallet verbunden — Beweiskette nicht verfügbar');
-    return;
-  }
+  var did = wallet.did || 'anon';
+
+  var receipts = [];
   try {
     var res = await fetch('https://windi-domain.com/api/receipts/?actor=' + encodeURIComponent(did));
     var data = await res.json();
-    __evidenceChain = data.receipts || [];
-    var html = '<div style="font-size:11px;font-weight:600;color:var(--gold);margin-bottom:8px;">Beweiskette · ' + did.substring(0,20) + '…</div>';
-    if (__evidenceChain.length === 0) {
-      html += '<div style="font-size:10px;color:var(--ink-3);">Keine vorherigen Belege</div>';
-    } else {
-      __evidenceChain.forEach(function(r) {
-        html += '<div style="font-size:9px;color:var(--ink-2);margin-bottom:4px;font-family:var(--mono);">' +
-          r.id + ' · ' + (r.hash ? r.hash.substring(0,12) + '…' : '—') + '</div>';
-      });
-    }
-    alert(html.replace(/<[^>]+>/g, '\n'));
+    receipts = data.receipts || [];
+    __evidenceChain = receipts;
   } catch(e) {
-    alert('Ledger inacessível');
+    console.warn('[WINDI-LAW] Ledger offline');
   }
+
+  // Painel inline — NÃO alert()
+  var existing = document.getElementById('chain-panel');
+  if (existing) existing.remove();
+
+  var panel = document.createElement('div');
+  panel.id = 'chain-panel';
+  panel.style.cssText = 'position:fixed;bottom:60px;left:50%;transform:translateX(-50%);background:var(--perg);border:1px solid var(--border-2);border-radius:var(--r-lg);padding:16px 20px;min-width:320px;max-width:480px;z-index:300;box-shadow:0 4px 24px rgba(90,74,42,0.12);animation:fu 0.25s cubic-bezier(0.22,1,0.36,1);';
+
+  var title = '<div style="font-size:9px;font-weight:500;color:var(--gold);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;">🔗 Beweiskette · ' + did.substring(0,20) + '…<span onclick="document.getElementById(\'chain-panel\').remove()" style="cursor:pointer;color:var(--ink-4);font-size:12px;padding:0 4px;">✕</span></div>';
+
+  var body = '';
+  if (!receipts.length) {
+    body = '<div style="font-size:12px;color:var(--ink-3);text-align:center;padding:12px 0;">Keine versiegelten Dokumente für diese Identität.</div>';
+  } else {
+    receipts.slice(0,5).forEach(function(r) {
+      body += '<div style="display:flex;gap:8px;padding:6px 0;border-bottom:0.5px solid var(--border);align-items:flex-start;"><span style="font-size:10px;color:var(--green);">⬡</span><div><div style="font-size:11px;font-weight:500;color:var(--ink);">' + (r.doc_name || r.id || 'Dokument') + '</div><div style="font-size:9px;font-family:var(--mono);color:var(--ink-4);">' + (r.id || '').substring(0,32) + '…</div></div></div>';
+    });
+  }
+
+  panel.innerHTML = title + body;
+  document.body.appendChild(panel);
+
+  // Auto-fechar em 8 segundos
+  setTimeout(function() { var p = document.getElementById('chain-panel'); if(p) p.remove(); }, 8000);
 }
 
 // ═══════════════════════════════════════════════════════════════
