@@ -1097,8 +1097,8 @@
         // INIT
         // ═══════════════════════════════════════════════════════════════
 
-        // Clear previous wallet session when entering the Gate
-        // This ensures each new registration starts fresh
+        // Clear previous wallet session ONLY when starting fresh registration
+        // FIX: Don't wipe existing session when user revisits /gate
         function clearPreviousSession() {
             sessionStorage.removeItem('windi_law_wallet');
             sessionStorage.removeItem('windi_law_did');
@@ -1107,7 +1107,10 @@
             document.cookie = 'windi_did=; path=/; max-age=0';
         }
 
-        clearPreviousSession();
+        // Only clear if no valid session exists (prevents wiping on revisit)
+        if (!sessionStorage.getItem('windi_law_wallet')) {
+            clearPreviousSession();
+        }
         initTheme();
         setLang(currentLang);
 
