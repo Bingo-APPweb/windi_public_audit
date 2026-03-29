@@ -47,6 +47,7 @@ import sys
 sys.path.insert(0, "/opt/windi/windi-travel")
 from maria_blueprint import router as maria_seal_router
 from booking_router import router as maria_plan_router
+from gate import router as travel_gate_router, require_auth  # P3-A Identity Gate
 
 # ═══════════════════════════════════════════════════════════════
 # CONSTANTS
@@ -427,9 +428,13 @@ app = FastAPI(
 # ═══ W-MARIA-001 Routers (Phase 2) ═══
 app.include_router(maria_seal_router)   # /maria/seal, /maria/health
 app.include_router(maria_plan_router)   # /maria/plan
+app.include_router(travel_gate_router)  # /travel/gate/* (P3-A)
 
 # ═══ Maria UI Static Files (Phase 2) ═══
 app.mount("/maria-ui", StaticFiles(directory="/opt/windi/windi-travel/static/maria", html=True), name="maria-ui")
+
+# ═══ Tesoura Soberana Static Files (P3-B) ═══
+app.mount("/tesoura-ui", StaticFiles(directory="/opt/windi/windi-travel/static/tesoura", html=True), name="tesoura-ui")
 
 # Mount static files and templates
 templates = Jinja2Templates(directory="/opt/windi/windi-travel/identity-gate/templates")
@@ -919,83 +924,35 @@ from fastapi.responses import RedirectResponse
 @app.get("/workspace")
 async def workspace_gate(request: Request):
     """
-    Workspace só abre com DID VERIFIED.
-    P0 FIX: FAIL-CLOSED — sem DID válido, redirige para /gate
+    Workspace — P3-A Gate Guard (I9 fail-closed)
+    Sem sessão válida → redirect /travel/gate
     """
-    did = request.headers.get("X-WINDI-DID", "").strip()
+    # P3-A: require_auth verifica cookie windi_travel_session
+    user = require_auth(request)
+    if isinstance(user, RedirectResponse):
+        return user  # Redirect to /travel/gate
 
-    # Também verificar query param e cookie como fallback
-    if not did:
-        did = request.query_params.get("did", "").strip()
-    if not did:
-        did = request.cookies.get("windi_did", "").strip()
+    # Utilizador autenticado — servir workspace
+    wallet_id = user["wallet_id"] if user else "anonymous"
+    user_name = user["name"] if user else "Viajante"
 
-    if not did:
-        return RedirectResponse(url="/gate", status_code=302)
-
-    # Verificar DID no DB
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    cursor.execute("SELECT state FROM admins WHERE did = ?", (did,))
-    admin = cursor.fetchone()
-    conn.close()
-
-    if not admin:
-        return RedirectResponse(url="/gate", status_code=302)
-
-    admin_state = admin[0]
-
-    if admin_state != STATE_VERIFIED:
-        # Mostrar wall de verificação pendente
-        return HTMLResponse(content=f"""
-        <!DOCTYPE html>
-        <html lang="de">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>WINDI LAW — Identität in Prüfung</title>
-            <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
-        </head>
-        <body style="background:#07090D;color:#F5F0E0;
-          font-family:'JetBrains Mono',monospace;
-          display:flex;align-items:center;justify-content:center;
-          min-height:100vh;text-align:center;margin:0;">
-          <div>
-            <div style="font-size:48px;margin-bottom:1.5rem">🔐</div>
-            <div style="font-size:18px;font-weight:500;
-              color:#C9A84C;margin-bottom:0.75rem">
-              Identidade em Verificação
-            </div>
-            <div style="font-size:13px;color:rgba(245,240,224,0.6);
-              margin-bottom:2rem;max-width:420px;line-height:1.6">
-              O Human Dragon irá validar a sua conta.<br>
-              Estado actual: <strong style="color:#C9A84C">{admin_state}</strong>
-            </div>
-            <a href="/law/gate" style="font-size:12px;
-              color:rgba(201,168,76,0.8);text-decoration:none;
-              border:1px solid rgba(201,168,76,0.3);
-              padding:10px 20px;border-radius:4px;
-              transition:all 0.2s ease;">
-              ← Voltar ao Gate
-            </a>
-          </div>
-        </body>
-        </html>
-        """, status_code=403)
-
-    # DID VERIFIED — servir workspace
     try:
         with open("/opt/windi/windi-travel/workspace/index.html", "r", encoding="utf-8") as f:
-            return HTMLResponse(content=f.read())
+            content = f.read()
+            # Injectar dados do utilizador se houver placeholders
+            content = content.replace("{{WALLET_ID}}", wallet_id)
+            content = content.replace("{{USER_NAME}}", user_name)
+            return HTMLResponse(content=content)
     except FileNotFoundError:
-        return HTMLResponse(content="""
+        return HTMLResponse(content=f"""
         <html><body style="background:#07090D;color:#F5F0E0;
           font-family:monospace;text-align:center;padding:4rem;">
           <h1 style="color:#C9A84C">Workspace em Construção</h1>
-          <p>O workspace está a ser preparado.</p>
-          <a href="/law/dashboard/{did}" style="color:#C9A84C">Ver Dashboard →</a>
+          <p>Bem-vindo, {user_name}!</p>
+          <p style="font-size:12px;color:#666;">Wallet: {wallet_id}</p>
+          <a href="/travel/gate/logout" style="color:#C9A84C;font-size:13px;">Sair</a>
         </body></html>
-        """.format(did=did), status_code=200)
+        """, status_code=200)
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -1330,6 +1287,61 @@ async def seal_moment(request: Request, data: MomentSeal):
             "receipt_id": receipt_id,
             "error": str(e),
             "note": "Moment stored locally — Ledger sync pending"
+        }
+
+
+# ═══════════════════════════════════════════════════════════════
+# TESOURA SOBERANA — Collage Seal (P3-B)
+# ═══════════════════════════════════════════════════════════════
+
+@app.post("/tesoura/seal")
+async def tesoura_seal(request: Request):
+    """
+    Seal a collage composition to the Forensic Ledger.
+    I11 — Permanência de Evidência Criptográfica
+    """
+    import time
+    import json as json_lib
+
+    try:
+        data = await request.json()
+    except:
+        raise HTTPException(status_code=400, detail="Invalid JSON")
+
+    receipt_id = data.get("id", f"WINDI-TRAVEL-COLLAGE-{int(time.time())}")
+    actor = data.get("actor", "anonymous")
+    content_hash = data.get("content_hash", "")
+    metadata = data.get("metadata", "{}")
+
+    # Build Ledger payload
+    ledger_payload = {
+        "id": receipt_id,
+        "actor": actor,
+        "app": "windi-travel-tesoura",
+        "doc_name": data.get("doc_name", f"Collage {receipt_id}"),
+        "doc_type": "doc",
+        "governance_level": data.get("governance_level", "HIGH"),
+        "content_hash": content_hash,
+        "sge_score": data.get("sge_score", 90),
+        "note": f"Tesoura Soberana · {metadata}",
+    }
+
+    # Seal to Ledger
+    try:
+        res = requests.post(LEDGER_URL, json=ledger_payload, timeout=6)
+        result = res.json()
+        return {
+            "success": True,
+            "receipt_id": receipt_id,
+            "verify_url": f"https://windi-domain.com/verify-public/?id={receipt_id}",
+            "ledger_response": result
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "receipt_id": receipt_id,
+            "error": str(e),
+            "note": "Collage receipt stored locally — Ledger sync pending"
         }
 
 

@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="pt" data-theme="KLAR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI Travel — Identidade</title>
+<style>
+  /* ── Design System KLAR ── */
+  :root {
+    --perg:    #F5F0E0;
+    --ink:     #1A1A1A;
+    --ink-2:   #4A4A4A;
+    --ink-3:   #7A7A7A;
+    --gold:    #8B6914;
+    --gold-lt: #C4A84A;
+    --border:  #D4C9A8;
+    --surface: #FDFAF3;
+    --danger:  #B5360C;
+    --success: #2D6A4F;
+    --radius:  8px;
+    --font:    'Georgia', serif;
+    --mono:    'JetBrains Mono', 'Courier New', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--perg);
+    color: var(--ink);
+    font-family: var(--font);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  /* ── Gate Card ── */
+  .gate-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 48px 40px;
+    max-width: 460px;
+    width: 100%;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+    animation: cardEnter 0.4s ease both;
+  }
+
+  @keyframes cardEnter {
+    from { opacity:0; transform:translateY(12px); }
+    to   { opacity:1; transform:none; }
+  }
+
+  /* ── Logo ── */
+  .gate-logo {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .gate-logo .mark {
+    font-size: 28px;
+    letter-spacing: 4px;
+    color: var(--gold);
+    font-weight: 400;
+    font-family: var(--font);
+  }
+
+  .gate-logo .product {
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    margin-top: 4px;
+    font-family: var(--mono);
+  }
+
+  .gate-logo .tagline {
+    font-size: 12px;
+    color: var(--ink-2);
+    margin-top: 10px;
+    font-style: italic;
+  }
+
+  /* ── Step label ── */
+  .step-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    font-family: var(--mono);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* ── Form ── */
+  .field {
+    margin-bottom: 20px;
+  }
+
+  label {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--ink-2);
+    margin-bottom: 6px;
+    font-family: var(--mono);
+  }
+
+  input[type="text"],
+  input[type="email"] {
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--perg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 15px;
+    color: var(--ink);
+    font-family: var(--font);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  input[type="text"]:focus,
+  input[type="email"]:focus {
+    border-color: var(--gold);
+  }
+
+  /* ── Button ── */
+  .btn-primary {
+    width: 100%;
+    padding: 13px;
+    background: var(--gold);
+    color: var(--perg);
+    border: none;
+    border-radius: var(--radius);
+    font-size: 13px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-family: var(--mono);
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    margin-top: 8px;
+  }
+
+  .btn-primary:hover  { background: var(--gold-lt); }
+  .btn-primary:active { transform: scale(0.99); }
+
+  /* ── Error ── */
+  .error-box {
+    background: #FEF2EE;
+    border: 1px solid #E8C4B6;
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: var(--danger);
+  }
+
+  /* ── Check email state ── */
+  .check-email {
+    text-align: center;
+  }
+
+  .check-email .icon {
+    font-size: 40px;
+    margin-bottom: 16px;
+  }
+
+  .check-email h2 {
+    font-size: 18px;
+    font-weight: 400;
+    margin-bottom: 10px;
+    color: var(--ink);
+  }
+
+  .check-email p {
+    font-size: 14px;
+    color: var(--ink-2);
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+
+  .check-email .email-highlight {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--gold);
+    background: rgba(139,105,20,0.08);
+    padding: 4px 10px;
+    border-radius: 4px;
+    display: inline-block;
+    margin: 8px 0;
+  }
+
+  /* ── Error state ── */
+  .error-state {
+    text-align: center;
+  }
+
+  .error-state h2 {
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--danger);
+    margin-bottom: 12px;
+  }
+
+  .error-state a {
+    color: var(--gold);
+    font-family: var(--mono);
+    font-size: 13px;
+  }
+
+  /* ── Footer ── */
+  .gate-footer {
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    font-size: 10px;
+    color: var(--ink-3);
+    font-family: var(--mono);
+    text-align: center;
+    line-height: 1.8;
+  }
+
+  /* ── Lang switcher ── */
+  .lang-bar {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    gap: 8px;
+  }
+
+  .lang-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 3px 8px;
+    font-size: 10px;
+    font-family: var(--mono);
+    color: var(--ink-3);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .lang-btn:hover, .lang-btn.active {
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  /* ── I18n ── */
+  [data-lang="de"], [data-lang="en"] { display: none; }
+  [data-lang="pt"] { display: block; }
+  span[data-lang="de"], span[data-lang="en"] { display: none; }
+  span[data-lang="pt"] { display: inline; }
+
+  .html-de [data-lang="pt"]             { display: none; }
+  .html-de span[data-lang="pt"]         { display: none; }
+  .html-de [data-lang="de"]             { display: block; }
+  .html-de span[data-lang="de"]         { display: inline; }
+
+  .html-en [data-lang="pt"]             { display: none; }
+  .html-en span[data-lang="pt"]         { display: none; }
+  .html-en [data-lang="en"]             { display: block; }
+  .html-en span[data-lang="en"]         { display: inline; }
+</style>
+</head>
+<body>
+
+<!-- Lang switcher -->
+<div class="lang-bar">
+  <button class="lang-btn active" onclick="setLang('pt')">PT</button>
+  <button class="lang-btn" onclick="setLang('de')">DE</button>
+  <button class="lang-btn" onclick="setLang('en')">EN</button>
+</div>
+
+<div class="gate-card">
+
+  <!-- Logo -->
+  <div class="gate-logo">
+    <div class="mark">WINDI</div>
+    <div class="product">TRAVEL</div>
+    <div class="tagline">
+      <span data-lang="pt">Gently proves. Silently seals.</span>
+      <span data-lang="de">Sanft beweist. Still versiegelt.</span>
+      <span data-lang="en">Gently proves. Silently seals.</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════ STEP: REGISTER ═══ -->
+  {% if step == 'register' %}
+
+  <div class="step-label">
+    <span data-lang="pt">Identidade · Passo 1 de 2</span>
+    <span data-lang="de">Identität · Schritt 1 von 2</span>
+    <span data-lang="en">Identity · Step 1 of 2</span>
+  </div>
+
+  {% if error %}
+  <div class="error-box">{{ error }}</div>
+  {% endif %}
+
+  <form method="post" action="/travel/gate/register">
+
+    <div class="field">
+      <label>
+        <span data-lang="pt">Nome</span>
+        <span data-lang="de">Name</span>
+        <span data-lang="en">Name</span>
+      </label>
+      <input
+        type="text"
+        name="name"
+        placeholder="Como te chamamos"
+        required
+        autocomplete="name"
+      >
+    </div>
+
+    <div class="field">
+      <label>Email</label>
+      <input
+        type="email"
+        name="email"
+        placeholder="o.teu@email.com"
+        required
+        autocomplete="email"
+      >
+    </div>
+
+    <button type="submit" class="btn-primary">
+      <span data-lang="pt">Continuar →</span>
+      <span data-lang="de">Weiter →</span>
+      <span data-lang="en">Continue →</span>
+    </button>
+
+  </form>
+
+  <div class="gate-footer">
+    <span data-lang="pt">
+      A tua identidade está contigo, não nos nossos servidores.<br>
+      I9 · I11 · I13 · GDPR Art.5(1)(c) by design
+    </span>
+    <span data-lang="de">
+      Deine Identität gehört dir — nicht unseren Servern.<br>
+      I9 · I11 · I13 · DSGVO Art.5(1)(c) by design
+    </span>
+    <span data-lang="en">
+      Your identity stays with you, not on our servers.<br>
+      I9 · I11 · I13 · GDPR Art.5(1)(c) by design
+    </span>
+  </div>
+
+  <!-- ═══════════════════════════════════ STEP: CHECK EMAIL ═══ -->
+  {% elif step == 'check_email' %}
+
+  <div class="check-email">
+    <div class="icon">📬</div>
+
+    <h2>
+      <span data-lang="pt">Verifica o teu email</span>
+      <span data-lang="de">Bestätige deine E-Mail</span>
+      <span data-lang="en">Check your email</span>
+    </h2>
+
+    <p>
+      <span data-lang="pt">Enviámos um link para</span>
+      <span data-lang="de">Wir haben einen Link gesendet an</span>
+      <span data-lang="en">We sent a link to</span>
+    </p>
+
+    <div class="email-highlight">{{ email }}</div>
+
+    <p>
+      <span data-lang="pt">Clica no link para activar o teu acesso ao WINDI Travel.</span>
+      <span data-lang="de">Klicke auf den Link, um deinen WINDI Travel Zugang zu aktivieren.</span>
+      <span data-lang="en">Click the link to activate your WINDI Travel access.</span>
+    </p>
+  </div>
+
+  <div class="gate-footer">
+    <span data-lang="pt">O link expira em 60 minutos · I11 activo</span>
+    <span data-lang="de">Der Link läuft in 60 Minuten ab · I11 aktiv</span>
+    <span data-lang="en">Link expires in 60 minutes · I11 active</span>
+  </div>
+
+  <!-- ═══════════════════════════════════ STEP: ERROR ═══ -->
+  {% elif step == 'error' %}
+
+  <div class="error-state">
+    <h2>
+      <span data-lang="pt">Link inválido</span>
+      <span data-lang="de">Ungültiger Link</span>
+      <span data-lang="en">Invalid link</span>
+    </h2>
+
+    <p style="color: var(--ink-2); font-size:14px; margin-bottom:20px;">{{ error }}</p>
+
+    <a href="/travel/gate">
+      <span data-lang="pt">← Voltar ao início</span>
+      <span data-lang="de">← Zurück zum Anfang</span>
+      <span data-lang="en">← Back to start</span>
+    </a>
+  </div>
+
+  {% endif %}
+
+</div>
+
+<script>
+function setLang(lang) {
+  document.documentElement.className = 'html-' + lang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  localStorage.setItem('windi_travel_lang', lang);
+}
+
+// Restaurar língua salva
+(function() {
+  const saved = localStorage.getItem('windi_travel_lang') || 'pt';
+  document.documentElement.className = 'html-' + saved;
+  const btn = document.querySelector(`.lang-btn[onclick="setLang('${saved}')"]`);
+  if (btn) {
+    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+})();
+</script>
+
+</body>
+</html>
