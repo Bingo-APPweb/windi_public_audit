@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="de">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -403,9 +403,9 @@
   </a>
   <div class="header-space"></div>
   <div class="lang-switcher">
-    <button class="lang-btn" onclick="setLang('pt')" id="lb-pt">PT</button>
     <button class="lang-btn" onclick="setLang('de')" id="lb-de">DE</button>
     <button class="lang-btn" onclick="setLang('en')" id="lb-en">EN</button>
+    <button class="lang-btn" onclick="setLang('pt')" id="lb-pt">PT</button>
   </div>
 </header>
 
@@ -612,6 +612,19 @@ const I18N = {
     footer_docs:     'Documentação',
     footer_fve:      'FVE Protocol Spec',
     footer_create:   'Criar documento WINDI',
+    // Auto-verify panel
+    av_verifying:    'A verificar...',
+    av_authentic:    'Documento Autêntico',
+    av_not_verified: 'Não Verificado',
+    av_error:        'Erro na verificação',
+    av_back:         '← Voltar ao Verify',
+    av_receipt_id:   'RECEIPT ID',
+    av_hash:         'HASH',
+    av_timestamp:    'TIMESTAMP',
+    av_integrity:    'INTEGRIDADE',
+    av_ledger:       'LEDGER',
+    av_anchored:     'Ancorado',
+    av_message:      'MENSAGEM',
   },
   de: {
     hero_badge:      'Konstitutionelle Verifikation · 3 Modi · PT / DE / EN',
@@ -663,6 +676,19 @@ const I18N = {
     footer_docs:     'Dokumentation',
     footer_fve:      'FVE-Protokoll-Spec',
     footer_create:   'WINDI-Dokument erstellen',
+    // Auto-verify panel
+    av_verifying:    'Wird verifiziert...',
+    av_authentic:    'Authentisches Dokument',
+    av_not_verified: 'Nicht verifiziert',
+    av_error:        'Verifizierungsfehler',
+    av_back:         '← Zurück zu Verify',
+    av_receipt_id:   'BELEG-ID',
+    av_hash:         'HASH',
+    av_timestamp:    'ZEITSTEMPEL',
+    av_integrity:    'INTEGRITÄT',
+    av_ledger:       'LEDGER',
+    av_anchored:     'Verankert',
+    av_message:      'NACHRICHT',
   },
   en: {
     hero_badge:      'Constitutional verification · 3 modes · PT / DE / EN',
@@ -714,13 +740,28 @@ const I18N = {
     footer_docs:     'Documentation',
     footer_fve:      'FVE Protocol Spec',
     footer_create:   'Create WINDI document',
+    // Auto-verify panel
+    av_verifying:    'Verifying...',
+    av_authentic:    'Authentic Document',
+    av_not_verified: 'Not Verified',
+    av_error:        'Verification error',
+    av_back:         '← Back to Verify',
+    av_receipt_id:   'RECEIPT ID',
+    av_hash:         'HASH',
+    av_timestamp:    'TIMESTAMP',
+    av_integrity:    'INTEGRITY',
+    av_ledger:       'LEDGER',
+    av_anchored:     'Anchored',
+    av_message:      'MESSAGE',
   },
 };
 
 // ── State ─────────────────────────────────────────────────────
 const S = {
-  lang: navigator.language.startsWith('de') ? 'de' :
-        navigator.language.startsWith('pt') ? 'pt' : 'en',
+  lang: localStorage.getItem('windi_lang') ||
+        localStorage.getItem('windi_travel_lang') ||
+        (navigator.language.startsWith('de') ? 'de' :
+         navigator.language.startsWith('pt') ? 'pt' : 'en'),
 };
 
 function t(key) { return (I18N[S.lang] || I18N.en)[key] || key; }
@@ -784,6 +825,7 @@ function applyI18N() {
 
 function setLang(lang) {
   S.lang = lang;
+  localStorage.setItem('windi_lang', lang);
   applyI18N();
 }
 
@@ -796,7 +838,10 @@ applyI18N();
   const id = params.get('id');
   if (!id) return;
 
-  // Criar painel de resultado dinamicamente
+  // Use current language from S.lang
+  const L = I18N[S.lang] || I18N.en;
+
+  // Create result panel dynamically
   const panel = document.createElement('div');
   panel.id = 'auto-verify-panel';
   panel.style.cssText = `
@@ -812,7 +857,7 @@ applyI18N();
         WINDI VERIFY — FORENSIC LEDGER
       </div>
       <div id="avp-status" style="font-size:32px; font-weight:700; color:#F5F0E0; margin-bottom:4px;">
-        ⏳ A verificar...
+        ⏳ ${L.av_verifying}
       </div>
       <div id="avp-id" style="font-size:12px; color:#888; font-family:'JetBrains Mono',monospace; margin-bottom:24px; word-break:break-all;">
         ${id}
@@ -825,32 +870,32 @@ applyI18N();
         style="margin-top:20px; background:transparent; border:1px solid rgba(255,255,255,0.15);
                color:#F5F0E0; padding:10px 20px; border-radius:8px; cursor:pointer;
                font-size:13px; font-family:inherit;">
-        ← Voltar ao Verify
+        ${L.av_back}
       </button>
     </div>
   `;
   document.body.appendChild(panel);
 
-  // Chamar o endpoint correcto
+  // Call the correct endpoint
   fetch(`/verify-public/document/${encodeURIComponent(id)}`)
     .then(r => r.json())
     .then(data => {
       const ok = data.status === 'verified' && data.integrity === 'valid';
       document.getElementById('avp-status').innerHTML = ok
-        ? '✅ Documento Autêntico'
-        : '❌ Não Verificado';
+        ? '✅ ' + L.av_authentic
+        : '❌ ' + L.av_not_verified;
       document.getElementById('avp-status').style.color = ok ? '#4CAF50' : '#E53935';
 
       const body = document.getElementById('avp-body');
       body.style.display = 'block';
       body.innerHTML = `
         <div style="display:grid; gap:12px; font-size:13px;">
-          ${row('RECEIPT ID', data.document_id || id)}
-          ${row('HASH', data.hash || '—')}
-          ${row('TIMESTAMP', data.timestamp || '—')}
-          ${row('INTEGRIDADE', data.integrity || '—')}
-          ${row('LEDGER', data.ledger_anchor ? '🔒 Ancorado' : '—')}
-          ${data.message ? row('MENSAGEM', data.message) : ''}
+          ${row(L.av_receipt_id, data.document_id || id)}
+          ${row(L.av_hash, data.hash || '—')}
+          ${row(L.av_timestamp, data.timestamp || '—')}
+          ${row(L.av_integrity, data.integrity || '—')}
+          ${row(L.av_ledger, data.ledger_anchor ? '🔒 ' + L.av_anchored : '—')}
+          ${data.message ? row(L.av_message, data.message) : ''}
         </div>
         <div style="margin-top:16px; padding-top:16px; border-top:1px solid rgba(255,255,255,0.08);
                     font-size:11px; color:#666; font-style:italic;">
@@ -859,7 +904,7 @@ applyI18N();
       `;
     })
     .catch(err => {
-      document.getElementById('avp-status').textContent = '⚠️ Erro na verificação';
+      document.getElementById('avp-status').textContent = '⚠️ ' + L.av_error;
       document.getElementById('avp-status').style.color = '#FF9800';
       console.error('AutoVerify error:', err);
     });
