@@ -936,23 +936,612 @@ async def workspace_gate(request: Request):
     wallet_id = user["wallet_id"] if user else "anonymous"
     user_name = user["name"] if user else "Viajante"
 
+    # FASE 3 — Rescue Mode (Tesoura rules mantidas)
+    return HTMLResponse(content=f"""
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WINDI Travel</title>
+<style>
+/* ══ FASE 6: Theme + i18n · Tesoura Rules ══ */
+/* NO: @import, transition, @keyframes, backdrop-filter */
+
+/* KLAR (light) - default */
+:root, [data-theme="klar"] {{
+    --perg: #F5F0E0;
+    --gold: #8B6914;
+    --ink: #1A1A1A;
+    --ink2: #4A4A4A;
+    --border: #D4C9A8;
+    --surface: #FDFAF3;
+    --success: #2D6A4F;
+}}
+
+/* NOIR (dark) */
+[data-theme="noir"] {{
+    --perg: #0A0A10;
+    --gold: #C9A84C;
+    --ink: #E8E6E1;
+    --ink2: #A0A0A0;
+    --border: #1A1A24;
+    --surface: #12121A;
+    --success: #4A9F6E;
+}}
+
+* {{ box-sizing: border-box; margin: 0; padding: 0; }}
+
+body {{
+    background: var(--perg);
+    color: var(--ink);
+    font-family: Georgia, serif;
+    min-height: 100vh;
+    padding: 0;
+    padding-bottom: 60px;
+}}
+
+/* ══ Header ══ */
+.header {{
+    background: var(--perg);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}}
+
+.logo {{
+    font-size: 18px;
+    letter-spacing: 3px;
+    color: var(--gold);
+}}
+
+.user-info {{
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    color: var(--ink2);
+}}
+
+/* ══ Lang Bar ══ */
+.lang-bar {{
+    display: flex;
+    gap: 6px;
+}}
+
+.lang-btn {{
+    padding: 4px 8px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--perg);
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    color: var(--ink2);
+    cursor: pointer;
+}}
+
+.lang-btn.active {{
+    border-color: var(--gold);
+    color: var(--gold);
+}}
+
+/* ══ Theme Toggle ══ */
+.theme-btn {{
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--perg);
+    font-size: 14px;
+    cursor: pointer;
+    margin-left: 8px;
+}}
+
+/* ══ Tool Nav ══ */
+.tool-nav {{
+    display: flex;
+    gap: 12px;
+    padding: 16px 20px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+}}
+
+.tool-btn {{
+    display: inline-block;
+    padding: 10px 20px;
+    background: var(--perg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--ink);
+    text-decoration: none;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+}}
+
+/* ══ Main ══ */
+.main {{
+    padding: 24px 20px;
+    max-width: 500px;
+    margin: 0 auto;
+}}
+
+.card {{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 20px;
+}}
+
+.card h2 {{
+    font-size: 20px;
+    font-weight: 400;
+    margin-bottom: 12px;
+    color: var(--ink);
+    text-align: center;
+}}
+
+.card p {{
+    font-size: 14px;
+    color: var(--ink2);
+    line-height: 1.6;
+    text-align: center;
+}}
+
+/* ══ Rescue Section ══ */
+.rescue-section {{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}}
+
+.rescue-section h3 {{
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--gold);
+    margin-bottom: 16px;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 1px;
+}}
+
+.rescue-input {{
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: Georgia, serif;
+    font-size: 14px;
+    background: var(--perg);
+    color: var(--ink);
+    margin-bottom: 12px;
+}}
+
+.rescue-input:focus {{
+    outline: none;
+    border-color: var(--gold);
+}}
+
+.capture-btn {{
+    width: 100%;
+    padding: 14px;
+    background: var(--gold);
+    color: var(--perg);
+    border: none;
+    border-radius: 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    cursor: pointer;
+    letter-spacing: 1px;
+}}
+
+.file-input {{
+    display: none;
+}}
+
+.preview-area {{
+    margin-top: 16px;
+    text-align: center;
+    display: none;
+}}
+
+.preview-area img {{
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+}}
+
+.preview-label {{
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    color: var(--ink2);
+    margin-top: 8px;
+}}
+
+.seal-btn {{
+    width: 100%;
+    padding: 14px;
+    background: var(--success);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    margin-top: 12px;
+    display: none;
+}}
+
+/* ══ Footer ══ */
+.footer {{
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 12px 20px;
+    background: var(--perg);
+    border-top: 1px solid var(--border);
+    text-align: center;
+}}
+
+.footer a {{
+    color: var(--gold);
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    text-decoration: none;
+}}
+
+/* ══ Status message ══ */
+.status {{
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    color: var(--success);
+    text-align: center;
+    margin-top: 12px;
+    display: none;
+}}
+
+/* ══ Thread Section ══ */
+.thread-section {{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}}
+
+.thread-section h3 {{
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--gold);
+    margin-bottom: 16px;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 1px;
+}}
+
+.thread-list {{
+    list-style: none;
+}}
+
+.thread-item {{
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 8px;
+    background: var(--perg);
+}}
+
+.thread-item-label {{
+    font-size: 14px;
+    color: var(--ink);
+    margin-bottom: 4px;
+}}
+
+.thread-item-meta {{
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    color: var(--ink2);
+}}
+
+.thread-empty {{
+    font-size: 13px;
+    color: var(--ink2);
+    text-align: center;
+    padding: 16px;
+    font-style: italic;
+}}
+
+.load-thread-btn {{
+    width: 100%;
+    padding: 10px;
+    background: var(--perg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    color: var(--ink2);
+    cursor: pointer;
+}}
+
+/* ══ i18n ══ */
+[data-lang] {{ display: none; }}
+[data-lang="de"] {{ display: inline; }}
+body.lang-en [data-lang="de"] {{ display: none; }}
+body.lang-en [data-lang="en"] {{ display: inline; }}
+body.lang-pt [data-lang="de"] {{ display: none; }}
+body.lang-pt [data-lang="pt"] {{ display: inline; }}
+</style>
+</head>
+<body>
+
+<header class="header">
+    <div class="logo">WINDI TRAVEL</div>
+    <div class="lang-bar">
+        <button class="lang-btn active" onclick="setLang('de')">DE</button>
+        <button class="lang-btn" onclick="setLang('en')">EN</button>
+        <button class="lang-btn" onclick="setLang('pt')">PT</button>
+        <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">☀</button>
+    </div>
+</header>
+
+<nav class="tool-nav">
+    <a href="/travel/maria-ui/" class="tool-btn">🤖 Maria</a>
+    <a href="/travel/tesoura-ui/" class="tool-btn">✂️ Tesoura</a>
+</nav>
+
+<main class="main">
+    <div class="card">
+        <h2><span data-lang="de">Hallo, {user_name}</span><span data-lang="en">Hello, {user_name}</span><span data-lang="pt">Olá, {user_name}</span></h2>
+        <p>
+            <span data-lang="de">Die Vergangenheit bewahren. Die Zukunft schützen.<br>Im perfekten Präsens.</span>
+            <span data-lang="en">Save the past. Protect the future.<br>In the perfect present.</span>
+            <span data-lang="pt">Guardar o passado. Resguardar o futuro.<br>No presente perfeito.</span>
+        </p>
+    </div>
+
+    <div class="rescue-section">
+        <h3>📸 RESCUE MODE</h3>
+        <input type="text" class="rescue-input" id="momentLabel" data-placeholder-de="Etikett des Moments..." data-placeholder-en="Moment label..." data-placeholder-pt="Etiqueta do momento..." placeholder="Etikett des Moments...">
+        <input type="file" class="file-input" id="fileInput" accept="image/*,video/*">
+        <button class="capture-btn" onclick="document.getElementById('fileInput').click()">
+            <span data-lang="de">Moment erfassen</span><span data-lang="en">Capture Moment</span><span data-lang="pt">Capturar Momento</span>
+        </button>
+        <div class="preview-area" id="previewArea">
+            <img id="previewImg" src="" alt="Preview">
+            <div class="preview-label" id="previewLabel"></div>
+            <button class="seal-btn" id="sealBtn" onclick="sealMoment()">
+                <span data-lang="de">🔒 Im Ledger versiegeln</span><span data-lang="en">🔒 Seal to Ledger</span><span data-lang="pt">🔒 Selar no Ledger</span>
+            </button>
+        </div>
+        <div class="status" id="status"></div>
+    </div>
+
+    <div class="thread-section">
+        <h3>🧵 THREAD</h3>
+        <button class="load-thread-btn" onclick="loadThread()">
+            <span data-lang="de">Versiegelte Momente laden</span><span data-lang="en">Load sealed moments</span><span data-lang="pt">Carregar momentos selados</span>
+        </button>
+        <ul class="thread-list" id="threadList">
+            <li class="thread-empty" id="threadEmpty">
+                <span data-lang="de">Noch keine versiegelten Momente.</span><span data-lang="en">No sealed moments yet.</span><span data-lang="pt">Nenhum momento selado ainda.</span>
+            </li>
+        </ul>
+    </div>
+</main>
+
+<footer class="footer">
+    <a href="/travel/gate/logout"><span data-lang="de">Abmelden</span><span data-lang="en">Logout</span><span data-lang="pt">Sair</span></a>
+</footer>
+
+<script>
+// Tesoura rules: minimal JS, no loops, no intervals
+var currentFile = null;
+var currentHash = '';
+
+// i18n
+function setLang(lang) {{
+    document.body.className = 'lang-' + lang;
+    var btns = document.querySelectorAll('.lang-btn');
+    for (var i = 0; i < btns.length; i++) {{
+        btns[i].classList.remove('active');
+        if (btns[i].textContent === lang.toUpperCase()) {{
+            btns[i].classList.add('active');
+        }}
+    }}
+    // Update placeholders
+    var input = document.getElementById('momentLabel');
+    if (input) {{
+        input.placeholder = input.getAttribute('data-placeholder-' + lang) || '';
+    }}
+    localStorage.setItem('windi_travel_lang', lang);
+}}
+
+// Theme toggle
+function toggleTheme() {{
+    var current = document.documentElement.getAttribute('data-theme') || 'klar';
+    var next = (current === 'klar') ? 'noir' : 'klar';
+    document.documentElement.setAttribute('data-theme', next);
+    document.getElementById('themeBtn').textContent = (next === 'klar') ? '☀' : '☽';
+    localStorage.setItem('windi_travel_theme', next);
+}}
+
+// Init language and theme from localStorage
+(function() {{
+    var savedLang = localStorage.getItem('windi_travel_lang') || 'de';
+    setLang(savedLang);
+
+    var savedTheme = localStorage.getItem('windi_travel_theme') || 'klar';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    document.getElementById('themeBtn').textContent = (savedTheme === 'klar') ? '☀' : '☽';
+}})();
+
+document.getElementById('fileInput').onchange = function(e) {{
+    var file = e.target.files[0];
+    if (!file) return;
+
+    currentFile = file;
+    var reader = new FileReader();
+
+    reader.onload = function(ev) {{
+        var img = document.getElementById('previewImg');
+        img.src = ev.target.result;
+        document.getElementById('previewArea').style.display = 'block';
+        document.getElementById('previewLabel').textContent = file.name + ' (' + Math.round(file.size/1024) + 'KB)';
+        document.getElementById('sealBtn').style.display = 'block';
+
+        // Hash the file
+        hashFile(ev.target.result);
+    }};
+
+    reader.readAsDataURL(file);
+}};
+
+function hashFile(data) {{
+    // Simple hash for demo - in production use crypto.subtle
+    var hash = 0;
+    for (var i = 0; i < data.length; i++) {{
+        hash = ((hash << 5) - hash) + data.charCodeAt(i);
+        hash = hash & hash;
+    }}
+    currentHash = Math.abs(hash).toString(16);
+}}
+
+function sealMoment() {{
+    var label = document.getElementById('momentLabel').value || 'Momento';
+    var status = document.getElementById('status');
+
+    status.textContent = 'Selando...';
+    status.style.display = 'block';
+
+    fetch('/travel/seal', {{
+        method: 'POST',
+        headers: {{ 'Content-Type': 'application/json' }},
+        body: JSON.stringify({{
+            label: label,
+            hash: currentHash,
+            mode: 'capture',
+            lang: 'pt',
+            media_type: currentFile ? currentFile.type : 'image'
+        }})
+    }})
+    .then(function(r) {{ return r.json(); }})
+    .then(function(data) {{
+        if (data.success) {{
+            status.textContent = '✅ Selado: ' + data.receipt_id;
+        }} else {{
+            status.textContent = '⚠️ ' + (data.error || 'Erro');
+        }}
+    }})
+    .catch(function(err) {{
+        status.textContent = '❌ Erro: ' + err.message;
+    }});
+}}
+
+function loadThread() {{
+    var list = document.getElementById('threadList');
+    var empty = document.getElementById('threadEmpty');
+
+    empty.textContent = 'A carregar...';
+
+    fetch('/travel/workspace/seals')
+    .then(function(r) {{ return r.json(); }})
+    .then(function(data) {{
+        if (data.seals && data.seals.length > 0) {{
+            empty.style.display = 'none';
+            list.innerHTML = '';
+            for (var i = 0; i < data.seals.length; i++) {{
+                var seal = data.seals[i];
+                var li = document.createElement('li');
+                li.className = 'thread-item';
+                li.innerHTML = '<div class="thread-item-label">' + (seal.doc_name || 'Momento') + '</div>' +
+                    '<div class="thread-item-meta">' + (seal.id || '') + '</div>';
+                list.appendChild(li);
+            }}
+        }} else {{
+            empty.textContent = 'Nenhum momento selado ainda.';
+            empty.style.display = 'block';
+        }}
+    }})
+    .catch(function(err) {{
+        empty.textContent = 'Erro ao carregar: ' + err.message;
+    }});
+}}
+</script>
+
+</body>
+</html>
+""")
+
+    # ORIGINAL CODE (disabled for Samsung flicker test):
+    # try:
+    #     with open("/opt/windi/windi-travel/workspace/index.html", "r", encoding="utf-8") as f:
+    #         content = f.read()
+    #         content = content.replace("{{WALLET_ID}}", wallet_id)
+    #         content = content.replace("{{USER_NAME}}", user_name)
+    #         return HTMLResponse(content=content)
+    # except FileNotFoundError:
+    #     return HTMLResponse(content="Workspace not found", status_code=404)
+
+
+# ═══════════════════════════════════════════════════════════════
+# WORKSPACE SEALS — P3-B Integration
+# ═══════════════════════════════════════════════════════════════
+
+@app.get("/workspace/seals")
+async def workspace_seals(request: Request):
+    """
+    P3-B: Lista de seals do utilizador autenticado
+    Consulta o Ledger :8101 por receipts onde actor = wallet_id
+    """
+    user = require_auth(request)
+    if isinstance(user, RedirectResponse):
+        return JSONResponse({"error": "unauthorized", "seals": []}, status_code=401)
+
+    wallet_id = user["wallet_id"]
+
     try:
-        with open("/opt/windi/windi-travel/workspace/index.html", "r", encoding="utf-8") as f:
-            content = f.read()
-            # Injectar dados do utilizador se houver placeholders
-            content = content.replace("{{WALLET_ID}}", wallet_id)
-            content = content.replace("{{USER_NAME}}", user_name)
-            return HTMLResponse(content=content)
-    except FileNotFoundError:
-        return HTMLResponse(content=f"""
-        <html><body style="background:#07090D;color:#F5F0E0;
-          font-family:monospace;text-align:center;padding:4rem;">
-          <h1 style="color:#C9A84C">Workspace em Construção</h1>
-          <p>Bem-vindo, {user_name}!</p>
-          <p style="font-size:12px;color:#666;">Wallet: {wallet_id}</p>
-          <a href="/travel/gate/logout" style="color:#C9A84C;font-size:13px;">Sair</a>
-        </body></html>
-        """, status_code=200)
+        # Query Forensic Ledger for user's receipts
+        import requests as req
+        ledger_response = req.get(
+            f"http://localhost:8101/api/receipts?actor={wallet_id}",
+            timeout=5
+        )
+
+        if ledger_response.status_code == 200:
+            data = ledger_response.json()
+            # Handle both list and dict responses
+            seals = data if isinstance(data, list) else data.get("receipts", [])
+        else:
+            # Try alternate endpoint format
+            ledger_response = req.get(
+                "http://localhost:8101/api/receipts",
+                timeout=5
+            )
+            if ledger_response.status_code == 200:
+                all_receipts = ledger_response.json()
+                if isinstance(all_receipts, list):
+                    seals = [r for r in all_receipts if r.get("actor") == wallet_id]
+                else:
+                    seals = [r for r in all_receipts.get("receipts", []) if r.get("actor") == wallet_id]
+            else:
+                seals = []
+
+        return JSONResponse({
+            "wallet_id": wallet_id,
+            "seals": seals,
+            "count": len(seals)
+        })
+
+    except Exception as e:
+        print(f"[WORKSPACE SEALS] Ledger query error: {e}")
+        return JSONResponse({
+            "wallet_id": wallet_id,
+            "seals": [],
+            "count": 0,
+            "error": str(e)
+        })
 
 
 # ═══════════════════════════════════════════════════════════════

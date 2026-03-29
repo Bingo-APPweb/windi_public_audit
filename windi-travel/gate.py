@@ -33,10 +33,10 @@ TEMPLATES  = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 LEDGER_URL = "https://www.windi-domain.com/api/receipts"
 BASE_URL   = os.getenv("BASE_URL", "https://www.windi-domain.com/travel")
 
-SMTP_HOST  = os.getenv("SMTP_HOST", "smtp.strato.de")
-SMTP_PORT  = int(os.getenv("SMTP_PORT", "587"))
-SMTP_USER  = os.getenv("SMTP_USER", "noreply@windi-domain.com")
-SMTP_PASS  = os.getenv("SMTP_PASS", "")
+SMTP_HOST  = os.getenv("WINDI_SMTP_HOST", "smtp.strato.de")
+SMTP_PORT  = int(os.getenv("WINDI_SMTP_PORT", "465"))
+SMTP_USER  = os.getenv("WINDI_SMTP_USER", "noreply@a4desk.de")
+SMTP_PASS  = os.getenv("WINDI_SMTP_PASS", "")
 
 SESSION_TTL_H  = 24          # horas de sessão válida
 TOKEN_TTL_MIN  = 60          # minutos para verificar email
@@ -163,10 +163,17 @@ def send_verify_email(email: str, name: str, wallet_id: str, token: str) -> bool
 
         msg.attach(MIMEText(html_body, "html"))
 
-        with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
-            server.starttls()
-            server.login(SMTP_USER, SMTP_PASS)
-            server.sendmail(SMTP_USER, email, msg.as_string())
+        # Port 465 = SSL, Port 587 = STARTTLS
+        if SMTP_PORT == 465:
+            with smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT) as server:
+                server.login(SMTP_USER, SMTP_PASS)
+                server.sendmail(SMTP_USER, email, msg.as_string())
+        else:
+            with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
+                server.starttls()
+                server.login(SMTP_USER, SMTP_PASS)
+                server.sendmail(SMTP_USER, email, msg.as_string())
+        print(f"[TRAVEL GATE] Email sent to {email}")
         return True
     except Exception as e:
         print(f"[TRAVEL GATE] SMTP error: {e}")
@@ -298,6 +305,46 @@ async def gate_logout(request: Request):
     response = RedirectResponse(url="/travel/gate", status_code=302)
     response.delete_cookie("windi_travel_session")
     return response
+
+@router.post("/gate/resend")
+async def gate_resend(request: Request, email: str = Form(...)):
+    """Reenviar email de verificação"""
+    email = email.strip().lower()
+
+    with get_db() as db:
+        user = db.execute(
+            "SELECT * FROM travel_users WHERE email=?", (email,)
+        ).fetchone()
+
+        if not user:
+            return TEMPLATES.TemplateResponse(request, "gate_travel.html", {
+                "step": "error",
+                "error": "Email não encontrado. Por favor regista-te novamente.",
+                "base_url": BASE_URL
+            })
+
+        wallet_id = user["wallet_id"]
+        name = user["name"] or "Viajante"
+
+        # Gerar novo token
+        verify_token = secrets.token_urlsafe(32)
+        expires = (datetime.utcnow() + timedelta(minutes=TOKEN_TTL_MIN)).isoformat()
+        db.execute(
+            "INSERT OR REPLACE INTO travel_verify_tokens VALUES (?,?,?,datetime('now'),?,0)",
+            (verify_token, wallet_id, email, expires)
+        )
+        db.commit()
+
+    # Enviar email
+    success = send_verify_email(email, name, wallet_id, verify_token)
+    seal_gate_event("EMAIL_RESENT", wallet_id, f"Verify email resent to {email}")
+
+    return TEMPLATES.TemplateResponse(request, "gate_travel.html", {
+        "step": "check_email",
+        "email": email,
+        "error": None if success else "Erro ao enviar email. Tenta novamente.",
+        "base_url": BASE_URL
+    })
 
 @router.get("/gate/status")
 async def gate_status(request: Request):
