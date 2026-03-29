@@ -42,6 +42,12 @@ except ImportError:
 # Ed25519 cryptography
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 
+# W-MARIA-001 Integration (Phase 2)
+import sys
+sys.path.insert(0, "/opt/windi/windi-travel")
+from maria_blueprint import router as maria_seal_router
+from booking_router import router as maria_plan_router
+
 # ═══════════════════════════════════════════════════════════════
 # CONSTANTS
 # ═══════════════════════════════════════════════════════════════
@@ -417,6 +423,13 @@ app = FastAPI(
     version=VERSION,
     description="Sovereign Identity Management for Legal Professionals"
 )
+
+# ═══ W-MARIA-001 Routers (Phase 2) ═══
+app.include_router(maria_seal_router)   # /maria/seal, /maria/health
+app.include_router(maria_plan_router)   # /maria/plan
+
+# ═══ Maria UI Static Files (Phase 2) ═══
+app.mount("/maria-ui", StaticFiles(directory="/opt/windi/windi-travel/static/maria", html=True), name="maria-ui")
 
 # Mount static files and templates
 templates = Jinja2Templates(directory="/opt/windi/windi-travel/identity-gate/templates")
