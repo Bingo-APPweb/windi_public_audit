@@ -1452,9 +1452,84 @@ body.lang-pt [data-lang="pt"] {{ display: inline; }}
 // Tesoura rules: minimal JS, no loops, no intervals
 var currentFile = null;
 var currentHash = '';
+var currentLang = 'de';
+
+// ══ i18n Strings (DE|EN|PT) ══
+var I18N = {{
+    // Seal flow
+    selectFileFirst: {{
+        de: 'Bitte wählen Sie zuerst eine Datei',
+        en: 'Please select a file first',
+        pt: 'Por favor, selecione um ficheiro primeiro'
+    }},
+    sealing: {{
+        de: 'Versiegeln...',
+        en: 'Sealing...',
+        pt: 'Selando...'
+    }},
+    sealed: {{
+        de: 'Versiegelt',
+        en: 'Sealed',
+        pt: 'Selado'
+    }},
+    unknownError: {{
+        de: 'Unbekannter Fehler',
+        en: 'Unknown error',
+        pt: 'Erro desconhecido'
+    }},
+    noConnection: {{
+        de: 'Keine Verbindung zum Server',
+        en: 'No connection to server',
+        pt: 'Sem ligação ao servidor'
+    }},
+    verify: {{
+        de: 'verifizieren',
+        en: 'verify',
+        pt: 'verificar'
+    }},
+    // Photo modal
+    photoLoaded: {{
+        de: 'Foto zur Wiederverwendung geladen',
+        en: 'Photo loaded for reuse',
+        pt: 'Foto carregada para reutilização'
+    }},
+    noThumbnail: {{
+        de: 'Miniaturansicht nicht verfügbar',
+        en: 'Thumbnail not available',
+        pt: 'Miniatura não disponível'
+    }},
+    // Thread
+    loading: {{
+        de: 'Laden...',
+        en: 'Loading...',
+        pt: 'A carregar...'
+    }},
+    noMomentsYet: {{
+        de: 'Noch keine versiegelten Momente.',
+        en: 'No sealed moments yet.',
+        pt: 'Nenhum momento selado ainda.'
+    }},
+    loadError: {{
+        de: 'Fehler beim Laden',
+        en: 'Error loading',
+        pt: 'Erro ao carregar'
+    }},
+    moment: {{
+        de: 'Moment',
+        en: 'Moment',
+        pt: 'Momento'
+    }}
+}};
+
+function t(key) {{
+    var entry = I18N[key];
+    if (!entry) return key;
+    return entry[currentLang] || entry['de'] || key;
+}}
 
 // i18n
 function setLang(lang) {{
+    currentLang = lang;
     document.body.className = 'lang-' + lang;
     var btns = document.querySelectorAll('.lang-btn');
     for (var i = 0; i < btns.length; i++) {{
@@ -1483,6 +1558,7 @@ function toggleTheme() {{
 // Init language and theme from localStorage
 (function() {{
     var savedLang = localStorage.getItem('windi_travel_lang') || 'de';
+    currentLang = savedLang;
     setLang(savedLang);
 
     var savedTheme = localStorage.getItem('windi_travel_theme') || 'klar';
@@ -1533,12 +1609,12 @@ async function hashFileAsync(file) {{
 
 async function sealMoment() {{
     if (!currentFile || !currentHash || currentHash.length !== 64) {{
-        showSealError('Selecciona um ficheiro primeiro');
+        showSealError(t('selectFileFirst'));
         return;
     }}
 
     var status = document.getElementById('status');
-    status.textContent = 'Selando...';
+    status.textContent = t('sealing');
     status.style.display = 'block';
 
     try {{
@@ -1556,16 +1632,16 @@ async function sealMoment() {{
         var data = await res.json();
 
         if (data.sealed) {{
-            // Guardar thumbnail no localStorage com label
-            var label = document.getElementById('momentLabel').value || currentFile.name || 'Momento';
+            // Save thumbnail to localStorage with label
+            var label = document.getElementById('momentLabel').value || currentFile.name || t('moment');
             saveThumbnail(data.receipt_id, document.getElementById('previewImg').src, label);
             showSealSuccess(data.receipt_id, currentHash, data.verify_url);
             loadThread();
         }} else {{
-            showSealError(data.error || 'Erro desconhecido');
+            showSealError(data.error || t('unknownError'));
         }}
     }} catch (err) {{
-        showSealError('Sem ligação ao servidor');
+        showSealError(t('noConnection'));
     }}
 }}
 
@@ -1573,9 +1649,9 @@ function showSealSuccess(receiptId, hash, verifyUrl) {{
     var el = document.getElementById('status');
     if (el) {{
         el.innerHTML =
-            '<span style="color:#2D6A4F">✅ Selado</span><br>' +
+            '<span style="color:#2D6A4F">✅ ' + t('sealed') + '</span><br>' +
             '<span style="font-family:monospace;font-size:10px">' + receiptId + '</span><br>' +
-            '<a href="' + verifyUrl + '" target="_blank" style="color:#8B6914;font-size:11px">verificar →</a>';
+            '<a href="' + verifyUrl + '" target="_blank" style="color:#8B6914;font-size:11px">' + t('verify') + ' →</a>';
         el.style.display = 'block';
     }}
 }}
@@ -1603,7 +1679,7 @@ function saveThumbnail(receiptId, imgSrc, label) {{
             var thumbs = JSON.parse(localStorage.getItem('windi_travel_thumbs') || '{{}}');
             thumbs[receiptId] = {{
                 src: thumbData,
-                label: label || 'Momento',
+                label: label || t('moment'),
                 time: Date.now()
             }};
             localStorage.setItem('windi_travel_thumbs', JSON.stringify(thumbs));
@@ -1617,8 +1693,8 @@ function getThumbnail(receiptId) {{
         var thumbs = JSON.parse(localStorage.getItem('windi_travel_thumbs') || '{{}}');
         var data = thumbs[receiptId];
         if (!data) return null;
-        // Suporta formato antigo (string) e novo (object)
-        if (typeof data === 'string') return {{ src: data, label: 'Momento' }};
+        // Support old format (string) and new format (object)
+        if (typeof data === 'string') return {{ src: data, label: t('moment') }};
         return data;
     }} catch(e) {{ return null; }}
 }}
@@ -1640,11 +1716,11 @@ function closePhotoModal() {{
 }}
 
 function reusePhoto() {{
-    // Copiar para clipboard ou preencher input
+    // Copy to clipboard or fill input
     document.getElementById('previewImg').src = currentPhotoSrc;
     document.getElementById('previewArea').style.display = 'block';
     closePhotoModal();
-    alert('Foto carregada para reutilização');
+    alert(t('photoLoaded'));
 }}
 
 function transferPhoto() {{
@@ -1674,7 +1750,7 @@ function loadThread() {{
     var list = document.getElementById('threadList');
     var empty = document.getElementById('threadEmpty');
 
-    empty.textContent = 'A carregar...';
+    empty.textContent = t('loading');
 
     fetch('/travel/workspace/seals')
     .then(function(r) {{ return r.json(); }})
@@ -1699,7 +1775,7 @@ function loadThread() {{
                 var seal = data.seals[i];
                 var thumbData = getThumbnail(seal.id);
                 var thumbSrc = thumbData ? thumbData.src : null;
-                var thumbLabel = thumbData ? thumbData.label : (seal.doc_name || 'Momento');
+                var thumbLabel = thumbData ? thumbData.label : (seal.doc_name || t('moment'));
                 var li = document.createElement('li');
                 li.className = 'thread-item';
                 li.style.display = 'flex';
@@ -1715,7 +1791,7 @@ function loadThread() {{
                     if (src) {{
                         openPhotoModal(id, src);
                     }} else {{
-                        alert('Thumbnail não disponível para esta foto');
+                        alert(t('noThumbnail'));
                     }}
                 }};
                 li.innerHTML =
@@ -1727,12 +1803,12 @@ function loadThread() {{
                 list.appendChild(li);
             }}
         }} else {{
-            empty.textContent = 'Nenhum momento selado ainda.';
+            empty.textContent = t('noMomentsYet');
             empty.style.display = 'block';
         }}
     }})
     .catch(function(err) {{
-        empty.textContent = 'Erro ao carregar: ' + err.message;
+        empty.textContent = t('loadError') + ': ' + err.message;
     }});
 }}
 </script>
