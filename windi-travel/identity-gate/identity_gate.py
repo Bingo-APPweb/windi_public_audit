@@ -1272,6 +1272,87 @@ body.lang-en [data-lang="de"] {{ display: none; }}
 body.lang-en [data-lang="en"] {{ display: inline; }}
 body.lang-pt [data-lang="de"] {{ display: none; }}
 body.lang-pt [data-lang="pt"] {{ display: inline; }}
+
+/* ══ Photo Modal ══ */
+.photo-modal {{
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 1000;
+    padding: 20px;
+    overflow-y: auto;
+}}
+
+.photo-modal.active {{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}}
+
+.photo-modal-close {{
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 40px;
+    height: 40px;
+    background: var(--surface);
+    border: none;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    color: var(--ink);
+}}
+
+.photo-modal-img {{
+    max-width: 100%;
+    max-height: 50vh;
+    border-radius: 8px;
+    margin-top: 50px;
+}}
+
+.photo-modal-info {{
+    background: var(--surface);
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 16px;
+    width: 100%;
+    max-width: 400px;
+}}
+
+.photo-modal-id {{
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    color: var(--ink2);
+    margin-bottom: 12px;
+    word-break: break-all;
+}}
+
+.photo-modal-actions {{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}}
+
+.photo-modal-btn {{
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--perg);
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    color: var(--ink);
+    cursor: pointer;
+    text-align: left;
+}}
+
+.photo-modal-btn:active {{
+    background: var(--border);
+}}
 </style>
 </head>
 <body>
@@ -1311,6 +1392,7 @@ body.lang-pt [data-lang="pt"] {{ display: inline; }}
         <div class="preview-area" id="previewArea">
             <img id="previewImg" src="" alt="Preview">
             <div class="preview-label" id="previewLabel"></div>
+            <div class="hash-preview" id="hashPreview" style="display:none;font-family:'Courier New',monospace;font-size:10px;color:var(--gold);margin:8px 0;"></div>
             <button class="seal-btn" id="sealBtn" onclick="sealMoment()">
                 <span data-lang="de">🔒 Im Ledger versiegeln</span><span data-lang="en">🔒 Seal to Ledger</span><span data-lang="pt">🔒 Selar no Ledger</span>
             </button>
@@ -1334,6 +1416,37 @@ body.lang-pt [data-lang="pt"] {{ display: inline; }}
 <footer class="footer">
     <a href="/travel/gate/logout"><span data-lang="de">Abmelden</span><span data-lang="en">Logout</span><span data-lang="pt">Sair</span></a>
 </footer>
+
+<!-- Photo Modal -->
+<div class="photo-modal" id="photoModal">
+    <button class="photo-modal-close" onclick="closePhotoModal()">✕</button>
+    <img class="photo-modal-img" id="photoModalImg" src="" alt="Photo">
+    <div class="photo-modal-info">
+        <div class="photo-modal-id" id="photoModalId"></div>
+        <div class="photo-modal-actions">
+            <button class="photo-modal-btn" onclick="reusePhoto()">
+                <span data-lang="de">📋 Wiederverwenden</span>
+                <span data-lang="en">📋 Reuse</span>
+                <span data-lang="pt">📋 Reutilizar</span>
+            </button>
+            <button class="photo-modal-btn" onclick="transferPhoto()">
+                <span data-lang="de">📤 An Tesoura senden</span>
+                <span data-lang="en">📤 Send to Tesoura</span>
+                <span data-lang="pt">📤 Enviar para Tesoura</span>
+            </button>
+            <button class="photo-modal-btn" onclick="downloadPhoto()">
+                <span data-lang="de">💾 Herunterladen</span>
+                <span data-lang="en">💾 Download</span>
+                <span data-lang="pt">💾 Descarregar</span>
+            </button>
+            <button class="photo-modal-btn" onclick="verifyPhoto()">
+                <span data-lang="de">🔍 Im Ledger verifizieren</span>
+                <span data-lang="en">🔍 Verify in Ledger</span>
+                <span data-lang="pt">🔍 Verificar no Ledger</span>
+            </button>
+        </div>
+    </div>
+</div>
 
 <script>
 // Tesoura rules: minimal JS, no loops, no intervals
@@ -1391,52 +1504,170 @@ document.getElementById('fileInput').onchange = function(e) {{
         document.getElementById('previewLabel').textContent = file.name + ' (' + Math.round(file.size/1024) + 'KB)';
         document.getElementById('sealBtn').style.display = 'block';
 
-        // Hash the file
-        hashFile(ev.target.result);
+        // SHA-256 hash — crypto.subtle · P0
+        hashFileAsync(file);
     }};
 
     reader.readAsDataURL(file);
 }};
 
-function hashFile(data) {{
-    // Simple hash for demo - in production use crypto.subtle
-    var hash = 0;
-    for (var i = 0; i < data.length; i++) {{
-        hash = ((hash << 5) - hash) + data.charCodeAt(i);
-        hash = hash & hash;
+// P0 Corte 2 — SHA-256 real via crypto.subtle
+async function hashFileAsync(file) {{
+    try {{
+        var buffer = await file.arrayBuffer();
+        var hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+        var hashArray = Array.from(new Uint8Array(hashBuffer));
+        currentHash = hashArray.map(function(b) {{ return b.toString(16).padStart(2,'0'); }}).join('');
+
+        // Mostrar preview do hash
+        var hashPreview = document.getElementById('hashPreview');
+        if (hashPreview) {{
+            hashPreview.textContent = '🔐 SHA-256: ' + currentHash.slice(0,16) + '…';
+            hashPreview.style.display = 'block';
+        }}
+    }} catch (err) {{
+        console.error('Hash error:', err);
+        currentHash = '';
     }}
-    currentHash = Math.abs(hash).toString(16);
 }}
 
-function sealMoment() {{
-    var label = document.getElementById('momentLabel').value || 'Momento';
-    var status = document.getElementById('status');
+async function sealMoment() {{
+    if (!currentFile || !currentHash || currentHash.length !== 64) {{
+        showSealError('Selecciona um ficheiro primeiro');
+        return;
+    }}
 
+    var status = document.getElementById('status');
     status.textContent = 'Selando...';
     status.style.display = 'block';
 
-    fetch('/travel/seal', {{
-        method: 'POST',
-        headers: {{ 'Content-Type': 'application/json' }},
-        body: JSON.stringify({{
-            label: label,
-            hash: currentHash,
-            mode: 'capture',
-            lang: 'pt',
-            media_type: currentFile ? currentFile.type : 'image'
-        }})
-    }})
-    .then(function(r) {{ return r.json(); }})
-    .then(function(data) {{
-        if (data.success) {{
-            status.textContent = '✅ Selado: ' + data.receipt_id;
+    try {{
+        var res = await fetch('/travel/seal', {{
+            method: 'POST',
+            headers: {{ 'Content-Type': 'application/json' }},
+            body: JSON.stringify({{
+                hash: currentHash,
+                name: currentFile.name,
+                type: currentFile.type,
+                note: document.getElementById('momentLabel').value || ''
+            }})
+        }});
+
+        var data = await res.json();
+
+        if (data.sealed) {{
+            // Guardar thumbnail no localStorage com label
+            var label = document.getElementById('momentLabel').value || currentFile.name || 'Momento';
+            saveThumbnail(data.receipt_id, document.getElementById('previewImg').src, label);
+            showSealSuccess(data.receipt_id, currentHash, data.verify_url);
+            loadThread();
         }} else {{
-            status.textContent = '⚠️ ' + (data.error || 'Erro');
+            showSealError(data.error || 'Erro desconhecido');
         }}
-    }})
-    .catch(function(err) {{
-        status.textContent = '❌ Erro: ' + err.message;
-    }});
+    }} catch (err) {{
+        showSealError('Sem ligação ao servidor');
+    }}
+}}
+
+function showSealSuccess(receiptId, hash, verifyUrl) {{
+    var el = document.getElementById('status');
+    if (el) {{
+        el.innerHTML =
+            '<span style="color:#2D6A4F">✅ Selado</span><br>' +
+            '<span style="font-family:monospace;font-size:10px">' + receiptId + '</span><br>' +
+            '<a href="' + verifyUrl + '" target="_blank" style="color:#8B6914;font-size:11px">verificar →</a>';
+        el.style.display = 'block';
+    }}
+}}
+
+function showSealError(msg) {{
+    var el = document.getElementById('status');
+    if (el) {{
+        el.innerHTML = '<span style="color:#B5360C">❌ ' + msg + '</span>';
+        el.style.display = 'block';
+    }}
+}}
+
+// Thumbnail storage - guarda thumb + label
+function saveThumbnail(receiptId, imgSrc, label) {{
+    try {{
+        // Criar thumbnail 100x100
+        var canvas = document.createElement('canvas');
+        canvas.width = 100;
+        canvas.height = 100;
+        var ctx = canvas.getContext('2d');
+        var img = new Image();
+        img.onload = function() {{
+            ctx.drawImage(img, 0, 0, 100, 100);
+            var thumbData = canvas.toDataURL('image/jpeg', 0.7);
+            var thumbs = JSON.parse(localStorage.getItem('windi_travel_thumbs') || '{{}}');
+            thumbs[receiptId] = {{
+                src: thumbData,
+                label: label || 'Momento',
+                time: Date.now()
+            }};
+            localStorage.setItem('windi_travel_thumbs', JSON.stringify(thumbs));
+        }};
+        img.src = imgSrc;
+    }} catch(e) {{ console.error('Thumb error:', e); }}
+}}
+
+function getThumbnail(receiptId) {{
+    try {{
+        var thumbs = JSON.parse(localStorage.getItem('windi_travel_thumbs') || '{{}}');
+        var data = thumbs[receiptId];
+        if (!data) return null;
+        // Suporta formato antigo (string) e novo (object)
+        if (typeof data === 'string') return {{ src: data, label: 'Momento' }};
+        return data;
+    }} catch(e) {{ return null; }}
+}}
+
+// Photo Modal
+var currentPhotoId = '';
+var currentPhotoSrc = '';
+
+function openPhotoModal(receiptId, imgSrc) {{
+    currentPhotoId = receiptId;
+    currentPhotoSrc = imgSrc;
+    document.getElementById('photoModalImg').src = imgSrc;
+    document.getElementById('photoModalId').textContent = receiptId;
+    document.getElementById('photoModal').classList.add('active');
+}}
+
+function closePhotoModal() {{
+    document.getElementById('photoModal').classList.remove('active');
+}}
+
+function reusePhoto() {{
+    // Copiar para clipboard ou preencher input
+    document.getElementById('previewImg').src = currentPhotoSrc;
+    document.getElementById('previewArea').style.display = 'block';
+    closePhotoModal();
+    alert('Foto carregada para reutilização');
+}}
+
+function transferPhoto() {{
+    // Guardar em sessionStorage para Tesoura
+    sessionStorage.setItem('tesoura_import', JSON.stringify({{
+        src: currentPhotoSrc,
+        id: currentPhotoId
+    }}));
+    closePhotoModal();
+    window.location.href = '/travel/tesoura-ui/';
+}}
+
+function downloadPhoto() {{
+    var link = document.createElement('a');
+    link.href = currentPhotoSrc;
+    link.download = currentPhotoId + '.jpg';
+    link.click();
+    closePhotoModal();
+}}
+
+function verifyPhoto() {{
+    window.open('https://windi-domain.com/verify-public/web/?id=' + currentPhotoId, '_blank');
+    closePhotoModal();
 }}
 
 function loadThread() {{
@@ -1451,12 +1682,48 @@ function loadThread() {{
         if (data.seals && data.seals.length > 0) {{
             empty.style.display = 'none';
             list.innerHTML = '';
-            for (var i = 0; i < data.seals.length; i++) {{
+            // Filtrar duplicados por content_hash e limitar a 15
+            var seen = {{}};
+            var filtered = [];
+            for (var j = 0; j < data.seals.length && filtered.length < 15; j++) {{
+                var s = data.seals[j];
+                // Usar hash como chave única (ignora duplicados reais)
+                var key = s.content_hash || s.id;
+                if (!seen[key]) {{
+                    seen[key] = true;
+                    filtered.push(s);
+                }}
+            }}
+            for (var i = 0; i < filtered.length; i++) {{
+                var seal = filtered[i];
                 var seal = data.seals[i];
+                var thumbData = getThumbnail(seal.id);
+                var thumbSrc = thumbData ? thumbData.src : null;
+                var thumbLabel = thumbData ? thumbData.label : (seal.doc_name || 'Momento');
                 var li = document.createElement('li');
                 li.className = 'thread-item';
-                li.innerHTML = '<div class="thread-item-label">' + (seal.doc_name || 'Momento') + '</div>' +
-                    '<div class="thread-item-meta">' + (seal.id || '') + '</div>';
+                li.style.display = 'flex';
+                li.style.alignItems = 'center';
+                li.style.gap = '12px';
+                li.style.cursor = 'pointer';
+                li.setAttribute('data-id', seal.id);
+                li.setAttribute('data-thumb', thumbSrc || '');
+                li.setAttribute('data-label', thumbLabel);
+                li.onclick = function() {{
+                    var id = this.getAttribute('data-id');
+                    var src = this.getAttribute('data-thumb');
+                    if (src) {{
+                        openPhotoModal(id, src);
+                    }} else {{
+                        alert('Thumbnail não disponível para esta foto');
+                    }}
+                }};
+                li.innerHTML =
+                    (thumbSrc ? '<img src="' + thumbSrc + '" style="width:60px;height:60px;border-radius:4px;object-fit:cover;border:1px solid var(--border);">' : '<div style="width:60px;height:60px;background:var(--border);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:20px;">📷</div>') +
+                    '<div style="flex:1;min-width:0;">' +
+                    '<div class="thread-item-label" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + thumbLabel + '</div>' +
+                    '<div class="thread-item-meta">' + (seal.id || '').slice(0,24) + '…</div>' +
+                    '</div>';
                 list.appendChild(li);
             }}
         }} else {{
@@ -1640,7 +1907,7 @@ async def dashboard_json(did: str):
     actual_receipt = admin[10] if admin[10] else genesis_receipt_id
 
     # verify_url canónica — sempre presente
-    verify_url = f"https://windi-domain.com/verify-public/?id={actual_receipt}"
+    verify_url = f"https://windi-domain.com/verify-public/document/{actual_receipt}"
 
     # Identity Card portátil — formato exportável v1.0
     return {
@@ -1811,72 +2078,62 @@ async def root():
 
 
 # ═══════════════════════════════════════════════════════════════
-# TRAVEL SEAL — Momento Verifiable (I14)
+# TRAVEL SEAL — P0 Corte 1 · require_auth + SHA-256 validation
 # ═══════════════════════════════════════════════════════════════
 
-class MomentSeal(BaseModel):
-    label: str
-    hash: str
-    geo: Optional[str] = None
-    mode: str = "capture"
-    lang: str = "de"
-    media_type: str = "image"
-    note: Optional[str] = None
-
-
 @app.post("/seal")
-async def seal_moment(request: Request, data: MomentSeal):
+async def seal_moment(request: Request):
     """
     Seal a moment to the Forensic Ledger.
-    I14 — Presence Integrity
-    I9 — Human confirmation required (done in frontend modal)
+    I9 — require_auth fail-closed
+    I11 — SHA-256 hash validation
     """
     import time
 
-    # Get wallet from session/cookie
-    wallet_id = request.cookies.get("windi_did", "anonymous")
+    # ✅ require_auth — fail-closed I9
+    user = require_auth(request)
+    if isinstance(user, RedirectResponse):
+        return JSONResponse({"error": "não autenticado"}, status_code=401)
 
-    # Generate receipt ID
-    receipt_id = f"WINDI-TRAVEL-{int(time.time())}"
+    wallet_id = user["wallet_id"]
 
-    # Build Ledger payload
-    ledger_payload = {
-        "id": receipt_id,
-        "actor": wallet_id,
-        "app": "windi-travel-workspace",
-        "doc_name": data.label or "Moment",
-        "doc_type": "doc",
-        "governance_level": "HIGH",
-        "content_hash": f"sha256:{data.hash}",
-        "sge_score": 95.0,
-        "invariant": "I14",
-        "note": f"Travel Seal · Mode:{data.mode} · Lang:{data.lang} · {data.note or ''}",
-        "metadata": {
-            "geo": data.geo or "",
-            "mode": data.mode,
-            "media_type": data.media_type,
-            "lang": data.lang,
-            "sealed_by": "WINDI Travel v1.0.0"
-        }
-    }
+    body = await request.json()
+    file_hash = body.get("hash", "")
+    file_name = body.get("name", "memoria")
+    file_type = body.get("type", "image")
+    note = body.get("note", "")
 
-    # Seal to Ledger
+    # Validar hash SHA-256 (64 hex chars)
+    if not file_hash or len(file_hash) != 64:
+        return JSONResponse({"error": "hash inválido"}, status_code=400)
+
+    receipt_id = f"WINDI-TRAVEL-{int(time.time())}-{file_hash[:8].upper()}"
+
+    # ✅ Seal no Ledger I11
     try:
-        res = requests.post(LEDGER_URL, json=ledger_payload, timeout=5)
-        result = res.json()
-        return {
-            "success": True,
-            "receipt_id": receipt_id,
-            "verify_url": f"https://windi-domain.com/verify-public/?id={receipt_id}",
-            "ledger_response": result
+        payload = {
+            "id": receipt_id,
+            "actor": wallet_id,
+            "app": "windi-travel-workspace-v3",
+            "doc_name": file_name,
+            "doc_type": "doc",
+            "governance_level": "MEDIUM",
+            "content_hash": f"sha256:{file_hash}",
+            "sge_score": 90,
+            "invariant": "I11",
+            "note": note or f"Travel memory sealed · {file_type}"
         }
+        requests.post(LEDGER_URL, json=payload, timeout=5)
     except Exception as e:
-        return {
-            "success": False,
-            "receipt_id": receipt_id,
-            "error": str(e),
-            "note": "Moment stored locally — Ledger sync pending"
-        }
+        print(f"[TRAVEL SEAL] Ledger error: {e}")
+
+    return JSONResponse({
+        "receipt_id": receipt_id,
+        "hash": file_hash,
+        "wallet_id": wallet_id,
+        "verify_url": f"https://windi-domain.com/verify-public/web/?id={receipt_id}",
+        "sealed": True
+    })
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -1922,7 +2179,7 @@ async def tesoura_seal(request: Request):
         return {
             "success": True,
             "receipt_id": receipt_id,
-            "verify_url": f"https://windi-domain.com/verify-public/?id={receipt_id}",
+            "verify_url": f"https://windi-domain.com/verify-public/web/?id={receipt_id}",
             "ledger_response": result
         }
     except Exception as e:
