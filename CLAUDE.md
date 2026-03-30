@@ -626,17 +626,17 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 
 **Products:** Triangle of Power · WINDI FIELD · WINDI TRAVEL · FVE Protocol · RFC-001 DNA
 
-> **Detalhes:** ver `§37-68. Sistemas Recentes` abaixo
+> **Detalhes:** ver `§37-69. Sistemas Recentes` abaixo
 
 ### Histórico Recente (últimos 5)
 
 | Data | Milestone |
 |------|-----------|
-| 30 Mar | §68 **Hotellook Hotel Bridge** · Token 513311 · /hotel-search · Voz Natural |
+| 30 Mar | §69 **MARIA Waterfall Fix** · 5 clean exits · PLACE_TYPE_MAP 50+ · Culture intent |
+| 30 Mar | §68 Hotellook Hotel Bridge · Token 513311 · /hotel-search · Voz Natural |
 | 30 Mar | §67 Kiwi Flight Bridge · IP1 Separação Financeira · IATA Normalization |
 | 30 Mar | §66 Places Sovereignty Gate · Cache-first · Weber Manufaktur ★4.7 soberano |
 | 30 Mar | §65 MARIA Saudação · §62-64 Triple LLM · DID Universal |
-| 29 Mar | §60 P3-A Identity Gate · Tesoura v10 · Three Claudes Protocol |
 
 > **Histórico completo:** `CLAUDE-HISTORY.md` + `CHANGELOG.md`
 
@@ -843,7 +843,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 
 ---
 
-## §37-68. Sistemas Recentes — Resumo
+## §37-69. Sistemas Recentes — Resumo
 
 > **Detalhes completos:** `CLAUDE-HISTORY.md` § MIGRAÇÃO 24 Mar 2026
 
@@ -881,6 +881,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 | 66 | **Places Sovereignty Gate** | Cache-first · TTL per type · Audit trail · Soberania cumulativa | ✅ **LIVE** |
 | 67 | **Kiwi Flight Bridge** | kiwi_bridge.py · IATA · Travelpayouts 513311 · Voz Natural trilíngue | ✅ **LIVE** |
 | 68 | **Hotellook Hotel Bridge** | hotel_bridge.py · /hotel-search · Token 513311 · Voz Natural | ✅ **LIVE** |
+| 69 | **MARIA Waterfall Fix** | 5 clean exits · PLACE_TYPE_MAP 50+ · Culture/General intents | ✅ **LIVE** |
 
 ### Referência Rápida
 
@@ -919,6 +920,16 @@ Sistema de autenticação por identidade soberana no GEN7.
 **Axioma §66:** "O mundo real entra uma vez, a soberania local serve para sempre."
 **Axioma §67:** "MARIA fala como companheira, não como motor de busca. 'Boa notícia!' em vez de 'Encontrei 2 resultados.'"
 **Axioma §68:** "Um token, dois mundos — voos e hotéis servidos pelo mesmo parceiro, sem fricção para o viajante."
+**Axioma §69:** "MARIA não engole queries no vazio. Cada pergunta tem uma saída limpa."
+
+**§69 MARIA Waterfall (canonical):**
+```
+Query → flight?     → Kiwi Bridge
+      → hotel?      → Hotellook Bridge
+      → culture?    → MARIA direct (dicas, moeda, seguro...)
+      → place match → Places Gate (50+ types)
+      → else        → general_companion (friendly fallback)
+```
 
 ---
 
