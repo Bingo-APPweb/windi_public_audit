@@ -351,7 +351,9 @@ function App(){
     const t1=setTimeout(()=>{
       setDoneSt(ids.slice(0,-1));setActiveStage(null);
       setResult(data);setMode("speaking");
-      const vt=(data.maria_voice&&(data.maria_voice[lang]||data.maria_voice.PT)||"")+" "+t.suffix;
+      // §71 — No seal suffix for greetings (nothing to seal)
+      const isGreeting=data.decision&&data.decision.type==="greeting";
+      const vt=(data.maria_voice&&(data.maria_voice[lang]||data.maria_voice.PT)||"")+(isGreeting?"":(" "+t.suffix));
       speakMaria(vt,lang,()=>setMode("result"));
     },wait);
     timers.current.push(t1);
@@ -592,9 +594,9 @@ function App(){
               <div style={{position:"absolute",top:-10,left:14,background:P.terra,borderRadius:20,
                 padding:"2px 10px",fontSize:10,color:"white",fontFamily:"'JetBrains Mono',monospace"}}>{t.maria_tag}</div>
               <p style={{color:P.pergaminho,fontSize:13,lineHeight:1.6,margin:"7px 0 0",fontStyle:"italic"}}>
-                "{result.maria_voice&&(result.maria_voice[lang]||result.maria_voice.PT)} {t.suffix}"
+                "{result.maria_voice&&(result.maria_voice[lang]||result.maria_voice.PT)}{decision.type!=="greeting"&&(" "+t.suffix)}"
               </p>
-              <button onClick={()=>speakMaria((result.maria_voice&&(result.maria_voice[lang]||result.maria_voice.PT)||"")+" "+t.suffix,lang,null)}
+              <button onClick={()=>speakMaria((result.maria_voice&&(result.maria_voice[lang]||result.maria_voice.PT)||"")+(decision.type!=="greeting"?(" "+t.suffix):""),lang,null)}
                 style={{background:"none",border:`1px solid rgba(255,255,255,0.2)`,borderRadius:20,
                   padding:"3px 11px",color:"rgba(255,255,255,0.55)",fontSize:10,
                   fontFamily:"'JetBrains Mono',monospace",cursor:"pointer",marginTop:9}}>{t.replay}</button>
