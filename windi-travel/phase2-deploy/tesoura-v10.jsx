@@ -1,0 +1,985 @@
+import { useState, useRef, useEffect } from "react";
+
+const TERRA = "#C9603A";
+const OCEAN = "#3A7CA8";
+const CREAM = "#FAF7F2";
+const INK   = "#2E2219";
+const NOIR  = "#1a1a18";
+const MIST  = "#B8A898";
+const GOLD_L= "#C49A1E";
+const SAGE  = "#6A8F72";
+const VERDE = "#5C7A5A";
+
+const LEDGER_SEAL_URL = "/travel/tesoura/seal";
+const VERIFY_BASE     = "https://windi-domain.com/verify-public/?id=";
+
+const T = {
+  pt:{
+    brand:"WINDI Travel", sub:"Tesoura Soberana",
+    lasso:"Lasso", ai:"IA Touch", move:"Mover", rotate:"Rodar",
+    text:"Texto", clear:"Tudo", seal:"Selar", layers:"Camadas",
+    undo:"Desfazer", del:"Apagar", rotation:"Rotação",
+    hint_lasso:"✂️ Desenha o contorno com o dedo",
+    hint_toque:"🤖 Toca num objecto · IA segmenta",
+    hint_mover:"✋ Arrasta · selecciona para camadas",
+    hint_rodar:"🔄 Toca numa peça · usa o slider",
+    hint_texto:"✍️ Toca no workspace para adicionar texto",
+    text_placeholder:"O teu texto...",
+    text_size:"Tamanho", text_color:"Cor",
+    ai_on:"🤖 MODO IA", piece:"PEÇA", pieces:"PEÇAS",
+    sealed:"Colagem Selada", sealed_sub:"Composição soberana · Camadas preservadas",
+    receipt:"Receipt ID", layers_lbl:"Camadas", recipe:"Receita",
+    hash_note:"A ordem das camadas faz parte do hash.\nMudar sobreposição = hash diferente.\nA composição é única e irrepetível.",
+    close:"Fechar",
+    st_ready:"PRONTO", st_cut:"A recortar...", st_ai:"IA a analisar...",
+    st_ok:"✨ Extraído", st_touch:"Toca numa área", st_undo:"↩ Desfeito",
+    st_del:"Eliminado", st_clear:"LIMPO", st_calc:"A calcular...",
+    st_sealed:"SELADO ✓", st_none:"⚠️ SEM PEÇAS", st_nundo:"Nada para desfazer",
+    lup:"▲ Camada acima", ldown:"▼ Camada abaixo", lfront:"⬆ Frente total", lback:"⬇ Fundo total",
+    addphoto:"+ FOTO", box:"Caixa",
+    // v10
+    export_title:"Partilhar & Exportar",
+    btn_download:"📥 Download PNG",
+    btn_share:"📤 Partilhar",
+    btn_email:"📧 Email",
+    btn_ledger:"🔒 Selar no Ledger",
+    btn_verify:"🔗 Verificar",
+    ledger_ok:"✦ SELADO NO LEDGER",
+    ledger_fail:"⚠️ Ledger indisponível · Receipt local",
+    ledger_ing:"A selar no Ledger...",
+    share_text:"Criei esta colagem verificável com WINDI Travel.",
+    email_subject:"Colagem WINDI Travel — Receipt",
+    copy_ok:"✓ Link copiado",
+    download_ok:"✓ Imagem guardada",
+    render_ing:"A renderizar...",
+  },
+  de:{
+    brand:"WINDI Travel", sub:"Souveräne Schere",
+    lasso:"Lasso", ai:"KI Touch", move:"Verschieben", rotate:"Drehen",
+    text:"Text", clear:"Alles", seal:"Versiegeln", layers:"Ebenen",
+    undo:"Rückgängig", del:"Löschen", rotation:"Drehung",
+    hint_lasso:"✂️ Kontur mit dem Finger zeichnen",
+    hint_toque:"🤖 Objekt berühren · KI segmentiert",
+    hint_mover:"✋ Verschieben · auswählen für Ebenen",
+    hint_rodar:"🔄 Stück berühren · Schieberegler",
+    hint_texto:"✍️ Workspace berühren um Text hinzuzufügen",
+    text_placeholder:"Dein Text...",
+    text_size:"Größe", text_color:"Farbe",
+    ai_on:"🤖 KI-MODUS", piece:"TEIL", pieces:"TEILE",
+    sealed:"Collage versiegelt", sealed_sub:"Souveräne Komposition · Ebenen gesichert",
+    receipt:"Receipt ID", layers_lbl:"Ebenen", recipe:"Rezept",
+    hash_note:"Die Ebenenreihenfolge ist Teil des Hashs.\nAndere Überlappung = anderer Hash.\nEinzigartige Komposition.",
+    close:"Schließen",
+    st_ready:"BEREIT", st_cut:"Ausschneiden...", st_ai:"KI analysiert...",
+    st_ok:"✨ Extrahiert", st_touch:"Farbigen Bereich berühren", st_undo:"↩ Rückgängig",
+    st_del:"Gelöscht", st_clear:"GELEERT", st_calc:"Berechne...",
+    st_sealed:"VERSIEGELT ✓", st_none:"⚠️ KEINE TEILE", st_nundo:"Nichts rückgängig",
+    lup:"▲ Ebene höher", ldown:"▼ Ebene tiefer", lfront:"⬆ Ganz vorne", lback:"⬇ Ganz hinten",
+    addphoto:"+ FOTO", box:"Schachtel",
+    export_title:"Teilen & Exportieren",
+    btn_download:"📥 Download PNG",
+    btn_share:"📤 Teilen",
+    btn_email:"📧 E-Mail",
+    btn_ledger:"🔒 Im Ledger versiegeln",
+    btn_verify:"🔗 Verifizieren",
+    ledger_ok:"✦ IM LEDGER VERSIEGELT",
+    ledger_fail:"⚠️ Ledger nicht verfügbar · Lokaler Receipt",
+    ledger_ing:"Im Ledger versiegeln...",
+    share_text:"Ich habe diese verifizierbare Collage mit WINDI Travel erstellt.",
+    email_subject:"WINDI Travel Collage — Receipt",
+    copy_ok:"✓ Link kopiert",
+    download_ok:"✓ Bild gespeichert",
+    render_ing:"Wird gerendert...",
+  },
+  en:{
+    brand:"WINDI Travel", sub:"Sovereign Shear",
+    lasso:"Lasso", ai:"AI Touch", move:"Move", rotate:"Rotate",
+    text:"Text", clear:"Clear", seal:"Seal", layers:"Layers",
+    undo:"Undo", del:"Delete", rotation:"Rotation",
+    hint_lasso:"✂️ Draw the outline with your finger",
+    hint_toque:"🤖 Touch an object · AI segments it",
+    hint_mover:"✋ Drag · select to manage layers",
+    hint_rodar:"🔄 Touch a piece · use the slider",
+    hint_texto:"✍️ Touch the workspace to add text",
+    text_placeholder:"Your text...",
+    text_size:"Size", text_color:"Color",
+    ai_on:"🤖 AI MODE", piece:"PIECE", pieces:"PIECES",
+    sealed:"Collage Sealed", sealed_sub:"Sovereign composition · Layers preserved",
+    receipt:"Receipt ID", layers_lbl:"Layers", recipe:"Recipe",
+    hash_note:"Layer order is part of the hash.\nChanging overlap = different hash.\nUnique, irreproducible composition.",
+    close:"Close",
+    st_ready:"READY", st_cut:"Cutting...", st_ai:"AI analysing...",
+    st_ok:"✨ Extracted", st_touch:"Touch a coloured area", st_undo:"↩ Undone",
+    st_del:"Deleted", st_clear:"CLEARED", st_calc:"Calculating...",
+    st_sealed:"SEALED ✓", st_none:"⚠️ NO PIECES", st_nundo:"Nothing to undo",
+    lup:"▲ Layer up", ldown:"▼ Layer down", lfront:"⬆ Bring to front", lback:"⬇ Send to back",
+    addphoto:"+ PHOTO", box:"Box",
+    export_title:"Share & Export",
+    btn_download:"📥 Download PNG",
+    btn_share:"📤 Share",
+    btn_email:"📧 Email",
+    btn_ledger:"🔒 Seal to Ledger",
+    btn_verify:"🔗 Verify",
+    ledger_ok:"✦ SEALED IN LEDGER",
+    ledger_fail:"⚠️ Ledger unavailable · Local receipt",
+    ledger_ing:"Sealing to Ledger...",
+    share_text:"I created this verifiable collage with WINDI Travel.",
+    email_subject:"WINDI Travel Collage — Receipt",
+    copy_ok:"✓ Link copied",
+    download_ok:"✓ Image saved",
+    render_ing:"Rendering...",
+  },
+};
+
+const SCENES = [
+  { name:"🏔️", sky:["#87CEEB","#B8D4E8"], ground:"#6B8E4E", sun:"#FFF176", hill:"#4A7C40", extra:"mountain" },
+  { name:"🌅", sky:["#FF6B35","#FFA07A"], ground:"#8B4513", sun:"#FFD700", hill:"#6B3410", extra:"sunset"   },
+  { name:"🌊", sky:["#4A90D9","#87CEEB"], ground:"#1E6091", sun:"#FFFFFF", hill:"#1A5276", extra:"ocean"    },
+  { name:"🌲", sky:["#90EE90","#228B22"], ground:"#3D5A1E", sun:"#FFFF99", hill:"#2D4A0E", extra:"forest"   },
+];
+
+function buildScene(s,w,h){
+  const c=document.createElement("canvas"); c.width=w; c.height=h;
+  const ctx=c.getContext("2d");
+  const g=ctx.createLinearGradient(0,0,0,h*.65);
+  g.addColorStop(0,s.sky[0]); g.addColorStop(1,s.sky[1]);
+  ctx.fillStyle=g; ctx.fillRect(0,0,w,h*.65);
+  ctx.fillStyle=s.ground; ctx.fillRect(0,h*.65,w,h*.35);
+  ctx.beginPath();
+  ctx.moveTo(0,h*.65);
+  ctx.bezierCurveTo(w*.15,h*.45,w*.35,h*.52,w*.5,h*.48);
+  ctx.bezierCurveTo(w*.65,h*.44,w*.82,h*.58,w,h*.52);
+  ctx.lineTo(w,h); ctx.lineTo(0,h); ctx.closePath();
+  ctx.fillStyle=s.hill; ctx.fill();
+  ctx.beginPath(); ctx.arc(w*.78,h*.18,h*.09,0,Math.PI*2);
+  ctx.fillStyle=s.sun; ctx.fill();
+  if(s.extra==="mountain"){
+    ctx.beginPath(); ctx.moveTo(w*.3,h*.65); ctx.lineTo(w*.45,h*.28); ctx.lineTo(w*.6,h*.65);
+    ctx.fillStyle="#8B9E8B"; ctx.fill();
+    ctx.beginPath(); ctx.moveTo(w*.38,h*.42); ctx.lineTo(w*.45,h*.28); ctx.lineTo(w*.52,h*.42);
+    ctx.fillStyle="#EEE"; ctx.fill();
+  }
+  if(s.extra==="ocean"){
+    for(let i=0;i<4;i++){
+      ctx.beginPath();
+      ctx.moveTo(i*w*.28,h*.55+i*8);
+      ctx.bezierCurveTo(i*w*.28+30,h*.52+i*8,i*w*.28+60,h*.56+i*8,i*w*.28+90,h*.54+i*8);
+      ctx.strokeStyle="rgba(255,255,255,0.4)"; ctx.lineWidth=2; ctx.stroke();
+    }
+  }
+  if(s.extra==="forest"){
+    for(let i=0;i<6;i++){
+      const tx=(i+.5)*w/6,ty=h*.55;
+      ctx.beginPath(); ctx.moveTo(tx,ty-h*.18); ctx.lineTo(tx+w*.05,ty); ctx.lineTo(tx-w*.05,ty);
+      ctx.fillStyle="#1B4D1B"; ctx.fill();
+    }
+  }
+  if(s.extra==="sunset"){
+    for(let a=0;a<8;a++){
+      const ang=(a/8)*Math.PI*2;
+      ctx.beginPath(); ctx.moveTo(w*.78,h*.18);
+      ctx.lineTo(w*.78+Math.cos(ang)*h*.2,h*.18+Math.sin(ang)*h*.2);
+      ctx.strokeStyle="rgba(255,200,50,0.2)"; ctx.lineWidth=2; ctx.stroke();
+    }
+  }
+  return c;
+}
+
+async function sha256(str){
+  const buf=new TextEncoder().encode(str);
+  const hash=await crypto.subtle.digest("SHA-256",buf);
+  return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,"0")).join("");
+}
+
+function floodFill(imageData,sx,sy,tol=42){
+  const{data,width,height}=imageData;
+  const idx=(x,y)=>(y*width+x)*4;
+  const sr=data[idx(sx,sy)],sg=data[idx(sx,sy)+1],sb=data[idx(sx,sy)+2];
+  const diff=(x,y)=>{const i=idx(x,y);return Math.sqrt((data[i]-sr)**2+(data[i+1]-sg)**2+(data[i+2]-sb)**2);};
+  const mask=new Uint8Array(width*height),visited=new Uint8Array(width*height);
+  const stack=[[sx,sy]]; visited[sy*width+sx]=1;
+  let minX=sx,maxX=sx,minY=sy,maxY=sy;
+  while(stack.length){
+    const[x,y]=stack.pop();
+    if(diff(x,y)<=tol){
+      mask[y*width+x]=1;
+      minX=Math.min(minX,x);maxX=Math.max(maxX,x);minY=Math.min(minY,y);maxY=Math.max(maxY,y);
+      for(const[nx,ny]of[[x-1,y],[x+1,y],[x,y-1],[x,y+1]])
+        if(nx>=0&&nx<width&&ny>=0&&ny<height&&!visited[ny*width+nx]){visited[ny*width+nx]=1;stack.push([nx,ny]);}
+    }
+  }
+  return{mask,minX,maxX,minY,maxY};
+}
+
+function extractMasked(src,mask,minX,minY,maxX,maxY){
+  const bw=maxX-minX+8,bh=maxY-minY+8;
+  if(bw<8||bh<8) return null;
+  const tmp=document.createElement("canvas"); tmp.width=bw; tmp.height=bh;
+  const tctx=tmp.getContext("2d");
+  const sd=src.getContext("2d").getImageData(minX-4,minY-4,bw,bh);
+  const id=new ImageData(new Uint8ClampedArray(sd.data),bw,bh);
+  const mW=src.width;
+  for(let py=0;py<bh;py++) for(let px=0;px<bw;px++){
+    const sx2=px+minX-4,sy2=py+minY-4;
+    if(sx2<0||sy2<0||sx2>=mW||!mask[sy2*mW+sx2]) id.data[(py*bw+px)*4+3]=0;
+  }
+  tctx.putImageData(id,0,0);
+  return{dataUrl:tmp.toDataURL("image/png"),w:bw,h:bh};
+}
+
+// ── RENDER COMPOSITE PNG ─────────────────────────────────────
+async function renderComposite(colCanvas, pieces, wsW, wsH) {
+  const out = document.createElement("canvas");
+  out.width = wsW; out.height = wsH;
+  const ctx = out.getContext("2d");
+  // Draw background
+  ctx.drawImage(colCanvas, 0, 0);
+  // Draw pieces in layer order
+  for (const p of pieces) {
+    await new Promise(res => {
+      const img = new Image();
+      img.onload = () => {
+        ctx.save();
+        ctx.translate(p.x + p.w/2, p.y + p.h/2);
+        ctx.rotate((p.rot * Math.PI) / 180);
+        ctx.drawImage(img, -p.w/2, -p.h/2, p.w, p.h);
+        ctx.restore();
+        res();
+      };
+      img.onerror = res;
+      img.src = p.src;
+    });
+  }
+  return out.toDataURL("image/png");
+}
+
+// ── SEAL TO LEDGER ───────────────────────────────────────────
+async function sealToLedger(receiptId, hash, recipe, lang) {
+  try {
+    const body = {
+      id: receiptId,
+      actor: "anonymous",
+      app: "windi-travel-tesoura",
+      doc_name: `COLLAGE_${receiptId}`,
+      doc_type: "doc",
+      governance_level: "HIGH",
+      metadata: JSON.stringify({ hash, lang, pieces: recipe.pieces.length }),
+    };
+    const r = await fetch(LEDGER_SEAL_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(6000),
+    });
+    return r.ok ? "ok" : "fail";
+  } catch {
+    return "fail";
+  }
+}
+
+export default function App(){
+  const wsRef   = useRef(null);
+  const colRef  = useRef(null);
+  const drawRef = useRef(null);
+  const scenes  = useRef([]);
+  const sr      = useRef({
+    mode:"lasso", sceneIdx:0, pieces:[], selIdx:null,
+    isDown:false, pts:[],
+    extraPhotos:[], extraIdx:-1,
+  });
+
+  const[lang,         setLang]      = useState("pt");
+  const[mode,         setModeS]     = useState("lasso");
+  const[sceneIdx,     setScnS]      = useState(0);
+  const[extraPhotos,  setExtras]    = useState([]);
+  const[activeExtra,  setActExt]    = useState(-1);
+  const[pieces,       setPieces]    = useState([]);
+  const[selIdx,       setSelS]      = useState(null);
+  const[rotVal,       setRotVal]    = useState(0);
+  const[status,       setStatus]    = useState("PRONTO");
+  const[sealModal,    setSeal]      = useState(null);
+  const[ripple,       setRipple]    = useState(null);
+  const[flash,        setFlash]     = useState(false);
+  const[textModal,    setTextModal] = useState(null);
+  const[textInput,    setTextInput] = useState("");
+  const[textSize,     setTextSize]  = useState(28);
+  const[textColor,    setTextColor] = useState("#FFFFFF");
+  // v10
+  const[ledgerStatus, setLedgerSt]  = useState(null); // null | "ing" | "ok" | "fail"
+  const[compositeUrl, setComposite] = useState(null);
+  const[copyFeedback, setCopyFb]    = useState(false);
+
+  const t = T[lang];
+  const sync = () => setPieces([...sr.current.pieces]);
+  const flashFx = () => { setFlash(true); setTimeout(()=>setFlash(false),300); };
+  const setMode = m => { sr.current.mode=m; sr.current.selIdx=null; setModeS(m); setSelS(null); };
+
+  useEffect(()=>{
+    const ws=wsRef.current; if(!ws) return;
+    const W=ws.clientWidth, H=ws.clientHeight;
+    scenes.current = SCENES.map(s=>buildScene(s,W,H));
+    colRef.current.width = drawRef.current.width = W;
+    colRef.current.height = drawRef.current.height = H;
+    drawCurrent();
+    const onR=()=>{
+      const W2=ws.clientWidth,H2=ws.clientHeight;
+      scenes.current=SCENES.map(s=>buildScene(s,W2,H2));
+      colRef.current.width=drawRef.current.width=W2;
+      colRef.current.height=drawRef.current.height=H2;
+      drawCurrent();
+    };
+    window.addEventListener("resize",onR);
+    return()=>window.removeEventListener("resize",onR);
+  },[]);
+
+  const drawCurrent = () => {
+    const s=sr.current;
+    const c=colRef.current; if(!c) return;
+    const ctx=c.getContext("2d");
+    ctx.clearRect(0,0,c.width,c.height);
+    if(s.extraIdx>=0 && s.extraPhotos[s.extraIdx]){
+      const img=new Image();
+      img.onload=()=>{
+        ctx.clearRect(0,0,c.width,c.height);
+        const sc=Math.max(c.width/img.width,c.height/img.height);
+        ctx.filter="blur(14px) brightness(0.35)";
+        ctx.drawImage(img,(c.width-img.width*sc)/2,(c.height-img.height*sc)/2,img.width*sc,img.height*sc);
+        ctx.filter="none";
+        const sf=Math.min(c.width/img.width,c.height/img.height)*0.93;
+        ctx.drawImage(img,(c.width-img.width*sf)/2,(c.height-img.height*sf)/2,img.width*sf,img.height*sf);
+      };
+      img.src=s.extraPhotos[s.extraIdx];
+    } else {
+      const sc=scenes.current[s.sceneIdx];
+      if(sc) ctx.drawImage(sc,0,0);
+    }
+  };
+
+  useEffect(()=>{ drawCurrent(); },[sceneIdx, activeExtra]);
+
+  const handleFiles=(e)=>{
+    const files=Array.from(e.target.files||[]); if(!files.length) return;
+    let done=0; const loaded=[];
+    files.forEach((f,fi)=>{
+      const reader=new FileReader();
+      reader.onload=ev=>{
+        loaded[fi]=ev.target.result; done++;
+        if(done===files.length){
+          const valid=loaded.filter(Boolean); if(!valid.length) return;
+          const updated=[...sr.current.extraPhotos,...valid];
+          sr.current.extraPhotos=updated; sr.current.extraIdx=updated.length-1;
+          setExtras([...updated]); setActExt(updated.length-1);
+          setTimeout(drawCurrent,60);
+        }
+      };
+      reader.onerror=()=>{ done++; };
+      reader.readAsDataURL(f);
+    });
+    e.target.value="";
+  };
+
+  const selectSource=(type,idx)=>{
+    if(type==="scene"){ sr.current.sceneIdx=idx; sr.current.extraIdx=-1; setScnS(idx); setActExt(-1); }
+    else { sr.current.extraIdx=idx; setActExt(idx); }
+    setTimeout(drawCurrent,20);
+  };
+
+  const getPos=e=>{
+    const r=wsRef.current.getBoundingClientRect();
+    const s=e.touches?e.touches[0]:e;
+    return{x:Math.round(s.clientX-r.left),y:Math.round(s.clientY-r.top)};
+  };
+
+  const onDown=e=>{
+    const s=sr.current;
+    if(s.mode==="toque"){handleToque(e);return;}
+    if(s.mode==="texto"){e.preventDefault();setTextInput("");setTextModal(getPos(e));return;}
+    if(s.mode!=="lasso") return;
+    e.preventDefault(); s.isDown=true; s.pts=[getPos(e)];
+    drawRef.current.getContext("2d").clearRect(0,0,drawRef.current.width,drawRef.current.height);
+    setStatus(t.st_cut);
+  };
+  const onMove=e=>{
+    const s=sr.current; if(!s.isDown||s.mode!=="lasso") return;
+    e.preventDefault(); s.pts.push(getPos(e));
+    const dctx=drawRef.current.getContext("2d");
+    dctx.clearRect(0,0,drawRef.current.width,drawRef.current.height);
+    dctx.strokeStyle="rgba(255,255,255,0.9)"; dctx.setLineDash([6,4]);
+    dctx.lineWidth=2; dctx.lineJoin="round";
+    dctx.beginPath(); dctx.moveTo(s.pts[0].x,s.pts[0].y);
+    s.pts.forEach(p=>dctx.lineTo(p.x,p.y)); dctx.stroke();
+  };
+  const onUp=e=>{
+    const s=sr.current; if(!s.isDown) return;
+    e.preventDefault(); s.isDown=false;
+    drawRef.current.getContext("2d").clearRect(0,0,drawRef.current.width,drawRef.current.height);
+    doLassoClip(); setStatus(t.st_ready);
+  };
+
+  const doLassoClip=()=>{
+    const s=sr.current,pts=s.pts; if(pts.length<5) return;
+    const xs=pts.map(p=>p.x),ys=pts.map(p=>p.y);
+    const x0=Math.max(0,Math.floor(Math.min(...xs))-4);
+    const y0=Math.max(0,Math.floor(Math.min(...ys))-4);
+    const x1=Math.min(colRef.current.width,Math.ceil(Math.max(...xs))+4);
+    const y1=Math.min(colRef.current.height,Math.ceil(Math.max(...ys))+4);
+    const bw=x1-x0,bh=y1-y0; if(bw<10||bh<10) return;
+    const tmp=document.createElement("canvas"); tmp.width=bw; tmp.height=bh;
+    const tctx=tmp.getContext("2d");
+    tctx.beginPath(); tctx.moveTo(pts[0].x-x0,pts[0].y-y0);
+    pts.forEach(p=>tctx.lineTo(p.x-x0,p.y-y0));
+    tctx.closePath(); tctx.clip(); tctx.drawImage(colRef.current,-x0,-y0);
+    s.pieces.push({id:Date.now(),src:tmp.toDataURL("image/png"),
+      x:x0,y:y0,w:bw,h:bh,rot:0,method:"lasso",ts:Date.now(),
+      anchorPts:pts.slice(0,6).map(p=>({x:Math.round(p.x-x0),y:Math.round(p.y-y0)}))});
+    s.pts=[]; sync();
+  };
+
+  const handleToque=e=>{
+    e.preventDefault(); const{x,y}=getPos(e);
+    setRipple({x,y}); setTimeout(()=>setRipple(null),900); setStatus(t.st_ai);
+    setTimeout(()=>{
+      const c=colRef.current;
+      const imgData=c.getContext("2d").getImageData(0,0,c.width,c.height);
+      const{mask,minX,maxX,minY,maxY}=floodFill(imgData,
+        Math.max(0,Math.min(x,c.width-1)),Math.max(0,Math.min(y,c.height-1)));
+      const result=extractMasked(c,mask,minX,minY,maxX,maxY);
+      if(!result||result.w<12||result.h<12){setStatus(t.st_touch);return;}
+      sr.current.pieces.push({id:Date.now(),src:result.dataUrl,
+        x:minX-4,y:minY-4,w:result.w,h:result.h,rot:0,
+        method:"toque-ia",ts:Date.now(),anchorPts:[{x,y}]});
+      sync(); setStatus(t.st_ok); setTimeout(()=>setStatus(t.st_ready),1500);
+    },300);
+  };
+
+  const onPieceDown=(e,idx)=>{
+    const s=sr.current;
+    if(s.mode==="lasso"||s.mode==="toque") return;
+    e.stopPropagation(); e.preventDefault();
+    s.selIdx=idx; setSelS(idx); setRotVal(s.pieces[idx].rot);
+    if(s.mode!=="mover") return;
+    const pt=e.touches?e.touches[0]:e;
+    const ox=pt.clientX-s.pieces[idx].x,oy=pt.clientY-s.pieces[idx].y;
+    const onMv=ev=>{const p=ev.touches?ev.touches[0]:ev;s.pieces[idx].x=p.clientX-ox;s.pieces[idx].y=p.clientY-oy;sync();};
+    const onUp2=()=>{window.removeEventListener("pointermove",onMv);window.removeEventListener("pointerup",onUp2);};
+    window.addEventListener("pointermove",onMv,{passive:false});
+    window.addEventListener("pointerup",onUp2);
+  };
+
+  const bringForward=()=>{const s=sr.current,i=s.selIdx;if(i===null||i>=s.pieces.length-1)return;[s.pieces[i],s.pieces[i+1]]=[s.pieces[i+1],s.pieces[i]];s.selIdx=i+1;setSelS(i+1);sync();};
+  const sendBackward=()=>{const s=sr.current,i=s.selIdx;if(i===null||i<=0)return;[s.pieces[i],s.pieces[i-1]]=[s.pieces[i-1],s.pieces[i]];s.selIdx=i-1;setSelS(i-1);sync();};
+  const bringToFront=()=>{const s=sr.current,i=s.selIdx;if(i===null||i>=s.pieces.length-1)return;const p=s.pieces.splice(i,1)[0];s.pieces.push(p);s.selIdx=s.pieces.length-1;setSelS(s.pieces.length-1);sync();};
+  const sendToBack=()=>{const s=sr.current,i=s.selIdx;if(i===null||i<=0)return;const p=s.pieces.splice(i,1)[0];s.pieces.unshift(p);s.selIdx=0;setSelS(0);sync();};
+  const applyRot=v=>{setRotVal(v);const s=sr.current;if(s.selIdx!==null){s.pieces[s.selIdx].rot=v;sync();}};
+  const doUndo=()=>{const s=sr.current;if(!s.pieces.length){setStatus(t.st_nundo);setTimeout(()=>setStatus(t.st_ready),1200);return;}s.pieces.pop();if(s.selIdx>=s.pieces.length){s.selIdx=null;setSelS(null);}sync();flashFx();setStatus(t.st_undo);setTimeout(()=>setStatus(t.st_ready),1200);};
+  const doDelete=()=>{const s=sr.current;if(s.selIdx===null)return;s.pieces.splice(s.selIdx,1);s.selIdx=null;setSelS(null);sync();flashFx();setStatus(t.st_del);setTimeout(()=>setStatus(t.st_ready),1000);};
+  const doClear=()=>{sr.current.pieces=[];sr.current.selIdx=null;setPieces([]);setSelS(null);setStatus(t.st_clear);setTimeout(()=>setStatus(t.st_ready),900);};
+
+  const addTextPiece=()=>{
+    const txt=textInput.trim(); if(!txt||!textModal) return;
+    const tmp=document.createElement("canvas");
+    const fs=textSize; const font=`bold ${fs}px Georgia,serif`;
+    const ctx2=tmp.getContext("2d"); ctx2.font=font;
+    const lines=txt.split("\n"); const lh=fs*1.3;
+    const maxW=Math.max(...lines.map(l=>ctx2.measureText(l).width));
+    const pad=fs*0.35;
+    tmp.width=Math.ceil(maxW+pad*2); tmp.height=Math.ceil(lines.length*lh+pad*2);
+    ctx2.font=font; ctx2.clearRect(0,0,tmp.width,tmp.height);
+    ctx2.shadowColor="rgba(0,0,0,0.6)"; ctx2.shadowBlur=fs*0.25;
+    ctx2.fillStyle=textColor; ctx2.textBaseline="top";
+    lines.forEach((line,i)=>{ ctx2.fillText(line,pad,pad+i*lh); });
+    ctx2.shadowBlur=0;
+    const src=tmp.toDataURL("image/png");
+    sr.current.pieces.push({
+      id:Date.now(), src, x:Math.round(textModal.x-tmp.width/2),
+      y:Math.round(textModal.y-tmp.height/2), w:tmp.width, h:tmp.height,
+      rot:0, method:"texto", text:txt, fontSize:fs, color:textColor,
+      anchorPts:[{x:textModal.x,y:textModal.y}], ts:Date.now(),
+    });
+    sync(); setTextModal(null); setTextInput("");
+    setStatus(t.st_ok); setTimeout(()=>setStatus(t.st_ready),1200);
+  };
+
+  // ── SEAL (v10: also renders composite) ──────────────────────
+  const doSeal=async()=>{
+    const s=sr.current;
+    if(!s.pieces.length){setStatus(t.st_none);setTimeout(()=>setStatus(t.st_ready),1500);return;}
+    setStatus(t.st_calc);
+    const ts=new Date().toISOString();
+    const recipe={version:"3.0",protocol:"WINDI-TRAVEL-COLLAGE",lang,timestamp:ts,
+      pieces:s.pieces.map((p,i)=>({index:i,layer:i,method:p.method,
+        position:{x:Math.round(p.x),y:Math.round(p.y)},
+        size:{w:p.w,h:p.h},rotation_deg:p.rot,anchor_pts:p.anchorPts}))};
+    const hash=await sha256(JSON.stringify(recipe));
+    const id=`WINDI-TRAVEL-COLLAGE-${ts.replace(/[-:T.Z]/g,"").slice(0,14)}`;
+    // Render composite
+    setStatus(t.render_ing||"A renderizar...");
+    const ws=wsRef.current;
+    const imgUrl=await renderComposite(colRef.current,s.pieces,ws.clientWidth,ws.clientHeight);
+    setComposite(imgUrl);
+    setLedgerSt(null);
+    setSeal({id,hash,recipe,ts,imgUrl}); setStatus(t.st_sealed);
+  };
+
+  // ── EXPORT ACTIONS ───────────────────────────────────────────
+  const doDownload=()=>{
+    if(!sealModal?.imgUrl) return;
+    const a=document.createElement("a");
+    a.href=sealModal.imgUrl;
+    a.download=`${sealModal.id}.png`;
+    a.click();
+  };
+
+  const doShare=async()=>{
+    const verifyUrl=`${VERIFY_BASE}${sealModal.id}`;
+    if(navigator.share){
+      try{
+        await navigator.share({
+          title:"WINDI Travel · Colagem Verificável",
+          text:`${t.share_text}\n\nReceipt: ${sealModal.id}`,
+          url:verifyUrl,
+        });
+      }catch(e){ if(e.name!=="AbortError") doCopyLink(); }
+    } else { doCopyLink(); }
+  };
+
+  const doCopyLink=()=>{
+    const verifyUrl=`${VERIFY_BASE}${sealModal.id}`;
+    navigator.clipboard?.writeText(verifyUrl).catch(()=>{});
+    setCopyFb(true); setTimeout(()=>setCopyFb(false),2000);
+  };
+
+  const doEmail=()=>{
+    const verifyUrl=`${VERIFY_BASE}${sealModal.id}`;
+    const body=encodeURIComponent(
+      `${t.share_text}\n\nReceipt ID: ${sealModal.id}\nSHA-256: ${sealModal.hash}\n\nVerificar: ${verifyUrl}\n\nAI processes. Human decides. WINDI guarantees. 🐉`
+    );
+    window.location.href=`mailto:?subject=${encodeURIComponent(t.email_subject)}&body=${body}`;
+  };
+
+  const doLedgerSeal=async()=>{
+    if(!sealModal) return;
+    setLedgerSt("ing");
+    const result=await sealToLedger(sealModal.id,sealModal.hash,sealModal.recipe,lang);
+    setLedgerSt(result);
+  };
+
+  const doVerify=()=>{
+    window.open(`${VERIFY_BASE}${sealModal.id}`,"_blank");
+  };
+
+  const hasSel=selIdx!==null;
+  const isTop=hasSel&&selIdx===pieces.length-1;
+  const isBot=hasSel&&selIdx===0;
+  const showLayerBar=hasSel&&(mode==="mover"||mode==="rodar");
+
+  const ToolBtn=({id,icon,label,accent})=>{
+    const isA=mode===id,col=accent||TERRA;
+    return(
+      <button onClick={()=>setMode(id)} style={{display:"flex",flexDirection:"column",
+        alignItems:"center",gap:2,padding:"5px 5px",borderRadius:10,minWidth:42,
+        cursor:"pointer",border:`1.5px solid ${isA?col:"transparent"}`,
+        background:isA?`${col}18`:"transparent",flexShrink:0}}>
+        <span style={{fontSize:18,lineHeight:1}}>{icon}</span>
+        <span style={{fontSize:7,fontWeight:700,letterSpacing:"0.04em",
+          textTransform:"uppercase",color:isA?col:MIST,whiteSpace:"nowrap"}}>{label}</span>
+      </button>
+    );
+  };
+
+  const LBtn=({onClick,icon,disabled,accent})=>(
+    <button onClick={onClick} disabled={disabled} style={{
+      width:34,height:34,borderRadius:8,flexShrink:0,fontSize:16,
+      border:`1px solid ${disabled?"rgba(255,255,255,0.07)":`${accent||TERRA}55`}`,
+      background:disabled?"transparent":`${accent||TERRA}14`,
+      cursor:disabled?"default":"pointer",opacity:disabled?0.2:1,
+      display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.1s"}}>
+      {icon}
+    </button>
+  );
+
+  const ActionBtn=({onClick,label,color,disabled,small})=>(
+    <button onClick={onClick} disabled={disabled} style={{
+      width:"100%",padding:small?"9px":"11px",borderRadius:9,border:`1.5px solid ${color}55`,
+      background:`${color}18`,color,fontFamily:"inherit",
+      fontSize:small?11:12,fontWeight:700,cursor:disabled?"default":"pointer",
+      opacity:disabled?0.4:1,letterSpacing:"0.03em",transition:"all 0.15s",
+      display:"flex",alignItems:"center",justifyContent:"center",gap:6}}>
+      {label}
+    </button>
+  );
+
+  return(
+    <div style={{display:"flex",flexDirection:"column",height:"100vh",
+      background:NOIR,fontFamily:"'DM Sans',system-ui,sans-serif",
+      userSelect:"none",overflow:"hidden"}}>
+
+      {/* HEADER */}
+      <div style={{height:46,background:CREAM,borderBottom:`2px solid ${TERRA}`,
+        display:"flex",alignItems:"center",justifyContent:"space-between",
+        padding:"0 10px",flexShrink:0,gap:6}}>
+        <div style={{display:"flex",alignItems:"baseline",gap:5,flexShrink:0}}>
+          <span style={{fontFamily:"Georgia,serif",fontStyle:"italic",
+            fontSize:15,fontWeight:500,color:TERRA}}>{t.brand}</span>
+          <span style={{fontSize:9,color:MIST}}>· {t.sub}</span>
+        </div>
+        <div style={{display:"flex",alignItems:"center",gap:5,flex:1,justifyContent:"flex-end"}}>
+          <div style={{display:"flex",gap:2,background:"#E8E0D4",padding:"2px 3px",borderRadius:10}}>
+            {["pt","de","en"].map(l=>(
+              <button key={l} onClick={()=>setLang(l)} style={{
+                padding:"2px 7px",borderRadius:8,border:"none",
+                background:lang===l?CREAM:"transparent",
+                fontSize:9,fontWeight:700,color:lang===l?TERRA:MIST,
+                cursor:"pointer",textTransform:"uppercase",letterSpacing:"0.04em",
+                boxShadow:lang===l?"0 1px 3px rgba(0,0,0,0.1)":"none"}}>{l}</button>
+            ))}
+          </div>
+          <button onClick={doUndo} disabled={pieces.length===0} style={{
+            display:"flex",alignItems:"center",gap:3,padding:"3px 8px",borderRadius:7,
+            border:`1px solid ${pieces.length>0?TERRA+"55":"rgba(0,0,0,0.1)"}`,
+            background:"transparent",cursor:pieces.length>0?"pointer":"default",
+            opacity:pieces.length>0?1:0.3}}>
+            <span style={{fontSize:12}}>↩</span>
+            <span style={{fontSize:8,fontWeight:700,textTransform:"uppercase",
+              color:pieces.length>0?TERRA:MIST,letterSpacing:"0.04em"}}>{t.undo}</span>
+          </button>
+          {hasSel&&(mode==="mover"||mode==="rodar")&&(
+            <button onClick={doDelete} style={{display:"flex",alignItems:"center",gap:3,
+              padding:"3px 8px",borderRadius:7,border:`1px solid ${TERRA}66`,
+              background:`${TERRA}10`,cursor:"pointer"}}>
+              <span style={{fontSize:12}}>🗑</span>
+              <span style={{fontSize:8,fontWeight:700,textTransform:"uppercase",
+                color:TERRA,letterSpacing:"0.04em"}}>{t.del}</span>
+            </button>
+          )}
+          <span style={{fontSize:8,fontFamily:"monospace",color:"#888",
+            minWidth:56,textAlign:"right",flexShrink:0}}>{status}</span>
+        </div>
+      </div>
+
+      {/* PHOTO STRIP */}
+      <div style={{height:62,background:"#0E0A07",borderBottom:"1px solid rgba(255,255,255,0.05)",
+        display:"flex",alignItems:"center",gap:7,padding:"0 10px",overflowX:"auto",flexShrink:0}}>
+        <span style={{fontSize:8,color:"rgba(255,255,255,0.25)",textTransform:"uppercase",
+          letterSpacing:"0.1em",whiteSpace:"nowrap"}}>📦 {t.box}</span>
+        {SCENES.map((sc,i)=>{
+          const isAct=activeExtra===-1&&sceneIdx===i;
+          return(
+            <div key={i} onClick={()=>selectSource("scene",i)} style={{
+              width:42,height:42,borderRadius:7,flexShrink:0,cursor:"pointer",
+              background:`linear-gradient(135deg,${sc.sky[0]},${sc.sky[1]})`,
+              border:`2px solid ${isAct?TERRA:"transparent"}`,
+              transform:isAct?"scale(1.1)":"scale(1)",transition:"all 0.15s",
+              display:"flex",alignItems:"center",justifyContent:"center",fontSize:14}}>
+              {sc.name}
+            </div>
+          );
+        })}
+        {extraPhotos.length>0&&<div style={{width:1,height:32,background:"rgba(255,255,255,0.1)",flexShrink:0}}/>}
+        {extraPhotos.map((url,i)=>{
+          const isAct=activeExtra===i;
+          return(
+            <div key={i} onClick={()=>selectSource("extra",i)} style={{
+              width:42,height:42,borderRadius:7,flexShrink:0,cursor:"pointer",
+              overflow:"hidden",border:`2px solid ${isAct?TERRA:"rgba(255,255,255,0.15)"}`,
+              transform:isAct?"scale(1.1)":"scale(1)",transition:"all 0.15s"}}>
+              <img src={url} style={{width:"100%",height:"100%",objectFit:"cover",display:"block"}}/>
+            </div>
+          );
+        })}
+        <label style={{width:42,height:42,borderRadius:7,flexShrink:0,
+          border:`1.5px dashed ${TERRA}99`,background:`${TERRA}0D`,
+          display:"flex",flexDirection:"column",alignItems:"center",
+          justifyContent:"center",gap:1,cursor:"pointer",position:"relative"}}>
+          <span style={{fontSize:16,lineHeight:1,pointerEvents:"none"}}>📷</span>
+          <span style={{fontSize:7,color:TERRA,fontWeight:700,
+            textTransform:"uppercase",letterSpacing:"0.05em",pointerEvents:"none"}}>{t.addphoto}</span>
+          <input type="file" accept="image/*" multiple onChange={handleFiles}
+            style={{position:"absolute",inset:0,opacity:0,cursor:"pointer",width:"100%",height:"100%"}}/>
+        </label>
+      </div>
+
+      {/* WORKSPACE */}
+      <div ref={wsRef} style={{flex:1,position:"relative",overflow:"hidden",touchAction:"none",
+        background:"#0A0806",
+        backgroundImage:"linear-gradient(rgba(255,255,255,0.012) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.012) 1px,transparent 1px)",
+        backgroundSize:"24px 24px",
+        boxShadow:flash?`inset 0 0 0 3px ${TERRA}`:"none",transition:"box-shadow 0.12s"}}
+        onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp}
+        onTouchStart={onDown} onTouchMove={onMove} onTouchEnd={onUp}>
+        <canvas ref={colRef}  style={{position:"absolute",top:0,left:0,zIndex:1}}/>
+        <canvas ref={drawRef} style={{position:"absolute",top:0,left:0,zIndex:5,pointerEvents:"none"}}/>
+        {ripple&&(
+          <div style={{position:"absolute",left:ripple.x,top:ripple.y,
+            width:60,height:60,marginLeft:-30,marginTop:-30,
+            border:`2px solid ${OCEAN}`,borderRadius:"50%",zIndex:15,
+            pointerEvents:"none",animation:"ripple 0.8s ease-out forwards"}}/>
+        )}
+        {pieces.map((p,i)=>(
+          <img key={p.id} src={p.src} alt=""
+            onPointerDown={e=>onPieceDown(e,i)} onTouchStart={e=>onPieceDown(e,i)}
+            style={{position:"absolute",left:p.x,top:p.y,width:p.w,height:p.h,
+              transform:`rotate(${p.rot}deg)`,transformOrigin:"center",
+              zIndex:10+i,pointerEvents:"all",cursor:mode==="mover"?"grab":"default",
+              filter:"drop-shadow(0 4px 18px rgba(0,0,0,0.7))",
+              outline:selIdx===i&&showLayerBar?`2px dashed ${TERRA}`:"none",
+              outlineOffset:4,transition:"outline 0.1s"}}/>
+        ))}
+        {hasSel&&showLayerBar&&pieces[selIdx]&&(
+          <div style={{position:"absolute",
+            left:pieces[selIdx].x+pieces[selIdx].w/2-22,
+            top:Math.max(4,pieces[selIdx].y-22),
+            zIndex:50,pointerEvents:"none",
+            background:"rgba(20,16,12,0.92)",color:"white",
+            fontFamily:"monospace",fontSize:9,fontWeight:700,
+            padding:"2px 8px",borderRadius:6,whiteSpace:"nowrap"}}>
+            L{selIdx+1}/{pieces.length}
+          </div>
+        )}
+        {pieces.map((p,i)=>(
+          <div key={`b${p.id}`} style={{position:"absolute",left:p.x+2,top:p.y+2,
+            zIndex:20+i,pointerEvents:"none",fontSize:8,
+            background:p.method==="toque-ia"?OCEAN:p.method==="texto"?SAGE:TERRA,
+            color:"white",padding:"1px 5px",borderRadius:4,
+            fontFamily:"monospace",fontWeight:700,opacity:0.85}}>
+            {p.method==="toque-ia"?"IA":p.method==="texto"?"T":"✂"}
+          </div>
+        ))}
+        {pieces.length>0&&(
+          <div style={{position:"absolute",top:10,right:10,background:TERRA,color:"white",
+            fontFamily:"monospace",fontSize:9,fontWeight:700,padding:"3px 10px",
+            borderRadius:20,zIndex:25}}>
+            {pieces.length} {pieces.length===1?t.piece:t.pieces}
+          </div>
+        )}
+        {mode==="toque"&&(
+          <div style={{position:"absolute",top:10,left:10,background:`${OCEAN}EE`,
+            color:"white",fontFamily:"monospace",fontSize:9,fontWeight:700,
+            padding:"4px 12px",borderRadius:20,zIndex:25}}>{t.ai_on}</div>
+        )}
+        <div style={{position:"absolute",bottom:10,width:"100%",textAlign:"center",
+          fontFamily:"monospace",fontSize:9,letterSpacing:"0.08em",
+          color:"rgba(255,255,255,0.2)",pointerEvents:"none",zIndex:6,textTransform:"uppercase"}}>
+          {T[lang]["hint_"+mode]||""}
+        </div>
+      </div>
+
+      {/* TEXT MODAL */}
+      {textModal&&(
+        <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.75)",zIndex:90,
+          display:"flex",alignItems:"center",justifyContent:"center",backdropFilter:"blur(4px)"}}
+          onClick={e=>{if(e.target===e.currentTarget)setTextModal(null);}}>
+          <div style={{background:CREAM,border:`2px solid ${SAGE}`,borderRadius:14,
+            padding:"20px 18px",maxWidth:320,width:"90%"}}>
+            <div style={{fontFamily:"Georgia,serif",fontStyle:"italic",
+              fontSize:17,fontWeight:300,color:INK,marginBottom:14}}>✍️ {t.text}</div>
+            <textarea autoFocus value={textInput} onChange={e=>setTextInput(e.target.value)}
+              placeholder={t.text_placeholder} rows={3}
+              style={{width:"100%",padding:"10px 12px",borderRadius:8,
+                border:"1.5px solid #D0C8BC",background:"white",
+                fontFamily:"Georgia,serif",fontSize:textSize*0.65,
+                color:textColor,resize:"none",outline:"none",
+                fontStyle:"italic",lineHeight:1.5,boxSizing:"border-box"}}/>
+            <div style={{display:"flex",alignItems:"center",gap:12,marginTop:12,marginBottom:16}}>
+              <div style={{flex:1}}>
+                <div style={{fontSize:9,fontFamily:"monospace",color:MIST,
+                  textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:4}}>
+                  {t.text_size} {textSize}px</div>
+                <input type="range" min="16" max="72" value={textSize}
+                  onChange={e=>setTextSize(parseInt(e.target.value))}
+                  style={{width:"100%",accentColor:SAGE}}/>
+              </div>
+              <div>
+                <div style={{fontSize:9,fontFamily:"monospace",color:MIST,
+                  textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:4}}>{t.text_color}</div>
+                <div style={{display:"flex",gap:6,flexWrap:"wrap",width:120}}>
+                  {["#FFFFFF","#1a1a18","#C9603A","#3A7CA8","#6A8F72","#FFD700","#FF6B6B","#F0E8D8"].map(c=>(
+                    <div key={c} onClick={()=>setTextColor(c)} style={{
+                      width:22,height:22,borderRadius:"50%",background:c,cursor:"pointer",
+                      border:`2px solid ${textColor===c?"#333":"rgba(0,0,0,0.15)"}`,
+                      transform:textColor===c?"scale(1.2)":"scale(1)",
+                      transition:"all 0.1s",flexShrink:0,
+                      boxShadow:c==="#FFFFFF"?"inset 0 0 0 1px #ccc":"none"}}/>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div style={{display:"flex",gap:8}}>
+              <button onClick={()=>setTextModal(null)} style={{flex:1,padding:"10px",
+                borderRadius:8,border:"1px solid #D0C8BC",background:"transparent",
+                fontFamily:"inherit",fontSize:12,color:MIST,cursor:"pointer"}}>✕</button>
+              <button onClick={addTextPiece} disabled={!textInput.trim()} style={{flex:2,padding:"10px",
+                borderRadius:8,border:"none",background:textInput.trim()?NOIR:"#ccc",
+                fontFamily:"inherit",fontSize:12,fontWeight:700,
+                letterSpacing:"0.08em",textTransform:"uppercase",
+                color:CREAM,cursor:textInput.trim()?"pointer":"default"}}>
+                ✍️ {t.text}</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* LAYER BAR */}
+      {showLayerBar&&(
+        <div style={{height:46,background:"rgba(10,8,6,0.98)",
+          borderTop:`1px solid rgba(139,105,20,0.25)`,
+          display:"flex",alignItems:"center",justifyContent:"center",
+          gap:8,padding:"0 12px",flexShrink:0}}>
+          <span style={{fontSize:9,color:GOLD_L,fontFamily:"monospace",
+            textTransform:"uppercase",letterSpacing:"0.08em",marginRight:2,whiteSpace:"nowrap"}}>
+            {t.layers}</span>
+          <LBtn onClick={sendToBack}   icon="⬇" disabled={isBot} accent={TERRA}/>
+          <LBtn onClick={sendBackward} icon="▼" disabled={isBot} accent={TERRA}/>
+          <div style={{background:"rgba(139,105,20,0.18)",border:"1px solid rgba(139,105,20,0.35)",
+            borderRadius:8,padding:"3px 14px",minWidth:58,textAlign:"center"}}>
+            <div style={{fontFamily:"monospace",fontSize:7,color:"rgba(255,255,255,0.3)",
+              textTransform:"uppercase",letterSpacing:"0.08em"}}>layer</div>
+            <div style={{fontFamily:"monospace",fontSize:14,fontWeight:700,color:GOLD_L,lineHeight:1.1}}>
+              {selIdx+1}<span style={{fontSize:9,color:"rgba(255,255,255,0.28)"}}>/{pieces.length}</span></div>
+          </div>
+          <LBtn onClick={bringForward} icon="▲" disabled={isTop} accent={SAGE}/>
+          <LBtn onClick={bringToFront} icon="⬆" disabled={isTop} accent={SAGE}/>
+        </div>
+      )}
+
+      {/* ROTATION BAR */}
+      {mode==="rodar"&&selIdx!==null&&(
+        <div style={{height:42,background:"rgba(12,10,8,0.98)",
+          borderTop:`1px solid ${TERRA}30`,
+          display:"flex",alignItems:"center",gap:12,padding:"0 16px",flexShrink:0}}>
+          <span style={{fontSize:9,color:TERRA,fontFamily:"monospace",
+            textTransform:"uppercase",letterSpacing:"0.08em",whiteSpace:"nowrap"}}>{t.rotation}</span>
+          <input type="range" min="-180" max="180" value={rotVal}
+            onChange={e=>applyRot(parseInt(e.target.value))} style={{flex:1,accentColor:TERRA}}/>
+          <span style={{fontFamily:"monospace",fontSize:10,color:"white",
+            minWidth:38,textAlign:"right"}}>{rotVal}°</span>
+        </div>
+      )}
+
+      {/* TOOLBAR */}
+      <div style={{height:58,background:CREAM,borderTop:`2px solid ${TERRA}`,
+        display:"flex",alignItems:"center",justifyContent:"space-around",
+        padding:"0 4px",flexShrink:0,gap:1}}>
+        <ToolBtn id="lasso" icon="✂️" label={t.lasso}/>
+        <ToolBtn id="toque" icon="🤖" label={t.ai}   accent={OCEAN}/>
+        <ToolBtn id="texto" icon="✍️" label={t.text} accent={SAGE}/>
+        <ToolBtn id="mover" icon="✋" label={t.move}/>
+        <ToolBtn id="rodar" icon="🔄" label={t.rotate}/>
+        <button onClick={doClear} style={{display:"flex",flexDirection:"column",
+          alignItems:"center",gap:2,padding:"5px 5px",borderRadius:10,minWidth:40,
+          cursor:"pointer",border:"1.5px solid transparent",background:"transparent",flexShrink:0}}>
+          <span style={{fontSize:18,lineHeight:1}}>🗑️</span>
+          <span style={{fontSize:7,fontWeight:700,textTransform:"uppercase",color:MIST,
+            letterSpacing:"0.04em"}}>{t.clear}</span>
+        </button>
+        <button onClick={doSeal} style={{display:"flex",flexDirection:"column",
+          alignItems:"center",gap:2,padding:"5px 8px",borderRadius:10,minWidth:42,
+          cursor:"pointer",border:`1.5px solid ${NOIR}`,background:NOIR,flexShrink:0}}>
+          <span style={{fontSize:18,lineHeight:1}}>🔐</span>
+          <span style={{fontSize:7,fontWeight:700,textTransform:"uppercase",color:CREAM,
+            letterSpacing:"0.04em"}}>{t.seal}</span>
+        </button>
+      </div>
+
+      {/* ══ SEAL MODAL v10 ══ */}
+      {sealModal&&(
+        <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.92)",zIndex:100,
+          display:"flex",alignItems:"center",justifyContent:"center",backdropFilter:"blur(10px)"}}>
+          <div style={{background:CREAM,border:`2px solid ${TERRA}`,borderRadius:18,
+            padding:"20px 18px",maxWidth:360,width:"95%",maxHeight:"95vh",overflowY:"auto"}}>
+
+            {/* Preview thumbnail */}
+            {sealModal.imgUrl&&(
+              <div style={{borderRadius:10,overflow:"hidden",marginBottom:14,
+                border:`1px solid ${TERRA}30`,background:NOIR}}>
+                <img src={sealModal.imgUrl} style={{width:"100%",display:"block",
+                  maxHeight:160,objectFit:"contain"}}/>
+              </div>
+            )}
+
+            <div style={{fontFamily:"Georgia,serif",fontStyle:"italic",
+              fontSize:19,fontWeight:300,color:INK,marginBottom:2}}>{t.sealed}</div>
+            <div style={{fontSize:10,color:MIST,marginBottom:14}}>{t.sealed_sub}</div>
+
+            {/* Receipt ID */}
+            <div style={{background:NOIR,borderRadius:8,padding:"8px 12px",marginBottom:8}}>
+              <div style={{fontSize:8,fontFamily:"monospace",color:"rgba(255,255,255,0.38)",
+                letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:3}}>{t.receipt}</div>
+              <div style={{fontFamily:"monospace",fontSize:10,color:"white",
+                wordBreak:"break-all",lineHeight:1.5}}>{sealModal.id}</div>
+            </div>
+
+            {/* SHA-256 */}
+            <div style={{background:NOIR,borderRadius:8,padding:"8px 12px",marginBottom:12}}>
+              <div style={{fontSize:8,fontFamily:"monospace",color:"rgba(255,255,255,0.38)",
+                letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:3}}>SHA-256</div>
+              <div style={{fontFamily:"monospace",fontSize:8,color:GOLD_L,
+                wordBreak:"break-all",lineHeight:1.5}}>{sealModal.hash}</div>
+            </div>
+
+            {/* ── EXPORT ACTIONS ── */}
+            <div style={{fontSize:9,fontFamily:"monospace",color:MIST,
+              textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:8}}>
+              {t.export_title}
+            </div>
+
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:7,marginBottom:8}}>
+              <ActionBtn onClick={doDownload} label={t.btn_download} color={TERRA}/>
+              <ActionBtn onClick={doShare}
+                label={copyFeedback?t.copy_ok:t.btn_share}
+                color={OCEAN}/>
+              <ActionBtn onClick={doEmail} label={t.btn_email} color={SAGE}/>
+              <ActionBtn onClick={doVerify} label={t.btn_verify} color={GOLD_L}/>
+            </div>
+
+            {/* Ledger seal */}
+            <div style={{marginBottom:12}}>
+              {ledgerStatus===null&&(
+                <ActionBtn onClick={doLedgerSeal} label={t.btn_ledger} color={VERDE}/>
+              )}
+              {ledgerStatus==="ing"&&(
+                <div style={{background:`${VERDE}14`,border:`1px solid ${VERDE}44`,
+                  borderRadius:9,padding:"10px",textAlign:"center",
+                  fontSize:11,fontFamily:"monospace",color:VERDE}}>
+                  ⟳ {t.ledger_ing}
+                </div>
+              )}
+              {ledgerStatus==="ok"&&(
+                <div style={{background:`${VERDE}20`,border:`2px solid ${VERDE}`,
+                  borderRadius:9,padding:"10px",textAlign:"center",
+                  fontSize:11,fontFamily:"monospace",color:VERDE,fontWeight:700}}>
+                  {t.ledger_ok}
+                  <div style={{fontSize:9,marginTop:4,fontWeight:400,opacity:0.7}}>
+                    {VERIFY_BASE}{sealModal.id}
+                  </div>
+                </div>
+              )}
+              {ledgerStatus==="fail"&&(
+                <div style={{background:"rgba(201,96,58,0.1)",border:`1px solid ${TERRA}55`,
+                  borderRadius:9,padding:"10px",textAlign:"center",
+                  fontSize:10,fontFamily:"monospace",color:TERRA}}>
+                  {t.ledger_fail}
+                </div>
+              )}
+            </div>
+
+            {/* Hash note */}
+            <div style={{background:`${SAGE}14`,border:`1px solid ${SAGE}40`,
+              borderRadius:8,padding:"9px 12px",marginBottom:14}}>
+              <div style={{fontSize:9,color:SAGE,lineHeight:1.8,whiteSpace:"pre-line"}}>{t.hash_note}</div>
+            </div>
+
+            <button onClick={()=>{setSeal(null);setLedgerSt(null);setComposite(null);}}
+              style={{width:"100%",padding:12,background:NOIR,color:CREAM,border:"none",
+                borderRadius:8,fontFamily:"inherit",fontSize:12,fontWeight:700,
+                letterSpacing:"0.1em",textTransform:"uppercase",cursor:"pointer"}}>
+              {t.close}
+            </button>
+          </div>
+        </div>
+      )}
+
+      <style>{`@keyframes ripple{0%{transform:scale(0.3);opacity:1;}100%{transform:scale(2.5);opacity:0;}}`}</style>
+    </div>
+  );
+}

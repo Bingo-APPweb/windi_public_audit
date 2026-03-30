@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Maria — WINDI Travel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;1,9..144,300;1,9..144,500&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<style>
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body, #root { height: 100%; }
+body { font-family: 'DM Sans', sans-serif; background: #F5F0E0; overflow-x: hidden; }
+
+/* ── Animations ── */
+@keyframes pulse {
+  0%,100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(139,94,60,0.4); }
+  50%      { transform: scale(1.06); box-shadow: 0 0 0 14px rgba(139,94,60,0); }
+}
+@keyframes wave {
+  0%,100% { height: 6px; }
+  50%      { height: 26px; }
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes pipelinePulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(201,168,76,0.5); }
+  50%      { box-shadow: 0 0 0 8px rgba(201,168,76,0); }
+}
+@keyframes sealGlow {
+  0%,100% { box-shadow: 0 0 0 0 rgba(92,122,90,0.4); }
+  50%      { box-shadow: 0 0 0 12px rgba(92,122,90,0); }
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-thumb { background: #C9A84C44; border-radius: 4px; }
+
+/* ── Button reset ── */
+button { font-family: inherit; cursor: pointer; border: none; outline: none; }
+button:disabled { cursor: not-allowed; opacity: 0.5; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useRef, useCallback, useEffect } = React;
+
+/* ── CONFIG ── */
+const MARIA_API    = '/travel/maria/plan';
+const MARIA_HEALTH = '/travel/maria/health';
+const TIMEOUT_MS   = 8000;
+
+/* ── PALETTE ── */
+const P = {
+  cream:  '#F5F0E0', sand:   '#EDE5D0', terra:  '#8B5E3C',
+  noite:  '#1A1208', agua:   '#4A7C9E', verde:  '#5C7A5A',
+  ouro:   '#C9A84C', cinza:  '#9A8878', branco: '#FDFAF3',
+  vermelho: '#C0392B', roxo: '#6B4C93',
+  ink:    '#2E2219', mist:   '#B8A898',
+};
+
+/* ── i18n ── */
+const I18N = {
+  PT: {
+    tagline: 'Orquestradora de Experiências Verificáveis',
+    headline: 'Maria decide antes de mostrar opções.',
+    demos_label: 'CENÁRIOS DE DEMONSTRAÇÃO',
+    input_ph: 'Maria, quero…',
+    or_write: 'OU ESCREVA O SEU PEDIDO',
+    tap_mic: 'Toque para falar com Maria',
+    listening: 'Maria está a ouvir…',
+    processing: 'A processar pipeline…',
+    speaking: 'Maria a falar…',
+    ctx_label: 'CONTEXTO CAPTURADO',
+    intent_show: '▶ VER INTENT PAYLOAD',
+    intent_hide: '▼ OCULTAR INTENT',
+    maria_tag: '🔊 MARIA',
+    decision_label: 'DECISÃO DO BOOKING ROUTER',
+    reason_label: 'RAZÃO DA DECISÃO',
+    seal_btn: '🔒 Versiegeln — Selar Decisão no Ledger',
+    sealed_ok: '✦ SELADO NO LEDGER',
+    ledger_label: 'LEDGER · RECEIPT GERADO',
+    new_btn: '← Nova Decisão',
+    replay: '🔊 repetir',
+    suffix: 'Deseja selar esta decisão?',
+    ctx_keys: { weather: 'Clima', location: 'Local', companions: 'Grupo' },
+    sovereign_notice: 'Modo soberano — sem APIs externas',
+    live_notice: 'Conectado ao servidor real',
+    error_notice: 'Backend indisponível — modo demonstração',
+    s_idle: '● AGUARDANDO', s_listen: '◎ ESCUTANDO',
+    s_proc: '⟳ PROCESSANDO', s_speak: '🔊 FALANDO',
+    s_result: '✓ DECISÃO PRONTA', s_live: '● LIVE', s_fallback: '◌ DEMO',
+    scenarios: [
+      { input: 'Maria, temos 3 horas, queremos comer bem sem fila', intent: { type: 'restaurant', time_available: 3, no_queue: true, quality: 'high' }, ctx: { weather: '☀️ 18°C', location: 'Kempten, Bayern', companions: '2 pessoas' }, s: { name: 'Zum Stift', type: 'Restaurante', distance_text: '8 min a pé', queue_status: 'Sem fila agora', reason: 'Clima ideal para caminhada · Alta qualidade · Reserva possível' }, voice: 'Encontrei o Zum Stift a oito minutos a pé. Sem fila neste momento. O clima está perfeito para caminhar.' },
+      { input: 'Maria, museu interessante para esta tarde com crianças', intent: { type: 'museum', time_available: 4, family: true }, ctx: { weather: '🌤️ 14°C', location: 'Friedrichshafen', companions: 'família' }, s: { name: 'Zeppelin Museum', type: 'Museu', distance_text: '12 min', queue_status: 'Pouca espera', reason: 'Perfeito para família · Coberto em caso de chuva · Acesso inclusivo' }, voice: 'Recomendo o Zeppelin Museum a doze minutos. Ideal para família, com espaços cobertos.' },
+      { input: 'Maria, café tranquilo para trabalhar 2 horas', intent: { type: 'cafe', time_available: 2, quiet: true, wifi: true }, ctx: { weather: '🌧️ 9°C', location: 'Lindau', companions: 'sozinho' }, s: { name: 'Café am See', type: 'Café', distance_text: '5 min', queue_status: 'Tranquilo agora', reason: 'Wi-Fi disponível · Interior acolhedor · Chuva — indoor preferido' }, voice: 'Encontrei o Café am See a cinco minutos. Tranquilo agora, com Wi-Fi.' },
+    ],
+  },
+  DE: {
+    tagline: 'Orchestratorin Verifizierbarer Erlebnisse',
+    headline: 'Maria entscheidet, bevor sie Optionen zeigt.',
+    demos_label: 'DEMO-SZENARIEN',
+    input_ph: 'Maria, ich möchte…',
+    or_write: 'ODER SCHREIBEN SIE IHRE ANFRAGE',
+    tap_mic: 'Tippen um mit Maria zu sprechen',
+    listening: 'Maria hört zu…',
+    processing: 'Pipeline wird verarbeitet…',
+    speaking: 'Maria spricht…',
+    ctx_label: 'ERFASSTER KONTEXT',
+    intent_show: '▶ INTENT PAYLOAD ANZEIGEN',
+    intent_hide: '▼ INTENT AUSBLENDEN',
+    maria_tag: '🔊 MARIA',
+    decision_label: 'ENTSCHEIDUNG DES BOOKING ROUTERS',
+    reason_label: 'ENTSCHEIDUNGSGRUND',
+    seal_btn: '🔒 Versiegeln — Entscheidung im Ledger sichern',
+    sealed_ok: '✦ IM LEDGER VERSIEGELT',
+    ledger_label: 'LEDGER · QUITTUNG ERSTELLT',
+    new_btn: '← Neue Entscheidung',
+    replay: '🔊 wiederholen',
+    suffix: 'Möchten Sie diese Entscheidung versiegeln?',
+    ctx_keys: { weather: 'Wetter', location: 'Ort', companions: 'Gruppe' },
+    sovereign_notice: 'Souveräner Modus — externe APIs nicht verfügbar',
+    live_notice: 'Mit echtem Server verbunden',
+    error_notice: 'Backend nicht verfügbar — Demo-Modus',
+    s_idle: '● WARTET', s_listen: '◎ HÖRT ZU',
+    s_proc: '⟳ VERARBEITUNG', s_speak: '🔊 SPRICHT',
+    s_result: '✓ ENTSCHEIDUNG BEREIT', s_live: '● LIVE', s_fallback: '◌ DEMO',
+    ctx_keys: { weather: 'Wetter', location: 'Ort', companions: 'Gruppe' },
+    scenarios: [
+      { input: 'Maria, wir haben 3 Stunden, gut essen ohne Warteschlange', intent: { type: 'restaurant', time_available: 3, no_queue: true }, ctx: { weather: '☀️ 18°C', location: 'Kempten, Bayern', companions: '2 Personen' }, s: { name: 'Zum Stift', type: 'Restaurant', distance_text: '8 Min. zu Fuß', queue_status: 'Jetzt keine Schlange', reason: 'Ideales Wetter · Hohe Qualität · Reservierung möglich' }, voice: 'Das Zum Stift ist acht Minuten zu Fuß entfernt. Gerade keine Warteschlange.' },
+      { input: 'Maria, interessantes Museum mit Kindern heute Nachmittag', intent: { type: 'museum', time_available: 4, family: true }, ctx: { weather: '🌤️ 14°C', location: 'Friedrichshafen', companions: 'Familie' }, s: { name: 'Zeppelin Museum', type: 'Museum', distance_text: '12 Min.', queue_status: 'Wenig Wartezeit', reason: 'Ideal für Familien · Überdacht bei Regen · Barrierefreiheit' }, voice: 'Das Zeppelin Museum in zwölf Minuten. Ideal für Familien, überdacht.' },
+      { input: 'Maria, ruhiges Café zum Arbeiten für 2 Stunden', intent: { type: 'cafe', time_available: 2, quiet: true, wifi: true }, ctx: { weather: '🌧️ 9°C', location: 'Lindau', companions: 'allein' }, s: { name: 'Café am See', type: 'Café', distance_text: '5 Min.', queue_status: 'Ruhig gerade', reason: 'WLAN verfügbar · Gemütliches Interieur · Regen — indoor bevorzugt' }, voice: 'Café am See in fünf Minuten. Gerade ruhig, mit WLAN.' },
+    ],
+  },
+  EN: {
+    tagline: 'Orchestrator of Verifiable Experiences',
+    headline: 'Maria decides before showing options.',
+    demos_label: 'DEMO SCENARIOS',
+    input_ph: 'Maria, I want…',
+    or_write: 'OR TYPE YOUR REQUEST',
+    tap_mic: 'Tap to speak with Maria',
+    listening: 'Maria is listening…',
+    processing: 'Processing pipeline…',
+    speaking: 'Maria speaking…',
+    ctx_label: 'CAPTURED CONTEXT',
+    intent_show: '▶ VIEW INTENT PAYLOAD',
+    intent_hide: '▼ HIDE INTENT',
+    maria_tag: '🔊 MARIA',
+    decision_label: 'BOOKING ROUTER DECISION',
+    reason_label: 'DECISION REASON',
+    seal_btn: '🔒 Versiegeln — Seal Decision to Ledger',
+    sealed_ok: '✦ SEALED IN LEDGER',
+    ledger_label: 'LEDGER · RECEIPT GENERATED',
+    new_btn: '← New Decision',
+    replay: '🔊 replay',
+    suffix: 'Would you like to seal this decision?',
+    ctx_keys: { weather: 'Weather', location: 'Location', companions: 'Group' },
+    sovereign_notice: 'Sovereign mode — external APIs unavailable',
+    live_notice: 'Connected to live server',
+    error_notice: 'Backend unavailable — demo mode',
+    s_idle: '● STANDBY', s_listen: '◎ LISTENING',
+    s_proc: '⟳ PROCESSING', s_speak: '🔊 SPEAKING',
+    s_result: '✓ DECISION READY', s_live: '● LIVE', s_fallback: '◌ DEMO',
+    scenarios: [
+      { input: 'Maria, we have 3 hours, want to eat well with no queue', intent: { type: 'restaurant', time_available: 3, no_queue: true }, ctx: { weather: '☀️ 18°C', location: 'Kempten, Bayern', companions: '2 people' }, s: { name: 'Zum Stift', type: 'Restaurant', distance_text: '8 min walk', queue_status: 'No queue now', reason: 'Ideal weather · High quality · Reservation available' }, voice: 'I found Zum Stift, eight minutes on foot. No queue at this moment.' },
+      { input: 'Maria, interesting museum this afternoon with kids', intent: { type: 'museum', time_available: 4, family: true }, ctx: { weather: '🌤️ 14°C', location: 'Friedrichshafen', companions: 'family' }, s: { name: 'Zeppelin Museum', type: 'Museum', distance_text: '12 min', queue_status: 'Short wait', reason: 'Perfect for families · Covered if rain · Accessible' }, voice: 'I recommend the Zeppelin Museum, twelve minutes away.' },
+      { input: 'Maria, quiet café to work for 2 hours', intent: { type: 'cafe', time_available: 2, quiet: true, wifi: true }, ctx: { weather: '🌧️ 9°C', location: 'Lindau', companions: 'alone' }, s: { name: 'Café am See', type: 'Café', distance_text: '5 min', queue_status: 'Quiet now', reason: 'Wi-Fi available · Cozy interior · Rain — indoor preferred' }, voice: 'Café am See is five minutes away. Quiet now, with Wi-Fi.' },
+    ],
+  },
+};
+
+const STAGES = [
+  { id: 'voice',    icon: '🎙️', lbl: { PT: 'Captura',   DE: 'Aufnahme',     EN: 'Capture'  } },
+  { id: 'intent',   icon: '🧠', lbl: { PT: 'Intent',    DE: 'Intent',       EN: 'Intent'   } },
+  { id: 'context',  icon: '🌍', lbl: { PT: 'Contexto',  DE: 'Kontext',      EN: 'Context'  } },
+  { id: 'router',   icon: '⚡', lbl: { PT: 'Router',    DE: 'Router',       EN: 'Router'   } },
+  { id: 'decision', icon: '✅', lbl: { PT: 'Decisão',   DE: 'Entscheidung', EN: 'Decision' } },
+  { id: 'seal',     icon: '🔒', lbl: { PT: 'Ledger',    DE: 'Ledger',       EN: 'Ledger'   } },
+];
+
+/* ── Speech helpers ── */
+function speakMaria(text, lang, onEnd) {
+  if (!window.speechSynthesis) { onEnd?.(); return; }
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = lang === 'DE' ? 'de-DE' : lang === 'EN' ? 'en-GB' : 'pt-PT';
+  u.rate = 0.9; u.pitch = 1.05; u.volume = 1;
+  const vs = window.speechSynthesis.getVoices();
+  const pick = vs.find(v => v.lang.startsWith(u.lang.slice(0,2)) && /female|samantha|anna|google|helena|monika/i.test(v.name))
+            || vs.find(v => v.lang.startsWith(u.lang.slice(0,2)));
+  if (pick) u.voice = pick;
+  u.onend = () => onEnd?.();
+  window.speechSynthesis.speak(u);
+  setTimeout(() => onEnd?.(), 9000);
+}
+
+function getGPS() {
+  return new Promise(res => {
+    if (!navigator.geolocation) { res({ lat: null, lng: null }); return; }
+    navigator.geolocation.getCurrentPosition(
+      p => res({ lat: p.coords.latitude, lng: p.coords.longitude }),
+      () => res({ lat: null, lng: null }),
+      { timeout: 4000, maximumAge: 60000 }
+    );
+  });
+}
+
+async function callMariaAPI(intent, lang, fallback) {
+  const { lat, lng } = await getGPS();
+  try {
+    const ctrl = new AbortController();
+    const tid = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
+    const r = await fetch(MARIA_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ intent, lang, lat, lng }),
+      signal: ctrl.signal,
+    });
+    clearTimeout(tid);
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return { source: 'live', data: await r.json() };
+  } catch {
+    return {
+      source: 'fallback',
+      data: {
+        request_id: 'demo-' + Math.random().toString(36).slice(2,10),
+        decision: fallback.s,
+        context: fallback.ctx,
+        maria_voice: { PT: fallback.voice, DE: fallback.voice, EN: fallback.voice },
+        intent_parsed: intent,
+        ledger_receipt_id: null,
+        sovereign_mode: true,
+        timestamp: new Date().toISOString(),
+      }
+    };
+  }
+}
+
+/* ── Wave animation ── */
+function WaveAnim({ color = P.terra, bars = 5, height = 36 }) {
+  return (
+    <div style={{ display:'flex', alignItems:'flex-end', justifyContent:'center', gap:5, height }}>
+      {Array.from({ length: bars }).map((_, i) => (
+        <div key={i} style={{
+          width: 5, borderRadius: 3, background: color,
+          animation: `wave ${0.5 + i * 0.1}s ease-in-out infinite`,
+          animationDelay: `${i * 0.1}s`,
+        }} />
+      ))}
+    </div>
+  );
+}
+
+/* ── Pipeline bar ── */
+function PipelineBar({ active, done, lang }) {
+  return (
+    <div style={{
+      display:'flex', alignItems:'center', justifyContent:'center',
+      padding:'10px 8px', background:'rgba(26,18,8,0.04)',
+      borderRadius:14, marginBottom:20, overflowX:'auto', gap:0,
+    }}>
+      {STAGES.map((st, i) => {
+        const isActive = st.id === active;
+        const isDone = done.includes(st.id);
+        return (
+          <React.Fragment key={st.id}>
+            <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:4, minWidth:44 }}>
+              <div style={{
+                width:32, height:32, borderRadius:'50%',
+                background: isDone ? P.verde : isActive ? P.ouro : 'rgba(26,18,8,0.08)',
+                border: `2px solid ${isActive ? P.ouro : 'transparent'}`,
+                display:'flex', alignItems:'center', justifyContent:'center',
+                fontSize:14, transition:'all 0.3s',
+                animation: isActive ? 'pipelinePulse 1s infinite' : 'none',
+                boxShadow: isActive ? `0 0 0 0 ${P.ouro}` : 'none',
+              }}>
+                {isDone ? '✓' : st.icon}
+              </div>
+              <span style={{
+                fontSize:8, fontFamily:'JetBrains Mono,monospace',
+                color: isActive ? P.terra : P.cinza,
+                fontWeight: isActive ? 700 : 400,
+                letterSpacing:'0.5px', textTransform:'uppercase',
+              }}>{st.lbl[lang]}</span>
+            </div>
+            {i < STAGES.length - 1 && (
+              <div style={{
+                width:12, height:1.5, marginBottom:16,
+                background: isDone ? P.verde : 'rgba(26,18,8,0.12)',
+                transition:'background 0.4s',
+              }} />
+            )}
+          </React.Fragment>
+        );
+      })}
+    </div>
+  );
+}
+
+/* ── Mic button ── */
+function MicButton({ onResult, onListening, lang, disabled }) {
+  const [active, setActive] = useState(false);
+  const recRef = useRef(null);
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  const toggle = () => {
+    if (disabled) return;
+    if (active) { recRef.current?.stop(); setActive(false); return; }
+    if (!SR) return;
+    const rec = new SR();
+    rec.lang = lang === 'DE' ? 'de-DE' : lang === 'EN' ? 'en-GB' : 'pt-PT';
+    rec.interimResults = false;
+    rec.onstart = () => { setActive(true); onListening?.(); };
+    rec.onresult = e => { setActive(false); onResult?.(e.results[0][0].transcript); };
+    rec.onerror = () => setActive(false);
+    rec.onend = () => setActive(false);
+    recRef.current = rec; rec.start();
+  };
+
+  return (
+    <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:10 }}>
+      <button onClick={toggle} disabled={disabled} style={{
+        width:80, height:80, borderRadius:'50%',
+        background: active
+          ? `radial-gradient(circle, ${P.vermelho}cc, ${P.terra}99)`
+          : `radial-gradient(circle, ${P.terra}44, ${P.terra}11)`,
+        border: `3px solid ${active ? P.vermelho : P.terra}`,
+        display:'flex', alignItems:'center', justifyContent:'center',
+        fontSize:30, transition:'all 0.3s',
+        animation: active ? 'pulse 1.2s infinite' : 'none',
+        boxShadow: active ? `0 0 28px ${P.vermelho}55` : `0 4px 20px ${P.terra}22`,
+      }}>
+        {active ? '⏹' : '🎙️'}
+      </button>
+      {!SR && (
+        <p style={{ fontSize:11, color:P.cinza, textAlign:'center', maxWidth:160, fontFamily:'JetBrains Mono,monospace' }}>
+          Browser sem suporte a voz
+        </p>
+      )}
+    </div>
+  );
+}
+
+/* ── Main App ── */
+function MariaAgent() {
+  const [lang, setLang] = useState('DE');
+  const t = I18N[lang];
+  const [mode, setMode] = useState('idle');
+  const [result, setResult] = useState(null);
+  const [activeStage, setActiveStage] = useState(null);
+  const [doneSt, setDoneSt] = useState([]);
+  const [sealed, setSealed] = useState(false);
+  const [textIn, setTextIn] = useState('');
+  const [transcript, setTranscript] = useState('');
+  const [showIntent, setShowIntent] = useState(false);
+  const [apiSource, setApiSource] = useState(null);
+  const [backendStatus, setBackendStatus] = useState(null);
+  const timers = useRef([]);
+
+  useEffect(() => {
+    fetch(MARIA_HEALTH, { signal: AbortSignal.timeout(3000) })
+      .then(r => setBackendStatus(r.ok ? 'live' : 'offline'))
+      .catch(() => setBackendStatus('offline'));
+  }, []);
+
+  const clearT = () => { timers.current.forEach(clearTimeout); timers.current = []; };
+
+  const runPipeline = useCallback(async (intent, inputText, fallbackSc) => {
+    clearT();
+    setTranscript(inputText);
+    setMode('processing');
+    setDoneSt([]); setSealed(false); setShowIntent(false); setResult(null);
+    const ids = STAGES.map(s => s.id);
+
+    ids.forEach((id, i) => {
+      const t0 = setTimeout(() => {
+        setActiveStage(id);
+        setDoneSt(prev => [...prev, ids[i - 1]].filter(Boolean));
+      }, i * 480);
+      timers.current.push(t0);
+    });
+
+    const { source, data } = await callMariaAPI(intent, lang, fallbackSc);
+    setApiSource(source);
+
+    const animDone = ids.length * 480 + 300;
+    const t1 = setTimeout(() => {
+      setDoneSt(ids.slice(0, -1));
+      setActiveStage(null);
+      setResult(data);
+      setMode('speaking');
+      const voiceText = (data.maria_voice?.[lang] || data.maria_voice?.PT || '') + ' ' + t.suffix;
+      speakMaria(voiceText, lang, () => setMode('result'));
+    }, animDone);
+    timers.current.push(t1);
+  }, [lang, t]);
+
+  const handleDemo = sc => { if (mode === 'processing') return; runPipeline(sc.intent, sc.input, sc); };
+  const handleVoice = tr => {
+    const sc = t.scenarios.find(s =>
+      s.intent.type === (/museu|museum/i.test(tr) ? 'museum' : /caf[eé]/i.test(tr) ? 'cafe' : 'restaurant')
+    ) || t.scenarios[0];
+    runPipeline({ ...sc.intent }, tr, sc);
+  };
+  const handleText = () => {
+    if (!textIn.trim()) return;
+    const sc = t.scenarios[0];
+    runPipeline({ ...sc.intent }, textIn, sc);
+    setTextIn('');
+  };
+  const reset = () => {
+    clearT(); window.speechSynthesis?.cancel();
+    setMode('idle'); setResult(null); setActiveStage(null);
+    setDoneSt([]); setSealed(false); setTranscript(''); setApiSource(null);
+  };
+
+  const statusBg = { idle:'rgba(255,255,255,0.08)', listening:P.vermelho, processing:P.ouro, speaking:P.agua, result:P.verde };
+  const statusLabel = { idle:t.s_idle, listening:t.s_listen, processing:t.s_proc, speaking:t.s_speak, result:t.s_result };
+  const decision = result?.decision;
+  const ctx = result?.context;
+
+  return (
+    <div style={{ minHeight:'100vh', background:`linear-gradient(160deg, ${P.cream}, #EDE5D0)`, paddingBottom:48 }}>
+
+      {/* ── Header ── */}
+      <div style={{ background:P.noite, padding:'12px 18px', display:'flex', alignItems:'center', justifyContent:'space-between', position:'sticky', top:0, zIndex:100 }}>
+        <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+          <div style={{ width:38, height:38, background:`linear-gradient(135deg, ${P.terra}, ${P.ouro})`, borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:19 }}>
+            🐉
+          </div>
+          <div>
+            <div style={{ color:'#fff', fontFamily:'Fraunces, serif', fontStyle:'italic', fontSize:18, fontWeight:300, letterSpacing:'-0.01em' }}>
+              Maria
+            </div>
+            <div style={{ color:P.cinza, fontSize:9, fontFamily:'JetBrains Mono, monospace', letterSpacing:'1px' }}>
+              W-MARIA-001 · WINDI TRAVEL
+            </div>
+          </div>
+        </div>
+        <div style={{ display:'flex', flexDirection:'column', alignItems:'flex-end', gap:6 }}>
+          <div style={{ display:'flex', gap:4 }}>
+            {['PT','DE','EN'].map(l => (
+              <button key={l} onClick={() => { setLang(l); reset(); }} style={{
+                padding:'3px 9px', borderRadius:20, fontSize:10, fontWeight:700,
+                fontFamily:'JetBrains Mono, monospace', transition:'all 0.2s',
+                border: `1px solid ${lang === l ? P.ouro : 'rgba(255,255,255,0.15)'}`,
+                background: lang === l ? P.ouro : 'transparent',
+                color: lang === l ? P.noite : 'rgba(255,255,255,0.5)',
+              }}>{l}</button>
+            ))}
+          </div>
+          <div style={{ display:'flex', gap:5, alignItems:'center' }}>
+            {backendStatus && (
+              <div style={{ background:backendStatus==='live' ? P.verde : 'rgba(255,255,255,0.06)', color:'#fff', borderRadius:20, padding:'2px 8px', fontSize:8, fontFamily:'JetBrains Mono, monospace' }}>
+                {backendStatus === 'live' ? t.s_live : t.s_fallback}
+              </div>
+            )}
+            <div style={{ background:statusBg[mode], color:'#fff', borderRadius:20, padding:'3px 10px', fontSize:9, fontFamily:'JetBrains Mono, monospace', transition:'background 0.4s' }}>
+              {statusLabel[mode]}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ padding:'20px 18px 0', maxWidth:520, margin:'0 auto' }}>
+
+        {/* ── API notice ── */}
+        {apiSource && (
+          <div style={{ background:apiSource==='live' ? `${P.verde}18` : `${P.ouro}12`, border:`1px solid ${apiSource==='live' ? P.verde : P.ouro}44`, borderRadius:10, padding:'7px 12px', marginBottom:14, fontSize:10, fontFamily:'JetBrains Mono, monospace', color:apiSource==='live' ? P.verde : P.terra, animation:'fadeUp 0.3s ease' }}>
+            {apiSource === 'live' ? `✓ ${t.live_notice}` : `◌ ${t.error_notice}`}
+          </div>
+        )}
+
+        {/* ── Pipeline ── */}
+        {mode !== 'idle' && <PipelineBar active={activeStage} done={doneSt} lang={lang} />}
+
+        {/* ════ IDLE ════ */}
+        {mode === 'idle' && (
+          <div style={{ animation:'fadeUp 0.4s ease' }}>
+            <div style={{ textAlign:'center', padding:'24px 0 20px' }}>
+              <p style={{ fontSize:10, color:P.cinza, fontFamily:'JetBrains Mono, monospace', letterSpacing:'1px', marginBottom:8, textTransform:'uppercase' }}>
+                {t.tagline}
+              </p>
+              <p style={{ fontFamily:'Fraunces, serif', fontStyle:'italic', fontSize:22, fontWeight:300, color:P.ink, lineHeight:1.25, maxWidth:260, margin:'0 auto 24px' }}>
+                {t.headline}
+              </p>
+              <MicButton onResult={handleVoice} onListening={() => setMode('listening')} lang={lang} disabled={false} />
+              <p style={{ fontSize:11, color:P.cinza, marginTop:10, fontFamily:'JetBrains Mono, monospace' }}>
+                {t.tap_mic}
+              </p>
+            </div>
+
+            <div style={{ display:'flex', alignItems:'center', gap:12, margin:'18px 0 16px' }}>
+              <div style={{ flex:1, height:1, background:`${P.terra}20` }} />
+              <span style={{ fontSize:10, color:P.mist, fontFamily:'JetBrains Mono, monospace' }}>ou</span>
+              <div style={{ flex:1, height:1, background:`${P.terra}20` }} />
+            </div>
+
+            <p style={{ fontSize:10, fontFamily:'JetBrains Mono, monospace', color:P.cinza, marginBottom:10, letterSpacing:'0.5px' }}>
+              {t.demos_label}
+            </p>
+            {t.scenarios.map((s, i) => (
+              <button key={i} onClick={() => handleDemo(s)} style={{
+                width:'100%', textAlign:'left', background:P.branco,
+                border:`1px solid ${P.terra}20`, borderRadius:12,
+                padding:'11px 14px', marginBottom:8, display:'flex',
+                alignItems:'center', gap:10, transition:'all 0.2s',
+              }}>
+                <span style={{ fontSize:18 }}>🎙️</span>
+                <span style={{ fontFamily:'Fraunces, serif', fontStyle:'italic', fontSize:14, color:P.ink, lineHeight:1.4 }}>
+                  "{s.input}"
+                </span>
+              </button>
+            ))}
+
+            <p style={{ fontSize:10, fontFamily:'JetBrains Mono, monospace', color:P.cinza, marginTop:20, marginBottom:8, letterSpacing:'0.5px' }}>
+              {t.or_write}
+            </p>
+            <div style={{ display:'flex', gap:8 }}>
+              <input
+                value={textIn}
+                onChange={e => setTextIn(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && handleText()}
+                placeholder={t.input_ph}
+                style={{ flex:1, padding:'11px 14px', border:`1.5px solid ${P.terra}25`, borderRadius:10, fontSize:14, fontFamily:'Fraunces, serif', fontStyle:'italic', background:P.branco, color:P.ink, outline:'none' }}
+              />
+              <button onClick={handleText} style={{ padding:'11px 16px', background:P.terra, color:'#fff', borderRadius:10, fontSize:18 }}>→</button>
+            </div>
+          </div>
+        )}
+
+        {/* ════ LISTENING ════ */}
+        {mode === 'listening' && (
+          <div style={{ textAlign:'center', padding:'50px 0', animation:'fadeUp 0.3s ease' }}>
+            <WaveAnim color={P.terra} bars={6} height={48} />
+            <p style={{ fontFamily:'Fraunces, serif', fontStyle:'italic', fontSize:17, color:P.terra, marginTop:16 }}>{t.listening}</p>
+          </div>
+        )}
+
+        {/* ════ PROCESSING ════ */}
+        {(mode === 'processing' || mode === 'speaking') && !result && (
+          <div style={{ animation:'fadeUp 0.3s ease' }}>
+            <div style={{ background:`${P.ouro}12`, border:`1px solid ${P.ouro}44`, borderRadius:12, padding:'12px 15px', marginBottom:16, fontFamily:'Fraunces, serif', fontStyle:'italic', color:P.terra, fontSize:14, lineHeight:1.5 }}>
+              "{transcript}"
+            </div>
+            <div style={{ textAlign:'center', color:P.cinza, fontSize:11, fontFamily:'JetBrains Mono, monospace' }}>
+              {t.processing}
+            </div>
+          </div>
+        )}
+
+        {/* ════ SPEAKING ════ */}
+        {mode === 'speaking' && result && (
+          <div style={{ textAlign:'center', padding:'28px 0', animation:'fadeUp 0.3s ease' }}>
+            <WaveAnim color={P.agua} bars={7} height={48} />
+            <p style={{ fontFamily:'Fraunces, serif', fontStyle:'italic', fontSize:15, fontWeight:300, color:P.agua, marginTop:14 }}>{t.speaking}</p>
+            <p style={{ fontSize:13, color:P.terra, fontFamily:'Fraunces, serif', fontStyle:'italic', marginTop:10, lineHeight:1.5, maxWidth:280, margin:'10px auto 0' }}>
+              "{result.maria_voice?.[lang] || result.maria_voice?.PT}"
+            </p>
+          </div>
+        )}
+
+        {/* ════ RESULT ════ */}
+        {mode === 'result' && result && decision && (
+          <div style={{ animation:'fadeUp 0.4s ease' }}>
+
+            {/* Transcript */}
+            <div style={{ background:`${P.ouro}12`, border:`1px solid ${P.ouro}44`, borderRadius:12, padding:'10px 14px', marginBottom:14, fontFamily:'Fraunces, serif', fontStyle:'italic', color:P.terra, fontSize:13 }}>
+              "{transcript}"
+            </div>
+
+            {/* Context */}
+            {ctx && (
+              <div style={{ marginBottom:14 }}>
+                <p style={{ fontSize:10, fontFamily:'JetBrains Mono, monospace', color:P.cinza, marginBottom:8, letterSpacing:'0.5px' }}>{t.ctx_label}</p>
+                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:8 }}>
+                  {['weather','location','companions'].filter(k => ctx[k]).map(k => (
+                    <div key={k} style={{ background:P.branco, border:`1px solid ${P.terra}18`, borderRadius:10, padding:'8px 6px', textAlign:'center' }}>
+                      <p style={{ fontSize:8, fontFamily:'JetBrains Mono, monospace', color:P.cinza, textTransform:'uppercase', letterSpacing:'0.3px', marginBottom:4 }}>{t.ctx_keys[k]}</p>
+                      <p style={{ fontSize:12, fontWeight:600, color:P.terra }}>{String(ctx[k])}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Sovereign notice */}
+            {result.sovereign_mode && (
+              <div style={{ background:`${P.roxo}12`, border:`1px solid ${P.roxo}40`, borderRadius:10, padding:'7px 12px', marginBottom:12, fontSize:10, fontFamily:'JetBrains Mono, monospace', color:P.roxo }}>
+                ◌ {t.sovereign_notice}
+              </div>
+            )}
+
+            {/* Intent toggle */}
+            <button onClick={() => setShowIntent(v => !v)} style={{ background:'none', fontSize:10, fontFamily:'JetBrains Mono, monospace', color:P.agua, letterSpacing:'0.5px', marginBottom:10, padding:0 }}>
+              {showIntent ? t.intent_hide : t.intent_show}
+            </button>
+            {showIntent && (
+              <div style={{ background:`${P.agua}10`, border:`1px solid ${P.agua}30`, borderRadius:10, padding:'12px 14px', marginBottom:12, animation:'fadeUp 0.3s ease' }}>
+                <p style={{ fontSize:9, fontFamily:'JetBrains Mono, monospace', color:P.agua, marginBottom:8, letterSpacing:'1px' }}>W-INTENT-ENGINE · PARSED</p>
+                <pre style={{ fontSize:11, fontFamily:'JetBrains Mono, monospace', color:P.ink, margin:0, lineHeight:1.7, whiteSpace:'pre-wrap' }}>
+                  {JSON.stringify(result.intent_parsed, null, 2)}
+                </pre>
+              </div>
+            )}
+
+            {/* Maria bubble */}
+            <div style={{ background:P.noite, borderRadius:16, padding:'16px', marginBottom:14, position:'relative' }}>
+              <div style={{ position:'absolute', top:-10, left:14, background:P.terra, borderRadius:20, padding:'2px 11px', fontSize:9, color:'#fff', fontFamily:'JetBrains Mono, monospace' }}>
+                {t.maria_tag}
+              </div>
+              <p style={{ fontFamily:'Fraunces, serif', fontStyle:'italic', color:'#F5F0E0', fontSize:14, lineHeight:1.7, marginTop:8 }}>
+                "{result.maria_voice?.[lang] || result.maria_voice?.PT} {t.suffix}"
+              </p>
+              <button onClick={() => speakMaria((result.maria_voice?.[lang] || result.maria_voice?.PT) + ' ' + t.suffix, lang, null)}
+                style={{ background:'none', border:'1px solid rgba(255,255,255,0.2)', borderRadius:20, padding:'3px 12px', color:'rgba(255,255,255,0.5)', fontSize:10, fontFamily:'JetBrains Mono, monospace', marginTop:10 }}>
+                {t.replay}
+              </button>
+            </div>
+
+            {/* Decision card */}
+            <p style={{ fontSize:10, fontFamily:'JetBrains Mono, monospace', color:P.cinza, marginBottom:8, letterSpacing:'0.5px' }}>{t.decision_label}</p>
+            <div style={{ background: sealed ? `linear-gradient(135deg, ${P.verde}15, ${P.ouro}10)` : P.branco, border:`2px solid ${sealed ? P.verde : P.ouro}`, borderRadius:16, padding:'16px', marginBottom:12, transition:'all 0.4s', animation: sealed ? 'sealGlow 1.5s ease' : 'none' }}>
+              <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:12 }}>
+                <div>
+                  <p style={{ fontFamily:'Fraunces, serif', fontSize:19, fontWeight:500, color:P.ink }}>{decision.name}</p>
+                  <p style={{ fontSize:12, color:P.cinza, marginTop:2 }}>{decision.type} · {decision.distance_text}</p>
+                  {decision.rating && <p style={{ fontSize:11, color:P.ouro, marginTop:2 }}>★ {decision.rating}</p>}
+                </div>
+                <span style={{ background:P.verde, color:'#fff', borderRadius:20, padding:'3px 10px', fontSize:10, fontWeight:700, fontFamily:'JetBrains Mono, monospace', flexShrink:0 }}>
+                  {decision.queue_status}
+                </span>
+              </div>
+
+              <div style={{ background:`${P.ink}06`, borderRadius:10, padding:'10px 12px', marginBottom:14, borderLeft:`3px solid ${P.ouro}` }}>
+                <p style={{ fontSize:9, fontFamily:'JetBrains Mono, monospace', color:P.cinza, marginBottom:4, letterSpacing:'0.5px' }}>{t.reason_label}</p>
+                <p style={{ fontSize:12, color:P.terra, lineHeight:1.6 }}>{decision.reason}</p>
+              </div>
+
+              {!sealed ? (
+                <button onClick={() => setSealed(true)} style={{ width:'100%', padding:'12px', background:`linear-gradient(135deg, ${P.terra}, ${P.ouro})`, color:'#fff', borderRadius:12, fontSize:13, fontWeight:700, fontFamily:'DM Sans, sans-serif', boxShadow:`0 4px 16px ${P.terra}44` }}>
+                  {t.seal_btn}
+                </button>
+              ) : (
+                <div style={{ background:P.verde, color:'#fff', borderRadius:12, padding:'10px', textAlign:'center', fontSize:11, fontFamily:'JetBrains Mono, monospace', letterSpacing:'0.5px' }}>
+                  {t.sealed_ok} · {result.ledger_receipt_id || 'WINDI-TRAVEL-' + Date.now().toString(36).toUpperCase()}
+                </div>
+              )}
+            </div>
+
+            {/* Ledger receipt */}
+            {sealed && (
+              <div style={{ background:`${P.verde}10`, border:`1px solid ${P.verde}40`, borderRadius:12, padding:'12px 14px', marginBottom:16, animation:'fadeUp 0.4s ease' }}>
+                <p style={{ fontSize:9, fontFamily:'JetBrains Mono, monospace', color:P.verde, marginBottom:8, letterSpacing:'1px' }}>{t.ledger_label}</p>
+                <pre style={{ fontSize:10, fontFamily:'JetBrains Mono, monospace', color:P.ink, margin:0, lineHeight:1.7, whiteSpace:'pre-wrap' }}>
+{`{
+  "receipt_id": "${result.ledger_receipt_id || 'WINDI-TRAVEL-' + Date.now().toString(36).toUpperCase()}",
+  "place": "${decision.name}",
+  "queue": "${decision.queue_status}",
+  "lang": "${lang}",
+  "source": "${apiSource}",
+  "governance": "HIGH",
+  "timestamp": "${result.timestamp}"
+}`}
+                </pre>
+              </div>
+            )}
+
+            <button onClick={reset} style={{ width:'100%', padding:'12px', background:'transparent', border:`1.5px solid ${P.terra}30`, borderRadius:12, color:P.terra, fontSize:13, fontFamily:'DM Sans, sans-serif' }}>
+              {t.new_btn}
+            </button>
+          </div>
+        )}
+
+        {/* ── Footer ── */}
+        <p style={{ textAlign:'center', marginTop:28, fontSize:9, fontFamily:'JetBrains Mono, monospace', color:P.mist, letterSpacing:'0.5px' }}>
+          AI processes. Human decides. WINDI guarantees. 🐉
+        </p>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<MariaAgent />);
+</script>
+</body>
+</html>

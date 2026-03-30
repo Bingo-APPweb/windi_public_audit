@@ -1,0 +1,103 @@
+╔══════════════════════════════════════════════════════════════╗
+║  W-GATEWAY-001 — DEPLOY EM BLOCOS                           ║
+║  WINDI LLM Bridge · Kempten 2026                            ║
+║  Para: Gêmeo (Claude Code)                                  ║
+║                                                              ║
+║  REGRA ABSOLUTA:                                            ║
+║  1. Lê o Block completo ANTES de executar                   ║
+║  2. Confirma "BLOCK N ✓" antes de avançar                   ║
+║  3. NUNCA pula um Block                                     ║
+║  4. Se algo falha → PARA e reporta o Block exacto           ║
+╚══════════════════════════════════════════════════════════════╝
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+BLOCK 0 — ORIENTAÇÃO GERAL (LÊ, NÃO EXECUTA)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+MISSÃO:
+  Criar o W-GATEWAY-001 — roteador soberano de inteligência.
+  Ponto de entrada ÚNICO para todos os LLMs externos.
+  Nenhum agente interno chama LLM directamente (I9).
+
+ARQUITECTURA:
+  Porto:        :8130
+  Serviço:      windi-gateway
+  Path:         /opt/windi/windi-gateway/
+  Nginx:        /gateway/ → proxy :8130 (ONE TREE)
+
+PRINCÍPIO:
+  FREE  → local soberano (0 tokens externos)
+  MED   → Mistral-small
+  HIGH  → Claude Sonnet / Gemini / ElevenLabs
+
+INVARIANTES ACTIVOS:
+  I1  — Dignidade (SGE PII Filter)
+  I9  — Anti-autonomia (Gateway Secret)
+  I10 — Continuidade (Bunker Mode)
+  I11 — Permanência (Ledger seal por chamada)
+  I12 — Custo transparente (cost_eur no Ledger)
+
+DEPENDÊNCIAS EXTERNAS:
+  - Ledger :8101 já LIVE
+  - Agent Corps :8091 já LIVE
+  - nginx ONE TREE já configurado
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+BLOCK 1 — ESTRUTURA BASE + .env + requirements
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CONTEXTO:
+  Criar directoria, ambiente virtual, ficheiros base.
+  SEM lógica ainda — apenas estrutura.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+BLOCK 2 — CORE: App + Tier + LLMRouter + TOKEN_BUDGET
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CONTEXTO:
+  O cérebro do Gateway — decide QUAL LLM usar para cada pedido.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+BLOCK 3 — PROVIDERS + AGENTBRIDGE + COST
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CONTEXTO:
+  - LLMProviders: chamadas reais às APIs externas
+  - AgentBridge: injecção nos agentes :8091
+  - calc_cost: custo por provider
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+BLOCK 4 — GUARDIÕES: BunkerMonitor + SGEFilter + Auth
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CONTEXTO:
+  Os 3 guardiões constitucionais
+  I10: Bunker Mode (rede instável → FREE forçado)
+  I1:  SGE PII Filter (dados sensíveis não saem da rede)
+  I9:  Gateway Secret (só agentes autorizados acedem ao budget)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+BLOCK 5 — ENDPOINTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CONTEXTO:
+  4 endpoints principais:
+  POST /gateway/call       — roteador principal
+  POST /gateway/voice/stream — ElevenLabs streaming
+  POST /gateway/refine     — Wisdom Loop
+  GET  /gateway/health     — smoke test
+  GET  /gateway/sovereignty — relatório de soberania
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+BLOCK 6 — DEPLOY: systemd + nginx + smoke test
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CONTEXTO:
+  Último Block — colocar em produção.
+  REGRA DOURADA: nginx -t ANTES de reload.
+  NÃO alterar portas SEALED (:8101, :8102, :8106).
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Liga IA+H · Kempten 2026
+"AI processes. Human decides. WINDI guarantees."
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
