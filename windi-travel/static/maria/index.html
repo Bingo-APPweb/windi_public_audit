@@ -19,6 +19,9 @@
   <!-- §79 Super Carta — Leaflet.js (FREE, OpenStreetMap) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <!-- §83 Navegação OSRM — Leaflet Routing Machine (FREE, sovereign) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css"/>
+  <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -299,20 +302,69 @@ function PipelineBar({active,done,lang}){
 }
 
 // §79 — Super Carta: Contextual Map Component (Leaflet.js + OpenStreetMap)
+// §83 — OSRM Navigation (sovereign routing)
 const PIN_ICONS = {
   restaurant: "🍽️", cafe: "☕", museum: "🏛️", hotel: "🏨",
   pharmacy: "💊", hospital: "🏥", bank: "🏦", supermarket: "🛒",
   beach: "🏖️", flight: "✈️", bar: "🍻", park: "🌳", default: "📍"
 };
 
-function SuperCarta({ locations, userLat, userLng, lang }) {
+function SuperCarta({ locations, userLat, userLng, lang, decisionName }) {
   const mapRef = useRef(null);
   const mapInstance = useRef(null);
   const markersRef = useRef([]);
+  const routingRef = useRef(null);
+  const [routeInfo, setRouteInfo] = useState(null);
+  const [routeMode, setRouteMode] = useState(null); // 'driving' | 'foot' | 'cycling'
+
+  // §83 — Start navigation to place
+  const startNavigation = useCallback((destLat, destLng, destName, mode = 'driving') => {
+    if (!mapInstance.current || !userLat || !userLng) return;
+    if (typeof L.Routing === "undefined") {
+      console.log("[SuperCarta] Routing not available");
+      return;
+    }
+
+    // Remove previous route
+    if (routingRef.current) {
+      mapInstance.current.removeControl(routingRef.current);
+      routingRef.current = null;
+    }
+
+    setRouteMode(mode);
+
+    // OSRM profiles: car, foot, bike
+    const profile = mode === 'foot' ? 'foot' : mode === 'cycling' ? 'bike' : 'car';
+
+    routingRef.current = L.Routing.control({
+      waypoints: [
+        L.latLng(userLat, userLng),
+        L.latLng(destLat, destLng)
+      ],
+      router: L.Routing.osrmv1({
+        serviceUrl: `https://router.project-osrm.org/route/v1/${profile}`
+      }),
+      lineOptions: {
+        styles: [{ color: '#8B6914', weight: 5, opacity: 0.8 }] // WINDI Gold
+      },
+      show: false,
+      addWaypoints: false,
+      draggableWaypoints: false,
+      fitSelectedRoutes: true,
+      showAlternatives: false
+    }).addTo(mapInstance.current);
+
+    routingRef.current.on('routesfound', (e) => {
+      const route = e.routes[0];
+      const distKm = (route.summary.totalDistance / 1000).toFixed(1);
+      const timeMin = Math.round(route.summary.totalTime / 60);
+      setRouteInfo({ distance: distKm, time: timeMin, dest: destName, mode });
+    });
+  }, [userLat, userLng]);
 
   useEffect(() => {
     if (!locations || locations.length === 0 || !mapRef.current) return;
-    if (typeof L === "undefined") return; // Leaflet not loaded
+    if (typeof L === "undefined") return;
 
     // Clean previous map
     if (mapInstance.current) {
@@ -320,92 +372,112 @@ function SuperCarta({ locations, userLat, userLng, lang }) {
       mapInstance.current = null;
     }
     markersRef.current = [];
+    routingRef.current = null;
+    setRouteInfo(null);
+    setRouteMode(null);
 
-    // Calculate center (average of locations or user position)
-    let centerLat = userLat || 47.72;
-    let centerLng = userLng || 10.31;
-    if (locations.length > 0) {
-      const validLocs = locations.filter(l => l.lat && l.lng);
-      if (validLocs.length > 0) {
-        centerLat = validLocs.reduce((s, l) => s + l.lat, 0) / validLocs.length;
-        centerLng = validLocs.reduce((s, l) => s + l.lng, 0) / validLocs.length;
-      }
-    }
+    // Calculate center — focus on first location (MARIA's decision)
+    const decision = locations[0];
+    let centerLat = decision?.lat || userLat || 47.72;
+    let centerLng = decision?.lng || userLng || 10.31;
 
     // Create map
     const map = L.map(mapRef.current, {
       center: [centerLat, centerLng],
-      zoom: 14,
+      zoom: 15,
       zoomControl: false,
       attributionControl: false
     });
     mapInstance.current = map;
 
-    // OpenStreetMap tiles (FREE + Sovereign!)
+    // OpenStreetMap tiles
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19
     }).addTo(map);
 
-    // Add zoom control to bottom-right
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-    // Create custom icon function
-    const createIcon = (type) => {
+    // §83 — Create icon function with selected/unselected variants
+    const createIcon = (type, isSelected) => {
       const emoji = PIN_ICONS[type] || PIN_ICONS.default;
+      const size = isSelected ? 40 : 24;
+      const bg = isSelected ? 'background:linear-gradient(135deg,#C9A84C,#8B6914);padding:8px;border-radius:50%;' : '';
+      const shadow = isSelected ? 'box-shadow:0 4px 12px rgba(139,105,20,0.4);' : '';
       return L.divIcon({
-        html: `<div style="font-size:24px;text-shadow:0 2px 4px rgba(0,0,0,0.3);filter:drop-shadow(0 1px 2px rgba(0,0,0,0.2));">${emoji}</div>`,
-        className: 'super-carta-pin',
-        iconSize: [32, 32],
-        iconAnchor: [16, 32],
-        popupAnchor: [0, -32]
+        html: `<div style="font-size:${size}px;${bg}${shadow}text-shadow:0 2px 4px rgba(0,0,0,0.3);">${emoji}</div>`,
+        className: isSelected ? 'super-carta-pin-selected' : 'super-carta-pin',
+        iconSize: [isSelected ? 56 : 32, isSelected ? 56 : 32],
+        iconAnchor: [isSelected ? 28 : 16, isSelected ? 56 : 32],
+        popupAnchor: [0, isSelected ? -56 : -32]
       });
     };
 
-    // Add user position marker (if available)
+    // Add user position marker
     if (userLat && userLng) {
-      const userMarker = L.marker([userLat, userLng], {
+      L.marker([userLat, userLng], {
         icon: L.divIcon({
-          html: '<div style="width:14px;height:14px;background:#4A7C9E;border:3px solid white;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.3);"></div>',
+          html: '<div style="width:16px;height:16px;background:#4A7C9E;border:3px solid white;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.4);"></div>',
           className: 'user-marker',
-          iconSize: [14, 14],
-          iconAnchor: [7, 7]
+          iconSize: [16, 16],
+          iconAnchor: [8, 8]
         })
-      }).addTo(map);
-      userMarker.bindPopup(lang === "PT" ? "Você está aqui" : lang === "DE" ? "Du bist hier" : "You are here");
+      }).addTo(map).bindPopup(lang === "PT" ? "📍 Você está aqui" : lang === "DE" ? "📍 Du bist hier" : "📍 You are here");
     }
 
     // Add location markers
+    let selectedMarker = null;
     locations.forEach((loc, idx) => {
       if (!loc.lat || !loc.lng) return;
+      const isSelected = idx === 0; // First location = MARIA's decision
+
       const marker = L.marker([loc.lat, loc.lng], {
-        icon: createIcon(loc.type)
+        icon: createIcon(loc.type, isSelected),
+        zIndexOffset: isSelected ? 1000 : 0
       }).addTo(map);
 
-      // Popup with place info
-      const ratingStr = loc.rating ? `★ ${loc.rating}` : "";
-      const openStr = loc.open_now === true ? "✓ Aberto" : loc.open_now === false ? "✗ Fechado" : "";
+      // Popup content
+      const ratingStr = loc.rating ? `<div style="color:#C9A84C;font-size:11px;font-weight:600;">★ ${loc.rating}</div>` : "";
+      const openStr = loc.open_now === true
+        ? `<div style="font-size:10px;color:#5C7A5A;margin-top:3px;">✓ ${lang==="PT"?"Aberto":lang==="DE"?"Geöffnet":"Open"}</div>`
+        : loc.open_now === false
+          ? `<div style="font-size:10px;color:#C0392B;margin-top:3px;">✗ ${lang==="PT"?"Fechado":lang==="DE"?"Geschlossen":"Closed"}</div>`
+          : "";
+
+      // §83 — Navigation button (only if user location available)
+      const navBtn = (userLat && userLng)
+        ? `<button onclick="window.__superCartaNav(${loc.lat},${loc.lng},'${loc.name.replace(/'/g,"\\'")}')"
+            style="margin-top:8px;width:100%;padding:6px 10px;background:linear-gradient(135deg,#8B5E3C,#C9A84C);color:white;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Bricolage Grotesque',sans-serif;">
+            🧭 ${lang==="PT"?"Como chegar":lang==="DE"?"Route anzeigen":"Get directions"}
+          </button>`
+        : "";
+
       marker.bindPopup(`
-        <div style="font-family:'Bricolage Grotesque',sans-serif;min-width:140px;">
-          <strong style="font-size:13px;">${loc.name}</strong>
-          ${ratingStr ? `<div style="color:#C9A84C;font-size:11px;">${ratingStr}</div>` : ""}
-          ${loc.address ? `<div style="font-size:10px;color:#666;margin-top:4px;">${loc.address}</div>` : ""}
-          ${openStr ? `<div style="font-size:10px;margin-top:3px;">${openStr}</div>` : ""}
+        <div style="font-family:'Bricolage Grotesque',sans-serif;min-width:160px;">
+          <strong style="font-size:14px;color:#1A1A2E;">${loc.name}</strong>
+          ${ratingStr}
+          ${loc.address ? `<div style="font-size:10px;color:#666;margin-top:4px;">📍 ${loc.address}</div>` : ""}
+          ${openStr}
+          ${navBtn}
         </div>
-      `);
+      `, { maxWidth: 220 });
+
       markersRef.current.push(marker);
+      if (isSelected) selectedMarker = marker;
     });
 
-    // Fit bounds to show all markers
-    if (locations.length > 1) {
-      const validLocs = locations.filter(l => l.lat && l.lng);
-      if (validLocs.length > 1) {
-        const bounds = L.latLngBounds(validLocs.map(l => [l.lat, l.lng]));
-        if (userLat && userLng) bounds.extend([userLat, userLng]);
-        map.fitBounds(bounds, { padding: [30, 30] });
-      }
+    // §83 — Auto-open popup on MARIA's decision
+    if (selectedMarker) {
+      setTimeout(() => selectedMarker.openPopup(), 300);
     }
 
-    // Cleanup on unmount
+    // Fit bounds if multiple markers or user far from decision
+    if (userLat && userLng && locations.length > 0) {
+      const bounds = L.latLngBounds(locations.filter(l=>l.lat&&l.lng).map(l => [l.lat, l.lng]));
+      bounds.extend([userLat, userLng]);
+      map.fitBounds(bounds, { padding: [40, 40], maxZoom: 15 });
+    }
+
+    // Cleanup
     return () => {
       if (mapInstance.current) {
         mapInstance.current.remove();
@@ -414,7 +486,33 @@ function SuperCarta({ locations, userLat, userLng, lang }) {
     };
   }, [locations, userLat, userLng, lang]);
 
+  // §83 — Expose navigation function to window for popup button
+  useEffect(() => {
+    window.__superCartaNav = (lat, lng, name) => startNavigation(lat, lng, name, 'driving');
+    return () => { delete window.__superCartaNav; };
+  }, [startNavigation]);
+
   if (!locations || locations.length === 0) return null;
+
+  // §83 — Helper: format time for display
+  const formatTime = (min) => {
+    if (min < 60) return `${min} min`;
+    const h = Math.floor(min / 60);
+    const m = min % 60;
+    return m > 0 ? `${h}h ${m}min` : `${h}h`;
+  };
+
+  // §83 — Change transport mode
+  const changeMode = (newMode) => {
+    if (routeInfo && routeInfo.dest) {
+      // Get destination coords from last route
+      const destMarker = markersRef.current[0];
+      if (destMarker) {
+        const pos = destMarker.getLatLng();
+        startNavigation(pos.lat, pos.lng, routeInfo.dest, newMode);
+      }
+    }
+  };
 
   return (
     <div style={{ marginBottom: 14 }}>
@@ -424,20 +522,87 @@ function SuperCarta({ locations, userLat, userLng, lang }) {
         <span>{lang === "PT" ? "SUPER CARTA" : lang === "DE" ? "ÜBERSICHTSKARTE" : "OVERVIEW MAP"}</span>
         <span style={{ color: P.verde }}>· {locations.length} {lang === "PT" ? "local" : lang === "DE" ? "Ort" : "place"}{locations.length > 1 ? (lang === "PT" ? "is" : lang === "DE" ? "e" : "s") : ""}</span>
       </div>
+
+      {/* §83 — Route Info Bar (shows when navigation active) */}
+      {routeInfo && (
+        <div style={{
+          background: "linear-gradient(135deg, #8B5E3C, #C9A84C)",
+          borderRadius: 10,
+          padding: "10px 14px",
+          marginBottom: 8,
+          color: "white",
+          fontFamily: "'Bricolage Grotesque', sans-serif"
+        }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <span style={{ fontSize: 20 }}>
+                {routeMode === "foot" ? "🚶" : routeMode === "cycling" ? "🚴" : "🚗"}
+              </span>
+              <div>
+                <div style={{ fontSize: 16, fontWeight: 700 }}>
+                  {routeInfo.distance} km · {formatTime(routeInfo.time)}
+                </div>
+                <div style={{ fontSize: 11, opacity: 0.9 }}>
+                  → {routeInfo.dest}
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={() => { setRouteInfo(null); if(routingRef.current && mapInstance.current) { mapInstance.current.removeControl(routingRef.current); routingRef.current = null; } }}
+              style={{ background: "rgba(255,255,255,0.2)", border: "none", borderRadius: 6, padding: "4px 8px", cursor: "pointer", color: "white", fontSize: 12 }}
+            >✕</button>
+          </div>
+
+          {/* Transport Mode Buttons */}
+          <div style={{ display: "flex", gap: 8 }}>
+            {[
+              { mode: "driving", icon: "🚗", label: lang === "PT" ? "Carro" : lang === "DE" ? "Auto" : "Car" },
+              { mode: "foot", icon: "🚶", label: lang === "PT" ? "A pé" : lang === "DE" ? "Zu Fuß" : "Walk" },
+              { mode: "cycling", icon: "🚴", label: lang === "PT" ? "Bici" : lang === "DE" ? "Rad" : "Bike" }
+            ].map(({ mode, icon, label }) => (
+              <button
+                key={mode}
+                onClick={() => changeMode(mode)}
+                style={{
+                  flex: 1,
+                  padding: "6px 10px",
+                  background: routeMode === mode ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,0.1)",
+                  border: routeMode === mode ? "2px solid white" : "2px solid transparent",
+                  borderRadius: 8,
+                  cursor: "pointer",
+                  color: "white",
+                  fontSize: 12,
+                  fontWeight: routeMode === mode ? 700 : 500,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 4,
+                  transition: "all 0.2s"
+                }}
+              >
+                <span style={{ fontSize: 16 }}>{icon}</span>
+                <span>{label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div
         ref={mapRef}
         style={{
           width: "100%",
-          height: 240,
+          height: routeInfo ? 280 : 240,
           borderRadius: 12,
           border: `1px solid rgba(139,94,60,0.2)`,
           overflow: "hidden",
-          boxShadow: "0 4px 12px rgba(0,0,0,0.08)"
+          boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+          transition: "height 0.3s"
         }}
       />
       <div style={{ fontSize: 9, fontFamily: "'JetBrains Mono',monospace", color: P.cinza,
         marginTop: 6, textAlign: "right", opacity: 0.7 }}>
-        © OpenStreetMap · Leaflet
+        © OpenStreetMap · OSRM · Leaflet
       </div>
     </div>
   );
