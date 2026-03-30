@@ -626,17 +626,17 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 
 **Products:** Triangle of Power · WINDI FIELD · WINDI TRAVEL · FVE Protocol · RFC-001 DNA
 
-> **Detalhes:** ver `§37-70. Sistemas Recentes` abaixo
+> **Detalhes:** ver `§37-71. Sistemas Recentes` abaixo
 
 ### Histórico Recente (últimos 5)
 
 | Data | Milestone |
 |------|-----------|
-| 30 Mar | §70 **I-TRAVEL Constitution** · Idioma ≠ Localização · MARIA pergunta destino |
+| 30 Mar | §71 **Armadura de Seda** · Identidade Fonética · Prompts com alma |
+| 30 Mar | §70 I-TRAVEL Constitution · Idioma ≠ Localização · MARIA pergunta destino |
 | 30 Mar | §69/b MARIA Waterfall Fix · 5 clean exits · Query intent override |
 | 30 Mar | §68 Hotellook Hotel Bridge · Token 513311 · /hotel-search |
 | 30 Mar | §67 Kiwi Flight Bridge · IP1 · IATA · Travelpayouts 513311 |
-| 30 Mar | §66 Places Sovereignty Gate · Cache-first · Soberania cumulativa |
 
 > **Histórico completo:** `CLAUDE-HISTORY.md` + `CHANGELOG.md`
 
@@ -843,7 +843,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 
 ---
 
-## §37-70. Sistemas Recentes — Resumo
+## §37-71. Sistemas Recentes — Resumo
 
 > **Detalhes completos:** `CLAUDE-HISTORY.md` § MIGRAÇÃO 24 Mar 2026
 
@@ -884,6 +884,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 | 69 | **MARIA Waterfall Fix** | 5 clean exits · PLACE_TYPE_MAP 50+ · Culture/General intents | ✅ **LIVE** |
 | 69b | **Query Intent Override** | detect_place_type_from_query() · Frontend mismatch fix | ✅ **LIVE** |
 | 70 | **I-TRAVEL Constitution** | Idioma ≠ Localização · MARIA pergunta destino · GPS origin | ✅ **LIVE** |
+| 71 | **Armadura de Seda** | Identidade Fonética · Prompts com alma · Surpresa/Opinião/Imperfeição | ✅ **LIVE** |
 
 ### Referência Rápida
 
@@ -925,6 +926,16 @@ Sistema de autenticação por identidade soberana no GEN7.
 **Axioma §69:** "MARIA não engole queries no vazio. Cada pergunta tem uma saída limpa."
 **Axioma §69b:** "O utilizador tem sempre razão — se escreve 'Farmacia', MARIA ouve 'Farmacia', não o que o frontend diz."
 **Axioma §70:** "Falar português não significa querer ir a Lisboa."
+**Axioma §71:** "Rigor por dentro, gentileza por fora."
+
+**§71 Armadura de Seda (MARIA Voice):**
+```
+Surpresa:     "Ah, esse bairro!" · "Olha que interessante—"
+Opinião:      "Pessoalmente, prefiro ir de manhã"
+Memória:      "Dizem que..." · "Há quem jure..."
+Imperfeição:  "Não sei se ainda está aberto, mas..."
+Ritmo:        Frase curta. Frase longa com cor. Micro-dica única.
+```
 
 **§70 I-TRAVEL Constitution:**
 ```
