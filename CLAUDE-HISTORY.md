@@ -3343,3 +3343,252 @@ E presença não se copia com npm install.
 *Sessão: 30 Mar 2026 · Companion System Architecture*
 *Claude Opus 4.5 · Human Dragon · Liga IA+H*
 *"AI processes. Human decides. WINDI guarantees."*
+
+---
+
+## § MIGRAÇÃO 30 Mar 2026 — Overflow Fix (46.5KB → 32KB)
+
+**Razão:** CLAUDE.md ultrapassou 40KB, impactando performance
+**Política:** CLAUDE.md = presente + regras | HISTORY = passado selado
+
+---
+
+### §10 Marketing da Epifania (migrado)
+
+**Receipt:** WINDI-VIRTUE-ONEWOW-20260314 ✅ SELADO
+**Hash:** `sha256:83887dde96130efdcc8ed0340bd2eb5980878109680d3598ae1dce7ea222bbae`
+
+**Os 4 Pilares:**
+| Pilar | Princípio |
+|-------|-----------|
+| P1 | Faz antes de explicar |
+| P2 | Silêncio como onboarding |
+| P3 | Virtude Forense Imutável |
+| P4 | Uma frase basta |
+
+**Pioneer Program URLs:**
+- `windi-domain.com/pioneer/` ✅
+- `windi-domain.com/pioneer/florianopolis/` ✅
+- `windi-domain.com/pioneer/manifesto/` ✅
+
+---
+
+### §15 W-KEYS P5 Pricing Page (migrado)
+
+**Status:** ✅ LIVE · 17 Mar 2026
+**URL:** `windi-domain.com/keys/`
+**Path:** `/opt/windi/keys-pricing/index.html`
+
+**Features:**
+- i18n PT/DE/EN com auto-detect + sync `windi_lang`
+- 4 Tiers: SEED €0 · NODAL €49 · SOVEREIGN €999+ · ORACLE interno
+- CTAs: `/api-keys/request?tier=X`
+- I9 Gate documentado no rodapé
+
+**Infraestrutura:**
+```
+nginx:  location ^~ /keys/ → alias /opt/windi/keys-pricing/
+Botão:  🔑 Chaves no header GEN7 → onclick="/keys/"
+```
+
+**i18n Strings:**
+| Key | PT | EN | DE |
+|-----|----|----|-----|
+| title | Leve o WINDI... | Bring WINDI... | WINDI für Ihre... |
+| popular | Mais escolhido | Most popular | Meistgewählt |
+| ctaNodal | Activar Nodal → | Activate Nodal → | Nodal aktivieren → |
+
+---
+
+### §16 NAMING Dragon/WINDI (migrado)
+
+**Regra:** Interface pública = "WINDI" | Interno = "Three Dragons"
+**Razão:** "Dragon" confunde detect_language() → resposta na língua errada
+
+**Implementação:**
+```python
+# sovereign_router.py — NEUTRAL_MARKERS
+NEUTRAL_MARKERS = {"windi", "dragon", "guardian", "architect", "witness", "ledger", "vault"}
+# detect_language() remove estes antes de contar scores
+```
+
+**Three Dragons (conceito interno):**
+- 🛡️ Guardian — Protege, valida, I9 gate
+- 🏗️ Architect — Constrói documentos
+- 👁️ Witness — Observa, sela no Ledger
+
+---
+
+### §21 Wallet Gate DID Modal (migrado)
+
+**Status:** FASE 1 LIVE · FASE 2 pendente
+**URL:** `windi-domain.com/desktop/` (botão 🪪)
+
+**Storage:** `sessionStorage('windi_desktop_wallet')` + `window.__windiWalletId`
+**Endpoints:** `/api/wallet/me`, `/api/wallet/health`, `/api/wallet/stats`
+
+**FASE 2 pendente:**
+- G1: wallet_id injection
+- G2: Ledger attribution
+- G4: Trust score
+
+---
+
+### §59 WINDI Travel v1.0 — Narrativa Completa (migrado)
+
+**Status:** ✅ LIVE · FIRST SEAL · 26 Mar 2026
+**Receipt:** `WINDI-TRAVEL-1774563585`
+**Port:** :8126
+
+**Narrativa:**
+> De uma caixa de sapatos no chão de Kempten nasceu o WINDI Travel.
+> "Guardar o passado. Resguardar o futuro. No presente perfeito."
+
+**Primeiro Selo Real:**
+```
+WINDI-TRAVEL-000001
+───────────────────────────────────────
+Momento:    "26 anos atrás o mundo ainda reservava..."
+Hash:       SHA-256: 1eafdcbbf57ca948…
+GPS:        47.6429°N, 10.2929°E · Kempten, Bavaria
+Timestamp:  2026-03-26T21:46:10.689Z
+Modo:       Rescue (📦 caixa de sapatos)
+Selado:     22:59 CET
+Invariante: I14 + I9 + I11
+───────────────────────────────────────
+```
+
+**Estrutura:**
+```
+/opt/windi/windi-travel/
+├── identity-gate/
+│   ├── identity_gate.py      # FastAPI :8126
+│   ├── templates/gate.html   # Trilíngue · KLAR
+│   └── windi-travel.service  # systemd
+└── workspace/
+    └── index.html            # Mobile-first · Rescue/Capture/Faden
+```
+
+**Axioma §59:** "A caixa de sapatos que estava no chão de Kempten já não pode desaparecer."
+
+---
+
+### RFC-001 Detalhes Técnicos (migrado)
+
+**Receipt:** `WINDI-RFC-001-DNA-IDENTITY-INJECTION-PROTOCOL`
+**Hash:** `sha256:69d717598bfead84981633dde3d4dc51c548fce3e1f4e73926cf0285f46b61c9`
+**Governance:** HIGH
+**Docs:** `/home/windi/docs/liga-iah/WINDI-RFC-001-v1.1-SEALED.md`
+
+---
+
+### §8 System Prompts — Detalhes (migrado)
+
+**Regras Globais para Todos os System Prompts:**
+1. Responder na língua do utilizador (DE / PT / EN — auto-detect)
+2. Gerar rascunho IMEDIATAMENTE, mesmo com info incompleta
+3. Usar placeholders [NOME], [DATA], [VALOR] em vez de interrogar
+4. Máximo 1 pergunta por turno
+5. NUNCA usar: "garanto", "certamente", "definitivamente"
+6. SEMPRE usar: "designed to support", "estruturado para", "verificável via Ledger"
+7. NUNCA mencionar marcas de LLM em respostas públicas
+8. Terminar respostas de documento com stage + próximo passo do Bridge
+
+**Prompts por Agente:**
+| Agente | Especialidade | Terminar com |
+|--------|---------------|--------------|
+| W-COMM-001 | Communiqués, Werbebriefe, Certificados | "→ Bridge C5 aguarda aprovação" |
+| W-JOURN-001 | Pipeline editorial J1→J6 | "→ J6-Gate com human_approved=true" |
+| W-LEGAL-001 | 4 jurisdições: DE/EU/BR/INT | "→ /legal/bridge/commit" |
+| W-NOTARY-001 | SHA-256 · Ed25519 DID · Ledger | "→ Aguarda human_approved para I11 seal" |
+| W-ACCT-001 | GoBD · XRechnung · ELSTER | "→ C6 IRREMEDIÁVEL · Aguarda aprovação" |
+| W-COMPLY-001 | DSGVO · eIDAS · LGPD | "→ Risk assessment pronto" |
+| W-AUDIT-001 | Hash verification · Provenance | "→ /audit/bridge/seal" |
+| GROVE ARENA | Tri-Divergence I6 | "→ Decisão final: Human Dragon" |
+
+---
+
+### §9 Design System — Cores por Agente (migrado)
+
+| Agente | Cor |
+|--------|-----|
+| W-COMM-001 | #8B6914 (WINDI Gold) |
+| W-LEGAL-001 | #1a3a6b (Azul) |
+| W-NOTARY-001 | #5a1a6b (Púrpura) |
+| W-JOURN-001 | #6b1a1a (Vermelho) |
+| W-AUDIT-001 | #2d4a1a (Verde) |
+| W-ACCT-001 | #4a3a1a (Castanho) |
+| W-COMPLY-001 | #1a4a5a (Azul compliance) |
+| GROVE ARENA | #2d5a2d (Verde conselho) |
+
+---
+
+### §12 GEN7 — Endpoints Detalhados (migrado)
+
+| Endpoint | Função |
+|---|---|
+| `/health` | Ecosystem status |
+| `/api/dragon/status` | Dragon Pulse |
+| `/api/agents/status` | Agent Corps |
+| `/api/onetouch/execute` | Pipeline execution |
+| `/api/onetouch/seal` | C5→C6 seal |
+| `/api/onetouch/dispatch` | Envio (email/whatsapp) |
+| `/api/export/web` | Export HTML standalone |
+| `/api/publish/web` | Publish to /sites/ |
+
+**7 Motores:**
+| Motor | Output | Status |
+|-------|--------|--------|
+| DOC | HTML semântico | ✅ LIVE |
+| SLIDES | windi-slides HTML | ✅ LIVE |
+| WEB | HTML/CSS/JS completo | ✅ LIVE |
+| ART | SVG artístico | ✅ LIVE |
+| DATA | Dashboard + Chart.js | ✅ LIVE |
+| CODE | Docs + highlight.js | ✅ LIVE |
+| MEDIA | Newsletter 600px | ✅ LIVE |
+
+---
+
+### Axiomas Consolidados §43-§82 (migrado de redundância)
+
+| § | Axioma |
+|---|--------|
+| 43 | "WINDI não declara 'fake'. Classifica verificabilidade." |
+| 44 | "One portal creates trust. The other creates humanity." |
+| 45 | "A prova mais forte é a que não se sente." |
+| 49 | "Sem DID, não existe sujeito operacional." |
+| 50 | "Um agente WINDI sabe onde não pode responder." |
+| 51 | "O modal existe antes do handler." |
+| 52 | "What is sealed, stays sealed." |
+| 53 | "O domínio do produto é selado no Ledger do produto." |
+| 54 | "Cartões de visita não têm modo escuro." |
+| 55 | "Um link morto é uma mentira silenciosa." |
+| 60 | "A prova mais gentil é aquela que o utilizador nem percebe." |
+| 61 | "Dois produtos, duas portas, duas bases de dados." |
+| 62 | "MARIA não é assistente — é companheira." |
+| 63 | "MARIA lembra-se, mas nunca intromete." |
+| 64 | "Quem tem DID WINDI é cidadão de todo o ecossistema." |
+| 65 | "Saudação muda com confiança: viajante → de volta → connosco." |
+| 66 | "O mundo real entra uma vez, soberania local serve sempre." |
+| 67 | "MARIA fala como companheira, não motor de busca." |
+| 68 | "Um token, dois mundos — voos e hotéis sem fricção." |
+| 69 | "MARIA não engole queries no vazio." |
+| 69b | "Se escreve 'Farmacia', MARIA ouve 'Farmacia'." |
+| 70 | "Falar português não significa querer ir a Lisboa." |
+| 71 | "Rigor por dentro, gentileza por fora." |
+| 72 | "Urgência não precisa de velocidade. Precisa de presença." |
+| 73 | "O sistema não responde ao pedido. Responde ao estado." |
+| 74 | "A necessidade primária nem sempre é a necessidade expressa." |
+| 75 | "Ausência de clareza é dado de alta prioridade." |
+| 76 | "Informação pode esperar. Desorientação não." |
+| 77 | "Rigor por dentro, gentileza por fora." |
+| 78 | "A sensação de compreensão é consequência, não objectivo." |
+| 79 | "Um mapa vale mil palavras — mas só quando necessário." |
+| 80 | "O utilizador nunca vê chaves {} a não ser que as peça." |
+| 81 | "Começa soberano. Externo só se qualidade justifica." |
+| 82 | "Concierge de 5 estrelas, não terapeuta." |
+
+---
+
+*Migração: 30 Mar 2026 · Claude Opus 4.5*
+*"O que foi selado, permanece. O que foi migrado, respira."*
