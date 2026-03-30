@@ -317,34 +317,95 @@ def detect_flight_intent(text: str) -> bool:
 
 def extract_flight_details(text: str, default_from: str = "MUC") -> Dict[str, str]:
     """Extract flight details from natural language input."""
+    import re
     lower = text.lower()
 
-    # Try to find destination
+    # Prepositions indicating origin/destination
+    origin_preps = ["de ", "from ", "von ", "aus "]
+    dest_preps = ["para ", "to ", "nach ", "pra "]
+
+    origin = None
     destination = None
-    for city, iata in IATA_CODES.items():
-        if city in lower:
-            destination = iata
-            break
 
-    # Try to find date patterns (simple extraction)
-    # TODO: More sophisticated date parsing
-    import re
-    date_pattern = r'(\d{1,2})[/\-\.](\d{1,2})[/\-\.]?(\d{2,4})?'
-    date_match = re.search(date_pattern, text)
+    # Find origin (city after "de/from/von")
+    for prep in origin_preps:
+        if prep in lower:
+            after_prep = lower.split(prep, 1)[1]
+            for city, iata in IATA_CODES.items():
+                if after_prep.startswith(city) or f" {city}" in after_prep[:30]:
+                    origin = iata
+                    break
+            if origin:
+                break
 
-    if date_match:
-        day, month = date_match.group(1), date_match.group(2)
-        year = date_match.group(3) or "2026"
-        if len(year) == 2:
-            year = "20" + year
-        date = f"{day.zfill(2)}/{month.zfill(2)}/{year}"
-    else:
-        # Default to 7 days from now
+    # Find destination (city after "para/to/nach")
+    for prep in dest_preps:
+        if prep in lower:
+            after_prep = lower.split(prep, 1)[1]
+            for city, iata in IATA_CODES.items():
+                if after_prep.startswith(city) or f" {city}" in after_prep[:30]:
+                    destination = iata
+                    break
+            if destination:
+                break
+
+    # Fallback: find any city not already used
+    if not origin or not destination:
+        for city, iata in IATA_CODES.items():
+            if city in lower:
+                if not origin and iata != destination:
+                    origin = iata
+                elif not destination and iata != origin:
+                    destination = iata
+                if origin and destination:
+                    break
+
+    # Parse date - multiple patterns
+    # Pattern 1: "dia 15 de abril de 2026"
+    month_names = {
+        "janeiro": "01", "fevereiro": "02", "março": "03", "marco": "03",
+        "abril": "04", "maio": "05", "junho": "06",
+        "julho": "07", "agosto": "08", "setembro": "09",
+        "outubro": "10", "novembro": "11", "dezembro": "12",
+        "january": "01", "february": "02", "march": "03",
+        "april": "04", "may": "05", "june": "06",
+        "july": "07", "august": "08", "september": "09",
+        "october": "10", "november": "11", "december": "12",
+        "januar": "01", "februar": "02", "märz": "03", "marz": "03",
+        "april": "04", "mai": "05", "juni": "06",
+        "juli": "07", "august": "08", "september": "09",
+        "oktober": "10", "november": "11", "dezember": "12",
+    }
+
+    date = None
+
+    # Pattern: "dia X de MONTH de YEAR" or "X de MONTH"
+    month_pattern = r'(?:dia\s+)?(\d{1,2})\s+(?:de\s+)?(' + '|'.join(month_names.keys()) + r')(?:\s+(?:de\s+)?(\d{4}))?'
+    month_match = re.search(month_pattern, lower)
+    if month_match:
+        day = month_match.group(1).zfill(2)
+        month = month_names.get(month_match.group(2), "01")
+        year = month_match.group(3) or "2026"
+        date = f"{day}/{month}/{year}"
+
+    # Pattern 2: dd/mm/yyyy or dd-mm-yyyy
+    if not date:
+        date_pattern = r'(\d{1,2})[/\-\.](\d{1,2})[/\-\.]?(\d{2,4})?'
+        date_match = re.search(date_pattern, text)
+        if date_match:
+            day, month = date_match.group(1), date_match.group(2)
+            year = date_match.group(3) or "2026"
+            if len(year) == 2:
+                year = "20" + year
+            date = f"{day.zfill(2)}/{month.zfill(2)}/{year}"
+
+    # Default: 7 days from now
+    if not date:
         future = datetime.now() + timedelta(days=7)
         date = future.strftime("%d/%m/%Y")
 
     return {
-        "fly_from": default_from,
-        "fly_to": destination or "LIS",  # Default: Lisbon
+        "fly_from": origin or default_from,
+        "fly_to": destination or "LIS",
         "date": date
     }
