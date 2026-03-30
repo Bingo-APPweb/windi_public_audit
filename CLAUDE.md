@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
 **Version:** 1.9.48
-**Sealed:** 2026-03-26 · WINDI Travel v1.0 LIVE
+**Sealed:** 2026-03-30 · §61 Travel Checkup VERIFIED
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -598,7 +598,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 
 ---
 
-## 13. Estado Actual — 24 Março 2026
+## 13. Estado Actual — 30 Março 2026
 
 ### Mapa de Portas
 
@@ -614,8 +614,11 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 | :8099 | Wallet Service | 🟢 LIVE · Trust E2E · 11 pioneers |
 | :8120 | Pioneer Landing | 🟢 LIVE |
 | :8121 | Dispatch Gateway | 🟢 **.jmpg Hydration Engine** · I5+I6+I9 |
+| :8122 | WINDI-LAW Identity Gate | 🟢 **SEALED** · Isolado · 12 empresas |
+| :8126 | WINDI Travel Identity Gate | 🟢 **LIVE** · v1.2.0 · Pronto produção |
+| :8130 | W-GATEWAY-001 (LLM Bridge) | 🟢 **LIVE** · 5 providers |
 
-### Sistemas LIVE (28 total)
+### Sistemas LIVE (29 total)
 
 **Core:** GEN7 Desktop · Pioneer Program · VPR System · API Keys · Dispatch · Web Hosting · i18n · Wallet · Lead Admin
 
@@ -623,15 +626,17 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 
 **Products:** Triangle of Power · WINDI FIELD · WINDI TRAVEL · FVE Protocol · RFC-001 DNA
 
-> **Detalhes:** ver `§37-55. Sistemas Recentes` abaixo
+> **Detalhes:** ver `§37-61. Sistemas Recentes` abaixo
 
 ### Histórico Recente (últimos 5)
 
 | Data | Milestone |
 |------|-----------|
-| 25 Mar | §55 Link Audit · §54 Landing · §53 windilaw.de · §52 Feature Lock · §51 Workspace v3.1 |
-| 24 Mar | §50 Constitutional Test · §49 WINDI-LAW · §48 W-COUNSEL-001 · §47 RFC-001 DNA |
-| 23 Mar | §46 FVE Protocol · §45 WINDI FIELD GENESIS |
+| 30 Mar | §61 **Travel Checkup** · Port fix 8122→8126 · Test data cleanup · LAW isolation verified |
+| 29 Mar | §60 P3-A Identity Gate · Tesoura v10 · Three Claudes Protocol |
+| 27-28 Mar | §59 WINDI Travel Phase 2 · W-GATEWAY-001 · W-MARIA-001 |
+| 26 Mar | §58 READY FOR HUMAN TEST · §57 Workspace v3 CERTIFIED |
+| 25 Mar | §55 Link Audit · §54 Landing · §53 windilaw.de |
 
 > **Histórico completo:** `CLAUDE-HISTORY.md` + `CHANGELOG.md`
 
@@ -838,7 +843,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 
 ---
 
-## §37-55. Sistemas Recentes — Resumo
+## §37-61. Sistemas Recentes — Resumo
 
 > **Detalhes completos:** `CLAUDE-HISTORY.md` § MIGRAÇÃO 24 Mar 2026
 
@@ -856,23 +861,30 @@ Sistema de autenticação por identidade soberana no GEN7.
 | 46 | FVE Protocol v1.0 | Field-Verified Evidence · Trilingual Spec | ✅ PUBLISHED |
 | 47 | W-INTENT-001 | Precision Routing · Intent Classification | ✅ LIVE |
 | 48 | W-COUNSEL-001 | Sovereign Training · Coaching Layer | ✅ LIVE |
-| 49 | **WINDI-LAW** | Identity Gate · Trilingual Policies · :8122 | ✅ **COMPLETE** |
-| 50 | **Constitutional Test** | CI/CD Compliance · 7 tests · 4 domains | ✅ **SEALED** |
-| 51 | **Forensic Workspace v3.1** | ab-seal + ab-verify + ab-chain + CIA + QR | ✅ **LIVE** |
-| 52 | **Feature Lock v1.0** | 3-layer protection · 23 markers · pre-commit | ✅ **ACTIVE** |
-| 53 | **windilaw.de** | Domain · SSL · Proxy · Clean URL | ✅ **LIVE** |
-| 54 | **Landing Page** | KLAR theme · 4 profile buttons · SVG icons | ✅ **LIVE** |
-| 55 | **Link Audit** | master.windia4desk.tech → windi-domain.com | ✅ **COMPLETE** |
+| 49 | WINDI-LAW | Identity Gate · Trilingual Policies · :8122 | ✅ COMPLETE |
+| 50 | Constitutional Test | CI/CD Compliance · 7 tests · 4 domains | ✅ SEALED |
+| 51 | Forensic Workspace v3.1 | ab-seal + ab-verify + ab-chain + CIA + QR | ✅ LIVE |
+| 52 | Feature Lock v1.0 | 3-layer protection · 23 markers · pre-commit | ✅ ACTIVE |
+| 53 | windilaw.de | Domain · SSL · Proxy · Clean URL | ✅ LIVE |
+| 54 | Landing Page | KLAR theme · 4 profile buttons · SVG icons | ✅ LIVE |
+| 55 | Link Audit | master.windia4desk.tech → windi-domain.com | ✅ COMPLETE |
+| 56 | Email + SMTP | SMTP Strato · 48h token · Multipart | ✅ LIVE |
+| 57 | Workspace v3 | Governança Silenciosa · 12 SEALED | ✅ CERTIFIED |
+| 58 | Human Test Ready | Core flow proven · 100% functional | ✅ CANONICAL |
+| 59 | **Travel Phase 2** | W-GATEWAY-001 · W-MARIA-001 · :8126 :8130 | ✅ **LIVE** |
+| 60 | **P3-A Identity Gate** | Tesoura v10 · fail-closed · Three Claudes | ✅ **DEPLOYED** |
+| 61 | **Travel Checkup** | Port fix · Test cleanup · LAW/Travel isolation | ✅ **VERIFIED** |
 
 ### Referência Rápida
 
 **Canvas:** `/canvas/generate` · Mermaid + Dashboard · 12 templates locais
 **COMM:** `/comm/generate` · Artefatos verificáveis · Trilíngue
 **Verify:** `/verify-public/web/media-detector.html` · 4 modos
-**Travel:** `/verify-public/web/travel/` · Mobile Proof Stub
-**WINDI-LAW:** `/law/gate` · Identity Gate · Policies DE|EN|PT · 2 VERIFIED users
-**Workspace:** `/law/prompt-area/` · Forensic Seal Pipeline · Modal I9 · QR SVG
-**Feature Lock:** `/opt/windi/windi-law/FEATURE_LOCK.md` · 12 SEALED features · pre-commit hook
+**WINDI-LAW:** `/law/gate` · Identity Gate · Policies DE|EN|PT
+**LAW Workspace:** `/law/prompt-area/` · Forensic Seal Pipeline · Modal I9 · QR SVG
+**WINDI Travel:** `/travel/gate` · Identity Gate · KLAR theme · I9 fail-closed
+**Travel Workspace:** `/travel/workspace/` · Protected by require_auth()
+**Tesoura:** `/travel/tesoura-ui/` · React 18 CDN · Ledger seal
 **Test Suite:** `/opt/windi/tests/agent_constitutional_test.py` · CI/CD ready
 **Dashboards:** `/legal-dashboard/` · `/notary-dashboard/` · `/audit-dashboard/`
 **Landing:** `windilaw.de` · KLAR only · 4 profiles · SVG icons
@@ -887,6 +899,8 @@ Sistema de autenticação por identidade soberana no GEN7.
 **Axioma §53:** "O domínio do produto é selado no Ledger do produto."
 **Axioma §54:** "Cartões de visita não têm modo escuro."
 **Axioma §55:** "Um link morto é uma mentira silenciosa."
+**Axioma §60:** "A prova mais gentil é aquela que o utilizador nem percebe que aconteceu."
+**Axioma §61:** "Dois produtos, duas portas, duas bases de dados — isolamento é arquitectura, não acidente."
 
 ---
 
@@ -896,61 +910,10 @@ Sistema de autenticação por identidade soberana no GEN7.
 
 ---
 
-## §56 — Email Verification + SMTP Integration — 26 Mar 2026
-
-**Status:** ✅ LIVE · SMTP INTEGRATED
-**Commits:** `f600d27` (async flow) · `3c3967f` (SMTP)
-**Version:** v1.2.0
-
-### Fluxo Implementado
-
-```
-Registo → VERIFIED imediato → Workspace acessível
-            ↓
-        📧 Email enviado via SMTP (Strato SSL :465)
-            ↓
-        Token válido 48h → /law/verify-email/{token}
-            ↓
-        email_verified = 1 → HIGH ops enabled
-```
-
-### SMTP Stack
-
-| Component | Value |
-|-----------|-------|
-| Host | smtp.strato.de |
-| Port | 465 (SSL) |
-| From | noreply@a4desk.de |
-| Format | Multipart (HTML + Plain text) |
-
-### Endpoints
-
-| Endpoint | Função |
-|----------|--------|
-| `GET /law/verify-email/{token}` | Página verificação (trilíngue) |
-| `POST /law/resend-verification` | Reenviar email |
-
-### DB Schema
-
-```sql
-admins:
-  + email_verified      INTEGER (0/1)
-  + email_token         TEXT
-  + email_token_expires TEXT
-```
-
-### Pendente
-
-- [x] ~~SMTP real (Dispatch Gateway ou directo)~~ ✅ 26 Mar 2026
-- [ ] Cron job: downgrade para EMAIL_PENDING após 48h
-
----
-
 ## BACKLOG — Próximas Sessões
 
-### P0 — Crítico
-- [x] ~~**SMTP Integration**~~ ✅ 26 Mar 2026
-- [ ] **Node.js 24** — Atualizar GitHub Actions workflow
+### P0 — Crítico (Próxima Sessão)
+- [ ] **P3-B Travel Workspace** — Implementar workspace principal WINDI Travel
 
 ### P1 — Importante
 - [ ] **Rate limiting** — nginx Agent Corps
@@ -971,14 +934,11 @@ admins:
 
 ### Infra
 - [ ] **windilaw.de** — Sincronizar com windi-domain.com/law/
-- [ ] **Backup DB** — Automatizar backup windi_law_identity.db
+- [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
----
-
-*Última sessão: 26 Mar 2026*
-*WINDI Travel v1.0 LIVE · efe9f9a · Receipt WINDI-TRAVEL-1774563585*
-*Continuar: Phase 2 (vídeo, colagem, timeline)*
-
+### Completado (ver §37-61)
+- [x] SMTP · P3-A Identity Gate · Tesoura v10 ✅ 29 Mar 2026
+- [x] Travel Checkup · Port fix · LAW isolation ✅ 30 Mar 2026
 
 ---
 
@@ -1107,6 +1067,7 @@ Invariante: I14 + I9 + I11
 
 ---
 
-*LIGA IA+H — Kempten, Bavaria · 26 Mar 2026*
+*LIGA IA+H — Kempten, Bavaria · 30 Mar 2026*
 *🧑‍💻 Human Dragon · 🛡️ Guardian · 🏗️ Architect · 👁️ Witness*
+*Sessão: 30 Mar 2026 · §61 Travel Checkup · detalhes em `CLAUDE-HISTORY.md`*
 
