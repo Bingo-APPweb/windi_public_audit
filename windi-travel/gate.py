@@ -83,9 +83,40 @@ def init_db():
         db.commit()
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
+
 def generate_wallet_id() -> str:
-    """UUIDv4 prefixado — compatível com ecossistema WINDI"""
-    return f"WID-TRAVEL-{uuid.uuid4().hex[:12].upper()}"
+    """
+    DID Universal WINDI — §64
+    Formato: did:windi:{produto}:{uuid}
+
+    "No WINDI não há estranhos.
+     Quem tem um DID WINDI é cidadão de todo o ecossistema."
+    """
+    return f"did:windi:travel:{uuid.uuid4().hex[:12].lower()}"
+
+
+def is_valid_windi_did(did: str) -> bool:
+    """
+    Valida qualquer DID do ecossistema WINDI — §64
+
+    Aceita:
+      did:windi:travel:xxx  ✅
+      did:windi:law:xxx     ✅
+      did:windi:xxx         ✅
+      WID-TRAVEL-xxx        ✅ (legacy)
+      WID-LAW-xxx           ✅ (legacy)
+
+    "Entraste pelo Travel? O teu DID já te conhece no LAW."
+    """
+    if not did:
+        return False
+    # Universal format
+    if did.startswith("did:windi:"):
+        return True
+    # Legacy formats (backwards compatible)
+    if did.startswith("WID-"):
+        return True
+    return False
 
 def make_session(wallet_id: str, ip: str) -> str:
     token = secrets.token_urlsafe(32)
