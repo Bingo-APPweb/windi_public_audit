@@ -69,7 +69,7 @@ except ImportError as e:
 try:
     from maria.kiwi_bridge import (
         search_flights,
-        format_maria_response,
+        format_maria_response as format_flight_response,
         detect_flight_intent,
         extract_flight_details,
     )
@@ -78,6 +78,20 @@ try:
 except ImportError as e:
     KIWI_BRIDGE_ENABLED = False
     log.warning(f"[MARIA] Kiwi Bridge not available: {e}")
+
+# ── Hotel Bridge (§68) ───────────────────────────────────────────────────────
+try:
+    from maria.hotel_bridge import (
+        search_hotels,
+        format_maria_hotel_response,
+        detect_hotel_intent,
+        extract_hotel_details,
+    )
+    HOTEL_BRIDGE_ENABLED = True
+    log.info("[MARIA] Hotel Bridge loaded ✓")
+except ImportError as e:
+    HOTEL_BRIDGE_ENABLED = False
+    log.warning(f"[MARIA] Hotel Bridge not available: {e}")
 
 # ── Config ────────────────────────────────────────────────────────────────────
 GOOGLE_PLACES_KEY = os.getenv("GOOGLE_PLACES_KEY", "")
@@ -157,6 +171,29 @@ class FlightSearchResponse(BaseModel):
     ledger_receipt_id: Optional[str] = None
     sovereign_mode: bool = False
     source: str = "kiwi.com"
+    timestamp: str
+
+# ── §68 Hotel Search Models ─────────────────────────────────────────────────────
+class HotelSearchRequest(BaseModel):
+    destination: str = Field(..., description="City name")
+    check_in: str = Field(..., description="Check-in date YYYY-MM-DD")
+    check_out: str = Field(..., description="Check-out date YYYY-MM-DD")
+    lang: Optional[str] = "PT"
+    wallet_id: Optional[str] = None
+    adults: Optional[int] = 2
+    max_results: Optional[int] = 3
+
+class HotelSearchResponse(BaseModel):
+    request_id: str
+    hotels: list
+    destination: str
+    check_in: str
+    check_out: str
+    nights: int
+    maria_voice: str
+    ledger_receipt_id: Optional[str] = None
+    sovereign_mode: bool = False
+    source: str = "hotellook.com"
     timestamp: str
 
 # ── Context Enricher (Open-Meteo, FREE) ───────────────────────────────────────
@@ -518,7 +555,72 @@ async def maria_plan(req: PlanRequest):
             timestamp=datetime.now(timezone.utc).isoformat(),
         )
 
-    # 1d. §65 — Special handling for greeting intent
+    # 1d. §68 — Hotel intent detection from raw query
+    if HOTEL_BRIDGE_ENABLED and req.query and detect_hotel_intent(req.query):
+        log.info(f"[{request_id[:8]}] Hotel intent detected → routing to Hotel Bridge")
+        hotel_details = extract_hotel_details(req.query)
+
+        hotels_data = await search_hotels(
+            destination=hotel_details["destination"],
+            check_in=hotel_details["check_in"],
+            check_out=hotel_details["check_out"],
+            adults=hotel_details["adults"],
+            lang=lang,
+        )
+
+        maria_text = format_maria_hotel_response(hotels_data, lang)
+        sovereign_mode = hotels_data.get("source") == "demo"
+
+        # Seal to Ledger
+        seal_payload = {
+            "request_id": request_id,
+            "destination": hotels_data.get("destination"),
+            "check_in": hotel_details["check_in"],
+            "check_out": hotel_details["check_out"],
+            "nights": hotel_details["nights"],
+            "hotels_count": len(hotels_data.get("hotels", [])),
+            "sovereign_mode": sovereign_mode,
+            "source": hotels_data.get("source", "hotellook.com"),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+        }
+        receipt_id = await seal_decision(request_id, seal_payload, req.wallet_id)
+
+        best_hotel = hotels_data.get("hotels", [{}])[0] if hotels_data.get("hotels") else {}
+
+        return PlanResponse(
+            request_id=request_id,
+            decision=PlaceResult(
+                name=best_hotel.get("name", "Hotel"),
+                type="hotel",
+                distance_text=f"{hotel_details['nights']} noites",
+                queue_status=f"€{best_hotel.get('price_total', '?')}",
+                reason=maria_text[:200],
+                rating=best_hotel.get("rating"),
+                open_now=None,
+            ),
+            context={
+                "weather": ctx.get("weather", ""),
+                "hotels": hotels_data.get("hotels", []),
+                "destination": hotels_data.get("destination"),
+                "check_in": hotel_details["check_in"],
+                "check_out": hotel_details["check_out"],
+                "nights": hotel_details["nights"],
+                "source": hotels_data.get("source", "hotellook.com"),
+            },
+            maria_voice=MariaVoice(
+                PT=maria_text if lang == "PT" else "",
+                DE=maria_text if lang == "DE" else "",
+                EN=maria_text if lang == "EN" else "",
+            ),
+            intent_parsed={"type": "hotel", "detected_from_query": True},
+            ledger_receipt_id=receipt_id,
+            cost_eur=0.0,
+            sovereign_mode=sovereign_mode,
+            memory_active=memory_active,
+            timestamp=datetime.now(timezone.utc).isoformat(),
+        )
+
+    # 1e. §65 — Special handling for greeting intent
     #     For greetings, use the requested language (not stored preference)
     if req.intent.type == "greeting":
         greeting_lang = req.lang if req.lang in ("PT", "DE", "EN") else "EN"
@@ -731,5 +833,82 @@ async def maria_flight_search(req: FlightSearchRequest):
         ledger_receipt_id=receipt_id,
         sovereign_mode=sovereign_mode,
         source=flights_data.get("source", "kiwi.com"),
+        timestamp=datetime.now(timezone.utc).isoformat(),
+    )
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# §68 — Hotel Search Endpoint (Hotellook Bridge)
+# ══════════════════════════════════════════════════════════════════════════════
+
+@router.post("/hotel-search", response_model=HotelSearchResponse)
+async def maria_hotel_search(req: HotelSearchRequest):
+    """
+    Search hotels via Hotellook sovereign bridge.
+
+    IP1 Separação Financeira — WINDI recommends. Hotellook processes. User pays there.
+    Token: 513311 (Travelpayouts — same as Kiwi flights)
+    """
+    if not HOTEL_BRIDGE_ENABLED:
+        raise HTTPException(status_code=503, detail="Hotel Bridge not available")
+
+    t0 = time.time()
+    request_id = str(uuid.uuid4())
+    lang = req.lang if req.lang in ("PT", "DE", "EN") else "PT"
+
+    # 1. Search hotels via Hotellook Bridge
+    hotels_data = await search_hotels(
+        destination=req.destination,
+        check_in=req.check_in,
+        check_out=req.check_out,
+        adults=req.adults or 2,
+        currency="EUR",
+        lang=lang.lower(),
+        max_results=req.max_results or 3,
+    )
+
+    # 2. Format MARIA voice response (natural, warm)
+    maria_text = format_maria_hotel_response(hotels_data, lang)
+
+    # 3. Determine if sovereign mode (demo data = no API key)
+    sovereign_mode = hotels_data.get("source") == "demo"
+
+    # 4. Calculate nights
+    try:
+        from datetime import datetime as dt
+        ci = dt.strptime(req.check_in, "%Y-%m-%d")
+        co = dt.strptime(req.check_out, "%Y-%m-%d")
+        nights = (co - ci).days
+    except Exception:
+        nights = 1
+
+    # 5. Ledger seal (I11)
+    seal_payload = {
+        "request_id": request_id,
+        "destination": hotels_data.get("destination", req.destination),
+        "check_in": req.check_in,
+        "check_out": req.check_out,
+        "nights": nights,
+        "hotels_count": len(hotels_data.get("hotels", [])),
+        "sovereign_mode": sovereign_mode,
+        "source": hotels_data.get("source", "hotellook.com"),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    }
+    receipt_id = await seal_decision(request_id, seal_payload, req.wallet_id)
+
+    elapsed = round((time.time() - t0) * 1000)
+    log.info(f"[{request_id[:8]}] hotel-search OK · {len(hotels_data.get('hotels', []))} hotels · {elapsed}ms")
+
+    return HotelSearchResponse(
+        request_id=request_id,
+        hotels=hotels_data.get("hotels", []),
+        destination=hotels_data.get("destination", req.destination),
+        check_in=req.check_in,
+        check_out=req.check_out,
+        nights=nights,
+        maria_voice=maria_text,
+        ledger_receipt_id=receipt_id,
+        sovereign_mode=sovereign_mode,
+        source=hotels_data.get("source", "hotellook.com"),
         timestamp=datetime.now(timezone.utc).isoformat(),
     )
