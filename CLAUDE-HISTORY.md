@@ -2683,3 +2683,236 @@ All links now resolve to HTTPS 200:
 
 *Migração §45-§55 · 26 Mar 2026*
 *CLAUDE.md: 53.7KB → ~30KB (dentro do limite 32KB)*
+
+---
+
+## § SESSÃO 29 Mar 2026
+**Commits:** 6db2b24
+**Receipts:** WINDI-TRAVEL-P3A-GATE-20260329
+
+### §59 — WINDI Travel Phase 2 — Gateway Genesis · 27-28 Mar 2026
+
+**Status:** ✅ LIVE · SEALED
+**Ports:** :8126 (Travel) · :8130 (Gateway)
+**Repo:** `/opt/windi/windi-travel/` · `/opt/windi/windi-gateway/`
+
+#### Serviços Deployados
+
+| Service | Port | Função |
+|---------|------|--------|
+| W-GATEWAY-001 | :8130 | Hub central · Auth · Routing |
+| W-MARIA-001 | :8126 | FastAPI Travel Service |
+| Maria UI | `/travel/maria-ui/` | Assistente de viagem |
+| Travel Genesis | `/travel/` | Landing page |
+
+#### Arquitectura
+
+```
+windi-domain.com/travel/
+        ↓
+nginx proxy_pass :8126/
+        ↓
+W-MARIA-001 (FastAPI)
+  ├── /travel/           → Landing
+  ├── /travel/maria-ui/  → Assistente
+  └── /travel/api/*      → REST endpoints
+```
+
+---
+
+### §60 — WINDI Travel Phase 3-A — Identity Gate · 29 Mar 2026
+
+**Status:** ✅ DEPLOYED · SEALED
+**Commit:** `6db2b24`
+**Principle:** *"Gently proves. Silently seals."*
+**Live:** `windi-domain.com/travel/gate`
+
+#### O que foi construído
+
+P3-A Identity Gate — sistema completo de autenticação para WINDI Travel.
+
+**Three Claudes Collaboration:**
+- Claude A (HTML/JSX) → `gate_travel.html` + `email_verify_travel.html`
+- Tesoura (Architecture) → `gate.py` + Workspace Guard
+- Gêmeo (Deployment) → Integration + Server patches
+
+#### Componentes
+
+| Ficheiro | Função |
+|----------|--------|
+| `gate.py` | FastAPI router · Auth · Sessions · Email |
+| `gate_travel.html` | UI trilíngue · KLAR theme |
+| `email_verify_travel.html` | Email template |
+| `travel_users.db` | SQLite identity store |
+
+#### Fluxo de Autenticação
+
+```
+/travel/gate
+     ↓
+Register (name + email)
+     ↓
+📧 Email verificação SMTP
+     ↓
+Click link → /travel/gate/verify-email/{token}
+     ↓
+✅ Session created → Cookie windi_travel_session
+     ↓
+/travel/workspace/ (protegido por I9)
+```
+
+#### Endpoints
+
+| Endpoint | Método | Função |
+|----------|--------|--------|
+| `/gate` | GET | Landing page |
+| `/gate/register` | POST | Criar conta |
+| `/gate/verify-email/{token}` | GET | Verificar email |
+| `/gate/logout` | GET | Terminar sessão |
+| `/gate/status` | GET | Health check |
+
+#### Workspace Guard (I9 fail-closed)
+
+```python
+def require_auth(request: Request) -> sqlite3.Row:
+    user = get_session_from_request(request)
+    if not user:
+        return RedirectResponse(url="/travel/gate", status_code=302)
+    return user
+```
+
+#### Tesoura Soberana v10
+
+**URL:** `/travel/tesoura-ui/`
+**Stack:** React 18 CDN + Babel standalone
+
+| Feature | Descrição |
+|---------|-----------|
+| Lasso | Selecção livre de fotos |
+| IA Touch | Melhoramento automático |
+| Text | Texto soberano sobre colagem |
+| Move/Rotate | Manipulação directa |
+| Layers | Z-index control |
+| Undo | Histórico de acções |
+| Export | Download PNG |
+| Share | Web Share API |
+| Email | Dispatch via Gateway |
+| Seal | Ledger :8101 + QR |
+
+#### Invariantes Validados
+
+| Invariante | Implementação |
+|------------|---------------|
+| I9 | fail-closed auth · redirect sem sessão |
+| I11 | Ledger seal · SHA-256 + receipt |
+| I13 | sessionStorage · cookies httponly |
+
+#### Axioma
+
+> "A prova mais gentil é aquela que o utilizador nem percebe que aconteceu."
+
+---
+
+*Migração §59-§60 · 29 Mar 2026*
+*Three Claudes Protocol: Claude A · Tesoura · Gêmeo*
+
+---
+
+### §61 — WINDI Travel Checkup · 30 Mar 2026
+
+**Status:** ✅ VERIFIED · CLEAN
+**Commit:** `c66c236` (Travel) · `71c833db` (CLAUDE.md)
+**Methodology:** Two-Gemini Cross-Analysis Protocol
+
+#### Contexto
+
+Checkup completo do WINDI Travel realizado com análise cruzada entre dois Gêmeos (Claude Opus + Gemini). Objectivo: verificar isolamento entre WINDI-LAW e WINDI Travel, limpar dados de teste, corrigir anomalias.
+
+#### Anomalia Detectada e Corrigida
+
+**Problema:** `/travel/health` reportava `"port": 8122` (porto do LAW) em vez de `8126` (porto do Travel).
+
+**Causa:** Linha 469 em `/opt/windi/windi-travel/identity-gate/identity_gate.py` tinha porta hardcoded errada.
+
+**Fix:**
+```python
+# Antes
+"port": 8122,
+
+# Depois  
+"port": 8126,
+```
+
+**Impacto:** Cosmético. Não afectava routing, apenas monitoring/debugging.
+
+#### Verificação de Isolamento LAW ↔ Travel
+
+| Verificação | LAW (:8122) | Travel (:8126) | Resultado |
+|-------------|-------------|----------------|-----------|
+| Processo | PID 33548 | PID 692697 | ✅ Separados |
+| Directório | `/windi-law/identity-gate` | `/windi-travel/identity-gate` | ✅ Isolados |
+| Base de Dados | `windi_law_identity.db` | `windi_travel_identity.db` | ✅ Distintas |
+| Nginx | `/law/` → 8122 | `/travel/` → 8126 | ✅ Routing limpo |
+| Empresas | 12 | 0 (após cleanup) | ✅ Sem mistura |
+
+**Veredicto:** ISOLAMENTO TOTAL CONFIRMADO
+
+#### Limpeza de Dados de Teste
+
+**Base:** `windi_travel_identity.db`
+
+| Tabela | Antes | Depois | Acção |
+|--------|-------|--------|-------|
+| companies | 7 ("Familie Mögele") | 0 | ✅ Apagados |
+| admins | 7 (email_verified=0) | 0 | ✅ Apagados |
+
+**Preservado:** `travel_users.db` → `jober@a4desk.de` (utilizador real, verificado)
+
+#### Estado Final dos Serviços
+
+| Porto | Serviço | Status |
+|-------|---------|--------|
+| :8122 | WINDI-LAW Identity Gate | 🟢 SEALED · 12 empresas |
+| :8126 | WINDI Travel Identity Gate v1.2.0 | 🟢 LIVE · Pronto produção |
+| :8130 | W-GATEWAY-001 (LLM Bridge) | 🟢 5 providers activos |
+
+#### Endpoints Verificados
+
+| URL | Status |
+|-----|--------|
+| `/travel/gate` | ✅ HTTP 200 · KLAR theme |
+| `/travel/workspace/` | ✅ 302 → gate (I9 protegido) |
+| `/travel/tesoura-ui/` | ✅ HTTP 200 · React 18 |
+| `/gateway/health` | ✅ JSON healthy |
+| `/law/gate` | ✅ HTTP 200 · Isolado |
+
+#### Two-Gemini Protocol
+
+Metodologia de verificação cruzada:
+
+```
+Gêmeo A (Claude Opus)     Gêmeo B (Gemini)
+        ↓                        ↓
+   Checkup local           Checkup remoto
+        ↓                        ↓
+   Relatório A             Relatório B
+        ↘                      ↙
+         Análise Cruzada
+              ↓
+        Anomalias identificadas
+              ↓
+        Fix aplicado
+              ↓
+        Verificação mútua
+```
+
+**Vantagem:** Redundância na detecção de anomalias. Ambos identificaram o mesmo problema (port 8122).
+
+#### Axioma §61
+
+> "Dois produtos, duas portas, duas bases de dados — isolamento é arquitectura, não acidente."
+
+---
+
+*Sessão: 30 Mar 2026 · Two-Gemini Cross-Analysis Protocol*
+*Claude Opus 4.5 + Gemini · Human Dragon · Liga IA+H*
