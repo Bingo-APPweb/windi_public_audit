@@ -1,6 +1,6 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.48
+**Version:** 1.9.49
 **Sealed:** 2026-03-30 · §61 Travel Checkup VERIFIED
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
@@ -626,17 +626,17 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 
 **Products:** Triangle of Power · WINDI FIELD · WINDI TRAVEL · FVE Protocol · RFC-001 DNA
 
-> **Detalhes:** ver `§37-61. Sistemas Recentes` abaixo
+> **Detalhes:** ver `§37-62. Sistemas Recentes` abaixo
 
 ### Histórico Recente (últimos 5)
 
 | Data | Milestone |
 |------|-----------|
-| 30 Mar | §61 **Travel Checkup** · Port fix 8122→8126 · Test data cleanup · LAW isolation verified |
+| 30 Mar | §62 **MARIA Triple LLM** · Gemini+Claude+OpenAI · Voz natural activa |
+| 30 Mar | §61 Travel Checkup · Port fix 8122→8126 · LAW isolation verified |
 | 29 Mar | §60 P3-A Identity Gate · Tesoura v10 · Three Claudes Protocol |
 | 27-28 Mar | §59 WINDI Travel Phase 2 · W-GATEWAY-001 · W-MARIA-001 |
 | 26 Mar | §58 READY FOR HUMAN TEST · §57 Workspace v3 CERTIFIED |
-| 25 Mar | §55 Link Audit · §54 Landing · §53 windilaw.de |
 
 > **Histórico completo:** `CLAUDE-HISTORY.md` + `CHANGELOG.md`
 
@@ -843,7 +843,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 
 ---
 
-## §37-61. Sistemas Recentes — Resumo
+## §37-62. Sistemas Recentes — Resumo
 
 > **Detalhes completos:** `CLAUDE-HISTORY.md` § MIGRAÇÃO 24 Mar 2026
 
@@ -874,6 +874,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 | 59 | **Travel Phase 2** | W-GATEWAY-001 · W-MARIA-001 · :8126 :8130 | ✅ **LIVE** |
 | 60 | **P3-A Identity Gate** | Tesoura v10 · fail-closed · Three Claudes | ✅ **DEPLOYED** |
 | 61 | **Travel Checkup** | Port fix · Test cleanup · LAW/Travel isolation | ✅ **VERIFIED** |
+| 62 | **MARIA Triple LLM** | Gemini+Claude+OpenAI · maria_voice.py · Voz natural | ✅ **LIVE** |
 
 ### Referência Rápida
 
@@ -885,6 +886,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 **WINDI Travel:** `/travel/gate` · Identity Gate · KLAR theme · I9 fail-closed
 **Travel Workspace:** `/travel/workspace/` · Protected by require_auth()
 **Tesoura:** `/travel/tesoura-ui/` · React 18 CDN · Ledger seal
+**MARIA:** `/maria/plan` · Triple LLM (Gemini+Claude+OpenAI) · Voz natural trilíngue
 **Test Suite:** `/opt/windi/tests/agent_constitutional_test.py` · CI/CD ready
 **Dashboards:** `/legal-dashboard/` · `/notary-dashboard/` · `/audit-dashboard/`
 **Landing:** `windilaw.de` · KLAR only · 4 profiles · SVG icons
@@ -901,6 +903,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 **Axioma §55:** "Um link morto é uma mentira silenciosa."
 **Axioma §60:** "A prova mais gentil é aquela que o utilizador nem percebe que aconteceu."
 **Axioma §61:** "Dois produtos, duas portas, duas bases de dados — isolamento é arquitectura, não acidente."
+**Axioma §62:** "MARIA não é um assistente — é uma companheira. A diferença está no tom, não na função."
 
 ---
 
@@ -936,9 +939,10 @@ Sistema de autenticação por identidade soberana no GEN7.
 - [ ] **windilaw.de** — Sincronizar com windi-domain.com/law/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
-### Completado (ver §37-61)
+### Completado (ver §37-62)
 - [x] SMTP · P3-A Identity Gate · Tesoura v10 ✅ 29 Mar 2026
 - [x] Travel Checkup · Port fix · LAW isolation ✅ 30 Mar 2026
+- [x] MARIA Triple LLM · Gemini+Claude+OpenAI · Voz activa ✅ 30 Mar 2026
 
 ---
 
