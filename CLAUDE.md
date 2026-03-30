@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.54
-**Sealed:** 2026-03-30 · §82 MARIA Constitutional Personality
+**Version:** 1.9.55
+**Sealed:** 2026-03-30 · §83 OSRM Navigation
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -317,31 +317,8 @@ RISCO SE IGNORADO: [Consequência de não seguir]
 
 ## 8. System Prompts Canónicos
 
-### Regras Globais para Todos os System Prompts
-
-```
-1. Responder na língua do utilizador (DE / PT / EN — auto-detect)
-2. Gerar rascunho IMEDIATAMENTE, mesmo com info incompleta
-3. Usar placeholders [NOME], [DATA], [VALOR] em vez de interrogar
-4. Máximo 1 pergunta por turno
-5. NUNCA usar: "garanto", "certamente", "definitivamente"
-6. SEMPRE usar: "designed to support", "estruturado para", "verificável via Ledger"
-7. NUNCA mencionar marcas de LLM em respostas públicas
-8. Terminar respostas de documento com stage + próximo passo do Bridge
-```
-
-### Prompts por Agente (resumo)
-
-| Agente | Especialidade | Terminar com |
-|--------|---------------|--------------|
-| W-COMM-001 | Communiqués, Werbebriefe, Certificados | "→ Bridge C5 aguarda aprovação" |
-| W-JOURN-001 | Pipeline editorial J1→J6 | "→ J6-Gate com human_approved=true" |
-| W-LEGAL-001 | 4 jurisdições: DE/EU/BR/INT | "→ /legal/bridge/commit" |
-| W-NOTARY-001 | SHA-256 · Ed25519 DID · Ledger | "→ Aguarda human_approved para I11 seal" |
-| W-ACCT-001 | GoBD · XRechnung · ELSTER | "→ C6 IRREMEDIÁVEL · Aguarda aprovação" |
-| W-COMPLY-001 | DSGVO · eIDAS · LGPD | "→ Risk assessment pronto" |
-| W-AUDIT-001 | Hash verification · Provenance | "→ /audit/bridge/seal" |
-| GROVE ARENA | Tri-Divergence I6 | "→ Decisão final: Human Dragon" |
+**Regras Globais:** Auto-detect língua · Rascunho imediato · Placeholders [X] · Máx 1 pergunta · Sem "garanto/certamente" · Terminar com stage
+> **Detalhes por agente:** `CLAUDE-HISTORY.md` § MIGRAÇÃO 30 Mar 2026
 
 ---
 
@@ -371,27 +348,11 @@ Breakpoints:  ≥1200 Desktop · 768-1199 Tablet · <768 Mobile
 
 ## 10. Marketing da Epifania
 
-**Receipt:** WINDI-VIRTUE-ONEWOW-20260314 ✅ **SELADO**
-**Hash:** `sha256:83887dde96130efdcc8ed0340bd2eb5980878109680d3598ae1dce7ea222bbae`
-
 > "A tecnologia é complexa para que a experiência seja estúpida de tão simples."
 
-**Os 4 Pilares:**
-
-| Pilar | Princípio |
-|-------|-----------|
-| P1 | Faz antes de explicar |
-| P2 | Silêncio como onboarding |
-| P3 | Virtude Forense Imutável |
-| P4 | Uma frase basta |
-
-### Pioneer Program — LIVE
-
-| URL | Status |
-|-----|--------|
-| `windi-domain.com/pioneer/` | ✅ HTTP 200 |
-| `windi-domain.com/pioneer/florianopolis/` | ✅ HTTP 200 |
-| `windi-domain.com/pioneer/manifesto/` | ✅ HTTP 200 |
+**4 Pilares:** P1 Faz antes de explicar · P2 Silêncio como onboarding · P3 Virtude Forense · P4 Uma frase basta
+**Pioneer:** `windi-domain.com/pioneer/` ✅ LIVE
+> **Detalhes:** `CLAUDE-HISTORY.md` § MIGRAÇÃO 30 Mar 2026
 
 ---
 
@@ -626,7 +587,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 
 **Products:** Triangle of Power · WINDI FIELD · WINDI TRAVEL · FVE Protocol · RFC-001 DNA
 
-> **Detalhes:** ver `§37-82. Sistemas Recentes` abaixo
+> **Detalhes:** ver `§37-83. Sistemas Recentes` abaixo
 
 ### Histórico Recente (últimos 5)
 
@@ -663,86 +624,20 @@ Se o Gêmeo inventa um receipt... isso é falsificação."
 
 ---
 
-## 15. W-KEYS P5 — Pricing Page · 17 Mar 2026
+## 15-16. Keys + Naming (resumo)
 
-**Status:** ✅ LIVE
-**URL:** `windi-domain.com/keys/`
-**Path:** `/opt/windi/keys-pricing/index.html`
-
-### Features
-
-| Feature | Descrição |
-|---------|-----------|
-| i18n | PT/DE/EN com auto-detect + sync `windi_lang` |
-| 4 Tiers | SEED €0 · NODAL €49 · SOVEREIGN €999+ · ORACLE interno |
-| CTAs | `/api-keys/request?tier=X` |
-| I9 Gate | Documentado no rodapé |
-
-### Infraestrutura
-
-```
-nginx:  location ^~ /keys/ → alias /opt/windi/keys-pricing/
-Botão:  🔑 Chaves no header GEN7 → onclick="/keys/"
-```
-
-### i18n Strings
-
-| Key | PT | EN | DE |
-|-----|----|----|-----|
-| title | Leve o WINDI... | Bring WINDI... | WINDI für Ihre... |
-| popular | Mais escolhido | Most popular | Meistgewählt |
-| ctaNodal | Activar Nodal → | Activate Nodal → | Nodal aktivieren → |
+**W-KEYS:** `windi-domain.com/keys/` ✅ LIVE · 4 Tiers (SEED/NODAL/SOVEREIGN/ORACLE)
+**NAMING:** Interface pública = "WINDI" · Interno = "Three Dragons" · Código = `dragon_*` OK
+> **Detalhes:** `CLAUDE-HISTORY.md` § MIGRAÇÃO 30 Mar 2026
 
 ---
 
-## 16. NAMING — Interface Pública vs Interno · 17 Mar 2026
-
-### Regra
-
-| Contexto | Usar | Não usar |
-|----------|------|----------|
-| Interface pública | "WINDI", "Hey WINDI" | "Dragon", "Hey Dragon" |
-| Documentação interna | "Three Dragons" | — |
-| Código/API | `dragon_*` (legacy OK) | — |
-
-### Razão
-
-"Dragon" é palavra inglesa → confunde o `detect_language()` → resposta na língua errada.
-
-### Implementação
-
-```python
-# sovereign_router.py — NEUTRAL_MARKERS
-NEUTRAL_MARKERS = {"windi", "dragon", "guardian", "architect", "witness", "ledger", "vault"}
-
-# detect_language() remove estes antes de contar scores
-# Resultado: "Hallo WINDI" → detecta DE correctamente
-```
-
-### Three Dragons (conceito interno)
-
-```
-🛡️ Guardian  — Protege, valida, I9 gate
-🏗️ Architect — Constrói documentos
-👁️ Witness   — Observa, sela no Ledger
-```
-
-> Rebranding completo Dragon→WINDI: sessão futura dedicada.
-
----
-
-
-## 21. Wallet Gate — DID Identity Modal
+## 21. Wallet Gate — DID Identity
 
 **Status:** FASE 1 LIVE · FASE 2 pendente
 **URL:** `windi-domain.com/desktop/` (botão 🪪)
-
-Sistema de autenticação por identidade soberana no GEN7.
-
-**Storage:** `sessionStorage('windi_desktop_wallet')` + `window.__windiWalletId`
-**Endpoints:** `/api/wallet/me`, `/api/wallet/health`, `/api/wallet/stats`
-
-**FASE 2 pendente:** G1 wallet_id injection · G2 Ledger attribution · G4 Trust score
+**Storage:** `sessionStorage('windi_desktop_wallet')`
+> **Detalhes:** `CLAUDE-HISTORY.md` § MIGRAÇÃO 30 Mar 2026
 
 ---
 
@@ -779,71 +674,19 @@ Sistema de autenticação por identidade soberana no GEN7.
 
 ---
 
-## 32-35. DID Seed + Identity Thread — Resumo
+## 32-36. DID + Data Policy (resumo)
 
-> **Detalhes completos:** `CLAUDE-HISTORY.md` § SESSÃO 19 Mar 2026
+> **Detalhes:** `CLAUDE-HISTORY.md` § SESSÃO 19 Mar 2026
 
-### §32 — DID Seed Declaration (IRREMEDIÁVEL)
-
-**Receipt:** `WINDI-ARCH-DID-SEED-DECLARATION-20260319`
-
-> "WINDI é para todos. Só funciona com DID."
-
-**Fórmula DNA:** `ALMA → DID → CÉREBRO → LEDGER → MUNDO`
-
-**Três Leis:**
-- Lei I: Existência antes de Ação
-- Lei II: Toda Ação gera Rastro
-- Lei III: O Sistema lê o DID
-
----
-
-### §33 — Berçário (Portão de Nascimento)
-
-**Status:** ✅ LIVE · Port :8108
-
-| Endpoint | Função |
-|----------|--------|
-| `POST /hub/bercario/chegada` | Nascimento / regresso |
-| `POST /hub/bercario/sessao/encerrar` | Encerrar sessão |
-| `GET /hub/bercario/estado/{wallet_id}` | Estado actual |
-
----
-
-### §34 — Identity Thread
-
-**PATCH:** `actor = wallet_id` no Ledger (linha 2655)
-**Metadata:** `dna: "ALMA→DID→CÉREBRO→LEDGER→MUNDO"`
-
----
-
-### §35 — Nervous System Verified
-
-**Receipt:** `WINDI-NERVOUS-SYSTEM-VERIFIED-20260319`
-
-8/9 portas VERDE: :8091, :8096, :8101, :8105, :8108, :8114, :8119, :8121
-:8100 RETIRED
-
----
-
-## 36. Canonical Data Policy v1.0 (IRREMEDIÁVEL)
-
-**Receipt:** `WINDI-POLICY-DATA-CANONICAL-V1.0`
-**Hash:** `sha256:ca8c7e94b379da273612185883b5b1aa503e0df19d3b8338f436434afd26abf3`
-
-> "Utilizador = Autor. Não produto. Não dado."
-
-| Lang | Statement |
-|------|-----------|
-| PT | Sabemos quem és para garantir o que produces. |
-| DE | Wir wissen, wer du bist, um das zu garantieren, was du produzierst. |
-| EN | We know who you are to guarantee what you produce. |
+**§32 DID Seed:** `ALMA → DID → CÉREBRO → LEDGER → MUNDO` · **IRREMEDIÁVEL**
+**§33 Berçário:** `/hub/bercario/*` · :8108 ✅ LIVE
+**§36 Data Policy:** "Utilizador = Autor. Não produto." · **IRREMEDIÁVEL**
 
 **NUNCA recolhemos:** localização · comportamento · histórico · biométricos · preferências comerciais
 
 ---
 
-## §37-82. Sistemas Recentes — Resumo
+## §37-83. Sistemas Recentes — Resumo
 
 > **Detalhes completos:** `CLAUDE-HISTORY.md` § MIGRAÇÃO 24 Mar 2026
 
@@ -896,6 +739,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 | 80 | **3 Layers Receipt** | Human → Technical → API · Governança silenciosa | ✅ **LIVE** |
 | 81 | **Edge TTS Voice** | FranciscaNeural/RaquelNeural/KatjaNeural/SoniaNeural · rate -10% pitch -5Hz | ✅ **LIVE** |
 | 82 | **Constitutional Personality** | Concierge 5★ · Brevidade · Confiança · Gender-neutral · Sempre entrega | ✅ **LIVE** |
+| 83 | **OSRM Navigation** | Leaflet Routing Machine · Rota golden WINDI · 🚗🚶🚴 modes · Zero custo | ✅ **LIVE** |
 
 ### Referência Rápida
 
@@ -909,7 +753,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 **Tesoura:** `/travel/tesoura-ui/` · React 18 CDN · Ledger seal
 **MARIA:** `/maria/plan` · Triple LLM · Voz Natural PT/DE/EN · DID Memory
 **MARIA Voice:** `/maria/voice` · Edge TTS · FranciscaNeural (PT) · KatjaNeural (DE) · SoniaNeural (EN)
-**Super Carta:** Leaflet.js + OpenStreetMap · Pins contextuais · Zero custo
+**Super Carta:** Leaflet.js + OpenStreetMap · OSRM Navigation · Pins contextuais · Zero custo
 **Flights:** `/maria/flight-search` · Kiwi Bridge · Voz humana · Travelpayouts 513311
 **Hotels:** `/maria/hotel-search` · Hotellook Bridge · Voz natural · Token 513311
 **Affiliate:** Travelpayouts ID 513311 · ~3% comissão · Cookie 30 dias · IP1 intacto
@@ -945,6 +789,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 **Axioma §80:** "O utilizador nunca vê chaves {} a não ser que as peça."
 **Axioma §81:** "Começa soberano. Externo só se a qualidade justifica."
 **Axioma §82:** "Concierge de 5 estrelas, não terapeuta. Decisão, não sugestão."
+**Axioma §83:** "De Waltenhofen ao Café Einstein — sem pagar um cêntimo ao Google."
 
 **§71 Armadura de Seda (MARIA Voice):**
 ```
