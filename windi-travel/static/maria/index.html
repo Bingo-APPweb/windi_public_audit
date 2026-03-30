@@ -364,10 +364,31 @@ function App(){
     )||t.scenarios[0];
     runPipeline({...sc.intent},tr,sc);
   };
+  // §69c — Smart intent detection from text input
+  const detectIntentFromText=(text)=>{
+    const lower=text.toLowerCase();
+    // Greetings first (highest priority)
+    if(/^(ol[aá]|oi|hey|hello|hallo|hi|bom dia|boa tarde|boa noite|guten|good morning|good evening)\b/i.test(lower))
+      return {type:"greeting"};
+    // Place types
+    if(/farm[aá]cia|apotheke|pharmacy|medicamento/i.test(lower))return{type:"pharmacy"};
+    if(/hospital|cl[ií]nica|urg[eê]ncia|krankenhaus|emergency/i.test(lower))return{type:"hospital"};
+    if(/banco|bank|atm|multibanco|geldautomat/i.test(lower))return{type:"bank"};
+    if(/supermercado|supermarkt|grocery|mercado/i.test(lower))return{type:"supermarket"};
+    if(/caf[eé]|coffee|kaffee/i.test(lower))return{type:"cafe"};
+    if(/restaurante?|comer|essen|jantar|almo[çc]o/i.test(lower))return{type:"restaurant"};
+    if(/museu|museum/i.test(lower))return{type:"museum"};
+    if(/praia|strand|beach/i.test(lower))return{type:"beach"};
+    if(/hotel|alojamento|unterkunft|hostel/i.test(lower))return{type:"hotel"};
+    if(/voo|voar|fly|flight|flug/i.test(lower))return{type:"flight"};
+    // Default: general query
+    return{type:"general"};
+  };
   const handleText=()=>{
     if(!textIn.trim())return;
-    const sc=t.scenarios[0];
-    runPipeline({...sc.intent},textIn,sc);
+    const intent=detectIntentFromText(textIn);
+    const sc=t.scenarios[0]; // fallback for UI demo data
+    runPipeline(intent,textIn,sc);
     setTextIn("");
   };
   const reset=()=>{
