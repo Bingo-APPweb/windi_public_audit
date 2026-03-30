@@ -131,6 +131,57 @@ def detect_culture_intent(text: str) -> bool:
             return True
     return False
 
+
+# ── §69b Place Type Detection from Query ──────────────────────────────────────
+# When frontend sends wrong intent, backend detects true intent from query
+PLACE_TYPE_KEYWORDS = {
+    # Health & Services
+    "pharmacy": ["farmacia", "farmácia", "apotheke", "pharmacy", "drogerie", "medicamento"],
+    "hospital": ["hospital", "krankenhaus", "klinik", "clinic", "urgencia", "emergencia", "notaufnahme"],
+    "bank": ["banco", "bank", "caixa", "atm", "geldautomat", "multibanco"],
+    # Shopping
+    "supermarket": ["supermercado", "supermarkt", "supermarket", "mercado", "grocery", "lebensmittel"],
+    # Leisure
+    "bar": ["bar", "pub", "kneipe", "cerveja", "bier", "beer", "drinks"],
+    "beach": ["praia", "strand", "beach", "mar", "meer", "sea"],
+    "park": ["parque", "park", "jardim", "garten", "garden"],
+    "theater": ["teatro", "theater", "kino", "cinema", "filme", "movie"],
+    # Transport
+    "station": ["estação", "estacao", "bahnhof", "station", "comboio", "zug", "train", "metro", "u-bahn"],
+    "airport": ["aeroporto", "flughafen", "airport"],
+    "gas": ["gasolina", "tankstelle", "gas station", "posto", "benzin", "fuel"],
+    # Culture
+    "church": ["igreja", "kirche", "church", "catedral", "dom", "cathedral"],
+    "library": ["biblioteca", "bibliothek", "library"],
+    "museum": ["museu", "museum"],
+    "gym": ["ginásio", "ginasio", "fitnessstudio", "gym", "fitness"],
+    "spa": ["spa", "wellness", "termas", "sauna"],
+    # Food
+    "restaurant": ["restaurante", "restaurant", "comer", "essen", "eat", "jantar", "almoço", "dinner", "lunch"],
+    "cafe": ["café", "cafe", "kaffee", "coffee", "cafetaria", "cafeteria"],
+}
+
+
+def detect_place_type_from_query(text: str) -> str | None:
+    """
+    Detect the actual place type from user's raw query.
+    Returns the place type key if found, None otherwise.
+
+    This overrides frontend's intent when there's a mismatch.
+    """
+    if not text:
+        return None
+
+    lower = text.lower()
+
+    # Check each place type's keywords
+    for place_type, keywords in PLACE_TYPE_KEYWORDS.items():
+        if any(kw in lower for kw in keywords):
+            return place_type
+
+    return None
+
+
 # ── Config ────────────────────────────────────────────────────────────────────
 GOOGLE_PLACES_KEY = os.getenv("GOOGLE_PLACES_KEY", "")
 LEDGER_URL        = os.getenv("LEDGER_URL", "http://localhost:8101/api/receipts")
@@ -806,9 +857,18 @@ async def maria_plan(req: PlanRequest):
             timestamp=datetime.now(timezone.utc).isoformat(),
         )
 
-    # 1g. §69 — Check if intent type matches expanded PLACE_TYPE_MAP
-    #     If no direct match, try general_companion bucket
+    # 1g. §69b — Query-based place type override
+    #     Frontend may send wrong intent; detect true intent from query
+    query_detected_type = detect_place_type_from_query(req.query) if req.query else None
     intent_type_lower = req.intent.type.lower() if req.intent.type else ""
+
+    # Override frontend intent if query clearly indicates different place type
+    if query_detected_type and query_detected_type != intent_type_lower:
+        log.info(f"[{request_id[:8]}] Intent override: frontend='{intent_type_lower}' → query='{query_detected_type}'")
+        intent_type_lower = query_detected_type
+        # Update intent for Places search
+        req.intent.type = query_detected_type
+
     place_type_match = intent_type_lower in PLACE_TYPE_MAP
 
     # 2. Places — Google Places via Sovereignty Gate (cache-first)
