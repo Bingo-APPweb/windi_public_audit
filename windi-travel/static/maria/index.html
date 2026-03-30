@@ -185,14 +185,14 @@ function getWalletId(){
 }
 const WALLET_ID=getWalletId();
 
-async function callMariaAPI(intent,lang,fallbackSc){
+async function callMariaAPI(intent,lang,fallbackSc,inputText=""){
   const{lat,lng}=await getGPS();
   try{
     const ctrl=new AbortController();
     const tid=setTimeout(()=>ctrl.abort(),API_TIMEOUT);
     const r=await fetch(MARIA_API,{
       method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({intent,lang,lat,lng,wallet_id:WALLET_ID}),signal:ctrl.signal,
+      body:JSON.stringify({intent,lang,lat,lng,wallet_id:WALLET_ID,query:inputText}),signal:ctrl.signal,
     });
     clearTimeout(tid);
     if(!r.ok)throw new Error(`HTTP ${r.status}`);
@@ -336,7 +336,7 @@ function App(){
       },i*480);
       timers.current.push(t0);
     });
-    const{source,data}=await callMariaAPI(intent,lang,fallbackSc);
+    const{source,data}=await callMariaAPI(intent,lang,fallbackSc,inputText);
     setApiSource(source);
     const wait=ids.length*480+300;
     const t1=setTimeout(()=>{

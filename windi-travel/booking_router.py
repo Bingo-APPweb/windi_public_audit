@@ -107,6 +107,7 @@ class PlanRequest(BaseModel):
     lang: Optional[str] = "PT"        # PT | DE | EN
     wallet_id: Optional[str] = None   # for Ledger attribution
     did: Optional[str] = None         # alias for wallet_id (DID Identity)
+    query: Optional[str] = None       # §67: Raw user message for intent detection
 
 class PlaceResult(BaseModel):
     name: str
@@ -453,7 +454,71 @@ async def maria_plan(req: PlanRequest):
             lang = profile["lang"]
             ctx["lang"] = lang
 
-    # 1c. §65 — Special handling for greeting intent
+    # 1c. §67 — Flight intent detection from raw query
+    #     If user message contains flight keywords, route to Kiwi Bridge
+    if KIWI_BRIDGE_ENABLED and req.query and detect_flight_intent(req.query):
+        log.info(f"[{request_id[:8]}] Flight intent detected → routing to Kiwi Bridge")
+        flight_details = extract_flight_details(req.query, default_from="MUC")
+
+        flights_data = await search_flights(
+            fly_from=flight_details["fly_from"],
+            fly_to=flight_details["fly_to"],
+            date_from=flight_details["date"],
+            currency="EUR",
+            max_results=3,
+        )
+
+        maria_text = format_maria_response(flights_data, lang)
+        sovereign_mode = flights_data.get("source") == "demo"
+
+        # Seal to Ledger
+        seal_payload = {
+            "request_id": request_id,
+            "origin": flights_data.get("origin"),
+            "destination": flights_data.get("destination"),
+            "date": flight_details["date"],
+            "flights_count": len(flights_data.get("flights", [])),
+            "sovereign_mode": sovereign_mode,
+            "source": flights_data.get("source", "kiwi.com"),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+        }
+        receipt_id = await seal_decision(request_id, seal_payload, req.wallet_id)
+
+        # Return flight results in PlanResponse format
+        best_flight = flights_data.get("flights", [{}])[0] if flights_data.get("flights") else {}
+
+        return PlanResponse(
+            request_id=request_id,
+            decision=PlaceResult(
+                name=f"Voo {flights_data.get('origin', '?')} → {flights_data.get('destination', '?')}",
+                type="flight",
+                distance_text=best_flight.get("duration_str", "?"),
+                queue_status=f"{best_flight.get('price', '?')}€" if best_flight else "?",
+                reason=maria_text[:200],
+                rating=None,
+                open_now=None,
+            ),
+            context={
+                "weather": ctx.get("weather", ""),
+                "flights": flights_data.get("flights", []),
+                "origin": flights_data.get("origin"),
+                "destination": flights_data.get("destination"),
+                "source": flights_data.get("source", "kiwi.com"),
+            },
+            maria_voice=MariaVoice(
+                PT=maria_text if lang == "PT" else "",
+                DE=maria_text if lang == "DE" else "",
+                EN=maria_text if lang == "EN" else "",
+            ),
+            intent_parsed={"type": "flight", "detected_from_query": True},
+            ledger_receipt_id=receipt_id,
+            cost_eur=0.0,
+            sovereign_mode=sovereign_mode,
+            memory_active=memory_active,
+            timestamp=datetime.now(timezone.utc).isoformat(),
+        )
+
+    # 1d. §65 — Special handling for greeting intent
     #     For greetings, use the requested language (not stored preference)
     if req.intent.type == "greeting":
         greeting_lang = req.lang if req.lang in ("PT", "DE", "EN") else "EN"
