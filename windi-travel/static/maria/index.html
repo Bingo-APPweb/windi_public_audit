@@ -636,11 +636,48 @@ function SuperCarta({ locations, userLat, userLng, lang, decisionName }) {
   // §84 — Auto-navigate after geocoding completes
   useEffect(() => {
     if (manualLoc.lat && manualLoc.lng && pendingDest) {
-      console.log("[SuperCarta] Geocoding complete, starting navigation to:", pendingDest.name);
-      startNavigation(pendingDest.lat, pendingDest.lng, pendingDest.name, 'driving');
+      console.log("[SuperCarta] Geocoding complete, calculating route from:", manualLoc.lat, manualLoc.lng, "to:", pendingDest.name);
+
+      // Direct OSRM call to avoid closure issues
+      if (mapInstance.current && typeof L.Routing !== "undefined") {
+        // Remove previous route
+        if (routingRef.current) {
+          mapInstance.current.removeControl(routingRef.current);
+          routingRef.current = null;
+        }
+
+        setRouteMode('driving');
+        routingRef.current = L.Routing.control({
+          waypoints: [
+            L.latLng(manualLoc.lat, manualLoc.lng),
+            L.latLng(pendingDest.lat, pendingDest.lng)
+          ],
+          router: L.Routing.osrmv1({
+            serviceUrl: 'https://router.project-osrm.org/route/v1/car'
+          }),
+          lineOptions: { styles: [{ color: '#8B6914', weight: 5, opacity: 0.8 }] },
+          show: false,
+          addWaypoints: false,
+          draggableWaypoints: false,
+          fitSelectedRoutes: true,
+          showAlternatives: false
+        }).addTo(mapInstance.current);
+
+        routingRef.current.on('routesfound', (e) => {
+          const route = e.routes[0];
+          const distKm = (route.summary.totalDistance / 1000).toFixed(1);
+          const timeMin = Math.round(route.summary.totalTime / 60);
+          setRouteInfo({ distance: distKm, time: timeMin, dest: pendingDest.name, mode: 'driving' });
+          console.log("[SuperCarta] Route found:", distKm, "km,", timeMin, "min");
+        });
+
+        routingRef.current.on('routingerror', (e) => {
+          console.error("[SuperCarta] Routing error:", e.error);
+        });
+      }
       setPendingDest(null);
     }
-  }, [manualLoc.lat, manualLoc.lng, pendingDest, startNavigation]);
+  }, [manualLoc.lat, manualLoc.lng, pendingDest]);
 
   if (!locations || locations.length === 0) return null;
 
