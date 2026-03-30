@@ -74,6 +74,7 @@ class PlanRequest(BaseModel):
     lng: Optional[float] = Field(None, description="GPS longitude — never stored")
     lang: Optional[str] = "PT"        # PT | DE | EN
     wallet_id: Optional[str] = None   # for Ledger attribution
+    did: Optional[str] = None         # alias for wallet_id (DID Identity)
 
 class PlaceResult(BaseModel):
     name: str
@@ -350,7 +351,7 @@ async def maria_plan(req: PlanRequest):
     ctx["lang"] = lang
 
     # 1b. Memory — enrich with DID profile if available
-    did = req.wallet_id
+    did = req.wallet_id or req.did  # Support both field names
     if MEMORY_ENABLED and did:
         profile = get_or_create_nomada(did, lang=lang)
         ctx = enrich_context_with_memory(did, ctx)

@@ -1449,6 +1449,13 @@ body.lang-pt [data-lang="pt"] {{ display: inline; }}
 </div>
 
 <script>
+// ══ §64 — DID Universal WINDI ══
+// "No WINDI não há estranhos."
+var WINDI_WALLET_ID = '{wallet_id}';
+var WINDI_USER_NAME = '{user_name}';
+</script>
+
+<script>
 // Tesoura rules: minimal JS, no loops, no intervals
 var currentFile = null;
 var currentHash = '';
