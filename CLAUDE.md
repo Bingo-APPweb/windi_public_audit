@@ -626,17 +626,17 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 
 **Products:** Triangle of Power · WINDI FIELD · WINDI TRAVEL · FVE Protocol · RFC-001 DNA
 
-> **Detalhes:** ver `§37-62. Sistemas Recentes` abaixo
+> **Detalhes:** ver `§37-67. Sistemas Recentes` abaixo
 
 ### Histórico Recente (últimos 5)
 
 | Data | Milestone |
 |------|-----------|
-| 30 Mar | §66 **Places Sovereignty Gate** · Cache-first · Weber Manufaktur ★4.7 soberano |
+| 30 Mar | §67 **Kiwi Flight Bridge** · IP1 Separação Financeira · IATA Normalization |
+| 30 Mar | §66 Places Sovereignty Gate · Cache-first · Weber Manufaktur ★4.7 soberano |
 | 30 Mar | §65 MARIA Saudação · §62-64 Triple LLM · DID Universal |
 | 29 Mar | §60 P3-A Identity Gate · Tesoura v10 · Three Claudes Protocol |
 | 27-28 Mar | §59 WINDI Travel Phase 2 · W-GATEWAY-001 · W-MARIA-001 |
-| 26 Mar | §58 READY FOR HUMAN TEST · §57 Workspace v3 CERTIFIED |
 
 > **Histórico completo:** `CLAUDE-HISTORY.md` + `CHANGELOG.md`
 
@@ -843,7 +843,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 
 ---
 
-## §37-62. Sistemas Recentes — Resumo
+## §37-67. Sistemas Recentes — Resumo
 
 > **Detalhes completos:** `CLAUDE-HISTORY.md` § MIGRAÇÃO 24 Mar 2026
 
@@ -879,6 +879,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 | 64 | **DID Universal WINDI** | did:windi:{produto}:{uuid} · Ecossistema unificado | ✅ **LIVE** |
 | 65 | **MARIA Saudação** | gerar_saudacao() · Trilingual · Visit count progression | ✅ **LIVE** |
 | 66 | **Places Sovereignty Gate** | Cache-first · TTL per type · Audit trail · Soberania cumulativa | ✅ **LIVE** |
+| 67 | **Kiwi Flight Bridge** | kiwi_bridge.py · IATA normalization · IP1 Separação Financeira | ✅ **LIVE** |
 
 ### Referência Rápida
 
@@ -891,6 +892,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 **Travel Workspace:** `/travel/workspace/` · Protected by require_auth()
 **Tesoura:** `/travel/tesoura-ui/` · React 18 CDN · Ledger seal
 **MARIA:** `/maria/plan` · Triple LLM · Vozes PT/DE/EN · DID Memory (maria_memory.db)
+**Flights:** `/maria/flight-search` · Kiwi.com Bridge · IATA auto · Demo fallback
 **Test Suite:** `/opt/windi/tests/agent_constitutional_test.py` · CI/CD ready
 **Dashboards:** `/legal-dashboard/` · `/notary-dashboard/` · `/audit-dashboard/`
 **Landing:** `windilaw.de` · KLAR only · 4 profiles · SVG icons
@@ -912,6 +914,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 **Axioma §64:** "No WINDI não há estranhos. Quem tem um DID WINDI é cidadão de todo o ecossistema."
 **Axioma §65:** "MARIA remembers, but never intrudes. A saudação muda com a confiança — viajante → de volta → connosco."
 **Axioma §66:** "O mundo real entra uma vez, a soberania local serve para sempre. Cache não é técnico — é ontologia do mundo físico codificada em dias."
+**Axioma §67:** "WINDI recomenda. Parceiro processa. User paga lá. IP1 Separação Financeira — INTACTO."
 
 ---
 
