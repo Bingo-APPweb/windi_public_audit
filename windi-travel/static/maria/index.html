@@ -16,6 +16,9 @@
   <title>Maria · WINDI Travel</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <!-- §79 Super Carta — Leaflet.js (FREE, OpenStreetMap) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -30,12 +33,17 @@
     input:focus{border-color:#8B5E3C !important;box-shadow:0 0 0 2px rgba(139,94,60,0.15);}
     ::-webkit-scrollbar{width:4px;}
     ::-webkit-scrollbar-thumb{background:rgba(139,94,60,0.3);border-radius:2px;}
+    /* §79 Super Carta — Custom pin styles */
+    .super-carta-pin{background:transparent !important;border:none !important;}
+    .leaflet-popup-content-wrapper{border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,0.15);}
+    .leaflet-popup-tip{display:none;}
+    .user-marker{background:transparent !important;border:none !important;}
   </style>
 </head>
 <body>
 <div id="root"></div>
 <script type="text/babel">
-const { useState, useRef, useCallback, useEffect } = React;
+const { useState, useRef, useCallback, useEffect, useMemo } = React;
 
 const MARIA_API    = "/travel/maria/plan";
 const MARIA_HEALTH = "/travel/maria/health";
@@ -257,6 +265,151 @@ function PipelineBar({active,done,lang}){
   );
 }
 
+// §79 — Super Carta: Contextual Map Component (Leaflet.js + OpenStreetMap)
+const PIN_ICONS = {
+  restaurant: "🍽️", cafe: "☕", museum: "🏛️", hotel: "🏨",
+  pharmacy: "💊", hospital: "🏥", bank: "🏦", supermarket: "🛒",
+  beach: "🏖️", flight: "✈️", bar: "🍻", park: "🌳", default: "📍"
+};
+
+function SuperCarta({ locations, userLat, userLng, lang }) {
+  const mapRef = useRef(null);
+  const mapInstance = useRef(null);
+  const markersRef = useRef([]);
+
+  useEffect(() => {
+    if (!locations || locations.length === 0 || !mapRef.current) return;
+    if (typeof L === "undefined") return; // Leaflet not loaded
+
+    // Clean previous map
+    if (mapInstance.current) {
+      mapInstance.current.remove();
+      mapInstance.current = null;
+    }
+    markersRef.current = [];
+
+    // Calculate center (average of locations or user position)
+    let centerLat = userLat || 47.72;
+    let centerLng = userLng || 10.31;
+    if (locations.length > 0) {
+      const validLocs = locations.filter(l => l.lat && l.lng);
+      if (validLocs.length > 0) {
+        centerLat = validLocs.reduce((s, l) => s + l.lat, 0) / validLocs.length;
+        centerLng = validLocs.reduce((s, l) => s + l.lng, 0) / validLocs.length;
+      }
+    }
+
+    // Create map
+    const map = L.map(mapRef.current, {
+      center: [centerLat, centerLng],
+      zoom: 14,
+      zoomControl: false,
+      attributionControl: false
+    });
+    mapInstance.current = map;
+
+    // OpenStreetMap tiles (FREE + Sovereign!)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19
+    }).addTo(map);
+
+    // Add zoom control to bottom-right
+    L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+    // Create custom icon function
+    const createIcon = (type) => {
+      const emoji = PIN_ICONS[type] || PIN_ICONS.default;
+      return L.divIcon({
+        html: `<div style="font-size:24px;text-shadow:0 2px 4px rgba(0,0,0,0.3);filter:drop-shadow(0 1px 2px rgba(0,0,0,0.2));">${emoji}</div>`,
+        className: 'super-carta-pin',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32]
+      });
+    };
+
+    // Add user position marker (if available)
+    if (userLat && userLng) {
+      const userMarker = L.marker([userLat, userLng], {
+        icon: L.divIcon({
+          html: '<div style="width:14px;height:14px;background:#4A7C9E;border:3px solid white;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.3);"></div>',
+          className: 'user-marker',
+          iconSize: [14, 14],
+          iconAnchor: [7, 7]
+        })
+      }).addTo(map);
+      userMarker.bindPopup(lang === "PT" ? "Você está aqui" : lang === "DE" ? "Du bist hier" : "You are here");
+    }
+
+    // Add location markers
+    locations.forEach((loc, idx) => {
+      if (!loc.lat || !loc.lng) return;
+      const marker = L.marker([loc.lat, loc.lng], {
+        icon: createIcon(loc.type)
+      }).addTo(map);
+
+      // Popup with place info
+      const ratingStr = loc.rating ? `★ ${loc.rating}` : "";
+      const openStr = loc.open_now === true ? "✓ Aberto" : loc.open_now === false ? "✗ Fechado" : "";
+      marker.bindPopup(`
+        <div style="font-family:'Bricolage Grotesque',sans-serif;min-width:140px;">
+          <strong style="font-size:13px;">${loc.name}</strong>
+          ${ratingStr ? `<div style="color:#C9A84C;font-size:11px;">${ratingStr}</div>` : ""}
+          ${loc.address ? `<div style="font-size:10px;color:#666;margin-top:4px;">${loc.address}</div>` : ""}
+          ${openStr ? `<div style="font-size:10px;margin-top:3px;">${openStr}</div>` : ""}
+        </div>
+      `);
+      markersRef.current.push(marker);
+    });
+
+    // Fit bounds to show all markers
+    if (locations.length > 1) {
+      const validLocs = locations.filter(l => l.lat && l.lng);
+      if (validLocs.length > 1) {
+        const bounds = L.latLngBounds(validLocs.map(l => [l.lat, l.lng]));
+        if (userLat && userLng) bounds.extend([userLat, userLng]);
+        map.fitBounds(bounds, { padding: [30, 30] });
+      }
+    }
+
+    // Cleanup on unmount
+    return () => {
+      if (mapInstance.current) {
+        mapInstance.current.remove();
+        mapInstance.current = null;
+      }
+    };
+  }, [locations, userLat, userLng, lang]);
+
+  if (!locations || locations.length === 0) return null;
+
+  return (
+    <div style={{ marginBottom: 14 }}>
+      <div style={{ fontSize: 10, fontFamily: "'JetBrains Mono',monospace", color: P.cinza,
+        marginBottom: 7, letterSpacing: "0.5px", display: "flex", alignItems: "center", gap: 6 }}>
+        <span>🗺️</span>
+        <span>{lang === "PT" ? "SUPER CARTA" : lang === "DE" ? "ÜBERSICHTSKARTE" : "OVERVIEW MAP"}</span>
+        <span style={{ color: P.verde }}>· {locations.length} {lang === "PT" ? "local" : lang === "DE" ? "Ort" : "place"}{locations.length > 1 ? (lang === "PT" ? "is" : lang === "DE" ? "e" : "s") : ""}</span>
+      </div>
+      <div
+        ref={mapRef}
+        style={{
+          width: "100%",
+          height: 240,
+          borderRadius: 12,
+          border: `1px solid rgba(139,94,60,0.2)`,
+          overflow: "hidden",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.08)"
+        }}
+      />
+      <div style={{ fontSize: 9, fontFamily: "'JetBrains Mono',monospace", color: P.cinza,
+        marginTop: 6, textAlign: "right", opacity: 0.7 }}>
+        © OpenStreetMap · Leaflet
+      </div>
+    </div>
+  );
+}
+
 function MicButton({onResult,onListening,lang,disabled}){
   const[active,setActive]=useState(false);
   const recRef=useRef(null);
@@ -306,6 +459,7 @@ function App(){
   const[backendOK,setBackendOK]=useState(null);
   const[greeting,setGreeting]=useState(null);
   const[weather,setWeather]=useState(null);
+  const[userGPS,setUserGPS]=useState({lat:null,lng:null});
   const timers=useRef([]);
 
   useEffect(()=>{
@@ -313,9 +467,13 @@ function App(){
     fetch(MARIA_HEALTH,{signal:AbortSignal.timeout(3000)})
       .then(r=>setBackendOK(r.ok))
       .catch(()=>setBackendOK(false));
-    // §65 — Personalized greeting on load
+    // §65 — Personalized greeting on load + save GPS for SuperCarta
+    getGPS().then(({lat,lng})=>{
+      if(lat&&lng)setUserGPS({lat,lng});
+    });
     if(WALLET_ID){
       getGPS().then(({lat,lng})=>{
+        if(lat&&lng)setUserGPS({lat,lng});
         fetch(MARIA_API,{
           method:"POST",headers:{"Content-Type":"application/json"},
           body:JSON.stringify({intent:{type:"greeting"},lang,lat,lng,wallet_id:WALLET_ID}),
@@ -360,6 +518,23 @@ function App(){
   },[lang,t]);
 
   const handleDemo=sc=>{if(mode==="processing")return;runPipeline(sc.intent,sc.input,sc);};
+  // §79 — Demo Super Carta (map test)
+  const handleDemoMap=async()=>{
+    if(mode==="processing")return;
+    setMode("processing");setTranscript("🗺️ Demo Super Carta");setDoneSt([]);setSealed(false);setShowIntent(false);setResult(null);
+    const ids=STAGES.map(s=>s.id);
+    ids.forEach((id,i)=>{
+      const t0=setTimeout(()=>{setActiveStage(id);setDoneSt(prev=>[...prev,ids[i-1]].filter(Boolean));},i*200);
+      timers.current.push(t0);
+    });
+    try{
+      const r=await fetch("/travel/maria/demo-carta",{signal:AbortSignal.timeout(5000)});
+      const data=await r.json();
+      setApiSource("live");
+      const t1=setTimeout(()=>{setDoneSt(ids.slice(0,-1));setActiveStage(null);setResult(data);setMode("result");},ids.length*200+100);
+      timers.current.push(t1);
+    }catch(e){setMode("idle");setApiSource(null);}
+  };
   const handleVoice=tr=>{
     const sc=t.scenarios.find(s=>
       s.intent.type===(/museu|museum/i.test(tr)?"museum":/caf[eé]/i.test(tr)?"cafe":"restaurant")
@@ -498,6 +673,15 @@ function App(){
                   <span style={{fontSize:13,color:P.noite,lineHeight:1.3}}>"{s.input}"</span>
                 </button>
               ))}
+              {/* §79 — Super Carta Demo Button */}
+              <button onClick={handleDemoMap} style={{
+                width:"100%",textAlign:"left",background:`linear-gradient(135deg,${P.agua}15,${P.verde}10)`,
+                border:`1px solid ${P.agua}44`,borderRadius:10,
+                padding:"10px 13px",marginBottom:6,cursor:"pointer",
+                display:"flex",alignItems:"center",gap:10}}>
+                <span style={{fontSize:16}}>🗺️</span>
+                <span style={{fontSize:13,color:P.agua,lineHeight:1.3,fontWeight:600}}>{lang==="PT"?"Ver Demo Super Carta (Mapa)":lang==="DE"?"Super Carta Demo ansehen (Karte)":"View Super Carta Demo (Map)"}</span>
+              </button>
             </div>
             <div style={{marginBottom:18}}>
               <div style={{fontSize:10,fontFamily:"'JetBrains Mono',monospace",color:P.cinza,marginBottom:7,letterSpacing:"0.5px"}}>{t.or_write}</div>
@@ -651,6 +835,16 @@ function App(){
 }`}
                 </pre>
               </div>
+            )}
+
+            {/* §79 — Super Carta: Shows map when locations are available */}
+            {result.locations&&result.locations.length>0&&(
+              <SuperCarta
+                locations={result.locations}
+                userLat={userGPS.lat}
+                userLng={userGPS.lng}
+                lang={lang}
+              />
             )}
 
             <button onClick={reset} style={{width:"100%",padding:"11px",background:"transparent",
