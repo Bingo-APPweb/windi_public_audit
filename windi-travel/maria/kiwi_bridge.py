@@ -274,41 +274,75 @@ def _demo_flights(fly_from: str, fly_to: str, date: str, currency: str) -> Dict:
 # ══════════════════════════════════════════════════════════════════════════════
 
 def format_maria_response(flights_data: Dict, lang: str = "PT") -> str:
-    """Format flights for MARIA's voice response."""
+    """Format flights for MARIA's natural voice response — warm and conversational."""
     lang = lang.upper()
     flights = flights_data.get("flights", [])
 
     if not flights:
         msgs = {
-            "PT": "Não encontrei voos disponíveis para essa rota. Quer tentar outras datas ou destinos?",
-            "DE": "Keine Flüge für diese Route gefunden. Andere Daten oder Ziele versuchen?",
-            "EN": "No flights found for this route. Want to try different dates or destinations?"
+            "PT": "Hmm, não encontrei voos para essa rota nas datas que pediste. Queres que tente outros dias ou outro destino?",
+            "DE": "Hmm, für diese Strecke habe ich leider keine Flüge gefunden. Soll ich andere Tage oder ein anderes Ziel versuchen?",
+            "EN": "Hmm, I couldn't find flights for that route on those dates. Want me to try different days or another destination?"
         }
         return msgs.get(lang, msgs["EN"])
 
     dest = flights_data.get("destination_city", flights_data.get("destination", "?"))
     origin = flights_data.get("origin_city", flights_data.get("origin", "?"))
     best = flights[0]
+    price = best['price']
+    duration = best['duration_str']
+    is_direct = best["direct"]
+    layovers = best.get('layovers', [])
 
     if lang == "PT":
-        intro = f"Encontrei {len(flights)} voo{'s' if len(flights) > 1 else ''} de {origin} para {dest}."
-        route = "directo" if best["direct"] else f"com escala em {', '.join(best['layovers'])}"
-        best_str = f"O mais barato: {best['price']}€ — {route} — {best['duration_str']}."
-        cta = "Queres ver os detalhes ou reservar?"
+        # Natural, warm Portuguese
+        if is_direct:
+            if price < 100:
+                voice = f"Boa notícia! Encontrei um voo directo para {dest} por apenas {price}€. São {duration} de viagem, bem tranquilo."
+            else:
+                voice = f"Tenho aqui um voo directo para {dest} — {duration} de viagem por {price}€. Sem escalas, chegas descansado!"
+        else:
+            stopover = layovers[0] if layovers else "uma cidade"
+            if price < 80:
+                voice = f"Achei uma pechincha! {price}€ para {dest}, com uma paragem em {stopover}. Demora {duration}, mas o preço compensa."
+            else:
+                voice = f"Encontrei voo para {dest} por {price}€, com escala em {stopover}. São {duration} no total."
+
+        voice += " Queres que reserve ou preferes ver outras opções?"
 
     elif lang == "DE":
-        intro = f"Ich habe {len(flights)} Flug{'e' if len(flights) > 1 else ''} von {origin} nach {dest} gefunden."
-        route = "Direktflug" if best["direct"] else f"mit Zwischenstopp in {', '.join(best['layovers'])}"
-        best_str = f"Der günstigste: {best['price']}€ — {route} — {best['duration_str']}."
-        cta = "Möchtest du die Details sehen oder buchen?"
+        # Natural, warm German
+        if is_direct:
+            if price < 100:
+                voice = f"Super Nachricht! Direktflug nach {dest} für nur {price}€. {duration} Flugzeit, ganz entspannt."
+            else:
+                voice = f"Ich hab einen Direktflug nach {dest} — {duration} für {price}€. Ohne Umsteigen, du kommst ausgeruht an!"
+        else:
+            stopover = layovers[0] if layovers else "einer Stadt"
+            if price < 80:
+                voice = f"Ein echtes Schnäppchen! {price}€ nach {dest}, mit Zwischenstopp in {stopover}. Dauert {duration}, aber der Preis ist top."
+            else:
+                voice = f"Flug nach {dest} für {price}€, mit Umstieg in {stopover}. Insgesamt {duration}."
+
+        voice += " Soll ich buchen oder möchtest du andere Optionen sehen?"
 
     else:  # EN
-        intro = f"Found {len(flights)} flight{'s' if len(flights) > 1 else ''} from {origin} to {dest}."
-        route = "direct" if best["direct"] else f"via {', '.join(best['layovers'])}"
-        best_str = f"Cheapest: €{best['price']} — {route} — {best['duration_str']}."
-        cta = "Want to see details or book?"
+        # Natural, warm English
+        if is_direct:
+            if price < 100:
+                voice = f"Great news! Found a direct flight to {dest} for just €{price}. It's {duration}, nice and easy."
+            else:
+                voice = f"Got a direct flight to {dest} — {duration} for €{price}. No layovers, you'll arrive fresh!"
+        else:
+            stopover = layovers[0] if layovers else "one city"
+            if price < 80:
+                voice = f"Found a bargain! €{price} to {dest}, with a stop in {stopover}. Takes {duration}, but that price is great."
+            else:
+                voice = f"Flight to {dest} for €{price}, connecting through {stopover}. {duration} total."
 
-    return f"{intro} {best_str} {cta}"
+        voice += " Want me to book it or show you other options?"
+
+    return voice
 
 
 def detect_flight_intent(text: str) -> bool:
