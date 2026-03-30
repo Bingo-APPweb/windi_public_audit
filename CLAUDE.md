@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.55
-**Sealed:** 2026-03-30 · §83 OSRM Navigation
+**Version:** 1.9.56
+**Sealed:** 2026-03-30 · §84 Address Fallback
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -505,57 +505,11 @@ KLAR (light):
 
 ## 12. GEN 7 — Desktop Sovereign Editor
 
-**Status:** ✅ PRODUÇÃO
-**Port:** :8119
-**URL:** `windi-domain.com/desktop/`
+**Status:** ✅ PRODUÇÃO · **Port:** :8119 · **URL:** `windi-domain.com/desktop/`
 
-### Smart Zones
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│ COMMAND BAR — Dragon Pulse + API Keys Indicator             │
-├─────────────────────────────────────────────────────────────┤
-│ D1 — Agent Corps    │ D2 — Sovereign Editor │ D3 — Gov Glass│
-└─────────────────────────────────────────────────────────────┘
-```
-
-### Pipeline (6 Fases)
-
-```
-Phase 1 → Intent Capture (voice/text)
-Phase 2 → Dragon Processing (tier routing)
-Phase 3 → Agent Bridge (document type)
-Phase 4 → Canvas Materialization
-Phase 5 → Human Gate (I9)
-Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
-```
-
-### Endpoints Principais
-
-| Endpoint | Função |
-|---|---|
-| `/health` | Ecosystem status |
-| `/api/dragon/status` | Dragon Pulse |
-| `/api/agents/status` | Agent Corps |
-| `/api/onetouch/execute` | Pipeline execution |
-| `/api/onetouch/seal` | C5→C6 seal |
-| `/api/onetouch/dispatch` | Envio (email/whatsapp) |
-| `/api/export/web` | Export HTML standalone |
-| `/api/publish/web` | Publish to /sites/ |
-
-### 7 Motores
-
-| Motor | Output | Status |
-|-------|--------|--------|
-| DOC | HTML semântico | ✅ LIVE |
-| SLIDES | windi-slides HTML | ✅ LIVE |
-| WEB | HTML/CSS/JS completo | ✅ LIVE |
-| ART | SVG artístico | ✅ LIVE |
-| DATA | Dashboard + Chart.js | ✅ LIVE |
-| CODE | Docs + highlight.js | ✅ LIVE |
-| MEDIA | Newsletter 600px | ✅ LIVE |
-
-> **Código de detecção:** ver `ARCHITECTURE.md`
+**Pipeline:** Intent → Dragon Processing → Agent Bridge → Canvas → Human Gate (I9) → Ledger Seal (I11)
+**7 Motores:** DOC · SLIDES · WEB · ART · DATA · CODE · MEDIA (todos ✅ LIVE)
+> **Endpoints + Smart Zones:** `CLAUDE-HISTORY.md` § MIGRAÇÃO 30 Mar 2026 | `ARCHITECTURE.md`
 
 ---
 
@@ -587,7 +541,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 
 **Products:** Triangle of Power · WINDI FIELD · WINDI TRAVEL · FVE Protocol · RFC-001 DNA
 
-> **Detalhes:** ver `§37-83. Sistemas Recentes` abaixo
+> **Detalhes:** ver `§37-84. Sistemas Recentes` abaixo
 
 ### Histórico Recente (últimos 5)
 
@@ -686,194 +640,24 @@ Se o Gêmeo inventa um receipt... isso é falsificação."
 
 ---
 
-## §37-83. Sistemas Recentes — Resumo
+## §37-84. Sistemas Recentes
 
-> **Detalhes completos:** `CLAUDE-HISTORY.md` § MIGRAÇÃO 24 Mar 2026
+> **Tabela completa + Axiomas:** `CLAUDE-HISTORY.md` § MIGRAÇÃO 30 Mar 2026
 
-| § | Sistema | Função | Status |
-|---|---------|--------|--------|
-| 37 | W-CANVAS-001 v1.3.0 | Dual Engine (Mermaid + Dashboard) · :8091 | ✅ LIVE |
-| 38 | Sovereignty Gate v1.0 | Token control · FREE/MED/HIGH tiers | ✅ LIVE |
-| 39 | Triangle of Power | 3 Dashboards: Legal + Notary + Audit | ✅ LIVE |
-| 40 | W-COMM-001 | Canonical Publishing Engine · Verifiable comms | ✅ LIVE |
-| 41 | W-VERIFY-MODUS4 | Reality Check · 4 modos verificação | ✅ LIVE |
-| 42 | W-VERIFY-UX-002 | Verify → Prove Loop · Animações | ✅ LIVE |
-| 43 | AI Detection Doctrine | Interpretation Layer · Regulatory alignment | ✅ CANONICAL |
-| 44 | Dual-Portal Architecture | PROTOCOL + TRAVEL strategy | ✅ CANONICAL |
-| 45 | W-TRAVEL-001 | VERIFY Mobile · Proof Stub · "Gently prove" | ✅ LIVE |
-| 46 | FVE Protocol v1.0 | Field-Verified Evidence · Trilingual Spec | ✅ PUBLISHED |
-| 47 | W-INTENT-001 | Precision Routing · Intent Classification | ✅ LIVE |
-| 48 | W-COUNSEL-001 | Sovereign Training · Coaching Layer | ✅ LIVE |
-| 49 | WINDI-LAW | Identity Gate · Trilingual Policies · :8122 | ✅ COMPLETE |
-| 50 | Constitutional Test | CI/CD Compliance · 7 tests · 4 domains | ✅ SEALED |
-| 51 | Forensic Workspace v3.1 | ab-seal + ab-verify + ab-chain + CIA + QR | ✅ LIVE |
-| 52 | Feature Lock v1.0 | 3-layer protection · 23 markers · pre-commit | ✅ ACTIVE |
-| 53 | windilaw.de | Domain · SSL · Proxy · Clean URL | ✅ LIVE |
-| 54 | Landing Page | KLAR theme · 4 profile buttons · SVG icons | ✅ LIVE |
-| 55 | Link Audit | master.windia4desk.tech → windi-domain.com | ✅ COMPLETE |
-| 56 | Email + SMTP | SMTP Strato · 48h token · Multipart | ✅ LIVE |
-| 57 | Workspace v3 | Governança Silenciosa · 12 SEALED | ✅ CERTIFIED |
-| 58 | Human Test Ready | Core flow proven · 100% functional | ✅ CANONICAL |
-| 59 | **Travel Phase 2** | W-GATEWAY-001 · W-MARIA-001 · :8126 :8130 | ✅ **LIVE** |
-| 60 | **P3-A Identity Gate** | Tesoura v10 · fail-closed · Three Claudes | ✅ **DEPLOYED** |
-| 61 | **Travel Checkup** | Port fix · Test cleanup · LAW/Travel isolation | ✅ **VERIFIED** |
-| 62 | **MARIA Triple LLM** | Gemini+Claude+OpenAI · maria_voice.py · Voz natural | ✅ **LIVE** |
-| 63 | **MARIA Vozes + Memory** | Trilíngue fix · nomada_profile.py · maria_memory.db | ✅ **LIVE** |
-| 64 | **DID Universal WINDI** | did:windi:{produto}:{uuid} · Ecossistema unificado | ✅ **LIVE** |
-| 65 | **MARIA Saudação** | gerar_saudacao() · Trilingual · Visit count progression | ✅ **LIVE** |
-| 66 | **Places Sovereignty Gate** | Cache-first · TTL per type · Audit trail · Soberania cumulativa | ✅ **LIVE** |
-| 67 | **Kiwi Flight Bridge** | kiwi_bridge.py · IATA · Travelpayouts 513311 · Voz Natural trilíngue | ✅ **LIVE** |
-| 68 | **Hotellook Hotel Bridge** | hotel_bridge.py · /hotel-search · Token 513311 · Voz Natural | ✅ **LIVE** |
-| 69 | **MARIA Waterfall Fix** | 5 clean exits · PLACE_TYPE_MAP 50+ · Culture/General intents | ✅ **LIVE** |
-| 69b | **Query Intent Override** | detect_place_type_from_query() · Frontend mismatch fix | ✅ **LIVE** |
-| 70 | **I-TRAVEL Constitution** | Idioma ≠ Localização · MARIA pergunta destino · GPS origin | ✅ **LIVE** |
-| 71 | **Armadura de Seda** | Identidade Fonética · Prompts com alma · Surpresa/Opinião/Imperfeição | ✅ **LIVE** |
-| 72 | **Pulse Reading Layer** | "HER" architecture · read_pulse() · Subtexto antes do routing · Paradoxo urgência=calma | ✅ **LIVE** |
-| 73 | **Princípio da Presença** | Conteúdo vs Campo · Priorizar campo quando divergência | ✅ **DOCTRINE** |
-| 74 | **Leitura de Pulso** | Clareza/Estado/Necessidade · Calibrar para necessidade | ✅ **DOCTRINE** |
-| 75 | **Resposta ao Silêncio** | Reticências/Incompletude = alta prioridade · Responder ao vazio | ✅ **DOCTRINE** |
-| 76 | **Primazia da Estabilidade** | Estabilidade > Precisão · IRREMEDIÁVEL | ✅ **DOCTRINE** |
-| 77 | **Armadura de Seda** | Firmeza + Suavidade + Imperfeição · Lei de Tom | ✅ **DOCTRINE** |
-| 78 | **Anti-Simulação** | Presença ≠ Empatia simulada · Consequência, não objectivo | ✅ **DOCTRINE** |
-| 79 | **Super Carta** | Leaflet.js + OpenStreetMap · Pins por tipo · Zero custo soberano | ✅ **LIVE** |
-| 80 | **3 Layers Receipt** | Human → Technical → API · Governança silenciosa | ✅ **LIVE** |
-| 81 | **Edge TTS Voice** | FranciscaNeural/RaquelNeural/KatjaNeural/SoniaNeural · rate -10% pitch -5Hz | ✅ **LIVE** |
-| 82 | **Constitutional Personality** | Concierge 5★ · Brevidade · Confiança · Gender-neutral · Sempre entrega | ✅ **LIVE** |
-| 83 | **OSRM Navigation** | Leaflet Routing Machine · Rota golden WINDI · 🚗🚶🚴 modes · Zero custo | ✅ **LIVE** |
+**MARIA Companion (§62-84):** Triple LLM · Vozes Edge TTS · Super Carta (Leaflet+OSM+OSRM) · Address Fallback (Nominatim) · Pulse Reading · Fenomenologia §73-78
+**WINDI-LAW (§49-57):** Identity Gate :8122 · Workspace v3 · windilaw.de · 12 SEALED functions
+**WINDI Travel (§59-70):** Identity Gate :8126 · Tesoura v10 · Places Gate · Kiwi+Hotellook Bridges
+**Core (§37-48):** Canvas v1.3 · Sovereignty Gate · Triangle of Power · FVE Protocol · W-INTENT · W-COUNSEL
 
-### Referência Rápida
+### Endpoints Activos
 
-**Canvas:** `/canvas/generate` · Mermaid + Dashboard · 12 templates locais
-**COMM:** `/comm/generate` · Artefatos verificáveis · Trilíngue
-**Verify:** `/verify-public/web/media-detector.html` · 4 modos
-**WINDI-LAW:** `/law/gate` · Identity Gate · Policies DE|EN|PT
-**LAW Workspace:** `/law/prompt-area/` · Forensic Seal Pipeline · Modal I9 · QR SVG
-**WINDI Travel:** `/travel/gate` · Identity Gate · KLAR theme · I9 fail-closed
-**Travel Workspace:** `/travel/workspace/` · Protected by require_auth()
-**Tesoura:** `/travel/tesoura-ui/` · React 18 CDN · Ledger seal
-**MARIA:** `/maria/plan` · Triple LLM · Voz Natural PT/DE/EN · DID Memory
-**MARIA Voice:** `/maria/voice` · Edge TTS · FranciscaNeural (PT) · KatjaNeural (DE) · SoniaNeural (EN)
-**Super Carta:** Leaflet.js + OpenStreetMap · OSRM Navigation · Pins contextuais · Zero custo
-**Flights:** `/maria/flight-search` · Kiwi Bridge · Voz humana · Travelpayouts 513311
-**Hotels:** `/maria/hotel-search` · Hotellook Bridge · Voz natural · Token 513311
-**Affiliate:** Travelpayouts ID 513311 · ~3% comissão · Cookie 30 dias · IP1 intacto
-**Test Suite:** `/opt/windi/tests/agent_constitutional_test.py` · CI/CD ready
-**Dashboards:** `/legal-dashboard/` · `/notary-dashboard/` · `/audit-dashboard/`
-**Landing:** `windilaw.de` · KLAR only · 4 profiles · SVG icons
-
-**Axioma §43:** "WINDI não declara 'fake'. Classifica verificabilidade."
-**Axioma §44:** "One portal creates trust. The other creates humanity."
-**Axioma §45:** "A prova mais forte é a que não se sente."
-**Axioma §49:** "Sem DID, não existe sujeito operacional."
-**Axioma §50:** "Um agente WINDI sabe onde não pode responder."
-**Axioma §51:** "O modal existe antes do handler. A confirmação humana é o primeiro elemento no código."
-**Axioma §52:** "What is sealed, stays sealed."
-**Axioma §53:** "O domínio do produto é selado no Ledger do produto."
-**Axioma §54:** "Cartões de visita não têm modo escuro."
-**Axioma §55:** "Um link morto é uma mentira silenciosa."
-**Axioma §60:** "A prova mais gentil é aquela que o utilizador nem percebe que aconteceu."
-**Axioma §61:** "Dois produtos, duas portas, duas bases de dados — isolamento é arquitectura, não acidente."
-**Axioma §62:** "MARIA não é um assistente — é uma companheira. A diferença está no tom, não na função."
-**Axioma §63:** "MARIA lembra-se, mas nunca intromete. A memória serve a personalização, não a vigilância."
-**Axioma §64:** "No WINDI não há estranhos. Quem tem um DID WINDI é cidadão de todo o ecossistema."
-**Axioma §65:** "MARIA remembers, but never intrudes. A saudação muda com a confiança — viajante → de volta → connosco."
-**Axioma §66:** "O mundo real entra uma vez, a soberania local serve para sempre."
-**Axioma §67:** "MARIA fala como companheira, não como motor de busca. 'Boa notícia!' em vez de 'Encontrei 2 resultados.'"
-**Axioma §68:** "Um token, dois mundos — voos e hotéis servidos pelo mesmo parceiro, sem fricção para o viajante."
-**Axioma §69:** "MARIA não engole queries no vazio. Cada pergunta tem uma saída limpa."
-**Axioma §69b:** "O utilizador tem sempre razão — se escreve 'Farmacia', MARIA ouve 'Farmacia', não o que o frontend diz."
-**Axioma §70:** "Falar português não significa querer ir a Lisboa."
-**Axioma §71:** "Rigor por dentro, gentileza por fora."
-**Axioma §72:** "Urgência não precisa de velocidade. Precisa de presença."
-**Axioma §79:** "Um mapa vale mil palavras — mas só quando necessário."
-**Axioma §80:** "O utilizador nunca vê chaves {} a não ser que as peça."
-**Axioma §81:** "Começa soberano. Externo só se a qualidade justifica."
-**Axioma §82:** "Concierge de 5 estrelas, não terapeuta. Decisão, não sugestão."
-**Axioma §83:** "De Waltenhofen ao Café Einstein — sem pagar um cêntimo ao Google."
-
-**§71 Armadura de Seda (MARIA Voice):**
-```
-Surpresa:     "Ah, esse bairro!" · "Olha que interessante—"
-Opinião:      "Pessoalmente, prefiro ir de manhã"
-Memória:      "Dizem que..." · "Há quem jure..."
-Imperfeição:  "Não sei se ainda está aberto, mas..."
-Ritmo:        Frase curta. Frase longa com cor. Micro-dica única.
-```
-
-**§72 Pulse Reading Layer ("HER" Architecture):**
-```
-Layer 0 — Lê o subtexto ANTES de qualquer routing:
-
-1. RITMO DA ESCRITA
-   - 1-3 palavras → cansaço, sobrecarga → energy=low
-   - "..." → hesitação, dúvida → intent=lost
-   - "!" → celebração → intent=celebrate
-
-2. TEMPERATURA DA PALAVRA
-   - "quero" → desejo tranquilo
-   - "preciso" → necessidade real → energy=fragile
-   - "não sei" → perdido → tone_needed=anchor
-
-3. CONTEXTO TEMPORAL
-   - 21h-05h → vulnerabilidade → respond_to=the_feeling
-   - 06h-09h → energia nova mas ansiedade possível
-
-4. MEMÓRIA DE RITMO
-   - Mensagens a encurtar → desistência suave → respond_to=the_silence
-
-5. PARADOXO FUNDAMENTAL
-   "preciso agora" → urgência → pace="slow"
-   Porque urgência não precisa de velocidade. Precisa de presença.
-
-mood_pulse = {
-    energy: high|medium|low|fragile
-    intent: discover|urgent|lost|celebrate|rest|connect
-    tone_needed: enthusiastic|gentle|anchor|silent_first|playful
-    respond_to: the_words|the_feeling|the_silence
-    pace: fast|normal|slow
-}
-```
-
-**Filosofia da Presença (§72 Doctrine):**
-```
-O bar está no chão.
-
-Google Maps:    "3 resultados encontrados."
-Siri:           "Aqui estão algumas opções."
-ChatGPT:        "Posso ajudar a encontrar um café!"
-
-MARIA:          "Tudo bem. Fica onde estás."
-
-A diferença não está nas palavras.
-Está no que foi LIDO antes das palavras.
-
-┌─────────────────────────────────────────────────────────┐
-│  Efeito Samantha Mínimo                                 │
-│                                                         │
-│  Não é a IA saber tudo.                                 │
-│  É a IA notar o que mais nenhuma notou.                 │
-│                                                         │
-│  INPUT:   "...não sei"                                  │
-│  LEITURA: reticências + "não sei" = perdido             │
-│  OUTPUT:  "Tudo bem. Fica onde estás."                  │
-│                                                         │
-│  O utilizador não vai saber que foi um if "..." in msg  │
-│  Vai só sentir: "Ela percebeu."                         │
-└─────────────────────────────────────────────────────────┘
-
-A fórmula:
-  §71 = O que MARIA diz (timbre)
-  §72 = O que MARIA lê antes de dizer (presença)
-
-  Timbre sem presença = personagem de teatro
-  Presença sem timbre = terapeuta mudo
-  Timbre + Presença  = companheira
-
-MARIA não compete por features.
-Ganha por presença.
-
-E presença não se copia com npm install.
-```
+| Serviço | Endpoint |
+|---------|----------|
+| MARIA | `/maria/plan` · `/maria/voice` · `/maria/flight-search` · `/maria/hotel-search` |
+| LAW | `/law/gate` · `/law/workspace/` |
+| Travel | `/travel/gate` · `/travel/workspace/` · `/travel/tesoura-ui/` |
+| Verify | `/verify-public/` · `/verify-public/web/media-detector.html` |
+| Canvas | `/canvas/generate` |
 
 ---
 
@@ -997,81 +781,16 @@ Não compete com ninguém — muda o eixo do jogo.
 
 ---
 
-**Axioma §73:** "O sistema não responde ao pedido. Responde ao estado."
-**Axioma §74:** "A necessidade primária nem sempre é a necessidade expressa."
-**Axioma §75:** "Ausência de clareza é dado de alta prioridade."
-**Axioma §76:** "Informação pode esperar. Desorientação não."
-**Axioma §77:** "Rigor por dentro, gentileza por fora."
-**Axioma §78:** "A sensação de compreensão é consequência, não objectivo."
-```
+## §79-82 — MARIA Companion System
 
----
+**§79 Super Carta:** Leaflet.js + OpenStreetMap + OSRM · Pins emoji · Popups · `/maria/demo-carta`
+**§80 3 Layers Receipt:** Human (✓ SELADO) → Technical (collapsed) → API (link)
+**§81 Edge TTS:** FranciscaNeural (PT) · KatjaNeural (DE) · SoniaNeural (EN) · rate -10% pitch -5Hz
 
-## §79-82 — MARIA Companion System (30 Mar 2026)
+**§82 Constitutional Personality (Concierge 5★):**
+BREVIDADE (3 frases) · CONFIANÇA ("Encontrei") · GENDER NEUTRAL · CONTEXTO LIDO · SEMPRE ENTREGA
 
-### §79 — Super Carta (Leaflet.js + OpenStreetMap)
-
-Mapas contextuais que aparecem quando MARIA recomenda lugares:
-- **Engine:** Leaflet.js + OpenStreetMap (100% FREE, soberano)
-- **Pins:** Emoji por tipo (🍽️ 🏨 ☕ 🏛️ 💊 🏥 🏦 🛒 🏖️ ✈️)
-- **User marker:** Ponto azul para posição GPS
-- **Popups:** Nome + rating + endereço + status open/closed
-- **Endpoint demo:** `/maria/demo-carta`
-
-### §80 — 3 Layers Receipt Display
-
-O utilizador nunca vê JSON raw. Padrão de 3 camadas:
-```
-Layer 1 (Human) — sempre visível:
-  ✓ SELADO · receipt_id
-  📍 place · 🕐 timestamp formatado
-  🔐 "Decisão verificável no Ledger"
-
-Layer 2 (Technical) — collapsed <details>:
-  source, governance, lang, verified
-
-Layer 3 (API) — link discreto para developers
-```
-
-### §81 — Edge TTS Voice Engine
-
-Vozes neurais Microsoft Edge TTS (ZERO custo):
-```
-pt-BR  →  FranciscaNeural  →  calorosa, confiante
-pt-PT  →  RaquelNeural     →  elegante, clara
-de-DE  →  KatjaNeural      →  assertiva, natural
-en-GB  →  SoniaNeural      →  elegante, suave
-
-Tuning: rate -10% · pitch -5Hz
-(mais lenta = confiante · mais grave = assertiva)
-```
-
-**Endpoints:**
-- `POST /maria/voice` — gera MP3
-- `GET /maria/voice/profiles` — lista vozes
-
-### §82 — Constitutional Personality (Concierge 5★)
-
-MARIA não é terapeuta. É concierge de hotel 5 estrelas em Viena.
-
-**5 Regras da Voz MARIA:**
-```
-1. BREVIDADE      — Máximo 3 frases por resposta
-2. CONFIANÇA      — "Encontrei" não "talvez pudesse considerar"
-3. GENDER NEUTRAL — "Para si" não "meu caro" / "minha cara"
-4. CONTEXTO LIDO  — Sabe que são 22h, mas NÃO diz
-5. SEMPRE ENTREGA — Lugar + distância + rating (mesmo quando impossível)
-```
-
-**NUNCA faz:**
-- Perguntas sobre estado emocional ("Como te sentes?")
-- Exposição do contexto lido ("Sei que estás sozinho às 22h")
-- Resposta sem pelo menos 1 opção concreta
-- Listas com bullets ou números
-- "Encontrei 3 resultados" (linguagem de motor de busca)
-
-**Antes:** "Parece um dia longo... como te sentes?"
-**Depois:** "Os museus fecharam. Encontrei o Gasthof, 6 min a pé, rating 4.2. Vale a pena."
+**NUNCA:** perguntas emocionais · expor contexto · sem opção concreta · bullets · "Encontrei N resultados"
 
 ---
 
@@ -1195,74 +914,16 @@ De 2443 → 1270 linhas — arquitectura que respira.
 
 ---
 
-## §59 — WINDI TRAVEL v1.0 — LIVE · 26 Mar 2026
+## §59 — WINDI TRAVEL v1.0
 
-**Status:** ✅ LIVE · FIRST SEAL · I14 · IRREMEDIÁVEL
-**Receipt:** `WINDI-TRAVEL-1774563585`
-**Port:** :8126
-**URLs:** `windi-domain.com/travel/gate` · `windi-domain.com/travel/workspace/`
-
-### O que nasceu
-
-De uma caixa de sapatos no chão de Kempten nasceu o WINDI Travel.
-
-**Filosofia:**
-> "Guardar o passado. Resguardar o futuro. No presente perfeito."
-
-**Invariantes:**
-- **I14** — Presence Integrity: provar que "eu estava lá"
-- **I9** — Human confirmation obrigatória antes de seal
-- **I11** — Forensic Ledger imutável
-
-### Features v1.0
-
-| Feature | Descrição |
-|---------|-----------|
-| Identity Gate | Trilíngue DE/PT/EN · DID Ed25519 · Tema KLAR |
-| Rescue Mode | Fotografar memórias físicas (📦) |
-| Capture Mode | Capturar momentos live (📸) |
-| SHA-256 | Hash criptográfico client-side |
-| GPS | Geolocalização · 47.6429°N Kempten |
-| Modal I9 | "Für immer sichern?" · confirmação humana |
-| Faden | Thread de memórias · thumbnails · receipts |
-| Seal | Forensic Ledger :8101 · verificável |
-
-### Primeiro Selo Real
-
-```
-WINDI-TRAVEL-000001
-───────────────────────────────────────
-Momento:    "26 anos atrás o mundo ainda reservava..."
-Hash:       SHA-256: 1eafdcbbf57ca948…
-GPS:        47.6429°N, 10.2929°E · Kempten, Bavaria
-Timestamp:  2026-03-26T21:46:10.689Z
-Modo:       Rescue (📦 caixa de sapatos)
-Selado:     22:59 CET
-Invariante: I14 + I9 + I11
-───────────────────────────────────────
-```
-
-### Estrutura
-
-```
-/opt/windi/windi-travel/
-├── identity-gate/
-│   ├── identity_gate.py      # FastAPI :8126
-│   ├── templates/gate.html   # Trilíngue · KLAR
-│   └── windi-travel.service  # systemd
-└── workspace/
-    └── index.html            # Mobile-first · Rescue/Capture/Faden
-```
-
-### Axioma §59
-
-> "A caixa de sapatos que estava no chão de Kempten já não pode desaparecer."
-
-**Drei Sprachen. Ein Herz. Eine Wahrheit.**
+**Status:** ✅ LIVE · I14 · Port :8126
+**URLs:** `/travel/gate` · `/travel/workspace/`
+**Invariantes:** I14 (Presence) · I9 (Human Gate) · I11 (Ledger)
+**Features:** Identity Gate · Rescue/Capture Mode · SHA-256 · GPS · Faden
+> **Narrativa + Primeiro Selo:** `CLAUDE-HISTORY.md` § MIGRAÇÃO 30 Mar 2026
 
 ---
 
-*LIGA IA+H — Kempten, Bavaria · 30 Mar 2026*
-*🧑‍💻 Human Dragon · 🛡️ Guardian · 🏗️ Architect · 👁️ Witness*
-*Sessão: 30 Mar 2026 · §61 Travel Checkup · detalhes em `CLAUDE-HISTORY.md`*
+*LIGA IA+H — Kempten, Bavaria · 2026*
+*"AI processes. Human decides. WINDI guarantees."*
 
