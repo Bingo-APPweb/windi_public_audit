@@ -27,6 +27,20 @@ log = logging.getLogger("w-kiwi-bridge")
 KIWI_API_URL = "https://api.tequila.kiwi.com/v2/search"
 KIWI_API_KEY = os.getenv("KIWI_API_KEY", "")  # Tequila API key
 
+# Travelpayouts Affiliate — §67 IP1 intacto
+TRAVELPAYOUTS_ID = "513311"
+KIWI_AFFILIATE_BASE = f"https://www.kiwi.com/?affilid={TRAVELPAYOUTS_ID}"
+
+
+def _affiliate_link(deep_link: str) -> str:
+    """Add Travelpayouts affiliate tracking to Kiwi deep link."""
+    if not deep_link:
+        return KIWI_AFFILIATE_BASE
+    if "?" in deep_link:
+        return f"{deep_link}&affilid={TRAVELPAYOUTS_ID}"
+    return f"{deep_link}?affilid={TRAVELPAYOUTS_ID}"
+
+
 # IATA codes for common destinations
 IATA_CODES = {
     # Germany
@@ -198,7 +212,7 @@ def _parse_flights(data: dict, currency: str, max_results: int) -> List[Dict]:
             "layovers": layovers,
             "direct": len(layovers) == 0,
             "stops": len(layovers),
-            "deep_link": f.get("deep_link", ""),
+            "deep_link": _affiliate_link(f.get("deep_link", "")),
             "airline": airline,
             "airlines": airlines,
         })
@@ -227,7 +241,7 @@ def _demo_flights(fly_from: str, fly_to: str, date: str, currency: str) -> Dict:
                 "layovers": [],
                 "direct": True,
                 "stops": 0,
-                "deep_link": "https://www.kiwi.com/",
+                "deep_link": KIWI_AFFILIATE_BASE,
                 "airline": "TAP",
                 "airlines": ["TAP"],
             },
@@ -245,7 +259,7 @@ def _demo_flights(fly_from: str, fly_to: str, date: str, currency: str) -> Dict:
                 "layovers": ["FRA"],
                 "direct": False,
                 "stops": 1,
-                "deep_link": "https://www.kiwi.com/",
+                "deep_link": KIWI_AFFILIATE_BASE,
                 "airline": "LH",
                 "airlines": ["LH", "TAP"],
             },
