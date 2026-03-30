@@ -316,13 +316,14 @@ def detect_flight_intent(text: str) -> bool:
     keywords = [
         # Portuguese
         "voo", "voos", "voar", "avião", "aviao", "aeroporto", "viajar de avião",
-        "passagem", "passagens", "bilhete de avião",
+        "passagem", "passagens", "bilhete de avião", "bilhete", "bilhetes",
+        "tiquet", "tiquete", "ticket", "tickets",
         # German
         "flug", "flüge", "fliegen", "flugzeug", "flughafen", "fliege nach",
-        "flugticket", "flugreise",
+        "flugticket", "flugreise", "flugkarte",
         # English
         "flight", "flights", "fly", "flying", "plane", "airport", "airplane",
-        "book a flight", "flight to",
+        "book a flight", "flight to", "air ticket",
     ]
 
     lower = text.lower()
@@ -335,8 +336,10 @@ def extract_flight_details(text: str, default_from: str = "MUC") -> Dict[str, st
     lower = text.lower()
 
     # Prepositions indicating origin/destination
-    origin_preps = ["de ", "from ", "von ", "aus "]
-    dest_preps = ["para ", "to ", "nach ", "pra "]
+    # Order matters: longer/more specific preps first to avoid false matches
+    # "de " appears in "15 de abril" so we check more specific preps first
+    origin_preps = ["saindo de ", "partindo de ", "via ", "from ", "von ", "aus "]
+    dest_preps = ["para ", "to ", "nach ", "pra ", "até "]
 
     origin = None
     destination = None
@@ -353,13 +356,21 @@ def extract_flight_details(text: str, default_from: str = "MUC") -> Dict[str, st
                 break
 
     # Find destination (city after "para/to/nach")
+    # Two-pass search: first exact startswith, then broader search
     for prep in dest_preps:
         if prep in lower:
             after_prep = lower.split(prep, 1)[1]
+            # Pass 1: exact match at start (most reliable)
             for city, iata in IATA_CODES.items():
-                if after_prep.startswith(city) or f" {city}" in after_prep[:30]:
+                if after_prep.startswith(city):
                     destination = iata
                     break
+            # Pass 2: broader search only if pass 1 failed
+            if not destination:
+                for city, iata in IATA_CODES.items():
+                    if f" {city}" in after_prep[:30] and iata != origin:
+                        destination = iata
+                        break
             if destination:
                 break
 
