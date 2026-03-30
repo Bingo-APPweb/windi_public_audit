@@ -242,11 +242,23 @@ class PlaceResult(BaseModel):
     address: Optional[str] = None
     rating: Optional[float] = None
     open_now: Optional[bool] = None
+    lat: Optional[float] = None    # §79 Super Carta
+    lng: Optional[float] = None    # §79 Super Carta
 
 class MariaVoice(BaseModel):
     PT: str
     DE: str
     EN: str
+
+class PlaceLocation(BaseModel):
+    """§79 — Location for Super Carta map pins"""
+    name: str
+    type: str
+    lat: float
+    lng: float
+    rating: Optional[float] = None
+    address: Optional[str] = None
+    open_now: Optional[bool] = None
 
 class PlanResponse(BaseModel):
     request_id: str
@@ -259,6 +271,7 @@ class PlanResponse(BaseModel):
     sovereign_mode: bool = False       # True if external APIs failed → I10
     memory_active: bool = False        # True if DID profile loaded
     timestamp: str
+    locations: Optional[list[PlaceLocation]] = None  # §79 Super Carta map pins
 
 # ── §67 Flight Search Models ────────────────────────────────────────────────────
 class FlightSearchRequest(BaseModel):
@@ -443,8 +456,10 @@ async def search_places(intent: IntentPayload, lat: float, lng: float, lang: str
         cache_hit = result.get("cache_hit", False)
 
         # Transform gate output to expected format
+        # §79 — Include lat/lng for Super Carta map pins
         out = []
         for p in places:
+            geo = p.get("geometry", {}).get("location", {})
             out.append({
                 "name": p.get("name"),
                 "place_id": p.get("place_id"),
@@ -452,6 +467,8 @@ async def search_places(intent: IntentPayload, lat: float, lng: float, lang: str
                 "rating": p.get("rating"),
                 "open_now": p.get("opening_hours", {}).get("open_now") if isinstance(p.get("opening_hours"), dict) else None,
                 "user_ratings_total": p.get("user_ratings_total", 0),
+                "lat": geo.get("lat"),   # §79 Super Carta
+                "lng": geo.get("lng"),   # §79 Super Carta
             })
 
         log.info(f"[Places Gate] {len(out)} results · cache_hit={cache_hit}")
@@ -477,6 +494,7 @@ async def search_places(intent: IntentPayload, lat: float, lng: float, lang: str
             results = r.json().get("results", [])[:5]
             out = []
             for p in results:
+                geo = p.get("geometry", {}).get("location", {})
                 out.append({
                     "name": p.get("name"),
                     "place_id": p.get("place_id"),
@@ -484,6 +502,8 @@ async def search_places(intent: IntentPayload, lat: float, lng: float, lang: str
                     "rating": p.get("rating"),
                     "open_now": p.get("opening_hours", {}).get("open_now"),
                     "user_ratings_total": p.get("user_ratings_total", 0),
+                    "lat": geo.get("lat"),   # §79 Super Carta
+                    "lng": geo.get("lng"),   # §79 Super Carta
                 })
             return out, False  # Not from cache
     except Exception as e:
@@ -1123,6 +1143,24 @@ async def maria_plan(req: PlanRequest):
             place_name=decision.name,
         )
 
+    # §79 — Build locations for Super Carta map
+    locations = None
+    if candidates:
+        locations = [
+            PlaceLocation(
+                name=p.get("name", ""),
+                type=req.intent.type,
+                lat=p.get("lat", 0),
+                lng=p.get("lng", 0),
+                rating=p.get("rating"),
+                address=p.get("address"),
+                open_now=p.get("open_now"),
+            )
+            for p in candidates
+            if p.get("lat") and p.get("lng")  # Only include places with coordinates
+        ]
+        log.info(f"[{request_id[:8]}] Super Carta: {len(locations)} locations for map")
+
     return PlanResponse(
         request_id=request_id,
         decision=decision,
@@ -1134,6 +1172,48 @@ async def maria_plan(req: PlanRequest):
         sovereign_mode=sovereign_mode,
         memory_active=memory_active,
         timestamp=datetime.now(timezone.utc).isoformat(),
+        locations=locations,  # §79 Super Carta map pins
+    )
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# §79 — Super Carta Demo Endpoint (for testing map)
+# ══════════════════════════════════════════════════════════════════════════════
+
+@router.get("/demo-carta")
+async def demo_super_carta():
+    """
+    Demo endpoint with mock locations for testing Super Carta map.
+    Use in dev: fetch('/travel/maria/demo-carta')
+    """
+    return PlanResponse(
+        request_id="demo-carta-001",
+        decision=PlaceResult(
+            name="Café Einstein",
+            type="cafe",
+            distance_text="5 min walk",
+            queue_status="Calm now",
+            reason="Demo location for Super Carta testing · Multiple cafés in Kempten",
+            rating=4.5,
+            open_now=True,
+        ),
+        context={"weather": "☀️ 12°C", "city": "Kempten", "demo": True},
+        maria_voice=MariaVoice(
+            PT="Encontrei três cafés perto de ti. O Einstein é o mais tranquilo.",
+            DE="Ich habe drei Cafés in deiner Nähe gefunden. Das Einstein ist am ruhigsten.",
+            EN="I found three cafés near you. Einstein is the quietest one.",
+        ),
+        intent_parsed={"type": "cafe", "demo": True},
+        ledger_receipt_id="DEMO-CARTA-001",
+        cost_eur=0.0,
+        sovereign_mode=False,
+        memory_active=False,
+        timestamp=datetime.now(timezone.utc).isoformat(),
+        locations=[
+            PlaceLocation(name="Café Einstein", type="cafe", lat=47.7267, lng=10.3159, rating=4.5, open_now=True, address="Rathausplatz 12"),
+            PlaceLocation(name="Starbucks", type="cafe", lat=47.7255, lng=10.3165, rating=4.2, open_now=True, address="Bahnhofstraße 8"),
+            PlaceLocation(name="Café Rösterei", type="cafe", lat=47.7280, lng=10.3180, rating=4.7, open_now=False, address="Klostersteige 5"),
+        ],
     )
 
 
