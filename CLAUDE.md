@@ -882,6 +882,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 | 67 | **Kiwi Flight Bridge** | kiwi_bridge.py · IATA · Travelpayouts 513311 · Voz Natural trilíngue | ✅ **LIVE** |
 | 68 | **Hotellook Hotel Bridge** | hotel_bridge.py · /hotel-search · Token 513311 · Voz Natural | ✅ **LIVE** |
 | 69 | **MARIA Waterfall Fix** | 5 clean exits · PLACE_TYPE_MAP 50+ · Culture/General intents | ✅ **LIVE** |
+| 69b | **Query Intent Override** | detect_place_type_from_query() · Frontend mismatch fix | ✅ **LIVE** |
 
 ### Referência Rápida
 
@@ -921,15 +922,19 @@ Sistema de autenticação por identidade soberana no GEN7.
 **Axioma §67:** "MARIA fala como companheira, não como motor de busca. 'Boa notícia!' em vez de 'Encontrei 2 resultados.'"
 **Axioma §68:** "Um token, dois mundos — voos e hotéis servidos pelo mesmo parceiro, sem fricção para o viajante."
 **Axioma §69:** "MARIA não engole queries no vazio. Cada pergunta tem uma saída limpa."
+**Axioma §69b:** "O utilizador tem sempre razão — se escreve 'Farmacia', MARIA ouve 'Farmacia', não o que o frontend diz."
 
 **§69 MARIA Waterfall (canonical):**
 ```
-Query → flight?     → Kiwi Bridge
-      → hotel?      → Hotellook Bridge
-      → culture?    → MARIA direct (dicas, moeda, seguro...)
-      → place match → Places Gate (50+ types)
-      → else        → general_companion (friendly fallback)
+Query → flight keywords?    → Kiwi Bridge
+      → hotel keywords?     → Hotellook Bridge
+      → culture keywords?   → MARIA direct (dicas, moeda, seguro...)
+      → §69b place detect?  → Override frontend intent (farmacia, praia, banco...)
+      → PLACE_TYPE_MAP?     → Places Gate (50+ types)
+      → else                → general_companion (friendly fallback)
 ```
+
+**§69b Intent Override:** `detect_place_type_from_query()` escaneia a query raw e corrige o intent do frontend quando há mismatch. Ex: frontend envia `restaurant` mas query contém "farmacia" → backend corrige para `pharmacy`.
 
 ---
 
