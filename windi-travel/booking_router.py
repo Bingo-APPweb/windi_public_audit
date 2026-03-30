@@ -28,6 +28,9 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 from typing import Optional
 
+# ── MARIA Voice (Triple LLM) ──────────────────────────────────────────────────
+from maria_voice import select_provider, get_system_prompt, MARIA_PROMPTS
+
 # ── Logging (no PII — I1) ─────────────────────────────────────────────────────
 log = logging.getLogger("w-maria-001-booking")
 
@@ -36,6 +39,8 @@ GOOGLE_PLACES_KEY = os.getenv("GOOGLE_PLACES_KEY", "")
 LEDGER_URL        = os.getenv("LEDGER_URL", "http://localhost:8101/api/receipts")
 LEDGER_APP        = "W-MARIA-001"
 OPEN_METEO_URL    = "https://api.open-meteo.com/v1/forecast"
+GATEWAY_URL       = os.getenv("GATEWAY_URL", "http://localhost:8130")
+GATEWAY_SECRET    = os.getenv("GATEWAY_SECRET", "windi-gateway-secret-2026")
 
 # ── Router (integrates with identity_gate.py) ─────────────────────────────────
 router = APIRouter(prefix="/maria", tags=["W-MARIA-001-Booking"])
@@ -226,6 +231,68 @@ async def seal_decision(request_id: str, payload: dict, wallet_id: str) -> Optio
         log.warning(f"Ledger seal failed (non-blocking): {e}")
     return None
 
+# ── Gateway LLM Call (Plan B — Triple LLM) ────────────────────────────────────
+async def call_gateway_llm(intent: dict, ctx: dict, lang: str) -> dict:
+    """
+    Call W-GATEWAY-001 with Triple LLM routing.
+    Plan B: When GOOGLE_PLACES_KEY is absent, use LLM for recommendations.
+
+    Returns dict with:
+      - name: place name
+      - reason: MARIA voice response
+      - provider: gemini | anthropic | openai
+      - sovereign_mode: False (LLM answered)
+    """
+    provider = select_provider(intent, ctx)
+    system_prompt = get_system_prompt(provider, lang)
+
+    # Build user message with context
+    city = ctx.get("city", "local area")
+    weather = ctx.get("weather", "unknown")
+    hour = datetime.now().strftime("%H:%M")
+    intent_type = intent.get("type", "discover")
+
+    user_msg = f"""Destino: {city}
+Tipo: {intent_type}
+Clima: {weather}
+Hora: {hour}
+Grupo: {ctx.get('companions', 'viajante solo')}
+
+Sugere um lugar real para visitar agora."""
+
+    try:
+        async with httpx.AsyncClient(timeout=12.0) as client:
+            r = await client.post(
+                f"{GATEWAY_URL}/gateway/call",
+                json={
+                    "actor": "W-MARIA-001",
+                    "tier": "HIGH",
+                    "task": "chat",
+                    "prompt": user_msg,
+                    "system": system_prompt,
+                },
+                headers={
+                    "Content-Type": "application/json",
+                    "X-Gateway-Secret": GATEWAY_SECRET
+                }
+            )
+            if r.status_code == 200:
+                data = r.json()
+                text = data.get("response", "") or data.get("content", "") or str(data)
+                log.info(f"[LLM] {provider} responded · {len(text)} chars")
+                return {
+                    "name": f"Recomendação {provider.title()}",
+                    "reason": text,
+                    "provider": provider,
+                    "sovereign_mode": False,
+                }
+    except Exception as e:
+        log.warning(f"[LLM] Gateway call failed: {e}")
+
+    # If LLM fails, return None to trigger old fallback
+    return None
+
+
 # ── Sovereign Fallback (I10) ───────────────────────────────────────────────────
 SOVEREIGN_FALLBACK = {
     "restaurant": {"name": "Local Restaurant", "queue": {"PT": "Estado desconhecido", "DE": "Status unbekannt", "EN": "Status unknown"}},
@@ -255,21 +322,49 @@ async def maria_plan(req: PlanRequest):
         candidates = await search_places(req.intent, lat, lng, lang)
 
     if not candidates:
-        sovereign_mode = True
-        # I10: graceful fallback — return best effort answer
-        fb = SOVEREIGN_FALLBACK.get(req.intent.type, SOVEREIGN_FALLBACK["restaurant"])
-        queue_txt = {"PT": "Sem dados em tempo real", "DE": "Keine Echtzeitdaten", "EN": "No real-time data"}[lang]
-        reason_txt = {"PT": "Modo soberano · APIs externas indisponíveis", "DE": "Souveräner Modus · Externe APIs nicht verfügbar", "EN": "Sovereign mode · External APIs unavailable"}[lang]
-        decision = PlaceResult(
-            name=fb["name"], type=req.intent.type,
-            distance_text="?", queue_status=queue_txt,
-            reason=reason_txt, open_now=None,
+        # Plan B: Try LLM via Gateway before falling back to generic
+        llm_result = await call_gateway_llm(
+            intent=req.intent.model_dump(),
+            ctx=ctx,
+            lang=lang
         )
-        voice = MariaVoice(
-            PT=f"Estou em modo soberano. Não consegui dados em tempo real, mas recomendo explorar {fb['name']} na sua área.",
-            DE=f"Ich bin im souveränen Modus. Keine Echtzeitdaten verfügbar. Ich empfehle {fb['name']} in Ihrer Nähe.",
-            EN=f"Running in sovereign mode. No real-time data available. I suggest checking {fb['name']} nearby.",
-        )
+
+        if llm_result:
+            # LLM responded — use its recommendation
+            sovereign_mode = False
+            provider_used = llm_result.get("provider", "gemini")
+            llm_text = llm_result.get("reason", "")
+
+            queue_txt = {"PT": "Recomendação IA", "DE": "KI-Empfehlung", "EN": "AI recommendation"}[lang]
+            decision = PlaceResult(
+                name=llm_result.get("name", "Recomendação MARIA"),
+                type=req.intent.type,
+                distance_text="?",
+                queue_status=queue_txt,
+                reason=f"[{provider_used.upper()}] {llm_text[:200]}",
+                open_now=None,
+            )
+            voice = MariaVoice(
+                PT=llm_text if lang == "PT" else f"[{provider_used}] {llm_text}",
+                DE=llm_text if lang == "DE" else f"[{provider_used}] {llm_text}",
+                EN=llm_text if lang == "EN" else f"[{provider_used}] {llm_text}",
+            )
+        else:
+            # I10: Ultimate fallback — return generic answer
+            sovereign_mode = True
+            fb = SOVEREIGN_FALLBACK.get(req.intent.type, SOVEREIGN_FALLBACK["restaurant"])
+            queue_txt = {"PT": "Sem dados", "DE": "Keine Daten", "EN": "No data"}[lang]
+            reason_txt = {"PT": "Modo soberano", "DE": "Souveräner Modus", "EN": "Sovereign mode"}[lang]
+            decision = PlaceResult(
+                name=fb["name"], type=req.intent.type,
+                distance_text="?", queue_status=queue_txt,
+                reason=reason_txt, open_now=None,
+            )
+            voice = MariaVoice(
+                PT=f"Estou em modo soberano. Recomendo explorar {fb['name']} na sua área.",
+                DE=f"Souveräner Modus. Ich empfehle {fb['name']} in Ihrer Nähe.",
+                EN=f"Sovereign mode. I suggest checking {fb['name']} nearby.",
+            )
     else:
         # 3. Score & pick best
         scored = sorted(candidates, key=lambda p: score_place(p, req.intent, ctx), reverse=True)
