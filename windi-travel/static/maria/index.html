@@ -305,6 +305,26 @@ const PIN_ICONS = {
   beach: "🏖️", flight: "✈️", bar: "🍻", park: "🌳", default: "📍"
 };
 
+// §87 — OSRM Routing Soberano (Zero dependências externas)
+async function windiRoute(fromLng, fromLat, toLng, toLat) {
+  const url = `http://router.project-osrm.org/route/v1/driving/${fromLng},${fromLat};${toLng},${toLat}?overview=full&geometries=geojson`;
+  const res = await fetch(url);
+  const data = await res.json();
+  if (data.code !== 'Ok') return null;
+  return data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
+}
+
+function drawRoute(map, userLat, userLng, destLat, destLng) {
+  windiRoute(userLng, userLat, destLng, destLat).then(points => {
+    if (!points) return console.error('[§87] OSRM falhou');
+    if (window._windiRoute) window._windiRoute.remove();
+    window._windiRoute = L.polyline(points, {
+      color: '#C8860A', weight: 4, opacity: 0.85
+    }).addTo(map);
+    map.fitBounds(window._windiRoute.getBounds(), { padding: [40, 40] });
+  });
+}
+
 function SuperCarta({ locations, userLat, userLng, lang }) {
   const mapRef = useRef(null);
   const mapInstance = useRef(null);
@@ -384,12 +404,17 @@ function SuperCarta({ locations, userLat, userLng, lang }) {
       // Popup with place info
       const ratingStr = loc.rating ? `★ ${loc.rating}` : "";
       const openStr = loc.open_now === true ? "✓ Aberto" : loc.open_now === false ? "✗ Fechado" : "";
+      // §87 — Store map reference for routing
+      window._windiMap = map;
+      window._windiUser = { lat: userLat, lng: userLng };
+
       marker.bindPopup(`
         <div style="font-family:'Bricolage Grotesque',sans-serif;min-width:140px;">
           <strong style="font-size:13px;">${loc.name}</strong>
           ${ratingStr ? `<div style="color:#C9A84C;font-size:11px;">${ratingStr}</div>` : ""}
           ${loc.address ? `<div style="font-size:10px;color:#666;margin-top:4px;">${loc.address}</div>` : ""}
           ${openStr ? `<div style="font-size:10px;margin-top:3px;">${openStr}</div>` : ""}
+          ${userLat && userLng ? `<button onclick="drawRoute(window._windiMap, ${userLat}, ${userLng}, ${loc.lat}, ${loc.lng})" style="margin-top:8px;padding:4px 10px;background:#C8860A;color:white;border:none;border-radius:4px;font-size:11px;cursor:pointer;">🗺️ Rota</button>` : ""}
         </div>
       `);
       markersRef.current.push(marker);
