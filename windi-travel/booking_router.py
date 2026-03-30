@@ -968,8 +968,12 @@ async def maria_plan(req: PlanRequest):
             log.info(f"[{request_id[:8]}] General companion mode → no place type match")
 
         # Try LLM via Gateway
+        # §72: Always pass raw_input for Pulse Reading
+        intent_dict = req.intent.model_dump() if place_type_match else {"type": "general"}
+        intent_dict["raw_input"] = req.query or req.intent.type  # §72 Pulse needs this
+
         llm_result = await call_gateway_llm(
-            intent=req.intent.model_dump() if place_type_match else {"type": "general", "raw_input": req.query or req.intent.type},
+            intent=intent_dict,
             ctx=ctx,
             lang=lang
         )
