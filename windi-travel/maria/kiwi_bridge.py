@@ -222,6 +222,16 @@ def _parse_flights(data: dict, currency: str, max_results: int) -> List[Dict]:
 
 def _demo_flights(fly_from: str, fly_to: str, date: str, currency: str) -> Dict:
     """Return demo data when API key not configured."""
+    # Parse date - handle both DD/MM/YYYY and YYYY-MM-DD formats
+    if "/" in date:
+        # DD/MM/YYYY → YYYY-MM-DD
+        iso_date = f"{date.split('/')[2]}-{date.split('/')[1]}-{date.split('/')[0]}"
+    elif "-" in date and len(date) == 10:
+        # Already YYYY-MM-DD
+        iso_date = date
+    else:
+        iso_date = date  # fallback
+
     return {
         "origin": fly_from,
         "destination": fly_to,
@@ -232,8 +242,8 @@ def _demo_flights(fly_from: str, fly_to: str, date: str, currency: str) -> Dict:
                 "from_iata": fly_from,
                 "to": fly_to,
                 "to_iata": fly_to,
-                "departure": f"{date.split('/')[2]}-{date.split('/')[1]}-{date.split('/')[0]}T08:30:00",
-                "arrival": f"{date.split('/')[2]}-{date.split('/')[1]}-{date.split('/')[0]}T11:45:00",
+                "departure": f"{iso_date}T08:30:00",
+                "arrival": f"{iso_date}T11:45:00",
                 "duration_min": 195,
                 "duration_str": "3h15m",
                 "price": 89,
@@ -250,8 +260,8 @@ def _demo_flights(fly_from: str, fly_to: str, date: str, currency: str) -> Dict:
                 "from_iata": fly_from,
                 "to": fly_to,
                 "to_iata": fly_to,
-                "departure": f"{date.split('/')[2]}-{date.split('/')[1]}-{date.split('/')[0]}T14:20:00",
-                "arrival": f"{date.split('/')[2]}-{date.split('/')[1]}-{date.split('/')[0]}T19:30:00",
+                "departure": f"{iso_date}T14:20:00",
+                "arrival": f"{iso_date}T19:30:00",
                 "duration_min": 310,
                 "duration_str": "5h10m",
                 "price": 67,
