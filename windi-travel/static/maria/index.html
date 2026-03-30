@@ -317,15 +317,66 @@ function SuperCarta({ locations, userLat, userLng, lang, decisionName }) {
   const [routeInfo, setRouteInfo] = useState(null);
   const [routeMode, setRouteMode] = useState(null); // 'driving' | 'foot' | 'cycling'
 
+  // §84 — Manual address fallback (Nominatim geocoding)
+  const [manualLoc, setManualLoc] = useState({ lat: null, lng: null, address: "" });
+  const [addressInput, setAddressInput] = useState("");
+  const [geocoding, setGeocoding] = useState(false);
+  const [geocodeError, setGeocodeError] = useState(null);
+
+  // Effective user location (GPS or manual)
+  const effectiveLat = userLat || manualLoc.lat;
+  const effectiveLng = userLng || manualLoc.lng;
+  const hasLocation = effectiveLat && effectiveLng;
+
+  // §84 — Geocode address using Nominatim (FREE, OpenStreetMap)
+  const geocodeAddress = async (address) => {
+    if (!address || address.trim().length < 3) return;
+    setGeocoding(true);
+    setGeocodeError(null);
+    try {
+      const encoded = encodeURIComponent(address.trim());
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encoded}&limit=1`, {
+        headers: { 'User-Agent': 'WINDI-Travel/1.0' }
+      });
+      const data = await res.json();
+      if (data && data.length > 0) {
+        const { lat, lon, display_name } = data[0];
+        setManualLoc({ lat: parseFloat(lat), lng: parseFloat(lon), address: display_name });
+        setGeocodeError(null);
+        console.log("[SuperCarta] Geocoded:", { lat, lon, display_name });
+
+        // Add marker for manual location
+        if (mapInstance.current) {
+          L.marker([parseFloat(lat), parseFloat(lon)], {
+            icon: L.divIcon({
+              html: '<div style="width:16px;height:16px;background:#4A7C9E;border:3px solid white;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.4);"></div>',
+              className: 'manual-loc-marker',
+              iconSize: [16, 16],
+              iconAnchor: [8, 8]
+            })
+          }).addTo(mapInstance.current).bindPopup(`📍 ${display_name.split(',')[0]}`);
+        }
+      } else {
+        setGeocodeError(lang === "PT" ? "Morada não encontrada" : lang === "DE" ? "Adresse nicht gefunden" : "Address not found");
+      }
+    } catch (e) {
+      console.error("[SuperCarta] Geocode error:", e);
+      setGeocodeError(lang === "PT" ? "Erro ao procurar" : lang === "DE" ? "Suchfehler" : "Search error");
+    }
+    setGeocoding(false);
+  };
+
   // §83 — Start navigation to place
   const startNavigation = useCallback((destLat, destLng, destName, mode = 'driving') => {
-    console.log("[SuperCarta] startNavigation called:", { destLat, destLng, destName, mode, mapReady: !!mapInstance.current, userLat, userLng });
+    const originLat = userLat || manualLoc.lat;
+    const originLng = userLng || manualLoc.lng;
+    console.log("[SuperCarta] startNavigation called:", { destLat, destLng, destName, mode, mapReady: !!mapInstance.current, originLat, originLng });
     if (!mapInstance.current) {
       console.log("[SuperCarta] Map not ready");
       return;
     }
-    if (!userLat || !userLng) {
-      console.log("[SuperCarta] No user GPS - cannot navigate");
+    if (!originLat || !originLng) {
+      console.log("[SuperCarta] No origin location - cannot navigate");
       return;
     }
     if (typeof L.Routing === "undefined") {
@@ -346,7 +397,7 @@ function SuperCarta({ locations, userLat, userLng, lang, decisionName }) {
 
     routingRef.current = L.Routing.control({
       waypoints: [
-        L.latLng(userLat, userLng),
+        L.latLng(originLat, originLng),
         L.latLng(destLat, destLng)
       ],
       router: L.Routing.osrmv1({
@@ -368,7 +419,7 @@ function SuperCarta({ locations, userLat, userLng, lang, decisionName }) {
       const timeMin = Math.round(route.summary.totalTime / 60);
       setRouteInfo({ distance: distKm, time: timeMin, dest: destName, mode });
     });
-  }, [userLat, userLng]);
+  }, [userLat, userLng, manualLoc.lat, manualLoc.lng]);
 
   useEffect(() => {
     if (!locations || locations.length === 0 || !mapRef.current) return;
@@ -451,19 +502,12 @@ function SuperCarta({ locations, userLat, userLng, lang, decisionName }) {
           ? `<div style="font-size:10px;color:#C0392B;margin-top:3px;">✗ ${lang==="PT"?"Fechado":lang==="DE"?"Geschlossen":"Closed"}</div>`
           : "";
 
-      // §83 — Navigation button (shows always, disabled if no GPS)
-      const hasGPS = userLat && userLng;
+      // §83/84 — Navigation button (always active, checks location on click)
       const navLabel = lang==="PT"?"Como chegar":lang==="DE"?"Route anzeigen":"Get directions";
-      const noGPSLabel = lang==="PT"?"GPS indisponível":lang==="DE"?"Kein GPS":lang==="EN"?"No GPS":"No GPS";
-      const navBtn = hasGPS
-        ? `<button onclick="window.__superCartaNav(${loc.lat},${loc.lng},'${loc.name.replace(/'/g,"\\'")}')"
-            style="margin-top:8px;width:100%;padding:6px 10px;background:linear-gradient(135deg,#8B5E3C,#C9A84C);color:white;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Bricolage Grotesque',sans-serif;">
-            🧭 ${navLabel}
-          </button>`
-        : `<button disabled
-            style="margin-top:8px;width:100%;padding:6px 10px;background:#ccc;color:#666;border:none;border-radius:6px;font-size:11px;font-weight:500;cursor:not-allowed;font-family:'Bricolage Grotesque',sans-serif;">
-            📍 ${noGPSLabel}
-          </button>`;
+      const navBtn = `<button onclick="window.__superCartaTryNav(${loc.lat},${loc.lng},'${loc.name.replace(/'/g,"\\'")}','${lang}')"
+          style="margin-top:8px;width:100%;padding:6px 10px;background:linear-gradient(135deg,#8B5E3C,#C9A84C);color:white;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Bricolage Grotesque',sans-serif;">
+          🧭 ${navLabel}
+        </button>`;
 
       marker.bindPopup(`
         <div style="font-family:'Bricolage Grotesque',sans-serif;min-width:160px;">
@@ -500,14 +544,62 @@ function SuperCarta({ locations, userLat, userLng, lang, decisionName }) {
     };
   }, [locations, userLat, userLng, lang]);
 
-  // §83 — Expose navigation function to window for popup button
+  // §83/84 — Expose navigation functions to window for popup button
   useEffect(() => {
+    // Direct navigation (when location is known)
     window.__superCartaNav = (lat, lng, name) => {
       console.log("[SuperCarta] Navigation requested:", { lat, lng, name, hasRouting: typeof L.Routing !== "undefined" });
       startNavigation(lat, lng, name, 'driving');
     };
-    return () => { delete window.__superCartaNav; };
-  }, [startNavigation]);
+
+    // Try navigation (checks location, shows prompt if needed)
+    window.__superCartaTryNav = (destLat, destLng, destName, lang) => {
+      const originLat = userLat || manualLoc.lat;
+      const originLng = userLng || manualLoc.lng;
+      console.log("[SuperCarta] TryNav:", { destLat, destLng, destName, originLat, originLng });
+
+      if (originLat && originLng) {
+        startNavigation(destLat, destLng, destName, 'driving');
+      } else {
+        // Show address input prompt
+        const msg = lang === "PT" ? "Insere a tua morada para calcular a rota:"
+          : lang === "DE" ? "Gib deine Adresse ein, um die Route zu berechnen:"
+          : "Enter your address to calculate the route:";
+        const addr = prompt(msg);
+        if (addr && addr.trim()) {
+          // Store destination for after geocoding
+          window.__superCartaPendingDest = { lat: destLat, lng: destLng, name: destName };
+          // Trigger geocoding via React state update workaround
+          const event = new CustomEvent('supercarta-geocode', { detail: { address: addr } });
+          window.dispatchEvent(event);
+        }
+      }
+    };
+
+    // Listen for geocode requests
+    const handleGeocode = (e) => {
+      if (e.detail && e.detail.address) {
+        geocodeAddress(e.detail.address);
+      }
+    };
+    window.addEventListener('supercarta-geocode', handleGeocode);
+
+    return () => {
+      delete window.__superCartaNav;
+      delete window.__superCartaTryNav;
+      window.removeEventListener('supercarta-geocode', handleGeocode);
+    };
+  }, [startNavigation, userLat, userLng, manualLoc.lat, manualLoc.lng]);
+
+  // §84 — Auto-navigate after geocoding completes
+  useEffect(() => {
+    if (manualLoc.lat && manualLoc.lng && window.__superCartaPendingDest) {
+      const { lat, lng, name } = window.__superCartaPendingDest;
+      console.log("[SuperCarta] Geocoding complete, starting navigation to:", name);
+      startNavigation(lat, lng, name, 'driving');
+      delete window.__superCartaPendingDest;
+    }
+  }, [manualLoc.lat, manualLoc.lng, startNavigation]);
 
   if (!locations || locations.length === 0) return null;
 
@@ -539,6 +631,80 @@ function SuperCarta({ locations, userLat, userLng, lang, decisionName }) {
         <span>{lang === "PT" ? "SUPER CARTA" : lang === "DE" ? "ÜBERSICHTSKARTE" : "OVERVIEW MAP"}</span>
         <span style={{ color: P.verde }}>· {locations.length} {lang === "PT" ? "local" : lang === "DE" ? "Ort" : "place"}{locations.length > 1 ? (lang === "PT" ? "is" : lang === "DE" ? "e" : "s") : ""}</span>
       </div>
+
+      {/* §84 — Location Status Bar */}
+      {!hasLocation && !routeInfo && (
+        <div style={{
+          background: "rgba(139,94,60,0.1)",
+          borderRadius: 10,
+          padding: "10px 14px",
+          marginBottom: 8,
+          fontFamily: "'Bricolage Grotesque', sans-serif"
+        }}>
+          <div style={{ fontSize: 11, color: P.terra, marginBottom: 6, fontWeight: 600 }}>
+            📍 {lang === "PT" ? "Onde estás?" : lang === "DE" ? "Wo bist du?" : "Where are you?"}
+          </div>
+          <div style={{ display: "flex", gap: 8 }}>
+            <input
+              type="text"
+              value={addressInput}
+              onChange={(e) => setAddressInput(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter' && addressInput.trim()) geocodeAddress(addressInput); }}
+              placeholder={lang === "PT" ? "Rua, cidade..." : lang === "DE" ? "Straße, Stadt..." : "Street, city..."}
+              style={{
+                flex: 1,
+                padding: "8px 12px",
+                border: `1px solid ${geocodeError ? '#C0392B' : 'rgba(139,94,60,0.3)'}`,
+                borderRadius: 8,
+                fontSize: 13,
+                fontFamily: "'Bricolage Grotesque', sans-serif",
+                background: "white"
+              }}
+            />
+            <button
+              onClick={() => geocodeAddress(addressInput)}
+              disabled={geocoding || !addressInput.trim()}
+              style={{
+                padding: "8px 14px",
+                background: geocoding ? "#ccc" : "linear-gradient(135deg, #8B5E3C, #C9A84C)",
+                color: "white",
+                border: "none",
+                borderRadius: 8,
+                fontSize: 12,
+                fontWeight: 600,
+                cursor: geocoding ? "wait" : "pointer",
+                minWidth: 70
+              }}
+            >
+              {geocoding ? "..." : "🔍"}
+            </button>
+          </div>
+          {geocodeError && (
+            <div style={{ fontSize: 10, color: '#C0392B', marginTop: 6 }}>{geocodeError}</div>
+          )}
+        </div>
+      )}
+
+      {/* §84 — Manual Location Indicator */}
+      {manualLoc.lat && !userLat && (
+        <div style={{
+          background: "rgba(90,122,90,0.15)",
+          borderRadius: 8,
+          padding: "8px 12px",
+          marginBottom: 8,
+          fontSize: 11,
+          color: P.verde,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between"
+        }}>
+          <span>📍 {manualLoc.address.split(',')[0]}</span>
+          <button
+            onClick={() => { setManualLoc({ lat: null, lng: null, address: "" }); setAddressInput(""); }}
+            style={{ background: "none", border: "none", cursor: "pointer", fontSize: 10, color: P.cinza }}
+          >✕</button>
+        </div>
+      )}
 
       {/* §83 — Route Info Bar (shows when navigation active) */}
       {routeInfo && (
