@@ -31,6 +31,19 @@ from typing import Optional
 # ── MARIA Voice (Triple LLM) ──────────────────────────────────────────────────
 from maria_voice import select_provider, get_system_prompt, MARIA_PROMPTS
 
+# ── MARIA Memory (DID Profiles) ───────────────────────────────────────────────
+try:
+    from maria.nomada_profile import (
+        get_or_create_nomada,
+        enrich_context_with_memory,
+        log_interaction,
+        set_preference,
+    )
+    MEMORY_ENABLED = True
+except ImportError:
+    MEMORY_ENABLED = False
+    log.warning("[MARIA] Memory module not available — running without DID persistence")
+
 # ── Logging (no PII — I1) ─────────────────────────────────────────────────────
 log = logging.getLogger("w-maria-001-booking")
 
@@ -87,6 +100,7 @@ class PlanResponse(BaseModel):
     ledger_receipt_id: Optional[str] = None
     cost_eur: float = 0.0
     sovereign_mode: bool = False       # True if external APIs failed → I10
+    memory_active: bool = False        # True if DID profile loaded
     timestamp: str
 
 # ── Context Enricher (Open-Meteo, FREE) ───────────────────────────────────────
@@ -246,19 +260,38 @@ async def call_gateway_llm(intent: dict, ctx: dict, lang: str) -> dict:
     provider = select_provider(intent, ctx)
     system_prompt = get_system_prompt(provider, lang)
 
-    # Build user message with context
+    # Build user message with context — trilingual (I12)
     city = ctx.get("city", "local area")
     weather = ctx.get("weather", "unknown")
     hour = datetime.now().strftime("%H:%M")
     intent_type = intent.get("type", "discover")
+    companions = ctx.get("companions", "")
 
-    user_msg = f"""Destino: {city}
+    # User message templates per language
+    user_templates = {
+        "PT": f"""Destino: {city}
 Tipo: {intent_type}
 Clima: {weather}
 Hora: {hour}
-Grupo: {ctx.get('companions', 'viajante solo')}
+Grupo: {companions or 'viajante solo'}
 
-Sugere um lugar real para visitar agora."""
+Sugere um lugar real para visitar agora.""",
+        "DE": f"""Ziel: {city}
+Typ: {intent_type}
+Wetter: {weather}
+Uhrzeit: {hour}
+Gruppe: {companions or 'Alleinreisender'}
+
+Empfehle einen echten Ort zum Besuchen.""",
+        "EN": f"""Destination: {city}
+Type: {intent_type}
+Weather: {weather}
+Time: {hour}
+Group: {companions or 'solo traveller'}
+
+Suggest a real place to visit now."""
+    }
+    user_msg = user_templates.get(lang, user_templates["EN"])
 
     try:
         async with httpx.AsyncClient(timeout=12.0) as client:
@@ -316,6 +349,16 @@ async def maria_plan(req: PlanRequest):
     ctx = await enrich_context(lat, lng)
     ctx["lang"] = lang
 
+    # 1b. Memory — enrich with DID profile if available
+    did = req.wallet_id
+    if MEMORY_ENABLED and did:
+        profile = get_or_create_nomada(did, lang=lang)
+        ctx = enrich_context_with_memory(did, ctx)
+        # Use nomada's preferred language if this is a returning user
+        if not profile.get("is_new") and profile.get("lang"):
+            lang = profile["lang"]
+            ctx["lang"] = lang
+
     # 2. Places — Google Places or sovereign fallback
     candidates = []
     if req.lat and req.lng:
@@ -341,13 +384,14 @@ async def maria_plan(req: PlanRequest):
                 type=req.intent.type,
                 distance_text="?",
                 queue_status=queue_txt,
-                reason=f"[{provider_used.upper()}] {llm_text[:200]}",
+                reason=llm_text[:200],
                 open_now=None,
             )
+            # LLM responds in requested language — assign correctly
             voice = MariaVoice(
-                PT=llm_text if lang == "PT" else f"[{provider_used}] {llm_text}",
-                DE=llm_text if lang == "DE" else f"[{provider_used}] {llm_text}",
-                EN=llm_text if lang == "EN" else f"[{provider_used}] {llm_text}",
+                PT=llm_text if lang == "PT" else "",
+                DE=llm_text if lang == "DE" else "",
+                EN=llm_text if lang == "EN" else "",
             )
         else:
             # I10: Ultimate fallback — return generic answer
@@ -401,14 +445,24 @@ async def maria_plan(req: PlanRequest):
     elapsed = round((time.time() - t0) * 1000)
     log.info(f"[{request_id[:8]}] plan OK · {decision.name} · {elapsed}ms · sovereign={sovereign_mode}")
 
+    # 5. Memory — log interaction for future personalization
+    if MEMORY_ENABLED and did:
+        log_interaction(
+            did=did,
+            request_id=request_id,
+            intent_type=req.intent.type,
+            place_name=decision.name,
+        )
+
     return PlanResponse(
         request_id=request_id,
         decision=decision,
-        context={k: v for k, v in ctx.items() if k not in ("lat", "lng")},
+        context={k: v for k, v in ctx.items() if k not in ("lat", "lng", "nomada")},
         maria_voice=voice,
         intent_parsed=req.intent.model_dump(),
         ledger_receipt_id=receipt_id,
         cost_eur=0.0,  # Google Places free tier; ElevenLabs billed separately
         sovereign_mode=sovereign_mode,
+        memory_active=MEMORY_ENABLED and did is not None,
         timestamp=datetime.now(timezone.utc).isoformat(),
     )
