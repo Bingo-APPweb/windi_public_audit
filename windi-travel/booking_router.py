@@ -65,6 +65,15 @@ except ImportError as e:
     PLACES_GATE_ENABLED = False
     log.warning(f"[MARIA] Places Gate not available: {e}")
 
+# ── MARIA Voice Engine (§81) ─────────────────────────────────────────────────
+try:
+    from maria.maria_voice import generate_speech, get_voice_profile, EDGE_TTS_AVAILABLE
+    VOICE_ENGINE_ENABLED = EDGE_TTS_AVAILABLE
+    log.info(f"[MARIA] Voice Engine loaded ✓ (Edge TTS: {EDGE_TTS_AVAILABLE})")
+except ImportError as e:
+    VOICE_ENGINE_ENABLED = False
+    log.warning(f"[MARIA] Voice Engine not available: {e}")
+
 # ── Kiwi Flight Bridge (§67) ─────────────────────────────────────────────────
 try:
     from maria.kiwi_bridge import (
@@ -1215,6 +1224,80 @@ async def demo_super_carta():
             PlaceLocation(name="Café Rösterei", type="cafe", lat=47.7280, lng=10.3180, rating=4.7, open_now=False, address="Klostersteige 5"),
         ],
     )
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# §81 — MARIA Voice Endpoint (Edge TTS)
+# ══════════════════════════════════════════════════════════════════════════════
+
+class VoiceRequest(BaseModel):
+    """Request for MARIA voice generation."""
+    text: str = Field(..., description="Text to speak", max_length=500)
+    lang: str = Field(default="PT", description="Language: PT, DE, EN")
+    accent: Optional[str] = Field(default=None, description="Accent override: pt-BR, pt-PT, de-DE, en-GB, en-US")
+
+
+@router.post("/voice")
+async def maria_voice_generate(req: VoiceRequest):
+    """
+    Generate MARIA voice audio using Edge TTS.
+
+    §81 — Voice Sovereignty Principle:
+    "Começa soberano. Externo só se a qualidade justifica."
+
+    Returns: MP3 audio stream
+    """
+    from fastapi.responses import Response
+
+    if not VOICE_ENGINE_ENABLED:
+        raise HTTPException(status_code=503, detail="Voice engine not available")
+
+    if not req.text or not req.text.strip():
+        raise HTTPException(status_code=400, detail="Text is required")
+
+    # Limit text length
+    text = req.text.strip()[:500]
+
+    try:
+        audio_data = await generate_speech(
+            text=text,
+            lang=req.lang,
+            accent=req.accent,
+            use_cache=True
+        )
+
+        if not audio_data:
+            raise HTTPException(status_code=500, detail="Voice generation failed")
+
+        log.info(f"[MARIA Voice] Generated {len(audio_data)} bytes for '{text[:50]}...'")
+
+        return Response(
+            content=audio_data,
+            media_type="audio/mpeg",
+            headers={
+                "Content-Disposition": "inline; filename=maria_voice.mp3",
+                "Cache-Control": "public, max-age=3600",
+            }
+        )
+
+    except Exception as e:
+        log.error(f"[MARIA Voice] Error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/voice/profiles")
+async def maria_voice_profiles():
+    """
+    List available MARIA voice profiles.
+    """
+    from maria.maria_voice import MARIA_VOICE_PROFILES, AVAILABLE_VOICES
+
+    return {
+        "engine": "Edge TTS",
+        "enabled": VOICE_ENGINE_ENABLED,
+        "profiles": MARIA_VOICE_PROFILES,
+        "available_voices": AVAILABLE_VOICES,
+    }
 
 
 # ══════════════════════════════════════════════════════════════════════════════

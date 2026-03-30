@@ -169,9 +169,42 @@ const STAGES=[
   {id:"seal",    lbl:{PT:"Ledger",   DE:"Ledger",      EN:"Ledger"},   icon:"🔒"},
 ];
 
-function speakMaria(text,lang,onEnd){
+// §81 — MARIA Voice Engine (Edge TTS with browser fallback)
+const MARIA_VOICE_API = "/travel/maria/voice";
+let mariaAudio = null;
+
+async function speakMaria(text,lang,onEnd){
+  // Stop any current playback
+  if(mariaAudio){mariaAudio.pause();mariaAudio=null;}
+  if(window.speechSynthesis)window.speechSynthesis.cancel();
+
+  if(!text||!text.trim()){onEnd&&onEnd();return;}
+
+  // Try Edge TTS server first (§81 Voice Sovereignty)
+  try{
+    const r=await fetch(MARIA_VOICE_API,{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({text,lang}),
+      signal:AbortSignal.timeout(8000)
+    });
+    if(r.ok){
+      const blob=await r.blob();
+      const url=URL.createObjectURL(blob);
+      mariaAudio=new Audio(url);
+      mariaAudio.onended=()=>{URL.revokeObjectURL(url);onEnd&&onEnd();};
+      mariaAudio.onerror=()=>{URL.revokeObjectURL(url);speakMariaFallback(text,lang,onEnd);};
+      mariaAudio.play().catch(()=>speakMariaFallback(text,lang,onEnd));
+      return;
+    }
+  }catch(e){console.log("[MARIA] Voice API unavailable, using browser fallback");}
+
+  // Fallback to browser Web Speech API
+  speakMariaFallback(text,lang,onEnd);
+}
+
+function speakMariaFallback(text,lang,onEnd){
   if(!window.speechSynthesis){onEnd&&onEnd();return;}
-  window.speechSynthesis.cancel();
   const u=new SpeechSynthesisUtterance(text);
   u.lang=lang==="DE"?"de-DE":lang==="EN"?"en-GB":"pt-PT";
   u.rate=0.9;u.pitch=1.05;u.volume=1;
@@ -181,7 +214,7 @@ function speakMaria(text,lang,onEnd){
   if(pick)u.voice=pick;
   u.onend=()=>onEnd&&onEnd();
   window.speechSynthesis.speak(u);
-  setTimeout(()=>onEnd&&onEnd(),9000);
+  setTimeout(()=>onEnd&&onEnd(),12000);
 }
 
 function getGPS(){
