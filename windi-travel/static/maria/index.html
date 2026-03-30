@@ -177,6 +177,14 @@ function getGPS(){
   });
 }
 
+// §65 — Get DID from URL or sessionStorage
+function getWalletId(){
+  const params=new URLSearchParams(window.location.search);
+  return params.get('did')||params.get('wallet_id')||
+    sessionStorage.getItem('windi_travel_wallet')||null;
+}
+const WALLET_ID=getWalletId();
+
 async function callMariaAPI(intent,lang,fallbackSc){
   const{lat,lng}=await getGPS();
   try{
@@ -184,7 +192,7 @@ async function callMariaAPI(intent,lang,fallbackSc){
     const tid=setTimeout(()=>ctrl.abort(),API_TIMEOUT);
     const r=await fetch(MARIA_API,{
       method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({intent,lang,lat,lng}),signal:ctrl.signal,
+      body:JSON.stringify({intent,lang,lat,lng,wallet_id:WALLET_ID}),signal:ctrl.signal,
     });
     clearTimeout(tid);
     if(!r.ok)throw new Error(`HTTP ${r.status}`);
@@ -287,12 +295,31 @@ function App(){
   const[showIntent,setShowIntent]=useState(false);
   const[apiSource,setApiSource]=useState(null);
   const[backendOK,setBackendOK]=useState(null);
+  const[greeting,setGreeting]=useState(null);
+  const[weather,setWeather]=useState(null);
   const timers=useRef([]);
 
   useEffect(()=>{
+    // Health check
     fetch(MARIA_HEALTH,{signal:AbortSignal.timeout(3000)})
       .then(r=>setBackendOK(r.ok))
       .catch(()=>setBackendOK(false));
+    // §65 — Personalized greeting on load
+    if(WALLET_ID){
+      getGPS().then(({lat,lng})=>{
+        fetch(MARIA_API,{
+          method:"POST",headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({intent:{type:"greeting"},lang,lat,lng,wallet_id:WALLET_ID}),
+          signal:AbortSignal.timeout(5000)
+        })
+        .then(r=>r.json())
+        .then(d=>{
+          if(d.context&&d.context.greeting)setGreeting(d.context.greeting);
+          if(d.context&&d.context.weather)setWeather(d.context.weather);
+        })
+        .catch(()=>{});
+      });
+    }
   },[]);
 
   const clearT=()=>{timers.current.forEach(clearTimeout);timers.current=[];};
@@ -403,6 +430,17 @@ function App(){
         {/* IDLE */}
         {mode==="idle"&&(
           <div style={{animation:"fadeIn 0.4s ease"}}>
+            {/* §65 — Personalized greeting */}
+            {greeting&&(
+              <div style={{background:"rgba(139,94,60,0.08)",borderRadius:12,padding:"14px 16px",
+                marginBottom:16,display:"flex",alignItems:"center",gap:12}}>
+                <div style={{fontSize:28}}>🌍</div>
+                <div>
+                  <div style={{fontSize:16,fontWeight:700,color:P.terra}}>{greeting}</div>
+                  {weather&&<div style={{fontSize:12,color:P.cinza,marginTop:2}}>{weather}</div>}
+                </div>
+              </div>
+            )}
             <div style={{textAlign:"center",padding:"18px 0 14px"}}>
               <div style={{fontSize:10,color:P.cinza,fontFamily:"'JetBrains Mono',monospace",
                 letterSpacing:"1px",marginBottom:6,textTransform:"uppercase"}}>{t.tagline}</div>
