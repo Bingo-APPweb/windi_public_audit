@@ -600,6 +600,8 @@ function App(){
                   fontFamily:"'JetBrains Mono',monospace",cursor:"pointer",marginTop:9}}>{t.replay}</button>
             </div>
 
+            {/* §71 — Hide decision card + seal for greetings. Ledger is for REAL decisions. */}
+            {decision.type!=="greeting"&&(
             <div style={{marginBottom:8}}>
               <div style={{fontSize:10,fontFamily:"'JetBrains Mono',monospace",color:P.cinza,marginBottom:7,letterSpacing:"0.5px"}}>{t.decision_label}</div>
               <div style={{background:sealed?`linear-gradient(135deg,${P.verde}15,${P.ouro}10)`:`linear-gradient(135deg,${P.pergaminho},white)`,
@@ -628,8 +630,9 @@ function App(){
                 )}
               </div>
             </div>
+            )}
 
-            {sealed&&(
+            {sealed&&decision.type!=="greeting"&&(
               <div style={{background:"rgba(92,122,90,0.08)",border:`1px solid ${P.verde}44`,
                 borderRadius:10,padding:"11px 13px",marginBottom:14,animation:"fadeIn 0.4s ease"}}>
                 <div style={{fontSize:10,fontFamily:"'JetBrains Mono',monospace",color:P.verde,marginBottom:7,letterSpacing:"1px"}}>{t.ledger_label}</div>

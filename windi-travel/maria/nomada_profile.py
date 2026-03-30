@@ -280,28 +280,47 @@ def gerar_saudacao(did: str, lang: str = "DE") -> str:
     Generate personalized greeting based on interaction history.
 
     §65 — Camada 2: MARIA lê o DID
+    §71 — Armadura de Seda: NOT CRM language. MARIA is a friend, not a loyalty program.
 
-    - n == 0: "Bom dia, viajante" (new user)
-    - n == 1: "Bem-vindo de volta" (first return)
-    - n >= 2: "Xª vez connosco" (frequent visitor)
+    - n == 0: First meeting (new user)
+    - n == 1: First return (recognition)
+    - n >= 2: Growing familiarity (warmth, not transaction count)
     """
+    import random
     n = get_total_interactions(did)
 
+    # §71 — Greetings with SOUL, not CRM
+    # "Rigor por dentro, gentileza por fora."
     greetings = {
         "PT": {
-            "new": "Bom dia, viajante",
-            "back": "Bem-vindo de volta",
-            "many": f"{n+1}ª vez connosco — obrigado pela confiança"
+            "new": "Olá! Primeira vez por aqui?",
+            "back": "Olha quem voltou. Bom ver-te.",
+            "many": [
+                f"Das {n+1} vezes que vieste, esta pode ser a melhor.",
+                f"Já são {n+1} conversas. Quase parece rotina — no bom sentido.",
+                f"Cá estás tu outra vez. Gosto disso.",
+                f"{n+1}ª vez. Já te conheço o ritmo.",
+            ]
         },
         "DE": {
-            "new": "Guten Tag, Reisender",
-            "back": "Willkommen zurück",
-            "many": f"Zum {n+1}. Mal bei uns — danke für Ihr Vertrauen"
+            "new": "Hallo! Zum ersten Mal hier?",
+            "back": "Da bist du ja wieder. Schön, dich zu sehen.",
+            "many": [
+                f"Das {n+1}. Mal schon — fast wie nach Hause kommen.",
+                f"Wieder da. Das macht {n+1}. Gut so.",
+                f"Schön, dass du wieder hier bist.",
+                f"{n+1} Mal jetzt. Ich kenne deinen Rhythmus langsam.",
+            ]
         },
         "EN": {
-            "new": "Good day, traveller",
-            "back": "Welcome back",
-            "many": f"Visit #{n+1} — thank you for your trust"
+            "new": "Hello! First time here?",
+            "back": "Look who's back. Good to see you.",
+            "many": [
+                f"Visit {n+1} — almost feels like a routine now.",
+                f"Here you are again. That's {n+1} times. I like that.",
+                f"Good to see you back. Number {n+1}.",
+                f"{n+1} conversations now. I'm getting to know your rhythm.",
+            ]
         }
     }
 
@@ -311,7 +330,8 @@ def gerar_saudacao(did: str, lang: str = "DE") -> str:
         return s["new"]
     if n == 1:
         return s["back"]
-    return s["many"]
+    # For frequent visitors, pick a random warm greeting
+    return random.choice(s["many"])
 
 
 # ── Context Enrichment ───────────────────────────────────────────────────────
