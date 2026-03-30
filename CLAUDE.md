@@ -879,7 +879,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 | 64 | **DID Universal WINDI** | did:windi:{produto}:{uuid} · Ecossistema unificado | ✅ **LIVE** |
 | 65 | **MARIA Saudação** | gerar_saudacao() · Trilingual · Visit count progression | ✅ **LIVE** |
 | 66 | **Places Sovereignty Gate** | Cache-first · TTL per type · Audit trail · Soberania cumulativa | ✅ **LIVE** |
-| 67 | **Kiwi Flight Bridge** | kiwi_bridge.py · IATA normalization · Travelpayouts 513311 · IP1 intacto | ✅ **LIVE** |
+| 67 | **Kiwi Flight Bridge** | kiwi_bridge.py · IATA · Travelpayouts 513311 · Voz Natural trilíngue | ✅ **LIVE** |
 
 ### Referência Rápida
 
@@ -891,8 +891,8 @@ Sistema de autenticação por identidade soberana no GEN7.
 **WINDI Travel:** `/travel/gate` · Identity Gate · KLAR theme · I9 fail-closed
 **Travel Workspace:** `/travel/workspace/` · Protected by require_auth()
 **Tesoura:** `/travel/tesoura-ui/` · React 18 CDN · Ledger seal
-**MARIA:** `/maria/plan` · Triple LLM · Vozes PT/DE/EN · DID Memory (maria_memory.db)
-**Flights:** `/maria/flight-search` · Kiwi.com Bridge · IATA auto · Travelpayouts 513311
+**MARIA:** `/maria/plan` · Triple LLM · Voz Natural PT/DE/EN · DID Memory
+**Flights:** `/maria/flight-search` · Kiwi Bridge · Voz humana · Travelpayouts 513311
 **Affiliate:** Travelpayouts ID 513311 · ~3% comissão · Cookie 30 dias · IP1 intacto
 **Test Suite:** `/opt/windi/tests/agent_constitutional_test.py` · CI/CD ready
 **Dashboards:** `/legal-dashboard/` · `/notary-dashboard/` · `/audit-dashboard/`
@@ -914,8 +914,8 @@ Sistema de autenticação por identidade soberana no GEN7.
 **Axioma §63:** "MARIA lembra-se, mas nunca intromete. A memória serve a personalização, não a vigilância."
 **Axioma §64:** "No WINDI não há estranhos. Quem tem um DID WINDI é cidadão de todo o ecossistema."
 **Axioma §65:** "MARIA remembers, but never intrudes. A saudação muda com a confiança — viajante → de volta → connosco."
-**Axioma §66:** "O mundo real entra uma vez, a soberania local serve para sempre. Cache não é técnico — é ontologia do mundo físico codificada em dias."
-**Axioma §67:** "WINDI recomenda. Parceiro processa. User paga lá. IP1 Separação Financeira — INTACTO."
+**Axioma §66:** "O mundo real entra uma vez, a soberania local serve para sempre."
+**Axioma §67:** "MARIA fala como companheira, não como motor de busca. 'Boa notícia!' em vez de 'Encontrei 2 resultados.'"
 
 ---
 
