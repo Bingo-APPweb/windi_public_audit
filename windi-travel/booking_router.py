@@ -305,11 +305,25 @@ class HotelSearchResponse(BaseModel):
     source: str = "hotellook.com"
     timestamp: str
 
-# ── Context Enricher (Open-Meteo, FREE) ───────────────────────────────────────
+# ── Context Enricher (Open-Meteo + Nominatim, FREE) ───────────────────────────
+# §70 FIX: Reverse geocoding to get REAL city from GPS
+# "Falar português não significa querer ir a Lisboa."
+NOMINATIM_URL = "https://nominatim.openstreetmap.org/reverse"
+
 async def enrich_context(lat: float, lng: float) -> dict:
-    """Fetch real weather via Open-Meteo. Zero cost, no API key."""
-    try:
-        async with httpx.AsyncClient(timeout=5.0) as client:
+    """Fetch real weather + city via Open-Meteo + Nominatim. Zero cost, no API key."""
+    result = {
+        "weather": "? N/A",
+        "is_raining": False,
+        "lat": round(lat, 3),   # I1: reduced precision, not stored
+        "lng": round(lng, 3),
+        "city": "local area",   # §70: Will be replaced by real city
+        "country": "",
+    }
+
+    async with httpx.AsyncClient(timeout=5.0) as client:
+        # 1. Weather from Open-Meteo
+        try:
             r = await client.get(OPEN_METEO_URL, params={
                 "latitude": lat, "longitude": lng,
                 "current": "temperature_2m,precipitation,weathercode",
@@ -320,15 +334,31 @@ async def enrich_context(lat: float, lng: float) -> dict:
             rain = d.get("precipitation", 0) > 0.5
             code = d.get("weathercode", 0)
             emoji = "🌧️" if rain else ("⛅" if code in range(1, 4) else "☀️")
-            return {
-                "weather": f"{emoji} {temp}°C",
-                "is_raining": rain,
-                "lat": round(lat, 3),   # I1: reduced precision, not stored
-                "lng": round(lng, 3),
-            }
-    except Exception as e:
-        log.warning(f"Open-Meteo fallback: {e}")
-        return {"weather": "? N/A", "is_raining": False, "lat": lat, "lng": lng}
+            result["weather"] = f"{emoji} {temp}°C"
+            result["is_raining"] = rain
+        except Exception as e:
+            log.warning(f"Open-Meteo fallback: {e}")
+
+        # 2. §70 — Reverse geocoding from Nominatim (OpenStreetMap)
+        #    Get REAL city from GPS, not language assumption
+        try:
+            r = await client.get(NOMINATIM_URL, params={
+                "lat": lat, "lon": lng,
+                "format": "json",
+                "addressdetails": 1,
+            }, headers={"User-Agent": "WINDI-MARIA/1.0"})
+            addr = r.json().get("address", {})
+            # Try city, town, village, municipality in order
+            city = addr.get("city") or addr.get("town") or addr.get("village") or addr.get("municipality") or addr.get("county", "")
+            country = addr.get("country", "")
+            if city:
+                result["city"] = f"{city}, {country}" if country else city
+                result["country"] = country
+                log.info(f"[§70] GPS→City: {lat},{lng} → {result['city']}")
+        except Exception as e:
+            log.warning(f"Nominatim fallback: {e}")
+
+    return result
 
 # ── Google Places Search (via Sovereignty Gate) ───────────────────────────────
 # §69 — Expanded Place Type Map (was 5, now 25+)
