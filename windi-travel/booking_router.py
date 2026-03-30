@@ -93,6 +93,44 @@ except ImportError as e:
     HOTEL_BRIDGE_ENABLED = False
     log.warning(f"[MARIA] Hotel Bridge not available: {e}")
 
+# ── §69 Culture/Tips Intent Detection ─────────────────────────────────────────
+CULTURE_KEYWORDS = {
+    "pt": [
+        "moeda", "língua", "idioma", "costume", "horário", "horarios",
+        "seguro", "segurança", "perigoso", "tempo", "clima", "temperatura",
+        "como chegar", "transporte", "metro", "autocarro", "táxi", "uber",
+        "dica", "dicas", "conselho", "recomenda", "gorjeta", "propina",
+        "tomada", "voltagem", "adaptador", "wifi", "internet", "roaming",
+        "visto", "passaporte", "vacina", "agua", "beber", "comer",
+        "quanto custa", "preço", "barato", "caro", "trocar dinheiro",
+    ],
+    "de": [
+        "währung", "geld", "sprache", "öffnungszeiten", "sicher", "sicherheit",
+        "gefährlich", "wetter", "klima", "temperatur", "wie komme ich",
+        "transport", "u-bahn", "bus", "taxi", "tipp", "tipps", "empfehlung",
+        "trinkgeld", "steckdose", "spannung", "adapter", "wlan", "internet",
+        "visum", "reisepass", "impfung", "wasser", "trinken", "essen",
+        "wie viel kostet", "preis", "billig", "teuer", "geld wechseln",
+    ],
+    "en": [
+        "currency", "money", "language", "customs", "hours", "opening",
+        "safe", "safety", "dangerous", "weather", "climate", "temperature",
+        "how to get", "transport", "metro", "subway", "bus", "taxi", "uber",
+        "tip", "tips", "advice", "recommend", "tipping", "gratuity",
+        "plug", "voltage", "adapter", "wifi", "internet", "roaming",
+        "visa", "passport", "vaccine", "water", "drink", "eat",
+        "how much", "price", "cheap", "expensive", "exchange money",
+    ],
+}
+
+def detect_culture_intent(text: str) -> bool:
+    """Detect if user is asking cultural/practical travel questions."""
+    lower = text.lower()
+    for lang_keywords in CULTURE_KEYWORDS.values():
+        if any(kw in lower for kw in lang_keywords):
+            return True
+    return False
+
 # ── Config ────────────────────────────────────────────────────────────────────
 GOOGLE_PLACES_KEY = os.getenv("GOOGLE_PLACES_KEY", "")
 LEDGER_URL        = os.getenv("LEDGER_URL", "http://localhost:8101/api/receipts")
@@ -222,12 +260,62 @@ async def enrich_context(lat: float, lng: float) -> dict:
         return {"weather": "? N/A", "is_raining": False, "lat": lat, "lng": lng}
 
 # ── Google Places Search (via Sovereignty Gate) ───────────────────────────────
+# §69 — Expanded Place Type Map (was 5, now 25+)
 PLACE_TYPE_MAP = {
+    # Original 5
     "restaurant": "restaurant",
     "cafe":       "cafe",
     "museum":     "museum",
     "hotel":      "lodging",
     "event":      "tourist_attraction",
+    # Expanded — Health & Services
+    "pharmacy":   "pharmacy",
+    "farmacia":   "pharmacy",
+    "apotheke":   "pharmacy",
+    "hospital":   "hospital",
+    "klinik":     "hospital",
+    "bank":       "bank",
+    "banco":      "bank",
+    # Expanded — Shopping
+    "supermarket": "supermarket",
+    "supermercado": "supermarket",
+    "supermarkt":  "supermarket",
+    "market":     "grocery_or_supermarket",
+    "mercado":    "grocery_or_supermarket",
+    "markt":      "grocery_or_supermarket",
+    # Expanded — Leisure
+    "bar":        "bar",
+    "beach":      "natural_feature",
+    "praia":      "natural_feature",
+    "strand":     "natural_feature",
+    "park":       "park",
+    "parque":     "park",
+    "theater":    "movie_theater",
+    "theatre":    "movie_theater",
+    "teatro":     "movie_theater",
+    "cinema":     "movie_theater",
+    "kino":       "movie_theater",
+    # Expanded — Transport
+    "station":    "transit_station",
+    "estacao":    "transit_station",
+    "bahnhof":    "transit_station",
+    "airport":    "airport",
+    "aeroporto":  "airport",
+    "flughafen":  "airport",
+    "gas":        "gas_station",
+    "gasolina":   "gas_station",
+    "tankstelle": "gas_station",
+    # Expanded — Culture
+    "church":     "church",
+    "igreja":     "church",
+    "kirche":     "church",
+    "library":    "library",
+    "biblioteca": "library",
+    "bibliothek": "library",
+    "spa":        "spa",
+    "gym":        "gym",
+    "ginasio":    "gym",
+    "fitnessstudio": "gym",
 }
 
 async def search_places(intent: IntentPayload, lat: float, lng: float, lang: str, tier: str = "MED", actor: str = "anonymous") -> tuple[list[dict], bool]:
@@ -659,10 +747,74 @@ async def maria_plan(req: PlanRequest):
             timestamp=datetime.now(timezone.utc).isoformat(),
         )
 
+    # 1f. §69 — Culture/Tips intent detection
+    #     Practical travel questions → MARIA responds directly via LLM
+    if req.query and detect_culture_intent(req.query):
+        log.info(f"[{request_id[:8]}] Culture intent detected → MARIA direct response")
+
+        # Call LLM Gateway for cultural/practical advice
+        llm_result = await call_gateway_llm(
+            intent={"type": "culture", "raw_input": req.query},
+            ctx=ctx,
+            lang=lang,
+        )
+
+        if llm_result:
+            maria_text = llm_result.get("reason", "")
+        else:
+            # Fallback: pre-built culture tips
+            culture_fallback = {
+                "PT": "Como companheira de viagem, recomendo que consultes fontes locais para informações práticas. Cada destino tem as suas particularidades!",
+                "DE": "Als Reisebegleiterin empfehle ich dir, lokale Quellen für praktische Informationen zu konsultieren. Jedes Reiseziel hat seine Besonderheiten!",
+                "EN": "As your travel companion, I recommend checking local sources for practical information. Every destination has its own quirks!",
+            }
+            maria_text = culture_fallback.get(lang, culture_fallback["EN"])
+
+        # Seal to Ledger
+        seal_payload = {
+            "request_id": request_id,
+            "intent_type": "culture",
+            "query_preview": req.query[:100] if req.query else "",
+            "lang": lang,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+        }
+        receipt_id = await seal_decision(request_id, seal_payload, req.wallet_id)
+
+        return PlanResponse(
+            request_id=request_id,
+            decision=PlaceResult(
+                name="Dica de Viagem" if lang == "PT" else ("Reisetipp" if lang == "DE" else "Travel Tip"),
+                type="culture",
+                distance_text="",
+                queue_status="",
+                reason=maria_text[:200],
+            ),
+            context={
+                "weather": ctx.get("weather", ""),
+                "culture_advice": maria_text,
+            },
+            maria_voice=MariaVoice(
+                PT=maria_text if lang == "PT" else "",
+                DE=maria_text if lang == "DE" else "",
+                EN=maria_text if lang == "EN" else "",
+            ),
+            intent_parsed={"type": "culture", "detected_from_query": True},
+            ledger_receipt_id=receipt_id,
+            cost_eur=0.0,
+            sovereign_mode=llm_result is None,
+            memory_active=memory_active,
+            timestamp=datetime.now(timezone.utc).isoformat(),
+        )
+
+    # 1g. §69 — Check if intent type matches expanded PLACE_TYPE_MAP
+    #     If no direct match, try general_companion bucket
+    intent_type_lower = req.intent.type.lower() if req.intent.type else ""
+    place_type_match = intent_type_lower in PLACE_TYPE_MAP
+
     # 2. Places — Google Places via Sovereignty Gate (cache-first)
     candidates = []
     places_cache_hit = False
-    if req.lat and req.lng:
+    if req.lat and req.lng and place_type_match:
         candidates, places_cache_hit = await search_places(
             req.intent, lat, lng, lang,
             tier="TRAVEL",  # Travel users get premium access
@@ -670,9 +822,16 @@ async def maria_plan(req: PlanRequest):
         )
 
     if not candidates:
-        # Plan B: Try LLM via Gateway before falling back to generic
+        # §69 — Plan B: MARIA as general_companion
+        #       If no place type match OR no Places results → LLM direct response
+        is_general_companion = not place_type_match
+
+        if is_general_companion:
+            log.info(f"[{request_id[:8]}] General companion mode → no place type match")
+
+        # Try LLM via Gateway
         llm_result = await call_gateway_llm(
-            intent=req.intent.model_dump(),
+            intent=req.intent.model_dump() if place_type_match else {"type": "general", "raw_input": req.query or req.intent.type},
             ctx=ctx,
             lang=lang
         )
@@ -683,11 +842,17 @@ async def maria_plan(req: PlanRequest):
             provider_used = llm_result.get("provider", "gemini")
             llm_text = llm_result.get("reason", "")
 
-            queue_txt = {"PT": "Recomendação IA", "DE": "KI-Empfehlung", "EN": "AI recommendation"}[lang]
+            if is_general_companion:
+                queue_txt = {"PT": "MARIA companheira", "DE": "MARIA Begleiterin", "EN": "MARIA companion"}[lang]
+                decision_name = {"PT": "Resposta MARIA", "DE": "MARIA Antwort", "EN": "MARIA Response"}[lang]
+            else:
+                queue_txt = {"PT": "Recomendação IA", "DE": "KI-Empfehlung", "EN": "AI recommendation"}[lang]
+                decision_name = llm_result.get("name", "Recomendação MARIA")
+
             decision = PlaceResult(
-                name=llm_result.get("name", "Recomendação MARIA"),
-                type=req.intent.type,
-                distance_text="?",
+                name=decision_name,
+                type="general_companion" if is_general_companion else req.intent.type,
+                distance_text="",
                 queue_status=queue_txt,
                 reason=llm_text[:200],
                 open_now=None,
@@ -699,21 +864,44 @@ async def maria_plan(req: PlanRequest):
                 EN=llm_text if lang == "EN" else "",
             )
         else:
-            # I10: Ultimate fallback — return generic answer
+            # I10: Ultimate fallback — friendly "I don't know" instead of robotic
             sovereign_mode = True
-            fb = SOVEREIGN_FALLBACK.get(req.intent.type, SOVEREIGN_FALLBACK["restaurant"])
-            queue_txt = {"PT": "Sem dados", "DE": "Keine Daten", "EN": "No data"}[lang]
-            reason_txt = {"PT": "Modo soberano", "DE": "Souveräner Modus", "EN": "Sovereign mode"}[lang]
-            decision = PlaceResult(
-                name=fb["name"], type=req.intent.type,
-                distance_text="?", queue_status=queue_txt,
-                reason=reason_txt, open_now=None,
-            )
-            voice = MariaVoice(
-                PT=f"Estou em modo soberano. Recomendo explorar {fb['name']} na sua área.",
-                DE=f"Souveräner Modus. Ich empfehle {fb['name']} in Ihrer Nähe.",
-                EN=f"Sovereign mode. I suggest checking {fb['name']} nearby.",
-            )
+
+            if is_general_companion:
+                # General companion: warm fallback
+                fallback_voice = {
+                    "PT": "Não tenho certeza sobre isso, mas posso ajudar-te com voos, hotéis, restaurantes ou dicas de viagem. O que precisas?",
+                    "DE": "Da bin ich mir nicht sicher, aber ich kann dir bei Flügen, Hotels, Restaurants oder Reisetipps helfen. Was brauchst du?",
+                    "EN": "I'm not sure about that, but I can help with flights, hotels, restaurants or travel tips. What do you need?",
+                }
+                decision = PlaceResult(
+                    name={"PT": "MARIA", "DE": "MARIA", "EN": "MARIA"}[lang],
+                    type="general_companion",
+                    distance_text="",
+                    queue_status={"PT": "Companheira", "DE": "Begleiterin", "EN": "Companion"}[lang],
+                    reason=fallback_voice[lang][:100],
+                    open_now=None,
+                )
+                voice = MariaVoice(
+                    PT=fallback_voice["PT"] if lang == "PT" else "",
+                    DE=fallback_voice["DE"] if lang == "DE" else "",
+                    EN=fallback_voice["EN"] if lang == "EN" else "",
+                )
+            else:
+                # Place type matched but no results — use old sovereign fallback
+                fb = SOVEREIGN_FALLBACK.get(req.intent.type, SOVEREIGN_FALLBACK["restaurant"])
+                queue_txt = {"PT": "Sem dados", "DE": "Keine Daten", "EN": "No data"}[lang]
+                reason_txt = {"PT": "Modo soberano", "DE": "Souveräner Modus", "EN": "Sovereign mode"}[lang]
+                decision = PlaceResult(
+                    name=fb["name"], type=req.intent.type,
+                    distance_text="?", queue_status=queue_txt,
+                    reason=reason_txt, open_now=None,
+                )
+                voice = MariaVoice(
+                    PT=f"Estou em modo soberano. Recomendo explorar {fb['name']} na sua área.",
+                    DE=f"Souveräner Modus. Ich empfehle {fb['name']} in Ihrer Nähe.",
+                    EN=f"Sovereign mode. I suggest checking {fb['name']} nearby.",
+                )
     else:
         # 3. Score & pick best
         scored = sorted(candidates, key=lambda p: score_place(p, req.intent, ctx), reverse=True)
