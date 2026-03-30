@@ -259,6 +259,61 @@ def get_favorite_types(did: str) -> list:
     return [row["intent_type"] for row in rows]
 
 
+# ── Interaction Counts ──────────────────────────────────────────────────────
+
+def get_total_interactions(did: str) -> int:
+    """Get total interaction count for a DID."""
+    if not did:
+        return 0
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute("SELECT COUNT(*) as total FROM interactions WHERE did = ?", (did,))
+    row = c.fetchone()
+    conn.close()
+    return row["total"] if row else 0
+
+
+# ── §65 — Personalized Greeting ─────────────────────────────────────────────
+
+def gerar_saudacao(did: str, lang: str = "DE") -> str:
+    """
+    Generate personalized greeting based on interaction history.
+
+    §65 — Camada 2: MARIA lê o DID
+
+    - n == 0: "Bom dia, viajante" (new user)
+    - n == 1: "Bem-vindo de volta" (first return)
+    - n >= 2: "Xª vez connosco" (frequent visitor)
+    """
+    n = get_total_interactions(did)
+
+    greetings = {
+        "PT": {
+            "new": "Bom dia, viajante",
+            "back": "Bem-vindo de volta",
+            "many": f"{n+1}ª vez connosco — obrigado pela confiança"
+        },
+        "DE": {
+            "new": "Guten Tag, Reisender",
+            "back": "Willkommen zurück",
+            "many": f"Zum {n+1}. Mal bei uns — danke für Ihr Vertrauen"
+        },
+        "EN": {
+            "new": "Good day, traveller",
+            "back": "Welcome back",
+            "many": f"Visit #{n+1} — thank you for your trust"
+        }
+    }
+
+    s = greetings.get(lang, greetings["EN"])
+
+    if n == 0:
+        return s["new"]
+    if n == 1:
+        return s["back"]
+    return s["many"]
+
+
 # ── Context Enrichment ───────────────────────────────────────────────────────
 
 def enrich_context_with_memory(did: str, context: dict) -> dict:

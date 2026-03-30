@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="klar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MARIA — WINDI Travel</title>
+<style>
+/* §65 — MARIA UI · Tesoura Rules · Minimal JS */
+:root {
+  --bg: #FAFAF8;
+  --text: #1A1A1A;
+  --text2: #666;
+  --gold: #8B7424;
+  --gold-bg: rgba(139,116,36,0.08);
+  --border: #E0DED8;
+  --success: #2D6A4F;
+}
+
+[data-theme="noir"] {
+  --bg: #0A0A10;
+  --text: #E8E6E1;
+  --text2: #888;
+  --gold: #C9A84C;
+  --gold-bg: rgba(201,168,76,0.1);
+  --border: #1A1A24;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: Georgia, serif;
+  min-height: 100vh;
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.logo { color: var(--gold); font-size: 14px; letter-spacing: 2px; }
+
+.controls { display: flex; gap: 8px; }
+
+.btn-small {
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--text2);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.btn-small.active { border-color: var(--gold); color: var(--gold); }
+
+/* Greeting */
+.greeting {
+  background: var(--gold-bg);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.greeting-icon { font-size: 36px; }
+
+.greeting-text h2 {
+  font-size: 18px;
+  font-weight: normal;
+  margin-bottom: 4px;
+}
+
+.greeting-context {
+  font-size: 13px;
+  color: var(--text2);
+}
+
+/* Input */
+.input-area {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.input-field {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  font-family: inherit;
+}
+
+.input-field:focus { outline: none; border-color: var(--gold); }
+
+.send-btn {
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 8px;
+  background: var(--gold);
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* Quick actions */
+.quick-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.quick-btn {
+  flex: 1;
+  padding: 14px 8px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  cursor: pointer;
+  text-align: center;
+}
+
+.quick-btn:hover { border-color: var(--gold); }
+.quick-btn .icon { font-size: 20px; display: block; margin-bottom: 4px; }
+.quick-btn .label { font-size: 11px; color: var(--text2); }
+
+/* Response */
+.response {
+  background: var(--gold-bg);
+  border-radius: 12px;
+  padding: 20px;
+  display: none;
+}
+
+.response.active { display: block; }
+
+.response-header {
+  font-size: 11px;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+
+.response-text {
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.response-meta {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  font-family: monospace;
+  font-size: 10px;
+  color: var(--text2);
+}
+
+/* Loading */
+.loading { display: none; }
+.loading.active { display: block; text-align: center; padding: 20px; color: var(--text2); }
+
+/* Back link */
+.back-link {
+  display: block;
+  text-align: center;
+  margin-top: 24px;
+  color: var(--gold);
+  font-size: 12px;
+}
+
+/* i18n */
+[lang="de"] [data-lang]:not([data-lang="de"]) { display: none; }
+[lang="en"] [data-lang]:not([data-lang="en"]) { display: none; }
+[lang="pt"] [data-lang]:not([data-lang="pt"]) { display: none; }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">MARIA</div>
+  <div class="controls">
+    <button class="btn-small active" onclick="setLang('de')">DE</button>
+    <button class="btn-small" onclick="setLang('en')">EN</button>
+    <button class="btn-small" onclick="setLang('pt')">PT</button>
+    <button class="btn-small" onclick="toggleTheme()">☀</button>
+  </div>
+</header>
+
+<div class="greeting" id="greeting">
+  <div class="greeting-icon">🌍</div>
+  <div class="greeting-text">
+    <h2 id="greetingText">
+      <span data-lang="de">Guten Tag, Reisender</span>
+      <span data-lang="en">Good day, traveller</span>
+      <span data-lang="pt">Bom dia, viajante</span>
+    </h2>
+    <div class="greeting-context" id="greetingContext">⛅ --°C</div>
+  </div>
+</div>
+
+<div class="input-area">
+  <input type="text" class="input-field" id="mariaInput"
+    placeholder="Was suchst du heute?"
+    data-placeholder-de="Was suchst du heute?"
+    data-placeholder-en="What are you looking for?"
+    data-placeholder-pt="O que procuras hoje?">
+  <button class="send-btn" onclick="askMaria()">→</button>
+</div>
+
+<div class="quick-actions">
+  <button class="quick-btn" onclick="quickAsk('restaurant')">
+    <span class="icon">🍽️</span>
+    <span class="label" data-lang="de">Entdecken</span>
+    <span class="label" data-lang="en">Discover</span>
+    <span class="label" data-lang="pt">Descobrir</span>
+  </button>
+  <button class="quick-btn" onclick="quickAsk('cafe')">
+    <span class="icon">☕</span>
+    <span class="label" data-lang="de">Arbeiten</span>
+    <span class="label" data-lang="en">Work</span>
+    <span class="label" data-lang="pt">Trabalhar</span>
+  </button>
+  <button class="quick-btn" onclick="quickAsk('hotel')">
+    <span class="icon">🛌</span>
+    <span class="label" data-lang="de">Ausruhen</span>
+    <span class="label" data-lang="en">Rest</span>
+    <span class="label" data-lang="pt">Descansar</span>
+  </button>
+</div>
+
+<div class="loading" id="loading">
+  <span data-lang="de">Denke nach...</span>
+  <span data-lang="en">Thinking...</span>
+  <span data-lang="pt">A pensar...</span>
+</div>
+
+<div class="response" id="response">
+  <div class="response-header">
+    <span data-lang="de">MARIA sagt</span>
+    <span data-lang="en">MARIA says</span>
+    <span data-lang="pt">MARIA diz</span>
+  </div>
+  <div class="response-text" id="responseText"></div>
+  <div class="response-meta" id="responseMeta"></div>
+</div>
+
+<a href="/travel/workspace/" class="back-link">
+  <span data-lang="de">← Zurück zum Workspace</span>
+  <span data-lang="en">← Back to Workspace</span>
+  <span data-lang="pt">← Voltar ao Workspace</span>
+</a>
+
+<script>
+// §65 — MARIA UI · Tesoura Rules
+var currentLang = localStorage.getItem('windi_travel_lang') || 'de';
+var walletId = null;
+
+// Init
+document.addEventListener('DOMContentLoaded', function() {
+  // Get wallet_id from URL or try to get from session
+  var params = new URLSearchParams(window.location.search);
+  walletId = params.get('did') || params.get('wallet_id') || null;
+
+  setLang(currentLang);
+  initTheme();
+  loadGreeting();
+});
+
+function setLang(lang) {
+  currentLang = lang;
+  document.documentElement.lang = lang;
+  localStorage.setItem('windi_travel_lang', lang);
+
+  // Update buttons
+  document.querySelectorAll('.controls .btn-small').forEach(function(btn) {
+    btn.classList.remove('active');
+    if (btn.textContent === lang.toUpperCase()) btn.classList.add('active');
+  });
+
+  // Update placeholder
+  var input = document.getElementById('mariaInput');
+  input.placeholder = input.getAttribute('data-placeholder-' + lang) || '';
+}
+
+function initTheme() {
+  var theme = localStorage.getItem('windi_theme') || 'klar';
+  document.documentElement.setAttribute('data-theme', theme);
+}
+
+function toggleTheme() {
+  var current = document.documentElement.getAttribute('data-theme');
+  var next = current === 'klar' ? 'noir' : 'klar';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('windi_theme', next);
+}
+
+function loadGreeting() {
+  // Fetch weather/context
+  fetch('/maria/plan', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      intent: {type: 'greeting'},
+      lat: 47.7258,
+      lng: 10.3175,
+      lang: currentLang.toUpperCase(),
+      wallet_id: walletId
+    })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(d) {
+    if (d.context && d.context.weather) {
+      document.getElementById('greetingContext').textContent = d.context.weather;
+    }
+    // §65 — Use personalized greeting from API
+    if (d.context && d.context.greeting) {
+      document.getElementById('greetingText').innerHTML =
+        '<span>' + d.context.greeting + '</span>';
+    }
+  })
+  .catch(function() {});
+}
+
+function askMaria() {
+  var input = document.getElementById('mariaInput').value.trim();
+  if (!input) return;
+
+  sendRequest({type: 'general', raw_input: input});
+}
+
+function quickAsk(type) {
+  sendRequest({type: type});
+}
+
+function sendRequest(intent) {
+  document.getElementById('loading').classList.add('active');
+  document.getElementById('response').classList.remove('active');
+
+  fetch('/maria/plan', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      intent: intent,
+      lat: 47.7258,
+      lng: 10.3175,
+      lang: currentLang.toUpperCase(),
+      wallet_id: walletId
+    })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(d) {
+    document.getElementById('loading').classList.remove('active');
+
+    // Get voice in current language
+    var voice = d.maria_voice[currentLang.toUpperCase()] ||
+                d.maria_voice.DE ||
+                d.decision.reason ||
+                'No response';
+
+    document.getElementById('responseText').textContent = voice;
+    document.getElementById('responseMeta').textContent =
+      (d.ledger_receipt_id || '') + ' · ' +
+      (d.memory_active ? '🧠' : '○');
+
+    document.getElementById('response').classList.add('active');
+  })
+  .catch(function() {
+    document.getElementById('loading').classList.remove('active');
+  });
+}
+</script>
+</body>
+</html>
