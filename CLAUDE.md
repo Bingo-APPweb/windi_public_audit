@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.49
-**Sealed:** 2026-03-30 · §62 MARIA Triple LLM LIVE
+**Version:** 1.9.50
+**Sealed:** 2026-03-30 · §63 MARIA Vozes + Memory LIVE
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -875,6 +875,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 | 60 | **P3-A Identity Gate** | Tesoura v10 · fail-closed · Three Claudes | ✅ **DEPLOYED** |
 | 61 | **Travel Checkup** | Port fix · Test cleanup · LAW/Travel isolation | ✅ **VERIFIED** |
 | 62 | **MARIA Triple LLM** | Gemini+Claude+OpenAI · maria_voice.py · Voz natural | ✅ **LIVE** |
+| 63 | **MARIA Vozes + Memory** | Trilíngue fix · nomada_profile.py · maria_memory.db | ✅ **LIVE** |
 
 ### Referência Rápida
 
@@ -886,7 +887,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 **WINDI Travel:** `/travel/gate` · Identity Gate · KLAR theme · I9 fail-closed
 **Travel Workspace:** `/travel/workspace/` · Protected by require_auth()
 **Tesoura:** `/travel/tesoura-ui/` · React 18 CDN · Ledger seal
-**MARIA:** `/maria/plan` · Triple LLM (Gemini+Claude+OpenAI) · Voz natural trilíngue
+**MARIA:** `/maria/plan` · Triple LLM · Vozes PT/DE/EN · DID Memory (maria_memory.db)
 **Test Suite:** `/opt/windi/tests/agent_constitutional_test.py` · CI/CD ready
 **Dashboards:** `/legal-dashboard/` · `/notary-dashboard/` · `/audit-dashboard/`
 **Landing:** `windilaw.de` · KLAR only · 4 profiles · SVG icons
@@ -904,6 +905,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 **Axioma §60:** "A prova mais gentil é aquela que o utilizador nem percebe que aconteceu."
 **Axioma §61:** "Dois produtos, duas portas, duas bases de dados — isolamento é arquitectura, não acidente."
 **Axioma §62:** "MARIA não é um assistente — é uma companheira. A diferença está no tom, não na função."
+**Axioma §63:** "MARIA lembra-se, mas nunca intromete. A memória serve a personalização, não a vigilância."
 
 ---
 
