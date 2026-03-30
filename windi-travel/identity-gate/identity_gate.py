@@ -430,7 +430,8 @@ app.include_router(maria_seal_router)   # /maria/seal, /maria/health
 app.include_router(maria_plan_router)   # /maria/plan
 app.include_router(travel_gate_router)  # /travel/gate/* (P3-A)
 
-# ═══ Maria UI Static Files (Phase 2) ═══
+# ═══ Maria UI Static Files (§65) ═══
+# Full-featured version with Audio IN/OUT, GPS, Pipeline visualization
 app.mount("/maria-ui", StaticFiles(directory="/opt/windi/windi-travel/static/maria", html=True), name="maria-ui")
 
 # ═══ Tesoura Soberana Static Files (P3-B) ═══
@@ -1368,8 +1369,8 @@ body.lang-pt [data-lang="pt"] {{ display: inline; }}
 </header>
 
 <nav class="tool-nav">
-    <a href="/travel/maria-ui/" class="tool-btn">🤖 Maria</a>
-    <a href="/travel/tesoura-ui/" class="tool-btn">✂️ Tesoura</a>
+    <a href="/travel/maria-ui/?did={wallet_id}" class="tool-btn">🤖 Maria</a>
+    <a href="/travel/tesoura-ui/?did={wallet_id}" class="tool-btn">✂️ Tesoura</a>
 </nav>
 
 <main class="main">
