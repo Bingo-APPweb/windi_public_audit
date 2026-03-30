@@ -20,7 +20,7 @@ Author: Liga IA+H · Kempten 2026
 "AI processes. Human decides. WINDI guarantees."
 """
 
-import os, time, uuid, hashlib, json, logging
+import os, time, uuid, hashlib, json, logging, re
 from datetime import datetime, timezone
 
 import httpx
@@ -168,15 +168,19 @@ def detect_place_type_from_query(text: str) -> str | None:
     Returns the place type key if found, None otherwise.
 
     This overrides frontend's intent when there's a mismatch.
+
+    §69c FIX: Use word boundaries to prevent substring false positives.
+    Example: "maria" should NOT match "mar" (beach keyword).
     """
     if not text:
         return None
 
     lower = text.lower()
 
-    # Check each place type's keywords
+    # Check each place type's keywords using WORD BOUNDARIES
+    # This prevents "maria" from matching "mar" (beach)
     for place_type, keywords in PLACE_TYPE_KEYWORDS.items():
-        if any(kw in lower for kw in keywords):
+        if any(re.search(r'\b' + re.escape(kw) + r'\b', lower) for kw in keywords):
             return place_type
 
     return None
