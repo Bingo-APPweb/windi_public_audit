@@ -626,17 +626,17 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 
 **Products:** Triangle of Power · WINDI FIELD · WINDI TRAVEL · FVE Protocol · RFC-001 DNA
 
-> **Detalhes:** ver `§37-71. Sistemas Recentes` abaixo
+> **Detalhes:** ver `§37-72. Sistemas Recentes` abaixo
 
 ### Histórico Recente (últimos 5)
 
 | Data | Milestone |
 |------|-----------|
+| 30 Mar | §72 **Pulse Reading Layer** · "HER" architecture · Subtexto antes do routing |
 | 30 Mar | §71 **Armadura de Seda** · Identidade Fonética · Prompts com alma |
 | 30 Mar | §70 I-TRAVEL Constitution · Idioma ≠ Localização · MARIA pergunta destino |
 | 30 Mar | §69/b MARIA Waterfall Fix · 5 clean exits · Query intent override |
 | 30 Mar | §68 Hotellook Hotel Bridge · Token 513311 · /hotel-search |
-| 30 Mar | §67 Kiwi Flight Bridge · IP1 · IATA · Travelpayouts 513311 |
 
 > **Histórico completo:** `CLAUDE-HISTORY.md` + `CHANGELOG.md`
 
@@ -843,7 +843,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 
 ---
 
-## §37-71. Sistemas Recentes — Resumo
+## §37-72. Sistemas Recentes — Resumo
 
 > **Detalhes completos:** `CLAUDE-HISTORY.md` § MIGRAÇÃO 24 Mar 2026
 
@@ -885,6 +885,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 | 69b | **Query Intent Override** | detect_place_type_from_query() · Frontend mismatch fix | ✅ **LIVE** |
 | 70 | **I-TRAVEL Constitution** | Idioma ≠ Localização · MARIA pergunta destino · GPS origin | ✅ **LIVE** |
 | 71 | **Armadura de Seda** | Identidade Fonética · Prompts com alma · Surpresa/Opinião/Imperfeição | ✅ **LIVE** |
+| 72 | **Pulse Reading Layer** | "HER" architecture · read_pulse() · Subtexto antes do routing · Paradoxo urgência=calma | ✅ **LIVE** |
 
 ### Referência Rápida
 
@@ -927,6 +928,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 **Axioma §69b:** "O utilizador tem sempre razão — se escreve 'Farmacia', MARIA ouve 'Farmacia', não o que o frontend diz."
 **Axioma §70:** "Falar português não significa querer ir a Lisboa."
 **Axioma §71:** "Rigor por dentro, gentileza por fora."
+**Axioma §72:** "Urgência não precisa de velocidade. Precisa de presença."
 
 **§71 Armadura de Seda (MARIA Voice):**
 ```
@@ -935,6 +937,40 @@ Opinião:      "Pessoalmente, prefiro ir de manhã"
 Memória:      "Dizem que..." · "Há quem jure..."
 Imperfeição:  "Não sei se ainda está aberto, mas..."
 Ritmo:        Frase curta. Frase longa com cor. Micro-dica única.
+```
+
+**§72 Pulse Reading Layer ("HER" Architecture):**
+```
+Layer 0 — Lê o subtexto ANTES de qualquer routing:
+
+1. RITMO DA ESCRITA
+   - 1-3 palavras → cansaço, sobrecarga → energy=low
+   - "..." → hesitação, dúvida → intent=lost
+   - "!" → celebração → intent=celebrate
+
+2. TEMPERATURA DA PALAVRA
+   - "quero" → desejo tranquilo
+   - "preciso" → necessidade real → energy=fragile
+   - "não sei" → perdido → tone_needed=anchor
+
+3. CONTEXTO TEMPORAL
+   - 21h-05h → vulnerabilidade → respond_to=the_feeling
+   - 06h-09h → energia nova mas ansiedade possível
+
+4. MEMÓRIA DE RITMO
+   - Mensagens a encurtar → desistência suave → respond_to=the_silence
+
+5. PARADOXO FUNDAMENTAL
+   "preciso agora" → urgência → pace="slow"
+   Porque urgência não precisa de velocidade. Precisa de presença.
+
+mood_pulse = {
+    energy: high|medium|low|fragile
+    intent: discover|urgent|lost|celebrate|rest|connect
+    tone_needed: enthusiastic|gentle|anchor|silent_first|playful
+    respond_to: the_words|the_feeling|the_silence
+    pace: fast|normal|slow
+}
 ```
 
 **§70 I-TRAVEL Constitution:**
