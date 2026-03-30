@@ -879,7 +879,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 | 64 | **DID Universal WINDI** | did:windi:{produto}:{uuid} · Ecossistema unificado | ✅ **LIVE** |
 | 65 | **MARIA Saudação** | gerar_saudacao() · Trilingual · Visit count progression | ✅ **LIVE** |
 | 66 | **Places Sovereignty Gate** | Cache-first · TTL per type · Audit trail · Soberania cumulativa | ✅ **LIVE** |
-| 67 | **Kiwi Flight Bridge** | kiwi_bridge.py · IATA normalization · IP1 Separação Financeira | ✅ **LIVE** |
+| 67 | **Kiwi Flight Bridge** | kiwi_bridge.py · IATA normalization · Travelpayouts 513311 · IP1 intacto | ✅ **LIVE** |
 
 ### Referência Rápida
 
@@ -892,7 +892,8 @@ Sistema de autenticação por identidade soberana no GEN7.
 **Travel Workspace:** `/travel/workspace/` · Protected by require_auth()
 **Tesoura:** `/travel/tesoura-ui/` · React 18 CDN · Ledger seal
 **MARIA:** `/maria/plan` · Triple LLM · Vozes PT/DE/EN · DID Memory (maria_memory.db)
-**Flights:** `/maria/flight-search` · Kiwi.com Bridge · IATA auto · Demo fallback
+**Flights:** `/maria/flight-search` · Kiwi.com Bridge · IATA auto · Travelpayouts 513311
+**Affiliate:** Travelpayouts ID 513311 · ~3% comissão · Cookie 30 dias · IP1 intacto
 **Test Suite:** `/opt/windi/tests/agent_constitutional_test.py` · CI/CD ready
 **Dashboards:** `/legal-dashboard/` · `/notary-dashboard/` · `/audit-dashboard/`
 **Landing:** `windilaw.de` · KLAR only · 4 profiles · SVG icons
