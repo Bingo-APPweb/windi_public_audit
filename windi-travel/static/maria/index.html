@@ -513,22 +513,31 @@ function SuperCarta({ locations, userLat, userLng, lang, decisionName }) {
           ? `<div style="font-size:10px;color:#C0392B;margin-top:3px;">✗ ${lang==="PT"?"Fechado":lang==="DE"?"Geschlossen":"Closed"}</div>`
           : "";
 
-      // §83/84 — Navigation button (always active, checks location on click)
-      const navLabel = lang==="PT"?"Como chegar":lang==="DE"?"Route anzeigen":"Get directions";
-      const navBtn = `<button onclick="window.__superCartaTryNav(${loc.lat},${loc.lng},'${loc.name.replace(/'/g,"\\'")}','${lang}')"
-          style="margin-top:8px;width:100%;padding:6px 10px;background:linear-gradient(135deg,#8B5E3C,#C9A84C);color:white;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Bricolage Grotesque',sans-serif;">
-          🧭 ${navLabel}
-        </button>`;
+      // §84 Nível 3 — Two navigation options: GPS or custom start
+      const gpsLabel = lang==="PT"?"📍 Usar minha localização":lang==="DE"?"📍 Meinen Standort nutzen":"📍 Use my location";
+      const customLabel = lang==="PT"?"✏️ Partir de outro local":lang==="DE"?"✏️ Von anderem Ort starten":"✏️ Start from another place";
+
+      const navButtons = `
+        <div style="margin-top:8px;display:flex;flex-direction:column;gap:4px;">
+          <button onclick="window.__superCartaNavGPS(${loc.lat},${loc.lng},'${loc.name.replace(/'/g,"\\'")}')"
+            style="width:100%;padding:6px 10px;background:linear-gradient(135deg,#8B5E3C,#C9A84C);color:white;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:'Bricolage Grotesque',sans-serif;">
+            ${gpsLabel}
+          </button>
+          <button onclick="window.__superCartaNavCustom(${loc.lat},${loc.lng},'${loc.name.replace(/'/g,"\\'")}','${lang}')"
+            style="width:100%;padding:6px 10px;background:transparent;color:#8B5E3C;border:1px solid #8B5E3C;border-radius:6px;font-size:10px;font-weight:500;cursor:pointer;font-family:'Bricolage Grotesque',sans-serif;">
+            ${customLabel}
+          </button>
+        </div>`;
 
       marker.bindPopup(`
-        <div style="font-family:'Bricolage Grotesque',sans-serif;min-width:160px;">
+        <div style="font-family:'Bricolage Grotesque',sans-serif;min-width:180px;">
           <strong style="font-size:14px;color:#1A1A2E;">${loc.name}</strong>
           ${ratingStr}
           ${loc.address ? `<div style="font-size:10px;color:#666;margin-top:4px;">📍 ${loc.address}</div>` : ""}
           ${openStr}
-          ${navBtn}
+          ${navButtons}
         </div>
-      `, { maxWidth: 220 });
+      `, { maxWidth: 240 });
 
       markersRef.current.push(marker);
       if (isSelected) selectedMarker = marker;
@@ -555,26 +564,19 @@ function SuperCarta({ locations, userLat, userLng, lang, decisionName }) {
     };
   }, [locations, userLat, userLng, lang]);
 
-  // §83/84 — Expose navigation functions to window for popup button
+  // §84 Nível 3 — Expose navigation functions to window for popup buttons
   useEffect(() => {
-    // Direct navigation (when location is known)
-    window.__superCartaNav = (lat, lng, name) => {
-      console.log("[SuperCarta] Navigation requested:", { lat, lng, name, hasRouting: typeof L.Routing !== "undefined" });
-      startNavigation(lat, lng, name, 'driving');
-    };
-
-    // Try navigation (checks location, highlights input if needed)
-    window.__superCartaTryNav = (destLat, destLng, destName, lang) => {
+    // Nível 1: Use GPS location (or manual if no GPS)
+    window.__superCartaNavGPS = (destLat, destLng, destName) => {
       const originLat = userLat || manualLoc.lat;
       const originLng = userLng || manualLoc.lng;
-      console.log("[SuperCarta] TryNav:", { destLat, destLng, destName, originLat, originLng });
+      console.log("[SuperCarta] NavGPS:", { destLat, destLng, destName, originLat, originLng });
 
       if (originLat && originLng) {
         startNavigation(destLat, destLng, destName, 'driving');
       } else {
-        // Store pending destination and highlight input
+        // No location — store pending and show input
         setPendingDest({ lat: destLat, lng: destLng, name: destName });
-        // Flash the address input to draw attention
         setTimeout(() => {
           const inputEl = document.getElementById('supercarta-address-input');
           if (inputEl) {
@@ -584,6 +586,34 @@ function SuperCarta({ locations, userLat, userLng, lang, decisionName }) {
           }
         }, 100);
       }
+    };
+
+    // Nível 3: Custom start point (even if GPS available)
+    window.__superCartaNavCustom = (destLat, destLng, destName, lang) => {
+      console.log("[SuperCarta] NavCustom: user wants custom origin for", destName);
+      // Store destination and force show address input
+      setPendingDest({ lat: destLat, lng: destLng, name: destName });
+      // Clear any existing manual location to show input
+      setManualLoc({ lat: null, lng: null, address: "" });
+      setAddressInput("");
+      // Focus input after React re-renders
+      setTimeout(() => {
+        const inputEl = document.getElementById('supercarta-address-input');
+        if (inputEl) {
+          inputEl.focus();
+          inputEl.placeholder = lang === "PT" ? "De onde partes?" : lang === "DE" ? "Von wo startest du?" : "Where do you start?";
+          inputEl.style.boxShadow = '0 0 0 3px #C9A84C';
+          setTimeout(() => { inputEl.style.boxShadow = 'none'; }, 2000);
+        }
+      }, 100);
+    };
+
+    // Legacy function for backwards compatibility
+    window.__superCartaNav = (lat, lng, name) => {
+      window.__superCartaNavGPS(lat, lng, name);
+    };
+    window.__superCartaTryNav = (destLat, destLng, destName, lang) => {
+      window.__superCartaNavGPS(destLat, destLng, destName);
     };
 
     // Listen for geocode requests
@@ -597,9 +627,11 @@ function SuperCarta({ locations, userLat, userLng, lang, decisionName }) {
     return () => {
       delete window.__superCartaNav;
       delete window.__superCartaTryNav;
+      delete window.__superCartaNavGPS;
+      delete window.__superCartaNavCustom;
       window.removeEventListener('supercarta-geocode', handleGeocode);
     };
-  }, [startNavigation, userLat, userLng, manualLoc.lat, manualLoc.lng]);
+  }, [startNavigation, userLat, userLng, manualLoc.lat, manualLoc.lng, setManualLoc, setAddressInput]);
 
   // §84 — Auto-navigate after geocoding completes
   useEffect(() => {
@@ -641,8 +673,8 @@ function SuperCarta({ locations, userLat, userLng, lang, decisionName }) {
         <span style={{ color: P.verde }}>· {locations.length} {lang === "PT" ? "local" : lang === "DE" ? "Ort" : "place"}{locations.length > 1 ? (lang === "PT" ? "is" : lang === "DE" ? "e" : "s") : ""}</span>
       </div>
 
-      {/* §84 — Location Status Bar (always visible when no GPS) */}
-      {!hasLocation && (
+      {/* §84 Nível 1-3 — Location Input Bar (shows when no GPS OR custom origin requested) */}
+      {(!hasLocation || pendingDest) && (
         <div style={{
           background: pendingDest ? "rgba(201,168,76,0.15)" : "rgba(139,94,60,0.1)",
           borderRadius: 10,
@@ -652,7 +684,10 @@ function SuperCarta({ locations, userLat, userLng, lang, decisionName }) {
           border: pendingDest ? "1px solid #C9A84C" : "none"
         }}>
           <div style={{ fontSize: 11, color: P.terra, marginBottom: 6, fontWeight: 600 }}>
-            📍 {lang === "PT" ? "Onde estás?" : lang === "DE" ? "Wo bist du?" : "Where are you?"}
+            {pendingDest
+              ? (lang === "PT" ? "✏️ De onde partes?" : lang === "DE" ? "✏️ Von wo startest du?" : "✏️ Where do you start?")
+              : (lang === "PT" ? "📍 Onde estás?" : lang === "DE" ? "📍 Wo bist du?" : "📍 Where are you?")
+            }
             {pendingDest && (
               <span style={{ marginLeft: 8, color: "#8B6914", fontWeight: 400 }}>
                 → {pendingDest.name}
