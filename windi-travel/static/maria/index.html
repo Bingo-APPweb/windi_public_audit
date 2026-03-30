@@ -818,22 +818,61 @@ function App(){
             </div>
             )}
 
+            {/* §80 — 3 Layers Receipt Display (Human → Technical → API) */}
             {sealed&&decision.type!=="greeting"&&(
               <div style={{background:"rgba(92,122,90,0.08)",border:`1px solid ${P.verde}44`,
-                borderRadius:10,padding:"11px 13px",marginBottom:14,animation:"fadeIn 0.4s ease"}}>
-                <div style={{fontSize:10,fontFamily:"'JetBrains Mono',monospace",color:P.verde,marginBottom:7,letterSpacing:"1px"}}>{t.ledger_label}</div>
-                <pre style={{fontSize:10,fontFamily:"'JetBrains Mono',monospace",color:P.noite,margin:0,lineHeight:1.6,whiteSpace:"pre-wrap"}}>
-{`{
-  "receipt_id": "${result.ledger_receipt_id||"DEMO-"+Date.now().toString(36).toUpperCase()}",
-  "place": "${decision.name}",
-  "queue": "${decision.queue_status}",
-  "lang": "${lang}",
-  "source": "${apiSource}",
-  "timestamp": "${result.timestamp}",
-  "verified": true,
-  "governance": "HIGH"
-}`}
-                </pre>
+                borderRadius:12,padding:"14px 16px",marginBottom:14,animation:"fadeIn 0.4s ease"}}>
+
+                {/* LAYER 1 — HUMAN (sempre visível) */}
+                <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
+                  <div style={{width:36,height:36,background:P.verde,borderRadius:"50%",
+                    display:"flex",alignItems:"center",justifyContent:"center",fontSize:18}}>✓</div>
+                  <div>
+                    <div style={{fontSize:14,fontWeight:800,color:P.verde}}>
+                      {lang==="PT"?"SELADO":lang==="DE"?"VERSIEGELT":"SEALED"}
+                    </div>
+                    <div style={{fontSize:10,fontFamily:"'JetBrains Mono',monospace",color:P.cinza}}>
+                      {result.ledger_receipt_id||"DEMO-"+Date.now().toString(36).toUpperCase()}
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:12}}>
+                  <div style={{display:"flex",alignItems:"center",gap:6}}>
+                    <span style={{fontSize:14}}>📍</span>
+                    <span style={{fontSize:12,color:P.noite}}>{decision.name}</span>
+                  </div>
+                  <div style={{display:"flex",alignItems:"center",gap:6}}>
+                    <span style={{fontSize:14}}>🕐</span>
+                    <span style={{fontSize:11,color:P.cinza}}>
+                      {new Date(result.timestamp).toLocaleString(lang==="PT"?"pt-PT":lang==="DE"?"de-DE":"en-GB",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})}
+                    </span>
+                  </div>
+                </div>
+
+                <div style={{display:"flex",alignItems:"center",gap:6,padding:"8px 10px",
+                  background:"rgba(92,122,90,0.1)",borderRadius:8}}>
+                  <span style={{fontSize:14}}>🔐</span>
+                  <span style={{fontSize:11,color:P.verde}}>
+                    {lang==="PT"?"Decisão verificável no Ledger":lang==="DE"?"Im Ledger verifizierbar":"Verifiable on Ledger"}
+                  </span>
+                </div>
+
+                {/* LAYER 2 — TECHNICAL (collapsed) */}
+                <details style={{marginTop:10}}>
+                  <summary style={{fontSize:10,fontFamily:"'JetBrains Mono',monospace",color:P.cinza,
+                    cursor:"pointer",letterSpacing:"0.5px",padding:"4px 0"}}>
+                    {lang==="PT"?"▶ Ver detalhes técnicos":lang==="DE"?"▶ Technische Details":"▶ View technical details"}
+                  </summary>
+                  <div style={{marginTop:8,padding:"10px",background:"rgba(26,26,46,0.04)",borderRadius:8}}>
+                    <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:6,fontSize:10,fontFamily:"'JetBrains Mono',monospace"}}>
+                      <div><span style={{color:P.cinza}}>source:</span> <span style={{color:P.terra}}>{apiSource}</span></div>
+                      <div><span style={{color:P.cinza}}>governance:</span> <span style={{color:P.ouro}}>HIGH</span></div>
+                      <div><span style={{color:P.cinza}}>lang:</span> <span style={{color:P.terra}}>{lang}</span></div>
+                      <div><span style={{color:P.cinza}}>verified:</span> <span style={{color:P.verde}}>true</span></div>
+                    </div>
+                  </div>
+                </details>
               </div>
             )}
 
