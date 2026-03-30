@@ -38,10 +38,14 @@ try:
         enrich_context_with_memory,
         log_interaction,
         set_preference,
+        gerar_saudacao,
+        get_total_interactions,
     )
     MEMORY_ENABLED = True
 except ImportError:
     MEMORY_ENABLED = False
+    def gerar_saudacao(did, lang): return {"PT": "Bom dia, viajante", "DE": "Guten Tag, Reisender", "EN": "Good day, traveller"}.get(lang, "Good day")
+    def get_total_interactions(did): return 0
     log.warning("[MARIA] Memory module not available — running without DID persistence")
 
 # ── Logging (no PII — I1) ─────────────────────────────────────────────────────
@@ -352,13 +356,54 @@ async def maria_plan(req: PlanRequest):
 
     # 1b. Memory — enrich with DID profile if available
     did = req.wallet_id or req.did  # Support both field names
+    memory_active = False
     if MEMORY_ENABLED and did:
         profile = get_or_create_nomada(did, lang=lang)
         ctx = enrich_context_with_memory(did, ctx)
+        memory_active = True
         # Use nomada's preferred language if this is a returning user
         if not profile.get("is_new") and profile.get("lang"):
             lang = profile["lang"]
             ctx["lang"] = lang
+
+    # 1c. §65 — Special handling for greeting intent
+    #     For greetings, use the requested language (not stored preference)
+    if req.intent.type == "greeting":
+        greeting_lang = req.lang if req.lang in ("PT", "DE", "EN") else "EN"
+        greeting_text = gerar_saudacao(did, greeting_lang) if did else {
+            "PT": "Bom dia, viajante",
+            "DE": "Guten Tag, Reisender",
+            "EN": "Good day, traveller"
+        }.get(lang, "Good day, traveller")
+
+        total_visits = get_total_interactions(did) if did else 0
+
+        return PlanResponse(
+            request_id=request_id,
+            decision=PlaceResult(
+                name="Greeting",
+                type="greeting",
+                distance_text="",
+                queue_status="",
+                reason=greeting_text,
+            ),
+            context={
+                "weather": ctx.get("weather", ""),
+                "greeting": greeting_text,
+                "total_visits": total_visits,
+            },
+            maria_voice=MariaVoice(
+                PT=greeting_text if greeting_lang == "PT" else "",
+                DE=greeting_text if greeting_lang == "DE" else "",
+                EN=greeting_text if greeting_lang == "EN" else "",
+            ),
+            intent_parsed=req.intent.model_dump(),
+            ledger_receipt_id=None,  # Greetings not sealed
+            cost_eur=0.0,
+            sovereign_mode=False,
+            memory_active=memory_active,
+            timestamp=datetime.now(timezone.utc).isoformat(),
+        )
 
     # 2. Places — Google Places or sovereign fallback
     candidates = []
@@ -464,6 +509,6 @@ async def maria_plan(req: PlanRequest):
         ledger_receipt_id=receipt_id,
         cost_eur=0.0,  # Google Places free tier; ElevenLabs billed separately
         sovereign_mode=sovereign_mode,
-        memory_active=MEMORY_ENABLED and did is not None,
+        memory_active=memory_active,
         timestamp=datetime.now(timezone.utc).isoformat(),
     )
