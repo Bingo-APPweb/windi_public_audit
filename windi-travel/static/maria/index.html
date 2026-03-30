@@ -238,7 +238,17 @@ function getWalletId(){
 }
 const WALLET_ID=getWalletId();
 
+// §84 — Demo mode check (add ?demo=1 to URL to test with mock locations)
+const DEMO_MODE = new URLSearchParams(window.location.search).get('demo') === '1';
+
 async function callMariaAPI(intent,lang,fallbackSc,inputText=""){
+  // §84 — If demo mode, use demo-carta endpoint for testing navigation
+  if (DEMO_MODE) {
+    try {
+      const r = await fetch(MARIA_API.replace('/plan', '/demo-carta'));
+      if (r.ok) return { source: "demo", data: await r.json() };
+    } catch(e) { console.log("[MARIA] Demo mode fallback failed"); }
+  }
   const{lat,lng}=await getGPS();
   try{
     const ctrl=new AbortController();
