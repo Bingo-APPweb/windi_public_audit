@@ -31,8 +31,8 @@ from typing import Optional
 # ── Logging (no PII — I1) ─────────────────────────────────────────────────────
 log = logging.getLogger("w-maria-001-booking")
 
-# ── MARIA Voice (Triple LLM) ──────────────────────────────────────────────────
-from maria_voice import select_provider, get_system_prompt, MARIA_PROMPTS
+# ── MARIA Voice (Triple LLM + §72 Pulse Reading) ─────────────────────────────
+from maria_voice import select_provider, get_system_prompt, read_pulse, MARIA_PROMPTS
 
 # ── MARIA Memory (DID Profiles) ───────────────────────────────────────────────
 try:
@@ -542,8 +542,16 @@ async def call_gateway_llm(intent: dict, ctx: dict, lang: str) -> dict:
       - provider: gemini | anthropic | openai
       - sovereign_mode: False (LLM answered)
     """
-    provider = select_provider(intent, ctx)
-    system_prompt = get_system_prompt(provider, lang)
+    # §72 — Pulse Reading Layer (HER architecture)
+    raw_input = intent.get("raw_input", "")
+    current_hour = datetime.now().hour
+    session_history = ctx.get("history", [])
+
+    pulse = read_pulse(raw_input, current_hour, session_history)
+    log.debug(f"[MARIA §72] Pulse: {pulse}")
+
+    provider = select_provider(intent, ctx, pulse=pulse)
+    system_prompt = get_system_prompt(provider, lang, pulse=pulse)
 
     # Build user message with context — trilingual (I12)
     city = ctx.get("city", "local area")
