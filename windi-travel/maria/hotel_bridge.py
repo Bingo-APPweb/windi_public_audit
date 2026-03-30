@@ -437,10 +437,12 @@ def extract_hotel_details(text: str, default_nights: int = 2) -> Dict[str, Any]:
     if adults_match:
         adults = int(adults_match.group(1))
 
+    # §70 I-TRAVEL-2: Destino extraído do texto ou None — NUNCA assumido
     return {
-        "destination": destination or "Lisbon",
+        "destination": destination,  # None se não detectado → MARIA pergunta
         "check_in": check_in,
         "check_out": check_out,
         "nights": nights,
         "adults": adults,
+        "destination_missing": destination is None,  # flag para MARIA perguntar
     }

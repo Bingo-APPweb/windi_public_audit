@@ -463,8 +463,10 @@ def extract_flight_details(text: str, default_from: str = "MUC") -> Dict[str, st
         future = datetime.now() + timedelta(days=7)
         date = future.strftime("%d/%m/%Y")
 
+    # §70 I-TRAVEL-2: Destino extraído do texto ou None — NUNCA assumido
     return {
         "fly_from": origin or default_from,
-        "fly_to": destination or "LIS",
-        "date": date
+        "fly_to": destination,  # None se não detectado → MARIA pergunta
+        "date": date,
+        "destination_missing": destination is None,  # flag para MARIA perguntar
     }

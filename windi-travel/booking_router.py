@@ -182,6 +182,22 @@ def detect_place_type_from_query(text: str) -> str | None:
     return None
 
 
+# ── §70 I-TRAVEL-2: MARIA pergunta destino se não detectado ───────────────────
+# Idioma ≠ Localização. Nunca inferir destino pelo idioma.
+MARIA_ASK_DESTINATION = {
+    "flight": {
+        "PT": "Para onde queres voar? 🌍 Diz-me a cidade de destino.",
+        "DE": "Wohin möchtest du fliegen? 🌍 Nenne mir die Zielstadt.",
+        "EN": "Where would you like to fly? 🌍 Tell me the destination city.",
+    },
+    "hotel": {
+        "PT": "Em que cidade procuras alojamento? 🏨",
+        "DE": "In welcher Stadt suchst du eine Unterkunft? 🏨",
+        "EN": "In which city are you looking for accommodation? 🏨",
+    },
+}
+
+
 # ── Config ────────────────────────────────────────────────────────────────────
 GOOGLE_PLACES_KEY = os.getenv("GOOGLE_PLACES_KEY", "")
 LEDGER_URL        = os.getenv("LEDGER_URL", "http://localhost:8101/api/receipts")
@@ -636,6 +652,33 @@ async def maria_plan(req: PlanRequest):
         log.info(f"[{request_id[:8]}] Flight intent detected → routing to Kiwi Bridge")
         flight_details = extract_flight_details(req.query, default_from="MUC")
 
+        # §70 I-TRAVEL-2: Se destino não detectado, MARIA pergunta (não assume)
+        if flight_details.get("destination_missing") or not flight_details.get("fly_to"):
+            log.info(f"[{request_id[:8]}] Destination missing → MARIA asks user")
+            ask_msg = MARIA_ASK_DESTINATION["flight"].get(lang, MARIA_ASK_DESTINATION["flight"]["EN"])
+            return PlanResponse(
+                request_id=request_id,
+                decision=PlaceResult(
+                    name="Destino necessário",
+                    type="flight_question",
+                    distance_text="",
+                    queue_status="",
+                    reason=ask_msg,
+                ),
+                context={"weather": ctx.get("weather", ""), "needs_destination": True},
+                maria_voice=MariaVoice(
+                    PT=ask_msg if lang == "PT" else "",
+                    DE=ask_msg if lang == "DE" else "",
+                    EN=ask_msg if lang == "EN" else "",
+                ),
+                intent_parsed={"type": "flight", "needs_destination": True},
+                ledger_receipt_id=None,
+                cost_eur=0.0,
+                sovereign_mode=False,
+                memory_active=memory_active,
+                timestamp=datetime.now(timezone.utc).isoformat(),
+            )
+
         flights_data = await search_flights(
             fly_from=flight_details["fly_from"],
             fly_to=flight_details["fly_to"],
@@ -644,7 +687,7 @@ async def maria_plan(req: PlanRequest):
             max_results=3,
         )
 
-        maria_text = format_maria_response(flights_data, lang)
+        maria_text = format_flight_response(flights_data, lang)
         sovereign_mode = flights_data.get("source") == "demo"
 
         # Seal to Ledger
@@ -698,6 +741,33 @@ async def maria_plan(req: PlanRequest):
     if HOTEL_BRIDGE_ENABLED and req.query and detect_hotel_intent(req.query):
         log.info(f"[{request_id[:8]}] Hotel intent detected → routing to Hotel Bridge")
         hotel_details = extract_hotel_details(req.query)
+
+        # §70 I-TRAVEL-2: Se destino não detectado, MARIA pergunta (não assume)
+        if hotel_details.get("destination_missing") or not hotel_details.get("destination"):
+            log.info(f"[{request_id[:8]}] Hotel destination missing → MARIA asks user")
+            ask_msg = MARIA_ASK_DESTINATION["hotel"].get(lang, MARIA_ASK_DESTINATION["hotel"]["EN"])
+            return PlanResponse(
+                request_id=request_id,
+                decision=PlaceResult(
+                    name="Cidade necessária",
+                    type="hotel_question",
+                    distance_text="",
+                    queue_status="",
+                    reason=ask_msg,
+                ),
+                context={"weather": ctx.get("weather", ""), "needs_destination": True},
+                maria_voice=MariaVoice(
+                    PT=ask_msg if lang == "PT" else "",
+                    DE=ask_msg if lang == "DE" else "",
+                    EN=ask_msg if lang == "EN" else "",
+                ),
+                intent_parsed={"type": "hotel", "needs_destination": True},
+                ledger_receipt_id=None,
+                cost_eur=0.0,
+                sovereign_mode=False,
+                memory_active=memory_active,
+                timestamp=datetime.now(timezone.utc).isoformat(),
+            )
 
         hotels_data = await search_hotels(
             destination=hotel_details["destination"],
@@ -1050,7 +1120,7 @@ async def maria_flight_search(req: FlightSearchRequest):
     )
 
     # 2. Format MARIA voice response
-    maria_text = format_maria_response(flights_data, lang)
+    maria_text = format_flight_response(flights_data, lang)
 
     # 3. Determine if sovereign mode (demo data = no API key)
     sovereign_mode = flights_data.get("source") == "demo"
