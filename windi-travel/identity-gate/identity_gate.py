@@ -466,7 +466,7 @@ async def health():
     return {
         "service": f"WINDI-TRAVEL Identity Gate {VERSION}",
         "status": "healthy",
-        "port": 8122,
+        "port": 8126,
         "companies": companies,
         "admins": admins,
         "invariants": ["I9", "I11", "I13", "G3"],
