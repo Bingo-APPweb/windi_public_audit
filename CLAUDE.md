@@ -626,17 +626,17 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 
 **Products:** Triangle of Power · WINDI FIELD · WINDI TRAVEL · FVE Protocol · RFC-001 DNA
 
-> **Detalhes:** ver `§37-67. Sistemas Recentes` abaixo
+> **Detalhes:** ver `§37-68. Sistemas Recentes` abaixo
 
 ### Histórico Recente (últimos 5)
 
 | Data | Milestone |
 |------|-----------|
-| 30 Mar | §67 **Kiwi Flight Bridge** · IP1 Separação Financeira · IATA Normalization |
+| 30 Mar | §68 **Hotellook Hotel Bridge** · Token 513311 · /hotel-search · Voz Natural |
+| 30 Mar | §67 Kiwi Flight Bridge · IP1 Separação Financeira · IATA Normalization |
 | 30 Mar | §66 Places Sovereignty Gate · Cache-first · Weber Manufaktur ★4.7 soberano |
 | 30 Mar | §65 MARIA Saudação · §62-64 Triple LLM · DID Universal |
 | 29 Mar | §60 P3-A Identity Gate · Tesoura v10 · Three Claudes Protocol |
-| 27-28 Mar | §59 WINDI Travel Phase 2 · W-GATEWAY-001 · W-MARIA-001 |
 
 > **Histórico completo:** `CLAUDE-HISTORY.md` + `CHANGELOG.md`
 
@@ -843,7 +843,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 
 ---
 
-## §37-67. Sistemas Recentes — Resumo
+## §37-68. Sistemas Recentes — Resumo
 
 > **Detalhes completos:** `CLAUDE-HISTORY.md` § MIGRAÇÃO 24 Mar 2026
 
@@ -880,6 +880,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 | 65 | **MARIA Saudação** | gerar_saudacao() · Trilingual · Visit count progression | ✅ **LIVE** |
 | 66 | **Places Sovereignty Gate** | Cache-first · TTL per type · Audit trail · Soberania cumulativa | ✅ **LIVE** |
 | 67 | **Kiwi Flight Bridge** | kiwi_bridge.py · IATA · Travelpayouts 513311 · Voz Natural trilíngue | ✅ **LIVE** |
+| 68 | **Hotellook Hotel Bridge** | hotel_bridge.py · /hotel-search · Token 513311 · Voz Natural | ✅ **LIVE** |
 
 ### Referência Rápida
 
@@ -893,6 +894,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 **Tesoura:** `/travel/tesoura-ui/` · React 18 CDN · Ledger seal
 **MARIA:** `/maria/plan` · Triple LLM · Voz Natural PT/DE/EN · DID Memory
 **Flights:** `/maria/flight-search` · Kiwi Bridge · Voz humana · Travelpayouts 513311
+**Hotels:** `/maria/hotel-search` · Hotellook Bridge · Voz natural · Token 513311
 **Affiliate:** Travelpayouts ID 513311 · ~3% comissão · Cookie 30 dias · IP1 intacto
 **Test Suite:** `/opt/windi/tests/agent_constitutional_test.py` · CI/CD ready
 **Dashboards:** `/legal-dashboard/` · `/notary-dashboard/` · `/audit-dashboard/`
@@ -916,6 +918,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 **Axioma §65:** "MARIA remembers, but never intrudes. A saudação muda com a confiança — viajante → de volta → connosco."
 **Axioma §66:** "O mundo real entra uma vez, a soberania local serve para sempre."
 **Axioma §67:** "MARIA fala como companheira, não como motor de busca. 'Boa notícia!' em vez de 'Encontrei 2 resultados.'"
+**Axioma §68:** "Um token, dois mundos — voos e hotéis servidos pelo mesmo parceiro, sem fricção para o viajante."
 
 ---
 
