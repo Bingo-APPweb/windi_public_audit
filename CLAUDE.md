@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.51
-**Sealed:** 2026-03-30 · §64 DID Universal WINDI
+**Version:** 1.9.52
+**Sealed:** 2026-03-30 · §65 MARIA Saudação Personalizada
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -632,8 +632,8 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 
 | Data | Milestone |
 |------|-----------|
-| 30 Mar | §62 **MARIA Triple LLM** · Gemini+Claude+OpenAI · Voz natural activa |
-| 30 Mar | §61 Travel Checkup · Port fix 8122→8126 · LAW isolation verified |
+| 30 Mar | §65 **MARIA Saudação** · gerar_saudacao() · Trilingual visit progression |
+| 30 Mar | §62-64 Triple LLM · Vozes fix · DID Universal |
 | 29 Mar | §60 P3-A Identity Gate · Tesoura v10 · Three Claudes Protocol |
 | 27-28 Mar | §59 WINDI Travel Phase 2 · W-GATEWAY-001 · W-MARIA-001 |
 | 26 Mar | §58 READY FOR HUMAN TEST · §57 Workspace v3 CERTIFIED |
@@ -877,6 +877,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 | 62 | **MARIA Triple LLM** | Gemini+Claude+OpenAI · maria_voice.py · Voz natural | ✅ **LIVE** |
 | 63 | **MARIA Vozes + Memory** | Trilíngue fix · nomada_profile.py · maria_memory.db | ✅ **LIVE** |
 | 64 | **DID Universal WINDI** | did:windi:{produto}:{uuid} · Ecossistema unificado | ✅ **LIVE** |
+| 65 | **MARIA Saudação** | gerar_saudacao() · Trilingual · Visit count progression | ✅ **LIVE** |
 
 ### Referência Rápida
 
@@ -908,6 +909,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 **Axioma §62:** "MARIA não é um assistente — é uma companheira. A diferença está no tom, não na função."
 **Axioma §63:** "MARIA lembra-se, mas nunca intromete. A memória serve a personalização, não a vigilância."
 **Axioma §64:** "No WINDI não há estranhos. Quem tem um DID WINDI é cidadão de todo o ecossistema."
+**Axioma §65:** "MARIA remembers, but never intrudes. A saudação muda com a confiança — viajante → de volta → connosco."
 
 ---
 
@@ -943,10 +945,11 @@ Sistema de autenticação por identidade soberana no GEN7.
 - [ ] **windilaw.de** — Sincronizar com windi-domain.com/law/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
-### Completado (ver §37-62)
+### Completado (ver §37-65)
 - [x] SMTP · P3-A Identity Gate · Tesoura v10 ✅ 29 Mar 2026
 - [x] Travel Checkup · Port fix · LAW isolation ✅ 30 Mar 2026
 - [x] MARIA Triple LLM · Gemini+Claude+OpenAI · Voz activa ✅ 30 Mar 2026
+- [x] §65 MARIA Saudação Personalizada · gerar_saudacao() ✅ 30 Mar 2026
 
 ---
 
