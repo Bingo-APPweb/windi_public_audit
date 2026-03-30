@@ -322,6 +322,7 @@ function SuperCarta({ locations, userLat, userLng, lang, decisionName }) {
   const [addressInput, setAddressInput] = useState("");
   const [geocoding, setGeocoding] = useState(false);
   const [geocodeError, setGeocodeError] = useState(null);
+  const [pendingDest, setPendingDest] = useState(null); // { lat, lng, name } - waiting for user location
 
   // Effective user location (GPS or manual)
   const effectiveLat = userLat || manualLoc.lat;
@@ -552,7 +553,7 @@ function SuperCarta({ locations, userLat, userLng, lang, decisionName }) {
       startNavigation(lat, lng, name, 'driving');
     };
 
-    // Try navigation (checks location, shows prompt if needed)
+    // Try navigation (checks location, highlights input if needed)
     window.__superCartaTryNav = (destLat, destLng, destName, lang) => {
       const originLat = userLat || manualLoc.lat;
       const originLng = userLng || manualLoc.lng;
@@ -561,18 +562,17 @@ function SuperCarta({ locations, userLat, userLng, lang, decisionName }) {
       if (originLat && originLng) {
         startNavigation(destLat, destLng, destName, 'driving');
       } else {
-        // Show address input prompt
-        const msg = lang === "PT" ? "Insere a tua morada para calcular a rota:"
-          : lang === "DE" ? "Gib deine Adresse ein, um die Route zu berechnen:"
-          : "Enter your address to calculate the route:";
-        const addr = prompt(msg);
-        if (addr && addr.trim()) {
-          // Store destination for after geocoding
-          window.__superCartaPendingDest = { lat: destLat, lng: destLng, name: destName };
-          // Trigger geocoding via React state update workaround
-          const event = new CustomEvent('supercarta-geocode', { detail: { address: addr } });
-          window.dispatchEvent(event);
-        }
+        // Store pending destination and highlight input
+        setPendingDest({ lat: destLat, lng: destLng, name: destName });
+        // Flash the address input to draw attention
+        setTimeout(() => {
+          const inputEl = document.getElementById('supercarta-address-input');
+          if (inputEl) {
+            inputEl.focus();
+            inputEl.style.boxShadow = '0 0 0 3px #C9A84C';
+            setTimeout(() => { inputEl.style.boxShadow = 'none'; }, 2000);
+          }
+        }, 100);
       }
     };
 
@@ -593,13 +593,12 @@ function SuperCarta({ locations, userLat, userLng, lang, decisionName }) {
 
   // §84 — Auto-navigate after geocoding completes
   useEffect(() => {
-    if (manualLoc.lat && manualLoc.lng && window.__superCartaPendingDest) {
-      const { lat, lng, name } = window.__superCartaPendingDest;
-      console.log("[SuperCarta] Geocoding complete, starting navigation to:", name);
-      startNavigation(lat, lng, name, 'driving');
-      delete window.__superCartaPendingDest;
+    if (manualLoc.lat && manualLoc.lng && pendingDest) {
+      console.log("[SuperCarta] Geocoding complete, starting navigation to:", pendingDest.name);
+      startNavigation(pendingDest.lat, pendingDest.lng, pendingDest.name, 'driving');
+      setPendingDest(null);
     }
-  }, [manualLoc.lat, manualLoc.lng, startNavigation]);
+  }, [manualLoc.lat, manualLoc.lng, pendingDest, startNavigation]);
 
   if (!locations || locations.length === 0) return null;
 
@@ -632,20 +631,27 @@ function SuperCarta({ locations, userLat, userLng, lang, decisionName }) {
         <span style={{ color: P.verde }}>· {locations.length} {lang === "PT" ? "local" : lang === "DE" ? "Ort" : "place"}{locations.length > 1 ? (lang === "PT" ? "is" : lang === "DE" ? "e" : "s") : ""}</span>
       </div>
 
-      {/* §84 — Location Status Bar */}
-      {!hasLocation && !routeInfo && (
+      {/* §84 — Location Status Bar (always visible when no GPS) */}
+      {!hasLocation && (
         <div style={{
-          background: "rgba(139,94,60,0.1)",
+          background: pendingDest ? "rgba(201,168,76,0.15)" : "rgba(139,94,60,0.1)",
           borderRadius: 10,
           padding: "10px 14px",
           marginBottom: 8,
-          fontFamily: "'Bricolage Grotesque', sans-serif"
+          fontFamily: "'Bricolage Grotesque', sans-serif",
+          border: pendingDest ? "1px solid #C9A84C" : "none"
         }}>
           <div style={{ fontSize: 11, color: P.terra, marginBottom: 6, fontWeight: 600 }}>
             📍 {lang === "PT" ? "Onde estás?" : lang === "DE" ? "Wo bist du?" : "Where are you?"}
+            {pendingDest && (
+              <span style={{ marginLeft: 8, color: "#8B6914", fontWeight: 400 }}>
+                → {pendingDest.name}
+              </span>
+            )}
           </div>
           <div style={{ display: "flex", gap: 8 }}>
             <input
+              id="supercarta-address-input"
               type="text"
               value={addressInput}
               onChange={(e) => setAddressInput(e.target.value)}
