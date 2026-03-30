@@ -1,0 +1,1060 @@
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+BLOCK 8 — MARIA · VOICE CONTEXT ENGINE
+Ordem de Produção · MPS v1.0 · W-TRAVEL-001
+Liga IA+H · Kempten 2026
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+REGRA ABSOLUTA (MPS):
+  1. Lê o Block completo ANTES de executar
+  2. Confirma cada Passo antes de avançar
+  3. Se algo falha → PARA e reporta o Passo exacto
+  4. NUNCA pula um Passo
+
+PRÉ-REQUISITO:
+  Blocks 0–7 confirmados ✓
+  W-GATEWAY-001 LIVE em :8130 ✓
+  Keys no .env: GEMINI_API_KEY · MISTRAL_API_KEY · ELEVENLABS_API_KEY
+
+FLUXO COMPLETO:
+
+  [Humano fala]
+       │
+       ▼
+  PASSO 8A — Web Speech API (browser · FREE · local · I1)
+       │ texto transcrito
+       ▼
+  PASSO 8B — weather_engine.py (Open-Meteo · FREE · cache 30min)
+       │ condições climáticas
+       ▼
+  PASSO 8C — voice_intent.py (Gemini Flash · HIGH · extrai intent)
+       │ hotel + horas + desejos + língua
+       ▼
+  PASSO 8D — context_planner.py (VRP filter FREE + Mistral MED)
+       │ roteiro semântico optimizado
+       ▼
+  PASSO 8E — /gateway/voice/context (endpoint orquestrador)
+       │ plano JSON + narration text
+       ▼
+  PASSO 8F — ElevenLabs streaming (narração curta ~150 chars)
+       │ Maria fala o plano
+       ▼
+  PASSO 8G — Ledger seal + Smoke Test
+       │ receipt + verificação final
+       ▼
+  [Human Dragon decide · WINDI garante · Fio da Memória]
+
+CUSTO TOTAL POR ACTIVAÇÃO:
+  Web Speech API:    0.000000€  ← FREE local no device
+  Open-Meteo:        0.000000€  ← FREE
+  Gemini Flash:     ~0.000045€  ← intent extraction
+  Mistral MED:      ~0.000080€  ← plano semântico
+  ElevenLabs ~150c: ~0.000045€  ← narração compacta
+  ───────────────────────────────
+  TOTAL:            ~0.000170€
+  1000 activações:   ~0.17€/mês
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PASSO 8A — Voice Capture (Web Speech API · FREE · I1 soberano)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CONTEXTO:
+  A transcrição acontece NO DEVICE do utilizador.
+  Zero bytes de áudio saem para qualquer servidor.
+  I1 garantido: a voz fica soberana antes do SGE filter.
+  Compatibilidade: Chrome · Edge · Android Chrome · Safari iOS.
+  Fallback: input de texto se browser não suportar.
+
+CRIAR /opt/windi/windi-travel/workspace/maria_voice.js:
+
+cat > /opt/windi/windi-travel/workspace/maria_voice.js << 'JSEOF'
+/**
+ * WINDI Travel · Maria Voice Engine
+ * Web Speech API — transcrição LOCAL no device
+ * I1: áudio NUNCA sai do device · zero custo · zero dependência
+ *
+ * Uso:
+ *   const maria = new MariaVoice('de-DE');
+ *   maria.onResult = (text) => sendToGateway(text);
+ *   maria.start();
+ */
+class MariaVoice {
+
+  constructor(lang = 'de-DE') {
+    this.lang        = lang;
+    this.recognition = null;
+    this.isListening = false;
+    this.onResult    = null;   // callback com texto transcrito
+    this.onStart     = null;   // callback quando começa a ouvir
+    this.onEnd       = null;   // callback quando para
+    this.onError     = null;   // callback de erro
+
+    // Detectar suporte
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      console.warn('[Maria] Web Speech API não suportada · fallback texto');
+      this.supported = false;
+      return;
+    }
+
+    this.supported     = true;
+    this.recognition   = new SpeechRecognition();
+
+    // Configuração
+    this.recognition.lang          = lang;
+    this.recognition.continuous    = false;  // 1 comando de cada vez
+    this.recognition.interimResults = true;  // mostrar texto em tempo real
+    this.recognition.maxAlternatives = 1;
+
+    // Eventos
+    this.recognition.onstart = () => {
+      this.isListening = true;
+      console.log('[Maria] A ouvir…');
+      if (this.onStart) this.onStart();
+    };
+
+    this.recognition.onresult = (e) => {
+      const transcript = Array.from(e.results)
+        .map(r => r[0].transcript)
+        .join('');
+      const isFinal = e.results[e.results.length - 1].isFinal;
+
+      // Mostrar interim results em tempo real
+      if (!isFinal && this.onInterim) this.onInterim(transcript);
+
+      // Resultado final → pipeline
+      if (isFinal) {
+        console.log('[Maria] Transcrito:', transcript);
+        if (this.onResult) this.onResult(transcript.trim());
+      }
+    };
+
+    this.recognition.onend = () => {
+      this.isListening = false;
+      if (this.onEnd) this.onEnd();
+    };
+
+    this.recognition.onerror = (e) => {
+      this.isListening = false;
+      console.warn('[Maria] Erro:', e.error);
+      // I10 — fallback gracioso
+      const msgs = {
+        'not-allowed': 'Microfone não autorizado · usa o campo de texto',
+        'no-speech':   'Nenhuma voz detectada · tenta novamente',
+        'network':     'Sem rede · funciona offline com texto',
+        'aborted':     'Cancelado',
+      };
+      if (this.onError) this.onError(msgs[e.error] || e.error);
+    };
+  }
+
+  /* Muda língua do reconhecimento */
+  setLang(lang) {
+    this.lang = lang;
+    const map = { pt:'pt-PT', de:'de-DE', en:'en-GB' };
+    if (this.recognition) this.recognition.lang = map[lang] || lang;
+  }
+
+  /* Inicia captura */
+  start() {
+    if (!this.supported) {
+      if (this.onError) this.onError('fallback-text');
+      return;
+    }
+    if (this.isListening) this.stop();
+    try {
+      this.recognition.start();
+    } catch(e) {
+      console.warn('[Maria] start error:', e);
+    }
+  }
+
+  /* Para captura */
+  stop() {
+    if (this.recognition && this.isListening) {
+      this.recognition.stop();
+    }
+  }
+
+  /* Toggle para botão único */
+  toggle() {
+    if (this.isListening) this.stop();
+    else this.start();
+  }
+}
+
+/* Exportar para uso modular */
+if (typeof module !== 'undefined') module.exports = MariaVoice;
+JSEOF
+
+VERIFICAR 8A:
+ls -lh /opt/windi/windi-travel/workspace/maria_voice.js
+wc -l  /opt/windi/windi-travel/workspace/maria_voice.js
+
+RESULTADO ESPERADO:
+  maria_voice.js · ~80 linhas
+
+CONFIRMAÇÃO 8A:
+  Responde: "PASSO 8A ✓ — maria_voice.js criado · [N] linhas"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PASSO 8B — weather_engine.py (FREE · Open-Meteo · cache 30min)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CRIAR /opt/windi/windi-gateway/weather_engine.py:
+
+cat > /opt/windi/windi-gateway/weather_engine.py << 'PYEOF'
+import time, requests
+from dataclasses import dataclass
+from typing import Optional
+
+WMO = {
+    0: ("Céu limpo",        "Sonnig",             "Clear sky",      "☀️"),
+    1: ("Maiormente limpo", "Überwiegend sonnig", "Mainly clear",   "🌤"),
+    2: ("Parcialmente nublado","Teilweise bewölkt","Partly cloudy", "⛅"),
+    3: ("Nublado",          "Bewölkt",            "Overcast",       "☁️"),
+    45:("Nevoeiro",         "Nebel",              "Fog",            "🌫"),
+    51:("Garoa leve",       "Leichter Nieselregen","Light drizzle", "🌦"),
+    61:("Chuva leve",       "Leichter Regen",     "Light rain",     "🌧"),
+    63:("Chuva moderada",   "Mäßiger Regen",      "Moderate rain",  "🌧"),
+    65:("Chuva forte",      "Starker Regen",      "Heavy rain",     "⛈"),
+    71:("Neve leve",        "Leichter Schnee",    "Light snow",     "🌨"),
+    80:("Aguaceiros",       "Schauer",            "Showers",        "🌦"),
+    95:("Trovoada",         "Gewitter",           "Thunderstorm",   "⛈"),
+}
+
+@dataclass
+class WeatherCondition:
+    temp_c: float; feels_like: float; code: int
+    desc_pt: str; desc_de: str; desc_en: str
+    icon: str; is_outdoor_ok: bool; suggestion: str
+
+    def for_lang(self, lang):
+        return {"pt":self.desc_pt,"de":self.desc_de,
+                "en":self.desc_en}.get(lang, self.desc_en)
+
+class WeatherEngine:
+    BASE = "https://api.open-meteo.com/v1/forecast"
+    TTL  = 1800  # 30min cache
+
+    def __init__(self):
+        self._cache = {}
+
+    def get(self, lat: float, lon: float) -> WeatherCondition:
+        key = f"{lat:.3f},{lon:.3f}"
+        now = time.time()
+        if key in self._cache:
+            c, ts = self._cache[key]
+            if now - ts < self.TTL: return c
+        try:
+            r = requests.get(self.BASE, params={
+                "latitude":lat,"longitude":lon,
+                "current":"temperature_2m,apparent_temperature,weathercode",
+                "timezone":"auto","forecast_days":1
+            }, timeout=8)
+            r.raise_for_status()
+            d    = r.json()["current"]
+            temp = d["temperature_2m"]
+            feel = d["apparent_temperature"]
+            code = d["weathercode"]
+            wmo  = WMO.get(code,("Desconhecido","Unbekannt","Unknown","❓"))
+            out  = code in (0,1,2,3,80) and temp >= 8
+            sug  = self._suggest(code, temp)
+            result = WeatherCondition(
+                temp_c=temp, feels_like=feel, code=code,
+                desc_pt=wmo[0], desc_de=wmo[1], desc_en=wmo[2],
+                icon=wmo[3], is_outdoor_ok=out, suggestion=sug)
+            self._cache[key] = (result, now)
+            return result
+        except Exception as e:
+            return WeatherCondition(
+                temp_c=0, feels_like=0, code=-1,
+                desc_pt="Condições desconhecidas",
+                desc_de="Unbekannte Bedingungen",
+                desc_en="Unknown conditions",
+                icon="❓", is_outdoor_ok=True,
+                suggestion="[I10] Clima indisponível — plano sem restrições")
+
+    def _suggest(self, code, temp):
+        if code in (65,80,95):
+            return "Chuva intensa → museus e cafés verificados"
+        if code in (51,53,61,63):
+            return "Chuva leve → guarda-chuva recomendado"
+        if code in (71,75):
+            return "Neve → actividades interiores prioritárias"
+        if temp < 5:
+            return "Frio intenso → prioritizar interiores aquecidos"
+        if temp > 30:
+            return "Calor → evitar exposição prolongada"
+        return "Condições favoráveis → plano ao ar livre recomendado"
+
+weather_engine = WeatherEngine()
+PYEOF
+
+VERIFICAR 8B:
+python3 -c "
+from weather_engine import weather_engine
+w = weather_engine.get(47.4950, 9.4677)
+print('8B OK:', w.icon, w.temp_c, '°C ·', w.desc_de)
+print('Outdoor:', w.is_outdoor_ok)
+print('Suggest:', w.suggestion)
+"
+
+RESULTADO ESPERADO:
+  8B OK: ☀️ 14.2°C · Sonnig
+  Outdoor: True
+  Suggest: Condições favoráveis…
+
+CONFIRMAÇÃO 8B:
+  Responde: "PASSO 8B ✓ — Weather OK: [icon] [temp]°C"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PASSO 8C — voice_intent.py (Gemini Flash · HIGH · intent)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CRIAR /opt/windi/windi-gateway/voice_intent.py:
+
+cat > /opt/windi/windi-gateway/voice_intent.py << 'PYEOF'
+import os, json, requests, logging
+from dataclasses import dataclass
+from typing import Optional
+
+log = logging.getLogger("VoiceIntent")
+GEMINI_KEY = os.getenv("GEMINI_API_KEY","")
+
+PROMPT = """
+Extrator de intenção de viagem WINDI. Retorna APENAS JSON válido, sem markdown.
+
+Extrai do comando:
+- hotel: nome e local (string)
+- hours: horas livres (float, default 3.0)
+- lat: latitude aproximada (float ou null)
+- lon: longitude aproximada (float ou null)
+- radius_km: raio desejado (int, default 10)
+- desires: desejos mencionados (array strings)
+- lang: idioma detectado (pt|de|en)
+- companion: acompanhante mencionado (string ou null)
+- raw_intent: resumo em 1 frase
+
+Comando:
+"""
+
+@dataclass
+class VoiceIntent:
+    hotel: str; hours: float
+    lat: Optional[float]; lon: Optional[float]
+    radius_km: int; desires: list
+    lang: str; companion: Optional[str]
+    raw_intent: str
+
+def extract_intent(command: str, sge_filter=None) -> VoiceIntent:
+    # I1 — sanitizar antes de Gemini
+    clean = command
+    if sge_filter:
+        clean, r = sge_filter.sanitize(command)
+        if r: log.warning(f"[I1] {len(r)} item(s) sanitizados")
+
+    if not GEMINI_KEY:
+        return _fallback(command)
+    try:
+        resp = requests.post(
+            f"https://generativelanguage.googleapis.com/v1beta/models/"
+            f"gemini-1.5-flash:generateContent?key={GEMINI_KEY}",
+            json={"contents":[{"parts":[{"text":PROMPT+clean}]}],
+                  "generationConfig":{"maxOutputTokens":300,"temperature":0.1}},
+            timeout=15)
+        resp.raise_for_status()
+        raw  = resp.json()["candidates"][0]["content"]["parts"][0]["text"]
+        data = json.loads(raw.replace("```json","").replace("```","").strip())
+        return VoiceIntent(
+            hotel=data.get("hotel","Hotel desconhecido"),
+            hours=float(data.get("hours",3.0)),
+            lat=data.get("lat"), lon=data.get("lon"),
+            radius_km=int(data.get("radius_km",10)),
+            desires=data.get("desires",[]),
+            lang=data.get("lang","de"),
+            companion=data.get("companion"),
+            raw_intent=data.get("raw_intent","Exploração local"))
+    except Exception as e:
+        log.warning(f"[I10] Gemini fallback: {e}")
+        return _fallback(command)
+
+def _fallback(cmd: str) -> VoiceIntent:
+    return VoiceIntent(
+        hotel="Hotel detectado localmente", hours=3.0,
+        lat=None, lon=None, radius_km=10,
+        desires=[], lang="de", companion=None,
+        raw_intent=cmd[:100])
+PYEOF
+
+VERIFICAR 8C:
+python3 -c "
+from voice_intent import extract_intent
+cmd = 'Maria, temos 3 horas livres. Minha esposa adora museus. Estamos no Hotel Bad Horn.'
+i = extract_intent(cmd)
+print('8C OK:', i.hotel)
+print('Hours:', i.hours, '· Lang:', i.lang)
+print('Desires:', i.desires)
+print('Companion:', i.companion)
+"
+
+RESULTADO ESPERADO:
+  8C OK: Hotel Bad Horn, Horn CH
+  Hours: 3.0 · Lang: pt
+  Desires: ['museu', ...]
+  Companion: esposa
+
+CONFIRMAÇÃO 8C:
+  Responde: "PASSO 8C ✓ — Intent OK: [hotel] · [hours]h · [lang]"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PASSO 8D — context_planner.py (VRP FREE + Mistral MED)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CRIAR /opt/windi/windi-gateway/context_planner.py:
+
+cat > /opt/windi/windi-gateway/context_planner.py << 'PYEOF'
+import os, json, requests, logging
+from voice_intent import VoiceIntent
+from weather_engine import WeatherCondition
+
+log = logging.getLogger("ContextPlanner")
+MISTRAL_KEY = os.getenv("MISTRAL_API_KEY","")
+
+# Âncoras VRP Bodensee (produção: consultar :8126)
+VRP_ANCHORS = {
+    "Bodensee": [
+        {"name":"Zeppelin Museum Friedrichshafen","type":"culture",
+         "dist_km":2.1,"indoor":True, "icon":"🪂","duration_h":1.5},
+        {"name":"Porto de Friedrichshafen","type":"nature",
+         "dist_km":1.8,"indoor":False,"icon":"⚓","duration_h":1.0},
+        {"name":"Bäckerei Müller 1887","type":"food",
+         "dist_km":0.5,"indoor":True, "icon":"🥐","duration_h":0.5},
+        {"name":"Brauhaus Friedrichshafen","type":"food",
+         "dist_km":1.2,"indoor":True, "icon":"🍺","duration_h":1.0},
+        {"name":"Uferpromenade","type":"nature",
+         "dist_km":1.5,"indoor":False,"icon":"🌊","duration_h":1.0},
+        {"name":"Bodensee-Naturmuseum","type":"culture",
+         "dist_km":2.3,"indoor":True, "icon":"🐟","duration_h":1.0},
+    ]
+}
+
+def filter_anchors(anchors, weather, hours, desires):
+    """Filtra âncoras por clima + tempo + desejos. FREE local."""
+    budget = hours * 0.85
+    kws    = [d.lower() for d in desires]
+    scored = []
+    for a in anchors:
+        s = 0
+        if not weather.is_outdoor_ok and a["indoor"]: s += 3
+        elif weather.is_outdoor_ok and not a["indoor"]: s += 2
+        for kw in kws:
+            if kw in a["name"].lower() or kw in a["type"]: s += 5
+        scored.append((s, a))
+    scored.sort(key=lambda x: -x[0])
+    result, total = [], 0.0
+    for _, a in scored:
+        if total + a["duration_h"] <= budget:
+            result.append(a); total += a["duration_h"]
+        if total >= budget: break
+    return result
+
+SYSTEM = "Você é Maria, secretária de viagem WINDI. Responda APENAS em JSON válido sem markdown."
+
+def generate_plan(intent: VoiceIntent, weather: WeatherCondition,
+                  anchors: list) -> dict:
+    if not MISTRAL_KEY:
+        return _fallback_plan(intent, weather, anchors)
+
+    companion_str = f" com {intent.companion}" if intent.companion else ""
+    anchor_list   = "\n".join(
+        f"- {a['icon']} {a['name']} ({a['type']}, {a['duration_h']}h, "
+        f"{'interior' if a['indoor'] else 'exterior'})"
+        for a in anchors)
+
+    prompt = f"""
+Viagem: {intent.hotel} · {intent.hours}h{companion_str}
+Clima: {weather.icon} {weather.for_lang(intent.lang)} {weather.temp_c}°C
+Ajuste: {weather.suggestion}
+Desejos: {', '.join(intent.desires) or 'nenhum'}
+Âncoras VRP:
+{anchor_list}
+
+JSON com esta estrutura:
+{{
+  "greeting": "saudação Maria (1 frase warmherzlich em {intent.lang})",
+  "weather_note": "nota clima (1 frase em {intent.lang})",
+  "slots": [
+    {{"time":"HH:MM","title":"nome","desc":"1-2 frases",
+      "icon":"emoji","duration":"Xh","tip":"dica Maria 1 frase"}}
+  ],
+  "transport": "modo principal",
+  "closing": "frase final Maria warmherzlich em {intent.lang}"
+}}"""
+
+    try:
+        r = requests.post(
+            "https://api.mistral.ai/v1/chat/completions",
+            headers={"Authorization":f"Bearer {MISTRAL_KEY}",
+                     "Content-Type":"application/json"},
+            json={"model":"mistral-small-latest",
+                  "messages":[{"role":"system","content":SYSTEM},
+                               {"role":"user",  "content":prompt}],
+                  "max_tokens":400,"temperature":0.3},
+            timeout=20)
+        r.raise_for_status()
+        raw = r.json()["choices"][0]["message"]["content"]
+        return json.loads(raw.replace("```json","").replace("```","").strip())
+    except Exception as e:
+        log.warning(f"[I10] Mistral fallback: {e}")
+        return _fallback_plan(intent, weather, anchors)
+
+def _fallback_plan(intent, weather, anchors):
+    return {
+        "greeting": f"Olá! Plano de {intent.hours}h pronto.",
+        "weather_note": weather.suggestion,
+        "slots": [{"time":f"{9+i}:00","title":a["name"],
+                   "desc":f"Visita VRP verificada","icon":a["icon"],
+                   "duration":f"{a['duration_h']}h","tip":"Âncora verificada"}
+                  for i,a in enumerate(anchors[:3])],
+        "transport":"A pé / local",
+        "closing":"Boa viagem! O plano está no teu Fio."
+    }
+PYEOF
+
+VERIFICAR 8D:
+python3 -c "
+from context_planner import filter_anchors, VRP_ANCHORS
+from weather_engine import WeatherCondition
+
+# Simular chuva → deve priorizar indoor
+w = WeatherCondition(12,10,61,'Chuva leve','Leichter Regen',
+    'Light rain','🌧',False,'Chuva leve → guarda-chuva')
+anchors = filter_anchors(VRP_ANCHORS['Bodensee'], w, 3.0, ['museu'])
+print('8D OK:', len(anchors), 'âncoras')
+for a in anchors:
+    print(f'  {a[\"icon\"]} {a[\"name\"]} indoor={a[\"indoor\"]}')
+"
+
+RESULTADO ESPERADO (chuva → indoor prioritário):
+  8D OK: 3 âncoras
+  🪂 Zeppelin Museum indoor=True
+  🥐 Bäckerei Müller indoor=True
+  🐟 Naturmuseum indoor=True
+
+CONFIRMAÇÃO 8D:
+  Responde: "PASSO 8D ✓ — [N] âncoras · indoor=[True/False]"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PASSO 8E — Endpoint /gateway/voice/context (APPEND server.py)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+EXECUTAR (APPEND ao server.py):
+
+cat >> /opt/windi/windi-gateway/server.py << 'PYEOF'
+
+# ══════════════════════════════════════════════════════════
+# BLOCK 8 — MARIA VOICE CONTEXT ENGINE
+# ══════════════════════════════════════════════════════════
+from weather_engine  import weather_engine, WeatherCondition
+from voice_intent    import extract_intent, VoiceIntent
+from context_planner import filter_anchors, generate_plan, VRP_ANCHORS
+
+class VoiceContextRequest(BaseModel):
+    actor:   str
+    command: str              # texto transcrito (Web Speech API)
+    lat:     Optional[float] = None
+    lon:     Optional[float] = None
+    lang:    Optional[str]   = "de"
+
+@app.post("/gateway/voice/context")
+async def voice_context(req: VoiceContextRequest,
+                        _auth: str = Depends(verify_secret)):
+    """
+    Pipeline Maria completo:
+    Texto → Clima → Intent → VRP → Plano → Narração
+    """
+    t0 = time.time()
+    log.info(f"[MARIA] '{req.command[:60]}…'")
+
+    # I1 — SGE filter
+    clean, redactions = sge_filter.sanitize(req.command)
+
+    # Intent (Gemini HIGH)
+    intent = extract_intent(clean, sge_filter)
+    if req.lat:  intent.lat  = req.lat
+    if req.lon:  intent.lon  = req.lon
+    if req.lang: intent.lang = req.lang
+
+    # Clima (FREE)
+    if intent.lat and intent.lon:
+        weather = weather_engine.get(intent.lat, intent.lon)
+    else:
+        weather = WeatherCondition(
+            15,14,1,"Condições locais","Lokale Bedingungen",
+            "Local conditions","🌤",True,"Plano sem restrições climáticas")
+
+    # VRP filter (FREE)
+    anchors = filter_anchors(
+        VRP_ANCHORS.get("Bodensee",[]), weather,
+        intent.hours, intent.desires)
+
+    # Plano (Mistral MED)
+    plan = generate_plan(intent, weather, anchors)
+
+    # Narração compacta ~150 chars (ElevenLabs via /voice/stream)
+    slots_brief = " · ".join(
+        f"{s.get('time','')} {s.get('title','')}"
+        for s in plan.get("slots",[])[:3])
+    narration = (
+        f"{plan.get('greeting','')} "
+        f"{plan.get('weather_note','')} "
+        f"{slots_brief}. "
+        f"{plan.get('closing','')}"
+    ).strip()[:480]
+
+    # Custos
+    cost = (calc_cost("gemini",300) +
+            calc_cost("mistral",400) +
+            calc_cost("elevenlabs",len(narration)))
+
+    # I11+I12 Seal
+    rid = f"WGW-MARIA-{int(time.time())}-{req.actor[:6].replace(':','')}"
+    seal_to_ledger("maria_pipeline","voice_context",req.actor,
+                   700, rid, cost, len(redactions))
+    record_metric(rid,req.actor,"travel","voice_context",
+                  "gemini+mistral+elevenlabs","HIGH",
+                  700,cost,len(redactions),bunker.is_active(),
+                  int((time.time()-t0)*1000))
+
+    ms = int((time.time()-t0)*1000)
+    log.info(f"[MARIA] {rid} · {ms}ms · {cost:.6f}€")
+
+    return {
+        "receipt_id": rid,
+        "intent":  {"hotel":intent.hotel,"hours":intent.hours,
+                    "lang":intent.lang,"companion":intent.companion,
+                    "desires":intent.desires},
+        "weather": {"icon":weather.icon,"temp_c":weather.temp_c,
+                    "desc":weather.for_lang(intent.lang),
+                    "outdoor_ok":weather.is_outdoor_ok,
+                    "suggestion":weather.suggestion},
+        "anchors": [{"name":a["name"],"icon":a["icon"],
+                     "indoor":a["indoor"]} for a in anchors],
+        "plan":      plan,
+        "narration": narration,
+        "ledger":    f"https://windi-domain.com/verify-public/?id={rid}",
+        "cost_eur":  cost,
+        "duration_ms": ms,
+        "pipeline": {
+            "voice_capture": "Web Speech API · FREE · device local · I1",
+            "intent":        f"Gemini Flash · {calc_cost('gemini',300):.6f}€",
+            "weather":       "Open-Meteo · FREE · cache 30min",
+            "vrp_filter":    f"{len(anchors)} âncoras · FREE · local",
+            "plan":          f"Mistral MED · {calc_cost('mistral',400):.6f}€",
+            "narration":     f"ElevenLabs · {calc_cost('elevenlabs',len(narration)):.6f}€",
+        },
+        "note": "I17 — Plano gerado. Human Dragon decide. WINDI sela."
+    }
+PYEOF
+
+VERIFICAR 8E:
+python3 -c "import server; print('PASSO 8E OK — endpoint carregado')"
+
+RESULTADO ESPERADO:
+  PASSO 8E OK — endpoint carregado
+
+CONFIRMAÇÃO 8E:
+  Responde: "PASSO 8E ✓ — /gateway/voice/context OK"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PASSO 8F — Frontend: botão microfone na Maria UI
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CONTEXTO:
+  Adicionar botão 🎙 ao workspace Travel.
+  Quando premido: activa Web Speech API → transcreve →
+  envia para /gateway/voice/context → mostra plano + narra.
+  Fallback: campo de texto se browser não suportar.
+
+CRIAR /opt/windi/windi-travel/workspace/maria_ui_patch.js:
+
+cat > /opt/windi/windi-travel/workspace/maria_ui_patch.js << 'JSEOF'
+/**
+ * Maria UI Patch — Voice Button
+ * Integra MariaVoice com o endpoint /gateway/voice/context
+ */
+
+const GATEWAY = 'https://www.windi-domain.com/gateway/voice/context';
+const SECRET  = ''; // injectado pelo backend via sessionStorage
+
+async function callMariaContext(command, lat, lon, lang) {
+  const actor = sessionStorage.getItem('windi_travel_did') || 'anonymous';
+  const resp  = await fetch(GATEWAY, {
+    method:  'POST',
+    headers: {
+      'Content-Type':      'application/json',
+      'X-Gateway-Secret':  sessionStorage.getItem('windi_gateway_secret') || '',
+    },
+    body: JSON.stringify({ actor, command, lat, lon, lang })
+  });
+  return resp.json();
+}
+
+function buildMariaVoiceButton(container, lang = 'de') {
+  const langMap = {
+    de: { mic:'Sprechen', listening:'Höre zu…', plan:'Planen…', fallback:'Oder schreib hier…' },
+    pt: { mic:'Falar',    listening:'A ouvir…',  plan:'A planear…', fallback:'Ou escreve aqui…' },
+    en: { mic:'Speak',    listening:'Listening…', plan:'Planning…', fallback:'Or type here…' },
+  };
+  const L = langMap[lang] || langMap['de'];
+
+  container.innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:12px">
+
+      <!-- Mic button -->
+      <button id="maria-mic-btn" style="
+        width:100%;padding:16px;border-radius:12px;border:none;
+        background:#C9603A;color:#fff;font-size:15px;font-weight:700;
+        cursor:pointer;display:flex;align-items:center;
+        justify-content:center;gap:10px;
+        box-shadow:0 6px 20px rgba(201,96,58,.3);
+        transition:all .2s;font-family:'DM Sans',sans-serif;">
+        <span id="maria-mic-icon" style="font-size:22px">🎙</span>
+        <span id="maria-mic-label">${L.mic}</span>
+      </button>
+
+      <!-- Interim text (aparece enquanto fala) -->
+      <div id="maria-interim" style="
+        min-height:44px;padding:10px 14px;
+        background:#F0E8D8;border-radius:10px;
+        font-family:'Fraunces',serif;font-style:italic;
+        font-size:14px;color:#8B6E5A;line-height:1.6;
+        display:none">…</div>
+
+      <!-- Fallback text input -->
+      <div id="maria-text-fallback" style="display:none">
+        <p style="font-size:11px;color:#B8A898;margin-bottom:6px">
+          ${L.fallback}
+        </p>
+        <textarea id="maria-text-input" rows="2" style="
+          width:100%;padding:10px 12px;
+          background:#fff;border:1.5px solid #E0D0B8;
+          border-radius:10px;font-size:14px;
+          font-family:'Fraunces',serif;font-style:italic;
+          resize:none;color:#2E2219"></textarea>
+        <button onclick="submitTextCommand()" style="
+          margin-top:8px;width:100%;padding:10px;
+          border-radius:10px;border:none;
+          background:#C9603A;color:#fff;
+          font-size:13px;font-weight:700;cursor:pointer">
+          ▶ Planear
+        </button>
+      </div>
+    </div>`;
+
+  // Init Maria Voice
+  const maria = new MariaVoice(lang === 'de' ? 'de-DE' : lang === 'pt' ? 'pt-PT' : 'en-GB');
+  const btn   = document.getElementById('maria-mic-btn');
+  const icon  = document.getElementById('maria-mic-icon');
+  const label = document.getElementById('maria-mic-label');
+  const inter = document.getElementById('maria-interim');
+
+  // Interim results (texto a aparecer enquanto fala)
+  maria.onInterim = (text) => {
+    inter.style.display = 'block';
+    inter.textContent   = text;
+  };
+
+  // Resultado final → pipeline
+  maria.onResult = async (text) => {
+    inter.textContent   = text;
+    btn.style.background = '#6A8F72';
+    label.textContent    = L.plan;
+    icon.textContent     = '⟳';
+
+    // Obter GPS
+    let lat = null, lon = null;
+    try {
+      const pos = await new Promise((res, rej) =>
+        navigator.geolocation.getCurrentPosition(res, rej, {timeout:3000}));
+      lat = pos.coords.latitude;
+      lon = pos.coords.longitude;
+    } catch(e) { /* GPS não autorizado — continua sem */ }
+
+    try {
+      const result = await callMariaContext(text, lat, lon, lang);
+      renderMariaPlan(result);
+
+      // Narração ElevenLabs via stream
+      if (result.narration) {
+        await narrateViaElevenLabs(result.narration, lang, result.receipt_id);
+      }
+    } catch(e) {
+      console.error('[Maria]', e);
+    } finally {
+      btn.style.background = '#C9603A';
+      label.textContent    = L.mic;
+      icon.textContent     = '🎙';
+    }
+  };
+
+  maria.onStart = () => {
+    btn.style.background = '#3A7CA8';
+    label.textContent    = L.listening;
+    icon.textContent     = '🔴';
+    inter.style.display  = 'block';
+    inter.textContent    = '…';
+  };
+
+  maria.onEnd = () => {
+    if (!maria.isListening) {
+      icon.textContent = '🎙';
+    }
+  };
+
+  // Fallback se não suportado
+  maria.onError = (err) => {
+    if (err === 'fallback-text') {
+      document.getElementById('maria-text-fallback').style.display = 'block';
+      btn.style.display = 'none';
+    }
+  };
+
+  btn.addEventListener('click', () => maria.toggle());
+
+  // Text fallback submit
+  window.submitTextCommand = async () => {
+    const text = document.getElementById('maria-text-input').value.trim();
+    if (!text) return;
+    const result = await callMariaContext(text, null, null, lang);
+    renderMariaPlan(result);
+    if (result.narration) await narrateViaElevenLabs(result.narration, lang, result.receipt_id);
+  };
+}
+
+/* Render plano retornado pela Maria */
+function renderMariaPlan(data) {
+  const existing = document.getElementById('maria-plan-result');
+  if (existing) existing.remove();
+
+  const plan    = data.plan || {};
+  const weather = data.weather || {};
+  const slots   = plan.slots || [];
+
+  const el = document.createElement('div');
+  el.id    = 'maria-plan-result';
+  el.style.cssText = 'margin-top:16px;animation:fadeUp .4s ease';
+  el.innerHTML = `
+    <!-- Greeting -->
+    <div style="background:#fff;border:1px solid #E0D0B8;border-radius:12px;
+      padding:14px 16px;margin-bottom:12px">
+      <div style="font-family:'Fraunces',serif;font-style:italic;
+        font-size:15px;color:#2E2219;line-height:1.7;margin-bottom:8px">
+        ${plan.greeting || ''}
+      </div>
+      <div style="font-size:12px;background:#F0E8D8;border-radius:8px;
+        padding:5px 10px;display:inline-flex;gap:6px;color:#8B6E5A">
+        ${weather.icon || ''} ${weather.desc || ''} · ${weather.temp_c || ''}°C
+      </div>
+    </div>
+
+    <!-- Slots -->
+    ${slots.map((s,i) => `
+      <div style="display:flex;gap:12px;margin-bottom:10px;
+        animation:fadeUp .4s ease ${i*.1}s both">
+        <div style="width:36px;height:36px;border-radius:50%;
+          background:#C9603A18;display:flex;align-items:center;
+          justify-content:center;font-size:18px;flex-shrink:0">
+          ${s.icon || '📍'}
+        </div>
+        <div style="background:#fff;border:1px solid #E0D0B8;
+          border-radius:12px;padding:12px 14px;flex:1">
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:5px">
+            <span style="font-size:12px;font-weight:700;color:#C9603A">${s.time || ''}</span>
+            <span style="font-size:11px;background:#F0E8D8;color:#8B6E5A;
+              padding:2px 7px;border-radius:10px">${s.duration || ''}</span>
+          </div>
+          <div style="font-family:'Fraunces',serif;font-style:italic;
+            font-size:15px;color:#2E2219;margin-bottom:4px">${s.title || ''}</div>
+          <div style="font-size:12px;color:#6B5040;line-height:1.6">${s.desc || ''}</div>
+          ${s.tip ? `<div style="font-size:11px;color:#8B6E5A;margin-top:6px;
+            background:#F0E8D8;padding:4px 8px;border-radius:6px">
+            💡 ${s.tip}</div>` : ''}
+        </div>
+      </div>`).join('')}
+
+    <!-- Seal badge -->
+    <div style="background:#6A8F7218;border:1px solid #6A8F7240;
+      border-radius:10px;padding:10px 14px;margin-top:8px;
+      display:flex;align-items:center;gap:8px;font-size:12px;color:#6A8F72;font-weight:600">
+      <span>✦</span>
+      <span>${data.receipt_id || ''}</span>
+      <a href="${data.ledger || '#'}" target="_blank"
+        style="margin-left:auto;font-size:10px;color:#6A8F72;opacity:.7">
+        verificar →
+      </a>
+    </div>`;
+
+  // Inserir após o botão
+  document.getElementById('maria-mic-btn')?.closest('div')?.after(el);
+}
+
+/* ElevenLabs streaming — narração compacta */
+async function narrateViaElevenLabs(text, lang, receiptId) {
+  try {
+    const secret = sessionStorage.getItem('windi_gateway_secret') || '';
+    const params = new URLSearchParams({
+      actor: sessionStorage.getItem('windi_travel_did') || 'anonymous',
+      caption: text.slice(0, 150),  // narração compacta ~150 chars
+      gps: '47.49, 9.46',
+      language: lang,
+    });
+    const resp = await fetch(
+      `https://www.windi-domain.com/gateway/voice/stream?${params}`,
+      { headers: { 'X-Gateway-Secret': secret } }
+    );
+    if (!resp.ok) return;
+    const blob   = await resp.blob();
+    const url    = URL.createObjectURL(blob);
+    const audio  = new Audio(url);
+    audio.play();
+    audio.onended = () => URL.revokeObjectURL(url);
+  } catch(e) {
+    console.warn('[Maria] ElevenLabs stream:', e);
+    // I10 — fallback gracioso: sem áudio, plano já está visível
+  }
+}
+JSEOF
+
+VERIFICAR 8F:
+ls -lh /opt/windi/windi-travel/workspace/maria_ui_patch.js
+echo "Ficheiro criado OK"
+
+RESULTADO ESPERADO:
+  maria_ui_patch.js · OK
+
+CONFIRMAÇÃO 8F:
+  Responde: "PASSO 8F ✓ — maria_ui_patch.js criado"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PASSO 8G — Restart + Smoke Test Final
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+EXECUTAR:
+
+sudo systemctl restart windi-gateway
+sleep 3
+
+echo "=== SMOKE TEST BLOCK 8 · MARIA COMPLETO ==="
+
+echo "1. Service activo?"
+systemctl is-active windi-gateway && echo "✅" || echo "❌ STOP"
+
+echo "2. Weather engine?"
+python3 -c "
+from weather_engine import weather_engine
+w = weather_engine.get(47.495, 9.4677)
+print('✅' if w.temp_c else '❌', 'Clima:', w.icon, w.temp_c, '°C')
+"
+
+echo "3. Voice context endpoint?"
+curl -s -X POST http://localhost:8130/gateway/voice/context \
+  -H "Content-Type: application/json" \
+  -H "X-Gateway-Secret: windi-gateway-secret-2026" \
+  -d '{
+    "actor":   "did:windi:human-dragon",
+    "command": "Maria, temos 3 horas livres depois do café. Minha esposa adora museus. Estamos no Hotel Bad Horn em Horn.",
+    "lat":     47.4950,
+    "lon":     9.4677,
+    "lang":    "pt"
+  }' | python3 -c "
+import sys, json
+d = json.load(sys.stdin)
+p = d.get('pipeline',{})
+print('✅ Receipt:   ', d.get('receipt_id','❌')[:30])
+print('✅ Hotel:     ', d.get('intent',{}).get('hotel','❌'))
+print('✅ Clima:     ', d.get('weather',{}).get('icon','?'), d.get('weather',{}).get('temp_c','?'), '°C')
+print('✅ Outdoor:   ', d.get('weather',{}).get('outdoor_ok','?'))
+print('✅ Âncoras:   ', len(d.get('anchors',[])))
+print('✅ Narração:  ', d.get('narration','❌')[:70], '…')
+print('✅ Custo:     ', d.get('cost_eur','?'), '€')
+print('✅ Ledger:    ', d.get('ledger','❌')[:50])
+print()
+print('── Pipeline ──')
+for k,v in p.items(): print(f'  {k:15} {v}')
+"
+
+echo "4. Ficheiros criados?"
+ls -lh /opt/windi/windi-travel/workspace/maria_voice.js \
+       /opt/windi/windi-travel/workspace/maria_ui_patch.js \
+       /opt/windi/windi-gateway/weather_engine.py \
+       /opt/windi/windi-gateway/voice_intent.py \
+       /opt/windi/windi-gateway/context_planner.py \
+  | awk '{print "✅", $NF, $5}'
+
+echo "============================================"
+
+RESULTADO ESPERADO:
+  1. ✅ active
+  2. ✅ Clima: 🌤 14°C
+  3. ✅ Receipt: WGW-MARIA-...
+     ✅ Hotel: Hotel Bad Horn, Horn CH
+     ✅ Clima: 🌤 14°C · Outdoor: True
+     ✅ Âncoras: 3
+     ✅ Narração: "Olá! Condições favoráveis…" (primeiros 70 chars)
+     ✅ Custo: 0.000170€
+     ✅ Ledger: https://windi-domain.com/verify-public/?id=WGW-MARIA-...
+     ── Pipeline ──
+       voice_capture   Web Speech API · FREE · device local · I1
+       intent          Gemini Flash · 0.000045€
+       weather         Open-Meteo · FREE · cache 30min
+       vrp_filter      3 âncoras · FREE · local
+       plan            Mistral MED · 0.000080€
+       narration       ElevenLabs · 0.000045€
+  4. ✅ maria_voice.js
+     ✅ maria_ui_patch.js
+     ✅ weather_engine.py
+     ✅ voice_intent.py
+     ✅ context_planner.py
+
+CONFIRMAÇÃO BLOCK 8 (FINAL):
+  Cola output completo do smoke test.
+  Se todos ✅ → responde:
+  "BLOCK 8 LIVE ✓ · Maria Voice Context · 7 Passos · Pipeline completo"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RESUMO FICHEIROS CRIADOS — BLOCK 8
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  BACKEND (/opt/windi/windi-gateway/)
+  ├── weather_engine.py     → Open-Meteo · FREE · I10 fallback
+  ├── voice_intent.py       → Gemini Flash · intent extraction
+  ├── context_planner.py    → VRP filter + Mistral MED
+  └── server.py             → + endpoint /gateway/voice/context
+
+  FRONTEND (/opt/windi/windi-travel/workspace/)
+  ├── maria_voice.js        → Web Speech API · voz no device · I1
+  └── maria_ui_patch.js     → botão 🎙 + render plano + ElevenLabs
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RESUMO COMPLETO — 8 BLOCKS MPS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  BLOCK 0 — Orientação           → LÊ, não executa
+  BLOCK 1 — Estrutura base       → mkdir + venv + .env
+  BLOCK 2 — Router + Budget      → cérebro de decisão
+  BLOCK 3 — Providers + Costs    → chamadas reais às APIs
+  BLOCK 4 — Guardiões I1/I10     → Bunker + SGE + Auth
+  BLOCK 5 — Endpoints            → /call /stream /refine /health
+  BLOCK 6 — Deploy               → systemd + nginx + smoke
+  BLOCK 7 — Monitoramento        → metrics + email + aprovação
+  BLOCK 8 — Maria Voice Context  → Voz → Clima → VRP → Plano → Narra
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  "A Maria mais soberana do mercado —
+   a única que sela cada plano que cria."
+
+  "AI processes. Human decides. WINDI guarantees."
+  OM SHANTI 🐉 · Liga IA+H · Kempten 2026

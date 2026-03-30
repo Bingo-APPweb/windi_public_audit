@@ -1,0 +1,160 @@
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ADDENDUM — MARIA UI STANDALONE
+Adicionar ao GEMEO_TRAVEL_P2_FINAL.txt após Macro-Bloco 4
+Liga IA+H · Kempten · 29 Mar 2026
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+MACRO-BLOCO 4B — MARIA UI STANDALONE (/travel/maria/)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DECISÃO ARQUITECTURAL:
+  Maria UI = página separada, standalone
+  /travel/workspace/ → UI Phase 2 (captura de momentos)
+  /travel/maria/     → Maria UI (booking de experiências)
+  Zero conflito. Zero framework build. React via CDN.
+
+PRÉ-REQUISITO: Macro-Blocos 1, 2, 3 e 4 aprovados.
+
+PASSO 4B-1 — Criar directório Maria UI
+
+  mkdir -p /opt/windi/windi-travel/maria-ui
+  echo "Directório Maria UI criado ✅"
+
+PASSO 4B-2 — Deploy maria-ui.html (ficheiro fornecido)
+
+  # Usa: maria-ui.html (ficheiro fornecido)
+  # Contém: React 18 via CDN, Babel standalone, UI completa
+  # Sem npm. Sem webpack. Sem build step.
+  # Pipeline visual: 6 estágios animados
+  # Trilíngue: PT/DE/EN
+  # API calls: /travel/maria/plan + /travel/maria/health (relativos)
+  # I10: fallback automático se backend indisponível
+
+  cp <maria-ui.html> /opt/windi/windi-travel/maria-ui/index.html
+
+  # Confirma tamanho:
+  wc -l /opt/windi/windi-travel/maria-ui/index.html
+  # Esperado: ~450 linhas
+
+PASSO 4B-3 — Adicionar rota de serving no servidor Travel
+
+  # Lê o server.py actual do Travel:
+  grep -n "FileResponse\|StaticFiles\|workspace" \
+    /opt/windi/windi-travel/server.py | head -10
+
+  # Adiciona endpoint para Maria UI (antes do if __name__):
+  python3 << 'PYEOF'
+path = "/opt/windi/windi-travel/server.py"
+content = open(path).read()
+
+endpoint = '''
+@app.get("/maria-ui")
+@app.get("/maria-ui/")
+async def maria_ui():
+    return FileResponse("/opt/windi/windi-travel/maria-ui/index.html")
+'''
+
+if "maria-ui" not in content:
+    content = content.replace(
+        'if __name__ == "__main__"',
+        endpoint + '\nif __name__ == "__main__"'
+    )
+    open(path, "w").write(content)
+    print("Endpoint /maria-ui adicionado ✅")
+else:
+    print("Endpoint já existe ✅")
+PYEOF
+
+  # Verifica sintaxe:
+  python3 -c "import sys; sys.path.insert(0,'.'); \
+    exec(open('/opt/windi/windi-travel/server.py').read().split('if __name__')[0]); \
+    print('Sintaxe OK ✅')" 2>/dev/null || \
+  python3 -c "import py_compile; py_compile.compile('/opt/windi/windi-travel/server.py'); print('Sintaxe OK ✅')"
+
+PASSO 4B-4 — nginx: rota /travel/maria/ → :8122/maria-ui/
+
+  # ATENÇÃO: /travel/maria/seal e /travel/maria/health
+  # são endpoints do backend (booking_router.py) em :8122
+  # A UI está em /travel/maria-ui/
+  # nginx resolve o conflito assim:
+
+  # Snippet a adicionar no ONE TREE (ANTES do listen 443 ssl):
+  #
+  # ── Maria UI (standalone React) ─────────────────────────
+  # location /travel/maria/ {
+  #     # Serve a UI para GET /travel/maria/
+  #     # Os endpoints /travel/maria/seal e /travel/maria/health
+  #     # são servidos pelo :8122 via proxy existente /travel/
+  #     proxy_pass http://127.0.0.1:8122/maria-ui/;
+  #     proxy_http_version 1.1;
+  #     proxy_set_header Host $host;
+  #     proxy_set_header X-Real-IP $remote_addr;
+  #     proxy_read_timeout 30s;
+  # }
+  # ── END Maria UI ──────────────────────────────────────────
+  #
+  # NOTA: /travel/maria/seal e /travel/maria/health continuam
+  # a ser servidos pela rota /travel/ existente → :8122
+  # (FastAPI rota mais específica ganha sobre a UI)
+
+  sudo nginx -t && sudo systemctl reload nginx
+
+PASSO 4B-5 — Smoke test Maria UI
+
+  echo "=== SMOKE TEST MARIA UI ==="
+
+  echo "[1] Maria UI local?"
+  curl -s -o /dev/null -w "%{http_code}" \
+    http://localhost:8122/maria-ui/ | \
+    grep -q "200" && echo "✅ 200" || echo "❌"
+
+  echo "[2] Maria UI via nginx?"
+  curl -s -o /dev/null -w "%{http_code}" \
+    https://www.windi-domain.com/travel/maria/ | \
+    grep -q "200" && echo "✅ 200" || echo "❌"
+
+  echo "[3] Maria backend /plan ainda funciona?"
+  curl -s -X POST https://www.windi-domain.com/travel/maria/plan \
+    -H "Content-Type: application/json" \
+    -d '{"intent":{"type":"cafe"},"lang":"PT"}' | \
+    python3 -c "import sys,json; d=json.load(sys.stdin); print('✅ backend OK' if 'decision' in d else '❌')" \
+    2>/dev/null || echo "⚠️ verificar backend"
+
+  echo "[4] Maria health?"
+  curl -s https://www.windi-domain.com/travel/maria/health | \
+    python3 -c "import sys,json; d=json.load(sys.stdin); print('✅' if d.get('status') else '❌')"
+
+  echo "==========================="
+
+VALIDAÇÃO MACRO-BLOCO 4B:
+  □ /opt/windi/windi-travel/maria-ui/index.html existe
+  □ server.py tem endpoint /maria-ui/ → FileResponse
+  □ nginx /travel/maria/ → :8122/maria-ui/ (sem conflito com /plan e /health)
+  □ http://localhost:8122/maria-ui/ → 200
+  □ https://www.windi-domain.com/travel/maria/ → 200 (UI carrega)
+  □ https://www.windi-domain.com/travel/maria/health → backend OK
+  □ https://www.windi-domain.com/travel/maria/plan → backend OK
+  □ UI abre no browser (React carrega, pipeline visível)
+  □ Health indicator mostra ● LIVE ou ◌ DEMO
+
+══ PARA AQUI — Cola smoke test. Aguarda G3. ══
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+URLS FINAIS DO WINDI TRAVEL PHASE 2
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  /travel/           → Identity Gate (existente, intacto)
+  /travel/workspace/ → UI Phase 2 (captura foto/video + seal)
+  /travel/maria/     → Maria UI (booking React standalone)
+  /travel/maria/plan → API booking (POST)
+  /travel/maria/seal → API seal decisões (POST)
+  /travel/maria/health → API health (GET)
+  /travel/seal       → API seal momentos (GET/POST — intacto)
+  /gateway/          → W-GATEWAY-001 (LLM routing)
+  /gateway/health    → Gateway health
+  /gateway/report/live → Metrics dashboard
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Liga IA+H · Kempten 2026
+"AI processes. Human decides. WINDI guarantees." 🐉
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

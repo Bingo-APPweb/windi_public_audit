@@ -7,7 +7,9 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2 L28 6 L28 14 C28 22 22 28 16 30 C10 28 4 22 4 14 L4 6 Z' fill='%238B7424'/%3E%3Cpath d='M16 4 L26 7.5 L26 14 C26 21 21 26 16 28 C11 26 6 21 6 14 L6 7.5 Z' fill='%23C9A84C'/%3E%3Cpath d='M9 12 L12 20 L16 14 L20 20 L23 12' stroke='%23ffffff' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<!-- Google Fonts disabled for Samsung test
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+-->
 <style>
 /* ═══════════════════════════════════════════════════════════════════════════
    WINDI TRAVEL — Mobile-First Workspace v1.0.0
@@ -17,8 +19,9 @@
    ═══════════════════════════════════════════════════════════════════════════ */
 
 :root {
-  --font: 'Bricolage Grotesque', sans-serif;
-  --mono: 'JetBrains Mono', monospace;
+  /* System fonts for Samsung test */
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --mono: 'Courier New', monospace;
   --r: 12px;
   --r-lg: 20px;
   --safe-b: env(safe-area-inset-bottom, 0px);
@@ -290,7 +293,7 @@ body {
   height: 6px;
   background: #2EC27E;
   border-radius: 50%;
-  animation: pulse 2s infinite;
+  /* animation: pulse 2s infinite; — Samsung fix */
 }
 @keyframes pulse {
   0%, 100% { opacity: 1; transform: scale(1); }
@@ -432,6 +435,202 @@ body {
 .tag-sealed { background: var(--success-bg); color: var(--success); }
 .tag-rescue { background: var(--gold-bg); color: var(--gold); }
 .tag-live { background: rgba(59,130,246,0.15); color: #3B82F6; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   MARIA MODE — Travel Companion (P3-B)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.maria-header {
+  padding: 20px 16px;
+  background: linear-gradient(135deg, var(--gold-bg) 0%, transparent 100%);
+  border-radius: var(--r-lg);
+  margin-bottom: 16px;
+}
+
+.maria-greeting {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.maria-icon {
+  font-size: 48px;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.1));
+}
+
+.maria-text { flex: 1; }
+
+.maria-hello {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 4px 0;
+}
+
+.maria-context {
+  font-size: 13px;
+  color: var(--text-2);
+  margin: 0;
+  display: flex;
+  gap: 12px;
+}
+
+.maria-input-area {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.maria-input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1px solid var(--border-2);
+  border-radius: var(--r);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  font-family: var(--font);
+  resize: none;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.maria-input:focus {
+  border-color: var(--gold);
+}
+
+.maria-send {
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: var(--r);
+  background: var(--gold);
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s, opacity 0.2s;
+}
+
+.maria-send:hover { opacity: 0.9; }
+.maria-send:active { transform: scale(0.95); }
+
+.maria-quick-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.maria-action {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  background: var(--bg-2);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.maria-action:hover {
+  background: var(--gold-bg);
+  border-color: var(--gold);
+}
+
+.maria-action .icon { font-size: 24px; }
+.maria-action .label { font-size: 12px; color: var(--text-2); font-weight: 500; }
+
+.maria-response {
+  background: var(--bg-2);
+  border-radius: var(--r-lg);
+  padding: 16px;
+  margin-bottom: 16px;
+  animation: fadeUp 0.3s ease-out;
+}
+
+.maria-response-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 12px;
+  color: var(--text-3);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.maria-response-icon { font-size: 16px; }
+
+.maria-response-text {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.maria-response-meta {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--text-3);
+  font-family: var(--mono);
+}
+
+.maria-history {
+  margin-top: 20px;
+}
+
+.maria-history-title {
+  font-size: 12px;
+  color: var(--text-3);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+
+.maria-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.maria-history-item {
+  padding: 12px;
+  background: var(--bg-2);
+  border-radius: var(--r);
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+/* Loading state */
+.maria-loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  color: var(--text-3);
+}
+
+.maria-loading::after {
+  content: '';
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--border-2);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
 
 /* ═══════════════════════════════════════════════════════════════════════════
    BOTTOM BAR — Mobile Navigation
@@ -680,7 +879,7 @@ body {
     0%, 100% { box-shadow: 0 0 0 0 rgba(139,116,36,0); }
     50% { box-shadow: 0 0 0 4px rgba(139,116,36,0.2); }
   }
-  .tag-sealed { animation: sealPulse 2s infinite; }
+  /* .tag-sealed { animation: sealPulse 2s infinite; } — Samsung fix */
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -789,6 +988,58 @@ body {
     <div class="thread-list" id="thread-list"></div>
   </div>
 
+  <!-- MARIA MODE (P3-B) — Travel Companion -->
+  <div class="mode-view" id="mode-maria">
+    <div class="maria-header">
+      <div class="maria-greeting" id="maria-greeting">
+        <span class="maria-icon">🌍</span>
+        <div class="maria-text">
+          <h2 class="maria-hello" id="maria-hello" data-i18n="maria_hello">Guten Tag, Reisender</h2>
+          <p class="maria-context" id="maria-context">
+            <span id="maria-weather">⛅ --°C</span>
+            <span id="maria-time"></span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="maria-input-area">
+      <textarea class="maria-input" id="maria-input" placeholder="Was suchst du heute?" data-i18n-placeholder="maria_placeholder" rows="2"></textarea>
+      <button class="maria-send" onclick="askMaria()">
+        <span>→</span>
+      </button>
+    </div>
+
+    <div class="maria-quick-actions">
+      <button class="maria-action" onclick="askMariaQuick('restaurant')">
+        <span class="icon">🍽️</span>
+        <span class="label" data-i18n="maria_discover">Entdecken</span>
+      </button>
+      <button class="maria-action" onclick="askMariaQuick('cafe')">
+        <span class="icon">☕</span>
+        <span class="label" data-i18n="maria_work">Arbeiten</span>
+      </button>
+      <button class="maria-action" onclick="askMariaQuick('hotel')">
+        <span class="icon">🛌</span>
+        <span class="label" data-i18n="maria_rest">Ausruhen</span>
+      </button>
+    </div>
+
+    <div class="maria-response" id="maria-response" style="display:none;">
+      <div class="maria-response-header">
+        <span class="maria-response-icon">💬</span>
+        <span class="maria-response-label" data-i18n="maria_says">MARIA sagt</span>
+      </div>
+      <div class="maria-response-text" id="maria-response-text"></div>
+      <div class="maria-response-meta" id="maria-response-meta"></div>
+    </div>
+
+    <div class="maria-history" id="maria-history" style="display:none;">
+      <p class="maria-history-title" data-i18n="maria_history">Letzte Empfehlungen</p>
+      <div class="maria-history-list" id="maria-history-list"></div>
+    </div>
+  </div>
+
   <!-- POST-SEAL STATE -->
   <div class="postseal" id="postseal">
     <div class="postseal-icon">✨</div>
@@ -818,6 +1069,10 @@ body {
      BOTTOM BAR
      ═══════════════════════════════════════════════════════════════════════════ -->
 <nav class="bottom-bar">
+  <button class="nav-btn" onclick="setMode('maria')" id="nav-maria">
+    <span class="icon">🌍</span>
+    <span class="label" data-i18n="nav_maria">MARIA</span>
+  </button>
   <button class="nav-btn active" onclick="setMode('rescue')" id="nav-rescue">
     <span class="icon">📦</span>
     <span class="label" data-i18n="nav_rescue">Retten</span>
@@ -889,9 +1144,34 @@ body {
 
 const TRAVEL_I18N = {
   // ── NAVEGAÇÃO ──
+  nav_maria:   { de: "MARIA",       pt: "MARIA",       en: "MARIA"    },
   nav_rescue:  { de: "Retten",      pt: "Resgatar",    en: "Rescue"   },
   nav_capture: { de: "Aufnehmen",   pt: "Capturar",    en: "Capture"  },
   nav_thread:  { de: "Dein Faden",  pt: "O teu fio",   en: "Your thread" },
+
+  // ── MARIA MODE (P3-B) ──
+  maria_hello: {
+    de: "Guten Tag, Reisender",
+    pt: "Bom dia, viajante",
+    en: "Good day, traveller"
+  },
+  maria_hello_returning: {
+    de: "Willkommen zurück",
+    pt: "Bem-vindo de volta",
+    en: "Welcome back"
+  },
+  maria_placeholder: {
+    de: "Was suchst du heute?",
+    pt: "O que procuras hoje?",
+    en: "What are you looking for today?"
+  },
+  maria_discover: { de: "Entdecken",  pt: "Descobrir",   en: "Discover" },
+  maria_work:     { de: "Arbeiten",   pt: "Trabalhar",   en: "Work"     },
+  maria_rest:     { de: "Ausruhen",   pt: "Descansar",   en: "Rest"     },
+  maria_says:     { de: "MARIA sagt", pt: "MARIA diz",   en: "MARIA says" },
+  maria_history:  { de: "Letzte Empfehlungen", pt: "Últimas recomendações", en: "Recent recommendations" },
+  maria_loading:  { de: "Denke nach...", pt: "A pensar...", en: "Thinking..." },
+  maria_sealed:   { de: "Im Ledger gesiegelt", pt: "Selado no Ledger", en: "Sealed in Ledger" },
 
   // ── RESCUE MODE ──
   rescue_title: {

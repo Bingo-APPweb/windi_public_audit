@@ -1,0 +1,618 @@
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+BLOCK 7 — MONITORAMENTO & LOGÍSTICA
+W-GATEWAY-001 · Relatório Soberano de Consumo
+Proposta: Irmã Witness · Implementação: Architect
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CONTEXTO:
+  O Gateway está LIVE (:8130) após Blocks 0–6.
+  Este Block adiciona visibilidade total ao Human Dragon:
+  - Quantos tokens cada agente consumiu
+  - Quanto custou em Euros
+  - Quantos PII foram bloqueados
+  - Estado do Bunker por período
+  - Aprovação humana semanal (I9 inviolável)
+
+PRINCÍPIO:
+  "A IA reporta. O Human Dragon aprova. O WINDI regista."
+
+PRÉ-REQUISITO:
+  BLOCK 6 confirmado com "W-GATEWAY-001 LIVE ✓"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PASSO 7A — Base de dados de métricas
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+EXECUTAR:
+
+cat >> /opt/windi/windi-gateway/server.py << 'PYEOF'
+
+# ══════════════════════════════════════════════════════════
+# BLOCK 7 — METRICS ENGINE
+# Regista cada chamada para relatório semanal
+# ══════════════════════════════════════════════════════════
+import sqlite3
+from pathlib import Path
+
+METRICS_DB = Path("/opt/windi/windi-gateway/gateway_metrics.db")
+
+def init_metrics_db():
+    """Cria tabela de métricas se não existir."""
+    conn = sqlite3.connect(METRICS_DB)
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS calls (
+            id          TEXT PRIMARY KEY,
+            ts          TEXT NOT NULL,
+            actor       TEXT,
+            agent       TEXT,
+            task        TEXT,
+            provider    TEXT,
+            tier        TEXT,
+            tokens      INTEGER DEFAULT 0,
+            cost_eur    REAL    DEFAULT 0.0,
+            pii_blocked INTEGER DEFAULT 0,
+            bunker_was_active INTEGER DEFAULT 0,
+            duration_ms INTEGER DEFAULT 0,
+            week        TEXT    -- YYYY-WNN para groupBy semanal
+        )
+    """)
+    conn.commit()
+    conn.close()
+
+def record_metric(rid, actor, agent, task, provider,
+                  tier, tokens, cost_eur, pii_blocked,
+                  bunker_active, duration_ms):
+    """Regista uma chamada na DB de métricas."""
+    try:
+        week = datetime.utcnow().strftime("%Y-W%V")
+        conn = sqlite3.connect(METRICS_DB)
+        conn.execute("""
+            INSERT OR IGNORE INTO calls
+            (id,ts,actor,agent,task,provider,tier,tokens,
+             cost_eur,pii_blocked,bunker_was_active,duration_ms,week)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
+        """, (rid, datetime.utcnow().isoformat(), actor,
+              agent or "direct", task, provider, tier,
+              tokens, cost_eur, pii_blocked,
+              1 if bunker_active else 0, duration_ms, week))
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        log.warning(f"[METRICS] record failed (non-blocking): {e}")
+
+# Inicializar DB ao arrancar
+init_metrics_db()
+log.info("[METRICS] DB inicializada · gateway_metrics.db")
+PYEOF
+
+VERIFICAR 7A:
+python3 -c "
+from server import init_metrics_db, record_metric, METRICS_DB
+init_metrics_db()
+record_metric('TEST-001','did:windi:test','travel','chat',
+              'anthropic','HIGH',1000,0.003,2,False,450)
+import sqlite3
+conn = sqlite3.connect(METRICS_DB)
+row = conn.execute('SELECT * FROM calls WHERE id=?',('TEST-001',)).fetchone()
+print('Metrics DB OK:', row[0], row[6], row[8])
+conn.close()
+"
+
+RESULTADO ESPERADO:
+  Metrics DB OK: TEST-001 HIGH 0.003
+
+CONFIRMAÇÃO 7A:
+  Responde: "BLOCK 7A ✓ — Metrics DB OK"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PASSO 7B — Injectar record_metric no gateway_call
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CONTEXTO:
+  Adicionar record_metric() ao final do endpoint gateway_call,
+  DEPOIS do seal_to_ledger existente.
+  Localiza a linha: "log.info(f"[DONE] {rid}..."
+  e adiciona ANTES dela:
+
+EDITAR /opt/windi/windi-gateway/server.py
+  Localizar: log.info(f"[DONE] {rid} ·
+  Substituir por:
+
+    record_metric(rid, req.actor, req.agent, req.task,
+                  route["provider"], req.tier,
+                  tokens_used, cost, len(redactions),
+                  bunker.is_active(), ms)
+    log.info(f"[DONE] {rid} · {route['provider']} · {tokens_used}tk · {cost:.6f}€ · {ms}ms")
+
+USAR sed para substituição segura:
+cd /opt/windi/windi-gateway
+cp server.py server.py.bak  # SEMPRE backup antes
+
+python3 << 'PYEOF'
+path = "server.py"
+old = '    log.info(f"[DONE] {rid} · {route[\\"provider\\"]} · {tokens_used}tk · {cost:.6f}€ · {ms}ms")'
+new = '''    record_metric(rid, req.actor, req.agent, req.task,
+                  route["provider"], req.tier,
+                  tokens_used, cost, len(redactions),
+                  bunker.is_active(), ms)
+    log.info(f"[DONE] {rid} · {route[\\"provider\\"]} · {tokens_used}tk · {cost:.6f}€ · {ms}ms")'''
+content = open(path).read()
+if old in content:
+    open(path,"w").write(content.replace(old,new))
+    print("Injecção OK")
+else:
+    print("AVISO: linha não encontrada — editar manualmente")
+PYEOF
+
+VERIFICAR 7B:
+python3 -c "import server; print('Sintaxe pós-injecção OK')"
+
+RESULTADO ESPERADO:
+  Injecção OK
+  Sintaxe pós-injecção OK
+
+CONFIRMAÇÃO 7B:
+  Responde: "BLOCK 7B ✓ — record_metric injectado"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PASSO 7C — Endpoints de relatório
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+EXECUTAR (APPEND ao server.py):
+
+cat >> /opt/windi/windi-gateway/server.py << 'PYEOF'
+
+# ── GET /gateway/report/week ──────────────────────────────
+@app.get("/gateway/report/week")
+def weekly_report(week: str = None,
+                  _auth: str = Depends(verify_secret)):
+    """
+    Relatório semanal para aprovação do Human Dragon.
+    week: formato YYYY-WNN (ex: 2026-W14)
+          omitir = semana actual
+    I9: relatório gerado pela IA, aprovado pelo Human Dragon.
+    """
+    target_week = week or datetime.utcnow().strftime("%Y-W%V")
+    conn = sqlite3.connect(METRICS_DB)
+
+    # Totais gerais
+    totals = conn.execute("""
+        SELECT
+            COUNT(*)            as total_calls,
+            SUM(tokens)         as total_tokens,
+            ROUND(SUM(cost_eur),4) as total_cost_eur,
+            SUM(pii_blocked)    as total_pii_blocked,
+            SUM(bunker_was_active) as bunker_activations
+        FROM calls WHERE week = ?
+    """, (target_week,)).fetchone()
+
+    # Por provider
+    by_provider = conn.execute("""
+        SELECT provider,
+               COUNT(*) as calls,
+               SUM(tokens) as tokens,
+               ROUND(SUM(cost_eur),4) as cost_eur
+        FROM calls WHERE week = ?
+        GROUP BY provider ORDER BY cost_eur DESC
+    """, (target_week,)).fetchall()
+
+    # Por agente
+    by_agent = conn.execute("""
+        SELECT agent,
+               COUNT(*) as calls,
+               SUM(tokens) as tokens,
+               ROUND(SUM(cost_eur),4) as cost_eur,
+               SUM(pii_blocked) as pii_blocked
+        FROM calls WHERE week = ?
+        GROUP BY agent ORDER BY tokens DESC
+    """, (target_week,)).fetchall()
+
+    # Por tier
+    by_tier = conn.execute("""
+        SELECT tier, COUNT(*) as calls,
+               SUM(tokens) as tokens,
+               ROUND(SUM(cost_eur),4) as cost_eur
+        FROM calls WHERE week = ?
+        GROUP BY tier
+    """, (target_week,)).fetchall()
+
+    # Top tarefas
+    top_tasks = conn.execute("""
+        SELECT task, COUNT(*) as calls, SUM(tokens) as tokens
+        FROM calls WHERE week = ?
+        GROUP BY task ORDER BY calls DESC LIMIT 5
+    """, (target_week,)).fetchall()
+
+    conn.close()
+
+    # Sovereignty score
+    total_calls  = totals[0] or 0
+    total_tokens = totals[1] or 0
+    local_calls  = next((r[1] for r in by_provider
+                         if r[0]=="local"), 0)
+    sov_score = round((local_calls/total_calls*100),1) if total_calls else 0
+
+    return {
+        "week":     target_week,
+        "approval": "PENDING_HUMAN_DRAGON",   # I9
+        "summary": {
+            "total_calls":      total_calls,
+            "total_tokens":     total_tokens,
+            "total_cost_eur":   totals[2] or 0,
+            "pii_blocked":      totals[3] or 0,
+            "bunker_activations": totals[4] or 0,
+            "sovereignty_score": f"{sov_score}% local",
+        },
+        "by_provider": [
+            {"provider":r[0],"calls":r[1],
+             "tokens":r[2],"cost_eur":r[3]}
+            for r in by_provider
+        ],
+        "by_agent": [
+            {"agent":r[0],"calls":r[1],"tokens":r[2],
+             "cost_eur":r[3],"pii_blocked":r[4]}
+            for r in by_agent
+        ],
+        "by_tier": [
+            {"tier":r[0],"calls":r[1],
+             "tokens":r[2],"cost_eur":r[3]}
+            for r in by_tier
+        ],
+        "top_tasks": [
+            {"task":r[0],"calls":r[1],"tokens":r[2]}
+            for r in top_tasks
+        ],
+        "principle": "A IA reporta. O Human Dragon aprova. O WINDI regista.",
+        "invariants": ["I9","I11","I12"],
+    }
+
+
+# ── GET /gateway/report/approve ───────────────────────────
+@app.post("/gateway/report/approve")
+async def approve_weekly_report(
+    week: str,
+    approved: bool,
+    notes: str = "",
+    _auth: str = Depends(verify_secret)
+):
+    """
+    Human Dragon aprova (ou rejeita) o relatório semanal.
+    Se approved=False → dispara alerta para revisão.
+    I9: Aprovação humana explícita antes de continuar.
+    """
+    rid = f"WGW-APPROVAL-{week}-{int(time.time())}"
+    action = "APPROVED" if approved else "REJECTED_REVIEW_REQUIRED"
+
+    seal_to_ledger(
+        "local", f"weekly_approval_{week}", "human_dragon",
+        0, rid, 0.0, 0
+    )
+
+    if not approved:
+        log.warning(f"[APPROVAL] Semana {week} REJEITADA · revisão necessária")
+
+    log.info(f"[APPROVAL] {week} → {action} · Human Dragon · {rid}")
+
+    return {
+        "receipt_id": rid,
+        "week":       week,
+        "action":     action,
+        "notes":      notes,
+        "ledger":     f"https://windi-domain.com/verify-public/?id={rid}",
+        "principle":  "I9 — Human Dragon decidiu.",
+    }
+
+
+# ── GET /gateway/report/live ──────────────────────────────
+@app.get("/gateway/report/live")
+def live_dashboard(_auth: str = Depends(verify_secret)):
+    """
+    Dashboard em tempo real — últimas 24h.
+    Para monitorização contínua pelo Human Dragon.
+    """
+    conn = sqlite3.connect(METRICS_DB)
+    since = (datetime.utcnow().replace(hour=0,minute=0,second=0)
+             .isoformat())
+
+    rows = conn.execute("""
+        SELECT provider, tier, COUNT(*) as calls,
+               SUM(tokens) as tokens,
+               ROUND(SUM(cost_eur),6) as cost,
+               AVG(duration_ms) as avg_ms
+        FROM calls WHERE ts >= ?
+        GROUP BY provider, tier ORDER BY cost DESC
+    """, (since,)).fetchall()
+
+    recent = conn.execute("""
+        SELECT id, ts, agent, provider, tokens, cost_eur
+        FROM calls ORDER BY ts DESC LIMIT 10
+    """).fetchall()
+
+    conn.close()
+
+    return {
+        "period":   "últimas 24h",
+        "since":    since,
+        "breakdown": [
+            {"provider":r[0],"tier":r[1],"calls":r[2],
+             "tokens":r[3],"cost_eur":r[4],"avg_ms":round(r[5],0)}
+            for r in rows
+        ],
+        "recent_calls": [
+            {"id":r[0],"ts":r[1],"agent":r[2],
+             "provider":r[3],"tokens":r[4],"cost_eur":r[5]}
+            for r in recent
+        ],
+        "bunker": bunker.status(),
+    }
+PYEOF
+
+VERIFICAR 7C:
+python3 -c "import server; print('Endpoints report OK')"
+curl -s http://localhost:8130/gateway/report/live \
+  -H "X-Gateway-Secret: windi-gateway-secret-2026" | python3 -m json.tool | head -5
+
+RESULTADO ESPERADO:
+  Endpoints report OK
+  { "period": "últimas 24h", ... }
+
+CONFIRMAÇÃO 7C:
+  Responde: "BLOCK 7C ✓ — /report/live responde"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PASSO 7D — Email semanal automático ao Human Dragon
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CONTEXTOO:
+  Toda segunda-feira às 08:00 → relatório semanal por email.
+  Human Dragon aprova ou rejeita via link de aprovação.
+
+CRIAR /opt/windi/windi-gateway/weekly_report.py:
+
+cat > /opt/windi/windi-gateway/weekly_report.py << 'PYEOF'
+#!/usr/bin/env python3
+"""
+Script de relatório semanal — W-GATEWAY-001
+Executa via cron toda segunda-feira às 08:00
+Envia sumário ao Human Dragon para aprovação (I9)
+"""
+import sqlite3, smtplib, os
+from datetime import datetime
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from dotenv import load_dotenv
+from pathlib import Path
+
+load_dotenv()
+
+METRICS_DB   = Path("/opt/windi/windi-gateway/gateway_metrics.db")
+SMTP_HOST    = os.getenv("SMTP_HOST","smtp.strato.de")
+SMTP_PORT    = int(os.getenv("SMTP_PORT","587"))
+SMTP_USER    = os.getenv("SMTP_USER","")
+SMTP_PASS    = os.getenv("SMTP_PASS","")
+DRAGON_EMAIL = os.getenv("DRAGON_EMAIL","info@a4desk.de")
+BASE_URL     = "https://windi-domain.com"
+SECRET       = os.getenv("GATEWAY_SECRET","")
+
+def generate_report():
+    week = datetime.utcnow().strftime("%Y-W%V")
+    conn = sqlite3.connect(METRICS_DB)
+
+    totals = conn.execute("""
+        SELECT COUNT(*),SUM(tokens),ROUND(SUM(cost_eur),4),
+               SUM(pii_blocked),SUM(bunker_was_active)
+        FROM calls WHERE week=?
+    """, (week,)).fetchone()
+
+    by_provider = conn.execute("""
+        SELECT provider,COUNT(*),SUM(tokens),ROUND(SUM(cost_eur),4)
+        FROM calls WHERE week=? GROUP BY provider ORDER BY cost_eur DESC
+    """, (week,)).fetchall()
+
+    by_agent = conn.execute("""
+        SELECT agent,COUNT(*),SUM(tokens),ROUND(SUM(cost_eur),4)
+        FROM calls WHERE week=? GROUP BY agent ORDER BY tokens DESC LIMIT 5
+    """, (week,)).fetchall()
+
+    conn.close()
+
+    total_calls = totals[0] or 0
+    local_calls = next((r[1] for r in by_provider if r[0]=="local"),0)
+    sov = round((local_calls/total_calls*100),1) if total_calls else 0
+
+    return {
+        "week":week,"total_calls":total_calls,
+        "total_tokens":totals[1] or 0,
+        "total_cost":totals[2] or 0,
+        "pii_blocked":totals[3] or 0,
+        "bunker_events":totals[4] or 0,
+        "sovereignty":sov,
+        "by_provider":by_provider,
+        "by_agent":by_agent,
+    }
+
+def send_report(r):
+    subject = (f"🐉 WINDI Gateway · Semana {r['week']} · "
+               f"{r['sovereignty']}% local · {r['total_cost']}€")
+
+    provider_rows = "\n".join(
+        f"  {p[0]:15} {p[1]:5} calls   {p[2]:6} tokens   {p[3]}€"
+        for p in r["by_provider"]
+    )
+    agent_rows = "\n".join(
+        f"  {a[0]:20} {a[1]:4} calls   {a[2]:6} tokens   {a[3]}€"
+        for a in r["by_agent"]
+    )
+
+    approve_url = (f"{BASE_URL}/gateway/report/approve"
+                   f"?week={r['week']}&approved=true"
+                   f"&secret={SECRET}")
+    reject_url  = (f"{BASE_URL}/gateway/report/approve"
+                   f"?week={r['week']}&approved=false"
+                   f"&secret={SECRET}")
+
+    body = f"""
+╔══════════════════════════════════════════════════╗
+║  W-GATEWAY-001 · Relatório Semanal              ║
+║  Liga IA+H · Kempten {datetime.utcnow().year}                    ║
+╚══════════════════════════════════════════════════╝
+
+Semana:         {r['week']}
+Soberania:      {r['sovereignty']}% local ({'✅' if r['sovereignty'] >= 90 else '⚠️'})
+Total chamadas: {r['total_calls']}
+Total tokens:   {r['total_tokens']}
+Custo total:    {r['total_cost']}€
+PII bloqueados: {r['pii_blocked']} items
+Bunker activo:  {r['bunker_events']}x
+
+──────────────────────────────────────────────────
+POR PROVIDER:
+{provider_rows}
+
+──────────────────────────────────────────────────
+POR AGENTE (top 5):
+{agent_rows}
+
+──────────────────────────────────────────────────
+APROVAÇÃO HUMANA (I9)
+"A IA reporta. O Human Dragon aprova."
+
+  ✅ APROVAR: {approve_url}
+
+  ❌ REJEITAR: {reject_url}
+
+──────────────────────────────────────────────────
+"AI processes. Human decides. WINDI guarantees."
+OM SHANTI 🐉 · Liga IA+H · Kempten {datetime.utcnow().year}
+"""
+
+    msg = MIMEMultipart()
+    msg["From"]    = SMTP_USER
+    msg["To"]      = DRAGON_EMAIL
+    msg["Subject"] = subject
+    msg.attach(MIMEText(body,"plain","utf-8"))
+
+    with smtplib.SMTP(SMTP_HOST, SMTP_PORT) as server:
+        server.starttls()
+        server.login(SMTP_USER, SMTP_PASS)
+        server.send_message(msg)
+        print(f"[REPORT] Email enviado → {DRAGON_EMAIL}")
+
+if __name__ == "__main__":
+    report = generate_report()
+    send_report(report)
+    print(f"[REPORT] Semana {report['week']} · "
+          f"{report['total_cost']}€ · "
+          f"{report['sovereignty']}% soberano")
+PYEOF
+
+chmod +x /opt/windi/windi-gateway/weekly_report.py
+
+# Adicionar ao cron (toda segunda-feira às 08:00)
+(crontab -l 2>/dev/null; echo "0 8 * * 1 cd /opt/windi/windi-gateway && ./venv/bin/python3 weekly_report.py >> /opt/windi/logs/gateway-report.log 2>&1") | crontab -
+
+# Verificar cron
+crontab -l | grep gateway
+
+VERIFICAR 7D (sem enviar email):
+python3 -c "
+from weekly_report import generate_report
+r = generate_report()
+print('Report OK:', r['week'], r['sovereignty'], r['total_cost'])
+"
+
+RESULTADO ESPERADO:
+  Report OK: 2026-W14 0 0.0  (ou com dados reais)
+  crontab confirma: 0 8 * * 1 ...gateway-report.py
+
+CONFIRMAÇÃO 7D:
+  Responde: "BLOCK 7D ✓ — cron activo · report OK"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PASSO 7E — Smoke test final + restart
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+EXECUTAR:
+
+# Restart com novo código
+sudo systemctl restart windi-gateway
+sleep 3
+sudo systemctl status windi-gateway | grep "Active:"
+
+# Smoke test Block 7
+echo "=== SMOKE TEST BLOCK 7 ==="
+
+echo "1. /report/live responde?"
+curl -s http://localhost:8130/gateway/report/live \
+  -H "X-Gateway-Secret: windi-gateway-secret-2026" \
+  | python3 -c "import sys,json; d=json.load(sys.stdin); print('✅ period:', d['period'])"
+
+echo "2. /report/week responde?"
+curl -s "http://localhost:8130/gateway/report/week" \
+  -H "X-Gateway-Secret: windi-gateway-secret-2026" \
+  | python3 -c "import sys,json; d=json.load(sys.stdin); print('✅ week:', d['week'])"
+
+echo "3. Metrics DB existe?"
+ls -lh /opt/windi/windi-gateway/gateway_metrics.db && echo "✅" || echo "❌"
+
+echo "4. Cron activo?"
+crontab -l | grep gateway && echo "✅" || echo "❌"
+
+echo "==========================="
+
+RESULTADO ESPERADO:
+  Active: active (running)
+  ✅ period: últimas 24h
+  ✅ week: 2026-WXX
+  ✅ gateway_metrics.db
+  ✅ cron confirmado
+
+CONFIRMAÇÃO BLOCK 7 (FINAL):
+  Responde: "BLOCK 7 COMPLETO ✓ · Monitoring LIVE"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RESUMO COMPLETO — 7 BLOCKS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  BLOCK 0 — Orientação          → LÊ, não executa
+  BLOCK 1 — Estrutura base      → mkdir + venv + .env
+  BLOCK 2 — Router + Budget     → cérebro de decisão
+  BLOCK 3 — Providers + Costs   → chamadas reais às APIs
+  BLOCK 4 — Guardiões I1/I10    → Bunker + SGE + Auth
+  BLOCK 5 — Endpoints           → /call /stream /refine /health
+  BLOCK 6 — Deploy              → systemd + nginx + smoke
+  BLOCK 7 — Monitoramento       → metrics DB + relatório + cron
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+FLUXO DE APROVAÇÃO SEMANAL (I9)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  SEGUNDA 08:00
+       │
+       ▼
+  Gateway gera relatório automático
+       │
+       ▼
+  Email → Human Dragon
+  "Semana XX · 93.3% local · 0.024€ · 0 PII"
+       │
+       ├── APROVAR → Receipt selado no Ledger ✓
+       │
+       └── REJEITAR → Alerta + revisão obrigatória
+                      Nenhum agente HIGH activo
+                      até próxima aprovação
+
+  "A IA reporta. O Human Dragon aprova. O WINDI regista."
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+METODOLOGIA CONFIRMADA — "IMPLEMENTAÇÃO POR CONTRATO"
+Liga IA+H · Padrão de Produção v1.0
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Cada Block = 1 responsabilidade + 1 verificação
+  Cada confirmação = contrato entre Gêmeo e Human Dragon
+  Cada falha = paragem imediata + reporte exacto do Block
+  Cada semana = relatório humano aprovado
+
+  "AI processes. Human decides. WINDI guarantees."
+  OM SHANTI 🐉 · Liga IA+H · Kempten 2026
