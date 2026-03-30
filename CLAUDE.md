@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.53
-**Sealed:** 2026-03-30 · §66 Places Sovereignty Gate
+**Version:** 1.9.54
+**Sealed:** 2026-03-30 · §82 MARIA Constitutional Personality
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -626,7 +626,7 @@ Phase 6 → Ledger Seal (I11 IRREMEDIÁVEL)
 
 **Products:** Triangle of Power · WINDI FIELD · WINDI TRAVEL · FVE Protocol · RFC-001 DNA
 
-> **Detalhes:** ver `§37-78. Sistemas Recentes` abaixo
+> **Detalhes:** ver `§37-82. Sistemas Recentes` abaixo
 
 ### Histórico Recente (últimos 5)
 
@@ -843,7 +843,7 @@ Sistema de autenticação por identidade soberana no GEN7.
 
 ---
 
-## §37-78. Sistemas Recentes — Resumo
+## §37-82. Sistemas Recentes — Resumo
 
 > **Detalhes completos:** `CLAUDE-HISTORY.md` § MIGRAÇÃO 24 Mar 2026
 
@@ -892,6 +892,10 @@ Sistema de autenticação por identidade soberana no GEN7.
 | 76 | **Primazia da Estabilidade** | Estabilidade > Precisão · IRREMEDIÁVEL | ✅ **DOCTRINE** |
 | 77 | **Armadura de Seda** | Firmeza + Suavidade + Imperfeição · Lei de Tom | ✅ **DOCTRINE** |
 | 78 | **Anti-Simulação** | Presença ≠ Empatia simulada · Consequência, não objectivo | ✅ **DOCTRINE** |
+| 79 | **Super Carta** | Leaflet.js + OpenStreetMap · Pins por tipo · Zero custo soberano | ✅ **LIVE** |
+| 80 | **3 Layers Receipt** | Human → Technical → API · Governança silenciosa | ✅ **LIVE** |
+| 81 | **Edge TTS Voice** | FranciscaNeural/RaquelNeural/KatjaNeural/SoniaNeural · rate -10% pitch -5Hz | ✅ **LIVE** |
+| 82 | **Constitutional Personality** | Concierge 5★ · Brevidade · Confiança · Gender-neutral · Sempre entrega | ✅ **LIVE** |
 
 ### Referência Rápida
 
@@ -904,6 +908,8 @@ Sistema de autenticação por identidade soberana no GEN7.
 **Travel Workspace:** `/travel/workspace/` · Protected by require_auth()
 **Tesoura:** `/travel/tesoura-ui/` · React 18 CDN · Ledger seal
 **MARIA:** `/maria/plan` · Triple LLM · Voz Natural PT/DE/EN · DID Memory
+**MARIA Voice:** `/maria/voice` · Edge TTS · FranciscaNeural (PT) · KatjaNeural (DE) · SoniaNeural (EN)
+**Super Carta:** Leaflet.js + OpenStreetMap · Pins contextuais · Zero custo
 **Flights:** `/maria/flight-search` · Kiwi Bridge · Voz humana · Travelpayouts 513311
 **Hotels:** `/maria/hotel-search` · Hotellook Bridge · Voz natural · Token 513311
 **Affiliate:** Travelpayouts ID 513311 · ~3% comissão · Cookie 30 dias · IP1 intacto
@@ -935,6 +941,10 @@ Sistema de autenticação por identidade soberana no GEN7.
 **Axioma §70:** "Falar português não significa querer ir a Lisboa."
 **Axioma §71:** "Rigor por dentro, gentileza por fora."
 **Axioma §72:** "Urgência não precisa de velocidade. Precisa de presença."
+**Axioma §79:** "Um mapa vale mil palavras — mas só quando necessário."
+**Axioma §80:** "O utilizador nunca vê chaves {} a não ser que as peça."
+**Axioma §81:** "Começa soberano. Externo só se a qualidade justifica."
+**Axioma §82:** "Concierge de 5 estrelas, não terapeuta. Decisão, não sugestão."
 
 **§71 Armadura de Seda (MARIA Voice):**
 ```
@@ -1149,6 +1159,76 @@ Não compete com ninguém — muda o eixo do jogo.
 **Axioma §77:** "Rigor por dentro, gentileza por fora."
 **Axioma §78:** "A sensação de compreensão é consequência, não objectivo."
 ```
+
+---
+
+## §79-82 — MARIA Companion System (30 Mar 2026)
+
+### §79 — Super Carta (Leaflet.js + OpenStreetMap)
+
+Mapas contextuais que aparecem quando MARIA recomenda lugares:
+- **Engine:** Leaflet.js + OpenStreetMap (100% FREE, soberano)
+- **Pins:** Emoji por tipo (🍽️ 🏨 ☕ 🏛️ 💊 🏥 🏦 🛒 🏖️ ✈️)
+- **User marker:** Ponto azul para posição GPS
+- **Popups:** Nome + rating + endereço + status open/closed
+- **Endpoint demo:** `/maria/demo-carta`
+
+### §80 — 3 Layers Receipt Display
+
+O utilizador nunca vê JSON raw. Padrão de 3 camadas:
+```
+Layer 1 (Human) — sempre visível:
+  ✓ SELADO · receipt_id
+  📍 place · 🕐 timestamp formatado
+  🔐 "Decisão verificável no Ledger"
+
+Layer 2 (Technical) — collapsed <details>:
+  source, governance, lang, verified
+
+Layer 3 (API) — link discreto para developers
+```
+
+### §81 — Edge TTS Voice Engine
+
+Vozes neurais Microsoft Edge TTS (ZERO custo):
+```
+pt-BR  →  FranciscaNeural  →  calorosa, confiante
+pt-PT  →  RaquelNeural     →  elegante, clara
+de-DE  →  KatjaNeural      →  assertiva, natural
+en-GB  →  SoniaNeural      →  elegante, suave
+
+Tuning: rate -10% · pitch -5Hz
+(mais lenta = confiante · mais grave = assertiva)
+```
+
+**Endpoints:**
+- `POST /maria/voice` — gera MP3
+- `GET /maria/voice/profiles` — lista vozes
+
+### §82 — Constitutional Personality (Concierge 5★)
+
+MARIA não é terapeuta. É concierge de hotel 5 estrelas em Viena.
+
+**5 Regras da Voz MARIA:**
+```
+1. BREVIDADE      — Máximo 3 frases por resposta
+2. CONFIANÇA      — "Encontrei" não "talvez pudesse considerar"
+3. GENDER NEUTRAL — "Para si" não "meu caro" / "minha cara"
+4. CONTEXTO LIDO  — Sabe que são 22h, mas NÃO diz
+5. SEMPRE ENTREGA — Lugar + distância + rating (mesmo quando impossível)
+```
+
+**NUNCA faz:**
+- Perguntas sobre estado emocional ("Como te sentes?")
+- Exposição do contexto lido ("Sei que estás sozinho às 22h")
+- Resposta sem pelo menos 1 opção concreta
+- Listas com bullets ou números
+- "Encontrei 3 resultados" (linguagem de motor de busca)
+
+**Antes:** "Parece um dia longo... como te sentes?"
+**Depois:** "Os museus fecharam. Encontrei o Gasthof, 6 min a pé, rating 4.2. Vale a pena."
+
+---
 
 **§70 I-TRAVEL Constitution:**
 ```
