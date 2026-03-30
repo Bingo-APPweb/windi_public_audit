@@ -65,6 +65,20 @@ except ImportError as e:
     PLACES_GATE_ENABLED = False
     log.warning(f"[MARIA] Places Gate not available: {e}")
 
+# ── Kiwi Flight Bridge (§67) ─────────────────────────────────────────────────
+try:
+    from maria.kiwi_bridge import (
+        search_flights,
+        format_maria_response,
+        detect_flight_intent,
+        extract_flight_details,
+    )
+    KIWI_BRIDGE_ENABLED = True
+    log.info("[MARIA] Kiwi Flight Bridge loaded ✓")
+except ImportError as e:
+    KIWI_BRIDGE_ENABLED = False
+    log.warning(f"[MARIA] Kiwi Bridge not available: {e}")
+
 # ── Config ────────────────────────────────────────────────────────────────────
 GOOGLE_PLACES_KEY = os.getenv("GOOGLE_PLACES_KEY", "")
 LEDGER_URL        = os.getenv("LEDGER_URL", "http://localhost:8101/api/receipts")
@@ -120,6 +134,28 @@ class PlanResponse(BaseModel):
     cost_eur: float = 0.0
     sovereign_mode: bool = False       # True if external APIs failed → I10
     memory_active: bool = False        # True if DID profile loaded
+    timestamp: str
+
+# ── §67 Flight Search Models ────────────────────────────────────────────────────
+class FlightSearchRequest(BaseModel):
+    fly_from: str = Field(..., description="Origin city or IATA code")
+    fly_to: str = Field(..., description="Destination city or IATA code")
+    date: str = Field(..., description="Departure date dd/mm/yyyy")
+    lang: Optional[str] = "PT"
+    wallet_id: Optional[str] = None
+    adults: Optional[int] = 1
+    max_results: Optional[int] = 3
+
+class FlightSearchResponse(BaseModel):
+    request_id: str
+    flights: list
+    origin: str
+    destination: str
+    date: str
+    maria_voice: str
+    ledger_receipt_id: Optional[str] = None
+    sovereign_mode: bool = False
+    source: str = "kiwi.com"
     timestamp: str
 
 # ── Context Enricher (Open-Meteo, FREE) ───────────────────────────────────────
@@ -566,5 +602,69 @@ async def maria_plan(req: PlanRequest):
         cost_eur=0.0,  # Google Places free tier; ElevenLabs billed separately
         sovereign_mode=sovereign_mode,
         memory_active=memory_active,
+        timestamp=datetime.now(timezone.utc).isoformat(),
+    )
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# §67 — Flight Search Endpoint (Kiwi.com Bridge)
+# ══════════════════════════════════════════════════════════════════════════════
+
+@router.post("/flight-search", response_model=FlightSearchResponse)
+async def maria_flight_search(req: FlightSearchRequest):
+    """
+    Search flights via Kiwi.com sovereign bridge.
+
+    IP1 Separação Financeira — WINDI recommends. Kiwi processes. User pays there.
+    """
+    if not KIWI_BRIDGE_ENABLED:
+        raise HTTPException(status_code=503, detail="Kiwi Bridge not available")
+
+    t0 = time.time()
+    request_id = str(uuid.uuid4())
+    lang = req.lang if req.lang in ("PT", "DE", "EN") else "PT"
+
+    # 1. Search flights via Kiwi Bridge
+    flights_data = await search_flights(
+        fly_from=req.fly_from,
+        fly_to=req.fly_to,
+        date_from=req.date,
+        currency="EUR",
+        max_results=req.max_results or 3,
+        adults=req.adults or 1,
+    )
+
+    # 2. Format MARIA voice response
+    maria_text = format_maria_response(flights_data, lang)
+
+    # 3. Determine if sovereign mode (demo data = no API key)
+    sovereign_mode = flights_data.get("source") == "demo"
+
+    # 4. Ledger seal (I11)
+    seal_payload = {
+        "request_id": request_id,
+        "origin": flights_data.get("origin"),
+        "destination": flights_data.get("destination"),
+        "date": req.date,
+        "flights_count": len(flights_data.get("flights", [])),
+        "sovereign_mode": sovereign_mode,
+        "source": flights_data.get("source", "kiwi.com"),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    }
+    receipt_id = await seal_decision(request_id, seal_payload, req.wallet_id)
+
+    elapsed = round((time.time() - t0) * 1000)
+    log.info(f"[{request_id[:8]}] flight-search OK · {len(flights_data.get('flights', []))} flights · {elapsed}ms")
+
+    return FlightSearchResponse(
+        request_id=request_id,
+        flights=flights_data.get("flights", []),
+        origin=flights_data.get("origin", req.fly_from),
+        destination=flights_data.get("destination", req.fly_to),
+        date=req.date,
+        maria_voice=maria_text,
+        ledger_receipt_id=receipt_id,
+        sovereign_mode=sovereign_mode,
+        source=flights_data.get("source", "kiwi.com"),
         timestamp=datetime.now(timezone.utc).isoformat(),
     )
