@@ -28,6 +28,9 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 from typing import Optional
 
+# ── Logging (no PII — I1) ─────────────────────────────────────────────────────
+log = logging.getLogger("w-maria-001-booking")
+
 # ── MARIA Voice (Triple LLM) ──────────────────────────────────────────────────
 from maria_voice import select_provider, get_system_prompt, MARIA_PROMPTS
 
@@ -48,8 +51,19 @@ except ImportError:
     def get_total_interactions(did): return 0
     log.warning("[MARIA] Memory module not available — running without DID persistence")
 
-# ── Logging (no PII — I1) ─────────────────────────────────────────────────────
-log = logging.getLogger("w-maria-001-booking")
+# ── Places Sovereignty Gate ───────────────────────────────────────────────────
+try:
+    # Add parent directory to path for import
+    import sys
+    _travel_path = "/opt/windi/windi-travel"
+    if _travel_path not in sys.path:
+        sys.path.insert(0, _travel_path)
+    from places_gate import search_places_sovereign, get_cache_stats
+    PLACES_GATE_ENABLED = True
+    log.info("[MARIA] Places Sovereignty Gate loaded ✓")
+except ImportError as e:
+    PLACES_GATE_ENABLED = False
+    log.warning(f"[MARIA] Places Gate not available: {e}")
 
 # ── Config ────────────────────────────────────────────────────────────────────
 GOOGLE_PLACES_KEY = os.getenv("GOOGLE_PLACES_KEY", "")
@@ -133,7 +147,7 @@ async def enrich_context(lat: float, lng: float) -> dict:
         log.warning(f"Open-Meteo fallback: {e}")
         return {"weather": "? N/A", "is_raining": False, "lat": lat, "lng": lng}
 
-# ── Google Places Search ───────────────────────────────────────────────────────
+# ── Google Places Search (via Sovereignty Gate) ───────────────────────────────
 PLACE_TYPE_MAP = {
     "restaurant": "restaurant",
     "cafe":       "cafe",
@@ -142,11 +156,48 @@ PLACE_TYPE_MAP = {
     "event":      "tourist_attraction",
 }
 
-async def search_places(intent: IntentPayload, lat: float, lng: float, lang: str) -> list[dict]:
-    """Query Google Places Nearby Search. Returns top 3 candidates."""
-    if not GOOGLE_PLACES_KEY:
-        return []  # sovereign fallback handled upstream
+async def search_places(intent: IntentPayload, lat: float, lng: float, lang: str, tier: str = "MED", actor: str = "anonymous") -> tuple[list[dict], bool]:
+    """
+    Query Places via Sovereignty Gate — cache-first, audit-always.
+
+    Returns:
+        (list of places, cache_hit boolean)
+    """
     gtype = PLACE_TYPE_MAP.get(intent.type, "point_of_interest")
+
+    # Use Sovereignty Gate if available
+    if PLACES_GATE_ENABLED:
+        result = await search_places_sovereign(
+            place_type=gtype,
+            lat=lat,
+            lng=lng,
+            lang=lang,
+            tier=tier,
+            actor=actor
+        )
+
+        places = result.get("places", [])
+        cache_hit = result.get("cache_hit", False)
+
+        # Transform gate output to expected format
+        out = []
+        for p in places:
+            out.append({
+                "name": p.get("name"),
+                "place_id": p.get("place_id"),
+                "address": p.get("vicinity") or p.get("formatted_address"),
+                "rating": p.get("rating"),
+                "open_now": p.get("opening_hours", {}).get("open_now") if isinstance(p.get("opening_hours"), dict) else None,
+                "user_ratings_total": p.get("user_ratings_total", 0),
+            })
+
+        log.info(f"[Places Gate] {len(out)} results · cache_hit={cache_hit}")
+        return out, cache_hit
+
+    # Fallback: Direct API call (legacy)
+    if not GOOGLE_PLACES_KEY:
+        return [], False
+
     lang_code = {"PT": "pt", "DE": "de", "EN": "en"}.get(lang, "en")
     try:
         async with httpx.AsyncClient(timeout=8.0) as client:
@@ -171,10 +222,10 @@ async def search_places(intent: IntentPayload, lat: float, lng: float, lang: str
                     "open_now": p.get("opening_hours", {}).get("open_now"),
                     "user_ratings_total": p.get("user_ratings_total", 0),
                 })
-            return out
+            return out, False  # Not from cache
     except Exception as e:
         log.warning(f"Google Places fallback: {e}")
-        return []
+        return [], False
 
 # ── Decision Engine ────────────────────────────────────────────────────────────
 def score_place(place: dict, intent: IntentPayload, ctx: dict) -> float:
@@ -405,10 +456,15 @@ async def maria_plan(req: PlanRequest):
             timestamp=datetime.now(timezone.utc).isoformat(),
         )
 
-    # 2. Places — Google Places or sovereign fallback
+    # 2. Places — Google Places via Sovereignty Gate (cache-first)
     candidates = []
+    places_cache_hit = False
     if req.lat and req.lng:
-        candidates = await search_places(req.intent, lat, lng, lang)
+        candidates, places_cache_hit = await search_places(
+            req.intent, lat, lng, lang,
+            tier="TRAVEL",  # Travel users get premium access
+            actor=did or "anonymous"
+        )
 
     if not candidates:
         # Plan B: Try LLM via Gateway before falling back to generic
