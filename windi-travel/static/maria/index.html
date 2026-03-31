@@ -305,15 +305,6 @@ const PIN_ICONS = {
   beach: "🏖️", flight: "✈️", bar: "🍻", park: "🌳", default: "📍"
 };
 
-// §87 — OSRM Routing Soberano (Zero dependências externas)
-async function windiRoute(fromLng, fromLat, toLng, toLat) {
-  const url = `http://router.project-osrm.org/route/v1/driving/${fromLng},${fromLat};${toLng},${toLat}?overview=full&geometries=geojson`;
-  const res = await fetch(url);
-  const data = await res.json();
-  if (data.code !== 'Ok') return null;
-  return data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
-}
-
 // §85 — Hybrid Navigation: WINDI seals, native Maps navigates
 function openNavigation(destLat, destLng, destName, lang) {
   // 1. Seal navigation start in Ledger (I11)
@@ -445,7 +436,7 @@ function SuperCarta({ locations, userLat, userLng, lang }) {
       // Popup with place info
       const ratingStr = loc.rating ? `★ ${loc.rating}` : "";
       const openStr = loc.open_now === true ? "✓ Aberto" : loc.open_now === false ? "✗ Fechado" : "";
-      // §87 — Store map reference for routing
+      // §85 — Store map reference for navigation
       window._windiMap = map;
       window._windiUser = { lat: userLat, lng: userLng };
 
