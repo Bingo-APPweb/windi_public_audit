@@ -1283,6 +1283,11 @@ const TRAVEL_I18N = {
   maria_history:  { de: "Letzte Empfehlungen", pt: "Últimas recomendações", en: "Recent recommendations" },
   maria_loading:  { de: "Denke nach...", pt: "A pensar...", en: "Thinking..." },
   maria_sealed:   { de: "Im Ledger gesiegelt", pt: "Selado no Ledger", en: "Sealed in Ledger" },
+  // P2-A/B — Progressive timeout + error messages
+  maria_working:  { de: "Arbeite noch…", pt: "Ainda a trabalhar…", en: "Still working…" },
+  maria_slow:     { de: "Dauert länger als üblich…", pt: "Mais tempo que o usual…", en: "Taking longer than usual…" },
+  error_network:  { de: "Keine Verbindung. Prüfe dein Netz.", pt: "Sem ligação. Verifica a rede.", en: "No connection. Check your network." },
+  error_generic:  { de: "Etwas ist schiefgelaufen. Versuch es nochmal.", pt: "Algo correu mal. Tenta novamente.", en: "Something went wrong. Try again." },
 
   // ── RESCUE MODE ──
   rescue_title: {
@@ -1833,7 +1838,21 @@ async function askMaria() {
   inputEl.value = '';
   inputEl.disabled = true;
 
+  // P2-A — Progressive feedback during API call
+  let progressTimer = null;
+  let elapsed = 0;
   try {
+    progressTimer = setInterval(() => {
+      elapsed++;
+      const textEl = document.getElementById('maria-response-text');
+      if (textEl && textEl.querySelector('.maria-thinking')) {
+        const msg = elapsed >= 10 ? (TRAVEL_I18N.maria_slow?.[LANG] || 'Taking longer…')
+                  : elapsed >= 5  ? (TRAVEL_I18N.maria_working?.[LANG] || 'Still working…')
+                  : (TRAVEL_I18N.maria_loading?.[LANG] || 'Thinking…');
+        textEl.innerHTML = `<span class="maria-thinking">${msg}</span>`;
+      }
+    }, 1000);
+
     const res = await fetch('/maria/think', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -1845,6 +1864,7 @@ async function askMaria() {
       })
     });
 
+    clearInterval(progressTimer);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
 
@@ -1852,13 +1872,14 @@ async function askMaria() {
     interpretSemantic(data, message);
 
   } catch (err) {
+    clearInterval(progressTimer);
     console.warn('[F13] askMaria error:', err);
-    const fallback = {
-      de: 'Maria denkt nach… bitte erneut versuchen.',
-      pt: 'Maria está a pensar… tenta novamente.',
-      en: 'Maria is thinking… please try again.'
-    };
-    renderMariaResponse({ response: fallback[LANG] || fallback.en, isError: true });
+    // P2-B — Human-friendly error messages by type
+    const isNetwork = !navigator.onLine || err.message?.includes('fetch') || err.message?.includes('Failed');
+    const fallback = isNetwork
+      ? (TRAVEL_I18N.error_network?.[LANG] || 'No connection. Check your network.')
+      : (TRAVEL_I18N.error_generic?.[LANG] || 'Something went wrong. Try again.');
+    renderMariaResponse({ response: fallback, isError: true });
   } finally {
     setMariaState('idle');
     inputEl.disabled = false;
