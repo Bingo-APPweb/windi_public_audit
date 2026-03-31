@@ -47,7 +47,7 @@ try:
     MEMORY_ENABLED = True
 except ImportError:
     MEMORY_ENABLED = False
-    def gerar_saudacao(did, lang): return {"PT": "Bom dia, viajante", "DE": "Guten Tag, Reisender", "EN": "Good day, traveller"}.get(lang, "Good day")
+    def gerar_saudacao(did, lang, weather=None, hour=None): return {"PT": "Bom dia, viajante", "DE": "Guten Tag, Reisender", "EN": "Good day, traveller"}.get(lang, "Good day")
     def get_total_interactions(did): return 0
     log.warning("[MARIA] Memory module not available — running without DID persistence")
 
@@ -900,11 +900,13 @@ async def maria_plan(req: PlanRequest):
             timestamp=datetime.now(timezone.utc).isoformat(),
         )
 
-    # 1e. §65 — Special handling for greeting intent
+    # 1e. §65 + §91 — Special handling for greeting intent with Small Talk
     #     For greetings, use the requested language (not stored preference)
+    #     §91: Memory informs behavior, not output. Pass hour for contextual greeting.
     if req.intent.type == "greeting":
         greeting_lang = req.lang if req.lang in ("PT", "DE", "EN") else "EN"
-        greeting_text = gerar_saudacao(did, greeting_lang) if did else {
+        current_hour = datetime.now().hour
+        greeting_text = gerar_saudacao(did, greeting_lang, weather=ctx.get("weather"), hour=current_hour) if did else {
             "PT": "Bom dia, viajante",
             "DE": "Guten Tag, Reisender",
             "EN": "Good day, traveller"
