@@ -315,6 +315,9 @@
         type="text"
         name="name"
         placeholder="Como te chamamos"
+        data-placeholder-pt="Como te chamamos"
+        data-placeholder-de="Wie sollen wir dich nennen?"
+        data-placeholder-en="What should we call you?"
         required
         autocomplete="name"
       >
@@ -326,6 +329,9 @@
         type="email"
         name="email"
         placeholder="o.teu@email.com"
+        data-placeholder-pt="o.teu@email.com"
+        data-placeholder-de="deine@email.de"
+        data-placeholder-en="your@email.com"
         required
         autocomplete="email"
       >
@@ -425,6 +431,11 @@ function setLang(lang) {
   document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
   event.target.classList.add('active');
   localStorage.setItem('windi_travel_lang', lang);
+
+  // I12 — Apply i18n placeholders
+  document.querySelectorAll('[data-placeholder-' + lang + ']').forEach(el => {
+    el.placeholder = el.getAttribute('data-placeholder-' + lang);
+  });
 }
 
 // Restaurar língua salva
@@ -436,6 +447,11 @@ function setLang(lang) {
     document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
   }
+
+  // I12 — Apply i18n placeholders on load
+  document.querySelectorAll('[data-placeholder-' + saved + ']').forEach(el => {
+    el.placeholder = el.getAttribute('data-placeholder-' + saved);
+  });
 })();
 </script>
 
