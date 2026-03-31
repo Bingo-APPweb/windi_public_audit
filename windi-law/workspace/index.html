@@ -1096,8 +1096,21 @@ function closeSealModal() {
 
 async function confirmSeal() {
   closeSealModal();
+
+  // ═══════════════════════════════════════════════════════════════
+  // P0 — Identity Gate (I9 enforcement)
+  // "O sistema só começa quando a identidade é obrigatória."
+  // Backend é autoridade. Frontend é UX.
+  // ═══════════════════════════════════════════════════════════════
   var wallet = JSON.parse(sessionStorage.getItem('windi_law_wallet') || '{}');
-  var did = wallet.did || 'anon';
+  var did = wallet.did;
+  if (!did) {
+    console.error('[WINDI-LAW] P0 BLOCK: No identity found. Seal rejected.');
+    alert('Identität nicht gefunden. Bitte melden Sie sich erneut an.\n\nIdentity not found. Please log in again.');
+    window.location.href = '/law/gate';
+    return;
+  }
+
   var docTitle = document.querySelector('.dtitle');
   docTitle = docTitle ? docTitle.textContent : 'documento';
   var hash = currentFileHash || Array.from(crypto.getRandomValues(new Uint8Array(16)))

@@ -261,6 +261,22 @@ class ForensicLedgerHandler(BaseHTTPRequestHandler):
                     })
                     return
 
+                # ═══════════════════════════════════════════════════════════
+                # P0 — Identity Gate (I9 enforcement)
+                # Ledger = registrador, não juiz. Apenas rejeita 'anon'.
+                # Validação complexa pertence ao middleware.
+                # ═══════════════════════════════════════════════════════════
+                actor = r.get("actor", "").strip()
+                if not actor or actor == "anon":
+                    self._json(403, {
+                        "ok": False,
+                        "error": "identity_required",
+                        "message": "Cannot seal without identity. actor='anon' forbidden.",
+                        "invariant": "I9",
+                        "hint": "Provide valid DID or email as actor."
+                    })
+                    return
+
                 # Validate types
                 if r["doc_type"] not in ("doc", "xlsx", "pptx", "jmpg", "communique", "compliance_passport", "cartaz", "canvas"):
                     self._json(400, {
