@@ -66,7 +66,8 @@ async def think(
     session_count: int = 0,
     memory: str = "",
     tier: str = "FREE",
-    context: dict = None
+    context: dict = None,
+    history: list = None
 ) -> Dict[str, Any]:
     """
     O cérebro da Maria pensa — agora através da Alma.
@@ -134,7 +135,7 @@ async def think(
     # ─────────────────────────────────────────────────────────────────────────
     # P4 Step 4: CALL LLM — Com o provider e prompt certos
     # ─────────────────────────────────────────────────────────────────────────
-    result = await _call_provider(provider, system, user_input, lang)
+    result = await _call_provider(provider, system, user_input, lang, history=history or [])
 
     # ─────────────────────────────────────────────────────────────────────────
     # P4 Step 5: RETURN — Resposta enriquecida com pulse
@@ -153,12 +154,13 @@ async def think(
 # LLM PROVIDERS
 # ══════════════════════════════════════════════════════════════════════════════
 
-async def _call_provider(provider: str, system: str, user_input: str, lang: str) -> Dict[str, Any]:
+async def _call_provider(provider: str, system: str, user_input: str, lang: str, history: list = None) -> Dict[str, Any]:
     """Route to the correct LLM based on provider selection."""
+    history = history or []
 
     # Anthropic (Claude) — emoção, presença
     if provider == "anthropic" and ANTHROPIC_KEY:
-        result = await _call_claude(system, user_input, lang)
+        result = await _call_claude(system, user_input, lang, history)
         if result["provider"] != "offline":
             return result
 
@@ -171,26 +173,27 @@ async def _call_provider(provider: str, system: str, user_input: str, lang: str)
     # OpenAI (GPT) — visão (fallback to Claude for now)
     if provider == "openai" and ANTHROPIC_KEY:
         # TODO: Implement GPT-4V when needed
-        result = await _call_claude(system, user_input, lang)
+        result = await _call_claude(system, user_input, lang, history)
         if result["provider"] != "offline":
             return result
 
     # Fallback chain: Claude → Mistral → Offline
     if ANTHROPIC_KEY:
-        result = await _call_claude(system, user_input, lang)
+        result = await _call_claude(system, user_input, lang, history)
         if result["provider"] != "offline":
             return result
 
     if MISTRAL_KEY:
-        result = await _call_mistral(system, user_input, lang)
+        result = await _call_mistral(system, user_input, lang, history)
         if result["provider"] != "offline":
             return result
 
     return _offline_response(lang)
 
 
-async def _call_claude(system: str, user_input: str, lang: str) -> Dict[str, Any]:
+async def _call_claude(system: str, user_input: str, lang: str, history: list = None) -> Dict[str, Any]:
     """Pensar com Claude (Anthropic) — presença humana, emoção."""
+    history = history or []
     try:
         import httpx
 
@@ -207,7 +210,7 @@ async def _call_claude(system: str, user_input: str, lang: str) -> Dict[str, Any
                     "max_tokens": 250,
                     "temperature": 0.3,
                     "system": system,
-                    "messages": [{"role": "user", "content": user_input}]
+                    "messages": [*history, {"role": "user", "content": user_input}]
                 }
             )
 
@@ -235,7 +238,7 @@ async def _call_gemini(system: str, user_input: str, lang: str) -> Dict[str, Any
         # Gemini uses a different API structure
         async with httpx.AsyncClient(timeout=30.0) as client:
             response = await client.post(
-                f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_KEY}",
+                f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GEMINI_KEY}",
                 headers={"Content-Type": "application/json"},
                 json={
                     "contents": [{
@@ -264,8 +267,9 @@ async def _call_gemini(system: str, user_input: str, lang: str) -> Dict[str, Any
     return {"response": "", "provider": "offline", "confidence": 0.0}
 
 
-async def _call_mistral(system: str, user_input: str, lang: str) -> Dict[str, Any]:
+async def _call_mistral(system: str, user_input: str, lang: str, history: list = None) -> Dict[str, Any]:
     """Pensar com Mistral — soberania local, fallback."""
+    history = history or []
     try:
         import httpx
 
@@ -280,6 +284,7 @@ async def _call_mistral(system: str, user_input: str, lang: str) -> Dict[str, An
                     "model": "mistral-small-latest",
                     "messages": [
                         {"role": "system", "content": system},
+                        *history,
                         {"role": "user", "content": user_input}
                     ],
                     "max_tokens": 300,
