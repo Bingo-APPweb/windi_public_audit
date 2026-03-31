@@ -79,16 +79,12 @@ const I18N = {
     suffix:"Deseja selar esta decisão?",
     s_idle:"● AGUARDANDO",s_listen:"◎ ESCUTANDO",
     s_proc:"⟳ PROCESSANDO",s_speak:"🔊 FALANDO",s_result:"✓ DECISÃO PRONTA",
-    s_live:"● LIVE",s_fallback:"◌ DEMO",
+    s_live:"● LIVE",s_error:"✗ ERROR",
     ctx_keys:{weather:"Clima",location:"Local",companions:"Grupo"},
     sovereign_notice:"Modo soberano — APIs externas indisponíveis",
     live_notice:"Conectado ao servidor real",
     error_notice:"Backend indisponível — modo demonstração",
-    scenarios:[
-      {input:"Maria, temos 3 horas, queremos comer bem sem fila",intent:{type:"restaurant",time_available:3,no_queue:true,quality:"high"},ctx:{weather:"☀️ 18°C",location:"Kempten, Bayern",companions:"2 pessoas"},s:{name:"Zum Stift",type:"Restaurante",distance_text:"8 min a pé",queue_status:"Sem fila agora",reason:"Clima ideal para caminhada · Alta qualidade · Reserva possível"},voice:"Encontrei o Zum Stift a oito minutos a pé. Sem fila neste momento. O clima está perfeito para caminhar."},
-      {input:"Maria, museu interessante para esta tarde com crianças",intent:{type:"museum",time_available:4,family:true},ctx:{weather:"🌤️ 14°C",location:"Friedrichshafen",companions:"família"},s:{name:"Zeppelin Museum",type:"Museu",distance_text:"12 min",queue_status:"Pouca espera",reason:"Perfeito para família · Coberto em caso de chuva · Acesso inclusivo"},voice:"Recomendo o Zeppelin Museum a doze minutos. Ideal para família, com espaços cobertos. Pouca espera esperada."},
-      {input:"Maria, café tranquilo para trabalhar 2 horas",intent:{type:"cafe",time_available:2,quiet:true,wifi:true},ctx:{weather:"🌧️ 9°C",location:"Lindau",companions:"sozinho"},s:{name:"Café am See",type:"Café",distance_text:"5 min",queue_status:"Tranquilo agora",reason:"Wi-Fi disponível · Interior acolhedor · Chuva — indoor preferido"},voice:"Encontrei o Café am See a cinco minutos. Tranquilo agora, com Wi-Fi. Interior acolhedor."},
-    ],
+    scenarios:[], // §89 — Production mode: no demo scenarios
   },
   DE:{
     tagline:"Orchestratorin Verifizierbarer Erlebnisse",
@@ -113,16 +109,12 @@ const I18N = {
     suffix:"Möchten Sie diese Entscheidung versiegeln?",
     s_idle:"● WARTET",s_listen:"◎ HÖRT ZU",
     s_proc:"⟳ VERARBEITUNG",s_speak:"🔊 SPRICHT",s_result:"✓ ENTSCHEIDUNG BEREIT",
-    s_live:"● LIVE",s_fallback:"◌ DEMO",
+    s_live:"● LIVE",s_error:"✗ ERROR",
     ctx_keys:{weather:"Wetter",location:"Ort",companions:"Gruppe"},
     sovereign_notice:"Souveräner Modus — externe APIs nicht verfügbar",
     live_notice:"Mit echtem Server verbunden",
     error_notice:"Backend nicht verfügbar — Demo-Modus",
-    scenarios:[
-      {input:"Maria, wir haben 3 Stunden, gut essen ohne Warteschlange",intent:{type:"restaurant",time_available:3,no_queue:true},ctx:{weather:"☀️ 18°C",location:"Kempten, Bayern",companions:"2 Personen"},s:{name:"Zum Stift",type:"Restaurant",distance_text:"8 Min. zu Fuß",queue_status:"Jetzt keine Schlange",reason:"Ideales Wetter · Hohe Qualität · Reservierung möglich"},voice:"Das Zum Stift ist acht Minuten zu Fuß entfernt. Gerade keine Warteschlange. Das Wetter ist ideal."},
-      {input:"Maria, interessantes Museum mit Kindern heute Nachmittag",intent:{type:"museum",time_available:4,family:true},ctx:{weather:"🌤️ 14°C",location:"Friedrichshafen",companions:"Familie"},s:{name:"Zeppelin Museum",type:"Museum",distance_text:"12 Min.",queue_status:"Wenig Wartezeit",reason:"Ideal für Familien · Überdacht bei Regen · Barrierefreiheit"},voice:"Das Zeppelin Museum in zwölf Minuten. Ideal für Familien, überdacht bei Regen. Wenig Wartezeit."},
-      {input:"Maria, ruhiges Café zum Arbeiten für 2 Stunden",intent:{type:"cafe",time_available:2,quiet:true,wifi:true},ctx:{weather:"🌧️ 9°C",location:"Lindau",companions:"allein"},s:{name:"Café am See",type:"Café",distance_text:"5 Min.",queue_status:"Ruhig gerade",reason:"WLAN verfügbar · Gemütliches Interieur · Regen — indoor bevorzugt"},voice:"Café am See in fünf Minuten. Gerade ruhig, mit WLAN. Gemütlich und ideal bei diesem Regenwetter."},
-    ],
+    scenarios:[], // §89 — Production mode: no demo scenarios
   },
   EN:{
     tagline:"Orchestrator of Verifiable Experiences",
@@ -147,16 +139,12 @@ const I18N = {
     suffix:"Would you like to seal this decision?",
     s_idle:"● STANDBY",s_listen:"◎ LISTENING",
     s_proc:"⟳ PROCESSING",s_speak:"🔊 SPEAKING",s_result:"✓ DECISION READY",
-    s_live:"● LIVE",s_fallback:"◌ DEMO",
+    s_live:"● LIVE",s_error:"✗ ERROR",
     ctx_keys:{weather:"Weather",location:"Location",companions:"Group"},
     sovereign_notice:"Sovereign mode — external APIs unavailable",
     live_notice:"Connected to live server",
     error_notice:"Backend unavailable — demo mode",
-    scenarios:[
-      {input:"Maria, we have 3 hours, want to eat well with no queue",intent:{type:"restaurant",time_available:3,no_queue:true},ctx:{weather:"☀️ 18°C",location:"Kempten, Bayern",companions:"2 people"},s:{name:"Zum Stift",type:"Restaurant",distance_text:"8 min walk",queue_status:"No queue now",reason:"Ideal weather to walk · High quality · Reservation available"},voice:"I found Zum Stift, eight minutes on foot. No queue at this moment. Perfect weather for a walk."},
-      {input:"Maria, interesting museum this afternoon with kids",intent:{type:"museum",time_available:4,family:true},ctx:{weather:"🌤️ 14°C",location:"Friedrichshafen",companions:"family"},s:{name:"Zeppelin Museum",type:"Museum",distance_text:"12 min",queue_status:"Short wait",reason:"Perfect for families · Covered if rain · Accessible"},voice:"I recommend the Zeppelin Museum, twelve minutes away. Ideal for families, with covered spaces."},
-      {input:"Maria, quiet café to work for 2 hours",intent:{type:"cafe",time_available:2,quiet:true,wifi:true},ctx:{weather:"🌧️ 9°C",location:"Lindau",companions:"alone"},s:{name:"Café am See",type:"Café",distance_text:"5 min",queue_status:"Quiet now",reason:"Wi-Fi available · Cozy interior · Rain — indoor preferred"},voice:"Café am See is five minutes away. Quiet right now, with Wi-Fi. Cozy and ideal for this rainy weather."},
-    ],
+    scenarios:[], // §89 — Production mode: no demo scenarios
   },
 };
 
@@ -235,6 +223,14 @@ function getWalletId(){
 }
 const WALLET_ID=getWalletId();
 
+// §89 — Production Gate: redirect if no valid DID
+(function(){
+  if(!WALLET_ID || WALLET_ID==='TEST' || WALLET_ID.length<8){
+    console.log('[§89] Invalid DID — redirecting to Identity Gate');
+    window.location.href='/travel/gate/?redirect=maria-ui';
+  }
+})();
+
 async function callMariaAPI(intent,lang,fallbackSc,inputText=""){
   const{lat,lng}=await getGPS();
   try{
@@ -248,12 +244,13 @@ async function callMariaAPI(intent,lang,fallbackSc,inputText=""){
     if(!r.ok)throw new Error(`HTTP ${r.status}`);
     return{source:"live",data:await r.json()};
   }catch(e){
-    return{source:"fallback",data:{
-      request_id:"demo-"+Math.random().toString(36).slice(2,10),
-      decision:fallbackSc.s,context:fallbackSc.ctx,
-      maria_voice:{PT:fallbackSc.voice,DE:fallbackSc.voice,EN:fallbackSc.voice},
-      intent_parsed:intent,ledger_receipt_id:null,sovereign_mode:true,
-      timestamp:new Date().toISOString(),
+    // §89 — Production mode: no demo fallback, show real error
+    console.error('[§89] API error:', e.message);
+    return{source:"error",data:{
+      request_id:"ERROR-"+Date.now().toString(36).toUpperCase(),
+      decision:{name:"Erro de Conexão",type:"error",reason:"Backend indisponível. Tenta novamente."},
+      context:{},maria_voice:{},intent_parsed:intent,ledger_receipt_id:null,
+      error:true,error_message:e.message,timestamp:new Date().toISOString(),
     }};
   }
 }
@@ -614,29 +611,11 @@ function App(){
     timers.current.push(t1);
   },[lang,t]);
 
-  const handleDemo=sc=>{if(mode==="processing")return;runPipeline(sc.intent,sc.input,sc);};
-  // §79 — Demo Super Carta (map test)
-  const handleDemoMap=async()=>{
-    if(mode==="processing")return;
-    setMode("processing");setTranscript("🗺️ Demo Super Carta");setDoneSt([]);setSealed(false);setShowIntent(false);setResult(null);
-    const ids=STAGES.map(s=>s.id);
-    ids.forEach((id,i)=>{
-      const t0=setTimeout(()=>{setActiveStage(id);setDoneSt(prev=>[...prev,ids[i-1]].filter(Boolean));},i*200);
-      timers.current.push(t0);
-    });
-    try{
-      const r=await fetch("/travel/maria/demo-carta",{signal:AbortSignal.timeout(5000)});
-      const data=await r.json();
-      setApiSource("live");
-      const t1=setTimeout(()=>{setDoneSt(ids.slice(0,-1));setActiveStage(null);setResult(data);setMode("result");},ids.length*200+100);
-      timers.current.push(t1);
-    }catch(e){setMode("idle");setApiSource(null);}
-  };
+  // §89 — Demo functions removed for production
   const handleVoice=tr=>{
-    const sc=t.scenarios.find(s=>
-      s.intent.type===(/museu|museum/i.test(tr)?"museum":/caf[eé]/i.test(tr)?"cafe":"restaurant")
-    )||t.scenarios[0];
-    runPipeline({...sc.intent},tr,sc);
+    // §89 — Direct to API, no demo fallback
+    const intent=detectIntentFromText(tr);
+    runPipeline(intent,tr,null);
   };
   // §69c — Smart intent detection from text input
   const detectIntentFromText=(text)=>{
@@ -661,8 +640,8 @@ function App(){
   const handleText=()=>{
     if(!textIn.trim())return;
     const intent=detectIntentFromText(textIn);
-    const sc=t.scenarios[0]; // fallback for UI demo data
-    runPipeline(intent,textIn,sc);
+    // §89 — Production: no demo fallback
+    runPipeline(intent,textIn,null);
     setTextIn("");
   };
   const reset=()=>{
@@ -706,7 +685,7 @@ function App(){
             {backendOK!==null&&(
               <div style={{background:backendOK?P.verde:"rgba(255,255,255,0.08)",color:"white",
                 borderRadius:20,padding:"2px 8px",fontSize:8,fontFamily:"'JetBrains Mono',monospace",letterSpacing:"0.5px"}}>
-                {backendOK?t.s_live:t.s_fallback}
+                {backendOK?t.s_live:t.s_error}
               </div>
             )}
             <div style={{background:statusBg[mode],color:"white",borderRadius:20,padding:"3px 10px",
@@ -758,28 +737,7 @@ function App(){
               <span style={{fontSize:10,color:P.cinza,fontFamily:"'JetBrains Mono',monospace"}}>ou</span>
               <div style={{flex:1,height:1,background:"rgba(139,94,60,0.15)"}}/>
             </div>
-            <div style={{marginBottom:14}}>
-              <div style={{fontSize:10,fontFamily:"'JetBrains Mono',monospace",color:P.cinza,marginBottom:8,letterSpacing:"0.5px"}}>{t.demos_label}</div>
-              {t.scenarios.map((s,i)=>(
-                <button key={i} onClick={()=>handleDemo(s)} style={{
-                  width:"100%",textAlign:"left",background:"white",
-                  border:`1px solid rgba(139,94,60,0.15)`,borderRadius:10,
-                  padding:"10px 13px",marginBottom:6,cursor:"pointer",
-                  display:"flex",alignItems:"center",gap:10}}>
-                  <span style={{fontSize:16}}>🎙️</span>
-                  <span style={{fontSize:13,color:P.noite,lineHeight:1.3}}>"{s.input}"</span>
-                </button>
-              ))}
-              {/* §79 — Super Carta Demo Button */}
-              <button onClick={handleDemoMap} style={{
-                width:"100%",textAlign:"left",background:`linear-gradient(135deg,${P.agua}15,${P.verde}10)`,
-                border:`1px solid ${P.agua}44`,borderRadius:10,
-                padding:"10px 13px",marginBottom:6,cursor:"pointer",
-                display:"flex",alignItems:"center",gap:10}}>
-                <span style={{fontSize:16}}>🗺️</span>
-                <span style={{fontSize:13,color:P.agua,lineHeight:1.3,fontWeight:600}}>{lang==="PT"?"Ver Demo Super Carta (Mapa)":lang==="DE"?"Super Carta Demo ansehen (Karte)":"View Super Carta Demo (Map)"}</span>
-              </button>
-            </div>
+            {/* §89 — Demo buttons removed for production */}
             <div style={{marginBottom:18}}>
               <div style={{fontSize:10,fontFamily:"'JetBrains Mono',monospace",color:P.cinza,marginBottom:7,letterSpacing:"0.5px"}}>{t.or_write}</div>
               <div style={{display:"flex",gap:7}}>
