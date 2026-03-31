@@ -45,7 +45,7 @@
 <script type="text/babel">
 const { useState, useRef, useCallback, useEffect, useMemo } = React;
 
-const MARIA_API    = "/travel/maria/plan";
+const MARIA_API    = "/travel/maria/think";  // §92 — Brain LLM live
 const MARIA_HEALTH = "/travel/maria/health";
 const API_TIMEOUT  = 15000;  // §72 — Claude needs ~10s for presence-aware responses
 
@@ -231,6 +231,7 @@ const WALLET_ID=getWalletId();
   }
 })();
 
+// §92 — Brain API: no intent detection, LLM handles everything
 async function callMariaAPI(intent,lang,fallbackSc,inputText=""){
   const{lat,lng}=await getGPS();
   try{
@@ -238,19 +239,30 @@ async function callMariaAPI(intent,lang,fallbackSc,inputText=""){
     const tid=setTimeout(()=>ctrl.abort(),API_TIMEOUT);
     const r=await fetch(MARIA_API,{
       method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({intent,lang,lat,lng,wallet_id:WALLET_ID,query:inputText}),signal:ctrl.signal,
+      // §92 — Send message directly to LLM brain, no regex intent
+      body:JSON.stringify({message:inputText,lang,did:WALLET_ID,lat,lng}),
+      signal:ctrl.signal,
     });
     clearTimeout(tid);
     if(!r.ok)throw new Error(`HTTP ${r.status}`);
-    return{source:"live",data:await r.json()};
+    // §92 — Adapt brain response to existing UI format
+    const brain=await r.json();
+    return{source:"live",data:{
+      request_id:"BRAIN-"+Date.now().toString(36).toUpperCase(),
+      decision:{name:"Maria",type:brain.intent||"llm",reason:brain.response},
+      context:{provider:brain.provider,confidence:brain.confidence},
+      maria_voice:{[lang]:brain.response},
+      intent_parsed:{type:brain.intent||"llm"},
+      ledger_receipt_id:null,
+      timestamp:new Date().toISOString(),
+    }};
   }catch(e){
-    // §89 — Production mode: no demo fallback, show real error
-    console.error('[§89] API error:', e.message);
+    console.error('[§92] Brain error:', e.message);
     return{source:"error",data:{
       request_id:"ERROR-"+Date.now().toString(36).toUpperCase(),
-      decision:{name:"Erro de Conexão",type:"error",reason:"Backend indisponível. Tenta novamente."},
-      context:{},maria_voice:{},intent_parsed:intent,ledger_receipt_id:null,
-      error:true,error_message:e.message,timestamp:new Date().toISOString(),
+      decision:{name:"Maria Offline",type:"offline",reason:"Estou offline neste momento. Tenta novamente."},
+      context:{},maria_voice:{[lang]:"Estou offline neste momento."},intent_parsed:{type:"offline"},
+      ledger_receipt_id:null,error:true,error_message:e.message,timestamp:new Date().toISOString(),
     }};
   }
 }
@@ -617,30 +629,12 @@ function App(){
     const intent=detectIntentFromText(tr);
     runPipeline(intent,tr,null);
   };
-  // §69c — Smart intent detection from text input
-  // §90 — Consciousness Layer: detect meta-questions about MARIA
+  // §92 — No regex intent detection. LLM brain handles everything.
+  // "Os regex tentam prever o que o humano vai dizer.
+  //  O LLM entende o que o humano quis dizer."
   const detectIntentFromText=(text)=>{
-    const lower=text.toLowerCase();
-    // Greetings first (highest priority)
-    if(/^(ol[aá]|oi|hey|hello|hallo|hi|bom dia|boa tarde|boa noite|guten|good morning|good evening)\b/i.test(lower))
-      return {type:"greeting"};
-    // §90 — Onboarding: user asks about MARIA's identity/services
-    // PT: quem és, que tipo de, és um bot | DE: wer bist du, was bist du | EN: who are you, what are you
-    if(/quem [eé]s|quem [eé] voc[eê]|quem voc[eê] [eé]|quem [eé] vc|o que [eé]s|o que [eé] voc[eê]|que tipo de|[eé]s uma? (ia|bot|chatbot|assistente)|voc[eê] [eé] uma?|wer bist|was bist|who are you|what are you|what kind of|are you a|apresenta|vorstellen|introduce|o que faz|was machst|what do you do|teus servi[çc]os|deine dienste|your service|como funciona|wie funktioniert|how.*work|ajuda.*usar|hilfe.*benutzen|help.*use/i.test(lower))
-      return {type:"onboarding"};
-    // Place types
-    if(/farm[aá]cia|apotheke|pharmacy|medicamento/i.test(lower))return{type:"pharmacy"};
-    if(/hospital|cl[ií]nica|urg[eê]ncia|krankenhaus|emergency/i.test(lower))return{type:"hospital"};
-    if(/banco|bank|atm|multibanco|geldautomat/i.test(lower))return{type:"bank"};
-    if(/supermercado|supermarkt|grocery|mercado/i.test(lower))return{type:"supermarket"};
-    if(/caf[eé]|coffee|kaffee/i.test(lower))return{type:"cafe"};
-    if(/restaurante?|comer|essen|jantar|almo[çc]o/i.test(lower))return{type:"restaurant"};
-    if(/museu|museum/i.test(lower))return{type:"museum"};
-    if(/praia|strand|beach/i.test(lower))return{type:"beach"};
-    if(/hotel|alojamento|unterkunft|hostel/i.test(lower))return{type:"hotel"};
-    if(/voo|voar|fly|flight|flug/i.test(lower))return{type:"flight"};
-    // Default: general query
-    return{type:"general"};
+    // Intent detection moved to LLM brain (maria_brain.py)
+    return {type:"llm"};
   };
   const handleText=()=>{
     if(!textIn.trim())return;
