@@ -625,8 +625,8 @@ function App(){
     if(/^(ol[aá]|oi|hey|hello|hallo|hi|bom dia|boa tarde|boa noite|guten|good morning|good evening)\b/i.test(lower))
       return {type:"greeting"};
     // §90 — Onboarding: user asks about MARIA's identity/services
-    // PT: quem és tu, quem é você, quem vc é | DE: wer bist du | EN: who are you
-    if(/quem [eé]s|quem [eé] voc[eê]|quem voc[eê] [eé]|quem [eé] vc|wer bist|who are you|apresenta|vorstellen|introduce|o que faz|was machst|what do you do|teus servi[çc]os|deine dienste|your service|como funciona|wie funktioniert|how.*work|ajuda.*usar|hilfe.*benutzen|help.*use/i.test(lower))
+    // PT: quem és, que tipo de, és um bot | DE: wer bist du, was bist du | EN: who are you, what are you
+    if(/quem [eé]s|quem [eé] voc[eê]|quem voc[eê] [eé]|quem [eé] vc|o que [eé]s|o que [eé] voc[eê]|que tipo de|[eé]s uma? (ia|bot|chatbot|assistente)|voc[eê] [eé] uma?|wer bist|was bist|who are you|what are you|what kind of|are you a|apresenta|vorstellen|introduce|o que faz|was machst|what do you do|teus servi[çc]os|deine dienste|your service|como funciona|wie funktioniert|how.*work|ajuda.*usar|hilfe.*benutzen|help.*use/i.test(lower))
       return {type:"onboarding"};
     // Place types
     if(/farm[aá]cia|apotheke|pharmacy|medicamento/i.test(lower))return{type:"pharmacy"};
