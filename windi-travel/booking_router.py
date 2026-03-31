@@ -958,9 +958,9 @@ async def maria_plan(req: PlanRequest):
                   f"Ich zeige dir keine Listen. Ich entscheide, und du bestätigst. "
                   f"{'Wir kennen uns schon ' + str(total_visits) + ' Mal.' if total_visits > 0 else 'Das ist unser erstes Gespräch.'} "
                   f"Probier es aus: sag mir, wo du bist und was du brauchst.",
-            "EN": f"I'm Maria — I take care of your travel decisions with the same attention you'd give to your memories. "
-                  f"I don't show you lists. I decide, and you confirm. "
-                  f"{'We've met ' + str(total_visits) + ' times already.' if total_visits > 0 else 'This is our first conversation.'} "
+            "EN": f"I am Maria — I take care of your travel decisions with the same attention you would give to your memories. "
+                  f"I do not show you lists. I decide, and you confirm. "
+                  f"{'We have met ' + str(total_visits) + ' times already.' if total_visits > 0 else 'This is our first conversation.'} "
                   f"Try it: tell me where you are and what you need.",
         }
 
