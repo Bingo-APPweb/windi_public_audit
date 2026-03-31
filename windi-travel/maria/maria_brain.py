@@ -144,15 +144,18 @@ async def think(
         memory=memory or "nenhuma memória prévia"
     )
 
-    # Routing — 100% live, sem fallbacks
-    # Se não há keys → honestamente offline
+    # Routing — fallback chain: Claude → Mistral → Offline
     if ANTHROPIC_KEY:
-        return await _think_claude(user_input, system, lang)
-    elif MISTRAL_KEY:
-        return await _think_mistral(user_input, system, lang)
-    else:
-        # Honestidade constitucional: sem keys = offline
-        return _offline_response(lang)
+        result = await _think_claude(user_input, system, lang)
+        if result["provider"] != "offline":
+            return result
+
+    if MISTRAL_KEY:
+        result = await _think_mistral(user_input, system, lang)
+        if result["provider"] != "offline":
+            return result
+
+    return _offline_response(lang)
 
 
 async def _think_claude(user_input: str, system: str, lang: str) -> Dict[str, Any]:
@@ -169,8 +172,8 @@ async def _think_claude(user_input: str, system: str, lang: str) -> Dict[str, An
                     "content-type": "application/json"
                 },
                 json={
-                    "model": "claude-3-haiku-20240307",
-                    "max_tokens": 80,  # Force brevity (2 short sentences max)
+                    "model": "claude-sonnet-4-20250514",
+                    "max_tokens": 250,  # Room for nuanced responses
                     "temperature": 0.3,  # More consistent, less creative
                     "system": system,
                     "messages": [{"role": "user", "content": user_input}]
