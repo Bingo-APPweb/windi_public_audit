@@ -173,8 +173,8 @@ async def _think_claude(user_input: str, system: str, lang: str) -> Dict[str, An
                     "content-type": "application/json"
                 },
                 json={
-                    "model": "claude-3-haiku-20240307",  # Fast + cheap for conversation
-                    "max_tokens": 300,
+                    "model": "claude-3-5-sonnet-20241022",  # Better instruction following
+                    "max_tokens": 100,  # Force brevity
                     "system": system,
                     "messages": [{"role": "user", "content": user_input}]
                 }
