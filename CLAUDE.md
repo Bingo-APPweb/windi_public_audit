@@ -852,7 +852,7 @@ Query → flight keywords?    → Kiwi Bridge
 - [ ] **Colagem Soberana** — Composição multi-momento
 - [ ] **Thread Visual** — Timeline com thumbnails
 - [ ] **GPS Reverse Geocoding** — Nomes de lugares
-- [ ] **Gemini Vision** — Descrição automática
+- [ ] **W-VISION-001** — Descrição automática
 
 ### P2 — Melhorias
 - [ ] **W-ACCT-001** — Bridge dedicado
@@ -871,7 +871,7 @@ Query → flight keywords?    → Kiwi Bridge
 - [x] §85 Hybrid Navigation · WINDI seals + native Maps navigates ✅ 31 Mar 2026
 - [x] SMTP · P3-A Identity Gate · Tesoura v10 ✅ 29 Mar 2026
 - [x] Travel Checkup · Port fix · LAW isolation ✅ 30 Mar 2026
-- [x] MARIA Triple LLM · Gemini+Claude+OpenAI · Voz activa ✅ 30 Mar 2026
+- [x] MARIA Three Dragons · Guardian+Architect+Witness · Voz activa ✅ 30 Mar 2026
 - [x] §65 MARIA Saudação Personalizada · gerar_saudacao() ✅ 30 Mar 2026
 - [x] §66 Places Sovereignty Gate · Cache-first · TTL · Audit ✅ 30 Mar 2026
 
