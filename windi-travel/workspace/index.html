@@ -1946,7 +1946,7 @@ function interpretSemantic(data, userQuery) {
 
   // §75 — Detectar intenção de navegação
   if (containsNavIntent(text)) {
-    showNavigationHint();
+    showNavigationHint(text, data);
   }
 
   // Se houver seal suggestion
@@ -2014,14 +2014,71 @@ function containsNavIntent(text) {
   return /ir para|navigate|gehen|route|direção|direction|richtung|como chego|how.*get|wie.*komme/i.test(text);
 }
 
-function showNavigationHint() {
-  // Mostrar hint de que pode usar o mapa nativo
-  const hint = {
-    de: '📍 Tipp: Du kannst nach Standorten fragen und ich helfe dir, dorthin zu navigieren.',
-    pt: '📍 Dica: Podes perguntar por locais e eu ajudo-te a navegar até lá.',
-    en: '📍 Tip: You can ask for places and I will help you navigate there.'
+function showNavigationHint(text, data) {
+  // §85 — Extrair dados de rota do texto da Maria
+  const kmMatch   = text?.match(/(\d+)\s*km/i);
+  const timeMatch = text?.match(/(\d+h?\s*\d*\s*min|\d+\s*Stunde)/i);
+  const km   = kmMatch   ? kmMatch[1] + ' km' : null;
+  const time = timeMatch ? timeMatch[1]       : null;
+
+  // Só mostrar card se houver dados concretos de rota
+  if (!km && !time) return;
+
+  // Remover card anterior se existir
+  const existing = document.getElementById('navCard');
+  if (existing) existing.remove();
+
+  const labels = {
+    maps: { de: 'In Maps öffnen', pt: 'Abrir no Maps', en: 'Open in Maps' },
+    waze: { de: 'In Waze öffnen', pt: 'Abrir no Waze', en: 'Open in Waze' },
   };
-  console.log('[F13]', hint[LANG] || hint.en);
+
+  // Query para Maps — usa localização do utilizador se disponível
+  const origin = window.__userLocation
+    ? `${window.__userLocation.lat},${window.__userLocation.lng}`
+    : 'Kempten,Bavaria,Germany';
+  const dest = data?.destination || '';
+  const mapsUrl = `https://www.google.com/maps/dir/${encodeURIComponent(origin)}/${encodeURIComponent(dest)}`;
+  const wazeUrl = `https://waze.com/ul?ll=${encodeURIComponent(dest)}&navigate=yes`;
+
+  const card = document.createElement('div');
+  card.id = 'navCard';
+  card.style.cssText = `
+    background: var(--surface, #1e1e1e);
+    border: 1px solid var(--gold, #8B6914);
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  `;
+  card.innerHTML = `
+    <div style="display:flex;gap:16px;font-size:0.9rem;opacity:0.85;">
+      ${km   ? `<span>📍 ${km}</span>`   : ''}
+      ${time ? `<span>⏱ ${time}</span>` : ''}
+    </div>
+    <div style="display:flex;gap:10px;">
+      <a href="${mapsUrl}" target="_blank" style="
+        flex:1; padding:10px; text-align:center;
+        background:var(--gold,#8B6914); color:#000;
+        border-radius:8px; font-weight:700;
+        text-decoration:none; font-size:0.85rem;">
+        🗺️ ${labels.maps[LANG] || labels.maps.en}
+      </a>
+      <a href="${wazeUrl}" target="_blank" style="
+        flex:1; padding:10px; text-align:center;
+        border:1px solid var(--gold,#8B6914); color:var(--gold,#8B6914);
+        border-radius:8px; font-weight:700;
+        text-decoration:none; font-size:0.85rem;">
+        🚗 ${labels.waze[LANG] || labels.waze.en}
+      </a>
+    </div>
+  `;
+
+  // Injectar após maria-response
+  const response = document.getElementById('maria-response');
+  if (response) response.after(card);
 }
 
 function showSealSuccess(receiptId) {
