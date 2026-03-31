@@ -632,6 +632,25 @@ body {
   to { transform: rotate(360deg); }
 }
 
+/* F13 — Maria Thinking State */
+.maria-thinking {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-3);
+  font-style: italic;
+}
+.maria-thinking::after {
+  content: '';
+  width: 12px;
+  height: 12px;
+  border: 2px solid var(--border-2);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-left: 8px;
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
    BOTTOM BAR — Mobile Navigation
    ═══════════════════════════════════════════════════════════════════════════ */
@@ -1696,6 +1715,190 @@ function checkWalletGate() {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
+// F13 — MARIA CHAT · P3-B · askMaria + askMariaQuick
+// "Nenhuma resposta sai do cérebro sem passar pela alma." — P4
+// ═══════════════════════════════════════════════════════════════════════════
+
+async function askMaria() {
+  const inputEl = document.getElementById('maria-input');
+  const message = inputEl?.value?.trim();
+  if (!message) return;
+
+  const did = sessionStorage.getItem('windi_travel_wallet');
+  if (!did) {
+    window.location.href = '/travel/gate/';
+    return;
+  }
+
+  // UI feedback — thinking state
+  setMariaState('thinking');
+  inputEl.value = '';
+  inputEl.disabled = true;
+
+  try {
+    const res = await fetch('/maria/think', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        message,
+        did,
+        lang: LANG.toUpperCase(),
+        context: { source: 'workspace_chat' }
+      })
+    });
+
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+
+    // Render response
+    interpretSemantic(data, message);
+
+  } catch (err) {
+    console.warn('[F13] askMaria error:', err);
+    const fallback = {
+      de: 'Maria denkt nach… bitte erneut versuchen.',
+      pt: 'Maria está a pensar… tenta novamente.',
+      en: 'Maria is thinking… please try again.'
+    };
+    renderMariaResponse({ response: fallback[LANG] || fallback.en, isError: true });
+  } finally {
+    setMariaState('idle');
+    inputEl.disabled = false;
+    inputEl.focus();
+  }
+}
+
+async function askMariaQuick(type) {
+  const presets = {
+    de: {
+      restaurant: 'Wo kann ich in der Nähe gut essen?',
+      cafe: 'Wo gibt es ein gutes Café zum Arbeiten?',
+      hotel: 'Empfehle mir ein Hotel zum Ausruhen.',
+      discover: 'Was kann ich in meiner Nähe entdecken?'
+    },
+    pt: {
+      restaurant: 'Onde posso comer bem aqui perto?',
+      cafe: 'Onde há um bom café para trabalhar?',
+      hotel: 'Recomenda-me um hotel para descansar.',
+      discover: 'O que posso descobrir perto de mim?'
+    },
+    en: {
+      restaurant: 'Where can I eat well nearby?',
+      cafe: 'Where is a good café to work?',
+      hotel: 'Recommend me a hotel to rest.',
+      discover: 'What can I discover near me?'
+    }
+  };
+
+  const message = presets[LANG]?.[type] || presets.en[type];
+  if (!message) return;
+
+  document.getElementById('maria-input').value = message;
+  await askMaria();
+}
+
+function interpretSemantic(data, userQuery) {
+  // §72 — Pulse Reading: resposta calibrada ao estado
+  const text = data.response || data.message || '…';
+  const provider = data.provider || 'unknown';
+  const pulse = data.pulse || {};
+
+  // Render main response
+  renderMariaResponse({
+    response: text,
+    provider,
+    pulse,
+    intent: data.intent,
+    soulActive: data.soul_active
+  });
+
+  // §75 — Detectar intenção de navegação
+  if (containsNavIntent(text)) {
+    showNavigationHint();
+  }
+
+  // Se houver seal suggestion
+  if (data.ledger_receipt_id) {
+    showSealSuccess(data.ledger_receipt_id);
+  }
+}
+
+function renderMariaResponse(data) {
+  const container = document.getElementById('maria-response');
+  const textEl = document.getElementById('maria-response-text');
+  const metaEl = document.getElementById('maria-response-meta');
+
+  if (!container || !textEl) return;
+
+  // Show container
+  container.style.display = 'block';
+
+  // Render text
+  textEl.textContent = data.response || '…';
+
+  // Render meta
+  if (metaEl) {
+    const metaParts = [];
+    if (data.provider && data.provider !== 'unknown') {
+      metaParts.push(`via ${data.provider}`);
+    }
+    if (data.pulse?.energy) {
+      metaParts.push(`pulse: ${data.pulse.energy}`);
+    }
+    if (data.soulActive) {
+      metaParts.push('§72 ✓');
+    }
+    metaEl.textContent = metaParts.join(' · ') || '';
+  }
+
+  // Error styling
+  if (data.isError) {
+    container.style.opacity = '0.7';
+  } else {
+    container.style.opacity = '1';
+  }
+
+  // Scroll into view
+  container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function setMariaState(state) {
+  const inputEl = document.getElementById('maria-input');
+  const responseEl = document.getElementById('maria-response');
+
+  if (state === 'thinking') {
+    // Show thinking indicator
+    if (responseEl) {
+      responseEl.style.display = 'block';
+      const textEl = document.getElementById('maria-response-text');
+      if (textEl) {
+        textEl.innerHTML = `<span class="maria-thinking">${TRAVEL_I18N.maria_loading?.[LANG] || 'Thinking…'}</span>`;
+      }
+    }
+  }
+}
+
+function containsNavIntent(text) {
+  return /ir para|navigate|gehen|route|direção|direction|richtung|como chego|how.*get|wie.*komme/i.test(text);
+}
+
+function showNavigationHint() {
+  // Mostrar hint de que pode usar o mapa nativo
+  const hint = {
+    de: '📍 Tipp: Du kannst nach Standorten fragen und ich helfe dir, dorthin zu navigieren.',
+    pt: '📍 Dica: Podes perguntar por locais e eu ajudo-te a navegar até lá.',
+    en: '📍 Tip: You can ask for places and I will help you navigate there.'
+  };
+  console.log('[F13]', hint[LANG] || hint.en);
+}
+
+function showSealSuccess(receiptId) {
+  // Update last receipt for verify button
+  lastReceipt = receiptId;
+  console.log('[F13] Sealed:', receiptId);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -1720,6 +1923,17 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('f-geo').textContent =
         `${pos.coords.latitude.toFixed(2)}°N`;
     }, () => {});
+  }
+
+  // F13 — Enter key → askMaria
+  const mariaInput = document.getElementById('maria-input');
+  if (mariaInput) {
+    mariaInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        askMaria();
+      }
+    });
   }
 });
 </script>
