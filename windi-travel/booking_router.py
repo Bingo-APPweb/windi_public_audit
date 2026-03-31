@@ -939,7 +939,59 @@ async def maria_plan(req: PlanRequest):
             timestamp=datetime.now(timezone.utc).isoformat(),
         )
 
-    # 1f. §69 — Culture/Tips intent detection
+    # 1f. §90 — Onboarding intent: MARIA introduces herself
+    #     When user asks "who are you?" or "what do you do?"
+    if req.intent.type == "onboarding":
+        log.info(f"[{request_id[:8]}] Onboarding intent → MARIA identity")
+        total_visits = get_total_interactions(did) if did else 0
+
+        # §90 — MARIA Identity: consciousness, not features
+        # "Rigor por dentro, gentileza por fora."
+        onboarding_text = {
+            "PT": f"Sou a Maria — cuido das tuas decisões de viagem com a mesma atenção que darias às tuas memórias. "
+                  f"Não te mostro listas. Decido por ti, e tu confirmas. "
+                  f"{'Já nos conhecemos ' + str(total_visits) + ' vezes.' if total_visits > 0 else 'É a nossa primeira conversa.'} "
+                  f"Experimenta: diz-me onde estás e o que precisas.",
+            "DE": f"Ich bin Maria — ich kümmere mich um deine Reiseentscheidungen mit derselben Aufmerksamkeit, die du deinen Erinnerungen widmen würdest. "
+                  f"Ich zeige dir keine Listen. Ich entscheide, und du bestätigst. "
+                  f"{'Wir kennen uns schon ' + str(total_visits) + ' Mal.' if total_visits > 0 else 'Das ist unser erstes Gespräch.'} "
+                  f"Probier es aus: sag mir, wo du bist und was du brauchst.",
+            "EN": f"I'm Maria — I take care of your travel decisions with the same attention you'd give to your memories. "
+                  f"I don't show you lists. I decide, and you confirm. "
+                  f"{'We've met ' + str(total_visits) + ' times already.' if total_visits > 0 else 'This is our first conversation.'} "
+                  f"Try it: tell me where you are and what you need.",
+        }
+
+        intro = onboarding_text.get(lang, onboarding_text["EN"])
+
+        return PlanResponse(
+            request_id=request_id,
+            decision=PlaceResult(
+                name="Maria" if lang != "DE" else "Maria",
+                type="onboarding",
+                distance_text="",
+                queue_status="Companion" if lang == "EN" else ("Companheira" if lang == "PT" else "Begleiterin"),
+                reason=intro,
+            ),
+            context={
+                "weather": ctx.get("weather", ""),
+                "total_visits": total_visits,
+                "onboarding": True,
+            },
+            maria_voice=MariaVoice(
+                PT=onboarding_text["PT"] if lang == "PT" else "",
+                DE=onboarding_text["DE"] if lang == "DE" else "",
+                EN=onboarding_text["EN"] if lang == "EN" else "",
+            ),
+            intent_parsed=req.intent.model_dump(),
+            ledger_receipt_id=None,  # Onboarding not sealed (nothing to seal)
+            cost_eur=0.0,
+            sovereign_mode=False,
+            memory_active=memory_active,
+            timestamp=datetime.now(timezone.utc).isoformat(),
+        )
+
+    # 1g. §69 — Culture/Tips intent detection
     #     Practical travel questions → MARIA responds directly via LLM
     if req.query and detect_culture_intent(req.query):
         log.info(f"[{request_id[:8]}] Culture intent detected → MARIA direct response")

@@ -604,7 +604,7 @@ function App(){
       setDoneSt(ids.slice(0,-1));setActiveStage(null);
       setResult(data);setMode("speaking");
       // §71 — No seal suffix for greetings (nothing to seal)
-      const isGreeting=data.decision&&data.decision.type==="greeting";
+      const isGreeting=data.decision&&data.decision.type==="greeting"||decision.type==="onboarding";
       const vt=(data.maria_voice&&(data.maria_voice[lang]||data.maria_voice.PT)||"")+(isGreeting?"":(" "+t.suffix));
       speakMaria(vt,lang,()=>setMode("result"));
     },wait);
@@ -618,11 +618,15 @@ function App(){
     runPipeline(intent,tr,null);
   };
   // §69c — Smart intent detection from text input
+  // §90 — Consciousness Layer: detect meta-questions about MARIA
   const detectIntentFromText=(text)=>{
     const lower=text.toLowerCase();
     // Greetings first (highest priority)
     if(/^(ol[aá]|oi|hey|hello|hallo|hi|bom dia|boa tarde|boa noite|guten|good morning|good evening)\b/i.test(lower))
       return {type:"greeting"};
+    // §90 — Onboarding: user asks about MARIA's identity/services
+    if(/quem [eé]s|wer bist|who are you|apresenta|vorstellen|introduce|o que faz|was machst|what do you do|teus servi[çc]os|deine dienste|your service|como funciona|wie funktioniert|how.*work|ajuda.*usar|hilfe.*benutzen|help.*use/i.test(lower))
+      return {type:"onboarding"};
     // Place types
     if(/farm[aá]cia|apotheke|pharmacy|medicamento/i.test(lower))return{type:"pharmacy"};
     if(/hospital|cl[ií]nica|urg[eê]ncia|krankenhaus|emergency/i.test(lower))return{type:"hospital"};
