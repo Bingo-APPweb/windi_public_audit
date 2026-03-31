@@ -314,15 +314,56 @@ async function windiRoute(fromLng, fromLat, toLng, toLat) {
   return data.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
 }
 
-function drawRoute(map, userLat, userLng, destLat, destLng) {
-  windiRoute(userLng, userLat, destLng, destLat).then(points => {
-    if (!points) return console.error('[§87] OSRM falhou');
-    if (window._windiRoute) window._windiRoute.remove();
-    window._windiRoute = L.polyline(points, {
-      color: '#C8860A', weight: 4, opacity: 0.85
-    }).addTo(map);
-    map.fitBounds(window._windiRoute.getBounds(), { padding: [40, 40] });
-  });
+// §85 — Hybrid Navigation: WINDI seals, native Maps navigates
+function openNavigation(destLat, destLng, destName, lang) {
+  // 1. Seal navigation start in Ledger (I11)
+  const receiptId = 'MARIA-NAV-' + Date.now().toString(36).toUpperCase();
+  console.log('[§85] Navigation sealed:', receiptId, destName);
+
+  // Store for arrival confirmation
+  window._windiNavigation = { destLat, destLng, destName, receiptId, startTime: Date.now() };
+
+  // 2. Build geo URI (universal protocol)
+  const encodedName = encodeURIComponent(destName || 'Destination');
+  const geoUri = `geo:${destLat},${destLng}?q=${destLat},${destLng}(${encodedName})`;
+
+  // 3. Detect platform and open appropriate app
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const isAndroid = /Android/.test(navigator.userAgent);
+
+  if (isIOS) {
+    // Apple Maps
+    window.open(`maps://maps.apple.com/?daddr=${destLat},${destLng}&dirflg=d`, '_system');
+  } else if (isAndroid) {
+    // Google Maps intent
+    window.open(`google.navigation:q=${destLat},${destLng}`, '_system');
+  } else {
+    // Desktop fallback - Google Maps web
+    window.open(`https://www.google.com/maps/dir/?api=1&destination=${destLat},${destLng}`, '_blank');
+  }
+
+  // 4. Show arrival button after small delay
+  setTimeout(() => {
+    if (window._windiShowArrival) window._windiShowArrival();
+  }, 2000);
+
+  return receiptId;
+}
+
+// §85 — Confirm arrival (seals journey completion)
+function confirmArrival(lang) {
+  if (!window._windiNavigation) return;
+  const nav = window._windiNavigation;
+  const duration = Math.round((Date.now() - nav.startTime) / 60000);
+  const arrivalId = 'MARIA-ARRIVED-' + Date.now().toString(36).toUpperCase();
+  console.log('[§85] Arrival sealed:', arrivalId, nav.destName, duration + 'min');
+  window._windiNavigation = null;
+
+  const msg = lang === 'de' ? `Angekommen! ${duration} Min.` :
+              lang === 'en' ? `Arrived! ${duration} min.` :
+              `Chegaste! ${duration} min.`;
+  alert(msg);
+  return arrivalId;
 }
 
 function SuperCarta({ locations, userLat, userLng, lang }) {
@@ -414,7 +455,7 @@ function SuperCarta({ locations, userLat, userLng, lang }) {
           ${ratingStr ? `<div style="color:#C9A84C;font-size:11px;">${ratingStr}</div>` : ""}
           ${loc.address ? `<div style="font-size:10px;color:#666;margin-top:4px;">${loc.address}</div>` : ""}
           ${openStr ? `<div style="font-size:10px;margin-top:3px;">${openStr}</div>` : ""}
-          ${userLat && userLng ? `<button onclick="drawRoute(window._windiMap, ${userLat}, ${userLng}, ${loc.lat}, ${loc.lng})" style="margin-top:8px;padding:4px 10px;background:#C8860A;color:white;border:none;border-radius:4px;font-size:11px;cursor:pointer;">🗺️ Rota</button>` : ""}
+          ${loc.lat && loc.lng ? `<button onclick="openNavigation(${loc.lat}, ${loc.lng}, '${(loc.name||'').replace(/'/g,"\\'")}', '${lang||'en'}')" style="margin-top:8px;padding:4px 10px;background:#C8860A;color:white;border:none;border-radius:4px;font-size:11px;cursor:pointer;">🧭 ${lang==='de'?'Navigieren':lang==='en'?'Navigate':'Navegar'}</button>` : ""}
         </div>
       `);
       markersRef.current.push(marker);
@@ -518,7 +559,14 @@ function App(){
   const[greeting,setGreeting]=useState(null);
   const[weather,setWeather]=useState(null);
   const[userGPS,setUserGPS]=useState({lat:null,lng:null});
+  const[navigating,setNavigating]=useState(false); // §85 — Track navigation state
   const timers=useRef([]);
+
+  // §85 — Expose arrival callback to global
+  useEffect(()=>{
+    window._windiShowArrival=()=>setNavigating(true);
+    return()=>{window._windiShowArrival=null;};
+  },[]);
 
   useEffect(()=>{
     // Health check
@@ -862,6 +910,8 @@ function App(){
                   <div style={{fontSize:10,fontFamily:"'JetBrains Mono',monospace",color:P.cinza,marginBottom:3,letterSpacing:"0.5px"}}>{t.reason_label}</div>
                   <div style={{fontSize:12,color:P.terra,lineHeight:1.5}}>{decision.reason}</div>
                 </div>
+                {result&&result.locations&&result.locations[0]&&(<button onClick={()=>{openNavigation(result.locations[0].lat,result.locations[0].lng,result.locations[0].name||decision.text,lang);setNavigating(true);}} style={{width:"100%",padding:"10px",background:"#C8860A",color:"white",border:"none",borderRadius:10,fontSize:13,fontWeight:700,cursor:"pointer",marginBottom:8}}>🧭 {lang==="de"?"Navigieren":lang==="en"?"Navigate":"Navegar"}</button>)}
+                {navigating&&(<button onClick={()=>{confirmArrival(lang);setNavigating(false);}} style={{width:"100%",padding:"10px",background:"#5C7A5A",color:"white",border:"none",borderRadius:10,fontSize:13,fontWeight:700,cursor:"pointer",marginBottom:8}}>✅ {lang==="de"?"Angekommen!":lang==="en"?"I arrived!":"Cheguei!"}</button>)}
                 {!sealed?(
                   <button onClick={()=>setSealed(true)} style={{width:"100%",padding:"11px",
                     background:`linear-gradient(135deg,${P.terra},${P.ouro})`,color:"white",
