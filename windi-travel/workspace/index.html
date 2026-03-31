@@ -902,6 +902,75 @@ body {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
+   F3+F4 — SIDEBAR IDENTITY
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.identity-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+  background: var(--bg-2);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--mono);
+  font-size: 10px;
+}
+
+.sb-schluessel, .sb-wallet {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sb-label {
+  color: var(--text-4);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.sb-value {
+  color: var(--gold);
+  font-weight: 500;
+}
+
+.sb-copy-btn {
+  padding: 2px 6px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-3);
+  cursor: pointer;
+  font-size: 10px;
+  transition: all 0.15s;
+}
+.sb-copy-btn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.sb-pioneer {
+  color: var(--success);
+  font-weight: 600;
+  margin-left: 4px;
+}
+
+/* F9 — QR Container */
+#qr-container {
+  text-align: center;
+  margin-top: 12px;
+}
+#qr-container img {
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+.qr-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text-4);
+  margin-top: 4px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
    RESPONSIVE
    ═══════════════════════════════════════════════════════════════════════════ */
 
@@ -929,6 +998,22 @@ body {
     <button class="ctrl-btn" onclick="toggleTheme()">&#9788;</button>
   </div>
 </header>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     F3+F4 — IDENTITY BAR
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<div class="identity-bar">
+  <div class="sb-schluessel" id="sb-schluessel">
+    <span class="sb-label" data-i18n="schluessel">SCHLÜSSEL</span>
+    <code class="sb-value" id="schluessel-value">—</code>
+    <button class="sb-copy-btn" onclick="copyFingerprint()" title="Copy fingerprint">⧉</button>
+  </div>
+  <div class="sb-wallet" id="sb-wallet">
+    <span class="sb-label" data-i18n="wallet">WALLET</span>
+    <code class="sb-value sb-did" id="sb-did-value">—</code>
+    <span class="sb-pioneer" id="sb-pioneer-num"></span>
+  </div>
+</div>
 
 <!-- ═══════════════════════════════════════════════════════════════════════════
      MAIN CONTENT
@@ -1073,6 +1158,9 @@ body {
       <span class="cia-badge on" id="cia-i11">I11</span>
       <span class="cia-badge on" id="cia-i9">I9</span>
     </div>
+    <!-- F9 — QR Code after seal -->
+    <div id="qr-container" style="display:none;">
+    </div>
   </div>
 
 </main>
@@ -1162,6 +1250,10 @@ body {
 // ═══════════════════════════════════════════════════════════════════════════
 
 const TRAVEL_I18N = {
+  // ── F3+F4 IDENTITY BAR ──
+  schluessel:  { de: "SCHLÜSSEL",   pt: "CHAVE",       en: "KEY"      },
+  wallet:      { de: "BRIEFTASCHE", pt: "CARTEIRA",    en: "WALLET"   },
+
   // ── NAVEGAÇÃO ──
   nav_maria:   { de: "MARIA",       pt: "MARIA",       en: "MARIA"    },
   nav_rescue:  { de: "Retten",      pt: "Resgatar",    en: "Rescue"   },
@@ -1594,6 +1686,12 @@ async function confirmSeal() {
       moment.sealed = true;
       moment.receipt = result.receipt_id || result.id;
       lastReceipt = moment.receipt;
+
+      // F3 — Update SCHLÜSSEL with file hash
+      updateSchluessel(currentMoment.hash);
+
+      // F9 — Generate QR for receipt
+      showQRCode(moment.receipt);
     }
   } catch (e) {
     console.warn('Ledger seal failed:', e);
@@ -1899,6 +1997,71 @@ function showSealSuccess(receiptId) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
+// F3 — SCHLÜSSEL (fingerprint copy)
+// ═══════════════════════════════════════════════════════════════════════════
+
+function copyFingerprint() {
+  const val = document.getElementById('schluessel-value')?.textContent;
+  if (!val || val === '—') return;
+  navigator.clipboard.writeText(val).then(() => {
+    const btn = document.querySelector('.sb-copy-btn');
+    if (btn) { btn.textContent = '✓'; setTimeout(() => btn.textContent = '⧉', 1500); }
+  });
+}
+
+function updateSchluessel(hash) {
+  const el = document.getElementById('schluessel-value');
+  if (el && hash) {
+    el.textContent = hash.substring(0, 16) + '…';
+    sessionStorage.setItem('windi_travel_last_hash', hash);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// F4 — WALLET sidebar
+// ═══════════════════════════════════════════════════════════════════════════
+
+function initWalletSidebar() {
+  const did = sessionStorage.getItem('windi_travel_wallet')
+           || new URLSearchParams(window.location.search).get('did')
+           || null;
+
+  if (!did) return; // Gate check já feito
+
+  const didEl = document.getElementById('sb-did-value');
+  const numEl = document.getElementById('sb-pioneer-num');
+
+  if (didEl) didEl.textContent = did.length > 20 ? did.substring(0, 18) + '…' : did;
+  if (numEl) numEl.textContent = '#' + did.slice(-4).toUpperCase();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// F9 — QR SVG (receipt verification)
+// ═══════════════════════════════════════════════════════════════════════════
+
+function generateQRSVG(receiptId) {
+  const url = `https://windi-domain.com/verify-public/?id=${receiptId}`;
+  const container = document.getElementById('qr-container');
+  if (!container) return;
+
+  // QR via API pública (sem dependência npm)
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(url)}&color=8B6914&bgcolor=F5F0E0`;
+
+  container.innerHTML = `
+    <a href="${url}" target="_blank" title="Verificar no Ledger">
+      <img src="${qrUrl}" alt="QR Verify" width="80" height="80">
+    </a>
+    <div class="qr-label">${receiptId.substring(0,20)}…</div>
+  `;
+  container.style.display = 'block';
+  sessionStorage.setItem('windi_travel_last_receipt', receiptId);
+}
+
+function showQRCode(receiptId) {
+  generateQRSVG(receiptId);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -1907,6 +2070,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Check wallet gate
   if (!checkWalletGate()) return;
+
+  // F4 — Init wallet sidebar
+  initWalletSidebar();
+
+  // F3 — Restore last hash if exists
+  const lastHash = sessionStorage.getItem('windi_travel_last_hash');
+  if (lastHash) updateSchluessel(lastHash);
+
+  // F9 — Restore last QR if exists
+  const lastReceipt = sessionStorage.getItem('windi_travel_last_receipt');
+  if (lastReceipt) showQRCode(lastReceipt);
 
   // Init theme
   initTheme();
