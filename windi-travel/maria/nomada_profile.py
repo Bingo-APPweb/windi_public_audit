@@ -273,65 +273,120 @@ def get_total_interactions(did: str) -> int:
     return row["total"] if row else 0
 
 
-# ── §65 — Personalized Greeting ─────────────────────────────────────────────
+# ── §65 + §91 — Personalized Greeting with Small Talk ────────────────────────
 
-def gerar_saudacao(did: str, lang: str = "DE") -> str:
+def gerar_saudacao(did: str, lang: str = "DE", weather: str = None, hour: int = None) -> str:
     """
-    Generate personalized greeting based on interaction history.
+    Generate personalized greeting with natural small talk.
 
     §65 — Camada 2: MARIA lê o DID
     §71 — Armadura de Seda: NOT CRM language. MARIA is a friend, not a loyalty program.
+    §91 — Small Talk Layer: Memory informs behavior, not output.
+          "A memória serve para perguntar melhor, não para impressionar."
 
-    - n == 0: First meeting (new user)
-    - n == 1: First return (recognition)
-    - n >= 2: Growing familiarity (warmth, not transaction count)
+    The visit count changes the TONE (familiarity), not the CONTENT.
+    Instead of announcing "19th visit", ask a contextual question.
     """
     import random
-    n = get_total_interactions(did)
+    from datetime import datetime
 
-    # §71 — Greetings with SOUL, not CRM
-    # "Rigor por dentro, gentileza por fora."
+    n = get_total_interactions(did)
+    h = hour if hour is not None else datetime.now().hour
+
+    # Detect time of day for context
+    if 5 <= h < 12:
+        period = "morning"
+    elif 12 <= h < 18:
+        period = "afternoon"
+    else:
+        period = "evening"
+
+    # §91 — Small Talk: Questions based on context, not memory display
+    # The more visits, the more casual/familiar the tone
     greetings = {
         "PT": {
-            "new": "Olá! Primeira vez por aqui?",
-            "back": "Olha quem voltou. Bom ver-te.",
-            "many": [
-                f"Das {n+1} vezes que vieste, esta pode ser a melhor.",
-                f"Já são {n+1} conversas. Quase parece rotina — no bom sentido.",
-                f"Cá estás tu outra vez. Gosto disso.",
-                f"{n+1}ª vez. Já te conheço o ritmo.",
-            ]
+            "new": {
+                "morning": "Bom dia! Primeira vez por aqui — tens planos para hoje?",
+                "afternoon": "Boa tarde! Estás a explorar a zona?",
+                "evening": "Boa noite! Procuras algo para esta noite?",
+            },
+            "familiar": {
+                "morning": [
+                    "Bom dia! Café primeiro ou directamente ao assunto?",
+                    "Bom dia! O que te traz por cá tão cedo?",
+                    "Bom dia! Dia cheio pela frente?",
+                ],
+                "afternoon": [
+                    "Boa tarde! Algum plano especial para hoje?",
+                    "Boa tarde! O que vamos descobrir?",
+                    "Boa tarde! Precisas de uma sugestão?",
+                ],
+                "evening": [
+                    "Boa noite! A planear o dia de amanhã?",
+                    "Boa noite! Preciso de te encontrar um sítio?",
+                    "Boa noite! Há algo que te apeteça fazer?",
+                ],
+            }
         },
         "DE": {
-            "new": "Hallo! Zum ersten Mal hier?",
-            "back": "Da bist du ja wieder. Schön, dich zu sehen.",
-            "many": [
-                f"Das {n+1}. Mal schon — fast wie nach Hause kommen.",
-                f"Wieder da. Das macht {n+1}. Gut so.",
-                f"Schön, dass du wieder hier bist.",
-                f"{n+1} Mal jetzt. Ich kenne deinen Rhythmus langsam.",
-            ]
+            "new": {
+                "morning": "Guten Morgen! Zum ersten Mal hier — was hast du heute vor?",
+                "afternoon": "Guten Tag! Erkundest du die Gegend?",
+                "evening": "Guten Abend! Suchst du etwas für heute Abend?",
+            },
+            "familiar": {
+                "morning": [
+                    "Guten Morgen! Erst Kaffee oder direkt loslegen?",
+                    "Guten Morgen! Was bringt dich so früh her?",
+                    "Guten Morgen! Voller Tag heute?",
+                ],
+                "afternoon": [
+                    "Guten Tag! Etwas Besonderes geplant?",
+                    "Guten Tag! Was entdecken wir heute?",
+                    "Guten Tag! Brauchst du einen Vorschlag?",
+                ],
+                "evening": [
+                    "Guten Abend! Planst du für morgen?",
+                    "Guten Abend! Soll ich dir etwas finden?",
+                    "Guten Abend! Worauf hast du Lust?",
+                ],
+            }
         },
         "EN": {
-            "new": "Hello! First time here?",
-            "back": "Look who's back. Good to see you.",
-            "many": [
-                f"Visit {n+1} — almost feels like a routine now.",
-                f"Here you are again. That's {n+1} times. I like that.",
-                f"Good to see you back. Number {n+1}.",
-                f"{n+1} conversations now. I'm getting to know your rhythm.",
-            ]
+            "new": {
+                "morning": "Good morning! First time here — any plans for today?",
+                "afternoon": "Good afternoon! Exploring the area?",
+                "evening": "Good evening! Looking for something tonight?",
+            },
+            "familiar": {
+                "morning": [
+                    "Good morning! Coffee first or straight to business?",
+                    "Good morning! What brings you here so early?",
+                    "Good morning! Busy day ahead?",
+                ],
+                "afternoon": [
+                    "Good afternoon! Any special plans today?",
+                    "Good afternoon! What shall we discover?",
+                    "Good afternoon! Need a suggestion?",
+                ],
+                "evening": [
+                    "Good evening! Planning for tomorrow?",
+                    "Good evening! Shall I find you a spot?",
+                    "Good evening! Anything you feel like doing?",
+                ],
+            }
         }
     }
 
     s = greetings.get(lang, greetings["EN"])
 
     if n == 0:
-        return s["new"]
-    if n == 1:
-        return s["back"]
-    # For frequent visitors, pick a random warm greeting
-    return random.choice(s["many"])
+        # First visit: welcome + contextual question
+        return s["new"].get(period, s["new"]["morning"])
+    else:
+        # Returning visitor: familiar tone with contextual question
+        options = s["familiar"].get(period, s["familiar"]["morning"])
+        return random.choice(options)
 
 
 # ── Context Enrichment ───────────────────────────────────────────────────────
