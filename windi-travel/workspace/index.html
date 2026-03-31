@@ -1415,6 +1415,8 @@ let currentMoment = null;
 let thread = JSON.parse(localStorage.getItem('windi_travel_thread') || '[]');
 let walletId = sessionStorage.getItem('windi_travel_wallet') || null;
 let lastReceipt = null;
+// F14 — Conversational Memory
+let __conversationHistory = [];
 
 // ═══════════════════════════════════════════════════════════════════════════
 // i18n — setLang SEALED
@@ -1860,7 +1862,8 @@ async function askMaria() {
         message,
         did,
         lang: LANG.toUpperCase(),
-        context: { source: 'workspace_chat' }
+        context: { source: 'workspace_chat' },
+        history: __conversationHistory  // F14
       })
     });
 
@@ -1921,6 +1924,16 @@ function interpretSemantic(data, userQuery) {
   const text = data.response || data.message || '…';
   const provider = data.provider || 'unknown';
   const pulse = data.pulse || {};
+
+  // F14 — Accumulate conversation history
+  if (userQuery) {
+    __conversationHistory.push({ role: 'user', content: userQuery });
+  }
+  __conversationHistory.push({ role: 'assistant', content: text });
+  // Keep last 20 messages (10 exchanges) to avoid token overflow
+  if (__conversationHistory.length > 20) {
+    __conversationHistory = __conversationHistory.slice(-20);
+  }
 
   // Render main response
   renderMariaResponse({

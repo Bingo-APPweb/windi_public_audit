@@ -1301,6 +1301,7 @@ class ThinkRequest(BaseModel):
     weather: Optional[str] = Field(default=None, description="Weather context")
     lat: Optional[float] = Field(default=None, description="User latitude")
     lng: Optional[float] = Field(default=None, description="User longitude")
+    history: Optional[list] = Field(default=[], description="F14 Conversation history")
 
 
 @router.post("/think")
@@ -1343,16 +1344,19 @@ async def maria_think_endpoint(req: ThinkRequest):
         location=location,
         session_count=session_count,
         memory=memory,
-        tier="FREE"  # TODO: Get from wallet
+        tier="FREE",  # TODO: Get from wallet
+        history=req.history or []
     )
 
-    log.info(f"[MARIA Brain] Provider: {result['provider']} | Intent: {result['intent']}")
+    log.info(f"[MARIA Brain] Provider: {result['provider']} | Intent: {result.get('intent')} | Soul: {result.get('soul_active')}")
 
     return {
         "response": result["response"],
         "provider": result["provider"],
-        "intent": result["intent"],
-        "confidence": result["confidence"],
+        "intent": result.get("intent", "general"),
+        "confidence": result.get("confidence", 0.9),
+        "pulse": result.get("pulse"),
+        "soul_active": result.get("soul_active"),
         "lang": req.lang,
         "session_count": session_count
     }
