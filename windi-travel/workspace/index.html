@@ -1651,6 +1651,19 @@ function closeSealModal() {
 }
 
 async function confirmSeal() {
+  // ═══════════════════════════════════════════════════════════════
+  // P0 — Identity Gate (I9 enforcement)
+  // "O sistema só começa quando a identidade é obrigatória."
+  // Backend é autoridade. Frontend é UX.
+  // ═══════════════════════════════════════════════════════════════
+  const did = sessionStorage.getItem('windi_travel_wallet');
+  if (!did) {
+    console.error('[WINDI-TRAVEL] P0 BLOCK: No identity found. Seal rejected.');
+    alert('Identität nicht gefunden. Bitte melden Sie sich erneut an.\n\nIdentity not found. Please log in again.');
+    window.location.href = '/travel/gate/';
+    return;
+  }
+
   if (!currentMoment) {
     console.warn('confirmSeal: no moment captured');
     return;
@@ -1944,8 +1957,11 @@ function interpretSemantic(data, userQuery) {
     soulActive: data.soul_active
   });
 
-  // §75 — Detectar intenção de navegação
+  // §85 — Detectar intenção de navegação
+  console.log('[§85 NavCard] Checking text:', text?.substring(0, 80));
+  console.log('[§85 NavCard] containsNavIntent:', containsNavIntent(text));
   if (containsNavIntent(text)) {
+    console.log('[§85 NavCard] Calling showNavigationHint');
     showNavigationHint(text, data);
   }
 
@@ -2011,18 +2027,26 @@ function setMariaState(state) {
 }
 
 function containsNavIntent(text) {
-  return /ir para|navigate|gehen|route|direção|direction|richtung|como chego|how.*get|wie.*komme/i.test(text);
+  // §85 — Detect navigation intent in all 3 languages (PT/DE/EN)
+  return /ir para|navigate|gehen|rota|route|direção|direction|richtung|como chego|how.*get|wie.*komme|navigation|navegação/i.test(text);
 }
 
 function showNavigationHint(text, data) {
   // §85 — Extrair dados de rota do texto da Maria
   const kmMatch   = text?.match(/(\d+)\s*km/i);
-  const timeMatch = text?.match(/(\d+h?\s*\d*\s*min|\d+\s*Stunde)/i);
+  const timeMatch = text?.match(/(\d+h?\s*\d*\s*min|\d+\s*minute|\d+\s*Stunde)/i);
   const km   = kmMatch   ? kmMatch[1] + ' km' : null;
   const time = timeMatch ? timeMatch[1]       : null;
 
+  console.log('[§85 NavCard] kmMatch:', kmMatch, '→ km:', km);
+  console.log('[§85 NavCard] timeMatch:', timeMatch, '→ time:', time);
+
   // Só mostrar card se houver dados concretos de rota
-  if (!km && !time) return;
+  if (!km && !time) {
+    console.log('[§85 NavCard] No km or time found, skipping card');
+    return;
+  }
+  console.log('[§85 NavCard] Creating card with km:', km, 'time:', time);
 
   // Remover card anterior se existir
   const existing = document.getElementById('navCard');
