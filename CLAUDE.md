@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.56
-**Sealed:** 2026-03-30 · §84 Address Fallback
+**Version:** 1.9.57
+**Sealed:** 2026-03-31 · §85 Hybrid Navigation
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -513,7 +513,7 @@ KLAR (light):
 
 ---
 
-## 13. Estado Actual — 30 Março 2026
+## 13. Estado Actual — 31 Março 2026
 
 ### Mapa de Portas
 
@@ -547,11 +547,11 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 31 Mar | §85 **Hybrid Navigation** · WINDI seals, native Maps navigates · I11 antes de abrir |
 | 30 Mar | §73-78 **Fenomenologia da Presença** · Doutrina IRREMEDIÁVEL · Companion System |
 | 30 Mar | §72 **Pulse Reading Layer** · "HER" architecture · Subtexto antes do routing |
 | 30 Mar | §71 **Armadura de Seda** · Identidade Fonética · Prompts com alma |
 | 30 Mar | §70 I-TRAVEL Constitution · Idioma ≠ Localização · MARIA pergunta destino |
-| 30 Mar | §69/b MARIA Waterfall Fix · 5 clean exits · Query intent override |
 
 > **Histórico completo:** `CLAUDE-HISTORY.md` + `CHANGELOG.md`
 
@@ -847,7 +847,8 @@ Query → flight keywords?    → Kiwi Bridge
 - [ ] **windilaw.de** — Sincronizar com windi-domain.com/law/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
-### Completado (ver §37-66)
+### Completado (ver §37-85)
+- [x] §85 Hybrid Navigation · WINDI seals + native Maps navigates ✅ 31 Mar 2026
 - [x] SMTP · P3-A Identity Gate · Tesoura v10 ✅ 29 Mar 2026
 - [x] Travel Checkup · Port fix · LAW isolation ✅ 30 Mar 2026
 - [x] MARIA Triple LLM · Gemini+Claude+OpenAI · Voz activa ✅ 30 Mar 2026
