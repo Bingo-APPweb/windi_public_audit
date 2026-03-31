@@ -615,8 +615,8 @@ function App(){
     const t1=setTimeout(()=>{
       setDoneSt(ids.slice(0,-1));setActiveStage(null);
       setResult(data);setMode("speaking");
-      // §71 — No seal suffix for greetings (nothing to seal)
-      const isGreeting=data.decision&&data.decision.type==="greeting"||decision.type==="onboarding";
+      // §71 — No seal suffix for greetings/onboarding (nothing to seal)
+      const isGreeting=data.decision&&(data.decision.type==="greeting"||data.decision.type==="onboarding"||data.decision.type==="llm");
       const vt=(data.maria_voice&&(data.maria_voice[lang]||data.maria_voice.PT)||"")+(isGreeting?"":(" "+t.suffix));
       speakMaria(vt,lang,()=>setMode("result"));
     },wait);
