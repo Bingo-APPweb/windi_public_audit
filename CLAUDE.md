@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.60
-**Sealed:** 2026-03-31 · §91 Small Talk Layer
+**Version:** 1.9.61
+**Sealed:** 2026-03-31 · §92 P3-B Travel Workspace
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -547,13 +547,11 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 31 Mar | §92 **P3-B Travel Workspace** · F13 Chat Maria · 14 features · I12 i18n fix |
 | 31 Mar | §91 **Small Talk Layer** · Memory informs, not displays · Contextual questions |
 | 31 Mar | §90 **Consciousness Layer** · Onboarding intent · MARIA identity · Memory integration |
 | 31 Mar | §89 **Production Cleanup** · Zero fallbacks · DID Gate · 9 atribuições LIVE |
 | 31 Mar | §85 **Hybrid Navigation** · WINDI seals, native Maps navigates · I11 antes de abrir |
-| 30 Mar | §73-78 **Fenomenologia da Presença** · Doutrina IRREMEDIÁVEL · Companion System |
-| 30 Mar | §72 **Pulse Reading Layer** · "HER" architecture · Subtexto antes do routing |
-| 30 Mar | §71 **Armadura de Seda** · Identidade Fonética · Prompts com alma |
 
 > **Histórico completo:** `CLAUDE-HISTORY.md` + `CHANGELOG.md`
 
@@ -783,9 +781,9 @@ Não compete com ninguém — muda o eixo do jogo.
 
 ---
 
-## MARIA-UI — Inventário de Atribuições (11 LIVE)
+## MARIA-UI — Inventário de Atribuições (12 LIVE)
 
-**Status:** ✅ PRODUÇÃO · DID Gate activo · Consciousness Layer activo
+**Status:** ✅ PRODUÇÃO · DID Gate activo · Consciousness Layer activo · P3-B Workspace activo
 
 | §§ | Nome | Função |
 |----|------|--------|
@@ -801,6 +799,7 @@ Não compete com ninguém — muda o eixo do jogo.
 | §89 | Production Cleanup | DID Gate + zero demos + erro real |
 | §90 | Consciousness Layer | Onboarding intent + MARIA identity |
 | §91 | Small Talk Layer | Memory informs behavior, not output |
+| §92 | P3-B Travel Workspace | F13 `askMaria()` + 14 features + I12 i18n |
 
 **Removidos:** §87 OSRM (dead code) · Demo buttons · Hardcoded scenarios
 
@@ -841,7 +840,7 @@ Query → flight keywords?    → Kiwi Bridge
 ## BACKLOG — Próximas Sessões
 
 ### P0 — Crítico (Próxima Sessão)
-- [ ] **P3-B Travel Workspace** — Implementar workspace principal WINDI Travel
+- [x] **P3-B Travel Workspace** — ✅ LIVE · F13 Chat Maria · 14 features
 
 ### P1 — Importante
 - [ ] **Rate limiting** — nginx Agent Corps
@@ -864,7 +863,8 @@ Query → flight keywords?    → Kiwi Bridge
 - [ ] **windilaw.de** — Sincronizar com windi-domain.com/law/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
-### Completado (ver §37-91)
+### Completado (ver §37-92)
+- [x] §92 **P3-B Travel Workspace** · F13 Chat Maria · 14 features ✅ 31 Mar 2026
 - [x] §91 Small Talk Layer · Memory informs, not displays ✅ 31 Mar 2026
 - [x] §90 Consciousness Layer · Onboarding intent + MARIA identity ✅ 31 Mar 2026
 - [x] §89 Production Cleanup · DID Gate + zero fallbacks ✅ 31 Mar 2026
