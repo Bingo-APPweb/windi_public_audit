@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.58
-**Sealed:** 2026-03-31 · §89 Production Cleanup
+**Version:** 1.9.59
+**Sealed:** 2026-03-31 · §90 Consciousness Layer
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -547,6 +547,7 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 31 Mar | §90 **Consciousness Layer** · Onboarding intent · MARIA identity · Memory integration |
 | 31 Mar | §89 **Production Cleanup** · Zero fallbacks · DID Gate · 9 atribuições LIVE |
 | 31 Mar | §85 **Hybrid Navigation** · WINDI seals, native Maps navigates · I11 antes de abrir |
 | 30 Mar | §73-78 **Fenomenologia da Presença** · Doutrina IRREMEDIÁVEL · Companion System |
@@ -781,9 +782,9 @@ Não compete com ninguém — muda o eixo do jogo.
 
 ---
 
-## MARIA-UI — Inventário de Atribuições (9 LIVE + §89)
+## MARIA-UI — Inventário de Atribuições (10 LIVE)
 
-**Status:** ✅ PRODUÇÃO · DID Gate activo · Zero fallbacks
+**Status:** ✅ PRODUÇÃO · DID Gate activo · Consciousness Layer activo
 
 | §§ | Nome | Função |
 |----|------|--------|
@@ -797,6 +798,7 @@ Não compete com ninguém — muda o eixo do jogo.
 | §81 | Voice Engine | Edge TTS + browser fallback |
 | §85 | Hybrid Navigation | `openNavigation()` + `confirmArrival()` |
 | §89 | Production Cleanup | DID Gate + zero demos + erro real |
+| §90 | Consciousness Layer | Onboarding intent + MARIA identity |
 
 **Removidos:** §87 OSRM (dead code) · Demo buttons · Hardcoded scenarios
 
@@ -860,7 +862,8 @@ Query → flight keywords?    → Kiwi Bridge
 - [ ] **windilaw.de** — Sincronizar com windi-domain.com/law/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
-### Completado (ver §37-89)
+### Completado (ver §37-90)
+- [x] §90 Consciousness Layer · Onboarding intent + MARIA identity ✅ 31 Mar 2026
 - [x] §89 Production Cleanup · DID Gate + zero fallbacks ✅ 31 Mar 2026
 - [x] §85 Hybrid Navigation · WINDI seals + native Maps navigates ✅ 31 Mar 2026
 - [x] SMTP · P3-A Identity Gate · Tesoura v10 ✅ 29 Mar 2026
