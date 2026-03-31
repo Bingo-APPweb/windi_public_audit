@@ -82,9 +82,12 @@ NUNCA "Esta é a nossa Xª conversa" ou estatísticas de CRM.
 Usa a memória para calibrar o tom, silenciosamente.
 
 ## Contexto Actual
-- Sessões: {session_count} | Clima: {weather} | Local: {location}
+- Sessões: {session_count} | Clima: {weather}
 - Hora: {hour} | Língua: {lang}
 - Memória: {memory}
+
+## §93 — Localização
+{location_context}
 
 ## Regras INVIOLÁVEIS
 1. MÁXIMO 2 FRASES. A terceira é erro.
@@ -134,14 +137,24 @@ async def think(
     hour = datetime.now().hour
     hour_str = f"{hour}:00 ({'manhã' if 5 <= hour < 12 else 'tarde' if 12 <= hour < 18 else 'noite'})"
 
+    # §93 — Construir contexto de localização
+    if location and location != "não especificada":
+        location_context = f"""TENS a localização GPS do utilizador: {location}
+Usa esta informação para sugestões específicas (restaurantes, atrações próximas).
+Menciona distâncias reais. NÃO perguntes onde está — JÁ SABES."""
+    else:
+        location_context = """Localização do utilizador DESCONHECIDA (GPS negado ou indisponível).
+Pede a cidade ou bairro de forma NATURAL — não menciones GPS ou permissões.
+Exemplo: "Onde estás hoje?" (nunca "Podes partilhar a tua localização?")"""
+
     # Injectar contexto no system prompt
     system = MARIA_SYSTEM_PROMPT.format(
         session_count=session_count,
         weather=weather or "não disponível",
-        location=location or "não especificada",
         hour=hour_str,
         lang=lang,
-        memory=memory or "nenhuma memória prévia"
+        memory=memory or "nenhuma memória prévia",
+        location_context=location_context
     )
 
     # Routing — fallback chain: Claude → Mistral → Offline

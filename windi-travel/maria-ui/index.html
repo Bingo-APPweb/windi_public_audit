@@ -267,8 +267,36 @@ body {
 
 <script>
 // §65 — MARIA UI · Tesoura Rules
+// §93 — Geolocalização Silenciosa
 var currentLang = localStorage.getItem('windi_travel_lang') || 'de';
 var walletId = null;
+var __userLocation = null;  // §93 — GPS real do device
+
+// §93 — Capturar localização imediatamente no boot
+function captureLocation() {
+  if (!navigator.geolocation) {
+    console.warn('[MARIA] Geolocalização não suportada');
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(
+    function(pos) {
+      __userLocation = {
+        lat: pos.coords.latitude,
+        lng: pos.coords.longitude,
+        accuracy: pos.coords.accuracy,
+        ts: new Date().toISOString()
+      };
+      console.log('[MARIA] 📍 Localização capturada:', __userLocation);
+      // Recarregar greeting com localização real
+      loadGreeting();
+    },
+    function(err) {
+      console.warn('[MARIA] Geolocalização negada:', err.message);
+      __userLocation = null;
+    },
+    { enableHighAccuracy: true, timeout: 8000 }
+  );
+}
 
 // Init
 document.addEventListener('DOMContentLoaded', function() {
@@ -278,6 +306,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   setLang(currentLang);
   initTheme();
+  captureLocation();  // §93 — Pedir GPS antes de tudo
   loadGreeting();
 });
 
@@ -310,14 +339,18 @@ function toggleTheme() {
 }
 
 function loadGreeting() {
-  // Fetch weather/context
+  // §93 — Usar localização real ou fallback Kempten
+  var lat = __userLocation ? __userLocation.lat : 47.7258;
+  var lng = __userLocation ? __userLocation.lng : 10.3175;
+
   fetch('/maria/plan', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({
       intent: {type: 'greeting'},
-      lat: 47.7258,
-      lng: 10.3175,
+      lat: lat,
+      lng: lng,
+      location_source: __userLocation ? 'gps' : 'fallback',
       lang: currentLang.toUpperCase(),
       wallet_id: walletId
     })
@@ -351,13 +384,18 @@ function sendRequest(intent) {
   document.getElementById('loading').classList.add('active');
   document.getElementById('response').classList.remove('active');
 
+  // §93 — Usar localização real ou fallback
+  var lat = __userLocation ? __userLocation.lat : 47.7258;
+  var lng = __userLocation ? __userLocation.lng : 10.3175;
+
   fetch('/maria/plan', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({
       intent: intent,
-      lat: 47.7258,
-      lng: 10.3175,
+      lat: lat,
+      lng: lng,
+      location_source: __userLocation ? 'gps' : 'fallback',
       lang: currentLang.toUpperCase(),
       wallet_id: walletId
     })
@@ -375,13 +413,56 @@ function sendRequest(intent) {
     document.getElementById('responseText').textContent = voice;
     document.getElementById('responseMeta').textContent =
       (d.ledger_receipt_id || '') + ' · ' +
-      (d.memory_active ? '🧠' : '○');
+      (d.memory_active ? '🧠' : '○') +
+      (__userLocation ? ' · 📍' : '');
 
     document.getElementById('response').classList.add('active');
+
+    // §93 — Quick action se Maria pede localização
+    var needsLocation = voice.toLowerCase().includes('localiza') ||
+                        voice.toLowerCase().includes('onde est') ||
+                        voice.toLowerCase().includes('where are') ||
+                        voice.toLowerCase().includes('wo bist');
+
+    if (needsLocation && !__userLocation) {
+      showLocationQuickAction();
+    }
   })
   .catch(function() {
     document.getElementById('loading').classList.remove('active');
   });
+}
+
+// §93 — Quick action para partilhar localização
+function showLocationQuickAction() {
+  var existing = document.getElementById('locationQuickAction');
+  if (existing) existing.remove();
+
+  var labels = {
+    de: '📍 Meinen Standort verwenden',
+    en: '📍 Use my location',
+    pt: '📍 Usar a minha localização'
+  };
+
+  var btn = document.createElement('button');
+  btn.id = 'locationQuickAction';
+  btn.className = 'quick-btn';
+  btn.style.marginTop = '12px';
+  btn.style.width = '100%';
+  btn.innerHTML = '<span class="label">' + labels[currentLang] + '</span>';
+  btn.onclick = function() {
+    btn.disabled = true;
+    btn.innerHTML = '<span class="label">...</span>';
+    captureLocation();
+    setTimeout(function() {
+      if (__userLocation) {
+        sendRequest({type: 'general', raw_input: 'Estou aqui: ' + __userLocation.lat.toFixed(4) + ', ' + __userLocation.lng.toFixed(4)});
+      }
+      btn.remove();
+    }, 2000);
+  };
+
+  document.getElementById('response').appendChild(btn);
 }
 </script>
 </body>
