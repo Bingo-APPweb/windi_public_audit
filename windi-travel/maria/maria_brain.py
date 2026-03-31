@@ -20,13 +20,26 @@ import logging
 import os
 from typing import Optional, Dict, Any
 from datetime import datetime
+from pathlib import Path
 
 log = logging.getLogger("w-maria-brain")
+
+# ── Load .env (WINDI keys) ───────────────────────────────────────────────────
+try:
+    from dotenv import load_dotenv
+    env_path = Path("/opt/windi/.env")
+    if env_path.exists():
+        load_dotenv(env_path)
+        log.info("[MARIA Brain] Loaded keys from /opt/windi/.env")
+except ImportError:
+    log.warning("[MARIA Brain] python-dotenv not available")
 
 # ── LLM Providers ────────────────────────────────────────────────────────────
 
 ANTHROPIC_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 MISTRAL_KEY = os.environ.get("MISTRAL_API_KEY", "")
+
+log.info(f"[MARIA Brain] Keys loaded: Anthropic={'yes' if ANTHROPIC_KEY else 'no'}, Mistral={'yes' if MISTRAL_KEY else 'no'}")
 
 # ── System Prompt — A Alma da Maria ──────────────────────────────────────────
 
@@ -125,13 +138,18 @@ async def think(
         memory=memory or "nenhuma memória prévia"
     )
 
-    # Routing por tier
+    # Routing por tier (com fallback chain)
+    # HIGH → Claude preferred
+    # FREE/MED → Mistral preferred, Claude fallback
     if tier == "HIGH" and ANTHROPIC_KEY:
         return await _think_claude(user_input, system, lang)
     elif MISTRAL_KEY:
         return await _think_mistral(user_input, system, lang)
+    elif ANTHROPIC_KEY:
+        # Fallback to Claude if Mistral not available
+        return await _think_claude(user_input, system, lang)
     else:
-        # Fallback local se nenhuma key disponível
+        # Local fallback if no keys available
         return _think_local(user_input, lang)
 
 
