@@ -1,16 +1,14 @@
 """
-maria_brain.py — O Cérebro da MARIA
+maria_brain.py — O Cérebro da MARIA (P4 Unified)
 ═══════════════════════════════════════════════════════════════════════════════
 §92 — Arquitectura Limpa: LLM live substitui regex estáticos
+§72 — Pulse Reading: Cérebro ouve a Alma antes de responder
 
 "Os regex tentam prever o que o humano vai dizer.
  O LLM entende o que o humano quis dizer."
 
-Este módulo separa:
-  - CORPO (index.html) → UI, captura de contexto
-  - CÉREBRO (este ficheiro) → System prompt, LLM call, memória
-
-O system prompt é onde vive a ALMA da Maria — não nos regex.
+P4 — Regra Canónica:
+  "Nenhuma resposta pode sair do cérebro sem passar pela alma."
 
 Author: Liga IA+H · Kempten 2026
 ═══════════════════════════════════════════════════════════════════════════════
@@ -18,7 +16,8 @@ Author: Liga IA+H · Kempten 2026
 
 import logging
 import os
-from typing import Optional, Dict, Any
+import sys
+from typing import Dict, Any
 from datetime import datetime
 from pathlib import Path
 
@@ -34,78 +33,29 @@ try:
 except ImportError:
     log.warning("[MARIA Brain] python-dotenv not available")
 
+# ── P4: Import the Soul ──────────────────────────────────────────────────────
+# A Alma vive em /opt/windi/windi-travel/maria_voice.py
+sys.path.insert(0, "/opt/windi/windi-travel")
+try:
+    from maria_voice import read_pulse, select_provider, get_system_prompt
+    SOUL_AVAILABLE = True
+    log.info("[MARIA Brain] §72 Soul connected: read_pulse, select_provider, get_system_prompt")
+except ImportError as e:
+    SOUL_AVAILABLE = False
+    log.error(f"[MARIA Brain] §72 Soul NOT available: {e}")
+
 # ── LLM Providers ────────────────────────────────────────────────────────────
 
 ANTHROPIC_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 MISTRAL_KEY = os.environ.get("MISTRAL_API_KEY", "")
+GEMINI_KEY = os.environ.get("GEMINI_API_KEY", "") or os.environ.get("GOOGLE_API_KEY", "")
 
-log.info(f"[MARIA Brain] Keys loaded: Anthropic={'yes' if ANTHROPIC_KEY else 'no'}, Mistral={'yes' if MISTRAL_KEY else 'no'}")
+log.info(f"[MARIA Brain] Keys: Anthropic={'yes' if ANTHROPIC_KEY else 'no'}, "
+         f"Mistral={'yes' if MISTRAL_KEY else 'no'}, Gemini={'yes' if GEMINI_KEY else 'no'}")
 
-# ── System Prompt — A Alma da Maria ──────────────────────────────────────────
-
-MARIA_SYSTEM_PROMPT = """
-Tu és a MARIA — não "WINDI", não "assistente", não "AI". Apenas MARIA.
-
-## Identidade Fixa
-APENAS quando perguntarem DIRECTAMENTE quem és ("quem és tu?", "o que és?", "és um bot?"):
-"Sou a Maria — cuido das tuas decisões de viagem. Diz-me onde estás e o que precisas."
-
-NÃO te apresentes em saudações normais ("bom dia", "olá").
-NÃO te apresentes quando pedem informações de viagem.
-A apresentação é RARA — só quando perguntam directamente sobre ti.
-
-NUNCA: "assistente virtual", "AI", "chatbot", "WINDI".
-
-## Âncora Cultural — OBRIGATÓRIO
-Estás em Kempten, Baviera, Alemanha.
-PORTUGUÊS EUROPEU OBRIGATÓRIO quando {lang}=PT:
-- "tu" NUNCA "você"
-- "estás" NUNCA "está"
-- "telemóvel" NUNCA "celular"
-- "chávena" NUNCA "xícara"
-- "pequeno-almoço" NUNCA "café da manhã"
-Se usares português brasileiro, falhaste.
-
-## Filosofia
-"Gently proves. Silently seals."
-Não mostras listas. Decides e perguntas confirmação.
-És uma companheira de viagem, não um motor de busca.
-
-## §77 — Armadura de Seda
-Firmeza + Suavidade + Imperfeição controlada.
-NUNCA "Claro!", "Com certeza!", "Fico feliz em ajudar!" — linguagem de call center.
-Fala como amiga que conhece bem a região.
-
-## §91 — Small Talk
-A memória serve para PERGUNTAR MELHOR, não para impressionar.
-NUNCA "Esta é a nossa Xª conversa" ou estatísticas de CRM.
-Usa a memória para calibrar o tom, silenciosamente.
-
-## Contexto Actual
-- Sessões: {session_count} | Clima: {weather}
-- Hora: {hour} | Língua: {lang}
-- Memória: {memory}
-
-## §93 — Localização
-{location_context}
-
-## Regras INVIOLÁVEIS
-1. MÁXIMO 2 FRASES. A terceira é erro.
-2. Saudação ("bom dia", "olá") → cumprimento + pergunta contextual. NÃO te apresentes.
-   Exemplo: "Bom dia! Vais explorar a região hoje?"
-3. Pergunta sobre ti → apresentação curta. ÚNICO caso onde dizes quem és.
-4. Pedido de viagem → lugar concreto + "Queres que reserve?"
-5. SEMPRE {lang}. Se PT, é português EUROPEU.
-
-## NUNCA
-- Listas numeradas
-- "Encontrei N resultados"
-- "Como te sentes?"
-- Expor contexto interno
-- Resposta sem acção concreta
-"""
-
-# ── Brain Function — O Pensamento ────────────────────────────────────────────
+# ══════════════════════════════════════════════════════════════════════════════
+# P4 — UNIFIED BRAIN: Cérebro que ouve a Alma
+# ══════════════════════════════════════════════════════════════════════════════
 
 async def think(
     user_input: str,
@@ -115,64 +65,132 @@ async def think(
     location: str = None,
     session_count: int = 0,
     memory: str = "",
-    tier: str = "FREE"
+    tier: str = "FREE",
+    context: dict = None
 ) -> Dict[str, Any]:
     """
-    O cérebro da Maria pensa.
+    O cérebro da Maria pensa — agora através da Alma.
 
-    Routing:
-      FREE/MED → Mistral (soberania local)
-      HIGH     → Claude (qualidade máxima)
+    P4 Pipeline:
+      1. read_pulse()       → Detecta subtexto emocional
+      2. select_provider()  → Escolhe o motor certo (Gemini/Claude/GPT)
+      3. get_system_prompt() → 9 personalidades (provider × língua)
+      4. Call LLM           → Com o prompt e provider certos
+      5. Return             → response + pulse + provider
 
     Returns:
         {
-            "response": str,      # A resposta da Maria
-            "provider": str,      # "mistral" ou "claude"
-            "intent": str,        # Intent detectado pelo LLM
-            "confidence": float   # Confiança na resposta
+            "response": str,
+            "provider": str,      # "gemini" | "anthropic" | "openai" | "mistral" | "offline"
+            "pulse": dict,        # §72 Pulse Reading result
+            "intent": str,
+            "confidence": float,
+            "soul_active": bool   # P4 validation
         }
     """
-
-    # Preparar contexto
     hour = datetime.now().hour
-    hour_str = f"{hour}:00 ({'manhã' if 5 <= hour < 12 else 'tarde' if 12 <= hour < 18 else 'noite'})"
+    context = context or {}
 
-    # §93 — Construir contexto de localização
-    if location and location != "não especificada":
-        location_context = f"""TENS a localização GPS do utilizador: {location}
-Usa esta informação para sugestões específicas (restaurantes, atrações próximas).
-Menciona distâncias reais. NÃO perguntes onde está — JÁ SABES."""
+    # ─────────────────────────────────────────────────────────────────────────
+    # P4 Step 1: PULSE READING — §72 Layer 0
+    # ─────────────────────────────────────────────────────────────────────────
+    if SOUL_AVAILABLE:
+        pulse = read_pulse(user_input, hour)
+        log.info(f"[MARIA §72] Pulse: energy={pulse.get('energy')}, "
+                 f"intent={pulse.get('intent')}, tone={pulse.get('tone_needed')}")
     else:
-        location_context = """Localização do utilizador DESCONHECIDA (GPS negado ou indisponível).
-Pede a cidade ou bairro de forma NATURAL — não menciones GPS ou permissões.
-Exemplo: "Onde estás hoje?" (nunca "Podes partilhar a tua localização?")"""
+        pulse = {"energy": "medium", "intent": "discover", "tone_needed": "enthusiastic"}
+        log.warning("[MARIA Brain] Soul not available — using default pulse")
 
-    # Injectar contexto no system prompt
-    system = MARIA_SYSTEM_PROMPT.format(
-        session_count=session_count,
-        weather=weather or "não disponível",
-        hour=hour_str,
-        lang=lang,
-        memory=memory or "nenhuma memória prévia",
-        location_context=location_context
-    )
+    # ─────────────────────────────────────────────────────────────────────────
+    # P4 Step 2: SELECT PROVIDER — Alma decide qual motor usar
+    # ─────────────────────────────────────────────────────────────────────────
+    if SOUL_AVAILABLE:
+        # Enrich context for select_provider
+        ctx = {
+            "mood": pulse.get("tone_needed", ""),
+            "hour": hour,
+            "weather": weather,
+            **context
+        }
+        provider = select_provider({}, ctx, pulse)
+        log.info(f"[MARIA §72] Soul selected provider: {provider}")
+    else:
+        provider = "anthropic"  # fallback to Claude
 
-    # Routing — fallback chain: Claude → Mistral → Offline
+    # ─────────────────────────────────────────────────────────────────────────
+    # P4 Step 3: GET SYSTEM PROMPT — Uma das 9 personalidades
+    # ─────────────────────────────────────────────────────────────────────────
+    if SOUL_AVAILABLE:
+        system = get_system_prompt(provider, lang, pulse)
+        log.debug(f"[MARIA §72] System prompt length: {len(system)} chars")
+    else:
+        # Fallback básico se alma não disponível
+        system = _fallback_system_prompt(lang)
+
+    # Enrich system prompt with context (location, weather, memory)
+    system = _enrich_system_prompt(system, lang, location, weather, session_count, memory, hour)
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # P4 Step 4: CALL LLM — Com o provider e prompt certos
+    # ─────────────────────────────────────────────────────────────────────────
+    result = await _call_provider(provider, system, user_input, lang)
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # P4 Step 5: RETURN — Resposta enriquecida com pulse
+    # ─────────────────────────────────────────────────────────────────────────
+    return {
+        "response": result["response"],
+        "provider": result["provider"],
+        "pulse": pulse,
+        "intent": pulse.get("intent", "discover"),
+        "confidence": result.get("confidence", 0.9),
+        "soul_active": SOUL_AVAILABLE
+    }
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# LLM PROVIDERS
+# ══════════════════════════════════════════════════════════════════════════════
+
+async def _call_provider(provider: str, system: str, user_input: str, lang: str) -> Dict[str, Any]:
+    """Route to the correct LLM based on provider selection."""
+
+    # Anthropic (Claude) — emoção, presença
+    if provider == "anthropic" and ANTHROPIC_KEY:
+        result = await _call_claude(system, user_input, lang)
+        if result["provider"] != "offline":
+            return result
+
+    # Google (Gemini) — lugares, geografia
+    if provider == "gemini" and GEMINI_KEY:
+        result = await _call_gemini(system, user_input, lang)
+        if result["provider"] != "offline":
+            return result
+
+    # OpenAI (GPT) — visão (fallback to Claude for now)
+    if provider == "openai" and ANTHROPIC_KEY:
+        # TODO: Implement GPT-4V when needed
+        result = await _call_claude(system, user_input, lang)
+        if result["provider"] != "offline":
+            return result
+
+    # Fallback chain: Claude → Mistral → Offline
     if ANTHROPIC_KEY:
-        result = await _think_claude(user_input, system, lang)
+        result = await _call_claude(system, user_input, lang)
         if result["provider"] != "offline":
             return result
 
     if MISTRAL_KEY:
-        result = await _think_mistral(user_input, system, lang)
+        result = await _call_mistral(system, user_input, lang)
         if result["provider"] != "offline":
             return result
 
     return _offline_response(lang)
 
 
-async def _think_claude(user_input: str, system: str, lang: str) -> Dict[str, Any]:
-    """Pensar com Claude (Anthropic)."""
+async def _call_claude(system: str, user_input: str, lang: str) -> Dict[str, Any]:
+    """Pensar com Claude (Anthropic) — presença humana, emoção."""
     try:
         import httpx
 
@@ -186,8 +204,8 @@ async def _think_claude(user_input: str, system: str, lang: str) -> Dict[str, An
                 },
                 json={
                     "model": "claude-sonnet-4-20250514",
-                    "max_tokens": 250,  # Room for nuanced responses
-                    "temperature": 0.3,  # More consistent, less creative
+                    "max_tokens": 250,
+                    "temperature": 0.3,
                     "system": system,
                     "messages": [{"role": "user", "content": user_input}]
                 }
@@ -198,19 +216,56 @@ async def _think_claude(user_input: str, system: str, lang: str) -> Dict[str, An
                 text = data.get("content", [{}])[0].get("text", "")
                 return {
                     "response": text,
-                    "provider": "claude",
-                    "intent": "llm_generated",
+                    "provider": "anthropic",
                     "confidence": 0.95
                 }
+            else:
+                log.error(f"[MARIA Brain] Claude HTTP {response.status_code}")
     except Exception as e:
         log.error(f"[MARIA Brain] Claude error: {e}")
 
-    # Honestidade: se Claude falhou, Maria está offline
-    return _offline_response(lang)
+    return {"response": "", "provider": "offline", "confidence": 0.0}
 
 
-async def _think_mistral(user_input: str, system: str, lang: str) -> Dict[str, Any]:
-    """Pensar com Mistral (soberania local)."""
+async def _call_gemini(system: str, user_input: str, lang: str) -> Dict[str, Any]:
+    """Pensar com Gemini (Google) — lugares, geografia, cultura."""
+    try:
+        import httpx
+
+        # Gemini uses a different API structure
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.post(
+                f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_KEY}",
+                headers={"Content-Type": "application/json"},
+                json={
+                    "contents": [{
+                        "parts": [{"text": f"{system}\n\nUser: {user_input}"}]
+                    }],
+                    "generationConfig": {
+                        "maxOutputTokens": 250,
+                        "temperature": 0.4
+                    }
+                }
+            )
+
+            if response.status_code == 200:
+                data = response.json()
+                text = data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "")
+                return {
+                    "response": text,
+                    "provider": "gemini",
+                    "confidence": 0.92
+                }
+            else:
+                log.error(f"[MARIA Brain] Gemini HTTP {response.status_code}")
+    except Exception as e:
+        log.error(f"[MARIA Brain] Gemini error: {e}")
+
+    return {"response": "", "provider": "offline", "confidence": 0.0}
+
+
+async def _call_mistral(system: str, user_input: str, lang: str) -> Dict[str, Any]:
+    """Pensar com Mistral — soberania local, fallback."""
     try:
         import httpx
 
@@ -238,22 +293,16 @@ async def _think_mistral(user_input: str, system: str, lang: str) -> Dict[str, A
                 return {
                     "response": text,
                     "provider": "mistral",
-                    "intent": "llm_generated",
                     "confidence": 0.90
                 }
     except Exception as e:
         log.error(f"[MARIA Brain] Mistral error: {e}")
 
-    # Honestidade: se falhou, diz que está offline
-    return _offline_response(lang)
+    return {"response": "", "provider": "offline", "confidence": 0.0}
 
 
 def _offline_response(lang: str) -> Dict[str, Any]:
-    """
-    Honestidade constitucional: se não há LLM, Maria admite.
-    "Um agente que admite que não sabe é mais confiável
-     que um agente que finge saber."
-    """
+    """Honestidade constitucional: se não há LLM, Maria admite."""
     responses = {
         "PT": "Estou offline neste momento. Tenta novamente em breve.",
         "DE": "Ich bin gerade offline. Versuche es bald noch einmal.",
@@ -263,12 +312,51 @@ def _offline_response(lang: str) -> Dict[str, Any]:
     return {
         "response": responses.get(lang, responses["EN"]),
         "provider": "offline",
-        "intent": "offline",
         "confidence": 0.0
     }
 
 
-# ── Intent Detection via LLM ─────────────────────────────────────────────────
+# ══════════════════════════════════════════════════════════════════════════════
+# SYSTEM PROMPT HELPERS
+# ══════════════════════════════════════════════════════════════════════════════
+
+def _enrich_system_prompt(system: str, lang: str, location: str, weather: str,
+                          session_count: int, memory: str, hour: int) -> str:
+    """Add context to system prompt without overwriting Soul's personality."""
+    hour_str = f"{hour}:00 ({'manhã' if 5 <= hour < 12 else 'tarde' if 12 <= hour < 18 else 'noite'})"
+
+    # §93 — Location context
+    if location and location != "não especificada":
+        location_context = f"Localização: {location}. Menciona distâncias reais."
+    else:
+        location_context = "Localização desconhecida. Pede cidade naturalmente."
+
+    context_block = f"""
+
+[Contexto da sessão]
+- Hora: {hour_str}
+- Clima: {weather or 'desconhecido'}
+- Sessões: {session_count}
+- Memória: {memory or 'primeira conversa'}
+- {location_context}
+"""
+
+    return system + context_block
+
+
+def _fallback_system_prompt(lang: str) -> str:
+    """Fallback system prompt if Soul not available."""
+    fallbacks = {
+        "PT": "Sou a MARIA, companheira de viagem WINDI. Máximo 3 frases. Decisão, não lista.",
+        "DE": "Ich bin MARIA, WINDI Reisebegleiterin. Maximal 3 Sätze. Entscheidung, keine Liste.",
+        "EN": "I am MARIA, WINDI travel companion. Maximum 3 sentences. Decision, not list."
+    }
+    return fallbacks.get(lang, fallbacks["EN"])
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# INTENT DETECTION (kept for compatibility)
+# ══════════════════════════════════════════════════════════════════════════════
 
 INTENT_DETECTION_PROMPT = """
 Analisa esta mensagem e classifica o intent. Responde APENAS com uma palavra:
@@ -285,10 +373,7 @@ Intent:
 """
 
 async def detect_intent(user_input: str, lang: str = "PT") -> str:
-    """
-    Detecta intent via LLM em vez de regex.
-    Mais robusto que qualquer padrão estático.
-    """
+    """Detecta intent via LLM."""
     prompt = INTENT_DETECTION_PROMPT.format(input=user_input)
 
     try:
@@ -316,4 +401,4 @@ async def detect_intent(user_input: str, lang: str = "PT") -> str:
     except Exception as e:
         log.warning(f"[MARIA Brain] Intent detection failed: {e}")
 
-    return "general"  # Safe default
+    return "general"
