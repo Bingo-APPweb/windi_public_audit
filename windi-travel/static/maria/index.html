@@ -46,6 +46,7 @@
 const { useState, useRef, useCallback, useEffect, useMemo } = React;
 
 const MARIA_API    = "/travel/maria/think";  // §92 — Brain LLM live
+const MARIA_PLAN   = "/travel/maria/plan";   // §65 — Greeting + structured responses
 const MARIA_HEALTH = "/travel/maria/health";
 const API_TIMEOUT  = 15000;  // §72 — Claude needs ~10s for presence-aware responses
 
@@ -233,7 +234,7 @@ const WALLET_ID=getWalletId();
 
 // §92 — Brain API: no intent detection, LLM handles everything
 async function callMariaAPI(intent,lang,fallbackSc,inputText=""){
-  const{lat,lng}=await getGPS();
+  const{lat,lng}=await getGPS();if(!window.__audioUnlocked){const u=new Audio();u.play().catch(()=>{});window.__audioUnlocked=true;}
   try{
     const ctrl=new AbortController();
     const tid=setTimeout(()=>ctrl.abort(),API_TIMEOUT);
@@ -580,7 +581,7 @@ function App(){
     if(WALLET_ID){
       getGPS().then(({lat,lng})=>{
         if(lat&&lng)setUserGPS({lat,lng});
-        fetch(MARIA_API,{
+        fetch(MARIA_PLAN,{
           method:"POST",headers:{"Content-Type":"application/json"},
           body:JSON.stringify({intent:{type:"greeting"},lang,lat,lng,wallet_id:WALLET_ID}),
           signal:AbortSignal.timeout(API_TIMEOUT)
