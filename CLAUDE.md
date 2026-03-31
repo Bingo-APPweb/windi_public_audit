@@ -547,11 +547,11 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 01 Apr | §95 **§85 NavCard Restaurado** · Card visual Maps+Waze · extrai km/tempo |
 | 31 Mar | §94 **F14 Conversational Memory** · LLM remembers context · UX 9/10 |
 | 31 Mar | §93 **P2 UX Polish** · Progressive timeout + human errors · UX 8/10 |
 | 31 Mar | §92 **P3-B Travel Workspace** · F13 Chat Maria · 14 features · I12 i18n fix |
 | 31 Mar | §91 **Small Talk Layer** · Memory informs, not displays · Contextual questions |
-| 31 Mar | §90 **Consciousness Layer** · Onboarding intent · MARIA identity · Memory integration |
 
 > **Histórico completo:** `CLAUDE-HISTORY.md` + `CHANGELOG.md`
 
@@ -781,7 +781,7 @@ Não compete com ninguém — muda o eixo do jogo.
 
 ---
 
-## MARIA-UI — Inventário de Atribuições (14 LIVE)
+## MARIA-UI — Inventário de Atribuições (15 LIVE)
 
 **Status:** ✅ PRODUÇÃO · DID Gate activo · Consciousness Layer activo · P3-B Workspace activo · UX 9/10
 
@@ -802,6 +802,7 @@ Não compete com ninguém — muda o eixo do jogo.
 | §92 | P3-B Travel Workspace | F13 `askMaria()` + 14 features + I12 i18n |
 | §93 | P2 UX Polish | Progressive timeout + human errors · 4 i18n strings |
 | §94 | F14 Conversational Memory | `__conversationHistory[]` + LLM context · 20 msg limit |
+| §95 | §85 NavCard Restaurado | Card visual Maps+Waze · extrai km/tempo do texto |
 
 **Removidos:** §87 OSRM (dead code) · Demo buttons · Hardcoded scenarios
 
@@ -865,7 +866,8 @@ Query → flight keywords?    → Kiwi Bridge
 - [ ] **windilaw.de** — Sincronizar com windi-domain.com/law/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
-### Completado (ver §37-94)
+### Completado (ver §37-95)
+- [x] §95 **§85 NavCard Restaurado** · Card visual Maps+Waze · extrai km/tempo ✅ 01 Apr 2026
 - [x] §94 **F14 Conversational Memory** · LLM remembers context · UX 9/10 ✅ 31 Mar 2026
 - [x] §93 **P2 UX Polish** · Progressive timeout + human errors · UX 8/10 ✅ 31 Mar 2026
 - [x] §92 **P3-B Travel Workspace** · F13 Chat Maria · 14 features ✅ 31 Mar 2026
