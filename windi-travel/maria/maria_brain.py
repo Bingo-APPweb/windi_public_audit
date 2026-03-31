@@ -144,19 +144,15 @@ async def think(
         memory=memory or "nenhuma memória prévia"
     )
 
-    # Routing por tier (com fallback chain)
-    # HIGH → Claude preferred
-    # FREE/MED → Mistral preferred, Claude fallback
-    if tier == "HIGH" and ANTHROPIC_KEY:
+    # Routing — 100% live, sem fallbacks
+    # Se não há keys → honestamente offline
+    if ANTHROPIC_KEY:
         return await _think_claude(user_input, system, lang)
     elif MISTRAL_KEY:
         return await _think_mistral(user_input, system, lang)
-    elif ANTHROPIC_KEY:
-        # Fallback to Claude if Mistral not available
-        return await _think_claude(user_input, system, lang)
     else:
-        # Local fallback if no keys available
-        return _think_local(user_input, lang)
+        # Honestidade constitucional: sem keys = offline
+        return _offline_response(lang)
 
 
 async def _think_claude(user_input: str, system: str, lang: str) -> Dict[str, Any]:
@@ -193,8 +189,8 @@ async def _think_claude(user_input: str, system: str, lang: str) -> Dict[str, An
     except Exception as e:
         log.error(f"[MARIA Brain] Claude error: {e}")
 
-    # Fallback to Mistral
-    return await _think_mistral(user_input, system, lang)
+    # Honestidade: se Claude falhou, Maria está offline
+    return _offline_response(lang)
 
 
 async def _think_mistral(user_input: str, system: str, lang: str) -> Dict[str, Any]:
@@ -232,26 +228,27 @@ async def _think_mistral(user_input: str, system: str, lang: str) -> Dict[str, A
     except Exception as e:
         log.error(f"[MARIA Brain] Mistral error: {e}")
 
-    # Fallback local
-    return _think_local(user_input, lang)
+    # Honestidade: se falhou, diz que está offline
+    return _offline_response(lang)
 
 
-def _think_local(user_input: str, lang: str) -> Dict[str, Any]:
+def _offline_response(lang: str) -> Dict[str, Any]:
     """
-    Fallback local quando nenhum LLM está disponível.
-    Resposta minimalista mas funcional.
+    Honestidade constitucional: se não há LLM, Maria admite.
+    "Um agente que admite que não sabe é mais confiável
+     que um agente que finge saber."
     """
     responses = {
-        "PT": "Olá! Diz-me onde estás e o que precisas — eu trato do resto.",
-        "DE": "Hallo! Sag mir, wo du bist und was du brauchst — ich kümmere mich darum.",
-        "EN": "Hello! Tell me where you are and what you need — I'll handle the rest."
+        "PT": "Estou offline neste momento. Tenta novamente em breve.",
+        "DE": "Ich bin gerade offline. Versuche es bald noch einmal.",
+        "EN": "I am offline at the moment. Please try again soon."
     }
 
     return {
         "response": responses.get(lang, responses["EN"]),
-        "provider": "local_fallback",
-        "intent": "fallback",
-        "confidence": 0.5
+        "provider": "offline",
+        "intent": "offline",
+        "confidence": 0.0
     }
 
 
