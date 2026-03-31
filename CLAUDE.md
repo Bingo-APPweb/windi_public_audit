@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.57
-**Sealed:** 2026-03-31 · §85 Hybrid Navigation
+**Version:** 1.9.58
+**Sealed:** 2026-03-31 · §89 Production Cleanup
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -547,11 +547,11 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 31 Mar | §89 **Production Cleanup** · Zero fallbacks · DID Gate · 9 atribuições LIVE |
 | 31 Mar | §85 **Hybrid Navigation** · WINDI seals, native Maps navigates · I11 antes de abrir |
 | 30 Mar | §73-78 **Fenomenologia da Presença** · Doutrina IRREMEDIÁVEL · Companion System |
 | 30 Mar | §72 **Pulse Reading Layer** · "HER" architecture · Subtexto antes do routing |
 | 30 Mar | §71 **Armadura de Seda** · Identidade Fonética · Prompts com alma |
-| 30 Mar | §70 I-TRAVEL Constitution · Idioma ≠ Localização · MARIA pergunta destino |
 
 > **Histórico completo:** `CLAUDE-HISTORY.md` + `CHANGELOG.md`
 
@@ -781,7 +781,9 @@ Não compete com ninguém — muda o eixo do jogo.
 
 ---
 
-## MARIA-UI — Inventário de Atribuições (9 LIVE)
+## MARIA-UI — Inventário de Atribuições (9 LIVE + §89)
+
+**Status:** ✅ PRODUÇÃO · DID Gate activo · Zero fallbacks
 
 | §§ | Nome | Função |
 |----|------|--------|
@@ -794,8 +796,9 @@ Não compete com ninguém — muda o eixo do jogo.
 | §80 | 3 Layers Receipt | Human → Technical → API |
 | §81 | Voice Engine | Edge TTS + browser fallback |
 | §85 | Hybrid Navigation | `openNavigation()` + `confirmArrival()` |
+| §89 | Production Cleanup | DID Gate + zero demos + erro real |
 
-**§87 OSRM Routing** — REMOVIDO (dead code) · 31 Mar 2026
+**Removidos:** §87 OSRM (dead code) · Demo buttons · Hardcoded scenarios
 
 **§82 Constitutional Personality (Concierge 5★):**
 BREVIDADE (3 frases) · CONFIANÇA ("Encontrei") · GENDER NEUTRAL · CONTEXTO LIDO · SEMPRE ENTREGA
@@ -857,7 +860,8 @@ Query → flight keywords?    → Kiwi Bridge
 - [ ] **windilaw.de** — Sincronizar com windi-domain.com/law/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
-### Completado (ver §37-85)
+### Completado (ver §37-89)
+- [x] §89 Production Cleanup · DID Gate + zero fallbacks ✅ 31 Mar 2026
 - [x] §85 Hybrid Navigation · WINDI seals + native Maps navigates ✅ 31 Mar 2026
 - [x] SMTP · P3-A Identity Gate · Tesoura v10 ✅ 29 Mar 2026
 - [x] Travel Checkup · Port fix · LAW isolation ✅ 30 Mar 2026
