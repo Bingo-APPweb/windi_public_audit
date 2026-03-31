@@ -74,6 +74,15 @@ except ImportError as e:
     VOICE_ENGINE_ENABLED = False
     log.warning(f"[MARIA] Voice Engine not available: {e}")
 
+# ── MARIA Brain (§92) ── LLM live substitui regex estáticos ──────────────────
+try:
+    from maria.maria_brain import think as maria_think, detect_intent as maria_detect_intent
+    BRAIN_ENABLED = True
+    log.info("[MARIA] Brain (LLM) loaded ✓ — regex substituídos por consciência")
+except ImportError as e:
+    BRAIN_ENABLED = False
+    log.warning(f"[MARIA] Brain not available: {e}")
+
 # ── Kiwi Flight Bridge (§67) ─────────────────────────────────────────────────
 try:
     from maria.kiwi_bridge import (
@@ -1278,6 +1287,75 @@ async def demo_super_carta():
             PlaceLocation(name="Café Rösterei", type="cafe", lat=47.7280, lng=10.3180, rating=4.7, open_now=False, address="Klostersteige 5"),
         ],
     )
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# §92 — MARIA Brain Endpoint (LLM live substitui regex)
+# ══════════════════════════════════════════════════════════════════════════════
+
+class ThinkRequest(BaseModel):
+    """Request for MARIA brain (LLM-powered response)."""
+    message: str = Field(..., description="User message", max_length=500)
+    lang: str = Field(default="PT", description="Language: PT, DE, EN")
+    did: Optional[str] = Field(default=None, description="User DID")
+    weather: Optional[str] = Field(default=None, description="Weather context")
+    lat: Optional[float] = Field(default=None, description="User latitude")
+    lng: Optional[float] = Field(default=None, description="User longitude")
+
+
+@router.post("/think")
+async def maria_think_endpoint(req: ThinkRequest):
+    """
+    §92 — MARIA Brain: LLM live substitui regex estáticos.
+
+    "Os regex tentam prever o que o humano vai dizer.
+     O LLM entende o que o humano quis dizer."
+
+    Pipeline:
+        input + contexto + memória → LLM → resposta genuinamente generativa
+    """
+    if not BRAIN_ENABLED:
+        raise HTTPException(status_code=503, detail="Brain not available — use /plan instead")
+
+    # Get session count from memory
+    session_count = 0
+    if MEMORY_ENABLED and req.did:
+        session_count = get_total_interactions(req.did)
+
+    # Build location string
+    location = None
+    if req.lat and req.lng:
+        location = f"{req.lat:.4f}, {req.lng:.4f}"
+
+    # Get memory context
+    memory = ""
+    if MEMORY_ENABLED and req.did:
+        nomada = get_or_create_nomada(req.did)
+        if not nomada.get("is_new"):
+            memory = f"Utilizador recorrente. Nome: {nomada.get('name', 'desconhecido')}."
+
+    # Think with LLM
+    result = await maria_think(
+        user_input=req.message,
+        lang=req.lang,
+        did=req.did,
+        weather=req.weather,
+        location=location,
+        session_count=session_count,
+        memory=memory,
+        tier="FREE"  # TODO: Get from wallet
+    )
+
+    log.info(f"[MARIA Brain] Provider: {result['provider']} | Intent: {result['intent']}")
+
+    return {
+        "response": result["response"],
+        "provider": result["provider"],
+        "intent": result["intent"],
+        "confidence": result["confidence"],
+        "lang": req.lang,
+        "session_count": session_count
+    }
 
 
 # ══════════════════════════════════════════════════════════════════════════════
