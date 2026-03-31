@@ -183,6 +183,68 @@ body {
   font-size: 12px;
 }
 
+/* §94 — Quick Replies */
+.quick-replies {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+
+.quick-reply-btn {
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  border-radius: 20px;
+  padding: 8px 16px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+
+.quick-reply-btn:hover {
+  background: var(--gold);
+  color: var(--bg);
+}
+
+/* §94 — Nav Card */
+.nav-card {
+  background: var(--gold-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 12px;
+}
+
+.nav-card-header {
+  font-size: 11px;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.nav-card-content {
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--gold);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
 /* i18n */
 [lang="de"] [data-lang]:not([data-lang="de"]) { display: none; }
 [lang="en"] [data-lang]:not([data-lang="en"]) { display: none; }
@@ -256,6 +318,8 @@ body {
     <span data-lang="pt">MARIA diz</span>
   </div>
   <div class="response-text" id="responseText"></div>
+  <div id="quickReplies" class="quick-replies"></div>
+  <div id="navCard" class="nav-card" style="display:none;"></div>
   <div class="response-meta" id="responseMeta"></div>
 </div>
 
@@ -418,6 +482,12 @@ function sendRequest(intent) {
 
     document.getElementById('response').classList.add('active');
 
+    // §94 — Quick Replies (botões para opções na pergunta da Maria)
+    renderQuickReplies(voice);
+
+    // §94 — Nav Card (se Maria menciona rotas/distâncias)
+    renderNavCard(voice, d);
+
     // §93 — Quick action se Maria pede localização
     var needsLocation = voice.toLowerCase().includes('localiza') ||
                         voice.toLowerCase().includes('onde est') ||
@@ -463,6 +533,134 @@ function showLocationQuickAction() {
   };
 
   document.getElementById('response').appendChild(btn);
+}
+
+// §94 — Quick Replies: detecta opções na resposta da Maria
+function renderQuickReplies(voice) {
+  var container = document.getElementById('quickReplies');
+  container.innerHTML = '';
+
+  var options = extractQuickReplies(voice);
+  if (options.length === 0) return;
+
+  options.forEach(function(opt) {
+    var btn = document.createElement('button');
+    btn.className = 'quick-reply-btn';
+    btn.textContent = opt;
+    btn.onclick = function() {
+      container.innerHTML = '';
+      document.getElementById('mariaInput').value = opt;
+      askMaria();
+    };
+    container.appendChild(btn);
+  });
+}
+
+function extractQuickReplies(text) {
+  var options = [];
+
+  // Padrão: "X ou Y?" em PT/DE/EN
+  var ptMatch = text.match(/(?:Queres?|Preferes?)\s+(.+?)\s+ou\s+(.+?)\?/i);
+  var deMatch = text.match(/(?:Möchtest du|Willst du)\s+(.+?)\s+oder\s+(.+?)\?/i);
+  var enMatch = text.match(/(?:Do you want|Would you prefer)\s+(.+?)\s+or\s+(.+?)\?/i);
+
+  var match = ptMatch || deMatch || enMatch;
+  if (match) {
+    options.push(cleanReplyLabel(match[1]));
+    options.push(cleanReplyLabel(match[2]));
+  }
+
+  // Padrão simples: "estacionamento ou comboio"
+  var simpleMatch = text.match(/(\w+(?:\s+\w+)?)\s+ou\s+(\w+(?:\s+\w+)?)\??/i);
+  if (!match && simpleMatch) {
+    options.push(cleanReplyLabel(simpleMatch[1]));
+    options.push(cleanReplyLabel(simpleMatch[2]));
+  }
+
+  return options;
+}
+
+function cleanReplyLabel(text) {
+  return text
+    .replace(/^(que te |te |ir de |reservar |o |a |um |uma )/gi, '')
+    .replace(/\?$/, '')
+    .trim()
+    .slice(0, 30);
+}
+
+// §94 — Nav Card: mostra quando Maria menciona rotas/distâncias
+function renderNavCard(voice, data) {
+  var container = document.getElementById('navCard');
+  container.style.display = 'none';
+  container.innerHTML = '';
+
+  if (!shouldShowNavCard(voice)) return;
+
+  // Extrair destino da resposta
+  var destination = extractDestination(voice, data);
+  if (!destination) return;
+
+  var labels = {
+    de: { header: 'NAVIGATION', btn: '🧭 Route starten' },
+    en: { header: 'NAVIGATION', btn: '🧭 Start route' },
+    pt: { header: 'NAVEGAÇÃO', btn: '🧭 Iniciar rota' }
+  };
+  var l = labels[currentLang] || labels.en;
+
+  container.innerHTML =
+    '<div class="nav-card-header">' + l.header + '</div>' +
+    '<div class="nav-card-content">' + destination.name + '</div>' +
+    '<button class="nav-btn" onclick="openNavigation(\'' +
+      destination.lat + '\',\'' + destination.lng + '\',\'' +
+      encodeURIComponent(destination.name) + '\')">' + l.btn + '</button>';
+
+  container.style.display = 'block';
+}
+
+function shouldShowNavCard(text) {
+  var navKeywords = [
+    'minutos de carro', 'minuten', 'minutes', 'km',
+    'pela B', 'pela A', 'Autobahn', 'highway',
+    'rota', 'route', 'direção', 'direction',
+    'estacionamento', 'Parkhaus', 'parking',
+    'comboio', 'Zug', 'train', 'station'
+  ];
+  var lower = text.toLowerCase();
+  return navKeywords.some(function(kw) {
+    return lower.includes(kw.toLowerCase());
+  });
+}
+
+function extractDestination(voice, data) {
+  // Se temos coordenadas no context
+  if (data && data.context) {
+    var ctx = data.context;
+    if (ctx.destination_lat && ctx.destination_lng) {
+      return {
+        name: data.decision ? data.decision.name : 'Destino',
+        lat: ctx.destination_lat,
+        lng: ctx.destination_lng
+      };
+    }
+  }
+
+  // Se temos decision com place
+  if (data && data.decision && data.decision.name) {
+    // Usar coordenadas de Kempten como fallback + nome do lugar
+    return {
+      name: data.decision.name,
+      lat: __userLocation ? __userLocation.lat + 0.01 : 47.73,
+      lng: __userLocation ? __userLocation.lng + 0.01 : 10.32
+    };
+  }
+
+  return null;
+}
+
+function openNavigation(lat, lng, name) {
+  // Abre Google Maps ou Apple Maps dependendo do device
+  var url = 'https://www.google.com/maps/dir/?api=1&destination=' + lat + ',' + lng;
+  window.open(url, '_blank');
 }
 </script>
 </body>
