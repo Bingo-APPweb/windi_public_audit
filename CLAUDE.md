@@ -547,11 +547,11 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 31 Mar | §93 **P2 UX Polish** · Progressive timeout + human errors · UX 8/10 |
 | 31 Mar | §92 **P3-B Travel Workspace** · F13 Chat Maria · 14 features · I12 i18n fix |
 | 31 Mar | §91 **Small Talk Layer** · Memory informs, not displays · Contextual questions |
 | 31 Mar | §90 **Consciousness Layer** · Onboarding intent · MARIA identity · Memory integration |
 | 31 Mar | §89 **Production Cleanup** · Zero fallbacks · DID Gate · 9 atribuições LIVE |
-| 31 Mar | §85 **Hybrid Navigation** · WINDI seals, native Maps navigates · I11 antes de abrir |
 
 > **Histórico completo:** `CLAUDE-HISTORY.md` + `CHANGELOG.md`
 
@@ -781,9 +781,9 @@ Não compete com ninguém — muda o eixo do jogo.
 
 ---
 
-## MARIA-UI — Inventário de Atribuições (12 LIVE)
+## MARIA-UI — Inventário de Atribuições (13 LIVE)
 
-**Status:** ✅ PRODUÇÃO · DID Gate activo · Consciousness Layer activo · P3-B Workspace activo
+**Status:** ✅ PRODUÇÃO · DID Gate activo · Consciousness Layer activo · P3-B Workspace activo · UX 8/10
 
 | §§ | Nome | Função |
 |----|------|--------|
@@ -800,6 +800,7 @@ Não compete com ninguém — muda o eixo do jogo.
 | §90 | Consciousness Layer | Onboarding intent + MARIA identity |
 | §91 | Small Talk Layer | Memory informs behavior, not output |
 | §92 | P3-B Travel Workspace | F13 `askMaria()` + 14 features + I12 i18n |
+| §93 | P2 UX Polish | Progressive timeout + human errors · 4 i18n strings |
 
 **Removidos:** §87 OSRM (dead code) · Demo buttons · Hardcoded scenarios
 
@@ -863,7 +864,8 @@ Query → flight keywords?    → Kiwi Bridge
 - [ ] **windilaw.de** — Sincronizar com windi-domain.com/law/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
-### Completado (ver §37-92)
+### Completado (ver §37-93)
+- [x] §93 **P2 UX Polish** · Progressive timeout + human errors · UX 8/10 ✅ 31 Mar 2026
 - [x] §92 **P3-B Travel Workspace** · F13 Chat Maria · 14 features ✅ 31 Mar 2026
 - [x] §91 Small Talk Layer · Memory informs, not displays ✅ 31 Mar 2026
 - [x] §90 Consciousness Layer · Onboarding intent + MARIA identity ✅ 31 Mar 2026
