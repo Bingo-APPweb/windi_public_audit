@@ -644,7 +644,7 @@ Se o Gêmeo inventa um receipt... isso é falsificação."
 
 > **Tabela completa + Axiomas:** `CLAUDE-HISTORY.md` § MIGRAÇÃO 30 Mar 2026
 
-**MARIA Companion (§62-84):** Triple LLM · Vozes Edge TTS · Super Carta (Leaflet+OSM+OSRM) · Address Fallback (Nominatim) · Pulse Reading · Fenomenologia §73-78
+**MARIA Companion (§62-85):** Triple LLM · Vozes Edge TTS · Super Carta (Leaflet+OSM) · Hybrid Navigation (§85) · Address Fallback (Nominatim) · Pulse Reading · Fenomenologia §73-78 · **9 atribuições LIVE**
 **WINDI-LAW (§49-57):** Identity Gate :8122 · Workspace v3 · windilaw.de · 12 SEALED functions
 **WINDI Travel (§59-70):** Identity Gate :8126 · Tesoura v10 · Places Gate · Kiwi+Hotellook Bridges
 **Core (§37-48):** Canvas v1.3 · Sovereignty Gate · Triangle of Power · FVE Protocol · W-INTENT · W-COUNSEL
@@ -781,11 +781,21 @@ Não compete com ninguém — muda o eixo do jogo.
 
 ---
 
-## §79-82 — MARIA Companion System
+## MARIA-UI — Inventário de Atribuições (9 LIVE)
 
-**§79 Super Carta:** Leaflet.js + OpenStreetMap + OSRM · Pins emoji · Popups · `/maria/demo-carta`
-**§80 3 Layers Receipt:** Human (✓ SELADO) → Technical (collapsed) → API (link)
-**§81 Edge TTS:** FranciscaNeural (PT) · KatjaNeural (DE) · SoniaNeural (EN) · rate -10% pitch -5Hz
+| §§ | Nome | Função |
+|----|------|--------|
+| §65 | Saudação Personalizada | `getWalletId()` + greeting API + GPS |
+| §67 | Travelpayouts Affiliate | Script ID 513311 |
+| §69 | Smart Intent Detection | `detectIntentFromText()` |
+| §71 | Decision vs Greeting | `type==="greeting"` → sem seal |
+| §72 | Pulse Reading Timeout | `API_TIMEOUT=15000` |
+| §79 | Super Carta | Leaflet.js + OpenStreetMap + Pins |
+| §80 | 3 Layers Receipt | Human → Technical → API |
+| §81 | Voice Engine | Edge TTS + browser fallback |
+| §85 | Hybrid Navigation | `openNavigation()` + `confirmArrival()` |
+
+**§87 OSRM Routing** — REMOVIDO (dead code) · 31 Mar 2026
 
 **§82 Constitutional Personality (Concierge 5★):**
 BREVIDADE (3 frases) · CONFIANÇA ("Encontrei") · GENDER NEUTRAL · CONTEXTO LIDO · SEMPRE ENTREGA
