@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.66
-**Sealed:** 2026-04-01 · §105 Explicação Visível
+**Version:** 1.9.67
+**Sealed:** 2026-04-01 · §106 Contexto no Scoring
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -547,6 +547,7 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 01 Apr | §106 **Contexto no Scoring** · apply_context_modifiers() · Situational awareness · `7d88676` |
 | 01 Apr | §105 **Explicação Visível** · Maria explains decisions · generate_explanation() · `668742b` |
 | 01 Apr | §104.1 **Hotels & Places Personalization** · Escala comparável · Category boosts · `7053f21` |
 | 01 Apr | §104 **Personalização Real** · Campos evoluíveis · Ajustes incrementais · `d355304` |
@@ -817,8 +818,9 @@ Não compete com ninguém — muda o eixo do jogo.
 | §104 | Personalização Real | Campos evoluíveis no scoring · learned_confidence · Ajustes incrementais |
 | §104.1 | Hotels & Places Personalization | score_hotel() + score_place() v2.0 · Category boosts · Escala comparável |
 | §105 | Explicação Visível | generate_explanation() unificada · Base + complement · Zero termos técnicos |
+| §106 | Contexto no Scoring | apply_context_modifiers() · 4 tipos: time_pressure, weather, trip_type, time_of_day |
 
-**Tags:** `W-MARIA-001-NOMADA-V2-READY` · `W-MARIA-001-MEMORY-ENGINE-READY` · `W-MARIA-001-EXPLANATION-VISIBLE`
+**Tags:** `W-MARIA-001-NOMADA-V2-READY` · `W-MARIA-001-MEMORY-ENGINE-READY` · `W-MARIA-001-CONTEXT-AWARE`
 
 **Removidos:** §87 OSRM (dead code) · Demo buttons · Hardcoded scenarios
 
@@ -882,7 +884,8 @@ Query → flight keywords?    → Kiwi Bridge
 - [ ] **windilaw.de** — Sincronizar com windi-domain.com/law/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
-### Completado (ver §37-105)
+### Completado (ver §37-106)
+- [x] §106 **Contexto no Scoring** · apply_context_modifiers() · Situational awareness ✅ 01 Apr 2026
 - [x] §105 **Explicação Visível** · generate_explanation() · Maria explains ✅ 01 Apr 2026
 - [x] §104.1 **Hotels & Places Personalization** · score v2.0 · Category boosts ✅ 01 Apr 2026
 - [x] §104 **Personalização Real** · Campos evoluíveis · Ajustes incrementais ✅ 01 Apr 2026
