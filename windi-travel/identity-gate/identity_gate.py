@@ -2162,6 +2162,111 @@ async def root():
 
 
 # ═══════════════════════════════════════════════════════════════
+# §110 GPS REVERSE GEOCODING — Nominatim OpenStreetMap
+# Coordenadas → Lugar humano · Soberano (sem API key)
+# ═══════════════════════════════════════════════════════════════
+
+# Cache em memória — TTL 1 hora · Respeita rate limit Nominatim
+_geocode_cache = {}  # key: "lat,lng" → {"place": ..., "ts": ...}
+_GEOCODE_TTL = 3600  # 1 hora em segundos
+
+def _get_cached_geocode(lat: str, lng: str) -> Optional[dict]:
+    """Retorna cache se válido, None se expirado."""
+    import time
+    key = f"{lat},{lng}"
+    if key in _geocode_cache:
+        cached = _geocode_cache[key]
+        if time.time() - cached["ts"] < _GEOCODE_TTL:
+            return cached["place"]
+    return None
+
+def _set_cached_geocode(lat: str, lng: str, place: dict):
+    """Guarda no cache com timestamp."""
+    import time
+    key = f"{lat},{lng}"
+    _geocode_cache[key] = {"place": place, "ts": time.time()}
+
+@app.get("/reverse-geocode")
+async def reverse_geocode(lat: str = None, lng: str = None, lang: str = "pt"):
+    """
+    §110 GPS Reverse Geocoding
+    Converte coordenadas GPS em nome de lugar legível.
+
+    API: Nominatim OpenStreetMap (soberano, sem key)
+    Rate limit: 1 req/s — cache obrigatório
+
+    GDPR: Coordenadas NÃO são persistidas. Só o place_name.
+    """
+    if not lat or not lng:
+        return JSONResponse({"error": "lat/lng required"}, status_code=400)
+
+    # Truncar para 4 casas decimais (~11m precisão) — para cache eficiente
+    try:
+        lat_round = f"{float(lat):.4f}"
+        lng_round = f"{float(lng):.4f}"
+    except ValueError:
+        return JSONResponse({"error": "invalid coordinates"}, status_code=400)
+
+    # Check cache
+    cached = _get_cached_geocode(lat_round, lng_round)
+    if cached:
+        return JSONResponse(cached)
+
+    # Nominatim request
+    try:
+        url = f"https://nominatim.openstreetmap.org/reverse?lat={lat_round}&lon={lng_round}&format=json&accept-language={lang}"
+        headers = {"User-Agent": "WINDI-Travel/1.0 (windi-domain.com)"}
+
+        resp = requests.get(url, headers=headers, timeout=5)
+        data = resp.json()
+
+        address = data.get("address", {})
+
+        # Extrair campos relevantes
+        city = (
+            address.get("city") or
+            address.get("town") or
+            address.get("village") or
+            address.get("municipality") or
+            address.get("county") or
+            "Unknown"
+        )
+        state = address.get("state", "")
+        country = address.get("country", "")
+        country_code = address.get("country_code", "").upper()
+
+        # Construir display: "Kempten, Bayern, Deutschland"
+        parts = [p for p in [city, state, country] if p]
+        display = ", ".join(parts) if parts else None
+
+        place = {
+            "place_name": city,
+            "city": city,
+            "state": state,
+            "country": country,
+            "country_code": country_code,
+            "display": display
+        }
+
+        # Cache result
+        _set_cached_geocode(lat_round, lng_round, place)
+
+        return JSONResponse(place)
+
+    except Exception as e:
+        print(f"[GEOCODE] Nominatim error: {e}")
+        # Fallback gracioso — seal funciona sem GPS
+        return JSONResponse({
+            "place_name": None,
+            "city": None,
+            "state": None,
+            "country": None,
+            "country_code": None,
+            "display": None
+        })
+
+
+# ═══════════════════════════════════════════════════════════════
 # TRAVEL SEAL — P0 Corte 1 · require_auth + SHA-256 validation
 # ═══════════════════════════════════════════════════════════════
 
@@ -2187,6 +2292,8 @@ async def seal_moment(request: Request):
     # Aceita tanto "type" como "media_type" (frontend envia media_type)
     file_type = body.get("type") or body.get("media_type", "image")
     note = body.get("note", "")
+    # §110 — place_name do GPS reverse geocoding
+    place_name = body.get("place_name", "")
 
     # Validar hash SHA-256 (64 hex chars)
     if not file_hash or len(file_hash) != 64:
@@ -2198,19 +2305,29 @@ async def seal_moment(request: Request):
     # doc_type dinâmico: "video" para vídeos, "doc" para imagens
     doc_type = "video" if file_type == "video" else "doc"
 
+    # §110 — Enriquecer doc_name com lugar (se disponível)
+    # Formato: "VIDEO-Kempten-Bayern-{timestamp}" ou "IMAGE-{label}"
+    if place_name:
+        # Simplificar: usar só cidade do place_name (antes da vírgula)
+        place_short = place_name.split(",")[0].strip().replace(" ", "-")
+        enriched_name = f"{file_type.upper()}-{place_short}-{file_name}"
+    else:
+        enriched_name = file_name
+
     try:
         payload = {
             "id": receipt_id,
             "actor": wallet_id,
             "app": "windi-travel-workspace-v3",
-            "doc_name": file_name,
+            "doc_name": enriched_name,
             "doc_type": doc_type,
             "governance_level": "HIGH" if file_type == "video" else "MEDIUM",
             "content_hash": f"sha256:{file_hash}",
             "sge_score": 90,
             "invariant": "I11",
-            "note": note or f"Travel memory sealed · {file_type}",
-            "media_type": file_type  # Metadado adicional
+            "note": note or f"Travel memory sealed · {file_type}" + (f" · {place_name}" if place_name else ""),
+            "media_type": file_type,  # Metadado adicional
+            "place_name": place_name or None  # §110 GPS Geocoding
         }
         requests.post(LEDGER_URL, json=payload, timeout=5)
     except Exception as e:
@@ -2221,7 +2338,8 @@ async def seal_moment(request: Request):
         "hash": file_hash,
         "wallet_id": wallet_id,
         "verify_url": f"https://windi-domain.com/verify-public/web/?id={receipt_id}",
-        "sealed": True
+        "sealed": True,
+        "place_name": place_name or None  # §110 GPS Geocoding
     })
 
 

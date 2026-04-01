@@ -1556,8 +1556,9 @@ async function handleMedia(file, source) {
   const hash = await hashFile(file);
   document.getElementById('vf-hash').textContent = `SHA-256: ${hash.substring(0,12)}…`;
 
-  // Get geo
+  // Get geo + §110 Reverse Geocoding
   let geo = null;
+  let placeName = null;
   if (navigator.geolocation) {
     try {
       const pos = await new Promise((resolve, reject) => {
@@ -1568,7 +1569,13 @@ async function handleMedia(file, source) {
         });
       });
       geo = { lat: pos.coords.latitude.toFixed(4), lon: pos.coords.longitude.toFixed(4) };
-      document.getElementById('geo-label').textContent = `${geo.lat}, ${geo.lon}`;
+
+      // §110 — Reverse geocoding: coordenadas → lugar humano
+      document.getElementById('geo-label').textContent = `📍 ${geo.lat}, ${geo.lon}`;
+      placeName = await getPlaceName(geo.lat, geo.lon);
+      if (placeName) {
+        document.getElementById('geo-label').textContent = `📍 ${placeName}`;
+      }
     } catch (e) {
       console.warn('GPS error:', e.code, e.message);
       document.getElementById('geo-label').textContent = TRAVEL_I18N.capture_geo_none[LANG] + ' (' + (e.message || 'erro') + ')';
@@ -1590,6 +1597,7 @@ async function handleMedia(file, source) {
     hash,
     source,
     geo,
+    placeName,  // §110 GPS Geocoding
     ts: Date.now(),
     lang: LANG,
     media_type: file.type.startsWith('video') ? 'video' : 'image',
@@ -1680,6 +1688,23 @@ function createVideoThumbnail(file, maxSize = 100) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
+// §110 GPS REVERSE GEOCODING — Coordenadas → Lugar humano
+// ═══════════════════════════════════════════════════════════════════════════
+
+async function getPlaceName(lat, lng) {
+  if (!lat || !lng) return null;
+  try {
+    const resp = await fetch(`/travel/reverse-geocode?lat=${lat}&lng=${lng}&lang=${LANG}`);
+    if (!resp.ok) return null;
+    const data = await resp.json();
+    return data.display || data.place_name || null;
+  } catch (e) {
+    console.warn('Geocode error:', e);
+    return null;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 // HASH — hashFile SEALED (crypto.subtle)
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -1707,11 +1732,13 @@ function openSealModal() {
       : `<img src="${currentMoment.dataUrl}" alt="Preview" style="width:100%;height:100%;object-fit:cover;">`;
   }
 
-  // Set meta
+  // Set meta — §110 mostra place_name se disponível
   document.getElementById('meta-hash').textContent = currentMoment.hash.substring(0, 16) + '…';
-  document.getElementById('meta-geo').textContent = currentMoment.geo
-    ? `${currentMoment.geo.lat}, ${currentMoment.geo.lon}`
-    : TRAVEL_I18N.capture_geo_none[LANG];
+  document.getElementById('meta-geo').textContent = currentMoment.placeName
+    ? `📍 ${currentMoment.placeName}`
+    : currentMoment.geo
+      ? `📍 ${currentMoment.geo.lat}, ${currentMoment.geo.lon}`
+      : TRAVEL_I18N.capture_geo_none[LANG];
   document.getElementById('meta-ts').textContent = new Date(currentMoment.ts).toISOString();
 
   modal.classList.add('active');
@@ -1748,6 +1775,7 @@ async function confirmSeal() {
     label,
     hash: currentMoment.hash,
     geo: currentMoment.geo,
+    placeName: currentMoment.placeName,  // §110 GPS Geocoding
     ts: currentMoment.ts,
     lang: currentMoment.lang,
     source: currentMoment.source,
@@ -1768,7 +1796,8 @@ async function confirmSeal() {
         geo: currentMoment.geo ? `${currentMoment.geo.lat},${currentMoment.geo.lon}` : '',
         mode: currentMoment.source,
         lang: currentMoment.lang,
-        media_type: currentMoment.media_type
+        media_type: currentMoment.media_type,
+        place_name: currentMoment.placeName || ''  // §110 GPS Geocoding
       })
     });
 
