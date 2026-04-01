@@ -3592,3 +3592,222 @@ Invariante: I14 + I9 + I11
 
 *Migração: 30 Mar 2026 · Claude Opus 4.5*
 *"O que foi selado, permanece. O que foi migrado, respira."*
+
+---
+
+## §96-100.5 — MARIA Decision Engine Evolution · 01 Apr 2026
+
+**Status:** ✅ COMPLETE · SEALED
+**Commits:** `2ddc3e5` (P0) · `4a9e51a` (§96-100) · `d6c5035` (§100.5) · `253cbea` (P0.1)
+**Tags:** `W-MARIA-001-NOMADA-V2-READY` · `W-MARIA-001-MEMORY-ENGINE-READY`
+
+### Contexto
+
+Transformação de MARIA de "feature system" para "decision system":
+> "MARIA deve decidir antes de falar"
+
+### O que foi implementado
+
+#### P0 — Identity Sovereignty (I9 Enforcement)
+```python
+# Ledger agora rejeita actor='anon'
+if actor == 'anon':
+    return {"ok": False, "error": "anonymous_forbidden", "invariant": "I9"}
+```
+
+#### §96 — Decision Router
+```
+Intent detection ANTES do LLM:
+Query → detect_flight_intent() → Kiwi Bridge
+      → detect_hotel_intent()  → Hotellook Bridge
+      → detect_place_type()    → Places Gate
+      → else                   → LLM fallback
+```
+
+#### §97 — Modo Nómada v1 (Single Decision)
+```
+ANTES:  Lista de 10 opções
+AGORA:  1 decisão central + alternativas discretas
+
+return {
+    "type": "flight",
+    "decision": best_flight,      # A MELHOR
+    "alternatives": others[:2],   # Opcionais
+}
+```
+
+#### §98 — DID Context (Personalized Scoring)
+```python
+def get_travel_preferences(did: str) -> dict:
+    """Merge: defaults → stored → learned"""
+    return {
+        "avoid_stops": True,
+        "price_sensitivity": 0.5,
+        "prefer_morning": True,
+        ...
+    }
+
+def score_flight(f, preferred_time, prefs):
+    score = 1000
+    score -= price * prefs["price_sensitivity"]
+    if f["direct"] and prefs["avoid_stops"]:
+        score += 250
+    return score
+```
+
+#### §99 — Live Context
+```python
+def get_live_context(user_input, lat, lng):
+    return {
+        "time_pressure": "high" if "urgente" in input else "normal",
+        "mode": "urgent" | "focus" | "explore" | "normal",
+    }
+
+def apply_context_to_score(base, flight, context):
+    if context["time_pressure"] == "high" and flight["direct"]:
+        return base + 150
+    return base
+```
+
+#### §100 — Antecipação (I9-Compliant)
+```python
+def should_anticipate(did, context, patterns):
+    if context["time_pressure"] == "high" and patterns["common_routes"]:
+        return {
+            "should_suggest": True,
+            "suggestion_type": "quick_flight",
+            "confidence": 0.8,
+        }
+
+# Always returns requires_approval: True
+```
+
+#### §100.5 — Memory Engine (Structural Learning)
+```sql
+CREATE TABLE maria_decisions (
+    id TEXT PRIMARY KEY,
+    did TEXT NOT NULL,
+    decision_type TEXT,      -- flight | hotel | places
+    route TEXT,              -- MUC→LIS
+    context_time TEXT,       -- high | normal
+    decision_json TEXT,
+    accepted BOOLEAN,
+    ignored BOOLEAN,
+    timestamp TEXT
+);
+```
+
+```python
+def time_weight(ts):
+    """Recent decisions matter more"""
+    return max(0.1, 1.0 - (age_days * 0.05))
+
+def detect_patterns_from_decisions(did):
+    """Weighted pattern detection"""
+    return {
+        "prefers_direct": weighted_ratio > 0.6,
+        "prefers_morning": weighted_ratio > 0.5,
+        "common_routes": ["MUC→LIS", "MUC→BCN"],
+        "acceptance_rate": 0.85,
+    }
+
+def get_enhanced_travel_preferences(did):
+    """Combine: defaults → stored → learned"""
+    prefs = DEFAULT_TRAVEL_PREFS.copy()
+    prefs.update(get_stored_prefs(did))
+    prefs.update(get_learned_adjustments(did))
+    return prefs
+```
+
+#### P0.1 — Frontend Cleanup
+```javascript
+// Feedback loop
+async function sendDecisionFeedback(decisionId, accepted, ignored) {
+    await fetch("/travel/maria/decision-feedback", {
+        method: "POST",
+        body: JSON.stringify({ decision_id: decisionId, accepted, ignored })
+    });
+}
+
+// Decision card with badges
+{result.mode?.includes("nomada") && <span>MARIA v1.3</span>}
+{result.personalized && <span>personalizado</span>}
+{result.context_aware && <span>contexto</span>}
+
+// Feedback buttons
+<button onClick={() => sendDecisionFeedback(id, true, false)}>✔️ Confirmar</button>
+<button onClick={() => sendDecisionFeedback(id, false, true)}>Ver alternativas</button>
+
+// Alternatives section
+<details>
+    <summary>ALTERNATIVAS ({alternatives.length})</summary>
+    {alternatives.map(alt => <AlternativeCard />)}
+</details>
+```
+
+### Invariantes Validados
+
+| Invariante | Validação |
+|------------|-----------|
+| I9 | Feedback não executa — apenas regista |
+| I11 | Decisions são evidência, não modificadas |
+| I14 | Intent detectado nunca regride para LLM |
+| G3 | Antecipação só propõe — nunca executa |
+
+### Ciclo Fechado
+
+```
+User → Input
+  ↓
+Decision Router (§96)
+  ↓
+Scoring + Context (§97-99)
+  ↓
+Decision Presented
+  ↓
+User Feedback (Accept/Ignore)
+  ↓
+Memory Engine (§100.5)
+  ↓
+Pattern Detection
+  ↓
+Better Preferences
+  ↓
+Next Decision (improved)
+```
+
+### Classificação do Sistema
+
+```
+MARIA não é:
+├── Chatbot           ❌
+├── Assistant         ❌
+└── Recommendation    ❌
+
+MARIA é:
+├── Decision Engine   ✅
+├── Context Engine    ✅
+├── Identity Engine   ✅
+├── Anticipation      ✅
+└── Memory Engine     ✅
+```
+
+### Axiomas (novos)
+
+| § | Axioma |
+|---|--------|
+| 96 | "MARIA decide ANTES de falar." |
+| 97 | "Uma decisão, não uma lista." |
+| 98 | "A decisão parte da identidade, não do pedido." |
+| 99 | "O contexto muda o peso, não a lógica." |
+| 100 | "Antecipar não é executar." |
+| 100.5 | "A memória não é histórico. É capacidade de reconhecer padrões." |
+
+### Próximo Passo
+
+WINDI-JOURNAL: "O nascimento de um sistema com memória soberana"
+
+---
+
+*Sessão: 01 Apr 2026 · Liga IA+H · Kempten, Bavaria*
+*"AI processes. Human decides. WINDI guarantees."*
