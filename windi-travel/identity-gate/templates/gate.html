@@ -559,7 +559,7 @@
 
             <div class="form-group">
                 <label class="form-label" data-i18n="vat_number">USt-IdNr. / NIF</label>
-                <input type="text" class="form-input" id="vat_number" placeholder="Opcional">
+                <input type="text" class="form-input" id="vat_number" placeholder="Optional" data-i18n-placeholder="vat_number">
             </div>
 
             <div class="form-group">
@@ -768,10 +768,11 @@
 
     <!-- Footer -->
     <footer class="footer">
-        <p>WINDI Travel &mdash; Guardar o passado. Resguardar o futuro.</p>
+        <p data-i18n="footer_tagline">WINDI Travel — Vergangenheit bewahren. Zukunft sichern.</p>
         <p style="margin-top:0.5rem;">
-            <a href="/">Landing</a> &middot;
-            <a href="/verify-public/">Verify</a> &middot;
+            <a href="/" data-i18n="footer_landing">Landing</a> &middot;
+            <a href="/travel/pitch/" data-i18n="pitch_link">Präsentation</a> &middot;
+            <a href="/verify-public/" data-i18n="footer_verify">Verify</a> &middot;
             Invariants: I9 &middot; I11 &middot; I13 &middot; G3
         </p>
     </footer>
@@ -824,7 +825,11 @@
                 enter_workspace: "Momente retten",
                 returning_user: " — Willkommen zurück",
                 email_sent_title: "Bestätigungsmail gesendet",
-                email_sent_desc: "Bitte bestätige deine E-Mail. Du hast bereits Zugang zu deinen Momenten."
+                email_sent_desc: "Bitte bestätige deine E-Mail. Du hast bereits Zugang zu deinen Momenten.",
+                pitch_link: "Präsentation",
+                footer_tagline: "WINDI Travel — Vergangenheit bewahren. Zukunft sichern.",
+                footer_landing: "Landing",
+                footer_verify: "Verify"
             },
             en: {
                 step1_title: "Your Account",
@@ -861,7 +866,11 @@
                 enter_workspace: "Rescue Moments",
                 returning_user: " — Welcome back",
                 email_sent_title: "Verification email sent",
-                email_sent_desc: "Please verify your email. You already have access to your moments."
+                email_sent_desc: "Please verify your email. You already have access to your moments.",
+                pitch_link: "Pitch Deck",
+                footer_tagline: "WINDI Travel — Preserve the past. Protect the future.",
+                footer_landing: "Landing",
+                footer_verify: "Verify"
             },
             pt: {
                 step1_title: "A tua conta",
@@ -898,7 +907,11 @@
                 enter_workspace: "Resgatar Momentos",
                 returning_user: " — Bem-vindo de volta",
                 email_sent_title: "Email de verificação enviado",
-                email_sent_desc: "Por favor verifica o teu email. Já tens acesso aos teus momentos."
+                email_sent_desc: "Por favor verifica o teu email. Já tens acesso aos teus momentos.",
+                pitch_link: "Libreto",
+                footer_tagline: "WINDI Travel — Guardar o passado. Resguardar o futuro.",
+                footer_landing: "Início",
+                footer_verify: "Verificar"
             }
         };
 
@@ -912,10 +925,18 @@
             document.querySelectorAll('.lang-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.lang === lang);
             });
+            // Update text content
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.dataset.i18n;
                 if (I18N[lang] && I18N[lang][key]) {
                     el.textContent = I18N[lang][key];
+                }
+            });
+            // Update placeholders (§11.2 I12 compliance)
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.dataset.i18nPlaceholder;
+                if (I18N[lang] && I18N[lang][key]) {
+                    el.placeholder = I18N[lang][key];
                 }
             });
         }
