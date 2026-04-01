@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.63
-**Sealed:** 2026-04-01 · §101-103 Coerência Restaurada (Feedback + Reserva + I9)
+**Version:** 1.9.64
+**Sealed:** 2026-04-01 · §104 Personalização Real (Memory Engine no Scoring)
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -547,11 +547,11 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
+| 01 Apr | §104 **Personalização Real** · Campos evoluíveis · Ajustes incrementais · `d355304` |
 | 01 Apr | §101-103 **Coerência Restaurada** · Feedback Loop + Reserva Contínua + I9 Gate |
 | 01 Apr | §100.5 **Memory Engine** · Structural learning · Decision feedback loop · `253cbea` |
 | 01 Apr | §96-100 **Decision Engine Evolution** · Nómada v1.3 · Anticipation · `4a9e51a` |
 | 01 Apr | P0 **Identity Sovereignty** · I9 Enforcement · Backend authority · `2ddc3e5` |
-| 01 Apr | P0.1 **Frontend Cleanup** · Feedback UI · Badges · Alternatives · `253cbea` |
 
 > **Histórico completo:** `CLAUDE-HISTORY.md` + `CHANGELOG.md`
 
@@ -812,8 +812,9 @@ Não compete com ninguém — muda o eixo do jogo.
 | §101 | Feedback Loop Real | Visual confirmation · Botões não escondem UI · Loop conectado |
 | §102 | Reserva Contínua | Link booking SEMPRE visível · Independente de feedback/seal |
 | §103 | I9 Seal Gate | Modal confirmação · "IRREMEDIÁVEL" · Human approval obrigatório |
+| §104 | Personalização Real | Campos evoluíveis no scoring · learned_confidence · Ajustes incrementais |
 
-**Tags:** `W-MARIA-001-NOMADA-V2-READY` · `W-MARIA-001-MEMORY-ENGINE-READY` · `W-MARIA-001-COHERENCE-RESTORED`
+**Tags:** `W-MARIA-001-NOMADA-V2-READY` · `W-MARIA-001-MEMORY-ENGINE-READY` · `W-MARIA-001-PERSONALIZATION-REAL`
 
 **Removidos:** §87 OSRM (dead code) · Demo buttons · Hardcoded scenarios
 
@@ -877,7 +878,8 @@ Query → flight keywords?    → Kiwi Bridge
 - [ ] **windilaw.de** — Sincronizar com windi-domain.com/law/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
-### Completado (ver §37-103)
+### Completado (ver §37-104)
+- [x] §104 **Personalização Real** · Campos evoluíveis · Ajustes incrementais ✅ 01 Apr 2026
 - [x] §103 **I9 Seal Gate** · Modal confirmação · Human approval obrigatório ✅ 01 Apr 2026
 - [x] §102 **Reserva Contínua** · Link booking SEMPRE visível ✅ 01 Apr 2026
 - [x] §101 **Feedback Loop Real** · Visual confirmation · Loop conectado ✅ 01 Apr 2026
