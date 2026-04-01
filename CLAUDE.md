@@ -1,7 +1,7 @@
 # CLAUDE.md — WINDI One Touch
 ## Institutional Memory & Constitutional Procedures
-**Version:** 1.9.61
-**Sealed:** 2026-03-31 · §92 P3-B Travel Workspace
+**Version:** 1.9.62
+**Sealed:** 2026-04-01 · §100.5 Memory Engine + P0.1 Frontend
 **Author:** Human Dragon (Jober Mögele Correa) · CGO · WINDI Publishing House
 **Location:** Kempten, Bavaria, Deutschland
 
@@ -547,11 +547,11 @@ KLAR (light):
 
 | Data | Milestone |
 |------|-----------|
-| 01 Apr | §95 **§85 NavCard Restaurado** · Card visual Maps+Waze · extrai km/tempo |
-| 31 Mar | §94 **F14 Conversational Memory** · LLM remembers context · UX 9/10 |
-| 31 Mar | §93 **P2 UX Polish** · Progressive timeout + human errors · UX 8/10 |
-| 31 Mar | §92 **P3-B Travel Workspace** · F13 Chat Maria · 14 features · I12 i18n fix |
-| 31 Mar | §91 **Small Talk Layer** · Memory informs, not displays · Contextual questions |
+| 01 Apr | §100.5 **Memory Engine** · Structural learning · Decision feedback loop · `253cbea` |
+| 01 Apr | §96-100 **Decision Engine Evolution** · Nómada v1.3 · Anticipation · `4a9e51a` |
+| 01 Apr | P0 **Identity Sovereignty** · I9 Enforcement · Backend authority · `2ddc3e5` |
+| 01 Apr | P0.1 **Frontend Cleanup** · Feedback UI · Badges · Alternatives · `253cbea` |
+| 01 Apr | §95 **NavCard Restaurado** · Card visual Maps+Waze · extrai km/tempo |
 
 > **Histórico completo:** `CLAUDE-HISTORY.md` + `CHANGELOG.md`
 
@@ -781,9 +781,9 @@ Não compete com ninguém — muda o eixo do jogo.
 
 ---
 
-## MARIA-UI — Inventário de Atribuições (15 LIVE)
+## MARIA-UI — Inventário de Atribuições (21 LIVE)
 
-**Status:** ✅ PRODUÇÃO · DID Gate activo · Consciousness Layer activo · P3-B Workspace activo · UX 9/10
+**Status:** ✅ PRODUÇÃO · DID Gate activo · Memory Engine activo · Nómada v1.3 · UX 10/10
 
 | §§ | Nome | Função |
 |----|------|--------|
@@ -802,7 +802,15 @@ Não compete com ninguém — muda o eixo do jogo.
 | §92 | P3-B Travel Workspace | F13 `askMaria()` + 14 features + I12 i18n |
 | §93 | P2 UX Polish | Progressive timeout + human errors · 4 i18n strings |
 | §94 | F14 Conversational Memory | `__conversationHistory[]` + LLM context · 20 msg limit |
-| §95 | §85 NavCard Restaurado | Card visual Maps+Waze · extrai km/tempo do texto |
+| §95 | NavCard Restaurado | Card visual Maps+Waze · extrai km/tempo do texto |
+| §96 | Decision Router | Intent ANTES do LLM · Routing por tipo |
+| §97 | Modo Nómada v1 | 1 decisão central + alternativas discretas |
+| §98 | DID Context | `get_travel_preferences()` · Scoring personalizado |
+| §99 | Live Context | `get_live_context()` · time_pressure + mode |
+| §100 | Antecipação | `should_anticipate()` · Sugestões proactivas I9-compliant |
+| §100.5 | Memory Engine | `save_decision()` · `mark_decision_feedback()` · Learning loop |
+
+**Tags:** `W-MARIA-001-NOMADA-V2-READY` · `W-MARIA-001-MEMORY-ENGINE-READY`
 
 **Removidos:** §87 OSRM (dead code) · Demo buttons · Hardcoded scenarios
 
@@ -866,8 +874,16 @@ Query → flight keywords?    → Kiwi Bridge
 - [ ] **windilaw.de** — Sincronizar com windi-domain.com/law/
 - [ ] **Backup DB** — Automatizar backup windi_law_identity.db + travel_users.db
 
-### Completado (ver §37-95)
-- [x] §95 **§85 NavCard Restaurado** · Card visual Maps+Waze · extrai km/tempo ✅ 01 Apr 2026
+### Completado (ver §37-100.5)
+- [x] §100.5 **Memory Engine** · `save_decision()` + feedback loop ✅ 01 Apr 2026
+- [x] §100 **Antecipação** · `should_anticipate()` · I9-compliant ✅ 01 Apr 2026
+- [x] §99 **Live Context** · `get_live_context()` · time_pressure ✅ 01 Apr 2026
+- [x] §98 **DID Context** · `get_travel_preferences()` · Scoring ✅ 01 Apr 2026
+- [x] §97 **Modo Nómada** · 1 decisão + alternativas discretas ✅ 01 Apr 2026
+- [x] §96 **Decision Router** · Intent ANTES do LLM ✅ 01 Apr 2026
+- [x] P0.1 **Frontend Cleanup** · Feedback UI · Badges · Alternatives ✅ 01 Apr 2026
+- [x] P0 **Identity Sovereignty** · I9 Enforcement · Backend authority ✅ 01 Apr 2026
+- [x] §95 **NavCard Restaurado** · Card visual Maps+Waze · extrai km/tempo ✅ 01 Apr 2026
 - [x] §94 **F14 Conversational Memory** · LLM remembers context · UX 9/10 ✅ 31 Mar 2026
 - [x] §93 **P2 UX Polish** · Progressive timeout + human errors · UX 8/10 ✅ 31 Mar 2026
 - [x] §92 **P3-B Travel Workspace** · F13 Chat Maria · 14 features ✅ 31 Mar 2026
@@ -875,11 +891,6 @@ Query → flight keywords?    → Kiwi Bridge
 - [x] §90 Consciousness Layer · Onboarding intent + MARIA identity ✅ 31 Mar 2026
 - [x] §89 Production Cleanup · DID Gate + zero fallbacks ✅ 31 Mar 2026
 - [x] §85 Hybrid Navigation · WINDI seals + native Maps navigates ✅ 31 Mar 2026
-- [x] SMTP · P3-A Identity Gate · Tesoura v10 ✅ 29 Mar 2026
-- [x] Travel Checkup · Port fix · LAW isolation ✅ 30 Mar 2026
-- [x] MARIA Three Dragons · Guardian+Architect+Witness · Voz activa ✅ 30 Mar 2026
-- [x] §65 MARIA Saudação Personalizada · gerar_saudacao() ✅ 30 Mar 2026
-- [x] §66 Places Sovereignty Gate · Cache-first · TTL · Audit ✅ 30 Mar 2026
 
 ---
 
