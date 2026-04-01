@@ -1,0 +1,35 @@
+# WINDI Sovereign Audit Portal — Protected Files
+# This repo is PUBLIC — never commit operational files
+
+# Databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Scripts and configs (operational)
+*.sh
+*.conf
+*.service
+*.py
+
+# Environment and secrets
+.env
+.env.*
+*.key
+*.pem
+secrets/
+
+# Sensitive patterns
+*_forensic*
+*_cycle*
+sentinel_*
+alpha_sins*
+embassy_*
+demo_simulator*
+tsil/
+
+# System
+.DS_Store
+__pycache__/
+*.pyc
+node_modules/
