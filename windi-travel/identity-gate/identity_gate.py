@@ -914,7 +914,12 @@ async def consent_sign(data: ConsentSign, request: Request):
 
 @app.get("/gate", response_class=HTMLResponse)
 async def gate_ui(request: Request):
-    """Render Identity Gate UI."""
+    """Render Identity Gate UI with DID Wizard."""
+    # Check if user already has session → redirect to workspace
+    from gate import get_session_from_request
+    user = get_session_from_request(request)
+    if user:
+        return RedirectResponse(url="/travel/workspace/", status_code=302)
     return templates.TemplateResponse(request, "gate.html")
 
 
@@ -2193,6 +2198,271 @@ async def get_moment_detail(receipt_id: str, request: Request):
     except Exception as e:
         print(f"[MOMENT DETAIL] Error: {e}")
         return JSONResponse({"status": "error", "message": str(e)})
+
+
+# ═══════════════════════════════════════════════════════════════
+# §103 TRAIN INTELLIGENCE — transport.rest (soberano, sem auth)
+# "MARIA não procura voos. MARIA conhece o caminho."
+# ═══════════════════════════════════════════════════════════════
+
+TRANSPORT_BASE = "https://v6.db.transport.rest"
+
+
+@app.get("/train/stations")
+async def search_train_stations(query: str = Query(..., min_length=2)):
+    """
+    §103.1 Autocomplete de estações DB.
+    API: transport.rest (community, sem auth)
+    """
+    try:
+        import requests as req
+        r = req.get(
+            f"{TRANSPORT_BASE}/locations",
+            params={"query": query, "results": 8, "stops": "true", "addresses": "false"},
+            timeout=15
+        )
+        data = r.json()
+        stations = []
+        for s in data:
+            if s.get("type") == "stop":
+                stations.append({
+                    "id": s.get("id"),
+                    "name": s.get("name"),
+                    "lat": s.get("location", {}).get("latitude"),
+                    "lng": s.get("location", {}).get("longitude"),
+                    "products": s.get("products", {})
+                })
+        return JSONResponse({"status": "ok", "stations": stations})
+    except Exception as e:
+        print(f"[TRAIN STATIONS] Error: {e}")
+        return JSONResponse({"status": "error", "message": str(e), "api": "transport.rest may be temporarily unavailable"})
+
+
+@app.get("/train/journeys")
+async def get_train_journeys(
+    from_id: str = Query(...),
+    to_id: str = Query(...),
+    when: str = Query(None),
+    results: int = Query(5)
+):
+    """
+    §103.2 Journeys com preços, atrasos, plataformas.
+    Este é o coração do §103 — o que a MARIA usa para decidir.
+    """
+    try:
+        import requests as req
+        params = {
+            "from": from_id,
+            "to": to_id,
+            "results": min(results, 10),
+            "stopovers": "false",
+            "tickets": "true",
+            "polylines": "false",
+            "remarks": "true",
+        }
+        if when:
+            params["departure"] = when
+
+        r = req.get(f"{TRANSPORT_BASE}/journeys", params=params, timeout=15)
+
+        raw = r.json()
+        journeys = []
+
+        for j in raw.get("journeys", []):
+            legs = j.get("legs", [])
+            if not legs:
+                continue
+
+            dep_leg = legs[0]
+            arr_leg = legs[-1]
+
+            # Extract price
+            price_data = j.get("price")
+            price = None
+            if price_data and isinstance(price_data, dict) and price_data.get("amount"):
+                price = {"amount": price_data["amount"], "currency": price_data.get("currency", "EUR")}
+
+            # Delays
+            dep_delay = dep_leg.get("departureDelay", 0) or 0
+            arr_delay = arr_leg.get("arrivalDelay", 0) or 0
+
+            # Main line
+            main_line = dep_leg.get("line", {}) or {}
+
+            # Warnings
+            remarks = []
+            for leg in legs:
+                for rm in leg.get("remarks", []):
+                    if rm.get("type") == "warning":
+                        remarks.append(rm.get("text", ""))
+
+            journeys.append({
+                "id": j.get("refreshToken", "")[:50],
+                "departure": dep_leg.get("departure"),
+                "arrival": arr_leg.get("arrival"),
+                "dep_delay_min": dep_delay // 60 if dep_delay else 0,
+                "arr_delay_min": arr_delay // 60 if arr_delay else 0,
+                "duration_min": _calc_train_duration(dep_leg.get("departure"), arr_leg.get("arrival")),
+                "changes": len(legs) - 1,
+                "line_name": main_line.get("name", ""),
+                "operator": main_line.get("operator", {}).get("name", "") if isinstance(main_line.get("operator"), dict) else "",
+                "dep_platform": dep_leg.get("departurePlatform", ""),
+                "arr_platform": arr_leg.get("arrivalPlatform", ""),
+                "price": price,
+                "legs": _simplify_train_legs(legs),
+                "remarks": remarks[:3],
+                "is_direct": len(legs) == 1,
+                "origin": dep_leg.get("origin", {}).get("name", ""),
+                "destination": arr_leg.get("destination", {}).get("name", "")
+            })
+
+        return JSONResponse({"status": "ok", "journeys": journeys, "source": "transport.rest"})
+
+    except Exception as e:
+        print(f"[TRAIN JOURNEYS] Error: {e}")
+        return JSONResponse({"status": "error", "message": str(e)})
+
+
+@app.post("/train/maria-decide")
+async def maria_train_decide(request: Request):
+    """
+    §103.3 Núcleo de decisão da MARIA para comboios.
+    Scoring soberano sem LLM externo.
+    Invariante: MARIA sugere. Humano confirma.
+    """
+    try:
+        body = await request.json()
+        journeys = body.get("journeys", [])
+        context = body.get("context", {})
+
+        if not journeys:
+            return JSONResponse({"status": "error", "message": "Sem journeys para analisar"})
+
+        meeting_time = context.get("meeting_time")
+        prefer_direct = context.get("prefer_direct", True)
+        budget = context.get("budget")
+
+        scored = []
+        for j in journeys:
+            score = 100.0
+            reasons = []
+            warnings = []
+
+            # Penalize delays
+            if j.get("dep_delay_min", 0) > 0:
+                score -= j["dep_delay_min"] * 3
+                warnings.append(f"+{j['dep_delay_min']} min atraso previsto")
+
+            # Penalize changes
+            changes = j.get("changes", 0)
+            if changes > 0:
+                score -= changes * 15
+                if prefer_direct:
+                    score -= 10
+                reasons.append(f"{changes} transbordo(s)")
+
+            # Check margin for meeting
+            if meeting_time and j.get("arrival"):
+                try:
+                    arr = datetime.fromisoformat(j["arrival"].replace("Z", "+00:00"))
+                    mt_h, mt_m = map(int, meeting_time.split(":"))
+                    meeting_dt = arr.replace(hour=mt_h, minute=mt_m, second=0)
+                    margin_min = int((meeting_dt - arr).total_seconds() / 60)
+                    j["margin_min"] = margin_min
+                    if margin_min < 15:
+                        score -= 40
+                        warnings.append(f"Margem curta: {margin_min} min")
+                    elif margin_min >= 30:
+                        score += 15
+                        reasons.append(f"Chega {margin_min} min antes")
+                except Exception:
+                    pass
+
+            # Price vs budget
+            if j.get("price") and budget:
+                price_eur = j["price"]["amount"]
+                j["price_eur"] = price_eur
+                if price_eur <= budget * 0.8:
+                    score += 10
+                    reasons.append(f"€{price_eur:.0f} — dentro do orçamento")
+                elif price_eur > budget:
+                    score -= 20
+                    warnings.append(f"€{price_eur:.0f} — acima do orçamento")
+
+            # Bonus for direct
+            if j.get("is_direct"):
+                score += 20
+                reasons.append("Viagem directa")
+
+            j["score"] = round(score, 1)
+            j["reasons"] = reasons
+            j["warnings"] = warnings
+            scored.append(j)
+
+        # Sort by score
+        scored.sort(key=lambda x: x["score"], reverse=True)
+        best = scored[0]
+
+        # Build explanation
+        dep_time = _fmt_train_time(best.get("departure", ""))
+        arr_time = _fmt_train_time(best.get("arrival", ""))
+        line = best.get("line_name", "comboio")
+        price_str = f" — €{best.get('price_eur', 0):.0f}" if best.get("price_eur") else ""
+        delay_str = f" (+{best['dep_delay_min']} min atraso)" if best.get("dep_delay_min", 0) > 0 else ""
+        margin_str = f" Chegas {best.get('margin_min', '?')} min antes." if best.get("margin_min") else ""
+
+        explanation = f"{line} · partida {dep_time}{delay_str} · chegada {arr_time}{price_str}.{margin_str}"
+        if best.get("reasons"):
+            explanation += " " + ". ".join(best["reasons"]) + "."
+        if best.get("warnings"):
+            explanation += " ⚠️ " + ". ".join(best["warnings"]) + "."
+
+        return JSONResponse({
+            "status": "ok",
+            "decision": best,
+            "explanation": explanation,
+            "all_scored": scored,
+            "principle": "MARIA sugere, nunca impõe — soberania até nos gestos pequenos."
+        })
+
+    except Exception as e:
+        print(f"[MARIA DECIDE] Error: {e}")
+        return JSONResponse({"status": "error", "message": str(e)})
+
+
+def _calc_train_duration(dep: str, arr: str) -> int:
+    """Calculate duration in minutes between two ISO timestamps."""
+    try:
+        d = datetime.fromisoformat(dep.replace("Z", "+00:00"))
+        a = datetime.fromisoformat(arr.replace("Z", "+00:00"))
+        return int((a - d).total_seconds() / 60)
+    except:
+        return 0
+
+
+def _fmt_train_time(iso: str) -> str:
+    """Format ISO timestamp to HH:MM."""
+    try:
+        return datetime.fromisoformat(iso.replace("Z", "+00:00")).strftime("%H:%M")
+    except:
+        return iso or ""
+
+
+def _simplify_train_legs(legs: list) -> list:
+    """Simplify leg data for frontend."""
+    out = []
+    for leg in legs:
+        line = leg.get("line") or {}
+        out.append({
+            "dep_name": leg.get("origin", {}).get("name", ""),
+            "arr_name": leg.get("destination", {}).get("name", ""),
+            "departure": _fmt_train_time(leg.get("departure", "")),
+            "arrival": _fmt_train_time(leg.get("arrival", "")),
+            "line": line.get("name", "") if isinstance(line, dict) else "",
+            "platform": leg.get("departurePlatform", ""),
+            "walking": leg.get("walking", False),
+        })
+    return out
 
 
 # ═══════════════════════════════════════════════════════════════
