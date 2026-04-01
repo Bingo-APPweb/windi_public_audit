@@ -931,15 +931,41 @@ from fastapi.responses import RedirectResponse
 
 @app.get("/workspace/")
 @app.get("/workspace")
-async def workspace_gate(request: Request):
+async def workspace_gate(request: Request, did: str = None):
     """
     Workspace — P3-A Gate Guard (I9 fail-closed)
-    Sem sessão válida → redirect /travel/gate
+    Accepts: session cookie OR DID from query param OR windi_did cookie
     """
-    # P3-A: require_auth verifica cookie windi_travel_session
+    # P3-A: Try session cookie first
     user = require_auth(request)
+
+    # Fallback 1: DID from query param (from registration success redirect)
+    if isinstance(user, RedirectResponse) and did:
+        conn = sqlite3.connect(DB_PATH)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM admins WHERE did = ?", (did,))
+        user_row = cursor.fetchone()
+        conn.close()
+        if user_row:
+            user = {"wallet_id": user_row["did"], "name": user_row["full_name"]}
+
+    # Fallback 2: windi_did cookie
     if isinstance(user, RedirectResponse):
-        return user  # Redirect to /travel/gate
+        windi_did = request.cookies.get("windi_did")
+        if windi_did:
+            conn = sqlite3.connect(DB_PATH)
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM admins WHERE did = ?", (windi_did,))
+            user_row = cursor.fetchone()
+            conn.close()
+            if user_row:
+                user = {"wallet_id": user_row["did"], "name": user_row["full_name"]}
+
+    # Still no auth → redirect to gate
+    if isinstance(user, RedirectResponse):
+        return user
 
     # Utilizador autenticado — servir workspace
     wallet_id = user["wallet_id"] if user else "anonymous"
