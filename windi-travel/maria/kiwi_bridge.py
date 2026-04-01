@@ -99,6 +99,54 @@ def normalize_location(location: str) -> str:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
+# WhereAmI — Geo-detection via Travelpayouts (§102)
+# ══════════════════════════════════════════════════════════════════════════════
+
+async def get_user_location(ip: str = None, locale: str = "pt") -> Dict[str, Any]:
+    """
+    Detecta localização do utilizador via Travelpayouts WhereAmI API.
+    Usado para auto-popular fly_from no workspace.
+
+    Sem API key especial — usa IP do request.
+    Fallback: Kempten → MUC (base WINDI).
+    """
+    url = f"https://www.travelpayouts.com/whereami?locale={locale}"
+    if ip and ip not in ("127.0.0.1", "::1", "localhost"):
+        url += f"&ip={ip}"
+
+    try:
+        async with httpx.AsyncClient(timeout=5.0) as client:
+            r = await client.get(url)
+            if r.status_code == 200:
+                data = r.json()
+                log.info(f"[WhereAmI] Detected: {data.get('name', '?')} ({data.get('iata', '?')})")
+                return {
+                    "iata": data.get("iata", "MUC"),
+                    "name": data.get("name", "Munique"),
+                    "country_code": data.get("country_code", "DE"),
+                    "country_name": data.get("country_name", "Germany"),
+                    "coordinates": data.get("coordinates", ""),
+                    "detected": True,
+                    "source": "travelpayouts_whereami"
+                }
+    except httpx.TimeoutException:
+        log.warning("[WhereAmI] Timeout — fallback MUC")
+    except Exception as e:
+        log.warning(f"[WhereAmI] Error: {e} — fallback MUC")
+
+    # Fallback: Kempten → MUC
+    return {
+        "iata": "MUC",
+        "name": "Munique",
+        "country_code": "DE",
+        "country_name": "Germany",
+        "coordinates": "",
+        "detected": False,
+        "source": "fallback_default"
+    }
+
+
+# ══════════════════════════════════════════════════════════════════════════════
 # Travelpayouts Data API (Motor alternativo)
 # ══════════════════════════════════════════════════════════════════════════════
 

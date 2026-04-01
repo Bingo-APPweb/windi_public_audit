@@ -24,7 +24,7 @@ import os, time, uuid, hashlib, json, logging, re
 from datetime import datetime, timezone, timedelta
 
 import httpx
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel, Field
 from typing import Optional
 
@@ -118,11 +118,14 @@ try:
         format_maria_response as format_flight_response,
         detect_flight_intent,
         extract_flight_details,
+        get_user_location,  # §102 WhereAmI
     )
     KIWI_BRIDGE_ENABLED = True
+    WHEREAMI_ENABLED = True
     log.info("[MARIA] Kiwi Flight Bridge loaded ✓")
 except ImportError as e:
     KIWI_BRIDGE_ENABLED = False
+    WHEREAMI_ENABLED = False
     log.warning(f"[MARIA] Kiwi Bridge not available: {e}")
 
 # ── Hotel Bridge (§68) ───────────────────────────────────────────────────────
@@ -1683,6 +1686,62 @@ async def demo_super_carta():
             PlaceLocation(name="Café Rösterei", type="cafe", lat=47.7280, lng=10.3180, rating=4.7, open_now=False, address="Klostersteige 5"),
         ],
     )
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+# §102 — WhereAmI Geo Auto-Detection
+# ══════════════════════════════════════════════════════════════════════════════
+
+@router.get("/location")
+async def maria_location(request: Request):
+    """
+    WhereAmI — detecta cidade do utilizador via IP para pré-popular fly_from.
+
+    Travelpayouts WhereAmI API — sem key especial.
+    Frontend chama ao iniciar → pré-popula fly_from + MARIA greeting contextual.
+
+    §102 WINDI-TRAVEL · IP1 intacto (apenas detecção, sem booking).
+    """
+    # Extrair IP real (nginx passa via X-Real-IP ou X-Forwarded-For)
+    ip = (
+        request.headers.get("X-Real-IP")
+        or request.headers.get("X-Forwarded-For", "").split(",")[0].strip()
+        or None
+    )
+
+    # Detectar localização via Travelpayouts
+    if WHEREAMI_ENABLED:
+        loc = await get_user_location(ip=ip, locale="pt")
+    else:
+        loc = {
+            "iata": "MUC",
+            "name": "Munique",
+            "country_code": "DE",
+            "detected": False,
+            "source": "fallback_bridge_disabled"
+        }
+
+    # Greeting contextual por país
+    greetings = {
+        "DE": f"Estás em {loc['name']}. Para onde queres voar?",
+        "AT": f"Estás em {loc['name']}. Para onde queres voar?",
+        "CH": f"Estás em {loc['name']}. Para onde queres voar?",
+        "BR": f"Você está em {loc['name']}. Para onde quer voar?",
+        "PT": f"Estás em {loc['name']}. Para onde queres voar?",
+    }
+    greeting = greetings.get(loc.get("country_code", ""), f"You're in {loc['name']}. Where do you want to fly?")
+
+    log.info(f"[WhereAmI §102] {loc['iata']} ({loc['name']}) — detected={loc.get('detected', False)}")
+
+    return {
+        "iata": loc["iata"],
+        "city": loc["name"],
+        "country_code": loc.get("country_code", ""),
+        "greeting": greeting,
+        "fly_from": loc["iata"],
+        "detected": loc.get("detected", False),
+        "source": loc.get("source", "unknown"),
+    }
 
 
 # ══════════════════════════════════════════════════════════════════════════════

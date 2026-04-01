@@ -1499,6 +1499,32 @@ function setCaptureMode(mode) {
   event.currentTarget.classList.add('active');
 }
 
+// §102 — WhereAmI Geo Auto-Detection
+async function initWhereAmI() {
+  try {
+    const resp = await fetch('/travel/maria/location');
+    if (!resp.ok) throw new Error('WhereAmI API error');
+    const loc = await resp.json();
+
+    // Store detected location for flight searches
+    window.__windi_fly_from = loc.fly_from || 'MUC';
+    window.__windi_city = loc.city || 'Munique';
+
+    // Update MARIA greeting with detected city
+    const helloEl = document.getElementById('maria-hello');
+    if (helloEl && loc.greeting) {
+      helloEl.textContent = loc.greeting;
+    }
+
+    console.log('[MARIA §102] WhereAmI:', loc.city, '(' + loc.fly_from + ')');
+  } catch (e) {
+    // Silent fallback — MARIA uses default greeting
+    window.__windi_fly_from = 'MUC';
+    window.__windi_city = 'Munique';
+    console.log('[MARIA §102] WhereAmI fallback MUC');
+  }
+}
+
 function triggerCapture(source) {
   const input = document.createElement('input');
   input.type = 'file';
@@ -2202,6 +2228,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Init language
   setLang(LANG);
+
+  // §102 — WhereAmI geo auto-detection
+  initWhereAmI();
 
   // Render thread
   renderThread();
