@@ -1042,6 +1042,49 @@ body {
 #travel-map{height:380px;border-radius:12px;overflow:hidden;border:1px solid var(--border)}
 .leaflet-popup-content-wrapper{border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,0.2)}
 .leaflet-popup-tip{display:none}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   §103 TRAIN INTELLIGENCE — MARIA Decision Engine
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.train-decision-card{background:var(--bg-2);border:1px solid var(--gold);border-radius:12px;padding:16px;margin-top:12px}
+.td-header{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.td-badge{background:var(--gold-bg);color:var(--gold);font-size:0.7rem;font-weight:600;padding:3px 8px;border-radius:12px}
+.td-title{font-size:0.95rem;font-weight:500;color:var(--text)}
+
+.td-recommendation{background:var(--success-bg);border:1px solid var(--success);border-radius:10px;padding:14px;margin-bottom:12px}
+.td-rec-label{font-size:0.7rem;text-transform:uppercase;color:var(--success);margin-bottom:6px;font-weight:600}
+.td-rec-main{display:flex;align-items:center;gap:10px}
+.td-rec-icon{font-size:1.5rem}
+.td-rec-info{flex:1}
+.td-rec-route{font-size:0.9rem;font-weight:500;color:var(--text)}
+.td-rec-time{font-size:0.8rem;color:var(--text-2);margin-top:2px}
+.td-rec-score{font-size:0.7rem;color:var(--success);margin-top:4px;font-family:var(--mono)}
+
+.td-alternatives{margin-top:12px}
+.td-alt-label{font-size:0.7rem;text-transform:uppercase;color:var(--text-3);margin-bottom:8px;font-weight:600}
+.td-alt-list{display:flex;flex-direction:column;gap:6px}
+.td-alt-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all 0.15s}
+.td-alt-item:hover{border-color:var(--gold);background:var(--gold-bg)}
+.td-alt-route{font-size:0.8rem;color:var(--text);flex:1}
+.td-alt-meta{font-size:0.75rem;color:var(--text-3)}
+.td-alt-score{font-size:0.65rem;color:var(--text-4);font-family:var(--mono)}
+
+.td-actions{display:flex;gap:8px;margin-top:14px}
+.td-btn{flex:1;padding:12px;border-radius:8px;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.15s;text-align:center}
+.td-btn-primary{background:var(--gold);border:none;color:#000}
+.td-btn-primary:hover{filter:brightness(1.1)}
+.td-btn-secondary{background:transparent;border:1px solid var(--border);color:var(--text-2)}
+.td-btn-secondary:hover{border-color:var(--gold);color:var(--gold)}
+
+.td-reasoning{margin-top:12px;padding:12px;background:var(--bg);border-radius:8px;font-size:0.75rem;color:var(--text-3);line-height:1.5}
+.td-reasoning strong{color:var(--text-2)}
+
+/* Train loading/error states */
+.train-loading{text-align:center;padding:20px;color:var(--text-2)}
+.train-loading-spinner{display:inline-block;width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite;margin-right:8px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.train-error{padding:16px;background:rgba(220,53,69,0.1);border:1px solid rgba(220,53,69,0.3);border-radius:10px;color:#dc3545;font-size:0.85rem;text-align:center}
 </style>
 </head>
 <body>
@@ -2690,6 +2733,244 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+// ═══════════════════════════════════════════════════════════════════════════
+// §103 TRAIN INTELLIGENCE — MARIA Decision Engine
+// ═══════════════════════════════════════════════════════════════════════════
+
+const TRAIN_I18N = {
+  searching: { de: 'Suche Zugverbindungen…', pt: 'A procurar comboios…', en: 'Searching trains…' },
+  recommendation: { de: 'MARIA-Empfehlung', pt: 'Recomendação MARIA', en: 'MARIA Recommendation' },
+  alternatives: { de: 'Alternativen', pt: 'Alternativas', en: 'Alternatives' },
+  confirm: { de: 'Diese Verbindung wählen', pt: 'Escolher esta ligação', en: 'Choose this connection' },
+  showMore: { de: 'Mehr anzeigen', pt: 'Ver mais', en: 'Show more' },
+  direct: { de: 'Direkt', pt: 'Directo', en: 'Direct' },
+  changes: { de: 'Umstieg', pt: 'Transbordo', en: 'Change' },
+  delay: { de: 'Verspätung', pt: 'Atraso', en: 'Delay' },
+  platform: { de: 'Gleis', pt: 'Plataforma', en: 'Platform' },
+  error: { de: 'Fehler beim Laden der Züge', pt: 'Erro ao carregar comboios', en: 'Error loading trains' },
+  noResults: { de: 'Keine Züge gefunden', pt: 'Nenhum comboio encontrado', en: 'No trains found' },
+  scoring: { de: 'Bewertung', pt: 'Pontuação', en: 'Score' },
+  reasoning: { de: 'Warum diese Verbindung?', pt: 'Porquê esta ligação?', en: 'Why this connection?' }
+};
+
+// mariaDecide() — Main entry point for train search with MARIA scoring
+async function mariaDecide(fromId, toId, when) {
+  const container = document.getElementById('train-decision-container') || createTrainContainer();
+  container.innerHTML = `
+    <div class="train-loading">
+      <span class="train-loading-spinner"></span>
+      ${TRAIN_I18N.searching[LANG] || TRAIN_I18N.searching.en}
+    </div>
+  `;
+
+  try {
+    const res = await fetch('/travel/train/maria-decide', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        from_id: fromId,
+        to_id: toId,
+        when: when || new Date().toISOString(),
+        lang: LANG.toUpperCase(),
+        results: 5
+      })
+    });
+
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+
+    if (data.status !== 'ok' || !data.recommendation) {
+      throw new Error(data.message || 'No recommendation');
+    }
+
+    renderMariaDecision(data);
+
+  } catch (err) {
+    console.error('[§103] mariaDecide error:', err);
+    container.innerHTML = `
+      <div class="train-error">
+        ${TRAIN_I18N.error[LANG] || TRAIN_I18N.error.en}<br>
+        <small>${err.message}</small>
+      </div>
+    `;
+  }
+}
+
+function createTrainContainer() {
+  const container = document.createElement('div');
+  container.id = 'train-decision-container';
+  container.style.marginTop = '12px';
+  const response = document.getElementById('maria-response');
+  if (response) response.after(container);
+  else document.querySelector('.main')?.appendChild(container);
+  return container;
+}
+
+// renderMariaDecision() — Render the decision card with recommendation + alternatives
+function renderMariaDecision(data) {
+  const container = document.getElementById('train-decision-container');
+  if (!container) return;
+
+  const rec = data.recommendation;
+  const alts = data.alternatives || [];
+  const reasoning = data.reasoning || '';
+
+  // Format times
+  const depTime = formatTrainTime(rec.departure);
+  const arrTime = formatTrainTime(rec.arrival);
+  const duration = formatDuration(rec.duration_minutes);
+
+  // Build changes text
+  const changesText = rec.changes === 0
+    ? `🚄 ${TRAIN_I18N.direct[LANG] || TRAIN_I18N.direct.en}`
+    : `🔄 ${rec.changes} ${TRAIN_I18N.changes[LANG] || TRAIN_I18N.changes.en}`;
+
+  // Delay indicator
+  const delayText = rec.delay_minutes > 0
+    ? `<span style="color:#dc3545">⚠️ +${rec.delay_minutes}min</span>`
+    : '';
+
+  // Platform
+  const platformText = rec.platform
+    ? `${TRAIN_I18N.platform[LANG] || TRAIN_I18N.platform.en} ${rec.platform}`
+    : '';
+
+  container.innerHTML = `
+    <div class="train-decision-card">
+      <div class="td-header">
+        <span class="td-badge">§103</span>
+        <span class="td-title">🚂 ${rec.from_name} → ${rec.to_name}</span>
+      </div>
+
+      <div class="td-recommendation">
+        <div class="td-rec-label">${TRAIN_I18N.recommendation[LANG] || TRAIN_I18N.recommendation.en}</div>
+        <div class="td-rec-main">
+          <div class="td-rec-icon">🚄</div>
+          <div class="td-rec-info">
+            <div class="td-rec-route">
+              ${depTime} → ${arrTime} <span style="opacity:0.7">(${duration})</span>
+            </div>
+            <div class="td-rec-time">
+              ${changesText} ${delayText} ${platformText ? '· ' + platformText : ''}
+              ${rec.price ? ` · €${rec.price.toFixed(2)}` : ''}
+            </div>
+            <div class="td-rec-score">${TRAIN_I18N.scoring[LANG] || TRAIN_I18N.scoring.en}: ${rec.score}/100</div>
+          </div>
+        </div>
+      </div>
+
+      ${alts.length > 0 ? `
+        <div class="td-alternatives">
+          <div class="td-alt-label">${TRAIN_I18N.alternatives[LANG] || TRAIN_I18N.alternatives.en}</div>
+          <div class="td-alt-list">
+            ${alts.map((alt, i) => `
+              <div class="td-alt-item" onclick="selectTrainAlt(${i})">
+                <div class="td-alt-route">
+                  ${formatTrainTime(alt.departure)} → ${formatTrainTime(alt.arrival)}
+                  ${alt.changes > 0 ? `(${alt.changes}×)` : ''}
+                </div>
+                <div class="td-alt-meta">${formatDuration(alt.duration_minutes)}</div>
+                <div class="td-alt-score">${alt.score}/100</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      ` : ''}
+
+      ${reasoning ? `
+        <div class="td-reasoning">
+          <strong>${TRAIN_I18N.reasoning[LANG] || TRAIN_I18N.reasoning.en}:</strong><br>
+          ${reasoning}
+        </div>
+      ` : ''}
+
+      <div class="td-actions">
+        <button class="td-btn td-btn-primary" onclick="confirmJourney('${rec.journey_id || ''}')">
+          ${TRAIN_I18N.confirm[LANG] || TRAIN_I18N.confirm.en}
+        </button>
+        <button class="td-btn td-btn-secondary" onclick="document.getElementById('train-decision-container').remove()">
+          ✕
+        </button>
+      </div>
+    </div>
+  `;
+
+  // Store alternatives for selection
+  window.__trainAlternatives = alts;
+}
+
+// Helper: format train time
+function formatTrainTime(isoStr) {
+  if (!isoStr) return '—';
+  try {
+    const d = new Date(isoStr);
+    return d.toLocaleTimeString(LANG === 'de' ? 'de-DE' : LANG === 'pt' ? 'pt-PT' : 'en-US', {
+      hour: '2-digit', minute: '2-digit'
+    });
+  } catch { return isoStr; }
+}
+
+// Helper: format duration
+function formatDuration(mins) {
+  if (!mins) return '';
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  return h > 0 ? `${h}h ${m}min` : `${m}min`;
+}
+
+// selectTrainAlt() — User selects an alternative
+function selectTrainAlt(index) {
+  const alts = window.__trainAlternatives || [];
+  if (!alts[index]) return;
+
+  const alt = alts[index];
+  console.log('[§103] Selected alternative:', alt);
+
+  // Update UI to show this as selected
+  const items = document.querySelectorAll('.td-alt-item');
+  items.forEach((el, i) => {
+    el.style.borderColor = i === index ? 'var(--gold)' : 'var(--border)';
+    el.style.background = i === index ? 'var(--gold-bg)' : 'var(--bg)';
+  });
+}
+
+// confirmJourney() — User confirms journey selection
+function confirmJourney(journeyId) {
+  if (!journeyId) {
+    console.log('[§103] Journey confirmed (no ID)');
+  } else {
+    console.log('[§103] Journey confirmed:', journeyId);
+  }
+
+  // Remove the decision card
+  const container = document.getElementById('train-decision-container');
+  if (container) {
+    container.innerHTML = `
+      <div style="text-align:center;padding:16px;color:var(--success)">
+        ✓ ${LANG === 'de' ? 'Verbindung ausgewählt' : LANG === 'pt' ? 'Ligação seleccionada' : 'Connection selected'}
+      </div>
+    `;
+    setTimeout(() => container.remove(), 2000);
+  }
+
+  // Future: Could integrate with DB booking or calendar
+}
+
+// searchTrainStations() — Autocomplete for station search
+async function searchTrainStations(query) {
+  if (!query || query.length < 2) return [];
+
+  try {
+    const res = await fetch(`/travel/train/stations?query=${encodeURIComponent(query)}`);
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.stations || [];
+  } catch (err) {
+    console.warn('[§103] Station search error:', err);
+    return [];
+  }
+}
 </script>
 
 </body>
